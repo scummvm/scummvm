@@ -182,35 +182,35 @@ void ScalpelJournal::drawFrame() {
 	// Draw the buttons
 	screen.makeButton(Common::Rect(JOURNAL_POINTS[0][0], JOURNAL_BUTTONS_Y,
 		JOURNAL_POINTS[0][1], JOURNAL_BUTTONS_Y + 10),
-		JOURNAL_POINTS[0][2], _fixedTextExit, true);
+		JOURNAL_POINTS[0][2], _fixedTextExit);
 	screen.makeButton(Common::Rect(JOURNAL_POINTS[1][0], JOURNAL_BUTTONS_Y,
 		JOURNAL_POINTS[1][1], JOURNAL_BUTTONS_Y + 10),
-		JOURNAL_POINTS[1][2], _fixedTextBack10, true);
+		JOURNAL_POINTS[1][2], _fixedTextBack10);
 	screen.makeButton(Common::Rect(JOURNAL_POINTS[2][0], JOURNAL_BUTTONS_Y,
 		JOURNAL_POINTS[2][1], JOURNAL_BUTTONS_Y + 10),
-		JOURNAL_POINTS[2][2], _fixedTextUp, true);
+		JOURNAL_POINTS[2][2], _fixedTextUp);
 	screen.makeButton(Common::Rect(JOURNAL_POINTS[3][0], JOURNAL_BUTTONS_Y,
 		JOURNAL_POINTS[3][1], JOURNAL_BUTTONS_Y + 10),
-		JOURNAL_POINTS[3][2], _fixedTextDown, true);
+		JOURNAL_POINTS[3][2], _fixedTextDown);
 	screen.makeButton(Common::Rect(JOURNAL_POINTS[4][0], JOURNAL_BUTTONS_Y,
 		JOURNAL_POINTS[4][1], JOURNAL_BUTTONS_Y + 10),
-		JOURNAL_POINTS[4][2], _fixedTextAhead10, true);
+		JOURNAL_POINTS[4][2], _fixedTextAhead10);
 	screen.makeButton(Common::Rect(JOURNAL_POINTS[5][0], JOURNAL_BUTTONS_Y + 11,
 		JOURNAL_POINTS[5][1], JOURNAL_BUTTONS_Y + 21),
-		JOURNAL_POINTS[5][2], _fixedTextSearch, true);
+		JOURNAL_POINTS[5][2], _fixedTextSearch);
 	screen.makeButton(Common::Rect(JOURNAL_POINTS[6][0], JOURNAL_BUTTONS_Y + 11,
 		JOURNAL_POINTS[6][1], JOURNAL_BUTTONS_Y + 21),
-		JOURNAL_POINTS[6][2], _fixedTextFirstPage, true);
+		JOURNAL_POINTS[6][2], _fixedTextFirstPage);
 	screen.makeButton(Common::Rect(JOURNAL_POINTS[7][0], JOURNAL_BUTTONS_Y + 11,
 		JOURNAL_POINTS[7][1], JOURNAL_BUTTONS_Y + 21),
-		JOURNAL_POINTS[7][2], _fixedTextLastPage, true);
+		JOURNAL_POINTS[7][2], _fixedTextLastPage);
 
 	// WORKAROUND: Draw Print Text button as disabled, since we don't support it in ScummVM
 	screen.makeButton(Common::Rect(JOURNAL_POINTS[8][0], JOURNAL_BUTTONS_Y + 11,
 		JOURNAL_POINTS[8][1], JOURNAL_BUTTONS_Y + 21),
-		JOURNAL_POINTS[8][2], _fixedTextPrintText, true);
+		JOURNAL_POINTS[8][2], _fixedTextPrintText);
 	screen.buttonPrint(Common::Point(JOURNAL_POINTS[8][2], JOURNAL_BUTTONS_Y + 11),
-		COMMAND_NULL, false, _fixedTextPrintText, true);
+		COMMAND_NULL, false, _fixedTextPrintText);
 }
 
 void ScalpelJournal::drawInterface() {
@@ -235,20 +235,20 @@ void ScalpelJournal::doArrows() {
 	byte color;
 
 	color = (_page > 1) ? COMMAND_FOREGROUND : COMMAND_NULL;
-	screen.buttonPrint(Common::Point(JOURNAL_POINTS[1][2], JOURNAL_BUTTONS_Y), color, false, _fixedTextBack10, true);
-	screen.buttonPrint(Common::Point(JOURNAL_POINTS[2][2], JOURNAL_BUTTONS_Y), color, false, _fixedTextUp, true);
+	screen.buttonPrint(Common::Point(JOURNAL_POINTS[1][2], JOURNAL_BUTTONS_Y), color, false, _fixedTextBack10);
+	screen.buttonPrint(Common::Point(JOURNAL_POINTS[2][2], JOURNAL_BUTTONS_Y), color, false, _fixedTextUp);
 
 	color = _down ? COMMAND_FOREGROUND : COMMAND_NULL;
-	screen.buttonPrint(Common::Point(JOURNAL_POINTS[3][2], JOURNAL_BUTTONS_Y), color, false, _fixedTextDown, true);
-	screen.buttonPrint(Common::Point(JOURNAL_POINTS[4][2], JOURNAL_BUTTONS_Y), color, false, _fixedTextAhead10, true);
-	screen.buttonPrint(Common::Point(JOURNAL_POINTS[7][2], JOURNAL_BUTTONS_Y + 11), color, false, _fixedTextLastPage, true);
+	screen.buttonPrint(Common::Point(JOURNAL_POINTS[3][2], JOURNAL_BUTTONS_Y), color, false, _fixedTextDown);
+	screen.buttonPrint(Common::Point(JOURNAL_POINTS[4][2], JOURNAL_BUTTONS_Y), color, false, _fixedTextAhead10);
+	screen.buttonPrint(Common::Point(JOURNAL_POINTS[7][2], JOURNAL_BUTTONS_Y + 11), color, false, _fixedTextLastPage);
 
 	color = _journal.size() > 0 ? COMMAND_FOREGROUND : COMMAND_NULL;
-	screen.buttonPrint(Common::Point(JOURNAL_POINTS[5][2], JOURNAL_BUTTONS_Y + 11), color, false, _fixedTextSearch, true);
-	screen.buttonPrint(Common::Point(JOURNAL_POINTS[8][2], JOURNAL_BUTTONS_Y + 11), COMMAND_NULL, false, _fixedTextPrintText, true);
+	screen.buttonPrint(Common::Point(JOURNAL_POINTS[5][2], JOURNAL_BUTTONS_Y + 11), color, false, _fixedTextSearch);
+	screen.buttonPrint(Common::Point(JOURNAL_POINTS[8][2], JOURNAL_BUTTONS_Y + 11), COMMAND_NULL, false, _fixedTextPrintText);
 
 	color = _page > 1 ? COMMAND_FOREGROUND : COMMAND_NULL;
-	screen.buttonPrint(Common::Point(JOURNAL_POINTS[6][2], JOURNAL_BUTTONS_Y + 11), color, false, _fixedTextFirstPage, true);
+	screen.buttonPrint(Common::Point(JOURNAL_POINTS[6][2], JOURNAL_BUTTONS_Y + 11), color, false, _fixedTextFirstPage);
 }
 
 JournalButton ScalpelJournal::getHighlightedButton(const Common::Point &pt) {
@@ -303,34 +303,34 @@ bool ScalpelJournal::handleEvents(int key) {
 	if (events._pressed || events._released) {
 		// Exit button
 		color = (btn == BTN_EXIT) ? COMMAND_HIGHLIGHTED : COMMAND_FOREGROUND;
-		screen.buttonPrint(Common::Point(JOURNAL_POINTS[0][2], JOURNAL_BUTTONS_Y), color, true, _fixedTextExit, true);
+		screen.buttonPrint(Common::Point(JOURNAL_POINTS[0][2], JOURNAL_BUTTONS_Y), color, true, _fixedTextExit);
 
 		// Back 10 button
 		if (btn == BTN_BACK10) {
-			screen.buttonPrint(Common::Point(JOURNAL_POINTS[1][2], JOURNAL_BUTTONS_Y), COMMAND_HIGHLIGHTED, true, _fixedTextBack10, true);
+			screen.buttonPrint(Common::Point(JOURNAL_POINTS[1][2], JOURNAL_BUTTONS_Y), COMMAND_HIGHLIGHTED, true, _fixedTextBack10);
 		} else if (_page > 1) {
-			screen.buttonPrint(Common::Point(JOURNAL_POINTS[1][2], JOURNAL_BUTTONS_Y), COMMAND_FOREGROUND, true, _fixedTextBack10, true);
+			screen.buttonPrint(Common::Point(JOURNAL_POINTS[1][2], JOURNAL_BUTTONS_Y), COMMAND_FOREGROUND, true, _fixedTextBack10);
 		}
 
 		// Up button
 		if (btn == BTN_UP) {
-			screen.buttonPrint(Common::Point(JOURNAL_POINTS[2][2], JOURNAL_BUTTONS_Y), COMMAND_HIGHLIGHTED, true, _fixedTextUp, true);
+			screen.buttonPrint(Common::Point(JOURNAL_POINTS[2][2], JOURNAL_BUTTONS_Y), COMMAND_HIGHLIGHTED, true, _fixedTextUp);
 		} else if (_up) {
-			screen.buttonPrint(Common::Point(JOURNAL_POINTS[2][2], JOURNAL_BUTTONS_Y), COMMAND_FOREGROUND, true, _fixedTextUp, true);
+			screen.buttonPrint(Common::Point(JOURNAL_POINTS[2][2], JOURNAL_BUTTONS_Y), COMMAND_FOREGROUND, true, _fixedTextUp);
 		}
 
 		// Down button
 		if (btn == BTN_DOWN) {
-			screen.buttonPrint(Common::Point(JOURNAL_POINTS[3][2], JOURNAL_BUTTONS_Y), COMMAND_HIGHLIGHTED, true, _fixedTextDown, true);
+			screen.buttonPrint(Common::Point(JOURNAL_POINTS[3][2], JOURNAL_BUTTONS_Y), COMMAND_HIGHLIGHTED, true, _fixedTextDown);
 		} else if (_down) {
-			screen.buttonPrint(Common::Point(JOURNAL_POINTS[3][2], JOURNAL_BUTTONS_Y), COMMAND_FOREGROUND, true, _fixedTextDown, true);
+			screen.buttonPrint(Common::Point(JOURNAL_POINTS[3][2], JOURNAL_BUTTONS_Y), COMMAND_FOREGROUND, true, _fixedTextDown);
 		}
 
 		// Ahead 10 button
 		if (btn == BTN_AHEAD110) {
-			screen.buttonPrint(Common::Point(JOURNAL_POINTS[4][2], JOURNAL_BUTTONS_Y), COMMAND_HIGHLIGHTED, true, _fixedTextAhead10, true);
+			screen.buttonPrint(Common::Point(JOURNAL_POINTS[4][2], JOURNAL_BUTTONS_Y), COMMAND_HIGHLIGHTED, true, _fixedTextAhead10);
 		} else if (_down) {
-			screen.buttonPrint(Common::Point(JOURNAL_POINTS[4][2], JOURNAL_BUTTONS_Y), COMMAND_FOREGROUND, true, _fixedTextAhead10, true);
+			screen.buttonPrint(Common::Point(JOURNAL_POINTS[4][2], JOURNAL_BUTTONS_Y), COMMAND_FOREGROUND, true, _fixedTextAhead10);
 		}
 
 		// Search button
@@ -341,7 +341,7 @@ bool ScalpelJournal::handleEvents(int key) {
 		} else {
 			color = COMMAND_FOREGROUND;
 		}
-		screen.buttonPrint(Common::Point(JOURNAL_POINTS[5][2], JOURNAL_BUTTONS_Y + 11), color, true, _fixedTextSearch, true);
+		screen.buttonPrint(Common::Point(JOURNAL_POINTS[5][2], JOURNAL_BUTTONS_Y + 11), color, true, _fixedTextSearch);
 
 		// First Page button
 		if (btn == BTN_FIRST_PAGE) {
@@ -351,7 +351,7 @@ bool ScalpelJournal::handleEvents(int key) {
 		} else {
 			color = COMMAND_NULL;
 		}
-		screen.buttonPrint(Common::Point(JOURNAL_POINTS[6][2], JOURNAL_BUTTONS_Y + 11), color, true, _fixedTextFirstPage, true);
+		screen.buttonPrint(Common::Point(JOURNAL_POINTS[6][2], JOURNAL_BUTTONS_Y + 11), color, true, _fixedTextFirstPage);
 
 		// Last Page button
 		if (btn == BTN_LAST_PAGE) {
@@ -361,10 +361,10 @@ bool ScalpelJournal::handleEvents(int key) {
 		} else {
 			color = COMMAND_NULL;
 		}
-		screen.buttonPrint(Common::Point(JOURNAL_POINTS[7][2], JOURNAL_BUTTONS_Y + 11), color, true, _fixedTextLastPage, true);
+		screen.buttonPrint(Common::Point(JOURNAL_POINTS[7][2], JOURNAL_BUTTONS_Y + 11), color, true, _fixedTextLastPage);
 
 		// Print Text button
-		screen.buttonPrint(Common::Point(JOURNAL_POINTS[8][2], JOURNAL_BUTTONS_Y + 11), COMMAND_NULL, true, _fixedTextPrintText, true);
+		screen.buttonPrint(Common::Point(JOURNAL_POINTS[8][2], JOURNAL_BUTTONS_Y + 11), COMMAND_NULL, true, _fixedTextPrintText);
 	}
 
 	if (btn == BTN_EXIT && events._released) {
@@ -404,7 +404,7 @@ bool ScalpelJournal::handleEvents(int key) {
 		screen.slamArea(0, 0, SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT);
 
 	} else if (((btn == BTN_SEARCH && events._released) || key == _hotkeySearch) && !_journal.empty()) {
-		screen.buttonPrint(Common::Point(JOURNAL_POINTS[5][2], JOURNAL_BUTTONS_Y + 11), COMMAND_FOREGROUND, true, _fixedTextSearch, true);
+		screen.buttonPrint(Common::Point(JOURNAL_POINTS[5][2], JOURNAL_BUTTONS_Y + 11), COMMAND_FOREGROUND, true, _fixedTextSearch);
 		bool notFound = false;
 
 		do {
@@ -477,18 +477,11 @@ int ScalpelJournal::getSearchString(bool printError) {
 	// Draw search panel
 	screen.makePanel(Common::Rect(6, 171, 313, 199));
 	screen.makeButton(Common::Rect(SEARCH_POINTS[0][0], yp, SEARCH_POINTS[0][1], yp + 10),
-		SEARCH_POINTS[0][2], _fixedTextSearchExit, true);
+		SEARCH_POINTS[0][2], _fixedTextSearchExit);
 	screen.makeButton(Common::Rect(SEARCH_POINTS[1][0], yp, SEARCH_POINTS[1][1], yp + 10),
-		SEARCH_POINTS[1][2], _fixedTextSearchBackward, true);
+		SEARCH_POINTS[1][2], _fixedTextSearchBackward);
 	screen.makeButton(Common::Rect(SEARCH_POINTS[2][0], yp, SEARCH_POINTS[2][1], yp + 10),
-		SEARCH_POINTS[2][2], _fixedTextSearchForward, true);
-
-//	screen.gPrint(Common::Point(SEARCH_POINTS[0][2] - screen.stringWidth(fixedText_Exit) / 2, yp),
-//		COMMAND_HIGHLIGHTED, "%c", _fixedTextSearchfixedText_Exit[0]);
-//	screen.gPrint(Common::Point(SEARCH_POINTS[1][2] - screen.stringWidth(fixedText_Backward) / 2, yp),
-//		COMMAND_HIGHLIGHTED, "%c", fixedText_Backward[0]);
-//	screen.gPrint(Common::Point(SEARCH_POINTS[2][2] - screen.stringWidth(fixedText_Forward) / 2, yp),
-//		COMMAND_HIGHLIGHTED, "%c", fixedText_Forward[0]);
+		SEARCH_POINTS[2][2], _fixedTextSearchForward);
 
 	screen.makeField(Common::Rect(12, 185, 307, 196));
 
@@ -554,8 +547,7 @@ int ScalpelJournal::getSearchString(bool printError) {
 				} else {
 					color = COMMAND_FOREGROUND;
 				}
-				screen.buttonPrint(Common::Point(SEARCH_POINTS[0][0], SEARCH_POINTS[0][2]), color, false, _fixedTextSearchExit, true);
-				//screen.print(Common::Point(SEARCH_POINTS[0][2] - screen.stringWidth(fixedText_Exit) / 2, 175), color, "%s", fixedText_Exit.c_str());
+				screen.buttonPrint(Common::Point(SEARCH_POINTS[0][0], SEARCH_POINTS[0][2]), color, false, _fixedTextSearchExit);
 
 				if (pt.x > SEARCH_POINTS[1][0] && pt.x < SEARCH_POINTS[1][1] && pt.y > 174 && pt.y < 183) {
 					found = BTN_BACKWARD;
@@ -563,8 +555,7 @@ int ScalpelJournal::getSearchString(bool printError) {
 				} else {
 					color = COMMAND_FOREGROUND;
 				}
-				screen.buttonPrint(Common::Point(SEARCH_POINTS[1][0], SEARCH_POINTS[1][2]), color, false, _fixedTextSearchBackward, true);
-				//screen.print(Common::Point(SEARCH_POINTS[1][2] - screen.stringWidth(fixedText_Backward) / 2, 175), color, "%s", fixedText_Backward.c_str());
+				screen.buttonPrint(Common::Point(SEARCH_POINTS[1][0], SEARCH_POINTS[1][2]), color, false, _fixedTextSearchBackward);
 
 				if (pt.x > SEARCH_POINTS[2][0] && pt.x < SEARCH_POINTS[2][1] && pt.y > 174 && pt.y < 183) {
 					found = BTN_FORWARD;
@@ -572,8 +563,7 @@ int ScalpelJournal::getSearchString(bool printError) {
 				} else {
 					color = COMMAND_FOREGROUND;
 				}
-				screen.buttonPrint(Common::Point(SEARCH_POINTS[2][0], SEARCH_POINTS[2][2]), color, false, _fixedTextSearchForward, true);
-				//screen.print(Common::Point(SEARCH_POINTS[2][2] - screen.stringWidth(fixedText_Forward) / 2, 175), color, "%s", fixedText_Forward.c_str());
+				screen.buttonPrint(Common::Point(SEARCH_POINTS[2][0], SEARCH_POINTS[2][2]), color, false, _fixedTextSearchForward);
 			}
 
 			events.wait(2);

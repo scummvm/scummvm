@@ -31,7 +31,7 @@ ScalpelScreen::ScalpelScreen(SherlockEngine *vm) : Screen(vm) {
 }
 
 void ScalpelScreen::makeButton(const Common::Rect &bounds, int textX,
-		const Common::String &str, bool textContainsHotkey) {
+		const Common::String &buttonText, bool textContainsHotkey) {
 
 	Surface &bb = *_backBuffer;
 	bb.fillRect(Common::Rect(bounds.left, bounds.top, bounds.right, bounds.top + 1), BUTTON_TOP);
@@ -40,28 +40,29 @@ void ScalpelScreen::makeButton(const Common::Rect &bounds, int textX,
 	bb.fillRect(Common::Rect(bounds.left + 1, bounds.bottom - 1, bounds.right, bounds.bottom), BUTTON_BOTTOM);
 	bb.fillRect(Common::Rect(bounds.left + 1, bounds.top + 1, bounds.right - 1, bounds.bottom - 1), BUTTON_MIDDLE);
 
-	buttonPrint(Common::Point(textX, bounds.top), COMMAND_FOREGROUND, false, str, textContainsHotkey);
+	buttonPrint(Common::Point(textX, bounds.top), COMMAND_FOREGROUND, false, buttonText, textContainsHotkey);
 }
 
+// ButtonText is supposed to have its hotkey as a prefix. The hotkey will get highlighted.
 void ScalpelScreen::buttonPrint(const Common::Point &pt, uint color, bool slamIt,
-		const Common::String &str, bool textContainsHotkey) {
+		const Common::String &buttonText, bool textContainsHotkey) {
 	int xStart = pt.x;
 	int skipTextOffset = textContainsHotkey ? +1 : 0; // skip first char in case text contains hotkey
 
 	// Center text around given x-coordinate
 	if (textContainsHotkey) {
-		xStart -= (stringWidth(Common::String(str.c_str() + 1)) / 2);
+		xStart -= (stringWidth(Common::String(buttonText.c_str() + 1)) / 2);
 	} else {
-		xStart -= (stringWidth(str) / 2);
+		xStart -= (stringWidth(buttonText) / 2);
 	}
 
 	if (color == COMMAND_FOREGROUND) {
 		uint16 prefixOffsetX = 0;
-		byte hotkey = str[0];
+		byte hotkey = buttonText[0];
 
 		// Hotkey needs to be highlighted
 		if (textContainsHotkey) {
-			Common::String prefixText = Common::String(str.c_str() + 1);
+			Common::String prefixText = Common::String(buttonText.c_str() + 1);
 			uint16 prefixTextLen = prefixText.size();
 			uint16 prefixTextPos = 0;
 
@@ -87,17 +88,17 @@ void ScalpelScreen::buttonPrint(const Common::Point &pt, uint color, bool slamIt
 
 		if (slamIt) {
 			print(Common::Point(xStart, pt.y + 1),
-				COMMAND_FOREGROUND, "%s", str.c_str() + skipTextOffset);
+				COMMAND_FOREGROUND, "%s", buttonText.c_str() + skipTextOffset);
 			print(Common::Point(xStart + prefixOffsetX, pt.y + 1), COMMAND_HIGHLIGHTED, "%c", hotkey);
 		} else {
 			gPrint(Common::Point(xStart, pt.y),
-				COMMAND_FOREGROUND, "%s", str.c_str() + skipTextOffset);
+				COMMAND_FOREGROUND, "%s", buttonText.c_str() + skipTextOffset);
 			gPrint(Common::Point(xStart + prefixOffsetX, pt.y), COMMAND_HIGHLIGHTED, "%c", hotkey);
 		}
 	} else if (slamIt) {
-		print(Common::Point(xStart, pt.y + 1), color, "%s", str.c_str() + skipTextOffset);
+		print(Common::Point(xStart, pt.y + 1), color, "%s", buttonText.c_str() + skipTextOffset);
 	} else {
-		gPrint(Common::Point(xStart, pt.y), color, "%s", str.c_str() + skipTextOffset);
+		gPrint(Common::Point(xStart, pt.y), color, "%s", buttonText.c_str() + skipTextOffset);
 	}
 }
 

@@ -38,14 +38,16 @@ public:
 
 	/**
 	 * Draws a button for use in the inventory, talk, and examine dialogs.
+	 * ButtonText is supposed to have its hotkey as a prefix. The hotkey will get highlighted.
 	 */
-	void makeButton(const Common::Rect &bounds, int textX, const Common::String &str, bool textContainsHotkey = false);
+	void makeButton(const Common::Rect &bounds, int textX, const Common::String &buttonText, bool textContainsHotkey = true);
 
 	/**
 	 * Prints an interface command with the first letter highlighted to indicate
 	 * what keyboard shortcut is associated with it
+	 * ButtonText is supposed to have its hotkey as a prefix. The hotkey will get highlighted.
 	 */
-	void buttonPrint(const Common::Point &pt, uint color, bool slamIt, const Common::String &str, bool textContainsHotkey = false);
+	void buttonPrint(const Common::Point &pt, uint color, bool slamIt, const Common::String &buttonText, bool textContainsHotkey = true);
 
 	/**
 	 * Draw a panel in the back buffer with a raised area effect around the edges

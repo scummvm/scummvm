@@ -69,7 +69,7 @@ void Settings::drawInterface(bool flag) {
 	tempStr = FIXED(Settings_Exit);
 	_hotkeyExit = toupper(tempStr.firstChar());
 	screen.makeButton(Common::Rect(SETUP_POINTS[0][0], SETUP_POINTS[0][1], SETUP_POINTS[0][2], SETUP_POINTS[0][1] + 10),
-		SETUP_POINTS[0][3], tempStr, true);
+		SETUP_POINTS[0][3], tempStr);
 
 	if (music._musicOn) {
 		tempStr = FIXED(Settings_MusicOn);
@@ -78,7 +78,7 @@ void Settings::drawInterface(bool flag) {
 	}
 	_hotkeyMusic = toupper(tempStr.firstChar());
 	screen.makeButton(Common::Rect(SETUP_POINTS[1][0], SETUP_POINTS[1][1], SETUP_POINTS[1][2], SETUP_POINTS[1][1] + 10),
-		SETUP_POINTS[1][3], tempStr, true);
+		SETUP_POINTS[1][3], tempStr);
 
 	if (people._portraitsOn) {
 		tempStr = FIXED(Settings_PortraitsOn);
@@ -87,18 +87,18 @@ void Settings::drawInterface(bool flag) {
 	}
 	_hotkeyPortraits = toupper(tempStr.firstChar());
 	screen.makeButton(Common::Rect(SETUP_POINTS[10][0], SETUP_POINTS[10][1], SETUP_POINTS[10][2], SETUP_POINTS[10][1] + 10),
-		SETUP_POINTS[10][3], tempStr, true);
+		SETUP_POINTS[10][3], tempStr);
 
 	// WORKAROUND: We don't support the joystick in ScummVM, so draw the next two buttons as disabled
 	tempStr = FIXED(Settings_JoystickOff);
 	screen.makeButton(Common::Rect(SETUP_POINTS[6][0], SETUP_POINTS[6][1], SETUP_POINTS[6][2], SETUP_POINTS[6][1] + 10),
-		SETUP_POINTS[6][3], tempStr, true);
-	screen.buttonPrint(Common::Point(SETUP_POINTS[6][3], SETUP_POINTS[6][1]), COMMAND_NULL, false, tempStr, true);
+		SETUP_POINTS[6][3], tempStr);
+	screen.buttonPrint(Common::Point(SETUP_POINTS[6][3], SETUP_POINTS[6][1]), COMMAND_NULL, false, tempStr);
 
 	tempStr = FIXED(Settings_NewFontStyle);
 	_hotkeyNewFontStyle = toupper(tempStr.firstChar());
 	screen.makeButton(Common::Rect(SETUP_POINTS[5][0], SETUP_POINTS[5][1], SETUP_POINTS[5][2], SETUP_POINTS[5][1] + 10),
-		SETUP_POINTS[5][3], tempStr, true);
+		SETUP_POINTS[5][3], tempStr);
 
 	if (sound._digitized) {
 		tempStr = FIXED(Settings_SoundEffectsOn);
@@ -107,7 +107,7 @@ void Settings::drawInterface(bool flag) {
 	}
 	_hotkeySoundEffects = toupper(tempStr.firstChar());
 	screen.makeButton(Common::Rect(SETUP_POINTS[3][0], SETUP_POINTS[3][1], SETUP_POINTS[3][2], SETUP_POINTS[3][1] + 10),
-		SETUP_POINTS[3][3], tempStr, true);
+		SETUP_POINTS[3][3], tempStr);
 
 	if (ui._slideWindows) {
 		tempStr = FIXED(Settings_WindowsSlide);
@@ -116,12 +116,12 @@ void Settings::drawInterface(bool flag) {
 	}
 	_hotkeyWindows = toupper(tempStr.firstChar());
 	screen.makeButton(Common::Rect(SETUP_POINTS[9][0], SETUP_POINTS[9][1], SETUP_POINTS[9][2], SETUP_POINTS[9][1] + 10),
-		SETUP_POINTS[9][3], tempStr, true);
+		SETUP_POINTS[9][3], tempStr);
 
 	tempStr = FIXED(Settings_CalibrateJoystick);
 	screen.makeButton(Common::Rect(SETUP_POINTS[7][0], SETUP_POINTS[7][1], SETUP_POINTS[7][2], SETUP_POINTS[7][1] + 10),
-		SETUP_POINTS[7][3], tempStr, true);
-	screen.buttonPrint(Common::Point(SETUP_POINTS[7][3], SETUP_POINTS[7][1]), COMMAND_NULL, false, tempStr, true);
+		SETUP_POINTS[7][3], tempStr);
+	screen.buttonPrint(Common::Point(SETUP_POINTS[7][3], SETUP_POINTS[7][1]), COMMAND_NULL, false, tempStr);
 
 	if (ui._helpStyle) {
 		tempStr = FIXED(Settings_AutoHelpRight);
@@ -130,7 +130,7 @@ void Settings::drawInterface(bool flag) {
 	}
 	_hotkeyAutoHelp = toupper(tempStr.firstChar());
 	screen.makeButton(Common::Rect(SETUP_POINTS[4][0], SETUP_POINTS[4][1], SETUP_POINTS[4][2], SETUP_POINTS[4][1] + 10),
-		SETUP_POINTS[4][3], tempStr, true);
+		SETUP_POINTS[4][3], tempStr);
 
 	if (sound._voices) {
 		tempStr = FIXED(Settings_VoicesOn);
@@ -139,7 +139,7 @@ void Settings::drawInterface(bool flag) {
 	}
 	_hotkeyVoices = toupper(tempStr.firstChar());
 	screen.makeButton(Common::Rect(SETUP_POINTS[2][0], SETUP_POINTS[2][1], SETUP_POINTS[2][2], SETUP_POINTS[2][1] + 10),
-		SETUP_POINTS[2][3], tempStr, true);
+		SETUP_POINTS[2][3], tempStr);
 
 	if (screen._fadeStyle) {
 		tempStr = FIXED(Settings_FadeByPixel);
@@ -148,12 +148,12 @@ void Settings::drawInterface(bool flag) {
 	}
 	_hotkeyFade = toupper(tempStr.firstChar());
 	screen.makeButton(Common::Rect(SETUP_POINTS[8][0], SETUP_POINTS[8][1], SETUP_POINTS[8][2], SETUP_POINTS[8][1] + 10),
-		SETUP_POINTS[8][3], tempStr, true);
+		SETUP_POINTS[8][3], tempStr);
 
 	tempStr = FIXED(Settings_KeyPadSlow);
 	screen.makeButton(Common::Rect(SETUP_POINTS[11][0], SETUP_POINTS[11][1], SETUP_POINTS[11][2], SETUP_POINTS[11][1] + 10),
-		SETUP_POINTS[11][3], tempStr, true);
-	screen.buttonPrint(Common::Point(SETUP_POINTS[11][3], SETUP_POINTS[11][1]), COMMAND_NULL, false, tempStr, true);
+		SETUP_POINTS[11][3], tempStr);
+	screen.buttonPrint(Common::Point(SETUP_POINTS[11][3], SETUP_POINTS[11][1]), COMMAND_NULL, false, tempStr);
 
 	_hotkeysIndexed[0] = _hotkeyExit;
 	_hotkeysIndexed[1] = _hotkeyMusic;
@@ -269,7 +269,7 @@ int Settings::drawButtons(const Common::Point &pt, int _key) {
 		default:
 			continue;
 		}
-		screen.buttonPrint(Common::Point(SETUP_POINTS[idx][3], SETUP_POINTS[idx][1]), color, true, tempStr, true);
+		screen.buttonPrint(Common::Point(SETUP_POINTS[idx][3], SETUP_POINTS[idx][1]), color, true, tempStr);
 	}
 
 	return found;

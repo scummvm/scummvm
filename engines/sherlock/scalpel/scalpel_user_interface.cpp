@@ -858,9 +858,9 @@ void ScalpelUserInterface::doEnvControl() {
 				screen.slamRect(Common::Rect(3, CONTROLS_Y + 11, SHERLOCK_SCREEN_WIDTH - 2, SHERLOCK_SCREEN_HEIGHT));
 
 				color = !saves._savegameIndex ? COMMAND_NULL : COMMAND_FOREGROUND;
-				screen.buttonPrint(Common::Point(ENV_POINTS[3][2], CONTROLS_Y), color, true, saves._fixedTextUp, true);
+				screen.buttonPrint(Common::Point(ENV_POINTS[3][2], CONTROLS_Y), color, true, saves._fixedTextUp);
 				color = (saves._savegameIndex == MAX_SAVEGAME_SLOTS - ONSCREEN_FILES_COUNT) ? COMMAND_NULL : COMMAND_FOREGROUND;
-				screen.buttonPrint(Common::Point(ENV_POINTS[4][2], CONTROLS_Y), color, true, saves._fixedTextDown, true);
+				screen.buttonPrint(Common::Point(ENV_POINTS[4][2], CONTROLS_Y), color, true, saves._fixedTextDown);
 
 				// Check whether there are more pending U keys pressed
 				moreKeys = false;
@@ -893,10 +893,10 @@ void ScalpelUserInterface::doEnvControl() {
 				screen.slamRect(Common::Rect(3, CONTROLS_Y + 11, SHERLOCK_SCREEN_WIDTH - 2, SHERLOCK_SCREEN_HEIGHT));
 
 				color = (!saves._savegameIndex) ? COMMAND_NULL : COMMAND_FOREGROUND;
-				screen.buttonPrint(Common::Point(ENV_POINTS[3][2], CONTROLS_Y), color, true, saves._fixedTextUp, true);
+				screen.buttonPrint(Common::Point(ENV_POINTS[3][2], CONTROLS_Y), color, true, saves._fixedTextUp);
 
 				color = (saves._savegameIndex == MAX_SAVEGAME_SLOTS - ONSCREEN_FILES_COUNT) ? COMMAND_NULL : COMMAND_FOREGROUND;
-				screen.buttonPrint(Common::Point(ENV_POINTS[4][2], CONTROLS_Y), color, true, saves._fixedTextDown, true);
+				screen.buttonPrint(Common::Point(ENV_POINTS[4][2], CONTROLS_Y), color, true, saves._fixedTextDown);
 
 				// Check whether there are more pending D keys pressed
 				moreKeys = false;
@@ -912,8 +912,8 @@ void ScalpelUserInterface::doEnvControl() {
 			screen.print(Common::Point(0, CONTROLS_Y + 20), INV_FOREGROUND, saves._fixedTextQuitGameQuestion.c_str());
 			screen.vgaBar(Common::Rect(0, CONTROLS_Y, SHERLOCK_SCREEN_WIDTH, CONTROLS_Y + 10), BORDER_COLOR);
 
-			screen.makeButton(Common::Rect(112, CONTROLS_Y, 160, CONTROLS_Y + 10), 136, saves._fixedTextQuitGameYes, true);
-			screen.makeButton(Common::Rect(161, CONTROLS_Y, 209, CONTROLS_Y + 10), 184, saves._fixedTextQuitGameNo, true);
+			screen.makeButton(Common::Rect(112, CONTROLS_Y, 160, CONTROLS_Y + 10), 136, saves._fixedTextQuitGameYes);
+			screen.makeButton(Common::Rect(161, CONTROLS_Y, 209, CONTROLS_Y + 10), 184, saves._fixedTextQuitGameNo);
 			screen.slamArea(112, CONTROLS_Y, 97, 10);
 
 			do {
@@ -952,13 +952,13 @@ void ScalpelUserInterface::doEnvControl() {
 						color = COMMAND_HIGHLIGHTED;
 					else
 						color = COMMAND_FOREGROUND;
-					screen.buttonPrint(Common::Point(136, CONTROLS_Y), color, true, saves._fixedTextQuitGameYes, true);
+					screen.buttonPrint(Common::Point(136, CONTROLS_Y), color, true, saves._fixedTextQuitGameYes);
 
 					if (mousePos.x > 161 && mousePos.x < 208 && mousePos.y > CONTROLS_Y && mousePos.y < (CONTROLS_Y + 9))
 						color = COMMAND_HIGHLIGHTED;
 					else
 						color = COMMAND_FOREGROUND;
-					screen.buttonPrint(Common::Point(184, CONTROLS_Y), color, true, saves._fixedTextQuitGameNo, true);
+					screen.buttonPrint(Common::Point(184, CONTROLS_Y), color, true, saves._fixedTextQuitGameNo);
 				}
 
 				if (mousePos.x > 112 && mousePos.x < 159 && mousePos.y > CONTROLS_Y && mousePos.y < (CONTROLS_Y + 9) && events._released)
@@ -973,7 +973,7 @@ void ScalpelUserInterface::doEnvControl() {
 				events.pollEvents();
 				return;
 			} else {
-				screen.buttonPrint(Common::Point(184, CONTROLS_Y), COMMAND_HIGHLIGHTED, true, saves._fixedTextQuitGameNo, true);
+				screen.buttonPrint(Common::Point(184, CONTROLS_Y), COMMAND_HIGHLIGHTED, true, saves._fixedTextQuitGameNo);
 				banishWindow(1);
 				_windowBounds.top = CONTROLS_Y1;
 				_key = -1;
@@ -1043,12 +1043,12 @@ void ScalpelUserInterface::doInvControl() {
 		if (found != -1)
 			// If a slot highlighted, set its color
 			colors[found] = COMMAND_HIGHLIGHTED;
-		screen.buttonPrint(Common::Point(INVENTORY_POINTS[0][2], CONTROLS_Y1), colors[0], true, inv._fixedTextExit, true);
+		screen.buttonPrint(Common::Point(INVENTORY_POINTS[0][2], CONTROLS_Y1), colors[0], true, inv._fixedTextExit);
 
 		if (found >= 0 && found <= 3) {
-			screen.buttonPrint(Common::Point(INVENTORY_POINTS[1][2], CONTROLS_Y1), colors[1], true, inv._fixedTextLook, true);
-			screen.buttonPrint(Common::Point(INVENTORY_POINTS[2][2], CONTROLS_Y1), colors[2], true, inv._fixedTextUse, true);
-			screen.buttonPrint(Common::Point(INVENTORY_POINTS[3][2], CONTROLS_Y1), colors[3], true, inv._fixedTextGive, true);
+			screen.buttonPrint(Common::Point(INVENTORY_POINTS[1][2], CONTROLS_Y1), colors[1], true, inv._fixedTextLook);
+			screen.buttonPrint(Common::Point(INVENTORY_POINTS[2][2], CONTROLS_Y1), colors[2], true, inv._fixedTextUse);
+			screen.buttonPrint(Common::Point(INVENTORY_POINTS[3][2], CONTROLS_Y1), colors[3], true, inv._fixedTextGive);
 			inv._invMode = (InvMode)found;
 			_selector = -1;
 		}
@@ -1591,19 +1591,19 @@ void ScalpelUserInterface::doTalkControl() {
 
 		// Handle button printing
 		if (mousePos.x > 99 && mousePos.x < 138 && mousePos.y > CONTROLS_Y && mousePos.y < (CONTROLS_Y + 10) && !_endKeyActive)
-			screen.buttonPrint(Common::Point(119, CONTROLS_Y), COMMAND_HIGHLIGHTED, true, talk._fixedTextWindowExit, true);
+			screen.buttonPrint(Common::Point(119, CONTROLS_Y), COMMAND_HIGHLIGHTED, true, talk._fixedTextWindowExit);
 		else if (_endKeyActive)
-			screen.buttonPrint(Common::Point(119, CONTROLS_Y), COMMAND_FOREGROUND, true, talk._fixedTextWindowExit, true);
+			screen.buttonPrint(Common::Point(119, CONTROLS_Y), COMMAND_FOREGROUND, true, talk._fixedTextWindowExit);
 
 		if (mousePos.x > 140 && mousePos.x < 170 && mousePos.y > CONTROLS_Y && mousePos.y < (CONTROLS_Y + 10) && talk._moreTalkUp)
-			screen.buttonPrint(Common::Point(159, CONTROLS_Y), COMMAND_HIGHLIGHTED, true, talk._fixedTextWindowUp, true);
+			screen.buttonPrint(Common::Point(159, CONTROLS_Y), COMMAND_HIGHLIGHTED, true, talk._fixedTextWindowUp);
 		else if (talk._moreTalkUp)
-			screen.buttonPrint(Common::Point(159, CONTROLS_Y), COMMAND_FOREGROUND, true, talk._fixedTextWindowUp, true);
+			screen.buttonPrint(Common::Point(159, CONTROLS_Y), COMMAND_FOREGROUND, true, talk._fixedTextWindowUp);
 
 		if (mousePos.x > 181&& mousePos.x < 220 && mousePos.y > CONTROLS_Y && mousePos.y < (CONTROLS_Y + 10) && talk._moreTalkDown)
-			screen.buttonPrint(Common::Point(200, CONTROLS_Y), COMMAND_HIGHLIGHTED, true, talk._fixedTextWindowDown, true);
+			screen.buttonPrint(Common::Point(200, CONTROLS_Y), COMMAND_HIGHLIGHTED, true, talk._fixedTextWindowDown);
 		else if (talk._moreTalkDown)
-			screen.buttonPrint(Common::Point(200, CONTROLS_Y), COMMAND_FOREGROUND, true, talk._fixedTextWindowDown, true);
+			screen.buttonPrint(Common::Point(200, CONTROLS_Y), COMMAND_FOREGROUND, true, talk._fixedTextWindowDown);
 
 		bool found = false;
 		for (_selector = talk._talkIndex; _selector < (int)talk._statements.size() && !found; ++_selector) {
@@ -1688,9 +1688,9 @@ void ScalpelUserInterface::doTalkControl() {
 
 			screen.slamRect(Common::Rect(5, CONTROLS_Y, SHERLOCK_SCREEN_WIDTH - 5, SHERLOCK_SCREEN_HEIGHT - 2));
 		} else if (_selector != -1) {
-			screen.buttonPrint(Common::Point(119, CONTROLS_Y), COMMAND_NULL, true, talk._fixedTextWindowExit, true);
-			screen.buttonPrint(Common::Point(159, CONTROLS_Y), COMMAND_NULL, true, talk._fixedTextWindowUp, true);
-			screen.buttonPrint(Common::Point(200, CONTROLS_Y), COMMAND_NULL, true, talk._fixedTextWindowDown, true);
+			screen.buttonPrint(Common::Point(119, CONTROLS_Y), COMMAND_NULL, true, talk._fixedTextWindowExit);
+			screen.buttonPrint(Common::Point(159, CONTROLS_Y), COMMAND_NULL, true, talk._fixedTextWindowUp);
+			screen.buttonPrint(Common::Point(200, CONTROLS_Y), COMMAND_NULL, true, talk._fixedTextWindowDown);
 
 			// If the reply is new, add it to the journal
 			if (!talk._talkHistory[talk._converseNum][_selector]) {
@@ -1784,9 +1784,9 @@ void ScalpelUserInterface::doTalkControl() {
 								!talk._statements[select]._statement.hasPrefix("^")) {
 							// Not a reply first file, so display the new selections
 							if (_endKeyActive)
-								screen.buttonPrint(Common::Point(119, CONTROLS_Y), COMMAND_FOREGROUND, true, talk._fixedTextWindowExit, true);
+								screen.buttonPrint(Common::Point(119, CONTROLS_Y), COMMAND_FOREGROUND, true, talk._fixedTextWindowExit);
 							else
-								screen.buttonPrint(Common::Point(119, CONTROLS_Y), COMMAND_NULL, true, talk._fixedTextWindowExit, true);
+								screen.buttonPrint(Common::Point(119, CONTROLS_Y), COMMAND_NULL, true, talk._fixedTextWindowExit);
 
 							talk.displayTalk(true);
 							events.setCursor(ARROW);
@@ -2012,13 +2012,13 @@ void ScalpelUserInterface::printObjectDesc(const Common::String &str, bool first
 		Common::String fixedText_PressKeyForMore = FIXED(PressKey_ForMore);
 
 		screen.makeButton(Common::Rect(46, CONTROLS_Y, 272, CONTROLS_Y + 10),
-			SHERLOCK_SCREEN_WIDTH / 2, fixedText_PressKeyForMore, true);
+			SHERLOCK_SCREEN_WIDTH / 2, fixedText_PressKeyForMore);
 		_descStr = msgP;
 	} else {
 		Common::String fixedText_PressKeyToContinue = FIXED(PressKey_ToContinue);
 
 		screen.makeButton(Common::Rect(46, CONTROLS_Y, 272, CONTROLS_Y + 10),
-			SHERLOCK_SCREEN_WIDTH / 2, fixedText_PressKeyToContinue, true);
+			SHERLOCK_SCREEN_WIDTH / 2, fixedText_PressKeyToContinue);
 		_descStr = "";
 	}
 

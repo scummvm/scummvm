@@ -88,21 +88,21 @@ void ScalpelInventory::drawInventory(InvNewMode mode) {
 
 	// Draw the buttons
 	screen.makeButton(Common::Rect(INVENTORY_POINTS[0][0], CONTROLS_Y1, INVENTORY_POINTS[0][1],
-		CONTROLS_Y1 + 10), INVENTORY_POINTS[0][2], _fixedTextExit, true);
+		CONTROLS_Y1 + 10), INVENTORY_POINTS[0][2], _fixedTextExit);
 	screen.makeButton(Common::Rect(INVENTORY_POINTS[1][0], CONTROLS_Y1, INVENTORY_POINTS[1][1],
-		CONTROLS_Y1 + 10), INVENTORY_POINTS[1][2], _fixedTextLook, true);
+		CONTROLS_Y1 + 10), INVENTORY_POINTS[1][2], _fixedTextLook);
 	screen.makeButton(Common::Rect(INVENTORY_POINTS[2][0], CONTROLS_Y1, INVENTORY_POINTS[2][1],
-		CONTROLS_Y1 + 10), INVENTORY_POINTS[2][2], _fixedTextUse, true);
+		CONTROLS_Y1 + 10), INVENTORY_POINTS[2][2], _fixedTextUse);
 	screen.makeButton(Common::Rect(INVENTORY_POINTS[3][0], CONTROLS_Y1, INVENTORY_POINTS[3][1],
-		CONTROLS_Y1 + 10), INVENTORY_POINTS[3][2], _fixedTextGive, true);
+		CONTROLS_Y1 + 10), INVENTORY_POINTS[3][2], _fixedTextGive);
 	screen.makeButton(Common::Rect(INVENTORY_POINTS[4][0], CONTROLS_Y1, INVENTORY_POINTS[4][1],
-		CONTROLS_Y1 + 10), INVENTORY_POINTS[4][2] + 8, "^^"); // 2 arrows pointing to the left
+		CONTROLS_Y1 + 10), INVENTORY_POINTS[4][2] + 8, "^^", false); // 2 arrows pointing to the left
 	screen.makeButton(Common::Rect(INVENTORY_POINTS[5][0], CONTROLS_Y1, INVENTORY_POINTS[5][1],
-		CONTROLS_Y1 + 10), INVENTORY_POINTS[5][2] + 4, "^"); // 1 arrow pointing to the left
+		CONTROLS_Y1 + 10), INVENTORY_POINTS[5][2] + 4, "^", false); // 1 arrow pointing to the left
 	screen.makeButton(Common::Rect(INVENTORY_POINTS[6][0], CONTROLS_Y1, INVENTORY_POINTS[6][1],
-		CONTROLS_Y1 + 10), INVENTORY_POINTS[6][2] + 4, "_"); // 1 arrow pointing to the right
+		CONTROLS_Y1 + 10), INVENTORY_POINTS[6][2] + 4, "_", false); // 1 arrow pointing to the right
 	screen.makeButton(Common::Rect(INVENTORY_POINTS[7][0], CONTROLS_Y1, INVENTORY_POINTS[7][1],
-		CONTROLS_Y1 + 10), INVENTORY_POINTS[7][2] + 8, "__"); // 2 arrows pointing to the right
+		CONTROLS_Y1 + 10), INVENTORY_POINTS[7][2] + 8, "__", false); // 2 arrows pointing to the right
 
 	if (tempMode == INVENTORY_DONT_DISPLAY)
 		mode = LOOK_INVENTORY_MODE;
@@ -142,55 +142,55 @@ void ScalpelInventory::invCommands(bool slamIt) {
 	if (slamIt) {
 		screen.buttonPrint(Common::Point(INVENTORY_POINTS[0][2], CONTROLS_Y1),
 			_invMode == INVMODE_EXIT ? COMMAND_HIGHLIGHTED :COMMAND_FOREGROUND,
-			true, _fixedTextExit, true);
+			true, _fixedTextExit);
 		screen.buttonPrint(Common::Point(INVENTORY_POINTS[1][2], CONTROLS_Y1),
 			_invMode == INVMODE_LOOK ? COMMAND_HIGHLIGHTED :COMMAND_FOREGROUND,
-			true, _fixedTextLook, true);
+			true, _fixedTextLook);
 		screen.buttonPrint(Common::Point(INVENTORY_POINTS[2][2], CONTROLS_Y1),
 			_invMode == INVMODE_USE ? COMMAND_HIGHLIGHTED : COMMAND_FOREGROUND,
-			true, _fixedTextUse, true);
+			true, _fixedTextUse);
 		screen.buttonPrint(Common::Point(INVENTORY_POINTS[3][2], CONTROLS_Y1),
 			_invMode == INVMODE_GIVE ? COMMAND_HIGHLIGHTED : COMMAND_FOREGROUND,
-			true, _fixedTextGive, true);
+			true, _fixedTextGive);
 		screen.print(Common::Point(INVENTORY_POINTS[4][2], CONTROLS_Y1 + 1),
 			_invIndex == 0 ? COMMAND_NULL : COMMAND_FOREGROUND,
-			"^^"); // 2 arrows pointing to the left
+			"^^", false); // 2 arrows pointing to the left
 		screen.print(Common::Point(INVENTORY_POINTS[5][2], CONTROLS_Y1 + 1),
 			_invIndex == 0 ? COMMAND_NULL : COMMAND_FOREGROUND,
-			"^"); // 2 arrows pointing to the left
+			"^", false); // 2 arrows pointing to the left
 		screen.print(Common::Point(INVENTORY_POINTS[6][2], CONTROLS_Y1 + 1),
 			(_holdings - _invIndex <= 6) ? COMMAND_NULL : COMMAND_FOREGROUND,
-			"_"); // 1 arrow pointing to the right
+			"_", false); // 1 arrow pointing to the right
 		screen.print(Common::Point(INVENTORY_POINTS[7][2], CONTROLS_Y1 + 1),
 			(_holdings - _invIndex <= 6) ? COMMAND_NULL : COMMAND_FOREGROUND,
-			"__"); // 2 arrows pointing to the right
+			"__", false); // 2 arrows pointing to the right
 		if (_invMode != INVMODE_LOOK)
 			ui.clearInfo();
 	} else {
 		screen.buttonPrint(Common::Point(INVENTORY_POINTS[0][2], CONTROLS_Y1),
 			_invMode == INVMODE_EXIT ? COMMAND_HIGHLIGHTED : COMMAND_FOREGROUND,
-			false, _fixedTextExit, true);
+			false, _fixedTextExit);
 		screen.buttonPrint(Common::Point(INVENTORY_POINTS[1][2], CONTROLS_Y1),
 			_invMode == INVMODE_LOOK ? COMMAND_HIGHLIGHTED : COMMAND_FOREGROUND,
-			false, _fixedTextLook, true);
+			false, _fixedTextLook);
 		screen.buttonPrint(Common::Point(INVENTORY_POINTS[2][2], CONTROLS_Y1),
 			_invMode == INVMODE_USE ? COMMAND_HIGHLIGHTED : COMMAND_FOREGROUND,
-			false, _fixedTextUse, true);
+			false, _fixedTextUse);
 		screen.buttonPrint(Common::Point(INVENTORY_POINTS[3][2], CONTROLS_Y1),
 			_invMode == INVMODE_GIVE ? COMMAND_HIGHLIGHTED : COMMAND_FOREGROUND,
-			false, _fixedTextGive, true);
+			false, _fixedTextGive);
 		screen.gPrint(Common::Point(INVENTORY_POINTS[4][2], CONTROLS_Y1),
 			_invIndex == 0 ? COMMAND_NULL : COMMAND_FOREGROUND,
-			"^^"); // 2 arrows pointing to the left
+			"^^", false); // 2 arrows pointing to the left
 		screen.gPrint(Common::Point(INVENTORY_POINTS[5][2], CONTROLS_Y1),
 			_invIndex == 0 ? COMMAND_NULL : COMMAND_FOREGROUND,
-			"^"); // 1 arrow pointing to the left
+			"^", false); // 1 arrow pointing to the left
 		screen.gPrint(Common::Point(INVENTORY_POINTS[6][2], CONTROLS_Y1),
 			(_holdings - _invIndex < 7) ? COMMAND_NULL : COMMAND_FOREGROUND,
-			"_"); // 1 arrow pointing to the right
+			"_", false); // 1 arrow pointing to the right
 		screen.gPrint(Common::Point(INVENTORY_POINTS[7][2], CONTROLS_Y1),
 			(_holdings - _invIndex < 7) ? COMMAND_NULL : COMMAND_FOREGROUND,
-			"__"); // 2 arrows pointing to the right
+			"__", false); // 2 arrows pointing to the right
 	}
 }
 
