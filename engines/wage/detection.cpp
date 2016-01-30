@@ -41,10 +41,8 @@ static const PlainGameDescriptor wageGames[] = {
 	{"afm", "Another Fine Mess"},
 	{"amot", "A Mess O' Trouble"},
 	{"cantitoe", "Camp Cantitoe"},
-	{"escapefromschool", "Escape from School!"},
-	{"queenquest", "Queen Quest"},
 	{"scepters", "Enchanced Scepters"},
-	{"wage", "World Adventure Game Engine game"},
+	{"wage", "WAGE"},
 	{0, 0}
 };
 
@@ -79,8 +77,8 @@ static const ADGameDescription gameDescriptions[] = {
 		GUIO0()
 	},
 	{
-		"escapefromschool",
-		"",
+		"wage",
+		"Escape from School!",
 		AD_ENTRY1s("Escape from School!", "a854be48d4af20126d18a9cad93a969b", 51840),
 		Common::EN_ANY,
 		Common::kPlatformMacintosh,
@@ -88,8 +86,8 @@ static const ADGameDescription gameDescriptions[] = {
 		GUIO0()
 	},
 	{
-		"queenquest",
-		"",
+		"wage",
+		"Queen Quest",
 		AD_ENTRY1s("Queen Quest", "730605d312efedb5e3ff108522fcac18", 59776),
 		Common::EN_ANY,
 		Common::kPlatformMacintosh,
