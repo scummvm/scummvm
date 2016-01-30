@@ -1355,7 +1355,7 @@ void ScalpelUserInterface::doMainControl() {
 			pushButton(6);
 			_selector = _oldSelector = -1;
 			_menuMode = INV_MODE;
-			inv.drawInventory(PLAIN_INVENTORY);
+			inv.drawInventory(LOOK_INVENTORY_MODE);
 			break;
 		case 'U':
 			pushButton(7);
