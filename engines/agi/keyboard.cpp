@@ -195,9 +195,8 @@ void AgiEngine::processEvents() {
 					}
 				}
 			} else {
-				key = event.kbd.keycode;
-
-				switch (key) {
+				key = 0;
+				switch (event.kbd.keycode) {
 				case Common::KEYCODE_LEFT:
 				case Common::KEYCODE_KP4:
 					if (_allowSynthetic || !event.synthetic)
