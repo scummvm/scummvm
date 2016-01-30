@@ -41,19 +41,19 @@ static const char *const fixedTextEN[] = {
 	"Watson's Journal",
 	"Page %d",
 	// SH1: Journal buttons
-	"Exit",
-	"Back 10",
-	"Up",
-	"Down",
-	"Ahead 10",
-	"Search",
-	"First Page",
-	"Last Page",
-	"Print Text",
+	"EExit",
+	"BBack 10",
+	"UUp",
+	"DDown",
+	"AAhead 10",
+	"SSearch",
+	"FFirst Page",
+	"LLast Page",
+	"PPrint Text",
 	// SH1: Journal search
-	"Exit",
-	"Backward",
-	"Forward",
+	"EExit",
+	"BBackward",
+	"FForward",
 	"Text Not Found !",
 	// SH1: Settings
 	"EExit",
@@ -186,19 +186,19 @@ static const char *const fixedTextDE[] = {
 	"Watsons Tagebuch",
 	"Seite %d",
 	// SH1: Journal buttons
-	"Zur\201ck",
-	"10 hoch",
-	"Hoch",
-	"Runter",
-	"10 runter",
-	"Suche",
-	"Erste Seite",
-	"Letzte Seite",
-	"Drucke Text",
+	"ZZur\201ck", // original: "Zur\201ck"
+	"o10 hoch",
+	"HHoch",
+	"RRunter",
+	"u10 runter", // original: "10 runter"
+	"SSuche",
+	"EErste Seite",
+	"LLetzte Seite",
+	"DDrucke Text",
 	// SH1: Journal search
-	"Zur\201ck",
-	"R\201ckw\204rts", // original: "Backward"
-	"Vorw\204rts", // original: "Forward"
+	"ZZur\201ck",
+	"RR\201ckw\204rts", // original: "Backward"
+	"VVorw\204rts", // original: "Forward"
 	"Text nicht gefunden!",
 	// SH1: Settings
 	"ZZur\201ck", // original interpreter: "Exit"
@@ -330,19 +330,19 @@ static const char *const fixedTextES[] = {
 	"Diario de Watson",
 	"Pagina %d",
 	// SH1: Journal buttons
-	"Salir", // original interpreter: "Exit"
-	"Retroceder",
-	"Subir",
-	"baJar",
-	"Adelante",
-	"Buscar",
-	"1a pagina",
-	"Ult pagina",
-	"Imprimir",
+	"aSalir", // original interpreter: "Exit"
+	"RRetroceder",
+	"SSubir",
+	"JbaJar",
+	"AAdelante",
+	"BBuscar",
+	"11a pagina",
+	"UUlt pagina",
+	"IImprimir",
 	// SH1: Journal search
-	"Salir", // original interpreter: "Exit"
-	"Retroceder",
-	"Avanzar",
+	"SSalir", // original interpreter: "Exit"
+	"RRetroceder",
+	"AAvanzar",
 	"Texto no encontrado!",
 	// SH1: Settings
 	"aSalir", // original interpreter: "Exit"

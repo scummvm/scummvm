@@ -41,6 +41,37 @@ enum JournalButton {
 };
 
 class ScalpelJournal: public Journal {
+public:
+	Common::String _fixedTextWatsonsJournal;
+	Common::String _fixedTextExit;
+	Common::String _fixedTextBack10;
+	Common::String _fixedTextUp;
+	Common::String _fixedTextDown;
+	Common::String _fixedTextAhead10;
+	Common::String _fixedTextSearch;
+	Common::String _fixedTextFirstPage;
+	Common::String _fixedTextLastPage;
+	Common::String _fixedTextPrintText;
+
+	byte _hotkeyExit;
+	byte _hotkeyBack10;
+	byte _hotkeyUp;
+	byte _hotkeyDown;
+	byte _hotkeyAhead10;
+	byte _hotkeySearch;
+	byte _hotkeyFirstPage;
+	byte _hotkeyLastPage;
+	byte _hotkeyPrintText;
+
+	Common::String _fixedTextSearchExit;
+	Common::String _fixedTextSearchBackward;
+	Common::String _fixedTextSearchForward;
+	Common::String _fixedTextSearchNotFound;
+
+	byte _hotkeySearchExit;
+	byte _hotkeySearchBackward;
+	byte _hotkeySearchForward;
+
 private:
 	/**
 	 * Load the list of journal locations

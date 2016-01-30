@@ -1768,7 +1768,7 @@ void ScalpelUserInterface::journalControl() {
 			if (keyState.keycode == Common::KEYCODE_x && (keyState.flags & Common::KBD_ALT)) {
 				_vm->quitGame();
 				return;
-			} else if (keyState.keycode == Common::KEYCODE_e || keyState.keycode == Common::KEYCODE_ESCAPE) {
+			} else if (toupper(keyState.ascii) == journal._hotkeyExit || keyState.keycode == Common::KEYCODE_ESCAPE) {
 				doneFlag = true;
 			} else {
 				_key = toupper(keyState.keycode);
