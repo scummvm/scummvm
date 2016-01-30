@@ -105,6 +105,15 @@ static const ADGameDescription gameDescriptions[] = {
 	},
 	{
 		"wage",
+		"ZikTuria",
+		AD_ENTRY1s("ZikTuria", "e793155bed1a70fa2074a3fcd696b751", 54784),
+		Common::EN_ANY,
+		Common::kPlatformMacintosh,
+		ADGF_USEEXTRAASTITLE,
+		GUIO0()
+	},
+	{
+		"wage",
 		"Zoony",
 		AD_ENTRY1s("Zoony", "e6cc8a914a4215dafbcce6315dd12cf5", 160256),
 		Common::EN_ANY,
