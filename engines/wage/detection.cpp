@@ -82,7 +82,7 @@ static const ADGameDescription gameDescriptions[] = {
 		AD_ENTRY1s("Escape from School!", "a854be48d4af20126d18a9cad93a969b", 51840),
 		Common::EN_ANY,
 		Common::kPlatformMacintosh,
-		ADGF_NO_FLAGS,
+		ADGF_USEEXTRAASTITLE,
 		GUIO0()
 	},
 	{
@@ -91,7 +91,7 @@ static const ADGameDescription gameDescriptions[] = {
 		AD_ENTRY1s("Queen Quest", "730605d312efedb5e3ff108522fcac18", 59776),
 		Common::EN_ANY,
 		Common::kPlatformMacintosh,
-		ADGF_NO_FLAGS,
+		ADGF_USEEXTRAASTITLE,
 		GUIO0()
 	},
 	{
