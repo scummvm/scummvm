@@ -62,12 +62,13 @@ void ScalpelScreen::buttonPrint(const Common::Point &pt, uint color, bool slamIt
 		// Hotkey needs to be highlighted
 		if (textContainsHotkey) {
 			Common::String prefixText = Common::String(str.c_str() + 1);
+			uint16 prefixTextLen = prefixText.size();
 			uint16 prefixTextPos = 0;
 
 			// Hotkey was passed additionally, we search for the hotkey inside the button text and
 			// remove it from there. We then draw the whole text as highlighted and afterward
 			// the processed text again as regular text (without the hotkey)
-			while (prefixTextPos < prefixText.size()) {
+			while (prefixTextPos < prefixTextLen) {
 				if (prefixText[prefixTextPos] == hotkey) {
 					// Hotkey found, remove remaining text
 					while (prefixTextPos < prefixText.size()) {
@@ -78,7 +79,7 @@ void ScalpelScreen::buttonPrint(const Common::Point &pt, uint color, bool slamIt
 				prefixTextPos++;
 			}
 
-			if (prefixTextPos < prefixText.size()) {
+			if (prefixTextPos < prefixTextLen) {
 				// only adjust in case hotkey character was actually found
 				prefixOffsetX = stringWidth(prefixText);
 			}

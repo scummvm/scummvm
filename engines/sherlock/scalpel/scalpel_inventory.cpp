@@ -32,13 +32,39 @@ namespace Scalpel {
 
 ScalpelInventory::ScalpelInventory(SherlockEngine *vm) : Inventory(vm) {
 	_invShapes.resize(6);
+
+	_fixedTextExit = FIXED(Inventory_Exit);
+	_fixedTextLook = FIXED(Inventory_Look);
+	_fixedTextUse  = FIXED(Inventory_Use);
+	_fixedTextGive = FIXED(Inventory_Give);
+
+	_hotkeyExit = toupper(_fixedTextExit[0]);
+	_hotkeyLook = toupper(_fixedTextLook[0]);
+	_hotkeyUse = toupper(_fixedTextUse[0]);
+	_hotkeyGive = toupper(_fixedTextGive[0]);
+
+	_hotkeysIndexed[0] = _hotkeyExit;
+	_hotkeysIndexed[1] = _hotkeyLook;
+	_hotkeysIndexed[2] = _hotkeyUse;
+	_hotkeysIndexed[3] = _hotkeyGive;
+	_hotkeysIndexed[4] = '-';
+	_hotkeysIndexed[5] = '+';
+	_hotkeysIndexed[6] = ',';
+	_hotkeysIndexed[7] = '.';
 }
 
 ScalpelInventory::~ScalpelInventory() {
 }
 
+int ScalpelInventory::identifyUserButton(int key) {
+	for (uint16 hotkeyNr = 0; hotkeyNr < sizeof(_hotkeysIndexed); hotkeyNr++) {
+		if (key == _hotkeysIndexed[hotkeyNr])
+			return hotkeyNr;
+	}
+	return -1;
+}
+
 void ScalpelInventory::drawInventory(InvNewMode mode) {
-	FixedText &fixedText = *_vm->_fixedText;
 	ScalpelScreen &screen = *(ScalpelScreen *)_vm->_screen;
 	UserInterface &ui = *_vm->_ui;
 	InvNewMode tempMode = mode;
@@ -61,19 +87,14 @@ void ScalpelInventory::drawInventory(InvNewMode mode) {
 		INV_BACKGROUND);
 
 	// Draw the buttons
-	Common::String fixedText_Exit = fixedText.getText(kFixedText_Inventory_Exit);
-	Common::String fixedText_Look = fixedText.getText(kFixedText_Inventory_Look);
-	Common::String fixedText_Use  = fixedText.getText(kFixedText_Inventory_Use);
-	Common::String fixedText_Give = fixedText.getText(kFixedText_Inventory_Give);
-
 	screen.makeButton(Common::Rect(INVENTORY_POINTS[0][0], CONTROLS_Y1, INVENTORY_POINTS[0][1],
-		CONTROLS_Y1 + 10), INVENTORY_POINTS[0][2], fixedText_Exit);
+		CONTROLS_Y1 + 10), INVENTORY_POINTS[0][2], _fixedTextExit, true);
 	screen.makeButton(Common::Rect(INVENTORY_POINTS[1][0], CONTROLS_Y1, INVENTORY_POINTS[1][1],
-		CONTROLS_Y1 + 10), INVENTORY_POINTS[1][2], fixedText_Look);
+		CONTROLS_Y1 + 10), INVENTORY_POINTS[1][2], _fixedTextLook, true);
 	screen.makeButton(Common::Rect(INVENTORY_POINTS[2][0], CONTROLS_Y1, INVENTORY_POINTS[2][1],
-		CONTROLS_Y1 + 10), INVENTORY_POINTS[2][2], fixedText_Use);
+		CONTROLS_Y1 + 10), INVENTORY_POINTS[2][2], _fixedTextUse, true);
 	screen.makeButton(Common::Rect(INVENTORY_POINTS[3][0], CONTROLS_Y1, INVENTORY_POINTS[3][1],
-		CONTROLS_Y1 + 10), INVENTORY_POINTS[3][2], fixedText_Give);
+		CONTROLS_Y1 + 10), INVENTORY_POINTS[3][2], _fixedTextGive, true);
 	screen.makeButton(Common::Rect(INVENTORY_POINTS[4][0], CONTROLS_Y1, INVENTORY_POINTS[4][1],
 		CONTROLS_Y1 + 10), INVENTORY_POINTS[4][2] + 8, "^^"); // 2 arrows pointing to the left
 	screen.makeButton(Common::Rect(INVENTORY_POINTS[5][0], CONTROLS_Y1, INVENTORY_POINTS[5][1],
@@ -88,7 +109,8 @@ void ScalpelInventory::drawInventory(InvNewMode mode) {
 	_invMode = (InvMode)((int)mode);
 
 	if (mode != PLAIN_INVENTORY) {
-		ui._oldKey = INVENTORY_COMMANDS[(int)mode];
+		assert(mode < sizeof(_hotkeysIndexed));
+		ui._oldKey = _hotkeysIndexed[mode];
 	} else {
 		ui._oldKey = -1;
 	}
@@ -114,28 +136,22 @@ void ScalpelInventory::drawInventory(InvNewMode mode) {
 }
 
 void ScalpelInventory::invCommands(bool slamIt) {
-	FixedText &fixedText = *_vm->_fixedText;
 	ScalpelScreen &screen = *(ScalpelScreen *)_vm->_screen;
 	UserInterface &ui = *_vm->_ui;
-
-	Common::String fixedText_Exit = fixedText.getText(kFixedText_Inventory_Exit);
-	Common::String fixedText_Look = fixedText.getText(kFixedText_Inventory_Look);
-	Common::String fixedText_Use  = fixedText.getText(kFixedText_Inventory_Use);
-	Common::String fixedText_Give = fixedText.getText(kFixedText_Inventory_Give);
 
 	if (slamIt) {
 		screen.buttonPrint(Common::Point(INVENTORY_POINTS[0][2], CONTROLS_Y1),
 			_invMode == INVMODE_EXIT ? COMMAND_HIGHLIGHTED :COMMAND_FOREGROUND,
-			true, fixedText_Exit);
+			true, _fixedTextExit, true);
 		screen.buttonPrint(Common::Point(INVENTORY_POINTS[1][2], CONTROLS_Y1),
 			_invMode == INVMODE_LOOK ? COMMAND_HIGHLIGHTED :COMMAND_FOREGROUND,
-			true, fixedText_Look);
+			true, _fixedTextLook, true);
 		screen.buttonPrint(Common::Point(INVENTORY_POINTS[2][2], CONTROLS_Y1),
 			_invMode == INVMODE_USE ? COMMAND_HIGHLIGHTED : COMMAND_FOREGROUND,
-			true, fixedText_Use);
+			true, _fixedTextUse, true);
 		screen.buttonPrint(Common::Point(INVENTORY_POINTS[3][2], CONTROLS_Y1),
 			_invMode == INVMODE_GIVE ? COMMAND_HIGHLIGHTED : COMMAND_FOREGROUND,
-			true, fixedText_Give);
+			true, _fixedTextGive, true);
 		screen.print(Common::Point(INVENTORY_POINTS[4][2], CONTROLS_Y1 + 1),
 			_invIndex == 0 ? COMMAND_NULL : COMMAND_FOREGROUND,
 			"^^"); // 2 arrows pointing to the left
@@ -153,16 +169,16 @@ void ScalpelInventory::invCommands(bool slamIt) {
 	} else {
 		screen.buttonPrint(Common::Point(INVENTORY_POINTS[0][2], CONTROLS_Y1),
 			_invMode == INVMODE_EXIT ? COMMAND_HIGHLIGHTED : COMMAND_FOREGROUND,
-			false, fixedText_Exit);
+			false, _fixedTextExit, true);
 		screen.buttonPrint(Common::Point(INVENTORY_POINTS[1][2], CONTROLS_Y1),
 			_invMode == INVMODE_LOOK ? COMMAND_HIGHLIGHTED : COMMAND_FOREGROUND,
-			false, fixedText_Look);
+			false, _fixedTextLook, true);
 		screen.buttonPrint(Common::Point(INVENTORY_POINTS[2][2], CONTROLS_Y1),
 			_invMode == INVMODE_USE ? COMMAND_HIGHLIGHTED : COMMAND_FOREGROUND,
-			false, fixedText_Use);
+			false, _fixedTextUse, true);
 		screen.buttonPrint(Common::Point(INVENTORY_POINTS[3][2], CONTROLS_Y1),
 			_invMode == INVMODE_GIVE ? COMMAND_HIGHLIGHTED : COMMAND_FOREGROUND,
-			false, fixedText_Give);
+			false, _fixedTextGive, true);
 		screen.gPrint(Common::Point(INVENTORY_POINTS[4][2], CONTROLS_Y1),
 			_invIndex == 0 ? COMMAND_NULL : COMMAND_FOREGROUND,
 			"^^"); // 2 arrows pointing to the left

@@ -38,7 +38,6 @@ extern const char COMMANDS_3DO[13];
 extern const int MENU_POINTS[12][4];
 
 extern const int INVENTORY_POINTS[8][3];
-extern const char INVENTORY_COMMANDS[9];
 
 class Settings;
 

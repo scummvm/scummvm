@@ -33,10 +33,10 @@ static const char *const fixedTextEN[] = {
 	"Up",
 	"Down",
 	// SH1: Inventory buttons
-	"Exit",
-	"Look",
-	"Use",
-	"Give",
+	"EExit",
+	"LLook",
+	"UUse",
+	"GGive",
 	// SH1: Journal text
 	"Watson's Journal",
 	"Page %d",
@@ -178,10 +178,10 @@ static const char *const fixedTextDE[] = {
 	"Hoch",
 	"Runter",
 	// SH1: Inventory buttons
-	"Zur\201ck",
-	"Schau",
-	"Benutze",
-	"Gib",
+	"ZZur\201ck",
+	"SSchau",
+	"BBenutze",
+	"GGib",
 	// SH1: Journal text
 	"Watsons Tagebuch",
 	"Seite %d",
@@ -322,10 +322,10 @@ static const char *const fixedTextES[] = {
 	"Subir",
 	"Bajar",
 	// SH1: Inventory buttons
-	"Salir", // original interpreter: "Exit"
-	"Mirar",
-	"Usar",
-	"Dar",
+	"SSalir", // original interpreter: "Exit"
+	"MMirar",
+	"UUsar",
+	"DDar",
 	// SH1: Journal text
 	"Diario de Watson",
 	"Pagina %d",

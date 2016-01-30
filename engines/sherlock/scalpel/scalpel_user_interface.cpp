@@ -66,7 +66,6 @@ const int INVENTORY_POINTS[8][3] = {
 
 const char COMMANDS[13] = "LMTPOCIUGJFS";
 const char COMMANDS_3DO[13] = "LMTPOCIUGSFF";
-const char INVENTORY_COMMANDS[9] = { "ELUG-+,." };
 const int UI_OFFSET_3DO = 16;	// (320 - 288) / 2
 
 /*----------------------------------------------------------------*/
@@ -980,7 +979,6 @@ void ScalpelUserInterface::doEnvControl() {
 
 void ScalpelUserInterface::doInvControl() {
 	Events &events = *_vm->_events;
-	FixedText &fixedText = *_vm->_fixedText;
 	ScalpelInventory &inv = *(ScalpelInventory *)_vm->_inventory;
 	Scene &scene = *_vm->_scene;
 	ScalpelScreen &screen = *(ScalpelScreen *)_vm->_screen;
@@ -1006,20 +1004,15 @@ void ScalpelUserInterface::doInvControl() {
 	if (events._pressed || events._released) {
 		events.clearKeyboard();
 
-		Common::String fixedText_Exit = fixedText.getText(kFixedText_Inventory_Exit);
-		Common::String fixedText_Look = fixedText.getText(kFixedText_Inventory_Look);
-		Common::String fixedText_Use  = fixedText.getText(kFixedText_Inventory_Use);
-		Common::String fixedText_Give = fixedText.getText(kFixedText_Inventory_Give);
-
 		if (found != -1)
 			// If a slot highlighted, set its color
 			colors[found] = COMMAND_HIGHLIGHTED;
-		screen.buttonPrint(Common::Point(INVENTORY_POINTS[0][2], CONTROLS_Y1), colors[0], true, fixedText_Exit);
+		screen.buttonPrint(Common::Point(INVENTORY_POINTS[0][2], CONTROLS_Y1), colors[0], true, inv._fixedTextExit);
 
 		if (found >= 0 && found <= 3) {
-			screen.buttonPrint(Common::Point(INVENTORY_POINTS[1][2], CONTROLS_Y1), colors[1], true, fixedText_Look);
-			screen.buttonPrint(Common::Point(INVENTORY_POINTS[2][2], CONTROLS_Y1), colors[2], true, fixedText_Use);
-			screen.buttonPrint(Common::Point(INVENTORY_POINTS[3][2], CONTROLS_Y1), colors[3], true, fixedText_Give);
+			screen.buttonPrint(Common::Point(INVENTORY_POINTS[1][2], CONTROLS_Y1), colors[1], true, inv._fixedTextLook);
+			screen.buttonPrint(Common::Point(INVENTORY_POINTS[2][2], CONTROLS_Y1), colors[2], true, inv._fixedTextUse);
+			screen.buttonPrint(Common::Point(INVENTORY_POINTS[3][2], CONTROLS_Y1), colors[3], true, inv._fixedTextGive);
 			inv._invMode = (InvMode)found;
 			_selector = -1;
 		}
@@ -1053,19 +1046,19 @@ void ScalpelUserInterface::doInvControl() {
 
 		if (_key == Common::KEYCODE_ESCAPE)
 			// Escape will also 'E'xit out of inventory display
-			_key = 'E';
+			_key = inv._hotkeyExit;
 
-		if (_key == 'E' || _key == 'L' || _key == 'U' || _key == 'G'
-				|| _key == '-' || _key == '+') {
+		int buttonIndex = inv.identifyUserButton(_key);
+
+		if ((buttonIndex >= 0) && (buttonIndex <= 5)) {
 			InvMode temp = inv._invMode;
 
-			const char *chP = strchr(INVENTORY_COMMANDS, _key);
-			inv._invMode = !chP ? INVMODE_INVALID : (InvMode)(chP - INVENTORY_COMMANDS);
+			inv._invMode = (InvMode)buttonIndex;
 			inv.invCommands(true);
 
 			inv._invMode = temp;
 			_keyboardInput = true;
-			if (_key == 'E')
+			if (_key == inv._hotkeyExit)
 				inv._invMode = INVMODE_EXIT;
 			_selector = -1;
 		} else {
@@ -1087,7 +1080,7 @@ void ScalpelUserInterface::doInvControl() {
 	}
 
 	if (events._released || _keyboardInput) {
-		if ((found == 0 && events._released) || _key == 'E') {
+		if ((found == 0 && events._released) || _key == inv._hotkeyExit) {
 			inv.freeInv();
 			_infoFlag = true;
 			clearInfo();
@@ -1095,11 +1088,11 @@ void ScalpelUserInterface::doInvControl() {
 			_key = -1;
 			events.clearEvents();
 			events.setCursor(ARROW);
-		} else if ((found == 1 && events._released) || (_key == 'L')) {
+		} else if ((found == 1 && events._released) || (_key == inv._hotkeyLook)) {
 			inv._invMode = INVMODE_LOOK;
-		} else if ((found == 2 && events._released) || (_key == 'U')) {
+		} else if ((found == 2 && events._released) || (_key == inv._hotkeyUse)) {
 			inv._invMode = INVMODE_USE;
-		} else if ((found == 3 && events._released) || (_key == 'G')) {
+		} else if ((found == 3 && events._released) || (_key == inv._hotkeyGive)) {
 			inv._invMode = INVMODE_GIVE;
 		} else if (((found == 4 && events._released) || _key == ',') && inv._invIndex) {
 			if (inv._invIndex >= 6)
