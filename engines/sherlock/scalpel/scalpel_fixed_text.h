@@ -78,6 +78,17 @@ enum FixedTextId {
 	kFixedText_Settings_FadeDirectly,
 	kFixedText_Settings_KeyPadSlow,
 	kFixedText_Settings_KeyPadFast,
+	// Load/Save
+	kFixedText_LoadSave_Exit,
+	kFixedText_LoadSave_Load,
+	kFixedText_LoadSave_Save,
+	kFixedText_LoadSave_Up,
+	kFixedText_LoadSave_Down,
+	kFixedText_LoadSave_Quit,
+	// Quit Game
+	kFixedText_QuitGame_Question,
+	kFixedText_QuitGame_Yes,
+	kFixedText_QuitGame_No,
 	// Press key text
 	kFixedText_PressKey_ForMore,
 	kFixedText_PressKey_ForMoreHotkey,

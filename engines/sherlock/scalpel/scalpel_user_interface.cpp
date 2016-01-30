@@ -684,7 +684,6 @@ void ScalpelUserInterface::doEnvControl() {
 	ScalpelScreen &screen = *(ScalpelScreen *)_vm->_screen;
 	Talk &talk = *_vm->_talk;
 	Common::Point mousePos = events.mousePos();
-	static const char ENV_COMMANDS[7] = "ELSUDQ";
 
 	byte color;
 
@@ -725,13 +724,13 @@ void ScalpelUserInterface::doEnvControl() {
 		if (_key == Common::KEYCODE_ESCAPE)
 			_key = 'E';
 
-		if (_key == 'E' || _key == 'L' || _key == 'S' || _key == 'U' || _key == 'D' || _key == 'Q') {
-			const char *chP = strchr(ENV_COMMANDS, _key);
-			int btnIndex = !chP ? -1 : chP - ENV_COMMANDS;
-			saves.highlightButtons(btnIndex);
+		int buttonIndex = saves.identifyUserButton(_key);
+
+		if ((buttonIndex >= 0) || (_key >= '1' && _key <= '9')) {
+			saves.highlightButtons(buttonIndex);
 			_keyboardInput = true;
 
-			if (_key == 'E' || _key == 'Q') {
+			if (_key == saves._hotkeyExit || _key == saves._hotkeyQuit) {
 				saves._envMode = SAVEMODE_NONE;
 			} else if (_key >= '1' && _key <= '9') {
 				_keyboardInput = true;
@@ -766,18 +765,18 @@ void ScalpelUserInterface::doEnvControl() {
 	}
 
 	if (events._released || _keyboardInput) {
-		if ((found == 0 && events._released) || _key == 'E') {
+		if ((found == 0 && events._released) || _key == saves._hotkeyExit) {
 			banishWindow();
 			_windowBounds.top = CONTROLS_Y1;
 
 			events._pressed = events._released = _keyboardInput = false;
 			_keyPress = '\0';
-		} else if ((found == 1 && events._released) || _key == 'L') {
+		} else if ((found == 1 && events._released) || _key == saves._hotkeyLoad) {
 			saves._envMode = SAVEMODE_LOAD;
 			if (_selector != -1) {
 				saves.loadGame(_selector);
 			}
-		} else if ((found == 2 && events._released) || _key == 'S') {
+		} else if ((found == 2 && events._released) || _key == saves._hotkeySave) {
 			saves._envMode = SAVEMODE_SAVE;
 			if (_selector != -1) {
 				if (saves.checkGameOnScreen(_selector))
@@ -805,7 +804,7 @@ void ScalpelUserInterface::doEnvControl() {
 					}
 				}
 			}
-		} else if (((found == 3 && events._released) || _key == 'U') && saves._savegameIndex) {
+		} else if (((found == 3 && events._released) || _key == saves._hotkeyUp) && saves._savegameIndex) {
 			bool moreKeys;
 			do {
 				saves._savegameIndex--;
@@ -824,9 +823,9 @@ void ScalpelUserInterface::doEnvControl() {
 				screen.slamRect(Common::Rect(3, CONTROLS_Y + 11, SHERLOCK_SCREEN_WIDTH - 2, SHERLOCK_SCREEN_HEIGHT));
 
 				color = !saves._savegameIndex ? COMMAND_NULL : COMMAND_FOREGROUND;
-				screen.buttonPrint(Common::Point(ENV_POINTS[3][2], CONTROLS_Y), color, true, "Up");
+				screen.buttonPrint(Common::Point(ENV_POINTS[3][2], CONTROLS_Y), color, true, saves._fixedTextUp, true);
 				color = (saves._savegameIndex == MAX_SAVEGAME_SLOTS - ONSCREEN_FILES_COUNT) ? COMMAND_NULL : COMMAND_FOREGROUND;
-				screen.buttonPrint(Common::Point(ENV_POINTS[4][2], CONTROLS_Y), color, true, "Down");
+				screen.buttonPrint(Common::Point(ENV_POINTS[4][2], CONTROLS_Y), color, true, saves._fixedTextDown, true);
 
 				// Check whether there are more pending U keys pressed
 				moreKeys = false;
@@ -834,10 +833,10 @@ void ScalpelUserInterface::doEnvControl() {
 					Common::KeyState keyState = events.getKey();
 
 					_key = toupper(keyState.keycode);
-					moreKeys = _key == 'U';
+					moreKeys = _key == saves._hotkeyUp;
 				}
 			} while ((saves._savegameIndex) && moreKeys);
-		} else if (((found == 4 && events._released) || _key == 'D') && saves._savegameIndex < (MAX_SAVEGAME_SLOTS - ONSCREEN_FILES_COUNT)) {
+		} else if (((found == 4 && events._released) || _key == saves._hotkeyDown) && saves._savegameIndex < (MAX_SAVEGAME_SLOTS - ONSCREEN_FILES_COUNT)) {
 			bool moreKeys;
 			do {
 				saves._savegameIndex++;
@@ -859,10 +858,10 @@ void ScalpelUserInterface::doEnvControl() {
 				screen.slamRect(Common::Rect(3, CONTROLS_Y + 11, SHERLOCK_SCREEN_WIDTH - 2, SHERLOCK_SCREEN_HEIGHT));
 
 				color = (!saves._savegameIndex) ? COMMAND_NULL : COMMAND_FOREGROUND;
-				screen.buttonPrint(Common::Point(ENV_POINTS[3][2], CONTROLS_Y), color, true, "Up");
+				screen.buttonPrint(Common::Point(ENV_POINTS[3][2], CONTROLS_Y), color, true, saves._fixedTextUp, true);
 
 				color = (saves._savegameIndex == MAX_SAVEGAME_SLOTS - ONSCREEN_FILES_COUNT) ? COMMAND_NULL : COMMAND_FOREGROUND;
-				screen.buttonPrint(Common::Point(ENV_POINTS[4][2], CONTROLS_Y), color, true, "Down");
+				screen.buttonPrint(Common::Point(ENV_POINTS[4][2], CONTROLS_Y), color, true, saves._fixedTextDown, true);
 
 				// Check whether there are more pending D keys pressed
 				moreKeys = false;
@@ -870,16 +869,16 @@ void ScalpelUserInterface::doEnvControl() {
 					Common::KeyState keyState = events.getKey();
 					_key = toupper(keyState.keycode);
 
-					moreKeys = _key == 'D';
+					moreKeys = _key == saves._hotkeyDown;
 				}
 			} while (saves._savegameIndex < (MAX_SAVEGAME_SLOTS - ONSCREEN_FILES_COUNT) && moreKeys);
-		} else if ((found == 5 && events._released) || _key == 'Q') {
+		} else if ((found == 5 && events._released) || _key == saves._hotkeyQuit) {
 			clearWindow();
-			screen.print(Common::Point(0, CONTROLS_Y + 20), INV_FOREGROUND, "Are you sure you wish to Quit ?");
+			screen.print(Common::Point(0, CONTROLS_Y + 20), INV_FOREGROUND, saves._fixedTextQuitGameQuestion.c_str());
 			screen.vgaBar(Common::Rect(0, CONTROLS_Y, SHERLOCK_SCREEN_WIDTH, CONTROLS_Y + 10), BORDER_COLOR);
 
-			screen.makeButton(Common::Rect(112, CONTROLS_Y, 160, CONTROLS_Y + 10), 136, "Yes");
-			screen.makeButton(Common::Rect(161, CONTROLS_Y, 209, CONTROLS_Y + 10), 184, "No");
+			screen.makeButton(Common::Rect(112, CONTROLS_Y, 160, CONTROLS_Y + 10), 136, saves._fixedTextQuitGameYes, true);
+			screen.makeButton(Common::Rect(161, CONTROLS_Y, 209, CONTROLS_Y + 10), 184, saves._fixedTextQuitGameNo, true);
 			screen.slamArea(112, CONTROLS_Y, 97, 10);
 
 			do {
@@ -903,7 +902,7 @@ void ScalpelUserInterface::doEnvControl() {
 					}
 
 					if (_key == Common::KEYCODE_ESCAPE)
-						_key = 'N';
+						_key = saves._hotkeyQuitGameNo;
 
 					if (_key == Common::KEYCODE_RETURN || _key == ' ') {
 						events._pressed = false;
@@ -918,28 +917,28 @@ void ScalpelUserInterface::doEnvControl() {
 						color = COMMAND_HIGHLIGHTED;
 					else
 						color = COMMAND_FOREGROUND;
-					screen.buttonPrint(Common::Point(136, CONTROLS_Y), color, true, "Yes");
+					screen.buttonPrint(Common::Point(136, CONTROLS_Y), color, true, saves._fixedTextQuitGameYes, true);
 
 					if (mousePos.x > 161 && mousePos.x < 208 && mousePos.y > CONTROLS_Y && mousePos.y < (CONTROLS_Y + 9))
 						color = COMMAND_HIGHLIGHTED;
 					else
 						color = COMMAND_FOREGROUND;
-					screen.buttonPrint(Common::Point(184, CONTROLS_Y), color, true, "No");
+					screen.buttonPrint(Common::Point(184, CONTROLS_Y), color, true, saves._fixedTextQuitGameNo, true);
 				}
 
 				if (mousePos.x > 112 && mousePos.x < 159 && mousePos.y > CONTROLS_Y && mousePos.y < (CONTROLS_Y + 9) && events._released)
-					_key = 'Y';
+					_key = saves._hotkeyQuitGameYes;
 
 				if (mousePos.x > 161 && mousePos.x < 208 && mousePos.y > CONTROLS_Y && mousePos.y < (CONTROLS_Y + 9) && events._released)
-					_key = 'N';
-			} while (!_vm->shouldQuit() && _key != 'Y' && _key != 'N');
+					_key = saves._hotkeyQuitGameNo;
+			} while (!_vm->shouldQuit() && _key != saves._hotkeyQuitGameYes && _key != saves._hotkeyQuitGameNo);
 
-			if (_key == 'Y') {
+			if (_key == saves._hotkeyQuitGameYes) {
 				_vm->quitGame();
 				events.pollEvents();
 				return;
 			} else {
-				screen.buttonPrint(Common::Point(184, CONTROLS_Y), COMMAND_HIGHLIGHTED, true, "No");
+				screen.buttonPrint(Common::Point(184, CONTROLS_Y), COMMAND_HIGHLIGHTED, true, saves._fixedTextQuitGameNo, true);
 				banishWindow(1);
 				_windowBounds.top = CONTROLS_Y1;
 				_key = -1;

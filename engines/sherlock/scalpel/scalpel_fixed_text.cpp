@@ -76,6 +76,17 @@ static const char *const fixedTextEN[] = {
 	"FFade Directly",
 	"KKey Pad Slow",
 	"KKey Pad Fast",
+	// Load/Save
+	"EExit",
+	"LLoad",
+	"SSave",
+	"UUp",
+	"DDown",
+	"QQuit",
+	// Quit Game
+	"Are you sure you wish to Quit ?",
+	"YYes",
+	"NNo",
 	// SH1: Press key text
 	"Press any Key for More.",
 	"P",
@@ -210,6 +221,17 @@ static const char *const fixedTextDE[] = {
 	"BBlende",
 	"CCursor langsam",
 	"CCursor schnell",
+	// Load/Save
+	"ZZur\201ck",
+	"LLaden",
+	"SSichern",
+	"HHoch",
+	"RRunter",
+	"EEnde",
+	// Quit Game
+	"Das Spiel verlassen ?",
+	"JJa",
+	"NNein",
 	// SH1: Press key text
 	"Mehr auf Tastendruck...",
 	"M",
@@ -343,6 +365,17 @@ static const char *const fixedTextES[] = {
 	"FFundido directo",
 	"eTeclado lento",
 	"eTeclado rapido",
+	// Load/Save
+	"aSalir", // original interpreter: "Exit"
+	"CCargar",
+	"GGrabar",
+	"SSubir",
+	"BBajar",
+	"AAcabar",
+	// Quit Game
+	"\250Seguro que quieres Acabar?",
+	"SSi",
+	"NNo",
 	// SH1: Press key text
 	"Tecla para ver mas",
 	"T",

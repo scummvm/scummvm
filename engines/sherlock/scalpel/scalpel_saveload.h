@@ -34,6 +34,30 @@ extern const int ENV_POINTS[6][3];
 class ScalpelSaveManager: public SaveManager {
 public:
 	SaveMode _envMode;
+
+	Common::String _fixedTextExit;
+	Common::String _fixedTextLoad;
+	Common::String _fixedTextSave;
+	Common::String _fixedTextUp;
+	Common::String _fixedTextDown;
+	Common::String _fixedTextQuit;
+
+	byte _hotkeyExit;
+	byte _hotkeyLoad;
+	byte _hotkeySave;
+	byte _hotkeyUp;
+	byte _hotkeyDown;
+	byte _hotkeyQuit;
+
+	byte _hotkeysIndexed[6];
+
+	Common::String _fixedTextQuitGameQuestion;
+	Common::String _fixedTextQuitGameYes;
+	Common::String _fixedTextQuitGameNo;
+
+	byte _hotkeyQuitGameYes;
+	byte _hotkeyQuitGameNo;
+
 public:
 	ScalpelSaveManager(SherlockEngine *vm, const Common::String &target);
 	virtual ~ScalpelSaveManager() {}
@@ -62,6 +86,11 @@ public:
 	 * Prompts the user to enter a description in a given slot
 	 */
 	bool promptForDescription(int slot);
+
+	/**
+	 * Identifies a button number according to the key, that the user pressed
+	 */
+	int identifyUserButton(int key);
 };
 
 } // End of namespace Scalpel

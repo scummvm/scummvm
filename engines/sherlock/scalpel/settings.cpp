@@ -67,105 +67,93 @@ void Settings::drawInterface(bool flag) {
 	}
 
 	tempStr = FIXED(Settings_Exit);
-	_hotkeyExit = tempStr.firstChar();
-	tempStr.deleteChar(0);
+	_hotkeyExit = toupper(tempStr.firstChar());
 	screen.makeButton(Common::Rect(SETUP_POINTS[0][0], SETUP_POINTS[0][1], SETUP_POINTS[0][2], SETUP_POINTS[0][1] + 10),
-		SETUP_POINTS[0][3], tempStr, _hotkeyExit);
+		SETUP_POINTS[0][3], tempStr, true);
 
 	if (music._musicOn) {
 		tempStr = FIXED(Settings_MusicOn);
 	} else {
 		tempStr = FIXED(Settings_MusicOff);
 	}
-	_hotkeyMusic = tempStr.firstChar();
-	tempStr.deleteChar(0);
+	_hotkeyMusic = toupper(tempStr.firstChar());
 	screen.makeButton(Common::Rect(SETUP_POINTS[1][0], SETUP_POINTS[1][1], SETUP_POINTS[1][2], SETUP_POINTS[1][1] + 10),
-		SETUP_POINTS[1][3], tempStr, _hotkeyMusic);
+		SETUP_POINTS[1][3], tempStr, true);
 
 	if (people._portraitsOn) {
 		tempStr = FIXED(Settings_PortraitsOn);
 	} else {
 		tempStr = FIXED(Settings_PortraitsOff);
 	}
-	_hotkeyPortraits = tempStr.firstChar();
-	tempStr.deleteChar(0);
+	_hotkeyPortraits = toupper(tempStr.firstChar());
 	screen.makeButton(Common::Rect(SETUP_POINTS[10][0], SETUP_POINTS[10][1], SETUP_POINTS[10][2], SETUP_POINTS[10][1] + 10),
-		SETUP_POINTS[10][3], tempStr, _hotkeyPortraits);
+		SETUP_POINTS[10][3], tempStr, true);
 
 	// WORKAROUND: We don't support the joystick in ScummVM, so draw the next two buttons as disabled
 	tempStr = FIXED(Settings_JoystickOff);
-	tempStr.deleteChar(0);
 	screen.makeButton(Common::Rect(SETUP_POINTS[6][0], SETUP_POINTS[6][1], SETUP_POINTS[6][2], SETUP_POINTS[6][1] + 10),
-		SETUP_POINTS[6][3], tempStr);
-	screen.buttonPrint(Common::Point(SETUP_POINTS[6][3], SETUP_POINTS[6][1]), COMMAND_NULL, false, tempStr);
+		SETUP_POINTS[6][3], tempStr, true);
+	screen.buttonPrint(Common::Point(SETUP_POINTS[6][3], SETUP_POINTS[6][1]), COMMAND_NULL, false, tempStr, true);
 
 	tempStr = FIXED(Settings_NewFontStyle);
-	_hotkeyNewFontStyle = tempStr.firstChar();
-	tempStr.deleteChar(0);
+	_hotkeyNewFontStyle = toupper(tempStr.firstChar());
 	screen.makeButton(Common::Rect(SETUP_POINTS[5][0], SETUP_POINTS[5][1], SETUP_POINTS[5][2], SETUP_POINTS[5][1] + 10),
-		SETUP_POINTS[5][3], tempStr, _hotkeyNewFontStyle);
+		SETUP_POINTS[5][3], tempStr, true);
 
 	if (sound._digitized) {
 		tempStr = FIXED(Settings_SoundEffectsOn);
 	} else {
 		tempStr = FIXED(Settings_SoundEffectsOff);
 	}
-	_hotkeySoundEffects = tempStr.firstChar();
-	tempStr.deleteChar(0);
+	_hotkeySoundEffects = toupper(tempStr.firstChar());
 	screen.makeButton(Common::Rect(SETUP_POINTS[3][0], SETUP_POINTS[3][1], SETUP_POINTS[3][2], SETUP_POINTS[3][1] + 10),
-		SETUP_POINTS[3][3], tempStr, _hotkeySoundEffects);
+		SETUP_POINTS[3][3], tempStr, true);
 
 	if (ui._slideWindows) {
 		tempStr = FIXED(Settings_WindowsSlide);
 	} else {
 		tempStr = FIXED(Settings_WindowsAppear);
 	}
-	_hotkeyWindows = tempStr.firstChar();
-	tempStr.deleteChar(0);
+	_hotkeyWindows = toupper(tempStr.firstChar());
 	screen.makeButton(Common::Rect(SETUP_POINTS[9][0], SETUP_POINTS[9][1], SETUP_POINTS[9][2], SETUP_POINTS[9][1] + 10),
-		SETUP_POINTS[9][3], tempStr, _hotkeyWindows);
+		SETUP_POINTS[9][3], tempStr, true);
 
 	tempStr = FIXED(Settings_CalibrateJoystick);
-	tempStr.deleteChar(0);
 	screen.makeButton(Common::Rect(SETUP_POINTS[7][0], SETUP_POINTS[7][1], SETUP_POINTS[7][2], SETUP_POINTS[7][1] + 10),
-		SETUP_POINTS[7][3], tempStr);
-	screen.buttonPrint(Common::Point(SETUP_POINTS[7][3], SETUP_POINTS[7][1]), COMMAND_NULL, false, tempStr);
+		SETUP_POINTS[7][3], tempStr, true);
+	screen.buttonPrint(Common::Point(SETUP_POINTS[7][3], SETUP_POINTS[7][1]), COMMAND_NULL, false, tempStr, true);
 
 	if (ui._helpStyle) {
 		tempStr = FIXED(Settings_AutoHelpRight);
 	} else {
 		tempStr = FIXED(Settings_AutoHelpLeft);
 	}
-	_hotkeyAutoHelp = tempStr.firstChar();
-	tempStr.deleteChar(0);
+	_hotkeyAutoHelp = toupper(tempStr.firstChar());
 	screen.makeButton(Common::Rect(SETUP_POINTS[4][0], SETUP_POINTS[4][1], SETUP_POINTS[4][2], SETUP_POINTS[4][1] + 10),
-		SETUP_POINTS[4][3], tempStr, _hotkeyAutoHelp);
+		SETUP_POINTS[4][3], tempStr, true);
 
 	if (sound._voices) {
 		tempStr = FIXED(Settings_VoicesOn);
 	} else {
 		tempStr = FIXED(Settings_VoicesOff);
 	}
-	_hotkeyVoices = tempStr.firstChar();
-	tempStr.deleteChar(0);
+	_hotkeyVoices = toupper(tempStr.firstChar());
 	screen.makeButton(Common::Rect(SETUP_POINTS[2][0], SETUP_POINTS[2][1], SETUP_POINTS[2][2], SETUP_POINTS[2][1] + 10),
-		SETUP_POINTS[2][3], tempStr, _hotkeyVoices);
+		SETUP_POINTS[2][3], tempStr, true);
 
 	if (screen._fadeStyle) {
 		tempStr = FIXED(Settings_FadeByPixel);
 	} else {
 		tempStr = FIXED(Settings_FadeDirectly);
 	}
-	_hotkeyFade = tempStr.firstChar();
-	tempStr.deleteChar(0);
+	_hotkeyFade = toupper(tempStr.firstChar());
 	screen.makeButton(Common::Rect(SETUP_POINTS[8][0], SETUP_POINTS[8][1], SETUP_POINTS[8][2], SETUP_POINTS[8][1] + 10),
-		SETUP_POINTS[8][3], tempStr, _hotkeyFade);
+		SETUP_POINTS[8][3], tempStr, true);
 
 	tempStr = FIXED(Settings_KeyPadSlow);
-	tempStr.deleteChar(0);
 	screen.makeButton(Common::Rect(SETUP_POINTS[11][0], SETUP_POINTS[11][1], SETUP_POINTS[11][2], SETUP_POINTS[11][1] + 10),
-		SETUP_POINTS[11][3], tempStr);
-	screen.buttonPrint(Common::Point(SETUP_POINTS[11][3], SETUP_POINTS[11][1]), COMMAND_NULL, false, tempStr);
+		SETUP_POINTS[11][3], tempStr, true);
+	screen.buttonPrint(Common::Point(SETUP_POINTS[11][3], SETUP_POINTS[11][1]), COMMAND_NULL, false, tempStr, true);
 
 	_hotkeysIndexed[0] = _hotkeyExit;
 	_hotkeysIndexed[1] = _hotkeyMusic;
@@ -281,8 +269,7 @@ int Settings::drawButtons(const Common::Point &pt, int _key) {
 		default:
 			continue;
 		}
-		tempStr.deleteChar(0);
-		screen.buttonPrint(Common::Point(SETUP_POINTS[idx][3], SETUP_POINTS[idx][1]), color, true, tempStr, _hotkeysIndexed[idx]);
+		screen.buttonPrint(Common::Point(SETUP_POINTS[idx][3], SETUP_POINTS[idx][1]), color, true, tempStr, true);
 	}
 
 	return found;
@@ -337,11 +324,11 @@ void Settings::show(SherlockEngine *vm) {
 			found = settings.drawButtons(pt, ui._key);
 		}
 
-		if ((found == 0 && events._released) || (ui._key == toupper(settings._hotkeyExit) || ui._key == Common::KEYCODE_ESCAPE))
+		if ((found == 0 && events._released) || (ui._key == settings._hotkeyExit || ui._key == Common::KEYCODE_ESCAPE))
 			// Exit
 			break;
 
-		if ((found == 1 && events._released) || ui._key == toupper(settings._hotkeyMusic)) {
+		if ((found == 1 && events._released) || ui._key == settings._hotkeyMusic) {
 			// Toggle music
 			music._musicOn = !music._musicOn;
 			if (!music._musicOn)
@@ -353,27 +340,27 @@ void Settings::show(SherlockEngine *vm) {
 			settings.drawInterface(true);
 		}
 
-		if ((found == 2 && events._released) || ui._key == toupper(settings._hotkeyVoices)) {
+		if ((found == 2 && events._released) || ui._key == settings._hotkeyVoices) {
 			sound._voices = !sound._voices;
 			updateConfig = true;
 			settings.drawInterface(true);
 		}
 
-		if ((found == 3 && events._released) || ui._key == toupper(settings._hotkeySoundEffects)) {
+		if ((found == 3 && events._released) || ui._key == settings._hotkeySoundEffects) {
 			// Toggle sound effects
 			sound._digitized = !sound._digitized;
 			updateConfig = true;
 			settings.drawInterface(true);
 		}
 
-		if ((found == 4 && events._released) || ui._key == toupper(settings._hotkeyAutoHelp)) {
+		if ((found == 4 && events._released) || ui._key == settings._hotkeyAutoHelp) {
 			// Help button style
 			ui._helpStyle = !ui._helpStyle;
 			updateConfig = true;
 			settings.drawInterface(true);
 		}
 
-		if ((found == 5 && events._released) || ui._key == toupper(settings._hotkeyNewFontStyle)) {
+		if ((found == 5 && events._released) || ui._key == settings._hotkeyNewFontStyle) {
 			// New font style
 			int fontNum = screen.fontNumber() + 1;
 			if (fontNum == 3)
@@ -384,21 +371,21 @@ void Settings::show(SherlockEngine *vm) {
 			settings.drawInterface(true);
 		}
 
-		if ((found == 8 && events._released) || ui._key == toupper(settings._hotkeyFade)) {
+		if ((found == 8 && events._released) || ui._key == settings._hotkeyFade) {
 			// Toggle fade style
 			screen._fadeStyle = !screen._fadeStyle;
 			updateConfig = true;
 			settings.drawInterface(true);
 		}
 
-		if ((found == 9 && events._released) || ui._key == toupper(settings._hotkeyWindows)) {
+		if ((found == 9 && events._released) || ui._key == settings._hotkeyWindows) {
 			// Window style
 			ui._slideWindows = !ui._slideWindows;
 			updateConfig = true;
 			settings.drawInterface(true);
 		}
 
-		if ((found == 10 && events._released) || ui._key == toupper(settings._hotkeyPortraits)) {
+		if ((found == 10 && events._released) || ui._key == settings._hotkeyPortraits) {
 			// Toggle portraits being shown
 			people._portraitsOn = !people._portraitsOn;
 			updateConfig = true;
