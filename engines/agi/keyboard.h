@@ -66,10 +66,10 @@ public:
 #define AGI_KEY_F4  0x3E00
 #define AGI_KEY_F5  0x3F00
 #define AGI_KEY_F6  0x4000
-#define AGI_KEY_F7  0x4000
-#define AGI_KEY_F8  0x4100
-#define AGI_KEY_F9  0x4200
-#define AGI_KEY_F10 0x4300
+#define AGI_KEY_F7  0x4100
+#define AGI_KEY_F8  0x4200
+#define AGI_KEY_F9  0x4300
+#define AGI_KEY_F10 0x4400
 #define AGI_KEY_F11 0xd900	// F11
 #define AGI_KEY_F12 0xda00	// F12
 
