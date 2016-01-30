@@ -1576,7 +1576,6 @@ void ScalpelUserInterface::doPickControl() {
 
 void ScalpelUserInterface::doTalkControl() {
 	Events &events = *_vm->_events;
-	FixedText &fixedText = *_vm->_fixedText;
 	ScalpelJournal &journal = *(ScalpelJournal *)_vm->_journal;
 	ScalpelPeople &people = *(ScalpelPeople *)_vm->_people;
 	ScalpelScreen &screen = *(ScalpelScreen *)_vm->_screen;
@@ -1587,28 +1586,24 @@ void ScalpelUserInterface::doTalkControl() {
 	_key = _oldKey = -1;
 	_keyboardInput = false;
 
-	Common::String fixedText_Exit = fixedText.getText(kFixedText_Window_Exit);
-	Common::String fixedText_Up   = fixedText.getText(kFixedText_Window_Up);
-	Common::String fixedText_Down = fixedText.getText(kFixedText_Window_Down);
-
 	if (events._pressed || events._released) {
 		events.clearKeyboard();
 
 		// Handle button printing
 		if (mousePos.x > 99 && mousePos.x < 138 && mousePos.y > CONTROLS_Y && mousePos.y < (CONTROLS_Y + 10) && !_endKeyActive)
-			screen.buttonPrint(Common::Point(119, CONTROLS_Y), COMMAND_HIGHLIGHTED, true, fixedText_Exit);
+			screen.buttonPrint(Common::Point(119, CONTROLS_Y), COMMAND_HIGHLIGHTED, true, talk._fixedTextWindowExit, true);
 		else if (_endKeyActive)
-			screen.buttonPrint(Common::Point(119, CONTROLS_Y), COMMAND_FOREGROUND, true, fixedText_Exit);
+			screen.buttonPrint(Common::Point(119, CONTROLS_Y), COMMAND_FOREGROUND, true, talk._fixedTextWindowExit, true);
 
 		if (mousePos.x > 140 && mousePos.x < 170 && mousePos.y > CONTROLS_Y && mousePos.y < (CONTROLS_Y + 10) && talk._moreTalkUp)
-			screen.buttonPrint(Common::Point(159, CONTROLS_Y), COMMAND_HIGHLIGHTED, true, fixedText_Up);
+			screen.buttonPrint(Common::Point(159, CONTROLS_Y), COMMAND_HIGHLIGHTED, true, talk._fixedTextWindowUp, true);
 		else if (talk._moreTalkUp)
-			screen.buttonPrint(Common::Point(159, CONTROLS_Y), COMMAND_FOREGROUND, true, fixedText_Up);
+			screen.buttonPrint(Common::Point(159, CONTROLS_Y), COMMAND_FOREGROUND, true, talk._fixedTextWindowUp, true);
 
 		if (mousePos.x > 181&& mousePos.x < 220 && mousePos.y > CONTROLS_Y && mousePos.y < (CONTROLS_Y + 10) && talk._moreTalkDown)
-			screen.buttonPrint(Common::Point(200, CONTROLS_Y), COMMAND_HIGHLIGHTED, true, fixedText_Down);
+			screen.buttonPrint(Common::Point(200, CONTROLS_Y), COMMAND_HIGHLIGHTED, true, talk._fixedTextWindowDown, true);
 		else if (talk._moreTalkDown)
-			screen.buttonPrint(Common::Point(200, CONTROLS_Y), COMMAND_FOREGROUND, true, fixedText_Down);
+			screen.buttonPrint(Common::Point(200, CONTROLS_Y), COMMAND_FOREGROUND, true, talk._fixedTextWindowDown, true);
 
 		bool found = false;
 		for (_selector = talk._talkIndex; _selector < (int)talk._statements.size() && !found; ++_selector) {
@@ -1624,7 +1619,7 @@ void ScalpelUserInterface::doTalkControl() {
 	if (_keyPress) {
 		_key = toupper(_keyPress);
 		if (_key == Common::KEYCODE_ESCAPE)
-			_key = 'E';
+			_key = talk._hotkeyWindowExit;
 
 		// Check for number press indicating reply line
 		if (_key >= '1' && _key <= ('1' + (int)talk._statements.size() - 1)) {
@@ -1637,7 +1632,7 @@ void ScalpelUserInterface::doTalkControl() {
 					break;
 				}
 			}
-		} else if (_key == 'E' || _key == 'U' || _key == 'D') {
+		} else if (_key == talk._hotkeyWindowExit || _key == talk._hotkeyWindowUp || _key == talk._hotkeyWindowDown) {
 			_keyboardInput = true;
 		} else {
 			_selector = -1;
@@ -1665,7 +1660,7 @@ void ScalpelUserInterface::doTalkControl() {
 
 	if (events._released || _keyboardInput) {
 		if (((Common::Rect(99, CONTROLS_Y, 138, CONTROLS_Y + 10).contains(mousePos) && events._released)
-				|| _key == 'E') && _endKeyActive) {
+				|| _key == talk._hotkeyWindowExit) && _endKeyActive) {
 			talk.freeTalkVars();
 			talk.pullSequence();
 
@@ -1673,7 +1668,7 @@ void ScalpelUserInterface::doTalkControl() {
 			banishWindow();
 			_windowBounds.top = CONTROLS_Y1;
 		} else if (((Common::Rect(140, CONTROLS_Y, 179, CONTROLS_Y + 10).contains(mousePos) && events._released)
-				|| _key == 'U') && talk._moreTalkUp) {
+				|| _key == talk._hotkeyWindowUp) && talk._moreTalkUp) {
 			while (talk._statements[--talk._talkIndex]._talkMap == -1)
 				;
 			screen._backBuffer1.fillRect(Common::Rect(5, CONTROLS_Y + 11, SHERLOCK_SCREEN_WIDTH - 2,
@@ -1682,7 +1677,7 @@ void ScalpelUserInterface::doTalkControl() {
 
 			screen.slamRect(Common::Rect(5, CONTROLS_Y, SHERLOCK_SCREEN_WIDTH - 5, SHERLOCK_SCREEN_HEIGHT - 2));
 		} else if (((Common::Rect(181, CONTROLS_Y, 220, CONTROLS_Y + 10).contains(mousePos) && events._released)
-				|| _key == 'D') && talk._moreTalkDown) {
+				|| _key == talk._hotkeyWindowDown) && talk._moreTalkDown) {
 			do {
 				++talk._talkIndex;
 			} while (talk._talkIndex < (int)talk._statements.size() && talk._statements[talk._talkIndex]._talkMap == -1);
@@ -1693,9 +1688,9 @@ void ScalpelUserInterface::doTalkControl() {
 
 			screen.slamRect(Common::Rect(5, CONTROLS_Y, SHERLOCK_SCREEN_WIDTH - 5, SHERLOCK_SCREEN_HEIGHT - 2));
 		} else if (_selector != -1) {
-			screen.buttonPrint(Common::Point(119, CONTROLS_Y), COMMAND_NULL, true, fixedText_Exit);
-			screen.buttonPrint(Common::Point(159, CONTROLS_Y), COMMAND_NULL, true, fixedText_Up);
-			screen.buttonPrint(Common::Point(200, CONTROLS_Y), COMMAND_NULL, true, fixedText_Down);
+			screen.buttonPrint(Common::Point(119, CONTROLS_Y), COMMAND_NULL, true, talk._fixedTextWindowExit, true);
+			screen.buttonPrint(Common::Point(159, CONTROLS_Y), COMMAND_NULL, true, talk._fixedTextWindowUp, true);
+			screen.buttonPrint(Common::Point(200, CONTROLS_Y), COMMAND_NULL, true, talk._fixedTextWindowDown, true);
 
 			// If the reply is new, add it to the journal
 			if (!talk._talkHistory[talk._converseNum][_selector]) {
@@ -1789,9 +1784,9 @@ void ScalpelUserInterface::doTalkControl() {
 								!talk._statements[select]._statement.hasPrefix("^")) {
 							// Not a reply first file, so display the new selections
 							if (_endKeyActive)
-								screen.buttonPrint(Common::Point(119, CONTROLS_Y), COMMAND_FOREGROUND, true, fixedText_Exit);
+								screen.buttonPrint(Common::Point(119, CONTROLS_Y), COMMAND_FOREGROUND, true, talk._fixedTextWindowExit, true);
 							else
-								screen.buttonPrint(Common::Point(119, CONTROLS_Y), COMMAND_NULL, true, fixedText_Exit);
+								screen.buttonPrint(Common::Point(119, CONTROLS_Y), COMMAND_NULL, true, talk._fixedTextWindowExit, true);
 
 							talk.displayTalk(true);
 							events.setCursor(ARROW);

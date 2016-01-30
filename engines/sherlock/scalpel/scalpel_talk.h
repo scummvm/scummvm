@@ -88,6 +88,14 @@ public:
 	ScalpelTalk(SherlockEngine *vm);
 	virtual ~ScalpelTalk() {}
 
+	Common::String _fixedTextWindowExit;
+	Common::String _fixedTextWindowUp;
+	Common::String _fixedTextWindowDown;
+
+	byte _hotkeyWindowExit;
+	byte _hotkeyWindowUp;
+	byte _hotkeyWindowDown;
+
 	/**
 	 * Opens the talk file 'talk.tlk' and searches the index for the specified
 	 * conversation. If found, the data for that conversation is loaded

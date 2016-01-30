@@ -31,9 +31,9 @@ static const char *const fixedTextEN[] = {
 	// Game hotkeys
 	"LMTPOCIUGJFS",
 	// SH1: Window buttons
-	"Exit",
-	"Up",
-	"Down",
+	"EExit",
+	"UUp",
+	"DDown",
 	// SH1: Inventory buttons
 	"EExit",
 	"LLook",
@@ -176,9 +176,9 @@ static const char *const fixedTextDE[] = {
 	// Game hotkeys
 	"SBRNOCTEGADU", // original: did not support hotkeys for actions
 	// SH1: Window buttons
-	"Zur\201ck",
-	"Hoch",
-	"Runter",
+	"ZZur\201ck",
+	"HHoch",
+	"RRunter",
 	// SH1: Inventory buttons
 	"ZZur\201ck",
 	"SSchau",
@@ -320,9 +320,9 @@ static const char *const fixedTextES[] = {
 	// Game hotkeys
 	"VMHTACIUDNFO",
 	// SH1: Window buttons
-	"Salir", // original interpreter: "Exit"
-	"Subir",
-	"Bajar",
+	"aSalir", // original interpreter: "Exit"
+	"SSubir",
+	"BBajar",
 	// SH1: Inventory buttons
 	"SSalir", // original interpreter: "Exit"
 	"MMirar",

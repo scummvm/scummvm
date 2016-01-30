@@ -170,6 +170,13 @@ ScalpelTalk::ScalpelTalk(SherlockEngine *vm) : Talk(vm) {
 		_opcodes = opcodes;
 	}
 
+	_fixedTextWindowExit = FIXED(Window_Exit);
+	_fixedTextWindowUp   = FIXED(Window_Up);
+	_fixedTextWindowDown = FIXED(Window_Down);
+
+	_hotkeyWindowExit = toupper(_fixedTextWindowExit[0]);
+	_hotkeyWindowUp   = toupper(_fixedTextWindowUp[0]);
+	_hotkeyWindowDown = toupper(_fixedTextWindowDown[0]);
 }
 
 void ScalpelTalk::talkTo(const Common::String filename) {
@@ -185,7 +192,6 @@ void ScalpelTalk::talkTo(const Common::String filename) {
 }
 
 void ScalpelTalk::talkInterface(const byte *&str) {
-	FixedText &fixedText = *_vm->_fixedText;
 	People &people = *_vm->_people;
 	ScalpelScreen &screen = *(ScalpelScreen *)_vm->_screen;
 	UserInterface &ui = *_vm->_ui;
@@ -199,12 +205,9 @@ void ScalpelTalk::talkInterface(const byte *&str) {
 		drawInterface();
 
 		if (_talkTo != -1) {
-			Common::String fixedText_Exit = fixedText.getText(kFixedText_Window_Exit);
-			Common::String fixedText_Up   = fixedText.getText(kFixedText_Window_Up);
-			Common::String fixedText_Down = fixedText.getText(kFixedText_Window_Down);
-			screen.buttonPrint(Common::Point(119, CONTROLS_Y), COMMAND_NULL, false, fixedText_Exit);
-			screen.buttonPrint(Common::Point(159, CONTROLS_Y), COMMAND_NULL, false, fixedText_Up);
-			screen.buttonPrint(Common::Point(200, CONTROLS_Y), COMMAND_NULL, false, fixedText_Down);
+			screen.buttonPrint(Common::Point(119, CONTROLS_Y), COMMAND_NULL, false, _fixedTextWindowExit, true);
+			screen.buttonPrint(Common::Point(159, CONTROLS_Y), COMMAND_NULL, false, _fixedTextWindowUp, true);
+			screen.buttonPrint(Common::Point(200, CONTROLS_Y), COMMAND_NULL, false, _fixedTextWindowDown, true);
 		}
 	}
 
@@ -512,7 +515,6 @@ OpcodeReturn ScalpelTalk::cmdSfxCommand(const byte *&str) {
 
 OpcodeReturn ScalpelTalk::cmdSummonWindow(const byte *&str) {
 	Events       &events = *_vm->_events;
-	FixedText &fixedText = *_vm->_fixedText;
 	ScalpelScreen &screen = *(ScalpelScreen *)_vm->_screen;
 
 	drawInterface();
@@ -521,12 +523,9 @@ OpcodeReturn ScalpelTalk::cmdSummonWindow(const byte *&str) {
 	_noTextYet = false;
 
 	if (_speaker != -1) {
-		Common::String fixedText_Exit = fixedText.getText(kFixedText_Window_Exit);
-		Common::String fixedText_Up   = fixedText.getText(kFixedText_Window_Up);
-		Common::String fixedText_Down = fixedText.getText(kFixedText_Window_Down);
-		screen.buttonPrint(Common::Point(119, CONTROLS_Y), COMMAND_NULL, false, fixedText_Exit);
-		screen.buttonPrint(Common::Point(159, CONTROLS_Y), COMMAND_NULL, false, fixedText_Up);
-		screen.buttonPrint(Common::Point(200, CONTROLS_Y), COMMAND_NULL, false, fixedText_Down);
+		screen.buttonPrint(Common::Point(119, CONTROLS_Y), COMMAND_NULL, false, _fixedTextWindowExit, true);
+		screen.buttonPrint(Common::Point(159, CONTROLS_Y), COMMAND_NULL, false, _fixedTextWindowUp, true);
+		screen.buttonPrint(Common::Point(200, CONTROLS_Y), COMMAND_NULL, false, _fixedTextWindowDown, true);
 	}
 
 	return RET_SUCCESS;
@@ -702,11 +701,11 @@ void ScalpelTalk::drawInterface() {
 		Common::String fixedText_Down = FIXED(Window_Down);
 
 		screen.makeButton(Common::Rect(99, CONTROLS_Y, 139, CONTROLS_Y + 10),
-			119, fixedText_Exit);
+			119, fixedText_Exit, true);
 		screen.makeButton(Common::Rect(140, CONTROLS_Y, 180, CONTROLS_Y + 10),
-			159, fixedText_Up);
+			159, fixedText_Up, true);
 		screen.makeButton(Common::Rect(181, CONTROLS_Y, 221, CONTROLS_Y + 10),
-			200, fixedText_Down);
+			200, fixedText_Down, true);
 	} else {
 		Common::String fixedText_PressKeyToContinue = FIXED(PressKey_ToContinue);
 
@@ -716,7 +715,6 @@ void ScalpelTalk::drawInterface() {
 }
 
 bool ScalpelTalk::displayTalk(bool slamIt) {
-	FixedText &fixedText = *_vm->_fixedText;
 	ScalpelScreen &screen = *(ScalpelScreen *)_vm->_screen;
 	int yp = CONTROLS_Y + 14;
 	int lineY = -1;
@@ -734,22 +732,20 @@ bool ScalpelTalk::displayTalk(bool slamIt) {
 	}
 
 	// Display the up arrow and enable Up button if the first option is scrolled off-screen
-	Common::String fixedText_Up   = fixedText.getText(kFixedText_Window_Up);
-	Common::String fixedText_Down = fixedText.getText(kFixedText_Window_Down);
 	if (_moreTalkUp) {
 		if (slamIt) {
 			screen.print(Common::Point(5, CONTROLS_Y + 13), INV_FOREGROUND, "~");
-			screen.buttonPrint(Common::Point(159, CONTROLS_Y), COMMAND_FOREGROUND, true, fixedText_Up);
+			screen.buttonPrint(Common::Point(159, CONTROLS_Y), COMMAND_FOREGROUND, true, _fixedTextWindowUp, true);
 		} else {
 			screen.gPrint(Common::Point(5, CONTROLS_Y + 12), INV_FOREGROUND, "~");
-			screen.buttonPrint(Common::Point(159, CONTROLS_Y), COMMAND_FOREGROUND, false, fixedText_Up);
+			screen.buttonPrint(Common::Point(159, CONTROLS_Y), COMMAND_FOREGROUND, false, _fixedTextWindowUp, true);
 		}
 	} else {
 		if (slamIt) {
-			screen.buttonPrint(Common::Point(159, CONTROLS_Y), COMMAND_NULL, true, fixedText_Up);
+			screen.buttonPrint(Common::Point(159, CONTROLS_Y), COMMAND_NULL, true, _fixedTextWindowUp, true);
 			screen.vgaBar(Common::Rect(5, CONTROLS_Y + 11, 15, CONTROLS_Y + 22), INV_BACKGROUND);
 		} else {
-			screen.buttonPrint(Common::Point(159, CONTROLS_Y), COMMAND_NULL, false, fixedText_Up);
+			screen.buttonPrint(Common::Point(159, CONTROLS_Y), COMMAND_NULL, false, _fixedTextWindowUp, true);
 			screen._backBuffer1.fillRect(Common::Rect(5, CONTROLS_Y + 11,
 				15, CONTROLS_Y + 22), INV_BACKGROUND);
 		}
@@ -784,17 +780,17 @@ bool ScalpelTalk::displayTalk(bool slamIt) {
 
 		if (slamIt) {
 			screen.print(Common::Point(5, 190), INV_FOREGROUND, "|");
-			screen.buttonPrint(Common::Point(200, CONTROLS_Y), COMMAND_FOREGROUND, true, fixedText_Down);
+			screen.buttonPrint(Common::Point(200, CONTROLS_Y), COMMAND_FOREGROUND, true, _fixedTextWindowDown, true);
 		} else {
 			screen.gPrint(Common::Point(5, 189), INV_FOREGROUND, "|");
-			screen.buttonPrint(Common::Point(200, CONTROLS_Y), COMMAND_FOREGROUND, false, fixedText_Down);
+			screen.buttonPrint(Common::Point(200, CONTROLS_Y), COMMAND_FOREGROUND, false, _fixedTextWindowDown, true);
 		}
 	} else {
 		if (slamIt) {
-			screen.buttonPrint(Common::Point(200, CONTROLS_Y), COMMAND_NULL, true, fixedText_Down);
+			screen.buttonPrint(Common::Point(200, CONTROLS_Y), COMMAND_NULL, true, _fixedTextWindowDown, true);
 			screen.vgaBar(Common::Rect(5, 189, 16, 199), INV_BACKGROUND);
 		} else {
-			screen.buttonPrint(Common::Point(200, CONTROLS_Y), COMMAND_NULL, false, fixedText_Down);
+			screen.buttonPrint(Common::Point(200, CONTROLS_Y), COMMAND_NULL, false, _fixedTextWindowDown, true);
 			screen._backBuffer1.fillRect(Common::Rect(5, 189, 16, 199), INV_BACKGROUND);
 		}
 	}
@@ -891,11 +887,9 @@ int ScalpelTalk::talkLine(int lineNum, int stateNum, byte color, int lineY, bool
 }
 
 void ScalpelTalk::showTalk() {
-	FixedText &fixedText = *_vm->_fixedText;
 	People &people = *_vm->_people;
 	ScalpelScreen &screen = *(ScalpelScreen *)_vm->_screen;
 	ScalpelUserInterface &ui = *(ScalpelUserInterface *)_vm->_ui;
-	Common::String fixedText_Exit = fixedText.getText(kFixedText_Window_Exit);
 	byte color = ui._endKeyActive ? COMMAND_FOREGROUND : COMMAND_NULL;
 
 	clearSequences();
@@ -915,9 +909,9 @@ void ScalpelTalk::showTalk() {
 	// If the window is already open, simply draw. Otherwise, do it
 	// to the back buffer and then summon the window
 	if (ui._windowOpen) {
-		screen.buttonPrint(Common::Point(119, CONTROLS_Y), color, true, fixedText_Exit);
+		screen.buttonPrint(Common::Point(119, CONTROLS_Y), color, true, _fixedTextWindowExit, true);
 	} else {
-		screen.buttonPrint(Common::Point(119, CONTROLS_Y), color, false, fixedText_Exit);
+		screen.buttonPrint(Common::Point(119, CONTROLS_Y), color, false, _fixedTextWindowExit, true);
 
 		if (!ui._slideWindows) {
 			screen.slamRect(Common::Rect(0, CONTROLS_Y,
