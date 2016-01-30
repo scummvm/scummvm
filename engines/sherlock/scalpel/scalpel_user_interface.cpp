@@ -878,8 +878,8 @@ void ScalpelUserInterface::doEnvControl() {
 			screen.print(Common::Point(0, CONTROLS_Y + 20), INV_FOREGROUND, "Are you sure you wish to Quit ?");
 			screen.vgaBar(Common::Rect(0, CONTROLS_Y, SHERLOCK_SCREEN_WIDTH, CONTROLS_Y + 10), BORDER_COLOR);
 
-			screen.makeButton(Common::Rect(112, CONTROLS_Y, 160, CONTROLS_Y + 10), 136 - screen.stringWidth("Yes") / 2, "Yes");
-			screen.makeButton(Common::Rect(161, CONTROLS_Y, 209, CONTROLS_Y + 10), 184 - screen.stringWidth("No") / 2, "No");
+			screen.makeButton(Common::Rect(112, CONTROLS_Y, 160, CONTROLS_Y + 10), 136, "Yes");
+			screen.makeButton(Common::Rect(161, CONTROLS_Y, 209, CONTROLS_Y + 10), 184, "No");
 			screen.slamArea(112, CONTROLS_Y, 97, 10);
 
 			do {
@@ -1955,7 +1955,7 @@ void ScalpelUserInterface::printObjectDesc(const Common::String &str, bool first
 		int fixedText_PressKeyToContinueLen = screen.stringWidth(fixedText_PressKeyToContinue);
 
 		screen.makeButton(Common::Rect(46, CONTROLS_Y, 272, CONTROLS_Y + 10),
-			(SHERLOCK_SCREEN_WIDTH - fixedText_PressKeyToContinueLen) / 2,
+			SHERLOCK_SCREEN_WIDTH / 2,
 			fixedText_PressKeyToContinue);
 		screen.gPrint(Common::Point((SHERLOCK_SCREEN_WIDTH - fixedText_PressKeyToContinueLen) / 2, CONTROLS_Y),
 			COMMAND_FOREGROUND, "%s", fixedText_PressKeyToContinueHotkey.c_str());

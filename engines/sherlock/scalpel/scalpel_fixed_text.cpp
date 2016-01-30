@@ -55,6 +55,27 @@ static const char *const fixedTextEN[] = {
 	"Backward",
 	"Forward",
 	"Text Not Found !",
+	// SH1: Settings
+	"EExit",
+	"MMusic on",
+	"MMusic off",
+	"PPortraits on",
+	"PPortraits off",
+	"JJoystick off",
+	"NNew Font Style",
+	"SSound Effects on",
+	"SSound Effects off",
+	"WWindows Slide",
+	"WWindows Appear",
+	"CCalibrate Joystick",
+	"AAuto Help left",
+	"AAuto Help right",
+	"VVoices on",
+	"VVoices off",
+	"FFade by Pixel",
+	"FFade Directly",
+	"KKey Pad Slow",
+	"KKey Pad Fast",
 	// SH1: Press key text
 	"Press any Key for More.",
 	"P",
@@ -168,6 +189,27 @@ static const char *const fixedTextDE[] = {
 	"R\201ckw\204rts", // original: "Backward"
 	"Vorw\204rts", // original: "Forward"
 	"Text nicht gefunden!",
+	// SH1: Settings
+	"ZZur\201ck", // original interpreter: "Exit"
+	"MMusik an",
+	"MMusik aus",
+	"PPortr\204ts an", // original interpreter: "Portraits"
+	"PPortr\204ts aus",
+	"JJoystick aus",
+	"NNeue Schrift",
+	"GGer\204uscheffekte on", // original interpreter: "Effekte"
+	"GGer\204uscheffekte off",
+	"FFenster gleitend",
+	"FFenster direkt",
+	"JJustiere Joystick",
+	"HHilfe links",
+	"HHilfe rechts",
+	"SSprache an",
+	"SSprache aus",
+	"cSchnitt",
+	"BBlende",
+	"CCursor langsam",
+	"CCursor schnell",
 	// SH1: Press key text
 	"Mehr auf Tastendruck...",
 	"M",
@@ -280,6 +322,27 @@ static const char *const fixedTextES[] = {
 	"Retroceder",
 	"Avanzar",
 	"Texto no encontrado!",
+	// SH1: Settings
+	"aSalir", // original interpreter: "Exit"
+	"MMusica si",
+	"MMusica no",
+	"RRetratos si",
+	"RRetratos no",
+	"JJoystick no",
+	"NNuevo fuente",
+	"Sefectos Sonido si",
+	"Sefectos Sonido no",
+	"Tven Tanas desliz.",
+	"Tven Tanas aparecen",
+	"CCalibrar Joystick",
+	"yAyuda lzq", // TODO: check this
+	"yAyuda Dcha",
+	"VVoces si",
+	"VVoces no",
+	"FFundido a pixel",
+	"FFundido directo",
+	"eTeclado lento",
+	"eTeclado rapido",
 	// SH1: Press key text
 	"Tecla para ver mas",
 	"T",

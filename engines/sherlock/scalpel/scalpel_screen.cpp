@@ -31,7 +31,7 @@ ScalpelScreen::ScalpelScreen(SherlockEngine *vm) : Screen(vm) {
 }
 
 void ScalpelScreen::makeButton(const Common::Rect &bounds, int textX,
-		const Common::String &str) {
+		const Common::String &str, const byte hotkey) {
 
 	Surface &bb = *_backBuffer;
 	bb.fillRect(Common::Rect(bounds.left, bounds.top, bounds.right, bounds.top + 1), BUTTON_TOP);
@@ -40,25 +40,49 @@ void ScalpelScreen::makeButton(const Common::Rect &bounds, int textX,
 	bb.fillRect(Common::Rect(bounds.left + 1, bounds.bottom - 1, bounds.right, bounds.bottom), BUTTON_BOTTOM);
 	bb.fillRect(Common::Rect(bounds.left + 1, bounds.top + 1, bounds.right - 1, bounds.bottom - 1), BUTTON_MIDDLE);
 
-	gPrint(Common::Point(textX, bounds.top), COMMAND_HIGHLIGHTED, "%c", str[0]);
-	gPrint(Common::Point(textX + charWidth(str[0]), bounds.top),
-		COMMAND_FOREGROUND, "%s", str.c_str() + 1);
+	buttonPrint(Common::Point(textX, bounds.top), COMMAND_FOREGROUND, false, str, hotkey);
 }
 
 void ScalpelScreen::buttonPrint(const Common::Point &pt, uint color, bool slamIt,
-		const Common::String &str) {
+		const Common::String &str, byte hotkey) {
 	int xStart = pt.x - stringWidth(str) / 2;
 
 	if (color == COMMAND_FOREGROUND) {
-		// First character needs to be highlighted
-		if (slamIt) {
-			print(Common::Point(xStart, pt.y + 1), COMMAND_HIGHLIGHTED, "%c", str[0]);
-			print(Common::Point(xStart + charWidth(str[0]), pt.y + 1),
-				COMMAND_FOREGROUND, "%s", str.c_str() + 1);
+		Common::String prefixText = str;
+		uint16 prefixOffsetX = 0;
+
+		// Hotkey needs to be highlighted
+		if (hotkey) {
+			// Hotkey was passed, we search for the hotkey inside the button text and
+			// remove it from there. We then draw the whole text as highlighted and afterward
+			// the processed text again as regular text (without the hotkey)
+			uint16 prefixTextPos = 0;
+
+			while (prefixTextPos < prefixText.size()) {
+				if (prefixText[prefixTextPos] == hotkey) {
+					// Hotkey found, remove remaining text
+					while (prefixTextPos < prefixText.size()) {
+						prefixText.deleteLastChar();
+					}
+					break;
+				}
+				prefixTextPos++;
+			}
+
+			prefixOffsetX = stringWidth(prefixText);
 		} else {
-			gPrint(Common::Point(xStart, pt.y), COMMAND_HIGHLIGHTED, "%c", str[0]);
-			gPrint(Common::Point(xStart + charWidth(str[0]), pt.y),
-				COMMAND_FOREGROUND, "%s", str.c_str() + 1);
+			// no hotkey passed, used first character of text
+			hotkey = str[0];
+		}
+
+		if (slamIt) {
+			print(Common::Point(xStart, pt.y + 1),
+				COMMAND_FOREGROUND, "%s", str.c_str());
+			print(Common::Point(xStart + prefixOffsetX, pt.y + 1), COMMAND_HIGHLIGHTED, "%c", hotkey);
+		} else {
+			gPrint(Common::Point(xStart, pt.y),
+				COMMAND_FOREGROUND, "%s", str.c_str());
+			gPrint(Common::Point(xStart + prefixOffsetX, pt.y), COMMAND_HIGHLIGHTED, "%c", hotkey);
 		}
 	} else if (slamIt) {
 		print(Common::Point(xStart, pt.y + 1), color, "%s", str.c_str());

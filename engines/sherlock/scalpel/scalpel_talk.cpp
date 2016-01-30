@@ -703,18 +703,18 @@ void ScalpelTalk::drawInterface() {
 		Common::String fixedText_Down = fixedText.getText(kFixedText_Window_Down);
 
 		screen.makeButton(Common::Rect(99, CONTROLS_Y, 139, CONTROLS_Y + 10),
-			119 - screen.stringWidth(fixedText_Exit) / 2, fixedText_Exit);
+			119, fixedText_Exit);
 		screen.makeButton(Common::Rect(140, CONTROLS_Y, 180, CONTROLS_Y + 10),
-			159 - screen.stringWidth(fixedText_Up) / 2, fixedText_Up);
+			159, fixedText_Up);
 		screen.makeButton(Common::Rect(181, CONTROLS_Y, 221, CONTROLS_Y + 10),
-			200 - screen.stringWidth(fixedText_Down) / 2, fixedText_Down);
+			200, fixedText_Down);
 	} else {
 		Common::String fixedText_PressKeyToContinue = fixedText.getText(kFixedText_PressKey_ToContinue);
 		Common::String fixedText_PressKeyToContinueHotkey = fixedText.getText(kFixedText_PressKey_ToContinueHotkey);
 		int fixedText_PressKeyToContinueLen = screen.stringWidth(fixedText_PressKeyToContinue);
 
 		screen.makeButton(Common::Rect(46, CONTROLS_Y, 273, CONTROLS_Y + 10),
-			160 - fixedText_PressKeyToContinueLen / 2, fixedText_PressKeyToContinue);
+			160, fixedText_PressKeyToContinue);
 		screen.gPrint(Common::Point(160 - fixedText_PressKeyToContinueLen / 2, CONTROLS_Y), COMMAND_FOREGROUND, 
 			"%s", fixedText_PressKeyToContinueHotkey.c_str());
 	}

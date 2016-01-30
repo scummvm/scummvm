@@ -67,21 +67,21 @@ void ScalpelInventory::drawInventory(InvNewMode mode) {
 	Common::String fixedText_Give = fixedText.getText(kFixedText_Inventory_Give);
 
 	screen.makeButton(Common::Rect(INVENTORY_POINTS[0][0], CONTROLS_Y1, INVENTORY_POINTS[0][1],
-		CONTROLS_Y1 + 10), INVENTORY_POINTS[0][2] - screen.stringWidth(fixedText_Exit) / 2, fixedText_Exit);
+		CONTROLS_Y1 + 10), INVENTORY_POINTS[0][2], fixedText_Exit);
 	screen.makeButton(Common::Rect(INVENTORY_POINTS[1][0], CONTROLS_Y1, INVENTORY_POINTS[1][1],
-		CONTROLS_Y1 + 10), INVENTORY_POINTS[1][2] - screen.stringWidth(fixedText_Look) / 2, fixedText_Look);
+		CONTROLS_Y1 + 10), INVENTORY_POINTS[1][2], fixedText_Look);
 	screen.makeButton(Common::Rect(INVENTORY_POINTS[2][0], CONTROLS_Y1, INVENTORY_POINTS[2][1],
-		CONTROLS_Y1 + 10), INVENTORY_POINTS[2][2] - screen.stringWidth(fixedText_Use) / 2, fixedText_Use);
+		CONTROLS_Y1 + 10), INVENTORY_POINTS[2][2], fixedText_Use);
 	screen.makeButton(Common::Rect(INVENTORY_POINTS[3][0], CONTROLS_Y1, INVENTORY_POINTS[3][1],
-		CONTROLS_Y1 + 10), INVENTORY_POINTS[3][2] - screen.stringWidth(fixedText_Give) / 2, fixedText_Give);
+		CONTROLS_Y1 + 10), INVENTORY_POINTS[3][2], fixedText_Give);
 	screen.makeButton(Common::Rect(INVENTORY_POINTS[4][0], CONTROLS_Y1, INVENTORY_POINTS[4][1],
-		CONTROLS_Y1 + 10), INVENTORY_POINTS[4][2], "^^"); // 2 arrows pointing to the left
+		CONTROLS_Y1 + 10), INVENTORY_POINTS[4][2] + 8, "^^"); // 2 arrows pointing to the left
 	screen.makeButton(Common::Rect(INVENTORY_POINTS[5][0], CONTROLS_Y1, INVENTORY_POINTS[5][1],
-		CONTROLS_Y1 + 10), INVENTORY_POINTS[5][2], "^"); // 1 arrow pointing to the left
+		CONTROLS_Y1 + 10), INVENTORY_POINTS[5][2] + 4, "^"); // 1 arrow pointing to the left
 	screen.makeButton(Common::Rect(INVENTORY_POINTS[6][0], CONTROLS_Y1, INVENTORY_POINTS[6][1],
-		CONTROLS_Y1 + 10), INVENTORY_POINTS[6][2], "_"); // 1 arrow pointing to the right
+		CONTROLS_Y1 + 10), INVENTORY_POINTS[6][2] + 4, "_"); // 1 arrow pointing to the right
 	screen.makeButton(Common::Rect(INVENTORY_POINTS[7][0], CONTROLS_Y1, INVENTORY_POINTS[7][1],
-		CONTROLS_Y1 + 10), INVENTORY_POINTS[7][2], "__"); // 2 arrows pointing to the right
+		CONTROLS_Y1 + 10), INVENTORY_POINTS[7][2] + 8, "__"); // 2 arrows pointing to the right
 
 	if (tempMode == INVENTORY_DONT_DISPLAY)
 		mode = LOOK_INVENTORY_MODE;

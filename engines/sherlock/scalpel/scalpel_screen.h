@@ -39,13 +39,13 @@ public:
 	/**
 	 * Draws a button for use in the inventory, talk, and examine dialogs.
 	 */
-	void makeButton(const Common::Rect &bounds, int textX, const Common::String &str);
+	void makeButton(const Common::Rect &bounds, int textX, const Common::String &str, const byte hotkey = 0);
 
 	/**
 	 * Prints an interface command with the first letter highlighted to indicate
 	 * what keyboard shortcut is associated with it
 	 */
-	void buttonPrint(const Common::Point &pt, uint color, bool slamIt, const Common::String &str);
+	void buttonPrint(const Common::Point &pt, uint color, bool slamIt, const Common::String &str, byte hotkey = 0);
 
 	/**
 	 * Draw a panel in the back buffer with a raised area effect around the edges

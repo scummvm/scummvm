@@ -57,17 +57,17 @@ void ScalpelSaveManager::drawInterface() {
 	screen._backBuffer1.fillRect(Common::Rect(2, CONTROLS_Y + 10, SHERLOCK_SCREEN_WIDTH - 2, SHERLOCK_SCREEN_HEIGHT - 2), INV_BACKGROUND);
 
 	screen.makeButton(Common::Rect(ENV_POINTS[0][0], CONTROLS_Y, ENV_POINTS[0][1], CONTROLS_Y + 10),
-		ENV_POINTS[0][2] - screen.stringWidth("Exit") / 2, "Exit");
+		ENV_POINTS[0][2], "Exit");
 	screen.makeButton(Common::Rect(ENV_POINTS[1][0], CONTROLS_Y, ENV_POINTS[1][1], CONTROLS_Y + 10),
-		ENV_POINTS[1][2] - screen.stringWidth("Load") / 2, "Load");
+		ENV_POINTS[1][2], "Load");
 	screen.makeButton(Common::Rect(ENV_POINTS[2][0], CONTROLS_Y, ENV_POINTS[2][1], CONTROLS_Y + 10),
-		ENV_POINTS[2][2] - screen.stringWidth("Save") / 2, "Save");
+		ENV_POINTS[2][2], "Save");
 	screen.makeButton(Common::Rect(ENV_POINTS[3][0], CONTROLS_Y, ENV_POINTS[3][1], CONTROLS_Y + 10),
-		ENV_POINTS[3][2] - screen.stringWidth("Up") / 2, "Up");
+		ENV_POINTS[3][2], "Up");
 	screen.makeButton(Common::Rect(ENV_POINTS[4][0], CONTROLS_Y, ENV_POINTS[4][1], CONTROLS_Y + 10),
-		ENV_POINTS[4][2] - screen.stringWidth("Down") / 2, "Down");
+		ENV_POINTS[4][2], "Down");
 	screen.makeButton(Common::Rect(ENV_POINTS[5][0], CONTROLS_Y, ENV_POINTS[5][1], CONTROLS_Y + 10),
-		ENV_POINTS[5][2] - screen.stringWidth("Quit") / 2, "Quit");
+		ENV_POINTS[5][2], "Quit");
 
 	if (!_savegameIndex)
 		screen.buttonPrint(Common::Point(ENV_POINTS[3][2], CONTROLS_Y), COMMAND_NULL, 0, "Up");
