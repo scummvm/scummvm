@@ -240,6 +240,9 @@ int AgiEngine::decodeView(byte *resourceData, uint16 resourceSize, int16 viewNr)
 				celCompressedData = resourceData + celOffset + 3;
 				celCompressedSize = resourceSize - (celOffset + 3);
 
+				if (celCompressedSize == 0)
+					error("compressed size of loop within view %d is 0 bytes", viewNr);
+
 				if (!isAGI256Data) {
 					unpackViewCelData(celData, celCompressedData, celCompressedSize);
 				} else {
@@ -350,7 +353,7 @@ void AgiEngine::unpackViewCelDataAGI256(AgiViewCel *celData, byte *compressedDat
 
 	while (remainingHeight) {
 		if (!compressedSize)
-			error("unexpected end of data, while unpacking AGI256 data");
+			error("unexpected end of data, while unpacking AGI256 view");
 
 		curByte = *compressedData++;
 		compressedSize--;
@@ -364,8 +367,13 @@ void AgiEngine::unpackViewCelDataAGI256(AgiViewCel *celData, byte *compressedDat
 				remainingWidth = 0;
 			}
 		} else {
+			if (!remainingWidth) {
+				error("broken view data, while unpacking AGI256 view");
+				break;
+			}
 			*rawBitmap = curByte;
 			rawBitmap++;
+			remainingWidth--;
 		}
 
 		if (curByte == 0) {
