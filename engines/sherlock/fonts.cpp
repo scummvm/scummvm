@@ -53,6 +53,15 @@ void Fonts::setFont(int fontNum) {
 	// Discard previous font
 	delete _font;
 
+	if (IS_SERRATED_SCALPEL) {
+		// Scalpel
+		if ((_vm->isDemo()) && (!_vm->_interactiveFl)) {
+			// Do not set up any font for the non-interactive demo of scalpel
+			// The non-interactive demo does not contain any font at all
+			return;
+		}
+	}
+
 	Common::String fontFilename;
 
 	if (_vm->getPlatform() != Common::kPlatform3DO) {
