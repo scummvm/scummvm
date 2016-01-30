@@ -184,8 +184,7 @@ void WidgetFoolscap::handleKeyboardEvents() {
 	TattooUserInterface &ui = *(TattooUserInterface *)_vm->_ui;
 	Common::KeyState keyState = ui._keyState;
 
-	if (((toupper(keyState.ascii) >= 'A') && (toupper(keyState.ascii) <= 'Z')) ||
-		((keyState.ascii >= 128) && ((keyState.ascii <= 168) || (keyState.ascii == 225)))) {
+	if ((toupper(keyState.ascii) >= 'A') && (toupper(keyState.ascii) <= 'Z')) {
 		// Visible key pressed, set it and set the keycode to move the caret to the right
 		_answers[_lineNum][_charNum] = keyState.ascii;
 		keyState.keycode = Common::KEYCODE_RIGHT;

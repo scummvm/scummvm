@@ -159,7 +159,7 @@ void WidgetPassword::handleEvents() {
 	} else if (keycode == Common::KEYCODE_RETURN || keycode == Common::KEYCODE_ESCAPE) {
 		close();
 		return;
-	} else if (((ui._keyState.ascii >= ' ' && ui._keyState.ascii < 169) || ui._keyState.ascii == 225)) {
+	} else if ((ui._keyState.ascii >= ' ') && (ui._keyState.ascii <= 'z')) {
 		if (_cursorPos.x + _surface.charWidth(ui._keyState.ascii) < _bounds.width() - _surface.widestChar() - 3) {
 			if (_insert)
 				_password.insertChar(ui._keyState.ascii, _index);

@@ -386,7 +386,7 @@ bool WidgetFiles::getFilename() {
 			done = -1;
 		}
 
-		if ((keyState.ascii >= ' ') && ((keyState.ascii <= 168) || (keyState.ascii == 225)) && (index < 50)) {
+		if ((keyState.ascii >= ' ') && (keyState.ascii <= 'z') && (index < 50)) {
 			if (pt.x + _surface.charWidth(keyState.ascii) < _surface.w() - BUTTON_SIZE - 20) {
 				if (insert)
 					filename.insertChar(keyState.ascii, index);
