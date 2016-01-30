@@ -30,8 +30,10 @@ namespace Sherlock {
 namespace Scalpel {
 
 enum FixedTextId {
+	// Game hotkeys
+	kFixedText_Game_Hotkeys = 0,
 	// Window buttons
-	kFixedText_Window_Exit = 0,
+	kFixedText_Window_Exit,
 	kFixedText_Window_Up,
 	kFixedText_Window_Down,
 	// Inventory buttons
@@ -91,9 +93,7 @@ enum FixedTextId {
 	kFixedText_QuitGame_No,
 	// Press key text
 	kFixedText_PressKey_ForMore,
-	kFixedText_PressKey_ForMoreHotkey,
 	kFixedText_PressKey_ToContinue,
-	kFixedText_PressKey_ToContinueHotkey,
 	// Initial inventory
 	kFixedText_InitInventory_Message,
 	kFixedText_InitInventory_HolmesCard,

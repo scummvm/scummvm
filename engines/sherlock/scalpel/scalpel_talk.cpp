@@ -684,7 +684,6 @@ Common::Point ScalpelTalk::get3doPortraitPosition() const {
 }
 
 void ScalpelTalk::drawInterface() {
-	FixedText &fixedText = *_vm->_fixedText;
 	ScalpelScreen &screen = *(ScalpelScreen *)_vm->_screen;
 	Surface &bb = *screen._backBuffer;
 
@@ -698,9 +697,9 @@ void ScalpelTalk::drawInterface() {
 		SHERLOCK_SCREEN_HEIGHT - 2), INV_BACKGROUND);
 
 	if (_talkTo != -1) {
-		Common::String fixedText_Exit = fixedText.getText(kFixedText_Window_Exit);
-		Common::String fixedText_Up   = fixedText.getText(kFixedText_Window_Up);
-		Common::String fixedText_Down = fixedText.getText(kFixedText_Window_Down);
+		Common::String fixedText_Exit = FIXED(Window_Exit);
+		Common::String fixedText_Up   = FIXED(Window_Up);
+		Common::String fixedText_Down = FIXED(Window_Down);
 
 		screen.makeButton(Common::Rect(99, CONTROLS_Y, 139, CONTROLS_Y + 10),
 			119, fixedText_Exit);
@@ -709,14 +708,10 @@ void ScalpelTalk::drawInterface() {
 		screen.makeButton(Common::Rect(181, CONTROLS_Y, 221, CONTROLS_Y + 10),
 			200, fixedText_Down);
 	} else {
-		Common::String fixedText_PressKeyToContinue = fixedText.getText(kFixedText_PressKey_ToContinue);
-		Common::String fixedText_PressKeyToContinueHotkey = fixedText.getText(kFixedText_PressKey_ToContinueHotkey);
-		int fixedText_PressKeyToContinueLen = screen.stringWidth(fixedText_PressKeyToContinue);
+		Common::String fixedText_PressKeyToContinue = FIXED(PressKey_ToContinue);
 
 		screen.makeButton(Common::Rect(46, CONTROLS_Y, 273, CONTROLS_Y + 10),
-			160, fixedText_PressKeyToContinue);
-		screen.gPrint(Common::Point(160 - fixedText_PressKeyToContinueLen / 2, CONTROLS_Y), COMMAND_FOREGROUND, 
-			"%s", fixedText_PressKeyToContinueHotkey.c_str());
+			160, fixedText_PressKeyToContinue, true);
 	}
 }
 

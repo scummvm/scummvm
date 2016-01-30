@@ -33,11 +33,26 @@ class Talk;
 
 namespace Scalpel {
 
-extern const char COMMANDS[13];
-extern const char COMMANDS_3DO[13];
 extern const int MENU_POINTS[12][4];
 
 extern const int INVENTORY_POINTS[8][3];
+
+enum {
+	MAINBUTTON_LOOK = 0,
+	MAINBUTTON_MOVE,
+	MAINBUTTON_TALK,
+	MAINBUTTON_PICKUP,
+	MAINBUTTON_OPEN,
+	MAINBUTTON_CLOSE,
+	MAINBUTTON_INVENTORY,
+	MAINBUTTON_USE,
+	MAINBUTTON_GIVE,
+	MAINBUTTON_JOURNAL,
+	MAINBUTTON_FILES,
+	MAINBUTTON_SETUP,
+	MAINBUTTON_LOADGAME,
+	MAINBUTTON_SAVEGAME
+};
 
 class Settings;
 
@@ -49,7 +64,7 @@ private:
 	int _lookHelp;
 	int _help, _oldHelp;
 	int _key, _oldKey;
-	int _temp, _oldTemp;
+	int _temp, _oldTemp; // button number (0-11)
 	int _oldLook;
 	bool _keyboardInput;
 	bool _pause;
@@ -144,6 +159,24 @@ public:
 	ImageFile *_controlPanel;
         ImageFile *_controls;
 	int _oldUse;
+
+	byte _hotkeyLook;
+	byte _hotkeyMove;
+	byte _hotkeyTalk;
+	byte _hotkeyPickUp;
+	byte _hotkeyOpen;
+	byte _hotkeyClose;
+	byte _hotkeyInventory;
+	byte _hotkeyUse;
+	byte _hotkeyGive;
+	byte _hotkeyJournal; // not used for 3DO
+	byte _hotkeyFiles; // not used for 3DO
+	byte _hotkeySetUp; // SetUp-button is in the spot of Journal for 3DO
+	byte _hotkeyLoadGame; // 3DO
+	byte _hotkeySaveGame; // 3DO
+
+	byte _hotkeysIndexed[14];
+
 public:
 	ScalpelUserInterface(SherlockEngine *vm);
 	virtual ~ScalpelUserInterface();

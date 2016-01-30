@@ -28,6 +28,8 @@ namespace Sherlock {
 namespace Scalpel {
 
 static const char *const fixedTextEN[] = {
+	// Game hotkeys
+	"LMTPOCIUGJFS",
 	// SH1: Window buttons
 	"Exit",
 	"Up",
@@ -88,10 +90,8 @@ static const char *const fixedTextEN[] = {
 	"YYes",
 	"NNo",
 	// SH1: Press key text
-	"Press any Key for More.",
-	"P",
-	"Press any Key to Continue.",
-	"P",
+	"PPress any Key for More.",
+	"PPress any Key to Continue.",
 	// SH1: Initial Inventory
 	"A message requesting help",
 	"A number of business cards",
@@ -173,6 +173,8 @@ static const char *const fixedTextEN[] = {
 // small o-umlaut: 0x94 / octal 224
 // small u-umlaut: 0x81 / octal 201
 static const char *const fixedTextDE[] = {
+	// Game hotkeys
+	"SBRNOCTEGADU", // original: did not support hotkeys for actions
 	// SH1: Window buttons
 	"Zur\201ck",
 	"Hoch",
@@ -233,10 +235,8 @@ static const char *const fixedTextDE[] = {
 	"JJa",
 	"NNein",
 	// SH1: Press key text
-	"Mehr auf Tastendruck...",
-	"M",
-	"Beliebige Taste dr\201cken.",
-	"B",
+	"MMehr auf Tastendruck...",
+	"BBeliebige Taste dr\201cken.",
 	// SH1: Initial Inventory
 	"Ein Hilferuf von Lestrade",
 	"Holmes' Visitenkarten",
@@ -317,6 +317,8 @@ static const char *const fixedTextDE[] = {
 // up-side down question mark - 0xA8 / octal 250
 // n with a wave on top - 0xA4 / octal 244
 static const char *const fixedTextES[] = {
+	// Game hotkeys
+	"VMHTACIUDNFO",
 	// SH1: Window buttons
 	"Salir", // original interpreter: "Exit"
 	"Subir",
@@ -377,10 +379,8 @@ static const char *const fixedTextES[] = {
 	"SSi",
 	"NNo",
 	// SH1: Press key text
-	"Tecla para ver mas",
-	"T",
-	"Tecla para continuar",
-	"T",
+	"TTecla para ver mas",
+	"TTecla para continuar",
 	// SH1: Initial Inventory
 	"Un mensaje solicitando ayuda",
 	"Unas cuantas tarjetas de visita",

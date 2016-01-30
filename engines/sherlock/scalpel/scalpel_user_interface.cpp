@@ -64,8 +64,6 @@ const int INVENTORY_POINTS[8][3] = {
 	{ 285, 315, 294 }
 };
 
-const char COMMANDS[13] = "LMTPOCIUGJFS";
-const char COMMANDS_3DO[13] = "LMTPOCIUGSFF";
 const int UI_OFFSET_3DO = 16;	// (320 - 288) / 2
 
 /*----------------------------------------------------------------*/
@@ -98,6 +96,43 @@ ScalpelUserInterface::ScalpelUserInterface(SherlockEngine *vm): UserInterface(vm
 	_cNum = 0;
 	_find = 0;
 	_oldUse = 0;
+
+	// Set up hotkeys
+	Common::String gameHotkeys = FIXED(Game_Hotkeys);
+
+	memset(_hotkeysIndexed, 0, sizeof(_hotkeysIndexed));
+	assert(gameHotkeys.size() <= sizeof(_hotkeysIndexed));
+	memcpy(_hotkeysIndexed, gameHotkeys.c_str(), gameHotkeys.size());
+
+	_hotkeyLook = gameHotkeys[0];
+	_hotkeyMove = gameHotkeys[1];
+	_hotkeyTalk = gameHotkeys[2];
+	_hotkeyPickUp = gameHotkeys[3];
+	_hotkeyOpen = gameHotkeys[4];
+	_hotkeyClose = gameHotkeys[5];
+	_hotkeyInventory = gameHotkeys[6];
+	_hotkeyUse = gameHotkeys[7];
+	_hotkeyGive = gameHotkeys[8];
+	_hotkeyJournal = gameHotkeys[9];
+	_hotkeyFiles = gameHotkeys[10];
+	_hotkeySetUp = gameHotkeys[11];
+	_hotkeyLoadGame = 0;
+	_hotkeySaveGame = 0;
+
+	if (IS_3DO) {
+		// 3DO doesn't have a Journal nor a Files button
+		// Instead it has the setup button in place of the journal
+		// and also "Load" and "Save" buttons underneath it.
+		_hotkeyJournal = 0;
+		_hotkeyFiles = 0;
+		_hotkeyLoadGame = 'A'; // "S" already used for SetUp
+		_hotkeySaveGame = 'V'; // ditto
+
+		_hotkeysIndexed[MAINBUTTON_JOURNAL]  = 0;
+		_hotkeysIndexed[MAINBUTTON_FILES]    = 0;
+		_hotkeysIndexed[MAINBUTTON_LOADGAME] = 'A';
+		_hotkeysIndexed[MAINBUTTON_SAVEGAME] = 'V';
+	}
 }
 
 ScalpelUserInterface::~ScalpelUserInterface() {
@@ -439,7 +474,8 @@ void ScalpelUserInterface::toggleButton(int num) {
 
 	if (_menuMode != (MenuMode)(num + 1)) {
 		_menuMode = (MenuMode)(num + 1);
-		_oldKey = COMMANDS[num];
+		assert(num < sizeof(_hotkeysIndexed));
+		_oldKey = _hotkeysIndexed[num];
 		_oldTemp = num;
 
 		if (_keyboardInput) {
@@ -721,7 +757,7 @@ void ScalpelUserInterface::doEnvControl() {
 
 		// Escape _key will close the dialog
 		if (_key == Common::KEYCODE_ESCAPE)
-			_key = 'E';
+			_key = saves._hotkeyExit;
 
 		int buttonIndex = saves.identifyUserButton(_key);
 
@@ -1222,7 +1258,7 @@ void ScalpelUserInterface::doLookControl() {
 				banishWindow(true);
 
 				_windowBounds.top = CONTROLS_Y1;
-				_key = _oldKey = COMMANDS[LOOK_MODE - 1];
+				_key = _oldKey = _hotkeyLook;
 				_temp = _oldTemp = 0;
 				_menuMode = LOOK_MODE;
 				events.clearEvents();
@@ -1252,7 +1288,7 @@ void ScalpelUserInterface::doLookControl() {
 			screen._backBuffer2.blitFrom(tempSurface, Common::Point(0, CONTROLS_Y1));
 
 			_windowBounds.top = CONTROLS_Y1;
-			_key = _oldKey = COMMANDS[LOOK_MODE - 1];
+			_key = _oldKey = _hotkeyLook;
 			_temp = _oldTemp = 0;
 			events.clearEvents();
 			_invLookFlag = false;
@@ -1268,41 +1304,83 @@ void ScalpelUserInterface::doMainControl() {
 	ScalpelInventory &inv = *(ScalpelInventory *)_vm->_inventory;
 	ScalpelSaveManager &saves = *(ScalpelSaveManager *)_vm->_saves;
 	Common::Point pt = events.mousePos();
-	const char *commands = IS_3DO ? COMMANDS_3DO : COMMANDS;
+	int pressedButtonId = -1; // button id according to enum MAINBUTTON_*
 
 	if ((events._pressed || events._released) && pt.y > CONTROLS_Y) {
 		events.clearKeyboard();
 		_key = -1;
+		_temp = 12; // no button currently selected
 
 		// Check whether the mouse is in any of the command areas
-		for (_temp = 0; (_temp < 12) && (_key == -1); ++_temp) {
-			Common::Rect r(MENU_POINTS[_temp][0], MENU_POINTS[_temp][1],
-				MENU_POINTS[_temp][2], MENU_POINTS[_temp][3]);
-			if (IS_3DO && _temp >= 0 && _temp <= 2) {
+		for (int buttonNr = 0; buttonNr < 12; buttonNr++) {
+			Common::Rect r(MENU_POINTS[buttonNr][0], MENU_POINTS[buttonNr][1],
+				MENU_POINTS[buttonNr][2], MENU_POINTS[buttonNr][3]);
+			if (IS_3DO && buttonNr >= 0 && buttonNr <= 2) {
 				r.left += UI_OFFSET_3DO - 1;
 				r.right += UI_OFFSET_3DO - 1;
 			}
-			if (r.contains(pt))
-				_key = commands[_temp];
+			if (r.contains(pt)) {
+				_temp = buttonNr;
+				pressedButtonId = buttonNr;
+				if (IS_3DO) {
+					// Replace some buttons according to 3DO
+					switch (pressedButtonId) {
+					case MAINBUTTON_JOURNAL:
+						pressedButtonId = MAINBUTTON_SETUP;
+						break;
+					case MAINBUTTON_FILES:
+						pressedButtonId = MAINBUTTON_LOADGAME;
+						break;
+					case MAINBUTTON_SETUP:
+						pressedButtonId = MAINBUTTON_SAVEGAME;
+						break;
+					default:
+						break;
+					}
+				}
+				// Get hotkey, that's assigned to it
+				assert(buttonNr < sizeof(_hotkeysIndexed));
+				_key = _hotkeysIndexed[buttonNr];
+				break;
+			}
 		}
-		--_temp;
 	} else if (_keyPress) {
 		// Keyboard control
 		_keyboardInput = true;
+		_temp = 12; // no button currently selected
 
-		char key = toupper(_keyPress);
-		const char *c = strchr(commands, key);
-		if (c) {
-			_temp = c - commands;
+		byte key = toupper(_keyPress);
+
+		for (int16 buttonId = 0; buttonId < sizeof(_hotkeysIndexed); buttonId++) {
+			if (key == _hotkeysIndexed[buttonId]) {
+				pressedButtonId = buttonId;
+			}
+		}
+		if (pressedButtonId >= 0) {
+			_temp = pressedButtonId;
 			_key = key;
+			if (IS_3DO) {
+				// Fix up button number for 3DO
+				switch (pressedButtonId) {
+				case MAINBUTTON_SETUP:
+					_temp = 9;
+					break;
+				case MAINBUTTON_LOADGAME:
+					_temp = 10;
+					break;
+				case MAINBUTTON_SAVEGAME:
+					_temp = 11;
+					break;
+				default:
+					break;
+				}
+			}
 		} else {
-			_temp = 12;
+			_key  = -1;
 		}
 
-		if (_temp == 12)
-			_key = -1;
-
 		if (events._rightPressed) {
+			pressedButtonId = -1;
 			_temp = 12;
 			_key = -1;
 		}
@@ -1332,58 +1410,52 @@ void ScalpelUserInterface::doMainControl() {
 	}
 
 	if (!events._pressed && !_windowOpen) {
-		switch (_key) {
-		case 'L':
+		switch (pressedButtonId) {
+		case MAINBUTTON_LOOK:
 			toggleButton(0);
 			break;
-		case 'M':
+		case MAINBUTTON_MOVE:
 			toggleButton(1);
 			break;
-		case 'T':
+		case MAINBUTTON_TALK:
 			toggleButton(2);
 			break;
-		case 'P':
+		case MAINBUTTON_PICKUP:
 			toggleButton(3);
 			break;
-		case 'O':
+		case MAINBUTTON_OPEN:
 			toggleButton(4);
 			break;
-		case 'C':
+		case MAINBUTTON_CLOSE:
 			toggleButton(5);
 			break;
-		case 'I':
+		case MAINBUTTON_INVENTORY:
 			pushButton(6);
 			_selector = _oldSelector = -1;
 			_menuMode = INV_MODE;
 			inv.drawInventory(LOOK_INVENTORY_MODE);
 			break;
-		case 'U':
+		case MAINBUTTON_USE:
 			pushButton(7);
 			_selector = _oldSelector = -1;
 			_menuMode = USE_MODE;
 			inv.drawInventory(USE_INVENTORY_MODE);
 			break;
-		case 'G':
+		case MAINBUTTON_GIVE:
 			pushButton(8);
 			_selector = _oldSelector = -1;
 			_menuMode = GIVE_MODE;
 			inv.drawInventory(GIVE_INVENTORY_MODE);
 			break;
-		case 'J':
-			pushButton(9);
-			_menuMode = JOURNAL_MODE;
-			journalControl();
+		case MAINBUTTON_JOURNAL:
+			if (!IS_3DO) {
+				pushButton(9);
+				_menuMode = JOURNAL_MODE;
+				journalControl();
+			}
 			break;
-		case 'F':
-			if (IS_3DO) {
-				if (_temp == 10) {
-					pushButton(10);
-					vm.showScummVMRestoreDialog();
-				} else if (_temp == 11) {
-					pushButton(11);
-					vm.showScummVMSaveDialog();
-				}
-			} else {
+		case MAINBUTTON_FILES:
+			if (!IS_3DO) {
 				pushButton(10);
 
 				// Create a thumbnail of the current screen before the files dialog is shown, in case
@@ -1405,7 +1477,19 @@ void ScalpelUserInterface::doMainControl() {
 				}
 			}
 			break;
-		case 'S':
+		case MAINBUTTON_LOADGAME:
+			if (IS_3DO) {
+				pushButton(10);
+				vm.showScummVMRestoreDialog();
+			}
+			break;
+		case MAINBUTTON_SAVEGAME:
+			if (IS_3DO) {
+				pushButton(11);
+				vm.showScummVMSaveDialog();
+			}
+			break;
+		case MAINBUTTON_SETUP:
 			pushButton(IS_3DO ? 9 : 11);
 			_menuMode = SETUP_MODE;
 			Settings::show(_vm);
@@ -1800,7 +1884,6 @@ void ScalpelUserInterface::printObjectDesc(const Common::String &str, bool first
 	ScalpelInventory &inv = *(ScalpelInventory *)_vm->_inventory;
 	ScalpelScreen &screen = *(ScalpelScreen *)_vm->_screen;
 	Talk &talk = *_vm->_talk;
-	FixedText &fixedText = *_vm->_fixedText;
 
 	if (str.hasPrefix("_")) {
 		_lookScriptFlag = true;
@@ -1832,7 +1915,7 @@ void ScalpelUserInterface::printObjectDesc(const Common::String &str, bool first
 				banishWindow(1);
 				events.setCursor(MAGNIFY);
 				_windowBounds.top = CONTROLS_Y1;
-				_key = _oldKey = COMMANDS[LOOK_MODE - 1];
+				_key = _oldKey = _hotkeyLook;
 				_temp = _oldTemp = 0;
 				_menuMode = LOOK_MODE;
 				events.clearEvents();
@@ -1859,7 +1942,7 @@ void ScalpelUserInterface::printObjectDesc(const Common::String &str, bool first
 			banishWindow(1);
 
 			_windowBounds.top = CONTROLS_Y1;
-			_key = _oldKey = COMMANDS[INV_MODE - 1];
+			_key = _oldKey = _hotkeyInventory;
 			_temp = _oldTemp = 0;
 			events.clearEvents();
 
@@ -1931,26 +2014,16 @@ void ScalpelUserInterface::printObjectDesc(const Common::String &str, bool first
 
 	// Handle display depending on whether all the message was shown
 	if (!endOfStr) {
-		Common::String fixedText_PressKeyForMore = fixedText.getText(kFixedText_PressKey_ForMore);
-		Common::String fixedText_PressKeyForMoreHotkey = fixedText.getText(kFixedText_PressKey_ForMoreHotkey);
-		int fixedText_PressKeyForMoreLen = screen.stringWidth(fixedText_PressKeyForMore);
+		Common::String fixedText_PressKeyForMore = FIXED(PressKey_ForMore);
 
 		screen.makeButton(Common::Rect(46, CONTROLS_Y, 272, CONTROLS_Y + 10),
-			(SHERLOCK_SCREEN_WIDTH - fixedText_PressKeyForMoreLen) / 2,
-			fixedText_PressKeyForMore);
-		screen.gPrint(Common::Point((SHERLOCK_SCREEN_WIDTH - fixedText_PressKeyForMoreLen) / 2, CONTROLS_Y),
-			COMMAND_FOREGROUND, "%s", fixedText_PressKeyForMoreHotkey.c_str());
+			SHERLOCK_SCREEN_WIDTH / 2, fixedText_PressKeyForMore, true);
 		_descStr = msgP;
 	} else {
-		Common::String fixedText_PressKeyToContinue = fixedText.getText(kFixedText_PressKey_ToContinue);
-		Common::String fixedText_PressKeyToContinueHotkey = fixedText.getText(kFixedText_PressKey_ToContinueHotkey);
-		int fixedText_PressKeyToContinueLen = screen.stringWidth(fixedText_PressKeyToContinue);
+		Common::String fixedText_PressKeyToContinue = FIXED(PressKey_ToContinue);
 
 		screen.makeButton(Common::Rect(46, CONTROLS_Y, 272, CONTROLS_Y + 10),
-			SHERLOCK_SCREEN_WIDTH / 2,
-			fixedText_PressKeyToContinue);
-		screen.gPrint(Common::Point((SHERLOCK_SCREEN_WIDTH - fixedText_PressKeyToContinueLen) / 2, CONTROLS_Y),
-			COMMAND_FOREGROUND, "%s", fixedText_PressKeyToContinueHotkey.c_str());
+			SHERLOCK_SCREEN_WIDTH / 2, fixedText_PressKeyToContinue, true);
 		_descStr = "";
 	}
 
