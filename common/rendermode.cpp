@@ -38,9 +38,11 @@ const RenderModeDescription g_renderModes[] = {
 	{ "ega", "EGA", kRenderEGA },
 	{ "vga", "VGA", kRenderVGA },
 	{ "amiga", "Amiga", kRenderAmiga },
-	{ "fmtowns", "FM-Towns", kRenderFMTowns },
-	{ "pc9821", "PC-9821 (256 Colors)", kRenderPC9821 },
-	{ "pc9801", "PC-9801 (16 Colors)", kRenderPC9801 },
+	{ "fmtowns", "FM-TOWNS", kRenderFMTowns },
+	{ "pc9821", _s("PC-9821 (256 Colors)"), kRenderPC9821 },
+	{ "pc9801", _s("PC-9801 (16 Colors)"), kRenderPC9801 },
+	{ "2gs", "Apple IIgs", kRenderApple2GS },
+	{ "atari", "Atari ST", kRenderAtariST },
 	{0, 0, kRenderDefault}
 };
 
@@ -53,15 +55,17 @@ struct RenderGUIOMapping {
 // could be used to indicate "any" mode when passed to renderMode2GUIO (if
 // we wanted to merge allRenderModesGUIOs back into)
 static const RenderGUIOMapping s_renderGUIOMapping[] = {
-	{ kRenderHercG,		GUIO_RENDERHERCGREEN },
-	{ kRenderHercA,		GUIO_RENDERHERCAMBER },
-	{ kRenderCGA,		GUIO_RENDERCGA },
-	{ kRenderEGA,		GUIO_RENDEREGA },
-	{ kRenderVGA,		GUIO_RENDERVGA },
-	{ kRenderAmiga,		GUIO_RENDERAMIGA },
-	{ kRenderFMTowns,	GUIO_RENDERFMTOWNS },
-	{ kRenderPC9821,	GUIO_RENDERPC9821 },
-	{ kRenderPC9801,	GUIO_RENDERPC9801 }
+	{ kRenderHercG,     GUIO_RENDERHERCGREEN },
+	{ kRenderHercA,     GUIO_RENDERHERCAMBER },
+	{ kRenderCGA,       GUIO_RENDERCGA },
+	{ kRenderEGA,       GUIO_RENDEREGA },
+	{ kRenderVGA,       GUIO_RENDERVGA },
+	{ kRenderAmiga,     GUIO_RENDERAMIGA },
+	{ kRenderFMTowns,   GUIO_RENDERFMTOWNS },
+	{ kRenderPC9821,    GUIO_RENDERPC9821 },
+	{ kRenderPC9801,    GUIO_RENDERPC9801 },
+	{ kRenderApple2GS,  GUIO_RENDERAPPLE2GS },
+	{ kRenderAtariST,   GUIO_RENDERATARIST }
 };
 
 DECLARE_TRANSLATION_ADDITIONAL_CONTEXT("Hercules Green", "lowres")

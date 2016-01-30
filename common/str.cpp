@@ -751,6 +751,13 @@ bool matchString(const char *str, const char *pat, bool ignoreCase, bool pathMod
 				return true;
 			break;
 
+		case '#':
+			if (!isDigit(*str))
+				return false;
+			pat++;
+			str++;
+			break;
+
 		default:
 			if ((!ignoreCase && *pat != *str) ||
 				(ignoreCase && tolower(*pat) != tolower(*str))) {

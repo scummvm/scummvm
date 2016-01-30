@@ -39,6 +39,8 @@ protected:
 
 	void createOtherBuildFiles(const BuildSetup &setup);
 
+	void addResourceFiles(const BuildSetup &setup, StringList &includeList, StringList &excludeList);
+
 	/**
 	 * Create the global project properties.
 	 *

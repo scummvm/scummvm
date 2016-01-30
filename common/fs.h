@@ -57,7 +57,14 @@ class FSList : public Array<FSNode> {};
  */
 class FSNode : public ArchiveMember {
 private:
+	friend class ::AbstractFSNode;
 	SharedPtr<AbstractFSNode>	_realNode;
+	/**
+	 * Construct a FSNode from a backend's AbstractFSNode implementation.
+	 *
+	 * @param realNode Pointer to a heap allocated instance. FSNode will take
+	 *                 ownership of the pointer.
+	 */
 	FSNode(AbstractFSNode *realNode);
 
 public:

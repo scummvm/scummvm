@@ -1357,6 +1357,11 @@ iphone)
 	_host_cpu=arm
 	_host_alias=arm-apple-darwin9
 	;;
+ios7)
+	_host_os=iphone
+	_host_cpu=arm
+	_host_alias=arm-apple-darwin11
+	;;
 linupy)
 	_host_os=linux
 	_host_cpu=arm
@@ -2061,18 +2066,31 @@ echo_n "Checking host CPU architecture... "
 case $_host_cpu in
 	arm*)
 		echo "ARM"
-		define_in_config_if_yes yes 'USE_ARM_SCALER_ASM'
-		# FIXME: The following feature exhibits a bug. It produces distorted
-		# sound since 9003ce517ff9906b0288f9f7c02197fd091d4554. The ARM
-		# assembly will need to be properly adapted to the changes to the C
-		# code in 8f5a7cde2f99de9fef849b0ff688906f05f4643e.
-		# See bug #6957: "AUDIO: ARM ASM sound code causes distorted audio on 32 bit armv6"
-		#define_in_config_if_yes yes 'USE_ARM_SOUND_ASM'
-		define_in_config_if_yes yes 'USE_ARM_SMUSH_ASM'
-		define_in_config_if_yes yes 'USE_ARM_GFX_ASM'
-		# FIXME: The following feature exhibits a bug during the intro scene of Indy 4
-		# (on Pandora and iPhone at least)
-		#define_in_config_if_yes yes 'USE_ARM_COSTUME_ASM'
+		case $_host_alias in
+			# Apple's as does not support the syntax we use in our ARM
+			# assembly. We simply do not enable it.
+			arm-apple-darwin9)
+				;;
+			arm-apple-darwin10)
+				;;
+			arm-apple-darwin11)
+				;;
+
+			*)
+				define_in_config_if_yes yes 'USE_ARM_SCALER_ASM'
+				# FIXME: The following feature exhibits a bug. It produces distorted
+				# sound since 9003ce517ff9906b0288f9f7c02197fd091d4554. The ARM
+				# assembly will need to be properly adapted to the changes to the C
+				# code in 8f5a7cde2f99de9fef849b0ff688906f05f4643e.
+				# See bug #6957: "AUDIO: ARM ASM sound code causes distorted audio on 32 bit armv6"
+				#define_in_config_if_yes yes 'USE_ARM_SOUND_ASM'
+				define_in_config_if_yes yes 'USE_ARM_SMUSH_ASM'
+				define_in_config_if_yes yes 'USE_ARM_GFX_ASM'
+				# FIXME: The following feature exhibits a bug during the intro scene of Indy 4
+				# (on Pandora and iPhone at least)
+				#define_in_config_if_yes yes 'USE_ARM_COSTUME_ASM'
+				;;
+		esac
 
 		append_var DEFINES "-DARM_TARGET"
 		;;
@@ -2105,7 +2123,7 @@ echo_n "Checking hosttype... "
 echo $_host_os
 case $_host_os in
 	amigaos*)
-		append_var LDFLAGS "-use-dynld -Wl,--export-dynamic"
+		append_var LDFLAGS "-Wl,--export-dynamic"
 		append_var LDFLAGS "-L/sdk/local/newlib/lib"
 		# We have to use 'long' for our 4 byte typedef because AmigaOS already typedefs (u)int32
 		# as (unsigned) long, and consequently we'd get a compiler error otherwise.
@@ -2722,6 +2740,16 @@ if test -n "$_host"; then
 			_seq_midi=no
 			_timidity=no
 			;;
+		ios7)
+			append_var DEFINES "-DIPHONE"
+			append_var CFLAGS "-Wno-shift-count-overflow"
+			append_var CXXFLAGS "-Wno-shift-count-overflow"
+			_backend="ios7"
+			_build_scalers=no
+			_mt32emu=no
+			_seq_midi=no
+			_timidity=no
+			;;
 		m68k-atari-mint)
 			append_var DEFINES "-DSYSTEM_NOT_SUPPORTING_D_TYPE"
 			_ranlib=m68k-atari-mint-ranlib
@@ -3015,6 +3043,19 @@ case $_backend in
 		append_var LIBS "-framework QuartzCore -framework CoreFoundation -framework Foundation"
 		append_var LIBS "-framework AudioToolbox -framework CoreAudio"
 		;;
+	ios7)
+		append_var LIBS "-lobjc -framework UIKit -framework CoreGraphics -framework OpenGLES"
+		append_var LIBS "-framework QuartzCore -framework CoreFoundation -framework Foundation"
+		append_var LIBS "-framework AudioToolbox -framework CoreAudio"
+		append_var LDFLAGS "-miphoneos-version-min=7.1 -arch armv7"
+		append_var CFLAGS "-miphoneos-version-min=7.1 -arch armv7"
+		append_var CXXFLAGS "-miphoneos-version-min=7.1 -arch armv7"
+		if test -n "$SDKROOT"; then
+			append_var LDFLAGS "-mlinker-version=134.9 -B/usr/local/bin/arm-apple-darwin11-"
+			append_var CFLAGS "-isysroot $SDKROOT -F$SDKROOT/System/Library/Frameworks"
+			append_var CXXFLAGS "-isysroot $SDKROOT -I$SDKROOT/usr/include/c++/4.2.1 -F$SDKROOT/System/Library/Frameworks"
+		fi
+		;;
 	linuxmoto)
 		append_var DEFINES "-DLINUXMOTO"
 		;;
@@ -3146,7 +3187,7 @@ esac
 # Enable 16bit support only for backends which support it
 #
 case $_backend in
-	android | dingux | dc | gph | iphone | maemo | openpandora | psp | samsungtv | sdl | tizen | webos | wii)
+	android | dingux | dc | gph | iphone | ios7 | maemo | openpandora | psp | samsungtv | sdl | tizen | webos | wii)
 		if test "$_16bit" = auto ; then
 			_16bit=yes
 		else
@@ -3205,7 +3246,7 @@ case $_host_os in
 	amigaos* | cygwin* | dreamcast | ds | gamecube | mingw* | n64 | ps2 | ps3 | psp | wii | wince)
 		_posix=no
 		;;
-	android | beos* | bsd* | darwin* | freebsd* | gnu* | gph-linux | haiku* | hpux* | iphone | irix*| k*bsd*-gnu* | linux* | maemo | mint* | netbsd* | openbsd* | solaris* | sunos* | uclinux* | webos)
+	android | beos* | bsd* | darwin* | freebsd* | gnu* | gph-linux | haiku* | hpux* | iphone | ios7 | irix*| k*bsd*-gnu* | linux* | maemo | mint* | netbsd* | openbsd* | solaris* | sunos* | uclinux* | webos)
 		_posix=yes
 		;;
 	os2-emx*)
@@ -3850,26 +3891,47 @@ fi
 echo "$_sparkle"
 
 #
-# Check for libfluidsynth
+# Check for FluidSynth 
 #
-echocheck "libfluidsynth"
-if test "$_fluidsynth" = auto ; then
+echocheck "FluidSynth"
+
+append_var FLUIDSYNTH_LIBS "-lfluidsynth"
+case $_host_os in
+	mingw*)
+		# NOTE: Windows builds use an older FluidSynth version (1.0.9)
+		# which doesn't require glib, to avoid bundling the complete glib
+		# libraries with Windows builds.
+		FLUIDSYNTH_STATIC_LIBS="$FLUIDSYNTH_LIBS -ldsound -lwinmm"
+	;;
+
+	darwin*)
+		FLUIDSYNTH_STATIC_LIBS="$FLUIDSYNTH_LIBS -framework Foundation -framework CoreMIDI -framework CoreAudio -lglib-2.0 -lintl -liconv -lreadline"
+	;;
+
+	iphone)
+		FLUIDSYNTH_STATIC_LIBS="$FLUIDSYNTH_LIBS -framework Foundation -framework CoreMIDI -lglib-2.0 -lintl -liconv"
+	;;
+
+	*)
+		FLUIDSYNTH_STATIC_LIBS="$FLUIDSYNTH_LIBS -lglib-2.0 -lintl -liconv"
+	;;
+esac
+
+if test "$_fluidsynth" = auto; then
 	_fluidsynth=no
 	cat > $TMPC << EOF
 #include <fluidsynth.h>
-int main(void) { return 0; }
+int main(void) { delete_fluid_settings(new_fluid_settings()); return 0; }
 EOF
-	cc_check $FLUIDSYNTH_CFLAGS $FLUIDSYNTH_LIBS -lfluidsynth && _fluidsynth=yes
+	cc_check_no_clean $FLUIDSYNTH_CFLAGS $FLUIDSYNTH_LIBS && _fluidsynth=yes
+	if test "$_fluidsynth" != yes; then
+		FLUIDSYNTH_LIBS="$FLUIDSYNTH_STATIC_LIBS"
+		cc_check_no_clean $FLUIDSYNTH_CFLAGS $FLUIDSYNTH_LIBS && _fluidsynth=yes
+	fi
+	cc_check_clean
 fi
-if test "$_fluidsynth" = yes ; then
-	case $_host_os in
-		mingw*)
-			append_var LIBS "$FLUIDSYNTH_LIBS -lfluidsynth -ldsound -lwinmm"
-		;;
-		*)
-			append_var LIBS "$FLUIDSYNTH_LIBS -lfluidsynth"
-		;;
-	esac
+if test "$_fluidsynth" = yes; then
+	append_var LIBS "$FLUIDSYNTH_LIBS"
 	append_var INCLUDES "$FLUIDSYNTH_CFLAGS"
 fi
 define_in_config_if_yes "$_fluidsynth" 'USE_FLUIDSYNTH'
@@ -4001,7 +4063,15 @@ int main(int argc, char *argv[]) {
 }
 EOF
 
-			cc_check $FREETYPE2_CFLAGS $FREETYPE2_LIBS && _freetype2=yes
+			cc_check_no_clean $FREETYPE2_CFLAGS $FREETYPE2_LIBS && _freetype2=yes
+			# Modern freetype-config scripts accept --static to get all
+			# required flags for static linking. We abuse this to detect
+			# FreeType2 builds which are static themselves.
+			if test "$_freetype2" != "yes"; then
+				FREETYPE2_LIBS=`$_freetypeconfig --prefix="$_freetypepath" --static --libs 2>/dev/null`
+				cc_check_no_clean $FREETYPE2_CFLAGS $FREETYPE2_LIBS && _freetype2=yes
+			fi
+			cc_check_clean
 		fi
 
 		if test "$_freetype2" = "yes"; then

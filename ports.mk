@@ -75,7 +75,7 @@ bundle: residualvm-static
 	mkdir -p $(bundle_name)/Contents/MacOS
 	mkdir -p $(bundle_name)/Contents/Resources
 	echo "APPL????" > $(bundle_name)/Contents/PkgInfo
-	cp $(srcdir)/dists/macosx/Info.plist $(bundle_name)/Contents/
+	sed -e 's/$$(PRODUCT_BUNDLE_IDENTIFIER)/org.residualvm.residualvm/' $(srcdir)/dists/macosx/Info.plist >$(bundle_name)/Contents/Info.plist
 ifdef USE_SPARKLE
 	mkdir -p $(bundle_name)/Contents/Frameworks
 	cp $(srcdir)/dists/macosx/dsa_pub.pem $(bundle_name)/Contents/Resources/
@@ -143,8 +143,16 @@ endif
 
 ifdef USE_FLUIDSYNTH
 OSX_STATIC_LIBS += \
-                -framework CoreAudio \
-                $(STATICLIBPATH)/lib/libfluidsynth.a
+                -liconv -framework CoreMIDI -framework CoreAudio\
+                $(STATICLIBPATH)/lib/libfluidsynth.a \
+                $(STATICLIBPATH)/lib/libglib-2.0.a \
+                $(STATICLIBPATH)/lib/libintl.a
+
+ifneq ($(BACKEND), iphone)
+ifneq ($(BACKEND), ios7)
+OSX_STATIC_LIBS += -lreadline
+endif
+endif
 endif
 
 ifdef USE_MAD
@@ -198,7 +206,7 @@ residualvm-static: $(OBJS)
 		$(OSX_STATIC_LIBS) \
 		$(OSX_ZLIB)
 
-# Special target to create a static linked binary for the iPhone
+# Special target to create a static linked binary for the iPhone (legacy, and iOS 7+)
 iphone: $(OBJS)
 	$(CXX) $(LDFLAGS) -o residualvm $(OBJS) \
 		$(OSX_STATIC_LIBS) \

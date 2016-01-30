@@ -38,7 +38,6 @@ my @subs_files = qw(
 	dists/macosx/Info.plist
 	dists/irix/residualvm.spec
 	dists/android/AndroidManifest.xml
-	dists/android/plugin-manifest.xml
 	);
 
 my %subs = (

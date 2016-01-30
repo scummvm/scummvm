@@ -84,6 +84,20 @@ protected:
 
 public:
 	/**
+	 * Construct a FSNode object from an AbstractFSNode object.
+	 *
+	 * This is a helper to create Common::FSNode objects when the backend's
+	 * FileSystemFactory cannot create the given AbstractFSNode object itself.
+	 * All other code is supposed to use Common::FSNode's constructor itself.
+	 *
+	 * @param realNode Pointer to a heap allocated instance. FSNode will take
+	 *                 ownership of the pointer.
+	 */
+	static Common::FSNode makeFSNode(AbstractFSNode *realNode) {
+		return Common::FSNode(realNode);
+	}
+
+	/**
 	 * Destructor.
 	 */
 	virtual ~AbstractFSNode() {}

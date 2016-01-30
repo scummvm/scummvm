@@ -332,6 +332,9 @@ class StringTestSuite : public CxxTest::TestSuite
 		TS_ASSERT(!Common::matchString("monkey.s99",  "monkey.s*1"));
 		TS_ASSERT(Common::matchString("monkey.s101", "monkey.s*1"));
 
+		TS_ASSERT(Common::matchString("monkey.s01",  "monkey.s##"));
+		TS_ASSERT(!Common::matchString("monkey.s01", "monkey.###"));
+
 		TS_ASSERT(!Common::String("").matchString("*_"));
 		TS_ASSERT(Common::String("a").matchString("a***"));
 	}

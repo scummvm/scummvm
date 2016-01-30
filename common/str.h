@@ -158,6 +158,7 @@ public:
 	 * Token meaning:
 	 *      "*": any character, any amount of times.
 	 *      "?": any character, only once.
+	 *      "#": any decimal digit, only once.
 	 *
 	 * Example strings/patterns:
 	 *      String: monkey.s01   Pattern: monkey.s??    => true
@@ -165,6 +166,8 @@ public:
 	 *      String: monkey.s99   Pattern: monkey.s?1    => false
 	 *      String: monkey.s101  Pattern: monkey.s*     => true
 	 *      String: monkey.s99   Pattern: monkey.s*1    => false
+	 *      String: monkey.s01   Pattern: monkey.s##    => true
+	 *      String: monkey.s01   Pattern: monkey.###    => false
 	 *
 	 * @param pat Glob pattern.
 	 * @param ignoreCase Whether to ignore the case when doing pattern match
@@ -180,6 +183,7 @@ public:
 	inline uint size() const         { return _size; }
 
 	inline bool empty() const { return (_size == 0); }
+	char firstChar() const    { return (_size > 0) ? _str[0] : 0; }
 	char lastChar() const     { return (_size > 0) ? _str[_size - 1] : 0; }
 
 	char operator[](int idx) const {
@@ -329,6 +333,7 @@ String normalizePath(const String &path, const char sep);
  * Token meaning:
  *      "*": any character, any amount of times.
  *      "?": any character, only once.
+ *      "#": any decimal digit, only once.
  *
  * Example strings/patterns:
  *      String: monkey.s01   Pattern: monkey.s??    => true
@@ -336,6 +341,8 @@ String normalizePath(const String &path, const char sep);
  *      String: monkey.s99   Pattern: monkey.s?1    => false
  *      String: monkey.s101  Pattern: monkey.s*     => true
  *      String: monkey.s99   Pattern: monkey.s*1    => false
+ *      String: monkey.s01   Pattern: monkey.s##    => true
+ *      String: monkey.s01   Pattern: monkey.###    => false
  *
  * @param str Text to be matched against the given pattern.
  * @param pat Glob pattern.

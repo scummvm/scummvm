@@ -139,8 +139,17 @@ static Common::Error runGame(const EnginePlugin *plugin, OSystem &system, const 
 		err = Common::kPathNotDirectory;
 
 	// Create the game engine
-	if (err.getCode() == Common::kNoError)
+	if (err.getCode() == Common::kNoError) {
+		// Set default values for all of the custom engine options
+		// Appareantly some engines query them in their constructor, thus we
+		// need to set this up before instance creation.
+		const ExtraGuiOptions engineOptions = (*plugin)->getExtraGuiOptions(Common::String());
+		for (uint i = 0; i < engineOptions.size(); i++) {
+			ConfMan.registerDefault(engineOptions[i].configOption, engineOptions[i].defaultState);
+		}
+
 		err = (*plugin)->createInstance(&system, &engine);
+	}
 
 	// Check for errors
 	if (!engine || err.getCode() != Common::kNoError) {
@@ -217,12 +226,6 @@ static Common::Error runGame(const EnginePlugin *plugin, OSystem &system, const 
 
 	// Initialize any game-specific keymaps
 	engine->initKeymap();
-
-	// Set default values for all of the custom engine options
-	const ExtraGuiOptions engineOptions = (*plugin)->getExtraGuiOptions(Common::String());
-	for (uint i = 0; i < engineOptions.size(); i++) {
-		ConfMan.registerDefault(engineOptions[i].configOption, engineOptions[i].defaultState);
-	}
 
 	// Inform backend that the engine is about to be run
 	system.engineInit();

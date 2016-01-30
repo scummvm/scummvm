@@ -36,7 +36,7 @@
 #include "graphics/pixelformat.h"
 
 
-#define SCUMMVM_THEME_VERSION_STR "SCUMMVM_STX0.8.20"
+#define SCUMMVM_THEME_VERSION_STR "SCUMMVM_STX0.8.21"
 
 class OSystem;
 
@@ -228,17 +228,17 @@ public:
 	static const char *const kImageLogoSmall; ///< ScummVM logo used in the GMM
 	static const char *const kImageSearch;    ///< Search tool image used in the launcher
 	static const char *const kImageEraser;     ///< Clear input image used in the launcher
-	static const char *const kImageDelbtn; ///< Delete characters in the predictive dialog
+	static const char *const kImageDelButton; ///< Delete characters in the predictive dialog
 	static const char *const kImageList;      ///< List image used in save/load chooser selection
 	static const char *const kImageGrid;      ///< Grid image used in save/load chooser selection
-	static const char *const kImageStopbtn; ///< Stop recording button in recorder onscreen dialog
-	static const char *const kImageEditbtn; ///< Edit recording metadata in recorder onscreen dialog
-	static const char *const kImageSwitchModebtn; ///< Switch mode button in recorder onscreen dialog
-	static const char *const kImageFastReplaybtn; ///< Fast playback mode button in recorder onscreen dialog
-	static const char *const kImageStopSmallbtn; ///< Stop recording button in recorder onscreen dialog (for 320xY)
-	static const char *const kImageEditSmallbtn; ///< Edit recording metadata in recorder onscreen dialog (for 320xY)
-	static const char *const kImageSwitchModeSmallbtn; ///< Switch mode button in recorder onscreen dialog (for 320xY)
-	static const char *const kImageFastReplaySmallbtn; ///< Fast playback mode button in recorder onscreen dialog (for 320xY)
+	static const char *const kImageStopButton; ///< Stop recording button in recorder onscreen dialog
+	static const char *const kImageEditButton; ///< Edit recording metadata in recorder onscreen dialog
+	static const char *const kImageSwitchModeButton; ///< Switch mode button in recorder onscreen dialog
+	static const char *const kImageFastReplayButton; ///< Fast playback mode button in recorder onscreen dialog
+	static const char *const kImageStopSmallButton; ///< Stop recording button in recorder onscreen dialog (for 320xY)
+	static const char *const kImageEditSmallButton; ///< Edit recording metadata in recorder onscreen dialog (for 320xY)
+	static const char *const kImageSwitchModeSmallButton; ///< Switch mode button in recorder onscreen dialog (for 320xY)
+	static const char *const kImageFastReplaySmallButton; ///< Fast playback mode button in recorder onscreen dialog (for 320xY)
 
 	/**
 	 * Graphics mode enumeration.

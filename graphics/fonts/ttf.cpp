@@ -277,7 +277,7 @@ bool TTFFont::load(Common::SeekableReadStream &stream, int size, TTFSizeMode siz
 }
 
 int TTFFont::computePointSize(int size, TTFSizeMode sizeMode) const {
-	int ptSize;
+	int ptSize = 0;
 	switch (sizeMode) {
 	case kTTFSizeModeCell: {
 		ptSize = readPointSizeFromVDMXTable(size);
