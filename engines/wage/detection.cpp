@@ -103,6 +103,15 @@ static const ADGameDescription gameDescriptions[] = {
 		ADGF_NO_FLAGS,
 		GUIO0()
 	},
+	{
+		"wage",
+		"Zoony",
+		AD_ENTRY1s("Zoony", "e6cc8a914a4215dafbcce6315dd12cf5", 160256),
+		Common::EN_ANY,
+		Common::kPlatformMacintosh,
+		ADGF_USEEXTRAASTITLE,
+		GUIO0()
+	},
 
 	AD_TABLE_END_MARKER
 };
