@@ -215,23 +215,20 @@ void Words::cleanUpInput(const char *rawUserInput, Common::String &cleanInput) {
 		// ends with a space? remove it
 		cleanInput.deleteLastChar();
 	}
-
-	// Sierra compared independent of upper case and lower case
-	cleanInput.toLowercase();
 }
 
-int16 Words::findWordInDictionary(const Common::String &userInput, uint16 userInputLen, uint16 userInputPos, uint16 &foundWordLen) {
+int16 Words::findWordInDictionary(const Common::String &userInputLowcased, uint16 userInputLen, uint16 userInputPos, uint16 &foundWordLen) {
 	uint16 userInputLeft = userInputLen - userInputPos;
 	uint16 wordStartPos = userInputPos;
 	int16 wordId = DICTIONARY_RESULT_UNKNOWN;
-	byte  firstChar = userInput[userInputPos];
+	byte  firstChar = userInputLowcased[userInputPos];
 	byte  curUserInputChar = 0;
 
 	foundWordLen = 0;
 
 	if ((firstChar >= 'a') && (firstChar <= 'z')) {
 		// word has to start with a letter
-		if (((userInputPos + 1) == userInputLen) || (userInput[1] == ' ')) {
+		if (((userInputPos + 1) < userInputLen) && (userInputLowcased[userInputPos + 1] == ' ')) {
 			// current word is 1 char only?
 			if ((firstChar == 'a') || (firstChar == 'i')) {
 				// and it's "a" or "i"? -> then set current type to ignore
@@ -254,7 +251,7 @@ int16 Words::findWordInDictionary(const Common::String &userInput, uint16 userIn
 
 				userInputPos = wordStartPos;
 				while (curCompareLeft) {
-					curUserInputChar = userInput[userInputPos];
+					curUserInputChar = userInputLowcased[userInputPos];
 					curDictionaryChar = dictionaryEntry->word[dictionaryWordPos];
 
 					if (curUserInputChar != curDictionaryChar)
@@ -266,14 +263,17 @@ int16 Words::findWordInDictionary(const Common::String &userInput, uint16 userIn
 				}
 
 				if (!curCompareLeft) {
-					// fully matched, remember match
-					wordId = dictionaryEntry->id;
-					foundWordLen = dictionaryWordLen;
+					// check, if there is also nothing more of user input left or if a space the follow-up char?
+					if ((userInputPos >= userInputLen) || (userInputLowcased[userInputPos] == ' ')) {
+						// so fully matched, remember match
+						wordId = dictionaryEntry->id;
+						foundWordLen = dictionaryWordLen;
 
-					// follow-up character in user-input is a space? add that to the word length
-					if (userInputLeft == foundWordLen) {
-						// perfect match -> break
-						break;
+						// perfect match? -> exit loop
+						if (userInputLeft == foundWordLen) {
+							// perfect match -> break
+							break;
+						}
 					}
 				}
 			}
@@ -283,7 +283,7 @@ int16 Words::findWordInDictionary(const Common::String &userInput, uint16 userIn
 	if (foundWordLen == 0) {
 		userInputPos = wordStartPos;
 		while (userInputPos < userInputLen) {
-			if (userInput[userInputPos] == ' ') {
+			if (userInputLowcased[userInputPos] == ' ') {
 				break;
 			}
 			userInputPos++;
@@ -295,6 +295,7 @@ int16 Words::findWordInDictionary(const Common::String &userInput, uint16 userIn
 
 void Words::parseUsingDictionary(char *rawUserInput) {
 	Common::String userInput;
+	Common::String userInputLowcased;
 	const char *userInputPtr = nullptr;
 	uint16 userInputLen;
 	uint16 userInputPos = 0;
@@ -312,6 +313,10 @@ void Words::parseUsingDictionary(char *rawUserInput) {
 	// clean up user input
 	cleanUpInput(rawUserInput, userInput);
 
+	// Sierra compared independent of upper case and lower case
+	userInputLowcased = userInput;
+	userInputLowcased.toLowercase();
+
 	userInputLen = userInput.size();
 	userInputPtr = userInput.c_str();
 
@@ -321,7 +326,7 @@ void Words::parseUsingDictionary(char *rawUserInput) {
 			userInputPos++;
 
 		foundWordPos = userInputPos;
-		foundWordId = findWordInDictionary(userInput, userInputLen, userInputPos, foundWordLen);
+		foundWordId = findWordInDictionary(userInputLowcased, userInputLen, userInputPos, foundWordLen);
 
 		if (foundWordId != DICTIONARY_RESULT_IGNORE) {
 			// word not supposed to get ignored
