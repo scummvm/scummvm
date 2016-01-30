@@ -78,6 +78,15 @@ static const ADGameDescription gameDescriptions[] = {
 	},
 	{
 		"wage",
+		"Deep Angst",
+		AD_ENTRY1s("Deep Angst", "635f62bbc569e72b03cab9107927d03d", 335232),
+		Common::EN_ANY,
+		Common::kPlatformMacintosh,
+		ADGF_USEEXTRAASTITLE,
+		GUIO0()
+	},
+	{
+		"wage",
 		"Escape from School!",
 		AD_ENTRY1s("Escape from School!", "a854be48d4af20126d18a9cad93a969b", 51840),
 		Common::EN_ANY,
