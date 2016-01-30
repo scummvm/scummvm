@@ -89,7 +89,9 @@ void AgiEngine::newRoom(int16 newRoomNr) {
 		break;
 	}
 
-	if (getVersion() < 0x2000) {
+	uint16 agiVersion = getVersion();
+
+	if (agiVersion < 0x2000) {
 		warning("STUB: NewRoom(%d)", newRoomNr);
 
 		screenObjEgo->flags &= ~fDidntMove;
@@ -98,9 +100,12 @@ void AgiEngine::newRoom(int16 newRoomNr) {
 		setView(screenObjEgo, screenObjEgo->currentViewNr);
 
 	} else {
-		if (screenObjEgo->motionType == kMotionEgo) {
-			screenObjEgo->motionType = kMotionNormal;
-			_game.vars[VM_VAR_EGO_DIRECTION] = 0;
+		if (agiVersion >= 0x3000) {
+			// this was only done in AGI3
+			if (screenObjEgo->motionType == kMotionEgo) {
+				screenObjEgo->motionType = kMotionNormal;
+				_game.vars[VM_VAR_EGO_DIRECTION] = 0;
+			}
 		}
 
 		_game.vars[VM_VAR_BORDER_TOUCH_EGO] = 0;
