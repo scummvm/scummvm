@@ -570,17 +570,39 @@ const ADGameDescription *AgiMetaEngine::fallbackDetect(const FileMap &allFilesXX
 namespace Agi {
 
 bool AgiBase::canLoadGameStateCurrently() {
-	return (!(getGameType() == GType_PreAGI) && getflag(VM_FLAG_MENUS_WORK) && !_noSaveLoadAllowed);
+	if (!(getGameType() == GType_PreAGI)) {
+		if (getflag(VM_FLAG_MENUS_WORK)) {
+			if (!_noSaveLoadAllowed) {
+				if (!cycleInnerLoopIsActive()) {
+					// We can't allow to restore a game, while inner loop is active
+					// For example Mixed Up Mother Goose has an endless loop for user name input
+					// Which means even if we abort the inner loop, the game would keep on calling
+					// GetString() until something is entered. And this would of course also happen
+					// right after restoring a saved game.
+					return true;
+				}
+			}
+		}
+	}
+	return false;
 }
 
 bool AgiBase::canSaveGameStateCurrently() {
-	bool promptEnabled = false;
-
 	if (getGameID() == GID_BC) // Technically in Black Cauldron we may save anytime
 		return true;
 
-	promptEnabled = promptIsEnabled();
-	return (!(getGameType() == GType_PreAGI) && getflag(VM_FLAG_MENUS_WORK) && !_noSaveLoadAllowed && promptEnabled);
+	if (!(getGameType() == GType_PreAGI)) {
+		if (getflag(VM_FLAG_MENUS_WORK)) {
+			if (!_noSaveLoadAllowed) {
+				if (!cycleInnerLoopIsActive()) {
+					if (promptIsEnabled()) {
+						return true;
+					}
+				}
+			}
+		}
+	}
+	return false;
 }
 
 int AgiEngine::agiDetectGame() {
