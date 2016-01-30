@@ -398,6 +398,11 @@ void Gui::paintBorder(Graphics::Surface *g, Common::Rect &r, WindowType windowTy
 		font->drawString(g, _scene->_name, x + (width - w) / 2 + 5, y + yOff, w, kColorBlack);
 	}
 
+	if (x + width > _screen.w)
+		width = _screen.w - x;
+	if (y + height > _screen.h)
+		height = _screen.h - y;
+
 	g_system->copyRectToScreen(g->getBasePtr(x, y), g->pitch, x, y, width, height);
 }
 
