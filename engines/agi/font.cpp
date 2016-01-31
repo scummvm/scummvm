@@ -664,6 +664,7 @@ void GfxFont::init() {
 		// no font assigned?
 		// use regular VGA font (taken from Dos-Box with a few modifications)
 		_fontData = fontData_VGA;
+		debug("AGI: Using VGA font");
 	}
 
 	if (_vm->getLanguage() == Common::RU_RUS) {
@@ -693,6 +694,8 @@ void GfxFont::overwriteExtendedWithRussianSet() {
 	}
 	// Overwrite extended set with Russian characters
 	memcpy(_fontDataAllocated + (128 * 8), fontData_ExtendedRussian, 128 * 8);
+
+	debug("AGI: Using Russian extended font set");
 }
 
 // This code loads a ScummVM-specific user-supplied binary font file
@@ -731,7 +734,7 @@ void GfxFont::loadFontScummVMFile(Common::String fontFilename) {
 
 	overwriteSaveRestoreDialogCharacter();
 
-	debug("Using user-supplied font");
+	debug("AGI: Using user-supplied font");
 }
 
 // We load the Mickey Mouse font from MICKEY.EXE
@@ -764,7 +767,7 @@ void GfxFont::loadFontMickey() {
 	interpreterFile.read(fontData, 256 * 8);
 	interpreterFile.close();
 
-	debug("Using Mickey Mouse font");
+	debug("AGI: Using Mickey Mouse font");
 }
 
 // we create a bitmap out of the topaz data used in parallaction (which is normally found in staticres.cpp)
@@ -837,7 +840,7 @@ void GfxFont::loadFontAmigaPseudoTopaz() {
 		}
 	}
 
-	debug("Using recreation of Amiga Topaz font");
+	debug("AGI: Using recreation of Amiga Topaz font");
 }
 
 void GfxFont::loadFontAppleIIgs() {
@@ -1026,6 +1029,8 @@ void GfxFont::loadFontAppleIIgs() {
 	free(strikeDataPtr);
 
 	overwriteSaveRestoreDialogCharacter();
+
+	debug("AGI: Using Apple IIgs font");
 }
 
 // Loads Atari ST font file
@@ -1152,7 +1157,7 @@ void GfxFont::loadFontAtariST(Common::String fontFilename) {
 
 	overwriteSaveRestoreDialogCharacter();
 
-	debug("Using Atari ST 8x8 system font");
+	debug("AGI: Using Atari ST 8x8 system font");
 }
 
 } // End of namespace Agi
