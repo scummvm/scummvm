@@ -26,6 +26,7 @@ For a more comprehensive changelog of the latest experimental code, see:
    - It is now possible to disable mouse support (except for Amiga versions
      and fanmade games, that require a mouse).
    - Fix incorrect volume attenuation in PCjr sound code (bug #6858).
+   - Major rewrite of graphics subsystem.
 
  AGOS:
    - Fixed arpeggio effect used in music of Amiga version of Elvira 1.
