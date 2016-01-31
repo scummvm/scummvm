@@ -829,6 +829,9 @@ private:
 	void setVolumeViaSystemSetting();
 
 public:
+	void syncSoundSettings();
+
+public:
 	void decrypt(uint8 *mem, int len);
 	void releaseSprites();
 	int mainCycle(bool onlyCheckForEvents = false);

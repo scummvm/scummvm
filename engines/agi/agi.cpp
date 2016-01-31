@@ -564,6 +564,12 @@ Common::Error AgiEngine::go() {
 	return Common::kNoError;
 }
 
+void AgiEngine::syncSoundSettings() {
+	Engine::syncSoundSettings();
+
+	setVolumeViaSystemSetting();
+}
+
 // Scenes that need this:
 //
 // Manhunter 1:
