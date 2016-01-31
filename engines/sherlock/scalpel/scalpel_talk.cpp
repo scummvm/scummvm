@@ -276,7 +276,7 @@ void ScalpelTalk::talkInterface(const byte *&str) {
 	str += idx;
 
 	// If line wrap occurred, then move to after the separating space between the words
-	if ((!isOpcode(str[0])) && str[0] != '{')
+	if (str[0] && (!isOpcode(str[0])) && str[0] != '{')
 		++str;
 
 	_yp += 9;
