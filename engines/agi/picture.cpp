@@ -906,7 +906,7 @@ int PictureMgr::draw_FillCheck(int16 x, int16 y) {
  * @param clear  clear AGI screen before drawing
  * @param agi256 load an AGI256 picture resource
  */
-int PictureMgr::decodePicture(int16 resourceNr, bool clear, bool agi256, int16 pic_width, int16 pic_height) {
+int PictureMgr::decodePicture(int16 resourceNr, bool clearScreen, bool agi256, int16 pic_width, int16 pic_height) {
 	debugC(8, kDebugLevelResources, "(%d)", resourceNr);
 
 	_patCode = 0;
@@ -924,7 +924,7 @@ int PictureMgr::decodePicture(int16 resourceNr, bool clear, bool agi256, int16 p
 	_width = pic_width;
 	_height = pic_height;
 
-	if (clear && !agi256) { // 256 color pictures should always fill the whole screen, so no clearing for them.
+	if (clearScreen && !agi256) { // 256 color pictures should always fill the whole screen, so no clearing for them.
 		_gfx->clear(15, 4); // Clear 16 color AGI screen (Priority 4, color white).
 	}
 
@@ -934,9 +934,9 @@ int PictureMgr::decodePicture(int16 resourceNr, bool clear, bool agi256, int16 p
 		drawPictureAGI256();
 	}
 
-	if (clear)
+	if (clearScreen)
 		_vm->clearImageStack();
-	_vm->recordImageStackCall(ADD_PIC, resourceNr, clear, agi256, 0, 0, 0, 0);
+	_vm->recordImageStackCall(ADD_PIC, resourceNr, clearScreen, agi256, 0, 0, 0, 0);
 
 	return errOK;
 }

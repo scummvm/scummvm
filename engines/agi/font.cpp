@@ -1042,8 +1042,8 @@ void GfxFont::loadFontAtariST(Common::String fontFilename) {
 	uint16 header_MaxWidth = 0;
 	uint16 header_MaxHeight = 0;
 	uint16 header_Flags = 0;
-	uint32 header_OffsetOfCharOffsets = 0;
-	uint32 header_OffsetOfFontData = 0;
+	//uint32 header_OffsetOfCharOffsets = 0;
+	//uint32 header_OffsetOfFontData = 0;
 	uint16 header_FormWidth = 0;
 	uint16 header_FormHeight = 0;
 	uint16 totalCharacterCount = 0;
@@ -1084,8 +1084,8 @@ void GfxFont::loadFontAtariST(Common::String fontFilename) {
 	// bit 2 - byte orientation word is high->low
 	// bit 3 - mono spaced font
 	fontFile.skip(4); // horizontal table offset
-	header_OffsetOfCharOffsets = fontFile.readUint32BE();
-	header_OffsetOfFontData = fontFile.readUint32BE();
+	fontFile.skip(4); // header_OffsetOfCharOffsets = fontFile.readUint32BE();
+	fontFile.skip(4); // header_OffsetOfFontData = fontFile.readUint32BE();
 	header_FormWidth = fontFile.readUint16BE();
 	header_FormHeight = fontFile.readUint16BE();
 	fontFile.skip(4); // pointer to next font
