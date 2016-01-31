@@ -24,28 +24,28 @@
 
 namespace Agi {
 
-int AgiBase::getflag(int n) {
-	uint8 *set = (uint8 *)&_game.flags;
+int AgiBase::getFlag(int16 flagNr) {
+	uint8 *flagPtr = _game.flags;
 
-	set += n >> 3;
-	return (*set & (1 << (n & 0x07))) != 0;
+	flagPtr += flagNr >> 3;
+	return (*flagPtr & (1 << (flagNr & 0x07))) != 0;
 }
 
-void AgiBase::setflag(int n, int v) {
-	uint8 *set = (uint8 *)&_game.flags;
+void AgiBase::setFlag(int16 flagNr, bool newState) {
+	uint8 *flagPtr = _game.flags;
 
-	set += n >> 3;
-	if (v)
-		*set |= 1 << (n & 0x07);	// set bit
+	flagPtr += flagNr >> 3;
+	if (newState)
+		*flagPtr |= 1 << (flagNr & 0x07);	// set bit
 	else
-		*set &= ~(1 << (n & 0x07));	// clear bit
+		*flagPtr &= ~(1 << (flagNr & 0x07));	// clear bit
 }
 
-void AgiBase::flipflag(int n) {
-	uint8 *set = (uint8 *)&_game.flags;
+void AgiBase::flipFlag(int16 flagNr) {
+	uint8 *flagPtr = _game.flags;
 
-	set += n >> 3;
-	*set ^= 1 << (n & 0x07);	// flip bit
+	flagPtr += flagNr >> 3;
+	*flagPtr ^= 1 << (flagNr & 0x07);	// flip bit
 }
 
 void AgiEngine::setVar(int16 varNr, int val) {

@@ -109,7 +109,7 @@ void AgiEngine::newRoom(int16 newRoomNr) {
 		}
 
 		setVar(VM_VAR_BORDER_TOUCH_EGO, 0);
-		setflag(VM_FLAG_NEW_ROOM_EXEC, true);
+		setFlag(VM_FLAG_NEW_ROOM_EXEC, true);
 
 		_game.exitAllLogics = true;
 
@@ -138,7 +138,7 @@ void AgiEngine::interpretCycle() {
 	checkAllMotions();
 
 	oldScore = getVar(VM_VAR_SCORE);
-	oldSound = getflag(VM_FLAG_SOUND_ON);
+	oldSound = getFlag(VM_FLAG_SOUND_ON);
 
 	_game.exitAllLogics = false;
 	while (runLogic(0) == 0 && !(shouldQuit() || _restartGame)) {
@@ -146,7 +146,7 @@ void AgiEngine::interpretCycle() {
 		setVar(VM_VAR_BORDER_TOUCH_OBJECT, 0);
 		setVar(VM_VAR_BORDER_CODE, 0);
 		oldScore = getVar(VM_VAR_SCORE);
-		setflag(VM_FLAG_ENTERED_CLI, false);
+		setFlag(VM_FLAG_ENTERED_CLI, false);
 		_game.exitAllLogics = false;
 		nonBlockingText_CycleDone();
 		resetControllers();
@@ -156,14 +156,14 @@ void AgiEngine::interpretCycle() {
 
 	screenObjEgo->direction = getVar(VM_VAR_EGO_DIRECTION);
 
-	if (getVar(VM_VAR_SCORE) != oldScore || getflag(VM_FLAG_SOUND_ON) != oldSound)
+	if (getVar(VM_VAR_SCORE) != oldScore || getFlag(VM_FLAG_SOUND_ON) != oldSound)
 		_game._vm->_text->statusDraw();
 
 	setVar(VM_VAR_BORDER_TOUCH_OBJECT, 0);
 	setVar(VM_VAR_BORDER_CODE, 0);
-	setflag(VM_FLAG_NEW_ROOM_EXEC, false);
-	setflag(VM_FLAG_RESTART_GAME, false);
-	setflag(VM_FLAG_RESTORE_JUST_RAN, false);
+	setFlag(VM_FLAG_NEW_ROOM_EXEC, false);
+	setFlag(VM_FLAG_RESTART_GAME, false);
+	setFlag(VM_FLAG_RESTORE_JUST_RAN, false);
 
 	if (_game.gfxMode) {
 		updateScreenObjTable();
@@ -361,9 +361,9 @@ int AgiEngine::playGame() {
 	_game.horizon = 36;
 	_game.playerControl = false;
 
-	setflag(VM_FLAG_LOGIC_ZERO_FIRST_TIME, true);	// not in 2.917
-	setflag(VM_FLAG_NEW_ROOM_EXEC, true);	// needed for MUMG and SQ2!
-	setflag(VM_FLAG_SOUND_ON, true);	// enable sound
+	setFlag(VM_FLAG_LOGIC_ZERO_FIRST_TIME, true);	// not in 2.917
+	setFlag(VM_FLAG_NEW_ROOM_EXEC, true);	// needed for MUMG and SQ2!
+	setFlag(VM_FLAG_SOUND_ON, true);	// enable sound
 	setVar(VM_VAR_TIME_DELAY, 2);	// "normal" speed
 
 	_game.gfxMode = true;
@@ -379,13 +379,13 @@ int AgiEngine::playGame() {
 
 	debug(0, "Running AGI script.\n");
 
-	setflag(VM_FLAG_ENTERED_CLI, false);
-	setflag(VM_FLAG_SAID_ACCEPTED_INPUT, false);
+	setFlag(VM_FLAG_ENTERED_CLI, false);
+	setFlag(VM_FLAG_SAID_ACCEPTED_INPUT, false);
 	setVar(VM_VAR_WORD_NOT_FOUND, 0);
 	setVar(VM_VAR_KEY, 0);
 
 	debugC(2, kDebugLevelMain, "Entering main loop");
-	bool firstLoop = !getflag(VM_FLAG_RESTART_GAME); // Do not restore on game restart
+	bool firstLoop = !getFlag(VM_FLAG_RESTART_GAME); // Do not restore on game restart
 
 	if (firstLoop) {
 		if (ConfMan.hasKey("save_slot")) {
@@ -419,8 +419,8 @@ int AgiEngine::playGame() {
 				checkQuickLoad();
 			}
 
-			setflag(VM_FLAG_ENTERED_CLI, false);
-			setflag(VM_FLAG_SAID_ACCEPTED_INPUT, false);
+			setFlag(VM_FLAG_ENTERED_CLI, false);
+			setFlag(VM_FLAG_SAID_ACCEPTED_INPUT, false);
 			setVar(VM_VAR_WORD_NOT_FOUND, 0);
 			setVar(VM_VAR_KEY, 0);
 		}
@@ -465,7 +465,7 @@ int AgiEngine::runGame() {
 			break;
 
 		if (_restartGame) {
-			setflag(VM_FLAG_RESTART_GAME, true);
+			setFlag(VM_FLAG_RESTART_GAME, true);
 			setVar(VM_VAR_TIME_DELAY, 2);	// "normal" speed
 			_restartGame = false;
 		}

@@ -161,7 +161,7 @@ void SoundGenSarien::stopNote(int i) {
 }
 
 void SoundGenSarien::playNote(int i, int freq, int vol) {
-	if (!_vm->getflag(VM_FLAG_SOUND_ON))
+	if (!_vm->getFlag(VM_FLAG_SOUND_ON))
 		vol = 0;
 	else if (vol && _vm->_soundemu == SOUND_EMU_PC)
 		vol = 160;

@@ -685,9 +685,9 @@ public:
 
 	int _soundemu;
 
-	int getflag(int);
-	void setflag(int, int);
-	void flipflag(int);
+	int getFlag(int16 flagNr);
+	void setFlag(int16 flagNr, bool newState);
+	void flipFlag(int16 flagNr);
 
 	const AGIGameDescription *_gameDescription;
 

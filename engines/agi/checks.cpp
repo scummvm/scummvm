@@ -163,8 +163,8 @@ bool AgiEngine::checkPriority(ScreenObjEntry *screenObj) {
 
 	// Check ego
 	if (screenObj->objectNr == 0) {
-		setflag(VM_FLAG_EGO_TOUCHED_P2, touchedTrigger ? true : false);
-		setflag(VM_FLAG_EGO_WATER, touchedWater ? true : false);
+		setFlag(VM_FLAG_EGO_TOUCHED_P2, touchedTrigger ? true : false);
+		setFlag(VM_FLAG_EGO_WATER, touchedWater ? true : false);
 	}
 
 	return touchedControl;

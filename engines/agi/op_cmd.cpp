@@ -223,22 +223,22 @@ void cmdSet(AgiGame *state, uint8 *parameter) {
 	AgiEngine *vm = state->_vm;
 	uint16 flagNr = parameter[0];
 
-	vm->setflag(flagNr, true);
+	vm->setFlag(flagNr, true);
 }
 
 void cmdReset(AgiGame *state, uint8 *parameter) {
 	AgiEngine *vm = state->_vm;
 	uint16 flagNr = parameter[0];
 
-	vm->setflag(flagNr, false);
+	vm->setFlag(flagNr, false);
 }
 
 void cmdToggle(AgiGame *state, uint8 *parameter) {
 	AgiEngine *vm = state->_vm;
 	uint16 flagNr = parameter[0];
-	bool curFlagState = vm->getflag(flagNr);
+	bool curFlagState = vm->getFlag(flagNr);
 
-	vm->setflag(flagNr, !curFlagState);
+	vm->setFlag(flagNr, !curFlagState);
 }
 
 void cmdSetV(AgiGame *state, uint8 *parameter) {
@@ -250,7 +250,7 @@ void cmdSetV(AgiGame *state, uint8 *parameter) {
 	} else {
 		flagNr = vm->getVar(flagNr);
 
-		vm->setflag(flagNr, true);
+		vm->setFlag(flagNr, true);
 	}
 }
 
@@ -263,7 +263,7 @@ void cmdResetV(AgiGame *state, uint8 *parameter) {
 	} else {
 		flagNr = vm->getVar(flagNr);
 
-		vm->setflag(flagNr, false);
+		vm->setFlag(flagNr, false);
 	}
 }
 
@@ -276,9 +276,9 @@ void cmdToggleV(AgiGame *state, uint8 *parameter) {
 		vm->setVar(flagNr, value ^ 1);
 	} else {
 		flagNr = vm->getVar(flagNr);
-		bool curFlagState = vm->getflag(flagNr);
+		bool curFlagState = vm->getFlag(flagNr);
 
-		vm->setflag(flagNr, !curFlagState);
+		vm->setFlag(flagNr, !curFlagState);
 	}
 }
 
@@ -781,7 +781,7 @@ void cmdStopSound(AgiGame *state, uint8 *parameter) {
 void cmdMenuInput(AgiGame *state, uint8 *parameter) {
 	AgiEngine *vm = state->_vm;
 
-	if (vm->getflag(VM_FLAG_MENUS_WORK)) {
+	if (vm->getFlag(VM_FLAG_MENUS_WORK)) {
 		vm->_menu->delayedExecute();
 	}
 }
@@ -964,21 +964,21 @@ void cmdSetSimple(AgiGame *state, uint8 *parameter) {
 		uint16 resourceNr = vm->getVar(varNr);
 
 		spritesMgr->eraseSprites();
-		state->_vm->agiLoadResource(RESOURCETYPE_PICTURE, resourceNr);
+		vm->agiLoadResource(RESOURCETYPE_PICTURE, resourceNr);
 
 		// Draw the picture. Similar to void cmdDraw_pic(AgiGame *state, uint8 *p).
-		state->_vm->_picture->decodePicture(resourceNr, false, true);
+		vm->_picture->decodePicture(resourceNr, false, true);
 		spritesMgr->drawAllSpriteLists();
 		state->pictureShown = false;
 
 		// Show the picture. Similar to void cmdShow_pic(AgiGame *state, uint8 *p).
-		state->_vm->setflag(VM_FLAG_OUTPUT_MODE, false);
-		state->_vm->_text->closeWindow();
-		state->_vm->_picture->showPic();
+		vm->setFlag(VM_FLAG_OUTPUT_MODE, false);
+		vm->_text->closeWindow();
+		vm->_picture->showPic();
 		state->pictureShown = true;
 
 		// Loading trigger
-		state->_vm->loadingTrigger_DrawPicture();
+		vm->loadingTrigger_DrawPicture();
 	}
 }
 
@@ -1093,8 +1093,8 @@ void cmdParse(AgiGame *state, uint8 *parameter) {
 	uint16 stringNr = parameter[0];
 
 	vm->setVar(VM_VAR_WORD_NOT_FOUND, 0);
-	vm->setflag(VM_FLAG_ENTERED_CLI, false);
-	vm->setflag(VM_FLAG_SAID_ACCEPTED_INPUT, false);
+	vm->setFlag(VM_FLAG_ENTERED_CLI, false);
+	vm->setFlag(VM_FLAG_SAID_ACCEPTED_INPUT, false);
 
 	vm->_words->parseUsingDictionary(text->stringPrintf(state->strings[stringNr]));
 }
@@ -1167,7 +1167,7 @@ void cmdDrawPic(AgiGame *state, uint8 *parameter) {
 	// that this is a script bug and occurs in the original interpreter as well.
 	// Fixes bug #3056: AGI: SQ1 (2.2 DOS ENG) bizzare exploding roger
 	if (getGameID() == GID_SQ1 && resourceNr == 20)
-		vm->setflag(103, false);
+		vm->setFlag(103, false);
 
 	// Loading trigger
 	vm->loadingTrigger_DrawPicture();
@@ -1177,7 +1177,7 @@ void cmdShowPic(AgiGame *state, uint8 *parameter) {
 	AgiEngine *vm = state->_vm;
 	debugC(6, kDebugLevelScripts, "=== show pic ===");
 
-	vm->setflag(VM_FLAG_OUTPUT_MODE, false);
+	vm->setFlag(VM_FLAG_OUTPUT_MODE, false);
 	vm->_text->closeWindow();
 	vm->_picture->showPicWithTransition();
 	state->pictureShown = true;
@@ -1506,7 +1506,7 @@ void cmdReverseLoop(AgiGame *state, uint8 *parameter) {
 	screenObj->cycle = kCycleRevLoop;
 	screenObj->flags |= (fDontupdate | fUpdate | fCycling);
 	screenObj->loop_flag = loopFlag;
-	state->_vm->setflag(screenObj->loop_flag, false);
+	state->_vm->setFlag(screenObj->loop_flag, false);
 }
 
 void cmdReverseLoopV1(AgiGame *state, uint8 *parameter) {
@@ -1523,6 +1523,7 @@ void cmdReverseLoopV1(AgiGame *state, uint8 *parameter) {
 }
 
 void cmdEndOfLoop(AgiGame *state, uint8 *parameter) {
+	AgiEngine *vm = state->_vm;
 	uint16 objectNr = parameter[0];
 	uint16 loopFlag = parameter[1];
 	ScreenObjEntry *screenObj = &state->screenObjTable[objectNr];
@@ -1531,7 +1532,7 @@ void cmdEndOfLoop(AgiGame *state, uint8 *parameter) {
 	screenObj->cycle = kCycleEndOfLoop;
 	screenObj->flags |= (fDontupdate | fUpdate | fCycling);
 	screenObj->loop_flag = loopFlag;
-	state->_vm->setflag(screenObj->loop_flag, false);
+	vm->setFlag(screenObj->loop_flag, false);
 }
 
 void cmdEndOfLoopV1(AgiGame *state, uint8 *parameter) {
@@ -1642,7 +1643,7 @@ void cmdFollowEgo(AgiGame *state, uint8 *parameter) {
 		vm->setVar(screenObj->follow_flag, 0);
 		screenObj->flags |= fUpdate | fAnimated;
 	} else {
-		state->_vm->setflag(screenObj->follow_flag, false);
+		vm->setFlag(screenObj->follow_flag, false);
 		screenObj->flags |= fUpdate;
 	}
 }
@@ -1670,7 +1671,7 @@ void cmdMoveObj(AgiGame *state, uint8 *parameter) {
 		vm->setVar(moveFlag, 0);
 		screenObj->flags |= fUpdate | fAnimated;
 	} else {
-		vm->setflag(screenObj->move_flag, false);
+		vm->setFlag(screenObj->move_flag, false);
 		screenObj->flags |= fUpdate;
 	}
 
@@ -1700,7 +1701,7 @@ void cmdMoveObjF(AgiGame *state, uint8 *parameter) {
 	if (stepSize != 0)
 		screenObj->stepSize = stepSize;
 
-	state->_vm->setflag(screenObj->move_flag, false);
+	vm->setFlag(screenObj->move_flag, false);
 	screenObj->flags |= fUpdate;
 
 	if (objectNr == 0)
@@ -1708,7 +1709,7 @@ void cmdMoveObjF(AgiGame *state, uint8 *parameter) {
 
 	// AGI 2.272 (ddp, xmas) doesn't call move_obj!
 	if (getVersion() > 0x2272)
-		state->_vm->moveObj(screenObj);
+		vm->moveObj(screenObj);
 }
 
 void cmdWander(AgiGame *state, uint8 *parameter) {
@@ -1899,20 +1900,21 @@ void cmdQuitV1(AgiGame *state, uint8 *parameter) {
 }
 
 void cmdRestartGame(AgiGame *state, uint8 *parameter) {
+	AgiEngine *vm = state->_vm;
 	bool doRestart = false;
 
 	state->_vm->_sound->stopSound();
 
-	if (state->_vm->getflag(VM_FLAG_AUTO_RESTART)) {
+	if (vm->getFlag(VM_FLAG_AUTO_RESTART)) {
 		doRestart = true;
 	} else {
-		doRestart = state->_vm->_systemUI->restartDialog();
+		doRestart = vm->_systemUI->restartDialog();
 	}
 
 	if (doRestart) {
-		state->_vm->_restartGame = true;
-		state->_vm->setflag(VM_FLAG_RESTART_GAME, true);
-		state->_vm->_menu->itemEnableAll();
+		vm->_restartGame = true;
+		vm->setFlag(VM_FLAG_RESTART_GAME, true);
+		vm->_menu->itemEnableAll();
 	}
 }
 

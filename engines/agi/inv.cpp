@@ -127,7 +127,7 @@ void InventoryMgr::show() {
 	// figure out current inventory of the player
 	getPlayerInventory();
 
-	if (_vm->getflag(VM_FLAG_STATUS_SELECTS_ITEMS)) {
+	if (_vm->getFlag(VM_FLAG_STATUS_SELECTS_ITEMS)) {
 		selectItems = true;
 	} else{
 		_activeItemNr = -1; // so that none is shown as active

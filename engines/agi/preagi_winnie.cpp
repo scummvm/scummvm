@@ -226,11 +226,11 @@ void WinnieEngine::setTakeDrop(int fCanSel[]) {
 	fCanSel[IDI_WTP_SEL_DROP] = _gameStateWinnie.iObjHave;
 }
 
-void WinnieEngine::setFlag(int iFlag) {
+void WinnieEngine::setWinnieFlag(int iFlag) {
 	_gameStateWinnie.fGame[iFlag] = 1;
 }
 
-void WinnieEngine::clearFlag(int iFlag) {
+void WinnieEngine::clearWinnieFlag(int iFlag) {
 	_gameStateWinnie.fGame[iFlag] = 0;
 }
 
@@ -404,11 +404,11 @@ int WinnieEngine::parser(int pc, int index, uint8 *buffer) {
 				break;
 			case IDO_WTP_FLAG_CLEAR:
 				opcode = *(buffer + pc++);
-				clearFlag(opcode);
+				clearWinnieFlag(opcode);
 				break;
 			case IDO_WTP_FLAG_SET:
 				opcode = *(buffer + pc++);
-				setFlag(opcode);
+				setWinnieFlag(opcode);
 				break;
 			case IDO_WTP_GAME_OVER:
 				gameOver();
@@ -947,7 +947,7 @@ void WinnieEngine::getMenuSel(char *szMenu, int *iSel, int fCanSel[]) {
 					break;
 				case Common::KEYCODE_s:
 					if (event.kbd.flags & Common::KBD_CTRL) {
-						flipflag(VM_FLAG_SOUND_ON);
+						flipFlag(VM_FLAG_SOUND_ON);
 					} else {
 						*iSel = IDI_WTP_SEL_SOUTH;
 						makeSel(iSel, fCanSel);
@@ -1342,7 +1342,7 @@ void WinnieEngine::init() {
 	}
 
 	_sound = new SoundMgr(this, _mixer);
-	setflag(VM_FLAG_SOUND_ON, true); // enable sound
+	setFlag(VM_FLAG_SOUND_ON, true); // enable sound
 
 	memset(&_gameStateWinnie, 0, sizeof(_gameStateWinnie));
 	_gameStateWinnie.fSound = 1;

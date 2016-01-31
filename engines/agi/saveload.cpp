@@ -134,6 +134,9 @@ int AgiEngine::saveGame(const Common::String &fileName, const Common::String &de
 	out->writeByte(_game.automaticSave);
 	out->write(_game.automaticSaveDescription, 31);
 
+	// touch VM_VAR_SECONDS, so that it gets updated
+	getVar(VM_VAR_SECONDS);
+
 	for (i = 0; i < MAX_FLAGS; i++)
 		out->writeByte(_game.flags[i]);
 	for (i = 0; i < MAX_VARS; i++)
@@ -666,7 +669,7 @@ int AgiEngine::loadGame(const Common::String &fileName, bool checkId) {
 	delete in;
 	debugC(3, kDebugLevelMain | kDebugLevelSavegame, "Closed %s", fileName.c_str());
 
-	setflag(VM_FLAG_RESTORE_JUST_RAN, true);
+	setFlag(VM_FLAG_RESTORE_JUST_RAN, true);
 
 	_game.hasPrompt = 0;	// force input line repaint if necessary
 	_words->clearEgoWords();

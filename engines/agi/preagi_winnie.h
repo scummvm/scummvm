@@ -336,8 +336,8 @@ private:
 	bool isRightObj(int, int, int*);
 	void drawObjPic(int, int, int);
 	void getMenuMouseSel(int*, int[], int, int);
-	void setFlag(int);
-	void clearFlag(int);
+	void setWinnieFlag(int);
+	void clearWinnieFlag(int);
 	void gameOver();
 	void saveGame();
 	void loadGame();

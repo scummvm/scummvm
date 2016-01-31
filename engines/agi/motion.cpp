@@ -98,7 +98,7 @@ void AgiEngine::motionFollowEgo(ScreenObjEntry *screenObj) {
 	if (dir == 0) {
 		screenObj->direction = 0;
 		screenObj->motionType = kMotionNormal;
-		setflag(screenObj->follow_flag, true);
+		setFlag(screenObj->follow_flag, true);
 		return;
 	}
 
@@ -200,7 +200,7 @@ void AgiEngine::checkAllMotions() {
 void AgiEngine::inDestination(ScreenObjEntry *screenObj) {
 	if (screenObj->motionType == kMotionMoveObj) {
 		screenObj->stepSize = screenObj->move_stepSize;
-		setflag(screenObj->move_flag, true);
+		setFlag(screenObj->move_flag, true);
 	}
 	screenObj->motionType = kMotionNormal;
 	if (isEgoView(screenObj))
@@ -213,7 +213,7 @@ void AgiEngine::motionMoveObjStop(ScreenObjEntry *screenObj) {
 	// This check for motionType was only done in AGI3.
 	// But we use this motion type for mouse movement, so we need to check in any case, otherwise it will cause glitches.
 	if (screenObj->motionType != kMotionEgo) {
-		setflag(screenObj->move_flag, true);
+		setFlag(screenObj->move_flag, true);
 	}
 
 	screenObj->motionType = kMotionNormal;

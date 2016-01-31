@@ -78,11 +78,11 @@ void condGreaterV(AgiGame *state, uint8 *p) {
 }
 
 void condIsSet(AgiGame *state, uint8 *p) {
-	state->testResult = state->_vm->getflag(p[0]);
+	state->testResult = state->_vm->getFlag(p[0]);
 }
 
 void condIsSetV(AgiGame *state, uint8 *p) {
-	state->testResult = state->_vm->getflag(getVar(p[0]));
+	state->testResult = state->_vm->getFlag(getVar(p[0]));
 }
 
 void condIsSetV1(AgiGame *state, uint8 *p) {
@@ -121,7 +121,7 @@ void condSaid(AgiGame *state, uint8 *p) {
 void condSaid1(AgiGame *state, uint8 *p) {
 	state->testResult = false;
 
-	if (!state->_vm->getflag(VM_FLAG_ENTERED_CLI))
+	if (!state->_vm->getFlag(VM_FLAG_ENTERED_CLI))
 		return;
 
 	int id0 = READ_LE_UINT16(p);
@@ -133,7 +133,7 @@ void condSaid1(AgiGame *state, uint8 *p) {
 void condSaid2(AgiGame *state, uint8 *p) {
 	state->testResult = false;
 
-	if (!state->_vm->getflag(VM_FLAG_ENTERED_CLI))
+	if (!state->_vm->getFlag(VM_FLAG_ENTERED_CLI))
 		return;
 
 	int id0 = READ_LE_UINT16(p);
@@ -147,7 +147,7 @@ void condSaid2(AgiGame *state, uint8 *p) {
 void condSaid3(AgiGame *state, uint8 *p) {
 	state->testResult = false;
 
-	if (!state->_vm->getflag(VM_FLAG_ENTERED_CLI))
+	if (!state->_vm->getFlag(VM_FLAG_ENTERED_CLI))
 		return;
 
 	int id0 = READ_LE_UINT16(p);
@@ -320,7 +320,7 @@ uint8 AgiEngine::testSaid(uint8 nwords, uint8 *cc) {
 	int c, n = words->getEgoWordCount();
 	int z = 0;
 
-	if (vm->getflag(VM_FLAG_SAID_ACCEPTED_INPUT) || !vm->getflag(VM_FLAG_ENTERED_CLI))
+	if (vm->getFlag(VM_FLAG_SAID_ACCEPTED_INPUT) || !vm->getFlag(VM_FLAG_ENTERED_CLI))
 		return false;
 
 	// FR:
@@ -366,7 +366,7 @@ uint8 AgiEngine::testSaid(uint8 nwords, uint8 *cc) {
 	if (nwords != 0 && READ_LE_UINT16(cc) != 9999)
 		return false;
 
-	setflag(VM_FLAG_SAID_ACCEPTED_INPUT, true);
+	setFlag(VM_FLAG_SAID_ACCEPTED_INPUT, true);
 
 	return true;
 }

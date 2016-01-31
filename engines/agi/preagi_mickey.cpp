@@ -492,7 +492,7 @@ bool MickeyEngine::getMenuSelRow(MSA_MENU menu, int *sel0, int *sel1, int iRow) 
 
 					return false;
 				case Common::KEYCODE_s:
-					flipflag(VM_FLAG_SOUND_ON);
+					flipFlag(VM_FLAG_SOUND_ON);
 					break;
 				case Common::KEYCODE_c:
 					inventory();
@@ -672,7 +672,7 @@ void MickeyEngine::playNote(MSA_SND_NOTE note) {
 }
 
 void MickeyEngine::playSound(ENUM_MSA_SOUND iSound) {
-	if (!getflag(VM_FLAG_SOUND_ON))
+	if (!getFlag(VM_FLAG_SOUND_ON))
 		return;
 
 	Common::Event event;
@@ -2297,7 +2297,7 @@ void MickeyEngine::init() {
 
 #endif
 
-	setflag(VM_FLAG_SOUND_ON, true); // enable sound
+	setFlag(VM_FLAG_SOUND_ON, true); // enable sound
 }
 
 Common::Error MickeyEngine::go() {

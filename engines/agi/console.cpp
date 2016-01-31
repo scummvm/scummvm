@@ -75,7 +75,7 @@ bool Console::Cmd_SetFlag(int argc, const char **argv) {
 	}
 	int p1 = (int)atoi(argv[1]);
 	int p2 = (int)atoi(argv[2]);
-	_vm->setflag(p1, !!p2);
+	_vm->setFlag(p1, !!p2);
 
 	return true;
 }
@@ -290,7 +290,7 @@ bool Console::Cmd_Flags(int argc, const char **argv) {
 	for (i = 0; i < 255;) {
 		debugPrintf("%3d ", i);
 		for (j = 0; j < 10; j++, i++) {
-			debugPrintf("%c ", _vm->getflag(i) ? 'T' : 'F');
+			debugPrintf("%c ", _vm->getFlag(i) ? 'T' : 'F');
 		}
 		debugPrintf("\n");
 	}
@@ -542,7 +542,7 @@ bool Console::Cmd_VmFlags(int argc, const char **argv) {
 
 	if (argc < 3) {
 		// show contents
-		if (_vm->getflag(flagNr)) {
+		if (_vm->getFlag(flagNr)) {
 			debugPrintf("flag %d == set\n", flagNr);
 		} else {
 			debugPrintf("flag %d == not set\n", flagNr);
@@ -557,10 +557,10 @@ bool Console::Cmd_VmFlags(int argc, const char **argv) {
 		}
 
 		if (!newFlagState) {
-			_vm->setflag(flagNr, 0);
+			_vm->setFlag(flagNr, false);
 			debugPrintf("flag %d reset.\n", flagNr);
 		} else {
-			_vm->setflag(flagNr, 1);
+			_vm->setFlag(flagNr, true);
 			debugPrintf("flag %d set.\n", flagNr);
 		}
 	}

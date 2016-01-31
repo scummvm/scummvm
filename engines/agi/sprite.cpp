@@ -254,7 +254,7 @@ void SpritesMgr::drawCel(ScreenObjEntry *screenObj) {
 	}
 
 	if (screenObj->objectNr == 0) {	// if ego, update if ego is visible at the moment
-		_vm->setflag(VM_FLAG_EGO_INVISIBLE, isViewHidden);
+		_vm->setFlag(VM_FLAG_EGO_INVISIBLE, isViewHidden);
 	}
 }
 

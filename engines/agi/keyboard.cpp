@@ -540,7 +540,7 @@ int AgiEngine::waitKey() {
 	clearKeyQueue();
 
 	debugC(3, kDebugLevelInput, "waiting...");
-	while (!(shouldQuit() || _restartGame || getflag(VM_FLAG_RESTORE_JUST_RAN))) {
+	while (!(shouldQuit() || _restartGame || getFlag(VM_FLAG_RESTORE_JUST_RAN))) {
 		pollTimer();
 		key = doPollKeyboard();
 		if (key == AGI_KEY_ENTER || key == AGI_KEY_ESCAPE || key == AGI_MOUSE_BUTTON_LEFT)

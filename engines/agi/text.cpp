@@ -328,9 +328,9 @@ void TextMgr::printAt(int16 textNr, int16 textPos_Row, int16 textPos_Column, int
 bool TextMgr::messageBox(const char *textPtr) {
 	drawMessageBox(textPtr);
 
-	if (_vm->getflag(VM_FLAG_OUTPUT_MODE)) {
+	if (_vm->getFlag(VM_FLAG_OUTPUT_MODE)) {
 		// non-blocking window
-		_vm->setflag(VM_FLAG_OUTPUT_MODE, false);
+		_vm->setFlag(VM_FLAG_OUTPUT_MODE, false);
 
 		// Signal, that non-blocking text is shown at the moment
 		_vm->nonBlockingText_IsShown();
@@ -359,7 +359,7 @@ bool TextMgr::messageBox(const char *textPtr) {
 	_vm->setVar(VM_VAR_KEY, 0);
 
 	do {
-		if (_vm->getflag(VM_FLAG_RESTORE_JUST_RAN))
+		if (_vm->getFlag(VM_FLAG_RESTORE_JUST_RAN))
 			break;
 
 		_vm->mainCycle();
@@ -491,7 +491,7 @@ void TextMgr::statusDraw() {
 		displayText(statusTextPtr);
 
 		charPos_Set(_statusRow, 30);
-		if (_vm->getflag(VM_FLAG_SOUND_ON)) {
+		if (_vm->getFlag(VM_FLAG_SOUND_ON)) {
 			statusTextPtr = stringPrintf(_systemUI->getStatusTextSoundOn());
 		} else {
 			statusTextPtr = stringPrintf(_systemUI->getStatusTextSoundOff());

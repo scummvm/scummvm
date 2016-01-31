@@ -354,11 +354,11 @@ void Words::parseUsingDictionary(char *rawUserInput) {
 
 	debugC(4, kDebugLevelScripts, "ego word count = %d", _egoWordCount);
 	if (_egoWordCount > 0) {
-		_vm->setflag(VM_FLAG_ENTERED_CLI, true);
+		_vm->setFlag(VM_FLAG_ENTERED_CLI, true);
 	} else {
-		_vm->setflag(VM_FLAG_ENTERED_CLI, false);
+		_vm->setFlag(VM_FLAG_ENTERED_CLI, false);
 	}
-	_vm->setflag(VM_FLAG_SAID_ACCEPTED_INPUT, false);
+	_vm->setFlag(VM_FLAG_SAID_ACCEPTED_INPUT, false);
 }
 
 uint16 Words::getEgoWordCount() {
