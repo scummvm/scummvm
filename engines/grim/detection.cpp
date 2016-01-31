@@ -27,6 +27,7 @@
 #include "engines/grim/savegame.h"
 #include "engines/grim/emi/emi.h"
 
+#include "common/config-manager.h"
 #include "common/system.h"
 #include "common/savefile.h"
 
@@ -631,12 +632,13 @@ static bool cmpSave(const SaveStateDescriptor &x, const SaveStateDescriptor &y) 
 }
 
 SaveStateList GrimMetaEngine::listSaves(const char *target) const {
+	Common::String gameId = ConfMan.get("gameid", target);
+	Common::Platform platform = Common::parsePlatform(ConfMan.get("platform", target));
 	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
 	Common::StringArray filenames;
-	Common::String targetString(target);
-	Common::String pattern = targetString.hasPrefix("monkey4") ? "efmi###.gsv" : "grim##.gsv";
+	Common::String pattern = gameId == "monkey4" ? "efmi###.gsv" : "grim##.gsv";
 	
-	if (targetString.hasPrefix("monkey4-ps2"))
+	if (platform == Common::kPlatformPS2)
 		pattern = "efmi###.ps2";
 
 	filenames = saveFileMan->listSavefiles(pattern);
@@ -651,7 +653,7 @@ SaveStateList GrimMetaEngine::listSaves(const char *target) const {
 		if (slotNum >= 0) {
 			SaveGame *savedState = SaveGame::openForLoading(*file);
 			if (savedState && savedState->isCompatible()) {
-				if (targetString.hasPrefix("monkey4-ps2"))
+				if (platform == Common::kPlatformPS2)
 					savedState->beginSection('PS2S');
 				else
 					savedState->beginSection('SUBS');
