@@ -39,6 +39,7 @@ public:
 
 private:
 	void overwriteSaveRestoreDialogCharacter();
+	void overwriteExtendedWithRussianSet();
 
 	void loadFontScummVMFile(Common::String fontFilename);
 	void loadFontMickey();
