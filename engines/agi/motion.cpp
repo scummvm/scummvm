@@ -209,7 +209,14 @@ void AgiEngine::inDestination(ScreenObjEntry *screenObj) {
 
 void AgiEngine::motionMoveObjStop(ScreenObjEntry *screenObj) {
 	screenObj->stepSize = screenObj->move_stepSize;
-	if (screenObj->motionType != kMotionEgo) {
+
+	uint16 agiVersion = getVersion();
+	if (agiVersion >= 0x3000) {
+		// this check was only done for AGI3
+		if (screenObj->motionType != kMotionEgo) {
+			setflag(screenObj->move_flag, true);
+		}
+	} else {
 		setflag(screenObj->move_flag, true);
 	}
 
