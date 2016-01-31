@@ -184,6 +184,12 @@ int AgiEngine::agiInit() {
 
 	_game.mouseFence.setWidth(0); // Reset
 
+	// Reset in-game timer
+	inGameTimerReset();
+
+	// Sync volume settings from ScummVM system settings
+	setVolumeViaSystemSetting();
+
 	return ec;
 }
 

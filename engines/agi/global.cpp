@@ -20,6 +20,8 @@
  *
  */
 
+#include "common/config-manager.h"
+
 #include "agi/agi.h"
 
 namespace Agi {
@@ -52,8 +54,7 @@ void AgiEngine::setVar(int16 varNr, byte newValue) {
 	_game.vars[varNr] = newValue;
 
 	if (varNr == VM_VAR_VOLUME) {
-		_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, newValue * 17);
-		_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, newValue * 17);
+		setVolumeViaScripts(newValue);
 	}
 }
 
@@ -71,6 +72,67 @@ byte AgiEngine::getVar(int16 varNr) {
 		break;
 	}
 	return _game.vars[varNr];
+}
+
+// sets volume based on script value
+// 0 - maximum volume
+// 15 - mute
+void AgiEngine::setVolumeViaScripts(byte newVolume) {
+	newVolume = CLIP<byte>(newVolume, 0, 15);
+	newVolume = 15 - newVolume; // turn volume around
+
+	int scummVMVolume = newVolume * Audio::Mixer::kMaxMixerVolume / 15;
+	bool scummVMMute = false;
+
+	// Set ScummVM setting
+	// We do not set "mute". In case "mute" is set, we will not apply the scripts wishes
+	ConfMan.setInt("music_volume", scummVMVolume);
+	ConfMan.setInt("sfx_volume", scummVMVolume);
+
+	if (ConfMan.hasKey("mute"))
+		scummVMMute = ConfMan.getBool("mute");
+
+	if (!scummVMMute) {
+		// Also change volume directly
+		_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, scummVMVolume);
+		_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, scummVMVolume);
+	}
+}
+
+void AgiEngine::setVolumeViaSystemSetting() {
+	int scummVMVolumeMusic = ConfMan.getInt("music_volume");
+	int scummVMVolumeSfx = ConfMan.getInt("sfx_volume");
+	bool scummVMMute = false;
+	int internalVolume = 0;
+
+	if (ConfMan.hasKey("mute"))
+		scummVMMute = ConfMan.getBool("mute");
+
+	// Clip user system setting
+	scummVMVolumeMusic = CLIP<int>(scummVMVolumeMusic, 0, Audio::Mixer::kMaxMixerVolume);
+	scummVMVolumeSfx = CLIP<int>(scummVMVolumeSfx, 0, Audio::Mixer::kMaxMixerVolume);
+
+	if (scummVMMute) {
+		scummVMVolumeMusic = 0;
+		scummVMVolumeSfx = 0;
+	}
+
+	// Now actually set it
+	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, scummVMVolumeMusic);
+	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, scummVMVolumeSfx);
+
+	// Take lowest volume to the scripts
+	if (scummVMVolumeMusic < scummVMVolumeSfx) {
+		internalVolume = scummVMVolumeMusic;
+	} else {
+		internalVolume = scummVMVolumeSfx;
+	}
+	// Change it to 0-15 range
+	internalVolume = (internalVolume + 1) * 15 / Audio::Mixer::kMaxMixerVolume;
+	// Reverse it
+	internalVolume = 15 - internalVolume;
+	// Put it into the VM variable. Directly set it, otherwise it would call a volume set call
+	_game.vars[VM_VAR_VOLUME] = internalVolume;
 }
 
 // In-Game timer, used for timer VM Variables

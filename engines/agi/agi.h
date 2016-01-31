@@ -824,6 +824,10 @@ public:
 	byte getVar(int16 varNr);
 	void setVar(int16 varNr, byte newValue);
 
+private:
+	void setVolumeViaScripts(byte newVolume);
+	void setVolumeViaSystemSetting();
+
 public:
 	void decrypt(uint8 *mem, int len);
 	void releaseSprites();
