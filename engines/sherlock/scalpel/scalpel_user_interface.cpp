@@ -469,7 +469,7 @@ void ScalpelUserInterface::pushButton(int num) {
 	restoreButton(num);
 }
 
-void ScalpelUserInterface::toggleButton(int num) {
+void ScalpelUserInterface::toggleButton(uint16 num) {
 	Screen &screen = *_vm->_screen;
 
 	if (_menuMode != (MenuMode)(num + 1)) {
@@ -1312,7 +1312,7 @@ void ScalpelUserInterface::doMainControl() {
 		_temp = 12; // no button currently selected
 
 		// Check whether the mouse is in any of the command areas
-		for (int buttonNr = 0; buttonNr < 12; buttonNr++) {
+		for (uint16 buttonNr = 0; buttonNr < 12; buttonNr++) {
 			Common::Rect r(MENU_POINTS[buttonNr][0], MENU_POINTS[buttonNr][1],
 				MENU_POINTS[buttonNr][2], MENU_POINTS[buttonNr][3]);
 			if (IS_3DO && buttonNr >= 0 && buttonNr <= 2) {
@@ -1351,7 +1351,7 @@ void ScalpelUserInterface::doMainControl() {
 
 		byte key = toupper(_keyPress);
 
-		for (int16 buttonId = 0; buttonId < sizeof(_hotkeysIndexed); buttonId++) {
+		for (uint16 buttonId = 0; buttonId < sizeof(_hotkeysIndexed); buttonId++) {
 			if (key == _hotkeysIndexed[buttonId]) {
 				pressedButtonId = buttonId;
 			}

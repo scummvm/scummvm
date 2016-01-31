@@ -89,7 +89,7 @@ private:
 	 * have already been drawn. This simply takes care of switching the mode around
 	 * accordingly
 	 */
-	void toggleButton(int num);
+	void toggleButton(uint16 num);
 
 	/**
 	 * Print the name of an object in the scene

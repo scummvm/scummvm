@@ -154,16 +154,16 @@ void ScalpelInventory::invCommands(bool slamIt) {
 			true, _fixedTextGive);
 		screen.print(Common::Point(INVENTORY_POINTS[4][2], CONTROLS_Y1 + 1),
 			_invIndex == 0 ? COMMAND_NULL : COMMAND_FOREGROUND,
-			"^^", false); // 2 arrows pointing to the left
+			"^^"); // 2 arrows pointing to the left
 		screen.print(Common::Point(INVENTORY_POINTS[5][2], CONTROLS_Y1 + 1),
 			_invIndex == 0 ? COMMAND_NULL : COMMAND_FOREGROUND,
-			"^", false); // 2 arrows pointing to the left
+			"^"); // 2 arrows pointing to the left
 		screen.print(Common::Point(INVENTORY_POINTS[6][2], CONTROLS_Y1 + 1),
 			(_holdings - _invIndex <= 6) ? COMMAND_NULL : COMMAND_FOREGROUND,
-			"_", false); // 1 arrow pointing to the right
+			"_"); // 1 arrow pointing to the right
 		screen.print(Common::Point(INVENTORY_POINTS[7][2], CONTROLS_Y1 + 1),
 			(_holdings - _invIndex <= 6) ? COMMAND_NULL : COMMAND_FOREGROUND,
-			"__", false); // 2 arrows pointing to the right
+			"__"); // 2 arrows pointing to the right
 		if (_invMode != INVMODE_LOOK)
 			ui.clearInfo();
 	} else {
@@ -181,16 +181,16 @@ void ScalpelInventory::invCommands(bool slamIt) {
 			false, _fixedTextGive);
 		screen.gPrint(Common::Point(INVENTORY_POINTS[4][2], CONTROLS_Y1),
 			_invIndex == 0 ? COMMAND_NULL : COMMAND_FOREGROUND,
-			"^^", false); // 2 arrows pointing to the left
+			"^^"); // 2 arrows pointing to the left
 		screen.gPrint(Common::Point(INVENTORY_POINTS[5][2], CONTROLS_Y1),
 			_invIndex == 0 ? COMMAND_NULL : COMMAND_FOREGROUND,
-			"^", false); // 1 arrow pointing to the left
+			"^"); // 1 arrow pointing to the left
 		screen.gPrint(Common::Point(INVENTORY_POINTS[6][2], CONTROLS_Y1),
 			(_holdings - _invIndex < 7) ? COMMAND_NULL : COMMAND_FOREGROUND,
-			"_", false); // 1 arrow pointing to the right
+			"_"); // 1 arrow pointing to the right
 		screen.gPrint(Common::Point(INVENTORY_POINTS[7][2], CONTROLS_Y1),
 			(_holdings - _invIndex < 7) ? COMMAND_NULL : COMMAND_FOREGROUND,
-			"__", false); // 2 arrows pointing to the right
+			"__"); // 2 arrows pointing to the right
 	}
 }
 
