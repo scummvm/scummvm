@@ -292,7 +292,7 @@ void WageEngine::performInitialSetup() {
 		if (!chr->_initialScene.equalsIgnoreCase(STORAGESCENE)) {
 			Common::String key = chr->_initialScene;
 			key.toLowercase();
-			if (_world->_scenes.contains(key)) {
+			if (_world->_scenes.contains(key) && _world->_scenes[key] != NULL) {
 				_world->move(chr, _world->_scenes[key]);
 
 				if (chr->_playerCharacter)
