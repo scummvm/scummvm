@@ -58,7 +58,7 @@ enum MotionType {
 	kMotionWander = 1,
 	kMotionFollowEgo = 2,
 	kMotionMoveObj = 3,
-	kMotionEgo = 4
+	kMotionEgo = 4 // used by us for mouse movement only?
 };
 
 enum CycleType {

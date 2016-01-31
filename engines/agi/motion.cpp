@@ -210,13 +210,9 @@ void AgiEngine::inDestination(ScreenObjEntry *screenObj) {
 void AgiEngine::motionMoveObjStop(ScreenObjEntry *screenObj) {
 	screenObj->stepSize = screenObj->move_stepSize;
 
-	uint16 agiVersion = getVersion();
-	if (agiVersion >= 0x3000) {
-		// this check was only done for AGI3
-		if (screenObj->motionType != kMotionEgo) {
-			setflag(screenObj->move_flag, true);
-		}
-	} else {
+	// This check for motionType was only done in AGI3.
+	// But we use this motion type for mouse movement, so we need to check in any case, otherwise it will cause glitches.
+	if (screenObj->motionType != kMotionEgo) {
 		setflag(screenObj->move_flag, true);
 	}
 
