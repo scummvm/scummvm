@@ -276,7 +276,7 @@ enum {
 	VM_VAR_MONITOR = 26,			// 26
 	VM_VAR_MOUSE_BUTTONSTATE = 27,  // 27
 	VM_VAR_MOUSE_X = 28,			// 28
-	VM_VAR_MOUSE_Y = 29,			// 29
+	VM_VAR_MOUSE_Y = 29				// 29
 };
 
 /**
