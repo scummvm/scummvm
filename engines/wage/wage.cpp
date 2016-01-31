@@ -336,13 +336,6 @@ void WageEngine::onMove(Designed *what, Designed *from, Designed *to) {
 		return;
 	}
 
-	if (!_temporarilyHidden) {
-		assert(what);
-		assert(from);
-		assert(to);
-		debug(6, "move: %s, %s -> %s", what->_name.c_str(), from->_name.c_str(), to->_name.c_str());
-	}
-
 	if (from == currentScene || to == currentScene ||
 			(what->_classType == CHR && ((Chr *)what)->_currentScene == currentScene) ||
 			(what->_classType == OBJ && ((Obj *)what)->_currentScene == currentScene))

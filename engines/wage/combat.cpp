@@ -409,10 +409,9 @@ void WageEngine::performMove(Chr *chr, int validMoves) {
 	int dir = _rnd->getRandomNumber(numValidMoves);
 
 	// And get it
-
 	for (int i = 0; i < 4; i++, dir--)
 		if ((validMoves & (1 << i)) != 0) {
-			if (dir == 0) {
+			if (dir == 1) {
 				dir = i;
 				break;
 			}
