@@ -48,7 +48,6 @@ public:
 private:
 	AgiEngine *_vm;
 	GfxMgr *_gfx;
-	PictureMgr *_picture;
 	TextMgr *_text;
 
 public:
