@@ -331,6 +331,7 @@ int AgiEngine::loadGame(const Common::String &fileName, bool checkId) {
 	uint8 t;
 	int16 parm[7];
 	Common::InSaveFile *in;
+	bool totalPlayTimeWasSet = false;
 
 	debugC(3, kDebugLevelMain | kDebugLevelSavegame, "AgiEngine::loadGame(%s)", fileName.c_str());
 
@@ -380,7 +381,8 @@ int AgiEngine::loadGame(const Common::String &fileName, bool checkId) {
 		in->readUint16BE(); // save time
 		if (saveVersion >= 6) {
 			uint32 playTime = in->readUint32BE();
-			g_engine->setTotalPlayTime(playTime * 1000);
+			inGameTimerReset(playTime * 1000);
+			totalPlayTimeWasSet = true;
 		}
 	}
 
@@ -438,6 +440,19 @@ int AgiEngine::loadGame(const Common::String &fileName, bool checkId) {
 		_game.flags[i] = in->readByte();
 	for (i = 0; i < MAX_VARS; i++)
 		_game.vars[i] = in->readByte();
+
+	if (!totalPlayTimeWasSet) {
+		// If we haven't gotten total play time by now, try to calculate it by using VM Variables
+		// This will happen for at least saves before version 6
+		// Direct access because otherwise we would trigger an update to these variables according to ScummVM total play time
+		byte playTimeSeconds = _game.vars[VM_VAR_SECONDS];
+		byte playTimeMinutes = _game.vars[VM_VAR_MINUTES];
+		byte playTimeHours   = _game.vars[VM_VAR_HOURS];
+		byte playTimeDays    = _game.vars[VM_VAR_DAYS];
+		uint32 playTime = (playTimeSeconds + (playTimeMinutes * 60) + (playTimeHours * 3600) + (playTimeDays * 86400)) * 1000;
+
+		inGameTimerReset(playTime);
+	}
 
 	setVar(VM_VAR_FREE_PAGES, 180); // Set amount of free memory to realistic value (Overwriting the just loaded value)
 

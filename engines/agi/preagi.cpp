@@ -62,7 +62,6 @@ void PreAgiEngine::initialize() {
 	_picture = new PictureMgr(this, _gfx);
 
 	_font->init();
-	_gfx->initMachine();
 
 	_game.gameFlags = 0;
 

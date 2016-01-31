@@ -173,37 +173,6 @@ void AgiEngine::interpretCycle() {
 	//_gfx->doUpdate();
 }
 
-/**
- * Update AGI interpreter timer.
- */
-void AgiEngine::updateTimer() {
-	_clockCount++;
-	if (_clockCount <= TICK_SECONDS)
-		return;
-
-	_clockCount -= TICK_SECONDS;
-
-	if (!_game.clockEnabled)
-		return;
-
-	setVar(VM_VAR_SECONDS, getVar(VM_VAR_SECONDS) + 1);
-	if (getVar(VM_VAR_SECONDS) < 60)
-		return;
-
-	setVar(VM_VAR_SECONDS, 0);
-	setVar(VM_VAR_MINUTES, getVar(VM_VAR_MINUTES) + 1);
-	if (getVar(VM_VAR_MINUTES) < 60)
-		return;
-
-	setVar(VM_VAR_MINUTES, 0);
-	setVar(VM_VAR_HOURS, getVar(VM_VAR_HOURS) + 1);
-	if (getVar(VM_VAR_HOURS) < 24)
-		return;
-
-	setVar(VM_VAR_HOURS, 0);
-	setVar(VM_VAR_DAYS, getVar(VM_VAR_DAYS) + 1);
-}
-
 void AgiEngine::newInputMode(InputMode mode) {
 	//if (mode == INPUTMODE_MENU && !getflag(VM_FLAG_MENUS_WORK) && !(getFeatures() & GF_MENUS))
 	//	return;
@@ -224,7 +193,6 @@ int AgiEngine::mainCycle(bool onlyCheckForEvents) {
 
 	if (!onlyCheckForEvents) {
 		pollTimer();
-		updateTimer();
 	}
 
 	if (_menu->delayedExecuteActive()) {
@@ -402,7 +370,11 @@ int AgiEngine::playGame() {
 		if (!mainCycle())
 			continue;
 
-		if (getVar(VM_VAR_TIME_DELAY) == 0 || (1 + _clockCount) % getVar(VM_VAR_TIME_DELAY) == 0) {
+		inGameTimerUpdate();
+
+		if (_passedPlayTimeCycles >= getVar(VM_VAR_TIME_DELAY)) {
+			_passedPlayTimeCycles = 0;
+
 			if (!_game.hasPrompt && _game.inputMode == INPUTMODE_NORMAL) {
 				_text->promptRedraw();
 				_game.hasPrompt = 1;
@@ -468,6 +440,10 @@ int AgiEngine::runGame() {
 		if (_restartGame) {
 			setFlag(VM_FLAG_RESTART_GAME, true);
 			setVar(VM_VAR_TIME_DELAY, 2);	// "normal" speed
+
+			// Reset in-game timer
+			inGameTimerReset();
+
 			_restartGame = false;
 		}
 

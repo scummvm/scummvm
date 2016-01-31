@@ -76,9 +76,6 @@ public:
 	void initMouseCursor(MouseCursorData *mouseCursor, const byte *bitmapData, uint16 width, uint16 height, int hotspotX, int hotspotY);
 	void setMouseCursor(bool busy = false);
 
-	int initMachine();
-	int deinitMachine();
-
 	void setRenderStartOffset(uint16 offsetY);
 	uint16 getRenderStartOffsetY();
 

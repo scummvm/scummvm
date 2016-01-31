@@ -811,25 +811,41 @@ void cmdResetScanStart(AgiGame *state, uint8 *parameter) {
 }
 
 void cmdSaveGame(AgiGame *state, uint8 *parameter) {
+	AgiEngine *vm = state->_vm;
+
+	vm->inGameTimerPause();
+
 	if (state->automaticSave) {
-		if (state->_vm->saveGameAutomatic()) {
+		if (vm->saveGameAutomatic()) {
 			// automatic save succeded
+			vm->inGameTimerResume();
 			return;
 		}
 		// fall back to regular dialog otherwise
 	}
-	state->_vm->saveGameDialog();
+
+	vm->saveGameDialog();
+
+	vm->inGameTimerResume();
 }
 
 void cmdLoadGame(AgiGame *state, uint8 *parameter) {
+	AgiEngine *vm = state->_vm;
+
+	vm->inGameTimerPause();
+
 	if (state->automaticSave) {
-		if (state->_vm->loadGameAutomatic()) {
+		if (vm->loadGameAutomatic()) {
 			// automatic restore succeded
+			vm->inGameTimerResume();
 			return;
 		}
 		// fall back to regular dialog otherwise
 	}
-	state->_vm->loadGameDialog();
+
+	vm->loadGameDialog();
+
+	vm->inGameTimerResume();
 }
 
 void cmdInitDisk(AgiGame *state, uint8 *parameter) {				// do nothing
@@ -1740,10 +1756,7 @@ void cmdSetGameID(AgiGame *state, uint8 *parameter) {
 
 void cmdPause(AgiGame *state, uint8 *parameter) {
 	AgiEngine *vm = state->_vm;
-	int originalClockState = state->clockEnabled;
 	bool skipPause = false;
-
-	state->clockEnabled = false;
 
 	// We check in here, if a special key was specified to trigger menus.
 	// If that's the case, normally triggering the menu should be handled inside handleController()
@@ -1773,10 +1786,16 @@ void cmdPause(AgiGame *state, uint8 *parameter) {
 
 	if (!skipPause) {
 		// Show pause message box
-		state->_vm->_systemUI->pauseDialog();
-	}
+		int originalClockState = state->clockEnabled;
 
-	state->clockEnabled = originalClockState;
+		vm->inGameTimerPause();
+		state->clockEnabled = false;
+
+		state->_vm->_systemUI->pauseDialog();
+
+		vm->inGameTimerPause();
+		state->clockEnabled = originalClockState;
+	}
 }
 
 void cmdSetMenu(AgiGame *state, uint8 *parameter) {
@@ -2370,7 +2389,6 @@ int AgiEngine::runLogic(int n) {
 
 	_game._curLogic->cIP = _game._curLogic->sIP;
 
-	_timerHack = 0;
 	while (state->_curLogic->cIP < _game.logics[n].size && !(shouldQuit() || _restartGame)) {
 		// TODO: old code, needs to be adjusted
 #if 0
@@ -2405,14 +2423,6 @@ int AgiEngine::runLogic(int n) {
 		case 0xfe:	// goto
 			// +2 covers goto size
 			state->_curLogic->cIP += 2 + ((int16)READ_LE_UINT16(state->_curLogic->data + state->_curLogic->cIP));
-
-			// timer must keep running even in goto loops,
-			// but AGI engine can't do that :(
-			if (_timerHack > 20) {
-				pollTimer();
-				updateTimer();
-				_timerHack = 0;
-			}
 			break;
 		case 0x00:	// return
 			debugC(2, kDebugLevelScripts, "%sreturn() // Logic %d", st, n);

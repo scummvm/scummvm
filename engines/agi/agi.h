@@ -653,7 +653,6 @@ public:
 	GfxMgr  *_gfx;
 
 	Common::RenderMode _renderMode;
-	volatile uint32 _clockCount;
 	AgiDebug _debug;
 	AgiGame _game;
 	Common::RandomSource *_rnd;
@@ -824,12 +823,13 @@ public:
 
 	byte getVar(int16 varNr);
 	void setVar(int16 varNr, byte newValue);
+
+public:
 	void decrypt(uint8 *mem, int len);
 	void releaseSprites();
 	int mainCycle(bool onlyCheckForEvents = false);
 	int viewPictures();
 	int runGame();
-	void updateTimer();
 	int getAppDir(char *appDir, unsigned int size);
 
 	int setupV2Game(int ver);
@@ -950,14 +950,23 @@ public:
 public:
 	void redrawScreen();
 
+	void inGameTimerReset(uint32 newPlayTime = 0);
+	void inGameTimerPause();
+	void inGameTimerResume();
+	uint32 inGameTimerGet();
+
+	void inGameTimerUpdate();
+
+private:
+	uint32 _lastUsedPlayTimeInCycles; // 20 per second
+	uint32 _lastUsedPlayTimeInSeconds; // actual seconds
+	uint32 _passedPlayTimeCycles; // increased by 1 every time we passed a cycle
+
 private:
 	AgiCommand _agiCommands[183];
 	AgiCommand _agiCondCommands[256];
 
 	void setupOpcodes();
-
-public:
-	int _timerHack;			// Workaround for timer loop in MH1 logic 153
 };
 
 } // End of namespace Agi

@@ -547,7 +547,6 @@ int AgiEngine::waitKey() {
 			break;
 
 		pollTimer();
-		updateTimer();
 
 		g_system->updateScreen();
 	}

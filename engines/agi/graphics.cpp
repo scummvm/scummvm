@@ -156,16 +156,6 @@ int GfxMgr::deinitVideo() {
 	return errOK;
 }
 
-int GfxMgr::initMachine() {
-	_vm->_clockCount = 0;
-
-	return errOK;
-}
-
-int GfxMgr::deinitMachine() {
-	return errOK;
-}
-
 void GfxMgr::setRenderStartOffset(uint16 offsetY) {
 	if (offsetY >= (DISPLAY_HEIGHT - SCRIPT_HEIGHT))
 		error("invalid render start offset");

@@ -42,38 +42,26 @@ namespace Agi {
 #define testObjInRoom(obj, v)	(state->_vm->objectGetLocation(obj) == getVar(v))
 
 void condEqual(AgiGame *state, uint8 *p) {
-	if (p[0] == VM_VAR_SECONDS)
-		state->_vm->_timerHack++;
 	state->testResult = testEqual(p[0], p[1]);
 }
 
 void condEqualV(AgiGame *state, uint8 *p) {
-	if (p[0] == VM_VAR_SECONDS || p[1] == VM_VAR_SECONDS)
-		state->_vm->_timerHack++;
 	state->testResult = testEqual(p[0], getVar(p[1]));
 }
 
 void condLess(AgiGame *state, uint8 *p) {
-	if (p[0] == VM_VAR_SECONDS)
-		state->_vm->_timerHack++;
 	state->testResult = testLess(p[0], p[1]);
 }
 
 void condLessV(AgiGame *state, uint8 *p) {
-	if (p[0] == VM_VAR_SECONDS || p[1] == VM_VAR_SECONDS)
-		state->_vm->_timerHack++;
 	state->testResult = testLess(p[0], getVar(p[1]));
 }
 
 void condGreater(AgiGame *state, uint8 *p) {
-	if (p[0] == VM_VAR_SECONDS)
-		state->_vm->_timerHack++;
 	state->testResult = testGreater(p[0], p[1]);
 }
 
 void condGreaterV(AgiGame *state, uint8 *p) {
-	if (p[0] == VM_VAR_SECONDS || p[1] == VM_VAR_SECONDS)
-		state->_vm->_timerHack++;
 	state->testResult = testGreater(p[0], getVar(p[1]));
 }
 

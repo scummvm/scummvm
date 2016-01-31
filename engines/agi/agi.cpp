@@ -390,7 +390,6 @@ AgiEngine::AgiEngine(OSystem *syst, const AGIGameDescription *gameDesc) : AgiBas
 
 	setupOpcodes();
 	_game._curLogic = NULL;
-	_timerHack = 0;
 
 	_lastSaveTime = 0;
 	_lastTick = 0;
@@ -460,8 +459,6 @@ void AgiEngine::initialize() {
 	_font->init();
 	_text->init(_systemUI);
 
-	_gfx->initMachine();
-
 	_game.gameFlags = 0;
 
 	_text->charAttrib_Set(15, 0);
@@ -530,7 +527,6 @@ AgiEngine::~AgiEngine() {
 	delete _text;
 	delete _sprites;
 	delete _picture;
-	_gfx->deinitMachine();
 	delete _gfx;
 	delete _font;
 	delete _words;
@@ -549,7 +545,7 @@ Common::Error AgiEngine::go() {
 	if (_game.mouseEnabled) {
 		CursorMan.showMouse(true);
 	}
-	setTotalPlayTime(0);
+	inGameTimerReset();
 
 	if (_game.state < STATE_LOADED) {
 		do {
