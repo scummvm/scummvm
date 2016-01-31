@@ -214,8 +214,8 @@ static const uint8 fontData_AmigaPseudoTopaz[2600] = {
 
 // 8x8 font patterns
 
-// this is basically the PC VGA font, taken from Dos-Box, with a few modifications
-static const uint8 fontData_VGA[] = {
+// this is basically the standard PC BIOS font, taken from Dos-Box, with a few modifications
+static const uint8 fontData_PCBIOS[] = {
 	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
 	0x7E, 0x81, 0xA5, 0x81, 0xBD, 0x99, 0x81, 0x7E,
 	0x7E, 0xFF, 0xDB, 0xFF, 0xC3, 0xE7, 0xFF, 0x7E,
@@ -662,8 +662,8 @@ void GfxFont::init() {
 
 	if (!_fontData) {
 		// no font assigned?
-		// use regular VGA font (taken from Dos-Box with a few modifications)
-		_fontData = fontData_VGA;
+		// use regular PC-BIOS font (taken from Dos-Box with a few modifications)
+		_fontData = fontData_PCBIOS;
 		debug("AGI: Using VGA font");
 	}
 
@@ -813,8 +813,8 @@ void GfxFont::loadFontAmigaPseudoTopaz() {
 	assert(topazLowChar == ' ');
 	assert(topazHighChar == 0xFF);
 
-	// copy first 32 VGA characters over
-	memcpy(fontData, fontData_VGA, FONT_DISPLAY_WIDTH * 32);
+	// copy first 32 PC-BIOS characters over
+	memcpy(fontData, fontData_PCBIOS, FONT_DISPLAY_WIDTH * 32);
 	fontData += FONT_DISPLAY_WIDTH * 32;
 
 	// now actually convert from topaz data
