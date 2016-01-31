@@ -1315,7 +1315,7 @@ void ScalpelUserInterface::doMainControl() {
 		for (uint16 buttonNr = 0; buttonNr < 12; buttonNr++) {
 			Common::Rect r(MENU_POINTS[buttonNr][0], MENU_POINTS[buttonNr][1],
 				MENU_POINTS[buttonNr][2], MENU_POINTS[buttonNr][3]);
-			if (IS_3DO && buttonNr >= 0 && buttonNr <= 2) {
+			if (IS_3DO && buttonNr <= 2) {
 				r.left += UI_OFFSET_3DO - 1;
 				r.right += UI_OFFSET_3DO - 1;
 			}
