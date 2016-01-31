@@ -452,38 +452,38 @@ bool AgiEngine::handleController(uint16 key) {
 		return true;
 	}
 
+	int16 newDirection = 0;
+
+	switch (key) {
+	case AGI_KEY_UP:
+		newDirection = 1;
+		break;
+	case AGI_KEY_DOWN:
+		newDirection = 5;
+		break;
+	case AGI_KEY_LEFT:
+		newDirection = 7;
+		break;
+	case AGI_KEY_RIGHT:
+		newDirection = 3;
+		break;
+	case AGI_KEY_UP_RIGHT:
+		newDirection = 2;
+		break;
+	case AGI_KEY_DOWN_RIGHT:
+		newDirection = 4;
+		break;
+	case AGI_KEY_UP_LEFT:
+		newDirection = 8;
+		break;
+	case AGI_KEY_DOWN_LEFT:
+		newDirection = 6;
+		break;
+	default:
+		break;
+	}
+
 	if (_game.playerControl) {
-		int16 newDirection = 0;
-
-		switch (key) {
-		case AGI_KEY_UP:
-			newDirection = 1;
-			break;
-		case AGI_KEY_DOWN:
-			newDirection = 5;
-			break;
-		case AGI_KEY_LEFT:
-			newDirection = 7;
-			break;
-		case AGI_KEY_RIGHT:
-			newDirection = 3;
-			break;
-		case AGI_KEY_UP_RIGHT:
-			newDirection = 2;
-			break;
-		case AGI_KEY_DOWN_RIGHT:
-			newDirection = 4;
-			break;
-		case AGI_KEY_UP_LEFT:
-			newDirection = 8;
-			break;
-		case AGI_KEY_DOWN_LEFT:
-			newDirection = 6;
-			break;
-		default:
-			break;
-		}
-
 		if (!(getFeatures() & GF_AGIMOUSE)) {
 			// Handle mouse button events
 			if (!_game.mouseHidden) {
@@ -515,13 +515,20 @@ bool AgiEngine::handleController(uint16 key) {
 				}
 			}
 		}
+	}
 
-		if (newDirection || key == AGI_KEY_STATIONARY) {
-			screenObjEgo->flags &= ~fAdjEgoXY;
-			screenObjEgo->direction = screenObjEgo->direction == newDirection ? 0 : newDirection;
-			screenObjEgo->motionType = kMotionNormal;
-			return true;
+	if (newDirection || key == AGI_KEY_STATIONARY) {
+		// TODO: not sure, what original AGI did with AdjEgoXY
+		screenObjEgo->flags &= ~fAdjEgoXY;
+		if (screenObjEgo->direction == newDirection) {
+			setVar(VM_VAR_EGO_DIRECTION, 0);
+		} else {
+			setVar(VM_VAR_EGO_DIRECTION, newDirection);
 		}
+		if (_game.playerControl) {
+			screenObjEgo->motionType = kMotionNormal;
+		}
+		return true;
 	}
 
 	return false;
