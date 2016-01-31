@@ -274,35 +274,36 @@ Common::Error StarkEngine::loadGameState(int slot) {
 		return _saveFileMan->getError();
 	}
 
-	// 0. Clear the previous world resources
+	// Reset the UI
+	_userInterface->skipFMV();
+	_userInterface->clearLocationDependentState();
+	_userInterface->setInteractive(true);
+
+	// Clear the previous world resources
 	_resourceProvider->shutdown();
 
 	StateReadStream *stream = new StateReadStream(save);
 
-	// 1. Read the header
-	// Save description
+	// Read the header
 	Common::String desc = stream->readString();
 
-	// Level
 	Common::String level = stream->readString();
 	uint levelIndex = strtol(level.c_str(), nullptr, 16);
 
-	// Location
 	Common::String location = stream->readString();
 	uint locationIndex = strtol(location.c_str(), nullptr, 16);
 
-	// Version
 	Common::String version = stream->readString();
 	//TODO: Check the version
 
-	// 2. Read the resource trees state
+	// Read the resource trees state
 	_stateProvider->readStateFromStream(stream);
 
 	//TODO: Read the rest of the state
 
 	delete stream;
 
-	// 3. Initialize the world resources with the loaded state
+	// Initialize the world resources with the loaded state
 	_resourceProvider->initGlobal();
 	_resourceProvider->setShouldRestoreCurrentState();
 	_resourceProvider->requestLocationChange(levelIndex, locationIndex);
