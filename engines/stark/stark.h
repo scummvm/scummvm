@@ -57,6 +57,9 @@ public:
 	StarkEngine(OSystem *syst, const ADGameDescription *gameDesc);
 	virtual ~StarkEngine();
 
+	/** Build a save file name for the specified target and slot */
+	static Common::String formatSaveName(const char *target, int slot);
+
 protected:
 	// Engine APIs
 	virtual Common::Error run() override;

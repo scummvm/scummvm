@@ -39,7 +39,7 @@ StateReadStream::~StateReadStream() {
 
 Common::String StateReadStream::readString() {
 	// Read the string length
-	uint16 length = readUint32LE();
+	uint32 length = readUint32LE();
 
 	// Read the string
 	char *data = new char[length];

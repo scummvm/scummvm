@@ -304,7 +304,7 @@ public:
 	}
 
 	int getMaximumSaveSlot() const override {
-		return 99;
+		return 999;
 	}
 
 	static bool cmpSave(const SaveStateDescriptor &x, const SaveStateDescriptor &y) {
@@ -312,15 +312,19 @@ public:
 	}
 
 	SaveStateList listSaves(const char *target) const override {
-		SaveStateList saveList;
-		Common::StringArray filenames = g_system->getSavefileManager()->listSavefiles("Save##.tlj");
+		Common::String pattern = Common::String::format("%s-###.tlj", target);
+		Common::StringArray filenames = g_system->getSavefileManager()->listSavefiles(pattern);
 
-		char slot[3];
+		int targetLen = strlen(target);
+
+		SaveStateList saveList;
 		for (Common::StringArray::const_iterator filename = filenames.begin(); filename != filenames.end(); ++filename) {
 			// Extract the slot number from the filename
-			slot[0] = filename->c_str()[4];
-			slot[1] = filename->c_str()[5];
-			slot[2] = '\0';
+			char slot[4];
+			slot[0] = (*filename)[targetLen + 1];
+			slot[1] = (*filename)[targetLen + 2];
+			slot[2] = (*filename)[targetLen + 3];
+			slot[3] = '\0';
 
 			// Read the description from the save
 			Common::String description;
@@ -339,7 +343,7 @@ public:
 	}
 
 	void removeSaveState(const char *target, int slot) const override {
-		Common::String filename = Common::String::format("Save%02d.tlj", slot);
+		Common::String filename = StarkEngine::formatSaveName(target, slot);
 		g_system->getSavefileManager()->removeSavefile(filename);
 	}
 

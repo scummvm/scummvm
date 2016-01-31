@@ -268,7 +268,7 @@ bool StarkEngine::canLoadGameStateCurrently() {
 
 Common::Error StarkEngine::loadGameState(int slot) {
 	// Open the save file
-	Common::String filename = Common::String::format("Save%02d.tlj", slot);
+	Common::String filename = formatSaveName(_targetName.c_str(), slot);
 	Common::InSaveFile *save = _saveFileMan->openForLoading(filename);
 	if (!save) {
 		return _saveFileMan->getError();
@@ -319,7 +319,7 @@ Common::Error StarkEngine::saveGameState(int slot, const Common::String &desc) {
 	_resourceProvider->commitActiveLocationsState();
 
 	// Open the save file
-	Common::String filename = Common::String::format("Save%02d.tlj", slot);
+	Common::String filename = formatSaveName(_targetName.c_str(), slot);
 	Common::OutSaveFile *save = _saveFileMan->openForSaving(filename);
 	if (!save) {
 		return _saveFileMan->getError();
@@ -360,4 +360,7 @@ bool StarkEngine::isDemo() {
 	return _gameDescription->flags & ADGF_DEMO;
 }
 
+Common::String StarkEngine::formatSaveName(const char *target, int slot) {
+	return Common::String::format("%s-%03d.tlj", target, slot);
+}
 } // End of namespace Stark
