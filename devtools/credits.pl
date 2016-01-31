@@ -538,6 +538,7 @@ begin_credits("Credits");
 				add_person("Stuart George", "darkfiber", "");
 				add_person("Matthew Hoops", "clone2727", "");
 				add_person("Filippos Karapetis", "[md5]", "");
+				add_person("Martin Kiewitz", "m_kiewitz", "");
 				add_person("Pawe&#322; Ko&#322;odziejski", "aquadran", "");
 				add_person("Walter van Niftrik", "waltervn", "(retired)");
 				add_person("Kari Salminen", "Buddha^", "");
