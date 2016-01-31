@@ -104,7 +104,7 @@ void AgiEngine::newRoom(int16 newRoomNr) {
 			// this was only done in AGI3
 			if (screenObjEgo->motionType == kMotionEgo) {
 				screenObjEgo->motionType = kMotionNormal;
-				_game.vars[VM_VAR_EGO_DIRECTION] = 0;
+				setVar(VM_VAR_EGO_DIRECTION, 0);
 			}
 		}
 
@@ -130,10 +130,10 @@ void AgiEngine::interpretCycle() {
 	ScreenObjEntry *screenObjEgo = &_game.screenObjTable[SCREENOBJECTS_EGO_ENTRY];
 	int oldSound, oldScore;
 
-	if (_game.playerControl)
-		_game.vars[VM_VAR_EGO_DIRECTION] = screenObjEgo->direction;
+	if (!_game.playerControl)
+		setVar(VM_VAR_EGO_DIRECTION, screenObjEgo->direction);
 	else
-		screenObjEgo->direction = _game.vars[VM_VAR_EGO_DIRECTION];
+		screenObjEgo->direction = getVar(VM_VAR_EGO_DIRECTION);
 
 	checkAllMotions();
 
@@ -154,7 +154,7 @@ void AgiEngine::interpretCycle() {
 	nonBlockingText_CycleDone();
 	resetControllers();
 
-	screenObjEgo->direction = _game.vars[VM_VAR_EGO_DIRECTION];
+	screenObjEgo->direction = getVar(VM_VAR_EGO_DIRECTION);
 
 	if (_game.vars[VM_VAR_SCORE] != oldScore || getflag(VM_FLAG_SOUND_ON) != oldSound)
 		_game._vm->_text->statusDraw();

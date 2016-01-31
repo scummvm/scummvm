@@ -276,7 +276,7 @@ void AgiEngine::updatePosition() {
 				_game.vars[VM_VAR_BORDER_CODE] = screenObj->objectNr;
 				_game.vars[VM_VAR_BORDER_TOUCH_OBJECT] = border;
 			}
-			if (screenObj->motionType == kMotionMoveObj) { // ANGEPASST
+			if (screenObj->motionType == kMotionMoveObj) {
 				motionMoveObjStop(screenObj);
 			}
 		}

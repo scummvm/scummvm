@@ -58,7 +58,7 @@ void AgiEngine::changePos(ScreenObjEntry *screenObj) {
 		screenObj->flags |= fMotion;
 		screenObj->direction = 0;
 		if (isEgoView(screenObj))
-			_game.vars[VM_VAR_EGO_DIRECTION] = 0;
+			setVar(VM_VAR_EGO_DIRECTION, 0);
 	}
 }
 
@@ -70,7 +70,7 @@ void AgiEngine::motionWander(ScreenObjEntry *screenObj) {
 		screenObj->direction = _rnd->getRandomNumber(8);
 
 		if (isEgoView(screenObj)) {
-			_game.vars[VM_VAR_EGO_DIRECTION] = screenObj->direction;
+			setVar(VM_VAR_EGO_DIRECTION, screenObj->direction);
 		}
 
 		while (screenObj->wander_count < 6) {
@@ -147,7 +147,7 @@ void AgiEngine::motionMoveObj(ScreenObjEntry *screenObj) {
 
 	// Update V6 if ego
 	if (isEgoView(screenObj))
-		_game.vars[VM_VAR_EGO_DIRECTION] = screenObj->direction;
+		setVar(VM_VAR_EGO_DIRECTION, screenObj->direction);
 
 	if (screenObj->direction == 0)
 		motionMoveObjStop(screenObj);
@@ -216,7 +216,7 @@ void AgiEngine::motionMoveObjStop(ScreenObjEntry *screenObj) {
 	screenObj->motionType = kMotionNormal;
 	if (isEgoView(screenObj)) {
 		_game.playerControl = true;
-		_game.vars[VM_VAR_EGO_DIRECTION] = 0;
+		setVar(VM_VAR_EGO_DIRECTION, 0);
 	}
 }
 

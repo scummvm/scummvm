@@ -1477,7 +1477,7 @@ void cmdStopMotion(AgiGame *state, uint8 *parameter) {
 	screenObj->direction = 0;
 	screenObj->motionType = kMotionNormal;
 	if (objectNr == 0) {		// ego only
-		state->vars[VM_VAR_EGO_DIRECTION] = 0;
+		state->_vm->setVar(VM_VAR_EGO_DIRECTION, 0);
 		state->playerControl = false;
 	}
 }
@@ -1495,7 +1495,7 @@ void cmdStartMotion(AgiGame *state, uint8 *parameter) {
 
 	screenObj->motionType = kMotionNormal;
 	if (objectNr == 0) {		// ego only
-		state->vars[VM_VAR_EGO_DIRECTION] = 0;
+		state->_vm->setVar(VM_VAR_EGO_DIRECTION, 0);
 		state->playerControl = true;
 	}
 }

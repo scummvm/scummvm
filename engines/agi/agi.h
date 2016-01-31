@@ -441,7 +441,7 @@ struct AgiGame {
 	Common::Array<ScriptPos> execStack;
 
 	// internal flags
-	int playerControl;		/**< player is in control */
+	bool playerControl;		/**< player is in control */
 	int clockEnabled;		/**< clock is on/off */
 	int exitAllLogics;	/**< break cycle after new.room */
 	bool pictureShown;		/**< show.pic has been issued */
