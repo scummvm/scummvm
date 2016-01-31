@@ -59,6 +59,7 @@ static const char *credits[] = {
 "C0""Stuart George",
 "C0""Matthew Hoops",
 "C0""Filippos Karapetis",
+"C0""Martin Kiewitz",
 "C0""Pawel Kolodziejski",
 "C0""Walter van Niftrik",
 "C2""(retired)",
