@@ -488,7 +488,7 @@ bool AgiEngine::handleController(uint16 key) {
 			// Handle mouse button events
 			if (!_game.mouseHidden) {
 				if (key == AGI_MOUSE_BUTTON_LEFT) {
-					if (getGameID() == GID_PQ1 && _game.vars[VM_VAR_CURRENT_ROOM] == 116) {
+					if (getGameID() == GID_PQ1 && getVar(VM_VAR_CURRENT_ROOM) == 116) {
 						// WORKAROUND: Special handling for mouse clicks in the newspaper
 						// screen of PQ1. Fixes bug #3018770.
 						newDirection = 3;	// fake a right arrow key (next page)

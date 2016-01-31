@@ -94,10 +94,8 @@ int AgiEngine::agiInit() {
 	_game.adjMouseX = _game.adjMouseY = 0;
 
 	// reset all flags to false and all variables to 0
-	for (i = 0; i < MAX_FLAGS; i++)
-		_game.flags[i] = 0;
-	for (i = 0; i < MAX_VARS; i++)
-		_game.vars[i] = 0;
+	memset(_game.flags, 0, sizeof(_game.flags));
+	memset(_game.vars, 0, sizeof(_game.vars));
 
 	// clear all resources and events
 	for (i = 0; i < MAX_DIRECTORY_ENTRIES; i++) {
@@ -606,7 +604,7 @@ void AgiEngine::loadingTrigger_NewRoom(int16 newRoomNr) {
 	if (_game.nonBlockingTextShown) {
 		_game.nonBlockingTextShown = false;
 
-		int16 curRoomNr = _game.vars[VM_VAR_CURRENT_ROOM];
+		int16 curRoomNr = getVar(VM_VAR_CURRENT_ROOM);
 
 		if (newRoomNr != curRoomNr) {
 			if (!_game.automaticRestoreGame) {

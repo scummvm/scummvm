@@ -65,16 +65,16 @@ void AgiEngine::newRoom(int16 newRoomNr) {
 	_game.playerControl = true;
 	_game.block.active = false;
 	_game.horizon = 36;
-	_game.vars[VM_VAR_PREVIOUS_ROOM] = _game.vars[VM_VAR_CURRENT_ROOM];
-	_game.vars[VM_VAR_CURRENT_ROOM] = newRoomNr;
-	_game.vars[VM_VAR_BORDER_TOUCH_OBJECT] = 0;
-	_game.vars[VM_VAR_BORDER_CODE] = 0;
-	_game.vars[VM_VAR_EGO_VIEW_RESOURCE] = screenObjEgo->currentViewNr;
+	setVar(VM_VAR_PREVIOUS_ROOM, getVar(VM_VAR_CURRENT_ROOM));
+	setVar(VM_VAR_CURRENT_ROOM, newRoomNr);
+	setVar(VM_VAR_BORDER_TOUCH_OBJECT, 0);
+	setVar(VM_VAR_BORDER_CODE, 0);
+	setVar(VM_VAR_EGO_VIEW_RESOURCE, screenObjEgo->currentViewNr);
 
 	agiLoadResource(RESOURCETYPE_LOGIC, newRoomNr);
 
 	// Reposition ego in the new room
-	switch (_game.vars[VM_VAR_BORDER_TOUCH_EGO]) {
+	switch (getVar(VM_VAR_BORDER_TOUCH_EGO)) {
 	case 1:
 		screenObjEgo->yPos = SCRIPT_HEIGHT - 1;
 		break;
@@ -108,7 +108,7 @@ void AgiEngine::newRoom(int16 newRoomNr) {
 			}
 		}
 
-		_game.vars[VM_VAR_BORDER_TOUCH_EGO] = 0;
+		setVar(VM_VAR_BORDER_TOUCH_EGO, 0);
 		setflag(VM_FLAG_NEW_ROOM_EXEC, true);
 
 		_game.exitAllLogics = true;
@@ -137,15 +137,15 @@ void AgiEngine::interpretCycle() {
 
 	checkAllMotions();
 
-	oldScore = _game.vars[VM_VAR_SCORE];
+	oldScore = getVar(VM_VAR_SCORE);
 	oldSound = getflag(VM_FLAG_SOUND_ON);
 
 	_game.exitAllLogics = false;
 	while (runLogic(0) == 0 && !(shouldQuit() || _restartGame)) {
-		_game.vars[VM_VAR_WORD_NOT_FOUND] = 0;
-		_game.vars[VM_VAR_BORDER_TOUCH_OBJECT] = 0;
-		_game.vars[VM_VAR_BORDER_CODE] = 0;
-		oldScore = _game.vars[VM_VAR_SCORE];
+		setVar(VM_VAR_WORD_NOT_FOUND, 0);
+		setVar(VM_VAR_BORDER_TOUCH_OBJECT, 0);
+		setVar(VM_VAR_BORDER_CODE, 0);
+		oldScore = getVar(VM_VAR_SCORE);
 		setflag(VM_FLAG_ENTERED_CLI, false);
 		_game.exitAllLogics = false;
 		nonBlockingText_CycleDone();
@@ -156,11 +156,11 @@ void AgiEngine::interpretCycle() {
 
 	screenObjEgo->direction = getVar(VM_VAR_EGO_DIRECTION);
 
-	if (_game.vars[VM_VAR_SCORE] != oldScore || getflag(VM_FLAG_SOUND_ON) != oldSound)
+	if (getVar(VM_VAR_SCORE) != oldScore || getflag(VM_FLAG_SOUND_ON) != oldSound)
 		_game._vm->_text->statusDraw();
 
-	_game.vars[VM_VAR_BORDER_TOUCH_OBJECT] = 0;
-	_game.vars[VM_VAR_BORDER_CODE] = 0;
+	setVar(VM_VAR_BORDER_TOUCH_OBJECT, 0);
+	setVar(VM_VAR_BORDER_CODE, 0);
 	setflag(VM_FLAG_NEW_ROOM_EXEC, false);
 	setflag(VM_FLAG_RESTART_GAME, false);
 	setflag(VM_FLAG_RESTORE_JUST_RAN, false);
@@ -237,8 +237,8 @@ int AgiEngine::mainCycle(bool onlyCheckForEvents) {
 	//
 	// We run AGIMOUSE always as a side effect
 	//if (getFeatures() & GF_AGIMOUSE) {
-		_game.vars[28] = _mouse.x / 2;
-		_game.vars[29] = _mouse.y;
+		setVar(VM_VAR_MOUSE_X, _mouse.x / 2);
+		setVar(VM_VAR_MOUSE_Y, _mouse.y);
 	//}
 
 	switch (_game.inputMode) {
@@ -381,8 +381,8 @@ int AgiEngine::playGame() {
 
 	setflag(VM_FLAG_ENTERED_CLI, false);
 	setflag(VM_FLAG_SAID_ACCEPTED_INPUT, false);
-	_game.vars[VM_VAR_WORD_NOT_FOUND] = 0;
-	_game.vars[VM_VAR_KEY] = 0;
+	setVar(VM_VAR_WORD_NOT_FOUND, 0);
+	setVar(VM_VAR_KEY, 0);
 
 	debugC(2, kDebugLevelMain, "Entering main loop");
 	bool firstLoop = !getflag(VM_FLAG_RESTART_GAME); // Do not restore on game restart
@@ -421,8 +421,8 @@ int AgiEngine::playGame() {
 
 			setflag(VM_FLAG_ENTERED_CLI, false);
 			setflag(VM_FLAG_SAID_ACCEPTED_INPUT, false);
-			_game.vars[VM_VAR_WORD_NOT_FOUND] = 0;
-			_game.vars[VM_VAR_KEY] = 0;
+			setVar(VM_VAR_WORD_NOT_FOUND, 0);
+			setVar(VM_VAR_KEY, 0);
 		}
 
 		if (shouldPerformAutoSave(_lastSaveTime)) {

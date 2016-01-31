@@ -341,7 +341,7 @@ bool TextMgr::messageBox(const char *textPtr) {
 	_vm->_noSaveLoadAllowed = true;
 	_vm->nonBlockingText_Forget();
 
-	if (_vm->_game.vars[VM_VAR_WINDOW_RESET] == 0) {
+	if (_vm->getVar(VM_VAR_WINDOW_RESET) == 0) {
 		int userKey;
 		_vm->setVar(VM_VAR_KEY, 0);
 		userKey = _vm->waitKey();

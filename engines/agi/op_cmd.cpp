@@ -43,29 +43,40 @@ namespace Agi {
 #define getLanguage() state->_vm->getLanguage()
 
 void cmdIncrement(AgiGame *state, uint8 *parameter) {
+	AgiEngine *vm = state->_vm;
 	uint16 varNr = parameter[0];
+	byte   varVal = vm->getVar(varNr);
 
 	if (getVersion() < 0x2000) {
-		if (state->vars[varNr] < 0xf0)
-			++state->vars[varNr];
+		if (varVal < 0xf0) {
+			varVal++;
+			vm->setVar(varNr, varVal);
+		}
 	} else {
-		if (state->vars[varNr] != 0xff)
-			++state->vars[varNr];
+		if (varVal != 0xff) {
+			varVal++;
+			vm->setVar(varNr, varVal);
+		}
 	}
 }
 
 void cmdDecrement(AgiGame *state, uint8 *parameter) {
+	AgiEngine *vm = state->_vm;
 	uint16 varNr = parameter[0];
+	byte   varVal = vm->getVar(varNr);
 
-	if (state->vars[varNr] != 0)
-		--state->vars[varNr];
+	if (varVal != 0) {
+		varVal--;
+		vm->setVar(varNr, varVal);
+	}
 }
 
 void cmdAssignN(AgiGame *state, uint8 *parameter) {
+	AgiEngine *vm = state->_vm;
 	uint16 varNr = parameter[0];
 	uint16 value = parameter[1];
 
-	state->vars[varNr] = value;
+	vm->setVar(varNr, value);
 
 	// WORKAROUND for a bug in fan game "Get outta SQ"
 	// Total number of points is stored in variable 7, which
@@ -75,117 +86,151 @@ void cmdAssignN(AgiGame *state, uint8 *parameter) {
 	// Fixes bug #1942476 - "AGI: Fan(Get Outta SQ) - Score
 	// is lost on restart"
 	if (getGameID() == GID_GETOUTTASQ && varNr == 7)
-		state->vars[varNr] = 8;
+		vm->setVar(varNr, 8);
 }
 
 void cmdAddN(AgiGame *state, uint8 *parameter) {
+	AgiEngine *vm = state->_vm;
 	uint16 varNr = parameter[0];
 	uint16 value = parameter[1];
+	byte   varVal = vm->getVar(varNr);
 
-	state->vars[varNr] += value;
+	vm->setVar(varNr, varVal + value);
 }
 
 void cmdSubN(AgiGame *state, uint8 *parameter) {
+	AgiEngine *vm = state->_vm;
 	uint16 varNr = parameter[0];
 	uint16 value = parameter[1];
+	byte   varVal = vm->getVar(varNr);
 
-	state->vars[varNr] -= value;
+	vm->setVar(varNr, varVal - value);
 }
 
 void cmdAssignV(AgiGame *state, uint8 *parameter) {
-	uint16 varNr1 = parameter[0];
-	uint16 varNr2 = parameter[1];
+	AgiEngine *vm = state->_vm;
+	uint16 varNr1  = parameter[0];
+	uint16 varNr2  = parameter[1];
+	byte   varVal2 = vm->getVar(varNr2);
 
-	state->vars[varNr1] = state->vars[varNr2];
+	vm->setVar(varNr1, varVal2);
 }
 
 void cmdAddV(AgiGame *state, uint8 *parameter) {
+	AgiEngine *vm = state->_vm;
 	uint16 varNr1 = parameter[0];
 	uint16 varNr2 = parameter[1];
+	byte   varVal1 = vm->getVar(varNr1);
+	byte   varVal2 = vm->getVar(varNr2);
 
-	state->vars[varNr1] += state->vars[varNr2];
+	vm->setVar(varNr1, varVal1 + varVal2);
 }
 
 void cmdSubV(AgiGame *state, uint8 *parameter) {
+	AgiEngine *vm = state->_vm;
 	uint16 varNr1 = parameter[0];
 	uint16 varNr2 = parameter[1];
+	byte   varVal1 = vm->getVar(varNr1);
+	byte   varVal2 = vm->getVar(varNr2);
 
-	state->vars[varNr1] -= state->vars[varNr2];
+	vm->setVar(varNr1, varVal1 - varVal2);
 }
 
 void cmdMulN(AgiGame *state, uint8 *parameter) {
+	AgiEngine *vm = state->_vm;
 	uint16 varNr = parameter[0];
 	uint16 value = parameter[1];
+	byte   varVal = vm->getVar(varNr);
 
-	state->vars[varNr] *= value;
+	vm->setVar(varNr, varVal * value);
 }
 
 void cmdMulV(AgiGame *state, uint8 *parameter) {
+	AgiEngine *vm = state->_vm;
 	uint16 varNr1 = parameter[0];
 	uint16 varNr2 = parameter[1];
+	byte   varVal1 = vm->getVar(varNr1);
+	byte   varVal2 = vm->getVar(varNr2);
 
-	state->vars[varNr1] *= state->vars[varNr2];
+	vm->setVar(varNr1, varVal1 * varVal2);
 }
 
 void cmdDivN(AgiGame *state, uint8 *parameter) {
+	AgiEngine *vm = state->_vm;
 	uint16 varNr = parameter[0];
 	uint16 value = parameter[1];
+	byte   varVal = vm->getVar(varNr);
 
-	state->vars[varNr] /= value;
+	vm->setVar(varNr, varVal / value);
 }
 
 void cmdDivV(AgiGame *state, uint8 *parameter) {
+	AgiEngine *vm = state->_vm;
 	uint16 varNr1 = parameter[0];
 	uint16 varNr2 = parameter[1];
+	byte   varVal1 = vm->getVar(varNr1);
+	byte   varVal2 = vm->getVar(varNr2);
 
-	state->vars[varNr1] /= state->vars[varNr2];
+	vm->setVar(varNr1, varVal1 / varVal2);
 }
 
 void cmdRandomV1(AgiGame *state, uint8 *parameter) {
+	AgiEngine *vm = state->_vm;
 	uint16 varNr = parameter[0];
 
-	state->vars[varNr] = state->_vm->_rnd->getRandomNumber(250);
+	vm->setVar(varNr, vm->_rnd->getRandomNumber(250));
 }
 
 void cmdRandom(AgiGame *state, uint8 *parameter) {
+	AgiEngine *vm = state->_vm;
 	uint16 valueMin = parameter[0];
 	uint16 valueMax = parameter[1];
 	uint16 varNr = parameter[2];
 
-	state->vars[varNr] = state->_vm->_rnd->getRandomNumber(valueMax - valueMin) + valueMin;
+	vm->setVar(varNr, vm->_rnd->getRandomNumber(valueMax - valueMin) + valueMin);
 }
 
 void cmdLindirectN(AgiGame *state, uint8 *parameter) {
+	AgiEngine *vm = state->_vm;
 	uint16 varNr = parameter[0];
 	uint16 value = parameter[1];
+	byte   varVal = vm->getVar(varNr);
 
-	state->vars[state->vars[varNr]] = value;
+	vm->setVar(varVal, value);
 }
 
 void cmdLindirectV(AgiGame *state, uint8 *parameter) {
+	AgiEngine *vm = state->_vm;
 	uint16 varNr1 = parameter[0];
 	uint16 varNr2 = parameter[1];
+	byte   varVal1 = vm->getVar(varNr1);
+	byte   varVal2 = vm->getVar(varNr2);
 
-	state->vars[state->vars[varNr1]] = state->vars[varNr2];
+	vm->setVar(varVal1, varVal2);
 }
 
 void cmdRindirect(AgiGame *state, uint8 *parameter) {
+	AgiEngine *vm = state->_vm;
 	uint16 varNr1 = parameter[0];
 	uint16 varNr2 = parameter[1];
+	byte   varVal2 = vm->getVar(varNr2);
+	byte   value   = vm->getVar(varVal2);
 
-	state->vars[varNr1] = state->vars[state->vars[varNr2]];
+	vm->setVar(varNr1, value);
 }
 
 void cmdSet(AgiGame *state, uint8 *parameter) {
+	AgiEngine *vm = state->_vm;
 	uint16 flagNr = parameter[0];
 
-	state->_vm->setflag(flagNr, true);
+	vm->setflag(flagNr, true);
 }
 
 void cmdReset(AgiGame *state, uint8 *parameter) {
+	AgiEngine *vm = state->_vm;
 	uint16 flagNr = parameter[0];
 
-	state->_vm->setflag(flagNr, false);
+	vm->setflag(flagNr, false);
 }
 
 void cmdToggle(AgiGame *state, uint8 *parameter) {
@@ -197,37 +242,40 @@ void cmdToggle(AgiGame *state, uint8 *parameter) {
 }
 
 void cmdSetV(AgiGame *state, uint8 *parameter) {
+	AgiEngine *vm = state->_vm;
 	uint16 flagNr = parameter[0];
 
 	if (getVersion() < 0x2000) {
-		state->vars[flagNr] = 1;
+		vm->setVar(flagNr, 1);
 	} else {
-		flagNr = state->vars[flagNr];
-		
-		state->_vm->setflag(flagNr, true);
+		flagNr = vm->getVar(flagNr);
+
+		vm->setflag(flagNr, true);
 	}
 }
 
 void cmdResetV(AgiGame *state, uint8 *parameter) {
+	AgiEngine *vm = state->_vm;
 	uint16 flagNr = parameter[0];
 
 	if (getVersion() < 0x2000) {
-		state->vars[flagNr] = 0;
+		vm->setVar(flagNr, 0);
 	} else {
-		flagNr = state->vars[flagNr];
+		flagNr = vm->getVar(flagNr);
 
-		state->_vm->setflag(flagNr, false);
+		vm->setflag(flagNr, false);
 	}
 }
 
 void cmdToggleV(AgiGame *state, uint8 *parameter) {
+	AgiEngine *vm = state->_vm;
 	uint16 flagNr = parameter[0];
 
 	if (getVersion() < 0x2000) {
-		state->vars[flagNr] ^= 1;
+		byte value = vm->getVar(flagNr);
+		vm->setVar(flagNr, value ^ 1);
 	} else {
-		AgiEngine *vm = state->_vm;
-		flagNr = state->vars[flagNr];
+		flagNr = vm->getVar(flagNr);
 		bool curFlagState = vm->getflag(flagNr);
 
 		vm->setflag(flagNr, !curFlagState);
@@ -253,9 +301,11 @@ void cmdNewRoom(AgiGame *state, uint8 *parameter) {
 }
 
 void cmdNewRoomF(AgiGame *state, uint8 *parameter) {
+	AgiEngine *vm = state->_vm;
 	uint16 varNr = parameter[0];
+	byte   value = vm->getVar(varNr);
 
-	state->_vm->newRoom(state->vars[varNr]);
+	state->_vm->newRoom(value);
 }
 
 void cmdLoadView(AgiGame *state, uint8 *parameter) {
@@ -277,15 +327,19 @@ void cmdLoadSound(AgiGame *state, uint8 *parameter) {
 }
 
 void cmdLoadViewF(AgiGame *state, uint8 *parameter) {
+	AgiEngine *vm = state->_vm;
 	uint16 varNr = parameter[0];
+	byte   value = vm->getVar(varNr);
 
-	state->_vm->agiLoadResource(RESOURCETYPE_VIEW, state->vars[varNr]);
+	vm->agiLoadResource(RESOURCETYPE_VIEW, value);
 }
 
 void cmdLoadLogicF(AgiGame *state, uint8 *parameter) {
+	AgiEngine *vm = state->_vm;
 	uint16 varNr = parameter[0];
+	byte   value = vm->getVar(varNr);
 
-	state->_vm->agiLoadResource(RESOURCETYPE_LOGIC, state->vars[varNr]);
+	state->_vm->agiLoadResource(RESOURCETYPE_LOGIC, value);
 }
 
 void cmdDiscardView(AgiGame *state, uint8 *parameter) {
@@ -364,11 +418,12 @@ void cmdSetHorizon(AgiGame *state, uint8 *parameter) {
 }
 
 void cmdGetPriority(AgiGame *state, uint8 *parameter) {
+	AgiEngine *vm = state->_vm;
 	uint16 objectNr = parameter[0];
 	uint16 varNr = parameter[1];
 	ScreenObjEntry *screenObj = &state->screenObjTable[objectNr];
 
-	state->vars[varNr] = screenObj->priority;
+	vm->setVar(varNr, screenObj->priority);
 }
 
 void cmdSetPriority(AgiGame *state, uint8 *parameter) {
@@ -381,12 +436,13 @@ void cmdSetPriority(AgiGame *state, uint8 *parameter) {
 }
 
 void cmdSetPriorityF(AgiGame *state, uint8 *parameter) {
+	AgiEngine *vm = state->_vm;
 	uint16 objectNr = parameter[0];
 	uint16 varNr = parameter[1];
 	ScreenObjEntry *screenObj = &state->screenObjTable[objectNr];
 
 	screenObj->flags |= fFixedPriority;
-	screenObj->priority = state->vars[varNr];
+	screenObj->priority = vm->getVar(varNr);
 }
 
 void cmdReleasePriority(AgiGame *state, uint8 *parameter) {
@@ -414,55 +470,62 @@ void cmdStopUpdate(AgiGame *state, uint8 *parameter) {
 }
 
 void cmdCurrentView(AgiGame *state, uint8 *parameter) {
+	AgiEngine *vm = state->_vm;
 	uint16 objectNr = parameter[0];
 	uint16 varNr = parameter[1];
 	ScreenObjEntry *screenObj = &state->screenObjTable[objectNr];
 
-	state->vars[varNr] = screenObj->currentViewNr;
+	vm->setVar(varNr, screenObj->currentViewNr);
 }
 
 void cmdCurrentCel(AgiGame *state, uint8 *parameter) {
+	AgiEngine *vm = state->_vm;
 	uint16 objectNr = parameter[0];
 	uint16 varNr = parameter[1];
 	ScreenObjEntry *screenObj = &state->screenObjTable[objectNr];
 
-	state->vars[varNr] = screenObj->currentCelNr;
-	debugC(4, kDebugLevelScripts, "v%d=%d", varNr, state->vars[varNr]);
+	vm->setVar(varNr, screenObj->currentCelNr);
+	debugC(4, kDebugLevelScripts, "v%d=%d", varNr, screenObj->currentCelNr);
 }
 
 void cmdCurrentLoop(AgiGame *state, uint8 *parameter) {
+	AgiEngine *vm = state->_vm;
 	uint16 objectNr = parameter[0];
 	uint16 varNr = parameter[1];
 	ScreenObjEntry *screenObj = &state->screenObjTable[objectNr];
 
-	state->vars[varNr] = screenObj->currentLoopNr;
+	vm->setVar(varNr, screenObj->currentLoopNr);
 }
 
 void cmdLastCel(AgiGame *state, uint8 *parameter) {
+	AgiEngine *vm = state->_vm;
 	uint16 objectNr = parameter[0];
 	uint16 varNr = parameter[1];
 	ScreenObjEntry *screenObj = &state->screenObjTable[objectNr];
 
-	state->vars[varNr] = screenObj->loopData->celCount - 1;
+	vm->setVar(varNr, screenObj->loopData->celCount - 1);
 }
 
 void cmdSetCel(AgiGame *state, uint8 *parameter) {
+	AgiEngine *vm = state->_vm;
 	uint16 objectNr = parameter[0];
 	uint16 celNr = parameter[1];
 	ScreenObjEntry *screenObj = &state->screenObjTable[objectNr];
 
-	state->_vm->setCel(screenObj, celNr);
+	vm->setCel(screenObj, celNr);
 	if (getVersion() >= 0x2000) {
 		screenObj->flags &= ~fDontupdate;
 	}
 }
 
 void cmdSetCelF(AgiGame *state, uint8 *parameter) {
+	AgiEngine *vm = state->_vm;
 	uint16 objectNr = parameter[0];
 	uint16 varNr = parameter[1];
 	ScreenObjEntry *screenObj = &state->screenObjTable[objectNr];
+	byte   value = vm->getVar(varNr);
 
-	state->_vm->setCel(screenObj, state->vars[varNr]);
+	vm->setCel(screenObj, value);
 	screenObj->flags &= ~fDontupdate;
 }
 
@@ -475,11 +538,13 @@ void cmdSetView(AgiGame *state, uint8 *parameter) {
 }
 
 void cmdSetViewF(AgiGame *state, uint8 *parameter) {
+	AgiEngine *vm = state->_vm;
 	uint16 objectNr = parameter[0];
 	uint16 varNr = parameter[1];
 	ScreenObjEntry *screenObj = &state->screenObjTable[objectNr];
+	byte   value = vm->getVar(varNr);
 
-	state->_vm->setView(screenObj, state->vars[varNr]);
+	state->_vm->setView(screenObj, value);
 }
 
 void cmdSetLoop(AgiGame *state, uint8 *parameter) {
@@ -491,19 +556,22 @@ void cmdSetLoop(AgiGame *state, uint8 *parameter) {
 }
 
 void cmdSetLoopF(AgiGame *state, uint8 *parameter) {
+	AgiEngine *vm = state->_vm;
 	uint16 objectNr = parameter[0];
 	uint16 varNr = parameter[1];
 	ScreenObjEntry *screenObj = &state->screenObjTable[objectNr];
+	byte   value = vm->getVar(varNr);
 
-	state->_vm->setLoop(screenObj, state->vars[varNr]);
+	state->_vm->setLoop(screenObj, value);
 }
 
 void cmdNumberOfLoops(AgiGame *state, uint8 *parameter) {
+	AgiEngine *vm = state->_vm;
 	uint16 objectNr = parameter[0];
 	uint16 varNr = parameter[1];
 	ScreenObjEntry *screenObj = &state->screenObjTable[objectNr];
 
-	state->vars[varNr] = screenObj->loopCount;
+	vm->setVar(varNr, screenObj->loopCount);
 }
 
 void cmdFixLoop(AgiGame *state, uint8 *parameter) {
@@ -521,27 +589,30 @@ void cmdReleaseLoop(AgiGame *state, uint8 *parameter) {
 }
 
 void cmdStepSize(AgiGame *state, uint8 *parameter) {
+	AgiEngine *vm = state->_vm;
 	uint16 objectNr = parameter[0];
 	uint16 varNr = parameter[1];
 	ScreenObjEntry *screenObj = &state->screenObjTable[objectNr];
 
-	screenObj->stepSize = state->vars[varNr];
+	screenObj->stepSize = vm->getVar(varNr);
 }
 
 void cmdStepTime(AgiGame *state, uint8 *parameter) {
+	AgiEngine *vm = state->_vm;
 	uint16 objectNr = parameter[0];
 	uint16 varNr = parameter[1];
 	ScreenObjEntry *screenObj = &state->screenObjTable[objectNr];
 
-	screenObj->stepTime = screenObj->stepTimeCount = state->vars[varNr];
+	screenObj->stepTime = screenObj->stepTimeCount = vm->getVar(varNr);
 }
 
 void cmdCycleTime(AgiGame *state, uint8 *parameter) {
+	AgiEngine *vm = state->_vm;
 	uint16 objectNr = parameter[0];
 	uint16 varNr = parameter[1];
 	ScreenObjEntry *screenObj = &state->screenObjTable[objectNr];
 
-	screenObj->cycleTime = screenObj->cycleTimeCount = state->vars[varNr];
+	screenObj->cycleTime = screenObj->cycleTimeCount = vm->getVar(varNr);
 }
 
 void cmdStopCycling(AgiGame *state, uint8 *parameter) {
@@ -575,40 +646,49 @@ void cmdReverseCycle(AgiGame *state, uint8 *parameter) {
 }
 
 void cmdSetDir(AgiGame *state, uint8 *parameter) {
+	AgiEngine *vm = state->_vm;
 	uint16 objectNr = parameter[0];
 	uint16 varNr = parameter[1];
 	ScreenObjEntry *screenObj = &state->screenObjTable[objectNr];
 
-	screenObj->direction = state->vars[varNr];
+	screenObj->direction = vm->getVar(varNr);
 }
 
 void cmdGetDir(AgiGame *state, uint8 *parameter) {
+	AgiEngine *vm = state->_vm;
 	uint16 objectNr = parameter[0];
 	uint16 varNr = parameter[1];
 	ScreenObjEntry *screenObj = &state->screenObjTable[objectNr];
 
-	state->vars[varNr] = screenObj->direction;
+	vm->setVar(varNr, screenObj->direction);
 }
 
 void cmdGetRoomF(AgiGame *state, uint8 *parameter) {
+	AgiEngine *vm = state->_vm;
 	uint16 varNr1 = parameter[0];
 	uint16 varNr2 = parameter[1];
+	byte   varVal1 = vm->getVar(varNr1);
 
-	state->vars[varNr2] = state->_vm->objectGetLocation(state->vars[varNr1]);
+	vm->setVar(varNr2, state->_vm->objectGetLocation(varVal1));
 }
 
 void cmdPut(AgiGame *state, uint8 *parameter) {
+	AgiEngine *vm = state->_vm;
 	uint16 objectNr = parameter[0];
 	uint16 varNr = parameter[1];
+	byte   varVal = vm->getVar(varNr);
 
-	state->_vm->objectSetLocation(objectNr, state->vars[varNr]);
+	vm->objectSetLocation(objectNr, varVal);
 }
 
 void cmdPutF(AgiGame *state, uint8 *parameter) {
+	AgiEngine *vm = state->_vm;
 	uint16 varNr1 = parameter[0];
 	uint16 varNr2 = parameter[1];
+	byte   varVal1 = vm->getVar(varNr1);
+	byte   varVal2 = vm->getVar(varNr2);
 
-	state->_vm->objectSetLocation(state->vars[varNr1], state->vars[varNr2]);
+	state->_vm->objectSetLocation(varVal1, varVal2);
 }
 
 void cmdDrop(AgiGame *state, uint8 *parameter) {
@@ -630,9 +710,11 @@ void cmdGetV1(AgiGame *state, uint8 *parameter) {
 }
 
 void cmdGetF(AgiGame *state, uint8 *parameter) {
+	AgiEngine *vm = state->_vm;
 	uint16 varNr = parameter[0];
+	byte   varVal = vm->getVar(varNr);
 
-	state->_vm->objectSetLocation(state->vars[varNr], EGO_OWNED);
+	state->_vm->objectSetLocation(varVal, EGO_OWNED);
 }
 
 void cmdWordToString(AgiGame *state, uint8 *parameter) {
@@ -643,15 +725,18 @@ void cmdWordToString(AgiGame *state, uint8 *parameter) {
 }
 
 void cmdOpenDialogue(AgiGame *state, uint8 *parameter) {
-	state->_vm->_text->dialogueOpen();
+	AgiEngine *vm = state->_vm;
+	vm->_text->dialogueOpen();
 }
 
 void cmdCloseDialogue(AgiGame *state, uint8 *parameter) {
-	state->_vm->_text->dialogueClose();
+	AgiEngine *vm = state->_vm;
+	vm->_text->dialogueClose();
 }
 
 void cmdCloseWindow(AgiGame *state, uint8 *parameter) {
-	state->_vm->_text->closeWindow();
+	AgiEngine *vm = state->_vm;
+	vm->_text->closeWindow();
 }
 
 void cmdStatusLineOn(AgiGame *state, uint8 *parameter) {
@@ -675,9 +760,11 @@ void cmdShowObj(AgiGame *state, uint8 *parameter) {
 }
 
 void cmdShowObjV(AgiGame *state, uint8 *parameter) {
+	AgiEngine *vm = state->_vm;
 	uint16 varNr = parameter[0];
+	byte   varVal = vm->getVar(varNr);
 
-	state->_vm->_sprites->showObject(state->vars[varNr]);
+	state->_vm->_sprites->showObject(varVal);
 }
 
 void cmdSound(AgiGame *state, uint8 *parameter) {
@@ -779,8 +866,9 @@ void cmdScriptSize(AgiGame *state, uint8 *parameter) {
 // 471 (When walking on the first screen's bridge),
 // 71 (When walking around, using the mouse or the keyboard).
 void cmdObjStatusF(AgiGame *state, uint8 *parameter) {
+	AgiEngine *vm = state->_vm;
 	uint16 varNr = parameter[0];
-	ScreenObjEntry *screenObj = &state->screenObjTable[state->vars[varNr]];
+	ScreenObjEntry *screenObj = &state->screenObjTable[vm->getVar(varNr)];
 
 	const char *cycleDesc;  // Object's cycle description line
 	const char *motionDesc; // Object's motion description line
@@ -835,7 +923,7 @@ void cmdObjStatusF(AgiGame *state, uint8 *parameter) {
 		"stepsize: %d\n" \
 		"%s\n" \
 		"%s",
-		state->vars[varNr],
+		vm->getVar(varNr),
 		screenObj->xPos, screenObj->xSize,
 		screenObj->yPos, screenObj->ySize,
 		screenObj->priority,
@@ -854,6 +942,7 @@ void cmdObjStatusF(AgiGame *state, uint8 *parameter) {
 // unk_177: Disable menus completely -- j5
 // unk_181: Deactivate keypressed control (default control of ego)
 void cmdSetSimple(AgiGame *state, uint8 *parameter) {
+	AgiEngine *vm = state->_vm;
 	if (!(getFeatures() & (GF_AGI256 | GF_AGI256_2))) {
 		int16 stringNr = parameter[0];
 		const char *textPtr = nullptr;
@@ -872,7 +961,7 @@ void cmdSetSimple(AgiGame *state, uint8 *parameter) {
 		// Load the picture. Similar to void cmdLoad_pic(AgiGame *state, uint8 *p).
 		SpritesMgr *spritesMgr = state->_vm->_sprites;
 		uint16 varNr = parameter[0];
-		uint16 resourceNr = state->vars[varNr];
+		uint16 resourceNr = vm->getVar(varNr);
 
 		spritesMgr->eraseSprites();
 		state->_vm->agiLoadResource(RESOURCETYPE_PICTURE, resourceNr);
@@ -999,14 +1088,15 @@ void cmdAdjEgoMoveToXY(AgiGame *state, uint8 *parameter) {
 }
 
 void cmdParse(AgiGame *state, uint8 *parameter) {
+	AgiEngine *vm = state->_vm;
 	TextMgr *text = state->_vm->_text;
 	uint16 stringNr = parameter[0];
 
-	state->vars[VM_VAR_WORD_NOT_FOUND] = 0;
-	state->_vm->setflag(VM_FLAG_ENTERED_CLI, false);
-	state->_vm->setflag(VM_FLAG_SAID_ACCEPTED_INPUT, false);
+	vm->setVar(VM_VAR_WORD_NOT_FOUND, 0);
+	vm->setflag(VM_FLAG_ENTERED_CLI, false);
+	vm->setflag(VM_FLAG_SAID_ACCEPTED_INPUT, false);
 
-	state->_vm->_words->parseUsingDictionary(text->stringPrintf(state->strings[stringNr]));
+	vm->_words->parseUsingDictionary(text->stringPrintf(state->strings[stringNr]));
 }
 
 void cmdCall(AgiGame *state, uint8 *parameter) {
@@ -1027,38 +1117,40 @@ void cmdCall(AgiGame *state, uint8 *parameter) {
 }
 
 void cmdCallF(AgiGame *state, uint8 *parameter) {
+	AgiEngine *vm = state->_vm;
 	uint16 varNr = parameter[0];
+	byte   logicNr = vm->getVar(varNr);
 
-	cmdCall(state, &state->vars[varNr]);
+	cmdCall(state, &logicNr);
 }
 
 void cmdDrawPicV1(AgiGame *state, uint8 *parameter) {
+	AgiEngine *vm = state->_vm;
 	uint16 varNr = parameter[0];
-	uint16 resourceNr = state->vars[varNr];
+	uint16 resourceNr = vm->getVar(varNr);
 
 	debugC(6, kDebugLevelScripts, "=== draw pic V1 %d ===", resourceNr);
 	state->_vm->_picture->decodePicture(resourceNr, true);
 
 	// TODO: check, if this was really done
-	state->_vm->_text->promptClear();
+	vm->_text->promptClear();
 
 	// Loading trigger
-	state->_vm->loadingTrigger_DrawPicture();
+	vm->loadingTrigger_DrawPicture();
 }
 
 void cmdDrawPic(AgiGame *state, uint8 *parameter) {
+	AgiEngine *vm = state->_vm;
 	SpritesMgr *spritesMgr = state->_vm->_sprites;
 	uint16 varNr = parameter[0];
-	uint16 resourceNr = state->vars[varNr];
+	uint16 resourceNr = vm->getVar(varNr);
 
 	debugC(6, kDebugLevelScripts, "=== draw pic %d ===", resourceNr);
 
-	spritesMgr->eraseSprites(); // === CHANGED ===
-	state->_vm->_picture->decodePicture(resourceNr, true);
+	spritesMgr->eraseSprites();
+	vm->_picture->decodePicture(resourceNr, true);
 	spritesMgr->buildAllSpriteLists();
-	spritesMgr->drawAllSpriteLists(); // === CHANGED ===
-	//state->_vm->_sprites->blitBoth();
-	//state->_vm->_sprites->commitBoth();
+	spritesMgr->drawAllSpriteLists();
 	state->pictureShown = false;
 	debugC(6, kDebugLevelScripts, "--- end of draw pic %d ---", resourceNr);
 
@@ -1075,37 +1167,40 @@ void cmdDrawPic(AgiGame *state, uint8 *parameter) {
 	// that this is a script bug and occurs in the original interpreter as well.
 	// Fixes bug #3056: AGI: SQ1 (2.2 DOS ENG) bizzare exploding roger
 	if (getGameID() == GID_SQ1 && resourceNr == 20)
-		state->_vm->setflag(103, false);
+		vm->setflag(103, false);
 
 	// Loading trigger
-	state->_vm->loadingTrigger_DrawPicture();
+	vm->loadingTrigger_DrawPicture();
 }
 
 void cmdShowPic(AgiGame *state, uint8 *parameter) {
+	AgiEngine *vm = state->_vm;
 	debugC(6, kDebugLevelScripts, "=== show pic ===");
 
-	state->_vm->setflag(VM_FLAG_OUTPUT_MODE, false);
-	state->_vm->_text->closeWindow();
-	state->_vm->_picture->showPicWithTransition();
+	vm->setflag(VM_FLAG_OUTPUT_MODE, false);
+	vm->_text->closeWindow();
+	vm->_picture->showPicWithTransition();
 	state->pictureShown = true;
 
 	debugC(6, kDebugLevelScripts, "--- end of show pic ---");
 }
 
 void cmdLoadPic(AgiGame *state, uint8 *parameter) {
+	AgiEngine *vm = state->_vm;
 	SpritesMgr *spritesMgr = state->_vm->_sprites;
 	uint16 varNr = parameter[0];
-	uint16 resourceNr = state->vars[varNr];
+	uint16 resourceNr = vm->getVar(varNr);
 
 	spritesMgr->eraseSprites();
-	state->_vm->agiLoadResource(RESOURCETYPE_PICTURE, resourceNr);
+	vm->agiLoadResource(RESOURCETYPE_PICTURE, resourceNr);
 	spritesMgr->buildAllSpriteLists();
 	spritesMgr->drawAllSpriteLists();
 }
 
 void cmdLoadPicV1(AgiGame *state, uint8 *parameter) {
+	AgiEngine *vm = state->_vm;
 	uint16 varNr = parameter[0];
-	uint16 resourceNr = state->vars[varNr];
+	uint16 resourceNr = vm->getVar(varNr);
 
 	state->_vm->agiLoadResource(RESOURCETYPE_PICTURE, resourceNr);
 }
@@ -1116,21 +1211,22 @@ void cmdDiscardPic(AgiGame *state, uint8 *parameter) {
 }
 
 void cmdOverlayPic(AgiGame *state, uint8 *parameter) {
+	AgiEngine *vm = state->_vm;
 	SpritesMgr *spritesMgr = state->_vm->_sprites;
 	uint16 varNr = parameter[0];
-	uint16 resourceNr = state->vars[varNr];
+	uint16 resourceNr = vm->getVar(varNr);
 
 	debugC(6, kDebugLevelScripts, "--- overlay pic ---");
 
 	spritesMgr->eraseSprites();
-	state->_vm->_picture->decodePicture(resourceNr, false);
+	vm->_picture->decodePicture(resourceNr, false);
 	spritesMgr->buildAllSpriteLists();
 	spritesMgr->drawAllSpriteLists();
 	spritesMgr->showAllSpriteLists();
 	state->pictureShown = false;
 
 	// Loading trigger
-	state->_vm->loadingTrigger_DrawPicture();
+	vm->loadingTrigger_DrawPicture();
 }
 
 void cmdShowPriScreen(AgiGame *state, uint8 *parameter) {
@@ -1260,41 +1356,45 @@ void cmdPositionV1(AgiGame *state, uint8 *parameter) {
 }
 
 void cmdPositionF(AgiGame *state, uint8 *parameter) {
+	AgiEngine *vm = state->_vm;
 	uint16 objectNr = parameter[0];
 	uint16 varNr1 = parameter[1];
 	uint16 varNr2 = parameter[2];
 	ScreenObjEntry *screenObj = &state->screenObjTable[objectNr];
 
-	screenObj->xPos = screenObj->xPos_prev = state->vars[varNr1];
-	screenObj->yPos = screenObj->yPos_prev = state->vars[varNr2];
+	screenObj->xPos = screenObj->xPos_prev = vm->getVar(varNr1);
+	screenObj->yPos = screenObj->yPos_prev = vm->getVar(varNr2);
 }
 
 void cmdPositionFV1(AgiGame *state, uint8 *parameter) {
+	AgiEngine *vm = state->_vm;
 	uint16 objectNr = parameter[0];
 	uint16 varNr1 = parameter[1];
 	uint16 varNr2 = parameter[2];
 	ScreenObjEntry *screenObj = &state->screenObjTable[objectNr];
 
-	screenObj->xPos = state->vars[varNr1];
-	screenObj->yPos = state->vars[varNr2];
+	screenObj->xPos = vm->getVar(varNr1);
+	screenObj->yPos = vm->getVar(varNr2);
 }
 
 void cmdGetPosn(AgiGame *state, uint8 *parameter) {
+	AgiEngine *vm = state->_vm;
 	uint16 objectNr = parameter[0];
 	uint16 varNr1 = parameter[1];
 	uint16 varNr2 = parameter[2];
 	ScreenObjEntry *screenObj = &state->screenObjTable[objectNr];
 
-	state->vars[varNr1] = (unsigned char)screenObj->xPos;
-	state->vars[varNr2] = (unsigned char)screenObj->yPos;
+	vm->setVar(varNr1, (unsigned char)screenObj->xPos);
+	vm->setVar(varNr2, (unsigned char)screenObj->yPos);
 }
 
 void cmdReposition(AgiGame *state, uint8 *parameter) {
+	AgiEngine *vm = state->_vm;
 	uint16 objectNr = parameter[0];
 	uint16 varNr1 = parameter[1];
 	uint16 varNr2 = parameter[2];
-	int16 dx = (int8) state->vars[varNr1];
-	int16 dy = (int8) state->vars[varNr2];
+	int16 dx = (int8) vm->getVar(varNr1);
+	int16 dy = (int8) vm->getVar(varNr2);
 	ScreenObjEntry *screenObj = &state->screenObjTable[objectNr];
 
 	debugC(4, kDebugLevelScripts, "dx=%d, dy=%d", dx, dy);
@@ -1340,13 +1440,14 @@ void cmdRepositionTo(AgiGame *state, uint8 *parameter) {
 }
 
 void cmdRepositionToF(AgiGame *state, uint8 *parameter) {
+	AgiEngine *vm = state->_vm;
 	uint16 objectNr = parameter[0];
 	uint16 varNr1 = parameter[1];
 	uint16 varNr2 = parameter[2];
 	ScreenObjEntry *screenObj = &state->screenObjTable[objectNr];
 
-	screenObj->xPos = state->vars[varNr1];
-	screenObj->yPos = state->vars[varNr2];
+	screenObj->xPos = vm->getVar(varNr1);
+	screenObj->yPos = vm->getVar(varNr2);
 	screenObj->flags |= fUpdatePos;
 	state->_vm->fixPosition(objectNr);
 }
@@ -1375,13 +1476,14 @@ void cmdAddToPicV1(AgiGame *state, uint8 *parameter) {
 }
 
 void cmdAddToPicF(AgiGame *state, uint8 *parameter) {
-	uint16 viewNr = state->vars[parameter[0]];
-	uint16 loopNr = state->vars[parameter[1]];
-	uint16 celNr = state->vars[parameter[2]];
-	uint16 xPos = state->vars[parameter[3]];
-	uint16 yPos = state->vars[parameter[4]];
-	uint16 priority = state->vars[parameter[5]];
-	uint16 border = state->vars[parameter[6]];
+	AgiEngine *vm = state->_vm;
+	uint16 viewNr = vm->getVar(parameter[0]);
+	uint16 loopNr = vm->getVar(parameter[1]);
+	uint16 celNr = vm->getVar(parameter[2]);
+	uint16 xPos = vm->getVar(parameter[3]);
+	uint16 yPos = vm->getVar(parameter[4]);
+	uint16 priority = vm->getVar(parameter[5]);
+	uint16 border = vm->getVar(parameter[6]);
 
 	state->_vm->_sprites->addToPic(viewNr, loopNr, celNr, xPos, yPos, priority, border);
 }
@@ -1521,6 +1623,7 @@ void cmdProgramControl(AgiGame *state, uint8 *parameter) {
 }
 
 void cmdFollowEgo(AgiGame *state, uint8 *parameter) {
+	AgiEngine *vm = state->_vm;
 	uint16 objectNr = parameter[0];
 	uint16 followStepSize = parameter[1];
 	uint16 followFlag = parameter[2];
@@ -1536,7 +1639,7 @@ void cmdFollowEgo(AgiGame *state, uint8 *parameter) {
 	screenObj->follow_count = 255;
 
 	if (getVersion() < 0x2000) {
-		state->vars[screenObj->follow_flag] = 0;
+		vm->setVar(screenObj->follow_flag, 0);
 		screenObj->flags |= fUpdate | fAnimated;
 	} else {
 		state->_vm->setflag(screenObj->follow_flag, false);
@@ -1545,6 +1648,7 @@ void cmdFollowEgo(AgiGame *state, uint8 *parameter) {
 }
 
 void cmdMoveObj(AgiGame *state, uint8 *parameter) {
+	AgiEngine *vm = state->_vm;
 	uint16 objectNr = parameter[0];
 	uint16 moveX = parameter[1];
 	uint16 moveY = parameter[2];
@@ -1563,10 +1667,10 @@ void cmdMoveObj(AgiGame *state, uint8 *parameter) {
 		screenObj->stepSize = stepSize;
 
 	if (getVersion() < 0x2000) {
-		state->vars[moveFlag] = 0;
+		vm->setVar(moveFlag, 0);
 		screenObj->flags |= fUpdate | fAnimated;
 	} else {
-		state->_vm->setflag(screenObj->move_flag, false);
+		vm->setflag(screenObj->move_flag, false);
 		screenObj->flags |= fUpdate;
 	}
 
@@ -1575,14 +1679,15 @@ void cmdMoveObj(AgiGame *state, uint8 *parameter) {
 
 	// AGI 2.272 (ddp, xmas) doesn't call move_obj!
 	if (getVersion() > 0x2272)
-		state->_vm->moveObj(screenObj);
+		vm->moveObj(screenObj);
 }
 
 void cmdMoveObjF(AgiGame *state, uint8 *parameter) {
+	AgiEngine *vm = state->_vm;
 	uint16 objectNr = parameter[0];
-	uint16 moveX = state->vars[parameter[1]];
-	uint16 moveY = state->vars[parameter[2]];
-	uint16 stepSize = state->vars[parameter[3]];
+	uint16 moveX = vm->getVar(parameter[1]);
+	uint16 moveY = vm->getVar(parameter[2]);
+	uint16 stepSize = vm->getVar(parameter[3]);
 	uint16 moveFlag = parameter[4];
 	ScreenObjEntry *screenObj = &state->screenObjTable[objectNr];
 
@@ -1812,6 +1917,7 @@ void cmdRestartGame(AgiGame *state, uint8 *parameter) {
 }
 
 void cmdDistance(AgiGame *state, uint8 *parameter) {
+	AgiEngine *vm = state->_vm;
 	uint16 objectNr1 = parameter[0];
 	uint16 objectNr2 = parameter[1];
 	uint16 destVarNr = parameter[2];
@@ -1841,7 +1947,7 @@ void cmdDistance(AgiGame *state, uint8 *parameter) {
 	// wouldn't chase Rosella around anymore. If it had worked correctly the zombie
 	// wouldn't have come up at all or it would have come up and gone back down
 	// immediately. The latter approach is the one implemented here.
-	if (getGameID() == GID_KQ4 && (state->vars[VM_VAR_CURRENT_ROOM] == 16 || state->vars[VM_VAR_CURRENT_ROOM] == 18) && destVarNr >= 221 && destVarNr <= 223) {
+	if (getGameID() == GID_KQ4 && (vm->getVar(VM_VAR_CURRENT_ROOM) == 16 || vm->getVar(VM_VAR_CURRENT_ROOM) == 18) && destVarNr >= 221 && destVarNr <= 223) {
 		// Rooms 16 and 18 are graveyards where three zombies come up at night. They use logics 16 and 18.
 		// Variables 221-223 are used to save the distance between each zombie and Rosella.
 		// Variables 155, 156 and 162 are used to save the state of each zombie in room 16.
@@ -1854,16 +1960,16 @@ void cmdDistance(AgiGame *state, uint8 *parameter) {
 		// a zombie or the zombie getting turned away by the scarab) we make it appear the
 		// zombie is far away from Rosella if the zombie is not already up and chasing her.
 		enum zombieStates {ZOMBIE_SET_TO_RISE_UP, ZOMBIE_RISING_UP, ZOMBIE_CHASING_EGO};
-		uint8 zombieStateVarNumList[] = {155, 156, (uint8)((state->vars[VM_VAR_CURRENT_ROOM] == 16) ? 162 : 158)};
+		uint8 zombieStateVarNumList[] = {155, 156, (uint8)((vm->getVar(VM_VAR_CURRENT_ROOM) == 16) ? 162 : 158)};
 		uint8 zombieNum         = destVarNr - 221;                         // Zombie's number (In range 0-2)
 		uint8 zombieStateVarNum = zombieStateVarNumList[zombieNum]; // Number of the variable containing zombie's state
-		uint8 zombieState       = state->vars[zombieStateVarNum];   // Zombie's state
+		uint8 zombieState       = vm->getVar(zombieStateVarNum);   // Zombie's state
 		// If zombie is not chasing Rosella then set its distance from Rosella to the maximum
 		if (zombieState != ZOMBIE_CHASING_EGO)
 			d = 0xff;
 	}
 
-	state->vars[destVarNr] = (unsigned char)d;
+	vm->setVar(destVarNr, (unsigned char)d);
 }
 
 void cmdAcceptInput(AgiGame *state, uint8 *parameter) {
@@ -1959,10 +2065,12 @@ void cmdGetString(AgiGame *state, uint8 *parameter) {
 }
 
 void cmdGetNum(AgiGame *state, uint8 *parameter) {
+	AgiEngine *vm = state->_vm;
 	TextMgr *textMgr = state->_vm->_text;
 	int16 leadInTextNr = parameter[0] - 1;
 	int16 numberDestVarNr = parameter[1];
 	const char *leadInTextPtr = nullptr;
+	byte  number = 0;
 
 	debugC(4, kDebugLevelScripts, "%d %d", leadInTextNr, numberDestVarNr);
 
@@ -1987,9 +2095,10 @@ void cmdGetNum(AgiGame *state, uint8 *parameter) {
 
 	textMgr->promptRedraw();
 
-	state->vars[numberDestVarNr] = atoi((char *)textMgr->_inputString);
+	number = atoi((char *)textMgr->_inputString);
+	vm->setVar(numberDestVarNr, number);
 
-	debugC(4, kDebugLevelScripts, "[%s] -> %d", state->strings[MAX_STRINGS], state->vars[numberDestVarNr]);
+	debugC(4, kDebugLevelScripts, "[%s] -> %d", state->strings[MAX_STRINGS], number);
 }
 
 void cmdSetCursorChar(AgiGame *state, uint8 *parameter) {
@@ -2048,9 +2157,10 @@ void cmdDisplay(AgiGame *state, uint8 *parameter) {
 }
 
 void cmdDisplayF(AgiGame *state, uint8 *parameter) {
-	int16 textRow = state->vars[parameter[0]];
-	int16 textColumn = state->vars[parameter[1]];
-	int16 textNr = state->vars[parameter[2]];
+	AgiEngine *vm = state->_vm;
+	int16 textRow = vm->getVar(parameter[0]);
+	int16 textColumn = vm->getVar(parameter[1]);
+	int16 textNr = vm->getVar(parameter[2]);
 
 	state->_vm->_text->display(textNr, textRow, textColumn);
 }
@@ -2091,7 +2201,8 @@ void cmdPrint(AgiGame *state, uint8 *parameter) {
 }
 
 void cmdPrintF(AgiGame *state, uint8 *parameter) {
-	int16 textNr = state->vars[parameter[0]];
+	AgiEngine *vm = state->_vm;
+	int16 textNr = vm->getVar(parameter[0]);
 
 	state->_vm->_text->print(textNr);
 }
@@ -2108,7 +2219,8 @@ void cmdPrintAt(AgiGame *state, uint8 *parameter) {
 }
 
 void cmdPrintAtV(AgiGame *state, uint8 *parameter) {
-	int16 textNr = state->vars[parameter[0]];
+	AgiEngine *vm = state->_vm;
+	int16 textNr = vm->getVar(parameter[0]);
 	int16 textRow = parameter[1];
 	int16 textColumn = parameter[2];
 	int16 textWidth = parameter[3];
@@ -2119,11 +2231,12 @@ void cmdPrintAtV(AgiGame *state, uint8 *parameter) {
 }
 
 void cmdPushScript(AgiGame *state, uint8 *parameter) {
+	AgiEngine *vm = state->_vm;
 	// We run AGIMOUSE always as a side effect
 	//if (getFeatures() & GF_AGIMOUSE || true) {
-		state->vars[27] = state->_vm->_mouse.button;
-		state->vars[28] = state->_vm->_mouse.x / 2;
-		state->vars[29] = state->_vm->_mouse.y;
+	vm->setVar(VM_VAR_MOUSE_BUTTONSTATE, state->_vm->_mouse.button);
+	vm->setVar(VM_VAR_MOUSE_X, state->_vm->_mouse.x / 2);
+	vm->setVar(VM_VAR_MOUSE_Y, state->_vm->_mouse.y);
 	/*} else {
 		if (getVersion() >= 0x2915) {
 			debug(0, "push.script");
@@ -2140,6 +2253,7 @@ void cmdSetPriBase(AgiGame *state, uint8 *parameter) {
 }
 
 void cmdMousePosn(AgiGame *state, uint8 *parameter) {
+	AgiEngine *vm = state->_vm;
 	uint16 destVarNr1 = parameter[0];
 	uint16 destVarNr2 = parameter[1];
 	int16 mouseX = state->_vm->_mouse.x;
@@ -2147,8 +2261,8 @@ void cmdMousePosn(AgiGame *state, uint8 *parameter) {
 
 	state->_vm->adjustPosToGameScreen(mouseX, mouseY);
 
-	state->vars[destVarNr1] = mouseX;
-	state->vars[destVarNr2] = mouseY;
+	vm->setVar(destVarNr1, mouseX);
+	vm->setVar(destVarNr2, mouseY);
 }
 
 void cmdShakeScreen(AgiGame *state, uint8 *parameter) {
@@ -2182,6 +2296,7 @@ void cmdSetItemView(AgiGame *state, uint8 *parameter) {
 }
 
 void cmdCallV1(AgiGame *state, uint8 *parameter) {
+	AgiEngine *vm = state->_vm;
 	uint16 resourceNr = parameter[0];
 
 	state->_vm->agiLoadResource(RESOURCETYPE_LOGIC, resourceNr);
@@ -2191,27 +2306,29 @@ void cmdCallV1(AgiGame *state, uint8 *parameter) {
 //	state->logic_list[++state->max_logics];
 	// For now, just do the increment, to silence a clang warning
 	++state->max_logics;
-	state->vars[13] = 1;
+	vm->setVar(13, 1); // ???? maybe create another enum vor VM Vars
 }
 
 void cmdNewRoomV1(AgiGame *state, uint8 *parameter) {
+	AgiEngine *vm = state->_vm;
 	uint16 resourceNr = parameter[0];
 
 	warning("cmdNewRoomV1()");
 	state->_vm->agiLoadResource(RESOURCETYPE_LOGIC, resourceNr);
 	state->max_logics = 1;
 	state->logic_list[1] = resourceNr;
-	state->vars[13] = 1;
+	vm->setVar(13, 1);
 }
 
 void cmdNewRoomVV1(AgiGame *state, uint8 *parameter) {
-	uint16 resourceNr = state->vars[parameter[0]];
+	AgiEngine *vm = state->_vm;
+	uint16 resourceNr = vm->getVar(parameter[0]);
 
 	warning("cmdNewRoomVV1()");
 	state->_vm->agiLoadResource(RESOURCETYPE_LOGIC, resourceNr);
 	state->max_logics = 1;
 	state->logic_list[1] = resourceNr;
-	state->vars[13] = 1;
+	vm->setVar(13, 1);
 }
 
 void cmdUnknown(AgiGame *state, uint8 *parameter) {

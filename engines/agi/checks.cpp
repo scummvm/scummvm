@@ -185,9 +185,9 @@ void AgiEngine::updatePosition() {
 	ScreenObjEntry *screenObj;
 	int x, y, oldX, oldY, border;
 
-	_game.vars[VM_VAR_BORDER_CODE] = 0;
-	_game.vars[VM_VAR_BORDER_TOUCH_EGO] = 0;
-	_game.vars[VM_VAR_BORDER_TOUCH_OBJECT] = 0;
+	setVar(VM_VAR_BORDER_CODE, 0);
+	setVar(VM_VAR_BORDER_TOUCH_EGO, 0);
+	setVar(VM_VAR_BORDER_TOUCH_OBJECT, 0);
 
 	for (screenObj = _game.screenObjTable; screenObj < &_game.screenObjTable[SCREENOBJECTS_MAX]; screenObj++) {
 		if ((screenObj->flags & (fAnimated | fUpdate | fDrawn)) != (fAnimated | fUpdate | fDrawn)) {
@@ -271,10 +271,10 @@ void AgiEngine::updatePosition() {
 
 		if (border) {
 			if (isEgoView(screenObj)) {
-				_game.vars[VM_VAR_BORDER_TOUCH_EGO] = border;
+				setVar(VM_VAR_BORDER_TOUCH_EGO, border);
 			} else {
-				_game.vars[VM_VAR_BORDER_CODE] = screenObj->objectNr;
-				_game.vars[VM_VAR_BORDER_TOUCH_OBJECT] = border;
+				setVar(VM_VAR_BORDER_CODE, screenObj->objectNr);
+				setVar(VM_VAR_BORDER_TOUCH_OBJECT, border);
 			}
 			if (screenObj->motionType == kMotionMoveObj) {
 				motionMoveObjStop(screenObj);

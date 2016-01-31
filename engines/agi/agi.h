@@ -273,7 +273,10 @@ enum {
 	VM_VAR_VOLUME,					// 23
 	VM_VAR_MAX_INPUT_CHARACTERS,	// 24
 	VM_VAR_SELECTED_INVENTORY_ITEM,	// 25
-	VM_VAR_MONITOR					// 26
+	VM_VAR_MONITOR = 26,			// 26
+	VM_VAR_MOUSE_BUTTONSTATE = 27,  // 27
+	VM_VAR_MOUSE_X = 28,			// 28
+	VM_VAR_MOUSE_Y = 29,			// 29
 };
 
 /**
@@ -422,7 +425,7 @@ struct AgiGame {
 	uint32 crc;		/**< game CRC */
 
 	// game flags and variables
-	uint8 flags[MAX_FLAGS]; /**< 256 1-bit flags */
+	uint8 flags[MAX_FLAGS]; /**< 256 1-bit flags combined into a total of 32 bytes */
 	uint8 vars[MAX_VARS];   /**< 256 variables */
 
 	// internal variables
