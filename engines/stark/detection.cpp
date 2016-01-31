@@ -313,7 +313,7 @@ public:
 
 	SaveStateList listSaves(const char *target) const override {
 		SaveStateList saveList;
-		Common::StringArray filenames = g_system->getSavefileManager()->listSavefiles("Save??.tlj");
+		Common::StringArray filenames = g_system->getSavefileManager()->listSavefiles("Save##.tlj");
 
 		char slot[3];
 		for (Common::StringArray::const_iterator filename = filenames.begin(); filename != filenames.end(); ++filename) {
