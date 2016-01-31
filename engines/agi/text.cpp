@@ -24,196 +24,830 @@
 #include "agi/sprite.h"		// for commit_both()
 #include "agi/graphics.h"
 #include "agi/keyboard.h"
+#include "agi/text.h"
+#include "agi/systemui.h"
+#include "agi/words.h"
+#ifdef __DS__
+#include "wordcompletion.h"
+#endif
 
 namespace Agi {
 
-void AgiEngine::printText2(int l, const char *msg, int foff, int xoff, int yoff,
-				int len, int fg, int bg, bool checkerboard) {
-	int x1, y1;
-	int maxx, minx, ofoff;
-	int update;
-	// Note: Must be unsigned to use AGDS cyrillic characters!
-#ifdef __DS__
-	// On the DS, a compiler bug causes the text to render incorrectly, because
-	// GCC tries to optimisie out writes to this pointer (tested on DevkitARM v19b and v20)
-	// Making this pointer volatile fixes this.
-	volatile const unsigned char *m;
-#else
-	const unsigned char *m;
-#endif
+TextMgr::TextMgr(AgiEngine *vm, Words *words, GfxMgr *gfx) {
+	_vm = vm;
+	_words = words;
+	_gfx = gfx;
 
-	// kludge!
-	update = 1;
-	if (l == 2) {
-		update = l = 0;
+	memset(&_messageState, 0, sizeof(_messageState));
+	_textPos.row = 0;
+	_textPos.column = 0;
+	_reset_Column = 0;
+
+	charAttrib_Set(15, 0);
+
+	_messageState.wanted_TextPos.row = -1;
+	_messageState.wanted_TextPos.column = -1;
+	_messageState.wanted_Text_Width = -1;
+	
+	_textPosArrayCount = 0;
+	memset(&_textPosArray, 0, sizeof(_textPosArray));
+	_textAttribArrayCount = 0;
+	memset(&_textAttribArray, 0, sizeof(_textAttribArray));
+
+	_inputEditEnabled = false;
+	_inputCursorChar = 0;
+
+	_statusEnabled = false;
+	_statusRow = 0;
+
+	_promptRow = 0;
+	promptDisable();
+	promptReset();
+
+	_inputStringMaxLen = 0;
+	_inputStringCursorPos = 0;
+	_inputString[0] = 0;
+
+	configureScreen(2);
+}
+
+TextMgr::~TextMgr() {
+}
+
+void TextMgr::init(SystemUI *systemUI) {
+	_systemUI = systemUI;
+}
+
+void TextMgr::configureScreen(uint16 row_Min) {
+	_window_Row_Min = row_Min;
+	_window_Row_Max = row_Min + 21;
+
+	// forward data to GfxMgr as well
+	_gfx->setRenderStartOffset(row_Min * FONT_DISPLAY_HEIGHT);
+}
+uint16 TextMgr::getWindowRowMin() {
+	return _window_Row_Min;
+}
+
+void TextMgr::dialogueOpen() {
+	_messageState.dialogue_Open = true;
+}
+
+void TextMgr::dialogueClose() {
+	_messageState.dialogue_Open = false;
+}
+
+void TextMgr::charPos_Clip(int16 &row, int16 &column) {
+	row = CLIP<int16>(row, 0, FONT_ROW_CHARACTERS - 1);
+	column = CLIP<int16>(column, 0, FONT_COLUMN_CHARACTERS - 1);
+}
+
+void TextMgr::charPos_Set(int16 row, int16 column) {
+	_textPos.row = row;
+	_textPos.column = column;
+}
+
+void TextMgr::charPos_Get(TextPos_Struct *posPtr) {
+	posPtr->row    = _textPos.row;
+	posPtr->column = _textPos.column;
+}
+
+void TextMgr::charPos_Set(TextPos_Struct *posPtr) {
+	_textPos.row    = posPtr->row;
+	_textPos.column = posPtr->column;
+}
+
+void TextMgr::charPos_Push() {
+	if (_textPosArrayCount < TEXTPOSARRAY_MAX) {
+		charPos_Get(&_textPosArray[_textPosArrayCount]);
+		_textPosArrayCount++;
+	}
+}
+
+void TextMgr::charPos_Pop() {
+	if (_textPosArrayCount > 0) {
+		_textPosArrayCount--;
+		charPos_Set(&_textPosArray[_textPosArrayCount]);
+	}
+}
+
+void TextMgr::charPos_SetInsideWindow(int16 windowRow, int16 windowColumn) {
+	if (!_messageState.window_Active)
+		return;
+
+	_textPos.row = _messageState.textPos.row + windowRow;
+	_textPos.column = _messageState.textPos.column + windowColumn;
+}
+
+static byte charAttrib_CGA_Conversion[] = {
+	0, 1, 1, 1, 2, 2, 2, 3, 3, 1, 1, 1, 2, 2, 2
+};
+
+void TextMgr::charAttrib_Set(byte foreground, byte background) {
+	_textAttrib.foreground = foreground;
+	_textAttrib.background = calculateTextBackground(background);
+
+	if (!_vm->_game.gfxMode) {
+		// Text-mode:
+		// just use the given colors directly
+		_textAttrib.combinedForeground = foreground;
+		_textAttrib.combinedBackground = background;
+	} else {
+		// Graphics-mode:
+		switch (_vm->_renderMode) {
+		case Common::kRenderCGA:
+			// CGA
+			if (background) {
+				_textAttrib.combinedForeground = 3;
+				_textAttrib.combinedBackground = 8; // enable invert of colors
+			} else if (foreground > 14) {
+				if (foreground > 14) {
+					_textAttrib.combinedForeground = 3;
+				} else {
+					_textAttrib.combinedForeground = charAttrib_CGA_Conversion[foreground & 0x0F];
+				}
+				_textAttrib.combinedBackground = 0;
+			}
+			break;
+		default:
+			// EGA-handling:
+			if (background) {
+				_textAttrib.combinedForeground = 15;
+				_textAttrib.combinedBackground = 8; // enable invert of colors
+			} else {
+				_textAttrib.combinedForeground = foreground;
+				_textAttrib.combinedBackground = 0;
+			}
+			break;
+		}
+	}
+}
+
+byte TextMgr::charAttrib_GetForeground() {
+	return _textAttrib.foreground;
+}
+byte TextMgr::charAttrib_GetBackground() {
+	return _textAttrib.background;
+}
+
+void TextMgr::charAttrib_Push() {
+	if (_textAttribArrayCount < TEXTATTRIBARRAY_MAX) {
+		memcpy(&_textAttribArray[_textAttribArrayCount], &_textAttrib, sizeof(_textAttrib));
+		_textAttribArrayCount++;
+	}
+}
+
+void TextMgr::charAttrib_Pop() {
+	if (_textAttribArrayCount > 0) {
+		_textAttribArrayCount--;
+		memcpy(&_textAttrib, &_textAttribArray[_textAttribArrayCount], sizeof(_textAttrib));
+	}
+}
+
+byte TextMgr::calculateTextBackground(byte background) {
+	if ((_vm->_game.gfxMode) && (background)) {
+		return 15; // interpreter sets 0xFF, but drawClearCharacter() would use upper 4 bits by shift
+	}
+	return 0;
+}
+
+void TextMgr::display(int16 textNr, int16 textRow, int16 textColumn) {
+	const char *logicTextPtr = NULL;
+	char *processedTextPtr   = NULL;
+
+	charPos_Push();
+	charPos_Set(textRow, textColumn);
+
+	if (textNr >= 1 && textNr <= _vm->_game._curLogic->numTexts) {
+		logicTextPtr = _vm->_game._curLogic->texts[textNr - 1];
+		processedTextPtr = stringPrintf(logicTextPtr);
+		processedTextPtr = stringWordWrap(processedTextPtr, 40);
+		displayText(processedTextPtr);
+
+		// Signal, that non-blocking text is shown at the moment
+		if (textRow > 0) {
+			// only signal, when it's not the status line (kq3)
+			_vm->nonBlockingText_IsShown();
+		}
+	}
+	charPos_Pop();
+}
+
+void TextMgr::displayTextInsideWindow(const char *textPtr, int16 windowRow, int16 windowColumn) {
+	int16 textRow = 0;
+	int16 textColumn = 0;
+
+	if (!_messageState.window_Active)
+		return;
+
+	charPos_Push();
+	textRow = _messageState.textPos.row + windowRow;
+	textColumn = _messageState.textPos.column + windowColumn;
+	charPos_Set(textRow, textColumn);
+	displayText(textPtr);
+	charPos_Pop();
+}
+
+void TextMgr::displayText(const char *textPtr, bool disabledLook) {
+	const char *curTextPtr = textPtr;
+	byte  curCharacter = 0;
+
+	while (1) {
+		curCharacter = *curTextPtr;
+		if (!curCharacter)
+			break;
+
+		curTextPtr++;
+		displayCharacter(curCharacter, disabledLook);
+	}
+}
+
+void TextMgr::displayCharacter(byte character, bool disabledLook) {
+	TextPos_Struct charCurPos;
+
+	charPos_Get(&charCurPos);
+
+	switch (character) {
+	case 0x08: // backspace
+		if (charCurPos.column) {
+			charCurPos.column--;
+		} else if (charCurPos.row > 21) {
+			charCurPos.column = (FONT_COLUMN_CHARACTERS - 1);
+			charCurPos.row--;
+		}
+		clearBlock(charCurPos.row, charCurPos.column, charCurPos.row, charCurPos.column, _textAttrib.background);
+		charPos_Set(&charCurPos);
+		break;
+
+	case 0x0D:
+	case 0x0A: // CR/LF
+		if (charCurPos.row < (FONT_ROW_CHARACTERS - 1))
+			charCurPos.row++;
+		charCurPos.column = _reset_Column;
+		charPos_Set(&charCurPos);
+		break;
+	default:
+		// ch_attrib(state.text_comb, conversion);
+		_gfx->drawCharacter(charCurPos.row, charCurPos.column, character, _textAttrib.combinedForeground, _textAttrib.combinedBackground, disabledLook);
+
+		charCurPos.column++;
+		if (charCurPos.column <= (FONT_COLUMN_CHARACTERS - 1)) {
+			charPos_Set(&charCurPos);
+		} else {
+			displayCharacter(0x0D); // go to next line
+		}
+	} 
+}
+
+void TextMgr::print(int16 textNr) {
+	const char *logicTextPtr = NULL;
+	if (textNr >= 1 && textNr <= _vm->_game._curLogic->numTexts) {
+		logicTextPtr = _vm->_game._curLogic->texts[textNr - 1];
+		messageBox(logicTextPtr);
+	}
+}
+
+void TextMgr::printAt(int16 textNr, int16 textPos_Row, int16 textPos_Column, int16 text_Width) {
+	// Sierra didn't do clipping, we do it for security
+	charPos_Clip(textPos_Row, textPos_Column);
+
+	_messageState.wanted_TextPos.row = textPos_Row;
+	_messageState.wanted_TextPos.column = textPos_Column;
+	_messageState.wanted_Text_Width = text_Width;
+
+	if (_messageState.wanted_Text_Width == 0) {
+		_messageState.wanted_Text_Width = 30;
+	}
+	print(textNr);
+
+	_messageState.wanted_TextPos.row = -1;
+	_messageState.wanted_TextPos.column = -1;
+	_messageState.wanted_Text_Width = -1;
+}
+
+bool TextMgr::messageBox(const char *textPtr) {
+	drawMessageBox(textPtr);
+
+	if (_vm->getFlag(VM_FLAG_OUTPUT_MODE)) {
+		// non-blocking window
+		_vm->setFlag(VM_FLAG_OUTPUT_MODE, false);
+
+		// Signal, that non-blocking text is shown at the moment
+		_vm->nonBlockingText_IsShown();
+		return true;
 	}
 
-	// FR: strings with len == 1 were not printed
-	if (len == 1) {
-		_gfx->putTextCharacter(l, xoff + foff, yoff, *msg, fg, bg, checkerboard, _fontData);
-		maxx = 1;
-		minx = 0;
-		ofoff = foff;
-		y1 = 0;		// Check this
+	// blocking window
+	_vm->_noSaveLoadAllowed = true;
+	_vm->nonBlockingText_Forget();
+
+	if (_vm->getVar(VM_VAR_WINDOW_RESET) == 0) {
+		int userKey;
+		_vm->setVar(VM_VAR_KEY, 0);
+		userKey = _vm->waitKey();
+		closeWindow();
+
+		_vm->_noSaveLoadAllowed = false;
+		if (userKey == AGI_KEY_ENTER)
+			return true;
+		return false;
+	}
+
+	// timed window
+	debugC(3, kDebugLevelText, "f15==0, v21==%d => timed", _vm->getVar(VM_VAR_WINDOW_RESET));
+	_vm->_game.msgBoxTicks = _vm->getVar(VM_VAR_WINDOW_RESET) * 10;
+	_vm->setVar(VM_VAR_KEY, 0);
+
+	do {
+		if (_vm->getFlag(VM_FLAG_RESTORE_JUST_RAN))
+			break;
+
+		_vm->mainCycle();
+		if (_vm->_game.keypress == AGI_KEY_ENTER) {
+			debugC(4, kDebugLevelText, "KEY_ENTER");
+			_vm->setVar(VM_VAR_WINDOW_RESET, 0);
+			_vm->_game.keypress = 0;
+			break;
+		}
+	} while (_vm->_game.msgBoxTicks > 0 && !(_vm->shouldQuit() || _vm->_restartGame));
+
+	_vm->setVar(VM_VAR_WINDOW_RESET, 0);
+	closeWindow();
+	_vm->_noSaveLoadAllowed = false;
+	return true;
+}
+
+void TextMgr::drawMessageBox(const char *textPtr, int16 wantedHeight, int16 wantedWidth, bool wantedForced) {
+	int16 maxWidth = wantedWidth;
+	int16 startingRow = 0;
+	char *processedTextPtr;
+
+	if (_messageState.window_Active) {
+		closeWindow();
+	}
+	charAttrib_Push();
+	charPos_Push();
+	charAttrib_Set(0, 15);
+
+	if ((_messageState.wanted_Text_Width == -1) && (maxWidth == 0)) {
+		maxWidth = 30;
+	} else if (_messageState.wanted_Text_Width != -1) {
+		maxWidth = _messageState.wanted_Text_Width;
+	}
+
+	processedTextPtr = stringPrintf(textPtr);
+
+	int16 calculatedWidth = 0;
+	int16 calculatedHeight = 0;
+
+	processedTextPtr = stringWordWrap(processedTextPtr, maxWidth, &calculatedWidth, &calculatedHeight);
+	_messageState.textSize_Width  = calculatedWidth;
+	_messageState.textSize_Height = calculatedHeight;
+
+	_messageState.printed_Height = _messageState.textSize_Height;
+
+	// Caller wants to force specified width/height? set it
+	if (wantedForced) {
+		if (wantedHeight)
+			_messageState.textSize_Height = wantedHeight;
+		if (wantedWidth)
+			_messageState.textSize_Width = wantedWidth;
+	}
+
+	if (_messageState.wanted_TextPos.row == -1) {
+		startingRow = ((HEIGHT_MAX - _messageState.textSize_Height - 1) / 2) + 1;
 	} else {
-		maxx = 0;
-		minx = GFX_WIDTH;
-		ofoff = foff;
+		startingRow = _messageState.wanted_TextPos.row;
+	}
+	_messageState.textPos.row = startingRow + _window_Row_Min;
+	_messageState.textPos_Edge.row = _messageState.textSize_Height + _messageState.textPos.row - 1;
 
-		for (m = (const unsigned char *)msg, x1 = y1 = 0; *m; m++) {
+	if (_messageState.wanted_TextPos.column == -1) {
+		_messageState.textPos.column = (FONT_COLUMN_CHARACTERS - _messageState.textSize_Width) / 2;
+	} else {
+		_messageState.textPos.column = _messageState.wanted_TextPos.column;
+	}
+	_messageState.textPos_Edge.column = _messageState.textPos.column + _messageState.textSize_Width;
 
-			// Note: there were extra checks for *m being a cursor character
-			// here (1, 2 or 3), which have been removed, as the cursor
-			// character is no longer printed via this function.
-			if (*m >= 0x20) {
-				int ypos = (y1 * CHAR_LINES) + yoff;
+	charPos_Set(_messageState.textPos.row, _messageState.textPos.column);
 
-				if ((x1 != (len - 1) || x1 == 39) && (ypos <= (GFX_HEIGHT - CHAR_LINES))) {
-					int xpos = (x1 * CHAR_COLS) + xoff + foff;
+	_messageState.backgroundSize_Width = (_messageState.textSize_Width * FONT_VISUAL_WIDTH) + 10;
+	_messageState.backgroundSize_Height = (_messageState.textSize_Height * FONT_VISUAL_HEIGHT) + 10;
+	_messageState.backgroundPos_x = (_messageState.textPos.column * FONT_VISUAL_WIDTH) - 5;
+	_messageState.backgroundPos_y = (_messageState.textPos_Edge.row - _window_Row_Min + 1 ) * FONT_VISUAL_HEIGHT + 4;
 
-					if (xpos >= GFX_WIDTH)
-						continue;
+	// Hardcoded colors: white background and red lines
+	_gfx->drawBox(_messageState.backgroundPos_x, _messageState.backgroundPos_y, _messageState.backgroundSize_Width, _messageState.backgroundSize_Height, 15, 4);
 
-					_gfx->putTextCharacter(l, xpos, ypos, *m, fg, bg, checkerboard, _fontData);
+	_messageState.window_Active = true;
 
-					if (x1 > maxx)
-						maxx = x1;
-					if (x1 < minx)
-						minx = x1;
-				}
+	_reset_Column = _messageState.textPos.column;
+	displayText(processedTextPtr);
+	_reset_Column = 0;
 
-				x1++;
+	charPos_Pop();
+	charAttrib_Pop();
 
-				// Change line if we've reached the end of this one, unless the next
-				// character is a new line itself, or the end of the string
-				if (x1 == len && m[1] != '\n' && m[1] != 0) {
-					y1++;
-					x1 = foff = 0;
-				}
-			} else {
-				if (m[1] != 0) {
-					y1++;
-					x1 = foff = 0;
+	_messageState.dialogue_Open = true;
+}
+
+void TextMgr::closeWindow() {
+	if (_messageState.window_Active) {
+		_gfx->render_Block(_messageState.backgroundPos_x, _messageState.backgroundPos_y, _messageState.backgroundSize_Width, _messageState.backgroundSize_Height);
+	}
+	_messageState.dialogue_Open = false;
+	_messageState.window_Active = false;
+}
+
+void TextMgr::statusRow_Set(int16 row) {
+	_statusRow = row;
+}
+int16 TextMgr::statusRow_Get() {
+	return _statusRow;
+}
+
+void TextMgr::statusEnable() {
+	_statusEnabled = true;
+}
+void TextMgr::statusDisable() {
+	_statusEnabled = false;
+}
+bool TextMgr::statusEnabled() {
+	return _statusEnabled;
+}
+
+void TextMgr::statusDraw() {
+	char *statusTextPtr = NULL;
+
+	charAttrib_Push();
+	charPos_Push();
+
+	if (_statusEnabled) {
+		clearLine(_statusRow, 15);
+
+		charAttrib_Set(0, 15);
+		charPos_Set(_statusRow, 1);
+		statusTextPtr = stringPrintf(_systemUI->getStatusTextScore());
+		displayText(statusTextPtr);
+
+		charPos_Set(_statusRow, 30);
+		if (_vm->getFlag(VM_FLAG_SOUND_ON)) {
+			statusTextPtr = stringPrintf(_systemUI->getStatusTextSoundOn());
+		} else {
+			statusTextPtr = stringPrintf(_systemUI->getStatusTextSoundOff());
+		}
+		displayText(statusTextPtr);
+	}
+
+	charPos_Pop();
+	charAttrib_Pop();
+}
+
+void TextMgr::statusClear() {
+	clearLine(_statusRow, 0);
+}
+
+void TextMgr::clearLine(int16 row, byte color) {
+	clearLines(row, row, color);
+}
+
+void TextMgr::clearLines(int16 row_Upper, int16 row_Lower, byte color) {
+	clearBlock(row_Upper, 0, row_Lower, FONT_COLUMN_CHARACTERS - 1, color);
+}
+
+void TextMgr::clearBlock(int16 row_Upper, int16 column_Upper, int16 row_Lower, int16 column_Lower, byte color) {
+	// Sierra didn't do clipping of the coordinates, we do it for security
+	//  and b/c there actually are some games, that call commands with invalid coordinates
+	//  see cmdClearLines() comments.
+	charPos_Clip(row_Upper, column_Upper);
+	charPos_Clip(row_Lower, column_Lower);
+
+	int16 x = column_Upper * FONT_DISPLAY_WIDTH;
+	int16 y = row_Upper * FONT_DISPLAY_HEIGHT;
+	int16 width = (column_Lower + 1 - column_Upper) * FONT_DISPLAY_WIDTH;
+	int16 height = (row_Lower + 1 - row_Upper) * FONT_DISPLAY_HEIGHT;
+
+	y = y + height - 1; // drawDisplayRect wants lower Y-coordinate
+	_gfx->drawDisplayRect(x, y, width, height, color);
+}
+
+void TextMgr::clearBlockInsideWindow(int16 windowRow, int16 windowColumn, int16 width, byte color) {
+	int16 row;
+	int16 column;
+	if (!_messageState.window_Active)
+		return;
+
+	row = _messageState.textPos.row + windowRow;
+	column = _messageState.textPos.column + windowColumn;
+	clearBlock(row, column, row, column + width - 1, color);
+}
+
+bool TextMgr::inputGetEditStatus() {
+	return _inputEditEnabled;
+}
+
+void TextMgr::inputEditOn() {
+	if (!_inputEditEnabled) {
+		_inputEditEnabled = true;
+		if (_inputCursorChar) {
+			displayCharacter(0x08); // backspace
+		}
+	}
+}
+
+void TextMgr::inputEditOff() {
+	if (_inputEditEnabled) {
+		_inputEditEnabled = false;
+		if (_inputCursorChar) {
+			displayCharacter(_inputCursorChar);
+		}
+	}
+}
+
+void TextMgr::inputSetCursorChar(int16 cursorChar) {
+	_inputCursorChar = cursorChar;
+}
+
+byte TextMgr::inputGetCursorChar() {
+	return _inputCursorChar;
+}
+
+void TextMgr::promptRow_Set(int16 row) {
+	_promptRow = row;
+}
+
+int16 TextMgr::promptRow_Get() {
+	return _promptRow;
+}
+
+void TextMgr::promptReset() {
+	_promptCursorPos = 0;
+	memset(_prompt, 0, sizeof(_prompt));
+	memset(_promptPrevious, 0, sizeof(_promptPrevious));
+}
+
+void TextMgr::promptEnable() {
+	_promptEnabled = true;
+}
+void TextMgr::promptDisable() {
+	_promptEnabled = false;
+}
+bool TextMgr::promptIsEnabled() {
+	return _promptEnabled;
+}
+
+void TextMgr::promptCharPress(int16 newChar) {
+	int16 maxChars = 0;
+	int16 scriptsInputLen = _vm->getVar(VM_VAR_MAX_INPUT_CHARACTERS);
+
+	if (_messageState.dialogue_Open) {
+		maxChars = TEXT_STRING_MAX_SIZE - 4;
+	} else {
+		maxChars = TEXT_STRING_MAX_SIZE - strlen(_vm->_game.strings[0]); // string 0 is the prompt string prefix
+	}
+
+	if (_promptCursorPos)
+		maxChars--;
+
+	if (scriptsInputLen < maxChars)
+		maxChars = scriptsInputLen;
+
+	inputEditOn();
+
+	switch (newChar) {
+	case AGI_KEY_BACKSPACE: {
+		if (_promptCursorPos) {
+			_promptCursorPos--;
+			_prompt[_promptCursorPos] = 0;
+			displayCharacter(newChar);
+
+			promptRememberForAutoComplete();
+		}
+		break;
+	}
+	case 0x0A: // LF
+		break;
+	case AGI_KEY_ENTER: {
+		if (_promptCursorPos) {
+			// something got entered? -> process it and pass it to the scripts
+			promptRememberForAutoComplete(true);
+
+			memcpy(&_promptPrevious, &_prompt, sizeof(_prompt));
+			// parse text
+			_vm->_words->parseUsingDictionary((char *)&_prompt);
+
+			_promptCursorPos = 0;
+			_prompt[0] = 0;
+			promptRedraw();
+		}
+		break;
+	}
+	default:
+		if (maxChars > _promptCursorPos) {
+			bool acceptableInput = false;
+
+			// FEATURE: Sierra didn't check for valid characters (filtered out umlauts etc.)
+			// In text-mode this sort of worked at least with the DOS interpreter
+			// but as soon as invalid characters were used in graphics mode they weren't properly shown
+			switch (_vm->getLanguage()) {
+			case Common::RU_RUS:
+				if (newChar >= 0x20)
+					acceptableInput = true;
+				break;
+			default:
+				if ((newChar >= 0x20) && (newChar <= 0x7f))
+					acceptableInput = true;
+				break;
+			}
+
+			if (acceptableInput) {
+				_prompt[_promptCursorPos] = newChar;
+				_promptCursorPos++;
+				_prompt[_promptCursorPos] = 0;
+				displayCharacter(newChar);
+
+				promptRememberForAutoComplete();
+			}
+		}
+		break;
+	}
+
+	inputEditOff();
+}
+
+void TextMgr::promptCancelLine() {
+	while (_promptCursorPos) {
+		promptCharPress(0x08); // Backspace until prompt is empty
+	}
+}
+
+void TextMgr::promptEchoLine() {
+	int16 previousLen = strlen((char *)_promptPrevious);
+
+	if (_promptCursorPos < previousLen) {
+		inputEditOn();
+
+		while (_promptPrevious[_promptCursorPos]) {
+			promptCharPress(_promptPrevious[_promptCursorPos]);
+		}
+		promptRememberForAutoComplete();
+
+		inputEditOff();
+	}
+}
+
+void TextMgr::promptRedraw() {
+	char *textPtr = nullptr;
+
+	if (_promptEnabled) {
+		inputEditOn();
+		clearLine(_promptRow, _textAttrib.background);
+		charPos_Set(_promptRow, 0);
+		// agi_printf(str_wordwrap(msg, state.string[0], 40) );
+
+		textPtr = _vm->_game.strings[0];
+		textPtr = stringPrintf(textPtr);
+		textPtr = stringWordWrap(textPtr, 40);
+
+		displayText(textPtr);
+		displayText((char *)&_prompt);
+		inputEditOff();
+	}
+}
+
+// for AGI1
+void TextMgr::promptClear() {
+	clearLine(_promptRow, _textAttrib.background);
+}
+
+void TextMgr::promptRememberForAutoComplete(bool entered) {
+#ifdef __DS__
+	DS::findWordCompletions((char *)_prompt);
+#endif
+}
+
+bool TextMgr::stringWasEntered() {
+	return _inputStringEntered;
+}
+
+void TextMgr::stringSet(const char *text) {
+	strncpy((char *)_inputString, text, sizeof(_inputString));
+	_inputString[sizeof(_inputString) - 1] = 0; // terminator
+}
+
+void TextMgr::stringEdit(int16 stringMaxLen) {
+	int16 inputStringLen = strlen((const char *)_inputString);
+
+	// Caller can set the input string
+	_inputStringCursorPos = 0;
+	while (_inputStringCursorPos < inputStringLen) {
+		displayCharacter(_inputString[_inputStringCursorPos]);
+		_inputStringCursorPos++;
+	}
+
+	// should never happen unless there is a coding glitch
+	assert(_inputStringCursorPos <= stringMaxLen);
+
+	_inputStringMaxLen = stringMaxLen;
+	_inputStringEntered = false;
+
+	inputEditOff();
+
+	do {
+		_vm->mainCycle();
+	} while (_vm->cycleInnerLoopIsActive() && !(_vm->shouldQuit() || _vm->_restartGame));
+
+	inputEditOn();
+
+	// Forget non-blocking text, user was asked to enter something
+	_vm->nonBlockingText_Forget();
+}
+
+void TextMgr::stringCharPress(int16 newChar) {
+	inputEditOn();
+
+	switch (newChar) {
+	case 0x3:		// ctrl-c
+	case 0x18: {	// ctrl-x
+		// clear string
+		while (_inputStringCursorPos) {
+			_inputStringCursorPos--;
+			_inputString[_inputStringCursorPos] = 0;
+			displayCharacter(0x08);
+		}
+		break;
+	}
+
+	case AGI_KEY_BACKSPACE: {
+		if (_inputStringCursorPos) {
+			_inputStringCursorPos--;
+			_inputString[_inputStringCursorPos] = 0;
+			displayCharacter(newChar);
+
+			stringRememberForAutoComplete();
+		}
+		break;
+	}
+
+	case AGI_KEY_ENTER: {
+		stringRememberForAutoComplete(true);
+
+		_inputStringEntered = true;
+
+		_vm->cycleInnerLoopInactive(); // exit GetString-loop
+		break;
+	}
+
+	case AGI_KEY_ESCAPE: {
+		_inputString[0] = 0;
+		_inputStringCursorPos = 0;
+		_inputStringEntered = false;
+
+		_vm->cycleInnerLoopInactive(); // exit GetString-loop
+		break;
+	}
+
+	default:
+		if (_inputStringMaxLen > _inputStringCursorPos) {
+			bool acceptableInput = false;
+
+			// FEATURE: Sierra didn't check for valid characters (filtered out umlauts etc.)
+			// In text-mode this sort of worked at least with the DOS interpreter
+			// but as soon as invalid characters were used in graphics mode they weren't properly shown
+			switch (_vm->getLanguage()) {
+			case Common::RU_RUS:
+				if (newChar >= 0x20)
+					acceptableInput = true;
+				break;
+			default:
+				if ((newChar >= 0x20) && (newChar <= 0x7f))
+					acceptableInput = true;
+				break;
+			}
+
+			if (acceptableInput) {
+				if ((_vm->_game.cycleInnerLoopType == CYCLE_INNERLOOP_GETSTRING) || ((newChar >= '0') && (newChar <= '9'))) {
+					// Additionally check for GETNUMBER-mode, if character is a number
+					// Sierra also did not do this
+					_inputString[_inputStringCursorPos] = newChar;
+					_inputStringCursorPos++;
+					_inputString[_inputStringCursorPos] = 0;
+					displayCharacter(newChar);
+
+					stringRememberForAutoComplete();
 				}
 			}
 		}
+		break;
 	}
 
-	if (l)
-		return;
-
-	if (maxx < minx)
-		return;
-
-	maxx *= CHAR_COLS;
-	minx *= CHAR_COLS;
-
-	if (update) {
-		_gfx->scheduleUpdate(foff + xoff + minx, yoff, ofoff + xoff + maxx + CHAR_COLS - 1,
-				yoff + y1 * CHAR_LINES + CHAR_LINES + 1);
-
-		// Making synchronous text updates reduces CPU load
-		// when updating status line and input area
-		_gfx->doUpdate();
-	}
+	inputEditOff();
 }
 
-//
-// len is in characters, not pixels!!
-//
-void AgiEngine::blitTextbox(const char *p, int y, int x, int len) {
-	// if x | y = -1, then center the box
-	int xoff, yoff, lin, h, w;
-	char *msg, *m;
-
-	debugC(3, kDebugLevelText, "blitTextbox(): x=%d, y=%d, len=%d", x, y, len);
-	if (_game.window.active)
-		closeWindow();
-
-	if (x == 0 && y == 0 && len == 0)
-		x = y = -1;
-
-	if (len <= 0)
-		len = 30;
-
-	xoff = x * CHAR_COLS;
-	yoff = y * CHAR_LINES;
-
-	m = msg = wordWrapString(agiSprintf(p), &len);
-
-	for (lin = 1; *m; m++) {
-		// Test \r for MacOS 8
-		if (*m == '\n' || *m == '\r')
-			lin++;
-	}
-
-	if (lin * CHAR_LINES > GFX_HEIGHT)
-		lin = (GFX_HEIGHT / CHAR_LINES);
-
-	w = (len + 2) * CHAR_COLS;
-	h = (lin + 2) * CHAR_LINES;
-
-	if (xoff < 0)
-		xoff = (GFX_WIDTH - w - CHAR_COLS) / 2;
-	else
-		xoff -= CHAR_COLS;
-
-	if (yoff < 0)
-		yoff = (GFX_HEIGHT - 3 * CHAR_LINES - h) / 2;
-
-	drawWindow(xoff, yoff, xoff + w - 1, yoff + h - 1);
-
-	printText2(2, msg, 0, CHAR_COLS + xoff, CHAR_LINES + yoff,
-			len + 1, MSG_BOX_TEXT, MSG_BOX_COLOR);
-
-	free(msg);
-
-	_gfx->doUpdate();
-}
-
-void AgiEngine::eraseTextbox() {
-	if (!_game.window.active) {
-		debugC(3, kDebugLevelText, "eraseTextbox(): no window active");
-		return;
-	}
-
-	debugC(4, kDebugLevelText, "eraseTextbox(): x1=%d, y1=%d, x2=%d, y2=%d", _game.window.x1,
-			_game.window.y1, _game.window.x2, _game.window.y2);
-
-	_gfx->restoreBlock(_game.window.x1, _game.window.y1,
-			_game.window.x2, _game.window.y2, _game.window.buffer);
-
-	free(_game.window.buffer);
-	_game.window.active = false;
-
-	_gfx->doUpdate();
-}
-
-/*
- * Public functions
- */
-
-/**
- * Print text in the AGI engine screen.
- */
-void AgiEngine::printText(const char *msg, int f, int x, int y, int len, int fg, int bg, bool checkerboard) {
-	f *= CHAR_COLS;
-	x *= CHAR_COLS;
-	y *= CHAR_LINES;
-
-	debugC(4, kDebugLevelText, "printText(): %s, %d, %d, %d, %d, %d, %d", msg, f, x, y, len, fg, bg);
-	printText2(0, agiSprintf(msg), f, x, y, len, fg, bg, checkerboard);
-}
-
-/**
- * Print text in the AGI engine console.
- */
-void AgiEngine::printTextConsole(const char *msg, int x, int y, int len, int fg, int bg) {
-	x *= CHAR_COLS;
-	y *= 10;
-
-	debugC(4, kDebugLevelText, "printTextConsole(): %s, %d, %d, %d, %d, %d", msg, x, y, len, fg, bg);
-	printText2(1, msg, 0, x, y, len, fg, bg);
+void TextMgr::stringRememberForAutoComplete(bool entered) {
+#ifdef __DS__
+	DS::findWordCompletions((char *)_inputString);
+#endif
 }
 
 /**
@@ -223,293 +857,88 @@ void AgiEngine::printTextConsole(const char *msg, int x, int y, int len, int fg,
  *
  * Based on GBAGI implementation with permission from the author
  */
-char *AgiEngine::wordWrapString(const char *s, int *len) {
-	char *outStr, *msgBuf;
-	int maxWidth = *len;
-	const char *pWord;
-	int lnLen, wLen;
+char *TextMgr::stringWordWrap(const char *originalText, int16 maxWidth, int16 *calculatedWidthPtr, int16 *calculatedHeightPtr) {
+	static char resultWrapBuffer[2000];
+	char *outStr = resultWrapBuffer;
+	const char *wordStartPtr;
+	int16 lineLen = 0;
+	int16 wordLen = 0;
+	int curMaxWidth = 0;
+	int curHeight = 0;
 
-	// Allocate some extra space for the final buffer, as
-	// outStr may end up being longer than s
-	// 26 = 200 (screen height) / 8 (font height) + 1
-	msgBuf = outStr = (char *)malloc(strlen(s) + 26);
+	assert(maxWidth > 0); // this routine would create heap corruption in case maxWidth <= 0
 
-	int msgWidth = 0;
+	while (*originalText) {
+		wordStartPtr = originalText;
 
-	lnLen = 0;
+		while (*originalText != '\0' && *originalText != ' ' && *originalText != '\n' && *originalText != '\r')
+			originalText++;
 
-	while (*s) {
-		pWord = s;
+		wordLen = originalText - wordStartPtr;
 
-		while (*s != '\0' && *s != ' ' && *s != '\n' && *s != '\r')
-			s++;
+		if (wordLen && *originalText == '\n' && originalText[-1] == ' ')
+			wordLen--;
 
-		wLen = (int)(s - pWord);
-
-		if (wLen && *s == '\n' && s[-1] == ' ')
-			wLen--;
-
-		if (wLen + lnLen >= maxWidth) {
+		if (wordLen + lineLen >= maxWidth) {
 			// Check if outStr isn't msgBuf. If this is the case, outStr hasn't advanced
 			// yet, so no output has been written yet
-			if (outStr != msgBuf) {
+			if (outStr != resultWrapBuffer) {
 				if (outStr[-1] == ' ')
 					outStr[-1] = '\n';
 				else
 					*outStr++ = '\n';
 			}
+			curHeight++;
 
-			lnLen = 0;
+			lineLen = 0;
 
-			while (wLen >= maxWidth) {
-				msgWidth = maxWidth;
+			while (wordLen >= maxWidth) {
+				curMaxWidth = maxWidth;
 
-				memcpy(outStr, pWord, maxWidth);
+				memcpy(outStr, wordStartPtr, maxWidth);
 
-				wLen -= maxWidth;
+				wordLen -= maxWidth;
 				outStr += maxWidth;
-				pWord  += maxWidth;
+				wordStartPtr  += maxWidth;
 				*outStr++ = '\n';
+				curHeight++;
 			}
 		}
 
-		if (wLen) {
-			memcpy(outStr, pWord, wLen);
-			outStr += wLen;
+		if (wordLen) {
+			memcpy(outStr, wordStartPtr, wordLen);
+			outStr += wordLen;
 		}
-		lnLen += wLen+1;
+		lineLen += wordLen + 1;
 
-		if (lnLen > msgWidth) {
-			msgWidth = lnLen;
+		if (lineLen > curMaxWidth) {
+			curMaxWidth = lineLen;
 
-			if (*s == '\0' || *s == ' ' || *s == '\n' || *s == '\r')
-				msgWidth--;
+			if (*originalText == '\0' || *originalText == ' ' || *originalText == '\n' || *originalText == '\r')
+				curMaxWidth--;
 		}
 
-		if (*s == '\n')
-			lnLen = 0;
+		if (*originalText == '\n') {
+			lineLen = 0;
+			curHeight++;
+		}
 
-		if (*s)
-			*outStr++ = *s++;
+		if (*originalText)
+			*outStr++ = *originalText++;
 	}
 	*outStr = '\0';
-	*len = msgWidth;
+	curHeight++;
 
-	return msgBuf;
+	if (calculatedWidthPtr) {
+		*calculatedWidthPtr = curMaxWidth;
+	}
+	if (calculatedHeightPtr) {
+		*calculatedHeightPtr = curHeight;
+	}
+	return resultWrapBuffer;
 }
 
-/**
- * Remove existing window, if any.
- */
-void AgiEngine::closeWindow() {
-	debugC(4, kDebugLevelText, "closeWindow()");
-
-	_sprites->eraseBoth();
-	eraseTextbox();	// remove window, if any
-	_sprites->blitBoth();
-	_sprites->commitBoth();		// redraw sprites
-	_game.hasWindow = false;
-}
-
-/**
- * Display a message box.
- * This function displays the specified message in a text box
- * centered in the screen and waits until a key is pressed.
- * @param p The text to be displayed
- */
-int AgiEngine::messageBox(const char *s) {
-	int k;
-
-	_sprites->eraseBoth();
-	blitTextbox(s, -1, -1, -1);
-	_sprites->blitBoth();
-	k = waitKey();
-	debugC(4, kDebugLevelText, "messageBox(): wait_key returned %02x", k);
-	closeWindow();
-
-	return k;
-}
-
-/**
- * Display a message box with buttons.
- * This function displays the specified message in a text box
- * centered in the screen and waits until a button is pressed.
- * @param p The text to be displayed
- * @param b NULL-terminated list of button labels
- */
-int AgiEngine::selectionBox(const char *m, const char **b) {
-	int numButtons = 0;
-	int x, y, i, s;
-	int bx[5], by[5];
-
-	_noSaveLoadAllowed = true;
-
-	_sprites->eraseBoth();
-	blitTextbox(m, -1, -1, -1);
-
-	x = _game.window.x1 + 5 * CHAR_COLS / 2;
-	y = _game.window.y2 - 5 * CHAR_LINES / 2;
-	s = _game.window.x2 - _game.window.x1 + 1 - 5 * CHAR_COLS;
-	debugC(3, kDebugLevelText, "selectionBox(): s = %d", s);
-
-	// Automatically position buttons
-	for (i = 0; b[i]; i++) {
-		numButtons++;
-		s -= CHAR_COLS * strlen(b[i]);
-	}
-
-	if (i > 1) {
-		debugC(3, kDebugLevelText, "selectionBox(): s / %d = %d", i - 1, s / (i - 1));
-		s /= (i - 1);
-	} else {
-		x += s / 2;
-	}
-
-	for (i = 0; b[i]; i++) {
-		bx[i] = x;
-		by[i] = y;
-		x += CHAR_COLS * strlen(b[i]) + s;
-	}
-
-	_sprites->blitBoth();
-
-	clearKeyQueue();
-
-	AllowSyntheticEvents on(this);
-
-	debugC(4, kDebugLevelText, "selectionBox(): waiting...");
-	int key, active = 0;
-	int rc = -1;
-	while (rc == -1 && !(shouldQuit() || _restartGame)) {
-		for (i = 0; b[i]; i++)
-			_gfx->drawCurrentStyleButton(bx[i], by[i], b[i], i == active, false, i == 0);
-
-		pollTimer();
-		key = doPollKeyboard();
-		switch (key) {
-		case KEY_ENTER:
-			rc = active;
-			debugC(4, kDebugLevelText, "selectionBox(): Button pressed: %d", rc);
-			break;
-		case KEY_RIGHT:
-			active++;
-			if (active >= numButtons)
-				active = 0;
-			break;
-		case KEY_LEFT:
-			active--;
-			if (active < 0)
-				active = numButtons - 1;
-			break;
-		case BUTTON_LEFT:
-			for (i = 0; b[i]; i++) {
-				if (_gfx->testButton(bx[i], by[i], b[i])) {
-					rc = active = i;
-					debugC(4, kDebugLevelText, "selectionBox(): Button pressed: %d", rc);
-					break;
-				}
-			}
-			break;
-		case 0x09:	// Tab
-			debugC(3, kDebugLevelText, "selectionBox(): Focus change");
-			active++;
-			active %= i;
-			break;
-		}
-		_gfx->doUpdate();
-
-		if (key == KEY_ESCAPE)
-			break;
-	}
-
-	closeWindow();
-	debugC(2, kDebugLevelText, "selectionBox(): Result = %d", rc);
-
-	_noSaveLoadAllowed = false;
-
-	return rc;
-}
-
-/**
- *
- */
-int AgiEngine::print(const char *p, int lin, int col, int len) {
-	if (p == NULL)
-		return 0;
-
-	debugC(4, kDebugLevelText, "print(): lin = %d, col = %d, len = %d", lin, col, len);
-
-	blitTextbox(p, lin, col, len);
-
-	if (getflag(fOutputMode)) {
-		// non-blocking window
-		setflag(fOutputMode, false);
-		return 1;
-	}
-
-	// blocking
-
-	_noSaveLoadAllowed = true;
-
-	if (_game.vars[vWindowReset] == 0) {
-		int k;
-		setvar(vKey, 0);
-		k = waitKey();
-		closeWindow();
-
-		_noSaveLoadAllowed = false;
-
-		return k;
-	}
-
-	// timed window
-
-	debugC(3, kDebugLevelText, "f15==0, v21==%d => timed", getvar(21));
-	_game.msgBoxTicks = getvar(vWindowReset) * 10;
-	setvar(vKey, 0);
-
-	_menuSelected = false;
-
-	do {
-		if (getflag(fRestoreJustRan))
-			break;
-
-		if (_menuSelected)
-			break;
-
-		mainCycle();
-		if (_game.keypress == KEY_ENTER) {
-			debugC(4, kDebugLevelText, "KEY_ENTER");
-			setvar(vWindowReset, 0);
-			_game.keypress = 0;
-			break;
-		}
-	} while (_game.msgBoxTicks > 0 && !(shouldQuit() || _restartGame));
-
-	setvar(vWindowReset, 0);
-
-	closeWindow();
-
-	_noSaveLoadAllowed = false;
-
-	return 0;
-}
-
-/**
- *
- */
-void AgiEngine::printStatus(const char *message, ...) {
-	va_list args;
-
-	va_start(args, message);
-
-	Common::String x = Common::String::vformat(message, args);
-
-	va_end(args);
-
-	debugC(4, kDebugLevelText, "fg=%d, bg=%d", STATUS_FG, STATUS_BG);
-	printText(x.c_str(), 0, 0, _game.lineStatus, 40, STATUS_FG, STATUS_BG);
-}
+// ===============================================================
 
 static void safeStrcat(Common::String &p, const char *t) {
 	if (t != NULL)
@@ -523,31 +952,31 @@ static void safeStrcat(Common::String &p, const char *t) {
  * @param s  string containing the format specifier
  * @param n  logic number
  */
-char *AgiEngine::agiSprintf(const char *s) {
-	static char agiSprintf_buf[768];
-	Common::String p;
+char *TextMgr::stringPrintf(const char *originalText) {
+	static char resultPrintfBuffer[2000];
+	Common::String resultString;
 	char z[16];
 
-	debugC(3, kDebugLevelText, "logic %d, '%s'", _game.lognum, s);
+	debugC(3, kDebugLevelText, "logic %d, '%s'", _vm->_game.lognum, originalText);
 
-	while (*s) {
-		switch (*s) {
+	while (*originalText) {
+		switch (*originalText) {
 		case '%':
-			s++;
-			switch (*s++) {
+			originalText++;
+			switch (*originalText++) {
 				int i;
 			case 'v':
-				i = strtoul(s, NULL, 10);
-				while (*s >= '0' && *s <= '9')
-					s++;
-				sprintf(z, "%015i", getvar(i));
+				i = strtoul(originalText, NULL, 10);
+				while (*originalText >= '0' && *originalText <= '9')
+					originalText++;
+				sprintf(z, "%015i", _vm->getVar(i));
 
 				i = 99;
-				if (*s == '|') {
-					s++;
-					i = strtoul(s, NULL, 10);
-					while (*s >= '0' && *s <= '9')
-						s++;
+				if (*originalText == '|') {
+					originalText++;
+					i = strtoul(originalText, NULL, 10);
+					while (*originalText >= '0' && *originalText <= '9')
+						originalText++;
 				}
 
 				if (i == 99) {
@@ -558,173 +987,48 @@ char *AgiEngine::agiSprintf(const char *s) {
 				} else {
 					i = 15 - i;
 				}
-				safeStrcat(p, z + i);
+				safeStrcat(resultString, z + i);
 				break;
 			case '0':
-				i = strtoul(s, NULL, 10) - 1;
-				safeStrcat(p, objectName(i));
+				i = strtoul(originalText, NULL, 10) - 1;
+				safeStrcat(resultString, _vm->objectName(i));
 				break;
 			case 'g':
-				i = strtoul(s, NULL, 10) - 1;
-				safeStrcat(p, _game.logics[0].texts[i]);
+				i = strtoul(originalText, NULL, 10) - 1;
+				safeStrcat(resultString, _vm->_game.logics[0].texts[i]);
 				break;
 			case 'w':
-				i = strtoul(s, NULL, 10) - 1;
-				safeStrcat(p, _game.egoWords[i].word);
+				i = strtoul(originalText, NULL, 10) - 1;
+				safeStrcat(resultString, _vm->_words->getEgoWord(i));
 				break;
 			case 's':
-				i = strtoul(s, NULL, 10);
-				safeStrcat(p, agiSprintf(_game.strings[i]));
+				i = strtoul(originalText, NULL, 10);
+				safeStrcat(resultString, stringPrintf(_vm->_game.strings[i]));
 				break;
 			case 'm':
-				i = strtoul(s, NULL, 10) - 1;
-				if (_game.logics[_game.lognum].numTexts > i)
-					safeStrcat(p, agiSprintf(_game.logics[_game.lognum].texts[i]));
+				i = strtoul(originalText, NULL, 10) - 1;
+				if (_vm->_game.logics[_vm->_game.lognum].numTexts > i)
+					safeStrcat(resultString, stringPrintf(_vm->_game.logics[_vm->_game.lognum].texts[i]));
 				break;
 			}
 
-			while (*s >= '0' && *s <= '9')
-				s++;
+			while (*originalText >= '0' && *originalText <= '9')
+				originalText++;
 			break;
 
 		case '\\':
-			s++;
+			originalText++;
 			// FALL THROUGH
 
 		default:
-			p += *s++;
+			resultString += *originalText++;
 			break;
 		}
 	}
 
-	assert(p.size() < sizeof(agiSprintf_buf));
-	strcpy(agiSprintf_buf, p.c_str());
-	return agiSprintf_buf;
-}
-
-/**
- * Write the status line.
- */
-void AgiEngine::writeStatus() {
-	char x[64];
-
-	if (_debug.statusline) {
-		printStatus("%3d(%03d) %3d,%3d(%3d,%3d)               ",
-				getvar(0), getvar(1), _game.viewTable[0].xPos,
-				_game.viewTable[0].yPos, WIN_TO_PIC_X(_mouse.x),
-				WIN_TO_PIC_Y(_mouse.y));
-		return;
-	}
-
-	if (!_game.statusLine) {
-		clearLines(_game.lineStatus, _game.lineStatus, 0);
-		flushLines(_game.lineStatus, _game.lineStatus);
-
-#if 0
-		// FIXME: Breaks wrist watch prompt in SQ2
-
-		// Clear the user input line as well when clearing the status line
-		// Fixes bug #1893564 - AGI: Texts messed out in Naturette 1
-		clearLines(_game.lineUserInput, _game.lineUserInput, 0);
-		flushLines(_game.lineUserInput, _game.lineUserInput);
-#endif
-		return;
-	}
-
-	switch (getLanguage()) {
-	case Common::RU_RUS:
-		sprintf(x, " \x91\xe7\xa5\xe2: %i \xa8\xa7 %-3i", _game.vars[vScore], _game.vars[vMaxScore]);
-		printStatus("%-17s              \x87\xa2\xe3\xaa:%s", x, getflag(fSoundOn) ? "\xa2\xaa\xab " : "\xa2\xeb\xaa\xab");
-		break;
-	default:
-		sprintf(x, " Score:%i of %-3i", _game.vars[vScore], _game.vars[vMaxScore]);
-		printStatus("%-17s             Sound:%s ", x, getflag(fSoundOn) ? "on " : "off");
-		break;
-	}
-}
-
-/**
- * Print user input prompt.
- */
-void AgiEngine::writePrompt() {
-	int l, fg, bg, pos;
-	int promptLength = strlen(agiSprintf(_game.strings[0]));
-
-	if (!_game.inputEnabled || _game.inputMode != INPUT_NORMAL)
-		return;
-
-	l = _game.lineUserInput;
-	fg = _game.colorFg;
-	bg = _game.colorBg;
-	pos = _game.cursorPos;
-
-	debugC(4, kDebugLevelText, "erase line %d", l);
-	clearLines(l, l, _game.colorBg);
-
-	debugC(4, kDebugLevelText, "prompt = '%s'", agiSprintf(_game.strings[0]));
-	printText(_game.strings[0], 0, 0, l, promptLength + 1, fg, bg);
-	printText((char *)_game.inputBuffer, 0, promptLength, l, pos + 1, fg, bg);
-	_gfx->printCharacter(pos + promptLength, l, _game.cursorChar, fg, bg);
-
-	flushLines(l, l);
-	_gfx->doUpdate();
-}
-
-void AgiEngine::clearPrompt(bool useBlackBg) {
-	int l;
-
-	l = _game.lineUserInput;
-	clearLines(l, l, useBlackBg ? 0 : _game.colorBg);
-	flushLines(l, l);
-
-	_gfx->doUpdate();
-}
-
-/**
- * Clear text lines in the screen.
- * @param l1  start line
- * @param l2  end line
- * @param c   color
- */
-void AgiEngine::clearLines(int l1, int l2, int c) {
-	// do we need to adjust for +8 on topline?
-	// inc for endline so it matches the correct num
-	// ie, from 22 to 24 is 3 lines, not 2 lines.
-
-	debugC(4, kDebugLevelText, "clearLines(%d, %d, %d)", l1, l2, c);
-
-	l1 *= CHAR_LINES;
-	l2 *= CHAR_LINES;
-	l2 += CHAR_LINES - 1;
-
-	_gfx->drawRectangle(0, l1, GFX_WIDTH - 1, l2, c);
-}
-
-/**
- *
- */
-void AgiEngine::flushLines(int l1, int l2) {
-	l1 *= CHAR_LINES;
-	l2 *= CHAR_LINES;
-	l2 += CHAR_LINES - 1;
-
-	_gfx->flushBlock(0, l1, GFX_WIDTH - 1, l2);
-}
-
-/**
- *
- */
-void AgiEngine::drawWindow(int x1, int y1, int x2, int y2) {
-	_game.window.active = true;
-	_game.window.x1 = x1;
-	_game.window.y1 = y1;
-	_game.window.x2 = x2;
-	_game.window.y2 = y2;
-	_game.window.buffer = (uint8 *)malloc((x2 - x1 + 1) * (y2 - y1 + 1));
-
-	debugC(4, kDebugLevelText, "x1=%d, y1=%d, x2=%d, y2=%d", x1, y1, x2, y2);
-	_gfx->saveBlock(x1, y1, x2, y2, _game.window.buffer);
-	_gfx->drawBox(x1, y1, x2, y2, MSG_BOX_COLOR, MSG_BOX_LINE, 2);
+	assert(resultString.size() < sizeof(resultPrintfBuffer));
+	strcpy(resultPrintfBuffer, resultString.c_str());
+	return resultPrintfBuffer;
 }
 
 } // End of namespace Agi

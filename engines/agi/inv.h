@@ -20,37 +20,42 @@
  *
  */
 
-#ifndef AGI_FONT_H
-#define AGI_FONT_H
+#ifndef AGI_INV_H
+#define AGI_INV_H
 
 namespace Agi {
 
-class GfxFont {
-public:
-	GfxFont(AgiBase *vm);
-	~GfxFont();
+struct InventoryEntry {
+	uint16 objectNr;
+	int16  row;
+	int16  column;
+	const char *name;
+};
+typedef Common::Array<InventoryEntry> InventoryArray;
 
+class InventoryMgr {
 private:
-	AgiBase *_vm;
+	GfxMgr *_gfx;
+	TextMgr *_text;
+	AgiEngine *_vm;
+	SystemUI *_systemUI;
+
+	InventoryArray _array;
+	int16 _activeItemNr;
 
 public:
-	void init();
-	const byte *getFontData();
+	InventoryMgr(AgiEngine *agi, GfxMgr *gfx, TextMgr *text, SystemUI *systemUI);
+	~InventoryMgr();
 
-private:
-	void overwriteSaveRestoreDialogCharacter();
-	void overwriteExtendedWithRussianSet();
+	void getPlayerInventory();
+	void drawAll();
+	void drawItem(int16 itemNr);
+	void show();
 
-	void loadFontScummVMFile(Common::String fontFilename);
-	void loadFontMickey();
-	void loadFontAmigaPseudoTopaz();
-	void loadFontAppleIIgs();
-	void loadFontAtariST(Common::String fontFilename);
-
-	const uint8 *_fontData; // pointer to the currently used font
-	uint8 *_fontDataAllocated;
+	void charPress(int16 newChar);
+	void changeActiveItem(int16 direction);
 };
 
 } // End of namespace Agi
 
-#endif /* AGI_FONT_H */
+#endif /* AGI_INV_H */

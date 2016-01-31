@@ -22,6 +22,7 @@
 
 #include "agi/agi.h"
 #include "agi/opcodes.h"
+#include "agi/graphics.h"
 
 #include "agi/preagi.h"
 #include "agi/preagi_mickey.h"
@@ -49,6 +50,10 @@ Console::Console(AgiEngine *vm) : GUI::Debugger() {
 	registerCmd("setobj",     WRAP_METHOD(Console, Cmd_SetObj));
 	registerCmd("room",       WRAP_METHOD(Console, Cmd_Room));
 	registerCmd("bt",         WRAP_METHOD(Console, Cmd_BT));
+	registerCmd("show_map",   WRAP_METHOD(Console, Cmd_ShowMap));
+	registerCmd("screenobj",  WRAP_METHOD(Console, Cmd_ScreenObj));
+	registerCmd("vmvars",     WRAP_METHOD(Console, Cmd_VmVars));
+	registerCmd("vmflags",    WRAP_METHOD(Console, Cmd_VmFlags));
 }
 
 bool Console::Cmd_SetVar(int argc, const char **argv) {
@@ -58,7 +63,7 @@ bool Console::Cmd_SetVar(int argc, const char **argv) {
 	}
 	int p1 = (int)atoi(argv[1]);
 	int p2 = (int)atoi(argv[2]);
-	_vm->setvar(p1, p2);
+	_vm->setVar(p1, p2);
 
 	return true;
 }
@@ -70,7 +75,7 @@ bool Console::Cmd_SetFlag(int argc, const char **argv) {
 	}
 	int p1 = (int)atoi(argv[1]);
 	int p2 = (int)atoi(argv[2]);
-	_vm->setflag(p1, !!p2);
+	_vm->setFlag(p1, !!p2);
 
 	return true;
 }
@@ -158,13 +163,13 @@ bool Console::Cmd_Version(int argc, const char **argv) {
 	// We do this by scanning through all script texts
 	// This is the best we can do about it. There is no special location for the game version number.
 	// There are multiple variations, like "ver. X.XX", "ver X.XX" and even "verion X.XX".
-	for (scriptNr = 0; scriptNr < MAX_DIRS; scriptNr++) {
+	for (scriptNr = 0; scriptNr < MAX_DIRECTORY_ENTRIES; scriptNr++) {
 		if (game->dirLogic[scriptNr].offset != _EMPTY) {
 			// Script is supposed to exist?
 			scriptLoadedByUs = false;
 			if (!(game->dirLogic[scriptNr].flags & RES_LOADED)) {
 				// But not currently loaded? -> load it now
-				if (_vm->agiLoadResource(rLOGIC, scriptNr) != errOK) {
+				if (_vm->agiLoadResource(RESOURCETYPE_LOGIC, scriptNr) != errOK) {
 					// In case we can't load the source, skip it
 					continue;
 				}
@@ -263,7 +268,7 @@ bool Console::Cmd_Version(int argc, const char **argv) {
 			}
 
 			if (scriptLoadedByUs) {
-				_vm->agiUnloadResource(rLOGIC, scriptNr);
+				_vm->agiUnloadResource(RESOURCETYPE_LOGIC, scriptNr);
 			}
 		}
 	}
@@ -285,7 +290,7 @@ bool Console::Cmd_Flags(int argc, const char **argv) {
 	for (i = 0; i < 255;) {
 		debugPrintf("%3d ", i);
 		for (j = 0; j < 10; j++, i++) {
-			debugPrintf("%c ", _vm->getflag(i) ? 'T' : 'F');
+			debugPrintf("%c ", _vm->getFlag(i) ? 'T' : 'F');
 		}
 		debugPrintf("\n");
 	}
@@ -298,7 +303,7 @@ bool Console::Cmd_Vars(int argc, const char **argv) {
 
 	for (i = 0; i < 255;) {
 		for (j = 0; j < 5; j++, i++) {
-			debugPrintf("%03d:%3d ", i, _vm->getvar(i));
+			debugPrintf("%03d:%3d ", i, _vm->getVar(i));
 		}
 		debugPrintf("\n");
 	}
@@ -380,7 +385,7 @@ bool Console::Cmd_Room(int argc, const char **argv) {
 		_vm->newRoom(strtoul(argv[1], NULL, 0));
 	}
 
-	debugPrintf("Current room: %d\n", _vm->getvar(0));
+	debugPrintf("Current room: %d\n", _vm->getVar(0));
 
 	return true;
 }
@@ -409,6 +414,179 @@ bool Console::Cmd_BT(int argc, const char **argv) {
 		debugPrintf(")\n");
 	}
 
+	return true;
+}
+
+bool Console::Cmd_ShowMap(int argc, const char **argv) {
+	if (argc != 2) {
+		debugPrintf("Switches to one of the following screen maps\n");
+		debugPrintf("Usage: %s <screen map>\n", argv[0]);
+		debugPrintf("Screen maps:\n");
+		debugPrintf("- 0: visual map\n");
+		debugPrintf("- 1: priority map\n");
+		return true;
+	}
+
+	int map = atoi(argv[1]);
+
+	switch (map) {
+	case 0:
+	case 1:
+		_vm->_gfx->debugShowMap(map);
+		break;
+
+	default:
+		debugPrintf("Map %d is not available.\n", map);
+		return true;
+	}
+	return cmdExit(0, 0);
+}
+
+bool Console::Cmd_ScreenObj(int argc, const char **argv) {
+	if (argc != 2) {
+		debugPrintf("Shows information about a specific screen object\n");
+		debugPrintf("Usage: %s <screenobj number>\n", argv[0]);
+		return true;
+	}
+
+	int16 screenObjNr = atoi(argv[1]);
+
+	if ((screenObjNr >= 0) && (screenObjNr < SCREENOBJECTS_MAX)) {
+		ScreenObjEntry *screenObj = &_vm->_game.screenObjTable[screenObjNr];
+
+		debugPrintf("Screen Object ID %d\n", screenObj->objectNr);
+		debugPrintf("current view: %d, loop: %d, cel: %d\n", screenObj->currentViewNr, screenObj->currentLoopNr, screenObj->currentCelNr);
+		debugPrintf("flags: %x\n", screenObj->flags);
+		debugPrintf("\n");
+		debugPrintf("xPos: %d, yPos: %d, xSize: %d, ySize: %d\n", screenObj->xPos, screenObj->yPos, screenObj->xSize, screenObj->ySize);
+		debugPrintf("previous: xPos: %d, yPos: %d, xSize: %d, ySize: %d\n", screenObj->xPos_prev, screenObj->yPos_prev, screenObj->xSize_prev, screenObj->ySize_prev);
+		debugPrintf("direction: %d, priority: %d\n", screenObj->direction, screenObj->priority);
+		debugPrintf("stepTime: %d, timeCount: %d, size: %d\n", screenObj->stepTime, screenObj->stepTimeCount, screenObj->stepSize);
+		debugPrintf("cycleTime: %d, timeCount: %d\n", screenObj->cycleTime, screenObj->cycleTimeCount);
+
+		switch(screenObj->motionType) {
+		case kMotionNormal:
+			debugPrintf("motion: normal\n");
+			break;
+		case kMotionWander:
+			debugPrintf("motion: wander\n");
+			debugPrintf("wanderCount: %d\n", screenObj->wander_count);
+			break;
+		case kMotionFollowEgo:
+			debugPrintf("motion: follow ego\n");
+			debugPrintf("stepSize: %d, flag: %x, count: %d", screenObj->follow_stepSize, screenObj->follow_flag, screenObj->follow_count);
+			break;
+		case kMotionMoveObj:
+		case kMotionEgo:
+			if (screenObj->motionType == kMotionMoveObj) {
+				debugPrintf("motion: move obj\n");
+			} else {
+				debugPrintf("motion: ego\n");
+			}
+			debugPrintf("x: %d, y: %d, stepSize: %d, flag: %x\n", screenObj->move_x, screenObj->move_y, screenObj->move_stepSize, screenObj->move_flag);
+			break;
+		}
+	}
+	return true;
+}
+
+bool Console::Cmd_VmVars(int argc, const char **argv) {
+	if (argc < 2) {
+		debugPrintf("Shows the content of a VM variable / sets it\n");
+		debugPrintf("Usage: %s <variable number> [<value>]\n", argv[0]);
+		return true;
+	}
+
+	int varNr = 0;
+	int newValue = 0;
+
+	if (!parseInteger(argv[1], varNr))
+		return true;
+
+	if ((varNr < 0) || (varNr > 255)) {
+		debugPrintf("invalid variable number\n");
+		return true;
+	}
+
+	if (argc < 3) {
+		// show contents
+		debugPrintf("variable %d == %d\n", varNr, _vm->getVar(varNr));
+	} else {
+		if (!parseInteger(argv[2], newValue))
+			return true;
+
+		_vm->setVar(varNr, newValue);
+
+		debugPrintf("value set.\n");
+	}
+	return true;
+}
+
+bool Console::Cmd_VmFlags(int argc, const char **argv) {
+	if (argc < 2) {
+		debugPrintf("Shows the content of a VM flag / sets it\n");
+		debugPrintf("Usage: %s <flag number> [<value>]\n", argv[0]);
+		return true;
+	}
+
+	int flagNr = 0;
+	int newFlagState = 0;
+
+	if (!parseInteger(argv[1], flagNr))
+		return true;
+
+	if ((flagNr < 0) || (flagNr > 255)) {
+		debugPrintf("invalid flag number\n");
+		return true;
+	}
+
+	if (argc < 3) {
+		// show contents
+		if (_vm->getFlag(flagNr)) {
+			debugPrintf("flag %d == set\n", flagNr);
+		} else {
+			debugPrintf("flag %d == not set\n", flagNr);
+		}
+	} else {
+		if (!parseInteger(argv[2], newFlagState))
+			return true;
+
+		if ((newFlagState != 0) && (newFlagState != 1)) {
+			debugPrintf("new state must bei either 0 or 1\n");
+			return true;
+		}
+
+		if (!newFlagState) {
+			_vm->setFlag(flagNr, false);
+			debugPrintf("flag %d reset.\n", flagNr);
+		} else {
+			_vm->setFlag(flagNr, true);
+			debugPrintf("flag %d set.\n", flagNr);
+		}
+	}
+	return true;
+}
+
+bool Console::parseInteger(const char *argument, int &result) {
+	char *endPtr = 0;
+	int idxLen = strlen(argument);
+	const char *lastChar = argument + idxLen - (idxLen == 0 ? 0 : 1);
+
+	if ((strncmp(argument, "0x", 2) == 0) || (*lastChar == 'h')) {
+		// hexadecimal number
+		result = strtol(argument, &endPtr, 16);
+		if ((*endPtr != 0) && (*endPtr != 'h')) {
+			debugPrintf("Invalid hexadecimal number '%s'\n", argument);
+			return false;
+		}
+	} else {
+		// decimal number
+		result = strtol(argument, &endPtr, 10);
+		if (*endPtr != 0) {
+			debugPrintf("Invalid decimal number '%s'\n", argument);
+			return false;
+		}
+	}
 	return true;
 }
 

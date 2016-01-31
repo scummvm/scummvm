@@ -140,7 +140,7 @@ void SoundMgr::startSound(int resnum, int flag) {
 	if (_vm->getVersion() < 0x2000) {
 		_vm->_game.vars[_endflag] = 0;
 	} else {
-		_vm->setflag(_endflag, false);
+		_vm->setFlag(_endflag, false);
 	}
 }
 
@@ -160,7 +160,7 @@ void SoundMgr::stopSound() {
 		if (_vm->getVersion() < 0x2000) {
 			_vm->_game.vars[_endflag] = 1;
 		} else {
-			_vm->setflag(_endflag, true);
+			_vm->setFlag(_endflag, true);
 		}
 	}
 
@@ -169,7 +169,7 @@ void SoundMgr::stopSound() {
 
 void SoundMgr::soundIsFinished() {
 	if (_endflag != -1)
-		_vm->setflag(_endflag, true);
+		_vm->setFlag(_endflag, true);
 
 	if (_playingSound != -1)
 		_vm->_game.sounds[_playingSound]->stop();

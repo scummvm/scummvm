@@ -23,6 +23,8 @@
 
 #include "agi/agi.h"
 #include "agi/opcodes.h"
+#include "agi/words.h"
+
 #include "common/endian.h"
 
 namespace Agi {
@@ -30,63 +32,49 @@ namespace Agi {
 #define ip (state->_curLogic->cIP)
 #define code (state->_curLogic->data)
 
-#define getvar(a) state->_vm->getvar(a)
-#define getflag(a) state->_vm->getflag(a)
+#define getVar(a) state->_vm->getVar(a)
 
-#define testEqual(v1, v2)		(getvar(v1) == (v2))
-#define testLess(v1, v2)		(getvar(v1) < (v2))
-#define testGreater(v1, v2)	(getvar(v1) > (v2))
-#define testIsSet(flag)		(getflag(flag))
+#define testEqual(v1, v2)		(getVar(v1) == (v2))
+#define testLess(v1, v2)		(getVar(v1) < (v2))
+#define testGreater(v1, v2)	(getVar(v1) > (v2))
 #define testHas(obj)			(state->_vm->objectGetLocation(obj) == EGO_OWNED)
 #define testHasV1(obj)			(state->_vm->objectGetLocation(obj) == EGO_OWNED_V1)
-#define testObjInRoom(obj, v)	(state->_vm->objectGetLocation(obj) == getvar(v))
+#define testObjInRoom(obj, v)	(state->_vm->objectGetLocation(obj) == getVar(v))
 
 void condEqual(AgiGame *state, uint8 *p) {
-	if (p[0] == 11)
-		state->_vm->_timerHack++;
 	state->testResult = testEqual(p[0], p[1]);
 }
 
 void condEqualV(AgiGame *state, uint8 *p) {
-	if (p[0] == 11 || p[1] == 11)
-		state->_vm->_timerHack++;
-	state->testResult = testEqual(p[0], getvar(p[1]));
+	state->testResult = testEqual(p[0], getVar(p[1]));
 }
 
 void condLess(AgiGame *state, uint8 *p) {
-	if (p[0] == 11)
-		state->_vm->_timerHack++;
 	state->testResult = testLess(p[0], p[1]);
 }
 
 void condLessV(AgiGame *state, uint8 *p) {
-	if (p[0] == 11 || p[1] == 11)
-		state->_vm->_timerHack++;
-	state->testResult = testLess(p[0], getvar(p[1]));
+	state->testResult = testLess(p[0], getVar(p[1]));
 }
 
 void condGreater(AgiGame *state, uint8 *p) {
-	if (p[0] == 11)
-		state->_vm->_timerHack++;
 	state->testResult = testGreater(p[0], p[1]);
 }
 
 void condGreaterV(AgiGame *state, uint8 *p) {
-	if (p[0] == 11 || p[1] == 11)
-		state->_vm->_timerHack++;
-	state->testResult = testGreater(p[0], getvar(p[1]));
+	state->testResult = testGreater(p[0], getVar(p[1]));
 }
 
 void condIsSet(AgiGame *state, uint8 *p) {
-	state->testResult = testIsSet(p[0]);
+	state->testResult = state->_vm->getFlag(p[0]);
 }
 
 void condIsSetV(AgiGame *state, uint8 *p) {
-	state->testResult = testIsSet(getvar(p[0]));
+	state->testResult = state->_vm->getFlag(getVar(p[0]));
 }
 
 void condIsSetV1(AgiGame *state, uint8 *p) {
-	state->testResult = getvar(p[0]) > 0;
+	state->testResult = getVar(p[0]) > 0;
 }
 
 void condHas(AgiGame *state, uint8 *p) {
@@ -121,47 +109,47 @@ void condSaid(AgiGame *state, uint8 *p) {
 void condSaid1(AgiGame *state, uint8 *p) {
 	state->testResult = false;
 
-	if (!getflag(fEnteredCli))
+	if (!state->_vm->getFlag(VM_FLAG_ENTERED_CLI))
 		return;
 
 	int id0 = READ_LE_UINT16(p);
 
-	if ((id0 == 1 || id0 == state->egoWords[0].id))
+	if ((id0 == 1 || id0 == state->_vm->_words->getEgoWordId(0)))
 		state->testResult = true;
 }
 
 void condSaid2(AgiGame *state, uint8 *p) {
 	state->testResult = false;
 
-	if (!getflag(fEnteredCli))
+	if (!state->_vm->getFlag(VM_FLAG_ENTERED_CLI))
 		return;
 
 	int id0 = READ_LE_UINT16(p);
 	int id1 = READ_LE_UINT16(p + 2);
 
-	if ((id0 == 1 || id0 == state->egoWords[0].id) &&
-		(id1 == 1 || id1 == state->egoWords[1].id))
+	if ((id0 == 1 || id0 == state->_vm->_words->getEgoWordId(0)) &&
+		(id1 == 1 || id1 == state->_vm->_words->getEgoWordId(1)))
 		state->testResult = true;
 }
 
 void condSaid3(AgiGame *state, uint8 *p) {
 	state->testResult = false;
 
-	if (!getflag(fEnteredCli))
+	if (!state->_vm->getFlag(VM_FLAG_ENTERED_CLI))
 		return;
 
 	int id0 = READ_LE_UINT16(p);
 	int id1 = READ_LE_UINT16(p + 2);
 	int id2 = READ_LE_UINT16(p + 4);
 
-	if ((id0 == 1 || id0 == state->egoWords[0].id) &&
-		(id1 == 1 || id1 == state->egoWords[1].id) &&
-		(id2 == 1 || id2 == state->egoWords[2].id))
+	if ((id0 == 1 || id0 == state->_vm->_words->getEgoWordId(0)) &&
+		(id1 == 1 || id1 == state->_vm->_words->getEgoWordId(1)) &&
+		(id2 == 1 || id2 == state->_vm->_words->getEgoWordId(2)))
 		state->testResult = true;
 }
 
 void condBit(AgiGame *state, uint8 *p) {
-	state->testResult = (getvar(p[1]) >> p[0]) & 1;
+	state->testResult = (getVar(p[1]) >> p[0]) & 1;
 }
 
 void condCompareStrings(AgiGame *state, uint8 *p) {
@@ -188,7 +176,7 @@ void condUnknown13(AgiGame *state, uint8 *p) {
 	// This command is used at least in the Amiga version of Gold Rush! v2.05 1989-03-09
 	// (AGI 2.316) in logics 1, 3, 5, 6, 137 and 192 (Logic.192 revealed this command's nature).
 	// TODO: Check this command's implementation using disassembly just to be sure.
-	int ec = state->viewTable[0].flags & fAdjEgoXY;
+	int ec = state->screenObjTable[SCREENOBJECTS_EGO_ENTRY].flags & fAdjEgoXY;
 	debugC(7, kDebugLevelScripts, "op_test: in.motion.using.mouse = %s (Amiga-specific testcase 19)", ec ? "true" : "false");
 	state->testResult = ec;
 }
@@ -221,7 +209,7 @@ uint8 AgiEngine::testCompareStrings(uint8 s1, uint8 s2) {
 			break;
 
 		default:
-			ms1[j++] = toupper(ms1[k]);
+			ms1[j++] = tolower(ms1[k]);
 			break;
 		}
 	}
@@ -242,7 +230,7 @@ uint8 AgiEngine::testCompareStrings(uint8 s1, uint8 s2) {
 			break;
 
 		default:
-			ms2[j++] = toupper(ms2[k]);
+			ms2[j++] = tolower(ms2[k]);
 			break;
 		}
 	}
@@ -258,7 +246,7 @@ uint8 AgiEngine::testKeypressed() {
 	if (!x) {
 		InputMode mode = _game.inputMode;
 
-		_game.inputMode = INPUT_NONE;
+		_game.inputMode = INPUTMODE_NONE;
 		// Only check for events here, without updating the game cycle,
 		// otherwise the animations in some games are drawn too quickly
 		// like, for example, Manannan's lightnings in the intro of KQ3
@@ -275,11 +263,11 @@ uint8 AgiEngine::testKeypressed() {
 }
 
 uint8 AgiEngine::testController(uint8 cont) {
-	return (_game.controllerOccured[cont] ? 1 : 0);
+	return (_game.controllerOccured[cont] ? true : false);
 }
 
 uint8 AgiEngine::testPosn(uint8 n, uint8 x1, uint8 y1, uint8 x2, uint8 y2) {
-	VtEntry *v = &_game.viewTable[n];
+	ScreenObjEntry *v = &_game.screenObjTable[n];
 	uint8 r;
 
 	r = v->xPos >= x1 && v->yPos >= y1 && v->xPos <= x2 && v->yPos <= y2;
@@ -290,7 +278,7 @@ uint8 AgiEngine::testPosn(uint8 n, uint8 x1, uint8 y1, uint8 x2, uint8 y2) {
 }
 
 uint8 AgiEngine::testObjInBox(uint8 n, uint8 x1, uint8 y1, uint8 x2, uint8 y2) {
-	VtEntry *v = &_game.viewTable[n];
+	ScreenObjEntry *v = &_game.screenObjTable[n];
 
 	return v->xPos >= x1 &&
 	    v->yPos >= y1 && v->xPos + v->xSize - 1 <= x2 && v->yPos <= y2;
@@ -298,7 +286,7 @@ uint8 AgiEngine::testObjInBox(uint8 n, uint8 x1, uint8 y1, uint8 x2, uint8 y2) {
 
 // if n is in center of box
 uint8 AgiEngine::testObjCenter(uint8 n, uint8 x1, uint8 y1, uint8 x2, uint8 y2) {
-	VtEntry *v = &_game.viewTable[n];
+	ScreenObjEntry *v = &_game.screenObjTable[n];
 
 	return v->xPos + v->xSize / 2 >= x1 &&
 			v->xPos + v->xSize / 2 <= x2 && v->yPos >= y1 && v->yPos <= y2;
@@ -306,7 +294,7 @@ uint8 AgiEngine::testObjCenter(uint8 n, uint8 x1, uint8 y1, uint8 x2, uint8 y2) 
 
 // if nect N is in right corner
 uint8 AgiEngine::testObjRight(uint8 n, uint8 x1, uint8 y1, uint8 x2, uint8 y2) {
-	VtEntry *v = &_game.viewTable[n];
+	ScreenObjEntry *v = &_game.screenObjTable[n];
 
 	return v->xPos + v->xSize - 1 >= x1 &&
 			v->xPos + v->xSize - 1 <= x2 && v->yPos >= y1 && v->yPos <= y2;
@@ -315,10 +303,12 @@ uint8 AgiEngine::testObjRight(uint8 n, uint8 x1, uint8 y1, uint8 x2, uint8 y2) {
 // When player has entered something, it is parsed elsewhere
 uint8 AgiEngine::testSaid(uint8 nwords, uint8 *cc) {
 	AgiGame *state = &_game;
-	int c, n = _game.numEgoWords;
+	AgiEngine *vm = state->_vm;
+	Words *words = vm->_words;
+	int c, n = words->getEgoWordCount();
 	int z = 0;
 
-	if (getflag(fSaidAcceptedInput) || !getflag(fEnteredCli))
+	if (vm->getFlag(VM_FLAG_SAID_ACCEPTED_INPUT) || !vm->getFlag(VM_FLAG_ENTERED_CLI))
 		return false;
 
 	// FR:
@@ -349,7 +339,7 @@ uint8 AgiEngine::testSaid(uint8 nwords, uint8 *cc) {
 		case 1:	// any word
 			break;
 		default:
-			if (_game.egoWords[c].id != z)
+			if (words->getEgoWordId(c) != z)
 				return false;
 			break;
 		}
@@ -364,7 +354,7 @@ uint8 AgiEngine::testSaid(uint8 nwords, uint8 *cc) {
 	if (nwords != 0 && READ_LE_UINT16(cc) != 9999)
 		return false;
 
-	setflag(fSaidAcceptedInput, true);
+	setFlag(VM_FLAG_SAID_ACCEPTED_INPUT, true);
 
 	return true;
 }

@@ -149,7 +149,7 @@ void MickeyEngine::printStr(char *buffer) {
 	}
 
 	// Show the string on screen
-	_gfx->doUpdate();
+	_gfx->updateScreen();
 }
 
 void MickeyEngine::printLine(const char *buffer) {
@@ -158,7 +158,7 @@ void MickeyEngine::printLine(const char *buffer) {
 	drawStr(22, 18 - strlen(buffer) / 2, IDA_DEFAULT, buffer);
 
 	// Show the string on screen
-	_gfx->doUpdate();
+	_gfx->updateScreen();
 
 	waitAnyKey(true);
 }
@@ -281,7 +281,7 @@ void MickeyEngine::drawMenu(MSA_MENU menu, int sel0, int sel1) {
 	}
 
 	// Menu created, show it on screen
-	_gfx->doUpdate();
+	_gfx->updateScreen();
 }
 
 void MickeyEngine::getMouseMenuSelRow(MSA_MENU menu, int *sel0, int *sel1, int iRow, int x, int y) {
@@ -373,18 +373,19 @@ bool MickeyEngine::getMenuSelRow(MSA_MENU menu, int *sel0, int *sel1, int iRow) 
 					// Change cursor
 					if (northIndex >= 0 && (event.mouse.x >= 20 && event.mouse.x <= (IDI_MSA_PIC_WIDTH + 10) * 2) &&
 							(event.mouse.y >= 0 && event.mouse.y <= 10)) {
-						_gfx->setCursorPalette(true);
+						//_gfx->setCursorPalette(true);
+						// TODO:?????
 					} else if (southIndex >= 0 && (event.mouse.x >= 20 && event.mouse.x <= (IDI_MSA_PIC_WIDTH + 10) * 2) &&
 								(event.mouse.y >= IDI_MSA_PIC_HEIGHT - 10 && event.mouse.y <= IDI_MSA_PIC_HEIGHT)) {
-						_gfx->setCursorPalette(true);
+						//_gfx->setCursorPalette(true);
 					} else if (westIndex >= 0 && (event.mouse.y >= 0  && event.mouse.y <= IDI_MSA_PIC_HEIGHT) &&
 								(event.mouse.x >= 20 && event.mouse.x <= 30)) {
-						_gfx->setCursorPalette(true);
+						//_gfx->setCursorPalette(true);
 					} else if (eastIndex >= 0 && (event.mouse.y >= 0  && event.mouse.y <= IDI_MSA_PIC_HEIGHT) &&
 								(event.mouse.x >= IDI_MSA_PIC_WIDTH * 2 && event.mouse.x <= (IDI_MSA_PIC_WIDTH + 10) * 2)) {
-						_gfx->setCursorPalette(true);
+						//_gfx->setCursorPalette(true);
 					} else {
-						_gfx->setCursorPalette(false);
+						//_gfx->setCursorPalette(false);
 					}
 				}
 				break;
@@ -397,7 +398,8 @@ bool MickeyEngine::getMenuSelRow(MSA_MENU menu, int *sel0, int *sel1, int iRow) 
 
 					drawMenu(menu, *sel0, *sel1);
 
-					_gfx->setCursorPalette(false);
+					//_gfx->setCursorPalette(false);
+					// TODO???
 					_clickToMove = true;
 				} else if (southIndex >= 0 && (event.mouse.x >= 20 && event.mouse.x <= (IDI_MSA_PIC_WIDTH + 10) * 2) &&
 							(event.mouse.y >= IDI_MSA_PIC_HEIGHT - 10 && event.mouse.y <= IDI_MSA_PIC_HEIGHT)) {
@@ -406,7 +408,8 @@ bool MickeyEngine::getMenuSelRow(MSA_MENU menu, int *sel0, int *sel1, int iRow) 
 
 					drawMenu(menu, *sel0, *sel1);
 
-					_gfx->setCursorPalette(false);
+					//_gfx->setCursorPalette(false);
+					// TODO???
 					_clickToMove = true;
 				} else if (westIndex >= 0 && (event.mouse.y >= 0  && event.mouse.y <= IDI_MSA_PIC_HEIGHT) &&
 							(event.mouse.x >= 20 && event.mouse.x <= 30)) {
@@ -415,7 +418,8 @@ bool MickeyEngine::getMenuSelRow(MSA_MENU menu, int *sel0, int *sel1, int iRow) 
 
 					drawMenu(menu, *sel0, *sel1);
 
-					_gfx->setCursorPalette(false);
+					//_gfx->setCursorPalette(false);
+					// TODO???
 					_clickToMove = true;
 				} else if (eastIndex >= 0 && (event.mouse.y >= 0  && event.mouse.y <= IDI_MSA_PIC_HEIGHT) &&
 							(event.mouse.x >= IDI_MSA_PIC_WIDTH * 2 && event.mouse.x <= (IDI_MSA_PIC_WIDTH + 10) * 2)) {
@@ -424,10 +428,12 @@ bool MickeyEngine::getMenuSelRow(MSA_MENU menu, int *sel0, int *sel1, int iRow) 
 
 					drawMenu(menu, *sel0, *sel1);
 
-					_gfx->setCursorPalette(false);
+					//_gfx->setCursorPalette(false);
+					// TODO???
 					_clickToMove = true;
 				} else {
-					_gfx->setCursorPalette(false);
+					//_gfx->setCursorPalette(false);
+					// TODO???
 				}
 				return true;
 			case Common::EVENT_RBUTTONUP:
@@ -486,7 +492,7 @@ bool MickeyEngine::getMenuSelRow(MSA_MENU menu, int *sel0, int *sel1, int iRow) 
 
 					return false;
 				case Common::KEYCODE_s:
-					flipflag(fSoundOn);
+					flipFlag(VM_FLAG_SOUND_ON);
 					break;
 				case Common::KEYCODE_c:
 					inventory();
@@ -666,7 +672,7 @@ void MickeyEngine::playNote(MSA_SND_NOTE note) {
 }
 
 void MickeyEngine::playSound(ENUM_MSA_SOUND iSound) {
-	if (!getflag(fSoundOn))
+	if (!getFlag(VM_FLAG_SOUND_ON))
 		return;
 
 	Common::Event event;
@@ -755,7 +761,9 @@ void MickeyEngine::drawPic(int iPic) {
 	file.close();
 
 	// Note that decodePicture clears the screen
+	_picture->setOffset(10, 0);
 	_picture->decodePicture(buffer, size, true, IDI_MSA_PIC_WIDTH, IDI_MSA_PIC_HEIGHT);
+	_picture->setOffset(0, 0);
 	_picture->showPic(10, 0, IDI_MSA_PIC_WIDTH, IDI_MSA_PIC_HEIGHT);
 }
 
@@ -892,75 +900,65 @@ void MickeyEngine::drawRoom() {
 	drawRoomAnimation();
 }
 
-#if 0
-const uint8 colorBCG[16][2] = {
-	{ 0x00,	0x00 },	// 0 (black, black)
-	{ 0, 0 },
-	{ 0x00,	0x0D },	// 2 (black, purple)
-	{ 0x00,	0xFF },	// 3 (black, white)
-	{ 0, 0 },
-	{ 0, 0 },
-	{ 0, 0 },
-	{ 0, 0 },
-	{ 0x0D,	0x00 },	// 8 (purple, black)
-	{ 0, 0 },
-	{ 0x0D,	0x0D },	// A (purple, purple)
-	{ 0, 0 },
-	{ 0xFF,	0x00 },	// C (white, black)
-	{ 0, 0 },
-	{ 0, 0 },
-	{ 0xFF,	0xFF }	// F (white, white)
+// Straight mapping, CGA colors to CGA
+const byte BCGColorMappingCGAToCGA[4] = {
+	0, 1, 2, 3
 };
-#endif
+
+// Mapping table to map CGA colors to EGA
+const byte BCGColorMappingCGAToEGA[4] = {
+	0, 11, 13, 15
+};
 
 void MickeyEngine::drawLogo() {
-	// TODO: clean this up and make it work properly, the logo is drawn way off to the right
-#if 0
-	char szFile[256] = {0};
-	uint8 *buffer = new uint8[16384];
-	const int w = 150;
-	const int h = 80;
-	const int xoffset = 30;	// FIXME: remove this
-	uint8 bitmap[w][h];
-	uint8 color, color2, color3, color4;
+	const int width = 80;
+	const int height = 85 * 2;
+	byte  color1, color2, color3, color4;
+	byte  *fileBuffer = nullptr;
+	uint32 fileBufferSize = 0;
+	byte  *dataBuffer;
+	byte   curByte;
+	const byte *BCGColorMapping = BCGColorMappingCGAToEGA;
 
-	// read in logos.bcg
-	sprintf(szFile, IDS_MSA_PATH_LOGO);
+	// disable color mapping in case we are in CGA mode
+	if (_renderMode == Common::kRenderCGA)
+		BCGColorMapping = BCGColorMappingCGAToCGA;
+
+	// read logos.bcg
 	Common::File infile;
-	if (!infile.open(szFile))
+	if (!infile.open(IDS_MSA_PATH_LOGO))
 		return;
 
-	infile.read(buffer, infile.size());
+	fileBufferSize = infile.size();
+	fileBuffer = new byte[fileBufferSize];
+	infile.read(fileBuffer, fileBufferSize);
 	infile.close();
 
-	// draw logo bitmap
-	memcpy(bitmap, buffer, sizeof(bitmap));
-
-	_picture->setDimensions(w, h);
+	if (fileBufferSize < (width * height / 4))
+		error("logos.bcg: unexpected end of file");
 
 	// Show BCG picture
-	for (int y = 0; y < h; y++) {
-		for (int x = xoffset; x < w; x++) {
-			color  = colorBCG[(bitmap[y][x] & 0xf0) / 0x10][0];	// background
-			color2 = colorBCG[(bitmap[y][x] & 0xf0) / 0x10][1];	// background
-			color3 = colorBCG[ bitmap[y][x] & 0x0f][0];			// foreground
-			color4 = colorBCG[ bitmap[y][x] & 0x0f][1];			// foreground
+	// It's basically uncompressed CGA 4-color data (4 pixels per byte)
+	dataBuffer = fileBuffer;
+	for (int y = 0; y < height; y++) {
+		for (int x = 0; x < width; x++) {
+			curByte = *dataBuffer++;
 
-			_picture->putPixel(x * 4 - xoffset,			y,		color);
-			_picture->putPixel(x * 4 + 1 - xoffset,		y,		color2);
-			_picture->putPixel(x * 4 + 2 - xoffset,		y,		color3);
-			_picture->putPixel(x * 4 + 3 - xoffset,		y,		color4);
-			_picture->putPixel(x * 4 - xoffset,			y + 1,	color);
-			_picture->putPixel(x * 4 + 1 - xoffset,		y + 1,	color2);
-			_picture->putPixel(x * 4 + 2 - xoffset,		y + 1,	color3);
-			_picture->putPixel(x * 4 + 3 - xoffset,		y + 1,	color4);
+			color1 = BCGColorMapping[(curByte >> 6) & 0x03];
+			color2 = BCGColorMapping[(curByte >> 4) & 0x03];
+			color3 = BCGColorMapping[(curByte >> 2) & 0x03];
+			color4 = BCGColorMapping[(curByte >> 0) & 0x03];
+
+			_gfx->putPixelOnDisplay(x * 4 + 0, y, color1);
+			_gfx->putPixelOnDisplay(x * 4 + 1, y, color2);
+			_gfx->putPixelOnDisplay(x * 4 + 2, y, color3);
+			_gfx->putPixelOnDisplay(x * 4 + 3, y, color4);
 		}
 	}
 
-	_picture->showPic(10, 10, w, h);
+	_gfx->copyDisplayRectToScreen(0, 0, DISPLAY_WIDTH, height);
 
-	delete[] buffer;
-#endif
+	delete[] fileBuffer;
 }
 
 void MickeyEngine::animate() {
@@ -1221,8 +1219,8 @@ void MickeyEngine::printStory() {
 	waitAnyKey();
 
 	//Set back to black
-	_gfx->clearScreen(0);
-	_gfx->doUpdate();
+	_gfx->clearDisplay(0);
+	_gfx->updateScreen();
 
 	drawRoom();
 
@@ -1399,8 +1397,8 @@ void MickeyEngine::inventory() {
 
 void MickeyEngine::intro() {
 	// Draw Sierra logo
-	//drawLogo();		// Original does not even show this, so we skip it too
-	//waitAnyKey();		// Not in the original, but needed so that the logo is visible
+	drawLogo();		// Original does not even show this, so we skip it too
+	waitAnyKey();		// Not in the original, but needed so that the logo is visible
 
 	// draw title picture
 	_gameStateMickey.iRoom = IDI_MSA_PIC_TITLE;
@@ -1448,14 +1446,14 @@ void MickeyEngine::intro() {
 		playSound(IDI_MSA_SND_PRESS_BLUE);
 
 		//Set screen to white
-		_gfx->clearScreen(15);
-		_gfx->doUpdate();
+		_gfx->clearDisplay(15);
+		_gfx->updateScreen();
 
 		_system->delayMillis(IDI_MSA_ANIM_DELAY);
 
 		//Set back to black
-		_gfx->clearScreen(0);
-		_gfx->doUpdate();
+		_gfx->clearDisplay(0);
+		_gfx->updateScreen();
 
 		drawRoom();
 		printDesc(_gameStateMickey.iRoom);
@@ -2201,7 +2199,7 @@ void MickeyEngine::waitAnyKey(bool anim) {
 	Common::Event event;
 
 	if (!anim)
-		_gfx->doUpdate();
+		_gfx->updateScreen();
 
 	while (!shouldQuit()) {
 		while (_system->getEventManager()->pollEvent(event)) {
@@ -2219,10 +2217,9 @@ void MickeyEngine::waitAnyKey(bool anim) {
 
 		if (anim) {
 			animate();
-			_gfx->doUpdate();
 		}
 
-		_system->updateScreen();
+		_gfx->updateScreen();
 		_system->delayMillis(10);
 	}
 }
@@ -2300,7 +2297,7 @@ void MickeyEngine::init() {
 
 #endif
 
-	setflag(fSoundOn, true); // enable sound
+	setFlag(VM_FLAG_SOUND_ON, true); // enable sound
 }
 
 Common::Error MickeyEngine::go() {

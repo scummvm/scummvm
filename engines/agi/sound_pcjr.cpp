@@ -236,7 +236,7 @@ int SoundGenPCJr::getNextNote_v2(int ch) {
 
 	assert(ch < CHAN_MAX);
 
-	if (!_vm->getflag(fSoundOn))
+	if (!_vm->getFlag(VM_FLAG_SOUND_ON))
 		return -1;
 
 	tpcm = &_tchannel[ch];

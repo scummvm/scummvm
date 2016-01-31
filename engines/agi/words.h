@@ -20,37 +20,50 @@
  *
  */
 
-#ifndef AGI_FONT_H
-#define AGI_FONT_H
+#ifndef AGI_WORDS_H
+#define AGI_WORDS_H
 
 namespace Agi {
 
-class GfxFont {
+#define DICTIONARY_RESULT_UNKNOWN -1
+#define DICTIONARY_RESULT_IGNORE   0
+
+struct WordEntry {
+	uint16 id;
+	Common::String word;
+};
+
+class Words {
 public:
-	GfxFont(AgiBase *vm);
-	~GfxFont();
+	Words(AgiEngine *vm);
+	~Words();
 
 private:
-	AgiBase *_vm;
+	AgiEngine *_vm;
+
+	// Dictionary
+	Common::Array<WordEntry *> _dictionaryWords[26];
+
+	WordEntry _egoWords[MAX_WORDS];
+	uint16  _egoWordCount;
 
 public:
-	void init();
-	const byte *getFontData();
+	uint16 getEgoWordCount();
+	const char *getEgoWord(int16 wordNr);
+	uint16 getEgoWordId(int16 wordNr);
+
+	int  loadDictionary_v1(Common::File &f);
+	int  loadDictionary(const char *fname);
+	void unloadDictionary();
+
+	void clearEgoWords();
+	void parseUsingDictionary(char *rawUserInput);
 
 private:
-	void overwriteSaveRestoreDialogCharacter();
-	void overwriteExtendedWithRussianSet();
-
-	void loadFontScummVMFile(Common::String fontFilename);
-	void loadFontMickey();
-	void loadFontAmigaPseudoTopaz();
-	void loadFontAppleIIgs();
-	void loadFontAtariST(Common::String fontFilename);
-
-	const uint8 *_fontData; // pointer to the currently used font
-	uint8 *_fontDataAllocated;
+	void  cleanUpInput(const char *userInput, Common::String &cleanInput);
+	int16 findWordInDictionary(const Common::String &userInput, uint16 userInputLen, uint16 userInputPos, uint16 &foundWordLen);
 };
 
 } // End of namespace Agi
 
-#endif /* AGI_FONT_H */
+#endif /* AGI_WORDS_H */

@@ -6,6 +6,7 @@ MODULE_OBJS := \
 	console.o \
 	cycle.o \
 	detection.o \
+	font.o \
 	global.o \
 	graphics.o \
 	id.o \
@@ -36,6 +37,7 @@ MODULE_OBJS := \
 	sound_pcjr.o \
 	sound_sarien.o \
 	sprite.o \
+	systemui.o \
 	text.o \
 	view.o \
 	wagparser.o \

@@ -25,6 +25,88 @@
 
 namespace Agi {
 
+struct GuiMenuEntry {
+	Common::String text;
+	int16 textLen;
+
+	int16 row;
+	int16 column;
+
+	int16 itemCount;
+	int16 firstItemNr;
+	int16 selectedItemNr;
+
+	int16 maxItemTextLen;
+};
+typedef Common::Array<GuiMenuEntry *> GuiMenuArray;
+
+struct GuiMenuItemEntry {
+	Common::String text;
+	int16 textLen;
+
+	int16 row;
+	int16 column;
+
+	bool enabled;
+	uint16 controllerSlot;
+};
+typedef Common::Array<GuiMenuItemEntry *> GuiMenuItemArray;
+
+class GfxMenu {
+public:
+	GfxMenu(AgiEngine *vm, GfxMgr *gfx, PictureMgr *picture, TextMgr *text);
+	~GfxMenu();
+
+	void addMenu(const char *menuText);
+	void addMenuItem(const char *menuText, uint16 controlCode);
+	void submit();
+	void itemEnable(uint16 controllerSlot);
+	void itemDisable(uint16 controllerSlot);
+	void itemEnableAll();
+	void charPress(int16 newChar);
+
+	bool isAvailable();
+
+	void accessAllow();
+	void accessDeny();
+
+	void delayedExecute();
+	bool delayedExecuteActive();
+	void execute();
+
+private:
+	void itemEnableDisable(uint16 controllerSlot, bool enabled);
+
+	void drawMenuName(int16 menuNr, bool inverted);
+	void drawItemName(int16 itemNr, bool inverted);
+	void drawActiveMenu();
+	void removeActiveMenu();
+
+	AgiEngine *_vm;
+	GfxMgr *_gfx;
+	PictureMgr *_picture;
+	TextMgr *_text;
+
+	bool _allowed;
+	bool _submitted;
+	bool _delayedExecute;
+
+	// for initial setup of the menu
+	int16 _setupMenuColumn;
+	int16 _setupMenuItemColumn;
+
+	GuiMenuArray _array;
+	GuiMenuItemArray _itemArray;
+
+	int16 _selectedMenuNr;
+
+	uint16 _selectedMenuHeight;
+	uint16 _selectedMenuWidth;
+	int16  _selectedMenuRow;
+	int16  _selectedMenuColumn;
+};
+
+#if 0
 #define MENU_BG		0x0f	// White
 #define MENU_DISABLED	0x07	// Grey
 
@@ -44,6 +126,7 @@ private:
 	AgiEngine *_vm;
 	GfxMgr *_gfx;
 	PictureMgr *_picture;
+	TextMgr *_text;
 
 public:
 	Menu(AgiEngine *vm, GfxMgr *gfx, PictureMgr *picture);
@@ -78,6 +161,7 @@ private:
 	bool mouseOverText(int line, int col, char *s);
 
 };
+#endif
 
 } // End of namespace Agi
 

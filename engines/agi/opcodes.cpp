@@ -173,189 +173,189 @@ AgiInstruction insV2Test[] = {
 };
 
 AgiInstruction insV2[] = {
-	{ "return",				"",			NULL },
-	{ "increment",			"v",		&cmdIncrement },
-	{ "decrement",			"v",		&cmdDecrement },
-	{ "assignn",			"vn",		&cmdAssignN },
-	{ "assignv",			"vv",		&cmdAssignV },
-	{ "addn",				"vn",		&cmdAddN },
-	{ "addv",				"vv",		&cmdAddV },
-	{ "subn",				"vn",		&cmdSubN },
-	{ "subv",				"vv",		&cmdSubV },
-	{ "lindirectv",			"vv",		&cmdLindirectV },
-	{ "lindirect",			"vv",		&cmdRindirect },
-	{ "lindirectn",			"vn",		&cmdLindirectN },
-	{ "set",				"n",		&cmdSet },
-	{ "reset",				"n",		&cmdReset },
-	{ "toggle",				"n",		&cmdToggle },
-	{ "set.v",				"v",		&cmdSetV },
-	{ "reset.v",			"v",		&cmdResetV },
-	{ "toggle.v",			"v",		&cmdToggleV },
-	{ "new.room",			"n",		&cmdNewRoom },
-	{ "new.room.v",			"v",		&cmdNewRoomF },
-	{ "load.logics",		"n",		&cmdLoadLogic },
-	{ "load.logics.v",		"v",		&cmdLoadLogicF },
-	{ "call",				"n",		&cmdCall },
-	{ "call.v",				"v",		&cmdCallF },
-	{ "load.pic",			"v",		&cmdLoadPic },
-	{ "draw.pic",			"v",		&cmdDrawPic },
-	{ "show.pic",			"",			&cmdShowPic },
-	{ "discard.pic",		"v",		&cmdDiscardPic },
-	{ "overlay.pic",		"v",		&cmdOverlayPic },
-	{ "show.pri.screen",	"",			&cmdShowPriScreen },
-	{ "load.view",			"n",		&cmdLoadView },
-	{ "load.view.v",		"v",		&cmdLoadViewF },
-	{ "discard.view",		"n",		&cmdDiscardView },
-	{ "animate.obj",		"n",		&cmdAnimateObj },
-	{ "unanimate.all",		"",			&cmdUnanimateAll },
-	{ "draw",				"n",		&cmdDraw },
-	{ "erase",				"n",		&cmdErase },
-	{ "position",			"nnn",		&cmdPosition },
-	{ "position.v",			"nvv",		&cmdPositionF },
-	{ "get.posn",			"nvv",		&cmdGetPosn },
-	{ "reposition",			"nvv",		&cmdReposition },
-	{ "set.view",			"nn",		&cmdSetView },
-	{ "set.view.v",			"nv",		&cmdSetViewF },
-	{ "set.loop",			"nn",		&cmdSetLoop },
-	{ "set.loop.v",			"nv",		&cmdSetLoopF },
-	{ "fix.loop",			"n",		&cmdFixLoop },
-	{ "release.loop",		"n",		&cmdReleaseLoop },
-	{ "set.cel",			"nn",		&cmdSetCel },
-	{ "set.cel.v",			"nv",		&cmdSetCelF },
-	{ "last.cel",			"nv",		&cmdLastCel },
-	{ "current.cel",		"nv",		&cmdCurrentCel },
-	{ "current.loop",		"nv",		&cmdCurrentLoop },
-	{ "current.view",		"nv",		&cmdCurrentView },
-	{ "number.of.loops",	"nv",		&cmdNumberOfLoops },
-	{ "set.priority",		"nn",		&cmdSetPriority },
-	{ "set.priority.v",		"nv",		&cmdSetPriorityF },
-	{ "release.priority",	"n",		&cmdReleasePriority },
-	{ "get.priority",		"nn",		&cmdGetPriority },
-	{ "stop.update",		"n",		&cmdStopUpdate },
-	{ "start.update",		"n",		&cmdStartUpdate },
-	{ "force.update",		"n",		&cmdForceUpdate },
-	{ "ignore.horizon",		"n",		&cmdIgnoreHorizon },
-	{ "observe.horizon",	"n",		&cmdObserveHorizon },
-	{ "set.horizon",		"n",		&cmdSetHorizon },
-	{ "object.on.water",	"n",		&cmdObjectOnWater },
-	{ "object.on.land",		"n",		&cmdObjectOnLand },
-	{ "object.on.anything",	"n",		&cmdObjectOnAnything },
-	{ "ignore.objs",		"n",		&cmdIgnoreObjs },
-	{ "observe.objs",		"n",		&cmdObserveObjs },
-	{ "distance",			"nnv",		&cmdDistance },
-	{ "stop.cycling",		"n",		&cmdStopCycling },
-	{ "start.cycling",		"n",		&cmdStartCycling },
-	{ "normal.cycle",		"n",		&cmdNormalCycle },
-	{ "end.of.loop",		"nn",		&cmdEndOfLoop },
-	{ "reverse.cycle",		"n",		&cmdReverseCycle },
-	{ "reverse.loop",		"nn",		&cmdReverseLoop },
-	{ "cycle.time",			"nv",		&cmdCycleTime },
-	{ "stop.motion",		"n",		&cmdStopMotion },
-	{ "start.motion",		"n",		&cmdStartMotion },
-	{ "step.size",			"nv",		&cmdStepSize },
-	{ "step.time",			"nv",		&cmdStepTime },
-	{ "move.obj",			"nnnnn",	&cmdMoveObj },
-	{ "move.obj.v",			"nvvvv",	&cmdMoveObjF },
-	{ "follow.ego",			"nnn",		&cmdFollowEgo },
-	{ "wander",				"n",		&cmdWander },
-	{ "normal.motion",		"n",		&cmdNormalMotion },
-	{ "set.dir",			"nv",		&cmdSetDir },
-	{ "get.dir",			"nv",		&cmdGetDir },
-	{ "ignore.blocks",		"n",		&cmdIgnoreBlocks },
-	{ "observe.blocks",		"n",		&cmdObserveBlocks },
-	{ "block",				"nnnn",		&cmdBlock },
-	{ "unblock",			"",			&cmdUnblock },
-	{ "get",				"n",		&cmdGet },
-	{ "get.v",				"v",		&cmdGetF },
-	{ "drop",				"n",		&cmdDrop },
-	{ "put",				"nn",		&cmdPut },
-	{ "put.v",				"vv",		&cmdPutF },
-	{ "get.room.v",			"vv",		&cmdGetRoomF },
-	{ "load.sound",			"n",		&cmdLoadSound },
-	{ "sound",				"nn",		&cmdSound },
-	{ "stop.sound",			"",			&cmdStopSound },
-	{ "print",				"s",		&cmdPrint },
-	{ "print.v",			"v",		&cmdPrintF },
-	{ "display",			"nns",		&cmdDisplay },
-	{ "display.v",			"vvv",		&cmdDisplayF },
-	{ "clear.lines",		"nns",		&cmdClearLines },
-	{ "text.screen",		"",			&cmdTextScreen },
-	{ "graphics",			"",			&cmdGraphics },
-	{ "set.cursor.char",	"s",		&cmdSetCursorChar },
-	{ "set.text.attribute",	"nn",		&cmdSetTextAttribute },
-	{ "shake.screen",		"n",		&cmdShakeScreen },
-	{ "configure.screen",	"nnn",		&cmdConfigureScreen },
-	{ "status.line.on",		"",			&cmdStatusLineOn },
-	{ "status.line.off",	"",			&cmdStatusLineOff },
-	{ "set.string",			"ns",		&cmdSetString },
-	{ "get.string",			"nsnnn",		&cmdGetString },
-	{ "word.to.string",		"nn",		&cmdWordToString },
-	{ "parse",				"n",		&cmdParse },
-	{ "get.num",			"nv",		&cmdGetNum },
-	{ "prevent.input",		"",			&cmdPreventInput },
-	{ "accept.input",		"",			&cmdAcceptInput },
-	{ "set.key",			"nnn",		&cmdSetKey },
-	{ "add.to.pic",			"nnnnnnn",	&cmdAddToPic },
-	{ "add.to.pic.v",		"vvvvvvv",	&cmdAddToPicF },
-	{ "status",				"",			&cmdStatus },
-	{ "save.game",			"",			&cmdSaveGame },
-	{ "restore.game",		"",			&cmdLoadGame },
-	{ "init.disk",			"",			&cmdInitDisk },
-	{ "restart.game",		"",			&cmdRestartGame },
-	{ "show.obj",			"n",		&cmdShowObj },
-	{ "random",				"nnv",		&cmdRandom },
-	{ "program.control",	"",			&cmdProgramControl },
-	{ "player.control",		"",			&cmdPlayerControl },
-	{ "obj.status.v",		"v",		&cmdObjStatusF },
-	{ "quit",				"n",		&cmdQuit },  // 0 args for AGI version 2.089
-	{ "show.mem",			"",			&cmdShowMem },
-	{ "pause",				"",			&cmdPause },
-	{ "echo.line",			"",			&cmdEchoLine },
-	{ "cancel.line",		"",			&cmdCancelLine },
-	{ "init.joy",			"",			&cmdInitJoy },
-	{ "toggle.monitor",		"",			&cmdToggleMonitor },
-	{ "version",			"",			&cmdVersion },
-	{ "script.size",		"n",		&cmdScriptSize },
-	{ "set.game.id",		"s",		&cmdSetGameID },
-	{ "log",				"s",		&cmdLog },
-	{ "set.scan.start",		"",			&cmdSetScanStart },
-	{ "reset.scan.start",	"",			&cmdResetScanStart },
-	{ "reposition.to",		"nnn",		&cmdRepositionTo },
-	{ "reposition.to.v",	"nvv",		&cmdRepositionToF },
-	{ "trace.on",			"",			&cmdTraceOn },
-	{ "trace.info", 		"nnn",		&cmdTraceInfo },
+	{ "return",				"",			NULL },					// 00
+	{ "increment",			"v",		&cmdIncrement },		// 01
+	{ "decrement",			"v",		&cmdDecrement },		// 02
+	{ "assignn",			"vn",		&cmdAssignN },			// 03
+	{ "assignv",			"vv",		&cmdAssignV },			// 04
+	{ "addn",				"vn",		&cmdAddN },				// 05
+	{ "addv",				"vv",		&cmdAddV },				// 06
+	{ "subn",				"vn",		&cmdSubN },				// 07
+	{ "subv",				"vv",		&cmdSubV },				// 08
+	{ "lindirectv",			"vv",		&cmdLindirectV },		// 09
+	{ "lindirect",			"vv",		&cmdRindirect },		// 0A
+	{ "lindirectn",			"vn",		&cmdLindirectN },		// 0B
+	{ "set",				"n",		&cmdSet },				// 0C
+	{ "reset",				"n",		&cmdReset },			// 0D
+	{ "toggle",				"n",		&cmdToggle },			// 0E
+	{ "set.v",				"v",		&cmdSetV },				// 0F
+	{ "reset.v",			"v",		&cmdResetV },			// 10
+	{ "toggle.v",			"v",		&cmdToggleV },			// 11
+	{ "new.room",			"n",		&cmdNewRoom },			// 12
+	{ "new.room.v",			"v",		&cmdNewRoomF },			// 13
+	{ "load.logics",		"n",		&cmdLoadLogic },		// 14
+	{ "load.logics.v",		"v",		&cmdLoadLogicF },		// 15
+	{ "call",				"n",		&cmdCall },				// 16
+	{ "call.v",				"v",		&cmdCallF },			// 17
+	{ "load.pic",			"v",		&cmdLoadPic },			// 18
+	{ "draw.pic",			"v",		&cmdDrawPic },			// 19
+	{ "show.pic",			"",			&cmdShowPic },			// 1A
+	{ "discard.pic",		"v",		&cmdDiscardPic },		// 1B
+	{ "overlay.pic",		"v",		&cmdOverlayPic },		// 1C
+	{ "show.pri.screen",	"",			&cmdShowPriScreen },	// 1D
+	{ "load.view",			"n",		&cmdLoadView },			// 1E
+	{ "load.view.v",		"v",		&cmdLoadViewF },		// 1F
+	{ "discard.view",		"n",		&cmdDiscardView },		// 20
+	{ "animate.obj",		"n",		&cmdAnimateObj },		// 21
+	{ "unanimate.all",		"",			&cmdUnanimateAll },		// 22
+	{ "draw",				"n",		&cmdDraw },				// 23
+	{ "erase",				"n",		&cmdErase },			// 24
+	{ "position",			"nnn",		&cmdPosition },			// 25
+	{ "position.v",			"nvv",		&cmdPositionF },		// 26
+	{ "get.posn",			"nvv",		&cmdGetPosn },			// 27
+	{ "reposition",			"nvv",		&cmdReposition },		// 28
+	{ "set.view",			"nn",		&cmdSetView },			// 29
+	{ "set.view.v",			"nv",		&cmdSetViewF },			// 2A
+	{ "set.loop",			"nn",		&cmdSetLoop },			// 2B
+	{ "set.loop.v",			"nv",		&cmdSetLoopF },			// 2C
+	{ "fix.loop",			"n",		&cmdFixLoop },			// 2D
+	{ "release.loop",		"n",		&cmdReleaseLoop },		// 2E
+	{ "set.cel",			"nn",		&cmdSetCel },			// 2F
+	{ "set.cel.v",			"nv",		&cmdSetCelF },			// 30
+	{ "last.cel",			"nv",		&cmdLastCel },			// 31
+	{ "current.cel",		"nv",		&cmdCurrentCel },		// 32
+	{ "current.loop",		"nv",		&cmdCurrentLoop },		// 33
+	{ "current.view",		"nv",		&cmdCurrentView },		// 34
+	{ "number.of.loops",	"nv",		&cmdNumberOfLoops },	// 35
+	{ "set.priority",		"nn",		&cmdSetPriority },		// 36
+	{ "set.priority.v",		"nv",		&cmdSetPriorityF },		// 37
+	{ "release.priority",	"n",		&cmdReleasePriority },	// 38
+	{ "get.priority",		"nn",		&cmdGetPriority },		// 39
+	{ "stop.update",		"n",		&cmdStopUpdate },		// 3A
+	{ "start.update",		"n",		&cmdStartUpdate },		// 3B
+	{ "force.update",		"n",		&cmdForceUpdate },		// 3C
+	{ "ignore.horizon",		"n",		&cmdIgnoreHorizon },	// 3D
+	{ "observe.horizon",	"n",		&cmdObserveHorizon },	// 3E
+	{ "set.horizon",		"n",		&cmdSetHorizon },		// 3F
+	{ "object.on.water",	"n",		&cmdObjectOnWater },	// 40
+	{ "object.on.land",		"n",		&cmdObjectOnLand },		// 41
+	{ "object.on.anything",	"n",		&cmdObjectOnAnything },	// 42
+	{ "ignore.objs",		"n",		&cmdIgnoreObjs },		// 43
+	{ "observe.objs",		"n",		&cmdObserveObjs },		// 44
+	{ "distance",			"nnv",		&cmdDistance },			// 45
+	{ "stop.cycling",		"n",		&cmdStopCycling },		// 46
+	{ "start.cycling",		"n",		&cmdStartCycling },		// 47
+	{ "normal.cycle",		"n",		&cmdNormalCycle },		// 48
+	{ "end.of.loop",		"nn",		&cmdEndOfLoop },		// 49
+	{ "reverse.cycle",		"n",		&cmdReverseCycle },		// 5A
+	{ "reverse.loop",		"nn",		&cmdReverseLoop },		// 5B
+	{ "cycle.time",			"nv",		&cmdCycleTime },		// 5C
+	{ "stop.motion",		"n",		&cmdStopMotion },		// 5D
+	{ "start.motion",		"n",		&cmdStartMotion },		// 5E
+	{ "step.size",			"nv",		&cmdStepSize },			// 5F
+	{ "step.time",			"nv",		&cmdStepTime },			// 60
+	{ "move.obj",			"nnnnn",	&cmdMoveObj },			// 61
+	{ "move.obj.v",			"nvvvv",	&cmdMoveObjF },			// 62
+	{ "follow.ego",			"nnn",		&cmdFollowEgo },		// 63
+	{ "wander",				"n",		&cmdWander },			// 64
+	{ "normal.motion",		"n",		&cmdNormalMotion },		// 65
+	{ "set.dir",			"nv",		&cmdSetDir },			// 66
+	{ "get.dir",			"nv",		&cmdGetDir },			// 67
+	{ "ignore.blocks",		"n",		&cmdIgnoreBlocks },		// 68
+	{ "observe.blocks",		"n",		&cmdObserveBlocks },	// 69
+	{ "block",				"nnnn",		&cmdBlock },			// 6A
+	{ "unblock",			"",			&cmdUnblock },			// 6B
+	{ "get",				"n",		&cmdGet },				// 6C
+	{ "get.v",				"v",		&cmdGetF },				// 6D
+	{ "drop",				"n",		&cmdDrop },				// 6E
+	{ "put",				"nn",		&cmdPut },				// 6F
+	{ "put.v",				"vv",		&cmdPutF },				// 70
+	{ "get.room.v",			"vv",		&cmdGetRoomF },			// 71
+	{ "load.sound",			"n",		&cmdLoadSound },		// 72
+	{ "sound",				"nn",		&cmdSound },			// 73
+	{ "stop.sound",			"",			&cmdStopSound },		// 74
+	{ "print",				"s",		&cmdPrint },			// 75
+	{ "print.v",			"v",		&cmdPrintF },			// 76
+	{ "display",			"nns",		&cmdDisplay },			// 77
+	{ "display.v",			"vvv",		&cmdDisplayF },			// 78
+	{ "clear.lines",		"nns",		&cmdClearLines },		// 79
+	{ "text.screen",		"",			&cmdTextScreen },		// 7A
+	{ "graphics",			"",			&cmdGraphics },			// 7B
+	{ "set.cursor.char",	"s",		&cmdSetCursorChar },	// 7C
+	{ "set.text.attribute",	"nn",		&cmdSetTextAttribute },	// 7D
+	{ "shake.screen",		"n",		&cmdShakeScreen },		// 7E
+	{ "configure.screen",	"nnn",		&cmdConfigureScreen },	// 7F
+	{ "status.line.on",		"",			&cmdStatusLineOn },		// 80
+	{ "status.line.off",	"",			&cmdStatusLineOff },	// 81
+	{ "set.string",			"ns",		&cmdSetString },		// 82
+	{ "get.string",			"nsnnn",	&cmdGetString },		// 83
+	{ "word.to.string",		"nn",		&cmdWordToString },		// 84
+	{ "parse",				"n",		&cmdParse },			// 85
+	{ "get.num",			"nv",		&cmdGetNum },			// 86
+	{ "prevent.input",		"",			&cmdPreventInput },		// 87
+	{ "accept.input",		"",			&cmdAcceptInput },		// 88
+	{ "set.key",			"nnn",		&cmdSetKey },			// 89
+	{ "add.to.pic",			"nnnnnnn",	&cmdAddToPic },			// 8A
+	{ "add.to.pic.v",		"vvvvvvv",	&cmdAddToPicF },		// 8B
+	{ "status",				"",			&cmdStatus },			// 8C
+	{ "save.game",			"",			&cmdSaveGame },			// 8D
+	{ "restore.game",		"",			&cmdLoadGame },			// 8E
+	{ "init.disk",			"",			&cmdInitDisk },			// 8F
+	{ "restart.game",		"",			&cmdRestartGame },		// 90
+	{ "show.obj",			"n",		&cmdShowObj },			// 91
+	{ "random",				"nnv",		&cmdRandom },			// 92
+	{ "program.control",	"",			&cmdProgramControl },	// 93
+	{ "player.control",		"",			&cmdPlayerControl },	// 94
+	{ "obj.status.v",		"v",		&cmdObjStatusF },		// 95
+	{ "quit",				"n",		&cmdQuit },				// 96 0 args for AGI version 2.089
+	{ "show.mem",			"",			&cmdShowMem },			// 97
+	{ "pause",				"",			&cmdPause },			// 98
+	{ "echo.line",			"",			&cmdEchoLine },			// 99
+	{ "cancel.line",		"",			&cmdCancelLine },		// 9A
+	{ "init.joy",			"",			&cmdInitJoy },			// 9B
+	{ "toggle.monitor",		"",			&cmdToggleMonitor },	// 9C
+	{ "version",			"",			&cmdVersion },			// 9D
+	{ "script.size",		"n",		&cmdScriptSize },		// 9E
+	{ "set.game.id",		"s",		&cmdSetGameID },		// 9F
+	{ "log",				"s",		&cmdLog },				// A0
+	{ "set.scan.start",		"",			&cmdSetScanStart },		// A1
+	{ "reset.scan.start",	"",			&cmdResetScanStart },	// A2
+	{ "reposition.to",		"nnn",		&cmdRepositionTo },		// A3
+	{ "reposition.to.v",	"nvv",		&cmdRepositionToF },	// A4
+	{ "trace.on",			"",			&cmdTraceOn },			// A5
+	{ "trace.info", 		"nnn",		&cmdTraceInfo },		// A6
 	{ "print.at",			"snnn",		&cmdPrintAt }, // 3 args for AGI versions before 2.440
-	{ "print.at.v",			"vnnn",		&cmdPrintAtV },
-	{ "discard.view.v",		"v",		&cmdDiscardView},
-	{ "clear.text.rect",	"nnnnn",	&cmdClearTextRect },
-	{ "set.upper.left",		"nn",		&cmdSetUpperLeft },
-	{ "set.menu",			"s",		&cmdSetMenu },
-	{ "set.menu.item",		"sn",		&cmdSetMenuItem },
-	{ "submit.menu",		"",			&cmdSubmitMenu },
-	{ "enable.item",		"n",		&cmdEnableItem },
-	{ "disable.item",		"n",		&cmdDisableItem },
-	{ "menu.input",			"",			&cmdMenuInput },
-	{ "show.obj.v",			"v",		&cmdShowObjV },
-	{ "open.dialogue",		"",			&cmdOpenDialogue },
-	{ "close.dialogue",		"",			&cmdCloseDialogue },
-	{ "mul.n",				"vn",		&cmdMulN },
-	{ "mul.v",				"vv",		&cmdMulV },
-	{ "div.n",				"vn",		&cmdDivN },
-	{ "div.v",				"vv",		&cmdDivV },
-	{ "close.window",		"",			&cmdCloseWindow },
-	{ "set.simple",			"n",		&cmdSetSimple },
-	{ "push.script",		"",			&cmdPushScript },
-	{ "pop.script",			"",			&cmdPopScript },
-	{ "hold.key",			"",			&cmdHoldKey },
-	{ "set.pri.base",		"n",		&cmdSetPriBase },
-	{ "discard.sound",		"n",		&cmdDiscardSound },
+	{ "print.at.v",			"vnnn",		&cmdPrintAtV },			// A8
+	{ "discard.view.v",		"v",		&cmdDiscardView},		// A9
+	{ "clear.text.rect",	"nnnnn",	&cmdClearTextRect },	// AA
+	{ "set.upper.left",		"nn",		&cmdSetUpperLeft },		// AB
+	{ "set.menu",			"s",		&cmdSetMenu },			// AC
+	{ "set.menu.item",		"sn",		&cmdSetMenuItem },		// AD
+	{ "submit.menu",		"",			&cmdSubmitMenu },		// AE
+	{ "enable.item",		"n",		&cmdEnableItem },		// AF
+	{ "disable.item",		"n",		&cmdDisableItem },		// B0
+	{ "menu.input",			"",			&cmdMenuInput },		// B1
+	{ "show.obj.v",			"v",		&cmdShowObjV },			// B2
+	{ "open.dialogue",		"",			&cmdOpenDialogue },		// B3
+	{ "close.dialogue",		"",			&cmdCloseDialogue },	// B4
+	{ "mul.n",				"vn",		&cmdMulN },				// B5
+	{ "mul.v",				"vv",		&cmdMulV },				// B6
+	{ "div.n",				"vn",		&cmdDivN },				// B7
+	{ "div.v",				"vv",		&cmdDivV },				// B8
+	{ "close.window",		"",			&cmdCloseWindow },		// B9
+	{ "set.simple",			"n",		&cmdSetSimple },		// BA
+	{ "push.script",		"",			&cmdPushScript },		// BB
+	{ "pop.script",			"",			&cmdPopScript },		// BC
+	{ "hold.key",			"",			&cmdHoldKey },			// BD
+	{ "set.pri.base",		"n",		&cmdSetPriBase },		// BE
+	{ "discard.sound",		"n",		&cmdDiscardSound },		// BF
 	{ "hide.mouse",			"",			&cmdHideMouse }, // 1 arg for AGI version 3.002.086
-	{ "allow.menu",			"n",		&cmdAllowMenu },
-	{ "show.mouse",			"",			&cmdShowMouse },
-	{ "fence.mouse",		"nnnn",		&cmdFenceMouse },
-	{ "mouse.posn",			"vv",		&cmdMousePosn },
+	{ "allow.menu",			"n",		&cmdAllowMenu },		// C1
+	{ "show.mouse",			"",			&cmdShowMouse },		// C2
+	{ "fence.mouse",		"nnnn",		&cmdFenceMouse },		// C3
+	{ "mouse.posn",			"vv",		&cmdMousePosn },		// C4
 	{ "release.key",		"",			&cmdReleaseKey }, // 2 args for at least the Amiga GR (v2.05 1989-03-09) using AGI 2.316
-	{ "adj.ego.move.to.xy",	"",			&cmdAdjEgoMoveToXY }
+	{ "adj.ego.move.to.xy",	"",			&cmdAdjEgoMoveToXY }	// C6
 };
 
 void AgiEngine::setupOpcodes() {

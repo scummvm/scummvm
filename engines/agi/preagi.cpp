@@ -29,6 +29,7 @@
 #include "agi/preagi.h"
 #include "agi/graphics.h"
 #include "agi/keyboard.h"
+#include "agi/text.h"
 
 namespace Agi {
 
@@ -56,31 +57,21 @@ PreAgiEngine::PreAgiEngine(OSystem *syst, const AGIGameDescription *gameDesc) : 
 void PreAgiEngine::initialize() {
 	initRenderMode();
 
+	_font = new GfxFont(this);
 	_gfx = new GfxMgr(this);
 	_picture = new PictureMgr(this, _gfx);
 
-	if (getGameID() == GID_MICKEY) {
-		_fontData = fontData_Mickey;
-	} else {
-		_fontData = fontData_IBM;
-	}
-
-	_gfx->initMachine();
+	_font->init();
 
 	_game.gameFlags = 0;
 
-	_game.colorFg = 15;
-	_game.colorBg = 0;
+	//_game._vm->_text->charAttrib_Set(15, 0);
 
 	_defaultColor = 0xF;
 
 	_game.name[0] = '\0';
 
-	_game.sbufOrig = (uint8 *)calloc(_WIDTH, _HEIGHT * 2); // Allocate space for two AGI screens vertically
-	_game.sbuf16c  = _game.sbufOrig + SBUF16_OFFSET; // Make sbuf16c point to the 16 color (+control line & priority info) AGI screen
-	_game.sbuf     = _game.sbuf16c; // Make sbuf point to the 16 color (+control line & priority info) AGI screen by default
-
-	_game.lineMinPrint = 0; // hardcoded
+	//_game._vm->_text->configureScreen(0); // hardcoded
 
 	_gfx->initVideo();
 
@@ -91,7 +82,7 @@ void PreAgiEngine::initialize() {
 	debugC(2, kDebugLevelMain, "Detect game");
 
 	// clear all resources and events
-	for (int i = 0; i < MAX_DIRS; i++) {
+	for (int i = 0; i < MAX_DIRECTORY_ENTRIES; i++) {
 		memset(&_game.pictures[i], 0, sizeof(struct AgiPicture));
 		memset(&_game.sounds[i], 0, sizeof(class AgiSound *)); // _game.sounds contains pointers now
 		memset(&_game.dirPic[i], 0, sizeof(struct AgiDir));
@@ -102,6 +93,10 @@ void PreAgiEngine::initialize() {
 PreAgiEngine::~PreAgiEngine() {
 	_mixer->stopHandle(_speakerHandle);
 	delete _speakerStream;
+
+	delete _picture;
+	delete _gfx;
+	delete _font;
 }
 
 int PreAgiEngine::rnd(int hi) {
@@ -113,11 +108,11 @@ void PreAgiEngine::clearScreen(int attr, bool overrideDefault) {
 	if (overrideDefault)
 		_defaultColor = attr;
 
-	_gfx->clearScreen((attr & 0xF0) / 0x10);
+	_gfx->clearDisplay((attr & 0xF0) / 0x10);
 }
 
 void PreAgiEngine::clearGfxScreen(int attr) {
-	_gfx->drawRectangle(0, 0, GFX_WIDTH - 1, IDI_MAX_ROW_PIC * 8 -1, (attr & 0xF0) / 0x10);
+	_gfx->drawDisplayRect(0, 0, GFX_WIDTH - 1, IDI_MAX_ROW_PIC * 8 -1, (attr & 0xF0) / 0x10);
 }
 
 // String functions
@@ -143,7 +138,7 @@ void PreAgiEngine::drawStr(int row, int col, int attr, const char *buffer) {
 			break;
 
 		default:
-			_gfx->putTextCharacter(1, col * 8 , row * 8, static_cast<char>(code), attr & 0x0f, (attr & 0xf0) / 0x10, false, _fontData);
+			_gfx->drawCharacter(row, col, code, attr & 0x0f, attr >> 4, false);
 
 			if (++col == 320 / 8) {
 				col = 0;
@@ -176,7 +171,7 @@ void PreAgiEngine::clearRow(int row) {
 void PreAgiEngine::printStr(const char* szMsg) {
 	clearTextArea();
 	drawStr(21, 0, IDA_DEFAULT, szMsg);
-	_gfx->doUpdate();
+	g_system->updateScreen();
 }
 
 void PreAgiEngine::XOR80(char *buffer) {
@@ -274,7 +269,7 @@ void PreAgiEngine::waitForTimer(int msec_delay) {
 	uint32 start_time = _system->getMillis();
 
 	while (_system->getMillis() < start_time + msec_delay) {
-		_gfx->doUpdate();
+		g_system->updateScreen();
 		_system->delayMillis(10);
 	}
 }
