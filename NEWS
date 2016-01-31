@@ -27,6 +27,13 @@ For a more comprehensive changelog of the latest experimental code, see:
      and fanmade games, that require a mouse).
    - Fix incorrect volume attenuation in PCjr sound code (bug #6858).
    - Major rewrite of graphics subsystem.
+   - Support for Apple IIgs, Amiga + Atari ST transitions, fonts and mouse cursors.
+     (Atari ST 8x8 system font is not included with ScummVM)
+   - Added ability to make for example a PC version look like an Apple IIgs version.
+     (includes palette, cursor, transition and even font). Just set corresponding render mode.
+   - Support for simplified automatic saving/restoring (used by Mixed Up Mother Goose).
+   - Removed forced 2 second delay on every room change, replaced with heuristic.
+   - Now saving controllers (key bindings by scripts) when saving games (bug #5858).
 
  AGOS:
    - Fixed arpeggio effect used in music of Amiga version of Elvira 1.
