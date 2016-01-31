@@ -128,7 +128,8 @@ void AgiEngine::resetControllers() {
 
 void AgiEngine::interpretCycle() {
 	ScreenObjEntry *screenObjEgo = &_game.screenObjTable[SCREENOBJECTS_EGO_ENTRY];
-	int oldSound, oldScore;
+	bool oldSound;
+	byte oldScore;
 
 	if (!_game.playerControl)
 		setVar(VM_VAR_EGO_DIRECTION, screenObjEgo->direction);

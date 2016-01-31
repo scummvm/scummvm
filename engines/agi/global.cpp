@@ -24,7 +24,7 @@
 
 namespace Agi {
 
-int AgiBase::getFlag(int16 flagNr) {
+bool AgiBase::getFlag(int16 flagNr) {
 	uint8 *flagPtr = _game.flags;
 
 	flagPtr += flagNr >> 3;
@@ -48,16 +48,16 @@ void AgiBase::flipFlag(int16 flagNr) {
 	*flagPtr ^= 1 << (flagNr & 0x07);	// flip bit
 }
 
-void AgiEngine::setVar(int16 varNr, int val) {
-	_game.vars[varNr] = val;
+void AgiEngine::setVar(int16 varNr, byte newValue) {
+	_game.vars[varNr] = newValue;
 
 	if (varNr == VM_VAR_VOLUME) {
-		_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, val * 17);
-		_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, val * 17);
+		_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, newValue * 17);
+		_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, newValue * 17);
 	}
 }
 
-int AgiEngine::getVar(int16 varNr) {
+byte AgiEngine::getVar(int16 varNr) {
 	return _game.vars[varNr];
 }
 

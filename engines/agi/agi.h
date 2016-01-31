@@ -685,7 +685,7 @@ public:
 
 	int _soundemu;
 
-	int getFlag(int16 flagNr);
+	bool getFlag(int16 flagNr);
 	void setFlag(int16 flagNr, bool newState);
 	void flipFlag(int16 flagNr);
 
@@ -822,8 +822,8 @@ public:
 	void newInputMode(InputMode mode);
 	void oldInputMode();
 
-	int getVar(int16 varNr);
-	void setVar(int16 varNr, int);
+	byte getVar(int16 varNr);
+	void setVar(int16 varNr, byte newValue);
 	void decrypt(uint8 *mem, int len);
 	void releaseSprites();
 	int mainCycle(bool onlyCheckForEvents = false);
