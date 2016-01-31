@@ -419,7 +419,7 @@ void Lua_V1::FileFindFirst() {
 	const char *extension = lua_getstring(extObj);
 	Common::String searchString = extension;
 	if (searchString == "*.gsv") {
-		searchString = "grim*.gsv";
+		searchString = "grim##.gsv";
 	}
 	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
 	g_grim->_listFiles = saveFileMan->listSavefiles(searchString);
