@@ -214,6 +214,8 @@ SciEvent EventManager::getScummVMEvent() {
 		//((ev.kbd.flags & Common::KBD_CAPS) ? SCI_KEYMOD_CAPSLOCK : 0) |
 		//((ev.kbd.flags & Common::KBD_SCRL) ? SCI_KEYMOD_SCRLOCK : 0) |
 
+	// FIXME: this hack should also not be here, see below
+#if 0
 	if (input.data >= Common::KEYCODE_KP0 && input.data <= Common::KEYCODE_KP9) {
 		if (!(ev.kbd.flags & Common::KBD_NUM)) {
 			// HACK: Num-Lock not enabled
@@ -222,8 +224,15 @@ SciEvent EventManager::getScummVMEvent() {
 			input.character = 0;
 		}
 	}
+#endif
 
-	if ((input.character) && (input.character <= 0xFF)) {
+	// FIXME: using .ascii (.character) in here somewhat works on Windows+Linux, but it seems that
+	//        at least SDL on AmigaOS returns valid .ascii characters when Fx keys are pressed etc.
+	//        Check bug #7009. For now I reverted my changes. This needs to get fixed properly in backend / SDL itself.
+	//        On Windows .ascii field gets values, when Fx keys are pressed as well, but it's above 0xFF.
+	//        On AmigaOS it seems to return a value <= 0xFF.
+	//if ((input.character) && (input.character <= 0xFF)) {
+	if (!(input.data & 0xFF00)) {
 		// Directly accept most common keys without conversion
 		if ((input.character >= 0x80) && (input.character <= 0xFF)) {
 			// If there is no extended font, we will just clear the
