@@ -379,14 +379,6 @@ int AgiEngine::playGame() {
 		if (_passedPlayTimeCycles >= getVar(VM_VAR_TIME_DELAY)) {
 			_passedPlayTimeCycles = 0;
 
-			if (!_game.hasPrompt && _game.inputMode == INPUTMODE_NORMAL) {
-				_text->promptRedraw();
-				_game.hasPrompt = 1;
-			} else if (_game.hasPrompt && _game.inputMode == INPUTMODE_NONE) {
-				_text->promptRedraw();
-				_game.hasPrompt = 0;
-			}
-
 			interpretCycle();
 
 			// Check if the user has asked to load a game from the command line
@@ -503,7 +495,6 @@ int AgiEngine::runGame() {
 		setVar(VM_VAR_MAX_INPUT_CHARACTERS, 38);
 		_game.inputMode = INPUTMODE_NONE;
 		_text->promptDisable();
-		_game.hasPrompt = 0;
 
 		_game.state = STATE_RUNNING;
 		ec = playGame();

@@ -446,7 +446,6 @@ struct AgiGame {
 	bool playerControl;		/**< player is in control */
 	int exitAllLogics;	/**< break cycle after new.room */
 	bool pictureShown;		/**< show.pic has been issued */
-	int hasPrompt;			/**< input prompt has been printed */
 #define ID_AGDS		0x00000001
 #define ID_AMIGA	0x00000002
 	int gameFlags;			/**< agi options flags */

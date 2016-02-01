@@ -161,7 +161,7 @@ int AgiEngine::saveGame(const Common::String &fileName, const Common::String &de
 	// (previous in-game-timer, in-game-timer is always enabled during the regular game, so need to save/load it)
 	out->writeSint16BE((int16)_game.exitAllLogics);
 	out->writeSint16BE((int16)_game.pictureShown);
-	out->writeSint16BE((int16)_game.hasPrompt);
+	out->writeSint16BE((int16)_text->promptIsEnabled()); // was "_game.hasPrompt", no longer needed
 	out->writeSint16BE((int16)_game.gameFlags);
 
 	if (_text->promptIsEnabled()) {
@@ -486,8 +486,7 @@ int AgiEngine::loadGame(const Common::String &fileName, bool checkId) {
 	in->readSint16BE(); // was clock enabled, no longer needed
 	_game.exitAllLogics = in->readSint16BE();
 	in->readSint16BE(); // was _game.pictureShown
-	//_game.pictureShown = in->readSint16BE();
-	_game.hasPrompt = in->readSint16BE();
+	in->readSint16BE(); // was _game.hasPrompt, no longer needed
 	_game.gameFlags = in->readSint16BE();
 	if (in->readSint16BE()) {
 		_text->promptEnable();
@@ -509,9 +508,6 @@ int AgiEngine::loadGame(const Common::String &fileName, bool checkId) {
 	int16 textForeground = in->readSint16BE();
 	int16 textBackground = in->readSint16BE();
 	_text->charAttrib_Set(textForeground, textBackground);
-
-	// game.hires - rebuilt from image stack
-	// game.sbuf - rebuilt from image stack
 
 	// game.ego_words - fixed by clean_input
 	// game.num_ego_words - fixed by clean_input
@@ -687,7 +683,6 @@ int AgiEngine::loadGame(const Common::String &fileName, bool checkId) {
 
 	setFlag(VM_FLAG_RESTORE_JUST_RAN, true);
 
-	_game.hasPrompt = 0;	// force input line repaint if necessary
 	_words->clearEgoWords();
 
 	// don't delay anything right after restoring a game
