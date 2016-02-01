@@ -75,9 +75,9 @@ public:
 
 private:
 	int16 askForSavedGameSlot(const char *slotListText);
-	bool  askForSavedGameVerification(const char *verifyText, const char *description);
+	bool  askForSavedGameVerification(const char *verifyText, const char *actualDescription, int16 slotId);
 
-	void  createSavedGameDisplayText(char *destDisplayText, const char *actualDescription, int16 slotId);
+	void  createSavedGameDisplayText(char *destDisplayText, const char *actualDescription, int16 slotId, bool fillUpWithSpaces);
 	void  clearSavedGameSlots();
 	void  readSavedGameSlots(bool filterNonexistant, bool withAutoSaveSlot);
 	void  figureOutAutomaticSavedGameSlot(const char *automaticSaveDescription, int16 &matchedGameSlotId, int16 &freshGameSlotId);

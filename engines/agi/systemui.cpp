@@ -48,12 +48,12 @@ SystemUI::SystemUI(AgiEngine *vm, GfxMgr *gfx, TextMgr *text) {
 
 	_textSaveGameSelectSlot = "Use the arrow keys to select the slot in which you wish to save the game. Press ENTER to save in the slot, ESC to not save a game.";
 	_textSaveGameEnterDescription = "How would you like to describe this saved game?\n\n";
-	_textSaveGameVerify = "About to save the game\ndescribed as:\n\n%s\n\nPress ENTER to continue.\nPress ESC to cancel.";
+	_textSaveGameVerify = "About to save the game\ndescribed as:\n\n%s\n\nin file:\n%s\n\nPress ENTER to continue.\nPress ESC to cancel.";
 	
 	_textRestoreGameNoSlots = "There are no games to\nrestore in\n\n ScummVM saved game directory\n\nPress ENTER to continue.";
 	_textRestoreGameSelectSlot = "Use the arrow keys to select the game which you wish to restore. Press ENTER to restore the game, ESC to not restore a game.";
 	_textRestoreGameError = "Error in restoring game.\nPress ENTER to quit.";
-	_textRestoreGameVerify = "About to restore the game\ndescribed as:\n\n%s\n\nPress ENTER to continue.\nPress ESC to cancel.";
+	_textRestoreGameVerify = "About to restore the game\ndescribed as:\n\n%s\n\nfrom file:\n%s\n\nPress ENTER to continue.\nPress ESC to cancel.";
 
 	// Replace with translated text, when needed
 	switch (_vm->getLanguage()) {
@@ -75,12 +75,12 @@ SystemUI::SystemUI(AgiEngine *vm, GfxMgr *gfx, TextMgr *text) {
 
 		_textSaveGameSelectSlot ="\x91 \xAF\xAE\xAC\xAE\xE9\xEC\xEE \xAA\xAB\xA0\xA2\xA8\xE8 \xAA\xE3\xE0\xE1\xAE\xE0\xA0 \xA2\xEB\xA1\xA5\xE0\xA8\xE2\xA5 \xE1\xE2\xE0\xAE\xAA\xE3, \xA2 \xAA\xAE\xE2\xAE\xE0\xE3\xEE \xA2\xEB \xA6\xA5\xAB\xA0\xA5\xE2\xA5 \xA7\xA0\xAF\xA8\xE1\xA0\xE2\xEC \xA8\xA3\xE0\xE3. \x8D\xA0\xA6\xAC\xA8\xE2\xA5 ENTER \xA4\xAB\xEF \xA7\xA0\xAF\xA8\xE1\xA8 \xA8\xA3\xE0\xEB, ESC - \xAE\xE2\xAC\xA5\xAD\xA0 \xA7\xA0\xAF\xA8\xE1\xA8.";
 		_textSaveGameEnterDescription = "\x8A\xA0\xAA \xA2\xEB \xA6\xA5\xAB\xA0\xA5\xE2\xA5 \xAD\xA0\xA7\xA2\xA0\xE2\xEC \xED\xE2\xE3 \xA7\xA0\xAF\xA8\xE1\xEB\xA2\xA0\xA5\xAC\xE3\xEE \xA8\xA3\xE0\xE3?\n\n";
-		_textSaveGameVerify = "\x83\xAE\xE2\xAE\xA2 \xAA \xA7\xA0\xAF\xA8\xE1\xA8 \xA8\xA3\xE0\xEB, \n\xAE\xAF\xA8\xE1\xA0\xAD\xAD\xAE\xA9 \xAA\xA0\xAA:\n\n%s\n\n\x84\xAB\xEF \xAF\xE0\xAE\xA4\xAE\xAB\xA6\xA5\xAD\xA8\xEF \xAD\xA0\xA6\xAC\xA8\xE2\xA5 ENTER.\nESC - \xAE\xE2\xAC\xA5\xAD\xA0.";
+		_textSaveGameVerify = "\x83\xAE\xE2\xAE\xA2 \xAA \xA7\xA0\xAF\xA8\xE1\xA8 \xA8\xA3\xE0\xEB, \n\xAE\xAF\xA8\xE1\xA0\xAD\xAD\xAE\xA9 \xAA\xA0\xAA:\n\n%s\n\n\xA2 \xE4\xA0\xA9\xAB:\n%s\n\n\x84\xAB\xEF \xAF\xE0\xAE\xA4\xAE\xAB\xA6\xA5\xAD\xA8\xEF \xAD\xA0\xA6\xAC\xA8\xE2\xA5 ENTER.\nESC - \xAE\xE2\xAC\xA5\xAD\xA0.";
 
 		_textRestoreGameNoSlots ="\x82 \xAA\xA0\xE2\xA0\xAB\xAE\xA3\xA5\n\n ScummVM saved game directory\n\n\xAD\xA5\xE2 \xA7\xA0\xAF\xA8\xE1\xA0\xAD\xAD\xEB\xE5 \xA8\xA3\xE0.\n\nENTER - \xAF\xE0\xAE\xA4\xAE\xAB\xA6\xA5\xAD\xA8\xA5.";
 		_textRestoreGameSelectSlot = "\x91 \xAF\xAE\xAC\xAE\xE9\xEC\xEE \xAA\xAB\xA0\xA2\xA8\xE8 \xAA\xE3\xE0\xE1\xAE\xE0\xA0 \xA2\xEB\xA1\xA5\xE0\xA8\xE2\xA5 \xA8\xA3\xE0\xE3, \xAA\xAE\xE2\xAE\xE0\xE3\xEE \xA2\xEB \xA6\xA5\xAB\xA0\xA5\xE2\xA5 \xE1\xE7\xA8\xE2\xA0\xE2\xEC. \x8D\xA0\xA6\xAC\xA8\xE2\xA5 ENTER \xA4\xAB\xEF \xE1\xE7\xA8\xE2\xEB\xA2\xA0\xAD\xA8\xEF \xA8\xA3\xE0\xEB, ESC - \xA4\xAB\xEF \xAE\xE2\xAC\xA5\xAD\xEB.";
 		_textRestoreGameError ="\x8E\xE8\xA8\xA1\xAA\xA0 \xA2 \xA7\xA0\xAF\xA8\xE1\xA0\xAD\xAD\xAE\xA9 \xA8\xA3\xE0\xA5.\nENTER - \xA2\xEB\xE5\xAE\xA4.";
-		_textRestoreGameVerify = "\x83\xAE\xE2\xAE\xA2 \xAA \xE1\xE7\xA8\xE2\xEB\xA2\xA0\xAD\xA8\xEE \xA8\xA3\xE0\xEB\x2C\n\xAE\xAF\xA8\xE1\xA0\xAD\xAD\xAE\xA9 \xAA\xA0\xAA.\n\n%s\n\n\x84\xAB\xEF \xAF\xE0\xAE\xA4\xAE\xAB\xA6\xA5\xAD\xA8\xEF \xAD\xA0\xA6\xAC\xA8\xE2\xA5 ENTER.\nESC - \xAE\xE2\xAC\xA5\xAD\xA0.";
+		_textRestoreGameVerify = "\x83\xAE\xE2\xAE\xA2 \xAA \xE1\xE7\xA8\xE2\xEB\xA2\xA0\xAD\xA8\xEE \xA8\xA3\xE0\xEB\x2C\n\xAE\xAF\xA8\xE1\xA0\xAD\xAD\xAE\xA9 \xAA\xA0\xAA.\n\n%s\n\n\xA8\xA7 \xE4\xA0\xA9\xAB\xA0:\n%s\n\n\x84\xAB\xEF \xAF\xE0\xAE\xA4\xAE\xAB\xA6\xA5\xAD\xA8\xEF \xAD\xA0\xA6\xAC\xA8\xE2\xA5 ENTER.\nESC - \xAE\xE2\xAC\xA5\xAD\xA0.";
 		break;
 	default:
 		break;
@@ -227,11 +227,7 @@ bool SystemUI::askForSaveGameDescription(int16 slotId, Common::String &newDescri
 	}
 
 	// Now verify that the user really wants to do this
-	char userInput[SYSTEMUI_SAVEDGAME_DISPLAYTEXT_LEN + 1];
-
-	createSavedGameDisplayText(userInput, (char *)_text->_inputString, slotId);
-
-	if (!askForSavedGameVerification(_textSaveGameVerify, userInput)) {
+	if (!askForSavedGameVerification(_textSaveGameVerify, (char *)_text->_inputString, slotId)) {
 		return false;
 	}
 
@@ -258,19 +254,19 @@ int16 SystemUI::askForRestoreGameSlot() {
 	if (restoreGameSlotNr < 0)
 		return -1;
 
+	SystemUISavedGameEntry *selectedSavedGameEntry = &_savedGameArray[restoreGameSlotNr];
+
 	// Check, if selected saved game was marked as valid
-	if (!_savedGameArray[restoreGameSlotNr].isValid) {
+	if (!selectedSavedGameEntry->isValid) {
 		_vm->_text->messageBox(_textRestoreGameError);
 		return -1;
 	}
 
-	// Now ask user about this specific saved game
-	char userActionVerify[200];
-
-	sprintf(userActionVerify, _textRestoreGameVerify, _savedGameArray[restoreGameSlotNr].displayText);
-	if (!_vm->_text->messageBox(userActionVerify)) {
+	// Now verify that the user really wants to do this
+	if (!askForSavedGameVerification(_textRestoreGameVerify, selectedSavedGameEntry->description, selectedSavedGameEntry->slotId)) {
 		return -1;
 	}
+
 	// return actual slot number of the saved game
 	return _savedGameArray[restoreGameSlotNr].slotId;
 }
@@ -411,12 +407,13 @@ void SystemUI::clearSavedGameSlots() {
 	_savedGameSelectedSlotNr = 0;
 }
 
-void SystemUI::createSavedGameDisplayText(char *destDisplayText, const char *actualDescription, int16 slotId) {
+void SystemUI::createSavedGameDisplayText(char *destDisplayText, const char *actualDescription, int16 slotId, bool fillUpWithSpaces) {
+	char  fillUpChar = fillUpWithSpaces ? ' ' : 0x00;
 	char  slotIdChar[3];
 	int16 actualDescriptionLen = 0;
 
 	// clear with spaces
-	memset(destDisplayText, ' ', SYSTEMUI_SAVEDGAME_DISPLAYTEXT_LEN);
+	memset(destDisplayText, fillUpChar, SYSTEMUI_SAVEDGAME_DISPLAYTEXT_LEN);
 
 	// create fixed prefix (" 1:", "10:", etc.)
 	sprintf(slotIdChar, "%02d", slotId);
@@ -487,7 +484,7 @@ void SystemUI::readSavedGameSlots(bool filterNonexistant, bool withAutoSaveSlot)
 				savedGameEntry.exists  = false;
 				savedGameEntry.isValid = false;
 				memset(savedGameEntry.description, 0, sizeof(savedGameEntry.description));
-				createSavedGameDisplayText(savedGameEntry.displayText, "", loopSlotId);
+				createSavedGameDisplayText(savedGameEntry.displayText, "", loopSlotId, true);
 
 				_savedGameArray.push_back(savedGameEntry);
 			}
@@ -524,7 +521,7 @@ void SystemUI::readSavedGameSlots(bool filterNonexistant, bool withAutoSaveSlot)
 		savedGameEntry.isValid = saveIsValid;
 		memset(savedGameEntry.description, 0, sizeof(savedGameEntry.description));
 		strncpy(savedGameEntry.description, saveDescription.c_str(), SYSTEMUI_SAVEDGAME_DESCRIPTION_LEN);
-		createSavedGameDisplayText(savedGameEntry.displayText, saveDescription.c_str(), curSlotId);
+		createSavedGameDisplayText(savedGameEntry.displayText, saveDescription.c_str(), curSlotId, true);
 
 		_savedGameArray.push_back(savedGameEntry);
 
@@ -610,13 +607,16 @@ void SystemUI::drawSavedGameSlotSelector(bool active) {
 	_text->charAttrib_Pop();
 }
 
-bool SystemUI::askForSavedGameVerification(const char *verifyText, const char *description) {
-	char userActionVerify[200];
+bool SystemUI::askForSavedGameVerification(const char *verifyText, const char *actualDescription, int16 slotId) {
+	char displayDescription[SYSTEMUI_SAVEDGAME_DISPLAYTEXT_LEN + 1];
+	Common::String userActionVerify;
+	Common::String savedGameFilename = _vm->getSavegameFilename(slotId);
 	int16 userKey = 0;
 
-	sprintf(userActionVerify, verifyText, description);
+	createSavedGameDisplayText(displayDescription, actualDescription, slotId, false);
+	userActionVerify = Common::String::format(verifyText, displayDescription, savedGameFilename.c_str());
 
-	_text->drawMessageBox(userActionVerify, 0, 35);
+	_text->drawMessageBox(userActionVerify.c_str(), 0, 35);
 
 	userKey = _vm->waitKey();
 
