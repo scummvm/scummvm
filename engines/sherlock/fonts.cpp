@@ -130,7 +130,7 @@ void Fonts::setFont(int fontNum) {
 
 	// Iterate through the frames to find the widest and tallest font characters
 	_fontHeight = _widestChar = 0;
-	for (uint idx = 0; idx < MIN((int)_charCount, 128 - 32); ++idx) {
+	for (uint idx = 0; idx < MIN<uint>(_charCount, 128 - 32); ++idx) {
 		_fontHeight = MAX((uint16)_fontHeight, (*_font)[idx]._frame.h);
 		_widestChar = MAX((uint16)_widestChar, (*_font)[idx]._frame.w);
 	}
