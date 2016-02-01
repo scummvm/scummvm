@@ -1793,7 +1793,7 @@ void cmdPause(AgiGame *state, uint8 *parameter) {
 
 		state->_vm->_systemUI->pauseDialog();
 
-		vm->inGameTimerPause();
+		vm->inGameTimerResume();
 		state->clockEnabled = originalClockState;
 	}
 }
