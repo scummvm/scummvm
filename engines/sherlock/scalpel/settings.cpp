@@ -310,7 +310,7 @@ void Settings::show(SherlockEngine *vm) {
 
 			if (events.kbHit()) {
 				Common::KeyState keyState = events.getKey();
-				ui._key = toupper(keyState.keycode);
+				ui._key = toupper(keyState.ascii);
 
 				if (ui._key == Common::KEYCODE_RETURN || ui._key == Common::KEYCODE_SPACE) {
 					events._pressed = false;
