@@ -343,7 +343,7 @@ enum {
 	VM_FLAG_LOGIC_ZERO_FIRST_TIME,
 	VM_FLAG_RESTORE_JUST_RAN,
 	VM_FLAG_STATUS_SELECTS_ITEMS,
-	VM_FLAG_MENUS_WORK,
+	VM_FLAG_MENUS_ACCESSIBLE,
 	VM_FLAG_OUTPUT_MODE,		// 15
 	VM_FLAG_AUTO_RESTART
 };
@@ -436,8 +436,6 @@ struct AgiGame {
 	int16 cycleInnerLoopType;
 
 	InputMode inputMode;			/**< keyboard input mode */
-
-	uint16 specialMenuTriggerKey;	/**< key to trigger menu for platforms except PC */
 
 	int16 curLogicNr;				/**< current logic number */
 	Common::Array<ScriptPos> execStack;
@@ -937,8 +935,6 @@ public:
 	// Keyboard
 	int doPollKeyboard();
 	void cleanKeyboard();
-
-	int16 getSpecialMenuControllerSlot();
 
 	bool handleMouseClicks(uint16 &key);
 	bool handleController(uint16 key);

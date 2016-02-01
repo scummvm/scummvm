@@ -571,7 +571,7 @@ namespace Agi {
 
 bool AgiBase::canLoadGameStateCurrently() {
 	if (!(getGameType() == GType_PreAGI)) {
-		if (getFlag(VM_FLAG_MENUS_WORK)) {
+		if (getFlag(VM_FLAG_MENUS_ACCESSIBLE)) {
 			if (!_noSaveLoadAllowed) {
 				if (!cycleInnerLoopIsActive()) {
 					// We can't allow to restore a game, while inner loop is active
@@ -592,7 +592,7 @@ bool AgiBase::canSaveGameStateCurrently() {
 		return true;
 
 	if (!(getGameType() == GType_PreAGI)) {
-		if (getFlag(VM_FLAG_MENUS_WORK)) {
+		if (getFlag(VM_FLAG_MENUS_ACCESSIBLE)) {
 			if (!_noSaveLoadAllowed) {
 				if (!cycleInnerLoopIsActive()) {
 					if (promptIsEnabled()) {

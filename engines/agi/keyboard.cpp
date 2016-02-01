@@ -280,37 +280,6 @@ int AgiEngine::doPollKeyboard() {
 	return key;
 }
 
-int16 AgiEngine::getSpecialMenuControllerSlot() {
-	int16 controllerSlotESC = -1;
-	int16 controllerSlotSpecial = -1;
-
-	for (uint16 curMapping = 0; curMapping < MAX_CONTROLLER_KEYMAPPINGS; curMapping++) {
-		if (_game.controllerKeyMapping[curMapping].keycode == _game.specialMenuTriggerKey) {
-			if (controllerSlotSpecial < 0) {
-				controllerSlotSpecial = _game.controllerKeyMapping[curMapping].controllerSlot;
-			}
-		}
-		if (_game.controllerKeyMapping[curMapping].keycode == AGI_MENU_TRIGGER_PC) {
-			if (controllerSlotESC < 0) {
-				controllerSlotESC = _game.controllerKeyMapping[curMapping].controllerSlot;
-			}
-		}
-	}
-	if (controllerSlotSpecial >= 0) {
-		// special menu controller slot found
-		if (controllerSlotSpecial != controllerSlotESC) {
-			// not the same as the ESC slot (is the same in Manhunter AppleIIgs, we need to replace "pause"
-			if (controllerSlotSpecial >= 10) {
-				// slot needs to be at least 10
-				// Atari ST SQ1 maps the special key, but doesn't trigger any menu with it
-				// the controller slot in this case is 8.
-				return controllerSlotSpecial;
-			}
-		}
-	}
-	return -1;
-}
-
 bool AgiEngine::handleMouseClicks(uint16 &key) {
 	// No mouse click? -> exit
 	if (key != AGI_MOUSE_BUTTON_LEFT)
@@ -322,7 +291,7 @@ bool AgiEngine::handleMouseClicks(uint16 &key) {
 	displayLineRect.moveTo(0, statusRow * FONT_DISPLAY_HEIGHT);
 
 	if (displayLineRect.contains(_mouse.pos)) {
-	    if (getFlag(VM_FLAG_MENUS_WORK) && _menu->isAvailable()) {
+	    if (getFlag(VM_FLAG_MENUS_ACCESSIBLE) && _menu->isAvailable()) {
 			warning("click on status line -> menu TODO");
 			// TODO: menu
 			// This should be done in a better way as in simulate ESC key
@@ -406,28 +375,31 @@ bool AgiEngine::handleController(uint16 key) {
 		// Escape pressed, user probably wants to trigger the menu
 		// For PC, just passing ASCII code for ESC will normally trigger a controller
 		//  and the scripts will then trigger the menu
-		// For other platforms, ESC was handled by platforms to trigger "pause game" instead
-		// We need to change ESC to a platform specific code to make it work properly.
-		//
-		// There are exceptions though. Mixed Up Mother Goose on AppleIIgs for example actually sets up
-		//  ESC for pause only. That's why we also check, if the key is actually mapped to a controller.
-		// For this special case, we actually replace the pause function with a menu trigger.
-		// Replacing "pause" all the time wouldn't work out as well, becaue games like KQ1 on Apple IIgs
-		//  actually disable "pause" when ego has been killed, which means we wouldn't be able to access
-		//  the menu anymore in that case.
-		if (_menu->isAvailable()) {
-			// menu is actually available
-			if (_game.specialMenuTriggerKey) {
-				int16 specialMenuControllerSlot = getSpecialMenuControllerSlot();
-
-				if (specialMenuControllerSlot >= 0) {
-					// menu trigger found, trigger it now
-					_game.controllerOccured[specialMenuControllerSlot] = true;
-					return true;
-				}
+		switch (getPlatform()) {
+		case Common::kPlatformAmiga:
+		case Common::kPlatformApple2GS:
+		case Common::kPlatformAtariST:
+			// For these platforms, the button ESC normally triggered "pause"
+			// But users could at the same time trigger the menu by clicking on the status line
+			// We check, if menu is currently available and supposed to be accessible.
+			// If yes, we do a delayed trigger now, otherwise we continue processing the key just like normal.
+			//
+			// This is probably the solution with the highest compatibility.
+			// Several games also look for special keys see AGI_MENU_TRIGGER_*
+			// And then there's also Mixed Up Mother Goose, which actually hooks the ESC key for the regular menu
+			//
+			// We risk in here of course, that we let the user access the menu, when it shouldn't be possible.
+			// I'm not 100% sure if those other interpreters really only check VM_FLAG_MENUS_ACCESSIBLE
+			// Needs further investigation.
+			if (getFlag(VM_FLAG_MENUS_ACCESSIBLE) && _menu->isAvailable()) {
+				// menu is supposed to be accessible and is also available
+				_menu->delayedExecute();
+				return true;
 			}
-			// Otherwise go on and look for the ESC controller
+		default:
+			break;
 		}
+		// Otherwise go on and look for the ESC controller
 	}
 
 

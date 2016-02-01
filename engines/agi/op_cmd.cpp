@@ -729,7 +729,7 @@ void cmdStopSound(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 }
 
 void cmdMenuInput(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
-	if (vm->getFlag(VM_FLAG_MENUS_WORK)) {
+	if (vm->getFlag(VM_FLAG_MENUS_ACCESSIBLE)) {
 		vm->_menu->delayedExecute();
 	}
 }
@@ -1679,42 +1679,12 @@ void cmdSetGameID(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 }
 
 void cmdPause(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
-	bool skipPause = false;
+	// Show pause message box
+	vm->inGameTimerPause();
 
-	// We check in here, if a special key was specified to trigger menus.
-	// If that's the case, normally triggering the menu should be handled inside handleController()
-	// For the rare cases, where this approach doesn't work because the trigger is not mapped to a controller,
-	//  we trigger the menu in here.
-	//
-	// for further study read the comments for handleController()
-	//
-	// This is needed for at least Mixed Up Mother Goose for Apple IIgs.
-	if (state->specialMenuTriggerKey) {
-		if (vm->_menu->isAvailable()) {
-			// Pulldown-menu is actually available (was submitted)
-			skipPause = true;
+	state->_vm->_systemUI->pauseDialog();
 
-			// Check, if special trigger key is currently NOT mapped.
-			if (vm->getSpecialMenuControllerSlot() < 0) {
-				// menu trigger is not mapped, trigger menu
-				vm->_menu->delayedExecute();
-			} else {
-				// menu trigger is mapped, do not replace "pause"
-				skipPause = false;
-			}
-		} else {
-			warning("menu is not available, doing regular pause game instead");
-		}
-	}
-
-	if (!skipPause) {
-		// Show pause message box
-		vm->inGameTimerPause();
-
-		state->_vm->_systemUI->pauseDialog();
-
-		vm->inGameTimerResume();
-	}
+	vm->inGameTimerResume();
 }
 
 void cmdSetMenu(AgiGame *state, AgiEngine *vm, uint8 *parameter) {

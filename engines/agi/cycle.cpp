@@ -195,10 +195,6 @@ int AgiEngine::mainCycle(bool onlyCheckForEvents) {
 		pollTimer();
 	}
 
-	if (_menu->delayedExecuteActive()) {
-		_menu->execute();
-	}
-
 	key = doPollKeyboard();
 
 	// In AGI Mouse emulation mode we must update the mouse-related
@@ -308,6 +304,10 @@ int AgiEngine::mainCycle(bool onlyCheckForEvents) {
 		}
 	}
 
+	if (_menu->delayedExecuteActive()) {
+		_menu->execute();
+	}
+
 	if (!onlyCheckForEvents) {
 		if (_game.msgBoxTicks > 0)
 			_game.msgBoxTicks--;
@@ -407,23 +407,6 @@ int AgiEngine::playGame() {
 
 int AgiEngine::runGame() {
 	int ec = errOK;
-
-	// figure out the expected menu trigger for the current platform
-	// need to trigger the menu via mouse and via keyboard for platforms except PC
-	if (!(getFeatures() & GF_ESCPAUSE)) {
-		switch (getPlatform()) {
-		case Common::kPlatformAmiga:
-		case Common::kPlatformApple2GS:
-			_game.specialMenuTriggerKey = AGI_MENU_TRIGGER_APPLE2GS;
-			break;
-		case Common::kPlatformAtariST:
-			_game.specialMenuTriggerKey = AGI_MENU_TRIGGER_ATARIST;
-			break;
-		// Macintosh games seem to use ESC key just like PC versions do
-		default:
-			break;
-		}
-	}
 
 	// Execute the game
 	do {
