@@ -102,7 +102,7 @@ struct KeyChar {
 	int16 zPosPrev;
 	int16 prevWalkDataNum;
 	uint16 textColor;
-	int16 inventoryItems[5];
+	int16 inventoryItems[4];
 	int16 money;
 	int16 pointsDataNum;
 	int16 currentWalkBox;
