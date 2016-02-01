@@ -1851,8 +1851,7 @@ void cmdConfigureScreen(AgiGame *state, uint8 *parameter) {
 	uint16 promptRow = parameter[1];
 	uint16 statusRow = parameter[2];
 
-	state->_vm->_text->configureScreen(lineMinPrint);
-
+	textMgr->configureScreen(lineMinPrint);
 	textMgr->statusRow_Set(statusRow);
 	textMgr->promptRow_Set(promptRow);
 }
@@ -2256,8 +2255,8 @@ void cmdPushScript(AgiGame *state, uint8 *parameter) {
 	// We run AGIMOUSE always as a side effect
 	//if (getFeatures() & GF_AGIMOUSE || true) {
 	vm->setVar(VM_VAR_MOUSE_BUTTONSTATE, state->_vm->_mouse.button);
-	vm->setVar(VM_VAR_MOUSE_X, state->_vm->_mouse.x / 2);
-	vm->setVar(VM_VAR_MOUSE_Y, state->_vm->_mouse.y);
+	vm->setVar(VM_VAR_MOUSE_X, vm->_mouse.pos.x / 2);
+	vm->setVar(VM_VAR_MOUSE_Y, vm->_mouse.pos.y);
 	/*} else {
 		if (getVersion() >= 0x2915) {
 			debug(0, "push.script");
@@ -2277,8 +2276,8 @@ void cmdMousePosn(AgiGame *state, uint8 *parameter) {
 	AgiEngine *vm = state->_vm;
 	uint16 destVarNr1 = parameter[0];
 	uint16 destVarNr2 = parameter[1];
-	int16 mouseX = state->_vm->_mouse.x;
-	int16 mouseY = state->_vm->_mouse.y;
+	int16 mouseX = vm->_mouse.pos.x;
+	int16 mouseY = vm->_mouse.pos.y;
 
 	state->_vm->adjustPosToGameScreen(mouseX, mouseY);
 

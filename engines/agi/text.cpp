@@ -64,6 +64,8 @@ TextMgr::TextMgr(AgiEngine *vm, Words *words, GfxMgr *gfx) {
 	promptDisable();
 	promptReset();
 
+	_inputStringRow = 0;
+	_inputStringColumn = 0;
 	_inputStringMaxLen = 0;
 	_inputStringCursorPos = 0;
 	_inputString[0] = 0;
@@ -107,14 +109,19 @@ void TextMgr::charPos_Set(int16 row, int16 column) {
 	_textPos.column = column;
 }
 
-void TextMgr::charPos_Get(TextPos_Struct *posPtr) {
-	posPtr->row    = _textPos.row;
-	posPtr->column = _textPos.column;
-}
-
 void TextMgr::charPos_Set(TextPos_Struct *posPtr) {
 	_textPos.row    = posPtr->row;
 	_textPos.column = posPtr->column;
+}
+
+void TextMgr::charPos_Get(int16 &row, int16 &column) {
+	row = _textPos.row;
+	column = _textPos.column;
+}
+
+void TextMgr::charPos_Get(TextPos_Struct *posPtr) {
+	posPtr->row    = _textPos.row;
+	posPtr->column = _textPos.column;
 }
 
 void TextMgr::charPos_Push() {
@@ -735,8 +742,20 @@ void TextMgr::stringSet(const char *text) {
 	_inputString[sizeof(_inputString) - 1] = 0; // terminator
 }
 
+void TextMgr::stringPos_Get(int16 &row, int16 &column) {
+	row = _inputStringRow;
+	column = _inputStringColumn;
+}
+int16 TextMgr::stringGetMaxLen() {
+	return _inputStringMaxLen;
+}
+
 void TextMgr::stringEdit(int16 stringMaxLen) {
 	int16 inputStringLen = strlen((const char *)_inputString);
+
+	// Remember current position for predictive dialog
+	_inputStringRow = _textPos.row;
+	_inputStringColumn = _textPos.column;
 
 	// Caller can set the input string
 	_inputStringCursorPos = 0;

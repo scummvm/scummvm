@@ -231,8 +231,7 @@ struct gameIdList {
 
 struct Mouse {
 	int button;
-	int x;
-	int y;
+	Common::Point pos;
 };
 
 // Used by AGI Mouse protocol 1.0 for v27 (i.e. button pressed -variable).
@@ -942,7 +941,12 @@ public:
 	void cleanKeyboard();
 
 	int16 getSpecialMenuControllerSlot();
+
+	bool handleMouseClicks(uint16 &key);
 	bool handleController(uint16 key);
+
+	bool showPredictiveDialog();
+
 	uint16 agiGetKeypress();
 	int waitKey();
 	int waitAnyKey();

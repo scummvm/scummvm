@@ -206,8 +206,8 @@ int AgiEngine::mainCycle(bool onlyCheckForEvents) {
 	//
 	// We run AGIMOUSE always as a side effect
 	//if (getFeatures() & GF_AGIMOUSE) {
-		setVar(VM_VAR_MOUSE_X, _mouse.x / 2);
-		setVar(VM_VAR_MOUSE_Y, _mouse.y);
+		setVar(VM_VAR_MOUSE_X, _mouse.pos.x / 2);
+		setVar(VM_VAR_MOUSE_Y, _mouse.pos.y);
 	//}
 
 	switch (_game.inputMode) {
@@ -245,21 +245,27 @@ int AgiEngine::mainCycle(bool onlyCheckForEvents) {
 		setVar(VM_VAR_KEY, keyAscii);
 	}
 
+	handleMouseClicks(key);
+
 	if (!cycleInnerLoopIsActive()) {
 		// no inner loop active at the moment, regular processing
 		switch (_game.inputMode) {
 		case INPUTMODE_NORMAL:
-			if (!handleController(key)) {
-				if (key == 0 || (!_text->promptIsEnabled()))
-					break;
-
-				_text->promptCharPress(key);
+			if (key) {
+				if (!handleController(key)) {
+					if ((key) && (_text->promptIsEnabled())) {
+						_text->promptCharPress(key);
+					}
+				}
 			}
 			break;
 		case INPUTMODE_NONE:
-			handleController(key);
-			if (key)
-				_game.keypress = key;
+			if (key) {
+				handleController(key);
+				if (key) {
+					_game.keypress = key;
+				}
+			}
 			break;
 		default:
 			break;
@@ -274,7 +280,6 @@ int AgiEngine::mainCycle(bool onlyCheckForEvents) {
 		switch (_game.cycleInnerLoopType) {
 		case CYCLE_INNERLOOP_GETSTRING: // loop called from TextMgr::stringEdit()
 		case CYCLE_INNERLOOP_GETNUMBER:
-			//handleController(key);
 			if (key) {
 				_text->stringCharPress(key);
 			}

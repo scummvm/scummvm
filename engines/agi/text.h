@@ -107,8 +107,9 @@ public:
 
 	void charPos_Clip(int16 &row, int16 &column);
 	void charPos_Set(int16 row, int16 column);
-	void charPos_Get(TextPos_Struct *posPtr);
 	void charPos_Set(TextPos_Struct *posPtr);
+	void charPos_Get(int16 &row, int16 &column);
+	void charPos_Get(TextPos_Struct *posPtr);
 	void charPos_Push();
 	void charPos_Pop();
 	void charPos_SetInsideWindow(int16 windowRow, int16 windowColumn);
@@ -181,12 +182,16 @@ public:
 	void promptClear(); // for AGI1
 	void promptRememberForAutoComplete(bool entered = false); // for auto-completion
 
+	int16 _inputStringRow;
+	int16 _inputStringColumn;
 	bool  _inputStringEntered;
 	int16 _inputStringMaxLen;
 	int16 _inputStringCursorPos;
 	byte  _inputString[42];
 
 	bool stringWasEntered();
+	void stringPos_Get(int16 &row, int16 &column);
+	int16 stringGetMaxLen();
 	void stringSet(const char *text);
 	void stringEdit(int16 stringMaxLen);
 	void stringCharPress(int16 newChar);

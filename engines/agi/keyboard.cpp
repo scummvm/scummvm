@@ -68,52 +68,16 @@ void AgiEngine::processEvents() {
 
 	while (_eventMan->pollEvent(event)) {
 		switch (event.type) {
-		case Common::EVENT_PREDICTIVE_DIALOG: {
-			GUI::PredictiveDialog _predictiveDialog;
-			_predictiveDialog.runModal();
-#if 0
-			strcpy(_predictiveResult, _predictiveDialog.getResult());
-			if (strcmp(_predictiveResult, "")) {
-				if (_game.inputMode == INPUTMODE_NORMAL) {
-					//strcpy((char *)_game.inputBuffer, _predictiveResult);
-					//handleKeys(KEY_ENTER);
-					// TODO: repair predictive
-				} else if (_game.inputMode == INPUTMODE_GETSTRING) {
-					strcpy(_game.strings[_stringdata.str], _predictiveResult);
-					newInputMode(INPUTMODE_NORMAL);
-					//_gfx->printCharacter(_stringdata.x + strlen(_game.strings[_stringdata.str]) + 1,
-					//		_stringdata.y, ' ', 15, 0);
-				} else if (_game.inputMode == INPUTMODE_NONE) {
-					for (int n = 0; _predictiveResult[n]; n++)
-						keyEnqueue(_predictiveResult[n]);
-				}
-			}
-#endif
-			/*
-			if (predictiveDialog()) {
-				if (_game.inputMode == INPUT_NORMAL) {
-					strcpy((char *)_game.inputBuffer, _predictiveResult);
-					handleKeys(KEY_ENTER);
-				} else if (_game.inputMode == INPUT_GETSTRING) {
-					strcpy(_game.strings[_stringdata.str], _predictiveResult);
-					newInputMode(INPUT_NORMAL);
-					_gfx->printCharacter(_stringdata.x + strlen(_game.strings[_stringdata.str]) + 1,
-							_stringdata.y, ' ', _game.colorFg, _game.colorBg);
-				} else if (_game.inputMode == INPUT_NONE) {
-					for (int n = 0; _predictiveResult[n]; n++)
-						keyEnqueue(_predictiveResult[n]);
-				}
-			}
-			*/
-			}
+		case Common::EVENT_PREDICTIVE_DIALOG:
+			showPredictiveDialog();
 			break;
 		case Common::EVENT_LBUTTONDOWN:
 			if (_game.mouseEnabled) {
 				key = AGI_MOUSE_BUTTON_LEFT;
 				_mouse.button = kAgiMouseButtonLeft;
 				keyEnqueue(key);
-				_mouse.x = event.mouse.x;
-				_mouse.y = event.mouse.y;
+				_mouse.pos.x = event.mouse.x;
+				_mouse.pos.y = event.mouse.y;
 			}
 			break;
 		case Common::EVENT_RBUTTONDOWN:
@@ -121,8 +85,8 @@ void AgiEngine::processEvents() {
 				key = AGI_MOUSE_BUTTON_RIGHT;
 				_mouse.button = kAgiMouseButtonRight;
 				keyEnqueue(key);
-				_mouse.x = event.mouse.x;
-				_mouse.y = event.mouse.y;
+				_mouse.pos.x = event.mouse.x;
+				_mouse.pos.y = event.mouse.y;
 			}
 			break;
 		case Common::EVENT_WHEELUP:
@@ -139,20 +103,20 @@ void AgiEngine::processEvents() {
 			break;
 		case Common::EVENT_MOUSEMOVE:
 			if (_game.mouseEnabled) {
-				_mouse.x = event.mouse.x;
-				_mouse.y = event.mouse.y;
+				_mouse.pos.x = event.mouse.x;
+				_mouse.pos.y = event.mouse.y;
 
 				if (!_game.mouseFence.isEmpty()) {
-					if (_mouse.x < _game.mouseFence.left)
-						_mouse.x = _game.mouseFence.left;
-					if (_mouse.x > _game.mouseFence.right)
-						_mouse.x = _game.mouseFence.right;
-					if (_mouse.y < _game.mouseFence.top)
-						_mouse.y = _game.mouseFence.top;
-					if (_mouse.y > _game.mouseFence.bottom)
-						_mouse.y = _game.mouseFence.bottom;
+					if (_mouse.pos.x < _game.mouseFence.left)
+						_mouse.pos.x = _game.mouseFence.left;
+					if (_mouse.pos.x > _game.mouseFence.right)
+						_mouse.pos.x = _game.mouseFence.right;
+					if (_mouse.pos.y < _game.mouseFence.top)
+						_mouse.pos.y = _game.mouseFence.top;
+					if (_mouse.pos.y > _game.mouseFence.bottom)
+						_mouse.pos.y = _game.mouseFence.bottom;
 
-					g_system->warpMouse(_mouse.x, _mouse.y);
+					g_system->warpMouse(_mouse.pos.x, _mouse.pos.y);
 				}
 			}
 
@@ -161,8 +125,8 @@ void AgiEngine::processEvents() {
 		case Common::EVENT_RBUTTONUP:
 			if (_game.mouseEnabled) {
 				_mouse.button = kAgiMouseButtonUp;
-				_mouse.x = event.mouse.x;
-				_mouse.y = event.mouse.y;
+				_mouse.pos.x = event.mouse.x;
+				_mouse.pos.y = event.mouse.y;
 			}
 			break;
 		case Common::EVENT_KEYDOWN:
@@ -347,6 +311,86 @@ int16 AgiEngine::getSpecialMenuControllerSlot() {
 	return -1;
 }
 
+bool AgiEngine::handleMouseClicks(uint16 &key) {
+	// No mouse click? -> exit
+	if (key != AGI_MOUSE_BUTTON_LEFT)
+		return false;
+
+	Common::Rect displayLineRect(DISPLAY_WIDTH, FONT_DISPLAY_HEIGHT);
+	int16 statusRow = _text->statusRow_Get();
+
+	displayLineRect.moveTo(0, statusRow * FONT_DISPLAY_HEIGHT);
+
+	if (displayLineRect.contains(_mouse.pos)) {
+	    if (getFlag(VM_FLAG_MENUS_WORK) && _menu->isAvailable()) {
+			warning("click on status line -> menu TODO");
+			// TODO: menu
+			// This should be done in a better way as in simulate ESC key
+			// Sierra seems to have hardcoded it in some way, but we would have to verify, what flags
+			// they checked. The previous way wasn't accurate. Mouse support for menu is missing atm anyway.
+			//if ((getflag(VM_FLAG_MENUS_WORK) || (getFeatures() & GF_MENUS)) && _mouse.y <= CHAR_LINES) {
+			//	newInputMode(INPUTMODE_MENU);
+			//	return true;
+			//}
+			key = 0; // eat event
+			return true;
+	    }
+	}
+
+	if (_text->promptIsEnabled() && (!cycleInnerLoopIsActive()) ) {
+		// Prompt is currently enabled, but no inner loop is active
+		int16 promptRow = _text->promptRow_Get();
+
+		displayLineRect.moveTo(0, promptRow * FONT_DISPLAY_HEIGHT);
+
+		if (displayLineRect.contains(_mouse.pos)) {
+			// and user clicked within the line of the prompt
+		    showPredictiveDialog();
+
+		    key = 0; // eat event
+		    return true;
+		}
+	}
+
+	if (cycleInnerLoopIsActive()) {
+		// inner loop active, check what kind of loop it is. Then process / forward it
+		switch (_game.cycleInnerLoopType) {
+		case CYCLE_INNERLOOP_GETSTRING:
+		case CYCLE_INNERLOOP_GETNUMBER: {
+			// process in here
+			int16 stringRow, stringColumn, stringMaxLen;
+
+			_text->stringPos_Get(stringRow, stringColumn);
+			stringMaxLen = _text->stringGetMaxLen();
+
+			Common::Rect displayRect(stringMaxLen * FONT_DISPLAY_WIDTH, FONT_DISPLAY_HEIGHT);
+			displayRect.moveTo(stringColumn * FONT_DISPLAY_WIDTH, stringRow * FONT_DISPLAY_HEIGHT);
+
+			if (displayRect.contains(_mouse.pos)) {
+				// user clicked inside the input space
+			    showPredictiveDialog();
+
+			    key = 0; // eat event
+			    return true;
+			}
+			break;
+		}
+		case CYCLE_INNERLOOP_INVENTORY:
+			// TODO: forward
+			break;
+		case CYCLE_INNERLOOP_MENU:
+			// TODO: forward
+			break;
+		case CYCLE_INNERLOOP_SYSTEMUI_SELECTSAVEDGAMESLOT:
+			// TODO: forward
+			break;
+		default:
+			break;
+		}
+	}
+	return false;
+}
+
 bool AgiEngine::handleController(uint16 key) {
 	ScreenObjEntry *screenObjEgo = &_game.screenObjTable[SCREENOBJECTS_EGO_ENTRY];
 
@@ -407,51 +451,6 @@ bool AgiEngine::handleController(uint16 key) {
 		}
 	}
 
-	if (key == AGI_MOUSE_BUTTON_LEFT) {
-		// call mouse when click is done on status bar
-		// TODO
-		// This should be done in a better way as in simulate ESC key
-		// Sierra seems to have hardcoded it in some way, but we would have to verify, what flags
-		// they checked. The previous way wasn't accurate. Mouse support for menu is missing atm anyway.
-		//if ((getflag(VM_FLAG_MENUS_WORK) || (getFeatures() & GF_MENUS)) && _mouse.y <= CHAR_LINES) {
-		//	newInputMode(INPUTMODE_MENU);
-		//	return true;
-		//}
-	}
-
-	// Show predictive dialog if the user clicks on input area
-	if (key == AGI_MOUSE_BUTTON_LEFT &&
-			(int)_mouse.y >= _text->promptRow_Get() * FONT_DISPLAY_HEIGHT &&
-			(int)_mouse.y <= (_text->promptRow_Get() + 1) * FONT_DISPLAY_HEIGHT) {
-		GUI::PredictiveDialog _predictiveDialog;
-		_predictiveDialog.runModal();
-#if 0
-		strcpy(_predictiveResult, _predictiveDialog.getResult());
-		if (strcmp(_predictiveResult, "")) {
-			if (_game.inputMode == INPUTMODE_NONE) {
-				for (int n = 0; _predictiveResult[n]; n++)
-					keyEnqueue(_predictiveResult[n]);
-			} else {
-				//strcpy((char *)_game.inputBuffer, _predictiveResult);
-				//handleKeys(KEY_ENTER);
-				// TODO
-			}
-		}
-#endif
-		/*
-		if (predictiveDialog()) {
-			if (_game.inputMode == INPUT_NONE) {
-				for (int n = 0; _predictiveResult[n]; n++)
-					keyEnqueue(_predictiveResult[n]);
-			} else {
-				strcpy((char *)_game.inputBuffer, _predictiveResult);
-				handleKeys(KEY_ENTER);
-			}
-		}
-		*/
-		return true;
-	}
-
 	int16 newDirection = 0;
 
 	switch (key) {
@@ -498,8 +497,8 @@ bool AgiEngine::handleController(uint16 key) {
 						//v->flags |= fAdjEgoXY;
 						// setting fAdjEgoXY here will at least break "climbing the log" in SQ2
 						// in case you walked to the log by using the mouse, so don't!!!
-						int16 egoDestinationX = _mouse.x;
-						int16 egoDestinationY = _mouse.y;
+						int16 egoDestinationX = _mouse.pos.x;
+						int16 egoDestinationY = _mouse.pos.y;
 						adjustPosToGameScreen(egoDestinationX, egoDestinationY);
 
 						screenObjEgo->motionType = kMotionEgo;
@@ -531,6 +530,41 @@ bool AgiEngine::handleController(uint16 key) {
 		return true;
 	}
 
+	return false;
+}
+
+bool AgiEngine::showPredictiveDialog() {
+	GUI::PredictiveDialog predictiveDialog;
+
+	inGameTimerPause();
+	predictiveDialog.runModal();
+	inGameTimerResume();
+
+	Common::String predictiveResult(predictiveDialog.getResult());
+	uint16 predictiveResultLen = predictiveResult.size();
+	if (predictiveResult.size()) {
+		// User actually entered something
+		for (int16 resultPos = 0; resultPos < predictiveResultLen; resultPos++) {
+			keyEnqueue(predictiveResult[resultPos]);
+		}
+		if (!cycleInnerLoopIsActive()) {
+			if (_text->promptIsEnabled()) {
+				// add ENTER, when the input is probably meant for the prompt
+				keyEnqueue(AGI_KEY_ENTER);
+			}
+		} else {
+			switch (_game.cycleInnerLoopType) {
+			case CYCLE_INNERLOOP_GETSTRING:
+			case CYCLE_INNERLOOP_GETNUMBER:
+				// add ENTER, when the input is probably meant for GetString/GetNumber
+				keyEnqueue(AGI_KEY_ENTER);
+				break;
+			default:
+				break;
+			}
+		}
+		return true;
+	}
 	return false;
 }
 
