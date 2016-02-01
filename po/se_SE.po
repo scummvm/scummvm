@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.5.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
-"POT-Creation-Date: 2016-01-25 20:35+0100\n"
+"POT-Creation-Date: 2016-02-01 21:58+0000\n"
 "PO-Revision-Date: 2014-07-02 16:30+0100\n"
 "Last-Translator: Hampus Flink <hampus.flink@gmail.com>\n"
 "Language-Team: \n"
@@ -1425,7 +1425,7 @@ msgctxt "lowres"
 msgid "~R~eturn to Launcher"
 msgstr "Åte~r~vänd till launcher"
 
-#: engines/dialogs.cpp:116 engines/agi/saveload.cpp:803
+#: engines/dialogs.cpp:116 engines/agi/saveload.cpp:714
 #: engines/cruise/menu.cpp:212 engines/drascula/saveload.cpp:336
 #: engines/dreamweb/saveload.cpp:261 engines/neverhood/menumodule.cpp:877
 #: engines/pegasus/pegasus.cpp:377 engines/sci/engine/kfile.cpp:769
@@ -1438,7 +1438,7 @@ msgstr "Spara spelet:"
 #: backends/platform/wince/CEActionsPocket.cpp:267
 #: backends/platform/wince/CEActionsSmartphone.cpp:45
 #: backends/platform/wince/CEActionsSmartphone.cpp:231
-#: engines/agi/saveload.cpp:803 engines/cruise/menu.cpp:212
+#: engines/agi/saveload.cpp:714 engines/cruise/menu.cpp:212
 #: engines/drascula/saveload.cpp:336 engines/dreamweb/saveload.cpp:261
 #: engines/neverhood/menumodule.cpp:877 engines/pegasus/pegasus.cpp:377
 #: engines/sci/engine/kfile.cpp:769 engines/scumm/dialogs.cpp:188
@@ -2348,13 +2348,13 @@ msgid ""
 "Enables mouse support. Allows to use mouse for movement and in game menus."
 msgstr ""
 
-#: engines/agi/saveload.cpp:816 engines/drascula/saveload.cpp:349
+#: engines/agi/saveload.cpp:727 engines/drascula/saveload.cpp:349
 #: engines/dreamweb/saveload.cpp:169 engines/neverhood/menumodule.cpp:890
 #: engines/sci/engine/kfile.cpp:868 engines/toltecs/menu.cpp:256
 msgid "Restore game:"
 msgstr "Återställ spel:"
 
-#: engines/agi/saveload.cpp:816 engines/drascula/saveload.cpp:349
+#: engines/agi/saveload.cpp:727 engines/drascula/saveload.cpp:349
 #: engines/dreamweb/saveload.cpp:169 engines/neverhood/menumodule.cpp:890
 #: engines/sci/engine/kfile.cpp:868 engines/toltecs/menu.cpp:256
 msgid "Restore"
@@ -3470,21 +3470,21 @@ msgstr "Flyg åt höger"
 msgid "Fly to lower right"
 msgstr "Flyg åt nedre höger"
 
-#: engines/scumm/input.cpp:572
+#: engines/scumm/input.cpp:580
 #, fuzzy
 msgid "Snap scroll on"
 msgstr "Mjuk rullning"
 
-#: engines/scumm/input.cpp:574
+#: engines/scumm/input.cpp:582
 msgid "Snap scroll off"
 msgstr ""
 
-#: engines/scumm/input.cpp:587
+#: engines/scumm/input.cpp:595
 #, fuzzy
 msgid "Music volume: "
 msgstr "Musikvolym:"
 
-#: engines/scumm/input.cpp:604
+#: engines/scumm/input.cpp:612
 #, fuzzy
 msgid "Subtitle speed: "
 msgstr "Texthastighet:"

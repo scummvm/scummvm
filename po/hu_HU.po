@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
-"POT-Creation-Date: 2016-01-25 20:35+0100\n"
+"POT-Creation-Date: 2016-02-01 21:58+0000\n"
 "PO-Revision-Date: 2016-01-27 06:57+0200\n"
 "Last-Translator: George Kormendi <grubycza@hotmail.com>\n"
 "Language-Team: Hungarian\n"
@@ -1409,7 +1409,7 @@ msgctxt "lowres"
 msgid "~R~eturn to Launcher"
 msgstr "Visszatérés az indítóba"
 
-#: engines/dialogs.cpp:116 engines/agi/saveload.cpp:803
+#: engines/dialogs.cpp:116 engines/agi/saveload.cpp:714
 #: engines/cruise/menu.cpp:212 engines/drascula/saveload.cpp:336
 #: engines/dreamweb/saveload.cpp:261 engines/neverhood/menumodule.cpp:877
 #: engines/pegasus/pegasus.cpp:377 engines/sci/engine/kfile.cpp:769
@@ -1422,7 +1422,7 @@ msgstr "Játék mentése:"
 #: backends/platform/wince/CEActionsPocket.cpp:267
 #: backends/platform/wince/CEActionsSmartphone.cpp:45
 #: backends/platform/wince/CEActionsSmartphone.cpp:231
-#: engines/agi/saveload.cpp:803 engines/cruise/menu.cpp:212
+#: engines/agi/saveload.cpp:714 engines/cruise/menu.cpp:212
 #: engines/drascula/saveload.cpp:336 engines/dreamweb/saveload.cpp:261
 #: engines/neverhood/menumodule.cpp:877 engines/pegasus/pegasus.cpp:377
 #: engines/sci/engine/kfile.cpp:769 engines/scumm/dialogs.cpp:188
@@ -2324,13 +2324,13 @@ msgstr ""
 "Egérmód engélyezve. Lehetõvé teszi az egérrel mozgatást játékban és "
 "játékmenükben."
 
-#: engines/agi/saveload.cpp:816 engines/drascula/saveload.cpp:349
+#: engines/agi/saveload.cpp:727 engines/drascula/saveload.cpp:349
 #: engines/dreamweb/saveload.cpp:169 engines/neverhood/menumodule.cpp:890
 #: engines/sci/engine/kfile.cpp:868 engines/toltecs/menu.cpp:256
 msgid "Restore game:"
 msgstr "Játékmenet visszaállítása:"
 
-#: engines/agi/saveload.cpp:816 engines/drascula/saveload.cpp:349
+#: engines/agi/saveload.cpp:727 engines/drascula/saveload.cpp:349
 #: engines/dreamweb/saveload.cpp:169 engines/neverhood/menumodule.cpp:890
 #: engines/sci/engine/kfile.cpp:868 engines/toltecs/menu.cpp:256
 msgid "Restore"
@@ -3451,19 +3451,19 @@ msgstr "Jobbra repülés"
 msgid "Fly to lower right"
 msgstr "Jobbra le repülés"
 
-#: engines/scumm/input.cpp:572
+#: engines/scumm/input.cpp:580
 msgid "Snap scroll on"
 msgstr "Finomgörgetés be"
 
-#: engines/scumm/input.cpp:574
+#: engines/scumm/input.cpp:582
 msgid "Snap scroll off"
 msgstr "Finomgörgetés ki"
 
-#: engines/scumm/input.cpp:587
+#: engines/scumm/input.cpp:595
 msgid "Music volume: "
 msgstr "Zene hangereje:"
 
-#: engines/scumm/input.cpp:604
+#: engines/scumm/input.cpp:612
 msgid "Subtitle speed: "
 msgstr "Felirat sebesség:"
 
