@@ -341,7 +341,6 @@ int AgiEngine::playGame() {
 	setVar(VM_VAR_TIME_DELAY, 2);	// "normal" speed
 
 	_game.gfxMode = true;
-	_game.clockEnabled = true;
 	_text->promptRow_Set(22);
 
 	// We run AGIMOUSE always as a side effect

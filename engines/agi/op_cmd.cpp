@@ -1786,15 +1786,11 @@ void cmdPause(AgiGame *state, uint8 *parameter) {
 
 	if (!skipPause) {
 		// Show pause message box
-		int originalClockState = state->clockEnabled;
-
 		vm->inGameTimerPause();
-		state->clockEnabled = false;
 
 		state->_vm->_systemUI->pauseDialog();
 
 		vm->inGameTimerResume();
-		state->clockEnabled = originalClockState;
 	}
 }
 

@@ -157,7 +157,8 @@ int AgiEngine::saveGame(const Common::String &fileName, const Common::String &de
 	} else {
 		out->writeSint16BE(0);
 	}
-	out->writeSint16BE((int16)_game.clockEnabled);
+	out->writeSint16BE(1); // was clock enabled
+	// (previous in-game-timer, in-game-timer is always enabled during the regular game, so need to save/load it)
 	out->writeSint16BE((int16)_game.exitAllLogics);
 	out->writeSint16BE((int16)_game.pictureShown);
 	out->writeSint16BE((int16)_game.hasPrompt);
@@ -482,7 +483,7 @@ int AgiEngine::loadGame(const Common::String &fileName, bool checkId) {
 	} else {
 		_text->statusDisable();
 	}
-	_game.clockEnabled = in->readSint16BE();
+	in->readSint16BE(); // was clock enabled, no longer needed
 	_game.exitAllLogics = in->readSint16BE();
 	in->readSint16BE(); // was _game.pictureShown
 	//_game.pictureShown = in->readSint16BE();

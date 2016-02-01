@@ -372,7 +372,6 @@ AgiEngine::AgiEngine(OSystem *syst, const AGIGameDescription *gameDesc) : AgiBas
 
 	_game.gfxMode = true;
 
-	_game.clockEnabled = false;
 	_game.state = STATE_INIT;
 
 	_keyQueueStart = 0;

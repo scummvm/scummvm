@@ -444,7 +444,6 @@ struct AgiGame {
 
 	// internal flags
 	bool playerControl;		/**< player is in control */
-	int clockEnabled;		/**< clock is on/off */
 	int exitAllLogics;	/**< break cycle after new.room */
 	bool pictureShown;		/**< show.pic has been issued */
 	int hasPrompt;			/**< input prompt has been printed */
