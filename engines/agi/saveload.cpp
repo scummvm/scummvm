@@ -762,7 +762,7 @@ int AgiEngine::doLoad(int slot, bool showMessages) {
 	int result = loadGame(fileName);
 
 	if (result == errOK) {
-		_game.exitAllLogics = 1;
+		_game.exitAllLogics = true;
 		_menu->itemEnableAll();
 	} else {
 		if (showMessages)
@@ -1010,7 +1010,7 @@ void AgiEngine::checkQuickLoad() {
 		_sound->stopSound();
 
 		if (loadGame(saveNameBuffer, false) == errOK) {	 // Do not check game id
-			_game.exitAllLogics = 1;
+			_game.exitAllLogics = true;
 			_menu->itemEnableAll();
 		}
 	}
@@ -1023,7 +1023,7 @@ Common::Error AgiEngine::loadGameState(int slot) {
 	_sound->stopSound();
 
 	if (loadGame(saveLoadSlot) == errOK) {
-		_game.exitAllLogics = 1;
+		_game.exitAllLogics = true;
 		_menu->itemEnableAll();
 		return Common::kNoError;
 	} else {

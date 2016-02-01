@@ -444,7 +444,7 @@ struct AgiGame {
 
 	// internal flags
 	bool playerControl;		/**< player is in control */
-	int exitAllLogics;	/**< break cycle after new.room */
+	bool exitAllLogics;	/**< break cycle after new.room */
 	bool pictureShown;		/**< show.pic has been issued */
 #define ID_AGDS		0x00000001
 #define ID_AMIGA	0x00000002
