@@ -19,6 +19,10 @@ For a more comprehensive changelog of the latest experimental code, see:
  General:
    - Updated Munt MT-32 emulation code to version 1.5.0.
 
+ SDL:
+   - Alt-x no longer quits ScummVM on platforms exhibiting this behavior
+     before. A notable example is our Windows port.
+
  3 Skulls of the Toltecs:
    - Improved AdLib music support.
 
@@ -73,6 +77,7 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Implemented original Maniac Mansion v0-v1 walking code.
    - It is now possible to play Maniac Mansion from within Day of the
      Tentacle, with a few caveats. See README for details.
+   - Alt-x can now be used to quit SCUMM games on all platforms.
 
  Tinsel:
    - Improved AdLib music support in Discworld 1.

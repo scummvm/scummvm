@@ -1487,7 +1487,7 @@ other games.
     Ctrl-F5                - Displays the Global Menu
     Cmd-q                  - Quit (Mac OS X)
     Ctrl-q                 - Quit (other unices including Linux)
-    Ctrl-z OR Alt-x        - Quit (other platforms)
+    Ctrl-z                 - Quit (other platforms)
     Ctrl-u                 - Mute all sounds
     Ctrl-m                 - Toggle mouse capture
     Ctrl-Alt 1-8           - Switch between graphics filters
@@ -1505,6 +1505,7 @@ other games.
                              of the middle mouse button or wheel.
 
   SCUMM:
+    Alt-x                  - Quit
     Ctrl 0-9 and Alt 0-9   - Load and save game state
     Ctrl-d                 - Starts the debugger
     Ctrl-f                 - Toggle fast mode
