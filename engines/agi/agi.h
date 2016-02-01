@@ -721,7 +721,7 @@ public:
 	}
 };
 
-typedef void (*AgiCommand)(AgiGame *state, uint8 *p);
+typedef void (*AgiCommand)(AgiGame *state, AgiEngine *vm, uint8 *p);
 
 class AgiEngine : public AgiBase {
 protected:
