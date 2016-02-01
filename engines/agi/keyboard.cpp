@@ -136,7 +136,6 @@ void AgiEngine::processEvents() {
 			}
 
 			key = event.kbd.ascii;
-#if 0
 			if (event.kbd.keycode >= Common::KEYCODE_KP0 && event.kbd.keycode <= Common::KEYCODE_KP9) {
 				if (!(event.kbd.flags & Common::KBD_NUM)) {
 					// HACK: Num-Lock not enabled
@@ -145,13 +144,8 @@ void AgiEngine::processEvents() {
 					key = 0;
 				}
 			}
-#endif
-			// FIXME: Checking .ascii this way seems to cause issues on at least AmigaOS
-			//        See bug #7009. For detailed information see engines/sci/event.cpp, EventManager::getScummVMEvent().
-			//        For now we are using the same code as in SCI to make it work.
-			//        Needs to get fixed in SDL backend / SDL itself.
-			//if ((key) && (key <= 0xFF)) {
-			if ((key) && (!(event.kbd.keycode & 0xFF00))) {
+
+			if ((key) && (key <= 0xFF)) {
 				// No special key, directly accept it
 				// Is ISO-8859-1, we need lower 128 characters only, which is plain ASCII, so no mapping required
 				if (Common::isAlpha(key)) {
