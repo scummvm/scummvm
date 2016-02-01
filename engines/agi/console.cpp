@@ -391,7 +391,7 @@ bool Console::Cmd_Room(int argc, const char **argv) {
 }
 
 bool Console::Cmd_BT(int argc, const char **argv) {
-	debugPrintf("Current script: %d\nStack depth: %d\n", _vm->_game.lognum, _vm->_game.execStack.size());
+	debugPrintf("Current script: %d\nStack depth: %d\n", _vm->_game.curLogicNr, _vm->_game.execStack.size());
 
 	uint8 *code = NULL;
 	uint8 op = 0;

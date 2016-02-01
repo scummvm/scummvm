@@ -976,7 +976,7 @@ char *TextMgr::stringPrintf(const char *originalText) {
 	Common::String resultString;
 	char z[16];
 
-	debugC(3, kDebugLevelText, "logic %d, '%s'", _vm->_game.lognum, originalText);
+	debugC(3, kDebugLevelText, "logic %d, '%s'", _vm->_game.curLogicNr, originalText);
 
 	while (*originalText) {
 		switch (*originalText) {
@@ -1026,8 +1026,8 @@ char *TextMgr::stringPrintf(const char *originalText) {
 				break;
 			case 'm':
 				i = strtoul(originalText, NULL, 10) - 1;
-				if (_vm->_game.logics[_vm->_game.lognum].numTexts > i)
-					safeStrcat(resultString, stringPrintf(_vm->_game.logics[_vm->_game.lognum].texts[i]));
+				if (_vm->_game.logics[_vm->_game.curLogicNr].numTexts > i)
+					safeStrcat(resultString, stringPrintf(_vm->_game.logics[_vm->_game.curLogicNr].texts[i]));
 				break;
 			}
 

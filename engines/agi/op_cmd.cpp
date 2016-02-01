@@ -1123,12 +1123,12 @@ void cmdCall(AgiGame *state, uint8 *parameter) {
 	// CM: we don't save sIP because set.scan.start can be
 	//     used in a called script (fixes xmas demo)
 	oldCIP = state->_curLogic->cIP;
-	oldLognum = state->lognum;
+	oldLognum = state->curLogicNr;
 
 	state->_vm->runLogic(logicNr);
 
-	state->lognum = oldLognum;
-	state->_curLogic = &state->logics[state->lognum];
+	state->curLogicNr = oldLognum;
+	state->_curLogic = &state->logics[state->curLogicNr];
 	state->_curLogic->cIP = oldCIP;
 }
 
@@ -2355,7 +2355,7 @@ void cmdUnknown(AgiGame *state, uint8 *parameter) {
  * Execute a logic script
  * @param n  Number of the logic resource to execute
  */
-int AgiEngine::runLogic(int n) {
+int AgiEngine::runLogic(int16 logicNr) {
 	AgiGame *state = &_game;
 	uint8 op = 0;
 	uint8 p[CMD_BSIZE] = { 0 };
@@ -2367,24 +2367,24 @@ int AgiEngine::runLogic(int n) {
 	state->max_logics = 0;
 
 	debugC(2, kDebugLevelScripts, "=================");
-	debugC(2, kDebugLevelScripts, "runLogic(%d)", n);
+	debugC(2, kDebugLevelScripts, "runLogic(%d)", logicNr);
 
-	sp.script = n;
+	sp.script = logicNr;
 	sp.curIP = 0;
 	_game.execStack.push_back(sp);
 
 	// If logic not loaded, load it
-	if (~_game.dirLogic[n].flags & RES_LOADED) {
-		debugC(4, kDebugLevelScripts, "logic %d not loaded!", n);
-		agiLoadResource(RESOURCETYPE_LOGIC, n);
+	if (~_game.dirLogic[logicNr].flags & RES_LOADED) {
+		debugC(4, kDebugLevelScripts, "logic %d not loaded!", logicNr);
+		agiLoadResource(RESOURCETYPE_LOGIC, logicNr);
 	}
 
-	_game.lognum = n;
-	_game._curLogic = &_game.logics[_game.lognum];
+	_game.curLogicNr = logicNr;
+	_game._curLogic = &_game.logics[_game.curLogicNr];
 
 	_game._curLogic->cIP = _game._curLogic->sIP;
 
-	while (state->_curLogic->cIP < _game.logics[n].size && !(shouldQuit() || _restartGame)) {
+	while (state->_curLogic->cIP < _game.logics[logicNr].size && !(shouldQuit() || _restartGame)) {
 		// TODO: old code, needs to be adjusted
 #if 0
 		if (_debug.enabled) {
@@ -2413,14 +2413,14 @@ int AgiEngine::runLogic(int n) {
 
 		switch (op = *(state->_curLogic->data + state->_curLogic->cIP++)) {
 		case 0xff:	// if (open/close)
-			testIfCode(n);
+			testIfCode(logicNr);
 			break;
 		case 0xfe:	// goto
 			// +2 covers goto size
 			state->_curLogic->cIP += 2 + ((int16)READ_LE_UINT16(state->_curLogic->data + state->_curLogic->cIP));
 			break;
 		case 0x00:	// return
-			debugC(2, kDebugLevelScripts, "%sreturn() // Logic %d", st, n);
+			debugC(2, kDebugLevelScripts, "%sreturn() // Logic %d", st, logicNr);
 			debugC(2, kDebugLevelScripts, "=================");
 
 //			if (getVersion() < 0x2000) {

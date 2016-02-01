@@ -439,7 +439,7 @@ struct AgiGame {
 
 	uint16 specialMenuTriggerKey;	/**< key to trigger menu for platforms except PC */
 
-	int lognum;				/**< current logic number */
+	int16 curLogicNr;				/**< current logic number */
 	Common::Array<ScriptPos> execStack;
 
 	// internal flags
@@ -866,7 +866,7 @@ private:
 public:
 	int decodeLogic(int16 logicNr);
 	void unloadLogic(int16 logicNr);
-	int runLogic(int);
+	int runLogic(int16 logicNr);
 	void debugConsole(int, int, const char *);
 	int testIfCode(int);
 	void executeAgiCommand(uint8, uint8 *);

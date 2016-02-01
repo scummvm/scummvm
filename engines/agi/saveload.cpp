@@ -148,7 +148,7 @@ int AgiEngine::saveGame(const Common::String &fileName, const Common::String &de
 	out->writeSint16BE((int16)_text->getWindowRowMin());
 
 	out->writeSint16BE((int16)_game.inputMode);
-	out->writeSint16BE((int16)_game.lognum);
+	out->writeSint16BE((int16)_game.curLogicNr);
 
 	out->writeSint16BE((int16)_game.playerControl);
 	out->writeSint16BE((int16)shouldQuit());
@@ -473,7 +473,7 @@ int AgiEngine::loadGame(const Common::String &fileName, bool checkId) {
 		_game.inputMode = INPUTMODE_NORMAL;
 	}
 
-	_game.lognum = in->readSint16BE();
+	_game.curLogicNr = in->readSint16BE();
 
 	_game.playerControl = in->readSint16BE();
 	if (in->readSint16BE())
