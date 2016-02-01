@@ -482,7 +482,7 @@ bool LabEngine::doActionRuleSub(int16 action, int16 roomNum, const CloseData *cl
 	if (closePtr) {
 		RuleList *rules = &(_rooms[_roomNum]._rules);
 
-		if (!rules && (roomNum == 0)) {
+		if (rules->empty() && (roomNum == 0)) {
 			_resource->readViews(roomNum);
 			rules = &(_rooms[roomNum]._rules);
 		}
@@ -530,7 +530,7 @@ bool LabEngine::doOperateRuleSub(int16 itemNum, int16 roomNum, const CloseData *
 		if (closePtr->_closeUpType > 0) {
 			RuleList *rules = &(_rooms[roomNum]._rules);
 
-			if (!rules && (roomNum == 0)) {
+			if (rules->empty() && (roomNum == 0)) {
 				_resource->readViews(roomNum);
 				rules = &(_rooms[roomNum]._rules);
 			}
