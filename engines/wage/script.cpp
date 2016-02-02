@@ -164,13 +164,13 @@ bool Script::execute(World *world, int loopCount, Common::String *inputText, Des
 			_handled = true;
 	} else if (!input.empty()) {
 		input.toLowercase();
-		if (input.equals("n") || input.contains("north")) {
+		if (input.contains("north")) {
 			_handled = _engine->handleMoveCommand(NORTH, "north");
-		} else if (input.equals("e") || input.contains("east")) {
+		} else if (input.contains("east")) {
 			_handled = _engine->handleMoveCommand(EAST, "east");
-		} else if (input.equals("s") || input.contains("south")) {
+		} else if (input.contains("south")) {
 			_handled = _engine->handleMoveCommand(SOUTH, "south");
-		} else if (input.equals("w") || input.contains("west")) {
+		} else if (input.contains("west")) {
 			_handled = _engine->handleMoveCommand(WEST, "west");
 		} else if (input.hasPrefix("take ")) {
 			_handled = _engine->handleTakeCommand(&input.c_str()[5]);
