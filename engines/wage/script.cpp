@@ -163,7 +163,6 @@ bool Script::execute(World *world, int loopCount, Common::String *inputText, Des
 		if (globalHandled)
 			_handled = true;
 	} else if (!input.empty()) {
-		input.toLowercase();
 		if (input.contains("north")) {
 			_handled = _engine->handleMoveCommand(NORTH, "north");
 		} else if (input.contains("east")) {
