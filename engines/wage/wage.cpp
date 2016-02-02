@@ -176,8 +176,10 @@ void WageEngine::processEvents() {
 				break;
 
 			default:
-				if (event.kbd.flags & Common::KBD_ALT || event.kbd.flags & Common::KBD_CTRL) {
-					warning("STUB: Shortcuts");
+				if (event.kbd.flags & (Common::KBD_ALT | Common::KBD_CTRL | Common::KBD_META)) {
+					if (event.kbd.ascii >= 0x20 && event.kbd.ascii <= 0x7f) {
+						_gui->processMenuShortCut(event.kbd.flags, event.kbd.ascii);
+					}
 					break;
 				}
 

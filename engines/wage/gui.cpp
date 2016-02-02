@@ -588,6 +588,11 @@ void Gui::regenWeaponsMenu() {
 	_menu->regenWeaponsMenu();
 }
 
+void Gui::processMenuShortCut(byte flags, uint16 ascii) {
+	_menu->processMenuShortCut(flags, ascii);
+}
+
+
 void Gui::mouseMove(int x, int y) {
 	if (_menu->_menuActivated) {
 		if (_menu->mouseMove(x, y))

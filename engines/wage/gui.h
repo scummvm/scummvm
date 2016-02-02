@@ -100,6 +100,7 @@ public:
 	const Graphics::Font *getFont(const char *name, Graphics::FontManager::FontUsage fallback);
 	void regenCommandsMenu();
 	void regenWeaponsMenu();
+	void processMenuShortCut(byte flags, uint16 ascii);
 
 private:
 	void paintBorder(Graphics::Surface *g, Common::Rect &r, WindowType windowType);
