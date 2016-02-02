@@ -268,7 +268,7 @@ SciEvent EventManager::getScummVMEvent() {
 		// SCI_K_SHIFT_F1 == 84 << 8
 		input.character = SCI_KEY_F1 + ((scummVMKeycode - Common::KEYCODE_F1)<<8);
 		if (ourModifiers & Common::KBD_SHIFT)
-			input.character = scummVMKeycode + 0x1900;
+			input.character = input.character + 0x1900;
 	} else {
 		// Special keys that need conversion
 		for (int i = 0; i < ARRAYSIZE(keyMappings); i++) {
