@@ -357,8 +357,9 @@ void GfxMenu::execute() {
 		_text->statusDraw();
 	} else {
 		if (_text->getWindowRowMin() == 0) {
-			// Playarea starts right at the stop, so instead of clearing that part, render it from playarea
+			// WORKAROUND: Playarea starts right at the stop, so instead of clearing that part, render it from playarea
 			// Required for at least Donald Duck
+			// This was not done by original AGI, which means the upper pixel line were cleared in this case.
 			_gfx->render_Block(0, (1 * FONT_VISUAL_HEIGHT) - 1, SCRIPT_WIDTH, FONT_VISUAL_HEIGHT);
 		} else {
 			_text->clearLine(0, 0);
