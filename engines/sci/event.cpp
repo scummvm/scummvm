@@ -38,13 +38,13 @@ struct ScancodeRow {
 	const char *keys;
 };
 
-const ScancodeRow s_scancodeRows[] = {
+static const ScancodeRow scancodeAltifyRows[] = {
 	{ 0x10, "QWERTYUIOP[]"  },
 	{ 0x1e, "ASDFGHJKL;'\\" },
 	{ 0x2c, "ZXCVBNM,./"    }
 };
 
-const byte codepagemap_88591toDOS[0x80] = {
+static const byte codepagemap_88591toDOS[0x80] = {
 	 '?',  '?',  '?',  '?',  '?',  '?',  '?',  '?',  '?',  '?',  '?',  '?',  '?',  '?',  '?',  '?', // 0x8x
 	 '?',  '?',  '?',  '?',  '?',  '?',  '?',  '?',  '?',  '?',  '?',  '?',  '?',  '?',  '?',  '?', // 0x9x
 	 '?', 0xad, 0x9b, 0x9c,  '?', 0x9d,  '?', 0x9e,  '?',  '?', 0xa6, 0xae, 0xaa,  '?',  '?',  '?', // 0xAx
@@ -61,7 +61,7 @@ struct SciKeyConversion {
 	int sciKeyNumlockOn;
 };
 
-const SciKeyConversion keyMappings[] = {
+static const SciKeyConversion keyMappings[] = {
 	{ Common::KEYCODE_UP          , SCI_KEY_UP     , SCI_KEY_UP     },
 	{ Common::KEYCODE_DOWN        , SCI_KEY_DOWN   , SCI_KEY_DOWN   },
 	{ Common::KEYCODE_RIGHT       , SCI_KEY_RIGHT  , SCI_KEY_RIGHT  },
@@ -96,7 +96,7 @@ struct MouseEventConversion {
 	short sciType;
 };
 
-const MouseEventConversion mouseEventMappings[] = {
+static const MouseEventConversion mouseEventMappings[] = {
 	{ Common::EVENT_LBUTTONDOWN,   SCI_EVENT_MOUSE_PRESS },
 	{ Common::EVENT_RBUTTONDOWN,   SCI_EVENT_MOUSE_PRESS },
 	{ Common::EVENT_MBUTTONDOWN,   SCI_EVENT_MOUSE_PRESS },
@@ -116,9 +116,9 @@ static int altify(int ch) {
 	int row;
 	int c = toupper((char)ch);
 
-	for (row = 0; row < ARRAYSIZE(s_scancodeRows); row++) {
-		const char *keys = s_scancodeRows[row].keys;
-		int offset = s_scancodeRows[row].offset;
+	for (row = 0; row < ARRAYSIZE(scancodeAltifyRows); row++) {
+		const char *keys = scancodeAltifyRows[row].keys;
+		int offset = scancodeAltifyRows[row].offset;
 
 		while (*keys) {
 			if (*keys == c)
