@@ -324,9 +324,6 @@ void GfxMenu::execute() {
 		}
 	}
 
-	// original AGI did not do this, at least when the menu was called by scripts
-	_vm->inGameTimerPause();
-
 	if (viaKeyboard) {
 		_vm->cycleInnerLoopActive(CYCLE_INNERLOOP_MENU_VIA_KEYBOARD);
 	} else if (viaMouse) {
@@ -336,9 +333,6 @@ void GfxMenu::execute() {
 	do {
 		_vm->mainCycle();
 	} while (_vm->cycleInnerLoopIsActive() && !(_vm->shouldQuit() || _vm->_restartGame));
-
-	// original AGI did not do this, at least when the menu was called by scripts
-	_vm->inGameTimerResume();
 
 	if (_drawnMenuNr >= 0) {
 		removeActiveMenu(_drawnMenuNr);
