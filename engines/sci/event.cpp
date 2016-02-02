@@ -94,16 +94,15 @@ const SciKeyConversion keyMappings[] = {
 struct MouseEventConversion {
 	Common::EventType commonType;
 	short sciType;
-	short data;
 };
 
 const MouseEventConversion mouseEventMappings[] = {
-	{ Common::EVENT_LBUTTONDOWN,   SCI_EVENT_MOUSE_PRESS, 1 },
-	{ Common::EVENT_RBUTTONDOWN,   SCI_EVENT_MOUSE_PRESS, 2 },
-	{ Common::EVENT_MBUTTONDOWN,   SCI_EVENT_MOUSE_PRESS, 3 },
-	{   Common::EVENT_LBUTTONUP, SCI_EVENT_MOUSE_RELEASE, 1 },
-	{   Common::EVENT_RBUTTONUP, SCI_EVENT_MOUSE_RELEASE, 2 },
-	{   Common::EVENT_MBUTTONUP, SCI_EVENT_MOUSE_RELEASE, 3 }
+	{ Common::EVENT_LBUTTONDOWN,   SCI_EVENT_MOUSE_PRESS },
+	{ Common::EVENT_RBUTTONDOWN,   SCI_EVENT_MOUSE_PRESS },
+	{ Common::EVENT_MBUTTONDOWN,   SCI_EVENT_MOUSE_PRESS },
+	{   Common::EVENT_LBUTTONUP, SCI_EVENT_MOUSE_RELEASE },
+	{   Common::EVENT_RBUTTONUP, SCI_EVENT_MOUSE_RELEASE },
+	{   Common::EVENT_MBUTTONUP, SCI_EVENT_MOUSE_RELEASE }
 };
 
 EventManager::EventManager(bool fontIsExtended) : _fontIsExtended(fontIsExtended) {
@@ -189,18 +188,20 @@ SciEvent EventManager::getScummVMEvent() {
 	for (int i = 0; i < ARRAYSIZE(mouseEventMappings); i++) {
 		if (mouseEventMappings[i].commonType == ev.type) {
 			input.type = mouseEventMappings[i].sciType;
-			input.data = mouseEventMappings[i].data;
 			// Sierra passed keyboard modifiers for mouse events, too.
 
 			// Sierra also set certain modifiers within their mouse interrupt handler
 			// This whole thing was probably meant for people using a mouse, that only featured 1 button
 			// So the user was able to press Ctrl and click the mouse button to create a right click.
-			switch (input.data) {
-			case 2: // right button click
+			switch (ev.type) {
+			case Common::EVENT_RBUTTONDOWN: // right button
+			case Common::EVENT_RBUTTONUP:
 				input.modifiers |= (SCI_KEYMOD_RSHIFT | SCI_KEYMOD_LSHIFT); // this value was hardcoded in the mouse interrupt handler
 				break;
-			case 3: //  middle button click
+			case Common::EVENT_MBUTTONDOWN: // middle button
+			case Common::EVENT_MBUTTONUP:
 				input.modifiers |= SCI_KEYMOD_CTRL; // this value was hardcoded in the mouse interrupt handler
+				break;
 			default:
 				break;
 			}

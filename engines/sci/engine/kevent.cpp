@@ -152,7 +152,7 @@ reg_t kGetEvent(EngineState *s, int argc, reg_t *argv) {
 	case SCI_EVENT_MOUSE_RELEASE:
 	case SCI_EVENT_MOUSE_PRESS:
 		// track left buttton clicks, if requested
-		if (curEvent.type == SCI_EVENT_MOUSE_PRESS && curEvent.data == 1 && g_debug_track_mouse_clicks) {
+		if (curEvent.type == SCI_EVENT_MOUSE_PRESS && curEvent.modifiers == 0 && g_debug_track_mouse_clicks) {
 			g_sci->getSciDebugger()->debugPrintf("Mouse clicked at %d, %d\n",
 						mousePos.x, mousePos.y);
 		}

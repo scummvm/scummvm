@@ -30,7 +30,7 @@ namespace Sci {
 
 struct SciEvent {
 	short type;
-	short data;
+	short data; // holds the ScummVM system keycode TODO: rename
 	short modifiers;
 	/**
 	 * For keyboard events: 'data' after applying
