@@ -30,16 +30,9 @@ namespace Sci {
 
 struct SciEvent {
 	short type;
-	short data; // holds the ScummVM system keycode TODO: rename
 	short modifiers;
 	/**
-	 * For keyboard events: 'data' after applying
-	 * the effects of 'modifiers', e.g. if
-	 *   type == SCI_EVT_KEYBOARD
-	 *   data == 'a'
-	 *   buckybits == SCI_EVM_LSHIFT
-	 * then
-	 *   character == 'A'
+	 * For keyboard events: the actual character of the key that was pressed
 	 * For 'Alt', characters are interpreted by their
 	 * PC keyboard scancodes.
 	 */

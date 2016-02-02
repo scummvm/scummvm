@@ -133,8 +133,8 @@ static int altify(int ch) {
 }
 
 SciEvent EventManager::getScummVMEvent() {
-	SciEvent input = { SCI_EVENT_NONE, 0, 0, 0, Common::Point(0, 0) };
-	SciEvent noEvent = { SCI_EVENT_NONE, 0, 0, 0, Common::Point(0, 0) };
+	SciEvent input = { SCI_EVENT_NONE, 0, 0, Common::Point(0, 0) };
+	SciEvent noEvent = { SCI_EVENT_NONE, 0, 0, Common::Point(0, 0) };
 
 	Common::EventManager *em = g_system->getEventManager();
 	Common::Event ev;
@@ -225,12 +225,14 @@ SciEvent EventManager::getScummVMEvent() {
 
 	bool numlockOn = (ev.kbd.flags & Common::KBD_NUM);
 
-	input.data = ev.kbd.keycode;
+	Common::KeyCode scummVMKeycode = ev.kbd.keycode;
+	byte scummVMKeyFlags = ev.kbd.flags;
+
 	input.character = ev.kbd.ascii;
 	input.type = SCI_EVENT_KEYBOARD;
 
-	if (input.data >= Common::KEYCODE_KP0 && input.data <= Common::KEYCODE_KP9) {
-		if (!(ev.kbd.flags & Common::KBD_NUM)) {
+	if (scummVMKeycode >= Common::KEYCODE_KP0 && scummVMKeycode <= Common::KEYCODE_KP9) {
+		if (!(scummVMKeyFlags & Common::KBD_NUM)) {
 			// HACK: Num-Lock not enabled
 			// We shouldn't get a valid ascii code in these cases. We fix it here, so that cursor keys
 			// on the numpad work properly.
@@ -254,24 +256,24 @@ SciEvent EventManager::getScummVMEvent() {
 			// multilingual SCI01 games
 			input.character = codepagemap_88591toDOS[input.character & 0x7f];
 		}
-		if (input.data == Common::KEYCODE_TAB) {
-			input.character = input.data = SCI_KEY_TAB;
+		if (scummVMKeycode == Common::KEYCODE_TAB) {
+			input.character = SCI_KEY_TAB;
 			if (ourModifiers & Common::KBD_SHIFT)
 				input.character = SCI_KEY_SHIFT_TAB;
 		}
-		if (input.data == Common::KEYCODE_DELETE)
-			input.data = input.character = SCI_KEY_DELETE;
-	} else if ((input.data >= Common::KEYCODE_F1) && input.data <= Common::KEYCODE_F10) {
+		if (scummVMKeycode == Common::KEYCODE_DELETE)
+			input.character = SCI_KEY_DELETE;
+	} else if ((scummVMKeycode >= Common::KEYCODE_F1) && scummVMKeycode <= Common::KEYCODE_F10) {
 		// SCI_K_F1 == 59 << 8
 		// SCI_K_SHIFT_F1 == 84 << 8
-		input.character = input.data = SCI_KEY_F1 + ((input.data - Common::KEYCODE_F1)<<8);
+		input.character = SCI_KEY_F1 + ((scummVMKeycode - Common::KEYCODE_F1)<<8);
 		if (ourModifiers & Common::KBD_SHIFT)
-			input.character = input.data + 0x1900;
+			input.character = scummVMKeycode + 0x1900;
 	} else {
 		// Special keys that need conversion
 		for (int i = 0; i < ARRAYSIZE(keyMappings); i++) {
-			if (keyMappings[i].scummVMKey == ev.kbd.keycode) {
-				input.character = input.data = numlockOn ? keyMappings[i].sciKeyNumlockOn : keyMappings[i].sciKeyNumlockOff;
+			if (keyMappings[i].scummVMKey == scummVMKeycode) {
+				input.character = numlockOn ? keyMappings[i].sciKeyNumlockOn : keyMappings[i].sciKeyNumlockOff;
 				break;
 			}
 		}
@@ -315,7 +317,7 @@ void EventManager::updateScreen() {
 }
 
 SciEvent EventManager::getSciEvent(unsigned int mask) {
-	SciEvent event = { 0, 0, 0, 0, Common::Point(0, 0) };
+	SciEvent event = { SCI_EVENT_NONE, 0, 0, Common::Point(0, 0) };
 
 	EventManager::updateScreen();
 

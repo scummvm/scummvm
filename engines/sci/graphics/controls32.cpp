@@ -79,7 +79,7 @@ void GfxControls32::kernelTexteditChange(reg_t controlObject) {
 				// TODO: Implement mouse support for cursor change
 				break;
 			case SCI_EVENT_KEYBOARD:
-				switch (curEvent.data) {
+				switch (curEvent.character) {
 				case SCI_KEY_BACKSPACE:
 					if (cursorPos > 0) {
 						cursorPos--; text.deleteChar(cursorPos);
@@ -131,12 +131,12 @@ void GfxControls32::kernelTexteditChange(reg_t controlObject) {
 					captureEvents = false;
 					break;
 				default:
-					if ((curEvent.modifiers & SCI_KEYMOD_CTRL) && curEvent.data == 99) {
+					if ((curEvent.modifiers & SCI_KEYMOD_CTRL) && curEvent.character == 'c') {
 						// Control-C in earlier SCI games (SCI0 - SCI1 middle)
 						// Control-C erases the whole line
 						cursorPos = 0; text.clear();
 						textChanged = true;
-					} else if (curEvent.data > 31 && curEvent.data < 256 && textSize < maxChars) {
+					} else if (curEvent.character > 31 && curEvent.character < 256 && textSize < maxChars) {
 						// insert pressed character
 						textAddChar = true;
 						textChanged = true;
@@ -158,14 +158,14 @@ void GfxControls32::kernelTexteditChange(reg_t controlObject) {
 				uint16 textWidth = 0;
 				while (*textPtr)
 					textWidth += font->getCharWidth((byte)*textPtr++);
-				textWidth += font->getCharWidth(curEvent.data);
+				textWidth += font->getCharWidth(curEvent.character);
 
 				// Does it fit?
 				if (textWidth >= rect.width()) {
 					return;
 				}
 
-				text.insertChar(curEvent.data, cursorPos++);
+				text.insertChar(curEvent.character, cursorPos++);
 
 				// Note: the following checkAltInput call might make the text
 				// too wide to fit, but SSCI fails to check that too.
