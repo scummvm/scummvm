@@ -201,7 +201,7 @@ void Menu::regenCommandsMenu() {
 
 	_commands->subitems.clear();
 
-	createWeaponsMenu(_commands);
+	createCommandsMenu(_commands);
 	calcMenuBounds(_commands);
 }
 
