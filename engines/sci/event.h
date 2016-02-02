@@ -29,14 +29,14 @@
 namespace Sci {
 
 struct SciEvent {
-	short type;
-	short modifiers;
+	uint16 type;
+	uint16 modifiers;
 	/**
 	 * For keyboard events: the actual character of the key that was pressed
 	 * For 'Alt', characters are interpreted by their
 	 * PC keyboard scancodes.
 	 */
-	short character;
+	uint16 character;
 
 	/**
 	 * The mouse position at the time the event was created.
