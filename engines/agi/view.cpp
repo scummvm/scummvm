@@ -627,8 +627,7 @@ void AgiEngine::updateScreenObjTable() {
 
 		// AGI 2.272 (ddp, xmas) doesn't test step_time_count!
 		if (loopNr != 4 && loopNr != screenObj->currentLoopNr) {
-			if (getVersion() <= 0x2272 ||
-			        screenObj->stepTimeCount == 1) {
+			if (getVersion() <= 0x2272 || screenObj->stepTimeCount == 1) {
 				setLoop(screenObj, loopNr);
 			}
 		}
