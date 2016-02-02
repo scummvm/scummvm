@@ -173,12 +173,24 @@ SciEvent EventManager::getScummVMEvent() {
 		return input;
 	}
 
-	int ourModifiers = em->getModifierState();
+	int	scummVMKeyFlags;
+
+	switch (ev.type) {
+	case Common::EVENT_KEYDOWN:
+	case Common::EVENT_KEYUP:
+		// Use keyboard modifiers directly in case this is a keyboard event
+		scummVMKeyFlags = ev.kbd.flags;
+		break;
+	default:
+		// Otherwise get them from EventManager
+		scummVMKeyFlags = em->getModifierState();
+		break;
+	}
 
 	input.modifiers =
-		((ourModifiers & Common::KBD_ALT) ? SCI_KEYMOD_ALT : 0) |
-		((ourModifiers & Common::KBD_CTRL) ? SCI_KEYMOD_CTRL : 0) |
-		((ourModifiers & Common::KBD_SHIFT) ? SCI_KEYMOD_LSHIFT | SCI_KEYMOD_RSHIFT : 0);
+		((scummVMKeyFlags & Common::KBD_ALT) ? SCI_KEYMOD_ALT : 0) |
+		((scummVMKeyFlags & Common::KBD_CTRL) ? SCI_KEYMOD_CTRL : 0) |
+		((scummVMKeyFlags & Common::KBD_SHIFT) ? SCI_KEYMOD_LSHIFT | SCI_KEYMOD_RSHIFT : 0);
 		// Caps lock and Scroll lock have been removed, cause we already handle upper
 		// case keys and Scroll lock doesn't seem to be used anywhere
 		//((ourModifiers & Common::KBD_CAPS) ? SCI_KEYMOD_CAPSLOCK : 0) |
@@ -226,7 +238,6 @@ SciEvent EventManager::getScummVMEvent() {
 	bool numlockOn = (ev.kbd.flags & Common::KBD_NUM);
 
 	Common::KeyCode scummVMKeycode = ev.kbd.keycode;
-	byte scummVMKeyFlags = ev.kbd.flags;
 
 	input.character = ev.kbd.ascii;
 	input.type = SCI_EVENT_KEYBOARD;
@@ -258,7 +269,7 @@ SciEvent EventManager::getScummVMEvent() {
 		}
 		if (scummVMKeycode == Common::KEYCODE_TAB) {
 			input.character = SCI_KEY_TAB;
-			if (ourModifiers & Common::KBD_SHIFT)
+			if (scummVMKeyFlags & Common::KBD_SHIFT)
 				input.character = SCI_KEY_SHIFT_TAB;
 		}
 		if (scummVMKeycode == Common::KEYCODE_DELETE)
@@ -267,7 +278,7 @@ SciEvent EventManager::getScummVMEvent() {
 		// SCI_K_F1 == 59 << 8
 		// SCI_K_SHIFT_F1 == 84 << 8
 		input.character = SCI_KEY_F1 + ((scummVMKeycode - Common::KEYCODE_F1)<<8);
-		if (ourModifiers & Common::KBD_SHIFT)
+		if (scummVMKeyFlags & Common::KBD_SHIFT)
 			input.character = input.character + 0x1900;
 	} else {
 		// Special keys that need conversion
@@ -282,13 +293,13 @@ SciEvent EventManager::getScummVMEvent() {
 	// When Ctrl AND Alt are pressed together with a regular key, Linux will give us control-key, Windows will give
 	//  us the actual key. My opinion is that windows is right, because under DOS the keys worked the same, anyway
 	//  we support the other case as well
-	if ((ourModifiers & Common::KBD_ALT) && input.character > 0 && input.character < 27)
+	if ((scummVMKeyFlags & Common::KBD_ALT) && input.character > 0 && input.character < 27)
 		input.character += 96; // 0x01 -> 'a'
 
 	// Scancodify if appropriate
-	if (ourModifiers & Common::KBD_ALT)
+	if (scummVMKeyFlags & Common::KBD_ALT)
 		input.character = altify(input.character);
-	if (getSciVersion() <= SCI_VERSION_1_MIDDLE && (ourModifiers & Common::KBD_CTRL) && input.character > 0 && input.character < 27)
+	if (getSciVersion() <= SCI_VERSION_1_MIDDLE && (scummVMKeyFlags & Common::KBD_CTRL) && input.character > 0 && input.character < 27)
 		input.character += 96; // 0x01 -> 'a'
 
 	// If no actual key was pressed (e.g. if only a modifier key was pressed),
