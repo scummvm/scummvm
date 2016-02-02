@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
 "POT-Creation-Date: 2016-02-01 21:58+0000\n"
-"PO-Revision-Date: 2015-11-06 09:23+0300\n"
+"PO-Revision-Date: 2016-02-02 20:38+0300\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Russian\n"
 "Language: Russian\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
 "%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
-"X-Generator: Poedit 1.5.5\n"
+"X-Generator: Poedit 1.8.6\n"
 
 #: gui/about.cpp:94
 #, c-format
@@ -38,7 +38,7 @@ msgstr "Показать скрытые файлы"
 
 #: gui/browser.cpp:68
 msgid "Show files marked with the hidden attribute"
-msgstr "Показать файлы с атрибутом \"скрыть\""
+msgstr "Показать файлы с атрибутом \"скрытый\""
 
 #: gui/browser.cpp:72
 msgid "Go up"
@@ -549,7 +549,7 @@ msgstr "~Д~обавить игру..."
 
 #: gui/launcher.cpp:638 gui/launcher.cpp:645
 msgid "Hold Shift for Mass Add"
-msgstr "Удерживайте клавишу Shift для того, чтобы добавить несколько игр"
+msgstr "Удерживайте клавишу Shift, чтобы добавить несколько игр"
 
 #: gui/launcher.cpp:640
 msgid "~E~dit Game..."
@@ -1006,7 +1006,7 @@ msgstr "Где темы:"
 #: gui/options.cpp:1148 gui/options.cpp:1150 gui/options.cpp:1151
 msgid "Specifies path to additional data used by all games or ScummVM"
 msgstr ""
-"Указывает путь к дополнительным файлам данных, используемых всеми играми, "
+"Указывает путь к дополнительным файлам данных, используемых всеми играми "
 "либо ScummVM"
 
 #: gui/options.cpp:1157
@@ -1863,7 +1863,7 @@ msgstr "Масштаб главного экрана:"
 
 #: backends/platform/ds/arm9/source/dsoptions.cpp:107
 msgid "Hardware scale (fast, but low quality)"
-msgstr "Хардварное масштабирование (быстро, но низкого качества)"
+msgstr "Аппаратное масштабирование (быстро, но низкого качества)"
 
 #: backends/platform/ds/arm9/source/dsoptions.cpp:108
 msgid "Software scale (good quality, but slower)"
@@ -2142,7 +2142,7 @@ msgstr "Отключть SMB"
 
 #: backends/platform/wii/options.cpp:143
 msgid "DVD Mounted successfully"
-msgstr "DVD подключен успешно"
+msgstr "DVD подключён успешно"
 
 #: backends/platform/wii/options.cpp:146
 msgid "Error while mounting the DVD"
@@ -2150,7 +2150,7 @@ msgstr "Ошибка во время подключения DVD"
 
 #: backends/platform/wii/options.cpp:148
 msgid "DVD not mounted"
-msgstr "DVD не подключен"
+msgstr "DVD не подключён"
 
 #: backends/platform/wii/options.cpp:161
 msgid "Network up, share mounted"
@@ -2412,8 +2412,8 @@ msgid ""
 msgstr ""
 "ScummVM обнаружил у вас сохранения игры Drascula в старом формате, которые "
 "необходимо преобразовать.\n"
-"Старый формат больше не поддерживается, и вы не сможете загрузить сохранения "
-"если не преобразуете их.\n"
+"Старый формат больше не поддерживается, и вы не сможете загрузить "
+"сохранения, если не преобразуете их.\n"
 "\n"
 "Нажмите ОК, чтобы перевести их в новый формат сейчас, в противном случае это "
 "сообщение появится снова при следующем запуске игры.\n"
@@ -2577,7 +2577,7 @@ msgstr ""
 "Кажется, вы пытаетесь использовать устройство\n"
 "General MIDI, но эта игра поддерживает только\n"
 "Roland MT32 MIDI. Мы попробуем подобрать General\n"
-"MIDI инструменты, похожие на Roland MT32, но\n"
+"MIDI-инструменты, похожие на Roland MT32, но\n"
 "может так получиться, что некоторые треки будут\n"
 "сыграны неверно."
 
@@ -2619,7 +2619,7 @@ msgid ""
 "\n"
 msgstr ""
 "%d оригинальных файлов сохранения были успешно импортированы в ScummVM.\n"
-"Если вы захотите импортировать оригинпльные сохранения, вам нужно будет\n"
+"Если вы захотите импортировать оригинальные сохранения, вам нужно будет\n"
 "открыть отладочную консоль ScummVM и ввести команду 'import_savefile'.\n"
 "\n"
 
@@ -2692,8 +2692,9 @@ msgid ""
 "Press OK to convert them now, otherwise you will be asked next time.\n"
 msgstr ""
 "ScummVM обнаружил у вас старые сохранения игры Nippon Safes, которые "
-"необходимо переименовать. Старые названия больше не поддерживаются, и "
-"поэтому вы не сможете загрузить сохранения, если не переименуете их.\n"
+"необходимо переименовать.\n"
+"Старые названия больше не поддерживаются, и поэтому вы не сможете загрузить "
+"сохранения, если не переименуете их.\n"
 "\n"
 "Нажмите ОК, чтобы переименовать их сейчас, в противном случае это же "
 "сообщение появится при следующем запуске игры.\n"
@@ -2720,7 +2721,7 @@ msgstr "Неверное имя файла сохранения"
 
 #: engines/pegasus/pegasus.cpp:2507
 msgid "Up/Zoom In/Move Forward/Open Doors"
-msgstr "Вверх/Уменьшить масштаб/Вперёд/Отрыть двери"
+msgstr "Вверх/Уменьшить масштаб/Вперёд/Открыть двери"
 
 #: engines/pegasus/pegasus.cpp:2508
 msgid "Down/Zoom Out"
@@ -2799,7 +2800,7 @@ msgstr ""
 
 #: engines/sci/detection.cpp:425
 msgid "Use CD audio"
-msgstr "Использовать CD аудио"
+msgstr "Использовать CD-аудио"
 
 #: engines/sci/detection.cpp:426
 msgid "Use CD audio instead of in-game audio, if available"
@@ -3370,7 +3371,7 @@ msgstr "Переключить показ инвентаря/очков IQ"
 
 #: engines/scumm/help.cpp:293
 msgid "Toggle Keyboard/Mouse Fighting (*)"
-msgstr "Переключить управление боями Клввиатурой/Мышью (*)"
+msgstr "Переключить управление боями Клавиатурой/Мышью (*)"
 
 #: engines/scumm/help.cpp:295
 msgid "* Keyboard Fighting is always on,"
@@ -3378,7 +3379,7 @@ msgstr "* Управление клавиатурой всегда включено,"
 
 #: engines/scumm/help.cpp:296
 msgid "  so despite the in-game message this"
-msgstr "  твк что несмотря на сообщение игры,"
+msgstr "  так что, несмотря на сообщение игры,"
 
 #: engines/scumm/help.cpp:297
 msgid "  actually toggles Mouse Fighting Off/On"
@@ -3510,7 +3511,7 @@ msgid ""
 msgstr ""
 "Сейчас должна запуститься игра Maniac Mansion. Но чтобы это работало, файлы "
 "игры Maniac Mansion должны быть скопированы в директорию 'Maniac' внутри "
-"директории игры Tentacle, и сама игра должна быть добавлена в ScummVM."
+"директории игры Tentacle и сама игра должна быть добавлена в ScummVM."
 
 #: engines/scumm/players/player_v3m.cpp:129
 msgid ""
@@ -3550,7 +3551,7 @@ msgstr "Вступление с флоппиков"
 
 #: engines/sky/detection.cpp:45
 msgid "Use the floppy version's intro (CD version only)"
-msgstr "Использовать вступление с гибких дисков (только для CD версии игры)"
+msgstr "Использовать вступление с гибких дисков (только для CD-версии игры)"
 
 #: engines/sword1/animation.cpp:524
 #, c-format
@@ -3637,7 +3638,7 @@ msgid ""
 "The teenagent.dat file is compressed and zlib hasn't been included in this "
 "executable. Please decompress it"
 msgstr ""
-"Файл teenagent.dat сжат, но zlib не включено в эту программу. Пожалуйста, "
+"Файл teenagent.dat сжат, но zlib не включён в эту программу. Пожалуйста, "
 "распакуйте его"
 
 #: engines/wintermute/detection.cpp:58
@@ -3656,7 +3657,7 @@ msgstr ""
 
 #: engines/zvision/detection_tables.h:61
 msgid "Double FPS"
-msgstr "Двойноq FPS"
+msgstr "Двойной FPS"
 
 #: engines/zvision/detection_tables.h:62
 msgid "Increase framerate from 30 to 60 FPS"
@@ -3676,7 +3677,7 @@ msgstr "Выключить анимацию во время поворотов"
 
 #: engines/zvision/detection_tables.h:82
 msgid "Disable animation while turning in panorama mode"
-msgstr "Выключить анимацию во время поворотов в режиме панормаы"
+msgstr "Выключить анимацию во время поворотов в режиме панорамы"
 
 #: engines/zvision/detection_tables.h:91
 msgid "Use high resolution MPEG video"
@@ -3685,7 +3686,7 @@ msgstr "Использовать видео MPEG высокого разрешения"
 #: engines/zvision/detection_tables.h:92
 msgid "Use MPEG video from the DVD version, instead of lower resolution AVI"
 msgstr ""
-"Использовать MPEG видео из DVD версии, вместо видео низкого разрешения в "
+"Использовать MPEG-видео из DVD-версии вместо видео низкого разрешения в "
 "формате AVI"
 
 #~ msgid "EGA undithering"
