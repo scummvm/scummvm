@@ -288,11 +288,9 @@ bool AgiEngine::handleMouseClicks(uint16 &key) {
 	if (!cycleInnerLoopIsActive()) {
 		// Only do this, when no inner loop is currently active
 		Common::Rect displayLineRect(DISPLAY_WIDTH, FONT_DISPLAY_HEIGHT);
-		int16 statusRow = _text->statusRow_Get();
-
-		displayLineRect.moveTo(0, statusRow * FONT_DISPLAY_HEIGHT);
 
 		if (displayLineRect.contains(_mouse.pos)) {
+			// Mouse is inside first line of the screen
 		    if (getFlag(VM_FLAG_MENUS_ACCESSIBLE) && _menu->isAvailable()) {
 				_menu->delayedExecuteViaMouse();
 				key = 0; // eat event
