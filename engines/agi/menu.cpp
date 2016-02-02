@@ -115,7 +115,7 @@ void GfxMenu::addMenuItem(const char *menuItemText, uint16 controllerSlot) {
 		if (menuItemEntry->textLen + curMenuEntry->column < (FONT_COLUMN_CHARACTERS - 1)) {
 			_setupMenuItemColumn = curMenuEntry->column;
 		} else {
-			_setupMenuItemColumn = ( FONT_COLUMN_CHARACTERS - 1 ) - menuItemEntry->textLen;
+			_setupMenuItemColumn = (FONT_COLUMN_CHARACTERS - 1) - menuItemEntry->textLen;
 		}
 	}
 
@@ -408,7 +408,7 @@ void GfxMenu::drawMenu(int16 selectedMenuNr, int16 selectedMenuItemNr) {
 	GuiMenuItemEntry *itemEntry = _itemArray[menuEntry->firstItemNr];
 	int16 itemNr = menuEntry->firstItemNr;
 	int16 itemCount = menuEntry->itemCount;
-	
+
 	// draw menu name as inverted
 	drawMenuName(selectedMenuNr, true);
 

@@ -137,13 +137,13 @@ int AgiEngine::agiInit() {
 	switch (getVersion() >> 12) {
 	case 2:
 		debug("Emulating Sierra AGI v%x.%03x",
-				(int)(getVersion() >> 12) & 0xF,
-				(int)(getVersion()) & 0xFFF);
+		      (int)(getVersion() >> 12) & 0xF,
+		      (int)(getVersion()) & 0xFFF);
 		break;
 	case 3:
 		debug("Emulating Sierra AGI v%x.002.%03x",
-				(int)(getVersion() >> 12) & 0xF,
-				(int)(getVersion()) & 0xFFF);
+		      (int)(getVersion() >> 12) & 0xF,
+		      (int)(getVersion()) & 0xFFF);
 		break;
 	}
 
@@ -159,7 +159,7 @@ int AgiEngine::agiInit() {
 	if (_game.gameFlags & ID_AGDS)
 		debug(1, "AGDS mode enabled.");
 
-	ec = _loader->init();	// load vol files, etc
+	ec = _loader->init();   // load vol files, etc
 
 	if (ec == errOK)
 		ec = _loader->loadObjects(OBJECTS);
@@ -214,8 +214,8 @@ void AgiEngine::agiUnloadResources() {
 int AgiEngine::agiDeinit() {
 	int ec;
 
-	_words->clearEgoWords();		// remove all words from memory
-	agiUnloadResources();	// unload resources in memory
+	_words->clearEgoWords(); // remove all words from memory
+	agiUnloadResources();    // unload resources in memory
 	_loader->unloadResource(RESOURCETYPE_LOGIC, 0);
 	ec = _loader->deinit();
 	unloadObjects();
@@ -428,7 +428,7 @@ void AgiEngine::initialize() {
 		// Default sound is the proper PCJr emulation
 		_soundemu = SOUND_EMU_PCJR;
 	} else {
-		switch (MidiDriver::getMusicType(MidiDriver::detectDevice(MDT_PCSPK|MDT_AMIGA|MDT_ADLIB|MDT_PCJR|MDT_MIDI))) {
+		switch (MidiDriver::getMusicType(MidiDriver::detectDevice(MDT_PCSPK | MDT_AMIGA | MDT_ADLIB | MDT_PCJR | MDT_MIDI))) {
 		case MT_PCSPK:
 			_soundemu = SOUND_EMU_PC;
 			break;

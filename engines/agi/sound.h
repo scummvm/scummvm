@@ -27,11 +27,11 @@
 
 namespace Agi {
 
-#define SOUND_EMU_NONE	0
-#define SOUND_EMU_PC	1
-#define SOUND_EMU_PCJR	2
-#define SOUND_EMU_MAC	3
-#define SOUND_EMU_AMIGA	4
+#define SOUND_EMU_NONE  0
+#define SOUND_EMU_PC    1
+#define SOUND_EMU_PCJR  2
+#define SOUND_EMU_MAC   3
+#define SOUND_EMU_AMIGA 4
 #define SOUND_EMU_APPLE2GS 5
 #define SOUND_EMU_COCO3 6
 #define SOUND_EMU_MIDI 7
@@ -62,9 +62,9 @@ struct AgiNote {
  * starts (The first 16-bit little endian word, to be precise).
  */
 enum AgiSoundEmuType {
-	AGI_SOUND_SAMPLE	= 0x0001,
-	AGI_SOUND_MIDI		= 0x0002,
-	AGI_SOUND_4CHN		= 0x0008
+	AGI_SOUND_SAMPLE    = 0x0001,
+	AGI_SOUND_MIDI      = 0x0002,
+	AGI_SOUND_4CHN      = 0x0008
 };
 
 class SoundMgr;

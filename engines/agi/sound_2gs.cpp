@@ -96,7 +96,7 @@ void SoundGen2GS::play(int resnum) {
 	AgiSoundEmuType type;
 
 	type = (AgiSoundEmuType)_vm->_game.sounds[resnum]->type();
-	assert (type == AGI_SOUND_SAMPLE || type == AGI_SOUND_MIDI);
+	assert(type == AGI_SOUND_SAMPLE || type == AGI_SOUND_MIDI);
 
 	if (_vm->_soundemu != SOUND_EMU_APPLE2GS) {
 		warning("Trying to play sample or MIDI resource but not using Apple IIGS sound emulation mode");
@@ -376,7 +376,7 @@ void SoundGen2GS::midiNoteOn(int channel, int note, int velocity) {
 	}
 
 	// Allocate a generator for the note.
-	IIgsGenerator* generator = allocateGenerator();
+	IIgsGenerator *generator = allocateGenerator();
 	generator->curInstrument = _channels[channel].getInstrument();
 	const IIgsInstrumentHeader *curInstrument = generator->curInstrument;
 
@@ -400,26 +400,26 @@ void SoundGen2GS::midiNoteOn(int channel, int note, int velocity) {
 		wb++;
 
 	// Prepare the generator.
-	generator->osc[0].base	= curInstrument->wavetableBase + curInstrument->wave[0][wa].offset;
-	generator->osc[0].size	= curInstrument->wave[0][wa].size;
-	generator->osc[0].pd	= doubleToFrac(midiKeyToFreq(note, (double)curInstrument->wave[0][wa].tune / 256.0) / (double)_sampleRate);
-	generator->osc[0].p		= 0;
-	generator->osc[0].halt	= curInstrument->wave[0][wa].halt;
-	generator->osc[0].loop	= curInstrument->wave[0][wa].loop;
-	generator->osc[0].swap	= curInstrument->wave[0][wa].swap;
+	generator->osc[0].base  = curInstrument->wavetableBase + curInstrument->wave[0][wa].offset;
+	generator->osc[0].size  = curInstrument->wave[0][wa].size;
+	generator->osc[0].pd    = doubleToFrac(midiKeyToFreq(note, (double)curInstrument->wave[0][wa].tune / 256.0) / (double)_sampleRate);
+	generator->osc[0].p     = 0;
+	generator->osc[0].halt  = curInstrument->wave[0][wa].halt;
+	generator->osc[0].loop  = curInstrument->wave[0][wa].loop;
+	generator->osc[0].swap  = curInstrument->wave[0][wa].swap;
 	generator->osc[0].rightChannel = curInstrument->wave[0][wa].rightChannel;
 
-	generator->osc[1].base	= curInstrument->wavetableBase + curInstrument->wave[1][wb].offset;
-	generator->osc[1].size	= curInstrument->wave[1][wb].size;
-	generator->osc[1].pd	= doubleToFrac(midiKeyToFreq(note, (double)curInstrument->wave[1][wb].tune / 256.0) / (double)_sampleRate);
-	generator->osc[1].p		= 0;
-	generator->osc[1].halt	= curInstrument->wave[1][wb].halt;
-	generator->osc[1].loop	= curInstrument->wave[1][wb].loop;
-	generator->osc[1].swap	= curInstrument->wave[1][wb].swap;
+	generator->osc[1].base  = curInstrument->wavetableBase + curInstrument->wave[1][wb].offset;
+	generator->osc[1].size  = curInstrument->wave[1][wb].size;
+	generator->osc[1].pd    = doubleToFrac(midiKeyToFreq(note, (double)curInstrument->wave[1][wb].tune / 256.0) / (double)_sampleRate);
+	generator->osc[1].p     = 0;
+	generator->osc[1].halt  = curInstrument->wave[1][wb].halt;
+	generator->osc[1].loop  = curInstrument->wave[1][wb].loop;
+	generator->osc[1].swap  = curInstrument->wave[1][wb].swap;
 	generator->osc[1].rightChannel = curInstrument->wave[1][wb].rightChannel;
 
-	generator->seg	= 0;
-	generator->a	= 0;
+	generator->seg  = 0;
+	generator->a    = 0;
 
 	// Print debug messages for instruments with swap mode or vibrato enabled
 	if (generator->osc[0].swap || generator->osc[1].swap)
@@ -475,7 +475,7 @@ IIgsMidi::IIgsMidi(uint8 *data, uint32 len, int resnum) : AgiSound() {
 static bool convertWave(Common::SeekableReadStream &source, int8 *dest, uint length) {
 	// Convert the wave from 8-bit unsigned to 8-bit signed format
 	for (uint i = 0; i < length; i++)
-		dest[i] = (int8) ((int) source.readByte() - ZERO_OFFSET);
+		dest[i] = (int8)((int)source.readByte() - ZERO_OFFSET);
 	return !(source.eos() || source.err());
 }
 
@@ -491,7 +491,7 @@ IIgsSample::IIgsSample(uint8 *data, uint32 len, int16 resourceNr) : AgiSound() {
 			// Apple IIGS Manhunter I: Sound resource 16 has only 16074 bytes
 			// of sample data although header says it should have 16384 bytes.
 			warning("Apple IIGS sample (%d) expected %d bytes, got %d bytes only",
-				resourceNr, _header.sampleSize, tailLen);
+			        resourceNr, _header.sampleSize, tailLen);
 
 			_header.sampleSize = (uint16) tailLen; // Use the part that's left
 		}
@@ -526,11 +526,11 @@ bool IIgsInstrumentHeader::read(Common::SeekableReadStream &stream, bool ignoreA
 		env[i].bp = intToFrac(stream.readByte());
 		env[i].inc = intToFrac(stream.readUint16LE()) >> 8;
 	}
-	seg			= stream.readByte();
-	/*priority	=*/ stream.readByte(); // Not needed. 32 in all tested data.
-	bend		= stream.readByte();
-	vibDepth	= stream.readByte();
-	vibSpeed	= stream.readByte();
+	seg         = stream.readByte();
+	/*priority  =*/ stream.readByte(); // Not needed. 32 in all tested data.
+	bend        = stream.readByte();
+	vibDepth    = stream.readByte();
+	vibSpeed    = stream.readByte();
 	stream.readByte(); // Not needed? 0 in all tested data.
 
 	waveCount[0] = stream.readByte();
@@ -548,9 +548,9 @@ bool IIgsInstrumentHeader::read(Common::SeekableReadStream &stream, bool ignoreA
 				wave[i][k].offset = 0;
 
 			// Parse the generator mode byte to separate fields.
-			wave[i][k].halt = b & 0x1;			// Bit 0     = HALT
-			wave[i][k].loop = !(b & 0x2);		// Bit 1     =!LOOP
-			wave[i][k].swap = (b & 0x6) == 0x6;	// Bit 1&2   = SWAP
+			wave[i][k].halt = b & 0x1;          // Bit 0     = HALT
+			wave[i][k].loop = !(b & 0x2);       // Bit 1     =!LOOP
+			wave[i][k].swap = (b & 0x6) == 0x6; // Bit 1&2   = SWAP
 			// channels seem to be reversed, verified with emulator + captured apple IIgs music
 			if (b & 0x10) {
 				wave[i][k].rightChannel = true; // Bit 4 set = right channel
@@ -597,13 +597,13 @@ bool IIgsInstrumentHeader::finalize(int8 *wavetable, uint32 wavetableSize) {
 }
 
 bool IIgsSampleHeader::read(Common::SeekableReadStream &stream) {
-	type				= stream.readUint16LE();
-	pitch				= stream.readByte();
-	unknownByte_Ofs3	= stream.readByte();
-	volume				= stream.readByte();
-	unknownByte_Ofs5	= stream.readByte();
-	instrumentSize		= stream.readUint16LE();
-	sampleSize			= stream.readUint16LE();
+	type                = stream.readUint16LE();
+	pitch               = stream.readByte();
+	unknownByte_Ofs3    = stream.readByte();
+	volume              = stream.readByte();
+	unknownByte_Ofs5    = stream.readByte();
+	instrumentSize      = stream.readUint16LE();
+	sampleSize          = stream.readUint16LE();
 	// Read the instrument header *ignoring* its wave address info
 	return instrument.read(stream, true);
 }
@@ -651,22 +651,26 @@ bool SoundGen2GS::loadInstruments() {
 
 /** Older Apple IIGS AGI MIDI program change to instrument number mapping. */
 static const IIgsMidiProgramMapping progToInstMappingV1 = {
-	{19, 20, 22, 23, 21, 24, 5, 5, 5, 5,
-	6, 7, 10, 9, 11, 9, 15, 8, 5, 5,
-	17, 16, 18, 12, 14, 5, 5, 5, 5, 5,
-	0, 1, 2, 9, 3, 4, 15, 2, 2, 2,
-	25, 13, 13, 25},
+	{
+		19, 20, 22, 23, 21, 24, 5, 5, 5, 5,
+		6, 7, 10, 9, 11, 9, 15, 8, 5, 5,
+		17, 16, 18, 12, 14, 5, 5, 5, 5, 5,
+		0, 1, 2, 9, 3, 4, 15, 2, 2, 2,
+		25, 13, 13, 25
+	},
 	5
 };
 
 /** Newer Apple IIGS AGI MIDI program change to instrument number mapping.
     FIXME: Some instrument choices sound wrong. */
 static const IIgsMidiProgramMapping progToInstMappingV2 = {
-	{21, 22, 24, 25, 23, 26, 6, 6, 6, 6,
-	7, 9, 12, 8, 13, 11, 17, 10, 6, 6,
-	19, 18, 20, 14, 16, 6, 6, 6, 6, 6,
-	0, 1, 2, 4, 3, 5, 17, 2, 2, 2,
-	27, 15, 15, 27},
+	{
+		21, 22, 24, 25, 23, 26, 6, 6, 6, 6,
+		7, 9, 12, 8, 13, 11, 17, 10, 6, 6,
+		19, 18, 20, 14, 16, 6, 6, 6, 6, 6,
+		0, 1, 2, 4, 3, 5, 17, 2, 2, 2,
+		27, 15, 15, 27
+	},
 	6
 };
 
@@ -741,7 +745,7 @@ bool SoundGen2GS::loadInstrumentHeaders(Common::String &exePath, const IIgsExeIn
 	file.open(exePath);
 	if (file.size() != (int32)exeInfo.exeSize) {
 		debugC(3, kDebugLevelSound, "Apple IIGS executable (%s) has wrong size (Is %d, should be %d)",
-			exePath.c_str(), file.size(), exeInfo.exeSize);
+		       exePath.c_str(), file.size(), exeInfo.exeSize);
 	}
 
 	// Read the whole executable file into memory
@@ -762,7 +766,7 @@ bool SoundGen2GS::loadInstrumentHeaders(Common::String &exePath, const IIgsExeIn
 	uint16 instSetByteCount = data->readUint16LE();
 	if (instSetByteCount != exeInfo.instSet->byteCount) {
 		debugC(3, kDebugLevelSound, "Wrong instrument set size (Is %d, should be %d) in Apple IIGS executable (%s)",
-			instSetByteCount, exeInfo.instSet->byteCount, exePath.c_str());
+		       instSetByteCount, exeInfo.instSet->byteCount, exePath.c_str());
 	}
 
 	// Check instrument set's md5sum
@@ -770,7 +774,7 @@ bool SoundGen2GS::loadInstrumentHeaders(Common::String &exePath, const IIgsExeIn
 	Common::String md5str = Common::computeStreamMD5AsString(*data, exeInfo.instSet->byteCount);
 	if (md5str != exeInfo.instSet->md5) {
 		warning("Unknown Apple IIGS instrument set (md5: %s) in %s, trying to use it nonetheless",
-			md5str.c_str(), exePath.c_str());
+		        md5str.c_str(), exePath.c_str());
 	}
 
 	// Read in the instrument set one instrument at a time
@@ -783,7 +787,7 @@ bool SoundGen2GS::loadInstrumentHeaders(Common::String &exePath, const IIgsExeIn
 	for (uint i = 0; i < exeInfo.instSet->instCount; i++) {
 		if (!instrument.read(*data)) {
 			warning("Error loading Apple IIGS instrument (%d. of %d) from %s, not loading more instruments",
-					i + 1, exeInfo.instSet->instCount, exePath.c_str());
+			        i + 1, exeInfo.instSet->instCount, exePath.c_str());
 			break;
 		}
 		instrument.finalize(_wavetable, SIERRASTANDARD_SIZE);
@@ -815,8 +819,8 @@ bool SoundGen2GS::loadWaveFile(Common::String &wavePath, const IIgsExeInfo &exeI
 	Common::String md5str = Common::computeStreamMD5AsString(*uint8Wave, SIERRASTANDARD_SIZE);
 	if (md5str != exeInfo.instSet->waveFileMd5) {
 		warning("Unknown Apple IIGS wave file (md5: %s, game: %s).\n" \
-				"Please report the information on the previous line to the ScummVM team.\n" \
-				"Using the wave file as it is - music may sound weird", md5str.c_str(), exeInfo.exePrefix);
+		        "Please report the information on the previous line to the ScummVM team.\n" \
+		        "Using the wave file as it is - music may sound weird", md5str.c_str(), exeInfo.exePrefix);
 	}
 
 	// Convert the wave file to 8-bit signed and save the result

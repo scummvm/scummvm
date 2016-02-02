@@ -21,7 +21,7 @@
  */
 
 #include "agi/agi.h"
-#include "agi/sprite.h"		// for commit_both()
+#include "agi/sprite.h"     // for commit_both()
 #include "agi/graphics.h"
 #include "agi/keyboard.h"
 #include "agi/text.h"
@@ -48,7 +48,7 @@ TextMgr::TextMgr(AgiEngine *vm, Words *words, GfxMgr *gfx) {
 	_messageState.wanted_TextPos.row = -1;
 	_messageState.wanted_TextPos.column = -1;
 	_messageState.wanted_Text_Width = -1;
-	
+
 	_textPosArrayCount = 0;
 	memset(&_textPosArray, 0, sizeof(_textPosArray));
 	_textAttribArrayCount = 0;
@@ -303,7 +303,7 @@ void TextMgr::displayCharacter(byte character, bool disabledLook) {
 		} else {
 			displayCharacter(0x0D); // go to next line
 		}
-	} 
+	}
 }
 
 void TextMgr::print(int16 textNr) {
@@ -441,7 +441,7 @@ void TextMgr::drawMessageBox(const char *textPtr, int16 wantedHeight, int16 want
 	_messageState.backgroundSize_Width = (_messageState.textSize_Width * FONT_VISUAL_WIDTH) + 10;
 	_messageState.backgroundSize_Height = (_messageState.textSize_Height * FONT_VISUAL_HEIGHT) + 10;
 	_messageState.backgroundPos_x = (_messageState.textPos.column * FONT_VISUAL_WIDTH) - 5;
-	_messageState.backgroundPos_y = (_messageState.textPos_Edge.row - _window_Row_Min + 1 ) * FONT_VISUAL_HEIGHT + 4;
+	_messageState.backgroundPos_y = (_messageState.textPos_Edge.row - _window_Row_Min + 1) * FONT_VISUAL_HEIGHT + 4;
 
 	// Hardcoded colors: white background and red lines
 	_gfx->drawBox(_messageState.backgroundPos_x, _messageState.backgroundPos_y, _messageState.backgroundSize_Width, _messageState.backgroundSize_Height, 15, 4);
@@ -786,8 +786,8 @@ void TextMgr::stringCharPress(int16 newChar) {
 	inputEditOn();
 
 	switch (newChar) {
-	case 0x3:		// ctrl-c
-	case 0x18: {	// ctrl-x
+	case 0x3:       // ctrl-c
+	case 0x18: {    // ctrl-x
 		// clear string
 		while (_inputStringCursorPos) {
 			_inputStringCursorPos--;

@@ -177,8 +177,8 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 using namespace Agi;
 
 class AgiMetaEngine : public AdvancedMetaEngine {
-	mutable Common::String	_gameid;
-	mutable Common::String	_extra;
+	mutable Common::String _gameid;
+	mutable Common::String _extra;
 
 public:
 	AgiMetaEngine() : AdvancedMetaEngine(Agi::gameDescriptions, sizeof(Agi::AGIGameDescription), agiGames, optionsList) {
@@ -205,20 +205,20 @@ public:
 
 bool AgiMetaEngine::hasFeature(MetaEngineFeature f) const {
 	return
-		(f == kSupportsListSaves) ||
-		(f == kSupportsLoadingDuringStartup) ||
-		(f == kSupportsDeleteSave) ||
-		(f == kSavesSupportMetaInfo) ||
-		(f == kSavesSupportThumbnail) ||
-		(f == kSavesSupportCreationDate) ||
-		(f == kSavesSupportPlayTime);
+	    (f == kSupportsListSaves) ||
+	    (f == kSupportsLoadingDuringStartup) ||
+	    (f == kSupportsDeleteSave) ||
+	    (f == kSavesSupportMetaInfo) ||
+	    (f == kSavesSupportThumbnail) ||
+	    (f == kSavesSupportCreationDate) ||
+	    (f == kSavesSupportPlayTime);
 }
 
 bool AgiBase::hasFeature(EngineFeature f) const {
 	return
-		(f == kSupportsRTL) ||
-		(f == kSupportsLoadingDuringRuntime) ||
-		(f == kSupportsSavingDuringRuntime);
+	    (f == kSupportsRTL) ||
+	    (f == kSupportsLoadingDuringRuntime) ||
+	    (f == kSupportsSavingDuringRuntime);
 }
 
 
@@ -254,14 +254,14 @@ bool AgiMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameD
 }
 
 SaveStateList AgiMetaEngine::listSaves(const char *target) const {
-	const uint32 AGIflag = MKTAG('A','G','I',':');
+	const uint32 AGIflag = MKTAG('A', 'G', 'I', ':');
 	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
 	Common::StringArray filenames;
 	Common::String pattern = target;
 	pattern += ".###";
 
 	filenames = saveFileMan->listSavefiles(pattern);
-	sort(filenames.begin(), filenames.end());	// Sort (hopefully ensuring we are sorted numerically..)
+	sort(filenames.begin(), filenames.end());   // Sort (hopefully ensuring we are sorted numerically..)
 
 	SaveStateList saveList;
 	for (Common::StringArray::const_iterator file = filenames.begin(); file != filenames.end(); ++file) {
@@ -310,7 +310,7 @@ void AgiMetaEngine::removeSaveState(const char *target, int slot) const {
 }
 
 SaveStateDescriptor AgiMetaEngine::querySaveMetaInfos(const char *target, int slotNr) const {
-	const uint32 AGIflag = MKTAG('A','G','I',':');
+	const uint32 AGIflag = MKTAG('A', 'G', 'I', ':');
 	Common::String fileName = Common::String::format("%s.%03d", target, slotNr);
 
 	Common::InSaveFile *in = g_system->getSavefileManager()->openForLoading(fileName);
@@ -431,9 +431,9 @@ const ADGameDescription *AgiMetaEngine::fallbackDetect(const FileMap &allFilesXX
 	}
 
 	if (allFiles.contains("logdir") && allFiles.contains("object") &&
-		allFiles.contains("picdir") && allFiles.contains("snddir") &&
-		allFiles.contains("viewdir") && allFiles.contains("vol.0") &&
-		allFiles.contains("words.tok")) { // Check for v2
+	        allFiles.contains("picdir") && allFiles.contains("snddir") &&
+	        allFiles.contains("viewdir") && allFiles.contains("vol.0") &&
+	        allFiles.contains("words.tok")) { // Check for v2
 
 		// The default AGI interpreter version 0x2917 is okay for v2 games
 		// so we don't have to change it here.
@@ -465,7 +465,7 @@ const ADGameDescription *AgiMetaEngine::fallbackDetect(const FileMap &allFilesXX
 				strncpy(name, f->_key.c_str(), MIN((uint)8, f->_key.size() > 5 ? f->_key.size() - 5 : f->_key.size()));
 
 				if (allFiles.contains("object") && allFiles.contains("words.tok") &&
-					allFiles.contains(Common::String(name) + "dir")) {
+				        allFiles.contains(Common::String(name) + "dir")) {
 					matchedUsingFilenames = true;
 					description = "Unknown v3 Game";
 					g_fallbackDesc.version = 0x3149; // Set the default AGI version for an AGI v3 game

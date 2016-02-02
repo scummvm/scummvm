@@ -150,7 +150,7 @@ void SoundGenPCJr::play(int resnum) {
 		_tchannel[i].noteCount = 0;
 		_tchannel[i].freqCount = 250;
 		_tchannel[i].freqCountPrev = -1;
-		_tchannel[i].atten = 0xF;	// silence
+		_tchannel[i].atten = 0xF;   // silence
 		_tchannel[i].genType = kGenTone;
 		_tchannel[i].genTypePrev = -1;
 	}
@@ -186,10 +186,10 @@ int SoundGenPCJr::volumeCalc(SndGenChan *chan) {
 	assert(chan);
 
 	attenuation = chan->attenuation;
-	if (attenuation != 0x0F) {	// != silence
+	if (attenuation != 0x0F) {  // != silence
 		if (chan->dissolveCount != 0xFFFF) {
 			dissolveValue = dissolveData[chan->dissolveCount];
-			if (dissolveValue == -100) {	// if at end of list
+			if (dissolveValue == -100) {    // if at end of list
 				chan->dissolveCount = 0xFFFF;
 				chan->attenuation = chan->attenuationCopy;
 				attenuation = chan->attenuation;
@@ -215,8 +215,7 @@ int SoundGenPCJr::volumeCalc(SndGenChan *chan) {
 	return attenuation;
 }
 
-int SoundGenPCJr::getNextNote(int ch)
-{
+int SoundGenPCJr::getNextNote(int ch) {
 	if (_vm->getVersion() > 0x2001)
 		return getNextNote_v2(ch);
 	else
@@ -248,7 +247,7 @@ int SoundGenPCJr::getNextNote_v2(int ch) {
 		data = chan->data;
 
 		// read the duration of the note
-		chan->duration = READ_LE_UINT16(data);	// duration
+		chan->duration = READ_LE_UINT16(data);  // duration
 
 		// if it's 0 then it's not going to be played
 		// if it's 0xFFFF then the channel data has finished.
@@ -263,7 +262,7 @@ int SoundGenPCJr::getNextNote_v2(int ch) {
 		_tchannel[ch].freqCountPrev = -1;
 
 		// only tone channels dissolve
-		if ((ch != 3) && (_dissolveMethod != 0))	// != noise??
+		if ((ch != 3) && (_dissolveMethod != 0))    // != noise??
 			chan->dissolveCount = 0;
 
 		// attenuation (volume)
@@ -280,8 +279,8 @@ int SoundGenPCJr::getNextNote_v2(int ch) {
 	if (chan->duration == 0xFFFF) {
 		// kill channel
 		chan->avail = 0;
-		chan->attenuation = 0x0F;	// silent
-		chan->attenuationCopy = 0x0F;	// dunno really
+		chan->attenuation = 0x0F;   // silent
+		chan->attenuationCopy = 0x0F;   // dunno really
 
 		return -1;
 	}
@@ -364,14 +363,14 @@ void SoundGenPCJr::writeData(uint8 val) {
 // bit0 = output
 
 // noise feedback for white noise mode
-#define FB_WNOISE 0x12000	// bit15.d(16bits) = bit0(out) ^ bit2
-//#define FB_WNOISE 0x14000	// bit15.d(16bits) = bit0(out) ^ bit1
-//#define FB_WNOISE 0x28000	// bit16.d(17bits) = bit0(out) ^ bit2 (same to AY-3-8910)
-//#define FB_WNOISE 0x50000	// bit17.d(18bits) = bit0(out) ^ bit2
+#define FB_WNOISE 0x12000   // bit15.d(16bits) = bit0(out) ^ bit2
+//#define FB_WNOISE 0x14000 // bit15.d(16bits) = bit0(out) ^ bit1
+//#define FB_WNOISE 0x28000 // bit16.d(17bits) = bit0(out) ^ bit2 (same to AY-3-8910)
+//#define FB_WNOISE 0x50000 // bit17.d(18bits) = bit0(out) ^ bit2
 
 // noise feedback for periodic noise mode
 // it is correct maybe (it was in the Megadrive sound manual)
-//#define FB_PNOISE 0x10000	// 16bit rorate
+//#define FB_PNOISE 0x10000 // 16bit rorate
 #define FB_PNOISE 0x08000
 
 // noise generator start preset (for periodic noise)
@@ -431,18 +430,18 @@ int SoundGenPCJr::chanGen(int chan, int16 *stream, int len) {
 		fillSize = (tpcm->noteCount <= len) ? tpcm->noteCount : len;
 
 		switch (tpcm->genType) {
-			case kGenTone:
-				fillSize = fillSquare(tpcm, stream, fillSize);
-				break;
-			case kGenPeriod:
-			case kGenWhite:
-				fillSize = fillNoise(tpcm, stream, fillSize);
-				break;
-			case kGenSilence:
-			default:
-				// fill with whitespace
-				memset(stream, 0, fillSize * sizeof(int16));
-				break;
+		case kGenTone:
+			fillSize = fillSquare(tpcm, stream, fillSize);
+			break;
+		case kGenPeriod:
+		case kGenWhite:
+			fillSize = fillNoise(tpcm, stream, fillSize);
+			break;
+		case kGenSilence:
+		default:
+			// fill with whitespace
+			memset(stream, 0, fillSize * sizeof(int16));
+			break;
 		}
 
 		tpcm->noteCount -= fillSize;

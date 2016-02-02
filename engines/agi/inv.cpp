@@ -65,7 +65,7 @@ void InventoryMgr::getPlayerInventory() {
 			inventoryEntry.column = curColumn;
 			if (inventoryEntry.column > 1) {
 				// right side, adjust column accordingly
-				inventoryEntry.column -= strlen( inventoryEntry.name );
+				inventoryEntry.column -= strlen(inventoryEntry.name);
 			}
 			_array.push_back(inventoryEntry);
 
@@ -129,7 +129,7 @@ void InventoryMgr::show() {
 
 	if (_vm->getFlag(VM_FLAG_STATUS_SELECTS_ITEMS)) {
 		selectItems = true;
-	} else{
+	} else {
 		_activeItemNr = -1; // so that none is shown as active
 	}
 

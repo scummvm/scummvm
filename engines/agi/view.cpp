@@ -251,7 +251,7 @@ int AgiEngine::decodeView(byte *resourceData, uint16 resourceSize, int16 viewNr)
 				celData++;
 			}
 		}
-		
+
 		loopData++;
 	}
 
@@ -312,7 +312,7 @@ void AgiEngine::unpackViewCelData(AgiViewCel *celData, byte *compressedData, uin
 		}
 
 		remainingWidth -= curChunkLen;
-			
+
 		if (curByte == 0) {
 			remainingWidth = celData->width;
 			remainingHeight--;
@@ -628,7 +628,7 @@ void AgiEngine::updateScreenObjTable() {
 		// AGI 2.272 (ddp, xmas) doesn't test step_time_count!
 		if (loopNr != 4 && loopNr != screenObj->currentLoopNr) {
 			if (getVersion() <= 0x2272 ||
-			    screenObj->stepTimeCount == 1) {
+			        screenObj->stepTimeCount == 1) {
 				setLoop(screenObj, loopNr);
 			}
 		}
@@ -655,7 +655,7 @@ void AgiEngine::updateScreenObjTable() {
 	}
 }
 
-bool AgiEngine::isEgoView(const ScreenObjEntry* screenObj) {
+bool AgiEngine::isEgoView(const ScreenObjEntry *screenObj) {
 	return screenObj == _game.screenObjTable;
 }
 

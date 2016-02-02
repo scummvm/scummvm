@@ -134,7 +134,7 @@ uint32 WinnieEngine::readObj(int iObj, uint8 *buffer) {
 
 	Common::File file;
 	if (!file.open(fileName)) {
-		warning ("Could not open file \'%s\'", fileName.c_str());
+		warning("Could not open file \'%s\'", fileName.c_str());
 		return 0;
 	}
 
@@ -274,9 +274,10 @@ int WinnieEngine::parser(int pc, int index, uint8 *buffer) {
 			memset(fCanSel, 0, sizeof(fCanSel));
 
 			// check if NSEW directions should be displayed
-			if (hdr.roomNew[0])
+			if (hdr.roomNew[0]) {
 				fCanSel[IDI_WTP_SEL_NORTH] = fCanSel[IDI_WTP_SEL_SOUTH] =
 				fCanSel[IDI_WTP_SEL_EAST] = fCanSel[IDI_WTP_SEL_WEST] = true;
+			}
 
 			// check if object in room or player carrying one
 			setTakeDrop(fCanSel);
@@ -494,7 +495,7 @@ void WinnieEngine::printObjStr(int iObj, int iStr) {
 
 bool WinnieEngine::isRightObj(int iRoom, int iObj, int *iCode) {
 	WTP_ROOM_HDR roomhdr;
-	WTP_OBJ_HDR	objhdr;
+	WTP_OBJ_HDR objhdr;
 	uint8 *roomdata = (uint8 *)malloc(4096);
 	uint8 *objdata = (uint8 *)malloc(2048);
 
@@ -777,7 +778,7 @@ void WinnieEngine::getMenuMouseSel(int *iSel, int fCanSel[], int x, int y) {
 	case IDI_WTP_ROW_OPTION_1:
 	case IDI_WTP_ROW_OPTION_2:
 	case IDI_WTP_ROW_OPTION_3:
-		if (fCanSel[y - IDI_WTP_ROW_OPTION_1])	*iSel = y - IDI_WTP_ROW_OPTION_1;
+		if (fCanSel[y - IDI_WTP_ROW_OPTION_1])  *iSel = y - IDI_WTP_ROW_OPTION_1;
 		break;
 	case IDI_WTP_ROW_OPTION_4:
 		if (fCanSel[IDI_WTP_SEL_NORTH] && (x > IDI_WTP_COL_NORTH - 1) && (x < 6)) *iSel = IDI_WTP_SEL_NORTH;
@@ -866,25 +867,25 @@ void WinnieEngine::getMenuSel(char *szMenu, int *iSel, int fCanSel[]) {
 				}
 
 				switch (*iSel) {
-					case IDI_WTP_SEL_OPT_1:
-					case IDI_WTP_SEL_OPT_2:
-					case IDI_WTP_SEL_OPT_3:
-						for (int iSel2 = 0; iSel2 < IDI_WTP_MAX_OPTION; iSel2++) {
-							if (*iSel == (fCanSel[iSel2 + IDI_WTP_SEL_REAL_OPT_1] - 1)) {
-								*iSel = iSel2;
-								// Menu selection made, hide the mouse cursor
-								CursorMan.showMouse(false);
-								return;
-							}
-						}
-						break;
-					default:
-						if (fCanSel[*iSel]) {
+				case IDI_WTP_SEL_OPT_1:
+				case IDI_WTP_SEL_OPT_2:
+				case IDI_WTP_SEL_OPT_3:
+					for (int iSel2 = 0; iSel2 < IDI_WTP_MAX_OPTION; iSel2++) {
+						if (*iSel == (fCanSel[iSel2 + IDI_WTP_SEL_REAL_OPT_1] - 1)) {
+							*iSel = iSel2;
 							// Menu selection made, hide the mouse cursor
 							CursorMan.showMouse(false);
 							return;
 						}
-						break;
+					}
+					break;
+				default:
+					if (fCanSel[*iSel]) {
+						// Menu selection made, hide the mouse cursor
+						CursorMan.showMouse(false);
+						return;
+					}
+					break;
 				}
 				break;
 			case Common::EVENT_RBUTTONUP:
@@ -993,7 +994,7 @@ void WinnieEngine::getMenuSel(char *szMenu, int *iSel, int fCanSel[]) {
 					}
 					break;
 				default:
-					if (!event.kbd.flags) {	// if the control/alt/shift keys are not pressed
+					if (!event.kbd.flags) { // if the control/alt/shift keys are not pressed
 						keyHelp();
 						clrMenuSel(iSel, fCanSel);
 					}
@@ -1070,7 +1071,7 @@ void WinnieEngine::drawPic(const char *szName) {
 	Common::File file;
 
 	if (!file.open(fileName)) {
-		warning ("Could not open file \'%s\'", fileName.c_str());
+		warning("Could not open file \'%s\'", fileName.c_str());
 		return;
 	}
 
@@ -1089,7 +1090,7 @@ void WinnieEngine::drawObjPic(int iObj, int x0, int y0) {
 	if (!iObj)
 		return;
 
-	WTP_OBJ_HDR	objhdr;
+	WTP_OBJ_HDR objhdr;
 	uint8 *buffer = (uint8 *)malloc(2048);
 	uint32 objSize = readObj(iObj, buffer);
 	parseObjHeader(&objhdr, buffer, sizeof(WTP_OBJ_HDR));
@@ -1216,7 +1217,7 @@ void WinnieEngine::saveGame() {
 	if (!outfile)
 		return;
 
-	outfile->writeUint32BE(MKTAG('W','I','N','N'));	// header
+	outfile->writeUint32BE(MKTAG('W', 'I', 'N', 'N')); // header
 	outfile->writeByte(WTP_SAVEGAME_VERSION);
 
 	outfile->writeByte(_gameStateWinnie.fSound);
@@ -1251,7 +1252,7 @@ void WinnieEngine::loadGame() {
 	if (!infile)
 		return;
 
-	if (infile->readUint32BE() == MKTAG('W','I','N','N')) {
+	if (infile->readUint32BE() == MKTAG('W', 'I', 'N', 'N')) {
 		saveVersion = infile->readByte();
 		if (saveVersion != WTP_SAVEGAME_VERSION)
 			warning("Old save game version (%d, current version is %d). Will try and read anyway, but don't be surprised if bad things happen", saveVersion, WTP_SAVEGAME_VERSION);
@@ -1269,25 +1270,25 @@ void WinnieEngine::loadGame() {
 		// Since we read the save file data as little-endian, we skip the first byte of each
 		// variable
 
-		infile->seek(0);					// Jump back to the beginning of the file
+		infile->seek(0);                    // Jump back to the beginning of the file
 
-		infile->readUint16LE();				// skip unused field
-		infile->readByte();					// first 8 bits of fSound
+		infile->readUint16LE();             // skip unused field
+		infile->readByte();                 // first 8 bits of fSound
 		_gameStateWinnie.fSound = infile->readByte();
-		infile->readByte();					// first 8 bits of nMoves
+		infile->readByte();                 // first 8 bits of nMoves
 		_gameStateWinnie.nMoves = infile->readByte();
-		infile->readByte();					// first 8 bits of nObjMiss
+		infile->readByte();                 // first 8 bits of nObjMiss
 		_gameStateWinnie.nObjMiss = infile->readByte();
-		infile->readByte();					// first 8 bits of nObjRet
+		infile->readByte();                 // first 8 bits of nObjRet
 		_gameStateWinnie.nObjRet = infile->readByte();
-		infile->readUint16LE();				// skip unused field
-		infile->readUint16LE();				// skip unused field
-		infile->readUint16LE();				// skip unused field
-		infile->readByte();					// first 8 bits of iObjHave
+		infile->readUint16LE();             // skip unused field
+		infile->readUint16LE();             // skip unused field
+		infile->readUint16LE();             // skip unused field
+		infile->readByte();                 // first 8 bits of iObjHave
 		_gameStateWinnie.iObjHave = infile->readByte();
-		infile->readUint16LE();				// skip unused field
-		infile->readUint16LE();				// skip unused field
-		infile->readUint16LE();				// skip unused field
+		infile->readUint16LE();             // skip unused field
+		infile->readUint16LE();             // skip unused field
+		infile->readUint16LE();             // skip unused field
 	}
 
 	for (i = 0; i < IDI_WTP_MAX_FLAG; i++)
@@ -1329,7 +1330,7 @@ WinnieEngine::~WinnieEngine() {
 void WinnieEngine::init() {
 	// Initialize sound
 
-	switch (MidiDriver::getMusicType(MidiDriver::detectDevice(MDT_PCSPK|MDT_PCJR))) {
+	switch (MidiDriver::getMusicType(MidiDriver::detectDevice(MDT_PCSPK | MDT_PCJR))) {
 	case MT_PCSPK:
 		_soundemu = SOUND_EMU_PC;
 		break;

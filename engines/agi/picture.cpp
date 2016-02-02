@@ -91,7 +91,7 @@ void PictureMgr::draw_xCorner(bool skipOtherCoords) {
 	int x1, x2, y1, y2;
 
 	if ((x1 = getNextByte()) >= _minCommand ||
-		(y1 = getNextByte()) >= _minCommand) {
+	        (y1 = getNextByte()) >= _minCommand) {
 		_dataOffset--;
 		return;
 	}
@@ -135,7 +135,7 @@ void PictureMgr::yCorner(bool skipOtherCoords) {
 	int x1, x2, y1, y2;
 
 	if ((x1 = getNextByte()) >= _minCommand ||
-		(y1 = getNextByte()) >= _minCommand) {
+	        (y1 = getNextByte()) >= _minCommand) {
 		_dataOffset--;
 		return;
 	}
@@ -177,20 +177,25 @@ void PictureMgr::yCorner(bool skipOtherCoords) {
 ** on the pattern code.
 **************************************************************************/
 void PictureMgr::plotPattern(int x, int y) {
-	static const uint16 binary_list[] = {0x8000, 0x4000, 0x2000, 0x1000, 0x800, 0x400, 0x200, 0x100,
-		0x80, 0x40, 0x20, 0x10, 0x8, 0x4, 0x2, 0x1};
+	static const uint16 binary_list[] = {
+		0x8000, 0x4000, 0x2000, 0x1000, 0x800, 0x400, 0x200, 0x100,
+		0x80, 0x40, 0x20, 0x10, 0x8, 0x4, 0x2, 0x1
+	};
 
-	static const uint8 circle_list[] = {0, 1, 4, 9, 16, 25, 37, 50};
+	static const uint8 circle_list[] = {
+		0, 1, 4, 9, 16, 25, 37, 50
+	};
 
-	static uint16 circle_data[] =
-		{0x8000,
+	static uint16 circle_data[] = {
+		0x8000,
 		0xE000, 0xE000, 0xE000,
 		0x7000, 0xF800, 0x0F800, 0x0F800, 0x7000,
 		0x3800, 0x7C00, 0x0FE00, 0x0FE00, 0x0FE00, 0x7C00, 0x3800,
 		0x1C00, 0x7F00, 0x0FF80, 0x0FF80, 0x0FF80, 0x0FF80, 0x0FF80, 0x7F00, 0x1C00,
 		0x0E00, 0x3F80, 0x7FC0, 0x7FC0, 0x0FFE0, 0x0FFE0, 0x0FFE0, 0x7FC0, 0x7FC0, 0x3F80, 0x1F00, 0x0E00,
 		0x0F80, 0x3FE0, 0x7FF0, 0x7FF0, 0x0FFF8, 0x0FFF8, 0x0FFF8, 0x0FFF8, 0x0FFF8, 0x7FF0, 0x7FF0, 0x3FE0, 0x0F80,
-		0x07C0, 0x1FF0, 0x3FF8, 0x7FFC, 0x7FFC, 0x0FFFE, 0x0FFFE, 0x0FFFE, 0x0FFFE, 0x0FFFE, 0x7FFC, 0x7FFC, 0x3FF8, 0x1FF0, 0x07C0};
+		0x07C0, 0x1FF0, 0x3FF8, 0x7FFC, 0x7FFC, 0x0FFFE, 0x0FFFE, 0x0FFFE, 0x0FFFE, 0x0FFFE, 0x7FFC, 0x7FFC, 0x3FF8, 0x1FF0, 0x07C0
+	};
 
 	uint16 circle_word;
 	const uint16 *circle_ptr;
@@ -203,10 +208,10 @@ void PictureMgr::plotPattern(int x, int y) {
 	uint8 temp8;
 	uint16 temp16;
 
-	int	pen_x = x;
-	int	pen_y = y;
-	uint16	texture_num = 0;
-	uint16	pen_size = (_patCode & 0x07);
+	int pen_x = x;
+	int pen_y = y;
+	uint16 texture_num = 0;
+	uint16 pen_size = (_patCode & 0x07);
 
 	circle_ptr = &circle_data[circle_list[pen_size]];
 
@@ -227,7 +232,7 @@ void PictureMgr::plotPattern(int x, int y) {
 		pen_x = temp16;
 
 	pen_x /= 2;
-	pen_final_x = pen_x;	// original starting point?? -> used in plotrelated
+	pen_final_x = pen_x;    // original starting point?? -> used in plotrelated
 
 	// Setup the Y Position
 	// = pen_y - pen.size
@@ -238,16 +243,16 @@ void PictureMgr::plotPattern(int x, int y) {
 	if (pen_y >= temp16)
 		pen_y = temp16;
 
-	pen_final_y = pen_y;	// used in plotrelated
+	pen_final_y = pen_y;    // used in plotrelated
 
-	t = (uint8)(texture_num | 0x01);		// even
+	t = (uint8)(texture_num | 0x01);        // even
 
 	// new purpose for temp16
 
-	temp16 = (pen_size << 1) + 1;	// pen size
-	pen_final_y += temp16;					// the last row of this shape
+	temp16 = (pen_size << 1) + 1;   // pen size
+	pen_final_y += temp16;                  // the last row of this shape
 	temp16 = temp16 << 1;
-	pen_width = temp16;					// width of shape?
+	pen_width = temp16;                 // width of shape?
 
 	bool circleCond;
 	int counterStep;
@@ -270,7 +275,7 @@ void PictureMgr::plotPattern(int x, int y) {
 		circle_word = *circle_ptr++;
 
 		for (counter = 0; counter <= pen_width; counter += counterStep) {
-			if (circleCond || ((binary_list[counter>>1] & circle_word) != 0)) {
+			if (circleCond || ((binary_list[counter >> 1] & circle_word) != 0)) {
 				if ((_patCode & 0x20) != 0) {
 					temp8 = t % 2;
 					t = t >> 1;
@@ -366,26 +371,26 @@ void PictureMgr::drawPictureC64() {
 		}
 
 		switch (curByte) {
-		case 0xe0:	// x-corner
+		case 0xe0:  // x-corner
 			draw_xCorner();
 			break;
-		case 0xe1:	// y-corner
+		case 0xe1:  // y-corner
 			yCorner();
 			break;
-		case 0xe2:	// dynamic draw lines
+		case 0xe2:  // dynamic draw lines
 			draw_LineShort();
 			break;
-		case 0xe3:	// absolute draw lines
+		case 0xe3:  // absolute draw lines
 			draw_LineAbsolute();
 			break;
-		case 0xe4:	// fill
+		case 0xe4:  // fill
 			draw_SetColor();
 			draw_Fill();
 			break;
-		case 0xe5:	// enable screen drawing
+		case 0xe5:  // enable screen drawing
 			_scrOn = true;
 			break;
-		case 0xe6:	// plot brush
+		case 0xe6:  // plot brush
 			_patCode = getNextByte();
 			plotBrush();
 			break;
@@ -576,11 +581,11 @@ void PictureMgr::drawPictureV2() {
 				_xOffset = storedXOffset;
 				_yOffset = storedYOffset;
 				_currentStep++;
-				if (_currentStep > 14)	// crystal animation is 15 frames
+				if (_currentStep > 14)  // crystal animation is 15 frames
 					_currentStep = 0;
 				// reset the picture step flag - it will be set when the next frame of the crystal animation is drawn
 				_flags &= ~kPicFStep;
-				return;		// return back to the game loop
+				return;     // return back to the game loop
 			}
 			mickeyIteration++;
 		}
@@ -761,7 +766,7 @@ void PictureMgr::draw_LineShort() {
 	int x1, y1, disp, dx, dy;
 
 	if ((x1 = getNextByte()) >= _minCommand ||
-		(y1 = getNextByte()) >= _minCommand) {
+	        (y1 = getNextByte()) >= _minCommand) {
 		_dataOffset--;
 		return;
 	}
@@ -796,7 +801,7 @@ void PictureMgr::draw_LineAbsolute() {
 	int16 x1, y1, x2, y2;
 
 	if ((x1 = getNextByte()) >= _minCommand ||
-		(y1 = getNextByte()) >= _minCommand) {
+	        (y1 = getNextByte()) >= _minCommand) {
 		_dataOffset--;
 		return;
 	}
@@ -833,7 +838,7 @@ void PictureMgr::draw_Fill(int16 x, int16 y) {
 
 	// Push initial pixel on the stack
 	Common::Stack<Common::Point> stack;
-	stack.push(Common::Point(x,y));
+	stack.push(Common::Point(x, y));
 
 	// Exit if stack is empty
 	while (!stack.empty()) {
@@ -853,7 +858,7 @@ void PictureMgr::draw_Fill(int16 x, int16 y) {
 			putVirtPixel(c, p.y);
 			if (draw_FillCheck(c, p.y - 1)) {
 				if (newspanUp) {
-					stack.push(Common::Point(c,p.y-1));
+					stack.push(Common::Point(c, p.y - 1));
 					newspanUp = false;
 				}
 			} else {
@@ -862,7 +867,7 @@ void PictureMgr::draw_Fill(int16 x, int16 y) {
 
 			if (draw_FillCheck(c, p.y + 1)) {
 				if (newspanDown) {
-					stack.push(Common::Point(c,p.y+1));
+					stack.push(Common::Point(c, p.y + 1));
 					newspanDown = false;
 				}
 			} else {
@@ -950,7 +955,7 @@ int PictureMgr::decodePicture(int16 resourceNr, bool clearScreen, bool agi256, i
  * @param length the size of the picture data buffer
  * @param clear  clear AGI screen before drawing
  */
-int PictureMgr::decodePicture(byte* data, uint32 length, int clr, int pic_width, int pic_height) {
+int PictureMgr::decodePicture(byte *data, uint32 length, int clr, int pic_width, int pic_height) {
 	_patCode = 0;
 	_patNum = 0;
 	_priOn = _scrOn = false;

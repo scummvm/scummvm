@@ -77,7 +77,7 @@ void PreAgiEngine::initialize() {
 
 	_speakerStream = new Audio::PCSpeaker(_mixer->getOutputRate());
 	_mixer->playStream(Audio::Mixer::kSFXSoundType, &_speakerHandle,
-							_speakerStream, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO, true);
+	                   _speakerStream, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO, true);
 
 	debugC(2, kDebugLevelMain, "Detect game");
 
@@ -112,7 +112,7 @@ void PreAgiEngine::clearScreen(int attr, bool overrideDefault) {
 }
 
 void PreAgiEngine::clearGfxScreen(int attr) {
-	_gfx->drawDisplayRect(0, 0, GFX_WIDTH - 1, IDI_MAX_ROW_PIC * 8 -1, (attr & 0xF0) / 0x10);
+	_gfx->drawDisplayRect(0, 0, GFX_WIDTH - 1, IDI_MAX_ROW_PIC * 8 - 1, (attr & 0xF0) / 0x10);
 }
 
 // String functions
@@ -149,7 +149,7 @@ void PreAgiEngine::drawStr(int row, int col, int attr, const char *buffer) {
 }
 
 void PreAgiEngine::drawStrMiddle(int row, int attr, const char *buffer) {
-	int col = (25 / 2) - (strlen(buffer) / 2);	// 25 = 320 / 8 (maximum column)
+	int col = (25 / 2) - (strlen(buffer) / 2);  // 25 = 320 / 8 (maximum column)
 	drawStr(row, col, attr, buffer);
 }
 
@@ -165,10 +165,10 @@ void PreAgiEngine::clearTextArea() {
 }
 
 void PreAgiEngine::clearRow(int row) {
-	drawStr(row, 0, IDA_DEFAULT, "                                        ");	// 40 spaces
+	drawStr(row, 0, IDA_DEFAULT, "                                        ");   // 40 spaces
 }
 
-void PreAgiEngine::printStr(const char* szMsg) {
+void PreAgiEngine::printStr(const char *szMsg) {
 	clearTextArea();
 	drawStr(21, 0, IDA_DEFAULT, szMsg);
 	g_system->updateScreen();

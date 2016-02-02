@@ -63,7 +63,7 @@
 
 namespace Agi {
 
-static const uint32 AGIflag = MKTAG('A','G','I',':');
+static const uint32 AGIflag = MKTAG('A', 'G', 'I', ':');
 
 int AgiEngine::saveGame(const Common::String &fileName, const Common::String &descriptionString) {
 	char gameIDstring[8] = "gameIDX";
@@ -365,7 +365,7 @@ int AgiEngine::loadGame(const Common::String &fileName, bool checkId) {
 	debugC(6, kDebugLevelMain | kDebugLevelSavegame, "Description is: %s", description);
 
 	saveVersion = in->readByte();
-	if (saveVersion < 2)	// is the save game pre-ScummVM?
+	if (saveVersion < 2)    // is the save game pre-ScummVM?
 		warning("Old save game version (%d, current version is %d). Will try and read anyway, but don't be surprised if bad things happen", saveVersion, SAVEGAME_CURRENT_VERSION);
 
 	if (saveVersion < 3)
@@ -378,7 +378,7 @@ int AgiEngine::loadGame(const Common::String &fileName, bool checkId) {
 		// We don't need the thumbnail here, so just read it and discard it
 		Graphics::skipThumbnail(*in);
 
-		in->readUint32BE();	// save date
+		in->readUint32BE(); // save date
 		in->readUint16BE(); // save time
 		if (saveVersion >= 6) {
 			uint32 playTime = in->readUint32BE();
@@ -654,9 +654,9 @@ int AgiEngine::loadGame(const Common::String &fileName, bool checkId) {
 		if (!(_game.dirView[screenObj->currentViewNr].flags & RES_LOADED))
 			agiLoadResource(RESOURCETYPE_VIEW, screenObj->currentViewNr);
 
-		setView(screenObj, screenObj->currentViewNr);	// Fix v->view_data
-		setLoop(screenObj, screenObj->currentLoopNr);	// Fix v->loop_data
-		setCel(screenObj, screenObj->currentCelNr);	// Fix v->cel_data
+		setView(screenObj, screenObj->currentViewNr);   // Fix v->view_data
+		setLoop(screenObj, screenObj->currentLoopNr);   // Fix v->loop_data
+		setCel(screenObj, screenObj->currentCelNr); // Fix v->cel_data
 	}
 
 	_sprites->eraseSprites();
@@ -671,7 +671,7 @@ int AgiEngine::loadGame(const Common::String &fileName, bool checkId) {
 		for (i = 0; i < 7; i++)
 			parm[i] = in->readSint16BE();
 		replayImageStackCall(t, parm[0], parm[1], parm[2],
-				parm[3], parm[4], parm[5], parm[6]);
+		                     parm[3], parm[4], parm[5], parm[6]);
 	}
 
 	// Load AGIPAL Data
@@ -963,7 +963,7 @@ bool AgiEngine::saveGameDialog() {
 
 
 void AgiEngine::recordImageStackCall(uint8 type, int16 p1, int16 p2, int16 p3,
-		int16 p4, int16 p5, int16 p6, int16 p7) {
+                                     int16 p4, int16 p5, int16 p6, int16 p7) {
 	ImageStackElement pnew;
 
 	pnew.type = type;
@@ -980,7 +980,7 @@ void AgiEngine::recordImageStackCall(uint8 type, int16 p1, int16 p2, int16 p3,
 }
 
 void AgiEngine::replayImageStackCall(uint8 type, int16 p1, int16 p2, int16 p3,
-		int16 p4, int16 p5, int16 p6, int16 p7) {
+                                     int16 p4, int16 p5, int16 p6, int16 p7) {
 	switch (type) {
 	case ADD_PIC:
 		debugC(8, kDebugLevelMain, "--- decoding picture %d ---", p1);
@@ -1009,7 +1009,7 @@ void AgiEngine::checkQuickLoad() {
 		_sprites->eraseSprites();
 		_sound->stopSound();
 
-		if (loadGame(saveNameBuffer, false) == errOK) {	 // Do not check game id
+		if (loadGame(saveNameBuffer, false) == errOK) {  // Do not check game id
 			_game.exitAllLogics = true;
 			_menu->itemEnableAll();
 		}

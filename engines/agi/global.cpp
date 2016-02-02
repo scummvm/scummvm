@@ -38,16 +38,16 @@ void AgiBase::setFlag(int16 flagNr, bool newState) {
 
 	flagPtr += flagNr >> 3;
 	if (newState)
-		*flagPtr |= 1 << (flagNr & 0x07);	// set bit
+		*flagPtr |= 1 << (flagNr & 0x07);    // set bit
 	else
-		*flagPtr &= ~(1 << (flagNr & 0x07));	// clear bit
+		*flagPtr &= ~(1 << (flagNr & 0x07)); // clear bit
 }
 
 void AgiBase::flipFlag(int16 flagNr) {
 	uint8 *flagPtr = _game.flags;
 
 	flagPtr += flagNr >> 3;
-	*flagPtr ^= 1 << (flagNr & 0x07);	// flip bit
+	*flagPtr ^= 1 << (flagNr & 0x07);        // flip bit
 }
 
 void AgiEngine::setVar(int16 varNr, byte newValue) {
@@ -208,7 +208,7 @@ void AgiEngine::decrypt(uint8 *mem, int len) {
 	int i;
 
 	key = (getFeatures() & GF_AGDS) ? (const uint8 *)CRYPT_KEY_AGDS
-	                   : (const uint8 *)CRYPT_KEY_SIERRA;
+	                                : (const uint8 *)CRYPT_KEY_SIERRA;
 
 	for (i = 0; i < len; i++)
 		*(mem + i) ^= *(key + (i % 11));

@@ -424,7 +424,7 @@ void cmdReleasePriority(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 	screenObj->flags &= ~fFixedPriority;
 }
 
-void cmdSetUpperLeft(AgiGame *state, AgiEngine *vm, uint8 *parameter) {				// do nothing (AGI 2.917)
+void cmdSetUpperLeft(AgiGame *state, AgiEngine *vm, uint8 *parameter) {             // do nothing (AGI 2.917)
 }
 
 void cmdStartUpdate(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
@@ -792,16 +792,16 @@ void cmdLoadGame(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 	vm->inGameTimerResume();
 }
 
-void cmdInitDisk(AgiGame *state, AgiEngine *vm, uint8 *parameter) {				// do nothing
+void cmdInitDisk(AgiGame *state, AgiEngine *vm, uint8 *parameter) {             // do nothing
 }
 
-void cmdLog(AgiGame *state, AgiEngine *vm, uint8 *parameter) {				// do nothing
+void cmdLog(AgiGame *state, AgiEngine *vm, uint8 *parameter) {              // do nothing
 }
 
-void cmdTraceOn(AgiGame *state, AgiEngine *vm, uint8 *parameter) {				// do nothing
+void cmdTraceOn(AgiGame *state, AgiEngine *vm, uint8 *parameter) {              // do nothing
 }
 
-void cmdTraceInfo(AgiGame *state, AgiEngine *vm, uint8 *parameter) {				// do nothing
+void cmdTraceInfo(AgiGame *state, AgiEngine *vm, uint8 *parameter) {                // do nothing
 }
 
 void cmdShowMem(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
@@ -875,20 +875,20 @@ void cmdObjStatusF(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 	}
 
 	sprintf(msg,
-		"Object %d:\n" \
-		"x: %d  xsize: %d\n" \
-		"y: %d  ysize: %d\n" \
-		"pri: %d\n" \
-		"stepsize: %d\n" \
-		"%s\n" \
-		"%s",
-		vm->getVar(varNr),
-		screenObj->xPos, screenObj->xSize,
-		screenObj->yPos, screenObj->ySize,
-		screenObj->priority,
-		screenObj->stepSize,
-		cycleDesc,
-		motionDesc);
+	        "Object %d:\n" \
+	        "x: %d  xsize: %d\n" \
+	        "y: %d  ysize: %d\n" \
+	        "pri: %d\n" \
+	        "stepsize: %d\n" \
+	        "%s\n" \
+	        "%s",
+	        vm->getVar(varNr),
+	        screenObj->xPos, screenObj->xSize,
+	        screenObj->yPos, screenObj->ySize,
+	        screenObj->priority,
+	        screenObj->stepSize,
+	        cycleDesc,
+	        motionDesc);
 	state->_vm->_text->messageBox(msg);
 }
 
@@ -1522,7 +1522,7 @@ void cmdStopMotion(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 
 	screenObj->direction = 0;
 	screenObj->motionType = kMotionNormal;
-	if (objectNr == 0) {		// ego only
+	if (objectNr == 0) {        // ego only
 		state->_vm->setVar(VM_VAR_EGO_DIRECTION, 0);
 		state->playerControl = false;
 	}
@@ -1540,7 +1540,7 @@ void cmdStartMotion(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 	ScreenObjEntry *screenObj = &state->screenObjTable[objectNr];
 
 	screenObj->motionType = kMotionNormal;
-	if (objectNr == 0) {		// ego only
+	if (objectNr == 0) {        // ego only
 		state->_vm->setVar(VM_VAR_EGO_DIRECTION, 0);
 		state->playerControl = true;
 	}
@@ -2140,9 +2140,9 @@ void cmdPushScript(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 	vm->setVar(VM_VAR_MOUSE_X, vm->_mouse.pos.x / 2);
 	vm->setVar(VM_VAR_MOUSE_Y, vm->_mouse.pos.y);
 	/*} else {
-		if (getVersion() >= 0x2915) {
-			debug(0, "push.script");
-		}
+	    if (getVersion() >= 0x2915) {
+	        debug(0, "push.script");
+	    }
 	}*/
 }
 
@@ -2294,14 +2294,14 @@ int AgiEngine::runLogic(int16 logicNr) {
 		st[sz] = 0;
 
 		switch (op = *(state->_curLogic->data + state->_curLogic->cIP++)) {
-		case 0xff:	// if (open/close)
+		case 0xff:  // if (open/close)
 			testIfCode(logicNr);
 			break;
-		case 0xfe:	// goto
+		case 0xfe:  // goto
 			// +2 covers goto size
 			state->_curLogic->cIP += 2 + ((int16)READ_LE_UINT16(state->_curLogic->data + state->_curLogic->cIP));
 			break;
-		case 0x00:	// return
+		case 0x00:  // return
 			debugC(2, kDebugLevelScripts, "%sreturn() // Logic %d", st, logicNr);
 			debugC(2, kDebugLevelScripts, "=================");
 
@@ -2344,7 +2344,7 @@ int AgiEngine::runLogic(int16 logicNr) {
 
 	_game.execStack.pop_back();
 
-	return 0;		// after executing new.room()
+	return 0;       // after executing new.room()
 }
 
 void AgiEngine::executeAgiCommand(uint8 op, uint8 *p) {

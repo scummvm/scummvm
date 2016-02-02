@@ -270,7 +270,7 @@ int AgiEngine::mainCycle(bool onlyCheckForEvents) {
 	} else {
 		// inner loop active
 		// call specific workers
-		setVar(VM_VAR_KEY, 0);	// clear keys, they must not be passed to the scripts
+		setVar(VM_VAR_KEY, 0);  // clear keys, they must not be passed to the scripts
 		_game.keypress = 0;
 
 		switch (_game.cycleInnerLoopType) {
@@ -339,10 +339,10 @@ int AgiEngine::playGame() {
 	_game.horizon = 36;
 	_game.playerControl = false;
 
-	setFlag(VM_FLAG_LOGIC_ZERO_FIRST_TIME, true);	// not in 2.917
-	setFlag(VM_FLAG_NEW_ROOM_EXEC, true);	// needed for MUMG and SQ2!
-	setFlag(VM_FLAG_SOUND_ON, true);	// enable sound
-	setVar(VM_VAR_TIME_DELAY, 2);	// "normal" speed
+	setFlag(VM_FLAG_LOGIC_ZERO_FIRST_TIME, true); // not in 2.917
+	setFlag(VM_FLAG_NEW_ROOM_EXEC, true);         // needed for MUMG and SQ2!
+	setFlag(VM_FLAG_SOUND_ON, true);              // enable sound
+	setVar(VM_VAR_TIME_DELAY, 2);                 // "normal" speed
 
 	_game.gfxMode = true;
 	_text->promptRow_Set(22);
@@ -422,7 +422,7 @@ int AgiEngine::runGame() {
 
 		if (_restartGame) {
 			setFlag(VM_FLAG_RESTART_GAME, true);
-			setVar(VM_VAR_TIME_DELAY, 2);	// "normal" speed
+			setVar(VM_VAR_TIME_DELAY, 2);   // "normal" speed
 
 			// Reset in-game timer
 			inGameTimerReset();

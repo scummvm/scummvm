@@ -43,7 +43,7 @@ int AgiLoader_v3::detectGame() {
 	}
 
 	for (Common::FSList::const_iterator file = fslist.begin();
-	    file != fslist.end() && !found; ++file) {
+	        file != fslist.end() && !found; ++file) {
 		Common::String f = file->getName();
 		f.toLowercase();
 
@@ -67,7 +67,7 @@ int AgiLoader_v3::detectGame() {
 }
 
 int AgiLoader_v3::loadDir(struct AgiDir *agid, Common::File *fp,
-						   uint32 offs, uint32 len) {
+                          uint32 offs, uint32 len) {
 	int ec = errOK;
 	uint8 *mem;
 	unsigned int i;
@@ -216,11 +216,11 @@ uint8 *AgiLoader_v3::loadVolRes(AgiDir *agid) {
 			debugC(3, kDebugLevelResources, "offset = %d", agid->offset);
 			debugC(3, kDebugLevelResources, "x = %x %x", x[0], x[1]);
 			error("ACK! BAD RESOURCE");
-			_vm->quitGame();	// for compilers that don't support NORETURN
+			_vm->quitGame();    // for compilers that don't support NORETURN
 		}
 
-		agid->len = READ_LE_UINT16((uint8 *) x + 3);	// uncompressed size
-		agid->clen = READ_LE_UINT16((uint8 *) x + 5);	// compressed len
+		agid->len = READ_LE_UINT16((uint8 *) x + 3);    // uncompressed size
+		agid->clen = READ_LE_UINT16((uint8 *) x + 5);   // compressed len
 
 		compBuffer = (uint8 *)calloc(1, agid->clen + 32);
 		fp.read(compBuffer, agid->clen);

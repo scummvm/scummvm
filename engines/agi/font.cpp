@@ -727,7 +727,7 @@ void GfxFont::loadFontScummVMFile(Common::String fontFilename) {
 	// allocate space for font bitmap data
 	_fontDataAllocated = (uint8 *)calloc(256, 8);
 	_fontData = _fontDataAllocated;
- 
+
 	// read font data, is already in the format that we need (plain bitmap 8x8)
 	fontFile.read(_fontDataAllocated, 256 * 8);
 	fontFile.close();
@@ -762,7 +762,7 @@ void GfxFont::loadFontMickey() {
 	fontData = (uint8 *)calloc(256, 8);
 	_fontData = fontData;
 	_fontDataAllocated = fontData;
- 
+
 	// read font data, is already in the format that we need (plain bitmap 8x8)
 	interpreterFile.read(fontData, 256 * 8);
 	interpreterFile.close();

@@ -53,7 +53,7 @@ struct MessageState_Struct {
 	int16 textSize_Width;
 	int16 textSize_Height;
 	uint16 printed_Height;
-	
+
 	int16 backgroundPos_x;
 	int16 backgroundPos_y;
 	int16 backgroundSize_Width;
@@ -61,16 +61,16 @@ struct MessageState_Struct {
 };
 
 // this defines here are for calculating character-size inside the visual-screen!
-#define FONT_VISUAL_WIDTH			4
-#define FONT_VISUAL_HEIGHT			8
+#define FONT_VISUAL_WIDTH           4
+#define FONT_VISUAL_HEIGHT          8
 
-#define FONT_DISPLAY_WIDTH			8
-#define FONT_DISPLAY_HEIGHT			8
-#define FONT_ROW_CHARACTERS			25
-#define FONT_COLUMN_CHARACTERS		40
-#define FONT_BYTES_PER_CHARACTER	8
+#define FONT_DISPLAY_WIDTH          8
+#define FONT_DISPLAY_HEIGHT         8
+#define FONT_ROW_CHARACTERS         25
+#define FONT_COLUMN_CHARACTERS      40
+#define FONT_BYTES_PER_CHARACTER    8
 
-#define HEIGHT_MAX					20
+#define HEIGHT_MAX                  20
 
 #define TEXT_STRING_MAX_SIZE        40
 

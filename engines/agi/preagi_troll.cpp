@@ -464,7 +464,7 @@ int TrollEngine::drawRoom(char *menu) {
 			sprintf(tmp, "\n  %d.", i);
 			strcat(menu, tmp);
 
-			strncat(menu, (char *)_gameData + _options[_roomDescs[_roomPicture - 1].options[i]- 1], 35);
+			strncat(menu, (char *)_gameData + _options[_roomDescs[_roomPicture - 1].options[i] - 1], 35);
 
 			n = i + 1;
 		}
@@ -546,7 +546,7 @@ void TrollEngine::printUserMessage(int msgId) {
 
 void TrollEngine::gameLoop() {
 	bool done = false;
-	char menu[160+5];
+	char menu[160 + 5];
 	int currentOption, numberOfOptions;
 	int roomParam;
 	int haveFlashlight;
@@ -584,7 +584,7 @@ void TrollEngine::gameLoop() {
 				printUserMessage(13);
 				break;
 			}
-			// fall down
+		// fall down
 		case OT_GO:
 			_currentRoom = roomParam;
 			_roomPicture = _roomPicStartIdx[_currentRoom];
@@ -618,7 +618,7 @@ void TrollEngine::gameLoop() {
 					haveFlashlight = true;
 
 				_locMessagesIdx[_currentRoom] = IDO_TRO_LOCMESSAGES +
-					(roomParam + 42) * 39;
+				                                (roomParam + 42) * 39;
 
 				pickupTreasure(roomParam);
 			}
@@ -730,10 +730,11 @@ void TrollEngine::init() {
 	//SetScreenPar(320, 200, (char *)ibm_fontdata);
 
 	const int gaps[] = { 0x3A40,  0x4600,  0x4800,  0x5800,  0x5a00,  0x6a00,
-						 0x6c00,  0x7400,  0x7600,  0x7c00,  0x7e00,  0x8e00,
-						 0x9000,  0xa000,  0xa200,  0xb200,  0xb400,  0xc400,
-						 0xc600,  0xd600,  0xd800,  0xe800,  0xea00,  0xfa00,
-						 0xfc00,  0x10c00, 0x10e00, 0x11e00, 0x12000, 0x13000 };
+	                     0x6c00,  0x7400,  0x7600,  0x7c00,  0x7e00,  0x8e00,
+	                     0x9000,  0xa000,  0xa200,  0xb200,  0xb400,  0xc400,
+	                     0xc600,  0xd600,  0xd800,  0xe800,  0xea00,  0xfa00,
+	                     0xfc00,  0x10c00, 0x10e00, 0x11e00, 0x12000, 0x13000
+	                   };
 
 	Common::File infile;
 	if (!infile.open(IDA_TRO_BINNAME))

@@ -277,7 +277,7 @@ void GfxMgr::render_Block(int16 x, int16 y, int16 width, int16 height, bool copy
 
 bool GfxMgr::render_Clip(int16 &x, int16 &y, int16 &width, int16 &height, int16 clipAgainstWidth, int16 clipAgainstHeight) {
 	if ((x >= clipAgainstWidth) || ((x + width - 1) < 0) ||
-		(y < 0) || ((y - (height - 1)) >= clipAgainstHeight)) {
+	        (y < 0) || ((y - (height - 1)) >= clipAgainstHeight)) {
 		return false;
 	}
 
@@ -367,7 +367,7 @@ void GfxMgr::transition_Amiga() {
 			screenStepPos = screenPos >> 1;
 			posY = screenStepPos / SCRIPT_WIDTH;
 			posX = screenStepPos - (posY * SCRIPT_WIDTH);
-		
+
 			posY += _renderStartOffsetY; // adjust to only update the main area, not the status bar
 			posX *= 2; // adjust for display screen
 
@@ -602,7 +602,7 @@ void GfxMgr::drawCharacter(int16 row, int16 column, byte character, byte foregro
 
 	// get font data of specified character
 	fontData = _vm->getFontData() + character * FONT_BYTES_PER_CHARACTER;
-	
+
 	// Now figure out, if special handling needs to be done (for graphical mode only)
 	if (_vm->_game.gfxMode) {
 		if (background & 0x08) {
@@ -730,7 +730,7 @@ int16 GfxMgr::priorityToY(int16 priority) {
 	//
 	// Priority bands were working properly in: 3.001.098 (Black Cauldron)
 	uint16 agiVersion = _vm->getVersion();
-	
+
 	if (agiVersion <= 0x3086) {
 		return 168; // Buggy behavior, see above
 	}

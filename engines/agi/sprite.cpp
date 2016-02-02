@@ -253,7 +253,7 @@ void SpritesMgr::drawCel(ScreenObjEntry *screenObj) {
 		curY++;
 	}
 
-	if (screenObj->objectNr == 0) {	// if ego, update if ego is visible at the moment
+	if (screenObj->objectNr == 0) { // if ego, update if ego is visible at the moment
 		_vm->setFlag(VM_FLAG_EGO_INVISIBLE, isViewHidden);
 	}
 }
@@ -451,7 +451,7 @@ void SpritesMgr::addToPic(int16 viewNr, int16 loopNr, int16 celNr, int16 xPos, i
 	screenObj->priority = priority;
 
 	eraseSprites();
-	
+
 	// bugs related to this code: required by Gold Rush (see Sarien bug #587558)
 	if (screenObj->priority == 0) {
 		screenObj->priority = _gfx->priorityFromY(screenObj->yPos);
@@ -477,7 +477,7 @@ void SpritesMgr::addToPicDrawPriorityBox(ScreenObjEntry *screenObj, int16 border
 	int16 height = 0;
 	int16 width = 0;
 	int16 offsetX = 0;
-	
+
 	// Figure out the height of the box
 	curY = screenObj->yPos;
 	do {
@@ -494,7 +494,7 @@ void SpritesMgr::addToPicDrawPriorityBox(ScreenObjEntry *screenObj, int16 border
 	// now actually draw lower horizontal line
 	curY = screenObj->yPos;
 	curX = screenObj->xPos;
-	
+
 	width = screenObj->xSize;
 	while (width) {
 		_gfx->putPixel(curX, curY, GFX_SCREEN_MASK_PRIORITY, 0, border);

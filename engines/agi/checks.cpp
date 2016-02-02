@@ -58,7 +58,7 @@ bool AgiEngine::checkPosition(ScreenObjEntry *screenObj) {
 
 	if (!result) {
 		debugC(4, kDebugLevelSprites, "check position failed: x=%d, y=%d, h=%d, w=%d",
-				screenObj->xPos, screenObj->yPos, screenObj->xSize, screenObj->ySize);
+		       screenObj->xPos, screenObj->yPos, screenObj->xSize, screenObj->ySize);
 	}
 	return result;
 }
@@ -95,12 +95,12 @@ bool AgiEngine::checkCollision(ScreenObjEntry *screenObj) {
 
 		// Crossed the baseline, return error!
 		if ((screenObj->yPos > checkObj->yPos && screenObj->yPos_prev < checkObj->yPos_prev) ||
-				(screenObj->yPos < checkObj->yPos && screenObj->yPos_prev > checkObj->yPos_prev)) {
+		        (screenObj->yPos < checkObj->yPos && screenObj->yPos_prev > checkObj->yPos_prev)) {
 			debugC(4, kDebugLevelSprites, "check returns 1 (object %d)", screenObj->objectNr);
 			return true;
 		}
 	}
-	
+
 	return false;
 }
 
@@ -128,15 +128,15 @@ bool AgiEngine::checkPriority(ScreenObjEntry *screenObj) {
 		for (celX = 0; celX < screenObj->xSize; celX++, curX++) {
 			screenPriority = _gfx->getPriority(curX, curY);
 
-			if (screenPriority == 0) {	// unconditional black. no go at all!
+			if (screenPriority == 0) {  // unconditional black. no go at all!
 				touchedControl = 0;
 				break;
 			}
 
-			if (screenPriority != 3) {	// not water surface
+			if (screenPriority != 3) {  // not water surface
 				touchedWater = false;
 
-				if (screenPriority == 1) {	// conditional blue
+				if (screenPriority == 1) {  // conditional blue
 					if (!(screenObj->flags & fIgnoreBlocks)) {
 						debugC(4, kDebugLevelSprites, "Blocks observed!");
 						touchedControl = false;
@@ -313,26 +313,26 @@ void AgiEngine::fixPosition(ScreenObjEntry *screenObj) {
 
 	while (!checkPosition(screenObj) || checkCollision(screenObj) || !checkPriority(screenObj)) {
 		switch (dir) {
-		case 0:	// west
+		case 0: // west
 			screenObj->xPos--;
 			if (--count)
 				continue;
 			dir = 1;
 			break;
-		case 1:	// south
+		case 1: // south
 			screenObj->yPos++;
 			if (--count)
 				continue;
 			dir = 2;
 			size++;
 			break;
-		case 2:	// east
+		case 2: // east
 			screenObj->xPos++;
 			if (--count)
 				continue;
 			dir = 3;
 			break;
-		case 3:	// north
+		case 3: // north
 			screenObj->yPos--;
 			if (--count)
 				continue;

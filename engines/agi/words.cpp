@@ -61,11 +61,11 @@ int Words::loadDictionary_v1(Common::File &f) {
 
 			newWord->word = Common::String(str, k + 1); // myStrndup(str, k + 1);
 			newWord->id = f.readUint16LE();
-			
+
 			_dictionaryWords[firstCharNr].push_back(newWord);
 			debug(3, "'%s' (%d)", newWord->word.c_str(), newWord->id);
 		}
-	} while((uint8)str[0] != 0xFF);
+	} while ((uint8)str[0] != 0xFF);
 
 	return errOK;
 }

@@ -34,12 +34,12 @@ namespace Agi {
 
 #define getVar(a) state->_vm->getVar(a)
 
-#define testEqual(v1, v2)		(getVar(v1) == (v2))
-#define testLess(v1, v2)		(getVar(v1) < (v2))
-#define testGreater(v1, v2)	(getVar(v1) > (v2))
-#define testHas(obj)			(vm->objectGetLocation(obj) == EGO_OWNED)
-#define testHasV1(obj)			(vm->objectGetLocation(obj) == EGO_OWNED_V1)
-#define testObjInRoom(obj, v)	(vm->objectGetLocation(obj) == getVar(v))
+#define testEqual(v1, v2)     (getVar(v1) == (v2))
+#define testLess(v1, v2)      (getVar(v1) < (v2))
+#define testGreater(v1, v2)   (getVar(v1) > (v2))
+#define testHas(obj)          (vm->objectGetLocation(obj) == EGO_OWNED)
+#define testHasV1(obj)        (vm->objectGetLocation(obj) == EGO_OWNED_V1)
+#define testObjInRoom(obj, v) (vm->objectGetLocation(obj) == getVar(v))
 
 void condEqual(AgiGame *state, AgiEngine *vm, uint8 *p) {
 	state->testResult = testEqual(p[0], p[1]);
@@ -128,7 +128,7 @@ void condSaid2(AgiGame *state, AgiEngine *vm, uint8 *p) {
 	int id1 = READ_LE_UINT16(p + 2);
 
 	if ((id0 == 1 || id0 == vm->_words->getEgoWordId(0)) &&
-		(id1 == 1 || id1 == vm->_words->getEgoWordId(1)))
+	        (id1 == 1 || id1 == vm->_words->getEgoWordId(1)))
 		state->testResult = true;
 }
 
@@ -143,8 +143,8 @@ void condSaid3(AgiGame *state, AgiEngine *vm, uint8 *p) {
 	int id2 = READ_LE_UINT16(p + 4);
 
 	if ((id0 == 1 || id0 == vm->_words->getEgoWordId(0)) &&
-		(id1 == 1 || id1 == vm->_words->getEgoWordId(1)) &&
-		(id2 == 1 || id2 == vm->_words->getEgoWordId(2)))
+	        (id1 == 1 || id1 == vm->_words->getEgoWordId(1)) &&
+	        (id2 == 1 || id2 == vm->_words->getEgoWordId(2)))
 		state->testResult = true;
 }
 
@@ -281,7 +281,7 @@ uint8 AgiEngine::testObjInBox(uint8 n, uint8 x1, uint8 y1, uint8 x2, uint8 y2) {
 	ScreenObjEntry *v = &_game.screenObjTable[n];
 
 	return v->xPos >= x1 &&
-	    v->yPos >= y1 && v->xPos + v->xSize - 1 <= x2 && v->yPos <= y2;
+	       v->yPos >= y1 && v->xPos + v->xSize - 1 <= x2 && v->yPos <= y2;
 }
 
 // if n is in center of box
@@ -289,7 +289,7 @@ uint8 AgiEngine::testObjCenter(uint8 n, uint8 x1, uint8 y1, uint8 x2, uint8 y2) 
 	ScreenObjEntry *v = &_game.screenObjTable[n];
 
 	return v->xPos + v->xSize / 2 >= x1 &&
-			v->xPos + v->xSize / 2 <= x2 && v->yPos >= y1 && v->yPos <= y2;
+	       v->xPos + v->xSize / 2 <= x2 && v->yPos >= y1 && v->yPos <= y2;
 }
 
 // if nect N is in right corner
@@ -297,7 +297,7 @@ uint8 AgiEngine::testObjRight(uint8 n, uint8 x1, uint8 y1, uint8 x2, uint8 y2) {
 	ScreenObjEntry *v = &_game.screenObjTable[n];
 
 	return v->xPos + v->xSize - 1 >= x1 &&
-			v->xPos + v->xSize - 1 <= x2 && v->yPos >= y1 && v->yPos <= y2;
+	       v->xPos + v->xSize - 1 <= x2 && v->yPos >= y1 && v->yPos <= y2;
 }
 
 // When player has entered something, it is parsed elsewhere
@@ -333,10 +333,10 @@ uint8 AgiEngine::testSaid(uint8 nwords, uint8 *cc) {
 		cc += 2;
 
 		switch (z) {
-		case 9999:	// rest of line (empty string counts to...)
+		case 9999:  // rest of line (empty string counts to...)
 			nwords = 1;
 			break;
-		case 1:	// any word
+		case 1: // any word
 			break;
 		default:
 			if (words->getEgoWordId(c) != z)

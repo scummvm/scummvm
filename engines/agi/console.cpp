@@ -348,7 +348,7 @@ bool Console::Cmd_Trigger(int argc, const char **argv) {
 		debugPrintf("Usage: trigger on|off\n");
 		return true;
 	}
-	_vm->_debug.ignoretriggers = strcmp (argv[1], "on");
+	_vm->_debug.ignoretriggers = strcmp(argv[1], "on");
 
 	return true;
 }
@@ -464,7 +464,7 @@ bool Console::Cmd_ScreenObj(int argc, const char **argv) {
 		debugPrintf("stepTime: %d, timeCount: %d, size: %d\n", screenObj->stepTime, screenObj->stepTimeCount, screenObj->stepSize);
 		debugPrintf("cycleTime: %d, timeCount: %d\n", screenObj->cycleTime, screenObj->cycleTimeCount);
 
-		switch(screenObj->motionType) {
+		switch (screenObj->motionType) {
 		case kMotionNormal:
 			debugPrintf("motion: normal\n");
 			break;

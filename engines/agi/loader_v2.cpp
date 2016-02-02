@@ -29,9 +29,9 @@ namespace Agi {
 
 int AgiLoader_v2::detectGame() {
 	if (!Common::File::exists(LOGDIR) ||
-			!Common::File::exists(PICDIR) ||
-			!Common::File::exists(SNDDIR) ||
-			!Common::File::exists(VIEWDIR))
+	        !Common::File::exists(PICDIR) ||
+	        !Common::File::exists(SNDDIR) ||
+	        !Common::File::exists(VIEWDIR))
 		return errInvalidAGIFile;
 
 	return _vm->setupV2Game(_vm->getVersion());

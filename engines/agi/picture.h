@@ -25,15 +25,15 @@
 
 namespace Agi {
 
-#define _DEFAULT_WIDTH		160
-#define _DEFAULT_HEIGHT		168
+#define _DEFAULT_WIDTH      160
+#define _DEFAULT_HEIGHT     168
 
 /**
  * AGI picture resource.
  */
 struct AgiPicture {
-	uint32 flen;			/**< size of raw data */
-	uint8 *rdata;			/**< raw vector image data */
+	uint32 flen;            /**< size of raw data */
+	uint8 *rdata;           /**< raw vector image data */
 };
 
 // AGI picture version
@@ -77,7 +77,7 @@ public:
 	void putVirtPixel(int x, int y);
 
 	int decodePicture(int16 resourceNr, bool clearScreen, bool agi256 = false, int16 pic_width = _DEFAULT_WIDTH, int16 pic_height = _DEFAULT_HEIGHT);
-	int decodePicture(byte* data, uint32 length, int clear, int pic_width = _DEFAULT_WIDTH, int pic_height = _DEFAULT_HEIGHT);
+	int decodePicture(byte *data, uint32 length, int clear, int pic_width = _DEFAULT_WIDTH, int pic_height = _DEFAULT_HEIGHT);
 	int unloadPicture(int);
 	void drawPicture();
 private:
@@ -106,7 +106,7 @@ public:
 	void showPicWithTransition();
 	uint8 *convertV3Pic(uint8 *src, uint32 len);
 
-	void plotPattern(int x, int y);		// public because it's used directly by preagi
+	void plotPattern(int x, int y);     // public because it's used directly by preagi
 
 	void setPattern(uint8 code, uint8 num);
 
