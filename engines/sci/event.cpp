@@ -174,11 +174,36 @@ SciEvent EventManager::getScummVMEvent() {
 		return input;
 	}
 
+	int ourModifiers = em->getModifierState();
+
+	input.modifiers =
+		((ourModifiers & Common::KBD_ALT) ? SCI_KEYMOD_ALT : 0) |
+		((ourModifiers & Common::KBD_CTRL) ? SCI_KEYMOD_CTRL : 0) |
+		((ourModifiers & Common::KBD_SHIFT) ? SCI_KEYMOD_LSHIFT | SCI_KEYMOD_RSHIFT : 0);
+		// Caps lock and Scroll lock have been removed, cause we already handle upper
+		// case keys ad Scroll lock doesn't seem to be used anywhere
+		//((ourModifiers & Common::KBD_CAPS) ? SCI_KEYMOD_CAPSLOCK : 0) |
+		//((ourModifiers & Common::KBD_SCRL) ? SCI_KEYMOD_SCRLOCK : 0) |
+
 	// Handle mouse events
 	for (int i = 0; i < ARRAYSIZE(mouseEventMappings); i++) {
 		if (mouseEventMappings[i].commonType == ev.type) {
 			input.type = mouseEventMappings[i].sciType;
 			input.data = mouseEventMappings[i].data;
+			// Sierra passed keyboard modifiers for mouse events, too.
+
+			// Sierra also set certain modifiers within their mouse interrupt handler
+			// This whole thing was probably meant for people using a mouse, that only featured 1 button
+			// So the user was able to press Ctrl and click the mouse button to create a right click.
+			switch (input.data) {
+			case 2: // right button click
+				input.modifiers |= (SCI_KEYMOD_RSHIFT | SCI_KEYMOD_LSHIFT); // this value was hardcoded in the mouse interrupt handler
+				break;
+			case 3: //  middle button click
+				input.modifiers |= SCI_KEYMOD_CTRL; // this value was hardcoded in the mouse interrupt handler
+			default:
+				break;
+			}
 			return input;
 		}
 	}
@@ -197,22 +222,11 @@ SciEvent EventManager::getScummVMEvent() {
 
 	// Process keyboard events
 
-	int modifiers = em->getModifierState();
 	bool numlockOn = (ev.kbd.flags & Common::KBD_NUM);
 
 	input.data = ev.kbd.keycode;
 	input.character = ev.kbd.ascii;
 	input.type = SCI_EVENT_KEYBOARD;
-
-	input.modifiers =
-		((modifiers & Common::KBD_ALT) ? SCI_KEYMOD_ALT : 0) |
-		((modifiers & Common::KBD_CTRL) ? SCI_KEYMOD_CTRL : 0) |
-		((modifiers & Common::KBD_SHIFT) ? SCI_KEYMOD_LSHIFT | SCI_KEYMOD_RSHIFT : 0);
-
-	// Caps lock and Scroll lock have been removed, cause we already handle upper
-	// case keys ad Scroll lock doesn't seem to be used anywhere
-		//((ev.kbd.flags & Common::KBD_CAPS) ? SCI_KEYMOD_CAPSLOCK : 0) |
-		//((ev.kbd.flags & Common::KBD_SCRL) ? SCI_KEYMOD_SCRLOCK : 0) |
 
 	if (input.data >= Common::KEYCODE_KP0 && input.data <= Common::KEYCODE_KP9) {
 		if (!(ev.kbd.flags & Common::KBD_NUM)) {
@@ -241,7 +255,7 @@ SciEvent EventManager::getScummVMEvent() {
 		}
 		if (input.data == Common::KEYCODE_TAB) {
 			input.character = input.data = SCI_KEY_TAB;
-			if (modifiers & Common::KBD_SHIFT)
+			if (ourModifiers & Common::KBD_SHIFT)
 				input.character = SCI_KEY_SHIFT_TAB;
 		}
 		if (input.data == Common::KEYCODE_DELETE)
@@ -250,7 +264,7 @@ SciEvent EventManager::getScummVMEvent() {
 		// SCI_K_F1 == 59 << 8
 		// SCI_K_SHIFT_F1 == 84 << 8
 		input.character = input.data = SCI_KEY_F1 + ((input.data - Common::KEYCODE_F1)<<8);
-		if (modifiers & Common::KBD_SHIFT)
+		if (ourModifiers & Common::KBD_SHIFT)
 			input.character = input.data + 0x1900;
 	} else {
 		// Special keys that need conversion
@@ -265,13 +279,13 @@ SciEvent EventManager::getScummVMEvent() {
 	// When Ctrl AND Alt are pressed together with a regular key, Linux will give us control-key, Windows will give
 	//  us the actual key. My opinion is that windows is right, because under DOS the keys worked the same, anyway
 	//  we support the other case as well
-	if ((modifiers & Common::KBD_ALT) && input.character > 0 && input.character < 27)
+	if ((ourModifiers & Common::KBD_ALT) && input.character > 0 && input.character < 27)
 		input.character += 96; // 0x01 -> 'a'
 
 	// Scancodify if appropriate
-	if (modifiers & Common::KBD_ALT)
+	if (ourModifiers & Common::KBD_ALT)
 		input.character = altify(input.character);
-	if (getSciVersion() <= SCI_VERSION_1_MIDDLE && (modifiers & Common::KBD_CTRL) && input.character > 0 && input.character < 27)
+	if (getSciVersion() <= SCI_VERSION_1_MIDDLE && (ourModifiers & Common::KBD_CTRL) && input.character > 0 && input.character < 27)
 		input.character += 96; // 0x01 -> 'a'
 
 	// If no actual key was pressed (e.g. if only a modifier key was pressed),

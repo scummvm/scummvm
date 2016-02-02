@@ -126,12 +126,12 @@ reg_t kGetEvent(EngineState *s, int argc, reg_t *argv) {
 
 		// It seems Sierra fixed this behaviour (effectively bug) in the SCI1 keyboard driver.
 		// SCI32 also resets the upper byte.
+
+		// This was verified in SSCI itself by creating a SCI game and checking behavior.
 		if (getSciVersion() <= SCI_VERSION_01) {
 			modifiers |= 0x0200;
 		}
 	}
-
-	//s->_gui->moveCursor(s->gfx_state->pointer_pos.x, s->gfx_state->pointer_pos.y);
 
 	switch (curEvent.type) {
 	case SCI_EVENT_QUIT:
@@ -151,7 +151,6 @@ reg_t kGetEvent(EngineState *s, int argc, reg_t *argv) {
 
 	case SCI_EVENT_MOUSE_RELEASE:
 	case SCI_EVENT_MOUSE_PRESS:
-
 		// track left buttton clicks, if requested
 		if (curEvent.type == SCI_EVENT_MOUSE_PRESS && curEvent.data == 1 && g_debug_track_mouse_clicks) {
 			g_sci->getSciDebugger()->debugPrintf("Mouse clicked at %d, %d\n",
@@ -159,19 +158,6 @@ reg_t kGetEvent(EngineState *s, int argc, reg_t *argv) {
 		}
 
 		if (mask & curEvent.type) {
-			int extra_bits = 0;
-
-			switch (curEvent.data) {
-			case 2:
-				extra_bits = SCI_KEYMOD_LSHIFT | SCI_KEYMOD_RSHIFT;
-				break;
-			case 3:
-				extra_bits = SCI_KEYMOD_CTRL;
-			default:
-				break;
-			}
-			modifiers |= extra_bits; // add these additional bits to the mix
-
 			writeSelectorValue(segMan, obj, SELECTOR(type), curEvent.type);
 			writeSelectorValue(segMan, obj, SELECTOR(message), 0);
 			writeSelectorValue(segMan, obj, SELECTOR(modifiers), modifiers);
