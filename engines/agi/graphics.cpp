@@ -589,16 +589,19 @@ void GfxMgr::drawDisplayRectCGA(int16 x, int16 y, int16 width, int16 height, byt
 
 // row + column are text-coordinates
 void GfxMgr::drawCharacter(int16 row, int16 column, byte character, byte foreground, byte background, bool disabledLook) {
-	int16       startX, startY;
+	int16 x = column * FONT_DISPLAY_WIDTH;
+	int16 y = row * FONT_DISPLAY_HEIGHT;
+
+	drawCharacterOnDisplay(x, y, character, foreground, background, disabledLook);
+}
+
+void GfxMgr::drawCharacterOnDisplay(int16 x, int16 y, byte character, byte foreground, byte background, bool disabledLook) {
 	int16       curX, curY;
 	const byte *fontData;
 	byte        curByte = 0;
 	uint16      curBit;
 	byte        curTransformXOR = 0;
 	byte        curTransformOR = 0;
-
-	startX = column * FONT_DISPLAY_HEIGHT;
-	startY = row * FONT_DISPLAY_WIDTH;
 
 	// get font data of specified character
 	fontData = _vm->getFontData() + character * FONT_BYTES_PER_CHARACTER;
@@ -627,15 +630,15 @@ void GfxMgr::drawCharacter(int16 row, int16 column, byte character, byte foregro
 				curBit  = 0x80;
 			}
 			if (curByte & curBit) {
-				putPixelOnDisplay(startX + curX, startY + curY, foreground);
+				putPixelOnDisplay(x + curX, y + curY, foreground);
 			} else {
-				putPixelOnDisplay(startX + curX, startY + curY, background);
+				putPixelOnDisplay(x + curX, y + curY, background);
 			}
 			curBit = curBit >> 1;
 		}
 	}
 
-	copyDisplayRectToScreen(startX, startY, FONT_DISPLAY_WIDTH, FONT_DISPLAY_HEIGHT);
+	copyDisplayRectToScreen(x, y, FONT_DISPLAY_WIDTH, FONT_DISPLAY_HEIGHT);
 }
 
 #define SHAKE_VERTICAL_PIXELS 4
