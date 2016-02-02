@@ -356,7 +356,13 @@ void GfxMenu::execute() {
 	if (_text->statusEnabled()) {
 		_text->statusDraw();
 	} else {
-		_text->clearLine(0, 0);
+		if (_text->getWindowRowMin() == 0) {
+			// Playarea starts right at the stop, so instead of clearing that part, render it from playarea
+			// Required for at least Donald Duck
+			_gfx->render_Block(0, (1 * FONT_VISUAL_HEIGHT) - 1, SCRIPT_WIDTH, FONT_VISUAL_HEIGHT);
+		} else {
+			_text->clearLine(0, 0);
+		}
 	}
 }
 
