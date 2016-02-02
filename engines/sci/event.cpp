@@ -180,7 +180,7 @@ SciEvent EventManager::getScummVMEvent() {
 		((ourModifiers & Common::KBD_CTRL) ? SCI_KEYMOD_CTRL : 0) |
 		((ourModifiers & Common::KBD_SHIFT) ? SCI_KEYMOD_LSHIFT | SCI_KEYMOD_RSHIFT : 0);
 		// Caps lock and Scroll lock have been removed, cause we already handle upper
-		// case keys ad Scroll lock doesn't seem to be used anywhere
+		// case keys and Scroll lock doesn't seem to be used anywhere
 		//((ourModifiers & Common::KBD_CAPS) ? SCI_KEYMOD_CAPSLOCK : 0) |
 		//((ourModifiers & Common::KBD_SCRL) ? SCI_KEYMOD_SCRLOCK : 0) |
 
