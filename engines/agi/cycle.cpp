@@ -176,7 +176,6 @@ void AgiEngine::interpretCycle() {
 // If main_cycle returns false, don't process more events!
 int AgiEngine::mainCycle(bool onlyCheckForEvents) {
 	uint16 key;
-	byte   keyAscii;
 	ScreenObjEntry *screenObjEgo = &_game.screenObjTable[SCREENOBJECTS_EGO_ENTRY];
 
 	if (!onlyCheckForEvents) {
@@ -219,19 +218,18 @@ int AgiEngine::mainCycle(bool onlyCheckForEvents) {
 		}
 	}
 
-	keyAscii = key & 0xFF;
-	if (keyAscii) {
-		setVar(VM_VAR_KEY, keyAscii);
-	}
-
 	handleMouseClicks(key);
 
 	if (!cycleInnerLoopIsActive()) {
 		// no inner loop active at the moment, regular processing
+
 		if (key) {
+			setVar(VM_VAR_KEY, key & 0xFF);
 			if (!handleController(key)) {
-				if ((key) && (_text->promptIsEnabled())) {
-					_text->promptCharPress(key);
+				if (key) {
+					if (_text->promptIsEnabled()) {
+						_text->promptCharPress(key);
+					}
 				}
 			}
 		}
@@ -239,7 +237,6 @@ int AgiEngine::mainCycle(bool onlyCheckForEvents) {
 	} else {
 		// inner loop active
 		// call specific workers
-		setVar(VM_VAR_KEY, 0);  // clear keys, they must not be passed to the scripts
 		_game.keypress = 0;
 
 		switch (_game.cycleInnerLoopType) {
@@ -272,22 +269,16 @@ int AgiEngine::mainCycle(bool onlyCheckForEvents) {
 			}
 			break;
 
-		case CYCLE_INNERLOOP_HAVEKEY:
-			if (key) {
-				testHaveKeyCharPress(key);
-			}
-			break;
-
 		default:
 			break;
 		}
 	}
 
-	if (_menu->delayedExecuteActive()) {
-		_menu->execute();
-	}
-
 	if (!onlyCheckForEvents) {
+		if (_menu->delayedExecuteActive()) {
+			_menu->execute();
+		}
+
 		if (_game.msgBoxTicks > 0)
 			_game.msgBoxTicks--;
 	}

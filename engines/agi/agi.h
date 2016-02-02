@@ -389,8 +389,7 @@ enum CycleInnerLoopType {
 	CYCLE_INNERLOOP_INVENTORY                    = 2,
 	CYCLE_INNERLOOP_MENU_VIA_KEYBOARD            = 3,
 	CYCLE_INNERLOOP_MENU_VIA_MOUSE               = 4,
-	CYCLE_INNERLOOP_SYSTEMUI_SELECTSAVEDGAMESLOT = 5,
-	CYCLE_INNERLOOP_HAVEKEY                      = 6
+	CYCLE_INNERLOOP_SYSTEMUI_SELECTSAVEDGAMESLOT = 5
 };
 
 enum State {
@@ -871,8 +870,6 @@ public:
 	uint8 testSaid(uint8, uint8 *);
 	uint8 testController(uint8);
 	uint8 testCompareStrings(uint8, uint8);
-
-	void testHaveKeyCharPress(uint16 newChar);
 
 	// View
 private:

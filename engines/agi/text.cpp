@@ -350,7 +350,6 @@ bool TextMgr::messageBox(const char *textPtr) {
 
 	if (_vm->getVar(VM_VAR_WINDOW_RESET) == 0) {
 		int userKey;
-		_vm->setVar(VM_VAR_KEY, 0);
 		userKey = _vm->waitKey();
 		closeWindow();
 
@@ -363,7 +362,6 @@ bool TextMgr::messageBox(const char *textPtr) {
 	// timed window
 	debugC(3, kDebugLevelText, "f15==0, v21==%d => timed", _vm->getVar(VM_VAR_WINDOW_RESET));
 	_vm->_game.msgBoxTicks = _vm->getVar(VM_VAR_WINDOW_RESET) * 10;
-	_vm->setVar(VM_VAR_KEY, 0);
 
 	do {
 		if (_vm->getFlag(VM_FLAG_RESTORE_JUST_RAN))

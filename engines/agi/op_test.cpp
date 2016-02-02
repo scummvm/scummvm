@@ -119,29 +119,19 @@ void condController(AgiGame *state, AgiEngine *vm, uint8 *p) {
 }
 
 void condHaveKey(AgiGame *state, AgiEngine *vm, uint8 *p) {
-	if (!vm->getVar(VM_VAR_KEY)) {
-		// Only wait for key when there is not already one set by scripts
-		vm->cycleInnerLoopActive(CYCLE_INNERLOOP_HAVEKEY);
-		do {
-			// Only check for events here, without updating the game cycle,
-			// otherwise the animations in some games are drawn too quickly
-			// like, for example, Manannan's lightnings in the intro of KQ3
-			// and the bullets opened in the logo of PQ1, during its intro.
-			// Fixes bug #3600733
-			vm->mainCycle(true);
-		} while (vm->cycleInnerLoopIsActive() && !(vm->shouldQuit() || vm->_restartGame));
+	if (vm->getVar(VM_VAR_KEY)) {
+		state->testResult = 1;
+		return;
 	}
-
-	state->testResult = 1;
-}
-
-void AgiEngine::testHaveKeyCharPress(uint16 newChar) {
-	// pass key to scripts
-	setVar(VM_VAR_KEY, newChar);
-
-	// Exit on any key press
-	cycleInnerLoopInactive();
-	debugC(5, kDebugLevelScripts | kDebugLevelInput, "keypress = %02x", newChar);
+	// Only check for key when there is not already one set by scripts
+	uint16 key = vm->doPollKeyboard();
+	if (key) {
+		debugC(5, kDebugLevelScripts | kDebugLevelInput, "keypress = %02x", key);
+		vm->setVar(VM_VAR_KEY, key);
+		state->testResult = 1;
+		return;
+	}
+	state->testResult = 0;
 }
 
 void condSaid(AgiGame *state, AgiEngine *vm, uint8 *p) {
