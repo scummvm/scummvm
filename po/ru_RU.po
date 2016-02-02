@@ -1105,12 +1105,12 @@ msgstr "*  Pre"
 #. I18N: 'Num' means Numbers
 #: gui/predictivedialog.cpp:575
 msgid "*  Num"
-msgstr ""
+msgstr "*  Цфр"
 
 #. I18N: 'Abc' means Latin alphabet input
 #: gui/predictivedialog.cpp:578
 msgid "*  Abc"
-msgstr ""
+msgstr "*  Abc"
 
 #: gui/recorderdialog.cpp:64
 msgid "Recorder or Playback Gameplay"
@@ -1356,11 +1356,11 @@ msgstr "Hercules Янтарный"
 
 #: common/rendermode.cpp:42
 msgid "PC-9821 (256 Colors)"
-msgstr ""
+msgstr "PC-9821 (256 цветов)"
 
 #: common/rendermode.cpp:43
 msgid "PC-9801 (16 Colors)"
-msgstr ""
+msgstr "PC-9801 (16 цветов)"
 
 #: common/rendermode.cpp:71
 msgctxt "lowres"
@@ -1614,17 +1614,15 @@ msgstr "Эмулятор Apple II GS (отсутствует)"
 
 #: audio/softsynth/cms.cpp:350
 msgid "Creative Music System Emulator"
-msgstr ""
+msgstr "Эмулятор Creative Music System"
 
 #: audio/softsynth/fmtowns_pc98/towns_pc98_plugins.cpp:33
-#, fuzzy
 msgid "FM-Towns Audio"
-msgstr "Эмулятор FM Towns"
+msgstr "Аудио FM-Towns"
 
 #: audio/softsynth/fmtowns_pc98/towns_pc98_plugins.cpp:58
-#, fuzzy
 msgid "PC-98 Audio"
-msgstr "Аудио"
+msgstr "Аудио PC-98"
 
 #: audio/softsynth/mt32.cpp:200
 msgid "Initializing MT-32 Emulator"
@@ -1719,34 +1717,33 @@ msgstr "Вы действительно хотите выйти?"
 
 #. I18N: Trackpad mode toggle status.
 #: backends/events/webossdl/webossdl-events.cpp:308
-#, fuzzy
 msgid "Trackpad mode is now"
-msgstr "Режим тачпада выключен."
+msgstr "Режим трекпада включен."
 
 #. I18N: Trackpad mode on or off.
 #. I18N: Auto-drag on or off.
 #: backends/events/webossdl/webossdl-events.cpp:311
 #: backends/events/webossdl/webossdl-events.cpp:338
 msgid "ON"
-msgstr ""
+msgstr "ВКЛ"
 
 #: backends/events/webossdl/webossdl-events.cpp:311
 #: backends/events/webossdl/webossdl-events.cpp:338
 msgid "OFF"
-msgstr ""
+msgstr "ВЫКЛ"
 
 #: backends/events/webossdl/webossdl-events.cpp:315
 msgid "Swipe two fingers to the right to toggle."
-msgstr ""
+msgstr "Проведите двумя пальцами направо для переключения."
 
 #. I18N: Auto-drag toggle status.
 #: backends/events/webossdl/webossdl-events.cpp:335
 msgid "Auto-drag mode is now"
-msgstr ""
+msgstr "Режим авто-дрег включен"
 
 #: backends/events/webossdl/webossdl-events.cpp:342
 msgid "Swipe three fingers to the right to toggle."
-msgstr ""
+msgstr "Проведите тремя пальцами направо для переключения."
 
 #: backends/graphics/opengl/opengl-graphics.cpp:119
 msgid "OpenGL"
@@ -2041,24 +2038,23 @@ msgstr "Управление мышью"
 
 #: backends/platform/tizen/fs.cpp:259
 msgid "[ Data ]"
-msgstr ""
+msgstr "[ Данные ]"
 
 #: backends/platform/tizen/fs.cpp:263
 msgid "[ Resources ]"
-msgstr ""
+msgstr "[ Ресурсы ]"
 
 #: backends/platform/tizen/fs.cpp:267
 msgid "[ SDCard ]"
-msgstr ""
+msgstr "[ SD-карта ]"
 
 #: backends/platform/tizen/fs.cpp:271
 msgid "[ Media ]"
-msgstr ""
+msgstr "[ Медиа ]"
 
 #: backends/platform/tizen/fs.cpp:275
-#, fuzzy
 msgid "[ Shared ]"
-msgstr "Сетевая папка:"
+msgstr "[ Сетевая папка ]"
 
 #: backends/platform/wii/options.cpp:51
 msgid "Video"
