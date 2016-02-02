@@ -32,37 +32,49 @@ namespace Agi {
 #define ip (state->_curLogic->cIP)
 #define code (state->_curLogic->data)
 
-#define getVar(a) vm->getVar(a)
-
-#define testEqual(v1, v2)     (getVar(v1) == (v2))
-#define testLess(v1, v2)      (getVar(v1) < (v2))
-#define testGreater(v1, v2)   (getVar(v1) > (v2))
-#define testHas(obj)          (vm->objectGetLocation(obj) == EGO_OWNED)
-#define testHasV1(obj)        (vm->objectGetLocation(obj) == EGO_OWNED_V1)
-#define testObjInRoom(obj, v) (vm->objectGetLocation(obj) == getVar(v))
-
 void condEqual(AgiGame *state, AgiEngine *vm, uint8 *p) {
-	state->testResult = testEqual(p[0], p[1]);
+	uint16 varNr1 = p[0];
+	uint16 varVal1 = vm->getVar(varNr1);
+	uint16 value2 = p[1];
+	state->testResult = (varVal1 == value2);
 }
 
 void condEqualV(AgiGame *state, AgiEngine *vm, uint8 *p) {
-	state->testResult = testEqual(p[0], getVar(p[1]));
+	uint16 varNr1 = p[0];
+	uint16 varNr2 = p[1];
+	uint16 varVal1 = vm->getVar(varNr1);
+	uint16 varVal2 = vm->getVar(varNr2);
+	state->testResult = (varVal1 == varVal2);
 }
 
 void condLess(AgiGame *state, AgiEngine *vm, uint8 *p) {
-	state->testResult = testLess(p[0], p[1]);
+	uint16 varNr1 = p[0];
+	uint16 varVal1 = vm->getVar(varNr1);
+	uint16 value2 = p[1];
+	state->testResult = (varVal1 < value2);
 }
 
 void condLessV(AgiGame *state, AgiEngine *vm, uint8 *p) {
-	state->testResult = testLess(p[0], getVar(p[1]));
+	uint16 varNr1 = p[0];
+	uint16 varNr2 = p[1];
+	uint16 varVal1 = vm->getVar(varNr1);
+	uint16 varVal2 = vm->getVar(varNr2);
+	state->testResult = (varVal1 < varVal2);
 }
 
 void condGreater(AgiGame *state, AgiEngine *vm, uint8 *p) {
-	state->testResult = testGreater(p[0], p[1]);
+	uint16 varNr1 = p[0];
+	uint16 varVal1 = vm->getVar(varNr1);
+	uint16 value2 = p[1];
+	state->testResult = (varVal1 > value2);
 }
 
 void condGreaterV(AgiGame *state, AgiEngine *vm, uint8 *p) {
-	state->testResult = testGreater(p[0], getVar(p[1]));
+	uint16 varNr1 = p[0];
+	uint16 varNr2 = p[1];
+	uint16 varVal1 = vm->getVar(varNr1);
+	uint16 varVal2 = vm->getVar(varNr2);
+	state->testResult = (varVal1 > varVal2);
 }
 
 void condIsSet(AgiGame *state, AgiEngine *vm, uint8 *p) {
@@ -70,23 +82,32 @@ void condIsSet(AgiGame *state, AgiEngine *vm, uint8 *p) {
 }
 
 void condIsSetV(AgiGame *state, AgiEngine *vm, uint8 *p) {
-	state->testResult = vm->getFlag(getVar(p[0]));
+	uint16 varNr = p[0];
+	uint16 varVal = vm->getVar(varNr);
+	state->testResult = vm->getFlag(varVal);
 }
 
 void condIsSetV1(AgiGame *state, AgiEngine *vm, uint8 *p) {
-	state->testResult = getVar(p[0]) > 0;
+	uint16 varNr = p[0];
+	uint16 varVal = vm->getVar(varNr);
+	state->testResult = varVal > 0;
 }
 
 void condHas(AgiGame *state, AgiEngine *vm, uint8 *p) {
-	state->testResult = testHas(p[0]);
+	uint16 objectNr = p[0];
+	state->testResult = (vm->objectGetLocation(objectNr) == EGO_OWNED);
 }
 
 void condHasV1(AgiGame *state, AgiEngine *vm, uint8 *p) {
-	state->testResult = testHasV1(p[0]);
+	uint16 objectNr = p[0];
+	state->testResult = (vm->objectGetLocation(objectNr) == EGO_OWNED_V1);
 }
 
 void condObjInRoom(AgiGame *state, AgiEngine *vm, uint8 *p) {
-	state->testResult = testObjInRoom(p[0], p[1]);
+	uint16 objectNr = p[0];
+	uint16 varNr = p[1];
+	uint16 varVal = vm->getVar(varNr);
+	state->testResult = (vm->objectGetLocation(objectNr) == varVal);
 }
 
 void condPosn(AgiGame *state, AgiEngine *vm, uint8 *p) {
@@ -98,7 +119,7 @@ void condController(AgiGame *state, AgiEngine *vm, uint8 *p) {
 }
 
 void condHaveKey(AgiGame *state, AgiEngine *vm, uint8 *p) {
-	if (!getVar(VM_VAR_KEY)) {
+	if (!vm->getVar(VM_VAR_KEY)) {
 		// Only wait for key when there is not already one set by scripts
 		vm->cycleInnerLoopActive(CYCLE_INNERLOOP_HAVEKEY);
 		do {
@@ -171,7 +192,10 @@ void condSaid3(AgiGame *state, AgiEngine *vm, uint8 *p) {
 }
 
 void condBit(AgiGame *state, AgiEngine *vm, uint8 *p) {
-	state->testResult = (getVar(p[1]) >> p[0]) & 1;
+	uint16 value1 = p[0];
+	uint16 varNr2 = p[1];
+	uint16 varVal2 = vm->getVar(varNr2);
+	state->testResult = (varVal2 >> value1) & 1;
 }
 
 void condCompareStrings(AgiGame *state, AgiEngine *vm, uint8 *p) {
