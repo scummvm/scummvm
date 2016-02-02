@@ -36,16 +36,21 @@ GfxMenu::GfxMenu(AgiEngine *vm, GfxMgr *gfx, PictureMgr *picture, TextMgr *text)
 
 	_allowed = true;
 	_submitted = false;
-	_delayedExecute = false;
+	_delayedExecuteViaKeyboard = false;
+	_delayedExecuteViaMouse = false;
 
 	_setupMenuColumn = 1;
 	_setupMenuItemColumn = 1;
 
-	_selectedMenuNr = 0;
-	_selectedMenuHeight = 0;
-	_selectedMenuWidth = 0;
-	_selectedMenuRow = 0;
-	_selectedMenuColumn = 0;
+	_lastSelectedMenuNr = 0;
+
+	_mouseModeItemNr = -1;
+
+	_drawnMenuNr = -1;
+	_drawnMenuHeight = 0;
+	_drawnMenuWidth = 0;
+	_drawnMenuRow = 0;
+	_drawnMenuColumn = 0;
 }
 
 GfxMenu::~GfxMenu() {
@@ -263,16 +268,24 @@ void GfxMenu::accessDeny() {
 	_allowed = false;
 }
 
-void GfxMenu::delayedExecute() {
-	_delayedExecute = true;
+void GfxMenu::delayedExecuteViaKeyboard() {
+	_delayedExecuteViaKeyboard = true;
+	_delayedExecuteViaMouse = false;
+}
+void GfxMenu::delayedExecuteViaMouse() {
+	_delayedExecuteViaKeyboard = false;
+	_delayedExecuteViaMouse = true;
 }
 
 bool GfxMenu::delayedExecuteActive() {
-	return _delayedExecute;
+	return _delayedExecuteViaKeyboard | _delayedExecuteViaMouse;
 }
 
 void GfxMenu::execute() {
-	_delayedExecute = false;
+	bool viaKeyboard = _delayedExecuteViaKeyboard;
+	bool viaMouse = _delayedExecuteViaMouse;
+	_delayedExecuteViaKeyboard = false;
+	_delayedExecuteViaMouse = false;
 
 	// got submitted? -> safety check
 	if (!_submitted)
@@ -290,12 +303,36 @@ void GfxMenu::execute() {
 	for (uint16 menuNr = 0; menuNr < _array.size(); menuNr++) {
 		drawMenuName(menuNr, false);
 	}
-	drawActiveMenu();
+
+	// Draw last selected menu
+	_drawnMenuNr = _lastSelectedMenuNr;
+
+	// Unless we are in "via mouse" mode. In that case check current mouse position
+	if (viaMouse) {
+		int16 mouseRow = _vm->_mouse.pos.y / FONT_DISPLAY_HEIGHT;
+		int16 mouseColumn = _vm->_mouse.pos.x / FONT_DISPLAY_WIDTH;
+
+		mouseFindMenuSelection(mouseRow, mouseColumn, _drawnMenuNr, _mouseModeItemNr);
+	}
+
+	if (_drawnMenuNr >= 0) {
+		if (viaKeyboard) {
+			drawMenu(_drawnMenuNr, _array[_drawnMenuNr]->selectedItemNr);
+		}
+		if (viaMouse) {
+			drawMenu(_drawnMenuNr, _mouseModeItemNr);
+		}
+	}
 
 	// original AGI did not do this, at least when the menu was called by scripts
 	_vm->inGameTimerPause();
 
-	_vm->cycleInnerLoopActive(CYCLE_INNERLOOP_MENU);
+	if (viaKeyboard) {
+		_vm->cycleInnerLoopActive(CYCLE_INNERLOOP_MENU_VIA_KEYBOARD);
+	} else if (viaMouse) {
+		_vm->cycleInnerLoopActive(CYCLE_INNERLOOP_MENU_VIA_MOUSE);
+	}
+
 	do {
 		_vm->mainCycle();
 	} while (_vm->cycleInnerLoopIsActive() && !(_vm->shouldQuit() || _vm->_restartGame));
@@ -303,7 +340,14 @@ void GfxMenu::execute() {
 	// original AGI did not do this, at least when the menu was called by scripts
 	_vm->inGameTimerResume();
 
-	removeActiveMenu();
+	if (_drawnMenuNr >= 0) {
+		removeActiveMenu(_drawnMenuNr);
+	}
+
+	if (viaKeyboard) {
+		// In "via Keyboard" mode, remember last selection
+		_lastSelectedMenuNr = _drawnMenuNr;
+	}
 
 	_text->charAttrib_Pop();
 	_text->charPos_Pop();
@@ -352,25 +396,25 @@ void GfxMenu::drawItemName(int16 itemNr, bool inverted) {
 	_text->displayText(itemEntry->text.c_str(), disabledLook);
 }
 
-void GfxMenu::drawActiveMenu() {
-	GuiMenuEntry *menuEntry = _array[_selectedMenuNr];
+void GfxMenu::drawMenu(int16 selectedMenuNr, int16 selectedMenuItemNr) {
+	GuiMenuEntry *menuEntry = _array[selectedMenuNr];
 	GuiMenuItemEntry *itemEntry = _itemArray[menuEntry->firstItemNr];
 	int16 itemNr = menuEntry->firstItemNr;
 	int16 itemCount = menuEntry->itemCount;
 	
 	// draw menu name as inverted
-	drawMenuName(_selectedMenuNr, true);
+	drawMenuName(selectedMenuNr, true);
 
 	// calculate active menu dimensions
-	_selectedMenuHeight = (menuEntry->itemCount + 2) * FONT_VISUAL_HEIGHT;
-	_selectedMenuWidth  = (menuEntry->maxItemTextLen * FONT_VISUAL_WIDTH) + 8;
-	_selectedMenuRow    = (menuEntry->itemCount + 3 - _text->getWindowRowMin()) * FONT_VISUAL_HEIGHT - 1;
-	_selectedMenuColumn = (itemEntry->column - 1) * FONT_VISUAL_WIDTH;
+	_drawnMenuHeight = (menuEntry->itemCount + 2) * FONT_VISUAL_HEIGHT;
+	_drawnMenuWidth  = (menuEntry->maxItemTextLen * FONT_VISUAL_WIDTH) + 8;
+	_drawnMenuRow    = (menuEntry->itemCount + 3 - _text->getWindowRowMin()) * FONT_VISUAL_HEIGHT - 1;
+	_drawnMenuColumn = (itemEntry->column - 1) * FONT_VISUAL_WIDTH;
 
-	_gfx->drawBox(_selectedMenuColumn, _selectedMenuRow, _selectedMenuWidth, _selectedMenuHeight, 15, 0);
+	_gfx->drawBox(_drawnMenuColumn, _drawnMenuRow, _drawnMenuWidth, _drawnMenuHeight, 15, 0);
 
 	while (itemCount) {
-		if (itemNr == menuEntry->selectedItemNr) {
+		if (itemNr == selectedMenuItemNr) {
 			drawItemName(itemNr, true);
 		} else {
 			drawItemName(itemNr, false);
@@ -380,18 +424,18 @@ void GfxMenu::drawActiveMenu() {
 	}
 }
 
-void GfxMenu::removeActiveMenu() {
+void GfxMenu::removeActiveMenu(int16 selectedMenuNr) {
 	// draw menu name normally again
-	drawMenuName(_selectedMenuNr, false);
+	drawMenuName(selectedMenuNr, false);
 
 	// overwrite actual menu items by rendering play screen
-	_gfx->render_Block(_selectedMenuColumn, _selectedMenuRow, _selectedMenuWidth, _selectedMenuHeight);
+	_gfx->render_Block(_drawnMenuColumn, _drawnMenuRow, _drawnMenuWidth, _drawnMenuHeight);
 }
 
-void GfxMenu::charPress(int16 newChar) {
-	GuiMenuEntry *menuEntry = _array[_selectedMenuNr];
+void GfxMenu::charPress(uint16 newChar) {
+	GuiMenuEntry *menuEntry = _array[_drawnMenuNr];
 	GuiMenuItemEntry *itemEntry = _itemArray[menuEntry->selectedItemNr];
-	int16 newMenuNr = _selectedMenuNr;
+	int16 newMenuNr = _drawnMenuNr;
 	int16 newItemNr = menuEntry->selectedItemNr;
 
 	switch (newChar) {
@@ -444,7 +488,7 @@ void GfxMenu::charPress(int16 newChar) {
 		break;
 	}
 
-	if (newMenuNr != _selectedMenuNr) {
+	if (newMenuNr != _drawnMenuNr) {
 		// selected menu was changed
 		int16 lastMenuNr = _array.size() - 1;
 
@@ -454,10 +498,10 @@ void GfxMenu::charPress(int16 newChar) {
 			newMenuNr = 0;
 		}
 
-		if (newMenuNr != _selectedMenuNr) {
-			removeActiveMenu();
-			_selectedMenuNr = newMenuNr;
-			drawActiveMenu();
+		if (newMenuNr != _drawnMenuNr) {
+			removeActiveMenu(_drawnMenuNr);
+			_drawnMenuNr = newMenuNr;
+			drawMenu(_drawnMenuNr, _array[_drawnMenuNr]->selectedItemNr);
 		}
 	}
 
@@ -478,6 +522,140 @@ void GfxMenu::charPress(int16 newChar) {
 			menuEntry->selectedItemNr = newItemNr;
 		}
 	}
+}
+
+// This gets called:
+// During "via keyboard" mode in case user actively clicks on something
+// During "via mouse" mode all the time, so that current mouse cursor position modifies active selection
+// In "via mouse" mode, we check if user let go of the left mouse button and then select the item that way
+void GfxMenu::mouseEvent(uint16 newChar) {
+	// Find out, where current mouse cursor actually is
+	int16 mouseRow = _vm->_mouse.pos.y / FONT_DISPLAY_HEIGHT;
+	int16 mouseColumn = _vm->_mouse.pos.x / FONT_DISPLAY_WIDTH;
+
+	int16 activeMenuNr, activeItemNr;
+	mouseFindMenuSelection(mouseRow, mouseColumn, activeMenuNr, activeItemNr);
+
+	switch (newChar) {
+	case AGI_MOUSE_BUTTON_LEFT:
+		// User clicked somewhere, in this case check if user clicked on status bar or on one of the currently shown menu items
+		// Happens in "via keyboard" mode only
+		// We do not close menu in case user clicked on something invalid
+
+		if (activeItemNr >= 0) {
+			GuiMenuItemEntry *itemEntry = _itemArray[activeItemNr];
+			if (!itemEntry->enabled)
+				return;
+
+			// Trigger controller
+			_vm->_game.controllerOccured[itemEntry->controllerSlot] = true;
+
+			_vm->cycleInnerLoopInactive(); // exit execute-loop
+			return;
+		}
+		if (activeMenuNr >= 0) {
+			// User clicked on a menu, check if that menu is already active
+			if (activeMenuNr != _drawnMenuNr) {
+				removeActiveMenu(_drawnMenuNr);
+				_drawnMenuNr = activeMenuNr;
+				drawMenu(_drawnMenuNr, _array[_drawnMenuNr]->selectedItemNr);
+			}
+		}
+		return; // exit all the time, we do not want to change the user selection while in "via keyboard" mode
+		break;
+	default:
+		break;
+	}
+
+	// If mouse is not selecting any menu, just use the last menu instead
+	if (activeMenuNr < 0) {
+		activeMenuNr = _drawnMenuNr;
+	}
+
+	if (activeMenuNr != _drawnMenuNr) {
+		if (_drawnMenuNr >= 0) {
+			removeActiveMenu(_drawnMenuNr);
+		}
+
+		_drawnMenuNr = activeMenuNr;
+
+		if (_drawnMenuNr >= 0) {
+			drawMenu(_drawnMenuNr, activeItemNr);
+		}
+		_mouseModeItemNr = activeItemNr;
+	}
+
+	if (activeItemNr != _mouseModeItemNr) {
+		if (_mouseModeItemNr >= 0) {
+			drawItemName(_mouseModeItemNr, false);
+		}
+		if (activeItemNr >= 0) {
+			drawItemName(activeItemNr, true);
+		}
+		_mouseModeItemNr = activeItemNr;
+	}
+
+	if (_vm->_mouse.button == kAgiMouseButtonUp) {
+		// User has stopped pressing the mouse button, if any item number is selected -> execute it
+		if (activeItemNr >= 0) {
+			GuiMenuItemEntry *itemEntry = _itemArray[activeItemNr];
+			if (!itemEntry->enabled)
+				return;
+
+			// Trigger controller
+			_vm->_game.controllerOccured[itemEntry->controllerSlot] = true;
+		}
+
+		_vm->cycleInnerLoopInactive(); // exit execute-loop
+		return;
+	}
+}
+
+void GfxMenu::mouseFindMenuSelection(int16 mouseRow, int16 mouseColumn, int16 &activeMenuNr, int16 &activeMenuItemNr) {
+	GuiMenuEntry *menuEntry = nullptr;
+	int16 menuCount = _array.size();
+
+	for (int16 menuNr = 0; menuNr < menuCount; menuNr++) {
+		menuEntry = _array[menuNr];
+
+		if (mouseRow == menuEntry->row) {
+			// line match
+			if ((mouseColumn >= menuEntry->column) && (mouseColumn <= (menuEntry->column + menuEntry->textLen))) {
+				// full match
+				activeMenuNr = menuNr;
+				activeMenuItemNr = -1; // no item selected
+				return;
+			}
+		}
+	}
+
+	// Now also check current menu
+	if (_drawnMenuNr >= 0) {
+		// A menu is currently shown
+		menuEntry = _array[_drawnMenuNr];
+
+		int16 itemNr = menuEntry->firstItemNr;
+		int16 itemCount = menuEntry->itemCount;
+
+		while (itemCount) {
+			GuiMenuItemEntry *itemEntry = _itemArray[itemNr];
+
+			if (mouseRow == itemEntry->row) {
+				// line match
+				if ((mouseColumn >= itemEntry->column) && (mouseColumn <= (itemEntry->column + itemEntry->textLen))) {
+					// full match
+					activeMenuNr = _drawnMenuNr;
+					activeMenuItemNr = itemNr;
+					return;
+				}
+			}
+			itemNr++;
+			itemCount--;
+		}
+	}
+	activeMenuNr = -1;
+	activeMenuItemNr = -1;
+	return;
 }
 
 } // End of namespace Agi

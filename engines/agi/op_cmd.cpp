@@ -730,7 +730,7 @@ void cmdStopSound(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 
 void cmdMenuInput(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 	if (vm->getFlag(VM_FLAG_MENUS_ACCESSIBLE)) {
-		vm->_menu->delayedExecute();
+		vm->_menu->delayedExecuteViaKeyboard();
 	}
 }
 

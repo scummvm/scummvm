@@ -285,39 +285,34 @@ bool AgiEngine::handleMouseClicks(uint16 &key) {
 	if (key != AGI_MOUSE_BUTTON_LEFT)
 		return false;
 
-	Common::Rect displayLineRect(DISPLAY_WIDTH, FONT_DISPLAY_HEIGHT);
-	int16 statusRow = _text->statusRow_Get();
+	if (!cycleInnerLoopIsActive()) {
+		// Only do this, when no inner loop is currently active
+		Common::Rect displayLineRect(DISPLAY_WIDTH, FONT_DISPLAY_HEIGHT);
+		int16 statusRow = _text->statusRow_Get();
 
-	displayLineRect.moveTo(0, statusRow * FONT_DISPLAY_HEIGHT);
-
-	if (displayLineRect.contains(_mouse.pos)) {
-	    if (getFlag(VM_FLAG_MENUS_ACCESSIBLE) && _menu->isAvailable()) {
-			warning("click on status line -> menu TODO");
-			// TODO: menu
-			// This should be done in a better way as in simulate ESC key
-			// Sierra seems to have hardcoded it in some way, but we would have to verify, what flags
-			// they checked. The previous way wasn't accurate. Mouse support for menu is missing atm anyway.
-			//if ((getflag(VM_FLAG_MENUS_WORK) || (getFeatures() & GF_MENUS)) && _mouse.y <= CHAR_LINES) {
-			//	newInputMode(INPUTMODE_MENU);
-			//	return true;
-			//}
-			key = 0; // eat event
-			return true;
-	    }
-	}
-
-	if (_text->promptIsEnabled() && (!cycleInnerLoopIsActive()) ) {
-		// Prompt is currently enabled, but no inner loop is active
-		int16 promptRow = _text->promptRow_Get();
-
-		displayLineRect.moveTo(0, promptRow * FONT_DISPLAY_HEIGHT);
+		displayLineRect.moveTo(0, statusRow * FONT_DISPLAY_HEIGHT);
 
 		if (displayLineRect.contains(_mouse.pos)) {
-			// and user clicked within the line of the prompt
-		    showPredictiveDialog();
+		    if (getFlag(VM_FLAG_MENUS_ACCESSIBLE) && _menu->isAvailable()) {
+				_menu->delayedExecuteViaMouse();
+				key = 0; // eat event
+				return true;
+			}
+		}
 
-		    key = 0; // eat event
-		    return true;
+		if (_text->promptIsEnabled()) {
+			// Prompt is currently enabled
+			int16 promptRow = _text->promptRow_Get();
+
+			displayLineRect.moveTo(0, promptRow * FONT_DISPLAY_HEIGHT);
+
+			if (displayLineRect.contains(_mouse.pos)) {
+				// and user clicked within the line of the prompt
+				showPredictiveDialog();
+
+				key = 0; // eat event
+				return true;
+			}
 		}
 	}
 
@@ -347,8 +342,9 @@ bool AgiEngine::handleMouseClicks(uint16 &key) {
 		case CYCLE_INNERLOOP_INVENTORY:
 			// TODO: forward
 			break;
-		case CYCLE_INNERLOOP_MENU:
-			// TODO: forward
+		case CYCLE_INNERLOOP_MENU_VIA_KEYBOARD:
+			_menu->mouseEvent(key);
+			key = 0; // eat event
 			break;
 		case CYCLE_INNERLOOP_SYSTEMUI_SELECTSAVEDGAMESLOT:
 			// TODO: forward
@@ -393,7 +389,7 @@ bool AgiEngine::handleController(uint16 key) {
 			// Needs further investigation.
 			if (getFlag(VM_FLAG_MENUS_ACCESSIBLE) && _menu->isAvailable()) {
 				// menu is supposed to be accessible and is also available
-				_menu->delayedExecute();
+				_menu->delayedExecuteViaKeyboard();
 				return true;
 			}
 		default:

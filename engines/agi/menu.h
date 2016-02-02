@@ -32,11 +32,12 @@ struct GuiMenuEntry {
 	int16 row;
 	int16 column;
 
-	int16 itemCount;
-	int16 firstItemNr;
-	int16 selectedItemNr;
+	int16 itemCount; // total number of menu items
+	int16 firstItemNr; // first menu item number, points into _itemArray[]
 
-	int16 maxItemTextLen;
+	int16 selectedItemNr; // currently selected menu item
+
+	int16 maxItemTextLen; // maximum text length of all menu items
 };
 typedef Common::Array<GuiMenuEntry *> GuiMenuArray;
 
@@ -47,8 +48,8 @@ struct GuiMenuItemEntry {
 	int16 row;
 	int16 column;
 
-	bool enabled;
-	uint16 controllerSlot;
+	bool enabled; // enabled-state, set by scripts
+	uint16 controllerSlot; // controller to trigger, when item is executed
 };
 typedef Common::Array<GuiMenuItemEntry *> GuiMenuItemArray;
 
@@ -63,14 +64,17 @@ public:
 	void itemEnable(uint16 controllerSlot);
 	void itemDisable(uint16 controllerSlot);
 	void itemEnableAll();
-	void charPress(int16 newChar);
+
+	void charPress(uint16 newChar);
+	void mouseEvent(uint16 newChar);
 
 	bool isAvailable();
 
 	void accessAllow();
 	void accessDeny();
 
-	void delayedExecute();
+	void delayedExecuteViaKeyboard();
+	void delayedExecuteViaMouse();
 	bool delayedExecuteActive();
 	void execute();
 
@@ -79,8 +83,10 @@ private:
 
 	void drawMenuName(int16 menuNr, bool inverted);
 	void drawItemName(int16 itemNr, bool inverted);
-	void drawActiveMenu();
-	void removeActiveMenu();
+	void drawMenu(int16 selectedMenuNr, int16 selectedMenuItemNr);
+	void removeActiveMenu(int16 selectedMenuNr);
+
+	void mouseFindMenuSelection(int16 mouseRow, int16 mouseColumn, int16 &activeMenuNr, int16 &activeMenuItemNr);
 
 	AgiEngine *_vm;
 	GfxMgr *_gfx;
@@ -89,7 +95,8 @@ private:
 
 	bool _allowed;
 	bool _submitted;
-	bool _delayedExecute;
+	bool _delayedExecuteViaKeyboard;
+	bool _delayedExecuteViaMouse;
 
 	// for initial setup of the menu
 	int16 _setupMenuColumn;
@@ -98,70 +105,18 @@ private:
 	GuiMenuArray _array;
 	GuiMenuItemArray _itemArray;
 
-	int16 _selectedMenuNr;
+	int16 _lastSelectedMenuNr; // only used for "via keyboard" mode
 
-	uint16 _selectedMenuHeight;
-	uint16 _selectedMenuWidth;
-	int16  _selectedMenuRow;
-	int16  _selectedMenuColumn;
+	int16 _drawnMenuNr;
+
+	uint16 _drawnMenuHeight;
+	uint16 _drawnMenuWidth;
+	int16  _drawnMenuRow;
+	int16  _drawnMenuColumn;
+
+	// Following variables are used in "via mouse" mode
+	int16 _mouseModeItemNr;
 };
-
-#if 0
-#define MENU_BG		0x0f	// White
-#define MENU_DISABLED	0x07	// Grey
-
-#define MENU_FG		0x00	// Black
-#define MENU_LINE	0x00	// Black
-
-struct AgiMenu;
-struct AgiMenuOption;
-typedef Common::List<AgiMenu *> MenuList;
-typedef Common::List<AgiMenuOption *> MenuOptionList;
-
-class GfxMgr;
-class PictureMgr;
-
-class Menu {
-private:
-	AgiEngine *_vm;
-	GfxMgr *_gfx;
-	PictureMgr *_picture;
-	TextMgr *_text;
-
-public:
-	Menu(AgiEngine *vm, GfxMgr *gfx, PictureMgr *picture);
-	~Menu();
-
-	void add(const char *s);
-	void addItem(const char *s, int code);
-	void submit();
-	void setItem(int event, int state);
-	bool keyhandler(int key);
-	void enableAll();
-
-private:
-	MenuList _menubar;
-
-	int _hCurMenu;
-	int _vCurMenu;
-
-	int _hIndex;
-	int _vIndex;
-	int _hCol;
-	int _hMaxMenu;
-	int _vMaxMenu[10];
-
-	AgiMenu* getMenu(int i);
-	AgiMenuOption *getMenuOption(int i, int j);
-	void drawMenuBar();
-	void drawMenuHilite(int curMenu);
-	void drawMenuOption(int hMenu);
-	void drawMenuOptionHilite(int hMenu, int vMenu);
-	void newMenuSelected(int i);
-	bool mouseOverText(int line, int col, char *s);
-
-};
-#endif
 
 } // End of namespace Agi
 

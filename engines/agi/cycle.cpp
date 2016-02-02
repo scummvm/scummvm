@@ -287,10 +287,14 @@ int AgiEngine::mainCycle(bool onlyCheckForEvents) {
 			}
 			break;
 
-		case CYCLE_INNERLOOP_MENU:
+		case CYCLE_INNERLOOP_MENU_VIA_KEYBOARD:
 			if (key) {
 				_menu->charPress(key);
 			}
+			return false;
+
+		case CYCLE_INNERLOOP_MENU_VIA_MOUSE:
+			_menu->mouseEvent(key);
 			return false;
 
 		case CYCLE_INNERLOOP_SYSTEMUI_SELECTSAVEDGAMESLOT:
