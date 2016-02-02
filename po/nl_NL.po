@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
 "POT-Creation-Date: 2016-02-01 21:58+0000\n"
-"PO-Revision-Date: 2014-11-25 20:46+0100\n"
+"PO-Revision-Date: 2016-02-02 12:05+0100\n"
 "Last-Translator: Ben Castricum <scummvm@bencastricum.nl>\n"
 "Language-Team: Ben Castricum <scummvm@bencastricum.nl>\n"
 "Language: Nederlands\n"
@@ -75,7 +75,7 @@ msgstr "Selecteer"
 
 #: gui/editrecorddialog.cpp:58
 msgid "Author:"
-msgstr ""
+msgstr "Auteur:"
 
 #: gui/editrecorddialog.cpp:59 gui/launcher.cpp:204
 msgid "Name:"
@@ -83,24 +83,23 @@ msgstr "Naam:"
 
 #: gui/editrecorddialog.cpp:60
 msgid "Notes:"
-msgstr ""
+msgstr "Notities:"
 
 #: gui/editrecorddialog.cpp:68 gui/predictivedialog.cpp:74
 msgid "Ok"
-msgstr ""
+msgstr "Ok"
 
 #: gui/filebrowser-dialog.cpp:49
 msgid "Choose file for loading"
-msgstr ""
+msgstr "Selecteer te laden bestand"
 
 #: gui/filebrowser-dialog.cpp:49
 msgid "Enter filename for saving"
-msgstr ""
+msgstr "Geef bestandsnaam voor bewaren"
 
 #: gui/filebrowser-dialog.cpp:132
-#, fuzzy
 msgid "Do you really want to overwrite the file?"
-msgstr "Wilt u dit opgeslagen spel echt verwijderen?"
+msgstr "Wilt u dit bestand echt overschrijven?"
 
 #: gui/filebrowser-dialog.cpp:132 gui/fluidsynth-dialog.cpp:217
 #: gui/launcher.cpp:795 gui/launcher.cpp:943 gui/launcher.cpp:1002
@@ -649,11 +648,11 @@ msgstr ""
 
 #: gui/launcher.cpp:1161
 msgid "Mass Add..."
-msgstr ""
+msgstr "Mass Add..."
 
 #: gui/launcher.cpp:1163
 msgid "Record..."
-msgstr ""
+msgstr "Opnemen..."
 
 #: gui/massadd.cpp:79 gui/massadd.cpp:82
 msgid "... progress ..."
@@ -684,21 +683,19 @@ msgstr ""
 
 #: gui/onscreendialog.cpp:101 gui/onscreendialog.cpp:103
 msgid "Stop"
-msgstr ""
+msgstr "Stop"
 
 #: gui/onscreendialog.cpp:106
 msgid "Edit record description"
-msgstr ""
+msgstr "Bewerk beschrijving opname"
 
 #: gui/onscreendialog.cpp:108
-#, fuzzy
 msgid "Switch to Game"
-msgstr "Schakel"
+msgstr "Schakel naar Spel"
 
 #: gui/onscreendialog.cpp:110
-#, fuzzy
 msgid "Fast replay"
-msgstr "Snelle modus"
+msgstr "Snelle herhaling"
 
 #: gui/options.cpp:85
 msgid "Never"
@@ -1093,39 +1090,38 @@ msgstr ""
 #. I18N: You must leave "#" as is, only word 'next' is translatable
 #: gui/predictivedialog.cpp:86
 msgid "#  next"
-msgstr ""
+msgstr "# volgende"
 
 #: gui/predictivedialog.cpp:87
 msgid "add"
-msgstr ""
+msgstr "voeg toe"
 
 #: gui/predictivedialog.cpp:92 gui/predictivedialog.cpp:164
-#, fuzzy
 msgid "Delete char"
-msgstr "Verwijderen"
+msgstr "Karakter verwijderen"
 
 #: gui/predictivedialog.cpp:97 gui/predictivedialog.cpp:168
 msgid "<"
-msgstr ""
+msgstr "<"
 
 #. I18N: Pre means 'Predictive', leave '*' as is
 #: gui/predictivedialog.cpp:99 gui/predictivedialog.cpp:572
 msgid "*  Pre"
-msgstr ""
+msgstr "*  Pre"
 
 #. I18N: 'Num' means Numbers
 #: gui/predictivedialog.cpp:575
 msgid "*  Num"
-msgstr ""
+msgstr "*  Num"
 
 #. I18N: 'Abc' means Latin alphabet input
 #: gui/predictivedialog.cpp:578
 msgid "*  Abc"
-msgstr ""
+msgstr "*  Abc"
 
 #: gui/recorderdialog.cpp:64
 msgid "Recorder or Playback Gameplay"
-msgstr ""
+msgstr "Opnemen of Afspelen Spel"
 
 #: gui/recorderdialog.cpp:69 gui/recorderdialog.cpp:156
 #: gui/saveload-dialog.cpp:220 gui/saveload-dialog.cpp:276
@@ -1134,36 +1130,33 @@ msgstr "Verwijderen"
 
 #: gui/recorderdialog.cpp:71
 msgid "Record"
-msgstr ""
+msgstr "Opnemen"
 
 #: gui/recorderdialog.cpp:72
-#, fuzzy
 msgid "Playback"
-msgstr "Spelen"
+msgstr "Opnieuw afspelen"
 
 #: gui/recorderdialog.cpp:74
 msgid "Edit"
-msgstr ""
+msgstr "Bewerken"
 
 #: gui/recorderdialog.cpp:86 gui/recorderdialog.cpp:243
 #: gui/recorderdialog.cpp:253
 msgid "Author: "
-msgstr ""
+msgstr "Auteur:"
 
 #: gui/recorderdialog.cpp:87 gui/recorderdialog.cpp:244
 #: gui/recorderdialog.cpp:254
 msgid "Notes: "
-msgstr ""
+msgstr "Notities"
 
 #: gui/recorderdialog.cpp:155
-#, fuzzy
 msgid "Do you really want to delete this record?"
-msgstr "Wilt u dit opgeslagen spel echt verwijderen?"
+msgstr "Wilt u deze opname echt verwijderen?"
 
 #: gui/recorderdialog.cpp:174
-#, fuzzy
 msgid "Unknown Author"
-msgstr "Onbekende fout"
+msgstr "Onbekende Auteur"
 
 #: gui/saveload-dialog.cpp:167
 msgid "List view"
@@ -1363,29 +1356,29 @@ msgstr "Onbekende fout"
 #. I18N: Hercules is graphics card name
 #: common/rendermode.cpp:35
 msgid "Hercules Green"
-msgstr ""
+msgstr "Hercules Groen"
 
 #: common/rendermode.cpp:36
 msgid "Hercules Amber"
-msgstr ""
+msgstr "Hercules Amber"
 
 #: common/rendermode.cpp:42
 msgid "PC-9821 (256 Colors)"
-msgstr ""
+msgstr "PC-9821 (256 Kleuren)"
 
 #: common/rendermode.cpp:43
 msgid "PC-9801 (16 Colors)"
-msgstr ""
+msgstr "PC-9801 (16 Kleuren)"
 
 #: common/rendermode.cpp:71
 msgctxt "lowres"
 msgid "Hercules Green"
-msgstr ""
+msgstr "Hercules Groen"
 
 #: common/rendermode.cpp:72
 msgctxt "lowres"
 msgid "Hercules Amber"
-msgstr ""
+msgstr "Hercules Amber"
 
 #: engines/advancedDetector.cpp:317
 #, c-format
@@ -1572,7 +1565,7 @@ msgstr "DOSBox OPL emulator"
 
 #: audio/fmopl.cpp:67
 msgid "ALSA Direct FM"
-msgstr ""
+msgstr "ALSA Direct FM"
 
 #: audio/mididrv.cpp:209
 #, c-format
@@ -1629,16 +1622,15 @@ msgstr "Apple II GS Emulator (NIET GEÏMPLEMENTEERD)"
 
 #: audio/softsynth/cms.cpp:350
 msgid "Creative Music System Emulator"
-msgstr ""
+msgstr "Creative Music System Emulator"
 
 #: audio/softsynth/fmtowns_pc98/towns_pc98_plugins.cpp:33
 msgid "FM-Towns Audio"
-msgstr ""
+msgstr "FM-Towns Geluid"
 
 #: audio/softsynth/fmtowns_pc98/towns_pc98_plugins.cpp:58
-#, fuzzy
 msgid "PC-98 Audio"
-msgstr "Geluid"
+msgstr "PC-98 Geluid"
 
 #: audio/softsynth/mt32.cpp:200
 msgid "Initializing MT-32 Emulator"
@@ -1733,34 +1725,33 @@ msgstr "Wilt u stoppen?"
 
 #. I18N: Trackpad mode toggle status.
 #: backends/events/webossdl/webossdl-events.cpp:308
-#, fuzzy
 msgid "Trackpad mode is now"
-msgstr "Touchpadmodus uitgeschakeld."
+msgstr "Trackpadmodus is nu"
 
 #. I18N: Trackpad mode on or off.
 #. I18N: Auto-drag on or off.
 #: backends/events/webossdl/webossdl-events.cpp:311
 #: backends/events/webossdl/webossdl-events.cpp:338
 msgid "ON"
-msgstr ""
+msgstr "AAN"
 
 #: backends/events/webossdl/webossdl-events.cpp:311
 #: backends/events/webossdl/webossdl-events.cpp:338
 msgid "OFF"
-msgstr ""
+msgstr "UIT"
 
 #: backends/events/webossdl/webossdl-events.cpp:315
 msgid "Swipe two fingers to the right to toggle."
-msgstr ""
+msgstr "Swipe twee vingers naar rechts om te schakelen."
 
 #. I18N: Auto-drag toggle status.
 #: backends/events/webossdl/webossdl-events.cpp:335
 msgid "Auto-drag mode is now"
-msgstr ""
+msgstr "Auto-sleep modus is nu"
 
 #: backends/events/webossdl/webossdl-events.cpp:342
 msgid "Swipe three fingers to the right to toggle."
-msgstr ""
+msgstr "Swipe drie vingers naar rechts om te schakelen."
 
 #: backends/graphics/opengl/opengl-graphics.cpp:119
 msgid "OpenGL"
@@ -2055,24 +2046,23 @@ msgstr "Muis Besturing"
 
 #: backends/platform/tizen/fs.cpp:259
 msgid "[ Data ]"
-msgstr ""
+msgstr "[ Data ]"
 
 #: backends/platform/tizen/fs.cpp:263
 msgid "[ Resources ]"
-msgstr ""
+msgstr "[ Resources ]"
 
 #: backends/platform/tizen/fs.cpp:267
 msgid "[ SDCard ]"
-msgstr ""
+msgstr "[ SDCard ]"
 
 #: backends/platform/tizen/fs.cpp:271
 msgid "[ Media ]"
-msgstr ""
+msgstr "[ Media ]"
 
 #: backends/platform/tizen/fs.cpp:275
-#, fuzzy
 msgid "[ Shared ]"
-msgstr "Share:"
+msgstr "[ Gedeeld ]"
 
 #: backends/platform/wii/options.cpp:51
 msgid "Video"
@@ -2341,26 +2331,27 @@ msgstr ""
 "Gebruik de originele opslaan/laden schermen, in plaats van die van ScummVM"
 
 #: engines/agi/detection.cpp:157
-#, fuzzy
 msgid "Use an alternative palette"
-msgstr ""
-"Gebruik een alternatieve versie van de intro (alleen voor de CD versie)"
+msgstr "Gebruik een alternatieve palet"
 
 #: engines/agi/detection.cpp:158
 msgid ""
 "Use an alternative palette, common for all Amiga games. This was the old "
 "behavior"
 msgstr ""
+"Gebruik een alternatieve palet, gemeenschappelijk voor alle Amiga spellen. "
+"Dit was het oude gedrag"
 
 #: engines/agi/detection.cpp:167
-#, fuzzy
 msgid "Mouse support"
-msgstr "Support overslaan"
+msgstr "Muis ondersteuning"
 
 #: engines/agi/detection.cpp:168
 msgid ""
 "Enables mouse support. Allows to use mouse for movement and in game menus."
 msgstr ""
+"Zet muis ondersteuning aan. Maakt het mogelijk om de muis te gebruiken voor "
+"bewegen en in spelmenus."
 
 #: engines/agi/saveload.cpp:727 engines/drascula/saveload.cpp:349
 #: engines/dreamweb/saveload.cpp:169 engines/neverhood/menumodule.cpp:890
@@ -2783,21 +2774,21 @@ msgstr ""
 
 #: engines/sci/detection.cpp:374
 msgid "Skip EGA dithering pass (full color backgrounds)"
-msgstr ""
+msgstr "Sla EGA dithering stap over (volledige kleuren achtergronden)"
 
 #: engines/sci/detection.cpp:375
 msgid "Skip dithering pass in EGA games, graphics are shown with full colors"
 msgstr ""
+"Sla dithering stap in EGA spellen over, beelden worden getoond met volledige "
+"kleuren"
 
 #: engines/sci/detection.cpp:384
-#, fuzzy
 msgid "Enable high resolution graphics"
-msgstr "Hitpoints balkgrafieken inschakelen"
+msgstr "Gebruik hoge resolutie beelden"
 
 #: engines/sci/detection.cpp:385
-#, fuzzy
 msgid "Enable high resolution graphics/content"
-msgstr "Hitpoints balkgrafieken inschakelen"
+msgstr "Gebruik hoge resolutie beelden"
 
 #: engines/sci/detection.cpp:394
 msgid "Prefer digital sound effects"
@@ -3386,25 +3377,24 @@ msgid "Third kid"
 msgstr "Derde kind"
 
 #: engines/scumm/help.cpp:292
-#, fuzzy
 msgid "Toggle Inventory/IQ Points display"
-msgstr "Aan-/Uitzetten centreren van Datascherm"
+msgstr "Schakel tussen bezittingen/IQ punten weergave"
 
 #: engines/scumm/help.cpp:293
 msgid "Toggle Keyboard/Mouse Fighting (*)"
-msgstr ""
+msgstr "Schakel tussen Toetsenbord/Muis vechten (*)"
 
 #: engines/scumm/help.cpp:295
 msgid "* Keyboard Fighting is always on,"
-msgstr ""
+msgstr "Toetsenbord vechten is altijd aan,"
 
 #: engines/scumm/help.cpp:296
 msgid "  so despite the in-game message this"
-msgstr ""
+msgstr " dus ondanks het bericht in het spel dit"
 
 #: engines/scumm/help.cpp:297
 msgid "  actually toggles Mouse Fighting Off/On"
-msgstr ""
+msgstr " schakelt eigenlijk Muis vechten uit/aan."
 
 #: engines/scumm/help.cpp:304
 msgid "Fighting controls (numpad):"
@@ -3441,7 +3431,7 @@ msgstr "Stoot laag"
 
 #: engines/scumm/help.cpp:315
 msgid "Sucker punch"
-msgstr ""
+msgstr "Sucker punch"
 
 #: engines/scumm/help.cpp:318
 msgid "These are for Indy on left."
@@ -3500,23 +3490,20 @@ msgid "Fly to lower right"
 msgstr "Vlieg naar rechts omlaag"
 
 #: engines/scumm/input.cpp:580
-#, fuzzy
 msgid "Snap scroll on"
-msgstr "Vloeiend scrollen"
+msgstr "Snap scrollen aan"
 
 #: engines/scumm/input.cpp:582
 msgid "Snap scroll off"
-msgstr ""
+msgstr "Snap scroll uit"
 
 #: engines/scumm/input.cpp:595
-#, fuzzy
 msgid "Music volume: "
 msgstr "Muziek volume:"
 
 #: engines/scumm/input.cpp:612
-#, fuzzy
 msgid "Subtitle speed: "
-msgstr "Snelheid tekst:"
+msgstr "Snelheid ondertitels:"
 
 #: engines/scumm/scumm.cpp:1832
 #, c-format
@@ -3528,15 +3515,14 @@ msgstr ""
 "maar %s ontbreekt. Er wordt nu AdLib gebruikt."
 
 #: engines/scumm/scumm.cpp:2644
-#, fuzzy
 msgid ""
 "Usually, Maniac Mansion would start now. But for that to work, the game "
 "files for Maniac Mansion have to be in the 'Maniac' directory inside the "
 "Tentacle game directory, and the game has to be added to ScummVM."
 msgstr ""
-"Normaal gesproken zou Maniac Mansion nu starten. Maar ScummVM doet dat nog "
-"niet. Om het te spelen, ga naar \"Spel Toevoegen\" in het ScummVM start menu "
-"en selecteer de map 'Maniac' in de Tentacle map."
+"Normaal gesproken zou Maniac Mansion nu starten. Maar om dat te laten werken "
+"moeten de Maniac Mansion bestanden in de 'Maniac' folder in de Tentacle "
+"spelfolder staan, en het spel moet worden toegevoegd aan ScummVM."
 
 #: engines/scumm/players/player_v3m.cpp:129
 msgid ""
@@ -3676,50 +3662,41 @@ msgid "Show the current number of frames per second in the upper left corner"
 msgstr "Toon de huidige Frames Per Second teller in de linkerbovenhoek"
 
 #: engines/zvision/detection_tables.h:52
-#, fuzzy
 msgid "Use the original save/load screens instead of the ScummVM interface"
 msgstr ""
-"Gebruik de originele opslaan/laden schermen, in plaats van die van ScummVM"
+"Gebruik de originele opslaan/laden schermen, in plaats van die van de "
+"ScummVM interface"
 
 #: engines/zvision/detection_tables.h:61
 msgid "Double FPS"
-msgstr ""
+msgstr "Dubbele FPS"
 
 #: engines/zvision/detection_tables.h:62
 msgid "Increase framerate from 30 to 60 FPS"
-msgstr ""
+msgstr "Verhoog framerate van 30 naar 60 FPS"
 
 #: engines/zvision/detection_tables.h:71
-#, fuzzy
 msgid "Enable Venus"
-msgstr "Helium-modus aangezet"
+msgstr "Gebruik Venus"
 
 #: engines/zvision/detection_tables.h:72
-#, fuzzy
 msgid "Enable the Venus help system"
-msgstr "Helium-modus aangezet"
+msgstr "Gebruik het Venus help systeem"
 
 #: engines/zvision/detection_tables.h:81
 msgid "Disable animation while turning"
-msgstr ""
+msgstr "Stop animatie tijdens draaien"
 
 #: engines/zvision/detection_tables.h:82
 msgid "Disable animation while turning in panorama mode"
-msgstr ""
+msgstr "Stop animatie tijdens draaien in panorama modus"
 
 #: engines/zvision/detection_tables.h:91
 msgid "Use high resolution MPEG video"
-msgstr ""
+msgstr "Gebruik hoge resolutie MPEG video"
 
 #: engines/zvision/detection_tables.h:92
-#, fuzzy
 msgid "Use MPEG video from the DVD version, instead of lower resolution AVI"
 msgstr ""
-"Gebruik de alternative set van zilveren cursors, in plaats van de normale "
-"gouden"
-
-#~ msgid "EGA undithering"
-#~ msgstr "EGA undithering"
-
-#~ msgid "Enable undithering in EGA games"
-#~ msgstr "Undithering inschakelen in EGA spellen"
+"Gebruik de MPEG video van de DVD versie, in plaats van de lagere resolutie "
+"AVI"
