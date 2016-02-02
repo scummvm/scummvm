@@ -387,8 +387,6 @@ AgiEngine::AgiEngine(OSystem *syst, const AGIGameDescription *gameDesc) : AgiBas
 
 	_restartGame = false;
 
-	_oldMode = INPUTMODE_NONE;
-
 	_firstSlot = 0;
 
 	resetControllers();

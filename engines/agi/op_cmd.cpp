@@ -1884,8 +1884,6 @@ void cmdAcceptInput(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 
 	debugC(4, kDebugLevelScripts | kDebugLevelInput, "input normal");
 
-	state->_vm->newInputMode(INPUTMODE_NORMAL);
-
 	textMgr->promptEnable();
 	textMgr->promptRedraw();
 }
@@ -1894,8 +1892,6 @@ void cmdPreventInput(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 	TextMgr *textMgr = state->_vm->_text;
 
 	debugC(4, kDebugLevelScripts | kDebugLevelInput, "no input");
-
-	state->_vm->newInputMode(INPUTMODE_NONE);
 
 	textMgr->promptDisable();
 

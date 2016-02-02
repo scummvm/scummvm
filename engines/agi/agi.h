@@ -383,11 +383,6 @@ struct ScriptPos {
 	int curIP;
 };
 
-enum InputMode {
-	INPUTMODE_NONE      = 0x04,
-	INPUTMODE_NORMAL    = 0x01 // prompt active
-};
-
 enum CycleInnerLoopType {
 	CYCLE_INNERLOOP_GETSTRING                    = 0,
 	CYCLE_INNERLOOP_GETNUMBER                    = 1,
@@ -436,8 +431,6 @@ struct AgiGame {
 
 	bool  cycleInnerLoopActive;
 	int16 cycleInnerLoopType;
-
-	InputMode inputMode;            /**< keyboard input mode */
 
 	int16 curLogicNr;               /**< current logic number */
 	Common::Array<ScriptPos> execStack;
@@ -778,7 +771,6 @@ public:
 	int scummVMSaveLoadDialog(bool isSave);
 
 	uint8 *_intobj;
-	InputMode _oldMode;
 	bool _restartGame;
 
 	SpritesMgr *_sprites;
@@ -814,9 +806,6 @@ public:
 	virtual int getKeypress();
 	virtual bool isKeypress();
 	virtual void clearKeyQueue();
-
-	void newInputMode(InputMode mode);
-	void oldInputMode();
 
 	byte getVar(int16 varNr);
 	void setVar(int16 varNr, byte newValue);

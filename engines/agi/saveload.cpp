@@ -147,7 +147,7 @@ int AgiEngine::saveGame(const Common::String &fileName, const Common::String &de
 	out->writeSint16BE((int16)_text->promptRow_Get());
 	out->writeSint16BE((int16)_text->getWindowRowMin());
 
-	out->writeSint16BE((int16)_game.inputMode);
+	out->writeSint16BE(1); // was _game.inputMode, we set it to 1, which was INPUTMODE_NORMAL
 	out->writeSint16BE((int16)_game.curLogicNr);
 
 	out->writeSint16BE((int16)_game.playerControl);
@@ -467,11 +467,7 @@ int AgiEngine::loadGame(const Common::String &fileName, bool checkId) {
 
 	_game.keypress = 0;
 
-	_game.inputMode = (InputMode)in->readSint16BE();
-	if ((_game.inputMode != INPUTMODE_NORMAL) && (_game.inputMode != INPUTMODE_NONE)) {
-		// other input modes were removed
-		_game.inputMode = INPUTMODE_NORMAL;
-	}
+	in->readSint16BE(); // was _game.inputMode, not needed anymore
 
 	_game.curLogicNr = in->readSint16BE();
 

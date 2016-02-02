@@ -173,18 +173,6 @@ void AgiEngine::interpretCycle() {
 	//_gfx->doUpdate();
 }
 
-void AgiEngine::newInputMode(InputMode mode) {
-	//if (mode == INPUTMODE_MENU && !getflag(VM_FLAG_MENUS_WORK) && !(getFeatures() & GF_MENUS))
-	//	return;
-
-	_oldMode = _game.inputMode;
-	_game.inputMode = mode;
-}
-
-void AgiEngine::oldInputMode() {
-	_game.inputMode = _oldMode;
-}
-
 // If main_cycle returns false, don't process more events!
 int AgiEngine::mainCycle(bool onlyCheckForEvents) {
 	uint16 key;
@@ -206,9 +194,7 @@ int AgiEngine::mainCycle(bool onlyCheckForEvents) {
 		setVar(VM_VAR_MOUSE_Y, _mouse.pos.y);
 	//}
 
-	switch (_game.inputMode) {
-	case INPUTMODE_NORMAL:
-	case INPUTMODE_NONE:
+	if (!cycleInnerLoopIsActive()) {
 		// Click-to-walk mouse interface
 		if (_game.playerControl && (screenObjEgo->flags & fAdjEgoXY)) {
 			int toX = screenObjEgo->move_x;
@@ -231,9 +217,6 @@ int AgiEngine::mainCycle(bool onlyCheckForEvents) {
 			if (screenObjEgo->direction == 0)
 				inDestination(screenObjEgo);
 		}
-		break;
-	default:
-		break;
 	}
 
 	keyAscii = key & 0xFF;
@@ -245,26 +228,12 @@ int AgiEngine::mainCycle(bool onlyCheckForEvents) {
 
 	if (!cycleInnerLoopIsActive()) {
 		// no inner loop active at the moment, regular processing
-		switch (_game.inputMode) {
-		case INPUTMODE_NORMAL:
-			if (key) {
-				if (!handleController(key)) {
-					if ((key) && (_text->promptIsEnabled())) {
-						_text->promptCharPress(key);
-					}
+		if (key) {
+			if (!handleController(key)) {
+				if ((key) && (_text->promptIsEnabled())) {
+					_text->promptCharPress(key);
 				}
 			}
-			break;
-		case INPUTMODE_NONE:
-			if (key) {
-				handleController(key);
-				if (key) {
-					_game.keypress = key;
-				}
-			}
-			break;
-		default:
-			break;
 		}
 
 	} else {
@@ -486,7 +455,6 @@ int AgiEngine::runGame() {
 
 		setVar(VM_VAR_FREE_PAGES, 180); // Set amount of free memory to realistic value
 		setVar(VM_VAR_MAX_INPUT_CHARACTERS, 38);
-		_game.inputMode = INPUTMODE_NONE;
 		_text->promptDisable();
 
 		_game.state = STATE_RUNNING;

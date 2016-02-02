@@ -402,8 +402,8 @@ bool AgiEngine::handleController(uint16 key) {
 	//		return false;
 
 	if ((getGameID() == GID_MH1 || getGameID() == GID_MH2) && (key == AGI_KEY_ENTER) &&
-	        (_game.inputMode == INPUTMODE_NONE)) {
-		key = 0x20; // Set Enter key to Space in Manhunter when there's no text input
+	        (!_text->promptIsEnabled())) {
+		key = 0x20; // Set Enter key to Space in Manhunter when prompt is disabled
 	}
 
 	debugC(3, kDebugLevelInput, "key = %04x", key);
