@@ -125,7 +125,6 @@ Resources::Location *ResourceProvider::getLocation(uint16 level, uint16 location
 }
 
 void ResourceProvider::pushAndChangeLocation(int16 level, int16 location) {
-	// TODO: Keep track of the inventory state
 	pushCurrentLocation();
 	requestLocationChange(level, location);
 }
@@ -135,19 +134,25 @@ void ResourceProvider::returnToPushedLocation() {
 }
 
 void ResourceProvider::pushCurrentLocation() {
-	_levelStack.push_back(_global->getCurrent()->getLevel()->getIndex());
-	_locationStack.push_back(_global->getCurrent()->getLocation()->getIndex());
+	PreviousLocation current;
+	current.level = _global->getCurrent()->getLevel()->getIndex();
+	current.location = _global->getCurrent()->getLocation()->getIndex();
+	current.inventoryOpen = StarkUserInterface->isInventoryOpen();
+
+	_locationStack.push_back(current);
+
+	StarkUserInterface->inventoryOpen(false);
 }
 
 void ResourceProvider::popCurrentLocation() {
-	if (_locationStack.empty() || _levelStack.empty()) {
+	if (_locationStack.empty()) {
 		error("Empty location stack");
 	} else {
-		int16 level = _levelStack.back();
-		int16 location = _locationStack.back();
-		_levelStack.pop_back();
+		PreviousLocation previous = _locationStack.back();
 		_locationStack.pop_back();
-		requestLocationChange(level, location);
+
+		requestLocationChange(previous.level, previous.location);
+		StarkUserInterface->inventoryOpen(previous.inventoryOpen);
 	}
 }
 

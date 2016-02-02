@@ -97,7 +97,7 @@ Command *Command::execute(uint32 callMode, Script *script) {
 	case kScriptPauseRandom:
 		return opScriptPauseRandom(script, _arguments[1].referenceValue);
 	case kExit2DLocation:
-		return opExit2DLocation(script);
+		return opExit2DLocation();
 	case kGoto2DLocation:
 		return opGoto2DLocation(_arguments[0].stringValue, _arguments[1].stringValue);
 	case kRumbleScene:
@@ -344,18 +344,13 @@ Command *Command::opScriptAbort(ResourceReference scriptRef, bool disable) {
 	return nextCommand();
 }
 
-Command *Command::opExit2DLocation(Script *script) {
-	warning("(TODO: Implement) Exit 2D Location");
-
+Command *Command::opExit2DLocation() {
 	StarkResourceProvider->returnToPushedLocation();
 
 	return nullptr;
 }
 
 Command *Command::opGoto2DLocation(const Common::String &level, const Common::String &location) {
-	warning("TODO: Implement) opGoto2DLocation");
-	// TODO: This needs to be handled differently, to allow exiting.
-
 	uint levelIndex = strtol(level.c_str(), nullptr, 16);
 	uint locationIndex = strtol(location.c_str(), nullptr, 16);
 	StarkResourceProvider->pushAndChangeLocation(levelIndex, locationIndex);

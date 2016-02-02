@@ -91,10 +91,15 @@ public:
 	Resources::Level *getLevelFromLocation(Resources::Location *location);
 
 private:
+	struct PreviousLocation {
+		uint16 location;
+		uint16 level;
+		bool inventoryOpen;
+	};
+
 	void pushCurrentLocation();
 	void popCurrentLocation();
-	Common::List<int16> _locationStack;
-	Common::List<int16> _levelStack;
+	Common::List<PreviousLocation> _locationStack;
 	typedef Common::List<Current *> CurrentList;
 
 	Current *findLevel(uint16 level);

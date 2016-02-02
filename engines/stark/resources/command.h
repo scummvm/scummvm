@@ -202,7 +202,7 @@ protected:
 	Command *opScriptPause(Script *script, const ResourceReference &durationRef);
 	Command *opScriptPauseRandom(Script *script, const ResourceReference &itemRef);
 	Command *opScriptAbort(ResourceReference scriptRef, bool disable);
-	Command *opExit2DLocation(Script *script);
+	Command *opExit2DLocation();
 	Command *opGoto2DLocation(const Common::String &level, const Common::String &location);
 	Command *opRumbleScene(int32 unknown1, int32 unknown2);
 	Command *opFadeScene(int32 unknown1, int32 unknown2, int32 unknown3);
