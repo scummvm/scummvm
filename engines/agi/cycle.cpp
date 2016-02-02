@@ -303,6 +303,12 @@ int AgiEngine::mainCycle(bool onlyCheckForEvents) {
 			}
 			break;
 
+		case CYCLE_INNERLOOP_HAVEKEY:
+			if (key) {
+				testHaveKeyCharPress(key);
+			}
+			break;
+
 		default:
 			break;
 		}

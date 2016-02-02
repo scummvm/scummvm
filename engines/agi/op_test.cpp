@@ -32,7 +32,7 @@ namespace Agi {
 #define ip (state->_curLogic->cIP)
 #define code (state->_curLogic->data)
 
-#define getVar(a) state->_vm->getVar(a)
+#define getVar(a) vm->getVar(a)
 
 #define testEqual(v1, v2)     (getVar(v1) == (v2))
 #define testLess(v1, v2)      (getVar(v1) < (v2))
@@ -98,7 +98,29 @@ void condController(AgiGame *state, AgiEngine *vm, uint8 *p) {
 }
 
 void condHaveKey(AgiGame *state, AgiEngine *vm, uint8 *p) {
-	state->testResult = vm->testKeypressed();
+	if (!getVar(VM_VAR_KEY)) {
+		// Only wait for key when there is not already one set by scripts
+		vm->cycleInnerLoopActive(CYCLE_INNERLOOP_HAVEKEY);
+		do {
+			// Only check for events here, without updating the game cycle,
+			// otherwise the animations in some games are drawn too quickly
+			// like, for example, Manannan's lightnings in the intro of KQ3
+			// and the bullets opened in the logo of PQ1, during its intro.
+			// Fixes bug #3600733
+			vm->mainCycle(true);
+		} while (vm->cycleInnerLoopIsActive() && !(vm->shouldQuit() || vm->_restartGame));
+	}
+
+	state->testResult = 1;
+}
+
+void AgiEngine::testHaveKeyCharPress(uint16 newChar) {
+	// pass key to scripts
+	setVar(VM_VAR_KEY, newChar);
+
+	// Exit on any key press
+	cycleInnerLoopInactive();
+	debugC(5, kDebugLevelScripts | kDebugLevelInput, "keypress = %02x", newChar);
 }
 
 void condSaid(AgiGame *state, AgiEngine *vm, uint8 *p) {
@@ -237,29 +259,6 @@ uint8 AgiEngine::testCompareStrings(uint8 s1, uint8 s2) {
 	ms2[j] = 0x0;
 
 	return !strcmp(ms1, ms2);
-}
-
-uint8 AgiEngine::testKeypressed() {
-	int x = _game.keypress;
-
-	_game.keypress = 0;
-	if (!x) {
-		InputMode mode = _game.inputMode;
-
-		_game.inputMode = INPUTMODE_NONE;
-		// Only check for events here, without updating the game cycle,
-		// otherwise the animations in some games are drawn too quickly
-		// like, for example, Manannan's lightnings in the intro of KQ3
-		// and the bullets opened in the logo of PQ1, during its intro.
-		// Fixes bug #3600733
-		mainCycle(true);
-		_game.inputMode = mode;
-	}
-
-	if (x)
-		debugC(5, kDebugLevelScripts | kDebugLevelInput, "keypress = %02x", x);
-
-	return x;
 }
 
 uint8 AgiEngine::testController(uint8 cont) {
