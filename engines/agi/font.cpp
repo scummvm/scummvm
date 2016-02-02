@@ -664,7 +664,7 @@ void GfxFont::init() {
 		// no font assigned?
 		// use regular PC-BIOS font (taken from Dos-Box with a few modifications)
 		_fontData = fontData_PCBIOS;
-		debug("AGI: Using VGA font");
+		debug("AGI: Using PC-BIOS font");
 	}
 
 	if (_vm->getLanguage() == Common::RU_RUS) {
