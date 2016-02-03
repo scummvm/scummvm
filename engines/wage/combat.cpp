@@ -517,8 +517,6 @@ bool WageEngine::handleMoveCommand(Directions dir, const char *dirName) {
 	Scene *playerScene = _world->_player->_currentScene;
 	const char *msg = playerScene->_messages[dir].c_str();
 
-	warning("Dir: %s  msg: %s", dirName, msg);
-
 	if (!playerScene->_blocked[dir]) {
 		int destX = playerScene->_worldX + directionsX[dir];
 		int destY = playerScene->_worldY + directionsY[dir];
