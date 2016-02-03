@@ -333,6 +333,7 @@ bool WageEngine::attackHit(Chr *attacker, Chr *victim, Obj *weapon, int targetIn
 
 	if (causesSpiritualDamage) {
 		/* TODO */
+		warning("TODO: Spiritual damage");
 	}
 
 	if (freezesOpponent) {
