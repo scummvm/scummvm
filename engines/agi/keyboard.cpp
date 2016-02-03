@@ -340,13 +340,16 @@ bool AgiEngine::handleMouseClicks(uint16 &key) {
 		case CYCLE_INNERLOOP_INVENTORY:
 			// TODO: forward
 			break;
+
 		case CYCLE_INNERLOOP_MENU_VIA_KEYBOARD:
 			_menu->mouseEvent(key);
 			key = 0; // eat event
 			break;
+
 		case CYCLE_INNERLOOP_SYSTEMUI_SELECTSAVEDGAMESLOT:
 			// TODO: forward
 			break;
+
 		default:
 			break;
 		}
