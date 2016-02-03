@@ -809,6 +809,12 @@ get_subengines_build_string() {
 #
 echo "Running ScummVM configure..."
 echo "Configure run on" `date` > $TMPLOG
+cat >> $TMPLOG <<EOF
+Invocation command line was:
+$0 $@
+Saved environment variables:
+LDFLAGS="$SAVED_LDFLAGS" CXX="$SAVED_CXX" CXXFLAGS="$SAVED_CXXFLAGS" CPPFLAGS="$SAVED_CPPFLAGS" ASFLAGS="$SAVED_ASFLAGS" WINDRESFLAGS="$SAVED_WINDRESFLAGS" SDL_CONFIG="$SAVED_SDL_CONFIG"
+EOF
 
 #
 # Check any parameters we received
