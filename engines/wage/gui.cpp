@@ -661,11 +661,23 @@ void Gui::mouseDown(int x, int y) {
 void Gui::startMarking(int x, int y) {
 	const int firstLine = _scrollPos / _consoleLineHeight;
 	int textLine = (y - kConHOverlap - kConHPadding - _scrollPos % _consoleLineHeight - _consoleTextArea.top) / _consoleLineHeight + firstLine;
-	int charPos = x - kConWOverlap - kConWPadding - _consoleTextArea.left;
+	int textChar = 0;
+	int charX = x - kConWOverlap - kConWPadding - _consoleTextArea.left;
+	const Graphics::Font *font = getConsoleFont();
+	Common::String str = _lines[textLine];
+
+	for (int i = str.size(); i >= 0; i--) {
+		if (font->getStringWidth(str) < charX) {
+			textChar = i;
+			break;
+		}
+
+		str.deleteLastChar();
+	}
 
 	_inTextSelection = true;
 
-	warning("x: %d y: %d", textLine, charPos);
+	warning("x: %d y: %d", textLine, textChar);
 }
 
 } // End of namespace Wage
