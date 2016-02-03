@@ -207,6 +207,9 @@ void AgiEngine::agiUnloadResources() {
 int AgiEngine::agiDeinit() {
 	int ec;
 
+	if (!_loader)
+		return errOK;
+
 	_words->clearEgoWords(); // remove all words from memory
 	agiUnloadResources();    // unload resources in memory
 	_loader->unloadResource(RESOURCETYPE_LOGIC, 0);
@@ -332,7 +335,6 @@ const byte *AgiBase::getFontData() {
 }
 
 AgiEngine::AgiEngine(OSystem *syst, const AGIGameDescription *gameDesc) : AgiBase(syst, gameDesc) {
-
 	// Setup mixer
 	syncSoundSettings();
 
@@ -365,8 +367,6 @@ AgiEngine::AgiEngine(OSystem *syst, const AGIGameDescription *gameDesc) : AgiBas
 
 	_game.gfxMode = true;
 
-	_game.state = STATE_INIT;
-
 	_keyQueueStart = 0;
 	_keyQueueEnd = 0;
 
@@ -391,14 +391,17 @@ AgiEngine::AgiEngine(OSystem *syst, const AGIGameDescription *gameDesc) : AgiBas
 
 	memset(_keyQueue, 0, sizeof(_keyQueue));
 
-	_text = NULL;
-	_sprites = NULL;
-	_picture = NULL;
-	_loader = NULL;
-	_console = NULL;
-	_menu = NULL;
-	_gfx = NULL;
-	_systemUI = NULL;
+	_console = nullptr;
+	_font = nullptr;
+	_gfx = nullptr;
+	_sound = nullptr;
+	_picture = nullptr;
+	_sprites = nullptr;
+	_text = nullptr;
+	_loader = nullptr;
+	_menu = nullptr;
+	_systemUI = nullptr;
+	_inventory = nullptr;
 
 	_egoHoldKey = false;
 }
@@ -467,7 +470,6 @@ void AgiEngine::initialize() {
 	debugC(2, kDebugLevelMain, "Detect game");
 
 	if (agiDetectGame() == errOK) {
-		_game.state = STATE_LOADED;
 		debugC(2, kDebugLevelMain, "game loaded");
 	} else {
 		warning("Could not open AGI game");
@@ -504,19 +506,14 @@ void AgiEngine::adjustPosToGameScreen(int16 &x, int16 &y) {
 }
 
 AgiEngine::~AgiEngine() {
-	// If the engine hasn't been initialized yet via
-	// AgiEngine::initialize(), don't attempt to free any resources, as
-	// they haven't been allocated. Fixes bug #1742432 - AGI: Engine
-	// crashes if no game is detected
-	if (_game.state == STATE_INIT) {
-		return;
-	}
-
 	agiDeinit();
 	delete _loader;
-	_gfx->deinitVideo();
+	if (_gfx) {
+		_gfx->deinitVideo();
+	}
 	delete _inventory;
 	delete _systemUI;
+	delete _menu;
 	delete _text;
 	delete _sprites;
 	delete _picture;
@@ -539,12 +536,6 @@ Common::Error AgiEngine::go() {
 		CursorMan.showMouse(true);
 	}
 	inGameTimerReset();
-
-	if (_game.state < STATE_LOADED) {
-		do {
-			processAGIEvents();
-		} while (_game.state < STATE_RUNNING);
-	}
 
 	runGame();
 

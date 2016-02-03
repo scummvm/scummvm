@@ -394,12 +394,6 @@ enum CycleInnerLoopType {
 	CYCLE_INNERLOOP_HAVEKEY                      = 7
 };
 
-enum State {
-	STATE_INIT      = 0x00,
-	STATE_LOADED    = 0x01,
-	STATE_RUNNING   = 0x02
-};
-
 typedef Common::Array<int16> SavedGameSlotIdArray;
 
 /**
@@ -409,8 +403,6 @@ typedef Common::Array<int16> SavedGameSlotIdArray;
  */
 struct AgiGame {
 	AgiEngine *_vm;
-
-	State state;    /**< state of the interpreter */
 
 	// TODO: Check whether adjMouseX and adjMouseY must be saved and loaded when using savegames.
 	//       If they must be then loading and saving is partially broken at the moment.
@@ -734,6 +726,8 @@ public:
 	void adjustPosToGameScreen(int16 &x, int16 &y);
 
 private:
+	bool initialized;
+
 	int _keyQueue[KEY_QUEUE_SIZE];
 	int _keyQueueStart;
 	int _keyQueueEnd;

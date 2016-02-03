@@ -110,8 +110,7 @@ int AgiEngine::saveGame(const Common::String &fileName, const Common::String &de
 	out->writeUint32BE(playTime);
 	debugC(5, kDebugLevelMain | kDebugLevelSavegame, "Writing play time (%d)", playTime);
 
-	out->writeByte(_game.state);
-	debugC(5, kDebugLevelMain | kDebugLevelSavegame, "Writing game state (%d)", _game.state);
+	out->writeByte(2); // was _game.state, 2 = STATE_RUNNING
 
 	strcpy(gameIDstring, _game.id);
 	out->write(gameIDstring, 8);
@@ -387,7 +386,7 @@ int AgiEngine::loadGame(const Common::String &fileName, bool checkId) {
 		}
 	}
 
-	_game.state = (State)in->readByte();
+	in->readByte(); // was _game.state, not needed anymore
 
 	in->read(loadId, 8);
 	if (strcmp(loadId, _game.id) != 0 && checkId) {

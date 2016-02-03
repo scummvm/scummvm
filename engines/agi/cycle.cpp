@@ -440,9 +440,7 @@ int AgiEngine::runGame() {
 		setVar(VM_VAR_MAX_INPUT_CHARACTERS, 38);
 		_text->promptDisable();
 
-		_game.state = STATE_RUNNING;
 		ec = playGame();
-		_game.state = STATE_LOADED;
 		agiDeinit();
 	} while (_restartGame);
 
