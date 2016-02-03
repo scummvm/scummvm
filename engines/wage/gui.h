@@ -112,6 +112,9 @@ private:
 	const Graphics::Font *getConsoleFont();
 	const Graphics::Font *getTitleFont();
 	void startMarking(int x, int y);
+	int calcTextX(int x, int textLine);
+	int calcTextY(int y);
+	void updateTextSelection(int x, int y);
 
 public:
 	Graphics::Surface _screen;
@@ -146,6 +149,10 @@ private:
 	bool _cursorIsArrow;
 
 	bool _inTextSelection;
+	int _selectionStartX;
+	int _selectionStartY;
+	int _selectionEndX;
+	int _selectionEndY;
 };
 
 } // End of namespace Wage

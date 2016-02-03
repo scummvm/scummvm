@@ -156,6 +156,8 @@ Gui::Gui(WageEngine *engine) {
 	_cursorOff = false;
 
 	_inTextSelection = false;
+	_selectionStartX = _selectionStartY = -1;
+	_selectionEndX = _selectionEndY = -1;
 
 	g_system->getPaletteManager()->setPalette(palette, 0, 4);
 
@@ -494,9 +496,14 @@ void Gui::renderConsole(Graphics::Surface *g, Common::Rect &r) {
 
 	for (int line = firstLine; line < lastLine; line++) {
 		const char *str = _lines[line].c_str();
+		int color = kColorBlack;
+
+		if (line >= _selectionStartY && line <= _selectionEndY) {
+			color = kColorWhite;
+		}
 
 		if (*str)
-			font->drawString(&_console, _lines[line], x1, y1, textW, kColorBlack);
+			font->drawString(&_console, _lines[line], x1, y1, textW, color);
 
 		y1 += _consoleLineHeight;
 	}
@@ -603,6 +610,11 @@ void Gui::mouseMove(int x, int y) {
 		return;
 	}
 
+	if (_inTextSelection) {
+		updateTextSelection(x, y);
+		return;
+	}
+
 	if (_consoleTextArea.contains(x, y)) {
 		if (_cursorIsArrow) {
 			CursorMan.replaceCursor(macCursorBeam, 11, 16, 3, 8, 3);
@@ -625,6 +637,10 @@ Designed *Gui::mouseUp(int x, int y) {
 
 		return NULL;
 	}
+
+	if (_inTextSelection)
+		_inTextSelection = false;
+
 	if (_sceneArea.contains(x, y)) {
 		if (!_sceneIsActive) {
 			_sceneIsActive = true;
@@ -658,26 +674,51 @@ void Gui::mouseDown(int x, int y) {
 	}
 }
 
-void Gui::startMarking(int x, int y) {
-	const int firstLine = _scrollPos / _consoleLineHeight;
-	int textLine = (y - kConHOverlap - kConHPadding - _scrollPos % _consoleLineHeight - _consoleTextArea.top) / _consoleLineHeight + firstLine;
-	int textChar = 0;
-	int charX = x - kConWOverlap - kConWPadding - _consoleTextArea.left;
+int Gui::calcTextX(int x, int textLine) {
 	const Graphics::Font *font = getConsoleFont();
 	Common::String str = _lines[textLine];
 
+	x -= _consoleTextArea.left + kConWOverlap + kConWPadding;
+
 	for (int i = str.size(); i >= 0; i--) {
-		if (font->getStringWidth(str) < charX) {
-			textChar = i;
-			break;
+		if (font->getStringWidth(str) < x) {
+			return i;
 		}
 
 		str.deleteLastChar();
 	}
 
+	return 0;
+}
+
+int Gui::calcTextY(int y) {
+	y -= _consoleTextArea.top + kConHOverlap + kConHPadding;
+
+	if (y < 0)
+		y = 0;
+
+	const int firstLine = _scrollPos / _consoleLineHeight;
+	int textLine = (y - _scrollPos % _consoleLineHeight) / _consoleLineHeight + firstLine;
+
+	return textLine;
+}
+
+void Gui::startMarking(int x, int y) {
+	warning("x: %d y: %d", x, y);
+	_selectionStartY = calcTextY(y);
+	_selectionStartX = calcTextX(x, _selectionStartY);
+
 	_inTextSelection = true;
 
-	warning("x: %d y: %d", textLine, textChar);
+	warning("x: %d y: %d", _selectionStartX, _selectionStartY);
+}
+
+void Gui::updateTextSelection(int x, int y) {
+	warning("x: %d y: %d", x, y);
+	_selectionEndY = calcTextY(y);
+	_selectionEndX = calcTextX(x, _selectionStartY);
+
+	_consoleFullRedraw = true;
 }
 
 } // End of namespace Wage
