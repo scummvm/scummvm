@@ -111,7 +111,7 @@ static const byte macCursorBeam[] = {
 	0, 0, 3, 3, 3, 0, 0, 3, 3, 3, 3,
 };
 
-static void cursor_timer_handler(void *refCon) {
+static void cursorTimerHandler(void *refCon) {
     Gui *gui = (Gui *)refCon;
 
 	int x = gui->_cursorX;
@@ -171,7 +171,7 @@ Gui::Gui(WageEngine *engine) {
 
 	loadFonts();
 
-	g_system->getTimerManager()->installTimerProc(&cursor_timer_handler, 200000, this, "wageCursor");
+	g_system->getTimerManager()->installTimerProc(&cursorTimerHandler, 200000, this, "wageCursor");
 
 	_menu = new Menu(this);
 }
@@ -179,7 +179,7 @@ Gui::Gui(WageEngine *engine) {
 Gui::~Gui() {
 	_screen.free();
 	_console.free();
-	g_system->getTimerManager()->removeTimerProc(&cursor_timer_handler);
+	g_system->getTimerManager()->removeTimerProc(&cursorTimerHandler);
 	delete _menu;
 }
 
@@ -531,7 +531,7 @@ void Gui::drawInput() {
 	// undraw cursor
 	_cursorOff = true;
 	_cursorState = false;
-	cursor_timer_handler(this);
+	cursorTimerHandler(this);
 	_cursorOff = false;
 
 	Common::Rect r(x, y, x + textW + 10, y + font->getFontHeight());
