@@ -433,13 +433,13 @@ void GfxMenu::removeActiveMenu(int16 selectedMenuNr) {
 	_gfx->render_Block(_drawnMenuColumn, _drawnMenuRow, _drawnMenuWidth, _drawnMenuHeight);
 }
 
-void GfxMenu::charPress(uint16 newChar) {
+void GfxMenu::keyPress(uint16 newKey) {
 	GuiMenuEntry *menuEntry = _array[_drawnMenuNr];
 	GuiMenuItemEntry *itemEntry = _itemArray[menuEntry->selectedItemNr];
 	int16 newMenuNr = _drawnMenuNr;
 	int16 newItemNr = menuEntry->selectedItemNr;
 
-	switch (newChar) {
+	switch (newKey) {
 	case AGI_KEY_ENTER:
 		// check, if current item is actually enabled
 		if (!itemEntry->enabled)
@@ -529,7 +529,7 @@ void GfxMenu::charPress(uint16 newChar) {
 // During "via keyboard" mode in case user actively clicks on something
 // During "via mouse" mode all the time, so that current mouse cursor position modifies active selection
 // In "via mouse" mode, we check if user let go of the left mouse button and then select the item that way
-void GfxMenu::mouseEvent(uint16 newChar) {
+void GfxMenu::mouseEvent(uint16 newKey) {
 	// Find out, where current mouse cursor actually is
 	int16 mouseRow = _vm->_mouse.pos.y / FONT_DISPLAY_HEIGHT;
 	int16 mouseColumn = _vm->_mouse.pos.x / FONT_DISPLAY_WIDTH;
@@ -537,7 +537,7 @@ void GfxMenu::mouseEvent(uint16 newChar) {
 	int16 activeMenuNr, activeItemNr;
 	mouseFindMenuSelection(mouseRow, mouseColumn, activeMenuNr, activeItemNr);
 
-	switch (newChar) {
+	switch (newKey) {
 	case AGI_MOUSE_BUTTON_LEFT:
 		// User clicked somewhere, in this case check if user clicked on status bar or on one of the currently shown menu items
 		// Happens in "via keyboard" mode only

@@ -228,7 +228,7 @@ int AgiEngine::mainCycle(bool onlyCheckForEvents) {
 			if (!handleController(key)) {
 				if (key) {
 					if (_text->promptIsEnabled()) {
-						_text->promptCharPress(key);
+						_text->promptKeyPress(key);
 					}
 				}
 			}
@@ -241,19 +241,19 @@ int AgiEngine::mainCycle(bool onlyCheckForEvents) {
 		case CYCLE_INNERLOOP_GETSTRING: // loop called from TextMgr::stringEdit()
 		case CYCLE_INNERLOOP_GETNUMBER:
 			if (key) {
-				_text->stringCharPress(key);
+				_text->stringKeyPress(key);
 			}
 			break;
 
 		case CYCLE_INNERLOOP_INVENTORY: // loop called from InventoryMgr::show()
 			if (key) {
-				_inventory->charPress(key);
+				_inventory->keyPress(key);
 			}
 			break;
 
 		case CYCLE_INNERLOOP_MENU_VIA_KEYBOARD:
 			if (key) {
-				_menu->charPress(key);
+				_menu->keyPress(key);
 			}
 			return false;
 
@@ -263,13 +263,13 @@ int AgiEngine::mainCycle(bool onlyCheckForEvents) {
 
 		case CYCLE_INNERLOOP_SYSTEMUI_SELECTSAVEDGAMESLOT:
 			if (key) {
-				_systemUI->savedGameSlot_CharPress(key);
+				_systemUI->savedGameSlot_KeyPress(key);
 			}
 			break;
 
 		case CYCLE_INNERLOOP_MESSAGEBOX:
 			if (key) {
-				_text->messageBox_CharPress(key);
+				_text->messageBox_KeyPress(key);
 			}
 			break;
 

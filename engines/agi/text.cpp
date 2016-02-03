@@ -383,7 +383,7 @@ bool TextMgr::messageBox(const char *textPtr) {
 	return true;
 }
 
-void TextMgr::messageBox_CharPress(uint16 newKey) {
+void TextMgr::messageBox_KeyPress(uint16 newKey) {
 	switch (newKey) {
 	case AGI_KEY_ENTER:
 		_vm->cycleInnerLoopInactive(); // exit messagebox-loop
@@ -616,7 +616,7 @@ bool TextMgr::promptIsEnabled() {
 	return _promptEnabled;
 }
 
-void TextMgr::promptCharPress(int16 newChar) {
+void TextMgr::promptKeyPress(uint16 newKey) {
 	int16 maxChars = 0;
 	int16 scriptsInputLen = _vm->getVar(VM_VAR_MAX_INPUT_CHARACTERS);
 
@@ -634,12 +634,12 @@ void TextMgr::promptCharPress(int16 newChar) {
 
 	inputEditOn();
 
-	switch (newChar) {
+	switch (newKey) {
 	case AGI_KEY_BACKSPACE: {
 		if (_promptCursorPos) {
 			_promptCursorPos--;
 			_prompt[_promptCursorPos] = 0;
-			displayCharacter(newChar);
+			displayCharacter(newKey);
 
 			promptRememberForAutoComplete();
 		}
@@ -671,20 +671,20 @@ void TextMgr::promptCharPress(int16 newChar) {
 			// but as soon as invalid characters were used in graphics mode they weren't properly shown
 			switch (_vm->getLanguage()) {
 			case Common::RU_RUS:
-				if (newChar >= 0x20)
+				if (newKey >= 0x20)
 					acceptableInput = true;
 				break;
 			default:
-				if ((newChar >= 0x20) && (newChar <= 0x7f))
+				if ((newKey >= 0x20) && (newKey <= 0x7f))
 					acceptableInput = true;
 				break;
 			}
 
 			if (acceptableInput) {
-				_prompt[_promptCursorPos] = newChar;
+				_prompt[_promptCursorPos] = newKey;
 				_promptCursorPos++;
 				_prompt[_promptCursorPos] = 0;
-				displayCharacter(newChar);
+				displayCharacter(newKey);
 
 				promptRememberForAutoComplete();
 			}
@@ -697,7 +697,7 @@ void TextMgr::promptCharPress(int16 newChar) {
 
 void TextMgr::promptCancelLine() {
 	while (_promptCursorPos) {
-		promptCharPress(0x08); // Backspace until prompt is empty
+		promptKeyPress(0x08); // Backspace until prompt is empty
 	}
 }
 
@@ -708,7 +708,7 @@ void TextMgr::promptEchoLine() {
 		inputEditOn();
 
 		while (_promptPrevious[_promptCursorPos]) {
-			promptCharPress(_promptPrevious[_promptCursorPos]);
+			promptKeyPress(_promptPrevious[_promptCursorPos]);
 		}
 		promptRememberForAutoComplete();
 
@@ -795,10 +795,10 @@ void TextMgr::stringEdit(int16 stringMaxLen) {
 	_vm->nonBlockingText_Forget();
 }
 
-void TextMgr::stringCharPress(int16 newChar) {
+void TextMgr::stringKeyPress(uint16 newKey) {
 	inputEditOn();
 
-	switch (newChar) {
+	switch (newKey) {
 	case 0x3:       // ctrl-c
 	case 0x18: {    // ctrl-x
 		// clear string
@@ -814,7 +814,7 @@ void TextMgr::stringCharPress(int16 newChar) {
 		if (_inputStringCursorPos) {
 			_inputStringCursorPos--;
 			_inputString[_inputStringCursorPos] = 0;
-			displayCharacter(newChar);
+			displayCharacter(newKey);
 
 			stringRememberForAutoComplete();
 		}
@@ -848,23 +848,23 @@ void TextMgr::stringCharPress(int16 newChar) {
 			// but as soon as invalid characters were used in graphics mode they weren't properly shown
 			switch (_vm->getLanguage()) {
 			case Common::RU_RUS:
-				if (newChar >= 0x20)
+				if (newKey >= 0x20)
 					acceptableInput = true;
 				break;
 			default:
-				if ((newChar >= 0x20) && (newChar <= 0x7f))
+				if ((newKey >= 0x20) && (newKey <= 0x7f))
 					acceptableInput = true;
 				break;
 			}
 
 			if (acceptableInput) {
-				if ((_vm->_game.cycleInnerLoopType == CYCLE_INNERLOOP_GETSTRING) || ((newChar >= '0') && (newChar <= '9'))) {
+				if ((_vm->_game.cycleInnerLoopType == CYCLE_INNERLOOP_GETSTRING) || ((newKey >= '0') && (newKey <= '9'))) {
 					// Additionally check for GETNUMBER-mode, if character is a number
 					// Sierra also did not do this
-					_inputString[_inputStringCursorPos] = newChar;
+					_inputString[_inputStringCursorPos] = newKey;
 					_inputStringCursorPos++;
 					_inputString[_inputStringCursorPos] = 0;
-					displayCharacter(newChar);
+					displayCharacter(newKey);
 
 					stringRememberForAutoComplete();
 				}

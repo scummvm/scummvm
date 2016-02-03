@@ -295,13 +295,13 @@ int16 SystemUI::askForSavedGameSlot(const char *slotListText) {
 	return _savedGameSelectedSlotNr;
 }
 
-void SystemUI::savedGameSlot_CharPress(int16 newChar) {
+void SystemUI::savedGameSlot_KeyPress(uint16 newKey) {
 	int16 slotCount = _savedGameArray.size();
 	int16 newUpmostSlotNr = _savedGameUpmostSlotNr;
 	int16 newSelectedSlotNr = _savedGameSelectedSlotNr;
 	bool  slotsScrolled = false;
 
-	switch (newChar) {
+	switch (newKey) {
 	case AGI_KEY_ENTER:
 		_vm->cycleInnerLoopInactive(); // exit savedGameSlot-loop
 		return;

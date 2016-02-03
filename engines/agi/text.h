@@ -132,7 +132,7 @@ public:
 	void print(int16 textNr);
 
 	bool messageBox(const char *textPtr);
-	void messageBox_CharPress(uint16 newKey);
+	void messageBox_KeyPress(uint16 newKey);
 
 	bool _messageBoxCancelled;
 
@@ -180,7 +180,7 @@ public:
 
 	void promptRow_Set(int16 row);
 	int16 promptRow_Get();
-	void promptCharPress(int16 newChar);
+	void promptKeyPress(uint16 newKey);
 	void promptCancelLine();
 	void promptEchoLine();
 	void promptRedraw();
@@ -199,7 +199,7 @@ public:
 	int16 stringGetMaxLen();
 	void stringSet(const char *text);
 	void stringEdit(int16 stringMaxLen);
-	void stringCharPress(int16 newChar);
+	void stringKeyPress(uint16 newKey);
 	void stringRememberForAutoComplete(bool entered = false); // for auto-completion
 
 	char *stringPrintf(const char *originalText);

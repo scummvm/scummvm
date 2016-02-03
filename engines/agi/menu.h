@@ -65,8 +65,8 @@ public:
 	void itemDisable(uint16 controllerSlot);
 	void itemEnableAll();
 
-	void charPress(uint16 newChar);
-	void mouseEvent(uint16 newChar);
+	void keyPress(uint16 newKey);
+	void mouseEvent(uint16 newKey);
 
 	bool isAvailable();
 

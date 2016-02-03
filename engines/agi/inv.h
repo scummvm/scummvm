@@ -52,7 +52,7 @@ public:
 	void drawItem(int16 itemNr);
 	void show();
 
-	void charPress(int16 newChar);
+	void keyPress(uint16 newKey);
 	void changeActiveItem(int16 direction);
 };
 

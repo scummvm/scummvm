@@ -71,7 +71,7 @@ public:
 	int16 askForRestoreGameSlot();
 	bool  askForSaveGameDescription(int16 slotId, Common::String &newDescription);
 
-	void  savedGameSlot_CharPress(int16 newChar);
+	void  savedGameSlot_KeyPress(uint16 newKey);
 
 private:
 	int16 askForSavedGameSlot(const char *slotListText);

@@ -165,8 +165,8 @@ void InventoryMgr::show() {
 	}
 }
 
-void InventoryMgr::charPress(int16 newChar) {
-	switch (newChar) {
+void InventoryMgr::keyPress(uint16 newKey) {
+	switch (newKey) {
 	case AGI_KEY_ENTER: {
 		_vm->cycleInnerLoopInactive(); // exit show-loop
 		break;
