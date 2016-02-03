@@ -141,6 +141,12 @@ public:
 		insert_aux(_storage + idx, array.begin(), array.end());
 	}
 
+	/**
+	 * Inserts element before pos.
+	 */
+	void insert(iterator pos, const T &element) {
+		insert_aux(pos, &element, &element + 1);
+	}
 
 	T remove_at(size_type idx) {
 		assert(idx < _size);
@@ -185,6 +191,14 @@ public:
 		_storage = 0;
 		_size = 0;
 		_capacity = 0;
+	}
+
+	iterator erase(iterator pos) {
+		copy(pos + 1, _storage + _size, pos);
+		_size--;
+		// We also need to destroy the last object properly here.
+		_storage[_size].~T();
+		return pos;
 	}
 
 	bool empty() const {
