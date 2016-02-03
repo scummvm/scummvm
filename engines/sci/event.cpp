@@ -277,9 +277,10 @@ SciEvent EventManager::getScummVMEvent() {
 	} else if ((scummVMKeycode >= Common::KEYCODE_F1) && scummVMKeycode <= Common::KEYCODE_F10) {
 		// SCI_K_F1 == 59 << 8
 		// SCI_K_SHIFT_F1 == 84 << 8
-		input.character = SCI_KEY_F1 + ((scummVMKeycode - Common::KEYCODE_F1)<<8);
-		if (scummVMKeyFlags & Common::KBD_SHIFT)
-			input.character = input.character + 0x1900;
+		if (!(scummVMKeyFlags & Common::KBD_SHIFT))
+			input.character = SCI_KEY_F1 + ((scummVMKeycode - Common::KEYCODE_F1)<<8);
+		else
+			input.character = SCI_KEY_SHIFT_F1 + ((scummVMKeycode - Common::KEYCODE_F1)<<8);
 	} else {
 		// Special keys that need conversion
 		for (int i = 0; i < ARRAYSIZE(keyMappings); i++) {

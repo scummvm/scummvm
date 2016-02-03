@@ -91,6 +91,17 @@ struct SciEvent {
 #define SCI_KEY_F9 (67<<8)
 #define SCI_KEY_F10 (68<<8)
 
+#define SCI_KEY_SHIFT_F1 (84<<8)
+#define SCI_KEY_SHIFT_F2 (85<<8)
+#define SCI_KEY_SHIFT_F3 (86<<8)
+#define SCI_KEY_SHIFT_F4 (87<<8)
+#define SCI_KEY_SHIFT_F5 (88<<8)
+#define SCI_KEY_SHIFT_F6 (89<<8)
+#define SCI_KEY_SHIFT_F7 (90<<8)
+#define SCI_KEY_SHIFT_F8 (91<<8)
+#define SCI_KEY_SHIFT_F9 (92<<8)
+#define SCI_KEY_SHIFT_F10 (93<<8)
+
 /*Values for buckybits */
 #define SCI_KEYMOD_RSHIFT          (1<<0)
 #define SCI_KEYMOD_LSHIFT          (1<<1)
