@@ -342,41 +342,41 @@ void Gui::paintBorder(Graphics::Surface *g, Common::Rect &r, WindowType windowTy
 		break;
 	}
 
-	drawBox(g, x, y, size, size);
-	drawBox(g, x+width-size-1, y, size, size);
-	drawBox(g, x+width-size-1, y+height-size-1, size, size);
-	drawBox(g, x, y+height-size-1, size, size);
-	drawBox(g, x + size, y + 2, width - 2*size - 1, size - 4);
-	drawBox(g, x + size, y + height - size + 1, width - 2*size - 1, size - 4);
-	drawBox(g, x + 2, y + size, size - 4, height - 2*size - 1);
-	drawBox(g, x + width - size + 1, y + size, size - 4, height - 2*size-1);
+	drawBox(g, x,                    y,                     size,                 size);
+	drawBox(g, x + width - size - 1, y,                     size,                 size);
+	drawBox(g, x + width - size - 1, y + height - size - 1, size,                 size);
+	drawBox(g, x,                    y + height - size - 1, size,                 size);
+	drawBox(g, x + size,             y + 2,                 width - 2 * size - 1, size - 4);
+	drawBox(g, x + size,             y + height - size + 1, width - 2 * size - 1, size - 4);
+	drawBox(g, x + 2,                y + size,              size - 4,             height - 2 * size - 1);
+	drawBox(g, x + width - size + 1, y + size,              size - 4,             height - 2 * size - 1);
 
 	if (active) {
-		fillRect(g, x + size, y + 5, width - 2*size - 1, 8);
-		fillRect(g, x + size, y + height - 13, width - 2*size - 1, 8);
-		fillRect(g, x + 5, y + size, 8, height - 2*size - 1);
+		fillRect(g, x + size, y + 5,           width - 2 * size - 1, 8);
+		fillRect(g, x + size, y + height - 13, width - 2 * size - 1, 8);
+		fillRect(g, x + 5,    y + size,        8,                    height - 2 * size - 1);
 		if (!scrollable) {
-			fillRect(g, x + width - 13, y + size, 8, height - 2*size - 1);
+			fillRect(g, x + width - 13, y + size, 8, height - 2 * size - 1);
 		} else {
 			int x1 = x + width - 15;
 			int y1 = y + size + 1;
 			for (int yy = 0; yy < ARROW_H; yy++) {
 				for (int xx = 0; xx < ARROW_W; xx++) {
 					if (arrowPixels[yy][xx] != 0) {
-						g->hLine(x1+xx, y1+yy, x1+xx, kColorBlack);
+						g->hLine(x1 + xx, y1 + yy, x1 + xx, kColorBlack);
 					} else {
-						g->hLine(x1+xx, y1+yy, x1+xx, kColorWhite);
+						g->hLine(x1 + xx, y1 + yy, x1 + xx, kColorWhite);
 					}
 				}
 			}
-			fillRect(g, x + width - 13, y + size + ARROW_H, 8, height - 2*size - 1 - ARROW_H*2);
-			y1 += height - 2*size - ARROW_H - 2;
+			fillRect(g, x + width - 13, y + size + ARROW_H, 8, height - 2 * size - 1 - ARROW_H * 2);
+			y1 += height - 2 * size - ARROW_H - 2;
 			for (int yy = 0; yy < ARROW_H; yy++) {
 				for (int xx = 0; xx < ARROW_W; xx++) {
-					if (arrowPixels[ARROW_H-yy-1][xx] != 0) {
-						g->hLine(x1+xx, y1+yy, x1+xx, kColorBlack);
+					if (arrowPixels[ARROW_H - yy - 1][xx] != 0) {
+						g->hLine(x1 + xx, y1 + yy, x1 + xx, kColorBlack);
 					} else {
-						g->hLine(x1+xx, y1+yy, x1+xx, kColorWhite);
+						g->hLine(x1 + xx, y1 + yy, x1 + xx, kColorWhite);
 					}
 				}
 			}
@@ -395,7 +395,7 @@ void Gui::paintBorder(Graphics::Surface *g, Common::Rect &r, WindowType windowTy
 		int yOff = _builtInFonts ? 3 : 1;
 
 		int w = font->getStringWidth(_scene->_name) + 10;
-		int maxWidth = width - size*2 - 7;
+		int maxWidth = width - size * 2 - 7;
 		if (w > maxWidth)
 			w = maxWidth;
 		drawBox(g, x + (width - w) / 2, y, w, size);
