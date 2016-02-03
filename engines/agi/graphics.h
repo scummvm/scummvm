@@ -137,8 +137,8 @@ private:
 
 public:
 	void drawCharacter(int16 row, int16 column, byte character, byte foreground, byte background, bool disabledLook);
-	void drawStringOnDisplay(int16 x, int16 y, const char *text, byte foreground, byte background, bool disabledLook);
-	void drawCharacterOnDisplay(int16 x, int16 y, byte character, byte foreground, byte background, bool disabledLook);
+	void drawStringOnDisplay(int16 x, int16 y, const char *text, byte foreground, byte background);
+	void drawCharacterOnDisplay(int16 x, int16 y, byte character, byte foreground, byte background, byte transformXOR = 0, byte transformOR = 0);
 
 	void shakeScreen(int16 repeatCount);
 	void updateScreen();

@@ -528,16 +528,22 @@ void GfxMgr::drawBox(int16 x, int16 y, int16 width, int16 height, byte backgroun
 	// draw lines
 	switch (_vm->_renderMode) {
 	case Common::kRenderApple2GS:
-		// Slightly different window frame
+		// Slightly different window frame, and actually using 1-pixel width, which is "hi-res"
 		drawDisplayRect(x + 2, y - 2, width - 4, 1, lineColor);
 		drawDisplayRect(x + width - 3, y - 2, 1, height - 4, lineColor);
 		drawDisplayRect(x + 2, y - height + 3, width - 4, 1, lineColor);
 		drawDisplayRect(x + 2, y - 2, 1, height - 4, lineColor);
 		break;
-	case Common::kRenderCGA:
-	case Common::kRenderEGA:
-	case Common::kRenderVGA:
+	case Common::kRenderHercA: // TODO/FIXME: This should be for Macintosh. Enum is not available atm
+		// 1 pixel between box and frame lines. Frame lines were black
+		drawDisplayRect(x + 1, y - 1, width - 2, 1, 0);
+		drawDisplayRect(x + width - 2, y - 1, 1, height - 2, 0);
+		drawDisplayRect(x + 1, y - height + 2, width - 2, 1, 0);
+		drawDisplayRect(x + 1, y - 1, 1, height - 2, 0);
+		break;
 	default:
+		// Confirmed platforms that used this type:
+		// PC, Amiga, Atari ST
 		drawDisplayRect(x + 2, y - 1, width - 4, 1, lineColor);
 		drawDisplayRect(x + width - 4, y - 2, 2, height - 4, lineColor);
 		drawDisplayRect(x + 2, y - height + 2, width - 4, 1, lineColor);
@@ -619,44 +625,41 @@ void GfxMgr::drawDisplayRectCGA(int16 x, int16 y, int16 width, int16 height, byt
 void GfxMgr::drawCharacter(int16 row, int16 column, byte character, byte foreground, byte background, bool disabledLook) {
 	int16 x = column * FONT_DISPLAY_WIDTH;
 	int16 y = row * FONT_DISPLAY_HEIGHT;
+	byte  transformXOR = 0;
+	byte  transformOR = 0;
 
 	// Now figure out, if special handling needs to be done
 	if (_vm->_game.gfxMode) {
 		if (background & 0x08) {
 			// invert enabled
 			background &= 0x07; // remove invert bit
-			SWAP<byte>(foreground, background);
+			transformXOR = 0xFF;
 		}
-	} else {
-		// in text mode disabled look is not allowed
-		disabledLook = false;
+		if (disabledLook) {
+			transformOR = 0xAA;
+		}
 	}
 
-	drawCharacterOnDisplay(x, y, character, foreground, background, disabledLook);
+	drawCharacterOnDisplay(x, y, character, foreground, background, transformXOR, transformOR);
 }
 
 // only meant for internal use (SystemUI)
-void GfxMgr::drawStringOnDisplay(int16 x, int16 y, const char *text, byte foregroundColor, byte backgroundColor, bool disabledLook) {
+void GfxMgr::drawStringOnDisplay(int16 x, int16 y, const char *text, byte foregroundColor, byte backgroundColor) {
 	while (*text) {
-		drawCharacterOnDisplay(x, y, *text, foregroundColor, backgroundColor, disabledLook);
+		drawCharacterOnDisplay(x, y, *text, foregroundColor, backgroundColor);
 		text++;
 		x += FONT_DISPLAY_WIDTH;
 	}
 }
 
-void GfxMgr::drawCharacterOnDisplay(int16 x, int16 y, const byte character, byte foreground, byte background, bool disabledLook) {
+void GfxMgr::drawCharacterOnDisplay(int16 x, int16 y, const byte character, byte foreground, byte background, byte transformXOR, byte transformOR) {
 	int16       curX, curY;
 	const byte *fontData;
 	byte        curByte = 0;
 	uint16      curBit;
-	byte        curTransformOR = 0;
 
 	// get font data of specified character
 	fontData = _vm->getFontData() + character * FONT_BYTES_PER_CHARACTER;
-
-	if (disabledLook) {
-		curTransformOR = 0xAA;
-	}
 
 	curBit = 0;
 	for (curY = 0; curY < FONT_DISPLAY_HEIGHT; curY++) {
@@ -664,7 +667,8 @@ void GfxMgr::drawCharacterOnDisplay(int16 x, int16 y, const byte character, byte
 			if (!curBit) {
 				curByte = *fontData;
 				// do transformations in case they are needed (invert/disabled look)
-				curByte |= curTransformOR;
+				curByte ^= transformXOR;
+				curByte |= transformOR;
 				fontData++;
 				curBit  = 0x80;
 			}
