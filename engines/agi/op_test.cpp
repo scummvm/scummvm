@@ -22,6 +22,7 @@
 
 
 #include "agi/agi.h"
+#include "agi/graphics.h"
 #include "agi/opcodes.h"
 #include "agi/words.h"
 
@@ -131,6 +132,7 @@ void condHaveKey(AgiGame *state, AgiEngine *vm, uint8 *p) {
 		state->testResult = 1;
 		return;
 	}
+	vm->_gfx->updateScreen(); // TODO: Solve this in a better way
 	state->testResult = 0;
 }
 
