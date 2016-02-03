@@ -174,14 +174,11 @@ void AgiEngine::interpretCycle() {
 }
 
 // We return the current key, or 0 if no key was pressed
-uint16 AgiEngine::processAGIEvents(bool doDelay) {
+uint16 AgiEngine::processAGIEvents() {
 	uint16 key;
 	ScreenObjEntry *screenObjEgo = &_game.screenObjTable[SCREENOBJECTS_EGO_ENTRY];
 
-	if (doDelay) {
-		pollTimer();
-	}
-
+	wait(10);
 	key = doPollKeyboard();
 
 	// In AGI Mouse emulation mode we must update the mouse-related

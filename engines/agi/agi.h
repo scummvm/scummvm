@@ -655,7 +655,6 @@ public:
 		return false;
 	}
 
-	virtual void pollTimer() = 0;
 	virtual int getKeypress() = 0;
 	virtual bool isKeypress() = 0;
 	virtual void clearKeyQueue() = 0;
@@ -735,8 +734,6 @@ public:
 	void adjustPosToGameScreen(int16 &x, int16 &y);
 
 private:
-	uint32 _lastTick;
-
 	int _keyQueue[KEY_QUEUE_SIZE];
 	int _keyQueueStart;
 	int _keyQueueEnd;
@@ -788,7 +785,7 @@ public:
 	                          int16 p4, int16 p5, int16 p6, int16 p7);
 	void releaseImageStack();
 
-	void pause(uint32 msec);
+	void wait(uint32 msec, bool busy = false);
 
 	Console *_console;
 	GUI::Debugger *getDebugger() { return _console; }
@@ -800,7 +797,6 @@ public:
 	int agiUnloadResource(int16 resourceType, int16 resourceNr);
 	void agiUnloadResources();
 
-	virtual void pollTimer();
 	virtual int getKeypress();
 	virtual bool isKeypress();
 	virtual void clearKeyQueue();
@@ -818,7 +814,7 @@ public:
 public:
 	void decrypt(uint8 *mem, int len);
 	void releaseSprites();
-	uint16 processAGIEvents(bool doDelay = true);
+	uint16 processAGIEvents();
 	int viewPictures();
 	int runGame();
 	int getAppDir(char *appDir, unsigned int size);

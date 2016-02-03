@@ -540,14 +540,10 @@ int AgiEngine::waitKey() {
 
 	debugC(3, kDebugLevelInput, "waiting...");
 	while (!(shouldQuit() || _restartGame || getFlag(VM_FLAG_RESTORE_JUST_RAN))) {
-		pollTimer();
+		wait(10);
 		key = doPollKeyboard();
 		if (key == AGI_KEY_ENTER || key == AGI_KEY_ESCAPE || key == AGI_MOUSE_BUTTON_LEFT)
 			break;
-
-		pollTimer();
-
-		g_system->updateScreen();
 	}
 	return key;
 }
@@ -559,11 +555,10 @@ int AgiEngine::waitAnyKey() {
 
 	debugC(3, kDebugLevelInput, "waiting... (any key)");
 	while (!(shouldQuit() || _restartGame)) {
-		pollTimer();
+		wait(10);
 		key = doPollKeyboard();
 		if (key)
 			break;
-		g_system->updateScreen();
 	}
 	return key;
 }
@@ -577,7 +572,7 @@ int AgiEngine::getKeypress() {
 	int k;
 
 	while (_keyQueueStart == _keyQueueEnd)  // block
-		pollTimer();
+		wait(10);
 
 	keyDequeue(k);
 

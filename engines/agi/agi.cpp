@@ -58,30 +58,23 @@ void AgiEngine::allowSynthetic(bool allow) {
 	_allowSynthetic = allow;
 }
 
-void AgiEngine::pollTimer() {
-	_lastTick += 50;
-
-	while (_system->getMillis() < _lastTick) {
-		processScummVMEvents();
-		_console->onFrame();
-		_system->delayMillis(10);
-		_system->updateScreen();
-	}
-
-	_lastTick = _system->getMillis();
-}
-
-void AgiEngine::pause(uint32 msec) {
+void AgiEngine::wait(uint32 msec, bool busy) {
 	uint32 endTime = _system->getMillis() + msec;
 
-	_gfx->setMouseCursor(true); // Busy mouse cursor
+	if (busy) {
+		_gfx->setMouseCursor(true); // Busy mouse cursor
+	}
 
-	while (_system->getMillis() < endTime) {
+	do {
 		processScummVMEvents();
+		_console->onFrame();
 		_system->updateScreen();
 		_system->delayMillis(10);
+	} while (_system->getMillis() < endTime);
+
+	if (busy) {
+		_gfx->setMouseCursor(); // regular mouse cursor
 	}
-	_gfx->setMouseCursor(); // regular mouse cursor
 }
 
 int AgiEngine::agiInit() {
@@ -395,7 +388,6 @@ AgiEngine::AgiEngine(OSystem *syst, const AGIGameDescription *gameDesc) : AgiBas
 	_game._curLogic = NULL;
 
 	_lastSaveTime = 0;
-	_lastTick = 0;
 
 	memset(_keyQueue, 0, sizeof(_keyQueue));
 
@@ -471,8 +463,6 @@ void AgiEngine::initialize() {
 	_gfx->initVideo();
 
 	_lastSaveTime = 0;
-
-	_lastTick = _system->getMillis();
 
 	debugC(2, kDebugLevelMain, "Detect game");
 
@@ -614,7 +604,7 @@ void AgiEngine::loadingTrigger_NewRoom(int16 newRoomNr) {
 		if (newRoomNr != curRoomNr) {
 			if (!_game.automaticRestoreGame) {
 				// wait a bit, we detected non-blocking text
-				pause(2000); // 2 seconds
+				wait(2000, true); // 2 seconds, set busy
 			}
 		}
 	}
@@ -626,7 +616,7 @@ void AgiEngine::loadingTrigger_DrawPicture() {
 
 		if (!_game.automaticRestoreGame) {
 			// wait a bit, we detected non-blocking text
-			pause(2000); // 2 seconds
+			wait(2000, true); // 2 seconds, set busy
 		}
 	}
 }

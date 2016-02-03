@@ -127,7 +127,7 @@ void condHaveKey(AgiGame *state, AgiEngine *vm, uint8 *p) {
 	}
 	// we are not really an inner loop, but we stop processAGIEvents() from doing regular cycle work by setting it up
 	vm->cycleInnerLoopActive(CYCLE_INNERLOOP_HAVEKEY);
-	uint16 key = vm->processAGIEvents(false); // also no delay
+	uint16 key = vm->processAGIEvents();
 	vm->cycleInnerLoopInactive();
 	if (key) {
 		debugC(5, kDebugLevelScripts | kDebugLevelInput, "keypress = %02x", key);
