@@ -338,7 +338,19 @@ int AgiEngine::playGame() {
 
 		inGameTimerUpdate();
 
-		if (_passedPlayTimeCycles >= getVar(VM_VAR_TIME_DELAY)) {
+		uint16 timeDelay = getVar(VM_VAR_TIME_DELAY);
+
+		if (getPlatform() == Common::kPlatformApple2GS) {
+			timeDelay++;
+			// It seems that either Apple IIgs ran very slowly or that the delay in its interpreter was not working as everywhere else
+			// Most games on that platform set the delay to 0, which means no delay in DOS
+			// Gold Rush! even "optimizes" itself when larger sprites are on the screen it sets TIME_DELAY to 0.
+			// Normally that game runs at TIME_DELAY 1.
+			// Maybe a script patch for this game would make sense.
+			// TODO: needs further investigation
+		}
+
+		if (_passedPlayTimeCycles >= timeDelay) {
 			inGameTimerResetPassedCycles();
 
 			interpretCycle();
