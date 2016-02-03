@@ -130,13 +130,14 @@ public:
 
 	void drawBox(int16 x, int16 y, int16 width, int16 height, byte backgroundColor, byte lineColor);
 	void drawRect(int16 x, int16 y, int16 width, int16 height, byte color);
-	void drawDisplayRect(int16 x, int16 y, int16 width, int16 height, byte color);
+	void drawDisplayRect(int16 x, int16 y, int16 width, int16 height, byte color, bool copyToScreen = true);
 private:
 	void drawDisplayRectEGA(int16 x, int16 y, int16 width, int16 height, byte color);
 	void drawDisplayRectCGA(int16 x, int16 y, int16 width, int16 height, byte color);
 
 public:
 	void drawCharacter(int16 row, int16 column, byte character, byte foreground, byte background, bool disabledLook);
+	void drawStringOnDisplay(int16 x, int16 y, const char *text, byte foreground, byte background, bool disabledLook);
 	void drawCharacterOnDisplay(int16 x, int16 y, byte character, byte foreground, byte background, bool disabledLook);
 
 	void shakeScreen(int16 repeatCount);

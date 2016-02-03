@@ -507,21 +507,46 @@ void GfxMgr::copyDisplayRectToScreen(int16 x, int16 y, int16 width, int16 height
 }
 
 // coordinates are for visual screen, but are supposed to point somewhere inside the playscreen
-void GfxMgr::drawBox(int16 x, int16 y, int16 width, int16 height, byte backgroundColor, byte lineColor) {
-	drawRect(x, y, width, height, backgroundColor);
-	drawRect(x + 1, y - 1, width - 2, 1, lineColor);
-	drawRect(x + width - 2, y - 2, 1, height - 4, lineColor);
-	drawRect(x + 1, y - height + 2, width - 2, 1, lineColor);
-	drawRect(x + 1, y - 2, 1, height - 4, lineColor);
-}
-
-// coordinates for visual screen
 // attention: Clipping is done here against 160x200 instead of 160x168
 //            Original interpreter didn't do any clipping, we do it for security.
 //            Clipping against the regular script width/height must not be done,
 //            because at least during the intro one message box goes beyond playscreen
 //            Going beyond 160x168 will result in messageboxes not getting fully removed
 //            In KQ4's case, the scripts clear the screen that's why it works.
+void GfxMgr::drawBox(int16 x, int16 y, int16 width, int16 height, byte backgroundColor, byte lineColor) {
+	if (!render_Clip(x, y, width, height, SCRIPT_WIDTH, DISPLAY_HEIGHT - _renderStartOffsetY))
+		return;
+
+	// coordinate translation: visual-screen -> display-screen
+	x = x * 2;
+	y = y + _renderStartOffsetY; // drawDisplayRect paints anywhere on the whole screen, our coordinate is within playscreen
+	width = width * 2; // width was given as visual width, we need display width
+
+	// draw box background
+	drawDisplayRect(x, y, width, height, backgroundColor);
+
+	// draw lines
+	switch (_vm->_renderMode) {
+	case Common::kRenderApple2GS:
+		// Slightly different window frame
+		drawDisplayRect(x + 2, y - 2, width - 4, 1, lineColor);
+		drawDisplayRect(x + width - 3, y - 2, 1, height - 4, lineColor);
+		drawDisplayRect(x + 2, y - height + 3, width - 4, 1, lineColor);
+		drawDisplayRect(x + 2, y - 2, 1, height - 4, lineColor);
+		break;
+	case Common::kRenderCGA:
+	case Common::kRenderEGA:
+	case Common::kRenderVGA:
+	default:
+		drawDisplayRect(x + 2, y - 1, width - 4, 1, lineColor);
+		drawDisplayRect(x + width - 4, y - 2, 2, height - 4, lineColor);
+		drawDisplayRect(x + 2, y - height + 2, width - 4, 1, lineColor);
+		drawDisplayRect(x + 2, y - 2, 2, height - 4, lineColor);
+		break;
+	}
+}
+
+// coordinates for visual screen
 void GfxMgr::drawRect(int16 x, int16 y, int16 width, int16 height, byte color) {
 	if (!render_Clip(x, y, width, height, SCRIPT_WIDTH, DISPLAY_HEIGHT - _renderStartOffsetY))
 		return;
@@ -530,11 +555,12 @@ void GfxMgr::drawRect(int16 x, int16 y, int16 width, int16 height, byte color) {
 	x = x * 2;
 	y = y + _renderStartOffsetY; // drawDisplayRect paints anywhere on the whole screen, our coordinate is within playscreen
 	width = width * 2; // width was given as visual width, we need display width
+
 	drawDisplayRect(x, y, width, height, color);
 }
 
 // coordinates are directly for display screen
-void GfxMgr::drawDisplayRect(int16 x, int16 y, int16 width, int16 height, byte color) {
+void GfxMgr::drawDisplayRect(int16 x, int16 y, int16 width, int16 height, byte color, bool copyToScreen) {
 	switch (_vm->_renderMode) {
 	case Common::kRenderCGA:
 		drawDisplayRectCGA(x, y, width, height, color);
@@ -544,8 +570,10 @@ void GfxMgr::drawDisplayRect(int16 x, int16 y, int16 width, int16 height, byte c
 		drawDisplayRectEGA(x, y, width, height, color);
 		break;
 	}
-	int16 upperY = y - height + 1;
-	g_system->copyRectToScreen(_displayScreen + upperY * DISPLAY_WIDTH + x, DISPLAY_WIDTH, x, upperY, width, height);
+	if (copyToScreen) {
+		int16 upperY = y - height + 1;
+		g_system->copyRectToScreen(_displayScreen + upperY * DISPLAY_WIDTH + x, DISPLAY_WIDTH, x, upperY, width, height);
+	}
 }
 
 void GfxMgr::drawDisplayRectEGA(int16 x, int16 y, int16 width, int16 height, byte color) {
@@ -592,30 +620,42 @@ void GfxMgr::drawCharacter(int16 row, int16 column, byte character, byte foregro
 	int16 x = column * FONT_DISPLAY_WIDTH;
 	int16 y = row * FONT_DISPLAY_HEIGHT;
 
+	// Now figure out, if special handling needs to be done
+	if (_vm->_game.gfxMode) {
+		if (background & 0x08) {
+			// invert enabled
+			background &= 0x07; // remove invert bit
+			SWAP<byte>(foreground, background);
+		}
+	} else {
+		// in text mode disabled look is not allowed
+		disabledLook = false;
+	}
+
 	drawCharacterOnDisplay(x, y, character, foreground, background, disabledLook);
 }
 
-void GfxMgr::drawCharacterOnDisplay(int16 x, int16 y, byte character, byte foreground, byte background, bool disabledLook) {
+// only meant for internal use (SystemUI)
+void GfxMgr::drawStringOnDisplay(int16 x, int16 y, const char *text, byte foregroundColor, byte backgroundColor, bool disabledLook) {
+	while (*text) {
+		drawCharacterOnDisplay(x, y, *text, foregroundColor, backgroundColor, disabledLook);
+		text++;
+		x += FONT_DISPLAY_WIDTH;
+	}
+}
+
+void GfxMgr::drawCharacterOnDisplay(int16 x, int16 y, const byte character, byte foreground, byte background, bool disabledLook) {
 	int16       curX, curY;
 	const byte *fontData;
 	byte        curByte = 0;
 	uint16      curBit;
-	byte        curTransformXOR = 0;
 	byte        curTransformOR = 0;
 
 	// get font data of specified character
 	fontData = _vm->getFontData() + character * FONT_BYTES_PER_CHARACTER;
 
-	// Now figure out, if special handling needs to be done (for graphical mode only)
-	if (_vm->_game.gfxMode) {
-		if (background & 0x08) {
-			// invert enabled
-			background &= 0x07; // remove invert bit
-			curTransformXOR = 0xFF; // inverse all bits of the font
-		}
-		if (disabledLook) {
-			curTransformOR = 0xAA;
-		}
+	if (disabledLook) {
+		curTransformOR = 0xAA;
 	}
 
 	curBit = 0;
@@ -624,7 +664,6 @@ void GfxMgr::drawCharacterOnDisplay(int16 x, int16 y, byte character, byte foreg
 			if (!curBit) {
 				curByte = *fontData;
 				// do transformations in case they are needed (invert/disabled look)
-				curByte ^= curTransformXOR;
 				curByte |= curTransformOR;
 				fontData++;
 				curBit  = 0x80;
