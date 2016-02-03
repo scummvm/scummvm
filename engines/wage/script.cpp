@@ -824,7 +824,6 @@ bool Script::evalClickEquality(Operand *lhs, Operand *rhs, bool partialMatch) {
 			Common::String name = lhs->_value.designed->_name;
 			name.toLowercase();
 
-			warning("%s <> %s", name.c_str(), str.c_str());
 			if (partialMatch)
 				result = name.contains(str);
 			else
