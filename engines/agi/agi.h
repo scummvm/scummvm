@@ -726,8 +726,6 @@ public:
 	void adjustPosToGameScreen(int16 &x, int16 &y);
 
 private:
-	bool initialized;
-
 	int _keyQueue[KEY_QUEUE_SIZE];
 	int _keyQueueStart;
 	int _keyQueueEnd;
