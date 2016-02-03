@@ -41,7 +41,7 @@ static const PlainGameDescriptor wageGames[] = {
 	{"afm", "Another Fine Mess"},
 	{"amot", "A Mess O' Trouble"},
 	{"cantitoe", "Camp Cantitoe"},
-	{"scepters", "Enchanced Scepters"},
+	{"scepters", "Enchanted Scepters"},
 	{"wage", "WAGE"},
 	{0, 0}
 };
