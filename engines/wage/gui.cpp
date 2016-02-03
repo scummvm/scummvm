@@ -155,6 +155,8 @@ Gui::Gui(WageEngine *engine) {
 	_cursorState = false;
 	_cursorOff = false;
 
+	_inTextSelection = false;
+
 	g_system->getPaletteManager()->setPalette(palette, 0, 4);
 
 	CursorMan.replaceCursorPalette(palette, 0, 4);
@@ -649,8 +651,21 @@ Designed *Gui::mouseUp(int x, int y) {
 }
 
 void Gui::mouseDown(int x, int y) {
-	if (_menu->mouseClick(x, y))
+	if (_menu->mouseClick(x, y)) {
 		_menuDirty = true;
+	} else if (_consoleTextArea.contains(x, y)) {
+		startMarking(x, y);
+	}
+}
+
+void Gui::startMarking(int x, int y) {
+	const int firstLine = _scrollPos / _consoleLineHeight;
+	int textLine = (y - kConHOverlap - kConHPadding - _scrollPos % _consoleLineHeight - _consoleTextArea.top) / _consoleLineHeight + firstLine;
+	int charPos = x - kConWOverlap - kConWPadding - _consoleTextArea.left;
+
+	_inTextSelection = true;
+
+	warning("x: %d y: %d", textLine, charPos);
 }
 
 } // End of namespace Wage

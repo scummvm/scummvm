@@ -111,6 +111,7 @@ private:
 	void flowText(Common::String &str);
 	const Graphics::Font *getConsoleFont();
 	const Graphics::Font *getTitleFont();
+	void startMarking(int x, int y);
 
 public:
 	Graphics::Surface _screen;
@@ -143,6 +144,8 @@ private:
 	Common::Rect _sceneArea;
 	bool _sceneIsActive;
 	bool _cursorIsArrow;
+
+	bool _inTextSelection;
 };
 
 } // End of namespace Wage
