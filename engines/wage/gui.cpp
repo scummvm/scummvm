@@ -612,7 +612,7 @@ void Gui::mouseMove(int x, int y) {
 	}
 }
 
-Designed *Gui::getClickTarget(int x, int y) {
+Designed *Gui::mouseUp(int x, int y) {
 	if (_menu->_menuActivated) {
 		if (_menu->mouseRelease(x, y)) {
 			_sceneDirty = true;
@@ -648,7 +648,7 @@ Designed *Gui::getClickTarget(int x, int y) {
 	return NULL;
 }
 
-void Gui::mouseClick(int x, int y) {
+void Gui::mouseDown(int x, int y) {
 	if (_menu->mouseClick(x, y))
 		_menuDirty = true;
 }

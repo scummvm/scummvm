@@ -148,11 +148,11 @@ void WageEngine::processEvents() {
 			_gui->mouseMove(event.mouse.x, event.mouse.y);
 			break;
 		case Common::EVENT_LBUTTONDOWN:
-			_gui->mouseClick(event.mouse.x, event.mouse.y);
+			_gui->mouseDown(event.mouse.x, event.mouse.y);
 			break;
 		case Common::EVENT_LBUTTONUP:
 			{
-				Designed *obj = _gui->getClickTarget(event.mouse.x, event.mouse.y);
+				Designed *obj = _gui->mouseUp(event.mouse.x, event.mouse.y);
 				if (obj != NULL)
 					processTurn(NULL, obj);
 			}

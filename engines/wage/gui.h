@@ -93,8 +93,8 @@ public:
 	void appendText(const char *str);
 	void clearOutput();
 	void mouseMove(int x, int y);
-	void mouseClick(int x, int y);
-	Designed *getClickTarget(int x, int y);
+	void mouseDown(int x, int y);
+	Designed *mouseUp(int x, int y);
 	void drawInput();
 	void setSceneDirty() { _sceneDirty = true; }
 	const Graphics::Font *getFont(const char *name, Graphics::FontManager::FontUsage fallback);
