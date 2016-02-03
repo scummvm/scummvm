@@ -636,7 +636,7 @@ void GfxMgr::drawCharacter(int16 row, int16 column, byte character, byte foregro
 			transformXOR = 0xFF;
 		}
 		if (disabledLook) {
-			transformOR = 0xAA;
+			transformOR = 0x55;
 		}
 	}
 
@@ -679,6 +679,8 @@ void GfxMgr::drawCharacterOnDisplay(int16 x, int16 y, const byte character, byte
 			}
 			curBit = curBit >> 1;
 		}
+		if (transformOR)
+			transformOR ^= 0xFF;
 	}
 
 	copyDisplayRectToScreen(x, y, FONT_DISPLAY_WIDTH, FONT_DISPLAY_HEIGHT);
