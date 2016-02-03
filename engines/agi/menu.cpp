@@ -331,7 +331,7 @@ void GfxMenu::execute() {
 	}
 
 	do {
-		_vm->mainCycle();
+		_vm->processAGIEvents();
 	} while (_vm->cycleInnerLoopIsActive() && !(_vm->shouldQuit() || _vm->_restartGame));
 
 	if (_drawnMenuNr >= 0) {

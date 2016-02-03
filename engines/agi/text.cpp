@@ -360,7 +360,7 @@ bool TextMgr::messageBox(const char *textPtr) {
 	_vm->inGameTimerResetPassedCycles();
 	_vm->cycleInnerLoopActive(CYCLE_INNERLOOP_MESSAGEBOX);
 	do {
-		_vm->mainCycle();
+		_vm->processAGIEvents();
 		_vm->inGameTimerUpdate();
 
 		if (windowTimer > 0) {
@@ -786,7 +786,7 @@ void TextMgr::stringEdit(int16 stringMaxLen) {
 	inputEditOff();
 
 	do {
-		_vm->mainCycle();
+		_vm->processAGIEvents();
 	} while (_vm->cycleInnerLoopIsActive() && !(_vm->shouldQuit() || _vm->_restartGame));
 
 	inputEditOn();

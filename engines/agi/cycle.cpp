@@ -173,12 +173,12 @@ void AgiEngine::interpretCycle() {
 	//_gfx->doUpdate();
 }
 
-// If main_cycle returns false, don't process more events!
-int AgiEngine::mainCycle(bool onlyCheckForEvents) {
+// We return the current key, or 0 if no key was pressed
+uint16 AgiEngine::processAGIEvents(bool doDelay) {
 	uint16 key;
 	ScreenObjEntry *screenObjEgo = &_game.screenObjTable[SCREENOBJECTS_EGO_ENTRY];
 
-	if (!onlyCheckForEvents) {
+	if (doDelay) {
 		pollTimer();
 	}
 
@@ -188,10 +188,8 @@ int AgiEngine::mainCycle(bool onlyCheckForEvents) {
 	// vars in every interpreter cycle.
 	//
 	// We run AGIMOUSE always as a side effect
-	//if (getFeatures() & GF_AGIMOUSE) {
-		setVar(VM_VAR_MOUSE_X, _mouse.pos.x / 2);
-		setVar(VM_VAR_MOUSE_Y, _mouse.pos.y);
-	//}
+	setVar(VM_VAR_MOUSE_X, _mouse.pos.x / 2);
+	setVar(VM_VAR_MOUSE_Y, _mouse.pos.y);
 
 	if (!cycleInnerLoopIsActive()) {
 		// Click-to-walk mouse interface
@@ -234,6 +232,10 @@ int AgiEngine::mainCycle(bool onlyCheckForEvents) {
 			}
 		}
 
+		if (_menu->delayedExecuteActive()) {
+			_menu->execute();
+		}
+
 	} else {
 		// inner loop active
 		// call specific workers
@@ -255,11 +257,11 @@ int AgiEngine::mainCycle(bool onlyCheckForEvents) {
 			if (key) {
 				_menu->keyPress(key);
 			}
-			return false;
+			break;
 
 		case CYCLE_INNERLOOP_MENU_VIA_MOUSE:
 			_menu->mouseEvent(key);
-			return false;
+			break;
 
 		case CYCLE_INNERLOOP_SYSTEMUI_SELECTSAVEDGAMESLOT:
 			if (key) {
@@ -278,15 +280,9 @@ int AgiEngine::mainCycle(bool onlyCheckForEvents) {
 		}
 	}
 
-	if (!onlyCheckForEvents) {
-		if (_menu->delayedExecuteActive()) {
-			_menu->execute();
-		}
-	}
-
 	_gfx->updateScreen();
 
-	return true;
+	return key;
 }
 
 int AgiEngine::playGame() {
@@ -341,9 +337,7 @@ int AgiEngine::playGame() {
 	nonBlockingText_Forget();
 
 	do {
-
-		if (!mainCycle())
-			continue;
+		processAGIEvents();
 
 		inGameTimerUpdate();
 

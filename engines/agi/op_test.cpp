@@ -120,19 +120,21 @@ void condController(AgiGame *state, AgiEngine *vm, uint8 *p) {
 }
 
 void condHaveKey(AgiGame *state, AgiEngine *vm, uint8 *p) {
+	// Only check for key when there is not already one set by scripts
 	if (vm->getVar(VM_VAR_KEY)) {
 		state->testResult = 1;
 		return;
 	}
-	// Only check for key when there is not already one set by scripts
-	uint16 key = vm->doPollKeyboard();
+	// we are not really an inner loop, but we stop processAGIEvents() from doing regular cycle work by setting it up
+	vm->cycleInnerLoopActive(CYCLE_INNERLOOP_HAVEKEY);
+	uint16 key = vm->processAGIEvents(false); // also no delay
+	vm->cycleInnerLoopInactive();
 	if (key) {
 		debugC(5, kDebugLevelScripts | kDebugLevelInput, "keypress = %02x", key);
 		vm->setVar(VM_VAR_KEY, key);
 		state->testResult = 1;
 		return;
 	}
-	vm->_gfx->updateScreen(); // TODO: Solve this in a better way
 	state->testResult = 0;
 }
 

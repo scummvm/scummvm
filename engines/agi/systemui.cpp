@@ -287,7 +287,7 @@ int16 SystemUI::askForSavedGameSlot(const char *slotListText) {
 
 	_vm->cycleInnerLoopActive(CYCLE_INNERLOOP_SYSTEMUI_SELECTSAVEDGAMESLOT);
 	do {
-		_vm->mainCycle();
+		_vm->processAGIEvents();
 	} while (_vm->cycleInnerLoopIsActive() && !(_vm->shouldQuit() || _vm->_restartGame));
 
 	_text->closeWindow();

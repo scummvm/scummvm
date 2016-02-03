@@ -62,7 +62,7 @@ void AgiEngine::pollTimer() {
 	_lastTick += 50;
 
 	while (_system->getMillis() < _lastTick) {
-		processEvents();
+		processScummVMEvents();
 		_console->onFrame();
 		_system->delayMillis(10);
 		_system->updateScreen();
@@ -77,7 +77,7 @@ void AgiEngine::pause(uint32 msec) {
 	_gfx->setMouseCursor(true); // Busy mouse cursor
 
 	while (_system->getMillis() < endTime) {
-		processEvents();
+		processScummVMEvents();
 		_system->updateScreen();
 		_system->delayMillis(10);
 	}
@@ -552,7 +552,7 @@ Common::Error AgiEngine::go() {
 
 	if (_game.state < STATE_LOADED) {
 		do {
-			mainCycle();
+			processAGIEvents();
 		} while (_game.state < STATE_RUNNING);
 	}
 

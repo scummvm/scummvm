@@ -390,7 +390,8 @@ enum CycleInnerLoopType {
 	CYCLE_INNERLOOP_MENU_VIA_KEYBOARD            = 3,
 	CYCLE_INNERLOOP_MENU_VIA_MOUSE               = 4,
 	CYCLE_INNERLOOP_SYSTEMUI_SELECTSAVEDGAMESLOT = 5,
-	CYCLE_INNERLOOP_MESSAGEBOX                   = 6
+	CYCLE_INNERLOOP_MESSAGEBOX                   = 6,
+	CYCLE_INNERLOOP_HAVEKEY                      = 7
 };
 
 enum State {
@@ -817,7 +818,7 @@ public:
 public:
 	void decrypt(uint8 *mem, int len);
 	void releaseSprites();
-	int mainCycle(bool onlyCheckForEvents = false);
+	uint16 processAGIEvents(bool doDelay = true);
 	int viewPictures();
 	int runGame();
 	int getAppDir(char *appDir, unsigned int size);
@@ -831,7 +832,7 @@ public:
 	int playGame();
 
 	void allowSynthetic(bool);
-	void processEvents();
+	void processScummVMEvents();
 	void checkQuickLoad();
 
 	// Objects

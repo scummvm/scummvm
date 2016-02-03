@@ -62,7 +62,7 @@ const uint8 scancodeTable[26] = {
 	44          // Z
 };
 
-void AgiEngine::processEvents() {
+void AgiEngine::processScummVMEvents() {
 	Common::Event event;
 	int key = 0;
 
@@ -569,7 +569,7 @@ int AgiEngine::waitAnyKey() {
 }
 
 bool AgiEngine::isKeypress() {
-	processEvents();
+	processScummVMEvents();
 	return _keyQueueStart != _keyQueueEnd;
 }
 
