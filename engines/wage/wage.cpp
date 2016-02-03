@@ -298,7 +298,7 @@ void WageEngine::performInitialSetup() {
 				_world->move(chr, _world->_scenes[key]);
 
 				if (chr->_playerCharacter)
-					warning("Initial scene: %s", key.c_str());
+					debug(0, "Initial scene: %s", key.c_str());
 			} else {
 				_world->move(chr, _world->getRandomScene());
 			}
