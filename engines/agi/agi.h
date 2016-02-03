@@ -267,7 +267,7 @@ enum {
 	VM_VAR_AGI_ERROR_INFO,          // 18
 	VM_VAR_KEY,                     // 19
 	VM_VAR_COMPUTER,                // 20
-	VM_VAR_WINDOW_RESET,            // 21
+	VM_VAR_WINDOW_AUTO_CLOSE_TIMER, // 21
 	VM_VAR_SOUNDGENERATOR,          // 22
 	VM_VAR_VOLUME,                  // 23
 	VM_VAR_MAX_INPUT_CHARACTERS,    // 24

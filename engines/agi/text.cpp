@@ -351,7 +351,7 @@ bool TextMgr::messageBox(const char *textPtr) {
 	_vm->nonBlockingText_Forget();
 
 	// timed window
-	uint32 windowTimer = _vm->getVar(VM_VAR_WINDOW_RESET);
+	uint32 windowTimer = _vm->getVar(VM_VAR_WINDOW_AUTO_CLOSE_TIMER);
 	debugC(3, kDebugLevelText, "blocking window v21=%d", windowTimer);
 
 	windowTimer = windowTimer * 10; // 1 = 0.5 seconds
@@ -373,7 +373,7 @@ bool TextMgr::messageBox(const char *textPtr) {
 
 	_vm->inGameTimerResetPassedCycles();
 
-	_vm->setVar(VM_VAR_WINDOW_RESET, 0);
+	_vm->setVar(VM_VAR_WINDOW_AUTO_CLOSE_TIMER, 0);
 
 	closeWindow();
 	_vm->_noSaveLoadAllowed = false;
