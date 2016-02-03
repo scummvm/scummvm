@@ -143,22 +143,22 @@ bool World::loadWorld(Common::MacResManager *resMan) {
 	Common::String *message;
 	if ((message = loadStringFromDITL(resMan, 2910, 1)) != NULL) {
 		message->trim();
-		warning("_gameOverMessage: %s", message->c_str());
+		debug(2, "_gameOverMessage: %s", message->c_str());
 		_gameOverMessage = message;
 	}
 	if ((message = loadStringFromDITL(resMan, 2480, 3)) != NULL) {
 		message->trim();
-		warning("_saveBeforeQuitMessage: %s", message->c_str());
+		debug(2, "_saveBeforeQuitMessage: %s", message->c_str());
 		_saveBeforeQuitMessage = message;
 	}
 	if ((message = loadStringFromDITL(resMan, 2490, 3)) != NULL) {
 		message->trim();
-		warning("_saveBeforeCloseMessage: %s", message->c_str());
+		debug(2, "_saveBeforeCloseMessage: %s", message->c_str());
 		_saveBeforeCloseMessage = message;
 	}
 	if ((message = loadStringFromDITL(resMan, 2940, 2)) != NULL) {
 		message->trim();
-		warning("_revertMessage: %s", message->c_str());
+		debug(2, "_revertMessage: %s", message->c_str());
 		_revertMessage = message;
 	}
 
