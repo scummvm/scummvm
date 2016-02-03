@@ -1,5 +1,5 @@
-Umfangreichere Änderungsaufzeichnungen des neusten experimentellen Codes finden
-Sie auf Englisch unter:
+Umfangreichere Informationen über die Änderungen des aktuellen experimentellen
+Programmcodes finden Sie auf Englisch unter:
         https://github.com/scummvm/scummvm/commits/
 
 1.8.0 (??.??.????)
@@ -8,17 +8,30 @@ Sie auf Englisch unter:
    - Unterstützung für Sfinx hinzugefügt.
    - Unterstützung für Zork Nemesis: The Forbidden Lands hinzugefügt.
    - Unterstützung für Zork: Grand Inquisitor hinzugefügt.
-   - Unterstützung für The Lost Files of Sherlock Holmes: The Case of the Serrated Scalpel hinzugefügt.
+   - Unterstützung für The Lost Files of Sherlock Holmes: The Case of the Serrated Scalpel
+     hinzugefügt.
    - Unterstützung für The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo hinzugefügt.
    - Unterstützung für Beavis and Butthead in Virtual Stupidity hinzugefügt.
    - Unterstützung für Amazon: Guardians of Eden hinzugefügt.
-   - Unterstützung für Broken Sword 2.5: The Return of the Templars hinzugefügt. 
+   - Unterstützung für Broken Sword 2.5: The Return of the Templars hinzugefügt.
+   - Unterstützung für Labyrinth of Time hinzugefügt.
 
  Neue Portierungen:
    - Portierung auf den Raspberry Pi erfolgt.
 
  Allgemein:
    - Code für Munt-MT-32-Emulation auf Version 1.5.0 aktualisiert.
+
+ SDL:
+   - Alt-x beendet ScummVM nicht mehr auf Plattformen, die dieses Problem
+     zuvor gezeigt haben. Ein bedeutendes Beispiel dafür ist unsere Version für Windows.
+     Auf POSIX-Systemen befolgen wir nun die "XDG Base Directory Specification" für die
+     Speicherung von Benutzerdaten. Dies resultiert in neuen Speicherorten für unsere
+     Konfigurationsdatei, unsere Log-Datei sowie für den standardmäßig voreingestellten
+     Speicherort für Spielstände. Wir unterstützen weiterhin die vorherigen Speicherorte.
+     Solange diese vorhanden sind, werden wir diese weiter verwenden. Bitte beachten Sie die 
+     Liesmich-Datei für weitere Informationen. Speicherorte auf Mac OS X sind von dieser
+     Änderung nicht betroffen.
 
  3 Skulls of the Toltecs:
    - Unterstützung für AdLib-Musik verbessert.
@@ -27,6 +40,16 @@ Sie auf Englisch unter:
    - Es ist nun möglich, die Maus-Unterstützung zu deaktivieren (außer bei
      Amiga-Versionen und Fan-Spielen, die eine Maus benötigen).
    - Fehlerhafte Lautstärke-Dämpfung im PCjr-Sound-Code behoben (Fehler #6858).
+   - Umfangreiche Änderung im Grafik-Subsystem.
+   - Unterstützung für Übergänge, Schriftarten und Mauszeigern für Apple IIgs, Amiga + Atari.
+     (die Atari ST 8x8 Systemschriftart ist nicht in ScummVM enthalten)
+   - Eine PC-Version kann jetzt wie eine Apple IIgs-Version dargestellt werden.
+     (inklusive Farbpalette, Cursor, Übergänge und Schriftart). Sie müssen lediglich
+     den gewünschten Darstellungsmodus auswählen.
+   - Unterstützung für vereinfachtes automatisches Speichern/Wiederherstellen hinzugefügt.
+     (verwendet von Mixed Up Mother Goose)
+   - Feste Verzögerung von 2 Sekunden bei Raumwechseln entfernt und durch Heuristik ersetzt
+   - Controller (skriptgesteuerte Tastenbelegungen) werden jetzt mit abgespeichert (Fehler #5858).
 
  AGOS:
    - Arpeggio-Effekt in der Musik der Amiga-Version von Elvira 1 repariert.
@@ -57,14 +80,17 @@ Sie auf Englisch unter:
    - Behandlung der Musik-Priorität extrem verbessert.
    - Viele Fehler in den originalen Skripten behoben, die auch bei
      Verwendung des originalen Interpreters auftreten:
-	 KQ6 (Sprache und Untertitel), LSL5, QfG1 (EGA), QfG (VGA), QfG2, QfG3,
+     KQ6 (Sprache und Untertitel), LSL5, QfG1 (EGA), QfG (VGA), QfG2, QfG3,
        SQ1, SQ4 (CD)
    - Rückkehr aus dem ScummVM-Menü im Spiel sollte nun immer funktionieren.
    - Verbesserte Unterstützung für japanische PC-9801-Spiele
 
  SCUMM:
+   - Umfangreiche Verbesserung der Textdarstellung in koreanischen Versionen
+   - Originaler Code der Gang-Animation in Maniac Mansion v0-v1 hinzugefügt
    - Es ist nun möglich, Maniac Mansion innerhalb von Day of the
      Tentacle zu spielen. Bitte Liesmich-Datei für weitere Details lesen.
+   - Alt-x kann jetzt auf allen Plattformen dazu verwendet werden, SCUMM-Spiele zu beenden.
 
  Tinsel:
    - Unterstützung für AdLib-Musik in Discworld 1 verbessert.
