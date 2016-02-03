@@ -465,8 +465,6 @@ int AgiEngine::loadGame(const Common::String &fileName, bool checkId) {
 	// These are never saved
 	_text->promptReset();
 
-	_game.keypress = 0;
-
 	in->readSint16BE(); // was _game.inputMode, not needed anymore
 
 	_game.curLogicNr = in->readSint16BE();
@@ -495,7 +493,6 @@ int AgiEngine::loadGame(const Common::String &fileName, bool checkId) {
 
 	_text->closeWindow();
 
-	_game.msgBoxTicks = 0;
 	_game.block.active = false;
 
 	_game.gfxMode = in->readSint16BE();

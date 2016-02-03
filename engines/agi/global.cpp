@@ -137,10 +137,13 @@ void AgiEngine::setVolumeViaSystemSetting() {
 
 // In-Game timer, used for timer VM Variables
 void AgiEngine::inGameTimerReset(uint32 newPlayTime) {
-	_passedPlayTimeCycles = 0;
 	_lastUsedPlayTimeInCycles = newPlayTime / 50;
 	_lastUsedPlayTimeInSeconds = newPlayTime / 1000;
 	setTotalPlayTime(newPlayTime);
+	inGameTimerResetPassedCycles();
+}
+void AgiEngine::inGameTimerResetPassedCycles() {
+	_passedPlayTimeCycles = 0;
 }
 void AgiEngine::inGameTimerPause() {
 	pauseEngine(true);
@@ -150,6 +153,9 @@ void AgiEngine::inGameTimerResume() {
 }
 uint32 AgiEngine::inGameTimerGet() {
 	return getTotalPlayTime();
+}
+uint32 AgiEngine::inGameTimerGetPassedCycles() {
+	return _passedPlayTimeCycles;
 }
 
 // This is called, when one of the timer variables is read

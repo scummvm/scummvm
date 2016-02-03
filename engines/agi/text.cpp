@@ -71,6 +71,8 @@ TextMgr::TextMgr(AgiEngine *vm, Words *words, GfxMgr *gfx) {
 	_inputString[0] = 0;
 
 	configureScreen(2);
+
+	_messageBoxCancelled = false;
 }
 
 TextMgr::~TextMgr() {
@@ -348,38 +350,51 @@ bool TextMgr::messageBox(const char *textPtr) {
 	_vm->_noSaveLoadAllowed = true;
 	_vm->nonBlockingText_Forget();
 
-	if (_vm->getVar(VM_VAR_WINDOW_RESET) == 0) {
-		int userKey;
-		userKey = _vm->waitKey();
-		closeWindow();
-
-		_vm->_noSaveLoadAllowed = false;
-		if (userKey == AGI_KEY_ENTER)
-			return true;
-		return false;
-	}
-
 	// timed window
-	debugC(3, kDebugLevelText, "f15==0, v21==%d => timed", _vm->getVar(VM_VAR_WINDOW_RESET));
-	_vm->_game.msgBoxTicks = _vm->getVar(VM_VAR_WINDOW_RESET) * 10;
+	uint32 windowTimer = _vm->getVar(VM_VAR_WINDOW_RESET);
+	debugC(3, kDebugLevelText, "blocking window v21=%d", windowTimer);
 
+	windowTimer = windowTimer * 10; // 1 = 0.5 seconds
+	_messageBoxCancelled = false;
+
+	_vm->inGameTimerResetPassedCycles();
+	_vm->cycleInnerLoopActive(CYCLE_INNERLOOP_MESSAGEBOX);
 	do {
-		if (_vm->getFlag(VM_FLAG_RESTORE_JUST_RAN))
-			break;
-
 		_vm->mainCycle();
-		if (_vm->_game.keypress == AGI_KEY_ENTER) {
-			debugC(4, kDebugLevelText, "KEY_ENTER");
-			_vm->setVar(VM_VAR_WINDOW_RESET, 0);
-			_vm->_game.keypress = 0;
-			break;
+		_vm->inGameTimerUpdate();
+
+		if (windowTimer > 0) {
+			if (_vm->inGameTimerGetPassedCycles() >= windowTimer) {
+				// Timer reached, close automatically
+				_vm->cycleInnerLoopInactive();
+			}
 		}
-	} while (_vm->_game.msgBoxTicks > 0 && !(_vm->shouldQuit() || _vm->_restartGame));
+	} while (_vm->cycleInnerLoopIsActive() && !(_vm->shouldQuit() || _vm->_restartGame));
+
+	_vm->inGameTimerResetPassedCycles();
 
 	_vm->setVar(VM_VAR_WINDOW_RESET, 0);
+
 	closeWindow();
 	_vm->_noSaveLoadAllowed = false;
+
+	if (_messageBoxCancelled)
+		return false;
 	return true;
+}
+
+void TextMgr::messageBox_CharPress(uint16 newKey) {
+	switch (newKey) {
+	case AGI_KEY_ENTER:
+		_vm->cycleInnerLoopInactive(); // exit messagebox-loop
+		break;
+	case AGI_KEY_ESCAPE:
+		_messageBoxCancelled = true;
+		_vm->cycleInnerLoopInactive(); // exit messagebox-loop
+		break;
+	default:
+		break;
+	}
 }
 
 void TextMgr::drawMessageBox(const char *textPtr, int16 wantedHeight, int16 wantedWidth, bool wantedForced) {

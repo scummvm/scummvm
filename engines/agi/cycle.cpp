@@ -237,8 +237,6 @@ int AgiEngine::mainCycle(bool onlyCheckForEvents) {
 	} else {
 		// inner loop active
 		// call specific workers
-		_game.keypress = 0;
-
 		switch (_game.cycleInnerLoopType) {
 		case CYCLE_INNERLOOP_GETSTRING: // loop called from TextMgr::stringEdit()
 		case CYCLE_INNERLOOP_GETNUMBER:
@@ -269,6 +267,12 @@ int AgiEngine::mainCycle(bool onlyCheckForEvents) {
 			}
 			break;
 
+		case CYCLE_INNERLOOP_MESSAGEBOX:
+			if (key) {
+				_text->messageBox_CharPress(key);
+			}
+			break;
+
 		default:
 			break;
 		}
@@ -278,9 +282,6 @@ int AgiEngine::mainCycle(bool onlyCheckForEvents) {
 		if (_menu->delayedExecuteActive()) {
 			_menu->execute();
 		}
-
-		if (_game.msgBoxTicks > 0)
-			_game.msgBoxTicks--;
 	}
 
 	_gfx->updateScreen();
@@ -347,7 +348,7 @@ int AgiEngine::playGame() {
 		inGameTimerUpdate();
 
 		if (_passedPlayTimeCycles >= getVar(VM_VAR_TIME_DELAY)) {
-			_passedPlayTimeCycles = 0;
+			inGameTimerResetPassedCycles();
 
 			interpretCycle();
 

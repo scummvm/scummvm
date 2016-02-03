@@ -549,11 +549,6 @@ int AgiEngine::waitKey() {
 
 		g_system->updateScreen();
 	}
-
-	// Have to clear it as original did not set this variable, and we do it in doPollKeyboard()
-	// Fixes bug #2823759
-	_game.keypress = 0;
-
 	return key;
 }
 
@@ -570,10 +565,6 @@ int AgiEngine::waitAnyKey() {
 			break;
 		g_system->updateScreen();
 	}
-
-	// Have to clear it as original did not set this variable, and we do it in doPollKeyboard()
-	_game.keypress = 0;
-
 	return key;
 }
 

@@ -389,7 +389,8 @@ enum CycleInnerLoopType {
 	CYCLE_INNERLOOP_INVENTORY                    = 2,
 	CYCLE_INNERLOOP_MENU_VIA_KEYBOARD            = 3,
 	CYCLE_INNERLOOP_MENU_VIA_MOUSE               = 4,
-	CYCLE_INNERLOOP_SYSTEMUI_SELECTSAVEDGAMESLOT = 5
+	CYCLE_INNERLOOP_SYSTEMUI_SELECTSAVEDGAMESLOT = 5,
+	CYCLE_INNERLOOP_MESSAGEBOX                   = 6
 };
 
 enum State {
@@ -426,8 +427,6 @@ struct AgiGame {
 	// internal variables
 	int16 horizon;          /**< horizon y coordinate */
 
-	int keypress;
-
 	bool  cycleInnerLoopActive;
 	int16 cycleInnerLoopType;
 
@@ -443,7 +442,6 @@ struct AgiGame {
 	int gameFlags;      /**< agi options flags */
 
 	// windows
-	uint32 msgBoxTicks; /**< timed message box tick counter */
 	AgiBlock block;
 
 	// graphics & text
@@ -945,9 +943,11 @@ public:
 	void redrawScreen();
 
 	void inGameTimerReset(uint32 newPlayTime = 0);
+	void inGameTimerResetPassedCycles();
 	void inGameTimerPause();
 	void inGameTimerResume();
 	uint32 inGameTimerGet();
+	uint32 inGameTimerGetPassedCycles();
 
 	void inGameTimerUpdate();
 

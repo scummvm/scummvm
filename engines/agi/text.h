@@ -130,7 +130,12 @@ public:
 
 	void printAt(int16 textNr, int16 textPos_Row, int16 textPos_Column, int16 text_Width);
 	void print(int16 textNr);
+
 	bool messageBox(const char *textPtr);
+	void messageBox_CharPress(uint16 newKey);
+
+	bool _messageBoxCancelled;
+
 	void drawMessageBox(const char *textPtr, int16 wantedHeight = 0, int16 wantedWidth = 0, bool wantedForced = false);
 	void closeWindow();
 
