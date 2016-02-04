@@ -948,7 +948,14 @@ void cmdShowMouse(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 	}
 }
 
+// Seems to have been added for AGI3, at least according to PC AGI
+// Space Quest 2 on Apple IIgs (using AGI ) calls it during the spaceship cutscene in the intro
+// but show.mouse is never called afterwards. Game running under emulator doesn't seem to hide the mouse cursor.
+// TODO: figure out, what exactly happens. Probably some hacked-in command and not related to mouse cursor for that game?
 void cmdHideMouse(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
+	if (getVersion() < 0x3000)
+		return;
+
 	// WORKAROUND: Turns off current movement that's being caused with the mouse.
 	// This fixes problems with too many popup boxes appearing in the Amiga
 	// Gold Rush's copy protection failure scene (i.e. the hanging scene, logic.192).
@@ -990,15 +997,17 @@ void cmdFenceMouse(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 // HoldKey was added in 2.425
 // There was no way to disable this mode until 3.098 though
 void cmdHoldKey(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
-	if (getVersion() >= 0x2425) {
-		vm->_keyHoldMode = true;
-	}
+	if (getVersion() < 0x2425)
+		return;
+
+	vm->_keyHoldMode = true;
 }
 
 void cmdReleaseKey(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
-	if (getVersion() >= 0x3098) {
-		vm->_keyHoldMode = false;
-	}
+	if (getVersion() < 0x3098)
+		return;
+
+	vm->_keyHoldMode = false;
 }
 
 void cmdAdjEgoMoveToXY(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
