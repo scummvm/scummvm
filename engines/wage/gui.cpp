@@ -506,8 +506,41 @@ void Gui::renderConsole(Graphics::Surface *g, Common::Rect &r) {
 			Design::drawFilledRect(&_console, trect, kColorBlack, _patterns, kPatternSolid);
 		}
 
-		if (*str)
-			font->drawString(&_console, _lines[line], x1, y1, textW, color);
+		if (line == _selectionStartY || line == _selectionEndY) {
+			if (_selectionStartY != _selectionEndY) {
+				int color1 = kColorWhite;
+				int color2 = kColorBlack;
+				int midpoint = _selectionStartX;
+
+				if (_selectionStartY > _selectionEndY)
+					SWAP(color1, color2);
+
+				if (line == _selectionEndY) {
+					SWAP(color1, color2);
+					midpoint = _selectionEndY;
+				}
+
+				Common::String beg(_lines[line].c_str(), &_lines[line].c_str()[midpoint]);
+				Common::String end(&_lines[line].c_str()[midpoint]);
+
+				warning("beg: %s  end: %s", beg.c_str(), end.c_str());
+
+				int rectW = font->getStringWidth(beg) + kConWPadding + kConWOverlap;
+				Common::Rect trect(0, y1, _console.w, y1 + _consoleLineHeight);
+				if (color1 == kColorWhite)
+					trect.right = rectW;
+				else
+					trect.left = rectW;
+
+				Design::drawFilledRect(&_console, trect, kColorBlack, _patterns, kPatternSolid);
+
+				font->drawString(&_console, beg, x1, y1, textW, color1);
+				font->drawString(&_console, end, x1 + rectW, y1, textW, color2);
+			}
+		} else {
+			if (*str)
+				font->drawString(&_console, _lines[line], x1, y1, textW, color);
+		}
 
 		y1 += _consoleLineHeight;
 	}
