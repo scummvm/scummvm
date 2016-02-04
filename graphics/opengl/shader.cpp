@@ -26,6 +26,8 @@
 
 #include "graphics/opengl/shader.h"
 
+#include "graphics/opengl/context.h"
+
 namespace OpenGL {
 
 static const GLchar *readFile(const Common::String &filename) {
@@ -70,14 +72,11 @@ static GLuint createDirectShader(const char *shaderSource, GLenum shaderType, co
 }
 
 static GLuint createCompatShader(const char *shaderSource, GLenum shaderType, const Common::String &name) {
+	const GLchar *versionSource = OpenGLContext.type == kContextGLES2 ? "#version 100\n" : "#version 120\n";
 	const GLchar *compatSource =
 			shaderType == GL_VERTEX_SHADER ? OpenGL::BuiltinShaders::compatVertex : OpenGL::BuiltinShaders::compatFragment;
 	const GLchar *shaderSources[] = {
-#ifdef USE_GLES2
-		"#version 100\n",
-#else
-		"#version 120\n",
-#endif
+		versionSource,
 		compatSource,
 		shaderSource
 	};
