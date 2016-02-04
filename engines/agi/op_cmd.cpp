@@ -946,6 +946,14 @@ void cmdDiscardSound(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 	}
 }
 
+void cmdShowMouse(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
+	if (state->mouseEnabled) {
+		state->mouseHidden = false;
+
+		g_system->showMouse(true);
+	}
+}
+
 void cmdHideMouse(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 	// WORKAROUND: Turns off current movement that's being caused with the mouse.
 	// This fixes problems with too many popup boxes appearing in the Amiga
@@ -955,9 +963,11 @@ void cmdHideMouse(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 	// FIXME: Write a proper implementation using disassembly and
 	//        apply it to other games as well if applicable.
 	//state->screenObjTable[SCREENOBJECTS_EGO_ENTRY].flags &= ~fAdjEgoXY;
-	state->_vm->_game.mouseHidden = true;
+	if (state->mouseEnabled) {
+		state->mouseHidden = true;
 
-	g_system->showMouse(false);
+		g_system->showMouse(false);
+	}
 }
 
 void cmdAllowMenu(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
@@ -970,12 +980,6 @@ void cmdAllowMenu(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 			state->_vm->_menu->accessDeny();
 		}
 	}
-}
-
-void cmdShowMouse(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
-	state->_vm->_game.mouseHidden = false;
-
-	g_system->showMouse(true);
 }
 
 void cmdFenceMouse(AgiGame *state, AgiEngine *vm, uint8 *parameter) {

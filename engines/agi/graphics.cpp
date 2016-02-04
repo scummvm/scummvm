@@ -351,7 +351,7 @@ void GfxMgr::transition_Amiga() {
 	int16  stepCount = 0;
 
 	// disable mouse while transition is taking place
-	if (_vm->_game.mouseEnabled) {
+	if ((_vm->_game.mouseEnabled) && (!_vm->_game.mouseHidden)) {
 		CursorMan.showMouse(false);
 	}
 
@@ -388,7 +388,7 @@ void GfxMgr::transition_Amiga() {
 	} while (screenPos != 1);
 
 	// Enable mouse again
-	if (_vm->_game.mouseEnabled) {
+	if ((_vm->_game.mouseEnabled) && (!_vm->_game.mouseHidden)) {
 		CursorMan.showMouse(true);
 	}
 
@@ -404,7 +404,7 @@ void GfxMgr::transition_AtariSt() {
 	int16  stepCount = 0;
 
 	// disable mouse while transition is taking place
-	if (_vm->_game.mouseEnabled) {
+	if ((_vm->_game.mouseEnabled) && (!_vm->_game.mouseHidden)) {
 		CursorMan.showMouse(false);
 	}
 
@@ -442,7 +442,7 @@ void GfxMgr::transition_AtariSt() {
 	} while (screenPos != 1);
 
 	// Enable mouse again
-	if (_vm->_game.mouseEnabled) {
+	if ((_vm->_game.mouseEnabled) && (!_vm->_game.mouseHidden)) {
 		CursorMan.showMouse(true);
 	}
 
