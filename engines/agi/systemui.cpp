@@ -274,9 +274,10 @@ bool SystemUI::askForSaveGameDescription(int16 slotId, Common::String &newDescri
 
 	_text->drawMessageBox(_textSaveGameEnterDescription, 0, 31, true);
 
+	_text->inputEditOn();
+
 	_text->charPos_Push();
 	_text->charAttrib_Push();
-	_text->inputEditOn();
 
 	_text->charPos_SetInsideWindow(3, 0);
 	_text->charAttrib_Set(15, 0);
