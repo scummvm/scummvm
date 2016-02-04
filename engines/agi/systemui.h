@@ -90,7 +90,7 @@ private:
 	int16 askForSavedGameSlot(const char *slotListText);
 	bool  askForSavedGameVerification(const char *verifyText, const char *verifyButton1, const char *verifyButton2, const char *actualDescription, int16 slotId);
 
-	bool  askForVerification(const char *verifyText, const char *button1Text, const char *button2Text);
+	bool  askForVerification(const char *verifyText, const char *button1Text, const char *button2Text, bool continueOnMessageBoxClick);
 
 	void  createSavedGameDisplayText(char *destDisplayText, const char *actualDescription, int16 slotId, bool fillUpWithSpaces);
 	void  clearSavedGameSlots();
@@ -111,13 +111,16 @@ private:
 	void drawButtonAppleIIgs(SystemUIButtonEntry *buttonEntry);
 	void drawButtonAppleIIgsEdgePixels(int16 x, int16 y, byte *edgeBitmap, bool mirrored, bool upsideDown);
 	void drawButtonAmiga(SystemUIButtonEntry *buttonEntry);
+	void drawButtonAtariST(SystemUIButtonEntry *buttonEntry);
 
 public:
 	void askForVerificationKeyPress(uint16 newKey);
 
 private:
-	bool _askForVerificationCancelled;
-	int16 _askForVerificationSelectedButtonNr;
+	bool  _askForVerificationContinueOnMessageBoxClick;
+	bool  _askForVerificationCancelled;
+	int16 _askForVerificationMouseLockedButtonNr;
+	int16 _askForVerificationMouseActiveButtonNr;
 
 private:
 	const char *_textStatusScore;

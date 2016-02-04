@@ -393,20 +393,12 @@ void TextMgr::messageBox_KeyPress(uint16 newKey) {
 		_vm->cycleInnerLoopInactive(); // exit messagebox-loop
 		break;
 	case AGI_MOUSE_BUTTON_LEFT: {
-		// Find out, where current mouse cursor actually is
-		int16 mouseY = _vm->_mouse.pos.y;
-		int16 mouseX = _vm->_mouse.pos.x;
-
-		_vm->adjustPosToGameScreen(mouseX, mouseY);
-
 		// Check, if mouse cursor is within message box
 		// If it is, take the click as ENTER.
 		// That's what AGI on Amiga + Apple IIgs did.
 		// On Atari ST at least via emulator it seems that the mouse cursor froze when messageboxes were diplayed.
-		if ((mouseX >= _messageState.backgroundPos_x) && (mouseX <= (_messageState.backgroundPos_x + _messageState.backgroundSize_Width))) {
-			if ((mouseY >= _messageState.backgroundPos_y - _messageState.backgroundSize_Height) && (mouseY <= (_messageState.backgroundPos_y))) {
-				_vm->cycleInnerLoopInactive(); // exit messagebox-loop
-			}
+		if (isMouseWithinMessageBox()) {
+			_vm->cycleInnerLoopInactive(); // exit messagebox-loop
 		}
 		break;
 	}
@@ -498,6 +490,23 @@ void TextMgr::getMessageBoxInnerDisplayDimensions(int16 &x, int16 &y, int16 &wid
 	x = _messageState.textPos.column * FONT_DISPLAY_WIDTH;
 	width = _messageState.textSize_Width * FONT_DISPLAY_WIDTH;
 	height = _messageState.textSize_Height * FONT_DISPLAY_HEIGHT;
+}
+
+bool TextMgr::isMouseWithinMessageBox() {
+	// Find out, where current mouse cursor actually is
+	int16 mouseY = _vm->_mouse.pos.y;
+	int16 mouseX = _vm->_mouse.pos.x;
+
+	if (_messageState.window_Active) {
+		_vm->adjustPosToGameScreen(mouseX, mouseY);
+
+		if ((mouseX >= _messageState.backgroundPos_x) && (mouseX <= (_messageState.backgroundPos_x + _messageState.backgroundSize_Width))) {
+			if ((mouseY >= _messageState.backgroundPos_y - _messageState.backgroundSize_Height) && (mouseY <= (_messageState.backgroundPos_y))) {
+				return true;
+			}
+		}
+	}
+	return false;
 }
 
 void TextMgr::closeWindow() {

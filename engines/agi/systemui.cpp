@@ -33,7 +33,10 @@ SystemUI::SystemUI(AgiEngine *vm, GfxMgr *gfx, TextMgr *text) {
 	_gfx = gfx;
 	_text = text;
 
+	_askForVerificationContinueOnMessageBoxClick = false;
 	_askForVerificationCancelled = false;
+	_askForVerificationMouseLockedButtonNr = -1;
+	_askForVerificationMouseActiveButtonNr = -1;
 
 	_textStatusScore = "Score:%v3 of %v7";
 	_textStatusSoundOn = "Sound:on";
@@ -155,6 +158,14 @@ SystemUI::SystemUI(AgiEngine *vm, GfxMgr *gfx, TextMgr *text) {
 		_textQuit = "About to leave the game.";
 		_textQuitButton1 = "OK";
 		_textQuitButton2 = "Cancel";
+
+		_textSaveGameVerify = "About to save the game\ndescribed as:\n\n%s\n\nin file:\n%s";
+		_textSaveGameVerifyButton1 = "OK";
+		_textSaveGameVerifyButton2 = "Cancel";
+
+		_textRestoreGameVerify = "About to restore the game\ndescribed as:\n\n%s\n\nfrom file:\n%s";
+		_textRestoreGameVerifyButton1 = "OK";
+		_textRestoreGameVerifyButton2 = "Cancel";
 		break;
 
 	default:
@@ -177,15 +188,15 @@ const char *SystemUI::getStatusTextSoundOff() {
 }
 
 void SystemUI::pauseDialog() {
-	askForVerification(_textPause, _textPauseButton, nullptr);
+	askForVerification(_textPause, _textPauseButton, nullptr, true);
 }
 
 bool SystemUI::restartDialog() {
-	return askForVerification(_textRestart, _textRestartButton1, _textRestartButton2);
+	return askForVerification(_textRestart, _textRestartButton1, _textRestartButton2, false);
 }
 
 bool SystemUI::quitDialog() {
-	return askForVerification(_textQuit, _textQuitButton1, _textQuitButton2);
+	return askForVerification(_textQuit, _textQuitButton1, _textQuitButton2, false);
 }
 
 const char *SystemUI::getInventoryTextNothing() {
@@ -690,13 +701,13 @@ bool SystemUI::askForSavedGameVerification(const char *verifyText, const char *v
 	createSavedGameDisplayText(displayDescription, actualDescription, slotId, false);
 	userActionVerify = Common::String::format(verifyText, displayDescription, savedGameFilename.c_str());
 
-	if (askForVerification(userActionVerify.c_str(), verifyButton1, verifyButton2)) {
+	if (askForVerification(userActionVerify.c_str(), verifyButton1, verifyButton2, false)) {
 		return true;
 	}
 	return false;
 }
 
-bool SystemUI::askForVerification(const char *verifyText, const char *button1Text, const char *button2Text) {
+bool SystemUI::askForVerification(const char *verifyText, const char *button1Text, const char *button2Text, bool continueOnMessageBoxClick) {
 	int16 forcedHeight = 0;
 	SystemUIButtonEntry buttonEntry;
 
@@ -780,6 +791,14 @@ bool SystemUI::askForVerification(const char *verifyText, const char *button1Tex
 			break;
 
 		case Common::kRenderAtariST:
+			_buttonArray[0].rect = Common::Rect(_buttonArray[0].textWidth, FONT_DISPLAY_HEIGHT);
+			_buttonArray[0].rect.moveTo(msgBoxX + (5 * FONT_DISPLAY_WIDTH), msgBoxLowerY - FONT_DISPLAY_HEIGHT);
+			if (_buttonArray.size() > 1) {
+				int16 adjustedX = msgBoxX + msgBoxWidth - (5 * FONT_DISPLAY_WIDTH);
+				_buttonArray[1].rect = Common::Rect(_buttonArray[1].textWidth, FONT_DISPLAY_HEIGHT);
+				adjustedX -= _buttonArray[1].rect.width();
+				_buttonArray[1].rect.moveTo(adjustedX, msgBoxLowerY - _buttonArray[1].rect.height());
+			}
 			break;
 
 		default:
@@ -792,9 +811,17 @@ bool SystemUI::askForVerification(const char *verifyText, const char *button1Tex
 		}
 	}
 
+	if ((continueOnMessageBoxClick) && (_buttonArray.size() == 0)) {
+		// continue on message box click allowed and no buttons? -> enable continue on message box
+		_askForVerificationContinueOnMessageBoxClick = true;
+	} else {
+		_askForVerificationContinueOnMessageBoxClick = false;
+	}
+
 	_vm->cycleInnerLoopActive(CYCLE_INNERLOOP_SYSTEMUI_VERIFICATION);
 	_askForVerificationCancelled = false;
-	_askForVerificationSelectedButtonNr = -1;
+	_askForVerificationMouseLockedButtonNr = -1;
+	_askForVerificationMouseActiveButtonNr = -1;
 	do {
 		_vm->processAGIEvents();
 	} while (_vm->cycleInnerLoopIsActive() && !(_vm->shouldQuit() || _vm->_restartGame));
@@ -808,6 +835,14 @@ bool SystemUI::askForVerification(const char *verifyText, const char *button1Tex
 
 void SystemUI::askForVerificationKeyPress(uint16 newKey) {
 	Common::Point mousePos = _vm->_mouse.pos;
+	bool searchButton = false; // searches for button at current mouse location, sets current button to inactive only
+	bool lockButton = false; // when new button is found, lock selection to it
+	bool executeButton = false; // actually triggers current button, exits inner loop
+
+	if (_vm->_renderMode == Common::kRenderAtariST) {
+		// Atari ST activates/deactivates buttons automatically on mouse over
+		searchButton = true;
+	}
 
 	switch (newKey) {
 	case AGI_KEY_ENTER:
@@ -818,45 +853,85 @@ void SystemUI::askForVerificationKeyPress(uint16 newKey) {
 		_vm->cycleInnerLoopInactive();
 		break;
 	case AGI_MOUSE_BUTTON_LEFT:
-		// check, if any button is under the mouse cursor
-		_askForVerificationSelectedButtonNr = -1;
-
-		for (uint16 buttonNr = 0; buttonNr < _buttonArray.size(); buttonNr++) {
-			SystemUIButtonEntry *button = &_buttonArray[buttonNr];
-
-			if (button->rect.contains(mousePos)) {
-				_askForVerificationSelectedButtonNr = buttonNr;
-				button->active = true;
-				drawButton(button);
+		if (_askForVerificationContinueOnMessageBoxClick) {
+			// check, if cursor is within message box
+			if (_text->isMouseWithinMessageBox()) {
+				_vm->cycleInnerLoopInactive();
+				return;
 			}
+		}
+
+		// check, if any button is under the mouse cursor
+		searchButton = true;
+		lockButton = true;
+
+		if (_vm->_renderMode == Common::kRenderAtariST) {
+			// Atari ST reacts immediately on clicks
+			executeButton = true;
 		}
 		break;
 	default:
 		break;
 	}
 
-	if (_askForVerificationSelectedButtonNr >= 0) {
-		// Button currently active, we wait for the user to release the mouse button
-		// And we also check, if mouse cursor is still hovering over the button
-		SystemUIButtonEntry *button = &_buttonArray[_askForVerificationSelectedButtonNr];
+	if (_askForVerificationMouseLockedButtonNr >= 0) {
+		// button is currently locked in, check if mouse is still over it
+		searchButton = true;
 
-		if (button->rect.contains(mousePos)) {
-			// Within button
-			if (!button->active) {
-				button->active = true;
-				drawButton(button);
-			}
-		} else {
-			// Outside of button
-			if (button->active) {
-				button->active = false;
-				drawButton(button);
+		if (_vm->_mouse.button == kAgiMouseButtonUp) {
+			// mouse button released, execute button
+			executeButton = true;
+		}
+	}
+
+	if (searchButton) {
+		int16 mouseOverButtonNr = -1;
+
+		for (uint16 buttonNr = 0; buttonNr < _buttonArray.size(); buttonNr++) {
+			SystemUIButtonEntry *button = &_buttonArray[buttonNr];
+
+			if (button->rect.contains(mousePos))
+				mouseOverButtonNr = buttonNr;
+		}
+
+		if (_askForVerificationMouseLockedButtonNr >= 0) {
+			// Lock active, do not allow any other buttons atm
+			if (mouseOverButtonNr >= 0) {
+				// Mouse currently over a button
+				if (mouseOverButtonNr != _askForVerificationMouseLockedButtonNr) {
+					// And it's not the one that we are locked to
+					// Treat this as if mouse was over no button
+					mouseOverButtonNr = -1;
+				}
 			}
 		}
 
-		if (_vm->_mouse.button == kAgiMouseButtonUp) {
-			// Released, check if still active and in that case exit inner loop
-			_askForVerificationSelectedButtonNr = -1;
+		if (mouseOverButtonNr != _askForVerificationMouseActiveButtonNr) {
+			// Selection changed
+			if (_askForVerificationMouseActiveButtonNr >= 0) {
+				SystemUIButtonEntry *oldButton = &_buttonArray[_askForVerificationMouseActiveButtonNr];
+
+				oldButton->active = false;
+				drawButton(oldButton);
+			}
+			if (mouseOverButtonNr >= 0) {
+				SystemUIButtonEntry *newButton = &_buttonArray[mouseOverButtonNr];
+
+				newButton->active = true;
+				drawButton(newButton);
+
+				if (lockButton) {
+					_askForVerificationMouseLockedButtonNr = mouseOverButtonNr;
+				}
+			}
+			_askForVerificationMouseActiveButtonNr = mouseOverButtonNr;
+		}
+	}
+
+	if (executeButton) {
+		if (_askForVerificationMouseActiveButtonNr >= 0) {
+			SystemUIButtonEntry *button = &_buttonArray[_askForVerificationMouseActiveButtonNr];
+		
 			if (button->active) {
 				if (!button->isDefault) {
 					// Not default button? -> that's cancel
@@ -865,6 +940,8 @@ void SystemUI::askForVerificationKeyPress(uint16 newKey) {
 				_vm->cycleInnerLoopInactive();
 			}
 		}
+		// Remove button lock in case it was locked
+		_askForVerificationMouseLockedButtonNr = -1;
 	}
 }
 
@@ -894,6 +971,9 @@ void SystemUI::drawButton(SystemUIButtonEntry *button) {
 		break;
 	case Common::kRenderAmiga:
 		drawButtonAmiga(button);
+		break;
+	case Common::kRenderAtariST:
+		drawButtonAtariST(button);
 		break;
 	default:
 		break;
@@ -1015,5 +1095,16 @@ void SystemUI::drawButtonAmiga(SystemUIButtonEntry *button) {
 	_gfx->copyDisplayRectToScreen(button->rect.left, button->rect.top, button->rect.width(), button->rect.height());
 }
 
+void SystemUI::drawButtonAtariST(SystemUIButtonEntry *button) {
+	byte  foregroundColor = 0;
+	byte  backgroundColor = 15;
+
+	if (button->active) {
+		SWAP<byte>(foregroundColor, backgroundColor);
+	}
+
+	// Button text
+	_gfx->drawStringOnDisplay(button->rect.left, button->rect.top, button->text, foregroundColor, backgroundColor);
+}
 
 } // End of namespace Agi
