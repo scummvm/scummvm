@@ -713,7 +713,7 @@ int Gui::calcTextX(int x, int textLine) {
 	const Graphics::Font *font = getConsoleFont();
 	Common::String str = _lines[textLine];
 
-	x -= _consoleTextArea.left + kConWOverlap + kConWPadding;
+	x -= _consoleTextArea.left;
 
 	for (int i = str.size(); i >= 0; i--) {
 		if (font->getStringWidth(str) < x) {
@@ -727,7 +727,7 @@ int Gui::calcTextX(int x, int textLine) {
 }
 
 int Gui::calcTextY(int y) {
-	y -= _consoleTextArea.top + kConHOverlap + kConHPadding;
+	y -= _consoleTextArea.top;
 
 	if (y < 0)
 		y = 0;
