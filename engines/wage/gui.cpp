@@ -517,7 +517,7 @@ void Gui::renderConsole(Graphics::Surface *g, Common::Rect &r) {
 
 				if (line == _selectionEndY) {
 					SWAP(color1, color2);
-					midpoint = _selectionEndY;
+					midpoint = _selectionEndX;
 				}
 
 				Common::String beg(_lines[line].c_str(), &_lines[line].c_str()[midpoint]);
@@ -745,13 +745,14 @@ void Gui::startMarking(int x, int y) {
 
 	_inTextSelection = true;
 
-	warning("x: %d y: %d", _selectionStartX, _selectionStartY);
+	warning("x: %d y: %d -> %d %d", x, y, _selectionStartX, _selectionStartY);
 }
 
 void Gui::updateTextSelection(int x, int y) {
-	warning("x: %d y: %d", x, y);
 	_selectionEndY = calcTextY(y);
 	_selectionEndX = calcTextX(x, _selectionStartY);
+
+	warning("x: %d y: %d -> %d %d", x, y, _selectionEndX, _selectionEndY);
 
 	_consoleFullRedraw = true;
 }
