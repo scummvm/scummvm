@@ -32,7 +32,7 @@ SystemUI::SystemUI(AgiEngine *vm, GfxMgr *gfx, TextMgr *text) {
 	_vm = vm;
 	_gfx = gfx;
 	_text = text;
-	
+
 	_askForVerificationCancelled = false;
 
 	_textStatusScore = "Score:%v3 of %v7";
@@ -58,11 +58,15 @@ SystemUI::SystemUI(AgiEngine *vm, GfxMgr *gfx, TextMgr *text) {
 	_textSaveGameSelectSlot = "Use the arrow keys to select the slot in which you wish to save the game. Press ENTER to save in the slot, ESC to not save a game.";
 	_textSaveGameEnterDescription = "How would you like to describe this saved game?\n\n";
 	_textSaveGameVerify = "About to save the game\ndescribed as:\n\n%s\n\nin file:\n%s\n\nPress ENTER to continue.\nPress ESC to cancel.";
+	_textSaveGameVerifyButton1 = nullptr;
+	_textSaveGameVerifyButton2 = nullptr;
 
 	_textRestoreGameNoSlots = "There are no games to\nrestore in\n\n ScummVM saved game directory\n\nPress ENTER to continue.";
 	_textRestoreGameSelectSlot = "Use the arrow keys to select the game which you wish to restore. Press ENTER to restore the game, ESC to not restore a game.";
 	_textRestoreGameError = "Error in restoring game.\nPress ENTER to quit.";
 	_textRestoreGameVerify = "About to restore the game\ndescribed as:\n\n%s\n\nfrom file:\n%s\n\nPress ENTER to continue.\nPress ESC to cancel.";
+	_textRestoreGameVerifyButton1 = nullptr;
+	_textRestoreGameVerifyButton2 = nullptr;
 
 	// Replace with translated text, when needed
 	switch (_vm->getLanguage()) {
@@ -108,6 +112,14 @@ SystemUI::SystemUI(AgiEngine *vm, GfxMgr *gfx, TextMgr *text) {
 		_textQuit = "Quit the game, or continue?";
 		_textQuitButton1 = "Quit";
 		_textQuitButton2 = "Continue";
+
+		_textSaveGameVerify = "About to save the game\ndescribed as:\n\n%s\n\nin file:\n%s";
+		_textSaveGameVerifyButton1 = "Save";
+		_textSaveGameVerifyButton2 = "Cancel";
+
+		_textRestoreGameVerify = "About to restore the game\ndescribed as:\n\n%s\n\nfrom file:\n%s";
+		_textRestoreGameVerifyButton1 = "Restore";
+		_textRestoreGameVerifyButton2 = "Cancel";
 		break;
 
 	case Common::kRenderApple2GS:
@@ -121,7 +133,17 @@ SystemUI::SystemUI(AgiEngine *vm, GfxMgr *gfx, TextMgr *text) {
 		_textQuit = "Press ENTER to quit.\nPress ESC to keep playing.";
 		_textQuitButton1 = "Quit";
 		_textQuitButton2 = "Continue";
+
+		// Apple IIgs used OS dialogs for saving/restoring
+		_textSaveGameVerify = "About to save the game\ndescribed as:\n\n%s\n\nin file:\n%s";
+		_textSaveGameVerifyButton1 = "Save";
+		_textSaveGameVerifyButton2 = "Cancel";
+
+		_textRestoreGameVerify = "About to restore the game\ndescribed as:\n\n%s\n\nfrom file:\n%s";
+		_textRestoreGameVerifyButton1 = "Restore";
+		_textRestoreGameVerifyButton2 = "Cancel";
 		break;
+
 	case Common::kRenderAtariST:
 		_textPause = "Game paused.  Press the left\nmouse button to continue.";
 		// Variation KQ3 _textPause = "      Game paused.\nPress RETURN to continue.";
@@ -134,6 +156,7 @@ SystemUI::SystemUI(AgiEngine *vm, GfxMgr *gfx, TextMgr *text) {
 		_textQuitButton1 = "OK";
 		_textQuitButton2 = "Cancel";
 		break;
+
 	default:
 		break;
 	}
@@ -279,7 +302,7 @@ bool SystemUI::askForSaveGameDescription(int16 slotId, Common::String &newDescri
 	}
 
 	// Now verify that the user really wants to do this
-	if (!askForSavedGameVerification(_textSaveGameVerify, (char *)_text->_inputString, slotId)) {
+	if (!askForSavedGameVerification(_textSaveGameVerify, _textSaveGameVerifyButton1, _textSaveGameVerifyButton2, (char *)_text->_inputString, slotId)) {
 		return false;
 	}
 
@@ -315,7 +338,7 @@ int16 SystemUI::askForRestoreGameSlot() {
 	}
 
 	// Now verify that the user really wants to do this
-	if (!askForSavedGameVerification(_textRestoreGameVerify, selectedSavedGameEntry->description, selectedSavedGameEntry->slotId)) {
+	if (!askForSavedGameVerification(_textRestoreGameVerify, _textRestoreGameVerifyButton1, _textRestoreGameVerifyButton2, selectedSavedGameEntry->description, selectedSavedGameEntry->slotId)) {
 		return -1;
 	}
 
@@ -659,7 +682,7 @@ void SystemUI::drawSavedGameSlotSelector(bool active) {
 	_text->charAttrib_Pop();
 }
 
-bool SystemUI::askForSavedGameVerification(const char *verifyText, const char *actualDescription, int16 slotId) {
+bool SystemUI::askForSavedGameVerification(const char *verifyText, const char *verifyButton1, const char *verifyButton2, const char *actualDescription, int16 slotId) {
 	char displayDescription[SYSTEMUI_SAVEDGAME_DISPLAYTEXT_LEN + 1];
 	Common::String userActionVerify;
 	Common::String savedGameFilename = _vm->getSavegameFilename(slotId);
@@ -667,7 +690,7 @@ bool SystemUI::askForSavedGameVerification(const char *verifyText, const char *a
 	createSavedGameDisplayText(displayDescription, actualDescription, slotId, false);
 	userActionVerify = Common::String::format(verifyText, displayDescription, savedGameFilename.c_str());
 
-	if (askForVerification(userActionVerify.c_str(), nullptr, nullptr)) {
+	if (askForVerification(userActionVerify.c_str(), verifyButton1, verifyButton2)) {
 		return true;
 	}
 	return false;

@@ -88,7 +88,7 @@ public:
 
 private:
 	int16 askForSavedGameSlot(const char *slotListText);
-	bool  askForSavedGameVerification(const char *verifyText, const char *actualDescription, int16 slotId);
+	bool  askForSavedGameVerification(const char *verifyText, const char *verifyButton1, const char *verifyButton2, const char *actualDescription, int16 slotId);
 
 	bool  askForVerification(const char *verifyText, const char *button1Text, const char *button2Text);
 
@@ -141,11 +141,15 @@ private:
 	const char *_textSaveGameSelectSlot;
 	const char *_textSaveGameEnterDescription;
 	const char *_textSaveGameVerify;
+	const char *_textSaveGameVerifyButton1;
+	const char *_textSaveGameVerifyButton2;
 
 	const char *_textRestoreGameNoSlots;
 	const char *_textRestoreGameSelectSlot;
 	const char *_textRestoreGameError;
 	const char *_textRestoreGameVerify;
+	const char *_textRestoreGameVerifyButton1;
+	const char *_textRestoreGameVerifyButton2;
 };
 
 } // End of namespace Agi
