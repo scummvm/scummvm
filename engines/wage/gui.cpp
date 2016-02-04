@@ -498,8 +498,12 @@ void Gui::renderConsole(Graphics::Surface *g, Common::Rect &r) {
 		const char *str = _lines[line].c_str();
 		int color = kColorBlack;
 
-		if (line >= _selectionStartY && line <= _selectionEndY) {
+		if ((line > _selectionStartY && line < _selectionEndY) ||
+			(line > _selectionEndY && line < _selectionStartY)) {
 			color = kColorWhite;
+			Common::Rect trect(0, y1, _console.w, y1 + _consoleLineHeight);
+
+			Design::drawFilledRect(&_console, trect, kColorBlack, _patterns, kPatternSolid);
 		}
 
 		if (*str)
