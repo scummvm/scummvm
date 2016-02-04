@@ -528,6 +528,7 @@ void GfxMgr::drawBox(int16 x, int16 y, int16 width, int16 height, byte backgroun
 	// draw lines
 	switch (_vm->_renderMode) {
 	case Common::kRenderApple2GS:
+	case Common::kRenderAmiga:
 		// Slightly different window frame, and actually using 1-pixel width, which is "hi-res"
 		drawDisplayRect(x + 2, y - 2, width - 4, 1, lineColor);
 		drawDisplayRect(x + width - 3, y - 2, 1, height - 4, lineColor);
@@ -541,9 +542,11 @@ void GfxMgr::drawBox(int16 x, int16 y, int16 width, int16 height, byte backgroun
 		drawDisplayRect(x + 1, y - height + 2, width - 2, 1, 0);
 		drawDisplayRect(x + 1, y - 1, 1, height - 2, 0);
 		break;
+	case Common::kRenderCGA:
+	case Common::kRenderEGA:
+	case Common::kRenderVGA:
+	case Common::kRenderAtariST:
 	default:
-		// Confirmed platforms that used this type:
-		// PC, Amiga, Atari ST
 		drawDisplayRect(x + 2, y - 1, width - 4, 1, lineColor);
 		drawDisplayRect(x + width - 4, y - 2, 2, height - 4, lineColor);
 		drawDisplayRect(x + 2, y - height + 2, width - 4, 1, lineColor);

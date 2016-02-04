@@ -693,9 +693,9 @@ bool SystemUI::askForVerification(const char *verifyText, const char *button1Tex
 
 		switch (_vm->_renderMode) {
 		case Common::kRenderApple2GS:
+		case Common::kRenderAmiga:
 			forcedHeight += 3;
 			break;
-		case Common::kRenderAmiga:
 		case Common::kRenderAtariST:
 			forcedHeight += 2;
 			break;
@@ -741,12 +741,19 @@ bool SystemUI::askForVerification(const char *verifyText, const char *button1Tex
 				_buttonArray[1].rect = Common::Rect(14 + _buttonArray[1].textWidth, FONT_DISPLAY_HEIGHT + 6);
 				adjustedX -= _buttonArray[1].rect.width();
 				_buttonArray[1].rect.moveTo(adjustedX, msgBoxLowerY - (8 + FONT_DISPLAY_HEIGHT + 2));
-
-				drawButtonAppleIIgs(&_buttonArray[1]);
 			}
 			break;
 
 		case Common::kRenderAmiga:
+			_buttonArray[0].rect = Common::Rect(4 + _buttonArray[0].textWidth + 4, 2 + FONT_DISPLAY_HEIGHT + 2);
+			_buttonArray[0].rect.moveTo(msgBoxX, msgBoxLowerY - _buttonArray[0].rect.height());
+
+			if (_buttonArray.size() > 1) {
+				int16 adjustedX = msgBoxX + msgBoxWidth;
+				_buttonArray[1].rect = Common::Rect(4 + _buttonArray[1].textWidth + 4, 2 + FONT_DISPLAY_HEIGHT + 2);
+				adjustedX -= _buttonArray[1].rect.width();
+				_buttonArray[1].rect.moveTo(adjustedX, msgBoxLowerY - _buttonArray[1].rect.height());
+			}
 			break;
 
 		case Common::kRenderAtariST:
@@ -955,7 +962,34 @@ void SystemUI::drawButtonAppleIIgsEdgePixels(int16 x, int16 y, byte *edgeBitmap,
 }
 
 void SystemUI::drawButtonAmiga(SystemUIButtonEntry *button) {
+	byte  foregroundColor;
+	byte  backgroundColor;
 
+	if (!button->active)
+		foregroundColor = 15;
+	else
+		foregroundColor = 0;
+
+	if (button->isDefault) {
+		if (!button->active)
+			backgroundColor = 2; // green
+		else
+			backgroundColor = 13; // orange
+	} else {
+		if (!button->active)
+			backgroundColor = 4; // red
+		else
+			backgroundColor = 11; // cyan
+	}
+
+	// draw base box for it
+	_gfx->drawDisplayRect(button->rect.left, button->rect.bottom - 1, button->rect.width(), button->rect.height(), backgroundColor, false);
+
+	// Button text
+	_gfx->drawStringOnDisplay(button->rect.left + 4, button->rect.top + 2, button->text, foregroundColor, backgroundColor);
+
+	// draw base box for it
+	_gfx->copyDisplayRectToScreen(button->rect.left, button->rect.top, button->rect.width(), button->rect.height());
 }
 
 
