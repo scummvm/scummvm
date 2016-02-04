@@ -600,11 +600,10 @@ void GfxMenu::mouseEvent(uint16 newKey) {
 		// User has stopped pressing the mouse button, if any item number is selected -> execute it
 		if (activeItemNr >= 0) {
 			GuiMenuItemEntry *itemEntry = _itemArray[activeItemNr];
-			if (!itemEntry->enabled)
-				return;
-
-			// Trigger controller
-			_vm->_game.controllerOccured[itemEntry->controllerSlot] = true;
+			if (itemEntry->enabled) {
+				// Trigger controller
+				_vm->_game.controllerOccured[itemEntry->controllerSlot] = true;
+			}
 		}
 
 		_vm->cycleInnerLoopInactive(); // exit execute-loop
@@ -645,9 +644,12 @@ void GfxMenu::mouseFindMenuSelection(int16 mouseRow, int16 mouseColumn, int16 &a
 				// line match
 				if ((mouseColumn >= itemEntry->column) && (mouseColumn <= (itemEntry->column + itemEntry->textLen))) {
 					// full match
-					activeMenuNr = _drawnMenuNr;
-					activeMenuItemNr = itemNr;
-					return;
+					if (itemEntry->enabled) {
+						// Only see it, when it's currently enabled
+						activeMenuNr = _drawnMenuNr;
+						activeMenuItemNr = itemNr;
+						return;
+					}
 				}
 			}
 			itemNr++;
