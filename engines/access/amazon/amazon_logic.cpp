@@ -1251,6 +1251,9 @@ Cast::Cast(AmazonEngine *vm) : PannedScene(vm) {
 void Cast::doCast(int param1) {
 	Screen &screen = *_vm->_screen;
 
+	_vm->_buffer1.create(_vm->_screen->w, _vm->_screen->h);
+	_vm->_buffer2.create(_vm->_screen->w, _vm->_screen->h);
+
 	screen.setDisplayScan();
 	_vm->_events->hideCursor();
 	screen.forceFadeOut();
@@ -1294,8 +1297,8 @@ void Cast::doCast(int param1) {
 		_pan[i]._pObjXl = _pan[i]._pObjYl = 0;
 	}
 
-	_pNumObj = 4;
-	for (int i = 0; i < _pNumObj; i++) {
+	_pNumObj += 4;
+	for (int i = 0; i < 4; i++) {
 		_pan[26 + i]._pObject = _vm->_objectsTable[1];
 		_pan[26 + i]._pImgNum = CAST_END_OBJ1[i][0];
 		_pan[26 + i]._pObjX = CAST_END_OBJ1[i][1];
@@ -1319,20 +1322,16 @@ void Cast::doCast(int param1) {
 		_vm->plotList();
 		_vm->copyBlocks();
 
-		_vm->_events->pollEvents();
+		for (int idx = 0; idx < 5 && !_vm->shouldQuit() &&
+				!_vm->_events->isKeyMousePressed(); ++idx)
+			_vm->_events->pollEventsAndWait();
+		
 		if (_vm->_events->isKeyMousePressed())
 			break;
 
 		if (_yCam < -7550) {
-			_vm->_events->_vbCount = 50;
-
-			while (!_vm->shouldQuit() && !_vm->_events->isKeyMousePressed() && _vm->_events->_vbCount > 0) {
-				_vm->_events->pollEventsAndWait();
-			}
-
 			while (!_vm->shouldQuit() && !_vm->_midi->checkMidiDone())
 				_vm->_events->pollEventsAndWait();
-
 			break;
 		}
 	}
