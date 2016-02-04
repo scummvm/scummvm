@@ -398,6 +398,7 @@ void Room::setWallCodes() {
 
 	_vm->_player->_rawXTemp = _vm->_player->_rawPlayer.x;
 	_vm->_player->_rawYTemp = _vm->_player->_rawPlayer.y;
+	codeWalls();
 }
 
 void Room::buildScreen() {
