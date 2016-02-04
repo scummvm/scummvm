@@ -45,7 +45,7 @@
 #include "agi/systemui.h"
 #include "agi/words.h"
 
-#define SAVEGAME_CURRENT_VERSION 7
+#define SAVEGAME_CURRENT_VERSION 8
 
 //
 // Version 0 (Sarien): view table has 64 entries
@@ -59,7 +59,9 @@
 //                       required for some games for quick-loading from ScummVM main menu
 //                       for games, that do not set all key mappings right at the start
 //                      Added automatic save data (for command SetSimple)
-//
+// Version 8 (ScummVM): Added Hold-Key-Mode boolean
+//                       required for at least Mixed Up Mother Goose
+//                       gets set at the start of the game only
 
 namespace Agi {
 
@@ -194,6 +196,10 @@ int AgiEngine::saveGame(const Common::String &fileName, const Common::String &de
 		out->writeUint16BE(_game.controllerKeyMapping[i].keycode);
 		out->writeByte(_game.controllerKeyMapping[i].controllerSlot);
 	}
+
+	// Version 8+: hold-key-mode
+	//  required for at least Mixed Up Mother Goose
+	out->writeByte(_keyHoldMode);
 
 	// game.ev_keyp
 	for (i = 0; i < MAX_STRINGS; i++)
@@ -518,6 +524,15 @@ int AgiEngine::loadGame(const Common::String &fileName, bool checkId) {
 		for (i = 0; i < MAX_CONTROLLER_KEYMAPPINGS; i++) {
 			_game.controllerKeyMapping[i].keycode = in->readUint16BE();
 			_game.controllerKeyMapping[i].controllerSlot = in->readByte();
+		}
+	}
+
+	if (saveVersion >= 8) {
+		// Version 8+: hold-key-mode
+		if (in->readByte()) {
+			_keyHoldMode = true;
+		} else {
+			_keyHoldMode = false;
 		}
 	}
 

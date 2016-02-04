@@ -252,8 +252,13 @@ void AgiEngine::processScummVMEvents() {
 			break;
 
 		case Common::EVENT_KEYUP:
-			if (_egoHoldKey)
-				_game.screenObjTable[SCREENOBJECTS_EGO_ENTRY].direction = 0;
+			if (_keyHoldMode) {
+				// Original AGI actually created direction events in here
+				// We don't do that, that's why we create a stationary event instead, which will
+				// result in a direction change to 0 in handleController().
+				keyEnqueue(AGI_KEY_STATIONARY);
+			}
+			break;
 
 		default:
 			break;

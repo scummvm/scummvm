@@ -934,12 +934,6 @@ void cmdPopScript(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 	}
 }
 
-void cmdHoldKey(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
-	if (getVersion() >= 0x3098) {
-		state->_vm->_egoHoldKey = true;
-	}
-}
-
 void cmdDiscardSound(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 	if (getVersion() >= 0x2936) {
 		debug(0, "discard.sound");
@@ -993,9 +987,17 @@ void cmdFenceMouse(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 	state->mouseFence.setHeight(varNr4 - varNr1);
 }
 
+// HoldKey was added in 2.425
+// There was no way to disable this mode until 3.098 though
+void cmdHoldKey(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
+	if (getVersion() >= 0x2425) {
+		vm->_keyHoldMode = true;
+	}
+}
+
 void cmdReleaseKey(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 	if (getVersion() >= 0x3098) {
-		state->_vm->_egoHoldKey = false;
+		vm->_keyHoldMode = false;
 	}
 }
 

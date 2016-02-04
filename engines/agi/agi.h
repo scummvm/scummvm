@@ -907,7 +907,7 @@ public:
 	void updatePosition();
 	int getDirection(int16 objX, int16 objY, int16 destX, int16 destY, int16 stepSize);
 
-	bool _egoHoldKey;
+	bool _keyHoldMode;
 
 	// Keyboard
 	int doPollKeyboard();

@@ -173,7 +173,7 @@ int AgiEngine::agiInit() {
 	// GUI Predictive Dialog, but DS Word Completion is probably broken due to this...
 #endif
 
-	_egoHoldKey = false;
+	_keyHoldMode = false;
 
 	_game.mouseFence.setWidth(0); // Reset
 
@@ -403,7 +403,7 @@ AgiEngine::AgiEngine(OSystem *syst, const AGIGameDescription *gameDesc) : AgiBas
 	_systemUI = nullptr;
 	_inventory = nullptr;
 
-	_egoHoldKey = false;
+	_keyHoldMode = false;
 }
 
 void AgiEngine::initialize() {
