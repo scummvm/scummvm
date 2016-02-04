@@ -681,6 +681,14 @@ void Gui::mouseMove(int x, int y) {
 	}
 }
 
+void Gui::pushArrowCursor() {
+	CursorMan.pushCursor(macCursorArrow, 11, 16, 1, 1, 3);
+}
+
+void Gui::popCursor() {
+	CursorMan.popCursor();
+}
+
 Designed *Gui::mouseUp(int x, int y) {
 	if (_menu->_menuActivated) {
 		if (_menu->mouseRelease(x, y)) {

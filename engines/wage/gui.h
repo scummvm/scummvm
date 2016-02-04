@@ -101,6 +101,8 @@ public:
 	void regenCommandsMenu();
 	void regenWeaponsMenu();
 	void processMenuShortCut(byte flags, uint16 ascii);
+	void pushArrowCursor();
+	void popCursor();
 
 private:
 	void paintBorder(Graphics::Surface *g, Common::Rect &r, WindowType windowType);
