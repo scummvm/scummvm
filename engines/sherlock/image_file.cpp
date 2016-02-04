@@ -172,7 +172,7 @@ void ImageFrame::decompressFrame(const byte *src, bool isRoseTattoo) {
 		while (frameSize > 0) {
 			if (*src == _rleMarker) {
 				byte rleColor = src[1];
-				byte rleCount = src[2];
+				byte rleCount = MIN((int)src[2], frameSize);
 				src += 3;
 				frameSize -= rleCount;
 				while (rleCount--)
@@ -182,7 +182,6 @@ void ImageFrame::decompressFrame(const byte *src, bool isRoseTattoo) {
 				--frameSize;
 			}
 		}
-		assert(frameSize == 0);
 	} else {
 		// Uncompressed frame
 		Common::copy(src, src + _width * _height, dest);
