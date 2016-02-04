@@ -455,7 +455,11 @@ void WageEngine::processTurn(Common::String *textInput, Designed *clickInput) {
 	_commandWasQuick = false;
 	Scene *prevScene = _world->_player->_currentScene;
 	Chr *prevMonster = getMonster();
-	Common::String input(*textInput);
+	Common::String input;
+
+	if (textInput)
+		input = *textInput;
+
 	input.toLowercase();
 	if (input.equals("e"))
 		input = "east";
