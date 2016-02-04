@@ -731,6 +731,10 @@ void Gui::mouseDown(int x, int y) {
 
 int Gui::calcTextX(int x, int textLine) {
 	const Graphics::Font *font = getConsoleFont();
+
+	if (textLine >= _lines.size())
+		return 0;
+
 	Common::String str = _lines[textLine];
 
 	x -= _consoleTextArea.left;
@@ -759,20 +763,15 @@ int Gui::calcTextY(int y) {
 }
 
 void Gui::startMarking(int x, int y) {
-	warning("x: %d y: %d", x, y);
 	_selectionStartY = calcTextY(y);
 	_selectionStartX = calcTextX(x, _selectionStartY);
 
 	_inTextSelection = true;
-
-	warning("x: %d y: %d -> %d %d", x, y, _selectionStartX, _selectionStartY);
 }
 
 void Gui::updateTextSelection(int x, int y) {
 	_selectionEndY = calcTextY(y);
 	_selectionEndX = calcTextX(x, _selectionEndY);
-
-	warning("x: %d y: %d -> %d %d", x, y, _selectionEndX, _selectionEndY);
 
 	_consoleFullRedraw = true;
 }
