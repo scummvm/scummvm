@@ -771,6 +771,11 @@ void Scripts::cmdSpecial() {
 	if (_specialFunction == 1) {
 		_vm->_screen->restorePalette();
 		_vm->_room->_function = FN_RELOAD;
+
+		// WORKAROUND: This fixes scene establishment being re-shown
+		// when restoring savegames in rooms which have one
+		if (_vm->getGameID() == GType_Amazon && !_vm->isCD())
+			_vm->_establishTable[p2] = true;
 	}
 }
 
