@@ -750,7 +750,7 @@ void Gui::startMarking(int x, int y) {
 
 void Gui::updateTextSelection(int x, int y) {
 	_selectionEndY = calcTextY(y);
-	_selectionEndX = calcTextX(x, _selectionStartY);
+	_selectionEndX = calcTextX(x, _selectionEndY);
 
 	warning("x: %d y: %d -> %d %d", x, y, _selectionEndX, _selectionEndY);
 
