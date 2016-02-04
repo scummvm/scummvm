@@ -456,7 +456,49 @@ bool Console::Cmd_ScreenObj(int argc, const char **argv) {
 
 		debugPrintf("Screen Object ID %d\n", screenObj->objectNr);
 		debugPrintf("current view: %d, loop: %d, cel: %d\n", screenObj->currentViewNr, screenObj->currentLoopNr, screenObj->currentCelNr);
-		debugPrintf("flags: %x\n", screenObj->flags);
+
+		// Figure out flags
+		Common::String flagsString;
+
+		if (screenObj->flags & fDrawn)
+			flagsString += "Drawn ";
+		if (screenObj->flags & fIgnoreBlocks)
+			flagsString += "IgnoreBlocks ";
+		if (screenObj->flags & fFixedPriority)
+			flagsString += "FixedPriority ";
+		if (screenObj->flags & fIgnoreHorizon)
+			flagsString += "IgnoreHorizon ";
+		if (screenObj->flags & fUpdate)
+			flagsString += "Update ";
+		if (screenObj->flags & fCycling)
+			flagsString += "Cycling ";
+		if (screenObj->flags & fAnimated)
+			flagsString += "Animated ";
+		if (screenObj->flags & fMotion)
+			flagsString += "Motion ";
+		if (screenObj->flags & fOnWater)
+			flagsString += "OnWater ";
+		if (screenObj->flags & fIgnoreObjects)
+			flagsString += "IgnoreObjects ";
+		if (screenObj->flags & fUpdatePos)
+			flagsString += "UpdatePos ";
+		if (screenObj->flags & fOnLand)
+			flagsString += "OnLand ";
+		if (screenObj->flags & fDontupdate)
+			flagsString += "DontUpdate ";
+		if (screenObj->flags & fFixLoop)
+			flagsString += "FixLoop ";
+		if (screenObj->flags & fDidntMove)
+			flagsString += "DidntMove ";
+		if (screenObj->flags & fAdjEgoXY)
+			flagsString += "AdjEgoXY ";
+
+		if (flagsString.size() == 0) {
+			flagsString += "*none*";
+		}
+
+		debugPrintf("flags: %s\n", flagsString.c_str());
+
 		debugPrintf("\n");
 		debugPrintf("xPos: %d, yPos: %d, xSize: %d, ySize: %d\n", screenObj->xPos, screenObj->yPos, screenObj->xSize, screenObj->ySize);
 		debugPrintf("previous: xPos: %d, yPos: %d, xSize: %d, ySize: %d\n", screenObj->xPos_prev, screenObj->yPos_prev, screenObj->xSize_prev, screenObj->ySize_prev);
