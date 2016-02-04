@@ -266,6 +266,10 @@ uint16 AgiEngine::processAGIEvents() {
 			}
 			break;
 
+		case CYCLE_INNERLOOP_SYSTEMUI_VERIFICATION:
+			_systemUI->askForVerificationKeyPress(key);
+			break;
+
 		case CYCLE_INNERLOOP_MESSAGEBOX:
 			if (key) {
 				_text->messageBox_KeyPress(key);

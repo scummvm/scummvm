@@ -136,7 +136,8 @@ public:
 
 	bool _messageBoxCancelled;
 
-	void drawMessageBox(const char *textPtr, int16 wantedHeight = 0, int16 wantedWidth = 0, bool wantedForced = false);
+	void drawMessageBox(const char *textPtr, int16 forcedHeight = 0, int16 wantedWidth = 0, bool forcedWidth = false);
+	void getMessageBoxInnerDisplayDimensions(int16 &x, int16 &y, int16 &width, int16 &height);
 	void closeWindow();
 
 	void statusRow_Set(int16 row);

@@ -415,7 +415,7 @@ void TextMgr::messageBox_KeyPress(uint16 newKey) {
 	}
 }
 
-void TextMgr::drawMessageBox(const char *textPtr, int16 wantedHeight, int16 wantedWidth, bool wantedForced) {
+void TextMgr::drawMessageBox(const char *textPtr, int16 forcedHeight, int16 wantedWidth, bool forcedWidth) {
 	int16 maxWidth = wantedWidth;
 	int16 startingRow = 0;
 	char *processedTextPtr;
@@ -445,9 +445,10 @@ void TextMgr::drawMessageBox(const char *textPtr, int16 wantedHeight, int16 want
 	_messageState.printed_Height = _messageState.textSize_Height;
 
 	// Caller wants to force specified width/height? set it
-	if (wantedForced) {
-		if (wantedHeight)
-			_messageState.textSize_Height = wantedHeight;
+	if (forcedHeight)
+		_messageState.textSize_Height = forcedHeight;
+	
+	if (forcedWidth) {
 		if (wantedWidth)
 			_messageState.textSize_Width = wantedWidth;
 	}
@@ -487,6 +488,16 @@ void TextMgr::drawMessageBox(const char *textPtr, int16 wantedHeight, int16 want
 	charAttrib_Pop();
 
 	_messageState.dialogue_Open = true;
+}
+
+void TextMgr::getMessageBoxInnerDisplayDimensions(int16 &x, int16 &y, int16 &width, int16 &height) {
+	if (!_messageState.window_Active)
+		return;
+
+	y = _messageState.textPos.row * FONT_DISPLAY_HEIGHT;
+	x = _messageState.textPos.column * FONT_DISPLAY_WIDTH;
+	width = _messageState.textSize_Width * FONT_DISPLAY_WIDTH;
+	height = _messageState.textSize_Height * FONT_DISPLAY_HEIGHT;
 }
 
 void TextMgr::closeWindow() {

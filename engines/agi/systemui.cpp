@@ -32,14 +32,23 @@ SystemUI::SystemUI(AgiEngine *vm, GfxMgr *gfx, TextMgr *text) {
 	_vm = vm;
 	_gfx = gfx;
 	_text = text;
+	
+	_askForVerificationCancelled = false;
 
 	_textStatusScore = "Score:%v3 of %v7";
 	_textStatusSoundOn = "Sound:on";
 	_textStatusSoundOff = "Sound:off";
 
 	_textPause = "      Game paused.\nPress Enter to continue.";
+	_textPauseButton = nullptr;
+
 	_textRestart = "Press ENTER to restart\nthe game.\n\nPress ESC to continue\nthis game.";
+	_textRestartButton1 = nullptr;
+	_textRestartButton2 = nullptr;
+
 	_textQuit = "Press ENTER to quit.\nPress ESC to keep playing.";
+	_textQuitButton1 = nullptr;
+	_textQuitButton2 = nullptr;
 
 	_textInventoryYouAreCarrying = "You are carrying:";
 	_textInventoryNothing = "nothing";
@@ -85,6 +94,49 @@ SystemUI::SystemUI(AgiEngine *vm, GfxMgr *gfx, TextMgr *text) {
 	default:
 		break;
 	}
+
+	// Now replace some text again for some render modes
+	switch (_vm->_renderMode) {
+	case Common::kRenderAmiga:
+		_textPause = "Game paused.";
+		_textPauseButton = "Continue";
+
+		_textRestart = "Restart the game?";
+		_textRestartButton1 = "Restart";
+		_textRestartButton2 = "Cancel";
+
+		_textQuit = "Quit the game, or continue?";
+		_textQuitButton1 = "Quit";
+		_textQuitButton2 = "Continue";
+		break;
+
+	case Common::kRenderApple2GS:
+		_textPause = "Game paused.";
+		_textPauseButton = "Continue";
+
+		_textRestart = "Restart the game?     "; // additional spaces for buttons
+		_textRestartButton1 = "Restart";
+		_textRestartButton2 = "Cancel";
+
+		_textQuit = "Press ENTER to quit.\nPress ESC to keep playing.";
+		_textQuitButton1 = "Quit";
+		_textQuitButton2 = "Continue";
+		break;
+	case Common::kRenderAtariST:
+		_textPause = "Game paused.  Press the left\nmouse button to continue.";
+		// Variation KQ3 _textPause = "      Game paused.\nPress RETURN to continue.";
+
+		_textRestart = "About to restart the game.";
+		_textRestartButton1 = "OK";
+		_textRestartButton2 = "Cancel";
+
+		_textQuit = "About to leave the game.";
+		_textQuitButton1 = "OK";
+		_textQuitButton2 = "Cancel";
+		break;
+	default:
+		break;
+	}
 }
 
 SystemUI::~SystemUI() {
@@ -102,15 +154,15 @@ const char *SystemUI::getStatusTextSoundOff() {
 }
 
 void SystemUI::pauseDialog() {
-	_vm->_text->messageBox(_textPause);
+	askForVerification(_textPause, _textPauseButton, nullptr);
 }
 
 bool SystemUI::restartDialog() {
-	return _vm->_text->messageBox(_textRestart);
+	return askForVerification(_textRestart, _textRestartButton1, _textRestartButton2);
 }
 
 bool SystemUI::quitDialog() {
-	return _vm->_text->messageBox(_textQuit);
+	return askForVerification(_textQuit, _textQuitButton1, _textQuitButton2);
 }
 
 const char *SystemUI::getInventoryTextNothing() {
@@ -611,26 +663,300 @@ bool SystemUI::askForSavedGameVerification(const char *verifyText, const char *a
 	char displayDescription[SYSTEMUI_SAVEDGAME_DISPLAYTEXT_LEN + 1];
 	Common::String userActionVerify;
 	Common::String savedGameFilename = _vm->getSavegameFilename(slotId);
-	int16 userKey = 0;
 
 	createSavedGameDisplayText(displayDescription, actualDescription, slotId, false);
 	userActionVerify = Common::String::format(verifyText, displayDescription, savedGameFilename.c_str());
 
-	_text->drawMessageBox(userActionVerify.c_str(), 0, 35);
+	if (askForVerification(userActionVerify.c_str(), nullptr, nullptr)) {
+		return true;
+	}
+	return false;
+}
 
-	userKey = _vm->waitKey();
+bool SystemUI::askForVerification(const char *verifyText, const char *button1Text, const char *button2Text) {
+	int16 forcedHeight = 0;
+	SystemUIButtonEntry buttonEntry;
+
+	_buttonArray.clear();
+
+	if (button1Text || button2Text) {
+		// Buttons are enabled, check how much space we need
+		const char *verifyTextSearch = verifyText;
+		char verifyTextSearchChar = 0;
+
+		forcedHeight = 1; // at least 1 line
+		do {
+			verifyTextSearchChar = *verifyTextSearch++;
+			if (verifyTextSearchChar == '\n')
+				forcedHeight++;
+		} while (verifyTextSearchChar);
+
+		switch (_vm->_renderMode) {
+		case Common::kRenderApple2GS:
+			forcedHeight += 3;
+			break;
+		case Common::kRenderAmiga:
+		case Common::kRenderAtariST:
+			forcedHeight += 2;
+			break;
+		default:
+			break;
+		}
+	}
+
+	// draw basic message box
+	_text->drawMessageBox(verifyText, forcedHeight, 35);
+
+	if (button1Text || button2Text) {
+		// Buttons enabled, calculate button coordinates
+		int16 msgBoxX = 0, msgBoxY = 0, msgBoxLowerY = 0;
+		int16 msgBoxWidth = 0, msgBoxHeight = 0;
+
+		_text->getMessageBoxInnerDisplayDimensions(msgBoxX, msgBoxY, msgBoxWidth, msgBoxHeight);
+		// Adjust Y coordinate to lower edge
+		msgBoxLowerY = msgBoxY + (msgBoxHeight - 1);
+
+		buttonEntry.active = false;
+		if (button1Text) {
+			buttonEntry.text = button1Text;
+			buttonEntry.textWidth = strlen(button1Text) * FONT_DISPLAY_WIDTH;
+			buttonEntry.isDefault = true;
+			_buttonArray.push_back(buttonEntry);
+		}
+		if (button2Text) {
+			buttonEntry.text = button2Text;
+			buttonEntry.textWidth = strlen(button2Text) * FONT_DISPLAY_WIDTH;
+			buttonEntry.isDefault = false;
+			_buttonArray.push_back(buttonEntry);
+		}
+
+		// Render-Mode specific calculations
+		switch (_vm->_renderMode) {
+		case Common::kRenderApple2GS:
+			_buttonArray[0].rect = Common::Rect(14 + _buttonArray[0].textWidth, FONT_DISPLAY_HEIGHT + 6);
+			_buttonArray[0].rect.moveTo(msgBoxX + 2, msgBoxLowerY - (8 + FONT_DISPLAY_HEIGHT + 2));
+				
+			if (_buttonArray.size() > 1) {
+				int16 adjustedX = msgBoxX + msgBoxWidth - 10;
+				_buttonArray[1].rect = Common::Rect(14 + _buttonArray[1].textWidth, FONT_DISPLAY_HEIGHT + 6);
+				adjustedX -= _buttonArray[1].rect.width();
+				_buttonArray[1].rect.moveTo(adjustedX, msgBoxLowerY - (8 + FONT_DISPLAY_HEIGHT + 2));
+
+				drawButtonAppleIIgs(&_buttonArray[1]);
+			}
+			break;
+
+		case Common::kRenderAmiga:
+			break;
+
+		case Common::kRenderAtariST:
+			break;
+
+		default:
+			break;
+		}
+
+		drawButton(&_buttonArray[0]);
+		if (_buttonArray.size() > 1) {
+			drawButton(&_buttonArray[1]);
+		}
+	}
+
+	_vm->cycleInnerLoopActive(CYCLE_INNERLOOP_SYSTEMUI_VERIFICATION);
+	_askForVerificationCancelled = false;
+	_askForVerificationSelectedButtonNr = -1;
+	do {
+		_vm->processAGIEvents();
+	} while (_vm->cycleInnerLoopIsActive() && !(_vm->shouldQuit() || _vm->_restartGame));
 
 	_text->closeWindow();
 
-	switch (userKey) {
+	if (_askForVerificationCancelled)
+		return false;
+	return true;
+}
+
+void SystemUI::askForVerificationKeyPress(uint16 newKey) {
+	Common::Point mousePos = _vm->_mouse.pos;
+
+	switch (newKey) {
 	case AGI_KEY_ENTER:
-	case AGI_KEY_LEFT:
-		return true;
+		_vm->cycleInnerLoopInactive();
+		break;
+	case AGI_KEY_ESCAPE:
+		_askForVerificationCancelled = true;
+		_vm->cycleInnerLoopInactive();
+		break;
+	case AGI_MOUSE_BUTTON_LEFT:
+		// check, if any button is under the mouse cursor
+		_askForVerificationSelectedButtonNr = -1;
+
+		for (uint16 buttonNr = 0; buttonNr < _buttonArray.size(); buttonNr++) {
+			SystemUIButtonEntry *button = &_buttonArray[buttonNr];
+
+			if (button->rect.contains(mousePos)) {
+				_askForVerificationSelectedButtonNr = buttonNr;
+				button->active = true;
+				drawButton(button);
+			}
+		}
 		break;
 	default:
 		break;
 	}
-	return false;
+
+	if (_askForVerificationSelectedButtonNr >= 0) {
+		// Button currently active, we wait for the user to release the mouse button
+		// And we also check, if mouse cursor is still hovering over the button
+		SystemUIButtonEntry *button = &_buttonArray[_askForVerificationSelectedButtonNr];
+
+		if (button->rect.contains(mousePos)) {
+			// Within button
+			if (!button->active) {
+				button->active = true;
+				drawButton(button);
+			}
+		} else {
+			// Outside of button
+			if (button->active) {
+				button->active = false;
+				drawButton(button);
+			}
+		}
+
+		if (_vm->_mouse.button == kAgiMouseButtonUp) {
+			// Released, check if still active and in that case exit inner loop
+			_askForVerificationSelectedButtonNr = -1;
+			if (button->active) {
+				if (!button->isDefault) {
+					// Not default button? -> that's cancel
+					_askForVerificationCancelled = true;
+				}
+				_vm->cycleInnerLoopInactive();
+			}
+		}
+	}
 }
+
+#define SYSTEMUI_BUTTONEDGE_APPLEIIGS_WIDTH 8
+#define SYSTEMUI_BUTTONEDGE_APPLEIIGS_HEIGHT 5
+
+static byte buttonEdgeAppleIIgsDefault[] = {
+	0x07, 0x1C, 0x33, 0x6E, 0xDC
+};
+
+static byte buttonEdgeAppleIIgsDefaultActive[] = {
+	0x07, 0x1C, 0x33, 0x6F, 0xDF
+};
+
+static byte buttonEdgeAppleIIgsNonDefault[] = {
+	0x00, 0x00, 0x03, 0x0E, 0x1C
+};
+
+static byte buttonEdgeAppleIIgsNonDefaultActive[] = {
+	0x00, 0x00, 0x03, 0x0F, 0x1F
+};
+
+void SystemUI::drawButton(SystemUIButtonEntry *button) {
+	switch (_vm->_renderMode) {
+	case Common::kRenderApple2GS:
+		drawButtonAppleIIgs(button);
+		break;
+	case Common::kRenderAmiga:
+		drawButtonAmiga(button);
+		break;
+	default:
+		break;
+	}
+}
+
+// Note: It seems that Apple IIgs AGI used a system font for the buttons (and the menu)
+// We use the regular 8x8 Sierra Apple IIgs font, that's why our buttons are not the exact same width
+void SystemUI::drawButtonAppleIIgs(SystemUIButtonEntry *button) {
+	byte  foregroundColor = 0;
+	byte  backgroundColor = 15;
+	byte *edgeBitmap = nullptr;
+
+	if (button->active) {
+		SWAP<byte>(foregroundColor, backgroundColor);
+	}
+
+	// draw base box for it
+	_gfx->drawDisplayRect(button->rect.left, button->rect.bottom - 1, button->rect.width(), button->rect.height(), backgroundColor, false);
+
+	// draw inner lines
+	_gfx->drawDisplayRect(button->rect.left + 1, button->rect.top - 1, button->rect.width() - 2, 1, 0, false); // upper horizontal
+	_gfx->drawDisplayRect(button->rect.left - 2, button->rect.bottom - 2, 2, button->rect.height() - 2, 0, false); // left vertical
+	_gfx->drawDisplayRect(button->rect.right, button->rect.bottom - 2, 2, button->rect.height() - 2, 0, false); // right vertical
+	_gfx->drawDisplayRect(button->rect.left + 1, button->rect.bottom, button->rect.width() - 2, 1, 0, false); // lower horizontal
+
+	if (button->isDefault) {
+		// draw outer lines
+		_gfx->drawDisplayRect(button->rect.left, button->rect.top - 3, button->rect.width(), 1, 0, false); // upper horizontal
+		_gfx->drawDisplayRect(button->rect.left - 5, button->rect.bottom - 2, 2, button->rect.height() - 2, 0, false); // left vertical
+		_gfx->drawDisplayRect(button->rect.right + 3, button->rect.bottom - 2, 2, button->rect.height() - 2, 0, false); // right vertical
+		_gfx->drawDisplayRect(button->rect.left, button->rect.bottom + 2, button->rect.width(), 1, 0, false); // lower horizontal
+
+		if (button->active)
+			edgeBitmap = buttonEdgeAppleIIgsDefaultActive;
+		else
+			edgeBitmap = buttonEdgeAppleIIgsDefault;
+
+	} else {
+		if (button->active)
+			edgeBitmap = buttonEdgeAppleIIgsNonDefaultActive;
+		else
+			edgeBitmap = buttonEdgeAppleIIgsNonDefault;
+	}
+
+	// draw edge graphics
+	drawButtonAppleIIgsEdgePixels(button->rect.left - 5, button->rect.top - 3, edgeBitmap, false, false);
+	drawButtonAppleIIgsEdgePixels(button->rect.right + 4, button->rect.top - 3, edgeBitmap, true, false);
+	drawButtonAppleIIgsEdgePixels(button->rect.left - 5, button->rect.bottom + 2, edgeBitmap, false, true);
+	drawButtonAppleIIgsEdgePixels(button->rect.right + 4, button->rect.bottom + 2, edgeBitmap, true, true);
+
+	// Button text
+	_gfx->drawStringOnDisplay(button->rect.left + 7, button->rect.top + 3, button->text, foregroundColor, backgroundColor);
+
+	_gfx->copyDisplayRectToScreen(button->rect.left - 5, button->rect.top - 3, button->rect.width() + 10, button->rect.height() + 6);
+}
+
+void SystemUI::drawButtonAppleIIgsEdgePixels(int16 x, int16 y, byte *edgeBitmap, bool mirrored, bool upsideDown) {
+	int8 directionY = upsideDown ? -1 : +1;
+	int8 directionX = mirrored ? -1 : +1;
+	int8 curY = 0;
+	int8 curX;
+	int8 heightLeft = SYSTEMUI_BUTTONEDGE_APPLEIIGS_HEIGHT;
+	int8 widthLeft;
+	byte curBitmapByte;
+	byte curBitmapBit;
+
+	while (heightLeft) {
+		widthLeft = SYSTEMUI_BUTTONEDGE_APPLEIIGS_WIDTH;
+		curX = 0;
+		curBitmapByte = *edgeBitmap++;
+		curBitmapBit = 0x80;
+
+		while (widthLeft) {
+			if (curBitmapByte & curBitmapBit) {
+				_gfx->putPixelOnDisplay(x + curX, y + curY, 0);
+			} else {
+				_gfx->putPixelOnDisplay(x + curX, y + curY, 15);
+			}
+
+			curBitmapBit = curBitmapBit >> 1;
+			curX += directionX;
+			widthLeft--;
+		}
+
+		curY += directionY;
+		heightLeft--;
+	}
+}
+
+void SystemUI::drawButtonAmiga(SystemUIButtonEntry *button) {
+
+}
+
 
 } // End of namespace Agi

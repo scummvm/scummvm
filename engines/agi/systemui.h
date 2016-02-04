@@ -40,6 +40,15 @@ struct SystemUISavedGameEntry {
 };
 typedef Common::Array<SystemUISavedGameEntry> SystemUISavedGameArray;
 
+struct SystemUIButtonEntry {
+	Common::Rect rect;
+	const char  *text;
+	int16        textWidth;
+	bool         active;
+	bool         isDefault;
+};
+typedef Common::Array<SystemUIButtonEntry> SystemUIButtonArray;
+
 class SystemUI {
 public:
 	SystemUI(AgiEngine *vm, GfxMgr *gfx, TextMgr *text);
@@ -59,6 +68,10 @@ public:
 	bool restartDialog();
 	bool quitDialog();
 
+private:
+	
+
+public:
 	const char *getInventoryTextNothing();
 	const char *getInventoryTextYouAreCarrying();
 	const char *getInventoryTextSelectItems();
@@ -77,6 +90,8 @@ private:
 	int16 askForSavedGameSlot(const char *slotListText);
 	bool  askForSavedGameVerification(const char *verifyText, const char *actualDescription, int16 slotId);
 
+	bool  askForVerification(const char *verifyText, const char *button1Text, const char *button2Text);
+
 	void  createSavedGameDisplayText(char *destDisplayText, const char *actualDescription, int16 slotId, bool fillUpWithSpaces);
 	void  clearSavedGameSlots();
 	void  readSavedGameSlots(bool filterNonexistant, bool withAutoSaveSlot);
@@ -90,13 +105,33 @@ private:
 	int16 _savedGameSelectedSlotNr;
 
 private:
+	SystemUIButtonArray _buttonArray;
+
+	void drawButton(SystemUIButtonEntry *button);
+	void drawButtonAppleIIgs(SystemUIButtonEntry *buttonEntry);
+	void drawButtonAppleIIgsEdgePixels(int16 x, int16 y, byte *edgeBitmap, bool mirrored, bool upsideDown);
+	void drawButtonAmiga(SystemUIButtonEntry *buttonEntry);
+
+public:
+	void askForVerificationKeyPress(uint16 newKey);
+
+private:
+	bool _askForVerificationCancelled;
+	int16 _askForVerificationSelectedButtonNr;
+
+private:
 	const char *_textStatusScore;
 	const char *_textStatusSoundOn;
 	const char *_textStatusSoundOff;
 
 	const char *_textPause;
+	const char *_textPauseButton;
 	const char *_textRestart;
+	const char *_textRestartButton1;
+	const char *_textRestartButton2;
 	const char *_textQuit;
+	const char *_textQuitButton1;
+	const char *_textQuitButton2;
 
 	const char *_textInventoryNothing;
 	const char *_textInventoryYouAreCarrying;
