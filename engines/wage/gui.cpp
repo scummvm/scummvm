@@ -534,6 +534,26 @@ void Gui::renderConsole(Graphics::Surface *g, Common::Rect &r) {
 
 				font->drawString(&_console, beg, x1, y1, textW, color1);
 				font->drawString(&_console, end, x1 + rectW - kConWPadding - kConWOverlap, y1, textW, color2);
+			} else {
+				int startPos = _selectionStartX;
+				int endPos = _selectionEndX;
+
+				if (startPos > endPos)
+					SWAP(startPos, endPos);
+
+				Common::String beg(_lines[line].c_str(), &_lines[line].c_str()[startPos]);
+				Common::String mid(&_lines[line].c_str()[startPos], &_lines[line].c_str()[endPos]);
+				Common::String end(&_lines[line].c_str()[endPos]);
+
+				int rectW1 = font->getStringWidth(beg) + kConWPadding + kConWOverlap;
+				int rectW2 = rectW1 + font->getStringWidth(mid);
+				Common::Rect trect(rectW1, y1, rectW2, y1 + _consoleLineHeight);
+
+				Design::drawFilledRect(&_console, trect, kColorBlack, _patterns, kPatternSolid);
+
+				font->drawString(&_console, beg, x1, y1, textW, kColorBlack);
+				font->drawString(&_console, mid, x1 + rectW1 - kConWPadding - kConWOverlap, y1, textW, kColorWhite);
+				font->drawString(&_console, end, x1 + rectW2 - kConWPadding - kConWOverlap, y1, textW, kColorBlack);
 			}
 		} else {
 			if (*str)
