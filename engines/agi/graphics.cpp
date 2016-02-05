@@ -535,7 +535,7 @@ void GfxMgr::drawBox(int16 x, int16 y, int16 width, int16 height, byte backgroun
 		drawDisplayRect(x + 2, y - height + 3, width - 4, 1, lineColor);
 		drawDisplayRect(x + 2, y - 2, 1, height - 4, lineColor);
 		break;
-	case Common::kRenderHercA: // TODO/FIXME: This should be for Macintosh. Enum is not available atm
+	case Common::kRenderMacintosh:
 		// 1 pixel between box and frame lines. Frame lines were black
 		drawDisplayRect(x + 1, y - 1, width - 2, 1, 0);
 		drawDisplayRect(x + width - 2, y - 1, 1, height - 2, 0);
