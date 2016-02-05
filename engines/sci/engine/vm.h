@@ -176,8 +176,8 @@ enum SciOpcodes {
 	op_calle    = 0x23,	// 035
 	op_ret      = 0x24,	// 036
 	op_send     = 0x25,	// 037
-	// dummy      0x26,	// 038
-	// dummy      0x27,	// 039
+	op_infoToa  = 0x26,	// 038
+	op_superToa = 0x27,	// 039
 	op_class    = 0x28,	// 040
 	// dummy      0x29,	// 041
 	op_self     = 0x2a,	// 042

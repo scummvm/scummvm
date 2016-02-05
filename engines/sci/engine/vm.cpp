@@ -974,21 +974,24 @@ void run_vm(EngineState *s) {
 
 			break;
 
-		case 0x26: // (38)
-		case 0x27: // (39)
-			if (getSciVersion() == SCI_VERSION_3) {
-				if (extOpcode == 0x4c)
-					s->r_acc = obj->getInfoSelector();
-				else if (extOpcode == 0x4d)
-					PUSH32(obj->getInfoSelector());
-				else if (extOpcode == 0x4e)
-					s->r_acc = obj->getSuperClassSelector();	// TODO: is this correct?
-				// TODO: There are also opcodes in
-				// here to get the superclass, and possibly the species too.
-				else
-					error("Dummy opcode 0x%x called", opcode);	// should never happen
-			} else
+		case op_infoToa: // (38)
+			if (getSciVersion() < SCI_VERSION_3)
 				error("Dummy opcode 0x%x called", opcode);	// should never happen
+
+			if (!(extOpcode & 1))
+				s->r_acc = obj->getInfoSelector();
+			else
+				PUSH32(obj->getInfoSelector());
+			break;
+
+		case op_superToa: // (39)
+			if (getSciVersion() < SCI_VERSION_3)
+				error("Dummy opcode 0x%x called", opcode);	// should never happen
+
+			if (!(extOpcode & 1))
+				s->r_acc = obj->getSuperClassSelector();
+			else
+				PUSH32(obj->getSuperClassSelector());
 			break;
 
 		case op_class: // 0x28 (40)
