@@ -707,6 +707,8 @@ Designed *Gui::mouseUp(int x, int y) {
 				(_selectionEndX == _selectionStartX && _selectionEndY == _selectionStartY)) {
 			_selectionStartY = _selectionEndY = -1;
 			_consoleFullRedraw = true;
+		} else {
+
 		}
 	}
 

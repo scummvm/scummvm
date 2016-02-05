@@ -79,25 +79,6 @@ struct MenuItem {
 	MenuItem(const char *n) : name(n) {}
 };
 
-enum {
-	kMenuActionAbout,
-	kMenuActionNew,
-	kMenuActionOpen,
-	kMenuActionClose,
-	kMenuActionSave,
-	kMenuActionSaveAs,
-	kMenuActionRevert,
-	kMenuActionQuit,
-
-	kMenuActionUndo,
-	kMenuActionCut,
-	kMenuActionCopy,
-	kMenuActionPaste,
-	kMenuActionClear,
-
-	kMenuActionCommand
-};
-
 struct MenuData {
 	int menunum;
 	const char *title;
@@ -568,5 +549,10 @@ void Menu::processMenuShortCut(byte flags, uint16 ascii) {
 	}
 }
 
+void Menu::enableCommand(int menunum, int action, bool state) {
+	for (int i = 0; i < _items[menunum]->subitems.size(); i++)
+		if (_items[menunum]->subitems[i]->action == action)
+			_items[menunum]->subitems[i]->enabled = state;
+}
 
 } // End of namespace Wage

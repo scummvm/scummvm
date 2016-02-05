@@ -63,6 +63,25 @@ enum {
 	kFontStyleExtended = 64
 };
 
+enum {
+	kMenuActionAbout,
+	kMenuActionNew,
+	kMenuActionOpen,
+	kMenuActionClose,
+	kMenuActionSave,
+	kMenuActionSaveAs,
+	kMenuActionRevert,
+	kMenuActionQuit,
+
+	kMenuActionUndo,
+	kMenuActionCut,
+	kMenuActionCopy,
+	kMenuActionPaste,
+	kMenuActionClear,
+
+	kMenuActionCommand
+};
+
 class Menu {
 public:
 	Menu(Gui *gui);
@@ -76,6 +95,7 @@ public:
 	void regenCommandsMenu();
 	void regenWeaponsMenu();
 	void processMenuShortCut(byte flags, uint16 ascii);
+	void enableCommand(int menunum, int action, bool state);
 
 	bool _menuActivated;
 	Common::Rect _bbox;
