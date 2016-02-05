@@ -516,6 +516,8 @@ void Menu::executeCommand(MenuSubItem *subitem) {
 	case kMenuActionQuit:
 
 	case kMenuActionUndo:
+		_gui->actionUndo();
+		break;
 	case kMenuActionCut:
 		warning("STUB: Unhandled shortcut");
 		break;

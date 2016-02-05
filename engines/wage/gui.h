@@ -106,6 +106,7 @@ public:
 
 	void actionCopy();
 	void actionPaste();
+	void actionUndo();
 
 private:
 	void paintBorder(Graphics::Surface *g, Common::Rect &r, WindowType windowType);
@@ -160,6 +161,7 @@ private:
 	int _selectionEndY;
 
 	Common::String _clipboard;
+	Common::String _undobuffer;
 };
 
 } // End of namespace Wage

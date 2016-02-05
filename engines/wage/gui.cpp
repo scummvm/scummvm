@@ -832,8 +832,18 @@ void Gui::actionCopy() {
 }
 
 void Gui::actionPaste() {
-	_engine->_inputText = _clipboard;
+	_undobuffer = _engine->_inputText;
+	_engine->_inputText += _clipboard;
 	drawInput();
+
+	_menu->enableCommand(kMenuEdit, kMenuActionUndo, true);
+}
+
+void Gui::actionUndo() {
+	_engine->_inputText = _undobuffer;
+	drawInput();
+
+	_menu->enableCommand(kMenuEdit, kMenuActionUndo, false);
 }
 
 } // End of namespace Wage
