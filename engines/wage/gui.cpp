@@ -656,7 +656,6 @@ void Gui::processMenuShortCut(byte flags, uint16 ascii) {
 	_menu->processMenuShortCut(flags, ascii);
 }
 
-
 void Gui::mouseMove(int x, int y) {
 	if (_menu->_menuActivated) {
 		if (_menu->mouseMove(x, y))
@@ -701,8 +700,15 @@ Designed *Gui::mouseUp(int x, int y) {
 		return NULL;
 	}
 
-	if (_inTextSelection)
+	if (_inTextSelection) {
 		_inTextSelection = false;
+
+		if (_selectionEndY == -1 ||
+				(_selectionEndX == _selectionStartX && _selectionEndY == _selectionStartY)) {
+			_selectionStartY = _selectionEndY = -1;
+			_consoleFullRedraw = true;
+		}
+	}
 
 	if (_sceneArea.contains(x, y)) {
 		if (!_sceneIsActive) {
@@ -773,6 +779,8 @@ int Gui::calcTextY(int y) {
 void Gui::startMarking(int x, int y) {
 	_selectionStartY = calcTextY(y);
 	_selectionStartX = calcTextX(x, _selectionStartY);
+
+	_selectionEndY = -1;
 
 	_inTextSelection = true;
 }
