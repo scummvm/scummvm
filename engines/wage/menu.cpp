@@ -517,12 +517,14 @@ void Menu::executeCommand(MenuSubItem *subitem) {
 
 	case kMenuActionUndo:
 	case kMenuActionCut:
+		warning("STUB: Unhandled shortcut");
 		break;
 	case kMenuActionCopy:
 		_gui->actionCopy();
 		break;
 	case kMenuActionPaste:
 	case kMenuActionClear:
+		warning("STUB: Unhandled shortcut");
 		break;
 
 	case kMenuActionCommand:
@@ -542,11 +544,7 @@ void Menu::processMenuShortCut(byte flags, uint16 ascii) {
 		for (int i = 0; i < _items.size(); i++)
 			for (int j = 0; j < _items[i]->subitems.size(); j++)
 				if (tolower(_items[i]->subitems[j]->shortcut) == ascii) {
-					if (_items[i]->subitems[j]->action == kMenuActionCommand)
-						_gui->_engine->processTurn(&_items[i]->subitems[j]->text, NULL);
-					else
-						warning("STUB: Unhandled shortcut");
-
+					executeCommand(_items[i]->subitems[j]);
 					break;
 				}
 	}
