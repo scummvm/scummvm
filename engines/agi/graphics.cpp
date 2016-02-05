@@ -93,7 +93,23 @@ int GfxMgr::initVideo() {
 		initPalette(_paletteGfxMode, PALETTE_ATARI_ST, 16, 3);
 		break;
 	case Common::kRenderMacintosh:
-		initPaletteCLUT(_paletteGfxMode, PALETTE_MACINTOSH_CLUT, 16);
+		switch (_vm->getGameID()) {
+		case GID_KQ3:
+		case GID_PQ1:
+			initPaletteCLUT(_paletteGfxMode, PALETTE_MACINTOSH_CLUT, 16);
+			break;
+		case GID_GOLDRUSH:
+			// We use the common KQ3/PQ1 palette at the moment.
+			// It seems the Gold Rush palette, that came with the game is quite ugly.
+			initPaletteCLUT(_paletteGfxMode, PALETTE_MACINTOSH_CLUT, 16);
+			break;
+		case GID_SQ2:
+			initPaletteCLUT(_paletteGfxMode, PALETTE_MACINTOSH_CLUT3, 16);
+			break;
+		default:
+			initPaletteCLUT(_paletteGfxMode, PALETTE_MACINTOSH_CLUT, 16);
+			break;
+		}
 		break;
 	default:
 		error("initVideo: unsupported render mode");
