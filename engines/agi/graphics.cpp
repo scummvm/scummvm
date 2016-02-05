@@ -107,7 +107,7 @@ int GfxMgr::initVideo() {
 			initPaletteCLUT(_paletteGfxMode, PALETTE_MACINTOSH_CLUT3, 16);
 			break;
 		default:
-			initPaletteCLUT(_paletteGfxMode, PALETTE_MACINTOSH_CLUT, 16);
+			initPaletteCLUT(_paletteGfxMode, PALETTE_MACINTOSH_CLUT3, 16);
 			break;
 		}
 		break;
