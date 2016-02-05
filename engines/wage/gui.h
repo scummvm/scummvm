@@ -104,6 +104,8 @@ public:
 	void pushArrowCursor();
 	void popCursor();
 
+	void actionCopy();
+
 private:
 	void paintBorder(Graphics::Surface *g, Common::Rect &r, WindowType windowType);
 	void renderConsole(Graphics::Surface *g, Common::Rect &r);
@@ -155,6 +157,8 @@ private:
 	int _selectionStartY;
 	int _selectionEndX;
 	int _selectionEndY;
+
+	Common::String _clipboard;
 };
 
 } // End of namespace Wage

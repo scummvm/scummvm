@@ -517,7 +517,10 @@ void Menu::executeCommand(MenuSubItem *subitem) {
 
 	case kMenuActionUndo:
 	case kMenuActionCut:
+		break;
 	case kMenuActionCopy:
+		_gui->actionCopy();
+		break;
 	case kMenuActionPaste:
 	case kMenuActionClear:
 		break;

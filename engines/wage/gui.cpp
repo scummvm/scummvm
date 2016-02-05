@@ -707,8 +707,9 @@ Designed *Gui::mouseUp(int x, int y) {
 				(_selectionEndX == _selectionStartX && _selectionEndY == _selectionStartY)) {
 			_selectionStartY = _selectionEndY = -1;
 			_consoleFullRedraw = true;
+			_menu->enableCommand(kMenuEdit, kMenuActionCopy, false);
 		} else {
-
+			_menu->enableCommand(kMenuEdit, kMenuActionCopy, true);
 		}
 	}
 
@@ -792,6 +793,21 @@ void Gui::updateTextSelection(int x, int y) {
 	_selectionEndX = calcTextX(x, _selectionEndY);
 
 	_consoleFullRedraw = true;
+}
+
+void Gui::actionCopy() {
+	if (_selectionStartX == -1)
+		return;
+
+	int startX = _selectionStartX;
+	int startY = _selectionStartY;
+	int endX = _selectionEndX;
+	int endY = _selectionEndY;
+
+	if (startY > endY) {
+		SWAP(startX, endX);
+		SWAP(endX, endY);
+	}
 }
 
 } // End of namespace Wage
