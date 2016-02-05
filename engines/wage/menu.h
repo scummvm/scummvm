@@ -64,6 +64,14 @@ enum {
 };
 
 enum {
+	kMenuAbout = 0,
+	kMenuFile = 1,
+	kMenuEdit = 2,
+	kMenuCommands = 3,
+	kMenuWeapons = 4
+};
+
+enum {
 	kMenuActionAbout,
 	kMenuActionNew,
 	kMenuActionOpen,

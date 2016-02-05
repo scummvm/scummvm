@@ -86,20 +86,20 @@ struct MenuData {
 	byte shortcut;
 	bool enabled;
 } menuSubItems[] = {
-	{ 1, "New",			kMenuActionNew, 0, false },
-	{ 1, "Open...",		kMenuActionOpen, 0, false },
-	{ 1, "Close",		kMenuActionClose, 0, true },
-	{ 1, "Save",		kMenuActionSave, 0, false },
-	{ 1, "Save as...",	kMenuActionSaveAs, 0, true },
-	{ 1, "Revert",		kMenuActionRevert, 0, false },
-	{ 1, "Quit",		kMenuActionQuit, 0, true },
+	{ kMenuFile, "New",			kMenuActionNew, 0, false },
+	{ kMenuFile, "Open...",		kMenuActionOpen, 0, false },
+	{ kMenuFile, "Close",		kMenuActionClose, 0, true },
+	{ kMenuFile, "Save",		kMenuActionSave, 0, false },
+	{ kMenuFile, "Save as...",	kMenuActionSaveAs, 0, true },
+	{ kMenuFile, "Revert",		kMenuActionRevert, 0, false },
+	{ kMenuFile, "Quit",		kMenuActionQuit, 0, true },
 
-	{ 2, "Undo",		kMenuActionUndo, 'Z', false },
-	{ 2, NULL,			0, 0, false },
-	{ 2, "Cut",			kMenuActionCut, 'K', false },
-	{ 2, "Copy",		kMenuActionCopy, 'C', false },
-	{ 2, "Paste",		kMenuActionPaste, 'V', false },
-	{ 2, "Clear",		kMenuActionClear, 'B', false },
+	{ kMenuEdit, "Undo",		kMenuActionUndo, 'Z', false },
+	{ kMenuEdit, NULL,			0, 0, false },
+	{ kMenuEdit, "Cut",			kMenuActionCut, 'K', false },
+	{ kMenuEdit, "Copy",		kMenuActionCopy, 'C', false },
+	{ kMenuEdit, "Paste",		kMenuActionPaste, 'V', false },
+	{ kMenuEdit, "Clear",		kMenuActionClear, 'B', false },
 
 	{ 0, NULL,			0, 0, false }
 };
