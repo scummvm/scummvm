@@ -1351,7 +1351,7 @@ arguments -- see the next section.
   --aspect-ratio           Enable aspect ratio correction
   --render-mode=MODE       Enable additional render modes (hercGreen, hercAmber,
                            cga, ega, vga, amiga, fmtowns, pc9821, pc9801, 2gs,
-                           atari)
+                           atari, macintosh)
 
   --alt-intro              Use alternative intro for CD versions of Beneath a
                            Steel Sky and Flight of the Amazon Queen

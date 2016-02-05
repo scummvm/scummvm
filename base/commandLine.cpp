@@ -118,7 +118,7 @@ static const char HELP_STRING[] =
 	"  --aspect-ratio           Enable aspect ratio correction\n"
 	"  --render-mode=MODE       Enable additional render modes (hercGreen, hercAmber,\n"
 	"                           cga, ega, vga, amiga, fmtowns, pc9821, pc9801, 2gs,\n"
-	"                           atari)\n"
+	"                           atari, macintosh)\n"
 #ifdef ENABLE_EVENTRECORDER
 	"  --record-mode=MODE       Specify record mode for event recorder (record, playback,\n"
 	"                           passthrough [default])\n"
