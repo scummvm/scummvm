@@ -69,6 +69,7 @@ public:
 	int initVideo();
 	int deinitVideo();
 	void initPalette(uint8 *destPalette, const uint8 *paletteData, uint colorCount = 16, uint fromBits = 6, uint toBits = 8);
+	void initPaletteCLUT(uint8 *destPalette, const uint16 *paletteCLUTData, uint colorCount = 16);
 	void setAGIPal(int);
 	int getAGIPalFileNum();
 	void setPalette(bool GfxModePalette);

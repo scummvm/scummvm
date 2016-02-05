@@ -305,6 +305,9 @@ void AgiBase::initRenderMode() {
 	case Common::kPlatformAtariST:
 		_renderMode = Common::kRenderAtariST;
 		break;
+	case Common::kPlatformMacintosh:
+		_renderMode = Common::kRenderMacintosh;
+		break;
 	default:
 		break;
 	}
@@ -319,6 +322,9 @@ void AgiBase::initRenderMode() {
 		break;
 	case Common::kRenderAtariST:
 		_renderMode = Common::kRenderAtariST;
+		break;
+	case Common::kRenderMacintosh:
+		_renderMode = Common::kRenderMacintosh;
 		break;
 	default:
 		break;

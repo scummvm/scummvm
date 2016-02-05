@@ -92,6 +92,9 @@ int GfxMgr::initVideo() {
 	case Common::kRenderAtariST:
 		initPalette(_paletteGfxMode, PALETTE_ATARI_ST, 16, 3);
 		break;
+	case Common::kRenderMacintosh:
+		initPaletteCLUT(_paletteGfxMode, PALETTE_MACINTOSH_CLUT, 16);
+		break;
 	default:
 		error("initVideo: unsupported render mode");
 		break;
@@ -117,6 +120,12 @@ int GfxMgr::initVideo() {
 	case Common::kRenderAtariST:
 		initMouseCursor(&_mouseCursor, MOUSECURSOR_ATARI_ST, 11, 16, 1, 1);
 		initMouseCursor(&_mouseCursorBusy, MOUSECURSOR_SCI_BUSY, 15, 16, 7, 8);
+		break;
+	case Common::kRenderMacintosh:
+		// It looks like Atari ST + Macintosh used the same standard mouse cursor
+		// TODO: Verify by checking actual hardware
+		initMouseCursor(&_mouseCursor, MOUSECURSOR_ATARI_ST, 11, 16, 1, 1);
+		initMouseCursor(&_mouseCursorBusy, MOUSECURSOR_MACINTOSH_BUSY, 10, 14, 7, 8);
 		break;
 	default:
 		error("initVideo: unsupported render mode");
@@ -813,9 +822,21 @@ int16 GfxMgr::priorityFromY(int16 yPos) {
 void GfxMgr::initPalette(uint8 *destPalette, const uint8 *paletteData, uint colorCount, uint fromBits, uint toBits) {
 	const uint srcMax  = (1 << fromBits) - 1;
 	const uint destMax = (1 << toBits) - 1;
-	for (uint col = 0; col < colorCount; col++) {
-		for (uint comp = 0; comp < 3; comp++) { // Convert RGB components
-			destPalette[col * 3 + comp] = (paletteData[col * 3 + comp] * destMax) / srcMax;
+	for (uint colorNr = 0; colorNr < colorCount; colorNr++) {
+		for (uint componentNr = 0; componentNr < 3; componentNr++) { // Convert RGB components
+			destPalette[colorNr * 3 + componentNr] = (paletteData[colorNr * 3 + componentNr] * destMax) / srcMax;
+		}
+	}
+}
+
+// Converts CLUT data to a palette, that we can use
+void GfxMgr::initPaletteCLUT(uint8 *destPalette, const uint16 *paletteCLUTData, uint colorCount) {
+	for (uint colorNr = 0; colorNr < colorCount; colorNr++) {
+		for (uint componentNr = 0; componentNr < 3; componentNr++) { // RGB component
+			byte component = (paletteCLUTData[colorNr * 3 + componentNr] >> 8);
+			// Adjust gamma (1.8 to 2.2)
+			component = (byte)(255 * powf(component / 255.0f, 0.8181f));
+			destPalette[colorNr * 3 + componentNr] = component;
 		}
 	}
 }
