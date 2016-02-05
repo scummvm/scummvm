@@ -831,4 +831,9 @@ void Gui::actionCopy() {
 	_menu->enableCommand(kMenuEdit, kMenuActionPaste, true);
 }
 
+void Gui::actionPaste() {
+	_engine->_inputText = _clipboard;
+	drawInput();
+}
+
 } // End of namespace Wage

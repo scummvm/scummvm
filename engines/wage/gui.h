@@ -105,6 +105,7 @@ public:
 	void popCursor();
 
 	void actionCopy();
+	void actionPaste();
 
 private:
 	void paintBorder(Graphics::Surface *g, Common::Rect &r, WindowType windowType);
