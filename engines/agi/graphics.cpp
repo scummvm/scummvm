@@ -835,7 +835,7 @@ void GfxMgr::initPaletteCLUT(uint8 *destPalette, const uint16 *paletteCLUTData, 
 		for (uint componentNr = 0; componentNr < 3; componentNr++) { // RGB component
 			byte component = (paletteCLUTData[colorNr * 3 + componentNr] >> 8);
 			// Adjust gamma (1.8 to 2.2)
-			component = (byte)(255 * powf(component / 255.0f, 0.8181f));
+			component = (byte)(255 * pow(component / 255.0f, 0.8181f));
 			destPalette[colorNr * 3 + componentNr] = component;
 		}
 	}
