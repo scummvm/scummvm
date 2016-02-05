@@ -784,7 +784,7 @@ void GfxPalette32::saveLoadWithSerializer(Common::Serializer &s) {
 	// by SCI engine
 
 	for (int i = 0; i < ARRAYSIZE(_cyclers); ++i) {
-		PalCycler *cycler;
+		PalCycler *cycler = nullptr;
 
 		bool hasCycler;
 		if (s.isSaving()) {
