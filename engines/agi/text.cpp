@@ -921,91 +921,111 @@ void TextMgr::stringRememberForAutoComplete(bool entered) {
 }
 
 /**
- * Wrap text line to the specified width.
- * @param str  String to wrap.
- * @param len  Length of line.
- *
- * Based on GBAGI implementation with permission from the author
+ * Wraps text line to the specified width.
+ * @param originalText  String to wrap.
+ * @param maxWidth      Length of line.
  */
 char *TextMgr::stringWordWrap(const char *originalText, int16 maxWidth, int16 *calculatedWidthPtr, int16 *calculatedHeightPtr) {
-	static char resultWrapBuffer[2000];
-	char *outStr = resultWrapBuffer;
-	const char *wordStartPtr;
-	int16 lineLen = 0;
+	static char resultWrappedBuffer[2000];
+	int16 boxWidth = 0;
+	int16 boxHeight = 0;
+	int16 lineWidth = 0; // width of current line
+
+	int16 lineWidthLeft = maxWidth; // width left of current line
+
+	int16 wordStartPos = 0;
 	int16 wordLen = 0;
-	int curMaxWidth = 0;
-	int curHeight = 0;
+	int16 curReadPos = 0;
+	int16 curWritePos = 0;
+	byte  wordEndChar = 0;
 
-	assert(maxWidth > 0); // this routine would create heap corruption in case maxWidth <= 0
+	//memset(resultWrappedBuffer, 0, sizeof(resultWrappedBuffer)); for debugging
 
-	while (*originalText) {
-		wordStartPtr = originalText;
+	while (originalText[curReadPos]) {
+		// Try to find out length of next word
+		while (originalText[curReadPos]) {
+			if (originalText[curReadPos] == ' ')
+				break;
+			if (originalText[curReadPos] == 0x0A)
+				break;
+			curReadPos++;
+		}
+		wordEndChar = originalText[curReadPos];
 
-		while (*originalText != '\0' && *originalText != ' ' && *originalText != '\n' && *originalText != '\r')
-			originalText++;
+		// Calculate word length
+		wordLen = curReadPos - wordStartPos;
 
-		wordLen = originalText - wordStartPtr;
-
-		if (wordLen && *originalText == '\n' && originalText[-1] == ' ')
-			wordLen--;
-
-		if (wordLen + lineLen >= maxWidth) {
-			// Check if outStr isn't msgBuf. If this is the case, outStr hasn't advanced
-			// yet, so no output has been written yet
-			if (outStr != resultWrapBuffer) {
-				if (outStr[-1] == ' ')
-					outStr[-1] = '\n';
-				else
-					*outStr++ = '\n';
+		if (wordLen >= lineWidthLeft) {
+			// Not enough space left
+			if (wordLen > maxWidth) {
+				// Word way too long, split it in half
+				curReadPos = curReadPos - (wordLen - maxWidth);
+				wordLen = maxWidth;
 			}
-			curHeight++;
 
-			lineLen = 0;
+			// Add new line
+			resultWrappedBuffer[curWritePos++] = 0x0A;
+			if (lineWidth > boxWidth)
+				boxWidth = lineWidth;
+			boxHeight++; lineWidth = 0;
+			lineWidthLeft = maxWidth;
 
-			while (wordLen >= maxWidth) {
-				curMaxWidth = maxWidth;
+			// Reached absolute maximum? -> exit now
+			if (boxHeight >= HEIGHT_MAX)
+				break;
 
-				memcpy(outStr, wordStartPtr, maxWidth);
-
-				wordLen -= maxWidth;
-				outStr += maxWidth;
-				wordStartPtr  += maxWidth;
-				*outStr++ = '\n';
-				curHeight++;
+			// If first character right after the new line is a space, skip over it
+			if (wordLen) {
+				if (originalText[wordStartPos] == ' ') {
+					wordStartPos++;
+					wordLen--;
+				}
 			}
 		}
 
-		if (wordLen) {
-			memcpy(outStr, wordStartPtr, wordLen);
-			outStr += wordLen;
+		// Copy current word over
+		memcpy(&resultWrappedBuffer[curWritePos], &originalText[wordStartPos], wordLen);
+		lineWidth += wordLen;
+		lineWidthLeft -= wordLen;
+		curWritePos += wordLen;
+
+		if (wordEndChar == 0x0A) {
+			// original text had a new line, so force it
+			curReadPos++;
+
+			resultWrappedBuffer[curWritePos++] = 0x0A;
+			if (lineWidth > boxWidth)
+				boxWidth = lineWidth;
+			boxHeight++; lineWidth = 0;
+			lineWidthLeft = maxWidth;
+
+			// Reached absolute maximum? -> exit now
+			if (boxHeight >= HEIGHT_MAX)
+				break;
 		}
-		lineLen += wordLen + 1;
 
-		if (lineLen > curMaxWidth) {
-			curMaxWidth = lineLen;
+		wordStartPos = curReadPos;
 
-			if (*originalText == '\0' || *originalText == ' ' || *originalText == '\n' || *originalText == '\r')
-				curMaxWidth--;
-		}
-
-		if (*originalText == '\n') {
-			lineLen = 0;
-			curHeight++;
-		}
-
-		if (*originalText)
-			*outStr++ = *originalText++;
+		// Last word ended with a space, skip this space for reading the next word
+		if (wordEndChar == ' ')
+			curReadPos++;
 	}
-	*outStr = '\0';
-	curHeight++;
+
+	resultWrappedBuffer[curWritePos] = 0;
+
+	if (curReadPos > 0) {
+		if (lineWidth > boxWidth)
+			boxWidth = lineWidth;
+		boxHeight++;
+	}
 
 	if (calculatedWidthPtr) {
-		*calculatedWidthPtr = curMaxWidth;
+		*calculatedWidthPtr = boxWidth;
 	}
 	if (calculatedHeightPtr) {
-		*calculatedHeightPtr = curHeight;
+		*calculatedHeightPtr = boxHeight;
 	}
-	return resultWrapBuffer;
+	return resultWrappedBuffer;
 }
 
 // ===============================================================
