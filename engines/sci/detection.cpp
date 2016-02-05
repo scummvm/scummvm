@@ -730,12 +730,12 @@ SaveStateList SciMetaEngine::listSaves(const char *target) const {
 	sort(filenames.begin(), filenames.end());	// Sort (hopefully ensuring we are sorted numerically..)
 
 	SaveStateList saveList;
-	int slotNum = 0;
+	int slotNr = 0;
 	for (Common::StringArray::const_iterator file = filenames.begin(); file != filenames.end(); ++file) {
 		// Obtain the last 3 digits of the filename, since they correspond to the save slot
-		slotNum = atoi(file->c_str() + file->size() - 3);
+		slotNr = atoi(file->c_str() + file->size() - 3);
 
-		if (slotNum >= 0 && slotNum <= 99) {
+		if (slotNr >= 0 && slotNr <= 99) {
 			Common::InSaveFile *in = saveFileMan->openForLoading(*file);
 			if (in) {
 				SavegameMetadata meta;
@@ -744,7 +744,17 @@ SaveStateList SciMetaEngine::listSaves(const char *target) const {
 					delete in;
 					continue;
 				}
-				saveList.push_back(SaveStateDescriptor(slotNum, meta.name));
+				SaveStateDescriptor descriptor(slotNr, meta.name);
+
+				if (slotNr == 0) {
+					// ScummVM auto-save slot, not used by SCI
+					// SCI does not support auto-saving, but slot 0 is reserved for auto-saving in ScummVM.
+					descriptor.setWriteProtectedFlag(true);
+				} else {
+					descriptor.setWriteProtectedFlag(false);
+				}
+
+				saveList.push_back(descriptor);
 				delete in;
 			}
 		}
@@ -753,48 +763,60 @@ SaveStateList SciMetaEngine::listSaves(const char *target) const {
 	return saveList;
 }
 
-SaveStateDescriptor SciMetaEngine::querySaveMetaInfos(const char *target, int slot) const {
-	Common::String fileName = Common::String::format("%s.%03d", target, slot);
+SaveStateDescriptor SciMetaEngine::querySaveMetaInfos(const char *target, int slotNr) const {
+	Common::String fileName = Common::String::format("%s.%03d", target, slotNr);
 	Common::InSaveFile *in = g_system->getSavefileManager()->openForLoading(fileName);
+	SaveStateDescriptor descriptor(slotNr, "");
+
+	// Do not allow save slot 0 (used for auto-saving) to be deleted or
+	// overwritten. SCI does not support auto-saving, but slot 0 is reserved for auto-saving in ScummVM.
+	if (slotNr == 0) {
+		descriptor.setWriteProtectedFlag(true);
+		descriptor.setDeletableFlag(false);
+	} else {
+		descriptor.setWriteProtectedFlag(false);
+		descriptor.setDeletableFlag(true);
+	}
 
 	if (in) {
 		SavegameMetadata meta;
+	
 		if (!get_savegame_metadata(in, &meta)) {
 			// invalid
 			delete in;
 
-			SaveStateDescriptor desc(slot, "Invalid");
-			return desc;
+			descriptor.setDescription("*Invalid*");
+			return descriptor;
 		}
 
-		SaveStateDescriptor desc(slot, meta.name);
+		descriptor.setDescription(meta.name);
 
 		Graphics::Surface *const thumbnail = Graphics::loadThumbnail(*in);
-		desc.setThumbnail(thumbnail);
+		descriptor.setThumbnail(thumbnail);
 
 		int day = (meta.saveDate >> 24) & 0xFF;
 		int month = (meta.saveDate >> 16) & 0xFF;
 		int year = meta.saveDate & 0xFFFF;
 
-		desc.setSaveDate(year, month, day);
+		descriptor.setSaveDate(year, month, day);
 
 		int hour = (meta.saveTime >> 16) & 0xFF;
 		int minutes = (meta.saveTime >> 8) & 0xFF;
 
-		desc.setSaveTime(hour, minutes);
+		descriptor.setSaveTime(hour, minutes);
 
 		if (meta.version >= 34) {
-			desc.setPlayTime(meta.playTime * 1000 / 60);
+			descriptor.setPlayTime(meta.playTime * 1000 / 60);
 		} else {
-			desc.setPlayTime(meta.playTime * 1000);
+			descriptor.setPlayTime(meta.playTime * 1000);
 		}
 
 		delete in;
 
-		return desc;
+		return descriptor;
 	}
-
-	return SaveStateDescriptor();
+	// Return empty descriptor
+	return descriptor;
 }
 
 int SciMetaEngine::getMaximumSaveSlot() const { return 99; }

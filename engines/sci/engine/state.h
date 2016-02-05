@@ -57,6 +57,10 @@ enum AbortGameState {
 	kAbortQuitGame = 3
 };
 
+// slot 0 is the ScummVM auto-save slot, which is not used by us, but is still reserved
+#define SAVEGAMESLOT_FIRST 1
+#define SAVEGAMESLOT_LAST 99
+
 // We assume that scripts give us savegameId 0->99 for creating a new save slot
 //  and savegameId 100->199 for existing save slots. Refer to kfile.cpp
 enum {

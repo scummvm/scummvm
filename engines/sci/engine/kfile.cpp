@@ -806,15 +806,15 @@ reg_t kSaveGame(EngineState *s, int argc, reg_t *argv) {
 			} else {
 				uint savegameNr;
 				// savegameId is in lower range, scripts expect us to create a new slot
-				for (savegameId = 0; savegameId < SAVEGAMEID_OFFICIALRANGE_START; savegameId++) {
+				for (savegameId = SAVEGAMESLOT_FIRST; savegameId <= SAVEGAMESLOT_LAST; savegameId++) {
 					for (savegameNr = 0; savegameNr < saves.size(); savegameNr++) {
 						if (savegameId == saves[savegameNr].id)
 							break;
 					}
-					if (savegameNr == saves.size())
+					if (savegameNr == saves.size()) // Slot not found, seems to be good to go
 						break;
 				}
-				if (savegameId == SAVEGAMEID_OFFICIALRANGE_START)
+				if (savegameId > SAVEGAMESLOT_LAST)
 					error("kSavegame: no more savegame slots available");
 			}
 		} else {
