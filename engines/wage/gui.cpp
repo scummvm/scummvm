@@ -808,6 +808,27 @@ void Gui::actionCopy() {
 		SWAP(startX, endX);
 		SWAP(endX, endY);
 	}
+
+	_clipboard.clear();
+
+	for (int i = startY; i <= endY; i++) {
+		if (startY == endY) {
+			_clipboard = Common::String(&_lines[i].c_str()[startX], &_lines[i].c_str()[endX]);
+			break;
+		}
+
+		if (i == startY) {
+			_clipboard += &_lines[i].c_str()[startX];
+			_clipboard += '\n';
+		} else if (i == endY) {
+			_clipboard += Common::String(_lines[i].c_str(), &_lines[i].c_str()[endX]);
+		} else {
+			_clipboard += _lines[i];
+			_clipboard += '\n';
+		}
+	}
+
+	_menu->enableCommand(kMenuEdit, kMenuActionPaste, true);
 }
 
 } // End of namespace Wage
