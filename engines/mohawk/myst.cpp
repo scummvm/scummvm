@@ -85,9 +85,6 @@ MohawkEngine_Myst::MohawkEngine_Myst(OSystem *syst, const MohawkGameDescription 
 	_gameState = nullptr;
 	_optionsDialog = nullptr;
 
-	_cursorHintCount = 0;
-	_cursorHints = nullptr;
-
 	_prevStack = nullptr;
 }
 
@@ -102,14 +99,8 @@ MohawkEngine_Myst::~MohawkEngine_Myst() {
 	delete _prevStack;
 	delete _rnd;
 
-	delete[] _cursorHints;
-
-	unloadCard();
-
 	for (uint32 i = 0; i < _resources.size(); i++)
 		delete _resources[i];
-
-	_resources.clear();
 }
 
 // Uses cached data objects in preference to disk access
@@ -946,9 +937,7 @@ void MohawkEngine_Myst::loadHelp(uint16 id) {
 }
 
 void MohawkEngine_Myst::loadCursorHints() {
-	_cursorHintCount = 0;
-	delete[] _cursorHints;
-	_cursorHints = nullptr;
+	_cursorHints.clear();
 
 	if (!_view.hint) {
 		debugC(kDebugHint, "No HINT Present");
@@ -958,30 +947,33 @@ void MohawkEngine_Myst::loadCursorHints() {
 	debugC(kDebugHint, "Loading Cursor Hints:");
 
 	Common::SeekableReadStream *hintStream = getResource(ID_HINT, _curCard);
-	_cursorHintCount = hintStream->readUint16LE();
-	debugC(kDebugHint, "Cursor Hint Count: %d", _cursorHintCount);
-	_cursorHints = new MystCursorHint[_cursorHintCount];
+	uint16 cursorHintCount = hintStream->readUint16LE();
+	debugC(kDebugHint, "Cursor Hint Count: %d", cursorHintCount);
 
-	for (uint16 i = 0; i < _cursorHintCount; i++) {
+	for (uint16 i = 0; i < cursorHintCount; i++) {
+		MystCursorHint hint;
+
 		debugC(kDebugHint, "Cursor Hint %d:", i);
-		_cursorHints[i].id = hintStream->readUint16LE();
-		debugC(kDebugHint, "\tId: %d", _cursorHints[i].id);
-		_cursorHints[i].cursor = hintStream->readSint16LE();
-		debugC(kDebugHint, "\tCursor: %d", _cursorHints[i].cursor);
+		hint.id = hintStream->readUint16LE();
+		debugC(kDebugHint, "\tId: %d", hint.id);
+		hint.cursor = hintStream->readSint16LE();
+		debugC(kDebugHint, "\tCursor: %d", hint.cursor);
 
-		if (_cursorHints[i].cursor == -1) {
+		if (hint.cursor == -1) {
 			debugC(kDebugHint, "\tConditional Cursor Hints:");
-			_cursorHints[i].variableHint.var = hintStream->readUint16LE();
-			debugC(kDebugHint, "\tVar: %d", _cursorHints[i].variableHint.var);
+			hint.variableHint.var = hintStream->readUint16LE();
+			debugC(kDebugHint, "\tVar: %d", hint.variableHint.var);
 			uint16 numStates = hintStream->readUint16LE();
 			debugC(kDebugHint, "\tNumber of States: %d", numStates);
 			for (uint16 j = 0; j < numStates; j++) {
-				_cursorHints[i].variableHint.values.push_back(hintStream->readUint16LE());
-				debugC(kDebugHint, "\t\t State %d: Cursor %d", j, _cursorHints[i].variableHint.values[j]);
+				hint.variableHint.values.push_back(hintStream->readUint16LE());
+				debugC(kDebugHint, "\t\t State %d: Cursor %d", j, hint.variableHint.values[j]);
 			}
 		} else {
-			_cursorHints[i].variableHint.var = 0;
+			hint.variableHint.var = 0;
 		}
+
+		_cursorHints.push_back(hint);
 	}
 
 	delete hintStream;
@@ -1003,7 +995,7 @@ void MohawkEngine_Myst::checkCursorHints() {
 	}
 
 	// Check all the cursor hints to see if we're in a hotspot that contains a hint.
-	for (uint16 i = 0; i < _cursorHintCount; i++)
+	for (uint16 i = 0; i < _cursorHints.size(); i++)
 		if (_cursorHints[i].id == _curResource && _resources[_cursorHints[i].id]->isEnabled()) {
 			if (_cursorHints[i].cursor == -1) {
 				uint16 var_value = _scriptParser->getVar(_cursorHints[i].variableHint.var);

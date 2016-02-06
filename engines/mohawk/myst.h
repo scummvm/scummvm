@@ -236,8 +236,7 @@ private:
 	int16 _curResource;
 	MystAreaHover *_hoverResource;
 
-	uint16 _cursorHintCount;
-	MystCursorHint *_cursorHints;
+	Common::Array<MystCursorHint> _cursorHints;
 	void loadCursorHints();
 	uint16 _currentCursor;
 	uint16 _mainCursor; // Also defines the current page being held (white, blue, red, or none)
