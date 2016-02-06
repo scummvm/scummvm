@@ -34,11 +34,11 @@ struct BITMAPINFOHEADER {
 	int _biHeight;
 	int _biPlanes;
 	int _biBitCount;
-	bool _biCompression;
+	int _biCompression;
 	int _biSizeImage;
 	int _biXPelsPerMeter;
 	int _biYPelsPerMeter;
-	int _biCirUsed;
+	int _biClrUsed;
 	int _biClrImportant;
 
 	BITMAPINFOHEADER();
@@ -59,6 +59,8 @@ struct tagBITMAPINFO {
 };
 
 class Image {
+private:
+	void loadBitmap(Common::SeekableReadStream &s);
 public:
 	tagBITMAPINFO *_bitmapInfo;
 	byte *_bits;

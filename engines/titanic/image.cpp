@@ -20,6 +20,7 @@
  *
  */
 
+#include "common/file.h"
 #include "titanic/image.h"
 
 namespace Titanic {
@@ -76,6 +77,22 @@ void Image::proc8() {
 }
 
 bool Image::loadResource(const Common::String &name) {
+	// This method is hardcoded for the Titanic splash screen resource
+	assert(name == "TITANIC");
+
+	Common::File f;
+	if (!f.open("ST.exe"))
+		return false;
+
+	// The ST.exe executable has a bitmap called "TITANIC". Since we can't use
+	// the Windows FindResource function in ScummVM, this is hardcoded for now
+	f.seek(0x29B660);
+	uint size = f.readUint32LE();
+	if (size != 40)
+		return false;
+
+	loadBitmap(f);
+
 	return true;
 }
 
@@ -84,6 +101,20 @@ void Image::proc10() {
 }
 
 void Image::draw() {
+
+}
+
+void Image::loadBitmap(Common::SeekableReadStream &s) {
+	_bitmapInfo->_bmiHeader._biWidth = s.readUint32LE();
+	_bitmapInfo->_bmiHeader._biHeight = s.readUint32LE();
+	_bitmapInfo->_bmiHeader._biPlanes = s.readUint16LE();
+	_bitmapInfo->_bmiHeader._biBitCount = s.readUint16LE();
+	_bitmapInfo->_bmiHeader._biCompression = s.readUint32LE();
+	_bitmapInfo->_bmiHeader._biSizeImage = s.readUint32LE();
+	_bitmapInfo->_bmiHeader._biXPelsPerMeter = s.readUint32LE();
+	_bitmapInfo->_bmiHeader._biYPelsPerMeter = s.readUint32LE();
+	_bitmapInfo->_bmiHeader._biClrUsed = s.readUint32LE();
+	_bitmapInfo->_bmiHeader._biClrImportant = s.readUint32LE();
 
 }
 
