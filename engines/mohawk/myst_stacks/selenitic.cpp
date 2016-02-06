@@ -39,7 +39,6 @@ namespace MystStacks {
 Selenitic::Selenitic(MohawkEngine_Myst *vm) :
 		MystScriptParser(vm), _state(vm->_gameState->_selenitic) {
 	setupOpcodes();
-	_invokingResource = nullptr;
 	_mazeRunnerPosition = 288;
 	_mazeRunnerDirection = 8;
 }
@@ -929,15 +928,15 @@ void Selenitic::o_soundReceiverEndMove(uint16 op, uint16 var, uint16 argc, uint1
 }
 
 void Selenitic::o_mazeRunnerCompass_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	_mazeRunnerCompass = static_cast<MystAreaImageSwitch *>(_invokingResource);
+	_mazeRunnerCompass = getInvokingResource<MystAreaImageSwitch>();
 }
 
 void Selenitic::o_mazeRunnerWindow_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	_mazeRunnerWindow = static_cast<MystAreaImageSwitch *>(_invokingResource);
+	_mazeRunnerWindow = getInvokingResource<MystAreaImageSwitch>();
 }
 
 void Selenitic::o_mazeRunnerLight_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	_mazeRunnerLight = static_cast<MystAreaImageSwitch *>(_invokingResource);
+	_mazeRunnerLight = getInvokingResource<MystAreaImageSwitch>();
 }
 
 void Selenitic::soundReceiver_run() {
@@ -1116,11 +1115,11 @@ void Selenitic::o_soundLock_init(uint16 op, uint16 var, uint16 argc, uint16 *arg
 }
 
 void Selenitic::o_mazeRunnerRight_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	_mazeRunnerRightButton = static_cast<MystAreaImageSwitch *>(_invokingResource);
+	_mazeRunnerRightButton = getInvokingResource<MystAreaImageSwitch>();
 }
 
 void Selenitic::o_mazeRunnerLeft_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	_mazeRunnerLeftButton = static_cast<MystAreaImageSwitch *>(_invokingResource);
+	_mazeRunnerLeftButton = getInvokingResource<MystAreaImageSwitch>();
 }
 
 const uint16 Selenitic::_mazeRunnerMap[300][4] = {

@@ -151,8 +151,6 @@ protected:
 
 	Common::Array<MystOpcode *> _opcodes;
 
-	MystArea *_invokingResource;
-
 	uint16 _savedCardId;
 	uint16 _savedMapCardId;
 	uint16 _savedCursorId;
@@ -163,7 +161,24 @@ protected:
 	static const uint16 _startCard[];
 
 	void setupCommonOpcodes();
+
+	template<class T>
+	T *getInvokingResource() const;
+
+private:
+	MystArea *_invokingResource;
 };
+
+template<class T>
+T *MystScriptParser::getInvokingResource() const {
+	T *resource = dynamic_cast<T *>(_invokingResource);
+
+	if (!resource) {
+		error("Invoking resource has unexpected type");
+	}
+
+	return resource;
+}
 
 } // End of namespace Mohawk
 

@@ -54,7 +54,6 @@ protected:
 	void towerRotationMap_run();
 	virtual void libraryBookcaseTransform_run();
 	void generatorControlRoom_run();
-	void opcode_212_run();
 	void libraryCombinationBook_run();
 	void clockWheel_run();
 	void matchBurn_run();

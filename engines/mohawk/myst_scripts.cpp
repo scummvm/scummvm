@@ -442,7 +442,7 @@ void MystScriptParser::o_triggerMovie(uint16 op, uint16 var, uint16 argc, uint16
 	debugC(kDebugScript, "\tDirection: %d", direction);
 
 	// Trigger resource 6 movie overriding play direction
-	MystAreaVideo *resource = static_cast<MystAreaVideo *>(_invokingResource);
+	MystAreaVideo *resource = getInvokingResource<MystAreaVideo>();
 	resource->setDirection(direction);
 	resource->playMovie();
 
@@ -459,7 +459,7 @@ void MystScriptParser::o_drawAreaState(uint16 op, uint16 var, uint16 argc, uint1
 	debugC(kDebugScript, "Opcode %d: drawAreaState, state: %d", op, argv[0]);
 	debugC(kDebugScript, "\tVar: %d", var);
 
-	MystAreaImageSwitch *parent = static_cast<MystAreaImageSwitch *>(_invokingResource->_parent);
+	MystAreaImageSwitch *parent = static_cast<MystAreaImageSwitch *>(getInvokingResource<MystArea>()->_parent);
 	parent->drawConditionalDataToScreen(argv[0]);
 }
 

@@ -466,7 +466,7 @@ void Stoneship::o_telescopeStart(uint16 op, uint16 var, uint16 argc, uint16 *arg
 void Stoneship::o_telescopeMove(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Telescope move", op);
 
-	MystAreaDrag *display = static_cast<MystAreaDrag *>(_invokingResource);
+	MystAreaDrag *display = getInvokingResource<MystAreaDrag>();
 	const Common::Point &mouse = _vm->_system->getEventManager()->getMousePos();
 
 	// Compute telescope position
@@ -489,7 +489,7 @@ void Stoneship::o_telescopeStop(uint16 op, uint16 var, uint16 argc, uint16 *argv
 void Stoneship::o_generatorStart(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Generator start", op);
 
-	MystAreaDrag *handle = static_cast<MystAreaDrag *>(_invokingResource);
+	MystAreaDrag *handle = getInvokingResource<MystAreaDrag>();
 
 	uint16 soundId = handle->getList1(0);
 	if (soundId)
@@ -530,7 +530,7 @@ void Stoneship::o_generatorStop(uint16 op, uint16 var, uint16 argc, uint16 *argv
 	}
 
 	// Pause handle movie
-	MystAreaDrag *handle = static_cast<MystAreaDrag *>(_invokingResource);
+	MystAreaDrag *handle = getInvokingResource<MystAreaDrag>();
 	MystAreaVideo *movie = static_cast<MystAreaVideo *>(handle->getSubResource(0));
 	movie->pauseMovie(true);
 
@@ -617,7 +617,7 @@ void Stoneship::o_hologramSelectionStart(uint16 op, uint16 var, uint16 argc, uin
 void Stoneship::o_hologramSelectionMove(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Hologram move", op);
 
-	MystAreaDrag *handle = static_cast<MystAreaDrag *>(_invokingResource);
+	MystAreaDrag *handle = getInvokingResource<MystAreaDrag>();
 	const Common::Point &mouse = _vm->_system->getEventManager()->getMousePos();
 
 	if (handle->getRect().contains(mouse)) {
@@ -806,7 +806,7 @@ void Stoneship::o_cloudOrbLeave(uint16 op, uint16 var, uint16 argc, uint16 *argv
 
 	_cloudOrbMovie->pauseMovie(true);
 	_vm->_sound->replaceSoundMyst(_cloudOrbStopSound);
-	_vm->_gfx->runTransition(kTransitionTopToBottom, _invokingResource->getRect(), 4, 0);
+	_vm->_gfx->runTransition(kTransitionTopToBottom, getInvokingResource<MystArea>()->getRect(), 4, 0);
 }
 
 void Stoneship::o_drawerCloseOpened(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
@@ -828,14 +828,14 @@ void Stoneship::drawerClose(uint16 drawer) {
 
 void Stoneship::o_hologramDisplay_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Hologram display init", op);
-	_hologramDisplay = static_cast<MystAreaVideo *>(_invokingResource);
+	_hologramDisplay = getInvokingResource<MystAreaVideo>();
 
 	_hologramDisplayPos = 0;
 }
 
 void Stoneship::o_hologramSelection_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Hologram selection init", op);
-	_hologramSelection = static_cast<MystAreaVideo *>(_invokingResource);
+	_hologramSelection = getInvokingResource<MystAreaVideo>();
 }
 
 void Stoneship::batteryGaugeUpdate() {
@@ -856,7 +856,7 @@ void Stoneship::o_battery_init(uint16 op, uint16 var, uint16 argc, uint16 *argv)
 	// Used for Card 2160 (Lighthouse Battery Pack Closeup)
 	debugC(kDebugScript, "Opcode %d: Battery init", op);
 
-	_batteryGauge = static_cast<MystAreaImageSwitch *>(_invokingResource);
+	_batteryGauge = getInvokingResource<MystAreaImageSwitch>();
 
 	batteryGaugeUpdate();
 }
@@ -1014,7 +1014,7 @@ void Stoneship::o_achenarDrawers_init(uint16 op, uint16 var, uint16 argc, uint16
 void Stoneship::o_cloudOrb_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Cloud orb init", op);
 
-	_cloudOrbMovie = static_cast<MystAreaVideo *>(_invokingResource);
+	_cloudOrbMovie = getInvokingResource<MystAreaVideo>();
 	_cloudOrbSound = argv[0];
 	_cloudOrbStopSound = argv[1];
 }
