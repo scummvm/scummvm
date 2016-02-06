@@ -284,86 +284,40 @@ MystAreaActionSwitch::~MystAreaActionSwitch() {
 	_subResources.clear();
 }
 
-// TODO: All these functions to switch subresource are very similar.
-//       Find way to share code (function pointer pass?)
-void MystAreaActionSwitch::drawDataToScreen() {
+void MystAreaActionSwitch::doSwitch(AreaHandler handler) {
 	if (_actionSwitchVar == 0xFFFF) {
 		if (_numSubResources == 1)
-			_subResources[0]->drawDataToScreen();
+			(_subResources[0]->*handler)();
 		else if (_numSubResources != 0)
-			warning("Type 7 Resource with _numSubResources of %d, but no control variable", _numSubResources);
+			warning("Action switch resource with _numSubResources of %d, but no control variable", _numSubResources);
 	} else {
 		uint16 varValue = _vm->_scriptParser->getVar(_actionSwitchVar);
 
 		if (_numSubResources == 1 && varValue != 0)
-			_subResources[0]->drawDataToScreen();
+			(_subResources[0]->*handler)();
 		else if (_numSubResources != 0) {
 			if (varValue < _numSubResources)
-				_subResources[varValue]->drawDataToScreen();
+				(_subResources[varValue]->*handler)();
 			else
-				warning("Type 7 Resource Var %d: %d exceeds number of sub resources %d", _actionSwitchVar, varValue, _numSubResources);
+				warning("Action switch resource Var %d: %d exceeds number of sub resources %d", _actionSwitchVar, varValue, _numSubResources);
 		}
 	}
+}
+
+void MystAreaActionSwitch::drawDataToScreen() {
+	doSwitch(&MystArea::drawDataToScreen);
 }
 
 void MystAreaActionSwitch::handleCardChange() {
-	if (_actionSwitchVar == 0xFFFF) {
-		if (_numSubResources == 1)
-			_subResources[0]->handleCardChange();
-		else if (_numSubResources != 0)
-			warning("Type 7 Resource with _numSubResources of %d, but no control variable", _numSubResources);
-	} else {
-		uint16 varValue = _vm->_scriptParser->getVar(_actionSwitchVar);
-
-		if (_numSubResources == 1 && varValue != 0)
-			_subResources[0]->handleCardChange();
-		else if (_numSubResources != 0) {
-			if (varValue < _numSubResources)
-				_subResources[varValue]->handleCardChange();
-			else
-				warning("Type 7 Resource Var %d: %d exceeds number of sub resources %d", _actionSwitchVar, varValue, _numSubResources);
-		}
-	}
+	doSwitch(&MystArea::handleCardChange);
 }
 
 void MystAreaActionSwitch::handleMouseUp() {
-	if (_actionSwitchVar == 0xFFFF) {
-		if (_numSubResources == 1)
-			_subResources[0]->handleMouseUp();
-		else if (_numSubResources != 0)
-			warning("Type 7 Resource with _numSubResources of %d, but no control variable", _numSubResources);
-	} else {
-		uint16 varValue = _vm->_scriptParser->getVar(_actionSwitchVar);
-
-		if (_numSubResources == 1 && varValue != 0)
-			_subResources[0]->handleMouseUp();
-		else if (_numSubResources != 0) {
-			if (varValue < _numSubResources)
-				_subResources[varValue]->handleMouseUp();
-			else
-				warning("Type 7 Resource Var %d: %d exceeds number of sub resources %d", _actionSwitchVar, varValue, _numSubResources);
-		}
-	}
+	doSwitch(&MystArea::handleMouseUp);
 }
 
 void MystAreaActionSwitch::handleMouseDown() {
-	if (_actionSwitchVar == 0xFFFF) {
-		if (_numSubResources == 1)
-			_subResources[0]->handleMouseDown();
-		else if (_numSubResources != 0)
-			warning("Type 7 Resource with _numSubResources of %d, but no control variable", _numSubResources);
-	} else {
-		uint16 varValue = _vm->_scriptParser->getVar(_actionSwitchVar);
-
-		if (_numSubResources == 1 && varValue != 0)
-			_subResources[0]->handleMouseDown();
-		else if (_numSubResources != 0) {
-			if (varValue < _numSubResources)
-				_subResources[varValue]->handleMouseDown();
-			else
-				warning("Type 7 Resource Var %d: %d exceeds number of sub resources %d", _actionSwitchVar, varValue, _numSubResources);
-		}
-	}
+	doSwitch(&MystArea::handleMouseDown);
 }
 
 MystAreaImageSwitch::MystAreaImageSwitch(MohawkEngine_Myst *vm, Common::SeekableReadStream *rlstStream, MystArea *parent) :
@@ -407,7 +361,7 @@ MystAreaImageSwitch::~MystAreaImageSwitch() {
 }
 
 void MystAreaImageSwitch::drawDataToScreen() {
-	// Need to call overidden Type 7 function to ensure
+	// Need to call overridden function to ensure
 	// switch section is processed correctly.
 	MystAreaActionSwitch::drawDataToScreen();
 

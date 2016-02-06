@@ -140,6 +140,10 @@ public:
 
 	MystArea *getSubResource(uint16 index) { return _subResources[index]; }
 protected:
+	typedef void (MystArea::*AreaHandler)();
+
+	void doSwitch(AreaHandler handler);
+
 	uint16 _actionSwitchVar;
 	uint16 _numSubResources;
 	Common::Array<MystArea *> _subResources;
