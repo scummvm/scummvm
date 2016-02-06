@@ -369,11 +369,11 @@ void MystAreaActionSwitch::handleMouseDown() {
 MystAreaImageSwitch::MystAreaImageSwitch(MohawkEngine_Myst *vm, Common::SeekableReadStream *rlstStream, MystArea *parent) :
 		MystAreaActionSwitch(vm, rlstStream, parent) {
 	_imageSwitchVar = rlstStream->readUint16LE();
-	_numSubImages = rlstStream->readUint16LE();
+	uint16 numSubImages = rlstStream->readUint16LE();
 	debugC(kDebugResource, "\tvar8: %d", _imageSwitchVar);
-	debugC(kDebugResource, "\tnumSubImages: %d", _numSubImages);
+	debugC(kDebugResource, "\tnumSubImages: %d", numSubImages);
 
-	for (uint16 i = 0; i < _numSubImages; i++) {
+	for (uint16 i = 0; i < numSubImages; i++) {
 		debugC(kDebugResource, "\tSubimage %d:", i);
 
 		SubImage subImage;
@@ -415,23 +415,23 @@ void MystAreaImageSwitch::drawDataToScreen() {
 	int16 subImageId = 0;
 
 	if (_imageSwitchVar == 0xFFFF) {
-		if (_numSubImages == 1) {
+		if (_subImages.size() == 1) {
 			subImageId = 0;
 			drawSubImage = true;
-		} else if (_numSubImages != 0)
-			warning("Type 8 Resource with _numSubImages of %d, but no control variable", _numSubImages);
+		} else if (_subImages.size() != 0)
+			warning("Image Switch resource with _numSubImages of %d, but no control variable", _subImages.size());
 	} else {
 		uint16 varValue = _vm->_scriptParser->getVar(_imageSwitchVar);
 
-		if (_numSubImages == 1 && varValue != 0) {
+		if (_subImages.size() == 1 && varValue != 0) {
 			subImageId = 0;
 			drawSubImage = true;
-		} else if (_numSubImages != 0) {
-			if (varValue < _numSubImages) {
+		} else if (_subImages.size() != 0) {
+			if (varValue < _subImages.size()) {
 				subImageId = varValue;
 				drawSubImage = true;
 			} else
-				warning("Type 8 Image Var %d: %d exceeds number of subImages %d", _imageSwitchVar, varValue, _numSubImages);
+				warning("Image Switch Var %d: %d exceeds number of subImages %d", _imageSwitchVar, varValue, _subImages.size());
 		}
 	}
 
@@ -451,15 +451,15 @@ void MystAreaImageSwitch::drawConditionalDataToScreen(uint16 state, bool update)
 	int16 subImageId = 0;
 
 
-	if (_numSubImages == 1 && state != 0) {
+	if (_subImages.size() == 1 && state != 0) {
 		subImageId = 0;
 		drawSubImage = true;
-	} else if (_numSubImages != 0) {
-		if (state < _numSubImages) {
+	} else if (_subImages.size() != 0) {
+		if (state < _subImages.size()) {
 			subImageId = state;
 			drawSubImage = true;
 		} else
-			warning("Type 8 Image Var %d: %d exceeds number of subImages %d", _imageSwitchVar, state, _numSubImages);
+			warning("Image Switch Var %d: %d exceeds number of subImages %d", _imageSwitchVar, state, _subImages.size());
 	}
 
 
@@ -496,10 +496,10 @@ const Common::String MystAreaImageSwitch::describe() {
 	Common::String desc = Common::String::format("%s var: %2d",
 	                                             MystAreaActionSwitch::describe().c_str(), _imageSwitchVar);
 
-	if (_numSubImages > 0) {
+	if (_subImages.size() > 0) {
 		desc +=  " subImgs:";
 
-		for (uint i = 0; i < _numSubImages; i++)
+		for (uint i = 0; i < _subImages.size(); i++)
 			desc += Common::String::format(" %d", (int16)_subImages[i].wdib);
 	}
 

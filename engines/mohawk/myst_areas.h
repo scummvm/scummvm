@@ -165,7 +165,6 @@ public:
 
 protected:
 	uint16 _imageSwitchVar;
-	uint16 _numSubImages;
 	Common::Array<SubImage> _subImages;
 };
 
