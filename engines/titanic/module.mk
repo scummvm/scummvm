@@ -2,6 +2,8 @@ MODULE := engines/titanic
 
 MODULE_OBJS := \
 	detection.o \
+	font.o \
+	screen_manager.o \
 	titanic.o
 
 # This module can be built as a plugin

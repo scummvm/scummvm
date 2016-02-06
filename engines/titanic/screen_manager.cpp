@@ -20,36 +20,55 @@
  *
  */
 
-#include "common/scummsys.h"
-#include "common/config-manager.h"
-#include "common/debug-channels.h"
-#include "common/events.h"
-#include "engines/util.h"
-#include "graphics/scaler.h"
-#include "graphics/thumbnail.h"
-#include "titanic/titanic.h"
+#include "titanic/screen_manager.h"
 
 namespace Titanic {
 
-TitanicEngine::TitanicEngine(OSystem *syst, const TitanicGameDescription *gameDesc)
-	: _gameDescription(gameDesc), Engine(syst) {
+CScreenManagerRec::CScreenManagerRec() {
+	_field0 = 0;
+	_field4 = 0;
+	_field8 = 0;
+	_fieldC = 0;
 }
 
-TitanicEngine::~TitanicEngine() {
+/*------------------------------------------------------------------------*/
+
+CScreenManager::CScreenManager() {
+	_screenManagerPtr = nullptr;
+
+	_field4 = 0;
+	_fontRenderSurface = nullptr;
+	_mouseCursor = nullptr;
+	_textCursor = nullptr;
+	_fontNumber = 0;
 }
 
-void TitanicEngine::initialize() {
-	// Set up debug channels
-	DebugMan.addDebugChannel(kDebugCore, "core", "Core engine debug level");
-	DebugMan.addDebugChannel(kDebugScripts, "scripts", "Game scripts");
-	DebugMan.addDebugChannel(kDebugGraphics, "graphics", "Graphics handling");
-	DebugMan.addDebugChannel(kDebugSound, "sound", "Sound and Music handling");
+CScreenManager::~CScreenManager() {
+	_screenManagerPtr = nullptr;
 }
 
-Common::Error TitanicEngine::run() {
-	initialize();
+void CScreenManager::proc2(int v) {
+	if (v)
+		_field4 = v;
+}
 
-	return Common::kNoError;
+bool CScreenManager::proc3(int v) {
+	if (!v || _field4)
+		return false;
+
+	_field4 = 0;
+	proc27();
+	return true;
+}
+
+/*------------------------------------------------------------------------*/
+
+OSScreenManager::OSScreenManager(): CScreenManager() {
+	_field48 = 0;
+	_field4C = 0;
+	_field50 = 0;
+	_field54 = 0;
+	_directDrawManager = nullptr;
 }
 
 } // End of namespace Titanic

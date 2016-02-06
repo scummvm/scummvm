@@ -20,36 +20,19 @@
  *
  */
 
+#ifndef TITANIC_FONT_H
+#define TITANIC_FONT_H
+
 #include "common/scummsys.h"
-#include "common/config-manager.h"
-#include "common/debug-channels.h"
-#include "common/events.h"
-#include "engines/util.h"
-#include "graphics/scaler.h"
-#include "graphics/thumbnail.h"
-#include "titanic/titanic.h"
 
 namespace Titanic {
 
-TitanicEngine::TitanicEngine(OSystem *syst, const TitanicGameDescription *gameDesc)
-	: _gameDescription(gameDesc), Engine(syst) {
-}
-
-TitanicEngine::~TitanicEngine() {
-}
-
-void TitanicEngine::initialize() {
-	// Set up debug channels
-	DebugMan.addDebugChannel(kDebugCore, "core", "Core engine debug level");
-	DebugMan.addDebugChannel(kDebugScripts, "scripts", "Game scripts");
-	DebugMan.addDebugChannel(kDebugGraphics, "graphics", "Graphics handling");
-	DebugMan.addDebugChannel(kDebugSound, "sound", "Sound and Music handling");
-}
-
-Common::Error TitanicEngine::run() {
-	initialize();
-
-	return Common::kNoError;
-}
+class STFont {
+public:
+public:
+	STFont();
+};
 
 } // End of namespace Titanic
+
+#endif /* TITANIC_FONT_H */
