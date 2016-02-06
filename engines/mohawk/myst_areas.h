@@ -145,7 +145,6 @@ protected:
 	void doSwitch(AreaHandler handler);
 
 	uint16 _actionSwitchVar;
-	uint16 _numSubResources;
 	Common::Array<MystArea *> _subResources;
 };
 

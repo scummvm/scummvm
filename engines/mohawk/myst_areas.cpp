@@ -269,11 +269,11 @@ void MystAreaVideo::pauseMovie(bool pause) {
 MystAreaActionSwitch::MystAreaActionSwitch(MohawkEngine_Myst *vm, Common::SeekableReadStream *rlstStream, MystArea *parent) :
 		MystArea(vm, rlstStream, parent) {
 	_actionSwitchVar = rlstStream->readUint16LE();
-	_numSubResources = rlstStream->readUint16LE();
-	debugC(kDebugResource, "\tvar7: %d", _actionSwitchVar);
-	debugC(kDebugResource, "\tnumSubResources: %d", _numSubResources);
+	uint16 numSubResources = rlstStream->readUint16LE();
+	debugC(kDebugResource, "\tactionSwitchVar: %d", _actionSwitchVar);
+	debugC(kDebugResource, "\tnumSubResources: %d", numSubResources);
 
-	for (uint16 i = 0; i < _numSubResources; i++)
+	for (uint16 i = 0; i < numSubResources; i++)
 		_subResources.push_back(vm->loadResource(rlstStream, this));
 }
 
@@ -286,20 +286,20 @@ MystAreaActionSwitch::~MystAreaActionSwitch() {
 
 void MystAreaActionSwitch::doSwitch(AreaHandler handler) {
 	if (_actionSwitchVar == 0xFFFF) {
-		if (_numSubResources == 1)
+		if (_subResources.size() == 1)
 			(_subResources[0]->*handler)();
-		else if (_numSubResources != 0)
-			warning("Action switch resource with _numSubResources of %d, but no control variable", _numSubResources);
+		else if (_subResources.size() != 0)
+			warning("Action switch resource with _numSubResources of %d, but no control variable", _subResources.size());
 	} else {
 		uint16 varValue = _vm->_scriptParser->getVar(_actionSwitchVar);
 
-		if (_numSubResources == 1 && varValue != 0)
+		if (_subResources.size() == 1 && varValue != 0)
 			(_subResources[0]->*handler)();
-		else if (_numSubResources != 0) {
-			if (varValue < _numSubResources)
+		else if (_subResources.size() != 0) {
+			if (varValue < _subResources.size())
 				(_subResources[varValue]->*handler)();
 			else
-				warning("Action switch resource Var %d: %d exceeds number of sub resources %d", _actionSwitchVar, varValue, _numSubResources);
+				warning("Action switch resource Var %d: %d exceeds number of sub resources %d", _actionSwitchVar, varValue, _subResources.size());
 		}
 	}
 }
