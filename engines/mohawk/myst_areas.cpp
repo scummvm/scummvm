@@ -554,9 +554,6 @@ void MystResourceType10::restoreBackground() {
 }
 
 void MystResourceType10::handleMouseDown() {
-	// Tell the engine we are dragging a resource
-	_vm->_dragResource = this;
-
 	const Common::Point &mouse = _vm->_system->getEventManager()->getMousePos();
 	updatePosition(mouse);
 
@@ -596,9 +593,6 @@ void MystResourceType10::handleMouseUp() {
 	_vm->_scriptParser->setVarValue(_var8, value);
 
 	MystResourceType11::handleMouseUp();
-
-	// No longer in drag mode
-	_vm->_dragResource = 0;
 }
 
 void MystResourceType10::handleMouseDrag() {

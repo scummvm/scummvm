@@ -168,8 +168,6 @@ public:
 
 	Common::String wrapMovieFilename(const Common::String &movieName, uint16 stack);
 
-	void reloadSaveList();
-
 	void changeToStack(uint16 stack, uint16 card, uint16 linkSrcSound, uint16 linkDstSound);
 	void changeToCard(uint16 card, TransitionType transition);
 	uint16 getCurCard() { return _curCard; }
@@ -191,7 +189,6 @@ public:
 	MystGameState *_gameState;
 	MystScriptParser *_scriptParser;
 	Common::Array<MystResource *> _resources;
-	MystResource *_dragResource;
 	Common::RandomSource *_rnd;
 
 	bool _showResourceRects;

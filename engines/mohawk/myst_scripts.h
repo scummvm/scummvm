@@ -163,7 +163,6 @@ protected:
 	static const uint16 _startCard[];
 
 	void setupCommonOpcodes();
-	void varUnusedCheck(uint16 op, uint16 var);
 };
 
 } // End of namespace Mohawk

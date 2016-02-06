@@ -260,15 +260,6 @@ bool MystScriptParser::setVarValue(uint16 var, uint16 value) {
 	return false;
 }
 
-// NOTE: Check to be used on Opcodes where var is thought
-// not to be used. This emits a warning if var is nonzero.
-// It is possible that the opcode does use var 0 in this case,
-// but this will catch the majority of missed cases.
-void MystScriptParser::varUnusedCheck(uint16 op, uint16 var) {
-	if (var != 0)
-		warning("Opcode %d: Unused Var %d", op, var);
-}
-
 void MystScriptParser::animatedUpdate(uint16 argc, uint16 *argv, uint16 delay) {
 	uint16 argsRead = 0;
 

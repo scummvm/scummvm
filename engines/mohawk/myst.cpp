@@ -78,7 +78,6 @@ MohawkEngine_Myst::MohawkEngine_Myst(OSystem *syst, const MohawkGameDescription 
 	_needsUpdate = false;
 	_curResource = -1;
 	_hoverResource = 0;
-	_dragResource = 0;
 
 	_gfx = NULL;
 	_console = NULL;
@@ -644,7 +643,6 @@ void MohawkEngine_Myst::changeToCard(uint16 card, TransitionType transition) {
 	}
 
 	// Make sure we have the right cursor showing
-	_dragResource = 0;
 	_hoverResource = 0;
 	_curResource = -1;
 	checkCurrentResource();
