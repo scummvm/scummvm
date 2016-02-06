@@ -231,7 +231,7 @@ Graphics::PixelBuffer SurfaceSdlGraphicsManager::setupScreen(uint screenW, uint 
 			SDL_putenv(const_cast<char *>("SDL_VIDEO_WINDOW_POS=9000,9000"));
 			SDL_SetVideoMode(32, 32, 0, SDL_OPENGL);
 			SDL_putenv(const_cast<char *>("SDL_VIDEO_WINDOW_POS=centered"));
-			OpenGLContext.initialize(OpenGL::kContextGL);
+			initializeOpenGLContext();
 			framebufferSupported = OpenGLContext.framebufferObjectSupported;
 			if (_fullscreen && framebufferSupported) {
 				screenW = _desktopW;
@@ -378,7 +378,7 @@ Graphics::PixelBuffer SurfaceSdlGraphicsManager::setupScreen(uint screenW, uint 
 		debug("INFO: GLSL version: %s", glGetString(GL_SHADING_LANGUAGE_VERSION));
 #endif
 
-		OpenGLContext.initialize(OpenGL::kContextGL);
+		initializeOpenGLContext();
 		_surfaceRenderer = OpenGL::createBestSurfaceRenderer();
 	}
 #endif
@@ -452,6 +452,18 @@ Graphics::PixelBuffer SurfaceSdlGraphicsManager::setupScreen(uint screenW, uint 
 }
 
 #ifdef USE_OPENGL
+
+void SurfaceSdlGraphicsManager::initializeOpenGLContext() const {
+	OpenGL::ContextType type;
+
+#ifdef USE_GLES2
+	type = OpenGL::kContextGLES2;
+#else
+	type = OpenGL::kContextGL;
+#endif
+
+	OpenGLContext.initialize(type);
+}
 
 #define BITMAP_TEXTURE_SIZE 256
 

@@ -177,6 +177,7 @@ protected:
 
 	OpenGL::Texture *_sideTextures[2];
 
+	void initializeOpenGLContext() const;
 	void updateOverlayTextures();
 	void drawOverlayOpenGL();
 	void drawSideTexturesOpenGL();
