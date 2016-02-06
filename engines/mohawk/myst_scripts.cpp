@@ -154,7 +154,7 @@ void MystScriptParser::setupCommonOpcodes() {
 
 #undef OPCODE
 
-void MystScriptParser::runScript(MystScript script, MystResource *invokingResource) {
+void MystScriptParser::runScript(MystScript script, MystArea *invokingResource) {
 	debugC(kDebugScript, "Script Size: %d", script->size());
 
 	// Scripted drawing takes more time to simulate older hardware
@@ -442,7 +442,7 @@ void MystScriptParser::o_triggerMovie(uint16 op, uint16 var, uint16 argc, uint16
 	debugC(kDebugScript, "\tDirection: %d", direction);
 
 	// Trigger resource 6 movie overriding play direction
-	MystResourceType6 *resource = static_cast<MystResourceType6 *>(_invokingResource);
+	MystAreaVideo *resource = static_cast<MystAreaVideo *>(_invokingResource);
 	resource->setDirection(direction);
 	resource->playMovie();
 
@@ -459,7 +459,7 @@ void MystScriptParser::o_drawAreaState(uint16 op, uint16 var, uint16 argc, uint1
 	debugC(kDebugScript, "Opcode %d: drawAreaState, state: %d", op, argv[0]);
 	debugC(kDebugScript, "\tVar: %d", var);
 
-	MystResourceType8 *parent = static_cast<MystResourceType8 *>(_invokingResource->_parent);
+	MystAreaImageSwitch *parent = static_cast<MystAreaImageSwitch *>(_invokingResource->_parent);
 	parent->drawConditionalDataToScreen(argv[0]);
 }
 
@@ -522,7 +522,7 @@ void MystScriptParser::o_enableAreas(uint16 op, uint16 var, uint16 argc, uint16 
 		for (uint16 i = 0; i < count; i++) {
 			debugC(kDebugScript, "Enable hotspot index %d", argv[i + 1]);
 
-			MystResource *resource = nullptr;
+			MystArea *resource = nullptr;
 			if (argv[i + 1] == 0xFFFF)
 				resource = _invokingResource;
 			else
@@ -547,7 +547,7 @@ void MystScriptParser::o_disableAreas(uint16 op, uint16 var, uint16 argc, uint16
 		for (uint16 i = 0; i < count; i++) {
 			debugC(kDebugScript, "Disable hotspot index %d", argv[i + 1]);
 
-			MystResource *resource = nullptr;
+			MystArea *resource = nullptr;
 			if (argv[i + 1] == 0xFFFF)
 				resource = _invokingResource;
 			else
@@ -578,7 +578,7 @@ void MystScriptParser::o_toggleAreasActivation(uint16 op, uint16 var, uint16 arg
 		for (uint16 i = 0; i < count; i++) {
 			debugC(kDebugScript, "Enable/Disable hotspot index %d", argv[i + 1]);
 
-			MystResource *resource = nullptr;
+			MystArea *resource = nullptr;
 			if (argv[i + 1] == 0xFFFF)
 				resource = _invokingResource;
 			else

@@ -34,7 +34,7 @@ namespace Mohawk {
 #define DECLARE_OPCODE(x) void x(uint16 op, uint16 var, uint16 argc, uint16 *argv)
 
 class MohawkEngine_Myst;
-class MystResource;
+class MystArea;
 
 enum MystScriptType {
 	kMystScriptNone,
@@ -63,11 +63,11 @@ public:
 	MystScriptParser(MohawkEngine_Myst *vm);
 	virtual ~MystScriptParser();
 
-	void runScript(MystScript script, MystResource *invokingResource = nullptr);
+	void runScript(MystScript script, MystArea *invokingResource = nullptr);
 	void runOpcode(uint16 op, uint16 var = 0, uint16 argc = 0, uint16 *argv = nullptr);
 	const Common::String getOpcodeDesc(uint16 op);
 	MystScript readScript(Common::SeekableReadStream *stream, MystScriptType type);
-	void setInvokingResource(MystResource *resource) { _invokingResource = resource; }
+	void setInvokingResource(MystArea *resource) { _invokingResource = resource; }
 
 	virtual void disablePersistentScripts() = 0;
 	virtual void runPersistentScripts() = 0;
@@ -151,7 +151,7 @@ protected:
 
 	Common::Array<MystOpcode *> _opcodes;
 
-	MystResource *_invokingResource;
+	MystArea *_invokingResource;
 
 	uint16 _savedCardId;
 	uint16 _savedMapCardId;

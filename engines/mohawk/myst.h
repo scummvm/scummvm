@@ -41,9 +41,9 @@ class MystScriptParser;
 class MystConsole;
 class MystGameState;
 class MystOptionsDialog;
-class MystResource;
-class MystResourceType8;
-class MystResourceType13;
+class MystArea;
+class MystAreaImageSwitch;
+class MystAreaHover;
 
 // Engine Debug Flags
 enum {
@@ -175,7 +175,7 @@ public:
 	void setMainCursor(uint16 cursor);
 	uint16 getMainCursor() { return _mainCursor; }
 	void checkCursorHints();
-	MystResource *updateCurrentResource();
+	MystArea *updateCurrentResource();
 	bool skippableWait(uint32 duration);
 
 	bool _tweaksEnabled;
@@ -184,18 +184,16 @@ public:
 	bool _needsShowMap;
 	bool _needsShowDemoMenu;
 
-	MystView _view;
 	MystGraphics *_gfx;
 	MystGameState *_gameState;
 	MystScriptParser *_scriptParser;
-	Common::Array<MystResource *> _resources;
+	Common::Array<MystArea *> _resources;
 	Common::RandomSource *_rnd;
 
-	bool _showResourceRects;
-	MystResource *loadResource(Common::SeekableReadStream *rlstStream, MystResource *parent);
+	MystArea *loadResource(Common::SeekableReadStream *rlstStream, MystArea *parent);
 	void setResourceEnabled(uint16 resourceId, bool enable);
 	void redrawArea(uint16 var, bool update = true);
-	void redrawResource(MystResourceType8 *resource, bool update = true);
+	void redrawResource(MystAreaImageSwitch *resource, bool update = true);
 	void drawResourceImages();
 	void drawCardBackground();
 	uint16 getCardBackgroundId();
@@ -221,7 +219,9 @@ private:
 
 	uint16 _curStack;
 	uint16 _curCard;
+	MystView _view;
 
+	bool _showResourceRects;
 	bool _runExitScript;
 
 	void dropPage();
@@ -237,7 +237,7 @@ private:
 	void drawResourceRects();
 	void checkCurrentResource();
 	int16 _curResource;
-	MystResourceType13 *_hoverResource;
+	MystAreaHover *_hoverResource;
 
 	uint16 _cursorHintCount;
 	MystCursorHint *_cursorHints;

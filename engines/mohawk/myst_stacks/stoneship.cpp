@@ -402,9 +402,9 @@ void Stoneship::o_pumpTurnOff(uint16 op, uint16 var, uint16 argc, uint16 *argv) 
 		}
 
 		for (uint i = 0; i < _vm->_resources.size(); i++) {
-			MystResource *resource = _vm->_resources[i];
-			if (resource->type == kMystConditionalImage && resource->getType8Var() == buttonVar) {
-				static_cast<MystResourceType8 *>(resource)->drawConditionalDataToScreen(0, true);
+			MystArea *resource = _vm->_resources[i];
+			if (resource->type == kMystAreaImageSwitch && resource->getImageSwitchVar() == buttonVar) {
+				static_cast<MystAreaImageSwitch *>(resource)->drawConditionalDataToScreen(0, true);
 				break;
 			}
 		}
@@ -437,9 +437,9 @@ void Stoneship::o_cabinBookMovie(uint16 op, uint16 var, uint16 argc, uint16 *arg
 void Stoneship::o_drawerOpenSirius(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Open drawer", op);
 
-	MystResourceType8 *drawer = static_cast<MystResourceType8 *>(_vm->_resources[argv[0]]);
+	MystAreaImageSwitch *drawer = static_cast<MystAreaImageSwitch *>(_vm->_resources[argv[0]]);
 
-	if (drawer->getType8Var() == 35) {
+	if (drawer->getImageSwitchVar() == 35) {
 		drawer->drawConditionalDataToScreen(getVar(102), 0);
 	} else {
 		drawer->drawConditionalDataToScreen(0, 0);
@@ -466,7 +466,7 @@ void Stoneship::o_telescopeStart(uint16 op, uint16 var, uint16 argc, uint16 *arg
 void Stoneship::o_telescopeMove(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Telescope move", op);
 
-	MystResourceType11 *display = static_cast<MystResourceType11 *>(_invokingResource);
+	MystAreaDrag *display = static_cast<MystAreaDrag *>(_invokingResource);
 	const Common::Point &mouse = _vm->_system->getEventManager()->getMousePos();
 
 	// Compute telescope position
@@ -489,7 +489,7 @@ void Stoneship::o_telescopeStop(uint16 op, uint16 var, uint16 argc, uint16 *argv
 void Stoneship::o_generatorStart(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Generator start", op);
 
-	MystResourceType11 *handle = static_cast<MystResourceType11 *>(_invokingResource);
+	MystAreaDrag *handle = static_cast<MystAreaDrag *>(_invokingResource);
 
 	uint16 soundId = handle->getList1(0);
 	if (soundId)
@@ -504,7 +504,7 @@ void Stoneship::o_generatorStart(uint16 op, uint16 var, uint16 argc, uint16 *arg
 	_batteryNextTime = _vm->_system->getMillis() + 1000;
 
 	// Start handle movie
-	MystResourceType6 *movie = static_cast<MystResourceType6 *>(handle->getSubResource(0));
+	MystAreaVideo *movie = static_cast<MystAreaVideo *>(handle->getSubResource(0));
 	movie->playMovie();
 
 	soundId = handle->getList2(0);
@@ -530,8 +530,8 @@ void Stoneship::o_generatorStop(uint16 op, uint16 var, uint16 argc, uint16 *argv
 	}
 
 	// Pause handle movie
-	MystResourceType11 *handle = static_cast<MystResourceType11 *>(_invokingResource);
-	MystResourceType6 *movie = static_cast<MystResourceType6 *>(handle->getSubResource(0));
+	MystAreaDrag *handle = static_cast<MystAreaDrag *>(_invokingResource);
+	MystAreaVideo *movie = static_cast<MystAreaVideo *>(handle->getSubResource(0));
 	movie->pauseMovie(true);
 
 	uint16 soundId = handle->getList3(0);
@@ -582,7 +582,7 @@ void Stoneship::batteryDeplete_run() {
 void Stoneship::o_drawerOpenAchenar(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Open drawer", op);
 
-	MystResourceType8 *drawer = static_cast<MystResourceType8 *>(_vm->_resources[argv[0]]);
+	MystAreaImageSwitch *drawer = static_cast<MystAreaImageSwitch *>(_vm->_resources[argv[0]]);
 	drawer->drawConditionalDataToScreen(0, 0);
 	_vm->_gfx->runTransition(kTransitionTopToBottom, drawer->getRect(), 25, 5);
 }
@@ -617,7 +617,7 @@ void Stoneship::o_hologramSelectionStart(uint16 op, uint16 var, uint16 argc, uin
 void Stoneship::o_hologramSelectionMove(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Hologram move", op);
 
-	MystResourceType11 *handle = static_cast<MystResourceType11 *>(_invokingResource);
+	MystAreaDrag *handle = static_cast<MystAreaDrag *>(_invokingResource);
 	const Common::Point &mouse = _vm->_system->getEventManager()->getMousePos();
 
 	if (handle->getRect().contains(mouse)) {
@@ -822,20 +822,20 @@ void Stoneship::drawerClose(uint16 drawer) {
 	_vm->drawCardBackground();
 	_vm->drawResourceImages();
 
-	MystResource *res = _vm->_resources[drawer];
+	MystArea *res = _vm->_resources[drawer];
 	_vm->_gfx->runTransition(kTransitionBottomToTop, res->getRect(), 25, 5);
 }
 
 void Stoneship::o_hologramDisplay_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Hologram display init", op);
-	_hologramDisplay = static_cast<MystResourceType6 *>(_invokingResource);
+	_hologramDisplay = static_cast<MystAreaVideo *>(_invokingResource);
 
 	_hologramDisplayPos = 0;
 }
 
 void Stoneship::o_hologramSelection_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Hologram selection init", op);
-	_hologramSelection = static_cast<MystResourceType6 *>(_invokingResource);
+	_hologramSelection = static_cast<MystAreaVideo *>(_invokingResource);
 }
 
 void Stoneship::batteryGaugeUpdate() {
@@ -856,7 +856,7 @@ void Stoneship::o_battery_init(uint16 op, uint16 var, uint16 argc, uint16 *argv)
 	// Used for Card 2160 (Lighthouse Battery Pack Closeup)
 	debugC(kDebugScript, "Opcode %d: Battery init", op);
 
-	_batteryGauge = static_cast<MystResourceType8 *>(_invokingResource);
+	_batteryGauge = static_cast<MystAreaImageSwitch *>(_invokingResource);
 
 	batteryGaugeUpdate();
 }
@@ -1014,7 +1014,7 @@ void Stoneship::o_achenarDrawers_init(uint16 op, uint16 var, uint16 argc, uint16
 void Stoneship::o_cloudOrb_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Cloud orb init", op);
 
-	_cloudOrbMovie = static_cast<MystResourceType6 *>(_invokingResource);
+	_cloudOrbMovie = static_cast<MystAreaVideo *>(_invokingResource);
 	_cloudOrbSound = argv[0];
 	_cloudOrbStopSound = argv[1];
 }

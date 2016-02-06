@@ -1251,7 +1251,7 @@ void Myst::o_imagerPlayButton(uint16 op, uint16 var, uint16 argc, uint16 *argv) 
 void Myst::o_imagerEraseButton(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Imager erase button", op);
 
-	_imagerRedButton = static_cast<MystResourceType8 *>(_invokingResource->_parent);
+	_imagerRedButton = static_cast<MystAreaImageSwitch *>(_invokingResource->_parent);
 	for (uint i = 0; i < 4; i++)
 		_imagerSound[i] = argv[i];
 	_imagerValidationCard = argv[4];
@@ -1351,7 +1351,7 @@ void Myst::o_towerElevatorAnimation(uint16 op, uint16 var, uint16 argc, uint16 *
 void Myst::o_generatorButtonPressed(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Generator button pressed", op);
 
-	MystResource *button = _invokingResource->_parent;
+	MystArea *button = _invokingResource->_parent;
 
 	generatorRedrawRocket();
 
@@ -1385,7 +1385,7 @@ void Myst::o_generatorButtonPressed(uint16 op, uint16 var, uint16 argc, uint16 *
 	}
 
 	// Redraw button
-	_vm->redrawArea(button->getType8Var());
+	_vm->redrawArea(button->getImageSwitchVar());
 
 	// Blow breaker
 	if (_state.generatorVoltage > 59)
@@ -1398,8 +1398,8 @@ void Myst::generatorRedrawRocket() {
 	_vm->redrawArea(97);
 }
 
-void Myst::generatorButtonValue(MystResource *button, uint16 &mask, uint16 &value) {
-	switch (button->getType8Var()) {
+void Myst::generatorButtonValue(MystArea *button, uint16 &mask, uint16 &value) {
+	switch (button->getImageSwitchVar()) {
 	case 52: // Generator Switch #1
 		mask = 1;
 		value = 10;
@@ -1466,7 +1466,7 @@ void Myst::o_cabinSafeHandleStartMove(uint16 op, uint16 var, uint16 argc, uint16
 	debugC(kDebugScript, "Opcode %d: Cabin safe handle start move", op);
 
 	// Used on Card 4100
-	MystResourceType12 *handle = static_cast<MystResourceType12 *>(_invokingResource);
+	MystVideoInfo *handle = static_cast<MystVideoInfo *>(_invokingResource);
 	handle->drawFrame(0);
 	_vm->_cursor->setCursor(700);
 	_tempVar = 0;
@@ -1476,7 +1476,7 @@ void Myst::o_cabinSafeHandleMove(uint16 op, uint16 var, uint16 argc, uint16 *arg
 	debugC(kDebugScript, "Opcode %d: Cabin safe handle move", op);
 
 	// Used on Card 4100
-	MystResourceType12 *handle = static_cast<MystResourceType12 *>(_invokingResource);
+	MystVideoInfo *handle = static_cast<MystVideoInfo *>(_invokingResource);
 
 	if (handle->pullLeverV()) {
 		// Sound not played yet
@@ -1506,7 +1506,7 @@ void Myst::o_cabinSafeHandleEndMove(uint16 op, uint16 var, uint16 argc, uint16 *
 	debugC(kDebugScript, "Opcode %d: Cabin safe handle end move", op);
 
 	// Used on Card 4100
-	MystResourceType12 *handle = static_cast<MystResourceType12 *>(_invokingResource);
+	MystVideoInfo *handle = static_cast<MystVideoInfo *>(_invokingResource);
 	handle->drawFrame(0);
 	_vm->checkCursorHints();
 }
@@ -1804,7 +1804,7 @@ void Myst::o_observatoryTimeSliderMove(uint16 op, uint16 var, uint16 argc, uint1
 void Myst::o_circuitBreakerStartMove(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Circuit breaker start move", op);
 
-	MystResourceType12 *breaker = static_cast<MystResourceType12 *>(_invokingResource);
+	MystVideoInfo *breaker = static_cast<MystVideoInfo *>(_invokingResource);
 	breaker->drawFrame(0);
 	_vm->_cursor->setCursor(700);
 	_tempVar = 0;
@@ -1813,7 +1813,7 @@ void Myst::o_circuitBreakerStartMove(uint16 op, uint16 var, uint16 argc, uint16 
 void Myst::o_circuitBreakerMove(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Circuit breaker move", op);
 
-	MystResourceType12 *breaker = static_cast<MystResourceType12 *>(_invokingResource);
+	MystVideoInfo *breaker = static_cast<MystVideoInfo *>(_invokingResource);
 	const Common::Point &mouse = _vm->_system->getEventManager()->getMousePos();
 
 	int16 maxStep = breaker->getStepsV() - 1;
@@ -1828,7 +1828,7 @@ void Myst::o_circuitBreakerMove(uint16 op, uint16 var, uint16 argc, uint16 *argv
 		// Breaker switched
 		if (step == maxStep) {
 			// Choose breaker
-			if (breaker->getType8Var() == 93) {
+			if (breaker->getImageSwitchVar() == 93) {
 				// Voltage is still too high or not broken
 				if (_state.generatorVoltage > 59 || _state.generatorBreakers != 1) {
 					uint16 soundId = breaker->getList2(1);
@@ -1864,8 +1864,8 @@ void Myst::o_circuitBreakerMove(uint16 op, uint16 var, uint16 argc, uint16 *argv
 void Myst::o_circuitBreakerEndMove(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Circuit breaker end move", op);
 
-	MystResourceType12 *breaker = static_cast<MystResourceType12 *>(_invokingResource);
-	_vm->redrawArea(breaker->getType8Var());
+	MystVideoInfo *breaker = static_cast<MystVideoInfo *>(_invokingResource);
+	_vm->redrawArea(breaker->getImageSwitchVar());
 	_vm->checkCursorHints();
 }
 
@@ -2202,7 +2202,7 @@ void Myst::o_rocketSoundSliderEndMove(uint16 op, uint16 var, uint16 argc, uint16
 }
 
 void Myst::rocketSliderMove() {
-	MystResourceType10 *slider = static_cast<MystResourceType10 *>(_invokingResource);
+	MystAreaSlider *slider = static_cast<MystAreaSlider *>(_invokingResource);
 
 	if (_state.generatorVoltage == 59 && !_state.generatorBreakers) {
 		uint16 soundId = rocketSliderGetSound(slider->_pos.y);
@@ -2262,7 +2262,7 @@ void Myst::rocketCheckSolution() {
 
 	if (solved) {
 		// Reset lever position
-		MystResourceType12 *lever = static_cast<MystResourceType12 *>(_invokingResource);
+		MystVideoInfo *lever = static_cast<MystVideoInfo *>(_invokingResource);
 		lever->drawFrame(0);
 
 		// Book appearing
@@ -2299,7 +2299,7 @@ void Myst::rocketCheckSolution() {
 void Myst::o_rocketPianoStart(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Rocket piano start move", op);
 
-	MystResourceType11 *key = static_cast<MystResourceType11 *>(_invokingResource);
+	MystAreaDrag *key = static_cast<MystAreaDrag *>(_invokingResource);
 
 	// What the hell??
 	Common::Rect src = key->getSubImage(1).rect;
@@ -2326,7 +2326,7 @@ void Myst::o_rocketPianoMove(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	Common::Rect piano = Common::Rect(85, 123, 460, 270);
 
 	// Unpress previous key
-	MystResourceType11 *key = static_cast<MystResourceType11 *>(_invokingResource);
+	MystAreaDrag *key = static_cast<MystAreaDrag *>(_invokingResource);
 
 	Common::Rect src = key->getSubImage(0).rect;
 	Common::Rect dest = src;
@@ -2337,10 +2337,10 @@ void Myst::o_rocketPianoMove(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	_vm->_gfx->copyImageSectionToScreen(key->getSubImage(0).wdib, src, dest);
 
 	if (piano.contains(mouse)) {
-		MystResource *resource = _vm->updateCurrentResource();
-		if (resource && resource->type == kMystDragArea) {
+		MystArea *resource = _vm->updateCurrentResource();
+		if (resource && resource->type == kMystAreaDrag) {
 			// Press new key
-			key = static_cast<MystResourceType11 *>(resource);
+			key = static_cast<MystAreaDrag *>(resource);
 			src = key->getSubImage(1).rect;
 			Common::Rect rect = key->getSubImage(0).rect;
 			dest = rect;
@@ -2368,7 +2368,7 @@ void Myst::o_rocketPianoMove(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 void Myst::o_rocketPianoStop(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Rocket piano end move", op);
 
-	MystResourceType8 *key = static_cast<MystResourceType8 *>(_invokingResource);
+	MystAreaImageSwitch *key = static_cast<MystAreaImageSwitch *>(_invokingResource);
 
 	Common::Rect src = key->getSubImage(0).rect;
 	Common::Rect dest = src;
@@ -2386,7 +2386,7 @@ void Myst::o_rocketPianoStop(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 void Myst::o_rocketLeverStartMove(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Rocket lever start move", op);
 
-	MystResourceType12 *lever = static_cast<MystResourceType12 *>(_invokingResource);
+	MystVideoInfo *lever = static_cast<MystVideoInfo *>(_invokingResource);
 
 	_vm->_cursor->setCursor(700);
 	_rocketLeverPosition = 0;
@@ -2406,7 +2406,7 @@ void Myst::o_rocketOpenBook(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 void Myst::o_rocketLeverMove(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Rocket lever move", op);
 
-	MystResourceType12 *lever = static_cast<MystResourceType12 *>(_invokingResource);
+	MystVideoInfo *lever = static_cast<MystVideoInfo *>(_invokingResource);
 	const Common::Point &mouse = _vm->_system->getEventManager()->getMousePos();
 
 	// Make the lever follow the mouse
@@ -2435,7 +2435,7 @@ void Myst::o_rocketLeverMove(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 void Myst::o_rocketLeverEndMove(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Rocket lever end move", op);
 
-	MystResourceType12 *lever = static_cast<MystResourceType12 *>(_invokingResource);
+	MystVideoInfo *lever = static_cast<MystVideoInfo *>(_invokingResource);
 
 	_vm->checkCursorHints();
 	_rocketLeverPosition = 0;
@@ -2712,7 +2712,7 @@ void Myst::clockWheel_run() {
 }
 
 void Myst::clockWheelStartTurn(uint16 wheel) {
-	MystResourceType11 *resource = static_cast<MystResourceType11 *>(_invokingResource);
+	MystAreaDrag *resource = static_cast<MystAreaDrag *>(_invokingResource);
 	uint16 soundId = resource->getList1(0);
 
 	if (soundId)
@@ -2874,7 +2874,7 @@ void Myst::o_imagerEraseStop(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 
 void Myst::o_clockLeverStartMove(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Clock lever start move", op);
-	MystResourceType12 *lever = static_cast<MystResourceType12 *>(_invokingResource);
+	MystVideoInfo *lever = static_cast<MystVideoInfo *>(_invokingResource);
 	lever->drawFrame(0);
 	_vm->_cursor->setCursor(700);
 	_clockMiddleGearMovedAlone = false;
@@ -2885,7 +2885,7 @@ void Myst::o_clockLeverMove(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Clock left lever move", op);
 
 	if (!_clockLeverPulled) {
-		MystResourceType12 *lever = static_cast<MystResourceType12 *>(_invokingResource);
+		MystVideoInfo *lever = static_cast<MystVideoInfo *>(_invokingResource);
 
 		// If lever pulled
 		if (lever->pullLeverV()) {
@@ -2977,7 +2977,7 @@ void Myst::o_clockLeverEndMove(uint16 op, uint16 var, uint16 argc, uint16 *argv)
 		_vm->_sound->replaceSoundMyst(8113);
 
 	// Release lever
-	MystResourceType12 *lever = static_cast<MystResourceType12 *>(_invokingResource);
+	MystVideoInfo *lever = static_cast<MystVideoInfo *>(_invokingResource);
 	lever->releaseLeverV();
 
 	// Check if puzzle is solved
@@ -3021,7 +3021,7 @@ void Myst::clockGearsCheckSolution() {
 void Myst::o_clockResetLeverStartMove(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Clock reset lever start move", op);
 
-	MystResourceType12 *lever = static_cast<MystResourceType12 *>(_invokingResource);
+	MystVideoInfo *lever = static_cast<MystVideoInfo *>(_invokingResource);
 	lever->drawFrame(0);
 	_vm->_cursor->setCursor(700);
 }
@@ -3029,7 +3029,7 @@ void Myst::o_clockResetLeverStartMove(uint16 op, uint16 var, uint16 argc, uint16
 void Myst::o_clockResetLeverMove(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Clock reset lever move", op);
 
-	MystResourceType12 *lever = static_cast<MystResourceType12 *>(_invokingResource);
+	MystVideoInfo *lever = static_cast<MystVideoInfo *>(_invokingResource);
 
 	// If pulled
 	if (lever->pullLeverV() && _clockWeightPosition != 0)
@@ -3125,7 +3125,7 @@ void Myst::o_clockResetLeverEndMove(uint16 op, uint16 var, uint16 argc, uint16 *
 	debugC(kDebugScript, "Opcode %d: Clock reset lever end move", op);
 
 	// Get current lever frame
-	MystResourceType12 *lever = static_cast<MystResourceType12 *>(_invokingResource);
+	MystVideoInfo *lever = static_cast<MystVideoInfo *>(_invokingResource);
 
 	lever->releaseLeverV();
 
@@ -3189,8 +3189,8 @@ void Myst::towerRotationMap_run() {
 
 void Myst::o_towerRotationMap_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	_towerRotationMapRunning = true;
-	_towerRotationMapTower = static_cast<MystResourceType11 *>(_invokingResource);
-	_towerRotationMapLabel = static_cast<MystResourceType8 *>(_vm->_resources[argv[0]]);
+	_towerRotationMapTower = static_cast<MystAreaDrag *>(_invokingResource);
+	_towerRotationMapLabel = static_cast<MystAreaImageSwitch *>(_vm->_resources[argv[0]]);
 	_tempVar = 0;
 	_startTime = 0;
 	_towerRotationMapClicked = false;
@@ -3202,7 +3202,7 @@ void Myst::towerRotationDrawBuildings() {
 
 	// Draw other resources
 	for (uint i = 1; i <= 10; i++) {
-		MystResourceType8 *resource = static_cast<MystResourceType8 *>(_vm->_resources[i]);
+		MystAreaImageSwitch *resource = static_cast<MystAreaImageSwitch *>(_vm->_resources[i]);
 		_vm->redrawResource(resource, false);
 	}
 }
@@ -3322,7 +3322,7 @@ void Myst::o_butterflies_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) 
 
 	// Used for Card 4256 (Butterfly Movie Activation)
 	if (!_butterfliesMoviePlayed) {
-		MystResourceType6 *butterflies = static_cast<MystResourceType6 *>(_invokingResource);
+		MystAreaVideo *butterflies = static_cast<MystAreaVideo *>(_invokingResource);
 		butterflies->playMovie();
 
 		_butterfliesMoviePlayed = true;
@@ -3333,8 +3333,8 @@ void Myst::o_imager_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Imager init", op);
 	debugC(kDebugScript, "Var: %d", var);
 
-	MystResourceType7 *select = static_cast<MystResourceType7 *>(_invokingResource);
-	_imagerMovie = static_cast<MystResourceType6 *>(select->getSubResource(getVar(var)));
+	MystAreaActionSwitch *select = static_cast<MystAreaActionSwitch *>(_invokingResource);
+	_imagerMovie = static_cast<MystAreaVideo *>(select->getSubResource(getVar(var)));
 	_imagerRunning = true;
 }
 
@@ -3377,8 +3377,8 @@ void Myst::libraryBookcaseTransform_run(void) {
 
 void Myst::o_libraryBookcaseTransform_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	if (_libraryBookcaseChanged) {
-		MystResourceType7 *resource = static_cast<MystResourceType7 *>(_invokingResource);
-		_libraryBookcaseMovie = static_cast<MystResourceType6 *>(resource->getSubResource(getVar(0)));
+		MystAreaActionSwitch *resource = static_cast<MystAreaActionSwitch *>(_invokingResource);
+		_libraryBookcaseMovie = static_cast<MystAreaVideo *>(resource->getSubResource(getVar(0)));
 		_libraryBookcaseSoundId = argv[0];
 		_libraryBookcaseMoving = true;
 	}
@@ -3471,17 +3471,17 @@ void Myst::o_observatory_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) 
 
 	_tempVar = 0;
 	_observatoryNotInitialized = true;
-	_observatoryVisualizer = static_cast<MystResourceType8 *>(_invokingResource);
-	_observatoryGoButton = static_cast<MystResourceType8 *>(_vm->_resources[argv[0]]);
+	_observatoryVisualizer = static_cast<MystAreaImageSwitch *>(_invokingResource);
+	_observatoryGoButton = static_cast<MystAreaImageSwitch *>(_vm->_resources[argv[0]]);
 	if (observatoryIsDDMMYYYY2400()) {
-		_observatoryDaySlider = static_cast<MystResourceType10 *>(_vm->_resources[argv[1]]);
-		_observatoryMonthSlider = static_cast<MystResourceType10 *>(_vm->_resources[argv[2]]);
+		_observatoryDaySlider = static_cast<MystAreaSlider *>(_vm->_resources[argv[1]]);
+		_observatoryMonthSlider = static_cast<MystAreaSlider *>(_vm->_resources[argv[2]]);
 	} else {
-		_observatoryMonthSlider = static_cast<MystResourceType10 *>(_vm->_resources[argv[1]]);
-		_observatoryDaySlider = static_cast<MystResourceType10 *>(_vm->_resources[argv[2]]);
+		_observatoryMonthSlider = static_cast<MystAreaSlider *>(_vm->_resources[argv[1]]);
+		_observatoryDaySlider = static_cast<MystAreaSlider *>(_vm->_resources[argv[2]]);
 	}
-	_observatoryYearSlider = static_cast<MystResourceType10 *>(_vm->_resources[argv[3]]);
-	_observatoryTimeSlider = static_cast<MystResourceType10 *>(_vm->_resources[argv[4]]);
+	_observatoryYearSlider = static_cast<MystAreaSlider *>(_vm->_resources[argv[3]]);
+	_observatoryTimeSlider = static_cast<MystAreaSlider *>(_vm->_resources[argv[4]]);
 
 	// Set date selection sliders position
 	_observatoryDaySlider->setPosition(_state.observatoryDaySlider);
@@ -3614,13 +3614,13 @@ void Myst::gullsFly2_run() {
 void Myst::o_treeCard_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Enter tree card", op);
 
-	_tree = static_cast<MystResourceType8 *>(_invokingResource);
+	_tree = static_cast<MystAreaImageSwitch *>(_invokingResource);
 }
 
 void Myst::o_treeEntry_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Enter tree card with entry", op);
 
-	_treeAlcove = static_cast<MystResourceType5 *>(_invokingResource);
+	_treeAlcove = static_cast<MystAreaAction *>(_invokingResource);
 	_treeMinAccessiblePosition = argv[0];
 	_treeMaxAccessiblePosition = argv[1];
 
@@ -3704,11 +3704,11 @@ void Myst::boilerGaugeInit() {
 void Myst::o_rocketSliders_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Rocket sliders init", op);
 
-	_rocketSlider1 = static_cast<MystResourceType10 *>(_vm->_resources[argv[0]]);
-	_rocketSlider2 = static_cast<MystResourceType10 *>(_vm->_resources[argv[1]]);
-	_rocketSlider3 = static_cast<MystResourceType10 *>(_vm->_resources[argv[2]]);
-	_rocketSlider4 = static_cast<MystResourceType10 *>(_vm->_resources[argv[3]]);
-	_rocketSlider5 = static_cast<MystResourceType10 *>(_vm->_resources[argv[4]]);
+	_rocketSlider1 = static_cast<MystAreaSlider *>(_vm->_resources[argv[0]]);
+	_rocketSlider2 = static_cast<MystAreaSlider *>(_vm->_resources[argv[1]]);
+	_rocketSlider3 = static_cast<MystAreaSlider *>(_vm->_resources[argv[2]]);
+	_rocketSlider4 = static_cast<MystAreaSlider *>(_vm->_resources[argv[3]]);
+	_rocketSlider5 = static_cast<MystAreaSlider *>(_vm->_resources[argv[4]]);
 
 	// Initialize sliders position
 	for (uint i = 0; i < 5; i++)

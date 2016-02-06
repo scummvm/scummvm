@@ -109,7 +109,7 @@ private:
 	uint16 _fortressRotationBrake; // 80
 	uint16 _fortressPosition; // 82
 	uint16 _fortressRotationSounds[4]; // 86 to 92
-	MystResourceType6 *_fortressRotationGears; // 172
+	MystAreaVideo *_fortressRotationGears; // 172
 
 	bool _fortressRotationShortMovieWorkaround;
 	uint32 _fortressRotationShortMovieCount;
@@ -121,8 +121,8 @@ private:
 	uint16 _fortressSimulationBrake; // 98
 	uint16 _fortressSimulationStartSound1; // 102
 	uint16 _fortressSimulationStartSound2; // 100
-	MystResourceType6 *_fortressSimulationHolo; // 160
-	MystResourceType6 *_fortressSimulationStartup; // 164
+	MystAreaVideo *_fortressSimulationHolo; // 160
+	MystAreaVideo *_fortressSimulationStartup; // 164
 
 	uint16 _elevatorGoingDown; // 112
 
@@ -143,10 +143,10 @@ private:
 	bool _birdSinging; // 144
 	uint32 _birdCrankStartTime; // 136
 	uint32 _birdSingEndTime; // 140
-	MystResourceType6 *_bird; // 152
+	MystAreaVideo *_bird; // 152
 
 
-	MystResourceType6 *_snakeBox; // 156
+	MystAreaVideo *_snakeBox; // 156
 };
 
 } // End of namespace MystStacks

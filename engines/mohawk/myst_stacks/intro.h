@@ -29,7 +29,7 @@
 
 namespace Mohawk {
 
-class MystResourceType6;
+class MystAreaVideo;
 struct MystScriptEntry;
 
 namespace MystStacks {
@@ -60,7 +60,7 @@ private:
 	uint16 _introStep;
 
 	bool _linkBookRunning;
-	MystResourceType6 *_linkBookMovie;
+	MystAreaVideo *_linkBookMovie;
 };
 
 } // End of namespace MystStacks

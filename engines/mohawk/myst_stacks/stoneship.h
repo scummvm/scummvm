@@ -98,7 +98,7 @@ private:
 
 	bool _batteryGaugeRunning;
 	uint16 _batteryLastCharge; // 92
-	MystResourceType8 *_batteryGauge; // 96
+	MystAreaImageSwitch *_batteryGauge; // 96
 	void batteryGaugeUpdate();
 	void batteryGauge_run();
 
@@ -113,8 +113,8 @@ private:
 	void drawerClose(uint16 drawer);
 
 	uint16 _hologramTurnedOn; // 80
-	MystResourceType6 *_hologramDisplay; // 84
-	MystResourceType6 *_hologramSelection; // 88
+	MystAreaVideo *_hologramDisplay; // 84
+	MystAreaVideo *_hologramSelection; // 88
 	uint16 _hologramDisplayPos;
 
 	bool _tunnelRunning;
@@ -135,7 +135,7 @@ private:
 	void telescope_run();
 	void telescopeLighthouseDraw();
 
-	MystResourceType6 *_cloudOrbMovie; // 136
+	MystAreaVideo *_cloudOrbMovie; // 136
 	uint16 _cloudOrbSound; // 140
 	uint16 _cloudOrbStopSound; // 142
 

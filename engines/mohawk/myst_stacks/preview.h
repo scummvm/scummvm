@@ -56,7 +56,7 @@ private:
 	DECLARE_OPCODE(o_library_init);
 
 	uint16 _libraryState; // 4
-	MystResourceType8 *_library; // 32
+	MystAreaImageSwitch *_library; // 32
 
 	bool _speechRunning;
 	uint _speechStep;

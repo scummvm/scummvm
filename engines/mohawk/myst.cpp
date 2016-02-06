@@ -674,8 +674,8 @@ void MohawkEngine_Myst::checkCurrentResource() {
 
 	for (uint16 i = 0; i < _resources.size(); i++)
 		if (_resources[i]->contains(mouse)) {
-			if (_hoverResource != _resources[i] && _resources[i]->type == kMystHoverArea) {
-				_hoverResource = static_cast<MystResourceType13 *>(_resources[i]);
+			if (_hoverResource != _resources[i] && _resources[i]->type == kMystAreaHover) {
+				_hoverResource = static_cast<MystAreaHover *>(_resources[i]);
 				_hoverResource->handleMouseEnter();
 			}
 
@@ -692,7 +692,7 @@ void MohawkEngine_Myst::checkCurrentResource() {
 	checkCursorHints();
 }
 
-MystResource *MohawkEngine_Myst::updateCurrentResource() {
+MystArea *MohawkEngine_Myst::updateCurrentResource() {
 	checkCurrentResource();
 
 	if (_curResource >= 0)
@@ -1074,50 +1074,50 @@ void MohawkEngine_Myst::drawResourceImages() {
 			_resources[i]->drawDataToScreen();
 }
 
-void MohawkEngine_Myst::redrawResource(MystResourceType8 *resource, bool update) {
-	resource->drawConditionalDataToScreen(_scriptParser->getVar(resource->getType8Var()), update);
+void MohawkEngine_Myst::redrawResource(MystAreaImageSwitch *resource, bool update) {
+	resource->drawConditionalDataToScreen(_scriptParser->getVar(resource->getImageSwitchVar()), update);
 }
 
 void MohawkEngine_Myst::redrawArea(uint16 var, bool update) {
 	for (uint16 i = 0; i < _resources.size(); i++)
-		if (_resources[i]->type == kMystConditionalImage && _resources[i]->getType8Var() == var)
-			redrawResource(static_cast<MystResourceType8 *>(_resources[i]), update);
+		if (_resources[i]->type == kMystAreaImageSwitch && _resources[i]->getImageSwitchVar() == var)
+			redrawResource(static_cast<MystAreaImageSwitch *>(_resources[i]), update);
 }
 
-MystResource *MohawkEngine_Myst::loadResource(Common::SeekableReadStream *rlstStream, MystResource *parent) {
-	MystResource *resource = nullptr;
+MystArea *MohawkEngine_Myst::loadResource(Common::SeekableReadStream *rlstStream, MystArea *parent) {
+	MystArea *resource = nullptr;
 	ResourceType type = static_cast<ResourceType>(rlstStream->readUint16LE());
 
 	debugC(kDebugResource, "\tType: %d", type);
 	debugC(kDebugResource, "\tSub_Record: %d", (parent == nullptr) ? 0 : 1);
 
 	switch (type) {
-	case kMystAction:
-		resource =  new MystResourceType5(this, rlstStream, parent);
+	case kMystAreaAction:
+		resource =  new MystAreaAction(this, rlstStream, parent);
 		break;
-	case kMystVideo:
-		resource =  new MystResourceType6(this, rlstStream, parent);
+	case kMystAreaVideo:
+		resource =  new MystAreaVideo(this, rlstStream, parent);
 		break;
-	case kMystSwitch:
-		resource =  new MystResourceType7(this, rlstStream, parent);
+	case kMystAreaActionSwitch:
+		resource =  new MystAreaActionSwitch(this, rlstStream, parent);
 		break;
-	case kMystConditionalImage:
-		resource =  new MystResourceType8(this, rlstStream, parent);
+	case kMystAreaImageSwitch:
+		resource =  new MystAreaImageSwitch(this, rlstStream, parent);
 		break;
-	case kMystSlider:
-		resource =  new MystResourceType10(this, rlstStream, parent);
+	case kMystAreaSlider:
+		resource =  new MystAreaSlider(this, rlstStream, parent);
 		break;
-	case kMystDragArea:
-		resource =  new MystResourceType11(this, rlstStream, parent);
+	case kMystAreaDrag:
+		resource =  new MystAreaDrag(this, rlstStream, parent);
 		break;
 	case kMystVideoInfo:
-		resource =  new MystResourceType12(this, rlstStream, parent);
+		resource =  new MystVideoInfo(this, rlstStream, parent);
 		break;
-	case kMystHoverArea:
-		resource =  new MystResourceType13(this, rlstStream, parent);
+	case kMystAreaHover:
+		resource =  new MystAreaHover(this, rlstStream, parent);
 		break;
 	default:
-		resource = new MystResource(this, rlstStream, parent);
+		resource = new MystArea(this, rlstStream, parent);
 		break;
 	}
 
