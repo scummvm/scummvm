@@ -407,10 +407,10 @@ Andere Spiele:
      The Legend of Kyrandia                      [kyra1]
      The Legend of Kyrandia: The Hand of Fate    [kyra2]
      The Legend of Kyrandia: Malcolm's Revenge   [kyra3]
-     The Lost Files of Sherlock Holmes: The Case
-        of the Serrated Scalpel                  [scalpel]
-     The Lost Files of Sherlock Holmes: The Case
-        of the Rose Tattoo                       [rosetattoo]
+     Die ungelösten Fälle von Sherlock Holmes:
+        Das gezackte Skalell                     [scalpel]
+     Die ungelösten Fälle von Sherlock Holmes:
+        Die tätowierte Rose                      [rosetattoo]
      The Neverhood                               [neverhood]
      The 7th Guest                               [t7g]
      TeenAgent                                   [teenagent]
@@ -420,8 +420,8 @@ Andere Spiele:
      Touché: Die Abenteuer des fünften
          Musketiers                              [touche]
      Voyeur                                      [voyeur]
-     Zork: Grand Inquisitor                      [zgi]
-     Zork Nemesis: The Forbidden Lands           [znemesis]
+     Zork: Der Großinquisitor                      [zgi]
+     Zork Nemesis: Das verbotene Land           [znemesis]
 
 Spiele von Humongous Entertainment (SCUMM):
      Backyard Baseball                           [baseball]
@@ -1143,11 +1143,11 @@ Space Quest 4 CD:
 
 3.24) Hinweise zu den Spielen der Zork-Reihe
 ----- --------------------------------------
-Um die unterstützen Zork-Spiele (Zork Nemesis: The Forbidden Lands
-und Zork: Grand Inquisitor) zu spielen, müssen Sie einige zusätzliche
+Um die unterstützen Zork-Spiele (Zork Nemesis: Das verbotene Land
+und Zork: Der Großinquisitor) zu spielen, müssen Sie einige zusätzliche
 Dateien zu ihren entsprechenden Zielen kopieren.
 
-Zork Nemesis: The Forbidden Lands
+Zork Nemesis: Das verbotene Land
 
 Alle Versionen
 Laden Sie das Liberation(tm)-Schriftartenpaket
@@ -1191,7 +1191,7 @@ Kopieren Sie die Verzeichnisse "disc2", "disc3" und "zassets" in das Hauptverzei
 des Spiels.
 
 
-Zork: Grand Inquisitor
+Zork: Der Großinquisitor
 
 Alle Versionen
 
@@ -1737,7 +1737,7 @@ zwischen SCUMM-Spielen und anderen Spielen.
     t                      - Wechselt zwischen „Nur Sprachausgabe“,
                              „Sprachausgabe und Text“ und „Nur Text“
 
-  Zork: Grand Inquisitor:
+  Zork: Der Großinquisitor:
     Ctrl-s                 - Save
     Ctrl-r                 - Restore
     Ctrl-q                 - Quit
@@ -1750,7 +1750,7 @@ zwischen SCUMM-Spielen und anderen Spielen.
     F9                     - Extract coin (must have the coin bag)
     Space                  - Skips movies
 
-  Zork Nemesis: The Forbidden Lands:
+  Zork Nemesis: Das verbotene Land:
     Ctrl-s                 - Save
     Ctrl-r                 - Restore
     Ctrl-q                 - Quit
@@ -2771,7 +2771,7 @@ Schlüsselwort:
                                 Geschwindigkeit wiedergegeben, um Probleme bei
                                 der Musik-Synchronität zu vermeiden.
 
-Zork Nemesis: The Forbidden Lands verfügt zusätzlich über folgende nicht
+Zork Nemesis: Das verbotene Land verfügt zusätzlich über folgende nicht
 standardmäßige Schlüsselwörter:
 
     originalsaveload   Bool     Falls „true“, werden die originalen Menüs zum
@@ -2785,7 +2785,7 @@ standardmäßige Schlüsselwörter:
                                 der DVD-Version im Spiel verwendet, anstelle der
                                 niedrig auflösenden AVI-Videos.
 
-Zork: Grand Inquisitor verfügt zusätzlich über folgende nicht
+Zork: Der Großinquisitor verfügt zusätzlich über folgende nicht
 standardmäßige Schlüsselwörter:
 
     originalsaveload   Bool     Falls „true“, werden die originalen Menüs zum
