@@ -28,6 +28,8 @@
 #include "common/serializer.h"
 #include "engines/advancedDetector.h"
 #include "engines/engine.h"
+#include "titanic/screen_manager.h"
+#include "titanic/main_game_window.h"
 
 /**
  * This is the namespace of the Titanic engine.
@@ -72,6 +74,9 @@ protected:
 	// Engine APIs
 	virtual Common::Error run();
 	virtual bool hasFeature(EngineFeature f) const;
+public:
+	OSScreenManager *_screenManager;
+	CMainGameWindow *_window;
 public:
 	TitanicEngine(OSystem *syst, const TitanicGameDescription *gameDesc);
 	virtual ~TitanicEngine();

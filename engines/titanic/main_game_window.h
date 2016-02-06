@@ -20,43 +20,30 @@
  *
  */
 
+#ifndef TITANIC_MAIN_GAME_WINDOW_H
+#define TITANIC_MAIN_GAME_WINDOW_H
+
 #include "common/scummsys.h"
-#include "common/config-manager.h"
-#include "common/debug-channels.h"
-#include "common/events.h"
-#include "engines/util.h"
-#include "graphics/scaler.h"
-#include "graphics/thumbnail.h"
-#include "titanic/titanic.h"
+#include "common/array.h"
 
 namespace Titanic {
 
-TitanicEngine::TitanicEngine(OSystem *syst, const TitanicGameDescription *gameDesc)
-		: _gameDescription(gameDesc), Engine(syst) {
-	_window = nullptr;
-	_screenManager = nullptr;
-}
+class TitanicEngine;
 
-TitanicEngine::~TitanicEngine() {
-	delete _window;
-	delete _screenManager;
-}
-
-void TitanicEngine::initialize() {
-	// Set up debug channels
-	DebugMan.addDebugChannel(kDebugCore, "core", "Core engine debug level");
-	DebugMan.addDebugChannel(kDebugScripts, "scripts", "Game scripts");
-	DebugMan.addDebugChannel(kDebugGraphics, "graphics", "Graphics handling");
-	DebugMan.addDebugChannel(kDebugSound, "sound", "Sound and Music handling");
-
-	_window = new CMainGameWindow(this);
-	_screenManager = new OSScreenManager();
-}
-
-Common::Error TitanicEngine::run() {
-	initialize();
-
-	return Common::kNoError;
-}
+class CMainGameWindow {
+private:
+	TitanicEngine *_vm;
+public:
+	void *_gameView;
+	void *_gameManager;
+	void *_project;
+	int _field50;
+	void *_image;
+	void *_cursor;
+public:
+	CMainGameWindow(TitanicEngine *vm);
+};
 
 } // End of namespace Titanic
+
+#endif /* TITANIC_MAIN_GAME_WINDOW_H */

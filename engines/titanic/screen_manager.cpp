@@ -71,4 +71,29 @@ OSScreenManager::OSScreenManager(): CScreenManager() {
 	_directDrawManager = nullptr;
 }
 
+void OSScreenManager::setMode() {}
+void OSScreenManager::proc5() {}
+void OSScreenManager::proc6() {}
+void OSScreenManager::proc7() {}
+void OSScreenManager::proc8() {}
+void OSScreenManager::proc9() {}
+void OSScreenManager::proc10() {}
+void OSScreenManager::proc11() {}
+void OSScreenManager::proc12() {}
+void OSScreenManager::proc13() {}
+void OSScreenManager::proc14() {}
+void OSScreenManager::proc15() {}
+void OSScreenManager::proc16() {}
+void OSScreenManager::getFont() {}
+void OSScreenManager::proc18() {}
+void OSScreenManager::proc19() {}
+void OSScreenManager::proc20() {}
+void OSScreenManager::proc21() {}
+void OSScreenManager::proc22() {}
+void OSScreenManager::proc23() {}
+void OSScreenManager::proc24() {}
+void OSScreenManager::proc25() {}
+void OSScreenManager::showCursor() {}
+void OSScreenManager::proc27() {}
+
 } // End of namespace Titanic

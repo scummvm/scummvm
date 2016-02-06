@@ -98,6 +98,31 @@ public:
 	STFont _fonts[4];
 public:
 	OSScreenManager();
+
+	virtual void setMode();
+	virtual void proc5();
+	virtual void proc6();
+	virtual void proc7();
+	virtual void proc8();
+	virtual void proc9();
+	virtual void proc10();
+	virtual void proc11();
+	virtual void proc12();
+	virtual void proc13();
+	virtual void proc14();
+	virtual void proc15();
+	virtual void proc16();
+	virtual void getFont();
+	virtual void proc18();
+	virtual void proc19();
+	virtual void proc20();
+	virtual void proc21();
+	virtual void proc22();
+	virtual void proc23();
+	virtual void proc24();
+	virtual void proc25();
+	virtual void showCursor();
+	virtual void proc27();
 };
 
 } // End of namespace Titanic
