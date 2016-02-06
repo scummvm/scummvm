@@ -130,10 +130,9 @@ void WidgetOptions::handleEvents() {
 		else if (_digiSliderX > _bounds.width() - _surface.widestChar())
 			_digiSliderX = _bounds.width() - _surface.widestChar();
 
-		int temp = sound._soundVolume;
-		sound._soundVolume = (_digiSliderX - _surface.widestChar()) * 255 / (_bounds.width() - _surface.widestChar() * 2);
-		if (sound._soundVolume != temp) {
-			sound.setVolume(sound._soundVolume);
+		int newVolume = (_digiSliderX - _surface.widestChar()) * 255 / (_bounds.width() - _surface.widestChar() * 2);
+		if (newVolume != sound._soundVolume) {
+			sound.setVolume(newVolume);
 			vm.saveConfig();
 		}
 
@@ -188,7 +187,7 @@ void WidgetOptions::handleEvents() {
 
 		case 5:
 			// Toggle Voices
-			sound._voices = !sound._voices;
+			sound._speechOn = !sound._speechOn;
 
 			render(OP_NAMES);
 			vm.saveConfig();
@@ -326,7 +325,7 @@ void WidgetOptions::render(OptionRenderMode mode) {
 				break;
 
 			case 5:
-				str = Common::String::format("%s %s", FIXED(Voices), OFF_ON[sound._voices]);
+				str = Common::String::format("%s %s", FIXED(Voices), OFF_ON[sound._speechOn]);
 				break;
 
 			case 6: {

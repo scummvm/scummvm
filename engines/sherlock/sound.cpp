@@ -58,10 +58,9 @@ Sound::Sound(SherlockEngine *vm, Audio::Mixer *mixer) : _vm(vm), _mixer(mixer) {
 	_soundPlaying = false;
 	_speechPlaying = false;
 	_curPriority = 0;
-	_soundVolume = 255;
-
-	_soundOn = true;
-	_speechOn = true;
+	_soundVolume = ConfMan.hasKey("sfx_volume") ? ConfMan.getInt("sfx_volume") : 255;
+	_soundOn = ConfMan.hasKey("mute") ? !ConfMan.getBool("mute") : true;
+	_speechOn = ConfMan.hasKey("speech_mute") ? !ConfMan.getBool("speech_mute") : true;
 
 	if (IS_3DO) {
 		// 3DO: we don't need to prepare anything for sound
@@ -239,7 +238,10 @@ Audio::SoundHandle &Sound::getFreeSoundHandle() {
 }
 
 void Sound::setVolume(int volume) {
-	warning("TODO: setVolume - %d", volume);
+	_soundVolume = volume;
+	_vm->_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, volume);
+	_vm->_mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, volume);
+	_vm->_mixer->setVolumeForSoundType(Audio::Mixer::kPlainSoundType, volume);
 }
 
 void Sound::playSpeech(const Common::String &name) {
