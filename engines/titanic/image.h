@@ -20,23 +20,60 @@
  *
  */
 
-#include "titanic/titanic.h"
-#include "titanic/main_game_window.h"
+#ifndef TITANIC_IMAGE_H
+#define TITANIC_IMAGE_H
+
+#include "common/scummsys.h"
+#include "common/array.h"
 
 namespace Titanic {
 
-CMainGameWindow::CMainGameWindow(TitanicEngine *vm): _vm(vm) {
-	_gameView = nullptr;
-	_gameManager = nullptr;
-	_project = nullptr;
-	_field50 = 0;
-	_image = nullptr;
-	_cursor = nullptr;
+struct BITMAPINFOHEADER {
+	int _biSize;
+	int _biWidth;
+	int _biHeight;
+	int _biPlanes;
+	int _biBitCount;
+	bool _biCompression;
+	int _biSizeImage;
+	int _biXPelsPerMeter;
+	int _biYPelsPerMeter;
+	int _biCirUsed;
+	int _biClrImportant;
 
-	Image image;
-	bool result = image.loadResource("TITANIC");
-	if (!result)
-		return;
-}
+	BITMAPINFOHEADER();
+};
+
+struct RGBQuad {
+	byte _rgbRed;
+	byte _rgbGreen;
+	byte _rgbBlue;
+	byte _rgbReserved;
+
+	RGBQuad();
+};
+
+struct tagBITMAPINFO {
+	BITMAPINFOHEADER _bmiHeader;
+	RGBQuad _bmiColors[256];
+};
+
+class Image {
+public:
+	tagBITMAPINFO *_bitmapInfo;
+	byte *_bits;
+	bool _flag;
+public:
+	Image();
+
+	virtual void proc6();
+	virtual void set(int width, int height);
+	virtual void proc8();
+	virtual bool loadResource(const Common::String &name);
+	virtual void proc10();
+	virtual void draw();
+};
 
 } // End of namespace Titanic
+
+#endif /* TITANIC_IMAGE_H */

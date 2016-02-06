@@ -3,6 +3,7 @@ MODULE := engines/titanic
 MODULE_OBJS := \
 	detection.o \
 	font.o \
+	image.o \
 	main_game_window.o \
 	screen_manager.o \
 	titanic.o

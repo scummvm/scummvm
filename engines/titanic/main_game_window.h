@@ -25,6 +25,7 @@
 
 #include "common/scummsys.h"
 #include "common/array.h"
+#include "titanic/image.h"
 
 namespace Titanic {
 
@@ -38,7 +39,7 @@ public:
 	void *_gameManager;
 	void *_project;
 	int _field50;
-	void *_image;
+	Image *_image;
 	void *_cursor;
 public:
 	CMainGameWindow(TitanicEngine *vm);
