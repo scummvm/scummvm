@@ -137,9 +137,8 @@ struct MystView {
 		uint16 id; // Not used by type 3
 		// TODO: Type 3 has more. Maybe use a union?
 		uint16 var; // Used by type 3 only
-		uint16 count; // Used by type 3 only
 		uint16 u0; // Used by type 3 only
-		int16 *resource_list; // Used by type 3 only
+		Common::Array<int16> resourceList; // Used by type 3 only
 	};
 	Common::Array<ScriptResource> scriptResources;
 

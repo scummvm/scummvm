@@ -795,18 +795,16 @@ void MohawkEngine_Myst::loadCard() {
 		if (scriptResource.type == 3) {
 			scriptResource.var = viewStream->readUint16LE();
 			debugC(kDebugView, "\t\t Var: %d", scriptResource.var);
-			scriptResource.count = viewStream->readUint16LE();
-			debugC(kDebugView, "\t\t Resource List Count: %d", scriptResource.count);
+			uint16 count = viewStream->readUint16LE();
+			debugC(kDebugView, "\t\t Resource List Count: %d", count);
 			scriptResource.u0 = viewStream->readUint16LE();
 			debugC(kDebugView, "\t\t u0: %d", scriptResource.u0);
-			scriptResource.resource_list = new int16[scriptResource.count];
 
-			for (uint16 j = 0; j < scriptResource.count; j++) {
-				scriptResource.resource_list[j] = viewStream->readSint16LE();
-				debugC(kDebugView, "\t\t Resource List %d: %d", j, scriptResource.resource_list[j]);
+			for (uint16 j = 0; j < count; j++) {
+				scriptResource.resourceList.push_back(viewStream->readSint16LE());
+				debugC(kDebugView, "\t\t Resource List %d: %d", j, scriptResource.resourceList[j]);
 			}
 		} else {
-			scriptResource.resource_list = nullptr;
 			scriptResource.id = viewStream->readUint16LE();
 			debugC(kDebugView, "\t\t Id: %d", scriptResource.id);
 		}
@@ -875,10 +873,6 @@ void MohawkEngine_Myst::loadCard() {
 void MohawkEngine_Myst::unloadCard() {
 	_view.conditionalImages.clear();
 	_view.soundList.clear();
-
-	for (uint16 i = 0; i < _view.scriptResources.size(); i++)
-		delete[] _view.scriptResources[i].resource_list;
-
 	_view.scriptResources.clear();
 }
 
