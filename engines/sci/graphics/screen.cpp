@@ -270,9 +270,21 @@ void GfxScreen::copyToScreen() {
 }
 
 void GfxScreen::copyFromScreen(byte *buffer) {
-	// TODO this ignores the pitch
 	Graphics::Surface *screen = g_system->lockScreen();
-	memcpy(buffer, screen->getPixels(), _displayPixels);
+
+	if (screen->pitch == _displayWidth) {
+		memcpy(buffer, screen->getPixels(), _displayPixels);
+	} else {
+		const byte *src = (const byte *)screen->getPixels();
+		uint height = _displayHeight;
+
+		while (height--) {
+			memcpy(buffer, src, _displayWidth);
+			buffer += _displayWidth;
+			src    += screen->pitch;
+		}
+	}
+
 	g_system->unlockScreen();
 }
 
