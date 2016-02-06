@@ -170,9 +170,9 @@ public:
 	virtual ~MystResourceType11();
 	const Common::String describe();
 
-	void handleMouseDown();
-	void handleMouseUp();
-	void handleMouseDrag();
+	virtual void handleMouseDown();
+	virtual void handleMouseUp();
+	virtual void handleMouseDrag();
 
 	uint16 getList1(uint16 index);
 	uint16 getList2(uint16 index);
