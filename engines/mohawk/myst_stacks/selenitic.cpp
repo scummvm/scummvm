@@ -39,7 +39,7 @@ namespace MystStacks {
 Selenitic::Selenitic(MohawkEngine_Myst *vm) :
 		MystScriptParser(vm), _state(vm->_gameState->_selenitic) {
 	setupOpcodes();
-	_invokingResource = NULL;
+	_invokingResource = nullptr;
 	_mazeRunnerPosition = 288;
 	_mazeRunnerDirection = 8;
 }
@@ -784,7 +784,7 @@ MystResourceType10 *Selenitic::soundLockSliderFromVar(uint16 var) {
 		return _soundLockSlider5;
 	}
 
-	return 0;
+	return nullptr;
 }
 
 void Selenitic::o_soundLockMove(uint16 op, uint16 var, uint16 argc, uint16 *argv) {

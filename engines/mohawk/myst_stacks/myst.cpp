@@ -52,12 +52,12 @@ Myst::Myst(MohawkEngine_Myst *vm) :
 	_cabinDoorOpened = 0;
 	_cabinMatchState = 2;
 	_matchBurning = false;
-	_tree = 0;
-	_treeAlcove = 0;
+	_tree = nullptr;
+	_treeAlcove = nullptr;
 	_treeStopped = false;
 	_treeMinPosition = 0;
 	_imagerValidationStep = 0;
-	_observatoryCurrentSlider = 0;
+	_observatoryCurrentSlider = nullptr;
 	_butterfliesMoviePlayed = false;
 	_state.treeLastMoveTime = _vm->_system->getMillis();
 }
@@ -2838,7 +2838,7 @@ void Myst::o_observatoryChangeSettingStop(uint16 op, uint16 var, uint16 argc, ui
 	_vm->_gfx->copyBackBufferToScreen(_invokingResource->getRect());
 	if (_observatoryCurrentSlider) {
 		_vm->redrawResource(_observatoryCurrentSlider);
-		_observatoryCurrentSlider = 0;
+		_observatoryCurrentSlider = nullptr;
 	}
 	_vm->_sound->resumeBackgroundMyst();
 }
@@ -3828,13 +3828,13 @@ void Myst::o_bookAddSpecialPage_exit(uint16 op, uint16 var, uint16 argc, uint16 
 void Myst::o_treeCard_exit(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Exit tree card", op);
 
-	_tree = 0;
+	_tree = nullptr;
 }
 
 void Myst::o_treeEntry_exit(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Exit tree card with entry", op);
 
-	_treeAlcove = 0;
+	_treeAlcove = nullptr;
 }
 
 void Myst::o_boiler_exit(uint16 op, uint16 var, uint16 argc, uint16 *argv) {

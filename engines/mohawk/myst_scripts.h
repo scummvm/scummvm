@@ -63,8 +63,8 @@ public:
 	MystScriptParser(MohawkEngine_Myst *vm);
 	virtual ~MystScriptParser();
 
-	void runScript(MystScript script, MystResource *invokingResource = NULL);
-	void runOpcode(uint16 op, uint16 var = 0, uint16 argc = 0, uint16 *argv = NULL);
+	void runScript(MystScript script, MystResource *invokingResource = nullptr);
+	void runOpcode(uint16 op, uint16 var = 0, uint16 argc = 0, uint16 *argv = nullptr);
 	const Common::String getOpcodeDesc(uint16 op);
 	MystScript readScript(Common::SeekableReadStream *stream, MystScriptType type);
 	void setInvokingResource(MystResource *resource) { _invokingResource = resource; }

@@ -40,7 +40,7 @@ MystGraphics::MystGraphics(MohawkEngine_Myst* vm) : GraphicsManager(), _vm(vm) {
 
 	if (_vm->getFeatures() & GF_ME) {
 		// High color
-		initGraphics(_viewport.width(), _viewport.height(), true, NULL);
+		initGraphics(_viewport.width(), _viewport.height(), true, nullptr);
 
 		if (_vm->_system->getScreenFormat().bytesPerPixel == 1)
 			error("Myst ME requires greater than 256 colors to run");
@@ -73,7 +73,7 @@ MohawkSurface *MystGraphics::decodeImage(uint16 id) {
 	// if it's a PICT or WDIB resource. If it's Myst ME it's most likely a PICT, and if it's
 	// original it's definitely a WDIB. However, Myst ME throws us another curve ball in
 	// that PICT resources can contain WDIB's instead of PICT's.
-	Common::SeekableReadStream *dataStream = NULL;
+	Common::SeekableReadStream *dataStream = nullptr;
 
 	if (_vm->getFeatures() & GF_ME && _vm->hasResource(ID_PICT, id)) {
 		// The PICT resource exists. However, it could still contain a MystBitmap
@@ -95,7 +95,7 @@ MohawkSurface *MystGraphics::decodeImage(uint16 id) {
 		dataStream->seek(0);
 	}
 
-	MohawkSurface *mhkSurface = 0;
+	MohawkSurface *mhkSurface = nullptr;
 
 	if (isPict) {
 		Image::PICTDecoder pict;

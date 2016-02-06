@@ -77,26 +77,26 @@ MohawkEngine_Myst::MohawkEngine_Myst(OSystem *syst, const MohawkGameDescription 
 	_curCard = 0;
 	_needsUpdate = false;
 	_curResource = -1;
-	_hoverResource = 0;
+	_hoverResource = nullptr;
 
-	_gfx = NULL;
-	_console = NULL;
-	_scriptParser = NULL;
-	_gameState = NULL;
-	_loadDialog = NULL;
-	_optionsDialog = NULL;
+	_gfx = nullptr;
+	_console = nullptr;
+	_scriptParser = nullptr;
+	_gameState = nullptr;
+	_loadDialog = nullptr;
+	_optionsDialog = nullptr;
 
 	_cursorHintCount = 0;
-	_cursorHints = NULL;
+	_cursorHints = nullptr;
 
-	_prevStack = NULL;
+	_prevStack = nullptr;
 
 	_view.conditionalImageCount = 0;
-	_view.conditionalImages = NULL;
-	_view.soundList = NULL;
-	_view.soundListVolume = NULL;
+	_view.conditionalImages = nullptr;
+	_view.soundList = nullptr;
+	_view.soundListVolume = nullptr;
 	_view.scriptResCount = 0;
-	_view.scriptResources = NULL;
+	_view.scriptResources = nullptr;
 }
 
 MohawkEngine_Myst::~MohawkEngine_Myst() {
@@ -137,7 +137,7 @@ Common::SeekableReadStream *MohawkEngine_Myst::getResource(uint32 tag, uint16 id
 		}
 
 	error("Could not find a \'%s\' resource with ID %04x", tag2str(tag), id);
-	return NULL;
+	return nullptr;
 }
 
 void MohawkEngine_Myst::cachePreload(uint32 tag, uint16 id) {
@@ -501,7 +501,7 @@ void MohawkEngine_Myst::changeToStack(uint16 stack, uint16 card, uint16 linkSrcS
 
 	if (getFeatures() & GF_ME) {
 		// Play Flyby Entry Movie on Masterpiece Edition.
-		const char *flyby = 0;
+		const char *flyby = nullptr;
 
 		switch (_curStack) {
 		case kSeleniticStack:
@@ -643,7 +643,7 @@ void MohawkEngine_Myst::changeToCard(uint16 card, TransitionType transition) {
 	}
 
 	// Make sure we have the right cursor showing
-	_hoverResource = 0;
+	_hoverResource = nullptr;
 	_curResource = -1;
 	checkCurrentResource();
 
@@ -669,7 +669,7 @@ void MohawkEngine_Myst::checkCurrentResource() {
 	// Tell previous resource the mouse is no longer hovering it
 	if (_hoverResource && !_hoverResource->contains(mouse)) {
 		_hoverResource->handleMouseLeave();
-		_hoverResource = 0;
+		_hoverResource = nullptr;
 	}
 
 	for (uint16 i = 0; i < _resources.size(); i++)
@@ -698,7 +698,7 @@ MystResource *MohawkEngine_Myst::updateCurrentResource() {
 	if (_curResource >= 0)
 		return _resources[_curResource];
 	else
-		return 0;
+		return nullptr;
 }
 
 void MohawkEngine_Myst::loadCard() {
@@ -810,7 +810,7 @@ void MohawkEngine_Myst::loadCard() {
 					debugC(kDebugView, "\t\t Resource List %d: %d", j, _view.scriptResources[i].resource_list[j]);
 				}
 			} else {
-				_view.scriptResources[i].resource_list = NULL;
+				_view.scriptResources[i].resource_list = nullptr;
 				_view.scriptResources[i].id = viewStream->readUint16LE();
 				debugC(kDebugView, "\t\t Id: %d", _view.scriptResources[i].id);
 			}
@@ -881,18 +881,18 @@ void MohawkEngine_Myst::unloadCard() {
 
 	delete[] _view.conditionalImages;
 	_view.conditionalImageCount = 0;
-	_view.conditionalImages = NULL;
+	_view.conditionalImages = nullptr;
 
 	delete[] _view.soundList;
-	_view.soundList = NULL;
+	_view.soundList = nullptr;
 	delete[] _view.soundListVolume;
-	_view.soundListVolume = NULL;
+	_view.soundListVolume = nullptr;
 
 	for (uint16 i = 0; i < _view.scriptResCount; i++)
 		delete[] _view.scriptResources[i].resource_list;
 
 	delete[] _view.scriptResources;
-	_view.scriptResources = NULL;
+	_view.scriptResources = nullptr;
 	_view.scriptResCount = 0;
 }
 
@@ -973,7 +973,7 @@ void MohawkEngine_Myst::loadCursorHints() {
 		delete[] _cursorHints[i].variableHint.values;
 	_cursorHintCount = 0;
 	delete[] _cursorHints;
-	_cursorHints = NULL;
+	_cursorHints = nullptr;
 
 	if (!_view.hint) {
 		debugC(kDebugHint, "No HINT Present");
@@ -1008,7 +1008,7 @@ void MohawkEngine_Myst::loadCursorHints() {
 		} else {
 			_cursorHints[i].variableHint.var = 0;
 			_cursorHints[i].variableHint.numStates = 0;
-			_cursorHints[i].variableHint.values = NULL;
+			_cursorHints[i].variableHint.values = nullptr;
 		}
 	}
 
@@ -1085,11 +1085,11 @@ void MohawkEngine_Myst::redrawArea(uint16 var, bool update) {
 }
 
 MystResource *MohawkEngine_Myst::loadResource(Common::SeekableReadStream *rlstStream, MystResource *parent) {
-	MystResource *resource = 0;
+	MystResource *resource = nullptr;
 	ResourceType type = static_cast<ResourceType>(rlstStream->readUint16LE());
 
 	debugC(kDebugResource, "\tType: %d", type);
-	debugC(kDebugResource, "\tSub_Record: %d", (parent == NULL) ? 0 : 1);
+	debugC(kDebugResource, "\tSub_Record: %d", (parent == nullptr) ? 0 : 1);
 
 	switch (type) {
 	case kMystAction:
@@ -1143,7 +1143,7 @@ void MohawkEngine_Myst::loadResources() {
 
 	for (uint16 i = 0; i < resourceCount; i++) {
 		debugC(kDebugResource, "Resource #%d:", i);
-		_resources.push_back(loadResource(rlstStream, NULL));
+		_resources.push_back(loadResource(rlstStream, nullptr));
 	}
 
 	delete rlstStream;

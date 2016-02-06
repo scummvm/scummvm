@@ -96,7 +96,7 @@ bool MystGameState::load(const Common::String &filename) {
 		return false;
 	}
 
-	Common::Serializer s(loadFile, 0);
+	Common::Serializer s(loadFile, nullptr);
 	syncGameState(s, size == 664);
 	delete loadFile;
 
@@ -131,7 +131,7 @@ bool MystGameState::save(const Common::String &fname) {
 
 	debugC(kDebugSaveLoad, "Saving game to '%s'", filename.c_str());
 
-	Common::Serializer s(0, saveFile);
+	Common::Serializer s(nullptr, saveFile);
 	syncGameState(s, _vm->getFeatures() & GF_ME);
 	saveFile->finalize();
 	delete saveFile;
@@ -321,7 +321,7 @@ void MystGameState::deleteSave(const Common::String &saveName) {
 }
 
 void MystGameState::addZipDest(uint16 stack, uint16 view) {
-	ZipDests *zipDests = 0;
+	ZipDests *zipDests = nullptr;
 
 	// The demo has no zip dest storage
 	if (_vm->getFeatures() & GF_DEMO)

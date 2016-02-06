@@ -36,7 +36,7 @@ MystResource::MystResource(MohawkEngine_Myst *vm, Common::SeekableReadStream *rl
 	_vm = vm;
 	_parent = parent;
 
-	if (parent == NULL) {
+	if (parent == nullptr) {
 		_flags = rlstStream->readUint16LE();
 		_rect.left = rlstStream->readSint16LE();
 		_rect.top = rlstStream->readSint16LE();

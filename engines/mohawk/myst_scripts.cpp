@@ -38,7 +38,7 @@ MystScriptEntry::MystScriptEntry() {
 	type = kMystScriptNone;
 	var = 0;
 	argc = 0;
-	argv = 0;
+	argv = nullptr;
 	resourceId = 0;
 	u1 = 0;
 }
@@ -81,7 +81,7 @@ MystScriptParser::MystScriptParser(MohawkEngine_Myst *vm) :
 		_vm(vm),
 		_globals(vm->_gameState->_globals) {
 	setupCommonOpcodes();
-	_invokingResource = NULL;
+	_invokingResource = nullptr;
 	_savedCardId = 0;
 	_savedCursorId = 0;
 	_tempVar = 0;
@@ -322,7 +322,7 @@ void MystScriptParser::o_changeCardSwitch4(uint16 op, uint16 var, uint16 argc, u
 
 	if (value)
 		_vm->changeToCard(argv[value -1 ], kTransitionDissolve);
-	else if (_invokingResource != NULL)
+	else if (_invokingResource != nullptr)
 		_vm->changeToCard(_invokingResource->getDest(), kTransitionDissolve);
 	else
 		warning("Missing invokingResource in altDest call");
@@ -335,7 +335,7 @@ void MystScriptParser::o_changeCardSwitchLtR(uint16 op, uint16 var, uint16 argc,
 
 	if (value)
 		_vm->changeToCard(argv[value -1 ], kTransitionLeftToRight);
-	else if (_invokingResource != NULL)
+	else if (_invokingResource != nullptr)
 		_vm->changeToCard(_invokingResource->getDest(), kTransitionLeftToRight);
 	else
 		warning("Missing invokingResource in altDest call");
@@ -348,7 +348,7 @@ void MystScriptParser::o_changeCardSwitchRtL(uint16 op, uint16 var, uint16 argc,
 
 	if (value)
 		_vm->changeToCard(argv[value -1 ], kTransitionRightToLeft);
-	else if (_invokingResource != NULL)
+	else if (_invokingResource != nullptr)
 		_vm->changeToCard(_invokingResource->getDest(), kTransitionRightToLeft);
 	else
 		warning("Missing invokingResource in altDest call");
@@ -389,7 +389,7 @@ void MystScriptParser::o_redrawCard(uint16 op, uint16 var, uint16 argc, uint16 *
 void MystScriptParser::o_goToDest(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Change To Dest of Invoking Resource", op);
 
-	if (_invokingResource != NULL)
+	if (_invokingResource != nullptr)
 		_vm->changeToCard(_invokingResource->getDest(), kTransitionCopy);
 	else
 		warning("Opcode %d: Missing invokingResource", op);
@@ -398,7 +398,7 @@ void MystScriptParser::o_goToDest(uint16 op, uint16 var, uint16 argc, uint16 *ar
 void MystScriptParser::o_goToDestForward(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Change To Dest of Invoking Resource", op);
 
-	if (_invokingResource != NULL)
+	if (_invokingResource != nullptr)
 		_vm->changeToCard(_invokingResource->getDest(), kTransitionDissolve);
 	else
 		warning("Opcode %d: Missing invokingResource", op);
@@ -407,7 +407,7 @@ void MystScriptParser::o_goToDestForward(uint16 op, uint16 var, uint16 argc, uin
 void MystScriptParser::o_goToDestLeft(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Change To Dest of Invoking Resource", op);
 
-	if (_invokingResource != NULL)
+	if (_invokingResource != nullptr)
 		_vm->changeToCard(_invokingResource->getDest(), kTransitionPartToRight);
 	else
 		warning("Opcode %d: Missing invokingResource", op);
@@ -416,7 +416,7 @@ void MystScriptParser::o_goToDestLeft(uint16 op, uint16 var, uint16 argc, uint16
 void MystScriptParser::o_goToDestRight(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Change To Dest of Invoking Resource", op);
 
-	if (_invokingResource != NULL)
+	if (_invokingResource != nullptr)
 		_vm->changeToCard(_invokingResource->getDest(), kTransitionPartToLeft);
 	else
 		warning("Opcode %d: Missing invokingResource", op);
@@ -425,7 +425,7 @@ void MystScriptParser::o_goToDestRight(uint16 op, uint16 var, uint16 argc, uint1
 void MystScriptParser::o_goToDestUp(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Change To Dest of Invoking Resource", op);
 
-	if (_invokingResource != NULL)
+	if (_invokingResource != nullptr)
 		_vm->changeToCard(_invokingResource->getDest(), kTransitionTopToBottom);
 	else
 		warning("Opcode %d: Missing invokingResource", op);
@@ -522,7 +522,7 @@ void MystScriptParser::o_enableAreas(uint16 op, uint16 var, uint16 argc, uint16 
 		for (uint16 i = 0; i < count; i++) {
 			debugC(kDebugScript, "Enable hotspot index %d", argv[i + 1]);
 
-			MystResource *resource = 0;
+			MystResource *resource = nullptr;
 			if (argv[i + 1] == 0xFFFF)
 				resource = _invokingResource;
 			else
@@ -547,7 +547,7 @@ void MystScriptParser::o_disableAreas(uint16 op, uint16 var, uint16 argc, uint16
 		for (uint16 i = 0; i < count; i++) {
 			debugC(kDebugScript, "Disable hotspot index %d", argv[i + 1]);
 
-			MystResource *resource = 0;
+			MystResource *resource = nullptr;
 			if (argv[i + 1] == 0xFFFF)
 				resource = _invokingResource;
 			else
@@ -578,7 +578,7 @@ void MystScriptParser::o_toggleAreasActivation(uint16 op, uint16 var, uint16 arg
 		for (uint16 i = 0; i < count; i++) {
 			debugC(kDebugScript, "Enable/Disable hotspot index %d", argv[i + 1]);
 
-			MystResource *resource = 0;
+			MystResource *resource = nullptr;
 			if (argv[i + 1] == 0xFFFF)
 				resource = _invokingResource;
 			else
@@ -681,8 +681,8 @@ void MystScriptParser::o_copyImageToBackBuffer(uint16 op, uint16 var, uint16 arg
 //       by Channelwood Card 3280 (Tank Valve) and water flow sound behavior in pipe
 //       on cards leading from shed...
 void MystScriptParser::o_changeBackgroundSound(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	int16 *soundList = NULL;
-	uint16 *soundListVolume = NULL;
+	int16 *soundList = nullptr;
+	uint16 *soundListVolume = nullptr;
 
 	// Used on Stoneship Card 2080
 	// Used on Channelwood Card 3225 with argc = 8 i.e. Conditional Sound List
@@ -746,9 +746,9 @@ void MystScriptParser::o_changeBackgroundSound(uint16 op, uint16 var, uint16 arg
 		warning("Unknown arg count in opcode %d", op);
 
 	delete[] soundList;
-	soundList = NULL;
+	soundList = nullptr;
 	delete[] soundListVolume;
-	soundListVolume = NULL;
+	soundListVolume = nullptr;
 }
 
 void MystScriptParser::o_soundPlaySwitch(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
