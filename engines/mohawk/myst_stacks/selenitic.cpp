@@ -1058,19 +1058,19 @@ void Selenitic::o_soundReceiver_init(uint16 op, uint16 var, uint16 argc, uint16 
 	// Used for Card 1245 (Sound Receiver)
 	_soundReceiverRunning = true;
 
-	_soundReceiverRightButton = static_cast<MystAreaImageSwitch *>(_vm->_resources[0]);
-	_soundReceiverLeftButton = static_cast<MystAreaImageSwitch *>(_vm->_resources[1]);
-	_soundReceiverSigmaButton = static_cast<MystAreaImageSwitch *>(_vm->_resources[2]);
-	_soundReceiverSources[4] = static_cast<MystAreaImageSwitch *>(_vm->_resources[3]);
-	_soundReceiverSources[3] = static_cast<MystAreaImageSwitch *>(_vm->_resources[4]);
-	_soundReceiverSources[2] = static_cast<MystAreaImageSwitch *>(_vm->_resources[5]);
-	_soundReceiverSources[1] = static_cast<MystAreaImageSwitch *>(_vm->_resources[6]);
-	_soundReceiverSources[0] = static_cast<MystAreaImageSwitch *>(_vm->_resources[7]);
-	_soundReceiverViewer = static_cast<MystAreaImageSwitch *>(_vm->_resources[8]);
-	_soundReceiverAngle1 = static_cast<MystAreaImageSwitch *>(_vm->_resources[10]);
-	_soundReceiverAngle2 = static_cast<MystAreaImageSwitch *>(_vm->_resources[11]);
-	_soundReceiverAngle3 = static_cast<MystAreaImageSwitch *>(_vm->_resources[12]);
-	_soundReceiverAngle4 = static_cast<MystAreaImageSwitch *>(_vm->_resources[13]);
+	_soundReceiverRightButton = _vm->getViewResource<MystAreaImageSwitch>(0);
+	_soundReceiverLeftButton = _vm->getViewResource<MystAreaImageSwitch>(1);
+	_soundReceiverSigmaButton = _vm->getViewResource<MystAreaImageSwitch>(2);
+	_soundReceiverSources[4] = _vm->getViewResource<MystAreaImageSwitch>(3);
+	_soundReceiverSources[3] = _vm->getViewResource<MystAreaImageSwitch>(4);
+	_soundReceiverSources[2] = _vm->getViewResource<MystAreaImageSwitch>(5);
+	_soundReceiverSources[1] = _vm->getViewResource<MystAreaImageSwitch>(6);
+	_soundReceiverSources[0] = _vm->getViewResource<MystAreaImageSwitch>(7);
+	_soundReceiverViewer = _vm->getViewResource<MystAreaImageSwitch>(8);
+	_soundReceiverAngle1 = _vm->getViewResource<MystAreaImageSwitch>(10);
+	_soundReceiverAngle2 = _vm->getViewResource<MystAreaImageSwitch>(11);
+	_soundReceiverAngle3 = _vm->getViewResource<MystAreaImageSwitch>(12);
+	_soundReceiverAngle4 = _vm->getViewResource<MystAreaImageSwitch>(13);
 
 	uint16 currentSource = _state.soundReceiverCurrentSource;
 	_soundReceiverPosition = &_state.soundReceiverPositions[currentSource];
@@ -1086,28 +1086,28 @@ void Selenitic::o_soundLock_init(uint16 op, uint16 var, uint16 argc, uint16 *arg
 		if (_vm->_resources[i]->type == kMystAreaSlider) {
 			switch (_vm->_resources[i]->getImageSwitchVar()) {
 			case 20:
-				_soundLockSlider1 = static_cast<MystAreaSlider *>(_vm->_resources[i]);
+				_soundLockSlider1 = _vm->getViewResource<MystAreaSlider>(i);
 				_soundLockSlider1->setStep(_state.soundLockSliderPositions[0]);
 				break;
 			case 21:
-				_soundLockSlider2 = static_cast<MystAreaSlider *>(_vm->_resources[i]);
+				_soundLockSlider2 = _vm->getViewResource<MystAreaSlider>(i);
 				_soundLockSlider2->setStep(_state.soundLockSliderPositions[1]);
 				break;
 			case 22:
-				_soundLockSlider3 = static_cast<MystAreaSlider *>(_vm->_resources[i]);
+				_soundLockSlider3 = _vm->getViewResource<MystAreaSlider>(i);
 				_soundLockSlider3->setStep(_state.soundLockSliderPositions[2]);
 				break;
 			case 23:
-				_soundLockSlider4 = static_cast<MystAreaSlider *>(_vm->_resources[i]);
+				_soundLockSlider4 = _vm->getViewResource<MystAreaSlider>(i);
 				_soundLockSlider4->setStep(_state.soundLockSliderPositions[3]);
 				break;
 			case 24:
-				_soundLockSlider5 = static_cast<MystAreaSlider *>(_vm->_resources[i]);
+				_soundLockSlider5 = _vm->getViewResource<MystAreaSlider>(i);
 				_soundLockSlider5->setStep(_state.soundLockSliderPositions[4]);
 				break;
 			}
 		} else if (_vm->_resources[i]->type == kMystAreaImageSwitch && _vm->_resources[i]->getImageSwitchVar() == 28) {
-			_soundLockButton = static_cast<MystAreaImageSwitch *>(_vm->_resources[i]);
+			_soundLockButton = _vm->getViewResource<MystAreaImageSwitch>(i);
 		}
 	}
 

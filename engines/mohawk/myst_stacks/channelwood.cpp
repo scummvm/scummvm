@@ -680,7 +680,7 @@ void Channelwood::o_hologramTemple(uint16 op, uint16 var, uint16 argc, uint16 *a
 void Channelwood::o_executeMouseUp(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Execute mouse up", op);
 
-	MystAreaAction *resource = static_cast<MystAreaAction *>(_vm->_resources[argv[0]]);
+	MystAreaAction *resource = _vm->getViewResource<MystAreaAction>(argv[0]);
 	resource->handleMouseUp();
 }
 

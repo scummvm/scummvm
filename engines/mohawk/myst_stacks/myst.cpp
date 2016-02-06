@@ -3190,7 +3190,7 @@ void Myst::towerRotationMap_run() {
 void Myst::o_towerRotationMap_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	_towerRotationMapRunning = true;
 	_towerRotationMapTower = getInvokingResource<MystAreaDrag>();
-	_towerRotationMapLabel = static_cast<MystAreaImageSwitch *>(_vm->_resources[argv[0]]);
+	_towerRotationMapLabel = _vm->getViewResource<MystAreaImageSwitch>(argv[0]);
 	_tempVar = 0;
 	_startTime = 0;
 	_towerRotationMapClicked = false;
@@ -3202,7 +3202,7 @@ void Myst::towerRotationDrawBuildings() {
 
 	// Draw other resources
 	for (uint i = 1; i <= 10; i++) {
-		MystAreaImageSwitch *resource = static_cast<MystAreaImageSwitch *>(_vm->_resources[i]);
+		MystAreaImageSwitch *resource = _vm->getViewResource<MystAreaImageSwitch>(i);
 		_vm->redrawResource(resource, false);
 	}
 }
@@ -3472,16 +3472,16 @@ void Myst::o_observatory_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) 
 	_tempVar = 0;
 	_observatoryNotInitialized = true;
 	_observatoryVisualizer = getInvokingResource<MystAreaImageSwitch>();
-	_observatoryGoButton = static_cast<MystAreaImageSwitch *>(_vm->_resources[argv[0]]);
+	_observatoryGoButton = _vm->getViewResource<MystAreaImageSwitch>(argv[0]);
 	if (observatoryIsDDMMYYYY2400()) {
-		_observatoryDaySlider = static_cast<MystAreaSlider *>(_vm->_resources[argv[1]]);
-		_observatoryMonthSlider = static_cast<MystAreaSlider *>(_vm->_resources[argv[2]]);
+		_observatoryDaySlider = _vm->getViewResource<MystAreaSlider>(argv[1]);
+		_observatoryMonthSlider = _vm->getViewResource<MystAreaSlider>(argv[2]);
 	} else {
-		_observatoryMonthSlider = static_cast<MystAreaSlider *>(_vm->_resources[argv[1]]);
-		_observatoryDaySlider = static_cast<MystAreaSlider *>(_vm->_resources[argv[2]]);
+		_observatoryMonthSlider = _vm->getViewResource<MystAreaSlider>(argv[1]);
+		_observatoryDaySlider = _vm->getViewResource<MystAreaSlider>(argv[2]);
 	}
-	_observatoryYearSlider = static_cast<MystAreaSlider *>(_vm->_resources[argv[3]]);
-	_observatoryTimeSlider = static_cast<MystAreaSlider *>(_vm->_resources[argv[4]]);
+	_observatoryYearSlider = _vm->getViewResource<MystAreaSlider>(argv[3]);
+	_observatoryTimeSlider = _vm->getViewResource<MystAreaSlider>(argv[4]);
 
 	// Set date selection sliders position
 	_observatoryDaySlider->setPosition(_state.observatoryDaySlider);
@@ -3704,11 +3704,11 @@ void Myst::boilerGaugeInit() {
 void Myst::o_rocketSliders_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Rocket sliders init", op);
 
-	_rocketSlider1 = static_cast<MystAreaSlider *>(_vm->_resources[argv[0]]);
-	_rocketSlider2 = static_cast<MystAreaSlider *>(_vm->_resources[argv[1]]);
-	_rocketSlider3 = static_cast<MystAreaSlider *>(_vm->_resources[argv[2]]);
-	_rocketSlider4 = static_cast<MystAreaSlider *>(_vm->_resources[argv[3]]);
-	_rocketSlider5 = static_cast<MystAreaSlider *>(_vm->_resources[argv[4]]);
+	_rocketSlider1 = _vm->getViewResource<MystAreaSlider>(argv[0]);
+	_rocketSlider2 = _vm->getViewResource<MystAreaSlider>(argv[1]);
+	_rocketSlider3 = _vm->getViewResource<MystAreaSlider>(argv[2]);
+	_rocketSlider4 = _vm->getViewResource<MystAreaSlider>(argv[3]);
+	_rocketSlider5 = _vm->getViewResource<MystAreaSlider>(argv[4]);
 
 	// Initialize sliders position
 	for (uint i = 0; i < 5; i++)

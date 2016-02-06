@@ -196,6 +196,9 @@ public:
 	void drawCardBackground();
 	uint16 getCardBackgroundId();
 
+	template<class T>
+	T *getViewResource(uint index);
+
 	void setCacheState(bool state) { _cache.enabled = state; }
 	bool getCacheState() { return _cache.enabled; }
 
@@ -241,6 +244,17 @@ private:
 	uint16 _currentCursor;
 	uint16 _mainCursor; // Also defines the current page being held (white, blue, red, or none)
 };
+
+template<class T>
+T *MohawkEngine_Myst::getViewResource(uint index) {
+	T *resource = dynamic_cast<T *>(_resources[index]);
+
+	if (!resource) {
+		error("View resource '%d' has unexpected type", index);
+	}
+
+	return resource;
+}
 
 } // End of namespace Mohawk
 

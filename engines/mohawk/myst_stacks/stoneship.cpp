@@ -437,7 +437,7 @@ void Stoneship::o_cabinBookMovie(uint16 op, uint16 var, uint16 argc, uint16 *arg
 void Stoneship::o_drawerOpenSirius(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Open drawer", op);
 
-	MystAreaImageSwitch *drawer = static_cast<MystAreaImageSwitch *>(_vm->_resources[argv[0]]);
+	MystAreaImageSwitch *drawer = _vm->getViewResource<MystAreaImageSwitch>(argv[0]);
 
 	if (drawer->getImageSwitchVar() == 35) {
 		drawer->drawConditionalDataToScreen(getVar(102), 0);
@@ -582,7 +582,7 @@ void Stoneship::batteryDeplete_run() {
 void Stoneship::o_drawerOpenAchenar(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Open drawer", op);
 
-	MystAreaImageSwitch *drawer = static_cast<MystAreaImageSwitch *>(_vm->_resources[argv[0]]);
+	MystAreaImageSwitch *drawer = _vm->getViewResource<MystAreaImageSwitch>(argv[0]);
 	drawer->drawConditionalDataToScreen(0, 0);
 	_vm->_gfx->runTransition(kTransitionTopToBottom, drawer->getRect(), 25, 5);
 }
