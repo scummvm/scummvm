@@ -369,37 +369,37 @@ MystResourceType8::MystResourceType8(MohawkEngine_Myst *vm, Common::SeekableRead
 	debugC(kDebugResource, "\tvar8: %d", _var8);
 	debugC(kDebugResource, "\tnumSubImages: %d", _numSubImages);
 
-	_subImages = new MystResourceType8::SubImage[_numSubImages];
-
 	for (uint16 i = 0; i < _numSubImages; i++) {
 		debugC(kDebugResource, "\tSubimage %d:", i);
 
-		_subImages[i].wdib = rlstStream->readUint16LE();
-		_subImages[i].rect.left = rlstStream->readSint16LE();
+		SubImage subImage;
+		subImage.wdib = rlstStream->readUint16LE();
+		subImage.rect.left = rlstStream->readSint16LE();
 
-		if (_subImages[i].rect.left != -1) {
-			_subImages[i].rect.top = rlstStream->readSint16LE();
-			_subImages[i].rect.right = rlstStream->readSint16LE();
-			_subImages[i].rect.bottom = rlstStream->readSint16LE();
+		if (subImage.rect.left != -1) {
+			subImage.rect.top = rlstStream->readSint16LE();
+			subImage.rect.right = rlstStream->readSint16LE();
+			subImage.rect.bottom = rlstStream->readSint16LE();
 		} else {
 			// Use the hotspot rect as the source rect since the subimage is fullscreen
 			// Convert to bitmap coordinates (upside down)
-			_subImages[i].rect.left = _rect.left;
-			_subImages[i].rect.top = 333 - _rect.bottom;
-			_subImages[i].rect.right = _rect.right;
-			_subImages[i].rect.bottom = 333 - _rect.top;
+			subImage.rect.left = _rect.left;
+			subImage.rect.top = 333 - _rect.bottom;
+			subImage.rect.right = _rect.right;
+			subImage.rect.bottom = 333 - _rect.top;
 		}
 
-		debugC(kDebugResource, "\twdib: %d", _subImages[i].wdib);
-		debugC(kDebugResource, "\tleft: %d", _subImages[i].rect.left);
-		debugC(kDebugResource, "\ttop: %d", _subImages[i].rect.top);
-		debugC(kDebugResource, "\tright: %d", _subImages[i].rect.right);
-		debugC(kDebugResource, "\tbottom: %d", _subImages[i].rect.bottom);
+		debugC(kDebugResource, "\twdib: %d", subImage.wdib);
+		debugC(kDebugResource, "\tleft: %d", subImage.rect.left);
+		debugC(kDebugResource, "\ttop: %d", subImage.rect.top);
+		debugC(kDebugResource, "\tright: %d", subImage.rect.right);
+		debugC(kDebugResource, "\tbottom: %d", subImage.rect.bottom);
+
+		_subImages.push_back(subImage);
 	}
 }
 
 MystResourceType8::~MystResourceType8() {
-	delete[] _subImages;
 }
 
 void MystResourceType8::drawDataToScreen() {
@@ -478,6 +478,14 @@ void MystResourceType8::drawConditionalDataToScreen(uint16 state, bool update) {
 
 uint16 MystResourceType8::getType8Var() {
 	return _var8;
+}
+
+MystResourceType8::SubImage MystResourceType8::getSubImage(uint index) const {
+	return _subImages[index];
+}
+
+void MystResourceType8::setSubImageRect(uint index, const Common::Rect &rect) {
+	_subImages[index].rect = rect;
 }
 
 const Common::String MystResourceType8::describe() {

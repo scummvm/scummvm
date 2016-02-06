@@ -671,9 +671,12 @@ void Selenitic::soundReceiverUpdate() {
 void Selenitic::soundReceiverDrawView() {
 	uint32 left = ((*_soundReceiverPosition) * 1800) / 3600;
 
-	_soundReceiverViewer->_subImages->rect.left = left;
-	_soundReceiverViewer->_subImages->rect.right = left + 136;
+	Common::Rect rect = _soundReceiverViewer->getSubImage(0).rect;
 
+	rect.left = left;
+	rect.right = left + 136;
+
+	_soundReceiverViewer->setSubImageRect(0, rect);
 	_soundReceiverViewer->drawConditionalDataToScreen(0);
 
 	soundReceiverDrawAngle();

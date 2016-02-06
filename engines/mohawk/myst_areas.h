@@ -146,20 +146,24 @@ class MystResourceType8 : public MystResourceType7 {
 public:
 	MystResourceType8(MohawkEngine_Myst *vm, Common::SeekableReadStream *rlstStream, MystResource *parent);
 	virtual ~MystResourceType8();
-	virtual const Common::String describe() override;
-
-	virtual void drawDataToScreen() override;
-	void drawConditionalDataToScreen(uint16 state, bool update = true);
-	uint16 getType8Var() override;
 
 	struct SubImage {
 		uint16 wdib;
 		Common::Rect rect;
-	} *_subImages;
+	};
+
+	virtual const Common::String describe() override;
+	virtual void drawDataToScreen() override;
+	void drawConditionalDataToScreen(uint16 state, bool update = true);
+	uint16 getType8Var() override;
+
+	SubImage getSubImage(uint index) const;
+	void setSubImageRect(uint index, const Common::Rect &rect);
 
 protected:
 	uint16 _var8;
 	uint16 _numSubImages;
+	Common::Array<SubImage> _subImages;
 };
 
 // No MystResourceType9!

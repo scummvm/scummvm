@@ -2302,14 +2302,14 @@ void Myst::o_rocketPianoStart(uint16 op, uint16 var, uint16 argc, uint16 *argv) 
 	MystResourceType11 *key = static_cast<MystResourceType11 *>(_invokingResource);
 
 	// What the hell??
-	Common::Rect src = key->_subImages[1].rect;
-	Common::Rect rect = key->_subImages[0].rect;
+	Common::Rect src = key->getSubImage(1).rect;
+	Common::Rect rect = key->getSubImage(0).rect;
 	Common::Rect dest = rect;
 	dest.top = 332 - rect.bottom;
 	dest.bottom = 332 - rect.top;
 
 	// Draw pressed piano key
-	_vm->_gfx->copyImageSectionToScreen(key->_subImages[1].wdib, src, dest);
+	_vm->_gfx->copyImageSectionToScreen(key->getSubImage(0).wdib, src, dest);
 	_vm->_system->updateScreen();
 
 	// Play note
@@ -2328,27 +2328,27 @@ void Myst::o_rocketPianoMove(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	// Unpress previous key
 	MystResourceType11 *key = static_cast<MystResourceType11 *>(_invokingResource);
 
-	Common::Rect src = key->_subImages[0].rect;
+	Common::Rect src = key->getSubImage(0).rect;
 	Common::Rect dest = src;
 	dest.top = 332 - src.bottom;
 	dest.bottom = 332 - src.top;
 
 	// Draw unpressed piano key
-	_vm->_gfx->copyImageSectionToScreen(key->_subImages[0].wdib, src, dest);
+	_vm->_gfx->copyImageSectionToScreen(key->getSubImage(0).wdib, src, dest);
 
 	if (piano.contains(mouse)) {
 		MystResource *resource = _vm->updateCurrentResource();
 		if (resource && resource->type == kMystDragArea) {
 			// Press new key
 			key = static_cast<MystResourceType11 *>(resource);
-			src = key->_subImages[1].rect;
-			Common::Rect rect = key->_subImages[0].rect;
+			src = key->getSubImage(1).rect;
+			Common::Rect rect = key->getSubImage(0).rect;
 			dest = rect;
 			dest.top = 332 - rect.bottom;
 			dest.bottom = 332 - rect.top;
 
 			// Draw pressed piano key
-			_vm->_gfx->copyImageSectionToScreen(key->_subImages[1].wdib, src, dest);
+			_vm->_gfx->copyImageSectionToScreen(key->getSubImage(1).wdib, src, dest);
 
 			// Play note
 			if (_state.generatorVoltage == 59 && !_state.generatorBreakers) {
@@ -2370,13 +2370,13 @@ void Myst::o_rocketPianoStop(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 
 	MystResourceType8 *key = static_cast<MystResourceType8 *>(_invokingResource);
 
-	Common::Rect &src = key->_subImages[0].rect;
+	Common::Rect src = key->getSubImage(0).rect;
 	Common::Rect dest = src;
 	dest.top = 332 - src.bottom;
 	dest.bottom = 332 - src.top;
 
 	// Draw unpressed piano key
-	_vm->_gfx->copyImageSectionToScreen(key->_subImages[0].wdib, src, dest);
+	_vm->_gfx->copyImageSectionToScreen(key->getSubImage(0).wdib, src, dest);
 	_vm->_system->updateScreen();
 
 	_vm->_sound->stopSound();
@@ -3503,18 +3503,14 @@ bool Myst::observatoryIsDDMMYYYY2400() {
 }
 
 void Myst::observatoryUpdateVisualizer(uint16 x, uint16 y) {
-	Common::Rect &visu0 = _observatoryVisualizer->_subImages[0].rect;
-	Common::Rect &visu1 = _observatoryVisualizer->_subImages[1].rect;
+	Common::Rect visu;
+	visu.left = x;
+	visu.right = visu.left + 105;
+	visu.bottom = 512 - y;
+	visu.top = visu.bottom - 106;
 
-	visu0.left = x;
-	visu0.right = visu0.left + 105;
-	visu0.bottom = 512 - y;
-	visu0.top = visu0.bottom - 106;
-
-	visu1.left = visu0.left;
-	visu1.top = visu0.top;
-	visu1.right = visu0.right;
-	visu1.bottom = visu0.bottom;
+	_observatoryVisualizer->setSubImageRect(0, visu);
+	_observatoryVisualizer->setSubImageRect(1, visu);
 }
 
 void Myst::observatorySetTargetToSetting() {
