@@ -702,16 +702,15 @@ MystAreaDrag::MystAreaDrag(MohawkEngine_Myst *vm, Common::SeekableReadStream *rl
 	debugCN(kDebugResource, "Type 11 _mouseDragOpcode: %d\n", _mouseDragOpcode);
 	debugCN(kDebugResource, "Type 11 _mouseUpOpcode: %d\n", _mouseUpOpcode);
 
-	for (byte i = 0; i < 3; i++) {
+	for (byte i = 0; i < ARRAYSIZE(_lists); i++) {
 		debugC(kDebugResource, "\tList %d:", i);
 
-		_lists[i].listCount = rlstStream->readUint16LE();
-		debugC(kDebugResource, "\t%d values", _lists[i].listCount);
+		uint16 listCount = rlstStream->readUint16LE();
+		debugC(kDebugResource, "\t%d values", listCount);
 
-		_lists[i].list = new uint16[_lists[i].listCount];
-		for (uint16 j = 0; j < _lists[i].listCount; j++) {
-			_lists[i].list[j] = rlstStream->readUint16LE();
-			debugC(kDebugResource, "\tValue %d: %d", j, _lists[i].list[j]);
+		for (uint16 j = 0; j < listCount; j++) {
+			_lists[i].push_back(rlstStream->readUint16LE());
+			debugC(kDebugResource, "\tValue %d: %d", j, _lists[i][j]);
 		}
 	}
 
@@ -726,8 +725,6 @@ MystAreaDrag::MystAreaDrag(MohawkEngine_Myst *vm, Common::SeekableReadStream *rl
 }
 
 MystAreaDrag::~MystAreaDrag() {
-	for (byte i = 0; i < 3; i++)
-		delete[] _lists[i].list;
 }
 
 void MystAreaDrag::handleMouseDown() {
@@ -771,15 +768,15 @@ void MystAreaDrag::setPositionClipping(const Common::Point &mouse, Common::Point
 }
 
 uint16 MystAreaDrag::getList1(uint16 index) {
-	return (index < _lists[0].listCount) ? _lists[0].list[index] : 0;
+	return (index < _lists[0].size()) ? _lists[0][index] : 0;
 }
 
 uint16 MystAreaDrag::getList2(uint16 index) {
-	return (index < _lists[1].listCount) ?  _lists[1].list[index] : 0;
+	return (index < _lists[1].size()) ?  _lists[1][index] : 0;
 }
 
 uint16 MystAreaDrag::getList3(uint16 index) {
-	return (index < _lists[2].listCount) ?  _lists[2].list[index] : 0;
+	return (index < _lists[2].size()) ?  _lists[2][index] : 0;
 }
 
 MystVideoInfo::MystVideoInfo(MohawkEngine_Myst *vm, Common::SeekableReadStream *rlstStream, MystArea *parent) :

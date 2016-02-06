@@ -189,10 +189,7 @@ public:
 
 	Common::Point _pos;
 protected:
-	struct ValueList {
-		uint16 listCount;
-		uint16 *list;
-	};
+	typedef Common::Array<uint16> ValueList;
 
 	void setPositionClipping(const Common::Point &mouse, Common::Point &dest);
 
