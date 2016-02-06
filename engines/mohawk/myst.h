@@ -30,8 +30,6 @@
 
 #include "common/random.h"
 
-#include "gui/saveload.h"
-
 namespace Mohawk {
 
 class MohawkEngine_Myst;
@@ -211,7 +209,6 @@ public:
 
 private:
 	MystConsole *_console;
-	GUI::SaveLoadChooser *_loadDialog;
 	MystOptionsDialog *_optionsDialog;
 	MystScriptParser *_prevStack;
 	ResourceCache _cache;

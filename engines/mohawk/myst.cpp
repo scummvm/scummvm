@@ -83,7 +83,6 @@ MohawkEngine_Myst::MohawkEngine_Myst(OSystem *syst, const MohawkGameDescription 
 	_console = nullptr;
 	_scriptParser = nullptr;
 	_gameState = nullptr;
-	_loadDialog = nullptr;
 	_optionsDialog = nullptr;
 
 	_cursorHintCount = 0;
@@ -99,7 +98,6 @@ MohawkEngine_Myst::~MohawkEngine_Myst() {
 	delete _console;
 	delete _scriptParser;
 	delete _gameState;
-	delete _loadDialog;
 	delete _optionsDialog;
 	delete _prevStack;
 	delete _rnd;
@@ -233,7 +231,6 @@ Common::Error MohawkEngine_Myst::run() {
 	_gfx = new MystGraphics(this);
 	_console = new MystConsole(this);
 	_gameState = new MystGameState(this, _saveFileMan);
-	_loadDialog = new GUI::SaveLoadChooser(_("Load game:"), _("Load"), false);
 	_optionsDialog = new MystOptionsDialog(this);
 	_cursor = new MystCursorManager(this);
 	_rnd = new Common::RandomSource("myst");
