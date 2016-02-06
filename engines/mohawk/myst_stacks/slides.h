@@ -40,8 +40,8 @@ public:
 	Slides(MohawkEngine_Myst *vm);
 	~Slides();
 
-	void disablePersistentScripts();
-	void runPersistentScripts();
+	void disablePersistentScripts() override;
+	void runPersistentScripts() override;
 
 private:
 	void setupOpcodes();

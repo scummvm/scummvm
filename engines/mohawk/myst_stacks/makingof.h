@@ -40,8 +40,8 @@ public:
 	MakingOf(MohawkEngine_Myst *vm);
 	~MakingOf();
 
-	void disablePersistentScripts();
-	void runPersistentScripts();
+	void disablePersistentScripts() override;
+	void runPersistentScripts() override;
 
 private:
 	void setupOpcodes();
