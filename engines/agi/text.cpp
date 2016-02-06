@@ -941,8 +941,17 @@ char *TextMgr::stringWordWrap(const char *originalText, int16 maxWidth, int16 *c
 
 	//memset(resultWrappedBuffer, 0, sizeof(resultWrappedBuffer)); for debugging
 
+	// Good testcases:
+	// King's Quest 1 intro:         the scrolling text is filled up with spaces, so that old lines are erased
+	// Apple IIgs restart system UI: spaces used to make the window larger
+
 	while (originalText[curReadPos]) {
 		// Try to find out length of next word
+
+		// If first character is a space, skip it, so that we process at least this space
+		if (originalText[curReadPos] == ' ')
+			curReadPos++;
+
 		while (originalText[curReadPos]) {
 			if (originalText[curReadPos] == ' ')
 				break;
@@ -1005,10 +1014,6 @@ char *TextMgr::stringWordWrap(const char *originalText, int16 maxWidth, int16 *c
 		}
 
 		wordStartPos = curReadPos;
-
-		// Last word ended with a space, skip this space for reading the next word
-		if (wordEndChar == ' ')
-			curReadPos++;
 	}
 
 	resultWrappedBuffer[curWritePos] = 0;
