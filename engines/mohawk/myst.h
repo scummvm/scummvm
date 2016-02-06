@@ -132,7 +132,6 @@ struct MystView {
 	Common::Array<MystSoundItem> soundList;
 
 	// Script Resources
-	uint16 scriptResCount;
 	struct ScriptResource {
 		uint16 type;
 		uint16 id; // Not used by type 3
@@ -141,7 +140,8 @@ struct MystView {
 		uint16 count; // Used by type 3 only
 		uint16 u0; // Used by type 3 only
 		int16 *resource_list; // Used by type 3 only
-	} *scriptResources;
+	};
+	Common::Array<ScriptResource> scriptResources;
 
 	// Resource ID's
 	uint16 rlst;

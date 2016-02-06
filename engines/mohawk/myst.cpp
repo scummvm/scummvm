@@ -90,9 +90,6 @@ MohawkEngine_Myst::MohawkEngine_Myst(OSystem *syst, const MohawkGameDescription 
 	_cursorHints = nullptr;
 
 	_prevStack = nullptr;
-
-	_view.scriptResCount = 0;
-	_view.scriptResources = nullptr;
 }
 
 MohawkEngine_Myst::~MohawkEngine_Myst() {
@@ -771,49 +768,50 @@ void MohawkEngine_Myst::loadCard() {
 	}
 
 	// Resources that scripts can call upon
-	_view.scriptResCount = viewStream->readUint16LE();
-	debugC(kDebugView, "Script Resource Count: %d", _view.scriptResCount);
-	if (_view.scriptResCount != 0) {
-		_view.scriptResources = new MystView::ScriptResource[_view.scriptResCount];
-		for (uint16 i = 0; i < _view.scriptResCount; i++) {
-			debugC(kDebugView, "\tResource %d:", i);
-			_view.scriptResources[i].type = viewStream->readUint16LE();
-			debugC(kDebugView, "\t\t Type: %d", _view.scriptResources[i].type);
+	uint16 scriptResCount = viewStream->readUint16LE();
+	debugC(kDebugView, "Script Resource Count: %d", scriptResCount);
+	for (uint16 i = 0; i < scriptResCount; i++) {
+		MystView::ScriptResource scriptResource;
 
-			switch (_view.scriptResources[i].type) {
-			case 1:
-				debugC(kDebugView, "\t\t\t\t= Image");
-				break;
-			case 2:
-				debugC(kDebugView, "\t\t\t\t= Sound");
-				break;
-			case 3:
-				debugC(kDebugView, "\t\t\t\t= Resource List");
-				break;
-			default:
-				debugC(kDebugView, "\t\t\t\t= Unknown");
-				break;
-			}
+		debugC(kDebugView, "\tResource %d:", i);
+		scriptResource.type = viewStream->readUint16LE();
+		debugC(kDebugView, "\t\t Type: %d", scriptResource.type);
 
-			if (_view.scriptResources[i].type == 3) {
-				_view.scriptResources[i].var = viewStream->readUint16LE();
-				debugC(kDebugView, "\t\t Var: %d", _view.scriptResources[i].var);
-				_view.scriptResources[i].count = viewStream->readUint16LE();
-				debugC(kDebugView, "\t\t Resource List Count: %d", _view.scriptResources[i].count);
-				_view.scriptResources[i].u0 = viewStream->readUint16LE();
-				debugC(kDebugView, "\t\t u0: %d", _view.scriptResources[i].u0);
-				_view.scriptResources[i].resource_list = new int16[_view.scriptResources[i].count];
-
-				for (uint16 j = 0; j < _view.scriptResources[i].count; j++) {
-					_view.scriptResources[i].resource_list[j] = viewStream->readSint16LE();
-					debugC(kDebugView, "\t\t Resource List %d: %d", j, _view.scriptResources[i].resource_list[j]);
-				}
-			} else {
-				_view.scriptResources[i].resource_list = nullptr;
-				_view.scriptResources[i].id = viewStream->readUint16LE();
-				debugC(kDebugView, "\t\t Id: %d", _view.scriptResources[i].id);
-			}
+		switch (scriptResource.type) {
+		case 1:
+			debugC(kDebugView, "\t\t\t\t= Image");
+			break;
+		case 2:
+			debugC(kDebugView, "\t\t\t\t= Sound");
+			break;
+		case 3:
+			debugC(kDebugView, "\t\t\t\t= Resource List");
+			break;
+		default:
+			debugC(kDebugView, "\t\t\t\t= Unknown");
+			break;
 		}
+
+		if (scriptResource.type == 3) {
+			scriptResource.var = viewStream->readUint16LE();
+			debugC(kDebugView, "\t\t Var: %d", scriptResource.var);
+			scriptResource.count = viewStream->readUint16LE();
+			debugC(kDebugView, "\t\t Resource List Count: %d", scriptResource.count);
+			scriptResource.u0 = viewStream->readUint16LE();
+			debugC(kDebugView, "\t\t u0: %d", scriptResource.u0);
+			scriptResource.resource_list = new int16[scriptResource.count];
+
+			for (uint16 j = 0; j < scriptResource.count; j++) {
+				scriptResource.resource_list[j] = viewStream->readSint16LE();
+				debugC(kDebugView, "\t\t Resource List %d: %d", j, scriptResource.resource_list[j]);
+			}
+		} else {
+			scriptResource.resource_list = nullptr;
+			scriptResource.id = viewStream->readUint16LE();
+			debugC(kDebugView, "\t\t Id: %d", scriptResource.id);
+		}
+
+		_view.scriptResources.push_back(scriptResource);
 	}
 
 	// Identifiers for other resources. 0 if non existent. There is always an RLST.
@@ -854,8 +852,8 @@ void MohawkEngine_Myst::loadCard() {
 	}
 
 	// Precache Script Resources
-	if (_view.scriptResCount != 0) {
-		for (uint16 i = 0; i < _view.scriptResCount; i++) {
+	if (_view.scriptResources.size() != 0) {
+		for (uint16 i = 0; i < _view.scriptResources.size(); i++) {
 			switch (_view.scriptResources[i].type) {
 			case 1:
 				cachePreload(cacheImageType, _view.scriptResources[i].id);
@@ -878,12 +876,10 @@ void MohawkEngine_Myst::unloadCard() {
 	_view.conditionalImages.clear();
 	_view.soundList.clear();
 
-	for (uint16 i = 0; i < _view.scriptResCount; i++)
+	for (uint16 i = 0; i < _view.scriptResources.size(); i++)
 		delete[] _view.scriptResources[i].resource_list;
 
-	delete[] _view.scriptResources;
-	_view.scriptResources = nullptr;
-	_view.scriptResCount = 0;
+	_view.scriptResources.clear();
 }
 
 void MohawkEngine_Myst::runInitScript() {
