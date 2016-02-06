@@ -99,6 +99,11 @@ struct MystCondition {
 	Common::Array<uint16> values;
 };
 
+struct MystSoundItem {
+	int16 action;
+	uint16 volume;
+};
+
 // View Sound Action Type
 enum {
 	kMystSoundActionConditional  = -4,
@@ -124,9 +129,7 @@ struct MystView {
 	int16 sound;
 	uint16 soundVolume;
 	uint16 soundVar;
-	uint16 soundCount;
-	int16 *soundList;
-	uint16 *soundListVolume;
+	Common::Array<MystSoundItem> soundList;
 
 	// Script Resources
 	uint16 scriptResCount;

@@ -91,8 +91,6 @@ MohawkEngine_Myst::MohawkEngine_Myst(OSystem *syst, const MohawkGameDescription 
 
 	_prevStack = nullptr;
 
-	_view.soundList = nullptr;
-	_view.soundListVolume = nullptr;
 	_view.scriptResCount = 0;
 	_view.scriptResources = nullptr;
 }
@@ -587,11 +585,11 @@ void MohawkEngine_Myst::changeToCard(uint16 card, TransitionType transition) {
 
 	if (_view.sound == kMystSoundActionConditional) {
 		uint16 soundVarValue = _scriptParser->getVar(_view.soundVar);
-		if (soundVarValue >= _view.soundCount)
+		if (soundVarValue >= _view.soundList.size())
 			warning("Conditional sound variable outside range");
 		else {
-			soundAction = _view.soundList[soundVarValue];
-			soundActionVolume = _view.soundListVolume[soundVarValue];
+			soundAction = _view.soundList[soundVarValue].action;
+			soundActionVolume = _view.soundList[soundVarValue].volume;
 		}
 	} else {
 		soundAction = _view.sound;
@@ -752,18 +750,20 @@ void MohawkEngine_Myst::loadCard() {
 		debugC(kDebugView, "Conditional sound list");
 		_view.soundVar = viewStream->readUint16LE();
 		debugC(kDebugView, "\tVar: %d", _view.soundVar);
-		_view.soundCount = viewStream->readUint16LE();
-		debugC(kDebugView, "\tCount: %d", _view.soundCount);
-		_view.soundList = new int16[_view.soundCount];
-		_view.soundListVolume = new uint16[_view.soundCount];
+		uint16 soundCount = viewStream->readUint16LE();
+		debugC(kDebugView, "\tCount: %d", soundCount);
 
-		for (uint16 i = 0; i < _view.soundCount; i++) {
-			_view.soundList[i] = viewStream->readSint16LE();
-			debugC(kDebugView, "\t\tCondition %d: Action %d", i, _view.soundList[i]);
-			if (_view.soundList[i] == kMystSoundActionChangeVolume || _view.soundList[i] >= 0) {
-				_view.soundListVolume[i] = viewStream->readUint16LE();
-				debugC(kDebugView, "\t\tCondition %d: Volume %d", i, _view.soundListVolume[i]);
+		for (uint16 i = 0; i < soundCount; i++) {
+			MystSoundItem sound;
+
+			sound.action = viewStream->readSint16LE();
+			debugC(kDebugView, "\t\tCondition %d: Action %d", i, sound.action);
+			if (sound.action == kMystSoundActionChangeVolume || sound.action >= 0) {
+				sound.volume = viewStream->readUint16LE();
+				debugC(kDebugView, "\t\tCondition %d: Volume %d", i, sound.volume);
 			}
+
+			_view.soundList.push_back(sound);
 		}
 	} else {
 		debugC(kDebugView, "Unknown");
@@ -847,9 +847,9 @@ void MohawkEngine_Myst::loadCard() {
 	if (_view.sound > 0)
 		cachePreload(ID_MSND, _view.sound);
 	else if (_view.sound == kMystSoundActionConditional) {
-		for (uint16 i = 0; i < _view.soundCount; i++) {
-			if (_view.soundList[i] > 0)
-				cachePreload(ID_MSND, _view.soundList[i]);
+		for (uint16 i = 0; i < _view.soundList.size(); i++) {
+			if (_view.soundList[i].action > 0)
+				cachePreload(ID_MSND, _view.soundList[i].action);
 		}
 	}
 
@@ -876,11 +876,7 @@ void MohawkEngine_Myst::loadCard() {
 
 void MohawkEngine_Myst::unloadCard() {
 	_view.conditionalImages.clear();
-
-	delete[] _view.soundList;
-	_view.soundList = nullptr;
-	delete[] _view.soundListVolume;
-	_view.soundListVolume = nullptr;
+	_view.soundList.clear();
 
 	for (uint16 i = 0; i < _view.scriptResCount; i++)
 		delete[] _view.scriptResources[i].resource_list;
