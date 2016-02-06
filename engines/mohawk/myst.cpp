@@ -91,8 +91,6 @@ MohawkEngine_Myst::MohawkEngine_Myst(OSystem *syst, const MohawkGameDescription 
 
 	_prevStack = nullptr;
 
-	_view.conditionalImageCount = 0;
-	_view.conditionalImages = nullptr;
 	_view.soundList = nullptr;
 	_view.soundListVolume = nullptr;
 	_view.scriptResCount = 0;
@@ -113,8 +111,7 @@ MohawkEngine_Myst::~MohawkEngine_Myst() {
 
 	delete[] _cursorHints;
 
-	delete[] _view.conditionalImages;
-	delete[] _view.scriptResources;
+	unloadCard();
 
 	for (uint32 i = 0; i < _resources.size(); i++)
 		delete _resources[i];
@@ -538,10 +535,10 @@ void MohawkEngine_Myst::changeToStack(uint16 stack, uint16 card, uint16 linkSrcS
 uint16 MohawkEngine_Myst::getCardBackgroundId() {
 	uint16 imageToDraw = 0;
 
-	if (_view.conditionalImageCount == 0)
+	if (_view.conditionalImages.size() == 0)
 		imageToDraw = _view.mainImage;
 	else {
-		for (uint16 i = 0; i < _view.conditionalImageCount; i++) {
+		for (uint16 i = 0; i < _view.conditionalImages.size(); i++) {
 			uint16 varValue = _scriptParser->getVar(_view.conditionalImages[i].var);
 			if (varValue < _view.conditionalImages[i].numStates)
 				imageToDraw = _view.conditionalImages[i].values[varValue];
@@ -711,21 +708,24 @@ void MohawkEngine_Myst::loadCard() {
 	debugC(kDebugView, "Flags: 0x%04X", _view.flags);
 
 	// The Image Block (Reminiscent of Riven PLST resources)
-	_view.conditionalImageCount = viewStream->readUint16LE();
-	debugC(kDebugView, "Conditional Image Count: %d", _view.conditionalImageCount);
-	if (_view.conditionalImageCount != 0) {
-		_view.conditionalImages = new MystCondition[_view.conditionalImageCount];
-		for (uint16 i = 0; i < _view.conditionalImageCount; i++) {
+	uint16 conditionalImageCount = viewStream->readUint16LE();
+	debugC(kDebugView, "Conditional Image Count: %d", conditionalImageCount);
+	if (conditionalImageCount != 0) {
+		for (uint16 i = 0; i < conditionalImageCount; i++) {
+			MystCondition conditionalImage;
+
 			debugC(kDebugView, "\tImage %d:", i);
-			_view.conditionalImages[i].var = viewStream->readUint16LE();
-			debugC(kDebugView, "\t\tVar: %d", _view.conditionalImages[i].var);
-			_view.conditionalImages[i].numStates = viewStream->readUint16LE();
-			debugC(kDebugView, "\t\tNumber of States: %d", _view.conditionalImages[i].numStates);
-			_view.conditionalImages[i].values = new uint16[_view.conditionalImages[i].numStates];
-			for (uint16 j = 0; j < _view.conditionalImages[i].numStates; j++) {
-				_view.conditionalImages[i].values[j] = viewStream->readUint16LE();
-				debugC(kDebugView, "\t\tState %d -> Value %d", j, _view.conditionalImages[i].values[j]);
+			conditionalImage.var = viewStream->readUint16LE();
+			debugC(kDebugView, "\t\tVar: %d", conditionalImage.var);
+			conditionalImage.numStates = viewStream->readUint16LE();
+			debugC(kDebugView, "\t\tNumber of States: %d", conditionalImage.numStates);
+			conditionalImage.values = new uint16[conditionalImage.numStates];
+			for (uint16 j = 0; j < conditionalImage.numStates; j++) {
+				conditionalImage.values[j] = viewStream->readUint16LE();
+				debugC(kDebugView, "\t\tState %d -> Value %d", j, conditionalImage.values[j]);
 			}
+
+			_view.conditionalImages.push_back(conditionalImage);
 		}
 		_view.mainImage = 0;
 	} else {
@@ -837,8 +837,8 @@ void MohawkEngine_Myst::loadCard() {
 		cacheImageType = ID_WDIB;
 
 	// Precache Image Block data
-	if (_view.conditionalImageCount != 0) {
-		for (uint16 i = 0; i < _view.conditionalImageCount; i++)
+	if (_view.conditionalImages.size() != 0) {
+		for (uint16 i = 0; i < _view.conditionalImages.size(); i++)
 			for (uint16 j = 0; j < _view.conditionalImages[i].numStates; j++)
 				cachePreload(cacheImageType, _view.conditionalImages[i].values[j]);
 	} else
@@ -876,12 +876,10 @@ void MohawkEngine_Myst::loadCard() {
 }
 
 void MohawkEngine_Myst::unloadCard() {
-	for (uint16 i = 0; i < _view.conditionalImageCount; i++)
+	for (uint16 i = 0; i < _view.conditionalImages.size(); i++)
 		delete[] _view.conditionalImages[i].values;
 
-	delete[] _view.conditionalImages;
-	_view.conditionalImageCount = 0;
-	_view.conditionalImages = nullptr;
+	_view.conditionalImages.clear();
 
 	delete[] _view.soundList;
 	_view.soundList = nullptr;

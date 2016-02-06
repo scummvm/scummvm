@@ -118,8 +118,7 @@ struct MystView {
 	uint16 flags;
 
 	// Image Data
-	uint16 conditionalImageCount;
-	MystCondition *conditionalImages;
+	Common::Array<MystCondition> conditionalImages;
 	uint16 mainImage;
 
 	// Sound Data
