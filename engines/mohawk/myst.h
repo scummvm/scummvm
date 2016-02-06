@@ -96,8 +96,7 @@ const uint16 kMasterpieceOnly = 0xFFFF;
 
 struct MystCondition {
 	uint16 var;
-	uint16 numStates;
-	uint16 *values;
+	Common::Array<uint16> values;
 };
 
 // View Sound Action Type

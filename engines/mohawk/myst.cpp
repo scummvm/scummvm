@@ -540,7 +540,7 @@ uint16 MohawkEngine_Myst::getCardBackgroundId() {
 	else {
 		for (uint16 i = 0; i < _view.conditionalImages.size(); i++) {
 			uint16 varValue = _scriptParser->getVar(_view.conditionalImages[i].var);
-			if (varValue < _view.conditionalImages[i].numStates)
+			if (varValue < _view.conditionalImages[i].values.size())
 				imageToDraw = _view.conditionalImages[i].values[varValue];
 		}
 	}
@@ -717,11 +717,10 @@ void MohawkEngine_Myst::loadCard() {
 			debugC(kDebugView, "\tImage %d:", i);
 			conditionalImage.var = viewStream->readUint16LE();
 			debugC(kDebugView, "\t\tVar: %d", conditionalImage.var);
-			conditionalImage.numStates = viewStream->readUint16LE();
-			debugC(kDebugView, "\t\tNumber of States: %d", conditionalImage.numStates);
-			conditionalImage.values = new uint16[conditionalImage.numStates];
-			for (uint16 j = 0; j < conditionalImage.numStates; j++) {
-				conditionalImage.values[j] = viewStream->readUint16LE();
+			uint16 numStates = viewStream->readUint16LE();
+			debugC(kDebugView, "\t\tNumber of States: %d", numStates);
+			for (uint16 j = 0; j < numStates; j++) {
+				conditionalImage.values.push_back(viewStream->readUint16LE());
 				debugC(kDebugView, "\t\tState %d -> Value %d", j, conditionalImage.values[j]);
 			}
 
@@ -839,7 +838,7 @@ void MohawkEngine_Myst::loadCard() {
 	// Precache Image Block data
 	if (_view.conditionalImages.size() != 0) {
 		for (uint16 i = 0; i < _view.conditionalImages.size(); i++)
-			for (uint16 j = 0; j < _view.conditionalImages[i].numStates; j++)
+			for (uint16 j = 0; j < _view.conditionalImages[i].values.size(); j++)
 				cachePreload(cacheImageType, _view.conditionalImages[i].values[j]);
 	} else
 		cachePreload(cacheImageType, _view.mainImage);
@@ -876,9 +875,6 @@ void MohawkEngine_Myst::loadCard() {
 }
 
 void MohawkEngine_Myst::unloadCard() {
-	for (uint16 i = 0; i < _view.conditionalImages.size(); i++)
-		delete[] _view.conditionalImages[i].values;
-
 	_view.conditionalImages.clear();
 
 	delete[] _view.soundList;
@@ -967,8 +963,6 @@ void MohawkEngine_Myst::loadHelp(uint16 id) {
 }
 
 void MohawkEngine_Myst::loadCursorHints() {
-	for (uint16 i = 0; i < _cursorHintCount; i++)
-		delete[] _cursorHints[i].variableHint.values;
 	_cursorHintCount = 0;
 	delete[] _cursorHints;
 	_cursorHints = nullptr;
@@ -996,17 +990,14 @@ void MohawkEngine_Myst::loadCursorHints() {
 			debugC(kDebugHint, "\tConditional Cursor Hints:");
 			_cursorHints[i].variableHint.var = hintStream->readUint16LE();
 			debugC(kDebugHint, "\tVar: %d", _cursorHints[i].variableHint.var);
-			_cursorHints[i].variableHint.numStates = hintStream->readUint16LE();
-			debugC(kDebugHint, "\tNumber of States: %d", _cursorHints[i].variableHint.numStates);
-			_cursorHints[i].variableHint.values = new uint16[_cursorHints[i].variableHint.numStates];
-			for (uint16 j = 0; j < _cursorHints[i].variableHint.numStates; j++) {
-				_cursorHints[i].variableHint.values[j] = hintStream->readUint16LE();
+			uint16 numStates = hintStream->readUint16LE();
+			debugC(kDebugHint, "\tNumber of States: %d", numStates);
+			for (uint16 j = 0; j < numStates; j++) {
+				_cursorHints[i].variableHint.values.push_back(hintStream->readUint16LE());
 				debugC(kDebugHint, "\t\t State %d: Cursor %d", j, _cursorHints[i].variableHint.values[j]);
 			}
 		} else {
 			_cursorHints[i].variableHint.var = 0;
-			_cursorHints[i].variableHint.numStates = 0;
-			_cursorHints[i].variableHint.values = nullptr;
 		}
 	}
 
@@ -1034,7 +1025,7 @@ void MohawkEngine_Myst::checkCursorHints() {
 			if (_cursorHints[i].cursor == -1) {
 				uint16 var_value = _scriptParser->getVar(_cursorHints[i].variableHint.var);
 
-				if (var_value >= _cursorHints[i].variableHint.numStates)
+				if (var_value >= _cursorHints[i].variableHint.values.size())
 					warning("Variable %d Out of Range in variable HINT Resource %d", _cursorHints[i].variableHint.var, i);
 				else {
 					_currentCursor = _cursorHints[i].variableHint.values[var_value];
