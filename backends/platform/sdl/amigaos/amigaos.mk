@@ -11,8 +11,8 @@ ifdef DIST_FILES_ENGINEDATA
 	cp $(DIST_FILES_ENGINEDATA) $(AMIGAOSPATH)/extras/
 endif
 	cat ${srcdir}/README | sed -f ${srcdir}/dists/amiga/convertRM.sed > README.conv
-	rx dists/amiga/RM2AG.rx README.conv
-	cp ${srcdir}/README.guide $(AMIGAOSPATH)
-	rm ${srcdir}/README.conv
-	rm ${srcdir}/README.guide
+	rx ${srcdir}/dists/amiga/RM2AG.rx README.conv
+	cp README.guide $(AMIGAOSPATH)
+	rm README.conv
+	rm README.guide
 	cp $(DIST_FILES_DOCS) $(AMIGAOSPATH)
