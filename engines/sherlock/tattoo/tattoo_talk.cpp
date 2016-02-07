@@ -795,7 +795,10 @@ OpcodeReturn TattooTalk::cmdTalkInterruptsDisable(const byte *&str) { error("Dum
 // Dummy opcode
 OpcodeReturn TattooTalk::cmdTalkInterruptsEnable(const byte *&str) { error("Dummy opcode cmdTalkInterruptsEnable called"); }
 
-OpcodeReturn TattooTalk::cmdTurnSoundsOff(const byte *&str) { error("TODO: script opcode (cmdTurnSoundsOff)"); }
+OpcodeReturn TattooTalk::cmdTurnSoundsOff(const byte *&str) {
+	_vm->_sound->stopSound();
+	return RET_SUCCESS;
+}
 
 OpcodeReturn TattooTalk::cmdWalkHolmesAndNPCToCAnimation(const byte *&str) {
 	int npcNum = *++str;
