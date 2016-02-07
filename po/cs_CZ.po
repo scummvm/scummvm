@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.7.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
-"POT-Creation-Date: 2016-02-01 21:58+0000\n"
-"PO-Revision-Date: 2015-12-24 13:37+0100\n"
+"POT-Creation-Date: 2016-02-03 22:22+0100\n"
+"PO-Revision-Date: 2016-02-03 22:59+0100\n"
 "Last-Translator: Zbyněk Schwarz <zbynek.schwarz@gmail.com>\n"
 "Language-Team: \n"
 "Language: Cesky\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2;\n"
 "X-Poedit-SourceCharset: iso-8859-2\n"
-"X-Generator: Poedit 1.8.6\n"
+"X-Generator: Poedit 1.8.7\n"
 "X-Poedit-Basepath: ..\n"
 
 #: gui/about.cpp:94
@@ -298,8 +298,8 @@ msgid ""
 "Short game identifier used for referring to saved games and running the game "
 "from the command line"
 msgstr ""
-"Krátký identifikátor her, používaný jako odkaz k uloženým hrám a "
-"spuštění hry z příkazového řádku"
+"Krátký identifikátor her, používaný jako odkaz k uloženým hrám a spuštění "
+"hry z příkazového řádku"
 
 #: gui/launcher.cpp:199
 msgctxt "lowres"
@@ -818,8 +818,8 @@ msgid ""
 "Higher value specifies better sound quality but may be not supported by your "
 "soundcard"
 msgstr ""
-"Vyšší hodnota způsobí lepší kvalitu zvuku, ale nemusí být podporována "
-"Vaši zvukovou kartou"
+"Vyšší hodnota způsobí lepší kvalitu zvuku, ale nemusí být podporována Vaši "
+"zvukovou kartou"
 
 #: gui/options.cpp:820
 msgid "GM Device:"
@@ -874,8 +874,7 @@ msgstr "Zařízení MT-32:"
 #: gui/options.cpp:879
 msgid "Specifies default sound device for Roland MT-32/LAPC1/CM32l/CM64 output"
 msgstr ""
-"Stanoví výchozí zvukové výstupní zařízení pro Roland MT-32/LAPC1/CM32l/"
-"CM64"
+"Stanoví výchozí zvukové výstupní zařízení pro Roland MT-32/LAPC1/CM32l/CM64"
 
 #: gui/options.cpp:884
 msgid "True Roland MT-32 (disable GM emulation)"
@@ -903,8 +902,8 @@ msgid ""
 "Check if you want to enable patch mappings to emulate an MT-32 on a Roland "
 "GS device"
 msgstr ""
-"Zaškrtněte, pokud chcete povolit záplaty mapování umožňující emulovat "
-"MT-32 na zařízení Roland GS"
+"Zaškrtněte, pokud chcete povolit záplaty mapování umožňující emulovat MT-32 "
+"na zařízení Roland GS"
 
 #: gui/options.cpp:898
 msgid "Don't use Roland MT-32 music"
@@ -1003,8 +1002,7 @@ msgstr "Cesta ke Vzhledu:"
 
 #: gui/options.cpp:1148 gui/options.cpp:1150 gui/options.cpp:1151
 msgid "Specifies path to additional data used by all games or ScummVM"
-msgstr ""
-"Stanoví cestu k dodatečným datům používaná všemi hrami nebo ScummVM"
+msgstr "Stanoví cestu k dodatečným datům používaná všemi hrami nebo ScummVM"
 
 #: gui/options.cpp:1157
 msgid "Plugins Path:"
@@ -1102,12 +1100,12 @@ msgstr "*  Prediktivní"
 #. I18N: 'Num' means Numbers
 #: gui/predictivedialog.cpp:575
 msgid "*  Num"
-msgstr ""
+msgstr "*  Čísla"
 
 #. I18N: 'Abc' means Latin alphabet input
 #: gui/predictivedialog.cpp:578
 msgid "*  Abc"
-msgstr ""
+msgstr "*  Abc"
 
 #: gui/recorderdialog.cpp:64
 msgid "Recorder or Playback Gameplay"
@@ -1353,11 +1351,11 @@ msgstr "Hercules Jantarová"
 
 #: common/rendermode.cpp:42
 msgid "PC-9821 (256 Colors)"
-msgstr ""
+msgstr "PC-9821 (256 barev)"
 
 #: common/rendermode.cpp:43
 msgid "PC-9801 (16 Colors)"
-msgstr ""
+msgstr "PC-9801 (16 barev)"
 
 #: common/rendermode.cpp:71
 msgctxt "lowres"
@@ -1442,9 +1440,9 @@ msgid ""
 "the README for basic information, and for instructions on how to obtain "
 "further assistance."
 msgstr ""
-"Je nám líto, ale toto jádro v současnosti nepodporuje herní nápovědu. "
-"Prosím prohlédněte si README pro základní informace a pro instrukce jak zí"
-"skat další pomoc."
+"Je nám líto, ale toto jádro v současnosti nepodporuje herní nápovědu. Prosím "
+"prohlédněte si README pro základní informace a pro instrukce jak získat "
+"další pomoc."
 
 #: engines/dialogs.cpp:234 engines/pegasus/pegasus.cpp:393
 #, c-format
@@ -1452,8 +1450,8 @@ msgid ""
 "Gamestate save failed (%s)! Please consult the README for basic information, "
 "and for instructions on how to obtain further assistance."
 msgstr ""
-"Uložení stavu hry selhalo (%s)! Prosím přečtěte si dokumentaci pro "
-"základní informace a pokyny k získání další podpory."
+"Uložení stavu hry selhalo (%s)! Prosím přečtěte si dokumentaci pro základní "
+"informace a pokyny k získání další podpory."
 
 #: engines/dialogs.cpp:307 engines/mohawk/dialogs.cpp:109
 #: engines/mohawk/dialogs.cpp:170 engines/tsage/dialogs.cpp:106
@@ -1529,8 +1527,8 @@ msgid ""
 "not work in future versions of ScummVM."
 msgstr ""
 "VAROVÁNÍ: Hra, kterou se chystáte spustit, není ještě plně podporována "
-"ScummVM. Proto je možné, že bude nestabilní a jakékoli uložené hry "
-"nemusí fungovat v budoucích verzích ScummVM."
+"ScummVM. Proto je možné, že bude nestabilní a jakékoli uložené hry nemusí "
+"fungovat v budoucích verzích ScummVM."
 
 #: engines/engine.cpp:546
 msgid "Start anyway"
@@ -1558,8 +1556,8 @@ msgid ""
 "The selected audio device '%s' was not found (e.g. might be turned off or "
 "disconnected)."
 msgstr ""
-"Zvolené zvukové zařízení '%s' nebylo nalezeno (např. může být vypnuto "
-"nebo odpojeno)."
+"Zvolené zvukové zařízení '%s' nebylo nalezeno (např. může být vypnuto nebo "
+"odpojeno)."
 
 #: audio/mididrv.cpp:209 audio/mididrv.cpp:221 audio/mididrv.cpp:257
 #: audio/mididrv.cpp:272
@@ -1572,8 +1570,8 @@ msgid ""
 "The selected audio device '%s' cannot be used. See log file for more "
 "information."
 msgstr ""
-"Zvolené zvukové zařízení '%s' nelze použít. Podívejte se na záznam pro ví"
-"ce informací."
+"Zvolené zvukové zařízení '%s' nelze použít. Podívejte se na záznam pro více "
+"informací."
 
 #: audio/mididrv.cpp:257
 #, c-format
@@ -1590,8 +1588,8 @@ msgid ""
 "The preferred audio device '%s' cannot be used. See log file for more "
 "information."
 msgstr ""
-"Upřednostňované zvukové zařízení '%s' nelze použít. Podívejte se na "
-"záznam pro více informací."
+"Upřednostňované zvukové zařízení '%s' nelze použít. Podívejte se na záznam "
+"pro více informací."
 
 #: audio/mods/paula.cpp:196
 msgid "Amiga Audio Emulator"
@@ -1607,17 +1605,15 @@ msgstr "Apple II GS Emulátor (NENÍ ZAVEDEN)"
 
 #: audio/softsynth/cms.cpp:350
 msgid "Creative Music System Emulator"
-msgstr ""
+msgstr "Emulátor hudebního systému Creative"
 
 #: audio/softsynth/fmtowns_pc98/towns_pc98_plugins.cpp:33
-#, fuzzy
 msgid "FM-Towns Audio"
-msgstr "FM Towns Emulátor"
+msgstr "Zvuk FM-Towns"
 
 #: audio/softsynth/fmtowns_pc98/towns_pc98_plugins.cpp:58
-#, fuzzy
 msgid "PC-98 Audio"
-msgstr "Zvuk"
+msgstr "Zvuk PC-98"
 
 #: audio/softsynth/mt32.cpp:200
 msgid "Initializing MT-32 Emulator"
@@ -1712,34 +1708,33 @@ msgstr "Chcete ukončit ?"
 
 #. I18N: Trackpad mode toggle status.
 #: backends/events/webossdl/webossdl-events.cpp:308
-#, fuzzy
 msgid "Trackpad mode is now"
-msgstr "Touchpad režim vypnut"
+msgstr "Režim trackpadu je nyní"
 
 #. I18N: Trackpad mode on or off.
 #. I18N: Auto-drag on or off.
 #: backends/events/webossdl/webossdl-events.cpp:311
 #: backends/events/webossdl/webossdl-events.cpp:338
 msgid "ON"
-msgstr ""
+msgstr "ZAPNUT"
 
 #: backends/events/webossdl/webossdl-events.cpp:311
 #: backends/events/webossdl/webossdl-events.cpp:338
 msgid "OFF"
-msgstr ""
+msgstr "VYPNUT"
 
 #: backends/events/webossdl/webossdl-events.cpp:315
 msgid "Swipe two fingers to the right to toggle."
-msgstr ""
+msgstr "Pro zapnutí přejeďte dvěma prsty doprava."
 
 #. I18N: Auto-drag toggle status.
 #: backends/events/webossdl/webossdl-events.cpp:335
 msgid "Auto-drag mode is now"
-msgstr ""
+msgstr "Režim automatického tažení je nyní"
 
 #: backends/events/webossdl/webossdl-events.cpp:342
 msgid "Swipe three fingers to the right to toggle."
-msgstr ""
+msgstr "Pro zapnutí přejeďte třemi prsty doprava."
 
 #: backends/graphics/opengl/opengl-graphics.cpp:119
 msgid "OpenGL"
@@ -2034,24 +2029,23 @@ msgstr "Ovládání Myši"
 
 #: backends/platform/tizen/fs.cpp:259
 msgid "[ Data ]"
-msgstr ""
+msgstr "[ Data ]"
 
 #: backends/platform/tizen/fs.cpp:263
 msgid "[ Resources ]"
-msgstr ""
+msgstr "[ Zdroje ]"
 
 #: backends/platform/tizen/fs.cpp:267
 msgid "[ SDCard ]"
-msgstr ""
+msgstr "[ SD Karta ]"
 
 #: backends/platform/tizen/fs.cpp:271
 msgid "[ Media ]"
-msgstr ""
+msgstr "[ Média ]"
 
 #: backends/platform/tizen/fs.cpp:275
-#, fuzzy
 msgid "[ Shared ]"
-msgstr "Sdílení:"
+msgstr "[ Sdílené ]"
 
 #: backends/platform/wii/options.cpp:51
 msgid "Video"
@@ -2272,8 +2266,8 @@ msgstr "Mapovat činnost pravé kliknutí"
 #: backends/platform/wince/wince-sdl.cpp:520
 msgid "You must map a key to the 'Right Click' action to play this game"
 msgstr ""
-"Musíte namapovat klávesu pro činnost 'Pravé Kliknutí', abyste tuto hru "
-"mohli hrát"
+"Musíte namapovat klávesu pro činnost 'Pravé Kliknutí', abyste tuto hru mohli "
+"hrát"
 
 #: backends/platform/wince/wince-sdl.cpp:529
 msgid "Map hide toolbar action"
@@ -2282,8 +2276,8 @@ msgstr "Mapovat činnost skrýt panel nástrojů"
 #: backends/platform/wince/wince-sdl.cpp:533
 msgid "You must map a key to the 'Hide toolbar' action to play this game"
 msgstr ""
-"Musíte namapovat klávesu pro činnost 'Skrýt Panel nástrojů', abyste tuto "
-"hru mohli hrát"
+"Musíte namapovat klávesu pro činnost 'Skrýt Panel nástrojů', abyste tuto hru "
+"mohli hrát"
 
 #: backends/platform/wince/wince-sdl.cpp:542
 msgid "Map Zoom Up action (optional)"
@@ -2338,8 +2332,8 @@ msgstr "Podpora myši"
 msgid ""
 "Enables mouse support. Allows to use mouse for movement and in game menus."
 msgstr ""
-"Povolí podporu myši. Umožní použít myš pro pohyb a pro ovládání herní"
-"ch nabídek."
+"Povolí podporu myši. Umožní použít myš pro pohyb a pro ovládání herních "
+"nabídek."
 
 #: engines/agi/saveload.cpp:727 engines/drascula/saveload.cpp:349
 #: engines/dreamweb/saveload.cpp:169 engines/neverhood/menumodule.cpp:890
@@ -2409,10 +2403,10 @@ msgid ""
 "Press OK to convert them now, otherwise you will be asked again the next "
 "time you start the game.\n"
 msgstr ""
-"ScummVM zjistil, že máte staré uložené pozice pro Drascula, které by "
-"měly být převedeny.\n"
-"Starý formát uložených her již není podporován, takže pokud je "
-"nepřevedete, nebudete moci vaše hry načíst.\n"
+"ScummVM zjistil, že máte staré uložené pozice pro Drascula, které by měly "
+"být převedeny.\n"
+"Starý formát uložených her již není podporován, takže pokud je nepřevedete, "
+"nebudete moci vaše hry načíst.\n"
 "\n"
 "Stiskněte OK, abyste je převedli teď, jinak budete požádáni znovu, při "
 "spuštění této hry.\n"
@@ -2688,10 +2682,10 @@ msgid ""
 "\n"
 "Press OK to convert them now, otherwise you will be asked next time.\n"
 msgstr ""
-"ScummVM zjistil, že máte staré uložené pozice pro Nippon Safes, které "
-"by měly být přejmenovány.\n"
-"Staré názvy již nejsou podporovány, takže pokud je nepřevedete, "
-"nebudete moci vaše hry načíst.\n"
+"ScummVM zjistil, že máte staré uložené pozice pro Nippon Safes, které by "
+"měly být přejmenovány.\n"
+"Staré názvy již nejsou podporovány, takže pokud je nepřevedete, nebudete "
+"moci vaše hry načíst.\n"
 "\n"
 "Stiskněte OK, abyste je převedli teď, jinak budete požádáni příště.\n"
 
@@ -2706,8 +2700,8 @@ msgid ""
 "\n"
 "Please report to the team."
 msgstr ""
-"ScummVM vytiskl některá varování ve vašem okně konzole a nemůže "
-"zaručit, že všechny vaše soubory byly převedeny.\n"
+"ScummVM vytiskl některá varování ve vašem okně konzole a nemůže zaručit, že "
+"všechny vaše soubory byly převedeny.\n"
 "\n"
 "Prosím nahlaste to týmu"
 
@@ -2765,14 +2759,12 @@ msgstr ""
 "Přeskočit průchod rozkladu barev EGA, obraze je zobrazen v plných barvách"
 
 #: engines/sci/detection.cpp:384
-#, fuzzy
 msgid "Enable high resolution graphics"
-msgstr "Povolit sloupcový indikátor zdraví"
+msgstr "Povolit grafiku ve vysokém rozlišení"
 
 #: engines/sci/detection.cpp:385
-#, fuzzy
 msgid "Enable high resolution graphics/content"
-msgstr "Povolit sloupcový indikátor zdraví"
+msgstr "Povolit grafiku/obsah ve vysokém rozlišení"
 
 #: engines/sci/detection.cpp:394
 msgid "Prefer digital sound effects"
@@ -2791,8 +2783,8 @@ msgid ""
 "Use an IBM Music Feature card or a Yamaha FB-01 FM synth module for MIDI "
 "output"
 msgstr ""
-"Použít kartu IBM Music Feature nebo modul syntetizátoru Yamaha FB-01 FM "
-"pro výstup MIDI"
+"Použít kartu IBM Music Feature nebo modul syntetizátoru Yamaha FB-01 FM pro "
+"výstup MIDI"
 
 #: engines/sci/detection.cpp:425
 msgid "Use CD audio"
@@ -2818,8 +2810,7 @@ msgstr "Použít stříbrné kurzory"
 #: engines/sci/detection.cpp:448
 msgid ""
 "Use the alternate set of silver cursors, instead of the normal golden ones"
-msgstr ""
-"Použít alternativní sadu stříbrných kurzorů místo standardních zlatých"
+msgstr "Použít alternativní sadu stříbrných kurzorů místo standardních zlatých"
 
 #: engines/scumm/dialogs.cpp:176
 #, c-format
@@ -3502,8 +3493,8 @@ msgid ""
 "Tentacle game directory, and the game has to be added to ScummVM."
 msgstr ""
 "Normálně by teď byl spuštěn Maniac Mansion. Ale aby toto mohlo fungovat, "
-"musí být soubory se hrou umístěny do složky 'Maniac' uvnitř složky se "
-"hrou Tentacle a hra musí být přidána do ScummVM."
+"musí být soubory se hrou umístěny do složky 'Maniac' uvnitř složky se hrou "
+"Tentacle a hra musí být přidána do ScummVM."
 
 #: engines/scumm/players/player_v3m.cpp:129
 msgid ""
@@ -3574,10 +3565,10 @@ msgid ""
 "Press OK to convert them now, otherwise you will be asked again the next "
 "time you start the game.\n"
 msgstr ""
-"ScummVM zjistil, že máte staré uložené pozice pro Broken Sword 1, "
-"které by měly být převedeny.\n"
-"Starý formát uložených her již není podporován, takže pokud je "
-"nepřevedete, nebudete moci vaše hry načíst.\n"
+"ScummVM zjistil, že máte staré uložené pozice pro Broken Sword 1, které by "
+"měly být převedeny.\n"
+"Starý formát uložených her již není podporován, takže pokud je nepřevedete, "
+"nebudete moci vaše hry načíst.\n"
 "\n"
 "Stiskněte OK, abyste je převedli teď, jinak budete požádáni znovu, při "
 "spuštění této hry.\n"
@@ -3619,8 +3610,7 @@ msgstr "Zobrazit jmenovky objektů při najetí myši"
 #: engines/teenagent/resources.cpp:95
 msgid ""
 "You're missing the 'teenagent.dat' file. Get it from the ScummVM website"
-msgstr ""
-"Chybí vám soubor 'teenagent.dat'. Můžete ho získat ze stránky ScummVM."
+msgstr "Chybí vám soubor 'teenagent.dat'. Můžete ho získat ze stránky ScummVM."
 
 #: engines/teenagent/resources.cpp:116
 msgid ""
@@ -3695,8 +3685,7 @@ msgstr ""
 #~ msgstr ""
 #~ "Normálně by teď Maniac Mansion byl spuštěn. Ale ScummVM toto zatím "
 #~ "nedělá. Abyste toto mohli hrát, přejděte do 'Přidat Hru' v počátečním "
-#~ "menu ScummVM a vyberte adresář 'Maniac' uvnitř herního adresáře "
-#~ "Tentacle."
+#~ "menu ScummVM a vyberte adresář 'Maniac' uvnitř herního adresáře Tentacle."
 
 #~ msgid "MPEG-2 cutscenes found but ScummVM has been built without MPEG-2"
 #~ msgstr "Videa MPEG-2 nalezena, ale ScummVM byl sestaven bez MPEG-2"
@@ -3754,8 +3743,8 @@ msgstr ""
 #~ "Your game version has been detected using filename matching as a variant "
 #~ "of %s."
 #~ msgstr ""
-#~ "Bylo zjištěno, že Vaše verze hry používá jméno souboru shodující se "
-#~ "s variantou %s."
+#~ "Bylo zjištěno, že Vaše verze hry používá jméno souboru shodující se s "
+#~ "variantou %s."
 
 #~ msgid "If this is an original and unmodified version, please report any"
 #~ msgstr "Pokud je toto původní a nezměněná verze, ohlaste prosím jakékoli"
@@ -3768,6 +3757,9 @@ msgstr ""
 
 #~ msgid "Command line argument not processed"
 #~ msgstr "Argument příkazové řádky nebyl zpracován"
+
+#~ msgid "FM Towns Emulator"
+#~ msgstr "FM Towns Emulátor"
 
 #~ msgid "Invalid Path"
 #~ msgstr "Neplatná Cesta"
