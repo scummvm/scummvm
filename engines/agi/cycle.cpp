@@ -306,7 +306,7 @@ int AgiEngine::playGame() {
 	setFlag(VM_FLAG_LOGIC_ZERO_FIRST_TIME, true); // not in 2.917
 	setFlag(VM_FLAG_NEW_ROOM_EXEC, true);         // needed for MUMG and SQ2!
 	setFlag(VM_FLAG_SOUND_ON, true);              // enable sound
-	setVar(VM_VAR_TIME_DELAY, 2);                 // "normal" speed
+	// do not set VM_VAR_TIME_DELAY, original AGI did not do it (in the data segment it was simply set to 0)
 
 	_game.gfxMode = true;
 	_text->promptRow_Set(22);
@@ -396,7 +396,7 @@ int AgiEngine::runGame() {
 
 		if (_restartGame) {
 			setFlag(VM_FLAG_RESTART_GAME, true);
-			setVar(VM_VAR_TIME_DELAY, 2);   // "normal" speed
+			// do not set VM_VAR_TIME_DELAY, original AGI did not do it
 
 			// Reset in-game timer
 			inGameTimerReset();
