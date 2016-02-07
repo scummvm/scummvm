@@ -426,7 +426,7 @@ static const char *const fixedTextFR[] = {
 
 	"Page %d",
 	"Fermer",
-	"Lessen", // <--
+	"Rechercher",
 	"Sauvegarder",
 	"Annuler ",
 	"Chercher avant",
@@ -610,7 +610,7 @@ static const char *const fixedTextES[] = {
 
 	"P\240gina %d",
 	"Cerrar Diario",
-	"Lessen", // <-- not included?!?!
+	"Buscar en Diario",
 	"Salvar en Archivo",
 	"Detener B\243squeda",
 	"Buscar Hacia Atr\240s",
@@ -755,7 +755,6 @@ static const char *const fixedTextES[] = {
 	"Cochero"
 };
 
-// TODO: There also was a Spanish version of Sherlock Holmes 2
 static const FixedTextLanguageEntry fixedTextLanguages[] = {
 	{ Common::DE_DEU,   fixedTextDE },
 	{ Common::ES_ESP,   fixedTextES },
