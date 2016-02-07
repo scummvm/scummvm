@@ -225,7 +225,7 @@ VideoHandle MystAreaVideo::playMovie() {
 	VideoHandle handle = _vm->_video->findVideoHandle(_videoFile);
 
 	// If the video is not running, play it
-	if (!handle || handle->endOfVideo()) {
+	if (!handle) {
 		handle = _vm->_video->playMovie(_videoFile);
 		if (!handle)
 			error("Failed to open '%s'", _videoFile.c_str());
