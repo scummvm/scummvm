@@ -93,16 +93,6 @@ private:
 	void drawOval(Graphics::Surface *surface, Common::ReadStream &in,
 		Patterns &patterns, byte fillType, byte borderThickness, byte borderFillType);
 	void drawBitmap(Graphics::Surface *surface, Common::ReadStream &in);
-
-	void drawFilledRect(Common::Rect &rect, int color, void (*plotProc)(int, int, int, void *), void *data);
-	static void drawRoundRect(Common::Rect &rect, int arc, int color, bool filled, void (*plotProc)(int, int, int, void *), void *data);
-	void drawPolygonScan(int *polyX, int *polyY, int npoints, Common::Rect &bbox, int color,
-									void (*plotProc)(int, int, int, void *), void *data);
-	void drawEllipse(int x0, int y0, int x1, int y1, bool filled, void (*plotProc)(int, int, int, void *), void *data);
-	static void drawHLine(int x1, int x2, int y, int color, void (*plotProc)(int, int, int, void *), void *data);
-	static void drawVLine(int x, int y1, int y2, int color, void (*plotProc)(int, int, int, void *), void *data);
-	void drawThickLine (int x1, int y1, int x2, int y2, int thick, int color,
-									void (*plotProc)(int, int, int, void *), void *data);
 };
 
 class FloodFill {
