@@ -890,6 +890,17 @@ void cmdObjStatusF(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 // unk_181: Deactivate keypressed control (default control of ego)
 void cmdSetSimple(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 	if (!(getFeatures() & (GF_AGI256 | GF_AGI256_2))) {
+		// set.simple is called by Larry 1 on Apple IIgs at the store, after answering the 555-6969 phone.
+		// load.sound(16) is called right before it. Interpreter is 2.440-like.
+		// it's called with parameter 16.
+		// Original interpreter doesn't seem to play any sound.
+		// TODO: Figure out what's going on. It can't be automatic saving of course.
+		if ((getVersion() < 0x2425) || (getVersion() == 0x2440)) {
+			// was not available before 2.2425, but also not available in 2.440
+			warning("set.simple called, although not available for current AGI version");
+			return;
+		}
+
 		int16 stringNr = parameter[0];
 		const char *textPtr = nullptr;
 
@@ -928,10 +939,15 @@ void cmdSetSimple(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 	}
 }
 
+// push.script was not available until 2.425, and also not available in 2.440
 void cmdPopScript(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
-	if (getVersion() >= 0x2915) {
-		debug(0, "pop.script");
+	if ((getVersion() < 0x2425) || (getVersion() == 0x2440)) {
+		// was not available before 2.2425, but also not available in 2.440
+		warning("pop.script called, although not available for current AGI version");
+		return;
 	}
+
+	debug(0, "pop.script");
 }
 
 void cmdDiscardSound(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
@@ -953,8 +969,11 @@ void cmdShowMouse(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 // but show.mouse is never called afterwards. Game running under emulator doesn't seem to hide the mouse cursor.
 // TODO: figure out, what exactly happens. Probably some hacked-in command and not related to mouse cursor for that game?
 void cmdHideMouse(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
-	if (getVersion() < 0x3000)
+	if (getVersion() < 0x3000) {
+		// was not available before 3.086
+		warning("hide.mouse, although not available for current AGI version");
 		return;
+	}
 
 	// WORKAROUND: Turns off current movement that's being caused with the mouse.
 	// This fixes problems with too many popup boxes appearing in the Amiga
@@ -972,14 +991,18 @@ void cmdHideMouse(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 }
 
 void cmdAllowMenu(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
+	if (getVersion() < 0x3098) {
+		// was not available before 3.098
+		warning("allow.menu called, although not available for current AGI version");
+		return;
+	}
+
 	uint16 allowed = parameter[0];
 
-	if (getVersion() >= 0x3098) {
-		if (allowed) {
-			state->_vm->_menu->accessAllow();
-		} else {
-			state->_vm->_menu->accessDeny();
-		}
+	if (allowed) {
+		state->_vm->_menu->accessAllow();
+	} else {
+		state->_vm->_menu->accessDeny();
 	}
 }
 
@@ -997,15 +1020,21 @@ void cmdFenceMouse(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 // HoldKey was added in 2.425
 // There was no way to disable this mode until 3.098 though
 void cmdHoldKey(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
-	if (getVersion() < 0x2425)
+	if ((getVersion() < 0x2425) || (getVersion() == 0x2440)) {
+		// was not available before 2.425, but also not available in 2.440
+		warning("hold.key called, although not available for current AGI version");
 		return;
+	}
 
 	vm->_keyHoldMode = true;
 }
 
 void cmdReleaseKey(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
-	if (getVersion() < 0x3098)
+	if (getVersion() < 0x3098) {
+		// was not available before 3.098
+		warning("release.key called, although not available for current AGI version");
 		return;
+	}
 
 	vm->_keyHoldMode = false;
 }
@@ -2132,6 +2161,7 @@ void cmdPrintAtV(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 	state->_vm->_text->printAt(textNr, textRow, textColumn, textWidth);
 }
 
+// push.script was not available until 2.425, and also not available in 2.440
 void cmdPushScript(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 	// We run AGIMOUSE always as a side effect
 	//if (getFeatures() & GF_AGIMOUSE || true) {
