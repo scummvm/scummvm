@@ -616,8 +616,6 @@ static const FixedTextActionEntry fixedTextES_Actions[] = {
 
 // =========================================
 
-// TODO:
-// It seems there was a French version of Sherlock Holmes 2
 static const FixedTextLanguageEntry fixedTextLanguages[] = {
 	{ Common::DE_DEU,   fixedTextDE, fixedTextDE_Actions },
 	{ Common::ES_ESP,   fixedTextES, fixedTextES_Actions },
