@@ -303,11 +303,6 @@ Common::Error MohawkEngine_Myst::run() {
 				case Common::KEYCODE_SPACE:
 					pauseGame();
 					break;
-				case Common::KEYCODE_F4:
-					_showResourceRects = !_showResourceRects;
-					if (_showResourceRects)
-						drawResourceRects();
-					break;
 				case Common::KEYCODE_F5:
 					_needsPageDrop = false;
 					_needsShowMap = false;

@@ -189,6 +189,8 @@ public:
 	bool _needsShowMap;
 	bool _needsShowDemoMenu;
 
+	bool _showResourceRects;
+
 	MystGraphics *_gfx;
 	MystGameState *_gameState;
 	MystScriptParser *_scriptParser;
@@ -228,7 +230,6 @@ private:
 	uint16 _curCard;
 	MystView _view;
 
-	bool _showResourceRects;
 	bool _runExitScript;
 
 	void dropPage();

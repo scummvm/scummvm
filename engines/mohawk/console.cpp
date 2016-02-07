@@ -63,6 +63,7 @@ MystConsole::MystConsole(MohawkEngine_Myst *vm) : GUI::Debugger(), _vm(vm) {
 	registerCmd("disableInitOpcodes",	WRAP_METHOD(MystConsole, Cmd_DisableInitOpcodes));
 	registerCmd("cache",				WRAP_METHOD(MystConsole, Cmd_Cache));
 	registerCmd("resources",			WRAP_METHOD(MystConsole, Cmd_Resources));
+	registerVar("show_resource_rects",  &_vm->_showResourceRects);
 }
 
 MystConsole::~MystConsole() {
