@@ -50,6 +50,8 @@ Stoneship::Stoneship(MohawkEngine_Myst *vm) :
 	_chestDrawersOpen = 0;
 	_chestAchenarBottomDrawerClosed = 1;
 
+	_brotherDoorOpen = 0;
+
 	// Drop key
 	if (_state.trapdoorKeyState == 1)
 		_state.trapdoorKeyState = 2;

@@ -37,6 +37,7 @@ namespace MystStacks {
 
 Credits::Credits(MohawkEngine_Myst *vm) : MystScriptParser(vm) {
 	setupOpcodes();
+	_curImage = 0;
 }
 
 Credits::~Credits() {

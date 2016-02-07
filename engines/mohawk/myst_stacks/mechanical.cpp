@@ -40,6 +40,9 @@ Mechanical::Mechanical(MohawkEngine_Myst *vm) :
 	setupOpcodes();
 
 	_elevatorGoingMiddle = false;
+	_elevatorPosition = 0;
+
+	_crystalLit = 0;
 
 	_mystStaircaseState = false;
 	_fortressPosition = 0;

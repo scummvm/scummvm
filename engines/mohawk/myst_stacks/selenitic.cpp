@@ -41,6 +41,10 @@ Selenitic::Selenitic(MohawkEngine_Myst *vm) :
 	setupOpcodes();
 	_mazeRunnerPosition = 288;
 	_mazeRunnerDirection = 8;
+	_mazeRunnerDoorOpened = false;
+
+	_soundReceiverDirection = 0;
+	_soundReceiverStartTime = 0;
 }
 
 Selenitic::~Selenitic() {
