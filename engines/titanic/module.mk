@@ -5,7 +5,6 @@ MODULE_OBJS := \
 	direct_draw.o \
 	font.o \
 	image.o \
-	list.o \
 	main_game_window.o \
 	saveable_object.o \
 	screen_manager.o \

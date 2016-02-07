@@ -24,11 +24,16 @@
 #define TITANIC_LIST_H
 
 #include "common/scummsys.h"
+#include "common/list.h"
 #include "titanic/saveable_object.h"
 
 namespace Titanic {
 
-class List : public CSaveableObject {
+class ListItem: public CSaveableObject {
+};
+
+class List : public CSaveableObject, Common::List<ListItem *> {
+public:
 
 };
 

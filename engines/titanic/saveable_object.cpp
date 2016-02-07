@@ -32,10 +32,12 @@ Common::HashMap<Common::String, CSaveableObject::CreateFunction> *
 #define ADDFN(T) (*_classList)["TEST"] = Function##T
 
 DEFFN(List);
+DEFFN(ListItem);
 
 void CSaveableObject::initClassList() {
 	_classList = new Common::HashMap<Common::String, CreateFunction>();
 	ADDFN(List);
+	ADDFN(ListItem);
 }
 
 void CSaveableObject::freeClassList() {
