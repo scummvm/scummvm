@@ -35,7 +35,7 @@ BITMAPINFOHEADER::BITMAPINFOHEADER() {
 	_biSizeImage = 0;
 	_biXPelsPerMeter = 0;
 	_biYPelsPerMeter = 0;
-	_biCirUsed = 0;
+	_biClrUsed = 0;
 	_biClrImportant = 0;
 }
 

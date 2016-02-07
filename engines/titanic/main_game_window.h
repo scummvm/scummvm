@@ -43,6 +43,11 @@ public:
 	void *_cursor;
 public:
 	CMainGameWindow(TitanicEngine *vm);
+
+	/**
+	 * Creates the window
+	 */
+	bool Create();
 };
 
 } // End of namespace Titanic

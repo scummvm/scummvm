@@ -20,25 +20,18 @@
  *
  */
 
-#include "titanic/titanic.h"
-#include "titanic/main_game_window.h"
+#ifndef TITANIC_LIST_H
+#define TITANIC_LIST_H
+
+#include "common/scummsys.h"
+#include "titanic/saveable_object.h"
 
 namespace Titanic {
 
-CMainGameWindow::CMainGameWindow(TitanicEngine *vm): _vm(vm) {
-	_gameView = nullptr;
-	_gameManager = nullptr;
-	_project = nullptr;
-	_field50 = 0;
-	_image = nullptr;
-	_cursor = nullptr;
-}
+class List : public CSaveableObject {
 
-bool CMainGameWindow::Create() {
-	Image image;
-	bool result = image.loadResource("TITANIC");
-	if (!result)
-		return true;
-}
+};
 
 } // End of namespace Titanic
+
+#endif /* TITANIC_LIST_H */

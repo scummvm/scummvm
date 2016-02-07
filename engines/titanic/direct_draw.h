@@ -20,25 +20,37 @@
  *
  */
 
+#ifndef TITANIC_DIRECT_DRAW_H
+#define TITANIC_DIRECT_DRAW_H
+
+#include "common/scummsys.h"
+#include "common/array.h"
 #include "titanic/titanic.h"
-#include "titanic/main_game_window.h"
 
 namespace Titanic {
 
-CMainGameWindow::CMainGameWindow(TitanicEngine *vm): _vm(vm) {
-	_gameView = nullptr;
-	_gameManager = nullptr;
-	_project = nullptr;
-	_field50 = 0;
-	_image = nullptr;
-	_cursor = nullptr;
-}
+class DirectDraw: public Manager {
+public:
+	int _field8;
+	int _fieldC;
+	int _width;
+	int _height;
+	int _bpp;
+	int _field1C;
+	int _field24;
+public:
+	DirectDraw(TitanicEngine *vm);
+};
 
-bool CMainGameWindow::Create() {
-	Image image;
-	bool result = image.loadResource("TITANIC");
-	if (!result)
-		return true;
-}
+class DirectDrawManager: public Manager {
+public:
+	DirectDraw _directDraw;
+	void *_mainSurface;
+	void *_backSurfaces[2];
+public:
+	DirectDrawManager(TitanicEngine *vm);
+};
 
 } // End of namespace Titanic
+
+#endif /* TITANIC_DIRECT_DRAW_H */

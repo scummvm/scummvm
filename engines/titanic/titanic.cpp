@@ -28,6 +28,7 @@
 #include "graphics/scaler.h"
 #include "graphics/thumbnail.h"
 #include "titanic/titanic.h"
+#include "titanic/saveable_object.h"
 
 namespace Titanic {
 
@@ -40,6 +41,7 @@ TitanicEngine::TitanicEngine(OSystem *syst, const TitanicGameDescription *gameDe
 TitanicEngine::~TitanicEngine() {
 	delete _window;
 	delete _screenManager;
+	CSaveableObject::freeClassList();
 }
 
 void TitanicEngine::initialize() {
@@ -49,6 +51,7 @@ void TitanicEngine::initialize() {
 	DebugMan.addDebugChannel(kDebugGraphics, "graphics", "Graphics handling");
 	DebugMan.addDebugChannel(kDebugSound, "sound", "Sound and Music handling");
 
+	CSaveableObject::initClassList();
 	_window = new CMainGameWindow(this);
 	_screenManager = new OSScreenManager();
 }

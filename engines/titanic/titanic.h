@@ -51,6 +51,7 @@ enum TitanicDebugChannels {
 #define TITANIC_SAVEGAME_VERSION 1
 
 struct TitanicGameDescription;
+class TitanicEngine;
 
 struct TitanicSavegameHeader {
 	uint8 _version;
@@ -59,6 +60,13 @@ struct TitanicSavegameHeader {
 	int _year, _month, _day;
 	int _hour, _minute;
 	int _totalFrames;
+};
+
+class Manager {
+protected:
+	TitanicEngine *_vm;
+public:
+	Manager(TitanicEngine *vm) : _vm(vm) {}
 };
 
 class TitanicEngine : public Engine {

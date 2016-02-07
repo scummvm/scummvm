@@ -20,25 +20,42 @@
  *
  */
 
-#include "titanic/titanic.h"
-#include "titanic/main_game_window.h"
+#include "titanic/saveable_object.h"
+#include "titanic/list.h"
 
 namespace Titanic {
 
-CMainGameWindow::CMainGameWindow(TitanicEngine *vm): _vm(vm) {
-	_gameView = nullptr;
-	_gameManager = nullptr;
-	_project = nullptr;
-	_field50 = 0;
-	_image = nullptr;
-	_cursor = nullptr;
+Common::HashMap<Common::String, CSaveableObject::CreateFunction> * 
+	CSaveableObject::_classList = nullptr;
+
+#define DEFFN(T) CSaveableObject *Function##T() { return new T(); }
+#define ADDFN(T) (*_classList)["TEST"] = Function##T
+
+DEFFN(List);
+
+void CSaveableObject::initClassList() {
+	_classList = new Common::HashMap<Common::String, CreateFunction>();
+	ADDFN(List);
 }
 
-bool CMainGameWindow::Create() {
-	Image image;
-	bool result = image.loadResource("TITANIC");
-	if (!result)
-		return true;
+void CSaveableObject::freeClassList() {
+	delete _classList;
+}
+
+CSaveableObject *CSaveableObject::createInstance(const Common::String &name) {
+	return (*_classList)[name]();
+}
+
+void CSaveableObject::proc4() {
+
+}
+
+void CSaveableObject::proc5() {
+
+}
+
+void CSaveableObject::proc6() {
+
 }
 
 } // End of namespace Titanic

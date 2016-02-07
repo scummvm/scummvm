@@ -20,25 +20,40 @@
  *
  */
 
-#include "titanic/titanic.h"
-#include "titanic/main_game_window.h"
+#ifndef TITANIC_SAVEABLE_OBJECT_H
+#define TITANIC_SAVEABLE_OBJECT_H
+
+#include "common/scummsys.h"
+#include "common/array.h"
+#include "common/hash-str.h"
 
 namespace Titanic {
 
-CMainGameWindow::CMainGameWindow(TitanicEngine *vm): _vm(vm) {
-	_gameView = nullptr;
-	_gameManager = nullptr;
-	_project = nullptr;
-	_field50 = 0;
-	_image = nullptr;
-	_cursor = nullptr;
-}
+class CSaveableObject {
+	typedef CSaveableObject *(*CreateFunction)();
+private:
+	static Common::HashMap<Common::String, CreateFunction> *_classList;
+public:
+	/**
+	 * Sets up the list of saveable object classes
+	 */
+	static void initClassList();
 
-bool CMainGameWindow::Create() {
-	Image image;
-	bool result = image.loadResource("TITANIC");
-	if (!result)
-		return true;
-}
+	/**
+	 * Free the list of saveable object classes
+	 */
+	static void freeClassList();
+
+	/**
+	 * Creates a new instance of a saveable object class
+	 */
+	static CSaveableObject *createInstance(const Common::String &name);
+public:
+	virtual void proc4();
+	virtual void proc5();
+	virtual void proc6();
+};
 
 } // End of namespace Titanic
+
+#endif /* TITANIC_SAVEABLE_OBJECT_H */
