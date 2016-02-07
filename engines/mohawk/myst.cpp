@@ -682,7 +682,7 @@ MystArea *MohawkEngine_Myst::updateCurrentResource() {
 }
 
 void MohawkEngine_Myst::loadCard() {
-	debugC(kDebugView, "Loading Card View:");
+	debugC(kDebugView, "Loading Card View: %d", _curCard);
 
 	Common::SeekableReadStream *viewStream = getResource(ID_VIEW, _curCard);
 
@@ -752,7 +752,7 @@ void MohawkEngine_Myst::loadCard() {
 		}
 	} else {
 		debugC(kDebugView, "Unknown");
-		warning("Unknown sound control value in card");
+		warning("Unknown sound control value '%d' in card '%d'", _view.sound, _curCard);
 	}
 
 	// Resources that scripts can call upon
@@ -762,35 +762,42 @@ void MohawkEngine_Myst::loadCard() {
 		MystView::ScriptResource scriptResource;
 
 		debugC(kDebugView, "\tResource %d:", i);
-		scriptResource.type = viewStream->readUint16LE();
+		scriptResource.type = (MystView::ScriptResourceType) viewStream->readUint16LE();
 		debugC(kDebugView, "\t\t Type: %d", scriptResource.type);
 
 		switch (scriptResource.type) {
-		case 1:
+		case MystView::kResourceImage:
 			debugC(kDebugView, "\t\t\t\t= Image");
 			break;
-		case 2:
+		case MystView::kResourceSound:
 			debugC(kDebugView, "\t\t\t\t= Sound");
 			break;
-		case 3:
-			debugC(kDebugView, "\t\t\t\t= Resource List");
+		case MystView::kResourceSwitch:
+			debugC(kDebugView, "\t\t\t\t= Resource Switch");
+			break;
+		case MystView::kResourceImageNoCache:
+			debugC(kDebugView, "\t\t\t\t= Image - Caching disabled");
+			break;
+		case MystView::kResourceSoundNoCache:
+			debugC(kDebugView, "\t\t\t\t= Sound - Caching disabled");
 			break;
 		default:
 			debugC(kDebugView, "\t\t\t\t= Unknown");
+			warning("Unknown script resource type '%d' in card '%d'", scriptResource.type, _curCard);
 			break;
 		}
 
-		if (scriptResource.type == 3) {
-			scriptResource.var = viewStream->readUint16LE();
-			debugC(kDebugView, "\t\t Var: %d", scriptResource.var);
+		if (scriptResource.type == MystView::kResourceSwitch) {
+			scriptResource.switchVar = viewStream->readUint16LE();
+			debugC(kDebugView, "\t\t Var: %d", scriptResource.switchVar);
 			uint16 count = viewStream->readUint16LE();
 			debugC(kDebugView, "\t\t Resource List Count: %d", count);
-			scriptResource.u0 = viewStream->readUint16LE();
-			debugC(kDebugView, "\t\t u0: %d", scriptResource.u0);
+			scriptResource.switchResourceType = (MystView::ScriptResourceType) viewStream->readUint16LE();
+			debugC(kDebugView, "\t\t u0: %d", scriptResource.switchResourceType);
 
 			for (uint16 j = 0; j < count; j++) {
-				scriptResource.resourceList.push_back(viewStream->readSint16LE());
-				debugC(kDebugView, "\t\t Resource List %d: %d", j, scriptResource.resourceList[j]);
+				scriptResource.switchResourceIds.push_back(viewStream->readSint16LE());
+				debugC(kDebugView, "\t\t Resource List %d: %d", j, scriptResource.switchResourceIds[j]);
 			}
 		} else {
 			scriptResource.id = viewStream->readUint16LE();
@@ -812,7 +819,6 @@ void MohawkEngine_Myst::loadCard() {
 	delete viewStream;
 
 	// Precache Card Resources
-	// TODO: Deal with Mac ME External Picture File
 	uint32 cacheImageType;
 	if (getFeatures() & GF_ME)
 		cacheImageType = ID_PICT;
@@ -821,39 +827,49 @@ void MohawkEngine_Myst::loadCard() {
 
 	// Precache Image Block data
 	if (_view.conditionalImages.size() != 0) {
-		for (uint16 i = 0; i < _view.conditionalImages.size(); i++)
-			for (uint16 j = 0; j < _view.conditionalImages[i].values.size(); j++)
-				cachePreload(cacheImageType, _view.conditionalImages[i].values[j]);
-	} else
+		for (uint16 i = 0; i < _view.conditionalImages.size(); i++) {
+			uint16 value = _scriptParser->getVar(_view.conditionalImages[i].var);
+			cachePreload(cacheImageType, _view.conditionalImages[i].values[value]);
+		}
+	} else {
 		cachePreload(cacheImageType, _view.mainImage);
+	}
 
 	// Precache Sound Block data
 	if (_view.sound > 0)
 		cachePreload(ID_MSND, _view.sound);
 	else if (_view.sound == kMystSoundActionConditional) {
-		for (uint16 i = 0; i < _view.soundList.size(); i++) {
-			if (_view.soundList[i].action > 0)
-				cachePreload(ID_MSND, _view.soundList[i].action);
+		uint16 value = _scriptParser->getVar(_view.soundVar);
+		if (_view.soundList[value].action > 0) {
+			cachePreload(ID_MSND, _view.soundList[value].action);
 		}
 	}
 
 	// Precache Script Resources
-	if (_view.scriptResources.size() != 0) {
-		for (uint16 i = 0; i < _view.scriptResources.size(); i++) {
-			switch (_view.scriptResources[i].type) {
-			case 1:
-				cachePreload(cacheImageType, _view.scriptResources[i].id);
-				break;
-			case 2:
-				cachePreload(ID_MSND, _view.scriptResources[i].id);
-				break;
-			case 3:
-				warning("TODO: Precaching of Script Resource List not supported");
-				break;
-			default:
-				warning("Unknown Resource in Script Resource List Precaching");
-				break;
-			}
+	for (uint16 i = 0; i < _view.scriptResources.size(); i++) {
+		MystView::ScriptResourceType type;
+		int16 id;
+		if (_view.scriptResources[i].type == MystView::kResourceSwitch) {
+			type = _view.scriptResources[i].switchResourceType;
+			uint16 value = _scriptParser->getVar(_view.scriptResources[i].switchVar);
+			id = _view.scriptResources[i].switchResourceIds[value];
+		} else {
+			type = _view.scriptResources[i].type;
+			id = _view.scriptResources[i].id;
+		}
+
+		if (id < 0) continue;
+
+		switch (type) {
+		case MystView::kResourceImage:
+			cachePreload(cacheImageType, id);
+			break;
+		case MystView::kResourceSound:
+			cachePreload(ID_MSND, id);
+			break;
+		default:
+			// The other resource types should not be cached
+			break;
 		}
 	}
 }

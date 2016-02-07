@@ -130,13 +130,20 @@ struct MystView {
 	Common::Array<MystSoundItem> soundList;
 
 	// Script Resources
+	enum ScriptResourceType {
+		kResourceImage = 1,
+		kResourceSound = 2,
+		kResourceSwitch = 3,
+		kResourceImageNoCache = 4,
+		kResourceSoundNoCache = 5
+	};
+
 	struct ScriptResource {
-		uint16 type;
-		uint16 id; // Not used by type 3
-		// TODO: Type 3 has more. Maybe use a union?
-		uint16 var; // Used by type 3 only
-		uint16 u0; // Used by type 3 only
-		Common::Array<int16> resourceList; // Used by type 3 only
+		ScriptResourceType type;
+		uint16 id;
+		uint16 switchVar;
+		ScriptResourceType switchResourceType;
+		Common::Array<int16> switchResourceIds;
 	};
 	Common::Array<ScriptResource> scriptResources;
 
