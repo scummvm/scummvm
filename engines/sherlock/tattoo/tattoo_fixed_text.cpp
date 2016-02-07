@@ -243,8 +243,8 @@ static const char *const fixedTextDE[] = {
 
 	"Seite %d",
 	"Schlie\341en",
-	"Lessen", // <--
-	"In Datei sichern",
+	"Durchsuchen", // original: "Lessen"
+	"In Datei sichern", // original: "Speichern"
 	"Suche abbrechen",
 	"R\201ckw\204rts suchen ",
 	"Vorwarts suchen ",
