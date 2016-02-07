@@ -157,6 +157,11 @@ bool LabEngine::saveGame(int slot, const Common::String desc) {
 	file->finalize();
 	delete file;
 
+	_mainDisplay = true;
+	_alternate = false;
+	_event->simulateEvent();
+	_graphics->screenUpdate();
+
 	return true;
 }
 
@@ -202,6 +207,17 @@ bool LabEngine::loadGame(int slot) {
 
 	delete file;
 
+	_curFileName = " ";
+	_closeDataPtr = nullptr;
+	_followingCrumbs = false;
+	_graphics->_longWinInFront = false;
+	_event->initMouse();
+
+	_mainDisplay = true;
+	_alternate = false;
+	_event->simulateEvent();
+	_graphics->screenUpdate();
+
 	return true;
 }
 
@@ -237,11 +253,6 @@ bool LabEngine::saveRestoreGame() {
 		}
 		delete dialog;
 	}
-
-	_alternate = false;
-	_mainDisplay = true;
-	_event->initMouse();
-	_graphics->screenUpdate();
 
 	return isOK;
 }
