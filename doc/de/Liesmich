@@ -287,7 +287,7 @@ Spiele von Adventuresoft/Horrorsoft (AGOS):
          - Swampy Adventures                     [swampy]
      Waxworks                                    [waxworks]
 
-GOB-Spiele von Coktel Vision:
+Spiele von Coktel Vision (GOB):
      Bargon Attack                               [bargon]
      Fascination                                 [fascination]
      Geisha                                      [geisha]
@@ -582,7 +582,7 @@ können, wird ScummVM Schwierigkeiten haben.
 Glücklicherweise hat ScummVM keine Probleme damit, die Spiele komplett von der
 Festplatte aus laufen zu lassen, wenn Sie ein Verzeichnis mit der richtigen
 Kombination der Dateien erstellen. Wenn eine Datei auf mehr als einer CD
-vorkommt, ist es normalerweise egal, welche sie in das Verzeichnis
+vorkommt, ist es normalerweise egal, welche Sie in das Verzeichnis
 hineinkopieren.
 
 
@@ -2850,20 +2850,6 @@ werden können.
 Bei Win9x/NT/XP können Sie USE_WINDBG definieren und WinDbg anhängen, um
 Debug-Nachrichten zu durchsuchen
 (siehe http://www.sysinternals.com/ntw2k/freeware/debugview.shtml).
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
    Windows:
