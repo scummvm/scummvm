@@ -111,7 +111,6 @@ int AgiEngine::decodeView(byte *resourceData, uint16 resourceSize, int16 viewNr)
 
 	byte  *celCompressedData = nullptr;
 	uint16 celCompressedSize = 0;
-//	byte  *rawBitmap = nullptr;
 
 	debugC(5, kDebugLevelResources, "decode_view(%d)", viewNr);
 
@@ -431,14 +430,28 @@ void AgiEngine::unloadView(int16 viewNr) {
  * @param viewNr number of AGI view resource
  */
 void AgiEngine::setView(ScreenObjEntry *screenObj, int16 viewNr) {
-	screenObj->viewData = &_game.views[viewNr];
+	if (!(_game.dirView[viewNr].flags & RES_LOADED)) {
+		// View resource currently not loaded, this is probably a game bug
+		// Load the resource now to fix the issue, and give out a warning
+		// This happens in at least Larry 1 for Apple IIgs right after getting beaten up by taxi driver
+		// Original interpreter bombs out in this situation saying "view not loaded, Press ESC to quit"
+		warning("setView() called on screen object %d to use view %d, but view not loaded", screenObj->objectNr, viewNr);
+		warning("probably game script bug, trying to load view into memory");
+		if (agiLoadResource(RESOURCETYPE_VIEW, viewNr) != errOK) {
+			// loading failed, we better error() out now
+			error("setView() called to set view %d for screen object %d, which is not loaded atm and loading failed", viewNr, screenObj->objectNr);
+			return;
+		};
+	}
+
+	screenObj->viewResource = &_game.views[viewNr];
 	screenObj->currentViewNr = viewNr;
-	screenObj->loopCount = screenObj->viewData->loopCount;
+	screenObj->loopCount = screenObj->viewResource->loopCount;
 	screenObj->viewReplaced = true;
 
 	if (getVersion() < 0x2000) {
-		screenObj->stepSize = screenObj->viewData->headerStepSize;
-		screenObj->cycleTime = screenObj->viewData->headerCycleTime;
+		screenObj->stepSize = screenObj->viewResource->headerStepSize;
+		screenObj->cycleTime = screenObj->viewResource->headerCycleTime;
 		screenObj->cycleTimeCount = 0;
 	}
 	if (screenObj->currentLoopNr >= screenObj->loopCount) {
@@ -454,7 +467,11 @@ void AgiEngine::setView(ScreenObjEntry *screenObj, int16 viewNr) {
  * @param loopNr number of loop
  */
 void AgiEngine::setLoop(ScreenObjEntry *screenObj, int16 loopNr) {
-	assert(screenObj->viewData != NULL);
+	if (!(_game.dirView[screenObj->currentViewNr].flags & RES_LOADED)) {
+		error("setLoop() called on screen object %d, which has no loaded view resource assigned to it", screenObj->objectNr);
+		return;
+	}
+	assert(screenObj->viewResource);
 
 	if (screenObj->loopCount == 0) {
 		warning("setLoop() called on screen object %d, which has no loops (view %d)", screenObj->objectNr, screenObj->currentViewNr);
@@ -493,7 +510,16 @@ void AgiEngine::setLoop(ScreenObjEntry *screenObj, int16 loopNr) {
  * @param celNr number of cel
  */
 void AgiEngine::setCel(ScreenObjEntry *screenObj, int16 celNr) {
-	assert(screenObj->viewData != NULL);
+	if (!(_game.dirView[screenObj->currentViewNr].flags & RES_LOADED)) {
+		error("setCel() called on screen object %d, which has no loaded view resource assigned to it", screenObj->objectNr);
+		return;
+	}
+	assert(screenObj->viewResource);
+
+	if (screenObj->loopCount == 0) {
+		warning("setLoop() called on screen object %d, which has no loops (view %d)", screenObj->objectNr, screenObj->currentViewNr);
+		return;
+	}
 
 	AgiViewLoop *curViewLoop = &_game.views[screenObj->currentViewNr].loop[screenObj->currentLoopNr];
 
