@@ -680,7 +680,7 @@ void Channelwood::o_hologramTemple(uint16 op, uint16 var, uint16 argc, uint16 *a
 void Channelwood::o_executeMouseUp(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Execute mouse up", op);
 
-	MystAreaAction *resource = _vm->getViewResource<MystAreaAction>(argv[0]);
+	MystArea *resource = _vm->getViewResource<MystArea>(argv[0]);
 	resource->handleMouseUp();
 }
 
@@ -753,7 +753,7 @@ void Channelwood::o_soundReplace(uint16 op, uint16 var, uint16 argc, uint16 *arg
 
 void Channelwood::o_lever_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Generic lever init", op);
-	_leverAction = getInvokingResource<MystAreaAction>();
+	_leverAction = getInvokingResource<MystArea>();
 }
 
 void Channelwood::o_pipeValve_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {

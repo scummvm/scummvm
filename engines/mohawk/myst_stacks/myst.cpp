@@ -3189,7 +3189,7 @@ void Myst::towerRotationMap_run() {
 
 void Myst::o_towerRotationMap_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	_towerRotationMapRunning = true;
-	_towerRotationMapTower = getInvokingResource<MystAreaDrag>();
+	_towerRotationMapTower = getInvokingResource<MystAreaImageSwitch>();
 	_towerRotationMapLabel = _vm->getViewResource<MystAreaImageSwitch>(argv[0]);
 	_tempVar = 0;
 	_startTime = 0;
@@ -3620,7 +3620,7 @@ void Myst::o_treeCard_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 void Myst::o_treeEntry_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Enter tree card with entry", op);
 
-	_treeAlcove = getInvokingResource<MystAreaAction>();
+	_treeAlcove = getInvokingResource<MystArea>();
 	_treeMinAccessiblePosition = argv[0];
 	_treeMaxAccessiblePosition = argv[1];
 

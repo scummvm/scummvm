@@ -247,7 +247,7 @@ protected:
 	bool _towerRotationBlinkLabel;
 	uint16 _towerRotationBlinkLabelCount;
 	uint16 _towerRotationMapInitialized; // 292
-	MystAreaDrag *_towerRotationMapTower; // 108
+	MystAreaImageSwitch *_towerRotationMapTower; // 108
 	MystAreaImageSwitch *_towerRotationMapLabel; // 112
 	uint16 _towerRotationSpeed; // 124
 	bool _towerRotationMapClicked; // 132
@@ -269,7 +269,7 @@ protected:
 
 	bool _treeStopped; // 236
 	MystAreaImageSwitch *_tree; // 220
-	MystAreaAction *_treeAlcove; // 224
+	MystArea *_treeAlcove; // 224
 	uint16 _treeMinPosition; // 228
 	uint16 _treeMinAccessiblePosition; // 230
 	uint16 _treeMaxAccessiblePosition; // 232

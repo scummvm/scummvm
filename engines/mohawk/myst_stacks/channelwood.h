@@ -94,7 +94,7 @@ private:
 	uint16 _doorOpened; // 68
 
 	bool _leverPulled;
-	MystAreaAction *_leverAction; // 72
+	MystArea *_leverAction; // 72
 
 	bool pipeChangeValve(bool open, uint16 mask);
 };
