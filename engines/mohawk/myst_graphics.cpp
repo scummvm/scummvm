@@ -103,6 +103,8 @@ MohawkSurface *MystGraphics::decodeImage(uint16 id) {
 		if (!pict.loadStream(*dataStream))
 			error("Could not decode Myst ME PICT");
 
+		delete dataStream;
+
 		mhkSurface = new MohawkSurface(pict.getSurface()->convertTo(_pixelFormat));
 	} else {
 		mhkSurface = _bmpDecoder->decodeImage(dataStream);

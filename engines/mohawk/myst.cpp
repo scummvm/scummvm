@@ -950,6 +950,8 @@ void MohawkEngine_Myst::loadHelp(uint16 id) {
 	debugC(kDebugHelp, "\thelpText: \"%s\"", helpText.c_str());
 
 	delete[] u0;
+
+	delete helpStream;
 }
 
 void MohawkEngine_Myst::loadCursorHints() {
