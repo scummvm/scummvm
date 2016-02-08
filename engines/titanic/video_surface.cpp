@@ -24,4 +24,19 @@
 
 namespace Titanic {
 
+CVideoSurface::CVideoSurface(CScreenManager *screenManager, Graphics::Surface *surface):
+			_screenManager(screenManager), _surface(surface) {
+}
+
+void CVideoSurface::setSurface(CScreenManager *screenManager, Graphics::Surface *surface) {
+	_screenManager = screenManager;
+	_surface = surface;
+}
+
+/*------------------------------------------------------------------------*/
+
+OSVideoSurface::OSVideoSurface(CScreenManager *screenManager, Graphics::Surface *surface):
+		CVideoSurface(screenManager, surface) {
+}
+
 } // End of namespace Titanic

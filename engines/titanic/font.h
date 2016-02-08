@@ -31,6 +31,8 @@ class STFont {
 public:
 public:
 	STFont();
+
+	void load(int fontNumber);
 };
 
 } // End of namespace Titanic

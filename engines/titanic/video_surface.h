@@ -25,16 +25,26 @@
 
 #include "common/scummsys.h"
 #include "common/array.h"
+#include "graphics/surface.h"
 #include "titanic/font.h"
 
 namespace Titanic {
 
-class CVideoSurface {
+class CScreenManager;
 
+class CVideoSurface {
+private:
+	CScreenManager *_screenManager;
+	Graphics::Surface *_surface;
+public:
+	CVideoSurface(CScreenManager *screenManager, Graphics::Surface *surface);
+
+	void setSurface(CScreenManager *screenManager, Graphics::Surface *surface);
 };
 
-class OSVideoSurface : CVideoSurface {
-
+class OSVideoSurface : public CVideoSurface {
+public:
+	OSVideoSurface(CScreenManager *screenManager, Graphics::Surface *surface);
 };
 
 } // End of namespace Titanic

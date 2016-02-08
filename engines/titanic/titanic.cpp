@@ -53,7 +53,7 @@ void TitanicEngine::initialize() {
 
 	CSaveableObject::initClassList();
 	_window = new CMainGameWindow(this);
-	_screenManager = new OSScreenManager();
+	_screenManager = new OSScreenManager(this);
 }
 
 Common::Error TitanicEngine::run() {

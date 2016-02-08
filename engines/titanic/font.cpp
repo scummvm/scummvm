@@ -27,4 +27,8 @@ namespace Titanic {
 STFont::STFont() {
 }
 
+void STFont::load(int fontNumber) {
+	// TODO
+}
+
 } // End of namespace Titanic

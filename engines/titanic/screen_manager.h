@@ -25,9 +25,13 @@
 
 #include "common/scummsys.h"
 #include "common/array.h"
+#include "titanic/direct_draw.h"
 #include "titanic/font.h"
+#include "titanic/video_surface.h"
 
 namespace Titanic {
+
+class TitanicEngine;
 
 class CSurface {
 };
@@ -43,26 +47,27 @@ public:
 };
 
 class CScreenManager {
+protected:
+	TitanicEngine *_vm;
 public:
 	void *_screenManagerPtr;
 public:
-	int _field4;
-	Common::Array<CSurface> _backSurfaces;
-	CSurface *_fontRenderSurface;
+	Common::Array<CVideoSurface *> _backSurfaces;
+	CVideoSurface *_frontRenderSurface;
 	CScreenManagerRec _entries[2];
 	void *_mouseCursor;
 	void *_textCursor;
 	int _fontNumber;
 public:
-	CScreenManager();
+	CScreenManager(TitanicEngine *vm);
 	virtual ~CScreenManager();
 
 	void fn1() {}
 	void fn2() {}
 
-	virtual void proc2(int v);
-	virtual bool proc3(int v);
-	virtual void setMode() = 0;
+	virtual void setWindowHandle(int v);
+	virtual bool resetWindowHandle(int v);
+	virtual void setMode(int width, int height, int bpp, int numBackSurfaces, bool flag2) = 0;
 	virtual void proc5() = 0;
 	virtual void proc6() = 0;
 	virtual void proc7() = 0;
@@ -89,17 +94,29 @@ public:
 };
 
 class OSScreenManager: CScreenManager {
+private:
+	DirectDrawManager _directDrawManager;
+
+	/**
+	 * Frees any surface buffers
+	 */
+	void destroyFrontAndBackBuffers();
+
+	/**
+	 * Load game cursors
+	 */
+	void loadCursors();
 public:
 	int _field48;
 	int _field4C;
 	int _field50;
 	int _field54;
-	void *_directDrawManager;
 	STFont _fonts[4];
 public:
-	OSScreenManager();
+	OSScreenManager(TitanicEngine *vm);
+	virtual ~OSScreenManager();
 
-	virtual void setMode();
+	virtual void setMode(int width, int height, int bpp, int numBackSurfaces, bool flag2);
 	virtual void proc5();
 	virtual void proc6();
 	virtual void proc7();

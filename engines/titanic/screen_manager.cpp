@@ -21,6 +21,7 @@
  */
 
 #include "titanic/screen_manager.h"
+#include "titanic/video_surface.h"
 
 namespace Titanic {
 
@@ -33,11 +34,10 @@ CScreenManagerRec::CScreenManagerRec() {
 
 /*------------------------------------------------------------------------*/
 
-CScreenManager::CScreenManager() {
+CScreenManager::CScreenManager(TitanicEngine *vm): _vm(vm) {
 	_screenManagerPtr = nullptr;
 
-	_field4 = 0;
-	_fontRenderSurface = nullptr;
+	_frontRenderSurface = nullptr;
 	_mouseCursor = nullptr;
 	_textCursor = nullptr;
 	_fontNumber = 0;
@@ -47,31 +47,51 @@ CScreenManager::~CScreenManager() {
 	_screenManagerPtr = nullptr;
 }
 
-void CScreenManager::proc2(int v) {
-	if (v)
-		_field4 = v;
+void CScreenManager::setWindowHandle(int v) {
+	// Not needed
 }
 
-bool CScreenManager::proc3(int v) {
-	if (!v || _field4)
-		return false;
-
-	_field4 = 0;
+bool CScreenManager::resetWindowHandle(int v) {
 	proc27();
 	return true;
 }
 
 /*------------------------------------------------------------------------*/
 
-OSScreenManager::OSScreenManager(): CScreenManager() {
+OSScreenManager::OSScreenManager(TitanicEngine *vm): CScreenManager(vm),
+		_directDrawManager(vm, 0) {
 	_field48 = 0;
 	_field4C = 0;
 	_field50 = 0;
 	_field54 = 0;
-	_directDrawManager = nullptr;
 }
 
-void OSScreenManager::setMode() {}
+OSScreenManager::~OSScreenManager() {
+	destroyFrontAndBackBuffers();
+}
+
+void OSScreenManager::setMode(int width, int height, int bpp, int numBackSurfaces, bool flag2) {
+	destroyFrontAndBackBuffers();
+	_directDrawManager.initVideo(width, height, bpp, numBackSurfaces);
+
+	_frontRenderSurface = new OSVideoSurface(this, nullptr);
+	_frontRenderSurface->setSurface(this, _directDrawManager._mainSurface);
+
+	for (uint idx = 0; idx < numBackSurfaces; ++idx) {
+		OSVideoSurface videoSurface(this, nullptr);
+		videoSurface.setSurface(this, _directDrawManager._backSurfaces[idx]);
+	}
+
+	// Load fonts
+	_fonts[0].load(149);
+	_fonts[1].load(151);
+	_fonts[2].load(152);
+	_fonts[3].load(153);
+
+	// Load the cursors
+	loadCursors();
+}
+
 void OSScreenManager::proc5() {}
 void OSScreenManager::proc6() {}
 void OSScreenManager::proc7() {}
@@ -95,5 +115,18 @@ void OSScreenManager::proc24() {}
 void OSScreenManager::proc25() {}
 void OSScreenManager::showCursor() {}
 void OSScreenManager::proc27() {}
+
+void OSScreenManager::destroyFrontAndBackBuffers() {
+	delete _frontRenderSurface;
+	_frontRenderSurface = nullptr;
+
+	for (uint idx = 0; idx < _backSurfaces.size(); ++idx)
+		delete _backSurfaces[idx];
+	_backSurfaces.clear();
+}
+
+void OSScreenManager::loadCursors() {
+	// TODO
+}
 
 } // End of namespace Titanic

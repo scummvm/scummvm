@@ -25,30 +25,64 @@
 
 #include "common/scummsys.h"
 #include "common/array.h"
-#include "titanic/titanic.h"
+#include "graphics/surface.h"
 
 namespace Titanic {
 
-class DirectDraw: public Manager {
+class TitanicEngine;
+
+class DirectDraw {
+private:
+	TitanicEngine *_vm;
 public:
 	int _field8;
 	int _fieldC;
 	int _width;
 	int _height;
 	int _bpp;
-	int _field1C;
+	int _numBackSurfaces;
 	int _field24;
 public:
 	DirectDraw(TitanicEngine *vm);
+
+	/**
+	 * Sets a new display mode
+	 */
+	void setDisplayMode(int width, int height, int bpp, int refreshRate);
+
+	/**
+	 * Logs diagnostic information
+	 */
+	void diagnostics();
 };
 
-class DirectDrawManager: public Manager {
+class DirectDrawManager {
 public:
 	DirectDraw _directDraw;
-	void *_mainSurface;
-	void *_backSurfaces[2];
+	Graphics::Surface *_mainSurface;
+	Graphics::Surface *_backSurfaces[2];
 public:
-	DirectDrawManager(TitanicEngine *vm);
+	DirectDrawManager(TitanicEngine *vm, int v);
+
+	/**
+	 * Initializes video surfaces
+	 * @param width				Screen width
+	 * @param height			Screen height
+	 * @param bpp				Bits per pixel
+	 * @param numBackSurfaces	Number of back surfaces	
+	 */
+	void initVideo(int width, int height, int bpp, int numBackSurfaces);
+
+	void setResolution();
+
+	void proc2();
+
+	void proc3();
+
+	/**
+	 * Initializes the surface for the screen
+	 */
+	void initSurface();
 };
 
 } // End of namespace Titanic
