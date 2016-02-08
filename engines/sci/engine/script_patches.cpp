@@ -1881,6 +1881,50 @@ static const SciScriptPatcherEntry mothergoose256Signatures[] = {
 
 // ===========================================================================
 // Police Quest 1 VGA
+
+// When briefing is about to start in room 15, other officers will get into the room too.
+// When one of those officers gets into the way of ego, they will tell the player to sit down.
+// But control will be disabled right at that point. Ego may then go to his seat by himself,
+// or more often than not will just stand there. The player is unable to do anything.
+//
+// Sergeant Dooley will then enter the room. Tell the player to sit down 3 times and after
+// that it's game over.
+//
+// Because the Sergeant is telling the player to sit down, one has to assume that the player
+// is meant to still be in control. Which is why this script patch removes disabling of player control.
+//
+// The script also tries to make ego walk to the chair, but it fails because it gets stuck with other
+// actors. So I guess the safest way is to remove all of that and let the player do it manually.
+//
+// The responsible method seems to use a few hardcoded texts, which is why I have to assume that it's
+// not used anywhere else. I also checked all scripts and couldn't find any other calls to it.
+//
+// This of course also happens when using the original interpreter.
+//
+// Scripts work like this: manX::doit (script 134) triggers gab::changeState, which then triggers rm015::notify
+//
+// Applies to at least: English floppy
+// Responsible method: gab::changeState (script 152)
+// Fixes bug: #5865
+static const uint16 pq1vgaSignatureBriefingGettingStuck[] = {
+	0x76,                                // push0
+	0x45, 0x02, 0x00,                    // call export 2 of script 0 (disable control)
+	0x38, SIG_ADDTOOFFSET(+2),           // pushi notify
+	0x76,                                // push0
+	0x81, 0x02,                          // lag global[2] (get current room)
+	0x4a, 0x04,                          // send 04
+	SIG_MAGICDWORD,
+	0x8b, 0x02,                          // lsl local[2]
+	0x35, 0x01,                          // ldi 01
+	0x02,                                // add
+	SIG_END
+};
+
+static const uint16 pq1vgaPatchBriefingGettingStuck[] = {
+	0x33, 0x0a,                      // jmp to lsl local[2], skip over export 2 and ::notify
+	PATCH_END                        // rm015::notify would try to make ego walk to the chair
+};
+
 // When at the police station, you can put or get your gun from your locker.
 // The script, that handles this, is buggy. It disposes the gun as soon as
 //  you click, but then waits 2 seconds before it also closes the locker.
@@ -1968,10 +2012,11 @@ static const uint16 pq1vgaPatchMapSaveRestoreBug[] = {
 	PATCH_END
 };
 
-//          script, description,                                      signature                         patch
+//          script, description,                                         signature                            patch
 static const SciScriptPatcherEntry pq1vgaSignatures[] = {
-	{  true,   341, "put gun in locker bug",                       1, pq1vgaSignaturePutGunInLockerBug, pq1vgaPatchPutGunInLockerBug },
-	{  true,   500, "map save/restore bug",                        2, pq1vgaSignatureMapSaveRestoreBug, pq1vgaPatchMapSaveRestoreBug },
+	{  true,   152, "getting stuck while briefing is about to start", 1, pq1vgaSignatureBriefingGettingStuck, pq1vgaPatchBriefingGettingStuck },
+	{  true,   341, "put gun in locker bug",                          1, pq1vgaSignaturePutGunInLockerBug,    pq1vgaPatchPutGunInLockerBug },
+	{  true,   500, "map save/restore bug",                           2, pq1vgaSignatureMapSaveRestoreBug,    pq1vgaPatchMapSaveRestoreBug },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
