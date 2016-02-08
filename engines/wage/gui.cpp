@@ -159,6 +159,8 @@ Gui::Gui(WageEngine *engine) {
 	_selectionStartX = _selectionStartY = -1;
 	_selectionEndX = _selectionEndY = -1;
 
+	_inputTextLineNum = 0;
+
 	g_system->getPaletteManager()->setPalette(palette, 0, 4);
 
 	CursorMan.replaceCursorPalette(palette, 0, 4);
@@ -432,14 +434,14 @@ void Gui::flowText(Common::String &str) {
 		_lines.push_back(*j);
 
 	uint pos = _scrollPos;
-	_scrollPos = MAX<int>(0, (_lines.size() - _consoleNumLines) * _consoleLineHeight);
+	_scrollPos = MAX<int>(0, (_lines.size() - 1 - _consoleNumLines) * _consoleLineHeight);
 
 	_cursorX = kConWPadding;
 
 	if (_scrollPos)
 		_cursorY = (_consoleNumLines) * _consoleLineHeight + kConHPadding;
 	else
-		_cursorY = (_lines.size()) * _consoleLineHeight + kConHPadding;
+		_cursorY = (_lines.size() - 1) * _consoleLineHeight + kConHPadding;
 
 	if (pos != _scrollPos)
 		_consoleFullRedraw = true;
@@ -576,28 +578,33 @@ void Gui::drawInput() {
 		_bordersDirty = true;
 	}
 
+	_lines.pop_back();
+	appendText(_engine->_inputText.c_str());
+	_inputTextLineNum = _lines.size() - 1;
+
 	const Graphics::Font *font = getConsoleFont();
 
-	int x = kConWPadding + _consoleTextArea.left;
-	int y = _cursorY + _consoleTextArea.top;
-	Common::String text(_engine->_inputText);
-	int textW = font->getStringWidth(text);
+	if (_engine->_inputText.contains('\n')) {
+		_consoleDirty = true;
+	} else {
+		int x = kConWPadding + _consoleTextArea.left;
+		int y = _cursorY + _consoleTextArea.top;
 
-	// undraw cursor
-	_cursorOff = true;
-	_cursorState = false;
-	cursorTimerHandler(this);
-	_cursorOff = false;
+		Common::Rect r(x, y, x + _consoleTextArea.width(), y + font->getFontHeight());
+		_screen.fillRect(r, kColorWhite);
 
-	Common::Rect r(x, y, x + textW + 10, y + font->getFontHeight());
+		// undraw cursor
+		_cursorOff = true;
+		_cursorState = false;
+		cursorTimerHandler(this);
+		_cursorOff = false;
 
-	_screen.fillRect(r, kColorWhite);
+		font->drawString(&_screen, _lines[_inputTextLineNum], x, y, _screen.w, kColorBlack);
 
-	font->drawString(&_screen, text, x, y, _screen.w, kColorBlack);
+		g_system->copyRectToScreen(_screen.getBasePtr(x, y), _screen.pitch, x, y, _consoleTextArea.width(), font->getFontHeight());
+	}
 
-	g_system->copyRectToScreen(_screen.getBasePtr(x, y), _screen.pitch, x, y, textW + 10, font->getFontHeight());
-
-	_cursorX = font->getStringWidth(_engine->_inputText) + kConHPadding;
+	_cursorX = font->getStringWidth(_lines[_inputTextLineNum]) + kConHPadding;
 }
 
 void Gui::loadFonts() {

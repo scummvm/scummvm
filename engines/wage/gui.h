@@ -162,6 +162,8 @@ private:
 
 	Common::String _clipboard;
 	Common::String _undobuffer;
+
+	int _inputTextLineNum;
 };
 
 } // End of namespace Wage
