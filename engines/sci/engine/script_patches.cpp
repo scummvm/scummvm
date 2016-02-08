@@ -101,6 +101,7 @@ static const char *const selectorNameTable[] = {
 	"startText",    // King's Quest 6 CD / Laura Bow 2 CD for audio+text support
 	"startAudio",   // King's Quest 6 CD / Laura Bow 2 CD for audio+text support
 	"modNum",       // King's Quest 6 CD / Laura Bow 2 CD for audio+text support
+	"cycler",       // Space Quest 4 / system selector
 	NULL
 };
 
@@ -127,7 +128,8 @@ enum ScriptPatcherSelectors {
 	SELECTOR_timesShownID,
 	SELECTOR_startText,
 	SELECTOR_startAudio,
-	SELECTOR_modNum
+	SELECTOR_modNum,
+	SELECTOR_cycler
 };
 
 // ===========================================================================
@@ -2836,6 +2838,66 @@ static const uint16 sq4CdPatchGetPointsForChangingBackClothes[] = {
 	PATCH_END
 };
 
+
+// For Space Quest 4 CD, Sierra added a pick up animation for Roger, when he picks up the rope.
+//
+// When the player is detected by the zombie right at the start of the game, while picking up the rope,
+// scripts bomb out. This also happens, when using the original interpreter.
+//
+// This is caused by code, that's supposed to make Roger face the arriving drone.
+// We fix it, by checking if ego::cycler is actually set before calling that code.
+//
+// Applies to at least: English PC CD
+// Responsible method: droidShoots::changeState(3)
+// Fixes bug: #6076
+static const uint16 sq4CdSignatureGettingShotWhileGettingRope[] = {
+	0x35, 0x02,                         // ldi 02
+	0x65, 0x1a,                         // aTop cycles
+	0x32, SIG_UINT16(0x02fa),           // jmp [end]
+	SIG_MAGICDWORD,
+	0x3c,                               // dup
+	0x35, 0x02,                         // ldi 02
+	0x1a,                               // eq?
+	0x31, 0x0b,                         // bnt [state 3 check]
+	0x76,                               // push0
+	0x45, 0x02, 0x00,                   // call export 2 of script 0 -> disable controls
+	0x35, 0x02,                         // ldi 02
+	0x65, 0x1a,                         // aTop cycles
+	0x32, SIG_UINT16(0x02e9),           // jmp [end]
+	0x3c,                               // dup
+	0x35, 0x03,                         // ldi 03
+	0x1a,                               // eq?
+	0x31, 0x1e,                         // bnt [state 4 check]
+	0x76,                               // push0
+	0x45, 0x02, 0x00,                   // call export 2 of script 0 -> disable controls again??
+	0x7a,                               // push2
+	0x89, 0x00,                         // lsg global[0]
+	0x72, SIG_UINT16(0x0242),           // lofsa deathDroid
+	0x36,                               // push
+	0x45, 0x0d, 0x04,                   // call export 13 of script 0 -> set heading of ego to face droid
+	SIG_END
+};
+
+static const uint16 sq4CdPatchGettingShotWhileGettingRope[] = {
+	PATCH_ADDTOOFFSET(+11),
+	// this makes state 2 only do the 2 cycles wait, controls should always be disabled already at this point
+	0x2f, 0xf3,                         // bt [previous state aTop cycles code]
+	// Now we check for state 3, this change saves us 11 bytes
+	0x3c,                               // dup
+	0x35, 0x03,                         // ldi 03
+	0x1a,                               // eq?
+	0x31, 0x29,                         // bnt [state 4 check]
+	// new state 3 code
+	0x76,                               // push0
+	0x45, 0x02, 0x00,                   // call export 2 of script 0 (disable controls, actually not needed)
+	0x38, PATCH_SELECTOR16(cycler),     // pushi cycler
+	0x76,                               // push0
+	0x81, 0x00,                         // lag global[0]
+	0x4a, 0x04,                         // send 04 (get ego::cycler)
+	0x30, PATCH_UINT16(10),             // bnt [jump over heading call]
+	PATCH_END
+};
+
 // The scripts in SQ4CD support simultaneous playing of speech and subtitles,
 // but this was not available as an option. The following two patches enable
 // this functionality in the game's GUI options dialog.
@@ -2932,6 +2994,7 @@ static const SciScriptPatcherEntry sq4Signatures[] = {
 	{  true,   700, "Floppy: throw stuff at sequel police bug",    1, sq4FloppySignatureThrowStuffAtSequelPoliceBug, sq4FloppyPatchThrowStuffAtSequelPoliceBug },
 	{  true,    45, "CD: walk in from below for room 45 fix",      1, sq4CdSignatureWalkInFromBelowRoom45,           sq4CdPatchWalkInFromBelowRoom45 },
 	{  true,   396, "CD: get points for changing back clothes fix",1, sq4CdSignatureGetPointsForChangingBackClothes, sq4CdPatchGetPointsForChangingBackClothes },
+	{  true,   701, "CD: getting shot, while getting rope",        1, sq4CdSignatureGettingShotWhileGettingRope,     sq4CdPatchGettingShotWhileGettingRope },
 	{  true,     0, "CD: Babble icon speech and subtitles fix",    1, sq4CdSignatureBabbleIcon,                      sq4CdPatchBabbleIcon },
 	{  true,   818, "CD: Speech and subtitles option",             1, sq4CdSignatureTextOptions,                     sq4CdPatchTextOptions },
 	{  true,   818, "CD: Speech and subtitles option button",      1, sq4CdSignatureTextOptionsButton,               sq4CdPatchTextOptionsButton },
