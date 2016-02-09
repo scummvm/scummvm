@@ -221,9 +221,9 @@ void WageEngine::performAttack(Chr *attacker, Chr *victim, Obj *weapon) {
 	if (chance < attacker->_physicalAccuracy) {
 		usesDecremented = attackHit(attacker, victim, weapon, targetIndex);
 	} else if (weapon->_type != Obj::MAGICAL_OBJECT) {
-		appendText((char *)"A miss!");
+		appendText("A miss!");
 	} else if (attacker->_playerCharacter) {
-		appendText((char *)"The spell has no effect.");
+		appendText("The spell has no effect.");
 	}
 
 	if (!usesDecremented) {
@@ -486,7 +486,7 @@ void WageEngine::regen() {
 }
 
 void WageEngine::takeObj(Obj *obj) {
-  if ((int)_world->_player->_inventory.size() >= _world->_player->_maximumCarriedObjects) {
+	if ((int)_world->_player->_inventory.size() >= _world->_player->_maximumCarriedObjects) {
 		appendText("Your pack is full, you must drop something.");
 	} else {
 		char buf[256];
@@ -603,7 +603,7 @@ bool WageEngine::handleInventoryCommand() {
 			objs.push_back(*it);
 
 	if (!objs.size()) {
-		appendText((char *)"Your pack is empty.");
+		appendText("Your pack is empty.");
 	} else {
 		Common::String res("Your pack contains ");
 		appendObjNames(res, objs);
@@ -661,7 +661,7 @@ bool WageEngine::handleStatusCommand() {
 
 bool WageEngine::handleRestCommand() {
 	if (getMonster() != NULL) {
-		appendText((char *)"This is no time to rest!");
+		appendText("This is no time to rest!");
 		_commandWasQuick = true;
 	} else {
 		regen();
@@ -695,7 +695,7 @@ bool WageEngine::handleTakeCommand(const char *target) {
 
 		if (t.contains(n)) {
 			if ((*it)->_type == Obj::IMMOBILE_OBJECT) {
-				appendText((char *)"You can't move it.");
+				appendText("You can't move it.");
 			} else {
 				takeObj(*it);
 			}
@@ -747,7 +747,7 @@ bool WageEngine::handleAimCommand(const char *t) {
 		_aim = Chr::SIDE;
 	} else {
 		wasHandled = false;
-		appendText((char *)"Please aim for the head, chest, or side.");
+		appendText("Please aim for the head, chest, or side.");
 	}
 
 	_commandWasQuick = true;
@@ -776,7 +776,7 @@ bool WageEngine::handleWearCommand(const char *t) {
 			} else if ((*it)->_type == Obj::SPIRITUAL_ARMOR) {
 				wearObj(*it, Chr::MAGIC_ARMOR);
 			} else {
-				appendText((char *)"You cannot wear that object.");
+				appendText("You cannot wear that object.");
 			}
 
 			handled = true;
