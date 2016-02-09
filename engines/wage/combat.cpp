@@ -613,7 +613,7 @@ bool WageEngine::handleInventoryCommand() {
 	return true;
 }
 
-static const char *armorMessages[] = {
+static const char *const armorMessages[] = {
 	"Head protection:",
 	"Chest protection:",
 	"Shield protection:", // TODO: check message
