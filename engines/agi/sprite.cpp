@@ -106,6 +106,28 @@ void SpritesMgr::buildSpriteListAdd(uint16 givenOrderNr, ScreenObjEntry *screenO
 	spriteEntry.yPos = (screenObj->yPos) - (screenObj->ySize) + 1;
 	spriteEntry.xSize = screenObj->xSize;
 	spriteEntry.ySize = screenObj->ySize;
+
+	// Checking, if xPos/yPos/right/bottom are valid and do not go outside of playscreen (visual screen)
+	// Original AGI did not do this (but it then resulted in memory corruption)
+	if (spriteEntry.xPos < 0) {
+		warning("buildSpriteListAdd(): ignoring screen obj %d, b/c xPos < 0", screenObj->objectNr, spriteEntry.xPos);
+		return;
+	}
+	if (spriteEntry.yPos < 0) {
+		warning("buildSpriteListAdd(): ignoring screen obj %d, b/c yPos (%d) < 0", screenObj->objectNr, spriteEntry.yPos);
+		return;
+	}
+	int16 xRight = spriteEntry.xPos + spriteEntry.xSize;
+	if (xRight > SCRIPT_HEIGHT) {
+		warning("buildSpriteListAdd(): ignoring screen obj %d, b/c rightPos > %d", screenObj->objectNr, xRight, SCRIPT_WIDTH);
+		return;
+	}
+	int16 yBottom = spriteEntry.yPos + spriteEntry.ySize;
+	if (yBottom > SCRIPT_HEIGHT) {
+		warning("buildSpriteListAdd(): ignoring screen obj %d, b/c bottomPos > %d", screenObj->objectNr, yBottom, SCRIPT_HEIGHT);
+		return;
+	}
+
 //	warning("list-add: %d, %d, original yPos: %d, ySize: %d", spriteEntry.xPos, spriteEntry.yPos, screenObj->yPos, screenObj->ySize);
 	spriteEntry.backgroundBuffer = (uint8 *)malloc(spriteEntry.xSize * spriteEntry.ySize * 2); // for visual + priority data
 	assert(spriteEntry.backgroundBuffer);
