@@ -66,6 +66,7 @@ TextMgr::TextMgr(AgiEngine *vm, Words *words, GfxMgr *gfx) {
 
 	_inputStringRow = 0;
 	_inputStringColumn = 0;
+	_inputStringEntered = false;
 	_inputStringMaxLen = 0;
 	_inputStringCursorPos = 0;
 	_inputString[0] = 0;
@@ -169,7 +170,7 @@ void TextMgr::charAttrib_Set(byte foreground, byte background) {
 			if (background) {
 				_textAttrib.combinedForeground = 3;
 				_textAttrib.combinedBackground = 8; // enable invert of colors
-			} else if (foreground > 14) {
+			} else {
 				if (foreground > 14) {
 					_textAttrib.combinedForeground = 3;
 				} else {

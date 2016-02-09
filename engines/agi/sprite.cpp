@@ -394,7 +394,7 @@ void SpritesMgr::showObject(int16 viewNr) {
 	screenObj.yPos_prev = SCRIPT_HEIGHT - 1;
 	screenObj.yPos = screenObj.yPos_prev;
 	screenObj.priority = 15;
-	screenObj.flags |= fFixedPriority;
+	screenObj.flags = fFixedPriority; // Original AGI did "| fFixedPriority" on uninitialized memory
 	screenObj.objectNr = 255; // ???
 
 	backgroundBuffer = (uint8 *)malloc(screenObj.xSize * screenObj.ySize * 2); // for visual + priority data
