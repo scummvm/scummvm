@@ -64,6 +64,8 @@ GfxMenu::~GfxMenu() {
 }
 
 void GfxMenu::addMenu(const char *menuText) {
+	int16 curColumnEnd = _setupMenuColumn;
+
 	// already submitted? in that case no further changes possible
 	if (_submitted)
 		return;
@@ -72,6 +74,18 @@ void GfxMenu::addMenu(const char *menuText) {
 
 	menuEntry->text = menuText;
 	menuEntry->textLen = menuEntry->text.size();
+
+	// Cut menu name in case menu bar is full
+	// Happens in at least the fan game Get Outta Space Quest
+	// Original interpreter had graphical issues in this case
+	// TODO: this whole code needs to get reworked anyway to support different types of menu bars depending on platform
+	curColumnEnd += menuEntry->textLen;
+	while ((menuEntry->textLen) && (curColumnEnd > 40)) {
+		menuEntry->text.deleteLastChar();
+		menuEntry->textLen--;
+		curColumnEnd--;
+	}
+
 	menuEntry->row = 0;
 	menuEntry->column = _setupMenuColumn;
 	menuEntry->itemCount = 0;
@@ -364,6 +378,10 @@ void GfxMenu::execute() {
 void GfxMenu::drawMenuName(int16 menuNr, bool inverted) {
 	GuiMenuEntry *menuEntry = _array[menuNr];
 	bool disabledLook = false;
+
+	// Don't draw in case there is no text
+	if (!menuEntry->text.size())
+		return;
 
 	if (!inverted) {
 		_text->charAttrib_Set(0, _text->calculateTextBackground(15));
