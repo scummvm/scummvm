@@ -640,6 +640,9 @@ void SystemUI::readSavedGameSlots(bool filterNonexistant, bool withAutoSaveSlot)
 void SystemUI::figureOutAutomaticSavedGameSlot(const char *automaticSaveDescription, int16 &matchedGameSlotId, int16 &freshGameSlotId) {
 	bool foundFresh = false;
 
+	matchedGameSlotId = -1;
+	freshGameSlotId = -1;
+
 	for (uint16 slotNr = 0; slotNr < _savedGameArray.size(); slotNr++) {
 		SystemUISavedGameEntry *savedGameEntry = &_savedGameArray[slotNr];
 
@@ -655,7 +658,7 @@ void SystemUI::figureOutAutomaticSavedGameSlot(const char *automaticSaveDescript
 			// no new slot found yet
 			if (!savedGameEntry->exists) {
 				// and current slot doesn't exist
-				if (slotNr) {
+				if (savedGameEntry->slotId) {
 					// and slot is not the auto-save slot -> remember this slot
 					freshGameSlotId = savedGameEntry->slotId;
 					foundFresh = true;
