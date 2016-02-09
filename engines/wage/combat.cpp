@@ -396,7 +396,7 @@ void WageEngine::performHealingMagic(Chr *chr, Obj *magicalObject) {
 
 static const int directionsX[] = { 0, 0, 1, -1 };
 static const int directionsY[] = { -1, 1, 0, 0 };
-static const char *directionsS[] = { "north", "south", "east", "west" };
+static const char *const directionsS[] = { "north", "south", "east", "west" };
 
 void WageEngine::performMove(Chr *chr, int validMoves) {
 	// count how many valid moves we have
