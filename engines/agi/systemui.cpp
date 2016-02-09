@@ -38,6 +38,8 @@ SystemUI::SystemUI(AgiEngine *vm, GfxMgr *gfx, TextMgr *text) {
 	_askForVerificationMouseLockedButtonNr = -1;
 	_askForVerificationMouseActiveButtonNr = -1;
 
+	clearSavedGameSlots();
+
 	_textStatusScore = "Score:%v3 of %v7";
 	_textStatusSoundOn = "Sound:on";
 	_textStatusSoundOff = "Sound:off";

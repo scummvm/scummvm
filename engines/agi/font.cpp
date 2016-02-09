@@ -829,6 +829,10 @@ void GfxFont::loadFontAmigaPseudoTopaz() {
 			assert((topazBitOffset & 7) == 0);
 
 			topazByteOffset = topazBitOffset >> 3;
+
+			// Security check, although we are working on static const data from within ScummVM
+			assert((topazByteOffset + ((topazHeight - 1) * topazModulo)) < sizeof(fontData_AmigaPseudoTopaz));
+
 			for (uint16 curHeight = 0; curHeight < topazHeight; curHeight++) {
 				*fontData = topazData[topazByteOffset];
 				fontData++;

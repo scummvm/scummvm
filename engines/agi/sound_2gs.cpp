@@ -482,6 +482,8 @@ static bool convertWave(Common::SeekableReadStream &source, int8 *dest, uint len
 IIgsSample::IIgsSample(uint8 *data, uint32 len, int16 resourceNr) : AgiSound() {
 	Common::MemoryReadStream stream(data, len, DisposeAfterUse::YES);
 
+	_sample = nullptr;
+
 	// Check that the header was read ok and that it's of the correct type
 	if (_header.read(stream) && _header.type == AGI_SOUND_SAMPLE) { // An Apple IIGS AGI sample resource
 		uint32 sampleStartPos = stream.pos();

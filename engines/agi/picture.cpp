@@ -394,9 +394,6 @@ void PictureMgr::drawPictureC64() {
 			_patCode = getNextByte();
 			plotBrush();
 			break;
-		case 0xfb:
-			draw_LineShort();
-			break;
 		case 0xff: // end of data
 			return;
 		default:
@@ -432,6 +429,9 @@ void PictureMgr::drawPictureV1() {
 			draw_LineAbsolute();
 			_scrOn = true;
 			_priOn = false;
+			break;
+		case 0xfb:
+			draw_LineShort();
 			break;
 		case 0xff: // end of data
 			return;
