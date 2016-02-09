@@ -172,7 +172,6 @@ void WageEngine::processEvents() {
 
 				processTurn(&_inputText, NULL);
 				_inputText = "";
-				_gui->drawInput();
 				break;
 
 			default:

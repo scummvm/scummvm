@@ -578,9 +578,10 @@ void Gui::drawInput() {
 		_bordersDirty = true;
 	}
 
+	_out.pop_back();
 	_lines.pop_back();
 	appendText(_engine->_inputText.c_str());
-	_inputTextLineNum = _lines.size() - 1;
+	_inputTextLineNum = _out.size() - 1;
 
 	const Graphics::Font *font = getConsoleFont();
 
@@ -590,7 +591,7 @@ void Gui::drawInput() {
 		int x = kConWPadding + _consoleTextArea.left;
 		int y = _cursorY + _consoleTextArea.top;
 
-		Common::Rect r(x, y, x + _consoleTextArea.width(), y + font->getFontHeight());
+		Common::Rect r(x, y, x + _consoleTextArea.width() - kConWPadding, y + font->getFontHeight());
 		_screen.fillRect(r, kColorWhite);
 
 		// undraw cursor
@@ -599,12 +600,12 @@ void Gui::drawInput() {
 		cursorTimerHandler(this);
 		_cursorOff = false;
 
-		font->drawString(&_screen, _lines[_inputTextLineNum], x, y, _screen.w, kColorBlack);
+		font->drawString(&_screen, _out[_inputTextLineNum], x, y, _screen.w, kColorBlack);
 
 		g_system->copyRectToScreen(_screen.getBasePtr(x, y), _screen.pitch, x, y, _consoleTextArea.width(), font->getFontHeight());
 	}
 
-	_cursorX = font->getStringWidth(_lines[_inputTextLineNum]) + kConHPadding;
+	_cursorX = font->getStringWidth(_out[_inputTextLineNum]) + kConHPadding;
 }
 
 void Gui::loadFonts() {
