@@ -1846,6 +1846,9 @@ static const SciScriptPatcherEntry laurabow2Signatures[] = {
 //  This Mixed Up Mother Goose draws the background picture before restoring,
 //  instead of doing it properly in MG::replay. This fixes graphic issues,
 //  when restoring from GMM.
+//
+// Applies to at least: English SCI1 CD, English SCI1.1 floppy, Japanese FM-Towns
+// Responsible method: MG::replay (script 0)
 static const uint16 mothergoose256SignatureReplay[] = {
 	0x7a,                            // push2
 	0x78,                            // push1
@@ -1943,6 +1946,9 @@ static const uint16 mothergoose256PatchReplay[] = {
 
 // when saving, it also checks if the savegame ID is below 13.
 //  we change this to check if below 113 instead
+//
+// Applies to at least: English SCI1 CD, English SCI1.1 floppy, Japanese FM-Towns
+// Responsible method: Game::save (script 994 for SCI1), MG::save (script 0 for SCI1.1)
 static const uint16 mothergoose256SignatureSaveLimit[] = {
 	0x89, SIG_MAGICDWORD, 0xb3,      // lsg global[b3]
 	0x35, 0x0d,                      // ldi 0d
