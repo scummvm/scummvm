@@ -219,9 +219,10 @@ uint16 AgiEngine::processAGIEvents() {
 		// no inner loop active at the moment, regular processing
 
 		if (key) {
-			setVar(VM_VAR_KEY, key & 0xFF);
 			if (!handleController(key)) {
 				if (key) {
+					// Only set VAR_KEY, when no controller/direction was detected
+					setVar(VM_VAR_KEY, key & 0xFF);
 					if (_text->promptIsEnabled()) {
 						_text->promptKeyPress(key);
 					}
