@@ -464,7 +464,7 @@ int WageEngine::getValidMoveDirections(Chr *npc) {
 
 			Scene *scene = _world->getSceneAt(destX, destY);
 
-			if (scene != NULL && scene->_chrs.size() == 0) {
+			if (scene != NULL && scene->_chrs.empty()) {
 				directions |= (1 << dir);
 			}
 		}
