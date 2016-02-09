@@ -79,17 +79,17 @@ public:
 
 private:
 	byte *_data;
-    int _len;
+	int _len;
 	Common::Rect *_bounds;
 	Graphics::Surface *_surface;
 
 private:
-    void drawRect(Graphics::Surface *surface, Common::ReadStream &in,
-        Patterns &patterns, byte fillType, byte borderThickness, byte borderFillType);
+	void drawRect(Graphics::Surface *surface, Common::ReadStream &in,
+		Patterns &patterns, byte fillType, byte borderThickness, byte borderFillType);
 	void drawRoundRect(Graphics::Surface *surface, Common::ReadStream &in,
-        Patterns &patterns, byte fillType, byte borderThickness, byte borderFillType);
+		Patterns &patterns, byte fillType, byte borderThickness, byte borderFillType);
 	void drawPolygon(Graphics::Surface *surface, Common::ReadStream &in,
-        Patterns &patterns, byte fillType, byte borderThickness, byte borderFillType);
+		Patterns &patterns, byte fillType, byte borderThickness, byte borderFillType);
 	void drawOval(Graphics::Surface *surface, Common::ReadStream &in,
 		Patterns &patterns, byte fillType, byte borderThickness, byte borderFillType);
 	void drawBitmap(Graphics::Surface *surface, Common::ReadStream &in);
