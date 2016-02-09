@@ -37,7 +37,7 @@ namespace Kyra {
 
 Sound::Sound(KyraEngine_v1 *vm, Audio::Mixer *mixer)
 	: _vm(vm), _mixer(mixer), _soundChannels(), _musicEnabled(1),
-	_sfxEnabled(true) {
+	  _sfxEnabled(true) {
 }
 
 Sound::~Sound() {
@@ -165,7 +165,7 @@ bool Sound::allVoiceChannelsPlaying() const {
 #pragma mark -
 
 MixedSoundDriver::MixedSoundDriver(KyraEngine_v1 *vm, Audio::Mixer *mixer, Sound *music, Sound *sfx)
-    : Sound(vm, mixer), _music(music), _sfx(sfx) {
+	: Sound(vm, mixer), _music(music), _sfx(sfx) {
 }
 
 MixedSoundDriver::~MixedSoundDriver() {
@@ -289,16 +289,16 @@ void KyraEngine_v1::snd_playWanderScoreViaMap(int command, int restart) {
 	//}
 
 	if (_flags.platform == Common::kPlatformDOS || _flags.platform == Common::kPlatformMacintosh) {
-		assert(command*2+1 < _trackMapSize);
-		if (_curMusicTheme != _trackMap[command*2]) {
-			if (_trackMap[command*2] != -1 && _trackMap[command*2] != -2)
-				snd_playTheme(_trackMap[command*2], -1);
+		assert(command * 2 + 1 < _trackMapSize);
+		if (_curMusicTheme != _trackMap[command * 2]) {
+			if (_trackMap[command * 2] != -1 && _trackMap[command * 2] != -2)
+				snd_playTheme(_trackMap[command * 2], -1);
 		}
 
 		if (command != 1) {
 			if (_lastMusicCommand != command) {
 				_sound->haltTrack();
-				_sound->playTrack(_trackMap[command*2+1]);
+				_sound->playTrack(_trackMap[command * 2 + 1]);
 			}
 		} else {
 			_sound->beginFadeOut();
@@ -307,8 +307,8 @@ void KyraEngine_v1::snd_playWanderScoreViaMap(int command, int restart) {
 		if (command == -1) {
 			_sound->haltTrack();
 		} else {
-			assert(command*2+1 < _trackMapSize);
-			if (_trackMap[command*2] != -2 && command != _lastMusicCommand) {
+			assert(command * 2 + 1 < _trackMapSize);
+			if (_trackMap[command * 2] != -2 && command != _lastMusicCommand) {
 				_sound->haltTrack();
 				_sound->playTrack(command);
 			}
