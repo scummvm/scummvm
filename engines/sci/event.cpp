@@ -342,7 +342,7 @@ SciEvent EventManager::getSciEvent(unsigned int mask) {
 
 	// Search for matching event in queue
 	Common::List<SciEvent>::iterator iter = _events.begin();
-	while (iter != _events.end() && !((*iter).type & mask))
+	while (iter != _events.end() && !(iter->type & mask))
 		++iter;
 
 	if (iter != _events.end()) {
