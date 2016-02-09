@@ -224,6 +224,9 @@ void Music::musicVolumeGaugeCallback(void *refCon) {
 }
 
 void Music::musicVolumeGauge() {
+	// CHECKME: This is potentially called from a different thread because it is
+	// called from a timer callback. However, it does not seem to take any
+	// precautions to avoid race conditions.
 	int volume;
 
 	_currentVolumePercent += 10;
