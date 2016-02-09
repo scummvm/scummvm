@@ -909,8 +909,9 @@ void cmdSetSimple(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 		// Try to get description for automatic saves
 		textPtr = state->strings[stringNr];
 
-		memset(state->automaticSaveDescription, 0, sizeof(state->automaticSaveDescription));
-		strncpy(state->automaticSaveDescription, textPtr, sizeof(state->automaticSaveDescription) - 1);
+		strncpy(state->automaticSaveDescription, textPtr, sizeof(state->automaticSaveDescription));
+		state->automaticSaveDescription[sizeof(state->automaticSaveDescription) - 1] = 0;
+
 		if (state->automaticSaveDescription[0]) {
 			// We got it and it's set, so enable automatic saving
 			state->automaticSave = true;
