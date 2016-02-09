@@ -1203,8 +1203,10 @@ static const uint16 kq6CDPatchAudioTextSupportJumpAlways[] = {
 };
 
 //  Fixes "Girl In The Tower" to get played in dual mode as well
+//  Also changes credits to use CD audio for dual mode.
+//
 // Applies to at least: PC-CD
-// Patched method: rm740::cue
+// Patched method: rm740::cue (script 740), sCredits::init (script 52)
 static const uint16 kq6CDSignatureAudioTextSupportGirlInTheTower[] = {
 	SIG_MAGICDWORD,
 	0x89, 0x5a,                         // lsg global[5a]
@@ -1331,6 +1333,7 @@ static const SciScriptPatcherEntry kq6Signatures[] = {
 	{ false,   928, "CD: audio + text support KQ6 4",                 1, kq6CDSignatureAudioTextSupport4,              kq6CDPatchAudioTextSupport4 },
 	{ false,  1009, "CD: audio + text support KQ6 Guards",            2, kq6CDSignatureAudioTextSupportGuards,         kq6CDPatchAudioTextSupportGuards },
 	{ false,  1027, "CD: audio + text support KQ6 Stepmother",        1, kq6CDSignatureAudioTextSupportStepmother,     kq6CDPatchAudioTextSupportJumpAlways },
+	{ false,    52, "CD: audio + text support KQ6 Girl In The Tower", 1, kq6CDSignatureAudioTextSupportGirlInTheTower, kq6CDPatchAudioTextSupportGirlInTheTower },
 	{ false,   740, "CD: audio + text support KQ6 Girl In The Tower", 1, kq6CDSignatureAudioTextSupportGirlInTheTower, kq6CDPatchAudioTextSupportGirlInTheTower },
 	{ false,   370, "CD: audio + text support KQ6 Azure & Ariel",     6, kq6CDSignatureAudioTextSupportAzureAriel,     kq6CDPatchAudioTextSupportAzureAriel },
 	{ false,   903, "CD: audio + text support KQ6 menu",              1, kq6CDSignatureAudioTextMenuSupport,           kq6CDPatchAudioTextMenuSupport },
