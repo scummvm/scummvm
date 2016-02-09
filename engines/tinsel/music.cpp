@@ -381,11 +381,25 @@ MidiMusicPlayer::MidiMusicPlayer(TinselEngine *vm) {
 	bool milesAudioEnabled = false;
 
 	if (vm->getPlatform() == Common::kPlatformDOS) {
-		// Enable Miles Audio for DOS only
-		milesAudioEnabled = true;
+		// Enable Miles Audio for DOS platform only...
+		switch (vm->getGameID()) {
+		case GID_DW1:
+			if (!vm->getIsADGFDemo()) {
+				// ...for Discworld 1
+				milesAudioEnabled = true;
+			} else {
+				if (vm->isV1CD()) {
+					// ...and for Discworld 1 CD Demo
+					milesAudioEnabled = true;
+				}
+			}
+			break;
+		default:
+			break;
+		}
 	}
 
-	if ((vm->getGameId() == GID_DW1) && (milesAudioEnabled)) {
+	if (milesAudioEnabled) {
 		// Discworld 1 (DOS) uses Miles Audio 3
 		// use our own Miles Audio drivers
 		// 
