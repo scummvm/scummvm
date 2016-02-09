@@ -85,7 +85,7 @@ struct MenuData {
 	int action;
 	byte shortcut;
 	bool enabled;
-} menuSubItems[] = {
+} static const menuSubItems[] = {
 	{ kMenuFile, "New",			kMenuActionNew, 0, false },
 	{ kMenuFile, "Open...",		kMenuActionOpen, 0, false },
 	{ kMenuFile, "Close",		kMenuActionClose, 0, true },
@@ -121,7 +121,7 @@ Menu::Menu(Gui *gui) : _gui(gui) {
 	_items.push_back(edit);
 
 	for (int i = 0; menuSubItems[i].menunum; i++) {
-		MenuData *m = &menuSubItems[i];
+		const MenuData *m = &menuSubItems[i];
 
 		_items[m->menunum]->subitems.push_back(new MenuSubItem(m->title, m->action, 0, m->shortcut, m->enabled));
 	}

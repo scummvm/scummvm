@@ -151,7 +151,7 @@ void Scene::paint(Graphics::Surface *surface, int x, int y) {
 
 // Source: Apple IIGS Technical Note #41, "Font Family Numbers"
 // http://apple2.boldt.ca/?page=til/tn.iigs.041
-const char *fontNames[] = {
+static const char *const fontNames[] = {
 	"Chicago",	// system font
 	"Geneva",	// application font
 	"New York",
