@@ -122,6 +122,9 @@ static const uint8 PALETTE_APPLE_II_GS[16 * 3] = {
 	0xF, 0xF, 0xF
 };
 
+// Re-use Amiga v1 palette for Apple IIgs Space Quest 1
+#define PALETTE_APPLE_II_GS_SQ1 PALETTE_AMIGA_V1
+
 /**
  * First generation Amiga & Apple IIGS AGI palette.
  * A 16-color, 12-bit RGB palette.
