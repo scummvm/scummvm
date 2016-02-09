@@ -2875,6 +2875,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		Common::EN_ANY, Common::kPlatformDOS, 0, GUIO5(GUIO_NOSPEECH, GAMEOPTION_EGA_UNDITHER, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
 
 	// Police Quest 2 - Japanese PC-98 (also includes english language)
+	// Executable scanning reports "x.yyy.zzz"
 	// SCI interpreter version unknown
 	{"pq2", "", {
 		{"resource.map", 0, "883804c616dca1d82373bf9fda3a71d2", 4656},
@@ -2882,7 +2883,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.002", 0, "05fdee43a228dd6ea4d1a92ccae3f788", 637662},
 		{"resource.003", 0, "05fdee43a228dd6ea4d1a92ccae3f788", 684395},
 		AD_LISTEND},
-		Common::JA_JPN, Common::kPlatformPC98, ADGF_ADDENGLISH, GUIO5(GUIO_NOSPEECH, GUIO_NOASPECT, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
+		Common::JA_JPN, Common::kPlatformPC98, ADGF_ADDENGLISH, GUIO6(GUIO_NOSPEECH, GUIO_NOASPECT, GAMEOPTION_EGA_UNDITHER, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
 
 	// Police Quest 3 - English Amiga
 	// Executable scanning reports "1.004.024"
