@@ -364,17 +364,17 @@ SciEvent EventManager::getSciEvent(unsigned int mask) {
 
 void SciEngine::sleep(uint32 msecs) {
 	uint32 time;
-	const uint32 wakeup_time = g_system->getMillis() + msecs;
+	const uint32 wakeUpTime = g_system->getMillis() + msecs;
 
 	while (true) {
 		// let backend process events and update the screen
 		_eventMan->getSciEvent(SCI_EVENT_PEEK);
 		time = g_system->getMillis();
-		if (time + 10 < wakeup_time) {
+		if (time + 10 < wakeUpTime) {
 			g_system->delayMillis(10);
 		} else {
-			if (time < wakeup_time)
-				g_system->delayMillis(wakeup_time - time);
+			if (time < wakeUpTime)
+				g_system->delayMillis(wakeUpTime - time);
 			break;
 		}
 
