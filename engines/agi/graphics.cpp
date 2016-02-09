@@ -87,7 +87,16 @@ int GfxMgr::initVideo() {
 		}
 		break;
 	case Common::kRenderApple2GS:
-		initPalette(_paletteGfxMode, PALETTE_APPLE_II_GS, 16, 4);
+		switch (_vm->getGameID()) {
+		case GID_SQ1:
+			// Special one, only used for Space Quest 1 on Apple IIgs. Is the same as Amiga v1 palette
+			initPalette(_paletteGfxMode, PALETTE_APPLE_II_GS_SQ1, 16, 4);
+			break;
+		default:
+			// Regular "standard" Apple IIgs palette, used by everything else
+			initPalette(_paletteGfxMode, PALETTE_APPLE_II_GS, 16, 4);
+			break;
+		}
 		break;
 	case Common::kRenderAtariST:
 		initPalette(_paletteGfxMode, PALETTE_ATARI_ST, 16, 3);
