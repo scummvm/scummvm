@@ -110,7 +110,7 @@ void SpritesMgr::buildSpriteListAdd(uint16 givenOrderNr, ScreenObjEntry *screenO
 	// Checking, if xPos/yPos/right/bottom are valid and do not go outside of playscreen (visual screen)
 	// Original AGI did not do this (but it then resulted in memory corruption)
 	if (spriteEntry.xPos < 0) {
-		warning("buildSpriteListAdd(): ignoring screen obj %d, b/c xPos < 0", screenObj->objectNr, spriteEntry.xPos);
+		warning("buildSpriteListAdd(): ignoring screen obj %d, b/c xPos (%d) < 0", screenObj->objectNr, spriteEntry.xPos);
 		return;
 	}
 	if (spriteEntry.yPos < 0) {
@@ -119,12 +119,12 @@ void SpritesMgr::buildSpriteListAdd(uint16 givenOrderNr, ScreenObjEntry *screenO
 	}
 	int16 xRight = spriteEntry.xPos + spriteEntry.xSize;
 	if (xRight > SCRIPT_HEIGHT) {
-		warning("buildSpriteListAdd(): ignoring screen obj %d, b/c rightPos > %d", screenObj->objectNr, xRight, SCRIPT_WIDTH);
+		warning("buildSpriteListAdd(): ignoring screen obj %d, b/c rightPos (%d) > %d", screenObj->objectNr, xRight, SCRIPT_WIDTH);
 		return;
 	}
 	int16 yBottom = spriteEntry.yPos + spriteEntry.ySize;
 	if (yBottom > SCRIPT_HEIGHT) {
-		warning("buildSpriteListAdd(): ignoring screen obj %d, b/c bottomPos > %d", screenObj->objectNr, yBottom, SCRIPT_HEIGHT);
+		warning("buildSpriteListAdd(): ignoring screen obj %d, b/c bottomPos (%d) > %d", screenObj->objectNr, yBottom, SCRIPT_HEIGHT);
 		return;
 	}
 
