@@ -256,7 +256,28 @@ void AgiEngine::processScummVMEvents() {
 				// Original AGI actually created direction events in here
 				// We don't do that, that's why we create a stationary event instead, which will
 				// result in a direction change to 0 in handleController().
-				keyEnqueue(AGI_KEY_STATIONARY);
+				switch (event.kbd.keycode) {
+				case Common::KEYCODE_LEFT:
+				case Common::KEYCODE_RIGHT:
+				case Common::KEYCODE_UP:
+				case Common::KEYCODE_DOWN:
+				case Common::KEYCODE_HOME:
+				case Common::KEYCODE_END:
+				case Common::KEYCODE_PAGEUP:
+				case Common::KEYCODE_PAGEDOWN:
+				case Common::KEYCODE_KP4:
+				case Common::KEYCODE_KP6:
+				case Common::KEYCODE_KP8:
+				case Common::KEYCODE_KP2:
+				case Common::KEYCODE_KP9:
+				case Common::KEYCODE_KP3:
+				case Common::KEYCODE_KP7:
+				case Common::KEYCODE_KP1:
+					keyEnqueue(AGI_KEY_STATIONARY);
+					break;
+				default:
+					break;
+				}
 			}
 			break;
 
