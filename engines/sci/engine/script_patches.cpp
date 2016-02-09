@@ -1842,15 +1842,100 @@ static const SciScriptPatcherEntry laurabow2Signatures[] = {
 // MG::replay somewhat calculates the savedgame-id used when saving again
 //  this doesn't work right and we remove the code completely.
 //  We set the savedgame-id directly right after restoring in kRestoreGame.
+//  We also draw the background picture in here instead.
+//  This Mixed Up Mother Goose draws the background picture before restoring,
+//  instead of doing it properly in MG::replay. This fixes graphic issues,
+//  when restoring from GMM.
 static const uint16 mothergoose256SignatureReplay[] = {
+	0x7a,                            // push2
+	0x78,                            // push1
+	0x5b, 0x00, 0xbe,                // lea global[BEh]
+	0x36,                            // push
+	0x43, 0x70, 0x04,                // callk MemorySegment
+	0x7a,                            // push2
+	0x5b, 0x00, 0xbe,                // lea global[BEh]
+	0x36,                            // push
+	0x76,                            // push0
+	0x43, 0x62, 0x04,                // callk StrAt
+	0xa1, 0xaa,                      // sag global[AAh]
+	0x7a,                            // push2
+	0x5b, 0x00, 0xbe,                // lea global[BEh]
+	0x36,                            // push
+	0x78,                            // push1
+	0x43, 0x62, 0x04,                // callk StrAt
+	0x36,                            // push
+	0x35, 0x20,                      // ldi 20
+	0x04,                            // sub
+	0xa1, SIG_ADDTOOFFSET(+1),       // sag global[57h] -> FM-Towns [9Dh]
+	// 35 bytes
+	0x39, 0x03,                      // pushi 03
+	0x89, SIG_ADDTOOFFSET(+1),       // lsg global[1Dh] -> FM-Towns [1Eh]
+	0x76,                            // push0
+	0x7a,                            // push2
+	0x5b, 0x00, 0xbe,                // lea global[BEh]
+	0x36,                            // push
+	0x7a,                            // push2
+	0x43, 0x62, 0x04,                // callk StrAt
+	0x36,                            // push
+	0x35, 0x01,                      // ldi 01
+	0x04,                            // sub
+	0x36,                            // push
+	0x43, 0x62, 0x06,                // callk StrAt
+	// 22 bytes
+	0x7a,                            // push2
+	0x5b, 0x00, 0xbe,                // lea global[BE]
+	0x36,                            // push
+	0x39, 0x03,                      // pushi 03
+	0x43, 0x62, 0x04,                // callk StrAt
+	// 10 bytes
 	0x36,                            // push
 	0x35, SIG_MAGICDWORD, 0x20,      // ldi 20
 	0x04,                            // sub
 	0xa1, 0xb3,                      // sag global[b3]
+	// 6 bytes
 	SIG_END
 };
 
 static const uint16 mothergoose256PatchReplay[] = {
+	0x39, 0x06,                      // pushi 06
+	0x76,                            // push0
+	0x76,                            // push0
+	0x38, PATCH_UINT16(200),         // pushi 200d
+	0x38, PATCH_UINT16(320),         // pushi 320d
+	0x76,                            // push0
+	0x76,                            // push0
+	0x43, 0x15, 0x0c,                // callk SetPort -> set picture port to full screen
+	// 15 bytes
+	0x39, 0x04,                      // pushi 04
+	0x3c,                            // dup
+	0x76,                            // push0
+	0x38, PATCH_UINT16(255),         // pushi 255d
+	0x76,                            // push0
+	0x43, 0x6f, 0x08,                // callk Palette -> set intensity to 0 for all colors
+	// 11 bytes
+	0x7a,                            // push2
+	0x38, PATCH_UINT16(800),         // pushi 800
+	0x76,                            // push0
+	0x43, 0x08, 0x04,                // callk DrawPic -> draw picture 800
+	// 8 bytes
+	0x39, 0x06,                      // pushi 06
+	0x39, 0x0c,                      // pushi 0Ch
+	0x76,                            // push0
+	0x76,                            // push0
+	0x38, PATCH_UINT16(200),         // push 200
+	0x38, PATCH_UINT16(320),         // push 320
+	0x78,                            // push1
+	0x43, 0x6c, 0x0c,                // callk Graph -> send everything to screen
+	// 16 bytes
+	0x39, 0x06,                      // pushi 06
+	0x76,                            // push0
+	0x76,                            // push0
+	0x38, PATCH_UINT16(156),         // pushi 156d
+	0x38, PATCH_UINT16(258),         // pushi 258d
+	0x39, 0x03,                      // pushi 03
+	0x39, 0x04,                      // pushi 04
+	0x43, 0x15, 0x0c,                // callk SetPort -> set picture port back
+	// 17 bytes
 	0x34, PATCH_UINT16(0x0000),      // ldi 0000 (dummy)
 	0x34, PATCH_UINT16(0x0000),      // ldi 0000 (dummy)
 	PATCH_END

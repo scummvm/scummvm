@@ -87,6 +87,9 @@ bool gamestate_save(EngineState *s, Common::WriteStream *save, const Common::Str
 // does a delayed saved game restore, used by ScummVM game menu - see detection.cpp / SciEngine::loadGameState()
 void gamestate_delayedrestore(EngineState *s);
 
+// does a few fixups right after restoring a saved game
+void gamestate_afterRestoreFixUp(EngineState *s, int savegameId);
+
 /**
  * Restores a game state from a directory.
  * @param s			An older state from the same game
