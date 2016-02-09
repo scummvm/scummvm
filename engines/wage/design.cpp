@@ -184,8 +184,10 @@ void drawPixel(int x, int y, int color, void *data) {
 
 	if (p->thickness == 1) {
 		if (x >= 0 && x < p->surface->w && y >= 0 && y < p->surface->h) {
-			*((byte *)p->surface->getBasePtr(x, y)) =
-				(pat[y % 8] & (1 << (7 - x % 8))) ?
+			uint xu = (uint)x; // for letting compiler optimize it
+			uint yu = (uint)y;
+			*((byte *)p->surface->getBasePtr(xu, yu)) =
+				(pat[yu % 8] & (1 << (7 - xu % 8))) ?
 					color : kColorWhite;
 		}
 	} else {
@@ -196,10 +198,13 @@ void drawPixel(int x, int y, int color, void *data) {
 
 		for (y = y1; y < y2; y++)
 			for (x = x1; x < x2; x++)
-				if (x >= 0 && x < p->surface->w && y >= 0 && y < p->surface->h)
-					*((byte *)p->surface->getBasePtr(x, y)) =
-						(pat[y % 8] & (1 << (7 - x % 8))) ?
+				if (x >= 0 && x < p->surface->w && y >= 0 && y < p->surface->h) {
+					uint xu = (uint)x; // for letting compiler optimize it
+					uint yu = (uint)y;
+					*((byte *)p->surface->getBasePtr(xu, yu)) =
+						(pat[yu % 8] & (1 << (7 - xu % 8))) ?
 							color : kColorWhite;
+				}
 	}
 }
 
