@@ -7,8 +7,10 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Added support for Sfinx.
    - Added support for Zork Nemesis: The Forbidden Lands.
    - Added support for Zork: Grand Inquisitor.
-   - Added support for The Lost Files of Sherlock Holmes: The Case of the Serrated Scalpel.
-   - Added support for The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo.
+   - Added support for The Lost Files of Sherlock Holmes: The Case of the
+     Serrated Scalpel.
+   - Added support for The Lost Files of Sherlock Holmes: The Case of the Rose
+     Tattoo.
    - Added support for Beavis and Butthead in Virtual Stupidity.
    - Added support for Amazon: Guardians of Eden.
    - Added support for Broken Sword 2.5: The Return of the Templars.
@@ -38,13 +40,17 @@ For a more comprehensive changelog of the latest experimental code, see:
      and fanmade games, that require a mouse).
    - Fix incorrect volume attenuation in PCjr sound code (bug #6858).
    - Major rewrite of graphics subsystem.
-   - Support for Apple IIgs, Amiga + Atari ST transitions, fonts and mouse cursors.
-     (Atari ST 8x8 system font is not included with ScummVM)
-   - Added ability to make for example a PC version look like an Apple IIgs version.
-     (includes palette, cursor, transition and even font). Just set corresponding render mode.
-   - Support for simplified automatic saving/restoring (used by Mixed Up Mother Goose).
-   - Removed forced 2 second delay on every room change, replaced with heuristic.
-   - Now saving controllers (key bindings by scripts) when saving games (bug #5858).
+   - Support for Apple IIgs, Amiga + Atari ST transitions, fonts and mouse
+     cursors. The Atari ST 8x8 system font is not included with ScummVM.
+   - Added ability to make for example a PC version look like an Apple IIgs
+     version. This includes palette, cursor, transition and even font. Just
+     set corresponding render mode.
+   - Support for simplified automatic saving/restoring used by Mixed Up Mother
+     Goose.
+   - Removed forced 2 second delay on every room change, replaced with
+     heuristic.
+   - Now saving controllers (key bindings by scripts) when saving games
+     (bug #5858).
 
  AGOS:
    - Fixed arpeggio effect used in music of Amiga version of Elvira 1.
@@ -74,8 +80,9 @@ For a more comprehensive changelog of the latest experimental code, see:
  SCI:
    - Handling of music priority has been greatly improved.
    - A lot of fixes for original game script bugs that also occurred when
-     using the original interpreter.
-     KQ6 (Dual Mode), LSL5, PQ1, QfG1 (EGA), QfG1 (VGA), QfG2, QfG3, SQ1, SQ4 (CD)
+     using the original interpreter. This affects the following games:
+     KQ6 (Dual Mode), LSL5, PQ1, QfG1 (EGA), QfG1 (VGA), QfG2, QfG3, SQ1,
+     SQ4 (CD).
    - Restoring from the ScummVM in-game menu should now work all the time.
    - Improve support for Japanese PC-9801 games.
    - Default to hi res version of KQ6, changeable using engine option.
