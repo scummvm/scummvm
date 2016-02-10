@@ -81,12 +81,12 @@ static const ComposerGameDescription gameDescriptions[] = {
 		GType_ComposerV1
 	},
 
-	// Magic Tales: Baba Yaga and the Magic Geese Mac - from bug #3466402
+	// Magic Tales: Baba Yaga and the Magic Geese Mac - from bug #3466402, #7025
 	{
 		{
 			"babayaga",
 			"",
-			AD_ENTRY1("Baba Yaga", "ae3a4445f42fe10253da7ee4ea0d37"),
+			AD_ENTRY1s("Baba Yaga", "ae3a4445f42fe10253da7ee4ea0d37d6", 44321),
 			Common::EN_ANY,
 			Common::kPlatformMacintosh,
 			ADGF_NO_FLAGS,
