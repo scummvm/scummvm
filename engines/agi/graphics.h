@@ -32,11 +32,6 @@ namespace Agi {
 #define DISPLAY_WIDTH   320
 #define DISPLAY_HEIGHT  200
 
-#define GFX_WIDTH   320
-#define GFX_HEIGHT  200
-#define CHAR_COLS   8
-#define CHAR_LINES  8
-
 class AgiEngine;
 
 enum GfxScreenMasks {
@@ -128,6 +123,7 @@ public:
 	void block_restore(int16 x, int16 y, int16 width, int16 height, byte *bufferPtr);
 
 	void copyDisplayRectToScreen(int16 x, int16 y, int16 width, int16 height);
+	void copyDisplayToScreen();
 
 	void drawBox(int16 x, int16 y, int16 width, int16 height, byte backgroundColor, byte lineColor);
 	void drawRect(int16 x, int16 y, int16 width, int16 height, byte color);

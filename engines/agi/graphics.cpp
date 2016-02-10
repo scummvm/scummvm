@@ -539,6 +539,9 @@ void GfxMgr::block_restore(int16 x, int16 y, int16 width, int16 height, byte *bu
 void GfxMgr::copyDisplayRectToScreen(int16 x, int16 y, int16 width, int16 height) {
 	g_system->copyRectToScreen(_displayScreen + y * DISPLAY_WIDTH + x, DISPLAY_WIDTH, x, y, width, height);
 }
+void GfxMgr::copyDisplayToScreen() {
+	g_system->copyRectToScreen(_displayScreen, DISPLAY_WIDTH, 0, 0, DISPLAY_WIDTH, DISPLAY_HEIGHT);
+}
 
 // coordinates are for visual screen, but are supposed to point somewhere inside the playscreen
 // attention: Clipping is done here against 160x200 instead of 160x168
@@ -741,7 +744,7 @@ void GfxMgr::shakeScreen(int16 repeatCount) {
 	for (shakeNr = 0; shakeNr < shakeCount; shakeNr++) {
 		if (shakeNr & 1) {
 			// move back
-			copyDisplayRectToScreen(0, 0, DISPLAY_WIDTH, DISPLAY_HEIGHT);
+			copyDisplayToScreen();
 		} else {
 			g_system->copyRectToScreen(_displayScreen, DISPLAY_WIDTH, SHAKE_HORIZONTAL_PIXELS, SHAKE_VERTICAL_PIXELS, DISPLAY_WIDTH - SHAKE_HORIZONTAL_PIXELS, DISPLAY_HEIGHT - SHAKE_VERTICAL_PIXELS);
 			// additionally fill the remaining space with black
