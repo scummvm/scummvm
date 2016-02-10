@@ -592,19 +592,6 @@ void GfxMgr::drawBox(int16 x, int16 y, int16 width, int16 height, byte backgroun
 	}
 }
 
-// coordinates for visual screen
-void GfxMgr::drawRect(int16 x, int16 y, int16 width, int16 height, byte color) {
-	if (!render_Clip(x, y, width, height, SCRIPT_WIDTH, DISPLAY_HEIGHT - _renderStartOffsetY))
-		return;
-
-	// coordinate translation: visual-screen -> display-screen
-	x = x * 2;
-	y = y + _renderStartOffsetY; // drawDisplayRect paints anywhere on the whole screen, our coordinate is within playscreen
-	width = width * 2; // width was given as visual width, we need display width
-
-	drawDisplayRect(x, y, width, height, color);
-}
-
 // coordinates are directly for display screen
 void GfxMgr::drawDisplayRect(int16 x, int16 y, int16 width, int16 height, byte color, bool copyToScreen) {
 	switch (_vm->_renderMode) {
