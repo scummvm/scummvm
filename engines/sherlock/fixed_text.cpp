@@ -126,45 +126,47 @@ static const char *const fixedJournalTextFR[] = {
 	"Alors %s dit, "
 };
 
-// Attention: Special characters are NOT the same in Sherlock Holmes 1+2
-// That's why we need 2 tables for Spanish.
-
-// Sherlock Holmes 2:
+// Sherlock Holmes 1+2:
+// small e w/ accent bottom to top : 0x82 / octal 202
+// big   E w/ accent bottom to top : 0x90 / octal 220
 // small a w/ accent bottom to top : 0xA0 / octal 240
 // small i w/ accent bottom to top : 0xA1 / octal 241
 // small o w/ accent bottom to top : 0xA2 / octal 242
 // small u w/ accent bottom to top : 0xA3 / octal 243
 // small n w/ wavy line            : 0xA4 / octal 244
+// big   N w/ wavy line            : 0xA5 / octal 245
+// small a w/ under line           : 0xA6 / octal 246
+// small o w/ under line           : 0xA7 / octal 247
 // inverted question mark          : 0xA8 / octal 250
-static const char *const fixedJournalTextES2[] = {
+static const char *const fixedJournalTextES[] = {
 	// Holmes asked/said...
-	"Holmes me pidi\242, ",
-	"Holmes pregunt\242 el inspector, ",
+	"Holmes me pregunt\242, ", // original: "Holmes me pidi\242, ",
+	"Holmes pregunt\242 al Inspector, ", // original: "el inspector"?
 	"Holmes pregunt\242 %s, ",
 	"Holmes me dijo, ",
-	"Holmes dijo el inspector, ",
-	"Holmes dijo %s, ",
+	"Holmes dijo al Inspector, ", // original: "el inspector"?
+	"Holmes dijo a %s, ", // original: "Holmes dijo a %s, "
 	// I asked/said...
-	"Yo respond\241, ",
+	"Yo content\202, ", // original: "Yo respond\241, ",
 	"La respuesta fue, ",
 	// Holmes/I/The Inspector/Person asked/said (without "Then" prefix)
 	"Holmes pregunt\242, ",
 	"Holmes dijo, ",
-	"Yo pregunt\242, ",
+	"Yo pregunt\202, ", // original: "Yo pregunt\242, ",
 	"Yo dije, ",
-	"El inspector pregunt\242, ",
-	"El inspector dijo, ",
+	"El Inspector pregunt\242, ",
+	"El Inspector dijo, ",
 	"%s pregunt\242, ",
 	"%s dijo, ",
 	// Then Holmes/I/The Inspector/Person asked/said
-	"Entonces Holmes pregunt\242, ",
-	"Entonces Holmes dijo, ",
-	"Entonces yo pregunt\242, ",
-	"Entonces yo dije, ",
-	"Entonces el Inspector pregunt\242, ",
-	"Entonces el Inspector dijo, ",
-	"Entonces %s pregunt\242, ",
-	"Entonces %s dijo, "
+	"Despu\202s Holmes pregunt\242, ", // original: added "Entonces" instead of "Despues"
+	"Despu\202s Holmes dijo, ",
+	"Despu\202s yo pregunt\202, ", // "pregunt\242, "
+	"Despu\202s yo dije, ",
+	"Despu\202s el Inspector pregunt\242, ",
+	"Despu\202s el Inspector dijo, ",
+	"Despu\202s %s pregunt\242, ",
+	"Despu\202s %s dijo, "
 };
 
 FixedText::FixedText(SherlockEngine *vm)  {
@@ -188,11 +190,7 @@ FixedText::FixedText(SherlockEngine *vm)  {
 		break;
 	case Common::ES_ESP:
 		// Used by Sherlock Holmes 1+2
-		// Because of different extended charsets, we need to use 2 tables
-		if (vm->getGameID() == GType_SerratedScalpel)
-			_fixedJournalTextArray = fixedJournalTextES2; // TODO check translation and then create ES1
-		else
-			_fixedJournalTextArray = fixedJournalTextES2;
+		_fixedJournalTextArray = fixedJournalTextES;
 		break;
 	default:
 		// Default to English

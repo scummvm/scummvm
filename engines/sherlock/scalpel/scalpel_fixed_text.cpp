@@ -316,6 +316,7 @@ static const char *const fixedTextDE[] = {
 // up-side down exclamation mark - 0xAD / octal 255
 // up-side down question mark - 0xA8 / octal 250
 // n with a wave on top - 0xA4 / octal 244
+// more characters see engines/sherlock/fixed_text.cpp
 static const char *const fixedTextES[] = {
 	// Game hotkeys
 	"VMHTACIUDNFO",
