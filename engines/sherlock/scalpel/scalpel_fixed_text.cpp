@@ -518,7 +518,7 @@ static const char *const fixedTextDE_ActionMove[] = {
 	"L\204\341t sich nicht bewegen",
 	"Festged\201belt in der Erde...",
 	"Oha, VIEL zu schwer",
-	"Der andere Kiste ist im Weg" // [sic]
+	"Die andere Kiste ist im Weg" // original: "Der andere Kiste ist im Weg"
 };
 
 static const char *const fixedTextES_ActionMove[] = {
