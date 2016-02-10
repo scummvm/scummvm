@@ -957,7 +957,7 @@ void MickeyEngine::drawLogo() {
 		}
 	}
 
-	_gfx->copyDisplayRectToScreen(0, 0, DISPLAY_WIDTH, height);
+	_gfx->copyDisplayToScreen();
 
 	delete[] fileBuffer;
 }
