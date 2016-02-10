@@ -126,7 +126,6 @@ public:
 	void copyDisplayToScreen();
 
 	void drawBox(int16 x, int16 y, int16 width, int16 height, byte backgroundColor, byte lineColor);
-	void drawRect(int16 x, int16 y, int16 width, int16 height, byte color);
 	void drawDisplayRect(int16 x, int16 y, int16 width, int16 height, byte color, bool copyToScreen = true);
 private:
 	void drawDisplayRectEGA(int16 x, int16 y, int16 width, int16 height, byte color);
