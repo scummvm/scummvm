@@ -235,7 +235,7 @@ static const char *const fixedTextDE[] = {
 	"Tagebuch",
 	"Tasche",
 	"Optionen",
-	"L\224osen",
+	"L\224sen",
 	"mit",
 	"Keine Wirkung...",
 	"Diese Person wei\341 im Augenblick nichts zu berichten.",
