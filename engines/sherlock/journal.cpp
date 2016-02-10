@@ -803,8 +803,7 @@ bool Journal::isPrintable(byte ch) const {
 	if (ch < opcodes[0])
 		return true;
 
-	if (_vm->getGameID() == GType_SerratedScalpel && _vm->getLanguage() == Common::DE_DEU
-			&& ch >= 0xe0)
+	if (_vm->getLanguage() == Common::DE_DEU && ch >= 0xe0)
 		return true;
 
 	return false;
