@@ -469,6 +469,8 @@ void AgiEngine::initialize() {
 	_systemUI = new SystemUI(this, _gfx, _text);
 	_inventory = new InventoryMgr(this, _gfx, _text, _systemUI);
 
+	_gfx->initVideo();
+
 	_font->init();
 	_text->init(_systemUI);
 
@@ -477,8 +479,6 @@ void AgiEngine::initialize() {
 	_text->charAttrib_Set(15, 0);
 
 	_game.name[0] = '\0';
-
-	_gfx->initVideo();
 
 	_lastSaveTime = 0;
 
