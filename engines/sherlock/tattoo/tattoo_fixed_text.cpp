@@ -247,7 +247,7 @@ static const char *const fixedTextDE[] = {
 	"In Datei sichern", // original: "Speichern"
 	"Suche abbrechen",
 	"R\201ckw\204rts suchen ",
-	"Vorwarts suchen ",
+	"Vorw\204rts suchen ",
 	"Text nicht gefunden",
 
 	"Holmes",
