@@ -6,8 +6,8 @@ build: scummvm
 
 scummvm:
 	dh_testdir
-	./configure --host=maemo
-	$(MAKE)
+	./configure --host=maemo $(CONFIGURE_EXTRA_ARGS)
+	$(MAKE) $(MAKE_EXTRA_ARGS)
 
 clean:
 	dh_testdir
