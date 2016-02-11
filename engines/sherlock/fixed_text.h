@@ -67,7 +67,7 @@ enum FixedJournalTextId {
 	kFixedJournalText_ThenTheInspectorAsked,
 	kFixedJournalText_ThenTheInspectorSaid,
 	kFixedJournalText_ThenPersonAsked,
-	kFixedJournalText_ThenPersonSaid
+	kFixedJournalText_ThenPersonSaid,
 };
 
 class SherlockEngine;
@@ -96,8 +96,14 @@ public:
 	 */
 	const char *getJournalText(int fixedJournalTextId);
 
+	/**
+	 * Gets object "Picked Up" text
+	 */
+	const char *getObjectPickedUpText();
+
 private:
 	const char *const *_fixedJournalTextArray;
+	const char *_fixedObjectPickedUpText;
 };
 
 } // End of namespace Sherlock
