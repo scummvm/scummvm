@@ -67,7 +67,7 @@ enum FixedJournalTextId {
 	kFixedJournalText_ThenTheInspectorAsked,
 	kFixedJournalText_ThenTheInspectorSaid,
 	kFixedJournalText_ThenPersonAsked,
-	kFixedJournalText_ThenPersonSaid,
+	kFixedJournalText_ThenPersonSaid
 };
 
 class SherlockEngine;
