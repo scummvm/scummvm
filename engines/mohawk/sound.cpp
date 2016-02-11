@@ -625,7 +625,7 @@ uint16 Sound::convertMystID(uint16 id) {
 	return id;
 }
 
-Audio::SoundHandle *Sound::replaceBackgroundMyst(uint16 id, uint16 volume) {
+void Sound::replaceBackgroundMyst(uint16 id, uint16 volume) {
 	debug(0, "Replacing background sound with %d", id);
 
 	// TODO: The original engine does fading
@@ -641,8 +641,11 @@ Audio::SoundHandle *Sound::replaceBackgroundMyst(uint16 id, uint16 volume) {
 
 	// Check if sound is already playing
 	if (_mystBackgroundSound.type == kUsedHandle && _vm->_mixer->isSoundHandleActive(_mystBackgroundSound.handle)
-			&& _vm->getResourceName(ID_MSND, convertMystID(_mystBackgroundSound.id)).hasPrefix(prefix))
-		return &_mystBackgroundSound.handle;
+			&& _vm->getResourceName(ID_MSND, convertMystID(_mystBackgroundSound.id)).hasPrefix(prefix)) {
+		// The sound is already playing, just change the volume
+		changeBackgroundVolumeMyst(volume);
+		return;
+	}
 
 	// Stop old background sound
 	stopBackgroundMyst();
@@ -659,10 +662,7 @@ Audio::SoundHandle *Sound::replaceBackgroundMyst(uint16 id, uint16 volume) {
 		Audio::AudioStream *audStream = Audio::makeLoopingAudioStream(rewindStream, 0);
 
 		_vm->_mixer->playStream(Audio::Mixer::kPlainSoundType, &_mystBackgroundSound.handle, audStream, -1, volume >> 8);
-		return &_mystBackgroundSound.handle;
 	}
-
-	return NULL;
 }
 
 void Sound::stopBackgroundMyst() {

@@ -674,11 +674,6 @@ void MystScriptParser::o_copyImageToBackBuffer(uint16 op, uint16 var, uint16 arg
 	_vm->_gfx->copyImageSectionToBackBuffer(imageId, srcRect, dstRect);
 }
 
-// TODO: Though the playSound and PlaySoundBlocking opcodes play sounds immediately,
-//       this opcode changes the main background sound playing..
-//       Current behavior here and with VIEW sound block is not right as demonstrated
-//       by Channelwood Card 3280 (Tank Valve) and water flow sound behavior in pipe
-//       on cards leading from shed...
 void MystScriptParser::o_changeBackgroundSound(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	// Used on Stoneship Card 2080
 	// Used on Channelwood Card 3225 with argc = 8 i.e. Conditional Sound List

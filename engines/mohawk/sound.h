@@ -136,7 +136,7 @@ public:
 
 	// Myst-specific sound functions
 	Audio::SoundHandle *replaceSoundMyst(uint16 id, byte volume = Audio::Mixer::kMaxChannelVolume, bool loop = false);
-	Audio::SoundHandle *replaceBackgroundMyst(uint16 id, uint16 volume = 0xFFFF);
+	void replaceBackgroundMyst(uint16 id, uint16 volume = 0xFFFF);
 	void pauseBackgroundMyst();
 	void resumeBackgroundMyst();
 	void stopBackgroundMyst();
