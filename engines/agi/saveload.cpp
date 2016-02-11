@@ -693,7 +693,7 @@ int AgiEngine::loadGame(const Common::String &fileName, bool checkId) {
 	_words->clearEgoWords();
 
 	// don't delay anything right after restoring a game
-	nonBlockingText_Forget();
+	artificialDelay_Reset();
 
 	_sprites->eraseSprites();
 	_sprites->buildAllSpriteLists();

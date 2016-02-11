@@ -931,14 +931,14 @@ void cmdSetSimple(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 		spritesMgr->drawAllSpriteLists();
 		state->pictureShown = false;
 
+		// Loading trigger
+		vm->artificialDelayTrigger_DrawPicture(resourceNr);
+
 		// Show the picture. Similar to void cmdShow_pic(AgiGame *state, AgiEngine *vm, uint8 *p).
 		vm->setFlag(VM_FLAG_OUTPUT_MODE, false);
 		vm->_text->closeWindow();
 		vm->_picture->showPic();
 		state->pictureShown = true;
-
-		// Loading trigger
-		vm->loadingTrigger_DrawPicture();
 	}
 }
 
@@ -1126,7 +1126,7 @@ void cmdDrawPicV1(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 	vm->_text->promptClear();
 
 	// Loading trigger
-	vm->loadingTrigger_DrawPicture();
+	vm->artificialDelayTrigger_DrawPicture(resourceNr);
 }
 
 void cmdDrawPic(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
@@ -1138,6 +1138,7 @@ void cmdDrawPic(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 
 	spritesMgr->eraseSprites();
 	vm->_picture->decodePicture(resourceNr, true);
+
 	spritesMgr->buildAllSpriteLists();
 	spritesMgr->drawAllSpriteLists();
 	state->pictureShown = false;
@@ -1159,7 +1160,7 @@ void cmdDrawPic(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 		vm->setFlag(103, false);
 
 	// Loading trigger
-	vm->loadingTrigger_DrawPicture();
+	vm->artificialDelayTrigger_DrawPicture(resourceNr);
 }
 
 void cmdShowPic(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
@@ -1211,7 +1212,7 @@ void cmdOverlayPic(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 	state->pictureShown = false;
 
 	// Loading trigger
-	vm->loadingTrigger_DrawPicture();
+	vm->artificialDelayTrigger_DrawPicture(resourceNr);
 }
 
 void cmdShowPriScreen(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
