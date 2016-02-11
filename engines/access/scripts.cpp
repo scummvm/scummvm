@@ -1005,10 +1005,7 @@ void Scripts::cmdFreeSound() {
 		} while (!_vm->shouldQuit() && sound.isSFXPlaying());
 
 		// Free the sounds
-		while (sound._soundTable.size() > 0) {
-			delete sound._soundTable[0]._res;
-			sound._soundTable.remove_at(0);
-		}
+		sound.freeSounds();
 	}
 }
 
