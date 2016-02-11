@@ -179,7 +179,7 @@ FixedText::FixedText(SherlockEngine *vm)  {
 	case Common::EN_ANY:
 		// Used by Sherlock Holmes 1+2
 		_fixedJournalTextArray = fixedJournalTextEN;
-		_fixedObjectPickedUpText = "Picked Up %s";
+		_fixedObjectPickedUpText = "Picked up %s";
 		break;
 	case Common::DE_DEU:
 		// Used by Sherlock Holmes 1+2
@@ -199,7 +199,7 @@ FixedText::FixedText(SherlockEngine *vm)  {
 	default:
 		// Default to English
 		_fixedJournalTextArray = fixedJournalTextEN;
-		_fixedObjectPickedUpText = "Picked Up %s";
+		_fixedObjectPickedUpText = "Picked up %s";
 		break;
 	}
 }
