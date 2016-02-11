@@ -673,82 +673,51 @@ void MystScriptParser::o_copyImageToBackBuffer(uint16 op, uint16 var, uint16 arg
 	_vm->_gfx->copyImageSectionToBackBuffer(imageId, srcRect, dstRect);
 }
 
-// TODO: Implement common engine function for read and processing of sound blocks
-//       for use by this opcode and VIEW sound block.
 // TODO: Though the playSound and PlaySoundBlocking opcodes play sounds immediately,
 //       this opcode changes the main background sound playing..
 //       Current behavior here and with VIEW sound block is not right as demonstrated
 //       by Channelwood Card 3280 (Tank Valve) and water flow sound behavior in pipe
 //       on cards leading from shed...
 void MystScriptParser::o_changeBackgroundSound(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	int16 *soundList = nullptr;
-	uint16 *soundListVolume = nullptr;
 
 	// Used on Stoneship Card 2080
 	// Used on Channelwood Card 3225 with argc = 8 i.e. Conditional Sound List
-	if (argc == 1 || argc == 2 || argc == 8) {
-		debugC(kDebugScript, "Opcode %d: Process Sound Block", op);
-		uint16 decodeIdx = 0;
+	debugC(kDebugScript, "Opcode %d: Process Sound Block", op);
 
-		int16 soundAction = argv[decodeIdx++];
-		uint16 soundVolume = 65535;
-		if (soundAction == kMystSoundActionChangeVolume || soundAction > 0) {
-			soundVolume = argv[decodeIdx++];
-		} else if (soundAction == kMystSoundActionConditional) {
-			debugC(kDebugScript, "Conditional sound list");
-			uint16 condVar = argv[decodeIdx++];
-			uint16 condVarValue = getVar(condVar);
-			uint16 condCount = argv[decodeIdx++];
+	uint16 decodeIdx = 0;
 
-			debugC(kDebugScript, "\tcondVar: %d = %d", condVar, condVarValue);
-			debugC(kDebugScript, "\tcondCount: %d", condCount);
+	MystSoundBlock soundBlock;
+	soundBlock.sound = argv[decodeIdx++];
+	soundBlock.soundVolume = 65535;
 
-			soundList = new int16[condCount];
-			soundListVolume = new uint16[condCount];
+	if (soundBlock.sound == kMystSoundActionChangeVolume || soundBlock.sound > 0) {
+		soundBlock.soundVolume = argv[decodeIdx++];
+	} else if (soundBlock.sound == kMystSoundActionConditional) {
+		debugC(kDebugScript, "Conditional sound list");
+		soundBlock.soundVar = argv[decodeIdx++];
 
-			if (condVarValue >= condCount)
-				warning("Opcode %d: Conditional sound variable outside range",  op);
-			else {
-				for (uint16 i = 0; i < condCount; i++) {
-					soundList[i] = argv[decodeIdx++];
-					debugC(kDebugScript, "\t\tCondition %d: Action %d", i, soundList[i]);
-					if (soundList[i] == kMystSoundActionChangeVolume || soundList[i] > 0) {
-						soundListVolume[i] = argv[decodeIdx++];
-					} else
-						soundListVolume[i] = 65535;
-					debugC(kDebugScript, "\t\tCondition %d: Volume %d", i, soundListVolume[i]);
-				}
+		uint16 condCount = argv[decodeIdx++];
+		debugC(kDebugScript, "\tcondCount: %d", condCount);
+		for (uint16 i = 0; i < condCount; i++) {
+			MystSoundBlock::SoundItem item;
 
-				soundAction = soundList[condVarValue];
-				soundVolume = soundListVolume[condVarValue];
-			}
+			item.action = argv[decodeIdx++];
+			debugC(kDebugScript, "\t\tCondition %d: Action %d", i, item.action);
+
+			if (item.action == kMystSoundActionChangeVolume || item.action > 0) {
+				item.volume = argv[decodeIdx++];
+			} else
+				item.volume = 65535;
+			debugC(kDebugScript, "\t\tCondition %d: Volume %d", i, item.volume);
+
+			soundBlock.soundList.push_back(item);
 		}
+	} else {
+		debugC(kDebugScript, "Unknown");
+		warning("Unknown sound control value in opcode %d", op);
+	}
 
-		if (soundAction == kMystSoundActionContinue)
-			debugC(kDebugScript, "Continue current sound");
-		else if (soundAction == kMystSoundActionChangeVolume) {
-			debugC(kDebugScript, "Continue current sound, change volume");
-			debugC(kDebugScript, "\tVolume: %d", soundVolume);
-			_vm->_sound->changeBackgroundVolumeMyst(soundVolume);
-		} else if (soundAction == kMystSoundActionStop) {
-			debugC(kDebugScript, "Stop sound");
-			_vm->_sound->stopBackgroundMyst();
-		} else if (soundAction > 0) {
-			debugC(kDebugScript, "Play new Sound, change volume");
-			debugC(kDebugScript, "\tSound: %d", soundAction);
-			debugC(kDebugScript, "\tVolume: %d", soundVolume);
-			_vm->_sound->replaceBackgroundMyst(soundAction, soundVolume);
-		} else {
-			debugC(kDebugScript, "Unknown");
-			warning("Unknown sound control value in opcode %d", op);
-		}
-	} else
-		warning("Unknown arg count in opcode %d", op);
-
-	delete[] soundList;
-	soundList = nullptr;
-	delete[] soundListVolume;
-	soundListVolume = nullptr;
+	_vm->applySoundBlock(soundBlock);
 }
 
 void MystScriptParser::o_soundPlaySwitch(uint16 op, uint16 var, uint16 argc, uint16 *argv) {

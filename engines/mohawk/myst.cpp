@@ -560,36 +560,7 @@ void MohawkEngine_Myst::changeToCard(uint16 card, TransitionType transition) {
 	drawCardBackground();
 
 	// Handle sound
-	int16 soundAction = 0;
-	uint16 soundActionVolume = 0;
-
-	if (_view.sound == kMystSoundActionConditional) {
-		uint16 soundVarValue = _scriptParser->getVar(_view.soundVar);
-		if (soundVarValue >= _view.soundList.size())
-			warning("Conditional sound variable outside range");
-		else {
-			soundAction = _view.soundList[soundVarValue].action;
-			soundActionVolume = _view.soundList[soundVarValue].volume;
-		}
-	} else {
-		soundAction = _view.sound;
-		soundActionVolume = _view.soundVolume;
-	}
-
-	if (soundAction == kMystSoundActionContinue)
-		debug(2, "Continuing with current sound");
-	else if (soundAction == kMystSoundActionChangeVolume) {
-		debug(2, "Continuing with current sound, changing volume");
-		_sound->changeBackgroundVolumeMyst(soundActionVolume);
-	} else if (soundAction == kMystSoundActionStop) {
-		debug(2, "Stopping sound");
-		_sound->stopBackgroundMyst();
-	} else if (soundAction > 0) {
-		debug(2, "Playing new sound %d", soundAction);
-		_sound->replaceBackgroundMyst(soundAction, soundActionVolume);
-	} else {
-		error("Unknown sound action %d", soundAction);
-	}
+	applySoundBlock(_view.soundBlock);
 
 	if (_view.flags & kMystZipDestination)
 		_gameState->addZipDest(_curStack, card);
@@ -711,30 +682,31 @@ void MohawkEngine_Myst::loadCard() {
 	}
 
 	// The Sound Block (Reminiscent of Riven SLST resources)
-	_view.sound = viewStream->readSint16LE();
-	debugCN(kDebugView, "Sound Control: %d = ", _view.sound);
-	if (_view.sound > 0) {
+	MystSoundBlock soundBlock;
+	soundBlock.sound = viewStream->readSint16LE();
+	debugCN(kDebugView, "Sound Control: %d = ", soundBlock.sound);
+	if (soundBlock.sound > 0) {
 		debugC(kDebugView, "Play new Sound, change volume");
-		debugC(kDebugView, "\tSound: %d", _view.sound);
-		_view.soundVolume = viewStream->readUint16LE();
-		debugC(kDebugView, "\tVolume: %d", _view.soundVolume);
-	} else if (_view.sound == kMystSoundActionContinue)
+		debugC(kDebugView, "\tSound: %d", soundBlock.sound);
+		soundBlock.soundVolume = viewStream->readUint16LE();
+		debugC(kDebugView, "\tVolume: %d", soundBlock.soundVolume);
+	} else if (soundBlock.sound == kMystSoundActionContinue)
 		debugC(kDebugView, "Continue current sound");
-	else if (_view.sound == kMystSoundActionChangeVolume) {
+	else if (soundBlock.sound == kMystSoundActionChangeVolume) {
 		debugC(kDebugView, "Continue current sound, change volume");
-		_view.soundVolume = viewStream->readUint16LE();
-		debugC(kDebugView, "\tVolume: %d", _view.soundVolume);
-	} else if (_view.sound == kMystSoundActionStop) {
+		soundBlock.soundVolume = viewStream->readUint16LE();
+		debugC(kDebugView, "\tVolume: %d", soundBlock.soundVolume);
+	} else if (soundBlock.sound == kMystSoundActionStop) {
 		debugC(kDebugView, "Stop sound");
-	} else if (_view.sound == kMystSoundActionConditional) {
+	} else if (soundBlock.sound == kMystSoundActionConditional) {
 		debugC(kDebugView, "Conditional sound list");
-		_view.soundVar = viewStream->readUint16LE();
-		debugC(kDebugView, "\tVar: %d", _view.soundVar);
+		soundBlock.soundVar = viewStream->readUint16LE();
+		debugC(kDebugView, "\tVar: %d", soundBlock.soundVar);
 		uint16 soundCount = viewStream->readUint16LE();
 		debugC(kDebugView, "\tCount: %d", soundCount);
 
 		for (uint16 i = 0; i < soundCount; i++) {
-			MystSoundItem sound;
+			MystSoundBlock::SoundItem sound;
 
 			sound.action = viewStream->readSint16LE();
 			debugC(kDebugView, "\t\tCondition %d: Action %d", i, sound.action);
@@ -743,12 +715,14 @@ void MohawkEngine_Myst::loadCard() {
 				debugC(kDebugView, "\t\tCondition %d: Volume %d", i, sound.volume);
 			}
 
-			_view.soundList.push_back(sound);
+			soundBlock.soundList.push_back(sound);
 		}
 	} else {
 		debugC(kDebugView, "Unknown");
-		warning("Unknown sound control value '%d' in card '%d'", _view.sound, _curCard);
+		warning("Unknown sound control value '%d' in card '%d'", soundBlock.sound, _curCard);
 	}
+
+	_view.soundBlock = soundBlock;
 
 	// Resources that scripts can call upon
 	uint16 scriptResCount = viewStream->readUint16LE();
@@ -831,12 +805,12 @@ void MohawkEngine_Myst::loadCard() {
 	}
 
 	// Precache Sound Block data
-	if (_view.sound > 0)
-		cachePreload(ID_MSND, _view.sound);
-	else if (_view.sound == kMystSoundActionConditional) {
-		uint16 value = _scriptParser->getVar(_view.soundVar);
-		if (_view.soundList[value].action > 0) {
-			cachePreload(ID_MSND, _view.soundList[value].action);
+	if (_view.soundBlock.sound > 0)
+		cachePreload(ID_MSND, _view.soundBlock.sound);
+	else if (_view.soundBlock.sound == kMystSoundActionConditional) {
+		uint16 value = _scriptParser->getVar(_view.soundBlock.soundVar);
+		if (_view.soundBlock.soundList[value].action > 0) {
+			cachePreload(ID_MSND, _view.soundBlock.soundList[value].action);
 		}
 	}
 
@@ -871,7 +845,7 @@ void MohawkEngine_Myst::loadCard() {
 
 void MohawkEngine_Myst::unloadCard() {
 	_view.conditionalImages.clear();
-	_view.soundList.clear();
+	_view.soundBlock.soundList.clear();
 	_view.scriptResources.clear();
 }
 
@@ -1198,6 +1172,39 @@ void MohawkEngine_Myst::dropPage() {
 
 	setMainCursor(kDefaultMystCursor);
 	checkCursorHints();
+}
+
+void MohawkEngine_Myst::applySoundBlock(const MystSoundBlock &block) {
+	int16 soundAction = 0;
+	uint16 soundActionVolume = 0;
+
+	if (block.sound == kMystSoundActionConditional) {
+		uint16 soundVarValue = _scriptParser->getVar(block.soundVar);
+		if (soundVarValue >= block.soundList.size())
+			warning("Conditional sound variable outside range");
+		else {
+			soundAction = block.soundList[soundVarValue].action;
+			soundActionVolume = block.soundList[soundVarValue].volume;
+		}
+	} else {
+		soundAction = block.sound;
+		soundActionVolume = block.soundVolume;
+	}
+
+	if (soundAction == kMystSoundActionContinue)
+		debug(2, "Continuing with current sound");
+	else if (soundAction == kMystSoundActionChangeVolume) {
+		debug(2, "Continuing with current sound, changing volume");
+		_sound->changeBackgroundVolumeMyst(soundActionVolume);
+	} else if (soundAction == kMystSoundActionStop) {
+		debug(2, "Stopping sound");
+		_sound->stopBackgroundMyst();
+	} else if (soundAction > 0) {
+		debug(2, "Playing new sound %d", soundAction);
+		_sound->replaceBackgroundMyst(soundAction, soundActionVolume);
+	} else {
+		error("Unknown sound action %d", soundAction);
+	}
 }
 
 } // End of namespace Mohawk

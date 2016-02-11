@@ -97,9 +97,16 @@ struct MystCondition {
 	Common::Array<uint16> values;
 };
 
-struct MystSoundItem {
-	int16 action;
-	uint16 volume;
+struct MystSoundBlock {
+	struct SoundItem {
+		int16 action;
+		uint16 volume;
+	};
+
+	int16 sound;
+	uint16 soundVolume;
+	uint16 soundVar;
+	Common::Array<SoundItem> soundList;
 };
 
 // View Sound Action Type
@@ -124,10 +131,7 @@ struct MystView {
 	uint16 mainImage;
 
 	// Sound Data
-	int16 sound;
-	uint16 soundVolume;
-	uint16 soundVar;
-	Common::Array<MystSoundItem> soundList;
+	MystSoundBlock soundBlock;
 
 	// Script Resources
 	enum ScriptResourceType {
@@ -182,6 +186,7 @@ public:
 	void checkCursorHints();
 	MystArea *updateCurrentResource();
 	bool skippableWait(uint32 duration);
+	void applySoundBlock(const MystSoundBlock &block);
 
 	bool _tweaksEnabled;
 	bool _needsUpdate;
