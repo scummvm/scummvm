@@ -1424,8 +1424,19 @@ int Object::pickUpObject(FixedTextActionId fixedTextActionId) {
 			ui.clearInfo();
 
 			Common::String itemName = _description;
-			itemName.setChar(tolower(itemName[0]), 0);
-			screen.print(Common::Point(0, INFO_LINE + 1), COL_INFO_FOREGROUND, "Picked up %s", itemName.c_str());
+
+			// It's an item, make it lowercase
+			switch (_vm->getLanguage()) {
+			case Common::DE_DEU:
+				// don't do this for German version
+				break;
+			default:
+				// do it for English + Spanish version
+				itemName.setChar(tolower(itemName[0]), 0);
+				break;
+			}
+
+			screen.print(Common::Point(0, INFO_LINE + 1), COL_INFO_FOREGROUND, fixedText.getObjectPickedUpText(), itemName.c_str());
 			ui._menuCounter = 25;
 		}
 	}

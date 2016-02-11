@@ -179,22 +179,27 @@ FixedText::FixedText(SherlockEngine *vm)  {
 	case Common::EN_ANY:
 		// Used by Sherlock Holmes 1+2
 		_fixedJournalTextArray = fixedJournalTextEN;
+		_fixedObjectPickedUpText = "Picked Up %s";
 		break;
 	case Common::DE_DEU:
 		// Used by Sherlock Holmes 1+2
 		_fixedJournalTextArray = fixedJournalTextDE;
+		_fixedObjectPickedUpText = "%s eingesteckt";
 		break;
 	case Common::FR_FRA:
 		// Used by Sherlock Holmes 2
 		_fixedJournalTextArray = fixedJournalTextFR;
+		_fixedObjectPickedUpText = ""; // Not used, because there is no French Sherlock Holmes 1
 		break;
 	case Common::ES_ESP:
 		// Used by Sherlock Holmes 1+2
 		_fixedJournalTextArray = fixedJournalTextES;
+		_fixedObjectPickedUpText = "Cogido/a %s";
 		break;
 	default:
 		// Default to English
 		_fixedJournalTextArray = fixedJournalTextEN;
+		_fixedObjectPickedUpText = "Picked Up %s";
 		break;
 	}
 }
@@ -208,6 +213,10 @@ FixedText *FixedText::init(SherlockEngine *vm) {
 
 const char *FixedText::getJournalText(int fixedJournalTextId) {
 	return _fixedJournalTextArray[fixedJournalTextId];
+}
+
+const char *FixedText::getObjectPickedUpText() {
+	return _fixedObjectPickedUpText;
 }
 
 } // End of namespace Sherlock
