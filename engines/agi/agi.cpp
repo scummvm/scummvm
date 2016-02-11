@@ -563,6 +563,12 @@ void AgiEngine::syncSoundSettings() {
 	setVolumeViaSystemSetting();
 }
 
+// WORKAROUND:
+// Sometimes Sierra printed some text on the screen and did a room change immediately afterwards expecting the
+// interpreter to load the data for a bit of time. This of course doesn't happen in our AGI, so we try to
+// detect such situations via heuristic and then delay the game for a bit.
+// In those cases a wait mouse cursor will be shown.
+//
 // Scenes that need this:
 //
 // Manhunter 1:
@@ -590,7 +596,14 @@ void AgiEngine::nonBlockingText_Forget() {
 	_game.nonBlockingTextShown = false;
 	_game.nonBlockingTextCyclesLeft = 0;
 }
-void AgiEngine::nonBlockingText_CycleDone() {
+
+void AgiEngine::artificialDelay_Reset() {
+	nonBlockingText_Forget();
+	_artificialDelayCurrentRoom = -1;
+	_artificialDelayCurrentPicture = -1;
+}
+
+void AgiEngine::artificialDelay_CycleDone() {
 	if (_game.nonBlockingTextCyclesLeft) {
 		_game.nonBlockingTextCyclesLeft--;
 
@@ -601,30 +614,94 @@ void AgiEngine::nonBlockingText_CycleDone() {
 	}
 }
 
-void AgiEngine::loadingTrigger_NewRoom(int16 newRoomNr) {
-	if (_game.nonBlockingTextShown) {
-		_game.nonBlockingTextShown = false;
+// WORKAROUND:
+// On Apple IIgs, there are situations like for example the Police Quest 1 intro, where music is playing
+// and then the scripts switch to a new room, expecting it to load for a bit of time. In ScummVM this results
+// in music getting cut off, because our loading is basically done in an instant. This also happens in the
+// original interpreter, when you use a faster CPU in emulation.
+//
+// That's why there is an additional table, where one can add such situations to it.
+// These issues are basically impossible to detect, because sometimes music is also supposed to play throughout
+// multiple rooms.
+//
+// Normally all text-based issues should get detected by the current heuristic. Do not add those in here.
 
-		int16 curRoomNr = getVar(VM_VAR_CURRENT_ROOM);
+//         script, description,                                       signature                   patch
+static const AgiArtificialDelayEntry artificialDelayTable[] = {
+	{ GID_PQ1,        Common::kPlatformApple2GS, ARTIFICIALDELAYTYPE_NEWPICTURE,   1,   2, 2200 }, // Intro: music track is supposed to finish before credits screen. Developers must have assumed that room loading would take that long.
+	{ GID_AGIDEMO,    Common::kPlatformUnknown,  ARTIFICIALDELAYTYPE_END,         -1,  -1,    0 }
+};
 
-		if (newRoomNr != curRoomNr) {
-			if (!_game.automaticRestoreGame) {
-				// wait a bit, we detected non-blocking text
-				wait(2000, true); // 2 seconds, set busy
+uint16 AgiEngine::artificialDelay_SearchTable(AgiArtificialDelayTriggerType triggerType, int16 orgNr, int16 newNr) {
+	if (getPlatform() != Common::kPlatformApple2GS) {
+		return 0;
+	}
+
+	const AgiArtificialDelayEntry *delayEntry = artificialDelayTable;
+
+	while (delayEntry->triggerType != ARTIFICIALDELAYTYPE_END) {
+		if (triggerType == delayEntry->triggerType) {
+			if ((orgNr == delayEntry->orgNr) && (newNr == delayEntry->newNr)) {
+				if ((getGameID() == delayEntry->gameId) && (getPlatform() == delayEntry->platform)) {
+					warning("artificial delay forced");
+					return delayEntry->millisecondsDelay;
+				}
 			}
 		}
+
+		delayEntry++;
 	}
+	return 0;
 }
 
-void AgiEngine::loadingTrigger_DrawPicture() {
-	if (_game.nonBlockingTextShown) {
-		_game.nonBlockingTextShown = false;
+void AgiEngine::artificialDelayTrigger_NewRoom(int16 newRoomNr) {
+	uint16 millisecondsDelay = 0;
 
-		if (!_game.automaticRestoreGame) {
-			// wait a bit, we detected non-blocking text
-			wait(2000, true); // 2 seconds, set busy
+	//warning("artificial delay trigger: room %d -> new room %d", _artificialDelayCurrentRoom, newRoomNr);
+
+	if (!_game.automaticRestoreGame) {
+		millisecondsDelay = artificialDelay_SearchTable(ARTIFICIALDELAYTYPE_NEWROOM, _artificialDelayCurrentRoom, newRoomNr);
+
+		if (_game.nonBlockingTextShown) {
+			_game.nonBlockingTextShown = false;
+
+			if (newRoomNr != _artificialDelayCurrentRoom) {
+				if (millisecondsDelay < 2000) {
+					// wait a bit, we detected non-blocking text
+					millisecondsDelay = 2000; // 2 seconds
+				}
+			}
+		}
+
+		if (millisecondsDelay) {
+			wait(millisecondsDelay, true); // set busy mouse cursor
 		}
 	}
+
+	_artificialDelayCurrentRoom = newRoomNr;
+}
+
+void AgiEngine::artificialDelayTrigger_DrawPicture(int16 newPictureNr) {
+	uint16 millisecondsDelay = 0;
+
+	//warning("artificial delay trigger: picture %d -> new picture %d", _artificialDelayCurrentPicture, newPictureNr);
+
+	if (!_game.automaticRestoreGame) {
+		millisecondsDelay = artificialDelay_SearchTable(ARTIFICIALDELAYTYPE_NEWPICTURE, _artificialDelayCurrentPicture, newPictureNr);
+
+		if (_game.nonBlockingTextShown) {
+			_game.nonBlockingTextShown = false;
+			if (millisecondsDelay < 2000) {
+				// wait a bit, we detected non-blocking text
+				millisecondsDelay = 2000; // 2 seconds, set busy
+			}
+		}
+
+		if (millisecondsDelay) {
+			wait(millisecondsDelay, true); // set busy mouse cursor
+		}
+	}
+	_artificialDelayCurrentPicture = newPictureNr;
 }
 
 } // End of namespace Agi

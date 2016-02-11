@@ -704,6 +704,21 @@ public:
 	}
 };
 
+enum AgiArtificialDelayTriggerType {
+	ARTIFICIALDELAYTYPE_NEWROOM = 0,
+	ARTIFICIALDELAYTYPE_NEWPICTURE = 1,
+	ARTIFICIALDELAYTYPE_END = -1
+};
+
+struct AgiArtificialDelayEntry {
+	uint32 gameId;
+	Common::Platform platform;
+	AgiArtificialDelayTriggerType triggerType;
+	int16 orgNr;
+	int16 newNr;
+	uint16 millisecondsDelay;
+};
+
 typedef void (*AgiCommand)(AgiGame *state, AgiEngine *vm, uint8 *p);
 
 class AgiEngine : public AgiBase {
@@ -924,10 +939,18 @@ public:
 
 	void nonBlockingText_IsShown();
 	void nonBlockingText_Forget();
-	void nonBlockingText_CycleDone();
 
-	void loadingTrigger_NewRoom(int16 newRoomNr);
-	void loadingTrigger_DrawPicture();
+	void artificialDelay_Reset();
+	void artificialDelay_CycleDone();
+
+	uint16 artificialDelay_SearchTable(AgiArtificialDelayTriggerType triggerType, int16 orgNr, int16 newNr);
+
+	void artificialDelayTrigger_NewRoom(int16 newRoomNr);
+	void artificialDelayTrigger_DrawPicture(int16 newPictureNr);
+
+private:
+	int16 _artificialDelayCurrentRoom;
+	int16 _artificialDelayCurrentPicture;
 
 public:
 	void redrawScreen();

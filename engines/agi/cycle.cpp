@@ -44,7 +44,7 @@ void AgiEngine::newRoom(int16 newRoomNr) {
 	int i;
 
 	// Loading trigger
-	loadingTrigger_NewRoom(newRoomNr);
+	artificialDelayTrigger_NewRoom(newRoomNr);
 
 	debugC(4, kDebugLevelMain, "*** room %d ***", newRoomNr);
 	_sound->stopSound();
@@ -149,10 +149,10 @@ void AgiEngine::interpretCycle() {
 		oldScore = getVar(VM_VAR_SCORE);
 		setFlag(VM_FLAG_ENTERED_CLI, false);
 		_game.exitAllLogics = false;
-		nonBlockingText_CycleDone();
+		artificialDelay_CycleDone();
 		resetControllers();
 	}
-	nonBlockingText_CycleDone();
+	artificialDelay_CycleDone();
 	resetControllers();
 
 	screenObjEgo->direction = getVar(VM_VAR_EGO_DIRECTION);
@@ -336,7 +336,7 @@ int AgiEngine::playGame() {
 		}
 	}
 
-	nonBlockingText_Forget();
+	artificialDelay_Reset();
 
 	do {
 		processAGIEvents();
