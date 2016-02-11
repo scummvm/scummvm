@@ -105,6 +105,14 @@ static const char *const fixedTextEN[] = {
 	"Tarot Cards",
 	"An ornate key",
 	"A pawn ticket",
+	// SH1: User Interface
+	"No, thank you.",
+	"You can't do that.",
+	"Done...",
+	"Use ",
+	" on %s",
+	"Give ",
+	" to %s",
 	// SH1: People names
 	"Sherlock Holmes",
 	"Dr. Watson",
@@ -250,6 +258,14 @@ static const char *const fixedTextDE[] = {
 	"Ein Tarot-Kartenspiel", // original interpreter: "Ein Tarock-Kartenspiel" [sic]
 	"Ein verzierter Schl\201ssel",
 	"Ein Pfandschein",
+	// SH1: User Interface
+	"Nein, vielen Dank.",
+	"Nein, das geht wirklich nicht.", // original: "Nein, das geht wirklich nicht"
+	"Fertig...",
+	"Benutze ",
+	" mit %s",
+	"Gib ", // original: "Gebe "
+	" an %s", // original: " zu %s"
 	// SH1: People names
 	"Sherlock Holmes",
 	"Dr. Watson",
@@ -395,6 +411,14 @@ static const char *const fixedTextES[] = {
 	"Unas cartas de Tarot",
 	"Una llave muy vistosa",
 	"Una papeleta de empe\244o",
+	// SH1: User Interface
+	"No, gracias.",
+	"No puedes hacerlo.", // original: "No puedes hacerlo"
+	"Hecho...",
+	"Usar ",
+	" sobre %s",
+	"Dar ",
+	" a %s",
 	// SH1: People names
 	"Sherlock Holmes",
 	"Dr. Watson",
