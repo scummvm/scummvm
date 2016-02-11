@@ -605,74 +605,92 @@ void ScalpelUserInterface::lookScreen(const Common::Point &pt) {
 				// If inventory is active and an item is selected for a Use or Give action
 				if ((_menuMode == INV_MODE || _menuMode == USE_MODE || _menuMode == GIVE_MODE) &&
 						(inv._invMode == INVMODE_USE || inv._invMode == INVMODE_GIVE)) {
-					int width1 = 0, width2 = 0;
-					int x, width;
+					int width1 = 0, width2 = 0, width3 = 0;
+					int x;
+
 					if (inv._invMode == INVMODE_USE) {
 						// Using an object
-						x = width = screen.stringWidth("Use ");
+						Common::String useText1 = FIXED(UserInterface_Use);
+						Common::String useText2;
+						Common::String useText3;
 
-						if (temp < 1000 && scene._bgShapes[temp]._aType != PERSON)
+						x = width1 = screen.stringWidth(useText1);
+
+						if (temp < 1000 && scene._bgShapes[temp]._aType != PERSON) {
 							// It's not a person, so make it lowercase
-							tempStr.setChar(tolower(tempStr[0]), 0);
-
-						x += screen.stringWidth(tempStr);
+							switch (_vm->getLanguage()) {
+							case Common::DE_DEU:
+							case Common::ES_ESP:
+								// don't do this for German + Spanish version
+								break;
+							default:
+								tempStr.setChar(tolower(tempStr[0]), 0);
+								break;
+							}
+						}
 
 						// If we're using an inventory object, add in the width
 						// of the object name and the " on "
 						if (_selector != -1) {
-							width1 = screen.stringWidth(inv[_selector]._name);
-							x += width1;
-							width2 = screen.stringWidth(" on ");
+							useText2 = inv[_selector]._name;
+							width2 = screen.stringWidth(useText2);
 							x += width2;
+
+							useText3 = Common::String::format(FIXED(UserInterface_UseOn), tempStr.c_str());
+
+						} else {
+							useText3 = tempStr;
 						}
+
+						width3 = screen.stringWidth(useText3);
+						x += width3;
 
 						// If the line will be too long, keep cutting off characters
 						// until the string will fit
 						while (x > 280) {
-							x -= screen.charWidth(tempStr.lastChar());
-							tempStr.deleteLastChar();
+							x -= screen.charWidth(useText3.lastChar());
+							useText3.deleteLastChar();
 						}
 
 						int xStart = (SHERLOCK_SCREEN_WIDTH - x) / 2;
 						screen.print(Common::Point(xStart, INFO_LINE + 1),
-							INFO_FOREGROUND, "Use ");
+							INFO_FOREGROUND, useText1.c_str());
 
 						if (_selector != -1) {
-							screen.print(Common::Point(xStart + width, INFO_LINE + 1),
-								TALK_FOREGROUND, "%s", inv[_selector]._name.c_str());
-							screen.print(Common::Point(xStart + width + width1, INFO_LINE + 1),
-								INFO_FOREGROUND, " on ");
-							screen.print(Common::Point(xStart + width + width1 + width2, INFO_LINE + 1),
-								INFO_FOREGROUND, "%s", tempStr.c_str());
+							screen.print(Common::Point(xStart + width1, INFO_LINE + 1),
+								TALK_FOREGROUND, useText2.c_str());
+							screen.print(Common::Point(xStart + width1 + width2, INFO_LINE + 1),
+								INFO_FOREGROUND, useText3.c_str());
 						} else {
-							screen.print(Common::Point(xStart + width, INFO_LINE + 1),
-								INFO_FOREGROUND, "%s", tempStr.c_str());
+							screen.print(Common::Point(xStart + width1, INFO_LINE + 1),
+								INFO_FOREGROUND, useText3.c_str());
 						}
 					} else if (temp >= 0 && temp < 1000 && _selector != -1 &&
 							scene._bgShapes[temp]._aType == PERSON) {
+						Common::String giveText1 = FIXED(UserInterface_Give);
+						Common::String giveText2 = inv[_selector]._name;
+						Common::String giveText3 = Common::String::format(FIXED(UserInterface_GiveTo), tempStr.c_str());
+
 						// Giving an object to a person
-						width1 = screen.stringWidth(inv[_selector]._name);
-						x = width = screen.stringWidth("Give ");
-						x += width1;
-						width2 = screen.stringWidth(" to ");
+						x = width1 = screen.stringWidth(giveText1);
+						width2 = screen.stringWidth(giveText2);
 						x += width2;
-						x += screen.stringWidth(tempStr);
+						width3 = screen.stringWidth(giveText3);
+						x += width3;
 
 						// Ensure string will fit on-screen
 						while (x > 280) {
-							x -= screen.charWidth(tempStr.lastChar());
-							tempStr.deleteLastChar();
+							x -= screen.charWidth(giveText3.lastChar());
+							giveText3.deleteLastChar();
 						}
 
 						int xStart = (SHERLOCK_SCREEN_WIDTH - x) / 2;
 						screen.print(Common::Point(xStart, INFO_LINE + 1),
-							INFO_FOREGROUND, "Give ");
-						screen.print(Common::Point(xStart + width, INFO_LINE + 1),
-							TALK_FOREGROUND, "%s", inv[_selector]._name.c_str());
-						screen.print(Common::Point(xStart + width + width1, INFO_LINE + 1),
-							INFO_FOREGROUND, " to ");
-						screen.print(Common::Point(xStart + width + width1 + width2, INFO_LINE + 1),
-							INFO_FOREGROUND, "%s", tempStr.c_str());
+							INFO_FOREGROUND, giveText1.c_str());
+						screen.print(Common::Point(xStart + width1, INFO_LINE + 1),
+							TALK_FOREGROUND, giveText2.c_str());
+						screen.print(Common::Point(xStart + width1 + width2, INFO_LINE + 1),
+							INFO_FOREGROUND, giveText3.c_str());
 					}
 				} else {
 					screen.print(Common::Point(0, INFO_LINE + 1), INFO_FOREGROUND, "%s", tempStr.c_str());
@@ -2234,7 +2252,7 @@ void ScalpelUserInterface::checkUseAction(const UseType *use, const Common::Stri
 			if (scene._goToScene != 1 && !printed && !talk._talkToAbort) {
 				_infoFlag = true;
 				clearInfo();
-				screen.print(Common::Point(0, INFO_LINE + 1), INFO_FOREGROUND, "Done...");
+				screen.print(Common::Point(0, INFO_LINE + 1), INFO_FOREGROUND, FIXED(UserInterface_Done));
 				_menuCounter = 25;
 			}
 		}
@@ -2244,9 +2262,9 @@ void ScalpelUserInterface::checkUseAction(const UseType *use, const Common::Stri
 		clearInfo();
 
 		if (giveMode) {
-			screen.print(Common::Point(0, INFO_LINE + 1), INFO_FOREGROUND, "No, thank you.");
+			screen.print(Common::Point(0, INFO_LINE + 1), INFO_FOREGROUND, FIXED(UserInterface_NoThankYou));
 		} else if (fixedTextActionId == kFixedTextAction_Invalid) {
-			screen.print(Common::Point(0, INFO_LINE + 1), INFO_FOREGROUND, "You can't do that.");
+			screen.print(Common::Point(0, INFO_LINE + 1), INFO_FOREGROUND, FIXED(UserInterface_YouCantDoThat));
 		} else {
 			Common::String errorMessage = fixedText.getActionMessage(fixedTextActionId, 0);
 			screen.print(Common::Point(0, INFO_LINE + 1), INFO_FOREGROUND, "%s", errorMessage.c_str());
