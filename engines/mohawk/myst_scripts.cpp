@@ -29,6 +29,7 @@
 #include "mohawk/video.h"
 
 #include "common/system.h"
+#include "common/memstream.h"
 #include "common/textconsole.h"
 #include "gui/message.h"
 
@@ -679,44 +680,13 @@ void MystScriptParser::o_copyImageToBackBuffer(uint16 op, uint16 var, uint16 arg
 //       by Channelwood Card 3280 (Tank Valve) and water flow sound behavior in pipe
 //       on cards leading from shed...
 void MystScriptParser::o_changeBackgroundSound(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-
 	// Used on Stoneship Card 2080
 	// Used on Channelwood Card 3225 with argc = 8 i.e. Conditional Sound List
 	debugC(kDebugScript, "Opcode %d: Process Sound Block", op);
 
-	uint16 decodeIdx = 0;
+	Common::MemoryReadStream stream = Common::MemoryReadStream((const byte *) argv, argc * sizeof(uint16));
 
-	MystSoundBlock soundBlock;
-	soundBlock.sound = argv[decodeIdx++];
-	soundBlock.soundVolume = 65535;
-
-	if (soundBlock.sound == kMystSoundActionChangeVolume || soundBlock.sound > 0) {
-		soundBlock.soundVolume = argv[decodeIdx++];
-	} else if (soundBlock.sound == kMystSoundActionConditional) {
-		debugC(kDebugScript, "Conditional sound list");
-		soundBlock.soundVar = argv[decodeIdx++];
-
-		uint16 condCount = argv[decodeIdx++];
-		debugC(kDebugScript, "\tcondCount: %d", condCount);
-		for (uint16 i = 0; i < condCount; i++) {
-			MystSoundBlock::SoundItem item;
-
-			item.action = argv[decodeIdx++];
-			debugC(kDebugScript, "\t\tCondition %d: Action %d", i, item.action);
-
-			if (item.action == kMystSoundActionChangeVolume || item.action > 0) {
-				item.volume = argv[decodeIdx++];
-			} else
-				item.volume = 65535;
-			debugC(kDebugScript, "\t\tCondition %d: Volume %d", i, item.volume);
-
-			soundBlock.soundList.push_back(item);
-		}
-	} else {
-		debugC(kDebugScript, "Unknown");
-		warning("Unknown sound control value in opcode %d", op);
-	}
-
+	MystSoundBlock soundBlock = _vm->readSoundBlock(&stream);
 	_vm->applySoundBlock(soundBlock);
 }
 

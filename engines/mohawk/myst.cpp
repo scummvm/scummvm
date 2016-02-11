@@ -682,47 +682,7 @@ void MohawkEngine_Myst::loadCard() {
 	}
 
 	// The Sound Block (Reminiscent of Riven SLST resources)
-	MystSoundBlock soundBlock;
-	soundBlock.sound = viewStream->readSint16LE();
-	debugCN(kDebugView, "Sound Control: %d = ", soundBlock.sound);
-	if (soundBlock.sound > 0) {
-		debugC(kDebugView, "Play new Sound, change volume");
-		debugC(kDebugView, "\tSound: %d", soundBlock.sound);
-		soundBlock.soundVolume = viewStream->readUint16LE();
-		debugC(kDebugView, "\tVolume: %d", soundBlock.soundVolume);
-	} else if (soundBlock.sound == kMystSoundActionContinue)
-		debugC(kDebugView, "Continue current sound");
-	else if (soundBlock.sound == kMystSoundActionChangeVolume) {
-		debugC(kDebugView, "Continue current sound, change volume");
-		soundBlock.soundVolume = viewStream->readUint16LE();
-		debugC(kDebugView, "\tVolume: %d", soundBlock.soundVolume);
-	} else if (soundBlock.sound == kMystSoundActionStop) {
-		debugC(kDebugView, "Stop sound");
-	} else if (soundBlock.sound == kMystSoundActionConditional) {
-		debugC(kDebugView, "Conditional sound list");
-		soundBlock.soundVar = viewStream->readUint16LE();
-		debugC(kDebugView, "\tVar: %d", soundBlock.soundVar);
-		uint16 soundCount = viewStream->readUint16LE();
-		debugC(kDebugView, "\tCount: %d", soundCount);
-
-		for (uint16 i = 0; i < soundCount; i++) {
-			MystSoundBlock::SoundItem sound;
-
-			sound.action = viewStream->readSint16LE();
-			debugC(kDebugView, "\t\tCondition %d: Action %d", i, sound.action);
-			if (sound.action == kMystSoundActionChangeVolume || sound.action >= 0) {
-				sound.volume = viewStream->readUint16LE();
-				debugC(kDebugView, "\t\tCondition %d: Volume %d", i, sound.volume);
-			}
-
-			soundBlock.soundList.push_back(sound);
-		}
-	} else {
-		debugC(kDebugView, "Unknown");
-		warning("Unknown sound control value '%d' in card '%d'", soundBlock.sound, _curCard);
-	}
-
-	_view.soundBlock = soundBlock;
+	_view.soundBlock = readSoundBlock(viewStream);
 
 	// Resources that scripts can call upon
 	uint16 scriptResCount = viewStream->readUint16LE();
@@ -1172,6 +1132,51 @@ void MohawkEngine_Myst::dropPage() {
 
 	setMainCursor(kDefaultMystCursor);
 	checkCursorHints();
+}
+
+MystSoundBlock MohawkEngine_Myst::readSoundBlock(Common::ReadStream *stream) const {
+	MystSoundBlock soundBlock;
+	soundBlock.sound = stream->readSint16LE();
+	debugCN(kDebugView, "Sound Control: %d = ", soundBlock.sound);
+
+	if (soundBlock.sound > 0) {
+		debugC(kDebugView, "Play new Sound, change volume");
+		debugC(kDebugView, "\tSound: %d", soundBlock.sound);
+		soundBlock.soundVolume = stream->readUint16LE();
+		debugC(kDebugView, "\tVolume: %d", soundBlock.soundVolume);
+	} else if (soundBlock.sound == kMystSoundActionContinue)
+		debugC(kDebugView, "Continue current sound");
+	else if (soundBlock.sound == kMystSoundActionChangeVolume) {
+		debugC(kDebugView, "Continue current sound, change volume");
+		soundBlock.soundVolume = stream->readUint16LE();
+		debugC(kDebugView, "\tVolume: %d", soundBlock.soundVolume);
+	} else if (soundBlock.sound == kMystSoundActionStop) {
+		debugC(kDebugView, "Stop sound");
+	} else if (soundBlock.sound == kMystSoundActionConditional) {
+		debugC(kDebugView, "Conditional sound list");
+		soundBlock.soundVar = stream->readUint16LE();
+		debugC(kDebugView, "\tVar: %d", soundBlock.soundVar);
+		uint16 soundCount = stream->readUint16LE();
+		debugC(kDebugView, "\tCount: %d", soundCount);
+
+		for (uint16 i = 0; i < soundCount; i++) {
+			MystSoundBlock::SoundItem sound;
+
+			sound.action = stream->readSint16LE();
+			debugC(kDebugView, "\t\tCondition %d: Action %d", i, sound.action);
+			if (sound.action == kMystSoundActionChangeVolume || sound.action >= 0) {
+				sound.volume = stream->readUint16LE();
+				debugC(kDebugView, "\t\tCondition %d: Volume %d", i, sound.volume);
+			}
+
+			soundBlock.soundList.push_back(sound);
+		}
+	} else {
+		debugC(kDebugView, "Unknown");
+		warning("Unknown sound control value '%d' in card '%d'", soundBlock.sound, _curCard);
+	}
+
+	return soundBlock;
 }
 
 void MohawkEngine_Myst::applySoundBlock(const MystSoundBlock &block) {
