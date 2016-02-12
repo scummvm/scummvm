@@ -173,7 +173,7 @@ SciEvent EventManager::getScummVMEvent() {
 		return input;
 	}
 
-	int	scummVMKeyFlags;
+	int scummVMKeyFlags;
 
 	switch (ev.type) {
 	case Common::EVENT_KEYDOWN:
