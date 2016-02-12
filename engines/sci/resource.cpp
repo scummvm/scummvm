@@ -2679,7 +2679,9 @@ Common::String ResourceManager::findSierraGameId() {
 		return "";
 
 	// Seek to the name selector of the first export
-	byte *seeker = heap->data + READ_UINT16(heap->data + gameObjectOffset + nameSelector * 2);
+	byte *offsetPtr = heap->data + gameObjectOffset + nameSelector * 2;
+	uint16 offset = !isSci11Mac() ? READ_LE_UINT16(offsetPtr) : READ_BE_UINT16(offsetPtr);
+	byte *seeker = heap->data + offset;
 	Common::String sierraId;
 	sierraId += (const char *)seeker;
 
