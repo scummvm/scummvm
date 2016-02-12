@@ -2659,7 +2659,11 @@ if test -n "$_host"; then
 			_build_scalers=no
 			_mad=yes
 			_zlib=yes
-			add_line_to_config_mk 'ronindir = /usr/local/ronin'
+			if test -z "$RONINDIR"; then
+				add_line_to_config_mk "ronindir := /usr/local/ronin"
+			else
+				add_line_to_config_mk "ronindir := $RONINDIR"
+			fi
 			_port_mk="backends/platform/dc/dreamcast.mk"
 			;;
 		ds)
