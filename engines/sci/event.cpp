@@ -44,7 +44,7 @@ static const ScancodeRow scancodeAltifyRows[] = {
 	{ 0x2c, "ZXCVBNM,./"    }
 };
 
-static const byte codepagemap_88591toDOS[0x80] = {
+static const byte codePageMap88591ToDOS[0x80] = {
 	 '?',  '?',  '?',  '?',  '?',  '?',  '?',  '?',  '?',  '?',  '?',  '?',  '?',  '?',  '?',  '?', // 0x8x
 	 '?',  '?',  '?',  '?',  '?',  '?',  '?',  '?',  '?',  '?',  '?',  '?',  '?',  '?',  '?',  '?', // 0x9x
 	 '?', 0xad, 0x9b, 0x9c,  '?', 0x9d,  '?', 0x9e,  '?',  '?', 0xa6, 0xae, 0xaa,  '?',  '?',  '?', // 0xAx
@@ -265,7 +265,7 @@ SciEvent EventManager::getScummVMEvent() {
 				return noEvent;
 			// Convert 8859-1 characters to DOS (cp850/437) for
 			// multilingual SCI01 games
-			input.character = codepagemap_88591toDOS[input.character & 0x7f];
+			input.character = codePageMap88591ToDOS[input.character & 0x7f];
 		}
 		if (scummVMKeycode == Common::KEYCODE_TAB) {
 			input.character = SCI_KEY_TAB;
