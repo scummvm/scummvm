@@ -30,6 +30,7 @@
 #include "agi/keyboard.h"
 #include "agi/menu.h"
 #include "agi/systemui.h"
+#include "agi/appleIIgs_timedelay_overwrite.h"
 
 namespace Agi {
 
@@ -289,6 +290,8 @@ uint16 AgiEngine::processAGIEvents() {
 
 int AgiEngine::playGame() {
 	int ec = errOK;
+	const AgiAppleIIgsDelayOverwriteGameEntry *appleIIgsDelayOverwrite = nullptr;
+	const AgiAppleIIgsDelayOverwriteRoomEntry *appleIIgsDelayRoomOverwrite = nullptr;
 
 	debugC(2, kDebugLevelMain, "initializing...");
 	debugC(2, kDebugLevelMain, "game version = 0x%x", getVersion());
@@ -338,6 +341,16 @@ int AgiEngine::playGame() {
 
 	artificialDelay_Reset();
 
+	if (getPlatform() == Common::kPlatformApple2GS) {
+		// Look up, if there is a time delay overwrite table for the current game
+		appleIIgsDelayOverwrite = appleIIgsDelayOverwriteGameTable;
+		while (appleIIgsDelayOverwrite->gameId != GID_AGIDEMO) {
+			if (appleIIgsDelayOverwrite->gameId == getGameID())
+				break; // game found
+			appleIIgsDelayOverwrite++;
+		}		
+	}
+
 	do {
 		processAGIEvents();
 
@@ -353,6 +366,39 @@ int AgiEngine::playGame() {
 			// Normally that game runs at TIME_DELAY 1.
 			// Maybe a script patch for this game would make sense.
 			// TODO: needs further investigation
+
+			int16 timeDelayOverwrite = -1;
+
+			// Now check, if we got a time delay overwrite entry for current room
+			if (appleIIgsDelayOverwrite->roomTable) {
+				byte curRoom = getVar(VM_VAR_CURRENT_ROOM);
+
+				appleIIgsDelayRoomOverwrite = appleIIgsDelayOverwrite->roomTable;
+				while (appleIIgsDelayRoomOverwrite->fromRoom >= 0) {
+					if ((appleIIgsDelayRoomOverwrite->fromRoom <= curRoom) && (appleIIgsDelayRoomOverwrite->toRoom >= curRoom)) {
+						timeDelayOverwrite = appleIIgsDelayRoomOverwrite->timeDelayOverwrite;
+						break;
+					}
+					appleIIgsDelayRoomOverwrite++;
+				}
+
+				if (timeDelayOverwrite < 0) {
+					// use default time delay in case no room specific one was found
+					timeDelayOverwrite = appleIIgsDelayOverwrite->defaultTimeDelayOverwrite;
+				}
+			} else {
+				timeDelayOverwrite = appleIIgsDelayOverwrite->defaultTimeDelayOverwrite;
+			}
+
+			if (timeDelayOverwrite >= 0) {
+				if (timeDelayOverwrite != timeDelay) {
+					// delayOverwrite is not the same as the delay taken from the scripts? overwrite it
+					warning("AppleIIgs: time delay overwrite from %d to %d", timeDelay, timeDelayOverwrite);
+
+					setVar(VM_VAR_TIME_DELAY, timeDelayOverwrite - 1); // adjust for Apple IIgs
+					timeDelay = timeDelayOverwrite;
+				}
+			}
 		}
 
 		if (_passedPlayTimeCycles >= timeDelay) {
