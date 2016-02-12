@@ -172,6 +172,7 @@ void WageEngine::processEvents() {
 
 				processTurn(&_inputText, NULL);
 				_inputText = "";
+				_gui->appendText("");
 				break;
 
 			default:
@@ -208,14 +209,10 @@ void WageEngine::setMenu(Common::String menu) {
 }
 
 void WageEngine::appendText(const char *str) {
-	if (_inputText.size()) {
-		_inputText += '\n';
-		_gui->drawInput();
-
-		_inputText = "";
-	}
-
 	_gui->appendText(str);
+
+	if (_inputText.size())
+		_inputText = "";
 }
 
 void WageEngine::gameOver() {
