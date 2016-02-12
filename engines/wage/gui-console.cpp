@@ -348,4 +348,8 @@ void Gui::actionUndo() {
 	_menu->enableCommand(kMenuEdit, kMenuActionUndo, false);
 }
 
+void Gui::disableUndo() {
+	_menu->enableCommand(kMenuEdit, kMenuActionUndo, false);
+}
+
 } // End of namespace Wage

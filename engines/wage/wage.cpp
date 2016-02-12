@@ -173,6 +173,7 @@ void WageEngine::processEvents() {
 				processTurn(&_inputText, NULL);
 				_inputText = "";
 				_gui->appendText("");
+				_gui->disableUndo();
 				break;
 
 			default:

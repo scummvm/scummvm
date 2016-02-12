@@ -107,6 +107,7 @@ public:
 	void actionCopy();
 	void actionPaste();
 	void actionUndo();
+	void disableUndo();
 
 private:
 	void undrawCursor();
