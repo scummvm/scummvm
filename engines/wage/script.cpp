@@ -929,7 +929,7 @@ enum {
 struct Mapping {
 	const char *cmd;
 	int type;
-} mapping[] = {
+} static const mapping[] = {
 	{ "IF{", STATEMENT }, // 0x80
 	{ "=", OPERATOR },
 	{ "<", OPERATOR },
