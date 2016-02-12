@@ -348,6 +348,49 @@ void Gui::actionUndo() {
 	_menu->enableCommand(kMenuEdit, kMenuActionUndo, false);
 }
 
+void Gui::actionClear() {
+	int startPos = _selectionStartX;
+	int endPos = _selectionEndX;
+
+	if (startPos > endPos)
+		SWAP(startPos, endPos);
+
+	Common::String beg(_lines[_selectionStartY].c_str(), &_lines[_selectionStartY].c_str()[startPos]);
+	Common::String end(&_lines[_selectionStartY].c_str()[endPos]);
+
+	_undobuffer = _engine->_inputText;
+	_engine->_inputText = beg + end;
+	drawInput();
+
+	_menu->enableCommand(kMenuEdit, kMenuActionUndo, true);
+
+	_selectionStartY = -1;
+	_selectionEndY = -1;
+}
+
+void Gui::actionCut() {
+	int startPos = _selectionStartX;
+	int endPos = _selectionEndX;
+
+	if (startPos > endPos)
+		SWAP(startPos, endPos);
+
+	Common::String beg(_lines[_selectionStartY].c_str(), &_lines[_selectionStartY].c_str()[startPos]);
+	Common::String mid(&_lines[_selectionStartY].c_str()[startPos], &_lines[_selectionStartY].c_str()[endPos]);
+	Common::String end(&_lines[_selectionStartY].c_str()[endPos]);
+
+	_undobuffer = _engine->_inputText;
+	_engine->_inputText = beg + end;
+	_clipboard = mid;
+	drawInput();
+
+	_menu->enableCommand(kMenuEdit, kMenuActionUndo, true);
+	_menu->enableCommand(kMenuEdit, kMenuActionPaste, true);
+
+	_selectionStartY = -1;
+	_selectionEndY = -1;
+}
+
 void Gui::disableUndo() {
 	_menu->enableCommand(kMenuEdit, kMenuActionUndo, false);
 }

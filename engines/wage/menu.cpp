@@ -519,7 +519,7 @@ void Menu::executeCommand(MenuSubItem *subitem) {
 		_gui->actionUndo();
 		break;
 	case kMenuActionCut:
-		warning("STUB: Unhandled shortcut");
+		_gui->actionCut();
 		break;
 	case kMenuActionCopy:
 		_gui->actionCopy();
@@ -528,7 +528,7 @@ void Menu::executeCommand(MenuSubItem *subitem) {
 		_gui->actionPaste();
 		break;
 	case kMenuActionClear:
-		warning("STUB: Unhandled shortcut");
+		_gui->actionClear();
 		break;
 
 	case kMenuActionCommand:

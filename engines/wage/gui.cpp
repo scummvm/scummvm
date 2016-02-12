@@ -485,6 +485,14 @@ Designed *Gui::mouseUp(int x, int y) {
 			_menu->enableCommand(kMenuEdit, kMenuActionCopy, false);
 		} else {
 			_menu->enableCommand(kMenuEdit, kMenuActionCopy, true);
+
+			bool cutAllowed = false;
+
+			if (_selectionStartY == _selectionEndY && _selectionStartY == _lines.size() - 1)
+				cutAllowed = true;
+
+			_menu->enableCommand(kMenuEdit, kMenuActionCut, cutAllowed);
+			_menu->enableCommand(kMenuEdit, kMenuActionClear, cutAllowed);
 		}
 	}
 

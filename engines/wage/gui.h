@@ -107,6 +107,8 @@ public:
 	void actionCopy();
 	void actionPaste();
 	void actionUndo();
+	void actionClear();
+	void actionCut();
 	void disableUndo();
 
 private:
