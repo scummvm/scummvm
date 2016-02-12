@@ -28,8 +28,22 @@
 
 #if defined(WIN32) && defined(USE_TASKBAR)
 
+// HACK: To get __MINGW64_VERSION_foo defines we need to manually include
+// _mingw.h in this file because we do not include any system headers at this
+// point on purpose. The defines are required to detect whether this is a
+// classic MinGW toolchain or a MinGW-w64 based one.
+#if defined(__MINGW32__)
+#include <_mingw.h>
+#endif
+
 // Needed for taskbar functions
-#if defined(__GNUC__) && defined(__MINGW32__) && !defined(__MINGW64__)
+// HACK: MinGW-w64 based toolchains include the symbols we require in their
+// headers. The 32 bit incarnation only defines __MINGW32__. This leads to
+// build breakage due to clashes with our compat header. Luckily MinGW-w64
+// based toolchains define __MINGW64_VERSION_foo macros inside _mingw.h,
+// which is included from all system headers. Thus we abuse that to detect
+// them.
+#if defined(__GNUC__) && defined(__MINGW32__) && !defined(__MINGW64_VERSION_MAJOR)
 	#include "backends/taskbar/win32/mingw-compat.h"
 #else
 	// We use functionality introduced with Win7 in this file.
