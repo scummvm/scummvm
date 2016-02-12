@@ -109,6 +109,7 @@ public:
 	void actionUndo();
 
 private:
+	void undrawCursor();
 	void paintBorder(Graphics::Surface *g, Common::Rect &r, WindowType windowType);
 	void renderConsole(Graphics::Surface *g, Common::Rect &r);
 	void drawBox(Graphics::Surface *g, int x, int y, int w, int h);
