@@ -184,7 +184,7 @@ void VideoManager::playMovieBlocking(const Common::String &fileName, uint16 x, u
 	}
 
 	ptr->start();
-	waitUntilMovieEnds(ptr);
+	waitUntilMovieEnds(VideoHandle(ptr));
 }
 
 void VideoManager::playMovieBlockingCentered(const Common::String &fileName, bool clearScreen) {
@@ -200,7 +200,7 @@ void VideoManager::playMovieBlockingCentered(const Common::String &fileName, boo
 
 	ptr->center();
 	ptr->start();
-	waitUntilMovieEnds(ptr);
+	waitUntilMovieEnds(VideoHandle(ptr));
 }
 
 void VideoManager::waitUntilMovieEnds(VideoHandle videoHandle) {
@@ -278,7 +278,7 @@ VideoHandle VideoManager::playMovie(const Common::String &fileName) {
 		return VideoHandle();
 
 	ptr->start();
-	return ptr;
+	return VideoHandle(ptr);
 }
 
 VideoHandle VideoManager::playMovie(uint16 id) {
@@ -287,7 +287,7 @@ VideoHandle VideoManager::playMovie(uint16 id) {
 		return VideoHandle();
 
 	ptr->start();
-	return ptr;
+	return VideoHandle(ptr);
 }
 
 bool VideoManager::updateMovies() {
@@ -360,7 +360,7 @@ bool VideoManager::updateMovies() {
 		}
 
 		// Check the video time
-		_vm->doVideoTimer(*it, false);
+		_vm->doVideoTimer(VideoHandle(*it), false);
 
 		// Remember to increase the iterator
 		it++;
@@ -430,7 +430,7 @@ VideoHandle VideoManager::playMovieRiven(uint16 id) {
 				ptr->start();
 			}
 
-			return ptr;
+			return VideoHandle(ptr);
 		}
 	}
 
@@ -445,7 +445,7 @@ void VideoManager::playMovieBlockingRiven(uint16 id) {
 			ptr->moveTo(_mlstRecords[i].left, _mlstRecords[i].top);
 			ptr->setVolume(_mlstRecords[i].volume);
 			ptr->start();
-			waitUntilMovieEnds(ptr);
+			waitUntilMovieEnds(VideoHandle(ptr));
 			return;
 		}
 	}
@@ -522,7 +522,7 @@ VideoHandle VideoManager::findVideoHandleRiven(uint16 id) {
 		if (_mlstRecords[i].code == id)
 			for (VideoList::iterator it = _videos.begin(); it != _videos.end(); it++)
 				if ((*it)->getID() == _mlstRecords[i].movieID)
-					return *it;
+					return VideoHandle(*it);
 
 	return VideoHandle();
 }
@@ -533,7 +533,7 @@ VideoHandle VideoManager::findVideoHandle(uint16 id) {
 
 	for (VideoList::iterator it = _videos.begin(); it != _videos.end(); it++)
 		if ((*it)->getID() == id)
-			return *it;
+			return VideoHandle(*it);
 
 	return VideoHandle();
 }
@@ -544,7 +544,7 @@ VideoHandle VideoManager::findVideoHandle(const Common::String &fileName) {
 
 	for (VideoList::iterator it = _videos.begin(); it != _videos.end(); it++)
 		if ((*it)->getFileName().equalsIgnoreCase(fileName))
-			return *it;
+			return VideoHandle(*it);
 
 	return VideoHandle();
 }

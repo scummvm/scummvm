@@ -293,7 +293,7 @@ private:
 	/**
 	 * Constructor for internal VideoManager use
 	 */
-	VideoHandle(VideoEntryPtr ptr);
+	explicit VideoHandle(VideoEntryPtr ptr);
 
 	/**
 	 * The video entry this is associated with
