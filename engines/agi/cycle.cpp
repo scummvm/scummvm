@@ -367,7 +367,7 @@ int AgiEngine::playGame() {
 			// Maybe a script patch for this game would make sense.
 			// TODO: needs further investigation
 
-			int16 timeDelayOverwrite = -1;
+			int16 timeDelayOverwrite = -99;
 
 			// Now check, if we got a time delay overwrite entry for current room
 			if (appleIIgsDelayOverwrite->roomTable) {
@@ -382,7 +382,7 @@ int AgiEngine::playGame() {
 					appleIIgsDelayRoomOverwrite++;
 				}
 
-				if (timeDelayOverwrite < 0) {
+				if (timeDelayOverwrite == -99) {
 					// use default time delay in case no room specific one was found
 					timeDelayOverwrite = appleIIgsDelayOverwrite->defaultTimeDelayOverwrite;
 				}

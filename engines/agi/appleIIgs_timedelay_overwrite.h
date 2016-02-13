@@ -38,10 +38,15 @@ struct AgiAppleIIgsDelayOverwriteGameEntry {
 };
 
 static const AgiAppleIIgsDelayOverwriteRoomEntry appleIIgsDelayOverwriteMH1[] = {
-	{ 153, 153, 2  }, // Intro w/ credits
-	{ 104, 104, 2  }, // Intro cutscene
-	{ 117, 117, 2  }, // Intro cutscene (ego waking up)
+	{ 153, 153,  2 }, // Intro w/ credits
+	{ 104, 104,  2 }, // Intro cutscene
+	{ 117, 117,  2 }, // Intro cutscene (ego waking up)
 	// Room 124+125 are MAD rooms, those seem to work at a proper speed
+	{  -1,  -1, -1 }
+};
+
+static const AgiAppleIIgsDelayOverwriteRoomEntry appleIIgsDelayOverwriteSQ2[] = {
+	{   1,   1, -1 }, // Intro: space ship entering space port, don't touch speed
 	{  -1,  -1, -1 }
 };
 
@@ -57,7 +62,7 @@ static const AgiAppleIIgsDelayOverwriteGameEntry appleIIgsDelayOverwriteGameTabl
 	{ GID_MIXEDUP,    2, nullptr }, // NEEDS TESTING
 	{ GID_PQ1,        2, nullptr }, // NEEDS TESTING
 	{ GID_SQ1,        2, nullptr }, // NEEDS TESTING
-	{ GID_SQ2,        2, nullptr }, // NEEDS TESTING
+	{ GID_SQ2,        2, appleIIgsDelayOverwriteSQ2 }, // NEEDS TESTING
 	{ GID_AGIDEMO,   -1, nullptr }
 };
 
