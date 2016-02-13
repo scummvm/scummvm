@@ -45,7 +45,7 @@
 #include "agi/systemui.h"
 #include "agi/words.h"
 
-#define SAVEGAME_CURRENT_VERSION 8
+#define SAVEGAME_CURRENT_VERSION 9
 
 //
 // Version 0 (Sarien): view table has 64 entries
@@ -62,6 +62,7 @@
 // Version 8 (ScummVM): Added Hold-Key-Mode boolean
 //                       required for at least Mixed Up Mother Goose
 //                       gets set at the start of the game only
+// Version 9 (ScummVM): Added seconds to saved game time stamp
 
 namespace Agi {
 
@@ -109,6 +110,8 @@ int AgiEngine::saveGame(const Common::String &fileName, const Common::String &de
 	debugC(5, kDebugLevelMain | kDebugLevelSavegame, "Writing save date (%d)", saveDate);
 	out->writeUint16BE(saveTime);
 	debugC(5, kDebugLevelMain | kDebugLevelSavegame, "Writing save time (%d)", saveTime);
+	// Version 9+: save seconds of current time as well
+	out->writeByte(curTime.tm_sec & 0xFF);
 	out->writeUint32BE(playTime);
 	debugC(5, kDebugLevelMain | kDebugLevelSavegame, "Writing play time (%d)", playTime);
 
@@ -384,7 +387,10 @@ int AgiEngine::loadGame(const Common::String &fileName, bool checkId) {
 		Graphics::skipThumbnail(*in);
 
 		in->readUint32BE(); // save date
-		in->readUint16BE(); // save time
+		in->readUint16BE(); // save time (hour + minute)
+		if (saveVersion >= 9) {
+			in->readByte(); // save time seconds
+		}
 		if (saveVersion >= 6) {
 			uint32 playTime = in->readUint32BE();
 			inGameTimerReset(playTime * 1000);
@@ -813,7 +819,7 @@ Common::String AgiEngine::getSavegameFilename(int16 slotId) const {
 	return saveLoadSlot;
 }
 
-bool AgiEngine::getSavegameInformation(int16 slotId, Common::String &saveDescription, uint32 &saveDate, uint16 &saveTime, bool &saveIsValid) {
+bool AgiEngine::getSavegameInformation(int16 slotId, Common::String &saveDescription, uint32 &saveDate, uint32 &saveTime, bool &saveIsValid) {
 	Common::InSaveFile *in;
 	Common::String fileName = getSavegameFilename(slotId);
 	char saveGameDescription[31];
@@ -875,7 +881,10 @@ bool AgiEngine::getSavegameInformation(int16 slotId, Common::String &saveDescrip
 			Graphics::skipThumbnail(*in);
 
 			saveDate = in->readUint32BE();
-			saveTime = in->readUint16BE();
+			saveTime = in->readUint16BE() << 8;
+			if (saveVersion >= 9) {
+				saveTime |= in->readByte(); // add seconds (only available since saved game version 9+)
+			}
 
 			// save date is DDMMYYYY, we need a proper format
 			byte saveDateDay = saveDate >> 24;
