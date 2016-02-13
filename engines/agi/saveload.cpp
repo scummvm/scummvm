@@ -45,24 +45,25 @@
 #include "agi/systemui.h"
 #include "agi/words.h"
 
-#define SAVEGAME_CURRENT_VERSION 9
+#define SAVEGAME_CURRENT_VERSION 10
 
 //
-// Version 0 (Sarien): view table has 64 entries
-// Version 1 (Sarien): view table has 256 entries (needed in KQ3)
-// Version 2 (ScummVM): first ScummVM version
-// Version 3 (ScummVM): added AGIPAL save/load support
-// Version 4 (ScummVM): added thumbnails and save creation date/time
-// Version 5 (ScummVM): Added game md5
-// Version 6 (ScummVM): Added game played time
-// Version 7 (ScummVM): Added controller key mappings
-//                       required for some games for quick-loading from ScummVM main menu
-//                       for games, that do not set all key mappings right at the start
-//                      Added automatic save data (for command SetSimple)
-// Version 8 (ScummVM): Added Hold-Key-Mode boolean
-//                       required for at least Mixed Up Mother Goose
-//                       gets set at the start of the game only
-// Version 9 (ScummVM): Added seconds to saved game time stamp
+// Version 0 (Sarien):   view table has 64 entries
+// Version 1 (Sarien):   view table has 256 entries (needed in KQ3)
+// Version 2 (ScummVM):  first ScummVM version
+// Version 3 (ScummVM):  added AGIPAL save/load support
+// Version 4 (ScummVM):  added thumbnails and save creation date/time
+// Version 5 (ScummVM):  Added game md5
+// Version 6 (ScummVM):  Added game played time
+// Version 7 (ScummVM):  Added controller key mappings
+//                        required for some games for quick-loading from ScummVM main menu
+//                        for games, that do not set all key mappings right at the start
+//                       Added automatic save data (for command SetSimple)
+// Version 8 (ScummVM):  Added Hold-Key-Mode boolean
+//                        required for at least Mixed Up Mother Goose
+//                        gets set at the start of the game only
+// Version 9 (ScummVM):  Added seconds to saved game time stamp
+// Version 10 (ScummVM): Added priorityTableSet boolean
 
 namespace Agi {
 
@@ -174,9 +175,11 @@ int AgiEngine::saveGame(const Common::String &fileName, const Common::String &de
 		out->writeSint16BE(0);
 	}
 
-	// TODO: save if priority table was modified
 	for (i = 0; i < SCRIPT_HEIGHT; i++)
-		out->writeByte(_gfx->priorityFromY(i));
+		out->writeByte(_gfx->saveLoadGetPriority(i));
+
+	// Version 10+: Save, if priority table got modified (set.pri.base opcode)
+	out->writeSint16BE((int16)_gfx->saveLoadWasPriorityTableModified());
 
 	out->writeSint16BE((int16)_game.gfxMode);
 	out->writeByte(_text->inputGetCursorChar());
@@ -500,7 +503,21 @@ int AgiEngine::loadGame(const Common::String &fileName, bool checkId) {
 	}
 
 	for (i = 0; i < SCRIPT_HEIGHT; i++)
-		_gfx->setPriority(i, in->readByte());
+		_gfx->saveLoadSetPriority(i, in->readByte());
+
+	if (saveVersion >= 10) {
+		// Version 10+: priority table was modified by scripts
+		int16 priorityTableWasModified = in->readSint16BE();
+
+		if (priorityTableWasModified) {
+			_gfx->saveLoadSetPriorityTableModifiedBool(true);
+		} else {
+			_gfx->saveLoadSetPriorityTableModifiedBool(false);
+		}
+	} else {
+		// Try to figure it out by ourselves
+		_gfx->saveLoadFigureOutPriorityTableModifiedBool();
+	}
 
 	_text->closeWindow();
 

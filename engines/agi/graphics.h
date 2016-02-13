@@ -140,8 +140,14 @@ public:
 	void updateScreen();
 
 	void initPriorityTable();
+	void createDefaultPriorityTable(uint8 *priorityTable);
 	void setPriorityTable(int16 priorityBase);
-	void setPriority(int16 yPos, int16 priority);
+	bool saveLoadWasPriorityTableModified();
+	int16 saveLoadGetPriority(int16 yPos);
+	void saveLoadSetPriorityTableModifiedBool(bool wasModified);
+	void saveLoadSetPriority(int16 yPos, int16 priority);
+	void saveLoadFigureOutPriorityTableModifiedBool();
+
 	int16 priorityToY(int16 priority);
 	int16 priorityFromY(int16 yPos);
 };
