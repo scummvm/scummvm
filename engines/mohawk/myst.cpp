@@ -387,6 +387,7 @@ void MohawkEngine_Myst::changeToStack(uint16 stack, uint16 card, uint16 linkSrcS
 
 	// Fill screen with black and empty cursor
 	_cursor->setCursor(0);
+	_currentCursor = 0;
 
 	if (getFeatures() & GF_ME)
 		_system->fillScreen(_system->getScreenFormat().RGBToColor(0, 0, 0));
