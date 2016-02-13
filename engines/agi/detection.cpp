@@ -359,6 +359,9 @@ SaveStateDescriptor AgiMetaEngine::querySaveMetaInfos(const char *target, int sl
 
 			uint32 saveDate = in->readUint32BE();
 			uint16 saveTime = in->readUint16BE();
+			if (saveVersion >= 9) {
+				in->readByte(); // skip over seconds of saveTime (not needed here)
+			}
 			if (saveVersion >= 6) {
 				uint32 playTime = in->readUint32BE();
 				descriptor.setPlayTime(playTime * 1000);

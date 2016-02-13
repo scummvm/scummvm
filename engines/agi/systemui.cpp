@@ -329,7 +329,7 @@ int16 SystemUI::askForRestoreGameSlot() {
 	int16 restoreGameSlotNr = -1;
 
 	// Fill saved game slot cache
-	readSavedGameSlots(true, true); // filter empty/corrupt slots, but including auto-save slot
+	readSavedGameSlots(true, true); // filter empty/corrupt slots, but include auto-save slot
 
 	if (_savedGameArray.size() == 0) {
 		// no saved games
@@ -528,12 +528,12 @@ void SystemUI::readSavedGameSlots(bool filterNonexistant, bool withAutoSaveSlot)
 	SystemUISavedGameEntry savedGameEntry;
 	Common::String saveDescription;
 	uint32         saveDate = 0;
-	uint16         saveTime = 0;
+	uint32         saveTime = 0;
 	bool           saveIsValid = false;
 
 	int16  mostRecentSlotNr = -1;
 	uint32 mostRecentSlotSaveDate = 0;
-	uint16 mostRecentSlotSaveTime = 0;
+	uint32 mostRecentSlotSaveTime = 0;
 
 	clearSavedGameSlots();
 

@@ -761,7 +761,7 @@ public:
 
 	SavedGameSlotIdArray getSavegameSlotIds();
 	Common::String getSavegameFilename(int16 slotId) const;
-	bool getSavegameInformation(int16 slotId, Common::String &saveDescription, uint32 &saveDate, uint16 &saveTime, bool &saveIsValid);
+	bool getSavegameInformation(int16 slotId, Common::String &saveDescription, uint32 &saveDate, uint32 &saveTime, bool &saveIsValid);
 
 	int saveGame(const Common::String &fileName, const Common::String &descriptionString);
 	int loadGame(const Common::String &fileName, bool checkId = true);
