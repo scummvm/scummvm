@@ -1338,7 +1338,7 @@ void Object::adjustObject() {
 			frame = 0;
 
 		int imgNum = _sequences[frame];
-		if (imgNum > _maxFrames)
+		if (imgNum > _maxFrames || imgNum == 0)
 			imgNum = 1;
 
 		_imageFrame = &(*_images)[imgNum - 1];
