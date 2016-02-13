@@ -199,16 +199,13 @@ MystAreaVideo::MystAreaVideo(MohawkEngine_Myst *vm, Common::SeekableReadStream *
 	_direction = rlstStream->readSint16LE();
 	_playBlocking = rlstStream->readUint16LE();
 	_loop = rlstStream->readUint16LE();
-	_u3 = rlstStream->readUint16LE();
+	_playRate = rlstStream->readUint16LE();
 
 	// TODO: Out of bound values should clip the movie
 	if (_left < 0)
 		_left = 0;
 	if (_top < 0)
 		_top = 0;
-
-	if (_u3 != 0)
-		warning("Type 6 _u3 != 0");
 
 	debugC(kDebugResource, "\tvideoFile: \"%s\"", _videoFile.c_str());
 	debugC(kDebugResource, "\tleft: %d", _left);
@@ -217,7 +214,7 @@ MystAreaVideo::MystAreaVideo(MohawkEngine_Myst *vm, Common::SeekableReadStream *
 	debugC(kDebugResource, "\tdirection: %d", _direction);
 	debugC(kDebugResource, "\tplayBlocking: %d", _playBlocking);
 	debugC(kDebugResource, "\tplayOnCardChange: %d", _playOnCardChange);
-	debugC(kDebugResource, "\tu3: %d", _u3);
+	debugC(kDebugResource, "\tplayRate: %d", _playRate);
 }
 
 VideoHandle MystAreaVideo::playMovie() {
@@ -233,10 +230,19 @@ VideoHandle MystAreaVideo::playMovie() {
 		handle->moveTo(_left, _top);
 		handle->setLooping(_loop != 0);
 
-		if (_direction == -1) {
-			handle->seek(handle->getDuration());
-			handle->setRate(-1);
+		Common::Rational rate;
+		if (_playRate != 0) {
+			rate = Common::Rational(_playRate, 100);
+		} else {
+			rate = 1;
 		}
+
+		if (_direction == -1) {
+			rate = -rate;
+			handle->seek(handle->getDuration());
+		}
+
+		handle->setRate(rate);
 	} else {
 		// Resume the video
 		handle->pause(false);
@@ -400,6 +406,7 @@ void MystAreaImageSwitch::drawDataToScreen() {
 	}
 }
 
+//TODO: Merge with the method above?
 void MystAreaImageSwitch::drawConditionalDataToScreen(uint16 state, bool update) {
 	bool drawSubImage = false;
 	int16 subImageId = 0;

@@ -124,7 +124,7 @@ protected:
 	int16 _direction; // 1 => forward, -1 => backwards
 	uint16 _playBlocking;
 	uint16 _playOnCardChange;
-	uint16 _u3;
+	uint16 _playRate; // percents
 };
 
 class MystAreaActionSwitch : public MystArea {
