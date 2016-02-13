@@ -37,6 +37,11 @@ struct AgiAppleIIgsDelayOverwriteGameEntry {
 	const AgiAppleIIgsDelayOverwriteRoomEntry *roomTable;
 };
 
+static const AgiAppleIIgsDelayOverwriteRoomEntry appleIIgsDelayOverwriteKQ4[] = {
+	{ 120, 121, -1 }, // Part of the intro: Graham gets his hat, throws it and breaks down, don't touch speed
+	{  -1,  -1, -1 }
+};
+
 static const AgiAppleIIgsDelayOverwriteRoomEntry appleIIgsDelayOverwriteMH1[] = {
 	{ 153, 153,  2 }, // Intro w/ credits
 	{ 104, 104,  2 }, // Intro cutscene
@@ -56,7 +61,7 @@ static const AgiAppleIIgsDelayOverwriteGameEntry appleIIgsDelayOverwriteGameTabl
 	{ GID_KQ1,        2, nullptr }, // NEEDS TESTING
 	// KQ2 seems to work fine at speed given by scripts (NEEDS FURTHER TESTING)
 	{ GID_KQ3,        2, nullptr }, // NEEDS TESTING
-	{ GID_KQ4,        2, nullptr }, // NEEDS TESTING
+	{ GID_KQ4,        2, appleIIgsDelayOverwriteKQ4 }, // NEEDS TESTING
 	{ GID_LSL1,       2, nullptr }, // Switch Larry 1 to 10 cycles per second (that's around PC Larry 1's "normal" speed
 	{ GID_MH1,       -1, appleIIgsDelayOverwriteMH1 }, // NEEDS TESTING
 	{ GID_MIXEDUP,    2, nullptr }, // NEEDS TESTING
