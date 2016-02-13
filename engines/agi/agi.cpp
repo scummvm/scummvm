@@ -577,6 +577,7 @@ void AgiEngine::syncSoundSettings() {
 //     The NewRoom call is not done during the same cycle as the "zooming in..." print call.
 // Space Quest 1:
 //  - right at the start of the game (NewRoom)
+//  - right at the end of the asteroids "That was mighty close!" (NewRoom)
 // Space Quest 2
 //  - right at the start of the game (NewRoom)
 //  - after exiting the very first room, a message pops up, that isn't readable without it (NewRoom)
