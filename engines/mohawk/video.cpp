@@ -563,7 +563,7 @@ void VideoManager::drawVideoFrame(VideoHandle handle, const Audio::Timestamp &ti
 	assert(handle);
 	handle->seek(time);
 	updateMovies();
-	handle->close();
+	handle->stop();
 }
 
 VideoManager::VideoList::iterator VideoManager::findEntry(VideoEntryPtr ptr) {
