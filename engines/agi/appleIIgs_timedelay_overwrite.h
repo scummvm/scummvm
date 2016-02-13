@@ -66,7 +66,7 @@ static const AgiAppleIIgsDelayOverwriteGameEntry appleIIgsDelayOverwriteGameTabl
 	{ GID_MH1,       -1, appleIIgsDelayOverwriteMH1 }, // NEEDS TESTING
 	{ GID_MIXEDUP,    2, nullptr }, // NEEDS TESTING
 	{ GID_PQ1,        2, nullptr }, // NEEDS TESTING
-	{ GID_SQ1,        2, nullptr }, // NEEDS TESTING
+	{ GID_SQ1,        2, nullptr }, // completed, no issues using these settings
 	{ GID_SQ2,        2, appleIIgsDelayOverwriteSQ2 }, // NEEDS TESTING
 	{ GID_AGIDEMO,   -1, nullptr }
 };
