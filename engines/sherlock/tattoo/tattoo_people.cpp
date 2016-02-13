@@ -1354,6 +1354,7 @@ void TattooPeople::setTalkSequence(int speaker, int sequenceNum) {
 
 
 int TattooPeople::findSpeaker(int speaker) {
+	speaker &= 0x7f;
 	int result = People::findSpeaker(speaker);
 	const char *portrait = _characters[speaker]._portrait;
 

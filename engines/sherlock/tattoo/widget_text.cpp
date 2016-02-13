@@ -80,6 +80,7 @@ void WidgetText::centerWindowOnSpeaker(int speaker) {
 	TattooScene &scene = *(TattooScene *)_vm->_scene;
 	Common::Point pt;
 
+	speaker &= 0x7f;
 	bool flag = _vm->readFlags(FLAG_PLAYER_IS_HOLMES);
 	if (people[HOLMES]._type == CHARACTER && ((speaker == HOLMES && flag) || (speaker == WATSON && !flag))) {
 		// Place the window centered above the player
