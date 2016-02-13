@@ -761,7 +761,7 @@ void GfxMgr::createDefaultPriorityTable(uint8 *priorityTable) {
 
 	for (priority = 1; priority < 15; priority++) {
 		for (step = 0; step < 12; step++) {
-			_priorityTable[yPos++] = priority < 4 ? 4 : priority;
+			priorityTable[yPos++] = priority < 4 ? 4 : priority;
 		}
 	}
 }
