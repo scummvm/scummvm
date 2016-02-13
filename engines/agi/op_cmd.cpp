@@ -2180,6 +2180,12 @@ void cmdPushScript(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 }
 
 void cmdSetPriBase(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
+	if (getVersion() < 0x2936) {
+		// was not available before 2.936 (last AGI2 version)
+		warning("set.pri.base called, although not available for current AGI version");
+		return;
+	}
+
 	uint16 priorityBase = parameter[0];
 
 	debug(0, "Priority base set to %d", priorityBase);

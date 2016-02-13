@@ -347,9 +347,9 @@ AgiInstruction insV2[] = {
 	{ "push.script",        "",         &cmdPushScript },       // BB
 	{ "pop.script",         "",         &cmdPopScript },        // BC
 	{ "hold.key",           "",         &cmdHoldKey },          // BD
-	{ "set.pri.base",       "n",        &cmdSetPriBase },       // BE
+	{ "set.pri.base",       "n",        &cmdSetPriBase },       // BE // AGI2.936+
 	{ "discard.sound",      "n",        &cmdDiscardSound },     // BF
-	{ "hide.mouse",         "",         &cmdHideMouse }, // 1 arg for AGI version 3.002.086
+	{ "hide.mouse",         "",         &cmdHideMouse }, // 1 arg for AGI version 3.002.086 AGI3+ only starts here
 	{ "allow.menu",         "n",        &cmdAllowMenu },        // C1
 	{ "show.mouse",         "",         &cmdShowMouse },        // C2
 	{ "fence.mouse",        "nnnn",     &cmdFenceMouse },       // C3

@@ -750,10 +750,15 @@ void GfxMgr::updateScreen() {
 }
 
 void GfxMgr::initPriorityTable() {
+	_priorityTableSet = false;
+
+	createDefaultPriorityTable(_priorityTable);
+}
+
+void GfxMgr::createDefaultPriorityTable(uint8 *priorityTable) {
 	int16 priority, step;
 	int16 yPos = 0;
 
-	_priorityTableSet = false;
 	for (priority = 1; priority < 15; priority++) {
 		for (step = 0; step < 12; step++) {
 			_priorityTable[yPos++] = priority < 4 ? 4 : priority;
@@ -775,10 +780,34 @@ void GfxMgr::setPriorityTable(int16 priorityBase) {
 	}
 }
 
+// used for saving
+int16 GfxMgr::saveLoadGetPriority(int16 yPos) {
+	assert(yPos < SCRIPT_HEIGHT);
+	return _priorityTable[yPos];
+}
+bool GfxMgr::saveLoadWasPriorityTableModified() {
+	return _priorityTableSet;
+}
+
 // used for restoring
-void GfxMgr::setPriority(int16 yPos, int16 priority) {
+void GfxMgr::saveLoadSetPriority(int16 yPos, int16 priority) {
 	assert(yPos < SCRIPT_HEIGHT);
 	_priorityTable[yPos] = priority;
+}
+void GfxMgr::saveLoadSetPriorityTableModifiedBool(bool wasModified) {
+	_priorityTableSet = wasModified;
+}
+void GfxMgr::saveLoadFigureOutPriorityTableModifiedBool() {
+	uint8 defaultPriorityTable[SCRIPT_HEIGHT]; /**< priority table */
+
+	createDefaultPriorityTable(defaultPriorityTable);
+
+	if (memcmp(defaultPriorityTable, _priorityTable, sizeof(_priorityTable)) == 0) {
+		// Match, it is the default table, so reset the flag
+		_priorityTableSet = false;
+	} else {
+		_priorityTableSet = true;
+	}
 }
 
 /**
@@ -792,7 +821,7 @@ int16 GfxMgr::priorityToY(int16 priority) {
 		return (priority - 5) * 12 + 48;
 	}
 
-	// dynamic priority bands were introduced in 3.002.086 (effectively AGI3)
+	// dynamic priority bands were introduced in 2.936 (effectively last version of AGI2)
 	// It seems there was a glitch, that caused priority bands to not get calculated properly.
 	// It was caused by this function starting with Y = 168 instead of 167, which meant it always
 	// returned with 168 as result.
