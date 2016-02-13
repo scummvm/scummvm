@@ -64,7 +64,6 @@ class MusicPlayer : public Audio::MidiPlayer {
 private:
 	SherlockEngine *_vm;
 	MusicType _musicType;
-	byte *_midiMusicData;
 public:
 	MusicPlayer(SherlockEngine *vm);
 
@@ -72,11 +71,6 @@ public:
 	 * Play a given music file
 	 */
 	bool play(Common::SeekableReadStream &stream);
-
-	/**
-	 * Stop playing music
-	 */
-	virtual void stop();
 
 	/**
 	 * Returns true if the player successfully loaded a driver
@@ -142,7 +136,11 @@ public:
 	 */
 	void stopMusic();
 	
+	/**
+	 * Returns true if the music is playing
+	 */
 	bool isPlaying();
+
 	uint32 getCurrentPosition();
 
 	bool waitUntilMSec(uint32 msecTarget, uint32 maxMSec, uint32 additionalDelay, uint32 noMusicDelay);

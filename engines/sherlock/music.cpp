@@ -218,12 +218,10 @@ void MidiParser_SH::unloadMusic() {
 /*----------------------------------------------------------------*/
 
 MusicPlayer::MusicPlayer(SherlockEngine *vm) : Audio::MidiPlayer(),
-		_vm(vm), _musicType(MT_NULL), _midiMusicData(nullptr) {
+		_vm(vm), _musicType(MT_NULL) {
 	MidiDriver::DeviceHandle dev;
 
 	if (IS_SERRATED_SCALPEL) {
-		// Serrated Scalpel: used an internal Electronic Arts .MUS music engine
-		_parser = new MidiParser_SH();
 		dev = MidiDriver::detectDevice(MDT_MIDI | MDT_ADLIB | MDT_PREFER_MT32);
 		_musicType = MidiDriver::getMusicType(dev);
 
@@ -244,8 +242,6 @@ MusicPlayer::MusicPlayer(SherlockEngine *vm) : Audio::MidiPlayer(),
 			break;
 		}
 	} else {
-		// Rose Tattooo: seems to use Miles Audio 3
-		_parser = MidiParser::createParser_XMIDI();
 		dev = MidiDriver::detectDevice(MDT_MIDI | MDT_ADLIB | MDT_PREFER_GM);
 		_musicType = MidiDriver::getMusicType(dev);
 
@@ -282,8 +278,6 @@ MusicPlayer::MusicPlayer(SherlockEngine *vm) : Audio::MidiPlayer(),
 			// Reset is done inside our MIDI driver
 			_driver->setTimerCallback(this, &timerCallback);
 		}
-		_parser->setMidiDriver(this);
-		_parser->setTimerRate(_driver->getBaseTempo());
 
 		if (IS_SERRATED_SCALPEL) {
 			if (_musicType == MT_MT32) {
@@ -312,24 +306,22 @@ MusicPlayer::MusicPlayer(SherlockEngine *vm) : Audio::MidiPlayer(),
 }
 
 bool MusicPlayer::play(Common::SeekableReadStream &stream) {
-	byte *midiMusicData = new byte[stream.size()];
-	int32 midiMusicDataSize = stream.size();
+	int32 dataSize = stream.size();
 
-	stream.read(midiMusicData, midiMusicDataSize);
-
-	if (midiMusicDataSize < 14) {
+	stop();
+	if (dataSize < 14) {
 		warning("Music: not enough data in music file");
-		delete[] midiMusicData;
 		return false;
 	}
 
-	byte  *dataPos = midiMusicData;
-	uint32 dataSize = midiMusicDataSize;
+	_midiData = new byte[dataSize];
+	stream.read(_midiData, dataSize);
+
+	byte  *dataPos = _midiData;
 
 	if (IS_SERRATED_SCALPEL) {
 		if (memcmp("            ", dataPos, 12)) {
 			warning("Music: expected header not found in music file");
-			delete[] midiMusicData;
 			return false;
 		}
 		dataPos += 12;
@@ -337,20 +329,17 @@ bool MusicPlayer::play(Common::SeekableReadStream &stream) {
 
 		if (dataSize < 0x7F) {
 			warning("Music: expected music header not found in music file");
-			delete[] midiMusicData;
 			return false;
 		}
 
 		uint16 headerSize = READ_LE_UINT16(dataPos);
 		if (headerSize != 0x7F) {
 			warning("Music: header is not as expected");
-			delete[] midiMusicData;
 			return false;
 		}
 	} else {
 		if (memcmp("FORM", dataPos, 4)) {
 			warning("Music: expected header not found in music file");
-			delete[] midiMusicData;
 			return false;
 		}
 	}
@@ -373,18 +362,22 @@ bool MusicPlayer::play(Common::SeekableReadStream &stream) {
 		}
 	}
 
-	_midiMusicData = midiMusicData;
-	_parser->loadMusic(midiMusicData, midiMusicDataSize);
+	if (IS_SERRATED_SCALPEL) {
+		// Serrated Scalpel: used an internal Electronic Arts .MUS music engine
+		_parser = new MidiParser_SH();
+	} else {
+		// Rose Tattooo: seems to use Miles Audio 3
+		_parser = MidiParser::createParser_XMIDI();
+	}
+
+	_parser->setMidiDriver(this);
+	_parser->setTimerRate(_driver->getBaseTempo());
+	_parser->loadMusic(_midiData, dataSize);
 	_parser->setTrack(0);
+
 	_isPlaying = true;
 	_isLooping = false;
-
 	return true;
-}
-
-void MusicPlayer::stop() {
-	Audio::MidiPlayer::stop();
-	_midiMusicData = nullptr;
 }
 
 /*----------------------------------------------------------------*/
