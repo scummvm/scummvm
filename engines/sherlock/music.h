@@ -60,15 +60,43 @@ private:
 	uint32 _musDataSize;
 };
 
+class MusicPlayer : public Audio::MidiPlayer {
+private:
+	SherlockEngine *_vm;
+	MusicType _musicType;
+	byte *_midiMusicData;
+public:
+	MusicPlayer(SherlockEngine *vm);
+
+	/**
+	 * Play a given music file
+	 */
+	bool play(Common::SeekableReadStream &stream);
+
+	/**
+	 * Stop playing music
+	 */
+	virtual void stop();
+
+	/**
+	 * Returns true if the player successfully loaded a driver
+	 */
+	bool hasDriver() const { return _driver != nullptr; }
+
+	/**
+	 * Returns the elapsed time playing in milliseconds
+	 */
+	uint32 getMilli() const {
+		return (_parser->getTick() * 1000) / 60;
+	}
+};
+
 class Music {
 private:
 	SherlockEngine *_vm;
 	Audio::Mixer *_mixer;
-	MidiParser *_midiParser;
-	MidiDriver *_midiDriver;
+	MusicPlayer *_musicPlayer;
 	Audio::SoundHandle _digitalMusicHandle;
-	MusicType _musicType;
-	byte *_midiMusicData;
 	
 	/**
 	 * Play the specified music resource
