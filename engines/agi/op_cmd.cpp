@@ -2180,8 +2180,8 @@ void cmdPushScript(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 }
 
 void cmdSetPriBase(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
-	if (getVersion() < 0x2936) {
-		// was not available before 2.936 (last AGI2 version)
+	if ((getVersion() != 0x2425) && (getVersion() < 0x2936)) {
+		// was only available in the 2.425 interpreter and from 2.936 (last AGI2 version) onwards
 		warning("set.pri.base called, although not available for current AGI version");
 		return;
 	}
