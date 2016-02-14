@@ -385,7 +385,7 @@ Common::String *World::loadStringFromDITL(Common::MacResManager *resMan, int res
 	return NULL;
 }
 
-bool InvComparator(Obj *l, Obj *r) {
+static bool InvComparator(const Obj *l, const Obj *r) {
     return l->_index < r->_index;
 }
 
@@ -402,7 +402,7 @@ void World::move(Obj *obj, Chr *chr) {
 	_engine->onMove(obj, from, chr);
 }
 
-bool ObjComparator(Obj *o1, Obj *o2) {
+static bool ObjComparator(const Obj *o1, const Obj *o2) {
 	bool o1Immobile = (o1->_type == Obj::IMMOBILE_OBJECT);
 	bool o2Immobile = (o2->_type == Obj::IMMOBILE_OBJECT);
 	if (o1Immobile == o2Immobile) {

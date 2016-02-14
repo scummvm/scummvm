@@ -109,7 +109,7 @@ enum {
 
 Common::String readPascalString(Common::SeekableReadStream *in);
 Common::Rect *readRect(Common::SeekableReadStream *in);
-const char *getIndefiniteArticle(Common::String &word);
+const char *getIndefiniteArticle(const Common::String &word);
 const char *prependGenderSpecificPronoun(int gender);
 const char *getGenderSpecificPronoun(int gender, bool capitalize);
 
@@ -158,7 +158,7 @@ public:
 	bool handleMoveCommand(Directions dir, const char *dirName);
 	bool handleLookCommand();
 	Common::String *getGroundItemsList(Scene *scene);
-	void appendObjNames(Common::String &str, ObjArray &objs);
+	void appendObjNames(Common::String &str, const ObjArray &objs);
 	bool handleInventoryCommand();
 	bool handleStatusCommand();
 	bool handleRestCommand();
@@ -172,11 +172,11 @@ public:
 
 	void wearObj(Obj *o, int pos);
 
-	bool tryAttack(Obj *weapon, Common::String &input);
+	bool tryAttack(const Obj *weapon, const Common::String &input);
 	bool handleAttack(Obj *weapon);
 
 	void printPlayerCondition(Chr *player);
-	const char *const getPercentMessage(double percent);
+	const char *getPercentMessage(double percent);
 
 public:
 	Common::RandomSource *_rnd;

@@ -571,7 +571,7 @@ Common::String *WageEngine::getGroundItemsList(Scene *scene) {
 	return NULL;
 }
 
-void WageEngine::appendObjNames(Common::String &str, ObjArray &objs) {
+void WageEngine::appendObjNames(Common::String &str, const ObjArray &objs) {
 	for (uint i = 0; i < objs.size(); i++) {
 		Obj *obj = objs[i];
 
@@ -849,7 +849,7 @@ bool WageEngine::handleOfferCommand(const char *target) {
 	return false;
 }
 
-bool WageEngine::tryAttack(Obj *weapon, Common::String &input) {
+bool WageEngine::tryAttack(const Obj *weapon, const Common::String &input) {
 	Common::String w(weapon->_name);
 	w.toLowercase();
 	Common::String i(input);
@@ -883,7 +883,7 @@ bool WageEngine::handleAttack(Obj *weapon) {
 	return true;
 }
 
-const char *const WageEngine::getPercentMessage(double percent) {
+const char *WageEngine::getPercentMessage(double percent) {
 	if (percent < 0.40) {
 		return "very bad";
 	} else if (percent < 0.55) {
