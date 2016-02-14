@@ -177,7 +177,7 @@ void WageEngine::performCombatAction(Chr *npc, Chr *player) {
 	delete magics;
 }
 
-const char *targets[] = { "head", "chest", "side" };
+static const char *const targets[] = { "head", "chest", "side" };
 
 void WageEngine::performAttack(Chr *attacker, Chr *victim, Obj *weapon) {
 	if (_world->_weaponMenuDisabled)
@@ -883,7 +883,7 @@ bool WageEngine::handleAttack(Obj *weapon) {
 	return true;
 }
 
-const char *WageEngine::getPercentMessage(double percent) {
+const char *const WageEngine::getPercentMessage(double percent) {
 	if (percent < 0.40) {
 		return "very bad";
 	} else if (percent < 0.55) {

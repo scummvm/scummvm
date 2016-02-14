@@ -176,7 +176,7 @@ public:
 	bool handleAttack(Obj *weapon);
 
 	void printPlayerCondition(Chr *player);
-	const char *getPercentMessage(double percent);
+	const char *const getPercentMessage(double percent);
 
 public:
 	Common::RandomSource *_rnd;
