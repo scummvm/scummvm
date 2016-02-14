@@ -25,6 +25,7 @@
 
 #include "common/scummsys.h"
 #include "common/file.h"
+#include "common/queue.h"
 #include "titanic/string.h"
 
 namespace Titanic {
@@ -32,10 +33,11 @@ namespace Titanic {
 enum FileMode { FILE_READ = 1, FILE_WRITE = 2 };
 
 class SimpleFile {
-public:
+protected:
 	Common::File _file;
 public:
 	SimpleFile();
+	virtual ~SimpleFile();
 
 	/**
 	 * Open a file for access
@@ -55,7 +57,7 @@ public:
 	/**
 	 * Read from the file
 	 */
-	virtual int unsafeRead(void *dst, size_t count);
+	virtual size_t unsafeRead(void *dst, size_t count);
 
 	/**
 	 * Read a string from the file
@@ -74,7 +76,39 @@ public:
 };
 
 class CompressedFile : public SimpleFile {
+private:
+	Common::Queue<byte> _queue;
+	int _field48;
+	int _isReading;
+	int _field260;
+	int _mode;
 
+	/**
+	 * Decompress data from the source file
+	 */
+	void decompress();
+
+	void validate(int *mode, const char *version, int v3);
+
+	int validate2(int *mode, int v15, const char *version, int v3);
+public:
+	CompressedFile();
+	virtual ~CompressedFile();
+
+	/**
+	 * Open a file for access
+	 */
+	virtual void open(const Common::String &name, FileMode mode = FILE_READ);
+
+	/**
+	 * Close the file
+	 */
+	virtual void close();
+
+	/**
+	 * Read from the file
+	 */
+	virtual size_t unsafeRead(void *dst, size_t count);
 };
 
 } // End of namespace Titanic

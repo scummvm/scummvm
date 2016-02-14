@@ -28,6 +28,10 @@ namespace Titanic {
 SimpleFile::SimpleFile() {
 }
 
+SimpleFile::~SimpleFile() {
+	_file.close();
+}
+
 void SimpleFile::open(const Common::String &name, FileMode mode) {
 	assert(mode == FILE_READ);
 	if (!_file.open(name))
@@ -39,11 +43,12 @@ void SimpleFile::close() {
 }
 
 void SimpleFile::safeRead(void *dst, size_t count) {
-	if (_file.read(dst, count) != count)
+	assert(_file.isOpen());
+	if (unsafeRead(dst, count) != count)
 		error("Could not read %d bytes", count);
 }
 
-int SimpleFile::unsafeRead(void *dst, size_t count) {
+size_t SimpleFile::unsafeRead(void *dst, size_t count) {
 	return _file.read(dst, count);
 }
 
@@ -162,6 +167,76 @@ double SimpleFile::readFloat() {
 	sscanf(result.c_str(), "%f", &floatValue);
 
 	return floatValue;
+}
+
+/*------------------------------------------------------------------------*/
+
+CompressedFile::CompressedFile() : SimpleFile() {
+	_field48 = 0;
+	_isReading = 0;
+	_field260 = 0;
+	_mode = 0;
+}
+
+CompressedFile::~CompressedFile() {
+}
+
+void CompressedFile::open(const Common::String &name, FileMode mode) {
+	SimpleFile::open(name, mode);
+
+	if (mode == FILE_READ) {
+		validate(&_mode, "1.0.4", 0x38);
+		_field48 = 2;
+	} else if (mode == FILE_WRITE) {
+		validate(&_mode, "1.0.4", 0x38);
+	}
+}
+void CompressedFile::close() {
+	_queue.clear();
+	SimpleFile::close();
+}
+
+size_t CompressedFile::unsafeRead(void *dst, size_t count) {
+	assert(_file.isOpen());
+	if (count == 0)
+		return 0;
+
+	// Ensure there's enough data queued in the buffer
+	decompress();
+
+	// Pass the data to the output buffer
+	size_t bytesRead = 0;
+	byte *dataPtr = (byte *)dst;
+
+	while (count > 0) {
+		if (_queue.empty()) {
+			decompress();
+
+		}
+
+		*dataPtr++ = _queue.pop();
+		++bytesRead;
+		--count;
+	}
+
+	return bytesRead;
+}
+
+void CompressedFile::validate(int *mode, const char *version, int v3) {
+	validate2(mode, 15, version, v3);
+}
+
+int CompressedFile::validate2(int *mode, int v15, const char *version, int v3) {
+	if (!version || *version != '1' || v3 != 0x38)
+		return -6;
+	if (!mode)
+		return -2;
+
+	// TODO
+}
+
+void CompressedFile::decompress() {
+
 }
 
 } // End of namespace Titanic
