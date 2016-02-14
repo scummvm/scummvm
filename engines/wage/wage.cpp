@@ -220,9 +220,9 @@ void WageEngine::gameOver() {
 
 	buttons.push_back(new DialogButton("OK", 66, 67, 68, 28));
 
-	Dialog gameOver(_gui, 199, _world->_gameOverMessage->c_str(), &buttons, 0);
+	Dialog gameOverDialog(_gui, 199, _world->_gameOverMessage->c_str(), &buttons, 0);
 
-	gameOver.run();
+	gameOverDialog.run();
 
 	doClose();
 }
