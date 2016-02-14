@@ -207,7 +207,7 @@ MenuItem *Menu::createCommandsMenu() {
 			bool enabled = true;
 			int style = 0;
 			char shortcut = 0;
-			char *shortptr = strrchr(item.c_str(), '/');
+			const char *shortptr = strrchr(item.c_str(), '/');
 			if (shortptr != NULL) {
 				if (strlen(shortptr) == 2) {
 					shortcut = shortptr[1];
