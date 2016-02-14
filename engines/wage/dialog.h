@@ -67,7 +67,7 @@ typedef Common::Array<DialogButton *> DialogButtonArray;
 
 class Dialog {
 public:
-	Dialog(Gui *gui, int width, const char *text, DialogButtonArray *buttons, int defaultButton);
+	Dialog(Gui *gui, int width, const char *text, DialogButtonArray *buttons, uint defaultButton);
 	~Dialog();
 
 	int run();
@@ -81,7 +81,7 @@ private:
 	const Graphics::Font *_font;
 	DialogButtonArray *_buttons;
 	int _pressedButton;
-	int _defaultButton;
+	uint _defaultButton;
 	bool _mouseOverPressedButton;
 
 	bool _needsRedraw;

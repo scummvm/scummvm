@@ -366,7 +366,7 @@ void WageEngine::performHealingMagic(Chr *chr, Obj *magicalObject) {
 		appendText(buf);
 	}
 
-	int chance = _rnd->getRandomNumber(255);
+	uint chance = _rnd->getRandomNumber(255);
 	if (chance < magicalObject->_accuracy) {
 		int type = magicalObject->_attackType;
 
@@ -486,7 +486,7 @@ void WageEngine::regen() {
 }
 
 void WageEngine::takeObj(Obj *obj) {
-	if ((int)_world->_player->_inventory.size() >= _world->_player->_maximumCarriedObjects) {
+	if (_world->_player->_inventory.size() >= _world->_player->_maximumCarriedObjects) {
 		appendText("Your pack is full, you must drop something.");
 	} else {
 		char buf[256];

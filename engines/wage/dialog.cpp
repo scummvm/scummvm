@@ -59,7 +59,7 @@ enum {
 	kDialogHeight = 113
 };
 
-Dialog::Dialog(Gui *gui, int width, const char *text, DialogButtonArray *buttons, int defaultButton) :
+Dialog::Dialog(Gui *gui, int width, const char *text, DialogButtonArray *buttons, uint defaultButton) :
 		_gui(gui), _text(text), _buttons(buttons), _defaultButton(defaultButton) {
 	assert(_gui->_engine);
 	assert(_gui->_engine->_world);
@@ -78,7 +78,7 @@ Dialog::Dialog(Gui *gui, int width, const char *text, DialogButtonArray *buttons
 	_mouseOverPressedButton = false;
 
 	// Adjust button positions
-	for (int i = 0; i < _buttons->size(); i++)
+	for (uint i = 0; i < _buttons->size(); i++)
 		_buttons->operator[](i)->bounds.translate(_bbox.left, _bbox.top);
 
 	_needsRedraw = true;
@@ -98,7 +98,7 @@ void Dialog::paint() {
 	static int boxOutline[] = { 1, 0, 0, 1, 1 };
 	drawOutline(_bbox, boxOutline, ARRAYSIZE(boxOutline));
 
-	for (int i = 0; i < _buttons->size(); i++) {
+	for (uint i = 0; i < _buttons->size(); i++) {
 		DialogButton *button = _buttons->operator[](i);
 		static int buttonOutline[] = { 0, 0, 0, 0, 1 };
 
@@ -110,7 +110,7 @@ void Dialog::paint() {
 
 		int color = kColorBlack;
 
-		if (i == _pressedButton && _mouseOverPressedButton) {
+		if ((int)i == _pressedButton && _mouseOverPressedButton) {
 			Common::Rect bb(button->bounds.left + 5, button->bounds.top + 5,
 				button->bounds.right - 5, button->bounds.bottom - 5);
 
@@ -195,7 +195,7 @@ int Dialog::run() {
 }
 
 int Dialog::matchButton(int x, int y) {
-	for (int i = 0; i < _buttons->size(); i++)
+	for (uint i = 0; i < _buttons->size(); i++)
 		if (_buttons->operator[](i)->bounds.contains(x, y))
 			return i;
 

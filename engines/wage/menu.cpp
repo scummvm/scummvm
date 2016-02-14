@@ -141,7 +141,7 @@ Menu::Menu(Gui *gui) : _gui(gui) {
 	int y = 1;
 	int x = 18;
 
-	for (int i = 0; i < _items.size(); i++) {
+	for (uint i = 0; i < _items.size(); i++) {
 		int w = _font->getStringWidth(_items[i]->name);
 
 		if (_items[i]->bbox.bottom == 0) {
@@ -170,15 +170,15 @@ Menu::Menu(Gui *gui) : _gui(gui) {
 }
 
 Menu::~Menu() {
-	for (int i = 0; i < _items.size(); i++) {
-		for (int j = 0; j < _items[i]->subitems.size(); j++)
+	for (uint i = 0; i < _items.size(); i++) {
+		for (uint j = 0; j < _items[i]->subitems.size(); j++)
 			delete _items[i]->subitems[j];
 		delete _items[i];
 	}
 }
 
 void Menu::regenCommandsMenu() {
-	for (int j = 0; j < _commands->subitems.size(); j++)
+	for (uint j = 0; j < _commands->subitems.size(); j++)
 		delete _commands->subitems[j];
 
 	_commands->subitems.clear();
@@ -192,7 +192,7 @@ void Menu::createCommandsMenu(MenuItem *menu) {
 
 	Common::String item;
 
-	for (int i = 0; i < string.size(); i++) {
+	for (uint i = 0; i < string.size(); i++) {
 		while(i < string.size() && string[i] != ';') // Read token
 			item += string[i++];
 
@@ -239,7 +239,7 @@ void Menu::createCommandsMenu(MenuItem *menu) {
 			if (tmpitem[0] == '(') {
 				enabled = false;
 
-				for (int j = 0; j < item.size(); j++)
+				for (uint j = 0; j < item.size(); j++)
 					if (item[j] == '(') {
 						item.deleteChar(j);
 						break;
@@ -257,7 +257,7 @@ void Menu::regenWeaponsMenu() {
 	if (_gui->_engine->_world->_weaponMenuDisabled)
 		return;
 
-	for (int j = 0; j < _weapons->subitems.size(); j++)
+	for (uint j = 0; j < _weapons->subitems.size(); j++)
 		delete _weapons->subitems[j];
 
 	_weapons->subitems.clear();
@@ -270,7 +270,7 @@ void Menu::createWeaponsMenu(MenuItem *menu) {
 	Chr *player = _gui->_engine->_world->_player;
 	ObjArray *weapons = player->getWeapons(true);
 
-	for (int i = 0; i < weapons->size(); i++) {
+	for (uint i = 0; i < weapons->size(); i++) {
 		Obj *obj = (*weapons)[i];
 		if (obj->_type == Obj::REGULAR_WEAPON ||
 			obj->_type == Obj::THROW_WEAPON ||
@@ -304,7 +304,7 @@ const char *Menu::getAcceleratorString(MenuSubItem *item, const char *prefix) {
 
 int Menu::calculateMenuWidth(MenuItem *menu) {
 	int maxWidth = 0;
-	for (int i = 0; i < menu->subitems.size(); i++) {
+	for (uint i = 0; i < menu->subitems.size(); i++) {
 		MenuSubItem *item = menu->subitems[i];
 		if (!item->text.empty()) {
 			Common::String text(item->text);
@@ -345,11 +345,11 @@ void Menu::render() {
 	r.top = kMenuHeight - 1;
 	Design::drawFilledRect(&_gui->_screen, r, kColorBlack, _gui->_patterns, kPatternSolid);
 
-	for (int i = 0; i < _items.size(); i++) {
+	for (uint i = 0; i < _items.size(); i++) {
 		int color = kColorBlack;
 		MenuItem *it = _items[i];
 
-		if (_activeItem == i) {
+		if ((uint)_activeItem == i) {
 			Common::Rect hbox = it->bbox;
 
 			hbox.left -= 1;
@@ -381,13 +381,13 @@ void Menu::renderSubmenu(MenuItem *menu) {
 
 	int x = r->left + kMenuDropdownPadding;
 	int y = r->top + 1;
-	for (int i = 0; i < menu->subitems.size(); i++) {
+	for (uint i = 0; i < menu->subitems.size(); i++) {
 		Common::String text(menu->subitems[i]->text);
 		Common::String acceleratorText(getAcceleratorString(menu->subitems[i], ""));
 		int accelX = r->right - 25;
 
 		int color = kColorBlack;
-		if (i == _activeSubItem && !text.empty() && menu->subitems[i]->enabled) {
+		if (i == (uint)_activeSubItem && !text.empty() && menu->subitems[i]->enabled) {
 			color = kColorWhite;
 			Common::Rect trect(r->left, y - (_gui->_builtInFonts ? 1 : 0), r->right, y + _font->getFontHeight());
 
@@ -442,9 +442,9 @@ bool Menu::mouseClick(int x, int y) {
 		if (!_menuActivated)
 			_screenCopy.copyFrom(_gui->_screen);
 
-		for (int i = 0; i < _items.size(); i++)
+		for (uint i = 0; i < _items.size(); i++)
 			if (_items[i]->bbox.contains(x, y)) {
-				if (_activeItem == i)
+			  if ((uint)_activeItem == i)
 					return false;
 
 				if (_activeItem != -1) { // Restore background
@@ -545,8 +545,8 @@ void Menu::processMenuShortCut(byte flags, uint16 ascii) {
 	ascii = tolower(ascii);
 
 	if (flags & (Common::KBD_CTRL | Common::KBD_META)) {
-		for (int i = 0; i < _items.size(); i++)
-			for (int j = 0; j < _items[i]->subitems.size(); j++)
+		for (uint i = 0; i < _items.size(); i++)
+			for (uint j = 0; j < _items[i]->subitems.size(); j++)
 				if (_items[i]->subitems[j]->enabled && tolower(_items[i]->subitems[j]->shortcut) == ascii) {
 					executeCommand(_items[i]->subitems[j]);
 					break;
@@ -555,7 +555,7 @@ void Menu::processMenuShortCut(byte flags, uint16 ascii) {
 }
 
 void Menu::enableCommand(int menunum, int action, bool state) {
-	for (int i = 0; i < _items[menunum]->subitems.size(); i++)
+	for (uint i = 0; i < _items[menunum]->subitems.size(); i++)
 		if (_items[menunum]->subitems[i]->action == action)
 			_items[menunum]->subitems[i]->enabled = state;
 }

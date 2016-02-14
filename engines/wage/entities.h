@@ -156,7 +156,7 @@ public:
 	int _gender;
 	bool _nameProperNoun;
 	bool _playerCharacter;
-	int _maximumCarriedObjects;
+	uint _maximumCarriedObjects;
 	int _returnTo;
 
 	int _physicalStrength;
@@ -168,7 +168,7 @@ public:
 	int _resistanceToMagic;
 	int _spiritualAccuracy;
 	int _runningSpeed;
-	int _rejectsOffers;
+	uint _rejectsOffers;
 	int _followsOpponent;
 
 	Common::String _initialSound;

@@ -501,7 +501,7 @@ Designed *Gui::mouseUp(int x, int y) {
 
 			bool cutAllowed = false;
 
-			if (_selectionStartY == _selectionEndY && _selectionStartY == _lines.size() - 1)
+			if (_selectionStartY == _selectionEndY && _selectionStartY == (int)_lines.size() - 1)
 				cutAllowed = true;
 
 			_menu->enableCommand(kMenuEdit, kMenuActionCut, cutAllowed);
@@ -545,7 +545,7 @@ void Gui::mouseDown(int x, int y) {
 int Gui::calcTextX(int x, int textLine) {
 	const Graphics::Font *font = getConsoleFont();
 
-	if (textLine >= _lines.size())
+	if ((uint)textLine >= _lines.size())
 		return 0;
 
 	Common::String str = _lines[textLine];

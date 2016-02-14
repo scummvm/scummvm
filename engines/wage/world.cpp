@@ -268,7 +268,7 @@ bool World::loadWorld(Common::MacResManager *resMan) {
 		_aboutMenuItemName.clear();
 		Common::String string = menu->operator[](1);
 
-		for (int i = 0; i < string.size() && string[i] != ';'; i++) // Read token
+		for (uint i = 0; i < string.size() && string[i] != ';'; i++) // Read token
 			_aboutMenuItemName += string[i];
 
 		delete res;
