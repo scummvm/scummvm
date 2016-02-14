@@ -20,6 +20,7 @@
  *
  */
 
+#include "common/algorithm.h"
 #include "common/util.h"
 #include "graphics/primitives.h"
 
@@ -365,17 +366,8 @@ void drawPolygonScan(int *polyX, int *polyY, int npoints, Common::Rect &bbox, in
 			j = i;
 		}
 
-		//  Sort the nodes, via a simple “Bubble” sort.
-		i = 0;
-		while (i < nodes - 1) {
-			if (nodeX[i] > nodeX[i + 1]) {
-				SWAP(nodeX[i], nodeX[i + 1]);
-				if (i)
-					i--;
-			} else {
-				i++;
-			}
-		}
+		//  Sort the nodes
+		Common::sort(nodeX, ARRAYEND(nodeX));
 
 		//  Fill the pixels between node pairs.
 		for (i = 0; i < nodes; i += 2) {
