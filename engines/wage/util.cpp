@@ -57,10 +57,7 @@ Common::String readPascalString(Common::SeekableReadStream *in) {
 	int len;
 	int i;
 
-	len = in->readSByte();
-	if (len < 0)
-		len += 256;
-
+	len = in->readByte();
 	buf = (char *)malloc(len + 1);
 	for (i = 0; i < len; i++) {
 		buf[i] = in->readByte();
