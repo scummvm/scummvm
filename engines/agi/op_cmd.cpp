@@ -2327,6 +2327,9 @@ int AgiEngine::runLogic(int16 logicNr) {
 		}
 #endif
 
+		// Just a counter for every instruction, that got executed
+		_instructionCounter++;
+
 		_game.execStack.back().curIP = state->_curLogic->cIP;
 
 		char st[101];
