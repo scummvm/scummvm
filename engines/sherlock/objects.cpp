@@ -1061,6 +1061,11 @@ void Object::load(Common::SeekableReadStream &s, bool isRoseTattoo) {
 		for (int idx = 0; idx < 6; ++idx)
 			_use[idx].load(s, true);
 
+		// WORKAROUND: Fix German version using hatpin/pin in pillow in Pratt's loft
+		if (_use[1]._target == "Nadel" && _use[1]._verb == "Untersuche"
+				&& _use[2]._target == "Nadel" && _use[2]._verb == "Untersuche")
+			_use[1]._target = "Alte Nadel";
+
 		_quickDraw = s.readByte();
 		_scaleVal = s.readUint16LE();
 		_requiredFlag[1] = s.readSint16LE();
