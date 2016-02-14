@@ -85,6 +85,9 @@ void Darts::playDarts(GameType gameType) {
 	bool done = false;
 	const char *const NUM_HITS_STR[3] = { "a", FIXED(Double), FIXED(Triple) };
 
+	// Set the game mode
+	_gameType = gameType;
+
 	screen.setFont(7);
 	_spacing = screen.fontHeight() + 2;
 
