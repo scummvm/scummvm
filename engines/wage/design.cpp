@@ -74,7 +74,7 @@ Design::Design(Common::SeekableReadStream *data) {
 
 Design::~Design() {
 	free(_data);
-	if (_surface && _surface->getPixels())
+	if (_surface)
 		_surface->free();
 	delete _surface;
 }
