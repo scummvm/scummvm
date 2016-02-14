@@ -343,18 +343,18 @@ AgiInstruction insV2[] = {
 	{ "div.n",              "vn",       &cmdDivN },             // B7
 	{ "div.v",              "vv",       &cmdDivV },             // B8
 	{ "close.window",       "",         &cmdCloseWindow },      // B9
-	{ "set.simple",         "n",        &cmdSetSimple },        // BA
+	{ "set.simple",         "n",        &cmdSetSimple },        // BA AGI2.425+, *BUT* not included in AGI2.440
 	{ "push.script",        "",         &cmdPushScript },       // BB
 	{ "pop.script",         "",         &cmdPopScript },        // BC
 	{ "hold.key",           "",         &cmdHoldKey },          // BD
-	{ "set.pri.base",       "n",        &cmdSetPriBase },       // BE // AGI2.936+
-	{ "discard.sound",      "n",        &cmdDiscardSound },     // BF
-	{ "hide.mouse",         "",         &cmdHideMouse }, // 1 arg for AGI version 3.002.086 AGI3+ only starts here
+	{ "set.pri.base",       "n",        &cmdSetPriBase },       // BE AGI2.936+ *AND* also inside AGI2.425
+	{ "discard.sound",      "n",        &cmdDiscardSound },     // BF was skip for PC
+	{ "hide.mouse",         "",         &cmdHideMouse },        // C0 1 arg for AGI version 3.002.086 AGI3+ only starts here
 	{ "allow.menu",         "n",        &cmdAllowMenu },        // C1
 	{ "show.mouse",         "",         &cmdShowMouse },        // C2
 	{ "fence.mouse",        "nnnn",     &cmdFenceMouse },       // C3
 	{ "mouse.posn",         "vv",       &cmdMousePosn },        // C4
-	{ "release.key",        "",         &cmdReleaseKey }, // 2 args for at least the Amiga GR (v2.05 1989-03-09) using AGI 2.316
+	{ "release.key",        "",         &cmdReleaseKey },       // C5 2 args for at least the Amiga GR (v2.05 1989-03-09) using AGI 2.316
 	{ "adj.ego.move.to.xy", "",         &cmdAdjEgoMoveToXY }    // C6
 };
 
