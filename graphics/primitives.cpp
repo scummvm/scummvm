@@ -127,7 +127,7 @@ void drawThickLine2(int x1, int y1, int x2, int y2, int thick, int color, void (
 
 		/* 2.0.12: Michael Schwartz: divide rather than multiply;
 			  TBB: but watch out for /0! */
-		double ac = cos(atan2 (dy, dx));
+		double ac = cos(atan2((double)dy, (double)dx));
 		if (ac != 0) {
 			wid = thick / ac;
 		} else {
