@@ -509,6 +509,11 @@ void MystScriptParser::o_changeCardPop(uint16 op, uint16 var, uint16 argc, uint1
 	debugC(kDebugScript, "Opcode %d: Return To Stored Card Id", op);
 	debugC(kDebugScript, "\tCardId: %d", _savedCardId);
 
+	if (_savedCardId == 0) {
+		warning("No pushed card to go back to");
+		return;
+	}
+
 	TransitionType transition = static_cast<TransitionType>(argv[0]);
 
 	_vm->changeToCard(_savedCardId, transition);
