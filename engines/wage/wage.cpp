@@ -171,7 +171,7 @@ void WageEngine::processEvents() {
 					break;
 
 				processTurn(&_inputText, NULL);
-				_inputText = "";
+				_inputText.clear();
 				_gui->appendText("");
 				_gui->disableUndo();
 				break;
@@ -212,8 +212,7 @@ void WageEngine::setMenu(Common::String menu) {
 void WageEngine::appendText(const char *str) {
 	_gui->appendText(str);
 
-	if (_inputText.size())
-		_inputText = "";
+	_inputText.clear();
 }
 
 void WageEngine::gameOver() {

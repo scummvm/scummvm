@@ -265,7 +265,7 @@ bool World::loadWorld(Common::MacResManager *resMan) {
 	res = resMan->getResource(MKTAG('M','E','N','U'), 2001);
 	if (res != NULL) {
 		Common::StringArray *menu = readMenu(res);
-		_aboutMenuItemName = "";
+		_aboutMenuItemName.clear();
 		Common::String string = menu->operator[](1);
 
 		for (int i = 0; i < string.size() && string[i] != ';'; i++) // Read token

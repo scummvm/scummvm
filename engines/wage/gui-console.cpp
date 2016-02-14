@@ -87,13 +87,13 @@ void Gui::appendText(const char *s) {
 
 	// Okay, we got new lines, need to split it
 	// and push substrings individually
-	Common::String tmp = "";
+	Common::String tmp;
 
 	for (uint i = 0; i < str.size(); i++) {
 		if (str[i] == '\n') {
 			_out.push_back(tmp);
 			flowText(tmp);
-			tmp = "";
+			tmp.clear();
 			continue;
 		}
 

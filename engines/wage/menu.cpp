@@ -249,7 +249,7 @@ void Menu::createCommandsMenu(MenuItem *menu) {
 			menu->subitems.push_back(new MenuSubItem(item.c_str(), kMenuActionCommand, style, shortcut, enabled));
 		}
 
-		item = "";
+		item.clear();
 	}
 }
 
