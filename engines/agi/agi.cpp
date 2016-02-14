@@ -401,6 +401,8 @@ AgiEngine::AgiEngine(OSystem *syst, const AGIGameDescription *gameDesc) : AgiBas
 
 	setupOpcodes();
 	_game._curLogic = NULL;
+	_instructionCounter = 0;
+	resetGetVarSecondsHeuristic();
 
 	_lastSaveTime = 0;
 

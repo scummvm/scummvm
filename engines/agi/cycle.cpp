@@ -142,6 +142,9 @@ void AgiEngine::interpretCycle() {
 	oldScore = getVar(VM_VAR_SCORE);
 	oldSound = getFlag(VM_FLAG_SOUND_ON);
 
+	// Reset script heuristic here
+	resetGetVarSecondsHeuristic();
+
 	_game.exitAllLogics = false;
 	while (runLogic(0) == 0 && !(shouldQuit() || _restartGame)) {
 		setVar(VM_VAR_WORD_NOT_FOUND, 0);

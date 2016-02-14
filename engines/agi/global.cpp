@@ -23,6 +23,7 @@
 #include "common/config-manager.h"
 
 #include "agi/agi.h"
+#include "agi/graphics.h"
 
 namespace Agi {
 
@@ -61,6 +62,8 @@ void AgiEngine::setVar(int16 varNr, byte newValue) {
 byte AgiEngine::getVar(int16 varNr) {
 	switch (varNr) {
 	case VM_VAR_SECONDS:
+		getVarSecondsTrigger();
+		// is supposed to fall through
 	case VM_VAR_MINUTES:
 	case VM_VAR_HOURS:
 	case VM_VAR_DAYS:
@@ -133,6 +136,35 @@ void AgiEngine::setVolumeViaSystemSetting() {
 	internalVolume = 15 - internalVolume;
 	// Put it into the VM variable. Directly set it, otherwise it would call a volume set call
 	_game.vars[VM_VAR_VOLUME] = internalVolume;
+}
+
+void AgiEngine::resetGetVarSecondsHeuristic() {
+	_getVarSecondsHeuristicLastInstructionCounter = 0;
+	_getVarSecondsHeuristicCounter = 0;
+}
+
+// Called, when the scripts read VM_VAR_SECONDS
+void AgiEngine::getVarSecondsTrigger() {
+	uint32 counterDifference = _instructionCounter - _getVarSecondsHeuristicLastInstructionCounter;
+
+	if (counterDifference <= 3) {
+		// Seconds were read within 3 instructions
+		_getVarSecondsHeuristicCounter++;
+		if (_getVarSecondsHeuristicCounter > 20) {
+			// More than 20 times in a row? This really seems to be an inner loop waiting for seconds to change
+			// This happens in at least:
+			// Police Quest 1 - Poker game
+
+			// Wait a few milliseconds, get events and update screen
+			// We MUST NOT process AGI events in here
+			wait(10);
+			processScummVMEvents();
+			_gfx->updateScreen();
+
+			_getVarSecondsHeuristicCounter = 0;
+		}
+	}
+	_getVarSecondsHeuristicLastInstructionCounter = _instructionCounter;
 }
 
 // In-Game timer, used for timer VM Variables
