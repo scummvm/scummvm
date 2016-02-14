@@ -174,40 +174,52 @@ reg_t kIsOnMe(EngineState *s, int argc, reg_t *argv) {
 }
 
 reg_t kCreateTextBitmap(EngineState *s, int argc, reg_t *argv) {
-	switch (argv[0].toUint16()) {
-	case 0: {
-		if (argc != 4) {
-			warning("kCreateTextBitmap(0): expected 4 arguments, got %i", argc);
-			return NULL_REG;
-		}
-		reg_t object = argv[3];
-		Common::String text = s->_segMan->getString(readSelector(s->_segMan, object, SELECTOR(text)));
-		debugC(kDebugLevelStrings, "kCreateTextBitmap case 0 (%04x:%04x, %04x:%04x, %04x:%04x)",
-				PRINT_REG(argv[1]), PRINT_REG(argv[2]), PRINT_REG(argv[3]));
-		debugC(kDebugLevelStrings, "%s", text.c_str());
-		int16 maxWidth = argv[1].toUint16();
-		int16 maxHeight = argv[2].toUint16();
-		g_sci->_gfxCoordAdjuster->fromScriptToDisplay(maxHeight, maxWidth);
-		// These values can be larger than the screen in the SQ6 demo, room 100
-		// TODO: Find out why. For now, don't show any text in that room.
-		if (g_sci->getGameId() == GID_SQ6 && g_sci->isDemo() && s->currentRoomNumber() == 100)
-			return NULL_REG;
-		return g_sci->_gfxText32->createTextBitmap(object, maxWidth, maxHeight);
-	}
-	case 1: {
-		if (argc != 2) {
-			warning("kCreateTextBitmap(1): expected 2 arguments, got %i", argc);
-			return NULL_REG;
-		}
-		reg_t object = argv[1];
-		Common::String text = s->_segMan->getString(readSelector(s->_segMan, object, SELECTOR(text)));
-		debugC(kDebugLevelStrings, "kCreateTextBitmap case 1 (%04x:%04x)", PRINT_REG(argv[1]));
-		debugC(kDebugLevelStrings, "%s", text.c_str());
-		return g_sci->_gfxText32->createTextBitmap(object);
-	}
-	default:
-		warning("CreateTextBitmap(%d)", argv[0].toUint16());
+	SegManager *segMan = s->_segMan;
+
+	int16 subop = argv[0].toUint16();
+
+	int16 width;
+	int16 height;
+	reg_t object;
+
+	if (subop == 0) {
+		width = argv[1].toUint16();
+		height = argv[2].toUint16();
+		object = argv[3];
+	} else if (subop == 1) {
+		object = argv[1];
+	} else {
+		warning("Invalid kCreateTextBitmap subop %d", subop);
 		return NULL_REG;
+	}
+
+	Common::String text = segMan->getString(readSelector(segMan, object, SELECTOR(text)));
+	int16 foreColor = readSelectorValue(segMan, object, SELECTOR(fore));
+	int16 backColor = readSelectorValue(segMan, object, SELECTOR(back));
+	int16 skipColor = readSelectorValue(segMan, object, SELECTOR(skip));
+	GuiResourceId fontId = (GuiResourceId)readSelectorValue(segMan, object, SELECTOR(font));
+	int16 borderColor = readSelectorValue(segMan, object, SELECTOR(borderColor));
+	int16 dimmed = readSelectorValue(segMan, object, SELECTOR(dimmed));
+
+	Common::Rect rect(
+		readSelectorValue(segMan, object, SELECTOR(textLeft)),
+		readSelectorValue(segMan, object, SELECTOR(textTop)),
+		readSelectorValue(segMan, object, SELECTOR(textRight)),
+		readSelectorValue(segMan, object, SELECTOR(textBottom))
+	);
+
+	if (subop == 0) {
+		TextAlign alignment = (TextAlign)readSelectorValue(segMan, object, SELECTOR(mode));
+		reg_t out;
+		return g_sci->_gfxText32->createFontBitmap(width, height, rect, text, foreColor, backColor, skipColor, fontId, alignment, borderColor, dimmed, 1, &out);
+	} else {
+		CelInfo32 celInfo;
+		celInfo.type = kCelTypeView;
+		celInfo.resourceId = readSelectorValue(segMan, object, SELECTOR(view));
+		celInfo.loopNo = readSelectorValue(segMan, object, SELECTOR(loop));
+		celInfo.celNo = readSelectorValue(segMan, object, SELECTOR(cel));
+		reg_t out;
+		return g_sci->_gfxText32->createTitledFontBitmap(celInfo, rect, text, foreColor, backColor, fontId, skipColor, borderColor, dimmed, &out);
 	}
 }
 
@@ -455,32 +467,24 @@ reg_t kScrollWindow(EngineState *s, int argc, reg_t *argv) {
 }
 #endif
 
-reg_t kSetFontRes(EngineState *s, int argc, reg_t *argv) {
-	// TODO: This defines the resolution that the fonts are supposed to be displayed
-	// in. Currently, this is only used for showing high-res fonts in GK1 Mac, but
-	// should be extended to handle other font resolutions such as those
+reg_t kFont(EngineState *s, int argc, reg_t *argv) {
+	// TODO: Handle font settings for SCI2.1
 
-	int xResolution = argv[0].toUint16();
-	//int yResolution = argv[1].toUint16();
-
-	g_sci->_gfxScreen->setFontIsUpscaled(xResolution == 640 &&
-			g_sci->_gfxScreen->getUpscaledHires() != GFX_SCREEN_UPSCALED_DISABLED);
+	switch (argv[0].toUint16()) {
+	case 1:
+		g_sci->_gfxText32->_scaledWidth = argv[1].toUint16();
+		g_sci->_gfxText32->_scaledHeight = argv[2].toUint16();
+		return NULL_REG;
+	default:
+		error("kFont: unknown subop %d", argv[0].toUint16());
+	}
 
 	return s->r_acc;
 }
 
-reg_t kFont(EngineState *s, int argc, reg_t *argv) {
-	// Handle font settings for SCI2.1
-
-	switch (argv[0].toUint16()) {
-	case 1:
-		// Set font resolution
-		return kSetFontRes(s, argc - 1, argv + 1);
-	default:
-		warning("kFont: unknown subop %d", argv[0].toUint16());
-	}
-
-	return s->r_acc;
+// TODO: Is this actually a thing??
+reg_t kSetFontRes(EngineState *s, int argc, reg_t *argv) {
+	return kStub(s, argc, argv);
 }
 
 // TODO: Eventually, all of the kBitmap operations should be put
@@ -516,8 +520,16 @@ reg_t kBitmap(EngineState *s, int argc, reg_t *argv) {
 		memset(memoryPtr + BITMAP_HEADER_SIZE, back, width * height);
 		// Save totalWidth, totalHeight
 		// TODO: Save the whole bitmap header, like SSCI does
-		WRITE_LE_UINT16(memoryPtr, width);
-		WRITE_LE_UINT16(memoryPtr + 2, height);
+		WRITE_SCI11ENDIAN_UINT16(memoryPtr, width);
+		WRITE_SCI11ENDIAN_UINT16(memoryPtr + 2, height);
+		WRITE_SCI11ENDIAN_UINT16(memoryPtr + 4, 0);
+		WRITE_SCI11ENDIAN_UINT16(memoryPtr + 6, 0);
+		memoryPtr[8] = 0;
+		WRITE_SCI11ENDIAN_UINT16(memoryPtr + 10, 0);
+		WRITE_SCI11ENDIAN_UINT16(memoryPtr + 20, BITMAP_HEADER_SIZE);
+		WRITE_SCI11ENDIAN_UINT32(memoryPtr + 28, 46);
+		WRITE_SCI11ENDIAN_UINT16(memoryPtr + 36, width);
+		WRITE_SCI11ENDIAN_UINT16(memoryPtr + 38, width);
 		return memoryId;
 		}
 		break;

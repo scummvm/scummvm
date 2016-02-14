@@ -128,6 +128,17 @@ struct Window : public Port, public Common::Serializable {
 
 #ifdef ENABLE_SCI32
 /**
+ * Multiplies a rectangle by two ratios with default
+ * rounding. Modifies the rect directly.
+ */
+inline void mul(Common::Rect &rect, const Common::Rational &ratioX, const Common::Rational &ratioY) {
+	rect.left = (rect.left * ratioX).toInt();
+	rect.top = (rect.top * ratioY).toInt();
+	rect.right = (rect.right * ratioX).toInt();
+	rect.bottom = (rect.bottom * ratioY).toInt();
+}
+
+/**
  * Multiplies a number by a rational number, rounding up to
  * the nearest whole number.
  */
