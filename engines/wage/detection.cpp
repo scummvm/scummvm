@@ -216,9 +216,7 @@ SaveStateList WageMetaEngine::listSaves(const char *target) const {
 int WageMetaEngine::getMaximumSaveSlot() const { return 999; }
 
 void WageMetaEngine::removeSaveState(const char *target, int slot) const {
-	char fileName[MAXPATHLEN];
-	sprintf(fileName, "%s.%03d", target, slot);
-	g_system->getSavefileManager()->removeSavefile(fileName);
+	g_system->getSavefileManager()->removeSavefile(Common::String::format("%s.%03d", target, slot));
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(WAGE)
