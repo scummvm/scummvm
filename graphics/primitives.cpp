@@ -187,7 +187,7 @@ void drawThickLine2(int x1, int y1, int x2, int y2, int thick, int color, void (
 		/* More-or-less vertical. use wid for horizontal stroke */
 		/* 2.0.12: Michael Schwartz: divide rather than multiply;
 		   TBB: but watch out for /0! */
-		double as = sin(atan2(dy, dx));
+		double as = sin(atan2((double)dy, (double)dx));
 		if (as != 0) {
 			wid = thick / as;
 		} else {
