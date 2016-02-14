@@ -62,7 +62,7 @@ void AgiEngine::setVar(int16 varNr, byte newValue) {
 byte AgiEngine::getVar(int16 varNr) {
 	switch (varNr) {
 	case VM_VAR_SECONDS:
-		getVarSecondsTrigger();
+		getVarSecondsHeuristicTrigger();
 		// is supposed to fall through
 	case VM_VAR_MINUTES:
 	case VM_VAR_HOURS:
@@ -144,7 +144,7 @@ void AgiEngine::resetGetVarSecondsHeuristic() {
 }
 
 // Called, when the scripts read VM_VAR_SECONDS
-void AgiEngine::getVarSecondsTrigger() {
+void AgiEngine::getVarSecondsHeuristicTrigger() {
 	uint32 counterDifference = _instructionCounter - _getVarSecondsHeuristicLastInstructionCounter;
 
 	if (counterDifference <= 3) {
@@ -153,7 +153,7 @@ void AgiEngine::getVarSecondsTrigger() {
 		if (_getVarSecondsHeuristicCounter > 20) {
 			// More than 20 times in a row? This really seems to be an inner loop waiting for seconds to change
 			// This happens in at least:
-			// Police Quest 1 - Poker game
+			// Police Quest 1 - Poker game (room 75, responsible script 81)
 
 			// Wait a few milliseconds, get events and update screen
 			// We MUST NOT process AGI events in here
@@ -163,6 +163,8 @@ void AgiEngine::getVarSecondsTrigger() {
 
 			_getVarSecondsHeuristicCounter = 0;
 		}
+	} else {
+		_getVarSecondsHeuristicCounter = 0;
 	}
 	_getVarSecondsHeuristicLastInstructionCounter = _instructionCounter;
 }

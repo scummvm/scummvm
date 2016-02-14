@@ -863,8 +863,10 @@ public:
 	void executeAgiCommand(uint8, uint8 *);
 
 private:
-	void resetGetVarSecondsHeuristic();
 	uint32 _instructionCounter; /**< counts every instruction, that got executed, can wrap around */
+
+	void resetGetVarSecondsHeuristic();
+	void getVarSecondsHeuristicTrigger();
 	uint32 _getVarSecondsHeuristicLastInstructionCounter; /**< last time VM_VAR_SECONDS were read */
 	uint16 _getVarSecondsHeuristicCounter; /**< how many times heuristic was triggered */
 
@@ -960,8 +962,6 @@ private:
 
 public:
 	void redrawScreen();
-
-	void getVarSecondsTrigger();
 
 	void inGameTimerReset(uint32 newPlayTime = 0);
 	void inGameTimerResetPassedCycles();
