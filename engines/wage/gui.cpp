@@ -199,7 +199,7 @@ void Gui::undrawCursor() {
 }
 
 const Graphics::Font *Gui::getFont(const char *name, Graphics::FontManager::FontUsage fallback) {
-	const Graphics::Font *font;
+	const Graphics::Font *font = 0;
 
 	if (!_builtInFonts) {
 		font = FontMan.getFontByName(name);
