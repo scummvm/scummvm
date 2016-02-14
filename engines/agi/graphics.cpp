@@ -821,7 +821,8 @@ int16 GfxMgr::priorityToY(int16 priority) {
 		return (priority - 5) * 12 + 48;
 	}
 
-	// dynamic priority bands were introduced in 2.936 (effectively last version of AGI2)
+	// Dynamic priority bands were introduced in 2.425, but removed again until 2.936 (effectively last version of AGI2)
+	// They are available from 2.936 onwards.
 	// It seems there was a glitch, that caused priority bands to not get calculated properly.
 	// It was caused by this function starting with Y = 168 instead of 167, which meant it always
 	// returned with 168 as result.
@@ -831,6 +832,8 @@ int16 GfxMgr::priorityToY(int16 priority) {
 	//  result in a Y of 101. Ego is priority (non-fixed) 8, which would mean that dwarf is
 	//  drawn first, followed by ego, which would then draw ego over the dwarf.
 	//  For more information see bug #1712585 (dwarf sprite priority)
+	//
+	// This glitch is definitely present in 2.425, 2.936 and 3.002.086.
 	//
 	// Priority bands were working properly in: 3.001.098 (Black Cauldron)
 	uint16 agiVersion = _vm->getVersion();
