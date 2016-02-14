@@ -333,7 +333,7 @@ public:
 
 class Sound {
 public:
-  Sound(Common::String name, Common::SeekableReadStream *data) : _name(name), _data(data) {}
+	Sound(Common::String name, Common::SeekableReadStream *data) : _name(name), _data(data) {}
 	~Sound() { }
 
 	Common::String _name;

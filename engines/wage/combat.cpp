@@ -147,30 +147,30 @@ void WageEngine::performCombatAction(Chr *npc, Chr *player) {
 
 	int token = hat.drawToken();
 	switch (token) {
-		case kTokWeapons:
-			// TODO: I think the monster should choose the "best" weapon.
-			performAttack(npc, player, weapons->operator[](_rnd->getRandomNumber(weapons->size() - 1)));
+	case kTokWeapons:
+		// TODO: I think the monster should choose the "best" weapon.
+		performAttack(npc, player, weapons->operator[](_rnd->getRandomNumber(weapons->size() - 1)));
+		break;
+	case kTokMagic:
+		// TODO: I think the monster should choose the "best" magic.
+		performMagic(npc, player, magics->operator[](_rnd->getRandomNumber(magics->size() - 1)));
+		break;
+	case kTokRun:
+		performMove(npc, validMoves);
+		break;
+	case kTokOffer:
+		performOffer(npc, player);
+		break;
+	case kTokNone:
+		break;
+	default:
+		{
+			int cnt = 0;
+			for (ObjList::const_iterator it = objs->begin(); it != objs->end(); ++it, ++cnt)
+				if (cnt == token)
+					performTake(npc, *it);
 			break;
-		case kTokMagic:
-			// TODO: I think the monster should choose the "best" magic.
-			performMagic(npc, player, magics->operator[](_rnd->getRandomNumber(magics->size() - 1)));
-			break;
-		case kTokRun:
-			performMove(npc, validMoves);
-			break;
-		case kTokOffer:
-			performOffer(npc, player);
-			break;
-		case kTokNone:
-			break;
-		default:
-			{
-				int cnt = 0;
-				for (ObjList::const_iterator it = objs->begin(); it != objs->end(); ++it, ++cnt)
-					if (cnt == token)
-						performTake(npc, *it);
-				break;
-			}
+		}
 	}
 
 	delete weapons;
