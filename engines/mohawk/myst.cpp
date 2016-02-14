@@ -121,6 +121,10 @@ Common::SeekableReadStream *MohawkEngine_Myst::getResource(uint32 tag, uint16 id
 	return nullptr;
 }
 
+Common::Array<uint16> MohawkEngine_Myst::getResourceIDList(uint32 type) const {
+	return _mhk[0]->getResourceIDList(type);
+}
+
 void MohawkEngine_Myst::cachePreload(uint32 tag, uint16 id) {
 	if (!_cache.enabled)
 		return;

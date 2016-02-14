@@ -174,6 +174,7 @@ public:
 	virtual ~MohawkEngine_Myst();
 
 	Common::SeekableReadStream *getResource(uint32 tag, uint16 id) override;
+	Common::Array<uint16> getResourceIDList(uint32 type) const;
 
 	Common::String wrapMovieFilename(const Common::String &movieName, uint16 stack);
 
