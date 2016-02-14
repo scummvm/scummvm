@@ -45,8 +45,8 @@
  *
  */
 
-#ifndef WAGE_H
-#define WAGE_H
+#ifndef WAGE_WAGE_H
+#define WAGE_WAGE_H
 
 #include "engines/engine.h"
 #include "common/debug.h"
