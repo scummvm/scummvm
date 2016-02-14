@@ -97,24 +97,24 @@ const char *getIndefiniteArticle(const Common::String &word) {
 }
 
 enum {
-	GENDER_HE = 0,
-	GENDER_SHE = 1,
-	GENDER_IT = 2
+	GENDER_MALE = 0,
+	GENDER_FEMALE = 1,
+	GENDER_NEUTRAL = 2
 };
 
 const char *prependGenderSpecificPronoun(int gender) {
-	if (gender == GENDER_HE)
+	if (gender == GENDER_MALE)
 		return "his ";
-	else if (gender == GENDER_SHE)
+	else if (gender == GENDER_FEMALE)
 		return "her ";
 	else
 		return "its ";
 }
 
 const char *getGenderSpecificPronoun(int gender, bool capitalize) {
-	if (gender == GENDER_HE)
+	if (gender == GENDER_MALE)
 		return capitalize ? "He" : "he";
-	else if (gender == GENDER_SHE)
+	else if (gender == GENDER_FEMALE)
 		return capitalize ? "She" : "she";
 	else
 		return capitalize ? "It" : "it";
