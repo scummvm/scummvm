@@ -131,7 +131,12 @@ static void cursorTimerHandler(void *refCon) {
 	if (!gui->_cursorOff)
 		gui->_cursorState = !gui->_cursorState;
 
-	g_system->copyRectToScreen(gui->_screen.getBasePtr(x, y), gui->_screen.pitch, x, y, 1, kCursorHeight);
+	gui->_cursorRect.left = x;
+	gui->_cursorRect.right = x + 1;
+	gui->_cursorRect.top = y;
+	gui->_cursorRect.bottom = y + kCursorHeight;
+
+	gui->_cursorDirty = true;
 }
 
 Gui::Gui(WageEngine *engine) {
@@ -141,6 +146,7 @@ Gui::Gui(WageEngine *engine) {
 	_consoleDirty = true;
 	_bordersDirty = true;
 	_menuDirty = true;
+	_cursorDirty = false;
 	_consoleFullRedraw = true;
 	_screen.create(g_system->getWidth(), g_system->getHeight(), Graphics::PixelFormat::createFormatCLUT8());
 
@@ -251,6 +257,13 @@ void Gui::draw() {
 
 	if (_menuDirty)
 		_menu->render();
+
+	if (_cursorDirty) {
+		g_system->copyRectToScreen(_screen.getBasePtr(_cursorRect.left, _cursorRect.top), _screen.pitch,
+				_cursorRect.left, _cursorRect.top, _cursorRect.width(), _cursorRect.height());
+
+		_cursorDirty = false;
+	}
 
 	_sceneDirty = false;
 	_consoleDirty = false;

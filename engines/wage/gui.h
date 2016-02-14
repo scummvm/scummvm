@@ -138,6 +138,9 @@ public:
 
 	Patterns _patterns;
 
+	bool _cursorDirty;
+	Common::Rect _cursorRect;
+
 private:
 	Graphics::Surface _console;
 	Menu *_menu;
