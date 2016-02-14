@@ -895,6 +895,8 @@ void cmdSetSimple(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 		// it's called with parameter 16.
 		// Original interpreter doesn't seem to play any sound.
 		// TODO: Figure out what's going on. It can't be automatic saving of course.
+		// Also getting called in KQ1, when planting beans - parameter 12.
+		// And when killing the witch - parameter 40.
 		if ((getVersion() < 0x2425) || (getVersion() == 0x2440)) {
 			// was not available before 2.2425, but also not available in 2.440
 			warning("set.simple called, although not available for current AGI version");

@@ -482,7 +482,11 @@ void AgiEngine::setLoop(ScreenObjEntry *screenObj, int16 loopNr) {
 		// requested loop not existant
 		// instead of error()ing out, we instead clip it
 		// At least required for possibly Manhunter 1 according to previous comment when leaving the arcade machine
-		// TODO: check MH1
+		// TODO: Check MH1
+		// TODO: This causes an issue in KQ1, when bowing to the king in room 53
+		//       Ego will face away from the king, because the scripts set the loop first and then the view
+		//       Loop is corrected by us, because at that time it's invalid. Was already present in 1.7.0
+		//       We should probably script-patch it out.
 		int16 requestedLoopNr = loopNr;
 
 		loopNr = screenObj->loopCount - 1;
