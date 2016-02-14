@@ -256,6 +256,7 @@ protected:
 	bool _matchBurning;
 	uint16 _matchGoOutCnt;
 	uint16 _cabinDoorOpened; // 56
+	uint16 _cabinHandleDown; // 344
 	uint16 _cabinMatchState; // 60
 	uint32 _matchGoOutTime; // 144
 

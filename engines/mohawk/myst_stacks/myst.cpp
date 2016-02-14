@@ -50,6 +50,7 @@ Myst::Myst(MohawkEngine_Myst *vm) :
 	_libraryBookcaseChanged = false;
 	_dockVaultState = 0;
 	_cabinDoorOpened = 0;
+	_cabinHandleDown = 0;
 	_cabinMatchState = 2;
 	_matchBurning = false;
 	_tree = nullptr;
@@ -626,7 +627,7 @@ uint16 Myst::getVar(uint16 var) {
 	case 307: // Cabin Boiler Fully Pressurized
 		return _state.cabinPilotLightLit == 1 && _state.cabinValvePosition > 12;
 	case 308: // Cabin handle position
-		return 0; // Not implemented in the original
+		return _cabinHandleDown;
 	default:
 		return MystScriptParser::getVar(var);
 	}
@@ -763,6 +764,9 @@ bool Myst::setVarValue(uint16 var, uint16 value) {
 		break;
 	case 304: // Myst Library Image Present on Tower Rotation Map
 		_towerRotationMapInitialized = value;
+		break;
+	case 308: // Cabin handle position
+		_cabinHandleDown = value;
 		break;
 	case 309: // Tree stopped
 		_treeStopped = value;
