@@ -54,6 +54,26 @@
 
 namespace Wage {
 
+Common::String Script::Operand::toString() {
+	switch(_type) {
+	case NUMBER:
+		return Common::String::format("%d", _value.number);
+	case STRING:
+	case TEXT_INPUT:
+		return *_value.string;
+	case OBJ:
+		return _value.obj->toString();
+	case CHR:
+		return _value.chr->toString();
+	case SCENE:
+		return _value.scene->toString();
+	case CLICK_INPUT:
+		return _value.inputClick->toString();
+	default:
+		error("Unhandled operand type: _type");
+	}
+}
+
 Script::Script(Common::SeekableReadStream *data) : _data(data) {
 	convertToText();
 }
