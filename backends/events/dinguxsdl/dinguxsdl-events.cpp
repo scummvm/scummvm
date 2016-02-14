@@ -176,6 +176,7 @@ bool DINGUXSdlEventSource::remapKey(SDL_Event &ev, Common::Event &event) {
 	} else if (ev.key.keysym.sym == BUT_SELECT) { // virtual keyboard
 #ifdef ENABLE_VKEYBD
 		event.type = Common::EVENT_VIRTUAL_KEYBOARD;
+		return true;
 #endif
 	} else if (ev.key.keysym.sym == BUT_START) { // F5, menu in some games
 		ev.key.keysym.sym = SDLK_F5;
