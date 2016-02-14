@@ -385,7 +385,7 @@ Common::String *World::loadStringFromDITL(Common::MacResManager *resMan, int res
 	return NULL;
 }
 
-static bool InvComparator(const Obj *l, const Obj *r) {
+static bool invComparator(const Obj *l, const Obj *r) {
     return l->_index < r->_index;
 }
 
@@ -397,12 +397,12 @@ void World::move(Obj *obj, Chr *chr) {
 	obj->_currentOwner = chr;
 	chr->_inventory.push_back(obj);
 
-	Common::sort(chr->_inventory.begin(), chr->_inventory.end(), InvComparator);
+	Common::sort(chr->_inventory.begin(), chr->_inventory.end(), invComparator);
 
 	_engine->onMove(obj, from, chr);
 }
 
-static bool ObjComparator(const Obj *o1, const Obj *o2) {
+static bool objComparator(const Obj *o1, const Obj *o2) {
 	bool o1Immobile = (o1->_type == Obj::IMMOBILE_OBJECT);
 	bool o2Immobile = (o2->_type == Obj::IMMOBILE_OBJECT);
 	if (o1Immobile == o2Immobile) {
@@ -420,12 +420,12 @@ void World::move(Obj *obj, Scene *scene, bool skipSort) {
 	scene->_objs.push_back(obj);
 
 	if (!skipSort)
-		Common::sort(scene->_objs.begin(), scene->_objs.end(), ObjComparator);
+		Common::sort(scene->_objs.begin(), scene->_objs.end(), objComparator);
 
 	_engine->onMove(obj, from, scene);
 }
 
-bool ChrComparator(Chr *l, Chr *r) {
+static bool chrComparator(const Chr *l, const Chr *r) {
     return l->_index < r->_index;
 }
 
@@ -440,7 +440,7 @@ void World::move(Chr *chr, Scene *scene, bool skipSort) {
 	scene->_chrs.push_back(chr);
 
 	if (!skipSort)
-		Common::sort(scene->_chrs.begin(), scene->_chrs.end(), ChrComparator);
+		Common::sort(scene->_chrs.begin(), scene->_chrs.end(), chrComparator);
 
 	if (scene == _storageScene) {
 		chr->resetState();
