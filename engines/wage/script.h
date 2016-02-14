@@ -77,7 +77,6 @@ private:
 			Designed *inputClick;
 		} _value;
 		OperandType _type;
-		Common::String _str;
 
 		Operand(Obj *value, OperandType type) {
 			_value.obj = value;
@@ -115,15 +114,9 @@ private:
 		}
 
 		Common::String toString() {
-			char buf[128];
-
-			if (_value.obj == NULL)
-				_str = "";
-
 			switch(_type) {
 			case NUMBER:
-				_str = snprintf(buf, 128, "%d", _value.number);
-				return _str;
+				return Common::String::format("%d", _value.number);
 			case STRING:
 			case TEXT_INPUT:
 				return *_value.string;
