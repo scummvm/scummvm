@@ -861,7 +861,7 @@ L2C36:;
 			stopActorMoving();
 			return;
 		}
-		// 2C98: Yes, an exact copy of what just occured.. the original does this, so im doing it...
+		// 2C98: Yes, an exact copy of what just occurred.. the original does this, so im doing it...
 		//       Just to keep me sane when going over it :)
 		if (A == 0xFF) {
 			setActorFromTmp();

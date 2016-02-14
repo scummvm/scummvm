@@ -112,7 +112,7 @@ typedef struct { int FAKE; } FAKE_FILE;
 #endif
 
 // In a moment of brilliance Xlib.h included by SDL_syswm.h #defines the
-// following names. In a moment of mental breakdown, which occured upon
+// following names. In a moment of mental breakdown, which occurred upon
 // gazing at Xlib.h, LordHoto decided to undefine them to prevent havoc.
 #ifdef Status
 #undef Status

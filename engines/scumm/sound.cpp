@@ -240,7 +240,7 @@ void Sound::playSound(int soundID) {
 		// mentioned in the bug report above; in case it is, I put a check here.
 		assert(soundID == 39);
 
-		// The samplerate is copied from the sound resouce 39 of the PC CD/VGA
+		// The samplerate is copied from the sound resource 39 of the PC CD/VGA
 		// version of Monkey Island.
 
 		// Read info from the header

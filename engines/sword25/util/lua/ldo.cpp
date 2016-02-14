@@ -114,7 +114,7 @@ void luaD_throw (lua_State *L, int errcode) {
     // LUAI_THROW has been replaced with an error message in ScummVM, together
     // with the LUA error code and description
     //LUAI_THROW(L, L->errorJmp);
-    error("LUA error occured, error code is %d (%s)", errcode, luaErrorDescription[errcode]);
+    error("LUA error occurred, error code is %d (%s)", errcode, luaErrorDescription[errcode]);
   }
   else {
     L->status = cast_byte(errcode);

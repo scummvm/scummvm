@@ -310,7 +310,7 @@ void GfxPalette::set(Palette *newPalette, bool force, bool forceRealMerge) {
 	uint32 systime = _sysPalette.timestamp;
 
 	if (force || newPalette->timestamp != systime) {
-		// SCI1.1+ doesnt do real merging anymore, but simply copying over the used colors from other palettes
+		// SCI1.1+ doesn't do real merging anymore, but simply copying over the used colors from other palettes
 		//  There are some games with inbetween SCI1.1 interpreters, use real merging for them (e.g. laura bow 2 demo)
 		if ((forceRealMerge) || (_useMerging))
 			_sysPaletteChanged |= merge(newPalette, force, forceRealMerge);

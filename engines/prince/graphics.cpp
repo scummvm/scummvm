@@ -279,7 +279,7 @@ void GraphicsMan::drawTransparentWithTransDrawNode(Graphics::Surface *screen, Dr
 							// first and last row at the same time (height = 1) - no anti-alias
 							continue;
 						}
-						// new color value based on orginal screen surface color and sprite's edge pixel color
+						// new color value based on original screen surface color and sprite's edge pixel color
 						*dst2 = transTableData[*dst2 * 256 + value];
 					}
 				}
