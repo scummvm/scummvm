@@ -202,14 +202,14 @@ void Menu::createCommandsMenu(MenuItem *menu) {
 			bool enabled = true;
 			int style = 0;
 			char shortcut = 0;
-			const char *shortptr = strrchr(item.c_str(), '/');
-			if (shortptr != NULL) {
-				if (strlen(shortptr) == 2) {
-					shortcut = shortptr[1];
+			const char *shortPtr = strrchr(item.c_str(), '/');
+			if (shortPtr != NULL) {
+				if (strlen(shortPtr) == 2) {
+					shortcut = shortPtr[1];
 					item.deleteLastChar();
 					item.deleteLastChar();
 				} else {
-					error("Unexpected shortcut: '%s', item '%s' in menu '%s'", shortptr, item.c_str(), string.c_str());
+					error("Unexpected shortcut: '%s', item '%s' in menu '%s'", shortPtr, item.c_str(), string.c_str());
 				}
 			}
 
