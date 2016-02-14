@@ -112,25 +112,25 @@ void WageEngine::performCombatAction(Chr *npc, Chr *player) {
 	// for the chance (e.g. only when all values were set to 0?).
 	if (winning) {
 		if (!_world->_weaponMenuDisabled) {
-			if (weapons->size() > 0)
+			if (!weapons->empty())
 				hat.addTokens(kTokWeapons, npc->_winningWeapons + 1);
-			if (magics->size() > 0)
+			if (!magics->empty())
 				hat.addTokens(kTokMagic, npc->_winningMagic);
 		}
 		if (validMoves != 0)
 			hat.addTokens(kTokRun, npc->_winningRun + 1);
-		if (npc->_inventory.size())
+		if (!npc->_inventory.empty())
 			hat.addTokens(kTokOffer, npc->_winningOffer + 1);
 	} else {
 		if (!_world->_weaponMenuDisabled) {
-			if (weapons->size() > 0)
+			if (!weapons->empty())
 				hat.addTokens(kTokWeapons, npc->_losingWeapons + 1);
-			if (magics->size() > 0)
+			if (!magics->empty())
 				hat.addTokens(kTokMagic, npc->_losingMagic);
 		}
 		if (validMoves != 0)
 			hat.addTokens(kTokRun, npc->_losingRun + 1);
-		if (npc->_inventory.size())
+		if (!npc->_inventory.empty())
 			hat.addTokens(kTokOffer, npc->_losingOffer + 1);
 	}
 
@@ -563,7 +563,7 @@ Common::String *WageEngine::getGroundItemsList(Scene *scene) {
 		if ((*it)->_type != Obj::IMMOBILE_OBJECT)
 			objs.push_back(*it);
 
-	if (objs.size()) {
+	if (!objs.empty()) {
 		Common::String *res = new Common::String("On the ground you see ");
 		appendObjNames(*res, objs);
 		return res;
@@ -602,7 +602,7 @@ bool WageEngine::handleInventoryCommand() {
 		if (!player->isWearing(*it))
 			objs.push_back(*it);
 
-	if (!objs.size()) {
+	if (objs.empty()) {
 		appendText("Your pack is empty.");
 	} else {
 		Common::String res("Your pack contains ");

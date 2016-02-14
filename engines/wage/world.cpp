@@ -117,7 +117,7 @@ bool World::loadWorld(Common::MacResManager *resMan) {
 	if (resArray.size() > 1)
 		warning("Too many VERS resources");
 
-	if (resArray.size()) {
+	if (!resArray.empty()) {
 		debug(3, "Loading version info");
 
 		res = resMan->getResource(MKTAG('V','E','R','S'), resArray[0]);
@@ -226,10 +226,10 @@ bool World::loadWorld(Common::MacResManager *resMan) {
 		addSound(new Sound(resMan->getResName(MKTAG('A','S','N','D'), *iter), res));
 	}
 
-	if (_soundLibrary1.size() > 0) {
+	if (!_soundLibrary1.empty()) {
 		loadExternalSounds(_soundLibrary1);
 	}
-	if (_soundLibrary2.size() > 0) {
+	if (!_soundLibrary2.empty()) {
 		loadExternalSounds(_soundLibrary2);
 	}
 
@@ -305,8 +305,8 @@ Common::StringArray *World::readMenu(Common::SeekableReadStream *res) {
 	Common::String menu;
 	byte itemData[4];
 
-	while (menuItem.size() > 0) {
-		if (menu.size() > 0) {
+	while (!menuItem.empty()) {
+		if (!menu.empty()) {
 			menu += ';';
 		}
 		if ((enableFlags & (1 << menuItemNumber)) == 0) {
@@ -492,7 +492,7 @@ const char *World::getAboutMenuItemName() {
 
 	*menu = '\0';
 
-	if (_aboutMenuItemName.size() == 0) {
+	if (_aboutMenuItemName.empty()) {
 		sprintf(menu, "About %s...", _name.c_str());
 	} else { // Replace '@' with name
 		const char *str = _aboutMenuItemName.c_str();

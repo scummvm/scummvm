@@ -160,7 +160,7 @@ void WageEngine::processEvents() {
 		case Common::EVENT_KEYDOWN:
 			switch (event.kbd.keycode) {
 			case Common::KEYCODE_BACKSPACE:
-				if (_inputText.size()) {
+				if (!_inputText.empty()) {
 					_inputText.deleteLastChar();
 					_gui->drawInput();
 				}

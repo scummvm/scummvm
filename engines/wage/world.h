@@ -101,7 +101,7 @@ public:
 	Common::String _weaponsMenuName;
 
 	void addScene(Scene *room) {
-		if (room->_name.size() != 0) {
+		if (!room->_name.empty()) {
 			Common::String s = room->_name;
 			s.toLowercase();
 			_scenes[s] = room;

@@ -419,7 +419,7 @@ Script::Operand *Script::readStringOperand() {
 	}
 	_data->seek(-1, SEEK_CUR);
 
-	if (allDigits && str->size() > 0) {
+	if (allDigits && !str->empty()) {
 		int r = atol(str->c_str());
 		delete str;
 
@@ -1137,7 +1137,7 @@ void Script::convertToText() {
 		}
 	}
 
-	if (scr->line.size())
+	if (!scr->line.empty())
 		_scriptText.push_back(scr);
 	else
 		delete scr;

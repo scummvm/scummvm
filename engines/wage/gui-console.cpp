@@ -119,7 +119,7 @@ void Gui::flowText(Common::String &str) {
 
 	font->wordWrapText(str, textW, wrappedLines);
 
-	if (wrappedLines.size() == 0) // Sometimes we have empty lines
+	if (wrappedLines.empty()) // Sometimes we have empty lines
 		_lines.push_back("");
 
 	for (Common::StringArray::const_iterator j = wrappedLines.begin(); j != wrappedLines.end(); ++j)

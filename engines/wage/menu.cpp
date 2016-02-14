@@ -284,7 +284,7 @@ void Menu::createWeaponsMenu(MenuItem *menu) {
 	}
 	delete weapons;
 
-	if (menu->subitems.size() == 0)
+	if (menu->subitems.empty())
 		menu->subitems.push_back(new MenuSubItem("You have no weapons", 0, 0, 0, false));
 }
 
@@ -306,10 +306,10 @@ int Menu::calculateMenuWidth(MenuItem *menu) {
 	int maxWidth = 0;
 	for (int i = 0; i < menu->subitems.size(); i++) {
 		MenuSubItem *item = menu->subitems[i];
-		if (item->text.size()) {
+		if (!item->text.empty()) {
 			Common::String text(item->text);
 			Common::String acceleratorText(getAcceleratorString(item, "  "));
-			if (acceleratorText.size()) {
+			if (!acceleratorText.empty()) {
 				text += acceleratorText;
 			}
 
@@ -358,7 +358,7 @@ void Menu::render() {
 			Design::drawFilledRect(&_gui->_screen, hbox, kColorBlack, _gui->_patterns, kPatternSolid);
 			color = kColorWhite;
 
-			if (it->subitems.size())
+			if (!it->subitems.empty())
 				renderSubmenu(it);
 		}
 
@@ -387,14 +387,14 @@ void Menu::renderSubmenu(MenuItem *menu) {
 		int accelX = r->right - 25;
 
 		int color = kColorBlack;
-		if (i == _activeSubItem && text.size() && menu->subitems[i]->enabled) {
+		if (i == _activeSubItem && !text.empty() && menu->subitems[i]->enabled) {
 			color = kColorWhite;
 			Common::Rect trect(r->left, y - (_gui->_builtInFonts ? 1 : 0), r->right, y + _font->getFontHeight());
 
 			Design::drawFilledRect(&_gui->_screen, trect, kColorBlack, _gui->_patterns, kPatternSolid);
 		}
 
-		if (text.size()) {
+		if (!text.empty()) {
 			Graphics::Surface *s = &_gui->_screen;
 			int tx = x, ty = y;
 
@@ -409,7 +409,7 @@ void Menu::renderSubmenu(MenuItem *menu) {
 
 			_font->drawString(s, text, tx, ty, r->width(), color);
 
-			if (acceleratorText.size())
+			if (!acceleratorText.empty())
 				_font->drawString(s, acceleratorText, accelX, ty, r->width(), color);
 
 			if (!menu->subitems[i]->enabled) {

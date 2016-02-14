@@ -369,7 +369,7 @@ Chr::Chr(Common::String name, Common::SeekableReadStream *data) {
 	_weapon2 = NULL;
 
 	// Create native weapons
-	if (_nativeWeapon1.size() && _operativeVerb1.size()) {
+	if (!_nativeWeapon1.empty() && !_operativeVerb1.empty()) {
 		_weapon1 = new Obj;
 
 		_weapon1->_name = _nativeWeapon1;
@@ -380,7 +380,7 @@ Chr::Chr(Common::String name, Common::SeekableReadStream *data) {
 		_weapon1->_sound = _weaponSound1;
 	}
 
-	if (_nativeWeapon2.size() && _operativeVerb2.size()) {
+	if (!_nativeWeapon2.empty() && !_operativeVerb2.empty()) {
 		_weapon2 = new Obj;
 
 		_weapon2->_name = _nativeWeapon2;

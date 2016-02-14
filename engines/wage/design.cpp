@@ -497,7 +497,7 @@ FloodFill::FloodFill(Graphics::Surface *surface, byte color1, byte color2) {
 }
 
 FloodFill::~FloodFill() {
-	while(_queue.size()) {
+	while(!_queue.empty()) {
 		Common::Point *p = _queue.front();
 
 		delete p;
@@ -523,7 +523,7 @@ void FloodFill::addSeed(int x, int y) {
 }
 
 void FloodFill::fill() {
-	while (_queue.size()) {
+	while (!_queue.empty()) {
 		Common::Point *p = _queue.front();
 		_queue.pop_front();
 		addSeed(p->x    , p->y - 1);
