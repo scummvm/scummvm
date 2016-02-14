@@ -31,7 +31,7 @@
 #include "sci/graphics/screen.h"
 
 namespace Sci {
-	
+
 GfxPalette32::GfxPalette32(ResourceManager *resMan, GfxScreen *screen)
 	: GfxPalette(resMan, screen),
 	_clutTable(nullptr),
@@ -42,9 +42,10 @@ GfxPalette32::GfxPalette32(ResourceManager *resMan, GfxScreen *screen)
 	_varyTime(0), _varyDirection(0), _varyTargetPercent(0),
 	_varyTargetPalette(nullptr), _varyStartPalette(nullptr),
 	_varyFromColor(0), _varyToColor(255), _varyNumTimesPaused(0),
-	_varyPercent(_varyTargetPercent), _varyLastTick(0),
+	_varyLastTick(0),
 	// Palette versioning
 	_version(1), _versionUpdated(false) {
+		_varyPercent = _varyTargetPercent;
 		memset(_fadeTable, 100, sizeof(_fadeTable));
 
 		// NOTE: In SCI engine, the palette manager constructor loads
