@@ -367,7 +367,7 @@ void drawPolygonScan(int *polyX, int *polyY, int npoints, Common::Rect &bbox, in
 		}
 
 		//  Sort the nodes
-		Common::sort(nodeX, ARRAYEND(nodeX));
+		Common::sort(nodeX, &nodeX[nodes]);
 
 		//  Fill the pixels between node pairs.
 		for (i = 0; i < nodes; i += 2) {
