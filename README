@@ -1487,6 +1487,7 @@ other games.
     Ctrl-F5                - Displays the Global Menu
     Cmd-q                  - Quit (Mac OS X)
     Ctrl-q                 - Quit (other unices including Linux)
+    Alt-F4                 - Quit (Windows)
     Ctrl-z                 - Quit (other platforms)
     Ctrl-u                 - Mute all sounds
     Ctrl-m                 - Toggle mouse capture
