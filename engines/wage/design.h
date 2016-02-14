@@ -92,7 +92,7 @@ private:
 		Patterns &patterns, byte fillType, byte borderThickness, byte borderFillType);
 	void drawOval(Graphics::Surface *surface, Common::ReadStream &in,
 		Patterns &patterns, byte fillType, byte borderThickness, byte borderFillType);
-	void drawBitmap(Graphics::Surface *surface, Common::ReadStream &in);
+	void drawBitmap(Graphics::Surface *surface, Common::SeekableReadStream &in);
 };
 
 class FloodFill {

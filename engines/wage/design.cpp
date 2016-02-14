@@ -363,7 +363,7 @@ void Design::drawOval(Graphics::Surface *surface, Common::ReadStream &in,
 		Graphics::drawEllipse(x1, y1, x2-1, y2-1, kColorBlack, false, drawPixel, &pd);
 }
 
-void Design::drawBitmap(Graphics::Surface *surface, Common::ReadStream &in) {
+void Design::drawBitmap(Graphics::Surface *surface, Common::SeekableReadStream &in) {
 	int numBytes = in.readSint16BE();
 	int y1 = in.readSint16BE();
 	int x1 = in.readSint16BE();
@@ -419,8 +419,7 @@ void Design::drawBitmap(Graphics::Surface *surface, Common::ReadStream &in) {
 		}
 	}
 
-	while (numBytes--)
-		in.readByte();
+	in.skip(numBytes);
 
 	FloodFill ff(&tmp, kColorWhite, kColorGreen);
 	for (int yy = 0; yy < h; yy++) {
