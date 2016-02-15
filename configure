@@ -2753,11 +2753,8 @@ if test -n "$_host"; then
 			;;
 		ios7)
 			append_var DEFINES "-DIPHONE"
-			append_var CFLAGS "-Wno-shift-count-overflow"
-			append_var CXXFLAGS "-Wno-shift-count-overflow"
 			_backend="ios7"
 			_build_scalers=no
-			_mt32emu=no
 			_seq_midi=no
 			_timidity=no
 			;;
