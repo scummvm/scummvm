@@ -227,7 +227,7 @@ struct Palette {
 			}
 		}
 
-		return false;
+		return true;
 	}
 	inline bool operator!=(const Palette &other) const {
 		return !(*this == other);
