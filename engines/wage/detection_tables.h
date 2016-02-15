@@ -82,6 +82,15 @@ static const ADGameDescription gameDescriptions[] = {
 	},
 	{
 		"wage",
+		"Midnight Snack",
+		AD_ENTRY1s("Midnight Snack", "346982a32fc701f53bb19771d72063d0", 69504),
+		Common::EN_ANY,
+		Common::kPlatformMacintosh,
+		ADGF_GENERIC,
+		GUIO0()
+	},
+	{
+		"wage",
 		"Queen Quest",
 		AD_ENTRY1s("Queen Quest", "730605d312efedb5e3ff108522fcac18", 59776),
 		Common::EN_ANY,
@@ -96,6 +105,15 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::EN_ANY,
 		Common::kPlatformMacintosh,
 		ADGF_DEFAULT,
+		GUIO0()
+	},
+	{
+		"wage",
+		"Time Bomb",
+		AD_ENTRY1s("Time Bomb", "2df84b636237686b624e736a698a16c4", 66432),
+		Common::EN_ANY,
+		Common::kPlatformMacintosh,
+		ADGF_GENERIC,
 		GUIO0()
 	},
 	{
