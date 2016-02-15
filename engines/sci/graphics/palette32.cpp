@@ -228,8 +228,6 @@ void GfxPalette32::updateFFrame() {
 
 void GfxPalette32::updateHardware() {
 	if (_sysPalette == _nextPalette) {
-		// TODO: This condition has never been encountered yet
-		debug("Skipping hardware update because palettes are identical");
 		return;
 	}
 
