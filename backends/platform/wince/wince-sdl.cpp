@@ -645,7 +645,7 @@ Common::String OSystem_WINCE3::getSystemLanguage() const {
 	const char *posixMappingTable[][3] = {
 		{"CAT", "ESP", "ca_ES"},
 		{"CSY", "CZE", "cs_CZ"},
-		{"DAN", "DNK", "da_DA"},
+		{"DAN", "DNK", "da_DK"},
 		{"DEU", "DEU", "de_DE"},
 		{"ESN", "ESP", "es_ES"},
 		{"ESP", "ESP", "es_ES"},
