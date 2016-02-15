@@ -59,7 +59,7 @@ void GfxAnimate::init() {
 	// fastCast object is not found in any SCI games prior SCI1
 	if (getSciVersion() <= SCI_VERSION_01)
 		_ignoreFastCast = true;
-	// Also if fastCast object exists at gamestartup, we can assume that the interpreter doesnt do kAnimate aborts
+	// Also if fastCast object exists at gamestartup, we can assume that the interpreter doesn't do kAnimate aborts
 	//  (found in Larry 1)
 	if (getSciVersion() > SCI_VERSION_0_EARLY) {
 		if (!_s->_segMan->findObjectByName("fastCast").isNull())

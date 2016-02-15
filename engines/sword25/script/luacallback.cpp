@@ -119,7 +119,7 @@ void LuaCallback::invokeCallbackFunctions(lua_State *L, uint objectHandle) {
 			// Lua_pcall the function and the parameters pop themselves from the stack
 			if (lua_pcall(L, argumentCount, 0, 0) != 0) {
 				// An error has occurred
-				error("An error occured executing a callback function: %s", lua_tostring(L, -1));
+				error("An error occurred executing a callback function: %s", lua_tostring(L, -1));
 
 				// Pop error message from the stack
 				lua_pop(L, 1);

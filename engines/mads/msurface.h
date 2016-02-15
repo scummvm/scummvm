@@ -56,7 +56,7 @@ protected:
 	bool _freeFlag;
 public:
 	/**
-	 * Sets the engine refrence used all surfaces
+	 * Sets the engine reference used all surfaces
 	 */
 	static void setVm(MADSEngine *vm) { _vm = vm; }
 

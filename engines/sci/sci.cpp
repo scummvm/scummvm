@@ -529,7 +529,7 @@ void SciEngine::patchGameSaveRestore() {
 	byte kernelIdSave = 0;
 
 	switch (_gameId) {
-	case GID_HOYLE1: // gets confused, although the game doesnt support saving/restoring at all
+	case GID_HOYLE1: // gets confused, although the game doesn't support saving/restoring at all
 	case GID_HOYLE2: // gets confused, see hoyle1
 	case GID_JONES: // gets confused, when we patch us in, the game is only able to save to 1 slot, so hooking is not required
 	case GID_MOTHERGOOSE: // mother goose EGA saves/restores directly and has no save/restore dialogs
