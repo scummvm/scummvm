@@ -1318,7 +1318,7 @@ raspberrypi)
 	_host_cpu=arm
 	# This tuple is the one used by the official Rpi toolchain.
 	# It may change in the future.
-	_host_alias=bcm2708hardfp
+	_host_alias=arm-linux-gnueabihf
 	;;
 caanoo)
 	_host_os=gph-linux
