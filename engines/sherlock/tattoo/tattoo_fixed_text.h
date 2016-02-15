@@ -109,6 +109,8 @@ enum FixedTextId {
 	kFixedText_No,
 	kFixedText_EnterPassword,
 	kFixedText_CorrectPassword,
+	kFixedText_WatsonsJournal,
+	kFixedText_JournalSaved,
 	// SH2: People names
 	kFixedText_People_SherlockHolmes,
 	kFixedText_People_DrWatson,

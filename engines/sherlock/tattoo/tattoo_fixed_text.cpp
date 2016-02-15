@@ -108,6 +108,8 @@ static const char *const fixedTextEN[] = {
 	"No",
 	"Enter Password",
 	"Going East", // correct password, was not and should not to be translated
+	"Watson's Journal",
+	"Journal saved as journal.txt",
 	// SH2: People names
 	"Sherlock Holmes",
 	"Dr. Watson",
@@ -293,6 +295,8 @@ static const char *const fixedTextDE[] = {
 	"Nein",
 	"Pa\341wort eingeben",
 	"Going East", // correct password, was not and should not to be translated
+	"Watsons Tagebuch",
+	"Journal gespeichert als journal.txt",
 	// SH2: People names
 	"Sherlock Holmes", // note: People names were not translated in the German interpreter
 	"Dr. Watson",
@@ -478,6 +482,8 @@ static const char *const fixedTextFR[] = {
 	"Non",
 	"Entrez le mot de passe",
 	"Going East", // correct password, was not and should not to be translated
+	"Journal de Watson",
+	"Journal enregistree comme journal.txt",
 	// SH2: People names
 	"Sherlock Holmes",
 	"Dr. Watson",
@@ -664,6 +670,8 @@ static const char *const fixedTextES[] = {
 	"Non",
 	"Introducir Palabra Clave",
 	"Vas al Este", // correct password, was translated in Spanish version (???)
+	"Diario de Watson",
+	"Diario guarda como journal.txt",
 	// SH2: People names
 	"Sherlock Holmes",
 	"Dr. Watson",

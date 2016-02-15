@@ -20,6 +20,7 @@
  *
  */
 
+#include "common/savefile.h"
 #include "sherlock/tattoo/tattoo_journal.h"
 #include "sherlock/tattoo/tattoo_fixed_text.h"
 #include "sherlock/tattoo/tattoo_scene.h"
@@ -130,7 +131,7 @@ void TattooJournal::handleKeyboardEvents() {
 			events.warpMouse(Common::Point(r.left + r.width() / 3 - 10, r.top + screen.fontHeight() + 2));
 		} else {
 			if (_selector == JH_CLOSE)
-				_selector = JH_PRINT;
+				_selector = JH_SAVE;
 			else
 				--_selector;
 
@@ -232,7 +233,7 @@ void TattooJournal::handleKeyboardEvents() {
 		if (_selector == JH_NONE) {
 			events.warpMouse(Common::Point(r.left + r.width() / 3 - 10, r.top + screen.fontHeight() + 2));
 		} else {
-			if (_selector == JH_PRINT)
+			if (_selector == JH_SAVE)
 				_selector = JH_NONE;
 			else
 				++_selector;
@@ -378,8 +379,13 @@ void TattooJournal::handleButtons() {
 			break;
 		}
 
-		case JH_PRINT:
-			// Print Journal - not implemented in ScummVM
+		case JH_SAVE:
+			// Save journal to file
+			disableControls();
+			saveJournal();
+			drawFrame();
+			drawJournal(0, 0);
+			screen.slamArea(0, 0, SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT);
 			break;
 
 		default:
@@ -592,7 +598,7 @@ void TattooJournal::highlightJournalControls(bool slamIt) {
 	}
 
 	// See if the Search was selected, but is not available
-	if (_journal.empty() && (_selector == JH_SEARCH || _selector == JH_PRINT))
+	if (_journal.empty() && (_selector == JH_SEARCH || _selector == JH_SAVE))
 		_selector = JH_NONE;
 
 	if (_selector == JH_PAGE_LEFT && _oldSelector == JH_PAGE_RIGHT)
@@ -618,7 +624,10 @@ void TattooJournal::highlightJournalControls(bool slamIt) {
 			color, "%s", FIXED(SearchJournal));
 		xp += r.width() / 3;
 
-		color = INFO_BOTTOM;
+		if (!_journal.empty())
+			color = (_selector == JH_SAVE) ? COMMAND_HIGHLIGHTED : INFO_TOP;
+		else
+			color = INFO_BOTTOM;
 		screen.gPrint(Common::Point(xp - screen.stringWidth(FIXED(SaveJournal)) / 2, r.top + 5), 
 			color, "%s", FIXED(SaveJournal));
 
@@ -737,7 +746,7 @@ void TattooJournal::disableControls() {
 
 	// Print the Journal commands
 	int xp = r.left + r.width() / 6;
-	for (int idx = 0; idx < 2; ++idx) {
+	for (int idx = 0; idx < 3; ++idx) {
 		screen.gPrint(Common::Point(xp - screen.stringWidth(JOURNAL_COMMANDS[idx]) / 2, r.top + 5),
 			INFO_BOTTOM, "%s", JOURNAL_COMMANDS[idx]);
 
@@ -880,11 +889,11 @@ int TattooJournal::getFindName(bool printError) {
 				} else {
 					if (keyState.keycode & Common::KBD_SHIFT) {
 						if (_selector == JH_CLOSE)
-							_selector = JH_PRINT;
+							_selector = JH_SAVE;
 						else
 							--_selector;
 					} else {
-						if (_selector == JH_PRINT)
+						if (_selector == JH_SAVE)
 							_selector = JH_CLOSE;
 						else
 							++_selector;
@@ -947,6 +956,173 @@ void TattooJournal::record(int converseNum, int statementNum, bool replyOnly) {
 	// Only record activity in the Journal if the player is Holmes (i.e. we're paast the prologoue)
 	if (_vm->readFlags(FLAG_PLAYER_IS_HOLMES) && !vm._runningProlog)
 		Journal::record(converseNum, statementNum, replyOnly);
+}
+
+void TattooJournal::saveJournal() {
+	Talk &talk = *_vm->_talk;
+	Common::OutSaveFile *file = g_system->getSavefileManager()->openForSaving("journal.txt", false);
+	int tempIndex = _index;
+
+	_index = 0;
+	talk._converseNum = -1;
+
+	file->writeString("                               ");
+	file->writeString(FIXED(WatsonsJournal));
+	file->writeString("\n\n");
+
+	// Loop through saving each page of the journal
+	do {
+		// Print a single talk file
+		Common::String text;
+		int line = 0;
+
+		// Copy all of the talk files entries into one big string
+		do {	
+			if (_lines[line].hasPrefix("@")) {
+				text += Common::String(_lines[line].c_str() + 1);
+				if ((line + 1) < (int)_lines.size() && _lines[line + 1].hasPrefix("@"))
+					text += "\n";
+				else
+					text += " ";
+			} else {
+				text += _lines[line];
+				text += " ";
+
+				// Check for embedded location names embedded in comment fields,
+				// which show up as a blank line with the next line starting
+				// with a '@'. We have to add a line break here because the '@' handler
+				// previously assumes that they're always following a blank line
+				
+				if ((_lines[line].empty() || _lines[line] == " ")
+						&& (line + 1) < (int)_lines.size() && _lines[line + 1].hasPrefix("@"))
+					text += "\n";
+			}
+
+			++line;
+		} while (line < (int)_lines.size());
+
+		// Now write out the text in 80 column lines
+		do {
+			if (text.size() > 80) {
+				const char *msgP = text.c_str() + 80;
+				
+				if (Common::String(text.c_str(), msgP).contains("\n")) {
+					// The 80 characters contain a carriage return,
+					// so we can print out that line
+					const char *cr = strchr(text.c_str(), '\n');
+					file->writeString(Common::String(text.c_str(), cr));
+					text = Common::String(cr + 1);
+				} else {
+					// Move backwards to find a word break				
+					while (*msgP != ' ')
+						--msgP;
+
+					// Write out the figured out line
+					file->writeString(Common::String(text.c_str(), msgP));
+
+					// Remove the line that was written out
+					while (*msgP == ' ')
+						++msgP;
+					text = Common::String(msgP);
+				}
+			} else {
+				// The remainder of the string is under 80 characters.
+				// Check to see if has any line ends
+				if (text.contains("\n")) {
+					// Write out the line up to the carraige return
+					const char *cr = strchr(text.c_str(), '\n');
+					file->writeString(Common::String(text.c_str(), cr));
+					text = Common::String(cr + 1);
+				} else {
+					// Write out the final line
+					file->writeString(text);
+					text = "";
+				}
+			}
+
+			file->writeString("\n");
+		} while (!text.empty());
+
+		// Move to next talk file
+		do {
+			++_index;
+
+			if (_index < (int)_journal.size())
+				loadJournalFile(false);
+		} while (_index < (int)_journal.size() && _lines.empty());
+
+		// Don't immediately exit if there are no loaded lines for
+		// the next page, since it's probably a stealth file and
+		// can simply be skipped
+		file->writeString("\n");
+	} while (_index < (int)_journal.size());
+
+	file->finalize();
+	delete file;
+
+	// Free up any talk file in memory
+	talk.freeTalkVars();
+
+	// Show the message for the journal having been saved
+	showSavedDialog();
+
+	// Reset the previous settings of the journal
+	_index = tempIndex;
+}
+
+void TattooJournal::showSavedDialog() {
+	TattooEngine &vm = *(TattooEngine *)_vm;
+	Events &events = *vm._events;
+	Screen &screen = *vm._screen;
+	TattooUserInterface &ui = *(TattooUserInterface *)vm._ui;
+	ImageFile &images = *ui._interfaceImages;
+	disableControls();
+
+	Common::String msg = FIXED(JournalSaved);
+	Common::Rect inner(0, 0, screen.stringWidth(msg), screen.fontHeight());
+	inner.moveTo((SHERLOCK_SCREEN_WIDTH - inner.width()) / 2,
+		(SHERLOCK_SCREEN_HEIGHT / 2) - (screen.fontHeight() / 2));
+
+	Common::Rect r = inner;
+	r.grow(10);
+
+	if (vm._transparentMenus)
+		ui.makeBGArea(r);
+	else
+		screen._backBuffer1.fillRect(r, MENU_BACKGROUND);
+
+	// Draw the four corners of the info box
+	screen._backBuffer1.transBlitFrom(images[0], Common::Point(r.left, r.top));
+	screen._backBuffer1.transBlitFrom(images[1], Common::Point(r.right - images[1]._width, r.top));
+	screen._backBuffer1.transBlitFrom(images[1], Common::Point(r.left, r.bottom - images[1]._height));
+	screen._backBuffer1.transBlitFrom(images[1], Common::Point(r.right - images[1]._width, r.bottom - images[1]._height));
+
+	// Draw the top of the info box
+	screen._backBuffer1.hLine(r.left + images[0]._width, r.top, r.right - images[0]._height, INFO_TOP);
+	screen._backBuffer1.hLine(r.left + images[0]._width, r.top + 1, r.right - images[0]._height, INFO_MIDDLE);
+	screen._backBuffer1.hLine(r.left + images[0]._width, r.top + 2, r.right - images[0]._height, INFO_BOTTOM);
+
+	// Draw the bottom of the info box
+	screen._backBuffer1.hLine(r.left + images[0]._width, r.bottom - 3, r.right - images[0]._height, INFO_TOP);
+	screen._backBuffer1.hLine(r.left + images[0]._width, r.bottom - 2, r.right - images[0]._height, INFO_MIDDLE);
+	screen._backBuffer1.hLine(r.left + images[0]._width, r.bottom - 1, r.right - images[0]._height, INFO_BOTTOM);
+
+	// Draw the left side of the info box
+	screen._backBuffer1.vLine(r.left, r.top + images[0]._height, r.bottom - images[2]._height, INFO_TOP);
+	screen._backBuffer1.vLine(r.left + 1, r.top + images[0]._height, r.bottom - images[2]._height, INFO_MIDDLE);
+	screen._backBuffer1.vLine(r.left + 2, r.top + images[0]._height, r.bottom - images[2]._height, INFO_BOTTOM);
+
+	// Draw the right side of the info box
+	screen._backBuffer1.vLine(r.right - 3, r.top + images[0]._height, r.bottom - images[2]._height, INFO_TOP);
+	screen._backBuffer1.vLine(r.right - 2, r.top + images[0]._height, r.bottom - images[2]._height, INFO_MIDDLE);
+	screen._backBuffer1.vLine(r.right - 1, r.top + images[0]._height, r.bottom - images[2]._height, INFO_BOTTOM);
+
+	// Draw the text
+	screen._backBuffer1.writeString(msg, Common::Point(inner.left, inner.top), INFO_TOP);
+	screen.slamRect(r);
+
+	// Five second pause
+	events.delay(5000, true);
 }
 
 } // End of namespace Tattoo
