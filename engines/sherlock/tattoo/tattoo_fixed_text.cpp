@@ -448,7 +448,7 @@ static const char *const fixedTextFR[] = {
 	"Appuyez sur C",
 	"FIN DE LA PARTIE!", // original: "Fin de la partie!"
 	"FIASCO!",
-	"%s a gagné!", // "Holmes Gagnant!", "%s Gagnant!" <--- FIXXXX
+	"%s a gagn\202!", // "Holmes Gagnant!", "%s Gagnant!"
 	"Rapporte %d point", // original: treated 1 point and multiple points the same ("Scored 1 points")
 	"Rapporte %d points", // original: Total des points: %d",
 	"Touche un %d", // original: ???
