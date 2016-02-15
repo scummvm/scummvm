@@ -171,8 +171,6 @@ void WageEngine::processEvents() {
 					break;
 
 				processTurn(&_inputText, NULL);
-				_inputText.clear();
-				_gui->appendText("");
 				_gui->disableUndo();
 				break;
 
@@ -498,6 +496,9 @@ void WageEngine::processTurn(Common::String *textInput, Designed *clickInput) {
 	if (!_commandWasQuick && getMonster() != NULL) {
 		performCombatAction(getMonster(), _world->_player);
 	}
+
+	_inputText.clear();
+	_gui->appendText("");
 }
 
 
