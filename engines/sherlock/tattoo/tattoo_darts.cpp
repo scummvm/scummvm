@@ -83,7 +83,6 @@ void Darts::playDarts(GameType gameType) {
 	int numHits = 0;
 	bool gameOver = false;
 	bool done = false;
-	const char *const NUM_HITS_STR[3] = { "a", FIXED(Double), FIXED(Triple) };
 
 	// Set the game mode
 	_gameType = gameType;
@@ -166,49 +165,82 @@ void Darts::playDarts(GameType gameType) {
 			showStatus(playerNum);
 			screen._backBuffer2.blitFrom(screen._backBuffer1, Common::Point(_dartInfo.left, _dartInfo.top - 1),
 				Common::Rect(_dartInfo.left, _dartInfo.top - 1, _dartInfo.right, _dartInfo.bottom - 1));
-			screen.print(Common::Point(_dartInfo.left, _dartInfo.top), 0, "%s # %d", FIXED(Dart), idx + 1);
+			screen.print(Common::Point(_dartInfo.left, _dartInfo.top), 0, FIXED(DartsCurrentDart), idx + 1);
 
 			if (_gameType == GAME_301) {
-				if (_vm->getLanguage() == Common::FR_FRA)
-					screen.print(Common::Point(_dartInfo.left, _dartInfo.top + _spacing), 0,
-						"%s %s: %d", FIXED(Scored), FIXED(Points), lastDart);
-				else
-					screen.print(Common::Point(_dartInfo.left, _dartInfo.top + _spacing), 0,
-						"%s %d %s", FIXED(Scored), lastDart, FIXED(Points));
+				// "Scored x points"
+				Common::String scoredPoints;
+
+				// original treated 1 point and multiple points the same. Wrote "Scored 1 points"
+				if (lastDart == 1) {
+					scoredPoints = Common::String::format(FIXED(DartsScoredPoint), lastDart);
+				} else {
+					scoredPoints = Common::String::format(FIXED(DartsScoredPoints), lastDart);
+				}
+
+				screen.print(Common::Point(_dartInfo.left, _dartInfo.top + _spacing), 0, scoredPoints.c_str());
 			} else {
-				if (lastDart != 25)
-					screen.print(Common::Point(_dartInfo.left, _dartInfo.top + _spacing), 0, 
-						"%s %s %d", FIXED(Hit), NUM_HITS_STR[numHits - 1], lastDart);
-				else
-					screen.print(Common::Point(_dartInfo.left, _dartInfo.top + _spacing), 0,
-						"%s %s %s", FIXED(Hit), NUM_HITS_STR[numHits - 1], FIXED(Bullseye));
+				Common::String hitText;
+
+				if (lastDart != 25) {
+					// Regular hit
+					switch (numHits) {
+					case 1: // "Hit a X"
+						hitText = Common::String::format(FIXED(DartsHitSingle), lastDart);
+						break;
+					case 2: // "Hit double X"
+						hitText = Common::String::format(FIXED(DartsHitDouble), lastDart);
+						break;
+					case 3: // "Hit triple X"
+						hitText = Common::String::format(FIXED(DartsHitTriple), lastDart);
+						break;
+					default:
+						break;
+					}
+				} else {
+					// Bullseye
+					switch (numHits) {
+					case 1:
+						hitText = Common::String(FIXED(DartsHitSingleBullseye));
+						break;
+					case 2:
+						hitText = Common::String(FIXED(DartsHitDoubleBullseye));
+						break;
+					case 3:
+						hitText = Common::String(FIXED(DartsHitTripleBullseye));
+						break;
+					default:
+						break;
+					}
+				}
+				screen.print(Common::Point(_dartInfo.left, _dartInfo.top + _spacing), 0, hitText.c_str());
 			}
 
 			if (score != 0 && playerNum == 0 && !gameOver)
 				screen.print(Common::Point(_dartInfo.left, _dartInfo.top + _spacing * 3), 0, 
-					"%s", FIXED(PressAKey));
+					"%s", FIXED(DartsPressKey));
 
 			if (gameOver) {
 				screen.print(Common::Point(_dartInfo.left, _dartInfo.top + _spacing * 3),
-					0, "%s", FIXED(GameOver));
+					0, "%s", FIXED(DartsGameOver));
 				if (playerNum == 0) {
 					screen.print(Common::Point(_dartInfo.left, _dartInfo.top + _spacing * 4), 0,
-						"%s %s", FIXED(Holmes), FIXED(Wins));
+						FIXED(DartsWins), FIXED(DartsPlayerHolmes));
 					_vm->setFlagsDirect(531);
 				} else {
 					screen.print(Common::Point(_dartInfo.left, _dartInfo.top + _spacing * 4), 0,
-						"%s %s!", _opponent.c_str(), FIXED(Wins));
+						FIXED(DartsWins), _opponent.c_str());
 					_vm->setFlagsDirect(530);
 				}
 
 				screen.print(Common::Point(_dartInfo.left, _dartInfo.top + _spacing * 5), 0,
-					"%s", FIXED(PressAKey));
+					"%s", FIXED(DartsPressKey));
 
 				done = true;
 				idx = 10;
 			} else if (_gameType == GAME_301 && score < 0) {
 				screen.print(Common::Point(_dartInfo.left, _dartInfo.top + _spacing * 2), 0,
-					"%s!", FIXED(Busted));
+					"%s!", FIXED(DartsBusted));
 
 				// End turn
 				idx = 10;
@@ -227,10 +259,15 @@ void Darts::playDarts(GameType gameType) {
 					done = true;
 					break;
 				}
+				// Wait for keypress
+				do {
+					events.pollEventsAndWait();
+					events.setButtonState();
+				} while (!_vm->shouldQuit() && !events.kbHit() && !events._pressed);
 			} else {
-				events.wait(20);
+				events.wait(40);
 			}
-
+			// Clears the status part of the board
 			screen._backBuffer1.blitFrom(screen._backBuffer2, Common::Point(_dartInfo.left, _dartInfo.top - 1),
 				Common::Rect(_dartInfo.left, _dartInfo.top - 1, _dartInfo.right, _dartInfo.bottom - 1));
 			screen.blitFrom(screen._backBuffer1);
@@ -306,7 +343,7 @@ void Darts::initDarts() {
 		}
 	}
 
-	_opponent = FIXED(Jock);
+	_opponent = FIXED(DartsPlayerJock);
 }
 
 void Darts::loadDarts() {
@@ -349,7 +386,7 @@ void Darts::showNames(int playerNum) {
 	byte color;
 
 	color = playerNum == 0 ? PLAYER_COLOR : DART_COLOR_FORE;
-	screen.print(Common::Point(STATUS_INFO_X, STATUS_INFO_Y), 0, "%s", FIXED(Holmes));
+	screen.print(Common::Point(STATUS_INFO_X, STATUS_INFO_Y), 0, "%s", FIXED(DartsPlayerHolmes));
 	screen._backBuffer1.fillRect(Common::Rect(STATUS_INFO_X, STATUS_INFO_Y + _spacing + 1, 
 		STATUS_INFO_X + 50, STATUS_INFO_Y + _spacing + 3), color);
 	screen.fillRect(Common::Rect(STATUS_INFO_X, STATUS_INFO_Y + _spacing + 1,
@@ -367,7 +404,7 @@ void Darts::showNames(int playerNum) {
 
 void Darts::showStatus(int playerNum) {
 	Screen &screen = *_vm->_screen;
-	const char *const CRICKET_SCORE_NAME[7] = { "20", "19", "18", "17", "16", "15", FIXED(Bull) };
+	const char *const CRICKET_SCORE_NAME[7] = { "20", "19", "18", "17", "16", "15", FIXED(DartsBull) };
 
 	screen._backBuffer1.blitFrom(screen._backBuffer2, Common::Point(STATUS_INFO_X, STATUS_INFO_Y + 10),
 		Common::Rect(STATUS_INFO_X, STATUS_INFO_Y + 10, STATUS_INFO_X + STATUS_INFO_WIDTH,
@@ -377,10 +414,15 @@ void Darts::showStatus(int playerNum) {
 	screen.print(Common::Point(STATUS2_INFO_X + 30, STATUS_INFO_Y + _spacing + 4), 0, "%d", _score2);
 
 	int temp = (_gameType == GAME_CRICKET) ? STATUS_INFO_Y + 10 * _spacing + 5 : STATUS_INFO_Y + 55;
-	screen.print(Common::Point(STATUS_INFO_X, temp), 0, "%s: %d", FIXED(Round), _roundNum);
+
+	// "Round: x"
+	Common::String dartsRoundStatus = Common::String::format(FIXED(DartsCurrentRound), _roundNum);
+	screen.print(Common::Point(STATUS_INFO_X, temp), 0, dartsRoundStatus.c_str());
 
 	if (_gameType == GAME_301) {
-		screen.print(Common::Point(STATUS_INFO_X, STATUS_INFO_Y + 75), 0, "%s: %d", FIXED(TurnTotal), _roundScore);
+		// "Turn Total: x"
+		Common::String dartsTotalPoints = Common::String::format(FIXED(DartsCurrentTotalPoints), _roundScore);
+		screen.print(Common::Point(STATUS_INFO_X, STATUS_INFO_Y + 75), 0, dartsTotalPoints.c_str());
 	} else {
 		// Show cricket scores
 		for (int x = 0; x < 7; ++x) {
@@ -890,13 +932,16 @@ int Darts::throwDart(int dartNum, int computer) {
 	events.clearEvents();
 
 	erasePowerBars();
-	screen.print(Common::Point(_dartInfo.left, _dartInfo.top), 0, "%s # %d", FIXED(Dart), dartNum);
+
+	// "Dart # x"
+	Common::String currentDart = Common::String::format(FIXED(DartsCurrentDart), dartNum);
+	screen.print(Common::Point(_dartInfo.left, _dartInfo.top), 0, currentDart.c_str());
 
 	drawDartsLeft(dartNum, computer);
 
 	if (!computer) {
-		screen.print(Common::Point(_dartInfo.left, _dartInfo.top + _spacing), 0, "%s", FIXED(HitAKey));
-		screen.print(Common::Point(_dartInfo.left, _dartInfo.top + _spacing * 2), 0, "%s", FIXED(ToStart));
+		screen.print(Common::Point(_dartInfo.left, _dartInfo.top + _spacing), 0, "%s", FIXED(DartsStartPressKey1));
+		screen.print(Common::Point(_dartInfo.left, _dartInfo.top + _spacing * 2), 0, "%s", FIXED(DartsStartPressKey2));
 	}
 
 	if (!computer) {
