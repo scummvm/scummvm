@@ -32,6 +32,9 @@ namespace Titanic {
 
 enum FileMode { FILE_READ = 1, FILE_WRITE = 2 };
 
+class Decompressor;
+class DecompressorData;
+
 class SimpleFile {
 protected:
 	Common::File _file;
@@ -75,10 +78,54 @@ public:
 	virtual double readFloat();
 };
 
+typedef DecompressorData *(Decompressor::*DecompressorCreateFn)(int v1, int v2, int v3);
+typedef void(Decompressor::*DecompressorDestroyFn)(DecompressorData *ptr);
+typedef void(Decompressor::*Method3Fn)();
+
+class DecompressorData {
+public:
+	int _field0;
+	int _field4;
+	int _field8;
+	int _fieldC;
+	int _field10;
+	int _field14;
+public:
+	DecompressorData();
+};
+
+class Decompressor {
+private:
+	DecompressorCreateFn _createFn;
+	DecompressorDestroyFn _destroyFn;
+	int _field18;
+	DecompressorData *_dataPtr;
+	int _field28;
+
+	DecompressorData *createMethod(int v1, int v2, int v3);
+
+	void destroyMethod(DecompressorData *ptr);
+
+	void method3() {
+		// TODO
+	}
+
+	int sub1(Method3Fn fn, int v);
+
+	void sub2();
+public:
+	Decompressor();
+
+	void load(const char *version = "1.0.4", int v = 15);
+
+	void close();
+};
+
 class CompressedFile : public SimpleFile {
 private:
+	Decompressor _decompressor;
 	Common::Queue<byte> _queue;
-	int _field48;
+	int _fileMode;
 	int _isReading;
 	int _field260;
 	int _mode;
@@ -87,10 +134,6 @@ private:
 	 * Decompress data from the source file
 	 */
 	void decompress();
-
-	void validate(int *mode, const char *version, int v3);
-
-	int validate2(int *mode, int v15, const char *version, int v3);
 public:
 	CompressedFile();
 	virtual ~CompressedFile();
