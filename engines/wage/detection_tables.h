@@ -73,6 +73,15 @@ static const ADGameDescription gameDescriptions[] = {
 	},
 	{
 		"wage",
+		"Magic Rings",
+		AD_ENTRY1s("Magic Rings", "6e0d1dd561d3dad8f9a7a20ed1f09b16", 112000),
+		Common::EN_ANY,
+		Common::kPlatformMacintosh,
+		ADGF_GENERIC,
+		GUIO0()
+	},
+	{
+		"wage",
 		"Queen Quest",
 		AD_ENTRY1s("Queen Quest", "730605d312efedb5e3ff108522fcac18", 59776),
 		Common::EN_ANY,
