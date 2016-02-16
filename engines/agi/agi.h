@@ -870,6 +870,10 @@ private:
 	uint32 _getVarSecondsHeuristicLastInstructionCounter; /**< last time VM_VAR_SECONDS were read */
 	uint16 _getVarSecondsHeuristicCounter; /**< how many times heuristic was triggered */
 
+	uint32 _playTimeInSecondsAdjust; /**< milliseconds to adjust for calculating current play time in seconds, see setVarSecondsTrigger() */
+
+	void setVarSecondsTrigger(byte newSeconds);
+
 public:
 	// Some submethods of testIfCode
 	void skipInstruction(byte op);
