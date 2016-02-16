@@ -441,6 +441,12 @@ reg_t kStringLower(EngineState *s, int argc, reg_t *argv);
 reg_t kStringTrn(EngineState *s, int argc, reg_t *argv);
 reg_t kStringTrnExclude(EngineState *s, int argc, reg_t *argv);
 
+reg_t kScrollWindowCreate(EngineState *s, int argc, reg_t *argv);
+reg_t kScrollWindowAdd(EngineState *s, int argc, reg_t *argv);
+reg_t kScrollWindowWhere(EngineState *s, int argc, reg_t *argv);
+reg_t kScrollWindowShow(EngineState *s, int argc, reg_t *argv);
+reg_t kScrollWindowDestroy(EngineState *s, int argc, reg_t *argv);
+
 reg_t kMulDiv(EngineState *s, int argc, reg_t *argv);
 reg_t kCantBeHere32(EngineState *s, int argc, reg_t *argv);
 reg_t kRemapColors32(EngineState *s, int argc, reg_t *argv);

@@ -314,8 +314,39 @@ reg_t kCelInfo(EngineState *s, int argc, reg_t *argv) {
 }
 
 reg_t kScrollWindow(EngineState *s, int argc, reg_t *argv) {
-	return kStub(s, argc, argv);
+	if (!s)
+		return make_reg(0, getSciVersion());
+	error("not supposed to call this");
+}
+
+reg_t kScrollWindowCreate(EngineState *s, int argc, reg_t *argv) {
+	debug("kScrollWindowCreate");
+	kStub(s, argc, argv);
+	return argv[0];
+}
+
+reg_t kScrollWindowAdd(EngineState *s, int argc, reg_t *argv) {
+	debug("kScrollWindowAdd");
+	return kStubNull(s, argc, argv);
+}
+
+reg_t kScrollWindowWhere(EngineState *s, int argc, reg_t *argv) {
+	debug("kScrollWindowWhere");
+	return kStubNull(s, argc, argv);
+}
+
+reg_t kScrollWindowShow(EngineState *s, int argc, reg_t *argv) {
+	debug("kScrollWindowShow");
+	return kStubNull(s, argc, argv);
+}
+
+reg_t kScrollWindowDestroy(EngineState *s, int argc, reg_t *argv) {
+	debug("kScrollWindowDestroy");
+	return kStubNull(s, argc, argv);
+}
+
 #if 0
+reg_t kScrollWindow(EngineState *s, int argc, reg_t *argv) {
 	// Used by SQ6 and LSL6 hires for the text area in the bottom of the
 	// screen. The relevant scripts also exist in Phantasmagoria 1, but they're
 	// unused. This is always called by scripts 64906 (ScrollerWindow) and
@@ -421,8 +452,8 @@ reg_t kScrollWindow(EngineState *s, int argc, reg_t *argv) {
 	}
 
 	return s->r_acc;
-#endif
 }
+#endif
 
 reg_t kSetFontRes(EngineState *s, int argc, reg_t *argv) {
 	// TODO: This defines the resolution that the fonts are supposed to be displayed
