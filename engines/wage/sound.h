@@ -52,11 +52,11 @@ namespace Wage {
 
 class Sound {
 public:
-	Sound(Common::String name, Common::SeekableReadStream *data) : _name(name), _data(data) {}
-	~Sound() { }
+	Sound(Common::String name, Common::SeekableReadStream *data);
+	~Sound();
 
 	Common::String _name;
-	Common::SeekableReadStream *_data;
+	byte *_data;
 };
 
 } // End of namespace Wage

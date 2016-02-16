@@ -45,9 +45,34 @@
  *
  */
 
+#include "common/stream.h"
+
 #include "wage/wage.h"
+#include "wage/sound.h"
 
 namespace Wage {
+
+static const int8 deltas[] = { 0,-49,-36,-25,-16,-9,-4,-1,0,1,4,9,16,25,36,49 };
+
+Sound::Sound(Common::String name, Common::SeekableReadStream *data) : _name(name) {
+	int size = data->size() - 20;
+	_data = (byte *)calloc(2 * size, 1);
+
+	data->skip(20); // Skip header
+
+	byte value = 0x80;
+	for (int i = 0; i < size; i++) {
+		byte d = data->readByte();
+		value += deltas[d & 0xf];
+		_data[i * 2] = value;
+		value += deltas[(d >> 4) & 0xf];
+		_data[i * 2 + 1] = value;
+	}
+}
+
+Sound::~Sound() {
+	free(_data);
+}
 
 void WageEngine::playSound(Common::String soundName) {
 	warning("STUB: WageEngine::playSound(%s)", soundName.c_str());
