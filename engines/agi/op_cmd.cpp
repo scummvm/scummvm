@@ -2184,6 +2184,14 @@ void cmdPushScript(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 void cmdSetPriBase(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 	if ((getVersion() != 0x2425) && (getVersion() < 0x2936)) {
 		// was only available in the 2.425 interpreter and from 2.936 (last AGI2 version) onwards
+		// Called during KQ3 (Apple IIgs):
+		//  - picking up chicken (parameter = 50)
+		//  - opening store/tavern door (parameter = 19)
+		//  - when pirates say "Land Ho" (parameter = 16)
+		//  - when killing the dragon (parameter = 4)
+		// Also called by SQ2 (Apple IIgs):
+		//  - in Vohaul's lair (SQ2 currently gets this call through, which breaks some priority)
+		// TODO: Figure out what's going on
 		warning("set.pri.base called, although not available for current AGI version");
 		return;
 	}
