@@ -215,6 +215,9 @@ void WageEngine::gameOver() {
 	gameOverDialog.run();
 
 	doClose();
+
+	_gui->disableAllMenus();
+	_gui->_menuDirty = true;
 }
 
 bool WageEngine::saveDialog() {

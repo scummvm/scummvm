@@ -218,14 +218,29 @@ const Graphics::Font *Gui::getTitleFont() {
 	return getFont("Chicago-12", Graphics::FontManager::kBigGUIFont);
 }
 
+void Gui::drawDesktop() {
+	// Draw desktop
+	Common::Rect r(0, 0, _screen.w - 1, _screen.h - 1);
+	Design::drawFilledRoundRect(&_screen, r, kDesktopArc, kColorBlack, _patterns, kPatternCheckers);
+	g_system->copyRectToScreen(_screen.getPixels(), _screen.pitch, 0, 0, _screen.w, _screen.h);
+}
+
 void Gui::draw() {
+	if (_engine->_isGameOver) {
+		if (_menuDirty) {
+			drawDesktop();
+			_menu->render();
+		}
+
+		_menuDirty = false;
+
+		return;
+	}
+
 	if (_scene != _engine->_world->_player->_currentScene || _sceneDirty) {
 		_scene = _engine->_world->_player->_currentScene;
 
-		// Draw desktop
-		Common::Rect r(0, 0, _screen.w - 1, _screen.h - 1);
-		Design::drawFilledRoundRect(&_screen, r, kDesktopArc, kColorBlack, _patterns, kPatternCheckers);
-		g_system->copyRectToScreen(_screen.getPixels(), _screen.pitch, 0, 0, _screen.w, _screen.h);
+		drawDesktop();
 
 		_sceneDirty = true;
 		_consoleDirty = true;

@@ -560,4 +560,10 @@ void Menu::enableCommand(int menunum, int action, bool state) {
 			_items[menunum]->subitems[i]->enabled = state;
 }
 
+void Menu::disableAllMenus() {
+	for (uint i = 1; i < _items.size(); i++) // Leave About menu on
+		for (uint j = 0; j < _items[i]->subitems.size(); j++)
+			_items[i]->subitems[j]->enabled = false;
+}
+
 } // End of namespace Wage

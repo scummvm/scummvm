@@ -110,9 +110,11 @@ public:
 	void actionClear();
 	void actionCut();
 	void disableUndo();
+	void disableAllMenus();
 
 private:
 	void undrawCursor();
+	void drawDesktop();
 	void paintBorder(Graphics::Surface *g, Common::Rect &r, WindowType windowType);
 	void renderConsole(Graphics::Surface *g, Common::Rect &r);
 	void drawBox(Graphics::Surface *g, int x, int y, int w, int h);
@@ -131,7 +133,6 @@ public:
 	int _cursorX, _cursorY;
 	bool _cursorState;
 	Common::Rect _consoleTextArea;
-	bool _cursorOff;
 
 	bool _builtInFonts;
 	WageEngine *_engine;
@@ -140,6 +141,9 @@ public:
 
 	bool _cursorDirty;
 	Common::Rect _cursorRect;
+	bool _cursorOff;
+
+	bool _menuDirty;
 
 private:
 	Graphics::Surface _console;
@@ -148,7 +152,6 @@ private:
 	bool _sceneDirty;
 	bool _consoleDirty;
 	bool _bordersDirty;
-	bool _menuDirty;
 
 	Common::StringArray _out;
 	Common::StringArray _lines;

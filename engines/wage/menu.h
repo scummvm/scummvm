@@ -104,6 +104,7 @@ public:
 	void regenWeaponsMenu();
 	void processMenuShortCut(byte flags, uint16 ascii);
 	void enableCommand(int menunum, int action, bool state);
+	void disableAllMenus();
 
 	bool _menuActivated;
 	Common::Rect _bbox;
