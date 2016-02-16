@@ -50,6 +50,7 @@
 #include "wage/wage.h"
 #include "wage/entities.h"
 #include "wage/script.h"
+#include "wage/sound.h"
 #include "wage/world.h"
 
 namespace Wage {
@@ -294,6 +295,13 @@ bool World::loadWorld(Common::MacResManager *resMan) {
 	//world.setCurrentState(initialState);	// pass off the state object to the world
 
 	return true;
+}
+
+void World::addSound(Sound *sound) {
+	Common::String s = sound->_name;
+	s.toLowercase();
+	_sounds[s] = sound;
+	_orderedSounds.push_back(sound);
 }
 
 Common::StringArray *World::readMenu(Common::SeekableReadStream *res) {

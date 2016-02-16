@@ -45,92 +45,18 @@
  *
  */
 
-#ifndef WAGE_WORLD_H
-#define WAGE_WORLD_H
+#ifndef WAGE_SOUND_H
+#define WAGE_SOUND_H
 
 namespace Wage {
 
-#define STORAGESCENE "STORAGE@"
-
-class Sound;
-
-class World {
+class Sound {
 public:
-	World(WageEngine *engine);
-	~World();
-
-	bool loadWorld(Common::MacResManager *resMan);
-	void loadExternalSounds(Common::String fname);
-	Common::String *loadStringFromDITL(Common::MacResManager *resMan, int resourceId, int itemIndex);
-	void move(Obj *obj, Chr *chr);
-	void move(Obj *obj, Scene *scene, bool skipSort = false);
-	void move(Chr *chr, Scene *scene, bool skipSort = false);
-	Scene *getRandomScene();
-	Scene *getSceneAt(int x, int y);
-	bool scenesAreConnected(Scene *scene1, Scene *scene2);
-	const char *getAboutMenuItemName();
-
-	WageEngine *_engine;
+	Sound(Common::String name, Common::SeekableReadStream *data) : _name(name), _data(data) {}
+	~Sound() { }
 
 	Common::String _name;
-	Common::String _aboutMessage;
-	Common::String _soundLibrary1;
-	Common::String _soundLibrary2;
-
-	bool _weaponMenuDisabled;
-	Script *_globalScript;
-	Common::HashMap<Common::String, Scene *> _scenes;
-	Common::HashMap<Common::String, Obj *> _objs;
-	Common::HashMap<Common::String, Chr *> _chrs;
-	Common::HashMap<Common::String, Sound *> _sounds;
-	Common::Array<Scene *> _orderedScenes;
-	ObjArray _orderedObjs;
-	ChrArray _orderedChrs;
-	Common::Array<Sound *> _orderedSounds;
-	Patterns _patterns;
-	Scene *_storageScene;
-	Chr *_player;
-	//List<MoveListener> moveListeners;
-
-	Common::String *_gameOverMessage;
-	Common::String *_saveBeforeQuitMessage;
-	Common::String *_saveBeforeCloseMessage;
-	Common::String *_revertMessage;
-
-	Common::String _aboutMenuItemName;
-	Common::String _commandsMenuName;
-	Common::String _commandsMenu;
-	Common::String _weaponsMenuName;
-
-	void addScene(Scene *room) {
-		if (!room->_name.empty()) {
-			Common::String s = room->_name;
-			s.toLowercase();
-			_scenes[s] = room;
-		}
-		_orderedScenes.push_back(room);
-	}
-
-	void addObj(Obj *obj) {
-		Common::String s = obj->_name;
-		s.toLowercase();
-		_objs[s] = obj;
-		obj->_index = _orderedObjs.size();
-		_orderedObjs.push_back(obj);
-	}
-
-	void addChr(Chr *chr) {
-		Common::String s = chr->_name;
-		s.toLowercase();
-		_chrs[s] = chr;
-		chr->_index = _orderedChrs.size();
-		_orderedChrs.push_back(chr);
-	}
-
-	void addSound(Sound *sound);
-
-private:
-	Common::StringArray *readMenu(Common::SeekableReadStream *res);
+	Common::SeekableReadStream *_data;
 };
 
 } // End of namespace Wage
