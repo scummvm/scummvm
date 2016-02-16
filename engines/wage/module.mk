@@ -11,6 +11,7 @@ MODULE_OBJS := \
 	menu.o \
 	randomhat.o \
 	script.o \
+	sound.o \
 	util.o \
 	wage.o \
 	world.o

@@ -189,10 +189,6 @@ void WageEngine::processEvents() {
 	}
 }
 
-void WageEngine::playSound(Common::String soundName) {
-	warning("STUB: WageEngine::playSound(%s)", soundName.c_str());
-}
-
 void WageEngine::setMenu(Common::String menu) {
 	_world->_commandsMenu = menu;
 
@@ -381,10 +377,6 @@ void WageEngine::redrawScene() {
 
 		updateSoundTimerForScene(currentScene, firstTime);
 	}
-}
-
-void WageEngine::updateSoundTimerForScene(Scene *scene, bool firstTime) {
-	//warning("STUB: WageEngine::updateSoundTimerForScene()");
 }
 
 void WageEngine::processTurnInternal(Common::String *textInput, Designed *clickInput) {
