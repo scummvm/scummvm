@@ -352,6 +352,31 @@ static const SciKernelMapSubEntry kString_subops[] = {
 	SCI_SUBOPENTRY_TERMINATOR
 };
 
+//    version,         subId, function-mapping,                    signature,              workarounds
+static const SciKernelMapSubEntry kScrollWindow_subops[] = {
+	{ SIG_SCI32,           0, MAP_CALL(ScrollWindowCreate),        "oi",                   NULL },
+	{ SIG_SCI32,           1, MAP_CALL(ScrollWindowAdd),           "o.ii.(.)",             NULL },
+	{ SIG_SCI32,           2, MAP_DUMMY(ScrollWindowClear),        "o",                    NULL },
+	{ SIG_SCI32,           3, MAP_DUMMY(ScrollWindowPageUp),       "o",                    NULL },
+	{ SIG_SCI32,           4, MAP_DUMMY(ScrollWindowPageDown),     "o",                    NULL },
+	{ SIG_SCI32,           5, MAP_DUMMY(ScrollWindowUpArrow),      "o",                    NULL },
+	{ SIG_SCI32,           6, MAP_DUMMY(ScrollWindowDownArrow),    "o",                    NULL },
+	{ SIG_SCI32,           7, MAP_DUMMY(ScrollWindowHome),         "o",                    NULL },
+	{ SIG_SCI32,           8, MAP_DUMMY(ScrollWindowEnd),          "o",                    NULL },
+	{ SIG_SCI32,           9, MAP_DUMMY(ScrollWindowResize),       "o.",                   NULL },
+	{ SIG_SCI32,          10, MAP_CALL(ScrollWindowWhere),         "oi",                   NULL },
+	{ SIG_SCI32,          11, MAP_DUMMY(ScrollWindowGo),           "o..",                  NULL },
+	{ SIG_SCI32,          12, MAP_DUMMY(ScrollWindowInsert),       "o.....",               NULL },
+	{ SIG_SCI32,          13, MAP_DUMMY(ScrollWindowDelete),       "o.",                   NULL },
+	{ SIG_SCI32,          14, MAP_DUMMY(ScrollWindowModify),       "o.....(.)",            NULL },
+	{ SIG_SCI32,          15, MAP_DUMMY(ScrollWindowHide),         "o",                    NULL },
+	{ SIG_SCI32,          16, MAP_CALL(ScrollWindowShow),          "o",                    NULL },
+	{ SIG_SCI32,          17, MAP_CALL(ScrollWindowDestroy),       "o",                    NULL },
+	{ SIG_SCI32,          18, MAP_DUMMY(ScrollWindowText),         "o",                    NULL },
+	{ SIG_SCI32,          19, MAP_DUMMY(ScrollWindowReconstruct),  "o.",                   NULL },
+	SCI_SUBOPENTRY_TERMINATOR
+};
+
 #endif
 
 struct SciKernelMapEntry {
@@ -562,7 +587,7 @@ static SciKernelMapEntry s_kernelMap[] = {
 	{ MAP_CALL(DeletePlane),       SIG_EVERYWHERE,           "o",                     NULL,            NULL },
 	{ MAP_CALL(DeleteScreenItem),  SIG_EVERYWHERE,           "o",                     NULL,            NULL },
 	{ MAP_CALL(DisposeTextBitmap), SIG_EVERYWHERE,           "r",                     NULL,            NULL },
-	{ MAP_CALL(FrameOut),          SIG_EVERYWHERE,           "",                      NULL,            NULL },
+	{ MAP_CALL(FrameOut),          SIG_EVERYWHERE,           "(i)",                   NULL,            NULL },
 	{ MAP_CALL(GetHighPlanePri),   SIG_EVERYWHERE,           "",                      NULL,            NULL },
 	{ MAP_CALL(InPolygon),         SIG_EVERYWHERE,           "iio",                   NULL,            NULL },
 	{ MAP_CALL(IsHiRes),           SIG_EVERYWHERE,           "",                      NULL,            NULL },
@@ -644,7 +669,7 @@ static SciKernelMapEntry s_kernelMap[] = {
 	{ MAP_CALL(GetSierraProfileInt), SIG_EVERYWHERE,         "rri",                   NULL,            NULL },
 	{ MAP_CALL(CelInfo),           SIG_EVERYWHERE,           "iiiiii",                NULL,            NULL },
 	{ MAP_CALL(SetLanguage),       SIG_EVERYWHERE,           "r",                     NULL,            NULL },
-	{ MAP_CALL(ScrollWindow),      SIG_EVERYWHERE,           "io(.*)",                NULL,            NULL },
+	{ MAP_CALL(ScrollWindow),      SIG_EVERYWHERE,           "i(.*)",                 kScrollWindow_subops, NULL },
 	{ MAP_CALL(SetFontRes),        SIG_EVERYWHERE,           "ii",                    NULL,            NULL },
 	{ MAP_CALL(Font),              SIG_EVERYWHERE,           "i(.*)",                 NULL,            NULL },
 	{ MAP_CALL(Bitmap),            SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
