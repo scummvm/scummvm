@@ -402,20 +402,22 @@ void WageEngine::performMove(Chr *chr, int validMoves) {
 	// count how many valid moves we have
 	int numValidMoves = 0;
 
-	for (int dir = 0; dir < 4; dir++)
-		if ((validMoves & (1 << dir)) != 0)
+	for (int i = 0; i < 4; i++)
+		if ((validMoves & (1 << i)) != 0)
 			numValidMoves++;
 
 	// Now pick random dir
-	int dir = _rnd->getRandomNumber(numValidMoves);
+	int dirNum = _rnd->getRandomNumber(numValidMoves - 1);
+	int dir = 0;
 
 	// And get it
-	for (int i = 0; i < 4; i++, dir--)
+	for (int i = 0; i < 4; i++)
 		if ((validMoves & (1 << i)) != 0) {
-			if (dir == 1) {
+			if (dirNum == 0) {
 				dir = i;
 				break;
 			}
+			dirNum--;
 		}
 
 	char buf[256];
