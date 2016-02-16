@@ -111,6 +111,7 @@ public:
 	void actionCut();
 	void disableUndo();
 	void disableAllMenus();
+	void enableNewGameMenus();
 
 private:
 	void undrawCursor();

@@ -217,6 +217,7 @@ void WageEngine::gameOver() {
 	doClose();
 
 	_gui->disableAllMenus();
+	_gui->enableNewGameMenus();
 	_gui->_menuDirty = true;
 }
 

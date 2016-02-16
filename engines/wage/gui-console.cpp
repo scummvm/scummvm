@@ -399,4 +399,10 @@ void Gui::disableAllMenus() {
 	_menu->disableAllMenus();
 }
 
+void Gui::enableNewGameMenus() {
+	_menu->enableCommand(kMenuFile, kMenuActionNew, true);
+	_menu->enableCommand(kMenuFile, kMenuActionOpen, true);
+	_menu->enableCommand(kMenuFile, kMenuActionQuit, true);
+}
+
 } // End of namespace Wage
