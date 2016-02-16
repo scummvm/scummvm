@@ -54,8 +54,13 @@ void AgiBase::flipFlag(int16 flagNr) {
 void AgiEngine::setVar(int16 varNr, byte newValue) {
 	_game.vars[varNr] = newValue;
 
-	if (varNr == VM_VAR_VOLUME) {
+	switch (varNr) {
+	case VM_VAR_SECONDS:
+		setVarSecondsTrigger(newValue);
+		break;
+	case VM_VAR_VOLUME:
 		setVolumeViaScripts(newValue);
+		break;
 	}
 }
 
@@ -173,6 +178,7 @@ void AgiEngine::getVarSecondsHeuristicTrigger() {
 void AgiEngine::inGameTimerReset(uint32 newPlayTime) {
 	_lastUsedPlayTimeInCycles = newPlayTime / 50;
 	_lastUsedPlayTimeInSeconds = newPlayTime / 1000;
+	_playTimeInSecondsAdjust = 0; // no adjust for now
 	setTotalPlayTime(newPlayTime);
 	inGameTimerResetPassedCycles();
 }
@@ -190,6 +196,24 @@ uint32 AgiEngine::inGameTimerGet() {
 }
 uint32 AgiEngine::inGameTimerGetPassedCycles() {
 	return _passedPlayTimeCycles;
+}
+
+// Seconds got set by the game
+// This happens in Mixed Up Mother Goose. The game syncs the songs to VM_VAR_SECONDS, but instead
+// of only reading them, it sets it to 0 and then checks if it reached a certain second.
+// The original interpreter didn't reset the internal cycles counter. Which means the timing was never accurate,
+// because the cycles counter may just overflow right after setting the seconds, which means a second
+// increase almost immediately happened. We even fix this issue by adjusting for it.
+void AgiEngine::setVarSecondsTrigger(byte newSeconds) {
+	// Adjust in game timer, so that VM timer variables are accurate
+	inGameTimerUpdate();
+
+	// Adjust VM seconds again
+	_game.vars[VM_VAR_SECONDS] = newSeconds;
+
+	// Calculate milliseconds adjust (see comment above)
+	uint32 curPlayTimeMilliseconds = inGameTimerGet();
+	_playTimeInSecondsAdjust = curPlayTimeMilliseconds % 1000;
 }
 
 // This is called, when one of the timer variables is read
@@ -212,6 +236,14 @@ void AgiEngine::inGameTimerUpdate() {
 	_lastUsedPlayTimeInCycles = curPlayTimeCycles;
 
 	// Now calculate current play time in seconds
+	if (_playTimeInSecondsAdjust) {
+		// Apply adjust from setVarSecondsTrigger()
+		if (curPlayTimeMilliseconds >= _playTimeInSecondsAdjust) {
+			curPlayTimeMilliseconds -= _playTimeInSecondsAdjust;
+		} else {
+			curPlayTimeMilliseconds = 0;
+		}
+	}
 	uint32 curPlayTimeSeconds = curPlayTimeMilliseconds / 1000;
 
 	if (curPlayTimeSeconds == _lastUsedPlayTimeInSeconds) {
@@ -219,26 +251,50 @@ void AgiEngine::inGameTimerUpdate() {
 		return;
 	}
 
-	uint32 secondsLeft = 0;
-	byte   curDays = 0;
-	byte   curHours = 0;
-	byte   curMinutes = 0;
-	byte   curSeconds = 0;
+	int32 playTimeSecondsDelta = curPlayTimeSeconds - _lastUsedPlayTimeInSeconds;
 
-	curDays = curPlayTimeSeconds / 86400;
-	secondsLeft = curPlayTimeSeconds % 86400;
+	if (playTimeSecondsDelta > 0) {
+		// Read and write to VM vars directly to avoid endless loop
+		uint32 secondsLeft = playTimeSecondsDelta;
+		byte   curSeconds = _game.vars[VM_VAR_SECONDS];
+		byte   curMinutes = _game.vars[VM_VAR_MINUTES];
+		byte   curHours = _game.vars[VM_VAR_HOURS];
+		byte   curDays = _game.vars[VM_VAR_DAYS];
 
-	curHours = secondsLeft / 3600;
-	secondsLeft = secondsLeft % 3600;
+		// Add delta to VM variables
+		if (secondsLeft >= 86400) {
+			curDays += secondsLeft / 86400;
+			secondsLeft = secondsLeft % 86400;
+		}
+		if (secondsLeft >= 3600) {
+			curHours += secondsLeft / 3600;
+			secondsLeft = secondsLeft % 3600;
+		}
+		if (secondsLeft >= 60) {
+			curMinutes += secondsLeft / 60;
+			secondsLeft = secondsLeft % 60;
+		}
+		curSeconds += secondsLeft;
 
-	curMinutes = secondsLeft / 60;
-	curSeconds = secondsLeft % 60;
+		while (curSeconds > 59) {
+			curSeconds -= 60;
+			curMinutes++;
+		}
+		while (curMinutes > 59) {
+			curMinutes -= 60;
+			curHours++;
+		}
+		while (curHours > 23) {
+			curHours -= 24;
+			curDays++;
+		}
 
-	// directly set them, otherwise we would go into an endless loop
-	_game.vars[VM_VAR_SECONDS] = curSeconds;
-	_game.vars[VM_VAR_MINUTES] = curMinutes;
-	_game.vars[VM_VAR_HOURS] = curHours;
-	_game.vars[VM_VAR_DAYS] = curDays;
+		// directly set them
+		_game.vars[VM_VAR_SECONDS] = curSeconds;
+		_game.vars[VM_VAR_MINUTES] = curMinutes;
+		_game.vars[VM_VAR_HOURS] = curHours;
+		_game.vars[VM_VAR_DAYS] = curDays;
+	}
 
 	_lastUsedPlayTimeInSeconds = curPlayTimeSeconds;
 }
