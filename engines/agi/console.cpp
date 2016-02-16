@@ -33,27 +33,28 @@ namespace Agi {
 Console::Console(AgiEngine *vm) : GUI::Debugger() {
 	_vm = vm;
 
-	registerCmd("debug",      WRAP_METHOD(Console, Cmd_Debug));
-	registerCmd("cont",       WRAP_METHOD(Console, Cmd_Cont));
-	registerCmd("agiver",     WRAP_METHOD(Console, Cmd_Agiver));
-	registerCmd("version",    WRAP_METHOD(Console, Cmd_Version));
-	registerCmd("flags",      WRAP_METHOD(Console, Cmd_Flags));
-	registerCmd("logic0",     WRAP_METHOD(Console, Cmd_Logic0));
-	registerCmd("objs",       WRAP_METHOD(Console, Cmd_Objs));
-	registerCmd("runopcode",  WRAP_METHOD(Console, Cmd_RunOpcode));
-	registerCmd("opcode",     WRAP_METHOD(Console, Cmd_Opcode));
-	registerCmd("step",       WRAP_METHOD(Console, Cmd_Step));
-	registerCmd("trigger",    WRAP_METHOD(Console, Cmd_Trigger));
-	registerCmd("vars",       WRAP_METHOD(Console, Cmd_Vars));
-	registerCmd("setvar",     WRAP_METHOD(Console, Cmd_SetVar));
-	registerCmd("setflag",    WRAP_METHOD(Console, Cmd_SetFlag));
-	registerCmd("setobj",     WRAP_METHOD(Console, Cmd_SetObj));
-	registerCmd("room",       WRAP_METHOD(Console, Cmd_Room));
-	registerCmd("bt",         WRAP_METHOD(Console, Cmd_BT));
-	registerCmd("show_map",   WRAP_METHOD(Console, Cmd_ShowMap));
-	registerCmd("screenobj",  WRAP_METHOD(Console, Cmd_ScreenObj));
-	registerCmd("vmvars",     WRAP_METHOD(Console, Cmd_VmVars));
-	registerCmd("vmflags",    WRAP_METHOD(Console, Cmd_VmFlags));
+	registerCmd("debug",           WRAP_METHOD(Console, Cmd_Debug));
+	registerCmd("cont",            WRAP_METHOD(Console, Cmd_Cont));
+	registerCmd("agiver",          WRAP_METHOD(Console, Cmd_Agiver));
+	registerCmd("version",         WRAP_METHOD(Console, Cmd_Version));
+	registerCmd("flags",           WRAP_METHOD(Console, Cmd_Flags));
+	registerCmd("logic0",          WRAP_METHOD(Console, Cmd_Logic0));
+	registerCmd("objs",            WRAP_METHOD(Console, Cmd_Objs));
+	registerCmd("runopcode",       WRAP_METHOD(Console, Cmd_RunOpcode));
+	registerCmd("opcode",          WRAP_METHOD(Console, Cmd_Opcode));
+	registerCmd("step",            WRAP_METHOD(Console, Cmd_Step));
+	registerCmd("trigger",         WRAP_METHOD(Console, Cmd_Trigger));
+	registerCmd("vars",            WRAP_METHOD(Console, Cmd_Vars));
+	registerCmd("setvar",          WRAP_METHOD(Console, Cmd_SetVar));
+	registerCmd("setflag",         WRAP_METHOD(Console, Cmd_SetFlag));
+	registerCmd("setobj",          WRAP_METHOD(Console, Cmd_SetObj));
+	registerCmd("room",            WRAP_METHOD(Console, Cmd_Room));
+	registerCmd("bt",              WRAP_METHOD(Console, Cmd_BT));
+	registerCmd("show_map",        WRAP_METHOD(Console, Cmd_ShowMap));
+	registerCmd("screenobj",       WRAP_METHOD(Console, Cmd_ScreenObj));
+	registerCmd("vmvars",          WRAP_METHOD(Console, Cmd_VmVars));
+	registerCmd("vmflags",         WRAP_METHOD(Console, Cmd_VmFlags));
+	registerCmd("disableautosave", WRAP_METHOD(Console, Cmd_DisableAutomaticSave));
 }
 
 bool Console::Cmd_SetVar(int argc, const char **argv) {
@@ -606,6 +607,18 @@ bool Console::Cmd_VmFlags(int argc, const char **argv) {
 			debugPrintf("flag %d set.\n", flagNr);
 		}
 	}
+	return true;
+}
+
+bool Console::Cmd_DisableAutomaticSave(int argc, const char **argv) {
+	if (!_vm->_game.automaticSave) {
+		debugPrintf("Automatic saving is currently not enabled\n");
+		return true;
+	}
+
+	_vm->_game.automaticSave = false;
+
+	debugPrintf("Automatic saving DISABLED!\n");
 	return true;
 }
 
