@@ -583,6 +583,7 @@ void AgiEngine::syncSoundSettings() {
 // Space Quest 2
 //  - right at the start of the game (NewRoom)
 //  - after exiting the very first room, a message pops up, that isn't readable without it (NewRoom)
+//  - Climbing into shuttle on planet Labion. "You open the hatch and head on in." (NewRoom)
 
 
 // Games, that must not be triggered:
