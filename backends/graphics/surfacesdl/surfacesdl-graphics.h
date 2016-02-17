@@ -251,8 +251,22 @@ protected:
 	};
 	VideoState _videoMode, _oldVideoMode;
 
-	// Original BPP to restore the video mode on unload
+#if defined(WIN32) && !SDL_VERSION_ATLEAST(2, 0, 0)
+	/**
+	 * Original BPP to restore the video mode on unload.
+	 *
+	 * This is required to make listing video modes for the OpenGL output work
+	 * on Windows 8+. On these systems OpenGL modes are only available for
+	 * 32bit formats. However, we setup a 16bit format and thus mode listings
+	 * for OpenGL will return an empty list afterwards.
+	 *
+	 * In theory we might require this behavior on non-Win32 platforms too.
+	 * However, SDL sometimes gives us invalid pixel formats for X11 outputs
+	 * causing crashes when trying to setup the original pixel format.
+	 * See bug #7038 "IRIX: X BadMatch when trying to start any 640x480 game".
+	 */
 	uint8 _originalBitsPerPixel;
+#endif
 
 	/** Force full redraw on next updateScreen */
 	bool _forceFull;
