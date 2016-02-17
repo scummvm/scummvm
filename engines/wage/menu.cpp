@@ -130,6 +130,8 @@ Menu::Menu(Gui *gui) : _gui(gui) {
 	_items.push_back(_commands);
 	regenCommandsMenu();
 
+	_weapons = NULL;
+
 	if (!_gui->_engine->_world->_weaponMenuDisabled) {
 		_weapons = new MenuItem(_gui->_engine->_world->_weaponsMenuName.c_str());
 		_items.push_back(_weapons);

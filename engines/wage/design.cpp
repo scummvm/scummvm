@@ -70,6 +70,7 @@ Design::Design(Common::SeekableReadStream *data) {
 	data->read(_data, _len);
 
 	_surface = NULL;
+	_bounds = NULL;
 }
 
 Design::~Design() {

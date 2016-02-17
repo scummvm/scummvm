@@ -228,7 +228,7 @@ public:
 
 class Obj : public Designed {
 public:
-	Obj() : _currentOwner(NULL), _currentScene(NULL) {}
+	Obj();
 	Obj(Common::String name, Common::SeekableReadStream *data);
 	~Obj();
 

@@ -75,6 +75,15 @@ Common::String Script::Operand::toString() {
 }
 
 Script::Script(Common::SeekableReadStream *data) : _data(data) {
+	_engine = NULL;
+	_world = NULL;
+
+	_loopCount = 0;
+	_inputText = NULL;
+	_inputClick = NULL;
+
+	_handled = false;
+
 	convertToText();
 }
 

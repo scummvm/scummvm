@@ -71,9 +71,19 @@ WageEngine::WageEngine(OSystem *syst, const ADGameDescription *desc) : Engine(sy
 	_running = NULL;
 	_lastScene = NULL;
 
+	_loopCount = 0;
+	_turn = 0;
+
 	_commandWasQuick = false;
 
 	_shouldQuit = false;
+
+	_gui = NULL;
+	_world = NULL;
+	_console = NULL;
+	_offer = NULL;
+
+	_resManager = NULL;
 
 	debug("WageEngine::WageEngine()");
 }
