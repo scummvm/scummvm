@@ -65,6 +65,7 @@ struct SciKernelMapSubEntry {
 #define SIG_SCI1            SCI_VERSION_1_EGA_ONLY, SCI_VERSION_1_LATE
 #define SIG_SCI11           SCI_VERSION_1_1, SCI_VERSION_1_1
 #define SIG_SINCE_SCI11     SCI_VERSION_1_1, SCI_VERSION_NONE
+#define SIG_SCI21EARLY_ONLY SCI_VERSION_2_1_EARLY, SCI_VERSION_2_1_EARLY
 #define SIG_SINCE_SCI21     SCI_VERSION_2_1_EARLY, SCI_VERSION_3
 #define SIG_UNTIL_SCI21MID  SCI_VERSION_2, SCI_VERSION_2_1_MIDDLE
 #define SIG_SINCE_SCI21LATE SCI_VERSION_2_1_LATE, SCI_VERSION_3
@@ -670,7 +671,7 @@ static SciKernelMapEntry s_kernelMap[] = {
 	{ MAP_CALL(CelInfo),           SIG_EVERYWHERE,           "iiiiii",                NULL,            NULL },
 	{ MAP_CALL(SetLanguage),       SIG_EVERYWHERE,           "r",                     NULL,            NULL },
 	{ MAP_CALL(ScrollWindow),      SIG_EVERYWHERE,           "i(.*)",                 kScrollWindow_subops, NULL },
-	{ MAP_DUMMY(SetFontRes),       SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
+	{ MAP_CALL(SetFontRes),        SIG_SCI21EARLY_ONLY, SIGFOR_ALL, "ii",             NULL,            NULL },
 	{ MAP_CALL(Font),              SIG_EVERYWHERE,           "i(.*)",                 NULL,            NULL },
 	{ MAP_CALL(Bitmap),            SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
 	{ MAP_CALL(AddLine),           SIG_EVERYWHERE,           "oiiiiiiiii",            NULL,            NULL },

@@ -482,9 +482,10 @@ reg_t kFont(EngineState *s, int argc, reg_t *argv) {
 	return s->r_acc;
 }
 
-// TODO: Is this actually a thing??
 reg_t kSetFontRes(EngineState *s, int argc, reg_t *argv) {
-	return kStub(s, argc, argv);
+	g_sci->_gfxText32->_scaledWidth = argv[0].toUint16();
+	g_sci->_gfxText32->_scaledHeight = argv[1].toUint16();
+	return NULL_REG;
 }
 
 // TODO: Eventually, all of the kBitmap operations should be put
