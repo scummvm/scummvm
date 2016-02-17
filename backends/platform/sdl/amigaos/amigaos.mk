@@ -11,8 +11,13 @@ ifdef DIST_FILES_ENGINEDATA
 	cp $(DIST_FILES_ENGINEDATA) $(AMIGAOSPATH)/extras/
 endif
 	cat ${srcdir}/README | sed -f ${srcdir}/dists/amiga/convertRM.sed > README.conv
-	rx ${srcdir}/dists/amiga/RM2AG.rx README.conv
+# AREXX doesn't understand makefile variables in it's execution path, i.e. ${srcdir}. It will
+# break with a Program not found error. Therefore copying the script to the cwd and
+# removing it again, once it has finished.
+	cp ${srcdir}/dists/amiga/RM2AG.rx .
+	rx RM2AG.rx README.conv
 	cp README.guide $(AMIGAOSPATH)
+	rm RM2AG.rx
 	rm README.conv
 	rm README.guide
 	cp $(DIST_FILES_DOCS) $(AMIGAOSPATH)
