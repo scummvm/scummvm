@@ -426,9 +426,7 @@ protected:
 	// Note: maxMemory will not be interpreted as a hard limit, only as a restriction
 	// for resources which are not explicitly locked. However, a warning will be
 	// issued whenever this limit is exceeded.
-	enum {
-		MAX_MEMORY = 256 * 1024	// 256KB
-	};
+	int _maxMemoryLRU;
 
 	ViewType _viewType; // Used to determine if the game has EGA or VGA graphics
 	Common::List<ResourceSource *> _sources;
