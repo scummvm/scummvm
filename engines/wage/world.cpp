@@ -274,6 +274,7 @@ bool World::loadWorld(Common::MacResManager *resMan) {
 		for (uint i = 0; i < string.size() && string[i] != ';'; i++) // Read token
 			_aboutMenuItemName += string[i];
 
+		delete menu;
 		delete res;
 	}
 	res = resMan->getResource(MKTAG('M','E','N','U'), 2004);
