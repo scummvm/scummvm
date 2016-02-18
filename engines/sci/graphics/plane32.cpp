@@ -377,6 +377,7 @@ void Plane::calcLists(Plane &visiblePlane, const PlaneList &planeList, DrawList 
 		}
 	}
 
+	// Remove parts of eraselist/drawlist that are covered by other planes
 	breakEraseListByPlanes(eraseList, planeList);
 	breakDrawListByPlanes(drawList, planeList);
 
