@@ -441,17 +441,23 @@ reg_t kStringLower(EngineState *s, int argc, reg_t *argv);
 reg_t kStringTrn(EngineState *s, int argc, reg_t *argv);
 reg_t kStringTrnExclude(EngineState *s, int argc, reg_t *argv);
 
+reg_t kScrollWindowCreate(EngineState *s, int argc, reg_t *argv);
+reg_t kScrollWindowAdd(EngineState *s, int argc, reg_t *argv);
+reg_t kScrollWindowWhere(EngineState *s, int argc, reg_t *argv);
+reg_t kScrollWindowShow(EngineState *s, int argc, reg_t *argv);
+reg_t kScrollWindowDestroy(EngineState *s, int argc, reg_t *argv);
+
 reg_t kMulDiv(EngineState *s, int argc, reg_t *argv);
 reg_t kCantBeHere32(EngineState *s, int argc, reg_t *argv);
 reg_t kRemapColors32(EngineState *s, int argc, reg_t *argv);
-// "Screen items" in SCI32 are views
+
 reg_t kAddScreenItem(EngineState *s, int argc, reg_t *argv);
 reg_t kUpdateScreenItem(EngineState *s, int argc, reg_t *argv);
 reg_t kDeleteScreenItem(EngineState *s, int argc, reg_t *argv);
-// Text
+
 reg_t kCreateTextBitmap(EngineState *s, int argc, reg_t *argv);
 reg_t kDisposeTextBitmap(EngineState *s, int argc, reg_t *argv);
-// "Planes" in SCI32 are pictures
+
 reg_t kAddPlane(EngineState *s, int argc, reg_t *argv);
 reg_t kDeletePlane(EngineState *s, int argc, reg_t *argv);
 reg_t kUpdatePlane(EngineState *s, int argc, reg_t *argv);
@@ -473,6 +479,7 @@ reg_t kEditText(EngineState *s, int argc, reg_t *argv);
 reg_t kMakeSaveCatName(EngineState *s, int argc, reg_t *argv);
 reg_t kMakeSaveFileName(EngineState *s, int argc, reg_t *argv);
 reg_t kSetScroll(EngineState *s, int argc, reg_t *argv);
+
 reg_t kPalCycle(EngineState *s, int argc, reg_t *argv);
 reg_t kPaletteSetFade(EngineState *s, int argc, reg_t *argv);
 reg_t kPalVarySetVary(EngineState *s, int argc, reg_t *argv);

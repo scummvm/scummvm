@@ -179,6 +179,7 @@ void Kernel::mapSelectors() {
 	FIND_SELECTOR(fore);
 	FIND_SELECTOR(back);
 	FIND_SELECTOR(skip);
+	FIND_SELECTOR(borderColor);
 	FIND_SELECTOR(fixPriority);
 	FIND_SELECTOR(mirrored);
 	FIND_SELECTOR(visible);
@@ -187,6 +188,11 @@ void Kernel::mapSelectors() {
 	FIND_SELECTOR(inLeft);
 	FIND_SELECTOR(inBottom);
 	FIND_SELECTOR(inRight);
+	FIND_SELECTOR(textTop);
+	FIND_SELECTOR(textLeft);
+	FIND_SELECTOR(textBottom);
+	FIND_SELECTOR(textRight);
+	FIND_SELECTOR(magnifier);
 #endif
 }
 
@@ -211,8 +217,16 @@ void writeSelector(SegManager *segMan, reg_t object, Selector selectorId, reg_t 
 	if (lookupSelector(segMan, object, selectorId, &address, NULL) != kSelectorVariable)
 		error("Selector '%s' of object at %04x:%04x could not be"
 		         " written to", g_sci->getKernel()->getSelectorName(selectorId).c_str(), PRINT_REG(object));
-	else
+	else {
 		*address.getPointer(segMan) = value;
+#ifdef ENABLE_SCI32
+		// TODO: Make this correct for all SCI versions
+		// Selectors 26 through 44 are selectors for View script objects
+		if (getSciVersion() >= SCI_VERSION_2 && selectorId >= 26 && selectorId <= 44) {
+			segMan->getObject(object)->setInfoSelectorFlag(kInfoFlagViewVisible);
+		}
+#endif
+	}
 }
 
 void invokeSelector(EngineState *s, reg_t object, int selectorId,

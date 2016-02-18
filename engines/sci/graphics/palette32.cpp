@@ -47,11 +47,10 @@ GfxPalette32::GfxPalette32(ResourceManager *resMan, GfxScreen *screen)
 	_version(1), _versionUpdated(false) {
 		_varyPercent = _varyTargetPercent;
 		memset(_fadeTable, 100, sizeof(_fadeTable));
-
 		// NOTE: In SCI engine, the palette manager constructor loads
 		// the default palette, but in ScummVM this initialisation
 		// is performed by SciEngine::run; see r49523 for details
-	}
+}
 
 GfxPalette32::~GfxPalette32() {
 	unloadClut();
@@ -65,6 +64,10 @@ inline void mergePaletteInternal(Palette *const to, const Palette *const from) {
 			to->colors[i] = from->colors[i];
 		}
 	}
+}
+
+const Palette *GfxPalette32::getNextPalette() const {
+	return &_nextPalette;
 }
 
 void GfxPalette32::submit(Palette &palette) {
@@ -206,8 +209,18 @@ int16 GfxPalette32::matchColor(const byte r, const byte g, const byte b, const i
 	return bestIndex;
 }
 
-void GfxPalette32::updateForFrame() {
+bool GfxPalette32::updateForFrame() {
 	applyAll();
+	_versionUpdated = false;
+	// TODO: Implement remapping
+	// return g_sci->_gfxFrameout->remapAllTables(_nextPalette != _sysPalette);
+	return false;
+}
+
+void GfxPalette32::updateFFrame() {
+	for (int i = 0; i < ARRAYSIZE(_nextPalette.colors); ++i) {
+		_nextPalette.colors[i] = _sourcePalette.colors[i];
+	}
 	_versionUpdated = false;
 	// TODO: Implement remapping
 	// g_sci->_gfxFrameout->remapAllTables(_nextPalette != _sysPalette);
@@ -215,8 +228,6 @@ void GfxPalette32::updateForFrame() {
 
 void GfxPalette32::updateHardware() {
 	if (_sysPalette == _nextPalette) {
-		// TODO: This condition has never been encountered yet
-		debug("Skipping hardware update because palettes are identical");
 		return;
 	}
 
@@ -410,7 +421,7 @@ void GfxPalette32::setVaryPercent(const int16 percent, const int time, const int
 }
 
 int16 GfxPalette32::getVaryPercent() const {
-	return abs(_varyPercent);
+	return ABS(_varyPercent);
 }
 
 void GfxPalette32::varyOff() {
@@ -773,6 +784,12 @@ void GfxPalette32::applyCycles() {
 // Palette fading
 //
 
+// NOTE: There are some game scripts (like SQ6 Sierra logo and main menu) that call
+// setFade with numColorsToFade set to 256, but other parts of the engine like
+// processShowStyleNone use 255 instead of 256. It is not clear if this is because
+// the last palette entry is intentionally left unmodified, or if this is a bug
+// in the engine. It certainly seems confused because all other places that accept
+// colour ranges typically receive values in the range of 0–255.
 void GfxPalette32::setFade(uint8 percent, uint8 fromColor, uint16 numColorsToFade) {
 	if (fromColor > numColorsToFade) {
 		return;

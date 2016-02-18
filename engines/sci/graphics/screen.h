@@ -76,6 +76,11 @@ public:
 	byte getColorWhite() { return _colorWhite; }
 	byte getColorDefaultVectorData() { return _colorDefaultVectorData; }
 
+#ifdef ENABLE_SCI32
+	byte *getDisplayScreen() { return _displayScreen; }
+	byte *getPriorityScreen() { return _priorityScreen; }
+#endif
+
 	void clearForRestoreGame();
 	void copyToScreen();
 	void copyFromScreen(byte *buffer);

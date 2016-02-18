@@ -80,21 +80,18 @@ reg_t kCantBeHere32(EngineState *s, int argc, reg_t *argv) {
 }
 
 reg_t kAddScreenItem(EngineState *s, int argc, reg_t *argv) {
-	if (g_sci->_gfxFrameout->findScreenItem(argv[0]) == NULL)
-		g_sci->_gfxFrameout->kernelAddScreenItem(argv[0]);
-	else
-		g_sci->_gfxFrameout->kernelUpdateScreenItem(argv[0]);
-	return s->r_acc;
+	g_sci->_gfxFrameout->kernelAddScreenItem(argv[0]);
+	return NULL_REG;
 }
 
 reg_t kUpdateScreenItem(EngineState *s, int argc, reg_t *argv) {
 	g_sci->_gfxFrameout->kernelUpdateScreenItem(argv[0]);
-	return s->r_acc;
+	return NULL_REG;
 }
 
 reg_t kDeleteScreenItem(EngineState *s, int argc, reg_t *argv) {
 	g_sci->_gfxFrameout->kernelDeleteScreenItem(argv[0]);
-	return s->r_acc;
+	return NULL_REG;
 }
 
 reg_t kAddPlane(EngineState *s, int argc, reg_t *argv) {
@@ -115,11 +112,12 @@ reg_t kUpdatePlane(EngineState *s, int argc, reg_t *argv) {
 reg_t kAddPicAt(EngineState *s, int argc, reg_t *argv) {
 	reg_t planeObj = argv[0];
 	GuiResourceId pictureId = argv[1].toUint16();
-	int16 pictureX = argv[2].toSint16();
-	int16 pictureY = argv[3].toSint16();
+	int16 x = argv[2].toSint16();
+	int16 y = argv[3].toSint16();
+	bool mirrorX = argc > 4 ? argv[4].toSint16() : false;
 
-	g_sci->_gfxFrameout->kernelAddPicAt(planeObj, pictureId, pictureX, pictureY);
-	return s->r_acc;
+	g_sci->_gfxFrameout->kernelAddPicAt(planeObj, pictureId, x, y, mirrorX);
+	return NULL_REG;
 }
 
 reg_t kGetHighPlanePri(EngineState *s, int argc, reg_t *argv) {
@@ -127,43 +125,13 @@ reg_t kGetHighPlanePri(EngineState *s, int argc, reg_t *argv) {
 }
 
 reg_t kFrameOut(EngineState *s, int argc, reg_t *argv) {
-/* TODO: Transcribed from SCI engine disassembly.
-	GraphicsMgr &graphicsMgr = g_sci->_graphicsMgr;
-	if (graphicsMgr.palMorphNeeded) {
-		graphicsMgr.PalMorphFrameOut(&g_PalStyleRanges, false);
-	}
-	else {
-		// TODO: Not sure if this is a pointer or not yet.
-		if (g_ScrollState != nullptr) {
-			kFrameOutDoScroll();
-		}
-
-		bool showBits = true;
-		if (argc == 1) {
-			showBits = (bool) argv[0].toUint16();
-		}
-
-		rect SOL_Rect = { .left = 0, .top = 0, .right = UINT32_MAX, .bottom = UINT32_MAX };
-		graphicsMgr.FrameOut(showBits, &rect);
-	}
-*/
-	g_sci->_gfxFrameout->kernelFrameout();
+	bool showBits = argc > 0 ? argv[0].toUint16() : true;
+	g_sci->_gfxFrameout->kernelFrameout(showBits);
 	return NULL_REG;
 }
 
 reg_t kSetPalStyleRange(EngineState *s, int argc, reg_t *argv) {
-/* TODO: Transcribed from SCI engine disassembly.
-	 uint16 start = argv[0].toUint16();
-	 uint16 end = argv[1].toUint16();
-	 if (end <= start) {
-		uint16 index = start;
-		while (index <= end) {
-			g_PalStyleRanges[index] = 0;
-		}
-	 }
-*/
-
-	kStub(s, argc, argv);
+	g_sci->_gfxFrameout->kernelSetPalStyleRange(argv[0].toUint16(), argv[1].toUint16());
 	return NULL_REG;
 }
 
@@ -206,40 +174,52 @@ reg_t kIsOnMe(EngineState *s, int argc, reg_t *argv) {
 }
 
 reg_t kCreateTextBitmap(EngineState *s, int argc, reg_t *argv) {
-	switch (argv[0].toUint16()) {
-	case 0: {
-		if (argc != 4) {
-			warning("kCreateTextBitmap(0): expected 4 arguments, got %i", argc);
-			return NULL_REG;
-		}
-		reg_t object = argv[3];
-		Common::String text = s->_segMan->getString(readSelector(s->_segMan, object, SELECTOR(text)));
-		debugC(kDebugLevelStrings, "kCreateTextBitmap case 0 (%04x:%04x, %04x:%04x, %04x:%04x)",
-				PRINT_REG(argv[1]), PRINT_REG(argv[2]), PRINT_REG(argv[3]));
-		debugC(kDebugLevelStrings, "%s", text.c_str());
-		int16 maxWidth = argv[1].toUint16();
-		int16 maxHeight = argv[2].toUint16();
-		g_sci->_gfxCoordAdjuster->fromScriptToDisplay(maxHeight, maxWidth);
-		// These values can be larger than the screen in the SQ6 demo, room 100
-		// TODO: Find out why. For now, don't show any text in that room.
-		if (g_sci->getGameId() == GID_SQ6 && g_sci->isDemo() && s->currentRoomNumber() == 100)
-			return NULL_REG;
-		return g_sci->_gfxText32->createTextBitmap(object, maxWidth, maxHeight);
-	}
-	case 1: {
-		if (argc != 2) {
-			warning("kCreateTextBitmap(1): expected 2 arguments, got %i", argc);
-			return NULL_REG;
-		}
-		reg_t object = argv[1];
-		Common::String text = s->_segMan->getString(readSelector(s->_segMan, object, SELECTOR(text)));
-		debugC(kDebugLevelStrings, "kCreateTextBitmap case 1 (%04x:%04x)", PRINT_REG(argv[1]));
-		debugC(kDebugLevelStrings, "%s", text.c_str());
-		return g_sci->_gfxText32->createTextBitmap(object);
-	}
-	default:
-		warning("CreateTextBitmap(%d)", argv[0].toUint16());
+	SegManager *segMan = s->_segMan;
+
+	int16 subop = argv[0].toUint16();
+
+	int16 width;
+	int16 height;
+	reg_t object;
+
+	if (subop == 0) {
+		width = argv[1].toUint16();
+		height = argv[2].toUint16();
+		object = argv[3];
+	} else if (subop == 1) {
+		object = argv[1];
+	} else {
+		warning("Invalid kCreateTextBitmap subop %d", subop);
 		return NULL_REG;
+	}
+
+	Common::String text = segMan->getString(readSelector(segMan, object, SELECTOR(text)));
+	int16 foreColor = readSelectorValue(segMan, object, SELECTOR(fore));
+	int16 backColor = readSelectorValue(segMan, object, SELECTOR(back));
+	int16 skipColor = readSelectorValue(segMan, object, SELECTOR(skip));
+	GuiResourceId fontId = (GuiResourceId)readSelectorValue(segMan, object, SELECTOR(font));
+	int16 borderColor = readSelectorValue(segMan, object, SELECTOR(borderColor));
+	int16 dimmed = readSelectorValue(segMan, object, SELECTOR(dimmed));
+
+	Common::Rect rect(
+		readSelectorValue(segMan, object, SELECTOR(textLeft)),
+		readSelectorValue(segMan, object, SELECTOR(textTop)),
+		readSelectorValue(segMan, object, SELECTOR(textRight)),
+		readSelectorValue(segMan, object, SELECTOR(textBottom))
+	);
+
+	if (subop == 0) {
+		TextAlign alignment = (TextAlign)readSelectorValue(segMan, object, SELECTOR(mode));
+		reg_t out;
+		return g_sci->_gfxText32->createFontBitmap(width, height, rect, text, foreColor, backColor, skipColor, fontId, alignment, borderColor, dimmed, 1, &out);
+	} else {
+		CelInfo32 celInfo;
+		celInfo.type = kCelTypeView;
+		celInfo.resourceId = readSelectorValue(segMan, object, SELECTOR(view));
+		celInfo.loopNo = readSelectorValue(segMan, object, SELECTOR(loop));
+		celInfo.celNo = readSelectorValue(segMan, object, SELECTOR(cel));
+		reg_t out;
+		return g_sci->_gfxText32->createTitledFontBitmap(celInfo, rect, text, foreColor, backColor, fontId, skipColor, borderColor, dimmed, &out);
 	}
 }
 
@@ -266,72 +246,59 @@ reg_t kWinHelp(EngineState *s, int argc, reg_t *argv) {
 }
 
 /**
- * Used for scene transitions, replacing (but reusing parts of) the old
- * transition code.
+ * Causes an immediate plane transition with an optional transition
+ * effect
  */
 reg_t kSetShowStyle(EngineState *s, int argc, reg_t *argv) {
-	// Can be called with 7 or 8 parameters
-	// The style defines which transition to perform. Related to the transition
-	// tables inside graphics/transitions.cpp
-	uint16 showStyle = argv[0].toUint16();	// 0 - 15
-	reg_t planeObj = argv[1];	// the affected plane
-	Common::String planeObjName = s->_segMan->getObjectName(planeObj);
-	uint16 seconds = argv[2].toUint16();	// seconds that the transition lasts
-	uint16 backColor =  argv[3].toUint16();	// target back color(?). When fading out, it's 0x0000. When fading in, it's 0xffff
-	int16 priority = argv[4].toSint16();	// always 0xc8 (200) when fading in/out
-	uint16 animate = argv[5].toUint16();	// boolean, animate or not while the transition lasts
-	uint16 refFrame = argv[6].toUint16();	// refFrame, always 0 when fading in/out
+	ShowStyleType type = (ShowStyleType)argv[0].toUint16();
+	reg_t planeObj = argv[1];
+	int16 seconds = argv[2].toSint16();
+	// NOTE: This value seems to indicate whether the transition is an
+	// “exit” transition (0) or an “enter” transition (-1) for fade
+	// transitions. For other types of transitions, it indicates a palette
+	// index value to use when filling the screen.
+	int16 back = argv[3].toSint16();
+	int16 priority = argv[4].toSint16();
+	int16 animate = argv[5].toSint16();
+	// TODO: Rename to frameOutNow?
+	int16 refFrame = argv[6].toSint16();
+	int16 blackScreen;
+	reg_t pFadeArray;
 	int16 divisions;
 
-	// If the game has the pFadeArray selector, another parameter is used here,
-	// before the optional last parameter
-	bool hasFadeArray = g_sci->getKernel()->findSelector("pFadeArray") > 0;
-	if (hasFadeArray) {
-		// argv[7]
-		divisions = (argc >= 9) ? argv[8].toSint16() : -1;	// divisions (transition steps?)
-	} else {
-		divisions = (argc >= 8) ? argv[7].toSint16() : -1;	// divisions (transition steps?)
+	// SCI 2–2.1early
+	if (getSciVersion() < SCI_VERSION_2_1_MIDDLE) {
+		blackScreen = 0;
+		pFadeArray = NULL_REG;
+		divisions = argc > 7 ? argv[7].toSint16() : -1;
+	}
+	// SCI 2.1mid–2.1late
+	else if (getSciVersion() < SCI_VERSION_3) {
+		blackScreen = 0;
+		pFadeArray = argc > 7 ? argv[7] : NULL_REG;
+		divisions = argc > 8 ? argv[8].toSint16() : -1;
+	}
+	// SCI 3
+	else {
+		blackScreen = argv[7].toSint16();
+		pFadeArray = argc > 8 ? argv[8] : NULL_REG;
+		divisions = argc > 9 ? argv[9].toSint16() : -1;
 	}
 
-	if (showStyle > 15) {
-		warning("kSetShowStyle: Illegal style %d for plane %04x:%04x", showStyle, PRINT_REG(planeObj));
-		return s->r_acc;
-	}
+// TODO: Reuse later for SCI2 and SCI3 implementation and then discard
+//	warning("kSetShowStyle: effect %d, plane: %04x:%04x (%s), sec: %d, "
+//			"dir: %d, prio: %d, animate: %d, ref frame: %d, black screen: %d, "
+//			"pFadeArray: %04x:%04x (%s), divisions: %d",
+//			type, PRINT_REG(planeObj), s->_segMan->getObjectName(planeObj), seconds,
+//			back, priority, animate, refFrame, blackScreen,
+//			PRINT_REG(pFadeArray), s->_segMan->getObjectName(pFadeArray), divisions);
 
-	// GK1 calls fadeout (13) / fadein (14) with the following parameters:
-	// seconds: 1
-	// backColor: 0 / -1
-	// fade: 200
-	// animate: 0
-	// refFrame: 0
-	// divisions: 0 / 20
+	// NOTE: The order of planeObj and showStyle are reversed
+	// because this is how SCI3 called the corresponding method
+	// on the KernelMgr
+	g_sci->_gfxFrameout->kernelSetShowStyle(argc, planeObj, type, seconds, back, priority, animate, refFrame, pFadeArray, divisions, blackScreen);
 
-	// TODO: Check if the plane is in the list of planes to draw
-
-	Common::String effectName = "unknown";
-
-	switch (showStyle) {
-	case 0:		// no transition / show
-		effectName = "show";
-		break;
-	case 13:	// fade out
-		effectName = "fade out";
-		// TODO
-		break;
-	case 14:	// fade in
-		effectName = "fade in";
-		// TODO
-		break;
-	default:
-		// TODO
-		break;
-	}
-
-	warning("kSetShowStyle: effect %d (%s) - plane: %04x:%04x (%s), sec: %d, "
-			"back: %d, prio: %d, animate: %d, ref frame: %d, divisions: %d",
-			showStyle, effectName.c_str(), PRINT_REG(planeObj), planeObjName.c_str(),
-			seconds, backColor, priority, animate, refFrame, divisions);
-	return s->r_acc;
+	return NULL_REG;
 }
 
 reg_t kCelInfo(EngineState *s, int argc, reg_t *argv) {
@@ -358,6 +325,39 @@ reg_t kCelInfo(EngineState *s, int argc, reg_t *argv) {
 	}
 }
 
+reg_t kScrollWindow(EngineState *s, int argc, reg_t *argv) {
+	if (!s)
+		return make_reg(0, getSciVersion());
+	error("not supposed to call this");
+}
+
+reg_t kScrollWindowCreate(EngineState *s, int argc, reg_t *argv) {
+	debug("kScrollWindowCreate");
+	kStub(s, argc, argv);
+	return argv[0];
+}
+
+reg_t kScrollWindowAdd(EngineState *s, int argc, reg_t *argv) {
+	debug("kScrollWindowAdd");
+	return kStubNull(s, argc, argv);
+}
+
+reg_t kScrollWindowWhere(EngineState *s, int argc, reg_t *argv) {
+	debug("kScrollWindowWhere");
+	return kStubNull(s, argc, argv);
+}
+
+reg_t kScrollWindowShow(EngineState *s, int argc, reg_t *argv) {
+	debug("kScrollWindowShow");
+	return kStubNull(s, argc, argv);
+}
+
+reg_t kScrollWindowDestroy(EngineState *s, int argc, reg_t *argv) {
+	debug("kScrollWindowDestroy");
+	return kStubNull(s, argc, argv);
+}
+
+#if 0
 reg_t kScrollWindow(EngineState *s, int argc, reg_t *argv) {
 	// Used by SQ6 and LSL6 hires for the text area in the bottom of the
 	// screen. The relevant scripts also exist in Phantasmagoria 1, but they're
@@ -465,38 +465,34 @@ reg_t kScrollWindow(EngineState *s, int argc, reg_t *argv) {
 
 	return s->r_acc;
 }
-
-reg_t kSetFontRes(EngineState *s, int argc, reg_t *argv) {
-	// TODO: This defines the resolution that the fonts are supposed to be displayed
-	// in. Currently, this is only used for showing high-res fonts in GK1 Mac, but
-	// should be extended to handle other font resolutions such as those
-
-	int xResolution = argv[0].toUint16();
-	//int yResolution = argv[1].toUint16();
-
-	g_sci->_gfxScreen->setFontIsUpscaled(xResolution == 640 &&
-			g_sci->_gfxScreen->getUpscaledHires() != GFX_SCREEN_UPSCALED_DISABLED);
-
-	return s->r_acc;
-}
+#endif
 
 reg_t kFont(EngineState *s, int argc, reg_t *argv) {
-	// Handle font settings for SCI2.1
+	// TODO: Handle font settings for SCI2.1
 
 	switch (argv[0].toUint16()) {
 	case 1:
-		// Set font resolution
-		return kSetFontRes(s, argc - 1, argv + 1);
+		g_sci->_gfxText32->_scaledWidth = argv[1].toUint16();
+		g_sci->_gfxText32->_scaledHeight = argv[2].toUint16();
+		return NULL_REG;
 	default:
-		warning("kFont: unknown subop %d", argv[0].toUint16());
+		error("kFont: unknown subop %d", argv[0].toUint16());
 	}
 
 	return s->r_acc;
 }
 
+reg_t kSetFontRes(EngineState *s, int argc, reg_t *argv) {
+	g_sci->_gfxText32->_scaledWidth = argv[0].toUint16();
+	g_sci->_gfxText32->_scaledHeight = argv[1].toUint16();
+	return NULL_REG;
+}
+
 // TODO: Eventually, all of the kBitmap operations should be put
 // in a separate class
 
+// NOTE: This size is correct only for SCI2.1mid; the size for
+// SCI2/2.1early is 36
 #define BITMAP_HEADER_SIZE 46
 
 reg_t kBitmap(EngineState *s, int argc, reg_t *argv) {
@@ -525,8 +521,16 @@ reg_t kBitmap(EngineState *s, int argc, reg_t *argv) {
 		memset(memoryPtr + BITMAP_HEADER_SIZE, back, width * height);
 		// Save totalWidth, totalHeight
 		// TODO: Save the whole bitmap header, like SSCI does
-		WRITE_LE_UINT16(memoryPtr, width);
-		WRITE_LE_UINT16(memoryPtr + 2, height);
+		WRITE_SCI11ENDIAN_UINT16(memoryPtr, width);
+		WRITE_SCI11ENDIAN_UINT16(memoryPtr + 2, height);
+		WRITE_SCI11ENDIAN_UINT16(memoryPtr + 4, 0);
+		WRITE_SCI11ENDIAN_UINT16(memoryPtr + 6, 0);
+		memoryPtr[8] = 0;
+		WRITE_SCI11ENDIAN_UINT16(memoryPtr + 10, 0);
+		WRITE_SCI11ENDIAN_UINT16(memoryPtr + 20, BITMAP_HEADER_SIZE);
+		WRITE_SCI11ENDIAN_UINT32(memoryPtr + 28, 46);
+		WRITE_SCI11ENDIAN_UINT16(memoryPtr + 36, width);
+		WRITE_SCI11ENDIAN_UINT16(memoryPtr + 38, width);
 		return memoryId;
 		}
 		break;
@@ -673,6 +677,8 @@ reg_t kEditText(EngineState *s, int argc, reg_t *argv) {
 }
 
 reg_t kAddLine(EngineState *s, int argc, reg_t *argv) {
+	return kStub(s, argc, argv);
+#if 0
 	reg_t plane = argv[0];
 	Common::Point startPoint(argv[1].toUint16(), argv[2].toUint16());
 	Common::Point endPoint(argv[3].toUint16(), argv[4].toUint16());
@@ -681,10 +687,15 @@ reg_t kAddLine(EngineState *s, int argc, reg_t *argv) {
 	byte priority = (byte)argv[7].toUint16();
 	byte control = (byte)argv[8].toUint16();
 	// argv[9] is unknown (usually a small number, 1 or 2). Thickness, perhaps?
-	return g_sci->_gfxFrameout->addPlaneLine(plane, startPoint, endPoint, color, priority, control);
+//	return g_sci->_gfxFrameout->addPlaneLine(plane, startPoint, endPoint, color, priority, control);
+	return s->r_acc;
+#endif
 }
 
 reg_t kUpdateLine(EngineState *s, int argc, reg_t *argv) {
+	return kStub(s, argc, argv);
+
+#if 0
 	reg_t hunkId = argv[0];
 	reg_t plane = argv[1];
 	Common::Point startPoint(argv[2].toUint16(), argv[3].toUint16());
@@ -694,14 +705,18 @@ reg_t kUpdateLine(EngineState *s, int argc, reg_t *argv) {
 	byte priority = (byte)argv[8].toUint16();
 	byte control = (byte)argv[9].toUint16();
 	// argv[10] is unknown (usually a small number, 1 or 2). Thickness, perhaps?
-	g_sci->_gfxFrameout->updatePlaneLine(plane, hunkId, startPoint, endPoint, color, priority, control);
+//	g_sci->_gfxFrameout->updatePlaneLine(plane, hunkId, startPoint, endPoint, color, priority, control);
 	return s->r_acc;
+#endif
 }
 reg_t kDeleteLine(EngineState *s, int argc, reg_t *argv) {
+	return kStub(s, argc, argv);
+#if 0
 	reg_t hunkId = argv[0];
 	reg_t plane = argv[1];
-	g_sci->_gfxFrameout->deletePlaneLine(plane, hunkId);
+//	g_sci->_gfxFrameout->deletePlaneLine(plane, hunkId);
 	return s->r_acc;
+#endif
 }
 
 reg_t kSetScroll(EngineState *s, int argc, reg_t *argv) {
@@ -730,12 +745,7 @@ reg_t kSetScroll(EngineState *s, int argc, reg_t *argv) {
 
 // Used by SQ6, script 900, the datacorder reprogramming puzzle (from room 270)
 reg_t kMorphOn(EngineState *s, int argc, reg_t *argv) {
-	// TODO: g_sci->_gfxManager->palMorphIsOn = true
-	// This function sets the palMorphIsOn flag which causes kFrameOut to use
-	// an alternative FrameOut function (GraphicsMgr::PalMorphFrameOut instead
-	// of GraphicsMgr::FrameOut). At the end of the frame, kFrameOut sets the
-	// palMorphIsOn flag back to false.
-	kStub(s, argc, argv);
+	g_sci->_gfxFrameout->_palMorphIsOn = true;
 	return NULL_REG;
 }
 

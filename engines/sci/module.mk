@@ -81,10 +81,13 @@ MODULE_OBJS := \
 ifdef ENABLE_SCI32
 MODULE_OBJS += \
 	engine/kgraphics32.o \
+	graphics/celobj32.o \
 	graphics/controls32.o \
 	graphics/frameout.o \
 	graphics/paint32.o \
+	graphics/plane32.o \
 	graphics/palette32.o \
+	graphics/screen_item32.o\
 	graphics/text32.o \
 	video/robot_decoder.o
 endif

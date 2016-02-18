@@ -146,6 +146,7 @@ struct SelectorCache {
 	Selector back;
 	Selector skip;
 	Selector dimmed;
+	Selector borderColor;
 
 	Selector fixPriority;
 	Selector mirrored;
@@ -153,6 +154,9 @@ struct SelectorCache {
 
 	Selector useInsetRect;
 	Selector inTop, inLeft, inBottom, inRight;
+	Selector textTop, textLeft, textBottom, textRight;
+
+	Selector magnifier;
 #endif
 };
 

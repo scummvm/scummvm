@@ -210,6 +210,20 @@ reg_t reg_t::operator^(const reg_t right) const {
 		return lookForWorkaround(right, "bitwise XOR");
 }
 
+#ifdef ENABLE_SCI32
+reg_t reg_t::operator&(int16 right) const {
+	return *this & make_reg(0, right);
+}
+
+reg_t reg_t::operator|(int16 right) const {
+	return *this | make_reg(0, right);
+}
+
+reg_t reg_t::operator^(int16 right) const {
+	return *this ^ make_reg(0, right);
+}
+#endif
+
 int reg_t::cmp(const reg_t right, bool treatAsUnsigned) const {
 	if (getSegment() == right.getSegment()) { // can compare things in the same segment
 		if (treatAsUnsigned || !isNumber())
