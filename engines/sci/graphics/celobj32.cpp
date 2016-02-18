@@ -51,11 +51,13 @@ void CelScaler::activateScaleTables(const Ratio &scaleX, const Ratio &scaleY) {
 	if (table.scaleX != scaleX) {
 		assert(screenWidth <= ARRAYSIZE(table.valuesX));
 		buildLookupTable(table.valuesX, scaleX, screenWidth);
+		table.scaleX = scaleX;
 	}
 
 	if (table.scaleY != scaleY) {
 		assert(screenHeight <= ARRAYSIZE(table.valuesY));
 		buildLookupTable(table.valuesY, scaleY, screenHeight);
+		table.scaleY = scaleY;
 	}
 }
 
