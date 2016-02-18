@@ -998,9 +998,9 @@ void ResourceManager::addToLRU(Resource *res) {
 	_LRU.push_front(res);
 	_memoryLRU += res->size;
 #if SCI_VERBOSE_RESMAN
-	debug("Adding %s.%03d (%d bytes) to lru control: %d bytes total",
-	      getResourceTypeName(res->type), res->number, res->size,
-	      mgr->_memoryLRU);
+	debug("Adding %s (%d bytes) to lru control: %d bytes total",
+	      res->_id.toString().c_str(), res->size,
+	      _memoryLRU);
 #endif
 	res->_status = kResStatusEnqueued;
 }
@@ -1029,7 +1029,7 @@ void ResourceManager::freeOldResources() {
 		removeFromLRU(goner);
 		goner->unalloc();
 #ifdef SCI_VERBOSE_RESMAN
-		debug("resMan-debug: LRU: Freeing %s.%03d (%d bytes)", getResourceTypeName(goner->type), goner->number, goner->size);
+		debug("resMan-debug: LRU: Freeing %s (%d bytes)", goner->_id.toString().c_str(), goner->size);
 #endif
 	}
 }
