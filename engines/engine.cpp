@@ -292,7 +292,7 @@ void splashScreen() {
 	Common::Event event;
 	while (time0 + 600 > g_system->getMillis()) {
 		g_system->updateScreen();
-		g_system->getEventManager()->pollEvent(event);
+		(void)g_system->getEventManager()->pollEvent(event);
 		g_system->delayMillis(10);
 	}
 	g_system->hideOverlay();
