@@ -49,10 +49,19 @@ static const AgiAppleIIgsDelayOverwriteRoomEntry appleIIgsDelayOverwriteKQ4[] = 
 };
 
 static const AgiAppleIIgsDelayOverwriteRoomEntry appleIIgsDelayOverwriteMH1[] = {
-	{ 153, 153,  2, true }, // Intro w/ credits
-	{ 104, 104,  2, true }, // Intro cutscene
-	{ 117, 117,  2, true }, // Intro cutscene (ego waking up)
-	// Room 124+125 are MAD rooms, those seem to work at a proper speed
+	//{ 153, 153,  2, false }, // Intro w/ credits
+	//{ 104, 104,  2, false }, // Intro cutscene
+	//{ 117, 117,  2, false }, // Intro cutscene (ego waking up)
+	{ 114, 114  -1, false }, // interactive MAD map
+	{ 124, 125, -1, false }, // MAD during intro (tracking), seem to work properly at given speed
+	{ 132, 133, -1, false }, // MAD day 2 intro (tracking)
+	{ 137, 137, -1, false }, // Night Club 4th arcade game - game sets speed to 7
+	{ 115, 116, -1, false }, // MAD day 3 intro (tracking)
+	{ 148, 148, -1, false }, // day 3: arcade sequence under pawn shop (game sets speed to 6)
+	{ 103, 103, -1, false }, // MAD day 4 intro (tracking)
+	{ 105, 105, -1, false }, // day 4 tracking mini game right at the start (game sets speed to 3)
+	{ 107, 107, -1, false }, // MAD day 4 intro (tracking)
+	{ 112, 112, -1, false }, // MAD day 4 intro (tracking)
 	{  -1,  -1, -1, false }
 };
 
@@ -69,7 +78,7 @@ static const AgiAppleIIgsDelayOverwriteGameEntry appleIIgsDelayOverwriteGameTabl
 	{ GID_KQ3,        2, nullptr },
 	{ GID_KQ4,        2, appleIIgsDelayOverwriteKQ4 },
 	{ GID_LSL1,       2, nullptr }, // Switch Larry 1 to 10 cycles per second (that's around PC Larry 1's "normal" speed
-	{ GID_MH1,       -1, appleIIgsDelayOverwriteMH1 }, // NEEDS TESTING
+	{ GID_MH1,        2, appleIIgsDelayOverwriteMH1 }, // NEEDS TESTING
 	{ GID_MIXEDUP,    2, nullptr },
 	{ GID_PQ1,        2, nullptr },
 	{ GID_SQ1,        2, nullptr }, // completed, no issues using these settings
