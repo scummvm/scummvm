@@ -52,7 +52,7 @@ static const AgiAppleIIgsDelayOverwriteRoomEntry appleIIgsDelayOverwriteMH1[] = 
 	//{ 153, 153,  2, false }, // Intro w/ credits
 	//{ 104, 104,  2, false }, // Intro cutscene
 	//{ 117, 117,  2, false }, // Intro cutscene (ego waking up)
-	{ 114, 114  -1, false }, // interactive MAD map
+	{ 114, 114, -1, false }, // interactive MAD map
 	{ 124, 125, -1, false }, // MAD during intro (tracking), seem to work properly at given speed
 	{ 132, 133, -1, false }, // MAD day 2 intro (tracking)
 	{ 137, 137, -1, false }, // Night Club 4th arcade game - game sets speed to 7
