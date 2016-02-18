@@ -29,6 +29,7 @@ struct AgiAppleIIgsDelayOverwriteRoomEntry {
 	int16 fromRoom;
 	int16 toRoom;
 	int16 timeDelayOverwrite; // time delay here is like on PC, so 0 - unlimited, 1 - 20 cycles, 2 - 10 cycles
+	bool onlyWhenPlayerNotInControl;
 };
 
 struct AgiAppleIIgsDelayOverwriteGameEntry {
@@ -38,36 +39,41 @@ struct AgiAppleIIgsDelayOverwriteGameEntry {
 };
 
 static const AgiAppleIIgsDelayOverwriteRoomEntry appleIIgsDelayOverwriteKQ4[] = {
-	{ 120, 121, -1 }, // Part of the intro: Graham gets his hat, throws it and breaks down, don't touch speed
-	{  -1,  -1, -1 }
+	{ 120, 121, -1, true }, // Part of the intro: Graham gets his hat, throws it and breaks down, don't touch speed (3 is set)
+	{ 128, 128, -1, true }, // Part of the intro: first actual room for gameplay, but during intro, don't touch speed (3 is set)
+	{  92,  92, -1, true }, // Part of caught by gargoyle w/ Lolotte cutscene (3 is set)
+	// room 54 sets the speed for a short time to 3 right after entering "clean" command. It doesn't seem to hurt that we switch it down to 2
+	// room 92 is dual use, part of cutscenes, part of gameplay, that's why we only stop touching it, when player is not in control
+	{ 135, 135, -1, true }, // Part of ending cutscene. Don't touch speed (3 is set)
+	{  -1,  -1, -1, false }
 };
 
 static const AgiAppleIIgsDelayOverwriteRoomEntry appleIIgsDelayOverwriteMH1[] = {
-	{ 153, 153,  2 }, // Intro w/ credits
-	{ 104, 104,  2 }, // Intro cutscene
-	{ 117, 117,  2 }, // Intro cutscene (ego waking up)
+	{ 153, 153,  2, true }, // Intro w/ credits
+	{ 104, 104,  2, true }, // Intro cutscene
+	{ 117, 117,  2, true }, // Intro cutscene (ego waking up)
 	// Room 124+125 are MAD rooms, those seem to work at a proper speed
-	{  -1,  -1, -1 }
+	{  -1,  -1, -1, false }
 };
 
 static const AgiAppleIIgsDelayOverwriteRoomEntry appleIIgsDelayOverwriteSQ2[] = {
-	{   1,   1, -1 }, // Intro: space ship entering space port, don't touch speed
-	{  -1,  -1, -1 }
+	{   1,   1, -1, false }, // Intro: space ship entering space port, don't touch speed
+	{  -1,  -1, -1, false }
 };
 
 static const AgiAppleIIgsDelayOverwriteGameEntry appleIIgsDelayOverwriteGameTable[] = {
 	{ GID_BC,         2, nullptr }, // NEEDS TESTING
 	{ GID_GOLDRUSH,   2, nullptr }, // NEEDS TESTING
-	{ GID_KQ1,        2, nullptr }, // NEEDS TESTING
-	// KQ2 seems to work fine at speed given by scripts (NEEDS FURTHER TESTING)
-	{ GID_KQ3,        2, nullptr }, // NEEDS TESTING
-	{ GID_KQ4,        2, appleIIgsDelayOverwriteKQ4 }, // NEEDS TESTING
+	{ GID_KQ1,        2, nullptr },
+	// KQ2 seems to work fine at speed given by scripts
+	{ GID_KQ3,        2, nullptr },
+	{ GID_KQ4,        2, appleIIgsDelayOverwriteKQ4 },
 	{ GID_LSL1,       2, nullptr }, // Switch Larry 1 to 10 cycles per second (that's around PC Larry 1's "normal" speed
 	{ GID_MH1,       -1, appleIIgsDelayOverwriteMH1 }, // NEEDS TESTING
-	{ GID_MIXEDUP,    2, nullptr }, // NEEDS TESTING
-	{ GID_PQ1,        2, nullptr }, // NEEDS TESTING
+	{ GID_MIXEDUP,    2, nullptr },
+	{ GID_PQ1,        2, nullptr },
 	{ GID_SQ1,        2, nullptr }, // completed, no issues using these settings
-	{ GID_SQ2,        2, appleIIgsDelayOverwriteSQ2 }, // NEEDS TESTING
+	{ GID_SQ2,        2, appleIIgsDelayOverwriteSQ2 },
 	{ GID_AGIDEMO,   -1, nullptr }
 };
 

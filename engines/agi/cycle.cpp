@@ -379,6 +379,13 @@ int AgiEngine::playGame() {
 				appleIIgsDelayRoomOverwrite = appleIIgsDelayOverwrite->roomTable;
 				while (appleIIgsDelayRoomOverwrite->fromRoom >= 0) {
 					if ((appleIIgsDelayRoomOverwrite->fromRoom <= curRoom) && (appleIIgsDelayRoomOverwrite->toRoom >= curRoom)) {
+						if (appleIIgsDelayRoomOverwrite->onlyWhenPlayerNotInControl) {
+							if (_game.playerControl) {
+								// Player is actually currently in control? -> then skip this entry
+								appleIIgsDelayRoomOverwrite++;
+								continue;
+							}
+						}
 						timeDelayOverwrite = appleIIgsDelayRoomOverwrite->timeDelayOverwrite;
 						break;
 					}
