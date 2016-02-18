@@ -97,6 +97,178 @@ void CelObj::deinit() {
 	_cache = nullptr;
 }
 
+#pragma mark -
+#pragma mark CelObj - Scalers
+
+template <bool FLIP, typename READER>
+struct SCALER_NoScale {
+	const byte *_row;
+	READER _reader;
+	const int16 _lastIndex;
+
+	SCALER_NoScale(const CelObj &celObj, const int16 maxWidth) :
+	_reader(celObj, maxWidth),
+	_lastIndex(maxWidth - 1) {}
+
+	inline void setSource(const int16 x, const int16 y) {
+		_row = _reader.getRow(y);
+
+		if (FLIP) {
+			_row += _lastIndex - x;
+		} else {
+			_row += x;
+		}
+	}
+
+	inline byte read() {
+		if (FLIP) {
+			return *_row--;
+		} else {
+			return *_row++;
+		}
+	}
+};
+
+template<bool FLIP, typename READER>
+struct SCALER_Scale {
+	const byte *_row;
+	READER _reader;
+	const CelScalerTable *_table;
+	int16 _x;
+	const uint16 _lastIndex;
+
+	SCALER_Scale(const CelObj &celObj, const int16 maxWidth, const Ratio scaleX, const Ratio scaleY) :
+	// The maximum width of the scaled object may not be as
+	// wide as the source data it requires if downscaling,
+	// so just always make the reader decompress an entire
+	// line of source data when scaling
+	_reader(celObj, celObj._width),
+	_lastIndex(maxWidth - 1),
+	_table(CelObj::_scaler->getScalerTable(scaleX, scaleY)) {}
+
+	inline void setSource(const int16 x, const int16 y) {
+		_row = _reader.getRow(_table->valuesY[y]);
+		if (FLIP) {
+			_x = _lastIndex - x;
+		} else {
+			_x = x;
+		}
+	}
+
+	inline byte read() {
+		if (FLIP) {
+			return _row[_table->valuesX[_x--]];
+		} else {
+			return _row[_table->valuesX[_x++]];
+		}
+	}
+};
+
+#pragma mark -
+#pragma mark CelObj - Resource readers
+
+struct READER_Uncompressed {
+private:
+	byte *_pixels;
+	const int16 _sourceWidth;
+	const int16 _maxWidth;
+
+public:
+	READER_Uncompressed(const CelObj &celObj, const int16 maxWidth) :
+	_sourceWidth(celObj._width),
+	_maxWidth(maxWidth) {
+		byte *resource = celObj.getResPointer();
+		_pixels = resource + READ_SCI11ENDIAN_UINT32(resource + celObj._celHeaderOffset + 24);
+	}
+
+	inline const byte *getRow(const int16 y) const {
+		return _pixels + y * _sourceWidth;
+	}
+};
+
+struct READER_Compressed {
+private:
+	byte *_resource;
+	byte _buffer[1024];
+	uint32 _controlOffset;
+	uint32 _dataOffset;
+	uint32 _uncompressedDataOffset;
+	int16 _y;
+	const int16 _sourceHeight;
+	const uint8 _transparentColor;
+	const int16 _maxWidth;
+
+public:
+	READER_Compressed(const CelObj &celObj, const int16 maxWidth) :
+	_y(-1),
+	_maxWidth(maxWidth),
+	_resource(celObj.getResPointer()),
+	_sourceHeight(celObj._height),
+	_transparentColor(celObj._transparentColor) {
+		assert(_maxWidth <= celObj._width);
+
+		byte *celHeader = _resource + celObj._celHeaderOffset;
+		_dataOffset = READ_SCI11ENDIAN_UINT32(celHeader + 24);
+		_uncompressedDataOffset = READ_SCI11ENDIAN_UINT32(celHeader + 28);
+		_controlOffset = READ_SCI11ENDIAN_UINT32(celHeader + 32);
+	}
+
+	inline const byte *getRow(const int16 y) {
+		if (y != _y) {
+			// compressed data segment for row
+			byte *row = _resource + _dataOffset + READ_SCI11ENDIAN_UINT32(_resource + _controlOffset + y * 4);
+
+			// uncompressed data segment for row
+			byte *literal = _resource + _uncompressedDataOffset + READ_SCI11ENDIAN_UINT32(_resource + _controlOffset + _sourceHeight * 4 + y * 4);
+
+			uint8 length;
+			for (int i = 0; i < _maxWidth; i += length) {
+				byte controlByte = *row++;
+				length = controlByte;
+
+				// Run-length encoded
+				if (controlByte & 0x80) {
+					length &= 0x3F;
+					assert(i + length < (int)sizeof(_buffer));
+
+					// Fill with skip color
+					if (controlByte & 0x40) {
+						memset(_buffer + i, _transparentColor, length);
+					// Next value is fill colour
+					} else {
+						memset(_buffer + i, *literal, length);
+						++literal;
+					}
+				// Uncompressed
+				} else {
+					assert(i + length < (int)sizeof(_buffer));
+					memcpy(_buffer + i, literal, length);
+					literal += length;
+				}
+			}
+			_y = y;
+		}
+
+		return _buffer;
+	}
+};
+
+#pragma mark -
+#pragma mark CelObj - Remappers
+
+struct MAPPER_NoMD {
+	inline void draw(byte *target, const byte pixel, const uint8 skipColor) const {
+		if (pixel != skipColor) {
+			*target = pixel;
+		}
+	}
+};
+struct MAPPER_NoMDNoSkip {
+	inline void draw(byte *target, const byte pixel, const uint8) const {
+		*target = pixel;
+	}
+};
+
 void CelObj::draw(Buffer &target, const ScreenItem &screenItem, const Common::Rect &targetRect) const {
 	const Buffer &priorityMap = g_sci->_gfxFrameout->getPriorityMap();
 	const Common::Point &scaledPosition = screenItem._scaledPosition;
@@ -105,7 +277,7 @@ void CelObj::draw(Buffer &target, const ScreenItem &screenItem, const Common::Re
 
 	if (_remap) {
 		if (g_sci->_gfxFrameout->_hasRemappedScreenItem) {
-			const uint8 priority = MAX((uint8)0, MIN((uint8)255, (uint8)screenItem._priority));
+			const uint8 priority = MAX((int16)0, MIN((int16)255, screenItem._priority));
 
 			// NOTE: In the original engine code, there was a second branch for
 			// _remap here that would then call the following functions if _remap was false:
@@ -193,7 +365,7 @@ void CelObj::draw(Buffer &target, const ScreenItem &screenItem, const Common::Re
 		}
 	} else {
 		if (g_sci->_gfxFrameout->_hasRemappedScreenItem) {
-			const uint8 priority = MAX((uint8)0, MIN((uint8)255, (uint8)screenItem._priority));
+			const uint8 priority = MAX((int16)0, MIN((int16)255, screenItem._priority));
 			if (scaleX.isOne() && scaleY.isOne()) {
 				if (_compressionType == kCelCompressionNone) {
 					if (_drawMirrored) {
@@ -309,57 +481,16 @@ void CelObj::drawTo(Buffer &target, Common::Rect const &targetRect, Common::Poin
 }
 
 uint8 CelObj::readPixel(uint16 x, const uint16 y, bool mirrorX) const {
-	byte *resource = getResPointer();
-	byte *celHeader = resource + _celHeaderOffset;
-
 	if (mirrorX) {
 		x = _width - x - 1;
 	}
 
 	if (_compressionType == kCelCompressionNone) {
-		byte *pixels = resource + READ_SCI11ENDIAN_UINT32(celHeader + 24);
-		return pixels[y * _width + x];
+		READER_Uncompressed reader(*this, x + 1);
+		return reader.getRow(y)[x];
 	} else {
-		byte buffer[1024];
-
-		uint32 dataOffset = READ_SCI11ENDIAN_UINT32(celHeader + 24);
-		uint32 uncompressedDataOffset = READ_SCI11ENDIAN_UINT32(celHeader + 28);
-		uint32 controlOffset = READ_SCI11ENDIAN_UINT32(celHeader + 32);
-
-		// compressed data segment for row
-		byte *row = resource + dataOffset + READ_SCI11ENDIAN_UINT32(resource + controlOffset + y * 4);
-
-		// uncompressed data segment for row
-		byte *literal = resource + uncompressedDataOffset + READ_SCI11ENDIAN_UINT32(resource + controlOffset + _height * 4 + y * 4);
-
-		uint8 length;
-		byte controlByte;
-		for (uint i = 0; i <= x; i += length) {
-			controlByte = *row++;
-			length = controlByte;
-
-			// Run-length encoded
-			if (controlByte & 0x80) {
-				length &= 0x3F;
-				assert(i + length < sizeof(buffer));
-
-				// Fill with skip color
-				if (controlByte & 0x40) {
-					memset(buffer + i, _transparentColor, length);
-				// Next value is fill colour
-				} else {
-					memset(buffer + i, *literal, length);
-					++literal;
-				}
-			// Uncompressed
-			} else {
-				assert(i + length < sizeof(buffer));
-				memcpy(buffer + i, literal, length);
-				literal += length;
-			}
-		}
-
-		return buffer[x];
+		READER_Compressed reader(*this, x + 1);
+		return reader.getRow(y)[x];
 	}
 }
 
@@ -425,6 +556,57 @@ void CelObj::putCopyInCache(const int cacheIndex) const {
 
 #pragma mark -
 #pragma mark CelObj - Drawing
+
+template <typename MAPPER, typename SCALER>
+struct RENDERER {
+	MAPPER &_mapper;
+	SCALER &_scaler;
+	const uint8 _skipColor;
+
+	RENDERER(MAPPER &mapper, SCALER &scaler, const uint8 skipColor) :
+	_mapper(mapper),
+	_scaler(scaler),
+	_skipColor(skipColor) {}
+
+	inline void draw(Buffer &target, const Common::Rect &targetRect, const Common::Point &scaledPosition) const {
+		const int16 sourceX = targetRect.left - scaledPosition.x;
+		const int16 sourceY = targetRect.top - scaledPosition.y;
+
+		byte *targetPixel = (byte *)target.getPixels() + target.screenWidth * targetRect.top + targetRect.left;
+
+		const int16 skipStride = target.screenWidth - targetRect.width();
+		const int16 targetWidth = targetRect.width();
+		const int16 targetHeight = targetRect.height();
+		for (int y = 0; y < targetHeight; ++y) {
+			_scaler.setSource(sourceX, sourceY + y);
+
+			for (int x = 0; x < targetWidth; ++x) {
+				_mapper.draw(targetPixel++, _scaler.read(), _skipColor);
+			}
+
+			targetPixel += skipStride;
+		}
+	}
+};
+
+template <typename MAPPER, typename SCALER>
+void CelObj::render(Buffer &target, const Common::Rect &targetRect, const Common::Point &scaledPosition) const {
+
+	MAPPER mapper;
+	SCALER scaler(*this, targetRect.left - scaledPosition.x + targetRect.width());
+	RENDERER<MAPPER, SCALER> renderer(mapper, scaler, _transparentColor);
+	renderer.draw(target, targetRect, scaledPosition);
+}
+
+template <typename MAPPER, typename SCALER>
+void CelObj::render(Buffer &target, const Common::Rect &targetRect, const Common::Point &scaledPosition, const Ratio &scaleX, const Ratio &scaleY) const {
+
+	MAPPER mapper;
+	SCALER scaler(*this, targetRect.left - scaledPosition.x + targetRect.width(), scaleX, scaleY);
+	RENDERER<MAPPER, SCALER> renderer(mapper, scaler, _transparentColor);
+	renderer.draw(target, targetRect, scaledPosition);
+}
+
 void dummyFill(Buffer &target, const Common::Rect &targetRect) {
 	target.fillRect(targetRect, 250);
 }
@@ -477,173 +659,42 @@ void CelObj::scaleDrawUncompMap(Buffer &target, const Ratio &scaleX, const Ratio
 	debug("scaleDrawUncompMap");
 	dummyFill(target, targetRect);
 }
-void CelObj::drawHzFlipNoMD(Buffer &target, const Common::Rect &targetRect, const Common::Point &scaledPosition) const {
-	debug("drawHzFlipNoMD");
-	dummyFill(target, targetRect);
-}
+
 void CelObj::drawNoFlipNoMD(Buffer &target, const Common::Rect &targetRect, const Common::Point &scaledPosition) const {
-	const int sourceX = targetRect.left - scaledPosition.x;
-	const int sourceY = targetRect.top - scaledPosition.y;
-
-	byte *targetPixel = (byte *)target.getPixels() + (targetRect.top * target.screenWidth) + targetRect.left;
-
-	const int stride = target.screenWidth - targetRect.width();
-
-	byte *resource = getResPointer();
-	byte *celHeader = resource + _celHeaderOffset;
-
-	byte buffer[1024];
-
-	uint32 dataOffset = READ_SCI11ENDIAN_UINT32(celHeader + 24);
-	uint32 uncompressedDataOffset = READ_SCI11ENDIAN_UINT32(celHeader + 28);
-	uint32 controlOffset = READ_SCI11ENDIAN_UINT32(celHeader + 32);
-
-	for (int y = sourceY; y < sourceY + targetRect.height(); ++y) {
-		// compressed data segment for row
-		byte *row = resource + dataOffset + READ_SCI11ENDIAN_UINT32(resource + controlOffset + y * 4);
-
-		// uncompressed data segment for row
-		byte *literal = resource + uncompressedDataOffset + READ_SCI11ENDIAN_UINT32(resource + controlOffset + _height * 4 + y * 4);
-
-		uint8 length;
-		byte controlByte;
-		for (int i = 0; i <= targetRect.width(); i += length) {
-			controlByte = *row++;
-			length = controlByte;
-
-			// Run-length encoded
-			if (controlByte & 0x80) {
-				length &= 0x3F;
-				assert(i + length < (int)sizeof(buffer));
-
-				// Fill with skip color
-				if (controlByte & 0x40) {
-					memset(buffer + i, _transparentColor, length);
-					// Next value is fill colour
-				} else {
-					memset(buffer + i, *literal, length);
-					++literal;
-				}
-				// Uncompressed
-			} else {
-				assert(i + length < (int)sizeof(buffer));
-				memcpy(buffer + i, literal, length);
-				literal += length;
-			}
-		}
-
-		for (int x = 0; x < targetRect.width(); ++x) {
-			byte pixel = buffer[sourceX + x];
-
-			if (pixel != _transparentColor) {
-				*targetPixel = pixel;
-			}
-
-			++targetPixel;
-		}
-
-		targetPixel += stride;
-	}
+	render<MAPPER_NoMD, SCALER_NoScale<false, READER_Compressed> >(target, targetRect, scaledPosition);
 }
+
+void CelObj::drawHzFlipNoMD(Buffer &target, const Common::Rect &targetRect, const Common::Point &scaledPosition) const {
+	render<MAPPER_NoMD, SCALER_NoScale<true, READER_Compressed> >(target, targetRect, scaledPosition);
+}
+
 void CelObj::drawUncompNoFlipNoMD(Buffer &target, const Common::Rect &targetRect, const Common::Point &scaledPosition) const {
-	const int sourceX = targetRect.left - scaledPosition.x;
-	const int sourceY = targetRect.top - scaledPosition.y;
-
-	const int sourceStride = _width - targetRect.width();
-	const int targetStride = target.screenWidth - targetRect.width();
-	const int dataOffset = READ_SCI11ENDIAN_UINT32(getResPointer() + _celHeaderOffset + 24);
-
-	byte *sourcePixel = getResPointer() + dataOffset + (sourceY * _width) + sourceX;
-	byte *targetPixel = (byte *)target.getPixels() + targetRect.top * target.screenWidth + targetRect.left;
-
-	for (int y = 0; y < targetRect.height(); ++y) {
-		for (int x = 0; x < targetRect.width(); ++x) {
-			byte pixel = *sourcePixel++;
-
-			if (pixel != _transparentColor) {
-				*targetPixel = pixel;
-			}
-
-			++targetPixel;
-		}
-
-		sourcePixel += sourceStride;
-		targetPixel += targetStride;
-	}
+	render<MAPPER_NoMD, SCALER_NoScale<false, READER_Uncompressed> >(target, targetRect, scaledPosition);
 }
+
 void CelObj::drawUncompNoFlipNoMDNoSkip(Buffer &target, const Common::Rect &targetRect, const Common::Point &scaledPosition) const {
-	const int sourceX = targetRect.left - scaledPosition.x;
-	const int sourceY = targetRect.top - scaledPosition.y;
-	const int dataOffset = READ_SCI11ENDIAN_UINT32(getResPointer() + _celHeaderOffset + 24);
-
-	byte *sourcePixel = getResPointer() + dataOffset + (sourceY * _width) + sourceX;
-
-	target.copyRectToSurface(sourcePixel, _width, targetRect.left, targetRect.top, targetRect.width(), targetRect.height());
-
+	render<MAPPER_NoMDNoSkip, SCALER_NoScale<false, READER_Uncompressed> >(target, targetRect, scaledPosition);
 }
 void CelObj::drawUncompHzFlipNoMD(Buffer &target, const Common::Rect &targetRect, const Common::Point &scaledPosition) const {
-	debug("drawUncompHzFlipNoMD");
-	dummyFill(target, targetRect);
+	render<MAPPER_NoMD, SCALER_NoScale<true, READER_Uncompressed> >(target, targetRect, scaledPosition);
 }
 void CelObj::drawUncompHzFlipNoMDNoSkip(Buffer &target, const Common::Rect &targetRect, const Common::Point &scaledPosition) const {
-	debug("drawUncompHzFlipNoMDNoSkip");
-	dummyFill(target, targetRect);
+	render<MAPPER_NoMDNoSkip, SCALER_NoScale<true, READER_Uncompressed> >(target, targetRect, scaledPosition);
 }
+
 void CelObj::scaleDrawNoMD(Buffer &target, const Ratio &scaleX, const Ratio &scaleY, const Common::Rect &targetRect, const Common::Point &scaledPosition) const {
-	debug("scaleDrawNoMD %d/%d, %d/%d", scaleX.getNumerator(), scaleX.getDenominator(), scaleY.getNumerator(), scaleY.getDenominator());
-	dummyFill(target, targetRect);
+	if (_drawMirrored) {
+		render<MAPPER_NoMD, SCALER_Scale<true, READER_Compressed> >(target, targetRect, scaledPosition, scaleX, scaleY);
+	} else {
+		render<MAPPER_NoMD, SCALER_Scale<false, READER_Compressed> >(target, targetRect, scaledPosition, scaleX, scaleY);
+	}
 }
 
 void CelObj::scaleDrawUncompNoMD(Buffer &target, const Ratio &scaleX, const Ratio &scaleY, const Common::Rect &targetRect, const Common::Point &scaledPosition) const {
-	debug("scaleDrawUncompNoMD %d/%d, %d/%d", scaleX.getNumerator(), scaleX.getDenominator(), scaleY.getNumerator(), scaleY.getDenominator());
-	if (targetRect.isEmpty()) {
-		return;
-	}
-
-	const CelScalerTable *table = _scaler->getScalerTable(scaleX, scaleY);
-
-	int pixelX[1024];
-	int pixelY[1024];
-
-	bool use2xOptimisedDrawRoutine = false /* TODO: scaleX.getDenominator() * 2 == scaleX.getNumerator() */;
-
-	int16 sourceX = (scaledPosition.x * scaleX.getInverse()).toInt();
-	int16 sourceY = (scaledPosition.y * scaleY.getInverse()).toInt();
-
 	if (_drawMirrored) {
-		for (int x = targetRect.left; x < targetRect.right; ++x) {
-			pixelX[x] = _width - 1 - (table->valuesX[x] - sourceX);
-		}
+		render<MAPPER_NoMD, SCALER_Scale<true, READER_Uncompressed> >(target, targetRect, scaledPosition, scaleX, scaleY);
 	} else {
-		for (int x = targetRect.left; x < targetRect.right; ++x) {
-			pixelX[x] = table->valuesX[x] - sourceX;
-		}
-	}
-
-	for (int y = targetRect.top; y < targetRect.bottom; ++y) {
-		pixelY[y] = table->valuesY[y] - sourceY;
-	}
-
-	byte *sourcePixels = getResPointer() + READ_SCI11ENDIAN_UINT32(getResPointer() + _celHeaderOffset + 24);
-
-	for (int y = targetRect.top; y < targetRect.bottom; ++y) {
-		byte *targetPixel = target.getAddress(targetRect.left, y);
-		byte *sourcePixel = sourcePixels + pixelY[y] * _width;
-		const int *sourcePixelIndex = pixelX + targetRect.left;
-
-		if (/* TODO */ use2xOptimisedDrawRoutine) {
-			// WriteUncompScaleLine2();
-		} else {
-			// start WriteUncompScaleLine
-			for (int x = targetRect.left; x < targetRect.right; ++x) {
-				byte value = sourcePixel[*sourcePixelIndex++];
-				if (value != _transparentColor) {
-					*targetPixel = value;
-				}
-				++targetPixel;
-			}
-			// end WriteUncompScaleLine
-		}
+		render<MAPPER_NoMD, SCALER_Scale<false, READER_Uncompressed> >(target, targetRect, scaledPosition, scaleX, scaleY);
 	}
 }
 

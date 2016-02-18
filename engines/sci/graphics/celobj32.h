@@ -205,9 +205,6 @@ class ScreenItem;
  * pixel buffer.
  */
 class CelObj {
-private:
-	static CelScaler *_scaler;
-
 protected:
 	/**
 	 * When true, this cel will be horizontally mirrored
@@ -219,6 +216,8 @@ protected:
 	bool _drawMirrored;
 
 public:
+	static CelScaler *_scaler;
+
 	/**
 	 * The basic identifying information for this cel. This
 	 * information effectively acts as a composite key for
@@ -380,6 +379,12 @@ public:
 #pragma mark -
 #pragma mark CelObj - Drawing
 private:
+	template <typename MAPPER, typename SCALER>
+	void render(Buffer &target, const Common::Rect &targetRect, const Common::Point &scaledPosition) const;
+
+	template <typename MAPPER, typename SCALER>
+	void render(Buffer &target, const Common::Rect &targetRect, const Common::Point &scaledPosition, const Ratio &scaleX, const Ratio &scaleY) const;
+
 	void drawHzFlip(Buffer &target, const Common::Rect &targetRect, const Common::Point &scaledPosition) const;
 	void drawNoFlip(Buffer &target, const Common::Rect &targetRect, const Common::Point &scaledPosition) const;
 	void drawUncompNoFlip(Buffer &target, const Common::Rect &targetRect, const Common::Point &scaledPosition) const;
