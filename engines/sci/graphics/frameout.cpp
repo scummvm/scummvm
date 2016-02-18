@@ -144,7 +144,7 @@ void GfxFrameout::run() {
 	// NOTE: This happens in SCI::InitPlane in the actual engine,
 	// and is a background fill plane to ensure hidden planes
 	// (planes with a priority of -1) are never drawn
-	Plane *initPlane = new Plane(Common::Rect(_currentBuffer.scriptWidth - 1, _currentBuffer.scriptHeight - 1));
+	Plane *initPlane = new Plane(Common::Rect(_currentBuffer.scriptWidth, _currentBuffer.scriptHeight));
 	initPlane->_priority = 0;
 	_planes.add(initPlane);
 }

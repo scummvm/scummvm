@@ -209,8 +209,8 @@ void ScreenItem::setFromObject(SegManager *segMan, const reg_t object, const boo
 		_useInsetRect = true;
 		_insetRect.left = readSelectorValue(segMan, object, SELECTOR(inLeft));
 		_insetRect.top = readSelectorValue(segMan, object, SELECTOR(inTop));
-		_insetRect.right = readSelectorValue(segMan, object, SELECTOR(inRight));
-		_insetRect.bottom = readSelectorValue(segMan, object, SELECTOR(inBottom));
+		_insetRect.right = readSelectorValue(segMan, object, SELECTOR(inRight)) + 1;
+		_insetRect.bottom = readSelectorValue(segMan, object, SELECTOR(inBottom)) + 1;
 	} else {
 		_useInsetRect = false;
 	}
@@ -376,7 +376,7 @@ void ScreenItem::calcRects(const Plane &plane) {
 				Ratio celXRatio(screenWidth, _celObj->_scaledWidth);
 				Ratio celYRatio(screenHeight, _celObj->_scaledHeight);
 				mulru(_scaledPosition, celXRatio, celYRatio);
-				mulru(_screenItemRect, celXRatio, celYRatio, 1);
+				mulru(_screenItemRect, celXRatio, celYRatio);
 			}
 
 			_ratioX = newRatioX * Ratio(screenWidth, _celObj->_scaledWidth);

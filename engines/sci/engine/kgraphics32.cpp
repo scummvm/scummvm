@@ -204,8 +204,8 @@ reg_t kCreateTextBitmap(EngineState *s, int argc, reg_t *argv) {
 	Common::Rect rect(
 		readSelectorValue(segMan, object, SELECTOR(textLeft)),
 		readSelectorValue(segMan, object, SELECTOR(textTop)),
-		readSelectorValue(segMan, object, SELECTOR(textRight)),
-		readSelectorValue(segMan, object, SELECTOR(textBottom))
+		readSelectorValue(segMan, object, SELECTOR(textRight)) + 1,
+		readSelectorValue(segMan, object, SELECTOR(textBottom)) + 1
 	);
 
 	if (subop == 0) {
