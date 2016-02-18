@@ -359,18 +359,17 @@ void World::loadExternalSounds(Common::String fname) {
 	}
 	in.close();
 
-	Common::MacResManager *resMan;
-	resMan = new Common::MacResManager();
-	resMan->open(fname);
+	Common::MacResManager resMan;
+	resMan.open(fname);
 
 	Common::MacResIDArray resArray;
 	Common::SeekableReadStream *res;
 	Common::MacResIDArray::const_iterator iter;
 
-	resArray = resMan->getResIDArray(MKTAG('A','S','N','D'));
+	resArray = resMan.getResIDArray(MKTAG('A','S','N','D'));
 	for (iter = resArray.begin(); iter != resArray.end(); ++iter) {
-		res = resMan->getResource(MKTAG('A','S','N','D'), *iter);
-		addSound(new Sound(resMan->getResName(MKTAG('A','S','N','D'), *iter), res));
+		res = resMan.getResource(MKTAG('A','S','N','D'), *iter);
+		addSound(new Sound(resMan.getResName(MKTAG('A','S','N','D'), *iter), res));
 	}
 }
 
