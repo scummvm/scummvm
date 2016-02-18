@@ -509,8 +509,8 @@ const char *World::getAboutMenuItemName() {
 		const char *pos = strchr(str, '@');
 		if (pos) {
 			strncat(menu, str, (pos - str));
-			strcat(menu, _name.c_str());
-			strcat(menu, pos + 1);
+			strncat(menu, _name.c_str(), 256);
+			strncat(menu, pos + 1, 256);
 		}
 	}
 
