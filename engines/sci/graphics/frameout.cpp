@@ -79,15 +79,15 @@ GfxFrameout::GfxFrameout(SegManager *segMan, ResourceManager *resMan, GfxCoordAd
 	_paint32(paint32),
 	_showStyles(nullptr),
 	// TODO: Stop using _gfxScreen
-	_currentBuffer(screen->getWidth(), screen->getHeight(), nullptr),
-	_priorityMap(screen->getWidth(), screen->getHeight(), nullptr),
+	_currentBuffer(screen->getDisplayWidth(), screen->getDisplayHeight(), nullptr),
+	_priorityMap(screen->getDisplayWidth(), screen->getDisplayHeight(), nullptr),
 	_remapOccurred(false),
 	_frameNowVisible(false),
-	_screenRect(screen->getWidth(), screen->getHeight()),
+	_screenRect(screen->getDisplayWidth(), screen->getDisplayHeight()),
 	_overdrawThreshold(0),
 	_palMorphIsOn(false) {
 
-	_currentBuffer.setPixels(calloc(1, screen->getWidth() * screen->getHeight()));
+	_currentBuffer.setPixels(calloc(1, screen->getDisplayWidth() * screen->getDisplayHeight()));
 
 	for (int i = 0; i < 236; i += 2) {
 		_styleRanges[i] = 0;
