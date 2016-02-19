@@ -634,6 +634,7 @@ void AgiEngine::artificialDelay_CycleDone() {
 
 //         script, description,                                       signature                   patch
 static const AgiArtificialDelayEntry artificialDelayTable[] = {
+	{ GID_GOLDRUSH,   Common::kPlatformApple2GS, ARTIFICIALDELAYTYPE_NEWROOM,     14,  21, 2200 }, // Stagecoach path: right after getting on it in Brooklyn
 	{ GID_PQ1,        Common::kPlatformApple2GS, ARTIFICIALDELAYTYPE_NEWPICTURE,   1,   2, 2200 }, // Intro: music track is supposed to finish before credits screen. Developers must have assumed that room loading would take that long.
 	{ GID_MH1,        Common::kPlatformApple2GS, ARTIFICIALDELAYTYPE_NEWPICTURE, 155, 183, 2200 }, // Happens, when hitting fingers at bar
 	{ GID_AGIDEMO,    Common::kPlatformUnknown,  ARTIFICIALDELAYTYPE_END,         -1,  -1,    0 }
