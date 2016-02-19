@@ -68,7 +68,7 @@ private:
 
 	int sub1(Method3Fn fn, int v);
 
-	void sub2();
+	void sub2() {}
 public:
 	Decompressor();
 

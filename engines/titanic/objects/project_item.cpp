@@ -27,7 +27,15 @@
 
 namespace Titanic {
 
-void CProjectItem::load(int id) {
+void CProjectItem::save(SimpleFile *file, int indent) const {
+	error("TODO");
+}
+
+void CProjectItem::load(SimpleFile *file) {
+	error("TODO");
+}
+
+void CProjectItem::loadGame(int slotId) {
 	CompressedFile file;
 	Common::InSaveFile *saveFile = nullptr;
 
@@ -35,16 +43,28 @@ void CProjectItem::load(int id) {
 	clear();
 
 	// Open either an existing savegame slot or the new game template
-	if (id > 0) {
+	if (slotId > 0) {
 		saveFile = g_system->getSavefileManager()->openForLoading(
-			Common::String::format("slot%d.gam", id));
+			Common::String::format("slot%d.gam", slotId));
 		file.open(saveFile);
 	} else {
 		file.open("newgame.st");
 	}
 
 	// Load the contents in
-	loadData(file);
+	loadData(&file);
+
+	file.close();
+}
+
+void CProjectItem::saveGame(int slotId) {
+	CompressedFile file;
+	Common::OutSaveFile *saveFile = g_system->getSavefileManager()->openForSaving(
+		Common::String::format("slot%d.gam", slotId));
+	file.open(saveFile);
+
+	// Save the contents out
+	saveData(&file, this);
 
 	file.close();
 }
@@ -53,8 +73,33 @@ void CProjectItem::clear() {
 
 }
 
-void CProjectItem::loadData(SimpleFile &file) {
+void CProjectItem::loadData(SimpleFile *file) {
 
+}
+
+void CProjectItem::saveData(SimpleFile *file, CTreeItem *item) const {
+	while (item) {
+		item->saveHeader(file, 0);
+		item->save(file, 1);
+		item->saveFooter(file, 0);
+
+	
+		CTreeItem *child = item->getFirstChild();
+		if (child) {
+			file->write("\n{\n", 3);
+			file->writeQuotedString("DOWN");
+			file->write("\n}\n", 3);
+			saveData(file, child);
+			file->write("\n{\n", 3);
+			file->writeQuotedString("UP");
+		} else {
+			file->write("\n{\n", 3);
+			file->writeQuotedString("ALONG");
+		}
+		
+		file->write("\n}\n", 3);
+		item = item->getNextSibling();
+	}
 }
 
 } // End of namespace Titanic

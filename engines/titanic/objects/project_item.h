@@ -34,12 +34,37 @@ private:
 	/**
 	 * Load project data from the passed file
 	 */
-	void loadData(SimpleFile &file);
+	void loadData(SimpleFile *file);
+
+	/**
+	 * Save project data to the passed file
+	 */
+	void saveData(SimpleFile *file, CTreeItem *item) const;
 public:
 	/**
-	 * Load the entire project data for a given Id
+	 * Return the class name
 	 */
-	void load(int id);
+	virtual const char *getClassName() const { return "CProjectItem"; }
+
+	/**
+	 * Save the data for the class to file
+	 */
+	virtual void save(SimpleFile *file, int indent) const;
+
+	/**
+	 * Load the data for the class from file
+	 */
+	virtual void load(SimpleFile *file);	
+
+	/**
+	 * Load the entire project data for a given slot Id
+	 */
+	void loadGame(int slotId);
+
+	/**
+	 * Save the entire project data to a given savegame slot
+	 */
+	void saveGame(int slotId);
 
 	/**
 	 * Clear any currently loaded project

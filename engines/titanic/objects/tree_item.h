@@ -28,6 +28,59 @@
 namespace Titanic {
 
 class CTreeItem: public CMessageTarget {
+private:
+	CTreeItem *_parent;
+	CTreeItem *_nextSibling;
+	CTreeItem *_priorSibling;
+	CTreeItem *_firstChild;
+	int _field14;
+public:
+	CTreeItem();
+
+	/**
+	 * Return the class name
+	 */
+	virtual const char *getClassName() const { return "CTreeItem"; }
+
+	/**
+	 * Save the data for the class to file
+	 */
+	virtual void save(SimpleFile *file, int indent) const;
+
+	/**
+	 * Load the data for the class from file
+	 */
+	virtual void load(SimpleFile *file);
+
+	/**
+	 * Get the parent for the given item
+	 */
+	CTreeItem *getParent() const { return _parent; }
+
+	/**
+	 * Get the next sibling
+	 */
+	CTreeItem *getNextSibling() { return _nextSibling; }
+
+	/**
+	 * Get the prior sibling
+	 */
+	CTreeItem *getPriorSibling() { return _priorSibling; }
+
+	/**
+	 * Get the last sibling of this sibling
+	 */
+	CTreeItem *getLastSibling();
+
+	/**
+	 * Get the first child of the item, if any
+	 */
+	CTreeItem *getFirstChild() { return _firstChild; }
+
+	/**
+	 * Get the last child of the item, if any
+	 */
+	CTreeItem *getLastChild();
 };
 
 } // End of namespace Titanic

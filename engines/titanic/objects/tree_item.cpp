@@ -24,4 +24,32 @@
 
 namespace Titanic {
 
+CTreeItem::CTreeItem() : _parent(nullptr), _firstChild(nullptr),
+	_nextSibling(nullptr), _priorSibling(nullptr), _field14(0) {
+}
+
+void CTreeItem::save(SimpleFile *file, int indent) const {
+	file->writeNumberLine(0, indent);
+	CMessageTarget::save(file, indent);
+}
+
+void CTreeItem::load(SimpleFile *file) {
+	file->readNumber();
+	CMessageTarget::load(file);
+}
+
+CTreeItem *CTreeItem::getLastSibling() {
+	CTreeItem *item = this;
+	while (item->getNextSibling())
+		item = item->getNextSibling();
+
+	return item;
+}
+
+CTreeItem *CTreeItem::getLastChild() {
+	if (!_firstChild)
+		return nullptr;
+	return _firstChild->getLastSibling();
+}
+
 } // End of namespace Titanic
