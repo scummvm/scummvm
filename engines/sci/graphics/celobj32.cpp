@@ -145,8 +145,8 @@ struct SCALER_Scale {
 	// so just always make the reader decompress an entire
 	// line of source data when scaling
 	_reader(celObj, celObj._width),
-	_lastIndex(maxWidth - 1),
-	_table(CelObj::_scaler->getScalerTable(scaleX, scaleY)) {}
+	_table(CelObj::_scaler->getScalerTable(scaleX, scaleY)),
+	_lastIndex(maxWidth - 1) {}
 
 	inline void setSource(const int16 x, const int16 y) {
 		_row = _reader.getRow(_table->valuesY[y]);
@@ -173,12 +173,10 @@ struct READER_Uncompressed {
 private:
 	byte *_pixels;
 	const int16 _sourceWidth;
-	const int16 _maxWidth;
 
 public:
-	READER_Uncompressed(const CelObj &celObj, const int16 maxWidth) :
-	_sourceWidth(celObj._width),
-	_maxWidth(maxWidth) {
+	READER_Uncompressed(const CelObj &celObj, const int16) :
+	_sourceWidth(celObj._width) {
 		byte *resource = celObj.getResPointer();
 		_pixels = resource + READ_SCI11ENDIAN_UINT32(resource + celObj._celHeaderOffset + 24);
 	}
@@ -202,11 +200,11 @@ private:
 
 public:
 	READER_Compressed(const CelObj &celObj, const int16 maxWidth) :
-	_y(-1),
-	_maxWidth(maxWidth),
 	_resource(celObj.getResPointer()),
+	_y(-1),
 	_sourceHeight(celObj._height),
-	_transparentColor(celObj._transparentColor) {
+	_transparentColor(celObj._transparentColor),
+	_maxWidth(maxWidth) {
 		assert(_maxWidth <= celObj._width);
 
 		byte *celHeader = _resource + celObj._celHeaderOffset;

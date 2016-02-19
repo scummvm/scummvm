@@ -70,22 +70,22 @@ static int16 unknownCDefaults[2][16] = {
 };
 
 GfxFrameout::GfxFrameout(SegManager *segMan, ResourceManager *resMan, GfxCoordAdjuster *coordAdjuster, GfxCache *cache, GfxScreen *screen, GfxPalette32 *palette, GfxPaint32 *paint32) :
-	_segMan(segMan),
-	_resMan(resMan),
-	_cache(cache),
-	_screen(screen),
-	_palette(palette),
-	_paint32(paint32),
 	_isHiRes(false),
-	_palMorphIsOn(false),
+	_cache(cache),
+	_palette(palette),
+	_resMan(resMan),
+	_screen(screen),
+	_segMan(segMan),
+	_paint32(paint32),
 	_showStyles(nullptr),
-	_remapOccurred(false),
-	_frameNowVisible(false),
 	// TODO: Stop using _gfxScreen
 	_currentBuffer(screen->getWidth(), screen->getHeight(), nullptr),
 	_priorityMap(screen->getWidth(), screen->getHeight(), nullptr),
+	_remapOccurred(false),
+	_frameNowVisible(false),
 	_screenRect(screen->getWidth(), screen->getHeight()),
-	_overdrawThreshold(0) {
+	_overdrawThreshold(0),
+	_palMorphIsOn(false) {
 
 	_currentBuffer.setPixels(calloc(1, screen->getWidth() * screen->getHeight()));
 

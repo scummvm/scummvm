@@ -76,12 +76,12 @@ public:
 	}
 
 	T *const &operator[](size_type index) const {
-		assert(index >= 0 && index < _size);
+		assert(index < _size);
 		return _items[index];
 	}
 
 	T *&operator[](size_type index) {
-		assert(index >= 0 && index < _size);
+		assert(index < _size);
 		return _items[index];
 	}
 
@@ -144,7 +144,7 @@ public:
 	 * Erases the object pointed to at the given index.
 	 */
 	void erase_at(size_type index) {
-		assert(index >= 0 && index < _size);
+		assert(index < _size);
 
 		delete _items[index];
 		_items[index] = nullptr;

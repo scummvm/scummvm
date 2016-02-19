@@ -36,13 +36,13 @@ namespace Sci {
 uint16 ScreenItem::_nextObjectId = 20000;
 
 ScreenItem::ScreenItem(const reg_t object) :
-_mirrorX(false),
-_pictureId(-1),
 _celObj(nullptr),
 _object(object),
-_deleted(0),
+_pictureId(-1),
+_created(g_sci->_gfxFrameout->getScreenCount()),
 _updated(0),
-_created(g_sci->_gfxFrameout->getScreenCount()) {
+_deleted(0),
+_mirrorX(false) {
 	SegManager *segMan = g_sci->getEngineState()->_segMan;
 
 	setFromObject(segMan, object, true, true);
@@ -50,65 +50,65 @@ _created(g_sci->_gfxFrameout->getScreenCount()) {
 }
 
 ScreenItem::ScreenItem(const reg_t plane, const CelInfo32 &celInfo) :
-_position(0, 0),
-_z(0),
-_object(make_reg(0, _nextObjectId++)),
-_celInfo(celInfo),
 _plane(plane),
-_celObj(nullptr),
 _useInsetRect(false),
+_z(0),
+_celInfo(celInfo),
+_celObj(nullptr),
 _fixPriority(false),
-_mirrorX(false),
+_position(0, 0),
+_object(make_reg(0, _nextObjectId++)),
 _pictureId(-1),
+_created(g_sci->_gfxFrameout->getScreenCount()),
 _updated(0),
 _deleted(0),
-_created(g_sci->_gfxFrameout->getScreenCount()) {}
+_mirrorX(false) {}
 
 ScreenItem::ScreenItem(const reg_t plane, const CelInfo32 &celInfo, const Common::Rect &rect) :
-_position(rect.left, rect.top),
-_z(0),
-_object(make_reg(0, _nextObjectId++)),
-_celInfo(celInfo),
 _plane(plane),
-_celObj(nullptr),
 _useInsetRect(false),
+_z(0),
+_celInfo(celInfo),
+_celObj(nullptr),
 _fixPriority(false),
-_mirrorX(false),
+_position(rect.left, rect.top),
+_object(make_reg(0, _nextObjectId++)),
 _pictureId(-1),
+_created(g_sci->_gfxFrameout->getScreenCount()),
 _updated(0),
 _deleted(0),
-_created(g_sci->_gfxFrameout->getScreenCount()) {
+_mirrorX(false) {
 	if (celInfo.type == kCelTypeColor) {
 		_insetRect = rect;
 	}
 }
 
 ScreenItem::ScreenItem(const reg_t plane, const CelInfo32 &celInfo, const Common::Rect &rect, const ScaleInfo &scaleInfo) :
-_position(rect.left, rect.top),
-_z(0),
-_object(make_reg(0, _nextObjectId++)),
-_celInfo(celInfo),
 _plane(plane),
-_celObj(nullptr),
+_scale(scaleInfo),
 _useInsetRect(false),
+_z(0),
+_celInfo(celInfo),
+_celObj(nullptr),
 _fixPriority(false),
-_mirrorX(false),
+_position(rect.left, rect.top),
+_object(make_reg(0, _nextObjectId++)),
 _pictureId(-1),
+_created(g_sci->_gfxFrameout->getScreenCount()),
 _updated(0),
 _deleted(0),
-_created(g_sci->_gfxFrameout->getScreenCount()),
-_scale(scaleInfo) {}
+_mirrorX(false) {}
 
 ScreenItem::ScreenItem(const ScreenItem &other) :
-_object(other._object),
 _plane(other._plane),
+_scale(other._scale),
+_useInsetRect(other._useInsetRect),
 _celInfo(other._celInfo),
 _celObj(nullptr),
-_screenRect(other._screenRect),
+_object(other._object),
 _mirrorX(other._mirrorX),
-_useInsetRect(other._useInsetRect),
-_scale(other._scale),
-_scaledPosition(other._scaledPosition) {
+_scaledPosition(other._scaledPosition),
+_screenRect(other._screenRect) {
 	if (other._useInsetRect) {
 		_insetRect = other._insetRect;
 	}

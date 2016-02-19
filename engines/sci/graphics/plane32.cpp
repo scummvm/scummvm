@@ -44,18 +44,18 @@ void DrawList::add(ScreenItem *screenItem, const Common::Rect &rect) {
 uint16 Plane::_nextObjectId = 20000;
 
 Plane::Plane(const Common::Rect &gameRect) :
-_gameRect(gameRect),
-_object(make_reg(0, _nextObjectId++)),
-_back(0),
-_pictureId(kPlanePicColored),
-_mirrored(false),
 _width(g_sci->_gfxFrameout->getCurrentBuffer().scriptWidth),
 _height(g_sci->_gfxFrameout->getCurrentBuffer().scriptHeight),
-_deleted(0),
-_updated(0),
+_pictureId(kPlanePicColored),
+_mirrored(false),
+_back(0),
 _priorityChanged(0),
+_object(make_reg(0, _nextObjectId++)),
+_redrawAllCount(g_sci->_gfxFrameout->getScreenCount()),
 _created(g_sci->_gfxFrameout->getScreenCount()),
-_redrawAllCount(g_sci->_gfxFrameout->getScreenCount()) {
+_updated(0),
+_deleted(0),
+_gameRect(gameRect) {
 	convertGameRectToPlaneRect();
 	_priority = MAX(10000, g_sci->_gfxFrameout->getPlanes().getTopPlanePriority() + 1);
 	setType();
@@ -63,14 +63,14 @@ _redrawAllCount(g_sci->_gfxFrameout->getScreenCount()) {
 }
 
 Plane::Plane(reg_t object) :
-_object(object),
 _width(g_sci->_gfxFrameout->getCurrentBuffer().scriptWidth),
 _height(g_sci->_gfxFrameout->getCurrentBuffer().scriptHeight),
-_created(g_sci->_gfxFrameout->getScreenCount()),
-_redrawAllCount(g_sci->_gfxFrameout->getScreenCount()),
-_deleted(0),
-_updated(0),
 _priorityChanged(false),
+_object(object),
+_redrawAllCount(g_sci->_gfxFrameout->getScreenCount()),
+_created(g_sci->_gfxFrameout->getScreenCount()),
+_updated(0),
+_deleted(0),
 _moved(0) {
 	SegManager *segMan = g_sci->getEngineState()->_segMan;
 	_vanishingPoint.x = readSelectorValue(segMan, object, SELECTOR(vanishingX));
@@ -93,13 +93,13 @@ _moved(0) {
 }
 
 Plane::Plane(const Plane &other) :
-_object(other._object),
-_priority(other._priority),
 _pictureId(other._pictureId),
 _mirrored(other._mirrored),
-_back(other._back),
 _field_34(other._field_34), _field_38(other._field_38),
 _field_3C(other._field_3C), _field_40(other._field_40),
+_back(other._back),
+_object(other._object),
+_priority(other._priority),
 _planeRect(other._planeRect),
 _gameRect(other._gameRect),
 _screenRect(other._screenRect),

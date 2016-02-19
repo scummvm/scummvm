@@ -34,17 +34,26 @@ namespace Sci {
 
 GfxPalette32::GfxPalette32(ResourceManager *resMan, GfxScreen *screen)
 	: GfxPalette(resMan, screen),
-	_clutTable(nullptr),
-	// Palette cycling
-	_cyclers(), _cycleMap(),
-	// Palette varying
-	_sourcePalette(_sysPalette), _nextPalette(_sysPalette),
-	_varyTime(0), _varyDirection(0), _varyTargetPercent(0),
-	_varyTargetPalette(nullptr), _varyStartPalette(nullptr),
-	_varyFromColor(0), _varyToColor(255), _varyNumTimesPaused(0),
-	_varyLastTick(0),
 	// Palette versioning
-	_version(1), _versionUpdated(false) {
+	_version(1),
+	_versionUpdated(false),
+	_sourcePalette(_sysPalette),
+	_nextPalette(_sysPalette),
+	// Clut
+	_clutTable(nullptr),
+	// Palette varying
+	_varyStartPalette(nullptr),
+	_varyTargetPalette(nullptr),
+	_varyFromColor(0),
+	_varyToColor(255),
+	_varyLastTick(0),
+	_varyTime(0),
+	_varyDirection(0),
+	_varyTargetPercent(0),
+	_varyNumTimesPaused(0),
+	// Palette cycling
+	_cyclers(),
+	_cycleMap() {
 		_varyPercent = _varyTargetPercent;
 		memset(_fadeTable, 100, sizeof(_fadeTable));
 		// NOTE: In SCI engine, the palette manager constructor loads
@@ -258,9 +267,8 @@ void GfxPalette32::applyAll() {
 	applyFade();
 }
 
-//
-// Clut
-//
+#pragma mark -
+#pragma mark Colour look-up
 
 bool GfxPalette32::loadClut(uint16 clutId) {
 	// loadClut() will load a color lookup table from a clu file and set
@@ -312,9 +320,8 @@ void GfxPalette32::unloadClut() {
 	_clutTable = nullptr;
 }
 
-//
-// Palette vary
-//
+#pragma mark -
+#pragma mark Varying
 
 inline bool GfxPalette32::createPaletteFromResourceInternal(const GuiResourceId paletteId, Palette *const out) const {
 	Resource *palResource = _resMan->findResource(ResourceId(kResourceTypePalette, paletteId), false);
@@ -554,9 +561,8 @@ void GfxPalette32::applyVary() {
 	}
 }
 
-//
-// Palette cycling
-//
+#pragma mark -
+#pragma mark Cycling
 
 inline void GfxPalette32::clearCycleMap(const uint16 fromColor, const uint16 numColorsToClear) {
 	bool *mapEntry = _cycleMap + fromColor;
@@ -780,9 +786,8 @@ void GfxPalette32::applyCycles() {
 	}
 }
 
-//
-// Palette fading
-//
+#pragma mark -
+#pragma mark Fading
 
 // NOTE: There are some game scripts (like SQ6 Sierra logo and main menu) that call
 // setFade with numColorsToFade set to 256, but other parts of the engine like
