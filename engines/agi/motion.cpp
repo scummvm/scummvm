@@ -65,7 +65,7 @@ void AgiEngine::changePos(ScreenObjEntry *screenObj) {
 // WORKAROUND:
 // A motion was just activated, check if "end.of.loop"/"reverse.loop" is currently active for the same screen object
 // If this is the case, it would result in some random flag getting overwritten in original AGI after the loop was
-// completed, because in original AGI loop_flag + move_flag shared the same memory location.
+// completed, because in original AGI loop_flag + wander_count/follow_stepSize/move_X shared the same memory location.
 // This is basically an implementation error in the original interpreter.
 // Happens in at least KQ1, when grabbing the eagle (room 22).
 void AgiEngine::motionActivated(ScreenObjEntry *screenObj) {
