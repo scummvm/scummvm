@@ -571,8 +571,8 @@ public:
 	 * Block fills the target buffer with the cel colour.
 	 */
 	void draw(Buffer &target, const Common::Rect &targetRect) const;
-	virtual void draw(Buffer &target, const ScreenItem &screenItem, const Common::Rect &targetRect, bool mirrorX) override;
-	virtual void draw(Buffer &target, const Common::Rect &targetRect, const Common::Point &scaledPosition, bool mirrorX) override;
+	virtual void draw(Buffer &target, const ScreenItem &screenItem, const Common::Rect &targetRect, const bool mirrorX) override;
+	virtual void draw(Buffer &target, const Common::Rect &targetRect, const Common::Point &scaledPosition, const bool mirrorX) override;
 
 	virtual CelObjColor *duplicate() const override;
 	virtual byte *getResPointer() const override;
