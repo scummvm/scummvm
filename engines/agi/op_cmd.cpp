@@ -1493,6 +1493,8 @@ void cmdReverseLoop(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 	screenObj->flags |= (fDontupdate | fUpdate | fCycling);
 	screenObj->loop_flag = loopFlag;
 	state->_vm->setFlag(screenObj->loop_flag, false);
+
+	vm->cyclerActivated(screenObj);
 }
 
 void cmdReverseLoopV1(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
@@ -1518,6 +1520,8 @@ void cmdEndOfLoop(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 	screenObj->flags |= (fDontupdate | fUpdate | fCycling);
 	screenObj->loop_flag = loopFlag;
 	vm->setFlag(screenObj->loop_flag, false);
+
+	vm->cyclerActivated(screenObj);
 }
 
 void cmdEndOfLoopV1(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
@@ -1630,6 +1634,8 @@ void cmdFollowEgo(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 		vm->setFlag(screenObj->follow_flag, false);
 		screenObj->flags |= fUpdate;
 	}
+
+	vm->motionActivated(screenObj);
 }
 
 void cmdMoveObj(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
@@ -1657,6 +1663,8 @@ void cmdMoveObj(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 		vm->setFlag(screenObj->move_flag, false);
 		screenObj->flags |= fUpdate;
 	}
+
+	vm->motionActivated(screenObj);
 
 	if (objectNr == 0)
 		state->playerControl = false;
@@ -1686,6 +1694,8 @@ void cmdMoveObjF(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 	vm->setFlag(screenObj->move_flag, false);
 	screenObj->flags |= fUpdate;
 
+	vm->motionActivated(screenObj);
+
 	if (objectNr == 0)
 		state->playerControl = false;
 
@@ -1707,6 +1717,8 @@ void cmdWander(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 	} else {
 		screenObj->flags |= fUpdate;
 	}
+
+	vm->motionActivated(screenObj);
 }
 
 void cmdSetGameID(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
