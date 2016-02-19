@@ -573,6 +573,8 @@ void AgiEngine::syncSoundSettings() {
 //
 // Scenes that need this:
 //
+// Gold Rush:
+//  - when following your mule "Yet right on his tail!!!" (NewRoom/NewPicture - but room 123 stays the same)
 // Manhunter 1:
 //  - intro text screen (DrawPic)
 //  - MAD "zooming in..." during intro and other scenes, for example room 124 (NewRoom)
@@ -668,8 +670,6 @@ void AgiEngine::artificialDelayTrigger_NewRoom(int16 newRoomNr) {
 		millisecondsDelay = artificialDelay_SearchTable(ARTIFICIALDELAYTYPE_NEWROOM, _artificialDelayCurrentRoom, newRoomNr);
 
 		if (_game.nonBlockingTextShown) {
-			_game.nonBlockingTextShown = false;
-
 			if (newRoomNr != _artificialDelayCurrentRoom) {
 				if (millisecondsDelay < 2000) {
 					// wait a bit, we detected non-blocking text
@@ -680,6 +680,7 @@ void AgiEngine::artificialDelayTrigger_NewRoom(int16 newRoomNr) {
 
 		if (millisecondsDelay) {
 			wait(millisecondsDelay, true); // set busy mouse cursor
+			_game.nonBlockingTextShown = false;
 		}
 	}
 
@@ -695,15 +696,17 @@ void AgiEngine::artificialDelayTrigger_DrawPicture(int16 newPictureNr) {
 		millisecondsDelay = artificialDelay_SearchTable(ARTIFICIALDELAYTYPE_NEWPICTURE, _artificialDelayCurrentPicture, newPictureNr);
 
 		if (_game.nonBlockingTextShown) {
-			_game.nonBlockingTextShown = false;
-			if (millisecondsDelay < 2000) {
-				// wait a bit, we detected non-blocking text
-				millisecondsDelay = 2000; // 2 seconds, set busy
+			if (newPictureNr != _artificialDelayCurrentPicture) {
+				if (millisecondsDelay < 2000) {
+					// wait a bit, we detected non-blocking text
+					millisecondsDelay = 2000; // 2 seconds, set busy
+				}
 			}
 		}
 
 		if (millisecondsDelay) {
 			wait(millisecondsDelay, true); // set busy mouse cursor
+			_game.nonBlockingTextShown = false;
 		}
 	}
 	_artificialDelayCurrentPicture = newPictureNr;
