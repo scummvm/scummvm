@@ -20,23 +20,33 @@
  *
  */
 
-#ifndef TITANIC_LIST_H
-#define TITANIC_LIST_H
+#ifndef TITANIC_PROJECT_ITEM_H
+#define TITANIC_PROJECT_ITEM_H
 
 #include "common/scummsys.h"
-#include "common/list.h"
-#include "titanic/objects/saveable_object.h"
+#include "titanic/files.h"
+#include "titanic/objects/file_item.h"
 
 namespace Titanic {
 
-class ListItem: public CSaveableObject {
-};
-
-class List : public CSaveableObject, Common::List<ListItem *> {
+class CProjectItem : public CFileItem {
+private:
+	/**
+	 * Load project data from the passed file
+	 */
+	void loadData(SimpleFile &file);
 public:
+	/**
+	 * Load the entire project data for a given Id
+	 */
+	void load(int id);
 
+	/**
+	 * Clear any currently loaded project
+	 */
+	void clear();
 };
 
 } // End of namespace Titanic
 
-#endif /* TITANIC_LIST_H */
+#endif /* TITANIC_PROJECT_ITEM_H */

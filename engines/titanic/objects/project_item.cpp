@@ -20,23 +20,41 @@
  *
  */
 
-#ifndef TITANIC_LIST_H
-#define TITANIC_LIST_H
-
-#include "common/scummsys.h"
-#include "common/list.h"
-#include "titanic/objects/saveable_object.h"
+#include "common/savefile.h"
+#include "titanic/titanic.h"
+#include "titanic/files.h"
+#include "titanic/objects/project_item.h"
 
 namespace Titanic {
 
-class ListItem: public CSaveableObject {
-};
+void CProjectItem::load(int id) {
+	CompressedFile file;
+	Common::InSaveFile *saveFile = nullptr;
 
-class List : public CSaveableObject, Common::List<ListItem *> {
-public:
+	// Clear any existing project contents
+	clear();
 
-};
+	// Open either an existing savegame slot or the new game template
+	if (id > 0) {
+		saveFile = g_system->getSavefileManager()->openForLoading(
+			Common::String::format("slot%d.gam", id));
+		file.open(saveFile);
+	} else {
+		file.open("newgame.st");
+	}
+
+	// Load the contents in
+	loadData(file);
+
+	file.close();
+}
+
+void CProjectItem::clear() {
+
+}
+
+void CProjectItem::loadData(SimpleFile &file) {
+
+}
 
 } // End of namespace Titanic
-
-#endif /* TITANIC_LIST_H */

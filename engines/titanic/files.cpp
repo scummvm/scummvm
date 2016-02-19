@@ -25,7 +25,7 @@
 
 namespace Titanic {
 
-SimpleFile::SimpleFile() {
+SimpleFile::SimpleFile(): _stream(nullptr) {
 }
 
 SimpleFile::~SimpleFile() {
@@ -38,18 +38,24 @@ void SimpleFile::open(const Common::String &name, FileMode mode) {
 		error("Could not find file - %s", name.c_str());
 }
 
+void SimpleFile::open(Common::SeekableReadStream *stream, FileMode mode) {
+	close();
+	_stream = stream;
+}
+
 void SimpleFile::close() {
 	_file.close();
+	_stream = nullptr;
 }
 
 void SimpleFile::safeRead(void *dst, size_t count) {
-	assert(_file.isOpen());
+	assert(_stream);
 	if (unsafeRead(dst, count) != count)
 		error("Could not read %d bytes", count);
 }
 
 size_t SimpleFile::unsafeRead(void *dst, size_t count) {
-	return _file.read(dst, count);
+	return _stream->read(dst, count);
 }
 
 CString SimpleFile::readString() {
@@ -225,7 +231,7 @@ void Decompressor::load(const char *version, int v) {
 }
 
 int Decompressor::sub1(Method3Fn fn, int v) {
-
+	return 0;
 }
 
 void Decompressor::close() {
@@ -263,6 +269,19 @@ void CompressedFile::open(const Common::String &name, FileMode mode) {
 		_fileMode = 1;
 	}
 }
+
+void CompressedFile::open(Common::SeekableReadStream *stream, FileMode mode) {
+	SimpleFile::open(stream, mode);
+
+	if (mode == FILE_READ) {
+		_decompressor.load();
+		_fileMode = 2;
+	} else if (mode == FILE_WRITE) {
+		_decompressor.load();
+		_fileMode = 1;
+	}
+}
+
 void CompressedFile::close() {
 	_queue.clear();
 	SimpleFile::close();

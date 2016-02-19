@@ -20,44 +20,8 @@
  *
  */
 
-#include "titanic/saveable_object.h"
-#include "titanic/list.h"
+#include "titanic/objects/tree_item.h"
 
 namespace Titanic {
-
-Common::HashMap<Common::String, CSaveableObject::CreateFunction> * 
-	CSaveableObject::_classList = nullptr;
-
-#define DEFFN(T) CSaveableObject *Function##T() { return new T(); }
-#define ADDFN(T) (*_classList)["TEST"] = Function##T
-
-DEFFN(List);
-DEFFN(ListItem);
-
-void CSaveableObject::initClassList() {
-	_classList = new Common::HashMap<Common::String, CreateFunction>();
-	ADDFN(List);
-	ADDFN(ListItem);
-}
-
-void CSaveableObject::freeClassList() {
-	delete _classList;
-}
-
-CSaveableObject *CSaveableObject::createInstance(const Common::String &name) {
-	return (*_classList)[name]();
-}
-
-void CSaveableObject::proc4() {
-
-}
-
-void CSaveableObject::proc5() {
-
-}
-
-void CSaveableObject::proc6() {
-
-}
 
 } // End of namespace Titanic

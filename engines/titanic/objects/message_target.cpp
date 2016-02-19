@@ -20,23 +20,8 @@
  *
  */
 
-#ifndef TITANIC_LIST_H
-#define TITANIC_LIST_H
-
-#include "common/scummsys.h"
-#include "common/list.h"
-#include "titanic/objects/saveable_object.h"
+#include "titanic/objects/message_target.h"
 
 namespace Titanic {
 
-class ListItem: public CSaveableObject {
-};
-
-class List : public CSaveableObject, Common::List<ListItem *> {
-public:
-
-};
-
 } // End of namespace Titanic
-
-#endif /* TITANIC_LIST_H */

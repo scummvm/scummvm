@@ -38,6 +38,7 @@ class DecompressorData;
 class SimpleFile {
 protected:
 	Common::File _file;
+	Common::SeekableReadStream *_stream;
 public:
 	SimpleFile();
 	virtual ~SimpleFile();
@@ -46,6 +47,11 @@ public:
 	 * Open a file for access
 	 */
 	virtual void open(const Common::String &name, FileMode mode = FILE_READ);
+
+	/**
+	 * Set up a stream for access
+	 */
+	virtual void open(Common::SeekableReadStream *stream, FileMode mode = FILE_READ);
 
 	/**
 	 * Close the file
@@ -142,6 +148,11 @@ public:
 	 * Open a file for access
 	 */
 	virtual void open(const Common::String &name, FileMode mode = FILE_READ);
+
+	/**
+	 * Set up a stream for access
+	 */
+	virtual void open(Common::SeekableReadStream *stream, FileMode mode = FILE_READ);
 
 	/**
 	 * Close the file

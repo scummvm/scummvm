@@ -28,7 +28,7 @@
 #include "graphics/scaler.h"
 #include "graphics/thumbnail.h"
 #include "titanic/titanic.h"
-#include "titanic/saveable_object.h"
+#include "titanic/objects/saveable_object.h"
 
 namespace Titanic {
 
