@@ -1,13 +1,14 @@
 MODULE := engines/titanic
 
 MODULE_OBJS := \
+	compressed_file.o \
 	detection.o \
 	direct_draw.o \
-	files.o \
 	font.o \
 	image.o \
 	main_game_window.o \
 	screen_manager.o \
+	simple_file.o \
 	string.o \
 	titanic.o \
 	video_surface.o \

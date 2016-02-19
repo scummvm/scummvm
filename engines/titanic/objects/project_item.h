@@ -24,7 +24,7 @@
 #define TITANIC_PROJECT_ITEM_H
 
 #include "common/scummsys.h"
-#include "titanic/files.h"
+#include "titanic/simple_file.h"
 #include "titanic/objects/file_item.h"
 
 namespace Titanic {

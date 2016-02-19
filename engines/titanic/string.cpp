@@ -20,7 +20,7 @@
  *
  */
 
-#include "titanic/files.h"
+#include "titanic/string.h"
 
 namespace Titanic {
 

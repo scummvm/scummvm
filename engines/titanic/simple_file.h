@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef TITANIC_FILES_H
-#define TITANIC_FILES_H
+#ifndef TITANIC_SIMPLE_FILE_H
+#define TITANIC_SIMPLE_FILE_H
 
 #include "common/scummsys.h"
 #include "common/file.h"
@@ -84,87 +84,6 @@ public:
 	virtual double readFloat();
 };
 
-typedef DecompressorData *(Decompressor::*DecompressorCreateFn)(int v1, int v2, int v3);
-typedef void(Decompressor::*DecompressorDestroyFn)(DecompressorData *ptr);
-typedef void(Decompressor::*Method3Fn)();
-
-class DecompressorData {
-public:
-	int _field0;
-	int _field4;
-	int _field8;
-	int _fieldC;
-	int _field10;
-	int _field14;
-public:
-	DecompressorData();
-};
-
-class Decompressor {
-private:
-	DecompressorCreateFn _createFn;
-	DecompressorDestroyFn _destroyFn;
-	int _field18;
-	DecompressorData *_dataPtr;
-	int _field28;
-
-	DecompressorData *createMethod(int v1, int v2, int v3);
-
-	void destroyMethod(DecompressorData *ptr);
-
-	void method3() {
-		// TODO
-	}
-
-	int sub1(Method3Fn fn, int v);
-
-	void sub2();
-public:
-	Decompressor();
-
-	void load(const char *version = "1.0.4", int v = 15);
-
-	void close();
-};
-
-class CompressedFile : public SimpleFile {
-private:
-	Decompressor _decompressor;
-	Common::Queue<byte> _queue;
-	int _fileMode;
-	int _isReading;
-	int _field260;
-	int _mode;
-
-	/**
-	 * Decompress data from the source file
-	 */
-	void decompress();
-public:
-	CompressedFile();
-	virtual ~CompressedFile();
-
-	/**
-	 * Open a file for access
-	 */
-	virtual void open(const Common::String &name, FileMode mode = FILE_READ);
-
-	/**
-	 * Set up a stream for access
-	 */
-	virtual void open(Common::SeekableReadStream *stream, FileMode mode = FILE_READ);
-
-	/**
-	 * Close the file
-	 */
-	virtual void close();
-
-	/**
-	 * Read from the file
-	 */
-	virtual size_t unsafeRead(void *dst, size_t count);
-};
-
 } // End of namespace Titanic
 
-#endif /* TITANIC_FILES_H */
+#endif /* TITANIC_SIMPLE_FILE_H */

@@ -22,7 +22,7 @@
 
 #include "common/savefile.h"
 #include "titanic/titanic.h"
-#include "titanic/files.h"
+#include "titanic/compressed_file.h"
 #include "titanic/objects/project_item.h"
 
 namespace Titanic {
