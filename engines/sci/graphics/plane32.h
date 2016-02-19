@@ -155,7 +155,7 @@ private:
 
 public:
 	/**
-	 * The colour to use when erasing the plane. Only
+	 * The color to use when erasing the plane. Only
 	 * applies to planes of type kPlaneTypeColored.
 	 */
 	byte _back;

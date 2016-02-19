@@ -79,7 +79,7 @@ struct CelInfo32 {
 	reg_t bitmap;
 
 	/**
-	 * For CelObjColor, the fill colour.
+	 * For CelObjColor, the fill color.
 	 */
 	uint8 color;
 
@@ -264,8 +264,8 @@ public:
 	uint16 _scaledWidth, _scaledHeight;
 
 	/**
-	 * The skip (transparent) colour for the cel. When
-	 * compositing, any pixels matching this colour will not
+	 * The skip (transparent) color for the cel. When
+	 * compositing, any pixels matching this color will not
 	 * be copied to the buffer.
 	 */
 	uint8 _transparentColor;
@@ -559,7 +559,7 @@ public:
 
 /**
  * A CelObjColor is the drawing primitive for fast,
- * low-memory, flat colour fills.
+ * low-memory, flat color fills.
  */
 class CelObjColor : public CelObj {
 public:
@@ -568,7 +568,7 @@ public:
 
 	using CelObj::draw;
 	/**
-	 * Block fills the target buffer with the cel colour.
+	 * Block fills the target buffer with the cel color.
 	 */
 	void draw(Buffer &target, const Common::Rect &targetRect) const;
 	virtual void draw(Buffer &target, const ScreenItem &screenItem, const Common::Rect &targetRect, const bool mirrorX) override;

@@ -89,7 +89,7 @@ struct ShowStyleEntry {
 	int unknownC;
 
 	/**
-	 * The colour used by transitions that draw CelObjColor
+	 * The color used by transitions that draw CelObjColor
 	 * screen items. -1 for transitions that do not draw
 	 * screen items.
 	 */
@@ -410,7 +410,7 @@ private:
 	 * Erases the areas in the given erase list from the
 	 * visible screen buffer by filling them with the color
 	 * from the corresponding plane. This is an optimisation
-	 * for coloured-type planes only; other plane types have
+	 * for colored-type planes only; other plane types have
 	 * to be redrawn from pixel data.
 	 */
 	void drawEraseList(const RectList &eraseList, const Plane &plane);

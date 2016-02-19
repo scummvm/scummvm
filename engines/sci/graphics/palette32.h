@@ -133,7 +133,7 @@ public:
 	void applyAll();
 
 #pragma mark -
-#pragma mark Colour look-up
+#pragma mark color look-up
 private:
 	/**
 	 * An optional lookup table used to remap RGB565 colors to a palette

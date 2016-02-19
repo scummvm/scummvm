@@ -789,7 +789,7 @@ void GfxPalette32::applyCycles() {
 // processShowStyleNone use 255 instead of 256. It is not clear if this is because
 // the last palette entry is intentionally left unmodified, or if this is a bug
 // in the engine. It certainly seems confused because all other places that accept
-// colour ranges typically receive values in the range of 0–255.
+// color ranges typically receive values in the range of 0–255.
 void GfxPalette32::setFade(uint8 percent, uint8 fromColor, uint16 numColorsToFade) {
 	if (fromColor > numColorsToFade) {
 		return;

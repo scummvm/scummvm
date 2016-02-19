@@ -58,17 +58,17 @@ private:
 	int16 _width, _height;
 
 	/**
-	 * The colour used to draw text.
+	 * The color used to draw text.
 	 */
 	uint8 _foreColor;
 
 	/**
-	 * The background colour of the text box.
+	 * The background color of the text box.
 	 */
 	uint8 _backColor;
 
 	/**
-	 * The transparent colour of the text box. Used when
+	 * The transparent color of the text box. Used when
 	 * compositing the bitmap onto the screen.
 	 */
 	uint8 _skipColor;
@@ -91,7 +91,7 @@ private:
 	GuiResourceId _fontId;
 
 	/**
-	 * The colour of the text box border.
+	 * The color of the text box border.
 	 */
 	int16 _borderColor;
 

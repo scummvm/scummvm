@@ -236,7 +236,7 @@ public:
 					// Fill with skip color
 					if (controlByte & 0x40) {
 						memset(_buffer + i, _transparentColor, length);
-					// Next value is fill colour
+					// Next value is fill color
 					} else {
 						memset(_buffer + i, *literal, length);
 						++literal;
@@ -1020,7 +1020,7 @@ CelObjColor::CelObjColor(const uint8 color, const int16 width, const int16 heigh
 
 void CelObjColor::draw(Buffer &target, const ScreenItem &screenItem, const Common::Rect &targetRect, const bool mirrorX) {
 	// TODO: The original engine sets this flag but why? One cannot
-	// draw a solid colour mirrored.
+	// draw a solid color mirrored.
 	_drawMirrored = mirrorX;
 	draw(target, targetRect);
 }
