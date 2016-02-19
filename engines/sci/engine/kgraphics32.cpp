@@ -180,8 +180,8 @@ reg_t kCreateTextBitmap(EngineState *s, int argc, reg_t *argv) {
 
 	int16 subop = argv[0].toUint16();
 
-	int16 width;
-	int16 height;
+	int16 width = 0;
+	int16 height = 0;
 	reg_t object;
 
 	if (subop == 0) {
