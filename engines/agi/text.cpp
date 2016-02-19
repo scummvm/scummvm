@@ -943,8 +943,9 @@ char *TextMgr::stringWordWrap(const char *originalText, int16 maxWidth, int16 *c
 	//memset(resultWrappedBuffer, 0, sizeof(resultWrappedBuffer)); for debugging
 
 	// Good testcases:
-	// King's Quest 1 intro:         the scrolling text is filled up with spaces, so that old lines are erased
-	// Apple IIgs restart system UI: spaces used to make the window larger
+	// King's Quest 1 intro:              the scrolling text is filled up with spaces, so that old lines are erased
+	// Apple IIgs restart system UI:      spaces used to make the window larger
+	// Gold Rush Stagecoach path room 60: "  Lake Michigan!", with max length 9 -> should get split into "  Lake" / "Michigan!"
 
 	while (originalText[curReadPos]) {
 		// Try to find out length of next word
@@ -967,6 +968,15 @@ char *TextMgr::stringWordWrap(const char *originalText, int16 maxWidth, int16 *c
 
 		if (wordLen >= lineWidthLeft) {
 			// Not enough space left
+
+			// If first character right after the new line is a space, skip over it
+			if (wordLen) {
+				if (originalText[wordStartPos] == ' ') {
+					wordStartPos++;
+					wordLen--;
+				}
+			}
+
 			if (wordLen > maxWidth) {
 				// Word way too long, split it in half
 				curReadPos = curReadPos - (wordLen - maxWidth);
@@ -983,14 +993,6 @@ char *TextMgr::stringWordWrap(const char *originalText, int16 maxWidth, int16 *c
 			// Reached absolute maximum? -> exit now
 			if (boxHeight >= HEIGHT_MAX)
 				break;
-
-			// If first character right after the new line is a space, skip over it
-			if (wordLen) {
-				if (originalText[wordStartPos] == ' ') {
-					wordStartPos++;
-					wordLen--;
-				}
-			}
 		}
 
 		// Copy current word over
