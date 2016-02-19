@@ -926,6 +926,8 @@ private:
 	void checkMotion(ScreenObjEntry *screenObj);
 
 public:
+	void motionActivated(ScreenObjEntry *screenObj);
+	void cyclerActivated(ScreenObjEntry *screenObj);
 	void checkAllMotions();
 	void moveObj(ScreenObjEntry *screenObj);
 	void inDestination(ScreenObjEntry *screenObj);
