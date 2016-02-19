@@ -13,6 +13,7 @@ MODULE_OBJS := \
 	titanic.o \
 	video_surface.o \
 	objects/file_item.o \
+	objects/list.o \
 	objects/message_target.o \
 	objects/project_item.o \
 	objects/saveable_object.o \

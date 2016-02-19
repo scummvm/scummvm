@@ -196,6 +196,14 @@ double SimpleFile::readFloat() {
 	return floatValue;
 }
 
+void SimpleFile::readBuffer(char *buffer, size_t count) {
+	CString tempString = readString();
+	if (buffer) {
+		strncpy(buffer, tempString.c_str(), count);
+		buffer[count - 1] = '\0';
+	}
+}
+
 void SimpleFile::writeLine(const CString &str) {
 	write(str.c_str(), str.size());
 	write("\r\n", 2);
@@ -244,6 +252,12 @@ void SimpleFile::writeQuotedString(const CString &str) {
 	write("\" ", 2);
 }
 
+void SimpleFile::writeQuotedLine(const CString &str, int indent) {
+	writeIndent(indent);
+	writeQuotedString(str);
+	write("\n", 1);
+}
+
 void SimpleFile::writeNumber(int val) {
 	CString str = CString::format("%ld ", val);
 	write(str.c_str(), str.size());
@@ -260,14 +274,15 @@ void SimpleFile::writeIndent(uint indent) {
 		write("\t", 1);
 }
 
-bool SimpleFile::IsClassEnd() {
+bool SimpleFile::IsClassStart() {
 	char c;
 
 	do {
 		safeRead(&c, 1);
 	} while (Common::isSpace(c));
 
-	return c == '}';
+	assert(c == '{' || c == '}');
+	return c == '{';
 }
 
 void SimpleFile::writeClassStart(const CString &classStr, int indent) {

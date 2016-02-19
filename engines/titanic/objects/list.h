@@ -30,11 +30,51 @@
 namespace Titanic {
 
 class ListItem: public CSaveableObject {
+public:
+	/**
+	 * Return the class name
+	 */
+	virtual const char *getClassName() const { return "ListItem"; }
+
+	/**
+	 * Save the data for the class to file
+	 */
+	virtual void save(SimpleFile *file, int indent) const;
+
+	/**
+	 * Load the data for the class from file
+	 */
+	virtual void load(SimpleFile *file);
 };
 
 class List : public CSaveableObject, Common::List<ListItem *> {
-public:
+private:
+	/**
+	 * Write out the contents of the list
+	 */
+	void saveItems(SimpleFile *file, int indent) const;
 
+	/**
+	 * Read in the contents of a list
+	 */
+	void loadItems(SimpleFile *file);
+public:
+	List();
+
+	/**
+	 * Return the class name
+	 */
+	virtual const char *getClassName() const { return "List"; }
+
+	/**
+	 * Save the data for the class to file
+	 */
+	virtual void save(SimpleFile *file, int indent) const;
+
+	/**
+	 * Load the data for the class from file
+	 */
+	virtual void load(SimpleFile *file);
 };
 
 } // End of namespace Titanic

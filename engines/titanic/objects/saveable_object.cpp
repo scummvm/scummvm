@@ -22,10 +22,10 @@
 
 #include "titanic/objects/saveable_object.h"
 #include "titanic/objects/file_item.h"
+#include "titanic/objects/list.h"
 #include "titanic/objects/message_target.h"
 #include "titanic/objects/project_item.h"
 #include "titanic/objects/tree_item.h"
-#include "titanic/list.h"
 
 namespace Titanic {
 
@@ -60,21 +60,21 @@ CSaveableObject *CSaveableObject::createInstance(const Common::String &name) {
 	return (*_classList)[name]();
 }
 
-void CSaveableObject::save(SimpleFile *file, int indent) {
+void CSaveableObject::save(SimpleFile *file, int indent) const {
 	// Should always be overriden in descendents, so just write a dummy value
 	file->writeNumberLine(0, indent);
 }
 
 void CSaveableObject::load(SimpleFile *file) {
-	// Should always be overriden in descendents, so just read a dummy value
+	// Should always be overriden in descendents, so just read the dummy value
 	file->readNumber();
 }
 
-void CSaveableObject::saveHeader(SimpleFile *file, int indent) {
+void CSaveableObject::saveHeader(SimpleFile *file, int indent) const {
 	file->writeClassStart(getClassName(), indent);
 }
 
-void CSaveableObject::saveFooter(SimpleFile *file, int indent) {
+void CSaveableObject::saveFooter(SimpleFile *file, int indent) const {
 	file->writeClassEnd(indent);
 }
 

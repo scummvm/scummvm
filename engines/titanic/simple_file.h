@@ -100,11 +100,14 @@ public:
 	double readFloat();
 
 	/**
+	 * Read a string and copy it into an optionally passed buffer
+	 */
+	void readBuffer(char *buffer = nullptr, size_t count = 0);
+
+	/**
 	 * Write a string line
 	 */
 	void writeLine(const CString &str);
-
-
 
 	/**
 	 * Write a string
@@ -115,6 +118,11 @@ public:
 	 * Write a quoted string
 	 */
 	void writeQuotedString(const CString &str);
+
+	/**
+	 * Write a quoted string line
+	 */
+	void writeQuotedLine(const CString &str, int indent);
 
 	/**
 	 * Write a number to file
@@ -134,9 +142,9 @@ public:
 	/**
 	 * Validates that the following non-space character is either
 	 * an opening or closing squiggly bracket denoting a class
-	 * definition start or end. Returns true if it's a class end
+	 * definition start or end. Returns true if it's a class start
 	 */
-	bool IsClassEnd();
+	bool IsClassStart();
 
 	/**
 	 * Write the starting header for a class definition

@@ -58,7 +58,7 @@ public:
 	/**
 	 * Save the data for the class to file
 	 */
-	virtual void save(SimpleFile *file, int indent);
+	virtual void save(SimpleFile *file, int indent) const;
 
 	/**
 	 * Load the data for the class from file
@@ -69,13 +69,13 @@ public:
 	 * Write out a header definition for the class to file
 	 * prior to saving the actual data for the class
 	 */
-	virtual void saveHeader(SimpleFile *file, int indent);
+	virtual void saveHeader(SimpleFile *file, int indent) const;
 	
 	/**
 	 * Writes out a footer for the class after it's data has
 	 * been written to file
 	 */
-	virtual void saveFooter(SimpleFile *file, int indent);
+	virtual void saveFooter(SimpleFile *file, int indent) const;
 };
 
 } // End of namespace Titanic
