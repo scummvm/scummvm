@@ -97,12 +97,17 @@ public:
 	/**
 	 * Open a file for access
 	 */
-	virtual void open(const Common::String &name, FileMode mode = FILE_READ);
+	virtual void open(const Common::String &name);
 
 	/**
-	 * Set up a stream for access
+	 * Set up a stream for read access
 	 */
-	virtual void open(Common::SeekableReadStream *stream, FileMode mode = FILE_READ);
+	virtual void open(Common::SeekableReadStream *stream);
+
+	/**
+	 * Set up a stream for write access
+	 */
+	virtual void open(Common::OutSaveFile *stream);
 
 	/**
 	 * Close the file

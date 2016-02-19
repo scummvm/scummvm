@@ -26,11 +26,10 @@
 #include "common/scummsys.h"
 #include "common/file.h"
 #include "common/queue.h"
+#include "common/savefile.h"
 #include "titanic/string.h"
 
 namespace Titanic {
-
-enum FileMode { FILE_READ = 1, FILE_WRITE = 2 };
 
 class Decompressor;
 class DecompressorData;
@@ -38,7 +37,9 @@ class DecompressorData;
 class SimpleFile {
 protected:
 	Common::File _file;
-	Common::SeekableReadStream *_stream;
+	Common::SeekableReadStream *_inStream;
+	Common::OutSaveFile *_outStream;
+	int _lineCount;
 public:
 	SimpleFile();
 	virtual ~SimpleFile();
@@ -46,12 +47,17 @@ public:
 	/**
 	 * Open a file for access
 	 */
-	virtual void open(const Common::String &name, FileMode mode = FILE_READ);
+	virtual void open(const Common::String &name);
 
 	/**
-	 * Set up a stream for access
+	 * Set up a stream for read access
 	 */
-	virtual void open(Common::SeekableReadStream *stream, FileMode mode = FILE_READ);
+	virtual void open(Common::SeekableReadStream *stream);
+
+	/**
+	 * Set up a stream for write access
+	 */
+	virtual void open(Common::OutSaveFile *stream);
 
 	/**
 	 * Close the file
@@ -69,19 +75,66 @@ public:
 	virtual size_t unsafeRead(void *dst, size_t count);
 
 	/**
+	 * Write out data
+	 */
+	virtual size_t write(const void *src, size_t count);
+
+	/**
+	 * Return true if the end of the file has been reached
+	 */
+	bool eof() const;
+
+	/**
 	 * Read a string from the file
 	 */
-	virtual CString readString();
+	CString readString();
 
 	/**
 	 * Read a number from the file
 	 */
-	virtual int readNumber();
+	int readNumber();
 
 	/**
 	 * Read a floating point number from the file
 	 */
-	virtual double readFloat();
+	double readFloat();
+
+	/**
+	 * Write a line
+	 */
+	void writeLine(const CString &str);
+
+	/**
+	 * Write a string
+	 */
+	void writeString(const CString &str);
+
+	/**
+	 * Write a quoted string
+	 */
+	void writeQuotedString(const CString &str);
+
+	/**
+	 * Write out a number of tabs to form an indent in the output
+	 */
+	void writeIndent(uint indent);
+
+	/**
+	 * Validates that the following non-space character is either
+	 * an opening or closing squiggly bracket denoting a class
+	 * definition start or end. Returns true if it's a class end
+	 */
+	bool IsClassEnd();
+
+	/**
+	 * Write the starting header for a class definition
+	 */
+	void writeClassStart(const CString &classStr, int indent);
+
+	/**
+	 * Write out the ending footer for a class definition
+	 */
+	void writeClassEnd(int indent);
 };
 
 } // End of namespace Titanic

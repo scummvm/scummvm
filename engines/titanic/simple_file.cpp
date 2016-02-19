@@ -20,41 +20,63 @@
  *
  */
 
+#include "common/util.h"
 #include "titanic/simple_file.h"
 
 namespace Titanic {
 
-SimpleFile::SimpleFile(): _stream(nullptr) {
+SimpleFile::SimpleFile(): _inStream(nullptr), _outStream(nullptr), _lineCount(1) {
 }
 
 SimpleFile::~SimpleFile() {
 	_file.close();
 }
 
-void SimpleFile::open(const Common::String &name, FileMode mode) {
-	assert(mode == FILE_READ);
+void SimpleFile::open(const Common::String &name) {
+	close();
+
 	if (!_file.open(name))
 		error("Could not find file - %s", name.c_str());
+	_inStream = &_file;
 }
 
-void SimpleFile::open(Common::SeekableReadStream *stream, FileMode mode) {
+void SimpleFile::open(Common::SeekableReadStream *stream) {
+	close();	
+	_inStream = stream;
+}
+
+void SimpleFile::open(Common::OutSaveFile *stream) {
 	close();
-	_stream = stream;
+	_outStream = stream;
 }
 
 void SimpleFile::close() {
 	_file.close();
-	_stream = nullptr;
+	if (_outStream)
+		_outStream->finalize();
+
+	_inStream = nullptr;
+	_outStream = nullptr;
 }
 
 void SimpleFile::safeRead(void *dst, size_t count) {
-	assert(_stream);
 	if (unsafeRead(dst, count) != count)
 		error("Could not read %d bytes", count);
 }
 
 size_t SimpleFile::unsafeRead(void *dst, size_t count) {
-	return _stream->read(dst, count);
+	assert(_inStream);
+	return _inStream->read(dst, count);
+}
+
+size_t SimpleFile::write(const void *src, size_t count) {
+	assert(_outStream);
+	return _outStream->write(src, count);
+}
+
+bool SimpleFile::eof() const {
+	assert(_inStream);
+	return _inStream->pos() >= _inStream->size();
 }
 
 CString SimpleFile::readString() {
@@ -172,6 +194,83 @@ double SimpleFile::readFloat() {
 	sscanf(result.c_str(), "%f", &floatValue);
 
 	return floatValue;
+}
+
+void SimpleFile::writeLine(const CString &str) {
+	write(str.c_str(), str.size());
+	write("\r\n", 2);
+}
+
+void SimpleFile::writeString(const CString &str) {
+	if (str.empty())
+		return;
+
+	const char *msgP = str.c_str();
+	char c;
+	
+	while (c = *msgP++) {
+		switch (c) {
+		case '\r':
+			write("\\r", 2);
+			break;
+		case '\n':
+			write("\\n", 2);
+			break;
+		case '\t':
+			write("\\t", 2);
+			break;
+		case '\"':
+			write("\\\"", 2);
+			break;
+		case '\\':
+			write("\\\\", 2);
+			break;
+		case '{':
+			write("\\{", 2);
+			break;
+		case '}':
+			write("\\}", 2);
+			break;
+		default:
+			write(&c, 1);
+			break;
+		}
+	}
+}
+
+void SimpleFile::writeQuotedString(const CString &str) {
+	write("\"", 1);
+	writeString(str);
+	write("\" ", 2);
+}
+
+void SimpleFile::writeIndent(uint indent) {
+	for (uint idx = 0; idx < indent; ++idx)
+		write("\t", 1);
+}
+
+bool SimpleFile::IsClassEnd() {
+	char c;
+
+	do {
+		safeRead(&c, 1);
+	} while (Common::isSpace(c));
+
+	return c == '}';
+}
+
+void SimpleFile::writeClassStart(const CString &classStr, int indent) {
+	write("\n", 1);
+	writeIndent(indent);
+	write("{\n", 2);
+	writeIndent(indent + 1);
+	writeQuotedString(classStr);
+	write("\n", 1);
+}
+
+void SimpleFile::writeClassEnd(int indent) {
+	writeIndent(indent);
+	write("}\n", 2);
 }
 
 } // End of namespace Titanic

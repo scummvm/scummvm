@@ -20,7 +20,6 @@
  *
  */
 
-#include "common/util.h"
 #include "titanic/compressed_file.h"
 
 namespace Titanic {
@@ -106,28 +105,25 @@ CompressedFile::CompressedFile() : SimpleFile() {
 CompressedFile::~CompressedFile() {
 }
 
-void CompressedFile::open(const Common::String &name, FileMode mode) {
-	SimpleFile::open(name, mode);
+void CompressedFile::open(const Common::String &name) {
+	SimpleFile::open(name);
 
-	if (mode == FILE_READ) {
-		_decompressor.load();
-		_fileMode = 2;
-	} else if (mode == FILE_WRITE) {
-		_decompressor.load();
-		_fileMode = 1;
-	}
+	_decompressor.load();
+	_fileMode = 2;
 }
 
-void CompressedFile::open(Common::SeekableReadStream *stream, FileMode mode) {
-	SimpleFile::open(stream, mode);
+void CompressedFile::open(Common::SeekableReadStream *stream) {
+	SimpleFile::open(stream);
 
-	if (mode == FILE_READ) {
-		_decompressor.load();
-		_fileMode = 2;
-	} else if (mode == FILE_WRITE) {
-		_decompressor.load();
-		_fileMode = 1;
-	}
+	_decompressor.load();
+	_fileMode = 2;
+}
+
+void CompressedFile::open(Common::OutSaveFile *stream) {
+	SimpleFile::open(stream);
+
+	_decompressor.load();
+	_fileMode = 1;
 }
 
 void CompressedFile::close() {
