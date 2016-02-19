@@ -45,7 +45,7 @@
 #include "agi/systemui.h"
 #include "agi/words.h"
 
-#define SAVEGAME_CURRENT_VERSION 10
+#define SAVEGAME_CURRENT_VERSION 11
 
 //
 // Version 0 (Sarien):   view table has 64 entries
@@ -266,6 +266,8 @@ int AgiEngine::saveGame(const Common::String &fileName, const Common::String &de
 
 		out->writeByte(screenObj->motionType);
 		out->writeByte(screenObj->cycle);
+		// Version 11+: loop_flag, was saved previously under vt.parm1
+		out->writeByte(screenObj->loop_flag);
 		out->writeByte(screenObj->priority);
 
 		out->writeUint16BE(screenObj->flags);
@@ -344,6 +346,7 @@ int AgiEngine::loadGame(const Common::String &fileName, bool checkId) {
 	int16 parm[7];
 	Common::InSaveFile *in;
 	bool totalPlayTimeWasSet = false;
+	byte oldLoopFlag = 0;
 
 	debugC(3, kDebugLevelMain | kDebugLevelSavegame, "AgiEngine::loadGame(%s)", fileName.c_str());
 
@@ -634,6 +637,10 @@ int AgiEngine::loadGame(const Common::String &fileName, bool checkId) {
 
 		screenObj->motionType = (MotionType)in->readByte();
 		screenObj->cycle = (CycleType)in->readByte();
+		if (saveVersion >= 11) {
+			// Version 11+: loop_flag, was previously vt.parm1
+			screenObj->loop_flag = in->readByte();
+		}
 		screenObj->priority = in->readByte();
 
 		screenObj->flags = in->readUint16BE();
@@ -641,7 +648,7 @@ int AgiEngine::loadGame(const Common::String &fileName, bool checkId) {
 		// this was done so that saved games compatibility isn't broken
 		switch (screenObj->motionType) {
 		case kMotionNormal:
-			in->readByte();
+			oldLoopFlag = in->readByte();
 			in->readByte();
 			in->readByte();
 			in->readByte();
@@ -651,12 +658,14 @@ int AgiEngine::loadGame(const Common::String &fileName, bool checkId) {
 			in->readByte();
 			in->readByte();
 			in->readByte();
+			oldLoopFlag = screenObj->wander_count;
 			break;
 		case kMotionFollowEgo:
 			screenObj->follow_stepSize = in->readByte();
 			screenObj->follow_flag = in->readByte();
 			screenObj->follow_count = in->readByte();
 			in->readByte();
+			oldLoopFlag = screenObj->follow_stepSize;
 			break;
 		case kMotionEgo:
 		case kMotionMoveObj:
@@ -664,9 +673,20 @@ int AgiEngine::loadGame(const Common::String &fileName, bool checkId) {
 			screenObj->move_y = in->readByte();
 			screenObj->move_stepSize = in->readByte();
 			screenObj->move_flag = in->readByte();
+			oldLoopFlag = screenObj->move_x;
 			break;
 		default:
 			error("unknown motion-type");
+		}
+		if (saveVersion < 11) {
+			if (saveVersion < 7) {
+				// Recreate loop_flag from motion-type (was previously vt.parm1)
+				// vt.parm1 was shared for multiple uses
+				screenObj->loop_flag = oldLoopFlag;
+			} else {
+				// for Version 7-10 we can't really do anything, it was not saved
+				screenObj->loop_flag = 0; // set it to 0
+			}
 		}
 	}
 	for (i = vtEntries; i < SCREENOBJECTS_MAX; i++) {
