@@ -100,9 +100,11 @@ public:
 	double readFloat();
 
 	/**
-	 * Write a line
+	 * Write a string line
 	 */
 	void writeLine(const CString &str);
+
+
 
 	/**
 	 * Write a string
@@ -113,6 +115,16 @@ public:
 	 * Write a quoted string
 	 */
 	void writeQuotedString(const CString &str);
+
+	/**
+	 * Write a number to file
+	 */
+	void writeNumber(int val);
+
+	/**
+	 * Write a number line to file
+	 */
+	void writeNumberLine(int val, int indent);
 
 	/**
 	 * Write out a number of tabs to form an indent in the output

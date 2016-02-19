@@ -244,6 +244,17 @@ void SimpleFile::writeQuotedString(const CString &str) {
 	write("\" ", 2);
 }
 
+void SimpleFile::writeNumber(int val) {
+	CString str = CString::format("%ld ", val);
+	write(str.c_str(), str.size());
+}
+
+void SimpleFile::writeNumberLine(int val, int indent) {
+	writeIndent(indent);
+	writeNumber(val);
+	write("\n", 1);
+}
+
 void SimpleFile::writeIndent(uint indent) {
 	for (uint idx = 0; idx < indent; ++idx)
 		write("\t", 1);

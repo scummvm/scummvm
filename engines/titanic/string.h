@@ -29,7 +29,13 @@
 namespace Titanic {
 
 class CString : public Common::String {
-
+public:
+	CString() : Common::String() {}
+	CString(const char *str) : Common::String(str) {}
+	CString(const char *str, uint32 len) : Common::String(str, len) {}
+	CString(const char *beginP, const char *endP) : Common::String(beginP, endP) {}
+	CString(const String &str) : Common::String(str) {}
+	explicit CString(char c) : Common::String(c) {}
 };
 
 } // End of namespace Titanic

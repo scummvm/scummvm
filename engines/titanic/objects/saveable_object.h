@@ -26,6 +26,7 @@
 #include "common/scummsys.h"
 #include "common/array.h"
 #include "common/hash-str.h"
+#include "titanic/simple_file.h"
 
 namespace Titanic {
 
@@ -49,9 +50,32 @@ public:
 	 */
 	static CSaveableObject *createInstance(const Common::String &name);
 public:
-	virtual void proc4();
-	virtual void proc5();
-	virtual void proc6();
+	/**
+	 * Return the class name
+	 */
+	virtual const char *getClassName() const { return "CSaveableObject"; }
+
+	/**
+	 * Save the data for the class to file
+	 */
+	virtual void save(SimpleFile *file, int indent);
+
+	/**
+	 * Load the data for the class from file
+	 */
+	virtual void load(SimpleFile *file);
+	
+	/**
+	 * Write out a header definition for the class to file
+	 * prior to saving the actual data for the class
+	 */
+	virtual void saveHeader(SimpleFile *file, int indent);
+	
+	/**
+	 * Writes out a footer for the class after it's data has
+	 * been written to file
+	 */
+	virtual void saveFooter(SimpleFile *file, int indent);
 };
 
 } // End of namespace Titanic

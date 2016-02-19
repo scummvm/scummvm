@@ -60,16 +60,22 @@ CSaveableObject *CSaveableObject::createInstance(const Common::String &name) {
 	return (*_classList)[name]();
 }
 
-void CSaveableObject::proc4() {
-
+void CSaveableObject::save(SimpleFile *file, int indent) {
+	// Should always be overriden in descendents, so just write a dummy value
+	file->writeNumberLine(0, indent);
 }
 
-void CSaveableObject::proc5() {
-
+void CSaveableObject::load(SimpleFile *file) {
+	// Should always be overriden in descendents, so just read a dummy value
+	file->readNumber();
 }
 
-void CSaveableObject::proc6() {
+void CSaveableObject::saveHeader(SimpleFile *file, int indent) {
+	file->writeClassStart(getClassName(), indent);
+}
 
+void CSaveableObject::saveFooter(SimpleFile *file, int indent) {
+	file->writeClassEnd(indent);
 }
 
 } // End of namespace Titanic
