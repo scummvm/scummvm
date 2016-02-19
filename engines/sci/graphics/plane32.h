@@ -258,7 +258,13 @@ public:
 		// other future conflicts with script-generated planes then we need
 		// to come up with a solution that works, similar to
 		// reg_t::pointerComparisonWithInteger used by SCI16.
-		return _priority < other._priority || (_priority == other._priority && _priority > -1 && _object < other._object);
+		//
+		// For now, we check the object offsets, as this will likely work
+		// like in the original SCI engine, without comparing objects.
+		// However, this whole comparison is quite ugly, and if it still
+		// fails, we should try to change it to something equivalent, to avoid
+		// adding loads of workarounds just for this
+		return _priority < other._priority || (_priority == other._priority && _priority > -1 && _object.getOffset() < other._object.getOffset());
 	}
 
 	/**
