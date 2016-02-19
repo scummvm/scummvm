@@ -574,6 +574,7 @@ void AgiEngine::syncSoundSettings() {
 // Scenes that need this:
 //
 // Gold Rush:
+//  - During Stagecoach path, after getting solving the steep hill "Congratulations!!!" (NewRoom)
 //  - when following your mule "Yet right on his tail!!!" (NewRoom/NewPicture - but room 123 stays the same)
 // Manhunter 1:
 //  - intro text screen (DrawPic)
