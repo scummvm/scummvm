@@ -578,7 +578,7 @@ const ADGameDescription *SciMetaEngine::fallbackDetect(const FileMap &allFiles, 
 
 	ResourceManager resMan;
 	resMan.addAppropriateSourcesForDetection(fslist);
-	resMan.init();
+	resMan.initForDetection();
 	// TODO: Add error handling.
 
 #ifndef ENABLE_SCI32

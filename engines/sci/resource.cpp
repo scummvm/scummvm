@@ -944,12 +944,33 @@ void ResourceManager::init() {
 		debugC(1, kDebugLevelResMan, "resMan: Detected SCI1.1 VGA graphic resources");
 		break;
 	default:
-		// Throw a warning, but do not error out here, because this is called from the
-		// fallback detector, and the user could be pointing to a folder with a non-SCI
-		// game, but with SCI-like file names (e.g. Pinball Creep)
-		warning("resMan: Couldn't determine view type");
-		break;
+#ifdef ENABLE_SCI32
+		error("resMan: Couldn't determine view type");
+#else
+		if (getSciVersion() >= SCI_VERSION_2) {
+			// SCI support isn't built in, thus the view type won't be determined for
+			// SCI2+ games. This will be handled further up, so throw no error here
+		} else {
+			error("resMan: Couldn't determine view type");
+		}
+#endif
 	}
+}
+
+void ResourceManager::initForDetection() {
+	assert(!g_sci);
+
+	_memoryLocked = 0;
+	_memoryLRU = 0;
+	_LRU.clear();
+	_resMap.clear();
+	_audioMapSCI1 = NULL;
+
+	_mapVersion = detectMapVersion();
+	_volVersion = detectVolVersion();
+
+	scanNewSources();
+	detectSciVersion();
 }
 
 ResourceManager::~ResourceManager() {
@@ -2462,9 +2483,7 @@ bool ResourceManager::hasOldScriptHeader() {
 	Resource *res = findResource(ResourceId(kResourceTypeScript, 0), 0);
 
 	if (!res) {
-		// Script 0 missing -> corrupted / non-SCI resource files.
-		// Don't error out here, because this might have been called
-		// from the fallback detector
+		error("resMan: Failed to find script.000");
 		return false;
 	}
 
