@@ -1869,7 +1869,7 @@ void GfxFrameout::kernelFrameout(const bool shouldShowBits) {
 
 uint16 GfxFrameout::kernelIsOnMe(int16 x, int16 y, uint16 checkPixels, reg_t screenObject) {
 	reg_t planeObject = readSelector(_segMan, screenObject, SELECTOR(plane));
-	Plane *screenItemPlane = _visiblePlanes.findByObject(planeObject);
+	Plane *screenItemPlane = _visiblePlanes.findByObject(planeObject); // Search for plane in visible planes
 	ScreenItem *screenItem = nullptr;
 
 	if (!screenItemPlane) {
