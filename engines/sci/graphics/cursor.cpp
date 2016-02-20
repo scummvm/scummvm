@@ -453,6 +453,10 @@ void GfxCursor::kernelClearZoomZone() {
 void GfxCursor::kernelSetZoomZone(byte multiplier, Common::Rect zone, GuiResourceId viewNum, int loopNum, int celNum, GuiResourceId picNum, byte zoomColor) {
 	kernelClearZoomZone();
 
+	// This function is a stub in Mac versions
+	if (g_sci->getPlatform() == Common::kPlatformMacintosh)
+		return;
+
 	_zoomMultiplier = multiplier;
 
 	if (_zoomMultiplier != 1 && _zoomMultiplier != 2 && _zoomMultiplier != 4)
