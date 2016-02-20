@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
 "POT-Creation-Date: 2016-02-20 21:28+0000\n"
-"PO-Revision-Date: 2016-02-02 09:10+0100\n"
+"PO-Revision-Date: 2016-02-21 00:43+0100\n"
 "Last-Translator: Santiago G. Sanz <s.sanz@uvigo.es>\n"
 "Language-Team: Santiago G. Sanz <s.sanz@uvigo.es>\n"
 "Language: Galego\n"
@@ -2684,18 +2684,16 @@ msgstr ""
 "\n"
 
 #: engines/parallaction/saveload.cpp:197
-#, fuzzy
 msgid "Load file"
-msgstr "Cargar partida:"
+msgstr "Cargar ficheiro"
 
 #: engines/parallaction/saveload.cpp:204
 msgid "Loading game..."
 msgstr "Cargando..."
 
 #: engines/parallaction/saveload.cpp:212
-#, fuzzy
 msgid "Save file"
-msgstr "Gardar partida:"
+msgstr "Gardar ficheiro"
 
 #: engines/parallaction/saveload.cpp:219
 msgid "Saving game..."
@@ -3547,58 +3545,60 @@ msgstr ""
 "do que empregar os instrumentos. A música desactivarase."
 
 #: engines/sherlock/detection.cpp:71
-#, fuzzy
 msgid "Use original savegame dialog"
-msgstr "Empregar pantallas orixinais de gardado e carga"
+msgstr "Empregar pantalla orixinal de gardado"
 
 #: engines/sherlock/detection.cpp:72
 msgid ""
 "Files button in-game shows original savegame dialog rather than the ScummVM "
 "menu"
 msgstr ""
+"O botón de ficheiros do xogo mostra a pantalla orixinal de gardado no canto "
+"do menú de ScummVM."
 
 #: engines/sherlock/detection.cpp:81
 msgid "Pixellated scene transitions"
-msgstr ""
+msgstr "Transicións de escenas pixeladas"
 
 #: engines/sherlock/detection.cpp:82
 msgid "When changing scenes, a randomized pixel transition is done"
-msgstr ""
+msgstr "Ao mudar de escena, mostrase una transición pixelada aleatoria."
 
 #: engines/sherlock/detection.cpp:91
 msgid "Don't show hotspots when moving mouse"
-msgstr ""
+msgstr "Non mostrar puntos de acceso ao mover o rato"
 
 #: engines/sherlock/detection.cpp:92
 msgid ""
 "Only show hotspot names after you actually click on a hotspot or action "
 "button"
 msgstr ""
+"Só mostra os nomes dos puntos de acceso despois de premer nun punto de "
+"acceso ou un botón de acción."
 
 #: engines/sherlock/detection.cpp:101
-#, fuzzy
 msgid "Show character portraits"
-msgstr "Cambiar carácter"
+msgstr "Mostrar retratos de personaxes"
 
 #: engines/sherlock/detection.cpp:102
 msgid "Show portraits for the characters when conversing"
-msgstr ""
+msgstr "Mostra os retratos dos personaxes nas conversas."
 
 #: engines/sherlock/detection.cpp:111
 msgid "Slide dialogs into view"
-msgstr ""
+msgstr "Deslizar pantallas"
 
 #: engines/sherlock/detection.cpp:112
 msgid "Slide UI dialogs into view, rather than simply showing them immediately"
-msgstr ""
+msgstr "Desliza as pantallas da IU, no canto de mostralas directamente."
 
 #: engines/sherlock/detection.cpp:121
 msgid "Transparent windows"
-msgstr ""
+msgstr "Ventás transparentes"
 
 #: engines/sherlock/detection.cpp:122
 msgid "Show windows with a partially transparent background"
-msgstr ""
+msgstr "Mostra ventás cun fondo parcialmente transparente."
 
 #: engines/sky/compact.cpp:130
 msgid ""
@@ -3622,7 +3622,7 @@ msgstr "Intro de disquete"
 
 #: engines/sky/detection.cpp:45
 msgid "Use the floppy version's intro (CD version only)"
-msgstr "Empregar a introdución da versión en disquete (só versión en CD)"
+msgstr "Emprega a introdución da versión en disquete (só versión en CD)."
 
 #: engines/sword1/animation.cpp:524
 #, c-format
@@ -3699,7 +3699,7 @@ msgstr "Mostrar etiquetas"
 
 #: engines/sword2/sword2.cpp:80
 msgid "Show labels for objects on mouse hover"
-msgstr "Mostrar as etiquetas dos obxectos ao apuntar co rato"
+msgstr "Mostra as etiquetas dos obxectos ao apuntar co rato."
 
 #: engines/teenagent/resources.cpp:95
 msgid ""
