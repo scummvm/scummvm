@@ -70,7 +70,7 @@ public:
 
 class MohawkEngine_Myst;
 
-class MystOptionsDialog : public GUI::OptionsDialog {
+class MystOptionsDialog : public GUI::Dialog {
 public:
 	MystOptionsDialog(MohawkEngine_Myst *vm);
 	~MystOptionsDialog();
