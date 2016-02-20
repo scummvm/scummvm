@@ -747,8 +747,9 @@ void Channelwood::o_soundReplace(uint16 op, uint16 var, uint16 argc, uint16 *arg
 
 	uint16 soundId = argv[0];
 
-	// TODO: If is foreground playing
-	_vm->_sound->replaceSoundMyst(soundId);
+	if (!_vm->_sound->isPlaying()) {
+		_vm->_sound->replaceSoundMyst(soundId);
+	}
 }
 
 void Channelwood::o_lever_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
