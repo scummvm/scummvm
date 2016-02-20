@@ -32,6 +32,10 @@
 #include "gui/widget.h"
 #include "gui/widgets/list.h"
 
+namespace GUI {
+class SaveLoadChooser;
+}
+
 namespace Mohawk {
 
 class MohawkEngine;
@@ -80,11 +84,22 @@ public:
 	virtual void handleCommand(GUI::CommandSender*, uint32, uint32);
 private:
 	MohawkEngine_Myst *_vm;
+
 	GUI::CheckboxWidget *_zipModeCheckbox;
 	GUI::CheckboxWidget *_transitionsCheckbox;
+
 	GUI::ButtonWidget *_dropPageButton;
 	GUI::ButtonWidget *_showMapButton;
 	GUI::ButtonWidget *_returnToMenuButton;
+
+	GUI::ButtonWidget    *_loadButton;
+	GUI::ButtonWidget    *_saveButton;
+
+	GUI::SaveLoadChooser *_loadDialog;
+	GUI::SaveLoadChooser *_saveDialog;
+
+	void save();
+	void load();
 };
 
 #endif
