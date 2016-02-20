@@ -87,7 +87,7 @@ enum {
 
 #ifdef ENABLE_MYST
 
-MystOptionsDialog::MystOptionsDialog(MohawkEngine_Myst* vm) : GUI::Dialog(120, 120, 360, 200), _vm(vm) {
+MystOptionsDialog::MystOptionsDialog(MohawkEngine_Myst* vm) : GUI::Dialog(0, 0, 360, 200), _vm(vm) {
 	// I18N: Option for fast scene switching
 	_zipModeCheckbox = new GUI::CheckboxWidget(this, 15, 10, 300, 15, _("~Z~ip Mode Activated"), 0, kZipCmd);
 	_transitionsCheckbox = new GUI::CheckboxWidget(this, 15, 30, 300, 15, _("~T~ransitions Enabled"), 0, kTransCmd);
@@ -133,6 +133,17 @@ void MystOptionsDialog::open() {
 
 	_zipModeCheckbox->setState(_vm->_gameState->_globals.zipMode);
 	_transitionsCheckbox->setState(_vm->_gameState->_globals.transitions);
+}
+
+void MystOptionsDialog::reflowLayout() {
+	const int screenW = g_system->getOverlayWidth();
+	const int screenH = g_system->getOverlayHeight();
+
+	// Center the dialog
+	_x = (screenW - getWidth()) / 2;
+	_y = (screenH - getHeight()) / 2;
+
+	Dialog::reflowLayout();
 }
 
 void MystOptionsDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data) {

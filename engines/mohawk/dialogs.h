@@ -76,6 +76,7 @@ public:
 	~MystOptionsDialog();
 	void open();
 
+	virtual void reflowLayout() override;
 	virtual void handleCommand(GUI::CommandSender*, uint32, uint32);
 private:
 	MohawkEngine_Myst *_vm;
