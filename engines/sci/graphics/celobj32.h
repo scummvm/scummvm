@@ -367,7 +367,7 @@ public:
 	 * Reads the pixel at the given coordinates. This method
 	 * is valid only for CelObjView and CelObjPic.
 	 */
-	inline uint8 readPixel(uint16 x, uint16 y, bool mirrorX) const;
+	virtual uint8 readPixel(uint16 x, uint16 y, bool mirrorX) const;
 
 	/**
 	 * Submits the palette from this cel to the palette

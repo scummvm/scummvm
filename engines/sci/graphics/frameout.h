@@ -490,6 +490,8 @@ public:
 		return 1;
 	};
 
+	uint16 kernelIsOnMe(int16 x, int16 y, uint16 checkPixels, reg_t screenObject);
+
 #pragma mark -
 #pragma mark Debugging
 public:

@@ -148,31 +148,9 @@ reg_t kIsOnMe(EngineState *s, int argc, reg_t *argv) {
 	uint16 x = argv[0].toUint16();
 	uint16 y = argv[1].toUint16();
 	reg_t targetObject = argv[2];
-	uint16 illegalBits = argv[3].getOffset();
-	Common::Rect nsRect = g_sci->_gfxCompare->getNSRect(targetObject);
+	uint16 checkPixels = argv[3].getOffset();
 
-	uint16 itemX = readSelectorValue(s->_segMan, targetObject, SELECTOR(x));
-	uint16 itemY = readSelectorValue(s->_segMan, targetObject, SELECTOR(y));
-	// If top and left are negative, we need to adjust coordinates by the item's x and y
-	if (nsRect.left < 0)
-		nsRect.translate(itemX, 0);
-	if (nsRect.top < 0)
-		nsRect.translate(0, itemY);
-
-	// we assume that x, y are local coordinates
-
-	bool contained = nsRect.contains(x, y);
-	if (contained && illegalBits) {
-		// If illegalbits are set, we check the color of the pixel that got clicked on
-		//  for now, we return false if the pixel is transparent
-		//  although illegalBits may get differently set, don't know yet how this really works out
-		uint16 viewId = readSelectorValue(s->_segMan, targetObject, SELECTOR(view));
-		int16 loopNo = readSelectorValue(s->_segMan, targetObject, SELECTOR(loop));
-		int16 celNo = readSelectorValue(s->_segMan, targetObject, SELECTOR(cel));
-		if (g_sci->_gfxCompare->kernelIsItSkip(viewId, loopNo, celNo, Common::Point(x - nsRect.left, y - nsRect.top)))
-			contained = false;
-	}
-	return make_reg(0, contained);
+	return make_reg(0, g_sci->_gfxFrameout->kernelIsOnMe(x, y, checkPixels, targetObject));
 }
 
 reg_t kCreateTextBitmap(EngineState *s, int argc, reg_t *argv) {

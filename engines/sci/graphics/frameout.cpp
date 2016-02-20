@@ -1867,6 +1867,73 @@ void GfxFrameout::kernelFrameout(const bool shouldShowBits) {
 	}
 }
 
+uint16 GfxFrameout::kernelIsOnMe(int16 x, int16 y, uint16 checkPixels, reg_t screenObject) {
+	reg_t planeObject = readSelector(_segMan, screenObject, SELECTOR(plane));
+	Plane *screenObjPlane = _planes.findByObject(planeObject);
+	ScreenItem *screenItem = nullptr;
+
+	if (!screenObjPlane) {
+		// Specified plane not found
+		return 0;
+	}
+
+	screenItem = screenObjPlane->_screenItemList.findByObject(screenObject);
+	if (!screenItem) {
+		// Specified screen object not in item list
+		return 0;
+	}
+
+	// adjust coordinate according to resolution 
+	int32 adjustedX = x * getCurrentBuffer().screenWidth / getCurrentBuffer().scriptWidth;
+	int32 adjustedY = y * getCurrentBuffer().screenHeight / getCurrentBuffer().scriptHeight;
+
+	adjustedX += screenObjPlane->_planeRect.left;
+	adjustedY += screenObjPlane->_planeRect.top;
+
+	//warning("kIsOnMe %s %d (%d, %d -> %d, %d) mouse %d, %d", _segMan->getObjectName(screenObject), checkPixels, screenItem->_screenRect.left, screenItem->_screenRect.top, screenItem->_screenRect.right, screenItem->_screenRect.bottom, adjustedX, adjustedY);
+
+	if (!screenItem->_screenRect.contains(adjustedX, adjustedY)) {
+		// Specified coordinates are not within screen item
+		return 0;
+	}
+
+	//warning("HIT!");
+	if (checkPixels) {
+		//warning("Check Pixels");
+		CelObj &screenItemCelObject = screenItem->getCelObj();
+
+		int32 celAdjustedX = adjustedX;
+		int32 celAdjustedY = adjustedY;
+		bool  celMirrored = screenItem->_mirrorX ^ screenItemCelObject._mirrorX;
+
+		celAdjustedX -= screenItem->_scaledPosition.x;
+		celAdjustedY -= screenItem->_scaledPosition.y;
+
+		celAdjustedX = celAdjustedX * screenItemCelObject._scaledWidth / getCurrentBuffer().screenWidth;
+		celAdjustedY = celAdjustedY * screenItemCelObject._scaledHeight / getCurrentBuffer().screenHeight;
+
+		// if adjustedX/Y larger than width/height divide again??
+		// + if >0 afterwards increase by 1
+
+#if 0
+		if ((screenItem->_scale.signal) && (screenItem->_scale.x) && (screenItem->_scale.y)) {
+			celAdjustedX = celAdjustedX * 128 / screenItem->_scale.x;
+			celAdjustedY = celAdjustedY * 128 / screenItem->_scale.y;
+		}
+#endif
+
+		byte coordinateColor = screenItemCelObject.readPixel(celAdjustedX, celAdjustedY, celMirrored);
+		byte transparentColor = screenItemCelObject._transparentColor;
+
+		if (coordinateColor == transparentColor) {
+			// Coordinate is transparent
+			//warning("TRANSPARENT!");
+			return 0;
+		}
+	}
+	return 1;
+}
+
 #pragma mark -
 #pragma mark Debugging
 
