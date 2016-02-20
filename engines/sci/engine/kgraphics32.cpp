@@ -657,7 +657,7 @@ reg_t kEditText(EngineState *s, int argc, reg_t *argv) {
 }
 
 reg_t kAddLine(EngineState *s, int argc, reg_t *argv) {
-	return kStub(s, argc, argv);
+	return kStubNull(s, argc, argv); // return 0:0 for now, so that follow up calls won't create signature mismatches
 #if 0
 	reg_t plane = argv[0];
 	Common::Point startPoint(argv[1].toUint16(), argv[2].toUint16());
