@@ -863,7 +863,10 @@ public:
 	void executeAgiCommand(uint8, uint8 *);
 
 private:
+	bool _veryFirstInitialCycle; /**< signals, that currently the very first cycle is executed (restarts, etc. do not count!) */
 	uint32 _instructionCounter; /**< counts every instruction, that got executed, can wrap around */
+
+	bool _setVolumeBrokenFangame;
 
 	void resetGetVarSecondsHeuristic();
 	void getVarSecondsHeuristicTrigger();

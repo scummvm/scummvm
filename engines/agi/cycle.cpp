@@ -153,9 +153,11 @@ void AgiEngine::interpretCycle() {
 		oldScore = getVar(VM_VAR_SCORE);
 		setFlag(VM_FLAG_ENTERED_CLI, false);
 		_game.exitAllLogics = false;
+		_veryFirstInitialCycle = false;
 		artificialDelay_CycleDone();
 		resetControllers();
 	}
+	_veryFirstInitialCycle = false;
 	artificialDelay_CycleDone();
 	resetControllers();
 
