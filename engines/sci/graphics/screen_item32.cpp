@@ -202,8 +202,11 @@ void ScreenItem::setFromObject(SegManager *segMan, const reg_t object, const boo
 		writeSelectorValue(segMan, object, SELECTOR(priority), _position.y);
 	}
 
-	// Check if the entry should be hidden
-	// TODO: Verify this against disassembly!
+	// Check if the entry should be hidden (used in GK1, for the inventory items)
+	// TODO/FIXME: Verify this against disassembly! Check if GK1 checks this selector
+	// like we do here. The following bit of code is guesswork, but for now it fixes
+	// the inventory in GK1, and it's really only used in that game (the "visible"
+	// selector isn't present in any other SCI32 game)
 	if (lookupSelector(segMan, object, SELECTOR(visible), NULL, NULL) != kSelectorNone) {
 		if (readSelectorValue(segMan, object, SELECTOR(visible)) == 0) {
 			_fixPriority = true;
