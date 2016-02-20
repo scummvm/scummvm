@@ -69,6 +69,7 @@ private:
 	 */
 	reg_t _plane;
 
+public:
 	/**
 	 * Scaling data used to calculate the final screen
 	 * dimensions of the screen item as well as the scaling
@@ -76,6 +77,7 @@ private:
 	 */
 	ScaleInfo _scale;
 
+private:
 	/**
 	 * The position & dimensions of the screen item in
 	 * screen coordinates. This rect includes the offset

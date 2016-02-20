@@ -1908,27 +1908,23 @@ uint16 GfxFrameout::isOnMe(Plane *screenItemPlane, ScreenItem *screenItem, int16
 		//warning("Check Pixels");
 		CelObj &screenItemCelObject = screenItem->getCelObj();
 
-		int32 celAdjustedX = adjustedX;
-		int32 celAdjustedY = adjustedY;
+		Common::Point celAdjustedPoint(adjustedX, adjustedY);
 		bool  celMirrored = screenItem->_mirrorX ^ screenItemCelObject._mirrorX;
 
-		celAdjustedX -= screenItem->_scaledPosition.x;
-		celAdjustedY -= screenItem->_scaledPosition.y;
+		celAdjustedPoint.x -= screenItem->_scaledPosition.x;
+		celAdjustedPoint.y -= screenItem->_scaledPosition.y;
 
-		celAdjustedX = celAdjustedX * screenItemCelObject._scaledWidth / getCurrentBuffer().screenWidth;
-		celAdjustedY = celAdjustedY * screenItemCelObject._scaledHeight / getCurrentBuffer().screenHeight;
+		Ratio celAdjustXRatio(screenItemCelObject._scaledWidth, getCurrentBuffer().screenWidth);
+		Ratio celAdjustYRatio(screenItemCelObject._scaledHeight, getCurrentBuffer().screenHeight);
+		mulru(celAdjustedPoint, celAdjustXRatio, celAdjustYRatio);
 
-		// if adjustedX/Y larger than width/height divide again??
-		// + if >0 afterwards increase by 1
-
-#if 0
 		if ((screenItem->_scale.signal) && (screenItem->_scale.x) && (screenItem->_scale.y)) {
-			celAdjustedX = celAdjustedX * 128 / screenItem->_scale.x;
-			celAdjustedY = celAdjustedY * 128 / screenItem->_scale.y;
+			// Apply scaling
+			celAdjustedPoint.x = celAdjustedPoint.x * 128 / screenItem->_scale.x;
+			celAdjustedPoint.y = celAdjustedPoint.y * 128 / screenItem->_scale.y;
 		}
-#endif
 
-		byte coordinateColor = screenItemCelObject.readPixel(celAdjustedX, celAdjustedY, celMirrored);
+		byte coordinateColor = screenItemCelObject.readPixel(celAdjustedPoint.x, celAdjustedPoint.y, celMirrored);
 		byte transparentColor = screenItemCelObject._transparentColor;
 
 		if (coordinateColor == transparentColor) {
