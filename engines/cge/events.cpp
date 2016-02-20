@@ -30,6 +30,7 @@
 #include "gui/message.h"
 #include "common/config-manager.h"
 #include "common/events.h"
+#include "common/translation.h"
 #include "engines/advancedDetector.h"
 #include "cge/events.h"
 #include "cge/events.h"
@@ -70,7 +71,7 @@ bool Keyboard::getKey(Common::Event &event) {
 		return false;
 	case Common::KEYCODE_F5:
 		if (_vm->canSaveGameStateCurrently()) {
-			GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser("Save game:", "Save", true);
+			GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(_("Save game:"), _("Save"), true);
 			int16 savegameId = dialog->runModalWithCurrentTarget();
 			Common::String savegameDescription = dialog->getResultString();
 			delete dialog;
@@ -81,7 +82,7 @@ bool Keyboard::getKey(Common::Event &event) {
 		return false;
 	case Common::KEYCODE_F7:
 		if (_vm->canLoadGameStateCurrently()) {
-			GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser("Restore game:", "Restore", false);
+			GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(_("Restore game:"), _("Restore"), false);
 			int16 savegameId = dialog->runModalWithCurrentTarget();
 			delete dialog;
 
