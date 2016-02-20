@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.7.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
-"POT-Creation-Date: 2016-02-20 21:04+0000\n"
+"POT-Creation-Date: 2016-02-20 21:22+0000\n"
 "PO-Revision-Date: 2016-02-03 22:59+0100\n"
 "Last-Translator: Zbynìk Schwarz <zbynek.schwarz@gmail.com>\n"
 "Language-Team: \n"
@@ -1414,10 +1414,14 @@ msgid "~R~eturn to Launcher"
 msgstr "~N~ávrat do Spou¹tìèe"
 
 #: engines/dialogs.cpp:116 engines/agi/saveload.cpp:764
-#: engines/cruise/menu.cpp:212 engines/drascula/saveload.cpp:336
-#: engines/dreamweb/saveload.cpp:261 engines/neverhood/menumodule.cpp:877
+#: engines/avalanche/parser.cpp:1899 engines/cge/events.cpp:74
+#: engines/cge2/events.cpp:67 engines/cruise/menu.cpp:212
+#: engines/drascula/saveload.cpp:336 engines/dreamweb/saveload.cpp:261
+#: engines/hugo/file.cpp:298 engines/neverhood/menumodule.cpp:877
 #: engines/pegasus/pegasus.cpp:377 engines/sci/engine/kfile.cpp:768
-#: engines/toltecs/menu.cpp:281 engines/tsage/scenes.cpp:598
+#: engines/sherlock/scalpel/scalpel.cpp:1249
+#: engines/sherlock/tattoo/widget_files.cpp:75 engines/toltecs/menu.cpp:281
+#: engines/toon/toon.cpp:3338 engines/tsage/scenes.cpp:598
 msgid "Save game:"
 msgstr "Ulo¾it hru:"
 
@@ -1426,12 +1430,15 @@ msgstr "Ulo¾it hru:"
 #: backends/platform/wince/CEActionsPocket.cpp:267
 #: backends/platform/wince/CEActionsSmartphone.cpp:45
 #: backends/platform/wince/CEActionsSmartphone.cpp:231
-#: engines/agi/saveload.cpp:764 engines/cruise/menu.cpp:212
-#: engines/drascula/saveload.cpp:336 engines/dreamweb/saveload.cpp:261
+#: engines/agi/saveload.cpp:764 engines/avalanche/parser.cpp:1899
+#: engines/cge/events.cpp:74 engines/cge2/events.cpp:67
+#: engines/cruise/menu.cpp:212 engines/drascula/saveload.cpp:336
+#: engines/dreamweb/saveload.cpp:261 engines/hugo/file.cpp:298
 #: engines/neverhood/menumodule.cpp:877 engines/parallaction/saveload.cpp:212
 #: engines/pegasus/pegasus.cpp:377 engines/sci/engine/kfile.cpp:768
-#: engines/scumm/dialogs.cpp:188 engines/toltecs/menu.cpp:281
-#: engines/tsage/scenes.cpp:598
+#: engines/scumm/dialogs.cpp:188 engines/sherlock/scalpel/scalpel.cpp:1249
+#: engines/sherlock/tattoo/widget_files.cpp:75 engines/toltecs/menu.cpp:281
+#: engines/toon/toon.cpp:3338 engines/tsage/scenes.cpp:598
 msgid "Save"
 msgstr "Ulo¾it"
 
@@ -2336,15 +2343,23 @@ msgstr ""
 "Povolí podporu my¹i. Umo¾ní pou¾ít my¹ pro pohyb a pro ovládání herních "
 "nabídek."
 
-#: engines/agi/saveload.cpp:777 engines/drascula/saveload.cpp:349
-#: engines/dreamweb/saveload.cpp:169 engines/neverhood/menumodule.cpp:890
-#: engines/sci/engine/kfile.cpp:867 engines/toltecs/menu.cpp:256
+#: engines/agi/saveload.cpp:777 engines/avalanche/parser.cpp:1887
+#: engines/cge/events.cpp:85 engines/cge2/events.cpp:78
+#: engines/drascula/saveload.cpp:349 engines/dreamweb/saveload.cpp:169
+#: engines/hugo/file.cpp:400 engines/neverhood/menumodule.cpp:890
+#: engines/sci/engine/kfile.cpp:867 engines/sherlock/scalpel/scalpel.cpp:1262
+#: engines/sherlock/tattoo/widget_files.cpp:94 engines/toltecs/menu.cpp:256
+#: engines/toon/toon.cpp:3430
 msgid "Restore game:"
 msgstr "Obnovit hru"
 
-#: engines/agi/saveload.cpp:777 engines/drascula/saveload.cpp:349
-#: engines/dreamweb/saveload.cpp:169 engines/neverhood/menumodule.cpp:890
-#: engines/sci/engine/kfile.cpp:867 engines/toltecs/menu.cpp:256
+#: engines/agi/saveload.cpp:777 engines/avalanche/parser.cpp:1887
+#: engines/cge/events.cpp:85 engines/cge2/events.cpp:78
+#: engines/drascula/saveload.cpp:349 engines/dreamweb/saveload.cpp:169
+#: engines/hugo/file.cpp:400 engines/neverhood/menumodule.cpp:890
+#: engines/sci/engine/kfile.cpp:867 engines/sherlock/scalpel/scalpel.cpp:1262
+#: engines/sherlock/tattoo/widget_files.cpp:94 engines/toltecs/menu.cpp:256
+#: engines/toon/toon.cpp:3430
 msgid "Restore"
 msgstr "Obnovit"
 
@@ -3522,6 +3537,60 @@ msgid ""
 msgstr ""
 "Nelze najít spustitelný soubor 'Monkey Island' pro Macintosh z\n"
 "jeho¾ mají být naèteny hudební nástroje. Hudba bude zakázána."
+
+#: engines/sherlock/detection.cpp:71
+#, fuzzy
+msgid "Use original savegame dialog"
+msgstr "Pou¾ít pùvodní obrazovky naètení/ulo¾ení"
+
+#: engines/sherlock/detection.cpp:72
+msgid ""
+"Files button in-game shows original savegame dialog rather than the ScummVM "
+"menu"
+msgstr ""
+
+#: engines/sherlock/detection.cpp:81
+msgid "Pixellated scene transitions"
+msgstr ""
+
+#: engines/sherlock/detection.cpp:82
+msgid "When changing scenes, a randomized pixel transition is done"
+msgstr ""
+
+#: engines/sherlock/detection.cpp:91
+msgid "Don't show hotspots when moving mouse"
+msgstr ""
+
+#: engines/sherlock/detection.cpp:92
+msgid ""
+"Only show hotspot names after you actually click on a hotspot or action "
+"button"
+msgstr ""
+
+#: engines/sherlock/detection.cpp:101
+#, fuzzy
+msgid "Show character portraits"
+msgstr "Zamìnit znaky"
+
+#: engines/sherlock/detection.cpp:102
+msgid "Show portraits for the characters when conversing"
+msgstr ""
+
+#: engines/sherlock/detection.cpp:111
+msgid "Slide dialogs into view"
+msgstr ""
+
+#: engines/sherlock/detection.cpp:112
+msgid "Slide UI dialogs into view, rather than simply showing them immediately"
+msgstr ""
+
+#: engines/sherlock/detection.cpp:121
+msgid "Transparent windows"
+msgstr ""
+
+#: engines/sherlock/detection.cpp:122
+msgid "Show windows with a partially transparent background"
+msgstr ""
 
 #: engines/sky/compact.cpp:130
 msgid ""
