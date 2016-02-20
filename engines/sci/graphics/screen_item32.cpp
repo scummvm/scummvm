@@ -202,6 +202,15 @@ void ScreenItem::setFromObject(SegManager *segMan, const reg_t object, const boo
 		writeSelectorValue(segMan, object, SELECTOR(priority), _position.y);
 	}
 
+	// Check if the entry should be hidden
+	// TODO: Verify this against disassembly!
+	if (lookupSelector(segMan, object, SELECTOR(visible), NULL, NULL) != kSelectorNone) {
+		if (readSelectorValue(segMan, object, SELECTOR(visible)) == 0) {
+			_fixPriority = true;
+			_priority = -1;
+		}
+	}
+
 	_z = readSelectorValue(segMan, object, SELECTOR(z));
 	_position.y -= _z;
 
