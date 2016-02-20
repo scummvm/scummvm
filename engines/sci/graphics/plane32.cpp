@@ -629,18 +629,26 @@ void Plane::mergeToRectList(const Common::Rect &rect, RectList &rectList) const 
 	temp.add(rect);
 
 	for (RectList::size_type i = 0; i < temp.size(); ++i) {
-		Common::Rect *outerRect = temp[i];
+		Common::Rect r = *temp[i];
+
 		for (RectList::size_type j = 0; j < rectList.size(); ++j) {
-			Common::Rect *innerRect = rectList[i];
-			if (innerRect->intersects(*outerRect)) {
-				Common::Rect out[4];
-				int count = splitRects(*outerRect, *innerRect, out);
+			Common::Rect *innerRect = rectList[j];
+			if (innerRect->contains(r)) {
+				temp.erase_at(i);
+				break;
+			}
+
+			Common::Rect out[4];
+			int count = splitRects(r, *innerRect, out);
+			if (count != -1) {
 				for (int k = count - 1; k >= 0; --k) {
 					temp.add(out[k]);
 				}
+
 				temp.erase_at(i);
-			} else {
-				temp.erase_at(i);
+
+				// proceed to the next rect
+				r = *temp[++i];
 			}
 		}
 	}
