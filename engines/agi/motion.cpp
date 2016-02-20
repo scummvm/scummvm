@@ -67,7 +67,10 @@ void AgiEngine::changePos(ScreenObjEntry *screenObj) {
 // If this is the case, it would result in some random flag getting overwritten in original AGI after the loop was
 // completed, because in original AGI loop_flag + wander_count/follow_stepSize/move_X shared the same memory location.
 // This is basically an implementation error in the original interpreter.
-// Happens in at least KQ1, when grabbing the eagle (room 22).
+// Happens in at least:
+// - BC: right at the end when the witches disappear at least on Apple IIgs (room 12, screen object 13, view 84)
+// - KQ1: when grabbing the eagle (room 22).
+// - KQ2: happened somewhere in the game, LordHoto couldn't remember exactly where
 void AgiEngine::motionActivated(ScreenObjEntry *screenObj) {
 	if (screenObj->flags & fCycling) {
 		// Cycling active too

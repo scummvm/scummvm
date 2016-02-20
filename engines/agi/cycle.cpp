@@ -403,7 +403,7 @@ int AgiEngine::playGame() {
 			if (timeDelayOverwrite >= 0) {
 				if (timeDelayOverwrite != timeDelay) {
 					// delayOverwrite is not the same as the delay taken from the scripts? overwrite it
-					warning("AppleIIgs: time delay overwrite from %d to %d", timeDelay, timeDelayOverwrite);
+					//warning("AppleIIgs: time delay overwrite from %d to %d", timeDelay, timeDelayOverwrite);
 
 					setVar(VM_VAR_TIME_DELAY, timeDelayOverwrite - 1); // adjust for Apple IIgs
 					timeDelay = timeDelayOverwrite;
