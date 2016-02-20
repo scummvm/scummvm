@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
 "POT-Creation-Date: 2016-02-20 21:22+0000\n"
-"PO-Revision-Date: 2016-01-25 21:35-0000\n"
+"PO-Revision-Date: 2016-02-20 23:17+0000\n"
 "Last-Translator: Thierry Crozat <criezy@scummvm.org>\n"
 "Language-Team: French <scummvm-devel@lists.sf.net>\n"
 "Language: Francais\n"
@@ -16,7 +16,7 @@ msgstr ""
 "Content-Type: text/plain; charset=iso-8859-1\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n>1;\n"
-"X-Generator: Poedit 1.6.6\n"
+"X-Generator: Poedit 1.8.6\n"
 
 #: gui/about.cpp:94
 #, c-format
@@ -2711,7 +2711,7 @@ msgstr "Chargement en cours..."
 
 #: engines/parallaction/saveload.cpp:212
 msgid "Save file"
-msgstr "Sauvegarde"
+msgstr "Sauver une partie"
 
 #: engines/parallaction/saveload.cpp:219
 msgid "Saving game..."
@@ -3562,58 +3562,64 @@ msgstr ""
 "y lire les instruments. La musique sera désactivée."
 
 #: engines/sherlock/detection.cpp:71
-#, fuzzy
 msgid "Use original savegame dialog"
-msgstr "Dialogues sauvegarde/chargement d'origine"
+msgstr "Utiliser le dialogue de sauvegarde d'origine"
 
 #: engines/sherlock/detection.cpp:72
 msgid ""
 "Files button in-game shows original savegame dialog rather than the ScummVM "
 "menu"
 msgstr ""
+"Le bouton Fichiers du jeu ouvre le dialogue de sauvegarde d'origine au lieu "
+"d'ouvrir celui de ScummVM"
 
 #: engines/sherlock/detection.cpp:81
 msgid "Pixellated scene transitions"
-msgstr ""
+msgstr "Transitions de scènes pixélisées"
 
 #: engines/sherlock/detection.cpp:82
 msgid "When changing scenes, a randomized pixel transition is done"
 msgstr ""
+"Lors du changement de scène une transition avec des pixels aléatoires est "
+"utilisée"
 
 #: engines/sherlock/detection.cpp:91
 msgid "Don't show hotspots when moving mouse"
-msgstr ""
+msgstr "Ne pas afficher les zones actives lors du déplacement de la souris"
 
 #: engines/sherlock/detection.cpp:92
 msgid ""
 "Only show hotspot names after you actually click on a hotspot or action "
 "button"
 msgstr ""
+"Afficher le nom des zones actives uniquement après avoir cliqué sur la zone "
+"ou le bouton d'action"
 
 #: engines/sherlock/detection.cpp:101
-#, fuzzy
 msgid "Show character portraits"
-msgstr "Changement de personnage"
+msgstr "Afficher le portrait des personnages"
 
 #: engines/sherlock/detection.cpp:102
 msgid "Show portraits for the characters when conversing"
-msgstr ""
+msgstr "Afficher le portrait des personnages lors des conversations"
 
 #: engines/sherlock/detection.cpp:111
 msgid "Slide dialogs into view"
-msgstr ""
+msgstr "Utiliser une transition pour les dialogues"
 
 #: engines/sherlock/detection.cpp:112
 msgid "Slide UI dialogs into view, rather than simply showing them immediately"
 msgstr ""
+"Utiliser une transition pour faire apparaître les dialogues au lieu de les "
+"afficher immédiatement"
 
 #: engines/sherlock/detection.cpp:121
 msgid "Transparent windows"
-msgstr ""
+msgstr "Fenêtres transparentes"
 
 #: engines/sherlock/detection.cpp:122
 msgid "Show windows with a partially transparent background"
-msgstr ""
+msgstr "Afficher les fenêtres avec un fond partiellement transparent"
 
 #: engines/sky/compact.cpp:130
 msgid ""
