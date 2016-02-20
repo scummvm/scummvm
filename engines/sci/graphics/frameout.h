@@ -491,6 +491,7 @@ public:
 	};
 
 	uint16 kernelIsOnMe(int16 x, int16 y, uint16 checkPixels, reg_t screenObject);
+	uint16 isOnMe(Plane *screenItemPlane, ScreenItem *screenItem, int16 x, int16 y, uint16 checkPixels);
 
 #pragma mark -
 #pragma mark Debugging

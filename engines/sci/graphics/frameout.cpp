@@ -1869,26 +1869,32 @@ void GfxFrameout::kernelFrameout(const bool shouldShowBits) {
 
 uint16 GfxFrameout::kernelIsOnMe(int16 x, int16 y, uint16 checkPixels, reg_t screenObject) {
 	reg_t planeObject = readSelector(_segMan, screenObject, SELECTOR(plane));
-	Plane *screenObjPlane = _planes.findByObject(planeObject);
+	Plane *screenItemPlane = _visiblePlanes.findByObject(planeObject);
 	ScreenItem *screenItem = nullptr;
 
-	if (!screenObjPlane) {
+	if (!screenItemPlane) {
 		// Specified plane not found
 		return 0;
 	}
 
-	screenItem = screenObjPlane->_screenItemList.findByObject(screenObject);
+	screenItem = screenItemPlane->_screenItemList.findByObject(screenObject);
 	if (!screenItem) {
 		// Specified screen object not in item list
 		return 0;
 	}
 
+	// Original SCI32 seems to have made a copy (?) of the screenitem?
+	// there is also a "or [ebp+arg_56], 1 - not sure what that did
+	return isOnMe(screenItemPlane, screenItem, x, y, checkPixels);
+}
+
+uint16 GfxFrameout::isOnMe(Plane *screenItemPlane, ScreenItem *screenItem, int16 x, int16 y, uint16 checkPixels) {
 	// adjust coordinate according to resolution 
 	int32 adjustedX = x * getCurrentBuffer().screenWidth / getCurrentBuffer().scriptWidth;
 	int32 adjustedY = y * getCurrentBuffer().screenHeight / getCurrentBuffer().scriptHeight;
 
-	adjustedX += screenObjPlane->_planeRect.left;
-	adjustedY += screenObjPlane->_planeRect.top;
+	adjustedX += screenItemPlane->_planeRect.left;
+	adjustedY += screenItemPlane->_planeRect.top;
 
 	//warning("kIsOnMe %s %d (%d, %d -> %d, %d) mouse %d, %d", _segMan->getObjectName(screenObject), checkPixels, screenItem->_screenRect.left, screenItem->_screenRect.top, screenItem->_screenRect.right, screenItem->_screenRect.bottom, adjustedX, adjustedY);
 
