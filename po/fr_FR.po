@@ -2687,18 +2687,16 @@ msgstr ""
 "\n"
 
 #: engines/parallaction/saveload.cpp:197
-#, fuzzy
 msgid "Load file"
-msgstr "Charger le jeu :"
+msgstr "Charger une partie"
 
 #: engines/parallaction/saveload.cpp:204
 msgid "Loading game..."
 msgstr "Chargement en cours..."
 
 #: engines/parallaction/saveload.cpp:212
-#, fuzzy
 msgid "Save file"
-msgstr "Échec de la sauvegarde!"
+msgstr "Sauvegarde"
 
 #: engines/parallaction/saveload.cpp:219
 msgid "Saving game..."
