@@ -865,7 +865,6 @@ ResourceManager::ResourceManager() {
 }
 
 void ResourceManager::init() {
-	_maxMemoryLRU = 256 * 1024; // 256KiB
 	_memoryLocked = 0;
 	_memoryLRU = 0;
 	_LRU.clear();
@@ -918,14 +917,6 @@ void ResourceManager::init() {
 	detectSciVersion();
 
 	debugC(1, kDebugLevelResMan, "resMan: Detected %s", getSciVersionDesc(getSciVersion()));
-
-	// Resources in SCI32 games are significantly larger than SCI16
-	// games and can cause immediate exhaustion of the LRU resource
-	// cache, leading to constant decompression of picture resources
-	// and making the renderer very slow.
-	if (getSciVersion() >= SCI_VERSION_2) {
-		_maxMemoryLRU = 2048 * 1024; // 2MiB
-	}
 
 	switch (_viewType) {
 	case kViewEga:
@@ -1032,7 +1023,7 @@ void ResourceManager::printLRU() {
 }
 
 void ResourceManager::freeOldResources() {
-	while (_maxMemoryLRU < _memoryLRU) {
+	while (MAX_MEMORY < _memoryLRU) {
 		assert(!_LRU.empty());
 		Resource *goner = *_LRU.reverse_begin();
 		removeFromLRU(goner);
