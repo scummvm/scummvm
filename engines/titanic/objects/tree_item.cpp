@@ -52,4 +52,32 @@ CTreeItem *CTreeItem::getLastChild() {
 	return _firstChild->getLastSibling();
 }
 
+void CTreeItem::addUnder(CTreeItem *newParent) {
+	if (newParent->_firstChild)
+		addSibling(newParent->getLastSibling());
+	else
+		setParent(newParent);
+}
+
+void CTreeItem::setParent(CTreeItem *newParent) {
+	_parent = newParent;
+	_priorSibling = nullptr;
+	_nextSibling = newParent->_firstChild;
+
+	if (newParent->_firstChild)
+		newParent->_firstChild->_priorSibling = this;
+	newParent->_firstChild = this;
+}
+
+void CTreeItem::addSibling(CTreeItem *item) {
+	_priorSibling = item->_nextSibling;
+	_nextSibling = item->_nextSibling;
+	_parent = item->_parent;
+
+	if (item->_nextSibling)
+		item->_nextSibling->_priorSibling = this;
+	item->_nextSibling = this;
+}
+
+
 } // End of namespace Titanic

@@ -73,8 +73,54 @@ void CProjectItem::clear() {
 
 }
 
-void CProjectItem::loadData(SimpleFile *file) {
+CProjectItem *CProjectItem::loadData(SimpleFile *file) {
+	if (!file->IsClassStart())
+		return nullptr;
 
+	CProjectItem *root = nullptr;
+	CTreeItem *parent = nullptr;
+	CTreeItem *item = nullptr;
+
+	do {
+		CString entryString = file->readString();
+
+		if (entryString == "ALONG") {
+			// Move along, nothing needed
+		} else if (entryString == "UP") {
+			// Move up
+			if (parent == nullptr ||
+				(parent = parent->getParent()) == nullptr)
+				break;
+		} else if (entryString == "DOWN") {
+			// Move down
+			if (parent == nullptr)
+				parent = item;
+			else
+				parent = parent->getLastChild();
+		} else {
+			// Create new class instance
+			item = dynamic_cast<CTreeItem *>(CSaveableObject::createInstance(entryString));
+			assert(item);
+
+			if (root) {
+				// Already created root project
+				item->addUnder(parent);
+			} else {
+				// TODO: Validate this is correct
+				root = dynamic_cast<CProjectItem *>(item);
+				assert(root);
+
+				_filename = root->_filename;
+			}
+
+			// Load the data for the item
+			item->load(file);
+		}
+
+		file->IsClassStart();
+	} while (file->IsClassStart());
+
+	return root;
 }
 
 void CProjectItem::saveData(SimpleFile *file, CTreeItem *item) const {

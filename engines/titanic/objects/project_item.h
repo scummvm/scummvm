@@ -31,10 +31,12 @@ namespace Titanic {
 
 class CProjectItem : public CFileItem {
 private:
+	CString _filename;
+private:
 	/**
 	 * Load project data from the passed file
 	 */
-	void loadData(SimpleFile *file);
+	CProjectItem *loadData(SimpleFile *file);
 
 	/**
 	 * Save project data to the passed file

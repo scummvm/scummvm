@@ -81,6 +81,21 @@ public:
 	 * Get the last child of the item, if any
 	 */
 	CTreeItem *getLastChild();
+
+	/**
+	 * Adds the item under another tree item
+	 */
+	void addUnder(CTreeItem *newParent);
+
+	/**
+	 * Sets the parent for the item
+	 */
+	void setParent(CTreeItem *newParent);
+
+	/**
+	 * Adds the item as a sibling of another item
+	 */
+	void addSibling(CTreeItem *item);
 };
 
 } // End of namespace Titanic
