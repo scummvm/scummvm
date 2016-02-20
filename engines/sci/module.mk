@@ -87,7 +87,7 @@ MODULE_OBJS += \
 	graphics/paint32.o \
 	graphics/plane32.o \
 	graphics/palette32.o \
-	graphics/screen_item32.o\
+	graphics/screen_item32.o \
 	graphics/text32.o \
 	video/robot_decoder.o
 endif
