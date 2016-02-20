@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
-"POT-Creation-Date: 2016-02-01 21:58+0000\n"
+"POT-Creation-Date: 2016-02-20 21:04+0000\n"
 "PO-Revision-Date: 2016-01-28 19:00+0100\n"
 "Last-Translator: Lothar Serra Mari <scummvm@rootfather.de>\n"
 "Language-Team: Simon Sawatzki <SimSaw@gmx.de>, Lothar Serra Mari "
@@ -595,16 +595,16 @@ msgid "Search:"
 msgstr "Suchen:"
 
 #: gui/launcher.cpp:685 engines/dialogs.cpp:115 engines/cruise/menu.cpp:214
-#: engines/mohawk/myst.cpp:245 engines/mohawk/riven.cpp:718
-#: engines/pegasus/pegasus.cpp:353 engines/tsage/scenes.cpp:600
+#: engines/mohawk/riven.cpp:718 engines/pegasus/pegasus.cpp:353
+#: engines/tsage/scenes.cpp:600
 msgid "Load game:"
 msgstr "Spiel laden:"
 
 #: gui/launcher.cpp:685 engines/dialogs.cpp:115
 #: backends/platform/wince/CEActionsPocket.cpp:267
 #: backends/platform/wince/CEActionsSmartphone.cpp:231
-#: engines/cruise/menu.cpp:214 engines/mohawk/myst.cpp:245
-#: engines/mohawk/riven.cpp:718 engines/pegasus/pegasus.cpp:353
+#: engines/cruise/menu.cpp:214 engines/mohawk/riven.cpp:718
+#: engines/parallaction/saveload.cpp:197 engines/pegasus/pegasus.cpp:353
 #: engines/scumm/dialogs.cpp:189 engines/tsage/scenes.cpp:600
 msgid "Load"
 msgstr "Laden"
@@ -770,7 +770,7 @@ msgstr ""
 "Spezielle Farbmischungsmethoden werden von manchen Spielen unterstützt."
 
 #: gui/options.cpp:758
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2313
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2316
 msgid "Fullscreen mode"
 msgstr "Vollbildmodus"
 
@@ -1373,12 +1373,12 @@ msgstr "PC-9821 (256 Farben)"
 msgid "PC-9801 (16 Colors)"
 msgstr "PC-9801 (16 Farben)"
 
-#: common/rendermode.cpp:71
+#: common/rendermode.cpp:73
 msgctxt "lowres"
 msgid "Hercules Green"
 msgstr "Hercules Grün"
 
-#: common/rendermode.cpp:72
+#: common/rendermode.cpp:74
 msgctxt "lowres"
 msgid "Hercules Amber"
 msgstr "Hercules Bernst."
@@ -1433,10 +1433,10 @@ msgctxt "lowres"
 msgid "~R~eturn to Launcher"
 msgstr "Zur Spiele~l~iste"
 
-#: engines/dialogs.cpp:116 engines/agi/saveload.cpp:714
+#: engines/dialogs.cpp:116 engines/agi/saveload.cpp:764
 #: engines/cruise/menu.cpp:212 engines/drascula/saveload.cpp:336
 #: engines/dreamweb/saveload.cpp:261 engines/neverhood/menumodule.cpp:877
-#: engines/pegasus/pegasus.cpp:377 engines/sci/engine/kfile.cpp:769
+#: engines/pegasus/pegasus.cpp:377 engines/sci/engine/kfile.cpp:768
 #: engines/toltecs/menu.cpp:281 engines/tsage/scenes.cpp:598
 msgid "Save game:"
 msgstr "Speichern:"
@@ -1446,11 +1446,12 @@ msgstr "Speichern:"
 #: backends/platform/wince/CEActionsPocket.cpp:267
 #: backends/platform/wince/CEActionsSmartphone.cpp:45
 #: backends/platform/wince/CEActionsSmartphone.cpp:231
-#: engines/agi/saveload.cpp:714 engines/cruise/menu.cpp:212
+#: engines/agi/saveload.cpp:764 engines/cruise/menu.cpp:212
 #: engines/drascula/saveload.cpp:336 engines/dreamweb/saveload.cpp:261
-#: engines/neverhood/menumodule.cpp:877 engines/pegasus/pegasus.cpp:377
-#: engines/sci/engine/kfile.cpp:769 engines/scumm/dialogs.cpp:188
-#: engines/toltecs/menu.cpp:281 engines/tsage/scenes.cpp:598
+#: engines/neverhood/menumodule.cpp:877 engines/parallaction/saveload.cpp:212
+#: engines/pegasus/pegasus.cpp:377 engines/sci/engine/kfile.cpp:768
+#: engines/scumm/dialogs.cpp:188 engines/toltecs/menu.cpp:281
+#: engines/tsage/scenes.cpp:598
 msgid "Save"
 msgstr "Speichern"
 
@@ -1778,19 +1779,19 @@ msgctxt "lowres"
 msgid "Normal (no scaling)"
 msgstr "Normal ohn.Skalieren"
 
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2212
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2215
 msgid "Enabled aspect ratio correction"
 msgstr "Seitenverhältniskorrektur an"
 
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2218
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2221
 msgid "Disabled aspect ratio correction"
 msgstr "Seitenverhältniskorrektur aus"
 
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2273
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2276
 msgid "Active graphics filter:"
 msgstr "Aktiver Grafikfilter:"
 
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2315
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2318
 msgid "Windowed mode"
 msgstr "Fenstermodus"
 
@@ -2359,15 +2360,15 @@ msgstr ""
 "Aktiviere Maus-Unterstützung. Erlaubt die Verwendung der Maus zur Bewegung "
 "und in Menüs innerhalb des Spiels."
 
-#: engines/agi/saveload.cpp:727 engines/drascula/saveload.cpp:349
+#: engines/agi/saveload.cpp:777 engines/drascula/saveload.cpp:349
 #: engines/dreamweb/saveload.cpp:169 engines/neverhood/menumodule.cpp:890
-#: engines/sci/engine/kfile.cpp:868 engines/toltecs/menu.cpp:256
+#: engines/sci/engine/kfile.cpp:867 engines/toltecs/menu.cpp:256
 msgid "Restore game:"
 msgstr "Spiel laden:"
 
-#: engines/agi/saveload.cpp:727 engines/drascula/saveload.cpp:349
+#: engines/agi/saveload.cpp:777 engines/drascula/saveload.cpp:349
 #: engines/dreamweb/saveload.cpp:169 engines/neverhood/menumodule.cpp:890
-#: engines/sci/engine/kfile.cpp:868 engines/toltecs/menu.cpp:256
+#: engines/sci/engine/kfile.cpp:867 engines/toltecs/menu.cpp:256
 msgid "Restore"
 msgstr "Laden"
 
@@ -2698,9 +2699,19 @@ msgstr ""
 "Kann Spiel nicht speichern auf Speicherplatz %i\n"
 "\n"
 
+#: engines/parallaction/saveload.cpp:197
+#, fuzzy
+msgid "Load file"
+msgstr "Spiel laden:"
+
 #: engines/parallaction/saveload.cpp:204
 msgid "Loading game..."
 msgstr "Spiel wird geladen..."
+
+#: engines/parallaction/saveload.cpp:212
+#, fuzzy
+msgid "Save file"
+msgstr "Konnte Spielstand nicht speichern!"
 
 #: engines/parallaction/saveload.cpp:219
 msgid "Saving game..."
@@ -3770,9 +3781,6 @@ msgstr ""
 
 #~ msgid "Enable Roland GS Mode"
 #~ msgstr "Roland-GS-Modus"
-
-#~ msgid "Save game failed!"
-#~ msgstr "Konnte Spielstand nicht speichern!"
 
 #~ msgid ""
 #~ "Your game version has been detected using filename matching as a variant "

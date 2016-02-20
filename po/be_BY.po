@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
-"POT-Creation-Date: 2016-02-01 21:58+0000\n"
+"POT-Creation-Date: 2016-02-20 21:04+0000\n"
 "PO-Revision-Date: 2016-02-02 23:16+0300\n"
 "Last-Translator: Ivan Lukyanov <greencis@mail.ru>\n"
 "Language-Team: Ivan Lukyanov <greencis@mail.ru>\n"
@@ -15,7 +15,8 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=iso-8859-5\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
+"Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
+"%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
 "X-Generator: Poedit 1.8.6\n"
 
 #: gui/about.cpp:94
@@ -224,7 +225,8 @@ msgid "OK"
 msgstr "OK"
 
 #: gui/fluidsynth-dialog.cpp:217
-msgid "Do you really want to reset all FluidSynth settings to their default values?"
+msgid ""
+"Do you really want to reset all FluidSynth settings to their default values?"
 msgstr "Вы сапраўды жадаеце скінуць налады FluidSynth па змаўчанні?"
 
 #: gui/gui-manager.cpp:119 backends/keymapper/remap-dialog.cpp:53
@@ -289,8 +291,12 @@ msgid "ID:"
 msgstr "ID:"
 
 #: gui/launcher.cpp:197 gui/launcher.cpp:199 gui/launcher.cpp:200
-msgid "Short game identifier used for referring to saved games and running the game from the command line"
-msgstr "Кароткі ідэнтыфікатар, выкарыстоўваны для імёнаў захаванняў гульняў і для запуску з каманднага радка"
+msgid ""
+"Short game identifier used for referring to saved games and running the game "
+"from the command line"
+msgstr ""
+"Кароткі ідэнтыфікатар, выкарыстоўваны для імёнаў захаванняў гульняў і для "
+"запуску з каманднага радка"
 
 #: gui/launcher.cpp:199
 msgctxt "lowres"
@@ -311,8 +317,12 @@ msgid "Language:"
 msgstr "Мова:"
 
 #: gui/launcher.cpp:210 gui/launcher.cpp:211
-msgid "Language of the game. This will not turn your Spanish game version into English"
-msgstr "Мова гульні. Змена гэтай налады не ператворыць рускую версію гульні ў беларускую"
+msgid ""
+"Language of the game. This will not turn your Spanish game version into "
+"English"
+msgstr ""
+"Мова гульні. Змена гэтай налады не ператворыць рускую версію гульні ў "
+"беларускую"
 
 #: gui/launcher.cpp:212 gui/launcher.cpp:226 gui/options.cpp:87
 #: gui/options.cpp:735 gui/options.cpp:748 gui/options.cpp:1208
@@ -580,23 +590,27 @@ msgid "Search:"
 msgstr "Пошук:"
 
 #: gui/launcher.cpp:685 engines/dialogs.cpp:115 engines/cruise/menu.cpp:214
-#: engines/mohawk/myst.cpp:245 engines/mohawk/riven.cpp:718
-#: engines/pegasus/pegasus.cpp:353 engines/tsage/scenes.cpp:600
+#: engines/mohawk/riven.cpp:718 engines/pegasus/pegasus.cpp:353
+#: engines/tsage/scenes.cpp:600
 msgid "Load game:"
 msgstr "Загрузіць гульню:"
 
 #: gui/launcher.cpp:685 engines/dialogs.cpp:115
 #: backends/platform/wince/CEActionsPocket.cpp:267
 #: backends/platform/wince/CEActionsSmartphone.cpp:231
-#: engines/cruise/menu.cpp:214 engines/mohawk/myst.cpp:245
-#: engines/mohawk/riven.cpp:718 engines/pegasus/pegasus.cpp:353
+#: engines/cruise/menu.cpp:214 engines/mohawk/riven.cpp:718
+#: engines/parallaction/saveload.cpp:197 engines/pegasus/pegasus.cpp:353
 #: engines/scumm/dialogs.cpp:189 engines/tsage/scenes.cpp:600
 msgid "Load"
 msgstr "Загрузіць"
 
 #: gui/launcher.cpp:794
-msgid "Do you really want to run the mass game detector? This could potentially add a huge number of games."
-msgstr "Вы сапраўды жадаеце запусціць дэтэктар усіх гульняў? Гэта патэнцыяльна можа дадаць вялікую колькасць гульняў."
+msgid ""
+"Do you really want to run the mass game detector? This could potentially add "
+"a huge number of games."
+msgstr ""
+"Вы сапраўды жадаеце запусціць дэтэктар усіх гульняў? Гэта патэнцыяльна можа "
+"дадаць вялікую колькасць гульняў."
 
 #: gui/launcher.cpp:843
 msgid "ScummVM couldn't open the specified directory!"
@@ -748,7 +762,7 @@ msgid "Special dithering modes supported by some games"
 msgstr "Спецыяльныя рэжымы рэндэрынгу, падтрымоўваныя некаторымі гульнямі"
 
 #: gui/options.cpp:758
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2313
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2316
 msgid "Fullscreen mode"
 msgstr "Поўнаэкранны рэжым"
 
@@ -799,8 +813,12 @@ msgid "Output rate:"
 msgstr "Чашчыня гуку:"
 
 #: gui/options.cpp:809 gui/options.cpp:810
-msgid "Higher value specifies better sound quality but may be not supported by your soundcard"
-msgstr "Большыя значэнні задаюць лепшую якасць гуку, аднак яны могуць не падтрымлівацца вашай гукавой картай"
+msgid ""
+"Higher value specifies better sound quality but may be not supported by your "
+"soundcard"
+msgstr ""
+"Большыя значэнні задаюць лепшую якасць гуку, аднак яны могуць не "
+"падтрымлівацца вашай гукавой картай"
 
 #: gui/options.cpp:820
 msgid "GM Device:"
@@ -824,7 +842,9 @@ msgstr "SoundFont:"
 
 #: gui/options.cpp:854 gui/options.cpp:856 gui/options.cpp:857
 msgid "SoundFont is supported by some audio cards, FluidSynth and Timidity"
-msgstr "SoundFont'ы падтрымліваюцца некаторымі гукавымі картамі, FluidSynth ды Timidity"
+msgstr ""
+"SoundFont'ы падтрымліваюцца некаторымі гукавымі картамі, FluidSynth ды "
+"Timidity"
 
 #: gui/options.cpp:856
 msgctxt "lowres"
@@ -853,15 +873,21 @@ msgstr "Нал. MT-32:"
 
 #: gui/options.cpp:879
 msgid "Specifies default sound device for Roland MT-32/LAPC1/CM32l/CM64 output"
-msgstr "Паказвае гукавую прыладу па змаўчанні для вываду на Roland MT-32/LAPC1/CM32l/CM64"
+msgstr ""
+"Паказвае гукавую прыладу па змаўчанні для вываду на Roland MT-32/LAPC1/CM32l/"
+"CM64"
 
 #: gui/options.cpp:884
 msgid "True Roland MT-32 (disable GM emulation)"
 msgstr "Сапраўдны Roland MT-32 (забараніць эмуляцыю GM)"
 
 #: gui/options.cpp:884 gui/options.cpp:886
-msgid "Check if you want to use your real hardware Roland-compatible sound device connected to your computer"
-msgstr "Адзначце, калі ў вас падключана Roland-сумяшчальная гукавая прылада і вы жадаеце яе выкарыстоўваць"
+msgid ""
+"Check if you want to use your real hardware Roland-compatible sound device "
+"connected to your computer"
+msgstr ""
+"Адзначце, калі ў вас падключана Roland-сумяшчальная гукавая прылада і вы "
+"жадаеце яе выкарыстоўваць"
 
 #: gui/options.cpp:886
 msgctxt "lowres"
@@ -873,8 +899,12 @@ msgid "Roland GS Device (enable MT-32 mappings)"
 msgstr "Рэжым Roland GS (дазволіць мапінг MT-32)"
 
 #: gui/options.cpp:889
-msgid "Check if you want to enable patch mappings to emulate an MT-32 on a Roland GS device"
-msgstr "Адзначце, калі жадаеце дазволіць мапінг для эмуляцыі MT-32 на прыладзе Rolans GS"
+msgid ""
+"Check if you want to enable patch mappings to emulate an MT-32 on a Roland "
+"GS device"
+msgstr ""
+"Адзначце, калі жадаеце дазволіць мапінг для эмуляцыі MT-32 на прыладзе "
+"Rolans GS"
 
 #: gui/options.cpp:898
 msgid "Don't use Roland MT-32 music"
@@ -973,7 +1003,9 @@ msgstr "Шлях да тэм:"
 
 #: gui/options.cpp:1148 gui/options.cpp:1150 gui/options.cpp:1151
 msgid "Specifies path to additional data used by all games or ScummVM"
-msgstr "Паказвае шлях да дадатковых файлаў дадзеных, выкарыстоўваных усімі гульнямі або ScummVM"
+msgstr ""
+"Паказвае шлях да дадатковых файлаў дадзеных, выкарыстоўваных усімі гульнямі "
+"або ScummVM"
 
 #: gui/options.cpp:1157
 msgid "Plugins Path:"
@@ -1039,8 +1071,12 @@ msgid "Select directory for plugins"
 msgstr "Абярыце дырэкторыю з плагінамі"
 
 #: gui/options.cpp:1467
-msgid "The theme you selected does not support your current language. If you want to use this theme you need to switch to another language first."
-msgstr "Тэма, абраная вамі, не падтрымлівае бягучую мову. Калі вы жадаеце выкарыстоўваць гэтую тэму, вам неабходна спачатку пераключыцца на іншую мову."
+msgid ""
+"The theme you selected does not support your current language. If you want "
+"to use this theme you need to switch to another language first."
+msgstr ""
+"Тэма, абраная вамі, не падтрымлівае бягучую мову. Калі вы жадаеце "
+"выкарыстоўваць гэтую тэму, вам неабходна спачатку пераключыцца на іншую мову."
 
 #. I18N: You must leave "#" as is, only word 'next' is translatable
 #: gui/predictivedialog.cpp:86
@@ -1324,12 +1360,12 @@ msgstr "PC-9821 (256 колераў)"
 msgid "PC-9801 (16 Colors)"
 msgstr "PC-9801 (16 колераў)"
 
-#: common/rendermode.cpp:71
+#: common/rendermode.cpp:73
 msgctxt "lowres"
 msgid "Hercules Green"
 msgstr "Hercules Зялёны"
 
-#: common/rendermode.cpp:72
+#: common/rendermode.cpp:74
 msgctxt "lowres"
 msgid "Hercules Amber"
 msgstr "Hercules Бурштынавы"
@@ -1341,7 +1377,8 @@ msgstr "Здаецца, што гульня '%s' яшчэ невядома."
 
 #: engines/advancedDetector.cpp:318
 msgid "Please, report the following data to the ScummVM team along with name"
-msgstr "Калі ласка, перадайце наступныя дадзеныя камандзе ScummVM разам з назвай"
+msgstr ""
+"Калі ласка, перадайце наступныя дадзеныя камандзе ScummVM разам з назвай"
 
 #: engines/advancedDetector.cpp:320
 msgid "of the game you tried to add and its version/language/etc.:"
@@ -1380,10 +1417,10 @@ msgctxt "lowres"
 msgid "~R~eturn to Launcher"
 msgstr "Г~а~лоўнае меню"
 
-#: engines/dialogs.cpp:116 engines/agi/saveload.cpp:714
+#: engines/dialogs.cpp:116 engines/agi/saveload.cpp:764
 #: engines/cruise/menu.cpp:212 engines/drascula/saveload.cpp:336
 #: engines/dreamweb/saveload.cpp:261 engines/neverhood/menumodule.cpp:877
-#: engines/pegasus/pegasus.cpp:377 engines/sci/engine/kfile.cpp:769
+#: engines/pegasus/pegasus.cpp:377 engines/sci/engine/kfile.cpp:768
 #: engines/toltecs/menu.cpp:281 engines/tsage/scenes.cpp:598
 msgid "Save game:"
 msgstr "Захаваць гульню:"
@@ -1393,22 +1430,34 @@ msgstr "Захаваць гульню:"
 #: backends/platform/wince/CEActionsPocket.cpp:267
 #: backends/platform/wince/CEActionsSmartphone.cpp:45
 #: backends/platform/wince/CEActionsSmartphone.cpp:231
-#: engines/agi/saveload.cpp:714 engines/cruise/menu.cpp:212
+#: engines/agi/saveload.cpp:764 engines/cruise/menu.cpp:212
 #: engines/drascula/saveload.cpp:336 engines/dreamweb/saveload.cpp:261
-#: engines/neverhood/menumodule.cpp:877 engines/pegasus/pegasus.cpp:377
-#: engines/sci/engine/kfile.cpp:769 engines/scumm/dialogs.cpp:188
-#: engines/toltecs/menu.cpp:281 engines/tsage/scenes.cpp:598
+#: engines/neverhood/menumodule.cpp:877 engines/parallaction/saveload.cpp:212
+#: engines/pegasus/pegasus.cpp:377 engines/sci/engine/kfile.cpp:768
+#: engines/scumm/dialogs.cpp:188 engines/toltecs/menu.cpp:281
+#: engines/tsage/scenes.cpp:598
 msgid "Save"
 msgstr "Захаваць"
 
 #: engines/dialogs.cpp:145
-msgid "Sorry, this engine does not currently provide in-game help. Please consult the README for basic information, and for instructions on how to obtain further assistance."
-msgstr "Прабачце, але гэты рухавічок пакуль не падае дапамогі ўнутры гульні. Калі ласка, звярніцеся да файла README за базавай інфармацыяй, а таксама інструкцыямі пра тое, як атрымаць далейшую дапамогу."
+msgid ""
+"Sorry, this engine does not currently provide in-game help. Please consult "
+"the README for basic information, and for instructions on how to obtain "
+"further assistance."
+msgstr ""
+"Прабачце, але гэты рухавічок пакуль не падае дапамогі ўнутры гульні. Калі "
+"ласка, звярніцеся да файла README за базавай інфармацыяй, а таксама "
+"інструкцыямі пра тое, як атрымаць далейшую дапамогу."
 
 #: engines/dialogs.cpp:234 engines/pegasus/pegasus.cpp:393
 #, c-format
-msgid "Gamestate save failed (%s)! Please consult the README for basic information, and for instructions on how to obtain further assistance."
-msgstr "Не атрымалася захаваць гульню (%s)! Калі ласка, звярніцеся да файла README за базавай інфармацыяй, а таксама інструкцыямі пра тое, як атрымаць далейшую дапамогу."
+msgid ""
+"Gamestate save failed (%s)! Please consult the README for basic information, "
+"and for instructions on how to obtain further assistance."
+msgstr ""
+"Не атрымалася захаваць гульню (%s)! Калі ласка, звярніцеся да файла README "
+"за базавай інфармацыяй, а таксама інструкцыямі пра тое, як атрымаць далейшую "
+"дапамогу."
 
 #: engines/dialogs.cpp:307 engines/mohawk/dialogs.cpp:109
 #: engines/mohawk/dialogs.cpp:170 engines/tsage/dialogs.cpp:106
@@ -1441,24 +1490,28 @@ msgid "Could not apply fullscreen setting."
 msgstr "Не магу ўжыць поўнаэкранны рэжым."
 
 #: engines/engine.cpp:461
-msgid "You appear to be playing this game directly\n"
+msgid ""
+"You appear to be playing this game directly\n"
 "from the CD. This is known to cause problems,\n"
 "and it is therefore recommended that you copy\n"
 "the data files to your hard disk instead.\n"
 "See the README file for details."
-msgstr "Здаецца, вы спрабуеце запусціць гэту гульню прама\n"
+msgstr ""
+"Здаецца, вы спрабуеце запусціць гэту гульню прама\n"
 "з CD. Гэта звычайна выклікае праблемы, і таму\n"
 "мы рэкамендуем скапіяваць файлы дадзеных гульні\n"
 "на жорсткі дыск. Падрабязнасці можна знайсці ў\n"
 "файле README."
 
 #: engines/engine.cpp:472
-msgid "This game has audio tracks in its disk. These\n"
+msgid ""
+"This game has audio tracks in its disk. These\n"
 "tracks need to be ripped from the disk using\n"
 "an appropriate CD audio extracting tool in\n"
 "order to listen to the game's music.\n"
 "See the README file for details."
-msgstr "Дыск гэтай гульні ўтрымоўвае гукавыя дарожкі. Іх\n"
+msgstr ""
+"Дыск гэтай гульні ўтрымоўвае гукавыя дарожкі. Іх\n"
 "неабходна перапісаць з дыска з дапамогай\n"
 "адпаведнай праграмы для капіявання\n"
 "аўдыё дыскаў, і толькі пасля гэтага ў гульні\n"
@@ -1467,12 +1520,23 @@ msgstr "Дыск гэтай гульні ўтрымоўвае гукавыя дарожкі. Іх\n"
 
 #: engines/engine.cpp:530
 #, c-format
-msgid "Gamestate load failed (%s)! Please consult the README for basic information, and for instructions on how to obtain further assistance."
-msgstr "Не атрымалася прачытаць захаванне гульні (%s)! Калі ласка, звярніцеся ў файл README за базавай інфармацыяй, а таксама інструкцыямі пра тое, як атрымаць далейшую дапамогу."
+msgid ""
+"Gamestate load failed (%s)! Please consult the README for basic information, "
+"and for instructions on how to obtain further assistance."
+msgstr ""
+"Не атрымалася прачытаць захаванне гульні (%s)! Калі ласка, звярніцеся ў файл "
+"README за базавай інфармацыяй, а таксама інструкцыямі пра тое, як атрымаць "
+"далейшую дапамогу."
 
 #: engines/engine.cpp:543
-msgid "WARNING: The game you are about to start is not yet fully supported by ScummVM. As such, it is likely to be unstable, and any saves you make might not work in future versions of ScummVM."
-msgstr "ПАПЯРЭДЖАННЕ: Гульня, якую вы збіраецеся запусціць, яшчэ не падтрымліваецца ScummVM цалкам. Яна, хутчэй за ўсё, не будзе працаваць стабільна, і захаванні гульняў могуць не працаваць у будучых версіях ScummVM."
+msgid ""
+"WARNING: The game you are about to start is not yet fully supported by "
+"ScummVM. As such, it is likely to be unstable, and any saves you make might "
+"not work in future versions of ScummVM."
+msgstr ""
+"ПАПЯРЭДЖАННЕ: Гульня, якую вы збіраецеся запусціць, яшчэ не падтрымліваецца "
+"ScummVM цалкам. Яна, хутчэй за ўсё, не будзе працаваць стабільна, і "
+"захаванні гульняў могуць не працаваць у будучых версіях ScummVM."
 
 #: engines/engine.cpp:546
 msgid "Start anyway"
@@ -1496,8 +1560,12 @@ msgstr "Прамы FM ALSA"
 
 #: audio/mididrv.cpp:209
 #, c-format
-msgid "The selected audio device '%s' was not found (e.g. might be turned off or disconnected)."
-msgstr "Абраная гукавая прылада '%s' не была знойдзена (магчыма, яна выключана ці не падключана)."
+msgid ""
+"The selected audio device '%s' was not found (e.g. might be turned off or "
+"disconnected)."
+msgstr ""
+"Абраная гукавая прылада '%s' не была знойдзена (магчыма, яна выключана ці не "
+"падключана)."
 
 #: audio/mididrv.cpp:209 audio/mididrv.cpp:221 audio/mididrv.cpp:257
 #: audio/mididrv.cpp:272
@@ -1506,18 +1574,30 @@ msgstr "Спрабую выкарыстаць іншую даступную прыладу..."
 
 #: audio/mididrv.cpp:221
 #, c-format
-msgid "The selected audio device '%s' cannot be used. See log file for more information."
-msgstr "Абраная гукавая прылада '%s' не можа быць скарыстана. Глядзіце файл пратаколу для больш падрабязнай інфармацыі."
+msgid ""
+"The selected audio device '%s' cannot be used. See log file for more "
+"information."
+msgstr ""
+"Абраная гукавая прылада '%s' не можа быць скарыстана. Глядзіце файл "
+"пратаколу для больш падрабязнай інфармацыі."
 
 #: audio/mididrv.cpp:257
 #, c-format
-msgid "The preferred audio device '%s' was not found (e.g. might be turned off or disconnected)."
-msgstr "Пераважная гукавая прылада '%s' не была знойдзена (магчыма, яна выключана ці не падключана)."
+msgid ""
+"The preferred audio device '%s' was not found (e.g. might be turned off or "
+"disconnected)."
+msgstr ""
+"Пераважная гукавая прылада '%s' не была знойдзена (магчыма, яна выключана ці "
+"не падключана)."
 
 #: audio/mididrv.cpp:272
 #, c-format
-msgid "The preferred audio device '%s' cannot be used. See log file for more information."
-msgstr "Пераважная гукавая прылада '%s' не можа быць скарыстана. Глядзіце файл пратаколу для больш падрабязнай інфармацыі."
+msgid ""
+"The preferred audio device '%s' cannot be used. See log file for more "
+"information."
+msgstr ""
+"Пераважная гукавая прылада '%s' не можа быць скарыстана. Глядзіце файл "
+"пратаколу для больш падрабязнай інфармацыі."
 
 #: audio/mods/paula.cpp:196
 msgid "Amiga Audio Emulator"
@@ -1683,19 +1763,19 @@ msgctxt "lowres"
 msgid "Normal (no scaling)"
 msgstr "Без павелічэння"
 
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2212
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2215
 msgid "Enabled aspect ratio correction"
 msgstr "Карэкцыя суадносін бакоў уключана"
 
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2218
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2221
 msgid "Disabled aspect ratio correction"
 msgstr "Карэкцыя суадносін бакоў выключана"
 
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2273
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2276
 msgid "Active graphics filter:"
 msgstr "Актыўны графічны фільтр:"
 
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2315
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2318
 msgid "Windowed mode"
 msgstr "Аконны рэжым"
 
@@ -2193,7 +2273,8 @@ msgstr "Прызначыць дзеянне па правай пстрычцы"
 
 #: backends/platform/wince/wince-sdl.cpp:520
 msgid "You must map a key to the 'Right Click' action to play this game"
-msgstr "Вы павінны прызначыць клавішу на дзеянне 'Right Click' для гэтай гульні"
+msgstr ""
+"Вы павінны прызначыць клавішу на дзеянне 'Right Click' для гэтай гульні"
 
 #: backends/platform/wince/wince-sdl.cpp:529
 msgid "Map hide toolbar action"
@@ -2201,7 +2282,8 @@ msgstr "Прызначыць дзеянне 'схаваць панэль інструментаў'"
 
 #: backends/platform/wince/wince-sdl.cpp:533
 msgid "You must map a key to the 'Hide toolbar' action to play this game"
-msgstr "Вы павінны прызначыць клавішу на дзеянне 'Hide toolbar' для гэтай гульні"
+msgstr ""
+"Вы павінны прызначыць клавішу на дзеянне 'Hide toolbar' для гэтай гульні"
 
 #: backends/platform/wince/wince-sdl.cpp:542
 msgid "Map Zoom Up action (optional)"
@@ -2212,8 +2294,11 @@ msgid "Map Zoom Down action (optional)"
 msgstr "Прызначыць дзеянне Паменшыць Маштаб (неабавязкова)"
 
 #: backends/platform/wince/wince-sdl.cpp:553
-msgid "Don't forget to map a key to 'Hide Toolbar' action to see the whole inventory"
-msgstr "Не забудзьцеся прызначыць клавішу для дзеяння 'Hide Toolbar', каб убачыць увесь інвентар у гульні"
+msgid ""
+"Don't forget to map a key to 'Hide Toolbar' action to see the whole inventory"
+msgstr ""
+"Не забудзьцеся прызначыць клавішу для дзеяння 'Hide Toolbar', каб убачыць "
+"увесь інвентар у гульні"
 
 #: backends/updates/macosx/macosx-updates.mm:67
 msgid "Check for Updates..."
@@ -2231,60 +2316,75 @@ msgstr "Выкарыстоўваць арыгінальныя экраны запісу/чытанні гульні"
 #: engines/neverhood/detection.cpp:161 engines/sci/detection.cpp:405
 #: engines/toltecs/detection.cpp:201
 msgid "Use the original save/load screens, instead of the ScummVM ones"
-msgstr "Выкарыстоўваць арыгінальныя экраны запісу і захавання гульні замест зробленых у ScummVM"
+msgstr ""
+"Выкарыстоўваць арыгінальныя экраны запісу і захавання гульні замест "
+"зробленых у ScummVM"
 
 #: engines/agi/detection.cpp:157
 msgid "Use an alternative palette"
 msgstr "Выкарыстоўваць альтэрнатыўную палітру"
 
 #: engines/agi/detection.cpp:158
-msgid "Use an alternative palette, common for all Amiga games. This was the old behavior"
-msgstr "Выкарыстоўваць альтэрнатыўную палітру для ўсіх гульняў Amiga. Гэта былі старыя паводзіны"
+msgid ""
+"Use an alternative palette, common for all Amiga games. This was the old "
+"behavior"
+msgstr ""
+"Выкарыстоўваць альтэрнатыўную палітру для ўсіх гульняў Amiga. Гэта былі "
+"старыя паводзіны"
 
 #: engines/agi/detection.cpp:167
 msgid "Mouse support"
 msgstr "Падтрымка мышы"
 
 #: engines/agi/detection.cpp:168
-msgid "Enables mouse support. Allows to use mouse for movement and in game menus."
-msgstr "Уключае падтрымку мышы. Дазваляе выкарыстоўваць мыш для перамяшчэння і ў меню гульні."
+msgid ""
+"Enables mouse support. Allows to use mouse for movement and in game menus."
+msgstr ""
+"Уключае падтрымку мышы. Дазваляе выкарыстоўваць мыш для перамяшчэння і ў "
+"меню гульні."
 
-#: engines/agi/saveload.cpp:727 engines/drascula/saveload.cpp:349
+#: engines/agi/saveload.cpp:777 engines/drascula/saveload.cpp:349
 #: engines/dreamweb/saveload.cpp:169 engines/neverhood/menumodule.cpp:890
-#: engines/sci/engine/kfile.cpp:868 engines/toltecs/menu.cpp:256
+#: engines/sci/engine/kfile.cpp:867 engines/toltecs/menu.cpp:256
 msgid "Restore game:"
 msgstr "Узнавіць гульню:"
 
-#: engines/agi/saveload.cpp:727 engines/drascula/saveload.cpp:349
+#: engines/agi/saveload.cpp:777 engines/drascula/saveload.cpp:349
 #: engines/dreamweb/saveload.cpp:169 engines/neverhood/menumodule.cpp:890
-#: engines/sci/engine/kfile.cpp:868 engines/toltecs/menu.cpp:256
+#: engines/sci/engine/kfile.cpp:867 engines/toltecs/menu.cpp:256
 msgid "Restore"
 msgstr "Узнавіць"
 
 #: engines/agos/saveload.cpp:160 engines/scumm/scumm.cpp:2377
 #, c-format
-msgid "Failed to load game state from file:\n"
+msgid ""
+"Failed to load game state from file:\n"
 "\n"
 "%s"
-msgstr "Не атрымалася загрузіць гульню з файла:\n"
+msgstr ""
+"Не атрымалася загрузіць гульню з файла:\n"
 "\n"
 "%s"
 
 #: engines/agos/saveload.cpp:195 engines/scumm/scumm.cpp:2370
 #, c-format
-msgid "Failed to save game state to file:\n"
+msgid ""
+"Failed to save game state to file:\n"
 "\n"
 "%s"
-msgstr "Не атрымалася запісаць гульню ў файл:\n"
+msgstr ""
+"Не атрымалася запісаць гульню ў файл:\n"
 "\n"
 "%s"
 
 #: engines/agos/saveload.cpp:203 engines/scumm/scumm.cpp:2388
 #, c-format
-msgid "Successfully saved game state in file:\n"
+msgid ""
+"Successfully saved game state in file:\n"
 "\n"
 "%s"
-msgstr "Гульня паспяхова захавана ў файл:\n"
+msgstr ""
+"Гульня паспяхова захавана ў файл:\n"
 "\n"
 "%s"
 
@@ -2302,16 +2402,21 @@ msgid "Enable Color Blind Mode by default"
 msgstr "Уключыць рэжым для людзей са слабым успрыманнем колеру"
 
 #: engines/drascula/saveload.cpp:47
-msgid "ScummVM found that you have old savefiles for Drascula that should be converted.\n"
-"The old save game format is no longer supported, so you will not be able to load your games if you don't convert them.\n"
+msgid ""
+"ScummVM found that you have old savefiles for Drascula that should be "
+"converted.\n"
+"The old save game format is no longer supported, so you will not be able to "
+"load your games if you don't convert them.\n"
 "\n"
-"Press OK to convert them now, otherwise you will be asked again the next time you start the game.\n"
-""
-msgstr "ScummVM выявіў у вас захаванні гульні Drascula у старым фармаце.\n"
-"Стары фармат больш не падтрымліваецца, і, каб загрузіць захаванні, яны павінны быць пераведзены ў новы фармат.\n"
+"Press OK to convert them now, otherwise you will be asked again the next "
+"time you start the game.\n"
+msgstr ""
+"ScummVM выявіў у вас захаванні гульні Drascula у старым фармаце.\n"
+"Стары фармат больш не падтрымліваецца, і, каб загрузіць захаванні, яны "
+"павінны быць пераведзены ў новы фармат.\n"
 "\n"
-"Націсніце ОК, каб перавесці іх у новы фармат зараз, у адваротным выпадку гэта паведамленне з'явіцца зноў пры наступным запуску гульні.\n"
-""
+"Націсніце ОК, каб перавесці іх у новы фармат зараз, у адваротным выпадку "
+"гэта паведамленне з'явіцца зноў пры наступным запуску гульні.\n"
 
 #: engines/dreamweb/detection.cpp:57
 msgid "Use bright palette mode"
@@ -2462,12 +2567,14 @@ msgid "Choose Spell"
 msgstr "Абраць загавор"
 
 #: engines/kyra/sound_midi.cpp:477
-msgid "You appear to be using a General MIDI device,\n"
+msgid ""
+"You appear to be using a General MIDI device,\n"
 "but your game only supports Roland MT32 MIDI.\n"
 "We try to map the Roland MT32 instruments to\n"
 "General MIDI ones. It is still possible that\n"
 "some tracks sound incorrect."
-msgstr "Здаецца, вы спрабуеце выкарыстоўваць прыладу\n"
+msgstr ""
+"Здаецца, вы спрабуеце выкарыстоўваць прыладу\n"
 "General MIDI, але гэтая гульня падтрымлівае толькі\n"
 "Roland MT32 MIDI. Мы паспрабуем падабраць General\n"
 "MIDI-прылады, падобныя да Roland MT32, але\n"
@@ -2476,42 +2583,45 @@ msgstr "Здаецца, вы спрабуеце выкарыстоўваць прыладу\n"
 
 #: engines/kyra/saveload_eob.cpp:557
 #, c-format
-msgid "The following original save game file has been found in your game path:\n"
+msgid ""
+"The following original save game file has been found in your game path:\n"
 "\n"
 "%s %s\n"
 "\n"
 "Do you wish to use this save game file with ScummVM?\n"
 "\n"
-""
-msgstr "Ніжэйзгаданы файл захавання з арыгінальнай гульні быў знойдзены ў вашай гульнявой дырэкторыі:\n"
+msgstr ""
+"Ніжэйзгаданы файл захавання з арыгінальнай гульні быў знойдзены ў вашай "
+"гульнявой дырэкторыі:\n"
 "\n"
 "%s %s\n"
 "\n"
 "Ці жадаеце выкарыстоўваць гэтае захаванне ў ScummVM?\n"
 "\n"
-""
 
 #: engines/kyra/saveload_eob.cpp:590
 #, c-format
-msgid "A save game file was found in the specified slot %d. Overwrite?\n"
+msgid ""
+"A save game file was found in the specified slot %d. Overwrite?\n"
 "\n"
-""
-msgstr "У азначаным слоце %d ужо ёсць захаванне гульні. Перазапісаць?\n"
+msgstr ""
+"У азначаным слоце %d ужо ёсць захаванне гульні. Перазапісаць?\n"
 "\n"
-""
 
 #: engines/kyra/saveload_eob.cpp:623
 #, c-format
-msgid "%d original save game files have been successfully imported into\n"
-"ScummVM. If you want to manually import original save game files later you will\n"
-"need to open the ScummVM debug console and use the command 'import_savefile'.\n"
+msgid ""
+"%d original save game files have been successfully imported into\n"
+"ScummVM. If you want to manually import original save game files later you "
+"will\n"
+"need to open the ScummVM debug console and use the command "
+"'import_savefile'.\n"
 "\n"
-""
-msgstr "%d арыгінальных файлаў захавання былі паспяхова імпартаваны ў ScummVM.\n"
+msgstr ""
+"%d арыгінальных файлаў захавання былі паспяхова імпартаваны ў ScummVM.\n"
 "Калі вы пажадаеце імпартаваць арыгінальныя захаванні, вам трэба будзе\n"
 "адкрыць адладачную кансоль ScummVM і ўвесці каманду 'import_savefile'.\n"
 "\n"
-""
 
 #. I18N: Option for fast scene switching
 #: engines/mohawk/dialogs.cpp:92 engines/mohawk/dialogs.cpp:167
@@ -2557,41 +2667,60 @@ msgstr "Расцягвае відэа пра стварэнне гульні так, што яно займае ўвесь экран"
 
 #: engines/parallaction/saveload.cpp:133
 #, c-format
-msgid "Can't save game in slot %i\n"
+msgid ""
+"Can't save game in slot %i\n"
 "\n"
-""
-msgstr "Не магу захаваць гульню ў пазіцыю %i\n"
+msgstr ""
+"Не магу захаваць гульню ў пазіцыю %i\n"
 "\n"
-""
+
+#: engines/parallaction/saveload.cpp:197
+#, fuzzy
+msgid "Load file"
+msgstr "Загрузіць гульню:"
 
 #: engines/parallaction/saveload.cpp:204
 msgid "Loading game..."
 msgstr "Загружаю гульню..."
+
+#: engines/parallaction/saveload.cpp:212
+#, fuzzy
+msgid "Save file"
+msgstr "Не удалось сохранить игру!"
 
 #: engines/parallaction/saveload.cpp:219
 msgid "Saving game..."
 msgstr "Захоўваю гульню..."
 
 #: engines/parallaction/saveload.cpp:272
-msgid "ScummVM found that you have old savefiles for Nippon Safes that should be renamed.\n"
-"The old names are no longer supported, so you will not be able to load your games if you don't convert them.\n"
+msgid ""
+"ScummVM found that you have old savefiles for Nippon Safes that should be "
+"renamed.\n"
+"The old names are no longer supported, so you will not be able to load your "
+"games if you don't convert them.\n"
 "\n"
 "Press OK to convert them now, otherwise you will be asked next time.\n"
-""
-msgstr "ScummVM знайшоў у вас старыя захаванні гульні Nippon Safes, якія неабходна пераназваць. Старыя назвы больш не падтрымліваюцца, і таму вы не зможаце загрузіць захаванні, калі не пераназавяце іх.\n"
+msgstr ""
+"ScummVM знайшоў у вас старыя захаванні гульні Nippon Safes, якія неабходна "
+"пераназваць. Старыя назвы больш не падтрымліваюцца, і таму вы не зможаце "
+"загрузіць захаванні, калі не пераназавяце іх.\n"
 "\n"
-"Націсніце ОК, каб пераназваць іх зараз, у адваротным выпадку гэтае ж паведамленне з'явіцца пры наступным запуску гульні.\n"
-""
+"Націсніце ОК, каб пераназваць іх зараз, у адваротным выпадку гэтае ж "
+"паведамленне з'явіцца пры наступным запуску гульні.\n"
 
 #: engines/parallaction/saveload.cpp:319
 msgid "ScummVM successfully converted all your savefiles."
 msgstr "ScummVM паспяхова пераўтварыў усе вашы захаванні гульняў."
 
 #: engines/parallaction/saveload.cpp:321
-msgid "ScummVM printed some warnings in your console window and can't guarantee all your files have been converted.\n"
+msgid ""
+"ScummVM printed some warnings in your console window and can't guarantee all "
+"your files have been converted.\n"
 "\n"
 "Please report to the team."
-msgstr "ScummVM напісаў некалькі папярэджанняў у акно кансолі і не змог пераўтварыць усе файлы.\n"
+msgstr ""
+"ScummVM напісаў некалькі папярэджанняў у акно кансолі і не змог пераўтварыць "
+"усе файлы.\n"
 "\n"
 "Калі ласка, паведаміце пра гэта камандзе ScummVM."
 
@@ -2645,7 +2774,9 @@ msgstr "Не рабіць апраксімацыю колераў EGA (поўнакаляровыя фоны)"
 
 #: engines/sci/detection.cpp:375
 msgid "Skip dithering pass in EGA games, graphics are shown with full colors"
-msgstr "Прапускае праход апраксімацыі колераў EGA, графіка будзе паказана з усімі колерамі"
+msgstr ""
+"Прапускае праход апраксімацыі колераў EGA, графіка будзе паказана з усімі "
+"колерамі"
 
 #: engines/sci/detection.cpp:384
 msgid "Enable high resolution graphics"
@@ -2668,8 +2799,12 @@ msgid "Use IMF/Yamaha FB-01 for MIDI output"
 msgstr "Выкарыстоўваць IMF/Yamaha FB-01 для вываду MIDI"
 
 #: engines/sci/detection.cpp:415
-msgid "Use an IBM Music Feature card or a Yamaha FB-01 FM synth module for MIDI output"
-msgstr "Выкарыстоўваць гукавую карту IBM Music Feature ці модуль сінтэзу Yamaha FB-01 FM для MIDI"
+msgid ""
+"Use an IBM Music Feature card or a Yamaha FB-01 FM synth module for MIDI "
+"output"
+msgstr ""
+"Выкарыстоўваць гукавую карту IBM Music Feature ці модуль сінтэзу Yamaha "
+"FB-01 FM для MIDI"
 
 #: engines/sci/detection.cpp:425
 msgid "Use CD audio"
@@ -2677,23 +2812,30 @@ msgstr "Выкарыстоўваць CD-аўдыё"
 
 #: engines/sci/detection.cpp:426
 msgid "Use CD audio instead of in-game audio, if available"
-msgstr "Выкарыстоўваць гукавыя дарожкі з CD замест музыкі з файлаў гульні (калі даступна)"
+msgstr ""
+"Выкарыстоўваць гукавыя дарожкі з CD замест музыкі з файлаў гульні (калі "
+"даступна)"
 
 #: engines/sci/detection.cpp:436
 msgid "Use Windows cursors"
 msgstr "Выкарыстоўваць курсоры Windows"
 
 #: engines/sci/detection.cpp:437
-msgid "Use the Windows cursors (smaller and monochrome) instead of the DOS ones"
-msgstr "Выкарыстоўваць курсоры Windows (меншыя па памеры і аднакаляровыя) замест курсораў DOS"
+msgid ""
+"Use the Windows cursors (smaller and monochrome) instead of the DOS ones"
+msgstr ""
+"Выкарыстоўваць курсоры Windows (меншыя па памеры і аднакаляровыя) замест "
+"курсораў DOS"
 
 #: engines/sci/detection.cpp:447
 msgid "Use silver cursors"
 msgstr "Выкарыстоўваць срэбныя курсоры"
 
 #: engines/sci/detection.cpp:448
-msgid "Use the alternate set of silver cursors, instead of the normal golden ones"
-msgstr "Выкарыстоўваць альтэрнатыўны набор срэбных курсораў замест звычайных залатых"
+msgid ""
+"Use the alternate set of silver cursors, instead of the normal golden ones"
+msgstr ""
+"Выкарыстоўваць альтэрнатыўны набор срэбных курсораў замест звычайных залатых"
 
 #: engines/scumm/dialogs.cpp:176
 #, c-format
@@ -3362,37 +3504,55 @@ msgstr "Хуткасць тытраў: "
 
 #: engines/scumm/scumm.cpp:1832
 #, c-format
-msgid "Native MIDI support requires the Roland Upgrade from LucasArts,\n"
+msgid ""
+"Native MIDI support requires the Roland Upgrade from LucasArts,\n"
 "but %s is missing. Using AdLib instead."
-msgstr "Рэжым \"роднага\" MIDI патрабуе абнаўленне Roland Upgrade ад\n"
+msgstr ""
+"Рэжым \"роднага\" MIDI патрабуе абнаўленне Roland Upgrade ад\n"
 "LucasArts, але не хапае %s. Пераключаюся на AdLib."
 
 #: engines/scumm/scumm.cpp:2644
-msgid "Usually, Maniac Mansion would start now. But for that to work, the game files for Maniac Mansion have to be in the 'Maniac' directory inside the Tentacle game directory, and the game has to be added to ScummVM."
-msgstr "Зараз павінна запусціцца гульня Maniac Mansion. Але каб гэта працавала, файлы гульні Maniac Mansion павінны быць скапіяваны ў дырэкторыю 'Maniac' унутры дырэкторыі гульні Tentacle і сама гульня павінна быць дададзена ў ScummVM."
+msgid ""
+"Usually, Maniac Mansion would start now. But for that to work, the game "
+"files for Maniac Mansion have to be in the 'Maniac' directory inside the "
+"Tentacle game directory, and the game has to be added to ScummVM."
+msgstr ""
+"Зараз павінна запусціцца гульня Maniac Mansion. Але каб гэта працавала, "
+"файлы гульні Maniac Mansion павінны быць скапіяваны ў дырэкторыю 'Maniac' "
+"унутры дырэкторыі гульні Tentacle і сама гульня павінна быць дададзена ў "
+"ScummVM."
 
 #: engines/scumm/players/player_v3m.cpp:129
-msgid "Could not find the 'Loom' Macintosh executable to read the\n"
+msgid ""
+"Could not find the 'Loom' Macintosh executable to read the\n"
 "instruments from. Music will be disabled."
-msgstr "Не атрымалася знайсці выканальны файл 'Loom' Macintosh, каб прачытаць\n"
+msgstr ""
+"Не атрымалася знайсці выканальны файл 'Loom' Macintosh, каб прачытаць\n"
 "дадзеныя пра інструменты. Музыка будзе выключана."
 
 #: engines/scumm/players/player_v5m.cpp:107
-msgid "Could not find the 'Monkey Island' Macintosh executable to read the\n"
+msgid ""
+"Could not find the 'Monkey Island' Macintosh executable to read the\n"
 "instruments from. Music will be disabled."
-msgstr "Не атрымалася знайсці выканальны файл 'Monkey Island' Macintosh, каб прачытаць\n"
+msgstr ""
+"Не атрымалася знайсці выканальны файл 'Monkey Island' Macintosh, каб "
+"прачытаць\n"
 "дадзеныя пра інструменты. Музыка будзе выключана."
 
 #: engines/sky/compact.cpp:130
-msgid "Unable to find \"sky.cpt\" file!\n"
+msgid ""
+"Unable to find \"sky.cpt\" file!\n"
 "Please download it from www.scummvm.org"
-msgstr "Адсутнічае файл sky.cpt!\n"
+msgstr ""
+"Адсутнічае файл sky.cpt!\n"
 "Калі ласка, запампуйце яго з www.scummvm.org"
 
 #: engines/sky/compact.cpp:141
-msgid "The \"sky.cpt\" file has an incorrect size.\n"
+msgid ""
+"The \"sky.cpt\" file has an incorrect size.\n"
 "Please (re)download it from www.scummvm.org"
-msgstr "Файл sky.cpt мае няправільны памер.\n"
+msgstr ""
+"Файл sky.cpt мае няправільны памер.\n"
 "Калі ласка, запампуйце яго нанова з www.scummvm.org"
 
 #: engines/sky/detection.cpp:44
@@ -3410,11 +3570,15 @@ msgstr "Застаўка PSX '%s' не можа быць прайграна ў рэжыме з палітрай"
 
 #: engines/sword1/animation.cpp:545 engines/sword2/animation.cpp:445
 msgid "DXA cutscenes found but ScummVM has been built without zlib"
-msgstr "Знойдзены застаўкі ў фармаце DXA, але ScummVM быў сабраны без падтрымкі zlib"
+msgstr ""
+"Знойдзены застаўкі ў фармаце DXA, але ScummVM быў сабраны без падтрымкі zlib"
 
 #: engines/sword1/animation.cpp:561 engines/sword2/animation.cpp:461
-msgid "MPEG-2 cutscenes found but ScummVM has been built without MPEG-2 support"
-msgstr "Знойдзены застаўкі ў фармаце MPEG-2, але ScummVM быў сабраны без падтрымкі MPEG-2"
+msgid ""
+"MPEG-2 cutscenes found but ScummVM has been built without MPEG-2 support"
+msgstr ""
+"Знойдзены застаўкі ў фармаце MPEG-2, але ScummVM быў сабраны без падтрымкі "
+"MPEG-2"
 
 #: engines/sword1/animation.cpp:568 engines/sword2/animation.cpp:470
 #, c-format
@@ -3422,25 +3586,30 @@ msgid "Cutscene '%s' not found"
 msgstr "Застаўка '%s' не знойдзена"
 
 #: engines/sword1/control.cpp:863
-msgid "ScummVM found that you have old savefiles for Broken Sword 1 that should be converted.\n"
-"The old save game format is no longer supported, so you will not be able to load your games if you don't convert them.\n"
+msgid ""
+"ScummVM found that you have old savefiles for Broken Sword 1 that should be "
+"converted.\n"
+"The old save game format is no longer supported, so you will not be able to "
+"load your games if you don't convert them.\n"
 "\n"
-"Press OK to convert them now, otherwise you will be asked again the next time you start the game.\n"
-""
-msgstr "ScummVM выявіў у вас захаванні гульні Broken Sword 1 у старым фармаце.\n"
-"Стары фармат больш не падтрымліваецца, і, каб загрузіць захаванні, яны павінны быць пераведзены ў новы фармат.\n"
+"Press OK to convert them now, otherwise you will be asked again the next "
+"time you start the game.\n"
+msgstr ""
+"ScummVM выявіў у вас захаванні гульні Broken Sword 1 у старым фармаце.\n"
+"Стары фармат больш не падтрымліваецца, і, каб загрузіць захаванні, яны "
+"павінны быць пераведзены ў новы фармат.\n"
 "\n"
-"Націсніце ОК, каб перавесці іх у новы фармат зараз, у адваротным выпадку гэта паведамленне з'явіцца зноў пры наступным запуску гульні.\n"
-""
+"Націсніце ОК, каб перавесці іх у новы фармат зараз, у адваротным выпадку "
+"гэта паведамленне з'явіцца зноў пры наступным запуску гульні.\n"
 
 #: engines/sword1/control.cpp:1232
 #, c-format
-msgid "Target new save game already exists!\n"
+msgid ""
+"Target new save game already exists!\n"
 "Would you like to keep the old save game (%s) or the new one (%s)?\n"
-""
-msgstr "Захаванне гульні з такім імем ужо існуе!\n"
+msgstr ""
+"Захаванне гульні з такім імем ужо існуе!\n"
 "Вы жадаеце пакінуць старую назву (%s) ці зрабіць новую (%s)?\n"
-""
 
 #: engines/sword1/control.cpp:1235
 msgid "Keep the old one"
@@ -3455,8 +3624,11 @@ msgid "This is the end of the Broken Sword 1 Demo"
 msgstr "Гэта завяршэнне дэма Broken Sword 1"
 
 #: engines/sword2/animation.cpp:425
-msgid "PSX cutscenes found but ScummVM has been built without RGB color support"
-msgstr "Знойдзены застаўкі ў фармаце PSX, але ScummVM быў сабраны без падтрымкі RGB-колераў"
+msgid ""
+"PSX cutscenes found but ScummVM has been built without RGB color support"
+msgstr ""
+"Знойдзены застаўкі ў фармаце PSX, але ScummVM быў сабраны без падтрымкі RGB-"
+"колераў"
 
 #: engines/sword2/sword2.cpp:79
 msgid "Show object labels"
@@ -3467,12 +3639,18 @@ msgid "Show labels for objects on mouse hover"
 msgstr "Паказвае назвы аб'ектаў пры навядзенні курсора мышы"
 
 #: engines/teenagent/resources.cpp:95
-msgid "You're missing the 'teenagent.dat' file. Get it from the ScummVM website"
-msgstr "У вас адсутнічае файл 'teenagent.dat'. Запампуйце яго з вэб-сайта ScummVM"
+msgid ""
+"You're missing the 'teenagent.dat' file. Get it from the ScummVM website"
+msgstr ""
+"У вас адсутнічае файл 'teenagent.dat'. Запампуйце яго з вэб-сайта ScummVM"
 
 #: engines/teenagent/resources.cpp:116
-msgid "The teenagent.dat file is compressed and zlib hasn't been included in this executable. Please decompress it"
-msgstr "Файл teenagent.dat зжаты, але zlib не ўключаны ў гэту праграму. Калі ласка, распакуйце яго"
+msgid ""
+"The teenagent.dat file is compressed and zlib hasn't been included in this "
+"executable. Please decompress it"
+msgstr ""
+"Файл teenagent.dat зжаты, але zlib не ўключаны ў гэту праграму. Калі ласка, "
+"распакуйце яго"
 
 #: engines/wintermute/detection.cpp:58
 msgid "Show FPS-counter"
@@ -3484,7 +3662,9 @@ msgstr "Паказаць у верхнім левым куце бягучую колькасць кадраў у секунду"
 
 #: engines/zvision/detection_tables.h:52
 msgid "Use the original save/load screens instead of the ScummVM interface"
-msgstr "Выкарыстоўваць арыгінальныя экраны запісу і захавання гульні замест зробленых у ScummVM"
+msgstr ""
+"Выкарыстоўваць арыгінальныя экраны запісу і захавання гульні замест "
+"зробленых у ScummVM"
 
 #: engines/zvision/detection_tables.h:61
 msgid "Double FPS"
@@ -3516,7 +3696,9 @@ msgstr "Выкарыстоўваць відэа MPEG высокага адрознення"
 
 #: engines/zvision/detection_tables.h:92
 msgid "Use MPEG video from the DVD version, instead of lower resolution AVI"
-msgstr "Выкарыстоўваць MPEG-відэа з DVD-версіі замест відэа нізкага адрознення ў фармаце AVI"
+msgstr ""
+"Выкарыстоўваць MPEG-відэа з DVD-версіі замест відэа нізкага адрознення ў "
+"фармаце AVI"
 
 #~ msgid "EGA undithering"
 #~ msgstr "EGA без растру"
@@ -3568,9 +3750,6 @@ msgstr "Выкарыстоўваць MPEG-відэа з DVD-версіі замест відэа нізкага адрознення ў
 
 #~ msgid "Enable Roland GS Mode"
 #~ msgstr "Уключыць рэжым Roland GS"
-
-#~ msgid "Save game failed!"
-#~ msgstr "Не удалось сохранить игру!"
 
 #~ msgctxt "lowres"
 #~ msgid "Add Game..."
