@@ -772,7 +772,7 @@ void GfxFrameout::palMorphFrameOut(const int8 *styleRanges, const ShowStyleEntry
 	_palette->updateHardware();
 	alterVmap(nextPalette, sourcePalette, 1, _styleRanges);
 
-	if (showStyle->type > 0 && showStyle->type < 15) {
+	if (showStyle && showStyle->type != kShowStyleUnknown) {
 // TODO: SCI2.1mid transition effects
 //		processEffects();
 		warning("Transition not implemented!");
