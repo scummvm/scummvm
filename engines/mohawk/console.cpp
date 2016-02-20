@@ -121,7 +121,7 @@ static const uint16 default_start_card[12] = {
 	10000,
 	2000,
 	5038,
-	2, // TODO: Should be 1?
+	1,
 	1,
 	6122,
 	4134,
