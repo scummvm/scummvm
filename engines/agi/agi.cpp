@@ -401,8 +401,11 @@ AgiEngine::AgiEngine(OSystem *syst, const AGIGameDescription *gameDesc) : AgiBas
 
 	setupOpcodes();
 	_game._curLogic = NULL;
+	_veryFirstInitialCycle = true;
 	_instructionCounter = 0;
 	resetGetVarSecondsHeuristic();
+
+	_setVolumeBrokenFangame = false; // for further study see AgiEngine::setVolumeViaScripts()
 
 	_lastSaveTime = 0;
 
