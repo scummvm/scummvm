@@ -71,14 +71,14 @@ static const AgiAppleIIgsDelayOverwriteRoomEntry appleIIgsDelayOverwriteSQ2[] = 
 };
 
 static const AgiAppleIIgsDelayOverwriteGameEntry appleIIgsDelayOverwriteGameTable[] = {
-	{ GID_BC,         2, nullptr }, // NEEDS TESTING
-	{ GID_GOLDRUSH,   2, nullptr }, // NEEDS TESTING
+	{ GID_BC,         2, nullptr }, // sets the speed at the start and doesn't modify it
+	{ GID_GOLDRUSH,   2, nullptr },
 	{ GID_KQ1,        2, nullptr },
 	// KQ2 seems to work fine at speed given by scripts
 	{ GID_KQ3,        2, nullptr },
 	{ GID_KQ4,        2, appleIIgsDelayOverwriteKQ4 },
 	{ GID_LSL1,       2, nullptr }, // Switch Larry 1 to 10 cycles per second (that's around PC Larry 1's "normal" speed
-	{ GID_MH1,        2, appleIIgsDelayOverwriteMH1 }, // NEEDS TESTING
+	{ GID_MH1,        2, appleIIgsDelayOverwriteMH1 },
 	{ GID_MIXEDUP,    2, nullptr },
 	{ GID_PQ1,        2, nullptr },
 	{ GID_SQ1,        2, nullptr }, // completed, no issues using these settings
