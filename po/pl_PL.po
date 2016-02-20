@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
 "POT-Creation-Date: 2016-02-20 21:28+0000\n"
-"PO-Revision-Date: 2016-02-05 22:34+0100\n"
+"PO-Revision-Date: 2016-02-20 23:43+0100\n"
 "Last-Translator: Micha³ Zi±bkowski <mziab@o2.pl>\n"
 "Language-Team: Grajpopolsku.pl <grajpopolsku@gmail.com>\n"
 "Language: Polski\n"
@@ -644,7 +644,7 @@ msgstr "ScummVM nie znalaz³ silnika zdolnego uruchomiæ wybran± grê!"
 
 #: gui/launcher.cpp:1161
 msgid "Mass Add..."
-msgstr "Masowe dodawanie..."
+msgstr "Przeszukaj..."
 
 #: gui/launcher.cpp:1163
 msgid "Record..."
@@ -659,17 +659,17 @@ msgid "Scan complete!"
 msgstr "Skanowanie zakoñczone!"
 
 #: gui/massadd.cpp:262
-#, fuzzy, c-format
+#, c-format
 msgid "Discovered %d new games, ignored %d previously added games."
 msgstr "Wykryto %d now± grê, zignorowano %d poprzednio dodanych."
 
 #: gui/massadd.cpp:266
-#, fuzzy, c-format
+#, c-format
 msgid "Scanned %d directories ..."
 msgstr "Przeskanowano %d katalog..."
 
 #: gui/massadd.cpp:269
-#, fuzzy, c-format
+#, c-format
 msgid "Discovered %d new games, ignored %d previously added games ..."
 msgstr "Wykryto %d now± grê, zignorowano %d poprzednio dodanych..."
 
@@ -2608,7 +2608,7 @@ msgstr ""
 "\n"
 
 #: engines/kyra/saveload_eob.cpp:623
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "%d original save game files have been successfully imported into\n"
 "ScummVM. If you want to manually import original save game files later you "
@@ -2674,18 +2674,16 @@ msgstr ""
 "\n"
 
 #: engines/parallaction/saveload.cpp:197
-#, fuzzy
 msgid "Load file"
-msgstr "Wczytaj grê:"
+msgstr "Wczytaj plik"
 
 #: engines/parallaction/saveload.cpp:204
 msgid "Loading game..."
 msgstr "Wczytywanie stanu gry..."
 
 #: engines/parallaction/saveload.cpp:212
-#, fuzzy
 msgid "Save file"
-msgstr "Nie uda³o siê zapisaæ stanu gry!"
+msgstr "Zapisz plik"
 
 #: engines/parallaction/saveload.cpp:219
 msgid "Saving game..."
@@ -3533,58 +3531,60 @@ msgstr ""
 "odczytania instrumentów. Muzyka bêdzie wy³±czona."
 
 #: engines/sherlock/detection.cpp:71
-#, fuzzy
 msgid "Use original savegame dialog"
-msgstr "U¿yj oryginalnych ekranów odczytu/zapisu"
+msgstr "U¿ywaj oryginalnego ekranu odczytu/zapisu"
 
 #: engines/sherlock/detection.cpp:72
 msgid ""
 "Files button in-game shows original savegame dialog rather than the ScummVM "
 "menu"
 msgstr ""
+"Przycisk zapisu w grze wy¶wietla oryginalny ekran odczytu/zapisu zamiast "
+"menu ScummVM"
 
 #: engines/sherlock/detection.cpp:81
 msgid "Pixellated scene transitions"
-msgstr ""
+msgstr "Pikselizowane przej¶cia miêdzy scenami"
 
 #: engines/sherlock/detection.cpp:82
 msgid "When changing scenes, a randomized pixel transition is done"
-msgstr ""
+msgstr "U¿ywaj losowej pikselizacji przy zmianie sceny"
 
 #: engines/sherlock/detection.cpp:91
 msgid "Don't show hotspots when moving mouse"
-msgstr ""
+msgstr "Nie wy¶wietlaj hotspotów przy poruszaniu mysz±"
 
 #: engines/sherlock/detection.cpp:92
 msgid ""
 "Only show hotspot names after you actually click on a hotspot or action "
 "button"
 msgstr ""
+"Wy¶wietlaj nazwy hotspotów dopiero po klikniêciu ich lub u¿yciu przycisku "
+"akcji"
 
 #: engines/sherlock/detection.cpp:101
-#, fuzzy
 msgid "Show character portraits"
-msgstr "Zmieñ postaæ"
+msgstr "Wy¶wietl portrety postaci"
 
 #: engines/sherlock/detection.cpp:102
 msgid "Show portraits for the characters when conversing"
-msgstr ""
+msgstr "Wy¶wietl portrety postaci podczas rozmowy"
 
 #: engines/sherlock/detection.cpp:111
 msgid "Slide dialogs into view"
-msgstr ""
+msgstr "Przysuñ okna"
 
 #: engines/sherlock/detection.cpp:112
 msgid "Slide UI dialogs into view, rather than simply showing them immediately"
-msgstr ""
+msgstr "Przysuñ okna interfejsu zamiast wy¶wietliæ je od razu"
 
 #: engines/sherlock/detection.cpp:121
 msgid "Transparent windows"
-msgstr ""
+msgstr "Przezroczyste okna"
 
 #: engines/sherlock/detection.cpp:122
 msgid "Show windows with a partially transparent background"
-msgstr ""
+msgstr "Wy¶wietlaj okna z pó³przezroczystym t³em"
 
 #: engines/sky/compact.cpp:130
 msgid ""
