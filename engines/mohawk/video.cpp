@@ -343,10 +343,34 @@ bool VideoManager::updateMovies() {
 						_vm->_system->getPaletteManager()->setPalette(video->getPalette(), 0, 256);
 				}
 
-				// Clip the width/height to make sure we stay on the screen (Myst does this a few times)
-				uint16 width = MIN<int32>(video->getWidth(), _vm->_system->getWidth() - (*it)->getX());
-				uint16 height = MIN<int32>(video->getHeight(), _vm->_system->getHeight() - (*it)->getY());
-				_vm->_system->copyRectToScreen(frame->getPixels(), frame->pitch, (*it)->getX(), (*it)->getY(), width, height);
+				// Clip the video to make sure it stays on the screen (Myst does this a few times)
+				Common::Rect targetRect = Common::Rect(video->getWidth(), video->getHeight());
+				targetRect.translate((*it)->getX(), (*it)->getY());
+
+				Common::Rect frameRect = Common::Rect(video->getWidth(), video->getHeight());
+
+				if (targetRect.left < 0) {
+					frameRect.left -= targetRect.left;
+					targetRect.left = 0;
+				}
+
+				if (targetRect.top < 0) {
+					frameRect.top -= targetRect.top;
+					targetRect.top = 0;
+				}
+
+				if (targetRect.right > _vm->_system->getWidth()) {
+					frameRect.right -= targetRect.right - _vm->_system->getWidth();
+					targetRect.right = _vm->_system->getWidth();
+				}
+
+				if (targetRect.bottom > _vm->_system->getHeight()) {
+					frameRect.bottom -= targetRect.bottom - _vm->_system->getHeight();
+					targetRect.bottom = _vm->_system->getHeight();
+				}
+
+				_vm->_system->copyRectToScreen(frame->getBasePtr(frameRect.left, frameRect.top), frame->pitch,
+				                               targetRect.left, targetRect.top, targetRect.width(), targetRect.height());
 
 				// We've drawn something to the screen, make sure we update it
 				updateScreen = true;
