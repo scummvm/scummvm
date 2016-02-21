@@ -1865,6 +1865,11 @@ drawCircleAlg(int x1, int y1, int r, PixelType color, VectorRenderer::FillMode f
 template<typename PixelType>
 void VectorRendererSpec<PixelType>::
 drawSquareShadow(int x, int y, int w, int h, int offset) {
+	// Do nothing for empty rects or no shadow offset.
+	if (w <= 0 || h <= 0 || offset <= 0) {
+		return;
+	}
+
 	PixelType *ptr = (PixelType *)_activeSurface->getBasePtr(x + w - 1, y + offset);
 	int pitch = _activeSurface->pitch / _activeSurface->format.bytesPerPixel;
 	int i, j;
