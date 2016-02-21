@@ -151,6 +151,7 @@ void GfxFrameout::run() {
 
 void GfxFrameout::clear() {
 	_planes.clear();
+	_visiblePlanes.clear();
 	_showList.clear();
 }
 
