@@ -441,13 +441,14 @@ template<typename PixelType>
 void VectorRendererSpec<PixelType>::
 gradientFill(PixelType *ptr, int width, int x, int y) {
 	bool ox = ((y & 1) == 1);
-	int stripSize;
 	int curGrad = 0;
 
 	while (_gradIndexes[curGrad + 1] <= y)
 		curGrad++;
 
-	stripSize = _gradIndexes[curGrad + 1] - _gradIndexes[curGrad];
+	// precalcGradient assures that _gradIndexes entries always differ in
+	// their value. This assures stripSize is always different from zero.
+	int stripSize = _gradIndexes[curGrad + 1] - _gradIndexes[curGrad];
 
 	int grad = (((y - _gradIndexes[curGrad]) % stripSize) << 2) / stripSize;
 
@@ -1422,6 +1423,9 @@ drawTriangleVertAlg(int x1, int y1, int w, int h, bool inverted, PixelType color
 			blendPixelPtr(floor, color, 50);
 
 #if FIXED_POINT
+		// In this branch dx is always different from zero. This is because
+		// abs(dx) is strictly greater than abs(dy), and abs returns zero
+		// as minimal value.
 		int gradient = (dy << 8) / dx;
 		int intery = (y1 << 8) + gradient;
 #else
