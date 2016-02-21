@@ -1394,6 +1394,12 @@ drawLineAlg(int x1, int y1, int x2, int y2, int dx, int dy, PixelType color) {
 template<typename PixelType>
 void VectorRendererSpec<PixelType>::
 drawTriangleVertAlg(int x1, int y1, int w, int h, bool inverted, PixelType color, VectorRenderer::FillMode fill_m) {
+	// Don't draw anything for empty rects. This assures dy is always different
+	// from zero.
+	if (w <= 0 || h <= 0) {
+		return;
+	}
+
 	int pitch = _activeSurface->pitch / _activeSurface->format.bytesPerPixel;
 	int gradient_h = 0;
 	if (!inverted) {
