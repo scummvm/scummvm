@@ -1710,6 +1710,11 @@ drawBorderRoundedSquareAlg(int x1, int y1, int r, int w, int h, PixelType color,
 template<typename PixelType>
 void VectorRendererSpec<PixelType>::
 drawInteriorRoundedSquareAlg(int x1, int y1, int r, int w, int h, PixelType color, VectorRenderer::FillMode fill_m) {
+	// Do not draw empty space rounded squares.
+	if (w <= 0 || h <= 0) {
+		return;
+	}
+
 	int f, ddF_x, ddF_y;
 	int x, y, px, py;
 	int pitch = _activeSurface->pitch / _activeSurface->format.bytesPerPixel;
@@ -2246,6 +2251,11 @@ drawBorderRoundedSquareAlg(int x1, int y1, int r, int w, int h, PixelType color,
 template<typename PixelType>
 void VectorRendererAA<PixelType>::
 drawInteriorRoundedSquareAlg(int x1, int y1, int r, int w, int h, PixelType color, VectorRenderer::FillMode fill_m) {
+	// Do not draw empty space rounded squares.
+	if (w <= 0 || h <= 0) {
+		return;
+	}
+
 	int x, y;
 	const int pitch = Base::_activeSurface->pitch / Base::_activeSurface->format.bytesPerPixel;
 	int px, py;
