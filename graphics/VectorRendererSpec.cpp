@@ -1967,7 +1967,6 @@ drawRoundedSquareShadow(int x1, int y1, int r, int w, int h, int offset) {
 template<typename PixelType>
 void VectorRendererAA<PixelType>::
 drawLineAlg(int x1, int y1, int x2, int y2, uint dx, uint dy, PixelType color) {
-
 	PixelType *ptr = (PixelType *)Base::_activeSurface->getBasePtr(x1, y1);
 	int pitch = Base::_activeSurface->pitch / Base::_activeSurface->format.bytesPerPixel;
 	int xdir = (x2 > x1) ? 1 : -1;
@@ -1993,7 +1992,7 @@ drawLineAlg(int x1, int y1, int x2, int y2, uint dx, uint dy, PixelType color) {
 			this->blendPixelPtr(ptr, color, ~alpha);
 			this->blendPixelPtr(ptr + pitch, color, alpha);
 		}
-	} else {
+	} else if (dy != 0) {
 		gradient = (dx << 16) / dy;
 		error_acc = 0;
 
