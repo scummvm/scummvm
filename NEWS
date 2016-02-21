@@ -1,5 +1,21 @@
 
 0.3.0 (2016-xx-xx)
+	New Games:
+	- ...
+
+	General:
+	- OpenGL shaders are now detected at runtime
+	- Support for selecting graphics renderer at runtime
+	- Enabled support for multi language
+
+	Grim fixes:
+	- Added support for German, French, Italian and Spanish Grim Fandango Demo
+	- Added support for English Grim Fandango Demo (with intro video version)
+	- Improve lighting
+
+	Myst III fixes:
+	- Added support for XBox version of Myst III
+	- Implemented the Narayan shield effect
 
 0.2.1 (2015-01-25)
 	Grim fixes:
