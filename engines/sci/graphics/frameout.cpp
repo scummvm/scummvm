@@ -197,12 +197,12 @@ void GfxFrameout::syncWithScripts(bool addElements) {
 
 		while (!planeCastsNodeObject.isNull()) {
 			Node *castsNode = segMan->lookupNode(planeCastsNodeObject);
-			reg_t castObject = castsNode->value;
+			reg_t castsObject = castsNode->value;
 
-			reg_t castListElements = readSelector(segMan, castObject, SELECTOR(elements));
+			reg_t castsListElements = readSelector(segMan, castsObject, SELECTOR(elements));
 
-			List *castList = segMan->lookupList(castListElements);
-			reg_t castNodeObject = castList->first;
+			List *castsList = segMan->lookupList(castsListElements);
+			reg_t castNodeObject = castsList->first;
 
 			while (!castNodeObject.isNull()) {
 				Node *castNode = segMan->lookupNode(castNodeObject);
