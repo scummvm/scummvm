@@ -80,37 +80,37 @@ reg_t kCantBeHere32(EngineState *s, int argc, reg_t *argv) {
 }
 
 reg_t kAddScreenItem(EngineState *s, int argc, reg_t *argv) {
-	debugCN(6, kDebugLevelGraphics, "kAddScreenItem %x:%x (%s)\n", argv[0].getSegment(), argv[0].getOffset(), g_sci->getEngineState()->_segMan->getObjectName(argv[0]));
+	debugC(6, kDebugLevelGraphics, "kAddScreenItem %x:%x (%s)", argv[0].getSegment(), argv[0].getOffset(), g_sci->getEngineState()->_segMan->getObjectName(argv[0]));
 	g_sci->_gfxFrameout->kernelAddScreenItem(argv[0]);
 	return NULL_REG;
 }
 
 reg_t kUpdateScreenItem(EngineState *s, int argc, reg_t *argv) {
-	debugCN(7, kDebugLevelGraphics, "kUpdateScreenItem %x:%x (%s)\n", argv[0].getSegment(), argv[0].getOffset(), g_sci->getEngineState()->_segMan->getObjectName(argv[0]));
+	debugC(7, kDebugLevelGraphics, "kUpdateScreenItem %x:%x (%s)", argv[0].getSegment(), argv[0].getOffset(), g_sci->getEngineState()->_segMan->getObjectName(argv[0]));
 	g_sci->_gfxFrameout->kernelUpdateScreenItem(argv[0]);
 	return NULL_REG;
 }
 
 reg_t kDeleteScreenItem(EngineState *s, int argc, reg_t *argv) {
-	debugCN(6, kDebugLevelGraphics, "kDeleteScreenItem %x:%x (%s)\n", argv[0].getSegment(), argv[0].getOffset(), g_sci->getEngineState()->_segMan->getObjectName(argv[0]));
+	debugC(6, kDebugLevelGraphics, "kDeleteScreenItem %x:%x (%s)", argv[0].getSegment(), argv[0].getOffset(), g_sci->getEngineState()->_segMan->getObjectName(argv[0]));
 	g_sci->_gfxFrameout->kernelDeleteScreenItem(argv[0]);
 	return NULL_REG;
 }
 
 reg_t kAddPlane(EngineState *s, int argc, reg_t *argv) {
-	debugCN(6, kDebugLevelGraphics, "kAddPlane %x:%x (%s)\n", argv[0].getSegment(), argv[0].getOffset(), g_sci->getEngineState()->_segMan->getObjectName(argv[0]));
+	debugC(6, kDebugLevelGraphics, "kAddPlane %x:%x (%s)", argv[0].getSegment(), argv[0].getOffset(), g_sci->getEngineState()->_segMan->getObjectName(argv[0]));
 	g_sci->_gfxFrameout->kernelAddPlane(argv[0]);
 	return s->r_acc;
 }
 
 reg_t kUpdatePlane(EngineState *s, int argc, reg_t *argv) {
-	debugCN(7, kDebugLevelGraphics, "kUpdatePlane %x:%x (%s)\n", argv[0].getSegment(), argv[0].getOffset(), g_sci->getEngineState()->_segMan->getObjectName(argv[0]));
+	debugC(7, kDebugLevelGraphics, "kUpdatePlane %x:%x (%s)", argv[0].getSegment(), argv[0].getOffset(), g_sci->getEngineState()->_segMan->getObjectName(argv[0]));
 	g_sci->_gfxFrameout->kernelUpdatePlane(argv[0]);
 	return s->r_acc;
 }
 
 reg_t kDeletePlane(EngineState *s, int argc, reg_t *argv) {
-	debugCN(6, kDebugLevelGraphics, "kDeletePlane %x:%x (%s)\n", argv[0].getSegment(), argv[0].getOffset(), g_sci->getEngineState()->_segMan->getObjectName(argv[0]));
+	debugC(6, kDebugLevelGraphics, "kDeletePlane %x:%x (%s)", argv[0].getSegment(), argv[0].getOffset(), g_sci->getEngineState()->_segMan->getObjectName(argv[0]));
 	g_sci->_gfxFrameout->kernelDeletePlane(argv[0]);
 	return s->r_acc;
 }
