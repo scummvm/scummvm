@@ -58,7 +58,7 @@ void Context::initialize(ContextType contextType) {
 	type = contextType;
 
 	// Obtain maximum texture size.
-	glGetIntegerv(GL_MAX_TEXTURE_SIZE, &maxTextureSize);
+	glGetIntegerv(GL_MAX_TEXTURE_SIZE, (GLint *)&maxTextureSize);
 	debug(5, "OpenGL maximum texture size: %d", maxTextureSize);
 
 	const char *extString = (const char *)glGetString(GL_EXTENSIONS);
