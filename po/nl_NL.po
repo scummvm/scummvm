@@ -8,14 +8,14 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
 "POT-Creation-Date: 2016-02-20 21:22+0000\n"
-"PO-Revision-Date: 2016-02-02 12:05+0100\n"
+"PO-Revision-Date: 2016-02-21 13:05+0100\n"
 "Last-Translator: Ben Castricum <scummvm@bencastricum.nl>\n"
 "Language-Team: Ben Castricum <scummvm@bencastricum.nl>\n"
 "Language: Nederlands\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=iso-8859-1\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 1.6.10\n"
+"X-Generator: Poedit 1.8.7\n"
 "X-Poedit-SourceCharset: iso-8859-1\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
@@ -2002,7 +2002,7 @@ msgstr "Meerdere Functies"
 
 #: backends/platform/symbian/src/SymbianActions.cpp:48
 msgid "Swap character"
-msgstr "Verwissel karakter"
+msgstr "Verwissel personage"
 
 #: backends/platform/symbian/src/SymbianActions.cpp:49
 msgid "Skip text"
@@ -2703,18 +2703,16 @@ msgstr ""
 "\n"
 
 #: engines/parallaction/saveload.cpp:197
-#, fuzzy
 msgid "Load file"
-msgstr "Laad spel:"
+msgstr "Laad bestand"
 
 #: engines/parallaction/saveload.cpp:204
 msgid "Loading game..."
 msgstr "Spel laden..."
 
 #: engines/parallaction/saveload.cpp:212
-#, fuzzy
 msgid "Save file"
-msgstr "Spel opslaan:"
+msgstr "Bestand opslaan"
 
 #: engines/parallaction/saveload.cpp:219
 msgid "Saving game..."
@@ -3392,7 +3390,7 @@ msgstr "Rechter middelste voorwerp"
 
 #: engines/scumm/help.cpp:280 engines/scumm/help.cpp:285
 msgid "Switching characters:"
-msgstr "Verwissel karakters:"
+msgstr "Verwissel personages:"
 
 #: engines/scumm/help.cpp:282
 msgid "Second kid"
@@ -3567,58 +3565,61 @@ msgstr ""
 "van te laden. Muziek wordt uitgeschakeld."
 
 #: engines/sherlock/detection.cpp:71
-#, fuzzy
 msgid "Use original savegame dialog"
-msgstr "Gebruik originele opslaan/laad schermen"
+msgstr "Gebruik originele spel-opslaan schermen"
 
 #: engines/sherlock/detection.cpp:72
 msgid ""
 "Files button in-game shows original savegame dialog rather than the ScummVM "
 "menu"
 msgstr ""
+"In-game knop Files toont originele spel opslaan dialoogvenster in plaats van "
+"het ScummVM menu"
 
 #: engines/sherlock/detection.cpp:81
 msgid "Pixellated scene transitions"
-msgstr ""
+msgstr "Pixellated scèneovergangen"
 
 #: engines/sherlock/detection.cpp:82
 msgid "When changing scenes, a randomized pixel transition is done"
 msgstr ""
+"Bij scene wijzigingen wordt er een willekeurig pixel transitie gebruikt"
 
 #: engines/sherlock/detection.cpp:91
 msgid "Don't show hotspots when moving mouse"
-msgstr ""
+msgstr "Toon geen hotspots als de muis beweegt"
 
 #: engines/sherlock/detection.cpp:92
 msgid ""
 "Only show hotspot names after you actually click on a hotspot or action "
 "button"
 msgstr ""
+"Toon alleen hotspots wanneer er daadwerkelijk op hotspot of actieknop "
+"geklikt word"
 
 #: engines/sherlock/detection.cpp:101
-#, fuzzy
 msgid "Show character portraits"
-msgstr "Verwissel karakter"
+msgstr "Toon personage portretfoto's"
 
 #: engines/sherlock/detection.cpp:102
 msgid "Show portraits for the characters when conversing"
-msgstr ""
+msgstr "Toon portretten van de personages bij het converseren"
 
 #: engines/sherlock/detection.cpp:111
 msgid "Slide dialogs into view"
-msgstr ""
+msgstr "Schuif dialoogvensters in beeld"
 
 #: engines/sherlock/detection.cpp:112
 msgid "Slide UI dialogs into view, rather than simply showing them immediately"
-msgstr ""
+msgstr "Schuif dialoogvensters in beeld, in plaats van onmiddellijk tonen"
 
 #: engines/sherlock/detection.cpp:121
 msgid "Transparent windows"
-msgstr ""
+msgstr "Transparante vensters"
 
 #: engines/sherlock/detection.cpp:122
 msgid "Show windows with a partially transparent background"
-msgstr ""
+msgstr "Toon vensters met een gedeeltelijk transparante achtergrond"
 
 #: engines/sky/compact.cpp:130
 msgid ""
