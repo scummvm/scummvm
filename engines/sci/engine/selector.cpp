@@ -193,6 +193,7 @@ void Kernel::mapSelectors() {
 	FIND_SELECTOR(textBottom);
 	FIND_SELECTOR(textRight);
 	FIND_SELECTOR(magnifier);
+	FIND_SELECTOR(casts);
 #endif
 }
 

@@ -233,6 +233,7 @@ public:
 	~GfxFrameout();
 
 	void clear();
+	void syncWithScripts(bool addElements); // this is what Game::restore does, only needed when our ScummVM dialogs are patched in
 	void run();
 
 #pragma mark -

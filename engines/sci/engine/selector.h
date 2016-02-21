@@ -157,6 +157,8 @@ struct SelectorCache {
 	Selector textTop, textLeft, textBottom, textRight;
 
 	Selector magnifier;
+
+	Selector casts; // needed for sync'ing screen items/planes with scripts, when our save/restore code is patched in (see GfxFrameout::syncWithScripts)
 #endif
 };
 
