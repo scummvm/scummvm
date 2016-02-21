@@ -102,6 +102,7 @@ static const char *const selectorNameTable[] = {
 	"startAudio",   // King's Quest 6 CD / Laura Bow 2 CD for audio+text support
 	"modNum",       // King's Quest 6 CD / Laura Bow 2 CD for audio+text support
 	"cycler",       // Space Quest 4 / system selector
+	"setLoop",      // Laura Bow 1 Colonel's Bequest
 	NULL
 };
 
@@ -129,7 +130,8 @@ enum ScriptPatcherSelectors {
 	SELECTOR_startText,
 	SELECTOR_startAudio,
 	SELECTOR_modNum,
-	SELECTOR_cycler
+	SELECTOR_cycler,
+	SELECTOR_setLoop
 };
 
 // ===========================================================================
@@ -1537,6 +1539,43 @@ static const uint16 larry6PatchDeathDialog[] = {
 //          script, description,                                      signature                   patch
 static const SciScriptPatcherEntry larry6Signatures[] = {
 	{  true,    82, "death dialog memory corruption",              1, larry6SignatureDeathDialog, larry6PatchDeathDialog },
+	SCI_SIGNATUREENTRY_TERMINATOR
+};
+
+// ===========================================================================
+// Laura Bow 1 - Colonel's Bequest
+//
+// This is basically just a broken easter egg in Colonel's Bequest.
+// A plane can show up in room 4, but that only happens really rarely.
+// Anyway the Sierra developer seems to have just entered the wrong loop,
+// which is why the statue view is used instead (loop 0).
+// We fix it to use the correct loop.
+//
+// This is only broken in the PC version. It was fixed for Amiga + Atari ST.
+//
+// Credits to OmerMor, for finding it.
+
+// Applies to at least: English PC Floppy
+// Responsible method: room4::init
+static const uint16 laurabow1SignatureEasterEggViewFix[] = {
+	0x78,                               // push1
+	0x76,                               // push0
+	SIG_MAGICDWORD,
+	0x38, SIG_SELECTOR16(setLoop),      // pushi "setLoop"
+	0x78,                               // push1
+	0x39, 0x03,                         // pushi 3 (loop 3, view only has 3 loops)
+	SIG_END
+};
+
+static const uint16 laurabow1PatchEasterEggViewFix[] = {
+	PATCH_ADDTOOFFSET(+7),
+	0x02,                            // change loop to 2
+	PATCH_END
+};
+
+//          script, description,                                      signature                           patch
+static const SciScriptPatcherEntry laurabow1Signatures[] = {
+	{  true,     4, "easter egg view fix",                         1, laurabow1SignatureEasterEggViewFix, laurabow1PatchEasterEggViewFix },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
@@ -3797,6 +3836,9 @@ void ScriptPatcher::processScript(uint16 scriptNr, byte *scriptData, const uint3
 		break;
 	case GID_KQ6:
 		signatureTable = kq6Signatures;
+		break;
+	case GID_LAURABOW:
+		signatureTable = laurabow1Signatures;
 		break;
 	case GID_LAURABOW2:
 		signatureTable = laurabow2Signatures;
