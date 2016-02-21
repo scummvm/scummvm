@@ -1035,6 +1035,11 @@ drawTriangle(int x, int y, int w, int h, TriangleOrientation orient) {
 template<typename PixelType>
 void VectorRendererSpec<PixelType>::
 drawTabAlg(int x1, int y1, int w, int h, int r, PixelType color, VectorRenderer::FillMode fill_m, int baseLeft, int baseRight) {
+	// Don't draw anything for empty rects.
+	if (w <= 0 || h <= 0) {
+		return;
+	}
+
 	int f, ddF_x, ddF_y;
 	int x, y, px, py;
 	int pitch = _activeSurface->pitch / _activeSurface->format.bytesPerPixel;
@@ -2018,6 +2023,11 @@ drawLineAlg(int x1, int y1, int x2, int y2, uint dx, uint dy, PixelType color) {
 template<typename PixelType>
 void VectorRendererAA<PixelType>::
 drawTabAlg(int x1, int y1, int w, int h, int r, PixelType color, VectorRenderer::FillMode fill_m, int baseLeft, int baseRight) {
+	// Don't draw anything for empty rects.
+	if (w <= 0 || h <= 0) {
+		return;
+	}
+
 	int x, y, px, py;
 	int pitch = Base::_activeSurface->pitch / Base::_activeSurface->format.bytesPerPixel;
 	int sw = 0, sp = 0, hp = 0;
