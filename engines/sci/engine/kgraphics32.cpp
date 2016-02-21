@@ -80,6 +80,7 @@ reg_t kCantBeHere32(EngineState *s, int argc, reg_t *argv) {
 }
 
 reg_t kAddScreenItem(EngineState *s, int argc, reg_t *argv) {
+	warning("AddScreenItem %x:%x (%s)", argv[0].getSegment(), argv[0].getOffset(), g_sci->getEngineState()->_segMan->getObjectName(argv[0]));
 	g_sci->_gfxFrameout->kernelAddScreenItem(argv[0]);
 	return NULL_REG;
 }

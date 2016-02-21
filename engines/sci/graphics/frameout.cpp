@@ -168,6 +168,8 @@ void GfxFrameout::kernelAddScreenItem(const reg_t object) {
 
 	Plane *plane = _planes.findByObject(planeObject);
 	if (plane == nullptr) {
+		warning("screen item %x:%x (%s)", object.getSegment(), object.getOffset(), g_sci->getEngineState()->_segMan->getObjectName(object));
+		warning("plane %x:%x (%s)", planeObject.getSegment(), planeObject.getOffset(), g_sci->getEngineState()->_segMan->getObjectName(planeObject));
 		error("Invalid plane selector passed to kAddScreenItem");
 	}
 
@@ -186,11 +188,15 @@ void GfxFrameout::kernelUpdateScreenItem(const reg_t object) {
 		const reg_t planeObject = readSelector(_segMan, object, SELECTOR(plane));
 		Plane *plane = _planes.findByObject(planeObject);
 		if (plane == nullptr) {
+			warning("screen item %x:%x (%s)", object.getSegment(), object.getOffset(), g_sci->getEngineState()->_segMan->getObjectName(object));
+			warning("plane %x:%x (%s)", planeObject.getSegment(), planeObject.getOffset(), g_sci->getEngineState()->_segMan->getObjectName(planeObject));
 			error("Invalid plane selector passed to kUpdateScreenItem");
 		}
 
 		ScreenItem *screenItem = plane->_screenItemList.findByObject(object);
 		if (screenItem == nullptr) {
+			warning("screen item %x:%x (%s)", object.getSegment(), object.getOffset(), g_sci->getEngineState()->_segMan->getObjectName(object));
+			warning("plane %x:%x (%s)", planeObject.getSegment(), planeObject.getOffset(), g_sci->getEngineState()->_segMan->getObjectName(planeObject));
 			error("Invalid screen item passed to kUpdateScreenItem");
 		}
 
@@ -248,6 +254,7 @@ void GfxFrameout::kernelAddPlane(const reg_t object) {
 void GfxFrameout::kernelUpdatePlane(const reg_t object) {
 	Plane *plane = _planes.findByObject(object);
 	if (plane == nullptr) {
+		warning("plane %x:%x (%s)", object.getSegment(), object.getOffset(), g_sci->getEngineState()->_segMan->getObjectName(object));
 		error("Invalid plane selector passed to kUpdatePlane");
 	}
 
@@ -258,6 +265,7 @@ void GfxFrameout::kernelUpdatePlane(const reg_t object) {
 void GfxFrameout::kernelDeletePlane(const reg_t object) {
 	Plane *plane = _planes.findByObject(object);
 	if (plane == nullptr) {
+		warning("plane %x:%x (%s)", object.getSegment(), object.getOffset(), g_sci->getEngineState()->_segMan->getObjectName(object));
 		error("Invalid plane selector passed to kDeletePlane");
 	}
 
@@ -309,6 +317,7 @@ void GfxFrameout::updatePlane(Plane &plane) {
 void GfxFrameout::kernelAddPicAt(const reg_t planeObject, const GuiResourceId pictureId, const int16 x, const int16 y, const bool mirrorX) {
 	Plane *plane = _planes.findByObject(planeObject);
 	if (plane == nullptr) {
+		warning("plane %x:%x (%s)", planeObject.getSegment(), planeObject.getOffset(), g_sci->getEngineState()->_segMan->getObjectName(planeObject));
 		error("Invalid plane selector passed to kAddPicAt");
 	}
 	plane->addPic(pictureId, Common::Point(x, y), mirrorX);
