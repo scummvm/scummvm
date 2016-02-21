@@ -774,8 +774,8 @@ drawLine(int x1, int y1, int x2, int y2) {
 		SWAP(y1, y2);
 	}
 
-	int dx = ABS(x2 - x1);
-	int dy = ABS(y2 - y1);
+	uint dx = ABS(x2 - x1);
+	uint dy = ABS(y2 - y1);
 
 	// this is a point, not a line. stoopid.
 	if (dy == 0 && dx == 0)
@@ -1327,7 +1327,7 @@ drawBevelSquareAlg(int x, int y, int w, int h, int bevel, PixelType top_color, P
 /** GENERIC LINE ALGORITHM **/
 template<typename PixelType>
 void VectorRendererSpec<PixelType>::
-drawLineAlg(int x1, int y1, int x2, int y2, int dx, int dy, PixelType color) {
+drawLineAlg(int x1, int y1, int x2, int y2, uint dx, uint dy, PixelType color) {
 	PixelType *ptr = (PixelType *)_activeSurface->getBasePtr(x1, y1);
 	int pitch = _activeSurface->pitch / _activeSurface->format.bytesPerPixel;
 	int xdir = (x2 > x1) ? 1 : -1;
@@ -1966,7 +1966,7 @@ drawRoundedSquareShadow(int x1, int y1, int r, int w, int h, int offset) {
 /** LINES **/
 template<typename PixelType>
 void VectorRendererAA<PixelType>::
-drawLineAlg(int x1, int y1, int x2, int y2, int dx, int dy, PixelType color) {
+drawLineAlg(int x1, int y1, int x2, int y2, uint dx, uint dy, PixelType color) {
 
 	PixelType *ptr = (PixelType *)Base::_activeSurface->getBasePtr(x1, y1);
 	int pitch = Base::_activeSurface->pitch / Base::_activeSurface->format.bytesPerPixel;
@@ -1977,7 +1977,7 @@ drawLineAlg(int x1, int y1, int x2, int y2, int dx, int dy, PixelType color) {
 	*ptr = (PixelType)color;
 
 	if (dx > dy) {
-		gradient = (uint32)(dy << 16) / (uint32)dx;
+		gradient = (dy << 16) / dx;
 		error_acc = 0;
 
 		while (--dx) {
@@ -1994,7 +1994,7 @@ drawLineAlg(int x1, int y1, int x2, int y2, int dx, int dy, PixelType color) {
 			this->blendPixelPtr(ptr + pitch, color, alpha);
 		}
 	} else {
-		gradient = (uint32)(dx << 16) / (uint32)dy;
+		gradient = (dx << 16) / dy;
 		error_acc = 0;
 
 		while (--dy) {
