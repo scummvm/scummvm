@@ -8,12 +8,12 @@
 	- Support for selecting graphics renderer at runtime
 	- Enabled support for multi language
 
-	Grim fixes:
+	Grim changes:
 	- Added support for German, French, Italian and Spanish Grim Fandango Demo
 	- Added support for English Grim Fandango Demo (with intro video version)
 	- Improve lighting
 
-	Myst III fixes:
+	Myst III changes:
 	- Added support for XBox version of Myst III
 	- Implemented the Narayan shield effect
 
