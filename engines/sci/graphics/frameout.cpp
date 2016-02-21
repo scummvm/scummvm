@@ -162,6 +162,7 @@ void GfxFrameout::clear() {
 // This is what Game::restore does, only needed when our ScummVM dialogs are patched in
 // It actually does one pass before actual restore deleting screen items + planes
 // And after restore it does another pass adding screen items + planes.
+// Attention: at least Space Quest 6's option plane seems to stay in memory right from the start and is not re-created.
 void GfxFrameout::syncWithScripts(bool addElements) {
 	EngineState *engineState = g_sci->getEngineState();
 	SegManager *segMan = engineState->_segMan;
