@@ -1584,6 +1584,11 @@ drawTriangleVertAlg(int x1, int y1, int w, int h, bool inverted, PixelType color
 template<typename PixelType>
 void VectorRendererSpec<PixelType>::
 drawTriangleFast(int x1, int y1, int size, bool inverted, PixelType color, VectorRenderer::FillMode fill_m) {
+	// Do not draw anything for empty rects.
+	if (size <= 0) {
+		return;
+	}
+
 	int pitch = _activeSurface->pitch / _activeSurface->format.bytesPerPixel;
 
 	if (!inverted) {
