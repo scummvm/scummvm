@@ -130,8 +130,7 @@ GfxOpenGL::~GfxOpenGL() {
 }
 
 byte *GfxOpenGL::setupScreen(int screenW, int screenH, bool fullscreen) {
-	_pixelFormat = g_system->setupScreen(screenW, screenH, fullscreen, true).getFormat();
-
+	_pixelFormat = g_system->getScreenPixelBuffer().getFormat();
 	_screenWidth = screenW;
 	_screenHeight = screenH;
 	_scaleW = _screenWidth / (float)_gameWidth;

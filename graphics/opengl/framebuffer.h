@@ -20,25 +20,25 @@
  *
  */
 
-#ifndef GRAPHICS_FRAMEBUFFER_H
-#define GRAPHICS_FRAMEBUFFER_H
+#ifndef GRAPHICS_OPENGL_FRAMEBUFFER_H
+#define GRAPHICS_OPENGL_FRAMEBUFFER_H
 
 #include "graphics/opengl/system_headers.h"
 #include "graphics/opengl/texture.h"
 
-namespace Graphics {
+namespace OpenGL {
 
 class FrameBuffer : public Texture {
 public:
 	FrameBuffer(uint width, uint height);
 	FrameBuffer(GLuint texture_name, uint width, uint height, uint texture_width, uint texture_height);
 #ifdef AMIGAOS
-	~FrameBuffer() {}
+	virtual ~FrameBuffer() {}
 
 	void attach() {}
 	void detach() {}
 #else
-	~FrameBuffer();
+	virtual ~FrameBuffer();
 
 	void attach();
 	void detach();
@@ -50,6 +50,6 @@ private:
 	GLuint _frameBuffer;
 };
 
-}
+} // End of namespace OpenGL
 
 #endif

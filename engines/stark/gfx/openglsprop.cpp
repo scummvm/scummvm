@@ -27,7 +27,7 @@
 #include "engines/stark/gfx/driver.h"
 #include "engines/stark/gfx/texture.h"
 
-#include "graphics/opengles2/shader.h"
+#include "graphics/opengl/shader.h"
 
 namespace Stark {
 namespace Gfx {
@@ -37,7 +37,7 @@ OpenGLSPropRenderer::OpenGLSPropRenderer(Driver *gfx) :
 		_gfx(gfx),
 		_faceVBO(-1) {
 	static const char* attributes[] = { "position", "normal", "texcoord", nullptr };
-	_shader = Graphics::Shader::fromFiles("stark_prop", attributes);
+	_shader = OpenGL::Shader::fromFiles("stark_prop", attributes);
 }
 
 OpenGLSPropRenderer::~OpenGLSPropRenderer() {
@@ -96,11 +96,11 @@ void OpenGLSPropRenderer::render(const Math::Vector3d position, float direction)
 }
 
 void OpenGLSPropRenderer::clearVertices() {
-	Graphics::Shader::freeBuffer(_faceVBO);
+	OpenGL::Shader::freeBuffer(_faceVBO);
 	_faceVBO = -1;
 
 	for (FaceBufferMap::iterator it = _faceEBO.begin(); it != _faceEBO.end(); ++it) {
-		Graphics::Shader::freeBuffer(it->_value);
+		OpenGL::Shader::freeBuffer(it->_value);
 	}
 
 	_faceEBO.clear();
@@ -118,11 +118,11 @@ void OpenGLSPropRenderer::uploadVertices() {
 uint32 OpenGLSPropRenderer::createFaceVBO() {
 	const Common::Array<Formats::BiffMesh::Vertex> &vertices = _model->getVertices();
 
-	return Graphics::Shader::createBuffer(GL_ARRAY_BUFFER, sizeof(float) * 9 * vertices.size(), &vertices.front());
+	return OpenGL::Shader::createBuffer(GL_ARRAY_BUFFER, sizeof(float) * 9 * vertices.size(), &vertices.front());
 }
 
 uint32 OpenGLSPropRenderer::createFaceEBO(const Formats::BiffMesh::Face *face) {
-	return Graphics::Shader::createBuffer(GL_ELEMENT_ARRAY_BUFFER, sizeof(uint32) * face->vertexIndices.size(), &face->vertexIndices.front());
+	return OpenGL::Shader::createBuffer(GL_ELEMENT_ARRAY_BUFFER, sizeof(uint32) * face->vertexIndices.size(), &face->vertexIndices.front());
 }
 
 } // End of namespace Gfx

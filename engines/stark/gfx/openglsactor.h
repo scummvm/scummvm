@@ -29,7 +29,7 @@
 #include "engines/stark/gfx/renderentry.h"
 #include "engines/stark/visual/actor.h"
 
-namespace Graphics {
+namespace OpenGL {
 	class Shader;
 }
 
@@ -49,7 +49,7 @@ protected:
 	typedef Common::HashMap<FaceNode *, uint32> FaceBufferMap;
 
 	OpenGLSDriver *_gfx;
-	Graphics::Shader *_shader;
+	OpenGL::Shader *_shader;
 
 	FaceBufferMap _faceVBO;
 	FaceBufferMap _faceEBO;

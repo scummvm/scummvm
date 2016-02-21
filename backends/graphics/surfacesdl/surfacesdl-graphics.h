@@ -27,18 +27,16 @@
 #include "graphics/opengl/system_headers.h"
 #include "graphics/opengl/framebuffer.h"
 #include "graphics/opengl/texture.h"
+#include "graphics/opengl/surfacerenderer.h"
 #endif
 
 #undef ARRAYSIZE
-
-#ifdef USE_OPENGL_SHADERS
-#include "graphics/opengles2/shader.h"
-#endif
 
 #include "backends/graphics/graphics.h"
 #include "backends/graphics/sdl/sdl-graphics.h"
 #include "graphics/pixelformat.h"
 #include "graphics/scaler.h"
+#include "common/array.h"
 #include "common/events.h"
 #include "common/system.h"
 #include "math/rect2d.h"
@@ -78,7 +76,8 @@ public:
 #endif
 	virtual void initSize(uint w, uint h, const Graphics::PixelFormat *format = NULL);
 	virtual void launcherInitSize(uint w, uint h); // ResidualVM specific method
-	Graphics::PixelBuffer setupScreen(uint screenW, uint screenH, bool fullscreen, bool accel3d); // ResidualVM specific method
+	virtual void setupScreen(uint screenW, uint screenH, bool fullscreen, bool accel3d); // ResidualVM specific method
+	virtual Graphics::PixelBuffer getScreenPixelBuffer(); // ResidualVM specific method
 	virtual int getScreenChangeID() const { return _screenChangeCount; }
 
 	virtual void beginGFXTransaction();
@@ -175,25 +174,19 @@ protected:
 	void setAntialiasing(bool enable);
 
 	// Overlay
-	int _overlayNumTex;
-	GLuint *_overlayTexIds;
-	GLenum _overlayScreenGLFormat;
+	Common::Array<OpenGL::Texture *> _overlayTextures;
 
-	Graphics::Texture *_sideTextures[2];
+	OpenGL::Texture *_sideTextures[2];
 
+	void initializeOpenGLContext() const;
 	void updateOverlayTextures();
 	void drawOverlayOpenGL();
 	void drawSideTexturesOpenGL();
-	void drawTexture(const Graphics::Texture &tex, const Math::Vector2d &topLeft, const Math::Vector2d &bottomRight, bool flip = false);
 
-	Graphics::FrameBuffer *_frameBuffer;
+	OpenGL::FrameBuffer *_frameBuffer;
 
-#ifdef USE_OPENGL_SHADERS
-	Graphics::Shader *_boxShader;
-	GLuint _boxVerticesVBO;
+	OpenGL::SurfaceRenderer *_surfaceRenderer;
 
-	void drawOverlayOpenGLShaders();
-#endif
 #endif
 
 	SDL_Surface *_sideSurfaces[2];

@@ -25,7 +25,7 @@
 #include "engines/stark/gfx/opengls.h"
 #include "engines/stark/gfx/texture.h"
 
-#include "graphics/opengles2/shader.h"
+#include "graphics/opengl/shader.h"
 
 namespace Stark {
 namespace Gfx {

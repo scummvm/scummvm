@@ -42,8 +42,8 @@
 #include "common/endian.h"
 #include "common/tokenizer.h"
 #include "graphics/conversion.h"
-#include "graphics/opengles2/shader.h"
-#include "graphics/opengl/extensions.h"
+#include "graphics/opengl/shader.h"
+#include "graphics/opengl/context.h"
 
 #include "backends/platform/android/android.h"
 #include "backends/platform/android/jni.h"
@@ -216,7 +216,7 @@ void OSystem_Android::initSurface() {
 	JNI::initSurface();
 
 	// Initialize OpenGLES context.
-	Graphics::initExtensions();
+	OpenGLContext.initialize(OpenGL::kContextGLES2);
 	logExtensions();
 	GLESTexture::initGL();
 
@@ -251,6 +251,8 @@ void OSystem_Android::deinitSurface() {
 
 	if (_mouse_texture)
 		_mouse_texture->release();
+
+	OpenGL::Context::destroy();
 
 	JNI::deinitSurface();
 }
@@ -308,7 +310,7 @@ void OSystem_Android::initSize(uint width, uint height,
 	_game_texture->allocBuffer(width, height);
 #endif
 #ifdef USE_GLES2
-	_frame_buffer = new Graphics::FrameBuffer(_game_texture->getTextureName(), _game_texture->width(), _game_texture->height(), _game_texture->texWidth(), _game_texture->texHeight());
+	_frame_buffer = new OpenGL::FrameBuffer(_game_texture->getTextureName(), _game_texture->width(), _game_texture->height(), _game_texture->texWidth(), _game_texture->texHeight());
 	_frame_buffer->attach();
 #endif
 
@@ -457,7 +459,7 @@ void OSystem_Android::copyRectToScreen(const void *buf, int pitch,
 
 
 // ResidualVM specific method
-Graphics::PixelBuffer OSystem_Android::setupScreen(uint screenW, uint screenH, bool fullscreen, bool accel3d, bool isGame) {
+void OSystem_Android::setupScreen(uint screenW, uint screenH, bool fullscreen, bool accel3d, bool isGame) {
 	_opengl = accel3d;
 	initViewport();
 
@@ -479,6 +481,10 @@ Graphics::PixelBuffer OSystem_Android::setupScreen(uint screenW, uint screenH, b
 		_game_pbuf.create(_game_texture->getPixelFormat(),
 				_game_texture->width() * _game_texture->height(), DisposeAfterUse::YES);
 	}
+
+}
+
+Graphics::PixelBuffer OSystem_Android::getScreenPixelBuffer() {
 	return _game_pbuf;
 }
 

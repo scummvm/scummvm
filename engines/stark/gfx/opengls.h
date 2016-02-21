@@ -33,7 +33,7 @@
 
 #include "math/vector2d.h"
 
-namespace Graphics {
+namespace OpenGL {
 class Shader;
 }
 
@@ -58,8 +58,8 @@ public:
 	VisualProp *createPropRenderer() override;
 	SurfaceRenderer *createSurfaceRenderer() override;
 
-	Graphics::Shader *createActorShaderInstance();
-	Graphics::Shader *createSurfaceShaderInstance();
+	OpenGL::Shader *createActorShaderInstance();
+	OpenGL::Shader *createSurfaceShaderInstance();
 
 	void start2DMode();
 	void end2DMode();
@@ -72,8 +72,8 @@ private:
 	Common::Rect _viewport;
 	Common::Rect _unscaledViewport;
 
-	Graphics::Shader *_surfaceShader;
-	Graphics::Shader *_actorShader;
+	OpenGL::Shader *_surfaceShader;
+	OpenGL::Shader *_actorShader;
 	uint32 _surfaceVBO;
 };
 

@@ -20,21 +20,21 @@
  *
  */
 
-#ifndef GRAPHICS_TEXTURE_H
-#define GRAPHICS_TEXTURE_H
+#ifndef GRAPHICS_OPENGL_TEXTURE_H
+#define GRAPHICS_OPENGL_TEXTURE_H
 
 #include "graphics/opengl/system_headers.h"
 
 #include "graphics/surface.h"
 
-namespace Graphics {
+namespace OpenGL {
 
 class Texture {
 public:
-	Texture(const Surface &srf);
+	Texture(const Graphics::Surface &srf);
 	Texture(uint width, uint height);
 	Texture(GLuint texture_name, uint width, uint height, uint texture_width, uint texture_height);
-	~Texture();
+	virtual ~Texture();
 
 	GLuint getTextureName() const { return _texture; }
 	uint getWidth() const { return _width; }
@@ -49,6 +49,6 @@ protected:
 	uint _texWidth, _texHeight;
 };
 
-}
+} // End of namespace OpenGL
 
 #endif

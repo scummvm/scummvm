@@ -33,6 +33,10 @@
 #include "graphics/renderer.h"
 #include "graphics/surface.h"
 
+#ifdef USE_OPENGL
+#include "graphics/opengl/context.h"
+#endif
+
 #include "math/glmath.h"
 #include "math/vector2d.h"
 
@@ -215,6 +219,17 @@ Renderer *createRenderer(OSystem *system) {
 	Common::String rendererConfig = ConfMan.get("renderer");
 	Graphics::RendererType desiredRendererType = Graphics::parseRendererTypeCode(rendererConfig);
 	Graphics::RendererType matchingRendererType = Graphics::getBestMatchingAvailableRendererType(desiredRendererType);
+
+	bool fullscreen = ConfMan.getBool("fullscreen");
+	bool isAccelerated = matchingRendererType != Graphics::kRendererTypeTinyGL;
+	system->setupScreen(Renderer::kOriginalWidth, Renderer::kOriginalHeight, fullscreen, isAccelerated);
+
+#if defined(USE_OPENGL)
+	// Check the OpenGL context actually supports shaders
+	if (matchingRendererType == Graphics::kRendererTypeOpenGLShaders && !OpenGLContext.shadersSupported) {
+		matchingRendererType = Graphics::kRendererTypeOpenGL;
+	}
+#endif
 
 	if (matchingRendererType != desiredRendererType && desiredRendererType != Graphics::kRendererTypeDefault) {
 		// Display a warning if unable to use the desired renderer

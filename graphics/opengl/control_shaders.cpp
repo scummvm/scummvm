@@ -24,7 +24,7 @@
 
 #if defined(USE_GLES2) || defined(USE_OPENGL_SHADERS)
 
-namespace Graphics {
+namespace OpenGL {
 namespace BuiltinShaders {
 
 const char *controlVertex =
@@ -60,6 +60,6 @@ const char *controlFragment =
 	"}\n";
 
 }
-}
+} // End of namespace OpenGL
 
 #endif

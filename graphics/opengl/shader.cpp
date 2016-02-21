@@ -24,9 +24,11 @@
 
 #if defined(USE_GLES2) || defined(USE_OPENGL_SHADERS)
 
-#include "graphics/opengles2/shader.h"
+#include "graphics/opengl/shader.h"
 
-namespace Graphics {
+#include "graphics/opengl/context.h"
+
+namespace OpenGL {
 
 static const GLchar *readFile(const Common::String &filename) {
 	Common::File file;
@@ -70,18 +72,11 @@ static GLuint createDirectShader(const char *shaderSource, GLenum shaderType, co
 }
 
 static GLuint createCompatShader(const char *shaderSource, GLenum shaderType, const Common::String &name) {
+	const GLchar *versionSource = OpenGLContext.type == kContextGLES2 ? "#version 100\n" : "#version 120\n";
 	const GLchar *compatSource =
-			shaderType == GL_VERTEX_SHADER ? Graphics::BuiltinShaders::compatVertex : Graphics::BuiltinShaders::compatFragment;
+			shaderType == GL_VERTEX_SHADER ? OpenGL::BuiltinShaders::compatVertex : OpenGL::BuiltinShaders::compatFragment;
 	const GLchar *shaderSources[] = {
-#ifdef USE_GLES2
-		"#version 100\n",
-#else
-	#ifdef MACOSX
-		"#version 120\n",
-	#else
-		"#version 130\n",
-	#endif
-#endif
+		versionSource,
 		compatSource,
 		shaderSource
 	};
@@ -181,7 +176,7 @@ void Shader::use(bool forceReload) {
 
 	glUseProgram(*_shaderNo);
 	for (uint32 i = 0; i < _attributes.size(); ++i) {
-		Graphics::VertexAttrib &attrib = _attributes[i];
+		VertexAttrib &attrib = _attributes[i];
 		if (attrib._enabled) {
 			glEnableVertexAttribArray(i);
 			glBindBuffer(GL_ARRAY_BUFFER, attrib._vbo);
@@ -251,6 +246,6 @@ void Shader::unbind() {
 	glUseProgram(0);
 	_previousShader = nullptr;
 }
-}
+} // End of namespace OpenGL
 
 #endif

@@ -45,7 +45,7 @@
 #include "gui/EventRecorder.h"
 
 #ifdef USE_OPENGL
-#include "graphics/opengl/extensions.h"
+#include "graphics/opengl/context.h"
 #endif
 
 static const OSystem::GraphicsMode s_supportedGraphicsModes[] = {
@@ -68,11 +68,9 @@ SurfaceSdlGraphicsManager::SurfaceSdlGraphicsManager(SdlEventSource *sdlEventSou
 	_lockAspectRatio(true),
 	_gameRect()
 #ifdef USE_OPENGL
-	, _opengl(false), _overlayNumTex(0), _overlayTexIds(0)
+	, _opengl(false)
 	, _frameBuffer(nullptr)
-#endif
-#ifdef USE_OPENGL_SHADERS
-	, _boxShader(nullptr), _boxVerticesVBO(0)
+	, _surfaceRenderer(nullptr)
 #endif
 	{
 		const SDL_VideoInfo *vi = SDL_GetVideoInfo();
@@ -138,7 +136,6 @@ bool SurfaceSdlGraphicsManager::getFeatureState(OSystem::Feature f) {
 			return _fullscreen;
 		case OSystem::kFeatureAspectRatioCorrection:
 			return _lockAspectRatio;
-		break;
 		default:
 			return false;
 	}
@@ -187,7 +184,7 @@ void SurfaceSdlGraphicsManager::launcherInitSize(uint w, uint h) {
 	setupScreen(w, h, false, false);
 }
 
-Graphics::PixelBuffer SurfaceSdlGraphicsManager::setupScreen(uint screenW, uint screenH, bool fullscreen, bool accel3d) {
+void SurfaceSdlGraphicsManager::setupScreen(uint screenW, uint screenH, bool fullscreen, bool accel3d) {
 	uint32 sdlflags;
 	int bpp;
 
@@ -234,8 +231,8 @@ Graphics::PixelBuffer SurfaceSdlGraphicsManager::setupScreen(uint screenW, uint 
 			SDL_putenv(const_cast<char *>("SDL_VIDEO_WINDOW_POS=9000,9000"));
 			SDL_SetVideoMode(32, 32, 0, SDL_OPENGL);
 			SDL_putenv(const_cast<char *>("SDL_VIDEO_WINDOW_POS=centered"));
-			Graphics::initExtensions();
-			framebufferSupported = Graphics::isExtensionSupported("GL_EXT_framebuffer_object");
+			initializeOpenGLContext();
+			framebufferSupported = OpenGLContext.framebufferObjectSupported;
 			if (_fullscreen && framebufferSupported) {
 				screenW = _desktopW;
 				screenH = _desktopH;
@@ -379,24 +376,10 @@ Graphics::PixelBuffer SurfaceSdlGraphicsManager::setupScreen(uint screenW, uint 
 
 #ifdef USE_OPENGL_SHADERS
 		debug("INFO: GLSL version: %s", glGetString(GL_SHADING_LANGUAGE_VERSION));
-
-		const GLfloat vertices[] = {
-			0.0, 0.0,
-			1.0, 0.0,
-			0.0, 1.0,
-			1.0, 1.0,
-		};
-
-		// Setup the box shader used to render the overlay
-		const char* attributes[] = { "position", "texcoord", NULL };
-		_boxShader = Graphics::Shader::fromStrings("box", Graphics::BuiltinShaders::boxVertex, Graphics::BuiltinShaders::boxFragment, attributes);
-		_boxVerticesVBO = Graphics::Shader::createBuffer(GL_ARRAY_BUFFER, sizeof(vertices), vertices);
-		_boxShader->enableVertexAttribute("position", _boxVerticesVBO, 2, GL_FLOAT, GL_TRUE, 2 * sizeof(float), 0);
-		_boxShader->enableVertexAttribute("texcoord", _boxVerticesVBO, 2, GL_FLOAT, GL_TRUE, 2 * sizeof(float), 0);
 #endif
 
-		Graphics::initExtensions();
-
+		initializeOpenGLContext();
+		_surfaceRenderer = OpenGL::createBestSurfaceRenderer();
 	}
 #endif
 
@@ -419,7 +402,6 @@ Graphics::PixelBuffer SurfaceSdlGraphicsManager::setupScreen(uint screenW, uint 
 #endif
 		_overlayscreen = SDL_CreateRGBSurface(SDL_SWSURFACE, _overlayWidth, _overlayHeight, 16,
 						rmask, gmask, bmask, amask);
-		_overlayScreenGLFormat = GL_UNSIGNED_SHORT_5_6_5;
 	} else
 #endif
 	{
@@ -458,18 +440,36 @@ Graphics::PixelBuffer SurfaceSdlGraphicsManager::setupScreen(uint screenW, uint 
 			&& !g_engine->hasFeature(Engine::kSupportsArbitraryResolutions)
 			&& framebufferSupported) {
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-		_frameBuffer = new Graphics::FrameBuffer(fbW, fbH);
+		_frameBuffer = new OpenGL::FrameBuffer(fbW, fbH);
 		_frameBuffer->attach();
 	}
 #endif
 	if (_fullscreen && !accel3d) {
 		_subScreen = SDL_CreateRGBSurface(SDL_SWSURFACE, fbW, fbH, bpp, _screen->format->Rmask, _screen->format->Gmask, _screen->format->Bmask, _screen->format->Amask);
+	}
+}
+
+Graphics::PixelBuffer SurfaceSdlGraphicsManager::getScreenPixelBuffer() {
+	if (_subScreen) {
 		return Graphics::PixelBuffer(_screenFormat, (byte *)_subScreen->pixels);
 	}
+
 	return Graphics::PixelBuffer(_screenFormat, (byte *)_screen->pixels);
 }
 
 #ifdef USE_OPENGL
+
+void SurfaceSdlGraphicsManager::initializeOpenGLContext() const {
+	OpenGL::ContextType type;
+
+#ifdef USE_GLES2
+	type = OpenGL::kContextGLES2;
+#else
+	type = OpenGL::kContextGL;
+#endif
+
+	OpenGLContext.initialize(type);
+}
 
 #define BITMAP_TEXTURE_SIZE 256
 
@@ -478,103 +478,59 @@ void SurfaceSdlGraphicsManager::updateOverlayTextures() {
 		return;
 
 	// remove if already exist
-	if (_overlayNumTex > 0) {
-		glDeleteTextures(_overlayNumTex, _overlayTexIds);
-		delete[] _overlayTexIds;
-		_overlayNumTex = 0;
+	for (uint i = 0; i < _overlayTextures.size(); i++) {
+		delete _overlayTextures[i];
 	}
+	_overlayTextures.clear();
 
-	_overlayNumTex = ((_overlayWidth + (BITMAP_TEXTURE_SIZE - 1)) / BITMAP_TEXTURE_SIZE) *
-					((_overlayHeight + (BITMAP_TEXTURE_SIZE - 1)) / BITMAP_TEXTURE_SIZE);
-	_overlayTexIds = new GLuint[_overlayNumTex];
-	glGenTextures(_overlayNumTex, _overlayTexIds);
-	for (int i = 0; i < _overlayNumTex; i++) {
-		glBindTexture(GL_TEXTURE_2D, _overlayTexIds[i]);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, BITMAP_TEXTURE_SIZE, BITMAP_TEXTURE_SIZE, 0, GL_RGB, _overlayScreenGLFormat, NULL);
-	}
+	Graphics::Surface overlaySurface;
+	overlaySurface.w = _overlayscreen->w;
+	overlaySurface.h = _overlayscreen->h;
+	overlaySurface.pitch = _overlayscreen->pitch;
+	overlaySurface.format = getOverlayFormat();
+	overlaySurface.setPixels(_overlayscreen->pixels);
 
-	int bpp = _overlayscreen->format->BytesPerPixel;
-
-	glPixelStorei(GL_UNPACK_ALIGNMENT, bpp);
-	glPixelStorei(GL_UNPACK_ROW_LENGTH, _overlayWidth);
-
-	int curTexIdx = 0;
 	for (int y = 0; y < _overlayHeight; y += BITMAP_TEXTURE_SIZE) {
 		for (int x = 0; x < _overlayWidth; x += BITMAP_TEXTURE_SIZE) {
 			int t_width = (x + BITMAP_TEXTURE_SIZE >= _overlayWidth) ? (_overlayWidth - x) : BITMAP_TEXTURE_SIZE;
 			int t_height = (y + BITMAP_TEXTURE_SIZE >= _overlayHeight) ? (_overlayHeight - y) : BITMAP_TEXTURE_SIZE;
-			glBindTexture(GL_TEXTURE_2D, _overlayTexIds[curTexIdx]);
-			glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, t_width, t_height, GL_RGB, _overlayScreenGLFormat,
-				(byte *)_overlayscreen->pixels + (y * _overlayscreen->pitch) + (bpp * x));
-			curTexIdx++;
+
+			Common::Rect textureArea = Common::Rect(t_width, t_height);
+			textureArea.translate(x, y);
+
+			const Graphics::Surface subSurface = overlaySurface.getSubArea(textureArea);
+			_overlayTextures.push_back(new OpenGL::Texture(subSurface));
 		}
 	}
-	glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
-	glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
 }
 
 void SurfaceSdlGraphicsManager::drawOverlayOpenGL() {
 	if (!_overlayscreen)
 		return;
 
-	// Save current state
-	glPushAttrib(GL_TRANSFORM_BIT | GL_ENABLE_BIT | GL_DEPTH_BUFFER_BIT | GL_SCISSOR_BIT);
+	glViewport(0, 0, _overlayWidth, _overlayHeight);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
-	// prepare view
-	glMatrixMode(GL_PROJECTION);
-	glPushMatrix();
-	glLoadIdentity();
-	glOrtho(0, _overlayWidth, _overlayHeight, 0, 0, 1);
-
-	glMatrixMode(GL_MODELVIEW);
-	glPushMatrix();
-	glLoadIdentity();
-
-	glMatrixMode(GL_TEXTURE);
-	glPushMatrix();
-	glLoadIdentity();
-
-	glDisable(GL_LIGHTING);
-	glEnable(GL_TEXTURE_2D);
-	glDisable(GL_DEPTH_TEST);
-	glDepthMask(GL_FALSE);
-	glEnable(GL_SCISSOR_TEST);
-
-	glScissor(0, 0, _overlayWidth, _overlayHeight);
+	_surfaceRenderer->prepareState();
 
 	int curTexIdx = 0;
 	for (int y = 0; y < _overlayHeight; y += BITMAP_TEXTURE_SIZE) {
 		for (int x = 0; x < _overlayWidth; x += BITMAP_TEXTURE_SIZE) {
-			glBindTexture(GL_TEXTURE_2D, _overlayTexIds[curTexIdx]);
-			glBegin(GL_QUADS);
-			glTexCoord2f(0, 0);
-			glVertex2i(x, y);
-			glTexCoord2f(1.0f, 0.0f);
-			glVertex2i(x + BITMAP_TEXTURE_SIZE, y);
-			glTexCoord2f(1.0f, 1.0f);
-			glVertex2i(x + BITMAP_TEXTURE_SIZE, y + BITMAP_TEXTURE_SIZE);
-			glTexCoord2f(0.0f, 1.0f);
-			glVertex2i(x, y + BITMAP_TEXTURE_SIZE);
-			glEnd();
+			OpenGL::Texture *texture = _overlayTextures[curTexIdx];
+
+			Common::Rect textureArea = Common::Rect(texture->getWidth(), texture->getHeight());
+			textureArea.translate(x, y);
+
+			Math::Vector2d topLeft = Math::Vector2d(textureArea.left / (float)_overlayWidth, textureArea.top / (float)_overlayHeight);
+			Math::Vector2d bottomRight = Math::Vector2d(textureArea.right / (float)_overlayWidth, textureArea.bottom / (float)_overlayHeight);
+
+			_surfaceRenderer->render(texture, Math::Rect2d(topLeft, bottomRight), true);
+
 			curTexIdx++;
 		}
 	}
 
-	// Restore previous state
-	glMatrixMode(GL_PROJECTION);
-	glPopMatrix();
-
-	glMatrixMode(GL_MODELVIEW);
-	glPopMatrix();
-
-	glMatrixMode(GL_TEXTURE);
-	glPopMatrix();
-
-	glPopAttrib();
+	_surfaceRenderer->restorePreviousState();
 }
 
 void SurfaceSdlGraphicsManager::drawSideTexturesOpenGL() {
@@ -582,127 +538,18 @@ void SurfaceSdlGraphicsManager::drawSideTexturesOpenGL() {
 		const Math::Vector2d nudge(1.0 / float(_screen->w), 0);
 		if (_sideTextures[0] != nullptr) {
 			float left = _gameRect.getBottomLeft().getX() - (float(_screen->h) / float(_sideTextures[0]->getHeight())) * _sideTextures[0]->getWidth() / float(_screen->w);
-			drawTexture(*_sideTextures[0], Math::Vector2d(left, 0.0), _gameRect.getBottomLeft() + nudge, true);
+			Math::Rect2d leftRect(Math::Vector2d(left, 0.0), _gameRect.getBottomLeft() + nudge);
+			_surfaceRenderer->render(_sideTextures[0], leftRect, true);
 		}
 
 		if (_sideTextures[1] != nullptr) {
 			float right = _gameRect.getTopRight().getX() + (float(_screen->h) / float(_sideTextures[1]->getHeight())) * _sideTextures[1]->getWidth() / float(_screen->w);
-			drawTexture(*_sideTextures[1], _gameRect.getTopRight() - nudge, Math::Vector2d(right, 1.0), true);
+			Math::Rect2d rightRect(_gameRect.getTopRight() - nudge, Math::Vector2d(right, 1.0));
+			_surfaceRenderer->render(_sideTextures[1], rightRect, true);
 		}
 	}
 }
 
-void SurfaceSdlGraphicsManager::drawTexture(const Graphics::Texture &tex, const Math::Vector2d &topLeft, const Math::Vector2d &bottomRight, bool flip) {
-#ifndef USE_OPENGL_SHADERS
-	// Save current state
-	glPushAttrib(GL_TRANSFORM_BIT | GL_ENABLE_BIT | GL_DEPTH_BUFFER_BIT | GL_SCISSOR_BIT);
-
-	// prepare view
-	glMatrixMode(GL_PROJECTION);
-	glPushMatrix();
-	glLoadIdentity();
-	glOrtho(0, 1.0, 1.0, 0, 0, 1);
-
-	glMatrixMode(GL_MODELVIEW);
-	glPushMatrix();
-	glLoadIdentity();
-
-	glMatrixMode(GL_TEXTURE);
-	glPushMatrix();
-	glLoadIdentity();
-
-	glDisable(GL_LIGHTING);
-	glEnable(GL_TEXTURE_2D);
-	glDisable(GL_DEPTH_TEST);
-	glDisable(GL_ALPHA_TEST);
-	glDepthMask(GL_FALSE);
-
-	float texcropX = tex.getWidth() / float(tex.getTexWidth());
-	float texcropY = tex.getHeight() / float(tex.getTexHeight());
-	float texTop    = flip ? 0.0 : texcropY;
-	float texBottom = flip ? texcropY : 0.0;
-
-	float offsetX = topLeft.getX();
-	float offsetY = topLeft.getY();
-	float sizeX   = fabsf(topLeft.getX() - bottomRight.getX());
-	float sizeY   = fabsf(topLeft.getY() - bottomRight.getY());
-
-	glColor4f(1.0, 1.0, 1.0, 1.0);
-
-	glBindTexture(GL_TEXTURE_2D, tex.getTextureName());
-	glBegin(GL_QUADS);
-	glTexCoord2f(0, texTop);
-	glVertex2f(offsetX, offsetY);
-	glTexCoord2f(texcropX, texTop);
-	glVertex2f(offsetX + sizeX, offsetY);
-	glTexCoord2f(texcropX, texBottom);
-	glVertex2f(offsetX + sizeX, offsetY + sizeY);
-	glTexCoord2f(0.0, texBottom);
-	glVertex2f(offsetX, offsetY + sizeY);
-	glEnd();
-
-	// Restore previous state
-	glMatrixMode(GL_PROJECTION);
-	glPopMatrix();
-
-	glMatrixMode(GL_MODELVIEW);
-	glPopMatrix();
-
-	glMatrixMode(GL_TEXTURE);
-	glPopMatrix();
-
-	glPopAttrib();
-#else
-	glBindTexture(GL_TEXTURE_2D, tex.getTextureName());
-
-	_boxShader->use();
-	float texcropX = tex.getWidth() / float(tex.getTexWidth());
-	float texcropY = tex.getHeight() / float(tex.getTexHeight());
-	_boxShader->setUniform("texcrop", Math::Vector2d(texcropX, texcropY));
-	_boxShader->setUniform("flipY", flip);
-
-	_boxShader->setUniform("offsetXY", topLeft);
-	_boxShader->setUniform("sizeWH", Math::Vector2d(fabsf(topLeft.getX() - bottomRight.getX()), fabsf(topLeft.getY() - bottomRight.getY())));
-
-	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-	glBindTexture(GL_TEXTURE_2D, 0);
-	_boxShader->unbind();
-#endif
-}
-
-#ifdef USE_OPENGL_SHADERS
-void SurfaceSdlGraphicsManager::drawOverlayOpenGLShaders() {
-	if (!_overlayscreen)
-		return;
-
-	glDisable(GL_LIGHTING);
-	glEnable(GL_TEXTURE_2D);
-	glDisable(GL_DEPTH_TEST);
-	glDepthMask(GL_FALSE);
-	glEnable(GL_SCISSOR_TEST);
-
-	glScissor(0, 0, _overlayWidth, _overlayHeight);
-
-	_boxShader->use();
-	_boxShader->setUniform("sizeWH", Math::Vector2d(BITMAP_TEXTURE_SIZE / (float)_overlayWidth, BITMAP_TEXTURE_SIZE / (float)_overlayHeight));
-	_boxShader->setUniform("flipY", true);
-	_boxShader->setUniform("texcrop", Math::Vector2d(1.0, 1.0));
-
-	int curTexIdx = 0;
-	for (int y = 0; y < _overlayHeight; y += BITMAP_TEXTURE_SIZE) {
-		for (int x = 0; x < _overlayWidth; x += BITMAP_TEXTURE_SIZE) {
-			_boxShader->setUniform("offsetXY", Math::Vector2d(x / (float)_overlayWidth, y / (float)_overlayHeight));
-
-			glBindTexture(GL_TEXTURE_2D, _overlayTexIds[curTexIdx]);
-			glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-			curTexIdx++;
-		}
-	}
-
-	_boxShader->unbind();
-}
-
-#endif
 #endif
 
 void SurfaceSdlGraphicsManager::drawSideTextures() {
@@ -753,8 +600,10 @@ void SurfaceSdlGraphicsManager::updateScreen() {
 			_frameBuffer->detach();
 			glViewport(0, 0, _screen->w, _screen->h);
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+			_surfaceRenderer->prepareState();
 			drawSideTexturesOpenGL();
-			drawTexture(*_frameBuffer, _gameRect.getTopLeft(), _gameRect.getBottomRight());
+			_surfaceRenderer->render(_frameBuffer, _gameRect);
+			_surfaceRenderer->restorePreviousState();
 		}
 
 		if (_overlayVisible) {
@@ -762,11 +611,7 @@ void SurfaceSdlGraphicsManager::updateScreen() {
 				updateOverlayTextures();
 			}
 
-#ifndef USE_OPENGL_SHADERS
 			drawOverlayOpenGL();
-#else
-			drawOverlayOpenGLShaders();
-#endif
 		}
 
 		SDL_GL_SwapBuffers();
@@ -896,7 +741,7 @@ void SurfaceSdlGraphicsManager::clearOverlay() {
 		SDL_LockSurface(tmp);
 		SDL_LockSurface(_overlayscreen);
 
-		glReadPixels(0, 0, _overlayWidth, _overlayHeight, GL_RGB, _overlayScreenGLFormat, tmp->pixels);
+		glReadPixels(0, 0, _overlayWidth, _overlayHeight, GL_RGB, GL_UNSIGNED_SHORT_5_6_5, tmp->pixels);
 
 		// Flip pixels vertically
 		byte *src = (byte *)tmp->pixels;
@@ -941,10 +786,10 @@ void SurfaceSdlGraphicsManager::setSideTextures(Graphics::Surface *left, Graphic
 		delete _sideTextures[1];
 		_sideTextures[1] = nullptr;
 		if (left) {
-			_sideTextures[0] = new Graphics::Texture(*left);
+			_sideTextures[0] = new OpenGL::Texture(*left);
 		}
 		if (right) {
-			_sideTextures[1] = new Graphics::Texture(*right);
+			_sideTextures[1] = new OpenGL::Texture(*right);
 		}
 	} else
 #endif
@@ -1039,29 +884,25 @@ void SurfaceSdlGraphicsManager::closeOverlay() {
 		SDL_FreeSurface(_overlayscreen);
 		_overlayscreen = NULL;
 #ifdef USE_OPENGL
+		delete _surfaceRenderer;
+		_surfaceRenderer = nullptr;
+
 		if (_opengl) {
-			if (_overlayNumTex > 0) {
-				glDeleteTextures(_overlayNumTex, _overlayTexIds);
-				delete[] _overlayTexIds;
-				_overlayNumTex = 0;
+			for (uint i = 0; i < _overlayTextures.size(); i++) {
+				delete _overlayTextures[i];
 			}
+			_overlayTextures.clear();
 
 			if (_frameBuffer) {
 				delete _frameBuffer;
 				_frameBuffer = nullptr;
 			}
-
-#ifdef USE_OPENGL_SHADERS
-			glDeleteBuffers(1, &_boxVerticesVBO);
-			_boxVerticesVBO = 0;
-
-			delete _boxShader;
-			_boxShader = nullptr;
-#endif
 		} else if (_subScreen) {
 			SDL_FreeSurface(_subScreen);
 			_subScreen = nullptr;
 		}
+
+		OpenGL::Context::destroy();
 #endif
 	}
 }

@@ -20,33 +20,46 @@
  *
  */
 
-#include "common/algorithm.h"
-#include "common/list.h"
-#include "common/str.h"
-#include "common/tokenizer.h"
+#include "common/scummsys.h"
 
-#include "graphics/opengl/system_headers.h"
+#if defined(USE_GLES2) || defined(USE_OPENGL_SHADERS)
 
-#ifdef USE_OPENGL
+namespace OpenGL {
+namespace BuiltinShaders {
 
-namespace Graphics {
+const char *boxVertex =
+	"attribute vec2 position;\n"
+	"attribute vec2 texcoord;\n"
+	"uniform vec2 offsetXY;\n"
+	"uniform vec2 sizeWH;\n"
+	"uniform vec2 texcrop;\n"
+	"uniform bool flipY;\n"
+	"varying vec2 Texcoord;\n"
+	"void main() {\n"
+		"Texcoord = texcoord * texcrop;\n"
+		"vec2 pos = offsetXY + position * sizeWH;\n"
+		"pos.x = pos.x * 2.0 - 1.0;\n"
+		"pos.y = pos.y * 2.0 - 1.0;\n"
+		"if (flipY)\n"
+			"pos.y *= -1.0;\n"
+		"gl_Position = vec4(pos, 0.0, 1.0);\n"
+	"}\n";
 
-static Common::List<Common::String> g_extensions;
+const char *boxFragment =
+	"#ifdef GL_ES\n"
+		"#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
+			"precision highp float;\n"
+		"#else\n"
+			"precision mediump float;\n"
+		"#endif\n"
+	"#endif\n"
+	"varying vec2 Texcoord;\n"
+	"uniform sampler2D tex;\n"
+	"void main() {\n"
+		"gl_FragColor = texture2D(tex, Texcoord);\n"
+	"}\n";
 
-void initExtensions() {
-	g_extensions.clear();
-
-	const char *exts = reinterpret_cast<const char *>(glGetString(GL_EXTENSIONS));
-	Common::StringTokenizer tokenizer(exts, " ");
-	while (!tokenizer.empty()) {
-		g_extensions.push_back(tokenizer.nextToken());
-	}
 }
-
-bool isExtensionSupported(const char *wanted) {
-	return g_extensions.end() != find(g_extensions.begin(), g_extensions.end(), wanted);
-}
-
-}
+} // End of namespace OpenGL
 
 #endif

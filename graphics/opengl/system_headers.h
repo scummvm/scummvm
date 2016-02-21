@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef GRAPHICS_SYSTEM_HEADERS_H
-#define GRAPHICS_SYSTEM_HEADERS_H
+#ifndef GRAPHICS_OPENGL_SYSTEM_HEADERS_H
+#define GRAPHICS_OPENGL_SYSTEM_HEADERS_H
 
 #include "common/scummsys.h"
 
@@ -39,6 +39,11 @@
 
 #ifndef GL_BGRA
 #	define GL_BGRA GL_BGRA_EXT
+#endif
+
+#if !defined(GL_UNPACK_ROW_LENGTH)
+// The Android SDK does not declare GL_UNPACK_ROW_LENGTH_EXT
+#define GL_UNPACK_ROW_LENGTH 0x0CF2
 #endif
 
 #elif defined(USE_GLEW)

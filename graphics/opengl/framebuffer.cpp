@@ -24,9 +24,7 @@
 
 #if defined(USE_OPENGL) && !defined(AMIGAOS)
 
-#ifdef USE_OPENGL_SHADERS
-#include "graphics/opengl/framebuffer.h"
-#elif defined(SDL_BACKEND)
+#if defined(SDL_BACKEND) && !defined(USE_GLEW) && !defined(USE_GLES2)
 #define GL_GLEXT_PROTOTYPES // For the GL_EXT_framebuffer_object extension
 #include "graphics/opengl/framebuffer.h"
 #ifndef GL_ARB_framebuffer_object
@@ -40,17 +38,19 @@
 #define GL_DEPTH24_STENCIL8 0x88F0
 #endif
 #include "backends/platform/sdl/sdl-sys.h"
-#endif // defined(SDL_BACKEND)
+#else
+#include "graphics/opengl/framebuffer.h"
+#endif
 
-#include "graphics/opengl/extensions.h"
+#include "graphics/opengl/context.h"
 
 #ifdef USE_GLES2
 #define GL_DEPTH24_STENCIL8 GL_DEPTH24_STENCIL8_OES
 #endif
 
-namespace Graphics {
+namespace OpenGL {
 
-#if defined(SDL_BACKEND) && !defined(USE_GLEW)
+#if defined(SDL_BACKEND) && !defined(USE_GLEW) && !defined(USE_GLES2)
 static bool framebuffer_object_functions = false;
 static PFNGLBINDFRAMEBUFFEREXTPROC glBindFramebuffer;
 static PFNGLBINDRENDERBUFFEREXTPROC glBindRenderbuffer;
@@ -96,28 +96,21 @@ static void grabFramebufferObjectPointers() {
 	u.obj_ptr = SDL_GL_GetProcAddress("glRenderbufferStorage");
 	glRenderbufferStorage = (PFNGLRENDERBUFFERSTORAGEEXTPROC)u.func_ptr;
 }
-#endif // defined(SDL_BACKEND) && !defined(USE_OPENGL_SHADERS)
+#endif // defined(SDL_BACKEND) && !defined(USE_GLES2)
 
 
 
 static bool usePackedBuffer() {
-#ifdef USE_GLES2
-	return Graphics::isExtensionSupported("GL_OES_packed_depth_stencil");
-#endif
-#ifndef USE_OPENGL_SHADERS
-	return Graphics::isExtensionSupported("GL_EXT_packed_depth_stencil");
-#endif
-	return true;
+	return OpenGLContext.packedDepthStencilSupported;
 }
 
 FrameBuffer::FrameBuffer(uint width, uint height) :
 		Texture(width, height) {
-#ifdef SDL_BACKEND
-	if (!Graphics::isExtensionSupported("GL_EXT_framebuffer_object")) {
-		error("GL_EXT_framebuffer_object extension is not supported!");
+	if (!OpenGLContext.framebufferObjectSupported) {
+		error("FrameBuffer Objects are not supported by the current OpenGL context");
 	}
-#endif
-#if defined(SDL_BACKEND) && !defined(USE_GLEW)
+
+#if defined(SDL_BACKEND) && !defined(USE_GLEW) && !defined(USE_GLES2)
 	grabFramebufferObjectPointers();
 #endif
 
@@ -179,6 +172,6 @@ void FrameBuffer::detach() {
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
-}
+} // End of namespace OpenGL
 
 #endif

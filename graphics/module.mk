@@ -27,13 +27,14 @@ MODULE_OBJS := \
 	yuv_to_rgb.o \
 	yuva_to_rgba.o \
 	pixelbuffer.o \
+	opengl/context.o \
 	opengl/framebuffer.o \
 	opengl/texture.o \
-	opengl/extensions.o \
-	opengles2/shader.o \
-	opengles2/box_shaders.o \
-	opengles2/control_shaders.o \
-	opengles2/compat_shaders.o \
+	opengl/shader.o \
+	opengl/surfacerenderer.o \
+	opengl/box_shaders.o \
+	opengl/control_shaders.o \
+	opengl/compat_shaders.o \
 	tinygl/api.o \
 	tinygl/arrays.o \
 	tinygl/clear.o \

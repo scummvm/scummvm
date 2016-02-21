@@ -23,20 +23,28 @@
 #include "engines/stark/gfx/driver.h"
 #include "engines/stark/gfx/opengls.h"
 
+#include "common/config-manager.h"
+
+#ifdef USE_OPENGL
+#include "graphics/opengl/context.h"
+#endif
+
 namespace Stark {
 namespace Gfx {
 
 Driver *Driver::create() {
-	Driver *driver = NULL;
-
 #if defined(USE_GLES2) || defined(USE_OPENGL_SHADERS)
-	// OpenGL Shaders
-	driver = new OpenGLSDriver();
-	if (driver)
-		return driver;
+	bool fullscreen = ConfMan.getBool("fullscreen");
+	g_system->setupScreen(kOriginalWidth, kOriginalHeight, fullscreen, true);
+
+	if (OpenGLContext.shadersSupported) {
+		return new OpenGLSDriver();
+	} else {
+		error("Your system does not have the required OpenGL capabilities");
+	}
 #endif // defined(USE_GLES2) || defined(USE_OPENGL_SHADERS)
 
-	error("Couldn't instance any graphics driver");
+	error("No renderers have been found for this game");
 }
 
 Graphics::PixelFormat Driver::getScreenFormat() {

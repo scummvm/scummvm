@@ -115,7 +115,7 @@ private:
 	// Game layer
 	GLESBaseTexture *_game_texture;
 	Graphics::PixelBuffer _game_pbuf;
-	Graphics::FrameBuffer *_frame_buffer;
+	OpenGL::FrameBuffer *_frame_buffer;
 
 	Common::Rect _focus_rect;
 
@@ -303,10 +303,11 @@ public:
 	// ResidualVM specific method
 	virtual void launcherInitSize(uint w, uint h);
 	bool lockMouse(bool lock);
-	Graphics::PixelBuffer setupScreen(uint screenW, uint screenH, bool fullscreen, bool accel3d) {
-		return setupScreen(screenW, screenH, fullscreen, accel3d, true);
+	void setupScreen(uint screenW, uint screenH, bool fullscreen, bool accel3d) {
+		setupScreen(screenW, screenH, fullscreen, accel3d, true);
 	}
-	Graphics::PixelBuffer setupScreen(uint screenW, uint screenH, bool fullscreen, bool accel3d, bool isGame);
+	void setupScreen(uint screenW, uint screenH, bool fullscreen, bool accel3d, bool isGame);
+	Graphics::PixelBuffer getScreenPixelBuffer();
 };
 
 #endif

@@ -26,14 +26,13 @@
 #undef ARRAYSIZE
 #endif
 
-#include "common/config-manager.h"
 #include "common/rect.h"
 #include "common/textconsole.h"
 
 #if defined(USE_OPENGL) && !defined(USE_GLES2)
 
 #include "graphics/colormasks.h"
-#include "graphics/pixelbuffer.h"
+#include "graphics/opengl/context.h"
 #include "graphics/surface.h"
 
 #include "engines/myst3/gfx.h"
@@ -47,15 +46,14 @@ Renderer *CreateGfxOpenGL(OSystem *system) {
 }
 
 OpenGLRenderer::OpenGLRenderer(OSystem *system) :
-		BaseRenderer(system),
-		_nonPowerOfTwoTexSupport(false) {
+		BaseRenderer(system) {
 }
 
 OpenGLRenderer::~OpenGLRenderer() {
 }
 
 Texture *OpenGLRenderer::createTexture(const Graphics::Surface *surface) {
-	return new OpenGLTexture(surface, _nonPowerOfTwoTexSupport);
+	return new OpenGLTexture(surface);
 }
 
 void OpenGLRenderer::freeTexture(Texture *texture) {
@@ -66,16 +64,12 @@ void OpenGLRenderer::freeTexture(Texture *texture) {
 void OpenGLRenderer::init() {
 	debug("Initializing OpenGL Renderer");
 
-	bool fullscreen = ConfMan.getBool("fullscreen");
-	_system->setupScreen(kOriginalWidth, kOriginalHeight, fullscreen, true);
 	computeScreenViewport();
 
 	// Check the available OpenGL extensions
-	const char* extensions = (const char*)glGetString(GL_EXTENSIONS);
-	if (strstr(extensions, "GL_ARB_texture_non_power_of_two"))
-		_nonPowerOfTwoTexSupport = true;
-	else
+	if (!OpenGLContext.NPOTSupported) {
 		warning("GL_ARB_texture_non_power_of_two is not available.");
+	}
 
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();

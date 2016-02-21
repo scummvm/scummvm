@@ -24,7 +24,7 @@
 
 #if defined(USE_GLES2) || defined(USE_OPENGL_SHADERS)
 
-namespace Graphics {
+namespace OpenGL {
 namespace BuiltinShaders {
 
 const char *compatVertex =
@@ -76,6 +76,6 @@ const char *compatFragment =
 ;
 
 }
-}
+} // End of namespace OpenGL
 
 #endif

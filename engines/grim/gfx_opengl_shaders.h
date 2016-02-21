@@ -25,7 +25,7 @@
 
 #include "engines/grim/actor.h"
 #include "engines/grim/gfx_base.h"
-#include "graphics/opengles2/shader.h"
+#include "graphics/opengl/shader.h"
 #include "common/stack.h"
 #include "common/rect.h"
 
@@ -220,20 +220,20 @@ private:
 	float _alpha;
 	int _maxLights;
 	GLuint _emergTexture;
-	Graphics::Shader* _emergProgram;
+	OpenGL::Shader* _emergProgram;
 
-	Graphics::Shader* _backgroundProgram;
-	Graphics::Shader* _actorProgram;
-	Graphics::Shader* _spriteProgram;
-	Graphics::Shader* _dimProgram;
-	Graphics::Shader* _dimPlaneProgram;
-	Graphics::Shader* _dimRegionProgram;
-	Graphics::Shader* _smushProgram;
+	OpenGL::Shader* _backgroundProgram;
+	OpenGL::Shader* _actorProgram;
+	OpenGL::Shader* _spriteProgram;
+	OpenGL::Shader* _dimProgram;
+	OpenGL::Shader* _dimPlaneProgram;
+	OpenGL::Shader* _dimRegionProgram;
+	OpenGL::Shader* _smushProgram;
 	GLuint _smushVBO, _quadEBO;
-	Graphics::Shader* _textProgram;
-	Graphics::Shader* _primitiveProgram;
-	Graphics::Shader* _irisProgram;
-	Graphics::Shader* _shadowPlaneProgram;
+	OpenGL::Shader* _textProgram;
+	OpenGL::Shader* _primitiveProgram;
+	OpenGL::Shader* _irisProgram;
+	OpenGL::Shader* _shadowPlaneProgram;
 
 	int _smushWidth;
 	int _smushHeight;

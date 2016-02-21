@@ -26,10 +26,7 @@
 
 #include "engines/myst3/gfx_opengl_texture.h"
 
-#if !defined(GL_UNPACK_ROW_LENGTH)
-// The Android SDK does not declare GL_UNPACK_ROW_LENGTH_EXT
-#define GL_UNPACK_ROW_LENGTH 0x0CF2
-#endif
+#include "graphics/opengl/context.h"
 
 namespace Myst3 {
 
@@ -45,15 +42,13 @@ static uint32 upperPowerOfTwo(uint32 v) {
 	return v;
 }
 
-OpenGLTexture::OpenGLTexture(const Graphics::Surface *surface, bool nonPoTSupport) :
-	_unpackSubImageSupport(true) {
-
+OpenGLTexture::OpenGLTexture(const Graphics::Surface *surface) {
 	width = surface->w;
 	height = surface->h;
 	format = surface->format;
 
 	// Pad the textures if non power of two support is unavailable
-	if (nonPoTSupport) {
+	if (OpenGLContext.NPOTSupported) {
 		internalHeight = height;
 		internalWidth = width;
 	} else {
@@ -101,7 +96,7 @@ void OpenGLTexture::update(const Graphics::Surface *surface) {
 void OpenGLTexture::updateTexture(const Graphics::Surface* surface, const Common::Rect& rect) {
 	glBindTexture(GL_TEXTURE_2D, id);
 
-	if (_unpackSubImageSupport) {
+	if (OpenGLContext.unpackSubImageSupported) {
 		const Graphics::Surface subArea = surface->getSubArea(rect);
 
 		glPixelStorei(GL_UNPACK_ROW_LENGTH, surface->pitch / surface->format.bytesPerPixel);
