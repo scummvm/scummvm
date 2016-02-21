@@ -184,7 +184,7 @@ class FindByObject {
 public:
 	FindByObject(const reg_t &object) : _object(object) {}
 	bool operator()(const T entry) const {
-		return entry->_object == _object;
+		return entry && entry->_object == _object;
 	}
 };
 
