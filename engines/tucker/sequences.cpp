@@ -244,7 +244,7 @@ void TuckerEngine::handleNewPartSequence() {
 			_inputKeys[kInputKeyEscape] = false;
 			break;
 		}
-	} while (isSpeechSoundPlaying());
+	} while (isSpeechSoundPlaying() && !_quitGame);
 	stopSpeechSound();
 	do {
 		if (_fadePaletteCounter > 0) {
@@ -257,7 +257,7 @@ void TuckerEngine::handleNewPartSequence() {
 		drawSprite(0);
 		redrawScreen(0);
 		waitForTimer(3);
-	} while (_fadePaletteCounter > 0);
+	} while (_fadePaletteCounter > 0 && !_quitGame);
 	_locationNum = currentLocation;
 }
 
@@ -281,7 +281,7 @@ void TuckerEngine::handleMeanwhileSequence() {
 	}
 	loadImage(filename, _quadBackgroundGfxBuf + 89600, 1);
 	_fadePaletteCounter = 0;
-	for (int i = 0; i < 60; ++i) {
+	for (int i = 0; i < 60 && !_quitGame; ++i) {
 		if (_fadePaletteCounter < 16) {
 			fadeOutPalette();
 			++_fadePaletteCounter;
@@ -290,6 +290,10 @@ void TuckerEngine::handleMeanwhileSequence() {
 		_fullRedraw = true;
 		redrawScreen(0);
 		waitForTimer(3);
+		if (_inputKeys[kInputKeyEscape]) {
+			_inputKeys[kInputKeyEscape] = false;
+			break;
+		}
 	}
 	do {
 		if (_fadePaletteCounter > 0) {
@@ -300,7 +304,7 @@ void TuckerEngine::handleMeanwhileSequence() {
 		_fullRedraw = true;
 		redrawScreen(0);
 		waitForTimer(3);
-	} while (_fadePaletteCounter > 0);
+	} while (_fadePaletteCounter > 0 && !_quitGame);
 	memcpy(_currentPalette, backupPalette, 256 * 3);
 	_fullRedraw = true;
 }
