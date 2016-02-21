@@ -472,6 +472,10 @@ void GfxFrameout::frameOut(const bool shouldShowBits, const Common::Rect &rect) 
 //	}
 }
 
+// Determine the parts of 'r' that aren't overlapped by 'other'.
+// Returns -1 if r and other have no intersection.
+// Returns number of returned parts (in outRects) otherwise.
+// (In particular, this returns 0 if r is contained in other.)
 int splitRects(Common::Rect r, const Common::Rect &other, Common::Rect(&outRects)[4]) {
 	if (!r.intersects(other)) {
 		return -1;
