@@ -804,7 +804,7 @@ drawLine(int x1, int y1, int x2, int y2) {
 			ptr += pitch;
 		}
 
-	} else if (ABS(dx) == ABS(dy)) { // diagonal lines
+	} else if (dx == dy) { // diagonal lines
 		// these ones also use a fixed pitch increase
 		pitch += (x2 > x1) ? 1 : -1;
 
