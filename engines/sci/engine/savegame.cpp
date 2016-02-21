@@ -1096,11 +1096,12 @@ void gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 	if (g_sci->_gfxPorts)
 		g_sci->_gfxPorts->saveLoadWithSerializer(ser);
 
-#ifdef ENABLE_SCI32
-	// Add current planes/screen elements of freshly loaded VM, only when our ScummVM dialogs are patched in
-	if (getSciVersion() >= SCI_VERSION_2)
-		g_sci->_gfxFrameout->syncWithScripts(true);
-#endif
+	// SCI32:
+	// Current planes/screen elements of freshly loaded VM are re-added by scripts in [gameID]::replay
+	// We don't have to do that in here.
+	// But we may have to do it ourselves in case we ever implement some soft-error handling in case
+	// a saved game can't be restored. That way we can restore the game screen.
+	// see _gfxFrameout->syncWithScripts()
 
 	Vocabulary *voc = g_sci->getVocabulary();
 	if (ser.getVersion() >= 30 && voc)

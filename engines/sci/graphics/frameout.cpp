@@ -210,6 +210,8 @@ void GfxFrameout::syncWithScripts(bool addElements) {
 
 				// read selector "-info-" of this object
 				// TODO: Seems to have been changed for SCI3
+				// Do NOT use getInfoSelector in here. SCI3 games did not use infoToa, but an actual selector.
+				// Maybe that selector is just a straight copy, but it needs to get verified/checked.
 				uint16 castInfoSelector = readSelectorValue(segMan, castObject, SELECTOR(_info_));
 
 				if (castInfoSelector & kInfoFlagViewInserted) {
