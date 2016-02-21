@@ -332,6 +332,7 @@ bool Console::cmdHelp(int argc, const char **argv) {
 	debugPrintf("debugflag_list - Lists the available debug flags and their status\n");
 	debugPrintf("debugflag_enable - Enables a debug flag\n");
 	debugPrintf("debugflag_disable - Disables a debug flag\n");
+	debugPrintf("debuglevel - Shows or sets debug level\n");
 	debugPrintf("\n");
 	debugPrintf("Commands\n");
 	debugPrintf("--------\n");
