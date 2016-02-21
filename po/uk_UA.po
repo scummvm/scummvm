@@ -2685,18 +2685,16 @@ msgstr ""
 "\n"
 
 #: engines/parallaction/saveload.cpp:197
-#, fuzzy
 msgid "Load file"
-msgstr "Завантажити гру:"
+msgstr "Завантажити файл"
 
 #: engines/parallaction/saveload.cpp:204
 msgid "Loading game..."
 msgstr "Завантажую гру..."
 
 #: engines/parallaction/saveload.cpp:212
-#, fuzzy
 msgid "Save file"
-msgstr "Зберегти гру: "
+msgstr "Зберегти файл"
 
 #: engines/parallaction/saveload.cpp:219
 msgid "Saving game..."
@@ -3545,58 +3543,60 @@ msgstr ""
 "з нього інструменти. Музику було вимкнено."
 
 #: engines/sherlock/detection.cpp:71
-#, fuzzy
 msgid "Use original savegame dialog"
-msgstr "Використовувати ориг. збереження/завантаження екрани"
+msgstr "Використовувати оригінальний екран збереження"
 
 #: engines/sherlock/detection.cpp:72
 msgid ""
 "Files button in-game shows original savegame dialog rather than the ScummVM "
 "menu"
 msgstr ""
+"Кнопка \"Файли\" у грі показуватиме оригінальний екран збереження "
+"замість меню ScummVM"
 
 #: engines/sherlock/detection.cpp:81
 msgid "Pixellated scene transitions"
-msgstr ""
+msgstr "Піесельовані переходи між сценами"
 
 #: engines/sherlock/detection.cpp:82
 msgid "When changing scenes, a randomized pixel transition is done"
-msgstr ""
+msgstr "При зміні сцен буде відбуватися перехід у вигляді випадкових пікселів"
 
 #: engines/sherlock/detection.cpp:91
 msgid "Don't show hotspots when moving mouse"
-msgstr ""
+msgstr "Не показувати цікаві точки при наведенні мишею"
 
 #: engines/sherlock/detection.cpp:92
 msgid ""
 "Only show hotspot names after you actually click on a hotspot or action "
 "button"
 msgstr ""
+"Показувати назви цікавих точок тільки після безпосереднього кліку по ним "
+"або дії з ними"
 
 #: engines/sherlock/detection.cpp:101
-#, fuzzy
 msgid "Show character portraits"
-msgstr "Змінити героя"
+msgstr "Показувати портрети героїв"
 
 #: engines/sherlock/detection.cpp:102
 msgid "Show portraits for the characters when conversing"
-msgstr ""
+msgstr "Показувати портрети героїв під час спілкування"
 
 #: engines/sherlock/detection.cpp:111
 msgid "Slide dialogs into view"
-msgstr ""
+msgstr "Заводити діалоги до обзору"
 
 #: engines/sherlock/detection.cpp:112
 msgid "Slide UI dialogs into view, rather than simply showing them immediately"
-msgstr ""
+msgstr "Заводити діалоги до обзору замість миттєвого показу"
 
 #: engines/sherlock/detection.cpp:121
 msgid "Transparent windows"
-msgstr ""
+msgstr "Прозорі вікна"
 
 #: engines/sherlock/detection.cpp:122
 msgid "Show windows with a partially transparent background"
-msgstr ""
+msgstr "Показувати вікна з частково прозорим тлом"
 
 #: engines/sky/compact.cpp:130
 msgid ""
