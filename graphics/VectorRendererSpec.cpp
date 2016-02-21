@@ -1244,6 +1244,11 @@ drawBevelTabAlg(int x, int y, int w, int h, int bevel, PixelType top_color, Pixe
 template<typename PixelType>
 void VectorRendererSpec<PixelType>::
 drawSquareAlg(int x, int y, int w, int h, PixelType color, VectorRenderer::FillMode fill_m) {
+	// Do not draw anything for empty rects.
+	if (w <= 0 || h <= 0) {
+		return;
+	}
+
 	PixelType *ptr = (PixelType *)_activeSurface->getBasePtr(x, y);
 	int pitch = _activeSurface->pitch / _activeSurface->format.bytesPerPixel;
 	int max_h = h;
