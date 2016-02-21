@@ -52,6 +52,8 @@ ifeq "$(HAVE_CLANG)" "1"
 	# It works for all our target systems though, thus we simply disable that
 	# warning.
 	CXXFLAGS+= -Wno-nested-anon-types
+	# ResidualVM: added -Wno-global-constructors
+	CXXFLAGS+= -Wno-global-constructors
 endif
 
 ifeq "$(HAVE_ICC)" "1"
