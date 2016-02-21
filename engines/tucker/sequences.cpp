@@ -290,7 +290,6 @@ void TuckerEngine::handleMeanwhileSequence() {
 		_fullRedraw = true;
 		redrawScreen(0);
 		waitForTimer(3);
-		++i;
 	}
 	do {
 		if (_fadePaletteCounter > 0) {
