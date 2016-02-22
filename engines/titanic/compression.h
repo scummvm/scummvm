@@ -66,7 +66,7 @@ public:
 	byte *_destPtr;
 	int _destCount;
 	int _field14;
-	int _field18;
+	const char *_errorMessage;
 	CompressionData *_compressionData;
 	CompressionCreateFn _createFn;
 	CompressionDestroyFn _destroyFn;

@@ -43,7 +43,7 @@ Compression::Compression() {
 	_destPtr = nullptr;
 	_destCount = 0;
 	_field14 = 0;
-	_field18 = 0;
+	_errorMessage = nullptr;
 	_compressionData = nullptr;
 	_createFn = nullptr;
 	_destroyFn = nullptr;
@@ -61,7 +61,7 @@ void Compression::initDecompress(const char *version, int v) {
 	if (!version || *version != '1')
 		error("Bad version");
 	
-	_field18 = 0;
+	_errorMessage = nullptr;
 	if (!_createFn) {
 		_createFn = &Compression::createMethod;
 		_field28 = 0;
@@ -118,25 +118,174 @@ int Compression::compress(int v) {
 }
 
 int Compression::decompress(size_t count) {
-/*
 	if (!_compressionData || !_srcPtr || !count)
 		// Needed fields aren't set
 		return -2;
 
 	int result = -5;
-	do {
-		int ebx = 5;
+	int ebx = 5;
+	uint v;
 
+	for (;;) {
 		switch (_compressionData->_commandNum) {
 		case 0:
-			if (_compressionData->_field4)
+			if (!_srcCount)
 				return result;
+
+			result = 0;
+			--_srcCount;
+			++_field8;
+			_compressionData->_field4 = *_srcPtr++;
+
+			if ((_compressionData->_field4 & 0xf) == 8) {
+				_compressionData->_commandNum = 13;
+				_compressionData->_field4 = ebx;
+				_errorMessage = "unknown compression method";
+			} else {
+				if ((_compressionData->_field4 / 16 + 8) > _compressionData->_field10) {
+					_compressionData->_commandNum = 13;
+					_compressionData->_field4 = ebx;
+					_errorMessage = "invalid window size";
+				} else {
+					_compressionData->_commandNum = 1;
+				}
+			}
+			break;
+
+		case 1:
+			if (!_srcCount)
+				return result;
+
+			result = 0;
+			--_srcCount;
+			++_field8;
+			v = *_srcPtr++;
+			if ((_compressionData->_field4 * 256 + v) % 31) {
+				_compressionData->_commandNum = 13;
+				_compressionData->_field4 = ebx;
+				ebx = 5;
+				_errorMessage = "incorrect header check";
+			} else if (!(v & 0x20)) {
+				_compressionData->_commandNum = 7;
+				ebx = 5;
+			} else {
+				_compressionData->_commandNum = 2;
+				ebx = 5;
+			}
+			break;
+
+		case 2:
+			if (!_srcCount)
+				return result;
+
+			result = 0;
+			--_srcCount;
+			++_field8;
+			_compressionData->_field8 = (uint)*_srcPtr++ << 24;
+			_compressionData->_commandNum = 3;
+			break;
+
+		case 3:
+			if (!_srcCount)
+				return result;
+
+			result = 0;
+			--_srcCount;
+			++_field8;
+			_compressionData->_field8 += (uint)*_srcPtr++ << 16;
+			_compressionData->_commandNum = 4;
+			break;
+
+		case 4:
+			if (!_srcCount)
+				return result;
+
+			result = 0;
+			--_srcCount;
+			++_field8;
+			_compressionData->_field8 = (uint)*_srcPtr++ << 8;
+			_compressionData->_commandNum = ebx;
+			break;
+
+		case 5:
+			if (!_srcCount)
+				return result;
+
+			--_srcCount;
+			++_field8;
+			_compressionData->_field8 += *_srcPtr++;
+			_compressionData->_commandNum = ebx;
+			_field30 = _compressionData->_field8;
+			_compressionData->_commandNum = 6;
+			return 2;
+
+		case 6:
+			_compressionData->_commandNum = 13;
+			_compressionData->_field4 = 0;
+			_errorMessage = "need dictionary";
+			return -2;
+
+		case 7:
+			error("TODO");
+			break;
+
+		case 8:
+			if (!_srcCount)
+				return result;
+
+			--_srcCount;
+			++_field8;
+			_compressionData->_field8 += *_srcPtr++ << 24;
+			_compressionData->_commandNum = 9;
+			break;
+
+		case 9:
+			if (!_srcCount)
+				return result;
+
+			--_srcCount;
+			++_field8;
+			_compressionData->_field8 += *_srcPtr++ << 16;
+			_compressionData->_commandNum = 10;
+			break;
+
+		case 10:
+			if (!_srcCount)
+				return result;
+
+			--_srcCount;
+			++_field8;
+			_compressionData->_field8 += *_srcPtr++ << 8;
+			_compressionData->_commandNum = 11;
+			break;
+
+		case 11:
+			if (!_srcCount)
+				return result;
+
+			--_srcCount;
+			++_field8;
+			_compressionData->_field8 += *_srcPtr++ << 8;
+
+			if (_compressionData->_field4 == _compressionData->_field8) {
+				_compressionData->_commandNum = 12;
+			} else {
+				_compressionData->_commandNum = 13;
+				_compressionData->_field4 = ebx;
+				_errorMessage = "incorrect data check";				
+			}
+			break;
+
+		case 12:
+			return 1;
+
+		case 13:
+			return -3;
 
 		default:
 			return -2;
 		}
-	}*/
-	return -2;
+	}
 }
 
 } // End of namespace Titanic
