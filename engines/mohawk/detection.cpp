@@ -35,6 +35,7 @@
 
 #ifdef ENABLE_MYST
 #include "mohawk/myst.h"
+#include "mohawk/myst_state.h"
 #endif
 
 #ifdef ENABLE_RIVEN
@@ -184,13 +185,18 @@ public:
 	virtual SaveStateList listSaves(const char *target) const;
 	virtual int getMaximumSaveSlot() const { return 999; }
 	virtual void removeSaveState(const char *target, int slot) const;
+	virtual SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const;
 };
 
 bool MohawkMetaEngine::hasFeature(MetaEngineFeature f) const {
 	return
 		(f == kSupportsListSaves)
 		|| (f == kSupportsLoadingDuringStartup)
-		|| (f == kSupportsDeleteSave);
+		|| (f == kSupportsDeleteSave)
+		|| (f == kSavesSupportMetaInfo)
+		|| (f == kSavesSupportThumbnail)
+		|| (f == kSavesSupportCreationDate)
+		|| (f == kSavesSupportPlayTime);
 }
 
 SaveStateList MohawkMetaEngine::listSaves(const char *target) const {
@@ -198,12 +204,15 @@ SaveStateList MohawkMetaEngine::listSaves(const char *target) const {
 	SaveStateList saveList;
 
 	// Loading games is only supported in Myst/Riven currently.
+#ifdef ENABLE_MYST
 	if (strstr(target, "myst")) {
-		filenames = g_system->getSavefileManager()->listSavefiles("*.mys");
+		filenames = Mohawk::MystGameState::generateSaveGameList();
 
 		for (uint32 i = 0; i < filenames.size(); i++)
 			saveList.push_back(SaveStateDescriptor(i, filenames[i]));
-	} else if (strstr(target, "riven")) {
+	} else
+#endif
+	if (strstr(target, "riven")) {
 		filenames = g_system->getSavefileManager()->listSavefiles("*.rvn");
 
 		for (uint32 i = 0; i < filenames.size(); i++)
@@ -215,12 +224,32 @@ SaveStateList MohawkMetaEngine::listSaves(const char *target) const {
 
 void MohawkMetaEngine::removeSaveState(const char *target, int slot) const {
 	// Removing saved games is only supported in Myst/Riven currently.
+#ifdef ENABLE_MYST
 	if (strstr(target, "myst")) {
-		Common::StringArray filenames = g_system->getSavefileManager()->listSavefiles("*.mys");
-		g_system->getSavefileManager()->removeSavefile(filenames[slot].c_str());
-	} else if (strstr(target, "riven")) {
+		Common::StringArray filenames = Mohawk::MystGameState::generateSaveGameList();
+		Mohawk::MystGameState::deleteSave(filenames[slot]);
+	} else
+#endif
+	if (strstr(target, "riven")) {
 		Common::StringArray filenames = g_system->getSavefileManager()->listSavefiles("*.rvn");
 		g_system->getSavefileManager()->removeSavefile(filenames[slot].c_str());
+	}
+}
+
+SaveStateDescriptor MohawkMetaEngine::querySaveMetaInfos(const char *target, int slot) const {
+#ifdef ENABLE_MYST
+	if (strstr(target, "myst")) {
+		Common::StringArray filenames = Mohawk::MystGameState::generateSaveGameList();
+
+		if (slot >= (int) filenames.size()) {
+			return SaveStateDescriptor();
+		}
+
+		return Mohawk::MystGameState::querySaveMetaInfos(filenames[slot]);
+	} else
+#endif
+	{
+		return SaveStateDescriptor();
 	}
 }
 
