@@ -2686,18 +2686,16 @@ msgstr ""
 "\n"
 
 #: engines/parallaction/saveload.cpp:197
-#, fuzzy
 msgid "Load file"
-msgstr "Jokoa kargatu:"
+msgstr "Kargatu fitxategia:"
 
 #: engines/parallaction/saveload.cpp:204
 msgid "Loading game..."
 msgstr "Jokoa kargatzen..."
 
 #: engines/parallaction/saveload.cpp:212
-#, fuzzy
 msgid "Save file"
-msgstr "Partida gordeak huts egin du!"
+msgstr "Gorde fitxategia"
 
 #: engines/parallaction/saveload.cpp:219
 msgid "Saving game..."
@@ -3548,58 +3546,61 @@ msgstr ""
 "bertatik irakurtzeko. Musika desgaituta egongo da."
 
 #: engines/sherlock/detection.cpp:71
-#, fuzzy
 msgid "Use original savegame dialog"
-msgstr "Erabili jatorrizko gorde/kargatu pantailak"
+msgstr "Erabili jatorrizko jokoa gordetzeko elkarrizketak"
 
 #: engines/sherlock/detection.cpp:72
 msgid ""
 "Files button in-game shows original savegame dialog rather than the ScummVM "
 "menu"
 msgstr ""
+"Jokoko Fitxategiak botoiak jatorrizko jokoa gordetzeko elkarrizketak erakusten "
+"ditu, ScummVM-ren elkarrizketak erakutsi beharrean"
 
 #: engines/sherlock/detection.cpp:81
 msgid "Pixellated scene transitions"
-msgstr ""
+msgstr "Eszena trantsizio pixelatuak"
 
 #: engines/sherlock/detection.cpp:82
 msgid "When changing scenes, a randomized pixel transition is done"
-msgstr ""
+msgstr "Eszenak aldatzean, ausazko pixel trantsizioa egiten da"
 
 #: engines/sherlock/detection.cpp:91
 msgid "Don't show hotspots when moving mouse"
-msgstr ""
+msgstr "Ez erakutsi puntu interesgarriak sagua mugitzean"
 
 #: engines/sherlock/detection.cpp:92
 msgid ""
 "Only show hotspot names after you actually click on a hotspot or action "
 "button"
 msgstr ""
+"Erakutsi puntu interesgarrien izenak haien gainean edota ekintza botoiaren "
+"gainean klik egin eta gero bakarrik "
 
 #: engines/sherlock/detection.cpp:101
-#, fuzzy
 msgid "Show character portraits"
-msgstr "Pertsonaia aldatu"
+msgstr "Erakutsi pertsonaien erretratuak"
 
 #: engines/sherlock/detection.cpp:102
 msgid "Show portraits for the characters when conversing"
-msgstr ""
+msgstr "Erakutsi pertsonaien erretratuak elkarrizketetan"
 
 #: engines/sherlock/detection.cpp:111
 msgid "Slide dialogs into view"
-msgstr ""
+msgstr "Irristatu elkarrizketak"
 
 #: engines/sherlock/detection.cpp:112
 msgid "Slide UI dialogs into view, rather than simply showing them immediately"
-msgstr ""
+msgstr "Irristatu UI elkarrizketak pantailara, osorik bat-batean erakutsi "
+"beharrean"
 
 #: engines/sherlock/detection.cpp:121
 msgid "Transparent windows"
-msgstr ""
+msgstr "Leiho gardenak"
 
 #: engines/sherlock/detection.cpp:122
 msgid "Show windows with a partially transparent background"
-msgstr ""
+msgstr "Erakutsi leihoak partzialki gardena den fondoarekin"
 
 #: engines/sky/compact.cpp:130
 msgid ""
