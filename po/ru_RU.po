@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
 "POT-Creation-Date: 2016-02-20 21:22+0000\n"
-"PO-Revision-Date: 2016-02-02 20:38+0300\n"
+"PO-Revision-Date: 2016-02-21 23:32+0300\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Russian\n"
 "Language: Russian\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
 "%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
-"X-Generator: Poedit 1.8.6\n"
+"X-Generator: Poedit 1.8.7\n"
 
 #: gui/about.cpp:94
 #, c-format
@@ -1642,7 +1642,7 @@ msgstr "Эмулятор MT-32"
 
 #: audio/softsynth/pcspk.cpp:139
 msgid "PC Speaker Emulator"
-msgstr "Эмулятор PC спикера"
+msgstr "Эмулятор PC-спикера"
 
 #: audio/softsynth/pcspk.cpp:158
 msgid "IBM PCjr Emulator"
@@ -1726,7 +1726,7 @@ msgstr "Вы действительно хотите выйти?"
 #. I18N: Trackpad mode toggle status.
 #: backends/events/webossdl/webossdl-events.cpp:308
 msgid "Trackpad mode is now"
-msgstr "Режим трекпада включен."
+msgstr "Режим трекпада сейчас"
 
 #. I18N: Trackpad mode on or off.
 #. I18N: Auto-drag on or off.
@@ -1747,7 +1747,7 @@ msgstr "Проведите двумя пальцами направо для переключения."
 #. I18N: Auto-drag toggle status.
 #: backends/events/webossdl/webossdl-events.cpp:335
 msgid "Auto-drag mode is now"
-msgstr "Режим авто-дрег включен"
+msgstr "Режим автодрэга сейчас"
 
 #: backends/events/webossdl/webossdl-events.cpp:342
 msgid "Swipe three fingers to the right to toggle."
@@ -1959,7 +1959,7 @@ msgstr "Окно"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:125
 msgid "Minimize"
-msgstr "Убрать в Dock"
+msgstr "Свернуть"
 
 #: backends/platform/symbian/src/SymbianActions.cpp:38
 #: backends/platform/wince/CEActionsSmartphone.cpp:39
@@ -2090,11 +2090,11 @@ msgstr "Ввод"
 
 #: backends/platform/wii/options.cpp:74
 msgid "GC Pad sensitivity:"
-msgstr "Чувствительность GC пада:"
+msgstr "Чувствительность GC-пада:"
 
 #: backends/platform/wii/options.cpp:80
 msgid "GC Pad acceleration:"
-msgstr "Ускорение GC пада:"
+msgstr "Ускорение GC-пада:"
 
 #: backends/platform/wii/options.cpp:86
 msgid "DVD"
@@ -2290,7 +2290,7 @@ msgstr "Назначить действие 'спрятать панель инструментов'"
 
 #: backends/platform/wince/wince-sdl.cpp:533
 msgid "You must map a key to the 'Hide toolbar' action to play this game"
-msgstr "Вы должны назначить клавишу на дейтствие 'Hide toolbar' для этой игры"
+msgstr "Вы должны назначить клавишу на действие 'Hide toolbar' для этой игры"
 
 #: backends/platform/wince/wince-sdl.cpp:542
 msgid "Map Zoom Up action (optional)"
@@ -2324,7 +2324,7 @@ msgstr "Использовать оригинальные экраны записи/чтения игры"
 #: engines/toltecs/detection.cpp:201
 msgid "Use the original save/load screens, instead of the ScummVM ones"
 msgstr ""
-"Использовать оригинальные экраны записи и сохранения игры вместо сделанных в "
+"Использовать оригинальные экраны чтения и сохранения игры вместо сделанных в "
 "ScummVM"
 
 #: engines/agi/detection.cpp:157
@@ -2612,7 +2612,7 @@ msgstr ""
 "\n"
 "%s %s\n"
 "\n"
-"Не желаете ли использовать это сохранение в ScummVM?\n"
+"Вы хотите использовать это сохранение в ScummVM?\n"
 "\n"
 
 #: engines/kyra/saveload_eob.cpp:590
@@ -2745,11 +2745,11 @@ msgstr "Неверное имя файла сохранения"
 
 #: engines/pegasus/pegasus.cpp:2507
 msgid "Up/Zoom In/Move Forward/Open Doors"
-msgstr "Вверх/Уменьшить масштаб/Вперёд/Открыть двери"
+msgstr "Вверх/Увел. масштаб/Вперёд/Открыть двери"
 
 #: engines/pegasus/pegasus.cpp:2508
 msgid "Down/Zoom Out"
-msgstr "Вниз/Увел. масштаб"
+msgstr "Вниз/Уменьш. масштаб"
 
 #: engines/pegasus/pegasus.cpp:2511
 msgid "Display/Hide Inventory Tray"
@@ -2781,7 +2781,7 @@ msgstr "Альтернативное вступление"
 
 #: engines/queen/detection.cpp:57
 msgid "Use an alternative game intro (CD version only)"
-msgstr "Использовать альтернативное вступление (только для CD версии игры)"
+msgstr "Использовать альтернативное вступление (только для CD-версии игры)"
 
 #: engines/sci/detection.cpp:374
 msgid "Skip EGA dithering pass (full color backgrounds)"
@@ -2959,7 +2959,7 @@ msgstr "Выберите уровень сложности."
 
 #: engines/scumm/dialogs.cpp:660
 msgid "Refer to your Loom(TM) manual for help."
-msgstr "За помощью обратитесь к инстукции Loom(TM)"
+msgstr "За помощью обратитесь к инструкции Loom(TM)."
 
 #: engines/scumm/dialogs.cpp:664
 msgid "Practice"
@@ -3029,7 +3029,7 @@ msgstr "Громкость музыки увеличить / уменьшить"
 
 #: engines/scumm/help.cpp:89
 msgid "Text speed slower / faster"
-msgstr "Скорость текста быстрее / медленнее"
+msgstr "Скорость текста медленнее / быстрее"
 
 #: engines/scumm/help.cpp:90
 msgid "Simulate left mouse button"
@@ -3049,7 +3049,7 @@ msgstr "Специальные клавиатурные команды:"
 
 #: engines/scumm/help.cpp:95
 msgid "Show / Hide console"
-msgstr "Показать / Убрать консоль"
+msgstr "Показать / убрать консоль"
 
 #: engines/scumm/help.cpp:96
 msgid "Start the debugger"
@@ -3077,7 +3077,7 @@ msgstr "Переключение между графическими фильтрами"
 
 #: engines/scumm/help.cpp:102
 msgid "Increase / Decrease scale factor"
-msgstr "Увеличить/уменьшить масштаб"
+msgstr "Увеличить / уменьшить масштаб"
 
 #: engines/scumm/help.cpp:103
 msgid "Toggle aspect-ratio correction"
@@ -3211,7 +3211,7 @@ msgstr "Путешествовать"
 
 #: engines/scumm/help.cpp:176
 msgid "To Henry / To Indy"
-msgstr "Генри/Инди"
+msgstr "Генри / Инди"
 
 #. I18N: These are different musical notes
 #: engines/scumm/help.cpp:180
@@ -3395,7 +3395,7 @@ msgstr "Переключить показ инвентаря/очков IQ"
 
 #: engines/scumm/help.cpp:293
 msgid "Toggle Keyboard/Mouse Fighting (*)"
-msgstr "Переключить управление боями Клавиатурой/Мышью (*)"
+msgstr "Переключить управление боями клавиатурой/мышью (*)"
 
 #: engines/scumm/help.cpp:295
 msgid "* Keyboard Fighting is always on,"
@@ -3508,7 +3508,7 @@ msgstr "Прокрутка скачками включена"
 
 #: engines/scumm/input.cpp:582
 msgid "Snap scroll off"
-msgstr "Прокрутка скачками выкл"
+msgstr "Прокрутка скачками выключена"
 
 #: engines/scumm/input.cpp:595
 msgid "Music volume: "
@@ -3562,8 +3562,8 @@ msgid ""
 "Files button in-game shows original savegame dialog rather than the ScummVM "
 "menu"
 msgstr ""
-"Кнопка \"Файли\" в игре показывает оригинальный диалог сохранения, в не "
-"меню ScummVM"
+"Кнопка \"Файлы\" в игре показывает оригинальный диалог сохранения, а не меню "
+"ScummVM"
 
 #: engines/sherlock/detection.cpp:81
 msgid "Pixellated scene transitions"
@@ -3571,7 +3571,7 @@ msgstr "Переходы между сценами с пикселизацией"
 
 #: engines/sherlock/detection.cpp:82
 msgid "When changing scenes, a randomized pixel transition is done"
-msgstr "При смене сцен производится переход с рандомизированными пикселами"
+msgstr "При смене сцен происходит переход с рандомизированными пикселями"
 
 #: engines/sherlock/detection.cpp:91
 msgid "Don't show hotspots when moving mouse"
@@ -3582,8 +3582,8 @@ msgid ""
 "Only show hotspot names after you actually click on a hotspot or action "
 "button"
 msgstr ""
-"Показывать названия хотспотов только после клика по ним либо нажатия на "
-"кнопку действия"
+"Показывать названия хотспотов только после клика по ним либо после нажатия "
+"на кнопку действия"
 
 #: engines/sherlock/detection.cpp:101
 msgid "Show character portraits"
@@ -3627,7 +3627,7 @@ msgstr ""
 
 #: engines/sky/detection.cpp:44
 msgid "Floppy intro"
-msgstr "Вступление с флоппиков"
+msgstr "Вступление с дискет"
 
 #: engines/sky/detection.cpp:45
 msgid "Use the floppy version's intro (CD version only)"
@@ -3664,7 +3664,8 @@ msgid ""
 "Press OK to convert them now, otherwise you will be asked again the next "
 "time you start the game.\n"
 msgstr ""
-"ScummVM обнаружил у вас сохранения игры Сломанный Меч в старом формате.\n"
+"ScummVM обнаружил у вас сохранения игры \"Сломанный меч 1\" в старом "
+"формате.\n"
 "Старый формат больше не поддерживается, и, чтобы загрузить сохранения, они "
 "должны быть переведены в новый формат.\n"
 "\n"
@@ -3690,13 +3691,13 @@ msgstr "Сделать новое"
 
 #: engines/sword1/logic.cpp:1633
 msgid "This is the end of the Broken Sword 1 Demo"
-msgstr "Это завершение демо Сломанного Меча 1"
+msgstr "Это завершение демо \"Сломанного меча 1\""
 
 #: engines/sword2/animation.cpp:425
 msgid ""
 "PSX cutscenes found but ScummVM has been built without RGB color support"
 msgstr ""
-"Найдены заставки в формате PSX, но ScummVM был собран без поддержки RGB "
+"Найдены заставки в формате PSX, но ScummVM был собран без поддержки RGB-"
 "цветов"
 
 #: engines/sword2/sword2.cpp:79
