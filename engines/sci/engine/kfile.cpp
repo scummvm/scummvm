@@ -601,6 +601,16 @@ reg_t kFileIOExists(EngineState *s, int argc, reg_t *argv) {
 
 	bool exists = false;
 
+	if (g_sci->getGameId() == GID_PEPPER) {
+		// HACK: Special case for Pepper's Adventure in Time
+		// The game checks like crazy for the file CDAUDIO when entering the game menu.
+		// On at least Windows that makes the engine slow down to a crawl and takes at least 1 second.
+		// Should get solved properly by changing the code below. This here is basically for 1.8.0 release.
+		// TODO: Fix this properly.
+		if (name == "CDAUDIO")
+			return NULL_REG;
+	}
+
 	// Check for regular file
 	exists = Common::File::exists(name);
 
