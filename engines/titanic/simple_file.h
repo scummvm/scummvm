@@ -80,11 +80,6 @@ public:
 	virtual size_t write(const void *src, size_t count);
 
 	/**
-	 * Return true if the end of the file has been reached
-	 */
-	bool eof() const;
-
-	/**
 	 * Read a string from the file
 	 */
 	CString readString();

@@ -25,32 +25,20 @@
 
 #include "common/scummsys.h"
 #include "common/file.h"
-#include "titanic/compression.h"
+#include "common/memstream.h"
+#include "common/zlib.h"
 #include "titanic/simple_file.h"
 #include "titanic/string.h"
 
 namespace Titanic {
-
-enum CompressedFileMode { COMPMODE_NONE, COMPMODE_WRITE, COMPMODE_READ };
 
 /**
  * Derived file that handles compressed files
  */
 class CompressedFile : public SimpleFile {
 private:
-	Compression _compression;
-	CompressedFileMode _fileMode;
-	byte _writeBuffer[516];
-	byte *_dataStartPtr;
-	byte *_dataPtr;
-	int _dataRemaining;
-	int _dataMaxSize;
-	int _dataCount;
-
-	/**
-	 * Decompress data from the source file
-	 */
-	void decompress();
+	Common::SeekableReadStream *_readStream;
+	Common::WriteStream *_writeStream;
 public:
 	CompressedFile();
 	virtual ~CompressedFile();
@@ -79,6 +67,11 @@ public:
 	 * Read from the file
 	 */
 	virtual size_t unsafeRead(void *dst, size_t count);
+
+	/**
+	 * Write out data
+	 */
+	virtual size_t write(const void *src, size_t count);
 };
 
 } // End of namespace Titanic

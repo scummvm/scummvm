@@ -74,11 +74,6 @@ size_t SimpleFile::write(const void *src, size_t count) {
 	return _outStream->write(src, count);
 }
 
-bool SimpleFile::eof() const {
-	assert(_inStream);
-	return _inStream->pos() >= _inStream->size();
-}
-
 CString SimpleFile::readString() {
 	char c;
 	CString result;
