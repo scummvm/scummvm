@@ -1003,9 +1003,9 @@ void Mechanical::fortressSimulation_run() {
 			_fortressSimulationHoloRate = newRate;
 
 			if (_fortressSimulationHoloRate < 0) {
-				uint32 newMoviePosition = moviePosition + _fortressSimulationHoloRate * 10;
+				double newMoviePosition = moviePosition + _fortressSimulationHoloRate * 10;
 				holo->setRate(0);
-				holo->seek(Audio::Timestamp(0, newMoviePosition, 600));
+				holo->seek(Audio::Timestamp(0, (uint)newMoviePosition, 600));
 			} else {
 				holo->setRate(Common::Rational((int)(newRate * 1000.0), 1000));
 			}
