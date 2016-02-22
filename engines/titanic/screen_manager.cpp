@@ -70,7 +70,7 @@ OSScreenManager::~OSScreenManager() {
 	destroyFrontAndBackBuffers();
 }
 
-void OSScreenManager::setMode(int width, int height, int bpp, int numBackSurfaces, bool flag2) {
+void OSScreenManager::setMode(int width, int height, int bpp, uint numBackSurfaces, bool flag2) {
 	destroyFrontAndBackBuffers();
 	_directDrawManager.initVideo(width, height, bpp, numBackSurfaces);
 

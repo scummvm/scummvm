@@ -39,6 +39,9 @@ bool CMainGameWindow::Create() {
 	bool result = image.loadResource("TITANIC");
 	if (!result)
 		return true;
+
+	// TODO: Stuff
+	return true;
 }
 
 } // End of namespace Titanic

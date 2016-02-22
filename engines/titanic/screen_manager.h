@@ -67,7 +67,7 @@ public:
 
 	virtual void setWindowHandle(int v);
 	virtual bool resetWindowHandle(int v);
-	virtual void setMode(int width, int height, int bpp, int numBackSurfaces, bool flag2) = 0;
+	virtual void setMode(int width, int height, int bpp, uint numBackSurfaces, bool flag2) = 0;
 	virtual void proc5() = 0;
 	virtual void proc6() = 0;
 	virtual void proc7() = 0;
@@ -116,7 +116,7 @@ public:
 	OSScreenManager(TitanicEngine *vm);
 	virtual ~OSScreenManager();
 
-	virtual void setMode(int width, int height, int bpp, int numBackSurfaces, bool flag2);
+	virtual void setMode(int width, int height, int bpp, uint numBackSurfaces, bool flag2);
 	virtual void proc5();
 	virtual void proc6();
 	virtual void proc7();

@@ -24,82 +24,16 @@
 
 namespace Titanic {
 
-DecompressorData::DecompressorData() {
-	_field0 = 0;
-	_field4 = 0;
-	_field8 = 0;
-	_fieldC = 0;
-	_field10 = 0;
-	_field14 = 0;
-}
-
-/*------------------------------------------------------------------------*/
-
-Decompressor::Decompressor() {
-	_createFn = nullptr;
-	_destroyFn = nullptr;
-	_field18 = 0;
-	_dataPtr = nullptr;
-	_field28 = 0;
-}
-
-void Decompressor::load(const char *version, int v) {
-	if (!version || *version != '1')
-		error("Bad version");
-	
-	_field18 = 0;
-	if (!_createFn) {
-		_createFn = &Decompressor::createMethod;
-		_field28 = 0;
-	}
-
-	if (!_destroyFn) {
-		_destroyFn = &Decompressor::destroyMethod;
-	}
-
-	_dataPtr = (this->*_createFn)(_field28, 1, 24);
-	_dataPtr->_field14 = 0;
-	_dataPtr->_fieldC = 0;
-	if (v < 0) {
-		v = -v;
-		_dataPtr->_fieldC = 1;
-	}
-
-	if (v < 8 || v > 15)
-		error("Bad parameter");
-
-	_dataPtr->_field10 = v;
-	_dataPtr->_field14 = sub1(_dataPtr->_fieldC ? nullptr : &Decompressor::method3, 1 << v);
-
-	if (_dataPtr->_field14)
-		sub2();
-	else
-		close();
-}
-
-int Decompressor::sub1(Method3Fn fn, int v) {
-	return 0;
-}
-
-void Decompressor::close() {
-
-}
-
-DecompressorData *Decompressor::createMethod(int v1, int v2, int v3) {
-	return new DecompressorData();
-}
-
-void Decompressor::destroyMethod(DecompressorData *ptr) {
-	delete ptr;
-}
-
-/*------------------------------------------------------------------------*/
+#define BUFFER_SIZE 1024
 
 CompressedFile::CompressedFile() : SimpleFile() {
-	_fileMode = 0;
-	_isReading = 0;
-	_field260 = 0;
-	_mode = 0;
+	_fileMode = COMPMODE_NONE;
+	Common::fill(&_writeBuffer[0], &_writeBuffer[516], 0);
+	_dataStartPtr = nullptr;
+	_dataPtr = nullptr;
+	_dataRemaining = 0;
+	_dataMaxSize = 0;
+	_dataCount = 0;
 }
 
 CompressedFile::~CompressedFile() {
@@ -108,27 +42,58 @@ CompressedFile::~CompressedFile() {
 void CompressedFile::open(const Common::String &name) {
 	SimpleFile::open(name);
 
-	_decompressor.load();
-	_fileMode = 2;
+	_compression.initDecompress();
+	_fileMode = COMPMODE_READ;
+	_dataPtr = _dataStartPtr = new byte[BUFFER_SIZE];
+	_dataMaxSize = BUFFER_SIZE;
+	_dataRemaining = 0;
+	_dataCount = 0;
 }
 
 void CompressedFile::open(Common::SeekableReadStream *stream) {
 	SimpleFile::open(stream);
 
-	_decompressor.load();
-	_fileMode = 2;
+	_compression.initDecompress();
+	_fileMode = COMPMODE_READ;
+	_dataPtr = _dataStartPtr = new byte[BUFFER_SIZE];
+	_dataMaxSize = BUFFER_SIZE;
+	_dataRemaining = 0;
+	_dataCount = 0;
 }
 
 void CompressedFile::open(Common::OutSaveFile *stream) {
 	SimpleFile::open(stream);
 
-	_decompressor.load();
-	_fileMode = 1;
+	_compression.initCompress();
+	_fileMode = COMPMODE_WRITE;
 }
 
 void CompressedFile::close() {
-	_queue.clear();
-	SimpleFile::close();
+	int result;
+
+	switch (_fileMode) {
+	case COMPMODE_WRITE:
+		do {
+			_compression._destPtr = _writeBuffer;
+			_compression._destCount = 512;
+			result = _compression.compress(4);
+			int count = 512 - _compression._destCount;
+
+			if (count)
+				write(_writeBuffer, count);
+		} while (!result);
+		break;
+	case COMPMODE_READ:
+		_compression.close();
+		delete[] _dataStartPtr;
+		_dataStartPtr = _dataPtr = nullptr;
+		_dataRemaining = _dataMaxSize = 0;
+
+		SimpleFile::close();
+		break;
+	default:
+		break;
+	}
 }
 
 size_t CompressedFile::unsafeRead(void *dst, size_t count) {
@@ -144,22 +109,51 @@ size_t CompressedFile::unsafeRead(void *dst, size_t count) {
 	byte *dataPtr = (byte *)dst;
 
 	while (count > 0) {
-		if (_queue.empty()) {
+		if (!_dataRemaining) {
 			decompress();
-			if (_queue.empty())
+			if (!_dataRemaining)
 				break;
 		}
 
-		*dataPtr++ = _queue.pop();
-		++bytesRead;
-		--count;
+		*dataPtr++ = *_dataPtr++;
+		--_dataRemaining;
 	}
 
 	return bytesRead;
 }
 
 void CompressedFile::decompress() {
+	const size_t COUNT = 1;
+	byte fileByte;
+	int count;
 
+	_dataPtr = _dataStartPtr;
+	_compression._destPtr = _dataStartPtr;
+	_compression._destCount = _dataMaxSize;
+
+	if (_dataMaxSize < 0x100)
+		return;
+
+	// Loop to get data from the file as needed and decompress
+	do {
+		if (!_compression._srcCount) {
+			// Read in next byte from the source file
+			if (!SimpleFile::unsafeRead(&fileByte, 1))
+				break;
+
+			// Set up the decompressor to process the data
+			_compression._srcCount = COUNT;
+			_compression._srcPtr = &fileByte;
+		}
+
+		int count = _compression.decompress(COUNT);
+		_dataRemaining = _dataMaxSize - _compression._destCount;
+
+		if (count == COUNT) {
+			_dataCount = COUNT;
+			break;
+		}
+	} while (!count && _compression._destCount > 0x100);
 }
 
 } // End of namespace Titanic
