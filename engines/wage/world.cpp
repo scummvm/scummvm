@@ -67,6 +67,9 @@ World::World(WageEngine *engine) {
 	_saveBeforeCloseMessage = nullptr;
 	_revertMessage = nullptr;
 
+	_globalScript = nullptr;
+	_player = nullptr;
+
 	_weaponMenuDisabled = true;
 
 	_engine = engine;
