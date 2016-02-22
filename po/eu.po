@@ -904,7 +904,7 @@ msgid ""
 "GS device"
 msgstr ""
 "Markatu Roland GS gailu batean MT-32 bat emulatzea ahalbidetzen "
-"dutenbihurketak gaitzeko"
+"duten bihurketak gaitzeko"
 
 #: gui/options.cpp:898
 msgid "Don't use Roland MT-32 music"
@@ -2319,7 +2319,7 @@ msgstr "Erabili jatorrizko gorde/kargatu pantailak"
 #: engines/toltecs/detection.cpp:201
 msgid "Use the original save/load screens, instead of the ScummVM ones"
 msgstr ""
-"Erabili jatorrizko gorde/kargatu pantailak, ScummVM-renak erabilibeharrean"
+"Erabili jatorrizko gorde/kargatu pantailak, ScummVM-renak erabili beharrean"
 
 #: engines/agi/detection.cpp:157
 msgid "Use an alternative palette"
@@ -2341,7 +2341,7 @@ msgstr "Saguaren euskarria"
 msgid ""
 "Enables mouse support. Allows to use mouse for movement and in game menus."
 msgstr ""
-"Saguaren euskarria giatzen du. Sagua mugitzeko eta jokoko menuetan "
+"Saguaren euskarria gaitzen du. Sagua mugitzeko eta jokoko menuetan "
 "erabiltzea ahalbidetzen du"
 
 #: engines/agi/saveload.cpp:777 engines/avalanche/parser.cpp:1887
@@ -2784,7 +2784,7 @@ msgstr "Saihestu EGA leuntze pausua (koloretako hondoak)"
 #: engines/sci/detection.cpp:375
 msgid "Skip dithering pass in EGA games, graphics are shown with full colors"
 msgstr ""
-"Saihestu leuntzea EGA jokoetan, grafikoak kolore guztiekin erakustendira"
+"Saihestu leuntzea EGA jokoetan, grafikoak kolore guztiekin erakusten dira"
 
 #: engines/sci/detection.cpp:384
 msgid "Enable high resolution graphics"
@@ -2812,7 +2812,7 @@ msgid ""
 "output"
 msgstr ""
 "Erabili IBM Music Feature txartela edo Yamaha FB-01 FM "
-"sintetizatzailemodulua MIDI irteerarako"
+"sintetizatzaile modulua MIDI irteerarako"
 
 #: engines/sci/detection.cpp:425
 msgid "Use CD audio"
@@ -2831,7 +2831,7 @@ msgid ""
 "Use the Windows cursors (smaller and monochrome) instead of the DOS ones"
 msgstr ""
 "Erabili Windows-eko kurtsoreak (txikiagoak eta monokromoak) DOS-ekoak "
-"erabilibeharrean"
+"erabili beharrean"
 
 #: engines/sci/detection.cpp:447
 msgid "Use silver cursors"
@@ -2842,7 +2842,7 @@ msgid ""
 "Use the alternate set of silver cursors, instead of the normal golden ones"
 msgstr ""
 "Erabili zilar kolorezko kurtsore multzo alternatiboa, urre-koloreko "
-"kursorenormalak erabili beharrean"
+"kurtsore normalak erabili beharrean"
 
 #: engines/scumm/dialogs.cpp:176
 #, c-format
@@ -3723,8 +3723,7 @@ msgstr "Erakutsi momentuko FPS (frames per second) goiko ezkerreko ertzean"
 
 #: engines/zvision/detection_tables.h:52
 msgid "Use the original save/load screens instead of the ScummVM interface"
-msgstr ""
-"Erabili jatorrizko gorde/kargatu pantailak ScummVM interfazearenak beharrean"
+msgstr "Erabili jatorrizko gorde/kargatu pantailak ScummVM interfazearenak beharrean"
 
 #: engines/zvision/detection_tables.h:61
 msgid "Double FPS"
