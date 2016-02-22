@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
 "POT-Creation-Date: 2016-02-20 21:28+0000\n"
-"PO-Revision-Date: 2016-02-02 23:16+0300\n"
+"PO-Revision-Date: 2016-02-21 23:32+0300\n"
 "Last-Translator: Ivan Lukyanov <greencis@mail.ru>\n"
 "Language-Team: Ivan Lukyanov <greencis@mail.ru>\n"
 "Language: Belarusian\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
 "%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
-"X-Generator: Poedit 1.8.6\n"
+"X-Generator: Poedit 1.8.7\n"
 
 #: gui/about.cpp:94
 #, c-format
@@ -38,7 +38,7 @@ msgstr "Паказваць схаваныя файлы"
 
 #: gui/browser.cpp:68
 msgid "Show files marked with the hidden attribute"
-msgstr "Паказваць файлы з атрыбутам \"схаваць\""
+msgstr "Паказваць файлы з атрыбутам \"схаваны\""
 
 #: gui/browser.cpp:72
 msgid "Go up"
@@ -191,11 +191,11 @@ msgstr "Лінейная"
 
 #: gui/fluidsynth-dialog.cpp:145
 msgid "Fourth-order"
-msgstr "Чацвёртага парадка"
+msgstr "Чацвёртага парадку"
 
 #: gui/fluidsynth-dialog.cpp:146
 msgid "Seventh-order"
-msgstr "Сёмага парадка"
+msgstr "Сёмага парадку"
 
 #: gui/fluidsynth-dialog.cpp:150
 msgid "Reset"
@@ -2317,7 +2317,7 @@ msgstr "Правяраю абнаўленні..."
 #: engines/neverhood/detection.cpp:160 engines/sci/detection.cpp:404
 #: engines/toltecs/detection.cpp:200 engines/zvision/detection_tables.h:51
 msgid "Use original save/load screens"
-msgstr "Выкарыстоўваць арыгінальныя экраны запісу/чытанні гульні"
+msgstr "Выкарыстоўваць арыгінальныя экраны запісу/чытання гульні"
 
 #: engines/agi/detection.cpp:148 engines/cine/detection.cpp:71
 #: engines/drascula/detection.cpp:303 engines/dreamweb/detection.cpp:48
@@ -2325,7 +2325,7 @@ msgstr "Выкарыстоўваць арыгінальныя экраны запісу/чытанні гульні"
 #: engines/toltecs/detection.cpp:201
 msgid "Use the original save/load screens, instead of the ScummVM ones"
 msgstr ""
-"Выкарыстоўваць арыгінальныя экраны запісу і захавання гульні замест "
+"Выкарыстоўваць арыгінальныя экраны чытання і захавання гульні замест "
 "зробленых у ScummVM"
 
 #: engines/agi/detection.cpp:157
@@ -2691,18 +2691,16 @@ msgstr ""
 "\n"
 
 #: engines/parallaction/saveload.cpp:197
-#, fuzzy
 msgid "Load file"
-msgstr "Загрузіць гульню:"
+msgstr "Загрузіць файл"
 
 #: engines/parallaction/saveload.cpp:204
 msgid "Loading game..."
 msgstr "Загружаю гульню..."
 
 #: engines/parallaction/saveload.cpp:212
-#, fuzzy
 msgid "Save file"
-msgstr "Не удалось сохранить игру!"
+msgstr "Захаваць файл"
 
 #: engines/parallaction/saveload.cpp:219
 msgid "Saving game..."
@@ -2746,7 +2744,7 @@ msgstr "Няправільнае імя файла захавання"
 
 #: engines/pegasus/pegasus.cpp:2507
 msgid "Up/Zoom In/Move Forward/Open Doors"
-msgstr "Уверх/Маштаб+/Наперад/Адчыніць дзверы"
+msgstr "Уверх/Павял. маштаб/Наперад/Адчыніць дзверы"
 
 #: engines/pegasus/pegasus.cpp:2508
 msgid "Down/Zoom Out"
@@ -3029,7 +3027,7 @@ msgstr "Гучнасць музыкі павялічыць / паменшыць"
 
 #: engines/scumm/help.cpp:89
 msgid "Text speed slower / faster"
-msgstr "Хуткасць тэксту хутчэй / павольней"
+msgstr "Хуткасць тэксту павольней / хутчэй"
 
 #: engines/scumm/help.cpp:90
 msgid "Simulate left mouse button"
@@ -3556,58 +3554,60 @@ msgstr ""
 "дадзеныя пра інструменты. Музыка будзе выключана."
 
 #: engines/sherlock/detection.cpp:71
-#, fuzzy
 msgid "Use original savegame dialog"
-msgstr "Выкарыстоўваць арыгінальныя экраны запісу/чытанні гульні"
+msgstr "Выкарыстоўваць арыгінальныя экраны запісу/чытання гульні"
 
 #: engines/sherlock/detection.cpp:72
 msgid ""
 "Files button in-game shows original savegame dialog rather than the ScummVM "
 "menu"
 msgstr ""
+"Кнопка \"Файлы\" ў гульні паказвае арыгінальны дыялог захавання, а не меню "
+"ScummVM"
 
 #: engines/sherlock/detection.cpp:81
 msgid "Pixellated scene transitions"
-msgstr ""
+msgstr "Пераходы паміж сцэнамі з пікселізацыяй"
 
 #: engines/sherlock/detection.cpp:82
 msgid "When changing scenes, a randomized pixel transition is done"
-msgstr ""
+msgstr "Пры змене сцэн адбываецца пераход з рандамізаванымі пікселямі"
 
 #: engines/sherlock/detection.cpp:91
 msgid "Don't show hotspots when moving mouse"
-msgstr ""
+msgstr "Не паказваць хотспоты пры навядзенні мышшу"
 
 #: engines/sherlock/detection.cpp:92
 msgid ""
 "Only show hotspot names after you actually click on a hotspot or action "
 "button"
 msgstr ""
+"Паказваць назвы хотспотаў толькі пасля кліку па іх або пасля націску на "
+"кнопку дзеяння"
 
 #: engines/sherlock/detection.cpp:101
-#, fuzzy
 msgid "Show character portraits"
-msgstr "Змяніць героя"
+msgstr "Паказваць партрэты герояў"
 
 #: engines/sherlock/detection.cpp:102
 msgid "Show portraits for the characters when conversing"
-msgstr ""
+msgstr "Паказваць партрэты герояў падчас дыялогаў"
 
 #: engines/sherlock/detection.cpp:111
 msgid "Slide dialogs into view"
-msgstr ""
+msgstr "Дыялогі заязджаюць"
 
 #: engines/sherlock/detection.cpp:112
 msgid "Slide UI dialogs into view, rather than simply showing them immediately"
-msgstr ""
+msgstr "Дыялогі будуць заязджаць, а не паказвацца імгненна"
 
 #: engines/sherlock/detection.cpp:121
 msgid "Transparent windows"
-msgstr ""
+msgstr "Празрыстыя вокны"
 
 #: engines/sherlock/detection.cpp:122
 msgid "Show windows with a partially transparent background"
-msgstr ""
+msgstr "Паказваць вокны з часткова празрыстым фонам"
 
 #: engines/sky/compact.cpp:130
 msgid ""
