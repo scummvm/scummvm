@@ -185,8 +185,6 @@ void WidgetCredits::blitCredits() {
 
 			screen.slamRect(r);
 		}
-
-		_creditLines[idx]._position.y -= _creditSpeed;
 	}
 }
 
@@ -200,7 +198,10 @@ void WidgetCredits::eraseCredits() {
 			r.moveTo(_creditLines[idx]._position.x, _creditLines[idx]._position.y - 1 + _creditSpeed);
 
 			screen.restoreBackground(r);
+			screen.slamRect(r);
 		}
+
+		_creditLines[idx]._position.y -= _creditSpeed;
 	}
 
 	if (_creditLines[_creditLines.size() - 1]._position.y < -_creditSpeed) {

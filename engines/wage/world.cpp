@@ -50,6 +50,7 @@
 #include "wage/wage.h"
 #include "wage/entities.h"
 #include "wage/script.h"
+#include "wage/sound.h"
 #include "wage/world.h"
 
 namespace Wage {
@@ -65,6 +66,8 @@ World::World(WageEngine *engine) {
 	_saveBeforeQuitMessage = nullptr;
 	_saveBeforeCloseMessage = nullptr;
 	_revertMessage = nullptr;
+
+	_weaponMenuDisabled = true;
 
 	_engine = engine;
 }
@@ -271,6 +274,7 @@ bool World::loadWorld(Common::MacResManager *resMan) {
 		for (uint i = 0; i < string.size() && string[i] != ';'; i++) // Read token
 			_aboutMenuItemName += string[i];
 
+		delete menu;
 		delete res;
 	}
 	res = resMan->getResource(MKTAG('M','E','N','U'), 2004);
@@ -294,6 +298,13 @@ bool World::loadWorld(Common::MacResManager *resMan) {
 	//world.setCurrentState(initialState);	// pass off the state object to the world
 
 	return true;
+}
+
+void World::addSound(Sound *sound) {
+	Common::String s = sound->_name;
+	s.toLowercase();
+	_sounds[s] = sound;
+	_orderedSounds.push_back(sound);
 }
 
 Common::StringArray *World::readMenu(Common::SeekableReadStream *res) {
@@ -349,18 +360,17 @@ void World::loadExternalSounds(Common::String fname) {
 	}
 	in.close();
 
-	Common::MacResManager *resMan;
-	resMan = new Common::MacResManager();
-	resMan->open(fname);
+	Common::MacResManager resMan;
+	resMan.open(fname);
 
 	Common::MacResIDArray resArray;
 	Common::SeekableReadStream *res;
 	Common::MacResIDArray::const_iterator iter;
 
-	resArray = resMan->getResIDArray(MKTAG('A','S','N','D'));
+	resArray = resMan.getResIDArray(MKTAG('A','S','N','D'));
 	for (iter = resArray.begin(); iter != resArray.end(); ++iter) {
-		res = resMan->getResource(MKTAG('A','S','N','D'), *iter);
-		addSound(new Sound(resMan->getResName(MKTAG('A','S','N','D'), *iter), res));
+		res = resMan.getResource(MKTAG('A','S','N','D'), *iter);
+		addSound(new Sound(resMan.getResName(MKTAG('A','S','N','D'), *iter), res));
 	}
 }
 
@@ -499,8 +509,8 @@ const char *World::getAboutMenuItemName() {
 		const char *pos = strchr(str, '@');
 		if (pos) {
 			strncat(menu, str, (pos - str));
-			strcat(menu, _name.c_str());
-			strcat(menu, pos + 1);
+			strncat(menu, _name.c_str(), 256);
+			strncat(menu, pos + 1, 256);
 		}
 	}
 

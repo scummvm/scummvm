@@ -87,7 +87,32 @@ byte AgiEngine::getVar(int16 varNr) {
 // 15 - mute
 void AgiEngine::setVolumeViaScripts(byte newVolume) {
 	newVolume = CLIP<byte>(newVolume, 0, 15);
-	newVolume = 15 - newVolume; // turn volume around
+
+	if (_veryFirstInitialCycle) {
+		// WORKAROUND:
+		// The very first cycle is currently running and volume got changed
+		// This is surely the initial value. For plenty of fan games, a default of 15 is set
+		// Which actually means "mute" in AGI, but AGI on PC used PC speaker, which did not use
+		// volume setting. We do. So we detect such a situation and set a flag, so that the
+		// volume will get interpreted "correctly" for those fan games.
+		// Note: not all fan games are broken in that regard!
+		// See bug #7035
+		if (getFeatures() & GF_FANMADE) {
+			// We only check for fan games, Sierra always did it properly of course
+			if (newVolume == 15) {
+				// Volume gets set to mute at the start?
+				// Probably broken fan game detected, set flag
+				debug("Broken volume in fan game detected, enabling workaround");
+				_setVolumeBrokenFangame = true;
+			}
+		}
+	}
+
+	if (!_setVolumeBrokenFangame) {
+		// In AGI 15 is mute, 0 is loudest
+		// Some fan games set this incorrectly as 15 for loudest, 0 for mute
+		newVolume = 15 - newVolume; // turn volume around
+	}
 
 	int scummVMVolume = newVolume * Audio::Mixer::kMaxMixerVolume / 15;
 	bool scummVMMute = false;

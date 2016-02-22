@@ -136,6 +136,19 @@ struct reg_t {
 	reg_t operator|(const reg_t right) const;
 	reg_t operator^(const reg_t right) const;
 
+#ifdef ENABLE_SCI32
+	reg_t operator&(int16 right) const;
+	reg_t operator|(int16 right) const;
+	reg_t operator^(int16 right) const;
+
+	void operator&=(const reg_t &right) { *this = *this & right; }
+	void operator|=(const reg_t &right) { *this = *this | right; }
+	void operator^=(const reg_t &right) { *this = *this ^ right; }
+	void operator&=(int16 right) { *this = *this & right; }
+	void operator|=(int16 right) { *this = *this | right; }
+	void operator^=(int16 right) { *this = *this ^ right; }
+#endif
+
 private:
 	/**
 	 * Compares two reg_t's.

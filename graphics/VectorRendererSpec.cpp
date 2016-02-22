@@ -441,13 +441,14 @@ template<typename PixelType>
 void VectorRendererSpec<PixelType>::
 gradientFill(PixelType *ptr, int width, int x, int y) {
 	bool ox = ((y & 1) == 1);
-	int stripSize;
 	int curGrad = 0;
 
 	while (_gradIndexes[curGrad + 1] <= y)
 		curGrad++;
 
-	stripSize = _gradIndexes[curGrad + 1] - _gradIndexes[curGrad];
+	// precalcGradient assures that _gradIndexes entries always differ in
+	// their value. This assures stripSize is always different from zero.
+	int stripSize = _gradIndexes[curGrad + 1] - _gradIndexes[curGrad];
 
 	int grad = (((y - _gradIndexes[curGrad]) % stripSize) << 2) / stripSize;
 
@@ -773,8 +774,8 @@ drawLine(int x1, int y1, int x2, int y2) {
 		SWAP(y1, y2);
 	}
 
-	int dx = ABS(x2 - x1);
-	int dy = ABS(y2 - y1);
+	uint dx = ABS(x2 - x1);
+	uint dy = ABS(y2 - y1);
 
 	// this is a point, not a line. stoopid.
 	if (dy == 0 && dx == 0)
@@ -803,7 +804,7 @@ drawLine(int x1, int y1, int x2, int y2) {
 			ptr += pitch;
 		}
 
-	} else if (ABS(dx) == ABS(dy)) { // diagonal lines
+	} else if (dx == dy) { // diagonal lines
 		// these ones also use a fixed pitch increase
 		pitch += (x2 > x1) ? 1 : -1;
 
@@ -1034,6 +1035,11 @@ drawTriangle(int x, int y, int w, int h, TriangleOrientation orient) {
 template<typename PixelType>
 void VectorRendererSpec<PixelType>::
 drawTabAlg(int x1, int y1, int w, int h, int r, PixelType color, VectorRenderer::FillMode fill_m, int baseLeft, int baseRight) {
+	// Don't draw anything for empty rects.
+	if (w <= 0 || h <= 0) {
+		return;
+	}
+
 	int f, ddF_x, ddF_y;
 	int x, y, px, py;
 	int pitch = _activeSurface->pitch / _activeSurface->format.bytesPerPixel;
@@ -1238,6 +1244,11 @@ drawBevelTabAlg(int x, int y, int w, int h, int bevel, PixelType top_color, Pixe
 template<typename PixelType>
 void VectorRendererSpec<PixelType>::
 drawSquareAlg(int x, int y, int w, int h, PixelType color, VectorRenderer::FillMode fill_m) {
+	// Do not draw anything for empty rects.
+	if (w <= 0 || h <= 0) {
+		return;
+	}
+
 	PixelType *ptr = (PixelType *)_activeSurface->getBasePtr(x, y);
 	int pitch = _activeSurface->pitch / _activeSurface->format.bytesPerPixel;
 	int max_h = h;
@@ -1326,7 +1337,7 @@ drawBevelSquareAlg(int x, int y, int w, int h, int bevel, PixelType top_color, P
 /** GENERIC LINE ALGORITHM **/
 template<typename PixelType>
 void VectorRendererSpec<PixelType>::
-drawLineAlg(int x1, int y1, int x2, int y2, int dx, int dy, PixelType color) {
+drawLineAlg(int x1, int y1, int x2, int y2, uint dx, uint dy, PixelType color) {
 	PixelType *ptr = (PixelType *)_activeSurface->getBasePtr(x1, y1);
 	int pitch = _activeSurface->pitch / _activeSurface->format.bytesPerPixel;
 	int xdir = (x2 > x1) ? 1 : -1;
@@ -1393,6 +1404,12 @@ drawLineAlg(int x1, int y1, int x2, int y2, int dx, int dy, PixelType color) {
 template<typename PixelType>
 void VectorRendererSpec<PixelType>::
 drawTriangleVertAlg(int x1, int y1, int w, int h, bool inverted, PixelType color, VectorRenderer::FillMode fill_m) {
+	// Don't draw anything for empty rects. This assures dy is always different
+	// from zero.
+	if (w <= 0 || h <= 0) {
+		return;
+	}
+
 	int pitch = _activeSurface->pitch / _activeSurface->format.bytesPerPixel;
 	int gradient_h = 0;
 	if (!inverted) {
@@ -1422,6 +1439,9 @@ drawTriangleVertAlg(int x1, int y1, int w, int h, bool inverted, PixelType color
 			blendPixelPtr(floor, color, 50);
 
 #if FIXED_POINT
+		// In this branch dx is always different from zero. This is because
+		// abs(dx) is strictly greater than abs(dy), and abs returns zero
+		// as minimal value.
 		int gradient = (dy << 8) / dx;
 		int intery = (y1 << 8) + gradient;
 #else
@@ -1564,6 +1584,11 @@ drawTriangleVertAlg(int x1, int y1, int w, int h, bool inverted, PixelType color
 template<typename PixelType>
 void VectorRendererSpec<PixelType>::
 drawTriangleFast(int x1, int y1, int size, bool inverted, PixelType color, VectorRenderer::FillMode fill_m) {
+	// Do not draw anything for empty rects.
+	if (size <= 0) {
+		return;
+	}
+
 	int pitch = _activeSurface->pitch / _activeSurface->format.bytesPerPixel;
 
 	if (!inverted) {
@@ -1685,6 +1710,11 @@ drawBorderRoundedSquareAlg(int x1, int y1, int r, int w, int h, PixelType color,
 template<typename PixelType>
 void VectorRendererSpec<PixelType>::
 drawInteriorRoundedSquareAlg(int x1, int y1, int r, int w, int h, PixelType color, VectorRenderer::FillMode fill_m) {
+	// Do not draw empty space rounded squares.
+	if (w <= 0 || h <= 0) {
+		return;
+	}
+
 	int f, ddF_x, ddF_y;
 	int x, y, px, py;
 	int pitch = _activeSurface->pitch / _activeSurface->format.bytesPerPixel;
@@ -1835,6 +1865,11 @@ drawCircleAlg(int x1, int y1, int r, PixelType color, VectorRenderer::FillMode f
 template<typename PixelType>
 void VectorRendererSpec<PixelType>::
 drawSquareShadow(int x, int y, int w, int h, int offset) {
+	// Do nothing for empty rects or no shadow offset.
+	if (w <= 0 || h <= 0 || offset <= 0) {
+		return;
+	}
+
 	PixelType *ptr = (PixelType *)_activeSurface->getBasePtr(x + w - 1, y + offset);
 	int pitch = _activeSurface->pitch / _activeSurface->format.bytesPerPixel;
 	int i, j;
@@ -1956,8 +1991,7 @@ drawRoundedSquareShadow(int x1, int y1, int r, int w, int h, int offset) {
 /** LINES **/
 template<typename PixelType>
 void VectorRendererAA<PixelType>::
-drawLineAlg(int x1, int y1, int x2, int y2, int dx, int dy, PixelType color) {
-
+drawLineAlg(int x1, int y1, int x2, int y2, uint dx, uint dy, PixelType color) {
 	PixelType *ptr = (PixelType *)Base::_activeSurface->getBasePtr(x1, y1);
 	int pitch = Base::_activeSurface->pitch / Base::_activeSurface->format.bytesPerPixel;
 	int xdir = (x2 > x1) ? 1 : -1;
@@ -1967,7 +2001,7 @@ drawLineAlg(int x1, int y1, int x2, int y2, int dx, int dy, PixelType color) {
 	*ptr = (PixelType)color;
 
 	if (dx > dy) {
-		gradient = (uint32)(dy << 16) / (uint32)dx;
+		gradient = (dy << 16) / dx;
 		error_acc = 0;
 
 		while (--dx) {
@@ -1983,8 +2017,8 @@ drawLineAlg(int x1, int y1, int x2, int y2, int dx, int dy, PixelType color) {
 			this->blendPixelPtr(ptr, color, ~alpha);
 			this->blendPixelPtr(ptr + pitch, color, alpha);
 		}
-	} else {
-		gradient = (uint32)(dx << 16) / (uint32)dy;
+	} else if (dy != 0) {
+		gradient = (dx << 16) / dy;
 		error_acc = 0;
 
 		while (--dy) {
@@ -2009,6 +2043,11 @@ drawLineAlg(int x1, int y1, int x2, int y2, int dx, int dy, PixelType color) {
 template<typename PixelType>
 void VectorRendererAA<PixelType>::
 drawTabAlg(int x1, int y1, int w, int h, int r, PixelType color, VectorRenderer::FillMode fill_m, int baseLeft, int baseRight) {
+	// Don't draw anything for empty rects.
+	if (w <= 0 || h <= 0) {
+		return;
+	}
+
 	int x, y, px, py;
 	int pitch = Base::_activeSurface->pitch / Base::_activeSurface->format.bytesPerPixel;
 	int sw = 0, sp = 0, hp = 0;
@@ -2217,6 +2256,11 @@ drawBorderRoundedSquareAlg(int x1, int y1, int r, int w, int h, PixelType color,
 template<typename PixelType>
 void VectorRendererAA<PixelType>::
 drawInteriorRoundedSquareAlg(int x1, int y1, int r, int w, int h, PixelType color, VectorRenderer::FillMode fill_m) {
+	// Do not draw empty space rounded squares.
+	if (w <= 0 || h <= 0) {
+		return;
+	}
+
 	int x, y;
 	const int pitch = Base::_activeSurface->pitch / Base::_activeSurface->format.bytesPerPixel;
 	int px, py;

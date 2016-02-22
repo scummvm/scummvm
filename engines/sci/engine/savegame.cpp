@@ -1066,10 +1066,12 @@ void gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 	if (g_sci->_gfxScreen)
 		g_sci->_gfxScreen->clearForRestoreGame();
 #ifdef ENABLE_SCI32
-	// Also clear any SCI32 planes/screen items currently showing so they
-	// don't show up after the load.
+	// Delete current planes/elements of actively loaded VM, only when our ScummVM dialogs are patched in
+	// We MUST NOT delete all planes/screen items. At least Space Quest 6 has a few in memory like for example
+	// the options plane, which are not re-added and are in memory all the time right from the start of the
+	// game. Sierra SCI32 did not clear planes, only scripts cleared the ones inside planes::elements.
 	if (getSciVersion() >= SCI_VERSION_2)
-		g_sci->_gfxFrameout->clear();
+		g_sci->_gfxFrameout->syncWithScripts(false);
 #endif
 
 	s->reset(true);
@@ -1093,6 +1095,13 @@ void gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 
 	if (g_sci->_gfxPorts)
 		g_sci->_gfxPorts->saveLoadWithSerializer(ser);
+
+	// SCI32:
+	// Current planes/screen elements of freshly loaded VM are re-added by scripts in [gameID]::replay
+	// We don't have to do that in here.
+	// But we may have to do it ourselves in case we ever implement some soft-error handling in case
+	// a saved game can't be restored. That way we can restore the game screen.
+	// see _gfxFrameout->syncWithScripts()
 
 	Vocabulary *voc = g_sci->getVocabulary();
 	if (ser.getVersion() >= 30 && voc)

@@ -492,7 +492,7 @@ reg_t kNumLoops(EngineState *s, int argc, reg_t *argv) {
 
 	loopCount = g_sci->_gfxCache->kernelViewGetLoopCount(viewId);
 
-	debugC(kDebugLevelGraphics, "NumLoops(view.%d) = %d", viewId, loopCount);
+	debugC(9, kDebugLevelGraphics, "NumLoops(view.%d) = %d", viewId, loopCount);
 
 	return make_reg(0, loopCount);
 }
@@ -505,7 +505,7 @@ reg_t kNumCels(EngineState *s, int argc, reg_t *argv) {
 
 	celCount = g_sci->_gfxCache->kernelViewGetCelCount(viewId, loopNo);
 
-	debugC(kDebugLevelGraphics, "NumCels(view.%d, %d) = %d", viewId, loopNo, celCount);
+	debugC(9, kDebugLevelGraphics, "NumCels(view.%d, %d) = %d", viewId, loopNo, celCount);
 
 	return make_reg(0, celCount);
 }

@@ -236,7 +236,7 @@ Common::Error MohawkEngine_Myst::run() {
 	// Load game from launcher/command line if requested
 	if (ConfMan.hasKey("save_slot") && canLoadGameStateCurrently()) {
 		uint32 gameToLoad = ConfMan.getInt("save_slot");
-		Common::StringArray savedGamesList = _gameState->generateSaveGameList();
+		Common::StringArray savedGamesList = MystGameState::generateSaveGameList();
 		if (gameToLoad > savedGamesList.size())
 			error ("Could not find saved game");
 		_gameState->load(savedGamesList[gameToLoad]);
@@ -1066,19 +1066,19 @@ void MohawkEngine_Myst::loadResources() {
 }
 
 Common::Error MohawkEngine_Myst::loadGameState(int slot) {
-	if (_gameState->load(_gameState->generateSaveGameList()[slot]))
+	if (_gameState->load(MystGameState::generateSaveGameList()[slot]))
 		return Common::kNoError;
 
 	return Common::kUnknownError;
 }
 
 Common::Error MohawkEngine_Myst::saveGameState(int slot, const Common::String &desc) {
-	Common::StringArray saveList = _gameState->generateSaveGameList();
+	Common::StringArray saveList = MystGameState::generateSaveGameList();
 
 	if ((uint)slot < saveList.size())
-		_gameState->deleteSave(saveList[slot]);
+		MystGameState::deleteSave(saveList[slot]);
 
-	return _gameState->save(Common::String(desc)) ? Common::kNoError : Common::kUnknownError;
+	return _gameState->save(desc) ? Common::kNoError : Common::kUnknownError;
 }
 
 bool MohawkEngine_Myst::canLoadGameStateCurrently() {

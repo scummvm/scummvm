@@ -453,6 +453,15 @@ void GfxCursor::kernelClearZoomZone() {
 void GfxCursor::kernelSetZoomZone(byte multiplier, Common::Rect zone, GuiResourceId viewNum, int loopNum, int celNum, GuiResourceId picNum, byte zoomColor) {
 	kernelClearZoomZone();
 
+	// This function is a stub in the Mac version of Freddy Pharkas.
+	// This function was only used in two games (LB2 and Pharkas), but there
+	// was no version of LB2 for the Macintosh platform.
+	// CHECKME: This wasn't verified against disassembly, one might want
+	// to check against it, in case there's some leftover code in the stubbed
+	// function (although it does seem that this was completely removed).
+	if (g_sci->getPlatform() == Common::kPlatformMacintosh)
+		return;
+
 	_zoomMultiplier = multiplier;
 
 	if (_zoomMultiplier != 1 && _zoomMultiplier != 2 && _zoomMultiplier != 4)

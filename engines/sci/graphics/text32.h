@@ -23,15 +23,148 @@
 #ifndef SCI_GRAPHICS_TEXT32_H
 #define SCI_GRAPHICS_TEXT32_H
 
+#include "sci/graphics/celobj32.h"
+#include "sci/graphics/frameout.h"
+
 namespace Sci {
 
+enum TextAlign {
+	kTextAlignLeft   = 0,
+	kTextAlignCenter = 1,
+	kTextAlignRight  = -1
+};
+
 /**
- * Text32 class, handles text calculation and displaying of text for SCI2, SCI21 and SCI3 games
+ * This class handles text calculation and rendering for
+ * SCI32 games. The text calculation system in SCI32 is
+ * nearly the same as SCI16, which means this class behaves
+ * similarly. Notably, GfxText32 maintains drawing
+ * parameters across multiple calls.
  */
 class GfxText32 {
+private:
+	/**
+	 * The resource ID of the default font used by the game.
+	 *
+	 * @todo Check all SCI32 games to learn what their
+	 * default font is.
+	 */
+	static int16 _defaultFontId;
+
+	/**
+	 * The width and height of the currently active text
+	 * bitmap, in text-system coordinates.
+	 */
+	int16 _width, _height;
+
+	/**
+	 * The color used to draw text.
+	 */
+	uint8 _foreColor;
+
+	/**
+	 * The background color of the text box.
+	 */
+	uint8 _backColor;
+
+	/**
+	 * The transparent color of the text box. Used when
+	 * compositing the bitmap onto the screen.
+	 */
+	uint8 _skipColor;
+
+	/**
+	 * The rect where the text is drawn within the bitmap.
+	 * This rect is clipped to the dimensions of the bitmap.
+	 */
+	Common::Rect _textRect;
+
+	/**
+	 * The text being drawn to the currently active text
+	 * bitmap.
+	 */
+	Common::String _text;
+
+	/**
+	 * The font being used to draw the text.
+	 */
+	GuiResourceId _fontId;
+
+	/**
+	 * The color of the text box border.
+	 */
+	int16 _borderColor;
+
+	/**
+	 * TODO: Document
+	 */
+	bool _dimmed;
+
+	/**
+	 * The text alignment for the drawn text.
+	 */
+	TextAlign _alignment;
+
+	/**
+	 * The memory handle of the currently active bitmap.
+	 */
+	reg_t _bitmap;
+
+	/**
+	 * TODO: Document
+	 */
+	int _field_22;
+
+	/**
+	 * The currently active font resource used to write text
+	 * into the bitmap.
+	 *
+	 * @note SCI engine builds the font table directly
+	 * inside of FontMgr; we use GfxFont instead.
+	 */
+	GfxFont *_font;
+
+	// TODO: This is general for all CelObjMem and should be
+	// put in a single location, like maybe as a static
+	// method of CelObjMem?!
+	void buildBitmapHeader(byte *bitmap, const int16 width, const int16 height, const uint8 skipColor, const int16 displaceX, const int16 displaceY, const int16 scaledWidth, const int16 scaledHeight, const uint32 hunkPaletteOffset, const bool useRemap) const;
+
+	void drawFrame(const Common::Rect &rect, const int size, const uint8 color, const bool doScaling);
+	void drawTextBox();
+	void erase(const Common::Rect &rect, const bool doScaling);
+
+	inline Common::Rect scaleRect(const Common::Rect &rect) {
+		Common::Rect scaledRect(rect);
+		int16 scriptWidth = g_sci->_gfxFrameout->getCurrentBuffer().scriptWidth;
+		int16 scriptHeight = g_sci->_gfxFrameout->getCurrentBuffer().scriptHeight;
+		Ratio scaleX(_scaledWidth, scriptWidth);
+		Ratio scaleY(_scaledHeight, scriptHeight);
+		mul(scaledRect, scaleX, scaleY);
+		return scaledRect;
+	}
+
 public:
 	GfxText32(SegManager *segMan, GfxCache *fonts, GfxScreen *screen);
-	~GfxText32();
+
+	/**
+	 * The size of the x-dimension of the coordinate system
+	 * used by the text renderer.
+	 */
+	int16 _scaledWidth;
+
+	/**
+	 * The size of the y-dimension of the coordinate system
+	 * used by the text renderer.
+	 */
+	int16 _scaledHeight;
+
+	reg_t createFontBitmap(int16 width, int16 height, const Common::Rect &rect, const Common::String &text, const uint8 foreColor, const uint8 backColor, const uint8 skipColor, const GuiResourceId fontId, TextAlign alignment, const int16 borderColor, bool dimmed, const bool doScaling, reg_t *outBitmapObject);
+
+	reg_t createTitledFontBitmap(CelInfo32 &celInfo, Common::Rect &rect, Common::String &text, int16 foreColor, int16 backColor, int font, int16 skipColor, int16 borderColor, bool dimmed, void *unknown1);
+
+#pragma mark -
+#pragma mark Old stuff
+
 	reg_t createTextBitmap(reg_t textObject, uint16 maxWidth = 0, uint16 maxHeight = 0, reg_t prevHunk = NULL_REG);
 	reg_t createScrollTextBitmap(Common::String text, reg_t textObject, uint16 maxWidth = 0, uint16 maxHeight = 0, reg_t prevHunk = NULL_REG);
 	void drawTextBitmap(int16 x, int16 y, Common::Rect planeRect, reg_t textObject);

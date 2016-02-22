@@ -137,6 +137,8 @@ Console::Console(SciEngine *engine) : GUI::Debugger(),
 	registerCmd("wl",                 WRAP_METHOD(Console, cmdWindowList));	// alias
 	registerCmd("plane_list",         WRAP_METHOD(Console, cmdPlaneList));
 	registerCmd("pl",                 WRAP_METHOD(Console, cmdPlaneList));	// alias
+	registerCmd("visible_plane_list", WRAP_METHOD(Console, cmdVisiblePlaneList));
+	registerCmd("vpl",                WRAP_METHOD(Console, cmdVisiblePlaneList));	// alias
 	registerCmd("plane_items",        WRAP_METHOD(Console, cmdPlaneItemList));
 	registerCmd("pi",                 WRAP_METHOD(Console, cmdPlaneItemList));	// alias
 	registerCmd("saved_bits",         WRAP_METHOD(Console, cmdSavedBits));
@@ -330,6 +332,7 @@ bool Console::cmdHelp(int argc, const char **argv) {
 	debugPrintf("debugflag_list - Lists the available debug flags and their status\n");
 	debugPrintf("debugflag_enable - Enables a debug flag\n");
 	debugPrintf("debugflag_disable - Disables a debug flag\n");
+	debugPrintf("debuglevel - Shows or sets debug level\n");
 	debugPrintf("\n");
 	debugPrintf("Commands\n");
 	debugPrintf("--------\n");
@@ -380,6 +383,7 @@ bool Console::cmdHelp(int argc, const char **argv) {
 	debugPrintf(" animate_list / al - Shows the current list of objects in kAnimate's draw list (SCI0 - SCI1.1)\n");
 	debugPrintf(" window_list / wl - Shows a list of all the windows (ports) in the draw list (SCI0 - SCI1.1)\n");
 	debugPrintf(" plane_list / pl - Shows a list of all the planes in the draw list (SCI2+)\n");
+	debugPrintf(" visible_plane_list / vpl - Shows a list of all the planes in the visible draw list (SCI2+)\n");
 	debugPrintf(" plane_items / pi - Shows a list of all items for a plane (SCI2+)\n");
 	debugPrintf(" saved_bits - List saved bits on the hunk\n");
 	debugPrintf(" show_saved_bits - Display saved bits\n");
@@ -1765,6 +1769,21 @@ bool Console::cmdPlaneList(int argc, const char **argv) {
 #endif
 	return true;
 }
+
+bool Console::cmdVisiblePlaneList(int argc, const char **argv) {
+#ifdef ENABLE_SCI32
+	if (_engine->_gfxFrameout) {
+		debugPrintf("Visible plane list:\n");
+		_engine->_gfxFrameout->printVisiblePlaneList(this);
+	} else {
+		debugPrintf("This SCI version does not have a list of planes\n");
+	}
+#else
+	debugPrintf("SCI32 isn't included in this compiled executable\n");
+#endif
+	return true;
+}
+
 
 bool Console::cmdPlaneItemList(int argc, const char **argv) {
 	if (argc != 2) {

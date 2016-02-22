@@ -434,7 +434,10 @@ void MystScriptParser::o_goToDestUp(uint16 op, uint16 var, uint16 argc, uint16 *
 
 void MystScriptParser::o_triggerMovie(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Trigger Type 6 Resource Movie..", op);
-	// TODO: If movie has sound, pause background music
+	// The original has code to pause the background music before playing the movie,
+	// if the movie has a sound track, as well as code to resume it afterwards. But since
+	// the movie has not yet been loaded at this point, it is impossible to know
+	// if the movie actually has a sound track. The code is never executed.
 
 	int16 direction = 1;
 	if (argc == 1)
@@ -446,8 +449,6 @@ void MystScriptParser::o_triggerMovie(uint16 op, uint16 var, uint16 argc, uint16
 	MystAreaVideo *resource = getInvokingResource<MystAreaVideo>();
 	resource->setDirection(direction);
 	resource->playMovie();
-
-	// TODO: If movie has sound, resume background music
 }
 
 void MystScriptParser::o_toggleVarNoRedraw(uint16 op, uint16 var, uint16 argc, uint16 *argv) {

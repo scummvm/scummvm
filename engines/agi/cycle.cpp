@@ -153,9 +153,11 @@ void AgiEngine::interpretCycle() {
 		oldScore = getVar(VM_VAR_SCORE);
 		setFlag(VM_FLAG_ENTERED_CLI, false);
 		_game.exitAllLogics = false;
+		_veryFirstInitialCycle = false;
 		artificialDelay_CycleDone();
 		resetControllers();
 	}
+	_veryFirstInitialCycle = false;
 	artificialDelay_CycleDone();
 	resetControllers();
 
@@ -379,6 +381,13 @@ int AgiEngine::playGame() {
 				appleIIgsDelayRoomOverwrite = appleIIgsDelayOverwrite->roomTable;
 				while (appleIIgsDelayRoomOverwrite->fromRoom >= 0) {
 					if ((appleIIgsDelayRoomOverwrite->fromRoom <= curRoom) && (appleIIgsDelayRoomOverwrite->toRoom >= curRoom)) {
+						if (appleIIgsDelayRoomOverwrite->onlyWhenPlayerNotInControl) {
+							if (_game.playerControl) {
+								// Player is actually currently in control? -> then skip this entry
+								appleIIgsDelayRoomOverwrite++;
+								continue;
+							}
+						}
 						timeDelayOverwrite = appleIIgsDelayRoomOverwrite->timeDelayOverwrite;
 						break;
 					}
@@ -396,7 +405,7 @@ int AgiEngine::playGame() {
 			if (timeDelayOverwrite >= 0) {
 				if (timeDelayOverwrite != timeDelay) {
 					// delayOverwrite is not the same as the delay taken from the scripts? overwrite it
-					warning("AppleIIgs: time delay overwrite from %d to %d", timeDelay, timeDelayOverwrite);
+					//warning("AppleIIgs: time delay overwrite from %d to %d", timeDelay, timeDelayOverwrite);
 
 					setVar(VM_VAR_TIME_DELAY, timeDelayOverwrite - 1); // adjust for Apple IIgs
 					timeDelay = timeDelayOverwrite;

@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
-"POT-Creation-Date: 2016-02-01 21:58+0000\n"
-"PO-Revision-Date: 2016-02-05 22:34+0100\n"
+"POT-Creation-Date: 2016-02-20 21:22+0000\n"
+"PO-Revision-Date: 2016-02-20 23:43+0100\n"
 "Last-Translator: Micha³ Zi±bkowski <mziab@o2.pl>\n"
 "Language-Team: Grajpopolsku.pl <grajpopolsku@gmail.com>\n"
 "Language: Polski\n"
@@ -592,16 +592,16 @@ msgid "Search:"
 msgstr "Szukaj"
 
 #: gui/launcher.cpp:685 engines/dialogs.cpp:115 engines/cruise/menu.cpp:214
-#: engines/mohawk/myst.cpp:245 engines/mohawk/riven.cpp:718
-#: engines/pegasus/pegasus.cpp:353 engines/tsage/scenes.cpp:600
+#: engines/mohawk/riven.cpp:718 engines/pegasus/pegasus.cpp:353
+#: engines/tsage/scenes.cpp:600
 msgid "Load game:"
 msgstr "Wczytaj grê:"
 
 #: gui/launcher.cpp:685 engines/dialogs.cpp:115
 #: backends/platform/wince/CEActionsPocket.cpp:267
 #: backends/platform/wince/CEActionsSmartphone.cpp:231
-#: engines/cruise/menu.cpp:214 engines/mohawk/myst.cpp:245
-#: engines/mohawk/riven.cpp:718 engines/pegasus/pegasus.cpp:353
+#: engines/cruise/menu.cpp:214 engines/mohawk/riven.cpp:718
+#: engines/parallaction/saveload.cpp:197 engines/pegasus/pegasus.cpp:353
 #: engines/scumm/dialogs.cpp:189 engines/tsage/scenes.cpp:600
 msgid "Load"
 msgstr "Wczytaj"
@@ -643,7 +643,7 @@ msgstr "ScummVM nie znalaz³ silnika zdolnego uruchomiæ wybran± grê!"
 
 #: gui/launcher.cpp:1161
 msgid "Mass Add..."
-msgstr "Masowe dodawanie..."
+msgstr "Przeszukaj..."
 
 #: gui/launcher.cpp:1163
 msgid "Record..."
@@ -660,26 +660,17 @@ msgstr "Skanowanie zakoñczone!"
 #: gui/massadd.cpp:262
 #, c-format
 msgid "Discovered %d new games, ignored %d previously added games."
-msgid_plural "Discovered %d new games, ignored %d previously added games."
-msgstr[0] "Wykryto %d now± grê, zignorowano %d poprzednio dodanych."
-msgstr[1] "Wykryto %d nowe gry, zignorowano %d poprzednio dodanych."
-msgstr[2] "Wykryto %d nowych gier, zignorowano %d poprzednio dodanych."
+msgstr "Wykryto %d now± grê, zignorowano %d poprzednio dodanych."
 
 #: gui/massadd.cpp:266
 #, c-format
 msgid "Scanned %d directories ..."
-msgid_plural "Scanned %d directories ..."
-msgstr[0] "Przeskanowano %d katalog..."
-msgstr[1] "Przeskanowano %d katalogi..."
-msgstr[2] "Przeskanowano %d katalogów..."
+msgstr "Przeskanowano %d katalog..."
 
 #: gui/massadd.cpp:269
 #, c-format
 msgid "Discovered %d new games, ignored %d previously added games ..."
-msgid_plural "Discovered %d new games, ignored %d previously added games ..."
-msgstr[0] "Wykryto %d now± grê, zignorowano %d poprzednio dodanych..."
-msgstr[1] "Wykryto %d nowe gry, zignorowano %d poprzednio dodanych..."
-msgstr[2] "Wykryto %d nowych gier, zignorowano %d poprzednio dodanych..."
+msgstr "Wykryto %d now± grê, zignorowano %d poprzednio dodanych..."
 
 #: gui/onscreendialog.cpp:101 gui/onscreendialog.cpp:103
 msgid "Stop"
@@ -772,7 +763,7 @@ msgid "Special dithering modes supported by some games"
 msgstr "Specjalne tryby ditheringu wspierane przez niektóre gry"
 
 #: gui/options.cpp:758
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2313
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2316
 msgid "Fullscreen mode"
 msgstr "Pe³ny ekran"
 
@@ -1367,12 +1358,12 @@ msgstr "PC-9821 (256 kolorów)"
 msgid "PC-9801 (16 Colors)"
 msgstr "PC-9801 (16 kolorów)"
 
-#: common/rendermode.cpp:71
+#: common/rendermode.cpp:73
 msgctxt "lowres"
 msgid "Hercules Green"
 msgstr "Zielony Hercules"
 
-#: common/rendermode.cpp:72
+#: common/rendermode.cpp:74
 msgctxt "lowres"
 msgid "Hercules Amber"
 msgstr "Bursztynowy Hercules"
@@ -1423,11 +1414,15 @@ msgctxt "lowres"
 msgid "~R~eturn to Launcher"
 msgstr "~P~owrót do launchera"
 
-#: engines/dialogs.cpp:116 engines/agi/saveload.cpp:714
-#: engines/cruise/menu.cpp:212 engines/drascula/saveload.cpp:336
-#: engines/dreamweb/saveload.cpp:261 engines/neverhood/menumodule.cpp:877
-#: engines/pegasus/pegasus.cpp:377 engines/sci/engine/kfile.cpp:769
-#: engines/toltecs/menu.cpp:281 engines/tsage/scenes.cpp:598
+#: engines/dialogs.cpp:116 engines/agi/saveload.cpp:764
+#: engines/avalanche/parser.cpp:1899 engines/cge/events.cpp:74
+#: engines/cge2/events.cpp:67 engines/cruise/menu.cpp:212
+#: engines/drascula/saveload.cpp:336 engines/dreamweb/saveload.cpp:261
+#: engines/hugo/file.cpp:298 engines/neverhood/menumodule.cpp:877
+#: engines/pegasus/pegasus.cpp:377 engines/sci/engine/kfile.cpp:768
+#: engines/sherlock/scalpel/scalpel.cpp:1249
+#: engines/sherlock/tattoo/widget_files.cpp:75 engines/toltecs/menu.cpp:281
+#: engines/toon/toon.cpp:3338 engines/tsage/scenes.cpp:598
 msgid "Save game:"
 msgstr "Zapis:"
 
@@ -1436,11 +1431,15 @@ msgstr "Zapis:"
 #: backends/platform/wince/CEActionsPocket.cpp:267
 #: backends/platform/wince/CEActionsSmartphone.cpp:45
 #: backends/platform/wince/CEActionsSmartphone.cpp:231
-#: engines/agi/saveload.cpp:714 engines/cruise/menu.cpp:212
-#: engines/drascula/saveload.cpp:336 engines/dreamweb/saveload.cpp:261
-#: engines/neverhood/menumodule.cpp:877 engines/pegasus/pegasus.cpp:377
-#: engines/sci/engine/kfile.cpp:769 engines/scumm/dialogs.cpp:188
-#: engines/toltecs/menu.cpp:281 engines/tsage/scenes.cpp:598
+#: engines/agi/saveload.cpp:764 engines/avalanche/parser.cpp:1899
+#: engines/cge/events.cpp:74 engines/cge2/events.cpp:67
+#: engines/cruise/menu.cpp:212 engines/drascula/saveload.cpp:336
+#: engines/dreamweb/saveload.cpp:261 engines/hugo/file.cpp:298
+#: engines/neverhood/menumodule.cpp:877 engines/parallaction/saveload.cpp:212
+#: engines/pegasus/pegasus.cpp:377 engines/sci/engine/kfile.cpp:768
+#: engines/scumm/dialogs.cpp:188 engines/sherlock/scalpel/scalpel.cpp:1249
+#: engines/sherlock/tattoo/widget_files.cpp:75 engines/toltecs/menu.cpp:281
+#: engines/toon/toon.cpp:3338 engines/tsage/scenes.cpp:598
 msgid "Save"
 msgstr "Zapisz"
 
@@ -1761,19 +1760,19 @@ msgctxt "lowres"
 msgid "Normal (no scaling)"
 msgstr "Zwyk³y (bez skalowania)"
 
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2212
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2215
 msgid "Enabled aspect ratio correction"
 msgstr "W³±czono korekcjê formatu obrazu"
 
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2218
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2221
 msgid "Disabled aspect ratio correction"
 msgstr "Wy³±czono korekcjê formatu obrazu"
 
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2273
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2276
 msgid "Active graphics filter:"
 msgstr "Aktywny filtr graficzny:"
 
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2315
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2318
 msgid "Windowed mode"
 msgstr "Okno"
 
@@ -2337,15 +2336,23 @@ msgstr ""
 "W³±cza obs³ugê myszki. Pozwala na u¿ycie myszki do przemieszczania i w menu "
 "gry."
 
-#: engines/agi/saveload.cpp:727 engines/drascula/saveload.cpp:349
-#: engines/dreamweb/saveload.cpp:169 engines/neverhood/menumodule.cpp:890
-#: engines/sci/engine/kfile.cpp:868 engines/toltecs/menu.cpp:256
+#: engines/agi/saveload.cpp:777 engines/avalanche/parser.cpp:1887
+#: engines/cge/events.cpp:85 engines/cge2/events.cpp:78
+#: engines/drascula/saveload.cpp:349 engines/dreamweb/saveload.cpp:169
+#: engines/hugo/file.cpp:400 engines/neverhood/menumodule.cpp:890
+#: engines/sci/engine/kfile.cpp:867 engines/sherlock/scalpel/scalpel.cpp:1262
+#: engines/sherlock/tattoo/widget_files.cpp:94 engines/toltecs/menu.cpp:256
+#: engines/toon/toon.cpp:3430
 msgid "Restore game:"
 msgstr "Wznów grê:"
 
-#: engines/agi/saveload.cpp:727 engines/drascula/saveload.cpp:349
-#: engines/dreamweb/saveload.cpp:169 engines/neverhood/menumodule.cpp:890
-#: engines/sci/engine/kfile.cpp:868 engines/toltecs/menu.cpp:256
+#: engines/agi/saveload.cpp:777 engines/avalanche/parser.cpp:1887
+#: engines/cge/events.cpp:85 engines/cge2/events.cpp:78
+#: engines/drascula/saveload.cpp:349 engines/dreamweb/saveload.cpp:169
+#: engines/hugo/file.cpp:400 engines/neverhood/menumodule.cpp:890
+#: engines/sci/engine/kfile.cpp:867 engines/sherlock/scalpel/scalpel.cpp:1262
+#: engines/sherlock/tattoo/widget_files.cpp:94 engines/toltecs/menu.cpp:256
+#: engines/toon/toon.cpp:3430
 msgid "Restore"
 msgstr "Wznów"
 
@@ -2608,27 +2615,10 @@ msgid ""
 "need to open the ScummVM debug console and use the command "
 "'import_savefile'.\n"
 "\n"
-msgid_plural ""
-"%d original save game files have been successfully imported into\n"
-"ScummVM. If you want to manually import original save game files later you "
-"will\n"
-"need to open the ScummVM debug console and use the command "
-"'import_savefile'.\n"
-"\n"
-msgstr[0] ""
+msgstr ""
 "Pomy¶lnie zaimportowano %d oryginalny zapis gry do ScummVM. Je¶li pó¼niej "
 "zechcesz zaimportowaæ oryginalne zapisy, bêdziesz musia³ otworzyæ konsolê "
 "debugowania ScummVM i u¿yæ komendy 'import_savefile'.\n"
-"\n"
-msgstr[1] ""
-"Pomy¶lnie zaimportowano %d oryginalne zapisy gry do ScummVM. Je¶li pó¼niej "
-"zechcesz zaimportowaæ oryginalne zapisy, bêdziesz musia³ otworzyæ konsolê "
-"debugowania ScummVM i u¿yæ komendy 'import_savefile'.\n"
-"\n"
-msgstr[2] ""
-"Pomy¶lnie zaimportowano %d oryginalnych zapisów gry do ScummVM. Je¶li "
-"pó¼niej zechcesz zaimportowaæ oryginalne zapisy, bêdziesz musia³ otworzyæ "
-"konsolê debugowania ScummVM i u¿yæ komendy 'import_savefile'.\n"
 "\n"
 
 #. I18N: Option for fast scene switching
@@ -2682,9 +2672,17 @@ msgstr ""
 "Nie mo¿na zapisaæ w slocie %i\n"
 "\n"
 
+#: engines/parallaction/saveload.cpp:197
+msgid "Load file"
+msgstr "Wczytaj plik"
+
 #: engines/parallaction/saveload.cpp:204
 msgid "Loading game..."
 msgstr "Wczytywanie stanu gry..."
+
+#: engines/parallaction/saveload.cpp:212
+msgid "Save file"
+msgstr "Zapisz plik"
 
 #: engines/parallaction/saveload.cpp:219
 msgid "Saving game..."
@@ -3531,6 +3529,62 @@ msgstr ""
 "Nie znaleziono pliku wykonywalnego \"Monkey Island\" dla Macintosha do "
 "odczytania instrumentów. Muzyka bêdzie wy³±czona."
 
+#: engines/sherlock/detection.cpp:71
+msgid "Use original savegame dialog"
+msgstr "U¿ywaj oryginalnego ekranu odczytu/zapisu"
+
+#: engines/sherlock/detection.cpp:72
+msgid ""
+"Files button in-game shows original savegame dialog rather than the ScummVM "
+"menu"
+msgstr ""
+"Przycisk zapisu w grze wy¶wietla oryginalny ekran odczytu/zapisu zamiast "
+"menu ScummVM"
+
+#: engines/sherlock/detection.cpp:81
+msgid "Pixellated scene transitions"
+msgstr "Pikselizowane przej¶cia miêdzy scenami"
+
+#: engines/sherlock/detection.cpp:82
+msgid "When changing scenes, a randomized pixel transition is done"
+msgstr "U¿ywaj losowej pikselizacji przy zmianie sceny"
+
+#: engines/sherlock/detection.cpp:91
+msgid "Don't show hotspots when moving mouse"
+msgstr "Nie wy¶wietlaj hotspotów przy poruszaniu mysz±"
+
+#: engines/sherlock/detection.cpp:92
+msgid ""
+"Only show hotspot names after you actually click on a hotspot or action "
+"button"
+msgstr ""
+"Wy¶wietlaj nazwy hotspotów dopiero po klikniêciu ich lub u¿yciu przycisku "
+"akcji"
+
+#: engines/sherlock/detection.cpp:101
+msgid "Show character portraits"
+msgstr "Wy¶wietl portrety postaci"
+
+#: engines/sherlock/detection.cpp:102
+msgid "Show portraits for the characters when conversing"
+msgstr "Wy¶wietl portrety postaci podczas rozmowy"
+
+#: engines/sherlock/detection.cpp:111
+msgid "Slide dialogs into view"
+msgstr "Przysuñ okna"
+
+#: engines/sherlock/detection.cpp:112
+msgid "Slide UI dialogs into view, rather than simply showing them immediately"
+msgstr "Przysuñ okna interfejsu zamiast wy¶wietliæ je od razu"
+
+#: engines/sherlock/detection.cpp:121
+msgid "Transparent windows"
+msgstr "Przezroczyste okna"
+
+#: engines/sherlock/detection.cpp:122
+msgid "Show windows with a partially transparent background"
+msgstr "Wy¶wietlaj okna z pó³przezroczystym t³em"
+
 #: engines/sky/compact.cpp:130
 msgid ""
 "Unable to find \"sky.cpt\" file!\n"
@@ -3740,9 +3794,6 @@ msgstr "U¿yj wideo MPEG z wersji DVD zamiast AVI ni¿szej rozdzielczo¶ci"
 
 #~ msgid "Enable Roland GS Mode"
 #~ msgstr "W³±cz tryb Roland GS"
-
-#~ msgid "Save game failed!"
-#~ msgstr "Nie uda³o siê zapisaæ stanu gry!"
 
 #~ msgctxt "lowres"
 #~ msgid "Add Game..."

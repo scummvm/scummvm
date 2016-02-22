@@ -146,6 +146,7 @@ struct SelectorCache {
 	Selector back;
 	Selector skip;
 	Selector dimmed;
+	Selector borderColor;
 
 	Selector fixPriority;
 	Selector mirrored;
@@ -153,6 +154,11 @@ struct SelectorCache {
 
 	Selector useInsetRect;
 	Selector inTop, inLeft, inBottom, inRight;
+	Selector textTop, textLeft, textBottom, textRight;
+
+	Selector magnifier;
+
+	Selector casts; // needed for sync'ing screen items/planes with scripts, when our save/restore code is patched in (see GfxFrameout::syncWithScripts)
 #endif
 };
 

@@ -31,6 +31,7 @@
 #include "sci/graphics/cache.h"
 #include "sci/graphics/compare.h"
 #include "sci/graphics/font.h"
+#include "sci/graphics/frameout.h"
 #include "sci/graphics/screen.h"
 #include "sci/graphics/text32.h"
 
@@ -38,20 +39,220 @@ namespace Sci {
 
 #define BITMAP_HEADER_SIZE 46
 
-#define SCI_TEXT32_ALIGNMENT_RIGHT -1
-#define SCI_TEXT32_ALIGNMENT_CENTER 1
-#define SCI_TEXT32_ALIGNMENT_LEFT	0
+GfxText32::GfxText32(SegManager *segMan, GfxCache *fonts, GfxScreen *screen) :
+	_segMan(segMan),
+	_cache(fonts),
+	_screen(screen),
+	_scaledWidth(g_sci->_gfxFrameout->getCurrentBuffer().scriptWidth),
+	_scaledHeight(g_sci->_gfxFrameout->getCurrentBuffer().scriptHeight),
+	_bitmap(NULL_REG) {}
 
-GfxText32::GfxText32(SegManager *segMan, GfxCache *fonts, GfxScreen *screen)
-	: _segMan(segMan), _cache(fonts), _screen(screen) {
+void GfxText32::buildBitmapHeader(byte *bitmap, const int16 width, const int16 height, const uint8 skipColor, const int16 displaceX, const int16 displaceY, const int16 scaledWidth, const int16 scaledHeight, const uint32 hunkPaletteOffset, const bool useRemap) const {
+
+	WRITE_SCI11ENDIAN_UINT16(bitmap + 0, width);
+	WRITE_SCI11ENDIAN_UINT16(bitmap + 2, height);
+	WRITE_SCI11ENDIAN_UINT16(bitmap + 4, (uint16)displaceX);
+	WRITE_SCI11ENDIAN_UINT16(bitmap + 6, (uint16)displaceY);
+	bitmap[8] = skipColor;
+	bitmap[9] = 0;
+	WRITE_SCI11ENDIAN_UINT16(bitmap + 10, 0);
+
+	if (useRemap) {
+		bitmap[10] |= 2;
+	}
+
+	WRITE_SCI11ENDIAN_UINT32(bitmap + 12, width * height);
+	WRITE_SCI11ENDIAN_UINT32(bitmap + 16, 0);
+
+	if (hunkPaletteOffset) {
+		WRITE_SCI11ENDIAN_UINT32(bitmap + 20, hunkPaletteOffset + BITMAP_HEADER_SIZE);
+	} else {
+		WRITE_SCI11ENDIAN_UINT32(bitmap + 20, 0);
+	}
+
+	WRITE_SCI11ENDIAN_UINT32(bitmap + 24, BITMAP_HEADER_SIZE);
+	WRITE_SCI11ENDIAN_UINT32(bitmap + 28, BITMAP_HEADER_SIZE);
+	WRITE_SCI11ENDIAN_UINT32(bitmap + 32, 0);
+	WRITE_SCI11ENDIAN_UINT16(bitmap + 36, scaledWidth);
+	WRITE_SCI11ENDIAN_UINT16(bitmap + 38, scaledHeight);
 }
 
-GfxText32::~GfxText32() {
+int16 GfxText32::_defaultFontId = 0;
+
+reg_t GfxText32::createFontBitmap(int16 width, int16 height, const Common::Rect &rect, const Common::String &text, const uint8 foreColor, const uint8 backColor, const uint8 skipColor, const GuiResourceId fontId, const TextAlign alignment, const int16 borderColor, const bool dimmed, const bool doScaling, reg_t *outBitmapObject) {
+
+	_field_22 = 0;
+	_borderColor = borderColor;
+	_text = text;
+	_textRect = rect;
+	_width = width;
+	_height = height;
+	_foreColor = foreColor;
+	_backColor = backColor;
+	_skipColor = skipColor;
+	_alignment = alignment;
+	_dimmed = dimmed;
+
+	if (fontId != _fontId) {
+		_fontId = fontId == -1 ? _defaultFontId : fontId;
+		_font = _cache->getFont(_fontId);
+	}
+
+	if (doScaling) {
+		int16 scriptWidth = g_sci->_gfxFrameout->getCurrentBuffer().scriptWidth;
+		int16 scriptHeight = g_sci->_gfxFrameout->getCurrentBuffer().scriptHeight;
+
+		Ratio scaleX(_scaledWidth, scriptWidth);
+		Ratio scaleY(_scaledHeight, scriptHeight);
+
+		_width = (_width * scaleX).toInt();
+		_height = (_height * scaleY).toInt();
+		mul(_textRect, scaleX, scaleY);
+	}
+
+	// _textRect represents where text is drawn inside the
+	// bitmap; clipRect is the entire bitmap
+	Common::Rect bitmapRect(_width, _height);
+
+	if (_textRect.intersects(bitmapRect)) {
+		_textRect.clip(bitmapRect);
+	} else {
+		_textRect = Common::Rect();
+	}
+
+	_bitmap = _segMan->allocateHunkEntry("FontBitmap()", _width * _height + BITMAP_HEADER_SIZE);
+
+	byte *bitmap = _segMan->getHunkPointer(_bitmap);
+	buildBitmapHeader(bitmap, _width, _height, _skipColor, 0, 0, _scaledWidth, _scaledHeight, 0, false);
+
+	erase(bitmapRect, false);
+
+	if (_borderColor > -1) {
+		drawFrame(bitmapRect, 1, _borderColor, false);
+	}
+
+	drawTextBox();
+
+	debug("Drawing a bitmap %dx%d, scaled %dx%d, border %d, font %d", width, height, _width, _height, _borderColor, _fontId);
+
+	*outBitmapObject = _bitmap;
+	return _bitmap;
+}
+
+reg_t GfxText32::createTitledFontBitmap(CelInfo32 &celInfo, Common::Rect &rect, Common::String &text, int16 foreColor, int16 backColor, int font, int16 skipColor, int16 borderColor, bool dimmed, void *unknown1) {
+	warning("TODO: createTitledFontBitmap");
+	return NULL_REG;
+}
+
+void GfxText32::drawFrame(const Common::Rect &rect, const int size, const uint8 color, const bool doScaling) {
+	Common::Rect targetRect = doScaling ? scaleRect(rect) : rect;
+
+	byte *bitmap = _segMan->getHunkPointer(_bitmap);
+	byte *pixels = bitmap + READ_SCI11ENDIAN_UINT32(bitmap + 28);
+
+	// NOTE: Not fully disassembled, but this should be right
+	// TODO: Implement variable frame size
+	assert(size == 1);
+	Buffer buffer(_width, _height, pixels);
+	buffer.frameRect(targetRect, color);
+}
+
+// TODO: This is not disassembled
+void GfxText32::drawTextBox() {
+	int16 charCount = 0;
+	uint16 curX = 0, curY = 0;
+	const char *txt = _text.c_str();
+	int16 textWidth, textHeight, totalHeight = 0, offsetX = 0, offsetY = 0;
+	uint16 start = 0;
+
+	// Calculate total text height
+	while (*txt) {
+		charCount = GetLongest(txt, _textRect.width(), _font);
+		if (charCount == 0)
+			break;
+
+		Width(txt, 0, (int16)strlen(txt), _fontId, textWidth, textHeight, true);
+
+		totalHeight += textHeight;
+		txt += charCount;
+		while (*txt == ' ') {
+			txt++; // skip over breaking spaces
+		}
+	}
+
+	txt = _text.c_str();
+
+	byte *pixels = _segMan->getHunkPointer(_bitmap);
+	pixels = pixels + READ_SCI11ENDIAN_UINT32(pixels + 28) + _width * _textRect.top + _textRect.left;
+
+	// Draw text in buffer
+	while (*txt) {
+		charCount = GetLongest(txt, _textRect.width(), _font);
+		if (charCount == 0)
+			break;
+		Width(txt, start, charCount, _fontId, textWidth, textHeight, true);
+
+		switch (_alignment) {
+			case kTextAlignRight:
+				offsetX = _textRect.width() - textWidth;
+				break;
+			case kTextAlignCenter:
+				// Center text both horizontally and vertically
+				offsetX = (_textRect.width() - textWidth) / 2;
+				offsetY = (_textRect.height() - totalHeight) / 2;
+				break;
+			case kTextAlignLeft:
+				offsetX = 0;
+				break;
+
+			default:
+				warning("Invalid alignment %d used in TextBox()", _alignment);
+		}
+
+		byte curChar;
+
+		for (int i = 0; i < charCount; i++) {
+			curChar = txt[i];
+
+			switch (curChar) {
+				case 0x0A:
+				case 0x0D:
+				case 0:
+					break;
+				case 0x7C:
+					warning("Code processing isn't implemented in SCI32");
+					break;
+				default:
+					_font->drawToBuffer(curChar, curY + offsetY, curX + offsetX, _foreColor, _dimmed, pixels, _width, _height);
+					curX += _font->getCharWidth(curChar);
+					break;
+			}
+		}
+
+		curX = 0;
+		curY += _font->getHeight();
+		txt += charCount;
+		while (*txt == ' ') {
+			txt++; // skip over breaking spaces
+		}
+	}
+}
+
+void GfxText32::erase(const Common::Rect &rect, const bool doScaling) {
+	Common::Rect targetRect = doScaling ? rect : scaleRect(rect);
+
+	byte *bitmap = _segMan->getHunkPointer(_bitmap);
+	byte *pixels = bitmap + READ_SCI11ENDIAN_UINT32(bitmap + 28);
+
+	// NOTE: There is an extra optimisation within the SCI code to
+	// do a single memset if the scaledRect is the same size as
+	// the bitmap, not implemented here.
+	Buffer buffer(_width, _height, pixels);
+	buffer.fillRect(targetRect, _backColor);
 }
 
 reg_t GfxText32::createScrollTextBitmap(Common::String text, reg_t textObject, uint16 maxWidth, uint16 maxHeight, reg_t prevHunk) {
 	return createTextBitmapInternal(text, textObject, maxWidth, maxHeight, prevHunk);
-
 }
 reg_t GfxText32::createTextBitmap(reg_t textObject, uint16 maxWidth, uint16 maxHeight, reg_t prevHunk) {
 	reg_t stringObject = readSelector(_segMan, textObject, SELECTOR(text));
@@ -116,8 +317,16 @@ reg_t GfxText32::createTextBitmapInternal(Common::String &text, reg_t textObject
 	memset(bitmap, backColor, width * height);
 
 	// Save totalWidth, totalHeight
-	WRITE_LE_UINT16(memoryPtr, width);
-	WRITE_LE_UINT16(memoryPtr + 2, height);
+	WRITE_SCI11ENDIAN_UINT16(memoryPtr, width);
+	WRITE_SCI11ENDIAN_UINT16(memoryPtr + 2, height);
+	WRITE_SCI11ENDIAN_UINT16(memoryPtr + 4, 0);
+	WRITE_SCI11ENDIAN_UINT16(memoryPtr + 6, 0);
+	memoryPtr[8] = 0;
+	WRITE_SCI11ENDIAN_UINT16(memoryPtr + 10, 0);
+	WRITE_SCI11ENDIAN_UINT16(memoryPtr + 20, BITMAP_HEADER_SIZE);
+	WRITE_SCI11ENDIAN_UINT32(memoryPtr + 28, 46);
+	WRITE_SCI11ENDIAN_UINT16(memoryPtr + 36, width);
+	WRITE_SCI11ENDIAN_UINT16(memoryPtr + 38, height);
 
 	int16 charCount = 0;
 	uint16 curX = 0, curY = 0;
@@ -149,15 +358,15 @@ reg_t GfxText32::createTextBitmapInternal(Common::String &text, reg_t textObject
 		Width(txt, start, charCount, fontId, textWidth, textHeight, true);
 
 		switch (alignment) {
-		case SCI_TEXT32_ALIGNMENT_RIGHT:
+		case kTextAlignRight:
 			offsetX = width - textWidth;
 			break;
-		case SCI_TEXT32_ALIGNMENT_CENTER:
+		case kTextAlignCenter:
 			// Center text both horizontally and vertically
 			offsetX = (width - textWidth) / 2;
 			offsetY = (height - totalHeight) / 2;
 			break;
-		case SCI_TEXT32_ALIGNMENT_LEFT:
+		case kTextAlignLeft:
 			offsetX = 0;
 			break;
 
@@ -347,9 +556,10 @@ int16 GfxText32::Size(Common::Rect &rect, const char *text, GuiResourceId fontId
 	int16 maxTextWidth = 0, textWidth;
 	int16 totalHeight = 0, textHeight;
 
-	// Adjust maxWidth if we're using an upscaled font
-	if (_screen->fontIsUpscaled())
-		maxWidth = maxWidth * _screen->getDisplayWidth() / _screen->getWidth();
+	int16 scriptWidth = g_sci->_gfxFrameout->getCurrentBuffer().scriptWidth;
+	int16 scriptHeight = g_sci->_gfxFrameout->getCurrentBuffer().scriptHeight;
+
+	maxWidth = maxWidth * _scaledWidth / scriptWidth;
 
 	rect.top = rect.left = 0;
 	GfxFont *font = _cache->getFont(fontId);
@@ -378,12 +588,8 @@ int16 GfxText32::Size(Common::Rect &rect, const char *text, GuiResourceId fontId
 		rect.right = maxWidth ? maxWidth : MIN(rect.right, maxTextWidth);
 	}
 
-	// Adjust the width/height if we're using an upscaled font
-	// for the scripts
-	if (_screen->fontIsUpscaled()) {
-		rect.right = rect.right * _screen->getWidth() / _screen->getDisplayWidth();
-		rect.bottom = rect.bottom * _screen->getHeight() / _screen->getDisplayHeight();
-	}
+	rect.right = rect.right * scriptWidth / _scaledWidth;
+	rect.bottom = rect.bottom * scriptHeight / _scaledHeight;
 
 	return rect.right;
 }

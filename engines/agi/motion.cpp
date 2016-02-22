@@ -62,6 +62,60 @@ void AgiEngine::changePos(ScreenObjEntry *screenObj) {
 	}
 }
 
+// WORKAROUND:
+// A motion was just activated, check if "end.of.loop"/"reverse.loop" is currently active for the same screen object
+// If this is the case, it would result in some random flag getting overwritten in original AGI after the loop was
+// completed, because in original AGI loop_flag + wander_count/follow_stepSize/move_X shared the same memory location.
+// This is basically an implementation error in the original interpreter.
+// Happens in at least:
+// - BC: right at the end when the witches disappear at least on Apple IIgs (room 12, screen object 13, view 84)
+// - KQ1: when grabbing the eagle (room 22).
+// - KQ2: happened somewhere in the game, LordHoto couldn't remember exactly where
+void AgiEngine::motionActivated(ScreenObjEntry *screenObj) {
+	if (screenObj->flags & fCycling) {
+		// Cycling active too
+		switch (screenObj->cycle) {
+		case kCycleEndOfLoop: // "end.of.loop"
+		case kCycleRevLoop: // "reverse.loop"
+			// Disable it
+			screenObj->flags &= ~fCycling;
+			screenObj->cycle = kCycleNormal;
+
+			warning("Motion activated for screen object %d, but cycler also active", screenObj->objectNr);
+			warning("This would have resulted in flag corruption in original AGI. Cycler disabled.");
+			break;
+		default:
+			break;
+		}
+	}
+}
+
+// WORKAROUND:
+// See comment for motionActivated()
+// This way no flag would have been overwritten, but certain other variables of the motions.
+void AgiEngine::cyclerActivated(ScreenObjEntry *screenObj) {
+	switch (screenObj->motionType) {
+	case kMotionWander:
+		// this would have resulted in wander_count to get corrupted
+		// We don't stop it.
+		break;
+	case kMotionFollowEgo:
+		// this would have resulted in follow_stepSize to get corrupted
+		// do not stop motion atm - screenObj->direction = 0;
+		// do not stop motion atm - screenObj->motionType = kMotionNormal;
+		break;
+	case kMotionMoveObj:
+		// this would have resulted in move_x to get corrupted
+		// do not stop motion atm - motionMoveObjStop(screenObj);
+		break;
+	default:
+		return;
+		break;
+	}
+	warning("Cycler activated for screen object %d, but motion also active", screenObj->objectNr);
+	warning("This would have resulted in corruption in original AGI. Motion disabled.");
+}
+
 void AgiEngine::motionWander(ScreenObjEntry *screenObj) {
 	uint8 originalWanderCount = screenObj->wander_count;
 

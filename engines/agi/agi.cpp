@@ -401,8 +401,11 @@ AgiEngine::AgiEngine(OSystem *syst, const AGIGameDescription *gameDesc) : AgiBas
 
 	setupOpcodes();
 	_game._curLogic = NULL;
+	_veryFirstInitialCycle = true;
 	_instructionCounter = 0;
 	resetGetVarSecondsHeuristic();
+
+	_setVolumeBrokenFangame = false; // for further study see AgiEngine::setVolumeViaScripts()
 
 	_lastSaveTime = 0;
 
@@ -573,6 +576,9 @@ void AgiEngine::syncSoundSettings() {
 //
 // Scenes that need this:
 //
+// Gold Rush:
+//  - During Stagecoach path, after getting solving the steep hill "Congratulations!!!" (NewRoom)
+//  - when following your mule "Yet right on his tail!!!" (NewRoom/NewPicture - but room 123 stays the same)
 // Manhunter 1:
 //  - intro text screen (DrawPic)
 //  - MAD "zooming in..." during intro and other scenes, for example room 124 (NewRoom)
@@ -583,6 +589,7 @@ void AgiEngine::syncSoundSettings() {
 // Space Quest 2
 //  - right at the start of the game (NewRoom)
 //  - after exiting the very first room, a message pops up, that isn't readable without it (NewRoom)
+//  - Climbing into shuttle on planet Labion. "You open the hatch and head on in." (NewRoom)
 
 
 // Games, that must not be triggered:
@@ -631,7 +638,9 @@ void AgiEngine::artificialDelay_CycleDone() {
 
 //         script, description,                                       signature                   patch
 static const AgiArtificialDelayEntry artificialDelayTable[] = {
+	{ GID_GOLDRUSH,   Common::kPlatformApple2GS, ARTIFICIALDELAYTYPE_NEWROOM,     14,  21, 2200 }, // Stagecoach path: right after getting on it in Brooklyn
 	{ GID_PQ1,        Common::kPlatformApple2GS, ARTIFICIALDELAYTYPE_NEWPICTURE,   1,   2, 2200 }, // Intro: music track is supposed to finish before credits screen. Developers must have assumed that room loading would take that long.
+	{ GID_MH1,        Common::kPlatformApple2GS, ARTIFICIALDELAYTYPE_NEWPICTURE, 155, 183, 2200 }, // Happens, when hitting fingers at bar
 	{ GID_AGIDEMO,    Common::kPlatformUnknown,  ARTIFICIALDELAYTYPE_END,         -1,  -1,    0 }
 };
 
@@ -666,8 +675,6 @@ void AgiEngine::artificialDelayTrigger_NewRoom(int16 newRoomNr) {
 		millisecondsDelay = artificialDelay_SearchTable(ARTIFICIALDELAYTYPE_NEWROOM, _artificialDelayCurrentRoom, newRoomNr);
 
 		if (_game.nonBlockingTextShown) {
-			_game.nonBlockingTextShown = false;
-
 			if (newRoomNr != _artificialDelayCurrentRoom) {
 				if (millisecondsDelay < 2000) {
 					// wait a bit, we detected non-blocking text
@@ -678,6 +685,7 @@ void AgiEngine::artificialDelayTrigger_NewRoom(int16 newRoomNr) {
 
 		if (millisecondsDelay) {
 			wait(millisecondsDelay, true); // set busy mouse cursor
+			_game.nonBlockingTextShown = false;
 		}
 	}
 
@@ -693,15 +701,17 @@ void AgiEngine::artificialDelayTrigger_DrawPicture(int16 newPictureNr) {
 		millisecondsDelay = artificialDelay_SearchTable(ARTIFICIALDELAYTYPE_NEWPICTURE, _artificialDelayCurrentPicture, newPictureNr);
 
 		if (_game.nonBlockingTextShown) {
-			_game.nonBlockingTextShown = false;
-			if (millisecondsDelay < 2000) {
-				// wait a bit, we detected non-blocking text
-				millisecondsDelay = 2000; // 2 seconds, set busy
+			if (newPictureNr != _artificialDelayCurrentPicture) {
+				if (millisecondsDelay < 2000) {
+					// wait a bit, we detected non-blocking text
+					millisecondsDelay = 2000; // 2 seconds, set busy
+				}
 			}
 		}
 
 		if (millisecondsDelay) {
 			wait(millisecondsDelay, true); // set busy mouse cursor
+			_game.nonBlockingTextShown = false;
 		}
 	}
 	_artificialDelayCurrentPicture = newPictureNr;

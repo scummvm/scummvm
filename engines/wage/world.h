@@ -52,6 +52,8 @@ namespace Wage {
 
 #define STORAGESCENE "STORAGE@"
 
+class Sound;
+
 class World {
 public:
 	World(WageEngine *engine);
@@ -125,12 +127,7 @@ public:
 		_orderedChrs.push_back(chr);
 	}
 
-	void addSound(Sound *sound) {
-		Common::String s = sound->_name;
-		s.toLowercase();
-		_sounds[s] = sound;
-		_orderedSounds.push_back(sound);
-	}
+	void addSound(Sound *sound);
 
 private:
 	Common::StringArray *readMenu(Common::SeekableReadStream *res);

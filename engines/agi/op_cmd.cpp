@@ -37,7 +37,6 @@
 
 namespace Agi {
 
-#define getGameID() state->_vm->getGameID()
 #define getFeatures() state->_vm->getFeatures()
 #define getVersion() state->_vm->getVersion()
 #define getLanguage() state->_vm->getLanguage()
@@ -82,7 +81,7 @@ void cmdAssignN(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 	// variable to the correct value here
 	// Fixes bug #1942476 - "AGI: Fan(Get Outta SQ) - Score
 	// is lost on restart"
-	if (getGameID() == GID_GETOUTTASQ && varNr == 7)
+	if (vm->getGameID() == GID_GETOUTTASQ && varNr == 7)
 		vm->setVar(varNr, 8);
 }
 
@@ -980,6 +979,13 @@ void cmdHideMouse(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 		return;
 	}
 
+	if ((vm->getGameID() == GID_MH1) && (vm->getPlatform() == Common::kPlatformApple2GS)) {
+		// Called right after beating arcade sequence on day 4 in the hospital Parameter is "1".
+		// Right before cutscene. show.mouse isn't called. Probably different function.
+		warning("hide.mouse called, disabled for MH1 Apple IIgs");
+		return;
+	}
+
 	// WORKAROUND: Turns off current movement that's being caused with the mouse.
 	// This fixes problems with too many popup boxes appearing in the Amiga
 	// Gold Rush's copy protection failure scene (i.e. the hanging scene, logic.192).
@@ -1158,7 +1164,7 @@ void cmdDrawPic(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 	// above the ground), flag 103 is reset, thereby fixing this issue. Note
 	// that this is a script bug and occurs in the original interpreter as well.
 	// Fixes bug #3056: AGI: SQ1 (2.2 DOS ENG) bizzare exploding roger
-	if (getGameID() == GID_SQ1 && resourceNr == 20)
+	if (vm->getGameID() == GID_SQ1 && resourceNr == 20)
 		vm->setFlag(103, false);
 
 	// Loading trigger
@@ -1489,6 +1495,8 @@ void cmdReverseLoop(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 	screenObj->flags |= (fDontupdate | fUpdate | fCycling);
 	screenObj->loop_flag = loopFlag;
 	state->_vm->setFlag(screenObj->loop_flag, false);
+
+	vm->cyclerActivated(screenObj);
 }
 
 void cmdReverseLoopV1(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
@@ -1514,6 +1522,8 @@ void cmdEndOfLoop(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 	screenObj->flags |= (fDontupdate | fUpdate | fCycling);
 	screenObj->loop_flag = loopFlag;
 	vm->setFlag(screenObj->loop_flag, false);
+
+	vm->cyclerActivated(screenObj);
 }
 
 void cmdEndOfLoopV1(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
@@ -1626,6 +1636,8 @@ void cmdFollowEgo(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 		vm->setFlag(screenObj->follow_flag, false);
 		screenObj->flags |= fUpdate;
 	}
+
+	vm->motionActivated(screenObj);
 }
 
 void cmdMoveObj(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
@@ -1653,6 +1665,8 @@ void cmdMoveObj(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 		vm->setFlag(screenObj->move_flag, false);
 		screenObj->flags |= fUpdate;
 	}
+
+	vm->motionActivated(screenObj);
 
 	if (objectNr == 0)
 		state->playerControl = false;
@@ -1682,6 +1696,8 @@ void cmdMoveObjF(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 	vm->setFlag(screenObj->move_flag, false);
 	screenObj->flags |= fUpdate;
 
+	vm->motionActivated(screenObj);
+
 	if (objectNr == 0)
 		state->playerControl = false;
 
@@ -1703,6 +1719,8 @@ void cmdWander(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 	} else {
 		screenObj->flags |= fUpdate;
 	}
+
+	vm->motionActivated(screenObj);
 }
 
 void cmdSetGameID(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
@@ -1892,7 +1910,7 @@ void cmdDistance(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 	// wouldn't chase Rosella around anymore. If it had worked correctly the zombie
 	// wouldn't have come up at all or it would have come up and gone back down
 	// immediately. The latter approach is the one implemented here.
-	if (getGameID() == GID_KQ4 && (vm->getVar(VM_VAR_CURRENT_ROOM) == 16 || vm->getVar(VM_VAR_CURRENT_ROOM) == 18) && destVarNr >= 221 && destVarNr <= 223) {
+	if (vm->getGameID() == GID_KQ4 && (vm->getVar(VM_VAR_CURRENT_ROOM) == 16 || vm->getVar(VM_VAR_CURRENT_ROOM) == 18) && destVarNr >= 221 && destVarNr <= 223) {
 		// Rooms 16 and 18 are graveyards where three zombies come up at night. They use logics 16 and 18.
 		// Variables 221-223 are used to save the distance between each zombie and Rosella.
 		// Variables 155, 156 and 162 are used to save the state of each zombie in room 16.

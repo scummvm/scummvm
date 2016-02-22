@@ -228,7 +228,7 @@ public:
 
 class Obj : public Designed {
 public:
-	Obj() : _currentOwner(NULL), _currentScene(NULL) {}
+	Obj();
 	Obj(Common::String name, Common::SeekableReadStream *data);
 	~Obj();
 
@@ -329,15 +329,6 @@ public:
 	void paint(Graphics::Surface *screen, int x, int y);
 
 	const char *getFontName();
-};
-
-class Sound {
-public:
-	Sound(Common::String name, Common::SeekableReadStream *data) : _name(name), _data(data) {}
-	~Sound() { }
-
-	Common::String _name;
-	Common::SeekableReadStream *_data;
 };
 
 } // End of namespace Wage

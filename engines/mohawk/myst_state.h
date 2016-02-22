@@ -27,6 +27,8 @@
 #include "common/file.h"
 #include "common/str.h"
 
+#include "engines/savestate.h"
+
 namespace Common {
 class Serializer;
 }
@@ -35,15 +37,33 @@ namespace Mohawk {
 
 class MohawkEngine_Myst;
 
+struct MystSaveMetadata {
+	uint8 saveDay;
+	uint8 saveMonth;
+	uint16 saveYear;
+
+	uint8 saveHour;
+	uint8 saveMinute;
+
+	uint32 totalPlayTime;
+
+	Common::String saveDescription;
+
+	MystSaveMetadata();
+	bool sync(Common::Serializer &s);
+};
+
 class MystGameState {
 public:
 	MystGameState(MohawkEngine_Myst*, Common::SaveFileManager*);
 	~MystGameState();
 
-	Common::StringArray generateSaveGameList();
-	bool load(const Common::String &);
-	bool save(const Common::String &);
-	void deleteSave(const Common::String &);
+	static Common::StringArray generateSaveGameList();
+	static SaveStateDescriptor querySaveMetaInfos(const Common::String filename);
+
+	bool load(const Common::String &filename);
+	bool save(const Common::String &filename);
+	static void deleteSave(const Common::String &saveName);
 
 	void addZipDest(uint16 stack, uint16 view);
 	bool isReachableZipDest(uint16 stack, uint16 view);
@@ -268,8 +288,17 @@ public:
 		uint32 generatorDepletionTime;
 	} _stoneship;
 
+	MystSaveMetadata _metadata;
+
 private:
 	void syncGameState(Common::Serializer &s, bool isME);
+	static Common::InSaveFile *openMetadataFile(const Common::String &filename);
+	bool loadState(const Common::String &filename);
+	void loadMetadata(const Common::String &filename);
+	bool saveState(const Common::String &desc);
+	void updateMetadateForSaving(const Common::String &desc);
+	bool saveMetadata(const Common::String &desc);
+	static Common::String removeExtension(const Common::String &filename);
 
 	// The values in these regions are lists of VIEW resources
 	// which correspond to visited zip destinations

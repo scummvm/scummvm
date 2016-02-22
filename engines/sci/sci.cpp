@@ -576,17 +576,29 @@ void SciEngine::patchGameSaveRestore() {
 		}
 	}
 
+	const Object *patchObjectSave = nullptr;
+
+	if (getSciVersion() < SCI_VERSION_2) {
+		// Patch gameobject ::save for now for SCI0 - SCI1.1
+		// TODO: It seems this was never adjusted to superclass, but adjusting it now may cause
+		// issues with some game. Needs to get checked and then possibly changed.
+		patchObjectSave = gameObject;
+	} else {
+		// Patch superclass ::save for SCI32
+		patchObjectSave = gameSuperObject;
+	}
+
 	// Search for gameobject ::save, if there is one patch that one too
-	uint16 gameObjectMethodCount = gameObject->getMethodCount();
-	for (uint16 methodNr = 0; methodNr < gameObjectMethodCount; methodNr++) {
-		uint16 selectorId = gameObject->getFuncSelector(methodNr);
+	uint16 patchObjectMethodCount = patchObjectSave->getMethodCount();
+	for (uint16 methodNr = 0; methodNr < patchObjectMethodCount; methodNr++) {
+		uint16 selectorId = patchObjectSave->getFuncSelector(methodNr);
 		Common::String methodName = _kernel->getSelectorName(selectorId);
 		if (methodName == "save") {
 			if (_gameId != GID_FAIRYTALES) {	// Fairy Tales saves automatically without a dialog
 				if (kernelIdSave != kernelIdRestore)
-					patchGameSaveRestoreCode(segMan, gameObject->getFunction(methodNr), kernelIdSave);
+					patchGameSaveRestoreCode(segMan, patchObjectSave->getFunction(methodNr), kernelIdSave);
 				else
-					patchGameSaveRestoreCodeSci21(segMan, gameObject->getFunction(methodNr), kernelIdSave, false);
+					patchGameSaveRestoreCodeSci21(segMan, patchObjectSave->getFunction(methodNr), kernelIdSave, false);
 			}
 			break;
 		}
@@ -690,10 +702,11 @@ void SciEngine::initGraphics() {
 		_gfxCompare = new GfxCompare(_gamestate->_segMan, _gfxCache, _gfxScreen, _gfxCoordAdjuster);
 		_gfxPaint32 = new GfxPaint32(_resMan, _gfxCoordAdjuster, _gfxScreen, _gfxPalette32);
 		_gfxPaint = _gfxPaint32;
-		_gfxText32 = new GfxText32(_gamestate->_segMan, _gfxCache, _gfxScreen);
-		_gfxControls32 = new GfxControls32(_gamestate->_segMan, _gfxCache, _gfxText32);
 		_robotDecoder = new RobotDecoder(getPlatform() == Common::kPlatformMacintosh);
 		_gfxFrameout = new GfxFrameout(_gamestate->_segMan, _resMan, _gfxCoordAdjuster, _gfxCache, _gfxScreen, _gfxPalette32, _gfxPaint32);
+		_gfxText32 = new GfxText32(_gamestate->_segMan, _gfxCache, _gfxScreen);
+		_gfxControls32 = new GfxControls32(_gamestate->_segMan, _gfxCache, _gfxText32);
+		_gfxFrameout->run();
 	} else {
 #endif
 		// SCI0-SCI1.1 graphic objects creation

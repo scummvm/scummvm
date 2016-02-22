@@ -27,6 +27,7 @@
 #include "common/config-manager.h"
 #include "common/savefile.h"
 #include "common/memstream.h"
+#include "common/translation.h"
 
 #include "engines/advancedDetector.h"
 #include "engines/util.h"
@@ -3334,7 +3335,7 @@ bool ToonEngine::saveGame(int32 slot, const Common::String &saveGameDesc) {
 	Common::String savegameDescription;
 
 	if (slot == -1) {
-		GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser("Save game:", "Save", true);
+		GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(_("Save game:"), _("Save"), true);
 		savegameId = dialog->runModalWithCurrentTarget();
 		savegameDescription = dialog->getResultString();
 		delete dialog;
@@ -3426,7 +3427,7 @@ bool ToonEngine::loadGame(int32 slot) {
 	int16 savegameId;
 
 	if (slot == -1) {
-		GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser("Restore game:", "Restore", false);
+		GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(_("Restore game:"), _("Restore"), false);
 		savegameId = dialog->runModalWithCurrentTarget();
 		delete dialog;
 	} else {

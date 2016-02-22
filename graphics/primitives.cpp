@@ -258,7 +258,7 @@ void drawRoundRect(Common::Rect &rect, int arc, int color, bool filled, void (*p
 		int dy = rect.height() - arc * 2;
 		int r = arc;
 		int stop = 0;
-		int lastx, lasty;
+		int lastx = 0, lasty = 0;
 		if (dy < 0)
 			stop = -dy / 2;
 
@@ -303,7 +303,7 @@ void drawRoundRect(Common::Rect &rect, int arc, int color, bool filled, void (*p
 		int dx = rect.width() - arc * 2;
 		int r = arc;
 		int stop = 0;
-		int lastx, lasty;
+		int lastx = 0, lasty = 0;
 		if (dx < 0)
 			stop = -dx / 2;
 

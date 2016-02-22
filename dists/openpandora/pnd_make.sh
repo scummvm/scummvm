@@ -41,9 +41,16 @@ cecho ()	# Color-echo. Argument $1 = message, Argument $2 = color
 {
 	local default_msg="No message passed."   # Doesn't really need to be a local variable.
 	message=${1:-$default_msg}               # Defaults to default message.
-	color=${2:-$black}                       # Defaults to black, if not specified.
-	echo -e "$color$message"
-	tput sgr0                                # Reset to normal.
+
+	# We only output colors when a TERM environment variable is set. This
+	# fixes execution of the script on buildbot, which does not have this set.
+	if [ -z "$TERM" ]; then
+		echo "$message"
+	else
+		color=${2:-$black}                       # Defaults to black, if not specified.
+		echo -e "$color$message"
+		tput sgr0                                # Reset to normal.
+	fi
 	return
 } 
 

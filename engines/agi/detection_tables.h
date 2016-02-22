@@ -573,7 +573,14 @@ static const AGIGameDescription gameDescriptions[] = {
 	GAME("sq2", "2.0D 1988-03-14 3.5\"", "85390bde8958c39830e1adbe9fff87f3", 0x2936, GID_SQ2),
 
 	// Space Quest 2 (IIgs) 2.0A 7/25/88 (CE)
-	GAME_P("sq2", "2.0A 1988-07-25 (CE)", "5dfdac98dd3c01fcfb166529f917e911", 0x2936, GID_SQ2, Common::kPlatformApple2GS),
+	// We have to see this as AGI < 2.936, because otherwise a set.pri.base call would somewhat break
+	// priority in SQ2, when entering Vohaul's vault.
+	// The Apple IIgs AGI included with SQ2 is the same as the one included with KQ3.
+	// We currently consider KQ3 IIgs to be a 2.917-equivalent.
+	// The SQ2 IIgs AGI definitely has 177 kernel functions, but it seems that Sierra shuffled the last few around / added a few extras at the end.
+	// For KQ3 set.pri.base is called with parameters that seem to be sound resources, which means
+	// set.pri.base was possibly discard.sound. For KQ4 onwards it seems this was cleaned up.
+	GAME_P("sq2", "2.0A 1988-07-25 (CE)", "5dfdac98dd3c01fcfb166529f917e911", 0x2917, GID_SQ2, Common::kPlatformApple2GS),
 
 	{
 		// Space Quest 2 (Amiga) 2.0F

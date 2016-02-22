@@ -75,6 +75,15 @@ Common::String Script::Operand::toString() {
 }
 
 Script::Script(Common::SeekableReadStream *data) : _data(data) {
+	_engine = NULL;
+	_world = NULL;
+
+	_loopCount = 0;
+	_inputText = NULL;
+	_inputClick = NULL;
+
+	_handled = false;
+
 	convertToText();
 }
 
@@ -166,6 +175,7 @@ bool Script::execute(World *world, int loopCount, Common::String *inputText, Des
 				Operand *op = readStringOperand(); // allows empty menu
 				// TODO check op type is string.
 				_engine->setMenu(op->toString());
+				delete op;
 				byte d = _data->readByte();
 				if (d != 0xFD)
 					warning("Operand 0x8B (PRINT) End Byte != 0xFD");

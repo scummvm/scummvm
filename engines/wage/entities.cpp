@@ -200,6 +200,18 @@ const char *Scene::getFontName() {
 	return "Unknown";
 }
 
+Obj::Obj() : _currentOwner(NULL), _currentScene(NULL) {
+	_index = 0;
+	_namePlural = false;
+	_value = 0;
+	_attackType = 0;
+	_numberOfUses = 0;
+	_returnToRandomScene = false;
+	_type = 0;
+	_accuracy = 0;
+	_damage = 0;
+}
+
 Obj::Obj(Common::String name, Common::SeekableReadStream *data) {
 	_name = name;
 	_classType = OBJ;

@@ -71,9 +71,19 @@ WageEngine::WageEngine(OSystem *syst, const ADGameDescription *desc) : Engine(sy
 	_running = NULL;
 	_lastScene = NULL;
 
+	_loopCount = 0;
+	_turn = 0;
+
 	_commandWasQuick = false;
 
 	_shouldQuit = false;
+
+	_gui = NULL;
+	_world = NULL;
+	_console = NULL;
+	_offer = NULL;
+
+	_resManager = NULL;
 
 	debug("WageEngine::WageEngine()");
 }
@@ -99,7 +109,8 @@ Common::Error WageEngine::run() {
 
 	// Your main event loop should be (invoked from) here.
 	_resManager = new Common::MacResManager();
-	_resManager->open(getGameFile());
+	if (!_resManager->open(getGameFile()))
+		error("Could not open %s as a resource fork", getGameFile());
 
 	_world = new World(this);
 
@@ -187,10 +198,6 @@ void WageEngine::processEvents() {
 			break;
 		}
 	}
-}
-
-void WageEngine::playSound(Common::String soundName) {
-	warning("STUB: WageEngine::playSound(%s)", soundName.c_str());
 }
 
 void WageEngine::setMenu(Common::String menu) {
@@ -381,10 +388,6 @@ void WageEngine::redrawScene() {
 
 		updateSoundTimerForScene(currentScene, firstTime);
 	}
-}
-
-void WageEngine::updateSoundTimerForScene(Scene *scene, bool firstTime) {
-	//warning("STUB: WageEngine::updateSoundTimerForScene()");
 }
 
 void WageEngine::processTurnInternal(Common::String *textInput, Designed *clickInput) {

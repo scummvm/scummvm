@@ -201,12 +201,6 @@ MystAreaVideo::MystAreaVideo(MohawkEngine_Myst *vm, Common::SeekableReadStream *
 	_loop = rlstStream->readUint16LE();
 	_playRate = rlstStream->readUint16LE();
 
-	// TODO: Out of bound values should clip the movie
-	if (_left < 0)
-		_left = 0;
-	if (_top < 0)
-		_top = 0;
-
 	debugC(kDebugResource, "\tvideoFile: \"%s\"", _videoFile.c_str());
 	debugC(kDebugResource, "\tleft: %d", _left);
 	debugC(kDebugResource, "\ttop: %d", _top);
