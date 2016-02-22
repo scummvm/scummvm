@@ -27,6 +27,15 @@ namespace Wage {
 
 static const ADGameDescription gameDescriptions[] = {
 	{
+		"wage",
+		"3rd Floor",
+		AD_ENTRY1s("3rd Floor", "a107d7a177970b2259e32681bd8b47c9", 285056),
+		Common::EN_ANY,
+		Common::kPlatformMacintosh,
+		ADGF_GENERIC,
+		GUIO0()
+	},
+	{
 		"afm",
 		"v1.8",
 		AD_ENTRY1s("Another Fine Mess 1.8", "8e5aa915f3253efb2aab52435647b25e", 1456000),
@@ -42,6 +51,15 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::EN_ANY,
 		Common::kPlatformMacintosh,
 		ADGF_DEFAULT,
+		GUIO0()
+	},
+	{
+		"wage",
+		"Bug Hunt",
+		AD_ENTRY1s("Bug Hunt", "2ebd3515a87941063ad66c3cf93c5e78", 200064),
+		Common::EN_ANY,
+		Common::kPlatformMacintosh,
+		ADGF_GENERIC,
 		GUIO0()
 	},
 	{
