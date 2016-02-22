@@ -75,6 +75,10 @@ struct SciWorkaroundEntry;	// from workarounds.h
  * vocab.997. This results in much more readable code. Thus, this vocabulary isn't
  * used at all.
  *
+ * 993.voc (unneeded) - Contains the SCI3 equivalent of vocab.994; like its predecessor,
+ * the raw selector numbers can be deduced and used instead. In fact, one version of this
+ * file has turned out to cover all versiona of SCI3.
+ *
  * SCI0 parser vocabularies:
  * - vocab.901 / 901.voc - suffix vocabulary
  * - vocab.900 / 900.voc - parse tree branches
