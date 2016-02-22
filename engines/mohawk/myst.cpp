@@ -76,6 +76,7 @@ MohawkEngine_Myst::MohawkEngine_Myst(OSystem *syst, const MohawkGameDescription 
 	_showResourceRects = false;
 	_curCard = 0;
 	_needsUpdate = false;
+	_canSafelySaveLoad = false;
 	_curResource = -1;
 	_hoverResource = nullptr;
 
@@ -267,7 +268,7 @@ Common::Error MohawkEngine_Myst::run() {
 		_needsUpdate = _video->updateMovies();
 		_scriptParser->runPersistentScripts();
 
-		while (_eventMan->pollEvent(event)) {
+		while (pollEvent(event)) {
 			switch (event.type) {
 			case Common::EVENT_MOUSEMOVE: {
 				_needsUpdate = true;
@@ -312,7 +313,9 @@ Common::Error MohawkEngine_Myst::run() {
 					_needsShowMap = false;
 					_needsShowDemoMenu = false;
 
+					_canSafelySaveLoad = true;
 					runDialog(*_optionsDialog);
+					_canSafelySaveLoad = false;
 
 					if (_needsPageDrop) {
 						dropPage();
@@ -348,6 +351,15 @@ Common::Error MohawkEngine_Myst::run() {
 	}
 
 	return Common::kNoError;
+}
+
+bool MohawkEngine_Myst::pollEvent(Common::Event &event) {
+	// Saving / Loading is allowed from the GMM only when the main event loop is running
+	_canSafelySaveLoad = true;
+	bool eventReturned =  _eventMan->pollEvent(event);
+	_canSafelySaveLoad = false;
+
+	return eventReturned;
 }
 
 bool MohawkEngine_Myst::skippableWait(uint32 duration) {
@@ -1083,10 +1095,14 @@ Common::Error MohawkEngine_Myst::saveGameState(int slot, const Common::String &d
 
 bool MohawkEngine_Myst::canLoadGameStateCurrently() {
 	// No loading in the demo/makingof
-	return !(getFeatures() & GF_DEMO) && getGameType() != GType_MAKINGOF;
+	return _canSafelySaveLoad && !(getFeatures() & GF_DEMO) && getGameType() != GType_MAKINGOF;
 }
 
 bool MohawkEngine_Myst::canSaveGameStateCurrently() {
+	if (!_canSafelySaveLoad) {
+		return false;
+	}
+
 	// There's a limited number of stacks the game can save in
 	switch (_curStack) {
 	case kChannelwoodStack:

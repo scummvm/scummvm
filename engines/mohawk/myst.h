@@ -28,6 +28,7 @@
 #include "mohawk/resource_cache.h"
 #include "mohawk/myst_scripts.h"
 
+#include "common/events.h"
 #include "common/random.h"
 
 namespace Mohawk {
@@ -239,6 +240,13 @@ private:
 	MystView _view;
 
 	bool _runExitScript;
+
+	/**
+	 * Saving / Loading is only allowed from the main event loop
+	 */
+	bool _canSafelySaveLoad;
+
+	bool pollEvent(Common::Event &event);
 
 	void dropPage();
 
