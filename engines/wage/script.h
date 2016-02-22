@@ -80,31 +80,37 @@ private:
 
 		Operand(Obj *value, OperandType type) {
 			_value.obj = value;
+			assert(type == OBJ);
 			_type = type;
 		}
 
 		Operand(Chr *value, OperandType type) {
 			_value.chr = value;
+			assert(type == CHR);
 			_type = type;
 		}
 
 		Operand(Scene *value, OperandType type) {
 			_value.scene = value;
+			assert(type == SCENE);
 			_type = type;
 		}
 
 		Operand(int value, OperandType type) {
 			_value.number = value;
+			assert(type == NUMBER);
 			_type = type;
 		}
 
 		Operand(Common::String *value, OperandType type) {
 			_value.string = value;
+			assert(type == STRING);
 			_type = type;
 		}
 
 		Operand(Designed *value, OperandType type) {
 			_value.inputClick = value;
+			assert(type == CLICK_INPUT);
 			_type = type;
 		}
 
