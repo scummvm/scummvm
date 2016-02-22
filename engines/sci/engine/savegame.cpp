@@ -1063,8 +1063,19 @@ void gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 	if (g_sci->_gfxPorts)
 		g_sci->_gfxPorts->reset();
 	// clear screen
-	if (g_sci->_gfxScreen)
-		g_sci->_gfxScreen->clearForRestoreGame();
+	if (getSciVersion() <= SCI_VERSION_1_1) {
+		// Only do clearing the screen for SCI16
+		// Both SCI16 + SCI32 did not clear the screen.
+		// We basically do it for SCI16, because of KQ6.
+		// When hires portraits are shown and the user restores during that time, the portraits
+		// wouldn't get fully removed. In original SCI, the user wasn't able to restore during that time,
+		// so this is basically a workaround, so that ScummVM features work properly.
+		// For SCI32, behavior was verified in DOSBox, that SCI32 does not clear and also not redraw the screen.
+		// It only redraws elements that have changed in comparison to the state before the restore.
+		// If we cleared the screen for SCI32, we would have issues because of this behavior.
+		if (g_sci->_gfxScreen)
+			g_sci->_gfxScreen->clearForRestoreGame();
+	}
 #ifdef ENABLE_SCI32
 	// Delete current planes/elements of actively loaded VM, only when our ScummVM dialogs are patched in
 	// We MUST NOT delete all planes/screen items. At least Space Quest 6 has a few in memory like for example
