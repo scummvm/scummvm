@@ -3585,7 +3585,7 @@ msgstr "Originale Spielstand-Menüs verwenden"
 msgid ""
 "Files button in-game shows original savegame dialog rather than the ScummVM "
 "menu"
-msgstr "Dateien-Schaltfläche im Spiel zeigt orginales Spielstand-Menü statt dem von ScummVM."
+msgstr "Dateien-Schaltfläche im Spiel zeigt originales Spielstand-Menü statt dem von ScummVM."
 
 #: engines/sherlock/detection.cpp:81
 msgid "Pixellated scene transitions"
