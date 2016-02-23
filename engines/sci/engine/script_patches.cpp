@@ -3615,20 +3615,20 @@ bool ScriptPatcher::verifySignature(uint32 byteOffset, const uint16 *signatureDa
 }
 
 // will return -1 if no match was found, otherwise an offset to the start of the signature match
-int32 ScriptPatcher::findSignature(const SciScriptPatcherEntry *patchEntry, SciScriptPatcherRuntimeEntry *runtimeEntry, const byte *scriptData, const uint32 scriptSize) {
+int32 ScriptPatcher::findSignature(uint32 magicDWord, int magicOffset, const uint16 *signatureData, const char *patchDescription, const byte *scriptData, const uint32 scriptSize) {
 	if (scriptSize < 4) // we need to find a DWORD, so less than 4 bytes is not okay
 		return -1;
 
-	const uint32 magicDWord = runtimeEntry->magicDWord; // is platform-specific BE/LE form, so that the later match will work
+	// magicDWord is in platform-specific BE/LE form, so that the later match will work, this was done for performance
 	const uint32 searchLimit = scriptSize - 3;
 	uint32 DWordOffset = 0;
 	// first search for the magic DWORD
 	while (DWordOffset < searchLimit) {
 		if (magicDWord == READ_UINT32(scriptData + DWordOffset)) {
 			// magic DWORD found, check if actual signature matches
-			uint32 offset = DWordOffset + runtimeEntry->magicOffset;
+			uint32 offset = DWordOffset + magicOffset;
 
-			if (verifySignature(offset, patchEntry->signatureData, patchEntry->description, scriptData, scriptSize))
+			if (verifySignature(offset, signatureData, patchDescription, scriptData, scriptSize))
 				return offset;
 		}
 		DWordOffset++;
@@ -3637,22 +3637,146 @@ int32 ScriptPatcher::findSignature(const SciScriptPatcherEntry *patchEntry, SciS
 	return -1;
 }
 
-// This method calculates the magic DWORD for each entry in the signature table
-//  and it also initializes the selector table for selectors used in the signatures/patches of the current game
-void ScriptPatcher::initSignature(const SciScriptPatcherEntry *patchTable) {
-	const SciScriptPatcherEntry *curEntry = patchTable;
-	SciScriptPatcherRuntimeEntry *curRuntimeEntry;
+int32 ScriptPatcher::findSignature(const SciScriptPatcherEntry *patchEntry, const SciScriptPatcherRuntimeEntry *runtimeEntry, const byte *scriptData, const uint32 scriptSize) {
+	return findSignature(runtimeEntry->magicDWord, runtimeEntry->magicOffset, patchEntry->signatureData, patchEntry->description, scriptData, scriptSize);
+}
+
+// Attention: Magic DWord is returns using platform specific byte order. This is done on purpose for performance.
+void ScriptPatcher::calculateMagicDWordAndVerify(const char *signatureDescription, const uint16 *signatureData, bool magicDWordIncluded, uint32 &calculatedMagicDWord, int &calculatedMagicDWordOffset) {
 	Selector curSelector = -1;
-	int step;
 	int magicOffset;
 	byte magicDWord[4];
 	int magicDWordLeft = 0;
-	const uint16 *curData;
 	uint16 curWord;
 	uint16 curCommand;
 	uint32 curValue;
 	byte byte1 = 0;
 	byte byte2 = 0;
+
+	memset(magicDWord, 0, sizeof(magicDWord));
+
+	curWord = *signatureData;
+	magicOffset = 0;
+	while (curWord != SIG_END) {
+		curCommand = curWord & SIG_COMMANDMASK;
+		curValue   = curWord & SIG_VALUEMASK;
+		switch (curCommand) {
+		case SIG_MAGICDWORD: {
+			if (magicDWordIncluded) {
+				if ((calculatedMagicDWord) || (magicDWordLeft))
+					error("Script-Patcher: Magic-DWORD specified multiple times in signature\nFaulty patch: '%s'", signatureDescription);
+				magicDWordLeft = 4;
+				calculatedMagicDWordOffset = magicOffset;
+			} else {
+				error("Script-Patcher: Magic-DWORD sequence found in patch data\nFaulty patch: '%s'", signatureDescription);
+			}
+			break;
+		}
+		case SIG_CODE_ADDTOOFFSET: {
+			magicOffset -= curValue;
+			if (magicDWordLeft)
+				error("Script-Patcher: Magic-DWORD contains AddToOffset command\nFaulty patch: '%s'", signatureDescription);
+			break;
+		}
+		case SIG_CODE_UINT16:
+		case SIG_CODE_SELECTOR16: {
+			// UINT16 or 1
+			switch (curCommand) {
+			case SIG_CODE_UINT16: {
+				signatureData++; curWord = *signatureData;
+				if (curWord & SIG_COMMANDMASK)
+					error("Script-Patcher: signature entry inconsistent\nFaulty patch: '%s'", signatureDescription);
+				if (!_isMacSci11) {
+					byte1 = curValue;
+					byte2 = curWord & SIG_BYTEMASK;
+				} else {
+					byte1 = curWord & SIG_BYTEMASK;
+					byte2 = curValue;
+				}
+				break;
+			}
+			case SIG_CODE_SELECTOR16: {
+				curSelector = _selectorIdTable[curValue];
+				if (curSelector == -1) {
+					curSelector = g_sci->getKernel()->findSelector(selectorNameTable[curValue]);
+					_selectorIdTable[curValue] = curSelector;
+				}
+				if (!_isMacSci11) {
+					byte1 = curSelector & 0x00FF;
+					byte2 = curSelector >> 8;
+				} else {
+					byte1 = curSelector >> 8;
+					byte2 = curSelector & 0x00FF;
+				}
+				break;
+			}
+			}
+			magicOffset -= 2;
+			if (magicDWordLeft) {
+				// Remember current word for Magic DWORD
+				magicDWord[4 - magicDWordLeft] = byte1;
+				magicDWordLeft--;
+				if (magicDWordLeft) {
+					magicDWord[4 - magicDWordLeft] = byte2;
+					magicDWordLeft--;
+				}
+				if (!magicDWordLeft) {
+					// Magic DWORD is now known, convert to platform specific byte order
+					calculatedMagicDWord = READ_LE_UINT32(magicDWord);
+				}
+			}
+			break;
+		}
+		case SIG_CODE_BYTE:
+		case SIG_CODE_SELECTOR8: {
+			if (curCommand == SIG_CODE_SELECTOR8) {
+				curSelector = _selectorIdTable[curValue];
+				if (curSelector == -1) {
+					curSelector = g_sci->getKernel()->findSelector(selectorNameTable[curValue]);
+					_selectorIdTable[curValue] = curSelector;
+					if (curSelector != -1) {
+						if (curSelector & 0xFF00)
+							error("Script-Patcher: 8 bit selector required, game uses 16 bit selector\nFaulty patch: '%s'", signatureDescription);
+					}
+				}
+				curValue = curSelector;
+			}
+			magicOffset--;
+			if (magicDWordLeft) {
+				// Remember current byte for Magic DWORD
+				magicDWord[4 - magicDWordLeft] = (byte)curValue;
+				magicDWordLeft--;
+				if (!magicDWordLeft) {
+					calculatedMagicDWord = READ_LE_UINT32(magicDWord);
+				}
+			}
+			break;
+		}
+		case PATCH_CODE_GETORIGINALBYTEADJUST: {
+			signatureData++; // skip over extra uint16
+			break;
+		}
+		default:
+			break;
+		}
+		signatureData++;
+		curWord = *signatureData;
+	}
+
+	if (magicDWordLeft)
+		error("Script-Patcher: Magic-DWORD beyond End-Of-Signature\nFaulty patch: '%s'", signatureDescription);
+	if (magicDWordIncluded) {
+		if (!calculatedMagicDWord) {
+			error("Script-Patcher: Magic-DWORD not specified in signature\nFaulty patch: '%s'", signatureDescription);
+		}
+	}
+}
+
+// This method calculates the magic DWORD for each entry in the signature table
+//  and it also initializes the selector table for selectors used in the signatures/patches of the current game
+void ScriptPatcher::initSignature(const SciScriptPatcherEntry *patchTable) {
+	const SciScriptPatcherEntry *curEntry = patchTable;
+	SciScriptPatcherRuntimeEntry *curRuntimeEntry;
 	int patchEntryCount = 0;
 
 	// Count entries and allocate runtime data
@@ -3666,120 +3790,14 @@ void ScriptPatcher::initSignature(const SciScriptPatcherEntry *patchTable) {
 	curRuntimeEntry = _runtimeTable;
 	while (curEntry->signatureData) {
 		// process signature
-		memset(magicDWord, 0, sizeof(magicDWord));
-
 		curRuntimeEntry->active = curEntry->defaultActive;
 		curRuntimeEntry->magicDWord = 0;
 		curRuntimeEntry->magicOffset = 0;
 
-		for (step = 0; step < 2; step++) {
-			switch (step) {
-			case 0: curData = curEntry->signatureData; break;
-			case 1: curData = curEntry->patchData; break;
-			}
-
-			curWord = *curData;
-			magicOffset = 0;
-			while (curWord != SIG_END) {
-				curCommand = curWord & SIG_COMMANDMASK;
-				curValue   = curWord & SIG_VALUEMASK;
-				switch (curCommand) {
-				case SIG_MAGICDWORD: {
-					if (step == 0) {
-						if ((curRuntimeEntry->magicDWord) || (magicDWordLeft))
-							error("Script-Patcher: Magic-DWORD specified multiple times in signature\nFaulty patch: '%s'", curEntry->description);
-						magicDWordLeft = 4;
-						curRuntimeEntry->magicOffset = magicOffset;
-					}
-					break;
-				}
-				case SIG_CODE_ADDTOOFFSET: {
-					magicOffset -= curValue;
-					if (magicDWordLeft)
-						error("Script-Patcher: Magic-DWORD contains AddToOffset command\nFaulty patch: '%s'", curEntry->description);
-					break;
-				}
-				case SIG_CODE_UINT16:
-				case SIG_CODE_SELECTOR16: {
-					// UINT16 or 1
-					switch (curCommand) {
-					case SIG_CODE_UINT16: {
-						curData++; curWord = *curData;
-						if (curWord & SIG_COMMANDMASK)
-							error("Script-Patcher: signature entry inconsistent\nFaulty patch: '%s'", curEntry->description);
-						if (!_isMacSci11) {
-							byte1 = curValue;
-							byte2 = curWord & SIG_BYTEMASK;
-						} else {
-							byte1 = curWord & SIG_BYTEMASK;
-							byte2 = curValue;
-						}
-						break;
-					}
-					case SIG_CODE_SELECTOR16: {
-						curSelector = _selectorIdTable[curValue];
-						if (curSelector == -1) {
-							curSelector = g_sci->getKernel()->findSelector(selectorNameTable[curValue]);
-							_selectorIdTable[curValue] = curSelector;
-						}
-						if (!_isMacSci11) {
-							byte1 = curSelector & 0x00FF;
-							byte2 = curSelector >> 8;
-						} else {
-							byte1 = curSelector >> 8;
-							byte2 = curSelector & 0x00FF;
-						}
-						break;
-					}
-					}
-					magicOffset -= 2;
-					if (magicDWordLeft) {
-						// Remember current word for Magic DWORD
-						magicDWord[4 - magicDWordLeft] = byte1;
-						magicDWordLeft--;
-						if (magicDWordLeft) {
-							magicDWord[4 - magicDWordLeft] = byte2;
-							magicDWordLeft--;
-						}
-						if (!magicDWordLeft) {
-							curRuntimeEntry->magicDWord = READ_LE_UINT32(magicDWord);
-						}
-					}
-					break;
-				}
-				case SIG_CODE_BYTE:
-				case SIG_CODE_SELECTOR8: {
-					if (curCommand == SIG_CODE_SELECTOR8) {
-						curSelector = _selectorIdTable[curValue];
-						if (curSelector == -1) {
-							curSelector = g_sci->getKernel()->findSelector(selectorNameTable[curValue]);
-							_selectorIdTable[curValue] = curSelector;
-							if (curSelector != -1) {
-								if (curSelector & 0xFF00)
-									error("Script-Patcher: 8 bit selector required, game uses 16 bit selector\nFaulty patch: '%s'", curEntry->description);
-							}
-						}
-						curValue = curSelector;
-					}
-					magicOffset--;
-					if (magicDWordLeft) {
-						// Remember current byte for Magic DWORD
-						magicDWord[4 - magicDWordLeft] = (byte)curValue;
-						magicDWordLeft--;
-						if (!magicDWordLeft) {
-							curRuntimeEntry->magicDWord = READ_LE_UINT32(magicDWord);
-						}
-					}
-				}
-				}
-				curData++;
-				curWord = *curData;
-			}
-		}
-		if (magicDWordLeft)
-			error("Script-Patcher: Magic-DWORD beyond End-Of-Signature\nFaulty patch: '%s'", curEntry->description);
-		if (!curRuntimeEntry->magicDWord)
-			error("Script-Patcher: Magic-DWORD not specified in signature\nFaulty patch: '%s'", curEntry->description);
+		// We verify the signature data and remember the calculated magic DWord from the signature data
+		calculateMagicDWordAndVerify(curEntry->description, curEntry->signatureData, true, curRuntimeEntry->magicDWord, curRuntimeEntry->magicOffset);
+		// We verify the patch data
+		calculateMagicDWordAndVerify(curEntry->description, curEntry->patchData, false, curRuntimeEntry->magicDWord, curRuntimeEntry->magicOffset);
 
 		curEntry++; curRuntimeEntry++;
 	}

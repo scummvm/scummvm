@@ -282,7 +282,7 @@ public:
 	inline EngineState *getEngineState() const { return _gamestate; }
 	inline Vocabulary *getVocabulary() const { return _vocabulary; }
 	inline EventManager *getEventManager() const { return _eventMan; }
-	inline reg_t getGameObject() const { return _gameObjectAddress; }
+	inline reg_t getGameObject() const { return _gameObjectAddress; } // Gets the game object VM address
 
 	Common::RandomSource &getRNG() { return _rng; }
 
