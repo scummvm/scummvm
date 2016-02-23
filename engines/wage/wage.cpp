@@ -46,10 +46,12 @@
  */
 
 #include "common/debug-channels.h"
+#include "common/error.h"
+#include "common/events.h"
+#include "common/system.h"
 
 #include "engines/engine.h"
 #include "engines/util.h"
-#include "gui/EventRecorder.h"
 
 #include "wage/wage.h"
 #include "wage/entities.h"
