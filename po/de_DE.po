@@ -1,15 +1,15 @@
 # German translation for ScummVM.
 # Copyright (C) 2010-2016 The ScummVM Team
 # This file is distributed under the same license as the ScummVM package.
-# Simon Sawatzki <SimSaw@gmx.de>, Lothar Serra Mari <scummvm@rootfather.de>, 2015.
+# Simon Sawatzki <SimSaw@gmx.de>, Lothar Serra Mari <scummvm@rootfather.de>, 2016.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
 "POT-Creation-Date: 2016-02-20 21:22+0000\n"
-"PO-Revision-Date: 2016-01-28 19:00+0100\n"
-"Last-Translator: Lothar Serra Mari <scummvm@rootfather.de>\n"
+"PO-Revision-Date: 2016-02-22 20:53+0100\n"
+"Last-Translator: Simon Sawatzki <SimSaw@gmx.de>\n"
 "Language-Team: Simon Sawatzki <SimSaw@gmx.de>, Lothar Serra Mari "
 "<scummvm@rootfather.de>\n"
 "Language: Deutsch\n"
@@ -2715,18 +2715,16 @@ msgstr ""
 "\n"
 
 #: engines/parallaction/saveload.cpp:197
-#, fuzzy
 msgid "Load file"
-msgstr "Spiel laden:"
+msgstr "Datei laden"
 
 #: engines/parallaction/saveload.cpp:204
 msgid "Loading game..."
 msgstr "Spiel wird geladen..."
 
 #: engines/parallaction/saveload.cpp:212
-#, fuzzy
 msgid "Save file"
-msgstr "Konnte Spielstand nicht speichern!"
+msgstr "Datei speichern"
 
 #: engines/parallaction/saveload.cpp:219
 msgid "Saving game..."
@@ -3580,58 +3578,56 @@ msgstr ""
 "gefunden. Musik wird abgeschaltet."
 
 #: engines/sherlock/detection.cpp:71
-#, fuzzy
 msgid "Use original savegame dialog"
-msgstr "Originale Spielstand-Menüs"
+msgstr "Originale Spielstand-Menüs verwenden"
 
 #: engines/sherlock/detection.cpp:72
 msgid ""
 "Files button in-game shows original savegame dialog rather than the ScummVM "
 "menu"
-msgstr ""
+msgstr "Dateien-Schaltfläche im Spiel zeigt orginales Spielstand-Menü statt dem von ScummVM."
 
 #: engines/sherlock/detection.cpp:81
 msgid "Pixellated scene transitions"
-msgstr ""
+msgstr "Verpixelte Szenenübergänge"
 
 #: engines/sherlock/detection.cpp:82
 msgid "When changing scenes, a randomized pixel transition is done"
-msgstr ""
+msgstr "Bei Szenenwechseln wird ein zufälliger Pixelübergang verwendet."
 
 #: engines/sherlock/detection.cpp:91
 msgid "Don't show hotspots when moving mouse"
-msgstr ""
+msgstr "Bei Mausbewegung keine Klickpunkte anzeigen"
 
 #: engines/sherlock/detection.cpp:92
 msgid ""
 "Only show hotspot names after you actually click on a hotspot or action "
 "button"
-msgstr ""
+msgstr "Zeigt Klickpunktnamen nur nach Klick auf selbigen oder auf einen Aktionspunkt."
 
 #: engines/sherlock/detection.cpp:101
-#, fuzzy
 msgid "Show character portraits"
-msgstr "Figur wechseln"
+msgstr "Figurenportraits zeigen"
 
 #: engines/sherlock/detection.cpp:102
 msgid "Show portraits for the characters when conversing"
-msgstr ""
+msgstr "Zeigt Portraits der Figuren bei Gesprächen."
 
 #: engines/sherlock/detection.cpp:111
 msgid "Slide dialogs into view"
-msgstr ""
+msgstr "Menüs in Blickfeld gleiten lassen"
 
 #: engines/sherlock/detection.cpp:112
 msgid "Slide UI dialogs into view, rather than simply showing them immediately"
-msgstr ""
+msgstr "Lässt Menüs in Blickfeld gleiten anstatt sie einfach sofort anzuzeigen."
 
 #: engines/sherlock/detection.cpp:121
 msgid "Transparent windows"
-msgstr ""
+msgstr "Transparente Fenster"
 
 #: engines/sherlock/detection.cpp:122
 msgid "Show windows with a partially transparent background"
-msgstr ""
+msgstr "Zeigt Fenster mit teilweise transparentem Hintergrund"
 
 #: engines/sky/compact.cpp:130
 msgid ""
