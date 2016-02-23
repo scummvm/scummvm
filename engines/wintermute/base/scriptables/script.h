@@ -161,12 +161,6 @@ private:
 
 	bool initScript();
 	bool initTables();
-
-
-// IWmeDebugScript interface implementation
-public:
-	virtual int dbgGetLine();
-	virtual const char *dbgGetFilename();
 };
 
 } // End of namespace Wintermute
