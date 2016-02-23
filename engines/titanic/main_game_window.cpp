@@ -22,6 +22,8 @@
 
 #include "titanic/titanic.h"
 #include "titanic/main_game_window.h"
+#include "titanic/game_manager.h"
+#include "titanic/game_view.h"
 
 namespace Titanic {
 
@@ -42,6 +44,40 @@ bool CMainGameWindow::Create() {
 
 	// TODO: Stuff
 	return true;
+}
+
+void CMainGameWindow::applicationStarting() {
+	// Set up the game project, and get game slot
+	int saveSlot = selectSavegame();
+	assert(_project);
+	
+	// Set the video mode
+	CScreenManager *screenManager = CScreenManager::setCurrent();
+	screenManager->setMode(640, 480, 1, 1, false);
+
+	// TODO: Clear surfaces
+
+	// Create game view and manager
+	_gameView = new CTitanicGameView(this);
+	_gameManager = new CGameManager(_project, _gameView);
+	_gameView->setGameManager(_gameManager);
+
+	// Load either a new game or selected existing save
+	_project->loadGame(saveSlot);
+
+	// TODO: Cursor/image and message generation
+}
+
+int CMainGameWindow::loadGame() {
+	_project = new CProjectItem();
+	_project->setFilename("starship.prj");
+
+	return selectSavegame();
+}
+
+int CMainGameWindow::selectSavegame() {
+	// TODO: For now, hardcoded to -1 for new saves
+	return -1;
 }
 
 } // End of namespace Titanic

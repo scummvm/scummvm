@@ -50,7 +50,13 @@ class CScreenManager {
 protected:
 	TitanicEngine *_vm;
 public:
-	void *_screenManagerPtr;
+	static CScreenManager *_screenManagerPtr;
+	static CScreenManager *_currentScreenManagerPtr;
+
+	/**
+	 * Set the current screen manager
+	 */
+	static CScreenManager *setCurrent();
 public:
 	Common::Array<CVideoSurface *> _backSurfaces;
 	CVideoSurface *_frontRenderSurface;

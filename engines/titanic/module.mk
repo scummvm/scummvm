@@ -6,6 +6,8 @@ MODULE_OBJS := \
 	detection.o \
 	direct_draw.o \
 	font.o \
+	game_manager.o \
+	game_view.o \
 	image.o \
 	main_game_window.o \
 	screen_manager.o \

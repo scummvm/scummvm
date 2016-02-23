@@ -34,8 +34,12 @@ CScreenManagerRec::CScreenManagerRec() {
 
 /*------------------------------------------------------------------------*/
 
+CScreenManager *CScreenManager::_screenManagerPtr;
+CScreenManager *CScreenManager::_currentScreenManagerPtr;
+
 CScreenManager::CScreenManager(TitanicEngine *vm): _vm(vm) {
 	_screenManagerPtr = nullptr;
+	_currentScreenManagerPtr = nullptr;
 
 	_frontRenderSurface = nullptr;
 	_mouseCursor = nullptr;
@@ -54,6 +58,13 @@ void CScreenManager::setWindowHandle(int v) {
 bool CScreenManager::resetWindowHandle(int v) {
 	proc27();
 	return true;
+}
+
+CScreenManager *CScreenManager::setCurrent() {
+	if (!_currentScreenManagerPtr)
+		_currentScreenManagerPtr = _screenManagerPtr;
+
+	return _currentScreenManagerPtr;
 }
 
 /*------------------------------------------------------------------------*/

@@ -72,6 +72,11 @@ public:
 	 * Clear any currently loaded project
 	 */
 	void clear();
+
+	/**
+	 * Set the proejct's name
+	 */
+	void setFilename(const CString &name) { _filename = name; }
 };
 
 } // End of namespace Titanic
