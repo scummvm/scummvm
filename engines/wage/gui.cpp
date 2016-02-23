@@ -311,7 +311,7 @@ const int arrowPixels[ARROW_H][ARROW_W] = {
 		{1,1,1,1,1,1,1,1,1,1,1,1}};
 
 void Gui::paintBorder(Graphics::Surface *g, Common::Rect &r, WindowType windowType) {
-	bool active, scrollable, closeable, closeBoxPressed, drawTitle;
+	bool active = false, scrollable = false, closeable = false, closeBoxPressed = false, drawTitle = false;
 	const int size = kBorderWidth;
 	int x = r.left - size;
 	int y = r.top - size;
