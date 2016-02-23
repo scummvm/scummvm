@@ -63,6 +63,15 @@ static const ADGameDescription gameDescriptions[] = {
 		GUIO0()
 	},
 	{
+		"wage",
+		"Canal District",
+		AD_ENTRY1s("Canal District", "8856bc699a20fc5b7fc67accee12cac7", 658176),
+		Common::EN_ANY,
+		Common::kPlatformMacintosh,
+		ADGF_GENERIC,
+		GUIO0()
+	},
+	{
 		"cantitoe",
 		"",
 		AD_ENTRY1s("Camp Cantitoe", "098aa5c11c58e1ef274a30a9e01b4755", 621440),
