@@ -897,12 +897,30 @@ int SciEngine::inQfGImportRoom() const {
 void SciEngine::setLauncherLanguage() {
 	if (_gameDescription->flags & ADGF_ADDENGLISH) {
 		// If game is multilingual
-		if (Common::parseLanguage(ConfMan.get("language")) == Common::EN_ANY) {
+		Common::Language chosenLanguage = Common::parseLanguage(ConfMan.get("language"));
+		uint16 languageToSet = 0;
+
+		switch (chosenLanguage) {
+		case Common::EN_ANY:
 			// and English was selected as language
-			if (SELECTOR(printLang) != -1) // set text language to English
-				writeSelectorValue(_gamestate->_segMan, _gameObjectAddress, SELECTOR(printLang), K_LANG_ENGLISH);
-			if (SELECTOR(parseLang) != -1) // and set parser language to English as well
-				writeSelectorValue(_gamestate->_segMan, _gameObjectAddress, SELECTOR(parseLang), K_LANG_ENGLISH);
+			languageToSet = K_LANG_ENGLISH;
+			break;
+		case Common::JA_JPN: {
+			// Set Japanese for FM-Towns games
+			// KQ5 on FM-Towns has no initial language set
+			if (g_sci->getPlatform() == Common::kPlatformFMTowns) {
+				languageToSet = K_LANG_JAPANESE;
+			}
+		}
+		default:
+			break;
+		}
+
+		if (languageToSet) {
+			if (SELECTOR(printLang) != -1) // set text language
+				writeSelectorValue(_gamestate->_segMan, _gameObjectAddress, SELECTOR(printLang), languageToSet);
+			if (SELECTOR(parseLang) != -1) // and set parser language as well
+				writeSelectorValue(_gamestate->_segMan, _gameObjectAddress, SELECTOR(parseLang), languageToSet);
 		}
 	}
 }
