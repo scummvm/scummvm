@@ -104,7 +104,7 @@ private:
 
 		Operand(Common::String *value, OperandType type) {
 			_value.string = value;
-			assert(type == STRING);
+			assert(type == STRING || type == TEXT_INPUT);
 			_type = type;
 		}
 
