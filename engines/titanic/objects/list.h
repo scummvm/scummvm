@@ -75,6 +75,11 @@ public:
 	 * Load the data for the class from file
 	 */
 	virtual void load(SimpleFile *file);
+
+	/**
+	 * Clear the list and destroy any items in it
+	 */
+	void destroyContents();
 };
 
 } // End of namespace Titanic

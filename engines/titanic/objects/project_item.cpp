@@ -27,15 +27,62 @@
 
 namespace Titanic {
 
+CProjectItem::CProjectItem() : _field34(0), _field38(0), _field3C(0) {
+}
+
 void CProjectItem::save(SimpleFile *file, int indent) const {
 	file->writeNumberLine(6, indent);
 
 }
 
 void CProjectItem::load(SimpleFile *file) {
-	file->readNumber();
+	int val = file->readNumber();
+	load2(file, val);
+}
 
+void CProjectItem::load2(SimpleFile *file, int val) {
+	int count;
+	_items.destroyContents();
 
+	switch (val) {
+	case 1:
+		file->readBuffer();
+		_field34 = file->readNumber();
+		// Deliberate fall-through
+
+	case 0:
+		count = file->readNumber();
+		for (int idx = 0; idx < count; ++idx) {
+
+		}
+		break;
+
+	case 6:
+		file->readBuffer();
+		_field3C = file->readNumber();
+		// Deliberate fall-through
+
+	case 5:
+		file->readBuffer();
+		_field38 = file->readNumber();
+		// Deliberate fall-through
+
+	case 4:
+		file->readBuffer();
+		// Deliberate fall-through
+
+	case 2:
+	case 3:
+		_items.load(file);
+		file->readBuffer();
+		_field34 = file->readNumber();
+		break;
+
+	default:
+		break;
+	}
+
+	CTreeItem::load(file);
 }
 
 void CProjectItem::loadGame(int slotId) {

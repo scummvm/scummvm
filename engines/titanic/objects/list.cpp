@@ -85,4 +85,13 @@ void List::loadItems(SimpleFile *file) {
 	}
 }
 
+void List::destroyContents() {
+	for (iterator i = begin(); i != end(); ++i) {
+		CSaveableObject *obj = *i;
+		delete obj;
+	}
+
+	clear();
+}
+
 } // End of namespace Titanic

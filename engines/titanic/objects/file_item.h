@@ -23,6 +23,7 @@
 #ifndef TITANIC_FILE_ITEM_H
 #define TITANIC_FILE_ITEM_H
 
+#include "titanic/objects/list.h"
 #include "titanic/objects/tree_item.h"
 
 namespace Titanic {

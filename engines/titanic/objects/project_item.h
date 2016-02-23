@@ -32,6 +32,15 @@ namespace Titanic {
 class CProjectItem : public CFileItem {
 private:
 	CString _filename;
+	List _items;
+	int _field34;
+	int _field38;
+	int _field3C;
+
+	/**
+	 * Load data for the project
+	 */
+	void load2(SimpleFile *file, int val);
 private:
 	/**
 	 * Load project data from the passed file
@@ -43,6 +52,8 @@ private:
 	 */
 	void saveData(SimpleFile *file, CTreeItem *item) const;
 public:
+	CProjectItem();
+
 	/**
 	 * Return the class name
 	 */
