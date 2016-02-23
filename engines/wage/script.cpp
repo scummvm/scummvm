@@ -574,6 +574,23 @@ enum {
 	kMoveChrScene
 };
 
+static const char *typeNames[] = {
+	"OBJ",
+	"CHR",
+	"SCENE",
+	"NUMBER",
+	"STRING",
+	"CLICK_INPUT",
+	"TEXT_INPUT"
+};
+
+static const char *operandTypeToStr(int type) {
+	if (type < 0 || type > 6)
+		return "UNKNOWN";
+
+	return typeNames[type];
+}
+
 struct Comparator {
 	char op;
 	OperandType o1;
@@ -711,6 +728,9 @@ bool Script::compare(Operand *o1, Operand *o2, int comparator) {
 }
 
 bool Script::evaluatePair(Operand *lhs, const char *op, Operand *rhs) {
+	debug(7, "HANDLING CASE: [lhs=%s/%s, op=%s rhs=%s/%s]",
+		operandTypeToStr(lhs->_type), lhs->toString().c_str(), op, operandTypeToStr(rhs->_type), rhs->toString().c_str());
+
 	for (int cmp = 0; comparators[cmp].op != 0; cmp++) {
 		if (comparators[cmp].op != op[0])
 			continue;
@@ -757,9 +777,8 @@ bool Script::evaluatePair(Operand *lhs, const char *op, Operand *rhs) {
 		}
 	}
 
-	warning("UNHANDLED CASE: [lhs=%d/%s, op=%s rhs=%d/%s]",
-		lhs->_type, lhs->toString().c_str(), op, rhs->_type, rhs->toString().c_str());
-
+	warning("UNHANDLED CASE: [lhs=%s/%s, op=%s rhs=%s/%s]",
+		operandTypeToStr(lhs->_type), lhs->toString().c_str(), op, operandTypeToStr(rhs->_type), rhs->toString().c_str());
 
 	return false;
 }
@@ -785,8 +804,8 @@ bool Script::eval(Operand *lhs, const char *op, Operand *rhs) {
 				result = _inputText->equalsIgnoreCase(lhs->toString());
 			}
 		} else {
-			error("UNHANDLED CASE: [lhs=%d/%s, rhs=%d/%s]",
-				lhs->_type, lhs->toString().c_str(), rhs->_type, rhs->toString().c_str());
+			error("UNHANDLED CASE: [lhs=%s/%s, rhs=%s/%s]",
+				operandTypeToStr(lhs->_type), lhs->toString().c_str(), operandTypeToStr(rhs->_type), rhs->toString().c_str());
 		}
 		if (!strcmp(op, ">>")) {
 			result = !result;
@@ -847,7 +866,7 @@ bool Script::evalClickEquality(Operand *lhs, Operand *rhs, bool partialMatch) {
 		str.toLowercase();
 
 		debug(9, "evalClickEquality(%s, %s, %d)", lhs->_value.designed->_name.c_str(), rhs->_value.designed->_name.c_str(), partialMatch);
-		debug(9, "l: %d r: %d (ch: %d ob: %d)", lhs->_type, rhs->_type, CHR, OBJ);
+		debug(9, "l: %s r: %s)", operandTypeToStr(lhs->_type), operandTypeToStr(rhs->_type));
 		debug(9, "class: %d", lhs->_value.inputClick->_classType);
 
 		if (lhs->_value.inputClick->_classType == CHR || lhs->_value.inputClick->_classType == OBJ) {
