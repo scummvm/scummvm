@@ -33,7 +33,7 @@ Common::HashMap<Common::String, CSaveableObject::CreateFunction> *
 	CSaveableObject::_classList = nullptr;
 
 #define DEFFN(T) CSaveableObject *Function##T() { return new T(); }
-#define ADDFN(T) (*_classList)["TEST"] = Function##T
+#define ADDFN(T) (*_classList)[#T] = Function##T
 
 DEFFN(List);
 DEFFN(ListItem);

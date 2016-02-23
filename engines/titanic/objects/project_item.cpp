@@ -28,11 +28,14 @@
 namespace Titanic {
 
 void CProjectItem::save(SimpleFile *file, int indent) const {
-	error("TODO");
+	file->writeNumberLine(6, indent);
+
 }
 
 void CProjectItem::load(SimpleFile *file) {
-	error("TODO");
+	file->readNumber();
+
+
 }
 
 void CProjectItem::loadGame(int slotId) {
@@ -43,7 +46,7 @@ void CProjectItem::loadGame(int slotId) {
 	clear();
 
 	// Open either an existing savegame slot or the new game template
-	if (slotId > 0) {
+	if (slotId >= 0) {
 		saveFile = g_system->getSavefileManager()->openForLoading(
 			Common::String::format("slot%d.gam", slotId));
 		file.open(saveFile);
@@ -109,8 +112,7 @@ CProjectItem *CProjectItem::loadData(SimpleFile *file) {
 				// TODO: Validate this is correct
 				root = dynamic_cast<CProjectItem *>(item);
 				assert(root);
-
-				_filename = root->_filename;
+				root->_filename = _filename;
 			}
 
 			// Load the data for the item

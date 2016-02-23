@@ -27,7 +27,7 @@ static const TitanicGameDescription gameDescriptions[] = {
 		{
 			"titanic",
 			0,
-			AD_ENTRY1s("a.st", "b283436d90974fdc81accc95dbd8e61c", 15405985),
+			AD_ENTRY1s("newgame.st", "c276f2661f0d0a547445a65db78b2292", 87227),
 			Common::EN_ANY,
 			Common::kPlatformWindows,
 			ADGF_NO_FLAGS,

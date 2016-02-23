@@ -21,6 +21,7 @@
  */
 
 #include "titanic/game_manager.h"
+#include "titanic/screen_manager.h"
 
 namespace Titanic {
 

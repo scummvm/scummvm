@@ -52,8 +52,9 @@ void TitanicEngine::initialize() {
 	DebugMan.addDebugChannel(kDebugSound, "sound", "Sound and Music handling");
 
 	CSaveableObject::initClassList();
-	_window = new CMainGameWindow(this);
 	_screenManager = new OSScreenManager(this);
+	_window = new CMainGameWindow(this);
+	_window->applicationStarting();
 }
 
 Common::Error TitanicEngine::run() {

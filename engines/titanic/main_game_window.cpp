@@ -48,7 +48,7 @@ bool CMainGameWindow::Create() {
 
 void CMainGameWindow::applicationStarting() {
 	// Set up the game project, and get game slot
-	int saveSlot = selectSavegame();
+	int saveSlot = loadGame();
 	assert(_project);
 	
 	// Set the video mode
