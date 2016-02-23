@@ -300,6 +300,7 @@ protected:
 	void updateCursorPos(int x, int y);
 	void setCursorNum(int num);
 	void setCursorType(int type);
+	void showCursor(bool visible);
 	void setupNewLocation();
 	void copyLocBitmap(const char *filename, int offset, bool isMask);
 	void updateMouseState();
