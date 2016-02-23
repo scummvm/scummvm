@@ -206,6 +206,16 @@ reg_t readSelector(SegManager *segMan, reg_t object, Selector selectorId) {
 		return *address.getPointer(segMan);
 }
 
+#ifdef ENABLE_SCI32
+void updateInfoFlagViewVisible(Object *obj, int offset) {
+	// TODO: Make this correct for all SCI versions
+	// Selectors 26 through 44 are selectors for View script objects in SQ6
+	if (offset >= 26 && offset <= 44 && getSciVersion() >= SCI_VERSION_2) {
+		obj->setInfoSelectorFlag(kInfoFlagViewVisible);
+	}
+}
+#endif
+
 void writeSelector(SegManager *segMan, reg_t object, Selector selectorId, reg_t value) {
 	ObjVarRef address;
 
@@ -221,11 +231,7 @@ void writeSelector(SegManager *segMan, reg_t object, Selector selectorId, reg_t 
 	else {
 		*address.getPointer(segMan) = value;
 #ifdef ENABLE_SCI32
-		// TODO: Make this correct for all SCI versions
-		// Selectors 26 through 44 are selectors for View script objects
-		if (getSciVersion() >= SCI_VERSION_2 && selectorId >= 26 && selectorId <= 44) {
-			segMan->getObject(object)->setInfoSelectorFlag(kInfoFlagViewVisible);
-		}
+		updateInfoFlagViewVisible(segMan->getObject(object), selectorId);
 #endif
 	}
 }

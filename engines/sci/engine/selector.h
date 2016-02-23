@@ -197,6 +197,16 @@ void writeSelector(SegManager *segMan, reg_t object, Selector selectorId, reg_t 
 void invokeSelector(EngineState *s, reg_t object, int selectorId,
 	int k_argc, StackPtr k_argp, int argc = 0, const reg_t *argv = 0);
 
+#ifdef ENABLE_SCI32
+/**
+ * SCI32 set kInfoFlagViewVisible in the -info- selector if a certain
+ * range of properties was written to.
+ * This function checks if offset is in the right range, and sets the flag
+ * on obj.-info- if it is.
+ */
+void updateInfoFlagViewVisible(Object *obj, int offset);
+#endif
+
 } // End of namespace Sci
 
 #endif // SCI_ENGINE_KERNEL_H
