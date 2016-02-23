@@ -124,7 +124,7 @@ public:
 
 	void setDesignBounds(Common::Rect *bounds);
 
-	Common::String toString() { return _name; }
+	Common::String toString() { if (!this) return "<NULL>"; return _name; }
 };
 
 class Chr : public Designed {
