@@ -215,14 +215,7 @@ void ScreenItem::setFromObject(SegManager *segMan, const reg_t object, const boo
 		_useInsetRect = false;
 	}
 
-	// TODO: SCI2.1/SQ6 engine clears this flag any time ScreenItem::Update(MemID)
-	// or ScreenItem::ScreenItem(MemID) are called, but doing this breaks
-	// view cycling because the flag isn't being set again later. There are over
-	// 100 places in the engine code where this flag is set, so it is probably
-	// a matter of figuring out what all of those calls are that re-set it. For
-	// now, since these are the *only* calls that clear this flag, we can just
-	// leave it set all the time.
-	// segMan->getObject(object)->clearInfoSelectorFlag(kInfoFlagViewVisible);
+	segMan->getObject(object)->clearInfoSelectorFlag(kInfoFlagViewVisible);
 }
 
 void ScreenItem::calcRects(const Plane &plane) {
