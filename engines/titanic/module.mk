@@ -20,6 +20,7 @@ MODULE_OBJS := \
 	objects/game_object.o \
 	objects/list.o \
 	objects/message_target.o \
+	objects/movie_clip.o \
 	objects/named_item.o \
 	objects/pet_control.o \
 	objects/project_item.o \

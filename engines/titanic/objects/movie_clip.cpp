@@ -20,46 +20,49 @@
  *
  */
 
-#ifndef TITANIC_ROOM_ITEM_H
-#define TITANIC_ROOM_ITEM_H
-
-#include "common/rect.h"
-#include "titanic/objects/list.h"
 #include "titanic/objects/movie_clip.h"
-#include "titanic/objects/named_item.h"
-#include "titanic/objects/resource_key.h"
 
 namespace Titanic {
 
-class CRoomItem : public CNamedItem {
-private:
-	Common::Rect _roomRect;
-	CMovieClipList _clipList;
-	int _roomNumber;
-	CResourceKey _transitionMovieKey;
-	CResourceKey _exitMovieKey;
-	double _roomDimensionX, _roomDimensionY;
+CMovieClip::CMovieClip() {
+}
 
-	void loading();
-public:
-	CRoomItem();
+void CMovieClip::save(SimpleFile *file, int indent) const {
+	file->writeNumberLine(2, indent);
+	file->writeQuotedLine("Clip", indent);
+	file->writeQuotedLine(_string1, indent);
+	file->writeNumberLine(_field18, indent);
+	file->writeNumberLine(_field1C, indent);
 
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CRoomItem"; }
+	ListItem::save(file, indent);
+}
 
-	/**
-	 * Save the data for the class to file
-	 */
-	virtual void save(SimpleFile *file, int indent) const;
+void CMovieClip::load(SimpleFile *file) {
+	int val = file->readNumber();
 
-	/**
-	 * Load the data for the class from file
-	 */
-	virtual void load(SimpleFile *file);
-};
+	switch (val) {
+	case 1:
+		_string1 = file->readString();
+		_field18 = file->readNumber();
+		_field1C = file->readNumber();
+		_field20 = file->readNumber();
+		_field24 = file->readNumber();
+		_field28 = file->readNumber();
+		_field2C = file->readNumber();
+		_field30 = file->readNumber();
+		break;
+
+	case 2:
+		_string1 = file->readString();
+		_field18 = file->readNumber();
+		_field1C = file->readNumber();
+		break;
+
+	default:
+		break;
+	}
+
+	ListItem::load(file);
+}
 
 } // End of namespace Titanic
-
-#endif /* TITANIC_ROOM_ITEM_H */

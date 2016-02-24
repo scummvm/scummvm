@@ -24,6 +24,7 @@
 #include "titanic/objects/file_item.h"
 #include "titanic/objects/list.h"
 #include "titanic/objects/message_target.h"
+#include "titanic/objects/movie_clip.h"
 #include "titanic/objects/project_item.h"
 #include "titanic/objects/tree_item.h"
 #include "titanic/rooms/room_item.h"
@@ -42,6 +43,7 @@ DEFFN(CTreeItem);
 DEFFN(CFileItem);
 DEFFN(CProjectItem);
 DEFFN(CRoomItem);
+DEFFN(CMovieClip);
 DEFFN(CMovieClipItem);
 DEFFN(CMovieClipList);
 
@@ -53,6 +55,7 @@ void CSaveableObject::initClassList() {
 	ADDFN(CFileItem);
 	ADDFN(CProjectItem);
 	ADDFN(CRoomItem);
+	ADDFN(CMovieClip);
 	ADDFN(CMovieClipItem);
 	ADDFN(CMovieClipList);
 }

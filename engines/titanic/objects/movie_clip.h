@@ -20,34 +20,51 @@
  *
  */
 
-#ifndef TITANIC_ROOM_ITEM_H
-#define TITANIC_ROOM_ITEM_H
+#ifndef TITANIC_MOVIE_CLIP_H
+#define TITANIC_MOVIE_CLIP_H
 
-#include "common/rect.h"
 #include "titanic/objects/list.h"
-#include "titanic/objects/movie_clip.h"
-#include "titanic/objects/named_item.h"
-#include "titanic/objects/resource_key.h"
 
 namespace Titanic {
 
-class CRoomItem : public CNamedItem {
-private:
-	Common::Rect _roomRect;
-	CMovieClipList _clipList;
-	int _roomNumber;
-	CResourceKey _transitionMovieKey;
-	CResourceKey _exitMovieKey;
-	double _roomDimensionX, _roomDimensionY;
-
-	void loading();
+/**
+ * Movie clip item
+ */
+class CMovieClipItem : public ListItem {
 public:
-	CRoomItem();
+	virtual const char *getClassName() const { return "CMovieClipItem"; }
+};
+
+/**
+ * Movie clip list
+ */
+class CMovieClipList: public List<CMovieClipItem> {
+public:
+	virtual const char *getClassName() const { return "CMovieClipList"; }
+};
+
+/**
+ * Movie clip
+ */
+class CMovieClip : public ListItem {
+private:
+	CString _string1;
+	int _field18;
+	int _field1C;
+	int _field20;
+	int _field24;
+	int _field28;
+	int _field2C;
+	int _field30;
+	CString _string2;
+	CString _string3;
+public:
+	CMovieClip();
 
 	/**
 	 * Return the class name
 	 */
-	virtual const char *getClassName() const { return "CRoomItem"; }
+	virtual const char *getClassName() const { return "CMovieClip"; }
 
 	/**
 	 * Save the data for the class to file
@@ -62,4 +79,4 @@ public:
 
 } // End of namespace Titanic
 
-#endif /* TITANIC_ROOM_ITEM_H */
+#endif /* TITANIC_MOVIE_CLIP_H */
