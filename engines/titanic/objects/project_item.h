@@ -26,21 +26,56 @@
 #include "common/scummsys.h"
 #include "titanic/simple_file.h"
 #include "titanic/objects/file_item.h"
+#include "titanic/objects/list.h"
 
 namespace Titanic {
+
+class CGameManager;
+class CPetControl;
+
+/**
+ * File list item
+ */
+class CFileListItem : public ListItem {
+public:
+	CString _name;
+
+	virtual const char *getClassName() const { return "CFileListItem"; }
+
+	/**
+	 * Save the data for the class to file
+	 */
+	virtual void save(SimpleFile *file, int indent) const;
+
+	/**
+	 * Load the data for the class from file
+	 */
+	virtual void load(SimpleFile *file);	
+	
+};
+
+/**
+ * Filename list
+ */
+class CFileList: public List<CFileListItem> {
+public:
+	virtual const char *getClassName() const { return "CFileList"; }
+};
+
 
 class CProjectItem : public CFileItem {
 private:
 	CString _filename;
-	List _items;
-	int _field34;
-	int _field38;
-	int _field3C;
+	CFileList _files;
+	int _nextRoomNumber;
+	int _nextMessageNumber;
+	int _nextObjectNumber;
+	CGameManager *_gameManager;
 
 	/**
-	 * Load data for the project
+	 * Called during save, iterates through the children to do some stuff
 	 */
-	void load2(SimpleFile *file, int val);
+	void buildFilesList();
 private:
 	/**
 	 * Load project data from the passed file
@@ -51,6 +86,11 @@ private:
 	 * Save project data to the passed file
 	 */
 	void saveData(SimpleFile *file, CTreeItem *item) const;
+
+	/**
+	 * Does post-loading processing
+	 */
+	void gameLoaded();
 public:
 	CProjectItem();
 
@@ -68,6 +108,21 @@ public:
 	 * Load the data for the class from file
 	 */
 	virtual void load(SimpleFile *file);	
+
+	/**
+	 * Get the game manager for the project
+	 */
+	virtual CGameManager *getGameManager();
+
+	/**
+	 * Get a reference to the PET control
+	 */
+	CPetControl *getPetControl();
+
+	/**
+	 * Resets the game manager field
+	 */
+	void resetGameManager();
 
 	/**
 	 * Load the entire project data for a given slot Id

@@ -35,8 +35,7 @@ Common::HashMap<Common::String, CSaveableObject::CreateFunction> *
 #define DEFFN(T) CSaveableObject *Function##T() { return new T(); }
 #define ADDFN(T) (*_classList)[#T] = Function##T
 
-DEFFN(List);
-DEFFN(ListItem);
+DEFFN(CFileListItem);
 DEFFN(CMessageTarget);
 DEFFN(CTreeItem);
 DEFFN(CFileItem);
@@ -44,8 +43,7 @@ DEFFN(CProjectItem);
 
 void CSaveableObject::initClassList() {
 	_classList = new Common::HashMap<Common::String, CreateFunction>();
-	ADDFN(List);
-	ADDFN(ListItem);
+	ADDFN(CFileListItem);
 	ADDFN(CMessageTarget);
 	ADDFN(CTreeItem);
 	ADDFN(CFileItem);
@@ -61,12 +59,10 @@ CSaveableObject *CSaveableObject::createInstance(const Common::String &name) {
 }
 
 void CSaveableObject::save(SimpleFile *file, int indent) const {
-	// Should always be overriden in descendents, so just write a dummy value
 	file->writeNumberLine(0, indent);
 }
 
 void CSaveableObject::load(SimpleFile *file) {
-	// Should always be overriden in descendents, so just read the dummy value
 	file->readNumber();
 }
 

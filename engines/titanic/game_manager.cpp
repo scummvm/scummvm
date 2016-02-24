@@ -30,4 +30,12 @@ CGameManager::CGameManager(CProjectItem *project, CGameView *gameView):
 	// TODO
 }
 
+void CGameManager::load(SimpleFile *file) {
+	// TODO
+}
+
+void CGameManager::gameLoaded() {
+	// TODO
+}
+
 } // End of namespace Titanic

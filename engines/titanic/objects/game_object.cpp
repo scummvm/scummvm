@@ -20,16 +20,8 @@
  *
  */
 
-#include "titanic/objects/list.h"
+#include "titanic/objects/game_object.h"
 
 namespace Titanic {
-
-void ListItem::save(SimpleFile *file, int indent) const {
-	file->writeNumberLine(0, indent);
-}
-
-void ListItem::load(SimpleFile *file) {
-	file->readNumber();
-}
 
 } // End of namespace Titanic

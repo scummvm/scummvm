@@ -28,6 +28,22 @@
 namespace Titanic {
 
 class CMessageTarget: public CSaveableObject {
+public:
+	/**
+	 * Return the class name
+	 */
+	virtual const char *getClassName() const { return "CMessageTarget"; }
+
+	/**
+	 * Save the data for the class to file
+	 */
+	virtual void save(SimpleFile *file, int indent) const;
+
+	/**
+	 * Load the data for the class from file
+	 */
+	virtual void load(SimpleFile *file);
+
 };
 
 } // End of namespace Titanic

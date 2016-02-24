@@ -23,5 +23,15 @@
 #include "titanic/objects/message_target.h"
 
 namespace Titanic {
+	
+void CMessageTarget::save(SimpleFile *file, int indent) const {
+	file->writeNumberLine(0, indent);
+	CSaveableObject::save(file, indent);
+}
+
+void CMessageTarget::load(SimpleFile *file) {
+	file->readNumber();
+	CSaveableObject::load(file);
+}
 
 } // End of namespace Titanic

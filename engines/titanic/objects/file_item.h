@@ -23,13 +23,45 @@
 #ifndef TITANIC_FILE_ITEM_H
 #define TITANIC_FILE_ITEM_H
 
+#include "titanic/string.h"
 #include "titanic/objects/list.h"
 #include "titanic/objects/tree_item.h"
 
 namespace Titanic {
 
 class CFileItem: public CTreeItem {
+private:
+	CString _filename;
 public:
+	/**
+	 * Return the class name
+	 */
+	virtual const char *getClassName() const { return "CFileItem"; }
+
+	/**
+	 * Save the data for the class to file
+	 */
+	virtual void save(SimpleFile *file, int indent) const;
+
+	/**
+	 * Load the data for the class from file
+	 */
+	virtual void load(SimpleFile *file);	
+
+	/**
+	 * Returns true if the item is a file item
+	 */
+	virtual bool isFileItem() const { return true; }
+
+	/**
+	 * Form a filename for the file item
+	 */
+	CString formFilename() const;
+
+	/**
+	 * Get a string?
+	 */
+	CString getFilename() const;
 };
 
 } // End of namespace Titanic

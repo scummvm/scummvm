@@ -21,6 +21,8 @@
  */
 
 #include "titanic/objects/tree_item.h"
+#include "titanic/objects/dont_save_file_item.h"
+#include "titanic/objects/file_item.h"
 
 namespace Titanic {
 
@@ -38,6 +40,22 @@ void CTreeItem::load(SimpleFile *file) {
 	CMessageTarget::load(file);
 }
 
+CGameManager *CTreeItem::getGameManager() {
+	return _parent ? _parent->getGameManager() : nullptr;
+}
+
+CTreeItem *CTreeItem::getRoot() const {
+	CTreeItem *parent = getParent();
+
+	if (parent) {
+		do {
+			parent = parent->getParent();
+		} while (parent->getParent());
+	}
+
+	return parent;
+}
+
 CTreeItem *CTreeItem::getLastSibling() {
 	CTreeItem *item = this;
 	while (item->getNextSibling())
@@ -50,6 +68,17 @@ CTreeItem *CTreeItem::getLastChild() {
 	if (!_firstChild)
 		return nullptr;
 	return _firstChild->getLastSibling();
+}
+
+CDontSaveFileItem *CTreeItem::getDontSaveFileItem() {
+	CTreeItem *item = getFirstChild();
+	while (item) {
+		CDontSaveFileItem *fileItem = dynamic_cast<CDontSaveFileItem *>(item);
+		if (fileItem)
+			return fileItem;
+
+		item = item->getNextSibling();
+	}
 }
 
 void CTreeItem::addUnder(CTreeItem *newParent) {
@@ -79,5 +108,44 @@ void CTreeItem::addSibling(CTreeItem *item) {
 	item->_nextSibling = this;
 }
 
+void CTreeItem::destroyAll() {
+	destroyOthers();
+	detach();
+	delete this;
+}
+
+int CTreeItem::destroyOthers() {
+	if (!_firstChild)
+		return 0;
+
+	CTreeItem *item = this, *child, *nextSibling;
+	int total = 0;
+
+	do {
+		child = item->_firstChild;
+		nextSibling = item->_nextSibling;
+
+		if (child)
+			total += child->destroyOthers();
+		child->detach();
+		delete child;
+		++total;
+	} while ((item = nextSibling) != nullptr);
+
+	return total;
+}
+
+void CTreeItem::detach() {
+	// Delink this item from any prior and/or next siblings
+	if (_priorSibling)
+		_priorSibling->_nextSibling = _nextSibling;
+	if (_nextSibling)
+		_nextSibling->_priorSibling = _priorSibling;
+
+	if (_parent && _parent->_firstChild == this)
+		_parent->_firstChild = _nextSibling;
+
+	_priorSibling = _nextSibling = _parent = nullptr;
+}
 
 } // End of namespace Titanic

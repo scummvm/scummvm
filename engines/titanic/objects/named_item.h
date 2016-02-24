@@ -20,16 +20,16 @@
  *
  */
 
-#include "titanic/objects/list.h"
+#ifndef TITANIC_NAMED_ITEM_H
+#define TITANIC_NAMED_ITEM_H
+
+#include "titanic/objects/tree_item.h"
 
 namespace Titanic {
 
-void ListItem::save(SimpleFile *file, int indent) const {
-	file->writeNumberLine(0, indent);
-}
-
-void ListItem::load(SimpleFile *file) {
-	file->readNumber();
-}
+class CNamedItem: public CTreeItem {
+};
 
 } // End of namespace Titanic
+
+#endif /* TITANIC_NAMED_ITEM_H */

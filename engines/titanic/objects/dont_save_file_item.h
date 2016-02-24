@@ -20,16 +20,31 @@
  *
  */
 
-#include "titanic/objects/list.h"
+#ifndef TITANIC_DONT_SAVE_FILE_ITEM_H
+#define TITANIC_DONT_SAVE_FILE_ITEM_H
+
+#include "titanic/objects/file_item.h"
 
 namespace Titanic {
 
-void ListItem::save(SimpleFile *file, int indent) const {
-	file->writeNumberLine(0, indent);
-}
+class CDontSaveFileItem : public CFileItem {
+public:
+	/**
+	 * Return the class name
+	 */
+	virtual const char *getClassName() const { return "CDontSaveFileItem"; }
 
-void ListItem::load(SimpleFile *file) {
-	file->readNumber();
-}
+	/**
+	 * Save the data for the class to file
+	 */
+	virtual void save(SimpleFile *file, int indent) const;
+
+	/**
+	 * Load the data for the class from file
+	 */
+	virtual void load(SimpleFile *file);
+};
 
 } // End of namespace Titanic
+
+#endif /* TITANIC_DONT_SAVE_FILE_ITEM_H */

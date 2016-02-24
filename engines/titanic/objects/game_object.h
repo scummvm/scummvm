@@ -20,16 +20,16 @@
  *
  */
 
-#include "titanic/objects/list.h"
+#ifndef TITANIC_GAME_OBJECT_H
+#define TITANIC_GAME_OBJECT_H
+
+#include "titanic/objects/named_item.h"
 
 namespace Titanic {
 
-void ListItem::save(SimpleFile *file, int indent) const {
-	file->writeNumberLine(0, indent);
-}
-
-void ListItem::load(SimpleFile *file) {
-	file->readNumber();
-}
+class CGameObject : public CNamedItem {
+};
 
 } // End of namespace Titanic
+
+#endif /* TITANIC_PET_CONTROL_H */

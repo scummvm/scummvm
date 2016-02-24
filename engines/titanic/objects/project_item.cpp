@@ -21,50 +21,89 @@
  */
 
 #include "common/savefile.h"
+#include "titanic/game_manager.h"
 #include "titanic/titanic.h"
 #include "titanic/compressed_file.h"
+#include "titanic/objects/dont_save_file_item.h"
+#include "titanic/objects/pet_control.h"
 #include "titanic/objects/project_item.h"
 
 namespace Titanic {
 
-CProjectItem::CProjectItem() : _field34(0), _field38(0), _field3C(0) {
+void CFileListItem::save(SimpleFile *file, int indent) const {
+	file->writeNumberLine(0, indent);
+	file->writeQuotedLine(_name, indent);
+
+	ListItem::save(file, indent);
+}
+
+void CFileListItem::load(SimpleFile *file) {
+	file->readNumber();
+	_name = file->readString();
+
+	ListItem::load(file);
+}
+
+/*------------------------------------------------------------------------*/
+
+CProjectItem::CProjectItem() : _nextRoomNumber(0), _nextMessageNumber(0),
+		_nextObjectNumber(0), _gameManager(nullptr) {
 }
 
 void CProjectItem::save(SimpleFile *file, int indent) const {
 	file->writeNumberLine(6, indent);
+	file->writeQuotedLine("Next Avail. Object Number", indent);
+	file->writeNumberLine(_nextObjectNumber, indent);
+	file->writeQuotedLine("Next Avail. Message Number", indent);
+	file->writeNumberLine(_nextMessageNumber, indent);
+	file->writeQuotedLine("Next Avail. Room Number", indent);
+	file->writeNumberLine(_nextRoomNumber, indent);
 
+	CTreeItem::save(file, indent);
+}
+
+void CProjectItem::buildFilesList() {
+	_files.destroyContents();
+
+	CTreeItem *treeItem = getFirstChild();
+	while (treeItem) {
+		if (treeItem->isFileItem()) {
+			CString name = static_cast<CFileItem *>(treeItem)->getFilename();
+			_files.add()->_name = name;
+		}
+
+		treeItem = getNextSibling();
+	}
 }
 
 void CProjectItem::load(SimpleFile *file) {
 	int val = file->readNumber();
-	load2(file, val);
-}
-
-void CProjectItem::load2(SimpleFile *file, int val) {
+	_files.destroyContents();
 	int count;
-	_items.destroyContents();
 
 	switch (val) {
 	case 1:
 		file->readBuffer();
-		_field34 = file->readNumber();
+		_nextRoomNumber = file->readNumber();
 		// Deliberate fall-through
 
 	case 0:
+		// Load the list of files
 		count = file->readNumber();
 		for (int idx = 0; idx < count; ++idx) {
-
+			CString name = file->readString();
+			_files.add()->_name = name;
 		}
 		break;
 
 	case 6:
 		file->readBuffer();
-		_field3C = file->readNumber();
+		_nextObjectNumber = file->readNumber();
 		// Deliberate fall-through
 
 	case 5:
 		file->readBuffer();
-		_field38 = file->readNumber();
+		_nextMessageNumber = file->readNumber();
 		// Deliberate fall-through
 
 	case 4:
@@ -73,9 +112,9 @@ void CProjectItem::load2(SimpleFile *file, int val) {
 
 	case 2:
 	case 3:
-		_items.load(file);
+		_files.load(file);
 		file->readBuffer();
-		_field34 = file->readNumber();
+		_nextRoomNumber = file->readNumber();
 		break;
 
 	default:
@@ -83,6 +122,14 @@ void CProjectItem::load2(SimpleFile *file, int val) {
 	}
 
 	CTreeItem::load(file);
+}
+
+CGameManager *CProjectItem::getGameManager() {
+	return _gameManager;
+}
+
+void CProjectItem::resetGameManager() {
+	_gameManager = nullptr;
 }
 
 void CProjectItem::loadGame(int slotId) {
@@ -102,9 +149,27 @@ void CProjectItem::loadGame(int slotId) {
 	}
 
 	// Load the contents in
-	loadData(&file);
+	CProjectItem *newProject = loadData(&file);
+	file.IsClassStart();
+	getGameManager()->load(&file);
 
 	file.close();
+
+	// Clear existing project
+	clear();
+
+	// Detach each item under the loaded project, and re-attach them
+	// to the existing project instance (this)
+	CTreeItem *item;
+	while ((item = newProject->getFirstChild()) != nullptr) {
+		item->detach();
+		item->addUnder(this);
+	}
+	// Loaded project instance is no longer needed
+	newProject->destroyAll();
+
+	// Post-load processing
+	gameLoaded();
 }
 
 void CProjectItem::saveGame(int slotId) {
@@ -120,7 +185,9 @@ void CProjectItem::saveGame(int slotId) {
 }
 
 void CProjectItem::clear() {
-
+	CTreeItem *item;
+	while ((item = getFirstChild()) != nullptr)
+		item->destroyAll();
 }
 
 CProjectItem *CProjectItem::loadData(SimpleFile *file) {
@@ -156,7 +223,6 @@ CProjectItem *CProjectItem::loadData(SimpleFile *file) {
 				// Already created root project
 				item->addUnder(parent);
 			} else {
-				// TODO: Validate this is correct
 				root = dynamic_cast<CProjectItem *>(item);
 				assert(root);
 				root->_filename = _filename;
@@ -195,6 +261,34 @@ void CProjectItem::saveData(SimpleFile *file, CTreeItem *item) const {
 		file->write("\n}\n", 3);
 		item = item->getNextSibling();
 	}
+}
+
+void CProjectItem::gameLoaded() {
+	CGameManager *gameManager = getGameManager();
+	if (gameManager)
+		gameManager->gameLoaded();
+
+	CPetControl *petControl = getPetControl();
+	if (petControl)
+		petControl->gameLoaded();
+}
+
+CPetControl *CProjectItem::getPetControl() {
+	CDontSaveFileItem *fileItem = getDontSaveFileItem();
+	CTreeItem *treeItem;
+
+	if (!fileItem || (treeItem = fileItem->getLastChild()) == nullptr)
+		return nullptr;
+
+	while (treeItem) {
+		CPetControl *petControl = dynamic_cast<CPetControl *>(treeItem);
+		if (petControl)
+			return petControl;
+
+		treeItem = treeItem->getPriorSibling();
+	}
+
+	return nullptr;
 }
 
 } // End of namespace Titanic

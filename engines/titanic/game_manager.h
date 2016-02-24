@@ -24,6 +24,7 @@
 #define TITANIC_GAME_MANAGER_H
 
 #include "common/scummsys.h"
+#include "titanic/simple_file.h"
 
 namespace Titanic {
 
@@ -36,6 +37,16 @@ private:
 	CGameView *_gameView;
 public:
 	CGameManager(CProjectItem *project, CGameView *gameView);
+
+	/**
+	 * Load data from a save file
+	 */
+	void load(SimpleFile *file);
+
+	/**
+	 * Called after loading a game has finished
+	 */
+	void gameLoaded();
 };
 
 } // End of namespace Titanic

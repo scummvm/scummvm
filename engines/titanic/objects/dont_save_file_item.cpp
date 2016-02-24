@@ -20,15 +20,15 @@
  *
  */
 
-#include "titanic/objects/list.h"
+#include "titanic/objects/dont_save_file_item.h"
 
 namespace Titanic {
 
-void ListItem::save(SimpleFile *file, int indent) const {
+void CDontSaveFileItem::save(SimpleFile *file, int indent) const {
 	file->writeNumberLine(0, indent);
 }
 
-void ListItem::load(SimpleFile *file) {
+void CDontSaveFileItem::load(SimpleFile *file) {
 	file->readNumber();
 }
 
