@@ -258,6 +258,10 @@ static void _exec_varselectors(EngineState *s) {
 			if (xs.argc) { // write?
 				*var = xs.variables_argp[1];
 
+#ifdef ENABLE_SCI32
+				updateInfoFlagViewVisible(s->_segMan->getObject(xs.addr.varp.obj), xs.addr.varp.varindex);
+#endif
+
 			} else // No, read
 				s->r_acc = *var;
 		}
