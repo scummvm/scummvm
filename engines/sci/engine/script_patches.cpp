@@ -2853,14 +2853,75 @@ static const uint16 qfg3PatchChiefPriority[] = {
 	PATCH_END
 };
 
+// Partly WORKAROUND:
+// During combat, the game is not properly throttled. That's because the game uses
+// an inner loop for combat and does not iterate through the main loop.
+// It also doesn't call kGameIsRestarting. This may get fixed properly at some point
+// by rewriting the speed throttler.
+//
+// Additionally Sierra set the cycle speed of the hero to 0. Which explains
+// why the actions of the hero are so incredibly fast. This issue also happened
+// in the original interpreter, when the computer was too powerful.
+//
+// Applies to at least: English, French, German, Italian, Spanish PC floppy
+// Responsible method: combatControls::dispatchEvent (script 550) + WarriorObj in heap
+// Fixes bug #6247
+static const uint16 qfg3SignatureCombatSpeedThrottling1[] = {
+	0x31, 0x0d,                         // bnt [skip code]
+	SIG_MAGICDWORD,
+	0x89, 0xd2,                         // lsg global[D2h]
+	0x35, 0x00,                         // ldi 0
+	0x1e,                               // gt?
+	0x31, 0x06,                         // bnt [skip code]
+	0xe1, 0xd2,                         // -ag global[D2h] (jump skips over this)
+	0x81, 0x58,                         // lag global[58h]
+	0xa3, 0x01,                         // sal local[01]
+	SIG_END
+};
+
+static const uint16 qfg3PatchCombatSpeedThrottling1[] = {
+	0x80, 0xd2,                         // lsg global[D2h]
+	0x14,                               // or
+	0x31, 0x06,                         // bnt [skip code] - saves 4 bytes
+	0xe1, 0xd2,                         // -ag global[D2h]
+	0x81, 0x58,                         // lag global[58h]
+	0xa3, 0x01,                         // sal local[01] (jump skips over this)
+	// our code
+	0x76,                               // push0
+	0x43, 0x2c, 0x00,                   // callk GameIsRestarting <-- add this so that our speed throttler is triggered
+	PATCH_END
+};
+
+static const uint16 qfg3SignatureCombatSpeedThrottling2[] = {
+	SIG_MAGICDWORD,
+	SIG_UINT16(12),                     // priority 12
+	SIG_UINT16(0),                      // underbits 0
+	SIG_UINT16(0x4010),                 // signal 4010h
+	SIG_ADDTOOFFSET(+18),
+	SIG_UINT16(0),                      // scaleSignal 0
+	SIG_UINT16(128),                    // scaleX
+	SIG_UINT16(128),                    // scaleY
+	SIG_UINT16(128),                    // maxScale
+	SIG_UINT16(0),                      // cycleSpeed
+	SIG_END
+};
+
+static const uint16 qfg3PatchCombatSpeedThrottling2[] = {
+	PATCH_ADDTOOFFSET(+32),
+	PATCH_UINT16(5),                    // set cycleSpeed to 5
+	PATCH_END
+};
+
 //          script, description,                                      signature                    patch
 static const SciScriptPatcherEntry qfg3Signatures[] = {
-	{  true,   944, "import dialog continuous calls",              1, qfg3SignatureImportDialog,   qfg3PatchImportDialog },
-	{  true,   440, "dialog crash when asking about Woo",          1, qfg3SignatureWooDialog,      qfg3PatchWooDialog },
-	{  true,   440, "dialog crash when asking about Woo",          1, qfg3SignatureWooDialogAlt,   qfg3PatchWooDialogAlt },
-	{  true,    52, "export character save bug",                   2, qfg3SignatureExportChar,     qfg3PatchExportChar },
-	{  true,    54, "import character from QfG1 bug",              1, qfg3SignatureImportQfG1Char, qfg3PatchImportQfG1Char },
-	{  true,   640, "chief in hut priority fix",                   1, qfg3SignatureChiefPriority, qfg3PatchChiefPriority },
+	{  true,   944, "import dialog continuous calls",              1, qfg3SignatureImportDialog,           qfg3PatchImportDialog },
+	{  true,   440, "dialog crash when asking about Woo",          1, qfg3SignatureWooDialog,              qfg3PatchWooDialog },
+	{  true,   440, "dialog crash when asking about Woo",          1, qfg3SignatureWooDialogAlt,           qfg3PatchWooDialogAlt },
+	{  true,    52, "export character save bug",                   2, qfg3SignatureExportChar,             qfg3PatchExportChar },
+	{  true,    54, "import character from QfG1 bug",              1, qfg3SignatureImportQfG1Char,         qfg3PatchImportQfG1Char },
+	{  true,   640, "chief in hut priority fix",                   1, qfg3SignatureChiefPriority,          qfg3PatchChiefPriority },
+	{  true,   550, "combat speed throttling script",              1, qfg3SignatureCombatSpeedThrottling1, qfg3PatchCombatSpeedThrottling1 },
+	{  true,   550, "combat speed throttling heap",                1, qfg3SignatureCombatSpeedThrottling2, qfg3PatchCombatSpeedThrottling2 },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
