@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
 "POT-Creation-Date: 2016-02-20 21:22+0000\n"
-"PO-Revision-Date: 2014-07-06 20:39+0100\n"
+"PO-Revision-Date: 2016-02-24 18:01+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: Espanol\n"
@@ -73,7 +73,7 @@ msgstr "Aceptar"
 
 #: gui/editrecorddialog.cpp:58
 msgid "Author:"
-msgstr ""
+msgstr "Autor:"
 
 #: gui/editrecorddialog.cpp:59 gui/launcher.cpp:204
 msgid "Name:"
@@ -81,24 +81,23 @@ msgstr "Nombre:"
 
 #: gui/editrecorddialog.cpp:60
 msgid "Notes:"
-msgstr ""
+msgstr "Notas:"
 
 #: gui/editrecorddialog.cpp:68 gui/predictivedialog.cpp:74
 msgid "Ok"
-msgstr ""
+msgstr "Aceptar"
 
 #: gui/filebrowser-dialog.cpp:49
 msgid "Choose file for loading"
-msgstr ""
+msgstr "Elegir el archivo para cargar"
 
 #: gui/filebrowser-dialog.cpp:49
 msgid "Enter filename for saving"
-msgstr ""
+msgstr "Escribir el nombre del archivo"
 
 #: gui/filebrowser-dialog.cpp:132
-#, fuzzy
 msgid "Do you really want to overwrite the file?"
-msgstr "¿Seguro que quieres borrar esta partida?"
+msgstr "¿Seguro que quieres sobrescribir esta partida?"
 
 #: gui/filebrowser-dialog.cpp:132 gui/fluidsynth-dialog.cpp:217
 #: gui/launcher.cpp:795 gui/launcher.cpp:943 gui/launcher.cpp:1002
@@ -648,7 +647,7 @@ msgstr "Añadir varios..."
 
 #: gui/launcher.cpp:1163
 msgid "Record..."
-msgstr ""
+msgstr "Grabar..."
 
 #: gui/massadd.cpp:79 gui/massadd.cpp:82
 msgid "... progress ..."
@@ -675,21 +674,19 @@ msgstr "%d juegos nuevos encontrados. %d juegos ignorados (ya añadidos)..."
 
 #: gui/onscreendialog.cpp:101 gui/onscreendialog.cpp:103
 msgid "Stop"
-msgstr ""
+msgstr "Detener"
 
 #: gui/onscreendialog.cpp:106
 msgid "Edit record description"
-msgstr ""
+msgstr "Editar la descripción de la grabación"
 
 #: gui/onscreendialog.cpp:108
-#, fuzzy
 msgid "Switch to Game"
-msgstr "Cambiar"
+msgstr "Volver al juego"
 
 #: gui/onscreendialog.cpp:110
-#, fuzzy
 msgid "Fast replay"
-msgstr "Modo rápido"
+msgstr "Repetición rápida"
 
 #: gui/options.cpp:85
 msgid "Never"
@@ -763,7 +760,7 @@ msgstr "Renderizado:"
 
 #: gui/options.cpp:746 gui/options.cpp:747
 msgid "Special dithering modes supported by some games"
-msgstr "Modos especiales de expansión compatibles con algunos juegos"
+msgstr "Modos especiales de difuminado compatibles con algunos juegos"
 
 #: gui/options.cpp:758
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2316
@@ -1087,39 +1084,38 @@ msgstr ""
 #. I18N: You must leave "#" as is, only word 'next' is translatable
 #: gui/predictivedialog.cpp:86
 msgid "#  next"
-msgstr ""
+msgstr "#  siguiente"
 
 #: gui/predictivedialog.cpp:87
 msgid "add"
-msgstr ""
+msgstr "añadir"
 
 #: gui/predictivedialog.cpp:92 gui/predictivedialog.cpp:164
-#, fuzzy
 msgid "Delete char"
-msgstr "Borrar"
+msgstr "Borrar personaje"
 
 #: gui/predictivedialog.cpp:97 gui/predictivedialog.cpp:168
 msgid "<"
-msgstr ""
+msgstr "<"
 
 #. I18N: Pre means 'Predictive', leave '*' as is
 #: gui/predictivedialog.cpp:99 gui/predictivedialog.cpp:572
 msgid "*  Pre"
-msgstr ""
+msgstr "*  Pre"
 
 #. I18N: 'Num' means Numbers
 #: gui/predictivedialog.cpp:575
 msgid "*  Num"
-msgstr ""
+msgstr "*  Num"
 
 #. I18N: 'Abc' means Latin alphabet input
 #: gui/predictivedialog.cpp:578
 msgid "*  Abc"
-msgstr ""
+msgstr "*  Abc"
 
 #: gui/recorderdialog.cpp:64
 msgid "Recorder or Playback Gameplay"
-msgstr ""
+msgstr "Grabar o reproducir vídeos"
 
 #: gui/recorderdialog.cpp:69 gui/recorderdialog.cpp:156
 #: gui/saveload-dialog.cpp:220 gui/saveload-dialog.cpp:276
@@ -1128,36 +1124,33 @@ msgstr "Borrar"
 
 #: gui/recorderdialog.cpp:71
 msgid "Record"
-msgstr ""
+msgstr "Grabar"
 
 #: gui/recorderdialog.cpp:72
-#, fuzzy
 msgid "Playback"
-msgstr "Jugar"
+msgstr "Reproducción"
 
 #: gui/recorderdialog.cpp:74
 msgid "Edit"
-msgstr ""
+msgstr "Editar"
 
 #: gui/recorderdialog.cpp:86 gui/recorderdialog.cpp:243
 #: gui/recorderdialog.cpp:253
 msgid "Author: "
-msgstr ""
+msgstr "Autor:"
 
 #: gui/recorderdialog.cpp:87 gui/recorderdialog.cpp:244
 #: gui/recorderdialog.cpp:254
 msgid "Notes: "
-msgstr ""
+msgstr "Notas:"
 
 #: gui/recorderdialog.cpp:155
-#, fuzzy
 msgid "Do you really want to delete this record?"
-msgstr "¿Seguro que quieres borrar esta partida?"
+msgstr "¿Seguro que quieres borrar esta grabación?"
 
 #: gui/recorderdialog.cpp:174
-#, fuzzy
 msgid "Unknown Author"
-msgstr "Error desconocido"
+msgstr "Autor desconocido"
 
 #: gui/saveload-dialog.cpp:167
 msgid "List view"
@@ -1364,11 +1357,11 @@ msgstr "Hercules ámbar"
 
 #: common/rendermode.cpp:42
 msgid "PC-9821 (256 Colors)"
-msgstr ""
+msgstr "PC-9821 (256 colores)"
 
 #: common/rendermode.cpp:43
 msgid "PC-9801 (16 Colors)"
-msgstr ""
+msgstr "PC-9801 (16 colores)"
 
 #: common/rendermode.cpp:73
 msgctxt "lowres"
@@ -1571,7 +1564,7 @@ msgstr "Emulador OPL de DOSBox"
 
 #: audio/fmopl.cpp:67
 msgid "ALSA Direct FM"
-msgstr ""
+msgstr "ALSA Direct FM"
 
 #: audio/mididrv.cpp:209
 #, c-format
@@ -1628,16 +1621,15 @@ msgstr "Emulador de Apple II GS (NO IMPLEMENTADO)"
 
 #: audio/softsynth/cms.cpp:350
 msgid "Creative Music System Emulator"
-msgstr ""
+msgstr "Emulador de Creative Music System"
 
 #: audio/softsynth/fmtowns_pc98/towns_pc98_plugins.cpp:33
 msgid "FM-Towns Audio"
-msgstr ""
+msgstr "FM-Towns Audio"
 
 #: audio/softsynth/fmtowns_pc98/towns_pc98_plugins.cpp:58
-#, fuzzy
 msgid "PC-98 Audio"
-msgstr "Sonido"
+msgstr "PC-98 Audio"
 
 #: audio/softsynth/mt32.cpp:200
 msgid "Initializing MT-32 Emulator"
@@ -1732,34 +1724,33 @@ msgstr "¿Quieres salir?"
 
 #. I18N: Trackpad mode toggle status.
 #: backends/events/webossdl/webossdl-events.cpp:308
-#, fuzzy
 msgid "Trackpad mode is now"
-msgstr "Modo Touchpad desactivado."
+msgstr "El modo trackpad está"
 
 #. I18N: Trackpad mode on or off.
 #. I18N: Auto-drag on or off.
 #: backends/events/webossdl/webossdl-events.cpp:311
 #: backends/events/webossdl/webossdl-events.cpp:338
 msgid "ON"
-msgstr ""
+msgstr "activado"
 
 #: backends/events/webossdl/webossdl-events.cpp:311
 #: backends/events/webossdl/webossdl-events.cpp:338
 msgid "OFF"
-msgstr ""
+msgstr "desactivado"
 
 #: backends/events/webossdl/webossdl-events.cpp:315
 msgid "Swipe two fingers to the right to toggle."
-msgstr ""
+msgstr "Desliza dos dedos hacia la derecha para cambiar de modo."
 
 #. I18N: Auto-drag toggle status.
 #: backends/events/webossdl/webossdl-events.cpp:335
 msgid "Auto-drag mode is now"
-msgstr ""
+msgstr "El modo de arrastre automático está"
 
 #: backends/events/webossdl/webossdl-events.cpp:342
 msgid "Swipe three fingers to the right to toggle."
-msgstr ""
+msgstr "Desliza tres dedos hacia la derecha para cambiar de modo."
 
 #: backends/graphics/opengl/opengl-graphics.cpp:119
 msgid "OpenGL"
@@ -2054,24 +2045,23 @@ msgstr "Control del ratón"
 
 #: backends/platform/tizen/fs.cpp:259
 msgid "[ Data ]"
-msgstr ""
+msgstr "[ Datos ]"
 
 #: backends/platform/tizen/fs.cpp:263
 msgid "[ Resources ]"
-msgstr ""
+msgstr "[ Recursos ]"
 
 #: backends/platform/tizen/fs.cpp:267
 msgid "[ SDCard ]"
-msgstr ""
+msgstr "[ Tarjeta SD ]"
 
 #: backends/platform/tizen/fs.cpp:271
 msgid "[ Media ]"
-msgstr ""
+msgstr "[ Media ]"
 
 #: backends/platform/tizen/fs.cpp:275
-#, fuzzy
 msgid "[ Shared ]"
-msgstr "Disco compartido:"
+msgstr "[ Compartido ]"
 
 #: backends/platform/wii/options.cpp:51
 msgid "Video"
@@ -2339,26 +2329,27 @@ msgstr ""
 "Utilizar las pantallas de guardar/cargar originales, en vez de las de ScummVM"
 
 #: engines/agi/detection.cpp:157
-#, fuzzy
 msgid "Use an alternative palette"
-msgstr ""
-"Usa una introducción alternativa para el juego (solo para la versión CD)"
+msgstr "Usar paleta alternativa"
 
 #: engines/agi/detection.cpp:158
 msgid ""
 "Use an alternative palette, common for all Amiga games. This was the old "
 "behavior"
 msgstr ""
+"Usar una paleta alternativa, común para todos los juegos de Amiga. Esta es "
+"la opción que se usaba antes."
 
 #: engines/agi/detection.cpp:167
-#, fuzzy
 msgid "Mouse support"
-msgstr "Permitir omisiones"
+msgstr "Compatibilidad de ratón"
 
 #: engines/agi/detection.cpp:168
 msgid ""
 "Enables mouse support. Allows to use mouse for movement and in game menus."
 msgstr ""
+"Activa el ratón. Permite usar el ratón para moverse en el juego y en los "
+"menús."
 
 #: engines/agi/saveload.cpp:777 engines/avalanche/parser.cpp:1887
 #: engines/cge/events.cpp:85 engines/cge2/events.cpp:78
@@ -2419,13 +2410,12 @@ msgid "Cutscene file '%s' not found!"
 msgstr "No se ha encontrado el vídeo '%s'"
 
 #: engines/cge/detection.cpp:105 engines/cge2/detection.cpp:101
-#, fuzzy
 msgid "Color Blind Mode"
-msgstr "Modo clic"
+msgstr "Modo para daltónicos"
 
 #: engines/cge/detection.cpp:106 engines/cge2/detection.cpp:102
 msgid "Enable Color Blind Mode by default"
-msgstr ""
+msgstr "Activar por defecto el modo para daltónicos"
 
 #: engines/drascula/saveload.cpp:47
 msgid ""
@@ -2481,11 +2471,11 @@ msgstr "Fallo al guardar la partida"
 
 #: engines/hopkins/detection.cpp:76 engines/hopkins/detection.cpp:86
 msgid "Gore Mode"
-msgstr ""
+msgstr "Modo sangriento"
 
 #: engines/hopkins/detection.cpp:77 engines/hopkins/detection.cpp:87
 msgid "Enable Gore Mode when available"
-msgstr ""
+msgstr "Activar el modo sangriento si está disponible"
 
 #. I18N: Studio audience adds an applause and cheering sounds whenever
 #. Malcolm makes a joke.
@@ -2617,6 +2607,12 @@ msgid ""
 "Do you wish to use this save game file with ScummVM?\n"
 "\n"
 msgstr ""
+"Se ha encontrado esta partida guardada en el directorio del juego:\n"
+"\n"
+"%s %s\n"
+"\n"
+"Do you wish to use this save game file with ScummVM?\n"
+"\n"
 
 #: engines/kyra/saveload_eob.cpp:590
 #, c-format
@@ -2624,6 +2620,8 @@ msgid ""
 "A save game file was found in the specified slot %d. Overwrite?\n"
 "\n"
 msgstr ""
+"Ya hay una partida guardada en la ranura %d. ¿Quieres sobrescribirla?\n"
+"\n"
 
 #: engines/kyra/saveload_eob.cpp:623
 #, c-format
@@ -2635,6 +2633,11 @@ msgid ""
 "'import_savefile'.\n"
 "\n"
 msgstr ""
+"Se han importado %d partidas guardadas originales.\n"
+"Si más adelante quieres importar manualmente más partidas guardadas\n"
+"originales, tendrás que abrir la consola de ScummVM y usar el comando "
+"'import_savefile'.\n"
+"\n"
 
 #. I18N: Option for fast scene switching
 #: engines/mohawk/dialogs.cpp:92 engines/mohawk/dialogs.cpp:167
@@ -2689,18 +2692,16 @@ msgstr ""
 "\n"
 
 #: engines/parallaction/saveload.cpp:197
-#, fuzzy
 msgid "Load file"
-msgstr "Cargar juego:"
+msgstr "Cargar partida"
 
 #: engines/parallaction/saveload.cpp:204
 msgid "Loading game..."
 msgstr "Cargando partida..."
 
 #: engines/parallaction/saveload.cpp:212
-#, fuzzy
 msgid "Save file"
-msgstr "No se ha podido guardar la partida."
+msgstr "Guardar partida"
 
 #: engines/parallaction/saveload.cpp:219
 msgid "Saving game..."
@@ -2786,21 +2787,21 @@ msgstr ""
 
 #: engines/sci/detection.cpp:374
 msgid "Skip EGA dithering pass (full color backgrounds)"
-msgstr ""
+msgstr "Omitir difuminado EGA (colores completos)"
 
 #: engines/sci/detection.cpp:375
 msgid "Skip dithering pass in EGA games, graphics are shown with full colors"
 msgstr ""
+"Omitir pasada de difuminado en los juegos EGA. Los gráficos se muestran con "
+"los colores completos"
 
 #: engines/sci/detection.cpp:384
-#, fuzzy
 msgid "Enable high resolution graphics"
-msgstr "Activar las barras de energía"
+msgstr "Activar gráficos de alta resolución"
 
 #: engines/sci/detection.cpp:385
-#, fuzzy
 msgid "Enable high resolution graphics/content"
-msgstr "Activar las barras de energía"
+msgstr "Activar gráficos/contenido de alta resolución"
 
 #: engines/sci/detection.cpp:394
 msgid "Prefer digital sound effects"
@@ -2873,13 +2874,11 @@ msgstr "Juego pausado. Pulsa Espacio para continuar."
 #. "Moechten Sie wirklich neu starten?  (J/N)J"
 #. Will react to J as 'Yes'
 #: engines/scumm/dialogs.cpp:183
-#, fuzzy
 msgid "Are you sure you want to restart?  (Y/N)Y"
 msgstr "¿Seguro que quieres reiniciar?  (S/N)S"
 
 #. I18N: you may specify 'Yes' symbol at the end of the line. See previous comment
 #: engines/scumm/dialogs.cpp:185
-#, fuzzy
 msgid "Are you sure you want to quit?  (Y/N)Y"
 msgstr "¿Seguro que quieres salir?  (S/N)S"
 
@@ -3389,25 +3388,24 @@ msgid "Third kid"
 msgstr "Tercer chaval"
 
 #: engines/scumm/help.cpp:292
-#, fuzzy
 msgid "Toggle Inventory/IQ Points display"
-msgstr "Activar/Desactivar pantalla de datos"
+msgstr "Alternar entre el inventario y la pantalla de puntuación"
 
 #: engines/scumm/help.cpp:293
 msgid "Toggle Keyboard/Mouse Fighting (*)"
-msgstr ""
+msgstr "Alternar entre modo de lucha con teclado o con ratón (*)"
 
 #: engines/scumm/help.cpp:295
 msgid "* Keyboard Fighting is always on,"
-msgstr ""
+msgstr "* El modo de lucha con teclado siempre está activo,"
 
 #: engines/scumm/help.cpp:296
 msgid "  so despite the in-game message this"
-msgstr ""
+msgstr "  así que, independientemente de lo que diga el juego,"
 
 #: engines/scumm/help.cpp:297
 msgid "  actually toggles Mouse Fighting Off/On"
-msgstr ""
+msgstr "  esta opción activa/desactiva el modo de lucha con ratón"
 
 #: engines/scumm/help.cpp:304
 msgid "Fighting controls (numpad):"
@@ -3444,7 +3442,7 @@ msgstr "Puñetazo bajo"
 
 #: engines/scumm/help.cpp:315
 msgid "Sucker punch"
-msgstr ""
+msgstr "Puñetazo a traición"
 
 #: engines/scumm/help.cpp:318
 msgid "These are for Indy on left."
@@ -3503,21 +3501,18 @@ msgid "Fly to lower right"
 msgstr "Volar abajo y a la derecha"
 
 #: engines/scumm/input.cpp:580
-#, fuzzy
 msgid "Snap scroll on"
-msgstr "Desplazamiento suave"
+msgstr "Desplazamiento mediante toques"
 
 #: engines/scumm/input.cpp:582
 msgid "Snap scroll off"
-msgstr ""
+msgstr "Desplazamiento normal"
 
 #: engines/scumm/input.cpp:595
-#, fuzzy
 msgid "Music volume: "
-msgstr "Música:"
+msgstr "Volumen de la música:"
 
 #: engines/scumm/input.cpp:612
-#, fuzzy
 msgid "Subtitle speed: "
 msgstr "Vel. de subtítulos:"
 
@@ -3531,81 +3526,88 @@ msgstr ""
 "pero %s no está disponible. Se usará AdLib."
 
 #: engines/scumm/scumm.cpp:2644
-#, fuzzy
 msgid ""
 "Usually, Maniac Mansion would start now. But for that to work, the game "
 "files for Maniac Mansion have to be in the 'Maniac' directory inside the "
 "Tentacle game directory, and the game has to be added to ScummVM."
 msgstr ""
-"Maniac Mansion debería arrancar en este momento, pero ScummVM aún no lo "
-"permite. Para jugar, ve a 'Añadir juego' en el menú de inicio de ScummVM y "
-"selecciona el directorio 'Maniac', dentro del directorio de DOTT."
+"Maniac Mansion debería arrancar en este momento, pero para que esto sea "
+"posible debes mover los archivos de Maniac Mansion al directorio 'Maniac', "
+"dentro del directorio de DOTT, y añadir el juego a ScummVM."
 
 #: engines/scumm/players/player_v3m.cpp:129
 msgid ""
 "Could not find the 'Loom' Macintosh executable to read the\n"
 "instruments from. Music will be disabled."
 msgstr ""
+"No se ha podido encontrar el ejecutable de Macintosh de 'Loom'\n"
+"para reproducir los instrumentos. Se ha desactivado la música."
 
 #: engines/scumm/players/player_v5m.cpp:107
 msgid ""
 "Could not find the 'Monkey Island' Macintosh executable to read the\n"
 "instruments from. Music will be disabled."
 msgstr ""
+"No se ha podido encontrar el ejecutable de Macintosh de 'Monkey Island'\n"
+"para reproducir los instrumentos. Se ha desactivado la música."
 
 #: engines/sherlock/detection.cpp:71
-#, fuzzy
 msgid "Use original savegame dialog"
-msgstr "Usar pantallas de guardar/cargar originales"
+msgstr "Usar menús originales al guardar/cargar"
 
 #: engines/sherlock/detection.cpp:72
 msgid ""
 "Files button in-game shows original savegame dialog rather than the ScummVM "
 "menu"
 msgstr ""
+"Se usan los menús originales para guardar y cargar partida en vez de los "
+"menús de ScummVM"
 
 #: engines/sherlock/detection.cpp:81
 msgid "Pixellated scene transitions"
-msgstr ""
+msgstr "Transiciones pixeladas"
 
 #: engines/sherlock/detection.cpp:82
 msgid "When changing scenes, a randomized pixel transition is done"
-msgstr ""
+msgstr "Al cambiar de escena, se utiliza una transición aleatoria de píxeles"
 
 #: engines/sherlock/detection.cpp:91
 msgid "Don't show hotspots when moving mouse"
-msgstr ""
+msgstr "No mostrar los puntos interactivos al mover el ratón"
 
 #: engines/sherlock/detection.cpp:92
 msgid ""
 "Only show hotspot names after you actually click on a hotspot or action "
 "button"
 msgstr ""
+"El nombre de los puntos interactivos solo aparece al hacer clic en uno de "
+"ellos o en un botón de acción."
 
 #: engines/sherlock/detection.cpp:101
-#, fuzzy
 msgid "Show character portraits"
-msgstr "Cambiar personaje"
+msgstr "Mostrar retratos"
 
 #: engines/sherlock/detection.cpp:102
 msgid "Show portraits for the characters when conversing"
-msgstr ""
+msgstr "Mostrar retratos de los personajes durante las conversaciones"
 
 #: engines/sherlock/detection.cpp:111
 msgid "Slide dialogs into view"
-msgstr ""
+msgstr "Utilizar una transición al mostrar los diálogos"
 
 #: engines/sherlock/detection.cpp:112
 msgid "Slide UI dialogs into view, rather than simply showing them immediately"
 msgstr ""
+"Los diálogos se muestran con una transición, en vez de aparecer "
+"inmediatamente"
 
 #: engines/sherlock/detection.cpp:121
 msgid "Transparent windows"
-msgstr ""
+msgstr "Ventanas transparentes"
 
 #: engines/sherlock/detection.cpp:122
 msgid "Show windows with a partially transparent background"
-msgstr ""
+msgstr "Mostrar las ventanas con un fondo parcialmente transparente"
 
 #: engines/sky/compact.cpp:130
 msgid ""
@@ -3726,53 +3728,50 @@ msgstr ""
 
 #: engines/wintermute/detection.cpp:58
 msgid "Show FPS-counter"
-msgstr ""
+msgstr "Mostrar contador de FPS"
 
 #: engines/wintermute/detection.cpp:59
 msgid "Show the current number of frames per second in the upper left corner"
 msgstr ""
+"El número de fotogramas por segundo aparece en la esquina superior izquierda"
 
 #: engines/zvision/detection_tables.h:52
-#, fuzzy
 msgid "Use the original save/load screens instead of the ScummVM interface"
 msgstr ""
-"Utilizar las pantallas de guardar/cargar originales, en vez de las de ScummVM"
+"Utilizar los menús originales para guardar/cargar, en vez de los de ScummVM"
 
 #: engines/zvision/detection_tables.h:61
 msgid "Double FPS"
-msgstr ""
+msgstr "Duplicar FPS"
 
 #: engines/zvision/detection_tables.h:62
 msgid "Increase framerate from 30 to 60 FPS"
-msgstr ""
+msgstr "Aumenta el número de fotogramas por segundo de 30 a 60"
 
 #: engines/zvision/detection_tables.h:71
-#, fuzzy
 msgid "Enable Venus"
-msgstr "Activar el modo helio"
+msgstr "Activar Venus"
 
 #: engines/zvision/detection_tables.h:72
-#, fuzzy
 msgid "Enable the Venus help system"
-msgstr "Activar el modo helio"
+msgstr "Activar el modo de ayuda Venus"
 
 #: engines/zvision/detection_tables.h:81
 msgid "Disable animation while turning"
-msgstr ""
+msgstr "Desactivar animación al girar"
 
 #: engines/zvision/detection_tables.h:82
 msgid "Disable animation while turning in panorama mode"
-msgstr ""
+msgstr "Desactivar la animación al girar en el modo panorama"
 
 #: engines/zvision/detection_tables.h:91
 msgid "Use high resolution MPEG video"
-msgstr ""
+msgstr "Usar vídeos MPEG de alta resolución"
 
 #: engines/zvision/detection_tables.h:92
-#, fuzzy
 msgid "Use MPEG video from the DVD version, instead of lower resolution AVI"
 msgstr ""
-"Usar los cursores plateados alternativos, en vez de los dorados normales"
+"Usar los vídeos MPEG de la versión DVD, en vez de los AVI de baja resolución"
 
 #~ msgid "EGA undithering"
 #~ msgstr "Difuminado EGA"
