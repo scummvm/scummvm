@@ -91,6 +91,15 @@ static const ADGameDescription gameDescriptions[] = {
 	},
 	{
 		"wage",
+		"Dungeon World II",
+		AD_ENTRY1s("DungeonWorld2", "e10c5e3cc17879c298b1551f33571b15", 234880),
+		Common::EN_ANY,
+		Common::kPlatformMacintosh,
+		ADGF_GENERIC,
+		GUIO0()
+	},
+	{
+		"wage",
 		"Double Trouble",
 		AD_ENTRY1s("Double Trouble", "5e9ee13d09ac54918ed111fa9727ac1c", 557184),
 		Common::EN_ANY,
