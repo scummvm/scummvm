@@ -275,7 +275,9 @@ void Design::drawPolygon(Graphics::Surface *surface, Common::ReadStream &in,
 	Patterns &patterns, byte fillType, byte borderThickness, byte borderFillType) {
 
 	byte ignored = in.readSint16BE(); // ignored
-	assert(ignored == 0);
+
+	if (ignored)
+		warning("Ignored: %d", ignored);
 
 	int numBytes = in.readSint16BE(); // #bytes used by polygon data, including the numBytes
 	int16 by1 = in.readSint16BE();
