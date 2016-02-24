@@ -72,7 +72,7 @@ GeneralUser_GS_1.44-FluidSynth.zip:
 	curl -s http://www.scummvm.org/frs/extras/SoundFont/GeneralUser_GS_1.44-FluidSynth.zip -o GeneralUser_GS_1.44-FluidSynth.zip
 
 GeneralUser\ GS\ FluidSynth\ v1.44.sf2: GeneralUser_GS_1.44-FluidSynth.zip
-	unzip GeneralUser_GS_1.44-FluidSynth.zip
+	unzip -n GeneralUser_GS_1.44-FluidSynth.zip
 	mv "GeneralUser GS 1.44 FluidSynth/GeneralUser GS FluidSynth v1.44.sf2" .
 	mv "GeneralUser GS 1.44 FluidSynth/README.txt" README.soundfont
 	mv "GeneralUser GS 1.44 FluidSynth/LICENSE.txt" LICENSE.soundfont
