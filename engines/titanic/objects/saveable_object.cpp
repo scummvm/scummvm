@@ -26,6 +26,7 @@
 #include "titanic/objects/message_target.h"
 #include "titanic/objects/project_item.h"
 #include "titanic/objects/tree_item.h"
+#include "titanic/rooms/room_item.h"
 
 namespace Titanic {
 
@@ -40,6 +41,9 @@ DEFFN(CMessageTarget);
 DEFFN(CTreeItem);
 DEFFN(CFileItem);
 DEFFN(CProjectItem);
+DEFFN(CRoomItem);
+DEFFN(CMovieClipItem);
+DEFFN(CMovieClipList);
 
 void CSaveableObject::initClassList() {
 	_classList = new Common::HashMap<Common::String, CreateFunction>();
@@ -48,6 +52,9 @@ void CSaveableObject::initClassList() {
 	ADDFN(CTreeItem);
 	ADDFN(CFileItem);
 	ADDFN(CProjectItem);
+	ADDFN(CRoomItem);
+	ADDFN(CMovieClipItem);
+	ADDFN(CMovieClipList);
 }
 
 void CSaveableObject::freeClassList() {

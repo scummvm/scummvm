@@ -20,33 +20,28 @@
  *
  */
 
-#ifndef TITANIC_NAMED_ITEM_H
-#define TITANIC_NAMED_ITEM_H
-
-#include "titanic/objects/tree_item.h"
+#include "titanic/simple_file.h"
+#include "titanic/objects/resource_key.h"
 
 namespace Titanic {
 
-class CNamedItem: public CTreeItem {
-public:
-	CString _name;
-public:
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CNamedItem"; }
+void CResourceKey::save(SimpleFile *file, int indent) const {
+	file->writeNumberLine(1, indent);
+	file->writeQuotedLine("Resource Key...", indent);
+	file->writeQuotedLine(_key, indent);
 
-	/**
-	 * Save the data for the class to file
-	 */
-	virtual void save(SimpleFile *file, int indent) const;
+	CSaveableObject::save(file, indent);
+}
 
-	/**
-	 * Load the data for the class from file
-	 */
-	virtual void load(SimpleFile *file);
-};
+void CResourceKey::load(SimpleFile *file) {
+	int val = file->readNumber();
+	
+	if (val == 1) {
+		file->readBuffer();
+		_value = file->readString();
+	}
+
+	CSaveableObject::load(file);
+}
 
 } // End of namespace Titanic
-
-#endif /* TITANIC_NAMED_ITEM_H */

@@ -23,8 +23,10 @@ MODULE_OBJS := \
 	objects/named_item.o \
 	objects/pet_control.o \
 	objects/project_item.o \
+	objects/resource_key.o \
 	objects/saveable_object.o \
-	objects/tree_item.o
+	objects/tree_item.o \
+	rooms/room_item.o
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_TITANIC), DYNAMIC_PLUGIN)

@@ -20,21 +20,49 @@
  *
  */
 
-#ifndef TITANIC_NAMED_ITEM_H
-#define TITANIC_NAMED_ITEM_H
+#ifndef TITANIC_ROOM_ITEM_H
+#define TITANIC_ROOM_ITEM_H
 
-#include "titanic/objects/tree_item.h"
+#include "common/rect.h"
+#include "titanic/objects/list.h"
+#include "titanic/objects/resource_key.h"
+#include "titanic/objects/named_item.h"
 
 namespace Titanic {
 
-class CNamedItem: public CTreeItem {
+/**
+ * Movie clip item
+ */
+class CMovieClipItem : public ListItem {
 public:
-	CString _name;
+	virtual const char *getClassName() const { return "CMovieClipItem"; }
+};
+
+/**
+ * Movie clip list
+ */
+class CMovieClipList: public List<CMovieClipItem> {
 public:
+	virtual const char *getClassName() const { return "CMovieClipList"; }
+};
+
+class CRoomItem : public CNamedItem {
+private:
+	Common::Rect _roomRect;
+	CMovieClipList _clipList;
+	int _roomNumber;
+	CResourceKey _transitionMovieKey;
+	CResourceKey _exitMovieKey;
+	double _roomDimensionX, _roomDimensionY;
+
+	void loading();
+public:
+	CRoomItem();
+
 	/**
 	 * Return the class name
 	 */
-	virtual const char *getClassName() const { return "CNamedItem"; }
+	virtual const char *getClassName() const { return "CRoomItem"; }
 
 	/**
 	 * Save the data for the class to file
@@ -49,4 +77,4 @@ public:
 
 } // End of namespace Titanic
 
-#endif /* TITANIC_NAMED_ITEM_H */
+#endif /* TITANIC_ROOM_ITEM_H */

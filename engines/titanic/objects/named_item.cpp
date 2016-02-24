@@ -24,5 +24,19 @@
 
 namespace Titanic {
 
+void CNamedItem::save(SimpleFile *file, int indent) const {
+	file->writeNumberLine(0, indent);
+	file->writeQuotedLine(_name, indent);
+
+	CTreeItem::save(file, indent);
+}
+
+void CNamedItem::load(SimpleFile *file) {
+	int val = file->readNumber();
+	if (!val)
+		_name = file->readString();
+
+	CTreeItem::load(file);
+}
 
 } // End of namespace Titanic
