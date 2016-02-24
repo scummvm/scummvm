@@ -7,3 +7,7 @@ browser_lastpath=/media
 extrapath=./engine-data
 pluginspath=./plugins
 joystick_num=0
+soundfont=./GeneralUser GS FluidSynth v1.44.sf2
+mt32_device=fluidsynth
+music_driver=fluidsynth
+gm_device=fluidsynth
