@@ -31,9 +31,12 @@ MODULE_OBJS := \
 	objects/saveable_object.o \
 	objects/tree_item.o \
 	objects/view_item.o \
+	rooms/announce.o \
 	rooms/door_auto_sound_event.o \
+	rooms/pet_position.o \
 	rooms/room_item.o \
-	rooms/service_elevator_door.o
+	rooms/service_elevator_door.o \
+	rooms/sub_glass.o
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_TITANIC), DYNAMIC_PLUGIN)

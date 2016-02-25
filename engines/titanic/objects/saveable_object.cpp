@@ -28,10 +28,14 @@
 #include "titanic/objects/movie_clip.h"
 #include "titanic/objects/node_item.h"
 #include "titanic/objects/project_item.h"
+#include "titanic/objects/saveable_object.h"
 #include "titanic/objects/tree_item.h"
 #include "titanic/objects/view_item.h"
+#include "titanic/rooms/announce.h"
+#include "titanic/rooms/pet_position.h"
 #include "titanic/rooms/room_item.h"
 #include "titanic/rooms/service_elevator_door.h"
+#include "titanic/rooms/sub_glass.h"
 
 namespace Titanic {
 
@@ -41,6 +45,7 @@ Common::HashMap<Common::String, CSaveableObject::CreateFunction> *
 #define DEFFN(T) CSaveableObject *Function##T() { return new T(); }
 #define ADDFN(T) (*_classList)[#T] = Function##T
 
+DEFFN(CAnnounce);
 DEFFN(CFileItem);
 DEFFN(CFileListItem);
 DEFFN(CLinkItem);
@@ -48,14 +53,17 @@ DEFFN(CMessageTarget);
 DEFFN(CMovieClip);
 DEFFN(CMovieClipList);
 DEFFN(CNodeItem);
+DEFFN(CPETPosition);
 DEFFN(CProjectItem);
 DEFFN(CRoomItem);
 DEFFN(CServiceElevatorDoor);
+DEFFN(CSUBGlass);
 DEFFN(CTreeItem);
 DEFFN(CViewItem);
 
 void CSaveableObject::initClassList() {
 	_classList = new Common::HashMap<Common::String, CreateFunction>();
+	ADDFN(CAnnounce);
 	ADDFN(CFileItem);
 	ADDFN(CFileListItem);
 	ADDFN(CLinkItem);
@@ -63,9 +71,11 @@ void CSaveableObject::initClassList() {
 	ADDFN(CMovieClip);
 	ADDFN(CMovieClipList);
 	ADDFN(CNodeItem);
+	ADDFN(CPETPosition);
 	ADDFN(CProjectItem);
 	ADDFN(CRoomItem);
 	ADDFN(CServiceElevatorDoor);
+	ADDFN(CSUBGlass);
 	ADDFN(CTreeItem);
 	ADDFN(CViewItem);
 }
