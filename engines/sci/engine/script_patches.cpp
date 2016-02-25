@@ -419,10 +419,10 @@ static const SciScriptPatcherEntry fanmadeSignatures[] = {
 // Applies to at least: English PC-CD
 // Responsible method: sTownScript::changeState(1), sTownScript::changeState(3) (script 110)
 static const uint16 freddypharkasSignatureIntroScaling[] = {
-	0x38, SIG_UINT16(0x009b),        // pushi 009b (setLoop)
+	0x38, SIG_ADDTOOFFSET(+2),       // pushi (setLoop) (009b for PC CD)
 	0x78,                            // push1
 	PATCH_ADDTOOFFSET(1),            // push0 for first code, push1 for second code
-	0x38, SIG_UINT16(0x0143),        // pushi 0143 (setStep)
+	0x38, SIG_ADDTOOFFSET(+2),       // pushi (setStep) (0143 for PC CD)
 	0x7a,                            // push2
 	0x39, 0x05,                      // pushi 05
 	0x3c,                            // dup
@@ -441,7 +441,9 @@ static const uint16 freddypharkasSignatureIntroScaling[] = {
 
 static const uint16 freddypharkasPatchIntroScaling[] = {
 	// remove setLoop(), objects in heap are already prepared, saves 5 bytes
-	0x38, PATCH_UINT16(0x0143),      // pushi 0143 (setStep)
+	0x38,
+	PATCH_GETORIGINALBYTE(+6),
+	PATCH_GETORIGINALBYTE(+7),       // pushi (setStep)
 	0x7a,                            // push2
 	0x39, 0x05,                      // pushi 05
 	0x3c,                            // dup
