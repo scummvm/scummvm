@@ -136,7 +136,6 @@ SaveStateList TinselMetaEngine::listSaves(const char *target) const {
 	Common::String pattern = target;
 	pattern = pattern + ".###";
 	Common::StringArray files = g_system->getSavefileManager()->listSavefiles(pattern);
-	sort(files.begin(), files.end());	// Sort (hopefully ensuring we are sorted numerically..)
 
 	SaveStateList saveList;
 	int slotNum = 0;
@@ -160,6 +159,8 @@ SaveStateList TinselMetaEngine::listSaves(const char *target) const {
 		}
 	}
 
+	// Sort saves based on slot number.
+	Common::sort(saveList.begin(), saveList.end(), SaveStateDescriptorSlotComparator());
 	return saveList;
 }
 

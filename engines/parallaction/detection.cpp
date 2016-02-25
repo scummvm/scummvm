@@ -273,7 +273,6 @@ SaveStateList ParallactionMetaEngine::listSaves(const char *target) const {
 
 	Common::String pattern(ConfMan.getDomain(target)->getVal("gameid") + ".0##");
 	Common::StringArray filenames = saveFileMan->listSavefiles(pattern);
-	sort(filenames.begin(), filenames.end());	// Sort (hopefully ensuring we are sorted numerically..)
 
 	SaveStateList saveList;
 	for (Common::StringArray::const_iterator file = filenames.begin(); file != filenames.end(); ++file) {
@@ -290,6 +289,8 @@ SaveStateList ParallactionMetaEngine::listSaves(const char *target) const {
 		}
 	}
 
+	// Sort saves based on slot number.
+	Common::sort(saveList.begin(), saveList.end(), SaveStateDescriptorSlotComparator());
 	return saveList;
 }
 

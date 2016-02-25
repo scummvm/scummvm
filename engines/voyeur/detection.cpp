@@ -117,7 +117,6 @@ SaveStateList VoyeurMetaEngine::listSaves(const char *target) const {
 	Common::String pattern = Common::String::format("%s.0##", target);
 
 	filenames = saveFileMan->listSavefiles(pattern);
-	sort(filenames.begin(), filenames.end());   // Sort to get the files in numerical order
 
 	SaveStateList saveList;
 	Voyeur::VoyeurSavegameHeader header;
@@ -139,6 +138,8 @@ SaveStateList VoyeurMetaEngine::listSaves(const char *target) const {
 		}
 	}
 
+	// Sort saves based on slot number.
+	Common::sort(saveList.begin(), saveList.end(), SaveStateDescriptorSlotComparator());
 	return saveList;
 }
 

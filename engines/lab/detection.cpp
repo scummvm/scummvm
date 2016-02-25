@@ -169,7 +169,6 @@ SaveStateList LabMetaEngine::listSaves(const char *target) const {
 
 	Common::StringArray filenames;
 	filenames = saveFileMan->listSavefiles(pattern.c_str());
-	Common::sort(filenames.begin(), filenames.end());   // Sort (hopefully ensuring we are sorted numerically..)*/
 
 	SaveStateList saveList;
 
@@ -187,6 +186,8 @@ SaveStateList LabMetaEngine::listSaves(const char *target) const {
 		}
 	}
 
+	// Sort saves based on slot number.
+	Common::sort(saveList.begin(), saveList.end(), SaveStateDescriptorSlotComparator());
 	return saveList;
 }
 
