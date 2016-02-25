@@ -19,6 +19,7 @@ MODULE_OBJS := \
 	objects/dont_save_file_item.o \
 	objects/file_item.o \
 	objects/game_object.o \
+	objects/link_item.o \
 	objects/list.o \
 	objects/message_target.o \
 	objects/movie_clip.o \

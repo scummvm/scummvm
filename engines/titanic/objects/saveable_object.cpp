@@ -22,6 +22,7 @@
 
 #include "titanic/objects/saveable_object.h"
 #include "titanic/objects/file_item.h"
+#include "titanic/objects/link_item.h"
 #include "titanic/objects/list.h"
 #include "titanic/objects/message_target.h"
 #include "titanic/objects/movie_clip.h"
@@ -42,6 +43,7 @@ Common::HashMap<Common::String, CSaveableObject::CreateFunction> *
 
 DEFFN(CFileItem);
 DEFFN(CFileListItem);
+DEFFN(CLinkItem);
 DEFFN(CMessageTarget);
 DEFFN(CMovieClip);
 DEFFN(CMovieClipList);
@@ -56,6 +58,7 @@ void CSaveableObject::initClassList() {
 	_classList = new Common::HashMap<Common::String, CreateFunction>();
 	ADDFN(CFileItem);
 	ADDFN(CFileListItem);
+	ADDFN(CLinkItem);
 	ADDFN(CMessageTarget);
 	ADDFN(CMovieClip);
 	ADDFN(CMovieClipList);
