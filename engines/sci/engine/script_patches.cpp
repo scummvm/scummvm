@@ -408,6 +408,57 @@ static const SciScriptPatcherEntry fanmadeSignatures[] = {
 };
 
 // ===========================================================================
+
+// WORKAROUND
+// Freddy Pharkas intro screen
+// Sierra used inner loops for the scaling of the 2 title views.
+// Those inner loops don't call kGameIsRestarting, which is why
+// we do not update the screen and we also do not throttle.
+//
+// This patch fixes this and makes it work.
+// Applies to at least: English PC-CD
+// Responsible method: sTownScript::changeState(1), sTownScript::changeState(3) (script 110)
+static const uint16 freddypharkasSignatureIntroScaling[] = {
+	0x38, SIG_UINT16(0x009b),        // pushi 009b (setLoop)
+	0x78,                            // push1
+	PATCH_ADDTOOFFSET(1),            // push0 for first code, push1 for second code
+	0x38, SIG_UINT16(0x0143),        // pushi 0143 (setStep)
+	0x7a,                            // push2
+	0x39, 0x05,                      // pushi 05
+	0x3c,                            // dup
+	0x72, SIG_ADDTOOFFSET(+2),       // lofsa (view)
+	SIG_MAGICDWORD,
+	0x4a, 0x1e,                      // send 1e
+	0x35, 0x0a,                      // ldi 0a
+	0xa3, 0x02,                      // sal local[2]
+	// start of inner loop
+	0x8b, 0x02,                      // lsl local[2]
+	SIG_ADDTOOFFSET(+43),            // skip almost all of inner loop
+	0xa3, 0x02,                      // sal local[2]
+	0x33, 0xcf,                      // jmp [inner loop start]
+	SIG_END
+};
+
+static const uint16 freddypharkasPatchIntroScaling[] = {
+	// remove setLoop(), objects in heap are already prepared, saves 5 bytes
+	0x38, PATCH_UINT16(0x0143),      // pushi 0143 (setStep)
+	0x7a,                            // push2
+	0x39, 0x05,                      // pushi 05
+	0x3c,                            // dup
+	0x72,
+	PATCH_GETORIGINALBYTE(+13),
+	PATCH_GETORIGINALBYTE(+14),      // lofsa (view)
+	0x4a, 0x18,                      // send 18 - adjusted
+	0x35, 0x0a,                      // ldi 0a
+	0xa3, 0x02,                      // sal local[2]
+	// start of new inner loop
+	0x39, 0x00,                      // pushi 00
+	0x43, 0x2c, 0x00,                // callk GameIsRestarting <-- add this so that our speed throttler is triggered
+	SIG_ADDTOOFFSET(+47),            // skip almost all of inner loop
+	0x33, 0xca,                      // jmp [inner loop start]
+	PATCH_END
+};
+
 //  script 0 of freddy pharkas/CD PointsSound::check waits for a signal and if
 //   no signal received will call kDoSound(0xD) which is a dummy in sierra sci
 //   and ScummVM and will use acc (which is not set by the dummy) to trigger
@@ -526,6 +577,7 @@ static const uint16 freddypharkasPatchMacInventory[] = {
 static const SciScriptPatcherEntry freddypharkasSignatures[] = {
 	{  true,     0, "CD: score early disposal",                    1, freddypharkasSignatureScoreDisposal, freddypharkasPatchScoreDisposal },
 	{  true,    15, "Mac: broken inventory",                       1, freddypharkasSignatureMacInventory,  freddypharkasPatchMacInventory },
+	{  true,   110, "intro scaling workaround",                    2, freddypharkasSignatureIntroScaling,  freddypharkasPatchIntroScaling },
 	{  true,   235, "CD: canister pickup hang",                    3, freddypharkasSignatureCanisterHang,  freddypharkasPatchCanisterHang },
 	{  true,   320, "ladder event issue",                          2, freddypharkasSignatureLadderEvent,   freddypharkasPatchLadderEvent },
 	SCI_SIGNATUREENTRY_TERMINATOR
