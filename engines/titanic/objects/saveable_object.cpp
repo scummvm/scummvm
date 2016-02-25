@@ -25,6 +25,7 @@
 #include "titanic/objects/list.h"
 #include "titanic/objects/message_target.h"
 #include "titanic/objects/movie_clip.h"
+#include "titanic/objects/node_item.h"
 #include "titanic/objects/project_item.h"
 #include "titanic/objects/tree_item.h"
 #include "titanic/rooms/room_item.h"
@@ -37,25 +38,27 @@ Common::HashMap<Common::String, CSaveableObject::CreateFunction> *
 #define DEFFN(T) CSaveableObject *Function##T() { return new T(); }
 #define ADDFN(T) (*_classList)[#T] = Function##T
 
+DEFFN(CFileItem);
 DEFFN(CFileListItem);
 DEFFN(CMessageTarget);
-DEFFN(CTreeItem);
-DEFFN(CFileItem);
-DEFFN(CProjectItem);
-DEFFN(CRoomItem);
 DEFFN(CMovieClip);
 DEFFN(CMovieClipList);
+DEFFN(CNodeItem);
+DEFFN(CProjectItem);
+DEFFN(CRoomItem);
+DEFFN(CTreeItem);
 
 void CSaveableObject::initClassList() {
 	_classList = new Common::HashMap<Common::String, CreateFunction>();
+	ADDFN(CFileItem);
 	ADDFN(CFileListItem);
 	ADDFN(CMessageTarget);
-	ADDFN(CTreeItem);
-	ADDFN(CFileItem);
-	ADDFN(CProjectItem);
-	ADDFN(CRoomItem);
 	ADDFN(CMovieClip);
 	ADDFN(CMovieClipList);
+	ADDFN(CNodeItem);
+	ADDFN(CProjectItem);
+	ADDFN(CRoomItem);
+	ADDFN(CTreeItem);
 }
 
 void CSaveableObject::freeClassList() {

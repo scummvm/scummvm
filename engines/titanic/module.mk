@@ -22,6 +22,7 @@ MODULE_OBJS := \
 	objects/message_target.o \
 	objects/movie_clip.o \
 	objects/named_item.o \
+	objects/node_item.o \
 	objects/pet_control.o \
 	objects/project_item.o \
 	objects/resource_key.o \
