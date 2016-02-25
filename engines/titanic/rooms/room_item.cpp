@@ -89,6 +89,7 @@ void CRoomItem::load(SimpleFile *file) {
 		_roomRect.right = file->readNumber();
 		_roomRect.bottom = file->readNumber();
 		file->readBuffer();
+		_roomNumber = file->readNumber();
 		break;
 
 	default:

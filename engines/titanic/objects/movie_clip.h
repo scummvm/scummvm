@@ -28,22 +28,6 @@
 namespace Titanic {
 
 /**
- * Movie clip item
- */
-class CMovieClipItem : public ListItem {
-public:
-	virtual const char *getClassName() const { return "CMovieClipItem"; }
-};
-
-/**
- * Movie clip list
- */
-class CMovieClipList: public List<CMovieClipItem> {
-public:
-	virtual const char *getClassName() const { return "CMovieClipList"; }
-};
-
-/**
  * Movie clip
  */
 class CMovieClip : public ListItem {
@@ -75,6 +59,14 @@ public:
 	 * Load the data for the class from file
 	 */
 	virtual void load(SimpleFile *file);
+};
+
+/**
+ * Movie clip list
+ */
+class CMovieClipList: public List<CMovieClip> {
+public:
+	virtual const char *getClassName() const { return "CMovieClipList"; }
 };
 
 } // End of namespace Titanic

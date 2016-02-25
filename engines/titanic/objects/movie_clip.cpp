@@ -53,6 +53,7 @@ void CMovieClip::load(SimpleFile *file) {
 		break;
 
 	case 2:
+		file->readString();
 		_string1 = file->readString();
 		_field18 = file->readNumber();
 		_field1C = file->readNumber();

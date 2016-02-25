@@ -44,7 +44,6 @@ DEFFN(CFileItem);
 DEFFN(CProjectItem);
 DEFFN(CRoomItem);
 DEFFN(CMovieClip);
-DEFFN(CMovieClipItem);
 DEFFN(CMovieClipList);
 
 void CSaveableObject::initClassList() {
@@ -56,7 +55,6 @@ void CSaveableObject::initClassList() {
 	ADDFN(CProjectItem);
 	ADDFN(CRoomItem);
 	ADDFN(CMovieClip);
-	ADDFN(CMovieClipItem);
 	ADDFN(CMovieClipList);
 }
 
@@ -65,6 +63,7 @@ void CSaveableObject::freeClassList() {
 }
 
 CSaveableObject *CSaveableObject::createInstance(const Common::String &name) {
+warning("%s", name.c_str());
 	return (*_classList)[name]();
 }
 
