@@ -257,8 +257,30 @@ void Gui::renderConsole(Graphics::Surface *g, Common::Rect &r) {
 		y1 += _consoleLineHeight;
 	}
 
-	g->copyRectToSurface(_console, r.left - kConOverscan, r.top - kConOverscan, boundsR);
-	g_system->copyRectToScreen(g->getBasePtr(r.left, r.top), g->pitch, r.left, r.top, r.width(), r.height());
+	// Now we need to clip it to the screen
+	int xcon = r.left - kConOverscan;
+	int ycon = r.top - kConOverscan;
+	if (xcon < 0) {
+		boundsR.left -= xcon;
+		xcon = 0;
+	}
+	if (ycon < 0) {
+		boundsR.top -= ycon;
+		ycon = 0;
+	}
+	if (xcon + boundsR.width() >= g->w)
+		boundsR.right -= xcon + boundsR.width() - g->w;
+	if (ycon + boundsR.height() >= g->h)
+		boundsR.bottom -= ycon + boundsR.height() - g->h;
+
+	Common::Rect rr(r);
+	if (rr.right > _screen.w - 1)
+		rr.right = _screen.w - 1;
+	if (rr.bottom > _screen.h - 1)
+		rr.bottom = _screen.h - 1;
+
+	g->copyRectToSurface(_console, xcon, ycon, boundsR);
+	g_system->copyRectToScreen(g->getBasePtr(rr.left, rr.top), g->pitch, rr.left, rr.top, rr.width(), rr.height());
 }
 
 void Gui::drawInput() {

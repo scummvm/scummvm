@@ -132,9 +132,9 @@ static void cursorTimerHandler(void *refCon) {
 		gui->_cursorState = !gui->_cursorState;
 
 	gui->_cursorRect.left = x;
-	gui->_cursorRect.right = x + 1;
+	gui->_cursorRect.right = MIN<uint16>(x + 1, gui->_screen.w);
 	gui->_cursorRect.top = y;
-	gui->_cursorRect.bottom = y + kCursorHeight;
+	gui->_cursorRect.bottom = MIN<uint16>(y + kCursorHeight, gui->_screen.h);
 
 	gui->_cursorDirty = true;
 }
