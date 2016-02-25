@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
 "POT-Creation-Date: 2016-02-20 21:28+0000\n"
-"PO-Revision-Date: 2016-02-14 15:28+0100\n"
+"PO-Revision-Date: 2016-02-25 21:08+0100\n"
 "Last-Translator: Steffen Nyeland <steffen@nyeland.dk>\n"
 "Language-Team: Steffen Nyeland <steffen@nyeland.dk>\n"
 "Language: Dansk\n"
@@ -2686,18 +2686,16 @@ msgstr ""
 "\n"
 
 #: engines/parallaction/saveload.cpp:197
-#, fuzzy
 msgid "Load file"
-msgstr "Indlæs spil:"
+msgstr "Indlæs fil"
 
 #: engines/parallaction/saveload.cpp:204
 msgid "Loading game..."
 msgstr "Indlæser spil..."
 
 #: engines/parallaction/saveload.cpp:212
-#, fuzzy
 msgid "Save file"
-msgstr "Gemmer:"
+msgstr "Gem fil"
 
 #: engines/parallaction/saveload.cpp:219
 msgid "Saving game..."
@@ -3545,58 +3543,60 @@ msgstr ""
 "at læse instrumenterne fra. Musik bliver deaktiveret."
 
 #: engines/sherlock/detection.cpp:71
-#, fuzzy
 msgid "Use original savegame dialog"
-msgstr "Brug original gem/indlæs skærme"
+msgstr "Brug original gem/indlæs dialog"
 
 #: engines/sherlock/detection.cpp:72
 msgid ""
 "Files button in-game shows original savegame dialog rather than the ScummVM "
 "menu"
 msgstr ""
+"Knappen Files i spillet viser original gem/indlæs dialog snarere end ScummVM "
+"menuen"
 
 #: engines/sherlock/detection.cpp:81
 msgid "Pixellated scene transitions"
-msgstr ""
+msgstr "Pixelleret scene overgange"
 
 #: engines/sherlock/detection.cpp:82
 msgid "When changing scenes, a randomized pixel transition is done"
-msgstr ""
+msgstr "Ved sceneskift, bruges en tilfældig pixelleret overgang"
 
 #: engines/sherlock/detection.cpp:91
 msgid "Don't show hotspots when moving mouse"
-msgstr ""
+msgstr "Vi ikke hotspots, når du flytter musen"
 
 #: engines/sherlock/detection.cpp:92
 msgid ""
 "Only show hotspot names after you actually click on a hotspot or action "
 "button"
 msgstr ""
+"Vis kun hotspot navne efter du rent faktisk klikker på et hotspot eller en "
+"handlingsknap"
 
 #: engines/sherlock/detection.cpp:101
-#, fuzzy
 msgid "Show character portraits"
-msgstr "Skift person"
+msgstr "Vis person portrætter"
 
 #: engines/sherlock/detection.cpp:102
 msgid "Show portraits for the characters when conversing"
-msgstr ""
+msgstr "Vis portrætter for personer når de taler"
 
 #: engines/sherlock/detection.cpp:111
 msgid "Slide dialogs into view"
-msgstr ""
+msgstr "Skub dialoger til syne"
 
 #: engines/sherlock/detection.cpp:112
 msgid "Slide UI dialogs into view, rather than simply showing them immediately"
-msgstr ""
+msgstr "Skub dialoger til syne, i stedet for blot at vise dem straks"
 
 #: engines/sherlock/detection.cpp:121
 msgid "Transparent windows"
-msgstr ""
+msgstr "Gennemsigtige vinduer"
 
 #: engines/sherlock/detection.cpp:122
 msgid "Show windows with a partially transparent background"
-msgstr ""
+msgstr "Vis vinduer med delvis gennemsigtig baggrund"
 
 #: engines/sky/compact.cpp:130
 msgid ""
