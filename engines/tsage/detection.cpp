@@ -117,7 +117,6 @@ public:
 		pattern += ".###";
 
 		Common::StringArray filenames = g_system->getSavefileManager()->listSavefiles(pattern);
-		sort(filenames.begin(), filenames.end());
 		TsAGE::tSageSavegameHeader header;
 
 		SaveStateList saveList;
@@ -141,6 +140,8 @@ public:
 			}
 		}
 
+		// Sort saves based on slot number.
+		Common::sort(saveList.begin(), saveList.end(), SaveStateDescriptorSlotComparator());
 		return saveList;
 	}
 
