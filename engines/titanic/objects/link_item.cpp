@@ -59,7 +59,7 @@ void CLinkItem::load(SimpleFile *file) {
 	file->readBuffer();
 
 	switch (val) {
-	case 3:
+	case 2:
 		_field34 = file->readNumber();
 		// Deliberate fall-through
 
@@ -71,6 +71,12 @@ void CLinkItem::load(SimpleFile *file) {
 		_field24 = file->readNumber();
 		_field28 = file->readNumber();
 		_field2C = file->readNumber();
+
+		file->readBuffer();
+		_sub._field0 = file->readNumber();
+		_sub._field4 = file->readNumber();
+		_sub._field8 = file->readNumber();
+		_sub._fieldC = file->readNumber();
 		break;
 
 	default:
