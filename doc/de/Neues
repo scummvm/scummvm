@@ -87,10 +87,12 @@ Neue Portierungen:
    - Behandlung der Musik-Priorität extrem verbessert.
    - Viele Fehler in den originalen Skripten behoben, die auch bei
      Verwendung des originalen Interpreters auftreten:
-	 KQ6 (Sprache und Untertitel), LSL5, QfG1 (EGA), QfG (VGA), QfG2, QfG3,
-       SQ1, SQ4 (CD)
+     KQ6 (Sprache und Untertitel), LSL5, QfG1 (EGA), QfG (VGA), QfG2, QfG3,
+     SQ1, SQ4 (CD)
    - Rückkehr aus dem ScummVM-Menü im Spiel sollte nun immer funktionieren.
    - Verbesserte Unterstützung für japanische PC-9801-Spiele
+   - Verwende standardmäßig die hochauflösende Version von KQ6
+     (kann in den Spieloptionen umgeschaltet werden)
 
  SCUMM:
    - Umfangreiche Verbesserung der Textdarstellung in koreanischen Versionen
