@@ -141,6 +141,16 @@ public:
 	void writeNumberLine(int val, int indent);
 
 	/**
+	 * Write a floating point number
+	 */
+	void writeFloat(double val);
+
+	/**
+	 * Write a floating point number as a line
+	 */
+	void writeFloatLine(double val, int indent);
+
+	/**
 	 * Write out a point line
 	 */
 	void writePoint(const Common::Point &pt, int indent);

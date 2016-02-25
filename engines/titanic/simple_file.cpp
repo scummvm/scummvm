@@ -282,6 +282,17 @@ void SimpleFile::writeNumberLine(int val, int indent) {
 	write("\n", 1);
 }
 
+void SimpleFile::writeFloat(double val) {
+	Common::String valStr = Common::String::format("%f ", val);
+	write(valStr.c_str(), valStr.size());
+}
+
+void SimpleFile::writeFloatLine(double val, int indent) {
+	writeIndent(indent);
+	writeFloat(val);
+	write("\n", 1);
+}
+
 void SimpleFile::writePoint(const Common::Point &pt, int indent) {
 	writeIndent(indent);
 	writeNumber(pt.x);

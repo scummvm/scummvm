@@ -28,6 +28,7 @@
 #include "titanic/objects/node_item.h"
 #include "titanic/objects/project_item.h"
 #include "titanic/objects/tree_item.h"
+#include "titanic/objects/view_item.h"
 #include "titanic/rooms/room_item.h"
 #include "titanic/rooms/service_elevator_door.h"
 
@@ -49,6 +50,7 @@ DEFFN(CProjectItem);
 DEFFN(CRoomItem);
 DEFFN(CServiceElevatorDoor);
 DEFFN(CTreeItem);
+DEFFN(CViewItem);
 
 void CSaveableObject::initClassList() {
 	_classList = new Common::HashMap<Common::String, CreateFunction>();
@@ -62,6 +64,7 @@ void CSaveableObject::initClassList() {
 	ADDFN(CRoomItem);
 	ADDFN(CServiceElevatorDoor);
 	ADDFN(CTreeItem);
+	ADDFN(CViewItem);
 }
 
 void CSaveableObject::freeClassList() {
@@ -69,7 +72,6 @@ void CSaveableObject::freeClassList() {
 }
 
 CSaveableObject *CSaveableObject::createInstance(const Common::String &name) {
-warning("%s", name.c_str());
 	return (*_classList)[name]();
 }
 
