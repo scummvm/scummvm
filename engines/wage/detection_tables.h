@@ -40,6 +40,7 @@ static const ADGameDescription gameDescriptions[] = {
 	FANGAME("Dungeon World II", "DungeonWorld2", "e10c5e3cc17879c298b1551f33571b15", 234880),
 	// Polygons with ignored byte 1
 	FANGAME("Double Trouble", "Double Trouble", "5e9ee13d09ac54918ed111fa9727ac1c", 557184),
+	FANGAME("Eidisi I", "Eidisi I", "299d1de4baccf1c66118396519953652", 180480),
 	FANGAME("Escape from School!", "Escape from School!", "a854be48d4af20126d18a9cad93a969b", 51840),
 	FANGAME("Magic Rings", "Magic Rings", "6e0d1dd561d3dad8f9a7a20ed1f09b16", 112000),
 	FANGAME("Midnight Snack", "Midnight Snack", "346982a32fc701f53bb19771d72063d0", 69504),
