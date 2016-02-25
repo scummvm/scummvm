@@ -128,7 +128,6 @@ public:
 		pattern += ".##";
 
 		Common::StringArray filenames = g_system->getSavefileManager()->listSavefiles(pattern);
-		Common::sort(filenames.begin(), filenames.end());
 
 		SaveStateList saveList;
 		for (Common::StringArray::const_iterator file = filenames.begin(); file != filenames.end(); ++file) {
@@ -145,6 +144,8 @@ public:
 				saveList.push_back(SaveStateDescriptor(slot, buf));
 			}
 		}
+		// Sort saves based on slot number.
+		Common::sort(saveList.begin(), saveList.end(), SaveStateDescriptorSlotComparator());
 		return saveList;
 	}
 
