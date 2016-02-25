@@ -15,6 +15,7 @@ MODULE_OBJS := \
 	string.o \
 	titanic.o \
 	video_surface.o \
+	objects/auto_sound_event.o \
 	objects/dont_save_file_item.o \
 	objects/file_item.o \
 	objects/game_object.o \
@@ -28,7 +29,9 @@ MODULE_OBJS := \
 	objects/resource_key.o \
 	objects/saveable_object.o \
 	objects/tree_item.o \
-	rooms/room_item.o
+	rooms/door_auto_sound_event.o \
+	rooms/room_item.o \
+	rooms/service_elevator_door.o
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_TITANIC), DYNAMIC_PLUGIN)

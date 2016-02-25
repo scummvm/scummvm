@@ -26,6 +26,7 @@
 #include "common/scummsys.h"
 #include "common/file.h"
 #include "common/queue.h"
+#include "common/rect.h"
 #include "common/savefile.h"
 #include "titanic/string.h"
 
@@ -95,6 +96,16 @@ public:
 	double readFloat();
 
 	/**
+	 * Read in a point
+	 */
+	Common::Point readPoint();
+
+	/**
+	 * Read in a rect
+	 */
+	Common::Rect readRect();
+
+	/**
 	 * Read a string and copy it into an optionally passed buffer
 	 */
 	void readBuffer(char *buffer = nullptr, size_t count = 0);
@@ -128,6 +139,16 @@ public:
 	 * Write a number line to file
 	 */
 	void writeNumberLine(int val, int indent);
+
+	/**
+	 * Write out a point line
+	 */
+	void writePoint(const Common::Point &pt, int indent);
+
+	/**
+	 * Write out a rect line
+	 */
+	void writeRect(const Common::Rect &r, int indent);
 
 	/**
 	 * Write out a number of tabs to form an indent in the output

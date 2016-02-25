@@ -20,51 +20,24 @@
  *
  */
 
-#ifndef TITANIC_GAME_OBJECT_H
-#define TITANIC_GAME_OBJECT_H
+#ifndef TITANIC_AUTO_SOUND_EVENT_H
+#define TITANIC_AUTO_SOUND_EVENT_H
 
-#include "common/rect.h"
-#include "titanic/objects/movie_clip.h"
-#include "titanic/objects/named_item.h"
+#include "titanic/objects/game_object.h"
 
 namespace Titanic {
 
-class CGameObject : public CNamedItem {
-protected:
-	Common::Rect _bounds;
-	double _field34;
-	double _field38;
-	double _field3C;
-	int _field40;
-	int _field44;
-	int _field48;
-	int _field4C;
-	int _field50;
-	int _field54;
-	int _field58;
-	int _field5C;
-	int _field60;
-	CMovieClipList _clipList1;
-	int _field74;
-	int _field78;
-	CMovieClipList _clipList2;
-	int _field8C;
-	int _field90;
-	int _field94;
-	int _field98;
-	int _field9C;
-	int _fieldA0;
-	int _fieldA4;
-	void *_fieldA8;
-	CString _string;
-	int _fieldB8;
+class CAutoSoundEvent : public CGameObject {
+private:
+	int _fieldBC;
+	int _fieldC0;
 public:
-	CGameObject();
+	CAutoSoundEvent();
 
 	/**
 	 * Return the class name
 	 */
-	virtual const char *getClassName() const { return "CGameObject"; }
+	virtual const char *getClassName() const { return "CAutoSoundEvent"; }
 
 	/**
 	 * Save the data for the class to file
@@ -79,4 +52,4 @@ public:
 
 } // End of namespace Titanic
 
-#endif /* TITANIC_PET_CONTROL_H */
+#endif /* TITANIC_AUTO_SOUND_EVENT_H */

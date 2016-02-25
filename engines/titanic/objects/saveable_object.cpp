@@ -29,6 +29,7 @@
 #include "titanic/objects/project_item.h"
 #include "titanic/objects/tree_item.h"
 #include "titanic/rooms/room_item.h"
+#include "titanic/rooms/service_elevator_door.h"
 
 namespace Titanic {
 
@@ -46,6 +47,7 @@ DEFFN(CMovieClipList);
 DEFFN(CNodeItem);
 DEFFN(CProjectItem);
 DEFFN(CRoomItem);
+DEFFN(CServiceElevatorDoor);
 DEFFN(CTreeItem);
 
 void CSaveableObject::initClassList() {
@@ -58,6 +60,7 @@ void CSaveableObject::initClassList() {
 	ADDFN(CNodeItem);
 	ADDFN(CProjectItem);
 	ADDFN(CRoomItem);
+	ADDFN(CServiceElevatorDoor);
 	ADDFN(CTreeItem);
 }
 
