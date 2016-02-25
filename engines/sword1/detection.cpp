@@ -241,7 +241,6 @@ SaveStateList SwordMetaEngine::listSaves(const char *target) const {
 	char saveName[40];
 
 	Common::StringArray filenames = saveFileMan->listSavefiles("sword1.###");
-	sort(filenames.begin(), filenames.end());   // Sort (hopefully ensuring we are sorted numerically..)
 
 	int slotNum = 0;
 	for (Common::StringArray::const_iterator file = filenames.begin(); file != filenames.end(); ++file) {
@@ -259,6 +258,8 @@ SaveStateList SwordMetaEngine::listSaves(const char *target) const {
 		}
 	}
 
+	// Sort saves based on slot number.
+	Common::sort(saveList.begin(), saveList.end(), SaveStateDescriptorSlotComparator());
 	return saveList;
 }
 
