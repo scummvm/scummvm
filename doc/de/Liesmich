@@ -1593,6 +1593,7 @@ zwischen SCUMM-Spielen und anderen Spielen.
     Strg+F5                - Zeigt globales Menü.
     Cmd+q                  - Beenden (Mac OS X)
     Strg+q                 - Beenden (andere UNIX-Systeme einschließlich Linux)
+    Alt+F4                 - Beenden (Windows)
     Strg+z ODER Alt+x      - Beenden (andere Plattformen)
     Strg+u                 - Allen Ton abschalten - EIN/AUS
     Strg+m                 - Mausbegrenzung in Fenster EIN/AUS
