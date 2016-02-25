@@ -223,7 +223,6 @@ SaveStateList SkyMetaEngine::listSaves(const char *target) const {
 	// Find all saves
 	Common::StringArray filenames;
 	filenames = saveFileMan->listSavefiles("SKY-VM.###");
-	sort(filenames.begin(), filenames.end());	// Sort (hopefully ensuring we are sorted numerically..)
 
 	// Slot 0 is the autosave, if it exists.
 	// TODO: Check for the existence of the autosave -- but this require us
@@ -243,6 +242,8 @@ SaveStateList SkyMetaEngine::listSaves(const char *target) const {
 		}
 	}
 
+	// Sort saves based on slot number.
+	Common::sort(saveList.begin(), saveList.end(), SaveStateDescriptorSlotComparator());
 	return saveList;
 }
 
