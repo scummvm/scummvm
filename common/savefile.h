@@ -56,6 +56,12 @@ typedef WriteStream OutSaveFile;
  * i.e. typically save states, but also configuration files and similar
  * things.
  *
+ * Savefile names represent SaveFiles. These names are case insensitive, that
+ * means a name of "Kq1.000" represents the same savefile as "kq1.000". In
+ * addition, SaveFileManager does not allow for names which contain path
+ * separators like '/' or '\'. This is because we do not support directories
+ * in SaveFileManager.
+ *
  * While not declared as a singleton, it is effectively used as such,
  * with OSystem::getSavefileManager returning a pointer to the single
  * SaveFileManager instances to be used.
