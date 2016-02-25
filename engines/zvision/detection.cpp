@@ -132,7 +132,6 @@ SaveStateList ZVisionMetaEngine::listSaves(const char *target) const {
 
 	Common::StringArray filenames;
 	filenames = saveFileMan->listSavefiles(pattern.c_str());
-	Common::sort(filenames.begin(), filenames.end());   // Sort (hopefully ensuring we are sorted numerically..)*/
 
 	SaveStateList saveList;
 	// We only use readSaveGameHeader() here, which doesn't need an engine callback
@@ -155,6 +154,8 @@ SaveStateList ZVisionMetaEngine::listSaves(const char *target) const {
 
 	delete zvisionSaveMan;
 
+	// Sort saves based on slot number.
+	Common::sort(saveList.begin(), saveList.end(), SaveStateDescriptorSlotComparator());
 	return saveList;
 }
 
