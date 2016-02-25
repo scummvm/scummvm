@@ -137,7 +137,6 @@ SaveStateList CineMetaEngine::listSaves(const char *target) const {
 	Common::String pattern = target;
 	pattern += ".#";
 	Common::StringArray filenames = saveFileMan->listSavefiles(pattern);
-	sort(filenames.begin(), filenames.end());
 	Common::StringArray::const_iterator file;
 
 	Common::String filename = target;
@@ -169,6 +168,8 @@ SaveStateList CineMetaEngine::listSaves(const char *target) const {
 
 	delete in;
 
+	// Sort saves based on slot number.
+	Common::sort(saveList.begin(), saveList.end(), SaveStateDescriptorSlotComparator());
 	return saveList;
 }
 
