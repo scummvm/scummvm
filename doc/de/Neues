@@ -86,7 +86,8 @@ Neue Portierungen:
  SCI:
    - Behandlung der Musik-Priorität extrem verbessert.
    - Viele Fehler in den originalen Skripten behoben, die auch bei
-     Verwendung des originalen Interpreters auftreten:
+     Verwendung des originalen Interpreters auftreten.
+     Folgende Spiele sind davon betroffen:
      KQ6 (Sprache und Untertitel), LSL5, PQ1, QfG1 (EGA), QfG (VGA),
      QfG2, QfG3, SQ1, SQ4 (CD)
    - Rückkehr aus dem ScummVM-Menü im Spiel sollte nun immer funktionieren.
