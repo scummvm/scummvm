@@ -20,56 +20,37 @@
  *
  */
 
-#ifndef TITANIC_MAIN_GAME_WINDOW_H
-#define TITANIC_MAIN_GAME_WINDOW_H
+#ifndef TITANIC_RESOURCE_KEY_H
+#define TITANIC_RESOURCE_KEY_H
 
-#include "common/scummsys.h"
-#include "common/array.h"
-#include "titanic/game_manager.h"
-#include "titanic/game_view.h"
-#include "titanic/image.h"
-#include "titanic/core/project_item.h"
+#include "titanic/string.h"
+#include "titanic/core/saveable_object.h"
 
 namespace Titanic {
 
-class TitanicEngine;
-
-class CMainGameWindow {
+class CResourceKey: public CSaveableObject {
 private:
-	TitanicEngine *_vm;
-
-	/**
-	 * Checks for the presence of any savegames and, if present,
-	 * lets the user pick one to resume
-	 */
-	int loadGame();
-
-	/**
-	 * Creates the game "project" and determine a game save slot
-	 * to use
-	 */
-	int selectSavegame();
+	CString _key;
+	CString _value;
 public:
-	CGameView *_gameView;
-	CGameManager *_gameManager;
-	CProjectItem *_project;
-	int _field50;
-	Image *_image;
-	void *_cursor;
-public:
-	CMainGameWindow(TitanicEngine *vm);
+	/**
+	 * Return the class name
+	 */
+	virtual const char *getClassName() const { return "CResourceKey"; }
 
 	/**
-	 * Creates the window
+	 * Save the data for the class to file
 	 */
-	bool Create();
+	virtual void save(SimpleFile *file, int indent) const;
 
 	/**
-	 * Called when the application starts
+	 * Load the data for the class from file
 	 */
-	void applicationStarting();
+	virtual void load(SimpleFile *file);
+
+	const CString &getString() const { return _key; }
 };
 
 } // End of namespace Titanic
 
-#endif /* TITANIC_MAIN_GAME_WINDOW_H */
+#endif /* TITANIC_RESOURCE_KEY_H */

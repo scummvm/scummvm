@@ -20,56 +20,21 @@
  *
  */
 
-#ifndef TITANIC_MAIN_GAME_WINDOW_H
-#define TITANIC_MAIN_GAME_WINDOW_H
+#ifndef TITANIC_PET_CONTROL_H
+#define TITANIC_PET_CONTROL_H
 
-#include "common/scummsys.h"
-#include "common/array.h"
-#include "titanic/game_manager.h"
-#include "titanic/game_view.h"
-#include "titanic/image.h"
-#include "titanic/core/project_item.h"
+#include "titanic/core/game_object.h"
 
 namespace Titanic {
 
-class TitanicEngine;
-
-class CMainGameWindow {
-private:
-	TitanicEngine *_vm;
-
-	/**
-	 * Checks for the presence of any savegames and, if present,
-	 * lets the user pick one to resume
-	 */
-	int loadGame();
-
-	/**
-	 * Creates the game "project" and determine a game save slot
-	 * to use
-	 */
-	int selectSavegame();
+class CPetControl : public CGameObject {
 public:
-	CGameView *_gameView;
-	CGameManager *_gameManager;
-	CProjectItem *_project;
-	int _field50;
-	Image *_image;
-	void *_cursor;
-public:
-	CMainGameWindow(TitanicEngine *vm);
-
 	/**
-	 * Creates the window
+	 * Called after loading a game has finished
 	 */
-	bool Create();
-
-	/**
-	 * Called when the application starts
-	 */
-	void applicationStarting();
+	void gameLoaded();
 };
 
 } // End of namespace Titanic
 
-#endif /* TITANIC_MAIN_GAME_WINDOW_H */
+#endif /* TITANIC_PET_CONTROL_H */

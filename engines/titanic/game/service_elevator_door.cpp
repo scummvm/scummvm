@@ -20,56 +20,29 @@
  *
  */
 
-#ifndef TITANIC_MAIN_GAME_WINDOW_H
-#define TITANIC_MAIN_GAME_WINDOW_H
-
-#include "common/scummsys.h"
-#include "common/array.h"
-#include "titanic/game_manager.h"
-#include "titanic/game_view.h"
-#include "titanic/image.h"
-#include "titanic/core/project_item.h"
+#include "titanic/game/service_elevator_door.h"
 
 namespace Titanic {
 
-class TitanicEngine;
+CServiceElevatorDoor::CServiceElevatorDoor() : CDoorAutoSoundEvent() {
+	_string1 = "z#31.wav";
+	_string2 = "z#32.wav";
+}
 
-class CMainGameWindow {
-private:
-	TitanicEngine *_vm;
+void CServiceElevatorDoor::save(SimpleFile *file, int indent) const {
+	file->writeNumberLine(1, indent);
+	file->writeQuotedLine(_string2, indent);
+	file->writeQuotedLine(_string1, indent);
 
-	/**
-	 * Checks for the presence of any savegames and, if present,
-	 * lets the user pick one to resume
-	 */
-	int loadGame();
+	CDoorAutoSoundEvent::save(file, indent);
+}
 
-	/**
-	 * Creates the game "project" and determine a game save slot
-	 * to use
-	 */
-	int selectSavegame();
-public:
-	CGameView *_gameView;
-	CGameManager *_gameManager;
-	CProjectItem *_project;
-	int _field50;
-	Image *_image;
-	void *_cursor;
-public:
-	CMainGameWindow(TitanicEngine *vm);
+void CServiceElevatorDoor::load(SimpleFile *file) {
+	file->readNumber();
+	_string2 = file->readString();
+	_string1 = file->readString();
 
-	/**
-	 * Creates the window
-	 */
-	bool Create();
-
-	/**
-	 * Called when the application starts
-	 */
-	void applicationStarting();
-};
+	CDoorAutoSoundEvent::load(file);
+}
 
 } // End of namespace Titanic
-
-#endif /* TITANIC_MAIN_GAME_WINDOW_H */

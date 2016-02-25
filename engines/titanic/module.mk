@@ -15,28 +15,28 @@ MODULE_OBJS := \
 	string.o \
 	titanic.o \
 	video_surface.o \
-	objects/auto_sound_event.o \
-	objects/dont_save_file_item.o \
-	objects/file_item.o \
-	objects/game_object.o \
-	objects/link_item.o \
-	objects/list.o \
-	objects/message_target.o \
-	objects/movie_clip.o \
-	objects/named_item.o \
-	objects/node_item.o \
-	objects/pet_control.o \
-	objects/project_item.o \
-	objects/resource_key.o \
-	objects/saveable_object.o \
-	objects/tree_item.o \
-	objects/view_item.o \
-	rooms/announce.o \
-	rooms/door_auto_sound_event.o \
-	rooms/pet_position.o \
-	rooms/room_item.o \
-	rooms/service_elevator_door.o \
-	rooms/sub_glass.o
+	core/auto_sound_event.o \
+	core/dont_save_file_item.o \
+	core/file_item.o \
+	core/game_object.o \
+	core/link_item.o \
+	core/list.o \
+	core/message_target.o \
+	core/movie_clip.o \
+	core/named_item.o \
+	core/node_item.o \
+	core/pet_control.o \
+	core/project_item.o \
+	core/resource_key.o \
+	core/saveable_object.o \
+	core/tree_item.o \
+	core/view_item.o \
+	game/announce.o \
+	game/door_auto_sound_event.o \
+	game/pet_position.o \
+	game/room_item.o \
+	game/service_elevator_door.o \
+	game/sub_glass.o
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_TITANIC), DYNAMIC_PLUGIN)

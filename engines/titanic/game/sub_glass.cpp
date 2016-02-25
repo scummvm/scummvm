@@ -20,56 +20,35 @@
  *
  */
 
-#ifndef TITANIC_MAIN_GAME_WINDOW_H
-#define TITANIC_MAIN_GAME_WINDOW_H
-
-#include "common/scummsys.h"
-#include "common/array.h"
-#include "titanic/game_manager.h"
-#include "titanic/game_view.h"
-#include "titanic/image.h"
-#include "titanic/core/project_item.h"
+#include "titanic/game/sub_glass.h"
 
 namespace Titanic {
 
-class TitanicEngine;
+CSUBGlass::CSUBGlass() : _fieldBC(0), _fieldC0(0), _fieldC4(1), _fieldC8(0) {
+}
 
-class CMainGameWindow {
-private:
-	TitanicEngine *_vm;
+void CSUBGlass::save(SimpleFile *file, int indent) const {
+	file->writeNumberLine(1, indent);
+	file->writeNumberLine(_fieldBC, indent);
+	file->writeNumberLine(_fieldC0, indent);
+	file->writeNumberLine(_fieldC4, indent);
+	file->writeNumberLine(_fieldC8, indent);
+	file->writeNumberLine(_fieldCC, indent);
+	file->writeQuotedLine(_string, indent);
 
-	/**
-	 * Checks for the presence of any savegames and, if present,
-	 * lets the user pick one to resume
-	 */
-	int loadGame();
+	CGameObject::save(file, indent);
+}
 
-	/**
-	 * Creates the game "project" and determine a game save slot
-	 * to use
-	 */
-	int selectSavegame();
-public:
-	CGameView *_gameView;
-	CGameManager *_gameManager;
-	CProjectItem *_project;
-	int _field50;
-	Image *_image;
-	void *_cursor;
-public:
-	CMainGameWindow(TitanicEngine *vm);
+void CSUBGlass::load(SimpleFile *file) {
+	file->readNumber();
+	_fieldBC = file->readNumber();
+	_fieldC0 = file->readNumber();
+	_fieldC4 = file->readNumber();
+	_fieldC8 = file->readNumber();
+	_fieldCC = file->readNumber();
+	_string = file->readString();
 
-	/**
-	 * Creates the window
-	 */
-	bool Create();
-
-	/**
-	 * Called when the application starts
-	 */
-	void applicationStarting();
-};
+	CGameObject::load(file);
+}
 
 } // End of namespace Titanic
-
-#endif /* TITANIC_MAIN_GAME_WINDOW_H */

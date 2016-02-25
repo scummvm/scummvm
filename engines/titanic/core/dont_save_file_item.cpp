@@ -20,56 +20,16 @@
  *
  */
 
-#ifndef TITANIC_MAIN_GAME_WINDOW_H
-#define TITANIC_MAIN_GAME_WINDOW_H
-
-#include "common/scummsys.h"
-#include "common/array.h"
-#include "titanic/game_manager.h"
-#include "titanic/game_view.h"
-#include "titanic/image.h"
-#include "titanic/core/project_item.h"
+#include "titanic/core/dont_save_file_item.h"
 
 namespace Titanic {
 
-class TitanicEngine;
+void CDontSaveFileItem::save(SimpleFile *file, int indent) const {
+	file->writeNumberLine(0, indent);
+}
 
-class CMainGameWindow {
-private:
-	TitanicEngine *_vm;
-
-	/**
-	 * Checks for the presence of any savegames and, if present,
-	 * lets the user pick one to resume
-	 */
-	int loadGame();
-
-	/**
-	 * Creates the game "project" and determine a game save slot
-	 * to use
-	 */
-	int selectSavegame();
-public:
-	CGameView *_gameView;
-	CGameManager *_gameManager;
-	CProjectItem *_project;
-	int _field50;
-	Image *_image;
-	void *_cursor;
-public:
-	CMainGameWindow(TitanicEngine *vm);
-
-	/**
-	 * Creates the window
-	 */
-	bool Create();
-
-	/**
-	 * Called when the application starts
-	 */
-	void applicationStarting();
-};
+void CDontSaveFileItem::load(SimpleFile *file) {
+	file->readNumber();
+}
 
 } // End of namespace Titanic
-
-#endif /* TITANIC_MAIN_GAME_WINDOW_H */

@@ -20,56 +20,28 @@
  *
  */
 
-#ifndef TITANIC_MAIN_GAME_WINDOW_H
-#define TITANIC_MAIN_GAME_WINDOW_H
-
-#include "common/scummsys.h"
-#include "common/array.h"
-#include "titanic/game_manager.h"
-#include "titanic/game_view.h"
-#include "titanic/image.h"
-#include "titanic/core/project_item.h"
+#include "titanic/core/file_item.h"
 
 namespace Titanic {
 
-class TitanicEngine;
+void CFileItem::save(SimpleFile *file, int indent) const {
+	file->writeNumberLine(0, indent);
+	CTreeItem::save(file, indent);
+}
 
-class CMainGameWindow {
-private:
-	TitanicEngine *_vm;
+void CFileItem::load(SimpleFile *file) {
+	file->readNumber();
 
-	/**
-	 * Checks for the presence of any savegames and, if present,
-	 * lets the user pick one to resume
-	 */
-	int loadGame();
+	CTreeItem::load(file);
+}
 
-	/**
-	 * Creates the game "project" and determine a game save slot
-	 * to use
-	 */
-	int selectSavegame();
-public:
-	CGameView *_gameView;
-	CGameManager *_gameManager;
-	CProjectItem *_project;
-	int _field50;
-	Image *_image;
-	void *_cursor;
-public:
-	CMainGameWindow(TitanicEngine *vm);
+CString CFileItem::formFilename() const {
+	return "";
+}
 
-	/**
-	 * Creates the window
-	 */
-	bool Create();
-
-	/**
-	 * Called when the application starts
-	 */
-	void applicationStarting();
-};
+CString CFileItem::getFilename() const {
+	//dynamic_cast<CFileItem *>(getRoot())->formDataPath();
+	return _filename;
+}
 
 } // End of namespace Titanic
-
-#endif /* TITANIC_MAIN_GAME_WINDOW_H */

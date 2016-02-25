@@ -20,56 +20,33 @@
  *
  */
 
-#ifndef TITANIC_MAIN_GAME_WINDOW_H
-#define TITANIC_MAIN_GAME_WINDOW_H
+#ifndef TITANIC_SERVICE_ELEVATOR_DOOR_H
+#define TITANIC_SERVICE_ELEVATOR_DOOR_H
 
-#include "common/scummsys.h"
-#include "common/array.h"
-#include "titanic/game_manager.h"
-#include "titanic/game_view.h"
-#include "titanic/image.h"
-#include "titanic/core/project_item.h"
+#include "titanic/game/door_auto_sound_event.h"
 
 namespace Titanic {
 
-class TitanicEngine;
-
-class CMainGameWindow {
-private:
-	TitanicEngine *_vm;
-
-	/**
-	 * Checks for the presence of any savegames and, if present,
-	 * lets the user pick one to resume
-	 */
-	int loadGame();
-
-	/**
-	 * Creates the game "project" and determine a game save slot
-	 * to use
-	 */
-	int selectSavegame();
+class CServiceElevatorDoor : public CDoorAutoSoundEvent {
 public:
-	CGameView *_gameView;
-	CGameManager *_gameManager;
-	CProjectItem *_project;
-	int _field50;
-	Image *_image;
-	void *_cursor;
-public:
-	CMainGameWindow(TitanicEngine *vm);
+	CServiceElevatorDoor();
 
 	/**
-	 * Creates the window
+	 * Return the class name
 	 */
-	bool Create();
+	virtual const char *getClassName() const { return "CServiceElevatorDoor"; }
 
 	/**
-	 * Called when the application starts
+	 * Save the data for the class to file
 	 */
-	void applicationStarting();
+	virtual void save(SimpleFile *file, int indent) const;
+
+	/**
+	 * Load the data for the class from file
+	 */
+	virtual void load(SimpleFile *file);
 };
 
 } // End of namespace Titanic
 
-#endif /* TITANIC_MAIN_GAME_WINDOW_H */
+#endif /* TITANIC_SERVICE_ELEVATOR_DOOR_H */

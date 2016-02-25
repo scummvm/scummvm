@@ -20,56 +20,50 @@
  *
  */
 
-#ifndef TITANIC_MAIN_GAME_WINDOW_H
-#define TITANIC_MAIN_GAME_WINDOW_H
-
-#include "common/scummsys.h"
-#include "common/array.h"
-#include "titanic/game_manager.h"
-#include "titanic/game_view.h"
-#include "titanic/image.h"
-#include "titanic/core/project_item.h"
+#include "titanic/core/movie_clip.h"
 
 namespace Titanic {
 
-class TitanicEngine;
+CMovieClip::CMovieClip() {
+}
 
-class CMainGameWindow {
-private:
-	TitanicEngine *_vm;
+void CMovieClip::save(SimpleFile *file, int indent) const {
+	file->writeNumberLine(2, indent);
+	file->writeQuotedLine("Clip", indent);
+	file->writeQuotedLine(_string1, indent);
+	file->writeNumberLine(_field18, indent);
+	file->writeNumberLine(_field1C, indent);
 
-	/**
-	 * Checks for the presence of any savegames and, if present,
-	 * lets the user pick one to resume
-	 */
-	int loadGame();
+	ListItem::save(file, indent);
+}
 
-	/**
-	 * Creates the game "project" and determine a game save slot
-	 * to use
-	 */
-	int selectSavegame();
-public:
-	CGameView *_gameView;
-	CGameManager *_gameManager;
-	CProjectItem *_project;
-	int _field50;
-	Image *_image;
-	void *_cursor;
-public:
-	CMainGameWindow(TitanicEngine *vm);
+void CMovieClip::load(SimpleFile *file) {
+	int val = file->readNumber();
 
-	/**
-	 * Creates the window
-	 */
-	bool Create();
+	switch (val) {
+	case 1:
+		_string1 = file->readString();
+		_field18 = file->readNumber();
+		_field1C = file->readNumber();
+		_field20 = file->readNumber();
+		_field24 = file->readNumber();
+		_field28 = file->readNumber();
+		_field2C = file->readNumber();
+		_field30 = file->readNumber();
+		break;
 
-	/**
-	 * Called when the application starts
-	 */
-	void applicationStarting();
-};
+	case 2:
+		file->readString();
+		_string1 = file->readString();
+		_field18 = file->readNumber();
+		_field1C = file->readNumber();
+		break;
+
+	default:
+		break;
+	}
+
+	ListItem::load(file);
+}
 
 } // End of namespace Titanic
-
-#endif /* TITANIC_MAIN_GAME_WINDOW_H */

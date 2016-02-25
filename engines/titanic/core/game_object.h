@@ -20,56 +20,63 @@
  *
  */
 
-#ifndef TITANIC_MAIN_GAME_WINDOW_H
-#define TITANIC_MAIN_GAME_WINDOW_H
+#ifndef TITANIC_GAME_OBJECT_H
+#define TITANIC_GAME_OBJECT_H
 
-#include "common/scummsys.h"
-#include "common/array.h"
-#include "titanic/game_manager.h"
-#include "titanic/game_view.h"
-#include "titanic/image.h"
-#include "titanic/core/project_item.h"
+#include "common/rect.h"
+#include "titanic/core/movie_clip.h"
+#include "titanic/core/named_item.h"
 
 namespace Titanic {
 
-class TitanicEngine;
-
-class CMainGameWindow {
-private:
-	TitanicEngine *_vm;
-
-	/**
-	 * Checks for the presence of any savegames and, if present,
-	 * lets the user pick one to resume
-	 */
-	int loadGame();
-
-	/**
-	 * Creates the game "project" and determine a game save slot
-	 * to use
-	 */
-	int selectSavegame();
-public:
-	CGameView *_gameView;
-	CGameManager *_gameManager;
-	CProjectItem *_project;
+class CGameObject : public CNamedItem {
+protected:
+	Common::Rect _bounds;
+	double _field34;
+	double _field38;
+	double _field3C;
+	int _field40;
+	int _field44;
+	int _field48;
+	int _field4C;
 	int _field50;
-	Image *_image;
-	void *_cursor;
+	int _field54;
+	int _field58;
+	int _field5C;
+	int _field60;
+	CMovieClipList _clipList1;
+	int _field74;
+	int _field78;
+	CMovieClipList _clipList2;
+	int _field8C;
+	int _field90;
+	int _field94;
+	int _field98;
+	int _field9C;
+	int _fieldA0;
+	int _fieldA4;
+	void *_fieldA8;
+	CString _string;
+	int _fieldB8;
 public:
-	CMainGameWindow(TitanicEngine *vm);
+	CGameObject();
 
 	/**
-	 * Creates the window
+	 * Return the class name
 	 */
-	bool Create();
+	virtual const char *getClassName() const { return "CGameObject"; }
 
 	/**
-	 * Called when the application starts
+	 * Save the data for the class to file
 	 */
-	void applicationStarting();
+	virtual void save(SimpleFile *file, int indent) const;
+
+	/**
+	 * Load the data for the class from file
+	 */
+	virtual void load(SimpleFile *file);
 };
 
 } // End of namespace Titanic
 
-#endif /* TITANIC_MAIN_GAME_WINDOW_H */
+#endif /* TITANIC_PET_CONTROL_H */

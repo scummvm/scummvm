@@ -20,56 +20,55 @@
  *
  */
 
-#ifndef TITANIC_MAIN_GAME_WINDOW_H
-#define TITANIC_MAIN_GAME_WINDOW_H
+#ifndef TITANIC_MOVIE_CLIP_H
+#define TITANIC_MOVIE_CLIP_H
 
-#include "common/scummsys.h"
-#include "common/array.h"
-#include "titanic/game_manager.h"
-#include "titanic/game_view.h"
-#include "titanic/image.h"
-#include "titanic/core/project_item.h"
+#include "titanic/core/list.h"
 
 namespace Titanic {
 
-class TitanicEngine;
-
-class CMainGameWindow {
+/**
+ * Movie clip
+ */
+class CMovieClip : public ListItem {
 private:
-	TitanicEngine *_vm;
-
-	/**
-	 * Checks for the presence of any savegames and, if present,
-	 * lets the user pick one to resume
-	 */
-	int loadGame();
-
-	/**
-	 * Creates the game "project" and determine a game save slot
-	 * to use
-	 */
-	int selectSavegame();
+	CString _string1;
+	int _field18;
+	int _field1C;
+	int _field20;
+	int _field24;
+	int _field28;
+	int _field2C;
+	int _field30;
+	CString _string2;
+	CString _string3;
 public:
-	CGameView *_gameView;
-	CGameManager *_gameManager;
-	CProjectItem *_project;
-	int _field50;
-	Image *_image;
-	void *_cursor;
+	CMovieClip();
+
+	/**
+	 * Return the class name
+	 */
+	virtual const char *getClassName() const { return "CMovieClip"; }
+
+	/**
+	 * Save the data for the class to file
+	 */
+	virtual void save(SimpleFile *file, int indent) const;
+
+	/**
+	 * Load the data for the class from file
+	 */
+	virtual void load(SimpleFile *file);
+};
+
+/**
+ * Movie clip list
+ */
+class CMovieClipList: public List<CMovieClip> {
 public:
-	CMainGameWindow(TitanicEngine *vm);
-
-	/**
-	 * Creates the window
-	 */
-	bool Create();
-
-	/**
-	 * Called when the application starts
-	 */
-	void applicationStarting();
+	virtual const char *getClassName() const { return "CMovieClipList"; }
 };
 
 } // End of namespace Titanic
 
-#endif /* TITANIC_MAIN_GAME_WINDOW_H */
+#endif /* TITANIC_MOVIE_CLIP_H */

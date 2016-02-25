@@ -20,56 +20,33 @@
  *
  */
 
-#ifndef TITANIC_MAIN_GAME_WINDOW_H
-#define TITANIC_MAIN_GAME_WINDOW_H
+#ifndef TITANIC_NAMED_ITEM_H
+#define TITANIC_NAMED_ITEM_H
 
-#include "common/scummsys.h"
-#include "common/array.h"
-#include "titanic/game_manager.h"
-#include "titanic/game_view.h"
-#include "titanic/image.h"
-#include "titanic/core/project_item.h"
+#include "titanic/core/tree_item.h"
 
 namespace Titanic {
 
-class TitanicEngine;
-
-class CMainGameWindow {
-private:
-	TitanicEngine *_vm;
-
-	/**
-	 * Checks for the presence of any savegames and, if present,
-	 * lets the user pick one to resume
-	 */
-	int loadGame();
-
-	/**
-	 * Creates the game "project" and determine a game save slot
-	 * to use
-	 */
-	int selectSavegame();
+class CNamedItem: public CTreeItem {
 public:
-	CGameView *_gameView;
-	CGameManager *_gameManager;
-	CProjectItem *_project;
-	int _field50;
-	Image *_image;
-	void *_cursor;
+	CString _name;
 public:
-	CMainGameWindow(TitanicEngine *vm);
+	/**
+	 * Return the class name
+	 */
+	virtual const char *getClassName() const { return "CNamedItem"; }
 
 	/**
-	 * Creates the window
+	 * Save the data for the class to file
 	 */
-	bool Create();
+	virtual void save(SimpleFile *file, int indent) const;
 
 	/**
-	 * Called when the application starts
+	 * Load the data for the class from file
 	 */
-	void applicationStarting();
+	virtual void load(SimpleFile *file);
 };
 
 } // End of namespace Titanic
 
-#endif /* TITANIC_MAIN_GAME_WINDOW_H */
+#endif /* TITANIC_NAMED_ITEM_H */

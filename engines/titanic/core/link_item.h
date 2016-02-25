@@ -20,56 +20,50 @@
  *
  */
 
-#ifndef TITANIC_MAIN_GAME_WINDOW_H
-#define TITANIC_MAIN_GAME_WINDOW_H
+#ifndef TITANIC_LINK_ITEM_H
+#define TITANIC_LINK_ITEM_H
 
-#include "common/scummsys.h"
-#include "common/array.h"
-#include "titanic/game_manager.h"
-#include "titanic/game_view.h"
-#include "titanic/image.h"
-#include "titanic/core/project_item.h"
+#include "titanic/core/named_item.h"
 
 namespace Titanic {
 
-class TitanicEngine;
-
-class CMainGameWindow {
-private:
-	TitanicEngine *_vm;
-
-	/**
-	 * Checks for the presence of any savegames and, if present,
-	 * lets the user pick one to resume
-	 */
-	int loadGame();
-
-	/**
-	 * Creates the game "project" and determine a game save slot
-	 * to use
-	 */
-	int selectSavegame();
+class CLinkItemSub {
 public:
-	CGameView *_gameView;
-	CGameManager *_gameManager;
-	CProjectItem *_project;
-	int _field50;
-	Image *_image;
-	void *_cursor;
+	int _field0;
+	int _field4;
+	int _field8;
+	int _fieldC;
 public:
-	CMainGameWindow(TitanicEngine *vm);
+	CLinkItemSub();
+};
+
+class CLinkItem : public CNamedItem {
+protected:
+	int _field24;
+	int _field28;
+	int _field2C;
+	int _field30;
+	int _field34;
+	CLinkItemSub _sub;
+public:
+	CLinkItem();
 
 	/**
-	 * Creates the window
+	 * Return the class name
 	 */
-	bool Create();
+	virtual const char *getClassName() const { return "CLinkItem"; }
 
 	/**
-	 * Called when the application starts
+	 * Save the data for the class to file
 	 */
-	void applicationStarting();
+	virtual void save(SimpleFile *file, int indent) const;
+
+	/**
+	 * Load the data for the class from file
+	 */
+	virtual void load(SimpleFile *file);
 };
 
 } // End of namespace Titanic
 
-#endif /* TITANIC_MAIN_GAME_WINDOW_H */
+#endif /* TITANIC_LINK_ITEM_H */

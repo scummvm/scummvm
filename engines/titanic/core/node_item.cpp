@@ -20,56 +20,35 @@
  *
  */
 
-#ifndef TITANIC_MAIN_GAME_WINDOW_H
-#define TITANIC_MAIN_GAME_WINDOW_H
-
-#include "common/scummsys.h"
-#include "common/array.h"
-#include "titanic/game_manager.h"
-#include "titanic/game_view.h"
-#include "titanic/image.h"
-#include "titanic/core/project_item.h"
+#include "titanic/core/node_item.h"
 
 namespace Titanic {
 
-class TitanicEngine;
+CNodeItem::CNodeItem() : CNamedItem(), _field24(0), _field28(0), _field2C(0) {
+}
 
-class CMainGameWindow {
-private:
-	TitanicEngine *_vm;
+void CNodeItem::save(SimpleFile *file, int indent) const {
+	file->writeNumberLine(0, indent);
+	file->writeQuotedLine("N", indent);
+	file->writeNumberLine(_field24, indent + 1);
+	file->writeNumberLine(_field28, indent + 1);
 
-	/**
-	 * Checks for the presence of any savegames and, if present,
-	 * lets the user pick one to resume
-	 */
-	int loadGame();
+	file->writeQuotedLine("N", indent);
+	file->writeNumberLine(_field2C, indent + 1);
 
-	/**
-	 * Creates the game "project" and determine a game save slot
-	 * to use
-	 */
-	int selectSavegame();
-public:
-	CGameView *_gameView;
-	CGameManager *_gameManager;
-	CProjectItem *_project;
-	int _field50;
-	Image *_image;
-	void *_cursor;
-public:
-	CMainGameWindow(TitanicEngine *vm);
+	CNamedItem::save(file, indent);
+}
 
-	/**
-	 * Creates the window
-	 */
-	bool Create();
+void CNodeItem::load(SimpleFile *file) {
+	file->readNumber();
+	file->readBuffer();
+	_field24 = file->readNumber();
+	_field28 = file->readNumber();
 
-	/**
-	 * Called when the application starts
-	 */
-	void applicationStarting();
-};
+	file->readBuffer();
+	_field2C = file->readNumber();
+
+	CNamedItem::load(file);
+}
 
 } // End of namespace Titanic
-
-#endif /* TITANIC_MAIN_GAME_WINDOW_H */
