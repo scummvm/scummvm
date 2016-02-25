@@ -182,6 +182,8 @@ public:
 				saveList.push_back(SaveStateDescriptor(slot, description));
 			}
 		}
+		// Sort saves based on slot number.
+		Common::sort(saveList.begin(), saveList.end(), SaveStateDescriptorSlotComparator());
 		return saveList;
 	}
 
