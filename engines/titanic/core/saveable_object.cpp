@@ -30,8 +30,11 @@
 #include "titanic/core/node_item.h"
 #include "titanic/core/project_item.h"
 #include "titanic/core/saveable_object.h"
+#include "titanic/core/turn_on_object.h"
+#include "titanic/core/turn_on_play_sound.h"
 #include "titanic/core/tree_item.h"
 #include "titanic/core/view_item.h"
+
 #include "titanic/game/announce.h"
 #include "titanic/game/pet_position.h"
 #include "titanic/game/room_item.h"
@@ -83,6 +86,8 @@ DEFFN(CMovieClip);
 DEFFN(CMovieClipList);
 DEFFN(CNodeItem);
 DEFFN(CProjectItem);
+DEFFN(CTurnOnObject);
+DEFFN(CTurnOnPlaySound);
 DEFFN(CTreeItem);
 DEFFN(CViewItem);
 
@@ -132,6 +137,8 @@ void CSaveableObject::initClassList() {
 	ADDFN(CNodeItem);
 	ADDFN(CProjectItem);
 	ADDFN(CTreeItem);
+	ADDFN(CTurnOnObject);
+	ADDFN(CTurnOnPlaySound);
 	ADDFN(CViewItem);
 
 	ADDFN(CAnnounce);

@@ -29,6 +29,8 @@ MODULE_OBJS := \
 	core/project_item.o \
 	core/resource_key.o \
 	core/saveable_object.o \
+	core/turn_on_object.o \
+	core/turn_on_play_sound.o \
 	core/tree_item.o \
 	core/view_item.o \
 	game/announce.o \
