@@ -36,7 +36,10 @@ MODULE_OBJS := \
 	game/pet_position.o \
 	game/room_item.o \
 	game/service_elevator_door.o \
-	game/sub_glass.o
+	game/sub_glass.o \
+	npcs/character.o \
+	npcs/succubus.o \
+	npcs/true_talk_npc.o
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_TITANIC), DYNAMIC_PLUGIN)

@@ -20,35 +20,38 @@
  *
  */
 
-#include "titanic/rooms/sub_glass.h"
+#ifndef TITANIC_CHARACTER_H
+#define TITANIC_CHARACTER_H
+
+#include "titanic/core/game_object.h"
 
 namespace Titanic {
 
-CSUBGlass::CSUBGlass() : _fieldBC(0), _fieldC0(0), _fieldC4(1), _fieldC8(0) {
-}
+class CCharacter : public CGameObject {
+protected:
+	int _fieldBC;
+	int _fieldC0;
+	int _fieldC4;
+	CString _charName;
+public:
+	CCharacter();
 
-void CSUBGlass::save(SimpleFile *file, int indent) const {
-	file->writeNumberLine(1, indent);
-	file->writeNumberLine(_fieldBC, indent);
-	file->writeNumberLine(_fieldC0, indent);
-	file->writeNumberLine(_fieldC4, indent);
-	file->writeNumberLine(_fieldC8, indent);
-	file->writeNumberLine(_fieldCC, indent);
-	file->writeQuotedLine(_string, indent);
+	/**
+	 * Return the class name
+	 */
+	virtual const char *getClassName() const { return "CCharacter"; }
 
-	CGameObject::save(file, indent);
-}
+	/**
+	 * Save the data for the class to file
+	 */
+	virtual void save(SimpleFile *file, int indent) const;
 
-void CSUBGlass::load(SimpleFile *file) {
-	file->readNumber();
-	_fieldBC = file->readNumber();
-	_fieldC0 = file->readNumber();
-	_fieldC4 = file->readNumber();
-	_fieldC8 = file->readNumber();
-	_fieldCC = file->readNumber();
-	_string = file->readString();
-
-	CGameObject::load(file);
-}
+	/**
+	 * Load the data for the class from file
+	 */
+	virtual void load(SimpleFile *file);
+};
 
 } // End of namespace Titanic
+
+#endif /* TITANIC_SUCCUBUS_H */

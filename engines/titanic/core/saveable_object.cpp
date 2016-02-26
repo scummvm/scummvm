@@ -36,6 +36,7 @@
 #include "titanic/game/room_item.h"
 #include "titanic/game/service_elevator_door.h"
 #include "titanic/game/sub_glass.h"
+#include "titanic/npcs/succubus.h"
 
 namespace Titanic {
 
@@ -58,6 +59,7 @@ DEFFN(CProjectItem);
 DEFFN(CRoomItem);
 DEFFN(CServiceElevatorDoor);
 DEFFN(CSUBGlass);
+DEFFN(CSuccUBus);
 DEFFN(CTreeItem);
 DEFFN(CViewItem);
 
@@ -76,6 +78,7 @@ void CSaveableObject::initClassList() {
 	ADDFN(CRoomItem);
 	ADDFN(CServiceElevatorDoor);
 	ADDFN(CSUBGlass);
+	ADDFN(CSuccUBus);
 	ADDFN(CTreeItem);
 	ADDFN(CViewItem);
 }
