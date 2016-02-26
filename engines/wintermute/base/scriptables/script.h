@@ -50,7 +50,7 @@ public:
 	bool copyParameters(ScStack *stack);
 
 	void afterLoad();
-private:
+protected:
 	ScValue *_operand;
 	ScValue *_reg1;
 public:
