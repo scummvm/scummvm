@@ -93,6 +93,7 @@ For a more comprehensive changelog of the latest experimental code, see:
    - It is now possible to play Maniac Mansion from within Day of the
      Tentacle, with a few caveats. See README for details.
    - Alt-x can now be used to quit SCUMM games on all platforms.
+   - Improved lip sync animation in later HE games.
 
  Tinsel:
    - Improved AdLib music support in Discworld 1.
