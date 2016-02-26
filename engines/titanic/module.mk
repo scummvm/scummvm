@@ -55,6 +55,7 @@ MODULE_OBJS := \
 	moves/trip_down_canal.o \
 	npcs/barbot.o \
 	npcs/bellbot.o \
+	npcs/callbot.o \
 	npcs/character.o \
 	npcs/deskbot.o \
 	npcs/doorbot.o \

@@ -59,6 +59,7 @@
 
 #include "titanic/npcs/barbot.h"
 #include "titanic/npcs/bellbot.h"
+#include "titanic/npcs/callbot.h"
 #include "titanic/npcs/deskbot.h"
 #include "titanic/npcs/doorbot.h"
 #include "titanic/npcs/liftbot.h"
@@ -115,6 +116,7 @@ DEFFN(CTripDownCanal);
 
 DEFFN(CBarbot);
 DEFFN(CBellBot);
+DEFFN(CCallBot);
 DEFFN(CDeskbot);
 DEFFN(CDoorbot);
 DEFFN(CLiftBot);
@@ -165,6 +167,7 @@ void CSaveableObject::initClassList() {
 
 	ADDFN(CBarbot);
 	ADDFN(CBellBot);
+	ADDFN(CCallBot);
 	ADDFN(CDeskbot);
 	ADDFN(CDoorbot);
 	ADDFN(CMaitreD);
