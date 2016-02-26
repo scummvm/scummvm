@@ -2,7 +2,7 @@ Umfangreichere Informationen über die Änderungen des aktuellen experimentellen
 Programmcodes finden Sie auf Englisch unter:
         https://github.com/scummvm/scummvm/commits/
 
-1.8.0 (26.02.2016)
+1.8.0 (04.03.2016)
  Neue Spiele:
    - Unterstützung für Rex Nebular and the Cosmic Gender Bender hinzugefügt.
    - Unterstützung für Sfinx hinzugefügt.
@@ -25,9 +25,8 @@ Neue Portierungen:
    - Code für Munt-MT-32-Emulation auf Version 1.5.0 aktualisiert.
 
  SDL:
-   - Alt+x beendet ScummVM nicht mehr auf Plattformen, für welche dies
-     vorher der Fall war. Ein bedeutendes Beispiel dafür ist unsere Portierung
-     für Windows.
+   - Alt+x beendet ScummVM nicht mehr. Verwenden Sie stattdessen
+     Cmd+q/Strg+q/Strg+z und beachten Sie die Hinweise in der Liesmich-Datei.
   -  Auf POSIX-Systemen befolgen wir nun die Spezifikation XDG Base Directory
      für die Speicherung von Benutzerdaten. Dies führt zu neuen
      Speicherorten für unsere Konfigurationsdatei, unsere Log-Datei sowie für
@@ -43,20 +42,20 @@ Neue Portierungen:
  AGI:
    - Es ist nun möglich, die Maus-Unterstützung zu deaktivieren (außer bei
      Amiga-Versionen und Fan-Spielen, die eine Maus benötigen).
-   - Fehlerhafte Lautstärke-Dämpfung im PCjr-Sound-Code behoben (Fehler #6858).
-   - Umfangreiche Änderung im Grafik-Subsystem
+   - Fehlerhafte Lautstärke in PCjr-Spielen korrigiert.
+   - Umfangreiche Änderung im Grafik-Subsystem.
    - Unterstützung für Übergänge, Schriftarten und Mauszeigern für Apple IIgs,
      Amiga und Atari (die Systemschriftart Atari ST 8x8 ist nicht in ScummVM
      enthalten)
    - Eine PC-Version kann jetzt wie eine Apple IIgs-Version dargestellt werden
      (inklusive Farbpalette, Cursor, Übergänge und Schriftart). Sie müssen
      lediglich den gewünschten Darstellungsmodus auswählen.
-   - Unterstützung für vereinfachtes automatisches Speichern / Laden
-     hinzugefügt (verwendet von Mixed Up Mother Goose).
+   - Apple IIgs-Spiele laufen nicht mehr zu schnell.
+   - Unterstützung für automatisches Speichern / Laden hinzugefügt
+     (verwendet von Mixed Up Mother Goose).
    - Feste Verzögerung von 2 Sekunden bei Raumwechseln entfernt und durch
      Heuristik ersetzt.
-   - Controller (skriptgesteuerte Tastenbelegungen) werden jetzt mit
-     abgespeichert (Fehler #5858).
+   - Fehlerhafte Tastenbelegungen nach abspeichern/laden behoben
 
  AGOS:
    - Arpeggio-Effekt in der Musik der Amiga-Version von Elvira 1 repariert.
@@ -68,11 +67,11 @@ Neue Portierungen:
      AdLib-Ausgabe erheblich und erhöht die Originaltreue.
 
  Baphomets Fluch 1:
-   - Erkennung der Byte-Reihenfolge der Sprachausgabe auf Big-Endian-Systemen
-     für die Macintosh-Version (Fehler #6720) repariert.
-   - Absturz beim Neuladen eines Spiels aus dem Hauptmenü heraus, während sich
-     das Spiel in der Szene am Bull's Head Hill befindet, behoben
-     (Fehler #6728). Dieser Fehler trat womöglich auch in anderen Szenen auf.
+   - Sprachausgabe in Macintosh-Versionen korrigiert, wenn ScumMVM
+     auf Big-Endian-Systemen ausgeführt wird.
+   - Fehler beim Laden eines Spielstandes aus dem Hauptmenü in der
+     Bull's Head Hill-Szene korrigiert. Dieser Fehler trat womöglich auch
+     in anderen Szenen auf.
 
  CinE:
    - Unterstützung für Musik in der CD-Version von Future Wars hinzugefügt.
@@ -102,6 +101,7 @@ Neue Portierungen:
      Tentacle zu spielen. Bitte Liesmich-Datei für weitere Details lesen.
    - Alt+x kann jetzt auf allen Plattformen dazu verwendet werden, SCUMM-Spiele
      zu beenden.
+   - Lippensynchronisation in neueren Spielen von Humongous Entertainment verbessert
 
  Tinsel:
    - Unterstützung für AdLib-Musik in Discworld 1 verbessert.
