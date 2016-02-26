@@ -90,6 +90,7 @@ MODULE_OBJS := \
 	base/saveload.o \
 	base/save_thumb_helper.o \
 	base/timer.o \
+	debugger/breakpoint.o \
 	debugger/error.o \
 	debugger/script_monitor.o \
 	detection.o \
