@@ -42,8 +42,11 @@
 #include "titanic/npcs/doorbot.h"
 #include "titanic/npcs/liftbot.h"
 #include "titanic/npcs/maitre_d.h"
+#include "titanic/npcs/mobile.h"
 #include "titanic/npcs/parrot.h"
+#include "titanic/npcs/starlings.h"
 #include "titanic/npcs/succubus.h"
+#include "titanic/npcs/titania.h"
 
 namespace Titanic {
 
@@ -64,6 +67,7 @@ DEFFN(CLiftBot);
 DEFFN(CLinkItem);
 DEFFN(CMaitreD);
 DEFFN(CMessageTarget);
+DEFFN(CMobile);
 DEFFN(CMovieClip);
 DEFFN(CMovieClipList);
 DEFFN(CNodeItem);
@@ -72,8 +76,10 @@ DEFFN(CPETPosition);
 DEFFN(CProjectItem);
 DEFFN(CRoomItem);
 DEFFN(CServiceElevatorDoor);
+DEFFN(CStarlings);
 DEFFN(CSUBGlass);
 DEFFN(CSuccUBus);
+DEFFN(CTitania);
 DEFFN(CTreeItem);
 DEFFN(CViewItem);
 
@@ -90,6 +96,7 @@ void CSaveableObject::initClassList() {
 	ADDFN(CLinkItem);
 	ADDFN(CMaitreD);
 	ADDFN(CMessageTarget);
+	ADDFN(CMobile);
 	ADDFN(CMovieClip);
 	ADDFN(CMovieClipList);
 	ADDFN(CNodeItem);
@@ -98,8 +105,10 @@ void CSaveableObject::initClassList() {
 	ADDFN(CProjectItem);
 	ADDFN(CRoomItem);
 	ADDFN(CServiceElevatorDoor);
+	ADDFN(CStarlings);
 	ADDFN(CSUBGlass);
 	ADDFN(CSuccUBus);
+	ADDFN(CTitania);
 	ADDFN(CTreeItem);
 	ADDFN(CViewItem);
 }

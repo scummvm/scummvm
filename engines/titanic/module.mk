@@ -44,8 +44,11 @@ MODULE_OBJS := \
 	npcs/doorbot.o \
 	npcs/liftbot.o \
 	npcs/maitre_d.o \
+	npcs/mobile.o \
 	npcs/parrot.o \
+	npcs/starlings.o \
 	npcs/succubus.o \
+	npcs/titania.o \
 	npcs/true_talk_npc.o
 
 # This module can be built as a plugin
