@@ -37,7 +37,14 @@ MODULE_OBJS := \
 	game/room_item.o \
 	game/service_elevator_door.o \
 	game/sub_glass.o \
+	npcs/barbot.o \
+	npcs/bellbot.o \
 	npcs/character.o \
+	npcs/deskbot.o \
+	npcs/doorbot.o \
+	npcs/liftbot.o \
+	npcs/maitre_d.o \
+	npcs/parrot.o \
 	npcs/succubus.o \
 	npcs/true_talk_npc.o
 

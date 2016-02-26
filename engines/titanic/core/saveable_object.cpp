@@ -36,6 +36,13 @@
 #include "titanic/game/room_item.h"
 #include "titanic/game/service_elevator_door.h"
 #include "titanic/game/sub_glass.h"
+#include "titanic/npcs/barbot.h"
+#include "titanic/npcs/bellbot.h"
+#include "titanic/npcs/deskbot.h"
+#include "titanic/npcs/doorbot.h"
+#include "titanic/npcs/liftbot.h"
+#include "titanic/npcs/maitre_d.h"
+#include "titanic/npcs/parrot.h"
 #include "titanic/npcs/succubus.h"
 
 namespace Titanic {
@@ -47,13 +54,20 @@ Common::HashMap<Common::String, CSaveableObject::CreateFunction> *
 #define ADDFN(T) (*_classList)[#T] = Function##T
 
 DEFFN(CAnnounce);
+DEFFN(CBarbot);
+DEFFN(CBellBot);
+DEFFN(CDeskbot);
+DEFFN(CDoorbot);
 DEFFN(CFileItem);
 DEFFN(CFileListItem);
+DEFFN(CLiftBot);
 DEFFN(CLinkItem);
+DEFFN(CMaitreD);
 DEFFN(CMessageTarget);
 DEFFN(CMovieClip);
 DEFFN(CMovieClipList);
 DEFFN(CNodeItem);
+DEFFN(CParrot);
 DEFFN(CPETPosition);
 DEFFN(CProjectItem);
 DEFFN(CRoomItem);
@@ -66,13 +80,20 @@ DEFFN(CViewItem);
 void CSaveableObject::initClassList() {
 	_classList = new Common::HashMap<Common::String, CreateFunction>();
 	ADDFN(CAnnounce);
+	ADDFN(CBarbot);
+	ADDFN(CBellBot);
+	ADDFN(CDeskbot);
+	ADDFN(CDoorbot);
 	ADDFN(CFileItem);
 	ADDFN(CFileListItem);
+	ADDFN(CLiftBot);
 	ADDFN(CLinkItem);
+	ADDFN(CMaitreD);
 	ADDFN(CMessageTarget);
 	ADDFN(CMovieClip);
 	ADDFN(CMovieClipList);
 	ADDFN(CNodeItem);
+	ADDFN(CParrot);
 	ADDFN(CPETPosition);
 	ADDFN(CProjectItem);
 	ADDFN(CRoomItem);
