@@ -37,6 +37,20 @@
 #include "titanic/game/room_item.h"
 #include "titanic/game/service_elevator_door.h"
 #include "titanic/game/sub_glass.h"
+
+#include "titanic/messages/enter_bomb_room.h"
+#include "titanic/messages/exit_arboretum.h"
+#include "titanic/messages/exit_bridge.h"
+#include "titanic/messages/exit_state_room.h"
+#include "titanic/messages/move_player_in_parrot_room.h"
+#include "titanic/messages/move_player_to.h"
+#include "titanic/messages/move_player_to_from.h"
+#include "titanic/messages/multi_move.h"
+#include "titanic/messages/pan_from_pel.h"
+#include "titanic/messages/restaurant_pan_handler.h"
+#include "titanic/messages/restricted_move.h"
+#include "titanic/messages/trip_down_canal.h"
+
 #include "titanic/npcs/barbot.h"
 #include "titanic/npcs/bellbot.h"
 #include "titanic/npcs/deskbot.h"
@@ -57,63 +71,93 @@ Common::HashMap<Common::String, CSaveableObject::CreateFunction> *
 #define DEFFN(T) CSaveableObject *Function##T() { return new T(); }
 #define ADDFN(T) (*_classList)[#T] = Function##T
 
-DEFFN(CAnnounce);
 DEFFN(CBackground);
+DEFFN(CFileItem);
+DEFFN(CFileListItem);
+DEFFN(CLinkItem);
+DEFFN(CMessageTarget);
+DEFFN(CMovieClip);
+DEFFN(CMovieClipList);
+DEFFN(CNodeItem);
+DEFFN(CProjectItem);
+DEFFN(CTreeItem);
+DEFFN(CViewItem);
+
+DEFFN(CAnnounce);
+DEFFN(CPETPosition);
+DEFFN(CRoomItem);
+DEFFN(CServiceElevatorDoor);
+DEFFN(CSUBGlass);
+
+DEFFN(CEnterBombRoom);
+DEFFN(CExitArboretum);
+DEFFN(CExitBridge);
+DEFFN(CExitStateRoom);
+DEFFN(CMovePlayerInParrotRoom);
+DEFFN(CMovePlayerTo);
+DEFFN(CMovePlayerToFrom);
+DEFFN(CMultiMove);
+DEFFN(CPanFromPel);
+DEFFN(CRestaurantPanHandler);
+DEFFN(CRestrictedMove);
+DEFFN(CTripDownCanal);
+
 DEFFN(CBarbot);
 DEFFN(CBellBot);
 DEFFN(CDeskbot);
 DEFFN(CDoorbot);
-DEFFN(CFileItem);
-DEFFN(CFileListItem);
 DEFFN(CLiftBot);
-DEFFN(CLinkItem);
 DEFFN(CMaitreD);
-DEFFN(CMessageTarget);
 DEFFN(CMobile);
-DEFFN(CMovieClip);
-DEFFN(CMovieClipList);
-DEFFN(CNodeItem);
 DEFFN(CParrot);
-DEFFN(CPETPosition);
-DEFFN(CProjectItem);
-DEFFN(CRoomItem);
-DEFFN(CServiceElevatorDoor);
 DEFFN(CStarlings);
-DEFFN(CSUBGlass);
 DEFFN(CSuccUBus);
 DEFFN(CTitania);
-DEFFN(CTreeItem);
-DEFFN(CViewItem);
 
 void CSaveableObject::initClassList() {
 	_classList = new Common::HashMap<Common::String, CreateFunction>();
-	ADDFN(CAnnounce);
 	ADDFN(CBackground);
+	ADDFN(CFileItem);
+	ADDFN(CFileListItem);
+	ADDFN(CLinkItem);
+	ADDFN(CMessageTarget);
+	ADDFN(CMovieClip);
+	ADDFN(CMovieClipList);
+	ADDFN(CNodeItem);
+	ADDFN(CProjectItem);
+	ADDFN(CTreeItem);
+	ADDFN(CViewItem);
+
+	ADDFN(CAnnounce);
+	ADDFN(CPETPosition);
+	ADDFN(CRoomItem);
+	ADDFN(CServiceElevatorDoor);
+	ADDFN(CSUBGlass);
+
+	ADDFN(CEnterBombRoom);
+	ADDFN(CExitArboretum);
+	ADDFN(CExitBridge);
+	ADDFN(CExitStateRoom);
+	ADDFN(CMovePlayerInParrotRoom);
+	ADDFN(CMovePlayerTo);
+	ADDFN(CMovePlayerToFrom);
+	ADDFN(CMultiMove);
+	ADDFN(CPanFromPel);
+	ADDFN(CRestaurantPanHandler);
+	ADDFN(CRestrictedMove);
+	ADDFN(CTripDownCanal);
+
 	ADDFN(CBarbot);
 	ADDFN(CBellBot);
 	ADDFN(CDeskbot);
 	ADDFN(CDoorbot);
-	ADDFN(CFileItem);
-	ADDFN(CFileListItem);
-	ADDFN(CLiftBot);
-	ADDFN(CLinkItem);
 	ADDFN(CMaitreD);
-	ADDFN(CMessageTarget);
+	ADDFN(CLiftBot);
 	ADDFN(CMobile);
-	ADDFN(CMovieClip);
-	ADDFN(CMovieClipList);
-	ADDFN(CNodeItem);
 	ADDFN(CParrot);
-	ADDFN(CPETPosition);
-	ADDFN(CProjectItem);
-	ADDFN(CRoomItem);
-	ADDFN(CServiceElevatorDoor);
 	ADDFN(CStarlings);
-	ADDFN(CSUBGlass);
 	ADDFN(CSuccUBus);
 	ADDFN(CTitania);
-	ADDFN(CTreeItem);
-	ADDFN(CViewItem);
 }
 
 void CSaveableObject::freeClassList() {
