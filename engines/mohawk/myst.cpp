@@ -235,7 +235,7 @@ Common::Error MohawkEngine_Myst::run() {
 	_cursor->showCursor();
 
 	// Load game from launcher/command line if requested
-	if (ConfMan.hasKey("save_slot") && canLoadGameStateCurrently()) {
+	if (ConfMan.hasKey("save_slot") && hasGameSaveSupport()) {
 		uint32 gameToLoad = ConfMan.getInt("save_slot");
 		Common::StringArray savedGamesList = MystGameState::generateSaveGameList();
 		if (gameToLoad > savedGamesList.size())
@@ -1093,9 +1093,13 @@ Common::Error MohawkEngine_Myst::saveGameState(int slot, const Common::String &d
 	return _gameState->save(desc) ? Common::kNoError : Common::kUnknownError;
 }
 
+bool MohawkEngine_Myst::hasGameSaveSupport() const {
+	return !(getFeatures() & GF_DEMO) && getGameType() != GType_MAKINGOF;
+}
+
 bool MohawkEngine_Myst::canLoadGameStateCurrently() {
 	// No loading in the demo/makingof
-	return _canSafelySaveLoad && !(getFeatures() & GF_DEMO) && getGameType() != GType_MAKINGOF;
+	return _canSafelySaveLoad && hasGameSaveSupport();
 }
 
 bool MohawkEngine_Myst::canSaveGameStateCurrently() {
