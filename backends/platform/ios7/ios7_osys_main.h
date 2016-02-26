@@ -111,6 +111,10 @@ protected:
 
 	char *_lastErrorMessage;
 
+#ifdef IPHONE_SANDBOXED
+	Common::String _chrootBasePath;
+#endif
+
 public:
 
 	OSystem_iOS7();

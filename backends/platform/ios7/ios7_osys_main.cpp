@@ -79,6 +79,33 @@ AQCallbackStruct OSystem_iOS7::s_AudioQueue;
 SoundProc OSystem_iOS7::s_soundCallback = NULL;
 void *OSystem_iOS7::s_soundParam = NULL;
 
+#ifdef IPHONE_SANDBOXED
+class SandboxedSaveFileManager : public DefaultSaveFileManager {
+	Common::String _sandboxRootPath;
+public:
+
+	SandboxedSaveFileManager(Common::String sandboxRootPath, Common::String defaultSavepath)
+			: DefaultSaveFileManager(defaultSavepath), _sandboxRootPath(sandboxRootPath) {
+	}
+
+	virtual bool removeSavefile(const Common::String &filename) override {
+		Common::String chrootedFile = getSavePath() + "/" + filename;
+		Common::String realFilePath = _sandboxRootPath + chrootedFile;
+
+		if (remove(realFilePath.c_str()) != 0) {
+			if (errno == EACCES)
+				setError(Common::kWritePermissionDenied, "Search or write permission denied: "+chrootedFile);
+
+			if (errno == ENOENT)
+				setError(Common::kPathDoesNotExist, "removeSavefile: '"+chrootedFile+"' does not exist or path is invalid");
+			return false;
+		} else {
+			return true;
+		}
+	}
+};
+#endif
+
 OSystem_iOS7::OSystem_iOS7() :
 	_mixer(NULL), _lastMouseTap(0), _queuedEventTime(0),
 	_mouseNeedTextureUpdate(false), _secondaryTapped(false), _lastSecondaryTap(0),
@@ -89,7 +116,8 @@ OSystem_iOS7::OSystem_iOS7() :
 	_queuedInputEvent.type = Common::EVENT_INVALID;
 	_touchpadModeEnabled = !iOS7_isBigDevice();
 #ifdef IPHONE_SANDBOXED
-	_fsFactory = new ChRootFilesystemFactory(iOS7_getDocumentsDir());
+	_chrootBasePath = iOS7_getDocumentsDir();
+	_fsFactory = new ChRootFilesystemFactory(_chrootBasePath);
 #else
 	_fsFactory = new POSIXFilesystemFactory();
 #endif
@@ -124,7 +152,7 @@ int OSystem_iOS7::timerHandler(int t) {
 
 void OSystem_iOS7::initBackend() {
 #ifdef IPHONE_SANDBOXED
-	_savefileManager = new DefaultSaveFileManager("/Savegames");
+	_savefileManager = new SandboxedSaveFileManager(_chrootBasePath, "/Savegames");
 #else
 	_savefileManager = new DefaultSaveFileManager(SCUMMVM_SAVE_PATH);
 #endif
