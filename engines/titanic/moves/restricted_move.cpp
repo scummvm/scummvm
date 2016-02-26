@@ -20,7 +20,7 @@
  *
  */
 
-#include "titanic/messages/restricted_move.h"
+#include "titanic/moves/restricted_move.h"
 
 namespace Titanic {
 

@@ -23,7 +23,7 @@
 #ifndef TITANIC_MOVE_PLAYER_IN_PARROT_ROOM_H
 #define TITANIC_MOVE_PLAYER_IN_PARROT_ROOM_H
 
-#include "titanic/messages/move_player_to.h"
+#include "titanic/moves/move_player_to.h"
 
 namespace Titanic {
 

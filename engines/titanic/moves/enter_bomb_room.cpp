@@ -20,7 +20,7 @@
  *
  */
 
-#include "titanic/messages/enter_bomb_room.h"
+#include "titanic/moves/enter_bomb_room.h"
 
 namespace Titanic {
 

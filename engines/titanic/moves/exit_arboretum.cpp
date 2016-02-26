@@ -20,7 +20,7 @@
  *
  */
 
-#include "titanic/messages/exit_arboretum.h"
+#include "titanic/moves/exit_arboretum.h"
 
 namespace Titanic {
 

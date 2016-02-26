@@ -23,7 +23,7 @@
 #ifndef TITANIC_EXIT_ARBORETUM_H
 #define TITANIC_EXIT_ARBORETUM_H
 
-#include "titanic/messages/move_player_to.h"
+#include "titanic/moves/move_player_to.h"
 
 namespace Titanic {
 

@@ -20,7 +20,7 @@
  *
  */
 
-#include "titanic/messages/move_player_to_from.h"
+#include "titanic/moves/move_player_to_from.h"
 
 namespace Titanic {
 

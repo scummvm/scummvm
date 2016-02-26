@@ -23,7 +23,7 @@
 #ifndef TITANIC_RESTAURANT_PAN_HANDLER_H
 #define TITANIC_RESTAURANT_PAN_HANDLER_H
 
-#include "titanic/messages/move_player_to.h"
+#include "titanic/moves/move_player_to.h"
 
 namespace Titanic {
 

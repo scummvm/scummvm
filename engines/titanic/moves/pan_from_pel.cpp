@@ -20,7 +20,7 @@
  *
  */
 
-#include "titanic/messages/pan_from_pel.h"
+#include "titanic/moves/pan_from_pel.h"
 
 namespace Titanic {
 

@@ -23,7 +23,7 @@
 #ifndef TITANIC_TRIP_DOWN_CANAL_H
 #define TITANIC_TRIP_DOWN_CANAL_H
 
-#include "titanic/messages/move_player_to.h"
+#include "titanic/moves/move_player_to.h"
 
 namespace Titanic {
 

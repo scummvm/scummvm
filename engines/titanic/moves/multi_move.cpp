@@ -20,7 +20,7 @@
  *
  */
 
-#include "titanic/messages/multi_move.h"
+#include "titanic/moves/multi_move.h"
 
 namespace Titanic {
 

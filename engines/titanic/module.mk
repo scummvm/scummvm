@@ -38,19 +38,19 @@ MODULE_OBJS := \
 	game/room_item.o \
 	game/service_elevator_door.o \
 	game/sub_glass.o \
-	messages/enter_bomb_room.o \
-	messages/exit_arboretum.o \
-	messages/exit_bridge.o \
-	messages/exit_state_room.o \
-	messages/exit_titania.o \
-	messages/move_player_in_parrot_room.o \
-	messages/move_player_to_from.o \
-	messages/move_player_to.o \
-	messages/multi_move.o \
-	messages/pan_from_pel.o \
-	messages/restaurant_pan_handler.o \
-	messages/restricted_move.o \
-	messages/trip_down_canal.o \
+	moves/enter_bomb_room.o \
+	moves/exit_arboretum.o \
+	moves/exit_bridge.o \
+	moves/exit_state_room.o \
+	moves/exit_titania.o \
+	moves/move_player_in_parrot_room.o \
+	moves/move_player_to_from.o \
+	moves/move_player_to.o \
+	moves/multi_move.o \
+	moves/pan_from_pel.o \
+	moves/restaurant_pan_handler.o \
+	moves/restricted_move.o \
+	moves/trip_down_canal.o \
 	npcs/barbot.o \
 	npcs/bellbot.o \
 	npcs/character.o \

@@ -23,7 +23,7 @@
 #ifndef TITANIC_MULTI_MOVE_H
 #define TITANIC_MULTI_MOVE_H
 
-#include "titanic/messages/move_player_to.h"
+#include "titanic/moves/move_player_to.h"
 
 namespace Titanic {
 

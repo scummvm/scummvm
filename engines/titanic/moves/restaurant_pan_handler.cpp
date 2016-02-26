@@ -20,7 +20,7 @@
  *
  */
 
-#include "titanic/messages/restaurant_pan_handler.h"
+#include "titanic/moves/restaurant_pan_handler.h"
 
 namespace Titanic {
 

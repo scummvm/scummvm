@@ -20,7 +20,7 @@
  *
  */
 
-#include "titanic/messages/exit_bridge.h"
+#include "titanic/moves/exit_bridge.h"
 
 namespace Titanic {
 

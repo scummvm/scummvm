@@ -23,7 +23,7 @@
 #ifndef TITANIC_ENTER_BOMB_ROOM_H
 #define TITANIC_ENTER_BOMB_ROOM_H
 
-#include "titanic/messages/move_player_to.h"
+#include "titanic/moves/move_player_to.h"
 
 namespace Titanic {
 

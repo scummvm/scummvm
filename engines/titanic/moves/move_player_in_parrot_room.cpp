@@ -20,7 +20,7 @@
  *
  */
 
-#include "titanic/messages/move_player_in_parrot_room.h"
+#include "titanic/moves/move_player_in_parrot_room.h"
 
 namespace Titanic {
 

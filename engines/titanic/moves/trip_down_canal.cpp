@@ -20,7 +20,7 @@
  *
  */
 
-#include "titanic/messages/trip_down_canal.h"
+#include "titanic/moves/trip_down_canal.h"
 
 namespace Titanic {
 
