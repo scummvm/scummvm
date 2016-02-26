@@ -599,10 +599,12 @@ void MohawkEngine_Myst::changeToCard(uint16 card, TransitionType transition) {
 
 	// Make sure the screen is updated
 	if (transition != kNoTransition) {
-		if (!_gameState->_globals.transitions)
-			transition = kTransitionCopy;
-
-		_gfx->runTransition(transition, Common::Rect(544, 333), 10, 0);
+		if (_gameState->_globals.transitions) {
+			_gfx->runTransition(transition, Common::Rect(544, 333), 10, 0);
+		} else {
+			_gfx->copyBackBufferToScreen(Common::Rect(544, 333));
+			_needsUpdate = true;
+		}
 	}
 
 	// Make sure we have the right cursor showing

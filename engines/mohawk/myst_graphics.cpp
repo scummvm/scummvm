@@ -227,9 +227,8 @@ void MystGraphics::copyBackBufferToScreen(Common::Rect r) {
 
 void MystGraphics::runTransition(TransitionType type, Common::Rect rect, uint16 steps, uint16 delay) {
 
-	// Do not artificially delay during transitions
-	int oldEnableDrawingTimeSimulation = _enableDrawingTimeSimulation;
-	_enableDrawingTimeSimulation = 0;
+	// Transitions are barely visible without adding delays between the draw calls
+	enableDrawingTimeSimulation(true);
 
 	switch (type) {
 	case kTransitionLeftToRight:	{
@@ -290,7 +289,10 @@ void MystGraphics::runTransition(TransitionType type, Common::Rect rect, uint16 
 			debugC(kDebugView, "Dissolve");
 
 			for (int16 step = 0; step < 8; step++) {
-				simulatePreviousDrawDelay(rect);
+				// Only one eighth of the rect pixels are updated by a draw step,
+				// delay by one eighth of the regular time
+				simulatePreviousDrawDelay(Common::Rect(rect.width() / 8, rect.height()));
+
 				transitionDissolve(rect, step);
 			}
 		}
@@ -369,7 +371,7 @@ void MystGraphics::runTransition(TransitionType type, Common::Rect rect, uint16 
 		error("Unknown transition %d", type);
 	}
 
-	_enableDrawingTimeSimulation = oldEnableDrawingTimeSimulation;
+	enableDrawingTimeSimulation(false);
 }
 
 void MystGraphics::transitionDissolve(Common::Rect rect, uint step) {
@@ -641,8 +643,10 @@ void MystGraphics::simulatePreviousDrawDelay(const Common::Rect &dest) {
 		// Do not draw anything new too quickly after the previous draw call
 		// so that images stay at least a little while on screen
 		// This is enabled only for scripted draw calls
-		if (time < _nextAllowedDrawTime)
+		if (time < _nextAllowedDrawTime) {
+			debugC(kDebugView, "Delaying draw call by %d ms", _nextAllowedDrawTime - time);
 			_vm->_system->delayMillis(_nextAllowedDrawTime - time);
+		}
 	}
 
 	// Next draw call allowed at DELAY + AERA * COEFF milliseconds from now
