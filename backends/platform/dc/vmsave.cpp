@@ -182,7 +182,7 @@ static void tryList(const Common::String &glob, int vm, Common::StringArray &lis
       char buf[16];
       strncpy(buf, (char *)de.entry+4, 12);
       buf[12] = 0;
-      if (glob.matchString(buf))
+      if (Common::matchString(buf, glob.c_str()))
 	list.push_back(buf);
     }
 }
