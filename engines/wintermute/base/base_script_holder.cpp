@@ -42,7 +42,7 @@ IMPLEMENT_PERSISTENT(BaseScriptHolder, false)
 //////////////////////////////////////////////////////////////////////
 BaseScriptHolder::BaseScriptHolder(BaseGame *inGame) : BaseScriptable(inGame) {
 	setName("<unnamed>");
-
+	_ready = false;
 	_freezable = true;
 	_filename = nullptr;
 }
