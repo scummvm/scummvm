@@ -102,7 +102,7 @@ void MainMenu::reflowLayout() {
 	_w = 2 * buttonWidth  + buttonPadding;
 	_h = 3 * buttonHeight + 3 * buttonPadding;
 	_x = (screenW - _w) / 2;
-	_y = screenH - _h;
+	_y = screenH - _h - 2;
 
 	int x = 0, y = 0;
 
