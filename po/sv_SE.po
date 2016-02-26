@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.5.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
 "POT-Creation-Date: 2016-02-20 21:22+0000\n"
-"PO-Revision-Date: 2016-02-12 12:07+0100\n"
+"PO-Revision-Date: 2016-02-25 23:06+0100\n"
 "Last-Translator: Hampus Flink <hampus.flink@gmail.com>\n"
 "Language-Team: \n"
 "Language: Svenska\n"
@@ -1086,7 +1086,7 @@ msgstr "# nästa"
 
 #: gui/predictivedialog.cpp:87
 msgid "add"
-msgstr "lägg till"
+msgstr "Lägg till"
 
 #: gui/predictivedialog.cpp:92 gui/predictivedialog.cpp:164
 msgid "Delete char"
@@ -2046,7 +2046,7 @@ msgstr "[ Data ]"
 
 #: backends/platform/tizen/fs.cpp:263
 msgid "[ Resources ]"
-msgstr "[ Resurser ]"
+msgstr "[ Resurser ]"
 
 #: backends/platform/tizen/fs.cpp:267
 msgid "[ SDCard ]"
@@ -2054,7 +2054,7 @@ msgstr "[ SD-kort ]"
 
 #: backends/platform/tizen/fs.cpp:271
 msgid "[ Media ]"
-msgstr "[ Media ]"
+msgstr "[ Media ]"
 
 #: backends/platform/tizen/fs.cpp:275
 msgid "[ Shared ]"
@@ -3547,7 +3547,6 @@ msgstr ""
 "för att läsa instrumenten. Musiken kommer att avaktiveras."
 
 #: engines/sherlock/detection.cpp:71
-#, fuzzy
 msgid "Use original savegame dialog"
 msgstr "Använd originalskärmar för spara/ladda"
 
@@ -3556,49 +3555,54 @@ msgid ""
 "Files button in-game shows original savegame dialog rather than the ScummVM "
 "menu"
 msgstr ""
+"Filknappen i spelet visar originalskärmen för spara/ladda istället för "
+"ScummVM-menyn"
 
 #: engines/sherlock/detection.cpp:81
 msgid "Pixellated scene transitions"
-msgstr ""
+msgstr "Pixliga scenövergångar"
 
 #: engines/sherlock/detection.cpp:82
 msgid "When changing scenes, a randomized pixel transition is done"
-msgstr ""
+msgstr "En slumpmässig pixelövergång visas vid scenbyten"
 
 #: engines/sherlock/detection.cpp:91
 msgid "Don't show hotspots when moving mouse"
-msgstr ""
+msgstr "Visa inte aktiveringspunkter vid musrörelse"
 
 #: engines/sherlock/detection.cpp:92
 msgid ""
 "Only show hotspot names after you actually click on a hotspot or action "
 "button"
 msgstr ""
+"Visar endast namn för aktiveringspunkter när du klickar på en "
+"aktiveringspunkt eller handlingsknapp"
 
 #: engines/sherlock/detection.cpp:101
-#, fuzzy
 msgid "Show character portraits"
-msgstr "Byt karaktär"
+msgstr "Visa karaktärsporträtt"
 
 #: engines/sherlock/detection.cpp:102
 msgid "Show portraits for the characters when conversing"
-msgstr ""
+msgstr "Visa porträtt för karaktärerna under dialoger"
 
 #: engines/sherlock/detection.cpp:111
 msgid "Slide dialogs into view"
-msgstr ""
+msgstr "Låt dialogrutor glida in"
 
 #: engines/sherlock/detection.cpp:112
 msgid "Slide UI dialogs into view, rather than simply showing them immediately"
 msgstr ""
+"Låter gränssnittets dialogrutor glida in i bilden istället för att bara visa "
+"dem direkt"
 
 #: engines/sherlock/detection.cpp:121
 msgid "Transparent windows"
-msgstr ""
+msgstr "Genomskinliga fönster"
 
 #: engines/sherlock/detection.cpp:122
 msgid "Show windows with a partially transparent background"
-msgstr ""
+msgstr "Visar fönster med en delvis genomskinlig bakgrund"
 
 #: engines/sky/compact.cpp:130
 msgid ""
@@ -3680,7 +3684,7 @@ msgstr "Behåll den nya"
 
 #: engines/sword1/logic.cpp:1633
 msgid "This is the end of the Broken Sword 1 Demo"
-msgstr "Här slutar Broken Sword 1 demon"
+msgstr "Här slutar Broken Sword 1-demon"
 
 #: engines/sword2/animation.cpp:425
 msgid ""
@@ -3706,7 +3710,7 @@ msgid ""
 "executable. Please decompress it"
 msgstr ""
 "Teenagent.dat-filen är komprimerad och zlib har inte inkluderats i det här "
-"programmet. Var god  dekomprimera den"
+"programmet. Var god dekomprimera den"
 
 #: engines/wintermute/detection.cpp:58
 msgid "Show FPS-counter"
