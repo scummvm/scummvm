@@ -21,6 +21,7 @@
  */
 
 #include "titanic/core/saveable_object.h"
+#include "titanic/core/background.h"
 #include "titanic/core/file_item.h"
 #include "titanic/core/link_item.h"
 #include "titanic/core/list.h"
@@ -57,6 +58,7 @@ Common::HashMap<Common::String, CSaveableObject::CreateFunction> *
 #define ADDFN(T) (*_classList)[#T] = Function##T
 
 DEFFN(CAnnounce);
+DEFFN(CBackground);
 DEFFN(CBarbot);
 DEFFN(CBellBot);
 DEFFN(CDeskbot);
@@ -86,6 +88,7 @@ DEFFN(CViewItem);
 void CSaveableObject::initClassList() {
 	_classList = new Common::HashMap<Common::String, CreateFunction>();
 	ADDFN(CAnnounce);
+	ADDFN(CBackground);
 	ADDFN(CBarbot);
 	ADDFN(CBellBot);
 	ADDFN(CDeskbot);

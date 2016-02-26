@@ -16,6 +16,7 @@ MODULE_OBJS := \
 	titanic.o \
 	video_surface.o \
 	core/auto_sound_event.o \
+	core/background.o \
 	core/dont_save_file_item.o \
 	core/file_item.o \
 	core/game_object.o \
