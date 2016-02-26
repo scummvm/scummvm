@@ -15,7 +15,6 @@ MODULE_OBJS := \
 	string.o \
 	titanic.o \
 	video_surface.o \
-	core/auto_sound_event.o \
 	core/background.o \
 	core/dont_save_file_item.o \
 	core/file_item.o \
@@ -33,11 +32,12 @@ MODULE_OBJS := \
 	core/tree_item.o \
 	core/view_item.o \
 	game/announce.o \
-	game/door_auto_sound_event.o \
 	game/pet_position.o \
 	game/room_item.o \
 	game/service_elevator_door.o \
 	game/sub_glass.o \
+	messages/auto_sound_event.o \
+	messages/door_auto_sound_event.o \
 	moves/enter_bomb_room.o \
 	moves/exit_arboretum.o \
 	moves/exit_bridge.o \

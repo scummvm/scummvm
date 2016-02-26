@@ -20,24 +20,26 @@
  *
  */
 
-#ifndef TITANIC_AUTO_SOUND_EVENT_H
-#define TITANIC_AUTO_SOUND_EVENT_H
+#ifndef TITANIC_DOOR_AUTO_SOUND_EVENT_H
+#define TITANIC_DOOR_AUTO_SOUND_EVENT_H
 
-#include "titanic/core/game_object.h"
+#include "titanic/messages/auto_sound_event.h"
 
 namespace Titanic {
 
-class CAutoSoundEvent : public CGameObject {
+class CDoorAutoSoundEvent : public CAutoSoundEvent {
 private:
-	int _fieldBC;
-	int _fieldC0;
+	CString _string1;
+	CString _string2;
+	int _fieldDC;
+	int _fieldE0;
 public:
-	CAutoSoundEvent();
+	CDoorAutoSoundEvent();
 
 	/**
 	 * Return the class name
 	 */
-	virtual const char *getClassName() const { return "CAutoSoundEvent"; }
+	virtual const char *getClassName() const { return "CDoorAutoSoundEvent"; }
 
 	/**
 	 * Save the data for the class to file
@@ -52,4 +54,4 @@ public:
 
 } // End of namespace Titanic
 
-#endif /* TITANIC_AUTO_SOUND_EVENT_H */
+#endif /* TITANIC_DOOR_AUTO_SOUND_EVENT_H */

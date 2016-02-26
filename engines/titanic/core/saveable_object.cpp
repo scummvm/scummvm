@@ -38,6 +38,9 @@
 #include "titanic/game/service_elevator_door.h"
 #include "titanic/game/sub_glass.h"
 
+#include "titanic/messages/auto_sound_event.h"
+#include "titanic/messages/door_auto_sound_event.h"
+
 #include "titanic/moves/enter_bomb_room.h"
 #include "titanic/moves/exit_arboretum.h"
 #include "titanic/moves/exit_bridge.h"
@@ -89,6 +92,9 @@ DEFFN(CRoomItem);
 DEFFN(CServiceElevatorDoor);
 DEFFN(CSUBGlass);
 
+DEFFN(CAutoSoundEvent);
+DEFFN(CDoorAutoSoundEvent);
+
 DEFFN(CEnterBombRoom);
 DEFFN(CExitArboretum);
 DEFFN(CExitBridge);
@@ -133,6 +139,9 @@ void CSaveableObject::initClassList() {
 	ADDFN(CRoomItem);
 	ADDFN(CServiceElevatorDoor);
 	ADDFN(CSUBGlass);
+
+	ADDFN(CAutoSoundEvent);
+	ADDFN(CDoorAutoSoundEvent);
 
 	ADDFN(CEnterBombRoom);
 	ADDFN(CExitArboretum);

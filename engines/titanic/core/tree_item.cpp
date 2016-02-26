@@ -79,6 +79,8 @@ CDontSaveFileItem *CTreeItem::getDontSaveFileItem() {
 
 		item = item->getNextSibling();
 	}
+
+	return nullptr;
 }
 
 void CTreeItem::addUnder(CTreeItem *newParent) {

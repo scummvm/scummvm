@@ -20,27 +20,32 @@
  *
  */
 
-#include "titanic/core/auto_sound_event.h"
+#include "titanic/messages/door_auto_sound_event.h"
 
 namespace Titanic {
 
-CAutoSoundEvent::CAutoSoundEvent() : CGameObject(), _fieldBC(-1), _fieldC0(0xFFFFFF) {
+CDoorAutoSoundEvent::CDoorAutoSoundEvent() : CAutoSoundEvent(),
+		_string1("z#44.wav"), _string2("z#43.wav"), _fieldDC(25), _fieldE0(25) {
 }
 
-void CAutoSoundEvent::save(SimpleFile *file, int indent) const {
+void CDoorAutoSoundEvent::save(SimpleFile *file, int indent) const {
 	file->writeNumberLine(1, indent);
-	file->writeNumberLine(_fieldBC, indent);
-	file->writeNumberLine(_fieldC0, indent);
+	file->writeQuotedLine(_string1, indent);
+	file->writeQuotedLine(_string2, indent);
+	file->writeNumberLine(_fieldDC, indent);
+	file->writeNumberLine(_fieldE0, indent);
 
-	CGameObject::save(file, indent);
+	CAutoSoundEvent::save(file, indent);
 }
 
-void CAutoSoundEvent::load(SimpleFile *file) {
+void CDoorAutoSoundEvent::load(SimpleFile *file) {
 	file->readNumber();
-	_fieldBC = file->readNumber();
-	_fieldC0 = file->readNumber();
+	_string1 = file->readString();
+	_string2 = file->readString();
+	_fieldDC = file->readNumber();
+	_fieldE0 = file->readNumber();
 
-	CGameObject::load(file);
+	CAutoSoundEvent::load(file);
 }
 
 } // End of namespace Titanic
