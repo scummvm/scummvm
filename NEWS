@@ -1,7 +1,7 @@
 For a more comprehensive changelog of the latest experimental code, see:
         https://github.com/scummvm/scummvm/commits/
 
-1.8.0 (????-??-??)
+1.8.0 (2016-03-04)
  New Games:
    - Added support for Rex Nebular and the Cosmic Gender Bender.
    - Added support for Sfinx.
@@ -18,6 +18,7 @@ For a more comprehensive changelog of the latest experimental code, see:
 
  New Ports:
    - Added Raspberry Pi port.
+   - Added GCW0 port.
 
  General:
    - Updated Munt MT-32 emulation code to version 1.5.0.
