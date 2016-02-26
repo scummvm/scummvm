@@ -3563,7 +3563,7 @@ msgstr "Ved sceneskift, bruges en tilfældig pixelleret overgang"
 
 #: engines/sherlock/detection.cpp:91
 msgid "Don't show hotspots when moving mouse"
-msgstr "Vi ikke hotspots, når du flytter musen"
+msgstr "Vis ikke hotspots, når du flytter musen"
 
 #: engines/sherlock/detection.cpp:92
 msgid ""
