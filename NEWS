@@ -45,6 +45,7 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Added ability to make for example a PC version look like an Apple IIgs
      version. This includes palette, cursor, transition and even font. Just
      set corresponding render mode.
+   - Fixed Apple IIgs game versions running too fast.
    - Support for simplified automatic saving/restoring used by Mixed Up Mother
      Goose.
    - Removed forced 2 second delay on every room change, replaced with
