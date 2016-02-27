@@ -125,13 +125,6 @@ protected:
 	bool _isDark;
 };
 
-// Example console class
-class Console : public GUI::Debugger {
-public:
-	Console(AdlEngine *vm) {}
-	virtual ~Console(void) {}
-};
-
 AdlEngine *AdlEngine_v1__create(OSystem *syst, const AdlGameDescription *gd);
 
 } // End of namespace Adl
