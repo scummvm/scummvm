@@ -66,7 +66,10 @@ MODULE_OBJS := \
 	npcs/starlings.o \
 	npcs/succubus.o \
 	npcs/titania.o \
-	npcs/true_talk_npc.o
+	npcs/true_talk_npc.o \
+	sound/auto_music_player.o \
+	sound/auto_music_player_base.o \
+	sound/seasonal_music_player.o
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_TITANIC), DYNAMIC_PLUGIN)

@@ -70,6 +70,8 @@
 #include "titanic/npcs/succubus.h"
 #include "titanic/npcs/titania.h"
 
+#include "titanic/sound/auto_music_player.h"
+
 namespace Titanic {
 
 Common::HashMap<Common::String, CSaveableObject::CreateFunction> * 
@@ -127,6 +129,8 @@ DEFFN(CStarlings);
 DEFFN(CSuccUBus);
 DEFFN(CTitania);
 
+DEFFN(CAutoMusicPlayer);
+
 void CSaveableObject::initClassList() {
 	_classList = new Common::HashMap<Common::String, CreateFunction>();
 	ADDFN(CBackground);
@@ -177,6 +181,8 @@ void CSaveableObject::initClassList() {
 	ADDFN(CStarlings);
 	ADDFN(CSuccUBus);
 	ADDFN(CTitania);
+
+	ADDFN(CAutoMusicPlayer);
 }
 
 void CSaveableObject::freeClassList() {
