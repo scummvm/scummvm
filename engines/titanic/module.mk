@@ -39,6 +39,13 @@ MODULE_OBJS := \
 	game/service_elevator_door.o \
 	game/sub_glass.o \
 	game/television.o \
+	gfx/act_button.o \
+	gfx/changes_season_button.o \
+	gfx/elevator_button.o \
+	gfx/move_object_button.o \
+	gfx/slider_button.o \
+	gfx/st_button.o \
+	gfx/status_change_button.o \
 	messages/auto_sound_event.o \
 	messages/door_auto_sound_event.o \
 	moves/enter_bomb_room.o \

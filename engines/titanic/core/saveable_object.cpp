@@ -42,6 +42,14 @@
 #include "titanic/game/sub_glass.h"
 #include "titanic/game/television.h"
 
+#include "titanic/gfx/act_button.h"
+#include "titanic/gfx/changes_season_button.h"
+#include "titanic/gfx/elevator_button.h"
+#include "titanic/gfx/move_object_button.h"
+#include "titanic/gfx/slider_button.h"
+#include "titanic/gfx/st_button.h"
+#include "titanic/gfx/status_change_button.h"
+
 #include "titanic/messages/auto_sound_event.h"
 #include "titanic/messages/door_auto_sound_event.h"
 
@@ -103,6 +111,14 @@ DEFFN(CServiceElevatorDoor);
 DEFFN(CSUBGlass);
 DEFFN(CTelevision);
 
+DEFFN(CActButton);
+DEFFN(CChangesSeasonButton);
+DEFFN(CElevatorButton);
+DEFFN(CMoveObjectButton);
+DEFFN(CSliderButton);
+DEFFN(CStatusChangeButton);
+DEFFN(CSTButton);
+
 DEFFN(CAutoSoundEvent);
 DEFFN(CDoorAutoSoundEvent);
 
@@ -157,6 +173,14 @@ void CSaveableObject::initClassList() {
 	ADDFN(CServiceElevatorDoor);
 	ADDFN(CSUBGlass);
 	ADDFN(CTelevision);
+
+	ADDFN(CActButton);
+	ADDFN(CChangesSeasonButton);
+	ADDFN(CElevatorButton);
+	ADDFN(CMoveObjectButton);
+	ADDFN(CSliderButton);
+	ADDFN(CStatusChangeButton);
+	ADDFN(CSTButton);
 
 	ADDFN(CAutoSoundEvent);
 	ADDFN(CDoorAutoSoundEvent);
