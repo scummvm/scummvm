@@ -42,9 +42,9 @@ enum {
 	STR_MH_TOTAL
 };
 
-class AdlEngine_v1 : public AdlEngine {
+class HiRes1Engine : public AdlEngine {
 public:
-	AdlEngine_v1(OSystem *syst, const AdlGameDescription *gd);
+	HiRes1Engine(OSystem *syst, const AdlGameDescription *gd);
 	Common::String getExeString(uint idx);
 
 protected:

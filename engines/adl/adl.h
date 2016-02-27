@@ -125,7 +125,7 @@ protected:
 	bool _isDark;
 };
 
-AdlEngine *AdlEngine_v1__create(OSystem *syst, const AdlGameDescription *gd);
+AdlEngine *HiRes1Engine__create(OSystem *syst, const AdlGameDescription *gd);
 
 } // End of namespace Adl
 

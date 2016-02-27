@@ -45,12 +45,12 @@ static uint exeStrings[STR_MH_TOTAL] = {
 	23484, 23375, 23438, 27658, 0x6c31, 27729, 27772, 0x5f1e
 };
 
-AdlEngine_v1::AdlEngine_v1(OSystem *syst, const AdlGameDescription *gd) :
+HiRes1Engine::HiRes1Engine(OSystem *syst, const AdlGameDescription *gd) :
 		AdlEngine(syst, gd) {
 	_variables.resize(20);
 }
 
-void AdlEngine_v1::runIntro() {
+void HiRes1Engine::runIntro() {
 	Common::File file;
 
 	if (!file.open("AUTO LOAD OBJ"))
@@ -132,7 +132,7 @@ void AdlEngine_v1::runIntro() {
 	}
 }
 
-void AdlEngine_v1::drawPic(Common::ReadStream &stream, byte xOffset, byte yOffset) {
+void HiRes1Engine::drawPic(Common::ReadStream &stream, byte xOffset, byte yOffset) {
 	byte x, y;
 	bool bNewLine = false;
 	byte oldX = 0, oldY = 0;
@@ -169,7 +169,7 @@ void AdlEngine_v1::drawPic(Common::ReadStream &stream, byte xOffset, byte yOffse
 	}
 }
 
-void AdlEngine_v1::drawPic(byte pic, byte xOffset, byte yOffset) {
+void HiRes1Engine::drawPic(byte pic, byte xOffset, byte yOffset) {
 	Common::File f;
 	Common::String name = Common::String::format("BLOCK%i", _pictures[pic].block);
 
@@ -180,7 +180,7 @@ void AdlEngine_v1::drawPic(byte pic, byte xOffset, byte yOffset) {
 	drawPic(f, xOffset, yOffset);
 }
 
-void AdlEngine_v1::drawItems() {
+void HiRes1Engine::drawItems() {
 	Common::Array<Item>::const_iterator it;
 
 	uint dropped = 0;
@@ -215,7 +215,7 @@ void AdlEngine_v1::drawItems() {
 	}
 }
 
-void AdlEngine_v1::showRoom() {
+void HiRes1Engine::showRoom() {
 	if (!_isDark) {
 		drawPic(_rooms[_room].picture, 0, 0);
 		drawItems();
@@ -225,11 +225,11 @@ void AdlEngine_v1::showRoom() {
 	printMessage(_rooms[_room].description, false);
 }
 
-Common::String AdlEngine_v1::getExeString(uint idx) {
+Common::String HiRes1Engine::getExeString(uint idx) {
 	return _exeStrings[idx];
 }
 
-void AdlEngine_v1::wordWrap(Common::String &str) {
+void HiRes1Engine::wordWrap(Common::String &str) {
 	uint end = 39;
 
 	while (1) {
@@ -244,7 +244,7 @@ void AdlEngine_v1::wordWrap(Common::String &str) {
 	}
 }
 
-void AdlEngine_v1::printMessage(uint idx, bool wait) {
+void HiRes1Engine::printMessage(uint idx, bool wait) {
 	// Hardcoded overrides that don't wait after printing
 	// Note: strings may differ slightly from the ones in MESSAGES
 	switch (idx) {
@@ -270,7 +270,7 @@ void AdlEngine_v1::printMessage(uint idx, bool wait) {
 		_display->delay(14 * 166018 / 1000);
 }
 
-void AdlEngine_v1::readCommands(Common::ReadStream &stream, Commands &commands) {
+void HiRes1Engine::readCommands(Common::ReadStream &stream, Commands &commands) {
 	while (1) {
 		Command command;
 		command.room = stream.readByte();
@@ -296,7 +296,7 @@ void AdlEngine_v1::readCommands(Common::ReadStream &stream, Commands &commands) 
 	}
 }
 
-void AdlEngine_v1::takeItem(byte noun) {
+void HiRes1Engine::takeItem(byte noun) {
 	Common::Array<Item>::iterator it;
 
 	for (it = _inventory.begin(); it != _inventory.end(); ++it) {
@@ -329,7 +329,7 @@ void AdlEngine_v1::takeItem(byte noun) {
 	printMessage(152);
 }
 
-void AdlEngine_v1::dropItem(byte noun) {
+void HiRes1Engine::dropItem(byte noun) {
 	Common::Array<Item>::iterator it;
 
 	for (it = _inventory.begin(); it != _inventory.end(); ++it) {
@@ -345,7 +345,7 @@ void AdlEngine_v1::dropItem(byte noun) {
 	printMessage(37);
 }
 
-void AdlEngine_v1::doActions(const Command &command, byte noun, byte offset) {
+void HiRes1Engine::doActions(const Command &command, byte noun, byte offset) {
 	for (uint i = 0; i < command.numAct; ++i) {
 		switch (command.script[offset]) {
 		case 1:
@@ -473,7 +473,7 @@ void AdlEngine_v1::doActions(const Command &command, byte noun, byte offset) {
 	}
 }
 
-bool AdlEngine_v1::checkCommand(const Command &command, byte verb, byte noun) {
+bool HiRes1Engine::checkCommand(const Command &command, byte verb, byte noun) {
 	if (command.room != 0xfe && command.room != _room)
 		return false;
 
@@ -521,7 +521,7 @@ bool AdlEngine_v1::checkCommand(const Command &command, byte verb, byte noun) {
 	return true;
 }
 
-bool AdlEngine_v1::doOneCommand(const Commands &commands, byte verb, byte noun) {
+bool HiRes1Engine::doOneCommand(const Commands &commands, byte verb, byte noun) {
 	Commands::const_iterator it;
 
 	for (it = commands.begin(); it != commands.end(); ++it)
@@ -531,19 +531,19 @@ bool AdlEngine_v1::doOneCommand(const Commands &commands, byte verb, byte noun) 
 	return false;
 }
 
-void AdlEngine_v1::doAllCommands(const Commands &commands, byte verb, byte noun) {
+void HiRes1Engine::doAllCommands(const Commands &commands, byte verb, byte noun) {
 	Commands::const_iterator it;
 
 	for (it = commands.begin(); it != commands.end(); ++it)
 		checkCommand(*it, verb, noun);
 }
 
-void AdlEngine_v1::clearScreen() {
+void HiRes1Engine::clearScreen() {
 	_display->setMode(Display::kModeMixed);
 	_display->clear(0x00);
 }
 
-void AdlEngine_v1::runGame() {
+void HiRes1Engine::runGame() {
 	runIntro();
 	_display->printASCIIString("\r");
 
@@ -673,8 +673,8 @@ void AdlEngine_v1::runGame() {
 	}
 }
 
-AdlEngine *AdlEngine_v1__create(OSystem *syst, const AdlGameDescription *gd) {
-	return new AdlEngine_v1(syst, gd);
+AdlEngine *HiRes1Engine__create(OSystem *syst, const AdlGameDescription *gd) {
+	return new HiRes1Engine(syst, gd);
 }
 
 } // End of namespace Adl
