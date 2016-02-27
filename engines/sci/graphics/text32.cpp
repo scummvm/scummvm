@@ -268,11 +268,6 @@ reg_t GfxText32::createTextBitmap(reg_t textObject, uint16 maxWidth, uint16 maxH
 }
 
 reg_t GfxText32::createTextBitmapInternal(Common::String &text, reg_t textObject, uint16 maxWidth, uint16 maxHeight, reg_t prevHunk) {
-	// HACK: The character offsets of the up and down arrow buttons are off by one
-	// in GK1, for some unknown reason. Fix them here.
-	if (text.size() == 1 && (text[0] == 29 || text[0] == 30)) {
-		text.setChar(text[0] + 1, 0);
-	}
 	GuiResourceId fontId = readSelectorValue(_segMan, textObject, SELECTOR(font));
 	GfxFont *font = _cache->getFont(fontId);
 	bool dimmed = readSelectorValue(_segMan, textObject, SELECTOR(dimmed));
