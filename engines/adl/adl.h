@@ -44,9 +44,6 @@ enum GameType {
 	kGameTypeHires1
 };
 
-Common::String asciiToApple(Common::String str);
-Common::String appleToAscii(Common::String str);
-
 enum {
 	STR_COMMON_ENTERCMD,
 	STR_COMMON_VERBERR,
@@ -54,7 +51,38 @@ enum {
 	STR_CUSTOM_START
 };
 
-#define A2CHAR(C) ((C) | 0x80)
+struct Room {
+	byte description;
+	byte connections[6];
+	byte field8;
+	byte picture;
+};
+
+struct Picture {
+	byte block;
+	uint16 offset;
+};
+
+struct Command {
+	byte room;
+	byte verb, noun;
+	byte numCond, numAct;
+	Common::Array<byte> script;
+};
+
+struct Item {
+	byte field1;
+	byte field2;
+	byte field3;
+	byte field4;
+	byte field5;
+	byte field6;
+	byte field7;
+	byte field8;
+	Common::Array<byte> field10;
+};
+
+typedef Common::List<Command> Commands;
 
 class AdlEngine : public Engine {
 public:

@@ -240,10 +240,10 @@ void AdlEngine_v1::wordWrap(Common::String &str) {
 		if (str.size() <= end)
 			return;
 
-		while (str[end] != (char)A2CHAR(' '))
+		while (str[end] != APPLECHAR(' '))
 			--end;
 
-		str.setChar((char)A2CHAR('\r'), end);
+		str.setChar(APPLECHAR('\r'), end);
 		end += 40;
 	}
 }
@@ -414,7 +414,7 @@ void AdlEngine_v1::doActions(const Command &command, byte noun, byte offset) {
 		case 0x11: {
 			_display->printString(_exeStrings[STR_MH_PLAYAGAIN]);
 			Common::String input = _display->inputString();
-			if (input.size() == 0 || input[0] != (char)A2CHAR('N')) {
+			if (input.size() == 0 || input[0] != APPLECHAR('N')) {
 				warning("Restart game not implemented");
 				return;
 			}
@@ -528,12 +528,9 @@ bool AdlEngine_v1::checkCommand(const Command &command, byte verb, byte noun) {
 bool AdlEngine_v1::doOneCommand(const Commands &commands, byte verb, byte noun) {
 	Commands::const_iterator it;
 
-	for (it = commands.begin(); it != commands.end(); ++it) {
-		if (checkCommand(*it, verb, noun)) {
-			debug("Found match: %i %i %i", it->room, it->verb, it->noun);
+	for (it = commands.begin(); it != commands.end(); ++it)
+		if (checkCommand(*it, verb, noun))
 			return true;
-		}
-	}
 
 	return false;
 }
@@ -541,11 +538,8 @@ bool AdlEngine_v1::doOneCommand(const Commands &commands, byte verb, byte noun) 
 void AdlEngine_v1::doAllCommands(const Commands &commands, byte verb, byte noun) {
 	Commands::const_iterator it;
 
-	for (it = commands.begin(); it != commands.end(); ++it) {
-		if (checkCommand(*it, verb, noun)) {
-			debug("Found match: %i %i %i", it->room, it->verb, it->noun);
-		}
-	}
+	for (it = commands.begin(); it != commands.end(); ++it)
+		checkCommand(*it, verb, noun);
 }
 
 void AdlEngine_v1::clearScreen() {
@@ -563,7 +557,7 @@ void AdlEngine_v1::runGame() {
 		error("Failed to open file");
 
 	while (!f.eos() && !f.err())
-		_msgStrings.push_back(readString(f, A2CHAR('\r')) + (char)A2CHAR('\r'));
+		_msgStrings.push_back(readString(f, APPLECHAR('\r')) + APPLECHAR('\r'));
 
 	f.close();
 

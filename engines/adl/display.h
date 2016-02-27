@@ -37,7 +37,9 @@ class Surface;
 }
 
 namespace Adl {
- 
+
+#define APPLECHAR(C) ((char)((C) | 0x80))
+
 class Display {
 public:
 	enum Mode {

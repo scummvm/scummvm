@@ -81,7 +81,7 @@ Common::String Parser::getLine() {
 	bool textMode = false;
 
 	while (1) {
-		Common::String line = _display.inputString(A2CHAR('?'));
+		Common::String line = _display.inputString(APPLECHAR('?'));
 
 		if (g_engine->shouldQuit())
 			return "";
@@ -102,7 +102,7 @@ Common::String Parser::getWord(const Common::String &line, uint &index) {
 	Common::String str;
 
 	for (uint i = 0; i < 8; ++i)
-		str += (char)(A2CHAR(' '));
+		str += APPLECHAR(' ');
 
 	int copied = 0;
 
@@ -110,7 +110,7 @@ Common::String Parser::getWord(const Common::String &line, uint &index) {
 	while (1) {
 		if (index == line.size())
 			return str;
-		if (line[index] != (char)(A2CHAR(' ')))
+		if (line[index] != APPLECHAR(' '))
 			break;
 		++index;
 	}
@@ -122,7 +122,7 @@ Common::String Parser::getWord(const Common::String &line, uint &index) {
 
 		index++;
 
-		if (index == line.size() || line[index] == (char)(A2CHAR(' ')))
+		if (index == line.size() || line[index] == APPLECHAR(' '))
 			return str;
 	}
 }
@@ -137,7 +137,6 @@ void Parser::getInput(uint &verb, uint &noun) {
 
 		uint index = 0;
 		Common::String verbStr = getWord(line, index);
-		debug("Verb: \"%s\"", appleToAscii(verbStr).c_str());
 
 		if (!_verbs.contains(verbStr)) {
 			Common::String err = _engine.getExeString(STR_COMMON_VERBERR);
@@ -148,10 +147,8 @@ void Parser::getInput(uint &verb, uint &noun) {
 		}
 
 		verb = _verbs[verbStr];
-		debug("Verb ID: %i", verb);
 
 		Common::String nounStr = getWord(line, index);
-		debug("Noun: \"%s\"", appleToAscii(nounStr).c_str());
 
 		if (!_nouns.contains(nounStr)) {
 			Common::String err = _engine.getExeString(STR_COMMON_NOUNERR);
@@ -164,7 +161,6 @@ void Parser::getInput(uint &verb, uint &noun) {
 		}
 
 		noun = _nouns[nounStr];
-		debug("Noun ID: %i", noun);
 		return;
 	}
 }

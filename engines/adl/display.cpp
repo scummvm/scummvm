@@ -429,7 +429,7 @@ void Display::printASCIIString(const Common::String &str) {
 
 	Common::String::const_iterator it;
 	for (it = str.begin(); it != str.end(); ++it)
-			aStr += *it | 0x80;
+			aStr += APPLECHAR(*it);
 
 	printString(aStr);
 }
