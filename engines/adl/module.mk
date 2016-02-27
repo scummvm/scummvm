@@ -1,10 +1,10 @@
 MODULE := engines/adl
 
 MODULE_OBJS := \
+	adl.o \
 	detection.o \
 	display.o \
-	adl.o \
-	adl_v1.o \
+	hires1.o \
 	parser.o
 
 MODULE_DIRS += \

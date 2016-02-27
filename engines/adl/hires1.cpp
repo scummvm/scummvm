@@ -35,7 +35,7 @@
 
 #include "engines/util.h"
 
-#include "adl/adl_v1.h"
+#include "adl/hires1.h"
 #include "adl/display.h"
 #include "adl/parser.h"
 
