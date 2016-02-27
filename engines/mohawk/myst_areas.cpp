@@ -240,6 +240,7 @@ VideoHandle MystAreaVideo::playMovie() {
 	} else {
 		// Resume the video
 		handle->pause(false);
+		handle->start();
 	}
 
 	if (_playBlocking) {
