@@ -317,69 +317,8 @@ bool VideoManager::updateMovies() {
 
 		// Check if we need to draw a frame
 		if (video->needsUpdate()) {
-			const Graphics::Surface *frame = video->decodeNextFrame();
-			Graphics::Surface *convertedFrame = 0;
-
-			if (frame && (*it)->isEnabled()) {
-				Graphics::PixelFormat pixelFormat = _vm->_system->getScreenFormat();
-
-				if (frame->format != pixelFormat) {
-					// We don't support downconverting to 8bpp without having
-					// support in the codec. Set _enableDither if shows up.
-					if (pixelFormat.bytesPerPixel == 1) {
-						warning("Cannot convert high color video frame to 8bpp");
-						(*it)->close();
-						it = _videos.erase(it);
-						continue;
-					}
-
-					// Convert to the current screen format
-					convertedFrame = frame->convertTo(pixelFormat, video->getPalette());
-					frame = convertedFrame;
-				} else if (pixelFormat.bytesPerPixel == 1 && video->hasDirtyPalette()) {
-					// Set the palette when running in 8bpp mode only
-					// Don't do this for Myst, which has its own per-stack handling
-					if (_vm->getGameType() != GType_MYST)
-						_vm->_system->getPaletteManager()->setPalette(video->getPalette(), 0, 256);
-				}
-
-				// Clip the video to make sure it stays on the screen (Myst does this a few times)
-				Common::Rect targetRect = Common::Rect(video->getWidth(), video->getHeight());
-				targetRect.translate((*it)->getX(), (*it)->getY());
-
-				Common::Rect frameRect = Common::Rect(video->getWidth(), video->getHeight());
-
-				if (targetRect.left < 0) {
-					frameRect.left -= targetRect.left;
-					targetRect.left = 0;
-				}
-
-				if (targetRect.top < 0) {
-					frameRect.top -= targetRect.top;
-					targetRect.top = 0;
-				}
-
-				if (targetRect.right > _vm->_system->getWidth()) {
-					frameRect.right -= targetRect.right - _vm->_system->getWidth();
-					targetRect.right = _vm->_system->getWidth();
-				}
-
-				if (targetRect.bottom > _vm->_system->getHeight()) {
-					frameRect.bottom -= targetRect.bottom - _vm->_system->getHeight();
-					targetRect.bottom = _vm->_system->getHeight();
-				}
-
-				_vm->_system->copyRectToScreen(frame->getBasePtr(frameRect.left, frameRect.top), frame->pitch,
-				                               targetRect.left, targetRect.top, targetRect.width(), targetRect.height());
-
-				// We've drawn something to the screen, make sure we update it
+			if (drawNextFrame(*it)) {
 				updateScreen = true;
-
-				// Delete 8bpp conversion surface
-				if (convertedFrame) {
-					convertedFrame->free();
-					delete convertedFrame;
-				}
 			}
 		}
 
@@ -392,6 +331,74 @@ bool VideoManager::updateMovies() {
 
 	// Return true if we need to update the screen
 	return updateScreen;
+}
+
+bool VideoManager::drawNextFrame(VideoEntryPtr videoEntry) {
+	Video::VideoDecoder *video = videoEntry->_video;
+	const Graphics::Surface *frame = video->decodeNextFrame();
+
+	if (!frame || !videoEntry->isEnabled()) {
+		return false;
+	}
+
+	Graphics::Surface *convertedFrame = 0;
+	Graphics::PixelFormat pixelFormat = _vm->_system->getScreenFormat();
+
+	if (frame->format != pixelFormat) {
+		// We don't support downconverting to 8bpp without having
+		// support in the codec. Set _enableDither if shows up.
+		if (pixelFormat.bytesPerPixel == 1) {
+			warning("Cannot convert high color video frame to 8bpp");
+			return false;
+		}
+
+		// Convert to the current screen format
+		convertedFrame = frame->convertTo(pixelFormat, video->getPalette());
+		frame = convertedFrame;
+	} else if (pixelFormat.bytesPerPixel == 1 && video->hasDirtyPalette()) {
+		// Set the palette when running in 8bpp mode only
+		// Don't do this for Myst, which has its own per-stack handling
+		if (_vm->getGameType() != GType_MYST)
+			_vm->_system->getPaletteManager()->setPalette(video->getPalette(), 0, 256);
+	}
+
+	// Clip the video to make sure it stays on the screen (Myst does this a few times)
+	Common::Rect targetRect = Common::Rect(video->getWidth(), video->getHeight());
+	targetRect.translate(videoEntry->getX(), videoEntry->getY());
+
+	Common::Rect frameRect = Common::Rect(video->getWidth(), video->getHeight());
+
+	if (targetRect.left < 0) {
+		frameRect.left -= targetRect.left;
+		targetRect.left = 0;
+	}
+
+	if (targetRect.top < 0) {
+		frameRect.top -= targetRect.top;
+		targetRect.top = 0;
+	}
+
+	if (targetRect.right > _vm->_system->getWidth()) {
+		frameRect.right -= targetRect.right - _vm->_system->getWidth();
+		targetRect.right = _vm->_system->getWidth();
+	}
+
+	if (targetRect.bottom > _vm->_system->getHeight()) {
+		frameRect.bottom -= targetRect.bottom - _vm->_system->getHeight();
+		targetRect.bottom = _vm->_system->getHeight();
+	}
+
+	_vm->_system->copyRectToScreen(frame->getBasePtr(frameRect.left, frameRect.top), frame->pitch,
+	                               targetRect.left, targetRect.top, targetRect.width(), targetRect.height());
+
+	// Delete 8bpp conversion surface
+	if (convertedFrame) {
+		convertedFrame->free();
+		delete convertedFrame;
+	}
+
+	// We've drawn something to the screen, make sure we update it
+	return true;
 }
 
 void VideoManager::activateMLST(uint16 mlstId, uint16 card) {
@@ -582,11 +589,9 @@ bool VideoManager::isVideoPlaying() {
 }
 
 void VideoManager::drawVideoFrame(VideoHandle handle, const Audio::Timestamp &time) {
-	// FIXME: This should be done separately from the "playing"
-	// videos eventually.
 	assert(handle);
 	handle->seek(time);
-	updateMovies();
+	drawNextFrame(handle._ptr);
 	handle->stop();
 }
 

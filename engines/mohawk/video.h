@@ -350,6 +350,8 @@ private:
 	VideoList::iterator findEntry(VideoEntryPtr ptr);
 	void removeEntry(VideoEntryPtr ptr);
 
+	bool drawNextFrame(VideoEntryPtr videoEntry);
+
 	// Dithering control
 	bool _enableDither;
 	void checkEnableDither(VideoEntryPtr &entry);
