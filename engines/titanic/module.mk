@@ -34,6 +34,7 @@ MODULE_OBJS := \
 	core/tree_item.o \
 	core/view_item.o \
 	game/announce.o \
+	game/dead_area.o \
 	game/hammer_dispensor_button.o \
 	game/pet_position.o \
 	game/room_item.o \

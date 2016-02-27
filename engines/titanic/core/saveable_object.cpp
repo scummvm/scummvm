@@ -36,6 +36,7 @@
 #include "titanic/core/view_item.h"
 
 #include "titanic/game/announce.h"
+#include "titanic/game/dead_area.h"
 #include "titanic/game/hammer_dispensor_button.h"
 #include "titanic/game/pet_position.h"
 #include "titanic/game/room_item.h"
@@ -131,6 +132,7 @@ DEFFN(CTreeItem);
 DEFFN(CViewItem);
 
 DEFFN(CAnnounce);
+DEFFN(CDeadArea);
 DEFFN(CHammerDispensorButton);
 DEFFN(CPETPosition);
 DEFFN(CRoomItem);
@@ -219,6 +221,7 @@ void CSaveableObject::initClassList() {
 	ADDFN(CViewItem);
 
 	ADDFN(CAnnounce);
+	ADDFN(CDeadArea);
 	ADDFN(CHammerDispensorButton);
 	ADDFN(CPETPosition);
 	ADDFN(CRoomItem);
