@@ -20,26 +20,29 @@
  *
  */
 
-#ifndef TITANIC_DOOR_AUTO_SOUND_EVENT_H
-#define TITANIC_DOOR_AUTO_SOUND_EVENT_H
+#ifndef TITANIC_HAMMER_DISPENSOR_H
+#define TITANIC_HAMMER_DISPENSOR_H
 
-#include "titanic/messages/auto_sound_event.h"
+#include "titanic/game/start_action.h"
 
 namespace Titanic {
 
-class CDoorAutoSoundEvent : public CAutoSoundEvent {
-protected:
-	CString _string1;
-	CString _string2;
-	int _fieldDC;
-	int _fieldE0;
+class CHammerDispensorButton : public CStartAction {
+private:
+	int _fieldF8;
+	int _fieldFC;
+	int _field100;
+	int _field104;
+	int _field108;
+	int _field10C;
+	int _field110;
 public:
-	CDoorAutoSoundEvent();
+	CHammerDispensorButton();
 
 	/**
 	 * Return the class name
 	 */
-	virtual const char *getClassName() const { return "CDoorAutoSoundEvent"; }
+	virtual const char *getClassName() const { return "CHammerDispensorButton"; }
 
 	/**
 	 * Save the data for the class to file
@@ -54,4 +57,4 @@ public:
 
 } // End of namespace Titanic
 
-#endif /* TITANIC_DOOR_AUTO_SOUND_EVENT_H */
+#endif /* TITANIC_HAMMER_DISPENSOR_H */

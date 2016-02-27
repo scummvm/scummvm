@@ -34,9 +34,11 @@ MODULE_OBJS := \
 	core/tree_item.o \
 	core/view_item.o \
 	game/announce.o \
+	game/hammer_dispensor_button.o \
 	game/pet_position.o \
 	game/room_item.o \
 	game/service_elevator_door.o \
+	game/start_action.o \
 	game/sub_glass.o \
 	game/television.o \
 	gfx/act_button.o \

@@ -20,38 +20,37 @@
  *
  */
 
-#ifndef TITANIC_DOOR_AUTO_SOUND_EVENT_H
-#define TITANIC_DOOR_AUTO_SOUND_EVENT_H
-
-#include "titanic/messages/auto_sound_event.h"
+#include "titanic/game/hammer_dispensor_button.h"
 
 namespace Titanic {
 
-class CDoorAutoSoundEvent : public CAutoSoundEvent {
-protected:
-	CString _string1;
-	CString _string2;
-	int _fieldDC;
-	int _fieldE0;
-public:
-	CDoorAutoSoundEvent();
+CHammerDispensorButton::CHammerDispensorButton() : CStartAction(),
+	_fieldF8(0), _fieldFC(0), _field100(0), _field104(56),
+	_field108(6), _field10C(0), _field110(0) {
+}
 
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CDoorAutoSoundEvent"; }
+void CHammerDispensorButton::save(SimpleFile *file, int indent) const {
+	file->writeNumberLine(1, indent);
+	file->writeNumberLine(_fieldF8, indent);
+	file->writeNumberLine(_fieldFC, indent);
+	file->writeNumberLine(_field100, indent);
+	file->writeNumberLine(_field104, indent);
+	file->writeNumberLine(_field108, indent);
+	file->writeNumberLine(_field110, indent);
 
-	/**
-	 * Save the data for the class to file
-	 */
-	virtual void save(SimpleFile *file, int indent) const;
+	CStartAction::save(file, indent);
+}
 
-	/**
-	 * Load the data for the class from file
-	 */
-	virtual void load(SimpleFile *file);
-};
+void CHammerDispensorButton::load(SimpleFile *file) {
+	file->readNumber();
+	_fieldF8 = file->readNumber();
+	_fieldFC = file->readNumber();
+	_field100 = file->readNumber();
+	_field104 = file->readNumber();
+	_field108 = file->readNumber();
+	_field110 = file->readNumber();
+
+	CStartAction::load(file);
+}
 
 } // End of namespace Titanic
-
-#endif /* TITANIC_DOOR_AUTO_SOUND_EVENT_H */

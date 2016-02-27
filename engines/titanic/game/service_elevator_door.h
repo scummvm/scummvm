@@ -23,7 +23,7 @@
 #ifndef TITANIC_SERVICE_ELEVATOR_DOOR_H
 #define TITANIC_SERVICE_ELEVATOR_DOOR_H
 
-#include "titanic/game/door_auto_sound_event.h"
+#include "titanic/messages/door_auto_sound_event.h"
 
 namespace Titanic {
 

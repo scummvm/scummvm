@@ -20,38 +20,27 @@
  *
  */
 
-#ifndef TITANIC_DOOR_AUTO_SOUND_EVENT_H
-#define TITANIC_DOOR_AUTO_SOUND_EVENT_H
-
-#include "titanic/messages/auto_sound_event.h"
+#include "titanic/game/start_action.h"
 
 namespace Titanic {
 
-class CDoorAutoSoundEvent : public CAutoSoundEvent {
-protected:
-	CString _string1;
-	CString _string2;
-	int _fieldDC;
-	int _fieldE0;
-public:
-	CDoorAutoSoundEvent();
+CStartAction::CStartAction() : CBackground() {
+}
 
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CDoorAutoSoundEvent"; }
+void CStartAction::save(SimpleFile *file, int indent) const {
+	file->writeNumberLine(1, indent);
+	file->writeQuotedLine(_string3, indent);
+	file->writeQuotedLine(_string4, indent);
 
-	/**
-	 * Save the data for the class to file
-	 */
-	virtual void save(SimpleFile *file, int indent) const;
+	CBackground::save(file, indent);
+}
 
-	/**
-	 * Load the data for the class from file
-	 */
-	virtual void load(SimpleFile *file);
-};
+void CStartAction::load(SimpleFile *file) {
+	file->readNumber();
+	_string3 = file->readString();
+	_string4 = file->readString();
+
+	CBackground::load(file);
+}
 
 } // End of namespace Titanic
-
-#endif /* TITANIC_DOOR_AUTO_SOUND_EVENT_H */
