@@ -15,6 +15,34 @@ MODULE_OBJS := \
 	string.o \
 	titanic.o \
 	video_surface.o \
+	carry/arm.o \
+	carry/brain.o \
+	carry/bridge_piece.o \
+	carry/carry.o \
+	carry/carry_parrot.oo \
+	carry/chicken.o \
+	carry/crushed_tv.o \
+	carry/ear.o \
+	carry/eye.o \
+	carry/feathers.o \
+	carry/fruit.o \
+	carry/glass.o \
+	carry/hammer.o \
+	carry/head_piece.o \
+	carry/hose.o \
+	carry/key.o \
+	carry/liftbot_head.o \
+	carry/long_stick.o \
+	carry/magazine.o \
+	carry/mouth.o \
+	carry/napkin.o \
+	carry/nose.o \
+	carry/note.o \
+	carry/parcel.o \
+	carry/phonograph_cylinder.o \
+	carry/photograph.o \
+	carry/plug_in.o \
+	carry/sweets.o \
 	core/background.o \
 	core/dont_save_file_item.o \
 	core/file_item.o \
@@ -119,4 +147,3 @@ endif
 
 # Include common rules
 include $(srcdir)/rules.mk
-

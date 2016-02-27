@@ -20,6 +20,35 @@
  *
  */
 
+#include "titanic/carry/arm.h"
+#include "titanic/carry/brain.h"
+#include "titanic/carry/bridge_piece.h"
+#include "titanic/carry/carry.h"
+#include "titanic/carry/carry_parrot.h"
+#include "titanic/carry/chicken.h"
+#include "titanic/carry/crushed_tv.h"
+#include "titanic/carry/ear.h"
+#include "titanic/carry/eye.h"
+#include "titanic/carry/feathers.h"
+#include "titanic/carry/fruit.h"
+#include "titanic/carry/glass.h"
+#include "titanic/carry/hammer.h"
+#include "titanic/carry/head_piece.h"
+#include "titanic/carry/hose.h"
+#include "titanic/carry/key.h"
+#include "titanic/carry/liftbot_head.h"
+#include "titanic/carry/long_stick.h"
+#include "titanic/carry/magazine.h"
+#include "titanic/carry/mouth.h"
+#include "titanic/carry/napkin.h"
+#include "titanic/carry/nose.h"
+#include "titanic/carry/note.h"
+#include "titanic/carry/parcel.h"
+#include "titanic/carry/phonograph_cylinder.h"
+#include "titanic/carry/photograph.h"
+#include "titanic/carry/plug_in.h"
+#include "titanic/carry/sweets.h"
+
 #include "titanic/core/saveable_object.h"
 #include "titanic/core/background.h"
 #include "titanic/core/file_item.h"
@@ -121,6 +150,30 @@ Common::HashMap<Common::String, CSaveableObject::CreateFunction> *
 #define DEFFN(T) CSaveableObject *Function##T() { return new T(); }
 #define ADDFN(T) (*_classList)[#T] = Function##T
 
+DEFFN(CArm);
+DEFFN(CBrain);
+DEFFN(CBridgePiece);
+DEFFN(CCarryParrot);
+DEFFN(CChicken);
+DEFFN(CCrushedTV);
+DEFFN(CFeathers);
+DEFFN(CFruit);
+DEFFN(CGlass);
+DEFFN(CHammer);
+DEFFN(CHeadPiece);
+DEFFN(CHose);
+DEFFN(CKey);
+DEFFN(CLiftbotHead);
+DEFFN(CLongStick);
+DEFFN(CMagazine);
+DEFFN(CNapkin);
+DEFFN(CNote);
+DEFFN(CParcel);
+DEFFN(CPhonographCylinder);
+DEFFN(CPhotograph);
+DEFFN(CPlugIn);
+DEFFN(CSweets);
+
 DEFFN(CBackground);
 DEFFN(CFileItem);
 DEFFN(CFileListItem);
@@ -214,6 +267,30 @@ DEFFN(CAutoMusicPlayer);
 
 void CSaveableObject::initClassList() {
 	_classList = new Common::HashMap<Common::String, CreateFunction>();
+	ADDFN(CArm);
+	ADDFN(CBrain);
+	ADDFN(CBridgePiece);
+	ADDFN(CCarryParrot);
+	ADDFN(CChicken);
+	ADDFN(CCrushedTV);
+	ADDFN(CFeathers);
+	ADDFN(CFruit);
+	ADDFN(CGlass);
+	ADDFN(CHammer);
+	ADDFN(CHeadPiece);
+	ADDFN(CHose);
+	ADDFN(CKey);
+	ADDFN(CLiftbotHead);
+	ADDFN(CLongStick);
+	ADDFN(CMagazine);
+	ADDFN(CNapkin);
+	ADDFN(CNote);
+	ADDFN(CParcel);
+	ADDFN(CPhonographCylinder);
+	ADDFN(CPhotograph);
+	ADDFN(CPlugIn);
+	ADDFN(CSweets);
+
 	ADDFN(CBackground);
 	ADDFN(CFileItem);
 	ADDFN(CFileListItem);
