@@ -55,7 +55,7 @@ struct MessageState_Struct {
 	uint16 printed_Height;
 
 	int16 backgroundPos_x;
-	int16 backgroundPos_y;
+	int16 backgroundPos_y; // original AGI used lowerY here, we use upperY so that upscaling is easier
 	int16 backgroundSize_Width;
 	int16 backgroundSize_Height;
 };

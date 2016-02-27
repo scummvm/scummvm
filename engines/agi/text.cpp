@@ -88,7 +88,7 @@ void TextMgr::configureScreen(uint16 row_Min) {
 	_window_Row_Max = row_Min + 21;
 
 	// forward data to GfxMgr as well
-	_gfx->setRenderStartOffset(row_Min * FONT_DISPLAY_HEIGHT);
+	_gfx->setRenderStartOffset(row_Min * FONT_VISUAL_HEIGHT);
 }
 uint16 TextMgr::getWindowRowMin() {
 	return _window_Row_Min;
@@ -466,7 +466,8 @@ void TextMgr::drawMessageBox(const char *textPtr, int16 forcedHeight, int16 want
 	_messageState.backgroundSize_Width = (_messageState.textSize_Width * FONT_VISUAL_WIDTH) + 10;
 	_messageState.backgroundSize_Height = (_messageState.textSize_Height * FONT_VISUAL_HEIGHT) + 10;
 	_messageState.backgroundPos_x = (_messageState.textPos.column * FONT_VISUAL_WIDTH) - 5;
-	_messageState.backgroundPos_y = (_messageState.textPos_Edge.row - _window_Row_Min + 1) * FONT_VISUAL_HEIGHT + 4;
+	_messageState.backgroundPos_y = (startingRow * FONT_VISUAL_HEIGHT) - 5;
+	// original AGI used lowerY here, calculated using (_messageState.textPos_Edge.row - _window_Row_Min + 1) * FONT_VISUAL_HEIGHT + 4;
 
 	// Hardcoded colors: white background and red lines
 	_gfx->drawBox(_messageState.backgroundPos_x, _messageState.backgroundPos_y, _messageState.backgroundSize_Width, _messageState.backgroundSize_Height, 15, 4);
@@ -487,10 +488,11 @@ void TextMgr::getMessageBoxInnerDisplayDimensions(int16 &x, int16 &y, int16 &wid
 	if (!_messageState.window_Active)
 		return;
 
-	y = _messageState.textPos.row * FONT_DISPLAY_HEIGHT;
-	x = _messageState.textPos.column * FONT_DISPLAY_WIDTH;
-	width = _messageState.textSize_Width * FONT_DISPLAY_WIDTH;
-	height = _messageState.textSize_Height * FONT_DISPLAY_HEIGHT;
+	y = _messageState.textPos.row;
+	x = _messageState.textPos.column;
+	width = _messageState.textSize_Width;
+	height = _messageState.textSize_Height;
+	_gfx->translateFontRectToDisplayScreen(x, y, width, height);
 }
 
 bool TextMgr::isMouseWithinMessageBox() {
@@ -499,10 +501,10 @@ bool TextMgr::isMouseWithinMessageBox() {
 	int16 mouseX = _vm->_mouse.pos.x;
 
 	if (_messageState.window_Active) {
-		_vm->adjustPosToGameScreen(mouseX, mouseY);
+		_gfx->translateDisplayPosToGameScreen(mouseX, mouseY);
 
-		if ((mouseX >= _messageState.backgroundPos_x) && (mouseX <= (_messageState.backgroundPos_x + _messageState.backgroundSize_Width))) {
-			if ((mouseY >= _messageState.backgroundPos_y - _messageState.backgroundSize_Height) && (mouseY <= (_messageState.backgroundPos_y))) {
+		if ((mouseX >= _messageState.backgroundPos_x) && (mouseX < (_messageState.backgroundPos_x + _messageState.backgroundSize_Width))) {
+			if ((mouseY >= _messageState.backgroundPos_y) && (mouseY < (_messageState.backgroundPos_y + _messageState.backgroundSize_Height))) {
 				return true;
 			}
 		}
@@ -581,12 +583,12 @@ void TextMgr::clearBlock(int16 row_Upper, int16 column_Upper, int16 row_Lower, i
 	charPos_Clip(row_Upper, column_Upper);
 	charPos_Clip(row_Lower, column_Lower);
 
-	int16 x = column_Upper * FONT_DISPLAY_WIDTH;
-	int16 y = row_Upper * FONT_DISPLAY_HEIGHT;
-	int16 width = (column_Lower + 1 - column_Upper) * FONT_DISPLAY_WIDTH;
-	int16 height = (row_Lower + 1 - row_Upper) * FONT_DISPLAY_HEIGHT;
+	int16 x = column_Upper;
+	int16 y = row_Upper;
+	int16 width = (column_Lower + 1 - column_Upper);
+	int16 height = (row_Lower + 1 - row_Upper);
+	_gfx->translateFontRectToDisplayScreen(x, y, width, height);
 
-	y = y + height - 1; // drawDisplayRect wants lower Y-coordinate
 	_gfx->drawDisplayRect(x, y, width, height, color);
 }
 

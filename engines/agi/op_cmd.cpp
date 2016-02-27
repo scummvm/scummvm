@@ -2227,7 +2227,7 @@ void cmdMousePosn(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 	int16 mouseX = vm->_mouse.pos.x;
 	int16 mouseY = vm->_mouse.pos.y;
 
-	state->_vm->adjustPosToGameScreen(mouseX, mouseY);
+	vm->_gfx->translateDisplayPosToGameScreen(mouseX, mouseY);
 
 	vm->setVar(destVarNr1, mouseX);
 	vm->setVar(destVarNr2, mouseY);

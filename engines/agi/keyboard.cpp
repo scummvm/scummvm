@@ -313,7 +313,8 @@ bool AgiEngine::handleMouseClicks(uint16 &key) {
 
 	if (!cycleInnerLoopIsActive()) {
 		// Only do this, when no inner loop is currently active
-		Common::Rect displayLineRect(DISPLAY_WIDTH, FONT_DISPLAY_HEIGHT);
+		Common::Rect displayLineRect = _gfx->getFontRectForDisplayScreen(0, 0, FONT_COLUMN_CHARACTERS, 1);
+//		Common::Rect displayLineRect(_gfx->getDisplayScreenWidth(), _gfx->getDisplayFontHeight());
 
 		if (displayLineRect.contains(_mouse.pos)) {
 			// Mouse is inside first line of the screen
@@ -328,7 +329,7 @@ bool AgiEngine::handleMouseClicks(uint16 &key) {
 			// Prompt is currently enabled
 			int16 promptRow = _text->promptRow_Get();
 
-			displayLineRect.moveTo(0, promptRow * FONT_DISPLAY_HEIGHT);
+			displayLineRect.moveTo(0, promptRow * _gfx->getDisplayFontHeight());
 
 			if (displayLineRect.contains(_mouse.pos)) {
 				// and user clicked within the line of the prompt
@@ -351,9 +352,7 @@ bool AgiEngine::handleMouseClicks(uint16 &key) {
 			_text->stringPos_Get(stringRow, stringColumn);
 			stringMaxLen = _text->stringGetMaxLen();
 
-			Common::Rect displayRect(stringMaxLen * FONT_DISPLAY_WIDTH, FONT_DISPLAY_HEIGHT);
-			displayRect.moveTo(stringColumn * FONT_DISPLAY_WIDTH, stringRow * FONT_DISPLAY_HEIGHT);
-
+			Common::Rect displayRect = _gfx->getFontRectForDisplayScreen(stringColumn, stringRow, stringMaxLen, 1);
 			if (displayRect.contains(_mouse.pos)) {
 				// user clicked inside the input space
 				showPredictiveDialog();
@@ -493,7 +492,7 @@ bool AgiEngine::handleController(uint16 key) {
 						// in case you walked to the log by using the mouse, so don't!!!
 						int16 egoDestinationX = _mouse.pos.x;
 						int16 egoDestinationY = _mouse.pos.y;
-						adjustPosToGameScreen(egoDestinationX, egoDestinationY);
+						_gfx->translateDisplayPosToGameScreen(egoDestinationX, egoDestinationY);
 
 						screenObjEgo->motionType = kMotionEgo;
 						if (egoDestinationX < (screenObjEgo->xSize / 2)) {

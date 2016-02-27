@@ -354,7 +354,8 @@ void SpritesMgr::showSprite(ScreenObjEntry *screenObj) {
 	}
 
 	// render this block
-	_gfx->render_Block(x, y, width, height);
+	int16 upperY = y - height + 1;
+	_gfx->render_Block(x, upperY, width, height);
 }
 
 void SpritesMgr::showSprites(SpriteList &spriteList) {

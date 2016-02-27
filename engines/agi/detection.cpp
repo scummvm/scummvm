@@ -171,6 +171,16 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 		}
 	},
 
+	{
+		GAMEOPTION_USE_HERCULES_FONT,
+		{
+			_s("Use Hercules hires font"),
+			_s("Uses Hercules hires font, when font file is available."),
+			"herculesfont",
+			false
+		}
+	},
+
 	AD_EXTRA_GUI_OPTIONS_TERMINATOR
 };
 

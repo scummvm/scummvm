@@ -739,8 +739,6 @@ public:
 	Common::Error loadGameState(int slot);
 	Common::Error saveGameState(int slot, const Common::String &description);
 
-	void adjustPosToGameScreen(int16 &x, int16 &y);
-
 private:
 	int _keyQueue[KEY_QUEUE_SIZE];
 	int _keyQueueStart;

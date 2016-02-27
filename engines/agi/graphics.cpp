@@ -39,7 +39,7 @@ namespace Agi {
 
 #include "agi/font.h"
 
-GfxMgr::GfxMgr(AgiBase *vm) : _vm(vm) {
+GfxMgr::GfxMgr(AgiBase *vm, GfxFont *font) : _vm(vm), _font(font) {
 	_agipalFileNum = 0;
 
 	memset(&_paletteGfxMode, 0, sizeof(_paletteGfxMode));
@@ -50,7 +50,17 @@ GfxMgr::GfxMgr(AgiBase *vm) : _vm(vm) {
 
 	initPriorityTable();
 
-	_renderStartOffsetY = 0;
+	_renderStartVisualOffsetY = 0;
+	_renderStartDisplayOffsetY = 0;
+
+	_upscaledHires = DISPLAY_UPSCALED_DISABLED;
+	_displayScreenWidth = DISPLAY_DEFAULT_WIDTH;
+	_displayScreenHeight = DISPLAY_DEFAULT_HEIGHT;
+	_displayFontWidth = 8;
+	_displayFontHeight = 8;
+
+	_displayWidthMulAdjust = 0; // visualPos * (2+0) = displayPos
+	_displayHeightMulAdjust = 0; // visualPos * (1+0) = displayPos
 }
 
 /**
@@ -125,31 +135,45 @@ int GfxMgr::initVideo() {
 		break;
 	}
 
+	//bool forcedUpscale = true;
+
+	if (_font->isFontHires()) {
+		// Upscaling enable
+		_upscaledHires = DISPLAY_UPSCALED_640x400;
+		_displayScreenWidth = 640;
+		_displayScreenHeight = 400;
+		_displayFontWidth = 16;
+		_displayFontHeight = 16;
+
+		_displayWidthMulAdjust = 2;
+		_displayHeightMulAdjust = 1;
+	}
+
 	// set up mouse cursors
 	switch (_vm->_renderMode) {
 	case Common::kRenderEGA:
 	case Common::kRenderCGA:
 	case Common::kRenderVGA:
-		initMouseCursor(&_mouseCursor, MOUSECURSOR_SCI, 11, 16, 1, 1);
+		initMouseCursor(&_mouseCursor, MOUSECURSOR_SCI, 11, 16, 0, 0);
 		initMouseCursor(&_mouseCursorBusy, MOUSECURSOR_SCI_BUSY, 15, 16, 7, 8);
 		break;
 	case Common::kRenderAmiga:
-		initMouseCursor(&_mouseCursor, MOUSECURSOR_AMIGA, 8, 11, 1, 1);
+		initMouseCursor(&_mouseCursor, MOUSECURSOR_AMIGA, 8, 11, 0, 0);
 		initMouseCursor(&_mouseCursorBusy, MOUSECURSOR_AMIGA_BUSY, 13, 16, 7, 8);
 		break;
 	case Common::kRenderApple2GS:
 		// had no special busy mouse cursor
-		initMouseCursor(&_mouseCursor, MOUSECURSOR_APPLE_II_GS, 9, 11, 1, 1);
+		initMouseCursor(&_mouseCursor, MOUSECURSOR_APPLE_II_GS, 9, 11, 0, 0);
 		initMouseCursor(&_mouseCursorBusy, MOUSECURSOR_SCI_BUSY, 15, 16, 7, 8);
 		break;
 	case Common::kRenderAtariST:
-		initMouseCursor(&_mouseCursor, MOUSECURSOR_ATARI_ST, 11, 16, 1, 1);
+		initMouseCursor(&_mouseCursor, MOUSECURSOR_ATARI_ST, 11, 16, 0, 0);
 		initMouseCursor(&_mouseCursorBusy, MOUSECURSOR_SCI_BUSY, 15, 16, 7, 8);
 		break;
 	case Common::kRenderMacintosh:
 		// It looks like Atari ST + Macintosh used the same standard mouse cursor
 		// TODO: Verify by checking actual hardware
-		initMouseCursor(&_mouseCursor, MOUSECURSOR_ATARI_ST, 11, 16, 1, 1);
+		initMouseCursor(&_mouseCursor, MOUSECURSOR_ATARI_ST, 11, 16, 0, 0);
 		initMouseCursor(&_mouseCursorBusy, MOUSECURSOR_MACINTOSH_BUSY, 10, 14, 7, 8);
 		break;
 	default:
@@ -158,15 +182,15 @@ int GfxMgr::initVideo() {
 	}
 
 	_pixels = SCRIPT_WIDTH * SCRIPT_HEIGHT;
-	_visualScreen = (byte *)calloc(_pixels, 1);
+	_gameScreen = (byte *)calloc(_pixels, 1);
 	_priorityScreen = (byte *)calloc(_pixels, 1);
-	_activeScreen = _visualScreen;
+	_activeScreen = _gameScreen;
 	//_activeScreen = _priorityScreen;
 
-	_displayPixels = DISPLAY_WIDTH * DISPLAY_HEIGHT;
+	_displayPixels = _displayScreenWidth * _displayScreenHeight;
 	_displayScreen = (byte *)calloc(_displayPixels, 1);
 
-	initGraphics(DISPLAY_WIDTH, DISPLAY_HEIGHT, DISPLAY_WIDTH > 320);
+	initGraphics(_displayScreenWidth, _displayScreenHeight, _displayScreenWidth > 320);
 
 	setPalette(true); // set gfx-mode palette
 
@@ -183,27 +207,151 @@ int GfxMgr::initVideo() {
  * @see init_video()
  */
 int GfxMgr::deinitVideo() {
+	// Free mouse cursors in case they were allocated
+	if (_mouseCursor.bitmapDataAllocated)
+		free(_mouseCursor.bitmapDataAllocated);
+	if (_mouseCursorBusy.bitmapDataAllocated)
+		free(_mouseCursorBusy.bitmapDataAllocated);
+
 	free(_displayScreen);
-	free(_visualScreen);
+	free(_gameScreen);
 	free(_priorityScreen);
 
 	return errOK;
 }
 
 void GfxMgr::setRenderStartOffset(uint16 offsetY) {
-	if (offsetY >= (DISPLAY_HEIGHT - SCRIPT_HEIGHT))
+	if (offsetY >= (VISUAL_HEIGHT - SCRIPT_HEIGHT))
 		error("invalid render start offset");
 
-	_renderStartOffsetY = offsetY;
+	_renderStartVisualOffsetY = offsetY;
+	_renderStartDisplayOffsetY = offsetY * (1 + _displayHeightMulAdjust);
 }
-uint16 GfxMgr::getRenderStartOffsetY() {
-	return _renderStartOffsetY;
+uint16 GfxMgr::getRenderStartDisplayOffsetY() {
+	return _renderStartDisplayOffsetY;
+}
+
+// Translates a game screen coordinate to a display screen coordinate
+// Game screen to 320x200 -> x * 2, y + renderStart
+// Game screen to 640x400 -> x * 4, (y * 2) + renderStart
+void GfxMgr::translateGamePosToDisplayScreen(int16 &x, int16 &y) {
+	x = x * (2 + _displayWidthMulAdjust);
+	y = y * (1 + _displayHeightMulAdjust) + _renderStartDisplayOffsetY;
+}
+
+// Translates a visual coordinate to a display screen coordinate
+// Visual to 320x200 -> x * 2, y
+// Visual to 640x400 -> x * 4, y * 2
+void GfxMgr::translateVisualPosToDisplayScreen(int16 &x, int16 &y) {
+	x = x * (2 + _displayWidthMulAdjust);
+	y = y * (1 + _displayHeightMulAdjust);
+}
+
+// Translates a display screen coordinate to a game screen coordinate
+// Display screen to 320x200 -> x / 2, y - renderStart
+// Display screen to 640x400 -> x / 4, (y / 2) - renderStart
+void GfxMgr::translateDisplayPosToGameScreen(int16 &x, int16 &y) {
+	y -= _renderStartDisplayOffsetY; // remove status bar line
+	x = x / (2 + _displayWidthMulAdjust);
+	y = y / (1 + _displayHeightMulAdjust);
+	if (y < 0)
+		y = 0;
+	if (y >= SCRIPT_HEIGHT)
+		y = SCRIPT_HEIGHT + 1; // 1 beyond
+}
+
+// Translates dimension from visual screen to display screen
+void GfxMgr::translateVisualDimensionToDisplayScreen(int16 &width, int16 &height) {
+	width = width * (2 + _displayWidthMulAdjust);
+	height = height * (1 + _displayHeightMulAdjust);
+}
+
+// Translates dimension from display screen to visual screen
+void GfxMgr::translateDisplayDimensionToVisualScreen(int16 &width, int16 &height) {
+	width = width / (2 + _displayWidthMulAdjust);
+	height = height / (1 + _displayHeightMulAdjust);
+}
+
+// Translates a rect from game screen to display screen
+void GfxMgr::translateGameRectToDisplayScreen(int16 &x, int16 &y, int16 &width, int16 &height) {
+	translateGamePosToDisplayScreen(x, y);
+	translateVisualDimensionToDisplayScreen(width, height);
+}
+
+// Translates a rect from visual screen to display screen
+void GfxMgr::translateVisualRectToDisplayScreen(int16 &x, int16 &y, int16 &width, int16 &height) {
+	translateVisualPosToDisplayScreen(x, y);
+	translateVisualDimensionToDisplayScreen(width, height);
+}
+
+uint32 GfxMgr::getDisplayOffsetToGameScreenPos(int16 x, int16 y) {
+	translateGamePosToDisplayScreen(x, y);
+	return (y * _displayScreenWidth) + x;
+}
+
+uint32 GfxMgr::getDisplayOffsetToVisualScreenPos(int16 x, int16 y) {
+	translateVisualPosToDisplayScreen(x, y);
+	return (y * _displayScreenWidth) + x;
+}
+
+// Attention: uses display screen coordinates!
+void GfxMgr::copyDisplayRectToScreen(int16 x, int16 y, int16 width, int16 height) {
+	g_system->copyRectToScreen(_displayScreen + y * _displayScreenWidth + x, _displayScreenWidth, x, y, width, height);
+}
+void GfxMgr::copyDisplayRectToScreen(int16 x, int16 adjX, int16 y, int16 adjY, int16 width, int16 adjWidth, int16 height, int16 adjHeight) {
+	switch (_upscaledHires) {
+	case DISPLAY_UPSCALED_DISABLED:
+		break;
+	case DISPLAY_UPSCALED_640x400:
+		adjX *= 2; adjY *= 2;
+		adjWidth *= 2; adjHeight *= 2;
+		break;
+	default:
+		assert(0);
+		break;
+	}
+	x += adjX; y += adjY;
+	width += adjWidth; height += adjHeight;
+	g_system->copyRectToScreen(_displayScreen + y * _displayScreenWidth + x, _displayScreenWidth, x, y, width, height);
+}
+void GfxMgr::copyDisplayRectToScreenUsingGamePos(int16 x, int16 y, int16 width, int16 height) {
+	translateGameRectToDisplayScreen(x, y, width, height);
+	g_system->copyRectToScreen(_displayScreen + (y * _displayScreenWidth) + x, _displayScreenWidth, x, y, width, height);
+}
+void GfxMgr::copyDisplayRectToScreenUsingVisualPos(int16 x, int16 y, int16 width, int16 height) {
+	translateVisualRectToDisplayScreen(x, y, width, height);
+	g_system->copyRectToScreen(_displayScreen + (y * _displayScreenWidth) + x, _displayScreenWidth, x, y, width, height);
+}
+void GfxMgr::copyDisplayToScreen() {
+	g_system->copyRectToScreen(_displayScreen, _displayScreenWidth, 0, 0, _displayScreenWidth, _displayScreenHeight);
+}
+
+void GfxMgr::translateFontPosToDisplayScreen(int16 &x, int16 &y) {
+	x *= _displayFontWidth;
+	y *= _displayFontHeight;
+}
+void GfxMgr::translateDisplayPosToFontScreen(int16 &x, int16 &y) {
+	x /= _displayFontWidth;
+	y /= _displayFontHeight;
+}
+void GfxMgr::translateFontDimensionToDisplayScreen(int16 &width, int16 &height) {
+	width *= _displayFontWidth;
+	height *= _displayFontHeight;
+}
+void GfxMgr::translateFontRectToDisplayScreen(int16 &x, int16 &y, int16 &width, int16 &height) {
+	translateFontPosToDisplayScreen(x, y);
+	translateFontDimensionToDisplayScreen(width, height);
+}
+Common::Rect GfxMgr::getFontRectForDisplayScreen(int16 column, int16 row, int16 width, int16 height) {
+	Common::Rect displayRect(width * _displayFontWidth, height * _displayFontHeight);
+	displayRect.moveTo(column * _displayFontWidth, row * _displayFontHeight);
+	return displayRect;
 }
 
 void GfxMgr::debugShowMap(int mapNr) {
 	switch (mapNr) {
 	case 0:
-		_activeScreen = _visualScreen;
+		_activeScreen = _gameScreen;
 		break;
 	case 1:
 		_activeScreen = _priorityScreen;
@@ -212,11 +360,11 @@ void GfxMgr::debugShowMap(int mapNr) {
 		break;
 	}
 
-	render_Block(0, 167, SCRIPT_WIDTH, SCRIPT_HEIGHT);
+	render_Block(0, 0, SCRIPT_WIDTH, SCRIPT_HEIGHT);
 }
 
 void GfxMgr::clear(byte color, byte priority) {
-	memset(_visualScreen, color, _pixels);
+	memset(_gameScreen, color, _pixels);
 	memset(_priorityScreen, priority, _pixels);
 }
 
@@ -224,7 +372,7 @@ void GfxMgr::clearDisplay(byte color, bool copyToScreen) {
 	memset(_displayScreen, color, _displayPixels);
 
 	if (copyToScreen) {
-		g_system->copyRectToScreen(_displayScreen, DISPLAY_WIDTH, 0, 0, DISPLAY_WIDTH, DISPLAY_HEIGHT);
+		copyDisplayToScreen();
 	}
 }
 
@@ -232,7 +380,7 @@ void GfxMgr::putPixel(int16 x, int16 y, byte drawMask, byte color, byte priority
 	int offset = y * SCRIPT_WIDTH + x;
 
 	if (drawMask & GFX_SCREEN_MASK_VISUAL) {
-		_visualScreen[offset] = color;
+		_gameScreen[offset] = color;
 	}
 	if (drawMask & GFX_SCREEN_MASK_PRIORITY) {
 		_priorityScreen[offset] = priority;
@@ -240,15 +388,72 @@ void GfxMgr::putPixel(int16 x, int16 y, byte drawMask, byte color, byte priority
 }
 
 void GfxMgr::putPixelOnDisplay(int16 x, int16 y, byte color) {
-	int offset = y * DISPLAY_WIDTH + x;
+	uint32 offset = 0;
 
-	_displayScreen[offset] = color;
+	switch (_upscaledHires) {
+	case DISPLAY_UPSCALED_DISABLED:
+		offset = y * _displayScreenWidth + x;
+
+		_displayScreen[offset] = color;
+		break;
+	case DISPLAY_UPSCALED_640x400:
+		offset = (y * _displayScreenWidth) + x;
+
+		_displayScreen[offset + 0] = color;
+		_displayScreen[offset + 1] = color;
+		_displayScreen[offset + _displayScreenWidth + 0] = color;
+		_displayScreen[offset + _displayScreenWidth + 1] = color;
+		break;
+	default:
+		break;
+	}
+}
+
+void GfxMgr::putPixelOnDisplay(int16 x, int16 adjX, int16 y, int16 adjY, byte color) {
+	switch (_upscaledHires) {
+	case DISPLAY_UPSCALED_DISABLED:
+		break;
+	case DISPLAY_UPSCALED_640x400:
+		adjX *= 2; adjY *= 2;
+		break;
+	default:
+		assert(0);
+		break;
+	}
+	x += adjX;
+	y += adjY;
+	putPixelOnDisplay(x, y, color);
+}
+
+void GfxMgr::putFontPixelOnDisplay(int16 baseX, int16 baseY, int16 addX, int16 addY, byte color, bool isHires) {
+	uint32 offset = 0;
+
+	switch (_upscaledHires) {
+	case DISPLAY_UPSCALED_DISABLED:
+		offset = ((baseY + addY) * _displayScreenWidth) + (baseX + addX);
+		_displayScreen[offset] = color;
+		break;
+	case DISPLAY_UPSCALED_640x400:
+		if (isHires) {
+			offset = ((baseY + addY) * _displayScreenWidth) + (baseX + addX);
+			_displayScreen[offset] = color;
+		} else {
+			offset = ((baseY + addY * 2) * _displayScreenWidth) + (baseX + addX * 2);
+			_displayScreen[offset + 0] = color;
+			_displayScreen[offset + 1] = color;
+			_displayScreen[offset + _displayScreenWidth + 0] = color;
+			_displayScreen[offset + _displayScreenWidth + 1] = color;
+		}
+		break;
+	default:
+		break;
+	}
 }
 
 byte GfxMgr::getColor(int16 x, int16 y) {
 	int offset = y * SCRIPT_WIDTH + x;
 
-	return _visualScreen[offset];
+	return _gameScreen[offset];
 }
 
 byte GfxMgr::getPriority(int16 x, int16 y) {
@@ -288,7 +493,8 @@ byte GfxMgr::getCGAMixtureColor(byte color) {
 	return CGA_MixtureColorTable[color & 0x0F];
 }
 
-// Attention: y-coordinate points to the LOWER left!
+// Attention: in our implementation, y-coordinate is upper left.
+// Sierra passed the lower left instead. We changed it to make upscaling easier.
 void GfxMgr::render_Block(int16 x, int16 y, int16 width, int16 height, bool copyToScreen) {
 	if (!render_Clip(x, y, width, height))
 		return;
@@ -304,17 +510,26 @@ void GfxMgr::render_Block(int16 x, int16 y, int16 width, int16 height, bool copy
 	}
 
 	if (copyToScreen) {
-		int16 upperY = y - height + 1 + _renderStartOffsetY;
-		g_system->copyRectToScreen(_displayScreen + upperY * DISPLAY_WIDTH + x * 2, DISPLAY_WIDTH, x * 2, upperY, width * 2, height);
+		copyDisplayRectToScreenUsingGamePos(x, y, width, height);
 	}
 }
 
 bool GfxMgr::render_Clip(int16 &x, int16 &y, int16 &width, int16 &height, int16 clipAgainstWidth, int16 clipAgainstHeight) {
 	if ((x >= clipAgainstWidth) || ((x + width - 1) < 0) ||
-	        (y < 0) || ((y - (height - 1)) >= clipAgainstHeight)) {
+	        (y < 0) || ((y + (height - 1)) >= clipAgainstHeight)) {
 		return false;
 	}
 
+	if (y < 0) {
+		height += y;
+		y = 0;
+	}
+
+	if ((y + height - 1) >= clipAgainstHeight) {
+		height = clipAgainstHeight - y;
+	}
+
+#if 0
 	if ((y - height + 1) < 0)
 		height = y + 1;
 
@@ -322,6 +537,7 @@ bool GfxMgr::render_Clip(int16 &x, int16 &y, int16 &width, int16 &height, int16 
 		height -= y - (clipAgainstHeight - 1);
 		y = clipAgainstHeight - 1;
 	}
+#endif
 
 	if (x < 0) {
 		width += x;
@@ -335,44 +551,104 @@ bool GfxMgr::render_Clip(int16 &x, int16 &y, int16 &width, int16 &height, int16 
 }
 
 void GfxMgr::render_BlockEGA(int16 x, int16 y, int16 width, int16 height, bool copyToScreen) {
-	int offsetVisual = SCRIPT_WIDTH * y + x;
-	int offsetDisplay = (DISPLAY_WIDTH * (y + _renderStartOffsetY)) + x * 2;
+	uint32 offsetVisual = SCRIPT_WIDTH * y + x;
+	uint32 offsetDisplay = getDisplayOffsetToGameScreenPos(x, y);
 	int16 remainingWidth = width;
 	int16 remainingHeight = height;
 	byte curColor = 0;
+	int16 displayWidth = width * (2 + _displayWidthMulAdjust);
 
 	while (remainingHeight) {
 		remainingWidth = width;
-		while (remainingWidth) {
-			curColor = _activeScreen[offsetVisual++];
-			_displayScreen[offsetDisplay++] = curColor;
-			_displayScreen[offsetDisplay++] = curColor;
-			remainingWidth--;
+
+		switch (_upscaledHires) {
+		case DISPLAY_UPSCALED_DISABLED:
+			while (remainingWidth) {
+				curColor = _activeScreen[offsetVisual++];
+				_displayScreen[offsetDisplay++] = curColor;
+				_displayScreen[offsetDisplay++] = curColor;
+				remainingWidth--;
+			}
+			break;
+		case DISPLAY_UPSCALED_640x400:
+			while (remainingWidth) {
+				curColor = _activeScreen[offsetVisual++];
+				memset(&_displayScreen[offsetDisplay], curColor, 4);
+				memset(&_displayScreen[offsetDisplay + _displayScreenWidth], curColor, 4);
+				offsetDisplay += 4;
+				remainingWidth--;
+			}
+			break;
+		default:
+			assert(0);
+			break;
 		}
-		offsetVisual -= SCRIPT_WIDTH + width;
-		offsetDisplay -= DISPLAY_WIDTH + width * 2;
+
+		offsetVisual += SCRIPT_WIDTH - width;
+		offsetDisplay += _displayScreenWidth - displayWidth;
+
+		switch (_upscaledHires) {
+		case DISPLAY_UPSCALED_640x400:
+			offsetDisplay += _displayScreenWidth;;
+			break;
+		default:
+			break;
+		}
 
 		remainingHeight--;
 	}
 }
 
 void GfxMgr::render_BlockCGA(int16 x, int16 y, int16 width, int16 height, bool copyToScreen) {
-	int offsetVisual = SCRIPT_WIDTH * y + x;
-	int offsetDisplay = (DISPLAY_WIDTH * (y + _renderStartOffsetY)) + x * 2;
+	uint32 offsetVisual = SCRIPT_WIDTH * y + x;
+	uint32 offsetDisplay = getDisplayOffsetToGameScreenPos(x, y);
 	int16 remainingWidth = width;
 	int16 remainingHeight = height;
 	byte curColor = 0;
+	int16 displayWidth = width * (2 + _displayWidthMulAdjust);
 
 	while (remainingHeight) {
 		remainingWidth = width;
-		while (remainingWidth) {
-			curColor = _activeScreen[offsetVisual++];
-			_displayScreen[offsetDisplay++] = curColor & 0x03; // we process CGA mixture
-			_displayScreen[offsetDisplay++] = curColor >> 2;
-			remainingWidth--;
+
+		switch (_upscaledHires) {
+		case DISPLAY_UPSCALED_DISABLED:
+			while (remainingWidth) {
+				curColor = _activeScreen[offsetVisual++];
+				_displayScreen[offsetDisplay++] = curColor & 0x03; // we process CGA mixture
+				_displayScreen[offsetDisplay++] = curColor >> 2;
+				remainingWidth--;
+			}
+			break;
+		case DISPLAY_UPSCALED_640x400:
+			while (remainingWidth) {
+				curColor = _activeScreen[offsetVisual++];
+				_displayScreen[offsetDisplay + 0] = curColor & 0x03; // we process CGA mixture
+				_displayScreen[offsetDisplay + 1] = curColor >> 2;
+				_displayScreen[offsetDisplay + 2] = curColor & 0x03;
+				_displayScreen[offsetDisplay + 3] = curColor >> 2;
+				_displayScreen[offsetDisplay + _displayScreenWidth + 0] = curColor & 0x03;
+				_displayScreen[offsetDisplay + _displayScreenWidth + 1] = curColor >> 2;
+				_displayScreen[offsetDisplay + _displayScreenWidth + 2] = curColor & 0x03;
+				_displayScreen[offsetDisplay + _displayScreenWidth + 3] = curColor >> 2;
+				offsetDisplay += 4;
+				remainingWidth--;
+			}
+			break;
+		default:
+			assert(0);
+			break;
 		}
-		offsetVisual -= SCRIPT_WIDTH + width;
-		offsetDisplay -= DISPLAY_WIDTH + width * 2;
+
+		offsetVisual += SCRIPT_WIDTH - width;
+		offsetDisplay += _displayScreenWidth - displayWidth;
+
+		switch (_upscaledHires) {
+		case DISPLAY_UPSCALED_640x400:
+			offsetDisplay += _displayScreenWidth;;
+			break;
+		default:
+			break;
+		}
 
 		remainingHeight--;
 	}
@@ -380,7 +656,7 @@ void GfxMgr::render_BlockCGA(int16 x, int16 y, int16 width, int16 height, bool c
 
 void GfxMgr::transition_Amiga() {
 	uint16 screenPos = 1;
-	uint16 screenStepPos = 1;
+	uint32 screenStepPos = 1;
 	int16  posY = 0, posX = 0;
 	int16  stepCount = 0;
 
@@ -402,15 +678,29 @@ void GfxMgr::transition_Amiga() {
 			posY = screenStepPos / SCRIPT_WIDTH;
 			posX = screenStepPos - (posY * SCRIPT_WIDTH);
 
-			posY += _renderStartOffsetY; // adjust to only update the main area, not the status bar
-			posX *= 2; // adjust for display screen
+			// Adjust to only update the game screen, not the status bar
+			translateGamePosToDisplayScreen(posX, posY);
 
-			screenStepPos = (screenStepPos * 2) + (_renderStartOffsetY * DISPLAY_WIDTH); // adjust here too for display screen
-			for (int16 multiPixel = 0; multiPixel < 4; multiPixel++) {
-				g_system->copyRectToScreen(_displayScreen + screenStepPos, DISPLAY_WIDTH, posX, posY, 2, 1);
-				screenStepPos += (0x1A40 * 2); // 6720d
-				posY += 42;
+			switch (_upscaledHires) {
+			case DISPLAY_UPSCALED_DISABLED:
+				for (int16 multiPixel = 0; multiPixel < 4; multiPixel++) {
+					screenStepPos = (posY * _displayScreenWidth) + posX;
+					g_system->copyRectToScreen(_displayScreen + screenStepPos, _displayScreenWidth, posX, posY, 2, 1);
+					posY += 42;
+				}
+				break;
+			case DISPLAY_UPSCALED_640x400:
+				for (int16 multiPixel = 0; multiPixel < 4; multiPixel++) {
+					screenStepPos = (posY * _displayScreenWidth) + posX;
+					g_system->copyRectToScreen(_displayScreen + screenStepPos, _displayScreenWidth, posX, posY, 4, 2);
+					posY += 42 * 2;
+				}
+				break;
+			default:
+				assert(0);
+				break;
 			}
+
 			stepCount++;
 			if (stepCount == 220) {
 				// 30 times for the whole transition, so should take around 0.5 seconds
@@ -433,7 +723,7 @@ void GfxMgr::transition_Amiga() {
 // Atari ST definitely had a hi-res transition using the full resolution unlike the Amiga transition.
 void GfxMgr::transition_AtariSt() {
 	uint16 screenPos = 1;
-	uint16 screenStepPos = 1;
+	uint32 screenStepPos = 1;
 	int16  posY = 0, posX = 0;
 	int16  stepCount = 0;
 
@@ -452,17 +742,31 @@ void GfxMgr::transition_AtariSt() {
 
 		if ((screenPos < 13440) && (screenPos & 1)) {
 			screenStepPos = screenPos >> 1;
-			posY = screenStepPos / DISPLAY_WIDTH;
-			posX = screenStepPos - (posY * DISPLAY_WIDTH);
+			posY = screenStepPos / DISPLAY_DEFAULT_WIDTH;
+			posX = screenStepPos - (posY * DISPLAY_DEFAULT_WIDTH);
 
-			posY += _renderStartOffsetY; // adjust to only update the main area, not the status bar
-
-			screenStepPos = screenStepPos + (_renderStartOffsetY * DISPLAY_WIDTH); // adjust here too for display screen
-			for (int16 multiPixel = 0; multiPixel < 8; multiPixel++) {
-				g_system->copyRectToScreen(_displayScreen + screenStepPos, DISPLAY_WIDTH, posX, posY, 1, 1);
-				screenStepPos += 0x1a40; // 6720d
-				posY += 21;
+			switch (_upscaledHires) {
+			case DISPLAY_UPSCALED_DISABLED:
+				posY += _renderStartDisplayOffsetY; // adjust to only update the main area, not the status bar
+				for (int16 multiPixel = 0; multiPixel < 8; multiPixel++) {
+					screenStepPos = (posY * _displayScreenWidth) + posX;
+					g_system->copyRectToScreen(_displayScreen + screenStepPos, _displayScreenWidth, posX, posY, 1, 1);
+					posY += 21;
+				}
+				break;
+			case DISPLAY_UPSCALED_640x400:
+				posX *= 2; posY *= 2;
+				posY += _renderStartDisplayOffsetY; // adjust to only update the main area, not the status bar
+				for (int16 multiPixel = 0; multiPixel < 8; multiPixel++) {
+					screenStepPos = (posY * _displayScreenWidth) + posX;
+					g_system->copyRectToScreen(_displayScreen + screenStepPos, _displayScreenWidth, posX, posY, 2, 2);
+					posY += 21 * 2;
+				}
+				break;
+			default:
+				break;
 			}
+
 			stepCount++;
 			if (stepCount == 168) {
 				// 40 times for the whole transition, so should take around 0.7 seconds
@@ -493,7 +797,7 @@ void GfxMgr::block_save(int16 x, int16 y, int16 width, int16 height, byte *buffe
 	//warning("block_save: %d, %d -> %d, %d", x, y, width, height);
 
 	while (remainingHeight) {
-		memcpy(curBufferPtr, _visualScreen + offset, width);
+		memcpy(curBufferPtr, _gameScreen + offset, width);
 		offset += SCRIPT_WIDTH;
 		curBufferPtr += width;
 		remainingHeight--;
@@ -519,7 +823,7 @@ void GfxMgr::block_restore(int16 x, int16 y, int16 width, int16 height, byte *bu
 	//warning("block_restore: %d, %d -> %d, %d", x, y, width, height);
 
 	while (remainingHeight) {
-		memcpy(_visualScreen + offset, curBufferPtr, width);
+		memcpy(_gameScreen + offset, curBufferPtr, width);
 		offset += SCRIPT_WIDTH;
 		curBufferPtr += width;
 		remainingHeight--;
@@ -535,15 +839,8 @@ void GfxMgr::block_restore(int16 x, int16 y, int16 width, int16 height, byte *bu
 	}
 }
 
-// Attention: uses visual screen coordinates!
-void GfxMgr::copyDisplayRectToScreen(int16 x, int16 y, int16 width, int16 height) {
-	g_system->copyRectToScreen(_displayScreen + y * DISPLAY_WIDTH + x, DISPLAY_WIDTH, x, y, width, height);
-}
-void GfxMgr::copyDisplayToScreen() {
-	g_system->copyRectToScreen(_displayScreen, DISPLAY_WIDTH, 0, 0, DISPLAY_WIDTH, DISPLAY_HEIGHT);
-}
-
 // coordinates are for visual screen, but are supposed to point somewhere inside the playscreen
+// x, y is the upper left. Sierra passed them as lower left. We change that to make upscaling easier.
 // attention: Clipping is done here against 160x200 instead of 160x168
 //            Original interpreter didn't do any clipping, we do it for security.
 //            Clipping against the regular script width/height must not be done,
@@ -551,13 +848,13 @@ void GfxMgr::copyDisplayToScreen() {
 //            Going beyond 160x168 will result in messageboxes not getting fully removed
 //            In KQ4's case, the scripts clear the screen that's why it works.
 void GfxMgr::drawBox(int16 x, int16 y, int16 width, int16 height, byte backgroundColor, byte lineColor) {
-	if (!render_Clip(x, y, width, height, SCRIPT_WIDTH, DISPLAY_HEIGHT - _renderStartOffsetY))
+	if (!render_Clip(x, y, width, height, VISUAL_WIDTH, VISUAL_HEIGHT - _renderStartVisualOffsetY))
 		return;
 
 	// coordinate translation: visual-screen -> display-screen
-	x = x * 2;
-	y = y + _renderStartOffsetY; // drawDisplayRect paints anywhere on the whole screen, our coordinate is within playscreen
-	width = width * 2; // width was given as visual width, we need display width
+	translateVisualRectToDisplayScreen(x, y, width, height);
+
+	y = y + _renderStartDisplayOffsetY;	// drawDisplayRect paints anywhere on the whole screen, our coordinate is within playscreen
 
 	// draw box background
 	drawDisplayRect(x, y, width, height, backgroundColor);
@@ -567,27 +864,27 @@ void GfxMgr::drawBox(int16 x, int16 y, int16 width, int16 height, byte backgroun
 	case Common::kRenderApple2GS:
 	case Common::kRenderAmiga:
 		// Slightly different window frame, and actually using 1-pixel width, which is "hi-res"
-		drawDisplayRect(x + 2, y - 2, width - 4, 1, lineColor);
-		drawDisplayRect(x + width - 3, y - 2, 1, height - 4, lineColor);
-		drawDisplayRect(x + 2, y - height + 3, width - 4, 1, lineColor);
-		drawDisplayRect(x + 2, y - 2, 1, height - 4, lineColor);
+		drawDisplayRect(x, +2, y, +2, width, -4, 0, 1, lineColor);
+		drawDisplayRect(x + width, -3, y, +2, 0, 1, height, -4, lineColor);
+		drawDisplayRect(x, +2, y + height, -3, width, -4, 0, 1, lineColor);
+		drawDisplayRect(x, +2, y, +2, 0, 1, height, -4, lineColor);
 		break;
 	case Common::kRenderMacintosh:
 		// 1 pixel between box and frame lines. Frame lines were black
-		drawDisplayRect(x + 1, y - 1, width - 2, 1, 0);
-		drawDisplayRect(x + width - 2, y - 1, 1, height - 2, 0);
-		drawDisplayRect(x + 1, y - height + 2, width - 2, 1, 0);
-		drawDisplayRect(x + 1, y - 1, 1, height - 2, 0);
+		drawDisplayRect(x, +1, y, +1, width, -2, 0, 1, 0);
+		drawDisplayRect(x + width, -2, y, +1, 0, 1, height, -2, 0);
+		drawDisplayRect(x, +1, y + height, -2, width, -2, 0, 1, 0);
+		drawDisplayRect(x, +1, y, +1, 0, 1, height, -2, 0);
 		break;
 	case Common::kRenderCGA:
 	case Common::kRenderEGA:
 	case Common::kRenderVGA:
 	case Common::kRenderAtariST:
 	default:
-		drawDisplayRect(x + 2, y - 1, width - 4, 1, lineColor);
-		drawDisplayRect(x + width - 4, y - 2, 2, height - 4, lineColor);
-		drawDisplayRect(x + 2, y - height + 2, width - 4, 1, lineColor);
-		drawDisplayRect(x + 2, y - 2, 2, height - 4, lineColor);
+		drawDisplayRect(x, +2, y, +1, width, -4, 0, 1, lineColor);
+		drawDisplayRect(x + width, -4, y, +2, 0, 2, height, -4, lineColor);
+		drawDisplayRect(x, +2, y + height, -2, width, -4, 0, 1, lineColor);
+		drawDisplayRect(x, +2, y, +2, 0, 2, height, -4, lineColor);
 		break;
 	}
 }
@@ -604,25 +901,41 @@ void GfxMgr::drawDisplayRect(int16 x, int16 y, int16 width, int16 height, byte c
 		break;
 	}
 	if (copyToScreen) {
-		int16 upperY = y - height + 1;
-		g_system->copyRectToScreen(_displayScreen + upperY * DISPLAY_WIDTH + x, DISPLAY_WIDTH, x, upperY, width, height);
+		copyDisplayRectToScreen(x, y, width, height);
 	}
 }
 
+void GfxMgr::drawDisplayRect(int16 x, int16 adjX, int16 y, int16 adjY, int16 width, int16 adjWidth, int16 height, int16 adjHeight, byte color, bool copyToScreen) {
+	switch (_upscaledHires) {
+	case DISPLAY_UPSCALED_DISABLED:
+		x += adjX; y += adjY;
+		width += adjWidth; height += adjHeight;
+		break;
+	case DISPLAY_UPSCALED_640x400:
+		x += adjX * 2; y += adjY * 2;
+		width += adjWidth * 2; height += adjHeight * 2;
+		break;
+	default:
+		assert(0);
+		break;
+	}
+	drawDisplayRect(x, y, width, height, color, copyToScreen);
+}
+
 void GfxMgr::drawDisplayRectEGA(int16 x, int16 y, int16 width, int16 height, byte color) {
-	int offsetDisplay = (DISPLAY_WIDTH * y) + x;
+	uint32 offsetDisplay = (y * _displayScreenWidth) + x;
 	int16 remainingHeight = height;
 
 	while (remainingHeight) {
 		memset(_displayScreen + offsetDisplay, color, width);
 
-		offsetDisplay -= DISPLAY_WIDTH;
+		offsetDisplay += _displayScreenWidth;
 		remainingHeight--;
 	}
 }
 
 void GfxMgr::drawDisplayRectCGA(int16 x, int16 y, int16 width, int16 height, byte color) {
-	int offsetDisplay = (DISPLAY_WIDTH * y) + x;
+	uint32 offsetDisplay = (y * _displayScreenWidth) + x;
 	int16 remainingHeight = height;
 	int16 remainingWidth = width;
 	byte CGAMixtureColor = getCGAMixtureColor(color);
@@ -643,17 +956,19 @@ void GfxMgr::drawDisplayRectCGA(int16 x, int16 y, int16 width, int16 height, byt
 			remainingWidth -= 2;
 		}
 
-		offsetDisplay -= DISPLAY_WIDTH;
+		offsetDisplay += _displayScreenWidth;
 		remainingHeight--;
 	}
 }
 
 // row + column are text-coordinates
 void GfxMgr::drawCharacter(int16 row, int16 column, byte character, byte foreground, byte background, bool disabledLook) {
-	int16 x = column * FONT_DISPLAY_WIDTH;
-	int16 y = row * FONT_DISPLAY_HEIGHT;
+	int16 x = column;
+	int16 y = row;
 	byte  transformXOR = 0;
 	byte  transformOR = 0;
+
+	translateFontPosToDisplayScreen(x, y);
 
 	// Now figure out, if special handling needs to be done
 	if (_vm->_game.gfxMode) {
@@ -675,22 +990,43 @@ void GfxMgr::drawStringOnDisplay(int16 x, int16 y, const char *text, byte foregr
 	while (*text) {
 		drawCharacterOnDisplay(x, y, *text, foregroundColor, backgroundColor);
 		text++;
-		x += FONT_DISPLAY_WIDTH;
+		x += _displayFontWidth;
 	}
+}
+
+void GfxMgr::drawStringOnDisplay(int16 x, int16 adjX, int16 y, int16 adjY, const char *text, byte foregroundColor, byte backgroundColor) {
+	switch (_upscaledHires) {
+	case DISPLAY_UPSCALED_DISABLED:
+		x += adjX;
+		y += adjY;
+		break;
+	case DISPLAY_UPSCALED_640x400:
+		x += adjX * 2;
+		y += adjY * 2;
+		break;
+	default:
+		assert(0);
+		break;
+	}
+	drawStringOnDisplay(x, y, text, foregroundColor, backgroundColor);
 }
 
 void GfxMgr::drawCharacterOnDisplay(int16 x, int16 y, const byte character, byte foreground, byte background, byte transformXOR, byte transformOR) {
 	int16       curX, curY;
 	const byte *fontData;
+	bool        fontIsHires = _font->isFontHires();
+	int16       fontHeight = fontIsHires ? 16 : FONT_DISPLAY_HEIGHT;
+	int16       fontWidth = fontIsHires ? 16 : FONT_DISPLAY_WIDTH;
+	int16       fontBytesPerCharacter = fontIsHires ? 32 : FONT_BYTES_PER_CHARACTER;
 	byte        curByte = 0;
 	uint16      curBit;
 
 	// get font data of specified character
-	fontData = _vm->getFontData() + character * FONT_BYTES_PER_CHARACTER;
+	fontData = _font->getFontData() + character * fontBytesPerCharacter;
 
 	curBit = 0;
-	for (curY = 0; curY < FONT_DISPLAY_HEIGHT; curY++) {
-		for (curX = 0; curX < FONT_DISPLAY_WIDTH; curX++) {
+	for (curY = 0; curY < fontHeight; curY++) {
+		for (curX = 0; curX < fontWidth; curX++) {
 			if (!curBit) {
 				curByte = *fontData;
 				// do transformations in case they are needed (invert/disabled look)
@@ -700,9 +1036,9 @@ void GfxMgr::drawCharacterOnDisplay(int16 x, int16 y, const byte character, byte
 				curBit  = 0x80;
 			}
 			if (curByte & curBit) {
-				putPixelOnDisplay(x + curX, y + curY, foreground);
+				putFontPixelOnDisplay(x, y, curX, curY, foreground, fontIsHires);
 			} else {
-				putPixelOnDisplay(x + curX, y + curY, background);
+				putFontPixelOnDisplay(x, y, curX, curY, background, fontIsHires);
 			}
 			curBit = curBit >> 1;
 		}
@@ -710,18 +1046,20 @@ void GfxMgr::drawCharacterOnDisplay(int16 x, int16 y, const byte character, byte
 			transformOR ^= 0xFF;
 	}
 
-	copyDisplayRectToScreen(x, y, FONT_DISPLAY_WIDTH, FONT_DISPLAY_HEIGHT);
+	copyDisplayRectToScreen(x, y, _displayFontWidth, _displayFontHeight);
 }
 
 #define SHAKE_VERTICAL_PIXELS 4
-#define SHAKE_HORIZONTAL_PIXELS 8
+#define SHAKE_HORIZONTAL_PIXELS 4
 
 // Sierra used some EGA port trickery to do it, we have to do it by copying pixels around
 void GfxMgr::shakeScreen(int16 repeatCount) {
 	int shakeNr, shakeCount;
 	uint8 *blackSpace;
+	int16 shakeHorizontalPixels = SHAKE_HORIZONTAL_PIXELS * (2 + _displayWidthMulAdjust);
+	int16 shakeVerticalPixels = SHAKE_VERTICAL_PIXELS * (1 + _displayHeightMulAdjust);
 
-	if ((blackSpace = (uint8 *)calloc(SHAKE_HORIZONTAL_PIXELS * DISPLAY_WIDTH, 1)) == NULL)
+	if ((blackSpace = (uint8 *)calloc(shakeVerticalPixels * _displayScreenWidth, 1)) == NULL)
 		return;
 
 	shakeCount = repeatCount * 8; // effectively 4 shakes per repeat
@@ -733,10 +1071,10 @@ void GfxMgr::shakeScreen(int16 repeatCount) {
 			// move back
 			copyDisplayToScreen();
 		} else {
-			g_system->copyRectToScreen(_displayScreen, DISPLAY_WIDTH, SHAKE_HORIZONTAL_PIXELS, SHAKE_VERTICAL_PIXELS, DISPLAY_WIDTH - SHAKE_HORIZONTAL_PIXELS, DISPLAY_HEIGHT - SHAKE_VERTICAL_PIXELS);
+			g_system->copyRectToScreen(_displayScreen, _displayScreenWidth, shakeHorizontalPixels, shakeVerticalPixels, _displayScreenWidth - shakeHorizontalPixels, _displayScreenHeight - shakeVerticalPixels);
 			// additionally fill the remaining space with black
-			g_system->copyRectToScreen(blackSpace, DISPLAY_WIDTH, 0, 0, DISPLAY_WIDTH, SHAKE_VERTICAL_PIXELS);
-			g_system->copyRectToScreen(blackSpace, SHAKE_HORIZONTAL_PIXELS, 0, 0, SHAKE_HORIZONTAL_PIXELS, DISPLAY_HEIGHT);
+			g_system->copyRectToScreen(blackSpace, _displayScreenWidth, 0, 0, _displayScreenWidth, shakeVerticalPixels);
+			g_system->copyRectToScreen(blackSpace, shakeHorizontalPixels, 0, 0, shakeHorizontalPixels, _displayScreenHeight);
 		}
 		g_system->updateScreen();
 		g_system->delayMillis(66); // Sierra waited for 4 V'Syncs, which is around 66 milliseconds
@@ -956,7 +1294,38 @@ int GfxMgr::getAGIPalFileNum() {
 }
 
 void GfxMgr::initMouseCursor(MouseCursorData *mouseCursor, const byte *bitmapData, uint16 width, uint16 height, int hotspotX, int hotspotY) {
-	mouseCursor->bitmapData = bitmapData;
+	switch (_upscaledHires) {
+	case DISPLAY_UPSCALED_DISABLED:
+		mouseCursor->bitmapData = bitmapData;
+		break;
+	case DISPLAY_UPSCALED_640x400: {
+		mouseCursor->bitmapDataAllocated = (byte *)malloc(width * height * 4);
+		mouseCursor->bitmapData = mouseCursor->bitmapDataAllocated;
+
+		// Upscale mouse cursor
+		byte *upscaledData = mouseCursor->bitmapDataAllocated;
+
+		for (uint16 y = 0; y < height; y++) {
+			for (uint16 x = 0; x < width; x++) {
+				byte curColor = *bitmapData++;
+				upscaledData[x * 2 + 0] = curColor;
+				upscaledData[x * 2 + 1] = curColor;
+				upscaledData[x * 2 + (width * 2) + 0] = curColor;
+				upscaledData[x * 2 + (width * 2) + 1] = curColor;
+			}
+			upscaledData += width * 2 * 2;
+		}
+
+		width *= 2;
+		height *= 2;
+		hotspotX *= 2;
+		hotspotY *= 2;
+		break;
+	}
+	default:
+		assert(0);
+		break;
+	}
 	mouseCursor->width = width;
 	mouseCursor->height = height;
 	mouseCursor->hotspotX = hotspotX;

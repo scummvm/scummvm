@@ -36,6 +36,7 @@ private:
 public:
 	void init();
 	const byte *getFontData();
+	bool isFontHires();
 
 private:
 	void overwriteSaveRestoreDialogCharacter();
@@ -46,9 +47,11 @@ private:
 	void loadFontAmigaPseudoTopaz();
 	void loadFontAppleIIgs();
 	void loadFontAtariST(Common::String fontFilename);
+	void loadFontHercules();
 
 	const uint8 *_fontData; // pointer to the currently used font
 	uint8 *_fontDataAllocated;
+	bool _fontIsHires;
 };
 
 } // End of namespace Agi
