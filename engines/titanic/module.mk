@@ -34,6 +34,10 @@ MODULE_OBJS := \
 	core/tree_item.o \
 	core/view_item.o \
 	game/announce.o \
+	game/cdrom.o \
+	game/cdrom_computer.o \
+	game/cdrom_tray.o \
+	game/computer_screen.o \
 	game/dead_area.o \
 	game/hammer_dispensor_button.o \
 	game/pet_position.o \

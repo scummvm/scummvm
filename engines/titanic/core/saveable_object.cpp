@@ -36,6 +36,10 @@
 #include "titanic/core/view_item.h"
 
 #include "titanic/game/announce.h"
+#include "titanic/game/cdrom.h"
+#include "titanic/game/cdrom_computer.h"
+#include "titanic/game/cdrom_tray.h"
+#include "titanic/game/computer_screen.h"
 #include "titanic/game/dead_area.h"
 #include "titanic/game/hammer_dispensor_button.h"
 #include "titanic/game/pet_position.h"
@@ -132,6 +136,10 @@ DEFFN(CTreeItem);
 DEFFN(CViewItem);
 
 DEFFN(CAnnounce);
+DEFFN(CCDROM);
+DEFFN(CCDROMComputer);
+DEFFN(CCDROMTray);
+DEFFN(CComputerScreen);
 DEFFN(CDeadArea);
 DEFFN(CHammerDispensorButton);
 DEFFN(CPETPosition);
@@ -221,6 +229,10 @@ void CSaveableObject::initClassList() {
 	ADDFN(CViewItem);
 
 	ADDFN(CAnnounce);
+	ADDFN(CCDROM);
+	ADDFN(CCDROMComputer);
+	ADDFN(CCDROMTray);
+	ADDFN(CComputerScreen);
 	ADDFN(CDeadArea);
 	ADDFN(CHammerDispensorButton);
 	ADDFN(CPETPosition);
