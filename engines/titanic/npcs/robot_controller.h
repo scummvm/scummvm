@@ -20,26 +20,23 @@
  *
  */
 
-#ifndef TITANIC_CHARACTER_H
-#define TITANIC_CHARACTER_H
+#ifndef TITANIC_ROBOT_CONTROLLER_H
+#define TITANIC_ROBOT_CONTROLLER_H
 
 #include "titanic/core/game_object.h"
 
 namespace Titanic {
 
-class CCharacter : public CGameObject {
+class CRobotController : public CGameObject {
 protected:
-	int _fieldBC;
-	int _fieldC0;
-	int _fieldC4;
-	CString _charName;
+	CString _string1;
 public:
-	CCharacter();
+	CRobotController();
 
 	/**
 	 * Return the class name
 	 */
-	virtual const char *getClassName() const { return "CCharacter"; }
+	virtual const char *getClassName() const { return "CRobotController"; }
 
 	/**
 	 * Save the data for the class to file
@@ -54,4 +51,4 @@ public:
 
 } // End of namespace Titanic
 
-#endif /* TITANIC_CHARACTER_H */
+#endif /* TITANIC_ROBOT_CONTROLLER_H */

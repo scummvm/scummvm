@@ -68,6 +68,7 @@
 #include "titanic/npcs/parrot.h"
 #include "titanic/npcs/starlings.h"
 #include "titanic/npcs/succubus.h"
+#include "titanic/npcs/summon_bots.h"
 #include "titanic/npcs/titania.h"
 
 #include "titanic/sound/auto_music_player.h"
@@ -126,6 +127,7 @@ DEFFN(CMaitreD);
 DEFFN(CMobile);
 DEFFN(CParrot);
 DEFFN(CStarlings);
+DEFFN(CSummonBots);
 DEFFN(CSuccUBus);
 DEFFN(CTitania);
 
@@ -180,6 +182,7 @@ void CSaveableObject::initClassList() {
 	ADDFN(CParrot);
 	ADDFN(CStarlings);
 	ADDFN(CSuccUBus);
+	ADDFN(CSummonBots);
 	ADDFN(CTitania);
 
 	ADDFN(CAutoMusicPlayer);

@@ -20,38 +20,25 @@
  *
  */
 
-#ifndef TITANIC_CHARACTER_H
-#define TITANIC_CHARACTER_H
-
-#include "titanic/core/game_object.h"
+#include "titanic/npcs/robot_controller.h"
 
 namespace Titanic {
 
-class CCharacter : public CGameObject {
-protected:
-	int _fieldBC;
-	int _fieldC0;
-	int _fieldC4;
-	CString _charName;
-public:
-	CCharacter();
+CRobotController::CRobotController() : CGameObject(), _string1("BellBot") {
+}
 
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CCharacter"; }
+void CRobotController::save(SimpleFile *file, int indent) const {
+	file->writeNumberLine(1, indent);
+	file->writeQuotedLine(_string1, indent);
 
-	/**
-	 * Save the data for the class to file
-	 */
-	virtual void save(SimpleFile *file, int indent) const;
+	CGameObject::save(file, indent);
+}
 
-	/**
-	 * Load the data for the class from file
-	 */
-	virtual void load(SimpleFile *file);
-};
+void CRobotController::load(SimpleFile *file) {
+	file->readNumber();
+	_string1 = file->readString();
+
+	CGameObject::load(file);
+}
 
 } // End of namespace Titanic
-
-#endif /* TITANIC_CHARACTER_H */

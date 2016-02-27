@@ -63,8 +63,10 @@ MODULE_OBJS := \
 	npcs/maitre_d.o \
 	npcs/mobile.o \
 	npcs/parrot.o \
+	npcs/robot_controller.o \
 	npcs/starlings.o \
 	npcs/succubus.o \
+	npcs/summon_bots.o \
 	npcs/titania.o \
 	npcs/true_talk_npc.o \
 	sound/auto_music_player.o \
