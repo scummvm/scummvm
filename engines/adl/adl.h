@@ -41,7 +41,7 @@ struct AdlGameDescription;
 
 enum GameType {
 	kGameTypeNone = 0,
-	kGameTypeAdl1
+	kGameTypeHires1
 };
 
 Common::String asciiToApple(Common::String str);

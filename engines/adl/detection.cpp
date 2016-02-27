@@ -20,14 +20,9 @@
  *
  */
 
-#include "adl/adl.h"
-
-#include "common/config-manager.h"
-#include "common/error.h"
-#include "common/fs.h"
-
 #include "engines/advancedDetector.h"
-#include "engines/metaengine.h"
+
+#include "adl/adl.h"
 
 namespace Adl {
 
@@ -36,22 +31,7 @@ struct AdlGameDescription {
 	GameType gameType;
 };
 
-uint32 AdlEngine::getFeatures() const {
-	return _gameDescription->desc.flags;
-}
-
-const char *AdlEngine::getGameId() const {
-	return _gameDescription->desc.gameid;
-}
-
-const char *const directoryGlobs[] = {
-	"game",
-	"datafiles",
-	0
-};
-
 static const PlainGameDescriptor adlGames[] = {
-	// Games
 	{"hires1", "Hi-Res Adventure #1: Mystery House"},
 	{0, 0}
 };
@@ -72,7 +52,7 @@ static const AdlGameDescription gameDescriptions[] = {
 			ADGF_NO_FLAGS,
 			GUIO0()
 		},
-		kGameTypeAdl1
+		kGameTypeHires1
 	},
 	{AD_TABLE_END_MARKER, kGameTypeNone}
 };
@@ -82,7 +62,7 @@ public:
 	AdlMetaEngine() : AdvancedMetaEngine(gameDescriptions, sizeof(AdlGameDescription), adlGames) { }
 
 	const char *getName() const {
-		return "Hi-Res Adventure";
+		return "ADL";
 	}
 
 	const char *getOriginalCopyright() const {
@@ -93,10 +73,9 @@ public:
 };
 
 bool AdlMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *gd) const {
-	if (gd) {
+	if (gd)
 		*engine = AdlEngine::create(((const AdlGameDescription *)gd)->gameType, syst, (const AdlGameDescription *)gd);
-	}
-	return gd != 0;
+	return gd != nullptr;
 }
 
 } // End of namespace Adl

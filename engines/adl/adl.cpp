@@ -145,7 +145,7 @@ void AdlEngine::printStrings(Common::SeekableReadStream &stream, int count) {
 
 AdlEngine *AdlEngine::create(GameType type, OSystem *syst, const AdlGameDescription *gd) {
 	switch(type) {
-	case kGameTypeAdl1:
+	case kGameTypeHires1:
 		return AdlEngine_v1__create(syst, gd);
 	default:
 		error("Unknown GameType");
