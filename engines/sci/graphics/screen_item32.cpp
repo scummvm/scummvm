@@ -202,23 +202,6 @@ void ScreenItem::setFromObject(SegManager *segMan, const reg_t object, const boo
 		writeSelectorValue(segMan, object, SELECTOR(priority), _position.y);
 	}
 
-	// TODO: At this point (needs checking), GK1 seems to check for the "visible"
-	// selector of a plane object. If the object has such a selector, and it's set
-	// to 0, then the object should be hidden.
-	//
-	// This is needed for the inventory in GK1, and seemed to be used only for that
-	// game - the "visible" selector isn't present in any other SCI32 game.
-	// Possible disabled and unverified code that checks for this follows. This fixes
-	// the inventory in GK1. Verify against disassembly!
-#if 0
-	if (lookupSelector(segMan, object, SELECTOR(visible), NULL, NULL) != kSelectorNone) {
-		if (readSelectorValue(segMan, object, SELECTOR(visible)) == 0) {
-			_fixPriority = true;
-			_priority = -1;
-		}
-	}
-#endif
-
 	_z = readSelectorValue(segMan, object, SELECTOR(z));
 	_position.y -= _z;
 
