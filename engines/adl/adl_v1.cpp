@@ -46,11 +46,7 @@ static uint exeStrings[STR_MH_TOTAL] = {
 };
 
 AdlEngine_v1::AdlEngine_v1(OSystem *syst, const AdlGameDescription *gd) :
-		AdlEngine(syst, gd),
-		_state(kIntro),
-		_room(1),
-		_steps(1),
-		_isDark(false) {
+		AdlEngine(syst, gd) {
 	_variables.resize(20);
 }
 

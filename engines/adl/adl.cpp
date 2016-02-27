@@ -42,12 +42,15 @@ namespace Adl {
 AdlEngine::AdlEngine(OSystem *syst, const AdlGameDescription *gd) :
 		Engine(syst),
 		_gameDescription(gd),
-		_console(nullptr),
-		_display(nullptr) {
+		_display(nullptr),
+		_parser(nullptr),
+		_room(1),
+		_steps(0),
+		_isDark(false) {
 }
 
 AdlEngine::~AdlEngine() {
-	delete _console;
+	delete _parser;
 	delete _display;
 }
 
@@ -65,7 +68,6 @@ Common::Error AdlEngine::run() {
 
 	g_system->getPaletteManager()->setPalette(palette, 0, 6);
 
-	_console = new Console(this);
 	_display = new Display();
 	_parser = new Parser(*this, *_display);
 

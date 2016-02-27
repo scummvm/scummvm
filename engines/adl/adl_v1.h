@@ -57,46 +57,6 @@ private:
 		MH_ITEM_OFFSETS = 21
 	};
 
-	enum State {
-		kIntro,
-		kIdle
-	};
-
-	struct Room {
-		byte description;
-		byte connections[6];
-		byte field8;
-		byte picture;
-	};
-
-	struct Picture {
-		byte block;
-		uint16 offset;
-	};
-
-	struct Command {
-		byte room;
-		byte verb, noun;
-		byte numCond, numAct;
-		Common::Array<byte> script;
-	};
-
-	struct Item {
-		byte field1;
-		byte field2;
-		byte field3;
-		byte field4;
-		byte field5;
-		byte field6;
-		byte field7;
-		byte field8;
-		Common::Array<byte> field10;
-	};
-
-	typedef Common::List<Command> Commands;
-
-	int _state;
-
 	void runIntro();
 	void drawPic(Common::ReadStream &stream, byte xOffset, byte yOffset);
 	void showRoom();
@@ -114,18 +74,6 @@ private:
 	void drawPic(byte pic, byte xOffset, byte yOffset);
 
 	Common::Array<Common::String> _exeStrings;
-	Common::Array<Common::String> _msgStrings;
-	Common::Array<Room> _rooms;
-	Common::Array<Picture> _pictures;
-	Common::Array<Item> _inventory;
-	Common::Array<Common::Point> _itemOffsets;
-	Common::Array<Common::Array<byte> > _drawings;
-	Commands _roomCommands;
-	Commands _globalCommands;
-	byte _room;
-	uint16 _steps;
-	Common::Array<byte> _variables;
-	bool _isDark;
 };
 
 } // End of namespace Adl

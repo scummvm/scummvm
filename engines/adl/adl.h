@@ -24,7 +24,10 @@
 #define ADL_ADL_H
 
 #include "common/random.h"
+#include "common/rect.h"
+
 #include "engines/engine.h"
+
 #include "gui/debugger.h"
 
 namespace Common {
@@ -102,14 +105,24 @@ protected:
 	virtual void runGame() = 0;
 	Common::String readString(Common::ReadStream &stream, byte until = 0);
 	void printStrings(Common::SeekableReadStream &stream, int count = 1);
+
 	Display *_display;
 	Parser *_parser;
 
-private:
-	Console *_console;
+	Common::Array<Common::String> _msgStrings;
+	Common::Array<Picture> _pictures;
+	Common::Array<Item> _inventory;
+	Common::Array<Common::Point> _itemOffsets;
+	Common::Array<Common::Array<byte> > _drawings;
+	Commands _roomCommands;
+	Commands _globalCommands;
 
-	// We need random numbers
-	Common::RandomSource *_rnd;
+	// Game state
+	Common::Array<Room> _rooms;
+	byte _room;
+	uint16 _steps;
+	Common::Array<byte> _variables;
+	bool _isDark;
 };
 
 // Example console class
