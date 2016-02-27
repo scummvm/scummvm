@@ -111,12 +111,10 @@ uint16 GfxCompare::kernelOnControl(byte screenMask, const Common::Rect &rect) {
 void GfxCompare::kernelSetNowSeen(reg_t objectReference) {
 	GfxView *view = NULL;
 	Common::Rect celRect(0, 0);
+	// TODO/FIXME: Torin's menu code tries to draw special views with an ID of 0xFFFF, which
+	// are not currently handled properly and cause a crash. These might be text views that
+	// are not properly implemented.
 	GuiResourceId viewId = (GuiResourceId)readSelectorValue(_segMan, objectReference, SELECTOR(view));
-
-	// HACK: Ignore invalid views for now (perhaps unimplemented text views?)
-	if (viewId == 0xFFFF)	// invalid view
-		return;
-
 	int16 loopNo = readSelectorValue(_segMan, objectReference, SELECTOR(loop));
 	int16 celNo = readSelectorValue(_segMan, objectReference, SELECTOR(cel));
 	int16 x = (int16)readSelectorValue(_segMan, objectReference, SELECTOR(x));
@@ -201,15 +199,9 @@ void GfxCompare::kernelBaseSetter(reg_t object) {
 		GuiResourceId viewId = readSelectorValue(_segMan, object, SELECTOR(view));
 		int16 loopNo = readSelectorValue(_segMan, object, SELECTOR(loop));
 		int16 celNo = readSelectorValue(_segMan, object, SELECTOR(cel));
-
-		// HACK: Ignore invalid views for now (perhaps unimplemented text views?)
-		if (viewId == 0xFFFF)	// invalid view
-			return;
-
 		uint16 scaleSignal = 0;
-		if (getSciVersion() >= SCI_VERSION_1_1) {
+		if (getSciVersion() >= SCI_VERSION_1_1)
 			scaleSignal = readSelectorValue(_segMan, object, SELECTOR(scaleSignal));
-		}
 
 		Common::Rect celRect;
 
