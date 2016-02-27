@@ -41,11 +41,35 @@ MODULE_OBJS := \
 	game/television.o \
 	gfx/act_button.o \
 	gfx/changes_season_button.o \
+	gfx/chev_left_off.o \
+	gfx/chev_left_on.o \
+	gfx/chev_right_off.o \
+	gfx/chev_right_on.o \
+	gfx/chev_send_rec_switch.o \
+	gfx/chev_switch.o \
 	gfx/elevator_button.o \
+	gfx/get_from_succ.o \
+	gfx/helmet_on_off.o \
+	gfx/home_photo.o \
+	gfx/icon_nav_action.o \
+	gfx/icon_nav_down.o \
+	gfx/icon_nav_left.o \
+	gfx/icon_nav_right.o \
+	gfx/icon_nav_up.o \
+	gfx/keybrd_butt.o \
 	gfx/move_object_button.o \
+	gfx/pet_mode_off.o \
+	gfx/pet_mode_on.o \
+	gfx/pet_mode_panel.o \
+	gfx/send_to_succ.o \
 	gfx/slider_button.o \
-	gfx/st_button.o \
+	gfx/small_chev_left_off.o \
+	gfx/small_chev_left_on.o \
+	gfx/small_chev_right_off.o \
+	gfx/small_chev_right_on.o \
 	gfx/status_change_button.o \
+	gfx/st_button.o \
+	gfx/toggle_switch.o \
 	messages/auto_sound_event.o \
 	messages/door_auto_sound_event.o \
 	moves/enter_bomb_room.o \
@@ -88,3 +112,4 @@ endif
 
 # Include common rules
 include $(srcdir)/rules.mk
+

@@ -44,11 +44,35 @@
 
 #include "titanic/gfx/act_button.h"
 #include "titanic/gfx/changes_season_button.h"
+#include "titanic/gfx/chev_left_off.h"
+#include "titanic/gfx/chev_left_on.h"
+#include "titanic/gfx/chev_right_off.h"
+#include "titanic/gfx/chev_right_on.h"
+#include "titanic/gfx/chev_send_rec_switch.h"
+#include "titanic/gfx/chev_switch.h"
 #include "titanic/gfx/elevator_button.h"
+#include "titanic/gfx/get_from_succ.h"
+#include "titanic/gfx/helmet_on_off.h"
+#include "titanic/gfx/home_photo.h"
+#include "titanic/gfx/icon_nav_action.h"
+#include "titanic/gfx/icon_nav_down.h"
+#include "titanic/gfx/icon_nav_left.h"
+#include "titanic/gfx/icon_nav_right.h"
+#include "titanic/gfx/icon_nav_up.h"
+#include "titanic/gfx/keybrd_butt.h"
 #include "titanic/gfx/move_object_button.h"
+#include "titanic/gfx/pet_mode_off.h"
+#include "titanic/gfx/pet_mode_on.h"
+#include "titanic/gfx/pet_mode_panel.h"
+#include "titanic/gfx/send_to_succ.h"
 #include "titanic/gfx/slider_button.h"
-#include "titanic/gfx/st_button.h"
+#include "titanic/gfx/small_chev_left_off.h"
+#include "titanic/gfx/small_chev_left_on.h"
+#include "titanic/gfx/small_chev_right_off.h"
+#include "titanic/gfx/small_chev_right_on.h"
 #include "titanic/gfx/status_change_button.h"
+#include "titanic/gfx/st_button.h"
+#include "titanic/gfx/toggle_switch.h"
 
 #include "titanic/messages/auto_sound_event.h"
 #include "titanic/messages/door_auto_sound_event.h"
@@ -113,9 +137,32 @@ DEFFN(CTelevision);
 
 DEFFN(CActButton);
 DEFFN(CChangesSeasonButton);
+DEFFN(CChevLeftOff);
+DEFFN(CChevLeftOn);
+DEFFN(CChevRightOff);
+DEFFN(CChevRightOn);
+DEFFN(CChevSendRecSwitch);
+DEFFN(CChevSwitch);
 DEFFN(CElevatorButton);
+DEFFN(CGetFromSucc);
+DEFFN(CHelmetOnOff);
+DEFFN(CHomePhoto);
+DEFFN(CIconNavAction);
+DEFFN(CIconNavDown);
+DEFFN(CIconNavLeft);
+DEFFN(CIconNavRight);
+DEFFN(CIconNavUp);
+DEFFN(CKeybrdButt);
 DEFFN(CMoveObjectButton);
+DEFFN(CPetModeOff);
+DEFFN(CPetModeOn);
+DEFFN(CPetModePanel);
+DEFFN(CSendToSucc);
 DEFFN(CSliderButton);
+DEFFN(CSmallChevLeftOff);
+DEFFN(CSmallChevLeftOn);
+DEFFN(CSmallChevRightOff);
+DEFFN(CSmallChevRightOn);
 DEFFN(CStatusChangeButton);
 DEFFN(CSTButton);
 
@@ -176,9 +223,32 @@ void CSaveableObject::initClassList() {
 
 	ADDFN(CActButton);
 	ADDFN(CChangesSeasonButton);
+	ADDFN(CChevLeftOff);
+	ADDFN(CChevLeftOn);
+	ADDFN(CChevRightOff);
+	ADDFN(CChevRightOn);
+	ADDFN(CChevSendRecSwitch);
+	ADDFN(CChevSwitch);
 	ADDFN(CElevatorButton);
+	ADDFN(CGetFromSucc);
+	ADDFN(CHelmetOnOff);
+	ADDFN(CHomePhoto);
+	ADDFN(CIconNavAction);
+	ADDFN(CIconNavDown);
+	ADDFN(CIconNavLeft);
+	ADDFN(CIconNavRight);
+	ADDFN(CIconNavUp);
+	ADDFN(CKeybrdButt);
 	ADDFN(CMoveObjectButton);
+	ADDFN(CPetModeOff);
+	ADDFN(CPetModeOn);
+	ADDFN(CPetModePanel);
+	ADDFN(CSendToSucc);
 	ADDFN(CSliderButton);
+	ADDFN(CSmallChevLeftOff);
+	ADDFN(CSmallChevLeftOn);
+	ADDFN(CSmallChevRightOff);
+	ADDFN(CSmallChevRightOn);
 	ADDFN(CStatusChangeButton);
 	ADDFN(CSTButton);
 
