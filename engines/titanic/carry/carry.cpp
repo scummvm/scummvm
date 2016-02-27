@@ -24,10 +24,9 @@
 
 namespace Titanic {
 
-CCarry::CCarry() : CGameObject(), _fieldC8(0), _fieldCC(0),
-	_fieldDC(0), _fieldE0(1), _fieldFC(0), _field100(0),
-	_field104(0), _field108(0), _field10C(0), _field110(0),
-	_field120(0), _field124(0), _field128(0), 
+CCarry::CCarry() : CGameObject(), _fieldDC(0), _fieldE0(1),
+	_field100(0), _field104(0), _field108(0), _field10C(0),
+	_field110(0), _field120(0), _field124(0), _field128(0),
 	_string1("None"),
 	_string2("NULL"),
 	_string3("That doesn't seem to do anything."),
@@ -37,13 +36,13 @@ CCarry::CCarry() : CGameObject(), _fieldC8(0), _fieldCC(0),
 void CCarry::save(SimpleFile *file, int indent) const {
 	file->writeNumberLine(1, indent);
 	file->writeQuotedLine(_string1, indent);
-	file->writeNumberLine(_fieldC8, indent);
+	file->writePoint(_pos1, indent);
 	file->writeQuotedLine(_string2, indent);
 	file->writeNumberLine(_fieldDC, indent);
 	file->writeNumberLine(_fieldE0, indent);
 	file->writeQuotedLine(_string3, indent);
 	file->writeQuotedLine(_string4, indent);
-	file->writeNumberLine(_fieldFC, indent);
+	file->writePoint(_pos2, indent);
 	file->writeNumberLine(_field104, indent);
 	file->writeNumberLine(_field108, indent);
 	file->writeNumberLine(_field10C, indent);
@@ -59,13 +58,13 @@ void CCarry::save(SimpleFile *file, int indent) const {
 void CCarry::load(SimpleFile *file) {
 	file->readNumber();
 	_string1 = file->readString();
-	_fieldC8 = file->readNumber();
+	_pos1 = file->readPoint();
 	_string2 = file->readString();
 	_fieldDC = file->readNumber();
 	_fieldE0 = file->readNumber();
 	_string3 = file->readString();
 	_string4 = file->readString();
-	_fieldFC = file->readNumber();
+	_pos2 = file->readPoint();
 	_field104 = file->readNumber();
 	_field108 = file->readNumber();
 	_field10C = file->readNumber();
