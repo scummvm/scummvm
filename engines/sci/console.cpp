@@ -192,6 +192,7 @@ Console::Console(SciEngine *engine) : GUI::Debugger(),
 	registerCmd("send",				WRAP_METHOD(Console, cmdSend));
 	registerCmd("go",					WRAP_METHOD(Console, cmdGo));
 	registerCmd("logkernel",          WRAP_METHOD(Console, cmdLogKernel));
+	registerCmd("vocab994",          WRAP_METHOD(Console, cmdMapVocab994));
 	// Breakpoints
 	registerCmd("bp_list",			WRAP_METHOD(Console, cmdBreakpointList));
 	registerCmd("bplist",				WRAP_METHOD(Console, cmdBreakpointList));			// alias
@@ -3923,6 +3924,56 @@ bool Console::cmdSfx01Track(int argc, const char **argv) {
 	return true;
 }
 
+bool Console::cmdMapVocab994(int argc, const char **argv) {
+	EngineState *s = _engine->_gamestate;	// for the several defines in this function
+	reg_t reg;
+
+	if (argc != 4) {
+		debugPrintf("Attempts to map a range of vocab.994 entries to a given class\n");
+		debugPrintf("Usage: %s <class addr> <first> <last>\n", argv[0]);
+		return true;
+	}
+
+	if (parse_reg_t(_engine->_gamestate, argv[1], &reg, false)) {
+		debugPrintf("Invalid address passed.\n");
+		debugPrintf("Check the \"addresses\" command on how to use addresses\n");
+		return true;
+	}
+
+	Resource *resource = _engine->_resMan->findResource(ResourceId(kResourceTypeVocab, 994), 0);
+	const Object *obj = s->_segMan->getObject(reg);
+	uint16 *data = (uint16 *) resource->data;
+	unsigned int first = atoi(argv[2]);
+	unsigned int last  = atoi(argv[3]);
+	Common::Array<bool> markers;
+
+	markers.resize(_engine->getKernel()->getSelectorNamesSize());
+	if (!obj->isClass() && getSciVersion() != SCI_VERSION_3)
+		obj = s->_segMan->getObject(obj->getSuperClassSelector());
+
+	first = MIN(first, resource->size / 2 - 2);
+	last =  MIN(last, resource->size / 2 - 2);
+
+	for (unsigned int i = first; i <= last; ++i)
+	{
+		uint16 ofs = data[i];
+
+		if (obj && ofs < obj->getVarCount()) {
+			uint16 varSelector = obj->getVarSelector(ofs);
+			debugPrintf("%d: property at index %04x of %s is %s %s\n", i, ofs,
+				    s->_segMan->derefString(obj->getNameSelector()),
+				    _engine->getKernel()->getSelectorName(varSelector).c_str(),
+				    markers[varSelector] ? "(repeat!)" : "");
+			markers[varSelector] = true;
+		}
+		else {
+			debugPrintf("%d: property at index %04x doesn't match up with %s\n", i, ofs,
+				    s->_segMan->derefString(obj->getNameSelector()));
+		}
+	}
+
+	return true;
+}
 bool Console::cmdQuit(int argc, const char **argv) {
 	if (argc != 2) {
 	}
@@ -4361,7 +4412,8 @@ int Console::printObject(reg_t pos) {
 		debugPrintf("    ");
 		if (var_container && i < var_container->getVarCount()) {
 			uint16 varSelector = var_container->getVarSelector(i);
-			debugPrintf("[%03x] %s = ", varSelector, _engine->getKernel()->getSelectorName(varSelector).c_str());
+			// Times two commented out for now for easy parsing of vocab.994
+			debugPrintf("(%04x) [%03x] %s = ", i /* *2 */, varSelector, _engine->getKernel()->getSelectorName(varSelector).c_str());
 		} else
 			debugPrintf("p#%x = ", i);
 
