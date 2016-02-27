@@ -261,6 +261,8 @@ protected:
 	uint32 _matchGoOutTime; // 144
 
 	VideoHandle _cabinFireMovie; // 240
+
+	bool _cabinGaugeMovieEnabled;
 	VideoHandle _cabinGaugeMovie; // 244
 
 	bool _boilerPressureIncreasing;
