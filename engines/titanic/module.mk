@@ -38,6 +38,7 @@ MODULE_OBJS := \
 	game/room_item.o \
 	game/service_elevator_door.o \
 	game/sub_glass.o \
+	game/television.o \
 	messages/auto_sound_event.o \
 	messages/door_auto_sound_event.o \
 	moves/enter_bomb_room.o \

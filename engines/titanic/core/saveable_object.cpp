@@ -40,6 +40,7 @@
 #include "titanic/game/room_item.h"
 #include "titanic/game/service_elevator_door.h"
 #include "titanic/game/sub_glass.h"
+#include "titanic/game/television.h"
 
 #include "titanic/messages/auto_sound_event.h"
 #include "titanic/messages/door_auto_sound_event.h"
@@ -100,6 +101,7 @@ DEFFN(CPETPosition);
 DEFFN(CRoomItem);
 DEFFN(CServiceElevatorDoor);
 DEFFN(CSUBGlass);
+DEFFN(CTelevision);
 
 DEFFN(CAutoSoundEvent);
 DEFFN(CDoorAutoSoundEvent);
@@ -154,6 +156,7 @@ void CSaveableObject::initClassList() {
 	ADDFN(CRoomItem);
 	ADDFN(CServiceElevatorDoor);
 	ADDFN(CSUBGlass);
+	ADDFN(CTelevision);
 
 	ADDFN(CAutoSoundEvent);
 	ADDFN(CDoorAutoSoundEvent);
