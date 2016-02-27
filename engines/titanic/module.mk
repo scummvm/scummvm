@@ -67,10 +67,14 @@ MODULE_OBJS := \
 	game/cdrom_tray.o \
 	game/computer_screen.o \
 	game/dead_area.o \
+	game/doorbot_home_handler.o \
+	game/drawer.o \
+	game/drop_target.o \
 	game/hammer_dispensor_button.o \
 	game/pet_position.o \
 	game/room_item.o \
 	game/service_elevator_door.o \
+	game/sgt_state_room.o \
 	game/start_action.o \
 	game/sub_glass.o \
 	game/television.o \
@@ -107,6 +111,11 @@ MODULE_OBJS := \
 	gfx/toggle_switch.o \
 	messages/auto_sound_event.o \
 	messages/door_auto_sound_event.o \
+	messages/doorbot_needed_in_elevator_msg.o \
+	messages/doorbot_needed_in_home_msg.o \
+	messages/drop_object_msg.o \
+	messages/drop_zone_got_object_msg.o \
+	messages/message.o \
 	moves/enter_bomb_room.o \
 	moves/exit_arboretum.o \
 	moves/exit_bridge.o \

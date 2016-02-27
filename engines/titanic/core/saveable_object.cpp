@@ -70,10 +70,14 @@
 #include "titanic/game/cdrom_tray.h"
 #include "titanic/game/computer_screen.h"
 #include "titanic/game/dead_area.h"
+#include "titanic/game/doorbot_home_handler.h"
+#include "titanic/game/drawer.h"
+#include "titanic/game/drop_target.h"
 #include "titanic/game/hammer_dispensor_button.h"
 #include "titanic/game/pet_position.h"
 #include "titanic/game/room_item.h"
 #include "titanic/game/service_elevator_door.h"
+#include "titanic/game/sgt_state_room.h"
 #include "titanic/game/start_action.h"
 #include "titanic/game/sub_glass.h"
 #include "titanic/game/television.h"
@@ -194,10 +198,13 @@ DEFFN(CCDROMComputer);
 DEFFN(CCDROMTray);
 DEFFN(CComputerScreen);
 DEFFN(CDeadArea);
+DEFFN(CDoorbotHomeHandler);
+DEFFN(CDropTarget);
 DEFFN(CHammerDispensorButton);
 DEFFN(CPETPosition);
 DEFFN(CRoomItem);
 DEFFN(CServiceElevatorDoor);
+DEFFN(CSGTStateRoom);
 DEFFN(CStartAction);
 DEFFN(CSUBGlass);
 DEFFN(CTelevision);
@@ -311,10 +318,13 @@ void CSaveableObject::initClassList() {
 	ADDFN(CCDROMTray);
 	ADDFN(CComputerScreen);
 	ADDFN(CDeadArea);
+	ADDFN(CDoorbotHomeHandler);
+	ADDFN(CDropTarget);
 	ADDFN(CHammerDispensorButton);
 	ADDFN(CPETPosition);
 	ADDFN(CRoomItem);
 	ADDFN(CServiceElevatorDoor);
+	ADDFN(CSGTStateRoom);
 	ADDFN(CStartAction);
 	ADDFN(CSUBGlass);
 	ADDFN(CTelevision);
