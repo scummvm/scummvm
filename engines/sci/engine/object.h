@@ -262,6 +262,8 @@ public:
 	bool initBaseObject(SegManager *segMan, reg_t addr, bool doInitSuperClass = true);
 	void syncBaseObject(const byte *ptr) { _baseObj = ptr; }
 
+	bool mustSetViewVisibleSci3(int selector) const { return _mustSetViewVisible[selector/32]; }
+
 private:
 	void initSelectorsSci3(const byte *buf);
 
@@ -278,6 +280,7 @@ private:
 	reg_t _superClassPosSci3; /**< reg_t pointing to superclass for SCI3 */
 	reg_t _speciesSelectorSci3;	/**< reg_t containing species "selector" for SCI3 */
 	reg_t _infoSelectorSci3; /**< reg_t containing info "selector" for SCI3 */
+	Common::Array<bool> _mustSetViewVisible; /** cached bit of info to make lookup fast, SCI3 only */
 };
 
 
