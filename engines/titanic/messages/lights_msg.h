@@ -20,36 +20,29 @@
  *
  */
 
-#ifndef TITANIC_DOORBOT_NEEDED_IN_ELEVATOR_MSG_H
-#define TITANIC_DOORBOT_NEEDED_IN_ELEVATOR_MSG_H
+#ifndef TITANIC_LIGHTS_MSG_H
+#define TITANIC_LIGHTS_MSG_H
 
-#include "titanic/core/game_object.h"
+#include "titanic/messages/message.h"
 
 namespace Titanic {
 
-class CAutoSoundEvent : public CMessage {
-protected:
-	int _fieldBC;
-	int _fieldC0;
+class CLightsMsg : public CMessage {
 public:
-	CAutoSoundEvent();
+	int _field4;
+	int _field8;
+	int _fieldC;
+	int _field10;
+public:
+	CLightsMsg() : CMessage(), _field4(0), _field8(0),
+		_fieldC(0), _field10(0) {}
 
 	/**
 	 * Return the class name
 	 */
-	virtual const char *getClassName() const { return "CAutoSoundEvent"; }
-
-	/**
-	 * Save the data for the class to file
-	 */
-	virtual void save(SimpleFile *file, int indent) const;
-
-	/**
-	 * Load the data for the class from file
-	 */
-	virtual void load(SimpleFile *file);
+	virtual const char *getClassName() const { return "CLightsMsg"; }
 };
 
 } // End of namespace Titanic
 
-#endif /* TITANIC_DOORBOT_NEEDED_IN_ELEVATOR_MSG_H */
+#endif /* TITANIC_LIGHTS_MSG_H */

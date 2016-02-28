@@ -20,27 +20,26 @@
  *
  */
 
-#include "titanic/messages/auto_sound_event.h"
+#ifndef TITANIC_SUB_ACCEPT_CCARRY_MSG_H
+#define TITANIC_SUB_ACCEPT_CCARRY_MSG_H
+
+#include "titanic/messages/message.h"
 
 namespace Titanic {
 
-CAutoSoundEvent::CAutoSoundEvent() : CGameObject(), _fieldBC(-1), _fieldC0(0xFFFFFF) {
-}
+class CSubAcceptCCarryMsg : public CMessage {
+public:
+	CString _string1;
+	int _value1, _value2, _value3;
+public:
+	CSubAcceptCCarryMsg() : _value1(0), _value2(0), _value3(0) {}
 
-void CAutoSoundEvent::save(SimpleFile *file, int indent) const {
-	file->writeNumberLine(1, indent);
-	file->writeNumberLine(_fieldBC, indent);
-	file->writeNumberLine(_fieldC0, indent);
-
-	CGameObject::save(file, indent);
-}
-
-void CAutoSoundEvent::load(SimpleFile *file) {
-	file->readNumber();
-	_fieldBC = file->readNumber();
-	_fieldC0 = file->readNumber();
-
-	CGameObject::load(file);
-}
+	/**
+	 * Return the class name
+	 */
+	virtual const char *getClassName() const { return "CSubAcceptCCarryMsg"; }
+};
 
 } // End of namespace Titanic
+
+#endif /* TITANIC_SUB_ACCEPT_CCARRY_MSG_H */

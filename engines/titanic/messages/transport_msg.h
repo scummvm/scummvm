@@ -20,27 +20,26 @@
  *
  */
 
-#include "titanic/messages/auto_sound_event.h"
+#ifndef TITANIC_TRANSPORT_MSG_H
+#define TITANIC_TRANSPORT_MSG_H
+
+#include "titanic/messages/message.h"
 
 namespace Titanic {
 
-CAutoSoundEvent::CAutoSoundEvent() : CGameObject(), _fieldBC(-1), _fieldC0(0xFFFFFF) {
-}
+class CTransportMsg : public CMessage {
+public:
+	CString _string;
+	int _value1, _value2;
+public:
+	CTransportMsg() : _value1(0), _value2(0) {}
 
-void CAutoSoundEvent::save(SimpleFile *file, int indent) const {
-	file->writeNumberLine(1, indent);
-	file->writeNumberLine(_fieldBC, indent);
-	file->writeNumberLine(_fieldC0, indent);
-
-	CGameObject::save(file, indent);
-}
-
-void CAutoSoundEvent::load(SimpleFile *file) {
-	file->readNumber();
-	_fieldBC = file->readNumber();
-	_fieldC0 = file->readNumber();
-
-	CGameObject::load(file);
-}
+	/**
+	 * Return the class name
+	 */
+	virtual const char *getClassName() const { return "CTransportMsg"; }
+};
 
 } // End of namespace Titanic
+
+#endif /* TITANIC_TRANSPORT_MSG_H */

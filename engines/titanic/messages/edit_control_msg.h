@@ -20,27 +20,31 @@
  *
  */
 
-#include "titanic/messages/auto_sound_event.h"
+#ifndef TITANIC_EDIT_CONTROL_MSG_H
+#define TITANIC_EDIT_CONTROL_MSG_H
+
+#include "titanic/messages/message.h"
 
 namespace Titanic {
 
-CAutoSoundEvent::CAutoSoundEvent() : CGameObject(), _fieldBC(-1), _fieldC0(0xFFFFFF) {
-}
+class CEditControlMsg : public CMessage {
+private:
+	int _field4;
+	int _field8;
+	CString _string1;
+	int _field18;
+	int _field1C;
+	int _field20;
+public:
+	CEditControlMsg() : _field4(0), _field8(0), _field18(0),
+		_field1C(0), _field20(0) {}
 
-void CAutoSoundEvent::save(SimpleFile *file, int indent) const {
-	file->writeNumberLine(1, indent);
-	file->writeNumberLine(_fieldBC, indent);
-	file->writeNumberLine(_fieldC0, indent);
-
-	CGameObject::save(file, indent);
-}
-
-void CAutoSoundEvent::load(SimpleFile *file) {
-	file->readNumber();
-	_fieldBC = file->readNumber();
-	_fieldC0 = file->readNumber();
-
-	CGameObject::load(file);
-}
+	/**
+	 * Return the class name
+	 */
+	virtual const char *getClassName() const { return "CEditControlMsg"; }
+};
 
 } // End of namespace Titanic
+
+#endif /* TITANIC_EDIT_CONTROL_MSG_H */

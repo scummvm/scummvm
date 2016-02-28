@@ -111,10 +111,6 @@ MODULE_OBJS := \
 	gfx/toggle_switch.o \
 	messages/auto_sound_event.o \
 	messages/door_auto_sound_event.o \
-	messages/doorbot_needed_in_elevator_msg.o \
-	messages/doorbot_needed_in_home_msg.o \
-	messages/drop_object_msg.o \
-	messages/drop_zone_got_object_msg.o \
 	messages/message.o \
 	moves/enter_bomb_room.o \
 	moves/exit_arboretum.o \
