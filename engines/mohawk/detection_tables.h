@@ -52,7 +52,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformWindows,
 			ADGF_DEMO | ADGF_UNSTABLE,
-			GUIO1(GUIO_NOASPECT)
+			GUIO2(GUIO_NOASPECT, GUIO_NOLAUNCHLOAD)
 		},
 		GType_MYST,
 		GF_DEMO,
@@ -178,7 +178,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformWindows,
 			ADGF_UNSTABLE,
-			GUIO1(GUIO_NOASPECT)
+			GUIO2(GUIO_NOASPECT, GUIO_NOLAUNCHLOAD)
 		},
 		GType_MAKINGOF,
 		0,
@@ -196,7 +196,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 			Common::JA_JPN,
 			Common::kPlatformWindows,
 			ADGF_UNSTABLE,
-			GUIO1(GUIO_NOASPECT)
+			GUIO2(GUIO_NOASPECT, GUIO_NOLAUNCHLOAD)
 		},
 		GType_MAKINGOF,
 		0,
@@ -2713,7 +2713,7 @@ static const MohawkGameDescription fallbackDescs[] = {
 			Common::UNK_LANG,
 			Common::kPlatformWindows,
 			ADGF_UNSTABLE,
-			GUIO1(GUIO_NOASPECT)
+			GUIO2(GUIO_NOASPECT, GUIO_NOLAUNCHLOAD)
 		},
 		GType_MAKINGOF,
 		0,
