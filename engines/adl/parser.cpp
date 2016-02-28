@@ -129,7 +129,7 @@ Common::String Parser::getWord(const Common::String &line, uint &index) {
 
 void Parser::getInput(uint &verb, uint &noun) {
 	while (1) {
-		_display.printString(_engine.getExeString(STR_COMMON_ENTERCMD));
+		_display.printString(_engine.getEngineString(IDI_STR_ENTER_COMMAND));
 		Common::String line = getLine();
 
 		if (g_engine->shouldQuit())
@@ -139,7 +139,7 @@ void Parser::getInput(uint &verb, uint &noun) {
 		Common::String verbStr = getWord(line, index);
 
 		if (!_verbs.contains(verbStr)) {
-			Common::String err = _engine.getExeString(STR_COMMON_VERBERR);
+			Common::String err = _engine.getEngineString(IDI_STR_VERB_ERROR);
 			for (uint i = 0; i < verbStr.size(); ++i)
 				err.setChar(verbStr[i], i + 19);
 			_display.printString(err);
@@ -151,7 +151,7 @@ void Parser::getInput(uint &verb, uint &noun) {
 		Common::String nounStr = getWord(line, index);
 
 		if (!_nouns.contains(nounStr)) {
-			Common::String err = _engine.getExeString(STR_COMMON_NOUNERR);
+			Common::String err = _engine.getEngineString(IDI_STR_NOUN_ERROR);
 			for (uint i = 0; i < verbStr.size(); ++i)
 				err.setChar(verbStr[i], i + 19);
 			for (uint i = 0; i < nounStr.size(); ++i)

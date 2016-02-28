@@ -32,20 +32,12 @@ class ReadStream;
 namespace Adl {
 
 enum {
-	// Some of these are probably common
-	STR_MH_DIRERR = STR_CUSTOM_START,
-	STR_MH_DONTHAVEIT,
-	STR_MH_DONTUNDERSTAND,
-	STR_MH_GETTINGDARK,
-	STR_MH_PLAYAGAIN,
-
-	STR_MH_TOTAL
+	IDI_HR1_MSG_
 };
 
 class HiRes1Engine : public AdlEngine {
 public:
 	HiRes1Engine(OSystem *syst, const AdlGameDescription *gd);
-	Common::String getExeString(uint idx);
 
 protected:
 	void runGame();
@@ -57,23 +49,14 @@ private:
 		MH_ITEM_OFFSETS = 21
 	};
 
+	void printMessage(uint idx, bool wait = true);
+	uint getEngineMessage(EngineMessage msg);
+
 	void runIntro();
 	void drawPic(Common::ReadStream &stream, byte xOffset, byte yOffset);
 	void showRoom();
-	void printMessage(uint idx, bool wait = true);
-	void wordWrap(Common::String &str);
-	void readCommands(Common::ReadStream &stream, Commands &commands);
-	bool checkCommand(const Command &command, byte verb, byte noun);
-	bool doOneCommand(const Commands &commands, byte verb, byte noun);
-	void doAllCommands(const Commands &commands, byte verb, byte noun);
-	void doActions(const Command &command, byte noun, byte offset);
-	void clearScreen();
-	void takeItem(byte noun);
-	void dropItem(byte noun);
 	void drawItems();
 	void drawPic(byte pic, byte xOffset, byte yOffset);
-
-	Common::Array<Common::String> _exeStrings;
 };
 
 } // End of namespace Adl

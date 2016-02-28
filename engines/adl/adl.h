@@ -42,16 +42,33 @@ class Parser;
 class Console;
 struct AdlGameDescription;
 
+struct StringOffset {
+	int stringIdx;
+	uint offset;
+};
+
 enum GameType {
 	kGameTypeNone = 0,
 	kGameTypeHires1
 };
 
-enum {
-	STR_COMMON_ENTERCMD,
-	STR_COMMON_VERBERR,
-	STR_COMMON_NOUNERR,
-	STR_CUSTOM_START
+// Messages used outside of scripts
+enum EngineMessage {
+	IDI_MSG_CANT_GO_THERE,
+	IDI_MSG_DONT_UNDERSTAND,
+	IDI_MSG_ITEM_DOESNT_MOVE,
+	IDI_MSG_ITEM_NOT_HERE,
+	IDI_MSG_THANKS_FOR_PLAYING
+};
+
+// Strings embedded in the executable
+enum EngineString {
+	IDI_STR_ENTER_COMMAND,
+	IDI_STR_VERB_ERROR,
+	IDI_STR_NOUN_ERROR,
+	IDI_STR_PLAY_AGAIN,
+
+	IDI_STR_TOTAL
 };
 
 struct Room {
@@ -99,17 +116,29 @@ public:
 	static AdlEngine *create(GameType type, OSystem *syst, const AdlGameDescription *gd);
 
 	Common::Error run();
-	virtual Common::String getExeString(uint id) = 0;
+	virtual Common::String getEngineString(int str);
 
 protected:
 	virtual void runGame() = 0;
+	virtual uint getEngineMessage(EngineMessage msg) = 0;
 	Common::String readString(Common::ReadStream &stream, byte until = 0);
 	void printStrings(Common::SeekableReadStream &stream, int count = 1);
+	virtual void printMessage(uint idx, bool wait = true);
+	void wordWrap(Common::String &str);
+	void readCommands(Common::ReadStream &stream, Commands &commands);
+	bool checkCommand(const Command &command, byte verb, byte noun);
+	bool doOneCommand(const Commands &commands, byte verb, byte noun);
+	void doAllCommands(const Commands &commands, byte verb, byte noun);
+	void doActions(const Command &command, byte noun, byte offset);
+	void clearScreen();
+	void takeItem(byte noun);
+	void dropItem(byte noun);
 
 	Display *_display;
 	Parser *_parser;
 
-	Common::Array<Common::String> _msgStrings;
+	Common::Array<Common::String> _strings;
+	Common::Array<Common::String> _messages;
 	Common::Array<Picture> _pictures;
 	Common::Array<Item> _inventory;
 	Common::Array<Common::Point> _itemOffsets;
@@ -123,6 +152,9 @@ protected:
 	uint16 _steps;
 	Common::Array<byte> _variables;
 	bool _isDark;
+
+private:
+	void printEngineMessage(EngineMessage);
 };
 
 AdlEngine *HiRes1Engine__create(OSystem *syst, const AdlGameDescription *gd);

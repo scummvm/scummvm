@@ -103,6 +103,309 @@ void AdlEngine::printStrings(Common::SeekableReadStream &stream, int count) {
 	};
 }
 
+Common::String AdlEngine::getEngineString(int str) {
+	return _strings[str];
+}
+
+void AdlEngine::wordWrap(Common::String &str) {
+	uint end = 39;
+
+	while (1) {
+		if (str.size() <= end)
+			return;
+
+		while (str[end] != APPLECHAR(' '))
+			--end;
+
+		str.setChar(APPLECHAR('\r'), end);
+		end += 40;
+	}
+}
+
+void AdlEngine::printMessage(uint idx, bool wait) {
+	Common::String msg = _messages[idx - 1];
+	wordWrap(msg);
+	_display->printString(msg);
+
+	if (wait)
+		_display->delay(14 * 166018 / 1000);
+}
+
+void AdlEngine::printEngineMessage(EngineMessage msg) {
+	printMessage(getEngineMessage(msg));
+}
+
+void AdlEngine::readCommands(Common::ReadStream &stream, Commands &commands) {
+	while (1) {
+		Command command;
+		command.room = stream.readByte();
+
+		if (command.room == 0xff)
+			return;
+
+		command.verb = stream.readByte();
+		command.noun = stream.readByte();
+
+		byte scriptSize = stream.readByte() - 6;
+
+		command.numCond = stream.readByte();
+		command.numAct = stream.readByte();
+
+		for (uint i = 0; i < scriptSize; ++i)
+			command.script.push_back(stream.readByte());
+
+		if (stream.eos() || stream.err())
+			error("Failed to read commands");
+
+		commands.push_back(command);
+	}
+}
+
+void AdlEngine::takeItem(byte noun) {
+	Common::Array<Item>::iterator it;
+
+	for (it = _inventory.begin(); it != _inventory.end(); ++it) {
+		if (it->field1 != noun || it->field2 != _room)
+			continue;
+
+		if (it->field7 == 2) {
+			printEngineMessage(IDI_MSG_ITEM_DOESNT_MOVE);
+			return;
+		}
+
+		if (it->field7 == 1) {
+			it->field2 = 0xfe;
+			it->field7 = 1;
+			return;
+		}
+
+		Common::Array<byte>::const_iterator it2;
+		for (it2 = it->field10.begin(); it->field10.end(); ++it2) {
+			if (*it2 == _rooms[_room].picture) {
+				it->field2 = 0xfe;
+				it->field7 = 1;
+				return;
+			}
+		}
+	}
+
+	printEngineMessage(IDI_MSG_ITEM_NOT_HERE);
+}
+
+void AdlEngine::dropItem(byte noun) {
+	Common::Array<Item>::iterator it;
+
+	for (it = _inventory.begin(); it != _inventory.end(); ++it) {
+		if (it->field1 != noun || it->field2 != 0xfe)
+			continue;
+
+		it->field2 = _room;
+		it->field7 = 1;
+		return;
+	}
+
+	// Don't understand
+	printEngineMessage(IDI_MSG_DONT_UNDERSTAND);
+}
+
+void AdlEngine::doActions(const Command &command, byte noun, byte offset) {
+	for (uint i = 0; i < command.numAct; ++i) {
+		switch (command.script[offset]) {
+		case 1:
+			_variables[command.script[offset + 2]] += command.script[offset + 1];
+			offset += 3;
+			break;
+		case 2:
+			_variables[command.script[offset + 2]] -= command.script[offset + 1];
+			offset += 3;
+			break;
+		case 3:
+			_variables[command.script[offset + 1]] = command.script[offset + 2];
+			offset += 3;
+			break;
+		case 4: {
+			Common::Array<Item>::const_iterator it;
+
+			for (it = _inventory.begin(); it != _inventory.end(); ++it)
+				if (it->field2 == 0xfe)
+					printMessage(it->field8);
+
+			++offset;
+			break;
+		}
+		case 5:
+			_inventory[command.script[offset + 1] - 1].field2 = command.script[offset + 2];
+			offset += 3;
+			break;
+		case 6:
+			_rooms[_room].picture = _rooms[_room].field8;
+			_room = command.script[offset + 1];
+			offset += 2;
+			break;
+		case 7:
+			_rooms[_room].picture = command.script[offset + 1];
+			offset += 2;
+			break;
+		case 8:
+			_rooms[_room].field8 = _rooms[_room].picture = command.script[offset + 1];
+			offset += 2;
+			break;
+		case 9:
+			printMessage(command.script[offset + 1]);
+			offset += 2;
+			break;
+		case 0xa:
+			_isDark = false;
+			++offset;
+			break;
+		case 0xb:
+			_isDark = true;
+			++offset;
+			break;
+		case 0xf:
+			warning("Save game not implemented");
+			++offset;
+			break;
+		case 0x10:
+			warning("Load game not implemented");
+			++offset;
+			break;
+		case 0x11: {
+			_display->printString(_strings[IDI_STR_PLAY_AGAIN]);
+			Common::String input = _display->inputString();
+			if (input.size() == 0 || input[0] != APPLECHAR('N')) {
+				warning("Restart game not implemented");
+				return;
+			}
+			// Fall-through
+		}
+		case 0xd:
+			printEngineMessage(IDI_MSG_THANKS_FOR_PLAYING);
+			quitGame();
+			return;
+		case 0x12: {
+			byte item = command.script[offset + 1] - 1;
+			_inventory[item].field2 = command.script[offset + 2];
+			_inventory[item].field5 = command.script[offset + 3];
+			_inventory[item].field6 = command.script[offset + 4];
+			offset += 5;
+			break;
+		}
+		case 0x13: {
+			byte item = command.script[offset + 2] - 1;
+			_inventory[item].field3 = command.script[offset + 1];
+			offset += 3;
+			break;
+		}
+		case 0x14:
+			_rooms[_room].picture = _rooms[_room].field8;
+			++offset;
+			break;
+		case 0x15:
+		case 0x16:
+		case 0x17:
+		case 0x18:
+		case 0x19:
+		case 0x1a: {
+			byte room = _rooms[_room].connections[command.script[offset] - 0x15];
+
+			if (room == 0) {
+				printEngineMessage(IDI_MSG_CANT_GO_THERE);
+				return;
+			}
+
+			_rooms[_room].picture = _rooms[_room].field8;
+			_room = room;
+			return;
+		}
+		case 0x1b:
+			takeItem(noun);
+			++offset;
+			break;
+		case 0x1c:
+			dropItem(noun);
+			++offset;
+			break;
+		case 0x1d:
+			_rooms[command.script[offset + 1]].field8 = _rooms[command.script[offset + 1]].picture = command.script[offset + 2];
+			offset += 3;
+			break;
+		default:
+			error("Invalid action opcode %02x", command.script[offset]);
+		}
+	}
+}
+
+bool AdlEngine::checkCommand(const Command &command, byte verb, byte noun) {
+	if (command.room != 0xfe && command.room != _room)
+		return false;
+
+	if (command.verb != 0xfe && command.verb != verb)
+		return false;
+
+	if (command.noun != 0xfe && command.noun != noun)
+		return false;
+
+	uint offset = 0;
+	for (uint i = 0; i < command.numCond; ++i) {
+		switch (command.script[offset]) {
+		case 3:
+			if (_inventory[command.script[offset + 1] - 1].field2 != command.script[offset + 2])
+				return false;
+			offset += 3;
+			break;
+		case 5:
+			if (command.script[offset + 1] > _steps)
+				return false;
+			offset += 2;
+			break;
+		case 6:
+			if (_variables[command.script[offset + 1]] != command.script[offset + 2])
+				return false;
+			offset += 3;
+			break;
+		case 9:
+			if (_rooms[_room].picture != command.script[offset + 1])
+				return false;
+			offset += 2;
+			break;
+		case 10:
+			if (_inventory[command.script[offset + 1] - 1].field3 != command.script[offset + 2])
+				return false;
+			offset += 3;
+			break;
+		default:
+			error("Invalid condition opcode %02x", command.script[offset]);
+		}
+	}
+
+	doActions(command, noun, offset);
+
+	return true;
+}
+
+bool AdlEngine::doOneCommand(const Commands &commands, byte verb, byte noun) {
+	Commands::const_iterator it;
+
+	for (it = commands.begin(); it != commands.end(); ++it)
+		if (checkCommand(*it, verb, noun))
+			return true;
+
+	return false;
+}
+
+void AdlEngine::doAllCommands(const Commands &commands, byte verb, byte noun) {
+	Commands::const_iterator it;
+
+	for (it = commands.begin(); it != commands.end(); ++it)
+		checkCommand(*it, verb, noun);
+}
+
+void AdlEngine::clearScreen() {
+	_display->setMode(Display::kModeMixed);
+	_display->clear(0x00);
+}
+
 AdlEngine *AdlEngine::create(GameType type, OSystem *syst, const AdlGameDescription *gd) {
 	switch(type) {
 	case kGameTypeHires1:
