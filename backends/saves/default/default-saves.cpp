@@ -137,7 +137,7 @@ bool DefaultSaveFileManager::removeSavefile(const Common::String &filename) {
 		file = _saveFileCache.end();
 
 		// FIXME: remove does not exist on all systems. If your port fails to
-		// compile because of this, please let us know (scummvm-devel or Fingolfin).
+		// compile because of this, please let us know (scummvm-devel).
 		// There is a nicely portable workaround, too: Make this method overloadable.
 		if (remove(fileNode.getPath().c_str()) != 0) {
 #ifndef _WIN32_WCE
