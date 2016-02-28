@@ -52,6 +52,7 @@ private:
 	void printMessage(uint idx, bool wait = true);
 	uint getEngineMessage(EngineMessage msg);
 
+	void initState();
 	void runIntro();
 	void drawPic(Common::ReadStream &stream, Common::Point pos);
 	void drawItems();

@@ -73,7 +73,7 @@ enum EngineString {
 
 // Conditional opcodes
 #define IDO_CND_ITEM_IN_ROOM   0x03
-#define IDO_CND_STEPS_GE       0x05
+#define IDO_CND_MOVES_GE       0x05
 #define IDO_CND_VAR_EQ         0x06
 #define IDO_CND_CUR_PIC_EQ     0x09
 #define IDO_CND_ITEM_PIC_EQ    0x0a
@@ -145,6 +145,18 @@ struct Item {
 	Common::Array<byte> roomPictures;
 };
 
+struct State {
+	Common::Array<Room> rooms;
+	Common::Array<Item> items;
+	Common::Array<byte> vars;
+
+	byte room;
+	uint16 moves;
+	bool isDark;
+
+	State() : room(1), moves(0), isDark(false) { }
+};
+
 typedef Common::List<Command> Commands;
 
 class AdlEngine : public Engine {
@@ -186,18 +198,13 @@ protected:
 	Common::Array<Common::String> _strings;
 	Common::Array<Common::String> _messages;
 	Common::Array<Picture> _pictures;
-	Common::Array<Item> _inventory;
 	Common::Array<Common::Point> _itemOffsets;
 	Common::Array<Common::Array<byte> > _lineArt;
 	Commands _roomCommands;
 	Commands _globalCommands;
 
 	// Game state
-	Common::Array<Room> _rooms;
-	byte _room;
-	uint16 _steps;
-	Common::Array<byte> _variables;
-	bool _isDark;
+	State _state;
 
 private:
 	void printEngineMessage(EngineMessage);

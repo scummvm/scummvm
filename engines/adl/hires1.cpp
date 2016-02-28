@@ -84,7 +84,6 @@ static const StringOffset stringOffsets[] = {
 
 HiRes1Engine::HiRes1Engine(OSystem *syst, const AdlGameDescription *gd) :
 		AdlEngine(syst, gd) {
-	_variables.resize(20);
 }
 
 void HiRes1Engine::runIntro() {
@@ -217,47 +216,38 @@ void HiRes1Engine::drawPic(byte pic, Common::Point pos) {
 	drawPic(f, pos);
 }
 
-void HiRes1Engine::runGame() {
-	runIntro();
-	_display->printASCIIString("\r");
-
+void HiRes1Engine::initState() {
 	Common::File f;
 
-	if (!f.open("MESSAGES"))
-		error("Failed to open file");
+	_state.room = 1;
+	_state.moves = 0;
+	_state.isDark = false;
 
-	while (!f.eos() && !f.err())
-		_messages.push_back(readString(f, APPLECHAR('\r')) + APPLECHAR('\r'));
-
-	f.close();
+	_state.vars.clear();
+	_state.vars.resize(20);
 
 	if (!f.open("ADVENTURE"))
 		error("Failed to open file");
 
-	// Load strings from executable
-	_strings.resize(IDI_HR1_STR_TOTAL);
-	for (uint idx = 0; idx < IDI_HR1_STR_TOTAL; ++idx) {
-		f.seek(stringOffsets[idx].offset);
-		_strings[stringOffsets[idx].stringIdx] = readString(f);
-	}
-
 	// Load room data from executable
+	_state.rooms.clear();
 	f.seek(1280);
 	for (uint i = 0; i < MH_ROOMS; ++i) {
-		struct Room room;
+		Room room;
 		f.readByte();
 		room.description = f.readByte();
 		for (uint j = 0; j < 6; ++j)
 			room.connections[j] = f.readByte();
 		room.picture = f.readByte();
 		room.curPicture = f.readByte();
-		_rooms.push_back(room);
+		_state.rooms.push_back(room);
 	}
 
 	// Load inventory data from executable
+	_state.items.clear();
 	f.seek(0x100);
 	while (f.readByte() != 0xff) {
-		struct Item item;
+		Item item;
 		item.noun = f.readByte();
 		item.room = f.readByte();
 		item.picture = f.readByte();
@@ -274,7 +264,34 @@ void HiRes1Engine::runGame() {
 		for (uint i = 0; i < size; ++i)
 			item.roomPictures.push_back(f.readByte());
 
-		_inventory.push_back(item);
+		_state.items.push_back(item);
+	}
+}
+
+void HiRes1Engine::runGame() {
+	runIntro();
+	_display->printASCIIString("\r");
+
+	Common::File f;
+
+	if (!f.open("MESSAGES"))
+		error("Failed to open file");
+
+	while (!f.eos() && !f.err())
+		_messages.push_back(readString(f, APPLECHAR('\r')) + APPLECHAR('\r'));
+
+	f.close();
+
+	initState();
+
+	if (!f.open("ADVENTURE"))
+		error("Failed to open file");
+
+	// Load strings from executable
+	_strings.resize(IDI_HR1_STR_TOTAL);
+	for (uint idx = 0; idx < IDI_HR1_STR_TOTAL; ++idx) {
+		f.seek(stringOffsets[idx].offset);
+		_strings[stringOffsets[idx].stringIdx] = readString(f);
 	}
 
 	// Load picture data from executable
@@ -341,7 +358,7 @@ void HiRes1Engine::runGame() {
 			printMessage(37);
 		doAllCommands(_globalCommands, verb, noun);
 
-		_steps++;
+		_state.moves++;
 
 		if (shouldQuit())
 			return;

@@ -43,10 +43,7 @@ AdlEngine::AdlEngine(OSystem *syst, const AdlGameDescription *gd) :
 		Engine(syst),
 		_gameDescription(gd),
 		_display(nullptr),
-		_parser(nullptr),
-		_room(1),
-		_steps(0),
-		_isDark(false) {
+		_parser(nullptr) {
 }
 
 AdlEngine::~AdlEngine() {
@@ -164,8 +161,8 @@ void AdlEngine::readCommands(Common::ReadStream &stream, Commands &commands) {
 void AdlEngine::takeItem(byte noun) {
 	Common::Array<Item>::iterator item;
 
-	for (item = _inventory.begin(); item != _inventory.end(); ++item) {
-		if (item->noun != noun || item->room != _room)
+	for (item = _state.items.begin(); item != _state.items.end(); ++item) {
+		if (item->noun != noun || item->room != _state.room)
 			continue;
 
 		if (item->state == IDI_ITEM_DOESNT_MOVE) {
@@ -180,7 +177,7 @@ void AdlEngine::takeItem(byte noun) {
 
 		Common::Array<byte>::const_iterator pic;
 		for (pic = item->roomPictures.begin(); item->roomPictures.end(); ++pic) {
-			if (*pic == _rooms[_room].curPicture) {
+			if (*pic == _state.rooms[_state.room].curPicture) {
 				item->room = IDI_NONE;
 				item->state = IDI_ITEM_MOVED;
 				return;
@@ -194,11 +191,11 @@ void AdlEngine::takeItem(byte noun) {
 void AdlEngine::dropItem(byte noun) {
 	Common::Array<Item>::iterator item;
 
-	for (item = _inventory.begin(); item != _inventory.end(); ++item) {
+	for (item = _state.items.begin(); item != _state.items.end(); ++item) {
 		if (item->noun != noun || item->room != IDI_NONE)
 			continue;
 
-		item->room = _room;
+		item->room = _state.room;
 		item->state = IDI_ITEM_MOVED;
 		return;
 	}
@@ -212,21 +209,21 @@ void AdlEngine::doActions(const Command &command, byte noun, byte offset) {
 	for (uint i = 0; i < command.numAct; ++i) {
 		switch (ARG(0)) {
 		case IDO_ACT_VAR_ADD:
-			_variables[ARG(2)] += ARG(1);
+			_state.vars[ARG(2)] += ARG(1);
 			offset += 3;
 			break;
 		case IDO_ACT_VAR_SUB:
-			_variables[ARG(2)] -= ARG(1);
+			_state.vars[ARG(2)] -= ARG(1);
 			offset += 3;
 			break;
 		case IDO_ACT_VAR_SET:
-			_variables[ARG(1)] = ARG(2);
+			_state.vars[ARG(1)] = ARG(2);
 			offset += 3;
 			break;
 		case IDO_ACT_LIST_ITEMS: {
 			Common::Array<Item>::const_iterator item;
 
-			for (item = _inventory.begin(); item != _inventory.end(); ++item)
+			for (item = _state.items.begin(); item != _state.items.end(); ++item)
 				if (item->room == IDI_NONE)
 					printMessage(item->description);
 
@@ -234,20 +231,20 @@ void AdlEngine::doActions(const Command &command, byte noun, byte offset) {
 			break;
 		}
 		case IDO_ACT_MOVE_ITEM:
-			_inventory[ARG(1) - 1].room = ARG(2);
+			_state.items[ARG(1) - 1].room = ARG(2);
 			offset += 3;
 			break;
 		case IDO_ACT_SET_ROOM:
-			_rooms[_room].curPicture = _rooms[_room].picture;
-			_room = ARG(1);
+			_state.rooms[_state.room].curPicture = _state.rooms[_state.room].picture;
+			_state.room = ARG(1);
 			offset += 2;
 			break;
 		case IDO_ACT_SET_CUR_PIC:
-			_rooms[_room].curPicture = ARG(1);
+			_state.rooms[_state.room].curPicture = ARG(1);
 			offset += 2;
 			break;
 		case IDO_ACT_SET_PIC:
-			_rooms[_room].picture = _rooms[_room].curPicture = ARG(1);
+			_state.rooms[_state.room].picture = _state.rooms[_state.room].curPicture = ARG(1);
 			offset += 2;
 			break;
 		case IDO_ACT_PRINT_MSG:
@@ -255,11 +252,11 @@ void AdlEngine::doActions(const Command &command, byte noun, byte offset) {
 			offset += 2;
 			break;
 		case IDO_ACT_SET_LIGHT:
-			_isDark = false;
+			_state.isDark = false;
 			++offset;
 			break;
 		case IDO_ACT_SET_DARK:
-			_isDark = true;
+			_state.isDark = true;
 			++offset;
 			break;
 		case IDO_ACT_SAVE:
@@ -284,17 +281,17 @@ void AdlEngine::doActions(const Command &command, byte noun, byte offset) {
 			quitGame();
 			return;
 		case IDO_ACT_PLACE_ITEM:
-			_inventory[ARG(1) - 1].room = ARG(2);
-			_inventory[ARG(1) - 1].position.x = ARG(3);
-			_inventory[ARG(1) - 1].position.y = ARG(4);
+			_state.items[ARG(1) - 1].room = ARG(2);
+			_state.items[ARG(1) - 1].position.x = ARG(3);
+			_state.items[ARG(1) - 1].position.y = ARG(4);
 			offset += 5;
 			break;
 		case IDO_ACT_SET_ITEM_PIC:
-			_inventory[ARG(2) - 1].picture = ARG(1);
+			_state.items[ARG(2) - 1].picture = ARG(1);
 			offset += 3;
 			break;
 		case IDO_ACT_RESET_PIC:
-			_rooms[_room].curPicture = _rooms[_room].picture;
+			_state.rooms[_state.room].curPicture = _state.rooms[_state.room].picture;
 			++offset;
 			break;
 		case IDO_ACT_GO_NORTH:
@@ -303,15 +300,15 @@ void AdlEngine::doActions(const Command &command, byte noun, byte offset) {
 		case IDO_ACT_GO_WEST:
 		case IDO_ACT_GO_UP:
 		case IDO_ACT_GO_DOWN: {
-			byte room = _rooms[_room].connections[ARG(0) - 0x15];
+			byte room = _state.rooms[_state.room].connections[ARG(0) - 0x15];
 
 			if (room == 0) {
 				printEngineMessage(IDI_MSG_CANT_GO_THERE);
 				return;
 			}
 
-			_rooms[_room].curPicture = _rooms[_room].picture;
-			_room = room;
+			_state.rooms[_state.room].curPicture = _state.rooms[_state.room].picture;
+			_state.room = room;
 			return;
 		}
 		case IDO_ACT_TAKE_ITEM:
@@ -323,7 +320,7 @@ void AdlEngine::doActions(const Command &command, byte noun, byte offset) {
 			++offset;
 			break;
 		case IDO_ACT_SET_ROOM_PIC:
-			_rooms[ARG(1)].picture = _rooms[ARG(1)].curPicture = ARG(2);
+			_state.rooms[ARG(1)].picture = _state.rooms[ARG(1)].curPicture = ARG(2);
 			offset += 3;
 			break;
 		default:
@@ -333,7 +330,7 @@ void AdlEngine::doActions(const Command &command, byte noun, byte offset) {
 }
 
 bool AdlEngine::checkCommand(const Command &command, byte verb, byte noun) {
-	if (command.room != IDI_NONE && command.room != _room)
+	if (command.room != IDI_NONE && command.room != _state.room)
 		return false;
 
 	if (command.verb != IDI_NONE && command.verb != verb)
@@ -346,27 +343,27 @@ bool AdlEngine::checkCommand(const Command &command, byte verb, byte noun) {
 	for (uint i = 0; i < command.numCond; ++i) {
 		switch (command.script[offset]) {
 		case IDO_CND_ITEM_IN_ROOM:
-			if (_inventory[ARG(1) - 1].room != ARG(2))
+			if (_state.items[ARG(1) - 1].room != ARG(2))
 				return false;
 			offset += 3;
 			break;
-		case IDO_CND_STEPS_GE:
-			if (ARG(1) > _steps)
+		case IDO_CND_MOVES_GE:
+			if (ARG(1) > _state.moves)
 				return false;
 			offset += 2;
 			break;
 		case IDO_CND_VAR_EQ:
-			if (_variables[ARG(1)] != ARG(2))
+			if (_state.vars[ARG(1)] != ARG(2))
 				return false;
 			offset += 3;
 			break;
 		case IDO_CND_CUR_PIC_EQ:
-			if (_rooms[_room].curPicture != ARG(1))
+			if (_state.rooms[_state.room].curPicture != ARG(1))
 				return false;
 			offset += 2;
 			break;
 		case IDO_CND_ITEM_PIC_EQ:
-			if (_inventory[ARG(1) - 1].picture != ARG(2))
+			if (_state.items[ARG(1) - 1].picture != ARG(2))
 				return false;
 			offset += 3;
 			break;
@@ -409,12 +406,12 @@ void AdlEngine::drawItems() {
 
 	uint dropped = 0;
 
-	for (item = _inventory.begin(); item != _inventory.end(); ++item) {
-		if (item->room != _room)
+	for (item = _state.items.begin(); item != _state.items.end(); ++item) {
+		if (item->room != _state.room)
 			continue;
 
 		if (item->state == IDI_ITEM_MOVED) {
-			if (_rooms[_room].picture == _rooms[_room].curPicture) {
+			if (_state.rooms[_state.room].picture == _state.rooms[_state.room].curPicture) {
 				const Common::Point &p =  _itemOffsets[dropped];
 				if (item->isLineArt)
 					_display->drawLineArt(_lineArt[item->picture - 1], p);
@@ -428,7 +425,7 @@ void AdlEngine::drawItems() {
 		Common::Array<byte>::const_iterator pic;
 
 		for (pic = item->roomPictures.begin(); pic != item->roomPictures.end(); ++pic) {
-			if (*pic == _rooms[_room].curPicture) {
+			if (*pic == _state.rooms[_state.room].curPicture) {
 				if (item->isLineArt)
 					_display->drawLineArt(_lineArt[item->picture - 1], item->position);
 				else
@@ -440,13 +437,13 @@ void AdlEngine::drawItems() {
 }
 
 void AdlEngine::showRoom() {
-	if (!_isDark) {
-		drawPic(_rooms[_room].curPicture);
+	if (!_state.isDark) {
+		drawPic(_state.rooms[_state.room].curPicture);
 		drawItems();
 	}
 
 	_display->decodeFrameBuffer();
-	printMessage(_rooms[_room].description, false);
+	printMessage(_state.rooms[_state.room].description, false);
 }
 
 AdlEngine *AdlEngine::create(GameType type, OSystem *syst, const AdlGameDescription *gd) {
