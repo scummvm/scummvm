@@ -60,6 +60,22 @@ static const uint8 PALETTE_CGA[4 * 3] = {
 };
 
 /**
+ * 2 color Hercules (green) palette. Using 8-bit RGB values.
+ */
+static const uint8 PALETTE_HERCULES_GREEN[2 * 3] = {
+	0x00, 0x00, 0x00, // black
+	0x00, 0xdc, 0x28  // green
+};
+
+/**
+ * 2 color Hercules (amber) palette. Using 8-bit RGB values.
+ */
+static const uint8 PALETTE_HERCULES_AMBER[2 * 3] = {
+	0x00, 0x00, 0x00, // black
+	0xdc, 0xb4, 0x00  // amber
+};
+
+/**
  * Atari ST AGI palette.
  * Used by all of the tested Atari ST AGI games
  * from Donald Duck's Playground (1986) to Manhunter II (1989).

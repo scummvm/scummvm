@@ -283,18 +283,7 @@ void AgiBase::initRenderMode() {
 
 	switch (platform) {
 	case Common::kPlatformDOS:
-		switch (configRenderMode) {
-		case Common::kRenderCGA:
-			_renderMode = Common::kRenderCGA;
-			break;
-		// Hercules is not supported atm
-		//case Common::kRenderHercA:
-		//case Common::kRenderHercG:
-		//	_renderMode = Common::kRenderHercG;
-		//	break;
-		default:
-			break;
-		}
+		// Keep EGA
 		break;
 	case Common::kPlatformAmiga:
 		_renderMode = Common::kRenderAmiga;
@@ -322,6 +311,12 @@ void AgiBase::initRenderMode() {
 		break;
 	case Common::kRenderVGA:
 		_renderMode = Common::kRenderVGA;
+		break;
+	case Common::kRenderHercG:
+		_renderMode = Common::kRenderHercG;
+		break;
+	case Common::kRenderHercA:
+		_renderMode = Common::kRenderHercA;
 		break;
 	case Common::kRenderAmiga:
 		_renderMode = Common::kRenderAmiga;

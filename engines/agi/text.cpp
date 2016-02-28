@@ -179,6 +179,16 @@ void TextMgr::charAttrib_Set(byte foreground, byte background) {
 				_textAttrib.combinedBackground = 0;
 			}
 			break;
+		case Common::kRenderHercA:
+		case Common::kRenderHercG:
+			if (background) {
+				_textAttrib.combinedForeground = 0;
+				_textAttrib.combinedBackground = 1;
+			} else {
+				_textAttrib.combinedForeground = 1;
+				_textAttrib.combinedBackground = 0;
+			}
+			break;
 		default:
 			// EGA-handling:
 			if (background) {

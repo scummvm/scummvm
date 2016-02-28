@@ -69,6 +69,8 @@ GfxMgr::GfxMgr(AgiBase *vm, GfxFont *font) : _vm(vm), _font(font) {
  * @see deinit_video()
  */
 int GfxMgr::initVideo() {
+	bool forceHires = false;
+
 	// Set up palettes
 	initPalette(_paletteTextMode, PALETTE_EGA);
 
@@ -81,6 +83,14 @@ int GfxMgr::initVideo() {
 		break;
 	case Common::kRenderVGA:
 		initPalette(_paletteGfxMode, PALETTE_VGA, 256, 8);
+		break;
+	case Common::kRenderHercG:
+		initPalette(_paletteGfxMode, PALETTE_HERCULES_GREEN, 2, 8);
+		forceHires = true;
+		break;
+	case Common::kRenderHercA:
+		initPalette(_paletteGfxMode, PALETTE_HERCULES_AMBER, 2, 8);
+		forceHires = true;
 		break;
 	case Common::kRenderAmiga:
 		if (!ConfMan.getBool("altamigapalette")) {
@@ -137,7 +147,7 @@ int GfxMgr::initVideo() {
 
 	//bool forcedUpscale = true;
 
-	if (_font->isFontHires()) {
+	if (_font->isFontHires() || forceHires) {
 		// Upscaling enable
 		_upscaledHires = DISPLAY_UPSCALED_640x400;
 		_displayScreenWidth = 640;
@@ -154,6 +164,8 @@ int GfxMgr::initVideo() {
 	case Common::kRenderEGA:
 	case Common::kRenderCGA:
 	case Common::kRenderVGA:
+	case Common::kRenderHercG:
+	case Common::kRenderHercA:
 		initMouseCursor(&_mouseCursor, MOUSECURSOR_SCI, 11, 16, 0, 0);
 		initMouseCursor(&_mouseCursorBusy, MOUSECURSOR_SCI_BUSY, 15, 16, 7, 8);
 		break;
@@ -500,6 +512,10 @@ void GfxMgr::render_Block(int16 x, int16 y, int16 width, int16 height, bool copy
 		return;
 
 	switch (_vm->_renderMode) {
+	case Common::kRenderHercG:
+	case Common::kRenderHercA:
+		render_BlockHercules(x, y, width, height, copyToScreen);
+		break;
 	case Common::kRenderCGA:
 		render_BlockCGA(x, y, width, height, copyToScreen);
 		break;
@@ -653,6 +669,106 @@ void GfxMgr::render_BlockCGA(int16 x, int16 y, int16 width, int16 height, bool c
 		remainingHeight--;
 	}
 }
+
+static const uint8 herculesColorMapping[] = {
+	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+	0x88, 0x00, 0x00, 0x00, 0x22, 0x00, 0x00, 0x00,
+	0x80, 0x10, 0x02, 0x20, 0x01, 0x08, 0x40, 0x04,
+	0xAA, 0x00, 0xAA, 0x00, 0xAA, 0x00, 0xAA, 0x00,
+	0x22, 0x88, 0x22, 0x88, 0x22, 0x88, 0x22, 0x88,
+	0x88, 0x00, 0x88, 0x00, 0x88, 0x00, 0x88, 0x00,
+	0x11, 0x22, 0x44, 0x88, 0x11, 0x22, 0x44, 0x88,
+	0x55, 0xAA, 0x55, 0xAA, 0x55, 0xAA, 0x55, 0xAA,
+	0x22, 0x00, 0x88, 0x00, 0x22, 0x00, 0x88, 0x00,
+	0xD7, 0xFF, 0x7D, 0xFF, 0xD7, 0xFF, 0x7D, 0xFF,
+	0xDD, 0x55, 0x77, 0xAA, 0xDD, 0x55, 0x77, 0xAA,
+	0x7F, 0xEF, 0xFD, 0xDF, 0xFE, 0xF7, 0xBF, 0xFB,
+	0xAA, 0xFF, 0xAA, 0xFF, 0xAA, 0xFF, 0xAA, 0xFF,
+	0x77, 0xBB, 0xDD, 0xEE, 0x77, 0xBB, 0xDD, 0xEE,
+	0x77, 0xFF, 0xFF, 0xFF, 0xDD, 0xFF, 0xFF, 0xFF,
+	0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF
+};
+
+// Sierra actually seems to have rendered the whole screen all the time
+void GfxMgr::render_BlockHercules(int16 x, int16 y, int16 width, int16 height, bool copyToScreen) {
+	uint32 offsetVisual = SCRIPT_WIDTH * y + x;
+	uint32 offsetDisplay = getDisplayOffsetToGameScreenPos(x, y);
+	int16 remainingWidth = width;
+	int16 remainingHeight = height;
+	byte curColor = 0;
+	int16 displayWidth = width * (2 + _displayWidthMulAdjust);
+
+	assert(_upscaledHires == DISPLAY_UPSCALED_640x400);
+
+	uint16 lookupOffset1 = (y * 2 & 0x07);
+	uint16 lookupOffset2 = 0;
+	bool   getUpperNibble = false;
+	byte   herculesColors1 = 0;
+	byte   herculesColors2 = 0;
+
+	while (remainingHeight) {
+		remainingWidth = width;
+
+		lookupOffset1 = (lookupOffset1 + 0) & 0x07;
+		lookupOffset2 = (lookupOffset1 + 1) & 0x07;
+
+		getUpperNibble = (x & 1) ? false : true;
+		while (remainingWidth) {
+			curColor = _activeScreen[offsetVisual++] & 0x0F;
+
+			if (getUpperNibble) {
+				herculesColors1 = herculesColorMapping[curColor * 8 + lookupOffset1] & 0x0F;
+				herculesColors2 = herculesColorMapping[curColor * 8 + lookupOffset2] & 0x0F;
+			} else {
+				herculesColors1 = herculesColorMapping[curColor * 8 + lookupOffset1] >> 4;
+				herculesColors2 = herculesColorMapping[curColor * 8 + lookupOffset2] >> 4;
+			}
+			getUpperNibble ^= true;
+
+			_displayScreen[offsetDisplay + 0] = (herculesColors1 & 0x08) ? 1 : 0;
+			_displayScreen[offsetDisplay + 1] = (herculesColors1 & 0x04) ? 1 : 0;
+			_displayScreen[offsetDisplay + 2] = (herculesColors1 & 0x02) ? 1 : 0;
+			_displayScreen[offsetDisplay + 3] = (herculesColors1 & 0x01) ? 1 : 0;
+
+			_displayScreen[offsetDisplay + _displayScreenWidth + 0] = (herculesColors2 & 0x08) ? 1 : 0;
+			_displayScreen[offsetDisplay + _displayScreenWidth + 1] = (herculesColors2 & 0x04) ? 1 : 0;
+			_displayScreen[offsetDisplay + _displayScreenWidth + 2] = (herculesColors2 & 0x02) ? 1 : 0;
+			_displayScreen[offsetDisplay + _displayScreenWidth + 3] = (herculesColors2 & 0x01) ? 1 : 0;
+
+			offsetDisplay += 4;
+			remainingWidth--;
+		}
+
+		lookupOffset1 += 2;
+
+		offsetVisual += SCRIPT_WIDTH - width;
+		offsetDisplay += _displayScreenWidth - displayWidth;
+		offsetDisplay += _displayScreenWidth;;
+
+		remainingHeight--;
+	}
+}
+
+// Table used for at least Manhunter 2, it renders 2 lines -> 3 lines instead of 4
+// Manhunter 1 is shipped with a broken Hercules font
+// King's Quest 4 aborts right at the start, when Hercules rendering is active
+#if 0
+static const uint8 herculesCoordinateOffset[] = {
+	0x00, 0x01, 0x03, 0x04, 0x06, 0x07, 0x01, 0x02,
+	0x04, 0x05, 0x07, 0x00, 0x02, 0x03, 0x05, 0x06
+};
+
+static const uint8 herculesColorMapping[] = {
+	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,	0x40, 0x00, 0x02, 0x00, 0x40, 0x00, 0x08, 0x00,
+	0x80, 0x10, 0x02, 0x20, 0x01, 0x08, 0x40, 0x04,	0xAA, 0x00, 0xAA, 0x00, 0xAA, 0x00, 0xAA, 0x00,
+	0x22, 0x88, 0x22, 0x88, 0x22, 0x88, 0x22, 0x88,	0x88, 0x00, 0x88, 0x00, 0x88, 0x00, 0x88, 0x00,
+	0x11, 0x22, 0x44, 0x88, 0x11, 0x22, 0x44, 0x88,	0x55, 0xAA, 0x55, 0xAA, 0x55, 0xAA, 0x55, 0xAA,
+	0x22, 0x00, 0x88, 0x00, 0x22, 0x00, 0x88, 0x00,	0xD7, 0xFF, 0x7D, 0xFF, 0xD7, 0xFF, 0x7D, 0xFF,
+	0xDD, 0x55, 0x77, 0xAA, 0xDD, 0x55, 0x77, 0xAA,	0x7F, 0xEF, 0xFD, 0xDF, 0xFE, 0xF7, 0xBF, 0xFB,
+	0xAA, 0xFF, 0xAA, 0xFF, 0xAA, 0xFF, 0xAA, 0xFF,	0x77, 0xBB, 0xDD, 0xEE, 0x77, 0xBB, 0xDD, 0xEE,
+	0x7F, 0xEF, 0xFB, 0xBF, 0xEF, 0xFE, 0xBF, 0xFD,	0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF
+};
+#endif
 
 void GfxMgr::transition_Amiga() {
 	uint16 screenPos = 1;
@@ -876,6 +992,10 @@ void GfxMgr::drawBox(int16 x, int16 y, int16 width, int16 height, byte backgroun
 		drawDisplayRect(x, +1, y + height, -2, width, -2, 0, 1, 0);
 		drawDisplayRect(x, +1, y, +1, 0, 1, height, -2, 0);
 		break;
+	case Common::kRenderHercA:
+	case Common::kRenderHercG:
+		lineColor = 0; // change linecolor to black
+		// supposed to fall through
 	case Common::kRenderCGA:
 	case Common::kRenderEGA:
 	case Common::kRenderVGA:
@@ -895,6 +1015,11 @@ void GfxMgr::drawDisplayRect(int16 x, int16 y, int16 width, int16 height, byte c
 	case Common::kRenderCGA:
 		drawDisplayRectCGA(x, y, width, height, color);
 		break;
+	case Common::kRenderHercG:
+	case Common::kRenderHercA:
+		if (color)
+			color = 1; // change any color except black to green/amber
+		// supposed to fall through
 	case Common::kRenderEGA:
 	default:
 		drawDisplayRectEGA(x, y, width, height, color);

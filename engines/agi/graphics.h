@@ -180,6 +180,7 @@ public:
 private:
 	void render_BlockEGA(int16 x, int16 y, int16 width, int16 height, bool copyToScreen);
 	void render_BlockCGA(int16 x, int16 y, int16 width, int16 height, bool copyToScreen);
+	void render_BlockHercules(int16 x, int16 y, int16 width, int16 height, bool copyToScreen);
 
 public:
 	void transition_Amiga();

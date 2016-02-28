@@ -624,6 +624,16 @@ void GfxFont::init() {
 	if (ConfMan.getBool("herculesfont")) {
 		// User wants, that we use Hercules hires font, try to load it
 		loadFontHercules();
+	} else {
+		switch (_vm->_renderMode) {
+		case Common::kRenderHercA:
+		case Common::kRenderHercG:
+			// Render mode is Hercules, we try to load Hercules hires font
+			loadFontHercules();
+			break;
+		default:
+			break;
+		}
 	}
 
 	if (!_fontData) {
@@ -650,6 +660,8 @@ void GfxFont::init() {
 				}
 			}
 			break;
+		case Common::kRenderHercA:
+		case Common::kRenderHercG:
 		case Common::kRenderCGA:
 		case Common::kRenderEGA:
 		case Common::kRenderVGA:
@@ -699,6 +711,11 @@ void GfxFont::overwriteSaveRestoreDialogCharacter() {
 
 // Overwrite extended character set (0x80-0xFF) with Russian characters
 void GfxFont::overwriteExtendedWithRussianSet() {
+	if (_fontIsHires) {
+		// TODO: Implement overwriting hires font characters too
+		return;
+	}
+
 	if (!_fontDataAllocated) {
 		// nothing allocated, we need to allocate space ourselves to be able to modify an internal font
 		_fontDataAllocated = (uint8 *)calloc(256, 8);
