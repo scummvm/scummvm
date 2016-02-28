@@ -32,8 +32,6 @@ class CLUT8LookUpPipeline : public ShaderPipeline {
 public:
 	CLUT8LookUpPipeline();
 
-	virtual Shader *setShader(Shader *shader);
-
 	void setPaletteTexture(const GLTexture *paletteTexture) { _paletteTexture = paletteTexture; }
 
 	virtual void drawTexture(const GLTexture &texture, const GLfloat *coordinates);

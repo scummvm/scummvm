@@ -27,8 +27,8 @@
 namespace OpenGL {
 
 #if !USE_FORCED_GLES
-ShaderPipeline::ShaderPipeline()
-    : _activeShader(nullptr) {
+ShaderPipeline::ShaderPipeline(Shader *shader)
+    : _activeShader(shader) {
 }
 
 void ShaderPipeline::activateInternal() {
@@ -38,17 +38,6 @@ void ShaderPipeline::activateInternal() {
 	if (g_context.multitextureSupported) {
 		GL_CALL(glActiveTexture(GL_TEXTURE0));
 	}
-}
-
-Shader *ShaderPipeline::setShader(Shader *shader) {
-	Shader *oldShader = _activeShader;
-
-	_activeShader = shader;
-	if (_activeShader && _activeFramebuffer) {
-		_activeShader->activate(_activeFramebuffer->getProjectionMatrix());
-	}
-
-	return oldShader;
 }
 
 void ShaderPipeline::setColor(GLfloat r, GLfloat g, GLfloat b, GLfloat a) {
@@ -64,7 +53,7 @@ void ShaderPipeline::drawTexture(const GLTexture &texture, const GLfloat *coordi
 }
 
 void ShaderPipeline::setProjectionMatrix(const GLfloat *projectionMatrix) {
-	if (_activeShader) {
+	if (isActive() && _activeShader) {
 		_activeShader->activate(projectionMatrix);
 	}
 }

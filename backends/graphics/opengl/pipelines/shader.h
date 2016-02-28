@@ -28,11 +28,11 @@
 namespace OpenGL {
 
 #if !USE_FORCED_GLES
+class Shader;
+
 class ShaderPipeline : public Pipeline {
 public:
-	ShaderPipeline();
-
-	virtual Shader *setShader(Shader *shader);
+	ShaderPipeline(Shader *shader);
 
 	virtual void setColor(GLfloat r, GLfloat g, GLfloat b, GLfloat a);
 
@@ -43,7 +43,7 @@ public:
 protected:
 	virtual void activateInternal();
 
-	Shader *_activeShader;
+	Shader *const _activeShader;
 };
 #endif // !USE_FORCED_GLES
 

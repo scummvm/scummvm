@@ -851,7 +851,8 @@ void OpenGLGraphicsManager::notifyContextCreate(const Graphics::PixelFormat &def
 
 #if !USE_FORCED_GLES
 	if (g_context.shadersSupported) {
-		_pipeline = new ShaderPipeline();
+		ShaderMan.notifyCreate();
+		_pipeline = new ShaderPipeline(ShaderMan.query(ShaderManager::kDefault));
 	}
 #endif
 
@@ -862,13 +863,6 @@ void OpenGLGraphicsManager::notifyContextCreate(const Graphics::PixelFormat &def
 #endif
 
 	g_context.setPipeline(_pipeline);
-
-#if !USE_FORCED_GLES
-	if (g_context.shadersSupported) {
-		ShaderMan.notifyCreate();
-		g_context.getActivePipeline()->setShader(ShaderMan.query(ShaderManager::kDefault));
-	}
-#endif
 
 	// Disable 3D properties.
 	GL_CALL(glDisable(GL_CULL_FACE));

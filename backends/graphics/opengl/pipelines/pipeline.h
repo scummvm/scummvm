@@ -29,9 +29,6 @@
 namespace OpenGL {
 
 class Framebuffer;
-#if !USE_FORCED_GLES
-class Shader;
-#endif
 
 /**
  * Interface for OpenGL pipeline functionality.
@@ -66,21 +63,6 @@ public:
 	 * @return Formerly active framebuffer.
 	 */
 	Framebuffer *setFramebuffer(Framebuffer *framebuffer);
-
-#if !USE_FORCED_GLES
-	/**
-	 * Set shader program.
-	 *
-	 * Not all pipelines support shader programs. This is method exits at this
-	 * place for convenience only.
-	 *
-	 * Client is responsible for any memory management related to shader.
-	 *
-	 * @param shader Shader program to activate.
-	 * @return Formerly active shader program.
-	 */
-	virtual Shader *setShader(Shader *shader) { return nullptr; }
-#endif
 
 	/**
 	 * Set modulation color.
