@@ -1232,6 +1232,7 @@ void GfxFont::loadFontHercules() {
 				fontData += 4; // skip the last 2 lines
 			}
 
+			free(rawData);
 		} else {
 			warning("Fontfile 'hgc_font': unexpected file size");
 		}
