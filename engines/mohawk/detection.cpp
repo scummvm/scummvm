@@ -26,6 +26,7 @@
 #include "common/savefile.h"
 #include "common/system.h"
 #include "common/textconsole.h"
+#include "common/translation.h"
 
 #include "mohawk/livingbooks.h"
 
@@ -160,9 +161,23 @@ static const char *directoryGlobs[] = {
 	0
 };
 
+static const ADExtraGuiOptionsMap optionsList[] = {
+		{
+				GAMEOPTION_PLAY_MYST_FLYBY,
+				{
+						_s("Play the Myst fly by movie"),
+						_s("The Myst fly by movie was not played by the original engine."),
+						"playmystflyby",
+						false
+				}
+		},
+
+		AD_EXTRA_GUI_OPTIONS_TERMINATOR
+};
+
 class MohawkMetaEngine : public AdvancedMetaEngine {
 public:
-	MohawkMetaEngine() : AdvancedMetaEngine(Mohawk::gameDescriptions, sizeof(Mohawk::MohawkGameDescription), mohawkGames) {
+	MohawkMetaEngine() : AdvancedMetaEngine(Mohawk::gameDescriptions, sizeof(Mohawk::MohawkGameDescription), mohawkGames, optionsList) {
 		_singleid = "mohawk";
 		_maxScanDepth = 2;
 		_directoryGlobs = directoryGlobs;

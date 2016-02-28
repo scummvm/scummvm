@@ -66,11 +66,6 @@ MohawkEngine_Myst::MohawkEngine_Myst(OSystem *syst, const MohawkGameDescription 
 	DebugMan.addDebugChannel(kDebugHelp, "Help", "Track Help File (HELP) Parsing");
 	DebugMan.addDebugChannel(kDebugCache, "Cache", "Track Resource Cache Accesses");
 
-	// Engine tweaks
-	// Disabling this makes engine behavior as per
-	// original, including bugs, missing bits etc. :)
-	_tweaksEnabled = true;
-
 	_currentCursor = 0;
 	_mainCursor = kDefaultMystCursor;
 	_showResourceRects = false;
@@ -503,8 +498,9 @@ void MohawkEngine_Myst::changeToStack(uint16 stack, uint16 card, uint16 linkSrcS
 			flyby = "stoneship flyby";
 			break;
 		// Myst Flyby Movie not used in Original Masterpiece Edition Engine
+		// We play it when first arriving on Myst, and if the user has chosen so.
 		case kMystStack:
-			if (_tweaksEnabled)
+			if (ConfMan.getBool("playmystflyby") && card == 4134)
 				flyby = "myst flyby";
 			break;
 		case kMechanicalStack:
