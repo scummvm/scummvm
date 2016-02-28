@@ -386,16 +386,16 @@ void HiRes1Engine::printMessage(uint idx, bool wait) {
 	// Hardcoded overrides that don't wait after printing
 	// Note: strings may differ slightly from the ones in MESSAGES
 	switch (idx) {
-	case 137:
+	case IDI_HR1_MSG_CANT_GO_THERE:
 		_display->printString(_strings[IDI_HR1_STR_CANT_GO_THERE]);
 		return;
-	case 127:
+	case IDI_HR1_MSG_DONT_HAVE_IT:
 		_display->printString(_strings[IDI_HR1_STR_DONT_HAVE_IT]);
 		return;
-	case 37:
+	case IDI_MSG_DONT_UNDERSTAND:
 		_display->printString(_strings[IDI_HR1_STR_DONT_UNDERSTAND]);
 		return;
-	case 7:
+	case IDI_HR1_MSG_GETTING_DARK:
 		_display->printString(_strings[IDI_HR1_STR_GETTING_DARK]);
 		return;
 	}
