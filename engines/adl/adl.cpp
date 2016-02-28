@@ -206,7 +206,7 @@ void AdlEngine::dropItem(byte noun) {
 	printEngineMessage(IDI_MSG_DONT_UNDERSTAND);
 }
 
-#define ARG(N) (command.script[offset + N])
+#define ARG(N) (command.script[offset + (N)])
 
 void AdlEngine::doActions(const Command &command, byte noun, byte offset) {
 	for (uint i = 0; i < command.numAct; ++i) {
@@ -402,6 +402,51 @@ void AdlEngine::doAllCommands(const Commands &commands, byte verb, byte noun) {
 void AdlEngine::clearScreen() {
 	_display->setMode(Display::kModeMixed);
 	_display->clear(0x00);
+}
+
+void AdlEngine::drawItems() {
+	Common::Array<Item>::const_iterator item;
+
+	uint dropped = 0;
+
+	for (item = _inventory.begin(); item != _inventory.end(); ++item) {
+		if (item->room != _room)
+			continue;
+
+		if (item->state == IDI_ITEM_MOVED) {
+			if (_rooms[_room].picture == _rooms[_room].curPicture) {
+				const Common::Point &p =  _itemOffsets[dropped];
+				if (item->isDrawing)
+					_display->drawRightAngles(_drawings[item->picture - 1], p, 0, 1, 0x7f);
+				else
+					drawPic(item->picture, p);
+				++dropped;
+			}
+			continue;
+		}
+
+		Common::Array<byte>::const_iterator pic;
+
+		for (pic = item->roomPictures.begin(); pic != item->roomPictures.end(); ++pic) {
+			if (*pic == _rooms[_room].curPicture) {
+				if (item->isDrawing)
+					_display->drawRightAngles(_drawings[item->picture - 1], item->position, 0, 1, 0x7f);
+				else
+					drawPic(item->picture, item->position);
+				continue;
+			}
+		}
+	}
+}
+
+void AdlEngine::showRoom() {
+	if (!_isDark) {
+		drawPic(_rooms[_room].curPicture);
+		drawItems();
+	}
+
+	_display->decodeFrameBuffer();
+	printMessage(_rooms[_room].description, false);
 }
 
 AdlEngine *AdlEngine::create(GameType type, OSystem *syst, const AdlGameDescription *gd) {

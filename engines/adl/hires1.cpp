@@ -169,7 +169,7 @@ void HiRes1Engine::runIntro() {
 	}
 }
 
-void HiRes1Engine::drawPic(Common::ReadStream &stream, byte xOffset, byte yOffset) {
+void HiRes1Engine::drawPic(Common::ReadStream &stream, Common::Point pos) {
 	byte x, y;
 	bool bNewLine = false;
 	byte oldX = 0, oldY = 0;
@@ -188,8 +188,8 @@ void HiRes1Engine::drawPic(Common::ReadStream &stream, byte xOffset, byte yOffse
 			continue;
 		}
 
-		x += xOffset;
-		y += yOffset;
+		x += pos.x;
+		y += pos.y;
 
 		if (y > 160)
 			y = 160;
@@ -206,7 +206,7 @@ void HiRes1Engine::drawPic(Common::ReadStream &stream, byte xOffset, byte yOffse
 	}
 }
 
-void HiRes1Engine::drawPic(byte pic, byte xOffset, byte yOffset) {
+void HiRes1Engine::drawPic(byte pic, Common::Point pos) {
 	Common::File f;
 	Common::String name = Common::String::format("BLOCK%i", _pictures[pic].block);
 
@@ -214,52 +214,7 @@ void HiRes1Engine::drawPic(byte pic, byte xOffset, byte yOffset) {
 		error("Failed to open file");
 
 	f.seek(_pictures[pic].offset);
-	drawPic(f, xOffset, yOffset);
-}
-
-void HiRes1Engine::drawItems() {
-	Common::Array<Item>::const_iterator item;
-
-	uint dropped = 0;
-
-	for (item = _inventory.begin(); item != _inventory.end(); ++item) {
-		if (item->room != _room)
-			continue;
-
-		if (item->state == IDI_ITEM_MOVED) {
-			if (_rooms[_room].picture == _rooms[_room].curPicture) {
-				const Common::Point &p =  _itemOffsets[dropped];
-				if (item->isDrawing)
-					_display->drawRightAngles(_drawings[item->picture - 1], Common::Point(p.x, p.y), 0, 1, 0x7f);
-				else
-					drawPic(item->picture, p.x, p.y);
-				++dropped;
-			}
-			continue;
-		}
-
-		Common::Array<byte>::const_iterator pic;
-
-		for (pic = item->roomPictures.begin(); pic != item->roomPictures.end(); ++pic) {
-			if (*pic == _rooms[_room].curPicture) {
-				if (item->isDrawing)
-					_display->drawRightAngles(_drawings[item->picture - 1], item->position, 0, 1, 0x7f);
-				else
-					drawPic(item->picture, item->position.x, item->position.y);
-				continue;
-			}
-		}
-	}
-}
-
-void HiRes1Engine::showRoom() {
-	if (!_isDark) {
-		drawPic(_rooms[_room].curPicture, 0, 0);
-		drawItems();
-	}
-
-	_display->decodeFrameBuffer();
-	printMessage(_rooms[_room].description, false);
+	drawPic(f, pos);
 }
 
 void HiRes1Engine::runGame() {

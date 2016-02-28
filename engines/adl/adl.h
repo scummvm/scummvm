@@ -174,6 +174,9 @@ protected:
 	void doAllCommands(const Commands &commands, byte verb, byte noun);
 	void doActions(const Command &command, byte noun, byte offset);
 	void clearScreen();
+	virtual void drawPic(byte pic, Common::Point pos = Common::Point()) = 0;
+	void drawItems();
+	void showRoom();
 	void takeItem(byte noun);
 	void dropItem(byte noun);
 

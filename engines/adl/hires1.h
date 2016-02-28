@@ -53,10 +53,9 @@ private:
 	uint getEngineMessage(EngineMessage msg);
 
 	void runIntro();
-	void drawPic(Common::ReadStream &stream, byte xOffset, byte yOffset);
-	void showRoom();
+	void drawPic(Common::ReadStream &stream, Common::Point pos);
 	void drawItems();
-	void drawPic(byte pic, byte xOffset, byte yOffset);
+	void drawPic(byte pic, Common::Point pos);
 };
 
 } // End of namespace Adl
