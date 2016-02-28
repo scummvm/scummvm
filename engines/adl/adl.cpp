@@ -210,19 +210,19 @@ void AdlEngine::dropItem(byte noun) {
 void AdlEngine::doActions(const Command &command, byte noun, byte offset) {
 	for (uint i = 0; i < command.numAct; ++i) {
 		switch (command.script[offset]) {
-		case 1:
+		case IDO_ACT_VAR_ADD:
 			_variables[command.script[offset + 2]] += command.script[offset + 1];
 			offset += 3;
 			break;
-		case 2:
+		case IDO_ACT_VAR_SUB:
 			_variables[command.script[offset + 2]] -= command.script[offset + 1];
 			offset += 3;
 			break;
-		case 3:
+		case IDO_ACT_VAR_SET:
 			_variables[command.script[offset + 1]] = command.script[offset + 2];
 			offset += 3;
 			break;
-		case 4: {
+		case IDO_ACT_LIST_ITEMS: {
 			Common::Array<Item>::const_iterator it;
 
 			for (it = _inventory.begin(); it != _inventory.end(); ++it)
@@ -232,44 +232,44 @@ void AdlEngine::doActions(const Command &command, byte noun, byte offset) {
 			++offset;
 			break;
 		}
-		case 5:
+		case IDO_ACT_MOVE_ITEM:
 			_inventory[command.script[offset + 1] - 1].room = command.script[offset + 2];
 			offset += 3;
 			break;
-		case 6:
+		case IDO_ACT_SET_ROOM:
 			_rooms[_room].curPicture = _rooms[_room].picture;
 			_room = command.script[offset + 1];
 			offset += 2;
 			break;
-		case 7:
+		case IDO_ACT_SET_CUR_PIC:
 			_rooms[_room].curPicture = command.script[offset + 1];
 			offset += 2;
 			break;
-		case 8:
+		case IDO_ACT_SET_PIC:
 			_rooms[_room].picture = _rooms[_room].curPicture = command.script[offset + 1];
 			offset += 2;
 			break;
-		case 9:
+		case IDO_ACT_PRINT_MSG:
 			printMessage(command.script[offset + 1]);
 			offset += 2;
 			break;
-		case 0xa:
+		case IDO_ACT_SET_LIGHT:
 			_isDark = false;
 			++offset;
 			break;
-		case 0xb:
+		case IDO_ACT_SET_DARK:
 			_isDark = true;
 			++offset;
 			break;
-		case 0xf:
+		case IDO_ACT_SAVE:
 			warning("Save game not implemented");
 			++offset;
 			break;
-		case 0x10:
+		case IDO_ACT_LOAD:
 			warning("Load game not implemented");
 			++offset;
 			break;
-		case 0x11: {
+		case IDO_ACT_RESTART: {
 			_display->printString(_strings[IDI_STR_PLAY_AGAIN]);
 			Common::String input = _display->inputString();
 			if (input.size() == 0 || input[0] != APPLECHAR('N')) {
@@ -278,11 +278,11 @@ void AdlEngine::doActions(const Command &command, byte noun, byte offset) {
 			}
 			// Fall-through
 		}
-		case 0xd:
+		case IDO_ACT_QUIT:
 			printEngineMessage(IDI_MSG_THANKS_FOR_PLAYING);
 			quitGame();
 			return;
-		case 0x12: {
+		case IDO_ACT_SET_ITEM_POS: {
 			byte item = command.script[offset + 1] - 1;
 			_inventory[item].room = command.script[offset + 2];
 			_inventory[item].position.x = command.script[offset + 3];
@@ -290,22 +290,22 @@ void AdlEngine::doActions(const Command &command, byte noun, byte offset) {
 			offset += 5;
 			break;
 		}
-		case 0x13: {
+		case IDO_ACT_SET_ITEM_PIC: {
 			byte item = command.script[offset + 2] - 1;
 			_inventory[item].picture = command.script[offset + 1];
 			offset += 3;
 			break;
 		}
-		case 0x14:
+		case IDO_ACT_RESET_PIC:
 			_rooms[_room].curPicture = _rooms[_room].picture;
 			++offset;
 			break;
-		case 0x15:
-		case 0x16:
-		case 0x17:
-		case 0x18:
-		case 0x19:
-		case 0x1a: {
+		case IDO_ACT_GO_NORTH:
+		case IDO_ACT_GO_SOUTH:
+		case IDO_ACT_GO_EAST:
+		case IDO_ACT_GO_WEST:
+		case IDO_ACT_GO_UP:
+		case IDO_ACT_GO_DOWN: {
 			byte room = _rooms[_room].connections[command.script[offset] - 0x15];
 
 			if (room == 0) {
@@ -317,15 +317,15 @@ void AdlEngine::doActions(const Command &command, byte noun, byte offset) {
 			_room = room;
 			return;
 		}
-		case 0x1b:
+		case IDO_ACT_TAKE_ITEM:
 			takeItem(noun);
 			++offset;
 			break;
-		case 0x1c:
+		case IDO_ACT_DROP_ITEM:
 			dropItem(noun);
 			++offset;
 			break;
-		case 0x1d:
+		case IDO_ACT_SET_ROOM_PIC:
 			_rooms[command.script[offset + 1]].picture = _rooms[command.script[offset + 1]].curPicture = command.script[offset + 2];
 			offset += 3;
 			break;
@@ -348,27 +348,27 @@ bool AdlEngine::checkCommand(const Command &command, byte verb, byte noun) {
 	uint offset = 0;
 	for (uint i = 0; i < command.numCond; ++i) {
 		switch (command.script[offset]) {
-		case 3:
+		case IDO_CND_ITEM_IN_ROOM:
 			if (_inventory[command.script[offset + 1] - 1].room != command.script[offset + 2])
 				return false;
 			offset += 3;
 			break;
-		case 5:
+		case IDO_CND_STEPS_GE:
 			if (command.script[offset + 1] > _steps)
 				return false;
 			offset += 2;
 			break;
-		case 6:
+		case IDO_CND_VAR_EQ:
 			if (_variables[command.script[offset + 1]] != command.script[offset + 2])
 				return false;
 			offset += 3;
 			break;
-		case 9:
+		case IDO_CND_CUR_PIC_EQ:
 			if (_rooms[_room].curPicture != command.script[offset + 1])
 				return false;
 			offset += 2;
 			break;
-		case 10:
+		case IDO_CND_ITEM_PIC_EQ:
 			if (_inventory[command.script[offset + 1] - 1].picture != command.script[offset + 2])
 				return false;
 			offset += 3;
