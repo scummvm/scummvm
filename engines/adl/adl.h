@@ -90,16 +90,23 @@ struct Command {
 	Common::Array<byte> script;
 };
 
+enum {
+	IDI_ITEM_NOT_MOVED,
+	IDI_ITEM_MOVED,
+	IDI_ITEM_DOESNT_MOVE
+};
+
+#define IDI_NONE 0xfe
+
 struct Item {
-	byte field1;
-	byte field2;
-	byte field3;
-	byte field4;
-	byte field5;
-	byte field6;
-	byte field7;
-	byte field8;
-	Common::Array<byte> field10;
+	byte noun;
+	byte room;
+	byte picture;
+	bool isDrawing;
+	Common::Point position;
+	int state;
+	byte description;
+	Common::Array<byte> roomPictures;
 };
 
 typedef Common::List<Command> Commands;

@@ -165,25 +165,24 @@ void AdlEngine::takeItem(byte noun) {
 	Common::Array<Item>::iterator it;
 
 	for (it = _inventory.begin(); it != _inventory.end(); ++it) {
-		if (it->field1 != noun || it->field2 != _room)
+		if (it->noun != noun || it->room != _room)
 			continue;
 
-		if (it->field7 == 2) {
+		if (it->state == IDI_ITEM_DOESNT_MOVE) {
 			printEngineMessage(IDI_MSG_ITEM_DOESNT_MOVE);
 			return;
 		}
 
-		if (it->field7 == 1) {
-			it->field2 = 0xfe;
-			it->field7 = 1;
+		if (it->state == IDI_ITEM_MOVED) {
+			it->room = IDI_NONE;
 			return;
 		}
 
 		Common::Array<byte>::const_iterator it2;
-		for (it2 = it->field10.begin(); it->field10.end(); ++it2) {
+		for (it2 = it->roomPictures.begin(); it->roomPictures.end(); ++it2) {
 			if (*it2 == _rooms[_room].picture) {
-				it->field2 = 0xfe;
-				it->field7 = 1;
+				it->room = IDI_NONE;
+				it->state = IDI_ITEM_MOVED;
 				return;
 			}
 		}
@@ -196,11 +195,11 @@ void AdlEngine::dropItem(byte noun) {
 	Common::Array<Item>::iterator it;
 
 	for (it = _inventory.begin(); it != _inventory.end(); ++it) {
-		if (it->field1 != noun || it->field2 != 0xfe)
+		if (it->noun != noun || it->room != IDI_NONE)
 			continue;
 
-		it->field2 = _room;
-		it->field7 = 1;
+		it->room = _room;
+		it->state = IDI_ITEM_MOVED;
 		return;
 	}
 
@@ -227,14 +226,14 @@ void AdlEngine::doActions(const Command &command, byte noun, byte offset) {
 			Common::Array<Item>::const_iterator it;
 
 			for (it = _inventory.begin(); it != _inventory.end(); ++it)
-				if (it->field2 == 0xfe)
-					printMessage(it->field8);
+				if (it->room == IDI_NONE)
+					printMessage(it->description);
 
 			++offset;
 			break;
 		}
 		case 5:
-			_inventory[command.script[offset + 1] - 1].field2 = command.script[offset + 2];
+			_inventory[command.script[offset + 1] - 1].room = command.script[offset + 2];
 			offset += 3;
 			break;
 		case 6:
@@ -285,15 +284,15 @@ void AdlEngine::doActions(const Command &command, byte noun, byte offset) {
 			return;
 		case 0x12: {
 			byte item = command.script[offset + 1] - 1;
-			_inventory[item].field2 = command.script[offset + 2];
-			_inventory[item].field5 = command.script[offset + 3];
-			_inventory[item].field6 = command.script[offset + 4];
+			_inventory[item].room = command.script[offset + 2];
+			_inventory[item].position.x = command.script[offset + 3];
+			_inventory[item].position.y = command.script[offset + 4];
 			offset += 5;
 			break;
 		}
 		case 0x13: {
 			byte item = command.script[offset + 2] - 1;
-			_inventory[item].field3 = command.script[offset + 1];
+			_inventory[item].picture = command.script[offset + 1];
 			offset += 3;
 			break;
 		}
@@ -337,20 +336,20 @@ void AdlEngine::doActions(const Command &command, byte noun, byte offset) {
 }
 
 bool AdlEngine::checkCommand(const Command &command, byte verb, byte noun) {
-	if (command.room != 0xfe && command.room != _room)
+	if (command.room != IDI_NONE && command.room != _room)
 		return false;
 
-	if (command.verb != 0xfe && command.verb != verb)
+	if (command.verb != IDI_NONE && command.verb != verb)
 		return false;
 
-	if (command.noun != 0xfe && command.noun != noun)
+	if (command.noun != IDI_NONE && command.noun != noun)
 		return false;
 
 	uint offset = 0;
 	for (uint i = 0; i < command.numCond; ++i) {
 		switch (command.script[offset]) {
 		case 3:
-			if (_inventory[command.script[offset + 1] - 1].field2 != command.script[offset + 2])
+			if (_inventory[command.script[offset + 1] - 1].room != command.script[offset + 2])
 				return false;
 			offset += 3;
 			break;
@@ -370,7 +369,7 @@ bool AdlEngine::checkCommand(const Command &command, byte verb, byte noun) {
 			offset += 2;
 			break;
 		case 10:
-			if (_inventory[command.script[offset + 1] - 1].field3 != command.script[offset + 2])
+			if (_inventory[command.script[offset + 1] - 1].picture != command.script[offset + 2])
 				return false;
 			offset += 3;
 			break;

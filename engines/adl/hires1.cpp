@@ -212,16 +212,16 @@ void HiRes1Engine::drawItems() {
 	uint dropped = 0;
 
 	for (it = _inventory.begin(); it != _inventory.end(); ++it) {
-		if (it->field2 != _room)
+		if (it->room != _room)
 			continue;
 
-		if (it->field7 == 1) {
+		if (it->state == IDI_ITEM_MOVED) {
 			if (_rooms[_room].field8 == _rooms[_room].picture) {
 				const Common::Point &p =  _itemOffsets[dropped];
-				if (it->field4)
-					_display->drawRightAngles(_drawings[it->field3 - 1], Common::Point(p.x, p.y), 0, 1, 0x7f);
+				if (it->isDrawing)
+					_display->drawRightAngles(_drawings[it->picture - 1], Common::Point(p.x, p.y), 0, 1, 0x7f);
 				else
-					drawPic(it->field3, p.x, p.y);
+					drawPic(it->picture, p.x, p.y);
 				++dropped;
 			}
 			continue;
@@ -229,12 +229,12 @@ void HiRes1Engine::drawItems() {
 
 		Common::Array<byte>::const_iterator it2;
 
-		for (it2 = it->field10.begin(); it2 != it->field10.end(); ++it2) {
+		for (it2 = it->roomPictures.begin(); it2 != it->roomPictures.end(); ++it2) {
 			if (*it2 == _rooms[_room].picture) {
-				if (it->field4)
-					_display->drawRightAngles(_drawings[it->field3 - 1], Common::Point(it->field5, it->field6), 0, 1, 0x7f);
+				if (it->isDrawing)
+					_display->drawRightAngles(_drawings[it->picture - 1], it->position, 0, 1, 0x7f);
 				else
-					drawPic(it->field3, it->field5, it->field6);
+					drawPic(it->picture, it->position.x, it->position.y);
 				continue;
 			}
 		}
@@ -292,21 +292,21 @@ void HiRes1Engine::runGame() {
 	f.seek(0x100);
 	while (f.readByte() != 0xff) {
 		struct Item item;
-		item.field1 = f.readByte();
-		item.field2 = f.readByte();
-		item.field3 = f.readByte();
-		item.field4 = f.readByte();
-		item.field5 = f.readByte();
-		item.field6 = f.readByte();
-		item.field7 = f.readByte();
-		item.field8 = f.readByte();
+		item.noun = f.readByte();
+		item.room = f.readByte();
+		item.picture = f.readByte();
+		item.isDrawing = f.readByte();
+		item.position.x = f.readByte();
+		item.position.y = f.readByte();
+		item.state = f.readByte();
+		item.description = f.readByte();
 
 		f.readByte();
 
 		byte size = f.readByte();
 
 		for (uint i = 0; i < size; ++i)
-			item.field10.push_back(f.readByte());
+			item.roomPictures.push_back(f.readByte());
 
 		_inventory.push_back(item);
 	}
