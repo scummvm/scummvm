@@ -29,6 +29,7 @@
 #include "graphics/thumbnail.h"
 #include "titanic/titanic.h"
 #include "titanic/core/saveable_object.h"
+#include "titanic/game/parrot/parrot_lobby_object.h"
 
 namespace Titanic {
 
@@ -52,6 +53,8 @@ void TitanicEngine::initialize() {
 	DebugMan.addDebugChannel(kDebugSound, "sound", "Sound and Music handling");
 
 	CSaveableObject::initClassList();
+	CParrotLobbyObject::init();
+
 	_screenManager = new OSScreenManager(this);
 	_window = new CMainGameWindow(this);
 	_window->applicationStarting();

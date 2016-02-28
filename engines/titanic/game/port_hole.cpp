@@ -20,51 +20,28 @@
  *
  */
 
-#include "titanic/game/drop_target.h"
+#include "titanic/game/port_hole.h"
 
 namespace Titanic {
 
-CDropTarget::CDropTarget() : CGameObject(), _fieldC4(0),
-	_fieldD4(0), _fieldE4(0), _fieldF4(0), _fieldF8(0),
-	_fieldFC(0), _field10C(1), _field110(8), _field114(20) {
+CPortHole::CPortHole() : CGameObject(), _fieldBC(0),
+		_string1("b#47.wav"), _string2("b#46.wav") {
 }
 
-void CDropTarget::save(SimpleFile *file, int indent) const {
+void CPortHole::save(SimpleFile *file, int indent) const {
 	file->writeNumberLine(1, indent);
-	file->writePoint(_pos1, indent);
-	file->writeNumberLine(_fieldC4, indent);
+	file->writeNumberLine(_fieldBC, indent);
 	file->writeQuotedLine(_string1, indent);
-	file->writeNumberLine(_fieldD4, indent);
 	file->writeQuotedLine(_string2, indent);
-	file->writeNumberLine(_fieldE4, indent);
-	file->writeQuotedLine(_string3, indent);
-	file->writeNumberLine(_fieldF4, indent);
-	file->writeNumberLine(_fieldF8, indent);
-	file->writeNumberLine(_fieldFC, indent);
-	file->writeQuotedLine(_string4, indent);
-	file->writeNumberLine(_field10C, indent);
-	file->writeNumberLine(_field110, indent);
-	file->writeNumberLine(_field114, indent);
 
 	CGameObject::save(file, indent);
 }
 
-void CDropTarget::load(SimpleFile *file) {
+void CPortHole::load(SimpleFile *file) {
 	file->readNumber();
-	_pos1 = file->readPoint();
-	_fieldC4 = file->readNumber();
+	_fieldBC = file->readNumber();
 	_string1 = file->readString();
-	_fieldD4 = file->readNumber();
 	_string2 = file->readString();
-	_fieldE4 = file->readNumber();
-	_string3 = file->readString();
-	_fieldF4 = file->readNumber();
-	_fieldF8 = file->readNumber();
-	_fieldFC = file->readNumber();
-	_string4 = file->readString();
-	_field10C = file->readNumber();
-	_field110 = file->readNumber();
-	_field114 = file->readNumber();
 
 	CGameObject::load(file);
 }

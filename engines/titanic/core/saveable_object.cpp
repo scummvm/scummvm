@@ -52,11 +52,13 @@
 #include "titanic/core/saveable_object.h"
 #include "titanic/core/background.h"
 #include "titanic/core/click_responder.h"
+#include "titanic/core/drop_target.h"
 #include "titanic/core/file_item.h"
 #include "titanic/core/link_item.h"
 #include "titanic/core/list.h"
 #include "titanic/core/message_target.h"
 #include "titanic/core/movie_clip.h"
+#include "titanic/core/multi_drop_target.h"
 #include "titanic/core/node_item.h"
 #include "titanic/core/project_item.h"
 #include "titanic/core/saveable_object.h"
@@ -76,17 +78,28 @@
 #include "titanic/game/desk_click_responder.h"
 #include "titanic/game/doorbot_home_handler.h"
 #include "titanic/game/drawer.h"
-#include "titanic/game/drop_target.h"
 #include "titanic/game/hammer_dispensor_button.h"
 #include "titanic/game/null_port_hole.h"
 #include "titanic/game/pet_position.h"
+#include "titanic/game/port_hole.h"
 #include "titanic/game/room_item.h"
 #include "titanic/game/service_elevator_door.h"
 #include "titanic/game/sgt_state_room.h"
 #include "titanic/game/sgt_upper_doors_sound.h"
 #include "titanic/game/start_action.h"
 #include "titanic/game/sub_glass.h"
+#include "titanic/game/sweet_bowl.h"
 #include "titanic/game/television.h"
+#include "titanic/game/parrot/parrot_lobby_controller.h"
+#include "titanic/game/parrot/parrot_lobby_link_updater.h"
+#include "titanic/game/parrot/parrot_lobby_object.h"
+#include "titanic/game/parrot/parrot_lobby_view_object.h"
+#include "titanic/game/parrot/parrot_loser.h"
+#include "titanic/game/parrot/parrot_nut_bowl_actor.h"
+#include "titanic/game/parrot/parrot_nut_eater.h"
+#include "titanic/game/parrot/parrot_perch_holder.h"
+#include "titanic/game/parrot/parrot_succubus.h"
+#include "titanic/game/parrot/parrot_trigger.h"
 
 #include "titanic/gfx/act_button.h"
 #include "titanic/gfx/changes_season_button.h"
@@ -187,12 +200,14 @@ DEFFN(CSweets);
 
 DEFFN(CBackground);
 DEFFN(CClickResponder);
+DEFFN(CDropTarget);
 DEFFN(CFileItem);
 DEFFN(CFileListItem);
 DEFFN(CLinkItem);
 DEFFN(CMessageTarget);
 DEFFN(CMovieClip);
 DEFFN(CMovieClipList);
+DEFFN(CMultiDropTarget);
 DEFFN(CNodeItem);
 DEFFN(CProjectItem);
 DEFFN(CTurnOnObject);
@@ -210,17 +225,28 @@ DEFFN(CCreditsButton);
 DEFFN(CDeadArea);
 DEFFN(CDeskClickResponder);
 DEFFN(CDoorbotHomeHandler);
-DEFFN(CDropTarget);
 DEFFN(CHammerDispensorButton);
 DEFFN(CNullPortHole);
 DEFFN(CPETPosition);
+DEFFN(CPortHole);
 DEFFN(CRoomItem);
 DEFFN(CServiceElevatorDoor);
 DEFFN(CSGTStateRoom);
 DEFFN(CSGTUpperDoorsSound);
 DEFFN(CStartAction);
 DEFFN(CSUBGlass);
+DEFFN(CSweetBowl);
 DEFFN(CTelevision);
+DEFFN(CParrotLobbyController);
+DEFFN(CParrotLobbyLinkUpdater);
+DEFFN(CParrotLobbyObject);
+DEFFN(CParrotLobbyViewObject);
+DEFFN(CParrotLoser);
+DEFFN(CParrotNutBowlActor);
+DEFFN(CParrotNutEater);
+DEFFN(CParrotPerchHolder);
+DEFFN(CParrotSuccUBus);
+DEFFN(CParrotTrigger);
 
 DEFFN(CActButton);
 DEFFN(CChangesSeasonButton);
@@ -485,12 +511,14 @@ void CSaveableObject::initClassList() {
 
 	ADDFN(CBackground);
 	ADDFN(CClickResponder);
+	ADDFN(CDropTarget);
 	ADDFN(CFileItem);
 	ADDFN(CFileListItem);
 	ADDFN(CLinkItem);
 	ADDFN(CMessageTarget);
 	ADDFN(CMovieClip);
 	ADDFN(CMovieClipList);
+	ADDFN(CMultiDropTarget);
 	ADDFN(CNodeItem);
 	ADDFN(CProjectItem);
 	ADDFN(CTreeItem);
@@ -512,13 +540,25 @@ void CSaveableObject::initClassList() {
 	ADDFN(CHammerDispensorButton);
 	ADDFN(CNullPortHole);
 	ADDFN(CPETPosition);
+	ADDFN(CPortHole);
 	ADDFN(CRoomItem);
 	ADDFN(CServiceElevatorDoor);
 	ADDFN(CSGTStateRoom);
 	ADDFN(CSGTUpperDoorsSound);
 	ADDFN(CStartAction);
 	ADDFN(CSUBGlass);
+	ADDFN(CSweetBowl);
 	ADDFN(CTelevision);
+	ADDFN(CParrotLobbyController);
+	ADDFN(CParrotLobbyLinkUpdater);
+	ADDFN(CParrotLobbyObject);
+	ADDFN(CParrotLobbyViewObject);
+	ADDFN(CParrotLoser);
+	ADDFN(CParrotNutBowlActor);
+	ADDFN(CParrotNutEater);
+	ADDFN(CParrotPerchHolder);
+	ADDFN(CParrotSuccUBus);
+	ADDFN(CParrotTrigger);
 
 	ADDFN(CActButton);
 	ADDFN(CChangesSeasonButton);

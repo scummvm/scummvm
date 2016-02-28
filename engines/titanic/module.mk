@@ -46,12 +46,14 @@ MODULE_OBJS := \
 	core/background.o \
 	core/click_responder.o \
 	core/dont_save_file_item.o \
+	core/drop_target.o \
 	core/file_item.o \
 	core/game_object.o \
 	core/link_item.o \
 	core/list.o \
 	core/message_target.o \
 	core/movie_clip.o \
+	core/multi_drop_target.o \
 	core/named_item.o \
 	core/node_item.o \
 	core/pet_control.o \
@@ -73,9 +75,9 @@ MODULE_OBJS := \
 	game/desk_click_responder.o \
 	game/doorbot_home_handler.o \
 	game/drawer.o \
-	game/drop_target.o \
 	game/hammer_dispensor_button.o \
 	game/pet_position.o \
+	game/port_hole.o \
 	game/null_port_hole.o \
 	game/room_item.o \
 	game/service_elevator_door.o \
@@ -83,7 +85,18 @@ MODULE_OBJS := \
 	game/sgt_upper_doors_sound.o \
 	game/start_action.o \
 	game/sub_glass.o \
+	game/sweet_bowl.o \
 	game/television.o \
+	game/parrot/parrot_lobby_controller.o \
+	game/parrot/parrot_lobby_link_updater.o \
+	game/parrot/parrot_lobby_object.o \
+	game/parrot/parrot_lobby_view_object.o \
+	game/parrot/parrot_loser.o \
+	game/parrot/parrot_nut_bowl_actor.o \
+	game/parrot/parrot_nut_eater.o \
+	game/parrot/parrot_perch_holder.o \
+	game/parrot/parrot_succubus.o \
+	game/parrot/parrot_trigger.o \
 	gfx/act_button.o \
 	gfx/changes_season_button.o \
 	gfx/chev_left_off.o \
