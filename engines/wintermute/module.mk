@@ -27,6 +27,8 @@ MODULE_OBJS := \
 	ad/ad_talk_holder.o \
 	ad/ad_talk_node.o \
 	ad/ad_waypoint_group.o \
+	base/scriptables/debuggable/debuggable_script.o \
+	base/scriptables/debuggable/debuggable_script_engine.o \
 	base/scriptables/script.o \
 	base/scriptables/script_engine.o \
 	base/scriptables/script_stack.o \
