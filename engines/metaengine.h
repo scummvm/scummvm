@@ -96,8 +96,8 @@ public:
 	/**
 	 * Return a list of all save states associated with the given target.
 	 *
-	 * The list return is guarnateed to be sorted by slot numbers. That means
-	 * lower slot numbers are always stored before bigger slot numbers.
+	 * The returned list is guaranteed to be sorted by slot numbers. That
+	 * means smaller slot numbers are always stored before bigger slot numbers.
 	 *
 	 * The caller has to ensure that this (Meta)Engine is responsible
 	 * for the specified target (by using findGame on it respectively
