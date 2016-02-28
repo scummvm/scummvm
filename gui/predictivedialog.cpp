@@ -724,6 +724,10 @@ int PredictiveDialog::binarySearch(const char *const *const dictLine, const Comm
 }
 
 bool PredictiveDialog::matchWord() {
+	// If there is no dictionary, then there is no match.
+	if (_unitedDict.dictLineCount <= 0)
+		return false;
+
 	// If no text has been entered, then there is no match.
 	if (_currentCode.empty())
 		return false;
