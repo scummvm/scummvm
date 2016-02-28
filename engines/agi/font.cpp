@@ -1239,6 +1239,10 @@ void GfxFont::loadFontHercules() {
 
 	}
 
+	// It seems hgc_graf.ovl holds a low-res font. It makes no real sense to use it.
+	// This was only done to AGI3 games and those rendered differently (2 pixel lines -> 3 pixel lines instead of 4)
+	// User could copy hgc_font from another AGI game over to get the hires font working.
+#if 0
 	if (!_fontDataAllocated) {
 		if (fontFile.open("hgc_graf.ovl")) {
 			// hgc_graf.ovl file found, this is font data + code. non-interleaved font data, should be 3075 bytes
@@ -1273,6 +1277,7 @@ void GfxFont::loadFontHercules() {
 			fontFile.close();
 		}
 	}
+#endif
 
 	if (_fontDataAllocated) {
 		// font loaded
@@ -1283,7 +1288,7 @@ void GfxFont::loadFontHercules() {
 
 	} else {
 		// Continue, if no file was not found
-		warning("Could not open/use file 'hgc_font' or 'hgc_graf.ovl' for Hercules hires font");
+		warning("Could not open/use file 'hgc_font' for Hercules hires font");
 	}
 }
 
