@@ -70,6 +70,8 @@
 #include "titanic/game/cdrom_computer.h"
 #include "titanic/game/cdrom_tray.h"
 #include "titanic/game/computer_screen.h"
+#include "titanic/game/credits.h"
+#include "titanic/game/credits_button.h"
 #include "titanic/game/dead_area.h"
 #include "titanic/game/desk_click_responder.h"
 #include "titanic/game/doorbot_home_handler.h"
@@ -203,6 +205,8 @@ DEFFN(CCDROM);
 DEFFN(CCDROMComputer);
 DEFFN(CCDROMTray);
 DEFFN(CComputerScreen);
+DEFFN(CCredits);
+DEFFN(CCreditsButton);
 DEFFN(CDeadArea);
 DEFFN(CDeskClickResponder);
 DEFFN(CDoorbotHomeHandler);
@@ -499,6 +503,8 @@ void CSaveableObject::initClassList() {
 	ADDFN(CCDROMComputer);
 	ADDFN(CCDROMTray);
 	ADDFN(CComputerScreen);
+	ADDFN(CCredits);
+	ADDFN(CCreditsButton);
 	ADDFN(CDeadArea);
 	ADDFN(CDeskClickResponder);
 	ADDFN(CDoorbotHomeHandler);

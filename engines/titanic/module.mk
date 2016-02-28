@@ -67,6 +67,8 @@ MODULE_OBJS := \
 	game/cdrom_computer.o \
 	game/cdrom_tray.o \
 	game/computer_screen.o \
+	game/credits.o \
+	game/credits_button.o \
 	game/dead_area.o \
 	game/desk_click_responder.o \
 	game/doorbot_home_handler.o \
