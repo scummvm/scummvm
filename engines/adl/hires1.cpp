@@ -42,13 +42,13 @@
 namespace Adl {
 
 // Messages used outside of scripts
-#define IDI_HR1_MSG_CANT_GO_THERE 137
-#define IDI_HR1_MSG_DONT_UNDERSTAND 37
-#define IDI_HR1_MSG_ITEM_DOESNT_MOVE 151
-#define IDI_HR1_MSG_ITEM_NOT_HERE 152
+#define IDI_HR1_MSG_CANT_GO_THERE      137
+#define IDI_HR1_MSG_DONT_UNDERSTAND     37
+#define IDI_HR1_MSG_ITEM_DOESNT_MOVE   151
+#define IDI_HR1_MSG_ITEM_NOT_HERE      152
 #define IDI_HR1_MSG_THANKS_FOR_PLAYING 140
-#define IDI_HR1_MSG_DONT_HAVE_IT 127
-#define IDI_HR1_MSG_GETTING_DARK 7
+#define IDI_HR1_MSG_DONT_HAVE_IT       127
+#define IDI_HR1_MSG_GETTING_DARK         7
 
 // Strings embedded in the executable
 enum {
@@ -227,7 +227,7 @@ void HiRes1Engine::drawItems() {
 			continue;
 
 		if (it->state == IDI_ITEM_MOVED) {
-			if (_rooms[_room].field8 == _rooms[_room].picture) {
+			if (_rooms[_room].picture == _rooms[_room].curPicture) {
 				const Common::Point &p =  _itemOffsets[dropped];
 				if (it->isDrawing)
 					_display->drawRightAngles(_drawings[it->picture - 1], Common::Point(p.x, p.y), 0, 1, 0x7f);
@@ -241,7 +241,7 @@ void HiRes1Engine::drawItems() {
 		Common::Array<byte>::const_iterator it2;
 
 		for (it2 = it->roomPictures.begin(); it2 != it->roomPictures.end(); ++it2) {
-			if (*it2 == _rooms[_room].picture) {
+			if (*it2 == _rooms[_room].curPicture) {
 				if (it->isDrawing)
 					_display->drawRightAngles(_drawings[it->picture - 1], it->position, 0, 1, 0x7f);
 				else
@@ -254,7 +254,7 @@ void HiRes1Engine::drawItems() {
 
 void HiRes1Engine::showRoom() {
 	if (!_isDark) {
-		drawPic(_rooms[_room].picture, 0, 0);
+		drawPic(_rooms[_room].curPicture, 0, 0);
 		drawItems();
 	}
 
@@ -294,8 +294,8 @@ void HiRes1Engine::runGame() {
 		room.description = f.readByte();
 		for (uint j = 0; j < 6; ++j)
 			room.connections[j] = f.readByte();
-		room.field8 = f.readByte();
 		room.picture = f.readByte();
+		room.curPicture = f.readByte();
 		_rooms.push_back(room);
 	}
 

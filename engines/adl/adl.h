@@ -74,8 +74,8 @@ enum EngineString {
 struct Room {
 	byte description;
 	byte connections[6];
-	byte field8;
 	byte picture;
+	byte curPicture;
 };
 
 struct Picture {

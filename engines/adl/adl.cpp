@@ -180,7 +180,7 @@ void AdlEngine::takeItem(byte noun) {
 
 		Common::Array<byte>::const_iterator it2;
 		for (it2 = it->roomPictures.begin(); it->roomPictures.end(); ++it2) {
-			if (*it2 == _rooms[_room].picture) {
+			if (*it2 == _rooms[_room].curPicture) {
 				it->room = IDI_NONE;
 				it->state = IDI_ITEM_MOVED;
 				return;
@@ -237,16 +237,16 @@ void AdlEngine::doActions(const Command &command, byte noun, byte offset) {
 			offset += 3;
 			break;
 		case 6:
-			_rooms[_room].picture = _rooms[_room].field8;
+			_rooms[_room].curPicture = _rooms[_room].picture;
 			_room = command.script[offset + 1];
 			offset += 2;
 			break;
 		case 7:
-			_rooms[_room].picture = command.script[offset + 1];
+			_rooms[_room].curPicture = command.script[offset + 1];
 			offset += 2;
 			break;
 		case 8:
-			_rooms[_room].field8 = _rooms[_room].picture = command.script[offset + 1];
+			_rooms[_room].picture = _rooms[_room].curPicture = command.script[offset + 1];
 			offset += 2;
 			break;
 		case 9:
@@ -297,7 +297,7 @@ void AdlEngine::doActions(const Command &command, byte noun, byte offset) {
 			break;
 		}
 		case 0x14:
-			_rooms[_room].picture = _rooms[_room].field8;
+			_rooms[_room].curPicture = _rooms[_room].picture;
 			++offset;
 			break;
 		case 0x15:
@@ -313,7 +313,7 @@ void AdlEngine::doActions(const Command &command, byte noun, byte offset) {
 				return;
 			}
 
-			_rooms[_room].picture = _rooms[_room].field8;
+			_rooms[_room].curPicture = _rooms[_room].picture;
 			_room = room;
 			return;
 		}
@@ -326,7 +326,7 @@ void AdlEngine::doActions(const Command &command, byte noun, byte offset) {
 			++offset;
 			break;
 		case 0x1d:
-			_rooms[command.script[offset + 1]].field8 = _rooms[command.script[offset + 1]].picture = command.script[offset + 2];
+			_rooms[command.script[offset + 1]].picture = _rooms[command.script[offset + 1]].curPicture = command.script[offset + 2];
 			offset += 3;
 			break;
 		default:
@@ -364,7 +364,7 @@ bool AdlEngine::checkCommand(const Command &command, byte verb, byte noun) {
 			offset += 3;
 			break;
 		case 9:
-			if (_rooms[_room].picture != command.script[offset + 1])
+			if (_rooms[_room].curPicture != command.script[offset + 1])
 				return false;
 			offset += 2;
 			break;
