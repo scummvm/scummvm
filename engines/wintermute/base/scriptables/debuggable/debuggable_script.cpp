@@ -21,8 +21,11 @@
  */
 
 #include "debuggable_script.h"
-#include "debuggable_script_engine.h"
+#include "engines/wintermute/base/scriptables/debuggable/debuggable_script_engine.h"
 #include "engines/wintermute/base/scriptables/script_stack.h"
+#include "engines/wintermute/base/scriptables/script_value.h"
+#include "engines/wintermute/debugger/breakpoint.h"
+#include "engines/wintermute/debugger/script_monitor.h"
 
 namespace Wintermute {
 
@@ -32,7 +35,17 @@ DebuggableScript::~DebuggableScript() {}
 
 void DebuggableScript::preInstHook(uint32 inst) {}
 
-void DebuggableScript::postInstHook(uint32 inst) {}
+void DebuggableScript::postInstHook(uint32 inst) {
+	if (inst == II_DBG_LINE) {
+		for (uint j = 0; j < _engine->_breakpoints.size(); j++) {
+			_engine->_breakpoints[j]->evaluate(this);
+		}
+
+		if (_callStack->_sP <= _stepDepth) {
+			_engine->_monitor->notifyStep(this);
+		}
+	}
+}
 
 void DebuggableScript::setStepDepth(int depth) {
 	_stepDepth = depth;
