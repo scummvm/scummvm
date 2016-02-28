@@ -25,6 +25,7 @@
 
 #include "gui/debugger.h"
 
+#define SET_PATH_CMD "set_path"
 namespace Wintermute {
 
 class WintermuteEngine;
