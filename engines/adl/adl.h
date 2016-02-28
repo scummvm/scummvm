@@ -138,7 +138,7 @@ struct Item {
 	byte noun;
 	byte room;
 	byte picture;
-	bool isDrawing;
+	bool isLineArt;
 	Common::Point position;
 	int state;
 	byte description;
@@ -188,7 +188,7 @@ protected:
 	Common::Array<Picture> _pictures;
 	Common::Array<Item> _inventory;
 	Common::Array<Common::Point> _itemOffsets;
-	Common::Array<Common::Array<byte> > _drawings;
+	Common::Array<Common::Array<byte> > _lineArt;
 	Commands _roomCommands;
 	Commands _globalCommands;
 

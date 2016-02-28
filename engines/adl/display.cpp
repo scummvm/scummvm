@@ -304,7 +304,7 @@ void Display::drawNextPixel(Display::PixelPos &p, byte &color, byte bits, byte q
 		moveY(p, bits & 2);
 }
 
-void Display::drawRightAngles(Common::Array<byte> &rightAngles, Common::Point p, byte rotation, byte scaling, byte color) {
+void Display::drawLineArt(const Common::Array<byte> &lineArt, Common::Point p, byte rotation, byte scaling, byte color) {
 	const byte stepping[] = {
 		0xff, 0xfe, 0xfa, 0xf4, 0xec, 0xe1, 0xd4, 0xc5,
 		0xb4, 0xa1, 0x8d, 0x78, 0x61, 0x49, 0x31, 0x18,
@@ -319,8 +319,8 @@ void Display::drawRightAngles(Common::Array<byte> &rightAngles, Common::Point p,
 	byte xStep = stepping[rotation];
 	byte yStep = stepping[(rotation ^ 0xf) + 1] + 1;
 
-	for (uint i = 0; i < rightAngles.size(); ++i) {
-		byte b = rightAngles[i];
+	for (uint i = 0; i < lineArt.size(); ++i) {
+		byte b = lineArt[i];
 
 		do {
 			byte xFrac = 0x80;

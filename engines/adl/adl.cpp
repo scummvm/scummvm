@@ -416,8 +416,8 @@ void AdlEngine::drawItems() {
 		if (item->state == IDI_ITEM_MOVED) {
 			if (_rooms[_room].picture == _rooms[_room].curPicture) {
 				const Common::Point &p =  _itemOffsets[dropped];
-				if (item->isDrawing)
-					_display->drawRightAngles(_drawings[item->picture - 1], p, 0, 1, 0x7f);
+				if (item->isLineArt)
+					_display->drawLineArt(_lineArt[item->picture - 1], p);
 				else
 					drawPic(item->picture, p);
 				++dropped;
@@ -429,8 +429,8 @@ void AdlEngine::drawItems() {
 
 		for (pic = item->roomPictures.begin(); pic != item->roomPictures.end(); ++pic) {
 			if (*pic == _rooms[_room].curPicture) {
-				if (item->isDrawing)
-					_display->drawRightAngles(_drawings[item->picture - 1], item->position, 0, 1, 0x7f);
+				if (item->isLineArt)
+					_display->drawLineArt(_lineArt[item->picture - 1], item->position);
 				else
 					drawPic(item->picture, item->position);
 				continue;

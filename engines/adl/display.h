@@ -63,7 +63,7 @@ public:
 	void drawPixel(byte x, byte y, byte color);
 	void drawLine(Common::Point p1, Common::Point p2, byte color);
 	void clear(byte color);
-	void drawRightAngles(Common::Array<byte> &rightAngles, Common::Point p, byte rotation, byte scaling, byte color);
+	void drawLineArt(const Common::Array<byte> &lineArt, Common::Point p, byte rotation = 0, byte scaling = 1, byte color = 0x7f);
 
 private:
 	enum {

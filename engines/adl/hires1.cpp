@@ -261,7 +261,7 @@ void HiRes1Engine::runGame() {
 		item.noun = f.readByte();
 		item.room = f.readByte();
 		item.picture = f.readByte();
-		item.isDrawing = f.readByte();
+		item.isLineArt = f.readByte();
 		item.position.x = f.readByte();
 		item.position.y = f.readByte();
 		item.state = f.readByte();
@@ -302,21 +302,21 @@ void HiRes1Engine::runGame() {
 		_itemOffsets.push_back(p);
 	}
 
-	// Load right-angle drawings
+	// Load right-angle line art
 	f.seek(0x4f00);
-	uint16 drawingsTotal = f.readUint16LE();
-	for (uint i = 0; i < drawingsTotal; ++i) {
+	uint16 lineArtTotal = f.readUint16LE();
+	for (uint i = 0; i < lineArtTotal; ++i) {
 		f.seek(0x4f00 + 2 + i * 2);
 		uint16 offset = f.readUint16LE();
 		f.seek(0x4f00 + offset);
 
-		Common::Array<byte> drawing;
+		Common::Array<byte> lineArt;
 		byte b = f.readByte();
 		while (b != 0) {
-			drawing.push_back(b);
+			lineArt.push_back(b);
 			b = f.readByte();
 		}
-		_drawings.push_back(drawing);
+		_lineArt.push_back(lineArt);
 	}
 
 	// Title screen shown during loading
