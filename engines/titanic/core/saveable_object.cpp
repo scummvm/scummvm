@@ -114,12 +114,9 @@
 #include "titanic/gfx/st_button.h"
 #include "titanic/gfx/toggle_switch.h"
 
-#include "titanic/messages/message.h"
-#include "titanic/messages/edit_control_msg.h"
-#include "titanic/messages/is_hooked_on_msg.h"
-#include "titanic/messages/lights_msg.h"
-#include "titanic/messages/sub_accept_ccarry_msg.h"
-#include "titanic/messages/transport_msg.h"
+#include "titanic/messages/messages.h"
+#include "titanic/messages/mouse_messages.h"
+#include "titanic/messages/pet_messages.h"
 
 #include "titanic/moves/enter_bomb_room.h"
 #include "titanic/moves/exit_arboretum.h"
@@ -301,6 +298,16 @@ DEFFN(CLockPhonographMsg);
 DEFFN(CMaitreDDefeatedMsg);
 DEFFN(CMaitreDHappyMsg);
 DEFFN(CMissiveOMatActionMsg);
+DEFFN(CMouseMsg);
+DEFFN(CMouseMoveMsg);
+DEFFN(CMouseButtonMsg);
+DEFFN(CMouseButtonDownMsg);
+DEFFN(CMouseButtonUpMsg);
+DEFFN(CMouseButtonDoubleClickMsg);
+DEFFN(CMouseDragMsg);
+DEFFN(CMouseDragStartMsg);
+DEFFN(CMouseDragMoveMsg);
+DEFFN(CMouseDragEndMsg);
 DEFFN(CMoveToStartPosMsg);
 DEFFN(CMovieEndMsg);
 DEFFN(CMovieFrameMsg);
@@ -583,6 +590,16 @@ void CSaveableObject::initClassList() {
 	ADDFN(CMaitreDDefeatedMsg);
 	ADDFN(CMaitreDHappyMsg);
 	ADDFN(CMissiveOMatActionMsg);
+	ADDFN(CMouseMsg);
+	ADDFN(CMouseMoveMsg);
+	ADDFN(CMouseButtonMsg);
+	ADDFN(CMouseButtonDownMsg);
+	ADDFN(CMouseButtonUpMsg);
+	ADDFN(CMouseButtonDoubleClickMsg);
+	ADDFN(CMouseDragMsg);
+	ADDFN(CMouseDragStartMsg);
+	ADDFN(CMouseDragMoveMsg);
+	ADDFN(CMouseDragEndMsg);
 	ADDFN(CMoveToStartPosMsg);
 	ADDFN(CMovieEndMsg);
 	ADDFN(CMovieFrameMsg);

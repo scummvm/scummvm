@@ -111,7 +111,7 @@ MODULE_OBJS := \
 	gfx/toggle_switch.o \
 	messages/auto_sound_event.o \
 	messages/door_auto_sound_event.o \
-	messages/message.o \
+	messages/messages.o \
 	moves/enter_bomb_room.o \
 	moves/exit_arboretum.o \
 	moves/exit_bridge.o \

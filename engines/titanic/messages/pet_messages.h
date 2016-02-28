@@ -20,20 +20,28 @@
  *
  */
 
-#include "titanic/messages/message.h"
+#ifndef TITANIC_PET_MESSAGES_H
+#define TITANIC_PET_MESSAGES_H
+
+#include "titanic/messages/messages.h"
 
 namespace Titanic {
 
-CMessage::CMessage() : CSaveableObject() {
-}
-
-void CMessage::save(SimpleFile *file, int indent) const {
-	file->writeNumberLine(0, indent);
-}
-
-void CMessage::load(SimpleFile *file) {
-	file->readNumber();
-	CSaveableObject::load(file);
-}
+RAW_MESSAGE(CPETDeliverMsg);
+RAW_MESSAGE(CPETGainedObjectMsg);
+RAW_MESSAGE(CPETHelmetOnOffMsg);
+RAW_MESSAGE(CPETKeyboardOnOffMsg);
+RAW_MESSAGE(CPETLostObjectMsg);
+RAW_MESSAGE(CPETObjectSelectedMsg);
+NUM_MESSAGE(CPETObjectStateMsg, _value);
+RAW_MESSAGE(CPETPhotoOnOffMsg);
+NUM_MESSAGE(CPETPlaySoundMsg, _value);
+RAW_MESSAGE(CPETReceiveMsg);
+RAW_MESSAGE(CPETSetStarDestinationMsg);
+NUM_MESSAGE(CPETStarFieldLockMsg, _value);
+RAW_MESSAGE(CPETStereoFieldOnOffMsg);
+SNUM_MESSAGE_VAL(CPETTargetMsg, _strValue, _numValue, nullptr, -1);
 
 } // End of namespace Titanic
+
+#endif /* TITANIC_PET_MESSAGES_H */

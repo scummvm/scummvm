@@ -20,10 +20,11 @@
  *
  */
 
-#ifndef TITANIC_MESSAGE_H
-#define TITANIC_MESSAGE_H
+#ifndef TITANIC_MESSAGES_H
+#define TITANIC_MESSAGES_H
 
 #include "titanic/core/saveable_object.h"
+#include "titanic/core/game_object.h"
 
 namespace Titanic {
 
@@ -45,6 +46,135 @@ public:
 	 * Load the data for the class from file
 	 */
 	virtual void load(SimpleFile *file);
+};
+
+class CAutoSoundEvent : public CGameObject {
+protected:
+	int _fieldBC;
+	int _fieldC0;
+public:
+	CAutoSoundEvent();
+
+	/**
+	 * Return the class name
+	 */
+	virtual const char *getClassName() const { return "CAutoSoundEvent"; }
+
+	/**
+	 * Save the data for the class to file
+	 */
+	virtual void save(SimpleFile *file, int indent) const;
+
+	/**
+	 * Load the data for the class from file
+	 */
+	virtual void load(SimpleFile *file);
+};
+
+
+class CDoorAutoSoundEvent : public CAutoSoundEvent {
+protected:
+	CString _string1;
+	CString _string2;
+	int _fieldDC;
+	int _fieldE0;
+public:
+	CDoorAutoSoundEvent();
+
+	/**
+	 * Return the class name
+	 */
+	virtual const char *getClassName() const { return "CDoorAutoSoundEvent"; }
+
+	/**
+	 * Save the data for the class to file
+	 */
+	virtual void save(SimpleFile *file, int indent) const;
+
+	/**
+	 * Load the data for the class from file
+	 */
+	virtual void load(SimpleFile *file);
+};
+
+
+class CEditControlMsg : public CMessage {
+private:
+	int _field4;
+	int _field8;
+	CString _string1;
+	int _field18;
+	int _field1C;
+	int _field20;
+public:
+	CEditControlMsg() : _field4(0), _field8(0), _field18(0),
+		_field1C(0), _field20(0) {}
+
+	/**
+	 * Return the class name
+	 */
+	virtual const char *getClassName() const { return "CEditControlMsg"; }
+};
+
+class CLightsMsg : public CMessage {
+public:
+	int _field4;
+	int _field8;
+	int _fieldC;
+	int _field10;
+public:
+	CLightsMsg() : CMessage(), _field4(0), _field8(0),
+		_fieldC(0), _field10(0) {}
+
+	/**
+	 * Return the class name
+	 */
+	virtual const char *getClassName() const { return "CLightsMsg"; }
+};
+
+class CIsHookedOnMsg : public CMessage {
+private:
+	int _field4;
+	int _field8;
+	CString _string1;
+	int _field18;
+	int _field1C;
+	int _field20;
+public:
+	CIsHookedOnMsg() : CMessage(), _field4(0), _field8(0),
+		_field18(0), _field1C(0), _field20(0) {}
+
+	/**
+	 * Return the class name
+	 */
+	virtual const char *getClassName() const { return "CIsHookedOnMsg"; }
+};
+
+
+class CSubAcceptCCarryMsg : public CMessage {
+public:
+	CString _string1;
+	int _value1, _value2, _value3;
+public:
+	CSubAcceptCCarryMsg() : _value1(0), _value2(0), _value3(0) {}
+
+	/**
+	* Return the class name
+	*/
+	virtual const char *getClassName() const { return "CSubAcceptCCarryMsg"; }
+};
+
+class CTransportMsg : public CMessage {
+public:
+	CString _string;
+	int _value1, _value2;
+public:
+	CTransportMsg() : _value1(0), _value2(0) {}
+
+	/**
+	* Return the class name
+	*/
+	virtual const char *getClassName() const { return "CTransportMsg"; }
 };
 
 #define RAW_MESSAGE(NAME) class NAME: public CMessage { \
@@ -171,20 +301,6 @@ RAW_MESSAGE(CNPCQueueIdleAnimMsg);
 STR_MESSAGE(CNutPuzzleMsg, _value);
 NUM_MESSAGE(COnSummonBotMsg, _value);
 RAW_MESSAGE(COpeningCreditsMsg);
-RAW_MESSAGE(CPETDeliverMsg);
-RAW_MESSAGE(CPETGainedObjectMsg);
-RAW_MESSAGE(CPETHelmetOnOffMsg);
-RAW_MESSAGE(CPETKeyboardOnOffMsg);
-RAW_MESSAGE(CPETLostObjectMsg);
-RAW_MESSAGE(CPETObjectSelectedMsg);
-NUM_MESSAGE(CPETObjectStateMsg, _value);
-RAW_MESSAGE(CPETPhotoOnOffMsg);
-NUM_MESSAGE(CPETPlaySoundMsg, _value);
-RAW_MESSAGE(CPETReceiveMsg);
-RAW_MESSAGE(CPETSetStarDestinationMsg);
-NUM_MESSAGE(CPETStarFieldLockMsg, _value);
-RAW_MESSAGE(CPETStereoFieldOnOffMsg);
-SNUM_MESSAGE_VAL(CPETTargetMsg, _strValue, _numValue, nullptr, -1);
 NUM_MESSAGE(CPanningAwayFromParrotMsg, _value);
 STR2_MESSAGE(CParrotSpeakMsg, _value1, _value2);
 NUM2_MESSAGE(CParrotTriesChickenMsg, _value1, _value2);
