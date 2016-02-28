@@ -72,6 +72,11 @@ private:
 	 * Handles basic initialization
 	 */
 	void initialize();
+
+	/**
+	 * Handles game deinitialization
+	 */
+	void deinitialize();
 protected:
 	const TitanicGameDescription *_gameDescription;
 	int _loadSaveSlot;

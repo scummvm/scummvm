@@ -80,7 +80,11 @@ MODULE_OBJS := \
 	game/drawer.o \
 	game/ear_sweet_bowl.o \
 	game/empty_nut_bowl.o \
+	game/enter_exit_first_class_state.o \
 	game/hammer_dispensor_button.o \
+	game/light.o \
+	game/light_switch.o \
+	game/little_lift_button.o \
 	game/no_nut_bowl.o \
 	game/pet_position.o \
 	game/port_hole.o \

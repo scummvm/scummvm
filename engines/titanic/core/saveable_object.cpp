@@ -82,7 +82,11 @@
 #include "titanic/game/drawer.h"
 #include "titanic/game/ear_sweet_bowl.h"
 #include "titanic/game/empty_nut_bowl.h"
+#include "titanic/game/enter_exit_first_class_state.h"
 #include "titanic/game/hammer_dispensor_button.h"
+#include "titanic/game/light.h"
+#include "titanic/game/light_switch.h"
+#include "titanic/game/little_lift_button.h"
 #include "titanic/game/no_nut_bowl.h"
 #include "titanic/game/null_port_hole.h"
 #include "titanic/game/nut_replacer.h"
@@ -188,6 +192,7 @@ DEFFN(CCarryParrot);
 DEFFN(CChicken);
 DEFFN(CCrushedTV);
 DEFFN(CEar);
+DEFFN(CEye);
 DEFFN(CFeathers);
 DEFFN(CFruit);
 DEFFN(CGlass);
@@ -237,7 +242,11 @@ DEFFN(CDeskClickResponder);
 DEFFN(CDoorbotHomeHandler);
 DEFFN(CEarSweetBowl);
 DEFFN(CEmptyNutBowl);
+DEFFN(CEnterExitFirstClassState);
 DEFFN(CHammerDispensorButton);
+DEFFN(CLight);
+DEFFN(CLightSwitch);
+DEFFN(CLittleLiftButton);
 DEFFN(CNoNutBowl);
 DEFFN(CNullPortHole);
 DEFFN(CNutReplacer);
@@ -507,6 +516,7 @@ void CSaveableObject::initClassList() {
 	ADDFN(CChicken);
 	ADDFN(CCrushedTV);
 	ADDFN(CEar);
+	ADDFN(CEye);
 	ADDFN(CFeathers);
 	ADDFN(CFruit);
 	ADDFN(CGlass);
@@ -557,7 +567,11 @@ void CSaveableObject::initClassList() {
 	ADDFN(CDropTarget);
 	ADDFN(CEarSweetBowl);
 	ADDFN(CEmptyNutBowl);
+	ADDFN(CEnterExitFirstClassState);
 	ADDFN(CHammerDispensorButton);
+	ADDFN(CLight);
+	ADDFN(CLightSwitch);
+	ADDFN(CLittleLiftButton);
 	ADDFN(CNoNutBowl);
 	ADDFN(CNullPortHole);
 	ADDFN(CNutReplacer);
