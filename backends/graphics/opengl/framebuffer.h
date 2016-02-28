@@ -31,25 +31,12 @@ namespace OpenGL {
  * Object describing a framebuffer OpenGL can render to.
  */
 class Framebuffer {
+	friend class Pipeline;
 public:
 	Framebuffer();
 	virtual ~Framebuffer() {};
 
-	/**
-	 * Activate framebuffer.
-	 *
-	 * This is supposed to set all state associated with the framebuffer.
-	 */
-	virtual void activate() = 0;
-
-	/**
-	 * Deactivate framebuffer.
-	 *
-	 * This is supposed to make any cleanup required when unbinding the
-	 * framebuffer.
-	 */
-	virtual void deactivate();
-
+public:
 	/**
 	 * Set the clear color of the framebuffer.
 	 */
@@ -82,6 +69,33 @@ protected:
 
 	GLfloat _projectionMatrix[4*4];
 	void applyProjectionMatrix();
+
+	/**
+	 * Activate framebuffer.
+	 *
+	 * This is supposed to set all state associated with the framebuffer.
+	 */
+	virtual void activateInternal() = 0;
+
+	/**
+	 * Deactivate framebuffer.
+	 *
+	 * This is supposed to make any cleanup required when unbinding the
+	 * framebuffer.
+	 */
+	virtual void deactivateInternal() {}
+
+private:
+	/**
+	 * Accessor to activate framebuffer for pipeline.
+	 */
+	void activate();
+
+	/**
+	 * Accessor to deactivate framebuffer from pipeline.
+	 */
+	void deactivate();
+
 private:
 	bool _isActive;
 
@@ -103,12 +117,13 @@ private:
  */
 class Backbuffer : public Framebuffer {
 public:
-	virtual void activate();
-
 	/**
 	 * Set the dimensions (a.k.a. size) of the back buffer.
 	 */
 	void setDimensions(uint width, uint height);
+
+protected:
+	virtual void activateInternal();
 };
 
 #if !USE_FORCED_GLES
@@ -124,8 +139,6 @@ class TextureTarget : public Framebuffer {
 public:
 	TextureTarget();
 	virtual ~TextureTarget();
-
-	virtual void activate();
 
 	/**
 	 * Notify that the GL context is about to be destroyed.
@@ -146,6 +159,10 @@ public:
 	 * Query pointer to underlying GL texture.
 	 */
 	GLTexture *getTexture() const { return _texture; }
+
+protected:
+	virtual void activateInternal();
+
 private:
 	GLTexture *_texture;
 	GLuint _glFBO;

@@ -40,10 +40,14 @@ void Framebuffer::activate() {
 	applyBlendState();
 	applyScissorTestState();
 	applyScissorBox();
+
+	activateInternal();
 }
 
 void Framebuffer::deactivate() {
 	_isActive = false;
+
+	deactivateInternal();
 }
 
 void Framebuffer::setClearColor(GLfloat r, GLfloat g, GLfloat b, GLfloat a) {
@@ -124,9 +128,7 @@ void Framebuffer::applyScissorBox() {
 // Backbuffer implementation
 //
 
-void Backbuffer::activate() {
-	Framebuffer::activate();
-
+void Backbuffer::activateInternal() {
 #if !USE_FORCED_GLES
 	if (g_context.framebufferObjectSupported) {
 		GL_CALL(glBindFramebuffer(GL_FRAMEBUFFER, 0));
@@ -183,9 +185,7 @@ TextureTarget::~TextureTarget() {
 	GL_CALL_SAFE(glDeleteFramebuffers, (1, &_glFBO));
 }
 
-void TextureTarget::activate() {
-	Framebuffer::activate();
-
+void TextureTarget::activateInternal() {
 	// Allocate framebuffer object if necessary.
 	if (!_glFBO) {
 		GL_CALL(glGenFramebuffers(1, &_glFBO));
