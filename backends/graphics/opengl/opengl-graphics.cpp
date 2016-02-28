@@ -396,11 +396,11 @@ void OpenGLGraphicsManager::updateScreen() {
 	const GLfloat shakeOffset = _gameScreenShakeOffset * (GLfloat)_displayHeight / _gameScreen->getHeight();
 
 	// First step: Draw the (virtual) game screen.
-	g_context.activePipeline->drawTexture(_gameScreen->getGLTexture(), _displayX, _displayY + shakeOffset, _displayWidth, _displayHeight);
+	g_context.getActivePipeline()->drawTexture(_gameScreen->getGLTexture(), _displayX, _displayY + shakeOffset, _displayWidth, _displayHeight);
 
 	// Second step: Draw the overlay if visible.
 	if (_overlayVisible) {
-		g_context.activePipeline->drawTexture(_overlay->getGLTexture(), 0, 0, _outputScreenWidth, _outputScreenHeight);
+		g_context.getActivePipeline()->drawTexture(_overlay->getGLTexture(), 0, 0, _outputScreenWidth, _outputScreenHeight);
 	}
 
 	// Third step: Draw the cursor if visible.
@@ -409,7 +409,7 @@ void OpenGLGraphicsManager::updateScreen() {
 		// visible.
 		const GLfloat cursorOffset = _overlayVisible ? 0 : shakeOffset;
 
-		g_context.activePipeline->drawTexture(_cursor->getGLTexture(),
+		g_context.getActivePipeline()->drawTexture(_cursor->getGLTexture(),
 		                         _cursorDisplayX - _cursorHotspotXScaled,
 		                         _cursorDisplayY - _cursorHotspotYScaled + cursorOffset,
 		                         _cursorWidthScaled, _cursorHeightScaled);
@@ -433,13 +433,13 @@ void OpenGLGraphicsManager::updateScreen() {
 		}
 
 		// Set the OSD transparency.
-		g_context.activePipeline->setColor(1.0f, 1.0f, 1.0f, _osdAlpha / 100.0f);
+		g_context.getActivePipeline()->setColor(1.0f, 1.0f, 1.0f, _osdAlpha / 100.0f);
 
 		// Draw the OSD texture.
-		g_context.activePipeline->drawTexture(_osd->getGLTexture(), 0, 0, _outputScreenWidth, _outputScreenHeight);
+		g_context.getActivePipeline()->drawTexture(_osd->getGLTexture(), 0, 0, _outputScreenWidth, _outputScreenHeight);
 
 		// Reset color.
-		g_context.activePipeline->setColor(1.0f, 1.0f, 1.0f, 1.0f);
+		g_context.getActivePipeline()->setColor(1.0f, 1.0f, 1.0f, 1.0f);
 	}
 #endif
 
@@ -865,7 +865,7 @@ void OpenGLGraphicsManager::notifyContextCreate(const Graphics::PixelFormat &def
 	if (g_context.shadersSupported) {
 		ShaderMan.notifyCreate();
 
-		g_context.activePipeline->setShader(ShaderMan.query(ShaderManager::kDefault));
+		g_context.getActivePipeline()->setShader(ShaderMan.query(ShaderManager::kDefault));
 	}
 #endif
 
@@ -874,7 +874,7 @@ void OpenGLGraphicsManager::notifyContextCreate(const Graphics::PixelFormat &def
 	GL_CALL(glDisable(GL_DEPTH_TEST));
 	GL_CALL(glDisable(GL_DITHER));
 
-	g_context.activePipeline->setColor(1.0f, 1.0f, 1.0f, 1.0f);
+	g_context.getActivePipeline()->setColor(1.0f, 1.0f, 1.0f, 1.0f);
 
 	GL_CALL(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
 
@@ -887,7 +887,7 @@ void OpenGLGraphicsManager::notifyContextCreate(const Graphics::PixelFormat &def
 	// Setup scissor state accordingly.
 	_backBuffer.enableScissorTest(!_overlayVisible);
 
-	g_context.activePipeline->setFramebuffer(&_backBuffer);
+	g_context.getActivePipeline()->setFramebuffer(&_backBuffer);
 
 	// Clear the whole screen for the first three frames to assure any
 	// leftovers are cleared.

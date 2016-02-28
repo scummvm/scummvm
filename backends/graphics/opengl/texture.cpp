@@ -615,10 +615,10 @@ void TextureCLUT8GPU::updateGLTexture() {
 
 void TextureCLUT8GPU::lookUpColors() {
 	// Save old state.
-	Framebuffer *oldFramebuffer = g_context.activePipeline->setFramebuffer(_target);
+	Framebuffer *oldFramebuffer = g_context.getActivePipeline()->setFramebuffer(_target);
 
 	Shader *lookUpShader = ShaderMan.query(ShaderManager::kCLUT8LookUp);
-	Shader *oldShader = g_context.activePipeline->setShader(lookUpShader);
+	Shader *oldShader = g_context.getActivePipeline()->setShader(lookUpShader);
 	lookUpShader->setUniformI(_paletteLocation, 1);
 
 	// Set the palette texture.
@@ -627,11 +627,11 @@ void TextureCLUT8GPU::lookUpColors() {
 	GL_CALL(glActiveTexture(GL_TEXTURE0));
 
 	// Do color look up.
-	g_context.activePipeline->drawTexture(_clut8Texture, _clut8Vertices);
+	g_context.getActivePipeline()->drawTexture(_clut8Texture, _clut8Vertices);
 
 	// Restore old state.
-	g_context.activePipeline->setShader(oldShader);
-	g_context.activePipeline->setFramebuffer(oldFramebuffer);
+	g_context.getActivePipeline()->setShader(oldShader);
+	g_context.getActivePipeline()->setFramebuffer(oldFramebuffer);
 }
 #endif // !USE_FORCED_GLES
 

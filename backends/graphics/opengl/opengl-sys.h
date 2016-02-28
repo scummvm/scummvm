@@ -129,9 +129,11 @@ struct Context {
 	// programmable pipelines in the same fashion.
 	//
 
+private:
 	/** Currently active rendering pipeline. */
 	Pipeline *activePipeline;
 
+public:
 	/**
 	 * Set new pipeline.
 	 *
@@ -141,6 +143,11 @@ struct Context {
 	 * @return Formerly active pipeline.
 	 */
 	Pipeline *setPipeline(Pipeline *pipeline);
+
+	/**
+	 * Query the currently active rendering pipeline.
+	 */
+	Pipeline *getActivePipeline() const { return activePipeline; }
 };
 
 /**
