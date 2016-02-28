@@ -48,7 +48,7 @@ static const ADGameDescription labDescriptions[] = {
 		},
 		Common::EN_ANY,
 		Common::kPlatformDOS,
-		ADGF_TESTING,
+		ADGF_NO_FLAGS,
 		GUIO0()
 	},
 	{
@@ -61,7 +61,7 @@ static const ADGameDescription labDescriptions[] = {
 		},
 		Common::EN_ANY,
 		Common::kPlatformDOS,
-		Lab::GF_LOWRES | ADGF_TESTING,
+		Lab::GF_LOWRES | ADGF_NO_FLAGS,
 		GUIO0()
 	},
 	{
@@ -75,7 +75,7 @@ static const ADGameDescription labDescriptions[] = {
 		},
 		Common::EN_ANY,
 		Common::kPlatformWindows,
-		ADGF_TESTING,
+		ADGF_NO_FLAGS,
 		GUIO0()
 	},
 	{
