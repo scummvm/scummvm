@@ -28,6 +28,7 @@
 #include "common/system.h"
 #include "common/events.h"
 #include "common/stream.h"
+#include "common/savefile.h"
 
 #include "engines/util.h"
 
@@ -261,18 +262,21 @@ void AdlEngine::doActions(const Command &command, byte noun, byte offset) {
 			++offset;
 			break;
 		case IDO_ACT_SAVE:
-			warning("Save game not implemented");
+			saveState(0);
 			++offset;
 			break;
 		case IDO_ACT_LOAD:
-			warning("Load game not implemented");
+			loadState(0);
 			++offset;
+			// Original engine continues processing here (?)
 			break;
 		case IDO_ACT_RESTART: {
 			_display->printString(_strings[IDI_STR_PLAY_AGAIN]);
 			Common::String input = _display->inputString();
 			if (input.size() == 0 || input[0] != APPLECHAR('N')) {
 				_isRestarting = true;
+				_display->clear(0x00);
+				_display->decodeFrameBuffer();
 				restartGame();
 				return;
 			}
@@ -449,6 +453,116 @@ void AdlEngine::showRoom() {
 
 	_display->decodeFrameBuffer();
 	printMessage(_state.rooms[_state.room].description, false);
+}
+
+bool AdlEngine::saveState(uint slot) {
+	Common::String fileName = Common::String::format("%s.s%02d", _targetName.c_str(), slot);
+	Common::OutSaveFile *outFile = getSaveFileManager()->openForSaving(fileName);
+
+	if (!outFile) {
+		warning("Failed to open file '%s'", fileName.c_str());
+		return false;
+	}
+
+	outFile->writeUint32BE(getTag());
+	outFile->writeByte(SAVEGAME_VERSION);
+
+	outFile->writeByte(_state.room);
+	outFile->writeByte(_state.moves);
+	outFile->writeByte(_state.isDark);
+
+	outFile->writeUint32BE(_state.rooms.size());
+	for (uint i = 0; i < _state.rooms.size(); ++i) {
+		outFile->writeByte(_state.rooms[i].picture);
+		outFile->writeByte(_state.rooms[i].curPicture);
+	}
+
+	outFile->writeUint32BE(_state.items.size());
+	for (uint i = 0; i < _state.items.size(); ++i) {
+		outFile->writeByte(_state.items[i].room);
+		outFile->writeByte(_state.items[i].picture);
+		outFile->writeByte(_state.items[i].position.x);
+		outFile->writeByte(_state.items[i].position.y);
+		outFile->writeByte(_state.items[i].state);
+	}
+
+	outFile->writeUint32BE(_state.vars.size());
+	for (uint i = 0; i < _state.vars.size(); ++i)
+		outFile->writeByte(_state.vars[i]);
+
+	outFile->finalize();
+
+	if (outFile->err()) {
+		delete outFile;
+		warning("Failed to save game '%s'", fileName.c_str());
+		return false;
+	}
+
+	delete outFile;
+	return true;
+}
+
+bool AdlEngine::loadState(uint slot) {
+	Common::String fileName = Common::String::format("%s.s%02d", _targetName.c_str(), slot);
+	Common::InSaveFile *inFile = getSaveFileManager()->openForLoading(fileName);
+
+	if (!inFile) {
+		warning("Failed to open file '%s'", fileName.c_str());
+		return false;
+	}
+
+	if (inFile->readUint32BE() != getTag()) {
+		warning("No header found in '%s'", fileName.c_str());
+		delete inFile;
+		return false;
+	}
+
+	byte saveVersion = inFile->readByte();
+	if (saveVersion != SAVEGAME_VERSION) {
+		warning("Save game version %i not supported", saveVersion);
+		delete inFile;
+		return false;
+	}
+
+	initState();
+
+	_state.room = inFile->readByte();
+	_state.moves = inFile->readByte();
+	_state.isDark = inFile->readByte();
+
+	uint32 size = inFile->readUint32BE();
+	if (size != _state.rooms.size())
+		error("Room count mismatch (expected %i; found %i)", _state.rooms.size(), size);
+
+	for (uint i = 0; i < size; ++i) {
+		_state.rooms[i].picture = inFile->readByte();
+		_state.rooms[i].curPicture = inFile->readByte();
+	}
+
+	size = inFile->readUint32BE();
+	if (size != _state.items.size())
+		error("Item count mismatch (expected %i; found %i)", _state.items.size(), size);
+
+	for (uint i = 0; i < size; ++i) {
+		_state.items[i].room = inFile->readByte();
+		_state.items[i].picture = inFile->readByte();
+		_state.items[i].position.x = inFile->readByte();
+		_state.items[i].position.y = inFile->readByte();
+		_state.items[i].state = inFile->readByte();
+	}
+
+	size = inFile->readUint32BE();
+	if (size != _state.vars.size())
+		error("Variable count mismatch (expected %i; found %i)", _state.vars.size(), size);
+
+	for (uint i = 0; i < size; ++i)
+		_state.vars[i] = inFile->readByte();
+
+	if (inFile->err() || inFile->eos())
+		error("Failed to load game '%s'", fileName.c_str());
+
+	delete inFile;
+	return true;
 }
 
 AdlEngine *AdlEngine::create(GameType type, OSystem *syst, const AdlGameDescription *gd) {

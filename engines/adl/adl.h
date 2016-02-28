@@ -37,6 +37,8 @@ class SeekableReadStream;
 
 namespace Adl {
 
+#define SAVEGAME_VERSION 0
+
 class Display;
 class Parser;
 class Console;
@@ -178,6 +180,7 @@ protected:
 	virtual void initState() = 0;
 	virtual void restartGame() = 0;
 	virtual uint getEngineMessage(EngineMessage msg) = 0;
+	virtual uint32 getTag() = 0;
 	Common::String readString(Common::ReadStream &stream, byte until = 0);
 	void printStrings(Common::SeekableReadStream &stream, int count = 1);
 	virtual void printMessage(uint idx, bool wait = true);
@@ -211,6 +214,9 @@ protected:
 
 private:
 	void printEngineMessage(EngineMessage);
+	bool saveState(uint slot);
+	bool loadState(uint slot);
+	Common::String getTargetName() { return _targetName; }
 };
 
 AdlEngine *HiRes1Engine__create(OSystem *syst, const AdlGameDescription *gd);
