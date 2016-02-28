@@ -981,6 +981,7 @@ void PredictiveDialog::loadAllDictionary(Dict &dict) {
 		Common::File *inFile = new Common::File();
 		if (!inFile->open(ConfMan.get(dict.nameDict))) {
 			warning("Predictive Dialog: cannot read file: %s", dict.defaultFilename.c_str());
+			delete inFile;
 			return;
 		}
 		loadDictionary(inFile, dict);
