@@ -44,6 +44,7 @@ MODULE_OBJS := \
 	carry/plug_in.o \
 	carry/sweets.o \
 	core/background.o \
+	core/click_responder.o \
 	core/dont_save_file_item.o \
 	core/file_item.o \
 	core/game_object.o \
@@ -67,14 +68,17 @@ MODULE_OBJS := \
 	game/cdrom_tray.o \
 	game/computer_screen.o \
 	game/dead_area.o \
+	game/desk_click_responder.o \
 	game/doorbot_home_handler.o \
 	game/drawer.o \
 	game/drop_target.o \
 	game/hammer_dispensor_button.o \
 	game/pet_position.o \
+	game/null_port_hole.o \
 	game/room_item.o \
 	game/service_elevator_door.o \
 	game/sgt_state_room.o \
+	game/sgt_upper_doors_sound.o \
 	game/start_action.o \
 	game/sub_glass.o \
 	game/television.o \

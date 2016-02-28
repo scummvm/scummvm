@@ -51,6 +51,7 @@
 
 #include "titanic/core/saveable_object.h"
 #include "titanic/core/background.h"
+#include "titanic/core/click_responder.h"
 #include "titanic/core/file_item.h"
 #include "titanic/core/link_item.h"
 #include "titanic/core/list.h"
@@ -70,14 +71,17 @@
 #include "titanic/game/cdrom_tray.h"
 #include "titanic/game/computer_screen.h"
 #include "titanic/game/dead_area.h"
+#include "titanic/game/desk_click_responder.h"
 #include "titanic/game/doorbot_home_handler.h"
 #include "titanic/game/drawer.h"
 #include "titanic/game/drop_target.h"
 #include "titanic/game/hammer_dispensor_button.h"
+#include "titanic/game/null_port_hole.h"
 #include "titanic/game/pet_position.h"
 #include "titanic/game/room_item.h"
 #include "titanic/game/service_elevator_door.h"
 #include "titanic/game/sgt_state_room.h"
+#include "titanic/game/sgt_upper_doors_sound.h"
 #include "titanic/game/start_action.h"
 #include "titanic/game/sub_glass.h"
 #include "titanic/game/television.h"
@@ -180,6 +184,7 @@ DEFFN(CPlugIn);
 DEFFN(CSweets);
 
 DEFFN(CBackground);
+DEFFN(CClickResponder);
 DEFFN(CFileItem);
 DEFFN(CFileListItem);
 DEFFN(CLinkItem);
@@ -199,13 +204,16 @@ DEFFN(CCDROMComputer);
 DEFFN(CCDROMTray);
 DEFFN(CComputerScreen);
 DEFFN(CDeadArea);
+DEFFN(CDeskClickResponder);
 DEFFN(CDoorbotHomeHandler);
 DEFFN(CDropTarget);
 DEFFN(CHammerDispensorButton);
+DEFFN(CNullPortHole);
 DEFFN(CPETPosition);
 DEFFN(CRoomItem);
 DEFFN(CServiceElevatorDoor);
 DEFFN(CSGTStateRoom);
+DEFFN(CSGTUpperDoorsSound);
 DEFFN(CStartAction);
 DEFFN(CSUBGlass);
 DEFFN(CTelevision);
@@ -472,6 +480,7 @@ void CSaveableObject::initClassList() {
 	ADDFN(CSweets);
 
 	ADDFN(CBackground);
+	ADDFN(CClickResponder);
 	ADDFN(CFileItem);
 	ADDFN(CFileListItem);
 	ADDFN(CLinkItem);
@@ -491,13 +500,16 @@ void CSaveableObject::initClassList() {
 	ADDFN(CCDROMTray);
 	ADDFN(CComputerScreen);
 	ADDFN(CDeadArea);
+	ADDFN(CDeskClickResponder);
 	ADDFN(CDoorbotHomeHandler);
 	ADDFN(CDropTarget);
 	ADDFN(CHammerDispensorButton);
+	ADDFN(CNullPortHole);
 	ADDFN(CPETPosition);
 	ADDFN(CRoomItem);
 	ADDFN(CServiceElevatorDoor);
 	ADDFN(CSGTStateRoom);
+	ADDFN(CSGTUpperDoorsSound);
 	ADDFN(CStartAction);
 	ADDFN(CSUBGlass);
 	ADDFN(CTelevision);
