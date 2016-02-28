@@ -42,14 +42,14 @@ class Parser;
 class Console;
 struct AdlGameDescription;
 
-struct StringOffset {
-	int stringIdx;
-	uint offset;
-};
-
 enum GameType {
 	kGameTypeNone = 0,
 	kGameTypeHires1
+};
+
+struct StringOffset {
+	int stringIdx;
+	uint offset;
 };
 
 // Messages used outside of scripts

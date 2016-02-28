@@ -60,6 +60,7 @@ enum {
 	IDI_HR1_STR_TOTAL
 };
 
+// Offsets for strings inside executable
 static const StringOffset stringOffsets[] = {
 	{ IDI_STR_ENTER_COMMAND,       0x5bbc },
 	{ IDI_STR_VERB_ERROR,          0x5b4f },
@@ -70,6 +71,16 @@ static const StringOffset stringOffsets[] = {
 	{ IDI_HR1_STR_DONT_UNDERSTAND, 0x6c51 },
 	{ IDI_HR1_STR_GETTING_DARK,    0x6c7c }
 };
+
+#define IDI_HR1_OFS_PD_TEXT_0 0x5d
+#define IDI_HR1_OFS_PD_TEXT_1 0x12b
+#define IDI_HR1_OFS_PD_TEXT_2 0x16d
+#define IDI_HR1_OFS_PD_TEXT_3 0x259
+
+#define IDI_HR1_OFS_INTRO_TEXT 0x66
+#define IDI_HR1_OFS_GAME_OR_HELP 0xf
+
+#define IDI_HR1_OFS_LOGO_0 0x1003
 
 HiRes1Engine::HiRes1Engine(OSystem *syst, const AdlGameDescription *gd) :
 		AdlEngine(syst, gd) {
@@ -82,7 +93,7 @@ void HiRes1Engine::runIntro() {
 	if (!file.open("AUTO LOAD OBJ"))
 		error("Failed to open file");
 
-	file.seek(0x1003);
+	file.seek(IDI_HR1_OFS_LOGO_0);
 	_display->setMode(Display::kModeHires);
 	_display->loadFrameBuffer(file);
 	_display->decodeFrameBuffer();
@@ -99,19 +110,19 @@ void HiRes1Engine::runIntro() {
 
 	Common::String str;
 
-	basic.seek(93);
+	basic.seek(IDI_HR1_OFS_PD_TEXT_0);
 	str = readString(basic, '"');
 	_display->printASCIIString(str + '\r');
 
-	basic.seek(299);
+	basic.seek(IDI_HR1_OFS_PD_TEXT_1);
 	str = readString(basic, '"');
 	_display->printASCIIString(str + "\r\r");
 
-	basic.seek(365);
+	basic.seek(IDI_HR1_OFS_PD_TEXT_2);
 	str = readString(basic, '"');
 	_display->printASCIIString(str + "\r\r");
 
-	basic.seek(601);
+	basic.seek(IDI_HR1_OFS_PD_TEXT_3);
 	str = readString(basic, '"');
 	_display->printASCIIString(str + '\r');
 
@@ -121,7 +132,7 @@ void HiRes1Engine::runIntro() {
 
 	_display->setMode(Display::kModeMixed);
 
-	file.seek(15);
+	file.seek(IDI_HR1_OFS_GAME_OR_HELP);
 	str = readString(file);
 
 	while (1) {
@@ -141,7 +152,7 @@ void HiRes1Engine::runIntro() {
 	};
 
 	_display->setMode(Display::kModeText);
-	file.seek(102);
+	file.seek(IDI_HR1_OFS_INTRO_TEXT);
 
 	const int pages[] = { 6, 6, 4, 5, 8, 7, 0 };
 
