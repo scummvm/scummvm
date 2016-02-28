@@ -82,29 +82,6 @@ Display::Display() :
 	_textBufSurface->create(kWidth * 2, kHeight * 2, Graphics::PixelFormat::createFormatCLUT8());
 
 	createFont();
-
-	struct PixelPos rel = getPixelPos(0, 191);
-	struct PixelPos absy;
-	for (int i = 191; i >= 0; --i) {
-		absy = getPixelPos(0, i);
-		if (absy.rowAddr != rel.rowAddr)
-			debug("%i: %04x %04x", i, absy.rowAddr, rel.rowAddr);
-		moveY(rel, false);
-	}
-	absy = getPixelPos(0, 191);
-	if (absy.rowAddr != rel.rowAddr)
-		debug("%i: %04x %04x", 191, absy.rowAddr, rel.rowAddr);
-
-	rel = getPixelPos(0, 0);
-	for (int i = 0; i < 192; ++i) {
-		absy = getPixelPos(0, i);
-		if (absy.rowAddr != rel.rowAddr)
-			debug("%i: %04x %04x", i, absy.rowAddr, rel.rowAddr);
-		moveY(rel, true);
-	}
-	absy = getPixelPos(0, 0);
-	if (absy.rowAddr != rel.rowAddr)
-		debug("%i: %04x %04x", 191, absy.rowAddr, rel.rowAddr);
 }
 
 Display::~Display() {
