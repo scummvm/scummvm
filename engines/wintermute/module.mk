@@ -91,6 +91,7 @@ MODULE_OBJS := \
 	base/save_thumb_helper.o \
 	base/timer.o \
 	debugger/error.o \
+	debugger/script_monitor.o \
 	detection.o \
 	math/math_util.o \
 	math/matrix4.o \
