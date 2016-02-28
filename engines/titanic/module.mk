@@ -16,6 +16,7 @@ MODULE_OBJS := \
 	titanic.o \
 	video_surface.o \
 	carry/arm.o \
+	carry/bowl_ear.o \
 	carry/brain.o \
 	carry/bridge_piece.o \
 	carry/carry.o \
@@ -40,6 +41,7 @@ MODULE_OBJS := \
 	carry/note.o \
 	carry/parcel.o \
 	carry/phonograph_cylinder.o \
+	carry/phonograph_ear.o \
 	carry/photograph.o \
 	carry/plug_in.o \
 	carry/sweets.o \
@@ -65,6 +67,7 @@ MODULE_OBJS := \
 	core/tree_item.o \
 	core/view_item.o \
 	game/announce.o \
+	game/bowl_unlocker.o \
 	game/cdrom.o \
 	game/cdrom_computer.o \
 	game/cdrom_tray.o \
@@ -75,10 +78,14 @@ MODULE_OBJS := \
 	game/desk_click_responder.o \
 	game/doorbot_home_handler.o \
 	game/drawer.o \
+	game/ear_sweet_bowl.o \
+	game/empty_nut_bowl.o \
 	game/hammer_dispensor_button.o \
+	game/no_nut_bowl.o \
 	game/pet_position.o \
 	game/port_hole.o \
 	game/null_port_hole.o \
+	game/nut_replacer.o \
 	game/room_item.o \
 	game/service_elevator_door.o \
 	game/sgt_state_room.o \

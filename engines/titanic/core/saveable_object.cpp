@@ -21,13 +21,13 @@
  */
 
 #include "titanic/carry/arm.h"
+#include "titanic/carry/bowl_ear.h"
 #include "titanic/carry/brain.h"
 #include "titanic/carry/bridge_piece.h"
 #include "titanic/carry/carry.h"
 #include "titanic/carry/carry_parrot.h"
 #include "titanic/carry/chicken.h"
 #include "titanic/carry/crushed_tv.h"
-#include "titanic/carry/ear.h"
 #include "titanic/carry/eye.h"
 #include "titanic/carry/feathers.h"
 #include "titanic/carry/fruit.h"
@@ -45,6 +45,7 @@
 #include "titanic/carry/note.h"
 #include "titanic/carry/parcel.h"
 #include "titanic/carry/phonograph_cylinder.h"
+#include "titanic/carry/phonograph_ear.h"
 #include "titanic/carry/photograph.h"
 #include "titanic/carry/plug_in.h"
 #include "titanic/carry/sweets.h"
@@ -68,6 +69,7 @@
 #include "titanic/core/view_item.h"
 
 #include "titanic/game/announce.h"
+#include "titanic/game/bowl_unlocker.h"
 #include "titanic/game/cdrom.h"
 #include "titanic/game/cdrom_computer.h"
 #include "titanic/game/cdrom_tray.h"
@@ -78,8 +80,12 @@
 #include "titanic/game/desk_click_responder.h"
 #include "titanic/game/doorbot_home_handler.h"
 #include "titanic/game/drawer.h"
+#include "titanic/game/ear_sweet_bowl.h"
+#include "titanic/game/empty_nut_bowl.h"
 #include "titanic/game/hammer_dispensor_button.h"
+#include "titanic/game/no_nut_bowl.h"
 #include "titanic/game/null_port_hole.h"
+#include "titanic/game/nut_replacer.h"
 #include "titanic/game/pet_position.h"
 #include "titanic/game/port_hole.h"
 #include "titanic/game/room_item.h"
@@ -175,11 +181,13 @@ Common::HashMap<Common::String, CSaveableObject::CreateFunction> *
 #define ADDFN(T) (*_classList)[#T] = Function##T
 
 DEFFN(CArm);
+DEFFN(CBowlEar);
 DEFFN(CBrain);
 DEFFN(CBridgePiece);
 DEFFN(CCarryParrot);
 DEFFN(CChicken);
 DEFFN(CCrushedTV);
+DEFFN(CEar);
 DEFFN(CFeathers);
 DEFFN(CFruit);
 DEFFN(CGlass);
@@ -194,6 +202,7 @@ DEFFN(CNapkin);
 DEFFN(CNote);
 DEFFN(CParcel);
 DEFFN(CPhonographCylinder);
+DEFFN(CPhonographEar);
 DEFFN(CPhotograph);
 DEFFN(CPlugIn);
 DEFFN(CSweets);
@@ -216,6 +225,7 @@ DEFFN(CTreeItem);
 DEFFN(CViewItem);
 
 DEFFN(CAnnounce);
+DEFFN(CBowlUnlocker);
 DEFFN(CCDROM);
 DEFFN(CCDROMComputer);
 DEFFN(CCDROMTray);
@@ -225,8 +235,12 @@ DEFFN(CCreditsButton);
 DEFFN(CDeadArea);
 DEFFN(CDeskClickResponder);
 DEFFN(CDoorbotHomeHandler);
+DEFFN(CEarSweetBowl);
+DEFFN(CEmptyNutBowl);
 DEFFN(CHammerDispensorButton);
+DEFFN(CNoNutBowl);
 DEFFN(CNullPortHole);
+DEFFN(CNutReplacer);
 DEFFN(CPETPosition);
 DEFFN(CPortHole);
 DEFFN(CRoomItem);
@@ -486,11 +500,13 @@ DEFFN(CAutoMusicPlayer);
 void CSaveableObject::initClassList() {
 	_classList = new Common::HashMap<Common::String, CreateFunction>();
 	ADDFN(CArm);
+	ADDFN(CBowlEar);
 	ADDFN(CBrain);
 	ADDFN(CBridgePiece);
 	ADDFN(CCarryParrot);
 	ADDFN(CChicken);
 	ADDFN(CCrushedTV);
+	ADDFN(CEar);
 	ADDFN(CFeathers);
 	ADDFN(CFruit);
 	ADDFN(CGlass);
@@ -505,6 +521,7 @@ void CSaveableObject::initClassList() {
 	ADDFN(CNote);
 	ADDFN(CParcel);
 	ADDFN(CPhonographCylinder);
+	ADDFN(CPhonographEar);
 	ADDFN(CPhotograph);
 	ADDFN(CPlugIn);
 	ADDFN(CSweets);
@@ -527,6 +544,7 @@ void CSaveableObject::initClassList() {
 	ADDFN(CViewItem);
 
 	ADDFN(CAnnounce);
+	ADDFN(CBowlUnlocker);
 	ADDFN(CCDROM);
 	ADDFN(CCDROMComputer);
 	ADDFN(CCDROMTray);
@@ -537,8 +555,12 @@ void CSaveableObject::initClassList() {
 	ADDFN(CDeskClickResponder);
 	ADDFN(CDoorbotHomeHandler);
 	ADDFN(CDropTarget);
+	ADDFN(CEarSweetBowl);
+	ADDFN(CEmptyNutBowl);
 	ADDFN(CHammerDispensorButton);
+	ADDFN(CNoNutBowl);
 	ADDFN(CNullPortHole);
+	ADDFN(CNutReplacer);
 	ADDFN(CPETPosition);
 	ADDFN(CPortHole);
 	ADDFN(CRoomItem);
