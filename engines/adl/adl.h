@@ -175,6 +175,8 @@ public:
 
 protected:
 	virtual void runGame() = 0;
+	virtual void initState() = 0;
+	virtual void restartGame() = 0;
 	virtual uint getEngineMessage(EngineMessage msg) = 0;
 	Common::String readString(Common::ReadStream &stream, byte until = 0);
 	void printStrings(Common::SeekableReadStream &stream, int count = 1);
@@ -194,6 +196,7 @@ protected:
 
 	Display *_display;
 	Parser *_parser;
+	bool _isRestarting;
 
 	Common::Array<Common::String> _strings;
 	Common::Array<Common::String> _messages;

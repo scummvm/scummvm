@@ -43,7 +43,8 @@ AdlEngine::AdlEngine(OSystem *syst, const AdlGameDescription *gd) :
 		Engine(syst),
 		_gameDescription(gd),
 		_display(nullptr),
-		_parser(nullptr) {
+		_parser(nullptr),
+		_isRestarting(false) {
 }
 
 AdlEngine::~AdlEngine() {
@@ -271,7 +272,8 @@ void AdlEngine::doActions(const Command &command, byte noun, byte offset) {
 			_display->printString(_strings[IDI_STR_PLAY_AGAIN]);
 			Common::String input = _display->inputString();
 			if (input.size() == 0 || input[0] != APPLECHAR('N')) {
-				warning("Restart game not implemented");
+				_isRestarting = true;
+				restartGame();
 				return;
 			}
 			// Fall-through
@@ -392,8 +394,11 @@ bool AdlEngine::doOneCommand(const Commands &commands, byte verb, byte noun) {
 void AdlEngine::doAllCommands(const Commands &commands, byte verb, byte noun) {
 	Commands::const_iterator cmd;
 
-	for (cmd = commands.begin(); cmd != commands.end(); ++cmd)
+	for (cmd = commands.begin(); cmd != commands.end(); ++cmd) {
 		checkCommand(*cmd, verb, noun);
+		if (_isRestarting)
+			return;
+	}
 }
 
 void AdlEngine::clearScreen() {

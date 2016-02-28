@@ -49,6 +49,7 @@ private:
 		MH_ITEM_OFFSETS = 21
 	};
 
+	void restartGame();
 	void printMessage(uint idx, bool wait = true);
 	uint getEngineMessage(EngineMessage msg);
 

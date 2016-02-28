@@ -56,6 +56,7 @@ enum {
 	IDI_HR1_STR_DONT_HAVE_IT,
 	IDI_HR1_STR_DONT_UNDERSTAND,
 	IDI_HR1_STR_GETTING_DARK,
+	IDI_HR1_STR_PRESS_RETURN,
 
 	IDI_HR1_STR_TOTAL
 };
@@ -69,7 +70,8 @@ static const StringOffset stringOffsets[] = {
 	{ IDI_HR1_STR_CANT_GO_THERE,   0x6c0a },
 	{ IDI_HR1_STR_DONT_HAVE_IT,    0x6c31 },
 	{ IDI_HR1_STR_DONT_UNDERSTAND, 0x6c51 },
-	{ IDI_HR1_STR_GETTING_DARK,    0x6c7c }
+	{ IDI_HR1_STR_GETTING_DARK,    0x6c7c },
+	{ IDI_HR1_STR_PRESS_RETURN,    0x5f68 }
 };
 
 #define IDI_HR1_OFS_PD_TEXT_0 0x5d
@@ -268,6 +270,13 @@ void HiRes1Engine::initState() {
 	}
 }
 
+void HiRes1Engine::restartGame() {
+	initState();
+	_display->printString(_strings[IDI_HR1_STR_PRESS_RETURN]);
+	_display->inputString(); // Missing in the original
+	_display->printASCIIString("\r\r\r\r\r");
+}
+
 void HiRes1Engine::runGame() {
 	runIntro();
 	_display->printASCIIString("\r");
@@ -348,7 +357,12 @@ void HiRes1Engine::runGame() {
 	f.seek(0xf00);
 	_parser->loadNouns(f);
 
+	_display->printASCIIString("\r\r\r\r\r");
+
 	while (1) {
+		if (_isRestarting)
+			_isRestarting = false;
+
 		uint verb = 0, noun = 0;
 		clearScreen();
 		showRoom();
@@ -356,7 +370,14 @@ void HiRes1Engine::runGame() {
 
 		if (!doOneCommand(_roomCommands, verb, noun))
 			printMessage(37);
+
+		if (_isRestarting)
+			continue;
+
 		doAllCommands(_globalCommands, verb, noun);
+
+		if (_isRestarting)
+			continue;
 
 		_state.moves++;
 
