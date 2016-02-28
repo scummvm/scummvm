@@ -32,8 +32,6 @@ class ShaderPipeline : public Pipeline {
 public:
 	ShaderPipeline();
 
-	virtual void activate();
-
 	virtual Shader *setShader(Shader *shader);
 
 	virtual void setColor(GLfloat r, GLfloat g, GLfloat b, GLfloat a);
@@ -42,7 +40,9 @@ public:
 
 	virtual void setProjectionMatrix(const GLfloat *projectionMatrix);
 
-private:
+protected:
+	virtual void activateInternal();
+
 	Shader *_activeShader;
 };
 #endif // !USE_FORCED_GLES

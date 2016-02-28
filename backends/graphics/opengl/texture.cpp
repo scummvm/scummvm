@@ -23,6 +23,7 @@
 #include "backends/graphics/opengl/texture.h"
 #include "backends/graphics/opengl/shader.h"
 #include "backends/graphics/opengl/pipelines/pipeline.h"
+#include "backends/graphics/opengl/pipelines/clut8.h"
 #include "backends/graphics/opengl/framebuffer.h"
 
 #include "common/rect.h"
@@ -489,15 +490,19 @@ void TextureRGB555::updateTexture() {
 TextureCLUT8GPU::TextureCLUT8GPU()
     : _clut8Texture(GL_ALPHA, GL_ALPHA, GL_UNSIGNED_BYTE),
       _paletteTexture(GL_RGBA, GL_RGBA, GL_UNSIGNED_BYTE),
-      _target(new TextureTarget()), _clut8Vertices(), _paletteLocation(-1),
-      _clut8Data(), _userPixelData(), _palette(), _paletteDirty(false) {
+      _target(new TextureTarget()), _clut8Pipeline(new CLUT8LookUpPipeline()),
+      _clut8Vertices(), _clut8Data(), _userPixelData(), _palette(),
+      _paletteDirty(false) {
 	// Allocate space for 256 colors.
 	_paletteTexture.setSize(256, 1);
 
-	_paletteLocation = ShaderMan.query(ShaderManager::kCLUT8LookUp)->getUniformLocation("palette");
+	// Setup pipeline.
+	_clut8Pipeline->setFramebuffer(_target);
+	_clut8Pipeline->setPaletteTexture(&_paletteTexture);
 }
 
 TextureCLUT8GPU::~TextureCLUT8GPU() {
+	delete _clut8Pipeline;
 	delete _target;
 	_clut8Data.free();
 }
@@ -511,7 +516,6 @@ void TextureCLUT8GPU::destroy() {
 void TextureCLUT8GPU::recreate() {
 	_clut8Texture.create();
 	_paletteTexture.create();
-	_paletteLocation = ShaderMan.query(ShaderManager::kCLUT8LookUp)->getUniformLocation("palette");
 	_target->create();
 
 	// In case image date exists assure it will be completely refreshed next
@@ -614,24 +618,14 @@ void TextureCLUT8GPU::updateGLTexture() {
 }
 
 void TextureCLUT8GPU::lookUpColors() {
-	// Save old state.
-	Framebuffer *oldFramebuffer = g_context.getActivePipeline()->setFramebuffer(_target);
-
-	Shader *lookUpShader = ShaderMan.query(ShaderManager::kCLUT8LookUp);
-	Shader *oldShader = g_context.getActivePipeline()->setShader(lookUpShader);
-	lookUpShader->setUniformI(_paletteLocation, 1);
-
-	// Set the palette texture.
-	GL_CALL(glActiveTexture(GL_TEXTURE1));
-	_paletteTexture.bind();
-	GL_CALL(glActiveTexture(GL_TEXTURE0));
+	// Setup pipeline to do color look up.
+	Pipeline *oldPipeline = g_context.setPipeline(_clut8Pipeline);
 
 	// Do color look up.
 	g_context.getActivePipeline()->drawTexture(_clut8Texture, _clut8Vertices);
 
 	// Restore old state.
-	g_context.getActivePipeline()->setShader(oldShader);
-	g_context.getActivePipeline()->setFramebuffer(oldFramebuffer);
+	g_context.setPipeline(oldPipeline);
 }
 #endif // !USE_FORCED_GLES
 

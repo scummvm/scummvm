@@ -866,7 +866,6 @@ void OpenGLGraphicsManager::notifyContextCreate(const Graphics::PixelFormat &def
 #if !USE_FORCED_GLES
 	if (g_context.shadersSupported) {
 		ShaderMan.notifyCreate();
-
 		g_context.getActivePipeline()->setShader(ShaderMan.query(ShaderManager::kDefault));
 	}
 #endif

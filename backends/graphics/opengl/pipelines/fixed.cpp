@@ -25,7 +25,7 @@
 namespace OpenGL {
 
 #if !USE_FORCED_GLES2
-void FixedPipeline::activate() {
+void FixedPipeline::activateInternal() {
 	GL_CALL(glDisable(GL_LIGHTING));
 	GL_CALL(glDisable(GL_FOG));
 	GL_CALL(glShadeModel(GL_FLAT));
@@ -55,6 +55,10 @@ void FixedPipeline::drawTexture(const GLTexture &texture, const GLfloat *coordin
 }
 
 void FixedPipeline::setProjectionMatrix(const GLfloat *projectionMatrix) {
+	if (!isActive()) {
+		return;
+	}
+
 	GL_CALL(glMatrixMode(GL_PROJECTION));
 	GL_CALL(glLoadMatrixf(projectionMatrix));
 

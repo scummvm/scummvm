@@ -31,7 +31,7 @@ ShaderPipeline::ShaderPipeline()
     : _activeShader(nullptr) {
 }
 
-void ShaderPipeline::activate() {
+void ShaderPipeline::activateInternal() {
 	GL_CALL(glEnableVertexAttribArray(kPositionAttribLocation));
 	GL_CALL(glEnableVertexAttribArray(kTexCoordAttribLocation));
 

@@ -20,26 +20,28 @@
  *
  */
 
-#ifndef BACKENDS_GRAPHICS_OPENGL_PIPELINES_FIXED_H
-#define BACKENDS_GRAPHICS_OPENGL_PIPELINES_FIXED_H
+#ifndef BACKENDS_GRAPHICS_OPENGL_PIPELINES_CLUT8_H
+#define BACKENDS_GRAPHICS_OPENGL_PIPELINES_CLUT8_H
 
-#include "backends/graphics/opengl/pipelines/pipeline.h"
+#include "backends/graphics/opengl/pipelines/shader.h"
 
 namespace OpenGL {
 
-#if !USE_FORCED_GLES2
-class FixedPipeline : public Pipeline {
+#if !USE_FORCED_GLES
+class CLUT8LookUpPipeline : public ShaderPipeline {
 public:
-	virtual void setColor(GLfloat r, GLfloat g, GLfloat b, GLfloat a);
+	CLUT8LookUpPipeline();
+
+	virtual Shader *setShader(Shader *shader);
+
+	void setPaletteTexture(const GLTexture *paletteTexture) { _paletteTexture = paletteTexture; }
 
 	virtual void drawTexture(const GLTexture &texture, const GLfloat *coordinates);
 
-	virtual void setProjectionMatrix(const GLfloat *projectionMatrix);
-
-protected:
-	virtual void activateInternal();
+private:
+	const GLTexture *_paletteTexture;
 };
-#endif // !USE_FORCED_GLES2
+#endif // !USE_FORCED_GLES
 
 } // End of namespace OpenGL
 

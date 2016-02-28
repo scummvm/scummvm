@@ -50,7 +50,12 @@ public:
 	 * This sets the OpenGL state to make use of drawing with the given
 	 * OpenGL pipeline.
 	 */
-	virtual void activate() = 0;
+	void activate();
+
+	/**
+	 * Deactivate the pipeline.
+	 */
+	void deactivate();
 
 	/**
 	 * Set framebuffer to render to.
@@ -113,7 +118,25 @@ public:
 	virtual void setProjectionMatrix(const GLfloat *projectionMatrix) = 0;
 
 protected:
+	/**
+	 * Activate the pipeline.
+	 *
+	 * This sets the OpenGL state to make use of drawing with the given
+	 * OpenGL pipeline.
+	 */
+	virtual void activateInternal() = 0;
+
+	/**
+	 * Deactivate the pipeline.
+	 */
+	virtual void deactivateInternal() {}
+
+	bool isActive() const { return _isActive; }
+
 	Framebuffer *_activeFramebuffer;
+
+private:
+	bool _isActive;
 };
 
 } // End of namespace OpenGL

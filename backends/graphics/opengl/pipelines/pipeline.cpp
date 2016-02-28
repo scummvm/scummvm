@@ -26,17 +26,38 @@
 namespace OpenGL {
 
 Pipeline::Pipeline()
-    : _activeFramebuffer(nullptr) {
+    : _activeFramebuffer(nullptr), _isActive(false) {
+}
+
+void Pipeline::activate() {
+	_isActive = true;
+
+	if (_activeFramebuffer) {
+		_activeFramebuffer->activate();
+		setProjectionMatrix(_activeFramebuffer->getProjectionMatrix());
+	}
+
+	activateInternal();
+}
+
+void Pipeline::deactivate() {
+	deactivateInternal();
+
+	if (_activeFramebuffer) {
+		_activeFramebuffer->deactivate();
+	}
+
+	_isActive = false;
 }
 
 Framebuffer *Pipeline::setFramebuffer(Framebuffer *framebuffer) {
 	Framebuffer *oldFramebuffer = _activeFramebuffer;
-	if (oldFramebuffer) {
+	if (_isActive && oldFramebuffer) {
 		oldFramebuffer->deactivate();
 	}
 
 	_activeFramebuffer = framebuffer;
-	if (_activeFramebuffer) {
+	if (_isActive && _activeFramebuffer) {
 		_activeFramebuffer->activate();
 		setProjectionMatrix(_activeFramebuffer->getProjectionMatrix());
 	}

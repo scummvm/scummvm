@@ -321,6 +321,7 @@ private:
 
 #if !USE_FORCED_GLES
 class TextureTarget;
+class CLUT8LookUpPipeline;
 
 class TextureCLUT8GPU : public Surface {
 public:
@@ -365,10 +366,9 @@ private:
 	GLTexture _paletteTexture;
 
 	TextureTarget *_target;
+	CLUT8LookUpPipeline *_clut8Pipeline;
 
 	GLfloat _clut8Vertices[4*2];
-
-	GLint _paletteLocation;
 
 	Graphics::Surface _clut8Data;
 	Graphics::Surface _userPixelData;

@@ -20,27 +20,34 @@
  *
  */
 
-#ifndef BACKENDS_GRAPHICS_OPENGL_PIPELINES_FIXED_H
-#define BACKENDS_GRAPHICS_OPENGL_PIPELINES_FIXED_H
-
-#include "backends/graphics/opengl/pipelines/pipeline.h"
+#include "backends/graphics/opengl/pipelines/clut8.h"
+#include "backends/graphics/opengl/shader.h"
+#include "backends/graphics/opengl/framebuffer.h"
 
 namespace OpenGL {
 
-#if !USE_FORCED_GLES2
-class FixedPipeline : public Pipeline {
-public:
-	virtual void setColor(GLfloat r, GLfloat g, GLfloat b, GLfloat a);
+#if !USE_FORCED_GLES
+CLUT8LookUpPipeline::CLUT8LookUpPipeline()
+    : _paletteTexture(nullptr) {
+	ShaderPipeline::setShader(ShaderMan.query(ShaderManager::kCLUT8LookUp));
+}
 
-	virtual void drawTexture(const GLTexture &texture, const GLfloat *coordinates);
+Shader *CLUT8LookUpPipeline::setShader(Shader *shader) {
+	return ShaderPipeline::setShader(ShaderMan.query(ShaderManager::kCLUT8LookUp));
+}
 
-	virtual void setProjectionMatrix(const GLfloat *projectionMatrix);
+void CLUT8LookUpPipeline::drawTexture(const GLTexture &texture, const GLfloat *coordinates) {
+	_activeShader->setUniformI(_activeShader->getUniformLocation("palette"), 1);
 
-protected:
-	virtual void activateInternal();
-};
-#endif // !USE_FORCED_GLES2
+	// Set the palette texture.
+	GL_CALL(glActiveTexture(GL_TEXTURE1));
+	if (_paletteTexture) {
+		_paletteTexture->bind();
+	}
+
+	GL_CALL(glActiveTexture(GL_TEXTURE0));
+	ShaderPipeline::drawTexture(texture, coordinates);
+}
+#endif // !USE_FORCED_GLES
 
 } // End of namespace OpenGL
-
-#endif
