@@ -206,19 +206,21 @@ void AdlEngine::dropItem(byte noun) {
 	printEngineMessage(IDI_MSG_DONT_UNDERSTAND);
 }
 
+#define ARG(N) (command.script[offset + N])
+
 void AdlEngine::doActions(const Command &command, byte noun, byte offset) {
 	for (uint i = 0; i < command.numAct; ++i) {
-		switch (command.script[offset]) {
+		switch (ARG(0)) {
 		case IDO_ACT_VAR_ADD:
-			_variables[command.script[offset + 2]] += command.script[offset + 1];
+			_variables[ARG(2)] += ARG(1);
 			offset += 3;
 			break;
 		case IDO_ACT_VAR_SUB:
-			_variables[command.script[offset + 2]] -= command.script[offset + 1];
+			_variables[ARG(2)] -= ARG(1);
 			offset += 3;
 			break;
 		case IDO_ACT_VAR_SET:
-			_variables[command.script[offset + 1]] = command.script[offset + 2];
+			_variables[ARG(1)] = ARG(2);
 			offset += 3;
 			break;
 		case IDO_ACT_LIST_ITEMS: {
@@ -232,24 +234,24 @@ void AdlEngine::doActions(const Command &command, byte noun, byte offset) {
 			break;
 		}
 		case IDO_ACT_MOVE_ITEM:
-			_inventory[command.script[offset + 1] - 1].room = command.script[offset + 2];
+			_inventory[ARG(1) - 1].room = ARG(2);
 			offset += 3;
 			break;
 		case IDO_ACT_SET_ROOM:
 			_rooms[_room].curPicture = _rooms[_room].picture;
-			_room = command.script[offset + 1];
+			_room = ARG(1);
 			offset += 2;
 			break;
 		case IDO_ACT_SET_CUR_PIC:
-			_rooms[_room].curPicture = command.script[offset + 1];
+			_rooms[_room].curPicture = ARG(1);
 			offset += 2;
 			break;
 		case IDO_ACT_SET_PIC:
-			_rooms[_room].picture = _rooms[_room].curPicture = command.script[offset + 1];
+			_rooms[_room].picture = _rooms[_room].curPicture = ARG(1);
 			offset += 2;
 			break;
 		case IDO_ACT_PRINT_MSG:
-			printMessage(command.script[offset + 1]);
+			printMessage(ARG(1));
 			offset += 2;
 			break;
 		case IDO_ACT_SET_LIGHT:
@@ -281,20 +283,16 @@ void AdlEngine::doActions(const Command &command, byte noun, byte offset) {
 			printEngineMessage(IDI_MSG_THANKS_FOR_PLAYING);
 			quitGame();
 			return;
-		case IDO_ACT_PLACE_ITEM: {
-			byte item = command.script[offset + 1] - 1;
-			_inventory[item].room = command.script[offset + 2];
-			_inventory[item].position.x = command.script[offset + 3];
-			_inventory[item].position.y = command.script[offset + 4];
+		case IDO_ACT_PLACE_ITEM:
+			_inventory[ARG(1) - 1].room = ARG(2);
+			_inventory[ARG(1) - 1].position.x = ARG(3);
+			_inventory[ARG(1) - 1].position.y = ARG(4);
 			offset += 5;
 			break;
-		}
-		case IDO_ACT_SET_ITEM_PIC: {
-			byte item = command.script[offset + 2] - 1;
-			_inventory[item].picture = command.script[offset + 1];
+		case IDO_ACT_SET_ITEM_PIC:
+			_inventory[ARG(2) - 1].picture = ARG(1);
 			offset += 3;
 			break;
-		}
 		case IDO_ACT_RESET_PIC:
 			_rooms[_room].curPicture = _rooms[_room].picture;
 			++offset;
@@ -305,7 +303,7 @@ void AdlEngine::doActions(const Command &command, byte noun, byte offset) {
 		case IDO_ACT_GO_WEST:
 		case IDO_ACT_GO_UP:
 		case IDO_ACT_GO_DOWN: {
-			byte room = _rooms[_room].connections[command.script[offset] - 0x15];
+			byte room = _rooms[_room].connections[ARG(0) - 0x15];
 
 			if (room == 0) {
 				printEngineMessage(IDI_MSG_CANT_GO_THERE);
@@ -325,11 +323,11 @@ void AdlEngine::doActions(const Command &command, byte noun, byte offset) {
 			++offset;
 			break;
 		case IDO_ACT_SET_ROOM_PIC:
-			_rooms[command.script[offset + 1]].picture = _rooms[command.script[offset + 1]].curPicture = command.script[offset + 2];
+			_rooms[ARG(1)].picture = _rooms[ARG(1)].curPicture = ARG(2);
 			offset += 3;
 			break;
 		default:
-			error("Invalid action opcode %02x", command.script[offset]);
+			error("Invalid action opcode %02x", ARG(0));
 		}
 	}
 }
@@ -348,27 +346,27 @@ bool AdlEngine::checkCommand(const Command &command, byte verb, byte noun) {
 	for (uint i = 0; i < command.numCond; ++i) {
 		switch (command.script[offset]) {
 		case IDO_CND_ITEM_IN_ROOM:
-			if (_inventory[command.script[offset + 1] - 1].room != command.script[offset + 2])
+			if (_inventory[ARG(1) - 1].room != ARG(2))
 				return false;
 			offset += 3;
 			break;
 		case IDO_CND_STEPS_GE:
-			if (command.script[offset + 1] > _steps)
+			if (ARG(1) > _steps)
 				return false;
 			offset += 2;
 			break;
 		case IDO_CND_VAR_EQ:
-			if (_variables[command.script[offset + 1]] != command.script[offset + 2])
+			if (_variables[ARG(1)] != ARG(2))
 				return false;
 			offset += 3;
 			break;
 		case IDO_CND_CUR_PIC_EQ:
-			if (_rooms[_room].curPicture != command.script[offset + 1])
+			if (_rooms[_room].curPicture != ARG(1))
 				return false;
 			offset += 2;
 			break;
 		case IDO_CND_ITEM_PIC_EQ:
-			if (_inventory[command.script[offset + 1] - 1].picture != command.script[offset + 2])
+			if (_inventory[ARG(1) - 1].picture != ARG(2))
 				return false;
 			offset += 3;
 			break;
@@ -381,6 +379,8 @@ bool AdlEngine::checkCommand(const Command &command, byte verb, byte noun) {
 
 	return true;
 }
+
+#undef ARG
 
 bool AdlEngine::doOneCommand(const Commands &commands, byte verb, byte noun) {
 	Commands::const_iterator cmd;
