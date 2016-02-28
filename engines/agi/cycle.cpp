@@ -497,7 +497,13 @@ int AgiEngine::runGame() {
 			break;
 		case Common::kRenderHercA:
 		case Common::kRenderHercG:
-			setVar(VM_VAR_MONITOR, kAgiMonitorHercules);
+			// Set EGA for now. Some games place text differently, when this is set to kAgiMonitorHercules.
+			// Text placement was different for Hercules rendering (16x12 instead of 16x16). There also was
+			// not enough space left for the prompt at the bottom. This was caused by the Hercules resolution.
+			// We don't have this restriction and we also support the regular prompt for Hercules mode.
+			// In theory Sierra could have had special Hercules code inside their games.
+			// TODO: check this.
+			setVar(VM_VAR_MONITOR, kAgiMonitorEga);
 			break;
 		// Don't know if Amiga AGI games use a different value than kAgiMonitorEga
 		// for vMonitor so I just use kAgiMonitorEga for them (As was done before too).

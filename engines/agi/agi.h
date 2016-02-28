@@ -148,17 +148,17 @@ enum BooterDisks {
 // position and position.v.
 //
 enum AgiGameFeatures {
-	GF_AGIMOUSE    = (1 << 0),
+	GF_AGIMOUSE    = (1 << 0), // this disables "Click-to-walk mouse interface"
 	GF_AGDS        = (1 << 1),
-	GF_AGI256      = (1 << 2),
-	GF_AGI256_2    = (1 << 3),
-	GF_AGIPAL      = (1 << 4),
-	GF_MACGOLDRUSH = (1 << 5),
-	GF_FANMADE     = (1 << 6),
-	GF_MENUS       = (1 << 7),
-	GF_ESCPAUSE    = (1 << 8),
+	GF_AGI256      = (1 << 2), // marks fanmade AGI-256 games
+	GF_AGI256_2    = (1 << 3), // marks fanmade AGI-256-2 games
+	GF_AGIPAL      = (1 << 4), // marks game using fanmade AGIPAL extension
+	GF_MACGOLDRUSH = (1 << 5), // use "grdir" instead of "dir" for volume loading
+	GF_FANMADE     = (1 << 6), // marks fanmade games
+	GF_MENUS       = (1 << 7), // not used anymore
+	GF_ESCPAUSE    = (1 << 8), // not used anymore, we detect this internally
 	GF_OLDAMIGAV20 = (1 << 9),
-	GF_CLIPCOORDS  = (1 << 10),
+	GF_CLIPCOORDS  = (1 << 10), // not used atm
 	GF_2GSOLDSOUND = (1 << 11)
 };
 
