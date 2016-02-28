@@ -22,7 +22,7 @@
 
 #include "backends/graphics/opengl/texture.h"
 #include "backends/graphics/opengl/shader.h"
-#include "backends/graphics/opengl/pipeline.h"
+#include "backends/graphics/opengl/pipelines/pipeline.h"
 #include "backends/graphics/opengl/framebuffer.h"
 
 #include "common/rect.h"

@@ -23,7 +23,7 @@
 #include "backends/graphics/opengl/opengl-sys.h"
 #include "backends/graphics/opengl/opengl-graphics.h"
 #include "backends/graphics/opengl/shader.h"
-#include "backends/graphics/opengl/pipeline.h"
+#include "backends/graphics/opengl/pipelines/pipeline.h"
 #include "backends/graphics/opengl/framebuffer.h"
 
 #include "common/tokenizer.h"

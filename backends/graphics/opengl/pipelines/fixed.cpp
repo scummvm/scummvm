@@ -20,30 +20,9 @@
  *
  */
 
-#include "backends/graphics/opengl/pipeline.h"
-#include "backends/graphics/opengl/shader.h"
-#include "backends/graphics/opengl/framebuffer.h"
+#include "backends/graphics/opengl/pipelines/fixed.h"
 
 namespace OpenGL {
-
-Pipeline::Pipeline()
-    : _activeFramebuffer(nullptr) {
-}
-
-Framebuffer *Pipeline::setFramebuffer(Framebuffer *framebuffer) {
-	Framebuffer *oldFramebuffer = _activeFramebuffer;
-	if (oldFramebuffer) {
-		oldFramebuffer->deactivate();
-	}
-
-	_activeFramebuffer = framebuffer;
-	if (_activeFramebuffer) {
-		_activeFramebuffer->activate();
-		setProjectionMatrix(_activeFramebuffer->getProjectionMatrix());
-	}
-
-	return oldFramebuffer;
-}
 
 #if !USE_FORCED_GLES2
 void FixedPipeline::activate() {
@@ -83,49 +62,5 @@ void FixedPipeline::setProjectionMatrix(const GLfloat *projectionMatrix) {
 	GL_CALL(glLoadIdentity());
 }
 #endif // !USE_FORCED_GLES2
-
-#if !USE_FORCED_GLES
-ShaderPipeline::ShaderPipeline()
-    : _activeShader(nullptr) {
-}
-
-void ShaderPipeline::activate() {
-	GL_CALL(glEnableVertexAttribArray(kPositionAttribLocation));
-	GL_CALL(glEnableVertexAttribArray(kTexCoordAttribLocation));
-
-	if (g_context.multitextureSupported) {
-		GL_CALL(glActiveTexture(GL_TEXTURE0));
-	}
-}
-
-Shader *ShaderPipeline::setShader(Shader *shader) {
-	Shader *oldShader = _activeShader;
-
-	_activeShader = shader;
-	if (_activeShader && _activeFramebuffer) {
-		_activeShader->activate(_activeFramebuffer->getProjectionMatrix());
-	}
-
-	return oldShader;
-}
-
-void ShaderPipeline::setColor(GLfloat r, GLfloat g, GLfloat b, GLfloat a) {
-	GL_CALL(glVertexAttrib4f(kColorAttribLocation, r, g, b, a));
-}
-
-void ShaderPipeline::drawTexture(const GLTexture &texture, const GLfloat *coordinates) {
-	texture.bind();
-
-	GL_CALL(glVertexAttribPointer(kTexCoordAttribLocation, 2, GL_FLOAT, GL_FALSE, 0, texture.getTexCoords()));
-	GL_CALL(glVertexAttribPointer(kPositionAttribLocation, 2, GL_FLOAT, GL_FALSE, 0, coordinates));
-	GL_CALL(glDrawArrays(GL_TRIANGLE_STRIP, 0, 4));
-}
-
-void ShaderPipeline::setProjectionMatrix(const GLfloat *projectionMatrix) {
-	if (_activeShader) {
-		_activeShader->activate(projectionMatrix);
-	}
-}
-#endif // !USE_FORCED_GLES
 
 } // End of namespace OpenGL

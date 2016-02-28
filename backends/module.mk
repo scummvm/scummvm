@@ -56,9 +56,11 @@ MODULE_OBJS += \
 	graphics/opengl/debug.o \
 	graphics/opengl/framebuffer.o \
 	graphics/opengl/opengl-graphics.o \
-	graphics/opengl/pipeline.o \
 	graphics/opengl/shader.o \
-	graphics/opengl/texture.o
+	graphics/opengl/texture.o \
+	graphics/opengl/pipelines/fixed.o \
+	graphics/opengl/pipelines/pipeline.o \
+	graphics/opengl/pipelines/shader.o
 endif
 
 # SDL specific source files.

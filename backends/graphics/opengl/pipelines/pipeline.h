@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef BACKENDS_GRAPHICS_OPENGL_PIEPLINE_H
-#define BACKENDS_GRAPHICS_OPENGL_PIEPLINE_H
+#ifndef BACKENDS_GRAPHICS_OPENGL_PIPELINES_PIPELINE_H
+#define BACKENDS_GRAPHICS_OPENGL_PIPELINES_PIPELINE_H
 
 #include "backends/graphics/opengl/opengl-sys.h"
 #include "backends/graphics/opengl/texture.h"
@@ -115,39 +115,6 @@ public:
 protected:
 	Framebuffer *_activeFramebuffer;
 };
-
-#if !USE_FORCED_GLES2
-class FixedPipeline : public Pipeline {
-public:
-	virtual void activate();
-
-	virtual void setColor(GLfloat r, GLfloat g, GLfloat b, GLfloat a);
-
-	virtual void drawTexture(const GLTexture &texture, const GLfloat *coordinates);
-
-	virtual void setProjectionMatrix(const GLfloat *projectionMatrix);
-};
-#endif // !USE_FORCED_GLES2
-
-#if !USE_FORCED_GLES
-class ShaderPipeline : public Pipeline {
-public:
-	ShaderPipeline();
-
-	virtual void activate();
-
-	virtual Shader *setShader(Shader *shader);
-
-	virtual void setColor(GLfloat r, GLfloat g, GLfloat b, GLfloat a);
-
-	virtual void drawTexture(const GLTexture &texture, const GLfloat *coordinates);
-
-	virtual void setProjectionMatrix(const GLfloat *projectionMatrix);
-
-private:
-	Shader *_activeShader;
-};
-#endif // !USE_FORCED_GLES
 
 } // End of namespace OpenGL
 
