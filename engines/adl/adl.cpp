@@ -162,27 +162,27 @@ void AdlEngine::readCommands(Common::ReadStream &stream, Commands &commands) {
 }
 
 void AdlEngine::takeItem(byte noun) {
-	Common::Array<Item>::iterator it;
+	Common::Array<Item>::iterator item;
 
-	for (it = _inventory.begin(); it != _inventory.end(); ++it) {
-		if (it->noun != noun || it->room != _room)
+	for (item = _inventory.begin(); item != _inventory.end(); ++item) {
+		if (item->noun != noun || item->room != _room)
 			continue;
 
-		if (it->state == IDI_ITEM_DOESNT_MOVE) {
+		if (item->state == IDI_ITEM_DOESNT_MOVE) {
 			printEngineMessage(IDI_MSG_ITEM_DOESNT_MOVE);
 			return;
 		}
 
-		if (it->state == IDI_ITEM_MOVED) {
-			it->room = IDI_NONE;
+		if (item->state == IDI_ITEM_MOVED) {
+			item->room = IDI_NONE;
 			return;
 		}
 
-		Common::Array<byte>::const_iterator it2;
-		for (it2 = it->roomPictures.begin(); it->roomPictures.end(); ++it2) {
-			if (*it2 == _rooms[_room].curPicture) {
-				it->room = IDI_NONE;
-				it->state = IDI_ITEM_MOVED;
+		Common::Array<byte>::const_iterator pic;
+		for (pic = item->roomPictures.begin(); item->roomPictures.end(); ++pic) {
+			if (*pic == _rooms[_room].curPicture) {
+				item->room = IDI_NONE;
+				item->state = IDI_ITEM_MOVED;
 				return;
 			}
 		}
@@ -192,18 +192,17 @@ void AdlEngine::takeItem(byte noun) {
 }
 
 void AdlEngine::dropItem(byte noun) {
-	Common::Array<Item>::iterator it;
+	Common::Array<Item>::iterator item;
 
-	for (it = _inventory.begin(); it != _inventory.end(); ++it) {
-		if (it->noun != noun || it->room != IDI_NONE)
+	for (item = _inventory.begin(); item != _inventory.end(); ++item) {
+		if (item->noun != noun || item->room != IDI_NONE)
 			continue;
 
-		it->room = _room;
-		it->state = IDI_ITEM_MOVED;
+		item->room = _room;
+		item->state = IDI_ITEM_MOVED;
 		return;
 	}
 
-	// Don't understand
 	printEngineMessage(IDI_MSG_DONT_UNDERSTAND);
 }
 
@@ -223,11 +222,11 @@ void AdlEngine::doActions(const Command &command, byte noun, byte offset) {
 			offset += 3;
 			break;
 		case IDO_ACT_LIST_ITEMS: {
-			Common::Array<Item>::const_iterator it;
+			Common::Array<Item>::const_iterator item;
 
-			for (it = _inventory.begin(); it != _inventory.end(); ++it)
-				if (it->room == IDI_NONE)
-					printMessage(it->description);
+			for (item = _inventory.begin(); item != _inventory.end(); ++item)
+				if (item->room == IDI_NONE)
+					printMessage(item->description);
 
 			++offset;
 			break;
@@ -282,7 +281,7 @@ void AdlEngine::doActions(const Command &command, byte noun, byte offset) {
 			printEngineMessage(IDI_MSG_THANKS_FOR_PLAYING);
 			quitGame();
 			return;
-		case IDO_ACT_SET_ITEM_POS: {
+		case IDO_ACT_PLACE_ITEM: {
 			byte item = command.script[offset + 1] - 1;
 			_inventory[item].room = command.script[offset + 2];
 			_inventory[item].position.x = command.script[offset + 3];
@@ -384,20 +383,20 @@ bool AdlEngine::checkCommand(const Command &command, byte verb, byte noun) {
 }
 
 bool AdlEngine::doOneCommand(const Commands &commands, byte verb, byte noun) {
-	Commands::const_iterator it;
+	Commands::const_iterator cmd;
 
-	for (it = commands.begin(); it != commands.end(); ++it)
-		if (checkCommand(*it, verb, noun))
+	for (cmd = commands.begin(); cmd != commands.end(); ++cmd)
+		if (checkCommand(*cmd, verb, noun))
 			return true;
 
 	return false;
 }
 
 void AdlEngine::doAllCommands(const Commands &commands, byte verb, byte noun) {
-	Commands::const_iterator it;
+	Commands::const_iterator cmd;
 
-	for (it = commands.begin(); it != commands.end(); ++it)
-		checkCommand(*it, verb, noun);
+	for (cmd = commands.begin(); cmd != commands.end(); ++cmd)
+		checkCommand(*cmd, verb, noun);
 }
 
 void AdlEngine::clearScreen() {

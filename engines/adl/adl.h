@@ -94,7 +94,7 @@ enum EngineString {
 #define IDO_ACT_SAVE           0x0f
 #define IDO_ACT_LOAD           0x10
 #define IDO_ACT_RESTART        0x11
-#define IDO_ACT_SET_ITEM_POS   0x12
+#define IDO_ACT_PLACE_ITEM     0x12
 #define IDO_ACT_SET_ITEM_PIC   0x13
 #define IDO_ACT_RESET_PIC      0x14
 #define IDO_ACT_GO_NORTH       0x15

@@ -218,34 +218,34 @@ void HiRes1Engine::drawPic(byte pic, byte xOffset, byte yOffset) {
 }
 
 void HiRes1Engine::drawItems() {
-	Common::Array<Item>::const_iterator it;
+	Common::Array<Item>::const_iterator item;
 
 	uint dropped = 0;
 
-	for (it = _inventory.begin(); it != _inventory.end(); ++it) {
-		if (it->room != _room)
+	for (item = _inventory.begin(); item != _inventory.end(); ++item) {
+		if (item->room != _room)
 			continue;
 
-		if (it->state == IDI_ITEM_MOVED) {
+		if (item->state == IDI_ITEM_MOVED) {
 			if (_rooms[_room].picture == _rooms[_room].curPicture) {
 				const Common::Point &p =  _itemOffsets[dropped];
-				if (it->isDrawing)
-					_display->drawRightAngles(_drawings[it->picture - 1], Common::Point(p.x, p.y), 0, 1, 0x7f);
+				if (item->isDrawing)
+					_display->drawRightAngles(_drawings[item->picture - 1], Common::Point(p.x, p.y), 0, 1, 0x7f);
 				else
-					drawPic(it->picture, p.x, p.y);
+					drawPic(item->picture, p.x, p.y);
 				++dropped;
 			}
 			continue;
 		}
 
-		Common::Array<byte>::const_iterator it2;
+		Common::Array<byte>::const_iterator pic;
 
-		for (it2 = it->roomPictures.begin(); it2 != it->roomPictures.end(); ++it2) {
-			if (*it2 == _rooms[_room].curPicture) {
-				if (it->isDrawing)
-					_display->drawRightAngles(_drawings[it->picture - 1], it->position, 0, 1, 0x7f);
+		for (pic = item->roomPictures.begin(); pic != item->roomPictures.end(); ++pic) {
+			if (*pic == _rooms[_room].curPicture) {
+				if (item->isDrawing)
+					_display->drawRightAngles(_drawings[item->picture - 1], item->position, 0, 1, 0x7f);
 				else
-					drawPic(it->picture, it->position.x, it->position.y);
+					drawPic(item->picture, item->position.x, item->position.y);
 				continue;
 			}
 		}
