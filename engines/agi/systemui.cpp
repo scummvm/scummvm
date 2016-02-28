@@ -44,6 +44,8 @@ SystemUI::SystemUI(AgiEngine *vm, GfxMgr *gfx, TextMgr *text) {
 	_textStatusSoundOn = "Sound:on";
 	_textStatusSoundOff = "Sound:off";
 
+	_textEnterCommand = "Enter input\n\n";
+
 	_textPause = "      Game paused.\nPress Enter to continue.";
 	_textPauseButton = nullptr;
 
@@ -212,6 +214,47 @@ const char *SystemUI::getInventoryTextSelectItems() {
 }
 const char *SystemUI::getInventoryTextReturnToGame() {
 	return _textInventoryReturnToGame;
+}
+
+bool SystemUI::askForCommand(Common::String &commandText) {
+	// Let user enter the command (this was originally only available for Hercules rendering, we allow it everywhere)
+	bool previousEditState = _text->inputGetEditStatus();
+	byte previousEditCursor = _text->inputGetCursorChar();
+
+	_text->drawMessageBox(_textEnterCommand, 0, 36, true);
+
+	_text->inputEditOn();
+
+	_text->charPos_Push();
+	_text->charAttrib_Push();
+
+	_text->charPos_SetInsideWindow(2, 0);
+	_text->charAttrib_Set(15, 0);
+	_text->clearBlockInsideWindow(2, 0, 36, 0); // input line is supposed to be black
+	_text->inputSetCursorChar('_');
+
+	_text->stringSet(commandText.c_str()); // Set current command text (may be a command recall)
+
+	_vm->cycleInnerLoopActive(CYCLE_INNERLOOP_GETSTRING);
+	_text->stringEdit(35); // only allow up to 35 characters
+
+	_text->charAttrib_Pop();
+	_text->charPos_Pop();
+	_text->inputSetCursorChar(previousEditCursor);
+	if (!previousEditState) {
+		_text->inputEditOff();
+	}
+
+	_text->closeWindow();
+
+	if (!_text->stringWasEntered()) {
+		// User cancelled? exit now
+		return false;
+	}
+
+	commandText.clear();
+	commandText += (char *)_text->_inputString;
+	return true;
 }
 
 int16 SystemUI::figureOutAutomaticSaveGameSlot(const char *automaticSaveDescription) {

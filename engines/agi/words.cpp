@@ -293,7 +293,7 @@ int16 Words::findWordInDictionary(const Common::String &userInputLowcased, uint1
 	return wordId;
 }
 
-void Words::parseUsingDictionary(char *rawUserInput) {
+void Words::parseUsingDictionary(const char *rawUserInput) {
 	Common::String userInput;
 	Common::String userInputLowcased;
 	const char *userInputPtr = nullptr;

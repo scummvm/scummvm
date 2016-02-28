@@ -77,6 +77,8 @@ public:
 	const char *getInventoryTextSelectItems();
 	const char *getInventoryTextReturnToGame();
 
+	bool askForCommand(Common::String &commandText);
+
 	int16 figureOutAutomaticSaveGameSlot(const char *automaticSaveDescription);
 	int16 figureOutAutomaticRestoreGameSlot(const char *automaticSaveDescription);
 
@@ -129,6 +131,8 @@ private:
 	const char *_textStatusScore;
 	const char *_textStatusSoundOn;
 	const char *_textStatusSoundOff;
+
+	const char *_textEnterCommand;
 
 	const char *_textPause;
 	const char *_textPauseButton;

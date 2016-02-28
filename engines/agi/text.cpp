@@ -20,6 +20,7 @@
  *
  */
 
+#include "common/config-manager.h"
 #include "agi/agi.h"
 #include "agi/sprite.h"     // for commit_both()
 #include "agi/graphics.h"
@@ -74,6 +75,12 @@ TextMgr::TextMgr(AgiEngine *vm, Words *words, GfxMgr *gfx) {
 	configureScreen(2);
 
 	_messageBoxCancelled = false;
+
+	_optionCommandPromptWindow = false;
+
+	if (ConfMan.getBool("commandpromptwindow")) {
+		_optionCommandPromptWindow = true;
+	}
 }
 
 TextMgr::~TextMgr() {
@@ -671,6 +678,30 @@ void TextMgr::promptKeyPress(uint16 newKey) {
 	int16 maxChars = 0;
 	int16 scriptsInputLen = _vm->getVar(VM_VAR_MAX_INPUT_CHARACTERS);
 
+	bool acceptableInput = false;
+
+	// FEATURE: Sierra didn't check for valid characters (filtered out umlauts etc.)
+	// In text-mode this sort of worked at least with the DOS interpreter
+	// but as soon as invalid characters were used in graphics mode they weren't properly shown
+	switch (_vm->getLanguage()) {
+	case Common::RU_RUS:
+		if (newKey >= 0x20)
+			acceptableInput = true;
+		break;
+	default:
+		if ((newKey >= 0x20) && (newKey <= 0x7f))
+			acceptableInput = true;
+		break;
+	}
+
+	if (_optionCommandPromptWindow) {
+		// Forward to command prompt window, using last command
+		if (acceptableInput) {
+			promptCommandWindow(false, newKey);
+		}
+		return;
+	}
+
 	if (_messageState.dialogue_Open) {
 		maxChars = TEXT_STRING_MAX_SIZE - 4;
 	} else {
@@ -715,22 +746,6 @@ void TextMgr::promptKeyPress(uint16 newKey) {
 	}
 	default:
 		if (maxChars > _promptCursorPos) {
-			bool acceptableInput = false;
-
-			// FEATURE: Sierra didn't check for valid characters (filtered out umlauts etc.)
-			// In text-mode this sort of worked at least with the DOS interpreter
-			// but as soon as invalid characters were used in graphics mode they weren't properly shown
-			switch (_vm->getLanguage()) {
-			case Common::RU_RUS:
-				if (newKey >= 0x20)
-					acceptableInput = true;
-				break;
-			default:
-				if ((newKey >= 0x20) && (newKey <= 0x7f))
-					acceptableInput = true;
-				break;
-			}
-
 			if (acceptableInput) {
 				_prompt[_promptCursorPos] = newKey;
 				_promptCursorPos++;
@@ -747,6 +762,11 @@ void TextMgr::promptKeyPress(uint16 newKey) {
 }
 
 void TextMgr::promptCancelLine() {
+	if (_optionCommandPromptWindow) {
+		// Abort, in case command prompt window is active
+		return;
+	}
+
 	while (_promptCursorPos) {
 		promptKeyPress(0x08); // Backspace until prompt is empty
 	}
@@ -754,6 +774,12 @@ void TextMgr::promptCancelLine() {
 
 void TextMgr::promptEchoLine() {
 	int16 previousLen = strlen((char *)_promptPrevious);
+
+	if (_optionCommandPromptWindow) {
+		// Forward to command prompt window, using last command
+		promptCommandWindow(true, 0);
+		return;
+	}
 
 	if (_promptCursorPos < previousLen) {
 		inputEditOn();
@@ -771,6 +797,11 @@ void TextMgr::promptRedraw() {
 	char *textPtr = nullptr;
 
 	if (_promptEnabled) {
+		if (_optionCommandPromptWindow) {
+			// Abort, in case command prompt window is active
+			return;
+		}
+
 		inputEditOn();
 		clearLine(_promptRow, _textAttrib.background);
 		charPos_Set(_promptRow, 0);
@@ -788,6 +819,10 @@ void TextMgr::promptRedraw() {
 
 // for AGI1
 void TextMgr::promptClear() {
+	if (_optionCommandPromptWindow) {
+		// Abort, in case command prompt window is active
+		return;
+	}
 	clearLine(_promptRow, _textAttrib.background);
 }
 
@@ -795,6 +830,35 @@ void TextMgr::promptRememberForAutoComplete(bool entered) {
 #ifdef __DS__
 	DS::findWordCompletions((char *)_prompt);
 #endif
+}
+
+void TextMgr::promptCommandWindow(bool recallLastCommand, uint16 newKey) {
+	Common::String commandText;
+
+	if (recallLastCommand) {
+		commandText += Common::String((char *)_promptPrevious);
+	}
+	if (newKey) {
+		if (newKey != ' ') {
+			// Only add char, when it's not a space.
+			// Original AGI did not filter space, but it makes no sense to start with a space.
+			// Space would get filtered anyway during dictionary parsing.
+			commandText += newKey;
+		}
+	}
+
+	if (_systemUI->askForCommand(commandText)) {
+		if (commandText.size()) {
+			// Something actually was entered?
+			strncpy((char *)&_prompt, commandText.c_str(), sizeof(_prompt));
+			promptRememberForAutoComplete(true);
+			memcpy(&_promptPrevious, &_prompt, sizeof(_prompt));
+			// parse text
+			_vm->_words->parseUsingDictionary((char *)&_prompt);
+
+			_prompt[0] = 0;
+		}
+	}
 }
 
 bool TextMgr::stringWasEntered() {
