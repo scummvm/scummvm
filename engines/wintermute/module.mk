@@ -91,6 +91,7 @@ MODULE_OBJS := \
 	base/save_thumb_helper.o \
 	base/timer.o \
 	debugger/breakpoint.o \
+	debugger/debugger_controller.o \
 	debugger/error.o \
 	debugger/listing_providers/blank_listing.o \
 	debugger/listing_providers/blank_listing_provider.o \

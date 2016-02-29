@@ -23,21 +23,108 @@
 #ifndef WINTERMUTE_DEBUGGER_H
 #define WINTERMUTE_DEBUGGER_H
 
+#define EXTENDED_DEBUGGER_ENABLED true
+
 #include "gui/debugger.h"
 
-#define SET_PATH_CMD "set_path"
-namespace Wintermute {
+#if EXTENDED_DEBUGGER_ENABLED == true
+#include "engines/wintermute/base/scriptables/debuggable/debuggable_script.h"
+#else
+#include "engines/wintermute/base/scriptables/script.h"
+#endif
 
+#define DEFAULT_SOURCE_PADDING 5
+
+#define STEP_CMD "step"
+#define CONTINUE_CMD "continue"
+#define FINISH_CMD "finish"
+#define BREAK_CMD "break"
+#define LIST_CMD "list"
+#define REMOVE_BREAKPOINT_CMD "del"
+#define DISABLE_BREAKPOINT_CMD "disable"
+#define ENABLE_BREAKPOINT_CMD "enable"
+#define INFO_CMD "info"
+#define SET_PATH_CMD "set_path"
+#define TOP_CMD "top"
+
+namespace Wintermute {
 class WintermuteEngine;
+class Adapter;
+class DebuggerController;
+class Error;
+
 class Console : public GUI::Debugger {
 public:
 	Console(WintermuteEngine *vm);
 	virtual ~Console();
-
+	/*
+	 * Debug commands
+	 */
+	bool Cmd_Help(int argc, const char **argv);
 	bool Cmd_ShowFps(int argc, const char **argv);
 	bool Cmd_DumpFile(int argc, const char **argv);
+
+#if EXTENDED_DEBUGGER_ENABLED == true
+	/**
+	 * Step - break again on next line
+	 */
+	bool Cmd_Step(int argc, const char **argv);
+	/**
+	 * Continue execution
+	 */
+	bool Cmd_Continue(int argc, const char **argv);
+	/**
+	 * Only break again when the current function is finished
+	 * (activation record is popped)
+	 */
+	bool Cmd_Finish(int argc, const char **argv);
+	// Breakpoints
+	bool Cmd_AddBreakpoint(int argc, const char **argv);
+	bool Cmd_RemoveBreakpoint(int argc, const char **argv);
+	bool Cmd_EnableBreakpoint(int argc, const char **argv);
+	bool Cmd_DisableBreakpoint(int argc, const char **argv);
+	/**
+	 * Print info re:watch and breakpoints.
+	 * This differs from e.g. gdb in that we have separate lists.
+	 */
+	bool Cmd_Info(int argc, const char **argv);
+	/**
+	 * Print source
+	 */
+	bool Cmd_List(int argc, const char **argv);
+	/**
+	 * Set (DOS-style) source path for debugging.
+	 * This is where you will (optionally) put your sources
+	 * to enable printing of sources as you step through the
+	 * scripts.
+	 *
+	 * Please note that we have no checksum or anything
+	 * to make sure your source files are up to date.
+	 *
+	 * YOU HAVE to make sure of that.
+	 *
+	 * You have been warned! :)
+	 */
+	bool Cmd_SourcePath(int argc, const char **argv);
+
+	/**
+	 * Top
+	 */
+	bool Cmd_Top(int argc, const char **argv);
+
+	Error printSource(int n = DEFAULT_SOURCE_PADDING);
+
+	/**
+	 * Hooks for the controller to open the console
+	 */
+	void notifyBreakpoint(const char *filename, int line);
+	void notifyStep(const char *filename, int line);
+#endif
+
 private:
-	WintermuteEngine *_engineRef;
+	const WintermuteEngine *_engineRef;
+	void printError(const Common::String &command, Error error);
+	void printUsage(const Common::String &command);
 };
 
 }

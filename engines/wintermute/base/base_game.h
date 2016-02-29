@@ -34,6 +34,7 @@
 #include "engines/wintermute/persistent.h"
 #include "engines/wintermute/coll_templ.h"
 #include "engines/wintermute/math/rect32.h"
+#include "engines/wintermute/debugger.h"
 #include "common/events.h"
 #if EXTENDED_DEBUGGER_ENABLED == true
 #include "engines/wintermute/base/scriptables/debuggable/debuggable_script_engine.h"
