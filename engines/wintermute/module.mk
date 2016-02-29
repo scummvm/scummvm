@@ -92,6 +92,7 @@ MODULE_OBJS := \
 	base/timer.o \
 	debugger/breakpoint.o \
 	debugger/error.o \
+	debugger/listing_providers/blank_listing.o \
 	debugger/listing_providers/source_listing.o \
 	debugger/listing.o \
 	debugger/script_monitor.o \
