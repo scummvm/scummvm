@@ -3951,8 +3951,8 @@ bool Console::cmdMapVocab994(int argc, const char **argv) {
 	if (!obj->isClass() && getSciVersion() != SCI_VERSION_3)
 		obj = s->_segMan->getObject(obj->getSuperClassSelector());
 
-	first = MIN(first, resource->size / 2 - 2);
-	last =  MIN(last, resource->size / 2 - 2);
+	first = MIN(first, (unsigned int) (resource->size / 2 - 2));
+	last =  MIN(last, (unsigned int) (resource->size / 2 - 2));
 
 	for (unsigned int i = first; i <= last; ++i)
 	{
