@@ -35,14 +35,19 @@
 
 #define DEFAULT_SOURCE_PADDING 5
 
+
 #define STEP_CMD "step"
 #define CONTINUE_CMD "continue"
 #define FINISH_CMD "finish"
+#define WATCH_CMD "watch"
 #define BREAK_CMD "break"
 #define LIST_CMD "list"
 #define REMOVE_BREAKPOINT_CMD "del"
 #define DISABLE_BREAKPOINT_CMD "disable"
 #define ENABLE_BREAKPOINT_CMD "enable"
+#define REMOVE_WATCH_CMD "delw"
+#define DISABLE_WATCH_CMD "disablew"
+#define ENABLE_WATCH_CMD "enablew"
 #define INFO_CMD "info"
 #define SET_CMD "set"
 #define PRINT_CMD "print"
@@ -88,6 +93,17 @@ public:
 	bool Cmd_EnableBreakpoint(int argc, const char **argv);
 	bool Cmd_DisableBreakpoint(int argc, const char **argv);
 	/**
+	 * Add a watch.
+	 *
+	 * It monitors the value of some variable x against its
+	 * last known state and it breaks if it has changed since.
+	 *
+	 */
+	bool Cmd_Watch(int argc, const char **argv);
+	bool Cmd_RemoveWatch(int argc, const char **argv);
+	bool Cmd_EnableWatch(int argc, const char **argv);
+	bool Cmd_DisableWatch(int argc, const char **argv);
+	/**
 	 * Print info re:watch and breakpoints.
 	 * This differs from e.g. gdb in that we have separate lists.
 	 */
@@ -123,6 +139,12 @@ public:
 	 */
 	void notifyBreakpoint(const char *filename, int line);
 	void notifyStep(const char *filename, int line);
+	/**
+	 * To be called by the adapter when a watched variable
+	 * is changed.
+	 * Opens a console and prints info and listing if available.
+	 */
+	void notifyWatch(const char *filename, const char *symbol, const char *newValue);
 #endif
 
 private:

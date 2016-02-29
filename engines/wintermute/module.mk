@@ -100,6 +100,8 @@ MODULE_OBJS := \
 	debugger/listing_providers/source_listing.o \
 	debugger/listing.o \
 	debugger/script_monitor.o \
+	debugger/watch.o \
+	debugger/watch_instance.o \
 	detection.o \
 	math/math_util.o \
 	math/matrix4.o \

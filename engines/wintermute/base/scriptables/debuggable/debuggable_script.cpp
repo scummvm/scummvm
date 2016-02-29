@@ -22,18 +22,28 @@
 
 #include "common/tokenizer.h"
 #include "debuggable_script.h"
-#include "engines/wintermute/base/scriptables/debuggable/debuggable_script_engine.h"
 #include "engines/wintermute/base/scriptables/script_stack.h"
 #include "engines/wintermute/base/scriptables/script_value.h"
+#include "engines/wintermute/base/scriptables/debuggable/debuggable_script_engine.h"
 #include "engines/wintermute/debugger/breakpoint.h"
 #include "engines/wintermute/debugger/script_monitor.h"
+#include "engines/wintermute/debugger/watch_instance.h"
 
 namespace Wintermute {
 
-DebuggableScript::DebuggableScript(BaseGame *inGame, DebuggableScEngine *engine) : ScScript(inGame, engine), _engine(engine), _stepDepth(kDefaultStepDepth) {}
+DebuggableScript::DebuggableScript(BaseGame *inGame, DebuggableScEngine *engine) : ScScript(inGame, engine), _engine(engine), _stepDepth(kDefaultStepDepth) {
+	_engine->_watches.subscribe(this);
+	for (uint i = 0; i < _engine->_watches.size(); i++) {
+		_watchInstances.push_back(new WatchInstance(_engine->_watches[i], this));
+	}
+}
 
-DebuggableScript::~DebuggableScript() {}
-
+DebuggableScript::~DebuggableScript() {
+	for (uint i = 0; i < _watchInstances.size(); i++) {
+		delete _watchInstances[i];
+	}
+	_engine->_watches.unsubscribe(this);
+}
 void DebuggableScript::preInstHook(uint32 inst) {}
 
 void DebuggableScript::postInstHook(uint32 inst) {
@@ -46,6 +56,11 @@ void DebuggableScript::postInstHook(uint32 inst) {
 			_engine->_monitor->notifyStep(this);
 		}
 	}
+
+	for (uint i = 0; i < _watchInstances.size(); i++) {
+		this->_watchInstances[i]->evaluate();
+	}
+
 }
 
 void DebuggableScript::setStepDepth(int depth) {
@@ -110,5 +125,24 @@ Common::String DebuggableScript::dbgGetFilename() const {
 	return _filename;
 }
 
+void DebuggableScript::updateWatches() {
+	// We drop obsolete watches
+	for (uint i = 0; i < _watchInstances.size(); i++) {
+		Watch *findMe = _watchInstances[i]->_watch;
+		if (Common::find(_engine->_watches.begin(), _engine->_watches.end(), findMe) == _engine->_watches.end()) {
+			// Not found on engine-wide list, must have been removed from watches. Must remove it from local list.
+			_watchInstances.remove_at(i);
+		}
+	}
+
+	// We add any new watches
+	for (uint i = 0; i < _engine->_watches.size(); i++) {
+		Watch *findMe = _engine->_watches[i];
+		if (Common::find(_engine->_watches.begin(), _engine->_watches.end(), findMe) == _engine->_watches.end()) {
+			// Not found on local list, must be a new one.
+			_watchInstances.push_back(new WatchInstance(_engine->_watches[i], this));
+		}
+	}
+}
 } // End of namespace Wintermute
 

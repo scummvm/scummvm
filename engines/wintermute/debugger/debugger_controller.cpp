@@ -32,6 +32,7 @@
 #include "engines/wintermute/base/scriptables/script_stack.h"
 #include "engines/wintermute/debugger/breakpoint.h"
 #include "engines/wintermute/debugger/debugger_controller.h"
+#include "engines/wintermute/debugger/watch.h"
 #include "engines/wintermute/debugger/listing_providers/blank_listing_provider.h"
 #include "engines/wintermute/debugger/listing_providers/cached_source_listing_provider.h"
 #include "engines/wintermute/debugger/listing_providers/source_listing.h"
@@ -99,6 +100,47 @@ Error DebuggerController::enableBreakpoint(uint id) {
 	}
 }
 
+Error DebuggerController::removeWatchpoint(uint id) {
+	assert(SCENGINE);
+	if (SCENGINE->_watches.size() > id) {
+		SCENGINE->_watches.remove_at(id);
+		return Error(SUCCESS, OK);
+	} else {
+		return Error(ERROR, NO_SUCH_BREAKPOINT, id);
+	}
+}
+
+
+Error DebuggerController::disableWatchpoint(uint id) {
+	assert(SCENGINE);
+	if (SCENGINE->_watches.size() > id) {
+		SCENGINE->_watches[id]->disable();
+		return Error(SUCCESS, OK);
+	} else {
+		return Error(ERROR, NO_SUCH_BREAKPOINT, id);
+	}
+}
+
+Error DebuggerController::enableWatchpoint(uint id) {
+	assert(SCENGINE);
+	if (SCENGINE->_watches.size() > id) {
+		SCENGINE->_watches[id]->enable();
+		return Error(SUCCESS, OK);
+	} else {
+		return Error(ERROR, NO_SUCH_BREAKPOINT, id);
+	}
+
+}
+
+Error DebuggerController::addWatch(const char *filename, const char *symbol) {
+	assert(SCENGINE);
+	if (!bytecodeExists(filename)) {
+		return Error(ERROR, NO_SUCH_BYTECODE, filename);
+	}
+	SCENGINE->_watches.push_back(new Watch(filename, symbol, this));
+	return Error(SUCCESS, OK, "Watchpoint added");
+}
+
 void DebuggerController::onBreakpoint(const Breakpoint *breakpoint, DebuggableScript *script) {
 	_lastScript = script;
 	_lastLine = script->_currentLine;
@@ -109,6 +151,13 @@ void DebuggerController::notifyStep(DebuggableScript *script) override {
 	_lastScript = script;
 	_lastLine = script->_currentLine;
 	DEBUGGER->notifyStep(script->dbgGetFilename().c_str(), script->_currentLine);
+}
+
+void DebuggerController::onWatch(const Watch *watch, DebuggableScript *script) {
+	_lastScript = script; // If script has changed do we still care?
+	_lastLine = script->_currentLine;
+	Common::String symbol = watch->getSymbol();
+	DEBUGGER->notifyWatch(script->dbgGetFilename().c_str(), symbol.c_str(), script->resolveName(symbol)->getString());
 }
 
 Error DebuggerController::step() {
@@ -223,6 +272,17 @@ Common::Array<BreakpointInfo> DebuggerController::getBreakpoints() const {
 		breakpoints.push_back(bpInfo);
 	}
 	return breakpoints;
+}
+
+Common::Array<WatchInfo> DebuggerController::getWatchlist() const {
+	Common::Array<WatchInfo> watchlist;
+	for (uint i = 0; i < SCENGINE->_watches.size(); i++) {
+		WatchInfo watchInfo;
+		watchInfo._filename = SCENGINE->_watches[i]->getFilename();
+		watchInfo._symbol = SCENGINE->_watches[i]->getSymbol();
+		watchlist.push_back(watchInfo);
+	}
+	return watchlist;
 }
 
 uint32 DebuggerController::getLastLine() const {

@@ -22,17 +22,19 @@
 
 #ifndef DEBUGGABLE_SCRIPT_H_
 #define DEBUGGABLE_SCRIPT_H_
-
 #include "engines/wintermute/base/scriptables/script.h"
 
 namespace Wintermute {
 class ScriptMonitor;
+class Watch;
+class WatchInstance;
 class DebuggableScEngine;
 
 class DebuggableScript : public ScScript {
 	static const int kDefaultStepDepth = -2;
 	int32 _stepDepth;
 	DebuggableScEngine *_engine;
+	BaseArray<WatchInstance *> _watchInstances;
 	virtual void preInstHook(uint32 inst) override;
 	virtual void postInstHook(uint32 inst) override;
 	void setStepDepth(int depth);
@@ -57,6 +59,7 @@ public:
 	 * Continue execution until the activation record on top of the stack is popped
 	 */
 	void stepFinish();
+	void updateWatches();
 };
 
 } // End of namespace Wintermute

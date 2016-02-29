@@ -27,12 +27,15 @@ namespace Wintermute {
 
 class DebuggableScript;
 class Breakpoint;
+class Watch;
 
 class ScriptMonitor {
 public:
+
 	virtual ~ScriptMonitor() {};
 	virtual void notifyStep(DebuggableScript* script) = 0;
 	virtual void onBreakpoint(const Breakpoint* breakpoint, DebuggableScript* script) = 0;
+	virtual void onWatch(const Watch* watch, DebuggableScript* script) = 0;
 };
 
 } // End of namespace Wintermute

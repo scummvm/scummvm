@@ -20,16 +20,25 @@
  *
  */
 
-#include "debuggable_script_engine.h"
-#include "debuggable_script.h"
-#include "engines/wintermute/debugger/watch_instance.h"
+#ifndef WATCH_INSTANCE_H_
+#define WATCH_INSTANCE_H_
 
 namespace Wintermute {
+class Watch;
+class ScValue;
+class DebuggableScript;
 
-DebuggableScEngine::DebuggableScEngine(BaseGame *inGame) : ScEngine(inGame), _monitor(nullptr) {}
-
-void DebuggableScEngine::attachMonitor(ScriptMonitor *monitor) {
-	_monitor = monitor;
-}
-
+class WatchInstance {
+	Watch* _watch;
+	ScValue *_lastValue;
+	DebuggableScript* _script;
+public:
+	WatchInstance (Watch* watch, DebuggableScript* script);
+	~WatchInstance();
+	void evaluate();
+friend class DebuggableScript;
+friend class Watch;
+};
 } // End of namespace Wintermute
+
+#endif /* WATCH_INSTANCE_H_ */

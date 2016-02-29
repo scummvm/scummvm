@@ -43,6 +43,13 @@ struct BreakpointInfo {
 	bool _enabled;
 };
 
+struct WatchInfo {
+	Common::String _filename;
+	Common::String _symbol;
+	int _hits;
+	bool _enabled;
+};
+
 struct TopEntry {
 	bool current;
 	Common::String filename;
@@ -70,7 +77,12 @@ public:
 	Error removeBreakpoint(uint id);
 	Error disableBreakpoint(uint id);
 	Error enableBreakpoint(uint id);
+	Error addWatch(const char *filename, const char *symbol);
+	Error removeWatchpoint(uint id);
+	Error disableWatchpoint(uint id);
+	Error enableWatchpoint(uint id);
 	Common::Array<BreakpointInfo> getBreakpoints() const;
+	Common::Array<WatchInfo> getWatchlist() const;
 	/**
 	 * @brief step one instruction
 	 */
@@ -99,6 +111,7 @@ public:
 	 * Inherited from ScriptMonitor
 	 */
 	void onBreakpoint(const Breakpoint *breakpoint, DebuggableScript *script);
+	void onWatch(const Watch *watch, DebuggableScript *script);
 	void notifyStep(DebuggableScript *script);
 };
 }
