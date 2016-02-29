@@ -178,7 +178,7 @@ void AdlEngine::takeItem(byte noun) {
 		}
 
 		Common::Array<byte>::const_iterator pic;
-		for (pic = item->roomPictures.begin(); item->roomPictures.end(); ++pic) {
+		for (pic = item->roomPictures.begin(); pic != item->roomPictures.end(); ++pic) {
 			if (*pic == _state.rooms[_state.room].curPicture) {
 				item->room = IDI_NONE;
 				item->state = IDI_ITEM_MOVED;
