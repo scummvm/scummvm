@@ -42,11 +42,14 @@ static const ADGameDescription gameDescriptions[] = {
 	FANGAME("Double Trouble", "Double Trouble", "5e9ee13d09ac54918ed111fa9727ac1c", 557184),
 	FANGAME("Eidisi I", "Eidisi I", "299d1de4baccf1c66118396519953652", 180480),
 	FANGAME("Escape from School!", "Escape from School!", "a854be48d4af20126d18a9cad93a969b", 51840),
+	FANGAME("Exploration Zeta!", "Exploration Zeta!", "b9fbb704017d7ea9613b0160f86527bb", 370944),
 	FANGAME("Magic Rings", "Magic Rings", "6e0d1dd561d3dad8f9a7a20ed1f09b16", 112000),
 	FANGAME("Midnight Snack", "Midnight Snack", "346982a32fc701f53bb19771d72063d0", 69504),
 	FANGAME("Queen Quest", "Queen Quest", "730605d312efedb5e3ff108522fcac18", 59776),
 	BIGGAME("scepters", "", "Scepters", "b80bff315897776dda7689cdf829fab4", 360832),
 	FANGAME("Time Bomb", "Time Bomb", "2df84b636237686b624e736a698a16c4", 66432),
+	// Doesn't go past first scene
+	BIGGAME("Twisted!", "", "Twisted! 1.6", "8ea8cc13d26d7975dc43ea7e6c193217", 992896),
 	FANGAME("ZikTuria", "ZikTuria", "e793155bed1a70fa2074a3fcd696b751", 54784),
 	FANGAME("Zoony", "Zoony", "e6cc8a914a4215dafbcce6315dd12cf5", 160256),
 
