@@ -44,10 +44,10 @@ cecho ()	# Color-echo. Argument $1 = message, Argument $2 = color
 
 	# We only output colors when stdout is outputting to a terminal.
 	# This avoids color codes being output in log files created on buildbot.
-	if [ -t 1 ]; then
+	if [ -t 1 -a -n "$TERM" ]; then
 		color=${2:-$black}                       # Defaults to black, if not specified.
 		echo -e "$color$message"
-		tput sgr0                                # Reset to normal.
+		tput -T"$TERM" sgr0                      # Reset to normal.
 	else
 		echo "$message"
 	fi
