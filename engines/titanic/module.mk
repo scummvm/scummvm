@@ -45,6 +45,7 @@ MODULE_OBJS := \
 	carry/photograph.o \
 	carry/plug_in.o \
 	carry/sweets.o \
+	carry/test_carry.o \
 	core/background.o \
 	core/click_responder.o \
 	core/dont_save_file_item.o \
@@ -62,42 +63,102 @@ MODULE_OBJS := \
 	core/project_item.o \
 	core/resource_key.o \
 	core/saveable_object.o \
+	core/static_image.o \
 	core/turn_on_object.o \
 	core/turn_on_play_sound.o \
 	core/tree_item.o \
 	core/view_item.o \
 	game/announce.o \
+	game/annoy_barbot.o \
+	game/bar_menu.o \
+	game/bar_menu_button.o \
+	game/bar_bell.o \
+	game/belbot_get_light.o \
+	game/bottom_of_well_monitor.o \
 	game/bowl_unlocker.o \
+	game/brain_slot.o \
+	game/bridge_door.o \
+	game/call_pellerator.o \
 	game/cdrom.o \
 	game/cdrom_computer.o \
 	game/cdrom_tray.o \
+	game/chev_code.o \
+	game/chev_panel.o \
+	game/chicken_cooler.o \
+	game/cookie.o \
 	game/computer_screen.o \
 	game/credits.o \
 	game/credits_button.o \
 	game/dead_area.o \
 	game/desk_click_responder.o \
+	game/doorbot_elevator_handler.o \
 	game/doorbot_home_handler.o \
 	game/drawer.o \
 	game/ear_sweet_bowl.o \
+	game/elevator_action_area.o \
 	game/empty_nut_bowl.o \
+	game/end_credit_text.o \
+	game/end_credits.o \
+	game/end_explode_ship.o \
+	game/end_game_cerdits.o \
+	game/end_sequence_control.o \
+	game/enter_bridge.o \
 	game/enter_exit_first_class_state.o \
+	game/enter_exit_sec_class_mini_lift.o \
+	game/enter_exit_view.o \
+	game/enter_sec_class_state.o \
 	game/hammer_dispensor_button.o \
+	game/exit_lift.o \
+	game/exit_pellerator.o \
+	game/fan.o \
+	game/fan_control.o \
+	game/fan_decrease.o \
+	game/fan_increase.o \
+	game/fan_noises.o \
+	game/floor_indicator.o \
+	game/get_lift_eye2.o \
+	game/glass_smasher.o \
+	game/gondolier_base.o \
+	game/hammer_clip.o \
+	game/head_slot.o \
+	game/head_spinner.o \
+	game/idle_summoner.o \
+	game/leave_sec_class_state.o \
 	game/light.o \
 	game/light_switch.o \
 	game/little_lift_button.o \
+	game/long_stick_dispenser.o \
+	game/mail_man.o \
+	game/missiveomat.o \
+	game/movie_tester.o \
+	game/navigation_computer.o \
 	game/no_nut_bowl.o \
-	game/pet_position.o \
-	game/port_hole.o \
 	game/null_port_hole.o \
 	game/nut_replacer.o \
+	game/pet_controler.o \
+	game/pet_disabler.o \
+	game/pet_graphic2.o \
+	game/pet_graphic.o \
+	game/phonograph_lid.o \
+	game/place_holder.o \
+	game/port_hole.o \
+	game/reserved_table.o \
 	game/room_item.o \
+	game/search_point.o \
 	game/service_elevator_door.o \
-	game/sgt_state_room.o \
-	game/sgt_upper_doors_sound.o \
+	game/ship_setting_button.o \
+	game/show_cell_points.o \
+	game/splash_animation.o \
+	game/star_control.o \
+	game/starling_puret.o \
 	game/start_action.o \
 	game/sub_glass.o \
+	game/sub_wrapper.o \
 	game/sweet_bowl.o \
 	game/television.o \
+	game/tow_parrot_nav.o \
+	game/throw_tv_down_well.o \
+	game/titania_still_control.o \
 	game/parrot/parrot_lobby_controller.o \
 	game/parrot/parrot_lobby_link_updater.o \
 	game/parrot/parrot_lobby_object.o \
@@ -108,6 +169,22 @@ MODULE_OBJS := \
 	game/parrot/parrot_perch_holder.o \
 	game/parrot/parrot_succubus.o \
 	game/parrot/parrot_trigger.o \
+	game/parrot/player_meets_parrot.o \
+	game/pet/pet.o \
+	game/pet/pet_class1.o \
+	game/pet/pet_class2.o \
+	game/pet/pet_class3.o \
+	game/pet/pet_monitor.o \
+	game/pet/pet_position.o \
+	game/pet/pet_sentinal.o \
+	game/pet/pet_sounds.o \
+	game/pet/pet_transition.o \
+	game/pet/pet_transport.o \
+	game/sgt/sgt_doors.o \
+	game/sgt/sgt_navigation.o \
+	game/sgt/sgt_restaurant_doors.o \
+	game/sgt/sgt_state_room.o \
+	game/sgt/sgt_upper_doors_sound.o \
 	gfx/act_button.o \
 	gfx/changes_season_button.o \
 	gfx/chev_left_off.o \
@@ -173,7 +250,12 @@ MODULE_OBJS := \
 	npcs/true_talk_npc.o \
 	sound/auto_music_player.o \
 	sound/auto_music_player_base.o \
-	sound/seasonal_music_player.o
+	sound/auto_sound_player.o \
+	sound/background_sound_maker.o \
+	sound/music_player.o \
+	sound/seasonal_music_player.o \
+	sound/titania_speech.o \
+	sound/trigger_auto_music_player.o
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_TITANIC), DYNAMIC_PLUGIN)

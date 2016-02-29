@@ -20,35 +20,26 @@
  *
  */
 
-#ifndef TITANIC_DRAWER_H
-#define TITANIC_DRAWER_H
-
-#include "titanic/game/sgt/sgt_state_room.h"
+#include "titanic/game/sgt/sgt_upper_doors_sound.h"
 
 namespace Titanic {
 
-class CDrawer : public CSGTStateRoom {
-private:
-	int _fieldF4;
-public:
-	CDrawer();
+CSGTUpperDoorsSound::CSGTUpperDoorsSound() {
+	_string2 = "b#53.wav";
+}
 
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CDrawer"; }
+void CSGTUpperDoorsSound::save(SimpleFile *file, int indent) const {
+	file->writeNumberLine(1, indent);
+	file->writeQuotedLine(_string2, indent);
 
-	/**
-	 * Save the data for the class to file
-	 */
-	virtual void save(SimpleFile *file, int indent) const;
+	CClickResponder::save(file, indent);
+}
 
-	/**
-	 * Load the data for the class from file
-	 */
-	virtual void load(SimpleFile *file);
-};
+void CSGTUpperDoorsSound::load(SimpleFile *file) {
+	file->readNumber();
+	_string2 = file->readString();
+
+	CClickResponder::load(file);
+}
 
 } // End of namespace Titanic
-
-#endif /* TITANIC_DRAWER_H */

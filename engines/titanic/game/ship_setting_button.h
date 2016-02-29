@@ -20,26 +20,31 @@
  *
  */
 
-#include "titanic/game/sgt_upper_doors_sound.h"
+#ifndef TITANIC_SHIP_SETTING_BUTTON_H
+#define TITANIC_SHIP_SETTING_BUTTON_H
+
+#include "titanic/core/game_object.h"
 
 namespace Titanic {
 
-CSGTUpperDoorsSound::CSGTUpperDoorsSound() {
-	_string2 = "b#53.wav";
-}
+class CShipSettingButton : public CGameObject {
+public:
+	/**
+	 * Return the class name
+	 */
+	virtual const char *getClassName() const { return "CShipSettingButton"; }
 
-void CSGTUpperDoorsSound::save(SimpleFile *file, int indent) const {
-	file->writeNumberLine(1, indent);
-	file->writeQuotedLine(_string2, indent);
+	/**
+	 * Save the data for the class to file
+	 */
+	virtual void save(SimpleFile *file, int indent) const;
 
-	CClickResponder::save(file, indent);
-}
-
-void CSGTUpperDoorsSound::load(SimpleFile *file) {
-	file->readNumber();
-	_string2 = file->readString();
-
-	CClickResponder::load(file);
-}
+	/**
+	 * Load the data for the class from file
+	 */
+	virtual void load(SimpleFile *file);
+};
 
 } // End of namespace Titanic
+
+#endif /* TITANIC_SHIP_SETTING_BUTTON_H */

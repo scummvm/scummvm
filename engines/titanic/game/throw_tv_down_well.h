@@ -20,23 +20,24 @@
  *
  */
 
-#ifndef TITANIC_DRAWER_H
-#define TITANIC_DRAWER_H
+#ifndef TITANIC_THROW_TV_DOWN_WELL_H
+#define TITANIC_THROW_TV_DOWN_WELL_H
 
-#include "titanic/game/sgt/sgt_state_room.h"
+#include "titanic/core/game_object.h"
 
 namespace Titanic {
 
-class CDrawer : public CSGTStateRoom {
-private:
-	int _fieldF4;
+class CThrowTVDownWell : public CGameObject {
 public:
-	CDrawer();
+	CString _strValue;
+	int _numValue;
+public:
+	CThrowTVDownWell() : CGameObject(), _numValue(0) {}
 
 	/**
 	 * Return the class name
 	 */
-	virtual const char *getClassName() const { return "CDrawer"; }
+	virtual const char *getClassName() const { return "CThrowTVDownWell"; }
 
 	/**
 	 * Save the data for the class to file
@@ -51,4 +52,4 @@ public:
 
 } // End of namespace Titanic
 
-#endif /* TITANIC_DRAWER_H */
+#endif /* TITANIC_THROW_TV_DOWN_WELL_H */

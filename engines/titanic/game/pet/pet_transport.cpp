@@ -20,16 +20,16 @@
  *
  */
 
-#include "titanic/game/pet_position.h"
+#include "titanic/game/pet/pet_transport.h"
 
 namespace Titanic {
 
-void CPETPosition::save(SimpleFile *file, int indent) const {
+void CPETTransport::save(SimpleFile *file, int indent) const {
 	file->writeNumberLine(1, indent);
 	CGameObject::save(file, indent);
 }
 
-void CPETPosition::load(SimpleFile *file) {
+void CPETTransport::load(SimpleFile *file) {
 	file->readNumber();
 	CGameObject::load(file);
 }

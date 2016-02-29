@@ -26,12 +26,12 @@ namespace Titanic {
 
 void CParrotLobbyLinkUpdater::save(SimpleFile *file, int indent) const {
 	file->writeNumberLine(1, indent);
-	CGameObject::save(file, indent);
+	CParrotLobbyObject::save(file, indent);
 }
 
 void CParrotLobbyLinkUpdater::load(SimpleFile *file) {
 	file->readNumber();
-	CGameObject::load(file);
+	CParrotLobbyObject::load(file);
 }
 
 } // End of namespace Titanic

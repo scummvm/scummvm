@@ -20,23 +20,21 @@
  *
  */
 
-#ifndef TITANIC_DRAWER_H
-#define TITANIC_DRAWER_H
+#ifndef TITANIC_BELBOT_GET_LIGHT_H
+#define TITANIC_BELBOT_GET_LIGHT_H
 
-#include "titanic/game/sgt/sgt_state_room.h"
+#include "titanic/core/game_object.h"
 
 namespace Titanic {
 
-class CDrawer : public CSGTStateRoom {
+class CBelbotGetLight : public CGameObject {
 private:
-	int _fieldF4;
+	CString _value;
 public:
-	CDrawer();
-
 	/**
 	 * Return the class name
 	 */
-	virtual const char *getClassName() const { return "CDrawer"; }
+	virtual const char *getClassName() const { return "CBelbotGetLight"; }
 
 	/**
 	 * Save the data for the class to file
@@ -51,4 +49,4 @@ public:
 
 } // End of namespace Titanic
 
-#endif /* TITANIC_DRAWER_H */
+#endif /* TITANIC_LIGHT_H */

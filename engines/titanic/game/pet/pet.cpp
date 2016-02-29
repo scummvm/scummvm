@@ -20,35 +20,38 @@
  *
  */
 
-#ifndef TITANIC_DRAWER_H
-#define TITANIC_DRAWER_H
-
-#include "titanic/game/sgt/sgt_state_room.h"
+#include "titanic/game/pet/pet.h"
 
 namespace Titanic {
 
-class CDrawer : public CSGTStateRoom {
-private:
-	int _fieldF4;
-public:
-	CDrawer();
+CPET::CPET() : CGameObject(), _fieldBC(0), _fieldC0(3),
+	_fieldC4(0), _fieldC8(0), _fieldD8(0), _fieldDC(0) {
+}
 
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CDrawer"; }
+void CPET::save(SimpleFile *file, int indent) const {
+	file->writeNumberLine(1, indent);
+	file->writeNumberLine(_fieldBC, indent);
+	file->writeNumberLine(_fieldC0, indent);
+	file->writeNumberLine(_fieldC4, indent);
+	file->writeNumberLine(_fieldC8, indent);
+	file->writeQuotedLine(_string1, indent);
+	file->writeNumberLine(_fieldD8, indent);
+	file->writeNumberLine(_fieldDC, indent);
 
-	/**
-	 * Save the data for the class to file
-	 */
-	virtual void save(SimpleFile *file, int indent) const;
+	CGameObject::save(file, indent);
+}
 
-	/**
-	 * Load the data for the class from file
-	 */
-	virtual void load(SimpleFile *file);
-};
+void CPET::load(SimpleFile *file) {
+	file->readNumber();
+	_fieldBC = file->readNumber();
+	_fieldC0 = file->readNumber();
+	_fieldC4 = file->readNumber();
+	_fieldC8 = file->readNumber();
+	_string1 = file->readString();
+	_fieldD8 = file->readNumber();
+	_fieldDC = file->readNumber();
+
+	CGameObject::load(file);
+}
 
 } // End of namespace Titanic
-
-#endif /* TITANIC_DRAWER_H */

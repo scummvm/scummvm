@@ -20,35 +20,23 @@
  *
  */
 
-#ifndef TITANIC_DRAWER_H
-#define TITANIC_DRAWER_H
-
-#include "titanic/game/sgt/sgt_state_room.h"
+#include "titanic/game/reserved_table.h"
 
 namespace Titanic {
 
-class CDrawer : public CSGTStateRoom {
-private:
-	int _fieldF4;
-public:
-	CDrawer();
+void CReservedTable::save(SimpleFile *file, int indent) const {
+	file->writeNumberLine(1, indent);
+	file->writeNumberLine(_value1, indent);
+	file->writeNumberLine(_value2, indent);
 
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CDrawer"; }
+	CGameObject::save(file, indent);
+}
 
-	/**
-	 * Save the data for the class to file
-	 */
-	virtual void save(SimpleFile *file, int indent) const;
-
-	/**
-	 * Load the data for the class from file
-	 */
-	virtual void load(SimpleFile *file);
-};
+void CReservedTable::load(SimpleFile *file) {
+	file->readNumber();
+	_value1 = file->readNumber();
+	_value2 = file->readNumber();
+	CGameObject::load(file);
+}
 
 } // End of namespace Titanic
-
-#endif /* TITANIC_DRAWER_H */

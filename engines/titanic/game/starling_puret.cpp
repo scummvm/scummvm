@@ -20,31 +20,18 @@
  *
  */
 
-#ifndef TITANIC_PET_POSITION_H
-#define TITANIC_PET_POSITION_H
-
-#include "titanic/core/game_object.h"
+#include "titanic/game/starling_puret.h"
 
 namespace Titanic {
 
-class CPETPosition : public CGameObject {
-public:
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CPETPosition"; }
+void CStarlingPuret::save(SimpleFile *file, int indent) const {
+	file->writeNumberLine(1, indent);
+	CGameObject::save(file, indent);
+}
 
-	/**
-	 * Save the data for the class to file
-	 */
-	virtual void save(SimpleFile *file, int indent) const;
-
-	/**
-	 * Load the data for the class from file
-	 */
-	virtual void load(SimpleFile *file);
-};
+void CStarlingPuret::load(SimpleFile *file) {
+	file->readNumber();
+	CGameObject::load(file);
+}
 
 } // End of namespace Titanic
-
-#endif /* TITANIC_ROOM_ITEM_H */

@@ -20,35 +20,39 @@
  *
  */
 
-#ifndef TITANIC_DRAWER_H
-#define TITANIC_DRAWER_H
-
-#include "titanic/game/sgt/sgt_state_room.h"
+#include "titanic/game/fan_noises.h"
 
 namespace Titanic {
 
-class CDrawer : public CSGTStateRoom {
-private:
-	int _fieldF4;
-public:
-	CDrawer();
+CFanNoises::CFanNoises() : CGameObject(), _fieldBC(-1),
+	_fieldC0(0), _fieldC4(70), _fieldC8(-1), _fieldCC(0),
+	_fieldD0(0), _fieldD4(-1) {
+}
 
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CDrawer"; }
+void CFanNoises::save(SimpleFile *file, int indent) const {
+	file->writeNumberLine(1, indent);
+	file->writeNumberLine(_fieldBC, indent);
+	file->writeNumberLine(_fieldC0, indent);
+	file->writeNumberLine(_fieldC4, indent);
+	file->writeNumberLine(_fieldC8, indent);
+	file->writeNumberLine(_fieldCC, indent);
+	file->writeNumberLine(_fieldD0, indent);
+	file->writeNumberLine(_fieldD4, indent);
 
-	/**
-	 * Save the data for the class to file
-	 */
-	virtual void save(SimpleFile *file, int indent) const;
+	CGameObject::save(file, indent);
+}
 
-	/**
-	 * Load the data for the class from file
-	 */
-	virtual void load(SimpleFile *file);
-};
+void CFanNoises::load(SimpleFile *file) {
+	file->readNumber();
+	_fieldBC = file->readNumber();
+	_fieldC0 = file->readNumber();
+	_fieldC4 = file->readNumber();
+	_fieldC8 = file->readNumber();
+	_fieldCC = file->readNumber();
+	_fieldD0 = file->readNumber();
+	_fieldD4 = file->readNumber();
+
+	CGameObject::load(file);
+}
 
 } // End of namespace Titanic
-
-#endif /* TITANIC_DRAWER_H */

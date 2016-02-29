@@ -20,7 +20,7 @@
  *
  */
 
-#include "titanic/game/sgt_state_room.h"
+#include "titanic/game/sgt/sgt_state_room.h"
 
 namespace Titanic {
 

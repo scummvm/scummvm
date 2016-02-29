@@ -20,23 +20,25 @@
  *
  */
 
-#ifndef TITANIC_DRAWER_H
-#define TITANIC_DRAWER_H
+#ifndef TITANIC_BRAIN_SLOT_H
+#define TITANIC_BRAIN_SLOT_H
 
-#include "titanic/game/sgt/sgt_state_room.h"
+#include "titanic/core/game_object.h"
 
 namespace Titanic {
 
-class CDrawer : public CSGTStateRoom {
-private:
-	int _fieldF4;
+class CBrainSlot : public CGameObject {
 public:
-	CDrawer();
+	static int _v1, _v2;
+public:
+	int _value1, _value2;
+public:
+	CBrainSlot() : CGameObject(), _value1(0), _value2(0) {}
 
 	/**
 	 * Return the class name
 	 */
-	virtual const char *getClassName() const { return "CDrawer"; }
+	virtual const char *getClassName() const { return "CBrainSlot"; }
 
 	/**
 	 * Save the data for the class to file
@@ -51,4 +53,4 @@ public:
 
 } // End of namespace Titanic
 
-#endif /* TITANIC_DRAWER_H */
+#endif /* TITANIC_BRAIN_SLOT_H */

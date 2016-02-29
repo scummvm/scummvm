@@ -20,23 +20,32 @@
  *
  */
 
-#ifndef TITANIC_DRAWER_H
-#define TITANIC_DRAWER_H
+#ifndef TITANIC_AUTO_SOUND_PLAYER_H
+#define TITANIC_AUTO_SOUND_PLAYER_H
 
-#include "titanic/game/sgt/sgt_state_room.h"
+#include "titanic/core/game_object.h"
 
 namespace Titanic {
 
-class CDrawer : public CSGTStateRoom {
-private:
-	int _fieldF4;
+class CAutoSoundPlayer : public CGameObject {
 public:
-	CDrawer();
+	CString _string1;
+	int _fieldC8;
+	int _fieldCC;
+	int _fieldD0;
+	int _fieldD4;
+	int _fieldD8;
+	int _fieldDC;
+	int _fieldE0;
+	int _fieldE4;
+	int _fieldE8;
+public:
+	CAutoSoundPlayer();
 
 	/**
 	 * Return the class name
 	 */
-	virtual const char *getClassName() const { return "CDrawer"; }
+	virtual const char *getClassName() const { return "CAutoSoundPlayer"; }
 
 	/**
 	 * Save the data for the class to file
@@ -51,4 +60,4 @@ public:
 
 } // End of namespace Titanic
 
-#endif /* TITANIC_DRAWER_H */
+#endif /* TITANIC_AUTO_SOUND_PLAYER_H */

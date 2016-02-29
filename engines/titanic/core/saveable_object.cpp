@@ -69,6 +69,7 @@
 #include "titanic/core/view_item.h"
 
 #include "titanic/game/announce.h"
+#include "titanic/game/belbot_get_light.h"
 #include "titanic/game/bowl_unlocker.h"
 #include "titanic/game/cdrom.h"
 #include "titanic/game/cdrom_computer.h"
@@ -90,12 +91,9 @@
 #include "titanic/game/no_nut_bowl.h"
 #include "titanic/game/null_port_hole.h"
 #include "titanic/game/nut_replacer.h"
-#include "titanic/game/pet_position.h"
 #include "titanic/game/port_hole.h"
 #include "titanic/game/room_item.h"
 #include "titanic/game/service_elevator_door.h"
-#include "titanic/game/sgt_state_room.h"
-#include "titanic/game/sgt_upper_doors_sound.h"
 #include "titanic/game/start_action.h"
 #include "titanic/game/sub_glass.h"
 #include "titanic/game/sweet_bowl.h"
@@ -110,6 +108,21 @@
 #include "titanic/game/parrot/parrot_perch_holder.h"
 #include "titanic/game/parrot/parrot_succubus.h"
 #include "titanic/game/parrot/parrot_trigger.h"
+#include "titanic/game/pet/pet.h"
+#include "titanic/game/pet/pet_class1.h"
+#include "titanic/game/pet/pet_class2.h"
+#include "titanic/game/pet/pet_class3.h"
+#include "titanic/game/pet/pet_monitor.h"
+#include "titanic/game/pet/pet_position.h"
+#include "titanic/game/pet/pet_sentinal.h"
+#include "titanic/game/pet/pet_sounds.h"
+#include "titanic/game/pet/pet_transition.h"
+#include "titanic/game/pet/pet_transport.h"
+#include "titanic/game/sgt/sgt_doors.h"
+#include "titanic/game/sgt/sgt_navigation.h"
+#include "titanic/game/sgt/sgt_restaurant_doors.h"
+#include "titanic/game/sgt/sgt_state_room.h"
+#include "titanic/game/sgt/sgt_upper_doors_sound.h"
 
 #include "titanic/gfx/act_button.h"
 #include "titanic/gfx/changes_season_button.h"
@@ -230,6 +243,7 @@ DEFFN(CTreeItem);
 DEFFN(CViewItem);
 
 DEFFN(CAnnounce);
+DEFFN(CBelbotGetLight);
 DEFFN(CBowlUnlocker);
 DEFFN(CCDROM);
 DEFFN(CCDROMComputer);
@@ -250,12 +264,9 @@ DEFFN(CLittleLiftButton);
 DEFFN(CNoNutBowl);
 DEFFN(CNullPortHole);
 DEFFN(CNutReplacer);
-DEFFN(CPETPosition);
 DEFFN(CPortHole);
 DEFFN(CRoomItem);
 DEFFN(CServiceElevatorDoor);
-DEFFN(CSGTStateRoom);
-DEFFN(CSGTUpperDoorsSound);
 DEFFN(CStartAction);
 DEFFN(CSUBGlass);
 DEFFN(CSweetBowl);
@@ -270,6 +281,21 @@ DEFFN(CParrotNutEater);
 DEFFN(CParrotPerchHolder);
 DEFFN(CParrotSuccUBus);
 DEFFN(CParrotTrigger);
+DEFFN(CPET);
+DEFFN(CPETClass1);
+DEFFN(CPETClass2);
+DEFFN(CPETClass3);
+DEFFN(CPETMonitor);
+DEFFN(CPETPosition);
+DEFFN(CPETSentinal);
+DEFFN(CPETSounds);
+DEFFN(CPETTransition);
+DEFFN(CPETTransport);
+DEFFN(CSGTDoors);
+DEFFN(CSGTNavigation);
+DEFFN(CSGTRestaurantDoors);
+DEFFN(CSGTStateRoom);
+DEFFN(CSGTUpperDoorsSound);
 
 DEFFN(CActButton);
 DEFFN(CChangesSeasonButton);
@@ -554,6 +580,7 @@ void CSaveableObject::initClassList() {
 	ADDFN(CViewItem);
 
 	ADDFN(CAnnounce);
+	ADDFN(CBelbotGetLight);
 	ADDFN(CBowlUnlocker);
 	ADDFN(CCDROM);
 	ADDFN(CCDROMComputer);
@@ -595,6 +622,21 @@ void CSaveableObject::initClassList() {
 	ADDFN(CParrotPerchHolder);
 	ADDFN(CParrotSuccUBus);
 	ADDFN(CParrotTrigger);
+	ADDFN(CPET);
+	ADDFN(CPETClass1);
+	ADDFN(CPETClass2);
+	ADDFN(CPETClass3);
+	ADDFN(CPETMonitor);
+	ADDFN(CPETPosition);
+	ADDFN(CPETSentinal);
+	ADDFN(CPETSounds);
+	ADDFN(CPETTransition);
+	ADDFN(CPETTransport);
+	ADDFN(CSGTDoors);
+	ADDFN(CSGTNavigation);
+	ADDFN(CSGTRestaurantDoors);
+	ADDFN(CSGTStateRoom);
+	ADDFN(CSGTUpperDoorsSound);
 
 	ADDFN(CActButton);
 	ADDFN(CChangesSeasonButton);
