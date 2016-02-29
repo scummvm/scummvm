@@ -306,7 +306,7 @@ void AdlEngine::doActions(const Command &command, byte noun, byte offset) {
 		case IDO_ACT_GO_WEST:
 		case IDO_ACT_GO_UP:
 		case IDO_ACT_GO_DOWN: {
-			byte room = _state.rooms[_state.room].connections[ARG(0) - 0x15];
+			byte room = _state.rooms[_state.room].connections[ARG(0) - IDO_ACT_GO_NORTH];
 
 			if (room == 0) {
 				printEngineMessage(IDI_MSG_CANT_GO_THERE);

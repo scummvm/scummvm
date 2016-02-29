@@ -155,9 +155,9 @@ void HiRes1Engine::runIntro() {
 	_display->setMode(Display::kModeText);
 	file.seek(IDI_HR1_OFS_INTRO_TEXT);
 
-	const int pages[] = { 6, 6, 4, 5, 8, 7, 0 };
+	const uint pages[] = { 6, 6, 4, 5, 8, 7, 0 };
 
-	int page = 0;
+	uint page = 0;
 	while (pages[page] != 0) {
 		_display->home();
 		printStrings(file, pages[page++]);
