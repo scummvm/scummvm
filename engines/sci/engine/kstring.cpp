@@ -661,19 +661,6 @@ reg_t kStrSplit(EngineState *s, int argc, reg_t *argv) {
 
 #ifdef ENABLE_SCI32
 
-reg_t kText(EngineState *s, int argc, reg_t *argv) {
-	switch (argv[0].toUint16()) {
-	case 0:
-		return kTextSize(s, argc - 1, argv + 1);
-	default:
-		// TODO: Other subops here too, perhaps kTextColors and kTextFonts
-		warning("kText(%d)", argv[0].toUint16());
-		break;
-	}
-
-	return s->r_acc;
-}
-
 // TODO: there is an unused second argument, happens at least in LSL6 right during the intro
 reg_t kStringNew(EngineState *s, int argc, reg_t *argv) {
 	reg_t stringHandle;

@@ -197,7 +197,7 @@ reg_t kCreateTextBitmap(EngineState *s, int argc, reg_t *argv) {
 	if (subop == 0) {
 		TextAlign alignment = (TextAlign)readSelectorValue(segMan, object, SELECTOR(mode));
 		reg_t out;
-		return g_sci->_gfxText32->createFontBitmap(width, height, rect, text, foreColor, backColor, skipColor, fontId, alignment, borderColor, dimmed, 1, &out);
+		return g_sci->_gfxText32->createFontBitmap(width, height, rect, text, foreColor, backColor, skipColor, fontId, alignment, borderColor, dimmed, true, &out);
 	} else {
 		CelInfo32 celInfo;
 		celInfo.type = kCelTypeView;
@@ -212,6 +212,35 @@ reg_t kCreateTextBitmap(EngineState *s, int argc, reg_t *argv) {
 reg_t kDisposeTextBitmap(EngineState *s, int argc, reg_t *argv) {
 	g_sci->_gfxText32->disposeTextBitmap(argv[0]);
 	return s->r_acc;
+}
+
+reg_t kText(EngineState *s, int argc, reg_t *argv) {
+	if (!s)
+		return make_reg(0, getSciVersion());
+	error("not supposed to call this");
+}
+
+reg_t kTextSize32(EngineState *s, int argc, reg_t *argv) {
+	g_sci->_gfxText32->setFont(argv[2].toUint16());
+
+	reg_t *rect = s->_segMan->derefRegPtr(argv[0], 4);
+
+	Common::String text = s->_segMan->getString(argv[1]);
+	int16 maxWidth = argc > 3 ? argv[3].toSint16() : 0;
+	bool doScaling = argc > 4 ? argv[4].toSint16() : true;
+
+	Common::Rect textRect = g_sci->_gfxText32->getTextSize(text, maxWidth, doScaling);
+	rect[0] = make_reg(0, textRect.left);
+	rect[1] = make_reg(0, textRect.top);
+	rect[2] = make_reg(0, textRect.right - 1);
+	rect[3] = make_reg(0, textRect.bottom - 1);
+	return NULL_REG;
+}
+
+reg_t kTextWidth(EngineState *s, int argc, reg_t *argv) {
+	g_sci->_gfxText32->setFont(argv[1].toUint16());
+	Common::String text = s->_segMan->getString(argv[0]);
+	return make_reg(0, g_sci->_gfxText32->getStringWidth(text));
 }
 
 reg_t kWinHelp(EngineState *s, int argc, reg_t *argv) {
@@ -454,18 +483,18 @@ reg_t kScrollWindow(EngineState *s, int argc, reg_t *argv) {
 #endif
 
 reg_t kFont(EngineState *s, int argc, reg_t *argv) {
-	// TODO: Handle font settings for SCI2.1
+	if (!s)
+		return make_reg(0, getSciVersion());
+	error("not supposed to call this");
+}
 
-	switch (argv[0].toUint16()) {
-	case 1:
-		g_sci->_gfxText32->_scaledWidth = argv[1].toUint16();
-		g_sci->_gfxText32->_scaledHeight = argv[2].toUint16();
-		return NULL_REG;
-	default:
-		error("kFont: unknown subop %d", argv[0].toUint16());
-	}
-
-	return s->r_acc;
+reg_t kSetFontHeight(EngineState *s, int argc, reg_t *argv) {
+	// TODO: Setting font may have just been for side effect
+	// of setting the fontHeight on the font manager, in
+	// which case we could just get the font directly ourselves.
+	g_sci->_gfxText32->setFont(argv[0].toUint16());
+	g_sci->_gfxText32->_scaledHeight = (g_sci->_gfxText32->_font->getHeight() * g_sci->_gfxFrameout->getCurrentBuffer().scriptHeight + g_sci->_gfxText32->_scaledHeight - 1) / g_sci->_gfxText32->_scaledHeight;
+	return NULL_REG;
 }
 
 reg_t kSetFontRes(EngineState *s, int argc, reg_t *argv) {
@@ -563,6 +592,10 @@ reg_t kBitmap(EngineState *s, int argc, reg_t *argv) {
 		break;
 	case 4:	// add text to bitmap
 		{
+			warning("kBitmap(4)");
+			return NULL_REG;
+		}
+#if 0
 		// 13 params, called e.g. from TextButton::createBitmap() in Torin's Passage,
 		// script 64894
 		reg_t hunkId = argv[1];	// obtained from kBitmap(0)
@@ -613,6 +646,7 @@ reg_t kBitmap(EngineState *s, int argc, reg_t *argv) {
 
 		}
 		break;
+#endif
 	case 5:	// fill with color
 		{
 		// 6 params, called e.g. from TextView::init() and TextView::draw()

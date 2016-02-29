@@ -499,6 +499,8 @@ reg_t kPalVaryMergeStart(EngineState *s, int argc, reg_t *argv);
 // SCI2.1 Kernel Functions
 reg_t kMorphOn(EngineState *s, int argc, reg_t *argv);
 reg_t kText(EngineState *s, int argc, reg_t *argv);
+reg_t kTextSize32(EngineState *s, int argc, reg_t *argv);
+reg_t kTextWidth(EngineState *s, int argc, reg_t *argv);
 reg_t kSave(EngineState *s, int argc, reg_t *argv);
 reg_t kAutoSave(EngineState *s, int argc, reg_t *argv);
 reg_t kList(EngineState *s, int argc, reg_t *argv);
@@ -516,6 +518,7 @@ reg_t kGetSierraProfileInt(EngineState *s, int argc, reg_t *argv);
 reg_t kCelInfo(EngineState *s, int argc, reg_t *argv);
 reg_t kSetLanguage(EngineState *s, int argc, reg_t *argv);
 reg_t kScrollWindow(EngineState *s, int argc, reg_t *argv);
+reg_t kSetFontHeight(EngineState *s, int argc, reg_t *argv);
 reg_t kSetFontRes(EngineState *s, int argc, reg_t *argv);
 reg_t kFont(EngineState *s, int argc, reg_t *argv);
 reg_t kBitmap(EngineState *s, int argc, reg_t *argv);

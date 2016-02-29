@@ -60,15 +60,17 @@ struct SciKernelMapSubEntry {
 #define SCI_SUBOPENTRY_TERMINATOR { SCI_VERSION_NONE, SCI_VERSION_NONE, 0, NULL, NULL, NULL, NULL }
 
 
-#define SIG_SCIALL          SCI_VERSION_NONE, SCI_VERSION_NONE
-#define SIG_SCI0            SCI_VERSION_NONE, SCI_VERSION_01
-#define SIG_SCI1            SCI_VERSION_1_EGA_ONLY, SCI_VERSION_1_LATE
-#define SIG_SCI11           SCI_VERSION_1_1, SCI_VERSION_1_1
-#define SIG_SINCE_SCI11     SCI_VERSION_1_1, SCI_VERSION_NONE
-#define SIG_SCI21EARLY_ONLY SCI_VERSION_2_1_EARLY, SCI_VERSION_2_1_EARLY
-#define SIG_SINCE_SCI21     SCI_VERSION_2_1_EARLY, SCI_VERSION_3
-#define SIG_UNTIL_SCI21MID  SCI_VERSION_2, SCI_VERSION_2_1_MIDDLE
-#define SIG_SINCE_SCI21LATE SCI_VERSION_2_1_LATE, SCI_VERSION_3
+#define SIG_SCIALL           SCI_VERSION_NONE, SCI_VERSION_NONE
+#define SIG_SCI0             SCI_VERSION_NONE, SCI_VERSION_01
+#define SIG_SCI1             SCI_VERSION_1_EGA_ONLY, SCI_VERSION_1_LATE
+#define SIG_SCI11            SCI_VERSION_1_1, SCI_VERSION_1_1
+#define SIG_SINCE_SCI11      SCI_VERSION_1_1, SCI_VERSION_NONE
+#define SIG_SCI21EARLY       SCI_VERSION_2_1_EARLY, SCI_VERSION_2_1_EARLY
+#define SIG_UNTIL_SCI21EARLY SCI_VERSION_2, SCI_VERSION_2_1_EARLY
+#define SIG_UNTIL_SCI21MID   SCI_VERSION_2, SCI_VERSION_2_1_MIDDLE
+#define SIG_SINCE_SCI21      SCI_VERSION_2_1_EARLY, SCI_VERSION_3
+#define SIG_SINCE_SCI21MID   SCI_VERSION_2_1_MIDDLE, SCI_VERSION_3
+#define SIG_SINCE_SCI21LATE  SCI_VERSION_2_1_LATE, SCI_VERSION_3
 
 #define SIG_SCI16          SCI_VERSION_NONE, SCI_VERSION_1_1
 #define SIG_SCI32          SCI_VERSION_2, SCI_VERSION_NONE
@@ -280,6 +282,20 @@ static const SciKernelMapSubEntry kSave_subops[] = {
 	{ SIG_SCI32,           6, MAP_CALL(MakeSaveCatName),           "rr",                   NULL },
 	{ SIG_SCI32,           7, MAP_CALL(MakeSaveFileName),          "rri",                  NULL },
 	{ SIG_SCI32,           8, MAP_CALL(AutoSave),                  "[o0]",                 NULL },
+	SCI_SUBOPENTRY_TERMINATOR
+};
+
+//    version,         subId, function-mapping,                    signature,              workarounds
+static const SciKernelMapSubEntry kFont_subops[] = {
+	{ SIG_SINCE_SCI21MID,  0, MAP_CALL(SetFontHeight),             "i",                    NULL },
+	{ SIG_SINCE_SCI21MID,  1, MAP_CALL(SetFontRes),                "ii",                   NULL },
+	SCI_SUBOPENTRY_TERMINATOR
+};
+
+//    version,         subId, function-mapping,                    signature,              workarounds
+static const SciKernelMapSubEntry kText_subops[] = {
+	{ SIG_SINCE_SCI21MID,  0, MAP_CALL(TextSize32),                "r[r0]i(i)(i)",         NULL },
+	{ SIG_SINCE_SCI21MID,  1, MAP_CALL(TextWidth),                 "ri",                   NULL },
 	SCI_SUBOPENTRY_TERMINATOR
 };
 
@@ -546,10 +562,10 @@ static SciKernelMapEntry s_kernelMap[] = {
 	{ MAP_CALL(StrEnd),            SIG_EVERYWHERE,           "r",                     NULL,            NULL },
 	{ MAP_CALL(StrLen),            SIG_EVERYWHERE,           "[r0]",                  NULL,            kStrLen_workarounds },
 	{ MAP_CALL(StrSplit),          SIG_EVERYWHERE,           "rr[r0]",                NULL,            NULL },
-	{ MAP_CALL(TextColors),        SIG_EVERYWHERE,           "(i*)",                  NULL,            NULL },
-	{ MAP_CALL(TextFonts),         SIG_EVERYWHERE,           "(i*)",                  NULL,            NULL },
-	{ MAP_CALL(TextSize),          SIG_SCIALL, SIGFOR_MAC,   "r[r0]i(i)(r0)(i)",      NULL,            NULL },
-	{ MAP_CALL(TextSize),          SIG_EVERYWHERE,           "r[r0]i(i)(r0)",         NULL,            NULL },
+	{ MAP_CALL(TextColors),        SIG_SCI16, SIGFOR_ALL,    "(i*)",                  NULL,            NULL },
+	{ MAP_CALL(TextFonts),         SIG_SCI16, SIGFOR_ALL,    "(i*)",                  NULL,            NULL },
+	{ MAP_CALL(TextSize),          SIG_SCI16, SIGFOR_MAC,    "r[r0]i(i)(r0)(i)",      NULL,            NULL },
+	{ MAP_CALL(TextSize),          SIG_SCI16, SIGFOR_ALL,    "r[r0]i(i)(r0)",         NULL,            NULL },
 	{ MAP_CALL(TimesCos),          SIG_EVERYWHERE,           "ii",                    NULL,            NULL },
 	{ "CosMult", kTimesCos,        SIG_EVERYWHERE,           "ii",                    NULL,            NULL },
 	{ MAP_CALL(TimesCot),          SIG_EVERYWHERE,           "ii",                    NULL,            NULL },
@@ -581,6 +597,10 @@ static SciKernelMapEntry s_kernelMap[] = {
 #ifdef ENABLE_SCI32
 	// SCI2 Kernel Functions
 	// TODO: whoever knows his way through those calls, fix the signatures.
+	{ "TextSize", kTextSize32,     SIG_UNTIL_SCI21EARLY, SIGFOR_ALL, "r[r0]i(i)",     NULL,            NULL },
+	{ MAP_DUMMY(TextColors),       SIG_UNTIL_SCI21EARLY, SIGFOR_ALL, "(.*)",          NULL,            NULL },
+	{ MAP_DUMMY(TextFonts),        SIG_UNTIL_SCI21EARLY, SIGFOR_ALL, "(.*)",          NULL,            NULL },
+
 	{ MAP_CALL(AddPlane),          SIG_EVERYWHERE,           "o",                     NULL,            NULL },
 	{ MAP_CALL(AddScreenItem),     SIG_EVERYWHERE,           "o",                     NULL,            NULL },
 	{ MAP_CALL(Array),             SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
@@ -651,7 +671,7 @@ static SciKernelMapEntry s_kernelMap[] = {
 	{ MAP_DUMMY(ShowStylePercent), SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
 	{ MAP_DUMMY(InvertRect),       SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
 	{ MAP_DUMMY(InputText),        SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
-	{ MAP_DUMMY(TextWidth),        SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
+	{ MAP_CALL(TextWidth),         SIG_UNTIL_SCI21EARLY, SIGFOR_ALL, "ri",            NULL,            NULL },
 	{ MAP_DUMMY(PointSize),        SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
 
 	// SCI2.1 Kernel Functions
@@ -662,7 +682,7 @@ static SciKernelMapEntry s_kernelMap[] = {
 	{ MAP_CALL(PlayVMD),           SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
 	{ MAP_CALL(Robot),             SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
 	{ MAP_CALL(Save),              SIG_EVERYWHERE,           "i(.*)",                 kSave_subops,    NULL },
-	{ MAP_CALL(Text),              SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
+	{ MAP_CALL(Text),              SIG_SINCE_SCI21MID, SIGFOR_ALL, "i(.*)",           kText_subops,    NULL },
 	{ MAP_CALL(AddPicAt),          SIG_EVERYWHERE,           "oiii",                  NULL,            NULL },
 	{ MAP_CALL(GetWindowsOption),  SIG_EVERYWHERE,           "i",                     NULL,            NULL },
 	{ MAP_CALL(WinHelp),           SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
@@ -671,8 +691,8 @@ static SciKernelMapEntry s_kernelMap[] = {
 	{ MAP_CALL(CelInfo),           SIG_EVERYWHERE,           "iiiiii",                NULL,            NULL },
 	{ MAP_CALL(SetLanguage),       SIG_EVERYWHERE,           "r",                     NULL,            NULL },
 	{ MAP_CALL(ScrollWindow),      SIG_EVERYWHERE,           "i(.*)",                 kScrollWindow_subops, NULL },
-	{ MAP_CALL(SetFontRes),        SIG_SCI21EARLY_ONLY, SIGFOR_ALL, "ii",             NULL,            NULL },
-	{ MAP_CALL(Font),              SIG_EVERYWHERE,           "i(.*)",                 NULL,            NULL },
+	{ MAP_CALL(SetFontRes),        SIG_SCI21EARLY, SIGFOR_ALL, "ii",                  NULL,            NULL },
+	{ MAP_CALL(Font),              SIG_SINCE_SCI21MID, SIGFOR_ALL, "i(.*)",           kFont_subops,    NULL },
 	{ MAP_CALL(Bitmap),            SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
 	{ MAP_CALL(AddLine),           SIG_EVERYWHERE,           "oiiiiiiiii",            NULL,            NULL },
 	{ MAP_CALL(UpdateLine),        SIG_EVERYWHERE,           "[r0]oiiiiiiiii",        NULL,            NULL },
@@ -1030,7 +1050,6 @@ static const char *const sci2_default_knames[] = {
 	/*0x89*/ "TextWidth",		  // for debugging(?), only in SCI2, not used in any SCI2 game
 	/*0x8a*/ "PointSize",	      // for debugging(?), only in SCI2, not used in any SCI2 game
 
-	// GK2 Demo (and similar) only kernel functions
 	/*0x8b*/ "AddLine",
 	/*0x8c*/ "DeleteLine",
 	/*0x8d*/ "UpdateLine",

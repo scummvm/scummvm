@@ -139,6 +139,18 @@ inline void mul(Common::Rect &rect, const Common::Rational &ratioX, const Common
 }
 
 /**
+ * Multiplies a rectangle by two ratios with default
+ * rounding. Modifies the rect directly. Uses inclusive
+ * rectangle rounding.
+ */
+inline void mulinc(Common::Rect &rect, const Common::Rational &ratioX, const Common::Rational &ratioY) {
+	rect.left = (rect.left * ratioX).toInt();
+	rect.top = (rect.top * ratioY).toInt();
+	rect.right = ((rect.right - 1) * ratioX).toInt() + 1;
+	rect.bottom = ((rect.bottom - 1) * ratioY).toInt() + 1;
+}
+
+/**
  * Multiplies a number by a rational number, rounding up to
  * the nearest whole number.
  */

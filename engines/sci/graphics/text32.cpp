@@ -37,7 +37,7 @@
 
 namespace Sci {
 
-#define BITMAP_HEADER_SIZE 46
+int16 GfxText32::_defaultFontId = 0;
 
 GfxText32::GfxText32(SegManager *segMan, GfxCache *fonts, GfxScreen *screen) :
 	_segMan(segMan),
@@ -45,8 +45,21 @@ GfxText32::GfxText32(SegManager *segMan, GfxCache *fonts, GfxScreen *screen) :
 	_screen(screen),
 	_scaledWidth(g_sci->_gfxFrameout->getCurrentBuffer().scriptWidth),
 	_scaledHeight(g_sci->_gfxFrameout->getCurrentBuffer().scriptHeight),
-	_bitmap(NULL_REG) {}
+	// Not a typo, the original engine did not initialise height, only width
+	_width(0),
+	_text(""),
+	_field_20(0),
+	_field_2C(2),
+	_field_30(0),
+	_field_34(0),
+	_field_38(0),
+	_field_3C(0),
+	_bitmap(NULL_REG) {
+		_fontId = _defaultFontId;
+		_font = _cache->getFont(_defaultFontId);
+	}
 
+#define BITMAP_HEADER_SIZE 46
 void GfxText32::buildBitmapHeader(byte *bitmap, const int16 width, const int16 height, const uint8 skipColor, const int16 displaceX, const int16 displaceY, const int16 scaledWidth, const int16 scaledHeight, const uint32 hunkPaletteOffset, const bool useRemap) const {
 
 	WRITE_SCI11ENDIAN_UINT16(bitmap + 0, width);
@@ -77,8 +90,6 @@ void GfxText32::buildBitmapHeader(byte *bitmap, const int16 width, const int16 h
 	WRITE_SCI11ENDIAN_UINT16(bitmap + 38, scaledHeight);
 }
 
-int16 GfxText32::_defaultFontId = 0;
-
 reg_t GfxText32::createFontBitmap(int16 width, int16 height, const Common::Rect &rect, const Common::String &text, const uint8 foreColor, const uint8 backColor, const uint8 skipColor, const GuiResourceId fontId, const TextAlign alignment, const int16 borderColor, const bool dimmed, const bool doScaling, reg_t *outBitmapObject) {
 
 	_field_22 = 0;
@@ -93,10 +104,7 @@ reg_t GfxText32::createFontBitmap(int16 width, int16 height, const Common::Rect 
 	_alignment = alignment;
 	_dimmed = dimmed;
 
-	if (fontId != _fontId) {
-		_fontId = fontId == -1 ? _defaultFontId : fontId;
-		_font = _cache->getFont(_fontId);
-	}
+	setFont(fontId);
 
 	if (doScaling) {
 		int16 scriptWidth = g_sci->_gfxFrameout->getCurrentBuffer().scriptWidth;
@@ -107,7 +115,7 @@ reg_t GfxText32::createFontBitmap(int16 width, int16 height, const Common::Rect 
 
 		_width = (_width * scaleX).toInt();
 		_height = (_height * scaleY).toInt();
-		mul(_textRect, scaleX, scaleY);
+		mulinc(_textRect, scaleX, scaleY);
 	}
 
 	// _textRect represents where text is drawn inside the
@@ -133,8 +141,6 @@ reg_t GfxText32::createFontBitmap(int16 width, int16 height, const Common::Rect 
 
 	drawTextBox();
 
-	debug("Drawing a bitmap %dx%d, scaled %dx%d, border %d, font %d", width, height, _width, _height, _borderColor, _fontId);
-
 	*outBitmapObject = _bitmap;
 	return _bitmap;
 }
@@ -144,7 +150,17 @@ reg_t GfxText32::createTitledFontBitmap(CelInfo32 &celInfo, Common::Rect &rect, 
 	return NULL_REG;
 }
 
-void GfxText32::drawFrame(const Common::Rect &rect, const int size, const uint8 color, const bool doScaling) {
+void GfxText32::setFont(const GuiResourceId fontId) {
+	// NOTE: In SCI engine this calls FontMgr::BuildFontTable and then a font
+	// table is built on the FontMgr directly; instead, because we already have
+	// font resources, this code just grabs a font out of GfxCache.
+	if (fontId != _fontId) {
+		_fontId = fontId == -1 ? _defaultFontId : fontId;
+		_font = _cache->getFont(_fontId);
+	}
+}
+
+void GfxText32::drawFrame(const Common::Rect &rect, const int16 size, const uint8 color, const bool doScaling) {
 	Common::Rect targetRect = doScaling ? scaleRect(rect) : rect;
 
 	byte *bitmap = _segMan->getHunkPointer(_bitmap);
@@ -157,85 +173,343 @@ void GfxText32::drawFrame(const Common::Rect &rect, const int size, const uint8 
 	buffer.frameRect(targetRect, color);
 }
 
-// TODO: This is not disassembled
+void GfxText32::drawChar(const uint8 charIndex) {
+	byte *bitmap = _segMan->getHunkPointer(_bitmap);
+	byte *pixels = bitmap + READ_SCI11ENDIAN_UINT32(bitmap + 28);
+
+	_font->drawToBuffer(charIndex, _drawPosition.y, _drawPosition.x, _foreColor, _dimmed, pixels, _width, _height);
+	_drawPosition.x += _font->getCharWidth(charIndex);
+}
+
+uint16 GfxText32::getCharWidth(const uint8 charIndex, const bool doScaling) const {
+	uint16 width = _font->getCharWidth(charIndex);
+	if (doScaling) {
+		width = scaleUpWidth(width);
+	}
+	return width;
+}
+
 void GfxText32::drawTextBox() {
-	int16 charCount = 0;
-	uint16 curX = 0, curY = 0;
-	const char *txt = _text.c_str();
-	int16 textWidth, textHeight, totalHeight = 0, offsetX = 0, offsetY = 0;
-	uint16 start = 0;
+	if (_text.size() == 0) {
+		return;
+	}
 
-	// Calculate total text height
-	while (*txt) {
-		charCount = GetLongest(txt, _textRect.width(), _font);
-		if (charCount == 0)
-			break;
+	const char *text = _text.c_str();
+	const char *sourceText = text;
+	int16 textRectWidth = _textRect.width();
+	_drawPosition.y = _textRect.top;
+	uint charIndex = 0;
+	if (getLongest(&charIndex, textRectWidth) == 0) {
+		error("DrawTextBox GetLongest=0");
+	}
 
-		Width(txt, 0, (int16)strlen(txt), _fontId, textWidth, textHeight, true);
+	charIndex = 0;
+	uint nextCharIndex = 0;
+	while (*text != '\0') {
+		_drawPosition.x = _textRect.left;
 
-		totalHeight += textHeight;
-		txt += charCount;
-		while (*txt == ' ') {
-			txt++; // skip over breaking spaces
+		uint length = getLongest(&nextCharIndex, textRectWidth);
+		int16 textWidth = getTextWidth(charIndex, length);
+
+		if (_alignment == kTextAlignCenter) {
+			_drawPosition.x += (textRectWidth - textWidth) / 2;
+		} else if (_alignment == kTextAlignRight) {
+			_drawPosition.x += textRectWidth - textWidth;
+		}
+
+		drawText(charIndex, length);
+		charIndex = nextCharIndex;
+		text = sourceText + charIndex;
+		_drawPosition.y += _font->getHeight();
+	}
+}
+
+void GfxText32::drawText(const uint index, uint length) {
+	assert(index + length <= _text.size());
+
+	// NOTE: This draw loop implementation is somewhat different than the
+	// implementation in the actual engine, but should be accurate. Primarily
+	// the changes revolve around eliminating some extra temporaries and
+	// fixing the logic to match.
+	const char *text = _text.c_str() + index;
+	while (length-- > 0) {
+		char currentChar = *text++;
+
+		if (currentChar == '|') {
+			const char controlChar = *text++;
+			--length;
+
+			if (length == 0) {
+				return;
+			}
+
+			if (controlChar == 'a' || controlChar == 'c' || controlChar == 'f') {
+				uint16 value = 0;
+
+				while (length > 0) {
+					const char valueChar = *text;
+					if (valueChar < '0' || valueChar > '9') {
+						break;
+					}
+
+					++text;
+					--length;
+					value = 10 * value + (valueChar - '0');
+				}
+
+				if (length == 0) {
+					return;
+				}
+
+				if (controlChar == 'a') {
+					_alignment = (TextAlign)value;
+				} else if (controlChar == 'c') {
+					_foreColor = value;
+				} else if (controlChar == 'f') {
+					setFont(value);
+				}
+			}
+
+			while (length > 0 && *text != '|') {
+				++text;
+				--length;
+			}
+		} else {
+			drawChar(currentChar);
+		}
+	}
+}
+
+uint GfxText32::getLongest(uint *charIndex, const int16 width) {
+	assert(width > 0);
+
+	uint testLength = 0;
+	uint length = 0;
+
+	const uint initialCharIndex = *charIndex;
+
+	// The index of the next word after the last word break
+	uint lastWordBreakIndex = *charIndex;
+
+	const char *text = _text.c_str() + *charIndex;
+
+	char currentChar;
+	while ((currentChar = *text++) != '\0') {
+		// NOTE: In the original engine, the font, color, and alignment were
+		// reset here to their initial values
+
+		// The text to render contains a line break; stop at the line break
+		if (currentChar == '\r' || currentChar == '\n') {
+			// Skip the rest of the line break if it is a Windows-style
+			// \r\n or non-standard \n\r
+			// NOTE: In the original engine, the `text` pointer had not been
+			// advanced yet so the indexes used to access characters were
+			// one higher
+			if (
+				(currentChar == '\r' && text[0] == '\n') ||
+				(currentChar == '\n' && text[0] == '\r' && text[1] != '\n')
+			) {
+				++*charIndex;
+			}
+
+			// We are at the end of a line but the last word in the line made
+			// it too wide to fit in the text area; return up to the previous
+			// word
+			if (length && getTextWidth(initialCharIndex, testLength) > width) {
+				*charIndex = lastWordBreakIndex;
+				return length;
+			}
+
+			// Skip the line break and return all text seen up to now
+			// NOTE: In original engine, the font, color, and alignment were
+			// reset, then getTextWidth was called to use its side-effects to
+			// set font, color, and alignment according to the text from
+			// `initialCharIndex` to `testLength`
+			++*charIndex;
+			return testLength;
+		} else if (currentChar == ' ') {
+			// The last word in the line made it too wide to fit in the text area;
+			// return up to the previous word, then collapse the whitespace
+			// between that word and its next sibling word into the line break
+			if (getTextWidth(initialCharIndex, testLength) > width) {
+				*charIndex = lastWordBreakIndex;
+				const char *nextChar = _text.c_str() + lastWordBreakIndex;
+				while (*nextChar++ == ' ') {
+					++*charIndex;
+				}
+
+				// NOTE: In original engine, the font, color, and alignment were
+				// set here to the values that were seen at the last space character
+				return length;
+			}
+
+			// NOTE: In the original engine, the values of _fontId, _foreColor,
+			// and _alignment were stored for use in the return path mentioned
+			// just above here
+
+			// We found a word break that was within the text area, memorise it
+			// and continue processing. +1 on the character index because it has
+			// not been incremented yet so currently points to the word break
+			// and not the word after the break
+			length = testLength;
+			lastWordBreakIndex = *charIndex + 1;
+		}
+
+		// In the middle of a line, keep processing
+		++*charIndex;
+		++testLength;
+
+		// NOTE: In the original engine, the font, color, and alignment were
+		// reset here to their initial values
+
+		// The text to render contained no word breaks yet but is already too
+		// wide for the text area; just split the word in half at the point
+		// where it overflows
+		if (length == 0 && getTextWidth(initialCharIndex, testLength) > width) {
+			*charIndex = --testLength + lastWordBreakIndex;
+			return testLength;
 		}
 	}
 
-	txt = _text.c_str();
+	// The complete text to render was a single word, or was narrower than
+	// the text area, so return the entire line
+	if (length == 0 || getTextWidth(initialCharIndex, testLength) <= width) {
+		// NOTE: In original engine, the font, color, and alignment were
+		// reset, then getTextWidth was called to use its side-effects to
+		// set font, color, and alignment according to the text from
+		// `initialCharIndex` to `testLength`
+		return testLength;
+	}
 
-	byte *pixels = _segMan->getHunkPointer(_bitmap);
-	pixels = pixels + READ_SCI11ENDIAN_UINT32(pixels + 28) + _width * _textRect.top + _textRect.left;
+	// The last word in the line made it wider than the text area, so return
+	// up to the penultimate word
+	*charIndex = lastWordBreakIndex;
+	return length;
+}
 
-	// Draw text in buffer
-	while (*txt) {
-		charCount = GetLongest(txt, _textRect.width(), _font);
-		if (charCount == 0)
-			break;
-		Width(txt, start, charCount, _fontId, textWidth, textHeight, true);
+int16 GfxText32::getTextWidth(const uint index, uint length) const {
+	int16 width = 0;
 
-		switch (_alignment) {
-			case kTextAlignRight:
-				offsetX = _textRect.width() - textWidth;
-				break;
-			case kTextAlignCenter:
-				// Center text both horizontally and vertically
-				offsetX = (_textRect.width() - textWidth) / 2;
-				offsetY = (_textRect.height() - totalHeight) / 2;
-				break;
-			case kTextAlignLeft:
-				offsetX = 0;
-				break;
+	const char *text = _text.c_str() + index;
 
-			default:
-				warning("Invalid alignment %d used in TextBox()", _alignment);
+	GfxFont *font = _font;
+
+	char currentChar = *text++;
+	while (length > 0 && currentChar != '\0') {
+		// Control codes are in the format `|<code><value>|`
+		if (currentChar == '|') {
+			// NOTE: Original engine code changed the global state of the
+			// FontMgr here upon encountering any color, alignment, or
+			// font control code.
+			// To avoid requiring all callers to manually restore these
+			// values on every call, we ignore control codes other than
+			// font change (since alignment and color do not change the
+			// width of characters), and simply update the font pointer
+			// on stack instead of the member property font.
+			currentChar = *text++;
+			--length;
+
+			if (length > 0 && currentChar == 'f') {
+				GuiResourceId fontId = 0;
+				do {
+					currentChar = *text++;
+					--length;
+
+					fontId = fontId * 10 + currentChar - '0';
+				} while (length > 0 && currentChar >= '0' && currentChar <= '9');
+
+				if (length > 0) {
+					font = _cache->getFont(fontId);
+				}
+			}
+
+			// Forward through any more unknown control character data
+			while (length > 0 && currentChar != '|') {
+				++text;
+				--length;
+			}
+		} else {
+			width += font->getCharWidth(currentChar);
 		}
 
-		byte curChar;
+		currentChar = *text++;
+		--length;
+	}
 
-		for (int i = 0; i < charCount; i++) {
-			curChar = txt[i];
+	return width;
+}
 
-			switch (curChar) {
-				case 0x0A:
-				case 0x0D:
-				case 0:
-					break;
-				case 0x7C:
-					warning("Code processing isn't implemented in SCI32");
-					break;
-				default:
-					_font->drawToBuffer(curChar, curY + offsetY, curX + offsetX, _foreColor, _dimmed, pixels, _width, _height);
-					curX += _font->getCharWidth(curChar);
-					break;
+int16 GfxText32::getTextWidth(const Common::String &text, const uint index, const uint length) {
+	_text = text;
+	return scaleUpWidth(getTextWidth(index, length));
+}
+
+Common::Rect GfxText32::getTextSize(const Common::String &text, int16 maxWidth, bool doScaling) {
+	// NOTE: Like most of the text rendering code, this function was pretty
+	// weird in the original engine. The initial result rectangle was actually
+	// a 1x1 rectangle (0, 0, 0, 0), which was then "fixed" after the main
+	// text size loop finished running by subtracting 1 from the right and
+	// bottom edges.
+
+	Common::Rect result;
+
+	int16 scriptWidth = g_sci->_gfxFrameout->getCurrentBuffer().scriptWidth;
+	int16 scriptHeight = g_sci->_gfxFrameout->getCurrentBuffer().scriptHeight;
+
+	maxWidth = maxWidth * _scaledWidth / scriptWidth;
+
+	_text = text;
+
+	if (maxWidth >= 0) {
+		if (maxWidth == 0) {
+			// TODO: This was hardcoded to 192, but guessing
+			// that it was originally 60% of the scriptWidth
+			// before the compiler took over.
+			// Verify this by looking at a game that uses a
+			// scriptWidth other than 320, like LSL7
+			maxWidth = _scaledWidth * (scriptWidth * 0.6) / scriptWidth;
+		}
+
+		result.right = maxWidth;
+
+		int16 textWidth = 0;
+		if (_text.size() > 0) {
+			const char *rawText = _text.c_str();
+			const char *sourceText = rawText;
+			uint charIndex = 0;
+			uint nextCharIndex = 0;
+			while (*rawText != '\0') {
+				uint length = getLongest(&nextCharIndex, result.width());
+				textWidth = MAX(textWidth, getTextWidth(charIndex, length));
+				charIndex = nextCharIndex;
+				rawText = sourceText + charIndex;
+				// TODO: Due to getLongest and getTextWidth not having side
+				// effects, it is possible that the currently loaded font's
+				// height is wrong for this line if it was changed inline
+				result.bottom += _font->getHeight();
 			}
 		}
 
-		curX = 0;
-		curY += _font->getHeight();
-		txt += charCount;
-		while (*txt == ' ') {
-			txt++; // skip over breaking spaces
+		if (textWidth < maxWidth) {
+			result.right = textWidth;
 		}
+	} else {
+		result.right = getTextWidth(0, 10000);
+		result.bottom = _font->getHeight() + 1;
 	}
+
+	if (doScaling) {
+		// NOTE: The original code did some more complex stuff for edge
+		// rounding. The right edge was designed to always round down,
+		// and the bottom edge was designed to always round up. It seems
+		// we are able to get away with simpler rounding, but it is
+		// possible that there are still some edge cases here.
+		mul(result, Ratio(scriptWidth, _scaledWidth), Ratio(scriptHeight, _scaledHeight));
+		result.right += 1;
+		result.bottom += 1;
+	}
+
+	return result;
 }
 
 void GfxText32::erase(const Common::Rect &rect, const bool doScaling) {
@@ -251,342 +525,15 @@ void GfxText32::erase(const Common::Rect &rect, const bool doScaling) {
 	buffer.fillRect(targetRect, _backColor);
 }
 
-reg_t GfxText32::createScrollTextBitmap(Common::String text, reg_t textObject, uint16 maxWidth, uint16 maxHeight, reg_t prevHunk) {
-	return createTextBitmapInternal(text, textObject, maxWidth, maxHeight, prevHunk);
-}
-reg_t GfxText32::createTextBitmap(reg_t textObject, uint16 maxWidth, uint16 maxHeight, reg_t prevHunk) {
-	reg_t stringObject = readSelector(_segMan, textObject, SELECTOR(text));
-	// The object in the text selector of the item can be either a raw string
-	// or a Str object. In the latter case, we need to access the object's data
-	// selector to get the raw string.
-	if (_segMan->isHeapObject(stringObject))
-		stringObject = readSelector(_segMan, stringObject, SELECTOR(data));
-
-	Common::String text = _segMan->getString(stringObject);
-
-	return createTextBitmapInternal(text, textObject, maxWidth, maxHeight, prevHunk);
-}
-
-reg_t GfxText32::createTextBitmapInternal(Common::String &text, reg_t textObject, uint16 maxWidth, uint16 maxHeight, reg_t prevHunk) {
-	GuiResourceId fontId = readSelectorValue(_segMan, textObject, SELECTOR(font));
-	GfxFont *font = _cache->getFont(fontId);
-	bool dimmed = readSelectorValue(_segMan, textObject, SELECTOR(dimmed));
-	int16 alignment = readSelectorValue(_segMan, textObject, SELECTOR(mode));
-	uint16 foreColor = readSelectorValue(_segMan, textObject, SELECTOR(fore));
-	uint16 backColor = readSelectorValue(_segMan, textObject, SELECTOR(back));
-
-	Common::Rect nsRect = g_sci->_gfxCompare->getNSRect(textObject);
-	uint16 width = nsRect.width() + 1;
-	uint16 height = nsRect.height() + 1;
-
-	// Limit rectangle dimensions, if requested
-	if (maxWidth > 0)
-		width = maxWidth;
-	if (maxHeight > 0)
-		height = maxHeight;
-
-	// Upscale the coordinates/width if the fonts are already upscaled
-	if (_screen->fontIsUpscaled()) {
-		width = width * _screen->getDisplayWidth() / _screen->getWidth();
-		height = height * _screen->getDisplayHeight() / _screen->getHeight();
-	}
-
-	int entrySize = width * height + BITMAP_HEADER_SIZE;
-	reg_t memoryId = NULL_REG;
-	if (prevHunk.isNull()) {
-		memoryId = _segMan->allocateHunkEntry("TextBitmap()", entrySize);
-
-		// Scroll text objects have no bitmap selector!
-		ObjVarRef varp;
-		if (lookupSelector(_segMan, textObject, SELECTOR(bitmap), &varp, NULL) == kSelectorVariable)
-			writeSelector(_segMan, textObject, SELECTOR(bitmap), memoryId);
-	} else {
-		memoryId = prevHunk;
-	}
-	byte *memoryPtr = _segMan->getHunkPointer(memoryId);
-
-	if (prevHunk.isNull())
-		memset(memoryPtr, 0, BITMAP_HEADER_SIZE);
-
-	byte *bitmap = memoryPtr + BITMAP_HEADER_SIZE;
-	memset(bitmap, backColor, width * height);
-
-	// Save totalWidth, totalHeight
-	WRITE_SCI11ENDIAN_UINT16(memoryPtr, width);
-	WRITE_SCI11ENDIAN_UINT16(memoryPtr + 2, height);
-	WRITE_SCI11ENDIAN_UINT16(memoryPtr + 4, 0);
-	WRITE_SCI11ENDIAN_UINT16(memoryPtr + 6, 0);
-	memoryPtr[8] = 0;
-	WRITE_SCI11ENDIAN_UINT16(memoryPtr + 10, 0);
-	WRITE_SCI11ENDIAN_UINT16(memoryPtr + 20, BITMAP_HEADER_SIZE);
-	WRITE_SCI11ENDIAN_UINT32(memoryPtr + 28, 46);
-	WRITE_SCI11ENDIAN_UINT16(memoryPtr + 36, width);
-	WRITE_SCI11ENDIAN_UINT16(memoryPtr + 38, height);
-
-	int16 charCount = 0;
-	uint16 curX = 0, curY = 0;
-	const char *txt = text.c_str();
-	int16 textWidth, textHeight, totalHeight = 0, offsetX = 0, offsetY = 0;
-	uint16 start = 0;
-
-	// Calculate total text height
-	while (*txt) {
-		charCount = GetLongest(txt, width, font);
-		if (charCount == 0)
-			break;
-
-		Width(txt, 0, (int16)strlen(txt), fontId, textWidth, textHeight, true);
-
-		totalHeight += textHeight;
-		txt += charCount;
-		while (*txt == ' ')
-			txt++; // skip over breaking spaces
-	}
-
-	txt = text.c_str();
-
-	// Draw text in buffer
-	while (*txt) {
-		charCount = GetLongest(txt, width, font);
-		if (charCount == 0)
-			break;
-		Width(txt, start, charCount, fontId, textWidth, textHeight, true);
-
-		switch (alignment) {
-		case kTextAlignRight:
-			offsetX = width - textWidth;
-			break;
-		case kTextAlignCenter:
-			// Center text both horizontally and vertically
-			offsetX = (width - textWidth) / 2;
-			offsetY = (height - totalHeight) / 2;
-			break;
-		case kTextAlignLeft:
-			offsetX = 0;
-			break;
-
-		default:
-			warning("Invalid alignment %d used in TextBox()", alignment);
-		}
-
-		byte curChar;
-
-		for (int i = 0; i < charCount; i++) {
-			curChar = txt[i];
-
-			switch (curChar) {
-			case 0x0A:
-			case 0x0D:
-			case 0:
-				break;
-			case 0x7C:
-				warning("Code processing isn't implemented in SCI32");
-				break;
-			default:
-				font->drawToBuffer(curChar, curY + offsetY, curX + offsetX, foreColor, dimmed, bitmap, width, height);
-				curX += font->getCharWidth(curChar);
-				break;
-			}
-		}
-
-		curX = 0;
-		curY += font->getHeight();
-		txt += charCount;
-		while (*txt == ' ')
-			txt++; // skip over breaking spaces
-	}
-
-	return memoryId;
-}
-
 void GfxText32::disposeTextBitmap(reg_t hunkId) {
 	_segMan->freeHunkEntry(hunkId);
 }
 
-void GfxText32::drawTextBitmap(int16 x, int16 y, Common::Rect planeRect, reg_t textObject) {
-	reg_t hunkId = readSelector(_segMan, textObject, SELECTOR(bitmap));
-	drawTextBitmapInternal(x, y, planeRect, textObject, hunkId);
-}
-
-void GfxText32::drawScrollTextBitmap(reg_t textObject, reg_t hunkId, uint16 x, uint16 y) {
-	/*reg_t plane = readSelector(_segMan, textObject, SELECTOR(plane));
-	Common::Rect planeRect;
-	planeRect.top = readSelectorValue(_segMan, plane, SELECTOR(top));
-	planeRect.left = readSelectorValue(_segMan, plane, SELECTOR(left));
-	planeRect.bottom = readSelectorValue(_segMan, plane, SELECTOR(bottom));
-	planeRect.right = readSelectorValue(_segMan, plane, SELECTOR(right));
-
-	drawTextBitmapInternal(x, y, planeRect, textObject, hunkId);*/
-
-	// HACK: we pretty much ignore the plane rect and x, y...
-	drawTextBitmapInternal(0, 0, Common::Rect(20, 390, 600, 460), textObject, hunkId);
-}
-
-void GfxText32::drawTextBitmapInternal(int16 x, int16 y, Common::Rect planeRect, reg_t textObject, reg_t hunkId) {
-	int16 backColor = (int16)readSelectorValue(_segMan, textObject, SELECTOR(back));
-	// Sanity check: Check if the hunk is set. If not, either the game scripts
-	// didn't set it, or an old saved game has been loaded, where it wasn't set.
-	if (hunkId.isNull())
-		return;
-
-	// Negative coordinates indicate that text shouldn't be displayed
-	if (x < 0 || y < 0)
-		return;
-
-	byte *memoryPtr = _segMan->getHunkPointer(hunkId);
-
-	if (!memoryPtr) {
-		// Happens when restoring in some SCI32 games (e.g. SQ6).
-		// Commented out to reduce console spam
-		//warning("Attempt to draw an invalid text bitmap");
-		return;
-	}
-
-	byte *surface = memoryPtr + BITMAP_HEADER_SIZE;
-
-	int curByte = 0;
-	int16 skipColor = (int16)readSelectorValue(_segMan, textObject, SELECTOR(skip));
-	uint16 textX = planeRect.left + x;
-	uint16 textY = planeRect.top + y;
-	// Get totalWidth, totalHeight
-	uint16 width = READ_LE_UINT16(memoryPtr);
-	uint16 height = READ_LE_UINT16(memoryPtr + 2);
-
-	// Upscale the coordinates/width if the fonts are already upscaled
-	if (_screen->fontIsUpscaled()) {
-		textX = textX * _screen->getDisplayWidth() / _screen->getWidth();
-		textY = textY * _screen->getDisplayHeight() / _screen->getHeight();
-	}
-
-	bool translucent = (skipColor == -1 && backColor == -1);
-
-	for (int curY = 0; curY < height; curY++) {
-		for (int curX = 0; curX < width; curX++) {
-			byte pixel = surface[curByte++];
-			if ((!translucent && pixel != skipColor && pixel != backColor) ||
-				(translucent && pixel != 0xFF))
-				_screen->putFontPixel(textY, curX + textX, curY, pixel);
-		}
-	}
-}
-
-int16 GfxText32::GetLongest(const char *text, int16 maxWidth, GfxFont *font) {
-	uint16 curChar = 0;
-	int16 maxChars = 0, curCharCount = 0;
-	uint16 width = 0;
-
-	while (width <= maxWidth) {
-		curChar = (*(const byte *)text++);
-
-		switch (curChar) {
-		// We need to add 0xD, 0xA and 0xD 0xA to curCharCount and then exit
-		//  which means, we split text like
-		//  'Mature, experienced software analyst available.' 0xD 0xA
-		//  'Bug installation a proven speciality. "No version too clean."' (normal game text, this is from lsl2)
-		//   and 0xA '-------' 0xA (which is the official sierra subtitle separator)
-		//  Sierra did it the same way.
-		case 0xD:
-			// Check, if 0xA is following, if so include it as well
-			if ((*(const unsigned char *)text) == 0xA)
-				curCharCount++;
-			// it's meant to pass through here
-		case 0xA:
-			curCharCount++;
-			// and it's also meant to pass through here
-		case 0:
-			return curCharCount;
-		case ' ':
-			maxChars = curCharCount; // return count up to (but not including) breaking space
-			break;
-		}
-		if (width + font->getCharWidth(curChar) > maxWidth)
-			break;
-		width += font->getCharWidth(curChar);
-		curCharCount++;
-	}
-
-	return maxChars;
-}
-
-void GfxText32::kernelTextSize(const char *text, int16 font, int16 maxWidth, int16 *textWidth, int16 *textHeight) {
-	Common::Rect rect(0, 0, 0, 0);
-	Size(rect, text, font, maxWidth);
-	*textWidth = rect.width();
-	*textHeight = rect.height();
-}
-
-void GfxText32::StringWidth(const char *str, GuiResourceId fontId, int16 &textWidth, int16 &textHeight) {
-	Width(str, 0, (int16)strlen(str), fontId, textWidth, textHeight, true);
-}
-
-void GfxText32::Width(const char *text, int16 from, int16 len, GuiResourceId fontId, int16 &textWidth, int16 &textHeight, bool restoreFont) {
-	byte curChar;
-	textWidth = 0; textHeight = 0;
-
-	GfxFont *font = _cache->getFont(fontId);
-
-	if (font) {
-		text += from;
-		while (len--) {
-			curChar = (*(const byte *)text++);
-			switch (curChar) {
-			case 0x0A:
-			case 0x0D:
-				textHeight = MAX<int16> (textHeight, font->getHeight());
-				break;
-			case 0x7C:
-				warning("Code processing isn't implemented in SCI32");
-				break;
-			default:
-				textHeight = MAX<int16> (textHeight, font->getHeight());
-				textWidth += font->getCharWidth(curChar);
-				break;
-			}
-		}
-	}
-}
-
-int16 GfxText32::Size(Common::Rect &rect, const char *text, GuiResourceId fontId, int16 maxWidth) {
-	int16 charCount;
-	int16 maxTextWidth = 0, textWidth;
-	int16 totalHeight = 0, textHeight;
-
-	int16 scriptWidth = g_sci->_gfxFrameout->getCurrentBuffer().scriptWidth;
-	int16 scriptHeight = g_sci->_gfxFrameout->getCurrentBuffer().scriptHeight;
-
-	maxWidth = maxWidth * _scaledWidth / scriptWidth;
-
-	rect.top = rect.left = 0;
-	GfxFont *font = _cache->getFont(fontId);
-
-	if (maxWidth < 0) { // force output as single line
-		StringWidth(text, fontId, textWidth, textHeight);
-		rect.bottom = textHeight;
-		rect.right = textWidth;
-	} else {
-		// rect.right=found widest line with RTextWidth and GetLongest
-		// rect.bottom=num. lines * GetPointSize
-		rect.right = (maxWidth ? maxWidth : 192);
-		const char *curPos = text;
-		while (*curPos) {
-			charCount = GetLongest(curPos, rect.right, font);
-			if (charCount == 0)
-				break;
-			Width(curPos, 0, charCount, fontId, textWidth, textHeight, false);
-			maxTextWidth = MAX(textWidth, maxTextWidth);
-			totalHeight += textHeight;
-			curPos += charCount;
-			while (*curPos == ' ')
-				curPos++; // skip over breaking spaces
-		}
-		rect.bottom = totalHeight;
-		rect.right = maxWidth ? maxWidth : MIN(rect.right, maxTextWidth);
-	}
-
-	rect.right = rect.right * scriptWidth / _scaledWidth;
-	rect.bottom = rect.bottom * scriptHeight / _scaledHeight;
-
-	return rect.right;
+int16 GfxText32::getStringWidth(const Common::String &text) {
+	// TODO: The fact that this double-scales the text makes it
+	// seem pretty unlikely that this is ever called in real life
+	error("Called weirdo getStringWidth (FontMgr::StringWidth)");
+	return scaleUpWidth(getTextWidth(text, 0, 10000));
 }
 
 } // End of namespace Sci

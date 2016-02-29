@@ -178,11 +178,14 @@ void GfxControls32::kernelTexteditChange(reg_t controlObject) {
 			// Write back string
 			_segMan->strcpy(textReference, text.c_str());
 			// Modify the buffer and show it
+			warning("kernelTexteditChange");
+#if 0
 			_text->createTextBitmap(controlObject, 0, 0, hunkId);
 
 			_text->drawTextBitmap(0, 0, nsRect, controlObject);
 			//texteditCursorDraw(rect, text.c_str(), cursorPos);	// TODO: Cursor
 			g_system->updateScreen();
+#endif
 		} else {
 			// TODO: Cursor
 			/*

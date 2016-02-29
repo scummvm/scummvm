@@ -31,7 +31,7 @@ namespace Sci {
 enum TextAlign {
 	kTextAlignLeft   = 0,
 	kTextAlignCenter = 1,
-	kTextAlignRight  = -1
+	kTextAlignRight  = 2
 };
 
 /**
@@ -43,6 +43,10 @@ enum TextAlign {
  */
 class GfxText32 {
 private:
+	SegManager *_segMan;
+	GfxCache *_cache;
+	GfxScreen *_screen;
+
 	/**
 	 * The resource ID of the default font used by the game.
 	 *
@@ -54,6 +58,8 @@ private:
 	/**
 	 * The width and height of the currently active text
 	 * bitmap, in text-system coordinates.
+	 *
+	 * @note These are unsigned in the actual engine.
 	 */
 	int16 _width, _height;
 
@@ -110,28 +116,62 @@ private:
 	 */
 	reg_t _bitmap;
 
+	int16 _field_20;
+
 	/**
 	 * TODO: Document
 	 */
-	int _field_22;
+	int16 _field_22;
+
+	int _field_2C, _field_30, _field_34, _field_38;
+
+	int16 _field_3C;
 
 	/**
-	 * The currently active font resource used to write text
-	 * into the bitmap.
-	 *
-	 * @note SCI engine builds the font table directly
-	 * inside of FontMgr; we use GfxFont instead.
+	 * The position of the text draw cursor.
 	 */
-	GfxFont *_font;
+	Common::Point _drawPosition;
 
 	// TODO: This is general for all CelObjMem and should be
 	// put in a single location, like maybe as a static
 	// method of CelObjMem?!
 	void buildBitmapHeader(byte *bitmap, const int16 width, const int16 height, const uint8 skipColor, const int16 displaceX, const int16 displaceY, const int16 scaledWidth, const int16 scaledHeight, const uint32 hunkPaletteOffset, const bool useRemap) const;
 
-	void drawFrame(const Common::Rect &rect, const int size, const uint8 color, const bool doScaling);
+	void drawFrame(const Common::Rect &rect, const int16 size, const uint8 color, const bool doScaling);
 	void drawTextBox();
 	void erase(const Common::Rect &rect, const bool doScaling);
+
+	void drawChar(const uint8 charIndex);
+	uint16 getCharWidth(const uint8 charIndex, const bool doScaling) const;
+	void drawText(const uint index, uint length);
+
+	inline int scaleUpWidth(int value) const {
+		const int scriptWidth = g_sci->_gfxFrameout->getCurrentBuffer().scriptWidth;
+		return (value * scriptWidth + _scaledWidth - 1) / _scaledWidth;
+	}
+
+	/**
+	 * Gets the length of the longest run of text available
+	 * within the currently loaded text, starting from the
+	 * given `charIndex` and running for up to `maxWidth`
+	 * pixels. Returns the number of characters that can be
+	 * written, and mutates the value pointed to by
+	 * `charIndex` to point to the index of the next
+	 * character to render.
+	 */
+	uint getLongest(uint *charIndex, const int16 maxWidth);
+
+	/**
+	 * Gets the pixel width of a substring of the currently
+	 * loaded text, without scaling.
+	 */
+	int16 getTextWidth(const uint index, uint length) const;
+
+	/**
+	 * Gets the pixel width of a substring of the currently
+	 * loaded text, with scaling.
+	 */
+	int16 getTextWidth(const Common::String &text, const uint index, const uint length);
 
 	inline Common::Rect scaleRect(const Common::Rect &rect) {
 		Common::Rect scaledRect(rect);
@@ -158,32 +198,36 @@ public:
 	 */
 	int16 _scaledHeight;
 
+	/**
+	 * The currently active font resource used to write text
+	 * into the bitmap.
+	 *
+	 * @note SCI engine builds the font table directly
+	 * inside of FontMgr; we use GfxFont instead.
+	 */
+	GfxFont *_font;
+
 	reg_t createFontBitmap(int16 width, int16 height, const Common::Rect &rect, const Common::String &text, const uint8 foreColor, const uint8 backColor, const uint8 skipColor, const GuiResourceId fontId, TextAlign alignment, const int16 borderColor, bool dimmed, const bool doScaling, reg_t *outBitmapObject);
 
 	reg_t createTitledFontBitmap(CelInfo32 &celInfo, Common::Rect &rect, Common::String &text, int16 foreColor, int16 backColor, int font, int16 skipColor, int16 borderColor, bool dimmed, void *unknown1);
 
-#pragma mark -
-#pragma mark Old stuff
-
-	reg_t createTextBitmap(reg_t textObject, uint16 maxWidth = 0, uint16 maxHeight = 0, reg_t prevHunk = NULL_REG);
-	reg_t createScrollTextBitmap(Common::String text, reg_t textObject, uint16 maxWidth = 0, uint16 maxHeight = 0, reg_t prevHunk = NULL_REG);
-	void drawTextBitmap(int16 x, int16 y, Common::Rect planeRect, reg_t textObject);
-	void drawScrollTextBitmap(reg_t textObject, reg_t hunkId, uint16 x, uint16 y);
 	void disposeTextBitmap(reg_t hunkId);
-	int16 GetLongest(const char *text, int16 maxWidth, GfxFont *font);
 
-	void kernelTextSize(const char *text, int16 font, int16 maxWidth, int16 *textWidth, int16 *textHeight);
+	/**
+	 * Sets the font to be used for rendering and
+	 * calculation of text dimensions.
+	 */
+	void setFont(const GuiResourceId fontId);
 
-private:
-	reg_t createTextBitmapInternal(Common::String &text, reg_t textObject, uint16 maxWidth, uint16 maxHeight, reg_t hunkId);
-	void drawTextBitmapInternal(int16 x, int16 y, Common::Rect planeRect, reg_t textObject, reg_t hunkId);
-	int16 Size(Common::Rect &rect, const char *text, GuiResourceId fontId, int16 maxWidth);
-	void Width(const char *text, int16 from, int16 len, GuiResourceId orgFontId, int16 &textWidth, int16 &textHeight, bool restoreFont);
-	void StringWidth(const char *str, GuiResourceId orgFontId, int16 &textWidth, int16 &textHeight);
+	/**
+	 * Retrieves the width and height of a block of text.
+	 */
+	Common::Rect getTextSize(const Common::String &text, const int16 maxWidth, bool doScaling);
 
-	SegManager *_segMan;
-	GfxCache *_cache;
-	GfxScreen *_screen;
+	/**
+	 * Retrieves the width of a line of text.
+	 */
+	int16 getStringWidth(const Common::String &text);
 };
 
 } // End of namespace Sci

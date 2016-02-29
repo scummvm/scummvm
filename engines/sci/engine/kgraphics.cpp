@@ -359,12 +359,7 @@ reg_t kTextSize(EngineState *s, int argc, reg_t *argv) {
 	uint16 languageSplitter = 0;
 	Common::String splitText = g_sci->strSplitLanguage(text.c_str(), &languageSplitter, sep);
 
-#ifdef ENABLE_SCI32
-	if (g_sci->_gfxText32)
-		g_sci->_gfxText32->kernelTextSize(splitText.c_str(), font_nr, maxwidth, &textWidth, &textHeight);
-	else
-#endif
-		g_sci->_gfxText16->kernelTextSize(splitText.c_str(), languageSplitter, font_nr, maxwidth, &textWidth, &textHeight);
+	g_sci->_gfxText16->kernelTextSize(splitText.c_str(), languageSplitter, font_nr, maxwidth, &textWidth, &textHeight);
 
 	// One of the game texts in LB2 German contains loads of spaces in
 	// its end. We trim the text here, otherwise the graphics code will
