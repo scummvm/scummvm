@@ -130,6 +130,7 @@ void DebuggableScript::updateWatches() {
 		Watch *findMe = _watchInstances[i]->_watch;
 		if (Common::find(_engine->_watches.begin(), _engine->_watches.end(), findMe) == _engine->_watches.end()) {
 			// Not found on engine-wide list, must have been removed from watches. Must remove it from local list.
+			delete _watchInstances[i];
 			_watchInstances.remove_at(i);
 		}
 	}
