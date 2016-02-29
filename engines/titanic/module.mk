@@ -15,12 +15,14 @@ MODULE_OBJS := \
 	string.o \
 	titanic.o \
 	video_surface.o \
+	carry/auditory_centre.o \
 	carry/arm.o \
 	carry/bowl_ear.o \
 	carry/brain.o \
 	carry/bridge_piece.o \
 	carry/carry.o \
-	carry/carry_parrot.oo \
+	carry/carry_parrot.o \
+	carry/central_core.o \
 	carry/chicken.o \
 	carry/crushed_tv.o \
 	carry/ear.o \
@@ -44,8 +46,10 @@ MODULE_OBJS := \
 	carry/phonograph_ear.o \
 	carry/photograph.o \
 	carry/plug_in.o \
+	carry/speech_centre.o \
 	carry/sweets.o \
 	carry/test_carry.o \
+	carry/vision_centre.o \
 	core/background.o \
 	core/click_responder.o \
 	core/dont_save_file_item.o \

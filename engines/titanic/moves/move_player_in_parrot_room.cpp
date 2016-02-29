@@ -29,12 +29,12 @@ CMovePlayerInParrotRoom::CMovePlayerInParrotRoom() : CMovePlayerTo() {
 
 void CMovePlayerInParrotRoom::save(SimpleFile *file, int indent) const {
 	file->writeNumberLine(1, indent);
-	CGameObject::save(file, indent);
+	CMovePlayerTo::save(file, indent);
 }
 
 void CMovePlayerInParrotRoom::load(SimpleFile *file) {
 	file->readNumber();
-	CGameObject::load(file);
+	CMovePlayerTo::load(file);
 }
 
 } // End of namespace Titanic

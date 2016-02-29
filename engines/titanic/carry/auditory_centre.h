@@ -20,29 +20,31 @@
  *
  */
 
+#ifndef TITANIC_AUDITORY_CENTRE_H
+#define TITANIC_AUDITORY_CENTRE_H
+
 #include "titanic/carry/brain.h"
 
 namespace Titanic {
 
-CBrain::CBrain() : CCarry(), _field134(0), _field138(0) {
-}
+class CAuditoryCentre : public CBrain {
+public:
+	/**
+	 * Return the class name
+	 */
+	virtual const char *getClassName() const { return "CAuditoryCentre"; }
 
-void CBrain::save(SimpleFile *file, int indent) const {
-	file->writeNumberLine(1, indent);
-	file->writePoint(_pos1, indent);
-	file->writeNumberLine(_field134, indent);
-	file->writeNumberLine(_field138, indent);
+	/**
+	 * Save the data for the class to file
+	 */
+	virtual void save(SimpleFile *file, int indent) const;
 
-	CCarry::save(file, indent);
-}
-
-void CBrain::load(SimpleFile *file) {
-	file->readNumber();
-	_pos1 = file->readPoint();
-	_field134 = file->readNumber();
-	_field138 = file->readNumber();
-
-	CCarry::load(file);
-}
+	/**
+	 * Load the data for the class from file
+	 */
+	virtual void load(SimpleFile *file);
+};
 
 } // End of namespace Titanic
+
+#endif /* TITANIC_AUDITORY_CENTRE_H */

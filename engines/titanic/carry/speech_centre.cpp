@@ -20,27 +20,24 @@
  *
  */
 
-#include "titanic/carry/brain.h"
+#include "titanic/carry/speech_centre.h"
 
 namespace Titanic {
 
-CBrain::CBrain() : CCarry(), _field134(0), _field138(0) {
-}
-
-void CBrain::save(SimpleFile *file, int indent) const {
+void CSpeechCentre::save(SimpleFile *file, int indent) const {
 	file->writeNumberLine(1, indent);
-	file->writePoint(_pos1, indent);
-	file->writeNumberLine(_field134, indent);
-	file->writeNumberLine(_field138, indent);
+	file->writeNumberLine(_field13C, indent);
+	file->writeQuotedLine(_string1, indent);
+	file->writeNumberLine(_field14C, indent);
 
 	CCarry::save(file, indent);
 }
 
-void CBrain::load(SimpleFile *file) {
+void CSpeechCentre::load(SimpleFile *file) {
 	file->readNumber();
-	_pos1 = file->readPoint();
-	_field134 = file->readNumber();
-	_field138 = file->readNumber();
+	_field13C = file->readNumber();
+	_string1 = file->readString();
+	_field14C = file->readNumber();
 
 	CCarry::load(file);
 }

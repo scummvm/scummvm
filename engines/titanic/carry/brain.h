@@ -29,8 +29,7 @@ namespace Titanic {
 
 class CBrain : public CCarry {
 private:
-	int _field12C;
-	int _field130;
+	Common::Point _pos1;
 	int _field134;
 	int _field138;
 public:

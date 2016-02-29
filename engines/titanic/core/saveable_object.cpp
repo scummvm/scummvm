@@ -21,11 +21,13 @@
  */
 
 #include "titanic/carry/arm.h"
+#include "titanic/carry/auditory_centre.h"
 #include "titanic/carry/bowl_ear.h"
 #include "titanic/carry/brain.h"
 #include "titanic/carry/bridge_piece.h"
 #include "titanic/carry/carry.h"
 #include "titanic/carry/carry_parrot.h"
+#include "titanic/carry/central_core.h"
 #include "titanic/carry/chicken.h"
 #include "titanic/carry/crushed_tv.h"
 #include "titanic/carry/eye.h"
@@ -48,7 +50,9 @@
 #include "titanic/carry/phonograph_ear.h"
 #include "titanic/carry/photograph.h"
 #include "titanic/carry/plug_in.h"
+#include "titanic/carry/speech_centre.h"
 #include "titanic/carry/sweets.h"
+#include "titanic/carry/vision_centre.h"
 
 #include "titanic/core/saveable_object.h"
 #include "titanic/core/background.h"
@@ -75,6 +79,7 @@
 #include "titanic/game/cdrom_computer.h"
 #include "titanic/game/cdrom_tray.h"
 #include "titanic/game/computer_screen.h"
+#include "titanic/game/cookie.h"
 #include "titanic/game/credits.h"
 #include "titanic/game/credits_button.h"
 #include "titanic/game/dead_area.h"
@@ -198,10 +203,12 @@ Common::HashMap<Common::String, CSaveableObject::CreateFunction> *
 #define ADDFN(T) (*_classList)[#T] = Function##T
 
 DEFFN(CArm);
+DEFFN(CAuditoryCentre);
 DEFFN(CBowlEar);
 DEFFN(CBrain);
 DEFFN(CBridgePiece);
 DEFFN(CCarryParrot);
+DEFFN(CCentralCore);
 DEFFN(CChicken);
 DEFFN(CCrushedTV);
 DEFFN(CEar);
@@ -223,7 +230,9 @@ DEFFN(CPhonographCylinder);
 DEFFN(CPhonographEar);
 DEFFN(CPhotograph);
 DEFFN(CPlugIn);
+DEFFN(CSpeechCentre);
 DEFFN(CSweets);
+DEFFN(CVisionCentre);
 
 DEFFN(CBackground);
 DEFFN(CClickResponder);
@@ -248,6 +257,7 @@ DEFFN(CBowlUnlocker);
 DEFFN(CCDROM);
 DEFFN(CCDROMComputer);
 DEFFN(CCDROMTray);
+DEFFN(CCookie);
 DEFFN(CComputerScreen);
 DEFFN(CCredits);
 DEFFN(CCreditsButton);
@@ -535,10 +545,12 @@ DEFFN(CAutoMusicPlayer);
 void CSaveableObject::initClassList() {
 	_classList = new Common::HashMap<Common::String, CreateFunction>();
 	ADDFN(CArm);
+	ADDFN(CAuditoryCentre);
 	ADDFN(CBowlEar);
 	ADDFN(CBrain);
 	ADDFN(CBridgePiece);
 	ADDFN(CCarryParrot);
+	ADDFN(CCentralCore);
 	ADDFN(CChicken);
 	ADDFN(CCrushedTV);
 	ADDFN(CEar);
@@ -560,7 +572,9 @@ void CSaveableObject::initClassList() {
 	ADDFN(CPhonographEar);
 	ADDFN(CPhotograph);
 	ADDFN(CPlugIn);
+	ADDFN(CSpeechCentre);
 	ADDFN(CSweets);
+	ADDFN(CVisionCentre);
 
 	ADDFN(CBackground);
 	ADDFN(CClickResponder);
@@ -586,6 +600,7 @@ void CSaveableObject::initClassList() {
 	ADDFN(CCDROMComputer);
 	ADDFN(CCDROMTray);
 	ADDFN(CComputerScreen);
+	ADDFN(CCookie);
 	ADDFN(CCredits);
 	ADDFN(CCreditsButton);
 	ADDFN(CDeadArea);
