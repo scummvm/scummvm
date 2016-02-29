@@ -44,6 +44,8 @@
 #define DISABLE_BREAKPOINT_CMD "disable"
 #define ENABLE_BREAKPOINT_CMD "enable"
 #define INFO_CMD "info"
+#define SET_CMD "set"
+#define PRINT_CMD "print"
 #define SET_PATH_CMD "set_path"
 #define TOP_CMD "top"
 
@@ -78,6 +80,8 @@ public:
 	 * (activation record is popped)
 	 */
 	bool Cmd_Finish(int argc, const char **argv);
+	bool Cmd_Print(int argc, const char **argv);
+	bool Cmd_Set(int argc, const char **argv);
 	// Breakpoints
 	bool Cmd_AddBreakpoint(int argc, const char **argv);
 	bool Cmd_RemoveBreakpoint(int argc, const char **argv);

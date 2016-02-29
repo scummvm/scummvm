@@ -46,6 +46,8 @@ Console::Console(WintermuteEngine *vm) : GUI::Debugger(), _engineRef(vm) {
 	registerCmd(REMOVE_BREAKPOINT_CMD, WRAP_METHOD(Console, Cmd_RemoveBreakpoint));
 	registerCmd(DISABLE_BREAKPOINT_CMD, WRAP_METHOD(Console, Cmd_DisableBreakpoint));
 	registerCmd(ENABLE_BREAKPOINT_CMD, WRAP_METHOD(Console, Cmd_EnableBreakpoint));
+	registerCmd(PRINT_CMD, WRAP_METHOD(Console, Cmd_Print));
+	registerCmd(SET_CMD, WRAP_METHOD(Console, Cmd_Set));
 	registerCmd(INFO_CMD, WRAP_METHOD(Console, Cmd_Info));
 	registerCmd(SET_PATH_CMD, WRAP_METHOD(Console, Cmd_SourcePath));
 	registerCmd(TOP_CMD, WRAP_METHOD(Console, Cmd_Top));
@@ -190,6 +192,40 @@ bool Console::Cmd_List(int argc, const char **argv) {
 	Error error = printSource();
 	if (error.getErrorLevel() != SUCCESS) {
 		printError(argv[0], error);
+	}
+	return true;
+}
+
+bool Console::Cmd_Print(int argc, const char **argv) {
+	if (argc == 2) {
+		Error error = Error(SUCCESS, OK, 0);
+		Common::String temp = CONTROLLER->readValue(argv[1], &error);
+		if (error.getErrorLevel() == SUCCESS) {
+			debugPrintf("%s = %s \n", argv[1], temp.c_str());
+			return true;
+		} else {
+			printError(argv[0], error);
+			return true;
+		}
+	} else {
+		printUsage(argv[0]);
+		return true;
+	}
+}
+
+
+bool Console::Cmd_Set(int argc, const char **argv) {
+	if (argc == 4 && !strncmp("=", argv[2], 1)) {
+		ScValue *val = nullptr;
+		Error error = CONTROLLER->setValue(argv[1], argv[3], val);
+		if (error.getErrorLevel() == SUCCESS) {
+			assert(val);
+			debugPrintf("%s = %s\n", argv[1], val->getString());
+		} else {
+			printError(argv[0], error);
+		}
+	} else {
+		printUsage(argv[0]);
 	}
 	return true;
 }

@@ -83,6 +83,14 @@ public:
 	 * @brief continue execution and don't step until the current activation record is popped
 	 */
 	Error stepFinish();
+	/**
+	 * @brief read value for a variable accessible from within the current scope.
+	 */
+	Common::String readValue(const Common::String &name, Error *error);
+	/**
+	 * @brief set value for a variable accessible from within the current scope.
+	 */
+	Error setValue(const Common::String &name, const Common::String &value, ScValue*&var);
 	Error setSourcePath(const Common::String &sourcePath);
 	Common::String getSourcePath() const;
 	Listing *getListing(Error* &err);

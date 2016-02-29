@@ -142,6 +142,71 @@ void DebuggerController::clear() {
 	_lastLine = -1;
 }
 
+Common::String DebuggerController::readValue(const Common::String &name, Error *error) {
+	if (!_lastScript) {
+		delete error;
+		error = new Error(ERROR, NOT_ALLOWED);
+		return Common::String();
+	}
+	char cstr[256]; // TODO not pretty
+	Common::strlcpy(cstr, name.c_str(), name.size() + 1);
+	cstr[255] = '\0'; // We 0-terminate it just in case it's longer than 255.
+	return _lastScript->resolveName(cstr)->getString();
+}
+
+Error DebuggerController::setValue(const Common::String &name, const Common::String &value, ScValue *&var) {
+	if (!_lastScript) {
+		return Error(ERROR, NOT_ALLOWED);
+	}
+
+	Common::String trimmed = value;
+	trimmed.trim();
+	char cstr[256];
+	Common::strlcpy(cstr, name.c_str(), name.size() + 1); // TODO not pretty
+
+	var = _lastScript->getVar(cstr);
+	if (var->_type == VAL_INT) {
+		char *endptr;
+		int res = strtol(trimmed.c_str(), &endptr, 10); // TODO: Hex too?
+		if (endptr == trimmed.c_str()) {
+			return Error(ERROR, PARSE_ERROR);
+		} else if (endptr == trimmed.c_str() + trimmed.size()) {
+			// We've parsed all of it, have we?
+			var->setInt(res);
+		} else {
+			assert(false);
+			return Error(ERROR, PARSE_ERROR);
+			// Something funny happened here.
+		}
+	} else if (var->_type == VAL_FLOAT) {
+		char *endptr;
+		float res = (float)strtod(trimmed.c_str(), &endptr);
+		if (endptr == trimmed.c_str()) {
+			return Error(ERROR, PARSE_ERROR);
+		} else if (endptr == trimmed.c_str() + trimmed.size()) {
+			// We've parsed all of it, have we?
+			var->setFloat(res);
+		} else {
+			return Error(ERROR, PARSE_ERROR);
+			assert(false);
+			// Something funny happened here.
+		}
+	} else if (var->_type == VAL_BOOL) {
+		Common::String str = Common::String(trimmed);
+		bool valAsBool;
+		if (Common::parseBool(trimmed, valAsBool)) {
+			var->setBool(valAsBool);
+		} else {
+			return Error(ERROR, PARSE_ERROR);
+		}
+	} else if (var->_type == VAL_STRING) {
+		var->setString(trimmed);
+	} else {
+		return Error(ERROR, NOT_YET_IMPLEMENTED);
+	}
+	return Error(SUCCESS, OK);
+}
+
 void DebuggerController::showFps(bool show) {
 	_engine->_game->setShowFPS(show);
 }
