@@ -52,7 +52,6 @@ private:
 	void restartGame();
 	void printMessage(uint idx, bool wait = true);
 	uint getEngineMessage(EngineMessage msg);
-	uint32 getTag() { return MKTAG('H', 'R', 'A', '1'); }
 
 	void initState();
 	void runIntro();

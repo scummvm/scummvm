@@ -585,4 +585,8 @@ void Display::home() {
 	_cursorPos = 0;
 }
 
+void Display::setCursorPos(Common::Point pos) {
+	_cursorPos = pos.y * 40 + pos.x;
+}
+
 } // End of namespace Adl

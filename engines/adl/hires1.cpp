@@ -136,6 +136,8 @@ void HiRes1Engine::runIntro() {
 	file.seek(IDI_HR1_OFS_GAME_OR_HELP);
 	str = readString(file);
 
+	bool instructions = false;
+
 	while (1) {
 		_display->printString(str);
 		Common::String s = _display->inputString();
@@ -146,28 +148,47 @@ void HiRes1Engine::runIntro() {
 		if (s.empty())
 			continue;
 
-		if ((byte)s[0] == ('I' | 0x80))
+		if (s[0] == APPLECHAR('I')) {
+			instructions = true;
 			break;
-		else if ((byte)s[0] == ('G' | 0x80))
-			return;
+		} else if (s[0] == APPLECHAR('G')) {
+			break;
+		}
 	};
 
-	_display->setMode(Display::kModeText);
-	file.seek(IDI_HR1_OFS_INTRO_TEXT);
+	if (instructions) {
+		_display->setMode(Display::kModeText);
+		file.seek(IDI_HR1_OFS_INTRO_TEXT);
 
-	const uint pages[] = { 6, 6, 4, 5, 8, 7, 0 };
+		const uint pages[] = { 6, 6, 4, 5, 8, 7, 0 };
 
-	uint page = 0;
-	while (pages[page] != 0) {
-		_display->home();
-		printStrings(file, pages[page++]);
-		_display->inputString();
+		uint page = 0;
+		while (pages[page] != 0) {
+			_display->home();
+			printStrings(file, pages[page++]);
+			_display->inputString();
 
-		if (g_engine->shouldQuit())
-			return;
+			if (g_engine->shouldQuit())
+				return;
 
-		file.seek(9, SEEK_CUR);
+			file.seek(9, SEEK_CUR);
+		}
 	}
+
+	_display->printASCIIString("\r");
+
+	file.close();
+
+	_display->setMode(Display::kModeMixed);
+
+	if (!file.open("ADVENTURE"))
+		error("Failed to open file");
+
+	// Title screen shown during loading
+	file.seek(0x1800);
+	_display->loadFrameBuffer(file);
+	_display->decodeFrameBuffer();
+	_display->delay(2000);
 }
 
 void HiRes1Engine::drawPic(Common::ReadStream &stream, Common::Point pos) {
@@ -278,8 +299,7 @@ void HiRes1Engine::restartGame() {
 }
 
 void HiRes1Engine::runGame() {
-	runIntro();
-	_display->printASCIIString("\r");
+	_display->setMode(Display::kModeMixed);
 
 	Common::File f;
 
@@ -290,8 +310,6 @@ void HiRes1Engine::runGame() {
 		_messages.push_back(readString(f, APPLECHAR('\r')) + APPLECHAR('\r'));
 
 	f.close();
-
-	initState();
 
 	if (!f.open("ADVENTURE"))
 		error("Failed to open file");
@@ -344,12 +362,6 @@ void HiRes1Engine::runGame() {
 		}
 		_lineArt.push_back(lineArt);
 	}
-
-	// Title screen shown during loading
-	f.seek(0x1800);
-	_display->loadFrameBuffer(f);
-	_display->decodeFrameBuffer();
-	_display->delay(2000);
 
 	f.seek(0x3800);
 	_parser->loadVerbs(f);

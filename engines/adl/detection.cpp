@@ -20,6 +20,9 @@
  *
  */
 
+#include "common/system.h"
+#include "common/savefile.h"
+
 #include "engines/advancedDetector.h"
 
 #include "adl/adl.h"
@@ -69,8 +72,62 @@ public:
 		return "Copyright (C) Sierra On-Line";
 	}
 
+	bool hasFeature(MetaEngineFeature f) const;
+	int getMaximumSaveSlot() const { return 15; }
+	SaveStateList listSaves(const char *target) const;
+
 	bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *gd) const;
 };
+
+bool AdlMetaEngine::hasFeature(MetaEngineFeature f) const {
+	switch(f) {
+	case kSupportsListSaves:
+	case kSupportsLoadingDuringStartup:
+		return true;
+	default:
+		return false;
+	}
+}
+
+SaveStateList AdlMetaEngine::listSaves(const char *target) const {
+	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
+	Common::StringArray files = saveFileMan->listSavefiles(Common::String(target) + ".s##");
+
+	SaveStateList saveList;
+	for (uint i = 0; i < files.size(); ++i) {
+		const Common::String &fileName = files[i];
+		Common::InSaveFile *inFile = saveFileMan->openForLoading(fileName);
+		if (!inFile) {
+			warning("Cannot open save file %s", fileName.c_str());
+			continue;
+		}
+
+		if (inFile->readUint32BE() != MKTAG('A', 'D', 'L', ':')) {
+			warning("No header found in '%s'", fileName.c_str());
+			delete inFile;
+			continue;
+		}
+
+		byte saveVersion = inFile->readByte();
+		if (saveVersion != SAVEGAME_VERSION) {
+			warning("Save game version %i not supported in '%s'", saveVersion, fileName.c_str());
+			delete inFile;
+			continue;
+		}
+
+		char name[SAVEGAME_NAME_LEN] = { };
+		inFile->read(name, sizeof(name) - 1);
+		delete inFile;
+
+		int slotNum = atoi(fileName.c_str() + fileName.size() - 2);
+		SaveStateDescriptor sd(slotNum, name);
+		saveList.push_back(sd);
+	}
+
+	// Sort saves based on slot number.
+	Common::sort(saveList.begin(), saveList.end(), SaveStateDescriptorSlotComparator());
+	return saveList;
+}
 
 bool AdlMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *gd) const {
 	if (gd)

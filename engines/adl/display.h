@@ -64,6 +64,7 @@ public:
 	void drawLine(Common::Point p1, Common::Point p2, byte color);
 	void clear(byte color);
 	void drawLineArt(const Common::Array<byte> &lineArt, Common::Point p, byte rotation = 0, byte scaling = 1, byte color = 0x7f);
+	void setCursorPos(Common::Point pos);
 
 private:
 	enum {

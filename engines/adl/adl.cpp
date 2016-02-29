@@ -70,6 +70,16 @@ Common::Error AdlEngine::run() {
 	_display = new Display();
 	_parser = new Parser(*this, *_display);
 
+	int saveSlot = ConfMan.getInt("save_slot");
+	if (saveSlot >= 0) {
+		if (!loadState(saveSlot))
+			error("Failed to load save game from slot %i", saveSlot);
+		_display->setCursorPos(Common::Point(0, 23));
+	} else {
+		runIntro();
+		initState();
+	}
+
 	runGame();
 
 	return Common::kNoError;
@@ -455,7 +465,7 @@ void AdlEngine::showRoom() {
 	printMessage(curRoom().description, false);
 }
 
-bool AdlEngine::saveState(uint slot) {
+bool AdlEngine::saveState(uint slot, const Common::String *description) {
 	Common::String fileName = Common::String::format("%s.s%02d", _targetName.c_str(), slot);
 	Common::OutSaveFile *outFile = getSaveFileManager()->openForSaving(fileName);
 
@@ -464,8 +474,20 @@ bool AdlEngine::saveState(uint slot) {
 		return false;
 	}
 
-	outFile->writeUint32BE(getTag());
+	outFile->writeUint32BE(MKTAG('A', 'D', 'L', ':'));
 	outFile->writeByte(SAVEGAME_VERSION);
+
+	char name[SAVEGAME_NAME_LEN] = { };
+
+	if (description)
+		strncpy(name, description->c_str(), sizeof(name) - 1);
+	else {
+		Common::String defaultName("Save ");
+		defaultName += 'A' + slot;
+		strncpy(name, defaultName.c_str(), sizeof(name) - 1);
+	}
+
+	outFile->write(name, sizeof(name));
 
 	outFile->writeByte(_state.room);
 	outFile->writeByte(_state.moves);
@@ -511,7 +533,7 @@ bool AdlEngine::loadState(uint slot) {
 		return false;
 	}
 
-	if (inFile->readUint32BE() != getTag()) {
+	if (inFile->readUint32BE() != MKTAG('A', 'D', 'L', ':')) {
 		warning("No header found in '%s'", fileName.c_str());
 		delete inFile;
 		return false;
@@ -525,6 +547,8 @@ bool AdlEngine::loadState(uint slot) {
 	}
 
 	initState();
+
+	inFile->seek(SAVEGAME_NAME_LEN, SEEK_CUR);
 
 	_state.room = inFile->readByte();
 	_state.moves = inFile->readByte();
