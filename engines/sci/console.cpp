@@ -1002,7 +1002,7 @@ bool Console::cmdHexgrep(int argc, const char **argv) {
 	for (; resNumber <= resMax; resNumber++) {
 		script = _engine->getResMan()->findResource(ResourceId(restype, resNumber), 0);
 		if (script) {
-			unsigned int seeker = 0, seekerold = 0;
+			uint32 seeker = 0, seekerold = 0;
 			uint32 comppos = 0;
 			int output_script_name = 0;
 
@@ -1508,7 +1508,7 @@ bool Console::cmdSaid(int argc, const char **argv) {
 	}
 
 	// TODO: Maybe turn this into a proper said spec compiler
-	unsigned int len = 0;
+	uint32 len = 0;
 	for (p++; p < argc; p++) {
 		if (strcmp(argv[p], ",") == 0) {
 			spec[len++] = 0xf0;
@@ -1545,7 +1545,7 @@ bool Console::cmdSaid(int argc, const char **argv) {
 			spec[len++] = 0xfe;
 			spec[len++] = 0xf6;
 		} else {
-			unsigned int s = strtol(argv[p], 0, 16);
+			uint32 s = strtol(argv[p], 0, 16);
 			if (s >= 0xf0 && s <= 0xff) {
 				spec[len++] = s;
 			} else {
@@ -3943,19 +3943,18 @@ bool Console::cmdMapVocab994(int argc, const char **argv) {
 	Resource *resource = _engine->_resMan->findResource(ResourceId(kResourceTypeVocab, 994), 0);
 	const Object *obj = s->_segMan->getObject(reg);
 	uint16 *data = (uint16 *) resource->data;
-	unsigned int first = atoi(argv[2]);
-	unsigned int last  = atoi(argv[3]);
+	uint32 first = atoi(argv[2]);
+	uint32 last  = atoi(argv[3]);
 	Common::Array<bool> markers;
 
 	markers.resize(_engine->getKernel()->getSelectorNamesSize());
 	if (!obj->isClass() && getSciVersion() != SCI_VERSION_3)
 		obj = s->_segMan->getObject(obj->getSuperClassSelector());
 
-	first = MIN(first, (unsigned int) (resource->size / 2 - 2));
-	last =  MIN(last, (unsigned int) (resource->size / 2 - 2));
+	first = MIN(first, (uint32) (resource->size / 2 - 2));
+	last =  MIN(last, (uint32) (resource->size / 2 - 2));
 
-	for (unsigned int i = first; i <= last; ++i)
-	{
+	for (uint32 i = first; i <= last; ++i) {
 		uint16 ofs = data[i];
 
 		if (obj && ofs < obj->getVarCount()) {

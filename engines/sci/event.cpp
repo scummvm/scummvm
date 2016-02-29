@@ -328,7 +328,7 @@ void EventManager::updateScreen() {
 	}
 }
 
-SciEvent EventManager::getSciEvent(unsigned int mask) {
+SciEvent EventManager::getSciEvent(uint32 mask) {
 	SciEvent event = { SCI_EVENT_NONE, 0, 0, Common::Point(0, 0) };
 
 	EventManager::updateScreen();

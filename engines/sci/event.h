@@ -121,7 +121,7 @@ public:
 	~EventManager();
 
 	void updateScreen();
-	SciEvent getSciEvent(unsigned int mask);
+	SciEvent getSciEvent(uint32 mask);
 
 private:
 	SciEvent getScummVMEvent();

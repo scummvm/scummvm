@@ -499,7 +499,7 @@ void Kernel::dumpScriptClass(char *data, int seeker, int objsize) {
 
 void Kernel::dissectScript(int scriptNumber, Vocabulary *vocab) {
 	int objectctr[11] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-	unsigned int _seeker = 0;
+	uint32 _seeker = 0;
 	Resource *script = _resMan->findResource(ResourceId(kResourceTypeScript, scriptNumber), 0);
 
 	if (!script) {
@@ -510,7 +510,7 @@ void Kernel::dissectScript(int scriptNumber, Vocabulary *vocab) {
 	while (_seeker < script->size) {
 		int objType = (int16)READ_SCI11ENDIAN_UINT16(script->data + _seeker);
 		int objsize;
-		unsigned int seeker = _seeker + 4;
+		uint32 seeker = _seeker + 4;
 
 		if (!objType) {
 			debugN("End of script object (#0) encountered.\n");

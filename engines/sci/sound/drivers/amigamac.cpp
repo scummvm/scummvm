@@ -497,7 +497,7 @@ MidiDriver_AmigaMac::InstrumentSample *MidiDriver_AmigaMac::readInstrumentSCI0(C
 	}
 
 	instrument->samples = (int8 *) malloc(size + 1);
-	if (file.read(instrument->samples, size) < (unsigned int)size) {
+	if (file.read(instrument->samples, size) < (uint32)size) {
 		warning("Amiga/Mac driver: failed to read instrument samples");
 		free(instrument->samples);
 		delete instrument;

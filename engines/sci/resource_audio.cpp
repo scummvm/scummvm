@@ -139,7 +139,7 @@ bool Resource::loadFromAudioVolumeSCI1(Common::SeekableReadStream *file) {
 		error("Can't allocate %d bytes needed for loading %s", size, _id.toString().c_str());
 	}
 
-	unsigned int really_read = file->read(data, size);
+	uint32 really_read = file->read(data, size);
 	if (really_read != size)
 		warning("Read %d bytes from %s but expected %d", really_read, _id.toString().c_str(), size);
 

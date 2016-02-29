@@ -307,7 +307,7 @@ bool Resource::loadPatch(Common::SeekableReadStream *file) {
 		error("Can't allocate %d bytes needed for loading %s", res->size + res->_headerSize, res->_id.toString().c_str());
 	}
 
-	unsigned int really_read;
+	uint32 really_read;
 	if (res->_headerSize > 0) {
 		really_read = file->read(res->_header, res->_headerSize);
 		if (really_read != res->_headerSize)
