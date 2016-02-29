@@ -112,7 +112,6 @@ ScValue *DebuggableScript::resolveName(const Common::String &name) {
 	}
 
 	res->copy(value);
-	delete value;
 
 	return res;
 }
