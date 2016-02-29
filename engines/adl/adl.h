@@ -196,6 +196,10 @@ protected:
 	void showRoom();
 	void takeItem(byte noun);
 	void dropItem(byte noun);
+	Room &room(uint i);
+	Room &curRoom();
+	Item &item(uint i);
+	byte &var(uint i);
 
 	Display *_display;
 	Parser *_parser;

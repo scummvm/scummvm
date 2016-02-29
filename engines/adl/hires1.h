@@ -44,7 +44,7 @@ protected:
 
 private:
 	enum {
-		MH_ROOMS = 42,
+		MH_ROOMS = 41,
 		MH_PICS = 98,
 		MH_ITEM_OFFSETS = 21
 	};

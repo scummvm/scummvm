@@ -233,7 +233,7 @@ void HiRes1Engine::initState() {
 
 	// Load room data from executable
 	_state.rooms.clear();
-	f.seek(1280);
+	f.seek(0x50a);
 	for (uint i = 0; i < MH_ROOMS; ++i) {
 		Room room;
 		f.readByte();
