@@ -385,7 +385,7 @@ Error Console::printSource(int n) {
 	delete error;
 
 	if (err.getErrorLevel() == SUCCESS || err.getErrorLevel() == WARNING) {
-		Common::Array<ListingLine> lines = listing->getLines(CONTROLLER->getLastLine(), n);
+		Common::Array<ListingLine> lines = listing->getLines(CONTROLLER->getLastLine(), n/2, n/2);
 		for (uint i = 0; i < lines.size(); i++) {
 			if (lines[i].number == CONTROLLER->getLastLine()) {
 				debugPrintf(" -> ");
