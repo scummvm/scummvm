@@ -95,6 +95,7 @@ MODULE_OBJS := \
 	debugger/error.o \
 	debugger/listing_providers/blank_listing.o \
 	debugger/listing_providers/blank_listing_provider.o \
+	debugger/listing_providers/basic_source_listing_provider.o \
 	debugger/listing_providers/source_listing.o \
 	debugger/listing.o \
 	debugger/script_monitor.o \
