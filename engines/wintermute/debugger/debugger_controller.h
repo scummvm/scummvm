@@ -51,7 +51,7 @@ struct TopEntry {
 };
 
 class DebuggerController : public ScriptMonitor {
-	ListingProvider *_listingProvider;
+	SourceListingProvider *_sourceListingProvider;
 	const WintermuteEngine *_engine;
 	DebuggableScript *_lastScript;
 	uint32 _lastDepth;
@@ -83,6 +83,8 @@ public:
 	 * @brief continue execution and don't step until the current activation record is popped
 	 */
 	Error stepFinish();
+	Error setSourcePath(const Common::String &sourcePath);
+	Common::String getSourcePath() const;
 	Listing *getListing(Error* &err);
 	void showFps(bool show);
 	/**

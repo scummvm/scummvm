@@ -47,6 +47,7 @@ Console::Console(WintermuteEngine *vm) : GUI::Debugger(), _engineRef(vm) {
 	registerCmd(DISABLE_BREAKPOINT_CMD, WRAP_METHOD(Console, Cmd_DisableBreakpoint));
 	registerCmd(ENABLE_BREAKPOINT_CMD, WRAP_METHOD(Console, Cmd_EnableBreakpoint));
 	registerCmd(INFO_CMD, WRAP_METHOD(Console, Cmd_Info));
+	registerCmd(SET_PATH_CMD, WRAP_METHOD(Console, Cmd_SourcePath));
 	registerCmd(TOP_CMD, WRAP_METHOD(Console, Cmd_Top));
 }
 
@@ -239,6 +240,21 @@ bool Console::Cmd_DumpFile(int argc, const char **argv) {
 
 	debugPrintf("Resource file '%s' dumped to file '%s'\n", argv[1], argv[2]);
 	return true;
+}
+
+
+bool Console::Cmd_SourcePath(int argc, const char **argv) {
+	if (argc != 2) {
+		debugPrintf("Usage: %s <source path>\n", argv[0]);
+		return true;
+	} else {
+		if (CONTROLLER->setSourcePath(Common::String(argv[1])).getErrorCode() == OK) {
+			debugPrintf("Source path set to '%s'\n", CONTROLLER->getSourcePath().c_str());
+		} else {
+			debugPrintf("Error setting source path. Note that \"\" is illegal.");
+		}
+		return true;
+	}
 }
 
 void Console::notifyBreakpoint(const char *filename, int line) {
