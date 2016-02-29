@@ -39,6 +39,7 @@ class DebuggableScript : public ScScript {
 public:
 	DebuggableScript(BaseGame *inGame, DebuggableScEngine *engine);
 	virtual ~DebuggableScript();
+	ScValue *resolveName(const Common::String &name);
 	/**
 	 * Return argument to last II_DBG_LINE encountered
 	 */

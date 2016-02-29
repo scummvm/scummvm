@@ -20,6 +20,7 @@
  *
  */
 
+#include "common/tokenizer.h"
 #include "debuggable_script.h"
 #include "engines/wintermute/base/scriptables/debuggable/debuggable_script_engine.h"
 #include "engines/wintermute/base/scriptables/script_stack.h"
@@ -62,6 +63,43 @@ void DebuggableScript::stepContinue() {
 
 void DebuggableScript::stepFinish() {
 	setStepDepth(_callStack->_sP - 1);
+}
+
+ScValue *DebuggableScript::resolveName(const Common::String &name) {
+
+	Common::String trimmed = name;
+	trimmed.trim();
+	Common::StringTokenizer st = Common::StringTokenizer(trimmed.c_str(), ".");
+	Common::String nextToken;
+
+	nextToken = st.nextToken();
+
+
+	char cstr[256]; // TODO not pretty
+	Common::strlcpy(cstr, nextToken.c_str(), nextToken.size() + 1);
+	cstr[255] = '\0'; // We 0-terminate it just in case it's > 256 chars.
+
+	ScValue *value = getVar(cstr);
+	ScValue *res = new ScValue(_gameRef);
+
+	if (value == nullptr) {
+		return res;
+	}
+
+	nextToken = st.nextToken();
+
+	while (nextToken.size() > 0 && (value->isObject() || value->isNative())) {
+		value = value->getProp(nextToken.c_str());
+		nextToken = st.nextToken();
+		if (value == nullptr) {
+			return res;
+		}
+	}
+
+	res->copy(value);
+	delete value;
+
+	return res;
 }
 
 uint DebuggableScript::dbgGetLine() const {
