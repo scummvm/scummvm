@@ -92,6 +92,7 @@ MODULE_OBJS := \
 	base/timer.o \
 	debugger/breakpoint.o \
 	debugger/error.o \
+	debugger/listing.o \
 	debugger/script_monitor.o \
 	detection.o \
 	math/math_util.o \
