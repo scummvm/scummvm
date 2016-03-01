@@ -565,12 +565,11 @@ Resource *ResourceManager::testResource(ResourceId id) {
 }
 
 int ResourceManager::addAppropriateSources() {
-	Common::ArchiveMemberList files;
-
 	if (Common::File::exists("resource.map")) {
 		// SCI0-SCI2 file naming scheme
 		ResourceSource *map = addExternalMap("resource.map");
 
+		Common::ArchiveMemberList files;
 		SearchMan.listMatchingMembers(files, "resource.0??");
 
 		for (Common::ArchiveMemberList::const_iterator x = files.begin(); x != files.end(); ++x) {
@@ -587,11 +586,11 @@ int ResourceManager::addAppropriateSources() {
 #endif
 	} else if (Common::MacResManager::exists("Data1")) {
 		// Mac SCI1.1+ file naming scheme
-		SearchMan.listMatchingMembers(files, "Data?*");
+		Common::Array<Common::String> files;
+		Common::MacResManager::listFiles(files, "Data?");
 
-		for (Common::ArchiveMemberList::const_iterator x = files.begin(); x != files.end(); ++x) {
-			Common::String filename = (*x)->getName();
-			addSource(new MacResourceForkResourceSource(filename, atoi(filename.c_str() + 4)));
+		for (Common::Array<Common::String>::const_iterator x = files.begin(); x != files.end(); ++x) {
+			addSource(new MacResourceForkResourceSource(*x, atoi(x->c_str() + 4)));
 		}
 
 #ifdef ENABLE_SCI32
@@ -600,7 +599,7 @@ int ResourceManager::addAppropriateSources() {
 			addSource(new MacResourceForkResourceSource("Patches", 100));
 	} else {
 		// SCI2.1-SCI3 file naming scheme
-		Common::ArchiveMemberList mapFiles;
+		Common::ArchiveMemberList mapFiles, files;
 		SearchMan.listMatchingMembers(mapFiles, "resmap.0??");
 		SearchMan.listMatchingMembers(files, "ressci.0??");
 
