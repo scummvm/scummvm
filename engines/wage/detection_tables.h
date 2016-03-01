@@ -49,6 +49,8 @@ static const ADGameDescription gameDescriptions[] = {
 	FANGAME("Queen Quest", "730605d312efedb5e3ff108522fcac18", 59776),
 	BIGGAME("scepters", "", "Scepters", "b80bff315897776dda7689cdf829fab4", 360832),
 	FANGAME("Time Bomb", "2df84b636237686b624e736a698a16c4", 66432),
+	// Invalid rect in scene "Access Tube 1"
+	FANGAMEN("The Phoenix v1.2", "The Phoenix", "7fa2a2ac740f22572516843922b7c630", 434560),
 	// Doesn't go past first scene
 	BIGGAME("Twisted!", "", "Twisted! 1.6", "8ea8cc13d26d7975dc43ea7e6c193217", 992896),
 	FANGAME("ZikTuria", "e793155bed1a70fa2074a3fcd696b751", 54784),

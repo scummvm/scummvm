@@ -97,6 +97,8 @@ Scene::Scene() {
 }
 
 Scene::Scene(Common::String name, Common::SeekableReadStream *data) {
+	debug(9, "Creating scene: %s", name.c_str());
+
 	_name = name;
 	_classType = SCENE;
 	_design = new Design(data);

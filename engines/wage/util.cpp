@@ -81,6 +81,8 @@ Common::Rect *readRect(Common::SeekableReadStream *in) {
 	y2 = in->readUint16BE() + 4;
 	x2 = in->readUint16BE() + 4;
 
+	debug(9, "readRect: %d, %d, %d, %d", x1, y1, x2, y2);
+
 	return new Common::Rect(x1, y1, x2, y2);
 }
 
