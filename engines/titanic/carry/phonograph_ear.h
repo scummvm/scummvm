@@ -20,15 +20,19 @@
  *
  */
 
-#ifndef TITANIC_PHONOGRAPH_EYE_H
-#define TITANIC_PHONOGRAPH_EYE_H
+#ifndef TITANIC_PHONOGRAPH_EAR_H
+#define TITANIC_PHONOGRAPH_EAR_H
 
 #include "titanic/carry/ear.h"
 
 namespace Titanic {
 
 class CPhonographEar : public CEar {
+private:
+	int _field140;
 public:
+	CPhonographEar() : CEar(), _field140(1) {}
+
 	/**
 	 * Return the class name
 	 */

@@ -20,20 +20,35 @@
  *
  */
 
-#include "titanic/carry/phonograph_ear.h"
+#ifndef TITANIC_MUSIC_ROOM_PHONOGRAPH_H
+#define TITANIC_MUSIC_ROOM_PHONOGRAPH_H
+
+#include "titanic/game/restaurant_phonograph.h"
 
 namespace Titanic {
 
-void CPhonographEar::save(SimpleFile *file, int indent) const {
-	file->writeNumberLine(1, indent);
-	file->writeNumberLine(_field140, indent);
-	CEar::save(file, indent);
-}
+class CMusicRoomPhonograph : public CRestaurantPhonograph {
+private:
+	int _field118;
+public:
+	CMusicRoomPhonograph() : CRestaurantPhonograph(), _field118(0) {}
 
-void CPhonographEar::load(SimpleFile *file) {
-	file->readNumber();
-	_field140 = file->readNumber();
-	CEar::load(file);
-}
+	/**
+	 * Return the class name
+	 */
+	virtual const char *getClassName() const { return "CMusicRoomPhonograph"; }
+
+	/**
+	 * Save the data for the class to file
+	 */
+	virtual void save(SimpleFile *file, int indent) const;
+
+	/**
+	 * Load the data for the class from file
+	 */
+	virtual void load(SimpleFile *file);
+};
 
 } // End of namespace Titanic
+
+#endif /* TITANIC_MUSIC_ROOM_PHONOGRAPH_H */

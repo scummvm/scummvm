@@ -28,7 +28,11 @@
 namespace Titanic {
 
 class CSGTRestaurantDoors : public CGameObject {
+private:
+	int _fieldBC;
 public:
+	CSGTRestaurantDoors() : CGameObject(), _fieldBC(0) {}
+
 	/**
 	 * Return the class name
 	 */

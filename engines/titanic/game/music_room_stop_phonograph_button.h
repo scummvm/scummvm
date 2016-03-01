@@ -20,20 +20,35 @@
  *
  */
 
-#include "titanic/carry/phonograph_ear.h"
+#ifndef TITANIC_MUSIC_ROOM_STOP_PHONOGRAPH_BUTTON_H
+#define TITANIC_MUSIC_ROOM_STOP_PHONOGRAPH_BUTTON_H
+
+#include "titanic/game/eject_phonograph_button.h"
 
 namespace Titanic {
 
-void CPhonographEar::save(SimpleFile *file, int indent) const {
-	file->writeNumberLine(1, indent);
-	file->writeNumberLine(_field140, indent);
-	CEar::save(file, indent);
-}
+class CMusicRoomStopPhonographButton : public CEjectPhonographButton {
+private:
+	int _field100;
+public:
+	CMusicRoomStopPhonographButton() : CEjectPhonographButton(), _field100(0) {}
 
-void CPhonographEar::load(SimpleFile *file) {
-	file->readNumber();
-	_field140 = file->readNumber();
-	CEar::load(file);
-}
+	/**
+	 * Return the class name
+	 */
+	virtual const char *getClassName() const { return "CMusicRoomStopPhonographButton"; }
+
+	/**
+	 * Save the data for the class to file
+	 */
+	virtual void save(SimpleFile *file, int indent) const;
+
+	/**
+	 * Load the data for the class from file
+	 */
+	virtual void load(SimpleFile *file);
+};
 
 } // End of namespace Titanic
+
+#endif /* TITANIC_MUSIC_ROOM_STOP_PHONOGRAPH_BUTTON_H */

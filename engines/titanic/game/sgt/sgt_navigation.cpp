@@ -24,13 +24,31 @@
 
 namespace Titanic {
 
+CSGTNavigationStatics *CSGTNavigation::_statics;
+
+void CSGTNavigation::init() {
+	_statics = new CSGTNavigationStatics();
+}
+
+void CSGTNavigation::deinit() {
+	delete _statics;
+}
+
 void CSGTNavigation::save(SimpleFile *file, int indent) const {
 	file->writeNumberLine(1, indent);
+	file->writeNumberLine(_statics->_v1, indent);
+	file->writeQuotedLine(_statics->_v2, indent);
+	file->writeQuotedLine(_statics->_v3, indent);
+
 	CGameObject::save(file, indent);
 }
 
 void CSGTNavigation::load(SimpleFile *file) {
 	file->readNumber();
+	_statics->_v1 = file->readNumber();
+	_statics->_v2 = file->readString();
+	_statics->_v3 = file->readString();
+
 	CGameObject::load(file);
 }
 

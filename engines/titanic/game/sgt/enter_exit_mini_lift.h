@@ -20,20 +20,36 @@
  *
  */
 
-#include "titanic/carry/phonograph_ear.h"
+#ifndef TITANIC_ENTER_EXIT_MINI_LIFT_H
+#define TITANIC_ENTER_EXIT_MINI_LIFT_H
+
+#include "titanic/game/sgt/sgt_navigation.h"
 
 namespace Titanic {
 
-void CPhonographEar::save(SimpleFile *file, int indent) const {
-	file->writeNumberLine(1, indent);
-	file->writeNumberLine(_field140, indent);
-	CEar::save(file, indent);
-}
+class CEnterExitMiniLift : public CSGTNavigation {
+private:
+	int _fieldBC;
+	int _fieldC0;
+public:
+	CEnterExitMiniLift() : CSGTNavigation(), _fieldBC(0), _fieldC0(1) {}
 
-void CPhonographEar::load(SimpleFile *file) {
-	file->readNumber();
-	_field140 = file->readNumber();
-	CEar::load(file);
-}
+	/**
+	 * Return the class name
+	 */
+	virtual const char *getClassName() const { return "CEnterExitMiniLift"; }
+
+	/**
+	 * Save the data for the class to file
+	 */
+	virtual void save(SimpleFile *file, int indent) const;
+
+	/**
+	 * Load the data for the class from file
+	 */
+	virtual void load(SimpleFile *file);
+};
 
 } // End of namespace Titanic
+
+#endif /* TITANIC_ENTER_EXIT_MINI_LIFT_H */

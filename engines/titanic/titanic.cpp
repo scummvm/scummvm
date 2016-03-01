@@ -31,6 +31,7 @@
 #include "titanic/core/saveable_object.h"
 #include "titanic/game/enter_exit_first_class_state.h"
 #include "titanic/game/parrot/parrot_lobby_object.h"
+#include "titanic/game/sgt/sgt_navigation.h"
 #include "titanic/game/sgt/sgt_state_room.h"
 #include "titanic/carry/hose.h"
 
@@ -59,6 +60,7 @@ void TitanicEngine::initialize() {
 	CParrotLobbyObject::init();
 	CEnterExitFirstClassState::init();
 	CHose::init();
+	CSGTNavigation::init();
 	CSGTStateRoom::init();
 
 	_screenManager = new OSScreenManager(this);
@@ -69,6 +71,7 @@ void TitanicEngine::initialize() {
 void TitanicEngine::deinitialize() {
 	CEnterExitFirstClassState::deinit();
 	CHose::deinit();
+	CSGTNavigation::deinit();
 	CSGTStateRoom::deinit();
 }
 

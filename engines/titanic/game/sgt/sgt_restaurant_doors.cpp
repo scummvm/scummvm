@@ -26,11 +26,13 @@ namespace Titanic {
 
 void CSGTRestaurantDoors::save(SimpleFile *file, int indent) const {
 	file->writeNumberLine(1, indent);
+	file->writeNumberLine(_fieldBC, indent);
 	CGameObject::save(file, indent);
 }
 
 void CSGTRestaurantDoors::load(SimpleFile *file) {
 	file->readNumber();
+	_fieldBC = file->readNumber();
 	CGameObject::load(file);
 }
 

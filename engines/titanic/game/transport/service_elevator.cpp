@@ -20,20 +20,32 @@
  *
  */
 
-#include "titanic/carry/phonograph_ear.h"
+#include "titanic/game/transport/service_elevator.h"
 
 namespace Titanic {
 
-void CPhonographEar::save(SimpleFile *file, int indent) const {
-	file->writeNumberLine(1, indent);
-	file->writeNumberLine(_field140, indent);
-	CEar::save(file, indent);
+CServiceElevator::CServiceElevator() : CTransport(),
+	_fieldF8(0), _fieldFC(0), _field100(0), _field104(0) {
 }
 
-void CPhonographEar::load(SimpleFile *file) {
+void CServiceElevator::save(SimpleFile *file, int indent) const {
+	file->writeNumberLine(1, indent);
+	file->writeNumberLine(_fieldF8, indent);
+	file->writeNumberLine(_fieldFC, indent);
+	file->writeNumberLine(_field100, indent);
+	file->writeNumberLine(_field104, indent);
+
+	CTransport::save(file, indent);
+}
+
+void CServiceElevator::load(SimpleFile *file) {
 	file->readNumber();
-	_field140 = file->readNumber();
-	CEar::load(file);
+	_fieldF8 = file->readNumber();
+	_fieldFC = file->readNumber();
+	_field100 = file->readNumber();
+	_field104 = file->readNumber();
+
+	CTransport::load(file);
 }
 
 } // End of namespace Titanic

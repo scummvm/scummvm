@@ -20,20 +20,28 @@
  *
  */
 
-#include "titanic/carry/phonograph_ear.h"
+#include "titanic/sound/restricted_auto_music_player.h"
 
 namespace Titanic {
 
-void CPhonographEar::save(SimpleFile *file, int indent) const {
+void CRestrictedAutoMusicPlayer::save(SimpleFile *file, int indent) const {
 	file->writeNumberLine(1, indent);
-	file->writeNumberLine(_field140, indent);
-	CEar::save(file, indent);
+	file->writeQuotedLine(_string3, indent);
+	file->writeQuotedLine(_string4, indent);
+	file->writeQuotedLine(_string5, indent);
+	file->writeQuotedLine(_string6, indent);
+
+	CAutoMusicPlayer::save(file, indent);
 }
 
-void CPhonographEar::load(SimpleFile *file) {
+void CRestrictedAutoMusicPlayer::load(SimpleFile *file) {
 	file->readNumber();
-	_field140 = file->readNumber();
-	CEar::load(file);
+	_string3 = file->readString();
+	_string4 = file->readString();
+	_string5 = file->readString();
+	_string6 = file->readString();
+
+	CAutoMusicPlayer::load(file);
 }
 
 } // End of namespace Titanic

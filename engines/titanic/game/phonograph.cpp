@@ -20,20 +20,39 @@
  *
  */
 
-#include "titanic/carry/phonograph_ear.h"
+#include "titanic/game/phonograph.h"
 
 namespace Titanic {
 
-void CPhonographEar::save(SimpleFile *file, int indent) const {
-	file->writeNumberLine(1, indent);
-	file->writeNumberLine(_field140, indent);
-	CEar::save(file, indent);
+CPhonograph::CPhonograph() : CMusicPlayer(),
+	_fieldE0(0), _fieldE4(0), _fieldE8(0), _fieldEC(0),
+	_fieldF0(0), _fieldF4(0) {
 }
 
-void CPhonographEar::load(SimpleFile *file) {
+void CPhonograph::save(SimpleFile *file, int indent) const {
+	file->writeNumberLine(1, indent);
+	file->writeQuotedLine(_string2, indent);
+	file->writeNumberLine(_fieldE0, indent);
+	file->writeNumberLine(_fieldE4, indent);
+	file->writeNumberLine(_fieldE8, indent);
+	file->writeNumberLine(_fieldEC, indent);
+	file->writeNumberLine(_fieldF0, indent);
+	file->writeNumberLine(_fieldF4, indent);
+
+	CMusicPlayer::save(file, indent);
+}
+
+void CPhonograph::load(SimpleFile *file) {
 	file->readNumber();
-	_field140 = file->readNumber();
-	CEar::load(file);
+	_string2 = file->readString();
+	_fieldE0 = file->readNumber();
+	_fieldE4 = file->readNumber();
+	_fieldE8 = file->readNumber();
+	_fieldEC = file->readNumber();
+	_fieldF0 = file->readNumber();
+	_fieldF4 = file->readNumber();
+
+	CMusicPlayer::load(file);
 }
 
 } // End of namespace Titanic

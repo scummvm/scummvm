@@ -26,11 +26,21 @@ namespace Titanic {
 
 void CMusicPlayer::save(SimpleFile *file, int indent) const {
 	file->writeNumberLine(1, indent);
+	file->writeNumberLine(_fieldBC, indent);
+	file->writeQuotedLine(_string1, indent);
+	file->writeNumberLine(_fieldCC, indent);
+	file->writeNumberLine(_fieldD0, indent);
+
 	CGameObject::save(file, indent);
 }
 
 void CMusicPlayer::load(SimpleFile *file) {
 	file->readNumber();
+	_fieldBC = file->readNumber();
+	_string1 = file->readString();
+	_fieldCC = file->readNumber();
+	_fieldD0 = file->readNumber();
+
 	CGameObject::load(file);
 }
 

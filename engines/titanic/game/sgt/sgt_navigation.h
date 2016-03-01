@@ -27,8 +27,19 @@
 
 namespace Titanic {
 
+struct CSGTNavigationStatics {
+	int _v1;
+	CString _v2;
+	CString _v3;
+};
+
 class CSGTNavigation : public CGameObject {
+private:
+	static CSGTNavigationStatics *_statics;
 public:
+	static void init();
+	static void deinit();
+
 	/**
 	 * Return the class name
 	 */

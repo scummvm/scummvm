@@ -20,20 +20,30 @@
  *
  */
 
-#include "titanic/carry/phonograph_ear.h"
+#include "titanic/game/hammer_dispensor.h"
 
 namespace Titanic {
 
-void CPhonographEar::save(SimpleFile *file, int indent) const {
-	file->writeNumberLine(1, indent);
-	file->writeNumberLine(_field140, indent);
-	CEar::save(file, indent);
+CHammerDispensor::CHammerDispensor() : CBackground(),
+	_fieldE0(0), _fieldE4(0), _fieldE8(0) {
 }
 
-void CPhonographEar::load(SimpleFile *file) {
+void CHammerDispensor::save(SimpleFile *file, int indent) const {
+	file->writeNumberLine(1, indent);
+	file->writeNumberLine(_fieldE0, indent);
+	file->writeNumberLine(_fieldE4, indent);
+	file->writeNumberLine(_fieldE8, indent);
+
+	CBackground::save(file, indent);
+}
+
+void CHammerDispensor::load(SimpleFile *file) {
 	file->readNumber();
-	_field140 = file->readNumber();
-	CEar::load(file);
+	_fieldE0 = file->readNumber();
+	_fieldE4 = file->readNumber();
+	_fieldE8 = file->readNumber();
+
+	CBackground::load(file);
 }
 
 } // End of namespace Titanic

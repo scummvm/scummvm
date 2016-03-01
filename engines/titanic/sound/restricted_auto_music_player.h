@@ -20,20 +20,36 @@
  *
  */
 
-#include "titanic/carry/phonograph_ear.h"
+#ifndef TITANIC_RESTRICTED_AUTO_MUSIC_PLAYER_H
+#define TITANIC_RESTRICTED_AUTO_MUSIC_PLAYER_H
+
+#include "titanic/sound/auto_music_player.h"
 
 namespace Titanic {
 
-void CPhonographEar::save(SimpleFile *file, int indent) const {
-	file->writeNumberLine(1, indent);
-	file->writeNumberLine(_field140, indent);
-	CEar::save(file, indent);
-}
+class CRestrictedAutoMusicPlayer : public CAutoMusicPlayer {
+private:
+	CString _string3;
+	CString _string4;
+	CString _string5;
+	CString _string6;
+public:
+	/**
+	 * Return the class name
+	 */
+	virtual const char *getClassName() const { return "CRestrictedAutoMusicPlayer"; }
 
-void CPhonographEar::load(SimpleFile *file) {
-	file->readNumber();
-	_field140 = file->readNumber();
-	CEar::load(file);
-}
+	/**
+	 * Save the data for the class to file
+	 */
+	virtual void save(SimpleFile *file, int indent) const;
+
+	/**
+	 * Load the data for the class from file
+	 */
+	virtual void load(SimpleFile *file);
+};
 
 } // End of namespace Titanic
+
+#endif /* TITANIC_RESTRICTED_AUTO_MUSIC_PLAYER_H */

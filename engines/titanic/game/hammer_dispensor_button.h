@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef TITANIC_HAMMER_DISPENSOR_H
-#define TITANIC_HAMMER_DISPENSOR_H
+#ifndef TITANIC_HAMMER_DISPENSOR_BUTTON_H
+#define TITANIC_HAMMER_DISPENSOR_BUTTON_H
 
 #include "titanic/game/start_action.h"
 
@@ -57,4 +57,4 @@ public:
 
 } // End of namespace Titanic
 
-#endif /* TITANIC_HAMMER_DISPENSOR_H */
+#endif /* TITANIC_HAMMER_DISPENSOR_BUTTON_H */

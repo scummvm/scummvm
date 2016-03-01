@@ -20,20 +20,24 @@
  *
  */
 
-#include "titanic/carry/phonograph_ear.h"
+#include "titanic/game/sgt/enter_exit_mini_lift.h"
 
 namespace Titanic {
 
-void CPhonographEar::save(SimpleFile *file, int indent) const {
+void CEnterExitMiniLift::save(SimpleFile *file, int indent) const {
 	file->writeNumberLine(1, indent);
-	file->writeNumberLine(_field140, indent);
-	CEar::save(file, indent);
+	file->writeNumberLine(_fieldBC, indent);
+	file->writeNumberLine(_fieldC0, indent);
+	
+	CSGTNavigation::save(file, indent);
 }
 
-void CPhonographEar::load(SimpleFile *file) {
+void CEnterExitMiniLift::load(SimpleFile *file) {
 	file->readNumber();
-	_field140 = file->readNumber();
-	CEar::load(file);
+	_fieldBC = file->readNumber();
+	_fieldC0 = file->readNumber();
+
+	CSGTNavigation::load(file);
 }
 
 } // End of namespace Titanic

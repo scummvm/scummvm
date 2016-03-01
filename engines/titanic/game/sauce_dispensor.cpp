@@ -24,25 +24,17 @@
 
 namespace Titanic {
 
-CSauceDispensor::CSauceDispensor() : CBackground() {
-	_fieldEC = 0;
-	_fieldF0 = 0;
-	_fieldF4 = 0;
-	_fieldF8 = 0;
-	_fieldFC = 0;
-	_field100 = 0;
-	_field104 = 0;
-	_field108 = 0;
+CSauceDispensor::CSauceDispensor() : CBackground(),
+		_fieldEC(0), _fieldF0(0), _field104(0), _field108(0) {
 }
 
 void CSauceDispensor::save(SimpleFile *file, int indent) const {
 	file->writeNumberLine(1, indent);
+	file->writeQuotedLine(_string3, indent);
 	file->writeNumberLine(_fieldEC, indent);
 	file->writeNumberLine(_fieldF0, indent);
-	file->writeNumberLine(_fieldF4, indent);
-	file->writeNumberLine(_fieldF8, indent);
-	file->writeNumberLine(_fieldFC, indent);
-	file->writeNumberLine(_field100, indent);
+	file->writePoint(_pos1, indent);
+	file->writePoint(_pos2, indent);
 	file->writeNumberLine(_field104, indent);
 	file->writeNumberLine(_field108, indent);
 
@@ -51,12 +43,11 @@ void CSauceDispensor::save(SimpleFile *file, int indent) const {
 
 void CSauceDispensor::load(SimpleFile *file) {
 	file->readNumber();
+	_string3 = file->readString();
 	_fieldEC = file->readNumber();
 	_fieldF0 = file->readNumber();
-	_fieldF4 = file->readNumber();
-	_fieldF8 = file->readNumber();
-	_fieldFC = file->readNumber();
-	_field100 = file->readNumber();
+	_pos1 = file->readPoint();
+	_pos2 = file->readPoint();
 	_field104 = file->readNumber();
 	_field108 = file->readNumber();
 

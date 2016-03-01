@@ -20,20 +20,37 @@
  *
  */
 
-#include "titanic/carry/phonograph_ear.h"
+#ifndef TITANIC_VOLUME_CONTROL_H
+#define TITANIC_VOLUME_CONTROL_H
+
+#include "titanic/core/game_object.h"
 
 namespace Titanic {
 
-void CPhonographEar::save(SimpleFile *file, int indent) const {
-	file->writeNumberLine(1, indent);
-	file->writeNumberLine(_field140, indent);
-	CEar::save(file, indent);
-}
+class CVolumeControl : public CGameObject {
+private:
+	int _fieldBC;
+	CString _string1;
+	int _fieldCC;
+public:
+	CVolumeControl();
 
-void CPhonographEar::load(SimpleFile *file) {
-	file->readNumber();
-	_field140 = file->readNumber();
-	CEar::load(file);
-}
+	/**
+	 * Return the class name
+	 */
+	virtual const char *getClassName() const { return "CVolumeControl"; }
+
+	/**
+	 * Save the data for the class to file
+	 */
+	virtual void save(SimpleFile *file, int indent) const;
+
+	/**
+	 * Load the data for the class from file
+	 */
+	virtual void load(SimpleFile *file);
+};
 
 } // End of namespace Titanic
+
+#endif /* TITANIC_VOLUME_CONTROL_H */

@@ -20,20 +20,18 @@
  *
  */
 
-#include "titanic/carry/phonograph_ear.h"
+#include "titanic/game/music_console_button.h"
 
 namespace Titanic {
 
-void CPhonographEar::save(SimpleFile *file, int indent) const {
+void CMusicConsoleButton::save(SimpleFile *file, int indent) const {
 	file->writeNumberLine(1, indent);
-	file->writeNumberLine(_field140, indent);
-	CEar::save(file, indent);
+	CMusicPlayer::save(file, indent);
 }
 
-void CPhonographEar::load(SimpleFile *file) {
+void CMusicConsoleButton::load(SimpleFile *file) {
 	file->readNumber();
-	_field140 = file->readNumber();
-	CEar::load(file);
+	CMusicPlayer::load(file);
 }
 
 } // End of namespace Titanic

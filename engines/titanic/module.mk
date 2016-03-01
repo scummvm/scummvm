@@ -127,6 +127,7 @@ MODULE_OBJS := \
 	game/enter_exit_sec_class_mini_lift.o \
 	game/enter_exit_view.o \
 	game/enter_sec_class_state.o \
+	game/hammer_dispensor.o \
 	game/hammer_dispensor_button.o \
 	game/exit_lift.o \
 	game/exit_pellerator.o \
@@ -156,6 +157,9 @@ MODULE_OBJS := \
 	game/maitred_arm_holder.o \
 	game/missiveomat.o \
 	game/movie_tester.o \
+	game/music_console_button.o \
+	game/music_room_phonograph.o \
+	game/music_room_stop_phonograph_button.o \
 	game/music_system_lock.o \
 	game/musical_instrument.o \
 	game/navigation_computer.o \
@@ -167,6 +171,7 @@ MODULE_OBJS := \
 	game/pet_disabler.o \
 	game/pet_graphic2.o \
 	game/pet_graphic.o \
+	game/phonograph.o \
 	game/phonograph_lid.o \
 	game/place_holder.o \
 	game/play_music_button.o \
@@ -176,6 +181,7 @@ MODULE_OBJS := \
 	game/replacement_ear.o \
 	game/reserved_table.o \
 	game/restaurant_cylinder_holder.o \
+	game/restaurant_phonograph.o \
 	game/room_item.o \
 	game/sauce_dispensor.o \
 	game/search_point.o \
@@ -226,6 +232,13 @@ MODULE_OBJS := \
 	game/pet/pet_sounds.o \
 	game/pet/pet_transition.o \
 	game/pet/pet_transport.o \
+	game/transport/gondolier.o \
+	game/transport/lift.o \
+	game/transport/lift_indicator.o \
+	game/transport/pellerator.o \
+	game/transport/service_elevator.o \
+	game/transport/transport.o \
+	game/sgt/enter_exit_mini_lift.o \
 	game/sgt/sgt_doors.o \
 	game/sgt/sgt_navigation.o \
 	game/sgt/sgt_restaurant_doors.o \
@@ -263,6 +276,7 @@ MODULE_OBJS := \
 	gfx/status_change_button.o \
 	gfx/st_button.o \
 	gfx/toggle_switch.o \
+	gfx/volume_control.o \
 	messages/auto_sound_event.o \
 	messages/door_auto_sound_event.o \
 	messages/messages.o \
@@ -300,6 +314,7 @@ MODULE_OBJS := \
 	sound/auto_sound_player.o \
 	sound/background_sound_maker.o \
 	sound/music_player.o \
+	sound/restricted_auto_music_player.o \
 	sound/seasonal_music_player.o \
 	sound/titania_speech.o \
 	sound/trigger_auto_music_player.o

@@ -34,6 +34,7 @@ void CChicken::save(SimpleFile *file, int indent) const {
 	file->writeNumberLine(1, indent);
 	file->writeNumberLine(_field12C, indent);
 	file->writeQuotedLine(_string6, indent);
+	file->writeNumberLine(_v1, indent);
 	file->writeNumberLine(_field13C, indent);
 	file->writeNumberLine(_field140, indent);
 
@@ -44,6 +45,7 @@ void CChicken::load(SimpleFile *file) {
 	file->readNumber();
 	_field12C = file->readNumber();
 	_string6 = file->readString();
+	_v1 = file->readNumber();
 	_field13C = file->readNumber();
 	_field140 = file->readNumber();
 

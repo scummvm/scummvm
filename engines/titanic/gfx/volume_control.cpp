@@ -20,20 +20,29 @@
  *
  */
 
-#include "titanic/carry/phonograph_ear.h"
+#include "titanic/gfx/volume_control.h"
 
 namespace Titanic {
 
-void CPhonographEar::save(SimpleFile *file, int indent) const {
-	file->writeNumberLine(1, indent);
-	file->writeNumberLine(_field140, indent);
-	CEar::save(file, indent);
+CVolumeControl::CVolumeControl() : CGameObject() {
 }
 
-void CPhonographEar::load(SimpleFile *file) {
+void CVolumeControl::save(SimpleFile *file, int indent) const {
+	file->writeNumberLine(1, indent);
+	file->writeNumberLine(_fieldBC, indent);
+	file->writeQuotedLine(_string1, indent);
+	file->writeNumberLine(_fieldCC, indent);
+
+	CGameObject::save(file, indent);
+}
+
+void CVolumeControl::load(SimpleFile *file) {
 	file->readNumber();
-	_field140 = file->readNumber();
-	CEar::load(file);
+	_fieldBC = file->readNumber();
+	_string1 = file->readString();
+	_fieldCC = file->readNumber();
+
+	CGameObject::load(file);
 }
 
 } // End of namespace Titanic
