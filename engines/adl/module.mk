@@ -4,8 +4,7 @@ MODULE_OBJS := \
 	adl.o \
 	detection.o \
 	display.o \
-	hires1.o \
-	parser.o
+	hires1.o
 
 MODULE_DIRS += \
 	engines/adl

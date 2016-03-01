@@ -52,19 +52,22 @@ public:
 	~Display();
 	void loadFrameBuffer(Common::ReadStream &stream);
 	void decodeFrameBuffer();
-	void printString(const Common::String &str);
-	void printASCIIString(const Common::String &str);
 	void updateScreen();
-	Common::String inputString(byte prompt = 0);
-	void delay(uint32 ms);
 	void setMode(Mode mode) { _mode = mode; }
-	byte inputKey();
-	void home();
 	void drawPixel(byte x, byte y, byte color);
 	void drawLine(Common::Point p1, Common::Point p2, byte color);
 	void clear(byte color);
 	void drawLineArt(const Common::Array<byte> &lineArt, Common::Point p, byte rotation = 0, byte scaling = 1, byte color = 0x7f);
 	void setCursorPos(Common::Point pos);
+
+	void home();
+	void moveCursorTo(const Common::Point &pos);
+	void moveCursorForward();
+	void moveCursorBackward();
+	void printString(const Common::String &str);
+	void setCharAtCursor(byte c);
+	void showCursor(bool enable);
+	void updateTextSurface();
 
 private:
 	enum {
@@ -85,11 +88,11 @@ private:
 	byte getPixelColor(byte x, byte color);
 	void drawChar(byte c, int x, int y);
 	void createFont();
-	void updateTextSurface();
-	byte convertKey(uint16 ascii);
 	void moveX(PixelPos &p, byte &color, bool left);
 	void moveY(PixelPos &p, bool down);
 	void drawNextPixel(Display::PixelPos &p, byte &color, byte bits, byte quadrant);
+
+	void scrollUp();
 
 	bool _scanlines;
 	byte *_frameBuf;
@@ -99,6 +102,7 @@ private:
 	Graphics::Surface *_font;
 	int _cursorPos;
 	Mode _mode;
+	bool _showCursor;
 };
  
 } // End of namespace Adl

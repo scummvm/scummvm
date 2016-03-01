@@ -37,7 +37,6 @@
 
 #include "adl/hires1.h"
 #include "adl/display.h"
-#include "adl/parser.h"
 
 namespace Adl {
 
@@ -98,7 +97,7 @@ void HiRes1Engine::runIntro() {
 	_display->setMode(Display::kModeHires);
 	_display->loadFrameBuffer(file);
 	_display->decodeFrameBuffer();
-	_display->delay(4000);
+	delay(4000);
 
 	if (shouldQuit())
 		return;
@@ -113,21 +112,21 @@ void HiRes1Engine::runIntro() {
 
 	basic.seek(IDI_HR1_OFS_PD_TEXT_0);
 	str = readString(basic, '"');
-	_display->printASCIIString(str + '\r');
+	printASCIIString(str + '\r');
 
 	basic.seek(IDI_HR1_OFS_PD_TEXT_1);
 	str = readString(basic, '"');
-	_display->printASCIIString(str + "\r\r");
+	printASCIIString(str + "\r\r");
 
 	basic.seek(IDI_HR1_OFS_PD_TEXT_2);
 	str = readString(basic, '"');
-	_display->printASCIIString(str + "\r\r");
+	printASCIIString(str + "\r\r");
 
 	basic.seek(IDI_HR1_OFS_PD_TEXT_3);
 	str = readString(basic, '"');
-	_display->printASCIIString(str + '\r');
+	printASCIIString(str + '\r');
 
-	_display->inputKey();
+	inputKey();
 	if (g_engine->shouldQuit())
 		return;
 
@@ -140,7 +139,7 @@ void HiRes1Engine::runIntro() {
 
 	while (1) {
 		_display->printString(str);
-		Common::String s = _display->inputString();
+		Common::String s = inputString();
 
 		if (g_engine->shouldQuit())
 			break;
@@ -166,7 +165,7 @@ void HiRes1Engine::runIntro() {
 		while (pages[page] != 0) {
 			_display->home();
 			printStrings(file, pages[page++]);
-			_display->inputString();
+			inputString();
 
 			if (g_engine->shouldQuit())
 				return;
@@ -175,7 +174,7 @@ void HiRes1Engine::runIntro() {
 		}
 	}
 
-	_display->printASCIIString("\r");
+	printASCIIString("\r");
 
 	file.close();
 
@@ -188,7 +187,7 @@ void HiRes1Engine::runIntro() {
 	file.seek(0x1800);
 	_display->loadFrameBuffer(file);
 	_display->decodeFrameBuffer();
-	_display->delay(2000);
+	delay(2000);
 }
 
 void HiRes1Engine::drawPic(Common::ReadStream &stream, Common::Point pos) {
@@ -294,8 +293,8 @@ void HiRes1Engine::initState() {
 void HiRes1Engine::restartGame() {
 	initState();
 	_display->printString(_strings[IDI_HR1_STR_PRESS_RETURN]);
-	_display->inputString(); // Missing in the original
-	_display->printASCIIString("\r\r\r\r\r");
+	inputString(); // Missing in the original
+	printASCIIString("\r\r\r\r\r");
 }
 
 void HiRes1Engine::runGame() {
@@ -364,12 +363,12 @@ void HiRes1Engine::runGame() {
 	}
 
 	f.seek(0x3800);
-	_parser->loadVerbs(f);
+	loadVerbs(f);
 
 	f.seek(0xf00);
-	_parser->loadNouns(f);
+	loadNouns(f);
 
-	_display->printASCIIString("\r\r\r\r\r");
+	printASCIIString("\r\r\r\r\r");
 
 	while (1) {
 		if (_isRestarting)
@@ -378,7 +377,7 @@ void HiRes1Engine::runGame() {
 		uint verb = 0, noun = 0;
 		clearScreen();
 		showRoom();
-		_parser->getInput(verb, noun);
+		getInput(verb, noun);
 
 		if (!doOneCommand(_roomCommands, verb, noun))
 			printMessage(37);

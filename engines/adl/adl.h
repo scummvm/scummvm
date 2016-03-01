@@ -177,6 +177,8 @@ public:
 	virtual Common::String getEngineString(int str);
 
 protected:
+	typedef Common::HashMap<Common::String, uint> WordMap;
+
 	virtual void runIntro() { }
 	virtual void runGame() = 0;
 	virtual void initState() = 0;
@@ -201,6 +203,16 @@ protected:
 	Room &curRoom();
 	Item &item(uint i);
 	byte &var(uint i);
+	void loadVerbs(Common::ReadStream &stream) { loadWords(stream, _verbs); }
+	void loadNouns(Common::ReadStream &stream) { loadWords(stream, _nouns); }
+	void getInput(uint &verb, uint &noun);
+	void loadWords(Common::ReadStream &stream, WordMap &map);
+	Common::String getLine();
+	Common::String getWord(const Common::String &line, uint &index);
+	void printASCIIString(const Common::String &str);
+	Common::String inputString(byte prompt = 0);
+	void delay(uint32 ms);
+	byte inputKey();
 
 	Display *_display;
 	Parser *_parser;
@@ -222,6 +234,14 @@ private:
 	bool saveState(uint slot, const Common::String *description = nullptr);
 	bool loadState(uint slot);
 	Common::String getTargetName() { return _targetName; }
+	byte convertKey(uint16 ascii);
+
+	enum {
+		kWordSize = 8
+	};
+
+	WordMap _verbs;
+	WordMap _nouns;
 };
 
 AdlEngine *HiRes1Engine__create(OSystem *syst, const AdlGameDescription *gd);

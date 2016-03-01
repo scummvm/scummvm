@@ -36,7 +36,6 @@
 
 #include "adl/adl.h"
 #include "adl/display.h"
-#include "adl/parser.h"
 
 namespace Adl {
 
@@ -44,12 +43,10 @@ AdlEngine::AdlEngine(OSystem *syst, const AdlGameDescription *gd) :
 		Engine(syst),
 		_gameDescription(gd),
 		_display(nullptr),
-		_parser(nullptr),
 		_isRestarting(false) {
 }
 
 AdlEngine::~AdlEngine() {
-	delete _parser;
 	delete _display;
 }
 
@@ -68,7 +65,6 @@ Common::Error AdlEngine::run() {
 	g_system->getPaletteManager()->setPalette(palette, 0, 6);
 
 	_display = new Display();
-	_parser = new Parser(*this, *_display);
 
 	int saveSlot = ConfMan.getInt("save_slot");
 	if (saveSlot >= 0) {
@@ -137,7 +133,7 @@ void AdlEngine::printMessage(uint idx, bool wait) {
 	_display->printString(msg);
 
 	if (wait)
-		_display->delay(14 * 166018 / 1000);
+		delay(14 * 166018 / 1000);
 }
 
 void AdlEngine::printEngineMessage(EngineMessage msg) {
@@ -282,7 +278,7 @@ void AdlEngine::doActions(const Command &command, byte noun, byte offset) {
 			break;
 		case IDO_ACT_RESTART: {
 			_display->printString(_strings[IDI_STR_PLAY_AGAIN]);
-			Common::String input = _display->inputString();
+			Common::String input = inputString();
 			if (input.size() == 0 || input[0] != APPLECHAR('N')) {
 				_isRestarting = true;
 				_display->clear(0x00);
@@ -612,6 +608,259 @@ byte &AdlEngine::var(uint i) {
 		error("Variable %i out of range [0, %i]", i, _state.vars.size() - 1);
 
 	return _state.vars[i];
+}
+
+void AdlEngine::loadWords(Common::ReadStream &stream, WordMap &map) {
+	uint index = 0;
+
+	while (1) {
+		++index;
+
+		byte buf[kWordSize];
+
+		if (stream.read(buf, kWordSize) < kWordSize)
+			error("Error reading word list");
+
+		Common::String word((char *)buf, kWordSize);
+
+		if (!map.contains(word))
+			map[word] = index;
+
+		byte synonyms = stream.readByte();
+
+		if (stream.err() || stream.eos())
+			error("Error reading word list");
+
+		if (synonyms == 0xff)
+			break;
+
+		for (uint i = 0; i < synonyms; ++i) {
+			if (stream.read((char *)buf, kWordSize) < kWordSize)
+				error("Error reading word list");
+
+			word = Common::String((char *)buf, kWordSize);
+
+			if (!map.contains(word))
+				map[word] = index;
+		}
+	}
+}
+
+Common::String AdlEngine::getLine() {
+	// Original engine uses a global here, which isn't reset between
+	// calls and may not match actual mode
+	bool textMode = false;
+
+	while (1) {
+		Common::String line = inputString(APPLECHAR('?'));
+
+		if (shouldQuit())
+			return "";
+
+		if ((byte)line[0] == ('\r' | 0x80)) {
+			textMode = !textMode;
+			_display->setMode(textMode ? Display::kModeText : Display::kModeMixed);
+			continue;
+		}
+
+		// Remove the return
+		line.deleteLastChar();
+		return line;
+	}
+}
+
+Common::String AdlEngine::getWord(const Common::String &line, uint &index) {
+	Common::String str;
+
+	for (uint i = 0; i < 8; ++i)
+		str += APPLECHAR(' ');
+
+	int copied = 0;
+
+	// Skip initial whitespace
+	while (1) {
+		if (index == line.size())
+			return str;
+		if (line[index] != APPLECHAR(' '))
+			break;
+		++index;
+	}
+
+	// Copy up to 8 characters
+	while (1) {
+		if (copied < 8)
+			str.setChar(line[index], copied++);
+
+		index++;
+
+		if (index == line.size() || line[index] == APPLECHAR(' '))
+			return str;
+	}
+}
+
+void AdlEngine::getInput(uint &verb, uint &noun) {
+	while (1) {
+		_display->printString(getEngineString(IDI_STR_ENTER_COMMAND));
+		Common::String line = getLine();
+
+		if (shouldQuit())
+			return;
+
+		uint index = 0;
+		Common::String verbStr = getWord(line, index);
+
+		if (!_verbs.contains(verbStr)) {
+			Common::String err = getEngineString(IDI_STR_VERB_ERROR);
+			for (uint i = 0; i < verbStr.size(); ++i)
+				err.setChar(verbStr[i], i + 19);
+			_display->printString(err);
+			continue;
+		}
+
+		verb = _verbs[verbStr];
+
+		Common::String nounStr = getWord(line, index);
+
+		if (!_nouns.contains(nounStr)) {
+			Common::String err = getEngineString(IDI_STR_NOUN_ERROR);
+			for (uint i = 0; i < verbStr.size(); ++i)
+				err.setChar(verbStr[i], i + 19);
+			for (uint i = 0; i < nounStr.size(); ++i)
+				err.setChar(nounStr[i], i + 30);
+			_display->printString(err);
+			continue;
+		}
+
+		noun = _nouns[nounStr];
+		return;
+	}
+}
+
+void AdlEngine::printASCIIString(const Common::String &str) {
+	Common::String aStr;
+
+	Common::String::const_iterator it;
+	for (it = str.begin(); it != str.end(); ++it)
+			aStr += APPLECHAR(*it);
+
+	_display->printString(aStr);
+}
+
+Common::String AdlEngine::inputString(byte prompt) {
+	Common::String s;
+
+	if (prompt > 0)
+		_display->printString(Common::String(prompt));
+
+	while (1) {
+		byte b = inputKey();
+
+		if (g_engine->shouldQuit())
+			return 0;
+
+		if (b == 0)
+			continue;
+
+		if (b == ('\r' | 0x80)) {
+			s += b;
+			_display->printString(Common::String(b));
+			return s;
+		}
+
+		if (b < 0xa0) {
+			switch (b) {
+			case Common::KEYCODE_BACKSPACE | 0x80:
+				if (!s.empty()) {
+					_display->moveCursorBackward();
+					_display->setCharAtCursor(APPLECHAR(' '));
+					s.deleteLastChar();
+				}
+				break;
+			};
+		} else {
+			s += b;
+			_display->printString(Common::String(b));
+		}
+	}
+}
+
+byte AdlEngine::convertKey(uint16 ascii) {
+	ascii = toupper(ascii);
+
+	if (ascii >= 0x80)
+		return 0;
+
+	ascii |= 0x80;
+
+	if (ascii >= 0x80 && ascii <= 0xe0)
+		return ascii;
+
+	return 0;
+}
+
+byte AdlEngine::inputKey() {
+	Common::EventManager *ev = g_system->getEventManager();
+
+	byte key = 0;
+
+	_display->showCursor(true);
+
+	while (!g_engine->shouldQuit() && key == 0) {
+		Common::Event event;
+		if (ev->pollEvent(event)) {
+			if (event.type != Common::EVENT_KEYDOWN)
+				continue;
+
+			if (event.kbd.flags & Common::KBD_CTRL) {
+				if (event.kbd.keycode == Common::KEYCODE_q)
+					g_engine->quitGame();
+				continue;
+			}
+
+			switch (event.kbd.keycode) {
+			case Common::KEYCODE_BACKSPACE:
+			case Common::KEYCODE_RETURN:
+				key = convertKey(event.kbd.keycode);
+				break;
+			default:
+				if (event.kbd.ascii >= 0x20 && event.kbd.ascii < 0x80)
+					key = convertKey(event.kbd.ascii);
+			};
+		}
+
+		_display->updateTextSurface();
+		_display->updateScreen();
+		g_system->updateScreen();
+		g_system->delayMillis(16);
+	}
+
+	_display->showCursor(false);
+
+	return key;
+}
+
+void AdlEngine::delay(uint32 ms) {
+	Common::EventManager *ev = g_system->getEventManager();
+
+	uint32 start = g_system->getMillis();
+
+	while (!g_engine->shouldQuit() && g_system->getMillis() - start < ms) {
+		Common::Event event;
+		if (ev->pollEvent(event)) {
+			if (event.type == Common::EVENT_KEYDOWN && (event.kbd.flags & Common::KBD_CTRL)) {
+				switch(event.kbd.keycode) {
+				case Common::KEYCODE_q:
+					g_engine->quitGame();
+					break;
+				default:
+					break;
+				}
+			}
+		}
+		_display->updateScreen();
+		g_system->updateScreen();
+		g_system->delayMillis(16);
+	}
 }
 
 AdlEngine *AdlEngine::create(GameType type, OSystem *syst, const AdlGameDescription *gd) {

@@ -71,7 +71,8 @@ static byte font[64][5] = {
 Display::Display() :
 		_scanlines(false),
 		_cursorPos(0),
-		_mode(kModeText) {
+		_mode(kModeText),
+		_showCursor(false) {
 	_frameBuf = new byte[kFrameBufSize];
 	_frameBufSurface = new Graphics::Surface;
 	_frameBufSurface->create(kWidth * 2, kHeight * 2, Graphics::PixelFormat::createFormatCLUT8());
@@ -367,7 +368,11 @@ void Display::clear(byte color) {
 void Display::updateTextSurface() {
 	for (uint row = 0; row < 24; ++row)
 		for (uint col = 0; col < 40; ++col) {
+			int charPos = row * 40 + col;
 			char c = _textBuf[row * 40 + col];
+
+			if (charPos == _cursorPos && _showCursor)
+				c = (c & 0x3f) | 0x40;
 
 			Common::Rect r(7 * 2, 8 * 2);
 			r.translate(((c & 0x3f) % 16) * 7 * 2, (c & 0x3f) / 16 * 8 * 2);
@@ -379,36 +384,6 @@ void Display::updateTextSurface() {
 
 			_textBufSurface->copyRectToSurface(*_font, col * 7 * 2, row * 8 * 2, r);
 		}
-}
-
-void Display::printString(const Common::String &str) {
-	Common::String::const_iterator it;
-	for (it = str.begin(); it != str.end(); ++it) {
-		byte b = *it;
-
-		if (b == ('\r' | 0x80))
-			_cursorPos = (_cursorPos / 40 + 1) * 40;
-		else if (b < 0x80 || b >= 0xa0)
-			_textBuf[_cursorPos++] = b;
-
-		if (_cursorPos == kTextBufSize) {
-			memmove(_textBuf, _textBuf + 40, kTextBufSize - 40);
-			memset(_textBuf + kTextBufSize - 40, ' ' | 0x80, 40);
-			_cursorPos -= 40;
-		}
-	}
-
-	updateTextSurface();
-}
-
-void Display::printASCIIString(const Common::String &str) {
-	Common::String aStr;
-
-	Common::String::const_iterator it;
-	for (it = str.begin(); it != str.end(); ++it)
-			aStr += APPLECHAR(*it);
-
-	printString(aStr);
 }
 
 void Display::drawChar(byte c, int x, int y) {
@@ -463,126 +438,63 @@ void Display::updateScreen() {
 	}
 }
 
-Common::String Display::inputString(byte prompt) {
-	Common::String s;
-
-	if (prompt > 0)
-		printString(Common::String(prompt));
-
-	while (1) {
-		byte b = inputKey();
-
-		if (g_engine->shouldQuit())
-			return 0;
-
-		if (b == 0)
-			continue;
-
-		if (b == ('\r' | 0x80)) {
-			s += b;
-			printString(Common::String(b));
-			return s;
-		}
-
-		if (b < 0xa0) {
-			switch (b) {
-			case Common::KEYCODE_BACKSPACE | 0x80:
-				if (!s.empty()) {
-					--_cursorPos;
-					_textBuf[_cursorPos] = ' ' | 0x80;
-					s.deleteLastChar();
-				}
-				break;
-			};
-		} else {
-			s += b;
-			printString(Common::String(b));
-		}
-	}
-}
-
-byte Display::convertKey(uint16 ascii) {
-	ascii = toupper(ascii);
-
-	if (ascii >= 0x80)
-		return 0;
-
-	ascii |= 0x80;
-
-	if (ascii >= 0x80 && ascii <= 0xe0)
-		return ascii;
-
-	return 0;
-}
-
-byte Display::inputKey() {
-	Common::EventManager *ev = g_system->getEventManager();
-
-	byte orgChar = _textBuf[_cursorPos];
-	_textBuf[_cursorPos] = (orgChar & 0x3f) | 0x40;
-
-	byte key = 0;
-
-	while (!g_engine->shouldQuit() && key == 0) {
-		Common::Event event;
-		if (ev->pollEvent(event)) {
-			if (event.type != Common::EVENT_KEYDOWN)
-				continue;
-
-			if (event.kbd.flags & Common::KBD_CTRL) {
-				if (event.kbd.keycode == Common::KEYCODE_q)
-					g_engine->quitGame();
-				continue;
-			}
-
-			switch (event.kbd.keycode) {
-			case Common::KEYCODE_BACKSPACE:
-			case Common::KEYCODE_RETURN:
-				key = convertKey(event.kbd.keycode);
-				break;
-			default:
-				if (event.kbd.ascii >= 0x20 && event.kbd.ascii < 0x80)
-					key = convertKey(event.kbd.ascii);
-			};
-		}
-
-		updateTextSurface();
-		updateScreen();
-		g_system->updateScreen();
-		g_system->delayMillis(16);
-	}
-
-	_textBuf[_cursorPos] = orgChar;
-	return key;
-}
-
-void Display::delay(uint32 ms) {
-	Common::EventManager *ev = g_system->getEventManager();
-
-	uint32 start = g_system->getMillis();
-
-	while (!g_engine->shouldQuit() && g_system->getMillis() - start < ms) {
-		Common::Event event;
-		if (ev->pollEvent(event)) {
-			if (event.type == Common::EVENT_KEYDOWN && (event.kbd.flags & Common::KBD_CTRL)) {
-				switch(event.kbd.keycode) {
-				case Common::KEYCODE_q:
-					g_engine->quitGame();
-					break;
-				default:
-					break;
-				}
-			}
-		}
-		updateScreen();
-		g_system->updateScreen();
-		g_system->delayMillis(16);
-	}
-}
-
 void Display::home() {
-	memset(_textBuf, ' ' | 0x80, kTextBufSize);
+	memset(_textBuf, APPLECHAR(' '), kTextBufSize);
 	_cursorPos = 0;
+}
+
+void Display::moveCursorForward() {
+	++_cursorPos;
+
+	if (_cursorPos >= kTextBufSize)
+		scrollUp();
+}
+
+void Display::moveCursorBackward() {
+	--_cursorPos;
+
+	if (_cursorPos < 0)
+		_cursorPos = 0;
+}
+
+void Display::moveCursorTo(const Common::Point &pos) {
+	_cursorPos = pos.y * 40 + pos.x;
+
+	if (_cursorPos >= kTextBufSize)
+		error("Cursor position (%i, %i) out of bounds", pos.x, pos.y);
+}
+
+void Display::setCharAtCursor(byte c) {
+	_textBuf[_cursorPos] = c;
+}
+
+void Display::scrollUp() {
+	memmove(_textBuf, _textBuf + 40, kTextBufSize - 40);
+	memset(_textBuf + kTextBufSize - 40, ' ' | 0x80, 40);
+	_cursorPos -= 40;
+}
+
+void Display::printString(const Common::String &str) {
+	Common::String::const_iterator c;
+	for (c = str.begin(); c != str.end(); ++c) {
+		byte b = *c;
+
+		if (*c == APPLECHAR('\r'))
+			_cursorPos = (_cursorPos / 40 + 1) * 40;
+		else if (b < 0x80 || b >= 0xa0) {
+			setCharAtCursor(b);
+			++_cursorPos;
+		}
+
+		if (_cursorPos == kTextBufSize)
+			scrollUp();
+	}
+
+	updateTextSurface();
+}
+
+void Display::showCursor(bool enable) {
+	_showCursor = enable;
 }
 
 void Display::setCursorPos(Common::Point pos) {
