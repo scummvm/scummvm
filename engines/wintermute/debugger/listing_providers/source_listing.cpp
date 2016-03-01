@@ -24,7 +24,7 @@
 
 namespace Wintermute {
 
-SourceListing::SourceListing(Common::Array<Common::String> strings) : _strings(strings) {}
+SourceListing::SourceListing(const Common::Array<Common::String> &strings) : _strings(strings) {}
 
 SourceListing::~SourceListing() {}
 
