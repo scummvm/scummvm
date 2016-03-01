@@ -50,12 +50,16 @@ static const ADGameDescription gameDescriptions[] = {
 	FANGAME("Magic Rings", "6e0d1dd561d3dad8f9a7a20ed1f09b16", 112000),
 	FANGAME("Midnight Snack", "346982a32fc701f53bb19771d72063d0", 69504),
 	FANGAME("Queen Quest", "730605d312efedb5e3ff108522fcac18", 59776),
+	// Crash in console rendering on the initial scene
+	FANGAME("Quest for the Dark Sword", "7e4e712d151f6c686f6024b0dedf5d34", 590720),
+	BIGGAME("raysmaze", "v1.5", "Ray's Maze1.5", "e5a3e25dddfffbed461bca3c26073117", 1437184),
 	BIGGAME("scepters", "", "Scepters", "b80bff315897776dda7689cdf829fab4", 360832),
 	// ??? problems with dog bitmap?
 	FANGAMEN("Space Adventure", "SpaceAdventure", "e5b0d8ad6d235ede2f08583342642dfa", 158720),
 	FANGAME("Time Bomb", "2df84b636237686b624e736a698a16c4", 66432),
 	// Invalid rect in scene "Access Tube 1"
 	FANGAMEN("The Phoenix v1.2", "The Phoenix", "7fa2a2ac740f22572516843922b7c630", 434560),
+	FANGAME("The Sultan's Palace", "589aebf6c14bb5c63d9b4b2c37f31e16", 468096),
 	// Admission for on 3rd screen is messed up
 	FANGAME("The Tower", "75eba57a12ed181e07f34eaf6aa9d2c4", 568320),
 	// Doesn't go past first scene
