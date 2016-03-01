@@ -207,10 +207,10 @@ reg_t readSelector(SegManager *segMan, reg_t object, Selector selectorId) {
 }
 
 #ifdef ENABLE_SCI32
-void updateInfoFlagViewVisible(Object *obj, int offset) {
+void updateInfoFlagViewVisible(Object *obj, int index) {
 	// TODO: Make this correct for all SCI versions
 	// Selectors 26 through 44 are selectors for View script objects in SQ6
-	if (offset >= 26 && offset <= 44 && getSciVersion() >= SCI_VERSION_2) {
+	if (index >= 26 && index <= 44 && getSciVersion() >= SCI_VERSION_2) {
 		obj->setInfoSelectorFlag(kInfoFlagViewVisible);
 	}
 }

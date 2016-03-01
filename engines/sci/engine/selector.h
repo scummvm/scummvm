@@ -201,10 +201,10 @@ void invokeSelector(EngineState *s, reg_t object, int selectorId,
 /**
  * SCI32 set kInfoFlagViewVisible in the -info- selector if a certain
  * range of properties was written to.
- * This function checks if offset is in the right range, and sets the flag
+ * This function checks if index is in the right range, and sets the flag
  * on obj.-info- if it is.
  */
-void updateInfoFlagViewVisible(Object *obj, int offset);
+void updateInfoFlagViewVisible(Object *obj, int index);
 #endif
 
 } // End of namespace Sci

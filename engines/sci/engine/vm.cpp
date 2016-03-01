@@ -1100,7 +1100,7 @@ void run_vm(EngineState *s) {
 			// Accumulator To Property
 			validate_property(s, obj, opparams[0]) = s->r_acc;
 #ifdef ENABLE_SCI32
-			updateInfoFlagViewVisible(obj, opparams[0]);
+			updateInfoFlagViewVisible(obj, opparams[0]>>1);
 #endif
 			break;
 
@@ -1113,7 +1113,7 @@ void run_vm(EngineState *s) {
 			// Stack To Property
 			validate_property(s, obj, opparams[0]) = POP32();
 #ifdef ENABLE_SCI32
-			updateInfoFlagViewVisible(obj, opparams[0]);
+			updateInfoFlagViewVisible(obj, opparams[0]>>1);
 #endif
 			break;
 
@@ -1130,7 +1130,7 @@ void run_vm(EngineState *s) {
 			else
 				opProperty -= 1;
 #ifdef ENABLE_SCI32
-			updateInfoFlagViewVisible(obj, opparams[0]);
+			updateInfoFlagViewVisible(obj, opparams[0]>>1);
 #endif
 			if (opcode == op_ipToa || opcode == op_dpToa)
 				s->r_acc = opProperty;
