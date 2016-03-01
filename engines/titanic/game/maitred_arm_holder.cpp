@@ -20,38 +20,18 @@
  *
  */
 
-#include "titanic/carry/hose.h"
+#include "titanic/game/maitred_arm_holder.h"
 
 namespace Titanic {
 
-CHoseStatics *CHose::_statics;
-
-void CHose::init() {
-	_statics = new CHoseStatics();
-}
-
-void CHose::deinit() {
-	delete _statics;
-}
-
-CHose::CHose() : CCarry(),
-	_string6("Succ-U-Bus auxiliary hose attachment incompatible with sliding glass cover.") {
-}
-
-void CHose::save(SimpleFile *file, int indent) const {
+void CMaitreDArmHolder::save(SimpleFile *file, int indent) const {
 	file->writeNumberLine(1, indent);
-	file->writeNumberLine(_statics->_v1, indent);
-	file->writeQuotedLine(_statics->_v2, indent);
-	file->writeQuotedLine(_string6, indent);
-	CCarry::save(file, indent);
+	CDropTarget::save(file, indent);
 }
 
-void CHose::load(SimpleFile *file) {
+void CMaitreDArmHolder::load(SimpleFile *file) {
 	file->readNumber();
-	_statics->_v1 = file->readNumber();
-	_statics->_v2 = file->readString();
-	_string6 = file->readString();
-	CCarry::load(file);
+	CGameObject::load(file);
 }
 
 } // End of namespace Titanic

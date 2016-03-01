@@ -20,38 +20,36 @@
  *
  */
 
-#include "titanic/carry/hose.h"
+#ifndef TITANIC_NOSE_HOLDER_H
+#define TITANIC_NOSE_HOLDER_H
+
+#include "titanic/core/drop_target.h"
 
 namespace Titanic {
 
-CHoseStatics *CHose::_statics;
+class CNoseHolder : public CDropTarget {
+private:
+	int _field118;
+	int _field11C;
+public:
+	CNoseHolder();
 
-void CHose::init() {
-	_statics = new CHoseStatics();
-}
+	/**
+	 * Return the class name
+	 */
+	virtual const char *getClassName() const { return "CNoseHolder"; }
 
-void CHose::deinit() {
-	delete _statics;
-}
+	/**
+	 * Save the data for the class to file
+	 */
+	virtual void save(SimpleFile *file, int indent) const;
 
-CHose::CHose() : CCarry(),
-	_string6("Succ-U-Bus auxiliary hose attachment incompatible with sliding glass cover.") {
-}
-
-void CHose::save(SimpleFile *file, int indent) const {
-	file->writeNumberLine(1, indent);
-	file->writeNumberLine(_statics->_v1, indent);
-	file->writeQuotedLine(_statics->_v2, indent);
-	file->writeQuotedLine(_string6, indent);
-	CCarry::save(file, indent);
-}
-
-void CHose::load(SimpleFile *file) {
-	file->readNumber();
-	_statics->_v1 = file->readNumber();
-	_statics->_v2 = file->readString();
-	_string6 = file->readString();
-	CCarry::load(file);
-}
+	/**
+	 * Load the data for the class from file
+	 */
+	virtual void load(SimpleFile *file);
+};
 
 } // End of namespace Titanic
+
+#endif /* TITANIC_NOSE_HOLDER_H */

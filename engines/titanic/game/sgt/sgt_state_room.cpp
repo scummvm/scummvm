@@ -24,7 +24,15 @@
 
 namespace Titanic {
 
-CSGTStateRoomStatics *_statics;
+CSGTStateRoomStatics *CSGTStateRoom::_statics;
+
+void CSGTStateRoom::init() {
+	_statics = new CSGTStateRoomStatics();
+}
+
+void CSGTStateRoom::deinit() {
+	delete _statics;
+}
 
 CSGTStateRoom::CSGTStateRoom() : CBackground(), _fieldE0(1),
 	_fieldE4(1), _fieldE8(0), _fieldEC(1), _fieldF0(1) {

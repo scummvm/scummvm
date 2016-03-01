@@ -29,8 +29,10 @@
 #include "graphics/thumbnail.h"
 #include "titanic/titanic.h"
 #include "titanic/core/saveable_object.h"
-#include "titanic/game/parrot/parrot_lobby_object.h"
 #include "titanic/game/enter_exit_first_class_state.h"
+#include "titanic/game/parrot/parrot_lobby_object.h"
+#include "titanic/game/sgt/sgt_state_room.h"
+#include "titanic/carry/hose.h"
 
 namespace Titanic {
 
@@ -56,6 +58,8 @@ void TitanicEngine::initialize() {
 	CSaveableObject::initClassList();
 	CParrotLobbyObject::init();
 	CEnterExitFirstClassState::init();
+	CHose::init();
+	CSGTStateRoom::init();
 
 	_screenManager = new OSScreenManager(this);
 	_window = new CMainGameWindow(this);
@@ -64,6 +68,8 @@ void TitanicEngine::initialize() {
 
 void TitanicEngine::deinitialize() {
 	CEnterExitFirstClassState::deinit();
+	CHose::deinit();
+	CSGTStateRoom::deinit();
 }
 
 Common::Error TitanicEngine::run() {

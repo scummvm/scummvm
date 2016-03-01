@@ -46,7 +46,7 @@ struct CSGTStateRoomStatics {
 
 class CSGTStateRoom : public CBackground {
 private:
-	CSGTStateRoomStatics *_statics;
+	static CSGTStateRoomStatics *_statics;
 private:
 	int _fieldE0;
 	int _fieldE4;
@@ -55,6 +55,8 @@ private:
 	int _fieldF0;
 public:
 	CSGTStateRoom();
+	static void init();
+	static void deinit();
 
 	/**
 	 * Return the class name

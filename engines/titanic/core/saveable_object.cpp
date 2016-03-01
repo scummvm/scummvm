@@ -37,6 +37,7 @@
 #include "titanic/carry/hammer.h"
 #include "titanic/carry/head_piece.h"
 #include "titanic/carry/hose.h"
+#include "titanic/carry/hose_end.h"
 #include "titanic/carry/key.h"
 #include "titanic/carry/liftbot_head.h"
 #include "titanic/carry/long_stick.h"
@@ -46,6 +47,7 @@
 #include "titanic/carry/nose.h"
 #include "titanic/carry/note.h"
 #include "titanic/carry/parcel.h"
+#include "titanic/carry/perch.h"
 #include "titanic/carry/phonograph_cylinder.h"
 #include "titanic/carry/phonograph_ear.h"
 #include "titanic/carry/photograph.h"
@@ -87,6 +89,7 @@
 #include "titanic/game/cdrom_computer.h"
 #include "titanic/game/cdrom_tray.h"
 #include "titanic/game/cell_point_button.h"
+#include "titanic/game/chicken_cooler.h"
 #include "titanic/game/chicken_dispensor.h"
 #include "titanic/game/close_broken_pel.h"
 #include "titanic/game/computer.h"
@@ -103,6 +106,8 @@
 #include "titanic/game/emma_control.h"
 #include "titanic/game/empty_nut_bowl.h"
 #include "titanic/game/enter_exit_first_class_state.h"
+#include "titanic/game/enter_exit_view.h"
+#include "titanic/game/floor_indicator.h"
 #include "titanic/game/games_console.h"
 #include "titanic/game/hammer_dispensor_button.h"
 #include "titanic/game/head_smash_event.h"
@@ -111,8 +116,11 @@
 #include "titanic/game/light.h"
 #include "titanic/game/light_switch.h"
 #include "titanic/game/little_lift_button.h"
+#include "titanic/game/maitred_arm_holder.h"
 #include "titanic/game/musical_instrument.h"
+#include "titanic/game/music_system_lock.h"
 #include "titanic/game/no_nut_bowl.h"
+#include "titanic/game/nose_holder.h"
 #include "titanic/game/null_port_hole.h"
 #include "titanic/game/nut_replacer.h"
 #include "titanic/game/play_music_button.h"
@@ -120,6 +128,7 @@
 #include "titanic/game/port_hole.h"
 #include "titanic/game/record_phonograph_button.h"
 #include "titanic/game/replacement_ear.h"
+#include "titanic/game/restaurant_cylinder_holder.h"
 #include "titanic/game/room_item.h"
 #include "titanic/game/sauce_dispensor.h"
 #include "titanic/game/season_background.h"
@@ -135,6 +144,8 @@
 #include "titanic/game/sweet_bowl.h"
 #include "titanic/game/television.h"
 #include "titanic/game/third_class_canal.h"
+#include "titanic/game/throw_tv_down_well.h"
+#include "titanic/game/up_lighter.h"
 #include "titanic/game/wheel_button.h"
 #include "titanic/game/wheel_hotspot.h"
 #include "titanic/game/wheel_spin.h"
@@ -148,6 +159,7 @@
 #include "titanic/game/parrot/parrot_perch_holder.h"
 #include "titanic/game/parrot/parrot_succubus.h"
 #include "titanic/game/parrot/parrot_trigger.h"
+#include "titanic/game/parrot/player_meets_parrot.h"
 #include "titanic/game/pet/pet.h"
 #include "titanic/game/pet/pet_class1.h"
 #include "titanic/game/pet/pet_class2.h"
@@ -257,6 +269,7 @@ DEFFN(CBridgePiece);
 DEFFN(CCarryParrot);
 DEFFN(CCentralCore);
 DEFFN(CChicken);
+DEFFN(CChickenCooler);
 DEFFN(CCrushedTV);
 DEFFN(CEar);
 DEFFN(CEye);
@@ -266,13 +279,17 @@ DEFFN(CGlass);
 DEFFN(CHammer);
 DEFFN(CHeadPiece);
 DEFFN(CHose);
+DEFFN(CHoseEnd);
 DEFFN(CKey);
 DEFFN(CLiftbotHead);
 DEFFN(CLongStick);
 DEFFN(CMagazine);
+DEFFN(CMouth);
 DEFFN(CNapkin);
+DEFFN(CNose);
 DEFFN(CNote);
 DEFFN(CParcel);
+DEFFN(CPerch);
 DEFFN(CPhonographCylinder);
 DEFFN(CPhonographEar);
 DEFFN(CPhotograph);
@@ -328,6 +345,8 @@ DEFFN(CEjectPhonographButton);
 DEFFN(CEmmaControl);
 DEFFN(CEmptyNutBowl);
 DEFFN(CEnterExitFirstClassState);
+DEFFN(CEnterExitView);
+DEFFN(CFloorIndicator);
 DEFFN(CGamesConsole);
 DEFFN(CHammerDispensorButton);
 DEFFN(CHeadSmashEvent);
@@ -336,8 +355,11 @@ DEFFN(CLemonDispensor);
 DEFFN(CLight);
 DEFFN(CLightSwitch);
 DEFFN(CLittleLiftButton);
+DEFFN(CMaitreDArmHolder);
 DEFFN(CMusicalInstrument);
+DEFFN(CMusicSystemLock);
 DEFFN(CNoNutBowl);
+DEFFN(CNoseHolder);
 DEFFN(CNullPortHole);
 DEFFN(CNutReplacer);
 DEFFN(CPlayMusicButton);
@@ -345,6 +367,7 @@ DEFFN(CPlayOnAct);
 DEFFN(CPortHole);
 DEFFN(CRecordPhonographButton);
 DEFFN(CReplacementEar);
+DEFFN(CRestaurantCylinderHolder);
 DEFFN(CRoomItem);
 DEFFN(CSauceDispensor);
 DEFFN(CSeasonBackground);
@@ -360,6 +383,8 @@ DEFFN(CSUBGlass);
 DEFFN(CSweetBowl);
 DEFFN(CTelevision);
 DEFFN(CThirdClassCanal);
+DEFFN(CThrowTVDownWell);
+DEFFN(CUpLighter);
 DEFFN(CWheelButton);
 DEFFN(CWheelHotSpot);
 DEFFN(CWheelSpin);
@@ -373,6 +398,7 @@ DEFFN(CParrotNutEater);
 DEFFN(CParrotPerchHolder);
 DEFFN(CParrotSuccUBus);
 DEFFN(CParrotTrigger);
+DEFFN(CPlayerMeetsParrot);
 DEFFN(CPET);
 DEFFN(CPETClass1);
 DEFFN(CPETClass2);
@@ -648,6 +674,7 @@ void CSaveableObject::initClassList() {
 	ADDFN(CCarryParrot);
 	ADDFN(CCentralCore);
 	ADDFN(CChicken);
+	ADDFN(CChickenCooler);
 	ADDFN(CCrushedTV);
 	ADDFN(CEar);
 	ADDFN(CEye);
@@ -657,13 +684,17 @@ void CSaveableObject::initClassList() {
 	ADDFN(CHammer);
 	ADDFN(CHeadPiece);
 	ADDFN(CHose);
+	ADDFN(CHoseEnd);
 	ADDFN(CKey);
 	ADDFN(CLiftbotHead);
 	ADDFN(CLongStick);
 	ADDFN(CMagazine);
+	ADDFN(CMouth);
 	ADDFN(CNapkin);
+	ADDFN(CNose);
 	ADDFN(CNote);
 	ADDFN(CParcel);
+	ADDFN(CPerch);
 	ADDFN(CPhonographCylinder);
 	ADDFN(CPhonographEar);
 	ADDFN(CPhotograph);
@@ -720,6 +751,8 @@ void CSaveableObject::initClassList() {
 	ADDFN(CEmmaControl);
 	ADDFN(CEmptyNutBowl);
 	ADDFN(CEnterExitFirstClassState);
+	ADDFN(CEnterExitView);
+	ADDFN(CFloorIndicator);
 	ADDFN(CGamesConsole);
 	ADDFN(CHammerDispensorButton);
 	ADDFN(CHeadSmashEvent);
@@ -728,8 +761,11 @@ void CSaveableObject::initClassList() {
 	ADDFN(CLight);
 	ADDFN(CLightSwitch);
 	ADDFN(CLittleLiftButton);
+	ADDFN(CMaitreDArmHolder);
 	ADDFN(CMusicalInstrument);
+	ADDFN(CMusicSystemLock);
 	ADDFN(CNoNutBowl);
+	ADDFN(CNoseHolder);
 	ADDFN(CNullPortHole);
 	ADDFN(CNutReplacer);
 	ADDFN(CPETPosition);
@@ -738,6 +774,7 @@ void CSaveableObject::initClassList() {
 	ADDFN(CPortHole);
 	ADDFN(CRecordPhonographButton);
 	ADDFN(CReplacementEar);
+	ADDFN(CRestaurantCylinderHolder);
 	ADDFN(CRoomItem);
 	ADDFN(CSauceDispensor);
 	ADDFN(CSeasonBackground);
@@ -753,6 +790,8 @@ void CSaveableObject::initClassList() {
 	ADDFN(CSweetBowl);
 	ADDFN(CTelevision);
 	ADDFN(CThirdClassCanal);
+	ADDFN(CThrowTVDownWell);
+	ADDFN(CUpLighter);
 	ADDFN(CWheelButton);
 	ADDFN(CWheelHotSpot);
 	ADDFN(CWheelSpin);
@@ -766,6 +805,7 @@ void CSaveableObject::initClassList() {
 	ADDFN(CParrotPerchHolder);
 	ADDFN(CParrotSuccUBus);
 	ADDFN(CParrotTrigger);
+	ADDFN(CPlayerMeetsParrot);
 	ADDFN(CPET);
 	ADDFN(CPETClass1);
 	ADDFN(CPETClass2);

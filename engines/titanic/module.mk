@@ -33,6 +33,7 @@ MODULE_OBJS := \
 	carry/hammer.o \
 	carry/head_piece.o \
 	carry/hose.o \
+	carry/hose_end.o \
 	carry/key.o \
 	carry/liftbot_head.o \
 	carry/long_stick.o \
@@ -42,6 +43,7 @@ MODULE_OBJS := \
 	carry/nose.o \
 	carry/note.o \
 	carry/parcel.o \
+	carry/perch.o \
 	carry/phonograph_cylinder.o \
 	carry/phonograph_ear.o \
 	carry/photograph.o \
@@ -151,11 +153,14 @@ MODULE_OBJS := \
 	game/little_lift_button.o \
 	game/long_stick_dispenser.o \
 	game/mail_man.o \
+	game/maitred_arm_holder.o \
 	game/missiveomat.o \
 	game/movie_tester.o \
+	game/music_system_lock.o \
 	game/musical_instrument.o \
 	game/navigation_computer.o \
 	game/no_nut_bowl.o \
+	game/nose_holder.o \
 	game/null_port_hole.o \
 	game/nut_replacer.o \
 	game/pet_controler.o \
@@ -170,6 +175,7 @@ MODULE_OBJS := \
 	game/record_phonograph_button.o \
 	game/replacement_ear.o \
 	game/reserved_table.o \
+	game/restaurant_cylinder_holder.o \
 	game/room_item.o \
 	game/sauce_dispensor.o \
 	game/search_point.o \
@@ -195,6 +201,7 @@ MODULE_OBJS := \
 	game/tow_parrot_nav.o \
 	game/throw_tv_down_well.o \
 	game/titania_still_control.o \
+	game/up_lighter.o \
 	game/wheel_button.o \
 	game/wheel_hotspot.o \
 	game/wheel_spin.o \

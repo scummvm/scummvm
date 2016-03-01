@@ -20,38 +20,24 @@
  *
  */
 
-#include "titanic/carry/hose.h"
+#include "titanic/carry/hose_end.h"
 
 namespace Titanic {
 
-CHoseStatics *CHose::_statics;
-
-void CHose::init() {
-	_statics = new CHoseStatics();
+CHoseEnd::CHoseEnd() : CHose() {
+	_string6 = "Connection refused by remote hose.";
 }
 
-void CHose::deinit() {
-	delete _statics;
-}
-
-CHose::CHose() : CCarry(),
-	_string6("Succ-U-Bus auxiliary hose attachment incompatible with sliding glass cover.") {
-}
-
-void CHose::save(SimpleFile *file, int indent) const {
+void CHoseEnd::save(SimpleFile *file, int indent) const {
 	file->writeNumberLine(1, indent);
-	file->writeNumberLine(_statics->_v1, indent);
-	file->writeQuotedLine(_statics->_v2, indent);
 	file->writeQuotedLine(_string6, indent);
-	CCarry::save(file, indent);
+	CHose::save(file, indent);
 }
 
-void CHose::load(SimpleFile *file) {
+void CHoseEnd::load(SimpleFile *file) {
 	file->readNumber();
-	_statics->_v1 = file->readNumber();
-	_statics->_v2 = file->readString();
 	_string6 = file->readString();
-	CCarry::load(file);
+	CHose::load(file);
 }
 
 } // End of namespace Titanic

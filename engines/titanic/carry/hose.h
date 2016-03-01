@@ -27,11 +27,20 @@
 
 namespace Titanic {
 
+struct CHoseStatics {
+	int _v1;
+	CString _v2;
+};
+
 class CHose : public CCarry {
-private:
+protected:
+	static CHoseStatics *_statics;
+
 	CString _string6;
 public:
 	CHose();
+	static void init();
+	static void deinit();
 
 	/**
 	 * Return the class name
