@@ -46,16 +46,22 @@ static const ADGameDescription gameDescriptions[] = {
 	FANGAME("Eidisi I", "299d1de4baccf1c66118396519953652", 180480),
 	FANGAME("Escape from School!", "a854be48d4af20126d18a9cad93a969b", 51840),
 	FANGAME("Exploration Zeta!", "b9fbb704017d7ea9613b0160f86527bb", 370944),
+	// Crash in console rendering on the first scene
+	FANGAME("Fantasy Quest", "599f0b2c7ecce65c39646c05f2c19c1b", 782848),
 	FANGAME("Lost Crystal", "4f21ba8ee64f8d655b9eeb1e3ffd50f7", 792064),
 	FANGAME("Magic Rings", "6e0d1dd561d3dad8f9a7a20ed1f09b16", 112000),
 	FANGAME("Midnight Snack", "346982a32fc701f53bb19771d72063d0", 69504),
 	FANGAME("Queen Quest", "730605d312efedb5e3ff108522fcac18", 59776),
 	// Crash in console rendering on the initial scene
 	FANGAME("Quest for the Dark Sword", "7e4e712d151f6c686f6024b0dedf5d34", 590720),
+	FANGAME("Quest for the Dark Sword", "308cf0fdfa129fa46b325b307f7e88c6", 590720), // Alteranative version
 	BIGGAME("raysmaze", "v1.5", "Ray's Maze1.5", "e5a3e25dddfffbed461bca3c26073117", 1437184),
 	BIGGAME("scepters", "", "Scepters", "b80bff315897776dda7689cdf829fab4", 360832),
 	// ??? problems with dog bitmap?
 	FANGAMEN("Space Adventure", "SpaceAdventure", "e5b0d8ad6d235ede2f08583342642dfa", 158720),
+	FANGAME("Star Trek", "2395856df8dbefe9c0609caa985edf73", 55296),
+	// Crash in bitmap drawing on the first scene
+	FANGAME("Strange Disappearance", "f9eba5b315853a5599927db2a73c87d3", 781312),
 	FANGAME("Time Bomb", "2df84b636237686b624e736a698a16c4", 66432),
 	// Invalid rect in scene "Access Tube 1"
 	FANGAMEN("The Phoenix v1.2", "The Phoenix", "7fa2a2ac740f22572516843922b7c630", 434560),
