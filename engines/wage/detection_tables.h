@@ -37,6 +37,8 @@ static const ADGameDescription gameDescriptions[] = {
 	// Problems with letter rendering
 	FANGAME("Canal District", "8856bc699a20fc5b7fc67accee12cac7", 658176),
 	BIGGAME("cantitoe", "", "Camp Cantitoe", "098aa5c11c58e1ef274a30a9e01b4755", 621440),
+	// Invalid rect in scene "FINALE"
+	FANGAME("Castle of Ert", "85f56731635e825e49a672c4fb0490dd", 205312),
 	FANGAME("Deep Angst", "635f62bbc569e72b03cab9107927d03d", 335232),
 	FANGAMEN("Dungeon World II", "DungeonWorld2", "e10c5e3cc17879c298b1551f33571b15", 234880),
 	// Polygons with ignored byte 1
@@ -54,9 +56,11 @@ static const ADGameDescription gameDescriptions[] = {
 	FANGAME("Time Bomb", "2df84b636237686b624e736a698a16c4", 66432),
 	// Invalid rect in scene "Access Tube 1"
 	FANGAMEN("The Phoenix v1.2", "The Phoenix", "7fa2a2ac740f22572516843922b7c630", 434560),
+	// Admission for on 3rd screen is messed up
 	FANGAME("The Tower", "75eba57a12ed181e07f34eaf6aa9d2c4", 568320),
 	// Doesn't go past first scene
 	BIGGAME("Twisted!", "", "Twisted! 1.6", "8ea8cc13d26d7975dc43ea7e6c193217", 992896),
+	FANGAME("Wishing Well", "3ee884d0d1a168d088cf2250d3a83c73", 105600),
 	FANGAME("ZikTuria", "e793155bed1a70fa2074a3fcd696b751", 54784),
 	FANGAME("Zoony", "e6cc8a914a4215dafbcce6315dd12cf5", 160256),
 
