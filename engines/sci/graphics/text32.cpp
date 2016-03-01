@@ -449,7 +449,8 @@ Common::Rect GfxText32::getTextSize(const Common::String &text, int16 maxWidth, 
 	// weird in the original engine. The initial result rectangle was actually
 	// a 1x1 rectangle (0, 0, 0, 0), which was then "fixed" after the main
 	// text size loop finished running by subtracting 1 from the right and
-	// bottom edges.
+	// bottom edges. Like other functions in SCI32, this has been converted
+	// to use exclusive rects with inclusive rounding.
 
 	Common::Rect result;
 
@@ -495,18 +496,18 @@ Common::Rect GfxText32::getTextSize(const Common::String &text, int16 maxWidth, 
 		}
 	} else {
 		result.right = getTextWidth(0, 10000);
+		// NOTE: In the original engine code, the bottom was not decremented
+		// by 1, which means that the rect was actually a pixel taller than
+		// the height of the font. This was not the case in the other branch,
+		// which decremented the bottom by 1 at the end of the loop.
 		result.bottom = _font->getHeight() + 1;
 	}
 
 	if (doScaling) {
-		// NOTE: The original code did some more complex stuff for edge
-		// rounding. The right edge was designed to always round down,
-		// and the bottom edge was designed to always round up. It seems
-		// we are able to get away with simpler rounding, but it is
-		// possible that there are still some edge cases here.
-		mul(result, Ratio(scriptWidth, _scaledWidth), Ratio(scriptHeight, _scaledHeight));
-		result.right += 1;
-		result.bottom += 1;
+		// NOTE: The original engine code also scaled top/left but these are
+		// always zero so there is no reason to do that.
+		result.right = ((result.right - 1) * scriptWidth + _scaledWidth - 1) / _scaledWidth + 1;
+		result.bottom = ((result.bottom - 1) * scriptHeight + _scaledHeight - 1) / _scaledHeight + 1;
 	}
 
 	return result;
