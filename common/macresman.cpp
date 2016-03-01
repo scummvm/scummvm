@@ -262,7 +262,7 @@ bool MacResManager::exists(const String &fileName) {
 	return false;
 }
 
-void MacResManager::listFiles(Array<String> &files, const String &pattern) {
+void MacResManager::listFiles(StringArray &files, const String &pattern) {
 	// Base names discovered so far.
 	typedef HashMap<String, bool, IgnoreCase_Hash, IgnoreCase_EqualTo> BaseNameSet;
 	BaseNameSet baseNames;

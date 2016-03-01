@@ -33,6 +33,7 @@
 #include "common/array.h"
 #include "common/fs.h"
 #include "common/str.h"
+#include "common/str-array.h"
 
 #ifndef COMMON_MACRESMAN_H
 #define COMMON_MACRESMAN_H
@@ -89,7 +90,7 @@ public:
 	 * @param pattern Pattern to match against. Taking String::matchPattern's
 	 *                format.
 	 */
-	static void listFiles(Array<String> &files, const String &pattern);
+	static void listFiles(StringArray &files, const String &pattern);
 
 	/**
 	 * Close the Mac data/resource fork pair.
