@@ -20,35 +20,24 @@
  *
  */
 
-#ifndef TITANIC_EMPTY_NUT_BOWL_H
-#define TITANIC_EMPTY_NUT_BOWL_H
-
-#include "titanic/core/background.h"
+#include "titanic/game/emma_control.h"
 
 namespace Titanic {
 
-class CEmptyNutBowl : public CGameObject {
-public:
-	int _value;
-public:
-	CEmptyNutBowl() : CGameObject(), _value(1) {}
+void CEmmaControl::save(SimpleFile *file, int indent) const {
+	file->writeNumberLine(1, indent);
+	file->writeQuotedLine(_wavFile1, indent);
+	file->writeQuotedLine(_wavFile2, indent);
 
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CEmptyNutBowl"; }
+	CBackground::save(file, indent);
+}
 
-	/**
-	 * Save the data for the class to file
-	 */
-	virtual void save(SimpleFile *file, int indent) const;
+void CEmmaControl::load(SimpleFile *file) {
+	file->readNumber();
+	_wavFile1 = file->readString();
+	_wavFile2 = file->readString();
 
-	/**
-	 * Load the data for the class from file
-	 */
-	virtual void load(SimpleFile *file);
-};
+	CBackground::load(file);
+}
 
 } // End of namespace Titanic
-
-#endif /* TITANIC_EMPTY_NUT_BOWL_H */

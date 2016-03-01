@@ -73,11 +73,23 @@
 #include "titanic/core/view_item.h"
 
 #include "titanic/game/announce.h"
+#include "titanic/game/arb_background.h"
+#include "titanic/game/arboretum_gate.h"
+#include "titanic/game/auto_animate.h"
 #include "titanic/game/belbot_get_light.h"
+#include "titanic/game/bomb.h"
 #include "titanic/game/bowl_unlocker.h"
+#include "titanic/game/bridge_view.h"
+#include "titanic/game/broken_pell_base.h"
+#include "titanic/game/cage.h"
+#include "titanic/game/captains_wheel.h"
 #include "titanic/game/cdrom.h"
 #include "titanic/game/cdrom_computer.h"
 #include "titanic/game/cdrom_tray.h"
+#include "titanic/game/cell_point_button.h"
+#include "titanic/game/chicken_dispensor.h"
+#include "titanic/game/close_broken_pel.h"
+#include "titanic/game/computer.h"
 #include "titanic/game/computer_screen.h"
 #include "titanic/game/cookie.h"
 #include "titanic/game/credits.h"
@@ -87,22 +99,45 @@
 #include "titanic/game/doorbot_home_handler.h"
 #include "titanic/game/drawer.h"
 #include "titanic/game/ear_sweet_bowl.h"
+#include "titanic/game/eject_phonograph_button.h"
+#include "titanic/game/emma_control.h"
 #include "titanic/game/empty_nut_bowl.h"
 #include "titanic/game/enter_exit_first_class_state.h"
+#include "titanic/game/games_console.h"
 #include "titanic/game/hammer_dispensor_button.h"
+#include "titanic/game/head_smash_event.h"
+#include "titanic/game/head_smash_lever.h"
+#include "titanic/game/lemon_dispensor.h"
 #include "titanic/game/light.h"
 #include "titanic/game/light_switch.h"
 #include "titanic/game/little_lift_button.h"
+#include "titanic/game/musical_instrument.h"
 #include "titanic/game/no_nut_bowl.h"
 #include "titanic/game/null_port_hole.h"
 #include "titanic/game/nut_replacer.h"
+#include "titanic/game/play_music_button.h"
+#include "titanic/game/play_on_act.h"
 #include "titanic/game/port_hole.h"
+#include "titanic/game/record_phonograph_button.h"
+#include "titanic/game/replacement_ear.h"
 #include "titanic/game/room_item.h"
+#include "titanic/game/sauce_dispensor.h"
+#include "titanic/game/season_background.h"
+#include "titanic/game/season_barrel.h"
+#include "titanic/game/seasonal_adjustment.h"
 #include "titanic/game/service_elevator_door.h"
+#include "titanic/game/service_elevator_window.h"
+#include "titanic/game/ship_setting.h"
+#include "titanic/game/speech_dispensor.h"
 #include "titanic/game/start_action.h"
+#include "titanic/game/stop_phonograph_button.h"
 #include "titanic/game/sub_glass.h"
 #include "titanic/game/sweet_bowl.h"
 #include "titanic/game/television.h"
+#include "titanic/game/third_class_canal.h"
+#include "titanic/game/wheel_button.h"
+#include "titanic/game/wheel_hotspot.h"
+#include "titanic/game/wheel_spin.h"
 #include "titanic/game/parrot/parrot_lobby_controller.h"
 #include "titanic/game/parrot/parrot_lobby_link_updater.h"
 #include "titanic/game/parrot/parrot_lobby_object.h"
@@ -128,7 +163,6 @@
 #include "titanic/game/sgt/sgt_restaurant_doors.h"
 #include "titanic/game/sgt/sgt_state_room.h"
 #include "titanic/game/sgt/sgt_upper_doors_sound.h"
-
 #include "titanic/gfx/act_button.h"
 #include "titanic/gfx/changes_season_button.h"
 #include "titanic/gfx/chev_left_off.h"
@@ -148,6 +182,13 @@
 #include "titanic/gfx/icon_nav_up.h"
 #include "titanic/gfx/keybrd_butt.h"
 #include "titanic/gfx/move_object_button.h"
+#include "titanic/gfx/music_control.h"
+#include "titanic/gfx/music_slider_pitch.h"
+#include "titanic/gfx/music_slider_speed.h"
+#include "titanic/gfx/music_switch.h"
+#include "titanic/gfx/music_switch_inversion.h"
+#include "titanic/gfx/music_switch_reverse.h"
+#include "titanic/gfx/music_voice_mute.h"
 #include "titanic/gfx/pet_mode_off.h"
 #include "titanic/gfx/pet_mode_on.h"
 #include "titanic/gfx/pet_mode_panel.h"
@@ -160,7 +201,6 @@
 #include "titanic/gfx/status_change_button.h"
 #include "titanic/gfx/st_button.h"
 #include "titanic/gfx/toggle_switch.h"
-
 #include "titanic/messages/messages.h"
 #include "titanic/messages/mouse_messages.h"
 #include "titanic/messages/pet_messages.h"
@@ -193,6 +233,13 @@
 #include "titanic/npcs/titania.h"
 
 #include "titanic/sound/auto_music_player.h"
+#include "titanic/sound/auto_music_player_base.h"
+#include "titanic/sound/auto_sound_player.h"
+#include "titanic/sound/background_sound_maker.h"
+#include "titanic/sound/music_player.h"
+#include "titanic/sound/seasonal_music_player.h"
+#include "titanic/sound/titania_speech.h"
+#include "titanic/sound/trigger_auto_music_player.h"
 
 namespace Titanic {
 
@@ -252,11 +299,23 @@ DEFFN(CTreeItem);
 DEFFN(CViewItem);
 
 DEFFN(CAnnounce);
+DEFFN(CArbBackground);
+DEFFN(CArboretumGate);
+DEFFN(CAutoAnimate);
 DEFFN(CBelbotGetLight);
 DEFFN(CBowlUnlocker);
+DEFFN(CBomb);
+DEFFN(CBridgeView);
+DEFFN(CBrokenPellBase)
+DEFFN(CCage);
+DEFFN(CCaptainsWheel);
 DEFFN(CCDROM);
 DEFFN(CCDROMComputer);
 DEFFN(CCDROMTray);
+DEFFN(CCellPointButton);
+DEFFN(CChickenDispensor);
+DEFFN(CCloseBrokenPel);
+DEFFN(CComputer);
 DEFFN(CCookie);
 DEFFN(CComputerScreen);
 DEFFN(CCredits);
@@ -265,22 +324,45 @@ DEFFN(CDeadArea);
 DEFFN(CDeskClickResponder);
 DEFFN(CDoorbotHomeHandler);
 DEFFN(CEarSweetBowl);
+DEFFN(CEjectPhonographButton);
+DEFFN(CEmmaControl);
 DEFFN(CEmptyNutBowl);
 DEFFN(CEnterExitFirstClassState);
+DEFFN(CGamesConsole);
 DEFFN(CHammerDispensorButton);
+DEFFN(CHeadSmashEvent);
+DEFFN(CHeadSmashLever);
+DEFFN(CLemonDispensor);
 DEFFN(CLight);
 DEFFN(CLightSwitch);
 DEFFN(CLittleLiftButton);
+DEFFN(CMusicalInstrument);
 DEFFN(CNoNutBowl);
 DEFFN(CNullPortHole);
 DEFFN(CNutReplacer);
+DEFFN(CPlayMusicButton);
+DEFFN(CPlayOnAct);
 DEFFN(CPortHole);
+DEFFN(CRecordPhonographButton);
+DEFFN(CReplacementEar);
 DEFFN(CRoomItem);
+DEFFN(CSauceDispensor);
+DEFFN(CSeasonBackground);
+DEFFN(CSeasonBarrel);
+DEFFN(CSeasonalAdjustment);
 DEFFN(CServiceElevatorDoor);
+DEFFN(CServiceElevatorWindow);
+DEFFN(CShipSetting);
+DEFFN(CSpeechDispensor);
 DEFFN(CStartAction);
+DEFFN(CStopPhonographButton);
 DEFFN(CSUBGlass);
 DEFFN(CSweetBowl);
 DEFFN(CTelevision);
+DEFFN(CThirdClassCanal);
+DEFFN(CWheelButton);
+DEFFN(CWheelHotSpot);
+DEFFN(CWheelSpin);
 DEFFN(CParrotLobbyController);
 DEFFN(CParrotLobbyLinkUpdater);
 DEFFN(CParrotLobbyObject);
@@ -326,6 +408,14 @@ DEFFN(CIconNavRight);
 DEFFN(CIconNavUp);
 DEFFN(CKeybrdButt);
 DEFFN(CMoveObjectButton);
+DEFFN(CMusicControl);
+DEFFN(CMusicSlider);
+DEFFN(CMusicSliderPitch);
+DEFFN(CMusicSliderSpeed);
+DEFFN(CMusicSwitch);
+DEFFN(CMusicSwitchInversion);
+DEFFN(CMusicSwitchReverse);
+DEFFN(CMusicVoiceMute);
 DEFFN(CPetModeOff);
 DEFFN(CPetModeOn);
 DEFFN(CPetModePanel);
@@ -539,8 +629,14 @@ DEFFN(CStarlings);
 DEFFN(CSummonBots);
 DEFFN(CSuccUBus);
 DEFFN(CTitania);
-
 DEFFN(CAutoMusicPlayer);
+DEFFN(CAutoMusicPlayerBase);
+DEFFN(CAutoSoundPlayer);
+DEFFN(CBackgroundSoundMaker);
+DEFFN(CMusicPlayer);
+DEFFN(CSeasonalMusicPlayer);
+DEFFN(CTitaniaSpeech);
+DEFFN(CTriggerAutoMusicPlayer);
 
 void CSaveableObject::initClassList() {
 	_classList = new Common::HashMap<Common::String, CreateFunction>();
@@ -594,12 +690,24 @@ void CSaveableObject::initClassList() {
 	ADDFN(CViewItem);
 
 	ADDFN(CAnnounce);
+	ADDFN(CArbBackground);
+	ADDFN(CArboretumGate);
+	ADDFN(CAutoAnimate);
 	ADDFN(CBelbotGetLight);
+	ADDFN(CBomb);
 	ADDFN(CBowlUnlocker);
+	ADDFN(CBridgeView);
+	ADDFN(CBrokenPellBase);
+	ADDFN(CCage);
+	ADDFN(CCaptainsWheel);
 	ADDFN(CCDROM);
 	ADDFN(CCDROMComputer);
 	ADDFN(CCDROMTray);
+	ADDFN(CCellPointButton);
+	ADDFN(CChickenDispensor);
 	ADDFN(CComputerScreen);
+	ADDFN(CCloseBrokenPel);
+	ADDFN(CComputer);
 	ADDFN(CCookie);
 	ADDFN(CCredits);
 	ADDFN(CCreditsButton);
@@ -608,25 +716,46 @@ void CSaveableObject::initClassList() {
 	ADDFN(CDoorbotHomeHandler);
 	ADDFN(CDropTarget);
 	ADDFN(CEarSweetBowl);
+	ADDFN(CEjectPhonographButton);
+	ADDFN(CEmmaControl);
 	ADDFN(CEmptyNutBowl);
 	ADDFN(CEnterExitFirstClassState);
+	ADDFN(CGamesConsole);
 	ADDFN(CHammerDispensorButton);
+	ADDFN(CHeadSmashEvent);
+	ADDFN(CHeadSmashLever);
+	ADDFN(CLemonDispensor);
 	ADDFN(CLight);
 	ADDFN(CLightSwitch);
 	ADDFN(CLittleLiftButton);
+	ADDFN(CMusicalInstrument);
 	ADDFN(CNoNutBowl);
 	ADDFN(CNullPortHole);
 	ADDFN(CNutReplacer);
 	ADDFN(CPETPosition);
+	ADDFN(CPlayMusicButton);
+	ADDFN(CPlayOnAct);
 	ADDFN(CPortHole);
+	ADDFN(CRecordPhonographButton);
+	ADDFN(CReplacementEar);
 	ADDFN(CRoomItem);
+	ADDFN(CSauceDispensor);
+	ADDFN(CSeasonBackground);
+	ADDFN(CSeasonBarrel);
+	ADDFN(CSeasonalAdjustment);
 	ADDFN(CServiceElevatorDoor);
-	ADDFN(CSGTStateRoom);
-	ADDFN(CSGTUpperDoorsSound);
+	ADDFN(CServiceElevatorWindow);
+	ADDFN(CShipSetting);
+	ADDFN(CSpeechDispensor);
 	ADDFN(CStartAction);
+	ADDFN(CStopPhonographButton);
 	ADDFN(CSUBGlass);
 	ADDFN(CSweetBowl);
 	ADDFN(CTelevision);
+	ADDFN(CThirdClassCanal);
+	ADDFN(CWheelButton);
+	ADDFN(CWheelHotSpot);
+	ADDFN(CWheelSpin);
 	ADDFN(CParrotLobbyController);
 	ADDFN(CParrotLobbyLinkUpdater);
 	ADDFN(CParrotLobbyObject);
@@ -672,6 +801,13 @@ void CSaveableObject::initClassList() {
 	ADDFN(CIconNavUp);
 	ADDFN(CKeybrdButt);
 	ADDFN(CMoveObjectButton);
+	ADDFN(CMusicControl);
+	ADDFN(CMusicSlider);
+	ADDFN(CMusicSliderPitch);
+	ADDFN(CMusicSliderSpeed);
+	ADDFN(CMusicSwitch);
+	ADDFN(CMusicSwitchInversion);
+	ADDFN(CMusicSwitchReverse);
 	ADDFN(CPetModeOff);
 	ADDFN(CPetModeOn);
 	ADDFN(CPetModePanel);
@@ -887,6 +1023,14 @@ void CSaveableObject::initClassList() {
 	ADDFN(CTitania);
 
 	ADDFN(CAutoMusicPlayer);
+	ADDFN(CAutoMusicPlayerBase);
+	ADDFN(CAutoSoundPlayer);
+	ADDFN(CBackgroundSoundMaker);
+	ADDFN(CMusicPlayer);
+	ADDFN(CSeasonalMusicPlayer);
+	ADDFN(CAutoMusicPlayer);
+	ADDFN(CTitaniaSpeech);
+	ADDFN(CTriggerAutoMusicPlayer);
 }
 
 void CSaveableObject::freeClassList() {

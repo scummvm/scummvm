@@ -20,35 +20,37 @@
  *
  */
 
-#ifndef TITANIC_EMPTY_NUT_BOWL_H
-#define TITANIC_EMPTY_NUT_BOWL_H
-
-#include "titanic/core/background.h"
+#include "titanic/game/captains_wheel.h"
 
 namespace Titanic {
 
-class CEmptyNutBowl : public CGameObject {
-public:
-	int _value;
-public:
-	CEmptyNutBowl() : CGameObject(), _value(1) {}
+CCaptainsWheel::CCaptainsWheel() : CBackground(),
+	_fieldE0(0), _fieldE4(0), _fieldE8(0), _fieldEC(0),
+	_fieldF0(0), _fieldF4(0) {
+}
 
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CEmptyNutBowl"; }
+void CCaptainsWheel::save(SimpleFile *file, int indent) const {
+	file->writeNumberLine(1, indent);
+	file->writeNumberLine(_fieldE0, indent);
+	file->writeNumberLine(_fieldE4, indent);
+	file->writeNumberLine(_fieldE8, indent);
+	file->writeNumberLine(_fieldEC, indent);
+	file->writeNumberLine(_fieldF0, indent);
+	file->writeNumberLine(_fieldF4, indent);
 
-	/**
-	 * Save the data for the class to file
-	 */
-	virtual void save(SimpleFile *file, int indent) const;
+	CBackground::save(file, indent);
+}
 
-	/**
-	 * Load the data for the class from file
-	 */
-	virtual void load(SimpleFile *file);
-};
+void CCaptainsWheel::load(SimpleFile *file) {
+	file->readNumber();
+	_fieldE0 = file->readNumber();
+	_fieldE4 = file->readNumber();
+	_fieldE8 = file->readNumber();
+	_fieldEC = file->readNumber();
+	_fieldF0 = file->readNumber();
+	_fieldF4 = file->readNumber();
+
+	CBackground::load(file);
+}
 
 } // End of namespace Titanic
-
-#endif /* TITANIC_EMPTY_NUT_BOWL_H */

@@ -20,35 +20,32 @@
  *
  */
 
-#ifndef TITANIC_EMPTY_NUT_BOWL_H
-#define TITANIC_EMPTY_NUT_BOWL_H
-
-#include "titanic/core/background.h"
+#include "titanic/game/arb_background.h"
 
 namespace Titanic {
 
-class CEmptyNutBowl : public CGameObject {
-public:
-	int _value;
-public:
-	CEmptyNutBowl() : CGameObject(), _value(1) {}
+CArbBackground::CArbBackground() : CBackground(),
+	_fieldE0(0), _fieldE4(61), _fieldE8(62), _fieldEC(118) {
+}
 
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CEmptyNutBowl"; }
+void CArbBackground::save(SimpleFile *file, int indent) const {
+	file->writeNumberLine(1, indent);
+	file->writeNumberLine(_fieldE0, indent);
+	file->writeNumberLine(_fieldE4, indent);
+	file->writeNumberLine(_fieldE8, indent);
+	file->writeNumberLine(_fieldEC, indent);
 
-	/**
-	 * Save the data for the class to file
-	 */
-	virtual void save(SimpleFile *file, int indent) const;
+	CBackground::save(file, indent);
+}
 
-	/**
-	 * Load the data for the class from file
-	 */
-	virtual void load(SimpleFile *file);
-};
+void CArbBackground::load(SimpleFile *file) {
+	file->readNumber();
+	_fieldE0 = file->readNumber();
+	_fieldE4 = file->readNumber();
+	_fieldE8 = file->readNumber();
+	_fieldEC = file->readNumber();
+
+	CBackground::load(file);
+}
 
 } // End of namespace Titanic
-
-#endif /* TITANIC_EMPTY_NUT_BOWL_H */

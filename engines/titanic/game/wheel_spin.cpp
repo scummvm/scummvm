@@ -20,35 +20,20 @@
  *
  */
 
-#ifndef TITANIC_EMPTY_NUT_BOWL_H
-#define TITANIC_EMPTY_NUT_BOWL_H
-
-#include "titanic/core/background.h"
+#include "titanic/game/wheel_spin.h"
 
 namespace Titanic {
 
-class CEmptyNutBowl : public CGameObject {
-public:
-	int _value;
-public:
-	CEmptyNutBowl() : CGameObject(), _value(1) {}
+void CWheelSpin::save(SimpleFile *file, int indent) const {
+	file->writeNumberLine(1, indent);
+	file->writeNumberLine(_value, indent);
+	CBackground::save(file, indent);
+}
 
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CEmptyNutBowl"; }
-
-	/**
-	 * Save the data for the class to file
-	 */
-	virtual void save(SimpleFile *file, int indent) const;
-
-	/**
-	 * Load the data for the class from file
-	 */
-	virtual void load(SimpleFile *file);
-};
+void CWheelSpin::load(SimpleFile *file) {
+	file->readNumber();
+	_value = file->readNumber();
+	CBackground::load(file);
+}
 
 } // End of namespace Titanic
-
-#endif /* TITANIC_EMPTY_NUT_BOWL_H */

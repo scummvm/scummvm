@@ -20,23 +20,56 @@
  *
  */
 
-#ifndef TITANIC_EMPTY_NUT_BOWL_H
-#define TITANIC_EMPTY_NUT_BOWL_H
+#ifndef TITANIC_ARBORETUM_GATE_H
+#define TITANIC_ARBORETUM_GATE_H
 
 #include "titanic/core/background.h"
 
 namespace Titanic {
 
-class CEmptyNutBowl : public CGameObject {
+class CArboretumGate : public CBackground {
 public:
-	int _value;
+	static int _v1;
+	static int _v2;
+	static int _v3;
 public:
-	CEmptyNutBowl() : CGameObject(), _value(1) {}
+	int _fieldE0;
+	CString _string1;
+	int _fieldE8;
+	int _fieldEC;
+	int _fieldF0;
+	int _fieldF4;
+	int _fieldF8;
+	int _fieldFC;
+	int _field100;
+	int _field104;
+	int _field108;
+	int _field10C;
+	int _field110;
+	int _field114;
+	int _field118;
+	int _field11C;
+	int _field120;
+	int _field124;
+	int _field128;
+	int _field12C;
+	int _field130;
+	int _field134;
+	int _field138;
+	int _field13C;
+	int _field140;
+	int _field144;
+	int _field148;
+	int _field14C;
+	int _field150;
+	CString _string2;
+public:
+	CArboretumGate();
 
 	/**
 	 * Return the class name
 	 */
-	virtual const char *getClassName() const { return "CEmptyNutBowl"; }
+	virtual const char *getClassName() const { return "CArboretumGate"; }
 
 	/**
 	 * Save the data for the class to file
@@ -51,4 +84,4 @@ public:
 
 } // End of namespace Titanic
 
-#endif /* TITANIC_EMPTY_NUT_BOWL_H */
+#endif /* TITANIC_ARBORETUM_GATE_H */

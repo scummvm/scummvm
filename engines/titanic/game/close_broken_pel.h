@@ -20,23 +20,21 @@
  *
  */
 
-#ifndef TITANIC_EMPTY_NUT_BOWL_H
-#define TITANIC_EMPTY_NUT_BOWL_H
+#ifndef TITANIC_CLOSE_BROKEN_PEL_H
+#define TITANIC_CLOSE_BROKEN_PEL_H
 
 #include "titanic/core/background.h"
 
 namespace Titanic {
 
-class CEmptyNutBowl : public CGameObject {
+class CCloseBrokenPel : public CBackground {
 public:
-	int _value;
+	CString _string3;
 public:
-	CEmptyNutBowl() : CGameObject(), _value(1) {}
-
 	/**
 	 * Return the class name
 	 */
-	virtual const char *getClassName() const { return "CEmptyNutBowl"; }
+	virtual const char *getClassName() const { return "CCloseBrokenPel"; }
 
 	/**
 	 * Save the data for the class to file
@@ -51,4 +49,4 @@ public:
 
 } // End of namespace Titanic
 
-#endif /* TITANIC_EMPTY_NUT_BOWL_H */
+#endif /* TITANIC_CLOSE_BROKEN_PEL_H */

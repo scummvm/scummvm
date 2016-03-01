@@ -74,6 +74,10 @@ MODULE_OBJS := \
 	core/view_item.o \
 	game/announce.o \
 	game/annoy_barbot.o \
+	game/arb_background.o \
+	game/arboretum_gate.o \
+	game/auto_animate.o \
+	game/bomb.o \
 	game/bar_menu.o \
 	game/bar_menu_button.o \
 	game/bar_bell.o \
@@ -82,14 +86,22 @@ MODULE_OBJS := \
 	game/bowl_unlocker.o \
 	game/brain_slot.o \
 	game/bridge_door.o \
+	game/bridge_view.o \
+	game/broken_pell_base.o \
 	game/call_pellerator.o \
+	game/cage.o \
+	game/captains_wheel.o \
 	game/cdrom.o \
 	game/cdrom_computer.o \
 	game/cdrom_tray.o \
+	game/cell_point_button.o \
 	game/chev_code.o \
 	game/chev_panel.o \
 	game/chicken_cooler.o \
+	game/chicken_dispensor.o \
+	game/close_broken_pel.o \
 	game/cookie.o \
+	game/computer.o \
 	game/computer_screen.o \
 	game/credits.o \
 	game/credits_button.o \
@@ -99,7 +111,9 @@ MODULE_OBJS := \
 	game/doorbot_home_handler.o \
 	game/drawer.o \
 	game/ear_sweet_bowl.o \
+	game/eject_phonograph_button.o \
 	game/elevator_action_area.o \
+	game/emma_control.o \
 	game/empty_nut_bowl.o \
 	game/end_credit_text.o \
 	game/end_credits.o \
@@ -120,14 +134,18 @@ MODULE_OBJS := \
 	game/fan_increase.o \
 	game/fan_noises.o \
 	game/floor_indicator.o \
+	game/games_console.o \
 	game/get_lift_eye2.o \
 	game/glass_smasher.o \
 	game/gondolier_base.o \
 	game/hammer_clip.o \
 	game/head_slot.o \
+	game/head_smash_event.o \
+	game/head_smash_lever.o \
 	game/head_spinner.o \
 	game/idle_summoner.o \
 	game/leave_sec_class_state.o \
+	game/lemon_dispensor.o \
 	game/light.o \
 	game/light_switch.o \
 	game/little_lift_button.o \
@@ -135,6 +153,7 @@ MODULE_OBJS := \
 	game/mail_man.o \
 	game/missiveomat.o \
 	game/movie_tester.o \
+	game/musical_instrument.o \
 	game/navigation_computer.o \
 	game/no_nut_bowl.o \
 	game/null_port_hole.o \
@@ -145,24 +164,40 @@ MODULE_OBJS := \
 	game/pet_graphic.o \
 	game/phonograph_lid.o \
 	game/place_holder.o \
+	game/play_music_button.o \
+	game/play_on_act.o \
 	game/port_hole.o \
+	game/record_phonograph_button.o \
+	game/replacement_ear.o \
 	game/reserved_table.o \
 	game/room_item.o \
+	game/sauce_dispensor.o \
 	game/search_point.o \
+	game/season_background.o \
+	game/season_barrel.o \
+	game/seasonal_adjustment.o \
 	game/service_elevator_door.o \
+	game/service_elevator_window.o \
+	game/ship_setting.o \
 	game/ship_setting_button.o \
 	game/show_cell_points.o \
+	game/speech_dispensor.o \
 	game/splash_animation.o \
 	game/star_control.o \
 	game/starling_puret.o \
 	game/start_action.o \
+	game/stop_phonograph_button.o \
 	game/sub_glass.o \
 	game/sub_wrapper.o \
 	game/sweet_bowl.o \
 	game/television.o \
+	game/third_class_canal.o \
 	game/tow_parrot_nav.o \
 	game/throw_tv_down_well.o \
 	game/titania_still_control.o \
+	game/wheel_button.o \
+	game/wheel_hotspot.o \
+	game/wheel_spin.o \
 	game/parrot/parrot_lobby_controller.o \
 	game/parrot/parrot_lobby_link_updater.o \
 	game/parrot/parrot_lobby_object.o \
@@ -208,6 +243,7 @@ MODULE_OBJS := \
 	gfx/icon_nav_up.o \
 	gfx/keybrd_butt.o \
 	gfx/move_object_button.o \
+	gfx/music_control.o \
 	gfx/pet_mode_off.o \
 	gfx/pet_mode_on.o \
 	gfx/pet_mode_panel.o \

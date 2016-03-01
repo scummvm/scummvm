@@ -20,23 +20,23 @@
  *
  */
 
-#ifndef TITANIC_EMPTY_NUT_BOWL_H
-#define TITANIC_EMPTY_NUT_BOWL_H
+#ifndef TITANIC_GAMES_CONSOLE_H
+#define TITANIC_GAMES_CONSOLE_H
 
 #include "titanic/core/background.h"
 
 namespace Titanic {
 
-class CEmptyNutBowl : public CGameObject {
+class CGamesConsole : public CBackground {
 public:
-	int _value;
+	int _fieldE0;
 public:
-	CEmptyNutBowl() : CGameObject(), _value(1) {}
+	CGamesConsole() : CBackground(), _fieldE0(0) {}
 
 	/**
 	 * Return the class name
 	 */
-	virtual const char *getClassName() const { return "CEmptyNutBowl"; }
+	virtual const char *getClassName() const { return "CGamesConsole"; }
 
 	/**
 	 * Save the data for the class to file
@@ -51,4 +51,4 @@ public:
 
 } // End of namespace Titanic
 
-#endif /* TITANIC_EMPTY_NUT_BOWL_H */
+#endif /* TITANIC_GAMES_CONSOLE_H */

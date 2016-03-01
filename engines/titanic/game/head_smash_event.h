@@ -20,23 +20,19 @@
  *
  */
 
-#ifndef TITANIC_EMPTY_NUT_BOWL_H
-#define TITANIC_EMPTY_NUT_BOWL_H
+#ifndef TITANIC_HEAD_SMASH_EVENT_H
+#define TITANIC_HEAD_SMASH_EVENT_H
 
 #include "titanic/core/background.h"
 
 namespace Titanic {
 
-class CEmptyNutBowl : public CGameObject {
+class CHeadSmashEvent : public CBackground {
 public:
-	int _value;
-public:
-	CEmptyNutBowl() : CGameObject(), _value(1) {}
-
 	/**
 	 * Return the class name
 	 */
-	virtual const char *getClassName() const { return "CEmptyNutBowl"; }
+	virtual const char *getClassName() const { return "CHeadSmashEvent"; }
 
 	/**
 	 * Save the data for the class to file
@@ -51,4 +47,4 @@ public:
 
 } // End of namespace Titanic
 
-#endif /* TITANIC_EMPTY_NUT_BOWL_H */
+#endif /* TITANIC_HEAD_SMASH_EVENT_H */

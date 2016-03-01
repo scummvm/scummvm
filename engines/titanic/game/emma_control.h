@@ -20,23 +20,23 @@
  *
  */
 
-#ifndef TITANIC_EMPTY_NUT_BOWL_H
-#define TITANIC_EMPTY_NUT_BOWL_H
+#ifndef TITANIC_EMMA_CONTROL_H
+#define TITANIC_EMMA_CONTROL_H
 
 #include "titanic/core/background.h"
 
 namespace Titanic {
 
-class CEmptyNutBowl : public CGameObject {
+class CEmmaControl : public CBackground {
 public:
-	int _value;
+	CString _wavFile1, _wavFile2;
 public:
-	CEmptyNutBowl() : CGameObject(), _value(1) {}
+	CEmmaControl() : CBackground(), _wavFile1("b#39.wav"), _wavFile2("b#38.wav") {}
 
 	/**
 	 * Return the class name
 	 */
-	virtual const char *getClassName() const { return "CEmptyNutBowl"; }
+	virtual const char *getClassName() const { return "CEmmaControl"; }
 
 	/**
 	 * Save the data for the class to file
@@ -51,4 +51,4 @@ public:
 
 } // End of namespace Titanic
 
-#endif /* TITANIC_EMPTY_NUT_BOWL_H */
+#endif /* TITANIC_EMMA_CONTROL_H */

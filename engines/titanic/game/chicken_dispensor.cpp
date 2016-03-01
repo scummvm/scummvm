@@ -20,35 +20,29 @@
  *
  */
 
-#ifndef TITANIC_EMPTY_NUT_BOWL_H
-#define TITANIC_EMPTY_NUT_BOWL_H
-
-#include "titanic/core/background.h"
+#include "titanic/game/chicken_dispensor.h"
 
 namespace Titanic {
 
-class CEmptyNutBowl : public CGameObject {
-public:
-	int _value;
-public:
-	CEmptyNutBowl() : CGameObject(), _value(1) {}
+CChickenDispensor::CChickenDispensor() : CBackground(),
+	_fieldE0(0), _fieldE4(0), _fieldE8(0) {
+}
 
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CEmptyNutBowl"; }
+void CChickenDispensor::save(SimpleFile *file, int indent) const {
+	file->writeNumberLine(1, indent);
+	file->writeNumberLine(_fieldE0, indent);
+	file->writeNumberLine(_fieldE4, indent);
+	file->writeNumberLine(_fieldE8, indent);
+	CBackground::save(file, indent);
+}
 
-	/**
-	 * Save the data for the class to file
-	 */
-	virtual void save(SimpleFile *file, int indent) const;
+void CChickenDispensor::load(SimpleFile *file) {
+	file->readNumber();
+	_fieldE0 = file->readNumber();
+	_fieldE4 = file->readNumber();
+	_fieldE8 = file->readNumber();
 
-	/**
-	 * Load the data for the class from file
-	 */
-	virtual void load(SimpleFile *file);
-};
+	CBackground::load(file);
+}
 
 } // End of namespace Titanic
-
-#endif /* TITANIC_EMPTY_NUT_BOWL_H */

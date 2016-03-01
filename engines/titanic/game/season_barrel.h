@@ -20,23 +20,24 @@
  *
  */
 
-#ifndef TITANIC_EMPTY_NUT_BOWL_H
-#define TITANIC_EMPTY_NUT_BOWL_H
+#ifndef TITANIC_SEASON_BARREL_H
+#define TITANIC_SEASON_BARREL_H
 
 #include "titanic/core/background.h"
 
 namespace Titanic {
 
-class CEmptyNutBowl : public CGameObject {
+class CSeasonBarrel : public CBackground {
 public:
-	int _value;
+	int _fieldE0;
+	int _fieldE4;
 public:
-	CEmptyNutBowl() : CGameObject(), _value(1) {}
+	CSeasonBarrel() : CBackground(), _fieldE0(0), _fieldE4(7) {}
 
 	/**
 	 * Return the class name
 	 */
-	virtual const char *getClassName() const { return "CEmptyNutBowl"; }
+	virtual const char *getClassName() const { return "CSeasonBarrel"; }
 
 	/**
 	 * Save the data for the class to file
@@ -51,4 +52,4 @@ public:
 
 } // End of namespace Titanic
 
-#endif /* TITANIC_EMPTY_NUT_BOWL_H */
+#endif /* TITANIC_SEASON_BARREL_H */

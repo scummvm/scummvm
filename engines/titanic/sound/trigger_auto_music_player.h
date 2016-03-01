@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef TITANIC_AUTO_MUSIC_PLAYER_H
-#define TITANIC_AUTO_MUSIC_PLAYER_H
+#ifndef TITANIC_TRIGGER_AUTO_MUSIC_PLAYER_H
+#define TITANIC_TRIGGER_AUTO_MUSIC_PLAYER_H
 
 #include "titanic/core/game_object.h"
 
@@ -47,4 +47,4 @@ public:
 
 } // End of namespace Titanic
 
-#endif /* TITANIC_AUTO_MUSIC_PLAYER_H */
+#endif /* TITANIC_TRIGGER_AUTO_MUSIC_PLAYER_H */
