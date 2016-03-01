@@ -44,10 +44,13 @@ static const ADGameDescription gameDescriptions[] = {
 	FANGAME("Eidisi I", "299d1de4baccf1c66118396519953652", 180480),
 	FANGAME("Escape from School!", "a854be48d4af20126d18a9cad93a969b", 51840),
 	FANGAME("Exploration Zeta!", "b9fbb704017d7ea9613b0160f86527bb", 370944),
+	FANGAME("Lost Crystal", "4f21ba8ee64f8d655b9eeb1e3ffd50f7", 792064),
 	FANGAME("Magic Rings", "6e0d1dd561d3dad8f9a7a20ed1f09b16", 112000),
 	FANGAME("Midnight Snack", "346982a32fc701f53bb19771d72063d0", 69504),
 	FANGAME("Queen Quest", "730605d312efedb5e3ff108522fcac18", 59776),
 	BIGGAME("scepters", "", "Scepters", "b80bff315897776dda7689cdf829fab4", 360832),
+	// ??? problems with dog bitmap?
+	FANGAMEN("Space Adventure", "SpaceAdventure", "e5b0d8ad6d235ede2f08583342642dfa", 158720),
 	FANGAME("Time Bomb", "2df84b636237686b624e736a698a16c4", 66432),
 	// Invalid rect in scene "Access Tube 1"
 	FANGAMEN("The Phoenix v1.2", "The Phoenix", "7fa2a2ac740f22572516843922b7c630", 434560),
