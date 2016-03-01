@@ -596,7 +596,7 @@ int ResourceManager::addAppropriateSources() {
 
 #ifdef ENABLE_SCI32
 		// There can also be a "Patches" resource fork with patches
-		if (Common::File::exists("Patches"))
+		if (Common::MacResManager::exists("Patches"))
 			addSource(new MacResourceForkResourceSource("Patches", 100));
 	} else {
 		// SCI2.1-SCI3 file naming scheme
