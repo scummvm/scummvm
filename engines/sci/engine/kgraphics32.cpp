@@ -800,6 +800,8 @@ reg_t kPalVarySetPercent(EngineState *s, int argc, reg_t *argv) {
 	int16 percent = argc > 1 ? argv[1].toSint16() : 0;
 	// TODO: GK1 adds a third optional parameter here, at the end of chapter 1
 	// (during the sunset/sunrise sequence, the parameter is 1)
+	if (argc > 2)
+		warning("kPalVarySetPercent: third parameter passed: %d", argv[2].toSint16());
 	g_sci->_gfxPalette32->setVaryPercent(percent, time, -1, -1);
 	return NULL_REG;
 }
