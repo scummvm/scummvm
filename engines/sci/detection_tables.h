@@ -892,6 +892,15 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformDOS, 0, GUIO5(GUIO_NOSPEECH, GAMEOPTION_EGA_UNDITHER, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
 
+	// Hoyle 1 - English DOS (supplied by m_kiewitz)
+	// SCI interpreter version 0.000.530, Ver 1.000.113, 3x5.25"
+	{"hoyle1", "", {
+		{"resource.map", 0, "8cef06c93d17d96f44aacd5902d84b30", 2100},
+		{"resource.001", 0, "8f2dd70abe01112eca464cda818b5eb6", 98289},
+		{"resource.002", 0, "8f2dd70abe01112eca464cda818b5eb6", 197326},
+		AD_LISTEND},
+		Common::EN_ANY, Common::kPlatformDOS, 0, GUIO5(GUIO_NOSPEECH, GAMEOPTION_EGA_UNDITHER, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
+
 	// Hoyle 1 - English DOS (supplied by merkur in bug report #2719227)
 	// SCI interpreter version 0.000.530
 	{"hoyle1", "", {
