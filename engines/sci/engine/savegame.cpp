@@ -1081,8 +1081,13 @@ void gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 	// We MUST NOT delete all planes/screen items. At least Space Quest 6 has a few in memory like for example
 	// the options plane, which are not re-added and are in memory all the time right from the start of the
 	// game. Sierra SCI32 did not clear planes, only scripts cleared the ones inside planes::elements.
-	if (getSciVersion() >= SCI_VERSION_2)
-		g_sci->_gfxFrameout->syncWithScripts(false);
+	if (getSciVersion() >= SCI_VERSION_2) {
+		if (!s->_delayedRestoreFromLauncher) {
+			// Only do it, when we are restoring regulary and not from launcher
+			// As it could result in option planes etc. on the screen (happens in gk1)
+			g_sci->_gfxFrameout->syncWithScripts(false);
+		}
+	}
 #endif
 
 	s->reset(true);
@@ -1131,6 +1136,8 @@ void gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 
 	// signal restored game to game scripts
 	s->gameIsRestarting = GAMEISRESTARTING_RESTORE;
+
+	s->_delayedRestoreFromLauncher = false;
 }
 
 bool get_savegame_metadata(Common::SeekableReadStream *stream, SavegameMetadata *meta) {

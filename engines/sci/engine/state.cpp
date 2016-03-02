@@ -95,6 +95,7 @@ void EngineState::reset(bool isRestoring) {
 	// reset delayed restore game functionality
 	_delayedRestoreGame = false;
 	_delayedRestoreGameId = 0;
+	_delayedRestoreFromLauncher = false;
 
 	executionStackBase = 0;
 	_executionStackPosChanged = false;
