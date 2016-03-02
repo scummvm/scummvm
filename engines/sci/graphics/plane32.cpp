@@ -388,14 +388,14 @@ void Plane::calcLists(Plane &visiblePlane, const PlaneList &planeList, DrawList 
 		bool v81 = false;
 
 		for (RectList::size_type i = 0; i < eraseList.size(); ++i) {
-			Common::Rect *rect = eraseList[i];
+			const Common::Rect *rect = eraseList[i];
 
 			for (ScreenItemList::size_type j = 0; j < _screenItemList.size(); ++j) {
 				ScreenItem *item = _screenItemList[j];
 
 				if (j < _screenItemList.size() && item != nullptr) {
 					if (rect->intersects(item->_screenRect)) {
-						Common::Rect intersection = rect->findIntersectingRect(item->_screenRect);
+						const Common::Rect intersection = rect->findIntersectingRect(item->_screenRect);
 						if (!item->_deleted) {
 							if (encounteredPic) {
 								if (item->_celInfo.type == kCelTypePic) {
@@ -428,7 +428,7 @@ void Plane::calcLists(Plane &visiblePlane, const PlaneList &planeList, DrawList 
 		for (RectList::size_type i = 0; i < eraseList.size(); ++i) {
 			for (ScreenItemList::size_type j = 0; j < _screenItemList.size(); ++j) {
 				ScreenItem *item = _screenItemList[j];
-				if (j < _screenItemList.size() && item != nullptr && !item->_updated && !item->_deleted && !item->_created && eraseList[i]->intersects(item->_screenRect)) {
+				if (item != nullptr && !item->_updated && !item->_deleted && !item->_created && eraseList[i]->intersects(item->_screenRect)) {
 					drawList.add(item, eraseList[i]->findIntersectingRect(item->_screenRect));
 				}
 			}
@@ -511,7 +511,7 @@ void Plane::decrementScreenItemArrayCounts(Plane *visiblePlane, const bool force
 void Plane::filterDownEraseRects(DrawList &drawList, RectList &eraseList, RectList &transparentEraseList) const {
 	if (_type == kPlaneTypeTransparent) {
 		for (RectList::size_type i = 0; i < transparentEraseList.size(); ++i) {
-			Common::Rect *r = transparentEraseList[i];
+			const Common::Rect *r = transparentEraseList[i];
 			for (ScreenItemList::size_type j = 0; j < _screenItemList.size(); ++j) {
 				ScreenItem *item = _screenItemList[j];
 				if (item != nullptr) {
@@ -539,7 +539,7 @@ void Plane::filterDownEraseRects(DrawList &drawList, RectList &eraseList, RectLi
 				}
 
 				Common::Rect ptr[4];
-				Common::Rect *r2 = transparentEraseList[i];
+				const Common::Rect *r2 = transparentEraseList[i];
 				int count = splitRects(*r2, *r, ptr);
 				for (int k = count - 1; k >= 0; --k) {
 					transparentEraseList.add(ptr[k]);
@@ -554,7 +554,7 @@ void Plane::filterDownEraseRects(DrawList &drawList, RectList &eraseList, RectLi
 
 void Plane::filterUpDrawRects(DrawList &transparentDrawList, const DrawList &drawList) const {
 	for (DrawList::size_type i = 0; i < drawList.size(); ++i) {
-		Common::Rect &r = drawList[i]->rect;
+		const Common::Rect &r = drawList[i]->rect;
 
 		for (ScreenItemList::size_type j = 0; j < _screenItemList.size(); ++j) {
 			ScreenItem *item = _screenItemList[j];
@@ -569,7 +569,7 @@ void Plane::filterUpDrawRects(DrawList &transparentDrawList, const DrawList &dra
 
 void Plane::filterUpEraseRects(DrawList &drawList, RectList &eraseList) const {
 	for (RectList::size_type i = 0; i < eraseList.size(); ++i) {
-		Common::Rect &r = *eraseList[i];
+		const Common::Rect &r = *eraseList[i];
 		for (ScreenItemList::size_type j = 0; j < _screenItemList.size(); ++j) {
 			ScreenItem *item = _screenItemList[j];
 
@@ -595,7 +595,7 @@ void Plane::mergeToDrawList(const DrawList::size_type index, const Common::Rect 
 		r = *rects[i];
 
 		for (DrawList::size_type j = 0; j < drawList.size(); ++j) {
-			DrawItem *drawitem = drawList[j];
+			const DrawItem *drawitem = drawList[j];
 			if (item->_object == drawitem->screenItem->_object) {
 				if (drawitem->rect.contains(r)) {
 					rects.erase_at(i);
@@ -603,7 +603,7 @@ void Plane::mergeToDrawList(const DrawList::size_type index, const Common::Rect 
 				}
 
 				Common::Rect outRects[4];
-				int count = splitRects(r, drawitem->rect, outRects);
+				const int count = splitRects(r, drawitem->rect, outRects);
 				if (count != -1) {
 					for (int k = count - 1; k >= 0; --k) {
 						rects.add(outRects[k]);
@@ -633,14 +633,14 @@ void Plane::mergeToRectList(const Common::Rect &rect, RectList &rectList) const 
 		Common::Rect r = *temp[i];
 
 		for (RectList::size_type j = 0; j < rectList.size(); ++j) {
-			Common::Rect *innerRect = rectList[j];
+			const Common::Rect *innerRect = rectList[j];
 			if (innerRect->contains(r)) {
 				temp.erase_at(i);
 				break;
 			}
 
 			Common::Rect out[4];
-			int count = splitRects(r, *innerRect, out);
+			const int count = splitRects(r, *innerRect, out);
 			if (count != -1) {
 				for (int k = count - 1; k >= 0; --k) {
 					temp.add(out[k]);
