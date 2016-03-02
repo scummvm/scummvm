@@ -33,6 +33,7 @@
 #include "engines/util.h"
 
 #include "graphics/palette.h"
+#include "graphics/thumbnail.h"
 
 #include "adl/adl.h"
 #include "adl/display.h"
@@ -86,7 +87,7 @@ Common::Error AdlEngine::run() {
 
 	int saveSlot = ConfMan.getInt("save_slot");
 	if (saveSlot >= 0) {
-		if (!loadState(saveSlot))
+		if (loadGameState(saveSlot).getCode() != Common::kNoError)
 			error("Failed to load save game from slot %i", saveSlot);
 		_display->setCursorPos(Common::Point(0, 23));
 		_isRestoring = true;
@@ -297,11 +298,11 @@ void AdlEngine::doActions(const Command &command, byte noun, byte offset) {
 			++offset;
 			break;
 		case IDO_ACT_SAVE:
-			saveState(0);
+			saveGameState(0, "");
 			++offset;
 			break;
 		case IDO_ACT_LOAD:
-			loadState(0);
+			loadGameState(0);
 			++offset;
 			// Original engine continues processing here (?)
 			break;
@@ -528,13 +529,13 @@ void AdlEngine::showRoom() {
 	printMessage(curRoom().description, false);
 }
 
-bool AdlEngine::saveState(uint slot, const Common::String *description) {
+Common::Error AdlEngine::saveGameState(int slot, const Common::String &desc) {
 	Common::String fileName = Common::String::format("%s.s%02d", _targetName.c_str(), slot);
 	Common::OutSaveFile *outFile = getSaveFileManager()->openForSaving(fileName);
 
 	if (!outFile) {
 		warning("Failed to open file '%s'", fileName.c_str());
-		return false;
+		return Common::kUnknownError;
 	}
 
 	outFile->writeUint32BE(MKTAG('A', 'D', 'L', ':'));
@@ -542,8 +543,8 @@ bool AdlEngine::saveState(uint slot, const Common::String *description) {
 
 	char name[SAVEGAME_NAME_LEN] = { };
 
-	if (description)
-		strncpy(name, description->c_str(), sizeof(name) - 1);
+	if (!desc.empty())
+		strncpy(name, desc.c_str(), sizeof(name) - 1);
 	else {
 		Common::String defaultName("Save ");
 		defaultName += 'A' + slot;
@@ -551,6 +552,20 @@ bool AdlEngine::saveState(uint slot, const Common::String *description) {
 	}
 
 	outFile->write(name, sizeof(name));
+
+	TimeDate t;
+	g_system->getTimeAndDate(t);
+
+	outFile->writeUint16BE(t.tm_year);
+	outFile->writeByte(t.tm_mon);
+	outFile->writeByte(t.tm_mday);
+	outFile->writeByte(t.tm_hour);
+	outFile->writeByte(t.tm_min);
+
+	uint32 playTime = getTotalPlayTime();
+	outFile->writeUint32BE(playTime);
+
+	Graphics::saveThumbnail(*outFile);
 
 	outFile->writeByte(_state.room);
 	outFile->writeByte(_state.moves);
@@ -580,38 +595,45 @@ bool AdlEngine::saveState(uint slot, const Common::String *description) {
 	if (outFile->err()) {
 		delete outFile;
 		warning("Failed to save game '%s'", fileName.c_str());
-		return false;
+		return Common::kUnknownError;
 	}
 
 	delete outFile;
-	return true;
+	return Common::kNoError;
 }
 
-bool AdlEngine::loadState(uint slot) {
+Common::Error AdlEngine::loadGameState(int slot) {
 	Common::String fileName = Common::String::format("%s.s%02d", _targetName.c_str(), slot);
 	Common::InSaveFile *inFile = getSaveFileManager()->openForLoading(fileName);
 
 	if (!inFile) {
 		warning("Failed to open file '%s'", fileName.c_str());
-		return false;
+		return Common::kUnknownError;
 	}
 
 	if (inFile->readUint32BE() != MKTAG('A', 'D', 'L', ':')) {
 		warning("No header found in '%s'", fileName.c_str());
 		delete inFile;
-		return false;
+		return Common::kUnknownError;
 	}
 
 	byte saveVersion = inFile->readByte();
 	if (saveVersion != SAVEGAME_VERSION) {
 		warning("Save game version %i not supported", saveVersion);
 		delete inFile;
-		return false;
+		return Common::kUnknownError;
 	}
 
-	initState();
-
+	// Skip description
 	inFile->seek(SAVEGAME_NAME_LEN, SEEK_CUR);
+	// Skip save time
+	inFile->seek(6, SEEK_CUR);
+
+	uint32 playTime = inFile->readUint32BE();
+
+	Graphics::skipThumbnail(*inFile);
+
+	initState();
 
 	_state.room = inFile->readByte();
 	_state.moves = inFile->readByte();
@@ -649,7 +671,10 @@ bool AdlEngine::loadState(uint slot) {
 		error("Failed to load game '%s'", fileName.c_str());
 
 	delete inFile;
-	return true;
+
+	setTotalPlayTime(playTime);
+
+	return Common::kNoError;
 }
 
 Room &AdlEngine::room(uint i) {
@@ -928,22 +953,6 @@ void AdlEngine::delay(uint32 ms) {
 		g_system->updateScreen();
 		g_system->delayMillis(16);
 	}
-}
-
-Common::Error AdlEngine::loadGameState(int slot) {
-	if (loadState(slot)) {
-		_isRestoring = true;
-		return Common::kNoError;
-	}
-
-	return Common::kUnknownError;
-}
-
-Common::Error AdlEngine::saveGameState(int slot, const Common::String &desc) {
-	if (saveState(slot, &desc))
-		return Common::kNoError;
-
-	return Common::kUnknownError;
 }
 
 AdlEngine *AdlEngine::create(GameType type, OSystem *syst, const AdlGameDescription *gd) {

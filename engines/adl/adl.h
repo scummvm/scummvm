@@ -237,8 +237,6 @@ protected:
 
 private:
 	void printEngineMessage(EngineMessage);
-	bool saveState(uint slot, const Common::String *description = nullptr);
-	bool loadState(uint slot);
 	Common::String getTargetName() { return _targetName; }
 	byte convertKey(uint16 ascii);
 

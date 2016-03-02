@@ -23,6 +23,8 @@
 #include "common/system.h"
 #include "common/savefile.h"
 
+#include "graphics/thumbnail.h"
+
 #include "engines/advancedDetector.h"
 
 #include "adl/adl.h"
@@ -73,8 +75,10 @@ public:
 	}
 
 	bool hasFeature(MetaEngineFeature f) const;
-	int getMaximumSaveSlot() const { return 15; }
+	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const;
+	int getMaximumSaveSlot() const { return 'O' - 'A'; }
 	SaveStateList listSaves(const char *target) const;
+	void removeSaveState(const char *target, int slot) const;
 
 	bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *gd) const;
 };
@@ -83,10 +87,68 @@ bool AdlMetaEngine::hasFeature(MetaEngineFeature f) const {
 	switch(f) {
 	case kSupportsListSaves:
 	case kSupportsLoadingDuringStartup:
+	case kSupportsDeleteSave:
+	case kSavesSupportMetaInfo:
+	case kSavesSupportThumbnail:
+	case kSavesSupportCreationDate:
+	case kSavesSupportPlayTime:
 		return true;
 	default:
 		return false;
 	}
+}
+
+SaveStateDescriptor AdlMetaEngine::querySaveMetaInfos(const char *target, int slot) const {
+	Common::String fileName = Common::String::format("%s.s%02d", target, slot);
+	Common::InSaveFile *inFile = g_system->getSavefileManager()->openForLoading(fileName);
+
+	if (!inFile)
+		return SaveStateDescriptor();
+
+	if (inFile->readUint32BE() != MKTAG('A', 'D', 'L', ':')) {
+		delete inFile;
+		return SaveStateDescriptor();
+	}
+
+	byte saveVersion = inFile->readByte();
+	if (saveVersion != SAVEGAME_VERSION) {
+		delete inFile;
+		return SaveStateDescriptor();
+	}
+
+	char name[SAVEGAME_NAME_LEN] = { };
+	inFile->read(name, sizeof(name) - 1);
+	inFile->readByte();
+
+	if (inFile->eos() || inFile->err()) {
+		delete inFile;
+		return SaveStateDescriptor();
+	}
+
+	SaveStateDescriptor sd(slot, name);
+
+	int year = inFile->readUint16BE();
+	int month = inFile->readByte();
+	int day = inFile->readByte();
+	sd.setSaveDate(year + 1900, month + 1, day);
+
+	int hour = inFile->readByte();
+	int minutes = inFile->readByte();
+	sd.setSaveTime(hour, minutes);
+
+	uint32 playTime = inFile->readUint32BE();
+	sd.setPlayTime(playTime);
+
+	if (inFile->eos() || inFile->err()) {
+		delete inFile;
+		return SaveStateDescriptor();
+	}
+
+	Graphics::Surface *const thumbnail = Graphics::loadThumbnail(*inFile);
+	sd.setThumbnail(thumbnail);
+
+	delete inFile;
+	return sd;
 }
 
 SaveStateList AdlMetaEngine::listSaves(const char *target) const {
@@ -94,6 +156,7 @@ SaveStateList AdlMetaEngine::listSaves(const char *target) const {
 	Common::StringArray files = saveFileMan->listSavefiles(Common::String(target) + ".s##");
 
 	SaveStateList saveList;
+
 	for (uint i = 0; i < files.size(); ++i) {
 		const Common::String &fileName = files[i];
 		Common::InSaveFile *inFile = saveFileMan->openForLoading(fileName);
@@ -127,6 +190,11 @@ SaveStateList AdlMetaEngine::listSaves(const char *target) const {
 	// Sort saves based on slot number.
 	Common::sort(saveList.begin(), saveList.end(), SaveStateDescriptorSlotComparator());
 	return saveList;
+}
+
+void AdlMetaEngine::removeSaveState(const char *target, int slot) const {
+	Common::String fileName = Common::String::format("%s.s%02d", target, slot);
+	g_system->getSavefileManager()->removeSavefile(fileName);
 }
 
 bool AdlMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *gd) const {
