@@ -656,6 +656,12 @@ const SciWorkaroundEntry kNewWindow_workarounds[] = {
 };
 
 //    gameID,           room,script,lvl,          object-name, method-name, local-call-signature, index,                workaround
+const SciWorkaroundEntry kPalVarySetPercent_workarounds[] = {
+	{ GID_GK1,           370,   370,  0,        "graceComeOut", "changeState",              NULL,     0, { WORKAROUND_STILLCALL, 0 } }, // there's an extra parameter in GK1, when changing chapters. This extra parameter seems to be a bug or just unimplemented functionality, as there's no visible change from the original in the chapter change room
+	SCI_WORKAROUNDENTRY_TERMINATOR
+};
+
+//    gameID,           room,script,lvl,          object-name, method-name, local-call-signature, index,                workaround
 const SciWorkaroundEntry kReadNumber_workarounds[] = {
 	{ GID_CNICK_LAURABOW,100,   101,  0,          "dominoes.opt", "doit",                   NULL,     0, { WORKAROUND_STILLCALL, 0 } }, // When dominoes.opt is present, the game scripts call kReadNumber with an extra integer parameter - bug #6425
 	{ GID_HOYLE3,        100,   101,  0,          "dominoes.opt", "doit",                   NULL,     0, { WORKAROUND_STILLCALL, 0 } }, // When dominoes.opt is present, the game scripts call kReadNumber with an extra integer parameter - bug #6425
