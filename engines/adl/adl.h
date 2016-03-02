@@ -168,7 +168,7 @@ public:
 	virtual ~AdlEngine();
 
 	const AdlGameDescription *_gameDescription;
-	uint32 getFeatures() const;
+	bool hasFeature(EngineFeature f) const;
 	const char *getGameId() const;
 
 	static AdlEngine *create(GameType type, OSystem *syst, const AdlGameDescription *gd);
@@ -184,12 +184,14 @@ protected:
 	virtual void initState() = 0;
 	virtual void restartGame() = 0;
 	virtual uint getEngineMessage(EngineMessage msg) = 0;
+	bool canSaveGameStateCurrently();
+	bool canLoadGameStateCurrently();
 	Common::String readString(Common::ReadStream &stream, byte until = 0);
 	void printStrings(Common::SeekableReadStream &stream, int count = 1);
 	virtual void printMessage(uint idx, bool wait = true);
 	void wordWrap(Common::String &str);
 	void readCommands(Common::ReadStream &stream, Commands &commands);
-	bool checkCommand(const Command &command, byte verb, byte noun);
+	bool matchCommand(const Command &command, byte verb, byte noun, bool run = true);
 	bool doOneCommand(const Commands &commands, byte verb, byte noun);
 	void doAllCommands(const Commands &commands, byte verb, byte noun);
 	void doActions(const Command &command, byte noun, byte offset);
@@ -213,10 +215,14 @@ protected:
 	Common::String inputString(byte prompt = 0);
 	void delay(uint32 ms);
 	byte inputKey();
+	Common::Error loadGameState(int slot);
+	Common::Error saveGameState(int slot, const Common::String &desc);
 
 	Display *_display;
 	Parser *_parser;
-	bool _isRestarting;
+	bool _isRestarting, _isRestoring;
+	byte _saveVerb, _saveNoun, _restoreVerb, _restoreNoun;
+	bool _canSaveNow, _canRestoreNow;
 
 	Common::Array<Common::String> _strings;
 	Common::Array<Common::String> _messages;

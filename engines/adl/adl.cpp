@@ -43,11 +43,29 @@ AdlEngine::AdlEngine(OSystem *syst, const AdlGameDescription *gd) :
 		Engine(syst),
 		_gameDescription(gd),
 		_display(nullptr),
-		_isRestarting(false) {
+		_isRestarting(false),
+		_isRestoring(false),
+		_saveVerb(0),
+		_saveNoun(0),
+		_restoreVerb(0),
+		_restoreNoun(0),
+		_canSaveNow(false),
+		_canRestoreNow(false) {
 }
 
 AdlEngine::~AdlEngine() {
 	delete _display;
+}
+
+bool AdlEngine::hasFeature(EngineFeature f) const {
+	switch (f) {
+	case kSupportsLoadingDuringRuntime:
+	case kSupportsSavingDuringRuntime:
+	case kSupportsRTL:
+		return true;
+	default:
+		return false;
+	}
 }
 
 Common::Error AdlEngine::run() {
@@ -71,6 +89,7 @@ Common::Error AdlEngine::run() {
 		if (!loadState(saveSlot))
 			error("Failed to load save game from slot %i", saveSlot);
 		_display->setCursorPos(Common::Point(0, 23));
+		_isRestoring = true;
 	} else {
 		runIntro();
 		initState();
@@ -161,6 +180,16 @@ void AdlEngine::readCommands(Common::ReadStream &stream, Commands &commands) {
 
 		if (stream.eos() || stream.err())
 			error("Failed to read commands");
+
+		if (command.numCond == 0 && command.script[0] == IDO_ACT_SAVE) {
+			_saveVerb = command.verb;
+			_saveNoun = command.noun;
+		}
+
+		if (command.numCond == 0 && command.script[0] == IDO_ACT_LOAD) {
+			_restoreVerb = command.verb;
+			_restoreNoun = command.noun;
+		}
 
 		commands.push_back(command);
 	}
@@ -278,7 +307,15 @@ void AdlEngine::doActions(const Command &command, byte noun, byte offset) {
 			break;
 		case IDO_ACT_RESTART: {
 			_display->printString(_strings[IDI_STR_PLAY_AGAIN]);
+
+			// We allow restoring via GMM here
+			_canRestoreNow = true;
 			Common::String input = inputString();
+			_canRestoreNow = false;
+
+			if (_isRestoring)
+				return;
+
 			if (input.size() == 0 || input[0] != APPLECHAR('N')) {
 				_isRestarting = true;
 				_display->clear(0x00);
@@ -341,7 +378,7 @@ void AdlEngine::doActions(const Command &command, byte noun, byte offset) {
 	}
 }
 
-bool AdlEngine::checkCommand(const Command &command, byte verb, byte noun) {
+bool AdlEngine::matchCommand(const Command &command, byte verb, byte noun, bool run) {
 	if (command.room != IDI_NONE && command.room != _state.room)
 		return false;
 
@@ -384,7 +421,8 @@ bool AdlEngine::checkCommand(const Command &command, byte verb, byte noun) {
 		}
 	}
 
-	doActions(command, noun, offset);
+	if (run)
+		doActions(command, noun, offset);
 
 	return true;
 }
@@ -395,7 +433,7 @@ bool AdlEngine::doOneCommand(const Commands &commands, byte verb, byte noun) {
 	Commands::const_iterator cmd;
 
 	for (cmd = commands.begin(); cmd != commands.end(); ++cmd)
-		if (checkCommand(*cmd, verb, noun))
+		if (matchCommand(*cmd, verb, noun))
 			return true;
 
 	return false;
@@ -403,12 +441,41 @@ bool AdlEngine::doOneCommand(const Commands &commands, byte verb, byte noun) {
 
 void AdlEngine::doAllCommands(const Commands &commands, byte verb, byte noun) {
 	Commands::const_iterator cmd;
+	bool oldIsRestoring = _isRestoring;
 
 	for (cmd = commands.begin(); cmd != commands.end(); ++cmd) {
-		checkCommand(*cmd, verb, noun);
-		if (_isRestarting)
-			return;
+		matchCommand(*cmd, verb, noun);
+
+		// We assume no restarts happen in this command group. This
+		// simplifies enabling GMM savegame loading on the restart
+		// prompt.
+		if (_isRestarting || _isRestoring != oldIsRestoring)
+			error("Unexpected restart action encountered");
 	}
+}
+
+bool AdlEngine::canSaveGameStateCurrently() {
+	if (!_canSaveNow)
+		return false;
+
+	Commands::const_iterator cmd;
+
+	// Here we check whether or not the game currently accepts the command
+	// "SAVE GAME". This prevents saving via the GMM in situations where
+	// it wouldn't otherwise be possible to do so.
+	for (cmd = _roomCommands.begin(); cmd != _roomCommands.end(); ++cmd) {
+		if (matchCommand(*cmd, _saveVerb, _saveNoun, false)) {
+			if (cmd->verb != _saveVerb || cmd->noun != _saveNoun)
+				return false;
+			return cmd->numCond == 0 && cmd->script[0] == IDO_ACT_SAVE;
+		}
+	}
+
+	return false;
+}
+
+bool AdlEngine::canLoadGameStateCurrently() {
+	return _canRestoreNow;
 }
 
 void AdlEngine::clearScreen() {
@@ -654,7 +721,7 @@ Common::String AdlEngine::getLine() {
 	while (1) {
 		Common::String line = inputString(APPLECHAR('?'));
 
-		if (shouldQuit())
+		if (shouldQuit() || _isRestoring)
 			return "";
 
 		if ((byte)line[0] == ('\r' | 0x80)) {
@@ -703,7 +770,7 @@ void AdlEngine::getInput(uint &verb, uint &noun) {
 		_display->printString(getEngineString(IDI_STR_ENTER_COMMAND));
 		Common::String line = getLine();
 
-		if (shouldQuit())
+		if (shouldQuit() || _isRestoring)
 			return;
 
 		uint index = 0;
@@ -755,7 +822,7 @@ Common::String AdlEngine::inputString(byte prompt) {
 	while (1) {
 		byte b = inputKey();
 
-		if (g_engine->shouldQuit())
+		if (g_engine->shouldQuit() || _isRestoring)
 			return 0;
 
 		if (b == 0)
@@ -805,7 +872,7 @@ byte AdlEngine::inputKey() {
 
 	_display->showCursor(true);
 
-	while (!g_engine->shouldQuit() && key == 0) {
+	while (!g_engine->shouldQuit() && !_isRestoring && key == 0) {
 		Common::Event event;
 		if (ev->pollEvent(event)) {
 			if (event.type != Common::EVENT_KEYDOWN)
@@ -861,6 +928,22 @@ void AdlEngine::delay(uint32 ms) {
 		g_system->updateScreen();
 		g_system->delayMillis(16);
 	}
+}
+
+Common::Error AdlEngine::loadGameState(int slot) {
+	if (loadState(slot)) {
+		_isRestoring = true;
+		return Common::kNoError;
+	}
+
+	return Common::kUnknownError;
+}
+
+Common::Error AdlEngine::saveGameState(int slot, const Common::String &desc) {
+	if (saveState(slot, &desc))
+		return Common::kNoError;
+
+	return Common::kUnknownError;
 }
 
 AdlEngine *AdlEngine::create(GameType type, OSystem *syst, const AdlGameDescription *gd) {
