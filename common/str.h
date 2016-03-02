@@ -46,6 +46,17 @@ namespace Common {
 class String {
 public:
 	static const uint32 npos = 0xFFFFFFFF;
+
+	typedef char          value_type;
+	/**
+	 * Unsigned version of the underlying type. This can be used to cast
+	 * individual string characters to bigger integer types without sign
+	 * extension happening.
+	 */
+	typedef unsigned char unsigned_type;
+	typedef char *        iterator;
+	typedef const char *  const_iterator;
+
 protected:
 	/**
 	 * The size of the internal storage. Increasing this means less heap
@@ -222,6 +233,38 @@ public:
 	void trim();
 
 	uint hash() const;
+	 
+	/**@{
+	 * Functions to replace some amount of chars with chars from some other string.
+	 *
+	 * @note The implementation follows that of the STL's std::string:
+	 *       http://www.cplusplus.com/reference/string/string/replace/        
+	 *
+	 * @param pos Starting position for the replace in the original string.
+	 * @param count Number of chars to replace from the original string.
+	 * @param str Source of the new chars.
+	 * @param posOri Same as pos
+	 * @param countOri Same as count
+	 * @param posDest Initial position to read str from.
+	 * @param countDest Number of chars to read from str. npos by default.
+	 */ 
+	// Replace 'count' bytes, starting from 'pos' with str.
+	void replace(uint32 pos, uint32 count, const String &str);
+	// The same as above, but accepts a C-like array of characters.
+	void replace(uint32 pos, uint32 count, const char *str);
+	// Replace the characters in [begin, end) with str._str.
+	void replace(iterator begin, iterator end, const String &str);
+	// Replace the characters in [begin, end) with str.
+	void replace(iterator begin, iterator end, const char *str);
+	// Replace _str[posOri, posOri + countOri) with
+	// str._str[posDest, posDest + countDest)
+	void replace(uint32 posOri, uint32 countOri, const String &str,
+					uint32 posDest, uint32 countDest);
+	// Replace _str[posOri, posOri + countOri) with
+	// str[posDest, posDest + countDest)
+	void replace(uint32 posOri, uint32 countOri, const char *str,
+					uint32 posDest, uint32 countDest);
+	/**@}*/ 
 
 	/**
 	 * Print formatted data into a String object. Similar to sprintf,
@@ -238,15 +281,6 @@ public:
 	static String vformat(const char *fmt, va_list args);
 
 public:
-	typedef char          value_type;
-	/**
-	 * Unsigned version of the underlying type. This can be used to cast
-	 * individual string characters to bigger integer types without sign
-	 * extension happening.
-	 */
-	typedef unsigned char unsigned_type;
-	typedef char *        iterator;
-	typedef const char *  const_iterator;
 
 	iterator begin() {
 		// Since the user could potentially
