@@ -427,7 +427,7 @@ void HiRes1Engine::printMessage(uint idx, bool wait) {
 	case IDI_HR1_MSG_DONT_HAVE_IT:
 		_display->printString(_strings[IDI_HR1_STR_DONT_HAVE_IT]);
 		return;
-	case IDI_MSG_DONT_UNDERSTAND:
+	case IDI_HR1_MSG_DONT_UNDERSTAND:
 		_display->printString(_strings[IDI_HR1_STR_DONT_UNDERSTAND]);
 		return;
 	case IDI_HR1_MSG_GETTING_DARK:
