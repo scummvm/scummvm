@@ -27,8 +27,9 @@
 
 #if !USE_FORCED_GLES
 
-#include "common/str.h"
 #include "common/singleton.h"
+#include "common/hash-str.h"
+#include "common/ptr.h"
 
 namespace OpenGL {
 
@@ -36,6 +37,62 @@ enum {
 	kPositionAttribLocation = 0,
 	kTexCoordAttribLocation = 1,
 	kColorAttribLocation    = 2
+};
+
+/**
+ * A generic uniform value interface for a shader program.
+ */
+class ShaderUniformValue {
+public:
+	virtual ~ShaderUniformValue() {}
+
+	/**
+	 * Setup the the value to the given location.
+	 *
+	 * @param location Location of the uniform.
+	 */
+	virtual void set(GLint location) const = 0;
+};
+
+/**
+ * Integer value for a shader uniform.
+ */
+class ShaderUniformInteger : public ShaderUniformValue {
+public:
+	ShaderUniformInteger(GLint value) : _value(value) {}
+
+	virtual void set(GLint location) const override;
+
+private:
+	const GLint _value;
+};
+
+/**
+ * Float value for a shader uniform.
+ */
+class ShaderUniformFloat : public ShaderUniformValue {
+public:
+	ShaderUniformFloat(GLfloat value) : _value(value) {}
+
+	virtual void set(GLint location) const override;
+
+private:
+	const GLfloat _value;
+};
+
+/**
+ * 4x4 Matrix value for a shader uniform.
+ */
+class ShaderUniformMatrix44 : public ShaderUniformValue {
+public:
+	ShaderUniformMatrix44(const GLfloat *mat44) {
+		memcpy(_matrix, mat44, sizeof(_matrix));
+	}
+
+	virtual void set(GLint location) const override;
+
+private:
+	GLfloat _matrix[4*4];
 };
 
 class Shader {
@@ -47,7 +104,8 @@ public:
 	 * Destroy the shader program.
 	 *
 	 * This keeps the vertex and fragment shader sources around and thus
-	 * allows for recreating the shader on context recreation.
+	 * allows for recreating the shader on context recreation. It also keeps
+	 * the uniform state around.
 	 */
 	void destroy();
 
@@ -60,10 +118,13 @@ public:
 
 	/**
 	 * Make shader active.
-	 *
-	 * @param projectionMatrix Projection matrix to use.
 	 */
-	void activate(const GLfloat *projectionMatrix);
+	void activate();
+
+	/**
+	 * Make shader inactive.
+	 */
+	void deactivate();
 
 	/**
 	 * Return location for uniform with given name.
@@ -76,12 +137,24 @@ public:
 	/**
 	 * Bind value to uniform.
 	 *
-	 * Note: this only works when the shader is actived by activate.
-	 *
-	 * @param location Location of the uniform.
-	 * @param value    The value to be set.
+	 * @param name  The name of the uniform to be set.
+	 * @param value The value to be set.
+	 * @return 'false' on error (i.e. uniform unknown or otherwise),
+	 *         'true' otherwise.
 	 */
-	void setUniformI(GLint location, GLint value);
+	bool setUniform(const Common::String &name, ShaderUniformValue *value);
+
+	/**
+	 * Bind integer value to uniform.
+	 *
+	 * @param name  The name of the uniform to be set.
+	 * @param value The value to be set.
+	 * @return 'false' on error (i.e. uniform unknown or otherwise),
+	 *         'true' otherwise.
+	 */
+	bool setUniform1I(const Common::String &name, GLint value) {
+		return setUniform(name, new ShaderUniformInteger(value));
+	}
 protected:
 	/**
 	 * Vertex shader sources.
@@ -94,19 +167,59 @@ protected:
 	const Common::String _fragment;
 
 	/**
+	 * Whether the shader is active or not.
+	 */
+	bool _isActive;
+
+	/**
 	 * Shader program handle.
 	 */
 	GLprogram _program;
 
 	/**
-	 * Location of the matrix uniform in the shader program.
+	 * A uniform descriptor.
+	 *
+	 * This stores the state of a shader uniform. The state is made up of the
+	 * uniform location, whether the state was altered since last set, and the
+	 * value of the uniform.
 	 */
-	GLint _projectionLocation;
+	struct Uniform {
+		Uniform() : location(-1), altered(false), value() {}
+		Uniform(GLint loc, ShaderUniformValue *val)
+		    : location(loc), altered(true), value(val) {}
+
+		/**
+		 * Write uniform value into currently active shader.
+		 */
+		void set() {
+			if (altered && value) {
+				value->set(location);
+				altered = false;
+			}
+		}
+
+		/**
+		 * The location of the uniform or -1 in case it does not exist.
+		 */
+		GLint location;
+
+		/**
+		 * Whether the uniform state was aletered since last 'set'.
+		 */
+		bool altered;
+
+		/**
+		 * The value of the uniform.
+		 */
+		Common::SharedPtr<ShaderUniformValue> value;
+	};
+
+	typedef Common::HashMap<Common::String, Uniform> UniformMap;
 
 	/**
-	 * Location of the texture sampler location in the shader program.
+	 * Map from uniform name to associated uniform description.
 	 */
-	GLint _textureLocation;
+	UniformMap _uniforms;
 
 	/**
 	 * Compile a vertex or fragment shader.
@@ -151,6 +264,8 @@ private:
 	friend class Common::Singleton<SingletonBaseType>;
 	ShaderManager();
 	~ShaderManager();
+
+	bool _initializeShaders;
 
 	Shader *_builtIn[kMaxUsages];
 };

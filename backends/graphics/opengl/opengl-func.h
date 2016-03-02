@@ -108,6 +108,7 @@ GL_FUNC_DEF(GLenum, glGetError, ());
 #if !USE_FORCED_GLES
 GL_FUNC_2_DEF(void, glEnableVertexAttribArray, glEnableVertexAttribArrayARB, (GLuint index));
 GL_FUNC_2_DEF(void, glUniform1i, glUniform1iARB, (GLint location, GLint v0));
+GL_FUNC_2_DEF(void, glUniform1f, glUniform1fARB, (GLint location, GLfloat v0));
 GL_FUNC_2_DEF(void, glUniformMatrix4fv, glUniformMatrix4fvARB, (GLint location, GLsizei count, GLboolean transpose, const GLfloat *value));
 GL_FUNC_2_DEF(void, glVertexAttrib4f, glVertexAttrib4fARB, (GLuint index, GLfloat x, GLfloat y, GLfloat z, GLfloat w));
 GL_FUNC_2_DEF(void, glVertexAttribPointer, glVertexAttribPointerARB, (GLuint index, GLint size, GLenum type, GLboolean normalized, GLsizei stride, const void *pointer));

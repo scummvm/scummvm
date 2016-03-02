@@ -42,6 +42,7 @@ public:
 
 protected:
 	virtual void activateInternal();
+	virtual void deactivateInternal();
 
 	Shader *const _activeShader;
 };

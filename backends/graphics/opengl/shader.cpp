@@ -35,6 +35,8 @@ namespace OpenGL {
 
 namespace {
 
+#pragma mark - Builtin Shader Sources -
+
 const char *const g_defaultVertexShader = 
 	"attribute vec4 position;\n"
 	"attribute vec2 texCoordIn;\n"
@@ -92,8 +94,25 @@ const char *const g_precisionDefines =
 
 } // End of anonymous namespace
 
+#pragma mark - Uniform Values -
+
+void ShaderUniformInteger::set(GLint location) const {
+	GL_CALL(glUniform1i(location, _value));
+}
+
+void ShaderUniformFloat::set(GLint location) const {
+	GL_CALL(glUniform1f(location, _value));
+}
+
+void ShaderUniformMatrix44::set(GLint location) const {
+	GL_CALL(glUniformMatrix4fv(location, 1, GL_FALSE, _matrix));
+}
+
+#pragma mark - Shader Implementation -
+
 Shader::Shader(const Common::String &vertex, const Common::String &fragment)
-    : _vertex(vertex), _fragment(fragment), _program(0), _projectionLocation(-1), _textureLocation(-1) {
+    : _vertex(vertex), _fragment(fragment), _isActive(false), _program(0), _uniforms() {
+	recreate();
 }
 
 Shader::~Shader() {
@@ -167,15 +186,26 @@ bool Shader::recreate() {
 		return false;
 	}
 
-	GL_ASSIGN(_projectionLocation, glGetUniformLocation(_program, "projection"));
-	if (_projectionLocation == -1) {
+	// Set program object in case shader is active during recreation.
+	if (_isActive) {
+		GL_CALL(glUseProgram(_program));
+	}
+
+	for (UniformMap::iterator i = _uniforms.begin(), end = _uniforms.end(); i != end; ++i) {
+		i->_value.location = getUniformLocation(i->_key.c_str());
+		i->_value.altered = true;
+		if (_isActive) {
+			i->_value.set();
+		}
+	}
+
+	if (getUniformLocation("projection") == -1) {
 		warning("Shader misses \"projection\" uniform.");
 		destroy();
 		return false;
 	}
 
-	GL_ASSIGN(_textureLocation, glGetUniformLocation(_program, "texture"));
-	if (_textureLocation == -1) {
+	if (!setUniform1I("texture", 0)) {
 		warning("Shader misses \"texture\" uniform.");
 		destroy();
 		return false;
@@ -184,15 +214,20 @@ bool Shader::recreate() {
 	return true;
 }
 
-void Shader::activate(const GLfloat *projectionMatrix) {
+void Shader::activate() {
 	// Activate program.
 	GL_CALL(glUseProgram(_program));
 
-	// Set projection matrix.
-	GL_CALL(glUniformMatrix4fv(_projectionLocation, 1, GL_FALSE, projectionMatrix));
+	// Reset changed uniform values.
+	for (UniformMap::iterator i = _uniforms.begin(), end = _uniforms.end(); i != end; ++i) {
+		i->_value.set();
+	}
 
-	// We always use texture unit 0.
-	GL_CALL(glUniform1i(_textureLocation, 0));
+	_isActive = true;
+}
+
+void Shader::deactivate() {
+	_isActive = false;
 }
 
 GLint Shader::getUniformLocation(const char *name) const {
@@ -201,8 +236,23 @@ GLint Shader::getUniformLocation(const char *name) const {
 	return result;
 }
 
-void Shader::setUniformI(GLint location, GLint value) {
-	GL_CALL(glUniform1i(location, value));
+bool Shader::setUniform(const Common::String &name, ShaderUniformValue *value) {
+	UniformMap::iterator uniformIter = _uniforms.find(name);
+	Uniform *uniform;
+
+	if (uniformIter == _uniforms.end()) {
+		uniform = &_uniforms[name];
+		uniform->location = getUniformLocation(name.c_str());
+	} else {
+		uniform = &uniformIter->_value;
+	}
+
+	uniform->value = Common::SharedPtr<ShaderUniformValue>(value);
+	uniform->altered = true;
+	if (_isActive) {
+		uniform->set();
+	}
+	return uniform->location != -1;
 }
 
 GLshader Shader::compileShader(const char *source, GLenum shaderType) {
@@ -238,9 +288,7 @@ GLshader Shader::compileShader(const char *source, GLenum shaderType) {
 	return handle;
 }
 
-ShaderManager::ShaderManager() {
-	_builtIn[kDefault] = new Shader(g_defaultVertexShader, g_defaultFragmentShader);
-	_builtIn[kCLUT8LookUp] = new Shader(g_defaultVertexShader, g_lookUpFragmentShader);
+ShaderManager::ShaderManager() : _initializeShaders(true) {
 }
 
 ShaderManager::~ShaderManager() {
@@ -256,8 +304,16 @@ void ShaderManager::notifyDestroy() {
 }
 
 void ShaderManager::notifyCreate() {
-	for (int i = 0; i < ARRAYSIZE(_builtIn); ++i) {
-		_builtIn[i]->recreate();
+	if (_initializeShaders) {
+		_initializeShaders = false;
+
+		_builtIn[kDefault] = new Shader(g_defaultVertexShader, g_defaultFragmentShader);
+		_builtIn[kCLUT8LookUp] = new Shader(g_defaultVertexShader, g_lookUpFragmentShader);
+		_builtIn[kCLUT8LookUp]->setUniform1I("palette", 1);
+	} else {
+		for (int i = 0; i < ARRAYSIZE(_builtIn); ++i) {
+			_builtIn[i]->recreate();
+		}
 	}
 }
 

@@ -32,8 +32,6 @@ CLUT8LookUpPipeline::CLUT8LookUpPipeline()
 }
 
 void CLUT8LookUpPipeline::drawTexture(const GLTexture &texture, const GLfloat *coordinates) {
-	_activeShader->setUniformI(_activeShader->getUniformLocation("palette"), 1);
-
 	// Set the palette texture.
 	GL_CALL(glActiveTexture(GL_TEXTURE1));
 	if (_paletteTexture) {

@@ -38,6 +38,12 @@ void ShaderPipeline::activateInternal() {
 	if (g_context.multitextureSupported) {
 		GL_CALL(glActiveTexture(GL_TEXTURE0));
 	}
+
+	_activeShader->activate();
+}
+
+void ShaderPipeline::deactivateInternal() {
+	_activeShader->deactivate();
 }
 
 void ShaderPipeline::setColor(GLfloat r, GLfloat g, GLfloat b, GLfloat a) {
@@ -53,9 +59,7 @@ void ShaderPipeline::drawTexture(const GLTexture &texture, const GLfloat *coordi
 }
 
 void ShaderPipeline::setProjectionMatrix(const GLfloat *projectionMatrix) {
-	if (isActive() && _activeShader) {
-		_activeShader->activate(projectionMatrix);
-	}
+	_activeShader->setUniform("projection", new ShaderUniformMatrix44(projectionMatrix));
 }
 #endif // !USE_FORCED_GLES
 
