@@ -310,7 +310,7 @@ MODULE_OBJS := \
 	moves/exit_lift.o \
 	moves/exit_pellerator.o \
 	moves/exit_state_room.o \
-	moves/exit_titania.o \
+	moves/exit_tiania.o \
 	moves/move_player_in_parrot_room.o \
 	moves/move_player_to_from.o \
 	moves/move_player_to.o \
@@ -338,15 +338,20 @@ MODULE_OBJS := \
 	sound/auto_music_player.o \
 	sound/auto_music_player_base.o \
 	sound/auto_sound_player.o \
+	sound/auto_sound_player_adsr.o \
 	sound/background_sound_maker.o \
 	sound/bird_song.o \
+	sound/enter_view_toggles_other_music.o \
 	sound/gondolier_song.o \
 	sound/music_player.o \
+	sound/node_auto_sound_player.o \
 	sound/restricted_auto_music_player.o \
 	sound/room_auto_sound_player.o \
 	sound/seasonal_music_player.o \
 	sound/titania_speech.o \
 	sound/trigger_auto_music_player.o \
+	sound/view_auto_sound_player.o \
+	sound/view_toggles_other_music.o \
 	sound/water_lapping_sounds.o
 
 # This module can be built as a plugin

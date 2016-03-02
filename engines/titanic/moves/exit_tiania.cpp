@@ -20,20 +20,32 @@
  *
  */
 
-#include "titanic/sound/trigger_auto_music_player.h"
+#include "titanic/moves/exit_tiania.h"
 
 namespace Titanic {
 
-void CTriggerAutoMusicPlayer::save(SimpleFile *file, int indent) const {
-	file->writeNumberLine(1, indent);
-	file->writeQuotedLine(_fieldBC, indent);
-	CGameObject::save(file, indent);
+CExitTiania::CExitTiania() : CMovePlayerTo(), _fieldC8(0),
+		_string1("NULL"), _string2("NULL"), _string3("NULL") {
 }
 
-void CTriggerAutoMusicPlayer::load(SimpleFile *file) {
+void CExitTiania::save(SimpleFile *file, int indent) const {
+	file->writeNumberLine(1, indent);
+	file->writeNumberLine(_fieldC8, indent);
+	file->writeQuotedLine(_string1, indent);
+	file->writeQuotedLine(_string2, indent);
+	file->writeQuotedLine(_string3, indent);
+
+	CMovePlayerTo::save(file, indent);
+}
+
+void CExitTiania::load(SimpleFile *file) {
 	file->readNumber();
-	_fieldBC = file->readString();
-	CGameObject::load(file);
+	_fieldC8 = file->readNumber();
+	_string1 = file->readString();
+	_string2 = file->readString();
+	_string3 = file->readString();
+
+	CMovePlayerTo::load(file);
 }
 
 } // End of namespace Titanic

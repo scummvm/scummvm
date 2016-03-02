@@ -28,6 +28,8 @@
 namespace Titanic {
 
 class CTriggerAutoMusicPlayer : public CGameObject {
+protected:
+	CString _fieldBC;
 public:
 	/**
 	 * Return the class name

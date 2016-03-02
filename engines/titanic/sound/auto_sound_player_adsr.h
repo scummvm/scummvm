@@ -20,20 +20,35 @@
  *
  */
 
-#include "titanic/sound/trigger_auto_music_player.h"
+#ifndef TITANIC_AUTO_SOUND_PLAYER_ADSR_H
+#define TITANIC_AUTO_SOUND_PLAYER_ADSR_H
+
+#include "titanic/sound/auto_sound_player.h"
 
 namespace Titanic {
 
-void CTriggerAutoMusicPlayer::save(SimpleFile *file, int indent) const {
-	file->writeNumberLine(1, indent);
-	file->writeQuotedLine(_fieldBC, indent);
-	CGameObject::save(file, indent);
-}
+class CAutoSoundPlayerADSR : public CAutoSoundPlayer {
+private:
+	CString _string2;
+	CString _string3;
+	CString _string4;
+public:
+	/**
+	 * Return the class name
+	 */
+	virtual const char *getClassName() const { return "CAutoSoundPlayerADSR"; }
 
-void CTriggerAutoMusicPlayer::load(SimpleFile *file) {
-	file->readNumber();
-	_fieldBC = file->readString();
-	CGameObject::load(file);
-}
+	/**
+	 * Save the data for the class to file
+	 */
+	virtual void save(SimpleFile *file, int indent) const;
+
+	/**
+	 * Load the data for the class from file
+	 */
+	virtual void load(SimpleFile *file);
+};
 
 } // End of namespace Titanic
+
+#endif /* TITANIC_AUTO_SOUND_PLAYER_ADSR_H */

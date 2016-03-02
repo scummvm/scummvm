@@ -291,6 +291,7 @@
 #include "titanic/moves/exit_lift.h"
 #include "titanic/moves/exit_pellerator.h"
 #include "titanic/moves/exit_state_room.h"
+#include "titanic/moves/exit_tiania.h"
 #include "titanic/moves/move_player_in_parrot_room.h"
 #include "titanic/moves/move_player_to.h"
 #include "titanic/moves/move_player_to_from.h"
@@ -317,14 +318,20 @@
 #include "titanic/sound/auto_music_player.h"
 #include "titanic/sound/auto_music_player_base.h"
 #include "titanic/sound/auto_sound_player.h"
+#include "titanic/sound/auto_sound_player_adsr.h"
 #include "titanic/sound/background_sound_maker.h"
 #include "titanic/sound/bird_song.h"
 #include "titanic/sound/gondolier_song.h"
+#include "titanic/sound/enter_view_toggles_other_music.h"
 #include "titanic/sound/music_player.h"
+#include "titanic/sound/node_auto_sound_player.h"
 #include "titanic/sound/restricted_auto_music_player.h"
+#include "titanic/sound/room_auto_sound_player.h"
 #include "titanic/sound/seasonal_music_player.h"
 #include "titanic/sound/titania_speech.h"
 #include "titanic/sound/trigger_auto_music_player.h"
+#include "titanic/sound/view_auto_sound_player.h"
+#include "titanic/sound/view_toggles_other_music.h"
 #include "titanic/sound/water_lapping_sounds.h"
 
 namespace Titanic {
@@ -779,6 +786,7 @@ DEFFN(CExitBridge);
 DEFFN(CExitLift);
 DEFFN(CExitPellerator);
 DEFFN(CExitStateRoom);
+DEFFN(CExitTiania);
 DEFFN(CMovePlayerInParrotRoom);
 DEFFN(CMovePlayerTo);
 DEFFN(CMovePlayerToFrom);
@@ -804,14 +812,20 @@ DEFFN(CTitania);
 DEFFN(CAutoMusicPlayer);
 DEFFN(CAutoMusicPlayerBase);
 DEFFN(CAutoSoundPlayer);
+DEFFN(CAutoSoundPlayerADSR);
 DEFFN(CBackgroundSoundMaker);
 DEFFN(CBirdSong);
+DEFFN(CEnterViewTogglesOtherMusic);
 DEFFN(CGondolierSong);
 DEFFN(CMusicPlayer);
+DEFFN(CNodeAutoSoundPlayer);
 DEFFN(CRestrictedAutoMusicPlayer);
+DEFFN(CRoomAutoSoundPlayer);
 DEFFN(CSeasonalMusicPlayer);
 DEFFN(CTitaniaSpeech);
 DEFFN(CTriggerAutoMusicPlayer);
+DEFFN(CViewAutoSoundPlayer);
+DEFFN(CViewTogglesOtherMusic);
 DEFFN(CWaterLappingSounds);
 
 void CSaveableObject::initClassList() {
@@ -1261,6 +1275,7 @@ void CSaveableObject::initClassList() {
 	ADDFN(CExitLift);
 	ADDFN(CExitPellerator);
 	ADDFN(CExitStateRoom);
+	ADDFN(CExitTiania);
 	ADDFN(CMovePlayerInParrotRoom);
 	ADDFN(CMovePlayerTo);
 	ADDFN(CMovePlayerToFrom);
@@ -1287,15 +1302,22 @@ void CSaveableObject::initClassList() {
 	ADDFN(CAutoMusicPlayer);
 	ADDFN(CAutoMusicPlayerBase);
 	ADDFN(CAutoSoundPlayer);
+	ADDFN(CAutoSoundPlayerADSR);
 	ADDFN(CBackgroundSoundMaker);
 	ADDFN(CBirdSong);
 	ADDFN(CGondolierSong);
+	ADDFN(CEnterViewTogglesOtherMusic);
+	ADDFN(CGondolierSong);
 	ADDFN(CMusicPlayer);
+	ADDFN(CNodeAutoSoundPlayer);
 	ADDFN(CRestrictedAutoMusicPlayer);
+	ADDFN(CRoomAutoSoundPlayer);
 	ADDFN(CSeasonalMusicPlayer);
 	ADDFN(CAutoMusicPlayer);
 	ADDFN(CTitaniaSpeech);
 	ADDFN(CTriggerAutoMusicPlayer);
+	ADDFN(CViewAutoSoundPlayer);
+	ADDFN(CViewTogglesOtherMusic);
 	ADDFN(CWaterLappingSounds);
 }
 

@@ -20,20 +20,35 @@
  *
  */
 
+#ifndef TITANIC_ENTER_VIEW_TOGGLES_OTHER_MUSIC_H
+#define TITANIC_ENTER_VIEW_TOGGLES_OTHER_MUSIC_H
+
 #include "titanic/sound/trigger_auto_music_player.h"
 
 namespace Titanic {
 
-void CTriggerAutoMusicPlayer::save(SimpleFile *file, int indent) const {
-	file->writeNumberLine(1, indent);
-	file->writeQuotedLine(_fieldBC, indent);
-	CGameObject::save(file, indent);
-}
+class CEnterViewTogglesOtherMusic : public CTriggerAutoMusicPlayer {
+protected:
+	int _fieldC8;
+public:
+	CEnterViewTogglesOtherMusic();
 
-void CTriggerAutoMusicPlayer::load(SimpleFile *file) {
-	file->readNumber();
-	_fieldBC = file->readString();
-	CGameObject::load(file);
-}
+	/**
+	 * Return the class name
+	 */
+	virtual const char *getClassName() const { return "CEnterViewTogglesOtherMusic"; }
+
+	/**
+	 * Save the data for the class to file
+	 */
+	virtual void save(SimpleFile *file, int indent) const;
+
+	/**
+	 * Load the data for the class from file
+	 */
+	virtual void load(SimpleFile *file);
+};
 
 } // End of namespace Titanic
+
+#endif /* TITANIC_ENTER_VIEW_TOGGLES_OTHER_MUSIC_H */

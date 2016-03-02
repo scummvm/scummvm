@@ -26,13 +26,21 @@ namespace Titanic {
 
 void CWaterLappingSounds::save(SimpleFile *file, int indent) const {
 	file->writeNumberLine(1, indent);
+	file->writeQuotedLine(_string1, indent);
+	file->writeNumberLine(_fieldD4, indent);
+	file->writeNumberLine(_fieldE0, indent);
 	file->writeNumberLine(_value, indent);
+
 	CRoomAutoSoundPlayer::save(file, indent);
 }
 
 void CWaterLappingSounds::load(SimpleFile *file) {
 	file->readNumber();
+	_string1 = file->readString();
+	_fieldD4 = file->readNumber();
+	_fieldE0 = file->readNumber();
 	_value = file->readNumber();
+	
 	CRoomAutoSoundPlayer::load(file);
 }
 

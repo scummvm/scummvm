@@ -20,32 +20,20 @@
  *
  */
 
-#include "titanic/moves/exit_titania.h"
+#include "titanic/sound/node_auto_sound_player.h"
 
 namespace Titanic {
 
-CExitTitania::CExitTitania() : CMovePlayerTo(), _fieldC8(0),
-		_string1("NULL"), _string2("NULL"), _string3("NULL") {
-}
-
-void CExitTitania::save(SimpleFile *file, int indent) const {
+void CNodeAutoSoundPlayer::save(SimpleFile *file, int indent) const {
 	file->writeNumberLine(1, indent);
-	file->writeNumberLine(_fieldC8, indent);
-	file->writeQuotedLine(_string1, indent);
-	file->writeQuotedLine(_string2, indent);
-	file->writeQuotedLine(_string3, indent);
-
-	CMovePlayerTo::save(file, indent);
+	file->writeNumberLine(_fieldEC, indent);
+	CAutoSoundPlayer::save(file, indent);
 }
 
-void CExitTitania::load(SimpleFile *file) {
+void CNodeAutoSoundPlayer::load(SimpleFile *file) {
 	file->readNumber();
-	_fieldC8 = file->readNumber();
-	_string1 = file->readString();
-	_string2 = file->readString();
-	_string3 = file->readString();
-
-	CMovePlayerTo::load(file);
+	_fieldEC = file->readNumber();
+	CAutoSoundPlayer::load(file);
 }
 
 } // End of namespace Titanic

@@ -20,20 +20,20 @@
  *
  */
 
-#include "titanic/sound/trigger_auto_music_player.h"
+#include "titanic/sound/view_auto_sound_player.h"
 
 namespace Titanic {
 
-void CTriggerAutoMusicPlayer::save(SimpleFile *file, int indent) const {
+void CViewAutoSoundPlayer::save(SimpleFile *file, int indent) const {
 	file->writeNumberLine(1, indent);
-	file->writeQuotedLine(_fieldBC, indent);
-	CGameObject::save(file, indent);
+	file->writeNumberLine(_fieldEC, indent);
+	CAutoSoundPlayer::save(file, indent);
 }
 
-void CTriggerAutoMusicPlayer::load(SimpleFile *file) {
+void CViewAutoSoundPlayer::load(SimpleFile *file) {
 	file->readNumber();
-	_fieldBC = file->readString();
-	CGameObject::load(file);
+	_fieldEC = file->readNumber();
+	CAutoSoundPlayer::load(file);
 }
 
 } // End of namespace Titanic

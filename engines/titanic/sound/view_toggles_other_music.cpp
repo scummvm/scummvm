@@ -20,38 +20,25 @@
  *
  */
 
-#ifndef TITANIC_EXIT_TITANIA_H
-#define TITANIC_EXIT_TITANIA_H
-
-#include "titanic/moves/move_player_to.h"
+#include "titanic/sound/view_toggles_other_music.h"
 
 namespace Titanic {
 
-class CExitTitania : public CMovePlayerTo {
-private:
-	int _fieldC8;
-	CString _string1;
-	CString _string2;
-	CString _string3;
-public:
-	CExitTitania();
+CViewTogglesOtherMusic::CViewTogglesOtherMusic() : CEnterViewTogglesOtherMusic(), _fieldCC(0) {
+}
 
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CExitTitania"; }
+void CViewTogglesOtherMusic::save(SimpleFile *file, int indent) const {
+	file->writeNumberLine(1, indent);
+	file->writeNumberLine(_fieldCC, indent);
 
-	/**
-	 * Save the data for the class to file
-	 */
-	virtual void save(SimpleFile *file, int indent) const;
+	CEnterViewTogglesOtherMusic::save(file, indent);
+}
 
-	/**
-	 * Load the data for the class from file
-	 */
-	virtual void load(SimpleFile *file);
-};
+void CViewTogglesOtherMusic::load(SimpleFile *file) {
+	file->readNumber();
+	_fieldCC = file->readNumber();
+
+	CEnterViewTogglesOtherMusic::load(file);
+}
 
 } // End of namespace Titanic
-
-#endif /* TITANIC_EXIT_TITANIA_H */
