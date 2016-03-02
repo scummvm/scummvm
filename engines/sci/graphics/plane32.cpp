@@ -434,7 +434,7 @@ void Plane::calcLists(Plane &visiblePlane, const PlaneList &planeList, DrawList 
 			}
 		}
 	}
-	if (/* TODO: g_Remap_numActiveRemaps */ false) { // no remaps active?
+	if (/* TODO: g_Remap_numActiveRemaps == 0 */ true) { // no remaps active?
 		// Add all items that overlap with items in the drawlist and have higher
 		// priority
 		for (DrawList::size_type i = 0; i < drawList.size(); ++i) {
@@ -447,7 +447,7 @@ void Plane::calcLists(Plane &visiblePlane, const PlaneList &planeList, DrawList 
 					if (j < _screenItemList.size() && sli) {
 						if (!sli->_updated && !sli->_deleted && !sli->_created) {
 							ScreenItem *item = dli->screenItem;
-							if (sli->_priority > item->_priority || (sli->_priority == item->_priority && sli->_object > item->_object)) {
+							if (sli->_priority > item->_priority /* TODO: || (sli->_priority == item->_priority && sli->_object > item->_object)*/) {
 								if (dli->rect.intersects(sli->_screenRect)) {
 									drawList.add(sli, dli->rect.findIntersectingRect(sli->_screenRect));
 								}
