@@ -86,6 +86,7 @@ MODULE_OBJS := \
 	game/bar_bell.o \
 	game/belbot_get_light.o \
 	game/bottom_of_well_monitor.o \
+	game/bomb.o \
 	game/bowl_unlocker.o \
 	game/brain_slot.o \
 	game/bridge_door.o \
@@ -103,6 +104,7 @@ MODULE_OBJS := \
 	game/chicken_cooler.o \
 	game/chicken_dispensor.o \
 	game/close_broken_pel.o \
+	game/code_wheel.o \
 	game/cookie.o \
 	game/computer.o \
 	game/computer_screen.o \
@@ -150,6 +152,7 @@ MODULE_OBJS := \
 	game/mail_man.o \
 	game/maitred_arm_holder.o \
 	game/missiveomat.o \
+	game/missiveomat_button.o \
 	game/movie_tester.o \
 	game/music_console_button.o \
 	game/music_room_phonograph.o \
@@ -270,6 +273,7 @@ MODULE_OBJS := \
 	gfx/chev_right_on.o \
 	gfx/chev_send_rec_switch.o \
 	gfx/chev_switch.o \
+	gfx/edit_control.o \
 	gfx/elevator_button.o \
 	gfx/get_from_succ.o \
 	gfx/helmet_on_off.o \

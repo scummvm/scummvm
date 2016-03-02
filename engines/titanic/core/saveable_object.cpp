@@ -86,7 +86,9 @@
 #include "titanic/game/bar_menu_button.h"
 #include "titanic/game/belbot_get_light.h"
 #include "titanic/game/bomb.h"
+#include "titanic/game/bottom_of_well_monitor.h"
 #include "titanic/game/bowl_unlocker.h"
+#include "titanic/game/brain_slot.h"
 #include "titanic/game/bridge_view.h"
 #include "titanic/game/broken_pell_base.h"
 #include "titanic/game/cage.h"
@@ -101,6 +103,7 @@
 #include "titanic/game/close_broken_pel.h"
 #include "titanic/game/computer.h"
 #include "titanic/game/computer_screen.h"
+#include "titanic/game/code_wheel.h"
 #include "titanic/game/cookie.h"
 #include "titanic/game/credits.h"
 #include "titanic/game/credits_button.h"
@@ -130,6 +133,7 @@
 #include "titanic/game/hammer_clip.h"
 #include "titanic/game/hammer_dispensor.h"
 #include "titanic/game/hammer_dispensor_button.h"
+#include "titanic/game/head_slot.h"
 #include "titanic/game/head_smash_event.h"
 #include "titanic/game/head_smash_lever.h"
 #include "titanic/game/idle_summoner.h"
@@ -139,6 +143,8 @@
 #include "titanic/game/little_lift_button.h"
 #include "titanic/game/long_stick_dispenser.h"
 #include "titanic/game/maitred_arm_holder.h"
+#include "titanic/game/missiveomat.h"
+#include "titanic/game/missiveomat_button.h"
 #include "titanic/game/musical_instrument.h"
 #include "titanic/game/music_console_button.h"
 #include "titanic/game/music_room_phonograph.h"
@@ -148,6 +154,9 @@
 #include "titanic/game/nose_holder.h"
 #include "titanic/game/null_port_hole.h"
 #include "titanic/game/nut_replacer.h"
+#include "titanic/game/pet_disabler.h"
+#include "titanic/game/pet_graphic.h"
+#include "titanic/game/pet_graphic2.h"
 #include "titanic/game/phonograph.h"
 #include "titanic/game/play_music_button.h"
 #include "titanic/game/play_on_act.h"
@@ -164,6 +173,7 @@
 #include "titanic/game/service_elevator_door.h"
 #include "titanic/game/service_elevator_window.h"
 #include "titanic/game/ship_setting.h"
+#include "titanic/game/ship_setting_button.h"
 #include "titanic/game/speech_dispensor.h"
 #include "titanic/game/starling_puret.h"
 #include "titanic/game/start_action.h"
@@ -173,6 +183,7 @@
 #include "titanic/game/television.h"
 #include "titanic/game/third_class_canal.h"
 #include "titanic/game/throw_tv_down_well.h"
+#include "titanic/game/titania_still_control.h"
 #include "titanic/game/tow_parrot_nav.h"
 #include "titanic/game/up_lighter.h"
 #include "titanic/game/wheel_button.h"
@@ -244,6 +255,7 @@
 #include "titanic/gfx/chev_right_on.h"
 #include "titanic/gfx/chev_send_rec_switch.h"
 #include "titanic/gfx/chev_switch.h"
+#include "titanic/gfx/edit_control.h"
 #include "titanic/gfx/elevator_button.h"
 #include "titanic/gfx/get_from_succ.h"
 #include "titanic/gfx/helmet_on_off.h"
@@ -407,8 +419,10 @@ DEFFN(CBarBell);
 DEFFN(CBarMenu);
 DEFFN(CBarMenuButton);
 DEFFN(CBelbotGetLight);
-DEFFN(CBowlUnlocker);
 DEFFN(CBomb);
+DEFFN(CBottomOfWellMonitor);
+DEFFN(CBowlUnlocker);
+DEFFN(CBrainSlot);
 DEFFN(CBridgeView);
 DEFFN(CBrokenPellBase)
 DEFFN(CCage);
@@ -420,6 +434,7 @@ DEFFN(CCDROMTray);
 DEFFN(CCellPointButton);
 DEFFN(CChickenDispensor);
 DEFFN(CCloseBrokenPel);
+DEFFN(CodeWheel);
 DEFFN(CComputer);
 DEFFN(CCookie);
 DEFFN(CComputerScreen);
@@ -451,6 +466,7 @@ DEFFN(CGlassSmasher);
 DEFFN(CHammerClip);
 DEFFN(CHammerDispensor);
 DEFFN(CHammerDispensorButton);
+DEFFN(CHeadSlot);
 DEFFN(CHeadSmashEvent);
 DEFFN(CHeadSmashLever);
 DEFFN(CIdleSummoner);
@@ -460,6 +476,8 @@ DEFFN(CLightSwitch);
 DEFFN(CLittleLiftButton);
 DEFFN(CLongStickDispenser);
 DEFFN(CMaitreDArmHolder);
+DEFFN(CMissiveOMat);
+DEFFN(CMissiveOMatButton);
 DEFFN(CMusicalInstrument);
 DEFFN(CMusicConsoleButton);
 DEFFN(CMusicRoomPhonograph);
@@ -469,6 +487,9 @@ DEFFN(CNoNutBowl);
 DEFFN(CNoseHolder);
 DEFFN(CNullPortHole);
 DEFFN(CNutReplacer);
+DEFFN(CPetDisabler);
+DEFFN(CPetGraphic);
+DEFFN(CPetGraphic2);
 DEFFN(CPhonograph);
 DEFFN(CPlayMusicButton);
 DEFFN(CPlayOnAct);
@@ -485,6 +506,7 @@ DEFFN(CSeasonalAdjustment);
 DEFFN(CServiceElevatorDoor);
 DEFFN(CServiceElevatorWindow);
 DEFFN(CShipSetting);
+DEFFN(CShipSettingButton);
 DEFFN(CSpeechDispensor);
 DEFFN(CStarlingPuret);
 DEFFN(CStartAction);
@@ -494,6 +516,7 @@ DEFFN(CSweetBowl);
 DEFFN(CTelevision);
 DEFFN(CThirdClassCanal);
 DEFFN(CThrowTVDownWell);
+DEFFN(CTitaniaStillControl);
 DEFFN(CTOWParrotNav);
 DEFFN(CUpLighter);
 DEFFN(CWheelButton);
@@ -567,6 +590,7 @@ DEFFN(CChevRightOff);
 DEFFN(CChevRightOn);
 DEFFN(CChevSendRecSwitch);
 DEFFN(CChevSwitch);
+DEFFN(CEditControl);
 DEFFN(CElevatorButton);
 DEFFN(CGetFromSucc);
 DEFFN(CHelmetOnOff);
@@ -896,6 +920,8 @@ void CSaveableObject::initClassList() {
 	ADDFN(CBarMenuButton);
 	ADDFN(CBelbotGetLight);
 	ADDFN(CBomb);
+	ADDFN(CBottomOfWellMonitor);
+	ADDFN(CBrainSlot);
 	ADDFN(CBowlUnlocker);
 	ADDFN(CBridgeView);
 	ADDFN(CBrokenPellBase);
@@ -907,6 +933,7 @@ void CSaveableObject::initClassList() {
 	ADDFN(CCDROMTray);
 	ADDFN(CCellPointButton);
 	ADDFN(CChickenDispensor);
+	ADDFN(CodeWheel);
 	ADDFN(CComputerScreen);
 	ADDFN(CCloseBrokenPel);
 	ADDFN(CComputer);
@@ -940,6 +967,7 @@ void CSaveableObject::initClassList() {
 	ADDFN(CHammerClip);
 	ADDFN(CHammerDispensor);
 	ADDFN(CHammerDispensorButton);
+	ADDFN(CHeadSlot);
 	ADDFN(CHeadSmashEvent);
 	ADDFN(CHeadSmashLever);
 	ADDFN(CIdleSummoner);
@@ -949,6 +977,8 @@ void CSaveableObject::initClassList() {
 	ADDFN(CLittleLiftButton);
 	ADDFN(CLongStickDispenser);
 	ADDFN(CMaitreDArmHolder);
+	ADDFN(CMissiveOMat);
+	ADDFN(CMissiveOMatButton);
 	ADDFN(CMusicalInstrument);
 	ADDFN(CMusicConsoleButton);
 	ADDFN(CMusicRoomPhonograph);
@@ -958,6 +988,9 @@ void CSaveableObject::initClassList() {
 	ADDFN(CNoseHolder);
 	ADDFN(CNullPortHole);
 	ADDFN(CNutReplacer);
+	ADDFN(CPetDisabler);
+	ADDFN(CPetGraphic);
+	ADDFN(CPetGraphic2);
 	ADDFN(CPhonograph);
 	ADDFN(CPlayMusicButton);
 	ADDFN(CPlayOnAct);
@@ -974,6 +1007,7 @@ void CSaveableObject::initClassList() {
 	ADDFN(CServiceElevatorDoor);
 	ADDFN(CServiceElevatorWindow);
 	ADDFN(CShipSetting);
+	ADDFN(CShipSettingButton);
 	ADDFN(CSpeechDispensor);
 	ADDFN(CStarlingPuret);
 	ADDFN(CStartAction);
@@ -983,6 +1017,7 @@ void CSaveableObject::initClassList() {
 	ADDFN(CTelevision);
 	ADDFN(CThirdClassCanal);
 	ADDFN(CThrowTVDownWell);
+	ADDFN(CTitaniaStillControl);
 	ADDFN(CTOWParrotNav);
 	ADDFN(CUpLighter);
 	ADDFN(CWheelButton);
@@ -1056,6 +1091,7 @@ void CSaveableObject::initClassList() {
 	ADDFN(CChevRightOn);
 	ADDFN(CChevSendRecSwitch);
 	ADDFN(CChevSwitch);
+	ADDFN(CEditControl);
 	ADDFN(CElevatorButton);
 	ADDFN(CGetFromSucc);
 	ADDFN(CHelmetOnOff);

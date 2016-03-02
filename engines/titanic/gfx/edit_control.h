@@ -20,25 +20,35 @@
  *
  */
 
-#ifndef TITANIC_BRIDGE_PIECE_H
-#define TITANIC_BRIDGE_PIECE_H
+#ifndef TITANIC_EDIT_CONTROL_H
+#define TITANIC_EDIT_CONTROL_H
 
-#include "titanic/carry/carry.h"
+#include "titanic/gfx/toggle_switch.h"
 
 namespace Titanic {
 
-class CBridgePiece : public CCarry {
-private:
-	CString _string6;
-	Common::Point _pos3;
-	int _field140;
+class CEditControl : public CGameObject {
+protected:
+	int _fieldBC;
+	int _fieldC0;
+	int _fieldC4;
+	int _fieldC8;
+	int _fieldCC;
+	int _fieldD0;
+	int _fieldD4;
+	int _fieldD8;
+	int _fieldDC;
+	int _fieldE0;
+	CString _string1;
+	int _fieldF0;
+	int _fieldF4;
 public:
-	CBridgePiece();
+	CEditControl();
 
 	/**
 	 * Return the class name
 	 */
-	virtual const char *getClassName() const { return "CBridgePiece"; }
+	virtual const char *getClassName() const { return "CEditControl"; }
 
 	/**
 	 * Save the data for the class to file
@@ -53,4 +63,4 @@ public:
 
 } // End of namespace Titanic
 
-#endif /* TITANIC_BRIDGE_PIECE_H */
+#endif /* TITANIC_EDIT_CONTROL_H */

@@ -28,7 +28,13 @@
 namespace Titanic {
 
 class CShipSettingButton : public CGameObject {
+private:
+	CString _string1;
+	int _fieldC8;
+	int _fieldCC;
 public:
+	CShipSettingButton();
+
 	/**
 	 * Return the class name
 	 */

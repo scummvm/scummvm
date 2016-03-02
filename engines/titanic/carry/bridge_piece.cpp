@@ -24,14 +24,13 @@
 
 namespace Titanic {
 
-CBridgePiece::CBridgePiece() : CCarry(),
-		_field138(0), _field13C(0), _field140(0) {
+CBridgePiece::CBridgePiece() : CCarry(), _field140(0) {
 }
 
 void CBridgePiece::save(SimpleFile *file, int indent) const {
 	file->writeNumberLine(1, indent);
 	file->writeQuotedLine(_string6, indent);
-	file->writeNumberLine(_field138, indent);
+	file->writePoint(_pos3, indent);
 	file->writeNumberLine(_field140, indent);
 
 	CCarry::save(file, indent);
@@ -40,7 +39,7 @@ void CBridgePiece::save(SimpleFile *file, int indent) const {
 void CBridgePiece::load(SimpleFile *file) {
 	file->readNumber();
 	_string6 = file->readString();
-	_field138 = file->readNumber();
+	_pos3 = file->readPoint();
 	_field140 = file->readNumber();
 
 	CCarry::load(file);

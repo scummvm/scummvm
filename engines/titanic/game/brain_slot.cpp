@@ -30,7 +30,7 @@ int CBrainSlot::_v2;
 void CBrainSlot::save(SimpleFile *file, int indent) const {
 	file->writeNumberLine(1, indent);
 	file->writeNumberLine(_value1, indent);
-	file->writeNumberLine(_value2, indent);
+	file->writeQuotedLine(_value2, indent);
 	file->writeNumberLine(_v1, indent);
 	file->writeNumberLine(_v2, indent);
 
@@ -40,7 +40,7 @@ void CBrainSlot::save(SimpleFile *file, int indent) const {
 void CBrainSlot::load(SimpleFile *file) {
 	file->readNumber();
 	_value1 = file->readNumber();
-	_value2 = file->readNumber();
+	_value2 = file->readString();
 	_v1 = file->readNumber();
 	_v2 = file->readNumber();
 

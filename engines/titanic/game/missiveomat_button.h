@@ -20,25 +20,23 @@
  *
  */
 
-#ifndef TITANIC_BRIDGE_PIECE_H
-#define TITANIC_BRIDGE_PIECE_H
+#ifndef TITANIC_MISSIVEOMAT_BUTTON_H
+#define TITANIC_MISSIVEOMAT_BUTTON_H
 
-#include "titanic/carry/carry.h"
+#include "titanic/gfx/edit_control.h"
 
 namespace Titanic {
 
-class CBridgePiece : public CCarry {
-private:
-	CString _string6;
-	Common::Point _pos3;
-	int _field140;
+class CMissiveOMatButton : public CEditControl {
 public:
-	CBridgePiece();
+	int _fieldFC;
+public:
+	CMissiveOMatButton() : CEditControl(), _fieldFC(2) {}
 
 	/**
 	 * Return the class name
 	 */
-	virtual const char *getClassName() const { return "CBridgePiece"; }
+	virtual const char *getClassName() const { return "CMissiveOMatButton"; }
 
 	/**
 	 * Save the data for the class to file
@@ -53,4 +51,4 @@ public:
 
 } // End of namespace Titanic
 
-#endif /* TITANIC_BRIDGE_PIECE_H */
+#endif /* TITANIC_MISSIVEOMAT_BUTTON_H */

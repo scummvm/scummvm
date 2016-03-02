@@ -24,13 +24,24 @@
 
 namespace Titanic {
 
+CShipSettingButton::CShipSettingButton() : CGameObject(), _fieldC8(0), _fieldCC(0) {
+}
+
 void CShipSettingButton::save(SimpleFile *file, int indent) const {
 	file->writeNumberLine(1, indent);
+	file->writeQuotedLine(_string1, indent);
+	file->writeNumberLine(_fieldC8, indent);
+	file->writeNumberLine(_fieldCC, indent);
+
 	CGameObject::save(file, indent);
 }
 
 void CShipSettingButton::load(SimpleFile *file) {
 	file->readNumber();
+	_string1 = file->readString();
+	_fieldC8 = file->readNumber();
+	_fieldCC = file->readNumber();
+
 	CGameObject::load(file);
 }
 

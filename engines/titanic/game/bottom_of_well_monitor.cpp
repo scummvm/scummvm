@@ -24,14 +24,21 @@
 
 namespace Titanic {
 
+int CBottomOfWellMonitor::_v1;
+int CBottomOfWellMonitor::_v2;
+
 void CBottomOfWellMonitor::save(SimpleFile *file, int indent) const {
 	file->writeNumberLine(1, indent);
+	file->writeNumberLine(_v1, indent);
+	file->writeNumberLine(_v2, indent);
 	file->writeNumberLine(_value, indent);
 	CGameObject::save(file, indent);
 }
 
 void CBottomOfWellMonitor::load(SimpleFile *file) {
 	file->readNumber();
+	_v1 = file->readNumber();
+	_v2 = file->readNumber();
 	_value = file->readNumber();
 	CGameObject::load(file);
 }

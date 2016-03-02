@@ -20,37 +20,22 @@
  *
  */
 
-#ifndef TITANIC_BRIDGE_PIECE_H
-#define TITANIC_BRIDGE_PIECE_H
-
-#include "titanic/carry/carry.h"
+#include "titanic/game/missiveomat_button.h"
 
 namespace Titanic {
 
-class CBridgePiece : public CCarry {
-private:
-	CString _string6;
-	Common::Point _pos3;
-	int _field140;
-public:
-	CBridgePiece();
+void CMissiveOMatButton::save(SimpleFile *file, int indent) const {
+	file->writeNumberLine(1, indent);
+	file->writeNumberLine(_fieldFC, indent);
 
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CBridgePiece"; }
+	CEditControl::save(file, indent);
+}
 
-	/**
-	 * Save the data for the class to file
-	 */
-	virtual void save(SimpleFile *file, int indent) const;
+void CMissiveOMatButton::load(SimpleFile *file) {
+	file->readNumber();
+	_fieldFC = file->readNumber();
 
-	/**
-	 * Load the data for the class from file
-	 */
-	virtual void load(SimpleFile *file);
-};
+	CEditControl::load(file);
+}
 
 } // End of namespace Titanic
-
-#endif /* TITANIC_BRIDGE_PIECE_H */

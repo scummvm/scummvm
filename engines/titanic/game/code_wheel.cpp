@@ -20,37 +20,29 @@
  *
  */
 
-#ifndef TITANIC_BRIDGE_PIECE_H
-#define TITANIC_BRIDGE_PIECE_H
-
-#include "titanic/carry/carry.h"
+#include "titanic/game/code_wheel.h"
 
 namespace Titanic {
 
-class CBridgePiece : public CCarry {
-private:
-	CString _string6;
-	Common::Point _pos3;
-	int _field140;
-public:
-	CBridgePiece();
+CodeWheel::CodeWheel() : CBomb(), _field108(0), _field10C(4), _field110(0) {
+}
 
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CBridgePiece"; }
+void CodeWheel::save(SimpleFile *file, int indent) const {
+	file->writeNumberLine(1, indent);
+	file->writeNumberLine(_field108, indent);
+	file->writeNumberLine(_field10C, indent);
+	file->writeNumberLine(_field110, indent);
 
-	/**
-	 * Save the data for the class to file
-	 */
-	virtual void save(SimpleFile *file, int indent) const;
+	CBomb::save(file, indent);
+}
 
-	/**
-	 * Load the data for the class from file
-	 */
-	virtual void load(SimpleFile *file);
-};
+void CodeWheel::load(SimpleFile *file) {
+	file->readNumber();
+	_field108 = file->readNumber();
+	_field10C = file->readNumber();
+	_field110 = file->readNumber();
+
+	CBomb::load(file);
+}
 
 } // End of namespace Titanic
-
-#endif /* TITANIC_BRIDGE_PIECE_H */

@@ -20,45 +20,51 @@
  *
  */
 
-#include "titanic/game/head_slot.h"
+#include "titanic/gfx/edit_control.h"
 
 namespace Titanic {
 
-int CHeadSlot::_v1;
+CEditControl::CEditControl() : CGameObject(), _fieldBC(0),  _fieldC0(0),
+		_fieldC4(0), _fieldC8(0), _fieldCC(0), _fieldD0(0), _fieldD4(2),
+		_fieldD8(0), _fieldDC(0), _fieldE0(0), _fieldF0(0), _fieldF4(0)
 
-CHeadSlot::CHeadSlot() : CGameObject(), _string1("NotWorking"), _string2("NULL"),
-	_fieldBC(0), _fieldD8(0), _fieldDC(27), _fieldE0(56),
-	_fieldE4(82), _fieldE8(112), _fieldEC(0) {
+{
 }
 
-void CHeadSlot::save(SimpleFile *file, int indent) const {
+void CEditControl::save(SimpleFile *file, int indent) const {
 	file->writeNumberLine(1, indent);
 	file->writeNumberLine(_fieldBC, indent);
-	file->writeQuotedLine(_string1, indent);
-	file->writeQuotedLine(_string2, indent);
+	file->writeNumberLine(_fieldC0, indent);
+	file->writeNumberLine(_fieldC4, indent);
+	file->writeNumberLine(_fieldC8, indent);
+	file->writeNumberLine(_fieldCC, indent);
+	file->writeNumberLine(_fieldD0, indent);
+	file->writeNumberLine(_fieldD4, indent);
 	file->writeNumberLine(_fieldD8, indent);
 	file->writeNumberLine(_fieldDC, indent);
-	file->writeNumberLine(_fieldE0, indent);
-	file->writeNumberLine(_fieldE4, indent);
-	file->writeNumberLine(_fieldE8, indent);
-	file->writeNumberLine(_v1, indent);
-	file->writeNumberLine(_fieldEC, indent);
+	file->writeNumberLine(_fieldC0, indent);
+	file->writeQuotedLine(_string1, indent);
+	file->writeNumberLine(_fieldF0, indent);
+	file->writeNumberLine(_fieldF4, indent);
 
 	CGameObject::save(file, indent);
 }
 
-void CHeadSlot::load(SimpleFile *file) {
+void CEditControl::load(SimpleFile *file) {
 	file->readNumber();
 	_fieldBC = file->readNumber();
-	_string1 = file->readString();
-	_string2 = file->readString();
+	_fieldC0 = file->readNumber();
+	_fieldC4 = file->readNumber();
+	_fieldC8 = file->readNumber();
+	_fieldCC = file->readNumber();
+	_fieldD0 = file->readNumber();
+	_fieldD4 = file->readNumber();
 	_fieldD8 = file->readNumber();
 	_fieldDC = file->readNumber();
 	_fieldE0 = file->readNumber();
-	_fieldE4 = file->readNumber();
-	_fieldE8 = file->readNumber();
-	_v1 = file->readNumber();
-	_fieldEC = file->readNumber();
+	_string1 = file->readString();
+	_fieldF0 = file->readNumber();
+	_fieldF4 = file->readNumber();
 
 	CGameObject::load(file);
 }

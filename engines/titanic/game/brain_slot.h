@@ -31,9 +31,10 @@ class CBrainSlot : public CGameObject {
 public:
 	static int _v1, _v2;
 public:
-	int _value1, _value2;
+	int _value1;
+	CString _value2;
 public:
-	CBrainSlot() : CGameObject(), _value1(0), _value2(0) {}
+	CBrainSlot() : CGameObject(), _value1(0) {}
 
 	/**
 	 * Return the class name

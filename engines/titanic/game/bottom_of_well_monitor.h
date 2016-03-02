@@ -29,6 +29,7 @@ namespace Titanic {
 
 class CBottomOfWellMonitor : public CGameObject {
 public:
+	static int _v1, _v2;
 	int _value;
 public:
 	CBottomOfWellMonitor() : _value(1) {}

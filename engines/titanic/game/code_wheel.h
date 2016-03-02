@@ -20,25 +20,25 @@
  *
  */
 
-#ifndef TITANIC_BRIDGE_PIECE_H
-#define TITANIC_BRIDGE_PIECE_H
+#ifndef TITANIC_CODE_WHEEL_H
+#define TITANIC_CODE_WHEEL_H
 
-#include "titanic/carry/carry.h"
+#include "titanic/game/bomb.h"
 
 namespace Titanic {
 
-class CBridgePiece : public CCarry {
+class CodeWheel : public CBomb {
 private:
-	CString _string6;
-	Common::Point _pos3;
-	int _field140;
+	int _field108;
+	int _field10C;
+	int _field110;
 public:
-	CBridgePiece();
+	CodeWheel();
 
 	/**
 	 * Return the class name
 	 */
-	virtual const char *getClassName() const { return "CBridgePiece"; }
+	virtual const char *getClassName() const { return "CodeWheel"; }
 
 	/**
 	 * Save the data for the class to file
@@ -53,4 +53,4 @@ public:
 
 } // End of namespace Titanic
 
-#endif /* TITANIC_BRIDGE_PIECE_H */
+#endif /* TITANIC_CODE_WHEEL_H */
