@@ -48,6 +48,9 @@ void Context::reset() {
 
 Pipeline *Context::setPipeline(Pipeline *pipeline) {
 	Pipeline *oldPipeline = activePipeline;
+	if (oldPipeline) {
+		oldPipeline->deactivate();
+	}
 
 	activePipeline = pipeline;
 	if (activePipeline) {
