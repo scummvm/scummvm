@@ -34,7 +34,6 @@ void Pipeline::activate() {
 
 	if (_activeFramebuffer) {
 		_activeFramebuffer->activate();
-		setProjectionMatrix(_activeFramebuffer->getProjectionMatrix());
 	}
 
 	activateInternal();
@@ -59,7 +58,6 @@ Framebuffer *Pipeline::setFramebuffer(Framebuffer *framebuffer) {
 	_activeFramebuffer = framebuffer;
 	if (_isActive && _activeFramebuffer) {
 		_activeFramebuffer->activate();
-		setProjectionMatrix(_activeFramebuffer->getProjectionMatrix());
 	}
 
 	return oldFramebuffer;
