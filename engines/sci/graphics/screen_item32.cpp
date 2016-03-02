@@ -256,7 +256,7 @@ void ScreenItem::calcRects(const Plane &plane) {
 			if (_useInsetRect) {
 				Ratio celScriptXRatio(_celObj->_scaledWidth, scriptWidth);
 				Ratio celScriptYRatio(_celObj->_scaledHeight, scriptHeight);
-				mulru(_screenItemRect, celScriptXRatio, celScriptYRatio);
+				mulru(_screenItemRect, celScriptXRatio, celScriptYRatio, 0);
 
 				if (_screenItemRect.intersects(celRect)) {
 					_screenItemRect.clip(celRect);
@@ -273,7 +273,7 @@ void ScreenItem::calcRects(const Plane &plane) {
 			}
 
 			if (!newRatioX.isOne() || !newRatioY.isOne()) {
-				mulru(_screenItemRect, newRatioX, newRatioY);
+				mulinc(_screenItemRect, newRatioX, newRatioY);
 				displaceX = (displaceX * newRatioX).toInt();
 				displaceY = (displaceY * newRatioY).toInt();
 			}
@@ -284,7 +284,7 @@ void ScreenItem::calcRects(const Plane &plane) {
 			displaceX = (displaceX * celXRatio).toInt();
 			displaceY = (displaceY * celYRatio).toInt();
 
-			mulru(_screenItemRect, celXRatio, celYRatio);
+			mulinc(_screenItemRect, celXRatio, celYRatio);
 
 			if (/* TODO: dword_C6288 */ false && _celInfo.type == kCelTypePic) {
 				_scaledPosition.x = _position.x;
@@ -300,18 +300,16 @@ void ScreenItem::calcRects(const Plane &plane) {
 				Common::Rect temp(_insetRect);
 
 				if (!newRatioX.isOne()) {
-					mulru(temp, newRatioX, Ratio());
+					mulinc(temp, newRatioX, Ratio());
 				}
 
-				mulru(temp, celXRatio, Ratio());
+				mulinc(temp, celXRatio, Ratio());
 
 				CelObjPic *celObjPic = dynamic_cast<CelObjPic *>(_celObj);
-
 				temp.translate(celObjPic->_relativePosition.x * screenWidth / scriptWidth - displaceX, 0);
 
-				// TODO: This is weird, and probably wrong calculation of widths
-				// due to BR-inclusion
-				int deltaX = plane._planeRect.right - plane._planeRect.left + 1 - temp.right - 1 - temp.left;
+				// TODO: This is weird.
+				int deltaX = plane._planeRect.width() - temp.right - 1 - temp.left;
 
 				_scaledPosition.x += deltaX;
 				_screenItemRect.translate(deltaX, 0);
@@ -330,9 +328,9 @@ void ScreenItem::calcRects(const Plane &plane) {
 			}
 
 			if (!newRatioX.isOne() || !newRatioY.isOne()) {
-				mulru(_screenItemRect, newRatioX, newRatioY);
+				mulinc(_screenItemRect, newRatioX, newRatioY);
 				// TODO: This was in the original code, baked into the
-				// multiplication though it is  not immediately clear
+				// multiplication though it is not immediately clear
 				// why this is the only one that reduces the BR corner
 				_screenItemRect.right -= 1;
 				_screenItemRect.bottom -= 1;
@@ -346,16 +344,15 @@ void ScreenItem::calcRects(const Plane &plane) {
 				Common::Rect temp(_insetRect);
 
 				if (!newRatioX.isOne()) {
-					mulru(temp, newRatioX, Ratio());
+					mulinc(temp, newRatioX, Ratio());
 					temp.right -= 1;
 				}
 
 				CelObjPic *celObjPic = dynamic_cast<CelObjPic *>(_celObj);
 				temp.translate(celObjPic->_relativePosition.x - (displaceX * newRatioX).toInt(), celObjPic->_relativePosition.y - (_celObj->_displace.y * newRatioY).toInt());
 
-				// TODO: This is weird, and probably wrong calculation of widths
-				// due to BR-inclusion
-				int deltaX = plane._gameRect.right - plane._gameRect.left + 1 - temp.right - 1 - temp.left;
+				// TODO: This is weird.
+				int deltaX = plane._gameRect.width() - temp.right - 1 - temp.left;
 
 				_scaledPosition.x += deltaX;
 				_screenItemRect.translate(deltaX, 0);
@@ -369,7 +366,7 @@ void ScreenItem::calcRects(const Plane &plane) {
 				Ratio celXRatio(screenWidth, _celObj->_scaledWidth);
 				Ratio celYRatio(screenHeight, _celObj->_scaledHeight);
 				mulru(_scaledPosition, celXRatio, celYRatio);
-				mulru(_screenItemRect, celXRatio, celYRatio);
+				mulru(_screenItemRect, celXRatio, celYRatio, 1);
 			}
 
 			_ratioX = newRatioX * Ratio(screenWidth, _celObj->_scaledWidth);

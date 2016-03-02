@@ -154,13 +154,13 @@ inline void mulinc(Common::Rect &rect, const Common::Rational &ratioX, const Com
  * Multiplies a number by a rational number, rounding up to
  * the nearest whole number.
  */
-inline int mulru(const int value, const Common::Rational &ratio) {
-	int num = value * ratio.getNumerator();
+inline int mulru(const int value, const Common::Rational &ratio, const int extra = 0) {
+	int num = (value + extra) * ratio.getNumerator();
 	int result = num / ratio.getDenominator();
 	if (num > ratio.getDenominator() && num % ratio.getDenominator()) {
 		++result;
 	}
-	return result;
+	return result - extra;
 }
 
 /**
@@ -177,19 +177,12 @@ inline void mulru(Common::Point &point, const Common::Rational &ratioX, const Co
  * Multiplies a point by two rational numbers for X and Y,
  * rounding up to the nearest whole number. Modifies the
  * rect directly.
- *
- * @note In SCI engine, the bottom-right corner of rects
- * received an additional one pixel during the
- * multiplication in order to round up to include the
- * bottom-right corner. Since ScummVM rects do not include
- * the bottom-right corner, doing this ends up making rects
- * a pixel too wide/tall depending upon the remainder.
  */
-inline void mulru(Common::Rect &rect, const Common::Rational &ratioX, const Common::Rational &ratioY) {
+inline void mulru(Common::Rect &rect, const Common::Rational &ratioX, const Common::Rational &ratioY, const int extra) {
 	rect.left = mulru(rect.left, ratioX);
 	rect.top = mulru(rect.top, ratioY);
-	rect.right = mulru(rect.right, ratioX);
-	rect.bottom = mulru(rect.bottom, ratioY);
+	rect.right = mulru(rect.right - 1, ratioX, extra) + 1;
+	rect.bottom = mulru(rect.bottom - 1, ratioY, extra) + 1;
 }
 
 struct Buffer : public Graphics::Surface {

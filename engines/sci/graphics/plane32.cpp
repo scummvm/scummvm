@@ -136,7 +136,7 @@ void Plane::convertGameRectToPlaneRect() {
 	const Ratio ratioY = Ratio(screenHeight, scriptHeight);
 
 	_planeRect = _gameRect;
-	mulru(_planeRect, ratioX, ratioY);
+	mulru(_planeRect, ratioX, ratioY, 1);
 }
 
 void Plane::printDebugInfo(Console *con) const {
