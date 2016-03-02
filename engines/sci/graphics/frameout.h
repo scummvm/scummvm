@@ -427,7 +427,7 @@ private:
 	 * frame. If `shouldShowBits` is true, also sends the
 	 * buffer to hardware.
 	 */
-	void frameOut(const bool shouldShowBits, const Common::Rect &rect);
+	void frameOut(const bool shouldShowBits, const Common::Rect &rect = Common::Rect());
 
 	/**
 	 * Adds a new rectangle to the list of regions to write
@@ -466,7 +466,7 @@ public:
 		return _currentBuffer;
 	}
 
-	void kernelFrameout(const bool showBits);
+	void kernelFrameOut(const bool showBits);
 
 	/**
 	 * Modifies the raw pixel data for the next frame with

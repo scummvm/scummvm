@@ -1947,7 +1947,7 @@ bool GfxFrameout::processShowStyle12(ShowStyleEntry *const showStyle) {
 }
 #endif
 
-void GfxFrameout::kernelFrameout(const bool shouldShowBits) {
+void GfxFrameout::kernelFrameOut(const bool shouldShowBits) {
 	if (_showStyles != nullptr) {
 		processShowStyles();
 	} else if (_palMorphIsOn) {
@@ -1959,8 +1959,7 @@ void GfxFrameout::kernelFrameout(const bool shouldShowBits) {
 //			doScroll();
 //		}
 
-		Common::Rect frameOutRect(0, 0);
-		frameOut(shouldShowBits, frameOutRect);
+		frameOut(shouldShowBits);
 	}
 }
 
