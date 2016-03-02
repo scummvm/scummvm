@@ -109,8 +109,8 @@ struct SCALER_NoScale {
 	const int16 _lastIndex;
 
 	SCALER_NoScale(const CelObj &celObj, const int16 maxWidth) :
-	_reader(celObj, maxWidth),
-	_lastIndex(maxWidth - 1) {}
+	_reader(celObj, FLIP ? celObj._width : maxWidth),
+	_lastIndex(celObj._width - 1) {}
 
 	inline void setSource(const int16 x, const int16 y) {
 		_row = _reader.getRow(y);
