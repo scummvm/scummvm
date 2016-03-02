@@ -24,13 +24,31 @@
 
 namespace Titanic {
 
+CEnterExitSecClassMiniLiftStatics *CEnterExitSecClassMiniLift::_statics;
+
+void CEnterExitSecClassMiniLift::init() {
+	_statics = new CEnterExitSecClassMiniLiftStatics();
+}
+
+void CEnterExitSecClassMiniLift::deinit() {
+	delete _statics;
+}
+
 void CEnterExitSecClassMiniLift::save(SimpleFile *file, int indent) const {
 	file->writeNumberLine(1, indent);
+	file->writeQuotedLine(_statics->_v1, indent);
+	file->writeNumberLine(_statics->_v2, indent);
+	file->writeNumberLine(_value, indent);
+
 	CGameObject::save(file, indent);
 }
 
 void CEnterExitSecClassMiniLift::load(SimpleFile *file) {
 	file->readNumber();
+	_statics->_v1 = file->readString();
+	_statics->_v2 = file->readNumber();
+	_value = file->readNumber();
+
 	CGameObject::load(file);
 }
 

@@ -28,6 +28,8 @@
 namespace Titanic {
 
 class CAnnoyBarbot : public CGameObject {
+private:
+	static int _v1;
 public:
 	/**
 	 * Return the class name

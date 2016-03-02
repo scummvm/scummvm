@@ -35,6 +35,8 @@
 #include "titanic/game/sgt/sgt_navigation.h"
 #include "titanic/game/sgt/sgt_state_room.h"
 #include "titanic/moves/enter_exit_first_class_state.h"
+#include "titanic/moves/enter_exit_sec_class_mini_lift.h"
+#include "titanic/moves/exit_pellerator.h"
 
 namespace Titanic {
 
@@ -64,6 +66,8 @@ void TitanicEngine::initialize() {
 	CParrotLobbyObject::init();
 	CSGTNavigation::init();
 	CSGTStateRoom::init();
+	CExitPellerator::init();
+	CEnterExitSecClassMiniLift::init();
 
 	_screenManager = new OSScreenManager(this);
 	_window = new CMainGameWindow(this);
@@ -76,6 +80,8 @@ void TitanicEngine::deinitialize() {
 	CHose::deinit();
 	CSGTNavigation::deinit();
 	CSGTStateRoom::deinit();
+	CExitPellerator::deinit();
+	CEnterExitSecClassMiniLift::deinit();
 }
 
 Common::Error TitanicEngine::run() {

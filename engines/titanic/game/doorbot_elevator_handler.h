@@ -28,7 +28,8 @@
 namespace Titanic {
 
 class CDoorbotElevatorHandler : public CGameObject {
-public:
+private:
+	static int _v1;
 	int _value;
 public:
 	/**

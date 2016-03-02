@@ -24,15 +24,19 @@
 
 namespace Titanic {
 
+int CDoorbotElevatorHandler::_v1;
+
 void CDoorbotElevatorHandler::save(SimpleFile *file, int indent) const {
 	file->writeNumberLine(1, indent);
 	file->writeNumberLine(_value, indent);
+	file->writeNumberLine(_v1, indent);
 	CGameObject::save(file, indent);
 }
 
 void CDoorbotElevatorHandler::load(SimpleFile *file) {
 	file->readNumber();
 	_value = file->readNumber();
+	_v1 = file->readNumber();
 	CGameObject::load(file);
 }
 

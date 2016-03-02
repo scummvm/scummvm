@@ -24,13 +24,31 @@
 
 namespace Titanic {
 
+CExitPelleratorStatics *CExitPellerator::_statics;
+
+void CExitPellerator::init() {
+	_statics = new CExitPelleratorStatics();
+}
+
+void CExitPellerator::deinit() {
+	delete _statics;
+}
+
 void CExitPellerator::save(SimpleFile *file, int indent) const {
 	file->writeNumberLine(1, indent);
+	file->writeQuotedLine(_statics->_v1, indent);
+	file->writeNumberLine(_statics->_v2, indent);
+	file->writeNumberLine(_statics->_v3, indent);
+
 	CGameObject::save(file, indent);
 }
 
 void CExitPellerator::load(SimpleFile *file) {
 	file->readNumber();
+	_statics->_v1 = file->readString();
+	_statics->_v2 = file->readNumber();
+	_statics->_v3 = file->readNumber();
+
 	CGameObject::load(file);
 }
 

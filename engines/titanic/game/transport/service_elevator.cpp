@@ -24,12 +24,19 @@
 
 namespace Titanic {
 
+int CServiceElevator::_v1;
+int CServiceElevator::_v2;
+int CServiceElevator::_v3;
+
 CServiceElevator::CServiceElevator() : CTransport(),
 	_fieldF8(0), _fieldFC(0), _field100(0), _field104(0) {
 }
 
 void CServiceElevator::save(SimpleFile *file, int indent) const {
 	file->writeNumberLine(1, indent);
+	file->writeNumberLine(_v1, indent);
+	file->writeNumberLine(_v2, indent);
+	file->writeNumberLine(_v3, indent);
 	file->writeNumberLine(_fieldF8, indent);
 	file->writeNumberLine(_fieldFC, indent);
 	file->writeNumberLine(_field100, indent);
@@ -40,6 +47,9 @@ void CServiceElevator::save(SimpleFile *file, int indent) const {
 
 void CServiceElevator::load(SimpleFile *file) {
 	file->readNumber();
+	_v1 = file->readNumber();
+	_v2 = file->readNumber();
+	_v3 = file->readNumber();
 	_fieldF8 = file->readNumber();
 	_fieldFC = file->readNumber();
 	_field100 = file->readNumber();

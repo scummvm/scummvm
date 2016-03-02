@@ -28,7 +28,9 @@
 namespace Titanic {
 
 class CEmmaControl : public CBackground {
-public:
+private:
+	static int _v1;
+
 	CString _wavFile1, _wavFile2;
 public:
 	CEmmaControl() : CBackground(), _wavFile1("b#39.wav"), _wavFile2("b#38.wav") {}

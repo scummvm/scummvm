@@ -20,18 +20,31 @@
  *
  */
 
-#include "titanic/game/place_holder.h"
+#ifndef TITANIC_PET_LIFT_H
+#define TITANIC_PET_LIFT_H
+
+#include "titanic/game/pet/pet_transport.h"
 
 namespace Titanic {
 
-void CPlaceHolder::save(SimpleFile *file, int indent) const {
-	file->writeNumberLine(1, indent);
-	CGameObject::save(file, indent);
-}
+class CPETLift : public CPETTransport {
+public:
+	/**
+	 * Return the class name
+	 */
+	virtual const char *getClassName() const { return "CPETLift"; }
 
-void CPlaceHolder::load(SimpleFile *file) {
-	file->readNumber();
-	CGameObject::load(file);
-}
+	/**
+	 * Save the data for the class to file
+	 */
+	virtual void save(SimpleFile *file, int indent) const;
+
+	/**
+	 * Load the data for the class from file
+	 */
+	virtual void load(SimpleFile *file);
+};
 
 } // End of namespace Titanic
+
+#endif /* TITANIC_PET_LIFT_H */

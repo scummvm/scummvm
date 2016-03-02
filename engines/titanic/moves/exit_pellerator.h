@@ -27,8 +27,19 @@
 
 namespace Titanic {
 
+struct CExitPelleratorStatics {
+	CString _v1;
+	int _v2;
+	int _v3;
+};
+
 class CExitPellerator : public CGameObject {
+private:
+	static CExitPelleratorStatics *_statics;
 public:
+	static void init();
+	static void deinit();
+
 	/**
 	 * Return the class name
 	 */

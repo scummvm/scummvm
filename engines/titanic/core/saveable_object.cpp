@@ -77,9 +77,13 @@
 #include "titanic/core/view_item.h"
 
 #include "titanic/game/announce.h"
+#include "titanic/game/annoy_barbot.h"
 #include "titanic/game/arb_background.h"
 #include "titanic/game/arboretum_gate.h"
 #include "titanic/game/auto_animate.h"
+#include "titanic/game/bar_bell.h"
+#include "titanic/game/bar_menu.h"
+#include "titanic/game/bar_menu_button.h"
 #include "titanic/game/belbot_get_light.h"
 #include "titanic/game/bomb.h"
 #include "titanic/game/bowl_unlocker.h"
@@ -102,10 +106,11 @@
 #include "titanic/game/credits_button.h"
 #include "titanic/game/dead_area.h"
 #include "titanic/game/desk_click_responder.h"
+#include "titanic/game/doorbot_elevator_handler.h"
 #include "titanic/game/doorbot_home_handler.h"
-#include "titanic/game/drawer.h"
 #include "titanic/game/ear_sweet_bowl.h"
 #include "titanic/game/eject_phonograph_button.h"
+#include "titanic/game/elevator_action_area.h"
 #include "titanic/game/emma_control.h"
 #include "titanic/game/empty_nut_bowl.h"
 #include "titanic/game/end_credit_text.h"
@@ -121,15 +126,18 @@
 #include "titanic/game/floor_indicator.h"
 #include "titanic/game/games_console.h"
 #include "titanic/game/get_lift_eye2.h"
+#include "titanic/game/glass_smasher.h"
 #include "titanic/game/hammer_clip.h"
 #include "titanic/game/hammer_dispensor.h"
 #include "titanic/game/hammer_dispensor_button.h"
 #include "titanic/game/head_smash_event.h"
 #include "titanic/game/head_smash_lever.h"
+#include "titanic/game/idle_summoner.h"
 #include "titanic/game/lemon_dispensor.h"
 #include "titanic/game/light.h"
 #include "titanic/game/light_switch.h"
 #include "titanic/game/little_lift_button.h"
+#include "titanic/game/long_stick_dispenser.h"
 #include "titanic/game/maitred_arm_holder.h"
 #include "titanic/game/musical_instrument.h"
 #include "titanic/game/music_console_button.h"
@@ -165,6 +173,7 @@
 #include "titanic/game/television.h"
 #include "titanic/game/third_class_canal.h"
 #include "titanic/game/throw_tv_down_well.h"
+#include "titanic/game/tow_parrot_nav.h"
 #include "titanic/game/up_lighter.h"
 #include "titanic/game/wheel_button.h"
 #include "titanic/game/wheel_hotspot.h"
@@ -184,17 +193,43 @@
 #include "titanic/game/pet/pet_class1.h"
 #include "titanic/game/pet/pet_class2.h"
 #include "titanic/game/pet/pet_class3.h"
+#include "titanic/game/pet/pet_lift.h"
 #include "titanic/game/pet/pet_monitor.h"
+#include "titanic/game/pet/pet_pellerator.h"
 #include "titanic/game/pet/pet_position.h"
 #include "titanic/game/pet/pet_sentinal.h"
 #include "titanic/game/pet/pet_sounds.h"
 #include "titanic/game/pet/pet_transition.h"
 #include "titanic/game/pet/pet_transport.h"
+#include "titanic/game/pickup/pick_up.h"
+#include "titanic/game/pickup/pick_up_bar_glass.h"
+#include "titanic/game/pickup/pick_up_hose.h"
+#include "titanic/game/pickup/pick_up_lemon.h"
+#include "titanic/game/pickup/pick_up_speech_centre.h"
+#include "titanic/game/pickup/pick_up_vis_centre.h"
+#include "titanic/game/placeholder/bar_shelf_vis_centre.h"
+#include "titanic/game/placeholder/lemon_on_bar.h"
+#include "titanic/game/placeholder/place_holder.h"
+#include "titanic/game/placeholder/tv_on_bar.h"
+#include "titanic/game/sgt/armchair.h"
+#include "titanic/game/sgt/basin.h"
+#include "titanic/game/sgt/bedfoot.h"
+#include "titanic/game/sgt/bedhead.h"
+#include "titanic/game/sgt/chest_of_drawers.h"
+#include "titanic/game/sgt/desk.h"
+#include "titanic/game/sgt/deskchair.h"
+#include "titanic/game/sgt/drawer.h"
 #include "titanic/game/sgt/sgt_doors.h"
+#include "titanic/game/sgt/sgt_nav.h"
 #include "titanic/game/sgt/sgt_navigation.h"
 #include "titanic/game/sgt/sgt_restaurant_doors.h"
+#include "titanic/game/sgt/sgt_state_control.h"
 #include "titanic/game/sgt/sgt_state_room.h"
+#include "titanic/game/sgt/sgt_tv.h"
 #include "titanic/game/sgt/sgt_upper_doors_sound.h"
+#include "titanic/game/sgt/toilet.h"
+#include "titanic/game/sgt/vase.h"
+#include "titanic/game/sgt/washstand.h"
 #include "titanic/game/transport/gondolier.h"
 #include "titanic/game/transport/lift.h"
 #include "titanic/game/transport/lift_indicator.h"
@@ -248,10 +283,13 @@
 #include "titanic/moves/enter_bridge.h"
 #include "titanic/moves/enter_exit_first_class_state.h"
 #include "titanic/moves/enter_exit_mini_lift.h"
+#include "titanic/moves/enter_exit_sec_class_mini_lift.h"
 #include "titanic/moves/enter_exit_view.h"
+#include "titanic/moves/enter_sec_class_state.h"
 #include "titanic/moves/exit_arboretum.h"
 #include "titanic/moves/exit_bridge.h"
 #include "titanic/moves/exit_lift.h"
+#include "titanic/moves/exit_pellerator.h"
 #include "titanic/moves/exit_state_room.h"
 #include "titanic/moves/move_player_in_parrot_room.h"
 #include "titanic/moves/move_player_to.h"
@@ -354,9 +392,13 @@ DEFFN(CTreeItem);
 DEFFN(CViewItem);
 
 DEFFN(CAnnounce);
+DEFFN(CAnnoyBarbot);
 DEFFN(CArbBackground);
 DEFFN(CArboretumGate);
 DEFFN(CAutoAnimate);
+DEFFN(CBarBell);
+DEFFN(CBarMenu);
+DEFFN(CBarMenuButton);
 DEFFN(CBelbotGetLight);
 DEFFN(CBowlUnlocker);
 DEFFN(CBomb);
@@ -378,9 +420,11 @@ DEFFN(CCredits);
 DEFFN(CCreditsButton);
 DEFFN(CDeadArea);
 DEFFN(CDeskClickResponder);
+DEFFN(CDoorbotElevatorHandler);
 DEFFN(CDoorbotHomeHandler);
 DEFFN(CEarSweetBowl);
 DEFFN(CEjectPhonographButton);
+DEFFN(CElevatorActionArea);
 DEFFN(CEmmaControl);
 DEFFN(CEmptyNutBowl);
 DEFFN(CEndCreditText);
@@ -396,15 +440,18 @@ DEFFN(CFanNoises);
 DEFFN(CFloorIndicator);
 DEFFN(CGamesConsole);
 DEFFN(CGetLiftEye2);
+DEFFN(CGlassSmasher);
 DEFFN(CHammerClip);
 DEFFN(CHammerDispensor);
 DEFFN(CHammerDispensorButton);
 DEFFN(CHeadSmashEvent);
 DEFFN(CHeadSmashLever);
+DEFFN(CIdleSummoner);
 DEFFN(CLemonDispensor);
 DEFFN(CLight);
 DEFFN(CLightSwitch);
 DEFFN(CLittleLiftButton);
+DEFFN(CLongStickDispenser);
 DEFFN(CMaitreDArmHolder);
 DEFFN(CMusicalInstrument);
 DEFFN(CMusicConsoleButton);
@@ -440,6 +487,7 @@ DEFFN(CSweetBowl);
 DEFFN(CTelevision);
 DEFFN(CThirdClassCanal);
 DEFFN(CThrowTVDownWell);
+DEFFN(CTOWParrotNav);
 DEFFN(CUpLighter);
 DEFFN(CWheelButton);
 DEFFN(CWheelHotSpot);
@@ -459,18 +507,44 @@ DEFFN(CPET);
 DEFFN(CPETClass1);
 DEFFN(CPETClass2);
 DEFFN(CPETClass3);
+DEFFN(CPETLift);
 DEFFN(CPETMonitor);
+DEFFN(CPETPellerator);
 DEFFN(CPETPosition);
 DEFFN(CPETSentinal);
 DEFFN(CPETSounds);
 DEFFN(CPETTransition);
 DEFFN(CPETTransport);
-DEFFN(CEnterExitMiniLift);
+DEFFN(CPickUp);
+DEFFN(CPickUpBarGlass);
+DEFFN(CPickUpHose);
+DEFFN(CPickUpLemon);
+DEFFN(CPickUpSpeechCentre);
+DEFFN(CPickUpVisCentre);
+DEFFN(CBarShelfVisCentre);
+DEFFN(CLemonOnBar);
+DEFFN(CPlaceHolder);
+DEFFN(CTVOnBar);
+DEFFN(CArmchair);
+DEFFN(CBasin);
+DEFFN(CBedfoot);
+DEFFN(CBedhead);
+DEFFN(CChestOfDrawers);
+DEFFN(CDesk);
+DEFFN(CDeskchair);
+DEFFN(CDrawer);
 DEFFN(CSGTDoors);
+DEFFN(SGTNav);
 DEFFN(CSGTNavigation);
 DEFFN(CSGTRestaurantDoors);
+DEFFN(CSGTStateControl);
 DEFFN(CSGTStateRoom);
+DEFFN(CSGTTV);
 DEFFN(CSGTUpperDoorsSound);
+DEFFN(CToilet);
+DEFFN(CVase);
+DEFFN(CWashstand);
+
 DEFFN(CGondolier);
 DEFFN(CLift);
 DEFFN(CLiftindicator);
@@ -696,10 +770,14 @@ DEFFN(CVisibleMsg);
 DEFFN(CEnterBombRoom);
 DEFFN(CEnterBridge);
 DEFFN(CEnterExitFirstClassState);
+DEFFN(CEnterExitMiniLift);
+DEFFN(CEnterExitSecClassMiniLift);
 DEFFN(CEnterExitView);
+DEFFN(CEnterSecClassState);
 DEFFN(CExitArboretum);
 DEFFN(CExitBridge);
 DEFFN(CExitLift);
+DEFFN(CExitPellerator);
 DEFFN(CExitStateRoom);
 DEFFN(CMovePlayerInParrotRoom);
 DEFFN(CMovePlayerTo);
@@ -795,9 +873,13 @@ void CSaveableObject::initClassList() {
 	ADDFN(CViewItem);
 
 	ADDFN(CAnnounce);
+	ADDFN(CAnnoyBarbot);
 	ADDFN(CArbBackground);
 	ADDFN(CArboretumGate);
 	ADDFN(CAutoAnimate);
+	ADDFN(CBarBell);
+	ADDFN(CBarMenu);
+	ADDFN(CBarMenuButton);
 	ADDFN(CBelbotGetLight);
 	ADDFN(CBomb);
 	ADDFN(CBowlUnlocker);
@@ -819,10 +901,12 @@ void CSaveableObject::initClassList() {
 	ADDFN(CCreditsButton);
 	ADDFN(CDeadArea);
 	ADDFN(CDeskClickResponder);
+	ADDFN(CDoorbotElevatorHandler);
 	ADDFN(CDoorbotHomeHandler);
 	ADDFN(CDropTarget);
 	ADDFN(CEarSweetBowl);
 	ADDFN(CEjectPhonographButton);
+	ADDFN(CElevatorActionArea);
 	ADDFN(CEmmaControl);
 	ADDFN(CEmptyNutBowl);
 	ADDFN(CEndCreditText);
@@ -838,15 +922,18 @@ void CSaveableObject::initClassList() {
 	ADDFN(CFloorIndicator);
 	ADDFN(CGamesConsole);
 	ADDFN(CGetLiftEye2);
+	ADDFN(CGlassSmasher);
 	ADDFN(CHammerClip);
 	ADDFN(CHammerDispensor);
 	ADDFN(CHammerDispensorButton);
 	ADDFN(CHeadSmashEvent);
 	ADDFN(CHeadSmashLever);
+	ADDFN(CIdleSummoner);
 	ADDFN(CLemonDispensor);
 	ADDFN(CLight);
 	ADDFN(CLightSwitch);
 	ADDFN(CLittleLiftButton);
+	ADDFN(CLongStickDispenser);
 	ADDFN(CMaitreDArmHolder);
 	ADDFN(CMusicalInstrument);
 	ADDFN(CMusicConsoleButton);
@@ -882,6 +969,7 @@ void CSaveableObject::initClassList() {
 	ADDFN(CTelevision);
 	ADDFN(CThirdClassCanal);
 	ADDFN(CThrowTVDownWell);
+	ADDFN(CTOWParrotNav);
 	ADDFN(CUpLighter);
 	ADDFN(CWheelButton);
 	ADDFN(CWheelHotSpot);
@@ -901,18 +989,44 @@ void CSaveableObject::initClassList() {
 	ADDFN(CPETClass1);
 	ADDFN(CPETClass2);
 	ADDFN(CPETClass3);
+	ADDFN(CPETLift);
 	ADDFN(CPETMonitor);
+	ADDFN(CPETPellerator);
 	ADDFN(CPETPosition);
 	ADDFN(CPETSentinal);
 	ADDFN(CPETSounds);
 	ADDFN(CPETTransition);
 	ADDFN(CPETTransport);
-	ADDFN(CEnterExitMiniLift);
+	ADDFN(CPickUp);
+	ADDFN(CPickUpBarGlass);
+	ADDFN(CPickUpHose);
+	ADDFN(CPickUpLemon);
+	ADDFN(CPickUpSpeechCentre);
+	ADDFN(CPickUpVisCentre);
+	ADDFN(CBarShelfVisCentre);
+	ADDFN(CLemonOnBar);
+	ADDFN(CPlaceHolder);
+	ADDFN(CTVOnBar);
+	ADDFN(CArmchair);
+	ADDFN(CBasin);
+	ADDFN(CBedfoot);
+	ADDFN(CBedhead);
+	ADDFN(CChestOfDrawers);
+	ADDFN(CDesk);
+	ADDFN(CDeskchair);
+	ADDFN(CDrawer);
 	ADDFN(CSGTDoors);
+	ADDFN(SGTNav);
 	ADDFN(CSGTNavigation);
 	ADDFN(CSGTRestaurantDoors);
+	ADDFN(CSGTStateControl);
 	ADDFN(CSGTStateRoom);
+	ADDFN(CSGTTV);
 	ADDFN(CSGTUpperDoorsSound);
+	ADDFN(CToilet);
+	ADDFN(CVase);
+	ADDFN(CWashstand);
+
 	ADDFN(CGondolier);
 	ADDFN(CLift);
 	ADDFN(CLiftindicator);
@@ -1138,10 +1252,14 @@ void CSaveableObject::initClassList() {
 	ADDFN(CEnterBombRoom);
 	ADDFN(CEnterBridge);
 	ADDFN(CEnterExitFirstClassState);
+	ADDFN(CEnterExitMiniLift);
+	ADDFN(CEnterExitSecClassMiniLift);
 	ADDFN(CEnterExitView);
+	ADDFN(CEnterSecClassState);
 	ADDFN(CExitArboretum);
 	ADDFN(CExitBridge);
 	ADDFN(CExitLift);
+	ADDFN(CExitPellerator);
 	ADDFN(CExitStateRoom);
 	ADDFN(CMovePlayerInParrotRoom);
 	ADDFN(CMovePlayerTo);

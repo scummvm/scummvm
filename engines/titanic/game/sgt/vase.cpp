@@ -20,22 +20,17 @@
  *
  */
 
-#include "titanic/game/drawer.h"
+#include "titanic/game/sgt/vase.h"
 
 namespace Titanic {
 
-CDrawer::CDrawer() : CSGTStateRoom(), _fieldF4(0) {
-}
-
-void CDrawer::save(SimpleFile *file, int indent) const {
+void CVase::save(SimpleFile *file, int indent) const {
 	file->writeNumberLine(1, indent);
-	file->writeNumberLine(_fieldF4, indent);
 	CSGTStateRoom::save(file, indent);
 }
 
-void CDrawer::load(SimpleFile *file) {
+void CVase::load(SimpleFile *file) {
 	file->readNumber();
-	_fieldF4 = file->readNumber();
 	CSGTStateRoom::load(file);
 }
 

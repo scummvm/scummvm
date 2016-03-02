@@ -27,8 +27,21 @@
 
 namespace Titanic {
 
+struct CEnterExitSecClassMiniLiftStatics {
+	CString _v1;
+	int _v2;
+
+	CEnterExitSecClassMiniLiftStatics() : _v2(1) {}
+};
+
 class CEnterExitSecClassMiniLift : public CGameObject {
+private:
+	static CEnterExitSecClassMiniLiftStatics *_statics;
+	int _value;
 public:
+	CEnterExitSecClassMiniLift() : CGameObject(), _value(0) {}
+	static void init();
+	static void deinit();
 	/**
 	 * Return the class name
 	 */

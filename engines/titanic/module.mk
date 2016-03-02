@@ -167,7 +167,6 @@ MODULE_OBJS := \
 	game/pet_graphic.o \
 	game/phonograph.o \
 	game/phonograph_lid.o \
-	game/place_holder.o \
 	game/play_music_button.o \
 	game/play_on_act.o \
 	game/port_hole.o \
@@ -220,23 +219,49 @@ MODULE_OBJS := \
 	game/pet/pet_class1.o \
 	game/pet/pet_class2.o \
 	game/pet/pet_class3.o \
+	game/pet/pet_lift.o \
 	game/pet/pet_monitor.o \
+	game/pet/pet_pellerator.o \
 	game/pet/pet_position.o \
 	game/pet/pet_sentinal.o \
 	game/pet/pet_sounds.o \
 	game/pet/pet_transition.o \
 	game/pet/pet_transport.o \
+	game/pickup/pick_up.o \
+	game/pickup/pick_up_bar_glass.o \
+	game/pickup/pick_up_hose.o \
+	game/pickup/pick_up_lemon.o \
+	game/pickup/pick_up_speech_centre.o \
+	game/pickup/pick_up_vis_centre.o \
+	game/placeholder/bar_shelf_vis_centre.o \
+	game/placeholder/place_holder.o \
+	game/placeholder/lemon_on_bar.o \
+	game/placeholder/tv_on_bar.o \
 	game/transport/gondolier.o \
 	game/transport/lift.o \
 	game/transport/lift_indicator.o \
 	game/transport/pellerator.o \
 	game/transport/service_elevator.o \
 	game/transport/transport.o \
+	game/sgt/armchair.o \
+	game/sgt/basin.o \
+	game/sgt/bedfoot.o \
+	game/sgt/bedhead.o \
+	game/sgt/chest_of_drawers.o \
+	game/sgt/desk.o \
+	game/sgt/deskchair.o \
+	game/sgt/drawer.o \
 	game/sgt/sgt_doors.o \
+	game/sgt/sgt_nav.o \
 	game/sgt/sgt_navigation.o \
 	game/sgt/sgt_restaurant_doors.o \
+	game/sgt/sgt_state_control.o \
 	game/sgt/sgt_state_room.o \
+	game/sgt/sgt_tv.o \
 	game/sgt/sgt_upper_doors_sound.o \
+	game/sgt/toilet.o \
+	game/sgt/vase.o \
+	game/sgt/washstand.o \
 	gfx/act_button.o \
 	gfx/changes_season_button.o \
 	gfx/chev_left_off.o \

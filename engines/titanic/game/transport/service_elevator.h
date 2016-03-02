@@ -28,7 +28,11 @@
 namespace Titanic {
 
 class CServiceElevator : public CTransport {
-public:
+private:
+	static int _v1;
+	static int _v2;
+	static int _v3;
+
 	int _fieldF8;
 	int _fieldFC;
 	int _field100;

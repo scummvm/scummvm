@@ -34,7 +34,7 @@ public:
 	int _fieldC4;
 public:
 	CLongStickDispenser() : CGameObject(), _fieldBC(0),
-		_fieldC0(0), _fieldC4(0) {}
+		_fieldC0(0), _fieldC4(1) {}
 
 	/**
 	 * Return the class name

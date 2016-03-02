@@ -29,11 +29,19 @@ CBarMenu::CBarMenu() : CGameObject(), _fieldBC(0), _fieldC0(0), _fieldC4(6) {
 
 void CBarMenu::save(SimpleFile *file, int indent) const {
 	file->writeNumberLine(1, indent);
+	file->writeNumberLine(_fieldBC, indent);
+	file->writeNumberLine(_fieldC0, indent);
+	file->writeNumberLine(_fieldC4, indent);
+	
 	CGameObject::save(file, indent);
 }
 
 void CBarMenu::load(SimpleFile *file) {
 	file->readNumber();
+	_fieldBC = file->readNumber();
+	_fieldC0 = file->readNumber();
+	_fieldC4 = file->readNumber();
+
 	CGameObject::load(file);
 }
 

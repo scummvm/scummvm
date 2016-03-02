@@ -24,8 +24,11 @@
 
 namespace Titanic {
 
+int CEmmaControl::_v1;
+
 void CEmmaControl::save(SimpleFile *file, int indent) const {
 	file->writeNumberLine(1, indent);
+	file->writeNumberLine(_v1, indent);
 	file->writeQuotedLine(_wavFile1, indent);
 	file->writeQuotedLine(_wavFile2, indent);
 
@@ -34,6 +37,7 @@ void CEmmaControl::save(SimpleFile *file, int indent) const {
 
 void CEmmaControl::load(SimpleFile *file) {
 	file->readNumber();
+	_v1 = file->readNumber();
 	_wavFile1 = file->readString();
 	_wavFile2 = file->readString();
 
