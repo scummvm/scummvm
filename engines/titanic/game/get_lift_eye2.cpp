@@ -24,13 +24,25 @@
 
 namespace Titanic {
 
+CString *CGetLiftEye2::_v1;
+
+void CGetLiftEye2::init() {
+	_v1 = new CString();
+}
+
+void CGetLiftEye2::deinit() {
+	delete _v1;
+}
+
 void CGetLiftEye2::save(SimpleFile *file, int indent) const {
 	file->writeNumberLine(1, indent);
+	file->writeQuotedLine(*_v1, indent);
 	CGameObject::save(file, indent);
 }
 
 void CGetLiftEye2::load(SimpleFile *file) {
 	file->readNumber();
+	*_v1 = file->readString();
 	CGameObject::load(file);
 }
 

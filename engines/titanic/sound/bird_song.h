@@ -20,24 +20,35 @@
  *
  */
 
-#include "titanic/game/sgt/enter_exit_mini_lift.h"
+#ifndef TITANIC_BIRD_SONG_H
+#define TITANIC_BIRD_SONG_H
+
+#include "titanic/sound/room_auto_sound_player.h"
 
 namespace Titanic {
 
-void CEnterExitMiniLift::save(SimpleFile *file, int indent) const {
-	file->writeNumberLine(1, indent);
-	file->writeNumberLine(_fieldBC, indent);
-	file->writeNumberLine(_fieldC0, indent);
-	
-	CSGTNavigation::save(file, indent);
-}
+class CBirdSong : public CRoomAutoSoundPlayer {
+public:
+	int _value;
+public:
+	CBirdSong() : CRoomAutoSoundPlayer(), _value(0) {}
 
-void CEnterExitMiniLift::load(SimpleFile *file) {
-	file->readNumber();
-	_fieldBC = file->readNumber();
-	_fieldC0 = file->readNumber();
+	/**
+	 * Return the class name
+	 */
+	virtual const char *getClassName() const { return "CBirdSong"; }
 
-	CSGTNavigation::load(file);
-}
+	/**
+	 * Save the data for the class to file
+	 */
+	virtual void save(SimpleFile *file, int indent) const;
+
+	/**
+	 * Load the data for the class from file
+	 */
+	virtual void load(SimpleFile *file);
+};
 
 } // End of namespace Titanic
+
+#endif /* TITANIC_BIRD_SONG_H */

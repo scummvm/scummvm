@@ -20,18 +20,33 @@
  *
  */
 
-#include "titanic/game/enter_exit_sec_class_mini_lift.h"
+#ifndef TITANIC_EXIT_LIFT_H
+#define TITANIC_EXIT_LIFT_H
+
+#include "titanic/core/game_object.h"
 
 namespace Titanic {
 
-void CEnterExitSecClassMiniLift::save(SimpleFile *file, int indent) const {
-	file->writeNumberLine(1, indent);
-	CGameObject::save(file, indent);
-}
+class CExitLift : public CGameObject {
+public:
+	CString _value;
+public:
+	/**
+	 * Return the class name
+	 */
+	virtual const char *getClassName() const { return "CExitLift"; }
 
-void CEnterExitSecClassMiniLift::load(SimpleFile *file) {
-	file->readNumber();
-	CGameObject::load(file);
-}
+	/**
+	 * Save the data for the class to file
+	 */
+	virtual void save(SimpleFile *file, int indent) const;
+
+	/**
+	 * Load the data for the class from file
+	 */
+	virtual void load(SimpleFile *file);
+};
 
 } // End of namespace Titanic
+
+#endif /* TITANIC_EXIT_LIFT_H */

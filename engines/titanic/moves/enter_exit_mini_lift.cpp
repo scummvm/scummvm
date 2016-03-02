@@ -20,20 +20,24 @@
  *
  */
 
-#include "titanic/game/starling_puret.h"
+#include "titanic/moves/enter_exit_mini_lift.h"
 
 namespace Titanic {
 
-void CStarlingPuret::save(SimpleFile *file, int indent) const {
+void CEnterExitMiniLift::save(SimpleFile *file, int indent) const {
 	file->writeNumberLine(1, indent);
-	file->writeNumberLine(_value, indent);
-	CGameObject::save(file, indent);
+	file->writeNumberLine(_fieldBC, indent);
+	file->writeNumberLine(_fieldC0, indent);
+	
+	CSGTNavigation::save(file, indent);
 }
 
-void CStarlingPuret::load(SimpleFile *file) {
+void CEnterExitMiniLift::load(SimpleFile *file) {
 	file->readNumber();
-	_value = file->readNumber();
-	CGameObject::load(file);
+	_fieldBC = file->readNumber();
+	_fieldC0 = file->readNumber();
+
+	CSGTNavigation::load(file);
 }
 
 } // End of namespace Titanic

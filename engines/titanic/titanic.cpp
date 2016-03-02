@@ -28,12 +28,13 @@
 #include "graphics/scaler.h"
 #include "graphics/thumbnail.h"
 #include "titanic/titanic.h"
+#include "titanic/carry/hose.h"
 #include "titanic/core/saveable_object.h"
-#include "titanic/game/enter_exit_first_class_state.h"
+#include "titanic/game/get_lift_eye2.h"
 #include "titanic/game/parrot/parrot_lobby_object.h"
 #include "titanic/game/sgt/sgt_navigation.h"
 #include "titanic/game/sgt/sgt_state_room.h"
-#include "titanic/carry/hose.h"
+#include "titanic/moves/enter_exit_first_class_state.h"
 
 namespace Titanic {
 
@@ -57,9 +58,10 @@ void TitanicEngine::initialize() {
 	DebugMan.addDebugChannel(kDebugSound, "sound", "Sound and Music handling");
 
 	CSaveableObject::initClassList();
-	CParrotLobbyObject::init();
 	CEnterExitFirstClassState::init();
+	CGetLiftEye2::init();
 	CHose::init();
+	CParrotLobbyObject::init();
 	CSGTNavigation::init();
 	CSGTStateRoom::init();
 
@@ -70,6 +72,7 @@ void TitanicEngine::initialize() {
 
 void TitanicEngine::deinitialize() {
 	CEnterExitFirstClassState::deinit();
+	CGetLiftEye2::deinit();
 	CHose::deinit();
 	CSGTNavigation::deinit();
 	CSGTStateRoom::deinit();

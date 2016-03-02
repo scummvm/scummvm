@@ -20,19 +20,29 @@
  *
  */
 
-#include "titanic/game/starling_puret.h"
+#include "titanic/moves/enter_exit_first_class_state.h"
 
 namespace Titanic {
 
-void CStarlingPuret::save(SimpleFile *file, int indent) const {
+CString *CEnterExitFirstClassState::_v1;
+
+void CEnterExitFirstClassState::init() {
+	_v1 = new CString();
+}
+
+void CEnterExitFirstClassState::deinit() {
+	delete _v1;
+}
+
+void CEnterExitFirstClassState::save(SimpleFile *file, int indent) const {
 	file->writeNumberLine(1, indent);
-	file->writeNumberLine(_value, indent);
+	file->writeQuotedLine(*_v1, indent);
 	CGameObject::save(file, indent);
 }
 
-void CStarlingPuret::load(SimpleFile *file) {
+void CEnterExitFirstClassState::load(SimpleFile *file) {
 	file->readNumber();
-	_value = file->readNumber();
+	*_v1 = file->readString();
 	CGameObject::load(file);
 }
 

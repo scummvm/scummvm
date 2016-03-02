@@ -20,19 +20,23 @@
  *
  */
 
-#include "titanic/game/starling_puret.h"
+#include "titanic/moves/enter_sec_class_state.h"
 
 namespace Titanic {
 
-void CStarlingPuret::save(SimpleFile *file, int indent) const {
+void CEnterSecClassState::save(SimpleFile *file, int indent) const {
 	file->writeNumberLine(1, indent);
-	file->writeNumberLine(_value, indent);
+	file->writeNumberLine(_value1, indent);
+	file->writeNumberLine(_value2, indent);
+
 	CGameObject::save(file, indent);
 }
 
-void CStarlingPuret::load(SimpleFile *file) {
+void CEnterSecClassState::load(SimpleFile *file) {
 	file->readNumber();
-	_value = file->readNumber();
+	_value1 = file->readNumber();
+	_value2 = file->readNumber();
+
 	CGameObject::load(file);
 }
 

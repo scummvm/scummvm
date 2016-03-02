@@ -20,19 +20,17 @@
  *
  */
 
-#include "titanic/game/enter_bridge.h"
+#include "titanic/moves/enter_exit_sec_class_mini_lift.h"
 
 namespace Titanic {
 
-void CEnterBridge::save(SimpleFile *file, int indent) const {
+void CEnterExitSecClassMiniLift::save(SimpleFile *file, int indent) const {
 	file->writeNumberLine(1, indent);
-	file->writeNumberLine(_value, indent);
 	CGameObject::save(file, indent);
 }
 
-void CEnterBridge::load(SimpleFile *file) {
+void CEnterExitSecClassMiniLift::load(SimpleFile *file) {
 	file->readNumber();
-	_value = file->readNumber();
 	CGameObject::load(file);
 }
 

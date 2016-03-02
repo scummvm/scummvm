@@ -28,7 +28,11 @@
 namespace Titanic {
 
 class CStarlingPuret : public CGameObject {
+private:
+	int _value;
 public:
+	CStarlingPuret() : CGameObject(), _value(0) {}
+
 	/**
 	 * Return the class name
 	 */

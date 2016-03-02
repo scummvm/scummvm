@@ -20,17 +20,26 @@
  *
  */
 
-#include "titanic/game/nut_replacer.h"
+#include "titanic/game/end_game_credits.h"
 
 namespace Titanic {
 
-void CNutReplacer::save(SimpleFile *file, int indent) const {
+CEndGameCredits::CEndGameCredits() : CGameObject(), _fieldBC(0) {
+}
+
+void CEndGameCredits::save(SimpleFile *file, int indent) const {
 	file->writeNumberLine(1, indent);
+	file->writeNumberLine(_fieldBC, indent);
+	file->writePoint(_pos1, indent);
+
 	CGameObject::save(file, indent);
 }
 
-void CNutReplacer::load(SimpleFile *file) {
+void CEndGameCredits::load(SimpleFile *file) {
 	file->readNumber();
+	_fieldBC = file->readNumber();
+	_pos1 = file->readPoint();
+
 	CGameObject::load(file);
 }
 

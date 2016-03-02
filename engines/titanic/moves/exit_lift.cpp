@@ -20,23 +20,19 @@
  *
  */
 
-#include "titanic/game/enter_sec_class_state.h"
+#include "titanic/moves/exit_lift.h"
 
 namespace Titanic {
 
-void CEnterSecClassState::save(SimpleFile *file, int indent) const {
+void CExitLift::save(SimpleFile *file, int indent) const {
 	file->writeNumberLine(1, indent);
-	file->writeNumberLine(_value1, indent);
-	file->writeNumberLine(_value2, indent);
-
+	file->writeQuotedLine(_value, indent);
 	CGameObject::save(file, indent);
 }
 
-void CEnterSecClassState::load(SimpleFile *file) {
+void CExitLift::load(SimpleFile *file) {
 	file->readNumber();
-	_value1 = file->readNumber();
-	_value2 = file->readNumber();
-
+	_value = file->readString();
 	CGameObject::load(file);
 }
 

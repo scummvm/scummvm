@@ -20,19 +20,24 @@
  *
  */
 
-#ifndef TITANIC_END_GAME_SHIP_H
-#define TITANIC_END_GAME_SHIP_H
+#ifndef TITANIC_END_GAME_CREDITS_H
+#define TITANIC_END_GAME_CREDITS_H
 
 #include "titanic/core/game_object.h"
 
 namespace Titanic {
 
-class CEndGameShip : public CGameObject {
+class CEndGameCredits : public CGameObject {
+private:
+	int _fieldBC;
+	Common::Point _pos1;
 public:
+	CEndGameCredits();
+
 	/**
 	 * Return the class name
 	 */
-	virtual const char *getClassName() const { return "CEndGameShip"; }
+	virtual const char *getClassName() const { return "CEndGameCredits"; }
 
 	/**
 	 * Save the data for the class to file
@@ -47,4 +52,4 @@ public:
 
 } // End of namespace Titanic
 
-#endif /* TITANIC_END_GAME_SHIP_H */
+#endif /* TITANIC_END_GAME_CREDITS_H */

@@ -72,6 +72,7 @@
 #include "titanic/core/static_image.h"
 #include "titanic/core/turn_on_object.h"
 #include "titanic/core/turn_on_play_sound.h"
+#include "titanic/core/turn_on_turn_off.h"
 #include "titanic/core/tree_item.h"
 #include "titanic/core/view_item.h"
 
@@ -107,8 +108,11 @@
 #include "titanic/game/eject_phonograph_button.h"
 #include "titanic/game/emma_control.h"
 #include "titanic/game/empty_nut_bowl.h"
-#include "titanic/game/enter_exit_first_class_state.h"
-#include "titanic/game/enter_exit_view.h"
+#include "titanic/game/end_credit_text.h"
+#include "titanic/game/end_credits.h"
+#include "titanic/game/end_explode_ship.h"
+#include "titanic/game/end_game_credits.h"
+#include "titanic/game/end_sequence_control.h"
 #include "titanic/game/fan.h"
 #include "titanic/game/fan_control.h"
 #include "titanic/game/fan_decrease.h"
@@ -116,6 +120,7 @@
 #include "titanic/game/fan_noises.h"
 #include "titanic/game/floor_indicator.h"
 #include "titanic/game/games_console.h"
+#include "titanic/game/get_lift_eye2.h"
 #include "titanic/game/hammer_clip.h"
 #include "titanic/game/hammer_dispensor.h"
 #include "titanic/game/hammer_dispensor_button.h"
@@ -185,7 +190,6 @@
 #include "titanic/game/pet/pet_sounds.h"
 #include "titanic/game/pet/pet_transition.h"
 #include "titanic/game/pet/pet_transport.h"
-#include "titanic/game/sgt/enter_exit_mini_lift.h"
 #include "titanic/game/sgt/sgt_doors.h"
 #include "titanic/game/sgt/sgt_navigation.h"
 #include "titanic/game/sgt/sgt_restaurant_doors.h"
@@ -241,8 +245,13 @@
 #include "titanic/messages/pet_messages.h"
 
 #include "titanic/moves/enter_bomb_room.h"
+#include "titanic/moves/enter_bridge.h"
+#include "titanic/moves/enter_exit_first_class_state.h"
+#include "titanic/moves/enter_exit_mini_lift.h"
+#include "titanic/moves/enter_exit_view.h"
 #include "titanic/moves/exit_arboretum.h"
 #include "titanic/moves/exit_bridge.h"
+#include "titanic/moves/exit_lift.h"
 #include "titanic/moves/exit_state_room.h"
 #include "titanic/moves/move_player_in_parrot_room.h"
 #include "titanic/moves/move_player_to.h"
@@ -271,11 +280,14 @@
 #include "titanic/sound/auto_music_player_base.h"
 #include "titanic/sound/auto_sound_player.h"
 #include "titanic/sound/background_sound_maker.h"
+#include "titanic/sound/bird_song.h"
+#include "titanic/sound/gondolier_song.h"
 #include "titanic/sound/music_player.h"
 #include "titanic/sound/restricted_auto_music_player.h"
 #include "titanic/sound/seasonal_music_player.h"
 #include "titanic/sound/titania_speech.h"
 #include "titanic/sound/trigger_auto_music_player.h"
+#include "titanic/sound/water_lapping_sounds.h"
 
 namespace Titanic {
 
@@ -337,6 +349,7 @@ DEFFN(CProjectItem);
 DEFFN(CStaticImage);
 DEFFN(CTurnOnObject);
 DEFFN(CTurnOnPlaySound);
+DEFFN(CTurnOnTurnOff);
 DEFFN(CTreeItem);
 DEFFN(CViewItem);
 
@@ -370,8 +383,11 @@ DEFFN(CEarSweetBowl);
 DEFFN(CEjectPhonographButton);
 DEFFN(CEmmaControl);
 DEFFN(CEmptyNutBowl);
-DEFFN(CEnterExitFirstClassState);
-DEFFN(CEnterExitView);
+DEFFN(CEndCreditText);
+DEFFN(CEndCredits);
+DEFFN(CEndExplodeShip);
+DEFFN(CEndGameCredits);
+DEFFN(CEndSequenceControl);
 DEFFN(CFan);
 DEFFN(CFanControl);
 DEFFN(CFanDecrease);
@@ -379,6 +395,7 @@ DEFFN(CFanIncrease);
 DEFFN(CFanNoises);
 DEFFN(CFloorIndicator);
 DEFFN(CGamesConsole);
+DEFFN(CGetLiftEye2);
 DEFFN(CHammerClip);
 DEFFN(CHammerDispensor);
 DEFFN(CHammerDispensorButton);
@@ -677,8 +694,12 @@ DEFFN(CVirtualKeyCharMsg);
 DEFFN(CVisibleMsg);
 
 DEFFN(CEnterBombRoom);
+DEFFN(CEnterBridge);
+DEFFN(CEnterExitFirstClassState);
+DEFFN(CEnterExitView);
 DEFFN(CExitArboretum);
 DEFFN(CExitBridge);
+DEFFN(CExitLift);
 DEFFN(CExitStateRoom);
 DEFFN(CMovePlayerInParrotRoom);
 DEFFN(CMovePlayerTo);
@@ -706,11 +727,14 @@ DEFFN(CAutoMusicPlayer);
 DEFFN(CAutoMusicPlayerBase);
 DEFFN(CAutoSoundPlayer);
 DEFFN(CBackgroundSoundMaker);
+DEFFN(CBirdSong);
+DEFFN(CGondolierSong);
 DEFFN(CMusicPlayer);
 DEFFN(CRestrictedAutoMusicPlayer);
 DEFFN(CSeasonalMusicPlayer);
 DEFFN(CTitaniaSpeech);
 DEFFN(CTriggerAutoMusicPlayer);
+DEFFN(CWaterLappingSounds);
 
 void CSaveableObject::initClassList() {
 	_classList = new Common::HashMap<Common::String, CreateFunction>();
@@ -764,9 +788,10 @@ void CSaveableObject::initClassList() {
 	ADDFN(CNodeItem);
 	ADDFN(CProjectItem);
 	ADDFN(CStaticImage);
-	ADDFN(CTreeItem);
 	ADDFN(CTurnOnObject);
+	ADDFN(CTreeItem);
 	ADDFN(CTurnOnPlaySound);
+	ADDFN(CTurnOnTurnOff);
 	ADDFN(CViewItem);
 
 	ADDFN(CAnnounce);
@@ -800,8 +825,11 @@ void CSaveableObject::initClassList() {
 	ADDFN(CEjectPhonographButton);
 	ADDFN(CEmmaControl);
 	ADDFN(CEmptyNutBowl);
-	ADDFN(CEnterExitFirstClassState);
-	ADDFN(CEnterExitView);
+	ADDFN(CEndCreditText);
+	ADDFN(CEndCredits);
+	ADDFN(CEndExplodeShip);
+	ADDFN(CEndGameCredits);
+	ADDFN(CEndSequenceControl);
 	ADDFN(CFan);
 	ADDFN(CFanControl);
 	ADDFN(CFanDecrease);
@@ -809,6 +837,7 @@ void CSaveableObject::initClassList() {
 	ADDFN(CFanNoises);
 	ADDFN(CFloorIndicator);
 	ADDFN(CGamesConsole);
+	ADDFN(CGetLiftEye2);
 	ADDFN(CHammerClip);
 	ADDFN(CHammerDispensor);
 	ADDFN(CHammerDispensorButton);
@@ -1107,8 +1136,12 @@ void CSaveableObject::initClassList() {
 	ADDFN(CVisibleMsg);
 
 	ADDFN(CEnterBombRoom);
+	ADDFN(CEnterBridge);
+	ADDFN(CEnterExitFirstClassState);
+	ADDFN(CEnterExitView);
 	ADDFN(CExitArboretum);
 	ADDFN(CExitBridge);
+	ADDFN(CExitLift);
 	ADDFN(CExitStateRoom);
 	ADDFN(CMovePlayerInParrotRoom);
 	ADDFN(CMovePlayerTo);
@@ -1137,12 +1170,15 @@ void CSaveableObject::initClassList() {
 	ADDFN(CAutoMusicPlayerBase);
 	ADDFN(CAutoSoundPlayer);
 	ADDFN(CBackgroundSoundMaker);
+	ADDFN(CBirdSong);
+	ADDFN(CGondolierSong);
 	ADDFN(CMusicPlayer);
 	ADDFN(CRestrictedAutoMusicPlayer);
 	ADDFN(CSeasonalMusicPlayer);
 	ADDFN(CAutoMusicPlayer);
 	ADDFN(CTitaniaSpeech);
 	ADDFN(CTriggerAutoMusicPlayer);
+	ADDFN(CWaterLappingSounds);
 }
 
 void CSaveableObject::freeClassList() {

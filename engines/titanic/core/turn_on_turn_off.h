@@ -20,23 +20,27 @@
  *
  */
 
-#ifndef TITANIC_EXIT_LIFT_H
-#define TITANIC_EXIT_LIFT_H
+#ifndef TITANIC_TURN_ON_TURN_OFF_H
+#define TITANIC_TURN_ON_TURN_OFF_H
 
-#include "titanic/core/game_object.h"
+#include "titanic/core/background.h"
 
 namespace Titanic {
 
-class CExitLift : public CGameObject {
+class CTurnOnTurnOff : public CBackground {
+private:
+	int _fieldE0;
+	int _fieldE4;
+	int _fieldE8;
+	int _fieldEC;
+	int _fieldF0;
 public:
-	int _value1, _value2;
-public:
-	CExitLift() : CGameObject(), _value1(0), _value2(0) {}
+	CTurnOnTurnOff();
 
 	/**
 	 * Return the class name
 	 */
-	virtual const char *getClassName() const { return "CExitLift"; }
+	virtual const char *getClassName() const { return "CTurnOnTurnOff"; }
 
 	/**
 	 * Save the data for the class to file
@@ -51,4 +55,4 @@ public:
 
 } // End of namespace Titanic
 
-#endif /* TITANIC_EXIT_LIFT_H */
+#endif /* TITANIC_TURN_ON_TURN_OFF_H */

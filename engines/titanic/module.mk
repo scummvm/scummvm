@@ -72,6 +72,7 @@ MODULE_OBJS := \
 	core/static_image.o \
 	core/turn_on_object.o \
 	core/turn_on_play_sound.o \
+	core/turn_on_turn_off.o \
 	core/tree_item.o \
 	core/view_item.o \
 	game/announce.o \
@@ -120,17 +121,10 @@ MODULE_OBJS := \
 	game/end_credit_text.o \
 	game/end_credits.o \
 	game/end_explode_ship.o \
-	game/end_game_cerdits.o \
+	game/end_game_credits.o \
 	game/end_sequence_control.o \
-	game/enter_bridge.o \
-	game/enter_exit_first_class_state.o \
-	game/enter_exit_sec_class_mini_lift.o \
-	game/enter_exit_view.o \
-	game/enter_sec_class_state.o \
 	game/hammer_dispensor.o \
 	game/hammer_dispensor_button.o \
-	game/exit_lift.o \
-	game/exit_pellerator.o \
 	game/fan.o \
 	game/fan_control.o \
 	game/fan_decrease.o \
@@ -238,7 +232,6 @@ MODULE_OBJS := \
 	game/transport/pellerator.o \
 	game/transport/service_elevator.o \
 	game/transport/transport.o \
-	game/sgt/enter_exit_mini_lift.o \
 	game/sgt/sgt_doors.o \
 	game/sgt/sgt_navigation.o \
 	game/sgt/sgt_restaurant_doors.o \
@@ -281,8 +274,16 @@ MODULE_OBJS := \
 	messages/door_auto_sound_event.o \
 	messages/messages.o \
 	moves/enter_bomb_room.o \
+	moves/enter_bridge.o \
+	moves/enter_exit_first_class_state.o \
+	moves/enter_exit_mini_lift.o \
+	moves/enter_exit_sec_class_mini_lift.o \
+	moves/enter_exit_view.o \
+	moves/enter_sec_class_state.o \
 	moves/exit_arboretum.o \
 	moves/exit_bridge.o \
+	moves/exit_lift.o \
+	moves/exit_pellerator.o \
 	moves/exit_state_room.o \
 	moves/exit_titania.o \
 	moves/move_player_in_parrot_room.o \
@@ -313,11 +314,15 @@ MODULE_OBJS := \
 	sound/auto_music_player_base.o \
 	sound/auto_sound_player.o \
 	sound/background_sound_maker.o \
+	sound/bird_song.o \
+	sound/gondolier_song.o \
 	sound/music_player.o \
 	sound/restricted_auto_music_player.o \
+	sound/room_auto_sound_player.o \
 	sound/seasonal_music_player.o \
 	sound/titania_speech.o \
-	sound/trigger_auto_music_player.o
+	sound/trigger_auto_music_player.o \
+	sound/water_lapping_sounds.o
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_TITANIC), DYNAMIC_PLUGIN)

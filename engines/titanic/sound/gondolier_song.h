@@ -20,18 +20,35 @@
  *
  */
 
-#include "titanic/game/exit_pellerator.h"
+#ifndef TITANIC_GONDOLIER_SONG_H
+#define TITANIC_GONDOLIER_SONG_H
+
+#include "titanic/sound/room_auto_sound_player.h"
 
 namespace Titanic {
 
-void CExitPellerator::save(SimpleFile *file, int indent) const {
-	file->writeNumberLine(1, indent);
-	CGameObject::save(file, indent);
-}
+class CGondolierSong : public CRoomAutoSoundPlayer {
+public:
+	int _value;
+public:
+	CGondolierSong() : CRoomAutoSoundPlayer(), _value(0) {}
 
-void CExitPellerator::load(SimpleFile *file) {
-	file->readNumber();
-	CGameObject::load(file);
-}
+	/**
+	 * Return the class name
+	 */
+	virtual const char *getClassName() const { return "CGondolierSong"; }
+
+	/**
+	 * Save the data for the class to file
+	 */
+	virtual void save(SimpleFile *file, int indent) const;
+
+	/**
+	 * Load the data for the class from file
+	 */
+	virtual void load(SimpleFile *file);
+};
 
 } // End of namespace Titanic
+
+#endif /* TITANIC_GONDOLIER_SONG_H */

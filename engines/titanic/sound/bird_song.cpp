@@ -20,20 +20,20 @@
  *
  */
 
-#include "titanic/game/starling_puret.h"
+#include "titanic/sound/bird_song.h"
 
 namespace Titanic {
 
-void CStarlingPuret::save(SimpleFile *file, int indent) const {
+void CBirdSong::save(SimpleFile *file, int indent) const {
 	file->writeNumberLine(1, indent);
 	file->writeNumberLine(_value, indent);
-	CGameObject::save(file, indent);
+	CRoomAutoSoundPlayer::save(file, indent);
 }
 
-void CStarlingPuret::load(SimpleFile *file) {
+void CBirdSong::load(SimpleFile *file) {
 	file->readNumber();
 	_value = file->readNumber();
-	CGameObject::load(file);
+	CRoomAutoSoundPlayer::load(file);
 }
 
 } // End of namespace Titanic

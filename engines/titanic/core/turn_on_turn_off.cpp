@@ -20,20 +20,34 @@
  *
  */
 
-#include "titanic/game/starling_puret.h"
+#include "titanic/core/turn_on_turn_off.h"
 
 namespace Titanic {
 
-void CStarlingPuret::save(SimpleFile *file, int indent) const {
-	file->writeNumberLine(1, indent);
-	file->writeNumberLine(_value, indent);
-	CGameObject::save(file, indent);
+CTurnOnTurnOff::CTurnOnTurnOff() : CBackground(), _fieldE0(0),
+	_fieldE4(0), _fieldE8(0), _fieldEC(0), _fieldF0(0) {
 }
 
-void CStarlingPuret::load(SimpleFile *file) {
+void CTurnOnTurnOff::save(SimpleFile *file, int indent) const {
+	file->writeNumberLine(1, indent);
+	file->writeNumberLine(_fieldE0, indent);
+	file->writeNumberLine(_fieldE4, indent);
+	file->writeNumberLine(_fieldE8, indent);
+	file->writeNumberLine(_fieldEC, indent);
+	file->writeNumberLine(_fieldF0, indent);
+
+	CBackground::save(file, indent);
+}
+
+void CTurnOnTurnOff::load(SimpleFile *file) {
 	file->readNumber();
-	_value = file->readNumber();
-	CGameObject::load(file);
+	_fieldE0 = file->readNumber();
+	_fieldE4 = file->readNumber();
+	_fieldE8 = file->readNumber();
+	_fieldEC = file->readNumber();
+	_fieldF0 = file->readNumber();
+
+	CBackground::load(file);
 }
 
 } // End of namespace Titanic

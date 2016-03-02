@@ -29,8 +29,8 @@ namespace Titanic {
 
 class CAutoSoundPlayer : public CGameObject {
 public:
+	int _fieldBC;
 	CString _string1;
-	int _fieldC8;
 	int _fieldCC;
 	int _fieldD0;
 	int _fieldD4;

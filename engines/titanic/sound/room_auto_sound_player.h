@@ -20,34 +20,31 @@
  *
  */
 
-#include "titanic/game/enter_exit_view.h"
+#ifndef TITANIC_ROOM_AUTO_SOUND_PLAYER_H
+#define TITANIC_ROOM_AUTO_SOUND_PLAYER_H
+
+#include "titanic/sound/auto_sound_player.h"
 
 namespace Titanic {
 
-CEnterExitView::CEnterExitView() : CGameObject(), _fieldBC(0),
-	_fieldC0(0), _fieldC4(0), _fieldC8(0), _fieldCC(0) {
-}
+class CRoomAutoSoundPlayer : public CAutoSoundPlayer {
+public:
+	/**
+	 * Return the class name
+	 */
+	virtual const char *getClassName() const { return "CRoomAutoSoundPlayer"; }
 
-void CEnterExitView::save(SimpleFile *file, int indent) const {
-	file->writeNumberLine(1, indent);
-	file->writeNumberLine(_fieldBC, indent);
-	file->writeNumberLine(_fieldC0, indent);
-	file->writeNumberLine(_fieldC4, indent);
-	file->writeNumberLine(_fieldC8, indent);
-	file->writeNumberLine(_fieldCC, indent);
+	/**
+	 * Save the data for the class to file
+	 */
+	virtual void save(SimpleFile *file, int indent) const;
 
-	CGameObject::save(file, indent);
-}
-
-void CEnterExitView::load(SimpleFile *file) {
-	file->readNumber();
-	_fieldBC = file->readNumber();
-	_fieldC0 = file->readNumber();
-	_fieldC4 = file->readNumber();
-	_fieldC8 = file->readNumber();
-	_fieldCC = file->readNumber();
-
-	CGameObject::load(file);
-}
+	/**
+	 * Load the data for the class from file
+	 */
+	virtual void load(SimpleFile *file);
+};
 
 } // End of namespace Titanic
+
+#endif /* TITANIC_ROOM_AUTO_SOUND_PLAYER_H */

@@ -28,7 +28,11 @@
 namespace Titanic {
 
 class CEndCreditText : public CGameObject {
+private:
+	int _value;
 public:
+	CEndCreditText() : CGameObject(), _value(0) {}
+
 	/**
 	 * Return the class name
 	 */

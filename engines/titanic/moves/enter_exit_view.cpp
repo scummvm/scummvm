@@ -20,22 +20,32 @@
  *
  */
 
-#include "titanic/game/exit_lift.h"
+#include "titanic/moves/enter_exit_view.h"
 
 namespace Titanic {
 
-void CExitLift::save(SimpleFile *file, int indent) const {
+CEnterExitView::CEnterExitView() : CGameObject(), _fieldBC(0),
+	_fieldC0(0), _fieldC4(0), _fieldC8(0), _fieldCC(0) {
+}
+
+void CEnterExitView::save(SimpleFile *file, int indent) const {
 	file->writeNumberLine(1, indent);
-	file->writeNumberLine(_value1, indent);
-	file->writeNumberLine(_value2, indent);
+	file->writeNumberLine(_fieldBC, indent);
+	file->writeNumberLine(_fieldC0, indent);
+	file->writeNumberLine(_fieldC4, indent);
+	file->writeNumberLine(_fieldC8, indent);
+	file->writeNumberLine(_fieldCC, indent);
 
 	CGameObject::save(file, indent);
 }
 
-void CExitLift::load(SimpleFile *file) {
+void CEnterExitView::load(SimpleFile *file) {
 	file->readNumber();
-	_value1 = file->readNumber();
-	_value2 = file->readNumber();
+	_fieldBC = file->readNumber();
+	_fieldC0 = file->readNumber();
+	_fieldC4 = file->readNumber();
+	_fieldC8 = file->readNumber();
+	_fieldCC = file->readNumber();
 
 	CGameObject::load(file);
 }

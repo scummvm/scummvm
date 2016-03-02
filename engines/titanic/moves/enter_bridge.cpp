@@ -20,17 +20,17 @@
  *
  */
 
-#include "titanic/game/starling_puret.h"
+#include "titanic/moves/enter_bridge.h"
 
 namespace Titanic {
 
-void CStarlingPuret::save(SimpleFile *file, int indent) const {
+void CEnterBridge::save(SimpleFile *file, int indent) const {
 	file->writeNumberLine(1, indent);
 	file->writeNumberLine(_value, indent);
 	CGameObject::save(file, indent);
 }
 
-void CStarlingPuret::load(SimpleFile *file) {
+void CEnterBridge::load(SimpleFile *file) {
 	file->readNumber();
 	_value = file->readNumber();
 	CGameObject::load(file);

@@ -20,30 +20,35 @@
  *
  */
 
-#include "titanic/game/enter_exit_first_class_state.h"
+#ifndef TITANIC_WATER_LAPPING_SOUNDS_H
+#define TITANIC_WATER_LAPPING_SOUNDS_H
+
+#include "titanic/sound/room_auto_sound_player.h"
 
 namespace Titanic {
 
-CString *CEnterExitFirstClassState::_v1;
+class CWaterLappingSounds : public CRoomAutoSoundPlayer {
+public:
+	int _value;
+public:
+	CWaterLappingSounds() : CRoomAutoSoundPlayer(), _value(0) {}
 
-void CEnterExitFirstClassState::init() {
-	_v1 = new CString();
-}
+	/**
+	 * Return the class name
+	 */
+	virtual const char *getClassName() const { return "CWaterLappingSounds"; }
 
-void CEnterExitFirstClassState::deinit() {
-	delete _v1;
-}
+	/**
+	 * Save the data for the class to file
+	 */
+	virtual void save(SimpleFile *file, int indent) const;
 
-void CEnterExitFirstClassState::save(SimpleFile *file, int indent) const {
-	file->writeNumberLine(1, indent);
-	file->writeQuotedLine(*_v1, indent);
-	CGameObject::save(file, indent);
-}
-
-void CEnterExitFirstClassState::load(SimpleFile *file) {
-	file->readNumber();
-	*_v1 = file->readString();
-	CGameObject::load(file);
-}
+	/**
+	 * Load the data for the class from file
+	 */
+	virtual void load(SimpleFile *file);
+};
 
 } // End of namespace Titanic
+
+#endif /* TITANIC_WATER_LAPPING_SOUNDS_H */

@@ -26,11 +26,13 @@ namespace Titanic {
 
 void CEndCreditText::save(SimpleFile *file, int indent) const {
 	file->writeNumberLine(1, indent);
+	file->writeNumberLine(_value, indent);
 	CGameObject::save(file, indent);
 }
 
 void CEndCreditText::load(SimpleFile *file) {
 	file->readNumber();
+	_value = file->readNumber();
 	CGameObject::load(file);
 }
 
