@@ -1600,16 +1600,15 @@ void GfxFrameout::processShowStyles() {
 		}
 
 		if (doFrameOut) {
-			Common::Rect frameOutRect(0, 0);
-			frameOut(true, frameOutRect);
+			frameOut(true);
 
-			// TODO: It seems like transitions without the “animate”
-			// flag are too fast in in SCI2–2.1early, but the throttle
-			// value is arbitrary. Someone on real hardware probably
-			// needs to test what the actual speed of transitions
-			// should be
-			//state->speedThrottler(30);
-			//state->_throttleTrigger = true;
+			// TODO: Transitions without the “animate” flag are too
+			// fast, but the throttle value is arbitrary. Someone on
+			// real hardware probably needs to test what the actual
+			// speed of these transitions should be
+			EngineState *state = g_sci->getEngineState();
+			state->speedThrottler(33);
+			state->_throttleTrigger = true;
 		}
 	} while(continueProcessing && doFrameOut);
 }
