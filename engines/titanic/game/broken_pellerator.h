@@ -20,23 +20,24 @@
  *
  */
 
-#ifndef TITANIC_PICK_UP_HOSE_H
-#define TITANIC_PICK_UP_HOSE_H
+#ifndef TITANIC_BROKEN_PELLERATOR_H
+#define TITANIC_BROKEN_PELLERATOR_H
 
-#include "titanic/game/pickup/pick_up.h"
+#include "titanic/game/broken_pell_base.h"
 
 namespace Titanic {
 
-class CPickUpHose : public CPickUp {
+class CBrokenPellerator : public CBrokenPellBase {
 private:
-	static int _v1;
-
-	CString _string1;
+	CString _string2;
+	CString _string3;
+	CString _string4;
+	CString _string5;
 public:
 	/**
 	 * Return the class name
 	 */
-	virtual const char *getClassName() const { return "CPickUpHose"; }
+	virtual const char *getClassName() const { return "CBrokenPellerator"; }
 
 	/**
 	 * Save the data for the class to file
@@ -51,4 +52,4 @@ public:
 
 } // End of namespace Titanic
 
-#endif /* TITANIC_PICK_UP_HOSE_H */
+#endif /* TITANIC_BROKEN_PELLERATOR_H */

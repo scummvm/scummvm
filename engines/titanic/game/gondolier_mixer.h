@@ -20,23 +20,29 @@
  *
  */
 
-#ifndef TITANIC_PICK_UP_HOSE_H
-#define TITANIC_PICK_UP_HOSE_H
+#ifndef TITANIC_GONDOLIER_MIXER_H
+#define TITANIC_GONDOLIER_MIXER_H
 
-#include "titanic/game/pickup/pick_up.h"
+#include "titanic/game/gondolier_base.h"
 
 namespace Titanic {
 
-class CPickUpHose : public CPickUp {
+class CGondolierMixer : public CGondolierBase {
 private:
-	static int _v1;
-
+	int _fieldBC;
+	int _fieldC0;
+	int _fieldC4;
+	int _fieldC8;
 	CString _string1;
+	CString _string2;
+	int _fieldE4;
 public:
+	CGondolierMixer();
+
 	/**
 	 * Return the class name
 	 */
-	virtual const char *getClassName() const { return "CPickUpHose"; }
+	virtual const char *getClassName() const { return "CGondolierMixer"; }
 
 	/**
 	 * Save the data for the class to file
@@ -51,4 +57,4 @@ public:
 
 } // End of namespace Titanic
 
-#endif /* TITANIC_PICK_UP_HOSE_H */
+#endif /* TITANIC_GONDOLIER_MIXER_H */

@@ -20,35 +20,34 @@
  *
  */
 
-#ifndef TITANIC_PICK_UP_HOSE_H
-#define TITANIC_PICK_UP_HOSE_H
-
-#include "titanic/game/pickup/pick_up.h"
+#include "titanic/sound/season_noises.h"
 
 namespace Titanic {
 
-class CPickUpHose : public CPickUp {
-private:
-	static int _v1;
+CSeasonNoises::CSeasonNoises() : CViewAutoSoundPlayer(), _fieldF0(0),
+	_string2("NULL"), _string3("NULL"), _string4("NULL"), _string5("NULL") {
+}
 
-	CString _string1;
-public:
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CPickUpHose"; }
+void CSeasonNoises::save(SimpleFile *file, int indent) const {
+	file->writeNumberLine(1, indent);
+	file->writeNumberLine(_fieldF0, indent);
+	file->writeQuotedLine(_string2, indent);
+	file->writeQuotedLine(_string3, indent);
+	file->writeQuotedLine(_string4, indent);
+	file->writeQuotedLine(_string5, indent);
 
-	/**
-	 * Save the data for the class to file
-	 */
-	virtual void save(SimpleFile *file, int indent) const;
+	CViewAutoSoundPlayer::save(file, indent);
+}
 
-	/**
-	 * Load the data for the class from file
-	 */
-	virtual void load(SimpleFile *file);
-};
+void CSeasonNoises::load(SimpleFile *file) {
+	file->readNumber();
+	_fieldF0 = file->readNumber();
+	_string2 = file->readString();
+	_string3 = file->readString();
+	_string4 = file->readString();
+	_string5 = file->readString();
+
+	CViewAutoSoundPlayer::load(file);
+}
 
 } // End of namespace Titanic
-
-#endif /* TITANIC_PICK_UP_HOSE_H */

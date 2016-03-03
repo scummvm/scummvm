@@ -20,35 +20,28 @@
  *
  */
 
-#ifndef TITANIC_PICK_UP_HOSE_H
-#define TITANIC_PICK_UP_HOSE_H
-
-#include "titanic/game/pickup/pick_up.h"
+#include "titanic/messages/door_auto_sound_event.h"
 
 namespace Titanic {
 
-class CPickUpHose : public CPickUp {
-private:
-	static int _v1;
+void CDoorAutoSoundEvent::save(SimpleFile *file, int indent) const {
+	file->writeNumberLine(1, indent);
+	file->writeQuotedLine(_string1, indent);
+	file->writeQuotedLine(_string2, indent);
+	file->writeNumberLine(_fieldDC, indent);
+	file->writeNumberLine(_fieldE0, indent);
 
-	CString _string1;
-public:
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CPickUpHose"; }
+	CAutoSoundEvent::save(file, indent);
+}
 
-	/**
-	 * Save the data for the class to file
-	 */
-	virtual void save(SimpleFile *file, int indent) const;
+void CDoorAutoSoundEvent::load(SimpleFile *file) {
+	file->readNumber();
+	_string1 = file->readString();
+	_string2 = file->readString();
+	_fieldDC = file->readNumber();
+	_fieldE0 = file->readNumber();
 
-	/**
-	 * Load the data for the class from file
-	 */
-	virtual void load(SimpleFile *file);
-};
+	CAutoSoundEvent::load(file);
+}
 
 } // End of namespace Titanic
-
-#endif /* TITANIC_PICK_UP_HOSE_H */

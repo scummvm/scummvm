@@ -20,23 +20,23 @@
  *
  */
 
-#ifndef TITANIC_PICK_UP_HOSE_H
-#define TITANIC_PICK_UP_HOSE_H
+#ifndef TITANIC_LEFT_ARM_H
+#define TITANIC_LEFT_ARM_H
 
-#include "titanic/game/pickup/pick_up.h"
+#include "titanic/carry/arm.h"
 
 namespace Titanic {
 
-class CPickUpHose : public CPickUp {
+class CMaitreDLeftArm : public CArm {
 private:
-	static int _v1;
-
-	CString _string1;
+	int _field174;
 public:
+	CMaitreDLeftArm() : CArm(), _field174(0) {}
+
 	/**
 	 * Return the class name
 	 */
-	virtual const char *getClassName() const { return "CPickUpHose"; }
+	virtual const char *getClassName() const { return "CMaitreDLeftArm"; }
 
 	/**
 	 * Save the data for the class to file
@@ -51,4 +51,4 @@ public:
 
 } // End of namespace Titanic
 
-#endif /* TITANIC_PICK_UP_HOSE_H */
+#endif /* TITANIC_LEFT_ARM_H */

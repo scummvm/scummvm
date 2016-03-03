@@ -38,6 +38,8 @@ MODULE_OBJS := \
 	carry/liftbot_head.o \
 	carry/long_stick.o \
 	carry/magazine.o \
+	carry/maitred_left_arm.o \
+	carry/maitred_right_arm.o \
 	carry/mouth.o \
 	carry/napkin.o \
 	carry/nose.o \
@@ -93,6 +95,8 @@ MODULE_OBJS := \
 	game/bridge_door.o \
 	game/bridge_view.o \
 	game/broken_pell_base.o \
+	game/broken_pellerator.o \
+	game/broken_pellerator_froz.o \
 	game/call_pellerator.o \
 	game/cage.o \
 	game/captains_wheel.o \
@@ -138,6 +142,7 @@ MODULE_OBJS := \
 	game/get_lift_eye2.o \
 	game/glass_smasher.o \
 	game/gondolier_base.o \
+	game/gondolier_mixer.o \
 	game/hammer_clip.o \
 	game/head_slot.o \
 	game/head_smash_event.o \
@@ -151,7 +156,6 @@ MODULE_OBJS := \
 	game/little_lift_button.o \
 	game/long_stick_dispenser.o \
 	game/mail_man.o \
-	game/maitred_arm_holder.o \
 	game/missiveomat.o \
 	game/missiveomat_button.o \
 	game/movie_tester.o \
@@ -186,7 +190,6 @@ MODULE_OBJS := \
 	game/season_background.o \
 	game/season_barrel.o \
 	game/seasonal_adjustment.o \
-	game/service_elevator_door.o \
 	game/service_elevator_window.o \
 	game/ship_setting.o \
 	game/ship_setting_button.o \
@@ -211,6 +214,10 @@ MODULE_OBJS := \
 	game/wheel_hotspot.o \
 	game/wheel_spin.o \
 	game/wheel_spin_horn.o \
+	game/maitred/maitred_arm_holder.o \
+	game/maitred/maitred_body.o \
+	game/maitred/maitred_legs.o \
+	game/maitred/maitred_prod_receptor.o \
 	game/parrot/parrot_lobby_controller.o \
 	game/parrot/parrot_lobby_link_updater.o \
 	game/parrot/parrot_lobby_object.o \
@@ -304,7 +311,12 @@ MODULE_OBJS := \
 	gfx/toggle_button.o \
 	gfx/toggle_switch.o \
 	gfx/volume_control.o \
+	messages/auto_sound_event.o \
+	messages/bilge_auto_sound_event.o \
+	messages/bilge_dispensor_event.o \
+	messages/door_auto_sound_event.o \
 	messages/messages.o \
+	messages/service_elevator_door.o \
 	moves/enter_bomb_room.o \
 	moves/enter_bridge.o \
 	moves/enter_exit_first_class_state.o \
@@ -344,19 +356,18 @@ MODULE_OBJS := \
 	npcs/true_talk_npc.o \
 	sound/auto_music_player.o \
 	sound/auto_music_player_base.o \
-	sound/auto_sound_event.o \
 	sound/auto_sound_player.o \
 	sound/auto_sound_player_adsr.o \
 	sound/background_sound_maker.o \
-	sound/bilge_auto_sound_event.o \
 	sound/bird_song.o \
-	sound/door_auto_sound_event.o \
+	sound/dome_from_top_of_well.o \
 	sound/enter_view_toggles_other_music.o \
 	sound/gondolier_song.o \
 	sound/music_player.o \
 	sound/node_auto_sound_player.o \
 	sound/restricted_auto_music_player.o \
 	sound/room_auto_sound_player.o \
+	sound/season_noises.o \
 	sound/seasonal_music_player.o \
 	sound/titania_speech.o \
 	sound/trigger_auto_music_player.o \

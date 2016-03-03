@@ -24,12 +24,19 @@
 
 namespace Titanic {
 
+int CLemonDispensor::_v1;
+int CLemonDispensor::_v2;
+int CLemonDispensor::_v3;
+
 CLemonDispensor::CLemonDispensor() : CBackground(),
 	_fieldE0(0), _fieldE4(9), _fieldE8(15), _fieldEC(0) {
 }
 
 void CLemonDispensor::save(SimpleFile *file, int indent) const {
 	file->writeNumberLine(1, indent);
+	file->writeNumberLine(_v1, indent);
+	file->writeNumberLine(_v2, indent);
+	file->writeNumberLine(_v3, indent);
 	file->writeNumberLine(_fieldE0, indent);
 	file->writeNumberLine(_fieldE4, indent);
 	file->writeNumberLine(_fieldE8, indent);
@@ -40,6 +47,9 @@ void CLemonDispensor::save(SimpleFile *file, int indent) const {
 
 void CLemonDispensor::load(SimpleFile *file) {
 	file->readNumber();
+	_v1 = file->readNumber();
+	_v2 = file->readNumber();
+	_v3 = file->readNumber();
 	_fieldE0 = file->readNumber();
 	_fieldE4 = file->readNumber();
 	_fieldE8 = file->readNumber();

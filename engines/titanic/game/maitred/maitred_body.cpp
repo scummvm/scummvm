@@ -20,31 +20,20 @@
  *
  */
 
-#ifndef TITANIC_BILGE_AUTO_SOUND_EVENT_H
-#define TITANIC_BILGE_AUTO_SOUND_EVENT_H
-
-#include "titanic/sound/auto_sound_event.h"
+#include "titanic/game/maitred/maitred_legs.h"
 
 namespace Titanic {
 
-class CBilgeAutoSoundEvent : public CAutoSoundEvent {
-public:
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CBilgeAutoSoundEvent"; }
+void CMaitreDLegs::save(SimpleFile *file, int indent) const {
+	file->writeNumberLine(1, indent);
+	file->writeNumberLine(_fieldC8, indent);
+	CMaitreDProdReceptor::save(file, indent);
+}
 
-	/**
-	 * Save the data for the class to file
-	 */
-	virtual void save(SimpleFile *file, int indent) const;
-
-	/**
-	 * Load the data for the class from file
-	 */
-	virtual void load(SimpleFile *file);
-};
+void CMaitreDLegs::load(SimpleFile *file) {
+	file->readNumber();
+	_fieldC8 = file->readNumber();
+	CMaitreDProdReceptor::load(file);
+}
 
 } // End of namespace Titanic
-
-#endif /* TITANIC_BILGE_AUTO_SOUND_EVENT_H */

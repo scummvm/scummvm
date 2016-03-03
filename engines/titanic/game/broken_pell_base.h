@@ -28,7 +28,10 @@
 namespace Titanic {
 
 class CBrokenPellBase : public CBackground {
-public:
+private:
+	static int _v1;
+	static int _v2;
+
 	int _fieldE0;
 public:
 	CBrokenPellBase() : CBackground(), _fieldE0(0) {}

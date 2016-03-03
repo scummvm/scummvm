@@ -20,18 +20,38 @@
  *
  */
 
-#include "titanic/sound/bilge_auto_sound_event.h"
+#ifndef TITANIC_MAITRED_PROD_RECEPTOR_H
+#define TITANIC_MAITRED_PROD_RECEPTOR_H
+
+#include "titanic/core/game_object.h"
 
 namespace Titanic {
 
-void CBilgeAutoSoundEvent::save(SimpleFile *file, int indent) const {
-	file->writeNumberLine(1, indent);
-	CAutoSoundEvent::save(file, indent);
-}
+class CMaitreDProdReceptor : public CGameObject {
+protected:
+	int _fieldBC;
+	int _fieldC0;
+	int _fieldC4;
+public:
+	CMaitreDProdReceptor() : CGameObject(),
+		_fieldBC(0), _fieldC0(0), _fieldC4(1) {}
 
-void CBilgeAutoSoundEvent::load(SimpleFile *file) {
-	file->readNumber();
-	CAutoSoundEvent::load(file);
-}
+	/**
+	 * Return the class name
+	 */
+	virtual const char *getClassName() const { return "CMaitreDProdReceptor"; }
+
+	/**
+	 * Save the data for the class to file
+	 */
+	virtual void save(SimpleFile *file, int indent) const;
+
+	/**
+	 * Load the data for the class from file
+	 */
+	virtual void load(SimpleFile *file);
+};
 
 } // End of namespace Titanic
+
+#endif /* TITANIC_MAITRED_PROD_RECEPTOR_H */

@@ -42,6 +42,8 @@
 #include "titanic/carry/liftbot_head.h"
 #include "titanic/carry/long_stick.h"
 #include "titanic/carry/magazine.h"
+#include "titanic/carry/maitred_left_arm.h"
+#include "titanic/carry/maitred_right_arm.h"
 #include "titanic/carry/mouth.h"
 #include "titanic/carry/napkin.h"
 #include "titanic/carry/nose.h"
@@ -92,6 +94,8 @@
 #include "titanic/game/brain_slot.h"
 #include "titanic/game/bridge_view.h"
 #include "titanic/game/broken_pell_base.h"
+#include "titanic/game/broken_pellerator.h"
+#include "titanic/game/broken_pellerator_froz.h"
 #include "titanic/game/cage.h"
 #include "titanic/game/call_pellerator.h"
 #include "titanic/game/captains_wheel.h"
@@ -131,6 +135,8 @@
 #include "titanic/game/games_console.h"
 #include "titanic/game/get_lift_eye2.h"
 #include "titanic/game/glass_smasher.h"
+#include "titanic/game/gondolier_base.h"
+#include "titanic/game/gondolier_mixer.h"
 #include "titanic/game/hammer_clip.h"
 #include "titanic/game/hammer_dispensor.h"
 #include "titanic/game/hammer_dispensor_button.h"
@@ -143,7 +149,6 @@
 #include "titanic/game/light_switch.h"
 #include "titanic/game/little_lift_button.h"
 #include "titanic/game/long_stick_dispenser.h"
-#include "titanic/game/maitred_arm_holder.h"
 #include "titanic/game/missiveomat.h"
 #include "titanic/game/missiveomat_button.h"
 #include "titanic/game/musical_instrument.h"
@@ -166,14 +171,15 @@
 #include "titanic/game/port_hole.h"
 #include "titanic/game/record_phonograph_button.h"
 #include "titanic/game/replacement_ear.h"
+#include "titanic/game/reserved_table.h"
 #include "titanic/game/restaurant_cylinder_holder.h"
 #include "titanic/game/restaurant_phonograph.h"
 #include "titanic/game/room_item.h"
 #include "titanic/game/sauce_dispensor.h"
+#include "titanic/game/search_point.h"
 #include "titanic/game/season_background.h"
 #include "titanic/game/season_barrel.h"
 #include "titanic/game/seasonal_adjustment.h"
-#include "titanic/game/service_elevator_door.h"
 #include "titanic/game/service_elevator_window.h"
 #include "titanic/game/ship_setting.h"
 #include "titanic/game/ship_setting_button.h"
@@ -195,6 +201,10 @@
 #include "titanic/game/wheel_hotspot.h"
 #include "titanic/game/wheel_spin.h"
 #include "titanic/game/wheel_spin_horn.h"
+#include "titanic/game/maitred/maitred_arm_holder.h"
+#include "titanic/game/maitred/maitred_body.h"
+#include "titanic/game/maitred/maitred_legs.h"
+#include "titanic/game/maitred/maitred_prod_receptor.h"
 #include "titanic/game/parrot/parrot_lobby_controller.h"
 #include "titanic/game/parrot/parrot_lobby_link_updater.h"
 #include "titanic/game/parrot/parrot_lobby_object.h"
@@ -294,9 +304,15 @@
 #include "titanic/gfx/toggle_button.h"
 #include "titanic/gfx/toggle_switch.h"
 #include "titanic/gfx/volume_control.h"
+
 #include "titanic/messages/messages.h"
+#include "titanic/messages/auto_sound_event.h"
+#include "titanic/messages/bilge_auto_sound_event.h"
+#include "titanic/messages/bilge_dispensor_event.h"
+#include "titanic/messages/door_auto_sound_event.h"
 #include "titanic/messages/mouse_messages.h"
 #include "titanic/messages/pet_messages.h"
+#include "titanic/messages/service_elevator_door.h"
 
 #include "titanic/moves/enter_bomb_room.h"
 #include "titanic/moves/enter_bridge.h"
@@ -336,19 +352,17 @@
 
 #include "titanic/sound/auto_music_player.h"
 #include "titanic/sound/auto_music_player_base.h"
-#include "titanic/sound/auto_sound_event.h"
 #include "titanic/sound/auto_sound_player.h"
 #include "titanic/sound/auto_sound_player_adsr.h"
 #include "titanic/sound/background_sound_maker.h"
-#include "titanic/sound/bilge_auto_sound_event.h"
 #include "titanic/sound/bird_song.h"
-#include "titanic/sound/door_auto_sound_event.h"
 #include "titanic/sound/gondolier_song.h"
 #include "titanic/sound/enter_view_toggles_other_music.h"
 #include "titanic/sound/music_player.h"
 #include "titanic/sound/node_auto_sound_player.h"
 #include "titanic/sound/restricted_auto_music_player.h"
 #include "titanic/sound/room_auto_sound_player.h"
+#include "titanic/sound/season_noises.h"
 #include "titanic/sound/seasonal_music_player.h"
 #include "titanic/sound/titania_speech.h"
 #include "titanic/sound/trigger_auto_music_player.h"
@@ -387,6 +401,8 @@ DEFFN(CKey);
 DEFFN(CLiftbotHead);
 DEFFN(CLongStick);
 DEFFN(CMagazine);
+DEFFN(CMaitreDLeftArm);
+DEFFN(CMaitreDRightArm);
 DEFFN(CMouth);
 DEFFN(CNapkin);
 DEFFN(CNose);
@@ -436,6 +452,8 @@ DEFFN(CBowlUnlocker);
 DEFFN(CBrainSlot);
 DEFFN(CBridgeView);
 DEFFN(CBrokenPellBase)
+DEFFN(CBrokenPellerator);
+DEFFN(CBrokenPelleratorFroz);
 DEFFN(CCage);
 DEFFN(CCallPellerator);
 DEFFN(CCaptainsWheel);
@@ -474,6 +492,8 @@ DEFFN(CFloorIndicator);
 DEFFN(CGamesConsole);
 DEFFN(CGetLiftEye2);
 DEFFN(CGlassSmasher);
+DEFFN(CGondolierBase);
+DEFFN(CGondolierMixer);
 DEFFN(CHammerClip);
 DEFFN(CHammerDispensor);
 DEFFN(CHammerDispensorButton);
@@ -486,7 +506,6 @@ DEFFN(CLight);
 DEFFN(CLightSwitch);
 DEFFN(CLittleLiftButton);
 DEFFN(CLongStickDispenser);
-DEFFN(CMaitreDArmHolder);
 DEFFN(CMissiveOMat);
 DEFFN(CMissiveOMatButton);
 DEFFN(CMusicalInstrument);
@@ -509,14 +528,15 @@ DEFFN(CPlayOnAct);
 DEFFN(CPortHole);
 DEFFN(CRecordPhonographButton);
 DEFFN(CReplacementEar);
+DEFFN(CReservedTable);
 DEFFN(CRestaurantCylinderHolder);
 DEFFN(CRestaurantPhonograph);
 DEFFN(CRoomItem);
 DEFFN(CSauceDispensor);
+DEFFN(CSearchPoint);
 DEFFN(CSeasonBackground);
 DEFFN(CSeasonBarrel);
 DEFFN(CSeasonalAdjustment);
-DEFFN(CServiceElevatorDoor);
 DEFFN(CServiceElevatorWindow);
 DEFFN(CShipSetting);
 DEFFN(CShipSettingButton);
@@ -538,6 +558,10 @@ DEFFN(CWheelButton);
 DEFFN(CWheelHotSpot);
 DEFFN(CWheelSpin);
 DEFFN(CWheelSpinHorn);
+DEFFN(CMaitreDArmHolder);
+DEFFN(CMaitreDBody);
+DEFFN(CMaitreDLegs);
+DEFFN(CMaitreDProdReceptor);
 DEFFN(CParrotLobbyController);
 DEFFN(CParrotLobbyLinkUpdater);
 DEFFN(CParrotLobbyObject);
@@ -647,6 +671,9 @@ DEFFN(CAddHeadPieceMsg);
 DEFFN(CAnimateMaitreDMsg);
 DEFFN(CArboretumGateMsg);
 DEFFN(CArmPickedUpFromTableMsg);
+DEFFN(CAutoSoundEvent);
+DEFFN(CBilgeAutoSoundEvent);
+DEFFN(CBilgeDispensorEvent);
 DEFFN(CBodyInBilgeRoomMsg);
 DEFFN(CBowlStateChange);
 DEFFN(CCarryObjectArrivedMsg);
@@ -666,6 +693,7 @@ DEFFN(CDisableMaitreDProdReceptor);
 DEFFN(CDismissBotMsg);
 DEFFN(CDoffNavHelmet);
 DEFFN(CDonNavHelmet);
+DEFFN(CDoorAutoSoundEvent);
 DEFFN(CDoorbotNeededInElevatorMsg);
 DEFFN(CDoorbotNeededInHomeMsg);
 DEFFN(CDropobjectMsg);
@@ -761,6 +789,7 @@ DEFFN(CReplaceBowlAndNutsMsg);
 DEFFN(CRestaurantMusicChanged);
 DEFFN(CSendCCarryMsg);
 DEFFN(CSenseWorkingMsg);
+DEFFN(CServiceElevatorDoor);
 DEFFN(CServiceElevatorFloorChangeMsg);
 DEFFN(CServiceElevatorFloorRequestMsg);
 DEFFN(CServiceElevatorMsg);
@@ -850,20 +879,18 @@ DEFFN(CSummonBots);
 DEFFN(CSuccUBus);
 DEFFN(CTitania);
 DEFFN(CAutoMusicPlayer);
-DEFFN(CAutoSoundEvent);
 DEFFN(CAutoMusicPlayerBase);
 DEFFN(CAutoSoundPlayer);
 DEFFN(CAutoSoundPlayerADSR);
 DEFFN(CBackgroundSoundMaker);
-DEFFN(CBilgeAutoSoundEvent);
 DEFFN(CBirdSong);
-DEFFN(CDoorAutoSoundEvent);
 DEFFN(CEnterViewTogglesOtherMusic);
 DEFFN(CGondolierSong);
 DEFFN(CMusicPlayer);
 DEFFN(CNodeAutoSoundPlayer);
 DEFFN(CRestrictedAutoMusicPlayer);
 DEFFN(CRoomAutoSoundPlayer);
+DEFFN(CSeasonNoises);
 DEFFN(CSeasonalMusicPlayer);
 DEFFN(CTitaniaSpeech);
 DEFFN(CTriggerAutoMusicPlayer);
@@ -896,6 +923,8 @@ void CSaveableObject::initClassList() {
 	ADDFN(CLiftbotHead);
 	ADDFN(CLongStick);
 	ADDFN(CMagazine);
+	ADDFN(CMaitreDLeftArm);
+	ADDFN(CMaitreDRightArm);
 	ADDFN(CMouth);
 	ADDFN(CNapkin);
 	ADDFN(CNose);
@@ -945,6 +974,8 @@ void CSaveableObject::initClassList() {
 	ADDFN(CBowlUnlocker);
 	ADDFN(CBridgeView);
 	ADDFN(CBrokenPellBase);
+	ADDFN(CBrokenPellerator);
+	ADDFN(CBrokenPelleratorFroz);
 	ADDFN(CCage);
 	ADDFN(CCallPellerator);
 	ADDFN(CCaptainsWheel);
@@ -984,6 +1015,8 @@ void CSaveableObject::initClassList() {
 	ADDFN(CGamesConsole);
 	ADDFN(CGetLiftEye2);
 	ADDFN(CGlassSmasher);
+	ADDFN(CGondolierBase);
+	ADDFN(CGondolierMixer);
 	ADDFN(CHammerClip);
 	ADDFN(CHammerDispensor);
 	ADDFN(CHammerDispensorButton);
@@ -996,7 +1029,6 @@ void CSaveableObject::initClassList() {
 	ADDFN(CLightSwitch);
 	ADDFN(CLittleLiftButton);
 	ADDFN(CLongStickDispenser);
-	ADDFN(CMaitreDArmHolder);
 	ADDFN(CMissiveOMat);
 	ADDFN(CMissiveOMatButton);
 	ADDFN(CMusicalInstrument);
@@ -1019,14 +1051,15 @@ void CSaveableObject::initClassList() {
 	ADDFN(CPortHole);
 	ADDFN(CRecordPhonographButton);
 	ADDFN(CReplacementEar);
+	ADDFN(CReservedTable);
 	ADDFN(CRestaurantCylinderHolder);
 	ADDFN(CRestaurantPhonograph);
 	ADDFN(CRoomItem);
 	ADDFN(CSauceDispensor);
+	ADDFN(CSearchPoint);
 	ADDFN(CSeasonBackground);
 	ADDFN(CSeasonBarrel);
 	ADDFN(CSeasonalAdjustment);
-	ADDFN(CServiceElevatorDoor);
 	ADDFN(CServiceElevatorWindow);
 	ADDFN(CShipSetting);
 	ADDFN(CShipSettingButton);
@@ -1048,6 +1081,10 @@ void CSaveableObject::initClassList() {
 	ADDFN(CWheelHotSpot);
 	ADDFN(CWheelSpin);
 	ADDFN(CWheelSpinHorn);
+	ADDFN(CMaitreDArmHolder);
+	ADDFN(CMaitreDBody);
+	ADDFN(CMaitreDLegs);
+	ADDFN(CMaitreDProdReceptor);
 	ADDFN(CParrotLobbyController);
 	ADDFN(CParrotLobbyLinkUpdater);
 	ADDFN(CParrotLobbyObject);
@@ -1271,6 +1308,7 @@ void CSaveableObject::initClassList() {
 	ADDFN(CRestaurantMusicChanged);
 	ADDFN(CSendCCarryMsg);
 	ADDFN(CSenseWorkingMsg);
+	ADDFN(CServiceElevatorDoor);
 	ADDFN(CServiceElevatorFloorChangeMsg);
 	ADDFN(CServiceElevatorFloorRequestMsg);
 	ADDFN(CServiceElevatorMsg);
@@ -1367,6 +1405,7 @@ void CSaveableObject::initClassList() {
 	ADDFN(CAutoSoundPlayerADSR);
 	ADDFN(CBackgroundSoundMaker);
 	ADDFN(CBilgeAutoSoundEvent);
+	ADDFN(CBilgeDispensorEvent);
 	ADDFN(CBirdSong);
 	ADDFN(CDoorAutoSoundEvent);
 	ADDFN(CGondolierSong);
@@ -1376,6 +1415,7 @@ void CSaveableObject::initClassList() {
 	ADDFN(CNodeAutoSoundPlayer);
 	ADDFN(CRestrictedAutoMusicPlayer);
 	ADDFN(CRoomAutoSoundPlayer);
+	ADDFN(CSeasonNoises);
 	ADDFN(CSeasonalMusicPlayer);
 	ADDFN(CAutoMusicPlayer);
 	ADDFN(CTitaniaSpeech);

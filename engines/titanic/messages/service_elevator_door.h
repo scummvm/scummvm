@@ -20,23 +20,21 @@
  *
  */
 
-#ifndef TITANIC_PICK_UP_HOSE_H
-#define TITANIC_PICK_UP_HOSE_H
+#ifndef TITANIC_SERVICE_ELEVATOR_DOOR_H
+#define TITANIC_SERVICE_ELEVATOR_DOOR_H
 
-#include "titanic/game/pickup/pick_up.h"
+#include "titanic/messages/door_auto_sound_event.h"
 
 namespace Titanic {
 
-class CPickUpHose : public CPickUp {
-private:
-	static int _v1;
-
-	CString _string1;
+class CServiceElevatorDoor : public CDoorAutoSoundEvent {
 public:
+	CServiceElevatorDoor();
+
 	/**
 	 * Return the class name
 	 */
-	virtual const char *getClassName() const { return "CPickUpHose"; }
+	virtual const char *getClassName() const { return "CServiceElevatorDoor"; }
 
 	/**
 	 * Save the data for the class to file
@@ -51,4 +49,4 @@ public:
 
 } // End of namespace Titanic
 
-#endif /* TITANIC_PICK_UP_HOSE_H */
+#endif /* TITANIC_SERVICE_ELEVATOR_DOOR_H */

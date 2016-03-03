@@ -28,7 +28,11 @@
 namespace Titanic {
 
 class CLemonDispensor : public CBackground {
-public:
+private:
+	static int _v1;
+	static int _v2;
+	static int _v3;
+
 	int _fieldE0;
 	int _fieldE4;
 	int _fieldE8;

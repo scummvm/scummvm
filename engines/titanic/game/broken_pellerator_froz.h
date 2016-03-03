@@ -20,27 +20,36 @@
  *
  */
 
-#include "titanic/sound/auto_sound_event.h"
+#ifndef TITANIC_BROKEN_PELLERATOR_FROZ_H
+#define TITANIC_BROKEN_PELLERATOR_FROZ_H
+
+#include "titanic/game/broken_pell_base.h"
 
 namespace Titanic {
 
-CAutoSoundEvent::CAutoSoundEvent() : CGameObject(), _value1(0), _value2(70) {
-}
+class CBrokenPelleratorFroz : public CBrokenPellBase {
+private:
+	CString _string2;
+	CString _string3;
+	CString _string4;
+	CString _string5;
+public:
+	/**
+	 * Return the class name
+	 */
+	virtual const char *getClassName() const { return "CBrokenPelleratorFroz"; }
 
-void CAutoSoundEvent::save(SimpleFile *file, int indent) const {
-	file->writeNumberLine(1, indent);
-	file->writeNumberLine(_value1, indent);
-	file->writeNumberLine(_value2, indent);
+	/**
+	 * Save the data for the class to file
+	 */
+	virtual void save(SimpleFile *file, int indent) const;
 
-	CGameObject::save(file, indent);
-}
-
-void CAutoSoundEvent::load(SimpleFile *file) {
-	file->readNumber();
-	_value1 = file->readNumber();
-	_value2  = file->readNumber();
-
-	CGameObject::load(file);
-}
+	/**
+	 * Load the data for the class from file
+	 */
+	virtual void load(SimpleFile *file);
+};
 
 } // End of namespace Titanic
+
+#endif /* TITANIC_BROKEN_PELLERATOR_FROZ_H */

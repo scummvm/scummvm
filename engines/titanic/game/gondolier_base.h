@@ -28,6 +28,17 @@
 namespace Titanic {
 
 class CGondolierBase : public CGameObject {
+private:
+	static int _v1;
+	static int _v2;
+	static int _v3;
+	static int _v4;
+	static int _v5;
+	static int _v6;
+	static int _v7;
+	static int _v8;
+	static int _v9;
+	static int _v10;
 public:
 	/**
 	 * Return the class name

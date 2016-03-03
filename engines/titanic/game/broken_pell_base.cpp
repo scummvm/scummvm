@@ -24,14 +24,21 @@
 
 namespace Titanic {
 
+int CBrokenPellBase::_v1;
+int CBrokenPellBase::_v2;
+
 void CBrokenPellBase::save(SimpleFile *file, int indent) const {
 	file->writeNumberLine(1, indent);
+	file->writeNumberLine(_v1, indent);
+	file->writeNumberLine(_v2, indent);
 	file->writeNumberLine(_fieldE0, indent);
 	CBackground::save(file, indent);
 }
 
 void CBrokenPellBase::load(SimpleFile *file) {
 	file->readNumber();
+	_v1 = file->readNumber();
+	_v2 = file->readNumber();
 	_fieldE0 = file->readNumber();
 	CBackground::load(file);
 }

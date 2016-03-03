@@ -20,35 +20,18 @@
  *
  */
 
-#ifndef TITANIC_PICK_UP_HOSE_H
-#define TITANIC_PICK_UP_HOSE_H
-
-#include "titanic/game/pickup/pick_up.h"
+#include "titanic/messages/bilge_auto_sound_event.h"
 
 namespace Titanic {
 
-class CPickUpHose : public CPickUp {
-private:
-	static int _v1;
+void CBilgeAutoSoundEvent::save(SimpleFile *file, int indent) const {
+	file->writeNumberLine(1, indent);
+	CAutoSoundEvent::save(file, indent);
+}
 
-	CString _string1;
-public:
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CPickUpHose"; }
-
-	/**
-	 * Save the data for the class to file
-	 */
-	virtual void save(SimpleFile *file, int indent) const;
-
-	/**
-	 * Load the data for the class from file
-	 */
-	virtual void load(SimpleFile *file);
-};
+void CBilgeAutoSoundEvent::load(SimpleFile *file) {
+	file->readNumber();
+	CAutoSoundEvent::load(file);
+}
 
 } // End of namespace Titanic
-
-#endif /* TITANIC_PICK_UP_HOSE_H */

@@ -24,15 +24,21 @@
 
 namespace Titanic {
 
+int CPickUpHose::_v1;
+
 void CPickUpHose::save(SimpleFile *file, int indent) const {
 	file->writeNumberLine(1, indent);
 	file->writeQuotedLine(_string1, indent);
+	file->writeNumberLine(_v1, indent);
+
 	CPickUp::save(file, indent);
 }
 
 void CPickUpHose::load(SimpleFile *file) {
 	file->readNumber();
 	_string1 = file->readString();
+	_v1 = file->readNumber();
+
 	CPickUp::load(file);
 }
 

@@ -20,23 +20,27 @@
  *
  */
 
-#ifndef TITANIC_PICK_UP_HOSE_H
-#define TITANIC_PICK_UP_HOSE_H
+#ifndef TITANIC_SEASON_NOISES_H
+#define TITANIC_SEASON_NOISES_H
 
-#include "titanic/game/pickup/pick_up.h"
+#include "titanic/sound/view_auto_sound_player.h"
 
 namespace Titanic {
 
-class CPickUpHose : public CPickUp {
+class CSeasonNoises : public CViewAutoSoundPlayer {
 private:
-	static int _v1;
-
-	CString _string1;
+	int _fieldF0;
+	CString _string2;
+	CString _string3;
+	CString _string4;
+	CString _string5;
 public:
+	CSeasonNoises();
+
 	/**
 	 * Return the class name
 	 */
-	virtual const char *getClassName() const { return "CPickUpHose"; }
+	virtual const char *getClassName() const { return "CSeasonNoises"; }
 
 	/**
 	 * Save the data for the class to file
@@ -51,4 +55,4 @@ public:
 
 } // End of namespace Titanic
 
-#endif /* TITANIC_PICK_UP_HOSE_H */
+#endif /* TITANIC_SEASON_NOISES_H */

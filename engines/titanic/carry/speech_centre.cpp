@@ -30,7 +30,7 @@ void CSpeechCentre::save(SimpleFile *file, int indent) const {
 	file->writeQuotedLine(_string1, indent);
 	file->writeNumberLine(_field14C, indent);
 
-	CCarry::save(file, indent);
+	CBrain::save(file, indent);
 }
 
 void CSpeechCentre::load(SimpleFile *file) {
@@ -39,7 +39,7 @@ void CSpeechCentre::load(SimpleFile *file) {
 	_string1 = file->readString();
 	_field14C = file->readNumber();
 
-	CCarry::load(file);
+	CBrain::load(file);
 }
 
 } // End of namespace Titanic

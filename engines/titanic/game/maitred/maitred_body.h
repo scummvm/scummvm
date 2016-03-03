@@ -20,29 +20,35 @@
  *
  */
 
-#include "titanic/game/service_elevator_door.h"
+#ifndef TITANIC_MAITRED_BODY_H
+#define TITANIC_MAITRED_BODY_H
+
+#include "titanic/game/maitred/maitred_prod_receptor.h"
 
 namespace Titanic {
 
-CServiceElevatorDoor::CServiceElevatorDoor() : CDoorAutoSoundEvent() {
-	_string1 = "z#31.wav";
-	_string2 = "z#32.wav";
-}
+class CMaitreDBody : public CMaitreDProdReceptor {
+private:
+	int _fieldC8;
+public:
+	CMaitreDBody() : CMaitreDProdReceptor(), _fieldC8(1) {}
 
-void CServiceElevatorDoor::save(SimpleFile *file, int indent) const {
-	file->writeNumberLine(1, indent);
-	file->writeQuotedLine(_string2, indent);
-	file->writeQuotedLine(_string1, indent);
+	/**
+	 * Return the class name
+	 */
+	virtual const char *getClassName() const { return "CMaitreDBody"; }
 
-	CDoorAutoSoundEvent::save(file, indent);
-}
+	/**
+	 * Save the data for the class to file
+	 */
+	virtual void save(SimpleFile *file, int indent) const;
 
-void CServiceElevatorDoor::load(SimpleFile *file) {
-	file->readNumber();
-	_string2 = file->readString();
-	_string1 = file->readString();
-
-	CDoorAutoSoundEvent::load(file);
-}
+	/**
+	 * Load the data for the class from file
+	 */
+	virtual void load(SimpleFile *file);
+};
 
 } // End of namespace Titanic
+
+#endif /* TITANIC_MAITRED_BODY_H */

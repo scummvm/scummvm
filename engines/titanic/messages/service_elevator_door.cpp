@@ -20,35 +20,29 @@
  *
  */
 
-#ifndef TITANIC_PICK_UP_HOSE_H
-#define TITANIC_PICK_UP_HOSE_H
-
-#include "titanic/game/pickup/pick_up.h"
+#include "titanic/messages/service_elevator_door.h"
 
 namespace Titanic {
 
-class CPickUpHose : public CPickUp {
-private:
-	static int _v1;
+CServiceElevatorDoor::CServiceElevatorDoor() : CDoorAutoSoundEvent() {
+	_string1 = "z#31.wav";
+	_string2 = "z#32.wav";
+}
 
-	CString _string1;
-public:
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CPickUpHose"; }
+void CServiceElevatorDoor::save(SimpleFile *file, int indent) const {
+	file->writeNumberLine(1, indent);
+	file->writeQuotedLine(_string2, indent);
+	file->writeQuotedLine(_string1, indent);
 
-	/**
-	 * Save the data for the class to file
-	 */
-	virtual void save(SimpleFile *file, int indent) const;
+	CDoorAutoSoundEvent::save(file, indent);
+}
 
-	/**
-	 * Load the data for the class from file
-	 */
-	virtual void load(SimpleFile *file);
-};
+void CServiceElevatorDoor::load(SimpleFile *file) {
+	file->readNumber();
+	_string2 = file->readString();
+	_string1 = file->readString();
+
+	CDoorAutoSoundEvent::load(file);
+}
 
 } // End of namespace Titanic
-
-#endif /* TITANIC_PICK_UP_HOSE_H */

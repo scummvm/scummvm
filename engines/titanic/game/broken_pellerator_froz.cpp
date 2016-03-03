@@ -20,28 +20,28 @@
  *
  */
 
-#include "titanic/sound/door_auto_sound_event.h"
+#include "titanic/game/broken_pellerator_froz.h"
 
 namespace Titanic {
 
-void CDoorAutoSoundEvent::save(SimpleFile *file, int indent) const {
+void CBrokenPelleratorFroz::save(SimpleFile *file, int indent) const {
 	file->writeNumberLine(1, indent);
-	file->writeQuotedLine(_string1, indent);
 	file->writeQuotedLine(_string2, indent);
-	file->writeNumberLine(_fieldDC, indent);
-	file->writeNumberLine(_fieldE0, indent);
+	file->writeQuotedLine(_string3, indent);
+	file->writeQuotedLine(_string4, indent);
+	file->writeQuotedLine(_string5, indent);
 
-	CAutoSoundEvent::save(file, indent);
+	CBrokenPellBase::save(file, indent);
 }
 
-void CDoorAutoSoundEvent::load(SimpleFile *file) {
+void CBrokenPelleratorFroz::load(SimpleFile *file) {
 	file->readNumber();
-	_string1 = file->readString();
 	_string2 = file->readString();
-	_fieldDC = file->readNumber();
-	_fieldE0 = file->readNumber();
+	_string3 = file->readString();
+	_string4 = file->readString();
+	_string5 = file->readString();
 
-	CAutoSoundEvent::load(file);
+	CBrokenPellBase::load(file);
 }
 
 } // End of namespace Titanic

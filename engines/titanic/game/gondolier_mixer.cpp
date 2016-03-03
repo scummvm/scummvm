@@ -20,18 +20,40 @@
  *
  */
 
-#include "titanic/game/maitred_arm_holder.h"
+#include "titanic/game/gondolier_mixer.h"
 
 namespace Titanic {
 
-void CMaitreDArmHolder::save(SimpleFile *file, int indent) const {
-	file->writeNumberLine(1, indent);
-	CDropTarget::save(file, indent);
+CGondolierMixer::CGondolierMixer() : CGondolierBase(),
+	_string1("c#0.wav"), _string2("c#1.wav"),
+	_fieldBC(-1), _fieldC0(-1), _fieldC4(0), _fieldC8(0),
+	_fieldE4(0) {
 }
 
-void CMaitreDArmHolder::load(SimpleFile *file) {
+void CGondolierMixer::save(SimpleFile *file, int indent) const {
+	file->writeNumberLine(1, indent);
+	file->writeNumberLine(_fieldBC, indent);
+	file->writeNumberLine(_fieldC0, indent);
+	file->writeNumberLine(_fieldC4, indent);
+	file->writeNumberLine(_fieldC8, indent);
+	file->writeQuotedLine(_string1, indent);
+	file->writeQuotedLine(_string2, indent);
+	file->writeNumberLine(_fieldE4, indent);
+
+	CGondolierBase::save(file, indent);
+}
+
+void CGondolierMixer::load(SimpleFile *file) {
 	file->readNumber();
-	CGameObject::load(file);
+	_fieldBC = file->readNumber();
+	_fieldC0 = file->readNumber();
+	_fieldC4 = file->readNumber();
+	_fieldC8 = file->readNumber();
+	_string1 = file->readString();
+	_string2 = file->readString();
+	_fieldE4 = file->readNumber();
+
+	CGondolierBase::load(file);
 }
 
 } // End of namespace Titanic

@@ -28,6 +28,15 @@
 namespace Titanic {
 
 class CSpeechDispensor : public CBackground {
+private:
+	int _fieldE0;
+	int _fieldE4;
+	int _fieldE8;
+	int _fieldEC;
+	int _fieldF0;
+	int _fieldF4;
+	int _fieldF8;
+	int _fieldFC;
 public:
 	/**
 	 * Return the class name

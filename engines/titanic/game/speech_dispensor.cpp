@@ -26,11 +26,27 @@ namespace Titanic {
 
 void CSpeechDispensor::save(SimpleFile *file, int indent) const {
 	file->writeNumberLine(1, indent);
+	file->writeNumberLine(_fieldE0, indent);
+	file->writeNumberLine(_fieldE4, indent);
+	file->writeNumberLine(_fieldEC, indent);
+	file->writeNumberLine(_fieldF0, indent);
+	file->writeNumberLine(_fieldF4, indent);
+	file->writeNumberLine(_fieldF8, indent);
+	file->writeNumberLine(_fieldFC, indent);
+
 	CBackground::save(file, indent);
 }
 
 void CSpeechDispensor::load(SimpleFile *file) {
 	file->readNumber();
+	_fieldE0 = file->readNumber();
+	_fieldE4 = file->readNumber();
+	_fieldEC = file->readNumber();
+	_fieldF0 = file->readNumber();
+	_fieldF4 = file->readNumber();
+	_fieldF8 = file->readNumber();
+	_fieldFC = file->readNumber();
+
 	CBackground::load(file);
 }
 
