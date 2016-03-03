@@ -33,7 +33,7 @@ void CMusicSystemLock::save(SimpleFile *file, int indent) const {
 void CMusicSystemLock::load(SimpleFile *file) {
 	file->readNumber();
 	_value = file->readNumber();
-	CGameObject::load(file);
+	CDropTarget::load(file);
 }
 
 } // End of namespace Titanic

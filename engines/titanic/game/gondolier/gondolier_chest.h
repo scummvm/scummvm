@@ -20,29 +20,19 @@
  *
  */
 
-#ifndef TITANIC_GONDOLIER_MIXER_H
-#define TITANIC_GONDOLIER_MIXER_H
+#ifndef TITANIC_GONDOLIER_CHEST_H
+#define TITANIC_GONDOLIER_CHEST_H
 
-#include "titanic/game/gondolier_base.h"
+#include "titanic/game/gondolier/gondolier_base.h"
 
 namespace Titanic {
 
-class CGondolierMixer : public CGondolierBase {
-private:
-	int _fieldBC;
-	int _fieldC0;
-	int _fieldC4;
-	int _fieldC8;
-	CString _string1;
-	CString _string2;
-	int _fieldE4;
+class CGondolierChest : public CGondolierBase {
 public:
-	CGondolierMixer();
-
 	/**
 	 * Return the class name
 	 */
-	virtual const char *getClassName() const { return "CGondolierMixer"; }
+	virtual const char *getClassName() const { return "CGondolierChest"; }
 
 	/**
 	 * Save the data for the class to file
@@ -57,4 +47,4 @@ public:
 
 } // End of namespace Titanic
 
-#endif /* TITANIC_GONDOLIER_MIXER_H */
+#endif /* TITANIC_GONDOLIER_CHEST_H */

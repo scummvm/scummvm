@@ -20,18 +20,31 @@
  *
  */
 
-#include "titanic/game/pet_graphic.h"
+#ifndef TITANIC_ICON_NAV_BUTT_H
+#define TITANIC_ICON_NAV_BUTT_H
+
+#include "titanic/gfx/pet_graphic.h"
 
 namespace Titanic {
 
-void CPetGraphic::save(SimpleFile *file, int indent) const {
-	file->writeNumberLine(1, indent);
-	CGameObject::save(file, indent);
-}
+class CIconNavButt : public CPetGraphic {
+public:
+	/**
+	 * Return the class name
+	 */
+	virtual const char *getClassName() const { return "CIconNavButt"; }
 
-void CPetGraphic::load(SimpleFile *file) {
-	file->readNumber();
-	CGameObject::load(file);
-}
+	/**
+	 * Save the data for the class to file
+	 */
+	virtual void save(SimpleFile *file, int indent) const;
+
+	/**
+	 * Load the data for the class from file
+	 */
+	virtual void load(SimpleFile *file);
+};
 
 } // End of namespace Titanic
+
+#endif /* TITANIC_ICON_NAV_BUTT_H */

@@ -61,6 +61,7 @@
 #include "titanic/core/saveable_object.h"
 #include "titanic/core/background.h"
 #include "titanic/core/click_responder.h"
+#include "titanic/core/dont_save_file_item.h"
 #include "titanic/core/drop_target.h"
 #include "titanic/core/file_item.h"
 #include "titanic/core/link_item.h"
@@ -69,6 +70,7 @@
 #include "titanic/core/movie_clip.h"
 #include "titanic/core/multi_drop_target.h"
 #include "titanic/core/node_item.h"
+#include "titanic/core/pet_control.h"
 #include "titanic/core/project_item.h"
 #include "titanic/core/saveable_object.h"
 #include "titanic/core/static_image.h"
@@ -135,8 +137,6 @@
 #include "titanic/game/games_console.h"
 #include "titanic/game/get_lift_eye2.h"
 #include "titanic/game/glass_smasher.h"
-#include "titanic/game/gondolier_base.h"
-#include "titanic/game/gondolier_mixer.h"
 #include "titanic/game/hammer_clip.h"
 #include "titanic/game/hammer_dispensor.h"
 #include "titanic/game/hammer_dispensor_button.h"
@@ -163,9 +163,8 @@
 #include "titanic/game/null_port_hole.h"
 #include "titanic/game/nut_replacer.h"
 #include "titanic/game/pet_disabler.h"
-#include "titanic/game/pet_graphic.h"
-#include "titanic/game/pet_graphic2.h"
 #include "titanic/game/phonograph.h"
+#include "titanic/game/phonograph_lid.h"
 #include "titanic/game/play_music_button.h"
 #include "titanic/game/play_on_act.h"
 #include "titanic/game/port_hole.h"
@@ -201,6 +200,11 @@
 #include "titanic/game/wheel_hotspot.h"
 #include "titanic/game/wheel_spin.h"
 #include "titanic/game/wheel_spin_horn.h"
+#include "titanic/game/gondolier/gondolier_base.h"
+#include "titanic/game/gondolier/gondolier_chest.h"
+#include "titanic/game/gondolier/gondolier_face.h"
+#include "titanic/game/gondolier/gondolier_mixer.h"
+#include "titanic/game/gondolier/gondolier_slider.h"
 #include "titanic/game/maitred/maitred_arm_holder.h"
 #include "titanic/game/maitred/maitred_body.h"
 #include "titanic/game/maitred/maitred_legs.h"
@@ -277,9 +281,13 @@
 #include "titanic/gfx/helmet_on_off.h"
 #include "titanic/gfx/home_photo.h"
 #include "titanic/gfx/icon_nav_action.h"
+#include "titanic/gfx/icon_nav_butt.h"
 #include "titanic/gfx/icon_nav_down.h"
+#include "titanic/gfx/icon_nav_image.h"
 #include "titanic/gfx/icon_nav_left.h"
+#include "titanic/gfx/icon_nav_receive.h"
 #include "titanic/gfx/icon_nav_right.h"
+#include "titanic/gfx/icon_nav_send.h"
 #include "titanic/gfx/icon_nav_up.h"
 #include "titanic/gfx/keybrd_butt.h"
 #include "titanic/gfx/move_object_button.h"
@@ -290,10 +298,18 @@
 #include "titanic/gfx/music_switch_inversion.h"
 #include "titanic/gfx/music_switch_reverse.h"
 #include "titanic/gfx/music_voice_mute.h"
+#include "titanic/gfx/pet_drag_chev.h"
+#include "titanic/gfx/pet_graphic.h"
+#include "titanic/gfx/pet_graphic2.h"
+#include "titanic/gfx/pet_leaf.h"
 #include "titanic/gfx/pet_mode_off.h"
 #include "titanic/gfx/pet_mode_on.h"
 #include "titanic/gfx/pet_mode_panel.h"
+#include "titanic/gfx/pet_pannel1.h"
+#include "titanic/gfx/pet_pannel2.h"
+#include "titanic/gfx/pet_pannel3.h"
 #include "titanic/gfx/send_to_succ.h"
+#include "titanic/gfx/sgt_selector.h"
 #include "titanic/gfx/slider_button.h"
 #include "titanic/gfx/small_chev_left_off.h"
 #include "titanic/gfx/small_chev_left_on.h"
@@ -302,6 +318,9 @@
 #include "titanic/gfx/status_change_button.h"
 #include "titanic/gfx/st_button.h"
 #include "titanic/gfx/toggle_button.h"
+#include "titanic/gfx/text_down.h"
+#include "titanic/gfx/text_skrew.h"
+#include "titanic/gfx/text_up.h"
 #include "titanic/gfx/toggle_switch.h"
 #include "titanic/gfx/volume_control.h"
 
@@ -334,6 +353,7 @@
 #include "titanic/moves/pan_from_pel.h"
 #include "titanic/moves/restaurant_pan_handler.h"
 #include "titanic/moves/restricted_move.h"
+#include "titanic/moves/scraliontis_table.h"
 #include "titanic/moves/trip_down_canal.h"
 
 #include "titanic/npcs/barbot.h"
@@ -383,6 +403,7 @@ DEFFN(CAuditoryCentre);
 DEFFN(CBowlEar);
 DEFFN(CBrain);
 DEFFN(CBridgePiece);
+DEFFN(CCarry);
 DEFFN(CCarryParrot);
 DEFFN(CCentralCore);
 DEFFN(CChicken);
@@ -419,6 +440,7 @@ DEFFN(CVisionCentre);
 
 DEFFN(CBackground);
 DEFFN(CClickResponder);
+DEFFN(CDontSaveFileItem);
 DEFFN(CDropTarget);
 DEFFN(CFileItem);
 DEFFN(CFileListItem);
@@ -428,6 +450,7 @@ DEFFN(CMovieClip);
 DEFFN(CMovieClipList);
 DEFFN(CMultiDropTarget);
 DEFFN(CNodeItem);
+DEFFN(CPetControl);
 DEFFN(CProjectItem);
 DEFFN(CStaticImage);
 DEFFN(CTurnOnObject);
@@ -492,8 +515,6 @@ DEFFN(CFloorIndicator);
 DEFFN(CGamesConsole);
 DEFFN(CGetLiftEye2);
 DEFFN(CGlassSmasher);
-DEFFN(CGondolierBase);
-DEFFN(CGondolierMixer);
 DEFFN(CHammerClip);
 DEFFN(CHammerDispensor);
 DEFFN(CHammerDispensorButton);
@@ -520,9 +541,8 @@ DEFFN(CNoseHolder);
 DEFFN(CNullPortHole);
 DEFFN(CNutReplacer);
 DEFFN(CPetDisabler);
-DEFFN(CPetGraphic);
-DEFFN(CPetGraphic2);
 DEFFN(CPhonograph);
+DEFFN(CPhonographLid);
 DEFFN(CPlayMusicButton);
 DEFFN(CPlayOnAct);
 DEFFN(CPortHole);
@@ -558,6 +578,11 @@ DEFFN(CWheelButton);
 DEFFN(CWheelHotSpot);
 DEFFN(CWheelSpin);
 DEFFN(CWheelSpinHorn);
+DEFFN(CGondolierBase);
+DEFFN(CGondolierChest);
+DEFFN(CGondolierFace);
+DEFFN(CGondolierMixer);
+DEFFN(CGondolierSlider);
 DEFFN(CMaitreDArmHolder);
 DEFFN(CMaitreDBody);
 DEFFN(CMaitreDLegs);
@@ -577,6 +602,10 @@ DEFFN(CPET);
 DEFFN(CPETClass1);
 DEFFN(CPETClass2);
 DEFFN(CPETClass3);
+DEFFN(CPetDragChev);
+DEFFN(CPetGraphic);
+DEFFN(CPetGraphic2);
+DEFFN(PETLeaf);
 DEFFN(CPETLift);
 DEFFN(CPETMonitor);
 DEFFN(CPETPellerator);
@@ -636,9 +665,13 @@ DEFFN(CGetFromSucc);
 DEFFN(CHelmetOnOff);
 DEFFN(CHomePhoto);
 DEFFN(CIconNavAction);
+DEFFN(CIconNavButt);
 DEFFN(CIconNavDown);
+DEFFN(CIconNavImage);
 DEFFN(CIconNavLeft);
+DEFFN(CIconNavReceive);
 DEFFN(CIconNavRight);
+DEFFN(CIconNavSend);
 DEFFN(CIconNavUp);
 DEFFN(CKeybrdButt);
 DEFFN(CMoveObjectButton);
@@ -653,7 +686,11 @@ DEFFN(CMusicVoiceMute);
 DEFFN(CPetModeOff);
 DEFFN(CPetModeOn);
 DEFFN(CPetModePanel);
+DEFFN(CPetPannel1);
+DEFFN(CPetPannel2);
+DEFFN(CPetPannel3);
 DEFFN(CSendToSucc);
+DEFFN(CSGTSelector);
 DEFFN(CSliderButton);
 DEFFN(CSmallChevLeftOff);
 DEFFN(CSmallChevLeftOn);
@@ -661,6 +698,9 @@ DEFFN(CSmallChevRightOff);
 DEFFN(CSmallChevRightOn);
 DEFFN(CStatusChangeButton);
 DEFFN(CSTButton);
+DEFFN(CTextDown);
+DEFFN(CTextSkrew);
+DEFFN(CTextUp);
 DEFFN(CToggleButton);
 DEFFN(CToggleSwitch);
 DEFFN(CVolumeControl);
@@ -862,6 +902,7 @@ DEFFN(CMovePlayerToFrom);
 DEFFN(CMultiMove);
 DEFFN(CPanFromPel);
 DEFFN(CRestaurantPanHandler);
+DEFFN(CScraliontisTable);
 DEFFN(CRestrictedMove);
 DEFFN(CTripDownCanal);
 
@@ -905,6 +946,7 @@ void CSaveableObject::initClassList() {
 	ADDFN(CBowlEar);
 	ADDFN(CBrain);
 	ADDFN(CBridgePiece);
+	ADDFN(CCarry);
 	ADDFN(CCarryParrot);
 	ADDFN(CCentralCore);
 	ADDFN(CChicken);
@@ -941,6 +983,7 @@ void CSaveableObject::initClassList() {
 
 	ADDFN(CBackground);
 	ADDFN(CClickResponder);
+	ADDFN(CDontSaveFileItem);
 	ADDFN(CDropTarget);
 	ADDFN(CFileItem);
 	ADDFN(CFileListItem);
@@ -950,6 +993,7 @@ void CSaveableObject::initClassList() {
 	ADDFN(CMovieClipList);
 	ADDFN(CMultiDropTarget);
 	ADDFN(CNodeItem);
+	ADDFN(CPetControl);
 	ADDFN(CProjectItem);
 	ADDFN(CStaticImage);
 	ADDFN(CTurnOnObject);
@@ -1015,8 +1059,6 @@ void CSaveableObject::initClassList() {
 	ADDFN(CGamesConsole);
 	ADDFN(CGetLiftEye2);
 	ADDFN(CGlassSmasher);
-	ADDFN(CGondolierBase);
-	ADDFN(CGondolierMixer);
 	ADDFN(CHammerClip);
 	ADDFN(CHammerDispensor);
 	ADDFN(CHammerDispensorButton);
@@ -1043,9 +1085,8 @@ void CSaveableObject::initClassList() {
 	ADDFN(CNullPortHole);
 	ADDFN(CNutReplacer);
 	ADDFN(CPetDisabler);
-	ADDFN(CPetGraphic);
-	ADDFN(CPetGraphic2);
 	ADDFN(CPhonograph);
+	ADDFN(CPhonographLid);
 	ADDFN(CPlayMusicButton);
 	ADDFN(CPlayOnAct);
 	ADDFN(CPortHole);
@@ -1081,6 +1122,11 @@ void CSaveableObject::initClassList() {
 	ADDFN(CWheelHotSpot);
 	ADDFN(CWheelSpin);
 	ADDFN(CWheelSpinHorn);
+	ADDFN(CGondolierBase);
+	ADDFN(CGondolierChest);
+	ADDFN(CGondolierFace);
+	ADDFN(CGondolierMixer);
+	ADDFN(CGondolierSlider);
 	ADDFN(CMaitreDArmHolder);
 	ADDFN(CMaitreDBody);
 	ADDFN(CMaitreDLegs);
@@ -1100,6 +1146,10 @@ void CSaveableObject::initClassList() {
 	ADDFN(CPETClass1);
 	ADDFN(CPETClass2);
 	ADDFN(CPETClass3);
+	ADDFN(CPetDragChev);
+	ADDFN(CPetGraphic);
+	ADDFN(CPetGraphic2);
+	ADDFN(PETLeaf);
 	ADDFN(CPETLift);
 	ADDFN(CPETMonitor);
 	ADDFN(CPETPellerator);
@@ -1159,9 +1209,13 @@ void CSaveableObject::initClassList() {
 	ADDFN(CHelmetOnOff);
 	ADDFN(CHomePhoto);
 	ADDFN(CIconNavAction);
+	ADDFN(CIconNavButt);
 	ADDFN(CIconNavDown);
+	ADDFN(CIconNavImage);
 	ADDFN(CIconNavLeft);
+	ADDFN(CIconNavReceive);
 	ADDFN(CIconNavRight);
+	ADDFN(CIconNavSend);
 	ADDFN(CIconNavUp);
 	ADDFN(CKeybrdButt);
 	ADDFN(CMoveObjectButton);
@@ -1176,7 +1230,11 @@ void CSaveableObject::initClassList() {
 	ADDFN(CPetModeOff);
 	ADDFN(CPetModeOn);
 	ADDFN(CPetModePanel);
+	ADDFN(CPetPannel1);
+	ADDFN(CPetPannel2);
+	ADDFN(CPetPannel3);
 	ADDFN(CSendToSucc);
+	ADDFN(CSGTSelector);
 	ADDFN(CSliderButton);
 	ADDFN(CSmallChevLeftOff);
 	ADDFN(CSmallChevLeftOn);
@@ -1184,6 +1242,9 @@ void CSaveableObject::initClassList() {
 	ADDFN(CSmallChevRightOn);
 	ADDFN(CStatusChangeButton);
 	ADDFN(CSTButton);
+	ADDFN(CTextDown);
+	ADDFN(CTextSkrew);
+	ADDFN(CTextUp);
 	ADDFN(CToggleButton);
 	ADDFN(CToggleSwitch);
 	ADDFN(CVolumeControl);
@@ -1381,6 +1442,7 @@ void CSaveableObject::initClassList() {
 	ADDFN(CMultiMove);
 	ADDFN(CPanFromPel);
 	ADDFN(CRestaurantPanHandler);
+	ADDFN(CScraliontisTable);
 	ADDFN(CRestrictedMove);
 	ADDFN(CTripDownCanal);
 

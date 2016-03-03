@@ -20,23 +20,26 @@
  *
  */
 
-#ifndef TITANIC_PHONOGRAPH_LID_H
-#define TITANIC_PHONOGRAPH_LID_H
+#ifndef TITANIC_SCRALIONTIS_TABLE_H
+#define TITANIC_SCRALIONTIS_TABLE_H
 
-#include "titanic/core/game_object.h"
+#include "titanic/moves/restaurant_pan_handler.h"
 
 namespace Titanic {
 
-class CPhonographLid : public CGameObject {
+class CScraliontisTable : public CRestaurantPanHandler {
 private:
-	int _value;
+	int _fieldE0;
+	int _fieldE4;
+	int _fieldE8;
+	int _fieldEC;
 public:
-	CPhonographLid() : CGameObject(), _value(0) {}
+	CScraliontisTable();
 
 	/**
 	 * Return the class name
 	 */
-	virtual const char *getClassName() const { return "CPhonographLid"; }
+	virtual const char *getClassName() const { return "CScraliontisTable"; }
 
 	/**
 	 * Save the data for the class to file
@@ -51,4 +54,4 @@ public:
 
 } // End of namespace Titanic
 
-#endif /* TITANIC_PHONOGRAPH_LID_H */
+#endif /* TITANIC_SCRALIONTIS_TABLE_H */

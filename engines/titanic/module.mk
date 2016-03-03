@@ -141,8 +141,6 @@ MODULE_OBJS := \
 	game/games_console.o \
 	game/get_lift_eye2.o \
 	game/glass_smasher.o \
-	game/gondolier_base.o \
-	game/gondolier_mixer.o \
 	game/hammer_clip.o \
 	game/head_slot.o \
 	game/head_smash_event.o \
@@ -172,8 +170,6 @@ MODULE_OBJS := \
 	game/nut_replacer.o \
 	game/pet_controler.o \
 	game/pet_disabler.o \
-	game/pet_graphic2.o \
-	game/pet_graphic.o \
 	game/phonograph.o \
 	game/phonograph_lid.o \
 	game/play_music_button.o \
@@ -214,6 +210,11 @@ MODULE_OBJS := \
 	game/wheel_hotspot.o \
 	game/wheel_spin.o \
 	game/wheel_spin_horn.o \
+	game/gondolier/gondolier_base.o \
+	game/gondolier/gondolier_chest.o \
+	game/gondolier/gondolier_face.o \
+	game/gondolier/gondolier_mixer.o \
+	game/gondolier/gondolier_slider.o \
 	game/maitred/maitred_arm_holder.o \
 	game/maitred/maitred_body.o \
 	game/maitred/maitred_legs.o \
@@ -290,17 +291,29 @@ MODULE_OBJS := \
 	gfx/helmet_on_off.o \
 	gfx/home_photo.o \
 	gfx/icon_nav_action.o \
+	gfx/icon_nav_butt.o \
 	gfx/icon_nav_down.o \
+	gfx/icon_nav_image.o \
 	gfx/icon_nav_left.o \
+	gfx/icon_nav_receive.o \
 	gfx/icon_nav_right.o \
+	gfx/icon_nav_send.o \
 	gfx/icon_nav_up.o \
 	gfx/keybrd_butt.o \
 	gfx/move_object_button.o \
 	gfx/music_control.o \
+	gfx/pet_drag_chev.o \
+	gfx/pet_graphic2.o \
+	gfx/pet_graphic.o \
+	gfx/pet_leaf.o \
 	gfx/pet_mode_off.o \
 	gfx/pet_mode_on.o \
 	gfx/pet_mode_panel.o \
+	gfx/pet_pannel1.o \
+	gfx/pet_pannel2.o \
+	gfx/pet_pannel3.o \
 	gfx/send_to_succ.o \
+	gfx/sgt_selector.o \
 	gfx/slider_button.o \
 	gfx/small_chev_left_off.o \
 	gfx/small_chev_left_on.o \
@@ -308,6 +321,9 @@ MODULE_OBJS := \
 	gfx/small_chev_right_on.o \
 	gfx/status_change_button.o \
 	gfx/st_button.o \
+	gfx/text_down.o \
+	gfx/text_skrew.o \
+	gfx/text_up.o \
 	gfx/toggle_button.o \
 	gfx/toggle_switch.o \
 	gfx/volume_control.o \
@@ -337,6 +353,7 @@ MODULE_OBJS := \
 	moves/pan_from_pel.o \
 	moves/restaurant_pan_handler.o \
 	moves/restricted_move.o \
+	moves/scraliontis_table.o \
 	moves/trip_down_canal.o \
 	npcs/barbot.o \
 	npcs/bellbot.o \

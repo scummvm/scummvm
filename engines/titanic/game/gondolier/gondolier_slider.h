@@ -20,23 +20,40 @@
  *
  */
 
-#ifndef TITANIC_PHONOGRAPH_LID_H
-#define TITANIC_PHONOGRAPH_LID_H
+#ifndef TITANIC_GONDOLIER_SLIDER_H
+#define TITANIC_GONDOLIER_SLIDER_H
 
-#include "titanic/core/game_object.h"
+#include "titanic/game/gondolier/gondolier_base.h"
 
 namespace Titanic {
 
-class CPhonographLid : public CGameObject {
+class CGondolierSlider : public CGondolierBase {
 private:
-	int _value;
+	int _fieldBC;
+	int _fieldC0;
+	int _fieldC4;
+	int _fieldC8;
+	int _fieldCC;
+	int _fieldD0;
+	int _fieldD4;
+	int _fieldD8;
+	int _fieldDC;
+	int _fieldE0;
+	int _fieldE4;
+	int _fieldE8;
+	int _fieldEC;
+	CString _string1;
+	int _fieldFC;
+	CString _string2;
+	CString _string3;
+	int _field118;
 public:
-	CPhonographLid() : CGameObject(), _value(0) {}
+	CGondolierSlider();
 
 	/**
 	 * Return the class name
 	 */
-	virtual const char *getClassName() const { return "CPhonographLid"; }
+	virtual const char *getClassName() const { return "CGondolierSlider"; }
 
 	/**
 	 * Save the data for the class to file
@@ -51,4 +68,4 @@ public:
 
 } // End of namespace Titanic
 
-#endif /* TITANIC_PHONOGRAPH_LID_H */
+#endif /* TITANIC_GONDOLIER_SLIDER_H */

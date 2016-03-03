@@ -29,11 +29,11 @@ namespace Titanic {
 
 class CRestaurantPanHandler : public CMovePlayerTo {
 protected:
+	static int _v1;
+
 	CString _string1;
 	CString _string2;
 public:
-	CRestaurantPanHandler();
-
 	/**
 	 * Return the class name
 	 */

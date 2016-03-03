@@ -20,23 +20,19 @@
  *
  */
 
-#ifndef TITANIC_PHONOGRAPH_LID_H
-#define TITANIC_PHONOGRAPH_LID_H
+#ifndef TITANIC_ICON_NAV_IMAGE_H
+#define TITANIC_ICON_NAV_IMAGE_H
 
-#include "titanic/core/game_object.h"
+#include "titanic/gfx/pet_graphic.h"
 
 namespace Titanic {
 
-class CPhonographLid : public CGameObject {
-private:
-	int _value;
+class CIconNavImage : public CPetGraphic {
 public:
-	CPhonographLid() : CGameObject(), _value(0) {}
-
 	/**
 	 * Return the class name
 	 */
-	virtual const char *getClassName() const { return "CPhonographLid"; }
+	virtual const char *getClassName() const { return "CIconNavImage"; }
 
 	/**
 	 * Save the data for the class to file
@@ -51,4 +47,4 @@ public:
 
 } // End of namespace Titanic
 
-#endif /* TITANIC_PHONOGRAPH_LID_H */
+#endif /* TITANIC_ICON_NAV_IMAGE_H */

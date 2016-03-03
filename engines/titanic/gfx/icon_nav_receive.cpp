@@ -20,35 +20,18 @@
  *
  */
 
-#ifndef TITANIC_PHONOGRAPH_LID_H
-#define TITANIC_PHONOGRAPH_LID_H
-
-#include "titanic/core/game_object.h"
+#include "titanic/gfx/icon_nav_receive.h"
 
 namespace Titanic {
 
-class CPhonographLid : public CGameObject {
-private:
-	int _value;
-public:
-	CPhonographLid() : CGameObject(), _value(0) {}
+void CIconNavReceive::save(SimpleFile *file, int indent) const {
+	file->writeNumberLine(1, indent);
+	CPetGraphic::save(file, indent);
+}
 
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CPhonographLid"; }
-
-	/**
-	 * Save the data for the class to file
-	 */
-	virtual void save(SimpleFile *file, int indent) const;
-
-	/**
-	 * Load the data for the class from file
-	 */
-	virtual void load(SimpleFile *file);
-};
+void CIconNavReceive::load(SimpleFile *file) {
+	file->readNumber();
+	CPetGraphic::load(file);
+}
 
 } // End of namespace Titanic
-
-#endif /* TITANIC_PHONOGRAPH_LID_H */

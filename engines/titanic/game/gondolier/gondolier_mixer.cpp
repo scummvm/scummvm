@@ -20,35 +20,40 @@
  *
  */
 
-#ifndef TITANIC_PHONOGRAPH_LID_H
-#define TITANIC_PHONOGRAPH_LID_H
-
-#include "titanic/core/game_object.h"
+#include "titanic/game/gondolier/gondolier_mixer.h"
 
 namespace Titanic {
 
-class CPhonographLid : public CGameObject {
-private:
-	int _value;
-public:
-	CPhonographLid() : CGameObject(), _value(0) {}
+CGondolierMixer::CGondolierMixer() : CGondolierBase(),
+	_string1("c#0.wav"), _string2("c#1.wav"),
+	_fieldBC(-1), _fieldC0(-1), _fieldC4(0), _fieldC8(0),
+	_fieldE4(0) {
+}
 
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CPhonographLid"; }
+void CGondolierMixer::save(SimpleFile *file, int indent) const {
+	file->writeNumberLine(1, indent);
+	file->writeNumberLine(_fieldBC, indent);
+	file->writeNumberLine(_fieldC0, indent);
+	file->writeNumberLine(_fieldC4, indent);
+	file->writeNumberLine(_fieldC8, indent);
+	file->writeQuotedLine(_string1, indent);
+	file->writeQuotedLine(_string2, indent);
+	file->writeNumberLine(_fieldE4, indent);
 
-	/**
-	 * Save the data for the class to file
-	 */
-	virtual void save(SimpleFile *file, int indent) const;
+	CGondolierBase::save(file, indent);
+}
 
-	/**
-	 * Load the data for the class from file
-	 */
-	virtual void load(SimpleFile *file);
-};
+void CGondolierMixer::load(SimpleFile *file) {
+	file->readNumber();
+	_fieldBC = file->readNumber();
+	_fieldC0 = file->readNumber();
+	_fieldC4 = file->readNumber();
+	_fieldC8 = file->readNumber();
+	_string1 = file->readString();
+	_string2 = file->readString();
+	_fieldE4 = file->readNumber();
+
+	CGondolierBase::load(file);
+}
 
 } // End of namespace Titanic
-
-#endif /* TITANIC_PHONOGRAPH_LID_H */
