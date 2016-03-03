@@ -552,7 +552,7 @@ Common::Error AdlEngine::saveGameState(int slot, const Common::String &desc) {
 	uint32 playTime = getTotalPlayTime();
 	outFile->writeUint32BE(playTime);
 
-	Graphics::saveThumbnail(*outFile);
+	_display->saveThumbnail(*outFile);
 
 	outFile->writeByte(_state.room);
 	outFile->writeByte(_state.moves);

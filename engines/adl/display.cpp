@@ -33,6 +33,7 @@
 #include "engines/engine.h"
 #include "engines/util.h"
 #include "graphics/palette.h"
+#include "graphics/thumbnail.h"
 
 namespace Adl {
 
@@ -81,7 +82,12 @@ Display::Display() :
 	_monochrome = !ConfMan.getBool("color");
 	_scanlines = ConfMan.getBool("scanlines");
 
-	setPalette(_scanlines, _monochrome);
+	if (_monochrome)
+		setMonoPalette();
+	else
+		setColorPalette();
+
+	enableScanlines(_scanlines);
 
 	_frameBuf = new byte[kFrameBufSize];
 	_frameBufSurface = new Graphics::Surface;
@@ -108,7 +114,34 @@ Display::~Display() {
 	delete _font;
 }
 
-void Display::setPalette(bool scanlines, bool monochrome) {
+bool Display::saveThumbnail(Common::WriteStream &out) {
+	if (_scanlines) {
+		enableScanlines(false);
+		g_system->updateScreen();
+	}
+
+	bool retval = Graphics::saveThumbnail(out);
+
+	if (_scanlines) {
+		enableScanlines(true);
+		g_system->updateScreen();
+	}
+
+	return retval;
+}
+
+void Display::enableScanlines(bool enable) {
+	byte pal[6 * 3] = { };
+
+	if (enable)
+		g_system->getPaletteManager()->setPalette(pal, 6, 6);
+	else {
+		g_system->getPaletteManager()->grabPalette(pal, 0, 6);
+		g_system->getPaletteManager()->setPalette(pal, 6, 6);
+	}
+}
+
+void Display::setColorPalette() {
 	const byte colorPal[6 * 3] = {
 		0x00, 0x00, 0x00,
 		0xff, 0xff, 0xff,
@@ -118,20 +151,16 @@ void Display::setPalette(bool scanlines, bool monochrome) {
 		0xf2, 0x5e, 0x00
 	};
 
+	g_system->getPaletteManager()->setPalette(colorPal, 0, 6);
+}
+
+void Display::setMonoPalette() {
 	const byte monoPal[2 * 3] = {
 		0x00, 0x00, 0x00,
 		0x00, 0xc0, 0x01
 	};
 
-	if (monochrome) {
-		g_system->getPaletteManager()->setPalette(monoPal, 0, 2);
-		if (!scanlines)
-			g_system->getPaletteManager()->setPalette(monoPal, 6, 2);
-	} else {
-		g_system->getPaletteManager()->setPalette(colorPal, 0, 6);
-		if (!scanlines)
-			g_system->getPaletteManager()->setPalette(colorPal, 6, 6);
-	}
+	g_system->getPaletteManager()->setPalette(monoPal, 0, 2);
 }
 
 void Display::loadFrameBuffer(Common::ReadStream &stream) {

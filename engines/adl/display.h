@@ -28,6 +28,7 @@
 
 namespace Common {
 class ReadStream;
+class WriteStream;
 class String;
 class Point;
 }
@@ -50,7 +51,9 @@ public:
 
 	Display();
 	~Display();
-	void setPalette(bool monochrome, bool scanlines);
+	void enableScanlines(bool enable);
+	void setMonoPalette();
+	void setColorPalette();
 	void loadFrameBuffer(Common::ReadStream &stream);
 	void decodeFrameBuffer();
 	void updateScreen();
@@ -69,6 +72,7 @@ public:
 	void setCharAtCursor(byte c);
 	void showCursor(bool enable);
 	void updateTextSurface();
+	bool saveThumbnail(Common::WriteStream &out);
 
 private:
 	enum {
