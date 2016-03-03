@@ -58,10 +58,8 @@ public:
 	void decodeFrameBuffer();
 	void updateScreen();
 	void setMode(Mode mode) { _mode = mode; }
-	void drawPixel(byte x, byte y, byte color);
-	void drawLine(Common::Point p1, Common::Point p2, byte color);
+	void putPixel(Common::Point p1, byte color);
 	void clear(byte color);
-	void drawLineArt(const Common::Array<byte> &lineArt, Common::Point p, byte rotation = 0, byte scaling = 1, byte color = 0x7f);
 	void setCursorPos(Common::Point pos);
 
 	void home();
@@ -78,7 +76,6 @@ private:
 	enum {
 		kWidth = 280,
 		kHeight = 192,
-		kFrameBufSize = 0x2000,
 		kTextBufSize = 40 * 24
 	};
 
@@ -91,13 +88,8 @@ private:
 	void decodeScanline(byte *dst, int pitch, byte *src);
 	void decodeScanlineColor(byte *dst, int pitch, byte *src);
 	void decodeScanlineMono(byte *dst, int pitch, byte *src);
-	PixelPos getPixelPos(byte x, byte y);
-	byte getPixelColor(byte x, byte color);
 	void drawChar(byte c, int x, int y);
 	void createFont();
-	void moveX(PixelPos &p, byte &color, bool left);
-	void moveY(PixelPos &p, bool down);
-	void drawNextPixel(Display::PixelPos &p, byte &color, byte bits, byte quadrant);
 
 	void scrollUp();
 

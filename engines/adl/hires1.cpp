@@ -216,10 +216,10 @@ void HiRes1Engine::drawPic(Common::ReadStream &stream, Common::Point pos) {
 			y = 160;
 
 		if (bNewLine) {
-			_display->drawPixel(x, y, 0x7f);
+			_display->putPixel(Common::Point(x, y), 0x7f);
 			bNewLine = false;
 		} else {
-			_display->drawLine(Common::Point(oldX, oldY), Common::Point(x, y), 0x7f);
+			drawLine(Common::Point(oldX, oldY), Common::Point(x, y), 0x7f);
 		}
 
 		oldX = x;
@@ -452,6 +452,42 @@ uint HiRes1Engine::getEngineMessage(EngineMessage msg) {
 		return IDI_HR1_MSG_THANKS_FOR_PLAYING;
 	default:
 		error("Cannot find engine message %i", msg);
+	}
+}
+
+void HiRes1Engine::drawLine(Common::Point p1, Common::Point p2, byte color) {
+	int16 deltaX = p2.x - p1.x;
+	byte dir = deltaX >> 8;
+
+	if (deltaX < 0)
+		deltaX = -deltaX;
+
+	int16 err = deltaX;
+
+	int16 deltaY = p2.y - p1.y - 1;
+	dir >>= 1;
+	if (deltaY >= 0) {
+		deltaY = -deltaY - 2;
+		dir |= 0x80;
+	}
+
+	int16 steps = deltaY - deltaX;
+
+	err += deltaY + 1;
+
+	while (1) {
+		_display->putPixel(p1, color);
+
+		if (++steps == 0)
+			return;
+
+		if (err < 0) {
+			p1.y += (dir & 0x80 ? 1 : -1);
+			err += deltaX;
+		} else {
+			p1.x += (dir & 0x40 ? -1 : 1);
+			err += deltaY + 1;
+		}
 	}
 }
 

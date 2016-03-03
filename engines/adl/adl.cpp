@@ -484,7 +484,7 @@ void AdlEngine::drawItems() {
 			if (curRoom().picture == curRoom().curPicture) {
 				const Common::Point &p =  _itemOffsets[dropped];
 				if (item->isLineArt)
-					_display->drawLineArt(_lineArt[item->picture - 1], p);
+					drawLineArt(_lineArt[item->picture - 1], p);
 				else
 					drawPic(item->picture, p);
 				++dropped;
@@ -497,7 +497,7 @@ void AdlEngine::drawItems() {
 		for (pic = item->roomPictures.begin(); pic != item->roomPictures.end(); ++pic) {
 			if (*pic == curRoom().curPicture) {
 				if (item->isLineArt)
-					_display->drawLineArt(_lineArt[item->picture - 1], item->position);
+					drawLineArt(_lineArt[item->picture - 1], item->position);
 				else
 					drawPic(item->picture, item->position);
 				continue;
@@ -939,6 +939,50 @@ void AdlEngine::delay(uint32 ms) {
 		_display->updateScreen();
 		g_system->updateScreen();
 		g_system->delayMillis(16);
+	}
+}
+
+void AdlEngine::drawNextPixel(Common::Point &p, byte color, byte bits, byte quadrant) {
+	if (bits & 4) {
+		_display->putPixel(p, color);
+	}
+
+	bits += quadrant;
+
+	if (bits & 1)
+		p.x += (bits & 2 ? -1 : 1);
+	else
+		p.y += (bits & 2 ? 1 : -1);
+}
+
+void AdlEngine::drawLineArt(const Common::Array<byte> &lineArt, Common::Point p, byte rotation, byte scaling, byte color) {
+	const byte stepping[] = {
+		0xff, 0xfe, 0xfa, 0xf4, 0xec, 0xe1, 0xd4, 0xc5,
+		0xb4, 0xa1, 0x8d, 0x78, 0x61, 0x49, 0x31, 0x18,
+		0xff
+	};
+
+	byte quadrant = rotation >> 4;
+	rotation &= 0xf;
+	byte xStep = stepping[rotation];
+	byte yStep = stepping[(rotation ^ 0xf) + 1] + 1;
+
+	for (uint i = 0; i < lineArt.size(); ++i) {
+		byte b = lineArt[i];
+
+		do {
+			byte xFrac = 0x80;
+			byte yFrac = 0x80;
+			for (uint j = 0; j < scaling; ++j) {
+				if (xFrac + xStep + 1 > 255)
+					drawNextPixel(p, color, b, quadrant);
+				xFrac += xStep + 1;
+				if (yFrac + yStep > 255)
+					drawNextPixel(p, color, b, quadrant + 1);
+				yFrac += yStep;
+			}
+			b >>= 3;
+		} while (b != 0);
 	}
 }
 

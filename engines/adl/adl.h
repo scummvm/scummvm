@@ -198,6 +198,8 @@ protected:
 	void clearScreen();
 	virtual void drawPic(byte pic, Common::Point pos = Common::Point()) = 0;
 	void drawItems();
+	void drawNextPixel(Common::Point &p, byte color, byte bits, byte quadrant);
+	void drawLineArt(const Common::Array<byte> &lineArt, Common::Point p, byte rotation = 0, byte scaling = 1, byte color = 0x7f);
 	void showRoom();
 	void takeItem(byte noun);
 	void dropItem(byte noun);

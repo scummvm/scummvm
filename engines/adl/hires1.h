@@ -57,6 +57,7 @@ private:
 	void runIntro();
 	void drawPic(Common::ReadStream &stream, Common::Point pos);
 	void drawItems();
+	void drawLine(Common::Point p1, Common::Point p2, byte color);
 	void drawPic(byte pic, Common::Point pos);
 };
 

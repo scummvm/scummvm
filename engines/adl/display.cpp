@@ -89,7 +89,7 @@ Display::Display() :
 
 	enableScanlines(_scanlines);
 
-	_frameBuf = new byte[kFrameBufSize];
+	_frameBuf = new byte[kWidth * kHeight / 7];
 	_frameBufSurface = new Graphics::Surface;
 	_frameBufSurface->create(kWidth * 2, kHeight * 2, Graphics::PixelFormat::createFormatCLUT8());
 
@@ -164,7 +164,19 @@ void Display::setMonoPalette() {
 }
 
 void Display::loadFrameBuffer(Common::ReadStream &stream) {
-	stream.read(_frameBuf, kFrameBufSize);
+	for (uint j = 0; j < 8; ++j) {
+		for (uint i = 0; i < 8; ++i) {
+			byte *dst = _frameBuf + kWidth / 7  * (i * 8 + j);
+			stream.read(dst, kWidth / 7);
+			dst += kWidth / 7 * 64;
+			stream.read(dst, kWidth / 7);
+			dst += kWidth / 7 * 64;
+			stream.read(dst, kWidth / 7);
+			stream.readUint32LE();
+			stream.readUint32LE();
+			dst += kWidth / 7 * 64;
+		}
+	}
 }
 
 void Display::decodeScanlineColor(byte *dst, int pitch, byte *src) {
@@ -236,222 +248,43 @@ void Display::decodeScanline(byte *dst, int pitch, byte *src) {
 		decodeScanlineColor(dst, pitch, src);
 }
 
-Display::PixelPos Display::getPixelPos(byte x, byte y) {
-	PixelPos pixelPos;
+void Display::decodeFrameBuffer() {
+	byte *src = _frameBuf;
+	byte *dst = (byte *)_frameBufSurface->getPixels();
 
-	// FIXME: check X, Y range
-
-	byte offsetL = y & 0xc0;
-	offsetL |= offsetL >> 2;
-	byte offsetH = y;
-	y <<= 2;
-	offsetH <<= 1;
-	offsetH |= y >> 7;
-	y <<= 1;
-	offsetH <<= 1;
-	offsetH |= y >> 7;
-	y <<= 1;
-	offsetL >>= 1;
-	offsetL |= y & 0x80;
-	y <<= 1;
-	offsetH = offsetH & 0x1f;
-	pixelPos.rowAddr = (offsetH << 8) | offsetL;
-	pixelPos.byteOffset = x / 7;
-	pixelPos.bitMask = 0x80 | (1 << x % 7);
-
-	return pixelPos;
+	for (uint i = 0; i < kHeight; ++i) {
+		decodeScanline(dst, _frameBufSurface->pitch, src);
+		src += kWidth / 7;
+		dst += _frameBufSurface->pitch * 2;
+	}
 }
 
-byte Display::getPixelColor(byte offset, byte color) {
+void Display::putPixel(Common::Point p, byte color) {
+	byte offset = p.x / 7;
+
 	if (offset & 1) {
 		byte c = color << 1;
 		if (c >= 0x40 && c < 0xc0)
-			return color ^ 0x7f;
+			color ^= 0x7f;
 	}
 
-	return color;
-}
-
-void Display::decodeFrameBuffer() {
-	byte *src = _frameBuf;
-	int pitch = _frameBufSurface->pitch;
-	for (int j = 0; j < 8; ++j) {
-		for (int i = 0; i < 8; ++i) {
-			byte *dst = (byte *)_frameBufSurface->getPixels() + pitch * 2 * (i * 8 + j);
-			decodeScanline(dst, pitch, src);
-			src += 40;
-			dst += pitch * 2 * 64;
-			decodeScanline(dst, pitch, src);
-			src += 40;
-			dst += pitch * 2 * 64;
-			decodeScanline(dst, pitch, src);
-			src += 48;
-			dst += pitch * 2 * 64;
-		}
-	}
-}
-
-void Display::drawPixel(byte x, byte y, byte color) {
-	PixelPos p = getPixelPos(x, y);
-	byte c = getPixelColor(p.byteOffset, color);
-	byte *b = _frameBuf + p.rowAddr + p.byteOffset;
-	c ^= *b;
-	c &= p.bitMask;
-	c ^= *b;
-	*b = c;
-}
-
-void Display::moveX(PixelPos &p, byte &color, bool left) {
-	if (left) {
-		byte bit = p.bitMask;
-		bool b = bit & 1;
-		bit >>= 1;
-		if (!b) {
-			bit ^= 0xc0;
-			p.bitMask = bit;
-			return;
-		}
-		--p.byteOffset;
-		if (p.byteOffset & 0x80)
-			p.byteOffset = 39;
-		p.bitMask = 0xc0;
-	} else {
-		byte bit = p.bitMask;
-		bit <<= 1;
-		bit ^= 0x80;
-		if (bit & 0x80) {
-			p.bitMask = bit;
-			return;
-		}
-		p.bitMask = 0x81;
-		++p.byteOffset;
-		if (p.byteOffset == 40)
-			p.byteOffset = 0;
-	}
-
-	color = getPixelColor(p.byteOffset, color);
-}
-
-void Display::moveY(PixelPos &p, bool down) {
-	if (!down) {
-		if (p.rowAddr & 0x1c00)
-			p.rowAddr -= 0x400;
-		else if (p.rowAddr & 0x380)
-			p.rowAddr += 0x1b80;
-		else {
-			p.rowAddr += 0x1f58;
-			if (!(p.rowAddr & 0x80))
-				p.rowAddr += 0x78; // Wrap around
-		}
-	} else {
-		p.rowAddr += 0x400;
-		if (p.rowAddr & 0x1c00)
-			return;
-		else if ((p.rowAddr & 0x380) != 0x380)
-			p.rowAddr -= 0x1f80;
-		else {
-			p.rowAddr -= 0x2358;
-			if ((p.rowAddr & 0x78) == 0x78)
-				p.rowAddr -= 0x78; // Wrap around
-		}
-	}
-}
-
-void Display::drawNextPixel(Display::PixelPos &p, byte &color, byte bits, byte quadrant) {
-	if (bits & 4) {
-		byte b = (_frameBuf[p.rowAddr + p.byteOffset] ^ color) & p.bitMask;
-		_frameBuf[p.rowAddr + p.byteOffset] ^= b;
-	}
-
-	bits += quadrant;
-
-	if (bits & 1)
-		moveX(p, color, bits & 2);
-	else
-		moveY(p, bits & 2);
-}
-
-void Display::drawLineArt(const Common::Array<byte> &lineArt, Common::Point p, byte rotation, byte scaling, byte color) {
-	const byte stepping[] = {
-		0xff, 0xfe, 0xfa, 0xf4, 0xec, 0xe1, 0xd4, 0xc5,
-		0xb4, 0xa1, 0x8d, 0x78, 0x61, 0x49, 0x31, 0x18,
-		0xff
-	};
-
-	PixelPos pos = getPixelPos(p.x, p.y);
-	byte c = getPixelColor(pos.byteOffset, color);
-
-	byte quadrant = rotation >> 4;
-	rotation &= 0xf;
-	byte xStep = stepping[rotation];
-	byte yStep = stepping[(rotation ^ 0xf) + 1] + 1;
-
-	for (uint i = 0; i < lineArt.size(); ++i) {
-		byte b = lineArt[i];
-
-		do {
-			byte xFrac = 0x80;
-			byte yFrac = 0x80;
-			for (uint j = 0; j < scaling; ++j) {
-				if (xFrac + xStep + 1 > 255)
-					drawNextPixel(pos, c, b, quadrant);
-				xFrac += xStep + 1;
-				if (yFrac + yStep > 255)
-					drawNextPixel(pos, c, b, quadrant + 1);
-				yFrac += yStep;
-			}
-			b >>= 3;
-		} while (b != 0);
-	}
-}
-
-void Display::drawLine(Common::Point p1, Common::Point p2, byte color) {
-	PixelPos p = getPixelPos(p1.x, p1.y);
-	byte c = getPixelColor(p.byteOffset, color);
-
-	int16 deltaX = p2.x - p1.x;
-	byte dir = deltaX >> 8;
-
-	if (deltaX < 0)
-		deltaX = -deltaX;
-
-	int16 err = deltaX;
-
-	int16 deltaY = p2.y - p1.y - 1;
-	dir >>= 1;
-	if (deltaY >= 0) {
-		deltaY = -deltaY - 2;
-		dir |= 0x80;
-	}
-
-	int16 steps = deltaY - deltaX;
-
-	err += deltaY + 1;
-
-	while (1) {
-		byte *b = _frameBuf + p.rowAddr + p.byteOffset;
-		byte d = *b;
-		d ^= c;
-		d &= p.bitMask;
-		d ^= *b;
-		*b = d;
-
-		if (++steps == 0)
-			return;
-
-		if (err < 0) {
-			moveY(p, dir & 0x80);
-			err += deltaX;
-		} else {
-			moveX(p, c, dir & 0x40);
-			err += deltaY + 1;
-		}
-	}
+	byte *b = _frameBuf + p.y * kWidth / 7 + offset;
+	color ^= *b;
+	color &= 1 << (p.x % 7);
+	*b ^= color;
 }
 
 void Display::clear(byte color) {
-	for (uint i = 0; i < kFrameBufSize; ++i)
-		_frameBuf[i] = getPixelColor(i & 1, color);
+	byte val = 0;
+
+	byte c = color << 1;
+	if (c >= 0x40 && c < 0xc0)
+		val = 0x7f;
+
+	for (uint i = 0; i < kWidth / 7 * kHeight; ++i) {
+		_frameBuf[i] = color;
+		color ^= val;
+	}
 }
 
 void Display::updateTextSurface() {
