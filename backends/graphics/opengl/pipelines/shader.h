@@ -44,6 +44,10 @@ protected:
 	virtual void activateInternal();
 	virtual void deactivateInternal();
 
+	GLint _vertexAttribLocation;
+	GLint _texCoordAttribLocation;
+	GLint _colorAttribLocation;
+
 	Shader *const _activeShader;
 };
 #endif // !USE_FORCED_GLES

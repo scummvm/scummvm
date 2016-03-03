@@ -33,12 +33,6 @@
 
 namespace OpenGL {
 
-enum {
-	kPositionAttribLocation = 0,
-	kTexCoordAttribLocation = 1,
-	kColorAttribLocation    = 2
-};
-
 /**
  * A generic uniform value interface for a shader program.
  */
@@ -125,6 +119,14 @@ public:
 	 * Make shader inactive.
 	 */
 	void deactivate();
+
+	/**
+	 * Return location for attribute with given name.
+	 *
+	 * @param name Name of the attribute to look up in the shader.
+	 * @return The loctaion of -1 if attribute was not found.
+	 */
+	GLint getAttributeLocation(const char *name) const;
 
 	/**
 	 * Return location for uniform with given name.

@@ -107,6 +107,7 @@ GL_FUNC_DEF(GLenum, glGetError, ());
 
 #if !USE_FORCED_GLES
 GL_FUNC_2_DEF(void, glEnableVertexAttribArray, glEnableVertexAttribArrayARB, (GLuint index));
+GL_FUNC_2_DEF(void, glDisableVertexAttribArray, glDisableVertexAttribArrayARB, (GLuint index));
 GL_FUNC_2_DEF(void, glUniform1i, glUniform1iARB, (GLint location, GLint v0));
 GL_FUNC_2_DEF(void, glUniform1f, glUniform1fARB, (GLint location, GLfloat v0));
 GL_FUNC_2_DEF(void, glUniformMatrix4fv, glUniformMatrix4fvARB, (GLint location, GLsizei count, GLboolean transpose, const GLfloat *value));
@@ -122,6 +123,7 @@ GL_FUNC_2_DEF(void, glUseProgram, glUseProgramObjectARB, (GLprogram program));
 GL_FUNC_2_DEF(void, glGetProgramiv, glGetObjectParameterivARB, (GLprogram program, GLenum pname, GLint *params));
 GL_FUNC_2_DEF(void, glGetProgramInfoLog, glGetInfoLogARB, (GLprogram program, GLsizei bufSize, GLsizei *length, GLchar *infoLog));
 GL_FUNC_2_DEF(void, glBindAttribLocation, glBindAttribLocationARB, (GLprogram program, GLuint index, const GLchar *name));
+GL_FUNC_2_DEF(GLint, glGetAttribLocation, glGetAttribLocationARB, (GLprogram program, const GLchar *name));
 GL_FUNC_2_DEF(GLint, glGetUniformLocation, glGetUniformLocationARB, (GLprogram program, const GLchar *name));
 
 GL_FUNC_2_DEF(GLshader, glCreateShader, glCreateShaderObjectARB, (GLenum type));

@@ -159,10 +159,6 @@ bool Shader::recreate() {
 	GL_CALL(glAttachShader(_program, vertexShader));
 	GL_CALL(glAttachShader(_program, fragmentShader));
 
-	GL_CALL(glBindAttribLocation(_program, kPositionAttribLocation, "position"));
-	GL_CALL(glBindAttribLocation(_program, kTexCoordAttribLocation, "texCoordIn"));
-	GL_CALL(glBindAttribLocation(_program, kColorAttribLocation,    "blendColorIn"));
-
 	GL_CALL(glLinkProgram(_program));
 
 	GL_CALL(glDetachShader(_program, fragmentShader));
@@ -199,18 +195,6 @@ bool Shader::recreate() {
 		}
 	}
 
-	if (getUniformLocation("projection") == -1) {
-		warning("Shader misses \"projection\" uniform.");
-		destroy();
-		return false;
-	}
-
-	if (!setUniform1I("texture", 0)) {
-		warning("Shader misses \"texture\" uniform.");
-		destroy();
-		return false;
-	}
-
 	return true;
 }
 
@@ -228,6 +212,12 @@ void Shader::activate() {
 
 void Shader::deactivate() {
 	_isActive = false;
+}
+
+GLint Shader::getAttributeLocation(const char *name) const {
+	GLint result = -1;
+	GL_ASSIGN(result, glGetAttribLocation(_program, name));
+	return result;
 }
 
 GLint Shader::getUniformLocation(const char *name) const {
@@ -310,6 +300,10 @@ void ShaderManager::notifyCreate() {
 		_builtIn[kDefault] = new Shader(g_defaultVertexShader, g_defaultFragmentShader);
 		_builtIn[kCLUT8LookUp] = new Shader(g_defaultVertexShader, g_lookUpFragmentShader);
 		_builtIn[kCLUT8LookUp]->setUniform1I("palette", 1);
+
+		for (uint i = 0; i < kMaxUsages; ++i) {
+			_builtIn[i]->setUniform1I("texture", 0);
+		}
 	} else {
 		for (int i = 0; i < ARRAYSIZE(_builtIn); ++i) {
 			_builtIn[i]->recreate();

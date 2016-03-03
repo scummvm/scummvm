@@ -29,11 +29,14 @@ namespace OpenGL {
 #if !USE_FORCED_GLES
 ShaderPipeline::ShaderPipeline(Shader *shader)
     : _activeShader(shader) {
+	_vertexAttribLocation = shader->getAttributeLocation("position");
+	_texCoordAttribLocation = shader->getAttributeLocation("texCoordIn");
+	_colorAttribLocation = shader->getAttributeLocation("blendColorIn");
 }
 
 void ShaderPipeline::activateInternal() {
-	GL_CALL(glEnableVertexAttribArray(kPositionAttribLocation));
-	GL_CALL(glEnableVertexAttribArray(kTexCoordAttribLocation));
+	GL_CALL(glEnableVertexAttribArray(_vertexAttribLocation));
+	GL_CALL(glEnableVertexAttribArray(_texCoordAttribLocation));
 
 	if (g_context.multitextureSupported) {
 		GL_CALL(glActiveTexture(GL_TEXTURE0));
@@ -43,18 +46,21 @@ void ShaderPipeline::activateInternal() {
 }
 
 void ShaderPipeline::deactivateInternal() {
+	GL_CALL(glDisableVertexAttribArray(_vertexAttribLocation));
+	GL_CALL(glDisableVertexAttribArray(_texCoordAttribLocation));
+
 	_activeShader->deactivate();
 }
 
 void ShaderPipeline::setColor(GLfloat r, GLfloat g, GLfloat b, GLfloat a) {
-	GL_CALL(glVertexAttrib4f(kColorAttribLocation, r, g, b, a));
+	GL_CALL(glVertexAttrib4f(_colorAttribLocation, r, g, b, a));
 }
 
 void ShaderPipeline::drawTexture(const GLTexture &texture, const GLfloat *coordinates) {
 	texture.bind();
 
-	GL_CALL(glVertexAttribPointer(kTexCoordAttribLocation, 2, GL_FLOAT, GL_FALSE, 0, texture.getTexCoords()));
-	GL_CALL(glVertexAttribPointer(kPositionAttribLocation, 2, GL_FLOAT, GL_FALSE, 0, coordinates));
+	GL_CALL(glVertexAttribPointer(_texCoordAttribLocation, 2, GL_FLOAT, GL_FALSE, 0, texture.getTexCoords()));
+	GL_CALL(glVertexAttribPointer(_vertexAttribLocation, 2, GL_FLOAT, GL_FALSE, 0, coordinates));
 	GL_CALL(glDrawArrays(GL_TRIANGLE_STRIP, 0, 4));
 }
 
