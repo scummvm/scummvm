@@ -20,33 +20,22 @@
  *
  */
 
-#ifndef TITANIC_SERVICE_ELEVATOR_DOOR_H
-#define TITANIC_SERVICE_ELEVATOR_DOOR_H
-
-#include "titanic/sound/door_auto_sound_event.h"
+#include "titanic/gfx/toggle_button.h"
 
 namespace Titanic {
 
-class CServiceElevatorDoor : public CDoorAutoSoundEvent {
-public:
-	CServiceElevatorDoor();
+void CToggleButton::save(SimpleFile *file, int indent) const {
+	file->writeNumberLine(1, indent);
+	file->writeNumberLine(_fieldE0, indent);
 
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CServiceElevatorDoor"; }
+	CBackground::save(file, indent);
+}
 
-	/**
-	 * Save the data for the class to file
-	 */
-	virtual void save(SimpleFile *file, int indent) const;
+void CToggleButton::load(SimpleFile *file) {
+	file->readNumber();
+	_fieldE0 = file->readNumber();
 
-	/**
-	 * Load the data for the class from file
-	 */
-	virtual void load(SimpleFile *file);
-};
+	CBackground::load(file);
+}
 
 } // End of namespace Titanic
-
-#endif /* TITANIC_SERVICE_ELEVATOR_DOOR_H */

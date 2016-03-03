@@ -20,33 +20,32 @@
  *
  */
 
-#ifndef TITANIC_SERVICE_ELEVATOR_DOOR_H
-#define TITANIC_SERVICE_ELEVATOR_DOOR_H
-
-#include "titanic/sound/door_auto_sound_event.h"
+#include "titanic/game/bilge_succubus.h"
 
 namespace Titanic {
 
-class CServiceElevatorDoor : public CDoorAutoSoundEvent {
-public:
-	CServiceElevatorDoor();
+CBilgeSuccUBus::CBilgeSuccUBus() : CSuccUBus(), _field1DC(0),
+	_field1E0(0), _field1E4(0), _field1E8(0) {
+}
 
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CServiceElevatorDoor"; }
+void CBilgeSuccUBus::save(SimpleFile *file, int indent) const {
+	file->writeNumberLine(1, indent);
+	file->writeNumberLine(_field1DC, indent);
+	file->writeNumberLine(_field1E0, indent);
+	file->writeNumberLine(_field1E4, indent);
+	file->writeNumberLine(_field1E8, indent);
 
-	/**
-	 * Save the data for the class to file
-	 */
-	virtual void save(SimpleFile *file, int indent) const;
+	CSuccUBus::save(file, indent);
+}
 
-	/**
-	 * Load the data for the class from file
-	 */
-	virtual void load(SimpleFile *file);
-};
+void CBilgeSuccUBus::load(SimpleFile *file) {
+	file->readNumber();
+	_field1DC = file->readNumber();
+	_field1E0 = file->readNumber();
+	_field1E4 = file->readNumber();
+	_field1E8 = file->readNumber();
+
+	CSuccUBus::load(file);
+}
 
 } // End of namespace Titanic
-
-#endif /* TITANIC_SERVICE_ELEVATOR_DOOR_H */

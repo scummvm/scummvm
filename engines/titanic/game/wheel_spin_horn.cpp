@@ -20,33 +20,24 @@
  *
  */
 
-#ifndef TITANIC_SERVICE_ELEVATOR_DOOR_H
-#define TITANIC_SERVICE_ELEVATOR_DOOR_H
-
-#include "titanic/sound/door_auto_sound_event.h"
+#include "titanic/game/wheel_spin_horn.h"
 
 namespace Titanic {
 
-class CServiceElevatorDoor : public CDoorAutoSoundEvent {
-public:
-	CServiceElevatorDoor();
+void CWheelSpinHorn::save(SimpleFile *file, int indent) const {
+	file->writeNumberLine(1, indent);
+	file->writeQuotedLine(_string1, indent);
+	file->writeQuotedLine(_string2, indent);
 
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CServiceElevatorDoor"; }
+	CWheelSpin::save(file, indent);
+}
 
-	/**
-	 * Save the data for the class to file
-	 */
-	virtual void save(SimpleFile *file, int indent) const;
+void CWheelSpinHorn::load(SimpleFile *file) {
+	file->readNumber();
+	_string1 = file->readString();
+	_string2 = file->readString();
 
-	/**
-	 * Load the data for the class from file
-	 */
-	virtual void load(SimpleFile *file);
-};
+	CWheelSpin::load(file);
+}
 
 } // End of namespace Titanic
-
-#endif /* TITANIC_SERVICE_ELEVATOR_DOOR_H */

@@ -80,6 +80,7 @@ MODULE_OBJS := \
 	game/arb_background.o \
 	game/arboretum_gate.o \
 	game/auto_animate.o \
+	game/bilge_succubus.o \
 	game/bomb.o \
 	game/bar_menu.o \
 	game/bar_menu_button.o \
@@ -159,6 +160,7 @@ MODULE_OBJS := \
 	game/music_room_stop_phonograph_button.o \
 	game/music_system_lock.o \
 	game/musical_instrument.o \
+	game/nav_helmet.o \
 	game/navigation_computer.o \
 	game/no_nut_bowl.o \
 	game/nose_holder.o \
@@ -204,9 +206,11 @@ MODULE_OBJS := \
 	game/throw_tv_down_well.o \
 	game/titania_still_control.o \
 	game/up_lighter.o \
+	game/useless_lever.o \
 	game/wheel_button.o \
 	game/wheel_hotspot.o \
 	game/wheel_spin.o \
+	game/wheel_spin_horn.o \
 	game/parrot/parrot_lobby_controller.o \
 	game/parrot/parrot_lobby_link_updater.o \
 	game/parrot/parrot_lobby_object.o \
@@ -297,10 +301,9 @@ MODULE_OBJS := \
 	gfx/small_chev_right_on.o \
 	gfx/status_change_button.o \
 	gfx/st_button.o \
+	gfx/toggle_button.o \
 	gfx/toggle_switch.o \
 	gfx/volume_control.o \
-	messages/auto_sound_event.o \
-	messages/door_auto_sound_event.o \
 	messages/messages.o \
 	moves/enter_bomb_room.o \
 	moves/enter_bridge.o \
@@ -341,10 +344,13 @@ MODULE_OBJS := \
 	npcs/true_talk_npc.o \
 	sound/auto_music_player.o \
 	sound/auto_music_player_base.o \
+	sound/auto_sound_event.o \
 	sound/auto_sound_player.o \
 	sound/auto_sound_player_adsr.o \
 	sound/background_sound_maker.o \
+	sound/bilge_auto_sound_event.o \
 	sound/bird_song.o \
+	sound/door_auto_sound_event.o \
 	sound/enter_view_toggles_other_music.o \
 	sound/gondolier_song.o \
 	sound/music_player.o \

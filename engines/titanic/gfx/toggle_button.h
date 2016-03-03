@@ -20,21 +20,23 @@
  *
  */
 
-#ifndef TITANIC_SERVICE_ELEVATOR_DOOR_H
-#define TITANIC_SERVICE_ELEVATOR_DOOR_H
+#ifndef TITANIC_TOGGLE_BUTTON_H
+#define TITANIC_TOGGLE_BUTTON_H
 
-#include "titanic/sound/door_auto_sound_event.h"
+#include "titanic/core/background.h"
 
 namespace Titanic {
 
-class CServiceElevatorDoor : public CDoorAutoSoundEvent {
+class CToggleButton : public CBackground {
+private:
+	int _fieldE0;
 public:
-	CServiceElevatorDoor();
+	CToggleButton() : CBackground(), _fieldE0(1) {}
 
 	/**
 	 * Return the class name
 	 */
-	virtual const char *getClassName() const { return "CServiceElevatorDoor"; }
+	virtual const char *getClassName() const { return "CToggleButton"; }
 
 	/**
 	 * Save the data for the class to file
@@ -49,4 +51,4 @@ public:
 
 } // End of namespace Titanic
 
-#endif /* TITANIC_SERVICE_ELEVATOR_DOOR_H */
+#endif /* TITANIC_TOGGLE_BUTTON_H */

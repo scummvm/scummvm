@@ -48,56 +48,6 @@ public:
 	virtual void load(SimpleFile *file);
 };
 
-class CAutoSoundEvent : public CGameObject {
-protected:
-	int _fieldBC;
-	int _fieldC0;
-public:
-	CAutoSoundEvent();
-
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CAutoSoundEvent"; }
-
-	/**
-	 * Save the data for the class to file
-	 */
-	virtual void save(SimpleFile *file, int indent) const;
-
-	/**
-	 * Load the data for the class from file
-	 */
-	virtual void load(SimpleFile *file);
-};
-
-
-class CDoorAutoSoundEvent : public CAutoSoundEvent {
-protected:
-	CString _string1;
-	CString _string2;
-	int _fieldDC;
-	int _fieldE0;
-public:
-	CDoorAutoSoundEvent();
-
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CDoorAutoSoundEvent"; }
-
-	/**
-	 * Save the data for the class to file
-	 */
-	virtual void save(SimpleFile *file, int indent) const;
-
-	/**
-	 * Load the data for the class from file
-	 */
-	virtual void load(SimpleFile *file);
-};
-
-
 class CEditControlMsg : public CMessage {
 private:
 	int _field4;

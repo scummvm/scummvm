@@ -20,21 +20,19 @@
  *
  */
 
-#ifndef TITANIC_SERVICE_ELEVATOR_DOOR_H
-#define TITANIC_SERVICE_ELEVATOR_DOOR_H
+#ifndef TITANIC_BILGE_AUTO_SOUND_EVENT_H
+#define TITANIC_BILGE_AUTO_SOUND_EVENT_H
 
-#include "titanic/sound/door_auto_sound_event.h"
+#include "titanic/sound/auto_sound_event.h"
 
 namespace Titanic {
 
-class CServiceElevatorDoor : public CDoorAutoSoundEvent {
+class CBilgeAutoSoundEvent : public CAutoSoundEvent {
 public:
-	CServiceElevatorDoor();
-
 	/**
 	 * Return the class name
 	 */
-	virtual const char *getClassName() const { return "CServiceElevatorDoor"; }
+	virtual const char *getClassName() const { return "CBilgeAutoSoundEvent"; }
 
 	/**
 	 * Save the data for the class to file
@@ -49,4 +47,4 @@ public:
 
 } // End of namespace Titanic
 
-#endif /* TITANIC_SERVICE_ELEVATOR_DOOR_H */
+#endif /* TITANIC_BILGE_AUTO_SOUND_EVENT_H */

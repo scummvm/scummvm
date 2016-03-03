@@ -20,21 +20,23 @@
  *
  */
 
-#ifndef TITANIC_SERVICE_ELEVATOR_DOOR_H
-#define TITANIC_SERVICE_ELEVATOR_DOOR_H
+#ifndef TITANIC_NAV_HELMET_H
+#define TITANIC_NAV_HELMET_H
 
-#include "titanic/sound/door_auto_sound_event.h"
+#include "titanic/core/game_object.h"
 
 namespace Titanic {
 
-class CServiceElevatorDoor : public CDoorAutoSoundEvent {
+class CNavHelmet : public CGameObject {
+private:
+	int _value;
 public:
-	CServiceElevatorDoor();
+	CNavHelmet() : CGameObject(), _value(0) {}
 
 	/**
 	 * Return the class name
 	 */
-	virtual const char *getClassName() const { return "CServiceElevatorDoor"; }
+	virtual const char *getClassName() const { return "CNavHelmet"; }
 
 	/**
 	 * Save the data for the class to file
@@ -49,4 +51,4 @@ public:
 
 } // End of namespace Titanic
 
-#endif /* TITANIC_SERVICE_ELEVATOR_DOOR_H */
+#endif /* TITANIC_NAV_HELMET_H */
