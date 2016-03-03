@@ -70,19 +70,6 @@ bool AdlEngine::hasFeature(EngineFeature f) const {
 }
 
 Common::Error AdlEngine::run() {
-	initGraphics(560, 384, true);
-
-	byte palette[6 * 3] = {
-		0x00, 0x00, 0x00,
-		0xff, 0xff, 0xff,
-		0xc7, 0x34, 0xff,
-		0x38, 0xcb, 0x00,
-		0x00, 0x00, 0xff, // FIXME
-		0xff, 0xa5, 0x00  // FIXME
-	};
-
-	g_system->getPaletteManager()->setPalette(palette, 0, 6);
-
 	_display = new Display();
 
 	int saveSlot = ConfMan.getInt("save_slot");

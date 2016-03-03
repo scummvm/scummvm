@@ -22,6 +22,7 @@
 
 #include "common/system.h"
 #include "common/savefile.h"
+#include "common/translation.h"
 
 #include "graphics/thumbnail.h"
 
@@ -30,6 +31,33 @@
 #include "adl/adl.h"
 
 namespace Adl {
+
+#define GAMEOPTION_COLOR      GUIO_GAMEOPTIONS1
+#define GAMEOPTION_SCANLINES  GUIO_GAMEOPTIONS2
+
+static const ADExtraGuiOptionsMap optionsList[] = {
+	{
+		GAMEOPTION_COLOR,
+		{
+			_s("Color mode"),
+			_s("Use color graphics"),
+			"color",
+			false
+		}
+	},
+
+	{
+		GAMEOPTION_SCANLINES,
+		{
+			_s("Scanlines"),
+			_s("Show scanlines"),
+			"scanlines",
+			false
+		}
+	},
+
+	AD_EXTRA_GUI_OPTIONS_TERMINATOR
+};
 
 struct AdlGameDescription {
 	ADGameDescription desc;
@@ -55,7 +83,7 @@ static const AdlGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformApple2GS, // FIXME
 			ADGF_NO_FLAGS,
-			GUIO0()
+			GUIO2(GAMEOPTION_COLOR, GAMEOPTION_SCANLINES)
 		},
 		kGameTypeHires1
 	},
@@ -64,7 +92,7 @@ static const AdlGameDescription gameDescriptions[] = {
 
 class AdlMetaEngine : public AdvancedMetaEngine {
 public:
-	AdlMetaEngine() : AdvancedMetaEngine(gameDescriptions, sizeof(AdlGameDescription), adlGames) { }
+	AdlMetaEngine() : AdvancedMetaEngine(gameDescriptions, sizeof(AdlGameDescription), adlGames, optionsList) { }
 
 	const char *getName() const {
 		return "ADL";

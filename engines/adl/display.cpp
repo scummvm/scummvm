@@ -29,11 +29,14 @@
 #include "common/events.h"
 #include "common/rect.h"
 #include "common/array.h"
+#include "common/config-manager.h"
 #include "engines/engine.h"
+#include "engines/util.h"
+#include "graphics/palette.h"
 
 namespace Adl {
 
-static byte font[64][5] = {
+static const byte font[64][5] = {
 	{ 0x7c, 0x82, 0xba, 0xb2, 0x9c }, { 0xf8, 0x24, 0x22, 0x24, 0xf8 }, // @A
 	{ 0xfe, 0x92, 0x92, 0x92, 0x6c }, { 0x7c, 0x82, 0x82, 0x82, 0x44 }, // BC
 	{ 0xfe, 0x82, 0x82, 0x82, 0x7c }, { 0xfe, 0x92, 0x92, 0x92, 0x82 }, // DE
@@ -69,10 +72,17 @@ static byte font[64][5] = {
 };
 
 Display::Display() :
-		_scanlines(false),
 		_cursorPos(0),
 		_mode(kModeText),
 		_showCursor(false) {
+
+	initGraphics(560, 384, true);
+
+	_monochrome = !ConfMan.getBool("color");
+	_scanlines = ConfMan.getBool("scanlines");
+
+	setPalette(_scanlines, _monochrome);
+
 	_frameBuf = new byte[kFrameBufSize];
 	_frameBufSurface = new Graphics::Surface;
 	_frameBufSurface->create(kWidth * 2, kHeight * 2, Graphics::PixelFormat::createFormatCLUT8());
@@ -98,11 +108,37 @@ Display::~Display() {
 	delete _font;
 }
 
+void Display::setPalette(bool scanlines, bool monochrome) {
+	const byte colorPal[6 * 3] = {
+		0x00, 0x00, 0x00,
+		0xff, 0xff, 0xff,
+		0xc7, 0x34, 0xff,
+		0x38, 0xcb, 0x00,
+		0x0d, 0xa1, 0xff,
+		0xf2, 0x5e, 0x00
+	};
+
+	const byte monoPal[2 * 3] = {
+		0x00, 0x00, 0x00,
+		0x00, 0xc0, 0x01
+	};
+
+	if (monochrome) {
+		g_system->getPaletteManager()->setPalette(monoPal, 0, 2);
+		if (!scanlines)
+			g_system->getPaletteManager()->setPalette(monoPal, 6, 2);
+	} else {
+		g_system->getPaletteManager()->setPalette(colorPal, 0, 6);
+		if (!scanlines)
+			g_system->getPaletteManager()->setPalette(colorPal, 6, 6);
+	}
+}
+
 void Display::loadFrameBuffer(Common::ReadStream &stream) {
 	stream.read(_frameBuf, kFrameBufSize);
 }
 
-void Display::decodeScanline(byte *dst, int pitch, byte *src) {
+void Display::decodeScanlineColor(byte *dst, int pitch, byte *src) {
 	// TODO: shift secondPal by half a pixel
 
 	bool prevOn = false;
@@ -135,16 +171,40 @@ void Display::decodeScanline(byte *dst, int pitch, byte *src) {
 
 			dst[0] = color;
 			dst[1] = color;
-
-			if (!_scanlines) {
-				dst[pitch] = color;
-				dst[pitch + 1] = color;
-			}
+			dst[pitch] = color + 6;
+			dst[pitch + 1] = color + 6;
 
 			dst += 2;
 			prevOn = curOn;
 		}
 	}
+}
+
+void Display::decodeScanlineMono(byte *dst, int pitch, byte *src) {
+	// TODO: shift secondPal by half a pixel
+
+	for (uint j = 0; j < 39; ++j) {
+		for (uint k = 0; k < 7; ++k) {
+			byte color = 0;
+
+			if (src[j] & (1 << k))
+				color = 1;
+
+			dst[0] = color;
+			dst[1] = color;
+			dst[pitch] = color + 6;
+			dst[pitch + 1] = color + 6;
+
+			dst += 2;
+		}
+	}
+}
+
+void Display::decodeScanline(byte *dst, int pitch, byte *src) {
+	if (_monochrome)
+		decodeScanlineMono(dst, pitch, src);
+	else
+		decodeScanlineColor(dst, pitch, src);
 }
 
 Display::PixelPos Display::getPixelPos(byte x, byte y) {
@@ -390,16 +450,23 @@ void Display::drawChar(byte c, int x, int y) {
 	byte *buf = (byte *)_font->getPixels() + y * _font->pitch + x;
 
 	for (uint row = 0; row < 8; ++row) {
-		for (uint col = 1; col < 6; ++col)
+		if (row & 1) {
+			buf[_font->pitch] = 6;
+			buf[_font->pitch + 1] = 6;
+			buf[_font->pitch + 6 * 2] = 6;
+			buf[_font->pitch + 6 * 2 + 1] = 6;
+		}
+		for (uint col = 1; col < 6; ++col) {
 			if (font[c][col - 1] & (1 << row)) {
 				buf[col * 2] = 1;
 				buf[col * 2 + 1] = 1;
-
-				if (!_scanlines) {
-					buf[_font->pitch + col * 2] = 1;
-					buf[_font->pitch + col * 2 + 1] = 1;
-				}
+				buf[_font->pitch + col * 2] = 1 + 6;
+				buf[_font->pitch + col * 2 + 1] = 1 + 6;
+			} else {
+				buf[_font->pitch + col * 2] = 6;
+				buf[_font->pitch + col * 2 + 1] = 6;
 			}
+		}
 
 		buf += 2 * _font->pitch;
 	}
@@ -417,10 +484,15 @@ void Display::createFont() {
 	byte *buf = (byte *)_font->getPixels();
 	byte *bufInv = buf + (_font->h / 2) * _font->pitch;
 
-	for (uint row = 0; row < _font->h / 2; ++row) {
-		if (!_scanlines || !(row & 1))
-			for (uint col = 0; col < _font->w; ++col)
-				bufInv[col] = buf[col] ? 0 : 1;
+	for (uint row = 0; row < _font->h / 2; row += 2) {
+		for (uint col = 0; col < _font->w; ++col)
+			bufInv[col] = (buf[col] ? 0 : 1);
+
+		buf += _font->pitch;
+		bufInv += _font->pitch;
+
+		for (uint col = 0; col < _font->w; ++col)
+			bufInv[col] = (buf[col] == 7 ? 6 : 7);
 
 		buf += _font->pitch;
 		bufInv += _font->pitch;

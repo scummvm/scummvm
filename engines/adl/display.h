@@ -50,6 +50,7 @@ public:
 
 	Display();
 	~Display();
+	void setPalette(bool monochrome, bool scanlines);
 	void loadFrameBuffer(Common::ReadStream &stream);
 	void decodeFrameBuffer();
 	void updateScreen();
@@ -84,6 +85,8 @@ private:
 	};
 
 	void decodeScanline(byte *dst, int pitch, byte *src);
+	void decodeScanlineColor(byte *dst, int pitch, byte *src);
+	void decodeScanlineMono(byte *dst, int pitch, byte *src);
 	PixelPos getPixelPos(byte x, byte y);
 	byte getPixelColor(byte x, byte color);
 	void drawChar(byte c, int x, int y);
@@ -103,6 +106,7 @@ private:
 	int _cursorPos;
 	Mode _mode;
 	bool _showCursor;
+	bool _monochrome;
 };
  
 } // End of namespace Adl
