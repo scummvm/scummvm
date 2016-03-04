@@ -25,8 +25,8 @@
 #include "titanic/titanic.h"
 #include "titanic/compressed_file.h"
 #include "titanic/core/dont_save_file_item.h"
-#include "titanic/core/pet_control.h"
 #include "titanic/core/project_item.h"
+#include "titanic/game/pet/pet_control.h"
 
 namespace Titanic {
 

@@ -20,21 +20,26 @@
  *
  */
 
-#ifndef TITANIC_PET_CONTROL_H
-#define TITANIC_PET_CONTROL_H
+#ifndef TITANIC_PET_CONTROL_SUB3_H
+#define TITANIC_PET_CONTROL_SUB3_H
 
-#include "titanic/core/game_object.h"
+#include "titanic/game/pet/pet_control_sub_base.h"
 
 namespace Titanic {
 
-class CPetControl : public CGameObject {
+class CPetControlSub3 : public CPetControlSubBase {
 public:
 	/**
-	 * Called after loading a game has finished
+	 * Save the data for the class to file
 	 */
-	void gameLoaded();
+	virtual void save(SimpleFile *file, int indent) const;
+
+	/**
+	 * Load the data for the class from file
+	 */
+	virtual void load(SimpleFile *file);
 };
 
 } // End of namespace Titanic
 
-#endif /* TITANIC_PET_CONTROL_H */
+#endif /* TITANIC_PET_CONTROL_SUB3_H */

@@ -20,12 +20,16 @@
  *
  */
 
-#include "titanic/core/pet_control.h"
+#include "titanic/game/pet/pet_control_sub6.h"
 
 namespace Titanic {
 
-void CPetControl::gameLoaded() {
-	// TODO
+void CPetControlSub6::save(SimpleFile *file, int indent) const {
+
+}
+
+void CPetControlSub6::load(SimpleFile *file) {
+
 }
 
 } // End of namespace Titanic

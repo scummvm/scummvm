@@ -70,7 +70,6 @@
 #include "titanic/core/movie_clip.h"
 #include "titanic/core/multi_drop_target.h"
 #include "titanic/core/node_item.h"
-#include "titanic/core/pet_control.h"
 #include "titanic/core/project_item.h"
 #include "titanic/core/saveable_object.h"
 #include "titanic/core/static_image.h"
@@ -162,6 +161,9 @@
 #include "titanic/game/nose_holder.h"
 #include "titanic/game/null_port_hole.h"
 #include "titanic/game/nut_replacer.h"
+#include "titanic/game/pet/pet_control.h"
+#include "titanic/game/pet/pet_control_sub_base.h"
+#include "titanic/game/pet/pet_control_sub1.h"
 #include "titanic/game/pet_disabler.h"
 #include "titanic/game/phonograph.h"
 #include "titanic/game/phonograph_lid.h"
@@ -450,7 +452,6 @@ DEFFN(CMovieClip);
 DEFFN(CMovieClipList);
 DEFFN(CMultiDropTarget);
 DEFFN(CNodeItem);
-DEFFN(CPetControl);
 DEFFN(CProjectItem);
 DEFFN(CStaticImage);
 DEFFN(CTurnOnObject);
@@ -602,6 +603,7 @@ DEFFN(CPET);
 DEFFN(CPETClass1);
 DEFFN(CPETClass2);
 DEFFN(CPETClass3);
+DEFFN(CPetControl);
 DEFFN(CPetDragChev);
 DEFFN(CPetGraphic);
 DEFFN(CPetGraphic2);
@@ -993,7 +995,6 @@ void CSaveableObject::initClassList() {
 	ADDFN(CMovieClipList);
 	ADDFN(CMultiDropTarget);
 	ADDFN(CNodeItem);
-	ADDFN(CPetControl);
 	ADDFN(CProjectItem);
 	ADDFN(CStaticImage);
 	ADDFN(CTurnOnObject);
@@ -1146,6 +1147,7 @@ void CSaveableObject::initClassList() {
 	ADDFN(CPETClass1);
 	ADDFN(CPETClass2);
 	ADDFN(CPETClass3);
+	ADDFN(CPetControl);
 	ADDFN(CPetDragChev);
 	ADDFN(CPetGraphic);
 	ADDFN(CPetGraphic2);

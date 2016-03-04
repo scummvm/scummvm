@@ -67,7 +67,6 @@ MODULE_OBJS := \
 	core/multi_drop_target.o \
 	core/named_item.o \
 	core/node_item.o \
-	core/pet_control.o \
 	core/project_item.o \
 	core/resource_key.o \
 	core/saveable_object.o \
@@ -236,12 +235,24 @@ MODULE_OBJS := \
 	game/pet/pet_class3.o \
 	game/pet/pet_lift.o \
 	game/pet/pet_monitor.o \
+	game/pet/pet_control.o \
+	game/pet/pet_control_sub_base.o \
+	game/pet/pet_control_sub1.o \
+	game/pet/pet_control_sub2.o \
+	game/pet/pet_control_sub3.o \
+	game/pet/pet_control_sub4.o \
+	game/pet/pet_control_sub5.o \
+	game/pet/pet_control_sub6.o \
+	game/pet/pet_control_sub7.o \
+	game/pet/pet_control_sub8.o \
 	game/pet/pet_pellerator.o \
 	game/pet/pet_position.o \
 	game/pet/pet_sentinal.o \
 	game/pet/pet_sounds.o \
 	game/pet/pet_transition.o \
 	game/pet/pet_transport.o \
+	game/pet/pet_val_base.o \
+	game/pet/pet_val.o \
 	game/pickup/pick_up.o \
 	game/pickup/pick_up_bar_glass.o \
 	game/pickup/pick_up_hose.o \
