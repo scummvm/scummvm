@@ -96,7 +96,7 @@ void HiRes1Engine::runIntro() {
 	file.seek(IDI_HR1_OFS_LOGO_0);
 	_display->setMode(DISPLAY_MODE_HIRES);
 	_display->loadFrameBuffer(file);
-	_display->decodeFrameBuffer();
+	_display->updateHiResScreen();
 	delay(4000);
 
 	if (shouldQuit())
@@ -186,7 +186,7 @@ void HiRes1Engine::runIntro() {
 	// Title screen shown during loading
 	file.seek(0x1800);
 	_display->loadFrameBuffer(file);
-	_display->decodeFrameBuffer();
+	_display->updateHiResScreen();
 	delay(2000);
 }
 

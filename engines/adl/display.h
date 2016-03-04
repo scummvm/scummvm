@@ -54,18 +54,17 @@ public:
 	Display();
 	~Display();
 
-	void setMode(DisplayMode mode) { _mode = mode; }
-	void updateScreen();
+	void setMode(DisplayMode mode);
+	void updateTextScreen();
+	void updateHiResScreen();
 	bool saveThumbnail(Common::WriteStream &out);
 
 	// Graphics
 	void loadFrameBuffer(Common::ReadStream &stream);
-	void decodeFrameBuffer();
 	void putPixel(Common::Point p1, byte color);
 	void clear(byte color);
 
 	// Text
-	void updateTextSurface();
 	void home();
 	void moveCursorTo(const Common::Point &pos);
 	void moveCursorForward();
@@ -79,11 +78,13 @@ private:
 		kTextBufSize = 40 * 24
 	};
 
+	void updateHiResSurface();
 	void enableScanlines(bool enable);
 	void decodeScanlineColor(byte *dst, int pitch, byte *src) const;
 	void decodeScanlineMono(byte *dst, int pitch, byte *src) const;
 	void decodeScanline(byte *dst, int pitch, byte *src) const;
 
+	void updateTextSurface();
 	void drawChar(byte c, int x, int y);
 	void createFont();
 	void scrollUp();

@@ -36,10 +36,12 @@
 
 namespace Adl {
 
+// TODO: Implement partial screen updates
+
 #define DISPLAY_PITCH (DISPLAY_WIDTH / 7)
 
-#define COLOR_PALETTE_SIZE 6
-const byte colorPalette[COLOR_PALETTE_SIZE * 3] = {
+#define COLOR_PALETTE_ENTRIES 6
+const byte colorPalette[COLOR_PALETTE_ENTRIES * 3] = {
 	0x00, 0x00, 0x00,
 	0xff, 0xff, 0xff,
 	0xc7, 0x34, 0xff,
@@ -48,8 +50,8 @@ const byte colorPalette[COLOR_PALETTE_SIZE * 3] = {
 	0xf2, 0x5e, 0x00
 };
 
-#define MONO_PALETTE_SIZE 2
-const byte monoPalette[MONO_PALETTE_SIZE * 3] = {
+#define MONO_PALETTE_ENTRIES 2
+const byte monoPalette[MONO_PALETTE_ENTRIES * 3] = {
 	0x00, 0x00, 0x00,
 	0x00, 0xc0, 0x01
 };
@@ -100,9 +102,9 @@ Display::Display() :
 	_scanlines = ConfMan.getBool("scanlines");
 
 	if (_monochrome)
-		g_system->getPaletteManager()->setPalette(monoPalette, 0, MONO_PALETTE_SIZE);
+		g_system->getPaletteManager()->setPalette(monoPalette, 0, MONO_PALETTE_ENTRIES);
 	else
-		g_system->getPaletteManager()->setPalette(colorPalette, 0, COLOR_PALETTE_SIZE);
+		g_system->getPaletteManager()->setPalette(colorPalette, 0, COLOR_PALETTE_ENTRIES);
 
 	enableScanlines(_scanlines);
 
@@ -134,15 +136,35 @@ Display::~Display() {
 	delete _font;
 }
 
-void Display::updateScreen() {
-	if (_mode == DISPLAY_MODE_TEXT) {
+void Display::setMode(DisplayMode mode) {
+	_mode = mode;
+
+	if (_mode == DISPLAY_MODE_TEXT || _mode == DISPLAY_MODE_MIXED)
+		updateTextScreen();
+	if (_mode == DISPLAY_MODE_HIRES || _mode == DISPLAY_MODE_MIXED)
+		updateHiResScreen();
+}
+
+void Display::updateTextScreen() {
+	updateTextSurface();
+
+	if (_mode == DISPLAY_MODE_TEXT)
 		g_system->copyRectToScreen(_textBufSurface->getPixels(), _textBufSurface->pitch, 0, 0, _textBufSurface->w, _textBufSurface->h);
-	} else if (_mode == DISPLAY_MODE_HIRES) {
-		g_system->copyRectToScreen(_frameBufSurface->getPixels(), _frameBufSurface->pitch, 0, 0, _frameBufSurface->w, _frameBufSurface->h);
-	} else {
-		g_system->copyRectToScreen(_frameBufSurface->getPixels(), _frameBufSurface->pitch, 0, 0, _frameBufSurface->w, _frameBufSurface->h - 4 * 8 * 2);
+	else if (_mode == DISPLAY_MODE_MIXED)
 		g_system->copyRectToScreen(_textBufSurface->getBasePtr(0, _textBufSurface->h - 4 * 8 * 2), _textBufSurface->pitch, 0, _textBufSurface->h - 4 * 8 * 2, _textBufSurface->w, 4 * 8 * 2);
-	}
+
+	g_system->updateScreen();
+}
+
+void Display::updateHiResScreen() {
+	updateHiResSurface();
+
+	if (_mode == DISPLAY_MODE_HIRES)
+		g_system->copyRectToScreen(_frameBufSurface->getPixels(), _frameBufSurface->pitch, 0, 0, _frameBufSurface->w, _frameBufSurface->h);
+	else if (_mode == DISPLAY_MODE_MIXED)
+		g_system->copyRectToScreen(_frameBufSurface->getPixels(), _frameBufSurface->pitch, 0, 0, _frameBufSurface->w, _frameBufSurface->h - 4 * 8 * 2);
+
+	g_system->updateScreen();
 }
 
 bool Display::saveThumbnail(Common::WriteStream &out) {
@@ -177,17 +199,6 @@ void Display::loadFrameBuffer(Common::ReadStream &stream) {
 	}
 }
 
-void Display::decodeFrameBuffer() {
-	byte *src = _frameBuf;
-	byte *dst = (byte *)_frameBufSurface->getPixels();
-
-	for (uint i = 0; i < DISPLAY_HEIGHT; ++i) {
-		decodeScanline(dst, _frameBufSurface->pitch, src);
-		src += DISPLAY_PITCH;
-		dst += _frameBufSurface->pitch * 2;
-	}
-}
-
 void Display::putPixel(Common::Point p, byte color) {
 	byte offset = p.x / 7;
 
@@ -214,27 +225,6 @@ void Display::clear(byte color) {
 		_frameBuf[i] = color;
 		color ^= val;
 	}
-}
-
-void Display::updateTextSurface() {
-	for (uint row = 0; row < 24; ++row)
-		for (uint col = 0; col < 40; ++col) {
-			int charPos = row * 40 + col;
-			char c = _textBuf[row * 40 + col];
-
-			if (charPos == _cursorPos && _showCursor)
-				c = (c & 0x3f) | 0x40;
-
-			Common::Rect r(7 * 2, 8 * 2);
-			r.translate(((c & 0x3f) % 16) * 7 * 2, (c & 0x3f) / 16 * 8 * 2);
-
-			if (!(c & 0x80)) {
-				if (!(c & 0x40) || ((g_system->getMillis() / 270) & 1))
-					r.translate(0, 4 * 8 * 2);
-			}
-
-			_textBufSurface->copyRectToSurface(*_font, col * 7 * 2, row * 8 * 2, r);
-		}
 }
 
 void Display::home() {
@@ -279,7 +269,7 @@ void Display::printString(const Common::String &str) {
 			scrollUp();
 	}
 
-	updateTextSurface();
+	updateTextScreen();
 }
 
 void Display::setCharAtCursor(byte c) {
@@ -291,13 +281,24 @@ void Display::showCursor(bool enable) {
 }
 
 void Display::enableScanlines(bool enable) {
-	byte pal[6 * 3] = { };
+	byte pal[COLOR_PALETTE_ENTRIES * 3] = { };
 
 	if (enable)
 		g_system->getPaletteManager()->setPalette(pal, 6, 6);
 	else {
 		g_system->getPaletteManager()->grabPalette(pal, 0, 6);
 		g_system->getPaletteManager()->setPalette(pal, 6, 6);
+	}
+}
+
+void Display::updateHiResSurface() {
+	byte *src = _frameBuf;
+	byte *dst = (byte *)_frameBufSurface->getPixels();
+
+	for (uint i = 0; i < DISPLAY_HEIGHT; ++i) {
+		decodeScanline(dst, _frameBufSurface->pitch, src);
+		src += DISPLAY_PITCH;
+		dst += _frameBufSurface->pitch * 2;
 	}
 }
 
@@ -368,6 +369,27 @@ void Display::decodeScanline(byte *dst, int pitch, byte *src) const {
 		decodeScanlineMono(dst, pitch, src);
 	else
 		decodeScanlineColor(dst, pitch, src);
+}
+
+void Display::updateTextSurface() {
+	for (uint row = 0; row < 24; ++row)
+		for (uint col = 0; col < 40; ++col) {
+			int charPos = row * 40 + col;
+			char c = _textBuf[row * 40 + col];
+
+			if (charPos == _cursorPos && _showCursor)
+				c = (c & 0x3f) | 0x40;
+
+			Common::Rect r(7 * 2, 8 * 2);
+			r.translate(((c & 0x3f) % 16) * 7 * 2, (c & 0x3f) / 16 * 8 * 2);
+
+			if (!(c & 0x80)) {
+				if (!(c & 0x40) || ((g_system->getMillis() / 270) & 1))
+					r.translate(0, 4 * 8 * 2);
+			}
+
+			_textBufSurface->copyRectToSurface(*_font, col * 7 * 2, row * 8 * 2, r);
+		}
 }
 
 void Display::drawChar(byte c, int x, int y) {

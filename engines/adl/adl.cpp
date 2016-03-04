@@ -312,7 +312,7 @@ void AdlEngine::doActions(const Command &command, byte noun, byte offset) {
 			if (input.size() == 0 || input[0] != APPLECHAR('N')) {
 				_isRestarting = true;
 				_display->clear(0x00);
-				_display->decodeFrameBuffer();
+				_display->updateHiResScreen();
 				restartGame();
 				return;
 			}
@@ -515,9 +515,9 @@ void AdlEngine::showRoom() {
 	if (!_state.isDark) {
 		drawPic(curRoom().curPicture);
 		drawItems();
+		_display->updateHiResScreen();
 	}
 
-	_display->decodeFrameBuffer();
 	printMessage(curRoom().description, false);
 }
 
@@ -913,9 +913,7 @@ byte AdlEngine::inputKey() {
 			};
 		}
 
-		_display->updateTextSurface();
-		_display->updateScreen();
-		g_system->updateScreen();
+		_display->updateTextScreen();
 		g_system->delayMillis(16);
 	}
 
@@ -942,8 +940,6 @@ void AdlEngine::delay(uint32 ms) {
 				}
 			}
 		}
-		_display->updateScreen();
-		g_system->updateScreen();
 		g_system->delayMillis(16);
 	}
 }
