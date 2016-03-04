@@ -291,7 +291,11 @@ void AdlEngine::doActions(const Command &command, byte noun, byte offset) {
 		case IDO_ACT_LOAD:
 			loadGameState(0);
 			++offset;
-			// Original engine continues processing here (?)
+			// Original engine does not jump out of the loop,
+			// so we don't either.
+			// We reset the restore flag, as the restore game
+			// process is complete
+			_isRestoring = false;
 			break;
 		case IDO_ACT_RESTART: {
 			_display->printString(_strings[IDI_STR_PLAY_AGAIN]);
@@ -301,6 +305,7 @@ void AdlEngine::doActions(const Command &command, byte noun, byte offset) {
 			Common::String input = inputString();
 			_canRestoreNow = false;
 
+			// If the user restored with the GMM, we break off the restart
 			if (_isRestoring)
 				return;
 
@@ -661,6 +666,7 @@ Common::Error AdlEngine::loadGameState(int slot) {
 
 	setTotalPlayTime(playTime);
 
+	_isRestoring = true;
 	return Common::kNoError;
 }
 
