@@ -231,8 +231,14 @@ bool Shader::setUniform(const Common::String &name, ShaderUniformValue *value) {
 	Uniform *uniform;
 
 	if (uniformIter == _uniforms.end()) {
+		const GLint location = getUniformLocation(name.c_str());
+		if (location == -1) {
+			delete value;
+			return false;
+		}
+
 		uniform = &_uniforms[name];
-		uniform->location = getUniformLocation(name.c_str());
+		uniform->location = location;
 	} else {
 		uniform = &uniformIter->_value;
 	}
@@ -242,7 +248,8 @@ bool Shader::setUniform(const Common::String &name, ShaderUniformValue *value) {
 	if (_isActive) {
 		uniform->set();
 	}
-	return uniform->location != -1;
+
+	return true;
 }
 
 GLshader Shader::compileShader(const char *source, GLenum shaderType) {
