@@ -24,7 +24,6 @@
 #define ADL_DISPLAY_H
 
 #include <common/types.h>
-#include <common/array.h>
 
 namespace Common {
 class ReadStream;
@@ -39,6 +38,9 @@ class Surface;
 
 namespace Adl {
 
+#define DISPLAY_WIDTH 280
+#define DISPLAY_HEIGHT 192
+
 #define APPLECHAR(C) ((char)((C) | 0x80))
 
 class Display {
@@ -51,17 +53,20 @@ public:
 
 	Display();
 	~Display();
-	void enableScanlines(bool enable);
-	void setMonoPalette();
-	void setColorPalette();
+
+	void setMode(Mode mode) { _mode = mode; }
+	void updateScreen();
+	bool saveThumbnail(Common::WriteStream &out);
+
+	// Graphics
 	void loadFrameBuffer(Common::ReadStream &stream);
 	void decodeFrameBuffer();
-	void updateScreen();
-	void setMode(Mode mode) { _mode = mode; }
 	void putPixel(Common::Point p1, byte color);
 	void clear(byte color);
-	void setCursorPos(Common::Point pos);
 
+	// Text
+	void updateTextSurface();
+	void setCursorPos(Common::Point pos);
 	void home();
 	void moveCursorTo(const Common::Point &pos);
 	void moveCursorForward();
@@ -69,40 +74,33 @@ public:
 	void printString(const Common::String &str);
 	void setCharAtCursor(byte c);
 	void showCursor(bool enable);
-	void updateTextSurface();
-	bool saveThumbnail(Common::WriteStream &out);
 
 private:
 	enum {
-		kWidth = 280,
-		kHeight = 192,
 		kTextBufSize = 40 * 24
 	};
 
-	struct PixelPos {
-		uint16 rowAddr;
-		byte byteOffset;
-		byte bitMask;
-	};
+	void enableScanlines(bool enable);
+	void decodeScanlineColor(byte *dst, int pitch, byte *src) const;
+	void decodeScanlineMono(byte *dst, int pitch, byte *src) const;
+	void decodeScanline(byte *dst, int pitch, byte *src) const;
 
-	void decodeScanline(byte *dst, int pitch, byte *src);
-	void decodeScanlineColor(byte *dst, int pitch, byte *src);
-	void decodeScanlineMono(byte *dst, int pitch, byte *src);
 	void drawChar(byte c, int x, int y);
 	void createFont();
-
 	void scrollUp();
 
-	bool _scanlines;
+	Mode _mode;
+
 	byte *_frameBuf;
-	byte *_textBuf;
 	Graphics::Surface *_frameBufSurface;
+	bool _scanlines;
+	bool _monochrome;
+
+	byte *_textBuf;
 	Graphics::Surface *_textBufSurface;
 	Graphics::Surface *_font;
 	int _cursorPos;
-	Mode _mode;
 	bool _showCursor;
-	bool _monochrome;
 };
  
 } // End of namespace Adl
