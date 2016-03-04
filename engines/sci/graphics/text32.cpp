@@ -115,9 +115,68 @@ reg_t GfxText32::createFontBitmap(int16 width, int16 height, const Common::Rect 
 	return _bitmap;
 }
 
-reg_t GfxText32::createTitledFontBitmap(CelInfo32 &celInfo, Common::Rect &rect, Common::String &text, int16 foreColor, int16 backColor, int font, int16 skipColor, int16 borderColor, bool dimmed, void *unknown1) {
-	warning("TODO: createTitledFontBitmap");
-	return NULL_REG;
+reg_t GfxText32::createFontBitmap(const CelInfo32 &celInfo, const Common::Rect &rect, const Common::String &text, const int16 foreColor, const int16 backColor, const GuiResourceId fontId, const int16 skipColor, const int16 borderColor, const bool dimmed, reg_t *outBitmapObject) {
+	_field_22 = 0;
+	_borderColor = borderColor;
+	_text = text;
+	_textRect = rect;
+	_foreColor = foreColor;
+	_dimmed = dimmed;
+
+	setFont(fontId);
+
+	int16 scriptWidth = g_sci->_gfxFrameout->getCurrentBuffer().scriptWidth;
+	int16 scriptHeight = g_sci->_gfxFrameout->getCurrentBuffer().scriptHeight;
+
+	int borderSize = 1;
+	mulinc(_textRect, Ratio(_scaledWidth, scriptWidth), Ratio(_scaledHeight, scriptHeight));
+
+	CelObjView view(celInfo.resourceId, celInfo.loopNo, celInfo.celNo);
+	_skipColor = view._transparentColor;
+	_width = view._width * _scaledWidth / view._scaledWidth;
+	_height = view._height * _scaledHeight / view._scaledHeight;
+
+	Common::Rect bitmapRect(_width, _height);
+	if (_textRect.intersects(bitmapRect)) {
+		_textRect.clip(bitmapRect);
+	} else {
+		_textRect = Common::Rect();
+	}
+
+	_bitmap = _segMan->allocateHunkEntry("FontBitmap()", _width * _height + CelObjMem::getBitmapHeaderSize());
+	byte *bitmap = _segMan->getHunkPointer(_bitmap);
+	CelObjMem::buildBitmapHeader(bitmap, _width, _height, _skipColor, 0, 0, _scaledWidth, _scaledHeight, 0, false);
+
+	Buffer buffer(_width, _height, bitmap + READ_SCI11ENDIAN_UINT32(bitmap + 28));
+
+	// NOTE: The engine filled the bitmap pixels with 11 here, which is silly
+	// because then it just erased the bitmap using the skip color. So we don't
+	// fill the bitmap redundantly here.
+
+	_backColor = _skipColor;
+	erase(bitmapRect, false);
+	_backColor = backColor;
+
+	view.draw(buffer, bitmapRect, Common::Point(0, 0), false, Ratio(_scaledWidth, view._scaledWidth), Ratio(_scaledHeight, view._scaledHeight));
+
+	if (_backColor != skipColor && _foreColor != skipColor) {
+		erase(_textRect, false);
+	}
+
+	if (text.size() > 0) {
+		if (_foreColor == skipColor) {
+			error("TODO: Implement transparent text");
+		} else {
+			if (borderColor != -1) {
+				drawFrame(bitmapRect, borderSize, _borderColor, false);
+			}
+
+			drawTextBox();
+		}
+	}
+
+	*outBitmapObject = _bitmap;
+	return _bitmap;
 }
 
 void GfxText32::setFont(const GuiResourceId fontId) {

@@ -202,11 +202,16 @@ public:
 	 */
 	GfxFont *_font;
 
+	/**
+	 * Creates a plain font bitmap with a flat color
+	 * background.
+	 */
 	reg_t createFontBitmap(int16 width, int16 height, const Common::Rect &rect, const Common::String &text, const uint8 foreColor, const uint8 backColor, const uint8 skipColor, const GuiResourceId fontId, TextAlign alignment, const int16 borderColor, bool dimmed, const bool doScaling, reg_t *outBitmapObject);
 
-	reg_t createTitledFontBitmap(CelInfo32 &celInfo, Common::Rect &rect, Common::String &text, int16 foreColor, int16 backColor, int font, int16 skipColor, int16 borderColor, bool dimmed, void *unknown1);
-
-	void disposeTextBitmap(reg_t hunkId);
+	/**
+	 * Creates a font bitmap with a view background.
+	 */
+	reg_t createFontBitmap(const CelInfo32 &celInfo, const Common::Rect &rect, const Common::String &text, const int16 foreColor, const int16 backColor, const GuiResourceId fontId, const int16 skipColor, const int16 borderColor, const bool dimmed, reg_t *outBitmapObject);
 
 	/**
 	 * Sets the font to be used for rendering and

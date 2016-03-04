@@ -206,7 +206,7 @@ reg_t kCreateTextBitmap(EngineState *s, int argc, reg_t *argv) {
 		celInfo.loopNo = readSelectorValue(segMan, object, SELECTOR(loop));
 		celInfo.celNo = readSelectorValue(segMan, object, SELECTOR(cel));
 		reg_t out;
-		return g_sci->_gfxText32->createTitledFontBitmap(celInfo, rect, text, foreColor, backColor, fontId, skipColor, borderColor, dimmed, &out);
+		return g_sci->_gfxText32->createFontBitmap(celInfo, rect, text, foreColor, backColor, fontId, skipColor, borderColor, dimmed, &out);
 	}
 }
 
