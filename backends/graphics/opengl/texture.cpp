@@ -46,7 +46,8 @@ static GLuint nextHigher2(GLuint v) {
 
 GLTexture::GLTexture(GLenum glIntFormat, GLenum glFormat, GLenum glType)
     : _glIntFormat(glIntFormat), _glFormat(glFormat), _glType(glType),
-      _width(0), _height(0), _texCoords(), _glFilter(GL_NEAREST),
+      _width(0), _height(0), _logicalWidth(0), _logicalHeight(0),
+      _texCoords(), _glFilter(GL_NEAREST),
       _glTexture(0) {
 	create();
 }
@@ -111,6 +112,9 @@ void GLTexture::setSize(uint width, uint height) {
 		_width  = width;
 		_height = height;
 	}
+
+	_logicalWidth  = width;
+	_logicalHeight = height;
 
 	// If a size is specified, allocate memory for it.
 	if (width != 0 && height != 0) {

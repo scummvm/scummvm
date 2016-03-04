@@ -99,8 +99,25 @@ public:
 	 */
 	void updateArea(const Common::Rect &area, const Graphics::Surface &src);
 
+	/**
+	 * Query the GL texture's width.
+	 */
 	uint getWidth() const { return _width; }
+
+	/**
+	 * Query the GL texture's height.
+	 */
 	uint getHeight() const { return _height; }
+
+	/**
+	 * Query the logical texture's width.
+	 */
+	uint getLogicalWidth() const { return _logicalWidth; }
+
+	/**
+	 * Query the logical texture's height.
+	 */
+	uint getLogicalHeight() const { return _logicalHeight; }
 
 	/**
 	 * Obtain texture coordinates for rectangular drawing.
@@ -120,6 +137,7 @@ private:
 	const GLenum _glType;
 
 	uint _width, _height;
+	uint _logicalWidth, _logicalHeight;
 	GLfloat _texCoords[4*2];
 
 	GLint _glFilter;
