@@ -127,6 +127,9 @@ public:
 	 * @return The loctaion of -1 if attribute was not found.
 	 */
 	GLint getAttributeLocation(const char *name) const;
+	GLint getAttributeLocation(const Common::String &name) const {
+		return getAttributeLocation(name.c_str());
+	}
 
 	/**
 	 * Return location for uniform with given name.
@@ -135,6 +138,9 @@ public:
 	 * @return The location or -1 if uniform was not found.
 	 */
 	GLint getUniformLocation(const char *name) const;
+	GLint getUniformLocation(const Common::String &name) const {
+		return getUniformLocation(name.c_str());
+	}
 
 	/**
 	 * Bind value to uniform.
