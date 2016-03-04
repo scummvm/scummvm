@@ -29,6 +29,7 @@
 #include "sci/engine/selector.h"
 #include "sci/engine/state.h"
 #include "sci/graphics/cache.h"
+#include "sci/graphics/celobj32.h"
 #include "sci/graphics/compare.h"
 #include "sci/graphics/font.h"
 #include "sci/graphics/frameout.h"
@@ -58,37 +59,6 @@ GfxText32::GfxText32(SegManager *segMan, GfxCache *fonts, GfxScreen *screen) :
 		_fontId = _defaultFontId;
 		_font = _cache->getFont(_defaultFontId);
 	}
-
-#define BITMAP_HEADER_SIZE 46
-void GfxText32::buildBitmapHeader(byte *bitmap, const int16 width, const int16 height, const uint8 skipColor, const int16 displaceX, const int16 displaceY, const int16 scaledWidth, const int16 scaledHeight, const uint32 hunkPaletteOffset, const bool useRemap) const {
-
-	WRITE_SCI11ENDIAN_UINT16(bitmap + 0, width);
-	WRITE_SCI11ENDIAN_UINT16(bitmap + 2, height);
-	WRITE_SCI11ENDIAN_UINT16(bitmap + 4, (uint16)displaceX);
-	WRITE_SCI11ENDIAN_UINT16(bitmap + 6, (uint16)displaceY);
-	bitmap[8] = skipColor;
-	bitmap[9] = 0;
-	WRITE_SCI11ENDIAN_UINT16(bitmap + 10, 0);
-
-	if (useRemap) {
-		bitmap[10] |= 2;
-	}
-
-	WRITE_SCI11ENDIAN_UINT32(bitmap + 12, width * height);
-	WRITE_SCI11ENDIAN_UINT32(bitmap + 16, 0);
-
-	if (hunkPaletteOffset) {
-		WRITE_SCI11ENDIAN_UINT32(bitmap + 20, hunkPaletteOffset + BITMAP_HEADER_SIZE);
-	} else {
-		WRITE_SCI11ENDIAN_UINT32(bitmap + 20, 0);
-	}
-
-	WRITE_SCI11ENDIAN_UINT32(bitmap + 24, BITMAP_HEADER_SIZE);
-	WRITE_SCI11ENDIAN_UINT32(bitmap + 28, BITMAP_HEADER_SIZE);
-	WRITE_SCI11ENDIAN_UINT32(bitmap + 32, 0);
-	WRITE_SCI11ENDIAN_UINT16(bitmap + 36, scaledWidth);
-	WRITE_SCI11ENDIAN_UINT16(bitmap + 38, scaledHeight);
-}
 
 reg_t GfxText32::createFontBitmap(int16 width, int16 height, const Common::Rect &rect, const Common::String &text, const uint8 foreColor, const uint8 backColor, const uint8 skipColor, const GuiResourceId fontId, const TextAlign alignment, const int16 borderColor, const bool dimmed, const bool doScaling, reg_t *outBitmapObject) {
 
@@ -128,10 +98,10 @@ reg_t GfxText32::createFontBitmap(int16 width, int16 height, const Common::Rect 
 		_textRect = Common::Rect();
 	}
 
-	_bitmap = _segMan->allocateHunkEntry("FontBitmap()", _width * _height + BITMAP_HEADER_SIZE);
+	_bitmap = _segMan->allocateHunkEntry("FontBitmap()", _width * _height + CelObjMem::getBitmapHeaderSize());
 
 	byte *bitmap = _segMan->getHunkPointer(_bitmap);
-	buildBitmapHeader(bitmap, _width, _height, _skipColor, 0, 0, _scaledWidth, _scaledHeight, 0, false);
+	CelObjMem::buildBitmapHeader(bitmap, _width, _height, _skipColor, 0, 0, _scaledWidth, _scaledHeight, 0, false);
 
 	erase(bitmapRect, false);
 
@@ -524,10 +494,6 @@ void GfxText32::erase(const Common::Rect &rect, const bool doScaling) {
 	// the bitmap, not implemented here.
 	Buffer buffer(_width, _height, pixels);
 	buffer.fillRect(targetRect, _backColor);
-}
-
-void GfxText32::disposeTextBitmap(reg_t hunkId) {
-	_segMan->freeHunkEntry(hunkId);
 }
 
 int16 GfxText32::getStringWidth(const Common::String &text) {

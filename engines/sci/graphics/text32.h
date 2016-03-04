@@ -132,11 +132,6 @@ private:
 	 */
 	Common::Point _drawPosition;
 
-	// TODO: This is general for all CelObjMem and should be
-	// put in a single location, like maybe as a static
-	// method of CelObjMem?!
-	void buildBitmapHeader(byte *bitmap, const int16 width, const int16 height, const uint8 skipColor, const int16 displaceX, const int16 displaceY, const int16 scaledWidth, const int16 scaledHeight, const uint32 hunkPaletteOffset, const bool useRemap) const;
-
 	void drawFrame(const Common::Rect &rect, const int16 size, const uint8 color, const bool doScaling);
 	void drawTextBox();
 	void erase(const Common::Rect &rect, const bool doScaling);

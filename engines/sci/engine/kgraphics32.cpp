@@ -49,11 +49,12 @@
 #include "sci/graphics/text16.h"
 #include "sci/graphics/view.h"
 #ifdef ENABLE_SCI32
-#include "sci/graphics/palette32.h"
+#include "sci/graphics/celobj32.h"
 #include "sci/graphics/controls32.h"
 #include "sci/graphics/font.h"	// TODO: remove once kBitmap is moved in a separate class
-#include "sci/graphics/text32.h"
 #include "sci/graphics/frameout.h"
+#include "sci/graphics/palette32.h"
+#include "sci/graphics/text32.h"
 #endif
 
 namespace Sci {
@@ -207,11 +208,6 @@ reg_t kCreateTextBitmap(EngineState *s, int argc, reg_t *argv) {
 		reg_t out;
 		return g_sci->_gfxText32->createTitledFontBitmap(celInfo, rect, text, foreColor, backColor, fontId, skipColor, borderColor, dimmed, &out);
 	}
-}
-
-reg_t kDisposeTextBitmap(EngineState *s, int argc, reg_t *argv) {
-	g_sci->_gfxText32->disposeTextBitmap(argv[0]);
-	return s->r_acc;
 }
 
 reg_t kText(EngineState *s, int argc, reg_t *argv) {
@@ -503,183 +499,171 @@ reg_t kSetFontRes(EngineState *s, int argc, reg_t *argv) {
 	return NULL_REG;
 }
 
-// TODO: Eventually, all of the kBitmap operations should be put
-// in a separate class
-
-// NOTE: This size is correct only for SCI2.1mid; the size for
-// SCI2/2.1early is 36
-#define BITMAP_HEADER_SIZE 46
-
 reg_t kBitmap(EngineState *s, int argc, reg_t *argv) {
-	// Used for bitmap operations in SCI2.1 and SCI3.
-	// This is the SCI2.1 version, the functionality seems to have changed in SCI3.
+	if (!s)
+		return make_reg(0, getSciVersion());
+	error("not supposed to call this");
+}
 
-	switch (argv[0].toUint16()) {
-	case 0:	// init bitmap surface
-		{
-		// 6 params, called e.g. from TextView::init() in Torin's Passage,
-		// script 64890 and TransView::init() in script 64884
-		uint16 width = argv[1].toUint16();
-		uint16 height = argv[2].toUint16();
-		//uint16 skip = argv[3].toUint16();
-		uint16 back = argv[4].toUint16();	// usually equals skip
-		//uint16 width2 = (argc >= 6) ? argv[5].toUint16() : 0;
-		//uint16 height2 = (argc >= 7) ? argv[6].toUint16() : 0;
-		//uint16 transparentFlag = (argc >= 8) ? argv[7].toUint16() : 0;
+reg_t kBitmapCreate(EngineState *s, int argc, reg_t *argv) {
+	uint32 bitmapHeaderSize = CelObjMem::getBitmapHeaderSize();
+	int16 width = argv[0].toSint16();
+	int16 height = argv[1].toSint16();
+	int16 skipColor = argv[2].toSint16();
+	int16 backColor = argv[3].toSint16();
+	int16 scaledWidth = argc > 4 ? argv[4].toSint16() : g_sci->_gfxText32->_scaledWidth;
+	int16 scaledHeight = argc > 5 ? argv[5].toSint16() : g_sci->_gfxText32->_scaledHeight;
+	bool useRemap = argc > 6 ? argv[6].toSint16() : false;
 
-		// TODO: skip, width2, height2, transparentFlag
-		// (used for transparent bitmaps)
-		int entrySize = width * height + BITMAP_HEADER_SIZE;
-		reg_t memoryId = s->_segMan->allocateHunkEntry("Bitmap()", entrySize);
-		byte *memoryPtr = s->_segMan->getHunkPointer(memoryId);
-		memset(memoryPtr, 0, BITMAP_HEADER_SIZE);	// zero out the bitmap header
-		memset(memoryPtr + BITMAP_HEADER_SIZE, back, width * height);
-		// Save totalWidth, totalHeight
-		// TODO: Save the whole bitmap header, like SSCI does
-		WRITE_SCI11ENDIAN_UINT16(memoryPtr, width);
-		WRITE_SCI11ENDIAN_UINT16(memoryPtr + 2, height);
-		WRITE_SCI11ENDIAN_UINT16(memoryPtr + 4, 0);
-		WRITE_SCI11ENDIAN_UINT16(memoryPtr + 6, 0);
-		memoryPtr[8] = 0;
-		WRITE_SCI11ENDIAN_UINT16(memoryPtr + 10, 0);
-		WRITE_SCI11ENDIAN_UINT16(memoryPtr + 20, BITMAP_HEADER_SIZE);
-		WRITE_SCI11ENDIAN_UINT32(memoryPtr + 28, 46);
-		WRITE_SCI11ENDIAN_UINT16(memoryPtr + 36, width);
-		WRITE_SCI11ENDIAN_UINT16(memoryPtr + 38, width);
-		return memoryId;
-		}
-		break;
-	case 1:	// dispose text bitmap surface
-		return kDisposeTextBitmap(s, argc - 1, argv + 1);
-	case 2:	// dispose bitmap surface, with extra param
-		// 2 params, called e.g. from MenuItem::dispose in Torin's Passage,
-		// script 64893
-		warning("kBitmap(2), unk1 %d, bitmap ptr %04x:%04x", argv[1].toUint16(), PRINT_REG(argv[2]));
-		break;
-	case 3:	// tiled surface
-		{
-		// 6 params, called e.g. from TiledBitmap::resize() in Torin's Passage,
-		// script 64869
-		reg_t hunkId = argv[1];	// obtained from kBitmap(0)
-		// The tiled view seems to always have 2 loops.
-		// These loops need to have 1 cel in loop 0 and 8 cels in loop 1.
-		uint16 viewNum = argv[2].toUint16();	// vTiles selector
-		uint16 loop = argv[3].toUint16();
-		uint16 cel = argv[4].toUint16();
-		uint16 x = argv[5].toUint16();
-		uint16 y = argv[6].toUint16();
+	reg_t bitmapMemId = s->_segMan->allocateHunkEntry("Bitmap()", width * height + bitmapHeaderSize);
+	byte *bitmap = s->_segMan->getHunkPointer(bitmapMemId);
+	memset(bitmap + bitmapHeaderSize, backColor, width * height);
+	CelObjMem::buildBitmapHeader(bitmap, width, height, skipColor, 0, 0, scaledWidth, scaledHeight, 0, useRemap);
+	return bitmapMemId;
+}
 
-		byte *memoryPtr = s->_segMan->getHunkPointer(hunkId);
-		// Get totalWidth, totalHeight
-		uint16 totalWidth = READ_LE_UINT16(memoryPtr);
-		uint16 totalHeight = READ_LE_UINT16(memoryPtr + 2);
-		byte *bitmap = memoryPtr + BITMAP_HEADER_SIZE;
+reg_t kBitmapDestroy(EngineState *s, int argc, reg_t *argv) {
+	s->_segMan->freeHunkEntry(argv[0]);
+	return NULL_REG;
+}
 
-		GfxView *view = g_sci->_gfxCache->getView(viewNum);
-		uint16 tileWidth = view->getWidth(loop, cel);
-		uint16 tileHeight = view->getHeight(loop, cel);
-		const byte *tileBitmap = view->getBitmap(loop, cel);
-		uint16 width = MIN<uint16>(totalWidth - x, tileWidth);
-		uint16 height = MIN<uint16>(totalHeight - y, tileHeight);
+reg_t kBitmapDrawLine(EngineState *s, int argc, reg_t *argv) {
+	// bitmapMemId, (x1, y1, x2, y2) OR (x2, y2, x1, y1), line color, unknown int, unknown int
+	return kStubNull(s, argc + 1, argv - 1);
+}
 
-		for (uint16 curY = 0; curY < height; curY++) {
-			for (uint16 curX = 0; curX < width; curX++) {
-				bitmap[(curY + y) * totalWidth + (curX + x)] = tileBitmap[curY * tileWidth + curX];
-			}
-		}
+reg_t kBitmapDrawView(EngineState *s, int argc, reg_t *argv) {
+	// viewId, loopNo, celNo, displace x, displace y, unused, view x, view y
 
-		}
-		break;
-	case 4:	// add text to bitmap
-		{
-			warning("kBitmap(4)");
-			return NULL_REG;
-		}
+	// called e.g. from TiledBitmap::resize() in Torin's Passage, script 64869
+	// The tiled view seems to always have 2 loops.
+	// These loops need to have 1 cel in loop 0 and 8 cels in loop 1.
+
+	return kStubNull(s, argc + 1, argv - 1);
+
 #if 0
-		// 13 params, called e.g. from TextButton::createBitmap() in Torin's Passage,
-		// script 64894
-		reg_t hunkId = argv[1];	// obtained from kBitmap(0)
-		Common::String text = s->_segMan->getString(argv[2]);
-		uint16 textX = argv[3].toUint16();
-		uint16 textY = argv[4].toUint16();
-		//reg_t unk5 = argv[5];
-		//reg_t unk6 = argv[6];
-		//reg_t unk7 = argv[7];	// skip?
-		//reg_t unk8 = argv[8];	// back?
-		//reg_t unk9 = argv[9];
-		uint16 fontId = argv[10].toUint16();
-		//uint16 mode = argv[11].toUint16();
-		uint16 dimmed = argv[12].toUint16();
-		//warning("kBitmap(4): bitmap ptr %04x:%04x, font %d, mode %d, dimmed %d - text: \"%s\"",
-		//		PRINT_REG(bitmapPtr), font, mode, dimmed, text.c_str());
-		uint16 foreColor = 255;	// TODO
+	// tiled surface
+	// 6 params, called e.g. from TiledBitmap::resize() in Torin's Passage,
+	// script 64869
+	reg_t hunkId = argv[1];	// obtained from kBitmap(0)
+	// The tiled view seems to always have 2 loops.
+	// These loops need to have 1 cel in loop 0 and 8 cels in loop 1.
+	uint16 viewNum = argv[2].toUint16();	// vTiles selector
+	uint16 loop = argv[3].toUint16();
+	uint16 cel = argv[4].toUint16();
+	uint16 x = argv[5].toUint16();
+	uint16 y = argv[6].toUint16();
 
-		byte *memoryPtr = s->_segMan->getHunkPointer(hunkId);
-		// Get totalWidth, totalHeight
-		uint16 totalWidth = READ_LE_UINT16(memoryPtr);
-		uint16 totalHeight = READ_LE_UINT16(memoryPtr + 2);
-		byte *bitmap = memoryPtr + BITMAP_HEADER_SIZE;
+	byte *memoryPtr = s->_segMan->getHunkPointer(hunkId);
+	// Get totalWidth, totalHeight
+	uint16 totalWidth = READ_LE_UINT16(memoryPtr);
+	uint16 totalHeight = READ_LE_UINT16(memoryPtr + 2);
+	byte *bitmap = memoryPtr + BITMAP_HEADER_SIZE;
 
-		GfxFont *font = g_sci->_gfxCache->getFont(fontId);
+	GfxView *view = g_sci->_gfxCache->getView(viewNum);
+	uint16 tileWidth = view->getWidth(loop, cel);
+	uint16 tileHeight = view->getHeight(loop, cel);
+	const byte *tileBitmap = view->getBitmap(loop, cel);
+	uint16 width = MIN<uint16>(totalWidth - x, tileWidth);
+	uint16 height = MIN<uint16>(totalHeight - y, tileHeight);
 
-		int16 charCount = 0;
-		uint16 curX = textX, curY = textY;
-		const char *txt = text.c_str();
-
-		while (*txt) {
-			charCount = g_sci->_gfxText32->GetLongest(txt, totalWidth, font);
-			if (charCount == 0)
-				break;
-
-			for (int i = 0; i < charCount; i++) {
-				unsigned char curChar = txt[i];
-				font->drawToBuffer(curChar, curY, curX, foreColor, dimmed, bitmap, totalWidth, totalHeight);
-				curX += font->getCharWidth(curChar);
-			}
-
-			curX = textX;
-			curY += font->getHeight();
-			txt += charCount;
-			while (*txt == ' ')
-				txt++; // skip over breaking spaces
+	for (uint16 curY = 0; curY < height; curY++) {
+		for (uint16 curX = 0; curX < width; curX++) {
+			bitmap[(curY + y) * totalWidth + (curX + x)] = tileBitmap[curY * tileWidth + curX];
 		}
-
-		}
-		break;
-#endif
-	case 5:	// fill with color
-		{
-		// 6 params, called e.g. from TextView::init() and TextView::draw()
-		// in Torin's Passage, script 64890
-		reg_t hunkId = argv[1];	// obtained from kBitmap(0)
-		uint16 x = argv[2].toUint16();
-		uint16 y = argv[3].toUint16();
-		uint16 fillWidth = argv[4].toUint16();	// width - 1
-		uint16 fillHeight = argv[5].toUint16();	// height - 1
-		uint16 back = argv[6].toUint16();
-
-		byte *memoryPtr = s->_segMan->getHunkPointer(hunkId);
-		// Get totalWidth, totalHeight
-		uint16 totalWidth = READ_LE_UINT16(memoryPtr);
-		uint16 totalHeight = READ_LE_UINT16(memoryPtr + 2);
-		uint16 width = MIN<uint16>(totalWidth - x, fillWidth);
-		uint16 height = MIN<uint16>(totalHeight - y, fillHeight);
-		byte *bitmap = memoryPtr + BITMAP_HEADER_SIZE;
-
-		for (uint16 curY = 0; curY < height; curY++) {
-			for (uint16 curX = 0; curX < width; curX++) {
-				bitmap[(curY + y) * totalWidth + (curX + x)] = back;
-			}
-		}
-
-		}
-		break;
-	default:
-		kStub(s, argc, argv);
-		break;
 	}
+#endif
+}
 
-	return s->r_acc;
+reg_t kBitmapDrawText(EngineState *s, int argc, reg_t *argv) {
+	// called e.g. from TextButton::createBitmap() in Torin's Passage, script 64894
+
+	// bitmap, text, textLeft, textTop, textRight, textBottom, foreColor, backColor, skipColor, fontNo, alignment, borderColor, dimmed
+	return kStubNull(s, argc + 1, argv - 1);
+}
+
+reg_t kBitmapDrawColor(EngineState *s, int argc, reg_t *argv) {
+	// bitmap, left, top, right, bottom, color
+
+	// called e.g. from TextView::init() and TextView::draw() in Torin's Passage, script 64890
+	return kStubNull(s, argc + 1, argv - 1);
+#if 0
+	reg_t hunkId = argv[1];	// obtained from kBitmap(0)
+	uint16 x = argv[2].toUint16();
+	uint16 y = argv[3].toUint16();
+	uint16 fillWidth = argv[4].toUint16();	// width - 1
+	uint16 fillHeight = argv[5].toUint16();	// height - 1
+	uint16 back = argv[6].toUint16();
+
+	byte *memoryPtr = s->_segMan->getHunkPointer(hunkId);
+	// Get totalWidth, totalHeight
+	uint16 totalWidth = READ_LE_UINT16(memoryPtr);
+	uint16 totalHeight = READ_LE_UINT16(memoryPtr + 2);
+	uint16 width = MIN<uint16>(totalWidth - x, fillWidth);
+	uint16 height = MIN<uint16>(totalHeight - y, fillHeight);
+	byte *bitmap = memoryPtr + BITMAP_HEADER_SIZE;
+
+	for (uint16 curY = 0; curY < height; curY++) {
+		for (uint16 curX = 0; curX < width; curX++) {
+			bitmap[(curY + y) * totalWidth + (curX + x)] = back;
+		}
+	}
+#endif
+}
+
+reg_t kBitmapDrawBitmap(EngineState *s, int argc, reg_t *argv) {
+	// target bitmap, source bitmap, x, y, unknown boolean
+
+	return kStubNull(s, argc + 1, argv - 1);
+}
+
+reg_t kBitmapInvert(EngineState *s, int argc, reg_t *argv) {
+	// bitmap, left, top, right, bottom, foreColor, backColor
+
+	return kStubNull(s, argc + 1, argv - 1);
+}
+
+reg_t kBitmapSetDisplace(EngineState *s, int argc, reg_t *argv) {
+	// bitmap, x, y
+
+	return kStubNull(s, argc + 1, argv - 1);
+}
+
+reg_t kBitmapCreateFromView(EngineState *s, int argc, reg_t *argv) {
+	// viewId, loopNo, celNo, skipColor, backColor, useRemap, source overlay bitmap
+
+	return kStub(s, argc + 1, argv - 1);
+}
+
+reg_t kBitmapCopyPixels(EngineState *s, int argc, reg_t *argv) {
+	// target bitmap, source bitmap
+
+	return kStubNull(s, argc + 1, argv - 1);
+}
+
+reg_t kBitmapClone(EngineState *s, int argc, reg_t *argv) {
+	// bitmap
+
+	return kStub(s, argc + 1, argv - 1);
+}
+
+reg_t kBitmapGetInfo(EngineState *s, int argc, reg_t *argv) {
+	// bitmap
+
+	// argc 1 = get width
+	// argc 2 = pixel at row 0 col n
+	// argc 3 = pixel at row n col n
+	return kStub(s, argc + 1, argv - 1);
+}
+
+reg_t kBitmapScale(EngineState *s, int argc, reg_t *argv) {
+	// TODO: SCI3
+	return kStubNull(s, argc + 1, argv - 1);
+}
+
+reg_t kBitmapCreateFromUnknown(EngineState *s, int argc, reg_t *argv) {
+	// TODO: SCI3
+	return kStub(s, argc + 1, argv - 1);
 }
 
 // Used for edit boxes in save/load dialogs. It's a rewritten version of kEditControl,

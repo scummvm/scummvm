@@ -547,6 +547,34 @@ public:
  */
 class CelObjMem : public CelObj {
 public:
+	/**
+	 * Writes a bitmap header to the given data buffer.
+	 */
+	static void buildBitmapHeader(byte *bitmap, const int16 width, const int16 height, const uint8 skipColor, const int16 displaceX, const int16 displaceY, const int16 scaledWidth, const int16 scaledHeight, const uint32 hunkPaletteOffset, const bool useRemap);
+
+	/**
+	 * Gets the size of the bitmap header for the current
+	 * engine version.
+	 */
+	inline static uint32 getBitmapHeaderSize() {
+		// TODO: These values are accurate for each engine, but there may be no reason
+		// to not simply just always use size 40, since SCI2.1mid does not seem to
+		// actually store any data above byte 40, and SCI2 did not allow bitmaps with
+		// scaling resolutions other than the default (320x200). Perhaps SCI3 used
+		// the extra bytes, or there is some reason why they tried to align the header
+		// size with other headers like pic headers?
+//		uint32 bitmapHeaderSize;
+//		if (getSciVersion() >= SCI_VERSION_2_1_MIDDLE) {
+//			bitmapHeaderSize = 46;
+//		} else if (getSciVersion() == SCI_VERSION_2_1_EARLY) {
+//			bitmapHeaderSize = 40;
+//		} else {
+//			bitmapHeaderSize = 36;
+//		}
+//		return bitmapHeaderSize;
+		return 46;
+	}
+
 	CelObjMem(reg_t bitmap);
 	virtual ~CelObjMem() override {};
 

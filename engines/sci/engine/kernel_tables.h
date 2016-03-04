@@ -65,12 +65,14 @@ struct SciKernelMapSubEntry {
 #define SIG_SCI1             SCI_VERSION_1_EGA_ONLY, SCI_VERSION_1_LATE
 #define SIG_SCI11            SCI_VERSION_1_1, SCI_VERSION_1_1
 #define SIG_SINCE_SCI11      SCI_VERSION_1_1, SCI_VERSION_NONE
+#define SIG_SCI2             SCI_VERSION_2, SCI_VERSION_2
 #define SIG_SCI21EARLY       SCI_VERSION_2_1_EARLY, SCI_VERSION_2_1_EARLY
 #define SIG_UNTIL_SCI21EARLY SCI_VERSION_2, SCI_VERSION_2_1_EARLY
 #define SIG_UNTIL_SCI21MID   SCI_VERSION_2, SCI_VERSION_2_1_MIDDLE
 #define SIG_SINCE_SCI21      SCI_VERSION_2_1_EARLY, SCI_VERSION_3
 #define SIG_SINCE_SCI21MID   SCI_VERSION_2_1_MIDDLE, SCI_VERSION_3
 #define SIG_SINCE_SCI21LATE  SCI_VERSION_2_1_LATE, SCI_VERSION_3
+#define SIG_SCI3             SCI_VERSION_3, SCI_VERSION_3
 
 #define SIG_SCI16          SCI_VERSION_NONE, SCI_VERSION_1_1
 #define SIG_SCI32          SCI_VERSION_2, SCI_VERSION_NONE
@@ -296,6 +298,28 @@ static const SciKernelMapSubEntry kFont_subops[] = {
 static const SciKernelMapSubEntry kText_subops[] = {
 	{ SIG_SINCE_SCI21MID,  0, MAP_CALL(TextSize32),                "r[r0]i(i)(i)",         NULL },
 	{ SIG_SINCE_SCI21MID,  1, MAP_CALL(TextWidth),                 "ri",                   NULL },
+	SCI_SUBOPENTRY_TERMINATOR
+};
+
+//    version,         subId, function-mapping,                    signature,              workarounds
+static const SciKernelMapSubEntry kBitmap_subops[] = {
+	{ SIG_SINCE_SCI21,     0, MAP_CALL(BitmapCreate),              "iiii(i)(i)(i)",        NULL },
+	{ SIG_SINCE_SCI21,     1, MAP_CALL(BitmapDestroy),             "r",                    NULL },
+	{ SIG_SINCE_SCI21,     2, MAP_CALL(BitmapDrawLine),            "riiiii(i)(i)",         NULL },
+	{ SIG_SINCE_SCI21,     3, MAP_CALL(BitmapDrawView),            "riii(i)(i)(0)(i)(i)",  NULL },
+	{ SIG_SINCE_SCI21,     4, MAP_CALL(BitmapDrawText),            "rriiiiiiiiiii",        NULL },
+	{ SIG_SINCE_SCI21,     5, MAP_CALL(BitmapDrawColor),           "riiiii",               NULL },
+	{ SIG_SINCE_SCI21,     6, MAP_CALL(BitmapDrawBitmap),          "rr(i)(i)(i)",          NULL },
+	{ SIG_SINCE_SCI21,     7, MAP_CALL(BitmapInvert),              "riiiiii",              NULL },
+	{ SIG_SINCE_SCI21MID,  8, MAP_CALL(BitmapSetDisplace),         "rii",                  NULL },
+	{ SIG_SINCE_SCI21MID,  9, MAP_CALL(BitmapCreateFromView),      "iii(i)(i)(i)([r0])",   NULL },
+	{ SIG_SINCE_SCI21MID, 10, MAP_CALL(BitmapCopyPixels),          "rr",                   NULL },
+	{ SIG_SINCE_SCI21MID, 11, MAP_CALL(BitmapClone),               "r",                    NULL },
+	{ SIG_SINCE_SCI21LATE, 12, MAP_CALL(BitmapGetInfo),            "r(i)(i)",              NULL },
+	{ SIG_SINCE_SCI21LATE, 13, MAP_CALL(BitmapScale),              "r...ii",               NULL },
+	{ SIG_SCI3,           14, MAP_CALL(BitmapCreateFromUnknown),   "......",               NULL },
+	{ SIG_SCI3,           15, MAP_EMPTY(Bitmap),                   "(.*)",                 NULL },
+	{ SIG_SCI3,           16, MAP_EMPTY(Bitmap),                   "(.*)",                 NULL },
 	SCI_SUBOPENTRY_TERMINATOR
 };
 
@@ -607,7 +631,7 @@ static SciKernelMapEntry s_kernelMap[] = {
 	{ MAP_CALL(CreateTextBitmap),  SIG_EVERYWHERE,           "i(.*)",                 NULL,            NULL },
 	{ MAP_CALL(DeletePlane),       SIG_EVERYWHERE,           "o",                     NULL,            NULL },
 	{ MAP_CALL(DeleteScreenItem),  SIG_EVERYWHERE,           "o",                     NULL,            NULL },
-	{ MAP_CALL(DisposeTextBitmap), SIG_EVERYWHERE,           "r",                     NULL,            NULL },
+	{ "DisposeTextBitmap", kBitmapDestroy, SIG_SCI2, SIGFOR_ALL, "r",                 NULL,            NULL },
 	{ MAP_CALL(FrameOut),          SIG_EVERYWHERE,           "(i)",                   NULL,            NULL },
 	{ MAP_CALL(GetHighPlanePri),   SIG_EVERYWHERE,           "",                      NULL,            NULL },
 	{ MAP_CALL(InPolygon),         SIG_EVERYWHERE,           "iio",                   NULL,            NULL },
@@ -693,7 +717,7 @@ static SciKernelMapEntry s_kernelMap[] = {
 	{ MAP_CALL(ScrollWindow),      SIG_EVERYWHERE,           "i(.*)",                 kScrollWindow_subops, NULL },
 	{ MAP_CALL(SetFontRes),        SIG_SCI21EARLY, SIGFOR_ALL, "ii",                  NULL,            NULL },
 	{ MAP_CALL(Font),              SIG_SINCE_SCI21MID, SIGFOR_ALL, "i(.*)",           kFont_subops,    NULL },
-	{ MAP_CALL(Bitmap),            SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
+	{ MAP_CALL(Bitmap),            SIG_EVERYWHERE,           "(.*)",                  kBitmap_subops,  NULL },
 	{ MAP_CALL(AddLine),           SIG_EVERYWHERE,           "oiiiiiiiii",            NULL,            NULL },
 	{ MAP_CALL(UpdateLine),        SIG_EVERYWHERE,           "[r0]oiiiiiiiii",        NULL,            NULL },
 	{ MAP_CALL(DeleteLine),        SIG_EVERYWHERE,           "[r0]o",                 NULL,            NULL },
