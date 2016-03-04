@@ -76,7 +76,7 @@ Common::Error AdlEngine::run() {
 	if (saveSlot >= 0) {
 		if (loadGameState(saveSlot).getCode() != Common::kNoError)
 			error("Failed to load save game from slot %i", saveSlot);
-		_display->setCursorPos(Common::Point(0, 23));
+		_display->moveCursorTo(Common::Point(0, 23));
 		_isRestoring = true;
 	} else {
 		runIntro();
@@ -472,7 +472,7 @@ bool AdlEngine::canLoadGameStateCurrently() {
 }
 
 void AdlEngine::clearScreen() {
-	_display->setMode(Display::kModeMixed);
+	_display->setMode(DISPLAY_MODE_MIXED);
 	_display->clear(0x00);
 }
 
@@ -744,7 +744,7 @@ Common::String AdlEngine::getLine() {
 
 		if ((byte)line[0] == ('\r' | 0x80)) {
 			textMode = !textMode;
-			_display->setMode(textMode ? Display::kModeText : Display::kModeMixed);
+			_display->setMode(textMode ? DISPLAY_MODE_TEXT : DISPLAY_MODE_MIXED);
 			continue;
 		}
 

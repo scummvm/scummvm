@@ -90,7 +90,7 @@ static const byte font[64][5] = {
 };
 
 Display::Display() :
-		_mode(kModeText),
+		_mode(DISPLAY_MODE_TEXT),
 		_cursorPos(0),
 		_showCursor(false) {
 
@@ -135,9 +135,9 @@ Display::~Display() {
 }
 
 void Display::updateScreen() {
-	if (_mode == kModeText) {
+	if (_mode == DISPLAY_MODE_TEXT) {
 		g_system->copyRectToScreen(_textBufSurface->getPixels(), _textBufSurface->pitch, 0, 0, _textBufSurface->w, _textBufSurface->h);
-	} else if (_mode == kModeHires) {
+	} else if (_mode == DISPLAY_MODE_HIRES) {
 		g_system->copyRectToScreen(_frameBufSurface->getPixels(), _frameBufSurface->pitch, 0, 0, _frameBufSurface->w, _frameBufSurface->h);
 	} else {
 		g_system->copyRectToScreen(_frameBufSurface->getPixels(), _frameBufSurface->pitch, 0, 0, _frameBufSurface->w, _frameBufSurface->h - 4 * 8 * 2);
@@ -236,12 +236,6 @@ void Display::updateTextSurface() {
 			_textBufSurface->copyRectToSurface(*_font, col * 7 * 2, row * 8 * 2, r);
 		}
 }
-
-
-void Display::setCursorPos(Common::Point pos) {
-	_cursorPos = pos.y * 40 + pos.x;
-}
-
 
 void Display::home() {
 	memset(_textBuf, APPLECHAR(' '), kTextBufSize);

@@ -94,7 +94,7 @@ void HiRes1Engine::runIntro() {
 		error("Failed to open file");
 
 	file.seek(IDI_HR1_OFS_LOGO_0);
-	_display->setMode(Display::kModeHires);
+	_display->setMode(DISPLAY_MODE_HIRES);
 	_display->loadFrameBuffer(file);
 	_display->decodeFrameBuffer();
 	delay(4000);
@@ -102,7 +102,7 @@ void HiRes1Engine::runIntro() {
 	if (shouldQuit())
 		return;
 
-	_display->setMode(Display::kModeText);
+	_display->setMode(DISPLAY_MODE_TEXT);
 
 	Common::File basic;
 	if (!basic.open("MYSTERY.HELLO"))
@@ -130,7 +130,7 @@ void HiRes1Engine::runIntro() {
 	if (g_engine->shouldQuit())
 		return;
 
-	_display->setMode(Display::kModeMixed);
+	_display->setMode(DISPLAY_MODE_MIXED);
 
 	file.seek(IDI_HR1_OFS_GAME_OR_HELP);
 	str = readString(file);
@@ -156,7 +156,7 @@ void HiRes1Engine::runIntro() {
 	};
 
 	if (instructions) {
-		_display->setMode(Display::kModeText);
+		_display->setMode(DISPLAY_MODE_TEXT);
 		file.seek(IDI_HR1_OFS_INTRO_TEXT);
 
 		const uint pages[] = { 6, 6, 4, 5, 8, 7, 0 };
@@ -178,7 +178,7 @@ void HiRes1Engine::runIntro() {
 
 	file.close();
 
-	_display->setMode(Display::kModeMixed);
+	_display->setMode(DISPLAY_MODE_MIXED);
 
 	if (!file.open("ADVENTURE"))
 		error("Failed to open file");
@@ -298,7 +298,7 @@ void HiRes1Engine::restartGame() {
 }
 
 void HiRes1Engine::runGame() {
-	_display->setMode(Display::kModeMixed);
+	_display->setMode(DISPLAY_MODE_MIXED);
 
 	Common::File f;
 

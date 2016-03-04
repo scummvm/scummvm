@@ -41,20 +41,20 @@ namespace Adl {
 #define DISPLAY_WIDTH 280
 #define DISPLAY_HEIGHT 192
 
+enum DisplayMode {
+	DISPLAY_MODE_HIRES,
+	DISPLAY_MODE_TEXT,
+	DISPLAY_MODE_MIXED
+};
+
 #define APPLECHAR(C) ((char)((C) | 0x80))
 
 class Display {
 public:
-	enum Mode {
-		kModeHires,
-		kModeText,
-		kModeMixed
-	};
-
 	Display();
 	~Display();
 
-	void setMode(Mode mode) { _mode = mode; }
+	void setMode(DisplayMode mode) { _mode = mode; }
 	void updateScreen();
 	bool saveThumbnail(Common::WriteStream &out);
 
@@ -66,7 +66,6 @@ public:
 
 	// Text
 	void updateTextSurface();
-	void setCursorPos(Common::Point pos);
 	void home();
 	void moveCursorTo(const Common::Point &pos);
 	void moveCursorForward();
@@ -89,7 +88,7 @@ private:
 	void createFont();
 	void scrollUp();
 
-	Mode _mode;
+	DisplayMode _mode;
 
 	byte *_frameBuf;
 	Graphics::Surface *_frameBufSurface;
