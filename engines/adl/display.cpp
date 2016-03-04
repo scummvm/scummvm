@@ -106,7 +106,7 @@ Display::Display() :
 	else
 		g_system->getPaletteManager()->setPalette(colorPalette, 0, COLOR_PALETTE_ENTRIES);
 
-	enableScanlines(_scanlines);
+	showScanlines(_scanlines);
 
 	_frameBuf = new byte[DISPLAY_PITCH * DISPLAY_HEIGHT];
 	_frameBufSurface = new Graphics::Surface;
@@ -169,14 +169,14 @@ void Display::updateHiResScreen() {
 
 bool Display::saveThumbnail(Common::WriteStream &out) {
 	if (_scanlines) {
-		enableScanlines(false);
+		showScanlines(false);
 		g_system->updateScreen();
 	}
 
 	bool retval = Graphics::saveThumbnail(out);
 
 	if (_scanlines) {
-		enableScanlines(true);
+		showScanlines(true);
 		g_system->updateScreen();
 	}
 
@@ -280,14 +280,14 @@ void Display::showCursor(bool enable) {
 	_showCursor = enable;
 }
 
-void Display::enableScanlines(bool enable) {
+void Display::showScanlines(bool enable) {
 	byte pal[COLOR_PALETTE_ENTRIES * 3] = { };
 
 	if (enable)
-		g_system->getPaletteManager()->setPalette(pal, 6, 6);
+		g_system->getPaletteManager()->setPalette(pal, COLOR_PALETTE_ENTRIES, COLOR_PALETTE_ENTRIES);
 	else {
-		g_system->getPaletteManager()->grabPalette(pal, 0, 6);
-		g_system->getPaletteManager()->setPalette(pal, 6, 6);
+		g_system->getPaletteManager()->grabPalette(pal, 0, COLOR_PALETTE_ENTRIES);
+		g_system->getPaletteManager()->setPalette(pal, COLOR_PALETTE_ENTRIES, COLOR_PALETTE_ENTRIES);
 	}
 }
 
