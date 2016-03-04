@@ -77,7 +77,8 @@ bool Text::setFont(const Common::String &font) {
 		return false;
 	}
 #else
-	getResourceManager()->requestResource(font);
+	Resource *pResource = getResourceManager()->requestResource(font);
+	pResource->release(); //unlock precached resource
 	_font = font;
 	updateFormat();
 	forceRefresh();
