@@ -2314,7 +2314,7 @@ void Myst::o_rocketPianoStart(uint16 op, uint16 var, uint16 argc, uint16 *argv) 
 	dest.bottom = 332 - rect.top;
 
 	// Draw pressed piano key
-	_vm->_gfx->copyImageSectionToScreen(key->getSubImage(0).wdib, src, dest);
+	_vm->_gfx->copyImageSectionToScreen(key->getSubImage(1).wdib, src, dest);
 	_vm->_system->updateScreen();
 
 	// Play note
