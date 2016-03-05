@@ -20,20 +20,11 @@
  *
  */
 
-#include "common/scummsys.h"
-
-#include "common/config-manager.h"
+#include "common/system.h"
 #include "common/debug.h"
-#include "common/debug-channels.h"
 #include "common/error.h"
 #include "common/file.h"
-#include "common/fs.h"
-#include "common/system.h"
-#include "common/events.h"
 #include "common/stream.h"
-#include "graphics/palette.h"
-
-#include "engines/util.h"
 
 #include "adl/hires1.h"
 #include "adl/display.h"
@@ -208,7 +199,7 @@ void HiRes1Engine::runIntro() {
 	delay(2000);
 }
 
-void HiRes1Engine::drawPic(Common::ReadStream &stream, Common::Point pos) {
+void HiRes1Engine::drawPic(Common::ReadStream &stream, const Common::Point &pos) {
 	byte x, y;
 	bool bNewLine = false;
 	byte oldX = 0, oldY = 0;
@@ -473,38 +464,39 @@ uint HiRes1Engine::getEngineMessage(EngineMessage msg) {
 	}
 }
 
-void HiRes1Engine::drawLine(Common::Point p1, Common::Point p2, byte color) {
+void HiRes1Engine::drawLine(const Common::Point &p1, const Common::Point &p2, byte color) {
 	int16 deltaX = p2.x - p1.x;
-	byte dir = deltaX >> 8;
+	int8 xStep = 1;
 
-	if (deltaX < 0)
+	if (deltaX < 0) {
 		deltaX = -deltaX;
-
-	int16 err = deltaX;
-
-	int16 deltaY = p2.y - p1.y - 1;
-	dir >>= 1;
-	if (deltaY >= 0) {
-		deltaY = -deltaY - 2;
-		dir |= 0x80;
+		xStep = -1;
 	}
 
-	int16 steps = deltaY - deltaX;
+	int16 deltaY = p2.y - p1.y;
+	int8 yStep = -1;
 
-	err += deltaY + 1;
+	if (deltaY > 0) {
+		deltaY = -deltaY;
+		yStep = 1;
+	}
+
+	Common::Point p(p1);
+	int16 steps = deltaX - deltaY + 1;
+	int16 err = deltaX + deltaY;
 
 	while (1) {
-		_display->putPixel(p1, color);
+		_display->putPixel(p, color);
 
-		if (++steps == 0)
+		if (--steps == 0)
 			return;
 
 		if (err < 0) {
-			p1.y += (dir & 0x80 ? 1 : -1);
+			p.y += yStep;
 			err += deltaX;
 		} else {
-			p1.x += (dir & 0x40 ? -1 : 1);
-			err += deltaY + 1;
+			p.x += xStep;
+			err += deltaY;
 		}
 	}
 }

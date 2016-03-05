@@ -45,9 +45,9 @@ private:
 
 	void initState();
 	void runIntro();
-	void drawPic(Common::ReadStream &stream, Common::Point pos);
+	void drawPic(Common::ReadStream &stream, const Common::Point &pos);
 	void drawItems();
-	void drawLine(Common::Point p1, Common::Point p2, byte color);
+	void drawLine(const Common::Point &p1, const Common::Point &p2, byte color);
 	void drawPic(byte pic, Common::Point pos);
 };
 
