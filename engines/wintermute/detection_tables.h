@@ -185,6 +185,9 @@ static const WMEGameDescription gameDescriptions[] = {
 	// Carol Reed 5 - The Colour of Murder
 	WME_WINENTRY("carolreed5", "", 
 		WME_ENTRY1s("data.dcp", "3fcfca44209545d0e26774156427b494", 603660415), Common::EN_ANY, ADGF_UNSTABLE, LATEST_VERSION),
+	// Carol Reed 5 - The Colour of Murder (1.0 Demo)
+	WME_WINENTRY("carolreed5", "Demo",
+		WME_ENTRY1s("data.dcp", "27b3efc018ade5ee8f4adf08b4e3c0dd", 92019500), Common::EN_ANY, ADGF_UNSTABLE | ADGF_DEMO, LATEST_VERSION),
 	// Carol Reed 6 - Black Circle
 	WME_WINENTRY("carolreed6", "", 
 		WME_ENTRY1s("data.dcp", "0e4c532beecf23d85012168753f41189", 456258147), Common::EN_ANY, ADGF_UNSTABLE, LATEST_VERSION),
