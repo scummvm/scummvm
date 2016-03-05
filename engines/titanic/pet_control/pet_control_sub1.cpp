@@ -20,15 +20,15 @@
  *
  */
 
-#include "titanic/game/pet/pet_control_sub7.h"
+#include "titanic/pet_control/pet_control_sub1.h"
 
 namespace Titanic {
 
-void CPetControlSub7::save(SimpleFile *file, int indent) const {
+void CPetControlSub1::save(SimpleFile *file, int indent) const {
 
 }
 
-void CPetControlSub7::load(SimpleFile *file) {
+void CPetControlSub1::load(SimpleFile *file) {
 
 }
 

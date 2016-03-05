@@ -20,14 +20,14 @@
  *
  */
 
-#ifndef TITANIC_PET_CONTROL_SUB8_H
-#define TITANIC_PET_CONTROL_SUB8_H
+#ifndef TITANIC_PET_CONTROL_SUB7_H
+#define TITANIC_PET_CONTROL_SUB7_H
 
-#include "titanic/game/pet/pet_control_sub_base.h"
+#include "titanic/pet_control/pet_control_sub_base.h"
 
 namespace Titanic {
 
-class CPetControlSub8 : public CPetControlSubBase {
+class CPetControlSub7 : public CPetControlSubBase {
 public:
 	/**
 	 * Save the data for the class to file
@@ -42,4 +42,4 @@ public:
 
 } // End of namespace Titanic
 
-#endif /* TITANIC_PET_CONTROL_SUB8_H */
+#endif /* TITANIC_PET_CONTROL_SUB7_H */

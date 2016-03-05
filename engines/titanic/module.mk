@@ -235,16 +235,6 @@ MODULE_OBJS := \
 	game/pet/pet_class3.o \
 	game/pet/pet_lift.o \
 	game/pet/pet_monitor.o \
-	game/pet/pet_control.o \
-	game/pet/pet_control_sub_base.o \
-	game/pet/pet_control_sub1.o \
-	game/pet/pet_control_sub2.o \
-	game/pet/pet_control_sub3.o \
-	game/pet/pet_control_sub4.o \
-	game/pet/pet_control_sub5.o \
-	game/pet/pet_control_sub6.o \
-	game/pet/pet_control_sub7.o \
-	game/pet/pet_control_sub8.o \
 	game/pet/pet_pellerator.o \
 	game/pet/pet_position.o \
 	game/pet/pet_sentinal.o \
@@ -382,6 +372,16 @@ MODULE_OBJS := \
 	npcs/summon_bots.o \
 	npcs/titania.o \
 	npcs/true_talk_npc.o \
+	pet_control/pet_control.o \
+	pet_control/pet_control_sub_base.o \
+	pet_control/pet_control_sub1.o \
+	pet_control/pet_control_sub2.o \
+	pet_control/pet_control_sub3.o \
+	pet_control/pet_control_sub4.o \
+	pet_control/pet_control_sub5.o \
+	pet_control/pet_control_sub6.o \
+	pet_control/pet_control_sub7.o \
+	pet_control/pet_control_sub8.o \
 	sound/auto_music_player.o \
 	sound/auto_music_player_base.o \
 	sound/auto_sound_player.o \

@@ -20,26 +20,16 @@
  *
  */
 
-#ifndef TITANIC_PET_CONTROL_SUB5_H
-#define TITANIC_PET_CONTROL_SUB5_H
-
-#include "titanic/game/pet/pet_control_sub_base.h"
+#include "titanic/pet_control/pet_control_sub6.h"
 
 namespace Titanic {
 
-class CPetControlSub5 : public CPetControlSubBase {
-public:
-	/**
-	 * Save the data for the class to file
-	 */
-	virtual void save(SimpleFile *file, int indent) const;
+void CPetControlSub6::save(SimpleFile *file, int indent) const {
 
-	/**
-	 * Load the data for the class from file
-	 */
-	virtual void load(SimpleFile *file);
-};
+}
+
+void CPetControlSub6::load(SimpleFile *file) {
+
+}
 
 } // End of namespace Titanic
-
-#endif /* TITANIC_PET_CONTROL_SUB5_H */

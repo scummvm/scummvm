@@ -161,9 +161,6 @@
 #include "titanic/game/nose_holder.h"
 #include "titanic/game/null_port_hole.h"
 #include "titanic/game/nut_replacer.h"
-#include "titanic/game/pet/pet_control.h"
-#include "titanic/game/pet/pet_control_sub_base.h"
-#include "titanic/game/pet/pet_control_sub1.h"
 #include "titanic/game/pet_disabler.h"
 #include "titanic/game/phonograph.h"
 #include "titanic/game/phonograph_lid.h"
@@ -371,6 +368,8 @@
 #include "titanic/npcs/succubus.h"
 #include "titanic/npcs/summon_bots.h"
 #include "titanic/npcs/titania.h"
+
+#include "titanic/pet_control/pet_control.h"
 
 #include "titanic/sound/auto_music_player.h"
 #include "titanic/sound/auto_music_player_base.h"

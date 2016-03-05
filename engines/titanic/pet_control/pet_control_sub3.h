@@ -23,7 +23,7 @@
 #ifndef TITANIC_PET_CONTROL_SUB3_H
 #define TITANIC_PET_CONTROL_SUB3_H
 
-#include "titanic/game/pet/pet_control_sub_base.h"
+#include "titanic/pet_control/pet_control_sub_base.h"
 
 namespace Titanic {
 
