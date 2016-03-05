@@ -70,7 +70,7 @@ public:
 		file->writeNumberLine(Common::List<T *>::size(), indent);
 
 		// Iterate through writing entries
-		typename Common::List<typename T *>::const_iterator i;
+		typename Common::List<T *>::const_iterator i;
 		for (i = Common::List<T *>::begin(); i != Common::List<T *>::end(); ++i) {
 			const ListItem *item = *i;
 			item->saveHeader(file, indent);

@@ -117,7 +117,6 @@ MODULE_OBJS := \
 	game/desk_click_responder.o \
 	game/doorbot_elevator_handler.o \
 	game/doorbot_home_handler.o \
-	game/drawer.o \
 	game/ear_sweet_bowl.o \
 	game/eject_phonograph_button.o \
 	game/elevator_action_area.o \
@@ -166,7 +165,6 @@ MODULE_OBJS := \
 	game/nose_holder.o \
 	game/null_port_hole.o \
 	game/nut_replacer.o \
-	game/pet_controler.o \
 	game/pet_disabler.o \
 	game/phonograph.o \
 	game/phonograph_lid.o \
@@ -375,8 +373,6 @@ MODULE_OBJS := \
 	pet_control/pet_control_list_item.o \
 	pet_control/pet_control_list_item2.o \
 	pet_control/pet_control_sub_base.o \
-	pet_control/pet_control_sub_list_item.o \
-	pet_control/pet_control_sub_list_item2.o \
 	pet_control/pet_control_sub1.o \
 	pet_control/pet_control_sub2.o \
 	pet_control/pet_control_sub3.o \

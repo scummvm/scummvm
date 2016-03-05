@@ -46,7 +46,7 @@ void CPetVal::proc5(CLinkItemSub *linkItem) {
 }
 
 int CPetVal::proc16() {
-	switch (!_field14) {
+	switch (_field14) {
 	case 0:
 		return _field18;
 	case 1:
