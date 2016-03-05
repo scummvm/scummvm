@@ -2355,8 +2355,7 @@ case $_host_os in
 			fi
 		fi
 		
-		# If _xcodetoolspath is not set yet try first /Developers/Tools and then
-		# /Applications/Xcode.app/Contents/Developer/Tools
+		# If _xcodetoolspath is not set yet use xcode-select to get the path
 		if test -z "$_xcodetoolspath"; then
 			_xcodetoolspath=`xcode-select -print-path`/Tools
 			if test -d "$_xcodetoolspath"; then
