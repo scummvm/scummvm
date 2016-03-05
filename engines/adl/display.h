@@ -61,7 +61,7 @@ public:
 
 	// Graphics
 	void loadFrameBuffer(Common::ReadStream &stream);
-	void putPixel(Common::Point p1, byte color);
+	void putPixel(const Common::Point &p, byte color);
 	void clear(byte color);
 
 	// Text
@@ -99,7 +99,7 @@ private:
 	byte *_textBuf;
 	Graphics::Surface *_textBufSurface;
 	Graphics::Surface *_font;
-	int _cursorPos;
+	uint _cursorPos;
 	bool _showCursor;
 };
  

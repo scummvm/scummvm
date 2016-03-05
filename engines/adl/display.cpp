@@ -39,6 +39,11 @@ namespace Adl {
 // This implements the Apple II "Hi-Res" display mode
 
 #define DISPLAY_PITCH (DISPLAY_WIDTH / 7)
+#define DISPLAY_SIZE (DISPLAY_PITCH * DISPLAY_HEIGHT)
+
+#define TEXT_WIDTH 40
+#define TEXT_HEIGHT 24
+#define TEXT_BUF_SIZE (TEXT_WIDTH * TEXT_HEIGHT)
 
 #define COLOR_PALETTE_ENTRIES 8
 const byte colorPalette[COLOR_PALETTE_ENTRIES * 3] = {
@@ -117,14 +122,15 @@ Display::Display() :
 
 	showScanlines(_scanlines);
 
-	_frameBuf = new byte[DISPLAY_PITCH * DISPLAY_HEIGHT];
+	_frameBuf = new byte[DISPLAY_SIZE];
+	memset(_frameBuf, 0, DISPLAY_SIZE);
 	_frameBufSurface = new Graphics::Surface;
 	// We need 2x scaling to properly render the half-pixel shift
 	// of the second palette
 	_frameBufSurface->create(DISPLAY_WIDTH * 2, DISPLAY_HEIGHT * 2, Graphics::PixelFormat::createFormatCLUT8());
 
-	_textBuf = new byte[kTextBufSize];
-	memset(_textBuf, APPLECHAR(' '), kTextBufSize);
+	_textBuf = new byte[TEXT_BUF_SIZE];
+	memset(_textBuf, APPLECHAR(' '), TEXT_BUF_SIZE);
 	_textBufSurface = new Graphics::Surface;
 	// For ease of copying, also use 2x scaling here
 	_textBufSurface->create(DISPLAY_WIDTH * 2, DISPLAY_HEIGHT * 2, Graphics::PixelFormat::createFormatCLUT8());
@@ -193,9 +199,9 @@ bool Display::saveThumbnail(Common::WriteStream &out) {
 }
 
 void Display::loadFrameBuffer(Common::ReadStream &stream) {
+	byte *dst = _frameBuf;
 	for (uint j = 0; j < 8; ++j) {
 		for (uint i = 0; i < 8; ++i) {
-			byte *dst = _frameBuf + DISPLAY_PITCH  * (i * 8 + j);
 			stream.read(dst, DISPLAY_PITCH);
 			dst += DISPLAY_PITCH * 64;
 			stream.read(dst, DISPLAY_PITCH);
@@ -203,12 +209,13 @@ void Display::loadFrameBuffer(Common::ReadStream &stream) {
 			stream.read(dst, DISPLAY_PITCH);
 			stream.readUint32LE();
 			stream.readUint32LE();
-			dst += DISPLAY_PITCH * 64;
+			dst -= DISPLAY_PITCH * 120;
 		}
+		dst -= DISPLAY_PITCH * 63;
 	}
 }
 
-void Display::putPixel(Common::Point p, byte color) {
+void Display::putPixel(const Common::Point &p, byte color) {
 	byte offset = p.x / 7;
 
 	if (offset & 1) {
@@ -230,35 +237,33 @@ void Display::clear(byte color) {
 	if (c >= 0x40 && c < 0xc0)
 		val = 0x7f;
 
-	for (uint i = 0; i < DISPLAY_PITCH * DISPLAY_HEIGHT; ++i) {
+	for (uint i = 0; i < DISPLAY_SIZE; ++i) {
 		_frameBuf[i] = color;
 		color ^= val;
 	}
 }
 
 void Display::home() {
-	memset(_textBuf, APPLECHAR(' '), kTextBufSize);
+	memset(_textBuf, APPLECHAR(' '), TEXT_BUF_SIZE);
 	_cursorPos = 0;
 }
 
 void Display::moveCursorForward() {
 	++_cursorPos;
 
-	if (_cursorPos >= kTextBufSize)
+	if (_cursorPos >= TEXT_BUF_SIZE)
 		scrollUp();
 }
 
 void Display::moveCursorBackward() {
-	--_cursorPos;
-
-	if (_cursorPos < 0)
-		_cursorPos = 0;
+	if (_cursorPos > 0)
+		--_cursorPos;
 }
 
 void Display::moveCursorTo(const Common::Point &pos) {
-	_cursorPos = pos.y * 40 + pos.x;
+	_cursorPos = pos.y * TEXT_WIDTH + pos.x;
 
-	if (_cursorPos >= kTextBufSize)
+	if (_cursorPos >= TEXT_BUF_SIZE)
 		error("Cursor position (%i, %i) out of bounds", pos.x, pos.y);
 }
 
@@ -268,13 +273,13 @@ void Display::printString(const Common::String &str) {
 		byte b = *c;
 
 		if (*c == APPLECHAR('\r'))
-			_cursorPos = (_cursorPos / 40 + 1) * 40;
+			_cursorPos = (_cursorPos / TEXT_WIDTH + 1) * TEXT_WIDTH;
 		else if (b < 0x80 || b >= 0xa0) {
 			setCharAtCursor(b);
 			++_cursorPos;
 		}
 
-		if (_cursorPos == kTextBufSize)
+		if (_cursorPos == TEXT_BUF_SIZE)
 			scrollUp();
 	}
 
@@ -358,8 +363,8 @@ void Display::decodeScanlineColor(byte *dst, int pitch, byte *src) const {
 
 	bool odd = false;
 
-	for (uint i = 0; i < 40; ++i) {
-		if (i != 39) {
+	for (uint i = 0; i < DISPLAY_PITCH; ++i) {
+		if (i != DISPLAY_PITCH - 1) {
 			bits |= (src[i + 1] & 0x7f) << 8;
 			pal |= (src[i + 1] >> 7) << 1;
 		}
@@ -424,9 +429,9 @@ void Display::decodeScanline(byte *dst, int pitch, byte *src) const {
 
 void Display::updateTextSurface() {
 	for (uint row = 0; row < 24; ++row)
-		for (uint col = 0; col < 40; ++col) {
-			int charPos = row * 40 + col;
-			char c = _textBuf[row * 40 + col];
+		for (uint col = 0; col < TEXT_WIDTH; ++col) {
+			uint charPos = row * TEXT_WIDTH + col;
+			char c = _textBuf[row * TEXT_WIDTH + col];
 
 			if (charPos == _cursorPos && _showCursor)
 				c = (c & 0x3f) | 0x40;
@@ -482,10 +487,10 @@ void Display::createFont() {
 }
 
 void Display::scrollUp() {
-	memmove(_textBuf, _textBuf + 40, kTextBufSize - 40);
-	memset(_textBuf + kTextBufSize - 40, APPLECHAR(' '), 40);
-	if (_cursorPos >= 40)
-		_cursorPos -= 40;
+	memmove(_textBuf, _textBuf + TEXT_WIDTH, TEXT_BUF_SIZE - TEXT_WIDTH);
+	memset(_textBuf + TEXT_BUF_SIZE - TEXT_WIDTH, APPLECHAR(' '), TEXT_WIDTH);
+	if (_cursorPos >= TEXT_WIDTH)
+		_cursorPos -= TEXT_WIDTH;
 }
 
 } // End of namespace Adl
