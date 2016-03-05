@@ -391,6 +391,8 @@
 #include "titanic/sound/view_toggles_other_music.h"
 #include "titanic/sound/water_lapping_sounds.h"
 
+#include "titanic/star_control/star_control.h"
+
 namespace Titanic {
 
 Common::HashMap<Common::String, CSaveableObject::CreateFunction> * 
@@ -939,6 +941,7 @@ DEFFN(CTriggerAutoMusicPlayer)
 DEFFN(CViewAutoSoundPlayer)
 DEFFN(CViewTogglesOtherMusic)
 DEFFN(CWaterLappingSounds)
+DEFFN(CStarControl);
 
 void CSaveableObject::initClassList() {
 	_classList = new Common::HashMap<Common::String, CreateFunction>();
@@ -1486,6 +1489,7 @@ void CSaveableObject::initClassList() {
 	ADDFN(CViewAutoSoundPlayer);
 	ADDFN(CViewTogglesOtherMusic);
 	ADDFN(CWaterLappingSounds);
+	ADDFN(CStarControl);
 }
 
 void CSaveableObject::freeClassList() {

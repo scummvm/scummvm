@@ -20,18 +20,9 @@
  *
  */
 
-#include "titanic/game/star_control.h"
+#include "titanic/star_control/star_control_sub7.h"
 
 namespace Titanic {
 
-void CStarControl::save(SimpleFile *file, int indent) const {
-	file->writeNumberLine(1, indent);
-	CGameObject::save(file, indent);
-}
-
-void CStarControl::load(SimpleFile *file) {
-	file->readNumber();
-	CGameObject::load(file);
-}
 
 } // End of namespace Titanic

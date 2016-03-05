@@ -188,7 +188,6 @@ MODULE_OBJS := \
 	game/show_cell_points.o \
 	game/speech_dispensor.o \
 	game/splash_animation.o \
-	game/star_control.o \
 	game/starling_puret.o \
 	game/start_action.o \
 	game/stop_phonograph_button.o \
@@ -403,7 +402,18 @@ MODULE_OBJS := \
 	sound/trigger_auto_music_player.o \
 	sound/view_auto_sound_player.o \
 	sound/view_toggles_other_music.o \
-	sound/water_lapping_sounds.o
+	sound/water_lapping_sounds.o \
+	star_control/star_control.o \
+	star_control/star_control_sub1.o \
+	star_control/star_control_sub2.o \
+	star_control/star_control_sub3.o \
+	star_control/star_control_sub4.o \
+	star_control/star_control_sub5.o \
+	star_control/star_control_sub6.o \
+	star_control/star_control_sub7.o \
+	star_control/star_control_sub8.o \
+	star_control/star_control_sub9.o \
+	star_control/star_control_sub10.o
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_TITANIC), DYNAMIC_PLUGIN)
