@@ -61,7 +61,7 @@ void SimpleFile::close() {
 
 void SimpleFile::safeRead(void *dst, size_t count) {
 	if (unsafeRead(dst, count) != count)
-		error("Could not read %d bytes", count);
+		error("Could not read %d bytes", (int)count);
 }
 
 size_t SimpleFile::unsafeRead(void *dst, size_t count) {
@@ -229,7 +229,7 @@ void SimpleFile::writeString(const CString &str) {
 	const char *msgP = str.c_str();
 	char c;
 	
-	while (c = *msgP++) {
+	while ((c = *msgP++) != '\0') {
 		switch (c) {
 		case '\r':
 			write("\\r", 2);
@@ -272,7 +272,7 @@ void SimpleFile::writeQuotedLine(const CString &str, int indent) {
 }
 
 void SimpleFile::writeNumber(int val) {
-	CString str = CString::format("%ld ", val);
+	CString str = CString::format("%d ", val);
 	write(str.c_str(), str.size());
 }
 

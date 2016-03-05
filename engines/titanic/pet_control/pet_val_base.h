@@ -38,6 +38,7 @@ protected:
 public:
 	CPetValBase() : _field4(0), _field8(0), _fieldC(0),
 		_field10(0), _field14(0) {}
+	virtual ~CPetValBase() {}
 
 	virtual void proc1() {}
 	virtual void proc2() {}

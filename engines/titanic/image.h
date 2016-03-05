@@ -67,6 +67,7 @@ public:
 	bool _flag;
 public:
 	Image();
+	virtual ~Image() {}
 
 	virtual void proc6();
 	virtual void set(int width, int height);

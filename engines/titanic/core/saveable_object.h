@@ -50,6 +50,8 @@ public:
 	 */
 	static CSaveableObject *createInstance(const Common::String &name);
 public:
+	virtual ~CSaveableObject() {}
+
 	/**
 	 * Return the class name
 	 */

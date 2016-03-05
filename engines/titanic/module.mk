@@ -2,7 +2,6 @@ MODULE := engines/titanic
 
 MODULE_OBJS := \
 	compressed_file.o \
-	compression.o \
 	detection.o \
 	direct_draw.o \
 	font.o \

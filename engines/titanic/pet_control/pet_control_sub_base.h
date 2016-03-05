@@ -42,6 +42,7 @@ protected:
 	int _field4;
 public:
 	CPetControlSubBase() : _field4(0) {}
+	virtual ~CPetControlSubBase() {}
 
 	virtual int proc1() { return 0; }
 	virtual int proc2() { return 0; }

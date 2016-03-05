@@ -34,7 +34,7 @@ public:
 	int _fieldDC;
 	int _fieldE0;
 public:
-	CDoorAutoSoundEvent::CDoorAutoSoundEvent() : CAutoSoundEvent(),
+	CDoorAutoSoundEvent() : CAutoSoundEvent(),
 		_string1("z#44.wav"), _string2("z#43.wav"), _fieldDC(25), _fieldE0(25) {
 	}
 

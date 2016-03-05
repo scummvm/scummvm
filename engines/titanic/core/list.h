@@ -70,7 +70,7 @@ public:
 		file->writeNumberLine(Common::List<T *>::size(), indent);
 
 		// Iterate through writing entries
-		Common::List<T *>::const_iterator i;
+		typename Common::List<typename T *>::const_iterator i;
 		for (i = Common::List<T *>::begin(); i != Common::List<T *>::end(); ++i) {
 			const ListItem *item = *i;
 			item->saveHeader(file, indent);
@@ -115,7 +115,8 @@ public:
 	 * Clear the list and destroy any items in it
 	 */
 	void destroyContents() {
-		for (Common::List<T *>::iterator i = Common::List<T *>::begin(); 
+		typename Common::List<T *>::iterator i;
+		for (i = Common::List<T *>::begin(); 
 				i != Common::List<T *>::end(); ++i) {
 			CSaveableObject *obj = *i;
 			delete obj;
@@ -127,7 +128,7 @@ public:
 	/**
 	 * Add a new item to the list of the type the list contains
 	 */
-	T *List::add() {
+	T *add() {
 		T *item = new T();
 		Common::List<T *>::push_back(item);
 		return item;
