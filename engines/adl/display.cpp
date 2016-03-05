@@ -36,20 +36,23 @@
 
 namespace Adl {
 
-// TODO: Implement partial screen updates
+// This implements the Apple II "Hi-Res" display mode
 
 #define DISPLAY_PITCH (DISPLAY_WIDTH / 7)
 
-#define COLOR_PALETTE_ENTRIES 6
+#define COLOR_PALETTE_ENTRIES 8
 const byte colorPalette[COLOR_PALETTE_ENTRIES * 3] = {
 	0x00, 0x00, 0x00,
 	0xff, 0xff, 0xff,
 	0xc7, 0x34, 0xff,
 	0x38, 0xcb, 0x00,
+	0x00, 0x00, 0x00,
+	0xff, 0xff, 0xff,
 	0x0d, 0xa1, 0xff,
 	0xf2, 0x5e, 0x00
 };
 
+// Green monochrome palette
 #define MONO_PALETTE_ENTRIES 2
 const byte monoPalette[MONO_PALETTE_ENTRIES * 3] = {
 	0x00, 0x00, 0x00,
@@ -303,11 +306,12 @@ void Display::updateHiResSurface() {
 }
 
 void Display::decodeScanlineColor(byte *dst, int pitch, byte *src) const {
-	// TODO: shift secondPal by half a pixel
-
 	bool prevOn = false;
 
-	for (uint j = 0; j < 39; ++j) {
+	if (src[0] & 0x80)
+		dst++;
+
+	for (uint j = 0; j < 40; ++j) {
 		bool secondPal = src[j] & 0x80;
 		byte cur = src[j];
 		byte next = 0;
@@ -326,19 +330,39 @@ void Display::decodeScanlineColor(byte *dst, int pitch, byte *src) const {
 			byte color;
 			if (curOn == prevOn || curOn == nextOn)
 				color = curOn ? 1 : 0;
-			else {
-				if (secondPal)
-					color = (curOn == ((j + k) % 2) ? 5 : 4);
-				else
-					color = (curOn == ((j + k) % 2) ? 3 : 2);
-			}
+			else
+				color = (curOn == ((j + k) % 2) ? 3 : 2);
+
+			if (secondPal)
+				color |= 4;
 
 			dst[0] = color;
-			dst[1] = color;
-			dst[pitch] = color + 6;
-			dst[pitch + 1] = color + 6;
+			dst[pitch] = color + COLOR_PALETTE_ENTRIES;
+			++dst;
 
-			dst += 2;
+			if (k == 6) {
+				if (secondPal) {
+					if (next & 0x80) {
+						dst[0] = color;
+						dst[pitch] = color + COLOR_PALETTE_ENTRIES;
+						++dst;
+					}
+				} else {
+					dst[0] = color;
+					dst[pitch] = color + COLOR_PALETTE_ENTRIES;
+					++dst;
+					if (next & 0x80) {
+						dst[0] = color | 4;
+						dst[pitch] = (color | 4) + COLOR_PALETTE_ENTRIES;
+						++dst;
+					}
+				}
+			} else {
+				dst[0] = color;
+				dst[pitch] = color + COLOR_PALETTE_ENTRIES;
+				++dst;
+			}
+
 			prevOn = curOn;
 		}
 	}
@@ -397,20 +421,20 @@ void Display::drawChar(byte c, int x, int y) {
 
 	for (uint row = 0; row < 8; ++row) {
 		if (row & 1) {
-			buf[_font->pitch] = 6;
-			buf[_font->pitch + 1] = 6;
-			buf[_font->pitch + 6 * 2] = 6;
-			buf[_font->pitch + 6 * 2 + 1] = 6;
+			buf[_font->pitch] = COLOR_PALETTE_ENTRIES;
+			buf[_font->pitch + 1] = COLOR_PALETTE_ENTRIES;
+			buf[_font->pitch + 6 * 2] = COLOR_PALETTE_ENTRIES;
+			buf[_font->pitch + 6 * 2 + 1] = COLOR_PALETTE_ENTRIES;
 		}
 		for (uint col = 1; col < 6; ++col) {
 			if (font[c][col - 1] & (1 << row)) {
 				buf[col * 2] = 1;
 				buf[col * 2 + 1] = 1;
-				buf[_font->pitch + col * 2] = 1 + 6;
-				buf[_font->pitch + col * 2 + 1] = 1 + 6;
+				buf[_font->pitch + col * 2] = 1 + COLOR_PALETTE_ENTRIES;
+				buf[_font->pitch + col * 2 + 1] = 1 + COLOR_PALETTE_ENTRIES;
 			} else {
-				buf[_font->pitch + col * 2] = 6;
-				buf[_font->pitch + col * 2 + 1] = 6;
+				buf[_font->pitch + col * 2] = COLOR_PALETTE_ENTRIES;
+				buf[_font->pitch + col * 2 + 1] = COLOR_PALETTE_ENTRIES;
 			}
 		}
 
@@ -438,7 +462,7 @@ void Display::createFont() {
 		bufInv += _font->pitch;
 
 		for (uint col = 0; col < _font->w; ++col)
-			bufInv[col] = (buf[col] == 7 ? 6 : 7);
+			bufInv[col] = (buf[col] == COLOR_PALETTE_ENTRIES + 1 ? COLOR_PALETTE_ENTRIES : COLOR_PALETTE_ENTRIES + 1);
 
 		buf += _font->pitch;
 		bufInv += _font->pitch;
