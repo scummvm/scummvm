@@ -266,6 +266,12 @@ void Texture::allocate(uint width, uint height) {
 
 	// Create a sub-buffer for raw access.
 	_userPixelData = _textureData.getSubArea(Common::Rect(width, height));
+
+	// The whole texture is dirty after we changed the size. This fixes
+	// multiple texture size changes without any actual update in between.
+	// Without this we might try to write a too big texture into the GL
+	// texture.
+	flagDirty();
 }
 
 void Texture::updateGLTexture() {
@@ -561,6 +567,12 @@ void TextureCLUT8GPU::allocate(uint width, uint height) {
 
 	_clut8Vertices[6] = width;
 	_clut8Vertices[7] = height;
+
+	// The whole texture is dirty after we changed the size. This fixes
+	// multiple texture size changes without any actual update in between.
+	// Without this we might try to write a too big texture into the GL
+	// texture.
+	flagDirty();
 }
 
 Graphics::PixelFormat TextureCLUT8GPU::getFormat() const {
