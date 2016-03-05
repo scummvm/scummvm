@@ -341,7 +341,7 @@ osxsnap: bundle
 	mkdir ScummVM-snapshot/doc/se
 	cp $(srcdir)/doc/se/LasMig ./ScummVM-snapshot/doc/se/LasMig
 	cp $(srcdir)/doc/se/Snabbstart ./ScummVM-snapshot/doc/se/Snabbstart
-	/Developer/Tools/SetFile -t ttro -c ttxt ./ScummVM-snapshot/*
+	$(XCODETOOLSPATH)/SetFile -t ttro -c ttxt ./ScummVM-snapshot/*
 	xattr -w "com.apple.TextEncoding" "utf-8;134217984" ./ScummVM-snapshot/doc/cz/*
 	xattr -w "com.apple.TextEncoding" "utf-8;134217984" ./ScummVM-snapshot/doc/da/*
 	xattr -w "com.apple.TextEncoding" "utf-8;134217984" ./ScummVM-snapshot/doc/de/*
@@ -350,11 +350,11 @@ osxsnap: bundle
 	xattr -w "com.apple.TextEncoding" "utf-8;134217984" ./ScummVM-snapshot/doc/it/*
 	xattr -w "com.apple.TextEncoding" "utf-8;134217984" ./ScummVM-snapshot/doc/no-nb/*
 	xattr -w "com.apple.TextEncoding" "utf-8;134217984" ./ScummVM-snapshot/doc/se/*
-	/Developer/Tools/CpMac -r $(bundle_name) ./ScummVM-snapshot/
+	$(XCODETOOLSPATH)/CpMac -r $(bundle_name) ./ScummVM-snapshot/
 	cp $(srcdir)/dists/macosx/DS_Store ./ScummVM-snapshot/.DS_Store
 	cp $(srcdir)/dists/macosx/background.jpg ./ScummVM-snapshot/background.jpg
-	/Developer/Tools/SetFile -a V ./ScummVM-snapshot/.DS_Store
-	/Developer/Tools/SetFile -a V ./ScummVM-snapshot/background.jpg
+	$(XCODETOOLSPATH)/SetFile -a V ./ScummVM-snapshot/.DS_Store
+	$(XCODETOOLSPATH)/SetFile -a V ./ScummVM-snapshot/background.jpg
 	hdiutil create -ov -format UDZO -imagekey zlib-level=9 -fs HFS+ \
 					-srcfolder ScummVM-snapshot \
 					-volname "ScummVM" \

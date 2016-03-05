@@ -182,6 +182,7 @@ _stagingpath="staging"
 _win32path="c:/scummvm"
 _amigaospath="Games:ScummVM"
 _staticlibpath=
+_xcodetoolspath=
 _sdlconfig=sdl-config
 _freetypeconfig=freetype-config
 _sdlpath="$PATH"
@@ -1234,6 +1235,9 @@ for ac_option in $@; do
 		;;
 	--with-staticlib-prefix=*)
 		_staticlibpath=`echo $ac_option | cut -d '=' -f 2`
+		;;
+	--with-xcodetools-path=*)
+		_xcodetoolspath=`echo $ac_option | cut -d '=' -f 2`
 		;;
 	--host=*)
 		_host=`echo $ac_option | cut -d '=' -f 2`
@@ -2348,6 +2352,18 @@ case $_host_os in
 				echo "Set staticlib-prefix to ${_staticlibpath}"
 			else
 				echo "Could not determine prefix for static libraries"
+			fi
+		fi
+		
+		# If _xcodetoolspath is not set yet try first /Developers/Tools and then
+		# /Applications/Xcode.app/Contents/Developer/Tools
+		if test -z "$_xcodetoolspath"; then
+			_xcodetoolspath=`xcode-select -print-path`/Tools
+			if test -d "$_xcodetoolspath"; then
+				echo "Set xcodetools-path to ${_xcodetoolspath}"
+			else
+				_xcodetoolspath=
+				echo "Could not determine path for Xcode Tools"
 			fi
 		fi
 		;;
@@ -4732,6 +4748,7 @@ STAGINGPATH=$_stagingpath
 WIN32PATH=$_win32path
 AMIGAOSPATH=$_amigaospath
 STATICLIBPATH=$_staticlibpath
+XCODETOOLSPATH=$_xcodetoolspath
 SDLCONFIG=$_sdlconfig
 
 ABI := $ABI
