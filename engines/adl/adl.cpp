@@ -515,9 +515,9 @@ void AdlEngine::showRoom() {
 	if (!_state.isDark) {
 		drawPic(curRoom().curPicture);
 		drawItems();
-		_display->updateHiResScreen();
 	}
 
+	_display->updateHiResScreen();
 	printMessage(curRoom().description, false);
 }
 
