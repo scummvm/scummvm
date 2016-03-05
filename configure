@@ -2443,6 +2443,10 @@ case $_host_os in
 	mint*)
 		append_var DEFINES "-DSYSTEM_NOT_SUPPORTING_D_TYPE"
 		;;
+	msys)
+		echo ERROR: Using the MSYS shell in msys mode is not supported. Please use the MSYS shell in mingw mode instead.
+		exit 1
+		;;
 	n64)
 		append_var DEFINES "-D__N64__"
 		append_var DEFINES "-DLIMIT_FPS"
