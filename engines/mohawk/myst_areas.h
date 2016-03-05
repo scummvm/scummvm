@@ -108,6 +108,8 @@ public:
 	MystAreaVideo(MohawkEngine_Myst *vm, Common::SeekableReadStream *rlstStream, MystArea *parent);
 
 	VideoHandle playMovie();
+	VideoHandle getMovieHandle();
+
 	void handleCardChange() override;
 	bool isPlaying();
 	void setDirection(int16 direction) { _direction = direction; }

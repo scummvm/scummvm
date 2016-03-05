@@ -667,7 +667,7 @@ void Mechanical::o_elevatorTopMovie(uint16 op, uint16 var, uint16 argc, uint16 *
 void Mechanical::o_fortressRotationSetPosition(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Set fortress position", op);
 
-	VideoHandle gears = _fortressRotationGears->playMovie();
+	VideoHandle gears = _fortressRotationGears->getMovieHandle();
 	uint32 moviePosition = Audio::Timestamp(gears->getTime(), 600).totalNumberOfFrames();
 
 	// Myst ME short movie workaround, explained in o_fortressRotation_init
@@ -801,7 +801,7 @@ void Mechanical::o_elevatorRotation_init(uint16 op, uint16 var, uint16 argc, uin
 }
 
 void Mechanical::fortressRotation_run() {
-	VideoHandle gears = _fortressRotationGears->playMovie();
+	VideoHandle gears = _fortressRotationGears->getMovieHandle();
 
 	double oldRate = gears->getRate().toDouble();
 	uint32 moviePosition = Audio::Timestamp(gears->getTime(), 600).totalNumberOfFrames();
@@ -949,7 +949,7 @@ void Mechanical::fortressSimulation_run() {
 
 		_fortressSimulationInit = false;
 	} else {
-		VideoHandle holo = _fortressSimulationHolo->playMovie();
+		VideoHandle holo = _fortressSimulationHolo->getMovieHandle();
 
 		double oldRate = holo->getRate().toDouble();
 
