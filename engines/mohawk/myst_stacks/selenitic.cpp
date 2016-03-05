@@ -948,10 +948,13 @@ void Selenitic::soundReceiver_run() {
 		if (_soundReceiverDirection) {
 			uint32 currentTime = _vm->_system->getMillis();
 
-			if (_soundReceiverSpeed == 50 && currentTime > _soundReceiverStartTime + 500)
-					soundReceiverIncreaseSpeed();
-			else if (currentTime > _soundReceiverStartTime + 1000)
-					soundReceiverIncreaseSpeed();
+			if (_soundReceiverSpeed == 50 && currentTime > _soundReceiverStartTime + 500) {
+				soundReceiverIncreaseSpeed();
+				_soundReceiverStartTime = currentTime;
+			} else if (currentTime > _soundReceiverStartTime + 1000) {
+				soundReceiverIncreaseSpeed();
+				_soundReceiverStartTime = currentTime;
+			}
 
 			if (currentTime > _soundReceiverStartTime + 100)
 				soundReceiverUpdate();
