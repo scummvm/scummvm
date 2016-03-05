@@ -74,7 +74,7 @@ public:
 	static const Timer *getTimer();
 	static const Timer *getLiveTimer();
 	static void LOG(bool res, const char *fmt, ...);
-	const char *getGameTargetName() const { return _targetName.c_str(); }
+	Common::String getGameTargetName() const { return _targetName; }
 	Common::String getGameId() const { return _gameId; }
 	Common::Language getLanguage() const { return _language; }
 	WMETargetExecutable getTargetExecutable() const {
