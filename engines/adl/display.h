@@ -80,9 +80,6 @@ private:
 
 	void updateHiResSurface();
 	void showScanlines(bool enable);
-	void decodeScanlineColor(byte *dst, int pitch, byte *src) const;
-	void decodeScanlineMono(byte *dst, int pitch, byte *src) const;
-	void decodeScanline(byte *dst, int pitch, byte *src) const;
 
 	void updateTextSurface();
 	void drawChar(byte c, int x, int y);

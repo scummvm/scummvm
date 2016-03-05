@@ -305,31 +305,7 @@ void Display::showScanlines(bool enable) {
 	}
 }
 
-static void copyEvenSurfaceRows(Graphics::Surface &surf) {
-	byte *src = (byte *)surf.getPixels();
-
-	for (uint y = 0; y < surf.h / 2; ++y) {
-		byte *dst = src + surf.pitch;
-		for (uint x = 0; x < surf.w; ++x)
-			dst[x] = ALTCOL(src[x]);
-		src += surf.pitch * 2;
-	}
-}
-
-void Display::updateHiResSurface() {
-	byte *src = _frameBuf;
-	byte *dst = (byte *)_frameBufSurface->getPixels();
-
-	for (uint i = 0; i < DISPLAY_HEIGHT; ++i) {
-		decodeScanline(dst, _frameBufSurface->pitch, src);
-		src += DISPLAY_PITCH;
-		dst += _frameBufSurface->pitch * 2;
-	}
-
-	copyEvenSurfaceRows(*_frameBufSurface);
-}
-
-static inline byte processColorBits(uint16 &bits, bool &odd, bool secondPal) {
+static byte processColorBits(uint16 &bits, bool &odd, bool secondPal) {
 	byte color = 0;
 
 	switch (bits & 0x7) {
@@ -354,7 +330,7 @@ static inline byte processColorBits(uint16 &bits, bool &odd, bool secondPal) {
 	return color;
 }
 
-void Display::decodeScanlineColor(byte *dst, int pitch, byte *src) const {
+static void renderPixelRowColor(byte *dst, byte *src) {
 	uint16 bits = (src[0] & 0x7f) << 1;
 	byte pal = src[0] >> 7;
 
@@ -400,31 +376,65 @@ void Display::decodeScanlineColor(byte *dst, int pitch, byte *src) const {
 	}
 }
 
-void Display::decodeScanlineMono(byte *dst, int pitch, byte *src) const {
-	// TODO: shift secondPal by half a pixel
+static void renderPixelRowMono(byte *dst, byte *src) {
+	byte pal = src[0] >> 7;
 
-	for (uint j = 0; j < 39; ++j) {
-		for (uint k = 0; k < 7; ++k) {
-			byte color = 0;
+	if (pal != 0)
+		*dst++ = 0;
 
-			if (src[j] & (1 << k))
-				color = 1;
+	for (uint i = 0; i < DISPLAY_PITCH; ++i) {
+		if (i != DISPLAY_PITCH - 1)
+			pal |= (src[i + 1] >> 7) << 1;
 
-			dst[0] = color;
-			dst[1] = color;
-			dst[pitch] = color + 6;
-			dst[pitch + 1] = color + 6;
-
-			dst += 2;
+		for (uint j = 0; j < 6; ++j) {
+			bool color = src[i] & (1 << j);
+			*dst++ = color;
+			*dst++ = color;
 		}
+
+		bool color = src[i] & (1 << 6);
+
+		*dst++ = color;
+
+		switch (pal) {
+			case 0x0:
+			case 0x3:
+				*dst++ = color;
+				break;
+			case 0x2:
+				*dst++ = color;
+				*dst++ = color;
+		}
+
+		pal >>= 1;
 	}
 }
 
-void Display::decodeScanline(byte *dst, int pitch, byte *src) const {
-	if (_monochrome)
-		decodeScanlineMono(dst, pitch, src);
-	else
-		decodeScanlineColor(dst, pitch, src);
+static void copyEvenSurfaceRows(Graphics::Surface &surf) {
+	byte *src = (byte *)surf.getPixels();
+
+	for (uint y = 0; y < surf.h / 2; ++y) {
+		byte *dst = src + surf.pitch;
+		for (uint x = 0; x < surf.w; ++x)
+			dst[x] = ALTCOL(src[x]);
+		src += surf.pitch * 2;
+	}
+}
+
+void Display::updateHiResSurface() {
+	byte *src = _frameBuf;
+	byte *dst = (byte *)_frameBufSurface->getPixels();
+
+	for (uint i = 0; i < DISPLAY_HEIGHT; ++i) {
+		if (_monochrome)
+			renderPixelRowMono(dst, src);
+		else
+			renderPixelRowColor(dst, src);
+		src += DISPLAY_PITCH;
+		dst += _frameBufSurface->pitch * 2;
+	}
+
+	copyEvenSurfaceRows(*_frameBufSurface);
 }
 
 void Display::updateTextSurface() {
