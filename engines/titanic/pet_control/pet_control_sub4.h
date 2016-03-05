@@ -23,12 +23,26 @@
 #ifndef TITANIC_PET_CONTROL_SUB4_H
 #define TITANIC_PET_CONTROL_SUB4_H
 
+#include "titanic/simple_file.h"
 #include "titanic/pet_control/pet_control_sub_base.h"
+#include "titanic/pet_control/pet_control_sub10.h"
+#include "titanic/pet_control/pet_control_sub12.h"
 
 namespace Titanic {
 
 class CPetControlSub4 : public CPetControlSubBase {
+private:
+	CPetControlSub12 _sub12;
+	CPetControlSub10 _sub10;
+	int _valArray1[46];
+	int _valArray2[46];
+	int _field28C;
+	int _field290;
+	int _field294;
+	int _field298;
 public:
+	CPetControlSub4();
+
 	/**
 	 * Save the data for the class to file
 	 */

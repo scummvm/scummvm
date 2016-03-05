@@ -34,7 +34,9 @@ public:
 	int _field8;
 	int _fieldC;
 public:
-	CLinkItemSub();
+	CLinkItemSub() { clear(); }
+
+	void clear();
 };
 
 class CLinkItem : public CNamedItem {

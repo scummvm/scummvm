@@ -24,10 +24,15 @@
 #define TITANIC_PET_CONTROL_SUB6_H
 
 #include "titanic/pet_control/pet_control_sub_base.h"
+#include "titanic/pet_control/pet_control_sub10.h"
+#include "titanic/pet_control/pet_control_sub12.h"
 
 namespace Titanic {
 
 class CPetControlSub6 : public CPetControlSubBase {
+private:
+	CPetControlSub10 _sub10;
+	CPetControlSub10 _sub12;
 public:
 	/**
 	 * Save the data for the class to file

@@ -20,41 +20,31 @@
  *
  */
 
-#include "common/textconsole.h"
-#include "titanic/pet_control/pet_control_sub_base.h"
+#ifndef TITANIC_PET_VAL_H
+#define TITANIC_PET_VAL_H
+
+#include "titanic/pet_control/pet_val_base.h"
 
 namespace Titanic {
 
-void CPetControlSubBase::proc4() {
-	error("TODO");
-}
+class CPetVal: public CPetValBase {
+protected:
+	int _field18;
+	int _field1C;
+	int _field20;
+public:
+	CPetVal() : CPetValBase(), _field18(0), _field1C(0), _field20(0) {}
 
-void CPetControlSubBase::proc16() {
-	error("TODO");
-}
+	virtual void proc1();
+	virtual void proc2();
+	virtual void proc3();
+	virtual void proc4();
 
-void CPetControlSubBase::proc25() {
-	error("TODO");
-}
+	virtual void proc5(CLinkItemSub *linkItem);
 
-void CPetControlSubBase::proc27() {
-	error("TODO");
-}
-
-void CPetControlSubBase::proc28() {
-	error("TODO");
-}
-
-void CPetControlSubBase::proc29() {
-	error("TODO");
-}
-
-void CPetControlSubBase::proc30() {
-	error("TODO");
-}
-
-void CPetControlSubBase::proc31() {
-	error("TODO");
-}
+	virtual int proc16();
+};
 
 } // End of namespace Titanic
+
+#endif /* TITANIC_PET_VAL_H */

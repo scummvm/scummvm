@@ -21,39 +21,27 @@
  */
 
 #include "common/textconsole.h"
-#include "titanic/pet_control/pet_control_sub_base.h"
+#include "titanic/pet_control/pet_control_sub10.h"
 
 namespace Titanic {
 
-void CPetControlSubBase::proc4() {
+CPetControlSub10::CPetControlSub10() : _field10(0), _field14(7),
+	_field18(-1), _field1C(-1), _field20(0), _field24(0) {
+}
+
+void CPetControlSub10::proc8() {
 	error("TODO");
 }
 
-void CPetControlSubBase::proc16() {
+void CPetControlSub10::proc9() {
 	error("TODO");
 }
 
-void CPetControlSubBase::proc25() {
+void CPetControlSub10::proc10() {
 	error("TODO");
 }
 
-void CPetControlSubBase::proc27() {
-	error("TODO");
-}
-
-void CPetControlSubBase::proc28() {
-	error("TODO");
-}
-
-void CPetControlSubBase::proc29() {
-	error("TODO");
-}
-
-void CPetControlSubBase::proc30() {
-	error("TODO");
-}
-
-void CPetControlSubBase::proc31() {
+void CPetControlSub10::proc11() {
 	error("TODO");
 }
 

@@ -20,41 +20,48 @@
  *
  */
 
-#include "common/textconsole.h"
-#include "titanic/pet_control/pet_control_sub_base.h"
+#ifndef TITANIC_PET_VAL_BASE_H
+#define TITANIC_PET_VAL_BASE_H
+
+#include "titanic/simple_file.h"
+#include "titanic/core/link_item.h"
 
 namespace Titanic {
 
-void CPetControlSubBase::proc4() {
-	error("TODO");
-}
+class CPetValBase {
+protected:
+	int _field4;
+	int _field8;
+	int _fieldC;
+	int _field10;
+	int _field14;
+public:
+	CPetValBase() : _field4(0), _field8(0), _fieldC(0),
+		_field10(0), _field14(0) {}
 
-void CPetControlSubBase::proc16() {
-	error("TODO");
-}
+	virtual void proc1() {}
+	virtual void proc2() {}
+	virtual void proc3() {}
+	virtual void proc4() {}
 
-void CPetControlSubBase::proc25() {
-	error("TODO");
-}
+	virtual void proc5(CLinkItemSub *linkItem);
 
-void CPetControlSubBase::proc27() {
-	error("TODO");
-}
+	virtual int proc6();
+	virtual int proc7();
+	virtual void proc8();
+	virtual int proc9();
+	virtual void proc10();
+	virtual void proc11();
+	virtual void proc12();
+	virtual void proc13();
+	virtual void proc14();
+	virtual void proc15();
 
-void CPetControlSubBase::proc28() {
-	error("TODO");
-}
+	virtual int proc16() { return 0; }
 
-void CPetControlSubBase::proc29() {
-	error("TODO");
-}
-
-void CPetControlSubBase::proc30() {
-	error("TODO");
-}
-
-void CPetControlSubBase::proc31() {
-	error("TODO");
-}
+	virtual void proc17(int v) { _field14 = v; }
+};
 
 } // End of namespace Titanic
+
+#endif /* TITANIC_PET_VAL_BASE_H */

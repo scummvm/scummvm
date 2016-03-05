@@ -24,6 +24,13 @@
 
 namespace Titanic {
 
+CPetControlSub4::CPetControlSub4() : _field28C(0),
+		_field290(0), _field294(0), _field298(0) {
+	for (int idx = 0; idx < 46; ++idx) {
+		_valArray1[idx] = _valArray2[idx] = 0;
+	}
+}
+
 void CPetControlSub4::save(SimpleFile *file, int indent) const {
 
 }

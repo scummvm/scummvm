@@ -24,6 +24,9 @@
 
 namespace Titanic {
 
+CPetControlSub1::CPetControlSub1() : _field414(0), _field418(0) {
+}
+
 void CPetControlSub1::save(SimpleFile *file, int indent) const {
 
 }

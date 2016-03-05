@@ -24,8 +24,14 @@
 
 namespace Titanic {
 
-CLinkItemSub::CLinkItemSub() : _field0(0), _field4(0), _field8(0), _fieldC(0) {
+void CLinkItemSub::clear() {
+	_field0 = 0;
+	_field4 = 0;
+	_field8 = 0;
+	_fieldC = 0;
 }
+
+/*------------------------------------------------------------------------*/
 
 CLinkItem::CLinkItem() : CNamedItem() {
 	_field24 = -1;

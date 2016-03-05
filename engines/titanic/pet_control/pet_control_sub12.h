@@ -20,41 +20,50 @@
  *
  */
 
-#include "common/textconsole.h"
-#include "titanic/pet_control/pet_control_sub_base.h"
+#ifndef TITANIC_PET_CONTROL_SUB12_H
+#define TITANIC_PET_CONTROL_SUB12_H
+
+#include "titanic/simple_file.h"
 
 namespace Titanic {
 
-void CPetControlSubBase::proc4() {
-	error("TODO");
-}
+class CPetControlSub12 {
+protected:
+	int _field0;
+	int _field4;
+	int _field8;
+	CString _string1;
+	int _field18;
+	int _field1C;
+	int _field20;
+	int _field24;
+	int _field28;
+	int _field2C;
+	int _field30;
+	int _field34;
+	int _field38;
+	int _field3C;
+	int _field40;
+	int _field44;
+	int _field48;
+	int _field4C;
+	int _field50;
+	int _field54;
+	int _field58;
+	int _field5C;
+	int _field60;
+	int _field64;
+	int _field68;
+	int _field6C;
+	int _field70;
+	int _field74;
+	int _field78;
+	int _field7C;
+public:
+	CPetControlSub12();
 
-void CPetControlSubBase::proc16() {
-	error("TODO");
-}
-
-void CPetControlSubBase::proc25() {
-	error("TODO");
-}
-
-void CPetControlSubBase::proc27() {
-	error("TODO");
-}
-
-void CPetControlSubBase::proc28() {
-	error("TODO");
-}
-
-void CPetControlSubBase::proc29() {
-	error("TODO");
-}
-
-void CPetControlSubBase::proc30() {
-	error("TODO");
-}
-
-void CPetControlSubBase::proc31() {
-	error("TODO");
-}
+};
 
 } // End of namespace Titanic
+
+#endif /* TITANIC_PET_CONTROL_SUB12_H */

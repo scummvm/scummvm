@@ -21,40 +21,41 @@
  */
 
 #include "common/textconsole.h"
-#include "titanic/pet_control/pet_control_sub_base.h"
+#include "titanic/pet_control/pet_val.h"
 
 namespace Titanic {
 
-void CPetControlSubBase::proc4() {
+void CPetVal::proc1() {
 	error("TODO");
 }
 
-void CPetControlSubBase::proc16() {
+void CPetVal::proc2() {
 	error("TODO");
 }
 
-void CPetControlSubBase::proc25() {
+void CPetVal::proc3() {
 	error("TODO");
 }
 
-void CPetControlSubBase::proc27() {
+void CPetVal::proc4() {
 	error("TODO");
 }
 
-void CPetControlSubBase::proc28() {
+void CPetVal::proc5(CLinkItemSub *linkItem) {
 	error("TODO");
 }
 
-void CPetControlSubBase::proc29() {
-	error("TODO");
-}
-
-void CPetControlSubBase::proc30() {
-	error("TODO");
-}
-
-void CPetControlSubBase::proc31() {
-	error("TODO");
+int CPetVal::proc16() {
+	switch (!_field14) {
+	case 0:
+		return _field18;
+	case 1:
+		return _field1C;
+	case 2:
+		return _field20;
+	default:
+		return 0;
+	}
 }
 
 } // End of namespace Titanic

@@ -24,6 +24,15 @@
 
 namespace Titanic {
 
+static const int INDEXES[6] = { 1, 0, 2, 3, 4, 5 };
+
+int CPetControlSub8::_indexes[6];
+
+CPetControlSub8::CPetControlSub8() {
+	for (int idx = 0; idx < 6; ++idx)
+		_indexes[INDEXES[idx]] = idx;
+}
+
 void CPetControlSub8::save(SimpleFile *file, int indent) const {
 
 }
