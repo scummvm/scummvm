@@ -336,6 +336,9 @@ void GfxCursor::setPosition(Common::Point pos) {
 			&& ((workaround->newPositionX == pos.x) && (workaround->newPositionY == pos.y))) {
 			EngineState *s = g_sci->getEngineState();
 			s->_cursorWorkaroundActive = true;
+			// At least on OpenPandora it seems that the cursor is actually set, but a bit afterwards
+			// touch screen controls will overwrite the position. More information see kGetEvent in kevent.cpp.
+			s->_cursorWorkaroundPosCount = 5; // should be enough for OpenPandora
 			s->_cursorWorkaroundPoint = pos;
 			s->_cursorWorkaroundRect = Common::Rect(workaround->rectLeft, workaround->rectTop, workaround->rectRight, workaround->rectBottom);
 			return;

@@ -142,6 +142,7 @@ public:
 	uint _chosenQfGImportItem; // Remembers the item selected in QfG import rooms
 
 	bool _cursorWorkaroundActive; // Refer to GfxCursor::setPosition()
+	int16 _cursorWorkaroundPosCount; // When the cursor is reported to be at the previously set coordinate, we won't disable the workaround unless it happened for this many times
 	Common::Point _cursorWorkaroundPoint;
 	Common::Rect _cursorWorkaroundRect;
 

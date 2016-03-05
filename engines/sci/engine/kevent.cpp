@@ -101,7 +101,25 @@ reg_t kGetEvent(EngineState *s, int argc, reg_t *argv) {
 		// question. Check GfxCursor::setPosition(), for a more detailed
 		// explanation and a list of cursor position workarounds.
 		if (s->_cursorWorkaroundRect.contains(mousePos.x, mousePos.y)) {
-			s->_cursorWorkaroundActive = false;
+			// For OpenPandora and possibly other platforms, that support analog-stick control + touch screen
+			// control at the same time: in case the cursor is currently at the coordinate set by the scripts,
+			// we will count down instead of immediately disabling the workaround.
+			// On OpenPandora the cursor position is set, but it's overwritten shortly afterwards by the
+			// touch screen. In this case we would sometimes disable the workaround, simply because the touch
+			// screen hasn't yet overwritten the position and thus the workaround would not work anymore.
+			// On OpenPandora it would sometimes work and sometimes not without this.
+			if (s->_cursorWorkaroundPoint == mousePos) {
+				// Cursor is still at the same spot as set by the scripts
+				if (s->_cursorWorkaroundPosCount > 0) {
+					s->_cursorWorkaroundPosCount--;
+				} else {
+					// Was for quite a bit of time at that spot, so disable workaround now
+					s->_cursorWorkaroundActive = false;
+				}
+			} else {
+				// Cursor has moved, but is within the rect -> disable workaround immediately
+				s->_cursorWorkaroundActive = false;
+			}
 		} else {
 			mousePos.x = s->_cursorWorkaroundPoint.x;
 			mousePos.y = s->_cursorWorkaroundPoint.y;
