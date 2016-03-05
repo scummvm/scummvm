@@ -207,9 +207,13 @@ void MystOptionsDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd, ui
 		save();
 		break;
 	case kQuitCmd: {
-		Common::Event eventQ;
-		eventQ.type = Common::EVENT_QUIT;
-		g_system->getEventManager()->pushEvent(eventQ);
+		if (_vm->getGameType() != GType_MAKINGOF) {
+			_vm->_needsShowCredits = true;
+		} else {
+			Common::Event eventQ;
+			eventQ.type = Common::EVENT_QUIT;
+			g_system->getEventManager()->pushEvent(eventQ);
+		}
 		close();
 	}
 		break;

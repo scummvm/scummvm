@@ -196,6 +196,7 @@ public:
 	bool _needsPageDrop;
 	bool _needsShowMap;
 	bool _needsShowDemoMenu;
+	bool _needsShowCredits;
 
 	bool _showResourceRects;
 

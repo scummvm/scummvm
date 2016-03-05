@@ -307,6 +307,7 @@ Common::Error MohawkEngine_Myst::run() {
 					_needsPageDrop = false;
 					_needsShowMap = false;
 					_needsShowDemoMenu = false;
+					_needsShowCredits = false;
 
 					_canSafelySaveLoad = true;
 					runDialog(*_optionsDialog);
@@ -325,6 +326,12 @@ Common::Error MohawkEngine_Myst::run() {
 					if (_needsShowDemoMenu) {
 						changeToStack(kDemoStack, 2002, 0, 0);
 						_needsShowDemoMenu = false;
+					}
+
+					if (_needsShowCredits) {
+						_cursor->hideCursor();
+						changeToStack(kCreditsStack, 10000, 0, 0);
+						_needsShowCredits = false;
 					}
 					break;
 				default:
