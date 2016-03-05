@@ -117,6 +117,7 @@ private:
 
 	void soundReceiverLeftRight(uint direction);
 	void soundReceiverUpdate();
+	void soundReceiverSetSubimageRect() const;
 	void soundReceiverDrawView();
 	void soundReceiverDrawAngle();
 	void soundReceiverIncreaseSpeed();

@@ -672,6 +672,11 @@ void Selenitic::soundReceiverUpdate() {
 }
 
 void Selenitic::soundReceiverDrawView() {
+	soundReceiverSetSubimageRect();
+	soundReceiverDrawAngle();
+}
+
+void Selenitic::soundReceiverSetSubimageRect() const {
 	uint32 left = ((*_soundReceiverPosition) * 1800) / 3600;
 
 	Common::Rect rect = _soundReceiverViewer->getSubImage(0).rect;
@@ -681,8 +686,6 @@ void Selenitic::soundReceiverDrawView() {
 
 	_soundReceiverViewer->setSubImageRect(0, rect);
 	_soundReceiverViewer->drawConditionalDataToScreen(0);
-
-	soundReceiverDrawAngle();
 }
 
 void Selenitic::soundReceiverDrawAngle() {
@@ -1082,6 +1085,8 @@ void Selenitic::o_soundReceiver_init(uint16 op, uint16 var, uint16 argc, uint16 
 	uint16 currentSource = _state.soundReceiverCurrentSource;
 	_soundReceiverPosition = &_state.soundReceiverPositions[currentSource];
 	_soundReceiverCurrentSource = _soundReceiverSources[currentSource];
+
+	soundReceiverSetSubimageRect();
 
 	_soundReceiverSigmaPressed = false;
 }
