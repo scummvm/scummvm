@@ -52,6 +52,12 @@ const byte colorPalette[COLOR_PALETTE_ENTRIES * 3] = {
 	0xf2, 0x5e, 0x00
 };
 
+// Corresponding color in second palette
+#define PAL2(X) ((X) | 0x04)
+
+// Alternate color for odd pixel rows (for scanlines)
+#define ALTCOL(X) ((X) | 0x08)
+
 // Green monochrome palette
 #define MONO_PALETTE_ENTRIES 2
 const byte monoPalette[MONO_PALETTE_ENTRIES * 3] = {
@@ -294,6 +300,17 @@ void Display::showScanlines(bool enable) {
 	}
 }
 
+static void copyEvenSurfaceRows(Graphics::Surface &surf) {
+	byte *src = (byte *)surf.getPixels();
+
+	for (uint y = 0; y < surf.h / 2; ++y) {
+		byte *dst = src + surf.pitch;
+		for (uint x = 0; x < surf.w; ++x)
+			dst[x] = ALTCOL(src[x]);
+		src += surf.pitch * 2;
+	}
+}
+
 void Display::updateHiResSurface() {
 	byte *src = _frameBuf;
 	byte *dst = (byte *)_frameBufSurface->getPixels();
@@ -303,68 +320,78 @@ void Display::updateHiResSurface() {
 		src += DISPLAY_PITCH;
 		dst += _frameBufSurface->pitch * 2;
 	}
+
+	copyEvenSurfaceRows(*_frameBufSurface);
+}
+
+static inline byte processColorBits(uint16 &bits, bool &odd, bool secondPal) {
+	byte color = 0;
+
+	switch (bits & 0x7) {
+	case 0x3: // 011 (white)
+	case 0x6: // 110
+	case 0x7: // 111
+		color = 1;
+		break;
+	case 0x2: // 010 (color)
+		color = 2 + odd;
+		break;
+	case 0x5: // 101 (color)
+		color = 2 + !odd;
+	}
+
+	if (secondPal)
+		color = PAL2(color);
+
+	odd = !odd;
+	bits >>= 1;
+
+	return color;
 }
 
 void Display::decodeScanlineColor(byte *dst, int pitch, byte *src) const {
-	bool prevOn = false;
+	uint16 bits = (src[0] & 0x7f) << 1;
+	byte pal = src[0] >> 7;
 
-	if (src[0] & 0x80)
-		dst++;
+	if (pal != 0)
+		*dst++ = 0;
 
-	for (uint j = 0; j < 40; ++j) {
-		bool secondPal = src[j] & 0x80;
-		byte cur = src[j];
-		byte next = 0;
-		if (j != 39)
-			next = src[j + 1];
+	bool odd = false;
 
-		for (uint k = 0; k < 7; ++k) {
-			bool curOn = cur & (1 << k);
-			bool nextOn;
-
-			if (k != 6)
-				nextOn = cur & (1 << (k + 1));
-			else
-				nextOn = next & 1;
-
-			byte color;
-			if (curOn == prevOn || curOn == nextOn)
-				color = curOn ? 1 : 0;
-			else
-				color = (curOn == ((j + k) % 2) ? 3 : 2);
-
-			if (secondPal)
-				color |= 4;
-
-			dst[0] = color;
-			dst[pitch] = color + COLOR_PALETTE_ENTRIES;
-			++dst;
-
-			if (k == 6) {
-				if (secondPal) {
-					if (next & 0x80) {
-						dst[0] = color;
-						dst[pitch] = color + COLOR_PALETTE_ENTRIES;
-						++dst;
-					}
-				} else {
-					dst[0] = color;
-					dst[pitch] = color + COLOR_PALETTE_ENTRIES;
-					++dst;
-					if (next & 0x80) {
-						dst[0] = color | 4;
-						dst[pitch] = (color | 4) + COLOR_PALETTE_ENTRIES;
-						++dst;
-					}
-				}
-			} else {
-				dst[0] = color;
-				dst[pitch] = color + COLOR_PALETTE_ENTRIES;
-				++dst;
-			}
-
-			prevOn = curOn;
+	for (uint i = 0; i < 40; ++i) {
+		if (i != 39) {
+			bits |= (src[i + 1] & 0x7f) << 8;
+			pal |= (src[i + 1] >> 7) << 1;
 		}
+
+		// For the first 6 bits in the block we draw two pixels
+		for (uint j = 0; j < 6; ++j) {
+			byte color = processColorBits(bits, odd, pal & 1);
+			*dst++ = color;
+			*dst++ = color;
+		}
+
+		// Last bit of the block, draw one, two or three pixels
+		byte color = processColorBits(bits, odd, pal & 1);
+
+		// Draw the first pixel
+		*dst++ = color;
+
+		switch (pal) {
+			case 0x0:
+			case 0x3:
+				// If palette stays the same, draw a second pixel
+				*dst++ = color;
+				break;
+			case 0x2:
+				// If we're moving from first to second palette,
+				// draw a second pixel, and a third in the second
+				// palette.
+				*dst++ = color;
+				*dst++ = PAL2(color);
+		}
+
+		pal >>= 1;
 	}
 }
 
@@ -420,21 +447,10 @@ void Display::drawChar(byte c, int x, int y) {
 	byte *buf = (byte *)_font->getPixels() + y * _font->pitch + x;
 
 	for (uint row = 0; row < 8; ++row) {
-		if (row & 1) {
-			buf[_font->pitch] = COLOR_PALETTE_ENTRIES;
-			buf[_font->pitch + 1] = COLOR_PALETTE_ENTRIES;
-			buf[_font->pitch + 6 * 2] = COLOR_PALETTE_ENTRIES;
-			buf[_font->pitch + 6 * 2 + 1] = COLOR_PALETTE_ENTRIES;
-		}
 		for (uint col = 1; col < 6; ++col) {
 			if (font[c][col - 1] & (1 << row)) {
 				buf[col * 2] = 1;
 				buf[col * 2 + 1] = 1;
-				buf[_font->pitch + col * 2] = 1 + COLOR_PALETTE_ENTRIES;
-				buf[_font->pitch + col * 2 + 1] = 1 + COLOR_PALETTE_ENTRIES;
-			} else {
-				buf[_font->pitch + col * 2] = COLOR_PALETTE_ENTRIES;
-				buf[_font->pitch + col * 2 + 1] = COLOR_PALETTE_ENTRIES;
 			}
 		}
 
@@ -458,21 +474,18 @@ void Display::createFont() {
 		for (uint col = 0; col < _font->w; ++col)
 			bufInv[col] = (buf[col] ? 0 : 1);
 
-		buf += _font->pitch;
-		bufInv += _font->pitch;
-
-		for (uint col = 0; col < _font->w; ++col)
-			bufInv[col] = (buf[col] == COLOR_PALETTE_ENTRIES + 1 ? COLOR_PALETTE_ENTRIES : COLOR_PALETTE_ENTRIES + 1);
-
-		buf += _font->pitch;
-		bufInv += _font->pitch;
+		buf += _font->pitch * 2;
+		bufInv += _font->pitch * 2;
 	}
+
+	copyEvenSurfaceRows(*_font);
 }
 
 void Display::scrollUp() {
 	memmove(_textBuf, _textBuf + 40, kTextBufSize - 40);
 	memset(_textBuf + kTextBufSize - 40, APPLECHAR(' '), 40);
-	_cursorPos -= 40;
+	if (_cursorPos >= 40)
+		_cursorPos -= 40;
 }
 
 } // End of namespace Adl
