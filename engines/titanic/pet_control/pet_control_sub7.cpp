@@ -24,12 +24,4 @@
 
 namespace Titanic {
 
-void CPetControlSub7::save(SimpleFile *file, int indent) const {
-
-}
-
-void CPetControlSub7::load(SimpleFile *file) {
-
-}
-
 } // End of namespace Titanic

@@ -69,14 +69,14 @@ public:
 	/**
 	 * Load the data for the class from file
 	 */
-	virtual void load(SimpleFile *file) = 0;
+	virtual void load(SimpleFile *file, int param) {}
 
 	virtual void proc19() {}
 
 	/**
 	 * Save the data for the class to file
 	 */
-	virtual void save(SimpleFile *file, int indent) const = 0;
+	virtual void save(SimpleFile *file, int indent) const {}
 
 	virtual void proc21() {}
 	virtual void proc22() {}

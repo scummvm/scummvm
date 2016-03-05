@@ -25,6 +25,9 @@
 
 namespace Titanic {
 
+CPetValBase::CPetValBase() : _field4(0), _field8(0), _fieldC(0),
+		_field10(0), _field14(0) {}
+
 void CPetValBase::proc5(CLinkItemSub *linkItem) {
 	if (linkItem)
 		linkItem->clear();

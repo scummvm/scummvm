@@ -24,12 +24,20 @@
 
 namespace Titanic {
 
+CPetControlSub5::CPetControlSub5() :
+	_field98(0), _field9C(0), _fieldA0(0),
+	_field18C(0), _field20C(0), _field210(0) {
+}
+
 void CPetControlSub5::save(SimpleFile *file, int indent) const {
 
 }
 
-void CPetControlSub5::load(SimpleFile *file) {
-
+void CPetControlSub5::load(SimpleFile *file, int param) {
+	if (!param) {
+		_field20C = file->readNumber();
+		_field210 = file->readNumber();
+	}
 }
 
 } // End of namespace Titanic

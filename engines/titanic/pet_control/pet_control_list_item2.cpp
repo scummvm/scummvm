@@ -23,12 +23,15 @@
 #include "titanic/pet_control/pet_control_list_item2.h"
 
 namespace Titanic {
-/*
-CPetControlListItem2::CPetControlListItem2(),
+
+CPetControlListItem2::CPetControlListItem2() :
 	_field34(0), _field38(0), _field3C(0), _field40(0),
 	_field44(0), _field48(0), _field4C(0), _field50(0),
 	_field54(0), _field58(0), _field5C(0) {
 }
-*/
+
+void CPetControlListItem2::setField34(int val) {
+	_field34 = val;
+}
 
 } // End of namespace Titanic

@@ -33,12 +33,4 @@ CPetControlSub8::CPetControlSub8() {
 		_indexes[INDEXES[idx]] = idx;
 }
 
-void CPetControlSub8::save(SimpleFile *file, int indent) const {
-
-}
-
-void CPetControlSub8::load(SimpleFile *file) {
-
-}
-
 } // End of namespace Titanic

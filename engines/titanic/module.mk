@@ -238,8 +238,6 @@ MODULE_OBJS := \
 	game/pet/pet_sounds.o \
 	game/pet/pet_transition.o \
 	game/pet/pet_transport.o \
-	game/pet/pet_val_base.o \
-	game/pet/pet_val.o \
 	game/pickup/pick_up.o \
 	game/pickup/pick_up_bar_glass.o \
 	game/pickup/pick_up_hose.o \

@@ -35,8 +35,8 @@ void CPetControlSub4::save(SimpleFile *file, int indent) const {
 
 }
 
-void CPetControlSub4::load(SimpleFile *file) {
-
+void CPetControlSub4::load(SimpleFile *file, int param) {
+	_field298 = file->readNumber();
 }
 
 } // End of namespace Titanic

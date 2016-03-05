@@ -31,8 +31,12 @@ void CPetControlSub1::save(SimpleFile *file, int indent) const {
 
 }
 
-void CPetControlSub1::load(SimpleFile *file) {
+void CPetControlSub1::load(SimpleFile *file, int param) {
+	_sub2.load(file, param);
+	_sub1.load(file, param);
 
+	for (int idx = 0; idx < 3; ++idx)
+		_valArray3[idx] = file->readNumber();
 }
 
 } // End of namespace Titanic

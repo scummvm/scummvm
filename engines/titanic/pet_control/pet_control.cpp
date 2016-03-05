@@ -36,14 +36,14 @@ void CPetControl::save(SimpleFile *file, int indent) const {
 
 void CPetControl::load(SimpleFile *file) {
 	int val = file->readNumber();
-	// TODO: sub_43A9E0
+	bool valid = isValid();
 	
-	if (!val) {
+	if (!valid) {
 		_fieldBC = file->readNumber();
 		_string1 = file->readString();
 		_string2 = file->readString();
 		
-		loadSubObjects(file);
+		loadSubObjects(file, 0);
 	}
 
 	CGameObject::load(file);
@@ -53,15 +53,22 @@ void CPetControl::gameLoaded() {
 	// TODO
 }
 
-void CPetControl::loadSubObjects(SimpleFile *file) {
-	_sub1.load(file);
-	_sub2.load(file);
-	_sub3.load(file);
-	_sub4.load(file);
-	_sub5.load(file);
-	_sub6.load(file);
-	_sub7.load(file);
-	_sub8.load(file);
+bool CPetControl::isValid() const {
+	return _sub1.isValid() && _sub2.isValid()
+		&& _sub3.isValid() && _sub4.isValid()
+		&& _sub5.isValid() && _sub6.isValid()
+		&& _sub7.isValid() && _sub8.isValid();
+}
+
+void CPetControl::loadSubObjects(SimpleFile *file, int param) {
+	_sub1.load(file, param);
+	_sub2.load(file, param);
+	_sub3.load(file, param);
+	_sub4.load(file, param);
+	_sub5.load(file, param);
+	_sub6.load(file, param);
+	_sub7.load(file, param);
+	_sub8.load(file, param);
 }
 
 void CPetControl::saveSubObjects(SimpleFile *file, int indent) const {

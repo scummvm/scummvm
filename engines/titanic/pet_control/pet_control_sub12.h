@@ -28,17 +28,19 @@
 namespace Titanic {
 
 class CPetControlSub12 {
-protected:
-	int _field0;
-	int _field4;
-	int _field8;
+	struct ArrayEntry {
+		CString _string1;
+		CString _string2;
+		CString _string3;
+	};
+private:
+	Common::Array<ArrayEntry> _array;
 	CString _string1;
 	int _field18;
 	int _field1C;
 	int _field20;
 	int _field24;
 	int _field28;
-	int _field2C;
 	int _field30;
 	int _field34;
 	int _field38;
@@ -59,9 +61,14 @@ protected:
 	int _field74;
 	int _field78;
 	int _field7C;
-public:
-	CPetControlSub12();
+private:
+	void setupArrays(int count);
 
+	void freeArrays();
+public:
+	CPetControlSub12(int count = 10);
+
+	void load(SimpleFile *file, int param);
 };
 
 } // End of namespace Titanic

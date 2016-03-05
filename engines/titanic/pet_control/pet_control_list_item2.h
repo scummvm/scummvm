@@ -41,7 +41,9 @@ protected:
 	int _field58;
 	int _field5C;
 public:
-	//CPetControlListItem2();
+	CPetControlListItem2();
+
+	void setField34(int val);
 };
 
 } // End of namespace Titanic

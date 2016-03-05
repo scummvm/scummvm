@@ -24,6 +24,7 @@
 #define TITANIC_PET_CONTROL_SUB5_H
 
 #include "titanic/pet_control/pet_control_sub_base.h"
+#include "titanic/pet_control/pet_control_sub12.h"
 #include "titanic/pet_control/pet_val.h"
 
 namespace Titanic {
@@ -34,13 +35,18 @@ private:
 	CPetVal _val2;
 	CPetVal _val3;
 	CPetVal _val4;
-	CPetControlSubData _field17C;
 	int _field98;
 	int _field9C;
 	int _fieldA0;
 	CPetVal _valArray1[6];
-
+	CPetControlSubData _field17C;
+	int _field18C;
+	CPetControlSub12 _sub12;
+	int _field20C;
+	int _field210;
 public:
+	CPetControlSub5();
+
 	/**
 	 * Save the data for the class to file
 	 */
@@ -49,7 +55,7 @@ public:
 	/**
 	 * Load the data for the class from file
 	 */
-	virtual void load(SimpleFile *file);
+	virtual void load(SimpleFile *file, int param);
 };
 
 } // End of namespace Titanic

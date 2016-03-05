@@ -46,15 +46,8 @@ private:
 	CPetVal _val11;
 	CPetControlSub12 _sub12;
 public:
-	/**
-	 * Save the data for the class to file
-	 */
-	virtual void save(SimpleFile *file, int indent) const;
 
-	/**
-	 * Load the data for the class from file
-	 */
-	virtual void load(SimpleFile *file);
+
 };
 
 } // End of namespace Titanic

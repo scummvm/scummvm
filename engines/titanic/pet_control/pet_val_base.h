@@ -36,8 +36,7 @@ protected:
 	int _field10;
 	int _field14;
 public:
-	CPetValBase() : _field4(0), _field8(0), _fieldC(0),
-		_field10(0), _field14(0) {}
+	CPetValBase();
 	virtual ~CPetValBase() {}
 
 	virtual void proc1() {}

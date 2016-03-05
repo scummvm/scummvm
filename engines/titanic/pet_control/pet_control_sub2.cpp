@@ -35,8 +35,25 @@ void CPetControlSub2::save(SimpleFile *file, int indent) const {
 
 }
 
-void CPetControlSub2::load(SimpleFile *file) {
+void CPetControlSub2::load(SimpleFile *file, int param) {
+	if (!param) {
+		int count = file->readNumber();
 
+		for (int idx = 0; idx < count; ++idx) {
+			int v1 = file->readNumber();
+			int v2 = file->readNumber();
+			warning("TODO: CPetControlSub2::load - %d,%d", v1, v2);
+		}
+
+		_listItem.setField34(file->readNumber());
+		file->readNumber();
+		_field1C0 = file->readNumber();
+		_field1C4 = file->readNumber();
+		_field1C8 = file->readNumber();
+		_field1CC = file->readNumber();
+		_field1D0 = file->readNumber();
+		_field1D4 = file->readNumber();
+	}
 }
 
 } // End of namespace Titanic

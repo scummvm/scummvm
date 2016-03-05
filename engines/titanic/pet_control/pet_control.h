@@ -55,7 +55,12 @@ private:
 	CString _string2;
 	int _field13A4;
 private:
-	void loadSubObjects(SimpleFile *file);
+	/**
+	 * Returns true if the control is in a valid state
+	 */
+	bool isValid() const;
+
+	void loadSubObjects(SimpleFile *file, int param);
 
 	void saveSubObjects(SimpleFile *file, int indent) const;
 public:
