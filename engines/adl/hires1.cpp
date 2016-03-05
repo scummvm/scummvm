@@ -40,6 +40,11 @@
 
 namespace Adl {
 
+#define IDI_HR1_NUM_ROOMS        41
+#define IDI_HR1_NUM_PICS         98
+#define IDI_HR1_NUM_VARS         20
+#define IDI_HR1_NUM_ITEM_OFFSETS 21
+
 // Messages used outside of scripts
 #define IDI_HR1_MSG_CANT_GO_THERE      137
 #define IDI_HR1_MSG_DONT_UNDERSTAND     37
@@ -73,15 +78,28 @@ static const StringOffset stringOffsets[] = {
 	{ IDI_HR1_STR_PRESS_RETURN,    0x5f68 }
 };
 
-#define IDI_HR1_OFS_PD_TEXT_0 0x5d
-#define IDI_HR1_OFS_PD_TEXT_1 0x12b
-#define IDI_HR1_OFS_PD_TEXT_2 0x16d
-#define IDI_HR1_OFS_PD_TEXT_3 0x259
+#define IDI_HR1_OFS_PD_TEXT_0    0x005d
+#define IDI_HR1_OFS_PD_TEXT_1    0x012b
+#define IDI_HR1_OFS_PD_TEXT_2    0x016d
+#define IDI_HR1_OFS_PD_TEXT_3    0x0259
 
-#define IDI_HR1_OFS_INTRO_TEXT 0x66
-#define IDI_HR1_OFS_GAME_OR_HELP 0xf
+#define IDI_HR1_OFS_INTRO_TEXT   0x0066
+#define IDI_HR1_OFS_GAME_OR_HELP 0x000f
 
-#define IDI_HR1_OFS_LOGO_0 0x1003
+#define IDI_HR1_OFS_LOGO_0       0x1003
+#define IDI_HR1_OFS_LOGO_1       0x1800
+
+#define IDI_HR1_OFS_ITEMS        0x0100
+#define IDI_HR1_OFS_ROOMS        0x050a
+#define IDI_HR1_OFS_PICS         0x4b00
+#define IDI_HR1_OFS_CMDS_0       0x3c00
+#define IDI_HR1_OFS_CMDS_1       0x3d00
+
+#define IDI_HR1_OFS_ITEM_OFFSETS 0x68ff
+#define IDI_HR1_OFS_LINE_ART     0x4f00
+
+#define IDI_HR1_OFS_VERBS        0x3800
+#define IDI_HR1_OFS_NOUNS        0x0f00
 
 HiRes1Engine::HiRes1Engine(OSystem *syst, const AdlGameDescription *gd) :
 		AdlEngine(syst, gd) {
@@ -184,7 +202,7 @@ void HiRes1Engine::runIntro() {
 		error("Failed to open file");
 
 	// Title screen shown during loading
-	file.seek(0x1800);
+	file.seek(IDI_HR1_OFS_LOGO_1);
 	_display->loadFrameBuffer(file);
 	_display->updateHiResScreen();
 	delay(2000);
@@ -246,15 +264,15 @@ void HiRes1Engine::initState() {
 	_state.isDark = false;
 
 	_state.vars.clear();
-	_state.vars.resize(20);
+	_state.vars.resize(IDI_HR1_NUM_VARS);
 
 	if (!f.open("ADVENTURE"))
 		error("Failed to open file");
 
 	// Load room data from executable
 	_state.rooms.clear();
-	f.seek(0x50a);
-	for (uint i = 0; i < MH_ROOMS; ++i) {
+	f.seek(IDI_HR1_OFS_ROOMS);
+	for (uint i = 0; i < IDI_HR1_NUM_ROOMS; ++i) {
 		Room room;
 		f.readByte();
 		room.description = f.readByte();
@@ -265,9 +283,9 @@ void HiRes1Engine::initState() {
 		_state.rooms.push_back(room);
 	}
 
-	// Load inventory data from executable
+	// Load item data from executable
 	_state.items.clear();
-	f.seek(0x100);
+	f.seek(IDI_HR1_OFS_ITEMS);
 	while (f.readByte() != 0xff) {
 		Item item;
 		item.noun = f.readByte();
@@ -321,8 +339,8 @@ void HiRes1Engine::runGame() {
 	}
 
 	// Load picture data from executable
-	f.seek(0x4b00);
-	for (uint i = 0; i < MH_PICS; ++i) {
+	f.seek(IDI_HR1_OFS_PICS);
+	for (uint i = 0; i < IDI_HR1_NUM_PICS; ++i) {
 		struct Picture pic;
 		pic.block = f.readByte();
 		pic.offset = f.readUint16LE();
@@ -330,15 +348,15 @@ void HiRes1Engine::runGame() {
 	}
 
 	// Load commands from executable
-	f.seek(0x3D00);
+	f.seek(IDI_HR1_OFS_CMDS_1);
 	readCommands(f, _roomCommands);
 
-	f.seek(0x3C00);
+	f.seek(IDI_HR1_OFS_CMDS_0);
 	readCommands(f, _globalCommands);
 
 	// Load dropped item offsets
-	f.seek(0x68ff);
-	for (uint i = 0; i < MH_ITEM_OFFSETS; ++i) {
+	f.seek(IDI_HR1_OFS_ITEM_OFFSETS);
+	for (uint i = 0; i < IDI_HR1_NUM_ITEM_OFFSETS; ++i) {
 		Common::Point p;
 		p.x = f.readByte();
 		p.y = f.readByte();
@@ -346,12 +364,12 @@ void HiRes1Engine::runGame() {
 	}
 
 	// Load right-angle line art
-	f.seek(0x4f00);
+	f.seek(IDI_HR1_OFS_LINE_ART);
 	uint16 lineArtTotal = f.readUint16LE();
 	for (uint i = 0; i < lineArtTotal; ++i) {
-		f.seek(0x4f00 + 2 + i * 2);
+		f.seek(IDI_HR1_OFS_LINE_ART + 2 + i * 2);
 		uint16 offset = f.readUint16LE();
-		f.seek(0x4f00 + offset);
+		f.seek(IDI_HR1_OFS_LINE_ART + offset);
 
 		Common::Array<byte> lineArt;
 		byte b = f.readByte();
@@ -362,10 +380,10 @@ void HiRes1Engine::runGame() {
 		_lineArt.push_back(lineArt);
 	}
 
-	f.seek(0x3800);
+	f.seek(IDI_HR1_OFS_VERBS);
 	loadVerbs(f);
 
-	f.seek(0xf00);
+	f.seek(IDI_HR1_OFS_NOUNS);
 	loadNouns(f);
 
 	printASCIIString("\r\r\r\r\r");

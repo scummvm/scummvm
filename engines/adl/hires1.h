@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef ADL_ADL_V1_H
-#define ADL_ADL_V1_H
+#ifndef ADL_HIRES1_H
+#define ADL_HIRES1_H
 
 #include "adl/adl.h"
 
@@ -31,10 +31,6 @@ class ReadStream;
 
 namespace Adl {
 
-enum {
-	IDI_HR1_MSG_
-};
-
 class HiRes1Engine : public AdlEngine {
 public:
 	HiRes1Engine(OSystem *syst, const AdlGameDescription *gd);
@@ -43,12 +39,6 @@ protected:
 	void runGame();
 
 private:
-	enum {
-		MH_ROOMS = 41,
-		MH_PICS = 98,
-		MH_ITEM_OFFSETS = 21
-	};
-
 	void restartGame();
 	void printMessage(uint idx, bool wait = true);
 	uint getEngineMessage(EngineMessage msg);

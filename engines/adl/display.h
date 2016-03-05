@@ -74,10 +74,6 @@ public:
 	void showCursor(bool enable);
 
 private:
-	enum {
-		kTextBufSize = 40 * 24
-	};
-
 	void updateHiResSurface();
 	void showScanlines(bool enable);
 
