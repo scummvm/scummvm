@@ -46,7 +46,7 @@ namespace Adl {
 #define TEXT_BUF_SIZE (TEXT_WIDTH * TEXT_HEIGHT)
 
 #define COLOR_PALETTE_ENTRIES 8
-const byte colorPalette[COLOR_PALETTE_ENTRIES * 3] = {
+static const byte colorPalette[COLOR_PALETTE_ENTRIES * 3] = {
 	0x00, 0x00, 0x00,
 	0xff, 0xff, 0xff,
 	0xc7, 0x34, 0xff,
@@ -65,7 +65,7 @@ const byte colorPalette[COLOR_PALETTE_ENTRIES * 3] = {
 
 // Green monochrome palette
 #define MONO_PALETTE_ENTRIES 2
-const byte monoPalette[MONO_PALETTE_ENTRIES * 3] = {
+static const byte monoPalette[MONO_PALETTE_ENTRIES * 3] = {
 	0x00, 0x00, 0x00,
 	0x00, 0xc0, 0x01
 };
@@ -110,7 +110,7 @@ Display::Display() :
 		_cursorPos(0),
 		_showCursor(false) {
 
-	initGraphics(560, 384, true);
+	initGraphics(DISPLAY_WIDTH * 2, DISPLAY_HEIGHT * 2, true);
 
 	_monochrome = !ConfMan.getBool("color");
 	_scanlines = ConfMan.getBool("scanlines");
