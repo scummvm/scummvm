@@ -36,6 +36,7 @@ private:
 	int _field4;
 	int _field8;
 	CStarControlSub12 _sub12;
+	int _field118;
 	CStarControlSub13 _sub13;
 	CStarControlSub15 _sub15;
 	int _field20C;

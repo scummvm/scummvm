@@ -27,8 +27,8 @@ namespace Titanic {
 
 CStarControlSub11::CStarControlSub11() : 
 		_sub12(nullptr, nullptr), _sub13(nullptr),
-		_field4(0), _field8(0), _field20C(0), _field210(0),
-		_field214(0), _field218(0), _field21C(0) {
+		_field4(0), _field8(0), _field118(0), _field20C(0),
+		_field210(0), _field214(0), _field218(0), _field21C(0) {
 	_sub12.proc3();
 }
 
@@ -36,8 +36,8 @@ void CStarControlSub11::load(SimpleFile *file, int param) {
 	if (!param) {
 		_sub12.load(file, param);
 
-		int val = file->readNumber();
-		if (val)
+		_field118 = file->readNumber();
+		if (_field118)
 			_sub13.load(file, 0);
 
 		_field218 = file->readNumber();
