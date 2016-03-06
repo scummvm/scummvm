@@ -37,6 +37,7 @@
 
 #include "adl/adl.h"
 #include "adl/display.h"
+#include "adl/detection.h"
 
 namespace Adl {
 
@@ -1068,15 +1069,6 @@ void AdlEngine::drawLineArt(const Common::Array<byte> &lineArt, const Common::Po
 			}
 			b >>= 3;
 		} while (b != 0);
-	}
-}
-
-AdlEngine *AdlEngine::create(GameType type, OSystem *syst, const AdlGameDescription *gd) {
-	switch(type) {
-	case kGameTypeHires1:
-		return HiRes1Engine__create(syst, gd);
-	default:
-		error("Unknown GameType");
 	}
 }
 

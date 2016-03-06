@@ -20,34 +20,24 @@
  *
  */
 
-#ifndef ADL_HIRES1_H
-#define ADL_HIRES1_H
+#ifndef ADL_DETECTION_H
+#define ADL_DETECTION_H
 
-#include "adl/adl.h"
-
-namespace Common {
-class ReadStream;
-class Point;
-}
+#include "engines/advancedDetector.h"
 
 namespace Adl {
 
-class HiRes1Engine : public AdlEngine {
-public:
-	HiRes1Engine(OSystem *syst, const AdlGameDescription *gd) : AdlEngine(syst, gd) { }
+#define SAVEGAME_VERSION 0
+#define SAVEGAME_NAME_LEN 32
 
-private:
-	void restartGame();
-	void printMessage(uint idx, bool wait = true);
-	uint getEngineMessage(EngineMessage msg) const;
+enum GameType {
+	GAME_TYPE_NONE,
+	GAME_TYPE_HIRES1
+};
 
-	void initState();
-	void runIntro();
-	void loadData();
-	void drawPic(Common::ReadStream &stream, const Common::Point &pos) const;
-	void drawItems();
-	void drawLine(const Common::Point &p1, const Common::Point &p2, byte color) const;
-	void drawPic(byte pic, Common::Point pos) const;
+struct AdlGameDescription {
+	ADGameDescription desc;
+	GameType gameType;
 };
 
 } // End of namespace Adl

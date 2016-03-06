@@ -28,7 +28,7 @@
 
 #include "engines/advancedDetector.h"
 
-#include "adl/adl.h"
+#include "adl/detection.h"
 
 namespace Adl {
 
@@ -59,18 +59,12 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 	AD_EXTRA_GUI_OPTIONS_TERMINATOR
 };
 
-struct AdlGameDescription {
-	ADGameDescription desc;
-	GameType gameType;
-};
-
 static const PlainGameDescriptor adlGames[] = {
 	{"hires1", "Hi-Res Adventure #1: Mystery House"},
 	{0, 0}
 };
 
 static const AdlGameDescription gameDescriptions[] = {
-
 	{ // MD5 by waltervn
 		{
 			"hires1", 0,
@@ -85,9 +79,9 @@ static const AdlGameDescription gameDescriptions[] = {
 			ADGF_NO_FLAGS,
 			GUIO2(GAMEOPTION_COLOR, GAMEOPTION_SCANLINES)
 		},
-		kGameTypeHires1
+		GAME_TYPE_HIRES1
 	},
-	{AD_TABLE_END_MARKER, kGameTypeNone}
+	{ AD_TABLE_END_MARKER, GAME_TYPE_NONE }
 };
 
 class AdlMetaEngine : public AdvancedMetaEngine {
@@ -189,7 +183,7 @@ SaveStateList AdlMetaEngine::listSaves(const char *target) const {
 		const Common::String &fileName = files[i];
 		Common::InSaveFile *inFile = saveFileMan->openForLoading(fileName);
 		if (!inFile) {
-			warning("Cannot open save file %s", fileName.c_str());
+			warning("Cannot open save file '%s'", fileName.c_str());
 			continue;
 		}
 
@@ -201,7 +195,7 @@ SaveStateList AdlMetaEngine::listSaves(const char *target) const {
 
 		byte saveVersion = inFile->readByte();
 		if (saveVersion != SAVEGAME_VERSION) {
-			warning("Save game version %i not supported in '%s'", saveVersion, fileName.c_str());
+			warning("Unsupported save game version %i found in '%s'", saveVersion, fileName.c_str());
 			delete inFile;
 			continue;
 		}
@@ -225,10 +219,23 @@ void AdlMetaEngine::removeSaveState(const char *target, int slot) const {
 	g_system->getSavefileManager()->removeSavefile(fileName);
 }
 
+Engine *HiRes1Engine_create(OSystem *syst, const AdlGameDescription *gd);
+
 bool AdlMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *gd) const {
-	if (gd)
-		*engine = AdlEngine::create(((const AdlGameDescription *)gd)->gameType, syst, (const AdlGameDescription *)gd);
-	return gd != nullptr;
+	if (!gd)
+		return false;
+
+	const AdlGameDescription *adlGd = (const AdlGameDescription *)gd;
+
+	switch (adlGd->gameType) {
+	case GAME_TYPE_HIRES1:
+		*engine = HiRes1Engine_create(syst, adlGd);
+		break;
+	default:
+		error("Unknown GameType");
+	}
+
+	return true;
 }
 
 } // End of namespace Adl

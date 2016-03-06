@@ -34,19 +34,10 @@ class SeekableReadStream;
 }
 
 namespace Adl {
-
-#define SAVEGAME_VERSION 0
-#define SAVEGAME_NAME_LEN 32
-
 class Display;
 class Parser;
 class Console;
 struct AdlGameDescription;
-
-enum GameType {
-	kGameTypeNone = 0,
-	kGameTypeHires1
-};
 
 struct StringOffset {
 	int stringIdx;
@@ -166,8 +157,6 @@ typedef Common::HashMap<Common::String, uint> WordMap;
 class AdlEngine : public Engine {
 public:
 	virtual ~AdlEngine();
-
-	static AdlEngine *create(GameType type, OSystem *syst, const AdlGameDescription *gd);
 
 protected:
 	AdlEngine(OSystem *syst, const AdlGameDescription *gd);

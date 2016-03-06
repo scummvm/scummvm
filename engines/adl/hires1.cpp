@@ -98,10 +98,6 @@ static const StringOffset stringOffsets[] = {
 #define IDI_HR1_OFS_VERBS        0x3800
 #define IDI_HR1_OFS_NOUNS        0x0f00
 
-HiRes1Engine::HiRes1Engine(OSystem *syst, const AdlGameDescription *gd) :
-		AdlEngine(syst, gd) {
-}
-
 void HiRes1Engine::runIntro() {
 	Common::File file;
 
@@ -462,7 +458,7 @@ void HiRes1Engine::drawLine(const Common::Point &p1, const Common::Point &p2, by
 	}
 }
 
-AdlEngine *HiRes1Engine__create(OSystem *syst, const AdlGameDescription *gd) {
+Engine *HiRes1Engine_create(OSystem *syst, const AdlGameDescription *gd) {
 	return new HiRes1Engine(syst, gd);
 }
 
