@@ -417,7 +417,7 @@ CelObj &ScreenItem::getCelObj() {
 }
 
 void ScreenItem::printDebugInfo(Console *con) const {
-	con->debugPrintf("%x:%x (%s), prio %d, x %d, y %d, z: %d, scaledX: %d, scaledY: %d flags: %d\n",
+	con->debugPrintf("%04x:%04x (%s), prio %d, x %d, y %d, z: %d, scaledX: %d, scaledY: %d flags: %d\n",
 		_object.getSegment(), _object.getOffset(),
 		g_sci->getEngineState()->_segMan->getObjectName(_object),
 		_priority,
