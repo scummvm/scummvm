@@ -43,7 +43,7 @@ private:
 
 	void initState();
 	void runIntro();
-	void runGame();
+	void loadData();
 	void drawPic(Common::ReadStream &stream, const Common::Point &pos);
 	void drawItems();
 	void drawLine(const Common::Point &p1, const Common::Point &p2, byte color);

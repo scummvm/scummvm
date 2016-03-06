@@ -180,7 +180,8 @@ protected:
 	typedef Common::HashMap<Common::String, uint> WordMap;
 
 	virtual void runIntro() { }
-	virtual void runGame() = 0;
+	virtual void loadData() = 0;
+	void runGame();
 	virtual void initState() = 0;
 	virtual void restartGame() = 0;
 	virtual uint getEngineMessage(EngineMessage msg) = 0;
