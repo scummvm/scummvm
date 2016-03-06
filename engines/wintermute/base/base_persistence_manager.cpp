@@ -56,7 +56,7 @@ namespace Wintermute {
 #define SAVE_MAGIC_3    0x12564154
 
 //////////////////////////////////////////////////////////////////////////
-BasePersistenceManager::BasePersistenceManager(const char *savePrefix, bool deleteSingleton) {
+BasePersistenceManager::BasePersistenceManager(const Common::String &savePrefix, bool deleteSingleton) {
 	_saving = false;
 	_offset = 0;
 	_saveStream = nullptr;
@@ -91,7 +91,7 @@ BasePersistenceManager::BasePersistenceManager(const char *savePrefix, bool dele
 
 	_thumbnailDataSize = 0;
 	_thumbnailData = nullptr;
-	if (savePrefix) {
+	if (savePrefix != "") {
 		_savePrefix = savePrefix;
 	} else if (_gameRef) {
 		_savePrefix = _gameRef->getGameTargetName();
