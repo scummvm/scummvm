@@ -31,37 +31,6 @@
 
 namespace Adl {
 
-#define IDS_HR1_EXE_0    "AUTO LOAD OBJ"
-#define IDS_HR1_EXE_1    "ADVENTURE"
-#define IDS_HR1_LOADER   "MYSTERY.HELLO"
-#define IDS_HR1_MESSAGES "MESSAGES"
-
-#define IDI_HR1_NUM_ROOMS         41
-#define IDI_HR1_NUM_PICS          98
-#define IDI_HR1_NUM_VARS          20
-#define IDI_HR1_NUM_ITEM_OFFSETS  21
-#define IDI_HR1_NUM_MESSAGES     167
-
-// Messages used outside of scripts
-#define IDI_HR1_MSG_CANT_GO_THERE      137
-#define IDI_HR1_MSG_DONT_UNDERSTAND     37
-#define IDI_HR1_MSG_ITEM_DOESNT_MOVE   151
-#define IDI_HR1_MSG_ITEM_NOT_HERE      152
-#define IDI_HR1_MSG_THANKS_FOR_PLAYING 140
-#define IDI_HR1_MSG_DONT_HAVE_IT       127
-#define IDI_HR1_MSG_GETTING_DARK         7
-
-// Strings embedded in the executable
-enum {
-	IDI_HR1_STR_CANT_GO_THERE = IDI_STR_TOTAL,
-	IDI_HR1_STR_DONT_HAVE_IT,
-	IDI_HR1_STR_DONT_UNDERSTAND,
-	IDI_HR1_STR_GETTING_DARK,
-	IDI_HR1_STR_PRESS_RETURN,
-
-	IDI_HR1_STR_TOTAL
-};
-
 // Offsets for strings inside executable
 static const StringOffset stringOffsets[] = {
 	{ IDI_STR_ENTER_COMMAND,       0x5bbc },
@@ -75,30 +44,7 @@ static const StringOffset stringOffsets[] = {
 	{ IDI_HR1_STR_PRESS_RETURN,    0x5f68 }
 };
 
-#define IDI_HR1_OFS_PD_TEXT_0    0x005d
-#define IDI_HR1_OFS_PD_TEXT_1    0x012b
-#define IDI_HR1_OFS_PD_TEXT_2    0x016d
-#define IDI_HR1_OFS_PD_TEXT_3    0x0259
-
-#define IDI_HR1_OFS_INTRO_TEXT   0x0066
-#define IDI_HR1_OFS_GAME_OR_HELP 0x000f
-
-#define IDI_HR1_OFS_LOGO_0       0x1003
-#define IDI_HR1_OFS_LOGO_1       0x1800
-
-#define IDI_HR1_OFS_ITEMS        0x0100
-#define IDI_HR1_OFS_ROOMS        0x050a
-#define IDI_HR1_OFS_PICS         0x4b00
-#define IDI_HR1_OFS_CMDS_0       0x3c00
-#define IDI_HR1_OFS_CMDS_1       0x3d00
-
-#define IDI_HR1_OFS_ITEM_OFFSETS 0x68ff
-#define IDI_HR1_OFS_LINE_ART     0x4f00
-
-#define IDI_HR1_OFS_VERBS        0x3800
-#define IDI_HR1_OFS_NOUNS        0x0f00
-
-void HiRes1Engine::runIntro() {
+void HiRes1Engine::runIntro() const {
 	Common::File file;
 
 	if (!file.open(IDS_HR1_EXE_0))
@@ -175,13 +121,20 @@ void HiRes1Engine::runIntro() {
 		uint page = 0;
 		while (pages[page] != 0) {
 			_display->home();
-			printStrings(file, pages[page++]);
+
+			uint count = pages[page++];
+			for (uint i = 0; i < count; ++i) {
+				str = readString(file);
+				_display->printString(str);
+				file.seek(3, SEEK_CUR);
+			}
+
 			inputString();
 
 			if (g_engine->shouldQuit())
 				return;
 
-			file.seek(9, SEEK_CUR);
+			file.seek(6, SEEK_CUR);
 		}
 	}
 
@@ -381,7 +334,7 @@ void HiRes1Engine::loadData() {
 	loadWords(f, _nouns);
 }
 
-void HiRes1Engine::printMessage(uint idx, bool wait) {
+void HiRes1Engine::printMessage(uint idx, bool wait) const {
 	// Hardcoded overrides that don't wait after printing
 	// Note: strings may differ slightly from the ones in MESSAGES
 	switch (idx) {

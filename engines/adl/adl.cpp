@@ -156,18 +156,6 @@ Common::String AdlEngine::readString(Common::ReadStream &stream, byte until) con
 	return str;
 }
 
-void AdlEngine::printStrings(Common::SeekableReadStream &stream, int count) const {
-	while (1) {
-		Common::String str = readString(stream);
-		_display->printString(str);
-
-		if (--count == 0)
-			break;
-
-		stream.seek(3, SEEK_CUR);
-	};
-}
-
 Common::String AdlEngine::getEngineString(int str) const {
 	return _strings[str];
 }

@@ -162,14 +162,16 @@ protected:
 	AdlEngine(OSystem *syst, const AdlGameDescription *gd);
 
 	Common::String readString(Common::ReadStream &stream, byte until = 0) const;
-	void printStrings(Common::SeekableReadStream &stream, int count = 1) const;
-	void printMessage(uint idx, bool wait = true) const;
+
+	virtual void printMessage(uint idx, bool wait = true) const;
 	void printASCIIString(const Common::String &str) const;
-	void readCommands(Common::ReadStream &stream, Commands &commands);
-	Common::String inputString(byte prompt = 0) const;
 	void delay(uint32 ms) const;
+
+	Common::String inputString(byte prompt = 0) const;
 	byte inputKey() const;
+
 	void loadWords(Common::ReadStream &stream, WordMap &map) const;
+	void readCommands(Common::ReadStream &stream, Commands &commands);
 
 	Display *_display;
 	Parser *_parser;
@@ -196,7 +198,7 @@ protected:
 	State _state;
 
 private:
-	virtual void runIntro() { }
+	virtual void runIntro() const { }
 	virtual void loadData() = 0;
 	virtual void initState() = 0;
 	virtual void restartGame() = 0;
