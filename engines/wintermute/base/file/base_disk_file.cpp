@@ -117,7 +117,7 @@ Common::SeekableReadStream *openDiskFile(const Common::String &filename) {
 	// The original interpreter on Windows usually simply ignores them when it can't find them.
 	// We try to turn the known ones into relative paths.
 	if (fixedFilename.contains(':')) {
-		Common::String knownPrefixes[] = { // Known absolute paths
+		const char* const knownPrefixes[] = { // Known absolute paths
 				"c:/windows/fonts/", // East Side Story refers to "c:\windows\fonts\framd.ttf"
 				"c:/carol6/svn/data/", // Carol Reed 6: Black Circle refers to "c:\carol6\svn\data\sprites\system\help.png"
 				"f:/dokument/spel 5/demo/data/" // Carol Reed 5 (non-demo) refers to "f:\dokument\spel 5\demo\data\scenes\credits\op_cred_00\op_cred_00.jpg"
@@ -127,7 +127,7 @@ Common::SeekableReadStream *openDiskFile(const Common::String &filename) {
 
 		for (uint i = 0; i < ARRAYSIZE(knownPrefixes); i++) {
 			if (fixedFilename.hasPrefix(knownPrefixes[i])) {
-				fixedFilename = filename.c_str() + knownPrefixes[i].size();
+				fixedFilename = fixedFilename.c_str() + strlen(knownPrefixes[i]);
 				matched = true;
 			}
 		}
