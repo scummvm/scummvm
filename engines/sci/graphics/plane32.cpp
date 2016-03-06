@@ -839,7 +839,7 @@ int16 PlaneList::getTopSciPlanePriority() const {
 
 void PlaneList::add(Plane *plane) {
 	for (iterator it = begin(); it != end(); ++it) {
-		if ((*it)->_priority < plane->_priority) {
+		if ((*it)->_priority > plane->_priority) {
 			insert(it, plane);
 			return;
 		}
