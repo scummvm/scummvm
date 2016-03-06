@@ -24,9 +24,11 @@
 #define STARK_GFX_DRIVER_H
 
 #include "common/rect.h"
-#include "graphics/surface.h"
-#include "math/matrix4.h"
-#include "math/vector3d.h"
+#include "graphics/pixelformat.h"
+
+namespace Graphics {
+struct Surface;
+}
 
 namespace Stark {
 

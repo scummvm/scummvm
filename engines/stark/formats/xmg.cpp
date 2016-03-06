@@ -28,6 +28,7 @@
 #include "graphics/pixelformat.h"
 #include "graphics/surface.h"
 #include "common/stream.h"
+#include "common/textconsole.h"
 
 namespace Stark {
 namespace Formats {

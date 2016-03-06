@@ -29,10 +29,6 @@
 
 #include "engines/stark/gfx/driver.h"
 
-#include "common/rect.h"
-
-#include "math/vector2d.h"
-
 namespace OpenGL {
 class Shader;
 }
