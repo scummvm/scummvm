@@ -215,8 +215,8 @@ bool BasePersistenceManager::getSaveExists(int slot) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool BasePersistenceManager::initSave(const char *desc) {
-	if (!desc) {
+bool BasePersistenceManager::initSave(const Common::String &desc) {
+	if (desc == "") {
 		return STATUS_FAILED;
 	}
 
@@ -297,11 +297,11 @@ bool BasePersistenceManager::initSave(const char *desc) {
 
 		uint32 dataOffset = _offset +
 		                    sizeof(uint32) + // data offset
-		                    sizeof(uint32) + strlen(desc) + 1 + // description
+		                    sizeof(uint32) + strlen(desc.c_str()) + 1 + // description
 		                    sizeof(uint32); // timestamp
 
 		putDWORD(dataOffset);
-		putString(desc);
+		putString(desc.c_str());
 
 		g_system->getTimeAndDate(_savedTimestamp);
 		putTimeDate(_savedTimestamp);
