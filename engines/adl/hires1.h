@@ -27,6 +27,7 @@
 
 namespace Common {
 class ReadStream;
+class Point;
 }
 
 namespace Adl {
@@ -35,9 +36,6 @@ class HiRes1Engine : public AdlEngine {
 public:
 	HiRes1Engine(OSystem *syst, const AdlGameDescription *gd);
 
-protected:
-	void runGame();
-
 private:
 	void restartGame();
 	void printMessage(uint idx, bool wait = true);
@@ -45,6 +43,7 @@ private:
 
 	void initState();
 	void runIntro();
+	void runGame();
 	void drawPic(Common::ReadStream &stream, const Common::Point &pos);
 	void drawItems();
 	void drawLine(const Common::Point &p1, const Common::Point &p2, byte color);

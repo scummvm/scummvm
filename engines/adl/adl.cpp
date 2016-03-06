@@ -94,7 +94,10 @@ Common::String AdlEngine::readString(Common::ReadStream &stream, byte until) {
 	while (1) {
 		byte b = stream.readByte();
 
-		if (stream.eos() || stream.err() || b == until)
+		if (stream.eos() || stream.err())
+			error("Error reading string");
+
+		if (b == until)
 			break;
 
 		str += b;

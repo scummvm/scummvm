@@ -31,10 +31,16 @@
 
 namespace Adl {
 
-#define IDI_HR1_NUM_ROOMS        41
-#define IDI_HR1_NUM_PICS         98
-#define IDI_HR1_NUM_VARS         20
-#define IDI_HR1_NUM_ITEM_OFFSETS 21
+#define IDS_HR1_EXE_0    "AUTO LOAD OBJ"
+#define IDS_HR1_EXE_1    "ADVENTURE"
+#define IDS_HR1_LOADER   "MYSTERY.HELLO"
+#define IDS_HR1_MESSAGES "MESSAGES"
+
+#define IDI_HR1_NUM_ROOMS         41
+#define IDI_HR1_NUM_PICS          98
+#define IDI_HR1_NUM_VARS          20
+#define IDI_HR1_NUM_ITEM_OFFSETS  21
+#define IDI_HR1_NUM_MESSAGES     167
 
 // Messages used outside of scripts
 #define IDI_HR1_MSG_CANT_GO_THERE      137
@@ -99,8 +105,8 @@ HiRes1Engine::HiRes1Engine(OSystem *syst, const AdlGameDescription *gd) :
 void HiRes1Engine::runIntro() {
 	Common::File file;
 
-	if (!file.open("AUTO LOAD OBJ"))
-		error("Failed to open file");
+	if (!file.open(IDS_HR1_EXE_0))
+		error("Failed to open file '" IDS_HR1_EXE_0 "'");
 
 	file.seek(IDI_HR1_OFS_LOGO_0);
 	_display->setMode(DISPLAY_MODE_HIRES);
@@ -114,8 +120,8 @@ void HiRes1Engine::runIntro() {
 	_display->setMode(DISPLAY_MODE_TEXT);
 
 	Common::File basic;
-	if (!basic.open("MYSTERY.HELLO"))
-		error("Failed to open file");
+	if (!basic.open(IDS_HR1_LOADER))
+		error("Failed to open file '" IDS_HR1_LOADER "'");
 
 	Common::String str;
 
@@ -189,8 +195,8 @@ void HiRes1Engine::runIntro() {
 
 	_display->setMode(DISPLAY_MODE_MIXED);
 
-	if (!file.open("ADVENTURE"))
-		error("Failed to open file");
+	if (!file.open(IDS_HR1_EXE_1))
+		error("Failed to open file '" IDS_HR1_EXE_1 "'");
 
 	// Title screen shown during loading
 	file.seek(IDI_HR1_OFS_LOGO_1);
@@ -241,7 +247,7 @@ void HiRes1Engine::drawPic(byte pic, Common::Point pos) {
 	Common::String name = Common::String::format("BLOCK%i", _pictures[pic].block);
 
 	if (!f.open(name))
-		error("Failed to open file");
+		error("Failed to open file '%s'", name.c_str());
 
 	f.seek(_pictures[pic].offset);
 	drawPic(f, pos);
@@ -257,8 +263,8 @@ void HiRes1Engine::initState() {
 	_state.vars.clear();
 	_state.vars.resize(IDI_HR1_NUM_VARS);
 
-	if (!f.open("ADVENTURE"))
-		error("Failed to open file");
+	if (!f.open(IDS_HR1_EXE_1))
+		error("Failed to open file '" IDS_HR1_EXE_1 "'");
 
 	// Load room data from executable
 	_state.rooms.clear();
@@ -311,16 +317,16 @@ void HiRes1Engine::runGame() {
 
 	Common::File f;
 
-	if (!f.open("MESSAGES"))
-		error("Failed to open file");
+	if (!f.open(IDS_HR1_MESSAGES))
+		error("Failed to open file '" IDS_HR1_MESSAGES "'");
 
-	while (!f.eos() && !f.err())
+	for (uint i = 0; i < IDI_HR1_NUM_MESSAGES; ++i)
 		_messages.push_back(readString(f, APPLECHAR('\r')) + APPLECHAR('\r'));
 
 	f.close();
 
-	if (!f.open("ADVENTURE"))
-		error("Failed to open file");
+	if (!f.open(IDS_HR1_EXE_1))
+		error("Failed to open file '" IDS_HR1_EXE_1 "'");
 
 	// Load strings from executable
 	_strings.resize(IDI_HR1_STR_TOTAL);
@@ -370,6 +376,9 @@ void HiRes1Engine::runGame() {
 		}
 		_lineArt.push_back(lineArt);
 	}
+
+	if (f.eos() || f.err())
+		error("Failed to read game data from '" IDS_HR1_EXE_1 "'");
 
 	f.seek(IDI_HR1_OFS_VERBS);
 	loadVerbs(f);
@@ -465,6 +474,8 @@ uint HiRes1Engine::getEngineMessage(EngineMessage msg) {
 }
 
 void HiRes1Engine::drawLine(const Common::Point &p1, const Common::Point &p2, byte color) {
+	// This draws a four-connected line
+
 	int16 deltaX = p2.x - p1.x;
 	int8 xStep = 1;
 

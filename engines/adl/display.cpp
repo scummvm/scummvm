@@ -213,6 +213,9 @@ void Display::loadFrameBuffer(Common::ReadStream &stream) {
 		}
 		dst -= DISPLAY_PITCH * 63;
 	}
+
+	if (stream.eos() || stream.err())
+		error("Failed to read frame buffer");
 }
 
 void Display::putPixel(const Common::Point &p, byte color) {
