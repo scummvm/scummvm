@@ -119,6 +119,8 @@ Common::SeekableReadStream *openDiskFile(const Common::String &filename) {
 			fixedFilename = filename.c_str() + 14;
 		} else if (fixedFilename.hasPrefix("c:/carol6/svn/data/")) {	// Carol Reed 6: Black Circle refers to "c:\carol6\svn\data\sprites\system\help.png"
 			fixedFilename = fixedFilename.c_str() + 19;
+		} else if (fixedFilename.hasPrefix("f:/dokument/spel 5/demo/data/")) { // Carol Reed 5 (non-demo) refers to "f:\dokument\spel 5\demo\data\scenes\credits\op_cred_00\op_cred_00.jpg"
+			fixedFilename = fixedFilename.c_str() + 29;
 		} else {
 			error("openDiskFile::Absolute path or invalid filename used in %s", filename.c_str());
 		}
