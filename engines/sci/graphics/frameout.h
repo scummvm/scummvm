@@ -259,6 +259,13 @@ private:
 	PlaneList _planes;
 
 	/**
+	 * Updates an existing plane with properties from the
+	 * given VM object.
+	 */
+	void updatePlane(Plane &plane);
+
+public:
+	/**
 	 * Creates and adds a new plane to the plane list, or
 	 * cancels deletion and updates an already-existing
 	 * plane if a plane matching the given plane VM object
@@ -270,14 +277,18 @@ private:
 	void addPlane(Plane &plane);
 
 	/**
-	 * Updates an existing plane with properties from the
-	 * given VM object.
+	 * Deletes a plane within the current plane list.
+	 *
+	 * @note This method is on Screen in SCI engine, but it
+	 * is only ever called on `GraphicsMgr.screen`.
 	 */
-	void updatePlane(Plane &plane);
+	void deletePlane(Plane &plane);
 
-public:
 	const PlaneList &getPlanes() const {
 		return _planes;
+	}
+	const PlaneList &getVisiblePlanes() const {
+		return _visiblePlanes;
 	}
 	void kernelAddPlane(const reg_t object);
 	void kernelUpdatePlane(const reg_t object);
@@ -423,13 +434,6 @@ private:
 	void drawScreenItemList(const DrawList &screenItemList);
 
 	/**
-	 * Updates the internal screen buffer for the next
-	 * frame. If `shouldShowBits` is true, also sends the
-	 * buffer to hardware.
-	 */
-	void frameOut(const bool shouldShowBits, const Common::Rect &rect = Common::Rect());
-
-	/**
 	 * Adds a new rectangle to the list of regions to write
 	 * out to the hardware. The provided rect may be merged
 	 * into an existing rectangle to reduce the number of
@@ -467,6 +471,13 @@ public:
 	}
 
 	void kernelFrameOut(const bool showBits);
+
+	/**
+	 * Updates the internal screen buffer for the next
+	 * frame. If `shouldShowBits` is true, also sends the
+	 * buffer to hardware.
+	 */
+	void frameOut(const bool shouldShowBits, const Common::Rect &rect = Common::Rect());
 
 	/**
 	 * Modifies the raw pixel data for the next frame with

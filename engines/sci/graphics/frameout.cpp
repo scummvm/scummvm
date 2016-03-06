@@ -365,6 +365,21 @@ void GfxFrameout::kernelDeletePlane(const reg_t object) {
 	}
 }
 
+void GfxFrameout::deletePlane(Plane &planeToFind) {
+	Plane *plane = _planes.findByObject(planeToFind._object);
+	if (plane == nullptr) {
+		error("Invalid plane passed to deletePlane");
+	}
+
+	if (plane->_created) {
+		_planes.erase(plane);
+	} else {
+		plane->_created = 0;
+		plane->_moved = 0;
+		plane->_deleted = getScreenCount();
+	}
+}
+
 int16 GfxFrameout::kernelGetHighPlanePri() {
 	return _planes.getTopSciPlanePriority();
 }
@@ -765,7 +780,7 @@ void GfxFrameout::drawScreenItemList(const DrawList &screenItemList) {
 		mergeToShowList(drawItem.rect, _showList, _overdrawThreshold);
 		ScreenItem &screenItem = *drawItem.screenItem;
 		// TODO: Remove
-//		debug("Drawing item %04x:%04x to %d %d %d %d", PRINT_REG(screenItem._object), drawItem.rect.left, drawItem.rect.top, drawItem.rect.right, drawItem.rect.bottom);
+//		debug("Drawing item %04x:%04x to %d %d %d %d", PRINT_REG(screenItem._object), PRINT_RECT(drawItem.rect));
 		CelObj &celObj = *screenItem._celObj;
 		celObj.draw(_currentBuffer, screenItem, drawItem.rect, screenItem._mirrorX ^ celObj._mirrorX);
 	}
@@ -1010,8 +1025,6 @@ void GfxFrameout::alterVmap(const Palette &palette1, const Palette &palette2, co
 	// NOTE: This is currBuffer->ptr in SCI engine
 	byte *pixels = (byte *)_currentBuffer.getPixels();
 
-	// TODO: Guessing that display width/height is the correct
-	// equivalent to screen width/height in SCI engine
 	for (int pixelIndex = 0, numPixels = _currentBuffer.screenWidth * _currentBuffer.screenHeight; pixelIndex < numPixels; ++pixelIndex) {
 		byte currentValue = pixels[pixelIndex];
 		int8 styleRangeValue = styleRanges[currentValue];

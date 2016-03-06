@@ -83,7 +83,7 @@ _mirrorX(false) {
 	}
 }
 
-ScreenItem::ScreenItem(const reg_t plane, const CelInfo32 &celInfo, const Common::Rect &rect, const ScaleInfo &scaleInfo) :
+ScreenItem::ScreenItem(const reg_t plane, const CelInfo32 &celInfo, const Common::Point &position, const ScaleInfo &scaleInfo) :
 _plane(plane),
 _scale(scaleInfo),
 _useInsetRect(false),
@@ -91,7 +91,7 @@ _z(0),
 _celInfo(celInfo),
 _celObj(nullptr),
 _fixPriority(false),
-_position(rect.left, rect.top),
+_position(position),
 _object(make_reg(0, _nextObjectId++)),
 _pictureId(-1),
 _created(g_sci->_gfxFrameout->getScreenCount()),

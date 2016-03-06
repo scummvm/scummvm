@@ -39,11 +39,18 @@ struct SciEvent {
 	uint16 character;
 
 	/**
-	 * The mouse position at the time the event was created.
-	 *
-	 * These are display coordinates!
+	 * The mouse position at the time the event was created,
+	 * in display coordinates.
 	 */
 	Common::Point mousePos;
+
+#ifdef ENABLE_SCI32
+	/**
+	 * The mouse position at the time the event was created,
+	 * in script coordinates.
+	 */
+	Common::Point mousePosSci;
+#endif
 };
 
 /*Values for type*/
@@ -59,6 +66,9 @@ struct SciEvent {
 #define SCI_EVENT_ANY             0x7fff
 
 /* Keycodes of special keys: */
+#ifdef ENABLE_SCI32
+#define SCI_KEY_ETX           3
+#endif
 #define SCI_KEY_ESC          27
 #define SCI_KEY_BACKSPACE     8
 #define SCI_KEY_ENTER        13

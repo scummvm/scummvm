@@ -29,6 +29,9 @@
 #include "sci/console.h"
 #include "sci/engine/state.h"
 #include "sci/engine/kernel.h"
+#ifdef ENABLE_SCI32
+#include "sci/graphics/frameout.h"
+#endif
 #include "sci/graphics/screen.h"
 
 namespace Sci {
@@ -133,8 +136,13 @@ static int altify(int ch) {
 }
 
 SciEvent EventManager::getScummVMEvent() {
-	SciEvent input = { SCI_EVENT_NONE, 0, 0, Common::Point(0, 0) };
-	SciEvent noEvent = { SCI_EVENT_NONE, 0, 0, Common::Point(0, 0) };
+#ifdef ENABLE_SCI32
+	SciEvent input = { SCI_EVENT_NONE, 0, 0, Common::Point(), Common::Point() };
+	SciEvent noEvent = { SCI_EVENT_NONE, 0, 0, Common::Point(), Common::Point() };
+#else
+	SciEvent input = { SCI_EVENT_NONE, 0, 0, Common::Point() };
+	SciEvent noEvent = { SCI_EVENT_NONE, 0, 0, Common::Point() };
+#endif
 
 	Common::EventManager *em = g_system->getEventManager();
 	Common::Event ev;
@@ -155,7 +163,20 @@ SciEvent EventManager::getScummVMEvent() {
 	// via pollEvent.
 	// We also adjust the position based on the scaling of the screen.
 	Common::Point mousePos = em->getMousePos();
-	g_sci->_gfxScreen->adjustBackUpscaledCoordinates(mousePos.y, mousePos.x);
+
+#if ENABLE_SCI32
+	if (getSciVersion() >= SCI_VERSION_2) {
+		Buffer &screen = g_sci->_gfxFrameout->getCurrentBuffer();
+
+		Common::Point mousePosSci = mousePos;
+		mulru(mousePosSci, Ratio(screen.scriptWidth, screen.screenWidth), Ratio(screen.scriptHeight, screen.screenHeight));
+		noEvent.mousePosSci = input.mousePosSci = mousePosSci;
+	} else {
+#endif
+		g_sci->_gfxScreen->adjustBackUpscaledCoordinates(mousePos.y, mousePos.x);
+#if ENABLE_SCI32
+	}
+#endif
 
 	noEvent.mousePos = input.mousePos = mousePos;
 
@@ -302,6 +323,11 @@ SciEvent EventManager::getScummVMEvent() {
 		input.character = altify(input.character);
 	if (getSciVersion() <= SCI_VERSION_1_MIDDLE && (scummVMKeyFlags & Common::KBD_CTRL) && input.character > 0 && input.character < 27)
 		input.character += 96; // 0x01 -> 'a'
+#ifdef ENABLE_SCI32
+	if (getSciVersion() >= SCI_VERSION_2 && (scummVMKeyFlags & Common::KBD_CTRL) && input.character == 'c') {
+		input.character = SCI_KEY_ETX;
+	}
+#endif
 
 	// If no actual key was pressed (e.g. if only a modifier key was pressed),
 	// ignore the event
@@ -329,7 +355,11 @@ void EventManager::updateScreen() {
 }
 
 SciEvent EventManager::getSciEvent(uint32 mask) {
-	SciEvent event = { SCI_EVENT_NONE, 0, 0, Common::Point(0, 0) };
+#ifdef ENABLE_SCI32
+	SciEvent event = { SCI_EVENT_NONE, 0, 0, Common::Point(), Common::Point() };
+#else
+	SciEvent event = { SCI_EVENT_NONE, 0, 0, Common::Point() };
+#endif
 
 	EventManager::updateScreen();
 

@@ -180,6 +180,7 @@ void Kernel::mapSelectors() {
 	FIND_SELECTOR(back);
 	FIND_SELECTOR(skip);
 	FIND_SELECTOR(borderColor);
+	FIND_SELECTOR(width);
 	FIND_SELECTOR(fixPriority);
 	FIND_SELECTOR(mirrored);
 	FIND_SELECTOR(visible);
@@ -192,7 +193,12 @@ void Kernel::mapSelectors() {
 	FIND_SELECTOR(textLeft);
 	FIND_SELECTOR(textBottom);
 	FIND_SELECTOR(textRight);
+	FIND_SELECTOR(title);
+	FIND_SELECTOR(titleFont);
+	FIND_SELECTOR(titleFore);
+	FIND_SELECTOR(titleBack);
 	FIND_SELECTOR(magnifier);
+	FIND_SELECTOR(frameOut);
 	FIND_SELECTOR(casts);
 #endif
 }

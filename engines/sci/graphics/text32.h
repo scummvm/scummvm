@@ -45,7 +45,6 @@ class GfxText32 {
 private:
 	SegManager *_segMan;
 	GfxCache *_cache;
-	GfxScreen *_screen;
 
 	/**
 	 * The resource ID of the default font used by the game.
@@ -111,11 +110,6 @@ private:
 	 */
 	TextAlign _alignment;
 
-	/**
-	 * The memory handle of the currently active bitmap.
-	 */
-	reg_t _bitmap;
-
 	int16 _field_20;
 
 	/**
@@ -133,17 +127,9 @@ private:
 	Common::Point _drawPosition;
 
 	void drawFrame(const Common::Rect &rect, const int16 size, const uint8 color, const bool doScaling);
-	void drawTextBox();
-	void erase(const Common::Rect &rect, const bool doScaling);
 
-	void drawChar(const uint8 charIndex);
-	uint16 getCharWidth(const uint8 charIndex, const bool doScaling) const;
+	void drawChar(const char charIndex);
 	void drawText(const uint index, uint length);
-
-	inline int scaleUpWidth(int value) const {
-		const int scriptWidth = g_sci->_gfxFrameout->getCurrentBuffer().scriptWidth;
-		return (value * scriptWidth + _scaledWidth - 1) / _scaledWidth;
-	}
 
 	/**
 	 * Gets the length of the longest run of text available
@@ -162,24 +148,23 @@ private:
 	 */
 	int16 getTextWidth(const uint index, uint length) const;
 
-	/**
-	 * Gets the pixel width of a substring of the currently
-	 * loaded text, with scaling.
-	 */
-	int16 getTextWidth(const Common::String &text, const uint index, const uint length);
-
 	inline Common::Rect scaleRect(const Common::Rect &rect) {
 		Common::Rect scaledRect(rect);
 		int16 scriptWidth = g_sci->_gfxFrameout->getCurrentBuffer().scriptWidth;
 		int16 scriptHeight = g_sci->_gfxFrameout->getCurrentBuffer().scriptHeight;
 		Ratio scaleX(_scaledWidth, scriptWidth);
 		Ratio scaleY(_scaledHeight, scriptHeight);
-		mul(scaledRect, scaleX, scaleY);
+		mulinc(scaledRect, scaleX, scaleY);
 		return scaledRect;
 	}
 
 public:
-	GfxText32(SegManager *segMan, GfxCache *fonts, GfxScreen *screen);
+	GfxText32(SegManager *segMan, GfxCache *fonts);
+
+	/**
+	 * The memory handle of the currently active bitmap.
+	 */
+	reg_t _bitmap;
 
 	/**
 	 * The size of the x-dimension of the coordinate system
@@ -214,15 +199,66 @@ public:
 	reg_t createFontBitmap(const CelInfo32 &celInfo, const Common::Rect &rect, const Common::String &text, const int16 foreColor, const int16 backColor, const GuiResourceId fontId, const int16 skipColor, const int16 borderColor, const bool dimmed, reg_t *outBitmapObject);
 
 	/**
+	 * Creates a font bitmap with a title.
+	 */
+	reg_t createTitledBitmap(const int16 width, const int16 height, const Common::Rect &textRect, const Common::String &text, const int16 foreColor, const int16 backColor, const int16 skipColor, const GuiResourceId fontId, const TextAlign alignment, const int16 borderColor, Common::String &title, const int16 titleForeColor, const int16 titleBackColor, const GuiResourceId titleFontId, const bool doScaling, reg_t *outBitmapObject);
+
+	inline int scaleUpWidth(int value) const {
+		const int scriptWidth = g_sci->_gfxFrameout->getCurrentBuffer().scriptWidth;
+		return (value * scriptWidth + _scaledWidth - 1) / _scaledWidth;
+	}
+
+	inline int scaleUpHeight(int value) const {
+		const int scriptHeight = g_sci->_gfxFrameout->getCurrentBuffer().scriptHeight;
+		return (value * scriptHeight + _scaledHeight - 1) / _scaledHeight;
+	}
+
+	/**
+	 * Draws the text to the bitmap.
+	 */
+	void drawTextBox();
+
+	/**
+	 * Draws the given text to the bitmap.
+	 *
+	 * @note The original engine holds a reference to a
+	 * shared string which lets the text be updated from
+	 * outside of the font manager. Instead, we give this
+	 * extra signature to send the text to draw.
+	 *
+	 * TODO: Use shared string instead?
+	 */
+	void drawTextBox(const Common::String &text);
+
+	/**
+	 * Erases the given rect by filling with the background
+	 * color.
+	 */
+	void erase(const Common::Rect &rect, const bool doScaling);
+
+	void invertRect(const reg_t bitmap, const int16 bitmapStride, const Common::Rect &rect, const uint8 foreColor, const uint8 backColor, const bool doScaling);
+
+	/**
 	 * Sets the font to be used for rendering and
 	 * calculation of text dimensions.
 	 */
 	void setFont(const GuiResourceId fontId);
 
 	/**
+	 * Gets the width of a character.
+	 */
+	uint16 getCharWidth(const char charIndex, const bool doScaling) const;
+
+	/**
 	 * Retrieves the width and height of a block of text.
 	 */
 	Common::Rect getTextSize(const Common::String &text, const int16 maxWidth, bool doScaling);
+
+	/**
+	 * Gets the pixel width of a substring of the currently
+	 * loaded text, with scaling.
+	 */
+	int16 getTextWidth(const Common::String &text, const uint index, const uint length);
 
 	/**
 	 * Retrieves the width of a line of text.

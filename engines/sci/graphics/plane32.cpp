@@ -43,10 +43,10 @@ void DrawList::add(ScreenItem *screenItem, const Common::Rect &rect) {
 #pragma mark Plane
 uint16 Plane::_nextObjectId = 20000;
 
-Plane::Plane(const Common::Rect &gameRect) :
+Plane::Plane(const Common::Rect &gameRect, PlanePictureCodes pictureId) :
 _width(g_sci->_gfxFrameout->getCurrentBuffer().scriptWidth),
 _height(g_sci->_gfxFrameout->getCurrentBuffer().scriptHeight),
-_pictureId(kPlanePicColored),
+_pictureId(pictureId),
 _mirrored(false),
 _back(0),
 _priorityChanged(0),

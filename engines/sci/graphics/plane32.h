@@ -133,7 +133,7 @@ private:
 	 * synchronised to another plane (which calls
 	 * changePic).
 	 */
-	bool _pictureChanged; // ?
+	bool _pictureChanged;
 
 	// TODO: Are these ever actually used?
 	int _field_34, _field_38; // probably a point or ratio
@@ -241,10 +241,18 @@ public:
 	 */
 	static void init();
 
-	Plane(const Common::Rect &gameRect);
+	// NOTE: This constructor signature originally did not accept a
+	// picture ID, but some calls to construct planes with this signature
+	// immediately set the picture ID and then called setType again, so
+	// it made more sense to just make the picture ID a parameter instead.
+	Plane(const Common::Rect &gameRect, PlanePictureCodes pictureId = kPlanePicColored);
+
 	Plane(const reg_t object);
+
 	Plane(const Plane &other);
+
 	void operator=(const Plane &other);
+
 	inline bool operator<(const Plane &other) const {
 		// TODO: In SCI engine, _object is actually a uint16 and can either
 		// contain a MemID (a handle to MemoryMgr, similar to reg_t) or
@@ -318,12 +326,6 @@ private:
 	inline void addPicInternal(const GuiResourceId pictureId, const Common::Point *position, const bool mirrorX);
 
 	/**
-	 * If the plane is a picture plane, re-adds all cels
-	 * from its picture resource to the plane.
-	 */
-	void changePic();
-
-	/**
 	 * Marks all screen items to be deleted that are within
 	 * this plane and match the given picture ID.
 	 */
@@ -351,6 +353,13 @@ public:
 	 * position.
 	 */
 	void addPic(const GuiResourceId pictureId, const Common::Point &position, const bool mirrorX);
+
+	/**
+	 * If the plane is a picture plane, re-adds all cels
+	 * from its picture resource to the plane. Otherwise,
+	 * just clears the _pictureChanged flag.
+	 */
+	void changePic();
 
 #pragma mark -
 #pragma mark Plane - Rendering

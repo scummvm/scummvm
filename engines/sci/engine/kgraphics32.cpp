@@ -670,14 +670,9 @@ reg_t kBitmapCreateFromUnknown(EngineState *s, int argc, reg_t *argv) {
 // but it handles events on its own, using an internal loop, instead of using SCI
 // scripts for event management like kEditControl does. Called by script 64914,
 // DEdit::hilite().
+
 reg_t kEditText(EngineState *s, int argc, reg_t *argv) {
-	reg_t controlObject = argv[0];
-
-	if (!controlObject.isNull()) {
-		g_sci->_gfxControls32->kernelTexteditChange(controlObject);
-	}
-
-	return s->r_acc;
+	return g_sci->_gfxControls32->kernelEditText(argv[0]);
 }
 
 reg_t kAddLine(EngineState *s, int argc, reg_t *argv) {
