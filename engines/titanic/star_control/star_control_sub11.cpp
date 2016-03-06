@@ -20,44 +20,32 @@
  *
  */
 
-#ifndef TITANIC_STAR_CONTROL_H
-#define TITANIC_STAR_CONTROL_H
-
-#include "titanic/core/game_object.h"
-#include "titanic/star_control/star_control_sub1.h"
+#include "titanic/screen_manager.h"
 #include "titanic/star_control/star_control_sub11.h"
 
 namespace Titanic {
 
-class CStarControl : public CGameObject {
-private:
-	int _fieldBC;
-	CStarControlSub1 _sub1;
-	CStarControlSub11 _sub11;
-	int _field80A0;
-	int _field80A4;
-	int _field80A8;
-	int _field80AC;
-	int _field80B0;
-public:
-	CStarControl();
+CStarControlSub11::CStarControlSub11() : 
+		_sub12(nullptr, nullptr), _sub13(nullptr),
+		_field4(0), _field8(0), _field20C(0), _field210(0),
+		_field214(0), _field218(0), _field21C(0) {
+	_sub12.proc3();
+}
 
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CStarControl"; }
+void CStarControlSub11::load(SimpleFile *file, int param) {
+	if (!param) {
+		_sub12.load(file, param);
 
-	/**
-	 * Save the data for the class to file
-	 */
-	virtual void save(SimpleFile *file, int indent) const;
+		int val = file->readNumber();
+		if (val)
+			_sub13.load(file, 0);
 
-	/**
-	 * Load the data for the class from file
-	 */
-	virtual void load(SimpleFile *file);
-};
+		_field218 = file->readNumber();
+		_field21C = file->readNumber();
+	}
+}
+
+void CStarControlSub11::save(SimpleFile *file, int indent) const {
+}
 
 } // End of namespace Titanic
-
-#endif /* TITANIC_STAR_CONTROL_H */

@@ -47,6 +47,13 @@ private:
 	int _field7DBC;
 public:
 	CStarControlSub1();
+
+	/**
+	 * Load the data for the class from file
+	 */
+	void load(SimpleFile *file, int param);
+
+	bool initDocument();
 };
 
 } // End of namespace Titanic

@@ -28,4 +28,8 @@ CStarControlSub3::CStarControlSub3() : _field4(0), _field8(0),
 		_fieldC(1), _field28(0), _field2C(0x3F800000) {
 }
 
+void CStarControlSub3::proc2() {
+	error("TODO");
+}
+
 } // End of namespace Titanic

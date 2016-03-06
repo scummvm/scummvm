@@ -29,4 +29,21 @@ CStarControlSub1::CStarControlSub1() :
 	_field7DB4(1), _field7DB8(0), _field7DBC(0) {
 }
 
+void CStarControlSub1::load(SimpleFile *file, int param) {
+	if (!param) {
+		_sub7.load(file);
+		_sub8.load(file);
+		_field7DA8 = file->readNumber();
+		_field7DAC = file->readNumber();
+		_field7DB0 = file->readNumber();
+		_field7DB4 = file->readNumber();
+		_field7DBC = file->readNumber();
+	}
+}
+
+bool CStarControlSub1::initDocument() {
+	warning("CStarControlSub1::initDocument");
+	return true;
+}
+
 } // End of namespace Titanic

@@ -20,9 +20,14 @@
  *
  */
 
+#include "titanic/screen_manager.h"
 #include "titanic/star_control/star_control.h"
 
 namespace Titanic {
+
+CStarControl::CStarControl() : _fieldBC(0), _field80A0(0),
+		_field80A4(0), _field80A8(0), _field80AC(0), _field80B0(0) {
+}
 
 void CStarControl::save(SimpleFile *file, int indent) const {
 	file->writeNumberLine(1, indent);
@@ -33,7 +38,16 @@ void CStarControl::load(SimpleFile *file) {
 	int val = file->readNumber();
 	
 	if (!val) {
+		_sub1.load(file, 0);
+		if (!_sub1.initDocument())
+			error("Couldn't initialise the StarField document");
 
+		_sub11.load(file, 0);
+		CScreenManager *screenManager = CScreenManager::setCurrent();
+		if (!screenManager)
+			error("There's no screen  manager during loading");
+
+		warning("TODO");
 	}
 	
 	CGameObject::load(file);

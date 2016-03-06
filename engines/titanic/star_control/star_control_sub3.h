@@ -23,6 +23,7 @@
 #ifndef TITANIC_STAR_CONTROL_SUB3_H
 #define TITANIC_STAR_CONTROL_SUB3_H
 
+#include "titanic/simple_file.h"
 #include "titanic/star_control/star_control_sub4.h"
 
 namespace Titanic {
@@ -38,6 +39,18 @@ protected:
 public:
 	CStarControlSub3();
 	virtual ~CStarControlSub3() {}
+
+	virtual void proc2();
+	virtual int proc3() { return 1; }
+	virtual int proc4() { return 0; }
+	virtual int proc5() { return 0; }
+	virtual int proc6() { return 0; }
+	virtual int proc7() { return 1; }
+
+	virtual void load(SimpleFile *file) {}
+
+	virtual void proc9() {}
+
 };
 
 } // End of namespace Titanic

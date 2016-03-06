@@ -20,44 +20,12 @@
  *
  */
 
-#ifndef TITANIC_STAR_CONTROL_H
-#define TITANIC_STAR_CONTROL_H
-
-#include "titanic/core/game_object.h"
-#include "titanic/star_control/star_control_sub1.h"
-#include "titanic/star_control/star_control_sub11.h"
+#include "titanic/star_control/star_control_sub15.h"
 
 namespace Titanic {
 
-class CStarControl : public CGameObject {
-private:
-	int _fieldBC;
-	CStarControlSub1 _sub1;
-	CStarControlSub11 _sub11;
-	int _field80A0;
-	int _field80A4;
-	int _field80A8;
-	int _field80AC;
-	int _field80B0;
-public:
-	CStarControl();
-
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CStarControl"; }
-
-	/**
-	 * Save the data for the class to file
-	 */
-	virtual void save(SimpleFile *file, int indent) const;
-
-	/**
-	 * Load the data for the class from file
-	 */
-	virtual void load(SimpleFile *file);
-};
+CStarControlSub15::CStarControlSub15() : _field4(-1),
+		_field8(32), _fieldC(0), _field10(0), _field14(0) {
+}
 
 } // End of namespace Titanic
-
-#endif /* TITANIC_STAR_CONTROL_H */

@@ -413,7 +413,12 @@ MODULE_OBJS := \
 	star_control/star_control_sub7.o \
 	star_control/star_control_sub8.o \
 	star_control/star_control_sub9.o \
-	star_control/star_control_sub10.o
+	star_control/star_control_sub10.o \
+	star_control/star_control_sub11.o \
+	star_control/star_control_sub12.o \
+	star_control/star_control_sub13.o \
+	star_control/star_control_sub14.o \
+	star_control/star_control_sub15.o
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_TITANIC), DYNAMIC_PLUGIN)

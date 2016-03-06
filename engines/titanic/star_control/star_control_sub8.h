@@ -23,6 +23,8 @@
 #ifndef TITANIC_STAR_CONTROL_SUB8_H
 #define TITANIC_STAR_CONTROL_SUB8_H
 
+#include "titanic/simple_file.h"
+
 namespace Titanic {
 
 class CStarControlSub8 {
@@ -40,6 +42,16 @@ private:
 	StructEntry _array[3];
 public:
 	CStarControlSub8();
+
+	/**
+	 * Load the data for the class from file
+	 */
+	virtual void load(SimpleFile *file) {}
+
+	/**
+	 * Save the data for the class to file
+	 */
+	virtual void save(SimpleFile *file, int indent) const {}
 };
 
 } // End of namespace Titanic
