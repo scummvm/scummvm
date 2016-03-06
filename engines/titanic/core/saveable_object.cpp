@@ -148,6 +148,7 @@
 #include "titanic/game/light_switch.h"
 #include "titanic/game/little_lift_button.h"
 #include "titanic/game/long_stick_dispenser.h"
+#include "titanic/game/mail_man.h"
 #include "titanic/game/missiveomat.h"
 #include "titanic/game/missiveomat_button.h"
 #include "titanic/game/musical_instrument.h"
@@ -529,6 +530,7 @@ DEFFN(CLight)
 DEFFN(CLightSwitch)
 DEFFN(CLittleLiftButton)
 DEFFN(CLongStickDispenser)
+DEFFN(CMailMan)
 DEFFN(CMissiveOMat)
 DEFFN(CMissiveOMatButton)
 DEFFN(CMusicalInstrument)
@@ -1074,6 +1076,7 @@ void CSaveableObject::initClassList() {
 	ADDFN(CLightSwitch);
 	ADDFN(CLittleLiftButton);
 	ADDFN(CLongStickDispenser);
+	ADDFN(CMailMan);
 	ADDFN(CMissiveOMat);
 	ADDFN(CMissiveOMatButton);
 	ADDFN(CMusicalInstrument);
