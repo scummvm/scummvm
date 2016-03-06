@@ -103,8 +103,9 @@ bool FontResource::parserCallback_font(ParserNode *node) {
 	if (!_pKernel->getResourceManager()->precacheResource(_bitmapFileName)) {
 		error("Could not precache \"%s\".", _bitmapFileName.c_str());
 	}
-#else
-	_pKernel->getResourceManager()->requestResource(_bitmapFileName);
+#else	
+	Resource *pResource = _pKernel->getResourceManager()->requestResource(_bitmapFileName);
+	pResource->release(); //unlock precached resource
 #endif
 
 	return true;
