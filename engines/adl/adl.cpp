@@ -137,7 +137,7 @@ Common::Error AdlEngine::run() {
 	return Common::kNoError;
 }
 
-Common::String AdlEngine::readString(Common::ReadStream &stream, byte until) {
+Common::String AdlEngine::readString(Common::ReadStream &stream, byte until) const {
 	Common::String str;
 
 	while (1) {
@@ -155,7 +155,7 @@ Common::String AdlEngine::readString(Common::ReadStream &stream, byte until) {
 	return str;
 }
 
-void AdlEngine::printStrings(Common::SeekableReadStream &stream, int count) {
+void AdlEngine::printStrings(Common::SeekableReadStream &stream, int count) const {
 	while (1) {
 		Common::String str = readString(stream);
 		_display->printString(str);
@@ -167,11 +167,11 @@ void AdlEngine::printStrings(Common::SeekableReadStream &stream, int count) {
 	};
 }
 
-Common::String AdlEngine::getEngineString(int str) {
+Common::String AdlEngine::getEngineString(int str) const {
 	return _strings[str];
 }
 
-void AdlEngine::wordWrap(Common::String &str) {
+void AdlEngine::wordWrap(Common::String &str) const {
 	uint end = 39;
 
 	while (1) {
@@ -186,7 +186,7 @@ void AdlEngine::wordWrap(Common::String &str) {
 	}
 }
 
-void AdlEngine::printMessage(uint idx, bool wait) {
+void AdlEngine::printMessage(uint idx, bool wait) const {
 	Common::String msg = _messages[idx - 1];
 	wordWrap(msg);
 	_display->printString(msg);
@@ -195,7 +195,7 @@ void AdlEngine::printMessage(uint idx, bool wait) {
 		delay(14 * 166018 / 1000);
 }
 
-void AdlEngine::printEngineMessage(EngineMessage msg) {
+void AdlEngine::printEngineMessage(EngineMessage msg) const {
 	printMessage(getEngineMessage(msg));
 }
 
@@ -423,7 +423,7 @@ void AdlEngine::doActions(const Command &command, byte noun, byte offset) {
 	}
 }
 
-bool AdlEngine::matchCommand(const Command &command, byte verb, byte noun, bool run) {
+bool AdlEngine::matchCommand(const Command &command, byte verb, byte noun, uint *actions) const {
 	if (command.room != IDI_NONE && command.room != _state.room)
 		return false;
 
@@ -466,8 +466,7 @@ bool AdlEngine::matchCommand(const Command &command, byte verb, byte noun, bool 
 		}
 	}
 
-	if (run)
-		doActions(command, noun, offset);
+	*actions = offset;
 
 	return true;
 }
@@ -477,9 +476,13 @@ bool AdlEngine::matchCommand(const Command &command, byte verb, byte noun, bool 
 bool AdlEngine::doOneCommand(const Commands &commands, byte verb, byte noun) {
 	Commands::const_iterator cmd;
 
-	for (cmd = commands.begin(); cmd != commands.end(); ++cmd)
-		if (matchCommand(*cmd, verb, noun))
+	for (cmd = commands.begin(); cmd != commands.end(); ++cmd) {
+		uint offset = 0;
+		if (matchCommand(*cmd, verb, noun, &offset)) {
+			doActions(*cmd, noun, offset);
 			return true;
+		}
+	}
 
 	return false;
 }
@@ -489,7 +492,9 @@ void AdlEngine::doAllCommands(const Commands &commands, byte verb, byte noun) {
 	bool oldIsRestoring = _isRestoring;
 
 	for (cmd = commands.begin(); cmd != commands.end(); ++cmd) {
-		matchCommand(*cmd, verb, noun);
+		uint offset = 0;
+		if (matchCommand(*cmd, verb, noun, &offset))
+			doActions(*cmd, noun, offset);
 
 		// We assume no restarts happen in this command group. This
 		// simplifies enabling GMM savegame loading on the restart
@@ -499,7 +504,7 @@ void AdlEngine::doAllCommands(const Commands &commands, byte verb, byte noun) {
 	}
 }
 
-bool AdlEngine::canSaveGameStateCurrently() {
+bool AdlEngine::canSaveGameStateCurrently() const {
 	if (!_canSaveNow)
 		return false;
 
@@ -509,7 +514,7 @@ bool AdlEngine::canSaveGameStateCurrently() {
 	// "SAVE GAME". This prevents saving via the GMM in situations where
 	// it wouldn't otherwise be possible to do so.
 	for (cmd = _roomCommands.begin(); cmd != _roomCommands.end(); ++cmd) {
-		if (matchCommand(*cmd, _saveVerb, _saveNoun, false)) {
+		if (matchCommand(*cmd, _saveVerb, _saveNoun)) {
 			if (cmd->verb != _saveVerb || cmd->noun != _saveNoun)
 				return false;
 			return cmd->numCond == 0 && cmd->script[0] == IDO_ACT_SAVE;
@@ -519,16 +524,16 @@ bool AdlEngine::canSaveGameStateCurrently() {
 	return false;
 }
 
-bool AdlEngine::canLoadGameStateCurrently() {
+bool AdlEngine::canLoadGameStateCurrently() const {
 	return _canRestoreNow;
 }
 
-void AdlEngine::clearScreen() {
+void AdlEngine::clearScreen() const {
 	_display->setMode(DISPLAY_MODE_MIXED);
 	_display->clear(0x00);
 }
 
-void AdlEngine::drawItems() {
+void AdlEngine::drawItems() const {
 	Common::Array<Item>::const_iterator item;
 
 	uint dropped = 0;
@@ -563,7 +568,7 @@ void AdlEngine::drawItems() {
 	}
 }
 
-void AdlEngine::showRoom() {
+void AdlEngine::showRoom() const {
 	if (!_state.isDark) {
 		drawPic(curRoom().curPicture);
 		drawItems();
@@ -722,6 +727,13 @@ Common::Error AdlEngine::loadGameState(int slot) {
 	return Common::kNoError;
 }
 
+const Room &AdlEngine::room(uint i) const {
+	if (i < 1 || i > _state.rooms.size())
+		error("Room %i out of range [1, %i]", i, _state.rooms.size());
+
+	return _state.rooms[i - 1];
+}
+
 Room &AdlEngine::room(uint i) {
 	if (i < 1 || i > _state.rooms.size())
 		error("Room %i out of range [1, %i]", i, _state.rooms.size());
@@ -729,8 +741,19 @@ Room &AdlEngine::room(uint i) {
 	return _state.rooms[i - 1];
 }
 
+const Room &AdlEngine::curRoom() const {
+	return room(_state.room);
+}
+
 Room &AdlEngine::curRoom() {
 	return room(_state.room);
+}
+
+const Item &AdlEngine::item(uint i) const {
+	if (i < 1 || i > _state.items.size())
+		error("Item %i out of range [1, %i]", i, _state.items.size());
+
+	return _state.items[i - 1];
 }
 
 Item &AdlEngine::item(uint i) {
@@ -738,6 +761,13 @@ Item &AdlEngine::item(uint i) {
 		error("Item %i out of range [1, %i]", i, _state.items.size());
 
 	return _state.items[i - 1];
+}
+
+const byte &AdlEngine::var(uint i) const {
+	if (i >= _state.vars.size())
+		error("Variable %i out of range [0, %i]", i, _state.vars.size() - 1);
+
+	return _state.vars[i];
 }
 
 byte &AdlEngine::var(uint i) {
@@ -783,7 +813,7 @@ void AdlEngine::loadWords(Common::ReadStream &stream, WordMap &map) {
 	}
 }
 
-Common::String AdlEngine::getLine() {
+Common::String AdlEngine::getLine() const {
 	// Original engine uses a global here, which isn't reset between
 	// calls and may not match actual mode
 	bool textMode = false;
@@ -806,7 +836,7 @@ Common::String AdlEngine::getLine() {
 	}
 }
 
-Common::String AdlEngine::getWord(const Common::String &line, uint &index) {
+Common::String AdlEngine::getWord(const Common::String &line, uint &index) const {
 	Common::String str;
 
 	for (uint i = 0; i < 8; ++i)
@@ -873,7 +903,7 @@ void AdlEngine::getInput(uint &verb, uint &noun) {
 	}
 }
 
-void AdlEngine::printASCIIString(const Common::String &str) {
+void AdlEngine::printASCIIString(const Common::String &str) const {
 	Common::String aStr;
 
 	Common::String::const_iterator it;
@@ -883,7 +913,7 @@ void AdlEngine::printASCIIString(const Common::String &str) {
 	_display->printString(aStr);
 }
 
-Common::String AdlEngine::inputString(byte prompt) {
+Common::String AdlEngine::inputString(byte prompt) const {
 	Common::String s;
 
 	if (prompt > 0)
@@ -921,7 +951,7 @@ Common::String AdlEngine::inputString(byte prompt) {
 	}
 }
 
-byte AdlEngine::convertKey(uint16 ascii) {
+byte AdlEngine::convertKey(uint16 ascii) const {
 	ascii = toupper(ascii);
 
 	if (ascii >= 0x80)
@@ -935,7 +965,7 @@ byte AdlEngine::convertKey(uint16 ascii) {
 	return 0;
 }
 
-byte AdlEngine::inputKey() {
+byte AdlEngine::inputKey() const {
 	Common::EventManager *ev = g_system->getEventManager();
 
 	byte key = 0;
@@ -974,7 +1004,7 @@ byte AdlEngine::inputKey() {
 	return key;
 }
 
-void AdlEngine::delay(uint32 ms) {
+void AdlEngine::delay(uint32 ms) const {
 	Common::EventManager *ev = g_system->getEventManager();
 
 	uint32 start = g_system->getMillis();
@@ -996,10 +1026,9 @@ void AdlEngine::delay(uint32 ms) {
 	}
 }
 
-void AdlEngine::drawNextPixel(Common::Point &p, byte color, byte bits, byte quadrant) {
-	if (bits & 4) {
+void AdlEngine::drawNextPixel(Common::Point &p, byte color, byte bits, byte quadrant) const {
+	if (bits & 4)
 		_display->putPixel(p, color);
-	}
 
 	bits += quadrant;
 
@@ -1009,7 +1038,7 @@ void AdlEngine::drawNextPixel(Common::Point &p, byte color, byte bits, byte quad
 		p.y += (bits & 2 ? 1 : -1);
 }
 
-void AdlEngine::drawLineArt(const Common::Array<byte> &lineArt, Common::Point p, byte rotation, byte scaling, byte color) {
+void AdlEngine::drawLineArt(const Common::Array<byte> &lineArt, Common::Point p, byte rotation, byte scaling, byte color) const {
 	const byte stepping[] = {
 		0xff, 0xfe, 0xfa, 0xf4, 0xec, 0xe1, 0xd4, 0xc5,
 		0xb4, 0xa1, 0x8d, 0x78, 0x61, 0x49, 0x31, 0x18,

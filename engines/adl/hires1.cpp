@@ -205,7 +205,7 @@ void HiRes1Engine::runIntro() {
 	delay(2000);
 }
 
-void HiRes1Engine::drawPic(Common::ReadStream &stream, const Common::Point &pos) {
+void HiRes1Engine::drawPic(Common::ReadStream &stream, const Common::Point &pos) const {
 	byte x, y;
 	bool bNewLine = false;
 	byte oldX = 0, oldY = 0;
@@ -242,7 +242,7 @@ void HiRes1Engine::drawPic(Common::ReadStream &stream, const Common::Point &pos)
 	}
 }
 
-void HiRes1Engine::drawPic(byte pic, Common::Point pos) {
+void HiRes1Engine::drawPic(byte pic, Common::Point pos) const {
 	Common::File f;
 	Common::String name = Common::String::format("BLOCK%i", _pictures[pic].block);
 
@@ -406,7 +406,7 @@ void HiRes1Engine::printMessage(uint idx, bool wait) {
 	AdlEngine::printMessage(idx, wait);
 }
 
-uint HiRes1Engine::getEngineMessage(EngineMessage msg) {
+uint HiRes1Engine::getEngineMessage(EngineMessage msg) const {
 	switch (msg) {
 	case IDI_MSG_CANT_GO_THERE:
 		return IDI_HR1_MSG_CANT_GO_THERE;
@@ -423,7 +423,7 @@ uint HiRes1Engine::getEngineMessage(EngineMessage msg) {
 	}
 }
 
-void HiRes1Engine::drawLine(const Common::Point &p1, const Common::Point &p2, byte color) {
+void HiRes1Engine::drawLine(const Common::Point &p1, const Common::Point &p2, byte color) const {
 	// This draws a four-connected line
 
 	int16 deltaX = p2.x - p1.x;

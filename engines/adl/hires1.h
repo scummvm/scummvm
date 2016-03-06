@@ -39,15 +39,15 @@ public:
 private:
 	void restartGame();
 	void printMessage(uint idx, bool wait = true);
-	uint getEngineMessage(EngineMessage msg);
+	uint getEngineMessage(EngineMessage msg) const;
 
 	void initState();
 	void runIntro();
 	void loadData();
-	void drawPic(Common::ReadStream &stream, const Common::Point &pos);
+	void drawPic(Common::ReadStream &stream, const Common::Point &pos) const;
 	void drawItems();
-	void drawLine(const Common::Point &p1, const Common::Point &p2, byte color);
-	void drawPic(byte pic, Common::Point pos);
+	void drawLine(const Common::Point &p1, const Common::Point &p2, byte color) const;
+	void drawPic(byte pic, Common::Point pos) const;
 };
 
 } // End of namespace Adl

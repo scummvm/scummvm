@@ -161,71 +161,30 @@ struct State {
 };
 
 typedef Common::List<Command> Commands;
+typedef Common::HashMap<Common::String, uint> WordMap;
 
 class AdlEngine : public Engine {
 public:
-	AdlEngine(OSystem *syst, const AdlGameDescription *gd);
 	virtual ~AdlEngine();
-
-	const AdlGameDescription *_gameDescription;
-	bool hasFeature(EngineFeature f) const;
-	const char *getGameId() const;
 
 	static AdlEngine *create(GameType type, OSystem *syst, const AdlGameDescription *gd);
 
-	Common::Error run();
-	virtual Common::String getEngineString(int str);
-
 protected:
-	typedef Common::HashMap<Common::String, uint> WordMap;
+	AdlEngine(OSystem *syst, const AdlGameDescription *gd);
 
-	virtual void runIntro() { }
-	virtual void loadData() = 0;
-	void runGame();
-	virtual void initState() = 0;
-	virtual void restartGame() = 0;
-	virtual uint getEngineMessage(EngineMessage msg) = 0;
-	bool canSaveGameStateCurrently();
-	bool canLoadGameStateCurrently();
-	Common::String readString(Common::ReadStream &stream, byte until = 0);
-	void printStrings(Common::SeekableReadStream &stream, int count = 1);
-	virtual void printMessage(uint idx, bool wait = true);
-	void wordWrap(Common::String &str);
-	void readCommands(Common::ReadStream &stream, Commands &commands);
-	bool matchCommand(const Command &command, byte verb, byte noun, bool run = true);
-	bool doOneCommand(const Commands &commands, byte verb, byte noun);
-	void doAllCommands(const Commands &commands, byte verb, byte noun);
-	void doActions(const Command &command, byte noun, byte offset);
-	void clearScreen();
-	virtual void drawPic(byte pic, Common::Point pos = Common::Point()) = 0;
-	void drawItems();
-	void drawNextPixel(Common::Point &p, byte color, byte bits, byte quadrant);
-	void drawLineArt(const Common::Array<byte> &lineArt, Common::Point p, byte rotation = 0, byte scaling = 1, byte color = 0x7f);
-	void showRoom();
-	void takeItem(byte noun);
-	void dropItem(byte noun);
-	Room &room(uint i);
-	Room &curRoom();
-	Item &item(uint i);
-	byte &var(uint i);
+	Common::String readString(Common::ReadStream &stream, byte until = 0) const;
+	void printStrings(Common::SeekableReadStream &stream, int count = 1) const;
+	void printMessage(uint idx, bool wait = true) const;
+	void printASCIIString(const Common::String &str) const;
 	void loadVerbs(Common::ReadStream &stream) { loadWords(stream, _verbs); }
 	void loadNouns(Common::ReadStream &stream) { loadWords(stream, _nouns); }
-	void getInput(uint &verb, uint &noun);
-	void loadWords(Common::ReadStream &stream, WordMap &map);
-	Common::String getLine();
-	Common::String getWord(const Common::String &line, uint &index);
-	void printASCIIString(const Common::String &str);
-	Common::String inputString(byte prompt = 0);
-	void delay(uint32 ms);
-	byte inputKey();
-	Common::Error loadGameState(int slot);
-	Common::Error saveGameState(int slot, const Common::String &desc);
+	void readCommands(Common::ReadStream &stream, Commands &commands);
+	Common::String inputString(byte prompt = 0) const;
+	void delay(uint32 ms) const;
+	byte inputKey() const;
 
 	Display *_display;
 	Parser *_parser;
-	bool _isRestarting, _isRestoring;
-	byte _saveVerb, _saveNoun, _restoreVerb, _restoreNoun;
-	bool _canSaveNow, _canRestoreNow;
 
 	Common::Array<Common::String> _strings;
 	Common::Array<Common::String> _messages;
@@ -239,14 +198,64 @@ protected:
 	State _state;
 
 private:
-	void printEngineMessage(EngineMessage);
-	Common::String getTargetName() { return _targetName; }
-	byte convertKey(uint16 ascii);
+	virtual void runIntro() { }
+	virtual void loadData() = 0;
+	virtual void initState() = 0;
+	virtual void restartGame() = 0;
+	virtual uint getEngineMessage(EngineMessage msg) const = 0;
+	virtual void drawPic(byte pic, Common::Point pos = Common::Point()) const = 0;
+
+	// Engine
+	Common::Error run();
+	bool hasFeature(EngineFeature f) const;
+	Common::Error loadGameState(int slot);
+	bool canLoadGameStateCurrently() const;
+	Common::Error saveGameState(int slot, const Common::String &desc);
+	bool canSaveGameStateCurrently() const;
+
+	// Text output
+	Common::String getEngineString(int str) const;
+	void printEngineMessage(EngineMessage) const;
+	void wordWrap(Common::String &str) const;
+
+	// Text input
+	void loadWords(Common::ReadStream &stream, WordMap &map);
+	byte convertKey(uint16 ascii) const;
+	Common::String getLine() const;
+	Common::String getWord(const Common::String &line, uint &index) const;
+	void getInput(uint &verb, uint &noun);
+
+	// Graphics
+	void showRoom() const;
+	void clearScreen() const;
+	void drawItems() const;
+	void drawNextPixel(Common::Point &p, byte color, byte bits, byte quadrant) const;
+	void drawLineArt(const Common::Array<byte> &lineArt, Common::Point p, byte rotation = 0, byte scaling = 1, byte color = 0x7f) const;
+
+	// Game state functions
+	const Room &room(uint i) const;
+	Room &room(uint i);
+	const Room &curRoom() const;
+	Room &curRoom();
+	const Item &item(uint i) const;
+	Item &item(uint i);
+	const byte &var(uint i) const;
+	byte &var(uint i);
+	void takeItem(byte noun);
+	void dropItem(byte noun);
+	bool matchCommand(const Command &command, byte verb, byte noun, uint *actions = nullptr) const;
+	bool doOneCommand(const Commands &commands, byte verb, byte noun);
+	void doAllCommands(const Commands &commands, byte verb, byte noun);
+	void doActions(const Command &command, byte noun, byte offset);
 
 	enum {
 		kWordSize = 8
 	};
 
+	const AdlGameDescription *_gameDescription;
+	bool _isRestarting, _isRestoring;
+	byte _saveVerb, _saveNoun, _restoreVerb, _restoreNoun;
+	bool _canSaveNow, _canRestoreNow;
 	WordMap _verbs;
 	WordMap _nouns;
 };
