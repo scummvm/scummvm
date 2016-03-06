@@ -272,7 +272,19 @@ public:
 		// However, this whole comparison is quite ugly, and if it still
 		// fails, we should try to change it to something equivalent, to avoid
 		// adding loads of workarounds just for this
-		return _priority < other._priority || (_priority == other._priority && _priority > -1 && _object.getOffset() < other._object.getOffset());
+		if (_priority < other._priority) {
+			return true;
+		}
+
+		if (_priority == other._priority) {
+			if (_object.isNumber() && other._object.isNumber()) {
+				return _object < other._object;
+			} else if (other._object.isNumber()) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 	/**

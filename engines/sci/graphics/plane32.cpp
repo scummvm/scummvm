@@ -447,7 +447,20 @@ void Plane::calcLists(Plane &visiblePlane, const PlaneList &planeList, DrawList 
 					if (j < _screenItemList.size() && sli) {
 						if (!sli->_updated && !sli->_deleted && !sli->_created) {
 							ScreenItem *item = dli->screenItem;
-							if (sli->_priority > item->_priority /* TODO: || (sli->_priority == item->_priority && sli->_object > item->_object)*/) {
+
+							bool isAbove = false;
+							if (sli->_priority > item->_priority) {
+								isAbove = true;
+							}
+							else if (sli->_priority == item->_priority) {
+								if (sli->_object.isNumber() && item->_object.isNumber()) {
+									isAbove = sli->_object > item->_object;
+								} else if (sli->_object.isNumber()) {
+									isAbove = true;
+								}
+							}
+
+							if (isAbove) {
 								if (dli->rect.intersects(sli->_screenRect)) {
 									drawList.add(sli, dli->rect.findIntersectingRect(sli->_screenRect));
 								}
