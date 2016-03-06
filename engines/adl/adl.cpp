@@ -777,18 +777,18 @@ byte &AdlEngine::var(uint i) {
 	return _state.vars[i];
 }
 
-void AdlEngine::loadWords(Common::ReadStream &stream, WordMap &map) {
+void AdlEngine::loadWords(Common::ReadStream &stream, WordMap &map) const {
 	uint index = 0;
 
 	while (1) {
 		++index;
 
-		byte buf[kWordSize];
+		byte buf[IDI_WORD_SIZE];
 
-		if (stream.read(buf, kWordSize) < kWordSize)
+		if (stream.read(buf, IDI_WORD_SIZE) < IDI_WORD_SIZE)
 			error("Error reading word list");
 
-		Common::String word((char *)buf, kWordSize);
+		Common::String word((char *)buf, IDI_WORD_SIZE);
 
 		if (!map.contains(word))
 			map[word] = index;
@@ -802,10 +802,10 @@ void AdlEngine::loadWords(Common::ReadStream &stream, WordMap &map) {
 			break;
 
 		for (uint i = 0; i < synonyms; ++i) {
-			if (stream.read((char *)buf, kWordSize) < kWordSize)
+			if (stream.read((char *)buf, IDI_WORD_SIZE) < IDI_WORD_SIZE)
 				error("Error reading word list");
 
-			word = Common::String((char *)buf, kWordSize);
+			word = Common::String((char *)buf, IDI_WORD_SIZE);
 
 			if (!map.contains(word))
 				map[word] = index;
@@ -1038,7 +1038,7 @@ void AdlEngine::drawNextPixel(Common::Point &p, byte color, byte bits, byte quad
 		p.y += (bits & 2 ? 1 : -1);
 }
 
-void AdlEngine::drawLineArt(const Common::Array<byte> &lineArt, Common::Point p, byte rotation, byte scaling, byte color) const {
+void AdlEngine::drawLineArt(const Common::Array<byte> &lineArt, const Common::Point &pos, byte rotation, byte scaling, byte color) const {
 	const byte stepping[] = {
 		0xff, 0xfe, 0xfa, 0xf4, 0xec, 0xe1, 0xd4, 0xc5,
 		0xb4, 0xa1, 0x8d, 0x78, 0x61, 0x49, 0x31, 0x18,
@@ -1049,6 +1049,8 @@ void AdlEngine::drawLineArt(const Common::Array<byte> &lineArt, Common::Point p,
 	rotation &= 0xf;
 	byte xStep = stepping[rotation];
 	byte yStep = stepping[(rotation ^ 0xf) + 1] + 1;
+
+	Common::Point p(pos);
 
 	for (uint i = 0; i < lineArt.size(); ++i) {
 		byte b = lineArt[i];

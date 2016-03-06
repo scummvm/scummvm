@@ -28,8 +28,6 @@
 
 #include "engines/engine.h"
 
-#include "gui/debugger.h"
-
 namespace Common {
 class ReadStream;
 class SeekableReadStream;
@@ -110,6 +108,8 @@ enum EngineString {
 #define IDO_ACT_DROP_ITEM      0x1c
 #define IDO_ACT_SET_ROOM_PIC   0x1d
 
+#define IDI_WORD_SIZE 8
+
 struct Room {
 	byte description;
 	byte connections[6];
@@ -176,23 +176,32 @@ protected:
 	void printStrings(Common::SeekableReadStream &stream, int count = 1) const;
 	void printMessage(uint idx, bool wait = true) const;
 	void printASCIIString(const Common::String &str) const;
-	void loadVerbs(Common::ReadStream &stream) { loadWords(stream, _verbs); }
-	void loadNouns(Common::ReadStream &stream) { loadWords(stream, _nouns); }
 	void readCommands(Common::ReadStream &stream, Commands &commands);
 	Common::String inputString(byte prompt = 0) const;
 	void delay(uint32 ms) const;
 	byte inputKey() const;
+	void loadWords(Common::ReadStream &stream, WordMap &map) const;
 
 	Display *_display;
 	Parser *_parser;
 
+	// Strings inside executable
 	Common::Array<Common::String> _strings;
+	// Message strings in data file
 	Common::Array<Common::String> _messages;
+	// Picture data
 	Common::Array<Picture> _pictures;
+	// Dropped item screen offsets
 	Common::Array<Common::Point> _itemOffsets;
+	// Drawings consisting of horizontal and vertical lines only, but
+	// supporting scaling and rotation
 	Common::Array<Common::Array<byte> > _lineArt;
+	// <room, verb, noun, script> lists
 	Commands _roomCommands;
 	Commands _globalCommands;
+
+	WordMap _verbs;
+	WordMap _nouns;
 
 	// Game state
 	State _state;
@@ -219,7 +228,6 @@ private:
 	void wordWrap(Common::String &str) const;
 
 	// Text input
-	void loadWords(Common::ReadStream &stream, WordMap &map);
 	byte convertKey(uint16 ascii) const;
 	Common::String getLine() const;
 	Common::String getWord(const Common::String &line, uint &index) const;
@@ -230,7 +238,7 @@ private:
 	void clearScreen() const;
 	void drawItems() const;
 	void drawNextPixel(Common::Point &p, byte color, byte bits, byte quadrant) const;
-	void drawLineArt(const Common::Array<byte> &lineArt, Common::Point p, byte rotation = 0, byte scaling = 1, byte color = 0x7f) const;
+	void drawLineArt(const Common::Array<byte> &lineArt, const Common::Point &pos, byte rotation = 0, byte scaling = 1, byte color = 0x7f) const;
 
 	// Game state functions
 	const Room &room(uint i) const;
@@ -248,16 +256,10 @@ private:
 	void doAllCommands(const Commands &commands, byte verb, byte noun);
 	void doActions(const Command &command, byte noun, byte offset);
 
-	enum {
-		kWordSize = 8
-	};
-
 	const AdlGameDescription *_gameDescription;
 	bool _isRestarting, _isRestoring;
 	byte _saveVerb, _saveNoun, _restoreVerb, _restoreNoun;
 	bool _canSaveNow, _canRestoreNow;
-	WordMap _verbs;
-	WordMap _nouns;
 };
 
 AdlEngine *HiRes1Engine__create(OSystem *syst, const AdlGameDescription *gd);

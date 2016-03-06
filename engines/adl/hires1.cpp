@@ -379,10 +379,10 @@ void HiRes1Engine::loadData() {
 		error("Failed to read game data from '" IDS_HR1_EXE_1 "'");
 
 	f.seek(IDI_HR1_OFS_VERBS);
-	loadVerbs(f);
+	loadWords(f, _verbs);
 
 	f.seek(IDI_HR1_OFS_NOUNS);
-	loadNouns(f);
+	loadWords(f, _nouns);
 }
 
 void HiRes1Engine::printMessage(uint idx, bool wait) {
