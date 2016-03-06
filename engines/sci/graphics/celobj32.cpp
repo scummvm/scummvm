@@ -84,10 +84,9 @@ const CelScalerTable *CelScaler::getScalerTable(const Ratio &scaleX, const Ratio
 #pragma mark CelObj
 
 void CelObj::init() {
+	CelObj::deinit();
 	_nextCacheId = 1;
-	delete _scaler;
 	_scaler = new CelScaler();
-	delete _cache;
 	_cache = new CelCache;
 	_cache->resize(100);
 }
@@ -95,6 +94,11 @@ void CelObj::init() {
 void CelObj::deinit() {
 	delete _scaler;
 	_scaler = nullptr;
+	if (_cache != nullptr) {
+		for (CelCache::iterator it = _cache->begin(); it != _cache->end(); ++it) {
+			delete it->celObj;
+		}
+	}
 	delete _cache;
 	_cache = nullptr;
 }

@@ -55,6 +55,7 @@ _redrawAllCount(g_sci->_gfxFrameout->getScreenCount()),
 _created(g_sci->_gfxFrameout->getScreenCount()),
 _updated(0),
 _deleted(0),
+_moved(0),
 _gameRect(gameRect) {
 	convertGameRectToPlaneRect();
 	_priority = MAX(10000, g_sci->_gfxFrameout->getPlanes().getTopPlanePriority() + 1);
@@ -808,6 +809,11 @@ void PlaneList::erase(Plane *plane) {
 	}
 }
 
+PlaneList::iterator PlaneList::erase(iterator it) {
+	delete *it;
+	return PlaneListBase::erase(it);
+}
+
 int PlaneList::findIndexByObject(const reg_t object) const {
 	for (size_type i = 0; i < size(); ++i) {
 		if ((*this)[i] != nullptr && (*this)[i]->_object == object) {
@@ -848,6 +854,10 @@ int16 PlaneList::getTopSciPlanePriority() const {
 	}
 
 	return priority;
+}
+
+void PlaneList::remove_at(size_type index) {
+	delete PlaneListBase::remove_at(index);
 }
 
 void PlaneList::add(Plane *plane) {

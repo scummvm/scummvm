@@ -215,6 +215,7 @@ public:
 	ScreenItem(const reg_t plane, const CelInfo32 &celInfo, const Common::Rect &rect);
 	ScreenItem(const reg_t plane, const CelInfo32 &celInfo, const Common::Point &position, const ScaleInfo &scaleInfo);
 	ScreenItem(const ScreenItem &other);
+	~ScreenItem();
 	void operator=(const ScreenItem &);
 
 	inline bool operator<(const ScreenItem &other) const {

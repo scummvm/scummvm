@@ -43,8 +43,6 @@ GfxControls32::GfxControls32(SegManager *segMan, GfxCache *cache, GfxText32 *tex
 	_overwriteMode(false),
 	_nextCursorFlashTick(0) {}
 
-GfxControls32::~GfxControls32() {}
-
 reg_t GfxControls32::kernelEditText(const reg_t controlObject) {
 	SegManager *segMan = _segMan;
 
@@ -149,7 +147,8 @@ reg_t GfxControls32::kernelEditText(const reg_t controlObject) {
 		bool focused = true;
 		// Original engine did not have a QUIT event but we have to handle it
 		if (event.type == SCI_EVENT_QUIT) {
-			return NULL_REG;
+			focused = false;
+			break;
 		} else if (event.type == SCI_EVENT_MOUSE_PRESS && !editorPlaneRect.contains(event.mousePosSci)) {
 			focused = false;
 		} else if (event.type == SCI_EVENT_KEYBOARD) {

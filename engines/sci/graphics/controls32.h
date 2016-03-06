@@ -105,7 +105,6 @@ struct TextEditor {
 class GfxControls32 {
 public:
 	GfxControls32(SegManager *segMan, GfxCache *cache, GfxText32 *text);
-	~GfxControls32();
 
 	reg_t kernelEditText(const reg_t controlObject);
 

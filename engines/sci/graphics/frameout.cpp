@@ -133,8 +133,9 @@ GfxFrameout::GfxFrameout(SegManager *segMan, ResourceManager *resMan, GfxCoordAd
 }
 
 GfxFrameout::~GfxFrameout() {
-	CelObj::deinit();
 	clear();
+	CelObj::deinit();
+	free(_currentBuffer.getPixels());
 }
 
 void GfxFrameout::run() {

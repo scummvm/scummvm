@@ -480,11 +480,12 @@ public:
 
 	void add(Plane *plane);
 	void clear();
-	using PlaneListBase::erase;
+	iterator erase(iterator it);
 	void erase(Plane *plane);
 	inline void sort() {
 		Common::sort(begin(), end(), sortHelper);
 	}
+	void remove_at(size_type index);
 };
 
 }

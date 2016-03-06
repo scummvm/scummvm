@@ -126,6 +126,10 @@ void ScreenItem::operator=(const ScreenItem &other) {
 	_scaledPosition = other._scaledPosition;
 }
 
+ScreenItem::~ScreenItem() {
+	delete _celObj;
+}
+
 void ScreenItem::init() {
 	_nextObjectId = 20000;
 }
