@@ -69,9 +69,4 @@ You can find concise instructions for this on the ScummVM wiki:
 
 http://wiki.scummvm.org/index.php/Compiling_ScummVM/RPI 
 
-The configure script is disabling scalers because we prefer dispmanx for that, which 
-makes scalers unnecessary on a CPU limited platform like this, timestamps because most people
-doesn't have an RTC on the Raspberry Pi, and event recorder to save SD card write cycles.
-All these are automatically disabled when we crosscompile by passing "--host=raspberrypi".
-
 Enjoy!
