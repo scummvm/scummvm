@@ -4474,7 +4474,7 @@ if test "$_16bit" = yes ; then
 fi
 
 if test "$_highres" = yes ; then
-	echo_n ", highres"
+	echo_n ", high resolution"
 fi
 
 if test "$_savegame_timestamp" = yes ; then
@@ -4490,7 +4490,7 @@ if test "$_build_scalers" = yes ; then
 fi
 
 if test "$_mt32emu" = yes ; then
-	echo_n ", MT-32 emu"
+	echo_n ", MT-32 emulator"
 fi
 
 if test "$_text_console" = yes ; then
