@@ -29,12 +29,8 @@ namespace Titanic {
 
 class CPetModeOff : public CToggleSwitch {
 public:
+	CLASSDEF
 	CPetModeOff();
-
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CPetModeOff"; }
 
 	/**
 	 * Save the data for the class to file

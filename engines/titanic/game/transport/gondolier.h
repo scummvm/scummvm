@@ -29,10 +29,7 @@ namespace Titanic {
 
 class CGondolier : public CTransport {
 public:
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CGondolier"; }
+	CLASSDEF
 
 	/**
 	 * Save the data for the class to file

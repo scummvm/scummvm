@@ -44,12 +44,8 @@ private:
 	int _field16C;
 	int _field170;
 public:
+	CLASSDEF
 	CArm();
-
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CArm"; }
 
 	/**
 	 * Save the data for the class to file

@@ -31,12 +31,8 @@ class CRecordPhonographButton : public CBackground {
 public:
 	int _value;
 public:
+	CLASSDEF
 	CRecordPhonographButton() : CBackground(), _value(0) {}
-
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CRecordPhonographButton"; }
 
 	/**
 	 * Save the data for the class to file

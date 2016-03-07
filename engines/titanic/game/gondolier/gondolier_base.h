@@ -40,10 +40,7 @@ private:
 	static int _v9;
 	static int _v10;
 public:
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CGondolierBase"; }
+	CLASSDEF
 
 	/**
 	 * Save the data for the class to file

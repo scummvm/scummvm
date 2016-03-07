@@ -32,12 +32,8 @@ protected:
 	CString _string1;
 	int _fieldC8;
 public:
+	CLASSDEF
 	CCallBot();
-
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CCallBot"; }
 
 	/**
 	 * Save the data for the class to file

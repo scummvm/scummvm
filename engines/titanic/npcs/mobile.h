@@ -32,12 +32,8 @@ private:
 	Common::Point _pos1;
 	int _fieldDC;
 public:
+	CLASSDEF
 	CMobile();
-
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CMobile"; }
 
 	/**
 	 * Save the data for the class to file

@@ -31,12 +31,8 @@ class CBowlUnlocker : public CGameObject {
 public:
 	int _value;
 public:
+	CLASSDEF
 	CBowlUnlocker() : CGameObject(), _value(0) {}
-
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CBowlUnlocker"; }
 
 	/**
 	 * Save the data for the class to file

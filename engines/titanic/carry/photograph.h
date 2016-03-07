@@ -34,12 +34,8 @@ private:
 	int _field12C;
 	int _field130;
 public:
+	CLASSDEF
 	CPhotograph();
-
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CPhotograph"; }
 
 	/**
 	 * Save the data for the class to file

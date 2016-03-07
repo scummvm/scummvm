@@ -27,20 +27,20 @@
 
 namespace Titanic {
 
-RAW_MESSAGE(CPETDeliverMsg);
-RAW_MESSAGE(CPETGainedObjectMsg);
-RAW_MESSAGE(CPETHelmetOnOffMsg);
-RAW_MESSAGE(CPETKeyboardOnOffMsg);
-RAW_MESSAGE(CPETLostObjectMsg);
-RAW_MESSAGE(CPETObjectSelectedMsg);
-NUM_MESSAGE(CPETObjectStateMsg, _value);
-RAW_MESSAGE(CPETPhotoOnOffMsg);
-NUM_MESSAGE(CPETPlaySoundMsg, _value);
-RAW_MESSAGE(CPETReceiveMsg);
-RAW_MESSAGE(CPETSetStarDestinationMsg);
-NUM_MESSAGE(CPETStarFieldLockMsg, _value);
-RAW_MESSAGE(CPETStereoFieldOnOffMsg);
-SNUM_MESSAGE_VAL(CPETTargetMsg, _strValue, _numValue, (const char *)nullptr, -1);
+MESSAGE0(CPETDeliverMsg);
+MESSAGE0(CPETGainedObjectMsg);
+MESSAGE0(CPETHelmetOnOffMsg);
+MESSAGE0(CPETKeyboardOnOffMsg);
+MESSAGE0(CPETLostObjectMsg);
+MESSAGE0(CPETObjectSelectedMsg);
+MESSAGE1(CPETObjectStateMsg, int, value, 0);
+MESSAGE0(CPETPhotoOnOffMsg);
+MESSAGE1(CPETPlaySoundMsg, int, value, 0);
+MESSAGE0(CPETReceiveMsg);
+MESSAGE0(CPETSetStarDestinationMsg);
+MESSAGE1(CPETStarFieldLockMsg, int, value, 0);
+MESSAGE0(CPETStereoFieldOnOffMsg);
+MESSAGE2(CPETTargetMsg, CString, strValue, nullptr, int, numValue, -1);
 
 } // End of namespace Titanic
 

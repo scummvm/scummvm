@@ -33,12 +33,8 @@ private:
 	int _fieldE4;
 	int _fieldE8;
 public:
+	CLASSDEF
 	CHammerDispensor();
-
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CHammerDispensor"; }
 
 	/**
 	 * Save the data for the class to file

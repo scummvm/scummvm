@@ -35,12 +35,8 @@ protected:
 	int _fieldD0;
 	int _fieldD4;
 public:
+	CLASSDEF
 	CAutoMusicPlayerBase();
-
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CAutoMusicPlayerBase"; }
 
 	/**
 	 * Save the data for the class to file

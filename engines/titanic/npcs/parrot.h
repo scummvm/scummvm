@@ -92,12 +92,8 @@ private:
 	int _field1E8;
 	int _field1EC;
 public:
+	CLASSDEF
 	CParrot();
-
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CParrot"; }
 
 	/**
 	 * Save the data for the class to file

@@ -31,12 +31,8 @@ class CBarMenuButton : public CGameObject {
 public:
 	int _value;
 public:
+	CLASSDEF
 	CBarMenuButton() : CGameObject(), _value(1) {}
-
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CBarMenuButton"; }
 
 	/**
 	 * Save the data for the class to file

@@ -34,12 +34,8 @@ public:
 	int _fieldE8;
 	int _fieldEC;
 public:
+	CLASSDEF
 	CMusicControl();
-
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CMusicControl"; }
 
 	/**
 	 * Save the data for the class to file

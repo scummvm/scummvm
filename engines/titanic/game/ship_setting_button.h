@@ -33,12 +33,8 @@ private:
 	int _fieldC8;
 	int _fieldCC;
 public:
+	CLASSDEF
 	CShipSettingButton();
-
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CShipSettingButton"; }
 
 	/**
 	 * Save the data for the class to file

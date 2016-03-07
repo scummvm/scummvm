@@ -32,12 +32,8 @@ private:
 	Common::Point _pos1;
 	int _field11C;
 public:
+	CLASSDEF
 	CMoveObjectButton();
-
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CMoveObjectButton"; }
 
 	/**
 	 * Save the data for the class to file

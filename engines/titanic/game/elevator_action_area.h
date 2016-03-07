@@ -31,12 +31,8 @@ class CElevatorActionArea : public CGameObject {
 public:
 	int _value;
 public:
+	CLASSDEF
 	CElevatorActionArea() : CGameObject(), _value(4) {}
-
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CElevatorActionArea"; }
 
 	/**
 	 * Save the data for the class to file

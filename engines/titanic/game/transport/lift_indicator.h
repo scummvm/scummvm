@@ -34,12 +34,8 @@ private:
 	int _field108;
 	int _field10C;
 public:
+	CLASSDEF
 	CLiftindicator();
-
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CLiftindicator"; }
 
 	/**
 	 * Save the data for the class to file

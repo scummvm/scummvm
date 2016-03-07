@@ -31,12 +31,8 @@ class CParrotNutBowlActor : public CGameObject {
 public:
 	int _value1, _value2;
 public:
+	CLASSDEF
 	CParrotNutBowlActor();
-
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CParrotNutBowlActor"; }
 
 	/**
 	 * Save the data for the class to file

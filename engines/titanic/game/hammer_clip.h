@@ -31,12 +31,8 @@ class CHammerClip : public CGameObject {
 public:
 	int _value;
 public:
+	CLASSDEF
 	CHammerClip() : CGameObject(), _value(0) {}
-
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CHammerClip"; }
 
 	/**
 	 * Save the data for the class to file

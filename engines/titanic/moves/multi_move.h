@@ -35,12 +35,8 @@ private:
 	CString _string4;
 	CString _string5;
 public:
+	CLASSDEF
 	CMultiMove();
-
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CMultiMove"; }
 
 	/**
 	 * Save the data for the class to file

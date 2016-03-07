@@ -32,12 +32,8 @@ public:
 	int _fieldE0;
 	int _fieldE4;
 public:
+	CLASSDEF
 	CSeasonBarrel() : CBackground(), _fieldE0(0), _fieldE4(7) {}
-
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CSeasonBarrel"; }
 
 	/**
 	 * Save the data for the class to file

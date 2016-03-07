@@ -31,12 +31,8 @@ class CExitBridge : public CMovePlayerTo {
 private:
 	CString _string1;
 public:
+	CLASSDEF
 	CExitBridge();
-
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CExitBridge"; }
 
 	/**
 	 * Save the data for the class to file

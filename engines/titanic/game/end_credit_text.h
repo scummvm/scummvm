@@ -31,12 +31,8 @@ class CEndCreditText : public CGameObject {
 private:
 	int _value;
 public:
+	CLASSDEF
 	CEndCreditText() : CGameObject(), _value(0) {}
-
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CEndCreditText"; }
 
 	/**
 	 * Save the data for the class to file

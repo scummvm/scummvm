@@ -31,12 +31,8 @@ class CMaitreDBody : public CMaitreDProdReceptor {
 private:
 	int _fieldC8;
 public:
+	CLASSDEF
 	CMaitreDBody() : CMaitreDProdReceptor(), _fieldC8(1) {}
-
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CMaitreDBody"; }
 
 	/**
 	 * Save the data for the class to file

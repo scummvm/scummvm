@@ -43,12 +43,8 @@ public:
 	CString _string3;
 	int _field118;
 public:
+	CLASSDEF
 	CCellPointButton();
-
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CCellPointButton"; }
 
 	/**
 	 * Save the data for the class to file

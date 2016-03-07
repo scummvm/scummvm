@@ -31,12 +31,8 @@ class CViewTogglesOtherMusic : public CEnterViewTogglesOtherMusic {
 private:
 	int _fieldCC;
 public:
+	CLASSDEF
 	CViewTogglesOtherMusic();
-
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CViewTogglesOtherMusic"; }
 
 	/**
 	 * Save the data for the class to file

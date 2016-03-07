@@ -35,12 +35,8 @@ private:
 	int _fieldEC;
 	int _fieldF0;
 public:
+	CLASSDEF
 	CTurnOnTurnOff();
-
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CTurnOnTurnOff"; }
 
 	/**
 	 * Save the data for the class to file

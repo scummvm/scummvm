@@ -35,12 +35,8 @@ public:
 	int _fieldC8;
 	int _fieldCC;
 public:
+	CLASSDEF
 	CEnterExitView();
-
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CEnterExitView"; }
 
 	/**
 	 * Save the data for the class to file

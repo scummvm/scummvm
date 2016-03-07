@@ -31,12 +31,8 @@ class CCreditsButton : public CBackground {
 public:
 	int _fieldE0;
 public:
+	CLASSDEF
 	CCreditsButton();
-
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CCreditsButton"; }
 
 	/**
 	 * Save the data for the class to file

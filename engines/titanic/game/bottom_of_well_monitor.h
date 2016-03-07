@@ -32,12 +32,8 @@ public:
 	static int _v1, _v2;
 	int _value;
 public:
+	CLASSDEF
 	CBottomOfWellMonitor() : _value(1) {}
-
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CBottomOfWellMonitor"; }
 
 	/**
 	 * Save the data for the class to file

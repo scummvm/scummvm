@@ -32,12 +32,8 @@ public:
 	CString _string3;
 	int _fieldEC;
 public:
+	CLASSDEF
 	CComputer() : CBackground(), _string3("None"), _fieldEC(0) {}
-
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CComputer"; }
 
 	/**
 	 * Save the data for the class to file

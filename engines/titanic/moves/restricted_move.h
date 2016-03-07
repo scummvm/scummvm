@@ -31,12 +31,8 @@ class CRestrictedMove : public CMovePlayerTo {
 protected:
 	int _fieldC8;
 public:
+	CLASSDEF
 	CRestrictedMove();
-
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CRestrictedMove"; }
 
 	/**
 	 * Save the data for the class to file

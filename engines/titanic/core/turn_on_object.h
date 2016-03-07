@@ -31,12 +31,8 @@ class CTurnOnObject : public CBackground {
 protected:
 	CString _string3;
 public:
+	CLASSDEF
 	CTurnOnObject();
-
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CTurnOnObject"; }
 
 	/**
 	 * Save the data for the class to file

@@ -173,12 +173,8 @@ private:
 	int _field33C;
 	int _field340;
 public:
+	CLASSDEF
 	CBarbot();
-
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CBarbot"; }
 
 	/**
 	 * Save the data for the class to file

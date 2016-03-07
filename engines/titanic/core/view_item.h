@@ -39,12 +39,8 @@ protected:
 	int _field50;
 	int _field54;
 public:
+	CLASSDEF
 	CViewItem();
-
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CNamedItem"; }
 
 	/**
 	 * Save the data for the class to file

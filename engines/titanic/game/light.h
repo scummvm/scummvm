@@ -38,12 +38,8 @@ private:
 	int _fieldF8;
 	int _fieldFC;
 public:
+	CLASSDEF
 	CLight();
-
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CLight"; }
 
 	/**
 	 * Save the data for the class to file

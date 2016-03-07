@@ -29,10 +29,7 @@ namespace Titanic {
 
 class CEndSequenceControl : public CGameObject {
 public:
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CEndSequenceControl"; }
+	CLASSDEF
 
 	/**
 	 * Save the data for the class to file

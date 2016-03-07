@@ -32,12 +32,8 @@ public:
 	int _value1;
 	int _value2;
 public:
+	CLASSDEF
 	CCookie() : CGameObject(), _value1(0), _value2(0) {}
-
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CCookie"; }
 
 	/**
 	 * Save the data for the class to file

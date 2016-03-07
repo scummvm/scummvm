@@ -29,12 +29,8 @@ namespace Titanic {
 
 class CCrushedTV : public CCarry {
 public:
+	CLASSDEF
 	CCrushedTV();
-
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CCrushedTV"; }
 
 	/**
 	 * Save the data for the class to file

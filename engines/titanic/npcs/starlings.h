@@ -31,12 +31,8 @@ class CStarlings : public CCharacter {
 private:
 	static int _v1;
 public:
+	CLASSDEF
 	CStarlings();
-
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CStarlings"; }
 
 	/**
 	 * Save the data for the class to file

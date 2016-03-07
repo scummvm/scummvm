@@ -31,12 +31,8 @@ class CEnterBridge : public CGameObject {
 public:
 	int _value;
 public:
+	CLASSDEF
 	CEnterBridge() : CGameObject(), _value(1) {}
-
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CEnterBridge"; }
 
 	/**
 	 * Save the data for the class to file

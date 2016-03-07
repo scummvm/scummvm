@@ -32,46 +32,46 @@ public:
 	int _buttons;
 	Common::Point _mousePos;
 public:
+	CLASSDEF
 	CMouseMsg() : _buttons(0) {}
-	virtual const char *getClassName() const { return "CMouseMsg"; }
 };
 
 class CMouseMoveMsg : public CMouseMsg {
 public:
-	virtual const char *getClassName() const { return "CMouseMoveMsg"; }
+	CLASSDEF
 };
 
 class CMouseButtonMsg : public CMouseMsg {
 public:
 	int _field10;
 public:
+	CLASSDEF
 	CMouseButtonMsg() : CMouseMsg(), _field10(0) {}
-	virtual const char *getClassName() const { return "CMouseButtonMsg"; }
 };
 
 class CMouseButtonDownMsg : public CMouseButtonMsg {
 public:
-	virtual const char *getClassName() const { return "CMouseButtonDownMsg"; }
+	CLASSDEF
 };
 
 class CMouseButtonUpMsg : public CMouseButtonMsg {
 public:
-	virtual const char *getClassName() const { return "CMouseButtonUpMsg"; }
+	CLASSDEF
 };
 
 class CMouseButtonDoubleClickMsg : public CMouseButtonMsg {
 public:
-	virtual const char *getClassName() const { return "CMouseButtonDoubleClickMsg"; }
+	CLASSDEF
 };
 
 class CMouseDragMsg : public CMouseMsg {
 public:
-	virtual const char *getClassName() const { return "CMouseDragMsg"; }
+	CLASSDEF
 };
 
 class CMouseDragMoveMsg : public CMouseDragMsg {
 public:
-	virtual const char *getClassName() const { return "CMouseDragMoveMsg"; }
+	CLASSDEF
 };
 
 class CMouseDragStartMsg : public CMouseDragMsg {
@@ -79,16 +79,16 @@ public:
 	int _field10;
 	int _field14;
 public:
+	CLASSDEF
 	CMouseDragStartMsg() : CMouseDragMsg(), _field10(0), _field14(0) {}
-	virtual const char *getClassName() const { return "CMouseDragStartMsg"; }
 };
 
 class CMouseDragEndMsg : public CMouseDragMsg {
 public:
 	int _field10;
 public:
+	CLASSDEF
 	CMouseDragEndMsg() : CMouseDragMsg(), _field10(0) {}
-	virtual const char *getClassName() const { return "CMouseDragEndMsg"; }
 };
 
 } // End of namespace Titanic

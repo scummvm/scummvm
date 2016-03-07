@@ -31,10 +31,7 @@ class CAnnoyBarbot : public CGameObject {
 private:
 	static int _v1;
 public:
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CAnnoyBarbot"; }
+	CLASSDEF
 
 	/**
 	 * Save the data for the class to file

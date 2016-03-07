@@ -32,10 +32,7 @@ protected:
 	int _fieldD4;
 	int _fieldD8;
 public:
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CDeskClickResponder"; }
+	CLASSDEF
 
 	/**
 	 * Save the data for the class to file

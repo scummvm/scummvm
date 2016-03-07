@@ -29,12 +29,8 @@ namespace Titanic {
 
 class CStatusChangeButton : public CSTButton {
 public:
+	CLASSDEF
 	CStatusChangeButton();
-
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CStatusChangeButton"; }
 
 	/**
 	 * Save the data for the class to file

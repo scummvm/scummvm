@@ -40,12 +40,8 @@ private:
 	int _field80AC;
 	int _field80B0;
 public:
+	CLASSDEF
 	CStarControl();
-
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CStarControl"; }
 
 	/**
 	 * Save the data for the class to file

@@ -31,12 +31,8 @@ class CDrawer : public CSGTStateRoom {
 private:
 	int _fieldF4;
 public:
+	CLASSDEF
 	CDrawer();
-
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CDrawer"; }
 
 	/**
 	 * Save the data for the class to file

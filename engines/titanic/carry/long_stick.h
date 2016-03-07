@@ -29,12 +29,8 @@ namespace Titanic {
 
 class CLongStick : public CCarry {
 public:
+	CLASSDEF
 	CLongStick();
-
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CLongStick"; }
 
 	/**
 	 * Save the data for the class to file

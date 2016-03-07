@@ -37,12 +37,8 @@ public:
 	int _field104;
 	int _field108;
 public:
+	CLASSDEF
 	CSauceDispensor();
-
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CSauceDispensor"; }
 
 	/**
 	 * Save the data for the class to file

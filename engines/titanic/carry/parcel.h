@@ -29,12 +29,8 @@ namespace Titanic {
 
 class CParcel : public CCarry {
 public:
+	CLASSDEF
 	CParcel();
-
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CParcel"; }
 
 	/**
 	 * Save the data for the class to file

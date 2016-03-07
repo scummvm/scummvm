@@ -33,12 +33,8 @@ public:
 	int _fieldE4;
 	int _fieldE8;
 public:
+	CLASSDEF
 	CHeadSmashLever();
-
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CHeadSmashLever"; }
 
 	/**
 	 * Save the data for the class to file

@@ -32,12 +32,8 @@ private:
 	int _field118;
 	int _field11C;
 public:
+	CLASSDEF
 	CNoseHolder();
-
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CNoseHolder"; }
 
 	/**
 	 * Save the data for the class to file

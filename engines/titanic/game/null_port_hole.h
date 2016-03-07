@@ -29,12 +29,8 @@ namespace Titanic {
 
 class CNullPortHole : public CClickResponder {
 public:
+	CLASSDEF
 	CNullPortHole();
-
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CNullPortHole"; }
 
 	/**
 	 * Save the data for the class to file

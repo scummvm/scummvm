@@ -31,12 +31,8 @@ class CLiftbotHead : public CCarry {
 private:
 	int _field12C;
 public:
+	CLASSDEF
 	CLiftbotHead();
-
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CLiftbotHead"; }
 
 	/**
 	 * Save the data for the class to file

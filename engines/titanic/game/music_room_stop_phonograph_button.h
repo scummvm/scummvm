@@ -31,12 +31,8 @@ class CMusicRoomStopPhonographButton : public CEjectPhonographButton {
 private:
 	int _field100;
 public:
+	CLASSDEF
 	CMusicRoomStopPhonographButton() : CEjectPhonographButton(), _field100(0) {}
-
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CMusicRoomStopPhonographButton"; }
 
 	/**
 	 * Save the data for the class to file

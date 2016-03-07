@@ -34,12 +34,8 @@ private:
 	int _fieldC4;
 	int _fieldC8;
 public:
+	CLASSDEF
 	CAnnounce();
-
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CAnnounce"; }
 
 	/**
 	 * Save the data for the class to file

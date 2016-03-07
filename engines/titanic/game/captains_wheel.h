@@ -36,12 +36,8 @@ public:
 	int _fieldF0;
 	int _fieldF4;
 public:
+	CLASSDEF
 	CCaptainsWheel();
-
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CCaptainsWheel"; }
 
 	/**
 	 * Save the data for the class to file

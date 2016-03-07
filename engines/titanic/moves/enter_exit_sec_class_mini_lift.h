@@ -39,14 +39,11 @@ private:
 	static CEnterExitSecClassMiniLiftStatics *_statics;
 	int _value;
 public:
+	CLASSDEF
 	CEnterExitSecClassMiniLift() : CGameObject(), _value(0) {}
 	static void init();
 	static void deinit();
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CEnterExitSecClassMiniLift"; }
-
+	
 	/**
 	 * Save the data for the class to file
 	 */

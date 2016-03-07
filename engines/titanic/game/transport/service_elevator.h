@@ -38,12 +38,8 @@ private:
 	int _field100;
 	int _field104;
 public:
+	CLASSDEF
 	CServiceElevator();
-
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CServiceElevator"; }
 
 	/**
 	 * Save the data for the class to file

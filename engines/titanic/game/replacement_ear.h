@@ -29,10 +29,7 @@ namespace Titanic {
 
 class CReplacementEar : public CBackground {
 public:
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CNoNutBowl"; }
+	CLASSDEF
 
 	/**
 	 * Save the data for the class to file

@@ -32,12 +32,8 @@ private:
 	int _fieldBC;
 	int _fieldC0;
 public:
+	CLASSDEF
 	CEnterExitMiniLift() : CSGTNavigation(), _fieldBC(0), _fieldC0(1) {}
-
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CEnterExitMiniLift"; }
 
 	/**
 	 * Save the data for the class to file

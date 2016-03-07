@@ -34,12 +34,8 @@ private:
 	int _field120;
 	int _field124;
 public:
+	CLASSDEF
 	CUpLighter();
-
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CUpLighter"; }
 
 	/**
 	 * Save the data for the class to file

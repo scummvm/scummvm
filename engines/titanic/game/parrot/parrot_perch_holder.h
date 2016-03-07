@@ -29,10 +29,7 @@ namespace Titanic {
 
 class CParrotPerchHolder : public CMultiDropTarget {
 public:
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CParrotPerchHolder"; }
+	CLASSDEF
 
 	/**
 	 * Save the data for the class to file

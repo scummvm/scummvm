@@ -32,10 +32,7 @@ private:
 	static int _v1;
 	int _value;
 public:
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CDoorbotElevatorHandler"; }
+	CLASSDEF
 
 	/**
 	 * Save the data for the class to file

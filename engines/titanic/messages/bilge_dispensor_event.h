@@ -29,10 +29,7 @@ namespace Titanic {
 
 class CBilgeDispensorEvent : public CAutoSoundEvent {
 public:
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CBilgeDispensorEvent"; }
+	CLASSDEF
 
 	/**
 	 * Save the data for the class to file

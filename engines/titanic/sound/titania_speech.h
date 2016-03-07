@@ -31,12 +31,8 @@ class CTitaniaSpeech : public CGameObject {
 public:
 	int _value1, _value2;
 public:
+	CLASSDEF
 	CTitaniaSpeech() : CGameObject(), _value1(1), _value2(0) {}
-
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CTitaniaSpeech"; }
 
 	/**
 	 * Save the data for the class to file

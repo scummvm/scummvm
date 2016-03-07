@@ -34,12 +34,8 @@ private:
 private:
 	int _field108;
 public:
+	CLASSDEF
 	CLiftBot();
-
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CLiftBot"; }
 
 	/**
 	 * Save the data for the class to file

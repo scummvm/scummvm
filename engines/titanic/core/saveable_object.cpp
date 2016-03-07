@@ -93,6 +93,7 @@
 #include "titanic/game/bottom_of_well_monitor.h"
 #include "titanic/game/bowl_unlocker.h"
 #include "titanic/game/brain_slot.h"
+#include "titanic/game/bridge_door.h"
 #include "titanic/game/bridge_view.h"
 #include "titanic/game/broken_pell_base.h"
 #include "titanic/game/broken_pellerator.h"
@@ -104,6 +105,8 @@
 #include "titanic/game/cdrom_computer.h"
 #include "titanic/game/cdrom_tray.h"
 #include "titanic/game/cell_point_button.h"
+#include "titanic/game/chev_code.h"
+#include "titanic/game/chev_panel.h"
 #include "titanic/game/chicken_cooler.h"
 #include "titanic/game/chicken_dispensor.h"
 #include "titanic/game/close_broken_pel.h"
@@ -142,7 +145,9 @@
 #include "titanic/game/head_slot.h"
 #include "titanic/game/head_smash_event.h"
 #include "titanic/game/head_smash_lever.h"
+#include "titanic/game/head_spinner.h"
 #include "titanic/game/idle_summoner.h"
+#include "titanic/game/leave_sec_class_state.h"
 #include "titanic/game/lemon_dispensor.h"
 #include "titanic/game/light.h"
 #include "titanic/game/light_switch.h"
@@ -151,6 +156,7 @@
 #include "titanic/game/mail_man.h"
 #include "titanic/game/missiveomat.h"
 #include "titanic/game/missiveomat_button.h"
+#include "titanic/game/movie_tester.h"
 #include "titanic/game/musical_instrument.h"
 #include "titanic/game/music_console_button.h"
 #include "titanic/game/music_room_phonograph.h"
@@ -184,10 +190,12 @@
 #include "titanic/game/ship_setting_button.h"
 #include "titanic/game/show_cell_points.h"
 #include "titanic/game/speech_dispensor.h"
+#include "titanic/game/splash_animation.h"
 #include "titanic/game/starling_puret.h"
 #include "titanic/game/start_action.h"
 #include "titanic/game/stop_phonograph_button.h"
 #include "titanic/game/sub_glass.h"
+#include "titanic/game/sub_wrapper.h"
 #include "titanic/game/sweet_bowl.h"
 #include "titanic/game/television.h"
 #include "titanic/game/third_class_canal.h"
@@ -369,6 +377,7 @@
 #include "titanic/npcs/succubus.h"
 #include "titanic/npcs/summon_bots.h"
 #include "titanic/npcs/titania.h"
+#include "titanic/npcs/true_talk_npc.h"
 
 #include "titanic/pet_control/pet_control.h"
 
@@ -378,6 +387,7 @@
 #include "titanic/sound/auto_sound_player_adsr.h"
 #include "titanic/sound/background_sound_maker.h"
 #include "titanic/sound/bird_song.h"
+#include "titanic/sound/dome_from_top_of_well.h"
 #include "titanic/sound/gondolier_song.h"
 #include "titanic/sound/enter_view_toggles_other_music.h"
 #include "titanic/sound/music_player.h"
@@ -398,9 +408,12 @@ namespace Titanic {
 
 Common::HashMap<Common::String, CSaveableObject::CreateFunction> * 
 	CSaveableObject::_classList = nullptr;
+Common::List<ClassDef *> *CSaveableObject::_classDefs;
 
-#define DEFFN(T) CSaveableObject *Function##T() { return new T(); }
-#define ADDFN(T) (*_classList)[#T] = Function##T
+#define DEFFN(T) ClassDef *T::_type; \
+	CSaveableObject *Function##T() { return new T(); }
+#define ADDFN(CHILD, PARENT) (*_classList)[#CHILD] = Function##CHILD; \
+	##CHILD::_type = new TypeTemplate<CHILD>(#CHILD, nullptr)
 
 DEFFN(CArm)
 DEFFN(CAuditoryCentre)
@@ -411,7 +424,6 @@ DEFFN(CCarry)
 DEFFN(CCarryParrot)
 DEFFN(CCentralCore)
 DEFFN(CChicken)
-DEFFN(CChickenCooler)
 DEFFN(CCrushedTV)
 DEFFN(CEar)
 DEFFN(CEye)
@@ -448,13 +460,17 @@ DEFFN(CDontSaveFileItem)
 DEFFN(CDropTarget)
 DEFFN(CFileItem)
 DEFFN(CFileListItem)
+DEFFN(CGameObject)
 DEFFN(CLinkItem)
+DEFFN(ListItem)
 DEFFN(CMessageTarget)
 DEFFN(CMovieClip)
 DEFFN(CMovieClipList)
 DEFFN(CMultiDropTarget)
+DEFFN(CNamedItem)
 DEFFN(CNodeItem)
 DEFFN(CProjectItem)
+DEFFN(CSaveableObject)
 DEFFN(CStaticImage)
 DEFFN(CTurnOnObject)
 DEFFN(CTurnOnPlaySound)
@@ -476,6 +492,7 @@ DEFFN(CBomb)
 DEFFN(CBottomOfWellMonitor)
 DEFFN(CBowlUnlocker)
 DEFFN(CBrainSlot)
+DEFFN(CBridgeDoor)
 DEFFN(CBridgeView)
 DEFFN(CBrokenPellBase)
 DEFFN(CBrokenPellerator)
@@ -487,12 +504,15 @@ DEFFN(CCDROM)
 DEFFN(CCDROMComputer)
 DEFFN(CCDROMTray)
 DEFFN(CCellPointButton)
+DEFFN(CChevCode)
+DEFFN(CChevPanel)
+DEFFN(CChickenCooler)
 DEFFN(CChickenDispensor)
 DEFFN(CCloseBrokenPel)
 DEFFN(CodeWheel)
 DEFFN(CComputer)
-DEFFN(CCookie)
 DEFFN(CComputerScreen)
+DEFFN(CCookie)
 DEFFN(CCredits)
 DEFFN(CCreditsButton)
 DEFFN(CDeadArea)
@@ -524,7 +544,9 @@ DEFFN(CHammerDispensorButton)
 DEFFN(CHeadSlot)
 DEFFN(CHeadSmashEvent)
 DEFFN(CHeadSmashLever)
+DEFFN(CHeadSpinner)
 DEFFN(CIdleSummoner)
+DEFFN(CLeaveSecClassState)
 DEFFN(CLemonDispensor)
 DEFFN(CLight)
 DEFFN(CLightSwitch)
@@ -533,6 +555,7 @@ DEFFN(CLongStickDispenser)
 DEFFN(CMailMan)
 DEFFN(CMissiveOMat)
 DEFFN(CMissiveOMatButton)
+DEFFN(CMovieTester);
 DEFFN(CMusicalInstrument)
 DEFFN(CMusicConsoleButton)
 DEFFN(CMusicRoomPhonograph)
@@ -566,10 +589,12 @@ DEFFN(CShipSetting)
 DEFFN(CShipSettingButton)
 DEFFN(CShowCellpoints)
 DEFFN(CSpeechDispensor)
+DEFFN(CSplashAnimation)
 DEFFN(CStarlingPuret)
 DEFFN(CStartAction)
 DEFFN(CStopPhonographButton)
 DEFFN(CSUBGlass)
+DEFFN(CSUBWrapper)
 DEFFN(CSweetBowl)
 DEFFN(CTelevision)
 DEFFN(CThirdClassCanal)
@@ -914,22 +939,26 @@ DEFFN(CTripDownCanal)
 DEFFN(CBarbot)
 DEFFN(CBellBot)
 DEFFN(CCallBot)
+DEFFN(CCharacter)
 DEFFN(CDeskbot)
 DEFFN(CDoorbot)
 DEFFN(CLiftBot)
 DEFFN(CMaitreD)
 DEFFN(CMobile)
 DEFFN(CParrot)
+DEFFN(CRobotController)
 DEFFN(CStarlings)
 DEFFN(CSummonBots)
 DEFFN(CSuccUBus)
 DEFFN(CTitania)
+DEFFN(CTrueTalkNPC)
 DEFFN(CAutoMusicPlayer)
 DEFFN(CAutoMusicPlayerBase)
 DEFFN(CAutoSoundPlayer)
 DEFFN(CAutoSoundPlayerADSR)
 DEFFN(CBackgroundSoundMaker)
 DEFFN(CBirdSong)
+DEFFN(CDomeFromTopOfWell)
 DEFFN(CEnterViewTogglesOtherMusic)
 DEFFN(CGondolierSong)
 DEFFN(CMusicPlayer)
@@ -946,556 +975,579 @@ DEFFN(CWaterLappingSounds)
 DEFFN(CStarControl);
 
 void CSaveableObject::initClassList() {
+	_classDefs = new Common::List<ClassDef *>();
 	_classList = new Common::HashMap<Common::String, CreateFunction>();
-	ADDFN(CArm);
-	ADDFN(CAuditoryCentre);
-	ADDFN(CBowlEar);
-	ADDFN(CBrain);
-	ADDFN(CBridgePiece);
-	ADDFN(CCarry);
-	ADDFN(CCarryParrot);
-	ADDFN(CCentralCore);
-	ADDFN(CChicken);
-	ADDFN(CChickenCooler);
-	ADDFN(CCrushedTV);
-	ADDFN(CEar);
-	ADDFN(CEye);
-	ADDFN(CFeathers);
-	ADDFN(CFruit);
-	ADDFN(CGlass);
-	ADDFN(CHammer);
-	ADDFN(CHeadPiece);
-	ADDFN(CHose);
-	ADDFN(CHoseEnd);
-	ADDFN(CKey);
-	ADDFN(CLiftbotHead);
-	ADDFN(CLongStick);
-	ADDFN(CMagazine);
-	ADDFN(CMaitreDLeftArm);
-	ADDFN(CMaitreDRightArm);
-	ADDFN(CMouth);
-	ADDFN(CNapkin);
-	ADDFN(CNose);
-	ADDFN(CNote);
-	ADDFN(CParcel);
-	ADDFN(CPerch);
-	ADDFN(CPhonographCylinder);
-	ADDFN(CPhonographEar);
-	ADDFN(CPhotograph);
-	ADDFN(CPlugIn);
-	ADDFN(CSpeechCentre);
-	ADDFN(CSweets);
-	ADDFN(CVisionCentre);
+	ADDFN(CArm, CCarry);
+	ADDFN(CAuditoryCentre, CBrain);
+	ADDFN(CBowlEar, CEar);
+	ADDFN(CBrain, CCarry);
+	ADDFN(CBridgePiece, CCarry);
+	ADDFN(CCarry, CGameObject);
+	ADDFN(CCarryParrot, CCarry);
+	ADDFN(CCentralCore, CBrain);
+	ADDFN(CChicken, CCarry);
+	ADDFN(CCrushedTV, CCarry);
+	ADDFN(CEar, CHeadPiece);
+	ADDFN(CEye, CHeadPiece);
+	ADDFN(CFeathers, CCarry);
+	ADDFN(CFruit, CCarry);
+	ADDFN(CGlass, CCarry);
+	ADDFN(CHammer, CCarry);
+	ADDFN(CHeadPiece, CCarry);
+	ADDFN(CHose, CCarry);
+	ADDFN(CHoseEnd, CHose);
+	ADDFN(CKey, CCarry);
+	ADDFN(CLiftbotHead, CCarry);
+	ADDFN(CLongStick, CCarry);
+	ADDFN(CMagazine, CCarry);
+	ADDFN(CMaitreDLeftArm, CArm);
+	ADDFN(CMaitreDRightArm, CArm);
+	ADDFN(CMouth, CHeadPiece);
+	ADDFN(CNapkin, CCarry);
+	ADDFN(CNose, CHeadPiece);
+	ADDFN(CNote, CCarry);
+	ADDFN(CParcel, CCarry);
+	ADDFN(CPerch, CCentralCore);
+	ADDFN(CPhonographCylinder, CCarry);
+	ADDFN(CPhonographEar, CEar);
+	ADDFN(CPhotograph, CCarry);
+	ADDFN(CPlugIn, CCarry);
+	ADDFN(CSpeechCentre, CBrain);
+	ADDFN(CSweets, CCarry);
+	ADDFN(CVisionCentre, CBrain);
 
-	ADDFN(CBackground);
-	ADDFN(CClickResponder);
-	ADDFN(CDontSaveFileItem);
-	ADDFN(CDropTarget);
-	ADDFN(CFileItem);
-	ADDFN(CFileListItem);
-	ADDFN(CLinkItem);
-	ADDFN(CMessageTarget);
-	ADDFN(CMovieClip);
-	ADDFN(CMovieClipList);
-	ADDFN(CMultiDropTarget);
-	ADDFN(CNodeItem);
-	ADDFN(CProjectItem);
-	ADDFN(CStaticImage);
-	ADDFN(CTurnOnObject);
-	ADDFN(CTreeItem);
-	ADDFN(CTurnOnPlaySound);
-	ADDFN(CTurnOnTurnOff);
-	ADDFN(CViewItem);
+	ADDFN(CBackground, CGameObject);
+	ADDFN(CClickResponder, CGameObject);
+	ADDFN(CDontSaveFileItem, CFileItem);
+	ADDFN(CDropTarget, CGameObject);
+	ADDFN(CFileItem, CTreeItem);
+	ADDFN(CFileListItem, ListItem);
+	ADDFN(CGameObject, CNamedItem);
+	ADDFN(CLinkItem, CNamedItem);
+	ADDFN(ListItem, CSaveableObject);
+	ADDFN(CMessageTarget, CSaveableObject);
+	ADDFN(CMovieClip, ListItem);
+	ADDFN(CMovieClipList, List);
+	ADDFN(CMultiDropTarget, CDropTarget);
+	ADDFN(CNamedItem, CTreeItem);
+	ADDFN(CNodeItem, CNamedItem);
+	ADDFN(CProjectItem, CFileItem);
+	ADDFN(CSaveableObject, CSaveableObject);
+	ADDFN(CStaticImage, CGameObject);
+	ADDFN(CTurnOnObject, CBackground);
+	ADDFN(CTreeItem, CMessageTarget);
+	ADDFN(CTurnOnPlaySound, CTurnOnObject);
+	ADDFN(CTurnOnTurnOff, CBackground);
+	ADDFN(CViewItem, CNamedItem);
 
-	ADDFN(CAnnounce);
-	ADDFN(CAnnoyBarbot);
-	ADDFN(CArbBackground);
-	ADDFN(CArboretumGate);
-	ADDFN(CAutoAnimate);
-	ADDFN(CBarBell);
-	ADDFN(CBarMenu);
-	ADDFN(CBarMenuButton);
-	ADDFN(CBelbotGetLight);
-	ADDFN(CBilgeSuccUBus);
-	ADDFN(CBomb);
-	ADDFN(CBottomOfWellMonitor);
-	ADDFN(CBrainSlot);
-	ADDFN(CBowlUnlocker);
-	ADDFN(CBridgeView);
-	ADDFN(CBrokenPellBase);
-	ADDFN(CBrokenPellerator);
-	ADDFN(CBrokenPelleratorFroz);
-	ADDFN(CCage);
-	ADDFN(CCallPellerator);
-	ADDFN(CCaptainsWheel);
-	ADDFN(CCDROM);
-	ADDFN(CCDROMComputer);
-	ADDFN(CCDROMTray);
-	ADDFN(CCellPointButton);
-	ADDFN(CChickenDispensor);
-	ADDFN(CodeWheel);
-	ADDFN(CComputerScreen);
-	ADDFN(CCloseBrokenPel);
-	ADDFN(CComputer);
-	ADDFN(CCookie);
-	ADDFN(CCredits);
-	ADDFN(CCreditsButton);
-	ADDFN(CDeadArea);
-	ADDFN(CDeskClickResponder);
-	ADDFN(CDoorbotElevatorHandler);
-	ADDFN(CDoorbotHomeHandler);
-	ADDFN(CDropTarget);
-	ADDFN(CEarSweetBowl);
-	ADDFN(CEjectPhonographButton);
-	ADDFN(CElevatorActionArea);
-	ADDFN(CEmmaControl);
-	ADDFN(CEmptyNutBowl);
-	ADDFN(CEndCreditText);
-	ADDFN(CEndCredits);
-	ADDFN(CEndExplodeShip);
-	ADDFN(CEndGameCredits);
-	ADDFN(CEndSequenceControl);
-	ADDFN(CFan);
-	ADDFN(CFanControl);
-	ADDFN(CFanDecrease);
-	ADDFN(CFanIncrease);
-	ADDFN(CFanNoises);
-	ADDFN(CFloorIndicator);
-	ADDFN(CGamesConsole);
-	ADDFN(CGetLiftEye2);
-	ADDFN(CGlassSmasher);
-	ADDFN(CHammerClip);
-	ADDFN(CHammerDispensor);
-	ADDFN(CHammerDispensorButton);
-	ADDFN(CHeadSlot);
-	ADDFN(CHeadSmashEvent);
-	ADDFN(CHeadSmashLever);
-	ADDFN(CIdleSummoner);
-	ADDFN(CLemonDispensor);
-	ADDFN(CLight);
-	ADDFN(CLightSwitch);
-	ADDFN(CLittleLiftButton);
-	ADDFN(CLongStickDispenser);
-	ADDFN(CMailMan);
-	ADDFN(CMissiveOMat);
-	ADDFN(CMissiveOMatButton);
-	ADDFN(CMusicalInstrument);
-	ADDFN(CMusicConsoleButton);
-	ADDFN(CMusicRoomPhonograph);
-	ADDFN(CMusicRoomStopPhonographButton);
-	ADDFN(CMusicSystemLock);
-	ADDFN(CNavHelmet);
-	ADDFN(CNavigationComputer);
-	ADDFN(CNoNutBowl);
-	ADDFN(CNoseHolder);
-	ADDFN(CNullPortHole);
-	ADDFN(CNutReplacer);
-	ADDFN(CPetDisabler);
-	ADDFN(CPhonograph);
-	ADDFN(CPhonographLid);
-	ADDFN(CPlayMusicButton);
-	ADDFN(CPlayOnAct);
-	ADDFN(CPortHole);
-	ADDFN(CRecordPhonographButton);
-	ADDFN(CReplacementEar);
-	ADDFN(CReservedTable);
-	ADDFN(CRestaurantCylinderHolder);
-	ADDFN(CRestaurantPhonograph);
-	ADDFN(CRoomItem);
-	ADDFN(CSauceDispensor);
-	ADDFN(CSearchPoint);
-	ADDFN(CSeasonBackground);
-	ADDFN(CSeasonBarrel);
-	ADDFN(CSeasonalAdjustment);
-	ADDFN(CServiceElevatorWindow);
-	ADDFN(CShipSetting);
-	ADDFN(CShipSettingButton);
-	ADDFN(CShowCellpoints);
-	ADDFN(CSpeechDispensor);
-	ADDFN(CStarlingPuret);
-	ADDFN(CStartAction);
-	ADDFN(CStopPhonographButton);
-	ADDFN(CSUBGlass);
-	ADDFN(CSweetBowl);
-	ADDFN(CTelevision);
-	ADDFN(CThirdClassCanal);
-	ADDFN(CThrowTVDownWell);
-	ADDFN(CTitaniaStillControl);
-	ADDFN(CTOWParrotNav);
-	ADDFN(CUpLighter);
-	ADDFN(CUselessLever);
-	ADDFN(CWheelButton);
-	ADDFN(CWheelHotSpot);
-	ADDFN(CWheelSpin);
-	ADDFN(CWheelSpinHorn);
-	ADDFN(CGondolierBase);
-	ADDFN(CGondolierChest);
-	ADDFN(CGondolierFace);
-	ADDFN(CGondolierMixer);
-	ADDFN(CGondolierSlider);
-	ADDFN(CMaitreDArmHolder);
-	ADDFN(CMaitreDBody);
-	ADDFN(CMaitreDLegs);
-	ADDFN(CMaitreDProdReceptor);
-	ADDFN(CParrotLobbyController);
-	ADDFN(CParrotLobbyLinkUpdater);
-	ADDFN(CParrotLobbyObject);
-	ADDFN(CParrotLobbyViewObject);
-	ADDFN(CParrotLoser);
-	ADDFN(CParrotNutBowlActor);
-	ADDFN(CParrotNutEater);
-	ADDFN(CParrotPerchHolder);
-	ADDFN(CParrotSuccUBus);
-	ADDFN(CParrotTrigger);
-	ADDFN(CPlayerMeetsParrot);
-	ADDFN(CPET);
-	ADDFN(CPETClass1);
-	ADDFN(CPETClass2);
-	ADDFN(CPETClass3);
-	ADDFN(CPetControl);
-	ADDFN(CPetDragChev);
-	ADDFN(CPetGraphic);
-	ADDFN(CPetGraphic2);
-	ADDFN(PETLeaf);
-	ADDFN(CPETLift);
-	ADDFN(CPETMonitor);
-	ADDFN(CPETPellerator);
-	ADDFN(CPETPosition);
-	ADDFN(CPETSentinal);
-	ADDFN(CPETSounds);
-	ADDFN(CPETTransition);
-	ADDFN(CPETTransport);
-	ADDFN(CPickUp);
-	ADDFN(CPickUpBarGlass);
-	ADDFN(CPickUpHose);
-	ADDFN(CPickUpLemon);
-	ADDFN(CPickUpSpeechCentre);
-	ADDFN(CPickUpVisCentre);
-	ADDFN(CBarShelfVisCentre);
-	ADDFN(CLemonOnBar);
-	ADDFN(CPlaceHolder);
-	ADDFN(CTVOnBar);
-	ADDFN(CArmchair);
-	ADDFN(CBasin);
-	ADDFN(CBedfoot);
-	ADDFN(CBedhead);
-	ADDFN(CChestOfDrawers);
-	ADDFN(CDesk);
-	ADDFN(CDeskchair);
-	ADDFN(CDrawer);
-	ADDFN(CSGTDoors);
-	ADDFN(SGTNav);
-	ADDFN(CSGTNavigation);
-	ADDFN(CSGTRestaurantDoors);
-	ADDFN(CSGTStateControl);
-	ADDFN(CSGTStateRoom);
-	ADDFN(CSGTTV);
-	ADDFN(CSGTUpperDoorsSound);
-	ADDFN(CToilet);
-	ADDFN(CVase);
-	ADDFN(CWashstand);
+	ADDFN(CAnnounce, CGameObject);
+	ADDFN(CAnnoyBarbot, CGameObject);
+	ADDFN(CArbBackground, CBackground);
+	ADDFN(CArboretumGate, CBackground);
+	ADDFN(CAutoAnimate, CBackground);
+	ADDFN(CBarBell, CGameObject);
+	ADDFN(CBarMenu, CGameObject);
+	ADDFN(CBarMenuButton, CGameObject);
+	ADDFN(CBelbotGetLight, CGameObject);
+	ADDFN(CBilgeSuccUBus, CSuccUBus);
+	ADDFN(CBomb, CBackground);
+	ADDFN(CBottomOfWellMonitor, CGameObject);
+	ADDFN(CBowlUnlocker, CGameObject);
+	ADDFN(CBrainSlot, CGameObject);
+	ADDFN(CBridgeDoor, CGameObject);
+	ADDFN(CBridgeView, CBackground);
+	ADDFN(CBrokenPellBase, CBackground);
+	ADDFN(CBrokenPellerator, CBrokenPellBase);
+	ADDFN(CBrokenPelleratorFroz, CBrokenPellBase);
+	ADDFN(CCage, CBackground);
+	ADDFN(CCallPellerator, CGameObject);
+	ADDFN(CCaptainsWheel, CBackground);
+	ADDFN(CCDROM, CGameObject);
+	ADDFN(CCDROMComputer, CGameObject);
+	ADDFN(CCDROMTray, CGameObject);
+	ADDFN(CCellPointButton, CBackground);
+	ADDFN(CChevCode, CGameObject);
+	ADDFN(CChevPanel, CGameObject);
+	ADDFN(CChickenCooler, CGameObject);
+	ADDFN(CChickenDispensor, CBackground);
+	ADDFN(CodeWheel, CBomb);
+	ADDFN(CCloseBrokenPel, CBackground);
+	ADDFN(CComputer, CBackground);
+	ADDFN(CComputerScreen, CGameObject);
+	ADDFN(CCookie, CGameObject);
+	ADDFN(CCredits, CGameObject);
+	ADDFN(CCreditsButton, CBackground);
+	ADDFN(CDeadArea, CGameObject);
+	ADDFN(CDeskClickResponder, CClickResponder);
+	ADDFN(CDoorbotElevatorHandler, CGameObject);
+	ADDFN(CDoorbotHomeHandler, CGameObject);
+	ADDFN(CDropTarget, CGameObject);
+	ADDFN(CEarSweetBowl, CSweetBowl);
+	ADDFN(CEjectPhonographButton, CBackground);
+	ADDFN(CElevatorActionArea, CGameObject);
+	ADDFN(CEmmaControl, CBackground);
+	ADDFN(CEmptyNutBowl, CGameObject);
+	ADDFN(CEndCreditText, CGameObject);
+	ADDFN(CEndCredits, CGameObject);
+	ADDFN(CEndExplodeShip, CGameObject);
+	ADDFN(CEndGameCredits, CGameObject);
+	ADDFN(CEndSequenceControl, CGameObject);
+	ADDFN(CFan, CGameObject);
+	ADDFN(CFanControl, CGameObject);
+	ADDFN(CFanDecrease, CGameObject);
+	ADDFN(CFanIncrease, CGameObject);
+	ADDFN(CFanNoises, CGameObject);
+	ADDFN(CFloorIndicator, CGameObject);
+	ADDFN(CGamesConsole, CBackground);
+	ADDFN(CGetLiftEye2, CGameObject);
+	ADDFN(CGlassSmasher, CGameObject);
+	ADDFN(CHammerClip, CGameObject);
+	ADDFN(CHammerDispensor, CBackground);
+	ADDFN(CHammerDispensorButton, CStartAction);
+	ADDFN(CHeadSlot, CGameObject);
+	ADDFN(CHeadSmashEvent, CBackground);
+	ADDFN(CHeadSmashLever, CBackground);
+	ADDFN(CHeadSpinner, CGameObject);
+	ADDFN(CIdleSummoner, CGameObject);
+	ADDFN(CLeaveSecClassState, CGameObject);
+	ADDFN(CLemonDispensor, CBackground);
+	ADDFN(CLight, CBackground);
+	ADDFN(CLightSwitch, CBackground);
+	ADDFN(CLittleLiftButton, CBackground);
+	ADDFN(CLongStickDispenser, CGameObject);
+	ADDFN(CMailMan, CGameObject);
+	ADDFN(CMissiveOMat, CGameObject);
+	ADDFN(CMissiveOMatButton, CEditControl);
+	ADDFN(CMovieTester, CGameObject);
+	ADDFN(CMusicalInstrument, CBackground);
+	ADDFN(CMusicConsoleButton, CMusicPlayer);
+	ADDFN(CMusicRoomPhonograph, CRestaurantPhonograph);
+	ADDFN(CMusicRoomStopPhonographButton, CEjectPhonographButton);
+	ADDFN(CMusicSystemLock, CDropTarget);
+	ADDFN(CNavHelmet, CGameObject);
+	ADDFN(CNavigationComputer, CGameObject);
+	ADDFN(CNoNutBowl, CBackground);
+	ADDFN(CNoseHolder, CDropTarget);
+	ADDFN(CNullPortHole, CClickResponder);
+	ADDFN(CNutReplacer, CGameObject);
+	ADDFN(CPetDisabler, CGameObject);
+	ADDFN(CPhonograph, CMusicPlayer);
+	ADDFN(CPhonographLid, CGameObject);
+	ADDFN(CPlayMusicButton, CBackground);
+	ADDFN(CPlayOnAct, CBackground);
+	ADDFN(CPortHole, CGameObject);
+	ADDFN(CRecordPhonographButton, CBackground);
+	ADDFN(CReplacementEar, CBackground);
+	ADDFN(CReservedTable, CGameObject);
+	ADDFN(CRestaurantCylinderHolder, CDropTarget);
+	ADDFN(CRestaurantPhonograph, CPhonograph);
+	ADDFN(CRoomItem, CNamedItem);
+	ADDFN(CSauceDispensor, CBackground);
+	ADDFN(CSearchPoint, CGameObject);
+	ADDFN(CSeasonBackground, CBackground);
+	ADDFN(CSeasonBarrel, CBackground);
+	ADDFN(CSeasonalAdjustment, CBackground);
+	ADDFN(CServiceElevatorWindow, CBackground);
+	ADDFN(CShipSetting, CBackground);
+	ADDFN(CShipSettingButton, CGameObject);
+	ADDFN(CShowCellpoints, CGameObject);
+	ADDFN(CSpeechDispensor, CBackground);
+	ADDFN(CSplashAnimation, CGameObject);
+	ADDFN(CStarlingPuret, CGameObject);
+	ADDFN(CStartAction, CBackground);
+	ADDFN(CStopPhonographButton, CBackground);
+	ADDFN(CSUBGlass, CGameObject);
+	ADDFN(CSUBWrapper, CGameObject);
+	ADDFN(CSweetBowl, CGameObject);
+	ADDFN(CTelevision, CBackground);
+	ADDFN(CThirdClassCanal, CBackground);
+	ADDFN(CThrowTVDownWell, CGameObject);
+	ADDFN(CTitaniaStillControl, CGameObject);
+	ADDFN(CTOWParrotNav, CGameObject);
+	ADDFN(CUpLighter, CDropTarget);
+	ADDFN(CUselessLever, CToggleButton);
+	ADDFN(CWheelButton, CBackground);
+	ADDFN(CWheelHotSpot, CBackground);
+	ADDFN(CWheelSpin, CBackground);
+	ADDFN(CWheelSpinHorn, CWheelSpin);
+	ADDFN(CGondolierBase, CGameObject);
+	ADDFN(CGondolierChest, CGondolierBase);
+	ADDFN(CGondolierFace, CGondolierBase);
+	ADDFN(CGondolierMixer, CGondolierBase);
+	ADDFN(CGondolierSlider, CGondolierBase);
+	ADDFN(CMaitreDArmHolder, CDropTarget);
+	ADDFN(CMaitreDBody, CMaitreDProdReceptor);
+	ADDFN(CMaitreDLegs, CMaitreDProdReceptor);
+	ADDFN(CMaitreDProdReceptor, CGameObject);
+	ADDFN(CParrotLobbyController, CParrotLobbyObject);
+	ADDFN(CParrotLobbyLinkUpdater, CParrotLobbyObject);
+	ADDFN(CParrotLobbyObject, CGameObject);
+	ADDFN(CParrotLobbyViewObject, CParrotLobbyObject);
+	ADDFN(CParrotLoser, CGameObject);
+	ADDFN(CParrotNutBowlActor, CGameObject);
+	ADDFN(CParrotNutEater, CGameObject);
+	ADDFN(CParrotPerchHolder, CMultiDropTarget);
+	ADDFN(CParrotSuccUBus, CSuccUBus);
+	ADDFN(CParrotTrigger, CGameObject);
+	ADDFN(CPlayerMeetsParrot, CGameObject);
+	ADDFN(CPET, CGameObject);
+	ADDFN(CPETClass1, CGameObject);
+	ADDFN(CPETClass2, CGameObject);
+	ADDFN(CPETClass3, CGameObject);
+	ADDFN(CPETLift, CPETTransport);
+	ADDFN(CPETMonitor, CGameObject);
+	ADDFN(CPETPellerator, CPETTransport);
+	ADDFN(CPETPosition, CGameObject);
+	ADDFN(CPETSentinal, CGameObject);
+	ADDFN(CPETSounds, CGameObject);
+	ADDFN(CPETTransition, CGameObject);
+	ADDFN(CPETTransport, CGameObject);
+	ADDFN(CPickUp, CGameObject);
+	ADDFN(CPickUpBarGlass, CPickUp);
+	ADDFN(CPickUpHose, CPickUp);
+	ADDFN(CPickUpLemon, CPickUp);
+	ADDFN(CPickUpSpeechCentre, CPickUp);
+	ADDFN(CPickUpVisCentre, CPickUp);
+	ADDFN(CBarShelfVisCentre, CPlaceHolder);
+	ADDFN(CLemonOnBar, CPlaceHolder);
+	ADDFN(CPlaceHolder, CGameObject);
+	ADDFN(CTVOnBar, CPlaceHolder);
+	ADDFN(CArmchair, CSGTStateRoom);
+	ADDFN(CBasin, CSGTStateRoom);
+	ADDFN(CBedfoot, CSGTStateRoom);
+	ADDFN(CBedhead, CSGTStateRoom);
+	ADDFN(CChestOfDrawers, CSGTStateRoom);
+	ADDFN(CDesk, CSGTStateRoom);
+	ADDFN(CDeskchair, CSGTStateRoom);
+	ADDFN(CDrawer, CSGTStateRoom);
+	ADDFN(CSGTDoors, CGameObject);
+	ADDFN(SGTNav, CSGTStateRoom);
+	ADDFN(CSGTNavigation, CGameObject);
+	ADDFN(CSGTRestaurantDoors, CGameObject);
+	ADDFN(CSGTStateControl, CBackground);
+	ADDFN(CSGTStateRoom, CBackground);
+	ADDFN(CSGTTV, CSGTStateRoom);
+	ADDFN(CSGTUpperDoorsSound, CClickResponder);
+	ADDFN(CToilet, CSGTStateRoom);
+	ADDFN(CVase, CSGTStateRoom);
+	ADDFN(CWashstand, CSGTStateRoom);
 
-	ADDFN(CGondolier);
-	ADDFN(CLift);
-	ADDFN(CLiftindicator);
-	ADDFN(CPellerator);
-	ADDFN(CServiceElevator);
-	ADDFN(CTransport);
+	ADDFN(CGondolier, CTransport);
+	ADDFN(CLift, CTransport);
+	ADDFN(CLiftindicator, CLift);
+	ADDFN(CPellerator, CTransport);
+	ADDFN(CServiceElevator, CTransport);
+	ADDFN(CTransport, CMobile);
 
-	ADDFN(CActButton);
-	ADDFN(CChangesSeasonButton);
-	ADDFN(CChevLeftOff);
-	ADDFN(CChevLeftOn);
-	ADDFN(CChevRightOff);
-	ADDFN(CChevRightOn);
-	ADDFN(CChevSendRecSwitch);
-	ADDFN(CChevSwitch);
-	ADDFN(CEditControl);
-	ADDFN(CElevatorButton);
-	ADDFN(CGetFromSucc);
-	ADDFN(CHelmetOnOff);
-	ADDFN(CHomePhoto);
-	ADDFN(CIconNavAction);
-	ADDFN(CIconNavButt);
-	ADDFN(CIconNavDown);
-	ADDFN(CIconNavImage);
-	ADDFN(CIconNavLeft);
-	ADDFN(CIconNavReceive);
-	ADDFN(CIconNavRight);
-	ADDFN(CIconNavSend);
-	ADDFN(CIconNavUp);
-	ADDFN(CKeybrdButt);
-	ADDFN(CMoveObjectButton);
-	ADDFN(CMusicControl);
-	ADDFN(CMusicSlider);
-	ADDFN(CMusicSliderPitch);
-	ADDFN(CMusicSliderSpeed);
-	ADDFN(CMusicSwitch);
-	ADDFN(CMusicSwitchInversion);
-	ADDFN(CMusicSwitchReverse);
-	ADDFN(CMusicVoiceMute);
-	ADDFN(CPetModeOff);
-	ADDFN(CPetModeOn);
-	ADDFN(CPetModePanel);
-	ADDFN(CPetPannel1);
-	ADDFN(CPetPannel2);
-	ADDFN(CPetPannel3);
-	ADDFN(CSendToSucc);
-	ADDFN(CSGTSelector);
-	ADDFN(CSliderButton);
-	ADDFN(CSmallChevLeftOff);
-	ADDFN(CSmallChevLeftOn);
-	ADDFN(CSmallChevRightOff);
-	ADDFN(CSmallChevRightOn);
-	ADDFN(CStatusChangeButton);
-	ADDFN(CSTButton);
-	ADDFN(CTextDown);
-	ADDFN(CTextSkrew);
-	ADDFN(CTextUp);
-	ADDFN(CToggleButton);
-	ADDFN(CToggleSwitch);
-	ADDFN(CVolumeControl);
+	ADDFN(CActButton, CSTButton);
+	ADDFN(CChangesSeasonButton, CSTButton);
+	ADDFN(CChevLeftOff, CToggleSwitch);
+	ADDFN(CChevLeftOn, CToggleSwitch);
+	ADDFN(CChevRightOff, CToggleSwitch);
+	ADDFN(CChevRightOn, CToggleSwitch);
+	ADDFN(CChevSendRecSwitch, CToggleSwitch);
+	ADDFN(CChevSwitch, CToggleSwitch);
+	ADDFN(CEditControl, CGameObject);
+	ADDFN(CElevatorButton, CSTButton);
+	ADDFN(CGetFromSucc, CToggleSwitch);
+	ADDFN(CHelmetOnOff, CToggleSwitch);
+	ADDFN(CHomePhoto, CToggleSwitch);
+	ADDFN(CIconNavAction, CToggleSwitch);
+	ADDFN(CIconNavButt, CPetGraphic);
+	ADDFN(CIconNavDown, CToggleSwitch);
+	ADDFN(CIconNavImage, CPetGraphic);
+	ADDFN(CIconNavLeft, CToggleSwitch);
+	ADDFN(CIconNavReceive, CPetGraphic);
+	ADDFN(CIconNavRight, CToggleSwitch);
+	ADDFN(CIconNavSend, CPetGraphic);
+	ADDFN(CIconNavUp, CToggleSwitch);
+	ADDFN(CKeybrdButt, CToggleSwitch);
+	ADDFN(CMoveObjectButton, CSTButton);
+	ADDFN(CMusicControl, CBackground);
+	ADDFN(CMusicSlider, CMusicControl);
+	ADDFN(CMusicSliderPitch, CMusicSlider);
+	ADDFN(CMusicSliderSpeed, CMusicSlider);
+	ADDFN(CMusicSwitch, CMusicControl);
+	ADDFN(CMusicSwitchInversion, CMusicSwitch);
+	ADDFN(CMusicSwitchReverse, CMusicSwitch);
+	ADDFN(CMusicVoiceMute, CMusicControl);
+	ADDFN(CPetControl, CGameObject);
+	ADDFN(CPetDragChev, CPetGraphic2);
+	ADDFN(CPetGraphic, CGameObject);
+	ADDFN(CPetGraphic2, CGameObject);
+	ADDFN(PETLeaf, CGameObject);
+	ADDFN(CPetModeOff, CToggleSwitch);
+	ADDFN(CPetModeOn, CToggleSwitch);
+	ADDFN(CPetModePanel, CToggleSwitch);
+	ADDFN(CPetPannel1, CPetGraphic);
+	ADDFN(CPetPannel2, CPetGraphic);
+	ADDFN(CPetPannel3, CPetGraphic);
+	ADDFN(CSendToSucc, CToggleSwitch);
+	ADDFN(CSGTSelector, CPetGraphic);
+	ADDFN(CSliderButton, CSTButton);
+	ADDFN(CSmallChevLeftOff, CToggleSwitch);
+	ADDFN(CSmallChevLeftOn, CToggleSwitch);
+	ADDFN(CSmallChevRightOff, CToggleSwitch);
+	ADDFN(CSmallChevRightOn, CToggleSwitch);
+	ADDFN(CStatusChangeButton, CSTButtonClass);
+	ADDFN(CSTButton, CBackground);
+	ADDFN(CTextDown, CPetGraphic);
+	ADDFN(CTextSkrew, CPetGraphic);
+	ADDFN(CTextUp, CPetGraphic);
+	ADDFN(CToggleButton, CBackground);
+	ADDFN(CToggleSwitch, CGameObject);
+	ADDFN(CVolumeControl, CGameObject);
+	
+	ADDFN(CActMsg, CMessage);
+	ADDFN(CActivationmsg, CMessage);
+	ADDFN(CAddHeadPieceMsg, CMessage);
+	ADDFN(CAnimateMaitreDMsg, CMessage);
+	ADDFN(CArboretumGateMsg, CMessage);
+	ADDFN(CArmPickedUpFromTableMsg, CMessage);
+	ADDFN(CAutoSoundEvent, CGameObject);
+	ADDFN(CBilgeAutoSoundEvent, CAutoSoundEvent);
+	ADDFN(CBilgeDispensorEvent, CAutoSoundEvent);
+	ADDFN(CBodyInBilgeRoomMsg, CMessage);
+	ADDFN(CBowlStateChange, CMessage);
+	ADDFN(CCarryObjectArrivedMsg, CMessage);
+	ADDFN(CChangeSeasonMsg, CMessage);
+	ADDFN(CCheckAllPossibleCodes, CMessage);
+	ADDFN(CCheckChevCode, CMessage);
+	ADDFN(CChildDragEndMsg, CMessage);
+	ADDFN(CChildDragMoveMsg, CMessage);
+	ADDFN(CChildDragStartMsg, CMessage);
+	ADDFN(CClearChevPanelBits, CMessage);
+	ADDFN(CCorrectMusicPlayedMsg, CMessage);
+	ADDFN(CCreateMusicPlayerMsg, CMessage);
+	ADDFN(CCylinderHolderReadyMsg, CMessage);
+	ADDFN(CDeactivationMsg, CMessage);
+	ADDFN(CDeliverCCarryMsg, CMessage);
+	ADDFN(CDisableMaitreDProdReceptor, CMessage);
+	ADDFN(CDismissBotMsg, CMessage);
+	ADDFN(CDoffNavHelmet, CMessage);
+	ADDFN(CDonNavHelmet, CMessage);
+	ADDFN(CDoorAutoSoundEvent, CAutoSoundEvent);
+	ADDFN(CDoorbotNeededInElevatorMsg, CMessage);
+	ADDFN(CDoorbotNeededInHomeMsg, CMessage);
+	ADDFN(CDropobjectMsg, CMessage);
+	ADDFN(CDropZoneGotObjectMsg, CMessage);
+	ADDFN(CDropZoneLostObjectMsg, CMessage);
+	ADDFN(CEditControlMsg, CMessage);
+	ADDFN(CEjectCylinderMsg, CMessage);
+	ADDFN(CErasePhonographCylinderMsg, CMessage);
+	ADDFN(CFreshenCookieMsg, CMessage);
+	ADDFN(CGetChevClassBits, CMessage);
+	ADDFN(CGetChevClassNum, CMessage);
+	ADDFN(CGetChevCodeFromRoomNameMsg, CMessage);
+	ADDFN(CGetChevFloorBits, CMessage);
+	ADDFN(CGetChevFloorNum, CMessage);
+	ADDFN(CGetChevLiftBits, CMessage);
+	ADDFN(CGetChevLiftNum, CMessage);
+	ADDFN(CGetChevRoomBits, CMessage);
+	ADDFN(CGetChevRoomNum, CMessage);
+	ADDFN(CHoseConnectedMsg, CMessage);
+	ADDFN(CInitializeAnimMsg, CMessage);
+	ADDFN(CIsEarBowlPuzzleDone, CMessage);
+	ADDFN(CIsHookedOnMsg, CMessage);
+	ADDFN(CIsParrotPresentMsg, CMessage);
+	ADDFN(CKeyCharMsg, CMessage);
+	ADDFN(CLemonFallsFromTreeMsg, CMessage);
+	ADDFN(CLightsMsg, CMessage);
+	ADDFN(CLockPhonographMsg, CMessage);
+	ADDFN(CMaitreDDefeatedMsg, CMessage);
+	ADDFN(CMaitreDHappyMsg, CMessage);
+	ADDFN(CMissiveOMatActionMsg, CMessage);
+	ADDFN(CMouseMsg, CMessage);
+	ADDFN(CMouseMoveMsg, CMouseMsg);
+	ADDFN(CMouseButtonMsg, CMouseMsg);
+	ADDFN(CMouseButtonDownMsg, CMouseButtonMsg);
+	ADDFN(CMouseButtonUpMsg, CMouseButtonMsg);
+	ADDFN(CMouseButtonDoubleClickMsg, CMouseButtonMsg);
+	ADDFN(CMouseDragMsg, CMouseMsg);
+	ADDFN(CMouseDragStartMsg, CMouseDragMsg);
+	ADDFN(CMouseDragMoveMsg, CMouseDragMsg);
+	ADDFN(CMouseDragEndMsg, CMouseDragMsg);
+	ADDFN(CMoveToStartPosMsg, CMessage);
+	ADDFN(CMovieEndMsg, CMessage);
+	ADDFN(CMovieFrameMsg, CMessage);
+	ADDFN(CMusicHasStartedMsg, CMessage);
+	ADDFN(CMusicHasStoppedMsg, CMessage);
+	ADDFN(CMusicSettingChangedMsg, CMessage);
+	ADDFN(CNPCPlayAnimationMsg, CMessage);
+	ADDFN(CNPCPlayIdleAnimationMsg, CMessage);
+	ADDFN(CNPCPlayTalkingAnimationMsg, CMessage);
+	ADDFN(CNPCQueueIdleAnimMsg, CMessage);
+	ADDFN(CNutPuzzleMsg, CMessage);
+	ADDFN(COnSummonBotMsg, CMessage);
+	ADDFN(COpeningCreditsMsg, CMessage);
+	ADDFN(CPETDeliverMsg, CMessage);
+	ADDFN(CPETGainedObjectMsg, CMessage);
+	ADDFN(CPETHelmetOnOffMsg, CMessage);
+	ADDFN(CPETKeyboardOnOffMsg, CMessage);
+	ADDFN(CPETLostObjectMsg, CMessage);
+	ADDFN(CPETObjectSelectedMsg, CMessage);
+	ADDFN(CPETObjectStateMsg, CMessage);
+	ADDFN(CPETPhotoOnOffMsg, CMessage);
+	ADDFN(CPETPlaySoundMsg, CMessage);
+	ADDFN(CPETReceiveMsg, CMessage);
+	ADDFN(CPETSetStarDestinationMsg, CMessage);
+	ADDFN(CPETStarFieldLockMsg, CMessage);
+	ADDFN(CPETStereoFieldOnOffMsg, CMessage);
+	ADDFN(CPETTargetMsg, CMessage);
+	ADDFN(CPanningAwayFromParrotMsg, CMessage);
+	ADDFN(CParrotSpeakMsg, CMessage);
+	ADDFN(CParrotTriesChickenMsg, CMessage);
+	ADDFN(CPassOnDragStartMsg, CMessage);
+	ADDFN(CPhonographPlayMsg, CMessage);
+	ADDFN(CPhonographReadyToPlayMsg, CMessage);
+	ADDFN(CPhonographRecordMsg, CMessage);
+	ADDFN(CPhonographStopMsg, CMessage);
+	ADDFN(CPlayRangeMsg, CMessage);
+	ADDFN(CPlayerTriesRestaurantTableMsg, CMessage);
+	ADDFN(CPreSaveMsg, CMessage);
+	ADDFN(CProdMaitreDMsg, CMessage);
+	ADDFN(CPumpingMsg, CMessage);
+	ADDFN(CPutBotBackInHisBoxMsg, CMessage);
+	ADDFN(CPutParrotBackMsg, CMessage);
+	ADDFN(CPuzzleSolvedMsg, CMessage);
+	ADDFN(CQueryCylinderHolderMsg, CMessage);
+	ADDFN(CQueryCylinderMsg, CMessage);
+	ADDFN(CQueryCylinderNameMsg, CMessage);
+	ADDFN(CQueryCylinderTypeMsg, CMessage);
+	ADDFN(CQueryMusicControlSettingMsg, CMessage);
+	ADDFN(CQueryPhonographState, CMessage);
+	ADDFN(CRecordOntoCylinderMsg, CMessage);
+	ADDFN(CRemoveFromGameMsg, CMessage);
+	ADDFN(CReplaceBowlAndNutsMsg, CMessage);
+	ADDFN(CRestaurantMusicChanged, CMessage);
+	ADDFN(CSendCCarryMsg, CMessage);
+	ADDFN(CSenseWorkingMsg, CMessage);
+	ADDFN(CServiceElevatorDoor, CMessage);
+	ADDFN(CServiceElevatorFloorChangeMsg, CMessage);
+	ADDFN(CServiceElevatorFloorRequestMsg, CMessage);
+	ADDFN(CServiceElevatorMsg, CMessage);
+	ADDFN(CSetChevButtonImageMsg, CMessage);
+	ADDFN(CSetChevClassBits, CMessage);
+	ADDFN(CSetChevFloorBits, CMessage);
+	ADDFN(CSetChevLiftBits, CMessage);
+	ADDFN(CSetChevPanelBitMsg, CMessage);
+	ADDFN(CSetChevPanelButtonsMsg, CMessage);
+	ADDFN(CSetChevRoomBits, CMessage);
+	ADDFN(CSetMusicControlsMsg, CMessage);
+	ADDFN(CSetVarMsg, CMessage);
+	ADDFN(CSetVolumeMsg, CMessage);
+	ADDFN(CShipSettingMsg, CMessage);
+	ADDFN(CShowTextMsg, CMessage);
+	ADDFN(CSignalObject, CMessage);
+	ADDFN(CSpeechFallsFromTreeMsg, CMessage);
+	ADDFN(CStartMusicMsg, CMessage);
+	ADDFN(CStatusChangeMsg, CMessage);
+	ADDFN(CStopMusicMsg, CMessage);
+	ADDFN(CSubAcceptCCarryMsg, CMessage);
+	ADDFN(CSubDeliverCCarryMsg, CMessage);
+	ADDFN(CSubSendCCarryMsg, CMessage);
+	ADDFN(CSUBTransition, CMessage);
+	ADDFN(CSubTurnOffMsg, CMessage);
+	ADDFN(CSubTurnOnMsg, CMessage);
+	ADDFN(CSummonBotMsg, CMessage);
+	ADDFN(CSummonBotQuerryMsg, CMessage);
+	ADDFN(CTakeHeadPieceMsg, CMessage);
+	ADDFN(CTextInputMsg, CMessage);
+	ADDFN(CTimeDilationMsg, CMessage);
+	ADDFN(CTimeMsg, CMessage);
+	ADDFN(CTitleSequenceEndedMsg, CMessage);
+	ADDFN(CTransitMsg, CMessage);
+	ADDFN(CTransportMsg, CMessage);
+	ADDFN(CTriggerAutoMusicPlayerMsg, CMessage);
+	ADDFN(CTriggerNPCEvent, CMessage);
+	ADDFN(CTrueTalkGetAnimSetMsg, CMessage);
+	ADDFN(CTrueTalkGetAssetDetailsMsg, CMessage);
+	ADDFN(CTrueTalkGetStateValueMsg, CMessage);
+	ADDFN(CTrueTalkNotifySpeechEndedMsg, CMessage);
+	ADDFN(CTrueTalkNotifySpeechStartedMsg, CMessage);
+	ADDFN(CTrueTalkQueueUpAnimSetMsg, CMessage);
+	ADDFN(CTrueTalkSelfQueueAnimSetMsg, CMessage);
+	ADDFN(CTrueTalkTriggerActionMsg, CMessage);
+	ADDFN(CTurnOff, CMessage);
+	ADDFN(CTurnOn, CMessage);
+	ADDFN(CUse, CMessage);
+	ADDFN(CUseWithCharMsg, CMessage);
+	ADDFN(CUseWithOtherMsg, CMessage);
+	ADDFN(CVirtualKeyCharMsg, CMessage);
+	ADDFN(CVisibleMsg, CMessage);
 
-	ADDFN(CActMsg);
-	ADDFN(CActivationmsg);
-	ADDFN(CAddHeadPieceMsg);
-	ADDFN(CAnimateMaitreDMsg);
-	ADDFN(CArboretumGateMsg);
-	ADDFN(CArmPickedUpFromTableMsg);
-	ADDFN(CBodyInBilgeRoomMsg);
-	ADDFN(CBowlStateChange);
-	ADDFN(CCarryObjectArrivedMsg);
-	ADDFN(CChangeSeasonMsg);
-	ADDFN(CCheckAllPossibleCodes);
-	ADDFN(CCheckChevCode);
-	ADDFN(CChildDragEndMsg);
-	ADDFN(CChildDragMoveMsg);
-	ADDFN(CChildDragStartMsg);
-	ADDFN(CClearChevPanelBits);
-	ADDFN(CCorrectMusicPlayedMsg);
-	ADDFN(CCreateMusicPlayerMsg);
-	ADDFN(CCylinderHolderReadyMsg);
-	ADDFN(CDeactivationMsg);
-	ADDFN(CDeliverCCarryMsg);
-	ADDFN(CDisableMaitreDProdReceptor);
-	ADDFN(CDismissBotMsg);
-	ADDFN(CDoffNavHelmet);
-	ADDFN(CDonNavHelmet);
-	ADDFN(CDoorbotNeededInElevatorMsg);
-	ADDFN(CDoorbotNeededInHomeMsg);
-	ADDFN(CDropobjectMsg);
-	ADDFN(CDropZoneGotObjectMsg);
-	ADDFN(CDropZoneLostObjectMsg);
-	ADDFN(CEditControlMsg);
-	ADDFN(CEjectCylinderMsg);
-	ADDFN(CErasePhonographCylinderMsg);
-	ADDFN(CFreshenCookieMsg);
-	ADDFN(CGetChevClassBits);
-	ADDFN(CGetChevClassNum);
-	ADDFN(CGetChevCodeFromRoomNameMsg);
-	ADDFN(CGetChevFloorBits);
-	ADDFN(CGetChevFloorNum);
-	ADDFN(CGetChevLiftBits);
-	ADDFN(CGetChevLiftNum);
-	ADDFN(CGetChevRoomBits);
-	ADDFN(CGetChevRoomNum);
-	ADDFN(CHoseConnectedMsg);
-	ADDFN(CInitializeAnimMsg);
-	ADDFN(CIsEarBowlPuzzleDone);
-	ADDFN(CIsHookedOnMsg);
-	ADDFN(CIsParrotPresentMsg);
-	ADDFN(CKeyCharMsg);
-	ADDFN(CLemonFallsFromTreeMsg);
-	ADDFN(CLightsMsg);
-	ADDFN(CLockPhonographMsg);
-	ADDFN(CMaitreDDefeatedMsg);
-	ADDFN(CMaitreDHappyMsg);
-	ADDFN(CMissiveOMatActionMsg);
-	ADDFN(CMouseMsg);
-	ADDFN(CMouseMoveMsg);
-	ADDFN(CMouseButtonMsg);
-	ADDFN(CMouseButtonDownMsg);
-	ADDFN(CMouseButtonUpMsg);
-	ADDFN(CMouseButtonDoubleClickMsg);
-	ADDFN(CMouseDragMsg);
-	ADDFN(CMouseDragStartMsg);
-	ADDFN(CMouseDragMoveMsg);
-	ADDFN(CMouseDragEndMsg);
-	ADDFN(CMoveToStartPosMsg);
-	ADDFN(CMovieEndMsg);
-	ADDFN(CMovieFrameMsg);
-	ADDFN(CMusicHasStartedMsg);
-	ADDFN(CMusicHasStoppedMsg);
-	ADDFN(CMusicSettingChangedMsg);
-	ADDFN(CNPCPlayAnimationMsg);
-	ADDFN(CNPCPlayIdleAnimationMsg);
-	ADDFN(CNPCPlayTalkingAnimationMsg);
-	ADDFN(CNPCQueueIdleAnimMsg);
-	ADDFN(CNutPuzzleMsg);
-	ADDFN(COnSummonBotMsg);
-	ADDFN(COpeningCreditsMsg);
-	ADDFN(CPETDeliverMsg);
-	ADDFN(CPETGainedObjectMsg);
-	ADDFN(CPETHelmetOnOffMsg);
-	ADDFN(CPETKeyboardOnOffMsg);
-	ADDFN(CPETLostObjectMsg);
-	ADDFN(CPETObjectSelectedMsg);
-	ADDFN(CPETObjectStateMsg);
-	ADDFN(CPETPhotoOnOffMsg);
-	ADDFN(CPETPlaySoundMsg);
-	ADDFN(CPETReceiveMsg);
-	ADDFN(CPETSetStarDestinationMsg);
-	ADDFN(CPETStarFieldLockMsg);
-	ADDFN(CPETStereoFieldOnOffMsg);
-	ADDFN(CPETTargetMsg);
-	ADDFN(CPanningAwayFromParrotMsg);
-	ADDFN(CParrotSpeakMsg);
-	ADDFN(CParrotTriesChickenMsg);
-	ADDFN(CPassOnDragStartMsg);
-	ADDFN(CPhonographPlayMsg);
-	ADDFN(CPhonographReadyToPlayMsg);
-	ADDFN(CPhonographRecordMsg);
-	ADDFN(CPhonographStopMsg);
-	ADDFN(CPlayRangeMsg);
-	ADDFN(CPlayerTriesRestaurantTableMsg);
-	ADDFN(CPreSaveMsg);
-	ADDFN(CProdMaitreDMsg);
-	ADDFN(CPumpingMsg);
-	ADDFN(CPutBotBackInHisBoxMsg);
-	ADDFN(CPutParrotBackMsg);
-	ADDFN(CPuzzleSolvedMsg);
-	ADDFN(CQueryCylinderHolderMsg);
-	ADDFN(CQueryCylinderMsg);
-	ADDFN(CQueryCylinderNameMsg);
-	ADDFN(CQueryCylinderTypeMsg);
-	ADDFN(CQueryMusicControlSettingMsg);
-	ADDFN(CQueryPhonographState);
-	ADDFN(CRecordOntoCylinderMsg);
-	ADDFN(CRemoveFromGameMsg);
-	ADDFN(CReplaceBowlAndNutsMsg);
-	ADDFN(CRestaurantMusicChanged);
-	ADDFN(CSendCCarryMsg);
-	ADDFN(CSenseWorkingMsg);
-	ADDFN(CServiceElevatorDoor);
-	ADDFN(CServiceElevatorFloorChangeMsg);
-	ADDFN(CServiceElevatorFloorRequestMsg);
-	ADDFN(CServiceElevatorMsg);
-	ADDFN(CSetChevButtonImageMsg);
-	ADDFN(CSetChevClassBits);
-	ADDFN(CSetChevFloorBits);
-	ADDFN(CSetChevLiftBits);
-	ADDFN(CSetChevPanelBitMsg);
-	ADDFN(CSetChevPanelButtonsMsg);
-	ADDFN(CSetChevRoomBits);
-	ADDFN(CSetMusicControlsMsg);
-	ADDFN(CSetVarMsg);
-	ADDFN(CSetVolumeMsg);
-	ADDFN(CShipSettingMsg);
-	ADDFN(CShowTextMsg);
-	ADDFN(CSignalObject);
-	ADDFN(CSpeechFallsFromTreeMsg);
-	ADDFN(CStartMusicMsg);
-	ADDFN(CStatusChangeMsg);
-	ADDFN(CStopMusicMsg);
-	ADDFN(CSubAcceptCCarryMsg);
-	ADDFN(CSubDeliverCCarryMsg);
-	ADDFN(CSubSendCCarryMsg);
-	ADDFN(CSUBTransition);
-	ADDFN(CSubTurnOffMsg);
-	ADDFN(CSubTurnOnMsg);
-	ADDFN(CSummonBotMsg);
-	ADDFN(CSummonBotQuerryMsg);
-	ADDFN(CTakeHeadPieceMsg);
-	ADDFN(CTextInputMsg);
-	ADDFN(CTimeDilationMsg);
-	ADDFN(CTimeMsg);
-	ADDFN(CTitleSequenceEndedMsg);
-	ADDFN(CTransitMsg);
-	ADDFN(CTransportMsg);
-	ADDFN(CTriggerAutoMusicPlayerMsg);
-	ADDFN(CTriggerNPCEvent);
-	ADDFN(CTrueTalkGetAnimSetMsg);
-	ADDFN(CTrueTalkGetAssetDetailsMsg);
-	ADDFN(CTrueTalkGetStateValueMsg);
-	ADDFN(CTrueTalkNotifySpeechEndedMsg);
-	ADDFN(CTrueTalkNotifySpeechStartedMsg);
-	ADDFN(CTrueTalkQueueUpAnimSetMsg);
-	ADDFN(CTrueTalkSelfQueueAnimSetMsg);
-	ADDFN(CTrueTalkTriggerActionMsg);
-	ADDFN(CTurnOff);
-	ADDFN(CTurnOn);
-	ADDFN(CUse);
-	ADDFN(CUseWithCharMsg);
-	ADDFN(CUseWithOtherMsg);
-	ADDFN(CVirtualKeyCharMsg);
-	ADDFN(CVisibleMsg);
+	ADDFN(CEnterBombRoom, CMovePlayerTo);
+	ADDFN(CEnterBridge, CGameObject);
+	ADDFN(CEnterExitFirstClassState, CGameObject);
+	ADDFN(CEnterExitMiniLift, CSGTNavigation);
+	ADDFN(CEnterExitSecClassMiniLift, CGameObject);
+	ADDFN(CEnterExitView, CGameObject);
+	ADDFN(CEnterSecClassState, CGameObject);
+	ADDFN(CExitArboretum, CMovePlayerTo);
+	ADDFN(CExitBridge, CMovePlayerTo);
+	ADDFN(CExitLift, CGameObject);
+	ADDFN(CExitPellerator, CGameObject);
+	ADDFN(CExitStateRoom, CMovePlayerTo);
+	ADDFN(CExitTiania, CMovePlayerTo);
+	ADDFN(CMovePlayerInParrotRoom, CMovePlayerTo);
+	ADDFN(CMovePlayerTo, CGameObject);
+	ADDFN(CMovePlayerToFrom, CGameObject);
+	ADDFN(CMultiMove, CMovePlayerTo);
+	ADDFN(CPanFromPel, CMovePlayerTo);
+	ADDFN(CRestaurantPanHandler, CMovePlayerTo);
+	ADDFN(CScraliontisTable, CRestaurantPanHandler);
+	ADDFN(CRestrictedMove, CMovePlayerTo);
+	ADDFN(CTripDownCanal, CMovePlayerTo);
 
-	ADDFN(CEnterBombRoom);
-	ADDFN(CEnterBridge);
-	ADDFN(CEnterExitFirstClassState);
-	ADDFN(CEnterExitMiniLift);
-	ADDFN(CEnterExitSecClassMiniLift);
-	ADDFN(CEnterExitView);
-	ADDFN(CEnterSecClassState);
-	ADDFN(CExitArboretum);
-	ADDFN(CExitBridge);
-	ADDFN(CExitLift);
-	ADDFN(CExitPellerator);
-	ADDFN(CExitStateRoom);
-	ADDFN(CExitTiania);
-	ADDFN(CMovePlayerInParrotRoom);
-	ADDFN(CMovePlayerTo);
-	ADDFN(CMovePlayerToFrom);
-	ADDFN(CMultiMove);
-	ADDFN(CPanFromPel);
-	ADDFN(CRestaurantPanHandler);
-	ADDFN(CScraliontisTable);
-	ADDFN(CRestrictedMove);
-	ADDFN(CTripDownCanal);
+	ADDFN(CBarbot, CTrueTalkNPC);
+	ADDFN(CBellBot, CTrueTalkNPC);
+	ADDFN(CCallBot, CGameObject);
+	ADDFN(CCharacter, CGameObject);
+	ADDFN(CDeskbot, CTrueTalkNPC);
+	ADDFN(CDoorbot, CTrueTalkNPC);
+	ADDFN(CMaitreD, CTrueTalkNPC);
+	ADDFN(CLiftBot, CTrueTalkNPC);
+	ADDFN(CMobile, CCharacter);
+	ADDFN(CParrot, CTrueTalkNPC);
+	ADDFN(CRobotController, CGameObject);
+	ADDFN(CStarlings, CCharacter);
+	ADDFN(CSuccUBus, CTrueTalkNPC);
+	ADDFN(CSummonBots, CRobotController);
+	ADDFN(CTitania, CCharacter);
+	ADDFN(CTrueTalkNPC, CCharacter);
 
-	ADDFN(CBarbot);
-	ADDFN(CBellBot);
-	ADDFN(CCallBot);
-	ADDFN(CDeskbot);
-	ADDFN(CDoorbot);
-	ADDFN(CMaitreD);
-	ADDFN(CLiftBot);
-	ADDFN(CMobile);
-	ADDFN(CParrot);
-	ADDFN(CStarlings);
-	ADDFN(CSuccUBus);
-	ADDFN(CSummonBots);
-	ADDFN(CTitania);
-
-	ADDFN(CAutoMusicPlayer);
-	ADDFN(CAutoSoundEvent);
-	ADDFN(CAutoMusicPlayerBase);
-	ADDFN(CAutoSoundPlayer);
-	ADDFN(CAutoSoundPlayerADSR);
-	ADDFN(CBackgroundSoundMaker);
-	ADDFN(CBilgeAutoSoundEvent);
-	ADDFN(CBilgeDispensorEvent);
-	ADDFN(CBirdSong);
-	ADDFN(CDoorAutoSoundEvent);
-	ADDFN(CGondolierSong);
-	ADDFN(CEnterViewTogglesOtherMusic);
-	ADDFN(CGondolierSong);
-	ADDFN(CMusicPlayer);
-	ADDFN(CNodeAutoSoundPlayer);
-	ADDFN(CRestrictedAutoMusicPlayer);
-	ADDFN(CRoomAutoSoundPlayer);
-	ADDFN(CSeasonNoises);
-	ADDFN(CSeasonalMusicPlayer);
-	ADDFN(CAutoMusicPlayer);
-	ADDFN(CTitaniaSpeech);
-	ADDFN(CTriggerAutoMusicPlayer);
-	ADDFN(CViewAutoSoundPlayer);
-	ADDFN(CViewTogglesOtherMusic);
-	ADDFN(CWaterLappingSounds);
-	ADDFN(CStarControl);
+	ADDFN(CAutoMusicPlayer, CAutoMusicPlayerBase);
+	ADDFN(CAutoMusicPlayerBase, CGameObject);
+	ADDFN(CAutoSoundPlayer, CGameObject);
+	ADDFN(CAutoSoundPlayerADSR, CAutoSoundPlayer);
+	ADDFN(CBackgroundSoundMaker, CGameObject);
+	ADDFN(CBirdSong, CRoomAutoSoundPlayer);
+	ADDFN(CDomeFromTopOfWell, CViewAutoSoundPlayer);
+	ADDFN(CGondolierSong, CGameObject);
+	ADDFN(CEnterViewTogglesOtherMusic, CTriggerAutoMusicPlayer);
+	ADDFN(CGondolierSong, CRoomAutoSoundPlayer);
+	ADDFN(CMusicPlayer, CGameObject);
+	ADDFN(CNodeAutoSoundPlayer, CAutoSoundPlayer);
+	ADDFN(CRestrictedAutoMusicPlayer, CAutoMusicPlayer);
+	ADDFN(CRoomAutoSoundPlayer, CAutoSoundPlayer);
+	ADDFN(CSeasonNoises, CViewAutoSoundPlayer);
+	ADDFN(CSeasonalMusicPlayer, CAutoMusicPlayerBase);
+	ADDFN(CAutoMusicPlayer, CAutoMusicPlayerBase);
+	ADDFN(CAutoMusicPlayerBase, CAutoMusicPlayer);
+	ADDFN(CTitaniaSpeech, CGameObject);
+	ADDFN(CTriggerAutoMusicPlayer, CGameObject);
+	ADDFN(CViewAutoSoundPlayer, CAutoSoundPlayer);
+	ADDFN(CViewTogglesOtherMusic, CEnterViewTogglesOtherMusic);
+	ADDFN(CWaterLappingSounds, CRoomAutoSoundPlayer);
+	ADDFN(CStarControl, CGameObject);
 }
 
 void CSaveableObject::freeClassList() {
+	Common::List<ClassDef *>::iterator i;
+	for (i = _classDefs->begin(); i != _classDefs->end(); ++i)
+		delete *i;
+
+	delete _classDefs;
 	delete _classList;
 }
 
@@ -1512,11 +1564,17 @@ void CSaveableObject::load(SimpleFile *file) {
 }
 
 void CSaveableObject::saveHeader(SimpleFile *file, int indent) const {
-	file->writeClassStart(getClassName(), indent);
+	file->writeClassStart(getType()->_className, indent);
 }
 
 void CSaveableObject::saveFooter(SimpleFile *file, int indent) const {
 	file->writeClassEnd(indent);
+}
+
+/*------------------------------------------------------------------------*/
+
+CSaveableObject *ClassDef::create() {
+	return new CSaveableObject();
 }
 
 } // End of namespace Titanic

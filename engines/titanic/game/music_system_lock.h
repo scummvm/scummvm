@@ -31,12 +31,8 @@ class CMusicSystemLock : public CDropTarget {
 private:
 	int _value;
 public:
+	CLASSDEF
 	CMusicSystemLock() : CDropTarget(), _value(0) {}
-
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CMusicSystemLock"; }
 
 	/**
 	 * Save the data for the class to file

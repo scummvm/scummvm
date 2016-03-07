@@ -34,12 +34,8 @@ private:
 	int _fieldC4;
 	int _fieldC8;
 public:
+	CLASSDEF
 	CCDROMComputer();
-
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CCDROMComputer"; }
 
 	/**
 	 * Save the data for the class to file

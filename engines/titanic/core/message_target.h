@@ -29,10 +29,7 @@ namespace Titanic {
 
 class CMessageTarget: public CSaveableObject {
 public:
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CMessageTarget"; }
+	CLASSDEF
 
 	/**
 	 * Save the data for the class to file

@@ -37,13 +37,9 @@ class CSGTNavigation : public CGameObject {
 private:
 	static CSGTNavigationStatics *_statics;
 public:
+	CLASSDEF
 	static void init();
 	static void deinit();
-
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CSGTNavigation"; }
 
 	/**
 	 * Save the data for the class to file

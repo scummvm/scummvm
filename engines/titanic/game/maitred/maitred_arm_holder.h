@@ -29,10 +29,7 @@ namespace Titanic {
 
 class CMaitreDArmHolder : public CDropTarget {
 public:
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CMaitreDArmHolder"; }
+	CLASSDEF
 
 	/**
 	 * Save the data for the class to file

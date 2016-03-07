@@ -35,12 +35,8 @@ private:
 	int _field108;
 	int _field10C;
 public:
+	CLASSDEF
 	CDeskbot();
-
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CDeskbot"; }
 
 	/**
 	 * Save the data for the class to file

@@ -32,12 +32,8 @@ public:
 	int _fieldE0;
 	int _fieldE4;
 public:
+	CLASSDEF
 	CWheelHotSpot() : CBackground(), _fieldE0(0), _fieldE4(0) {}
-
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CWheelHotSpot"; }
 
 	/**
 	 * Save the data for the class to file

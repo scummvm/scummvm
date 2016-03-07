@@ -29,10 +29,7 @@ namespace Titanic {
 
 class CDontSaveFileItem : public CFileItem {
 public:
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CDontSaveFileItem"; }
+	CLASSDEF
 
 	/**
 	 * Save the data for the class to file

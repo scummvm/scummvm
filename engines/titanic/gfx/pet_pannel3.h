@@ -29,10 +29,7 @@ namespace Titanic {
 
 class CPetPannel3 : public CPetGraphic {
 public:
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CPetPannel3"; }
+	CLASSDEF
 
 	/**
 	 * Save the data for the class to file

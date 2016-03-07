@@ -29,10 +29,7 @@ namespace Titanic {
 
 class CEarSweetBowl : public CSweetBowl {
 public:
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CEarSweetBowl"; }
+	CLASSDEF
 
 	/**
 	 * Save the data for the class to file

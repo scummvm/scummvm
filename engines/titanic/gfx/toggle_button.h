@@ -31,12 +31,8 @@ class CToggleButton : public CBackground {
 private:
 	int _fieldE0;
 public:
+	CLASSDEF
 	CToggleButton() : CBackground(), _fieldE0(1) {}
-
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CToggleButton"; }
 
 	/**
 	 * Save the data for the class to file

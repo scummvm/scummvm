@@ -38,12 +38,8 @@ private:
 	int _field14C;
 	int _field150;
 public:
+	CLASSDEF
 	CCarryParrot();
-
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CCarryParrot"; }
 
 	/**
 	 * Save the data for the class to file

@@ -31,12 +31,8 @@ class CMovePlayerToFrom : public CGameObject {
 private:
 	CString _string2;
 public:
+	CLASSDEF
 	CMovePlayerToFrom();
-
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CMovePlayerToFrom"; }
 
 	/**
 	 * Save the data for the class to file

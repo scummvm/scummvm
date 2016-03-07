@@ -29,10 +29,7 @@ namespace Titanic {
 
 class CMusicConsoleButton : public CMusicPlayer {
 public:
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CMusicConsoleButton"; }
+	CLASSDEF
 
 	/**
 	 * Save the data for the class to file

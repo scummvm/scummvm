@@ -42,12 +42,8 @@ private:
 
 	void loading();
 public:
+	CLASSDEF
 	CRoomItem();
-
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CRoomItem"; }
 
 	/**
 	 * Save the data for the class to file

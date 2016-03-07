@@ -31,12 +31,8 @@ class CWheelSpin : public CBackground {
 public:
 	int _value;
 public:
+	CLASSDEF
 	CWheelSpin() : CBackground(), _value(0) {}
-
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CWheelSpin"; }
 
 	/**
 	 * Save the data for the class to file

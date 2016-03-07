@@ -33,13 +33,9 @@ public:
 	int _fieldC0;
 	int _fieldC4;
 public:
+	CLASSDEF
 	CLongStickDispenser() : CGameObject(), _fieldBC(0),
 		_fieldC0(0), _fieldC4(1) {}
-
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CLongStickDispenser"; }
 
 	/**
 	 * Save the data for the class to file

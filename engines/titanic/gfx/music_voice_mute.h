@@ -29,10 +29,7 @@ namespace Titanic {
 
 class CMusicVoiceMute : public CMusicControl {
 public:
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CMusicVoiceMute"; }
+	CLASSDEF
 
 	/**
 	 * Save the data for the class to file

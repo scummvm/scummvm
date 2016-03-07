@@ -29,12 +29,8 @@ namespace Titanic {
 
 class CSGTUpperDoorsSound : public CClickResponder {
 public:
+	CLASSDEF
 	CSGTUpperDoorsSound();
-
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CSGTUpperDoorsSound"; }
 
 	/**
 	 * Save the data for the class to file

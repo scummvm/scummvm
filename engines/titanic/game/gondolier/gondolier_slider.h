@@ -48,12 +48,8 @@ private:
 	CString _string3;
 	int _field118;
 public:
+	CLASSDEF
 	CGondolierSlider();
-
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CGondolierSlider"; }
 
 	/**
 	 * Save the data for the class to file

@@ -34,12 +34,8 @@ protected:
 	int _fieldC4;
 	CString _charName;
 public:
+	CLASSDEF
 	CCharacter();
-
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CCharacter"; }
 
 	/**
 	 * Save the data for the class to file

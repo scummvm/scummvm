@@ -29,13 +29,9 @@ namespace Titanic {
 
 class CSendToSucc : public CToggleSwitch {
 public:
+	CLASSDEF
 	CSendToSucc();
-
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CSendToSucc"; }
-
+	
 	/**
 	 * Save the data for the class to file
 	 */

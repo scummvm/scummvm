@@ -34,12 +34,8 @@ private:
 	int _field134;
 	int _field138;
 public:
+	CLASSDEF
 	CFruit();
-
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CFruit"; }
 
 	/**
 	 * Save the data for the class to file

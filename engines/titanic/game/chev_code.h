@@ -31,12 +31,8 @@ class CChevCode : public CGameObject {
 public:
 	int _value;
 public:
+	CLASSDEF
 	CChevCode() : CGameObject(), _value(0) {}
-
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CChevCode"; }
 
 	/**
 	 * Save the data for the class to file

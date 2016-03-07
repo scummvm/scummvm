@@ -29,10 +29,7 @@ namespace Titanic {
 
 class CPerch : public CCentralCore {
 public:
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CPerch"; }
+	CLASSDEF
 
 	/**
 	 * Save the data for the class to file

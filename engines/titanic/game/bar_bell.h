@@ -35,12 +35,8 @@ public:
 	int _fieldC8;
 	int _fieldCC;
 public:
+	CLASSDEF
 	CBarBell();
-
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CBarBell"; }
 
 	/**
 	 * Save the data for the class to file

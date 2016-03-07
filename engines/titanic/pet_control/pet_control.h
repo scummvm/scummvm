@@ -64,10 +64,7 @@ private:
 
 	void saveSubObjects(SimpleFile *file, int indent) const;
 public:
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CPetControl"; }
+	CLASSDEF
 
 	/**
 	 * Save the data for the class to file

@@ -33,12 +33,8 @@ protected:
 	int _fieldCC;
 	int _fieldD0;
 public:
+	CLASSDEF
 	CExitArboretum();
-
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CExitArboretum"; }
 
 	/**
 	 * Save the data for the class to file

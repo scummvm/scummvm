@@ -33,10 +33,7 @@ private:
 	CString _key;
 	CString _value;
 public:
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CResourceKey"; }
+	CLASSDEF
 
 	/**
 	 * Save the data for the class to file

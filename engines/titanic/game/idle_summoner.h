@@ -40,11 +40,7 @@ public:
 	int _fieldDC;
 public:
 	CIdleSummoner();
-
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CIdleSummoner"; }
+	CLASSDEF
 
 	/**
 	 * Save the data for the class to file

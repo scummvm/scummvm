@@ -34,12 +34,8 @@ private:
 	CString _string3;
 	int _field114;
 public:
+	CLASSDEF
 	CRestaurantPhonograph();
-
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CRestaurantPhonograph"; }
 
 	/**
 	 * Save the data for the class to file

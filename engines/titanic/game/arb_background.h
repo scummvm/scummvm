@@ -34,12 +34,8 @@ public:
 	int _fieldE8;
 	int _fieldEC;
 public:
+	CLASSDEF
 	CArbBackground();
-
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CArbBackground"; }
 
 	/**
 	 * Save the data for the class to file

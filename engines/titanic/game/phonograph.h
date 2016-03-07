@@ -37,12 +37,8 @@ protected:
 	int _fieldF0;
 	int _fieldF4;
 public:
+	CLASSDEF
 	CPhonograph();
-
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CPhonograph"; }
 
 	/**
 	 * Save the data for the class to file

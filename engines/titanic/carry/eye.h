@@ -31,12 +31,8 @@ class CEye : public CHeadPiece {
 private:
 	int _eyeNum;
 public:
+	CLASSDEF
 	CEye();
-
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CEye"; }
 
 	/**
 	 * Save the data for the class to file

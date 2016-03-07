@@ -30,9 +30,34 @@
 
 namespace Titanic {
 
+class CSaveableObject;
+
+class ClassDef {
+public:
+	const char *_className;
+	ClassDef *_parent;
+public:
+	ClassDef(const char *className, ClassDef *parent) :
+		_className(className), _parent(parent) {}
+	virtual CSaveableObject *create();
+};
+
+template<typename T>
+class TypeTemplate : public ClassDef {
+public:
+	TypeTemplate(const char *className, ClassDef *parent) : 
+		ClassDef(className, parent) {}
+	virtual CSaveableObject *create() { return new T(); }
+};
+
+#define CLASSDEF \
+	static ClassDef *_type; \
+	virtual ClassDef *getType() const { return _type; }
+
 class CSaveableObject {
 	typedef CSaveableObject *(*CreateFunction)();
 private:
+	static Common::List<ClassDef *> *_classDefs;
 	static Common::HashMap<Common::String, CreateFunction> *_classList;
 public:
 	/**
@@ -50,13 +75,9 @@ public:
 	 */
 	static CSaveableObject *createInstance(const Common::String &name);
 public:
+	CLASSDEF
 	virtual ~CSaveableObject() {}
-
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CSaveableObject"; }
-
+	
 	/**
 	 * Save the data for the class to file
 	 */

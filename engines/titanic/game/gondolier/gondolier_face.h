@@ -31,12 +31,8 @@ class CGondolierFace : public CGondolierBase {
 private:
 	int _fieldBC;
 public:
+	CLASSDEF
 	CGondolierFace() : CGondolierBase(), _fieldBC(0) {}
-
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CGondolierMixer"; }
 
 	/**
 	 * Save the data for the class to file

@@ -33,12 +33,8 @@ public:
 	int _fieldE4;
 	int _fieldE8;
 public:
+	CLASSDEF
 	CChickenDispensor();
-
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CNoNutBowl"; }
 
 	/**
 	 * Save the data for the class to file

@@ -29,12 +29,8 @@ namespace Titanic {
 
 class CNose : public CHeadPiece {
 public:
+	CLASSDEF
 	CNose();
-
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CNose"; }
 
 	/**
 	 * Save the data for the class to file

@@ -29,12 +29,8 @@ namespace Titanic {
 
 class CEar : public CHeadPiece {
 public:
+	CLASSDEF
 	CEar();
-
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CEar"; }
 
 	/**
 	 * Save the data for the class to file

@@ -51,12 +51,8 @@ private:
 	int _field180;
 	int _field184;
 public:
+	CLASSDEF
 	CPhonographCylinder();
-
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CPhonographCylinder"; }
 
 	/**
 	 * Save the data for the class to file

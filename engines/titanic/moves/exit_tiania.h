@@ -34,12 +34,8 @@ private:
 	CString _string2;
 	CString _string3;
 public:
+	CLASSDEF
 	CExitTiania();
-
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CExitTiania"; }
 
 	/**
 	 * Save the data for the class to file

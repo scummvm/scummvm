@@ -29,12 +29,8 @@ namespace Titanic {
 
 class CHoseEnd : public CHose {
 public:
+	CLASSDEF
 	CHoseEnd();
-
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CHoseEnd"; }
 
 	/**
 	 * Save the data for the class to file

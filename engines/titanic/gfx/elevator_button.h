@@ -29,12 +29,8 @@ namespace Titanic {
 
 class CElevatorButton : public CSTButton {
 public:
+	CLASSDEF
 	CElevatorButton();
-
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CElevatorButton"; }
 
 	/**
 	 * Save the data for the class to file

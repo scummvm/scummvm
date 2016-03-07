@@ -31,12 +31,8 @@ class CLittleLiftButton : public CBackground {
 private:
 	int _value;
 public:
+	CLASSDEF
 	CLittleLiftButton() : CBackground(), _value(0) {}
-
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CLittleLiftButton"; }
 
 	/**
 	 * Save the data for the class to file

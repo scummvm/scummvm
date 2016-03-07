@@ -32,11 +32,7 @@ public:
 	int _value1, _value2;
 public:
 	CHeadSpinner() : CGameObject(), _value1(0), _value2(0) {}
-
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CHeadSpinner"; }
+	CLASSDEF
 
 	/**
 	 * Save the data for the class to file

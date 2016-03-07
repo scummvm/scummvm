@@ -31,10 +31,7 @@ class CBelbotGetLight : public CGameObject {
 private:
 	CString _value;
 public:
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CBelbotGetLight"; }
+	CLASSDEF
 
 	/**
 	 * Save the data for the class to file

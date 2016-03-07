@@ -32,12 +32,8 @@ public:
 	CString _string1;
 	CString _string2;
 public:
+	CLASSDEF
 	CTransport();
-
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CTransport"; }
 
 	/**
 	 * Save the data for the class to file

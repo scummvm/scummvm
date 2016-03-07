@@ -47,12 +47,8 @@ private:
 	int _field124;
 	int _field128;
 public:
+	CLASSDEF
 	CCarry();
-
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CCarry"; }
 
 	/**
 	 * Save the data for the class to file

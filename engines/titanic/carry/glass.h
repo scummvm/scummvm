@@ -31,12 +31,8 @@ class CGlass : public CCarry {
 private:
 	CString _string6;
 public:
+	CLASSDEF
 	CGlass();
-
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CGlass"; }
 
 	/**
 	 * Save the data for the class to file

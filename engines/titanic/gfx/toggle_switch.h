@@ -32,12 +32,8 @@ private:
 	int _fieldBC;
 	Common::Point _pos1;
 public:
+	CLASSDEF
 	CToggleSwitch();
-
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CToggleSwitch"; }
 
 	/**
 	 * Save the data for the class to file

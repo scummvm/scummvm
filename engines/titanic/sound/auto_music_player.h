@@ -31,12 +31,8 @@ class CAutoMusicPlayer : public CAutoMusicPlayerBase {
 private:
 	CString _string2;
 public:
+	CLASSDEF
 	CAutoMusicPlayer();
-
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CAutoMusicPlayer"; }
 
 	/**
 	 * Save the data for the class to file

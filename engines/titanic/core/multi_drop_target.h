@@ -32,12 +32,8 @@ public:
 	CString _string5;
 	CString _string6;
 public:
+	CLASSDEF
 	CMultiDropTarget() : CDropTarget(), _string5("1,2") {}
-
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CMultiDropTarget"; }
 
 	/**
 	 * Save the data for the class to file

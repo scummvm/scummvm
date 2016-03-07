@@ -33,12 +33,8 @@ public:
 	int _fieldC0;
 	int _fieldC4;
 public:
+	CLASSDEF
 	CChevPanel() : _fieldBC(0), _fieldC0(0), _fieldC4(0) {}
-
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CChevPanel"; }
 
 	/**
 	 * Save the data for the class to file

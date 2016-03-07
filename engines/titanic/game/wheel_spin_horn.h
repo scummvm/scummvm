@@ -32,10 +32,7 @@ public:
 	CString _string1;
 	CString _string2;
 public:
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CWheelSpinHorn"; }
+	CLASSDEF
 
 	/**
 	 * Save the data for the class to file

@@ -34,12 +34,8 @@ private:
 
 	int _fieldE0;
 public:
+	CLASSDEF
 	CBrokenPellBase() : CBackground(), _fieldE0(0) {}
-
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CBrokenPellBase"; }
 
 	/**
 	 * Save the data for the class to file

@@ -33,12 +33,8 @@ private:
 	int _field10C;
 	int _field110;
 public:
+	CLASSDEF
 	CodeWheel();
-
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CodeWheel"; }
 
 	/**
 	 * Save the data for the class to file

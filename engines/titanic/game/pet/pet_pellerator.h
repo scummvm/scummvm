@@ -29,10 +29,7 @@ namespace Titanic {
 
 class CPETPellerator : public CPETTransport {
 public:
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CPETPellerator"; }
+	CLASSDEF
 
 	/**
 	 * Save the data for the class to file

@@ -29,12 +29,8 @@ namespace Titanic {
 
 class CIconNavAction : public CToggleSwitch {
 public:
+	CLASSDEF
 	CIconNavAction();
-
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CIconNavAction"; }
 
 	/**
 	 * Save the data for the class to file

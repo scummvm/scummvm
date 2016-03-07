@@ -31,12 +31,8 @@ class CNavHelmet : public CGameObject {
 private:
 	int _value;
 public:
+	CLASSDEF
 	CNavHelmet() : CGameObject(), _value(0) {}
-
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CNavHelmet"; }
 
 	/**
 	 * Save the data for the class to file

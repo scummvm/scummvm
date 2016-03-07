@@ -43,12 +43,8 @@ private:
 	CString _string2;
 	CString _string3;
 public:
+	CLASSDEF
 	CMovieClip();
-
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CMovieClip"; }
 
 	/**
 	 * Save the data for the class to file
@@ -66,7 +62,7 @@ public:
  */
 class CMovieClipList: public List<CMovieClip> {
 public:
-	virtual const char *getClassName() const { return "CMovieClipList"; }
+	CLASSDEF
 };
 
 } // End of namespace Titanic

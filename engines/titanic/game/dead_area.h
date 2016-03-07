@@ -29,12 +29,8 @@ namespace Titanic {
 
 class CDeadArea : public CGameObject {
 public:
+	CLASSDEF
 	CDeadArea();
-
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CDeadArea"; }
 
 	/**
 	 * Save the data for the class to file

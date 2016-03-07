@@ -36,10 +36,7 @@ public:
 
 	static void init();
 public:
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CParrotLobbyObject"; }
+	CLASSDEF
 
 	/**
 	 * Save the data for the class to file

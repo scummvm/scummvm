@@ -33,12 +33,8 @@ private:
 	CString _string6;
 	int _field13C;
 public:
+	CLASSDEF
 	CHeadPiece();
-
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CHeadPiece"; }
 
 	/**
 	 * Save the data for the class to file

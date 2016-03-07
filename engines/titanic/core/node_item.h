@@ -33,12 +33,8 @@ private:
 	int _field28;
 	int _field2C;
 public:
+	CLASSDEF
 	CNodeItem();
-
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CNodeItem"; }
 
 	/**
 	 * Save the data for the class to file

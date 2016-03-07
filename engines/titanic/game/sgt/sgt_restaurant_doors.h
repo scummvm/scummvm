@@ -31,12 +31,8 @@ class CSGTRestaurantDoors : public CGameObject {
 private:
 	int _fieldBC;
 public:
+	CLASSDEF
 	CSGTRestaurantDoors() : CGameObject(), _fieldBC(0) {}
-
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CSGTRestaurantDoors"; }
 
 	/**
 	 * Save the data for the class to file

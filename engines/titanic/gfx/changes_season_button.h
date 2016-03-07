@@ -29,12 +29,8 @@ namespace Titanic {
 
 class CChangesSeasonButton : public CSTButton {
 public:
+	CLASSDEF
 	CChangesSeasonButton();
-
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CChangesSeasonButton"; }
 
 	/**
 	 * Save the data for the class to file

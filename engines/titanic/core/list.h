@@ -35,10 +35,7 @@ namespace Titanic {
  */
 class ListItem: public CSaveableObject {
 public:
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "ListItem"; }
+	CLASSDEF
 
 	/**
 	 * Save the data for the class to file
@@ -54,10 +51,7 @@ public:
 template<typename T>
 class List : public CSaveableObject, public Common::List<T *> {
 public:
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return nullptr; }
+	CLASSDEF
 
 	/**
 	 * Save the data for the class to file

@@ -31,12 +31,8 @@ class CEmptyNutBowl : public CGameObject {
 public:
 	int _value;
 public:
+	CLASSDEF
 	CEmptyNutBowl() : CGameObject(), _value(1) {}
-
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CEmptyNutBowl"; }
 
 	/**
 	 * Save the data for the class to file

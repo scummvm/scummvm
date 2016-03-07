@@ -31,12 +31,8 @@ class CMusicRoomPhonograph : public CRestaurantPhonograph {
 private:
 	int _field118;
 public:
+	CLASSDEF
 	CMusicRoomPhonograph() : CRestaurantPhonograph(), _field118(0) {}
-
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CMusicRoomPhonograph"; }
 
 	/**
 	 * Save the data for the class to file

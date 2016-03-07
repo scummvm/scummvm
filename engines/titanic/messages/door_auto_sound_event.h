@@ -34,14 +34,10 @@ public:
 	int _fieldDC;
 	int _fieldE0;
 public:
+	CLASSDEF
 	CDoorAutoSoundEvent() : CAutoSoundEvent(),
 		_string1("z#44.wav"), _string2("z#43.wav"), _fieldDC(25), _fieldE0(25) {
 	}
-
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CDoorAutoSoundEvent"; }
 
 	/**
 	 * Save the data for the class to file

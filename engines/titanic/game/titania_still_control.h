@@ -29,10 +29,7 @@ namespace Titanic {
 
 class CTitaniaStillControl : public CGameObject {
 public:
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CTitaniaStillControl"; }
+	CLASSDEF
 
 	/**
 	 * Save the data for the class to file

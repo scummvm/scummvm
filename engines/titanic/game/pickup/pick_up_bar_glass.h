@@ -29,10 +29,7 @@ namespace Titanic {
 
 class CPickUpBarGlass : public CPickUp {
 public:
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CPickUpBarGlass"; }
+	CLASSDEF
 
 	/**
 	 * Save the data for the class to file

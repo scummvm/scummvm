@@ -29,12 +29,8 @@ namespace Titanic {
 
 class CMouth : public CHeadPiece {
 public:
+	CLASSDEF
 	CMouth();
-
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CMouth"; }
 
 	/**
 	 * Save the data for the class to file

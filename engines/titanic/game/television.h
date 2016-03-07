@@ -42,12 +42,8 @@ private:
 	int _fieldEC;
 	int _fieldF0;
 public:
+	CLASSDEF
 	CTelevision();
-
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CTelevision"; }
 
 	/**
 	 * Save the data for the class to file

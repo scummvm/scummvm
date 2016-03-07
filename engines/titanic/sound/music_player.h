@@ -34,13 +34,9 @@ public:
 	int _fieldCC;
 	int _fieldD0;
 public:
+	CLASSDEF
 	CMusicPlayer() : CGameObject(),
 		_fieldBC(0), _fieldCC(0), _fieldD0(100) {}
-
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CMusicPlayer"; }
 
 	/**
 	 * Save the data for the class to file

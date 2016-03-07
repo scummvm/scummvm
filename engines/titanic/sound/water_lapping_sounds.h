@@ -31,12 +31,8 @@ class CWaterLappingSounds : public CRoomAutoSoundPlayer {
 public:
 	int _value;
 public:
+	CLASSDEF
 	CWaterLappingSounds() : CRoomAutoSoundPlayer(), _value(0) {}
-
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CWaterLappingSounds"; }
 
 	/**
 	 * Save the data for the class to file

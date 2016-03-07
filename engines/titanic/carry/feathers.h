@@ -29,12 +29,8 @@ namespace Titanic {
 
 class CFeathers : public CCarry {
 public:
+	CLASSDEF
 	CFeathers();
-
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CFeathers"; }
 
 	/**
 	 * Save the data for the class to file

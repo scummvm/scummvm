@@ -29,10 +29,7 @@ namespace Titanic {
 
 class CMaitreDRightArm : public CArm {
 public:
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CMaitreDRightArm"; }
+	CLASSDEF
 
 	/**
 	 * Save the data for the class to file

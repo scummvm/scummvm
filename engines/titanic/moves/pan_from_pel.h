@@ -32,12 +32,8 @@ protected:
 	int _fieldC8;
 	CString _string1;
 public:
+	CLASSDEF
 	CPanFromPel();
-
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CPanFromPel"; }
 
 	/**
 	 * Save the data for the class to file

@@ -38,10 +38,7 @@ private:
 	int _fieldF8;
 	int _fieldFC;
 public:
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CSpeechDispensor"; }
+	CLASSDEF
 
 	/**
 	 * Save the data for the class to file

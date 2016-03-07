@@ -33,13 +33,9 @@ private:
 	CString _string1;
 	int _field14C;
 public:
+	CLASSDEF
 	CSpeechCentre() : CBrain(), _string1("Summer"),
 		_field13C(1), _field14C(0) {}
-
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CSpeechCentre"; }
 
 	/**
 	 * Save the data for the class to file

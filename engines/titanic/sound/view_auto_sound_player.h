@@ -31,12 +31,8 @@ class CViewAutoSoundPlayer : public CAutoSoundPlayer {
 private:
 	int _fieldEC;
 public:
+	CLASSDEF
 	CViewAutoSoundPlayer() : CAutoSoundPlayer(), _fieldEC(0) {}
-
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CViewAutoSoundPlayer"; }
 
 	/**
 	 * Save the data for the class to file

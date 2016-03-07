@@ -30,12 +30,8 @@ namespace Titanic {
 
 class CMessage : public CSaveableObject {
 public:
+	CLASSDEF
 	CMessage();
-
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CMessage"; }
 
 	/**
 	 * Save the data for the class to file
@@ -57,13 +53,9 @@ private:
 	int _field1C;
 	int _field20;
 public:
+	CLASSDEF
 	CEditControlMsg() : _field4(0), _field8(0), _field18(0),
 		_field1C(0), _field20(0) {}
-
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CEditControlMsg"; }
 };
 
 class CLightsMsg : public CMessage {
@@ -73,13 +65,9 @@ public:
 	int _fieldC;
 	int _field10;
 public:
+	CLASSDEF
 	CLightsMsg() : CMessage(), _field4(0), _field8(0),
 		_fieldC(0), _field10(0) {}
-
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CLightsMsg"; }
 };
 
 class CIsHookedOnMsg : public CMessage {
@@ -91,27 +79,18 @@ private:
 	int _field1C;
 	int _field20;
 public:
+	CLASSDEF
 	CIsHookedOnMsg() : CMessage(), _field4(0), _field8(0),
 		_field18(0), _field1C(0), _field20(0) {}
-
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CIsHookedOnMsg"; }
 };
-
 
 class CSubAcceptCCarryMsg : public CMessage {
 public:
 	CString _string1;
 	int _value1, _value2, _value3;
 public:
+	CLASSDEF
 	CSubAcceptCCarryMsg() : _value1(0), _value2(0), _value3(0) {}
-
-	/**
-	* Return the class name
-	*/
-	virtual const char *getClassName() const { return "CSubAcceptCCarryMsg"; }
 };
 
 class CTransportMsg : public CMessage {
@@ -119,216 +98,187 @@ public:
 	CString _string;
 	int _value1, _value2;
 public:
+	CLASSDEF
 	CTransportMsg() : _value1(0), _value2(0) {}
-
-	/**
-	* Return the class name
-	*/
-	virtual const char *getClassName() const { return "CTransportMsg"; }
 };
 
-#define RAW_MESSAGE(NAME) class NAME: public CMessage { \
-	virtual const char *getClassName() const { return #NAME; } \
-	}
-#define STR_MESSAGE(NAME, FIELD) class NAME: public CMessage { \
-	public: CString FIELD; \
-	virtual const char *getClassName() const { return #NAME; } \
-	}
-#define STR2_MESSAGE(NAME, FIELD1, FIELD2) class NAME: public CMessage { \
-	public: CString FIELD1, FIELD2; \
-	virtual const char *getClassName() const { return #NAME; } \
-	}
-#define STR_MESSAGE_VAL(NAME, FIELD, VAL) class NAME: public CMessage { \
-	public: CString FIELD; \
-	NAME(): FIELD(VAL) {} \
-	virtual const char *getClassName() const { return #NAME; } \
-	}
-#define NUM_MESSAGE(NAME, FIELD) class NAME: public CMessage { \
-	public: int FIELD; \
-	NAME(): FIELD(0) {} \
-	virtual const char *getClassName() const { return #NAME; } \
-	}
-#define NUM_MESSAGE_VAL(NAME, FIELD, VAL) class NAME: public CMessage { \
-	public: int FIELD; \
-	NAME(): CMessage(), FIELD(VAL) {} \
-	virtual const char *getClassName() const { return #NAME; } \
-	}
-#define NUM2_MESSAGE(NAME, FIELD1, FIELD2) class NAME: public CMessage { \
-	public: int FIELD1, FIELD2; \
-	NAME(): CMessage(), FIELD1(0), FIELD2(0) {} \
-	virtual const char *getClassName() const { return #NAME; } \
-	}
-#define NUM3_MESSAGE(NAME, FIELD1, FIELD2, FIELD3) class NAME: public CMessage { \
-	public: int FIELD1, FIELD2, FIELD3; \
-	NAME(): CMessage(), FIELD1(0), FIELD2(0), FIELD3(0) {} \
-	virtual const char *getClassName() const { return #NAME; } \
-	}
-#define NUM4_MESSAGE(NAME, FIELD1, FIELD2, FIELD3, FIELD4) \
+#define MESSAGE0(NAME) \
 	class NAME: public CMessage { \
-	public: int FIELD1, FIELD2, FIELD3, FIELD4; \
-	NAME(): CMessage(), FIELD1(0), FIELD2(0), FIELD3(0), FIELD4(0) {} \
-	virtual const char *getClassName() const { return #NAME; } \
+	public: NAME() : CMessage() {} \
+	CLASSDEF \
 	}
-#define NUM2_MESSAGE_VAL(NAME, FIELD1, FIELD2, VAL1, VAL2) \
+#define MESSAGE1(NAME, F1, N1, V1) \
 	class NAME: public CMessage { \
-	public: int FIELD1, FIELD2; \
-	NAME(): CMessage(), FIELD1(VAL1), FIELD2(VAL2) {} \
-	virtual const char *getClassName() const { return #NAME; } \
+	public: F1 _N1; \
+	NAME() : CMessage(), _N1(V1) {} \
+	NAME(F1 N1) : CMessage(), _N1(N1) {} \
+	CLASSDEF \
 	}
-#define SNUM_MESSAGE(NAME, SFIELD, NFIELD) class NAME: public CMessage { \
-	public: CString SFIELD; CString NFIELD; \
-	virtual const char *getClassName() const { return #NAME; } \
-	}
-#define SNUM_MESSAGE_VAL(NAME, SFIELD, NFIELD, SVAL, NVAL) \
+#define MESSAGE2(NAME, F1, N1, V1, F2, N2, V2) \
 	class NAME: public CMessage { \
-	public: CString SFIELD; CString NFIELD; \
-	NAME(): CMessage(), SFIELD(SVAL), NFIELD(NVAL) {} \
-	virtual const char *getClassName() const { return #NAME; } \
+	public: F1 _N1; F2 _N2; \
+	NAME() : CMessage(), _N1(V1), _N2(V2) {} \
+	NAME(F1 N1, F2 N2) : CMessage(), _N1(N1), _N2(N2) {} \
+	CLASSDEF \
+	}
+#define MESSAGE3(NAME, F1, N1, V1, F2, N2, V2, F3, N3, V3) \
+	class NAME: public CMessage { \
+	public: F1 _N1; F2 _N2; F3 _N3; \
+	NAME() : CMessage(), _N1(V1), _N2(V2), _N3(V3) {} \
+	NAME(F1 N1, F2 N2, F3 N3) : CMessage(), _N1(N1), _N2(N2), _N3(N3) {} \
+	CLASSDEF \
+	}
+#define MESSAGE4(NAME, F1, N1, V1, F2, N2, V2, F3, N3, V3, F4, N4, V4) \
+	class NAME: public CMessage { \
+	public: F1 _N1; F2 _N2; F3 _N3; F4 _N4; \
+	NAME() : CMessage(), _N1(V1), _N2(V2), _N3(V3), _N4(V4) {} \
+	NAME(F1 N1, F2 N2, F3 N3, F4 N4) : CMessage(), _N1(N1), _N2(N2), _N3(N3), _N4(N4) {} \
+	CLASSDEF \
 	}
 
-STR_MESSAGE(CActMsg, _value);
-STR_MESSAGE(CActivationmsg, _value);
-STR_MESSAGE_VAL(CAddHeadPieceMsg, _value, "NULL");
-NUM_MESSAGE(CAnimateMaitreDMsg, _value);
-NUM_MESSAGE(CArboretumGateMsg, _value);
-RAW_MESSAGE(CArmPickedUpFromTableMsg);
-RAW_MESSAGE(CBodyInBilgeRoomMsg);
-NUM_MESSAGE(CBowlStateChange, _value);
-SNUM_MESSAGE(CCarryObjectArrivedMsg, _strValue, _numValue);
-STR_MESSAGE_VAL(CChangeSeasonMsg, _season, "Summer");
-RAW_MESSAGE(CCheckAllPossibleCodes);
-NUM2_MESSAGE(CCheckChevCode, _value1, _value2);
-NUM_MESSAGE(CChildDragEndMsg, _value);
-NUM2_MESSAGE(CChildDragMoveMsg, _value1, _value2);
-NUM2_MESSAGE(CChildDragStartMsg, _value1, _value2);
-RAW_MESSAGE(CClearChevPanelBits);
-RAW_MESSAGE(CCorrectMusicPlayedMsg);
-RAW_MESSAGE(CCreateMusicPlayerMsg);
-RAW_MESSAGE(CCylinderHolderReadyMsg);
-RAW_MESSAGE(CDeactivationMsg);
-STR_MESSAGE(CDeliverCCarryMsg, _value);
-RAW_MESSAGE(CDisableMaitreDProdReceptor);
-RAW_MESSAGE(CDismissBotMsg);
-RAW_MESSAGE(CDoffNavHelmet);
-RAW_MESSAGE(CDonNavHelmet);
-NUM_MESSAGE(CDoorbotNeededInElevatorMsg, _value);
-RAW_MESSAGE(CDoorbotNeededInHomeMsg);
-NUM_MESSAGE(CDropobjectMsg, _value);
-NUM_MESSAGE(CDropZoneGotObjectMsg, _value);
-NUM_MESSAGE(CDropZoneLostObjectMsg, _value);
-NUM_MESSAGE(CEjectCylinderMsg, _value);
-RAW_MESSAGE(CErasePhonographCylinderMsg);
-NUM2_MESSAGE(CFreshenCookieMsg, _value1, _value2);
-NUM_MESSAGE(CGetChevClassBits, _value);
-NUM_MESSAGE(CGetChevClassNum, _value);
-SNUM_MESSAGE(CGetChevCodeFromRoomNameMsg, _strValue, _numValue);
-NUM_MESSAGE(CGetChevFloorBits, _value);
-NUM_MESSAGE(CGetChevFloorNum, _value);
-NUM_MESSAGE(CGetChevLiftBits, _value);
-NUM_MESSAGE(CGetChevLiftNum, _value);
-NUM_MESSAGE(CGetChevRoomBits, _value);
-NUM_MESSAGE(CGetChevRoomNum, _value);
-NUM2_MESSAGE_VAL(CHoseConnectedMsg, _value1, _value2, 1, 0);
-RAW_MESSAGE(CInitializeAnimMsg);
-NUM_MESSAGE(CIsEarBowlPuzzleDone, _value);
-NUM_MESSAGE(CIsParrotPresentMsg, _value);
-NUM_MESSAGE_VAL(CKeyCharMsg, _value, 32);
-NUM2_MESSAGE(CLemonFallsFromTreeMsg, _value1, _value2);
-NUM_MESSAGE(CLockPhonographMsg, _value);
-RAW_MESSAGE(CMaitreDDefeatedMsg);
-RAW_MESSAGE(CMaitreDHappyMsg);
-NUM_MESSAGE(CMissiveOMatActionMsg, _value);
-RAW_MESSAGE(CMoveToStartPosMsg);
-NUM2_MESSAGE(CMovieEndMsg, _value1, _value2);
-NUM2_MESSAGE(CMovieFrameMsg, _value1, _value2);
-RAW_MESSAGE(CMusicHasStartedMsg);
-RAW_MESSAGE(CMusicHasStoppedMsg);
-RAW_MESSAGE(CMusicSettingChangedMsg);
-NUM2_MESSAGE(CNPCPlayAnimationMsg, _value1, _value2);
-NUM_MESSAGE(CNPCPlayIdleAnimationMsg, _value);
-NUM3_MESSAGE(CNPCPlayTalkingAnimationMsg, _value1, _value2, _value3);
-RAW_MESSAGE(CNPCQueueIdleAnimMsg);
-STR_MESSAGE(CNutPuzzleMsg, _value);
-NUM_MESSAGE(COnSummonBotMsg, _value);
-RAW_MESSAGE(COpeningCreditsMsg);
-NUM_MESSAGE(CPanningAwayFromParrotMsg, _value);
-STR2_MESSAGE(CParrotSpeakMsg, _value1, _value2);
-NUM2_MESSAGE(CParrotTriesChickenMsg, _value1, _value2);
-NUM4_MESSAGE(CPassOnDragStartMsg, _value1, _value2, _value3, _value4);
-NUM_MESSAGE(CPhonographPlayMsg, _value);
-RAW_MESSAGE(CPhonographReadyToPlayMsg);
-NUM_MESSAGE(CPhonographRecordMsg, _value);
-NUM3_MESSAGE(CPhonographStopMsg, _value1, _value2, _value3);
-NUM2_MESSAGE(CPlayRangeMsg, _value1, _value2);
-NUM2_MESSAGE(CPlayerTriesRestaurantTableMsg, _value1, _value2);
-NUM_MESSAGE(CPreSaveMsg, _value);
-NUM_MESSAGE(CProdMaitreDMsg, _value);
-NUM2_MESSAGE(CPumpingMsg, _value1, _value2);
-NUM_MESSAGE(CPutBotBackInHisBoxMsg, _value);
-NUM_MESSAGE(CPutParrotBackMsg, _value);
-RAW_MESSAGE(CPuzzleSolvedMsg);
-NUM3_MESSAGE(CQueryCylinderHolderMsg, _value1, _value2, _value3);
-NUM3_MESSAGE(CQueryCylinderMsg, _value1, _value2, _value3);
-NUM3_MESSAGE(CQueryCylinderNameMsg, _value1, _value2, _value3);
-NUM3_MESSAGE(CQueryCylinderTypeMsg, _value1, _value2, _value3);
-NUM_MESSAGE(CQueryMusicControlSettingMsg, _value);
-NUM_MESSAGE(CQueryPhonographState, _value);
-RAW_MESSAGE(CRecordOntoCylinderMsg);
-RAW_MESSAGE(CRemoveFromGameMsg);
-RAW_MESSAGE(CReplaceBowlAndNutsMsg);
-STR_MESSAGE(CRestaurantMusicChanged, _value);
-SNUM_MESSAGE(CSendCCarryMsg, _strValue, _numValue);
-STR_MESSAGE_VAL(CSenseWorkingMsg, _value, "Not Working");
-NUM2_MESSAGE(CServiceElevatorFloorChangeMsg, _value1, _value2);
-RAW_MESSAGE(CServiceElevatorFloorRequestMsg);
-NUM_MESSAGE_VAL(CServiceElevatorMsg, _value, 4);
-NUM2_MESSAGE(CSetChevButtonImageMsg, _value1, _value2);
-NUM_MESSAGE(CSetChevClassBits, _value);
-NUM_MESSAGE(CSetChevFloorBits, _value);
-NUM_MESSAGE(CSetChevLiftBits, _value);
-NUM2_MESSAGE(CSetChevPanelBitMsg, _value1, _value2);
-NUM_MESSAGE(CSetChevPanelButtonsMsg, _value);
-NUM_MESSAGE(CSetChevRoomBits, _value);
-RAW_MESSAGE(CSetMusicControlsMsg);
-SNUM_MESSAGE(CSetVarMsg, _varName, _value);
-NUM2_MESSAGE_VAL(CSetVolumeMsg, _value1, _value2, 70, 0);
-SNUM_MESSAGE(CShipSettingMsg, _strValue, _numValue);
-STR_MESSAGE_VAL(CShowTextMsg, _value, "NO TEXT INCLUDED!!!");
-SNUM_MESSAGE(CSignalObject, _strValue, _numValue);
-NUM2_MESSAGE(CSpeechFallsFromTreeMsg, _value1, _value2);
-NUM_MESSAGE(CStartMusicMsg, _value);
-NUM3_MESSAGE(CStatusChangeMsg, _value1, _value2, _value3);
-NUM_MESSAGE(CStopMusicMsg, _value);
-RAW_MESSAGE(CSubDeliverCCarryMsg);
-RAW_MESSAGE(CSubSendCCarryMsg);
-RAW_MESSAGE(CSUBTransition);
-RAW_MESSAGE(CSubTurnOffMsg);
-RAW_MESSAGE(CSubTurnOnMsg);
-SNUM_MESSAGE(CSummonBotMsg, _strValue, _numValue);
-STR_MESSAGE(CSummonBotQuerryMsg, _value);
-STR_MESSAGE(CTakeHeadPieceMsg, _value);
-STR2_MESSAGE(CTextInputMsg, _value1, _value2);
-NUM_MESSAGE(CTimeDilationMsg, _value);
-NUM_MESSAGE(CTimeMsg, _value);
-RAW_MESSAGE(CTitleSequenceEndedMsg);
-RAW_MESSAGE(CTransitMsg);
-NUM_MESSAGE(CTriggerAutoMusicPlayerMsg, _value);
-NUM_MESSAGE(CTriggerNPCEvent, _value);
-NUM4_MESSAGE(CTrueTalkGetAnimSetMsg, _value1, _value2, _value3, _value4);
-SNUM_MESSAGE(CTrueTalkGetAssetDetailsMsg, _strValue, _numValue);
-NUM2_MESSAGE_VAL(CTrueTalkGetStateValueMsg, _value1, _value2, 0, -1000);
-NUM2_MESSAGE(CTrueTalkNotifySpeechEndedMsg, _value1, _value2);
-NUM3_MESSAGE(CTrueTalkNotifySpeechStartedMsg, _value1, _value2, _value);
-NUM_MESSAGE(CTrueTalkQueueUpAnimSetMsg, _value);
-RAW_MESSAGE(CTrueTalkSelfQueueAnimSetMsg);
-NUM3_MESSAGE(CTrueTalkTriggerActionMsg, _value1, _value2, _value3);
-RAW_MESSAGE(CTurnOff);
-RAW_MESSAGE(CTurnOn);
-NUM_MESSAGE(CUse, _value);
-NUM_MESSAGE(CUseWithCharMsg, _value);
-NUM_MESSAGE(CUseWithOtherMsg, _value);
-NUM_MESSAGE(CVirtualKeyCharMsg, _value);
-NUM2_MESSAGE_VAL(CVisibleMsg, _value1, _value2, 1, 0);
+MESSAGE1(CActMsg, CString, value, nullptr);
+MESSAGE1(CActivationmsg, CString, value, nullptr);
+MESSAGE1(CAddHeadPieceMsg, CString, value, "NULL");
+MESSAGE1(CAnimateMaitreDMsg, int, value, 0);
+MESSAGE1(CArboretumGateMsg, int, value, 0);
+MESSAGE0(CArmPickedUpFromTableMsg);
+MESSAGE0(CBodyInBilgeRoomMsg);
+MESSAGE1(CBowlStateChange, int, value, 0);
+MESSAGE2(CCarryObjectArrivedMsg, CString, strValue, nullptr, int, numValue, 0);
+MESSAGE1(CChangeSeasonMsg, CString, season, "Summer");
+MESSAGE0(CCheckAllPossibleCodes);
+MESSAGE2(CCheckChevCode, int, value1, 0, int, value2, 0);
+MESSAGE1(CChildDragEndMsg, int, value, 0);
+MESSAGE2(CChildDragMoveMsg, int, value1, 0, int, value2, 0);
+MESSAGE2(CChildDragStartMsg, int, value1, 0, int, value2, 0);
+MESSAGE0(CClearChevPanelBits);
+MESSAGE0(CCorrectMusicPlayedMsg);
+MESSAGE0(CCreateMusicPlayerMsg);
+MESSAGE0(CCylinderHolderReadyMsg);
+MESSAGE0(CDeactivationMsg);
+MESSAGE1(CDeliverCCarryMsg, CString, value, nullptr);
+MESSAGE0(CDisableMaitreDProdReceptor);
+MESSAGE0(CDismissBotMsg);
+MESSAGE0(CDoffNavHelmet);
+MESSAGE0(CDonNavHelmet);
+MESSAGE1(CDoorbotNeededInElevatorMsg, int, value, 0);
+MESSAGE0(CDoorbotNeededInHomeMsg);
+MESSAGE1(CDropobjectMsg, int, value, 0);
+MESSAGE1(CDropZoneGotObjectMsg, int, value, 0);
+MESSAGE1(CDropZoneLostObjectMsg, int, value, 0);
+MESSAGE1(CEjectCylinderMsg, int, value, 0);
+MESSAGE0(CErasePhonographCylinderMsg);
+MESSAGE2(CFreshenCookieMsg, int, value1, 0, int, value2, 0);
+MESSAGE1(CGetChevClassBits, int, value, 0);
+MESSAGE1(CGetChevClassNum, int, value, 0);
+MESSAGE2(CGetChevCodeFromRoomNameMsg, CString, strValue, nullptr, int, numValue, 0);
+MESSAGE1(CGetChevFloorBits, int, value, 0);
+MESSAGE1(CGetChevFloorNum, int, value, 0);
+MESSAGE1(CGetChevLiftBits, int, value, 0);
+MESSAGE1(CGetChevLiftNum, int, value, 0);
+MESSAGE1(CGetChevRoomBits, int, value, 0);
+MESSAGE1(CGetChevRoomNum, int, value, 0);
+MESSAGE2(CHoseConnectedMsg, int, value1, 1, int, value2, 0);
+MESSAGE0(CInitializeAnimMsg);
+MESSAGE1(CIsEarBowlPuzzleDone, int, value, 0);
+MESSAGE1(CIsParrotPresentMsg, int, value, 0);
+MESSAGE1(CKeyCharMsg, int, value, 32);
+MESSAGE2(CLemonFallsFromTreeMsg, int, value1, 0, int, value2, 0);
+MESSAGE1(CLockPhonographMsg, int, value, 0);
+MESSAGE0(CMaitreDDefeatedMsg);
+MESSAGE0(CMaitreDHappyMsg);
+MESSAGE1(CMissiveOMatActionMsg, int, value, 0);
+MESSAGE0(CMoveToStartPosMsg);
+MESSAGE2(CMovieEndMsg, int, value1, 0, int, value2, 0);
+MESSAGE2(CMovieFrameMsg, int, value1, 0, int, value2, 0);
+MESSAGE0(CMusicHasStartedMsg);
+MESSAGE0(CMusicHasStoppedMsg);
+MESSAGE0(CMusicSettingChangedMsg);
+MESSAGE2(CNPCPlayAnimationMsg, int, value1, 0, int, value2, 0);
+MESSAGE1(CNPCPlayIdleAnimationMsg, int, value, 0);
+MESSAGE3(CNPCPlayTalkingAnimationMsg, int, value1, 0, int, value2, 0, int, value3, 0);
+MESSAGE0(CNPCQueueIdleAnimMsg);
+MESSAGE1(CNutPuzzleMsg, CString, value, nullptr);
+MESSAGE1(COnSummonBotMsg, int, value, 0);
+MESSAGE0(COpeningCreditsMsg);
+MESSAGE1(CPanningAwayFromParrotMsg, int, value, 0);
+MESSAGE2(CParrotSpeakMsg, CString, value1, nullptr, CString, value2, nullptr);
+MESSAGE2(CParrotTriesChickenMsg, int, value1, 0, int, value2, 0);
+MESSAGE4(CPassOnDragStartMsg, int, value1, 0, int, value2, 0, int, value3, 0, int, value4, 0);
+MESSAGE1(CPhonographPlayMsg, int, value, 0);
+MESSAGE0(CPhonographReadyToPlayMsg);
+MESSAGE1(CPhonographRecordMsg, int, value, 0);
+MESSAGE3(CPhonographStopMsg, int, value1, 0, int, value2, 0, int, value3, 0);
+MESSAGE2(CPlayRangeMsg, int, value1, 0, int, value2, 0);
+MESSAGE2(CPlayerTriesRestaurantTableMsg, int, value1, 0, int, value2, 0);
+MESSAGE1(CPreSaveMsg, int, value, 0);
+MESSAGE1(CProdMaitreDMsg, int, value, 0);
+MESSAGE2(CPumpingMsg, int, value1, 0, int, value2, 0);
+MESSAGE1(CPutBotBackInHisBoxMsg, int, value, 0);
+MESSAGE1(CPutParrotBackMsg, int, value, 0);
+MESSAGE0(CPuzzleSolvedMsg);
+MESSAGE3(CQueryCylinderHolderMsg, int, value1, 0, int, value2, 0, int, value3, 0);
+MESSAGE3(CQueryCylinderMsg, int, value1, 0, int, value2, 0, int, value3, 0);
+MESSAGE3(CQueryCylinderNameMsg, int, value1, 0, int, value2, 0, int, value3, 0);
+MESSAGE3(CQueryCylinderTypeMsg, int, value1, 0, int, value2, 0, int, value3, 0);
+MESSAGE1(CQueryMusicControlSettingMsg, int, value, 0);
+MESSAGE1(CQueryPhonographState, int, value, 0);
+MESSAGE0(CRecordOntoCylinderMsg);
+MESSAGE0(CRemoveFromGameMsg);
+MESSAGE0(CReplaceBowlAndNutsMsg);
+MESSAGE1(CRestaurantMusicChanged, CString, value, nullptr);
+MESSAGE2(CSendCCarryMsg, CString, strValue, nullptr, int, numValue, 0);
+MESSAGE1(CSenseWorkingMsg, CString, value, "Not Working");
+MESSAGE2(CServiceElevatorFloorChangeMsg, int, value1, 0, int, value2, 0);
+MESSAGE0(CServiceElevatorFloorRequestMsg);
+MESSAGE1(CServiceElevatorMsg, int, value, 4);
+MESSAGE2(CSetChevButtonImageMsg, int, value1, 0, int, value2, 0);
+MESSAGE1(CSetChevClassBits, int, value, 0);
+MESSAGE1(CSetChevFloorBits, int, value, 0);
+MESSAGE1(CSetChevLiftBits, int, value, 0);
+MESSAGE2(CSetChevPanelBitMsg, int, value1, 0, int, value2, 0);
+MESSAGE1(CSetChevPanelButtonsMsg, int, value, 0);
+MESSAGE1(CSetChevRoomBits, int, value, 0);
+MESSAGE0(CSetMusicControlsMsg);
+MESSAGE2(CSetVarMsg, CString, varName, nullptr, int, value, 0);
+MESSAGE2(CSetVolumeMsg, int, value1, 70, int, value2, 0);
+MESSAGE2(CShipSettingMsg, CString, strValue, nullptr, int, numValue, 0);
+MESSAGE1(CShowTextMsg, CString, value, "NO TEXT INCLUDED!!!");
+MESSAGE2(CSignalObject, CString, strValue, nullptr, int, numValue, 0);
+MESSAGE2(CSpeechFallsFromTreeMsg, int, value1, 0, int, value2, 0);
+MESSAGE1(CStartMusicMsg, int, value, 0);
+MESSAGE3(CStatusChangeMsg, int, value1, 0, int, value2, 0, int, value3, 0);
+MESSAGE1(CStopMusicMsg, int, value, 0);
+MESSAGE0(CSubDeliverCCarryMsg);
+MESSAGE0(CSubSendCCarryMsg);
+MESSAGE0(CSUBTransition);
+MESSAGE0(CSubTurnOffMsg);
+MESSAGE0(CSubTurnOnMsg);
+MESSAGE2(CSummonBotMsg, CString, strValue, nullptr, int, numValue, 0);
+MESSAGE1(CSummonBotQuerryMsg, CString, value, nullptr);
+MESSAGE1(CTakeHeadPieceMsg, CString, value, nullptr);
+MESSAGE2(CTextInputMsg, CString, value1, nullptr, CString, value2, nullptr);
+MESSAGE1(CTimeDilationMsg, int, value, 0);
+MESSAGE1(CTimeMsg, int, value, 0);
+MESSAGE0(CTitleSequenceEndedMsg);
+MESSAGE0(CTransitMsg);
+MESSAGE1(CTriggerAutoMusicPlayerMsg, int, value, 0);
+MESSAGE1(CTriggerNPCEvent, int, value, 0);
+MESSAGE4(CTrueTalkGetAnimSetMsg, int, value1, 0, int, value2, 0, int, value3, 0, int, value4, 0);
+MESSAGE2(CTrueTalkGetAssetDetailsMsg, CString, strValue, nullptr, int, numValue, 0);
+MESSAGE2(CTrueTalkGetStateValueMsg, int, value1, 0, int, value2, -1000);
+MESSAGE2(CTrueTalkNotifySpeechEndedMsg, int, value1, 0, int, value2, 0);
+MESSAGE3(CTrueTalkNotifySpeechStartedMsg, int, value1, 0, int, value2, 0, int, value, 0);
+MESSAGE1(CTrueTalkQueueUpAnimSetMsg, int, value, 0);
+MESSAGE0(CTrueTalkSelfQueueAnimSetMsg);
+MESSAGE3(CTrueTalkTriggerActionMsg, int, value1, 0, int, value2, 0, int, value3, 0);
+MESSAGE0(CTurnOff);
+MESSAGE0(CTurnOn);
+MESSAGE1(CUse, int, value, 0);
+MESSAGE1(CUseWithCharMsg, int, value, 0);
+MESSAGE1(CUseWithOtherMsg, int, value, 0);
+MESSAGE1(CVirtualKeyCharMsg, int, value, 0);
+MESSAGE2(CVisibleMsg, int, value1, 1, int, value2, 0);
 
 } // End of namespace Titanic
 

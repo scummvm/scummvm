@@ -42,12 +42,8 @@ private:
 	int _fieldFC;
 	int _field100;
 public:
+	CLASSDEF
 	CTitania();
-
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CTitania"; }
 
 	/**
 	 * Save the data for the class to file

@@ -37,12 +37,8 @@ private:
 	CString _string2;
 	int _fieldE4;
 public:
+	CLASSDEF
 	CGondolierMixer();
-
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CGondolierMixer"; }
 
 	/**
 	 * Save the data for the class to file

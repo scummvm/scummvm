@@ -32,12 +32,8 @@ private:
 	int _fieldBC;
 	CString _string1;
 public:
+	CLASSDEF
 	CCDROMTray();
-
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CCDROMTray"; }
 
 	/**
 	 * Save the data for the class to file

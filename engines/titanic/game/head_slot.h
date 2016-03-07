@@ -41,12 +41,8 @@ public:
 	int _fieldE8;
 	int _fieldEC;
 public:
+	CLASSDEF
 	CHeadSlot();
-
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CHeadSlot"; }
 
 	/**
 	 * Save the data for the class to file

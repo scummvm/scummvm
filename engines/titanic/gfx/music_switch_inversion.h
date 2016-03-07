@@ -29,10 +29,7 @@ namespace Titanic {
 
 class CMusicSwitchInversion : public CMusicSwitch {
 public:
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CMusicSwitchInversion"; }
+	CLASSDEF
 
 	/**
 	 * Save the data for the class to file

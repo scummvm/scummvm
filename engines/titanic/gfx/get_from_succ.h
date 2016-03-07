@@ -29,12 +29,8 @@ namespace Titanic {
 
 class CGetFromSucc : public CToggleSwitch {
 public:
+	CLASSDEF
 	CGetFromSucc();
-
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CGetFromSucc"; }
 
 	/**
 	 * Save the data for the class to file

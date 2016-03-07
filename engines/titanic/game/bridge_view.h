@@ -31,12 +31,8 @@ class CBridgeView : public CBackground {
 public:
 	int _fieldE0;
 public:
+	CLASSDEF
 	CBridgeView() : CBackground(), _fieldE0(0) {}
-
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CBridgeView"; }
 
 	/**
 	 * Save the data for the class to file

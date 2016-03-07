@@ -33,12 +33,8 @@ private:
 	CString _string1;
 	int _fieldCC;
 public:
+	CLASSDEF
 	CVolumeControl();
-
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CVolumeControl"; }
 
 	/**
 	 * Save the data for the class to file

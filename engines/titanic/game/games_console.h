@@ -31,12 +31,8 @@ class CGamesConsole : public CBackground {
 public:
 	int _fieldE0;
 public:
+	CLASSDEF
 	CGamesConsole() : CBackground(), _fieldE0(0) {}
-
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CGamesConsole"; }
 
 	/**
 	 * Save the data for the class to file

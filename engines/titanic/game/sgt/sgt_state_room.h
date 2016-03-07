@@ -54,14 +54,10 @@ private:
 	int _fieldEC;
 	int _fieldF0;
 public:
+	CLASSDEF
 	CSGTStateRoom();
 	static void init();
 	static void deinit();
-
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CSGTStateRoom"; }
 
 	/**
 	 * Save the data for the class to file

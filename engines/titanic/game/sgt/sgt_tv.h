@@ -29,10 +29,7 @@ namespace Titanic {
 
 class CSGTTV : public CSGTStateRoom {
 public:
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CSGTTV"; }
+	CLASSDEF
 
 	/**
 	 * Save the data for the class to file

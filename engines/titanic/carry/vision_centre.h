@@ -29,10 +29,7 @@ namespace Titanic {
 
 class CVisionCentre : public CBrain {
 public:
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CVisionCentre"; }
+	CLASSDEF
 
 	/**
 	 * Save the data for the class to file

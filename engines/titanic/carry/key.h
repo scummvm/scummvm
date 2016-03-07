@@ -29,12 +29,8 @@ namespace Titanic {
 
 class CKey : public CCarry {
 public:
+	CLASSDEF
 	CKey();
-
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CKey"; }
 
 	/**
 	 * Save the data for the class to file

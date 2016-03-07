@@ -38,14 +38,10 @@ protected:
 
 	CString _string6;
 public:
+	CLASSDEF
 	CHose();
 	static void init();
 	static void deinit();
-
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CHose"; }
 
 	/**
 	 * Save the data for the class to file

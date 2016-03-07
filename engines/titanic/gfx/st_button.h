@@ -37,12 +37,8 @@ private:
 	CString _string5;
 	int _field110;
 public:
+	CLASSDEF
 	CSTButton();
-
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CSTButton"; }
 
 	/**
 	 * Save the data for the class to file

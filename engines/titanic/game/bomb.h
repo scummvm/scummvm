@@ -40,12 +40,8 @@ public:
 	int _field100;
 	int _field104;
 public:
+	CLASSDEF
 	CBomb();
-
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CBomb"; }
 
 	/**
 	 * Save the data for the class to file

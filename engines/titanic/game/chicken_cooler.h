@@ -32,12 +32,8 @@ public:
 	int _fieldBC;
 	int _fieldC0;
 public:
+	CLASSDEF
 	CChickenCooler() : CGameObject(), _fieldBC(0), _fieldC0(0) {}
-
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CChickenCooler"; }
 
 	/**
 	 * Save the data for the class to file

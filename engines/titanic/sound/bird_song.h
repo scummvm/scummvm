@@ -31,12 +31,8 @@ class CBirdSong : public CRoomAutoSoundPlayer {
 public:
 	int _value;
 public:
+	CLASSDEF
 	CBirdSong() : CRoomAutoSoundPlayer(), _value(0) {}
-
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CBirdSong"; }
 
 	/**
 	 * Save the data for the class to file

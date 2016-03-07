@@ -31,12 +31,9 @@ class CBarShelfVisCentre : public CPlaceHolder {
 private:
 	int _value;
 public:
+	CLASSDEF
 	CBarShelfVisCentre() : CPlaceHolder(), _value(0) {}
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CBarShelfVisCentre"; }
-
+	
 	/**
 	 * Save the data for the class to file
 	 */

@@ -31,10 +31,7 @@ class CClickResponder : public CGameObject {
 protected:
 	CString _string1, _string2;
 public:
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CClickResponder"; }
+	CLASSDEF
 
 	/**
 	 * Save the data for the class to file

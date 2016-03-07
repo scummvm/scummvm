@@ -29,12 +29,8 @@ namespace Titanic {
 
 class CSweets : public CCarry {
 public:
+	CLASSDEF
 	CSweets();
-
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CSweets"; }
 
 	/**
 	 * Save the data for the class to file

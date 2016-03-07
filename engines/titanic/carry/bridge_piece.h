@@ -33,12 +33,8 @@ private:
 	Common::Point _pos3;
 	int _field140;
 public:
+	CLASSDEF
 	CBridgePiece();
-
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CBridgePiece"; }
 
 	/**
 	 * Save the data for the class to file

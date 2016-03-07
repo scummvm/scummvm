@@ -29,12 +29,8 @@ namespace Titanic {
 
 class CNapkin : public CCarry {
 public:
+	CLASSDEF
 	CNapkin();
-
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CNapkin"; }
 
 	/**
 	 * Save the data for the class to file

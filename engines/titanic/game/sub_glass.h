@@ -36,12 +36,8 @@ private:
 	int _fieldCC;
 	CString _string;
 public:
+	CLASSDEF
 	CSUBGlass();
-
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CSUBGlass"; }
 
 	/**
 	 * Save the data for the class to file

@@ -32,12 +32,8 @@ private:
 	CString _string6;
 	int _field138;
 public:
+	CLASSDEF
 	CNote();
-
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CNote"; }
 
 	/**
 	 * Save the data for the class to file

@@ -37,12 +37,8 @@ public:
 	int _fieldD0;
 	int _fieldD4;
 public:
+	CLASSDEF
 	CFanNoises();
-
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CFanNoises"; }
 
 	/**
 	 * Save the data for the class to file

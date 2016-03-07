@@ -29,12 +29,8 @@ namespace Titanic {
 
 class CTripDownCanal : public CMovePlayerTo {
 public:
+	CLASSDEF
 	CTripDownCanal();
-
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CTripDownCanal"; }
 
 	/**
 	 * Save the data for the class to file

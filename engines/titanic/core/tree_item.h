@@ -38,12 +38,8 @@ private:
 	CTreeItem *_firstChild;
 	int _field14;
 public:
+	CLASSDEF
 	CTreeItem();
-
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CTreeItem"; }
 
 	/**
 	 * Save the data for the class to file

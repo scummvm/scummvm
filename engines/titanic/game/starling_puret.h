@@ -31,12 +31,8 @@ class CStarlingPuret : public CGameObject {
 private:
 	int _value;
 public:
+	CLASSDEF
 	CStarlingPuret() : CGameObject(), _value(0) {}
-
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CStarlingPuret"; }
 
 	/**
 	 * Save the data for the class to file

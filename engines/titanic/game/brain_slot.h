@@ -34,12 +34,8 @@ public:
 	int _value1;
 	CString _value2;
 public:
+	CLASSDEF
 	CBrainSlot() : CGameObject(), _value1(0) {}
-
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CBrainSlot"; }
 
 	/**
 	 * Save the data for the class to file

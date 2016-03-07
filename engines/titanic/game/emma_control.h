@@ -33,12 +33,8 @@ private:
 
 	CString _wavFile1, _wavFile2;
 public:
+	CLASSDEF
 	CEmmaControl() : CBackground(), _wavFile1("b#39.wav"), _wavFile2("b#38.wav") {}
-
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CEmmaControl"; }
 
 	/**
 	 * Save the data for the class to file

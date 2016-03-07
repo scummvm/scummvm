@@ -43,12 +43,8 @@ protected:
 	int _fieldF0;
 	int _fieldF4;
 public:
+	CLASSDEF
 	CEditControl();
-
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CEditControl"; }
 
 	/**
 	 * Save the data for the class to file

@@ -31,12 +31,8 @@ class CCDROM : public CGameObject {
 private:
 	Common::Point _pos1;
 public:
+	CLASSDEF
 	CCDROM();
-
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CCDROM"; }
 
 	/**
 	 * Save the data for the class to file

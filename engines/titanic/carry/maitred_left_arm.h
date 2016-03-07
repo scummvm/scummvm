@@ -31,12 +31,8 @@ class CMaitreDLeftArm : public CArm {
 private:
 	int _field174;
 public:
+	CLASSDEF
 	CMaitreDLeftArm() : CArm(), _field174(0) {}
-
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CMaitreDLeftArm"; }
 
 	/**
 	 * Save the data for the class to file

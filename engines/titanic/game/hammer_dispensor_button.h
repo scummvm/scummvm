@@ -37,12 +37,8 @@ private:
 	int _field10C;
 	int _field110;
 public:
+	CLASSDEF
 	CHammerDispensorButton();
-
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CHammerDispensorButton"; }
 
 	/**
 	 * Save the data for the class to file

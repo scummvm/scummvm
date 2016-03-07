@@ -64,12 +64,8 @@ public:
 	int _field150;
 	CString _string2;
 public:
+	CLASSDEF
 	CArboretumGate();
-
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CArboretumGate"; }
 
 	/**
 	 * Save the data for the class to file

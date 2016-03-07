@@ -29,12 +29,8 @@ namespace Titanic {
 
 class CComputerScreen : public CGameObject {
 public:
+	CLASSDEF
 	CComputerScreen();
-
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CComputerScreen"; }
 
 	/**
 	 * Save the data for the class to file

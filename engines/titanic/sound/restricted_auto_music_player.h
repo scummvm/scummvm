@@ -34,10 +34,7 @@ private:
 	CString _string5;
 	CString _string6;
 public:
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CRestrictedAutoMusicPlayer"; }
+	CLASSDEF
 
 	/**
 	 * Save the data for the class to file

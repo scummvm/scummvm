@@ -31,12 +31,8 @@ class CParrotLobbyViewObject : public CParrotLobbyObject {
 public:
 	int _fieldBC;
 public:
+	CLASSDEF
 	CParrotLobbyViewObject() : CParrotLobbyObject(), _fieldBC(1) {}
-
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CParrotLobbyViewObject"; }
 
 	/**
 	 * Save the data for the class to file

@@ -36,12 +36,8 @@ private:
 	int _field13C;
 	int _field140;
 public:
+	CLASSDEF
 	CChicken();
-
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CChicken"; }
 
 	/**
 	 * Save the data for the class to file

@@ -29,10 +29,7 @@ namespace Titanic {
 
 class CBowlEar : public CEar {
 public:
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CBowlEar"; }
+	CLASSDEF
 
 	/**
 	 * Save the data for the class to file

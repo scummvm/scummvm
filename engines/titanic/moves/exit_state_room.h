@@ -31,12 +31,8 @@ class CExitStateRoom : public CMovePlayerTo {
 protected:
 	int _fieldC8;
 public:
+	CLASSDEF
 	CExitStateRoom();
-
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CExitStateRoom"; }
 
 	/**
 	 * Save the data for the class to file

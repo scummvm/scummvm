@@ -32,12 +32,8 @@ public:
 	CString _strValue;
 	int _numValue;
 public:
+	CLASSDEF
 	CShowCellpoints() : CGameObject(), _numValue(0) {}
-
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CShowCellpoints"; }
 
 	/**
 	 * Save the data for the class to file

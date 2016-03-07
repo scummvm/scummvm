@@ -35,12 +35,8 @@ public:
 	int _field1F0;
 	int _field1F4;
 public:
+	CLASSDEF
 	CParrotSuccUBus();
-
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CParrotSuccUBus"; }
 
 	/**
 	 * Save the data for the class to file

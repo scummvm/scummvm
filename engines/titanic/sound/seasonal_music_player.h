@@ -38,12 +38,8 @@ private:
 	int _fieldF0;
 	int _fieldF4;
 public:
+	CLASSDEF
 	CSeasonalMusicPlayer();
-
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CSeasonalMusicPlayer"; }
 
 	/**
 	 * Save the data for the class to file

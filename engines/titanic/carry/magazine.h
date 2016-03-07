@@ -32,12 +32,8 @@ private:
 	int _field12C;
 	int _field130;
 public:
+	CLASSDEF
 	CMagazine();
-
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CMagazine"; }
 
 	/**
 	 * Save the data for the class to file

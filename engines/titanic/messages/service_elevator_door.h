@@ -29,12 +29,8 @@ namespace Titanic {
 
 class CServiceElevatorDoor : public CDoorAutoSoundEvent {
 public:
+	CLASSDEF
 	CServiceElevatorDoor();
-
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CServiceElevatorDoor"; }
 
 	/**
 	 * Save the data for the class to file

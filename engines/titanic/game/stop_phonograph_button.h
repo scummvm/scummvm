@@ -29,10 +29,7 @@ namespace Titanic {
 
 class CStopPhonographButton : public CBackground {
 public:
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CStopPhonographButton"; }
+	CLASSDEF
 
 	/**
 	 * Save the data for the class to file

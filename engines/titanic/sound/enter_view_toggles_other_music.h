@@ -31,12 +31,8 @@ class CEnterViewTogglesOtherMusic : public CTriggerAutoMusicPlayer {
 protected:
 	int _fieldC8;
 public:
+	CLASSDEF
 	CEnterViewTogglesOtherMusic();
-
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CEnterViewTogglesOtherMusic"; }
 
 	/**
 	 * Save the data for the class to file

@@ -59,12 +59,8 @@ protected:
 	CString _string;
 	int _fieldB8;
 public:
+	CLASSDEF
 	CGameObject();
-
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CGameObject"; }
 
 	/**
 	 * Save the data for the class to file

@@ -41,12 +41,8 @@ protected:
 	int _field100;
 	int _field104;
 public:
+	CLASSDEF
 	CTrueTalkNPC();
-
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CTrueTalkNPC"; }
 
 	/**
 	 * Save the data for the class to file

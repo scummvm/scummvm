@@ -31,12 +31,8 @@ class CPhonographEar : public CEar {
 private:
 	int _field140;
 public:
+	CLASSDEF
 	CPhonographEar() : CEar(), _field140(1) {}
-
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CPhonographEar"; }
 
 	/**
 	 * Save the data for the class to file

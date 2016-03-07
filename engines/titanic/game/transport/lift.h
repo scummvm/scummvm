@@ -38,12 +38,8 @@ private:
 
 	int _fieldF8;
 public:
+	CLASSDEF
 	CLift() : CTransport(), _fieldF8(1) {}
-
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CLift"; }
 
 	/**
 	 * Save the data for the class to file

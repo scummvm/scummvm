@@ -48,12 +48,8 @@ protected:
 	int _field34;
 	CLinkItemSub _sub;
 public:
+	CLASSDEF
 	CLinkItem();
-
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CLinkItem"; }
 
 	/**
 	 * Save the data for the class to file

@@ -32,10 +32,7 @@ private:
 	static int _v1;
 	static int _v2;
 public:
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CPellerator"; }
+	CLASSDEF
 
 	/**
 	 * Save the data for the class to file

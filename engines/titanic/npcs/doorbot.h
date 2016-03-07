@@ -37,12 +37,8 @@ private:
 	int _field110;
 	int _field114;
 public:
+	CLASSDEF
 	CDoorbot();
-
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CDoorbot"; }
 
 	/**
 	 * Save the data for the class to file

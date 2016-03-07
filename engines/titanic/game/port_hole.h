@@ -32,12 +32,8 @@ private:
 	int _fieldBC;
 	CString _string1, _string2;
 public:
+	CLASSDEF
 	CPortHole();
-
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CPortHole"; }
 
 	/**
 	 * Save the data for the class to file

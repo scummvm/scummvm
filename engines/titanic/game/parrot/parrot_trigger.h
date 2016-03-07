@@ -31,12 +31,8 @@ class CParrotTrigger : public CGameObject {
 public:
 	int _value;
 public:
+	CLASSDEF
 	CParrotTrigger() : CGameObject(), _value(0x446AB) {}
-
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CParrotTrigger"; }
 
 	/**
 	 * Save the data for the class to file

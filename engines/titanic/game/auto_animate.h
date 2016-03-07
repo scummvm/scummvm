@@ -33,11 +33,8 @@ public:
 	int _fieldE4;
 	int _fieldE8;
 public:
+	CLASSDEF
 	CAutoAnimate() : CBackground(), _fieldE0(1), _fieldE4(1), _fieldE8(0) {}
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CAutoAnimate"; }
 
 	/**
 	 * Save the data for the class to file

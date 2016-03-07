@@ -31,12 +31,8 @@ class CSearchPoint : public CGameObject {
 public:
 	int _value;
 public:
+	CLASSDEF
 	CSearchPoint() : CGameObject(), _value(2) {}
-
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CSearchPoint"; }
 
 	/**
 	 * Save the data for the class to file

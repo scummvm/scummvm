@@ -31,12 +31,8 @@ class CRobotController : public CGameObject {
 protected:
 	CString _string1;
 public:
+	CLASSDEF
 	CRobotController();
-
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CRobotController"; }
 
 	/**
 	 * Save the data for the class to file

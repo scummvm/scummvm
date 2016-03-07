@@ -39,8 +39,8 @@ class CPetControl;
 class CFileListItem : public ListItem {
 public:
 	CString _name;
-
-	virtual const char *getClassName() const { return "CFileListItem"; }
+public:
+	CLASSDEF
 
 	/**
 	 * Save the data for the class to file
@@ -59,7 +59,7 @@ public:
  */
 class CFileList: public List<CFileListItem> {
 public:
-	virtual const char *getClassName() const { return "CFileList"; }
+	CLASSDEF
 };
 
 
@@ -92,12 +92,8 @@ private:
 	 */
 	void gameLoaded();
 public:
+	CLASSDEF
 	CProjectItem();
-
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CProjectItem"; }
 
 	/**
 	 * Save the data for the class to file

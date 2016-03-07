@@ -35,12 +35,8 @@ protected:
 	CString _string2;
 	int _fieldDC;
 public:
+	CLASSDEF
 	CBackground();
-
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CBackground"; }
 
 	/**
 	 * Save the data for the class to file

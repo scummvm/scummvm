@@ -115,6 +115,7 @@ MODULE_OBJS := \
 	game/credits_button.o \
 	game/dead_area.o \
 	game/desk_click_responder.o \
+	game/dome_from_top_of_well.o \
 	game/doorbot_elevator_handler.o \
 	game/doorbot_home_handler.o \
 	game/ear_sweet_bowl.o \

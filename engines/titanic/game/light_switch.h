@@ -35,12 +35,8 @@ private:
 	int _fieldE4;
 	int _fieldE8;
 public:
+	CLASSDEF
 	CLightSwitch();
-
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CLightSwitch"; }
 
 	/**
 	 * Save the data for the class to file

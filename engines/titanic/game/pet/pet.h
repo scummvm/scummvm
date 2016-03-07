@@ -37,12 +37,8 @@ public:
 	int _fieldD8;
 	int _fieldDC;
 public:
+	CLASSDEF
 	CPET();
-
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CPET"; }
 
 	/**
 	 * Save the data for the class to file

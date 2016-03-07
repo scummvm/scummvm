@@ -31,12 +31,8 @@ class CPetDisabler : public CGameObject {
 public:
 	CString _value;
 public:
+	CLASSDEF
 	CPetDisabler() : CGameObject() {}
-
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CPetDisabler"; }
 
 	/**
 	 * Save the data for the class to file

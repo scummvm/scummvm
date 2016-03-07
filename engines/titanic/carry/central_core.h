@@ -29,10 +29,7 @@ namespace Titanic {
 
 class CCentralCore : public CBrain {
 public:
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CCentralCore"; }
+	CLASSDEF
 
 	/**
 	 * Save the data for the class to file

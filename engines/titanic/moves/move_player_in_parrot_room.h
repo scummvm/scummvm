@@ -29,12 +29,8 @@ namespace Titanic {
 
 class CMovePlayerInParrotRoom : public CMovePlayerTo {
 public:
+	CLASSDEF
 	CMovePlayerInParrotRoom();
-
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CMovePlayerInParrotRoom"; }
 
 	/**
 	 * Save the data for the class to file

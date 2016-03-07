@@ -31,10 +31,7 @@ class CLemonOnBar : public CPlaceHolder {
 private:
 	Common::Point _pos1;
 public:
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CLemonOnBar"; }
+	CLASSDEF
 
 	/**
 	 * Save the data for the class to file

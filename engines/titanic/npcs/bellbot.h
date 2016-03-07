@@ -31,12 +31,8 @@ class CBellBot : public CTrueTalkNPC {
 private:
 	int _field108;
 public:
+	CLASSDEF
 	CBellBot();
-
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CBellBot"; }
 
 	/**
 	 * Save the data for the class to file

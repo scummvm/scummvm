@@ -31,13 +31,9 @@ class CGetLiftEye2 : public CGameObject {
 private:
 	static CString *_v1;
 public:
+	CLASSDEF
 	static void init();
 	static void deinit();
-
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CGetLiftEye2"; }
 
 	/**
 	 * Save the data for the class to file

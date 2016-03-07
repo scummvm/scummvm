@@ -31,12 +31,8 @@ class CMailMan : public CGameObject {
 public:
 	int _value;
 public:
+	CLASSDEF
 	CMailMan() : CGameObject(), _value(1) {}
-
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CMailMan"; }
 
 	/**
 	 * Save the data for the class to file

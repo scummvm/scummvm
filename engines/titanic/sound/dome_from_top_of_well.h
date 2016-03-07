@@ -29,10 +29,7 @@ namespace Titanic {
 
 class CDomeFromTopOfWell : public CViewAutoSoundPlayer {
 public:
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CDomeFromTopOfWell"; }
+	CLASSDEF
 
 	/**
 	 * Save the data for the class to file

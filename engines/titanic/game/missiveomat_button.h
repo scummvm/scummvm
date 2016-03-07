@@ -31,12 +31,8 @@ class CMissiveOMatButton : public CEditControl {
 public:
 	int _fieldFC;
 public:
+	CLASSDEF
 	CMissiveOMatButton() : CEditControl(), _fieldFC(2) {}
-
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CMissiveOMatButton"; }
 
 	/**
 	 * Save the data for the class to file

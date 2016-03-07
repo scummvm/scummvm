@@ -29,10 +29,7 @@ namespace Titanic {
 
 class CIconNavSend : public CPetGraphic {
 public:
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CIconNavSend"; }
+	CLASSDEF
 
 	/**
 	 * Save the data for the class to file

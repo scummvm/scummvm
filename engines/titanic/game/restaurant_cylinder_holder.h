@@ -37,12 +37,8 @@ private:
 	CString _string6;
 	int _field140;
 public:
+	CLASSDEF
 	CRestaurantCylinderHolder();
-
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CRestaurantCylinderHolder"; }
 
 	/**
 	 * Save the data for the class to file

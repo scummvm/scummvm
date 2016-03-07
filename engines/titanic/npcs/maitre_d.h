@@ -41,12 +41,8 @@ private:
 	int _field134;
 	int _field138;
 public:
+	CLASSDEF
 	CMaitreD();
-
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CMaitreD"; }
 
 	/**
 	 * Save the data for the class to file

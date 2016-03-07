@@ -31,12 +31,8 @@ class CSUBWrapper : public CGameObject {
 public:
 	int _value;
 public:
+	CLASSDEF
 	CSUBWrapper() : CGameObject(), _value(0) {}
-
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CSUBWrapper"; }
 
 	/**
 	 * Save the data for the class to file

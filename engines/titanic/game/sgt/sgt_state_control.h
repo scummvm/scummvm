@@ -31,12 +31,8 @@ class CSGTStateControl : public CBackground {
 private:
 	int _fieldE0;
 public:
+	CLASSDEF
 	CSGTStateControl() : CBackground(), _fieldE0(1) {}
-
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CSGTStateControl"; }
 
 	/**
 	 * Save the data for the class to file

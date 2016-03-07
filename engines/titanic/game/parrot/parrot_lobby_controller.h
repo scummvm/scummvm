@@ -29,10 +29,7 @@ namespace Titanic {
 
 class CParrotLobbyController : public CParrotLobbyObject {
 public:
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CParrotLobbyController"; }
+	CLASSDEF
 
 	/**
 	 * Save the data for the class to file

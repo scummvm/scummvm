@@ -29,12 +29,8 @@ namespace Titanic {
 
 class CActButton : public CSTButton {
 public:
+	CLASSDEF
 	CActButton();
-
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CActButton"; }
 
 	/**
 	 * Save the data for the class to file

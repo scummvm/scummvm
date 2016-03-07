@@ -36,12 +36,8 @@ public:
 	CString _string2;
 	int _fieldE0;
 public:
+	CLASSDEF
 	CMissiveOMat();
-
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CMissiveOMat"; }
 
 	/**
 	 * Save the data for the class to file

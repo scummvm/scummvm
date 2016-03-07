@@ -29,12 +29,8 @@ namespace Titanic {
 
 class CKeybrdButt : public CToggleSwitch {
 public:
+	CLASSDEF
 	CKeybrdButt();
-
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CKeybrdButt"; }
 
 	/**
 	 * Save the data for the class to file

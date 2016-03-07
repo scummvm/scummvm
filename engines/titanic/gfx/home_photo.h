@@ -29,12 +29,8 @@ namespace Titanic {
 
 class CHomePhoto : public CToggleSwitch {
 public:
+	CLASSDEF
 	CHomePhoto();
-
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CHomePhoto"; }
 
 	/**
 	 * Save the data for the class to file

@@ -35,12 +35,8 @@ public:
 	int _fieldC8;
 	int _fieldCC;
 public:
+	CLASSDEF
 	CFanControl();
-
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CFanControl"; }
 
 	/**
 	 * Save the data for the class to file

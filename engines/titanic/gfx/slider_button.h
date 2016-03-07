@@ -34,12 +34,8 @@ private:
 	int _field11C;
 	Common::Point _pos1;
 public:
+	CLASSDEF
 	CSliderButton();
-
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CSliderButton"; }
 
 	/**
 	 * Save the data for the class to file

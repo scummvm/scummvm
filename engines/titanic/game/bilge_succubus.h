@@ -34,12 +34,8 @@ public:
 	int _field1E4;
 	int _field1E8;
 public:
+	CLASSDEF
 	CBilgeSuccUBus();
-
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CBilgeSuccUBus"; }
 
 	/**
 	 * Save the data for the class to file

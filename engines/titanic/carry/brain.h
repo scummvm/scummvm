@@ -33,12 +33,8 @@ private:
 	int _field134;
 	int _field138;
 public:
+	CLASSDEF
 	CBrain();
-
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CBrain"; }
 
 	/**
 	 * Save the data for the class to file

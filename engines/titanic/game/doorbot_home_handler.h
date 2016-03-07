@@ -29,12 +29,8 @@ namespace Titanic {
 
 class CDoorbotHomeHandler : public CGameObject {
 public:
+	CLASSDEF
 	CDoorbotHomeHandler();
-
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CDoorbotHomeHandler"; }
 
 	/**
 	 * Save the data for the class to file

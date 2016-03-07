@@ -87,12 +87,8 @@ private:
 	int _field1D4;
 	int _field1D8;
 public:
+	CLASSDEF
 	CSuccUBus();
-
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CSuccUBus"; }
 
 	/**
 	 * Save the data for the class to file

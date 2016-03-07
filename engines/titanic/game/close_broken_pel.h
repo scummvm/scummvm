@@ -31,10 +31,7 @@ class CCloseBrokenPel : public CBackground {
 public:
 	CString _string3;
 public:
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CCloseBrokenPel"; }
+	CLASSDEF
 
 	/**
 	 * Save the data for the class to file

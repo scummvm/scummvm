@@ -34,12 +34,8 @@ private:
 	int _fieldE8;
 	int _fieldEC;
 public:
+	CLASSDEF
 	CScraliontisTable();
-
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CScraliontisTable"; }
 
 	/**
 	 * Save the data for the class to file

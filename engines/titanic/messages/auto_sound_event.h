@@ -32,12 +32,8 @@ public:
 	int _value1;
 	int _value2;
 public:
+	CLASSDEF
 	CAutoSoundEvent();
-
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CAutoSoundEvent"; }
 
 	/**
 	 * Save the data for the class to file

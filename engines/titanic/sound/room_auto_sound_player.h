@@ -29,10 +29,7 @@ namespace Titanic {
 
 class CRoomAutoSoundPlayer : public CAutoSoundPlayer {
 public:
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CRoomAutoSoundPlayer"; }
+	CLASSDEF
 
 	/**
 	 * Save the data for the class to file

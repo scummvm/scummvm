@@ -34,10 +34,7 @@ private:
 	CString _string4;
 	CString _string5;
 public:
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CBrokenPellerator"; }
+	CLASSDEF
 
 	/**
 	 * Save the data for the class to file

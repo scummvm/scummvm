@@ -33,10 +33,7 @@ class CFileItem: public CTreeItem {
 private:
 	CString _filename;
 public:
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CFileItem"; }
+	CLASSDEF
 
 	/**
 	 * Save the data for the class to file

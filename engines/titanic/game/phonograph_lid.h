@@ -31,12 +31,8 @@ class CPhonographLid : public CGameObject {
 private:
 	int _value;
 public:
+	CLASSDEF
 	CPhonographLid() : CGameObject(), _value(0) {}
-
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CPhonographLid"; }
 
 	/**
 	 * Save the data for the class to file

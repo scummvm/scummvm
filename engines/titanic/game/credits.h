@@ -31,12 +31,8 @@ class CCredits : public CGameObject {
 public:
 	int _fieldBC, _fieldC0;
 public:
+	CLASSDEF
 	CCredits();
-
-	/**
-	 * Return the class name
-	 */
-	virtual const char *getClassName() const { return "CCredits"; }
 
 	/**
 	 * Save the data for the class to file
