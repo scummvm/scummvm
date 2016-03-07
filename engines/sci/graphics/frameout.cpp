@@ -287,7 +287,7 @@ void GfxFrameout::kernelUpdateScreenItem(const reg_t object) {
 
 		screenItem->update(object);
 	} else {
-		warning("TODO: Magnifier view not implemented yet!");
+		error("Magnifier view is not known to be used by any game. Please submit a bug report with details about the game you were playing and what you were doing that triggered this error. Thanks!");
 	}
 }
 
