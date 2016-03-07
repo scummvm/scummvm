@@ -109,7 +109,7 @@ Common::Error AdlEngine::run() {
 				break;
 
 			if (!doOneCommand(_roomCommands, verb, noun))
-				printEngineMessage(IDI_MSG_DONT_UNDERSTAND);
+				printMessage(_messageIds.dontUnderstand);
 		}
 
 		if (_isRestoring) {
@@ -156,8 +156,9 @@ Common::String AdlEngine::readString(Common::ReadStream &stream, byte until) con
 	return str;
 }
 
-Common::String AdlEngine::getEngineString(int str) const {
-	return _strings[str];
+Common::String AdlEngine::readStringAt(Common::SeekableReadStream &stream, uint offset, byte until) const {
+	stream.seek(offset);
+	return readString(stream, until);
 }
 
 void AdlEngine::wordWrap(Common::String &str) const {
@@ -182,10 +183,6 @@ void AdlEngine::printMessage(uint idx, bool wait) const {
 
 	if (wait)
 		delay(14 * 166018 / 1000);
-}
-
-void AdlEngine::printEngineMessage(EngineMessage msg) const {
-	printMessage(getEngineMessage(msg));
 }
 
 void AdlEngine::readCommands(Common::ReadStream &stream, Commands &commands) {
@@ -232,7 +229,7 @@ void AdlEngine::takeItem(byte noun) {
 			continue;
 
 		if (item->state == IDI_ITEM_DOESNT_MOVE) {
-			printEngineMessage(IDI_MSG_ITEM_DOESNT_MOVE);
+			printMessage(_messageIds.itemDoesntMove);
 			return;
 		}
 
@@ -251,7 +248,7 @@ void AdlEngine::takeItem(byte noun) {
 		}
 	}
 
-	printEngineMessage(IDI_MSG_ITEM_NOT_HERE);
+	printMessage(_messageIds.itemNotHere);
 }
 
 void AdlEngine::dropItem(byte noun) {
@@ -266,7 +263,7 @@ void AdlEngine::dropItem(byte noun) {
 		return;
 	}
 
-	printEngineMessage(IDI_MSG_DONT_UNDERSTAND);
+	printMessage(_messageIds.dontUnderstand);
 }
 
 #define ARG(N) (command.script[offset + (N)])
@@ -339,7 +336,7 @@ void AdlEngine::doActions(const Command &command, byte noun, byte offset) {
 			_isRestoring = false;
 			break;
 		case IDO_ACT_RESTART: {
-			_display->printString(_strings[IDI_STR_PLAY_AGAIN]);
+			_display->printString(_strings.playAgain);
 
 			// We allow restoring via GMM here
 			_canRestoreNow = true;
@@ -360,7 +357,7 @@ void AdlEngine::doActions(const Command &command, byte noun, byte offset) {
 			// Fall-through
 		}
 		case IDO_ACT_QUIT:
-			printEngineMessage(IDI_MSG_THANKS_FOR_PLAYING);
+			printMessage(_messageIds.thanksForPlaying);
 			quitGame();
 			return;
 		case IDO_ACT_PLACE_ITEM:
@@ -386,7 +383,7 @@ void AdlEngine::doActions(const Command &command, byte noun, byte offset) {
 			byte room = curRoom().connections[ARG(0) - IDO_ACT_GO_NORTH];
 
 			if (room == 0) {
-				printEngineMessage(IDI_MSG_CANT_GO_THERE);
+				printMessage(_messageIds.cantGoThere);
 				return;
 			}
 
@@ -856,7 +853,7 @@ Common::String AdlEngine::getWord(const Common::String &line, uint &index) const
 
 void AdlEngine::getInput(uint &verb, uint &noun) {
 	while (1) {
-		_display->printString(getEngineString(IDI_STR_ENTER_COMMAND));
+		_display->printString(_strings.enterCommand);
 		Common::String line = getLine();
 
 		if (shouldQuit() || _isRestoring)
@@ -866,7 +863,7 @@ void AdlEngine::getInput(uint &verb, uint &noun) {
 		Common::String verbStr = getWord(line, index);
 
 		if (!_verbs.contains(verbStr)) {
-			Common::String err = getEngineString(IDI_STR_VERB_ERROR);
+			Common::String err = _strings.verbError;
 			for (uint i = 0; i < verbStr.size(); ++i)
 				err.setChar(verbStr[i], i + 19);
 			_display->printString(err);
@@ -878,7 +875,7 @@ void AdlEngine::getInput(uint &verb, uint &noun) {
 		Common::String nounStr = getWord(line, index);
 
 		if (!_nouns.contains(nounStr)) {
-			Common::String err = getEngineString(IDI_STR_NOUN_ERROR);
+			Common::String err = _strings.nounError;
 			for (uint i = 0; i < verbStr.size(); ++i)
 				err.setChar(verbStr[i], i + 19);
 			for (uint i = 0; i < nounStr.size(); ++i)

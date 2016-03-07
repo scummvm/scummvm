@@ -31,19 +31,6 @@
 
 namespace Adl {
 
-// Offsets for strings inside executable
-static const StringOffset stringOffsets[] = {
-	{ IDI_STR_ENTER_COMMAND,       0x5bbc },
-	{ IDI_STR_VERB_ERROR,          0x5b4f },
-	{ IDI_STR_NOUN_ERROR,          0x5b8e },
-	{ IDI_STR_PLAY_AGAIN,          0x5f1e },
-	{ IDI_HR1_STR_CANT_GO_THERE,   0x6c0a },
-	{ IDI_HR1_STR_DONT_HAVE_IT,    0x6c31 },
-	{ IDI_HR1_STR_DONT_UNDERSTAND, 0x6c51 },
-	{ IDI_HR1_STR_GETTING_DARK,    0x6c7c },
-	{ IDI_HR1_STR_PRESS_RETURN,    0x5f68 }
-};
-
 void HiRes1Engine::runIntro() const {
 	Common::File file;
 
@@ -67,20 +54,16 @@ void HiRes1Engine::runIntro() const {
 
 	Common::String str;
 
-	basic.seek(IDI_HR1_OFS_PD_TEXT_0);
-	str = readString(basic, '"');
+	str = readStringAt(basic, IDI_HR1_OFS_PD_TEXT_0, '"');
 	printASCIIString(str + '\r');
 
-	basic.seek(IDI_HR1_OFS_PD_TEXT_1);
-	str = readString(basic, '"');
+	str = readStringAt(basic, IDI_HR1_OFS_PD_TEXT_1, '"');
 	printASCIIString(str + "\r\r");
 
-	basic.seek(IDI_HR1_OFS_PD_TEXT_2);
-	str = readString(basic, '"');
+	str = readStringAt(basic, IDI_HR1_OFS_PD_TEXT_2, '"');
 	printASCIIString(str + "\r\r");
 
-	basic.seek(IDI_HR1_OFS_PD_TEXT_3);
-	str = readString(basic, '"');
+	str = readStringAt(basic, IDI_HR1_OFS_PD_TEXT_3, '"');
 	printASCIIString(str + '\r');
 
 	inputKey();
@@ -89,8 +72,7 @@ void HiRes1Engine::runIntro() const {
 
 	_display->setMode(DISPLAY_MODE_MIXED);
 
-	file.seek(IDI_HR1_OFS_GAME_OR_HELP);
-	str = readString(file);
+	str = readStringAt(file, IDI_HR1_OFS_GAME_OR_HELP);
 
 	bool instructions = false;
 
@@ -256,7 +238,7 @@ void HiRes1Engine::initState() {
 
 void HiRes1Engine::restartGame() {
 	initState();
-	_display->printString(_strings[IDI_HR1_STR_PRESS_RETURN]);
+	_display->printString(_gameStrings.pressReturn);
 	inputString(); // Missing in the original
 	printASCIIString("\r\r\r\r\r");
 }
@@ -275,12 +257,27 @@ void HiRes1Engine::loadData() {
 	if (!f.open(IDS_HR1_EXE_1))
 		error("Failed to open file '" IDS_HR1_EXE_1 "'");
 
-	// Load strings from executable
-	_strings.resize(IDI_HR1_STR_TOTAL);
-	for (uint idx = 0; idx < IDI_HR1_STR_TOTAL; ++idx) {
-		f.seek(stringOffsets[idx].offset);
-		_strings[stringOffsets[idx].stringIdx] = readString(f);
-	}
+	// Some messages have overrides inside the executable
+	_messages[IDI_HR1_MSG_CANT_GO_THERE - 1] = readStringAt(f, IDI_HR1_OFS_STR_CANT_GO_THERE);
+	_messages[IDI_HR1_MSG_DONT_HAVE_IT - 1] = readStringAt(f, IDI_HR1_OFS_STR_DONT_HAVE_IT);
+	_messages[IDI_HR1_MSG_DONT_UNDERSTAND - 1] = readStringAt(f, IDI_HR1_OFS_STR_DONT_UNDERSTAND);
+	_messages[IDI_HR1_MSG_GETTING_DARK - 1] = readStringAt(f, IDI_HR1_OFS_STR_GETTING_DARK);
+
+	// Load other strings from executable
+	_strings.enterCommand = readStringAt(f, IDI_HR1_OFS_STR_ENTER_COMMAND);
+	_strings.dontHaveIt = readStringAt(f, IDI_HR1_OFS_STR_DONT_HAVE_IT);
+	_strings.gettingDark = readStringAt(f, IDI_HR1_OFS_STR_GETTING_DARK);
+	_strings.verbError = readStringAt(f, IDI_HR1_OFS_STR_VERB_ERROR);
+	_strings.nounError = readStringAt(f, IDI_HR1_OFS_STR_NOUN_ERROR);
+	_strings.playAgain = readStringAt(f, IDI_HR1_OFS_STR_PLAY_AGAIN);
+	_gameStrings.pressReturn = readStringAt(f, IDI_HR1_OFS_STR_PRESS_RETURN);
+
+	// Set message IDs
+	_messageIds.cantGoThere = IDI_HR1_MSG_CANT_GO_THERE;
+	_messageIds.dontUnderstand = IDI_HR1_MSG_DONT_UNDERSTAND;
+	_messageIds.itemDoesntMove = IDI_HR1_MSG_ITEM_DOESNT_MOVE;
+	_messageIds.itemNotHere = IDI_HR1_MSG_ITEM_NOT_HERE;
+	_messageIds.thanksForPlaying = IDI_HR1_MSG_THANKS_FOR_PLAYING;
 
 	// Load picture data from executable
 	f.seek(IDI_HR1_OFS_PICS);
@@ -335,41 +332,22 @@ void HiRes1Engine::loadData() {
 }
 
 void HiRes1Engine::printMessage(uint idx, bool wait) const {
-	// Hardcoded overrides that don't wait after printing
-	// Note: strings may differ slightly from the ones in MESSAGES
+	// Messages with hardcoded overrides don't delay after printing.
+	// It's unclear if this is a bug or not. In some cases the result
+	// is that these strings will scroll past the four-line text window
+	// before the user gets a chance to read them.
+	// NOTE: later games seem to wait for a key when the text window
+	// overflows and don't use delays. It might be better to use
+	// that system for this game as well.
 	switch (idx) {
 	case IDI_HR1_MSG_CANT_GO_THERE:
-		_display->printString(_strings[IDI_HR1_STR_CANT_GO_THERE]);
-		return;
 	case IDI_HR1_MSG_DONT_HAVE_IT:
-		_display->printString(_strings[IDI_HR1_STR_DONT_HAVE_IT]);
-		return;
 	case IDI_HR1_MSG_DONT_UNDERSTAND:
-		_display->printString(_strings[IDI_HR1_STR_DONT_UNDERSTAND]);
-		return;
 	case IDI_HR1_MSG_GETTING_DARK:
-		_display->printString(_strings[IDI_HR1_STR_GETTING_DARK]);
-		return;
+		wait = false;
 	}
 
 	AdlEngine::printMessage(idx, wait);
-}
-
-uint HiRes1Engine::getEngineMessage(EngineMessage msg) const {
-	switch (msg) {
-	case IDI_MSG_CANT_GO_THERE:
-		return IDI_HR1_MSG_CANT_GO_THERE;
-	case IDI_MSG_DONT_UNDERSTAND:
-		return IDI_HR1_MSG_DONT_UNDERSTAND;
-	case IDI_MSG_ITEM_DOESNT_MOVE:
-		return IDI_HR1_MSG_ITEM_DOESNT_MOVE;
-	case IDI_MSG_ITEM_NOT_HERE:
-		return IDI_HR1_MSG_ITEM_NOT_HERE;
-	case IDI_MSG_THANKS_FOR_PLAYING:
-		return IDI_HR1_MSG_THANKS_FOR_PLAYING;
-	default:
-		error("Cannot find engine message %i", msg);
-	}
 }
 
 void HiRes1Engine::drawLine(const Common::Point &p1, const Common::Point &p2, byte color) const {

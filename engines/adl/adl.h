@@ -44,25 +44,6 @@ struct StringOffset {
 	uint offset;
 };
 
-// Messages used outside of scripts
-enum EngineMessage {
-	IDI_MSG_CANT_GO_THERE,
-	IDI_MSG_DONT_UNDERSTAND,
-	IDI_MSG_ITEM_DOESNT_MOVE,
-	IDI_MSG_ITEM_NOT_HERE,
-	IDI_MSG_THANKS_FOR_PLAYING
-};
-
-// Strings embedded in the executable
-enum EngineString {
-	IDI_STR_ENTER_COMMAND,
-	IDI_STR_VERB_ERROR,
-	IDI_STR_NOUN_ERROR,
-	IDI_STR_PLAY_AGAIN,
-
-	IDI_STR_TOTAL
-};
-
 // Conditional opcodes
 #define IDO_CND_ITEM_IN_ROOM   0x03
 #define IDO_CND_MOVES_GE       0x05
@@ -162,6 +143,7 @@ protected:
 	AdlEngine(OSystem *syst, const AdlGameDescription *gd);
 
 	Common::String readString(Common::ReadStream &stream, byte until = 0) const;
+	Common::String readStringAt(Common::SeekableReadStream &stream, uint offset, byte until = 0) const;
 
 	virtual void printMessage(uint idx, bool wait = true) const;
 	void printASCIIString(const Common::String &str) const;
@@ -176,8 +158,6 @@ protected:
 	Display *_display;
 	Parser *_parser;
 
-	// Strings inside executable
-	Common::Array<Common::String> _strings;
 	// Message strings in data file
 	Common::Array<Common::String> _messages;
 	// Picture data
@@ -194,6 +174,23 @@ protected:
 	WordMap _verbs;
 	WordMap _nouns;
 
+	struct {
+		Common::String enterCommand;
+		Common::String dontHaveIt;
+		Common::String gettingDark;
+		Common::String verbError;
+		Common::String nounError;
+		Common::String playAgain;
+	} _strings;
+
+	struct {
+		uint cantGoThere;
+		uint dontUnderstand;
+		uint itemDoesntMove;
+		uint itemNotHere;
+		uint thanksForPlaying;
+	} _messageIds;
+
 	// Game state
 	State _state;
 
@@ -202,7 +199,6 @@ private:
 	virtual void loadData() = 0;
 	virtual void initState() = 0;
 	virtual void restartGame() = 0;
-	virtual uint getEngineMessage(EngineMessage msg) const = 0;
 	virtual void drawPic(byte pic, Common::Point pos = Common::Point()) const = 0;
 
 	// Engine
@@ -214,8 +210,6 @@ private:
 	bool canSaveGameStateCurrently() const;
 
 	// Text output
-	Common::String getEngineString(int str) const;
-	void printEngineMessage(EngineMessage) const;
 	void wordWrap(Common::String &str) const;
 
 	// Text input

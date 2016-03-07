@@ -52,16 +52,15 @@ namespace Adl {
 #define IDI_HR1_MSG_DONT_HAVE_IT       127
 #define IDI_HR1_MSG_GETTING_DARK         7
 
-// Strings embedded in the executable
-enum {
-	IDI_HR1_STR_CANT_GO_THERE = IDI_STR_TOTAL,
-	IDI_HR1_STR_DONT_HAVE_IT,
-	IDI_HR1_STR_DONT_UNDERSTAND,
-	IDI_HR1_STR_GETTING_DARK,
-	IDI_HR1_STR_PRESS_RETURN,
-
-	IDI_HR1_STR_TOTAL
-};
+#define IDI_HR1_OFS_STR_ENTER_COMMAND   0x5bbc
+#define IDI_HR1_OFS_STR_VERB_ERROR      0x5b4f
+#define IDI_HR1_OFS_STR_NOUN_ERROR      0x5b8e
+#define IDI_HR1_OFS_STR_PLAY_AGAIN      0x5f1e
+#define IDI_HR1_OFS_STR_CANT_GO_THERE   0x6c0a
+#define IDI_HR1_OFS_STR_DONT_HAVE_IT    0x6c31
+#define IDI_HR1_OFS_STR_DONT_UNDERSTAND 0x6c51
+#define IDI_HR1_OFS_STR_GETTING_DARK    0x6c7c
+#define IDI_HR1_OFS_STR_PRESS_RETURN    0x5f68
 
 #define IDI_HR1_OFS_PD_TEXT_0    0x005d
 #define IDI_HR1_OFS_PD_TEXT_1    0x012b
@@ -96,12 +95,15 @@ private:
 	void loadData();
 	void initState();
 	void restartGame();
-	uint getEngineMessage(EngineMessage msg) const;
 	void drawPic(byte pic, Common::Point pos) const;
 	void printMessage(uint idx, bool wait = true) const;
 
 	void drawLine(const Common::Point &p1, const Common::Point &p2, byte color) const;
 	void drawPic(Common::ReadStream &stream, const Common::Point &pos) const;
+
+	struct {
+		Common::String pressReturn;
+	} _gameStrings;
 };
 
 } // End of namespace Adl
