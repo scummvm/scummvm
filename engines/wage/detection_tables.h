@@ -50,9 +50,12 @@ static const ADGameDescription gameDescriptions[] = {
 	FANGAME("Exploration Zeta!", "b9fbb704017d7ea9613b0160f86527bb", 370944),
 	// Crash in console rendering on the first scene
 	FANGAME("Fantasy Quest", "599f0b2c7ecce65c39646c05f2c19c1b", 782848),
+	FANGAME("Find the Heart", "7ae36ffa295651cd6d2d56981d6b5ff7", 108928), // From Joshua's Worlds 1.0
 	FANGAME("Lost Crystal", "4f21ba8ee64f8d655b9eeb1e3ffd50f7", 792064),
 	FANGAME("Magic Rings", "6e0d1dd561d3dad8f9a7a20ed1f09b16", 112000),
 	FANGAME("Midnight Snack", "346982a32fc701f53bb19771d72063d0", 69504),
+	FANGAME("Puzzle Piece Search", "51885fe2effeaa14b2b8b08a53931805", 252928), // From Joshua's Worlds 1.0
+	// Empty(?)  first scene
 	FANGAME("Pyramid of No Return", "48a9c668ce69206f57e11e1a85970d02", 392192),
 	FANGAME("Queen Quest", "730605d312efedb5e3ff108522fcac18", 59776),
 	// Crash in console rendering on the initial scene
