@@ -22,6 +22,7 @@
 
 #include "titanic/messages/messages.h"
 #include "titanic/core/game_object.h"
+#include "titanic/core/tree_item.h"
 
 namespace Titanic {
 
@@ -35,6 +36,34 @@ void CMessage::save(SimpleFile *file, int indent) const {
 void CMessage::load(SimpleFile *file) {
 	file->readNumber();
 	CSaveableObject::load(file);
+}
+
+bool CMessage::execute(CTreeItem *target, const ClassDef *classDef, int flags) {
+	// If no target was specified, then there's nothing to do
+	if (!target)
+		return false;
+
+	bool result = false;
+	CTreeItem *item = target;
+	CTreeItem *nextItem = nullptr;
+	do {
+		if (flags & MSGFLAG_SCAN)
+			nextItem = item->scan(target);
+
+		if (!(flags & MSGFLAG_CLASS_DEF) || item->isInstanceOf(*classDef)) {
+			bool handled = true; // item->handleEvent(this);
+
+			if (handled) {
+				result = true;
+				if (flags & MSGFLAG_BREAK_IF_HANDLED)
+					return true;
+			}
+		}
+
+		item = nextItem;
+	} while (nextItem);
+
+	return result;
 }
 
 } // End of namespace Titanic

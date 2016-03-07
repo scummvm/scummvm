@@ -28,10 +28,18 @@
 
 namespace Titanic {
 
+enum MessageFlag { 
+	MSGFLAG_SCAN = 1,
+	MSGFLAG_BREAK_IF_HANDLED = 2,
+	MSGFLAG_CLASS_DEF = 4
+};
+
 class CMessage : public CSaveableObject {
 public:
 	CLASSDEF
 	CMessage();
+
+	bool execute(CTreeItem *target, const ClassDef *classDef, int flags);
 
 	/**
 	 * Save the data for the class to file

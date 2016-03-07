@@ -406,6 +406,12 @@
 
 namespace Titanic {
 
+CSaveableObject *ClassDef::create() {
+	return new CSaveableObject();
+}
+
+/*------------------------------------------------------------------------*/
+
 Common::HashMap<Common::String, CSaveableObject::CreateFunction> * 
 	CSaveableObject::_classList = nullptr;
 Common::List<ClassDef *> *CSaveableObject::_classDefs;
@@ -1573,10 +1579,15 @@ void CSaveableObject::saveFooter(SimpleFile *file, int indent) const {
 	file->writeClassEnd(indent);
 }
 
-/*------------------------------------------------------------------------*/
+bool CSaveableObject::isInstanceOf(const ClassDef &classDef) {
+	for (ClassDef *def = getType(); def != nullptr; def = def->_parent) {
+		if (def == &classDef)
+			return true;
+	}
 
-CSaveableObject *ClassDef::create() {
-	return new CSaveableObject();
+	return false;
 }
+
+
 
 } // End of namespace Titanic

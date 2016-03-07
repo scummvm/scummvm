@@ -70,6 +70,23 @@ CTreeItem *CTreeItem::getLastChild() {
 	return _firstChild->getLastSibling();
 }
 
+CTreeItem *CTreeItem::scan(CTreeItem *item) {
+	if (_firstChild)
+		return _firstChild;
+
+	CTreeItem *treeItem = this;
+	while (treeItem != item) {
+		if (treeItem->_nextSibling)
+			return treeItem->_nextSibling;
+
+		treeItem = treeItem->_parent;
+		if (!treeItem)
+			break;
+	}
+
+	return nullptr;
+}
+
 CDontSaveFileItem *CTreeItem::getDontSaveFileItem() {
 	CTreeItem *item = getFirstChild();
 	while (item) {

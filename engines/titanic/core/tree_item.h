@@ -96,6 +96,8 @@ public:
 	 */
 	CTreeItem *getLastChild();
 
+	CTreeItem *scan(CTreeItem *item);
+
 	/**
 	 * Get any dont save file item in the immediate children
 	 */
