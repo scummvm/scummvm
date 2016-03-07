@@ -111,12 +111,9 @@ void AdvancedMetaEngine::updateGameDescriptor(GameDescriptor &desc, const ADGame
 			desc["preferredtarget"] = desc["gameid"];
 
 	if (realDesc->flags & ADGF_AUTOGENTARGET) {
-		warning("Ahem");
 		if (*realDesc->extra)
 			desc["preferredtarget"] = sanitizeName(realDesc->extra);
 	}
-
-	warning("here: %s", desc["preferredtarget"].c_str());
 
 	desc["preferredtarget"] = generatePreferredTarget(desc["preferredtarget"], realDesc);
 
