@@ -50,12 +50,12 @@ public:
 	/**
 	 * Load the data for the class from file
 	 */
-	virtual void load(SimpleFile *file, int param);
+	void load(SimpleFile *file, int param);
 
 	/**
 	 * Save the data for the class to file
 	 */
-	virtual void save(SimpleFile *file, int indent) const;
+	void save(SimpleFile *file, int indent) const;
 };
 
 } // End of namespace Titanic

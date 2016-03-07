@@ -412,8 +412,8 @@ Common::List<ClassDef *> *CSaveableObject::_classDefs;
 
 #define DEFFN(T) ClassDef *T::_type; \
 	CSaveableObject *Function##T() { return new T(); }
-#define ADDFN(CHILD, PARENT) (*_classList)[#CHILD] = Function##CHILD; \
-	##CHILD::_type = new TypeTemplate<CHILD>(#CHILD, nullptr)
+#define ADDFN(CHILD, PARENT) CHILD::_type = new TypeTemplate<CHILD>(#CHILD, nullptr); \
+	(*_classList)[#CHILD] = Function##CHILD
 
 DEFFN(CArm)
 DEFFN(CAuditoryCentre)
@@ -459,6 +459,7 @@ DEFFN(CClickResponder)
 DEFFN(CDontSaveFileItem)
 DEFFN(CDropTarget)
 DEFFN(CFileItem)
+DEFFN(CFileList)
 DEFFN(CFileListItem)
 DEFFN(CGameObject)
 DEFFN(CLinkItem)
@@ -470,6 +471,7 @@ DEFFN(CMultiDropTarget)
 DEFFN(CNamedItem)
 DEFFN(CNodeItem)
 DEFFN(CProjectItem)
+DEFFN(CResourceKey)
 DEFFN(CSaveableObject)
 DEFFN(CStaticImage)
 DEFFN(CTurnOnObject)
@@ -555,7 +557,7 @@ DEFFN(CLongStickDispenser)
 DEFFN(CMailMan)
 DEFFN(CMissiveOMat)
 DEFFN(CMissiveOMatButton)
-DEFFN(CMovieTester);
+DEFFN(CMovieTester)
 DEFFN(CMusicalInstrument)
 DEFFN(CMusicConsoleButton)
 DEFFN(CMusicRoomPhonograph)
@@ -632,6 +634,7 @@ DEFFN(CPETClass1)
 DEFFN(CPETClass2)
 DEFFN(CPETClass3)
 DEFFN(CPetControl)
+DEFFN(CPetControlSub10)
 DEFFN(CPetDragChev)
 DEFFN(CPetGraphic)
 DEFFN(CPetGraphic2)
@@ -793,6 +796,7 @@ DEFFN(CLightsMsg)
 DEFFN(CLockPhonographMsg)
 DEFFN(CMaitreDDefeatedMsg)
 DEFFN(CMaitreDHappyMsg)
+DEFFN(CMessage)
 DEFFN(CMissiveOMatActionMsg)
 DEFFN(CMouseMsg)
 DEFFN(CMouseMoveMsg)
@@ -972,7 +976,7 @@ DEFFN(CTriggerAutoMusicPlayer)
 DEFFN(CViewAutoSoundPlayer)
 DEFFN(CViewTogglesOtherMusic)
 DEFFN(CWaterLappingSounds)
-DEFFN(CStarControl);
+DEFFN(CStarControl)
 
 void CSaveableObject::initClassList() {
 	_classDefs = new Common::List<ClassDef *>();
@@ -1021,6 +1025,7 @@ void CSaveableObject::initClassList() {
 	ADDFN(CDontSaveFileItem, CFileItem);
 	ADDFN(CDropTarget, CGameObject);
 	ADDFN(CFileItem, CTreeItem);
+	ADDFN(CFileList, List);
 	ADDFN(CFileListItem, ListItem);
 	ADDFN(CGameObject, CNamedItem);
 	ADDFN(CLinkItem, CNamedItem);
@@ -1032,6 +1037,7 @@ void CSaveableObject::initClassList() {
 	ADDFN(CNamedItem, CTreeItem);
 	ADDFN(CNodeItem, CNamedItem);
 	ADDFN(CProjectItem, CFileItem);
+	ADDFN(CResourceKey, CSaveableObject);
 	ADDFN(CSaveableObject, CSaveableObject);
 	ADDFN(CStaticImage, CGameObject);
 	ADDFN(CTurnOnObject, CBackground);
@@ -1272,6 +1278,7 @@ void CSaveableObject::initClassList() {
 	ADDFN(CMusicSwitchReverse, CMusicSwitch);
 	ADDFN(CMusicVoiceMute, CMusicControl);
 	ADDFN(CPetControl, CGameObject);
+	ADDFN(CPetControlSub10, List);
 	ADDFN(CPetDragChev, CPetGraphic2);
 	ADDFN(CPetGraphic, CGameObject);
 	ADDFN(CPetGraphic2, CGameObject);
@@ -1356,6 +1363,7 @@ void CSaveableObject::initClassList() {
 	ADDFN(CLockPhonographMsg, CMessage);
 	ADDFN(CMaitreDDefeatedMsg, CMessage);
 	ADDFN(CMaitreDHappyMsg, CMessage);
+	ADDFN(CMessage, CSaveableObject);
 	ADDFN(CMissiveOMatActionMsg, CMessage);
 	ADDFN(CMouseMsg, CMessage);
 	ADDFN(CMouseMoveMsg, CMouseMsg);

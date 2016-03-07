@@ -44,18 +44,19 @@ private:
 	int _field21C;
 public:
 	CStarControlSub12(void *val1, void *val2);
+	virtual ~CStarControlSub12() {}
 
 	virtual void proc3() {}
 
 	/**
 	 * Load the data for the class from file
 	 */
-	virtual void load(SimpleFile *file, int param);
+	void load(SimpleFile *file, int param);
 
 	/**
 	 * Save the data for the class to file
 	 */
-	virtual void save(SimpleFile *file, int indent) const;
+	void save(SimpleFile *file, int indent) const;
 };
 
 } // End of namespace Titanic

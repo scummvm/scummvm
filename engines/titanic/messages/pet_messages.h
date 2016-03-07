@@ -40,7 +40,7 @@ MESSAGE0(CPETReceiveMsg);
 MESSAGE0(CPETSetStarDestinationMsg);
 MESSAGE1(CPETStarFieldLockMsg, int, value, 0);
 MESSAGE0(CPETStereoFieldOnOffMsg);
-MESSAGE2(CPETTargetMsg, CString, strValue, nullptr, int, numValue, -1);
+MESSAGE2(CPETTargetMsg, CString, strValue, "", int, numValue, -1);
 
 } // End of namespace Titanic
 

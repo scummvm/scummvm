@@ -39,6 +39,7 @@ public:
 public:
 	ClassDef(const char *className, ClassDef *parent) :
 		_className(className), _parent(parent) {}
+	virtual ~ClassDef() {}
 	virtual CSaveableObject *create();
 };
 
