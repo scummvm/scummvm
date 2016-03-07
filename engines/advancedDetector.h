@@ -81,6 +81,7 @@ typedef Common::HashMap<Common::String, ADFileProperties, Common::IgnoreCase_Has
 
 enum ADGameFlags {
 	ADGF_NO_FLAGS = 0,
+	ADGF_AUTOGENTARGET = (1 << 20),  // automatically generate gameid from extra
 	ADGF_UNSTABLE = (1 << 21),    	// flag to designate not yet officially-supported games that are not fit for public testing
 	ADGF_TESTING = (1 << 22),    	// flag to designate not yet officially-supported games that are fit for public testing
 	ADGF_PIRATED = (1 << 23), ///< flag to designate well known pirated versions with cracks
