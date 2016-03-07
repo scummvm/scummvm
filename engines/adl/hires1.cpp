@@ -136,113 +136,6 @@ void HiRes1Engine::runIntro() const {
 	delay(2000);
 }
 
-void HiRes1Engine::drawPic(Common::ReadStream &stream, const Common::Point &pos) const {
-	byte x, y;
-	bool bNewLine = false;
-	byte oldX = 0, oldY = 0;
-	while (1) {
-		x = stream.readByte();
-		y = stream.readByte();
-
-		if (stream.err() || stream.eos())
-			error("Failed to read picture");
-
-		if (x == 0xff && y == 0xff)
-			return;
-
-		if (x == 0 && y == 0) {
-			bNewLine = true;
-			continue;
-		}
-
-		x += pos.x;
-		y += pos.y;
-
-		if (y > 160)
-			y = 160;
-
-		if (bNewLine) {
-			_display->putPixel(Common::Point(x, y), 0x7f);
-			bNewLine = false;
-		} else {
-			drawLine(Common::Point(oldX, oldY), Common::Point(x, y), 0x7f);
-		}
-
-		oldX = x;
-		oldY = y;
-	}
-}
-
-void HiRes1Engine::drawPic(byte pic, Common::Point pos) const {
-	Common::File f;
-	Common::String name = Common::String::format("BLOCK%i", _pictures[pic].block);
-
-	if (!f.open(name))
-		error("Failed to open file '%s'", name.c_str());
-
-	f.seek(_pictures[pic].offset);
-	drawPic(f, pos);
-}
-
-void HiRes1Engine::initState() {
-	Common::File f;
-
-	_state.room = 1;
-	_state.moves = 0;
-	_state.isDark = false;
-
-	_state.vars.clear();
-	_state.vars.resize(IDI_HR1_NUM_VARS);
-
-	if (!f.open(IDS_HR1_EXE_1))
-		error("Failed to open file '" IDS_HR1_EXE_1 "'");
-
-	// Load room data from executable
-	_state.rooms.clear();
-	f.seek(IDI_HR1_OFS_ROOMS);
-	for (uint i = 0; i < IDI_HR1_NUM_ROOMS; ++i) {
-		Room room;
-		f.readByte();
-		room.description = f.readByte();
-		for (uint j = 0; j < 6; ++j)
-			room.connections[j] = f.readByte();
-		room.picture = f.readByte();
-		room.curPicture = f.readByte();
-		_state.rooms.push_back(room);
-	}
-
-	// Load item data from executable
-	_state.items.clear();
-	f.seek(IDI_HR1_OFS_ITEMS);
-	while (f.readByte() != 0xff) {
-		Item item;
-		item.noun = f.readByte();
-		item.room = f.readByte();
-		item.picture = f.readByte();
-		item.isLineArt = f.readByte();
-		item.position.x = f.readByte();
-		item.position.y = f.readByte();
-		item.state = f.readByte();
-		item.description = f.readByte();
-
-		f.readByte();
-
-		byte size = f.readByte();
-
-		for (uint i = 0; i < size; ++i)
-			item.roomPictures.push_back(f.readByte());
-
-		_state.items.push_back(item);
-	}
-}
-
-void HiRes1Engine::restartGame() {
-	initState();
-	_display->printString(_gameStrings.pressReturn);
-	inputString(); // Missing in the original
-	_display->printAsciiString("\r\r\r\r\r");
-}
-
 void HiRes1Engine::loadData() {
 	Common::File f;
 
@@ -331,6 +224,76 @@ void HiRes1Engine::loadData() {
 	loadWords(f, _nouns);
 }
 
+void HiRes1Engine::initState() {
+	Common::File f;
+
+	_state.room = 1;
+	_state.moves = 0;
+	_state.isDark = false;
+
+	_state.vars.clear();
+	_state.vars.resize(IDI_HR1_NUM_VARS);
+
+	if (!f.open(IDS_HR1_EXE_1))
+		error("Failed to open file '" IDS_HR1_EXE_1 "'");
+
+	// Load room data from executable
+	_state.rooms.clear();
+	f.seek(IDI_HR1_OFS_ROOMS);
+	for (uint i = 0; i < IDI_HR1_NUM_ROOMS; ++i) {
+		Room room;
+		f.readByte();
+		room.description = f.readByte();
+		for (uint j = 0; j < 6; ++j)
+			room.connections[j] = f.readByte();
+		room.picture = f.readByte();
+		room.curPicture = f.readByte();
+		_state.rooms.push_back(room);
+	}
+
+	// Load item data from executable
+	_state.items.clear();
+	f.seek(IDI_HR1_OFS_ITEMS);
+	while (f.readByte() != 0xff) {
+		Item item;
+		item.noun = f.readByte();
+		item.room = f.readByte();
+		item.picture = f.readByte();
+		item.isLineArt = f.readByte();
+		item.position.x = f.readByte();
+		item.position.y = f.readByte();
+		item.state = f.readByte();
+		item.description = f.readByte();
+
+		f.readByte();
+
+		byte size = f.readByte();
+
+		for (uint i = 0; i < size; ++i)
+			item.roomPictures.push_back(f.readByte());
+
+		_state.items.push_back(item);
+	}
+}
+
+void HiRes1Engine::restartGame() {
+	initState();
+	_display->printString(_gameStrings.pressReturn);
+	inputString(); // Missing in the original
+	_display->printAsciiString("\r\r\r\r\r");
+}
+
+void HiRes1Engine::drawPic(byte pic, Common::Point pos) const {
+	Common::File f;
+	Common::String name = Common::String::format("BLOCK%i", _pictures[pic].block);
+
+	if (!f.open(name))
+		error("Failed to open file '%s'", name.c_str());
+
+	f.seek(_pictures[pic].offset);
+	drawPic(f, pos);
+}
+
 void HiRes1Engine::printMessage(uint idx, bool wait) const {
 	// Messages with hardcoded overrides don't delay after printing.
 	// It's unclear if this is a bug or not. In some cases the result
@@ -386,6 +349,43 @@ void HiRes1Engine::drawLine(const Common::Point &p1, const Common::Point &p2, by
 			p.x += xStep;
 			err += deltaY;
 		}
+	}
+}
+
+void HiRes1Engine::drawPic(Common::ReadStream &stream, const Common::Point &pos) const {
+	byte x, y;
+	bool bNewLine = false;
+	byte oldX = 0, oldY = 0;
+	while (1) {
+		x = stream.readByte();
+		y = stream.readByte();
+
+		if (stream.err() || stream.eos())
+			error("Failed to read picture");
+
+		if (x == 0xff && y == 0xff)
+			return;
+
+		if (x == 0 && y == 0) {
+			bNewLine = true;
+			continue;
+		}
+
+		x += pos.x;
+		y += pos.y;
+
+		if (y > 160)
+			y = 160;
+
+		if (bNewLine) {
+			_display->putPixel(Common::Point(x, y), 0x7f);
+			bNewLine = false;
+		} else {
+			drawLine(Common::Point(oldX, oldY), Common::Point(x, y), 0x7f);
+		}
+
+		oldX = x;
+		oldY = y;
 	}
 }
 

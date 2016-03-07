@@ -23,8 +23,9 @@
 #ifndef ADL_ADL_H
 #define ADL_ADL_H
 
-#include "common/random.h"
+#include "common/array.h"
 #include "common/rect.h"
+#include "common/str.h"
 
 #include "engines/engine.h"
 
@@ -34,15 +35,9 @@ class SeekableReadStream;
 }
 
 namespace Adl {
-class Display;
-class Parser;
-class Console;
-struct AdlGameDescription;
 
-struct StringOffset {
-	int stringIdx;
-	uint offset;
-};
+class Display;
+struct AdlGameDescription;
 
 // Conditional opcodes
 #define IDO_CND_ITEM_IN_ROOM   0x03
@@ -155,7 +150,6 @@ protected:
 	void readCommands(Common::ReadStream &stream, Commands &commands);
 
 	Display *_display;
-	Parser *_parser;
 
 	// Message strings in data file
 	Common::Array<Common::String> _messages;
@@ -236,9 +230,9 @@ private:
 	void takeItem(byte noun);
 	void dropItem(byte noun);
 	bool matchCommand(const Command &command, byte verb, byte noun, uint *actions = nullptr) const;
+	void doActions(const Command &command, byte noun, byte offset);
 	bool doOneCommand(const Commands &commands, byte verb, byte noun);
 	void doAllCommands(const Commands &commands, byte verb, byte noun);
-	void doActions(const Command &command, byte noun, byte offset);
 
 	const AdlGameDescription *_gameDescription;
 	bool _isRestarting, _isRestoring;

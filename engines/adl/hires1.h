@@ -23,6 +23,8 @@
 #ifndef ADL_HIRES1_H
 #define ADL_HIRES1_H
 
+#include "common/str.h"
+
 #include "adl/adl.h"
 
 namespace Common {
