@@ -24,12 +24,15 @@
 // is disabled by default due to a macro conflict.
 // See backends/platform/symbian/src/portdefs.h .
 #define SYMBIAN_USE_SYSTEM_REMOVE
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
 
 #include "common/scummsys.h"
 
 #if !defined(DISABLE_DEFAULT_SAVEFILEMANAGER)
 
 #include "backends/saves/default/default-saves.h"
+#include "backends/fs/stdiostream.h"
+#include "backends/cloud/cloud.h"
 
 #include "common/savefile.h"
 #include "common/util.h"
@@ -61,6 +64,7 @@ void DefaultSaveFileManager::checkPath(const Common::FSNode &dir) {
 
 Common::StringArray DefaultSaveFileManager::listSavefiles(const Common::String &pattern) {
 	Common::String savePathName = getSavePath();
+
 	checkPath(Common::FSNode(savePathName));
 	if (getError().getCode() != Common::kNoError)
 		return Common::StringArray();
@@ -72,6 +76,11 @@ Common::StringArray DefaultSaveFileManager::listSavefiles(const Common::String &
 	Common::ArchiveMemberList savefiles;
 	Common::StringArray results;
 	Common::String search(pattern);
+
+  Cloud::getDefaultInstance()->Sync(search);//Download any missing files matching the pattern
+
+  //Recreate FSDirectory as Cloud may have downloaded additional files
+	dir = Common::FSDirectory (savePath);
 
 	if (dir.listMatchingMembers(savefiles, search) > 0) {
 		for (Common::ArchiveMemberList::const_iterator file = savefiles.begin(); file != savefiles.end(); ++file) {
@@ -85,6 +94,7 @@ Common::StringArray DefaultSaveFileManager::listSavefiles(const Common::String &
 Common::InSaveFile *DefaultSaveFileManager::openForLoading(const Common::String &filename) {
 	// Ensure that the savepath is valid. If not, generate an appropriate error.
 	Common::String savePathName = getSavePath();
+
 	checkPath(Common::FSNode(savePathName));
 	if (getError().getCode() != Common::kNoError)
 		return 0;
@@ -117,6 +127,9 @@ Common::OutSaveFile *DefaultSaveFileManager::openForSaving(const Common::String 
 	// Open the file for saving
 	Common::WriteStream *sf = file.createWriteStream();
 
+  //Save the FSNode for the cloud to save the file later
+  ((StdioStream *)sf)->SaveNode(file);
+
 	return compress ? Common::wrapCompressedWriteStream(sf) : sf;
 }
 
@@ -144,6 +157,8 @@ bool DefaultSaveFileManager::removeSavefile(const Common::String &filename) {
 #endif
 		return false;
 	} else {
+    //TODO: Implement errors for Cloud
+    Cloud::getDefaultInstance()->Remove(filename);
 		return true;
 	}
 }

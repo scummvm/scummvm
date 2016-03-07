@@ -30,6 +30,8 @@
 
 // FIXME: Avoid using printf
 #define FORBIDDEN_SYMBOL_EXCEPTION_printf
+#define FORBIDDEN_SYMBOL_EXCEPTION_scanf
+#define FORBIDDEN_SYMBOL_EXCEPTION_printf
 
 #include "engines/engine.h"
 #include "engines/metaengine.h"
@@ -66,6 +68,7 @@
 #endif
 
 #include "backends/keymapper/keymapper.h"
+#include "backends/cloud/cloud.h"
 
 #if defined(_WIN32_WCE)
 #include "backends/platform/wince/CELauncherDialog.h"
@@ -351,6 +354,8 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 	assert(g_system);
 	OSystem &system = *g_system;
 
+  
+
 	// Register config manager defaults
 	Base::registerDefaults();
 
@@ -368,6 +373,14 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 
 	// Update the config file
 	ConfMan.set("versioninfo", gScummVMVersion, Common::ConfigManager::kApplicationDomain);
+  Cloud::getDefaultInstance()->useDropbox();
+
+  if (!Cloud::getDefaultInstance()->checkAuth()) {
+    char a[25];
+    printf("Please visit https://www.dropbox.com/1/oauth2/authorize?client_id=bgnmkfnaxarvq5z&response_type=code . And Copy Paste the obtained code here: ");
+    scanf("%s", a);
+    Cloud::getDefaultInstance()->Auth(Common::String(a));
+  }
 
 	// Load and setup the debuglevel and the debug flags. We do this at the
 	// soonest possible moment to ensure debug output starts early on, if

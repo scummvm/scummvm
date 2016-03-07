@@ -3536,6 +3536,11 @@ define_in_config_if_yes "$_build_scalers" 'USE_SCALERS'
 
 define_in_config_if_yes "$_build_hq_scalers" 'USE_HQ_SCALERS'
 
+#TODO: Check for libcurl
+#
+#
+append_var LIBS "-lcurl"
+
 #
 # Check for math lib
 #

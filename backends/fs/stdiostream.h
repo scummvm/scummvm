@@ -27,18 +27,24 @@
 #include "common/noncopyable.h"
 #include "common/stream.h"
 #include "common/str.h"
+#include "common/fs.h"
 
 class StdioStream : public Common::SeekableReadStream, public Common::WriteStream, public Common::NonCopyable {
 protected:
 	/** File handle to the actual file. */
 	void *_handle;
+  /* Path to the actual file. To be used for cloud*/
 
 public:
 	/**
 	 * Given a path, invokes fopen on that path and wrap the result in a
 	 * StdioStream instance.
 	 */
+  Common::FSNode FileNode;
+  void SaveNode(Common::FSNode node);
+
 	static StdioStream *makeFromPath(const Common::String &path, bool writeMode);
+  void finalize();
 
 	StdioStream(void *handle);
 	virtual ~StdioStream();
