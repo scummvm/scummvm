@@ -382,6 +382,10 @@ void Plane::calcLists(Plane &visiblePlane, const PlaneList &planeList, DrawList 
 	breakEraseListByPlanes(eraseList, planeList);
 	breakDrawListByPlanes(drawList, planeList);
 
+	// We store the current size of the drawlist, as we want to loop
+	// over the currently inserted entries later.
+	DrawList::size_type drawListSizePrimary = drawList.size();
+
 	// NOTE: Setting this to true fixes the menu bars in GK1
 	if (/* TODO: dword_C6288 */ false) {  // "high resolution pictures"????
 		_screenItemList.sort();
@@ -437,8 +441,12 @@ void Plane::calcLists(Plane &visiblePlane, const PlaneList &planeList, DrawList 
 	}
 	if (/* TODO: g_Remap_numActiveRemaps == 0 */ true) { // no remaps active?
 		// Add all items that overlap with items in the drawlist and have higher
-		// priority
-		for (DrawList::size_type i = 0; i < drawList.size(); ++i) {
+		// priority.
+
+		// We only loop over "primary" items in the draw list, skipping
+		// those that were added because of the erase list in the previous loop,
+		// or those to be added in this loop.
+		for (DrawList::size_type i = 0; i < drawListSizePrimary; ++i) {
 			DrawItem *dli = drawList[i];
 
 			for (PlaneList::size_type j = 0; j < planeItemCount; ++j) {
