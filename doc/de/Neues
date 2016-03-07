@@ -3,6 +3,13 @@ Programmcodes finden Sie auf Englisch unter:
         https://github.com/scummvm/scummvm/commits/
 
 1.9.0 (DD.MM.YYYY)
+ AGI:
+   - Unterstützung für Hercules-Darstellung (Grün + Bernstein) hinzugefügt
+   - Unterstützung für hochauflösende Hercules-Schriftart hinzugefügt
+     (auch außerhalb der Hercules-Darstellung nutzbar)
+   - Optionale Funktion "Pause, wenn Befehle eingegeben werden" hinzugefügt.
+     Diese Funktion war im originalen Interpreter nur im Hercules-Darstellungsmodus
+     verfügbar.
 
 
 1.8.0 (04.03.2016)
