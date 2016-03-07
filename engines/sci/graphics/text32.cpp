@@ -197,13 +197,32 @@ void GfxText32::drawFrame(const Common::Rect &rect, const int16 size, const uint
 	Common::Rect targetRect = doScaling ? scaleRect(rect) : rect;
 
 	byte *bitmap = _segMan->getHunkPointer(_bitmap);
-	byte *pixels = bitmap + READ_SCI11ENDIAN_UINT32(bitmap + 28);
+	byte *pixels = bitmap + READ_SCI11ENDIAN_UINT32(bitmap + 28) + rect.top * _width + rect.left;
 
 	// NOTE: Not fully disassembled, but this should be right
-	// TODO: Implement variable frame size
-	assert(size == 1);
-	Buffer buffer(_width, _height, pixels);
-	buffer.frameRect(targetRect, color);
+	int16 rectWidth = targetRect.width();
+	int16 sidesHeight = targetRect.height() - size * 2;
+	int16 centerWidth = rectWidth - size * 2;
+	int16 stride = _width - rectWidth;
+
+	for (int16 y = 0; y < size; ++y) {
+		memset(pixels, color, rectWidth);
+		pixels += _width;
+	}
+	for (int16 y = 0; y < sidesHeight; ++y) {
+		for (int16 x = 0; x < size; ++x) {
+			*pixels++ = color;
+		}
+		pixels += centerWidth;
+		for (int16 x = 0; x < size; ++x) {
+			*pixels++ = color;
+		}
+		pixels += stride;
+	}
+	for (int16 y = 0; y < size; ++y) {
+		memset(pixels, color, rectWidth);
+		pixels += _width;
+	}
 }
 
 void GfxText32::drawChar(const char charIndex) {
