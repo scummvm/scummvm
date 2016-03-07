@@ -44,6 +44,8 @@ static const ADGameDescription gameDescriptions[] = {
 	// Polygons with ignored byte 1
 	FANGAME("Double Trouble", "5e9ee13d09ac54918ed111fa9727ac1c", 557184),
 	FANGAME("Eidisi I", "299d1de4baccf1c66118396519953652", 180480),
+	// Problems(?) with text on the first screen
+	FANGAMEN("Enchanted Pencils", "Enchanted Pencils 0.99 (PG)", "35514583fe7ab36fad2569fc87bd887b", 414464),
 	FANGAME("Escape from School!", "a854be48d4af20126d18a9cad93a969b", 51840),
 	FANGAME("Exploration Zeta!", "b9fbb704017d7ea9613b0160f86527bb", 370944),
 	// Crash in console rendering on the first scene
@@ -51,6 +53,7 @@ static const ADGameDescription gameDescriptions[] = {
 	FANGAME("Lost Crystal", "4f21ba8ee64f8d655b9eeb1e3ffd50f7", 792064),
 	FANGAME("Magic Rings", "6e0d1dd561d3dad8f9a7a20ed1f09b16", 112000),
 	FANGAME("Midnight Snack", "346982a32fc701f53bb19771d72063d0", 69504),
+	FANGAME("Pyramid of No Return", "48a9c668ce69206f57e11e1a85970d02", 392192),
 	FANGAME("Queen Quest", "730605d312efedb5e3ff108522fcac18", 59776),
 	// Crash in console rendering on the initial scene
 	FANGAME("Quest for the Dark Sword", "7e4e712d151f6c686f6024b0dedf5d34", 590720),
