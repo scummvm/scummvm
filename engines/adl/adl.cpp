@@ -635,12 +635,12 @@ void AdlEngine::getInput(uint &verb, uint &noun) {
 
 void AdlEngine::showRoom() const {
 	if (!_state.isDark) {
-		drawPic(curRoom().curPicture);
+		drawPic(getCurRoom().curPicture);
 		drawItems();
 	}
 
 	_display->updateHiResScreen();
-	printMessage(curRoom().description, false);
+	printMessage(getCurRoom().description, false);
 }
 
 void AdlEngine::clearScreen() const {
@@ -658,7 +658,7 @@ void AdlEngine::drawItems() const {
 			continue;
 
 		if (item->state == IDI_ITEM_MOVED) {
-			if (curRoom().picture == curRoom().curPicture) {
+			if (getCurRoom().picture == getCurRoom().curPicture) {
 				const Common::Point &p =  _itemOffsets[dropped];
 				if (item->isLineArt)
 					drawLineArt(_lineArt[item->picture - 1], p);
@@ -672,7 +672,7 @@ void AdlEngine::drawItems() const {
 		Common::Array<byte>::const_iterator pic;
 
 		for (pic = item->roomPictures.begin(); pic != item->roomPictures.end(); ++pic) {
-			if (*pic == curRoom().curPicture) {
+			if (*pic == getCurRoom().curPicture) {
 				if (item->isLineArt)
 					drawLineArt(_lineArt[item->picture - 1], item->position);
 				else
@@ -728,54 +728,54 @@ void AdlEngine::drawLineArt(const Common::Array<byte> &lineArt, const Common::Po
 	}
 }
 
-const Room &AdlEngine::room(uint i) const {
+const Room &AdlEngine::getRoom(uint i) const {
 	if (i < 1 || i > _state.rooms.size())
 		error("Room %i out of range [1, %i]", i, _state.rooms.size());
 
 	return _state.rooms[i - 1];
 }
 
-Room &AdlEngine::room(uint i) {
+Room &AdlEngine::getRoom(uint i) {
 	if (i < 1 || i > _state.rooms.size())
 		error("Room %i out of range [1, %i]", i, _state.rooms.size());
 
 	return _state.rooms[i - 1];
 }
 
-const Room &AdlEngine::curRoom() const {
-	return room(_state.room);
+const Room &AdlEngine::getCurRoom() const {
+	return getRoom(_state.room);
 }
 
-Room &AdlEngine::curRoom() {
-	return room(_state.room);
+Room &AdlEngine::getCurRoom() {
+	return getRoom(_state.room);
 }
 
-const Item &AdlEngine::item(uint i) const {
+const Item &AdlEngine::getItem(uint i) const {
 	if (i < 1 || i > _state.items.size())
 		error("Item %i out of range [1, %i]", i, _state.items.size());
 
 	return _state.items[i - 1];
 }
 
-Item &AdlEngine::item(uint i) {
+Item &AdlEngine::getItem(uint i) {
 	if (i < 1 || i > _state.items.size())
 		error("Item %i out of range [1, %i]", i, _state.items.size());
 
 	return _state.items[i - 1];
 }
 
-const byte &AdlEngine::var(uint i) const {
+byte AdlEngine::getVar(uint i) const {
 	if (i >= _state.vars.size())
 		error("Variable %i out of range [0, %i]", i, _state.vars.size() - 1);
 
 	return _state.vars[i];
 }
 
-byte &AdlEngine::var(uint i) {
+void AdlEngine::setVar(uint i, byte value) {
 	if (i >= _state.vars.size())
 		error("Variable %i out of range [0, %i]", i, _state.vars.size() - 1);
 
-	return _state.vars[i];
+	_state.vars[i] = value;
 }
 
 void AdlEngine::takeItem(byte noun) {
@@ -797,7 +797,7 @@ void AdlEngine::takeItem(byte noun) {
 
 		Common::Array<byte>::const_iterator pic;
 		for (pic = item->roomPictures.begin(); pic != item->roomPictures.end(); ++pic) {
-			if (*pic == curRoom().curPicture) {
+			if (*pic == getCurRoom().curPicture) {
 				item->room = IDI_NONE;
 				item->state = IDI_ITEM_MOVED;
 				return;
@@ -839,7 +839,7 @@ bool AdlEngine::matchCommand(const Command &command, byte verb, byte noun, uint 
 	for (uint i = 0; i < command.numCond; ++i) {
 		switch (ARG(0)) {
 		case IDO_CND_ITEM_IN_ROOM:
-			if (item(ARG(1)).room != ARG(2))
+			if (getItem(ARG(1)).room != ARG(2))
 				return false;
 			offset += 3;
 			break;
@@ -849,17 +849,17 @@ bool AdlEngine::matchCommand(const Command &command, byte verb, byte noun, uint 
 			offset += 2;
 			break;
 		case IDO_CND_VAR_EQ:
-			if (var(ARG(1)) != ARG(2))
+			if (getVar(ARG(1)) != ARG(2))
 				return false;
 			offset += 3;
 			break;
 		case IDO_CND_CUR_PIC_EQ:
-			if (curRoom().curPicture != ARG(1))
+			if (getCurRoom().curPicture != ARG(1))
 				return false;
 			offset += 2;
 			break;
 		case IDO_CND_ITEM_PIC_EQ:
-			if (item(ARG(1)).picture != ARG(2))
+			if (getItem(ARG(1)).picture != ARG(2))
 				return false;
 			offset += 3;
 			break;
@@ -877,15 +877,15 @@ void AdlEngine::doActions(const Command &command, byte noun, byte offset) {
 	for (uint i = 0; i < command.numAct; ++i) {
 		switch (ARG(0)) {
 		case IDO_ACT_VAR_ADD:
-			var(ARG(2)) += ARG(1);
+			setVar(ARG(2), getVar(ARG(2) + ARG(1)));
 			offset += 3;
 			break;
 		case IDO_ACT_VAR_SUB:
-			var(ARG(2)) -= ARG(1);
+			setVar(ARG(2), getVar(ARG(2)) - ARG(1));
 			offset += 3;
 			break;
 		case IDO_ACT_VAR_SET:
-			var(ARG(1)) = ARG(2);
+			setVar(ARG(1), ARG(2));
 			offset += 3;
 			break;
 		case IDO_ACT_LIST_ITEMS: {
@@ -899,20 +899,20 @@ void AdlEngine::doActions(const Command &command, byte noun, byte offset) {
 			break;
 		}
 		case IDO_ACT_MOVE_ITEM:
-			item(ARG(1)).room = ARG(2);
+			getItem(ARG(1)).room = ARG(2);
 			offset += 3;
 			break;
 		case IDO_ACT_SET_ROOM:
-			curRoom().curPicture = curRoom().picture;
+			getCurRoom().curPicture = getCurRoom().picture;
 			_state.room = ARG(1);
 			offset += 2;
 			break;
 		case IDO_ACT_SET_CUR_PIC:
-			curRoom().curPicture = ARG(1);
+			getCurRoom().curPicture = ARG(1);
 			offset += 2;
 			break;
 		case IDO_ACT_SET_PIC:
-			curRoom().picture = curRoom().curPicture = ARG(1);
+			getCurRoom().picture = getCurRoom().curPicture = ARG(1);
 			offset += 2;
 			break;
 		case IDO_ACT_PRINT_MSG:
@@ -966,17 +966,17 @@ void AdlEngine::doActions(const Command &command, byte noun, byte offset) {
 			quitGame();
 			return;
 		case IDO_ACT_PLACE_ITEM:
-			item(ARG(1)).room = ARG(2);
-			item(ARG(1)).position.x = ARG(3);
-			item(ARG(1)).position.y = ARG(4);
+			getItem(ARG(1)).room = ARG(2);
+			getItem(ARG(1)).position.x = ARG(3);
+			getItem(ARG(1)).position.y = ARG(4);
 			offset += 5;
 			break;
 		case IDO_ACT_SET_ITEM_PIC:
-			item(ARG(2)).picture = ARG(1);
+			getItem(ARG(2)).picture = ARG(1);
 			offset += 3;
 			break;
 		case IDO_ACT_RESET_PIC:
-			curRoom().curPicture = curRoom().picture;
+			getCurRoom().curPicture = getCurRoom().picture;
 			++offset;
 			break;
 		case IDO_ACT_GO_NORTH:
@@ -985,14 +985,14 @@ void AdlEngine::doActions(const Command &command, byte noun, byte offset) {
 		case IDO_ACT_GO_WEST:
 		case IDO_ACT_GO_UP:
 		case IDO_ACT_GO_DOWN: {
-			byte room = curRoom().connections[ARG(0) - IDO_ACT_GO_NORTH];
+			byte room = getCurRoom().connections[ARG(0) - IDO_ACT_GO_NORTH];
 
 			if (room == 0) {
 				printMessage(_messageIds.cantGoThere);
 				return;
 			}
 
-			curRoom().curPicture = curRoom().picture;
+			getCurRoom().curPicture = getCurRoom().picture;
 			_state.room = room;
 			return;
 		}
@@ -1005,7 +1005,7 @@ void AdlEngine::doActions(const Command &command, byte noun, byte offset) {
 			++offset;
 			break;
 		case IDO_ACT_SET_ROOM_PIC:
-			room(ARG(1)).picture = room(ARG(1)).curPicture = ARG(2);
+			getRoom(ARG(1)).picture = getRoom(ARG(1)).curPicture = ARG(2);
 			offset += 3;
 			break;
 		default:

@@ -219,14 +219,14 @@ private:
 	void drawLineArt(const Common::Array<byte> &lineArt, const Common::Point &pos, byte rotation = 0, byte scaling = 1, byte color = 0x7f) const;
 
 	// Game state functions
-	const Room &room(uint i) const;
-	Room &room(uint i);
-	const Room &curRoom() const;
-	Room &curRoom();
-	const Item &item(uint i) const;
-	Item &item(uint i);
-	const byte &var(uint i) const;
-	byte &var(uint i);
+	const Room &getRoom(uint i) const;
+	Room &getRoom(uint i);
+	const Room &getCurRoom() const;
+	Room &getCurRoom();
+	const Item &getItem(uint i) const;
+	Item &getItem(uint i);
+	byte getVar(uint i) const;
+	void setVar(uint i, byte value);
 	void takeItem(byte noun);
 	void dropItem(byte noun);
 	bool matchCommand(const Command &command, byte verb, byte noun, uint *actions = nullptr) const;
