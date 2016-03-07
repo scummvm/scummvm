@@ -459,14 +459,12 @@ DEFFN(CClickResponder)
 DEFFN(CDontSaveFileItem)
 DEFFN(CDropTarget)
 DEFFN(CFileItem)
-DEFFN(CFileList)
 DEFFN(CFileListItem)
 DEFFN(CGameObject)
 DEFFN(CLinkItem)
 DEFFN(ListItem)
 DEFFN(CMessageTarget)
 DEFFN(CMovieClip)
-DEFFN(CMovieClipList)
 DEFFN(CMultiDropTarget)
 DEFFN(CNamedItem)
 DEFFN(CNodeItem)
@@ -634,7 +632,6 @@ DEFFN(CPETClass1)
 DEFFN(CPETClass2)
 DEFFN(CPETClass3)
 DEFFN(CPetControl)
-DEFFN(CPetControlSub10)
 DEFFN(CPetDragChev)
 DEFFN(CPetGraphic)
 DEFFN(CPetGraphic2)
@@ -1025,14 +1022,12 @@ void CSaveableObject::initClassList() {
 	ADDFN(CDontSaveFileItem, CFileItem);
 	ADDFN(CDropTarget, CGameObject);
 	ADDFN(CFileItem, CTreeItem);
-	ADDFN(CFileList, List);
 	ADDFN(CFileListItem, ListItem);
 	ADDFN(CGameObject, CNamedItem);
 	ADDFN(CLinkItem, CNamedItem);
 	ADDFN(ListItem, CSaveableObject);
 	ADDFN(CMessageTarget, CSaveableObject);
 	ADDFN(CMovieClip, ListItem);
-	ADDFN(CMovieClipList, List);
 	ADDFN(CMultiDropTarget, CDropTarget);
 	ADDFN(CNamedItem, CTreeItem);
 	ADDFN(CNodeItem, CNamedItem);
@@ -1278,7 +1273,6 @@ void CSaveableObject::initClassList() {
 	ADDFN(CMusicSwitchReverse, CMusicSwitch);
 	ADDFN(CMusicVoiceMute, CMusicControl);
 	ADDFN(CPetControl, CGameObject);
-	ADDFN(CPetControlSub10, List);
 	ADDFN(CPetDragChev, CPetGraphic2);
 	ADDFN(CPetGraphic, CGameObject);
 	ADDFN(CPetGraphic2, CGameObject);

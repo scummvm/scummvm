@@ -51,8 +51,6 @@ public:
 template<typename T>
 class List : public CSaveableObject, public Common::List<T *> {
 public:
-	CLASSDEF
-
 	/**
 	 * Save the data for the class to file
 	 */

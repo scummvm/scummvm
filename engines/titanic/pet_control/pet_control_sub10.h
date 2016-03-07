@@ -41,7 +41,6 @@ protected:
 	CPetVal _val2;
 	CPetVal _val3;
 public:
-	CLASSDEF
 	CPetControlSub10();
 
 	virtual void proc8();

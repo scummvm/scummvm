@@ -62,7 +62,6 @@ public:
  */
 class CMovieClipList: public List<CMovieClip> {
 public:
-	CLASSDEF
 };
 
 } // End of namespace Titanic

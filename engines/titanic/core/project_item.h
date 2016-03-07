@@ -59,7 +59,6 @@ public:
  */
 class CFileList: public List<CFileListItem> {
 public:
-	CLASSDEF
 };
 
 
