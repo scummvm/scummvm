@@ -98,6 +98,7 @@ private:
 	bool cmdPlaneList(int argc, const char **argv);
 	bool cmdVisiblePlaneList(int argc, const char **argv);
 	bool cmdPlaneItemList(int argc, const char **argv);
+	bool cmdVisiblePlaneItemList(int argc, const char **argv);
 	bool cmdSavedBits(int argc, const char **argv);
 	bool cmdShowSavedBits(int argc, const char **argv);
 	// Segments

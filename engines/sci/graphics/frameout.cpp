@@ -2064,6 +2064,15 @@ void GfxFrameout::printVisiblePlaneList(Console *con) const {
 	printPlaneListInternal(con, _visiblePlanes);
 }
 
+void GfxFrameout::printPlaneItemListInternal(Console *con, const ScreenItemList &screenItemList) const {
+	ScreenItemList::size_type i = 0;
+	for (ScreenItemList::const_iterator sit = screenItemList.begin(); sit != screenItemList.end(); sit++) {
+		ScreenItem *screenItem = *sit;
+		con->debugPrintf("%2d: ", i++);
+		screenItem->printDebugInfo(con);
+	}
+}
+
 void GfxFrameout::printPlaneItemList(Console *con, const reg_t planeObject) const {
 	Plane *p = _planes.findByObject(planeObject);
 
@@ -2072,12 +2081,18 @@ void GfxFrameout::printPlaneItemList(Console *con, const reg_t planeObject) cons
 		return;
 	}
 
-	ScreenItemList::size_type i = 0;
-	for (ScreenItemList::iterator sit = p->_screenItemList.begin(); sit != p->_screenItemList.end(); sit++) {
-		ScreenItem *screenItem = *sit;
-		con->debugPrintf("%2d: ", i++);
-		screenItem->printDebugInfo(con);
+	printPlaneItemListInternal(con, p->_screenItemList);
+}
+
+void GfxFrameout::printVisiblePlaneItemList(Console *con, const reg_t planeObject) const {
+	Plane *p = _visiblePlanes.findByObject(planeObject);
+
+	if (p == nullptr) {
+		con->debugPrintf("Plane does not exist");
+		return;
 	}
+
+	printPlaneItemListInternal(con, p->_screenItemList);
 }
 
 } // End of namespace Sci

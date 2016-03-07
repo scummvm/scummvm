@@ -512,6 +512,8 @@ public:
 	void printVisiblePlaneList(Console *con) const;
 	void printPlaneListInternal(Console *con, const PlaneList &planeList) const;
 	void printPlaneItemList(Console *con, const reg_t planeObject) const;
+	void printVisiblePlaneItemList(Console *con, const reg_t planeObject) const;
+	void printPlaneItemListInternal(Console *con, const ScreenItemList &screenItemList) const;
 };
 
 } // End of namespace Sci

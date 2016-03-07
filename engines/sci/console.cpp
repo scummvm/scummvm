@@ -141,6 +141,8 @@ Console::Console(SciEngine *engine) : GUI::Debugger(),
 	registerCmd("vpl",                WRAP_METHOD(Console, cmdVisiblePlaneList));	// alias
 	registerCmd("plane_items",        WRAP_METHOD(Console, cmdPlaneItemList));
 	registerCmd("pi",                 WRAP_METHOD(Console, cmdPlaneItemList));	// alias
+	registerCmd("visible_plane_items", WRAP_METHOD(Console, cmdVisiblePlaneItemList));
+	registerCmd("vpi",                WRAP_METHOD(Console, cmdVisiblePlaneItemList));	// alias
 	registerCmd("saved_bits",         WRAP_METHOD(Console, cmdSavedBits));
 	registerCmd("show_saved_bits",    WRAP_METHOD(Console, cmdShowSavedBits));
 	// Segments
@@ -386,6 +388,7 @@ bool Console::cmdHelp(int argc, const char **argv) {
 	debugPrintf(" plane_list / pl - Shows a list of all the planes in the draw list (SCI2+)\n");
 	debugPrintf(" visible_plane_list / vpl - Shows a list of all the planes in the visible draw list (SCI2+)\n");
 	debugPrintf(" plane_items / pi - Shows a list of all items for a plane (SCI2+)\n");
+	debugPrintf(" visible_plane_items / vpi - Shows a list of all items for a plane in the visible draw list (SCI2+)\n");
 	debugPrintf(" saved_bits - List saved bits on the hunk\n");
 	debugPrintf(" show_saved_bits - Display saved bits\n");
 	debugPrintf("\n");
@@ -1808,6 +1811,34 @@ bool Console::cmdPlaneItemList(int argc, const char **argv) {
 	if (_engine->_gfxFrameout) {
 		debugPrintf("Plane item list:\n");
 		_engine->_gfxFrameout->printPlaneItemList(this, planeObject);
+	} else {
+		debugPrintf("This SCI version does not have a list of plane items\n");
+	}
+#else
+	debugPrintf("SCI32 isn't included in this compiled executable\n");
+#endif
+	return true;
+}
+
+bool Console::cmdVisiblePlaneItemList(int argc, const char **argv) {
+	if (argc != 2) {
+		debugPrintf("Shows the list of items for a plane\n");
+		debugPrintf("Usage: %s <plane address>\n", argv[0]);
+		return true;
+	}
+
+	reg_t planeObject = NULL_REG;
+
+	if (parse_reg_t(_engine->_gamestate, argv[1], &planeObject, false)) {
+		debugPrintf("Invalid address passed.\n");
+		debugPrintf("Check the \"addresses\" command on how to use addresses\n");
+		return true;
+	}
+
+#ifdef ENABLE_SCI32
+	if (_engine->_gfxFrameout) {
+		debugPrintf("Visible plane item list:\n");
+		_engine->_gfxFrameout->printVisiblePlaneItemList(this, planeObject);
 	} else {
 		debugPrintf("This SCI version does not have a list of plane items\n");
 	}
