@@ -146,7 +146,6 @@ protected:
 	Common::String readStringAt(Common::SeekableReadStream &stream, uint offset, byte until = 0) const;
 
 	virtual void printMessage(uint idx, bool wait = true) const;
-	void printASCIIString(const Common::String &str) const;
 	void delay(uint32 ms) const;
 
 	Common::String inputString(byte prompt = 0) const;

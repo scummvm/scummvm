@@ -70,6 +70,7 @@ public:
 	void moveCursorForward();
 	void moveCursorBackward();
 	void printString(const Common::String &str);
+	void printAsciiString(const Common::String &str);
 	void setCharAtCursor(byte c);
 	void showCursor(bool enable);
 

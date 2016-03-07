@@ -289,6 +289,16 @@ void Display::printString(const Common::String &str) {
 	updateTextScreen();
 }
 
+void Display::printAsciiString(const Common::String &str) {
+	Common::String aStr;
+
+	Common::String::const_iterator it;
+	for (it = str.begin(); it != str.end(); ++it)
+			aStr += APPLECHAR(*it);
+
+	printString(aStr);
+}
+
 void Display::setCharAtCursor(byte c) {
 	_textBuf[_cursorPos] = c;
 }

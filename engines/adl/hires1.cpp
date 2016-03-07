@@ -55,16 +55,16 @@ void HiRes1Engine::runIntro() const {
 	Common::String str;
 
 	str = readStringAt(basic, IDI_HR1_OFS_PD_TEXT_0, '"');
-	printASCIIString(str + '\r');
+	_display->printAsciiString(str + '\r');
 
 	str = readStringAt(basic, IDI_HR1_OFS_PD_TEXT_1, '"');
-	printASCIIString(str + "\r\r");
+	_display->printAsciiString(str + "\r\r");
 
 	str = readStringAt(basic, IDI_HR1_OFS_PD_TEXT_2, '"');
-	printASCIIString(str + "\r\r");
+	_display->printAsciiString(str + "\r\r");
 
 	str = readStringAt(basic, IDI_HR1_OFS_PD_TEXT_3, '"');
-	printASCIIString(str + '\r');
+	_display->printAsciiString(str + '\r');
 
 	inputKey();
 	if (g_engine->shouldQuit())
@@ -120,7 +120,7 @@ void HiRes1Engine::runIntro() const {
 		}
 	}
 
-	printASCIIString("\r");
+	_display->printAsciiString("\r");
 
 	file.close();
 
@@ -240,7 +240,7 @@ void HiRes1Engine::restartGame() {
 	initState();
 	_display->printString(_gameStrings.pressReturn);
 	inputString(); // Missing in the original
-	printASCIIString("\r\r\r\r\r");
+	_display->printAsciiString("\r\r\r\r\r");
 }
 
 void HiRes1Engine::loadData() {

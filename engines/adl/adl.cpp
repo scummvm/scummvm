@@ -87,7 +87,7 @@ Common::Error AdlEngine::run() {
 	}
 
 	_display->setMode(DISPLAY_MODE_MIXED);
-	printASCIIString("\r\r\r\r\r");
+	_display->printAsciiString("\r\r\r\r\r");
 
 	while (1) {
 		uint verb = 0, noun = 0;
@@ -119,7 +119,7 @@ Common::Error AdlEngine::run() {
 			// means that restoring a game will always run through
 			// the global commands and increase the move counter
 			// before the first user input.
-			printASCIIString("\r");
+			_display->printAsciiString("\r");
 			_isRestoring = false;
 			verb = _restoreVerb;
 			noun = _restoreNoun;
@@ -887,16 +887,6 @@ void AdlEngine::getInput(uint &verb, uint &noun) {
 		noun = _nouns[nounStr];
 		return;
 	}
-}
-
-void AdlEngine::printASCIIString(const Common::String &str) const {
-	Common::String aStr;
-
-	Common::String::const_iterator it;
-	for (it = str.begin(); it != str.end(); ++it)
-			aStr += APPLECHAR(*it);
-
-	_display->printString(aStr);
 }
 
 Common::String AdlEngine::inputString(byte prompt) const {
