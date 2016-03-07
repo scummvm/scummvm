@@ -160,6 +160,10 @@ private:
 	int cmp(const reg_t right, bool treatAsUnsigned) const;
 	reg_t lookForWorkaround(const reg_t right, const char *operation) const;
 	bool pointerComparisonWithInteger(const reg_t right) const;
+
+#ifdef ENABLE_SCI32
+	int sci32Comparison(const reg_t right) const;
+#endif
 };
 
 static inline reg_t make_reg(SegmentId segment, uint16 offset) {

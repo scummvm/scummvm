@@ -230,12 +230,34 @@ int reg_t::cmp(const reg_t right, bool treatAsUnsigned) const {
 			return toUint16() - right.toUint16();
 		else
 			return toSint16() - right.toSint16();
+#ifdef ENABLE_SCI32
+	} else if (getSciVersion() >= SCI_VERSION_2) {
+		return sci32Comparison(right);
+#endif
 	} else if (pointerComparisonWithInteger(right)) {
 		return 1;
 	} else if (right.pointerComparisonWithInteger(*this)) {
 		return -1;
 	} else
 		return lookForWorkaround(right, "comparison").toSint16();
+}
+
+int reg_t::sci32Comparison(const reg_t right) const {
+	// In SCI32, MemIDs are normally indexes into the memory manager's handle
+	// list, but the engine reserves indexes at and above 20000 for objects
+	// that were created inside the engine (as opposed to inside the VM). The
+	// engine compares these as a tiebreaker for graphics objects that are at
+	// the same priority, and it is necessary to at least minimally handle
+	// this situation.
+	// This is obviously a bogus comparision, but then, this entire thing is
+	// bogus. For the moment, it just needs to be deterministic.
+	if (isNumber() && !right.isNumber()) {
+		return 1;
+	} else if (right.isNumber() && !isNumber()) {
+		return -1;
+	}
+
+	return getOffset() - right.getOffset();
 }
 
 bool reg_t::pointerComparisonWithInteger(const reg_t right) const {

@@ -229,14 +229,7 @@ public:
 			}
 
 			if (_position.y + _z == other._position.y + other._z) {
-				// TODO: Failure in SQ6 room 220 when using SCI logic
-				// to compare pointer and numeric memory handles
-
-				if (_object.isNumber() && other._object.isNumber()) {
-					return _object < other._object;
-				} else if (other._object.isNumber()) {
-					return true;
-				}
+				return _object < other._object;
 			}
 		}
 
