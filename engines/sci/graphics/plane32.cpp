@@ -792,6 +792,17 @@ void Plane::update(const reg_t object) {
 
 #pragma mark -
 #pragma mark PlaneList
+void PlaneList::add(Plane *plane) {
+	for (iterator it = begin(); it != end(); ++it) {
+		if ((*it)->_priority > plane->_priority) {
+			insert(it, plane);
+			return;
+		}
+	}
+
+	push_back(plane);
+}
+
 void PlaneList::clear() {
 	for (iterator it = begin(); it != end(); ++it) {
 		delete *it;
@@ -858,17 +869,6 @@ int16 PlaneList::getTopSciPlanePriority() const {
 
 void PlaneList::remove_at(size_type index) {
 	delete PlaneListBase::remove_at(index);
-}
-
-void PlaneList::add(Plane *plane) {
-	for (iterator it = begin(); it != end(); ++it) {
-		if ((*it)->_priority > plane->_priority) {
-			insert(it, plane);
-			return;
-		}
-	}
-
-	push_back(plane);
 }
 
 }
