@@ -21,6 +21,7 @@
  */
 
 #include "titanic/game_manager.h"
+#include "titanic/messages/messages.h"
 #include "titanic/screen_manager.h"
 
 namespace Titanic {
@@ -36,6 +37,9 @@ void CGameManager::load(SimpleFile *file) {
 
 void CGameManager::gameLoaded() {
 	// TODO
+
+	//CLoadSuccessMsg msg(0);
+
 }
 
-} // End of namespace Titanic
+} // End of namespace Titanic z

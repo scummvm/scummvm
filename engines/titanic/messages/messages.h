@@ -34,12 +34,17 @@ enum MessageFlag {
 	MSGFLAG_CLASS_DEF = 4
 };
 
+#define MSGTARGET(NAME) class NAME; class NAME##Target { public: \
+	virtual bool handleEvent(const NAME &msg) = 0; }
+
 class CMessage : public CSaveableObject {
 public:
 	CLASSDEF
 	CMessage();
 
 	bool execute(CTreeItem *target, const ClassDef *classDef, int flags);
+
+	virtual bool perform(CTreeItem *treeItem) { return false; }
 
 	/**
 	 * Save the data for the class to file
@@ -52,8 +57,11 @@ public:
 	virtual void load(SimpleFile *file);
 };
 
+MSGTARGET(CEditControlMsg);
 class CEditControlMsg : public CMessage {
-private:
+protected:
+	virtual bool handleMessage(CEditControlMsg &msg) { return false; }
+public:
 	int _field4;
 	int _field8;
 	CString _string1;
@@ -64,9 +72,17 @@ public:
 	CLASSDEF
 	CEditControlMsg() : _field4(0), _field8(0), _field18(0),
 		_field1C(0), _field20(0) {}
+
+	virtual bool perform(CTreeItem *treeItem) { 
+		CEditControlMsg *dest = dynamic_cast<CEditControlMsg *>(treeItem);
+		return dest != nullptr && dest->handleMessage(*this);
+	}
 };
 
+MSGTARGET(CLightsMsg);
 class CLightsMsg : public CMessage {
+protected:
+	virtual bool handleMessage(CLightsMsg &msg) { return false; }
 public:
 	int _field4;
 	int _field8;
@@ -76,10 +92,18 @@ public:
 	CLASSDEF
 	CLightsMsg() : CMessage(), _field4(0), _field8(0),
 		_fieldC(0), _field10(0) {}
+
+	virtual bool perform(CTreeItem *treeItem) {
+		CLightsMsg *dest = dynamic_cast<CLightsMsg *>(treeItem);
+		return dest != nullptr && dest->handleMessage(*this);
+	}
 };
 
+MSGTARGET(CIsHookedOnMsg);
 class CIsHookedOnMsg : public CMessage {
-private:
+protected:
+	virtual bool handleMessage(CIsHookedOnMsg &msg) { return false; }
+public:
 	int _field4;
 	int _field8;
 	CString _string1;
@@ -90,59 +114,100 @@ public:
 	CLASSDEF
 	CIsHookedOnMsg() : CMessage(), _field4(0), _field8(0),
 		_field18(0), _field1C(0), _field20(0) {}
+
+	virtual bool perform(CTreeItem *treeItem) {
+		CIsHookedOnMsg *dest = dynamic_cast<CIsHookedOnMsg *>(treeItem);
+		return dest != nullptr && dest->handleMessage(*this);
+	}
 };
 
+MSGTARGET(CSubAcceptCCarryMsg);
 class CSubAcceptCCarryMsg : public CMessage {
+protected:
+	virtual bool handleMessage(CSubAcceptCCarryMsg &msg) { return false; }
 public:
 	CString _string1;
 	int _value1, _value2, _value3;
 public:
 	CLASSDEF
 	CSubAcceptCCarryMsg() : _value1(0), _value2(0), _value3(0) {}
+
+	virtual bool perform(CTreeItem *treeItem) {
+		CSubAcceptCCarryMsg *dest = dynamic_cast<CSubAcceptCCarryMsg *>(treeItem);
+		return dest != nullptr && dest->handleMessage(*this);
+	}
 };
 
+MSGTARGET(CTransportMsg);
 class CTransportMsg : public CMessage {
+protected:
+	virtual bool handleMessage(CTransportMsg &msg) { return false; }
 public:
 	CString _string;
 	int _value1, _value2;
 public:
 	CLASSDEF
 	CTransportMsg() : _value1(0), _value2(0) {}
+
+	virtual bool perform(CTreeItem *treeItem) {
+		CTransportMsg *dest = dynamic_cast<CTransportMsg *>(treeItem);
+		return dest != nullptr && dest->handleMessage(*this);
+	}
 };
 
-#define MESSAGE0(NAME) \
+#define MESSAGE0(NAME) MSGTARGET(NAME); \
 	class NAME: public CMessage { \
 	public: NAME() : CMessage() {} \
 	CLASSDEF \
-	}
-#define MESSAGE1(NAME, F1, N1, V1) \
+	virtual bool handleMessage(NAME &msg) { return false; } \
+	virtual bool perform(CTreeItem *treeItem) { \
+		NAME *dest = dynamic_cast<NAME *>(treeItem); \
+		return dest != nullptr && dest->handleMessage(*this); \
+	} }
+#define MESSAGE1(NAME, F1, N1, V1) MSGTARGET(NAME); \
 	class NAME: public CMessage { \
 	public: F1 _N1; \
 	NAME() : CMessage(), _N1(V1) {} \
 	NAME(F1 N1) : CMessage(), _N1(N1) {} \
 	CLASSDEF \
-	}
-#define MESSAGE2(NAME, F1, N1, V1, F2, N2, V2) \
+	virtual bool handleMessage(NAME &msg) { return false; } \
+	virtual bool perform(CTreeItem *treeItem) { \
+		NAME *dest = dynamic_cast<NAME *>(treeItem); \
+		return dest != nullptr && dest->handleMessage(*this); \
+	} }
+#define MESSAGE2(NAME, F1, N1, V1, F2, N2, V2) MSGTARGET(NAME); \
 	class NAME: public CMessage { \
 	public: F1 _N1; F2 _N2; \
 	NAME() : CMessage(), _N1(V1), _N2(V2) {} \
 	NAME(F1 N1, F2 N2) : CMessage(), _N1(N1), _N2(N2) {} \
 	CLASSDEF \
-	}
-#define MESSAGE3(NAME, F1, N1, V1, F2, N2, V2, F3, N3, V3) \
+	virtual bool handleMessage(NAME &msg) { return false; } \
+	virtual bool perform(CTreeItem *treeItem) { \
+		NAME *dest = dynamic_cast<NAME *>(treeItem); \
+		return dest != nullptr && dest->handleMessage(*this); \
+	} }
+#define MESSAGE3(NAME, F1, N1, V1, F2, N2, V2, F3, N3, V3) MSGTARGET(NAME); \
 	class NAME: public CMessage { \
 	public: F1 _N1; F2 _N2; F3 _N3; \
 	NAME() : CMessage(), _N1(V1), _N2(V2), _N3(V3) {} \
 	NAME(F1 N1, F2 N2, F3 N3) : CMessage(), _N1(N1), _N2(N2), _N3(N3) {} \
 	CLASSDEF \
-	}
-#define MESSAGE4(NAME, F1, N1, V1, F2, N2, V2, F3, N3, V3, F4, N4, V4) \
+	virtual bool handleMessage(NAME &msg) { return false; } \
+	virtual bool perform(CTreeItem *treeItem) { \
+		NAME *dest = dynamic_cast<NAME *>(treeItem); \
+		return dest != nullptr && dest->handleMessage(*this); \
+	} }
+#define MESSAGE4(NAME, F1, N1, V1, F2, N2, V2, F3, N3, V3, F4, N4, V4) MSGTARGET(NAME); \
 	class NAME: public CMessage { \
 	public: F1 _N1; F2 _N2; F3 _N3; F4 _N4; \
 	NAME() : CMessage(), _N1(V1), _N2(V2), _N3(V3), _N4(V4) {} \
 	NAME(F1 N1, F2 N2, F3 N3, F4 N4) : CMessage(), _N1(N1), _N2(N2), _N3(N3), _N4(N4) {} \
 	CLASSDEF \
-	}
+	virtual bool handleMessage(NAME &msg) { return false; } \
+	virtual bool perform(CTreeItem *treeItem) { \
+		NAME *dest = dynamic_cast<NAME *>(treeItem); \
+		return dest != nullptr && dest->handleMessage(*this); \
+	} }
 
 MESSAGE1(CActMsg, CString, value, "");
 MESSAGE1(CActivationmsg, CString, value, "");
@@ -175,6 +240,8 @@ MESSAGE1(CDropobjectMsg, int, value, 0);
 MESSAGE1(CDropZoneGotObjectMsg, int, value, 0);
 MESSAGE1(CDropZoneLostObjectMsg, int, value, 0);
 MESSAGE1(CEjectCylinderMsg, int, value, 0);
+MESSAGE0(CEnterNodeMsg);
+MESSAGE0(CEnterViewMsg);
 MESSAGE0(CErasePhonographCylinderMsg);
 MESSAGE2(CFreshenCookieMsg, int, value1, 0, int, value2, 0);
 MESSAGE1(CGetChevClassBits, int, value, 0);
@@ -191,7 +258,9 @@ MESSAGE0(CInitializeAnimMsg);
 MESSAGE1(CIsEarBowlPuzzleDone, int, value, 0);
 MESSAGE1(CIsParrotPresentMsg, int, value, 0);
 MESSAGE1(CKeyCharMsg, int, value, 32);
+MESSAGE0(CLeaveViewMsg);
 MESSAGE2(CLemonFallsFromTreeMsg, int, value1, 0, int, value2, 0);
+MESSAGE1(CLoadSuccessMsg, int, ticks, 0);
 MESSAGE1(CLockPhonographMsg, int, value, 0);
 MESSAGE0(CMaitreDDefeatedMsg);
 MESSAGE0(CMaitreDHappyMsg);

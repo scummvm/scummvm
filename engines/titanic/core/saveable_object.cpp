@@ -796,6 +796,7 @@ DEFFN(CIsParrotPresentMsg)
 DEFFN(CKeyCharMsg)
 DEFFN(CLemonFallsFromTreeMsg)
 DEFFN(CLightsMsg)
+DEFFN(CLoadSuccessMsg)
 DEFFN(CLockPhonographMsg)
 DEFFN(CMaitreDDefeatedMsg)
 DEFFN(CMaitreDHappyMsg)
@@ -1360,6 +1361,7 @@ void CSaveableObject::initClassList() {
 	ADDFN(CKeyCharMsg, CMessage);
 	ADDFN(CLemonFallsFromTreeMsg, CMessage);
 	ADDFN(CLightsMsg, CMessage);
+	ADDFN(CLoadSuccessMsg, CMessage);
 	ADDFN(CLockPhonographMsg, CMessage);
 	ADDFN(CMaitreDDefeatedMsg, CMessage);
 	ADDFN(CMaitreDHappyMsg, CMessage);

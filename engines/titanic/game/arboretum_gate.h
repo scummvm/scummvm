@@ -24,15 +24,20 @@
 #define TITANIC_ARBORETUM_GATE_H
 
 #include "titanic/core/background.h"
+#include "titanic/messages/messages.h"
+#include "titanic/messages/mouse_messages.h"
 
 namespace Titanic {
 
-class CArboretumGate : public CBackground {
-public:
+class CArboretumGate : public CBackground, public CActMsgTarget,
+	public CLeaveViewMsgTarget, public CTurnOffTarget,
+	public CMouseButtonDownMsgTarget, public CEnterViewMsgTarget,
+	public CTurnOnTarget, public CMovieEndMsgTarget {
+private:
 	static int _v1;
 	static int _v2;
 	static int _v3;
-public:
+private:
 	int _fieldE0;
 	CString _string1;
 	int _fieldE8;
@@ -63,6 +68,14 @@ public:
 	int _field14C;
 	int _field150;
 	CString _string2;
+protected:
+	virtual bool handleEvent(const CActMsg &msg) { return false; }
+	virtual bool handleEvent(const CLeaveViewMsg &msg) { return false; }	
+	virtual bool handleEvent(const CTurnOff &msg) { return false; }
+	virtual bool handleEvent(const CMouseButtonDownMsg &msg) { return false; }
+	virtual bool handleEvent(const CEnterViewMsg &msg) { return false; }
+	virtual bool handleEvent(const CTurnOn &msg) { return false; }
+	virtual bool handleEvent(const CMovieEndMsg &msg) { return false; }
 public:
 	CLASSDEF
 	CArboretumGate();
