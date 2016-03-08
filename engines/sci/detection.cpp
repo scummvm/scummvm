@@ -98,8 +98,11 @@ static const PlainGameDescriptor s_sciGameTitles[] = {
 	{"lsl6",            "Leisure Suit Larry 6: Shape Up or Slip Out!"},
 	{"pepper",          "Pepper's Adventure in Time"},
 	{"slater",          "Slater & Charlie Go Camping"},
+	{"gk1demo",         "Gabriel Knight: Sins of the Fathers"},
+	{"qfg4demo",        "Quest for Glory IV: Shadows of Darkness"},
+	{"pq4demo",         "Police Quest IV: Open Season"},
 	// === SCI2 games =========================================================
-	{"gk1",             "Gabriel Knight: Sins of the Fathers"},	// demo is SCI11, full version SCI32
+	{"gk1",             "Gabriel Knight: Sins of the Fathers"},
 	{"pq4",             "Police Quest IV: Open Season"}, // floppy is SCI2, CD SCI2.1
 	{"qfg4",            "Quest for Glory IV: Shadows of Darkness"},	// floppy is SCI2, CD SCI2.1
 	// === SCI2.1 games ========================================================
@@ -146,6 +149,7 @@ static const GameIdStrToEnum s_gameIdStrToEnum[] = {
 	{ "fairytales",      GID_FAIRYTALES },
 	{ "freddypharkas",   GID_FREDDYPHARKAS },
 	{ "funseeker",       GID_FUNSEEKER },
+	{ "gk1demo",         GID_GK1DEMO },
 	{ "gk1",             GID_GK1 },
 	{ "gk2",             GID_GK2 },
 	{ "hoyle1",          GID_HOYLE1 },
@@ -183,12 +187,14 @@ static const GameIdStrToEnum s_gameIdStrToEnum[] = {
 	{ "pq2",             GID_PQ2 },
 	{ "pq3",             GID_PQ3 },
 	{ "pq4",             GID_PQ4 },
+	{ "pq4demo",         GID_PQ4DEMO },
 	{ "pqswat",          GID_PQSWAT },
 	{ "qfg1",            GID_QFG1 },
 	{ "qfg1vga",         GID_QFG1VGA },
 	{ "qfg2",            GID_QFG2 },
 	{ "qfg3",            GID_QFG3 },
 	{ "qfg4",            GID_QFG4 },
+	{ "qfg4demo",        GID_QFG4DEMO },
 	{ "rama",            GID_RAMA },
 	{ "sci-fanmade",     GID_FANMADE },	// FIXME: Do we really need/want this?
 	{ "shivers",         GID_SHIVERS },
@@ -356,7 +362,7 @@ Common::String convertSierraGameId(Common::String sierraId, uint32 *gameFlags, R
 
 		// qfg4 demo has less than 50 scripts
 		if (resources.size() < 50)
-			return "qfg4";
+			return "qfg4demo";
 
 		// Otherwise it's qfg3
 		return "qfg3";

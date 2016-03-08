@@ -684,21 +684,23 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformDOS, 0, GUIO5(GUIO_NOSPEECH, GAMEOPTION_EGA_UNDITHER, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
 
-	// Gabriel Knight - English DOS CD Demo
+	// Gabriel Knight - English DOS Demo
 	// SCI interpreter version 1.001.092
-	{"gk1", "CD Demo", {
+	// Note: we are not using ADGF_DEMO here, to avoid a game ID like gk1demo-demo
+	{"gk1demo", "Demo", {
 		{"resource.map", 0, "39645952ae0ed8072c7e838f31b75464", 2490},
 		{"resource.000", 0, "eb3ed7477ca4110813fe1fcf35928561", 1718450},
 		AD_LISTEND},
-		Common::EN_ANY, Common::kPlatformDOS, ADGF_DEMO, GUIO3(GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
+		Common::EN_ANY, Common::kPlatformDOS, 0, GUIO3(GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
 
-	// Gabriel Knight - English DOS CD Demo (from DrMcCoy)
+	// Gabriel Knight - English DOS Demo (from DrMcCoy)
 	// SCI interpreter version 1.001.092
-	{"gk1", "CD Demo", {
+	// Note: we are not using ADGF_DEMO here, to avoid a game ID like gk1demo-demo
+	{"gk1demo", "Demo", {
 		{"resource.map", 0, "8cad2a256f41463030cbb7ea1bfb2857", 2490},
 		{"resource.000", 0, "eb3ed7477ca4110813fe1fcf35928561", 1718450},
 		AD_LISTEND},
-		Common::EN_ANY, Common::kPlatformDOS, ADGF_DEMO, GUIO3(GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
+		Common::EN_ANY, Common::kPlatformDOS, 0, GUIO3(GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
 
 #ifdef ENABLE_SCI32
 	// Gabriel Knight - English DOS Floppy
@@ -2976,11 +2978,12 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 
 	// Police Quest 4 - English DOS Non-Interactive Demo (from FRG)
 	// SCI interpreter version 1.001.096
-	{"pq4", "Demo", {
+	// Note: we are not using ADGF_DEMO here, to avoid a game ID like pq4demo-demo
+	{"pq4demo", "Demo", {
 		{"resource.map", 0, "be56f87a1c4a13062a30a362df860c2f", 1472},
 		{"resource.000", 0, "527d5684016e6816157cd15d9071b11b", 1121310},
 		AD_LISTEND},
-		Common::EN_ANY, Common::kPlatformDOS, ADGF_DEMO, GUIO4(GUIO_NOSPEECH, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
+		Common::EN_ANY, Common::kPlatformDOS, 0, GUIO4(GUIO_NOSPEECH, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
 
 #ifdef ENABLE_SCI32
 	// Police Quest 4 - English DOS CD (from the Police Quest Collection)
@@ -3388,11 +3391,12 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 
 	// Quest for Glory 4 - English DOS Non-Interactive Demo (from FRG)
 	// SCI interpreter version 1.001.069 (just a guess)
-	{"qfg4", "Demo", {
+	// Note: we are not using ADGF_DEMO here, to avoid a game ID like qfg4demo-demo
+	{"qfg4demo", "Demo", {
 		{"resource.map", 0, "1ba7c7ae1efb315326d45cb931569b1b", 922},
 		{"resource.000", 0, "41ba03f0b188b029132daa3ece0d3e14", 623154},
 		AD_LISTEND},
-		Common::EN_ANY, Common::kPlatformDOS, ADGF_DEMO, GUIO4(GUIO_NOSPEECH, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
+		Common::EN_ANY, Common::kPlatformDOS, 0, GUIO4(GUIO_NOSPEECH, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
 
 #ifdef ENABLE_SCI32
 	// Quest for Glory 4 1.1 Floppy - English DOS (supplied by markcool in bug report #2723852)

@@ -238,13 +238,7 @@ Common::Error SciEngine::run() {
 		// Only DOS+Windows
 		switch (_gameId) {
 		case GID_KQ6:
-			if (isCD())
-				_forceHiresGraphics = ConfMan.getBool("enable_high_resolution_graphics");
-			break;
 		case GID_GK1:
-			if ((isCD()) && (!isDemo()))
-				_forceHiresGraphics = ConfMan.getBool("enable_high_resolution_graphics");
-			break;
 		case GID_PQ4:
 			if (isCD())
 				_forceHiresGraphics = ConfMan.getBool("enable_high_resolution_graphics");
