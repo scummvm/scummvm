@@ -466,6 +466,6 @@ public:
 	void remove_at(size_type index);
 };
 
-}
+} // End of namespace Sci
 
 #endif

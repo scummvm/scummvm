@@ -819,4 +819,4 @@ void GfxPalette32::applyFade() {
 	}
 }
 
-}
+} // End of namespace Sci

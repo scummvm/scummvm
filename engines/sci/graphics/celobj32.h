@@ -577,6 +577,6 @@ public:
 	virtual CelObjColor *duplicate() const override;
 	virtual byte *getResPointer() const override;
 };
-}
+} // End of namespace Sci
 
 #endif

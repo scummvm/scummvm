@@ -278,6 +278,6 @@ public:
 	void applyFade();
 };
 
-}
+} // End of namespace Sci
 
 #endif

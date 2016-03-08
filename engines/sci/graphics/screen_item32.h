@@ -276,6 +276,6 @@ public:
 	void sort();
 	void unsort();
 };
-}
+} // End of namespace Sci
 
 #endif

@@ -188,5 +188,5 @@ public:
 	}
 };
 
-}
+} // End of namespace Sci
 #endif

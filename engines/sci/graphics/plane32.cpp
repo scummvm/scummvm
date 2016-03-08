@@ -882,4 +882,4 @@ void PlaneList::remove_at(size_type index) {
 	delete PlaneListBase::remove_at(index);
 }
 
-}
+} // End of namespace Sci

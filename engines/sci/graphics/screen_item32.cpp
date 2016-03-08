@@ -527,4 +527,4 @@ void ScreenItemList::unsort() {
 	}
 }
 
-}
+} // End of namespace Sci

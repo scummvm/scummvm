@@ -1036,4 +1036,4 @@ CelObjColor *CelObjColor::duplicate() const {
 byte *CelObjColor::getResPointer() const {
 	error("Unsupported method");
 }
-}
+} // End of namespace Sci
