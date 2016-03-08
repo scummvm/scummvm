@@ -670,7 +670,7 @@ const SciWorkaroundEntry kReadNumber_workarounds[] = {
 
 //    gameID,           room,script,lvl,          object-name, method-name,  local-call-signature, index,                workaround
 const SciWorkaroundEntry kPaletteUnsetFlag_workarounds[] = {
-	{ GID_QFG4,          100,   100,  0,            "doMovie", "changeState",                NULL,     0, { WORKAROUND_IGNORE,    0 } }, // after the Sierra logo, no flags are passed, thus the call is meaningless - bug #4947
+	{ GID_QFG4DEMO,      100,   100,  0,            "doMovie", "changeState",                NULL,     0, { WORKAROUND_IGNORE,    0 } }, // after the Sierra logo, no flags are passed, thus the call is meaningless - bug #4947
 	SCI_WORKAROUNDENTRY_TERMINATOR
 };
 
