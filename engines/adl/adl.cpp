@@ -145,8 +145,10 @@ Common::String AdlEngine::inputString(byte prompt) const {
 				break;
 			};
 		} else {
-			s += b;
-			_display->printString(Common::String(b));
+			if (s.size() < 255) {
+				s += b;
+				_display->printString(Common::String(b));
+			}
 		}
 	}
 }
