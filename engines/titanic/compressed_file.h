@@ -36,17 +36,9 @@ namespace Titanic {
  * Derived file that handles compressed files
  */
 class CompressedFile : public SimpleFile {
-private:
-	Common::SeekableReadStream *_readStream;
-	Common::WriteStream *_writeStream;
 public:
-	CompressedFile();
-	virtual ~CompressedFile();
-
-	/**
-	 * Open a file for access
-	 */
-	virtual void open(const Common::String &name);
+	CompressedFile() : SimpleFile() {}
+	virtual ~CompressedFile() {}
 
 	/**
 	 * Set up a stream for read access
@@ -57,21 +49,6 @@ public:
 	 * Set up a stream for write access
 	 */
 	virtual void open(Common::OutSaveFile *stream);
-
-	/**
-	 * Close the file
-	 */
-	virtual void close();
-
-	/**
-	 * Read from the file
-	 */
-	virtual size_t unsafeRead(void *dst, size_t count);
-
-	/**
-	 * Write out data
-	 */
-	virtual size_t write(const void *src, size_t count);
 };
 
 } // End of namespace Titanic

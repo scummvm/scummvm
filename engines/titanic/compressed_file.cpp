@@ -24,51 +24,12 @@
 
 namespace Titanic {
 
-#define BUFFER_SIZE 1024
-
-CompressedFile::CompressedFile() : SimpleFile() {
-	_readStream = nullptr;
-	_writeStream = nullptr;
-}
-
-CompressedFile::~CompressedFile() {
-}
-
-void CompressedFile::open(const Common::String &name) {
-	SimpleFile::open(name);
-	_readStream = Common::wrapCompressedReadStream(&_file);
-}
-
 void CompressedFile::open(Common::SeekableReadStream *stream) {
-	SimpleFile::open(stream);
-	_readStream = Common::wrapCompressedReadStream(&_file);
+	SimpleFile::open(Common::wrapCompressedReadStream(stream));
 }
 
 void CompressedFile::open(Common::OutSaveFile *stream) {
-	SimpleFile::open(stream);
-	_writeStream = Common::wrapCompressedWriteStream(stream);
-}
-
-void CompressedFile::close() {
-	delete _readStream;
-	delete _writeStream;
-	_readStream = nullptr;
-	_writeStream = nullptr;
-
-	SimpleFile::close();
-}
-
-size_t CompressedFile::unsafeRead(void *dst, size_t count) {
-	assert(_readStream);
-	if (count == 0)
-		return 0;
-
-	// Read data and decompress
-	return _readStream->read(dst, count);
-}
-
-size_t CompressedFile::write(const void *src, size_t count) {
-	return _writeStream->write(src, count);
+	SimpleFile::open(Common::wrapCompressedWriteStream(stream));
 }
 
 } // End of namespace Titanic

@@ -35,20 +35,17 @@ namespace Titanic {
 class Decompressor;
 class DecompressorData;
 
+/**
+ * This class implements basic reading and writing to files
+ */
 class SimpleFile {
 protected:
-	Common::File _file;
 	Common::SeekableReadStream *_inStream;
 	Common::OutSaveFile *_outStream;
 	int _lineCount;
 public:
 	SimpleFile();
 	virtual ~SimpleFile();
-
-	/**
-	 * Open a file for access
-	 */
-	virtual void open(const Common::String &name);
 
 	/**
 	 * Set up a stream for read access

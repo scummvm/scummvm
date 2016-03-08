@@ -29,15 +29,7 @@ SimpleFile::SimpleFile(): _inStream(nullptr), _outStream(nullptr), _lineCount(1)
 }
 
 SimpleFile::~SimpleFile() {
-	_file.close();
-}
-
-void SimpleFile::open(const Common::String &name) {
 	close();
-
-	if (!_file.open(name))
-		error("Could not find file - %s", name.c_str());
-	_inStream = &_file;
 }
 
 void SimpleFile::open(Common::SeekableReadStream *stream) {
@@ -51,12 +43,16 @@ void SimpleFile::open(Common::OutSaveFile *stream) {
 }
 
 void SimpleFile::close() {
-	_file.close();
-	if (_outStream)
+	if (_outStream) {
 		_outStream->finalize();
+		delete _outStream;
+		_outStream = nullptr;
+	}
 
-	_inStream = nullptr;
-	_outStream = nullptr;
+	if (_inStream) {
+		delete _inStream;
+		_inStream = nullptr;
+	}
 }
 
 void SimpleFile::safeRead(void *dst, size_t count) {

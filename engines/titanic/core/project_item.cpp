@@ -134,18 +134,20 @@ void CProjectItem::resetGameManager() {
 
 void CProjectItem::loadGame(int slotId) {
 	CompressedFile file;
-	Common::InSaveFile *saveFile = nullptr;
 
 	// Clear any existing project contents
 	clear();
 
 	// Open either an existing savegame slot or the new game template
 	if (slotId >= 0) {
-		saveFile = g_system->getSavefileManager()->openForLoading(
+		Common::InSaveFile *saveFile = g_system->getSavefileManager()->openForLoading(
 			Common::String::format("slot%d.gam", slotId));
 		file.open(saveFile);
 	} else {
-		file.open("newgame.st");
+		Common::File *newFile = new Common::File();
+		if (!newFile->open("newgame.st"))
+			error("Could not open newgame.st");
+		file.open(newFile);
 	}
 
 	// Load the contents in
@@ -165,6 +167,7 @@ void CProjectItem::loadGame(int slotId) {
 		item->detach();
 		item->addUnder(this);
 	}
+
 	// Loaded project instance is no longer needed
 	newProject->destroyAll();
 
