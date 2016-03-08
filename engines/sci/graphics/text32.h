@@ -154,15 +154,15 @@ public:
 	}
 
 	inline bool getRemap() const {
-		return READ_SCI11ENDIAN_UINT16(_bitmap + 10) & 2;
+		return READ_SCI11ENDIAN_UINT16(_bitmap + 10) & kBitmapRemap;
 	}
 
 	inline void setRemap(const bool remap) {
 		uint16 flags = READ_SCI11ENDIAN_UINT16(_bitmap + 10);
 		if (remap) {
-			flags |= 2;
+			flags |= kBitmapRemap;
 		} else {
-			flags &= ~2;
+			flags &= ~kBitmapRemap;
 		}
 		WRITE_SCI11ENDIAN_UINT16(_bitmap + 10, flags);
 	}
