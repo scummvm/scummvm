@@ -108,7 +108,7 @@ void AdvancedMetaEngine::updateGameDescriptor(GameDescriptor &desc, const ADGame
 	}
 
 	if (!desc.contains("preferredtarget"))
-			desc["preferredtarget"] = desc["gameid"];
+		desc["preferredtarget"] = desc["gameid"];
 
 	if (realDesc->flags & ADGF_AUTOGENTARGET) {
 		if (*realDesc->extra)
