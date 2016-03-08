@@ -695,14 +695,8 @@ void GfxPalette32::cycleAllOn() {
 }
 
 void GfxPalette32::cycleAllPause() {
-	// TODO: The SCI SQ6 cycleAllPause function does not seem to perform
-	// nullptr checking?? This would definitely cause null pointer
-	// dereference in SCI code. I have not seen anything actually call
-	// this function yet, so it is possible it is just unused and broken
-	// in SCI SQ6. This assert exists so that if this function is called,
-	// it is noticed and can be rechecked in the actual engine.
-	// Obviously this code *does* do nullptr checks instead of crashing. :)
-	assert(0);
+	// NOTE: The original engine did not check for null pointers in the
+	// palette cyclers pointer array.
 	for (int i = 0, len = ARRAYSIZE(_cyclers); i < len; ++i) {
 		PalCycler *cycler = _cyclers[i];
 		if (cycler != nullptr) {
