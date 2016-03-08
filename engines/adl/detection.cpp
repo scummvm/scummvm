@@ -65,7 +65,7 @@ static const PlainGameDescriptor adlGames[] = {
 };
 
 static const AdlGameDescription gameDescriptions[] = {
-	{ // MD5 by waltervn
+	{ // Hi-Res Adventure #1: Mystery House - Apple II - 1987 PD release
 		{
 			"hires1", 0,
 			{
