@@ -242,6 +242,7 @@ int reg_t::cmp(const reg_t right, bool treatAsUnsigned) const {
 		return lookForWorkaround(right, "comparison").toSint16();
 }
 
+#ifdef ENABLE_SCI32
 int reg_t::sci32Comparison(const reg_t right) const {
 	// In SCI32, MemIDs are normally indexes into the memory manager's handle
 	// list, but the engine reserves indexes at and above 20000 for objects
@@ -259,6 +260,7 @@ int reg_t::sci32Comparison(const reg_t right) const {
 
 	return getOffset() - right.getOffset();
 }
+#endif
 
 bool reg_t::pointerComparisonWithInteger(const reg_t right) const {
 	// This function handles the case where a script tries to compare a pointer
