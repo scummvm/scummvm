@@ -502,8 +502,17 @@ public:
 		return 1;
 	};
 
-	uint16 kernelIsOnMe(int16 x, int16 y, uint16 checkPixels, reg_t screenObject);
-	uint16 isOnMe(Plane *screenItemPlane, ScreenItem *screenItem, int16 x, int16 y, uint16 checkPixels);
+#pragma mark -
+#pragma mark Mouse cursor
+private:
+	/**
+	 * Determines whether or not the point given by
+	 * `position` is inside of the given screen item.
+	 */
+	bool isOnMe(const ScreenItem &screenItem, const Plane &plane, const Common::Point &position, const bool checkPixel) const;
+
+public:
+	reg_t kernelIsOnMe(const reg_t object, const Common::Point &position, const bool checkPixel) const;
 
 #pragma mark -
 #pragma mark Debugging

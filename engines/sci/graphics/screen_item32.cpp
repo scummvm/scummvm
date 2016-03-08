@@ -399,7 +399,7 @@ void ScreenItem::calcRects(const Plane &plane) {
 	}
 }
 
-CelObj &ScreenItem::getCelObj() {
+CelObj &ScreenItem::getCelObj() const {
 	if (_celObj == nullptr) {
 		switch (_celInfo.type) {
 			case kCelTypeView:

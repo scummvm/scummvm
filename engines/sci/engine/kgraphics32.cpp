@@ -152,12 +152,12 @@ reg_t kObjectIntersect(EngineState *s, int argc, reg_t *argv) {
 
 // Tests if the coordinate is on the passed object
 reg_t kIsOnMe(EngineState *s, int argc, reg_t *argv) {
-	uint16 x = argv[0].toUint16();
-	uint16 y = argv[1].toUint16();
-	reg_t targetObject = argv[2];
-	uint16 checkPixels = argv[3].getOffset();
+	int16 x = argv[0].toSint16();
+	int16 y = argv[1].toSint16();
+	reg_t object = argv[2];
+	bool checkPixel = argv[3].toSint16();
 
-	return make_reg(0, g_sci->_gfxFrameout->kernelIsOnMe(x, y, checkPixels, targetObject));
+	return g_sci->_gfxFrameout->kernelIsOnMe(object, Common::Point(x, y), checkPixel);
 }
 
 reg_t kCreateTextBitmap(EngineState *s, int argc, reg_t *argv) {

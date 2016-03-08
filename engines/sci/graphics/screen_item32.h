@@ -125,7 +125,7 @@ public:
 	 * item. This member is populated by calling
 	 * `getCelObj`.
 	 */
-	CelObj *_celObj;
+	mutable CelObj *_celObj;
 
 	/**
 	 * If set, the priority for this screen item is fixed
@@ -250,7 +250,7 @@ public:
 	 * screen item. If a cel object does not already exist,
 	 * one will be created and assigned.
 	 */
-	CelObj &getCelObj();
+	CelObj &getCelObj() const;
 
 	void printDebugInfo(Console *con) const;
 
