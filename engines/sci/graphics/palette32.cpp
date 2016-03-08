@@ -55,7 +55,9 @@ GfxPalette32::GfxPalette32(ResourceManager *resMan, GfxScreen *screen)
 	_cyclers(),
 	_cycleMap() {
 		_varyPercent = _varyTargetPercent;
-		memset(_fadeTable, 100, sizeof(_fadeTable));
+		for (int i = 0, len = ARRAYSIZE(_fadeTable); i < len; ++i) {
+			_fadeTable[i] = 100;
+		}
 		// NOTE: In SCI engine, the palette manager constructor loads
 		// the default palette, but in ScummVM this initialisation
 		// is performed by SciEngine::run; see r49523 for details
@@ -789,7 +791,7 @@ void GfxPalette32::applyCycles() {
 // the last palette entry is intentionally left unmodified, or if this is a bug
 // in the engine. It certainly seems confused because all other places that accept
 // color ranges typically receive values in the range of 0–255.
-void GfxPalette32::setFade(uint8 percent, uint8 fromColor, uint16 numColorsToFade) {
+void GfxPalette32::setFade(uint16 percent, uint8 fromColor, uint16 numColorsToFade) {
 	if (fromColor > numColorsToFade) {
 		return;
 	}
@@ -811,9 +813,9 @@ void GfxPalette32::applyFade() {
 
 		Color &color = _nextPalette.colors[i];
 
-		color.r = (int16)color.r * _fadeTable[i] / 100;
-		color.g = (int16)color.g * _fadeTable[i] / 100;
-		color.b = (int16)color.b * _fadeTable[i] / 100;
+		color.r = MIN(255, (uint16)color.r * _fadeTable[i] / 100);
+		color.g = MIN(255, (uint16)color.g * _fadeTable[i] / 100);
+		color.b = MIN(255, (uint16)color.b * _fadeTable[i] / 100);
 	}
 }
 }
