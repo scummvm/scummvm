@@ -59,7 +59,7 @@ GfxText32::GfxText32(SegManager *segMan, GfxCache *fonts) :
 		_font = _cache->getFont(_defaultFontId);
 	}
 
-reg_t GfxText32::createFontBitmap(int16 width, int16 height, const Common::Rect &rect, const Common::String &text, const uint8 foreColor, const uint8 backColor, const uint8 skipColor, const GuiResourceId fontId, const TextAlign alignment, const int16 borderColor, const bool dimmed, const bool doScaling, reg_t *outBitmapObject) {
+reg_t GfxText32::createFontBitmap(int16 width, int16 height, const Common::Rect &rect, const Common::String &text, const uint8 foreColor, const uint8 backColor, const uint8 skipColor, const GuiResourceId fontId, const TextAlign alignment, const int16 borderColor, const bool dimmed, const bool doScaling) {
 
 	_field_22 = 0;
 	_borderColor = borderColor;
@@ -97,10 +97,8 @@ reg_t GfxText32::createFontBitmap(int16 width, int16 height, const Common::Rect 
 		_textRect = Common::Rect();
 	}
 
-	_bitmap = _segMan->allocateHunkEntry("FontBitmap()", _width * _height + CelObjMem::getBitmapHeaderSize());
-
-	byte *bitmap = _segMan->getHunkPointer(_bitmap);
-	CelObjMem::buildBitmapHeader(bitmap, _width, _height, _skipColor, 0, 0, _scaledWidth, _scaledHeight, 0, false);
+	BitmapResource bitmap(_segMan, _width, _height, _skipColor, 0, 0, _scaledWidth, _scaledHeight, 0, false);
+	_bitmap = bitmap.getObject();
 
 	erase(bitmapRect, false);
 
@@ -109,12 +107,10 @@ reg_t GfxText32::createFontBitmap(int16 width, int16 height, const Common::Rect 
 	}
 
 	drawTextBox();
-
-	*outBitmapObject = _bitmap;
 	return _bitmap;
 }
 
-reg_t GfxText32::createFontBitmap(const CelInfo32 &celInfo, const Common::Rect &rect, const Common::String &text, const int16 foreColor, const int16 backColor, const GuiResourceId fontId, const int16 skipColor, const int16 borderColor, const bool dimmed, reg_t *outBitmapObject) {
+reg_t GfxText32::createFontBitmap(const CelInfo32 &celInfo, const Common::Rect &rect, const Common::String &text, const int16 foreColor, const int16 backColor, const GuiResourceId fontId, const int16 skipColor, const int16 borderColor, const bool dimmed) {
 	_field_22 = 0;
 	_borderColor = borderColor;
 	_text = text;
@@ -142,11 +138,9 @@ reg_t GfxText32::createFontBitmap(const CelInfo32 &celInfo, const Common::Rect &
 		_textRect = Common::Rect();
 	}
 
-	_bitmap = _segMan->allocateHunkEntry("FontBitmap()", _width * _height + CelObjMem::getBitmapHeaderSize());
-	byte *bitmap = _segMan->getHunkPointer(_bitmap);
-	CelObjMem::buildBitmapHeader(bitmap, _width, _height, _skipColor, 0, 0, _scaledWidth, _scaledHeight, 0, false);
-
-	Buffer buffer(_width, _height, bitmap + READ_SCI11ENDIAN_UINT32(bitmap + 28));
+	BitmapResource bitmap(_segMan, _width, _height, _skipColor, 0, 0, _scaledWidth, _scaledHeight, 0, false);
+	_bitmap = bitmap.getObject();
+	Buffer buffer(_width, _height, bitmap.getPixels());
 
 	// NOTE: The engine filled the bitmap pixels with 11 here, which is silly
 	// because then it just erased the bitmap using the skip color. So we don't
@@ -174,13 +168,12 @@ reg_t GfxText32::createFontBitmap(const CelInfo32 &celInfo, const Common::Rect &
 		}
 	}
 
-	*outBitmapObject = _bitmap;
 	return _bitmap;
 }
 
-reg_t GfxText32::createTitledBitmap(const int16 width, const int16 height, const Common::Rect &textRect, const Common::String &text, const int16 foreColor, const int16 backColor, const int16 skipColor, const GuiResourceId fontId, const TextAlign alignment, const int16 borderColor, Common::String &title, const int16 titleForeColor, const int16 titleBackColor, const GuiResourceId titleFontId, const bool doScaling, reg_t *outBitmapObject) {
+reg_t GfxText32::createTitledBitmap(const int16 width, const int16 height, const Common::Rect &textRect, const Common::String &text, const int16 foreColor, const int16 backColor, const int16 skipColor, const GuiResourceId fontId, const TextAlign alignment, const int16 borderColor, Common::String &title, const int16 titleForeColor, const int16 titleBackColor, const GuiResourceId titleFontId, const bool doScaling) {
 	warning("TODO: createTitledBitmap incomplete !");
-	return createFontBitmap(width, height, textRect, text, foreColor, backColor, skipColor, fontId, alignment, borderColor, false, doScaling, outBitmapObject);
+	return createFontBitmap(width, height, textRect, text, foreColor, backColor, skipColor, fontId, alignment, borderColor, false, doScaling);
 }
 
 void GfxText32::setFont(const GuiResourceId fontId) {

@@ -197,16 +197,14 @@ reg_t kCreateTextBitmap(EngineState *s, int argc, reg_t *argv) {
 
 	if (subop == 0) {
 		TextAlign alignment = (TextAlign)readSelectorValue(segMan, object, SELECTOR(mode));
-		reg_t out;
-		return g_sci->_gfxText32->createFontBitmap(width, height, rect, text, foreColor, backColor, skipColor, fontId, alignment, borderColor, dimmed, true, &out);
+		return g_sci->_gfxText32->createFontBitmap(width, height, rect, text, foreColor, backColor, skipColor, fontId, alignment, borderColor, dimmed, true);
 	} else {
 		CelInfo32 celInfo;
 		celInfo.type = kCelTypeView;
 		celInfo.resourceId = readSelectorValue(segMan, object, SELECTOR(view));
 		celInfo.loopNo = readSelectorValue(segMan, object, SELECTOR(loop));
 		celInfo.celNo = readSelectorValue(segMan, object, SELECTOR(cel));
-		reg_t out;
-		return g_sci->_gfxText32->createFontBitmap(celInfo, rect, text, foreColor, backColor, fontId, skipColor, borderColor, dimmed, &out);
+		return g_sci->_gfxText32->createFontBitmap(celInfo, rect, text, foreColor, backColor, fontId, skipColor, borderColor, dimmed);
 	}
 }
 
@@ -506,7 +504,6 @@ reg_t kBitmap(EngineState *s, int argc, reg_t *argv) {
 }
 
 reg_t kBitmapCreate(EngineState *s, int argc, reg_t *argv) {
-	uint32 bitmapHeaderSize = CelObjMem::getBitmapHeaderSize();
 	int16 width = argv[0].toSint16();
 	int16 height = argv[1].toSint16();
 	int16 skipColor = argv[2].toSint16();
@@ -515,11 +512,9 @@ reg_t kBitmapCreate(EngineState *s, int argc, reg_t *argv) {
 	int16 scaledHeight = argc > 5 ? argv[5].toSint16() : g_sci->_gfxText32->_scaledHeight;
 	bool useRemap = argc > 6 ? argv[6].toSint16() : false;
 
-	reg_t bitmapMemId = s->_segMan->allocateHunkEntry("Bitmap()", width * height + bitmapHeaderSize);
-	byte *bitmap = s->_segMan->getHunkPointer(bitmapMemId);
-	memset(bitmap + bitmapHeaderSize, backColor, width * height);
-	CelObjMem::buildBitmapHeader(bitmap, width, height, skipColor, 0, 0, scaledWidth, scaledHeight, 0, useRemap);
-	return bitmapMemId;
+	BitmapResource bitmap(s->_segMan, width, height, skipColor, 0, 0, scaledWidth, scaledHeight, 0, useRemap);
+	memset(bitmap.getPixels(), backColor, width * height);
+	return bitmap.getObject();
 }
 
 reg_t kBitmapDestroy(EngineState *s, int argc, reg_t *argv) {

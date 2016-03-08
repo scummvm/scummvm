@@ -27,6 +27,7 @@
 #include "sci/graphics/frameout.h"
 #include "sci/graphics/palette32.h"
 #include "sci/graphics/picture.h"
+#include "sci/graphics/text32.h"
 #include "sci/graphics/view.h"
 
 namespace Sci {
@@ -972,67 +973,23 @@ byte *CelObjPic::getResPointer() const {
 
 #pragma mark -
 #pragma mark CelObjMem
-void CelObjMem::buildBitmapHeader(byte *bitmap, const int16 width, const int16 height, const uint8 skipColor, const int16 displaceX, const int16 displaceY, const int16 scaledWidth, const int16 scaledHeight, const uint32 hunkPaletteOffset, const bool useRemap) {
-	const uint16 bitmapHeaderSize = getBitmapHeaderSize();
-
-	WRITE_SCI11ENDIAN_UINT16(bitmap + 0, width);
-	WRITE_SCI11ENDIAN_UINT16(bitmap + 2, height);
-	WRITE_SCI11ENDIAN_UINT16(bitmap + 4, (uint16)displaceX);
-	WRITE_SCI11ENDIAN_UINT16(bitmap + 6, (uint16)displaceY);
-	bitmap[8] = skipColor;
-	bitmap[9] = 0;
-	WRITE_SCI11ENDIAN_UINT16(bitmap + 10, 0);
-
-	if (useRemap) {
-		bitmap[10] |= 2;
-	}
-
-	WRITE_SCI11ENDIAN_UINT32(bitmap + 12, width * height);
-	WRITE_SCI11ENDIAN_UINT32(bitmap + 16, 0);
-
-	if (hunkPaletteOffset) {
-		WRITE_SCI11ENDIAN_UINT32(bitmap + 20, hunkPaletteOffset + bitmapHeaderSize);
-	} else {
-		WRITE_SCI11ENDIAN_UINT32(bitmap + 20, 0);
-	}
-
-	WRITE_SCI11ENDIAN_UINT32(bitmap + 24, bitmapHeaderSize);
-	WRITE_SCI11ENDIAN_UINT32(bitmap + 28, bitmapHeaderSize);
-	WRITE_SCI11ENDIAN_UINT32(bitmap + 32, 0);
-
-	if (bitmapHeaderSize >= 40) {
-		WRITE_SCI11ENDIAN_UINT16(bitmap + 36, scaledWidth);
-		WRITE_SCI11ENDIAN_UINT16(bitmap + 38, scaledHeight);
-	}
-}
-
-CelObjMem::CelObjMem(const reg_t bitmap) {
+CelObjMem::CelObjMem(const reg_t bitmapObject) {
 	_info.type = kCelTypeMem;
-	_info.bitmap = bitmap;
+	_info.bitmap = bitmapObject;
 	_mirrorX = false;
 	_compressionType = kCelCompressionNone;
 	_celHeaderOffset = 0;
 	_transparent = true;
 
-	const uint32 bitmapHeaderSize = getBitmapHeaderSize();
-	byte *bitmapData = g_sci->getEngineState()->_segMan->getHunkPointer(bitmap);
-	if (bitmapData == nullptr || READ_SCI11ENDIAN_UINT32(bitmapData + 28) != bitmapHeaderSize) {
-		error("Invalid Text bitmap %04x:%04x", PRINT_REG(bitmap));
-	}
-
-	_width = READ_SCI11ENDIAN_UINT16(bitmapData);
-	_height = READ_SCI11ENDIAN_UINT16(bitmapData + 2);
-	_displace.x = READ_SCI11ENDIAN_UINT16(bitmapData + 4);
-	_displace.y = READ_SCI11ENDIAN_UINT16(bitmapData + 6);
-	_transparentColor = bitmapData[8];
-	if (bitmapHeaderSize >= 40) {
-		_scaledWidth = READ_SCI11ENDIAN_UINT16(bitmapData + 36);
-		_scaledHeight = READ_SCI11ENDIAN_UINT16(bitmapData + 38);
-	} else {
-		error("TODO: SCI2 bitmaps not implemented yet!");
-	}
-	_hunkPaletteOffset = READ_SCI11ENDIAN_UINT16(bitmapData + 20);
-	_remap = (READ_SCI11ENDIAN_UINT16(bitmapData + 10) & 2) ? true : false;
+	BitmapResource bitmap(bitmapObject);
+	_width = bitmap.getWidth();
+	_height = bitmap.getHeight();
+	_displace = bitmap.getDisplace();
+	_transparentColor = bitmap.getSkipColor();
+	_scaledWidth = bitmap.getScaledWidth();
+	_scaledHeight = bitmap.getScaledHeight();
+	_hunkPaletteOffset = bitmap.getHunkPaletteOffset();
+	_remap = bitmap.getRemap();
 }
 
 CelObjMem *CelObjMem::duplicate() const {
