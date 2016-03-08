@@ -818,4 +818,5 @@ void GfxPalette32::applyFade() {
 		color.b = MIN(255, (uint16)color.b * _fadeTable[i] / 100);
 	}
 }
+
 }

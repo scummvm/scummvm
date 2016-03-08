@@ -277,6 +277,7 @@ public:
 	void fadeOff();
 	void applyFade();
 };
+
 }
 
 #endif
