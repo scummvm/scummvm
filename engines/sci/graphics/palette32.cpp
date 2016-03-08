@@ -70,7 +70,7 @@ GfxPalette32::~GfxPalette32() {
 }
 
 inline void mergePaletteInternal(Palette *const to, const Palette *const from) {
-	for (int i = 0; i < ARRAYSIZE(to->colors); ++i) {
+	for (int i = 0, len = ARRAYSIZE(to->colors); i < len; ++i) {
 		if (from->colors[i].used) {
 			to->colors[i] = from->colors[i];
 		}
