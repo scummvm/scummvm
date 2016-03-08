@@ -813,6 +813,32 @@ static const uint16 kq5PatchWitchCageInit[] = {
 	PATCH_END
 };
 
+// The multilingual releases of KQ5 hang right at the end during the magic battle with Mordack.
+// It seems additional code was added to wait for signals, but the signals are never set and thus
+// the game hangs. We disable that code, so that the battle works again.
+// This also happened in the original interpreter.
+// We must not change similar code, that happens before.
+
+// Applies to at least: French PC floppy, German PC floppy, Spanish PC floppy
+// Responsible method: stingScript::changeState, dragonScript::changeState, snakeScript::changeState
+static const uint16 kq5SignatureMultilingualEndingGlitch[] = {
+	SIG_MAGICDWORD,
+	0x89, 0x57,                      // lsg global[57h]
+	0x35, 0x00,                      // ldi 0
+	0x1a,                            // eq?
+	0x18,                            // not
+	0x30, SIG_UINT16(0x0011),        // bnt [skip signal check]
+	SIG_ADDTOOFFSET(+8),             // skip globalSound::prevSignal get code
+	0x36,                            // push
+	0x35, 0x0a,                      // ldi 0Ah
+	SIG_END
+};
+
+static const uint16 kq5PatchMultilingualEndingGlitch[] = {
+	PATCH_ADDTOOFFSET(+6),
+	0x32,                            // change BNT into JMP
+	PATCH_END
+};
 
 // In the final battle, the DOS version uses signals in the music to handle
 // timing, while in the Windows version another method is used and the GM
@@ -843,9 +869,10 @@ static const uint16 kq5PatchWinGMSignals[] = {
 
 //          script, description,                                      signature                  patch
 static const SciScriptPatcherEntry kq5Signatures[] = {
-	{  true,     0, "CD: harpy volume change",                     1, kq5SignatureCdHarpyVolume, kq5PatchCdHarpyVolume },
-	{  true,   200, "CD: witch cage init",                         1, kq5SignatureWitchCageInit, kq5PatchWitchCageInit },
-	{ false,   124, "Win: GM Music signal checks",                 4, kq5SignatureWinGMSignals, kq5PatchWinGMSignals },
+	{  true,     0, "CD: harpy volume change",                     1, kq5SignatureCdHarpyVolume,            kq5PatchCdHarpyVolume },
+	{  true,   200, "CD: witch cage init",                         1, kq5SignatureWitchCageInit,            kq5PatchWitchCageInit },
+	{  true,   124, "Multilingual: Ending glitching out",          3, kq5SignatureMultilingualEndingGlitch, kq5PatchMultilingualEndingGlitch },
+	{ false,   124, "Win: GM Music signal checks",                 4, kq5SignatureWinGMSignals,             kq5PatchWinGMSignals },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
