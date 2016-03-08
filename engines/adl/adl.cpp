@@ -946,16 +946,7 @@ void AdlEngine::doActions(const Command &command, byte noun, byte offset) {
 			break;
 		case IDO_ACT_RESTART: {
 			_display->printString(_strings.playAgain);
-
-			// We allow restoring via GMM here
-			_canRestoreNow = true;
 			Common::String input = inputString();
-			_canRestoreNow = false;
-
-			// If the user restored with the GMM, we break off the restart
-			if (_isRestoring)
-				return;
-
 			if (input.size() == 0 || input[0] != APPLECHAR('N')) {
 				_isRestarting = true;
 				_display->clear(0x00);
@@ -1036,18 +1027,11 @@ bool AdlEngine::doOneCommand(const Commands &commands, byte verb, byte noun) {
 
 void AdlEngine::doAllCommands(const Commands &commands, byte verb, byte noun) {
 	Commands::const_iterator cmd;
-	bool oldIsRestoring = _isRestoring;
 
 	for (cmd = commands.begin(); cmd != commands.end(); ++cmd) {
 		uint offset = 0;
 		if (matchCommand(*cmd, verb, noun, &offset))
 			doActions(*cmd, noun, offset);
-
-		// We assume no restarts happen in this command group. This
-		// simplifies enabling GMM savegame loading on the restart
-		// prompt.
-		if (_isRestarting || _isRestoring != oldIsRestoring)
-			error("Unexpected restart action encountered");
 	}
 }
 
