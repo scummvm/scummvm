@@ -26,6 +26,7 @@
 #include "common/scummsys.h"
 #include "common/array.h"
 #include "common/hash-str.h"
+#include "common/list.h"
 #include "titanic/simple_file.h"
 
 namespace Titanic {

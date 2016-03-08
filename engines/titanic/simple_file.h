@@ -23,11 +23,10 @@
 #ifndef TITANIC_SIMPLE_FILE_H
 #define TITANIC_SIMPLE_FILE_H
 
-#include "common/scummsys.h"
-#include "common/file.h"
-#include "common/queue.h"
 #include "common/rect.h"
 #include "common/savefile.h"
+#include "common/stream.h"
+#include "common/zlib.h"
 #include "titanic/string.h"
 
 namespace Titanic {
@@ -178,6 +177,29 @@ public:
 	 * Write out the ending footer for a class definition
 	 */
 	void writeClassEnd(int indent);
+};
+
+/**
+ * Derived file that handles compressed files
+ */
+class CompressedFile : public SimpleFile {
+public:
+	CompressedFile() : SimpleFile() {}
+	virtual ~CompressedFile() {}
+
+	/**
+	 * Set up a stream for read access
+	 */
+	virtual void open(Common::SeekableReadStream *stream) {
+		SimpleFile::open(Common::wrapCompressedReadStream(stream));
+	}
+
+	/**
+	 * Set up a stream for write access
+	 */
+	virtual void open(Common::OutSaveFile *stream) {
+		SimpleFile::open(Common::wrapCompressedWriteStream(stream));
+	}
 };
 
 } // End of namespace Titanic

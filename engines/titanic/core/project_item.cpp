@@ -20,10 +20,10 @@
  *
  */
 
+#include "common/file.h"
 #include "common/savefile.h"
 #include "titanic/game_manager.h"
 #include "titanic/titanic.h"
-#include "titanic/compressed_file.h"
 #include "titanic/core/dont_save_file_item.h"
 #include "titanic/core/project_item.h"
 #include "titanic/pet_control/pet_control.h"
