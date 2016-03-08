@@ -688,6 +688,12 @@ SoundResource::SoundResource(uint32 resourceNr, ResourceManager *resMan, SciVers
 
 					channel->data = resource->data + dataOffset;
 					channel->size = READ_LE_UINT16(data + 4);
+
+					if (dataOffset + channel->size > resource->size) {
+						warning("Invalid size inside sound resource %d: track %d, channel %d", resourceNr, trackNr, channelNr);
+						channel->size = resource->size - dataOffset;
+					}
+
 					channel->curPos = 0;
 					channel->number = *channel->data;
 
