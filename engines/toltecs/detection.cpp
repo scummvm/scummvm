@@ -206,7 +206,7 @@ static const ExtraGuiOption toltecsExtraGuiOption = {
 class ToltecsMetaEngine : public AdvancedMetaEngine {
 public:
 	ToltecsMetaEngine() : AdvancedMetaEngine(Toltecs::gameDescriptions, sizeof(Toltecs::ToltecsGameDescription), toltecsGames) {
-		_singleid = "toltecs";
+		_singleId = "toltecs";
 	}
 
 	virtual const char *getName() const {

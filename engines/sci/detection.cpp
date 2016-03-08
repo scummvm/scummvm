@@ -473,7 +473,7 @@ static char s_fallbackGameIdBuf[256];
 class SciMetaEngine : public AdvancedMetaEngine {
 public:
 	SciMetaEngine() : AdvancedMetaEngine(Sci::SciGameDescriptions, sizeof(ADGameDescription), s_sciGameTitles, optionsList) {
-		_singleid = "sci";
+		_singleId = "sci";
 	}
 
 	virtual const char *getName() const {

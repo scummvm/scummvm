@@ -53,8 +53,8 @@ static const PlainGameDescriptor wageGames[] = {
 class WageMetaEngine : public AdvancedMetaEngine {
 public:
 	WageMetaEngine() : AdvancedMetaEngine(Wage::gameDescriptions, sizeof(ADGameDescription), wageGames) {
-		_singleid = "wage";
-		_guioptions = GUIO2(GUIO_NOSPEECH, GUIO_NOMIDI);
+		_singleId = "wage";
+		_guiOptions = GUIO2(GUIO_NOSPEECH, GUIO_NOMIDI);
 	}
 
 	virtual const char *getName() const {

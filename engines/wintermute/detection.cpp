@@ -75,8 +75,8 @@ static const char *directoryGlobs[] = {
 class WintermuteMetaEngine : public AdvancedMetaEngine {
 public:
 	WintermuteMetaEngine() : AdvancedMetaEngine(Wintermute::gameDescriptions, sizeof(WMEGameDescription), Wintermute::wintermuteGames, gameGuiOptions) {
-		_singleid = "wintermute";
-		_guioptions = GUIO2(GUIO_NOMIDI, GAMEOPTION_SHOW_FPS);
+		_singleId = "wintermute";
+		_guiOptions = GUIO2(GUIO_NOMIDI, GAMEOPTION_SHOW_FPS);
 		_maxScanDepth = 2;
 		_directoryGlobs = directoryGlobs;
 	}

@@ -192,7 +192,7 @@ protected:
 	 * A list of all gameids (and their corresponding descriptions) supported
 	 * by this engine.
 	 */
-	const PlainGameDescriptor *_gameids;
+	const PlainGameDescriptor *_gameIds;
 
 	/**
 	 * A map containing all the extra game GUI options the engine supports.
@@ -220,7 +220,7 @@ protected:
 	 * address a more generic problem. We should find a better way to
 	 * disambiguate gameids.
 	 */
-	const char *_singleid;
+	const char *_singleId;
 
 	/**
 	 * A bitmask of flags which can be used to configure the behavior
@@ -234,7 +234,7 @@ protected:
 	 * entry in addition to per-game options. Refer to GameGUIOption
 	 * enum for the list.
 	 */
-	Common::String _guioptions;
+	Common::String _guiOptions;
 
 	/**
 	 * Maximum depth of directories to look up.
@@ -252,7 +252,7 @@ protected:
 	const char * const *_directoryGlobs;
 
 public:
-	AdvancedMetaEngine(const void *descs, uint descItemSize, const PlainGameDescriptor *gameids, const ADExtraGuiOptionsMap *extraGuiOptions = 0);
+	AdvancedMetaEngine(const void *descs, uint descItemSize, const PlainGameDescriptor *gameIds, const ADExtraGuiOptionsMap *extraGuiOptions = 0);
 
 	/**
 	 * Returns list of targets supported by the engine.
@@ -260,7 +260,7 @@ public:
 	 */
 	virtual GameList getSupportedGames() const;
 
-	virtual GameDescriptor findGame(const char *gameid) const;
+	virtual GameDescriptor findGame(const char *gameId) const;
 
 	virtual GameList detectGames(const Common::FSList &fslist) const;
 

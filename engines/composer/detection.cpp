@@ -386,7 +386,7 @@ static const char *directoryGlobs[] = {
 class ComposerMetaEngine : public AdvancedMetaEngine {
 public:
 	ComposerMetaEngine() : AdvancedMetaEngine(Composer::gameDescriptions, sizeof(Composer::ComposerGameDescription), composerGames) {
-		_singleid = "composer";
+		_singleId = "composer";
 		_maxScanDepth = 2;
 		_directoryGlobs = directoryGlobs;
 	}

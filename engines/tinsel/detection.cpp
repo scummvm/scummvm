@@ -85,7 +85,7 @@ static const PlainGameDescriptor tinselGames[] = {
 class TinselMetaEngine : public AdvancedMetaEngine {
 public:
 	TinselMetaEngine() : AdvancedMetaEngine(Tinsel::gameDescriptions, sizeof(Tinsel::TinselGameDescription), tinselGames) {
-		_singleid = "tinsel";
+		_singleId = "tinsel";
 	}
 
 	virtual const char *getName() const {

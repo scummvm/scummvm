@@ -61,7 +61,7 @@ public:
 	ZVisionMetaEngine() : AdvancedMetaEngine(ZVision::gameDescriptions, sizeof(ZVision::ZVisionGameDescription), ZVision::zVisionGames, ZVision::optionsList) {
 		_maxScanDepth = 2;
 		_directoryGlobs = ZVision::directoryGlobs;
-		_singleid = "zvision";
+		_singleId = "zvision";
 	}
 
 	virtual const char *getName() const {

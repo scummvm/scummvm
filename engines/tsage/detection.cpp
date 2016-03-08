@@ -75,7 +75,7 @@ enum {
 class TSageMetaEngine : public AdvancedMetaEngine {
 public:
 	TSageMetaEngine() : AdvancedMetaEngine(TsAGE::gameDescriptions, sizeof(TsAGE::tSageGameDescription), tSageGameTitles) {
-		_singleid = "tsage";
+		_singleId = "tsage";
 	}
 
 	virtual const char *getName() const {

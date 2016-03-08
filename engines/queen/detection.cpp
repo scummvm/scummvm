@@ -401,7 +401,7 @@ static const QueenGameDescription gameDescriptions[] = {
 class QueenMetaEngine : public AdvancedMetaEngine {
 public:
 	QueenMetaEngine() : AdvancedMetaEngine(Queen::gameDescriptions, sizeof(Queen::QueenGameDescription), queenGames, optionsList) {
-		_singleid = "queen";
+		_singleId = "queen";
 	}
 
 	virtual const char *getName() const {

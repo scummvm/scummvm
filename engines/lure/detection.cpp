@@ -193,12 +193,12 @@ class LureMetaEngine : public AdvancedMetaEngine {
 public:
 	LureMetaEngine() : AdvancedMetaEngine(Lure::gameDescriptions, sizeof(Lure::LureGameDescription), lureGames) {
 		_md5Bytes = 1024;
-		_singleid = "lure";
+		_singleId = "lure";
 
 		// Use kADFlagUseExtraAsHint to distinguish between EGA and VGA versions
 		// of italian Lure when their datafiles sit in the same directory.
 		_flags = kADFlagUseExtraAsHint;
-		_guioptions = GUIO1(GUIO_NOSPEECH);
+		_guiOptions = GUIO1(GUIO_NOSPEECH);
 	}
 
 	virtual const char *getName() const {

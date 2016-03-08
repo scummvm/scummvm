@@ -80,12 +80,12 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 class CineMetaEngine : public AdvancedMetaEngine {
 public:
 	CineMetaEngine() : AdvancedMetaEngine(Cine::gameDescriptions, sizeof(Cine::CINEGameDescription), cineGames, optionsList) {
-		_singleid = "cine";
-		_guioptions = GUIO2(GUIO_NOSPEECH, GAMEOPTION_ORIGINAL_SAVELOAD);
+		_singleId = "cine";
+		_guiOptions = GUIO2(GUIO_NOSPEECH, GAMEOPTION_ORIGINAL_SAVELOAD);
 	}
 
-	virtual GameDescriptor findGame(const char *gameid) const {
-		return Engines::findGameID(gameid, _gameids, obsoleteGameIDsTable);
+	virtual GameDescriptor findGame(const char *gameId) const {
+		return Engines::findGameID(gameId, _gameIds, obsoleteGameIDsTable);
 	}
 
 	virtual const char *getName() const {

@@ -84,7 +84,7 @@ const ADGameDescription gameDescriptions[] = {
 class DraciMetaEngine : public AdvancedMetaEngine {
 public:
 	DraciMetaEngine() : AdvancedMetaEngine(Draci::gameDescriptions, sizeof(ADGameDescription), draciGames) {
-		_singleid = "draci";
+		_singleId = "draci";
 	}
 
 	virtual const char *getName() const {

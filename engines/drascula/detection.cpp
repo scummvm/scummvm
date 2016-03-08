@@ -310,8 +310,8 @@ SaveStateDescriptor loadMetaData(Common::ReadStream *s, int slot, bool setPlayTi
 class DrasculaMetaEngine : public AdvancedMetaEngine {
 public:
 	DrasculaMetaEngine() : AdvancedMetaEngine(Drascula::gameDescriptions, sizeof(Drascula::DrasculaGameDescription), drasculaGames) {
-		_singleid = "drascula";
-		_guioptions = GUIO1(GUIO_NOMIDI);
+		_singleId = "drascula";
+		_guiOptions = GUIO1(GUIO_NOMIDI);
 	}
 
 	virtual const char *getName() const {

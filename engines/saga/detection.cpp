@@ -102,11 +102,11 @@ static const Engines::ObsoleteGameID obsoleteGameIDsTable[] = {
 class SagaMetaEngine : public AdvancedMetaEngine {
 public:
 	SagaMetaEngine() : AdvancedMetaEngine(Saga::gameDescriptions, sizeof(Saga::SAGAGameDescription), sagaGames) {
-		_singleid = "saga";
+		_singleId = "saga";
 	}
 
-	virtual GameDescriptor findGame(const char *gameid) const {
-		return Engines::findGameID(gameid, _gameids, obsoleteGameIDsTable);
+	virtual GameDescriptor findGame(const char *gameId) const {
+		return Engines::findGameID(gameId, _gameIds, obsoleteGameIDsTable);
 	}
 
 	virtual const char *getName() const {

@@ -94,13 +94,13 @@ using namespace AGOS;
 class AgosMetaEngine : public AdvancedMetaEngine {
 public:
 	AgosMetaEngine() : AdvancedMetaEngine(AGOS::gameDescriptions, sizeof(AGOS::AGOSGameDescription), agosGames) {
-		_guioptions = GUIO1(GUIO_NOLAUNCHLOAD);
+		_guiOptions = GUIO1(GUIO_NOLAUNCHLOAD);
 		_maxScanDepth = 2;
 		_directoryGlobs = directoryGlobs;
 	}
 
-	virtual GameDescriptor findGame(const char *gameid) const {
-		return Engines::findGameID(gameid, _gameids, obsoleteGameIDsTable);
+	virtual GameDescriptor findGame(const char *gameId) const {
+		return Engines::findGameID(gameId, _gameIds, obsoleteGameIDsTable);
 	}
 
 	virtual const char *getName() const {

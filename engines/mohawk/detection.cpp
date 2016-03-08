@@ -178,7 +178,7 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 class MohawkMetaEngine : public AdvancedMetaEngine {
 public:
 	MohawkMetaEngine() : AdvancedMetaEngine(Mohawk::gameDescriptions, sizeof(Mohawk::MohawkGameDescription), mohawkGames, optionsList) {
-		_singleid = "mohawk";
+		_singleId = "mohawk";
 		_maxScanDepth = 2;
 		_directoryGlobs = directoryGlobs;
 	}

@@ -220,7 +220,7 @@ static const PARALLACTIONGameDescription gameDescriptions[] = {
 class ParallactionMetaEngine : public AdvancedMetaEngine {
 public:
 	ParallactionMetaEngine() : AdvancedMetaEngine(Parallaction::gameDescriptions, sizeof(Parallaction::PARALLACTIONGameDescription), parallactionGames) {
-		_guioptions = GUIO1(GUIO_NOLAUNCHLOAD);
+		_guiOptions = GUIO1(GUIO_NOLAUNCHLOAD);
 	}
 
 	virtual const char *getName() const {

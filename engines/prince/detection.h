@@ -104,7 +104,7 @@ const static char *directoryGlobs[] = {
 class PrinceMetaEngine : public AdvancedMetaEngine {
 public:
 	PrinceMetaEngine() : AdvancedMetaEngine(Prince::gameDescriptions, sizeof(Prince::PrinceGameDescription), princeGames) {
-		_singleid = "prince";
+		_singleId = "prince";
 		_maxScanDepth = 2;
 		_directoryGlobs = directoryGlobs;
 	}
