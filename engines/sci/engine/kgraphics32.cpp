@@ -574,7 +574,37 @@ reg_t kBitmapDrawText(EngineState *s, int argc, reg_t *argv) {
 	// called e.g. from TextButton::createBitmap() in Torin's Passage, script 64894
 
 	// bitmap, text, textLeft, textTop, textRight, textBottom, foreColor, backColor, skipColor, fontNo, alignment, borderColor, dimmed
-	return kStubNull(s, argc + 1, argv - 1);
+	BitmapResource bitmap(argv[0]);
+	Common::String text = s->_segMan->getString(argv[1]);
+	Common::Rect textRect(
+		argv[2].toSint16(),
+		argv[3].toSint16(),
+		argv[4].toSint16() + 1,
+		argv[5].toSint16() + 1
+	);
+	int16 foreColor = argv[6].toSint16();
+	int16 backColor = argv[7].toSint16();
+	int16 skipColor = argv[8].toSint16();
+	GuiResourceId fontId = (GuiResourceId)argv[9].toUint16();
+	TextAlign alignment = (TextAlign)argv[10].toSint16();
+	int16 borderColor = argv[11].toSint16();
+	bool dimmed = argv[12].toUint16();
+
+	// NOTE: Technically the engine checks these things:
+	// textRect.bottom > 0
+	// textRect.right > 0
+	// textRect.left < bitmap.width
+	// textRect.top < bitmap.height
+	// Then clips. But this seems stupid.
+	textRect.clip(Common::Rect(bitmap.getWidth(), bitmap.getHeight()));
+
+	reg_t textBitmapObject = g_sci->_gfxText32->createFontBitmap(textRect.width(), textRect.height(), Common::Rect(textRect.width(), textRect.height()), text, foreColor, backColor, skipColor, fontId, alignment, borderColor, dimmed, false);
+	Buffer bitmapBuffer(bitmap.getWidth(), bitmap.getHeight(), bitmap.getPixels());
+	CelObjMem textCel(textBitmapObject);
+	textCel.draw(bitmapBuffer, textRect, Common::Point(textRect.left, textRect.top), false);
+	s->_segMan->freeHunkEntry(textBitmapObject);
+
+	return NULL_REG;
 }
 
 reg_t kBitmapDrawColor(EngineState *s, int argc, reg_t *argv) {
