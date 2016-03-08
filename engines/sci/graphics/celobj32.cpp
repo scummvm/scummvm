@@ -107,7 +107,7 @@ void CelObj::deinit() {
 #pragma mark -
 #pragma mark CelObj - Scalers
 
-template <bool FLIP, typename READER>
+template<bool FLIP, typename READER>
 struct SCALER_NoScale {
 	const byte *_row;
 	READER _reader;
@@ -562,7 +562,7 @@ void CelObj::putCopyInCache(const int cacheIndex) const {
 #pragma mark -
 #pragma mark CelObj - Drawing
 
-template <typename MAPPER, typename SCALER>
+template<typename MAPPER, typename SCALER>
 struct RENDERER {
 	MAPPER &_mapper;
 	SCALER &_scaler;
@@ -594,7 +594,7 @@ struct RENDERER {
 	}
 };
 
-template <typename MAPPER, typename SCALER>
+template<typename MAPPER, typename SCALER>
 void CelObj::render(Buffer &target, const Common::Rect &targetRect, const Common::Point &scaledPosition) const {
 
 	MAPPER mapper;
@@ -603,7 +603,7 @@ void CelObj::render(Buffer &target, const Common::Rect &targetRect, const Common
 	renderer.draw(target, targetRect, scaledPosition);
 }
 
-template <typename MAPPER, typename SCALER>
+template<typename MAPPER, typename SCALER>
 void CelObj::render(Buffer &target, const Common::Rect &targetRect, const Common::Point &scaledPosition, const Ratio &scaleX, const Ratio &scaleY) const {
 
 	MAPPER mapper;

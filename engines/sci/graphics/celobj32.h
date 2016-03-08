@@ -379,10 +379,10 @@ public:
 #pragma mark -
 #pragma mark CelObj - Drawing
 private:
-	template <typename MAPPER, typename SCALER>
+	template<typename MAPPER, typename SCALER>
 	void render(Buffer &target, const Common::Rect &targetRect, const Common::Point &scaledPosition) const;
 
-	template <typename MAPPER, typename SCALER>
+	template<typename MAPPER, typename SCALER>
 	void render(Buffer &target, const Common::Rect &targetRect, const Common::Point &scaledPosition, const Ratio &scaleX, const Ratio &scaleY) const;
 
 	void drawHzFlip(Buffer &target, const Common::Rect &targetRect, const Common::Point &scaledPosition) const;

@@ -36,7 +36,7 @@ namespace Sci {
  * calling `erase` or when destroying the
  * StablePointerArray.
  */
-template <class T, uint N>
+template<class T, uint N>
 class StablePointerArray {
 	uint _size;
 	T *_items[N];
@@ -178,7 +178,7 @@ public:
 	}
 };
 
-template <typename T>
+template<typename T>
 class FindByObject {
 	const reg_t &_object;
 public:
