@@ -41,8 +41,8 @@ static GameDescriptor toGameDescriptor(const ADGameDescription &g, const PlainGa
 		title = g.extra;
 		extra = "";
 	} else {
-		while (sg->gameid) {
-			if (!scumm_stricmp(g.gameId, sg->gameid))
+		while (sg->gameId) {
+			if (!scumm_stricmp(g.gameId, sg->gameId))
 				title = sg->description;
 			sg++;
 		}
@@ -589,9 +589,9 @@ GameList AdvancedMetaEngine::getSupportedGames() const {
 		GameList gl;
 
 		const PlainGameDescriptor *g = _gameIds;
-		while (g->gameid) {
-			if (0 == scumm_stricmp(_singleId, g->gameid)) {
-				gl.push_back(GameDescriptor(g->gameid, g->description));
+		while (g->gameId) {
+			if (0 == scumm_stricmp(_singleId, g->gameId)) {
+				gl.push_back(GameDescriptor(g->gameId, g->description));
 
 				return gl;
 			}

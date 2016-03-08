@@ -128,17 +128,17 @@ GameList SwordMetaEngine::getSupportedGames() const {
 }
 
 GameDescriptor SwordMetaEngine::findGame(const char *gameid) const {
-	if (0 == scumm_stricmp(gameid, sword1FullSettings.gameid))
+	if (0 == scumm_stricmp(gameid, sword1FullSettings.gameId))
 		return sword1FullSettings;
-	if (0 == scumm_stricmp(gameid, sword1DemoSettings.gameid))
+	if (0 == scumm_stricmp(gameid, sword1DemoSettings.gameId))
 		return sword1DemoSettings;
-	if (0 == scumm_stricmp(gameid, sword1MacFullSettings.gameid))
+	if (0 == scumm_stricmp(gameid, sword1MacFullSettings.gameId))
 		return sword1MacFullSettings;
-	if (0 == scumm_stricmp(gameid, sword1MacDemoSettings.gameid))
+	if (0 == scumm_stricmp(gameid, sword1MacDemoSettings.gameId))
 		return sword1MacDemoSettings;
-	if (0 == scumm_stricmp(gameid, sword1PSXSettings.gameid))
+	if (0 == scumm_stricmp(gameid, sword1PSXSettings.gameId))
 		return sword1PSXSettings;
-	if (0 == scumm_stricmp(gameid, sword1PSXDemoSettings.gameid))
+	if (0 == scumm_stricmp(gameid, sword1PSXDemoSettings.gameId))
 		return sword1PSXDemoSettings;
 	return GameDescriptor();
 }

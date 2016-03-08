@@ -136,7 +136,7 @@ const ExtraGuiOptions SkyMetaEngine::getExtraGuiOptions(const Common::String &ta
 }
 
 GameDescriptor SkyMetaEngine::findGame(const char *gameid) const {
-	if (0 == scumm_stricmp(gameid, skySetting.gameid))
+	if (0 == scumm_stricmp(gameid, skySetting.gameId))
 		return skySetting;
 	return GameDescriptor();
 }
@@ -175,7 +175,7 @@ GameList SkyMetaEngine::detectGames(const Common::FSList &fslist) const {
 		// Match found, add to list of candidates, then abort inner loop.
 		// The game detector uses US English by default. We want British
 		// English to match the recorded voices better.
-		GameDescriptor dg(skySetting.gameid, skySetting.description, Common::UNK_LANG, Common::kPlatformUnknown);
+		GameDescriptor dg(skySetting.gameId, skySetting.description, Common::UNK_LANG, Common::kPlatformUnknown);
 		const SkyVersion *sv = skyVersions;
 		while (sv->dinnerTableEntries) {
 			if (dinnerTableEntries == sv->dinnerTableEntries &&
