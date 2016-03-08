@@ -302,8 +302,11 @@ Common::Error AdlEngine::run() {
 			if (shouldQuit())
 				break;
 
-			if (!doOneCommand(_roomCommands, verb, noun))
-				printMessage(_messageIds.dontUnderstand);
+			// If we just restored from the GMM, we skip this command
+			// set, as no command has been input by the user
+			if (!_isRestoring)
+				if (!doOneCommand(_roomCommands, verb, noun))
+					printMessage(_messageIds.dontUnderstand);
 		}
 
 		if (_isRestoring) {
@@ -419,7 +422,7 @@ Common::Error AdlEngine::loadGameState(int slot) {
 	return Common::kNoError;
 }
 
-bool AdlEngine::canLoadGameStateCurrently() const {
+bool AdlEngine::canLoadGameStateCurrently() {
 	return _canRestoreNow;
 }
 
@@ -496,7 +499,7 @@ Common::Error AdlEngine::saveGameState(int slot, const Common::String &desc) {
 	return Common::kNoError;
 }
 
-bool AdlEngine::canSaveGameStateCurrently() const {
+bool AdlEngine::canSaveGameStateCurrently() {
 	if (!_canSaveNow)
 		return false;
 
@@ -506,11 +509,9 @@ bool AdlEngine::canSaveGameStateCurrently() const {
 	// "SAVE GAME". This prevents saving via the GMM in situations where
 	// it wouldn't otherwise be possible to do so.
 	for (cmd = _roomCommands.begin(); cmd != _roomCommands.end(); ++cmd) {
-		if (matchCommand(*cmd, _saveVerb, _saveNoun)) {
-			if (cmd->verb != _saveVerb || cmd->noun != _saveNoun)
-				return false;
-			return cmd->numCond == 0 && cmd->script[0] == IDO_ACT_SAVE;
-		}
+		uint offset;
+		if (matchCommand(*cmd, _saveVerb, _saveNoun, &offset))
+			return cmd->script[offset] == IDO_ACT_SAVE;
 	}
 
 	return false;
@@ -870,7 +871,8 @@ bool AdlEngine::matchCommand(const Command &command, byte verb, byte noun, uint 
 		}
 	}
 
-	*actions = offset;
+	if (actions)
+		*actions = offset;
 
 	return true;
 }

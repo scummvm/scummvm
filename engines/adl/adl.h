@@ -198,9 +198,9 @@ private:
 	Common::Error run();
 	bool hasFeature(EngineFeature f) const;
 	Common::Error loadGameState(int slot);
-	bool canLoadGameStateCurrently() const;
+	bool canLoadGameStateCurrently();
 	Common::Error saveGameState(int slot, const Common::String &desc);
-	bool canSaveGameStateCurrently() const;
+	bool canSaveGameStateCurrently();
 
 	// Text output
 	void wordWrap(Common::String &str) const;
