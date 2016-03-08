@@ -54,6 +54,7 @@ static const ADGameDescription gameDescriptions[] = {
 	FANGAME("Lost Crystal", "4f21ba8ee64f8d655b9eeb1e3ffd50f7", 792064),
 	FANGAME("Magic Rings", "6e0d1dd561d3dad8f9a7a20ed1f09b16", 112000),
 	FANGAME("Midnight Snack", "346982a32fc701f53bb19771d72063d0", 69504),
+	FANGAME("Minitorian", "5e8b1c21fccd629eac0300e9cf003a2d", 592384),
 	FANGAME("Puzzle Piece Search", "51885fe2effeaa14b2b8b08a53931805", 252928), // From Joshua's Worlds 1.0
 	// Empty(?)  first scene
 	FANGAME("Pyramid of No Return", "48a9c668ce69206f57e11e1a85970d02", 392192),
