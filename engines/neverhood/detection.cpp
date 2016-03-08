@@ -41,7 +41,7 @@ struct NeverhoodGameDescription {
 };
 
 const char *NeverhoodEngine::getGameId() const {
-	return _gameDescription->desc.gameid;
+	return _gameDescription->desc.gameId;
 }
 
 uint32 NeverhoodEngine::getFeatures() const {

@@ -35,7 +35,7 @@ struct CRUISEGameDescription {
 };
 
 const char *CruiseEngine::getGameId() const {
-	return _gameDescription->desc.gameid;
+	return _gameDescription->desc.gameId;
 }
 
 Common::Language CruiseEngine::getLanguage() const {

@@ -443,25 +443,25 @@ const ADGameDescription *QueenMetaEngine::fallbackDetect(const FileMap &allFiles
 			}
 			Queen::DetectedGameVersion version;
 			if (Queen::Resource::detectVersion(&version, &dataFile)) {
-				desc.gameid = "queen";
+				desc.gameId = "queen";
 				desc.language = version.language;
 				desc.platform = version.platform;
 				desc.flags = ADGF_NO_FLAGS;
-				desc.guioptions = GUIO0();
+				desc.guiOptions = GUIO0();
 				if (version.features & Queen::GF_DEMO) {
 					desc.extra = "Demo";
 					desc.flags = ADGF_DEMO;
-					desc.guioptions = GUIO_NOSPEECH;
+					desc.guiOptions = GUIO_NOSPEECH;
 				} else if (version.features & Queen::GF_INTERVIEW) {
 					desc.extra = "Interview";
 					desc.flags = ADGF_DEMO;
-					desc.guioptions = GUIO_NOSPEECH;
+					desc.guiOptions = GUIO_NOSPEECH;
 				} else if (version.features & Queen::GF_FLOPPY) {
 					desc.extra = "Floppy";
-					desc.guioptions = GUIO_NOSPEECH;
+					desc.guiOptions = GUIO_NOSPEECH;
 				} else if (version.features & Queen::GF_TALKIE) {
 					desc.extra = "Talkie";
-					desc.guioptions = GAMEOPTION_ALT_INTRO;
+					desc.guiOptions = GAMEOPTION_ALT_INTRO;
 				}
 				return (const ADGameDescription *)&desc;
 			}

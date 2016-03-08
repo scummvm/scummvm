@@ -29,7 +29,7 @@ int PrinceEngine::getGameType() const {
 }
 
 const char *PrinceEngine::getGameId() const {
-	return _gameDescription->desc.gameid;
+	return _gameDescription->desc.gameId;
 }
 
 uint32 PrinceEngine::getFeatures() const {

@@ -32,7 +32,7 @@
 namespace Fullpipe {
 
 const char *FullpipeEngine::getGameId() const {
-	return _gameDescription->gameid;
+	return _gameDescription->gameId;
 }
 
 }

@@ -40,7 +40,7 @@ struct tSageGameDescription {
 };
 
 const char *TSageEngine::getGameId() const {
-	return _gameDescription->desc.gameid;
+	return _gameDescription->desc.gameId;
 }
 
 uint32 TSageEngine::getGameID() const {

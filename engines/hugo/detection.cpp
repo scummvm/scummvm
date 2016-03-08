@@ -41,7 +41,7 @@ uint32 HugoEngine::getFeatures() const {
 }
 
 const char *HugoEngine::getGameId() const {
-	return _gameDescription->desc.gameid;
+	return _gameDescription->desc.gameId;
 }
 
 

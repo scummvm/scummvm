@@ -228,8 +228,8 @@ const ADGameDescription *TinselMetaEngine::fallbackDetect(const FileMap &allFile
 
 	// Check which files are included in some dw2 ADGameDescription *and* present
 	// in fslist without a '1' suffix character. Compute MD5s and file sizes for these files.
-	for (g = &Tinsel::gameDescriptions[0]; g->desc.gameid != 0; ++g) {
-		if (strcmp(g->desc.gameid, "dw2") != 0)
+	for (g = &Tinsel::gameDescriptions[0]; g->desc.gameId != 0; ++g) {
+		if (strcmp(g->desc.gameId, "dw2") != 0)
 			continue;
 
 		for (fileDesc = g->desc.filesDescriptions; fileDesc->fileName; fileDesc++) {
@@ -265,8 +265,8 @@ const ADGameDescription *TinselMetaEngine::fallbackDetect(const FileMap &allFile
 	int maxFilesMatched = 0;
 
 	// MD5 based matching
-	for (g = &Tinsel::gameDescriptions[0]; g->desc.gameid != 0; ++g) {
-		if (strcmp(g->desc.gameid, "dw2") != 0)
+	for (g = &Tinsel::gameDescriptions[0]; g->desc.gameId != 0; ++g) {
+		if (strcmp(g->desc.gameId, "dw2") != 0)
 			continue;
 
 		bool fileMissing = false;

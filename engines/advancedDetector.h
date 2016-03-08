@@ -95,7 +95,7 @@ enum ADGameFlags {
 };
 
 struct ADGameDescription {
-	const char *gameid;
+	const char *gameId;
 	const char *extra;
 	ADGameFileDescription filesDescriptions[14];
 	Common::Language language;
@@ -108,7 +108,7 @@ struct ADGameDescription {
 	 */
 	uint32 flags;
 
-	const char *guioptions;
+	const char *guiOptions;
 };
 
 /**

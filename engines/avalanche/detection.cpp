@@ -40,7 +40,7 @@ uint32 AvalancheEngine::getFeatures() const {
 }
 
 const char *AvalancheEngine::getGameId() const {
-	return _gameDescription->desc.gameid;
+	return _gameDescription->desc.gameId;
 }
 
 static const PlainGameDescriptor avalancheGames[] = {

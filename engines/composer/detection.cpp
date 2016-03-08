@@ -38,7 +38,7 @@ int ComposerEngine::getGameType() const {
 }
 
 const char *ComposerEngine::getGameId() const {
-	return _gameDescription->desc.gameid;
+	return _gameDescription->desc.gameId;
 }
 
 uint32 ComposerEngine::getFeatures() const {

@@ -54,7 +54,7 @@ struct MohawkGameDescription {
 };
 
 const char* MohawkEngine::getGameId() const {
-	return _gameDescription->desc.gameid;
+	return _gameDescription->desc.gameId;
 }
 
 uint32 MohawkEngine::getFeatures() const {

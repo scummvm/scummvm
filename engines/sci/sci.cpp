@@ -834,7 +834,7 @@ Console *SciEngine::getSciDebugger() {
 }
 
 const char *SciEngine::getGameIdStr() const {
-	return _gameDescription->gameid;
+	return _gameDescription->gameId;
 }
 
 Common::Language SciEngine::getLanguage() const {
