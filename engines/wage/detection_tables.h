@@ -77,6 +77,7 @@ static const ADGameDescription gameDescriptions[] = {
 	// Doesn't go past first scene
 	BIGGAME("Twisted!", "", "Twisted! 1.6", "8ea8cc13d26d7975dc43ea7e6c193217", 992896),
 	FANGAME("Wishing Well", "3ee884d0d1a168d088cf2250d3a83c73", 105600),
+	FANGAME("Wizard's Warehouse", "46fa84397d83f03d3a683ec9a3000323", 163200),
 	FANGAME("ZikTuria", "e793155bed1a70fa2074a3fcd696b751", 54784),
 	FANGAME("Zoony", "e6cc8a914a4215dafbcce6315dd12cf5", 160256),
 
