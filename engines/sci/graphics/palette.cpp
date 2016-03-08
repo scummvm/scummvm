@@ -32,6 +32,7 @@
 #include "sci/graphics/cache.h"
 #include "sci/graphics/maciconbar.h"
 #include "sci/graphics/palette.h"
+#include "sci/graphics/remap.h"
 #include "sci/graphics/screen.h"
 #include "sci/graphics/view.h"
 
@@ -103,9 +104,6 @@ GfxPalette::GfxPalette(ResourceManager *resMan, GfxScreen *screen)
 	default:
 		error("GfxPalette: Unknown view type");
 	}
-
-	_remapOn = false;
-	resetRemapping();
 }
 
 GfxPalette::~GfxPalette() {
@@ -336,79 +334,6 @@ void GfxPalette::set(Palette *newPalette, bool force, bool forceRealMerge) {
 	}
 }
 
-byte GfxPalette::remapColor(byte remappedColor, byte screenColor) {
-	assert(_remapOn);
-	if (_remappingType[remappedColor] == kRemappingByRange)
-		return _remappingByRange[screenColor];
-	else if (_remappingType[remappedColor] == kRemappingByPercent)
-		return _remappingByPercent[screenColor];
-	else
-		error("remapColor(): Color %d isn't remapped", remappedColor);
-
-	return 0;	// should never reach here
-}
-
-void GfxPalette::resetRemapping() {
-	_remapOn = false;
-	_remappingPercentToSet = 0;
-
-	for (int i = 0; i < 256; i++) {
-		_remappingType[i] = kRemappingNone;
-		_remappingByPercent[i] = i;
-		_remappingByRange[i] = i;
-	}
-}
-
-void GfxPalette::setRemappingPercent(byte color, byte percent) {
-	_remapOn = true;
-
-	// We need to defer the setup of the remapping table every time the screen
-	// palette is changed, so that kernelFindColor() can find the correct
-	// colors. Set it once here, in case the palette stays the same and update
-	// it on each palette change by copySysPaletteToScreen().
-	_remappingPercentToSet = percent;
-
-	for (int i = 0; i < 256; i++) {
-		byte r = _sysPalette.colors[i].r * _remappingPercentToSet / 100;
-		byte g = _sysPalette.colors[i].g * _remappingPercentToSet / 100;
-		byte b = _sysPalette.colors[i].b * _remappingPercentToSet / 100;
-		_remappingByPercent[i] = kernelFindColor(r, g, b);
-	}
-
-	_remappingType[color] = kRemappingByPercent;
-}
-
-void GfxPalette::setRemappingPercentGray(byte color, byte percent) {
-	_remapOn = true;
-
-	// We need to defer the setup of the remapping table every time the screen
-	// palette is changed, so that kernelFindColor() can find the correct
-	// colors. Set it once here, in case the palette stays the same and update
-	// it on each palette change by copySysPaletteToScreen().
-	_remappingPercentToSet = percent;
-
-	// Note: This is not what the original does, but the results are the same visually
-	for (int i = 0; i < 256; i++) {
-		byte rComponent = (byte)(_sysPalette.colors[i].r * _remappingPercentToSet * 0.30 / 100);
-		byte gComponent = (byte)(_sysPalette.colors[i].g * _remappingPercentToSet * 0.59 / 100);
-		byte bComponent = (byte)(_sysPalette.colors[i].b * _remappingPercentToSet * 0.11 / 100);
-		byte luminosity = rComponent + gComponent + bComponent;
-		_remappingByPercent[i] = kernelFindColor(luminosity, luminosity, luminosity);
-	}
-
-	_remappingType[color] = kRemappingByPercent;
-}
-
-void GfxPalette::setRemappingRange(byte color, byte from, byte to, byte base) {
-	_remapOn = true;
-
-	for (int i = from; i <= to; i++) {
-		_remappingByRange[i] = i + base;
-	}
-
-	_remappingType[color] = kRemappingByRange;
-}
-
 bool GfxPalette::insert(Palette *newPalette, Palette *destPalette) {
 	bool paletteChanged = false;
 
@@ -589,15 +514,8 @@ void GfxPalette::copySysPaletteToScreen() {
 		}
 	}
 
-	// Check if we need to reset remapping by percent with the new colors.
-	if (_remappingPercentToSet) {
-		for (int i = 0; i < 256; i++) {
-			byte r = _sysPalette.colors[i].r * _remappingPercentToSet / 100;
-			byte g = _sysPalette.colors[i].g * _remappingPercentToSet / 100;
-			byte b = _sysPalette.colors[i].b * _remappingPercentToSet / 100;
-			_remappingByPercent[i] = kernelFindColor(r, g, b);
-		}
-	}
+	if (g_sci->_gfxRemap16)
+		g_sci->_gfxRemap16->updateRemapping();
 
 	g_system->getPaletteManager()->setPalette(bpal, 0, 256);
 }

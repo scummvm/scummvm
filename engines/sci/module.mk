@@ -57,6 +57,7 @@ MODULE_OBJS := \
 	graphics/picture.o \
 	graphics/portrait.o \
 	graphics/ports.o \
+	graphics/remap.o \
 	graphics/screen.o \
 	graphics/text16.o \
 	graphics/transitions.o \

@@ -35,12 +35,6 @@ class GfxScreen;
 #define SCI_PALETTE_MATCH_PERFECT 0x8000
 #define SCI_PALETTE_MATCH_COLORMASK 0xFF
 
-enum ColorRemappingType {
-	kRemappingNone = 0,
-	kRemappingByRange = 1,
-	kRemappingByPercent = 2
-};
-
 /**
  * Palette class, handles palette operations like changing intensity, setting up the palette, merging different palettes
  */
@@ -63,15 +57,6 @@ public:
 	uint16 matchColor(byte r, byte g, byte b);
 	void getSys(Palette *pal);
 	uint16 getTotalColorCount() const { return _totalScreenColors; }
-
-	void resetRemapping();
-	void setRemappingPercent(byte color, byte percent);
-	void setRemappingPercentGray(byte color, byte percent);
-	void setRemappingRange(byte color, byte from, byte to, byte base);
-	bool isRemapped(byte color) const {
-		return _remapOn && (_remappingType[color] != kRemappingNone);
-	}
-	byte remapColor(byte remappedColor, byte screenColor);
 
 	void setOnScreen();
 	void copySysPaletteToScreen();
@@ -137,12 +122,6 @@ protected:
 	int _palVaryPaused;
 	int _palVarySignal;
 	uint16 _totalScreenColors;
-
-	bool _remapOn;
-	ColorRemappingType _remappingType[256];
-	byte _remappingByPercent[256];
-	byte _remappingByRange[256];
-	uint16 _remappingPercentToSet;
 
 	void loadMacIconBarPalette();
 	byte *_macClut;

@@ -45,6 +45,7 @@
 #include "sci/graphics/paint16.h"
 #include "sci/graphics/picture.h"
 #include "sci/graphics/ports.h"
+#include "sci/graphics/remap.h"
 #include "sci/graphics/screen.h"
 #include "sci/graphics/text16.h"
 #include "sci/graphics/view.h"
@@ -1248,16 +1249,16 @@ reg_t kRemapColors(EngineState *s, int argc, reg_t *argv) {
 	switch (operation) {
 	case 0: { // remap by percent
 		uint16 percent = argv[1].toUint16();
-		g_sci->_gfxPalette16->resetRemapping();
-		g_sci->_gfxPalette16->setRemappingPercent(254, percent);
+		g_sci->_gfxRemap16->resetRemapping();
+		g_sci->_gfxRemap16->setRemappingPercent(254, percent);
 		}
 		break;
 	case 1:	{ // remap by range
 		uint16 from = argv[1].toUint16();
 		uint16 to = argv[2].toUint16();
 		uint16 base = argv[3].toUint16();
-		g_sci->_gfxPalette16->resetRemapping();
-		g_sci->_gfxPalette16->setRemappingRange(254, from, to, base);
+		g_sci->_gfxRemap16->resetRemapping();
+		g_sci->_gfxRemap16->setRemappingRange(254, from, to, base);
 		}
 		break;
 	case 2:	// turn remapping off (unused)

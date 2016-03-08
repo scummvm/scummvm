@@ -25,6 +25,7 @@
 #include "sci/engine/state.h"
 #include "sci/graphics/screen.h"
 #include "sci/graphics/palette.h"
+#include "sci/graphics/remap.h"
 #include "sci/graphics/coordadjuster.h"
 #include "sci/graphics/view.h"
 
@@ -842,12 +843,11 @@ void GfxView::draw(const Common::Rect &rect, const Common::Rect &clipRect, const
 					const int y2 = clipRectTranslated.top + y;
 					if (!upscaledHires) {
 						if (priority >= _screen->getPriority(x2, y2)) {
-							if (!_palette->isRemapped(palette->mapping[color])) {
-								_screen->putPixel(x2, y2, drawMask, palette->mapping[color], priority, 0);
-							} else {
-								byte remappedColor = _palette->remapColor(palette->mapping[color], _screen->getVisual(x2, y2));
-								_screen->putPixel(x2, y2, drawMask, remappedColor, priority, 0);
-							}
+							byte outputColor = palette->mapping[color];
+							// SCI16 remapping (QFG4 demo)
+							if (g_sci->_gfxRemap16 && g_sci->_gfxRemap16->isRemapped(outputColor))
+								outputColor = g_sci->_gfxRemap16->remapColor(outputColor, _screen->getVisual(x2, y2));
+							_screen->putPixel(x2, y2, drawMask, outputColor, priority, 0);
 						}
 					} else {
 						// UpscaledHires means view is hires and is supposed to
@@ -957,12 +957,11 @@ void GfxView::drawScaled(const Common::Rect &rect, const Common::Rect &clipRect,
 			const int x2 = clipRectTranslated.left + x;
 			const int y2 = clipRectTranslated.top + y;
 			if (color != clearKey && priority >= _screen->getPriority(x2, y2)) {
-				if (!_palette->isRemapped(palette->mapping[color])) {
-					_screen->putPixel(x2, y2, drawMask, palette->mapping[color], priority, 0);
-				} else {
-					byte remappedColor = _palette->remapColor(palette->mapping[color], _screen->getVisual(x2, y2));
-					_screen->putPixel(x2, y2, drawMask, remappedColor, priority, 0);
-				}
+				byte outputColor = palette->mapping[color];
+				// SCI16 remapping (QFG4 demo)
+				if (g_sci->_gfxRemap16 && g_sci->_gfxRemap16->isRemapped(outputColor))
+					outputColor = g_sci->_gfxRemap16->remapColor(outputColor, _screen->getVisual(x2, y2));
+				_screen->putPixel(x2, y2, drawMask, outputColor, priority, 0);
 			}
 		}
 	}

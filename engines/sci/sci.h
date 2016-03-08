@@ -71,6 +71,8 @@ class GfxPaint16;
 class GfxPaint32;
 class GfxPalette;
 class GfxPalette32;
+class GfxRemap;
+class GfxRemap32;
 class GfxPorts;
 class GfxScreen;
 class GfxText16;
@@ -352,6 +354,8 @@ public:
 	GfxMenu *_gfxMenu; // Menu for 16-bit gfx
 	GfxPalette *_gfxPalette16;
 	GfxPalette32 *_gfxPalette32; // Palette for 32-bit gfx
+	GfxRemap *_gfxRemap16;	// Remapping for the QFG4 demo
+	GfxRemap32 *_gfxRemap32; // Remapping for 32-bit gfx
 	GfxPaint *_gfxPaint;
 	GfxPaint16 *_gfxPaint16; // Painting in 16-bit gfx
 	GfxPaint32 *_gfxPaint32; // Painting in 32-bit gfx
