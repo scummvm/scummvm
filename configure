@@ -3960,7 +3960,7 @@ case $_host_os in
 		# NOTE: Windows builds use an older FluidSynth version (1.0.9)
 		# which doesn't require glib, to avoid bundling the complete glib
 		# libraries with Windows builds.
-		FLUIDSYNTH_STATIC_LIBS="$FLUIDSYNTH_LIBS -ldsound -lwinmm"
+		FLUIDSYNTH_STATIC_LIBS="$FLUIDSYNTH_LIBS -lglib-2.0 -lintl -liconv -lws2_32 -lole32 -lshlwapi -lpcre -ldsound -lwinmm"
 	;;
 
 	darwin*)
