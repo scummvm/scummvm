@@ -178,7 +178,7 @@ void Darts::playDarts(GameType gameType) {
 					scoredPoints = Common::String::format(FIXED(DartsScoredPoints), lastDart);
 				}
 
-				screen.print(Common::Point(_dartInfo.left, _dartInfo.top + _spacing), 0, scoredPoints.c_str());
+				screen.print(Common::Point(_dartInfo.left, _dartInfo.top + _spacing), 0, "%s", scoredPoints.c_str());
 			} else {
 				Common::String hitText;
 
@@ -213,7 +213,7 @@ void Darts::playDarts(GameType gameType) {
 						break;
 					}
 				}
-				screen.print(Common::Point(_dartInfo.left, _dartInfo.top + _spacing), 0, hitText.c_str());
+				screen.print(Common::Point(_dartInfo.left, _dartInfo.top + _spacing), 0, "%s", hitText.c_str());
 			}
 
 			if (score != 0 && playerNum == 0 && !gameOver)
@@ -417,12 +417,12 @@ void Darts::showStatus(int playerNum) {
 
 	// "Round: x"
 	Common::String dartsRoundStatus = Common::String::format(FIXED(DartsCurrentRound), _roundNum);
-	screen.print(Common::Point(STATUS_INFO_X, temp), 0, dartsRoundStatus.c_str());
+	screen.print(Common::Point(STATUS_INFO_X, temp), 0, "%s", dartsRoundStatus.c_str());
 
 	if (_gameType == GAME_301) {
 		// "Turn Total: x"
 		Common::String dartsTotalPoints = Common::String::format(FIXED(DartsCurrentTotalPoints), _roundScore);
-		screen.print(Common::Point(STATUS_INFO_X, STATUS_INFO_Y + 75), 0, dartsTotalPoints.c_str());
+		screen.print(Common::Point(STATUS_INFO_X, STATUS_INFO_Y + 75), 0, "%s", dartsTotalPoints.c_str());
 	} else {
 		// Show cricket scores
 		for (int x = 0; x < 7; ++x) {
@@ -935,7 +935,7 @@ int Darts::throwDart(int dartNum, int computer) {
 
 	// "Dart # x"
 	Common::String currentDart = Common::String::format(FIXED(DartsCurrentDart), dartNum);
-	screen.print(Common::Point(_dartInfo.left, _dartInfo.top), 0, currentDart.c_str());
+	screen.print(Common::Point(_dartInfo.left, _dartInfo.top), 0, "%s", currentDart.c_str());
 
 	drawDartsLeft(dartNum, computer);
 
