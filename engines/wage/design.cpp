@@ -214,6 +214,8 @@ void drawPixel(int x, int y, int color, void *data) {
 		return;
 
 	if (p->design && p->design->isBoundsCalculation()) {
+		if (x < 0 || y < 0)
+			return;
 		if (p->thickness == 1) {
 			p->design->adjustBounds(x, y);
 		} else {
