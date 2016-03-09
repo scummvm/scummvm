@@ -132,11 +132,14 @@ static const ADGameDescription gameDescriptions[] = {
 
 	// Distributed by ScummVM
 	// Contains all language packs, English voice-overs and Hungarian version
+	// Mark it as Unknown Language since it contains multiple languages. If we
+	// mark it as English, then changing the language in-game causes the detection
+	// to fail the next time we try to start the engine.
 	{
 		"sword25",
 		"Latest version",
 		AD_ENTRY1s("data.b25c", "880a8a67faf4a4e7ab62cf114b771428", 827397764),
-		Common::EN_ANY,
+		Common::UNK_LANG,
 		Common::kPlatformUnknown,
 		ADGF_NO_FLAGS,
 		GUIO1(GUIO_NOASPECT)
