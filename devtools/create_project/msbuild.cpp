@@ -431,7 +431,7 @@ void MSBuildProvider::createBuildProp(const BuildSetup &setup, bool isRelease, b
 		              "\t\t\t<StringPooling>true</StringPooling>\n"
 		              "\t\t\t<BufferSecurityCheck>false</BufferSecurityCheck>\n"
 		              "\t\t\t<DebugInformationFormat></DebugInformationFormat>\n"
-		              "\t\t\t<RuntimeLibrary>MultiThreaded</RuntimeLibrary>\n"
+		              "\t\t\t<RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>\n"
 		              "\t\t\t<EnablePREfast>" << (configuration == "Analysis" ? "true" : "false") << "</EnablePREfast>\n"
 		              "\t\t</ClCompile>\n"
 		              "\t\t<Link>\n"
@@ -442,7 +442,7 @@ void MSBuildProvider::createBuildProp(const BuildSetup &setup, bool isRelease, b
 		              "\t\t\t<PreprocessorDefinitions>WIN32;" << (configuration == "LLVM" ? "_CRT_SECURE_NO_WARNINGS;" : "") << "%(PreprocessorDefinitions)</PreprocessorDefinitions>\n"
 		              "\t\t\t<MinimalRebuild>true</MinimalRebuild>\n"
 		              "\t\t\t<BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>\n"
-		              "\t\t\t<RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>\n"
+		              "\t\t\t<RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>\n"
 		              "\t\t\t<FunctionLevelLinking>true</FunctionLevelLinking>\n"
 		              "\t\t\t<TreatWarningAsError>false</TreatWarningAsError>\n";
 		if (_version >= 14) {
