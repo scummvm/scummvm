@@ -2611,8 +2611,12 @@ bool ScummEngine::startManiac() {
 			Common::String path = dom.getVal("path");
 
 			if (path.hasPrefix(currentPath)) {
-				path.erase(0, currentPath.size() + 1);
-				if (path.equalsIgnoreCase("maniac")) {
+				path.erase(0, currentPath.size());
+				// Do a case-insensitive non-path-mode match of the remainder.
+				// While strictly speaking it's too broad, this matchString
+				// ignores the presence or absence of trailing path separators
+				// in either currentPath or path.
+				if (path.matchString("*maniac*", true, false)) {
 					maniacTarget = iter->_key;
 					break;
 				}
