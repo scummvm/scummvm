@@ -466,7 +466,7 @@ void Design::drawBitmap(Graphics::Surface *surface, Common::SeekableReadStream &
 
 			for (int c = 0; c < 8; c++) {
 				if (_boundsCalculationMode) {
-					adjustBounds(x, y);
+					adjustBounds(x1 + x, y1 + y);
 				} else if (x1 + x >= 0 && x1 + x < surface->w && y1 + y >= 0 && y1 + y < surface->h)
 					*((byte *)tmp.getBasePtr(x, y)) = (color & (1 << (7 - c % 8))) ? kColorBlack : kColorWhite;
 				x++;
