@@ -2608,31 +2608,13 @@ bool ScummEngine::startManiac() {
 		Common::ConfigManager::DomainMap::iterator iter = ConfMan.beginGameDomains();
 		for (; iter != ConfMan.endGameDomains(); ++iter) {
 			Common::ConfigManager::Domain &dom = iter->_value;
-			Common::String path1 = dom.getVal("path");
+			Common::String path = dom.getVal("path");
 
-			if (path1.hasPrefix(currentPath)) {
-				// In some ports (e.g. Windows), the "path" will end with a
-				// path separator. In others (e.g. Linux), it won't. And
-				// we have no way of knowing exactly what the separator
-				// is. The technical term for this is "annoying".
-
-				path1.erase(0, currentPath.size());
-
-				if (!path1.empty()) {
-					// If we've found the path we're looking for, all that
-					// remains now is the "maniac" part of it. If paths end
-					// with a separator, we'll have "maniac" followed by a
-					// separator. If they don't, we'll have a separator
-					// followed by "maniac".
-					Common::String path2 = path1;
-
-					path1.erase(0, 1);
-					path2.deleteLastChar();
-
-					if (path1.equalsIgnoreCase("maniac") || path2.equalsIgnoreCase("maniac")) {
-						maniacTarget = iter->_key;
-						break;
-					}
+			if (path.hasPrefix(currentPath)) {
+				path.erase(0, currentPath.size() + 1);
+				if (path.equalsIgnoreCase("maniac")) {
+					maniacTarget = iter->_key;
+					break;
 				}
 			}
 		}
