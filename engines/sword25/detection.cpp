@@ -21,6 +21,7 @@
  */
 
 #include "base/plugins.h"
+#include "common/translation.h"
 #include "engines/advancedDetector.h"
 
 #include "sword25/sword25.h"
@@ -41,6 +42,13 @@ static const char *directoryGlobs[] = {
 	0
 };
 
+static const ExtraGuiOption sword25ExtraGuiOption = {
+	_s("Use English speech"),
+	_s("Use English speech instead of German for every language other than German"),
+	"english_speech",
+	false
+};
+
 class Sword25MetaEngine : public AdvancedMetaEngine {
 public:
 	Sword25MetaEngine() : AdvancedMetaEngine(Sword25::gameDescriptions, sizeof(ADGameDescription), sword25Game) {
@@ -58,6 +66,7 @@ public:
 
 	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const;
 	virtual bool hasFeature(MetaEngineFeature f) const;
+	virtual const ExtraGuiOptions getExtraGuiOptions(const Common::String &target) const;
 	virtual int getMaximumSaveSlot() const { return Sword25::PersistenceService::getSlotCount(); }
 	virtual SaveStateList listSaves(const char *target) const;
 };
@@ -72,6 +81,12 @@ bool Sword25MetaEngine::createInstance(OSystem *syst, Engine **engine, const ADG
 bool Sword25MetaEngine::hasFeature(MetaEngineFeature f) const {
 	return
 		(f == kSupportsListSaves);
+}
+
+const ExtraGuiOptions Sword25MetaEngine::getExtraGuiOptions(const Common::String &target) const {
+	ExtraGuiOptions options;
+	options.push_back(sword25ExtraGuiOption);
+	return options;
 }
 
 SaveStateList Sword25MetaEngine::listSaves(const char *target) const {
