@@ -43,50 +43,47 @@ static const ADGameDescription gameDescriptions[] = {
 	// Polygons with ignored byte 1
 	FANGAME("Double Trouble", "1652e36857a04c01dc560234c4818619", 542371),
 	FANGAMEN("Dungeon World II", "DungeonWorld2", "0154ea11d3cbb536c13b4ae9e6902d48", 230199),
-	FANGAME("Eidisi I", "299d1de4baccf1c66118396519953652", 180480),
+	FANGAME("Eidisi I", "595117cbed33e8de1ab3714b33880205", 172552),
 	// Problems(?) with text on the first screen
-	FANGAMEN("Enchanted Pencils", "Enchanted Pencils 0.99 (PG)", "35514583fe7ab36fad2569fc87bd887b", 414464),
-	FANGAME("Escape from School!", "a854be48d4af20126d18a9cad93a969b", 51840),
-	FANGAME("Exploration Zeta!", "b9fbb704017d7ea9613b0160f86527bb", 370944),
+	FANGAMEN("Enchanted Pencils", "Enchanted Pencils 0.99 (PG)", "595117cbed33e8de1ab3714b33880205", 408913),
+	FANGAME("Escape from School!", "913812a1ac7a6b0e48dadd1afa1c7763", 50105),
+	FANGAME("Exploration Zeta!", "c477921aeee6ed0f8997ba44447eb2d0", 366599),
 	// Crash in console rendering on the first scene
-	FANGAME("Fantasy Quest", "599f0b2c7ecce65c39646c05f2c19c1b", 782848),
-	FANGAME("Find the Heart", "7ae36ffa295651cd6d2d56981d6b5ff7", 108928), // From Joshua's Worlds 1.0
-	FANGAME("Karth of the Jungle", "6e7d5ab9a151a9dfd54e409b79fee0f4", 99456),
-	FANGAME("Karth of the Jungle", "b3f60b9fd2cb2029eff65a1e112a9399", 99840), // Alternative version
-	FANGAME("Karth of the Jungle", "e208ddbedc081b04f47a8638e6d28c18", 99840), // Alternative version
-	FANGAME("Karth of the Jungle II", "873223adb36cf3bd259d116ced918bae", 204544),
-	FANGAME("Karth of the Jungle II", "9327d86cf29d16c9906e34094c1a7b12", 204544), // Alternative version
-	FANGAME("Lost Crystal", "4f21ba8ee64f8d655b9eeb1e3ffd50f7", 792064),
-	FANGAME("Magic Rings", "6e0d1dd561d3dad8f9a7a20ed1f09b16", 112000),
-	FANGAME("Midnight Snack", "346982a32fc701f53bb19771d72063d0", 69504),
-	FANGAME("Minitorian", "5e8b1c21fccd629eac0300e9cf003a2d", 592384),
-	FANGAME("Puzzle Piece Search", "51885fe2effeaa14b2b8b08a53931805", 252928), // From Joshua's Worlds 1.0
+	FANGAME("Fantasy Quest", "4b0e1a1fbaaa4930accd0f9f0e1519c7", 762754),
+	FANGAME("Find the Heart", "595117cbed33e8de1ab3714b33880205", 106235), // From Joshua's Worlds 1.0
+	FANGAME("Karth of the Jungle", "595117cbed33e8de1ab3714b33880205", 96711),
+	FANGAME("Karth of the Jungle", "595117cbed33e8de1ab3714b33880205", 96960), // Alternative version
+	FANGAME("Karth of the Jungle II", "c106835ab4436de054e03aec3ce904ce", 201053),
+	FANGAME("Lost Crystal", "8174c81ea1858d0079ae040dae2cefd3", 771072),
+	FANGAME("Magic Rings", "913812a1ac7a6b0e48dadd1afa1c7763", 109044),
+	FANGAME("Midnight Snack", "913812a1ac7a6b0e48dadd1afa1c7763", 67952),
+	FANGAME("Minitorian", "913812a1ac7a6b0e48dadd1afa1c7763", 586464),
+	FANGAME("Puzzle Piece Search", "595117cbed33e8de1ab3714b33880205", 247693), // From Joshua's Worlds 1.0
 	// Empty(?)  first scene
-	FANGAME("Pyramid of No Return", "48a9c668ce69206f57e11e1a85970d02", 392192),
-	FANGAME("Queen Quest", "730605d312efedb5e3ff108522fcac18", 59776),
+	FANGAME("Pyramid of No Return", "77a55a45f794b4d4a56703d3acce871e", 385145),
+	FANGAME("Queen Quest", "4b0e1a1fbaaa4930accd0f9f0e1519c7", 57026),
 	// Crash in console rendering on the initial scene
-	FANGAME("Quest for the Dark Sword", "7e4e712d151f6c686f6024b0dedf5d34", 590720),
-	FANGAME("Quest for the Dark Sword", "308cf0fdfa129fa46b325b307f7e88c6", 590720), // Alteranative version
-	FANGAME("Radical Castle 1.0", "b08e1b935807356f86633c2bc4f810ed", 355712),
-	BIGGAME("raysmaze", "v1.5", "Ray's Maze1.5", "e5a3e25dddfffbed461bca3c26073117", 1437184),
-	BIGGAME("scepters", "", "Scepters", "b80bff315897776dda7689cdf829fab4", 360832),
+	FANGAME("Quest for the Dark Sword", "b35dd0c078da9f35fc25a455f56bb129", 572576),
+	FANGAME("Radical Castle 1.0", "677bfee4afeca2f7152eb8b76c85ca8d", 347278),
+	BIGGAME("raysmaze", "v1.5", "Ray's Maze1.5", "064b16d8c20724f8debbbdc3aafde538", 1408516),
+	BIGGAME("raysmaze", "v1.5/alt", "Ray's Maze1.5", "92cca777800c3d31a77b5ed7f6ee49ad", 1408516),
+	BIGGAME("scepters", "", "Scepters", "3311deef8bf82f0b4b1cfa15a3b3289d", 346595),
 	// ??? problems with dog bitmap?
-	FANGAMEN("Space Adventure", "SpaceAdventure", "e5b0d8ad6d235ede2f08583342642dfa", 158720),
-	FANGAME("Star Trek", "2395856df8dbefe9c0609caa985edf73", 55296),
+	FANGAMEN("Space Adventure", "SpaceAdventure", "f9f3f1c419f56955f7966355b34ea5c8", 155356),
+	FANGAME("Star Trek", "44aaef4806578700429de5aaf95c266e", 53320),
 	// Crash in bitmap drawing on the first scene
-	FANGAME("Strange Disappearance", "f9eba5b315853a5599927db2a73c87d3", 781312),
-	FANGAME("Time Bomb", "2df84b636237686b624e736a698a16c4", 66432),
+	FANGAME("Strange Disappearance", "d81f2d03a1e863f04fb1e3a5495b720e", 772282),
+	FANGAME("Time Bomb", "4b0e1a1fbaaa4930accd0f9f0e1519c7", 64564),
 	// Invalid rect in scene "Access Tube 1"
-	FANGAMEN("The Phoenix v1.2", "The Phoenix", "7fa2a2ac740f22572516843922b7c630", 434560),
-	FANGAME("The Sultan's Palace", "589aebf6c14bb5c63d9b4b2c37f31e16", 468096),
+	FANGAMEN("The Phoenix v1.2", "The Phoenix", "4b0e1a1fbaaa4930accd0f9f0e1519c7", 431640),
+	FANGAME("The Sultan's Palace", "358799d446ee4fc12f793febd6c94b95", 456855),
 	// Admission for on 3rd screen is messed up
-	FANGAME("The Tower", "75eba57a12ed181e07f34eaf6aa9d2c4", 568320),
+	FANGAME("The Tower", "435f420b9dff895ae1ddf1338040c51d", 556539),
 	// Doesn't go past first scene
-	BIGGAME("twisted", "", "Twisted! 1.6", "8ea8cc13d26d7975dc43ea7e6c193217", 992896),
-	FANGAME("Wishing Well", "3ee884d0d1a168d088cf2250d3a83c73", 105600),
-	FANGAME("Wizard's Warehouse", "46fa84397d83f03d3a683ec9a3000323", 163200),
-	FANGAME("ZikTuria", "e793155bed1a70fa2074a3fcd696b751", 54784),
-	FANGAME("Zoony", "e6cc8a914a4215dafbcce6315dd12cf5", 160256),
+	BIGGAME("twisted", "", "Twisted! 1.6", "26207bdf0bb539464f136f0669af885f", 960954),
+	FANGAME("Wishing Well", "913812a1ac7a6b0e48dadd1afa1c7763", 103688),
+	FANGAME("Wizard's Warehouse", "913812a1ac7a6b0e48dadd1afa1c7763", 159748),
+	FANGAME("ZikTuria", "418e74ca71029a1e9db80d0eb30c0843", 52972),
 
 	AD_TABLE_END_MARKER
 };
