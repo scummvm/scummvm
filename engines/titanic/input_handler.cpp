@@ -20,35 +20,20 @@
  *
  */
 
-#include "titanic/game_manager.h"
-#include "titanic/messages/messages.h"
+#include "titanic/input_handler.h"
 #include "titanic/screen_manager.h"
 
 namespace Titanic {
 
-CGameManager::CGameManager(CProjectItem *project, CGameView *gameView):
-		_project(project), _gameView(gameView), _trueTalkManager(this),
-		_inputHandler(this), _inputTranslator(&_inputHandler),		
-		_gameState(this), _sound(this), _musicRoom(this),
-		_videoSurface(nullptr), _field30(0), _field34(0), _field48(0),
-		_field4C(0), _field50(0), _field54(0), _tickCount(0) {
-	// TODO
+CInputHandler::CInputHandler(CGameManager *owner) :
+		_gameManager(owner), _inputTranslator(nullptr),
+		_field4(0), _field8(0), _fieldC(0), _field10(0), _field14(0),
+		_field18(0), _field1C(0), _field20(0), _field24(0) {
+	CScreenManager::_screenManagerPtr->_inputHandler = this;
 }
 
-void CGameManager::load(SimpleFile *file) {
-	file->readNumber();
-
-	//_gameState.load(file);
-	//_list.load(file);
-
-
-}
-
-void CGameManager::gameLoaded() {
-	// TODO
-
-	//CLoadSuccessMsg msg(0);
-
+void CInputHandler::setTranslator(CInputTranslator *translator) {
+	_inputTranslator = translator;
 }
 
 } // End of namespace Titanic z

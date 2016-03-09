@@ -20,34 +20,15 @@
  *
  */
 
-#include "titanic/game_manager.h"
-#include "titanic/messages/messages.h"
-#include "titanic/screen_manager.h"
+#include "titanic/game_state.h"
 
 namespace Titanic {
 
-CGameManager::CGameManager(CProjectItem *project, CGameView *gameView):
-		_project(project), _gameView(gameView), _trueTalkManager(this),
-		_inputHandler(this), _inputTranslator(&_inputHandler),		
-		_gameState(this), _sound(this), _musicRoom(this),
-		_videoSurface(nullptr), _field30(0), _field34(0), _field48(0),
-		_field4C(0), _field50(0), _field54(0), _tickCount(0) {
-	// TODO
-}
-
-void CGameManager::load(SimpleFile *file) {
-	file->readNumber();
-
-	//_gameState.load(file);
-	//_list.load(file);
-
-
-}
-
-void CGameManager::gameLoaded() {
-	// TODO
-
-	//CLoadSuccessMsg msg(0);
+CGameState::CGameState(CGameManager *gameManager) :
+		_gameManager(gameManager), _sub(this),
+		_field8(0), _fieldC(0), _field10(10), _field14(0), _field18(0),
+		_field1C(0), _field20(0), _field24(0), _field28(0), _field2C(0),
+		_field30(0), _field34(0), _field38(0) {
 
 }
 

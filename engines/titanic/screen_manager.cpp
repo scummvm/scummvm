@@ -44,6 +44,7 @@ CScreenManager::CScreenManager(TitanicEngine *vm): _vm(vm) {
 	_frontRenderSurface = nullptr;
 	_mouseCursor = nullptr;
 	_textCursor = nullptr;
+	_inputHandler = nullptr;
 	_fontNumber = 0;
 	// TODO: Further initialization
 

@@ -5,8 +5,12 @@ MODULE_OBJS := \
 	direct_draw.o \
 	font.o \
 	game_manager.o \
+	game_state.o \
+	game_state_sub.o \
 	game_view.o \
 	image.o \
+	input_handler.o \
+	input_translator.o \
 	main_game_window.o \
 	screen_manager.o \
 	simple_file.o \
@@ -364,6 +368,7 @@ MODULE_OBJS := \
 	npcs/succubus.o \
 	npcs/summon_bots.o \
 	npcs/titania.o \
+	npcs/true_talk_manager.o \
 	npcs/true_talk_npc.o \
 	pet_control/pet_control.o \
 	pet_control/pet_control_list_item.o \
@@ -391,12 +396,14 @@ MODULE_OBJS := \
 	sound/dome_from_top_of_well.o \
 	sound/enter_view_toggles_other_music.o \
 	sound/gondolier_song.o \
+	sound/music_room.o \
 	sound/music_player.o \
 	sound/node_auto_sound_player.o \
 	sound/restricted_auto_music_player.o \
 	sound/room_auto_sound_player.o \
 	sound/season_noises.o \
 	sound/seasonal_music_player.o \
+	sound/sound.o \
 	sound/titania_speech.o \
 	sound/trigger_auto_music_player.o \
 	sound/view_auto_sound_player.o \

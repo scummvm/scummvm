@@ -20,58 +20,34 @@
  *
  */
 
-#ifndef TITANIC_GAME_MANAGER_H
-#define TITANIC_GAME_MANAGER_H
+#ifndef TITANIC_INPUT_HANDLER_H
+#define TITANIC_INPUT_HANDLER_H
 
-#include "common/scummsys.h"
-#include "titanic/game_state.h"
-#include "titanic/input_handler.h"
 #include "titanic/input_translator.h"
-#include "titanic/simple_file.h"
-#include "titanic/video_surface.h"
-#include "titanic/npcs/true_talk_manager.h"
-#include "titanic/sound/music_room.h"
-#include "titanic/sound/sound.h"
 
 namespace Titanic {
 
-class CProjectItem;
-class CGameView;
+class CGameManager;
 
-class CGameManager {
-private:
-	CProjectItem *_project;
-	CGameView *_gameView;
-	CGameState _gameState;
-	CSound _sound;
-	CInputHandler _inputHandler;
-	CInputTranslator _inputTranslator;
-	CMusicRoom _musicRoom;
-	CTrueTalkManager _trueTalkManager;
-	Common::Rect _bounds;
-	int _field30;
-	int _field34;
-	int _field48;
-	int _field4C;
-	int _field50;
-	int _field54;
-	CVideoSurface *_videoSurface;
-	int _tickCount;
+class CInputHandler {
 public:
-	CGameManager(CProjectItem *project, CGameView *gameView);
-	~CGameManager();
+	CGameManager *_gameManager;
+	CInputTranslator *_inputTranslator;
+	int _field4;
+	int _field8;
+	int _fieldC;
+	int _field10;
+	int _field14;
+	int _field18;
+	int _field1C;
+	int _field20;
+	int _field24;
+public:
+	CInputHandler(CGameManager *owner);
 
-	/**
-	 * Load data from a save file
-	 */
-	void load(SimpleFile *file);
-
-	/**
-	 * Called after loading a game has finished
-	 */
-	void gameLoaded();
+	void setTranslator(CInputTranslator *translator);
 };
 
 } // End of namespace Titanic
 
-#endif /* TITANIC_GAME_MANAGER_H */
+#endif /* TITANIC_INPUT_HANDLER_H */

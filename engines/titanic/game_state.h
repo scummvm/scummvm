@@ -20,58 +20,47 @@
  *
  */
 
-#ifndef TITANIC_GAME_MANAGER_H
-#define TITANIC_GAME_MANAGER_H
+#ifndef TITANIC_GAME_STATE_H
+#define TITANIC_GAME_STATE_H
 
-#include "common/scummsys.h"
-#include "titanic/game_state.h"
-#include "titanic/input_handler.h"
-#include "titanic/input_translator.h"
+#include "titanic/core/list.h"
 #include "titanic/simple_file.h"
-#include "titanic/video_surface.h"
-#include "titanic/npcs/true_talk_manager.h"
-#include "titanic/sound/music_room.h"
-#include "titanic/sound/sound.h"
+#include "titanic/game_state_sub.h"
 
 namespace Titanic {
 
-class CProjectItem;
-class CGameView;
+class CGameManager;
 
-class CGameManager {
-private:
-	CProjectItem *_project;
-	CGameView *_gameView;
-	CGameState _gameState;
-	CSound _sound;
-	CInputHandler _inputHandler;
-	CInputTranslator _inputTranslator;
-	CMusicRoom _musicRoom;
-	CTrueTalkManager _trueTalkManager;
-	Common::Rect _bounds;
+class CGameStateList : public List<ListItem> {
+public:
+	int _field10;
+	int _field14;
+public:
+	CGameStateList() : List<ListItem>(), _field10(0), _field14(0) {}
+};
+
+class CGameState {
+public:
+	CGameManager *_gameManager;
+	CGameStateSub _sub;
+	CGameStateList _list;
+	int _field8;
+	int _fieldC;
+	int _field10;
+	int _field14;
+	int _field18;
+	int _field1C;
+	int _field20;
+	int _field24;
+	int _field28;
+	int _field2C;
 	int _field30;
 	int _field34;
-	int _field48;
-	int _field4C;
-	int _field50;
-	int _field54;
-	CVideoSurface *_videoSurface;
-	int _tickCount;
+	int _field38;
 public:
-	CGameManager(CProjectItem *project, CGameView *gameView);
-	~CGameManager();
-
-	/**
-	 * Load data from a save file
-	 */
-	void load(SimpleFile *file);
-
-	/**
-	 * Called after loading a game has finished
-	 */
-	void gameLoaded();
+	CGameState(CGameManager *gameManager);
 };
 
 } // End of namespace Titanic
 
-#endif /* TITANIC_GAME_MANAGER_H */
+#endif /* TITANIC_GAME_STATE_H */

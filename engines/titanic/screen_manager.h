@@ -27,6 +27,7 @@
 #include "common/array.h"
 #include "titanic/direct_draw.h"
 #include "titanic/font.h"
+#include "titanic/input_handler.h"
 #include "titanic/video_surface.h"
 
 namespace Titanic {
@@ -63,6 +64,7 @@ public:
 	CScreenManagerRec _entries[2];
 	void *_mouseCursor;
 	void *_textCursor;
+	CInputHandler *_inputHandler;
 	int _fontNumber;
 public:
 	CScreenManager(TitanicEngine *vm);
