@@ -21,8 +21,9 @@
  */
 
 #include "titanic/game_manager.h"
-#include "titanic/messages/messages.h"
 #include "titanic/screen_manager.h"
+#include "titanic/core/project_item.h"
+#include "titanic/messages/messages.h"
 
 namespace Titanic {
 
@@ -30,9 +31,10 @@ CGameManager::CGameManager(CProjectItem *project, CGameView *gameView):
 		_project(project), _gameView(gameView), _trueTalkManager(this),
 		_inputHandler(this), _inputTranslator(&_inputHandler),		
 		_gameState(this), _sound(this), _musicRoom(this),
-		_videoSurface(nullptr), _field30(0), _field34(0), _field48(0),
+		_field30(0), _field34(0), _field48(0),
 		_field4C(0), _field50(0), _field54(0), _tickCount(0) {
-	// TODO
+	_videoSurface = CScreenManager::_screenManagerPtr->createSurface(600, 340);
+	_project->setGameManager(this);
 }
 
 void CGameManager::load(SimpleFile *file) {

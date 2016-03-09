@@ -128,6 +128,11 @@ CGameManager *CProjectItem::getGameManager() const {
 	return _gameManager;
 }
 
+void CProjectItem::setGameManager(CGameManager *gameManager) {
+	if (!_gameManager)
+		_gameManager = gameManager;
+}
+
 void CProjectItem::resetGameManager() {
 	_gameManager = nullptr;
 }

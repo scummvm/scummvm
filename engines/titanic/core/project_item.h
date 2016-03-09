@@ -122,6 +122,11 @@ public:
 	virtual CGameManager *getGameManager() const;
 
 	/**
+	 * Sets the game manager for the project, if not already set
+	 */
+	void setGameManager(CGameManager *gameManager);
+
+	/**
 	 * Get a reference to the PET control
 	 */
 	CPetControl *getPetControl() const;

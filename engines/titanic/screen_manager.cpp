@@ -124,7 +124,11 @@ void OSScreenManager::proc18() {}
 void OSScreenManager::proc19() {}
 void OSScreenManager::proc20() {}
 void OSScreenManager::proc21() {}
-void OSScreenManager::proc22() {}
+
+CVideoSurface *OSScreenManager::createSurface(int w, int h) {
+	error("TODO");
+}
+
 void OSScreenManager::proc23() {}
 void OSScreenManager::proc24() {}
 void OSScreenManager::proc25() {}

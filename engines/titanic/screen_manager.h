@@ -93,7 +93,7 @@ public:
 	virtual void proc19() = 0;
 	virtual void proc20() = 0;
 	virtual void proc21() = 0;
-	virtual void proc22() = 0;
+	virtual CVideoSurface *createSurface(int w, int h) = 0;
 	virtual void proc23() = 0;
 	virtual void proc24() = 0;
 	virtual void proc25() = 0;
@@ -142,7 +142,7 @@ public:
 	virtual void proc19();
 	virtual void proc20();
 	virtual void proc21();
-	virtual void proc22();
+	virtual CVideoSurface *createSurface(int w, int h);
 	virtual void proc23();
 	virtual void proc24();
 	virtual void proc25();
