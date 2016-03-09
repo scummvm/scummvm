@@ -72,6 +72,8 @@ Design::Design(Common::SeekableReadStream *data) {
 
 	_surface = NULL;
 	_bounds = NULL;
+
+	_boundsCalculationMode = false;
 }
 
 Design::~Design() {
@@ -87,9 +89,13 @@ void Design::paint(Graphics::Surface *surface, Patterns &patterns, int x, int y)
 	if (_surface == NULL) {
 		_boundsCalculationMode = true;
 		_bounds->debugPrint(4, "Internal bounds:");
-		_bounds->left = _bounds->right = _bounds->top = _bounds->bottom = 0;
+		_bounds->left = _bounds->top = 10000;
+		_bounds->right =_bounds->bottom = -10000;
 		render(patterns);
 		_boundsCalculationMode = false;
+		if (_bounds->right == -10000) {
+			_bounds->left = _bounds->top = _bounds->right = _bounds->bottom = 0;
+		}
 		_bounds->debugPrint(4, "Calculated bounds:");
 
 		_surface = new Graphics::Surface;
@@ -100,6 +106,8 @@ void Design::paint(Graphics::Surface *surface, Patterns &patterns, int x, int y)
 
 		needRender = true;
 	}
+
+	_bounds->debugPrint(4, "Using bounds:");
 #if 0
 	PlotData pd(_surface, &patterns, 8, 1, this);
 	int x1 = 50, y1 = 50, x2 = 200, y2 = 200, borderThickness = 30;
@@ -125,15 +133,17 @@ void Design::paint(Graphics::Surface *surface, Patterns &patterns, int x, int y)
 	if (needRender)
 		render(patterns);
 
-	const int padding = 3;
-	for (int i = padding; i < _bounds->height() - 2 * padding; i++) {
-		const byte *src = (const byte *)_surface->getBasePtr(padding, i);
-		byte *dst = (byte *)surface->getBasePtr(x + padding, y+i);
-		for (int j = padding; j < _bounds->width() - 2 * padding; j++) {
-			if (*src != kColorGreen)
-				*dst = *src;
-			src++;
-			dst++;
+	if (_bounds->width() && _bounds->height()) {
+		const int padding = 3;
+		for (int i = padding; i < _bounds->height() - 2 * padding; i++) {
+			const byte *src = (const byte *)_surface->getBasePtr(padding, i);
+			byte *dst = (byte *)surface->getBasePtr(x + padding, y+i);
+			for (int j = padding; j < _bounds->width() - 2 * padding; j++) {
+				if (*src != kColorGreen)
+					*dst = *src;
+				src++;
+				dst++;
+			}
 		}
 	}
 }
@@ -192,7 +202,7 @@ bool Design::isPointOpaque(int x, int y) {
 
 void Design::adjustBounds(int16 x, int16 y) {
 	_bounds->left   = MIN(x, _bounds->left);
-	_bounds->right  = MAX(x, _bounds->left);
+	_bounds->right  = MAX(x, _bounds->right);
 	_bounds->top    = MIN(y, _bounds->top);
 	_bounds->bottom = MAX(y, _bounds->bottom);
 }
@@ -455,7 +465,9 @@ void Design::drawBitmap(Graphics::Surface *surface, Common::SeekableReadStream &
 				color = b;
 
 			for (int c = 0; c < 8; c++) {
-				if (x1 + x >= 0 && x1 + x < surface->w && y1 + y >= 0 && y1 + y < surface->h)
+				if (_boundsCalculationMode) {
+					adjustBounds(x, y);
+				} else if (x1 + x >= 0 && x1 + x < surface->w && y1 + y >= 0 && y1 + y < surface->h)
 					*((byte *)tmp.getBasePtr(x, y)) = (color & (1 << (7 - c % 8))) ? kColorBlack : kColorWhite;
 				x++;
 				if (x == w) {

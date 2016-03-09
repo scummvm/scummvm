@@ -31,7 +31,7 @@ namespace Wage {
 
 static const ADGameDescription gameDescriptions[] = {
 	FANGAME("3rd Floor", "a107d7a177970b2259e32681bd8b47c9", 285056),
-	BIGGAME("afm", "v1.8", "Another Fine Mess 1.8", "8e5aa915f3253efb2aab52435647b25e", 1456000),
+	BIGGAME("afm", "v1.8", "Another Fine Mess 1.8", "65dc7baec9fb0812238139da15efc4e3", 1456000),
 	BIGGAME("amot", "v1.8", "A Mess O' Trouble 1.8", "b3ef53afed282671b704e45df829350c", 1895552),
 	FANGAME("Bug Hunt", "2ebd3515a87941063ad66c3cf93c5e78", 200064),
 	// Problems with letter rendering
