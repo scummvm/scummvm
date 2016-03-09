@@ -481,6 +481,9 @@ void Design::drawBitmap(Graphics::Surface *surface, Common::SeekableReadStream &
 
 	in.skip(numBytes);
 
+	if (_boundsCalculationMode)
+		return;
+
 	FloodFill ff(&tmp, kColorWhite, kColorGreen);
 	for (int yy = 0; yy < h; yy++) {
 		ff.addSeed(0, yy);
