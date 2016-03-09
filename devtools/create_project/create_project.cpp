@@ -939,7 +939,7 @@ const Feature s_features[] = {
 	{       "mad",         "USE_MAD", "libmad",           true, "libmad (MP3) support" },
 	{    "vorbis",      "USE_VORBIS", "libvorbisfile_static libvorbis_static libogg_static", true, "Ogg Vorbis support" },
 	{      "flac",        "USE_FLAC", "libFLAC_static win_utf8_io_static",   true, "FLAC support" },
-	{       "png",         "USE_PNG", "libpng",           true, "libpng support" },
+	{       "png",         "USE_PNG", "libpng16",         true, "libpng support" },
 	{      "faad",        "USE_FAAD", "libfaad",          false, "AAC support" },
 	{     "mpeg2",       "USE_MPEG2", "libmpeg2",         false, "MPEG-2 support" },
 	{    "theora",   "USE_THEORADEC", "libtheora_static", true, "Theora decoding support" },
