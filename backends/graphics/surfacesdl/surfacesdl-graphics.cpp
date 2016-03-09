@@ -401,7 +401,7 @@ void SurfaceSdlGraphicsManager::setupScreen(uint gameWidth, uint gameHeight, boo
 	_screenFormat = Graphics::PixelFormat(f->BytesPerPixel, 8 - f->Rloss, 8 - f->Gloss, 8 - f->Bloss, 0,
 										f->Rshift, f->Gshift, f->Bshift, f->Ashift);
 
-#if defined(USE_OPENGL)
+#if defined(USE_OPENGL) && !defined(AMIGAOS)
 	if (gameRenderTarget == kFramebuffer) {
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 		_frameBuffer = new OpenGL::FrameBuffer(gameWidth, gameHeight);
