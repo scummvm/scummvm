@@ -73,6 +73,9 @@ SurfaceSdlGraphicsManager::SurfaceSdlGraphicsManager(SdlEventSource *sdlEventSou
 	, _surfaceRenderer(nullptr)
 #endif
 	{
+		ConfMan.registerDefault("fullscreen_res", "desktop");
+		ConfMan.registerDefault("aspect_ratio", true);
+
 		const SDL_VideoInfo *vi = SDL_GetVideoInfo();
 		_desktopW = vi->current_w;
 		_desktopH = vi->current_h;
@@ -184,9 +187,7 @@ void SurfaceSdlGraphicsManager::launcherInitSize(uint w, uint h) {
 	setupScreen(w, h, false, false);
 }
 
-void SurfaceSdlGraphicsManager::setupScreen(uint screenW, uint screenH, bool fullscreen, bool accel3d) {
-	uint32 sdlflags;
-	int bpp;
+void SurfaceSdlGraphicsManager::setupScreen(uint gameWidth, uint gameHeight, bool fullscreen, bool accel3d) {
 
 	closeOverlay();
 
@@ -195,62 +196,36 @@ void SurfaceSdlGraphicsManager::setupScreen(uint screenW, uint screenH, bool ful
 	_antialiasing = 0;
 #endif
 	_fullscreen = fullscreen;
-
-	ConfMan.registerDefault("fullscreen_res", "desktop");
-	const Common::String &fsres = ConfMan.get("fullscreen_res");
-	if (fsres != "desktop") {
-		uint newW, newH;
-		int converted = sscanf(fsres.c_str(), "%ux%u", &newW, &newH);
-		if (converted == 2) {
-			_desktopW = newW;
-			_desktopH = newH;
-		} else {
-			warning("Could not parse 'fullscreen_res' option: expected WWWxHHH, got %s", fsres.c_str());
-		}
-	}
-
-	ConfMan.registerDefault("aspect_ratio", true);
 	_lockAspectRatio = ConfMan.getBool("aspect_ratio");
-	uint fbW = screenW;
-	uint fbH = screenH;
-	_gameRect = Math::Rect2d(Math::Vector2d(0, 0), Math::Vector2d(1, 1));
 
-#ifdef USE_OPENGL
-	bool framebufferSupported = false;
+	bool engineSupportsArbitraryResolutions = g_engine && g_engine->hasFeature(Engine::kSupportsArbitraryResolutions);
 
-	// Use the desktop resolution for fullscreen when possible
-	if (_fullscreen) {
-		if (g_engine->hasFeature(Engine::kSupportsArbitraryResolutions)) {
-			// If the game supports arbitrary resolutions, use the desktop mode as the game mode
-			screenW = _desktopW;
-			screenH = _desktopH;
-		} else if (_opengl) {
-			// If available, draw to a framebuffer and scale it to the desktop resolution
-#ifndef AMIGAOS
-			// Spawn a 32x32 window off-screen
-			SDL_putenv(const_cast<char *>("SDL_VIDEO_WINDOW_POS=9000,9000"));
-			SDL_SetVideoMode(32, 32, 0, SDL_OPENGL);
-			SDL_putenv(const_cast<char *>("SDL_VIDEO_WINDOW_POS=centered"));
-			initializeOpenGLContext();
-			framebufferSupported = OpenGLContext.framebufferObjectSupported;
-			if (_fullscreen && framebufferSupported) {
-				screenW = _desktopW;
-				screenH = _desktopH;
+	// Detecting if OpenGL framebuffers are available relies on spawning an offscreen window
+	// thus it is only done when framebuffers may be used.
+	bool framebufferSupported = accel3d && fullscreen && detectFramebufferSupport();
 
-				if (_lockAspectRatio) {
-					float scale = MIN(_desktopH / float(fbH), _desktopW / float(fbW));
-					float scaledW = scale * (fbW / float(_desktopW));
-					float scaledH = scale * (fbH / float(_desktopH));
-					_gameRect = Math::Rect2d(
-						Math::Vector2d(0.5 - (0.5 * scaledW), 0.5 - (0.5 * scaledH)),
-						Math::Vector2d(0.5 + (0.5 * scaledW), 0.5 + (0.5 * scaledH))
-					);
-				}
-			}
-#endif
-		}
+	// Select how the game screen is going to be drawn
+	GameRenderTarget gameRenderTarget = selectGameRenderTarget(_fullscreen, accel3d, engineSupportsArbitraryResolutions,
+	                                                           framebufferSupported, _lockAspectRatio);
+
+	// Choose the effective window size or fullscreen mode
+	uint effectiveWidth;
+	uint effectiveHeight;
+	if (_fullscreen && canUsePreferredResolution(gameRenderTarget, engineSupportsArbitraryResolutions)) {
+		Common::Rect fullscreenResolution = getPreferredFullscreenResolution();
+		effectiveWidth = fullscreenResolution.width();
+		effectiveHeight = fullscreenResolution.height();
+	} else {
+		effectiveWidth = gameWidth;
+		effectiveHeight = gameHeight;
 	}
 
+	// Compute the rectangle where to draw the game inside the effective screen
+	_gameRect = computeGameRect(gameRenderTarget, gameWidth, gameHeight, effectiveWidth, effectiveHeight);
+
+	uint32 sdlflags;
+	int bpp;
+#ifdef USE_OPENGL
 	if (_opengl) {
 		if (ConfMan.hasKey("antialiasing"))
 			_antialiasing = ConfMan.getInt("antialiasing");
@@ -273,25 +248,16 @@ void SurfaceSdlGraphicsManager::setupScreen(uint screenW, uint screenH, bool ful
 		sdlflags = SDL_SWSURFACE;
 	}
 
-	if (_fullscreen && !accel3d && _lockAspectRatio) {
-		screenW = _desktopW;
-		screenH = _desktopH;
-		_gameRect = Math::Rect2d(
-			Math::Vector2d((_desktopW - fbW) / 2, (_desktopH - fbH) / 2),
-			Math::Vector2d((_desktopW + fbW) / 2, (_desktopH + fbH) / 2)
-		);
-	}
-
 	if (_fullscreen)
 		sdlflags |= SDL_FULLSCREEN;
 
-	_screen = SDL_SetVideoMode(screenW, screenH, bpp, sdlflags);
+	_screen = SDL_SetVideoMode(effectiveWidth, effectiveHeight, bpp, sdlflags);
 #ifdef USE_OPENGL
 	// If 32-bit with antialiasing failed, try 32-bit without antialiasing
 	if (!_screen && _opengl && _antialiasing) {
 		warning("Couldn't create 32-bit visual with AA, trying 32-bit without AA");
 		setAntialiasing(false);
-		_screen = SDL_SetVideoMode(screenW, screenH, bpp, sdlflags);
+		_screen = SDL_SetVideoMode(effectiveWidth, effectiveHeight, bpp, sdlflags);
 	}
 
 	// If 32-bit failed, try 16-bit
@@ -302,14 +268,14 @@ void SurfaceSdlGraphicsManager::setupScreen(uint screenW, uint screenH, bool ful
 		SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, 5);
 		SDL_GL_SetAttribute(SDL_GL_ALPHA_SIZE, 1);
 		setAntialiasing(true);
-		_screen = SDL_SetVideoMode(screenW, screenH, 0, sdlflags);
+		_screen = SDL_SetVideoMode(effectiveWidth, effectiveHeight, 0, sdlflags);
 	}
 
 	// If 16-bit with antialiasing failed, try 16-bit without antialiasing
 	if (!_screen && _opengl && _antialiasing) {
 		warning("Couldn't create 16-bit visual with AA, trying 16-bit without AA");
 		setAntialiasing(false);
-		_screen = SDL_SetVideoMode(screenW, screenH, 0, sdlflags);
+		_screen = SDL_SetVideoMode(effectiveWidth, effectiveHeight, 0, sdlflags);
 	}
 
 	// If 16-bit with alpha failed, try 16-bit without alpha
@@ -320,14 +286,14 @@ void SurfaceSdlGraphicsManager::setupScreen(uint screenW, uint screenH, bool ful
 		SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, 5);
 		SDL_GL_SetAttribute(SDL_GL_ALPHA_SIZE, 0);
 		setAntialiasing(true);
-		_screen = SDL_SetVideoMode(screenW, screenH, 0, sdlflags);
+		_screen = SDL_SetVideoMode(effectiveWidth, effectiveHeight, 0, sdlflags);
 	}
 
 	// If 16-bit without alpha and with antialiasing didn't work, try without antialiasing
 	if (!_screen && _opengl && _antialiasing) {
 		warning("Couldn't create 16-bit visual with AA, trying 16-bit without AA");
 		setAntialiasing(false);
-		_screen = SDL_SetVideoMode(screenW, screenH, 0, sdlflags);
+		_screen = SDL_SetVideoMode(effectiveWidth, effectiveHeight, 0, sdlflags);
 	}
 #endif
 
@@ -383,8 +349,8 @@ void SurfaceSdlGraphicsManager::setupScreen(uint screenW, uint screenH, bool ful
 	}
 #endif
 
-	_overlayWidth = screenW;
-	_overlayHeight = screenH;
+	_overlayWidth = effectiveWidth;
+	_overlayHeight = effectiveHeight;
 
 #ifdef USE_OPENGL
 	if (_opengl) {
@@ -435,18 +401,115 @@ void SurfaceSdlGraphicsManager::setupScreen(uint screenW, uint screenH, bool ful
 	_screenFormat = Graphics::PixelFormat(f->BytesPerPixel, 8 - f->Rloss, 8 - f->Gloss, 8 - f->Bloss, 0,
 										f->Rshift, f->Gshift, f->Bshift, f->Ashift);
 
-#if defined(USE_OPENGL) && !defined(AMIGAOS)
-	if (_opengl && _fullscreen
-			&& !g_engine->hasFeature(Engine::kSupportsArbitraryResolutions)
-			&& framebufferSupported) {
+#if defined(USE_OPENGL)
+	if (gameRenderTarget == kFramebuffer) {
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-		_frameBuffer = new OpenGL::FrameBuffer(fbW, fbH);
+		_frameBuffer = new OpenGL::FrameBuffer(gameWidth, gameHeight);
 		_frameBuffer->attach();
 	}
 #endif
-	if (_fullscreen && !accel3d) {
-		_subScreen = SDL_CreateRGBSurface(SDL_SWSURFACE, fbW, fbH, bpp, _screen->format->Rmask, _screen->format->Gmask, _screen->format->Bmask, _screen->format->Amask);
+	if (gameRenderTarget == kSubScreen) {
+		_subScreen = SDL_CreateRGBSurface(SDL_SWSURFACE, gameWidth, gameHeight, bpp, _screen->format->Rmask, _screen->format->Gmask, _screen->format->Bmask, _screen->format->Amask);
 	}
+}
+
+SurfaceSdlGraphicsManager::GameRenderTarget SurfaceSdlGraphicsManager::selectGameRenderTarget(bool fullscreen,
+                                                                                              bool accel3d,
+                                                                                              bool engineSupportsArbitraryResolutions,
+                                                                                              bool framebufferSupported,
+                                                                                              bool lockAspectRatio) {
+	if (!fullscreen) {
+		return kScreen;
+	}
+
+	if (!accel3d && lockAspectRatio) {
+		return kSubScreen;
+	}
+
+	if (!engineSupportsArbitraryResolutions && framebufferSupported) {
+		return kFramebuffer;
+	}
+
+	return kScreen;
+}
+
+Math::Rect2d SurfaceSdlGraphicsManager::computeGameRect(GameRenderTarget gameRenderTarget, uint gameWidth, uint gameHeight,
+                                                        uint effectiveWidth, uint effectiveHeight) {
+	switch (gameRenderTarget) {
+		case kScreen:
+			// The game occupies the whole screen
+			return Math::Rect2d(Math::Vector2d(0, 0), Math::Vector2d(1, 1));
+		case kSubScreen:
+			// The game is centered on the screen
+			return Math::Rect2d(
+					Math::Vector2d((effectiveWidth - gameWidth) / 2, (effectiveHeight - gameHeight) / 2),
+					Math::Vector2d((effectiveWidth + gameWidth) / 2, (effectiveHeight + gameHeight) / 2)
+			);
+		case kFramebuffer:
+			if (_lockAspectRatio) {
+				// The game is scaled to fit the screen, keeping the same aspect ratio
+				float scale = MIN(effectiveHeight / float(gameHeight), effectiveWidth / float(gameWidth));
+				float scaledW = scale * (gameWidth / float(effectiveWidth));
+				float scaledH = scale * (gameHeight / float(effectiveHeight));
+				return Math::Rect2d(
+						Math::Vector2d(0.5 - (0.5 * scaledW), 0.5 - (0.5 * scaledH)),
+						Math::Vector2d(0.5 + (0.5 * scaledW), 0.5 + (0.5 * scaledH))
+				);
+			} else {
+				// The game occupies the whole screen
+				return Math::Rect2d(Math::Vector2d(0, 0), Math::Vector2d(1, 1));
+			}
+		default:
+			error("Unhandled game render target '%d'", gameRenderTarget);
+	}
+}
+
+bool SurfaceSdlGraphicsManager::detectFramebufferSupport() {
+	bool framebufferSupported = false;
+#if defined(USE_OPENGL) && !defined(AMIGAOS)
+	// Spawn a 32x32 window off-screen
+	SDL_putenv(const_cast<char *>("SDL_VIDEO_WINDOW_POS=9000,9000"));
+	SDL_SetVideoMode(32, 32, 0, SDL_OPENGL);
+	SDL_putenv(const_cast<char *>("SDL_VIDEO_WINDOW_POS=center"));
+	initializeOpenGLContext();
+	framebufferSupported = OpenGLContext.framebufferObjectSupported;
+#endif
+	return framebufferSupported;
+}
+
+bool SurfaceSdlGraphicsManager::canUsePreferredResolution(GameRenderTarget gameRenderTarget,
+                                                          bool engineSupportsArbitraryResolutions) {
+	switch (gameRenderTarget) {
+		case kScreen:
+			// If the game supports arbitrary resolutions, use the preferred mode as the game mode
+			return engineSupportsArbitraryResolutions;
+		case kSubScreen:
+		case kFramebuffer:
+			return true;
+		default:
+			error("Unhandled game render target '%d'", gameRenderTarget);
+	}
+}
+
+Common::Rect SurfaceSdlGraphicsManager::getPreferredFullscreenResolution() {
+	// Default to the desktop resolution ...
+	uint preferredWidth = _desktopW;
+	uint preferredHeight = _desktopH;
+
+	// ... unless the user has set a resolution in the configuration file
+	const Common::String &fsres = ConfMan.get("fullscreen_res");
+	if (fsres != "desktop") {
+		uint newW, newH;
+		int converted = sscanf(fsres.c_str(), "%ux%u", &newW, &newH);
+		if (converted == 2) {
+			preferredWidth = newW;
+			preferredHeight = newH;
+		} else {
+			warning("Could not parse 'fullscreen_res' option: expected WWWxHHH, got %s", fsres.c_str());
+		}
+	}
+
+	return Common::Rect(preferredWidth, preferredHeight);
 }
 
 Graphics::PixelBuffer SurfaceSdlGraphicsManager::getScreenPixelBuffer() {

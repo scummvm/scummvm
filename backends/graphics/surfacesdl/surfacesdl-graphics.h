@@ -76,7 +76,7 @@ public:
 #endif
 	virtual void initSize(uint w, uint h, const Graphics::PixelFormat *format = NULL);
 	virtual void launcherInitSize(uint w, uint h); // ResidualVM specific method
-	virtual void setupScreen(uint screenW, uint screenH, bool fullscreen, bool accel3d); // ResidualVM specific method
+	virtual void setupScreen(uint gameWidth, uint gameHeight, bool fullscreen, bool accel3d); // ResidualVM specific method
 	virtual Graphics::PixelBuffer getScreenPixelBuffer(); // ResidualVM specific method
 	virtual int getScreenChangeID() const { return _screenChangeCount; }
 
@@ -198,6 +198,33 @@ protected:
 
 	void drawOverlay();
 	void drawSideTextures();
+
+	bool detectFramebufferSupport();
+
+	/**
+	 * Places where the game can be drawn
+	 */
+	enum GameRenderTarget {
+		kScreen,     /** The game is drawn directly on the screen */
+		kSubScreen,  /** The game is drawn to a surface, which is centered on the screen */
+		kFramebuffer /** The game is drawn to a framebuffer, which is scaled to fit the screen */
+	};
+
+	/** Select the best draw target according to the specified parameters */
+	GameRenderTarget selectGameRenderTarget(bool fullscreen, bool accel3d,
+	                                        bool engineSupportsArbitraryResolutions,
+	                                        bool framebufferSupported,
+	                                        bool lockAspectRatio);
+
+	/** Compute the size and position of the game rectangle in the screen */
+	Math::Rect2d computeGameRect(GameRenderTarget gameRenderTarget, uint gameWidth, uint gameHeight,
+	                             uint effectiveWidth, uint effectiveHeight);
+
+	/** Checks if the render target supports drawing at arbitrary resolutions */
+	bool canUsePreferredResolution(GameRenderTarget gameRenderTarget, bool engineSupportsArbitraryResolutions);
+
+	/** Obtain the user configured fullscreen resolution, or default to the desktop resolution */
+	Common::Rect getPreferredFullscreenResolution();
 };
 
 #endif
