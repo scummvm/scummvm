@@ -53,7 +53,9 @@ static const ADGameDescription gameDescriptions[] = {
 	FANGAME("Find the Heart", "7ae36ffa295651cd6d2d56981d6b5ff7", 108928), // From Joshua's Worlds 1.0
 	FANGAME("Karth of the Jungle", "6e7d5ab9a151a9dfd54e409b79fee0f4", 99456),
 	FANGAME("Karth of the Jungle", "b3f60b9fd2cb2029eff65a1e112a9399", 99840), // Alternative version
+	FANGAME("Karth of the Jungle", "e208ddbedc081b04f47a8638e6d28c18", 99840), // Alternative version
 	FANGAME("Karth of the Jungle II", "873223adb36cf3bd259d116ced918bae", 204544),
+	FANGAME("Karth of the Jungle II", "9327d86cf29d16c9906e34094c1a7b12", 204544), // Alternative version
 	FANGAME("Lost Crystal", "4f21ba8ee64f8d655b9eeb1e3ffd50f7", 792064),
 	FANGAME("Magic Rings", "6e0d1dd561d3dad8f9a7a20ed1f09b16", 112000),
 	FANGAME("Midnight Snack", "346982a32fc701f53bb19771d72063d0", 69504),
