@@ -51,6 +51,9 @@ static const ADGameDescription gameDescriptions[] = {
 	// Crash in console rendering on the first scene
 	FANGAME("Fantasy Quest", "599f0b2c7ecce65c39646c05f2c19c1b", 782848),
 	FANGAME("Find the Heart", "7ae36ffa295651cd6d2d56981d6b5ff7", 108928), // From Joshua's Worlds 1.0
+	FANGAME("Karth of the Jungle", "6e7d5ab9a151a9dfd54e409b79fee0f4", 99456),
+	FANGAME("Karth of the Jungle", "b3f60b9fd2cb2029eff65a1e112a9399", 99840), // Alternative version
+	FANGAME("Karth of the Jungle II", "873223adb36cf3bd259d116ced918bae", 204544),
 	FANGAME("Lost Crystal", "4f21ba8ee64f8d655b9eeb1e3ffd50f7", 792064),
 	FANGAME("Magic Rings", "6e0d1dd561d3dad8f9a7a20ed1f09b16", 112000),
 	FANGAME("Midnight Snack", "346982a32fc701f53bb19771d72063d0", 69504),
@@ -62,6 +65,7 @@ static const ADGameDescription gameDescriptions[] = {
 	// Crash in console rendering on the initial scene
 	FANGAME("Quest for the Dark Sword", "7e4e712d151f6c686f6024b0dedf5d34", 590720),
 	FANGAME("Quest for the Dark Sword", "308cf0fdfa129fa46b325b307f7e88c6", 590720), // Alteranative version
+	FANGAME("Radical Castle 1.0", "b08e1b935807356f86633c2bc4f810ed", 355712),
 	BIGGAME("raysmaze", "v1.5", "Ray's Maze1.5", "e5a3e25dddfffbed461bca3c26073117", 1437184),
 	BIGGAME("scepters", "", "Scepters", "b80bff315897776dda7689cdf829fab4", 360832),
 	// ??? problems with dog bitmap?
