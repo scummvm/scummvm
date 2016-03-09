@@ -22,27 +22,27 @@
 
 namespace Wage {
 
-#define ADGF_DEFAULT (ADGF_DROPLANGUAGE|ADGF_DROPPLATFORM)
-#define ADGF_GENERIC (ADGF_DROPLANGUAGE|ADGF_DROPPLATFORM|ADGF_USEEXTRAASTITLE|ADGF_AUTOGENTARGET)
+#define ADGF_DEFAULT (ADGF_DROPLANGUAGE|ADGF_DROPPLATFORM|ADGF_MACRESFORK)
+#define ADGF_GENERIC (ADGF_DROPLANGUAGE|ADGF_DROPPLATFORM|ADGF_USEEXTRAASTITLE|ADGF_AUTOGENTARGET|ADGF_MACRESFORK)
 
 #define FANGAME(n,m,s) { "wage",n,AD_ENTRY1s(n,m,s),Common::EN_ANY,Common::kPlatformMacintosh,ADGF_GENERIC,GUIO0()}
 #define FANGAMEN(n,f,m,s) { "wage",n,AD_ENTRY1s(f,m,s),Common::EN_ANY,Common::kPlatformMacintosh,ADGF_GENERIC,GUIO0()}
 #define BIGGAME(t,v,f,m,s) { t,v,AD_ENTRY1s(f,m,s),Common::EN_ANY,Common::kPlatformMacintosh,ADGF_DEFAULT,GUIO0()}
 
 static const ADGameDescription gameDescriptions[] = {
-	FANGAME("3rd Floor", "a107d7a177970b2259e32681bd8b47c9", 285056),
-	BIGGAME("afm", "v1.8", "Another Fine Mess 1.8", "65dc7baec9fb0812238139da15efc4e3", 1456000),
-	BIGGAME("amot", "v1.8", "A Mess O' Trouble 1.8", "b3ef53afed282671b704e45df829350c", 1895552),
-	FANGAME("Bug Hunt", "2ebd3515a87941063ad66c3cf93c5e78", 200064),
+	FANGAME("3rd Floor", "913812a1ac7a6b0e48dadd1afa1c7763", 281409),
+	BIGGAME("afm", "v1.8", "Another Fine Mess 1.8", "94a9c4f8b3dabd1846d76215a49bd221", 1420723),
+	BIGGAME("amot", "v1.8", "A Mess O' Trouble 1.8", "26207bdf0bb539464f136f0669af885f", 1843104),
+	FANGAME("Bug Hunt", "595117cbed33e8de1ab3714b33880205", 195699),
+	BIGGAME("cantitoe", "", "Camp Cantitoe", "913812a1ac7a6b0e48dadd1afa1c7763", 616985),
 	// Problems with letter rendering
-	FANGAME("Canal District", "8856bc699a20fc5b7fc67accee12cac7", 658176),
-	BIGGAME("cantitoe", "", "Camp Cantitoe", "098aa5c11c58e1ef274a30a9e01b4755", 621440),
+	FANGAME("Canal District", "a56aa3cd4a6e070e15ce1d5815c7be0a", 641470),
 	// Invalid rect in scene "FINALE"
-	FANGAME("Castle of Ert", "85f56731635e825e49a672c4fb0490dd", 205312),
-	FANGAME("Deep Angst", "635f62bbc569e72b03cab9107927d03d", 335232),
-	FANGAMEN("Dungeon World II", "DungeonWorld2", "e10c5e3cc17879c298b1551f33571b15", 234880),
+	FANGAME("Castle of Ert", "327610eb2298a9427a566288312df040", 198955),
+	FANGAME("Deep Angst", "b130b3c811cd89024dd5fdd2b71f70b8", 329550),
 	// Polygons with ignored byte 1
-	FANGAME("Double Trouble", "5e9ee13d09ac54918ed111fa9727ac1c", 557184),
+	FANGAME("Double Trouble", "1652e36857a04c01dc560234c4818619", 542371),
+	FANGAMEN("Dungeon World II", "DungeonWorld2", "0154ea11d3cbb536c13b4ae9e6902d48", 230199),
 	FANGAME("Eidisi I", "299d1de4baccf1c66118396519953652", 180480),
 	// Problems(?) with text on the first screen
 	FANGAMEN("Enchanted Pencils", "Enchanted Pencils 0.99 (PG)", "35514583fe7ab36fad2569fc87bd887b", 414464),
