@@ -444,9 +444,15 @@ void MSBuildProvider::createBuildProp(const BuildSetup &setup, bool isRelease, b
 		              "\t\t\t<BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>\n"
 		              "\t\t\t<RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>\n"
 		              "\t\t\t<FunctionLevelLinking>true</FunctionLevelLinking>\n"
-		              "\t\t\t<TreatWarningAsError>false</TreatWarningAsError>\n"
-		              "\t\t\t<DebugInformationFormat>" << (isWin32 ? "EditAndContinue" : "ProgramDatabase") << "</DebugInformationFormat>\n" // For x64 format Edit and continue is not supported, thus we default to Program Database
-		              "\t\t\t<EnablePREfast>" << (configuration == "Analysis" ? "true" : "false") << "</EnablePREfast>\n";
+		              "\t\t\t<TreatWarningAsError>false</TreatWarningAsError>\n";
+		if (_version >= 14) {
+			// Since MSVC 2015 Edit and Continue is support for x64 too.
+			properties << "\t\t\t<DebugInformationFormat>" << "EditAndContinue" << "</DebugInformationFormat>\n";
+		} else {
+			// Older MSVC versions did not support Edit and Continue for x64, thus we do not use it.
+			properties << "\t\t\t<DebugInformationFormat>" << (isWin32 ? "EditAndContinue" : "ProgramDatabase") << "</DebugInformationFormat>\n";
+		}
+		properties << "\t\t\t<EnablePREfast>" << (configuration == "Analysis" ? "true" : "false") << "</EnablePREfast>\n";
 
 		if (configuration == "LLVM") {
 			// FIXME The LLVM cl wrapper does not seem to work properly with the $(TargetDir) path so we hard-code the build folder until the issue is resolved
