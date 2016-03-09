@@ -319,12 +319,6 @@ void MSBuildProvider::outputProjectSettings(std::ofstream &project, const std::s
 		for (StringList::const_iterator i = setup.libraries.begin(); i != setup.libraries.end(); ++i)
 			libraries += *i + ".lib;";
 
-		if (_version == 14) {
-			std::string debug = isRelease ? "" : "d";
-			libraries += "libvcruntime" + debug + ".lib;";
-			libraries += "libucrt" + debug + ".lib;";
-		}
-
 		project << "\t\t<Link>\n"
 		           "\t\t\t<OutputFile>$(OutDir)" << ((setup.devTools || setup.tests) ? name : setup.projectName) << ".exe</OutputFile>\n"
 		           "\t\t\t<AdditionalDependencies>" << libraries << "%(AdditionalDependencies)</AdditionalDependencies>\n"
