@@ -76,14 +76,18 @@ public:
 	static void drawHLine(Graphics::Surface *surface, int x1, int x2, int y, int thickness, int color, Patterns &patterns, byte fillType);
 	static void drawVLine(Graphics::Surface *surface, int x, int y1, int y2, int thickness, int color, Patterns &patterns, byte fillType);
 
+	bool isBoundsCalculation() { return _boundsCalculationMode; }
+	void adjustBounds(int16 x, int16 y);
 
 private:
 	byte *_data;
 	int _len;
 	Common::Rect *_bounds;
 	Graphics::Surface *_surface;
+	bool _boundsCalculationMode;
 
 private:
+	void render(Patterns &patterns);
 	void drawRect(Graphics::Surface *surface, Common::ReadStream &in,
 		Patterns &patterns, byte fillType, byte borderThickness, byte borderFillType);
 	void drawRoundRect(Graphics::Surface *surface, Common::ReadStream &in,
