@@ -40,7 +40,7 @@ void CTreeItem::load(SimpleFile *file) {
 	CMessageTarget::load(file);
 }
 
-CGameManager *CTreeItem::getGameManager() {
+CGameManager *CTreeItem::getGameManager() const {
 	return _parent ? _parent->getGameManager() : nullptr;
 }
 
@@ -64,17 +64,17 @@ CTreeItem *CTreeItem::getLastSibling() {
 	return item;
 }
 
-CTreeItem *CTreeItem::getLastChild() {
+CTreeItem *CTreeItem::getLastChild() const {
 	if (!_firstChild)
 		return nullptr;
 	return _firstChild->getLastSibling();
 }
 
-CTreeItem *CTreeItem::scan(CTreeItem *item) {
+CTreeItem *CTreeItem::scan(CTreeItem *item) const {
 	if (_firstChild)
 		return _firstChild;
 
-	CTreeItem *treeItem = this;
+	const CTreeItem *treeItem = this;
 	while (treeItem != item) {
 		if (treeItem->_nextSibling)
 			return treeItem->_nextSibling;
@@ -82,19 +82,6 @@ CTreeItem *CTreeItem::scan(CTreeItem *item) {
 		treeItem = treeItem->_parent;
 		if (!treeItem)
 			break;
-	}
-
-	return nullptr;
-}
-
-CDontSaveFileItem *CTreeItem::getDontSaveFileItem() {
-	CTreeItem *item = getFirstChild();
-	while (item) {
-		CDontSaveFileItem *fileItem = dynamic_cast<CDontSaveFileItem *>(item);
-		if (fileItem)
-			return fileItem;
-
-		item = item->getNextSibling();
 	}
 
 	return nullptr;

@@ -124,7 +124,7 @@ void CProjectItem::load(SimpleFile *file) {
 	CTreeItem::load(file);
 }
 
-CGameManager *CProjectItem::getGameManager() {
+CGameManager *CProjectItem::getGameManager() const {
 	return _gameManager;
 }
 
@@ -276,7 +276,7 @@ void CProjectItem::gameLoaded() {
 		petControl->gameLoaded();
 }
 
-CPetControl *CProjectItem::getPetControl() {
+CPetControl *CProjectItem::getPetControl() const {
 	CDontSaveFileItem *fileItem = getDontSaveFileItem();
 	CTreeItem *treeItem;
 
@@ -294,11 +294,11 @@ CPetControl *CProjectItem::getPetControl() {
 	return nullptr;
 }
 
-CRoomItem *CProjectItem::findFirstRoom() {
+CRoomItem *CProjectItem::findFirstRoom() const {
 	return dynamic_cast<CRoomItem *>(findChildInstance(*CRoomItem::_type));
 }
 
-CTreeItem *CProjectItem::findChildInstance(ClassDef &classDef) {
+CTreeItem *CProjectItem::findChildInstance(ClassDef &classDef) const {
 	CTreeItem *treeItem = getFirstChild();
 	if (treeItem == nullptr)
 		return nullptr;
@@ -316,11 +316,11 @@ CTreeItem *CProjectItem::findChildInstance(ClassDef &classDef) {
 	return nullptr;
 }
 
-CRoomItem *CProjectItem::findNextRoom(CRoomItem *priorRoom) {
+CRoomItem *CProjectItem::findNextRoom(CRoomItem *priorRoom) const {
 	return dynamic_cast<CRoomItem *>(findSiblingInstanceOf(*CRoomItem::_type, priorRoom));
 }
 
-CTreeItem *CProjectItem::findSiblingInstanceOf(ClassDef &classDef, CTreeItem *startItem) {
+CTreeItem *CProjectItem::findSiblingInstanceOf(ClassDef &classDef, CTreeItem *startItem) const {
 	CTreeItem *treeItem = startItem->getParent()->getNextSibling();
 	if (treeItem == nullptr)
 		return nullptr;
@@ -328,7 +328,7 @@ CTreeItem *CProjectItem::findSiblingInstanceOf(ClassDef &classDef, CTreeItem *st
 	return findChildInstance(classDef);
 }
 
-CDontSaveFileItem *CProjectItem::getDontSaveFileItem() {
+CDontSaveFileItem *CProjectItem::getDontSaveFileItem() const {
 	for (CTreeItem *treeItem = getFirstChild(); treeItem; treeItem = treeItem->getNextSibling()) {
 		if (treeItem->isInstanceOf(*CDontSaveFileItem::_type))
 			return dynamic_cast<CDontSaveFileItem *>(treeItem);

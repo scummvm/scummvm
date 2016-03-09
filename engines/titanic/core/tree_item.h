@@ -54,7 +54,7 @@ public:
 	/**
 	 * Get the game manager for the project
 	 */
-	virtual CGameManager *getGameManager();
+	virtual CGameManager *getGameManager() const;
 
 	/**
 	 * Returns true if the item is a file item
@@ -74,12 +74,12 @@ public:
 	/**
 	 * Get the next sibling
 	 */
-	CTreeItem *getNextSibling() { return _nextSibling; }
+	CTreeItem *getNextSibling() const { return _nextSibling; }
 
 	/**
 	 * Get the prior sibling
 	 */
-	CTreeItem *getPriorSibling() { return _priorSibling; }
+	CTreeItem *getPriorSibling() const { return _priorSibling; }
 
 	/**
 	 * Get the last sibling of this sibling
@@ -89,23 +89,18 @@ public:
 	/**
 	 * Get the first child of the item, if any
 	 */
-	CTreeItem *getFirstChild() { return _firstChild; }
+	CTreeItem *getFirstChild() const { return _firstChild; }
 
 	/**
 	 * Get the last child of the item, if any
 	 */
-	CTreeItem *getLastChild();
+	CTreeItem *getLastChild() const;
 
 	/**
 	 * Given all the recursive children of the tree item, gives the next
 	 * item in sequence to the passed starting item
 	 */
-	CTreeItem *scan(CTreeItem *item);
-
-	/**
-	 * Get any dont save file item in the immediate children
-	 */
-	CDontSaveFileItem *getDontSaveFileItem();
+	CTreeItem *scan(CTreeItem *item) const;
 
 	/**
 	 * Adds the item under another tree item

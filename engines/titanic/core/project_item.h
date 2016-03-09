@@ -81,12 +81,12 @@ private:
 	/**
 	 * Finds the first child instance of a given class type
 	 */
-	CTreeItem *findChildInstance(ClassDef &classDef);
+	CTreeItem *findChildInstance(ClassDef &classDef) const;
 
 	/**
 	 * Finds the next sibling occurance of a given class type
 	 */
-	CTreeItem *findSiblingInstanceOf(ClassDef &classDef, CTreeItem *startItem);
+	CTreeItem *findSiblingInstanceOf(ClassDef &classDef, CTreeItem *startItem) const;
 private:
 	/**
 	 * Load project data from the passed file
@@ -119,12 +119,12 @@ public:
 	/**
 	 * Get the game manager for the project
 	 */
-	virtual CGameManager *getGameManager();
+	virtual CGameManager *getGameManager() const;
 
 	/**
 	 * Get a reference to the PET control
 	 */
-	CPetControl *getPetControl();
+	CPetControl *getPetControl() const;
 
 	/**
 	 * Resets the game manager field
@@ -154,17 +154,17 @@ public:
 	/**
 	 * Returns a reference to the first room item in the project
 	 */
-	CRoomItem *findFirstRoom();
+	CRoomItem *findFirstRoom() const;
 
 	/**
 	 * Returns a reference to the next room following the specified room
 	 */
-	CRoomItem *findNextRoom(CRoomItem *priorRoom);
+	CRoomItem *findNextRoom(CRoomItem *priorRoom) const;
 
 	/**
 	 * Returns the don't save file item, if it exists in the project
 	 */
-	CDontSaveFileItem *getDontSaveFileItem();
+	CDontSaveFileItem *getDontSaveFileItem() const;
 
 	CRoomItem *findHiddenRoom() const;
 
