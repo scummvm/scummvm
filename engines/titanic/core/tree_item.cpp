@@ -23,6 +23,7 @@
 #include "titanic/core/tree_item.h"
 #include "titanic/core/dont_save_file_item.h"
 #include "titanic/core/file_item.h"
+#include "titanic/core/named_item.h"
 
 namespace Titanic {
 
@@ -152,6 +153,26 @@ void CTreeItem::detach() {
 		_parent->_firstChild = _nextSibling;
 
 	_priorSibling = _nextSibling = _parent = nullptr;
+}
+
+CNamedItem *CTreeItem::findByName(const CString &name, int maxLen) {
+	CString nameLower = name;
+	nameLower.toLowercase();
+
+	for (CTreeItem *treeItem = this; treeItem; treeItem = scan(treeItem)) {
+		CString nodeName = treeItem->getName();
+		nodeName.toLowercase();
+
+		if (maxLen) {
+			if (nodeName.left(maxLen).compareTo(nameLower))
+				return dynamic_cast<CNamedItem *>(treeItem);
+		} else {
+			if (nodeName.compareTo(nameLower))
+				return dynamic_cast<CNamedItem *>(treeItem);
+		}
+	}
+
+	return nullptr;
 }
 
 } // End of namespace Titanic

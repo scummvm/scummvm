@@ -29,6 +29,7 @@ namespace Titanic {
 
 class CGameManager;
 class CDontSaveFileItem;
+class CNamedItem;
 
 class CTreeItem: public CMessageTarget {
 private:
@@ -60,6 +61,21 @@ public:
 	 * Returns true if the item is a file item
 	 */
 	virtual bool isFileItem() const { return false; }
+
+	/**
+	 * Returns true if the item is a named item
+	 */
+	virtual bool isNamedItem() const { return false; }
+
+	/**
+	 * Gets the name of the item, if any
+	 */
+	virtual const CString getName() const { return CString(); }
+
+	/**
+	 * Compares the name of the item to a passed name
+	 */
+	virtual int compareTo(const CString &name, int maxLen) const { return false; }
 
 	/**
 	 * Get the parent for the given item
@@ -131,6 +147,11 @@ public:
 	 * Detach the tree item from any other associated tree items
 	 */
 	void detach();
+
+	/**
+	 * Finds a tree item by name
+	 */
+	CNamedItem *findByName(const CString &name, int maxLen = 0);
 };
 
 } // End of namespace Titanic

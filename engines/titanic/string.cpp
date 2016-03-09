@@ -20,8 +20,24 @@
  *
  */
 
+#include "common/algorithm.h"
 #include "titanic/string.h"
 
 namespace Titanic {
+
+CString CString::left(uint count) const {
+	return (count > size()) ? *this : CString(c_str(), c_str() + count);
+}
+
+CString CString::right(uint count) const {
+	return (count > size()) ? *this : CString(c_str() - count, c_str());
+}
+
+CString CString::mid(uint start, uint count) const {
+	if (start >= size())
+		return CString();
+	else
+		return CString(c_str() + start, MIN(count, size() - start));
+}
 
 } // End of namespace Titanic

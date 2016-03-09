@@ -42,6 +42,21 @@ public:
 	 * Load the data for the class from file
 	 */
 	virtual void load(SimpleFile *file);
+
+	/**
+	 * Returns true if the item is a named item
+	 */
+	virtual bool isNamedItem() const { return true; }
+
+	/**
+	 * Gets the name of the item, if any
+	 */
+	virtual const CString getName() const { return _name; }
+
+	/**
+	 * Compares the name of the item to a passed name
+	 */
+	virtual int compareTo(const CString &name, int maxLen) const;
 };
 
 } // End of namespace Titanic

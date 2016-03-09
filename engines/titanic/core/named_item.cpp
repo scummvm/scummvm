@@ -39,4 +39,12 @@ void CNamedItem::load(SimpleFile *file) {
 	CTreeItem::load(file);
 }
 
+int CNamedItem::compareTo(const CString &name, int maxLen) const {
+	if (maxLen) {
+		return getName().left(maxLen).compareToIgnoreCase(name);
+	} else {
+		return getName().compareToIgnoreCase(name);
+	}
+}
+
 } // End of namespace Titanic

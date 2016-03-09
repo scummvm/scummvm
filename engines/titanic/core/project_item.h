@@ -166,9 +166,7 @@ public:
 	 */
 	CDontSaveFileItem *getDontSaveFileItem() const;
 
-	CRoomItem *findHiddenRoom() const;
-
-	CNamedItem *findByName(const CString &name, int maxChars = 0) const;
+	CRoomItem *findHiddenRoom();
 };
 
 } // End of namespace Titanic

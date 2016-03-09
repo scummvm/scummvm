@@ -337,23 +337,8 @@ CDontSaveFileItem *CProjectItem::getDontSaveFileItem() const {
 	return nullptr;
 }
 
-CRoomItem *CProjectItem::findHiddenRoom() const {
+CRoomItem *CProjectItem::findHiddenRoom() {
 	return dynamic_cast<CRoomItem *>(findByName("HiddenRoom"));
 }
-
-CNamedItem *CProjectItem::findByName(const CString &name, int maxChars) const {
-	/*
-	CString nameLower = name;
-	nameLower.toLowercase();
-
-	CTreeItem *treeItem = this;
-	while (treeItem) {
-		CString nodeName = treeItem->getName();
-
-	}
-	*/
-	return nullptr;
-}
-
 
 } // End of namespace Titanic

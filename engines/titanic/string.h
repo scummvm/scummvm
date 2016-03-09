@@ -36,6 +36,21 @@ public:
 	CString(const char *beginP, const char *endP) : Common::String(beginP, endP) {}
 	CString(const String &str) : Common::String(str) {}
 	explicit CString(char c) : Common::String(c) {}
+
+	/**
+	 * Returns the left n characters of the string
+	 */
+	CString left(uint count) const;
+
+	/**
+	 * Returns the right n characters of the string
+	 */
+	CString right(uint count) const;
+
+	/**
+	 * Returns a substring from within the string
+	 */
+	CString mid(uint start, uint count) const;
 };
 
 } // End of namespace Titanic
