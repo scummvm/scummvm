@@ -25,8 +25,10 @@
 
 #include "common/scummsys.h"
 #include "titanic/simple_file.h"
+#include "titanic/core/dont_save_file_item.h"
 #include "titanic/core/file_item.h"
 #include "titanic/core/list.h"
+#include "titanic/game/room_item.h"
 
 namespace Titanic {
 
@@ -75,6 +77,16 @@ private:
 	 * Called during save, iterates through the children to do some stuff
 	 */
 	void buildFilesList();
+
+	/**
+	 * Finds the first child instance of a given class type
+	 */
+	CTreeItem *findChildInstance(ClassDef &classDef);
+
+	/**
+	 * Finds the next sibling occurance of a given class type
+	 */
+	CTreeItem *findSiblingInstanceOf(ClassDef &classDef, CTreeItem *startItem);
 private:
 	/**
 	 * Load project data from the passed file
@@ -138,6 +150,25 @@ public:
 	 * Set the proejct's name
 	 */
 	void setFilename(const CString &name) { _filename = name; }
+
+	/**
+	 * Returns a reference to the first room item in the project
+	 */
+	CRoomItem *findFirstRoom();
+
+	/**
+	 * Returns a reference to the next room following the specified room
+	 */
+	CRoomItem *findNextRoom(CRoomItem *priorRoom);
+
+	/**
+	 * Returns the don't save file item, if it exists in the project
+	 */
+	CDontSaveFileItem *getDontSaveFileItem();
+
+	CRoomItem *findHiddenRoom() const;
+
+	CNamedItem *findByName(const CString &name, int maxChars = 0) const;
 };
 
 } // End of namespace Titanic

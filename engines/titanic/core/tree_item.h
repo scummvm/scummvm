@@ -96,6 +96,10 @@ public:
 	 */
 	CTreeItem *getLastChild();
 
+	/**
+	 * Given all the recursive children of the tree item, gives the next
+	 * item in sequence to the passed starting item
+	 */
 	CTreeItem *scan(CTreeItem *item);
 
 	/**

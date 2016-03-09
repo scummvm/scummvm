@@ -294,4 +294,66 @@ CPetControl *CProjectItem::getPetControl() {
 	return nullptr;
 }
 
+CRoomItem *CProjectItem::findFirstRoom() {
+	return dynamic_cast<CRoomItem *>(findChildInstance(*CRoomItem::_type));
+}
+
+CTreeItem *CProjectItem::findChildInstance(ClassDef &classDef) {
+	CTreeItem *treeItem = getFirstChild();
+	if (treeItem == nullptr)
+		return nullptr;
+
+	do {
+		CTreeItem *childItem = treeItem->getFirstChild();
+		if (childItem) {
+			do {
+				if (childItem->isInstanceOf(classDef))
+					return childItem;
+			} while ((childItem = childItem->getNextSibling()) != nullptr);
+		}
+	} while ((treeItem = treeItem->getNextSibling()) != nullptr);
+
+	return nullptr;
+}
+
+CRoomItem *CProjectItem::findNextRoom(CRoomItem *priorRoom) {
+	return dynamic_cast<CRoomItem *>(findSiblingInstanceOf(*CRoomItem::_type, priorRoom));
+}
+
+CTreeItem *CProjectItem::findSiblingInstanceOf(ClassDef &classDef, CTreeItem *startItem) {
+	CTreeItem *treeItem = startItem->getParent()->getNextSibling();
+	if (treeItem == nullptr)
+		return nullptr;
+
+	return findChildInstance(classDef);
+}
+
+CDontSaveFileItem *CProjectItem::getDontSaveFileItem() {
+	for (CTreeItem *treeItem = getFirstChild(); treeItem; treeItem = treeItem->getNextSibling()) {
+		if (treeItem->isInstanceOf(*CDontSaveFileItem::_type))
+			return dynamic_cast<CDontSaveFileItem *>(treeItem);
+	}
+
+	return nullptr;
+}
+
+CRoomItem *CProjectItem::findHiddenRoom() const {
+	return dynamic_cast<CRoomItem *>(findByName("HiddenRoom"));
+}
+
+CNamedItem *CProjectItem::findByName(const CString &name, int maxChars) const {
+	/*
+	CString nameLower = name;
+	nameLower.toLowercase();
+
+	CTreeItem *treeItem = this;
+	while (treeItem) {
+		CString nodeName = treeItem->getName();
+
+	}
+	*/
+	return nullptr;
+}
+
+
 } // End of namespace Titanic
