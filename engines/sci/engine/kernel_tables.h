@@ -772,9 +772,9 @@ static SciKernelMapEntry s_kernelMap[] = {
 	//     <lskovlun> The idea, if I understand correctly, is that the engine generates events
 	//     of a special HotRect type continuously when the mouse is on that rectangle
 
-	// MovePlaneItems - used by SQ6 to scroll through the inventory via the up/down buttons
-	// SetPalStyleRange - 2 integer parameters, start and end. All styles from start-end
-	//   (inclusive) are set to 0
+	// Used by SQ6 to scroll through the inventory via the up/down buttons
+	{ MAP_CALL(MovePlaneItems),     SIG_SINCE_SCI21, SIGFOR_ALL, "oii(i)",            NULL,            NULL },
+
 	{ MAP_CALL(SetPalStyleRange),   SIG_EVERYWHERE,           "ii",                   NULL,            NULL },
 
 	{ MAP_CALL(MorphOn),            SIG_EVERYWHERE,           "",                     NULL,            NULL },

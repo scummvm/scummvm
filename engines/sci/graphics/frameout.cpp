@@ -381,6 +381,33 @@ void GfxFrameout::deletePlane(Plane &planeToFind) {
 	}
 }
 
+void GfxFrameout::kernelMovePlaneItems(const reg_t object, const int16 deltaX, const int16 deltaY, const bool scrollPics) {
+	Plane *plane = _planes.findByObject(object);
+	if (plane == nullptr) {
+		error("Invalid plane %04x:%04x", PRINT_REG(object));
+	}
+
+	plane->scrollScreenItems(deltaX, deltaY, scrollPics);
+
+	for (ScreenItemList::iterator it = plane->_screenItemList.begin(); it != plane->_screenItemList.end(); ++it) {
+		ScreenItem &screenItem = **it;
+
+		// If object is a number, the screen item from the
+		// engine, not a script, and should be ignored
+		if (screenItem._object.isNumber()) {
+			continue;
+		}
+
+		if (deltaX != 0) {
+			writeSelectorValue(_segMan, screenItem._object, SELECTOR(x), readSelectorValue(_segMan, screenItem._object, SELECTOR(x)) + deltaX);
+		}
+
+		if (deltaY != 0) {
+			writeSelectorValue(_segMan, screenItem._object, SELECTOR(y), readSelectorValue(_segMan, screenItem._object, SELECTOR(y)) + deltaY);
+		}
+	}
+}
+
 int16 GfxFrameout::kernelGetHighPlanePri() {
 	return _planes.getTopSciPlanePriority();
 }

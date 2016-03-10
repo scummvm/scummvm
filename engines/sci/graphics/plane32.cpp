@@ -798,6 +798,20 @@ void Plane::update(const reg_t object) {
 	_back = readSelectorValue(segMan, object, SELECTOR(back));
 }
 
+void Plane::scrollScreenItems(const int16 deltaX, const int16 deltaY, const bool scrollPics) {
+	_redrawAllCount = g_sci->_gfxFrameout->getScreenCount();
+
+	for (ScreenItemList::iterator it = _screenItemList.begin(); it != _screenItemList.end(); ++it) {
+		if (*it != nullptr) {
+			ScreenItem &screenItem = **it;
+			if (!screenItem._deleted && (screenItem._celInfo.type != kCelTypePic || scrollPics)) {
+				screenItem._position.x += deltaX;
+				screenItem._position.y += deltaY;
+			}
+		}
+	}
+}
+
 #pragma mark -
 #pragma mark PlaneList
 void PlaneList::add(Plane *plane) {

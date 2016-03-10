@@ -303,6 +303,13 @@ public:
 	 */
 	void update(const reg_t object);
 
+	/**
+	 * Modifies the position of all non-pic screen items
+	 * by the given delta. If `scrollPics` is true, pic
+	 * items are also repositioned.
+	 */
+	void scrollScreenItems(const int16 deltaX, const int16 deltaY, const bool scrollPics);
+
 #pragma mark -
 #pragma mark Plane - Pic
 private:

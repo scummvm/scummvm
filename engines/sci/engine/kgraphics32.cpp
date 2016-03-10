@@ -106,6 +106,16 @@ reg_t kDeletePlane(EngineState *s, int argc, reg_t *argv) {
 	return s->r_acc;
 }
 
+reg_t kMovePlaneItems(EngineState *s, int argc, reg_t *argv) {
+	const reg_t plane = argv[0];
+	const int16 deltaX = argv[1].toSint16();
+	const int16 deltaY = argv[2].toSint16();
+	const bool scrollPics = argc > 3 ? argv[3].toUint16() : false;
+
+	g_sci->_gfxFrameout->kernelMovePlaneItems(plane, deltaX, deltaY, scrollPics);
+	return NULL_REG;
+}
+
 reg_t kAddPicAt(EngineState *s, int argc, reg_t *argv) {
 	reg_t planeObj = argv[0];
 	GuiResourceId pictureId = argv[1].toUint16();

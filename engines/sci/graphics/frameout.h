@@ -294,6 +294,7 @@ public:
 	void kernelAddPlane(const reg_t object);
 	void kernelUpdatePlane(const reg_t object);
 	void kernelDeletePlane(const reg_t object);
+	void kernelMovePlaneItems(const reg_t object, const int16 deltaX, const int16 deltaY, const bool scrollPics);
 	int16 kernelGetHighPlanePri();
 
 #pragma mark -
