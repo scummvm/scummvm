@@ -73,6 +73,9 @@ void HiRes2Engine::restartGame() {
 void HiRes2Engine::drawPic(byte pic, Common::Point pos) const {
 }
 
+void HiRes2Engine::showRoom() const {
+}
+
 Engine *HiRes2Engine_create(OSystem *syst, const AdlGameDescription *gd) {
 	return new HiRes2Engine(syst, gd);
 }

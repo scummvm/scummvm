@@ -239,11 +239,12 @@ void HiRes1Engine::initState() {
 
 	// Load room data from executable
 	_state.rooms.clear();
+	_roomDesc.clear();
 	f.seek(IDI_HR1_OFS_ROOMS);
 	for (uint i = 0; i < IDI_HR1_NUM_ROOMS; ++i) {
 		Room room;
 		f.readByte();
-		room.description = f.readByte();
+		_roomDesc.push_back(f.readByte());
 		for (uint j = 0; j < 6; ++j)
 			room.connections[j] = f.readByte();
 		room.picture = f.readByte();
@@ -311,6 +312,16 @@ void HiRes1Engine::printMessage(uint idx, bool wait) const {
 	}
 
 	AdlEngine::printMessage(idx, wait);
+}
+
+void HiRes1Engine::showRoom() const {
+	if (!_state.isDark) {
+		drawPic(getCurRoom().curPicture);
+		drawItems();
+	}
+
+	_display->updateHiResScreen();
+	printMessage(_roomDesc[_state.room - 1], false);
 }
 
 void HiRes1Engine::drawLine(const Common::Point &p1, const Common::Point &p2, byte color) const {

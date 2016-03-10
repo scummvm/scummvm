@@ -264,6 +264,186 @@ void AdlEngine::readCommands(Common::ReadStream &stream, Commands &commands) {
 	}
 }
 
+void AdlEngine::clearScreen() const {
+	_display->setMode(DISPLAY_MODE_MIXED);
+	_display->clear(0x00);
+}
+
+void AdlEngine::drawItems() const {
+	Common::Array<Item>::const_iterator item;
+
+	uint dropped = 0;
+
+	for (item = _state.items.begin(); item != _state.items.end(); ++item) {
+		if (item->room != _state.room)
+			continue;
+
+		if (item->state == IDI_ITEM_MOVED) {
+			if (getCurRoom().picture == getCurRoom().curPicture) {
+				const Common::Point &p =  _itemOffsets[dropped];
+				if (item->isLineArt)
+					drawLineArt(_lineArt[item->picture - 1], p);
+				else
+					drawPic(item->picture, p);
+				++dropped;
+			}
+			continue;
+		}
+
+		Common::Array<byte>::const_iterator pic;
+
+		for (pic = item->roomPictures.begin(); pic != item->roomPictures.end(); ++pic) {
+			if (*pic == getCurRoom().curPicture) {
+				if (item->isLineArt)
+					drawLineArt(_lineArt[item->picture - 1], item->position);
+				else
+					drawPic(item->picture, item->position);
+				continue;
+			}
+		}
+	}
+}
+
+void AdlEngine::drawNextPixel(Common::Point &p, byte color, byte bits, byte quadrant) const {
+	if (bits & 4)
+		_display->putPixel(p, color);
+
+	bits += quadrant;
+
+	if (bits & 1)
+		p.x += (bits & 2 ? -1 : 1);
+	else
+		p.y += (bits & 2 ? 1 : -1);
+}
+
+void AdlEngine::drawLineArt(const Common::Array<byte> &lineArt, const Common::Point &pos, byte rotation, byte scaling, byte color) const {
+	const byte stepping[] = {
+		0xff, 0xfe, 0xfa, 0xf4, 0xec, 0xe1, 0xd4, 0xc5,
+		0xb4, 0xa1, 0x8d, 0x78, 0x61, 0x49, 0x31, 0x18,
+		0xff
+	};
+
+	byte quadrant = rotation >> 4;
+	rotation &= 0xf;
+	byte xStep = stepping[rotation];
+	byte yStep = stepping[(rotation ^ 0xf) + 1] + 1;
+
+	Common::Point p(pos);
+
+	for (uint i = 0; i < lineArt.size(); ++i) {
+		byte b = lineArt[i];
+
+		do {
+			byte xFrac = 0x80;
+			byte yFrac = 0x80;
+			for (uint j = 0; j < scaling; ++j) {
+				if (xFrac + xStep + 1 > 255)
+					drawNextPixel(p, color, b, quadrant);
+				xFrac += xStep + 1;
+				if (yFrac + yStep > 255)
+					drawNextPixel(p, color, b, quadrant + 1);
+				yFrac += yStep;
+			}
+			b >>= 3;
+		} while (b != 0);
+	}
+}
+
+const Room &AdlEngine::getRoom(uint i) const {
+	if (i < 1 || i > _state.rooms.size())
+		error("Room %i out of range [1, %i]", i, _state.rooms.size());
+
+	return _state.rooms[i - 1];
+}
+
+Room &AdlEngine::getRoom(uint i) {
+	if (i < 1 || i > _state.rooms.size())
+		error("Room %i out of range [1, %i]", i, _state.rooms.size());
+
+	return _state.rooms[i - 1];
+}
+
+const Room &AdlEngine::getCurRoom() const {
+	return getRoom(_state.room);
+}
+
+Room &AdlEngine::getCurRoom() {
+	return getRoom(_state.room);
+}
+
+const Item &AdlEngine::getItem(uint i) const {
+	if (i < 1 || i > _state.items.size())
+		error("Item %i out of range [1, %i]", i, _state.items.size());
+
+	return _state.items[i - 1];
+}
+
+Item &AdlEngine::getItem(uint i) {
+	if (i < 1 || i > _state.items.size())
+		error("Item %i out of range [1, %i]", i, _state.items.size());
+
+	return _state.items[i - 1];
+}
+
+byte AdlEngine::getVar(uint i) const {
+	if (i >= _state.vars.size())
+		error("Variable %i out of range [0, %i]", i, _state.vars.size() - 1);
+
+	return _state.vars[i];
+}
+
+void AdlEngine::setVar(uint i, byte value) {
+	if (i >= _state.vars.size())
+		error("Variable %i out of range [0, %i]", i, _state.vars.size() - 1);
+
+	_state.vars[i] = value;
+}
+
+void AdlEngine::takeItem(byte noun) {
+	Common::Array<Item>::iterator item;
+
+	for (item = _state.items.begin(); item != _state.items.end(); ++item) {
+		if (item->noun != noun || item->room != _state.room)
+			continue;
+
+		if (item->state == IDI_ITEM_DOESNT_MOVE) {
+			printMessage(_messageIds.itemDoesntMove);
+			return;
+		}
+
+		if (item->state == IDI_ITEM_MOVED) {
+			item->room = IDI_NONE;
+			return;
+		}
+
+		Common::Array<byte>::const_iterator pic;
+		for (pic = item->roomPictures.begin(); pic != item->roomPictures.end(); ++pic) {
+			if (*pic == getCurRoom().curPicture) {
+				item->room = IDI_NONE;
+				item->state = IDI_ITEM_MOVED;
+				return;
+			}
+		}
+	}
+
+	printMessage(_messageIds.itemNotHere);
+}
+
+void AdlEngine::dropItem(byte noun) {
+	Common::Array<Item>::iterator item;
+
+	for (item = _state.items.begin(); item != _state.items.end(); ++item) {
+		if (item->noun != noun || item->room != IDI_NONE)
+			continue;
+
+		item->room = _state.room;
+		item->state = IDI_ITEM_MOVED;
+		return;
+	}
+
+	printMessage(_messageIds.dontUnderstand);
+}
+
 Common::Error AdlEngine::run() {
 	_display = new Display();
 
@@ -634,196 +814,6 @@ void AdlEngine::getInput(uint &verb, uint &noun) {
 		noun = _nouns[nounStr];
 		return;
 	}
-}
-
-void AdlEngine::showRoom() const {
-	if (!_state.isDark) {
-		drawPic(getCurRoom().curPicture);
-		drawItems();
-	}
-
-	_display->updateHiResScreen();
-	printMessage(getCurRoom().description, false);
-}
-
-void AdlEngine::clearScreen() const {
-	_display->setMode(DISPLAY_MODE_MIXED);
-	_display->clear(0x00);
-}
-
-void AdlEngine::drawItems() const {
-	Common::Array<Item>::const_iterator item;
-
-	uint dropped = 0;
-
-	for (item = _state.items.begin(); item != _state.items.end(); ++item) {
-		if (item->room != _state.room)
-			continue;
-
-		if (item->state == IDI_ITEM_MOVED) {
-			if (getCurRoom().picture == getCurRoom().curPicture) {
-				const Common::Point &p =  _itemOffsets[dropped];
-				if (item->isLineArt)
-					drawLineArt(_lineArt[item->picture - 1], p);
-				else
-					drawPic(item->picture, p);
-				++dropped;
-			}
-			continue;
-		}
-
-		Common::Array<byte>::const_iterator pic;
-
-		for (pic = item->roomPictures.begin(); pic != item->roomPictures.end(); ++pic) {
-			if (*pic == getCurRoom().curPicture) {
-				if (item->isLineArt)
-					drawLineArt(_lineArt[item->picture - 1], item->position);
-				else
-					drawPic(item->picture, item->position);
-				continue;
-			}
-		}
-	}
-}
-
-void AdlEngine::drawNextPixel(Common::Point &p, byte color, byte bits, byte quadrant) const {
-	if (bits & 4)
-		_display->putPixel(p, color);
-
-	bits += quadrant;
-
-	if (bits & 1)
-		p.x += (bits & 2 ? -1 : 1);
-	else
-		p.y += (bits & 2 ? 1 : -1);
-}
-
-void AdlEngine::drawLineArt(const Common::Array<byte> &lineArt, const Common::Point &pos, byte rotation, byte scaling, byte color) const {
-	const byte stepping[] = {
-		0xff, 0xfe, 0xfa, 0xf4, 0xec, 0xe1, 0xd4, 0xc5,
-		0xb4, 0xa1, 0x8d, 0x78, 0x61, 0x49, 0x31, 0x18,
-		0xff
-	};
-
-	byte quadrant = rotation >> 4;
-	rotation &= 0xf;
-	byte xStep = stepping[rotation];
-	byte yStep = stepping[(rotation ^ 0xf) + 1] + 1;
-
-	Common::Point p(pos);
-
-	for (uint i = 0; i < lineArt.size(); ++i) {
-		byte b = lineArt[i];
-
-		do {
-			byte xFrac = 0x80;
-			byte yFrac = 0x80;
-			for (uint j = 0; j < scaling; ++j) {
-				if (xFrac + xStep + 1 > 255)
-					drawNextPixel(p, color, b, quadrant);
-				xFrac += xStep + 1;
-				if (yFrac + yStep > 255)
-					drawNextPixel(p, color, b, quadrant + 1);
-				yFrac += yStep;
-			}
-			b >>= 3;
-		} while (b != 0);
-	}
-}
-
-const Room &AdlEngine::getRoom(uint i) const {
-	if (i < 1 || i > _state.rooms.size())
-		error("Room %i out of range [1, %i]", i, _state.rooms.size());
-
-	return _state.rooms[i - 1];
-}
-
-Room &AdlEngine::getRoom(uint i) {
-	if (i < 1 || i > _state.rooms.size())
-		error("Room %i out of range [1, %i]", i, _state.rooms.size());
-
-	return _state.rooms[i - 1];
-}
-
-const Room &AdlEngine::getCurRoom() const {
-	return getRoom(_state.room);
-}
-
-Room &AdlEngine::getCurRoom() {
-	return getRoom(_state.room);
-}
-
-const Item &AdlEngine::getItem(uint i) const {
-	if (i < 1 || i > _state.items.size())
-		error("Item %i out of range [1, %i]", i, _state.items.size());
-
-	return _state.items[i - 1];
-}
-
-Item &AdlEngine::getItem(uint i) {
-	if (i < 1 || i > _state.items.size())
-		error("Item %i out of range [1, %i]", i, _state.items.size());
-
-	return _state.items[i - 1];
-}
-
-byte AdlEngine::getVar(uint i) const {
-	if (i >= _state.vars.size())
-		error("Variable %i out of range [0, %i]", i, _state.vars.size() - 1);
-
-	return _state.vars[i];
-}
-
-void AdlEngine::setVar(uint i, byte value) {
-	if (i >= _state.vars.size())
-		error("Variable %i out of range [0, %i]", i, _state.vars.size() - 1);
-
-	_state.vars[i] = value;
-}
-
-void AdlEngine::takeItem(byte noun) {
-	Common::Array<Item>::iterator item;
-
-	for (item = _state.items.begin(); item != _state.items.end(); ++item) {
-		if (item->noun != noun || item->room != _state.room)
-			continue;
-
-		if (item->state == IDI_ITEM_DOESNT_MOVE) {
-			printMessage(_messageIds.itemDoesntMove);
-			return;
-		}
-
-		if (item->state == IDI_ITEM_MOVED) {
-			item->room = IDI_NONE;
-			return;
-		}
-
-		Common::Array<byte>::const_iterator pic;
-		for (pic = item->roomPictures.begin(); pic != item->roomPictures.end(); ++pic) {
-			if (*pic == getCurRoom().curPicture) {
-				item->room = IDI_NONE;
-				item->state = IDI_ITEM_MOVED;
-				return;
-			}
-		}
-	}
-
-	printMessage(_messageIds.itemNotHere);
-}
-
-void AdlEngine::dropItem(byte noun) {
-	Common::Array<Item>::iterator item;
-
-	for (item = _state.items.begin(); item != _state.items.end(); ++item) {
-		if (item->noun != noun || item->room != IDI_NONE)
-			continue;
-
-		item->room = _state.room;
-		item->state = IDI_ITEM_MOVED;
-		return;
-	}
-
-	printMessage(_messageIds.dontUnderstand);
 }
 
 #define ARG(N) (command.script[offset + (N)])

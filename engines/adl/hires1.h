@@ -97,8 +97,9 @@ private:
 	void loadData();
 	void initState();
 	void restartGame();
-	void drawPic(byte pic, Common::Point pos) const;
+	void drawPic(byte pic, Common::Point pos = Common::Point()) const;
 	void printMessage(uint idx, bool wait = true) const;
+	void showRoom() const;
 
 	void drawLine(const Common::Point &p1, const Common::Point &p2, byte color) const;
 	void drawPic(Common::ReadStream &stream, const Common::Point &pos) const;
@@ -106,6 +107,8 @@ private:
 	struct {
 		Common::String pressReturn;
 	} _gameStrings;
+
+	Common::Array<byte> _roomDesc;
 };
 
 } // End of namespace Adl

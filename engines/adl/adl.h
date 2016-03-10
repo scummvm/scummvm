@@ -149,6 +149,28 @@ protected:
 	void loadWords(Common::ReadStream &stream, WordMap &map) const;
 	void readCommands(Common::ReadStream &stream, Commands &commands);
 
+	// Graphics
+	void clearScreen() const;
+	void drawItems() const;
+	void drawNextPixel(Common::Point &p, byte color, byte bits, byte quadrant) const;
+	void drawLineArt(const Common::Array<byte> &lineArt, const Common::Point &pos, byte rotation = 0, byte scaling = 1, byte color = 0x7f) const;
+
+	// Game state functions
+	const Room &getRoom(uint i) const;
+	Room &getRoom(uint i);
+	const Room &getCurRoom() const;
+	Room &getCurRoom();
+	const Item &getItem(uint i) const;
+	Item &getItem(uint i);
+	byte getVar(uint i) const;
+	void setVar(uint i, byte value);
+	void takeItem(byte noun);
+	void dropItem(byte noun);
+	bool matchCommand(const Command &command, byte verb, byte noun, uint *actions = nullptr) const;
+	void doActions(const Command &command, byte noun, byte offset);
+	bool doOneCommand(const Commands &commands, byte verb, byte noun);
+	void doAllCommands(const Commands &commands, byte verb, byte noun);
+
 	Display *_display;
 
 	// Message strings in data file
@@ -193,6 +215,7 @@ private:
 	virtual void initState() = 0;
 	virtual void restartGame() = 0;
 	virtual void drawPic(byte pic, Common::Point pos = Common::Point()) const = 0;
+	virtual void showRoom() const = 0;
 
 	// Engine
 	Common::Error run();
@@ -210,29 +233,6 @@ private:
 	Common::String getLine() const;
 	Common::String getWord(const Common::String &line, uint &index) const;
 	void getInput(uint &verb, uint &noun);
-
-	// Graphics
-	void showRoom() const;
-	void clearScreen() const;
-	void drawItems() const;
-	void drawNextPixel(Common::Point &p, byte color, byte bits, byte quadrant) const;
-	void drawLineArt(const Common::Array<byte> &lineArt, const Common::Point &pos, byte rotation = 0, byte scaling = 1, byte color = 0x7f) const;
-
-	// Game state functions
-	const Room &getRoom(uint i) const;
-	Room &getRoom(uint i);
-	const Room &getCurRoom() const;
-	Room &getCurRoom();
-	const Item &getItem(uint i) const;
-	Item &getItem(uint i);
-	byte getVar(uint i) const;
-	void setVar(uint i, byte value);
-	void takeItem(byte noun);
-	void dropItem(byte noun);
-	bool matchCommand(const Command &command, byte verb, byte noun, uint *actions = nullptr) const;
-	void doActions(const Command &command, byte noun, byte offset);
-	bool doOneCommand(const Commands &commands, byte verb, byte noun);
-	void doAllCommands(const Commands &commands, byte verb, byte noun);
 
 	const AdlGameDescription *_gameDescription;
 	bool _isRestarting, _isRestoring;

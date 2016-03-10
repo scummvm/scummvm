@@ -56,6 +56,7 @@ private:
 	void initState();
 	void restartGame();
 	void drawPic(byte pic, Common::Point pos) const;
+	void showRoom() const;
 };
 
 } // End of namespace Adl
