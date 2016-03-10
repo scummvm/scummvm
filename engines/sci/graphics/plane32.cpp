@@ -325,7 +325,6 @@ void Plane::calcLists(Plane &visiblePlane, const PlaneList &planeList, DrawList 
 				}
 			} else if (item->_created) {
 				// add item to draw list
-				item->getCelObj();
 				item->calcRects(*this);
 
 				if(!item->_screenRect.isEmpty()) {
@@ -338,7 +337,6 @@ void Plane::calcLists(Plane &visiblePlane, const PlaneList &planeList, DrawList 
 				}
 			} else if (item->_updated) {
 				// add old rect to erase list, new item to draw list
-				item->getCelObj();
 				item->calcRects(*this);
 				if (/* TODO: g_Remap_numActiveRemaps */ false) { // active remaps
 					// if item and vitem don't overlap, ...
@@ -691,7 +689,6 @@ void Plane::redrawAll(Plane *visiblePlane, const PlaneList &planeList, DrawList 
 		if (*screenItemPtr != nullptr) {
 			ScreenItem &screenItem = **screenItemPtr;
 			if (!screenItem._deleted) {
-				screenItem.getCelObj();
 				screenItem.calcRects(*this);
 				if (!screenItem._screenRect.isEmpty()) {
 					drawList.add(&screenItem, screenItem._screenRect);
