@@ -104,10 +104,6 @@ private:
 	void drawLine(const Common::Point &p1, const Common::Point &p2, byte color) const;
 	void drawPic(Common::ReadStream &stream, const Common::Point &pos) const;
 
-	struct {
-		Common::String pressReturn;
-	} _gameStrings;
-
 	Common::Array<byte> _roomDesc;
 };
 

@@ -194,11 +194,10 @@ protected:
 
 	struct {
 		Common::String enterCommand;
-		Common::String dontHaveIt;
-		Common::String gettingDark;
 		Common::String verbError;
 		Common::String nounError;
 		Common::String playAgain;
+		Common::String pressReturn;
 	} _strings;
 
 	struct {

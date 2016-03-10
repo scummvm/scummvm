@@ -45,7 +45,23 @@ namespace Adl {
 #define IDI_HR2_OFS_VERBS        T(0x19)
 #define IDI_HR2_OFS_NOUNS       TS(0x22, 0x2)
 #define IDI_HR2_OFS_ROOMS      TSO(0x21, 0x5, 0x0e) // Skip bogus room 0
+#define IDI_HR2_OFS_MESSAGES   TSO(0x1f, 0x2, 0x04) // Skip bogus message 0
+
 #define IDI_HR2_NUM_ROOMS 135
+#define IDI_HR2_NUM_MESSAGES 254
+
+// Messages used outside of scripts
+#define IDI_HR2_MSG_CANT_GO_THERE      123
+#define IDI_HR2_MSG_DONT_UNDERSTAND     19
+#define IDI_HR2_MSG_ITEM_DOESNT_MOVE   242
+#define IDI_HR2_MSG_ITEM_NOT_HERE        4
+#define IDI_HR2_MSG_THANKS_FOR_PLAYING 239
+
+#define IDI_HR2_OFS_STR_ENTER_COMMAND TSO(0x1a, 0x1, 0xbc)
+#define IDI_HR2_OFS_STR_VERB_ERROR    TSO(0x1a, 0x1, 0x4f)
+#define IDI_HR2_OFS_STR_NOUN_ERROR    TSO(0x1a, 0x1, 0x8e)
+#define IDI_HR2_OFS_STR_PLAY_AGAIN    TSO(0x1a, 0x8, 0x25)
+#define IDI_HR2_OFS_STR_PRESS_RETURN  TSO(0x1a, 0x8, 0x5f)
 
 class HiRes2Engine : public AdlEngine {
 public:

@@ -158,12 +158,10 @@ void HiRes1Engine::loadData() {
 
 	// Load other strings from executable
 	_strings.enterCommand = readStringAt(f, IDI_HR1_OFS_STR_ENTER_COMMAND);
-	_strings.dontHaveIt = readStringAt(f, IDI_HR1_OFS_STR_DONT_HAVE_IT);
-	_strings.gettingDark = readStringAt(f, IDI_HR1_OFS_STR_GETTING_DARK);
 	_strings.verbError = readStringAt(f, IDI_HR1_OFS_STR_VERB_ERROR);
 	_strings.nounError = readStringAt(f, IDI_HR1_OFS_STR_NOUN_ERROR);
 	_strings.playAgain = readStringAt(f, IDI_HR1_OFS_STR_PLAY_AGAIN);
-	_gameStrings.pressReturn = readStringAt(f, IDI_HR1_OFS_STR_PRESS_RETURN);
+	_strings.pressReturn = readStringAt(f, IDI_HR1_OFS_STR_PRESS_RETURN);
 
 	// Set message IDs
 	_messageIds.cantGoThere = IDI_HR1_MSG_CANT_GO_THERE;
@@ -279,7 +277,7 @@ void HiRes1Engine::initState() {
 
 void HiRes1Engine::restartGame() {
 	initState();
-	_display->printString(_gameStrings.pressReturn);
+	_display->printString(_strings.pressReturn);
 	inputString(); // Missing in the original
 	_display->printAsciiString("\r\r\r\r\r");
 }
