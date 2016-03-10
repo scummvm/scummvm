@@ -696,7 +696,7 @@ static SciKernelMapEntry s_kernelMap[] = {
 	{ MAP_DUMMY(MarkMemory),       SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
 	{ MAP_DUMMY(GetHighItemPri),   SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
 	{ MAP_DUMMY(ShowStylePercent), SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
-	{ MAP_DUMMY(InvertRect),       SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
+	{ MAP_DUMMY(InvertRect),       SIG_UNTIL_SCI21EARLY, SIGFOR_ALL, "(.*)",          NULL,            NULL },
 	{ MAP_DUMMY(InputText),        SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
 	{ MAP_CALL(TextWidth),         SIG_UNTIL_SCI21EARLY, SIGFOR_ALL, "ri",            NULL,            NULL },
 	{ MAP_DUMMY(PointSize),        SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },

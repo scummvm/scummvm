@@ -63,46 +63,45 @@ namespace Sci {
 extern void showScummVMDialog(const Common::String &message);
 
 reg_t kIsHiRes(EngineState *s, int argc, reg_t *argv) {
-	// Returns 0 if the screen width or height is less than 640 or 400,
-	// respectively.
-	if (g_system->getWidth() < 640 || g_system->getHeight() < 400)
+	const Buffer &buffer = g_sci->_gfxFrameout->getCurrentBuffer();
+	if (buffer.screenWidth < 640 || buffer.screenHeight < 400)
 		return make_reg(0, 0);
 
 	return make_reg(0, 1);
 }
 
 reg_t kAddScreenItem(EngineState *s, int argc, reg_t *argv) {
-	debugC(6, kDebugLevelGraphics, "kAddScreenItem %x:%x (%s)", argv[0].getSegment(), argv[0].getOffset(), g_sci->getEngineState()->_segMan->getObjectName(argv[0]));
+	debugC(6, kDebugLevelGraphics, "kAddScreenItem %x:%x (%s)", PRINT_REG(argv[0]), s->_segMan->getObjectName(argv[0]));
 	g_sci->_gfxFrameout->kernelAddScreenItem(argv[0]);
 	return NULL_REG;
 }
 
 reg_t kUpdateScreenItem(EngineState *s, int argc, reg_t *argv) {
-	debugC(7, kDebugLevelGraphics, "kUpdateScreenItem %x:%x (%s)", argv[0].getSegment(), argv[0].getOffset(), g_sci->getEngineState()->_segMan->getObjectName(argv[0]));
+	debugC(7, kDebugLevelGraphics, "kUpdateScreenItem %x:%x (%s)", PRINT_REG(argv[0]), s->_segMan->getObjectName(argv[0]));
 	g_sci->_gfxFrameout->kernelUpdateScreenItem(argv[0]);
 	return NULL_REG;
 }
 
 reg_t kDeleteScreenItem(EngineState *s, int argc, reg_t *argv) {
-	debugC(6, kDebugLevelGraphics, "kDeleteScreenItem %x:%x (%s)", argv[0].getSegment(), argv[0].getOffset(), g_sci->getEngineState()->_segMan->getObjectName(argv[0]));
+	debugC(6, kDebugLevelGraphics, "kDeleteScreenItem %x:%x (%s)", PRINT_REG(argv[0]), s->_segMan->getObjectName(argv[0]));
 	g_sci->_gfxFrameout->kernelDeleteScreenItem(argv[0]);
 	return NULL_REG;
 }
 
 reg_t kAddPlane(EngineState *s, int argc, reg_t *argv) {
-	debugC(6, kDebugLevelGraphics, "kAddPlane %x:%x (%s)", argv[0].getSegment(), argv[0].getOffset(), g_sci->getEngineState()->_segMan->getObjectName(argv[0]));
+	debugC(6, kDebugLevelGraphics, "kAddPlane %x:%x (%s)", PRINT_REG(argv[0]), s->_segMan->getObjectName(argv[0]));
 	g_sci->_gfxFrameout->kernelAddPlane(argv[0]);
 	return s->r_acc;
 }
 
 reg_t kUpdatePlane(EngineState *s, int argc, reg_t *argv) {
-	debugC(7, kDebugLevelGraphics, "kUpdatePlane %x:%x (%s)", argv[0].getSegment(), argv[0].getOffset(), g_sci->getEngineState()->_segMan->getObjectName(argv[0]));
+	debugC(7, kDebugLevelGraphics, "kUpdatePlane %x:%x (%s)", PRINT_REG(argv[0]), s->_segMan->getObjectName(argv[0]));
 	g_sci->_gfxFrameout->kernelUpdatePlane(argv[0]);
 	return s->r_acc;
 }
 
 reg_t kDeletePlane(EngineState *s, int argc, reg_t *argv) {
-	debugC(6, kDebugLevelGraphics, "kDeletePlane %x:%x (%s)", argv[0].getSegment(), argv[0].getOffset(), g_sci->getEngineState()->_segMan->getObjectName(argv[0]));
+	debugC(6, kDebugLevelGraphics, "kDeletePlane %x:%x (%s)", PRINT_REG(argv[0]), s->_segMan->getObjectName(argv[0]));
 	g_sci->_gfxFrameout->kernelDeletePlane(argv[0]);
 	return s->r_acc;
 }
@@ -141,7 +140,6 @@ reg_t kObjectIntersect(EngineState *s, int argc, reg_t *argv) {
 	return make_reg(0, objRect1.intersects(objRect2));
 }
 
-// Tests if the coordinate is on the passed object
 reg_t kIsOnMe(EngineState *s, int argc, reg_t *argv) {
 	int16 x = argv[0].toSint16();
 	int16 y = argv[1].toSint16();
@@ -681,11 +679,6 @@ reg_t kBitmapCreateFromUnknown(EngineState *s, int argc, reg_t *argv) {
 	// TODO: SCI3
 	return kStub(s, argc + 1, argv - 1);
 }
-
-// Used for edit boxes in save/load dialogs. It's a rewritten version of kEditControl,
-// but it handles events on its own, using an internal loop, instead of using SCI
-// scripts for event management like kEditControl does. Called by script 64914,
-// DEdit::hilite().
 
 reg_t kEditText(EngineState *s, int argc, reg_t *argv) {
 	return g_sci->_gfxControls32->kernelEditText(argv[0]);
