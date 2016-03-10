@@ -246,16 +246,11 @@ void GfxFrameout::syncWithScripts(bool addElements) {
 void GfxFrameout::kernelAddScreenItem(const reg_t object) {
 	const reg_t planeObject = readSelector(_segMan, object, SELECTOR(plane));
 
-// TODO: Remove
-//	debug("Adding screen item %04x:%04x to plane %04x:%04x", PRINT_REG(object), PRINT_REG(planeObject));
-
 	_segMan->getObject(object)->setInfoSelectorFlag(kInfoFlagViewInserted);
 
 	Plane *plane = _planes.findByObject(planeObject);
 	if (plane == nullptr) {
-		warning("screen item %x:%x (%s)", object.getSegment(), object.getOffset(), g_sci->getEngineState()->_segMan->getObjectName(object));
-		warning("plane %x:%x (%s)", planeObject.getSegment(), planeObject.getOffset(), g_sci->getEngineState()->_segMan->getObjectName(planeObject));
-		error("Invalid plane selector passed to kAddScreenItem");
+		error("kAddScreenItem: Plane %04x:%04x not found for screen item %04x:%04x", PRINT_REG(planeObject), PRINT_REG(object));
 	}
 
 	ScreenItem *screenItem = plane->_screenItemList.findByObject(object);
@@ -273,16 +268,12 @@ void GfxFrameout::kernelUpdateScreenItem(const reg_t object) {
 		const reg_t planeObject = readSelector(_segMan, object, SELECTOR(plane));
 		Plane *plane = _planes.findByObject(planeObject);
 		if (plane == nullptr) {
-			warning("screen item %x:%x (%s)", object.getSegment(), object.getOffset(), g_sci->getEngineState()->_segMan->getObjectName(object));
-			warning("plane %x:%x (%s)", planeObject.getSegment(), planeObject.getOffset(), g_sci->getEngineState()->_segMan->getObjectName(planeObject));
-			error("Invalid plane selector passed to kUpdateScreenItem");
+			error("kUpdateScreenItem: Plane %04x:%04x not found for screen item %04x:%04x", PRINT_REG(planeObject), PRINT_REG(object));
 		}
 
 		ScreenItem *screenItem = plane->_screenItemList.findByObject(object);
 		if (screenItem == nullptr) {
-			warning("screen item %x:%x (%s)", object.getSegment(), object.getOffset(), g_sci->getEngineState()->_segMan->getObjectName(object));
-			warning("plane %x:%x (%s)", planeObject.getSegment(), planeObject.getOffset(), g_sci->getEngineState()->_segMan->getObjectName(planeObject));
-			error("Invalid screen item passed to kUpdateScreenItem");
+			error("kUpdateScreenItem: Screen item %04x:%04x not found in plane %04x:%04x", PRINT_REG(object), PRINT_REG(planeObject));
 		}
 
 		screenItem->update(object);
@@ -297,18 +288,11 @@ void GfxFrameout::kernelDeleteScreenItem(const reg_t object) {
 	const reg_t planeObject = readSelector(_segMan, object, SELECTOR(plane));
 	Plane *plane = _planes.findByObject(planeObject);
 	if (plane == nullptr) {
-	// TODO: Remove
-//		warning("Invalid plane selector %04x:%04x passed to kDeleteScreenItem (real engine ignores this)", PRINT_REG(object));
 		return;
 	}
 
-// TODO: Remove
-//	debug("Deleting screen item %04x:%04x from plane %04x:%04x", PRINT_REG(object), PRINT_REG(planeObject));
-
 	ScreenItem *screenItem = plane->_screenItemList.findByObject(object);
 	if (screenItem == nullptr) {
-// TODO: Remove
-//		warning("Invalid screen item %04x:%04x passed to kDeleteScreenItem (real engine ignores this)", PRINT_REG(object));
 		return;
 	}
 
@@ -339,8 +323,7 @@ void GfxFrameout::kernelAddPlane(const reg_t object) {
 void GfxFrameout::kernelUpdatePlane(const reg_t object) {
 	Plane *plane = _planes.findByObject(object);
 	if (plane == nullptr) {
-		warning("plane %x:%x (%s)", object.getSegment(), object.getOffset(), g_sci->getEngineState()->_segMan->getObjectName(object));
-		error("Invalid plane selector passed to kUpdatePlane");
+		error("kUpdatePlane: Plane %04x:%04x not found", PRINT_REG(object));
 	}
 
 	plane->update(object);
@@ -350,8 +333,7 @@ void GfxFrameout::kernelUpdatePlane(const reg_t object) {
 void GfxFrameout::kernelDeletePlane(const reg_t object) {
 	Plane *plane = _planes.findByObject(object);
 	if (plane == nullptr) {
-		warning("plane %x:%x (%s)", object.getSegment(), object.getOffset(), g_sci->getEngineState()->_segMan->getObjectName(object));
-		error("Invalid plane selector passed to kDeletePlane");
+		error("kDeletePlane: Plane %04x:%04x not found", PRINT_REG(object));
 	}
 
 	if (plane->_created) {
@@ -359,8 +341,6 @@ void GfxFrameout::kernelDeletePlane(const reg_t object) {
 		// just ends up doing this anyway so we skip the extra indirection
 		_planes.erase(plane);
 	} else {
-		// TODO: Remove
-//		debug("Deleting plane %04x:%04x", PRINT_REG(object));
 		plane->_created = 0;
 		plane->_deleted = g_sci->_gfxFrameout->getScreenCount();
 	}
@@ -369,7 +349,7 @@ void GfxFrameout::kernelDeletePlane(const reg_t object) {
 void GfxFrameout::deletePlane(Plane &planeToFind) {
 	Plane *plane = _planes.findByObject(planeToFind._object);
 	if (plane == nullptr) {
-		error("Invalid plane passed to deletePlane");
+		error("deletePlane: Plane %04x:%04x not found", PRINT_REG(planeToFind._object));
 	}
 
 	if (plane->_created) {
@@ -384,7 +364,7 @@ void GfxFrameout::deletePlane(Plane &planeToFind) {
 void GfxFrameout::kernelMovePlaneItems(const reg_t object, const int16 deltaX, const int16 deltaY, const bool scrollPics) {
 	Plane *plane = _planes.findByObject(object);
 	if (plane == nullptr) {
-		error("Invalid plane %04x:%04x", PRINT_REG(object));
+		error("kMovePlaneItems: Plane %04x:%04x not found", PRINT_REG(object));
 	}
 
 	plane->scrollScreenItems(deltaX, deltaY, scrollPics);
@@ -444,8 +424,7 @@ void GfxFrameout::updatePlane(Plane &plane) {
 void GfxFrameout::kernelAddPicAt(const reg_t planeObject, const GuiResourceId pictureId, const int16 x, const int16 y, const bool mirrorX) {
 	Plane *plane = _planes.findByObject(planeObject);
 	if (plane == nullptr) {
-		warning("plane %x:%x (%s)", planeObject.getSegment(), planeObject.getOffset(), g_sci->getEngineState()->_segMan->getObjectName(planeObject));
-		error("Invalid plane selector passed to kAddPicAt");
+		error("kAddPicAt: Plane %04x:%04x not found", PRINT_REG(planeObject));
 	}
 	plane->addPic(pictureId, Common::Point(x, y), mirrorX);
 }
@@ -2060,12 +2039,12 @@ void GfxFrameout::kernelSetNowSeen(const reg_t screenItemObject) const {
 
 	Plane *plane = _planes.findByObject(planeObject);
 	if (plane == nullptr) {
-		error("Plane %04x:%04x not found", PRINT_REG(planeObject));
+		error("kSetNowSeen: Plane %04x:%04x not found for screen item %04x:%04x", PRINT_REG(planeObject), PRINT_REG(screenItemObject));
 	}
 
 	ScreenItem *screenItem = plane->_screenItemList.findByObject(screenItemObject);
 	if (screenItem == nullptr) {
-		error("Screen item %04x:%04x not found", PRINT_REG(screenItemObject));
+		error("kSetNowSeen: Screen item %04x:%04x not found in plane %04x:%04x", PRINT_REG(screenItemObject), PRINT_REG(planeObject));
 	}
 
 	Common::Rect result = screenItem->getNowSeenRect(*plane);
