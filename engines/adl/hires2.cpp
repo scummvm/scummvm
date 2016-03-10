@@ -64,6 +64,27 @@ void HiRes2Engine::loadData() {
 }
 
 void HiRes2Engine::initState() {
+	Common::File f;
+
+	if (!f.open(IDS_HR2_DISK_IMAGE))
+		error("Failed to open file '" IDS_HR2_DISK_IMAGE "'");
+
+	_state.rooms.clear();
+	f.seek(IDI_HR2_OFS_ROOMS);
+	for (uint i = 0; i < IDI_HR2_NUM_ROOMS; ++i) {
+		Room room = { };
+		f.readByte(); // number
+		for (uint j = 0; j < 6; ++j)
+			room.connections[j] = f.readByte();
+		room.track = f.readByte();
+		room.sector = f.readByte();
+		room.offset = f.readByte();
+		f.readByte(); // always 1, possibly disk?
+		room.picture = f.readByte();
+		room.curPicture = f.readByte();
+		f.readByte(); // always 1, possibly disk?
+		_state.rooms.push_back(room);
+	}
 }
 
 void HiRes2Engine::restartGame() {

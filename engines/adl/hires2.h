@@ -44,6 +44,8 @@ namespace Adl {
 #define IDI_HR2_OFS_INTRO_TEXT TSO(0x00, 0xd, 0x17)
 #define IDI_HR2_OFS_VERBS        T(0x19)
 #define IDI_HR2_OFS_NOUNS       TS(0x22, 0x2)
+#define IDI_HR2_OFS_ROOMS      TSO(0x21, 0x5, 0x0e) // Skip bogus room 0
+#define IDI_HR2_NUM_ROOMS 135
 
 class HiRes2Engine : public AdlEngine {
 public:

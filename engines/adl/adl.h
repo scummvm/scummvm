@@ -80,6 +80,9 @@ struct AdlGameDescription;
 struct Room {
 	byte description;
 	byte connections[6];
+	byte track;
+	byte sector;
+	byte offset;
 	byte picture;
 	byte curPicture;
 };

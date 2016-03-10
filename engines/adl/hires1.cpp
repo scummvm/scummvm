@@ -242,7 +242,7 @@ void HiRes1Engine::initState() {
 	_roomDesc.clear();
 	f.seek(IDI_HR1_OFS_ROOMS);
 	for (uint i = 0; i < IDI_HR1_NUM_ROOMS; ++i) {
-		Room room;
+		Room room = { };
 		f.readByte();
 		_roomDesc.push_back(f.readByte());
 		for (uint j = 0; j < 6; ++j)
