@@ -319,13 +319,13 @@ void Design::drawRoundRect(Graphics::Surface *surface, Common::ReadStream &in,
 	PlotData pd(surface, &patterns, fillType, 1, this);
 
 	if (fillType <= patterns.size())
-		Graphics::drawRoundRect(r, arc/2, kColorBlack, true, drawPixel, &pd);
+		Graphics::drawRoundRect(r, arc / 2, kColorBlack, true, drawPixel, &pd);
 
 	pd.fillType = borderFillType;
 	pd.thickness = borderThickness;
 
 	if (borderThickness > 0 && borderFillType <= patterns.size())
-		Graphics::drawRoundRect(r, arc/2, kColorBlack, false, drawPixel, &pd);
+		Graphics::drawRoundRect(r, arc / 2, kColorBlack, false, drawPixel, &pd);
 }
 
 void Design::drawPolygon(Graphics::Surface *surface, Common::ReadStream &in,
