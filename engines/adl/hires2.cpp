@@ -51,6 +51,16 @@ void HiRes2Engine::runIntro() const {
 }
 
 void HiRes2Engine::loadData() {
+	Common::File f;
+
+	if (!f.open(IDS_HR2_DISK_IMAGE))
+		error("Failed to open file '" IDS_HR2_DISK_IMAGE "'");
+
+	f.seek(IDI_HR2_OFS_VERBS);
+	loadWords(f, _verbs);
+
+	f.seek(IDI_HR2_OFS_NOUNS);
+	loadWords(f, _nouns);
 }
 
 void HiRes2Engine::initState() {
