@@ -38,6 +38,12 @@ namespace Titanic {
 class CProjectItem;
 class CGameView;
 
+class CGameManagerListItem : public ListItem {
+};
+
+class CGameManagerList : public List<CGameManagerListItem> {
+};
+
 class CGameManager {
 private:
 	CProjectItem *_project;
@@ -49,6 +55,7 @@ private:
 	CMusicRoom _musicRoom;
 	CTrueTalkManager _trueTalkManager;
 	Common::Rect _bounds;
+	CGameManagerList _list;
 	int _field30;
 	int _field34;
 	int _field48;

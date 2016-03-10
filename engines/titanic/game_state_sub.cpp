@@ -29,4 +29,17 @@ CGameStateSub::CGameStateSub(CGameState *owner) : _gameState(owner),
 		_field0(0), _field4(0), _field8(0), _fieldC(0) {
 }
 
+void CGameStateSub::save(SimpleFile *file) const {
+	file->writeNumber(_field4);
+	file->writeNumber(_field8);
+	file->writeNumber(_fieldC);
+}
+
+void CGameStateSub::load(SimpleFile *file) {
+	_field0 = 0;
+	_field4 = file->readNumber();
+	_field8 = file->readNumber();
+	_fieldC = file->readNumber();
+}
+
 } // End of namespace Titanic z

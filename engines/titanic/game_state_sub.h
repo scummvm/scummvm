@@ -23,6 +23,8 @@
 #ifndef TITANIC_GAME_STATE_SUB_H
 #define TITANIC_GAME_STATE_SUB_H
 
+#include "titanic/simple_file.h"
+
 namespace Titanic {
 
 class CGameState;
@@ -37,6 +39,16 @@ public:
 	int _fieldC;
 public:
 	CGameStateSub(CGameState *owner);
+
+	/**
+	 * Save the data for the class to file
+	 */
+	void save(SimpleFile *file) const;
+
+	/**
+	 * Load the data for the class from file
+	 */
+	void load(SimpleFile *file);
 };
 
 } // End of namespace Titanic

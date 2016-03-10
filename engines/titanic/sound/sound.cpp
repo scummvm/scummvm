@@ -27,4 +27,12 @@ namespace Titanic {
 CSound::CSound(CGameManager *owner) : _gameManager(owner) {
 }
 
+void CSound::save(SimpleFile *file) const {
+
+}
+
+void CSound::load(SimpleFile *file) {
+
+}
+
 } // End of namespace Titanic z

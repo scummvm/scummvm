@@ -23,6 +23,8 @@
 #ifndef TITANIC_SOUND_H
 #define TITANIC_SOUND_H
 
+#include "titanic/simple_file.h"
+
 namespace Titanic {
 
 class CGameManager;
@@ -32,6 +34,16 @@ public:
 	CGameManager *_gameManager;
 public:
 	CSound(CGameManager *owner);
+
+	/**
+	 * Save the data for the class to file
+	 */
+	void save(SimpleFile *file) const;
+
+	/**
+	 * Load the data for the class from file
+	 */
+	void load(SimpleFile *file);
 };
 
 } // End of namespace Titanic

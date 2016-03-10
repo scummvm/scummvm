@@ -59,6 +59,16 @@ public:
 	int _field38;
 public:
 	CGameState(CGameManager *gameManager);
+
+	/**
+	 * Save the data for the class to file
+	 */
+	void save(SimpleFile *file) const;
+
+	/**
+	 * Load the data for the class from file
+	 */
+	void load(SimpleFile *file);
 };
 
 } // End of namespace Titanic

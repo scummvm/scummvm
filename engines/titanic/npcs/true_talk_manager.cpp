@@ -24,7 +24,54 @@
 
 namespace Titanic {
 
+int CTrueTalkManager::_v1;
+int CTrueTalkManager::_v2;
+int CTrueTalkManager::_v3;
+bool CTrueTalkManager::_v4;
+bool CTrueTalkManager::_v5;
+int CTrueTalkManager::_v6;
+int CTrueTalkManager::_v7;
+bool CTrueTalkManager::_v8;
+int CTrueTalkManager::_v9;
+bool CTrueTalkManager::_v10;
+int CTrueTalkManager::_v11[41];
+
 CTrueTalkManager::CTrueTalkManager(CGameManager *owner) : _gameManager(owner) {
+}
+
+void CTrueTalkManager::save(SimpleFile *file) const {
+
+}
+
+void CTrueTalkManager::load(SimpleFile *file) {
+	loadStatics(file);
+
+	int count = file->readNumber();
+	//TODO
+}
+
+void CTrueTalkManager::loadStatics(SimpleFile *file) {
+	int count = file->readNumber();
+	_v1 = file->readNumber();
+	_v2 = file->readNumber();
+	_v3 = file->readNumber();
+	_v4 = file->readNumber() != 0;
+	_v5 = file->readNumber() != 0;
+	_v6 = file->readNumber();
+	_v7 = file->readNumber();
+	_v8 = file->readNumber() != 0;
+	_v9 = file->readNumber();
+	_v10 = file->readNumber() != 0;
+
+	for (int idx = count; count > 10; --idx)
+		file->readNumber();
+
+	int count2 = file->readNumber();
+	for (int idx = 0; idx < count2; ++idx) {
+		int v = file->readNumber();
+		if (idx < 41)
+			_v11[idx] = v;
+	}
 }
 
 } // End of namespace Titanic

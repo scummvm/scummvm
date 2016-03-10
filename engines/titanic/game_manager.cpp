@@ -40,9 +40,10 @@ CGameManager::CGameManager(CProjectItem *project, CGameView *gameView):
 void CGameManager::load(SimpleFile *file) {
 	file->readNumber();
 
-	//_gameState.load(file);
-	//_list.load(file);
-
+	_gameState.load(file);
+	_list.load(file);
+	_trueTalkManager.load(file);
+	_sound.load(file);
 
 }
 
