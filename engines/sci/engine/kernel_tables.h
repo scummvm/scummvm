@@ -568,7 +568,10 @@ static SciKernelMapEntry s_kernelMap[] = {
 	{ MAP_CALL(SetDebug),          SIG_EVERYWHERE,           "(i*)",                  NULL,            NULL },
 	{ MAP_CALL(SetJump),           SIG_EVERYWHERE,           "oiii",                  NULL,            NULL },
 	{ MAP_CALL(SetMenu),           SIG_EVERYWHERE,           "i(.*)",                 NULL,            NULL },
-	{ MAP_CALL(SetNowSeen),        SIG_EVERYWHERE,           "o(i)",                  NULL,            NULL },
+	{ MAP_CALL(SetNowSeen),        SIG_SCI16, SIGFOR_ALL,    "o(i)",                  NULL,            NULL },
+#ifdef ENABLE_SCI32
+	{ MAP_CALL(SetNowSeen),        SIG_SCI32, SIGFOR_ALL,    "o",                     NULL,            NULL },
+#endif
 	{ MAP_CALL(SetPort),           SIG_EVERYWHERE,           "i(iiiii)(i)",           NULL,            kSetPort_workarounds },
 	{ MAP_CALL(SetQuitStr),        SIG_EVERYWHERE,           "r",                     NULL,            NULL },
 	{ MAP_CALL(SetSynonyms),       SIG_EVERYWHERE,           "o",                     NULL,            NULL },

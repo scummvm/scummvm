@@ -259,6 +259,13 @@ public:
 	 * VM object.
 	 */
 	void update(const reg_t object);
+
+	/**
+	 * Gets the "now seen" rect for the screen item, which
+	 * represents the current size and position of the
+	 * screen item on the screen in script coordinates.
+	 */
+	Common::Rect getNowSeenRect(const Plane &plane) const;
 };
 
 #pragma mark -

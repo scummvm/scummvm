@@ -245,6 +245,7 @@ public:
 	void kernelAddScreenItem(const reg_t object);
 	void kernelUpdateScreenItem(const reg_t object);
 	void kernelDeleteScreenItem(const reg_t object);
+	void kernelSetNowSeen(const reg_t screenItemObject) const;
 
 #pragma mark -
 #pragma mark Planes

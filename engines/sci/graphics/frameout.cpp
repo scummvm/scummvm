@@ -2028,6 +2028,26 @@ bool GfxFrameout::isOnMe(const ScreenItem &screenItem, const Plane &plane, const
 	return true;
 }
 
+void GfxFrameout::kernelSetNowSeen(const reg_t screenItemObject) const {
+	const reg_t planeObject = readSelector(_segMan, screenItemObject, SELECTOR(plane));
+
+	Plane *plane = _planes.findByObject(planeObject);
+	if (plane == nullptr) {
+		error("Plane %04x:%04x not found", PRINT_REG(planeObject));
+	}
+
+	ScreenItem *screenItem = plane->_screenItemList.findByObject(screenItemObject);
+	if (screenItem == nullptr) {
+		error("Screen item %04x:%04x not found", PRINT_REG(screenItemObject));
+	}
+
+	Common::Rect result = screenItem->getNowSeenRect(*plane);
+	writeSelectorValue(_segMan, screenItemObject, SELECTOR(nsLeft), result.left);
+	writeSelectorValue(_segMan, screenItemObject, SELECTOR(nsTop), result.top);
+	writeSelectorValue(_segMan, screenItemObject, SELECTOR(nsRight), result.right - 1);
+	writeSelectorValue(_segMan, screenItemObject, SELECTOR(nsBottom), result.bottom - 1);
+}
+
 #pragma mark -
 #pragma mark Debugging
 

@@ -122,9 +122,6 @@ uint16 GfxCompare::kernelOnControl(byte screenMask, const Common::Rect &rect) {
 void GfxCompare::kernelSetNowSeen(reg_t objectReference) {
 	GfxView *view = NULL;
 	Common::Rect celRect(0, 0);
-	// TODO/FIXME: Torin's menu code tries to draw special views with an ID of 0xFFFF, which
-	// are not currently handled properly and cause a crash. These might be text views that
-	// are not properly implemented.
 	GuiResourceId viewId = (GuiResourceId)readSelectorValue(_segMan, objectReference, SELECTOR(view));
 	int16 loopNo = readSelectorValue(_segMan, objectReference, SELECTOR(loop));
 	int16 celNo = readSelectorValue(_segMan, objectReference, SELECTOR(cel));
@@ -135,25 +132,7 @@ void GfxCompare::kernelSetNowSeen(reg_t objectReference) {
 		z = (int16)readSelectorValue(_segMan, objectReference, SELECTOR(z));
 
 	view = _cache->getView(viewId);
-
-#ifdef ENABLE_SCI32
-	if (view->isSci2Hires())
-		view->adjustToUpscaledCoordinates(y, x);
-	else if ((getSciVersion() >= SCI_VERSION_2_1_EARLY) && (getSciVersion() <= SCI_VERSION_2_1_LATE))
-		_coordAdjuster->fromScriptToDisplay(y, x);
-#endif
-
 	view->getCelRect(loopNo, celNo, x, y, z, celRect);
-
-#ifdef ENABLE_SCI32
-	if (view->isSci2Hires()) {
-		view->adjustBackUpscaledCoordinates(celRect.top, celRect.left);
-		view->adjustBackUpscaledCoordinates(celRect.bottom, celRect.right);
-	} else if ((getSciVersion() >= SCI_VERSION_2_1_EARLY) && (getSciVersion() <= SCI_VERSION_2_1_LATE)) {
-		_coordAdjuster->fromDisplayToScript(celRect.top, celRect.left);
-		_coordAdjuster->fromDisplayToScript(celRect.bottom, celRect.right);
-	}
-#endif
 
 	if (lookupSelector(_segMan, objectReference, SELECTOR(nsTop), NULL, NULL) == kSelectorVariable) {
 		setNSRect(objectReference, celRect);

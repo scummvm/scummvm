@@ -572,9 +572,17 @@ reg_t kBaseSetter(EngineState *s, int argc, reg_t *argv) {
 }
 
 reg_t kSetNowSeen(EngineState *s, int argc, reg_t *argv) {
-	g_sci->_gfxCompare->kernelSetNowSeen(argv[0]);
-
-	return s->r_acc;
+#ifdef ENABLE_SCI32
+	if (getSciVersion() >= SCI_VERSION_2) {
+		g_sci->_gfxFrameout->kernelSetNowSeen(argv[0]);
+		return NULL_REG;
+	} else {
+#endif
+		g_sci->_gfxCompare->kernelSetNowSeen(argv[0]);
+		return s->r_acc;
+#ifdef ENABLE_SCI32
+	}
+#endif
 }
 
 reg_t kPalette(EngineState *s, int argc, reg_t *argv) {
