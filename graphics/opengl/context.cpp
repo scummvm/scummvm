@@ -131,6 +131,10 @@ void Context::initialize(ContextType contextType) {
 
 int Context::getGLSLVersion() const {
 	const char *glslVersionString = (const char *)glGetString(GL_SHADING_LANGUAGE_VERSION);
+	if (!glslVersionString) {
+		warning("Could not get GLSL version");
+		return 0;
+	}
 
 	const char *glslVersionFormat;
 	if (type == kContextGL) {

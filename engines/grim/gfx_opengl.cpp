@@ -197,7 +197,7 @@ void GfxOpenGL::initExtensions() {
 #endif
 
 	const char *extensions = (const char *)glGetString(GL_EXTENSIONS);
-	if (strstr(extensions, "ARB_fragment_program")) {
+	if (extensions && strstr(extensions, "ARB_fragment_program")) {
 		_useDepthShader = true;
 		_useDimShader = true;
 	}
