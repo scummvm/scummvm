@@ -60,8 +60,9 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 };
 
 static const PlainGameDescriptor adlGames[] = {
-	{"hires1", "Hi-Res Adventure #1: Mystery House"},
-	{0, 0}
+	{ "hires1", "Hi-Res Adventure #1: Mystery House" },
+	{ "hires2", "Hi-Res Adventure #2: Wizard and the Princess" },
+	{ 0, 0 }
 };
 
 static const AdlGameDescription gameDescriptions[] = {
@@ -69,9 +70,9 @@ static const AdlGameDescription gameDescriptions[] = {
 		{
 			"hires1", 0,
 			{
-				{"ADVENTURE", 0, "22d9e63a11d69fa033ba1738715ad09a", 29952},
-				{"AUTO LOAD OBJ", 0, "23bfccfe9fcff9b22cf6c41bde9078ac", 12291},
-				{"MYSTERY.HELLO", 0, "2289b7fea300b506e902a4c597968369", 836},
+				{ "ADVENTURE", 0, "22d9e63a11d69fa033ba1738715ad09a", 29952 },
+				{ "AUTO LOAD OBJ", 0, "23bfccfe9fcff9b22cf6c41bde9078ac", 12291 },
+				{ "MYSTERY.HELLO", 0, "2289b7fea300b506e902a4c597968369", 836 },
 				AD_LISTEND
 			},
 			Common::EN_ANY,
@@ -80,6 +81,20 @@ static const AdlGameDescription gameDescriptions[] = {
 			GUIO2(GAMEOPTION_COLOR, GAMEOPTION_SCANLINES)
 		},
 		GAME_TYPE_HIRES1
+	},
+	{ // Hi-Res Adventure #2: Wizard and the Princess - Apple II - 1986 SierraVenture release
+		{
+			"hires2", 0,
+			{
+				{ "WIZARD.DSK", 0, "816fdfc35e25496213c8db40ecf26569", 143360 },
+				AD_LISTEND
+			},
+			Common::EN_ANY,
+			Common::kPlatformApple2GS, // FIXME
+			ADGF_NO_FLAGS,
+			GUIO1(GAMEOPTION_SCANLINES)
+		},
+		GAME_TYPE_HIRES2
 	},
 	{ AD_TABLE_END_MARKER, GAME_TYPE_NONE }
 };
@@ -220,6 +235,7 @@ void AdlMetaEngine::removeSaveState(const char *target, int slot) const {
 }
 
 Engine *HiRes1Engine_create(OSystem *syst, const AdlGameDescription *gd);
+Engine *HiRes2Engine_create(OSystem *syst, const AdlGameDescription *gd);
 
 bool AdlMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *gd) const {
 	if (!gd)
@@ -230,6 +246,9 @@ bool AdlMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameD
 	switch (adlGd->gameType) {
 	case GAME_TYPE_HIRES1:
 		*engine = HiRes1Engine_create(syst, adlGd);
+		break;
+	case GAME_TYPE_HIRES2:
+		*engine = HiRes2Engine_create(syst, adlGd);
 		break;
 	default:
 		error("Unknown GameType");
