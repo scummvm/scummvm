@@ -32,8 +32,9 @@
 
 namespace Adl {
 
-#define GAMEOPTION_COLOR      GUIO_GAMEOPTIONS1
-#define GAMEOPTION_SCANLINES  GUIO_GAMEOPTIONS2
+#define GAMEOPTION_COLOR     GUIO_GAMEOPTIONS1
+#define GAMEOPTION_SCANLINES GUIO_GAMEOPTIONS2
+#define GAMEOPTION_MONO      GUIO_GAMEOPTIONS3
 
 static const ADExtraGuiOptionsMap optionsList[] = {
 	{
@@ -43,6 +44,16 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 			_s("Use color graphics"),
 			"color",
 			false
+		}
+	},
+
+	{
+		GAMEOPTION_MONO,
+		{
+			_s("Color mode"),
+			_s("Use color graphics"),
+			"color",
+			true
 		}
 	},
 
@@ -92,7 +103,7 @@ static const AdlGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformApple2GS, // FIXME
 			ADGF_NO_FLAGS,
-			GUIO1(GAMEOPTION_SCANLINES)
+			GUIO2(GAMEOPTION_MONO, GAMEOPTION_SCANLINES)
 		},
 		GAME_TYPE_HIRES2
 	},

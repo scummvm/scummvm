@@ -34,6 +34,13 @@ class Point;
 
 namespace Adl {
 
+#define IDS_HR2_DISK_IMAGE "WIZARD.DSK"
+
+// Track, sector, offset
+#define TSO(T, S, O) (((T) * 16 + (S)) * 256 + (O))
+
+#define IDI_HR2_OFS_INTRO_TEXT TSO(0x00, 0xd, 0x17)
+
 class HiRes2Engine : public AdlEngine {
 public:
 	HiRes2Engine(OSystem *syst, const AdlGameDescription *gd) : AdlEngine(syst, gd) { }

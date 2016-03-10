@@ -32,6 +32,22 @@
 namespace Adl {
 
 void HiRes2Engine::runIntro() const {
+	Common::File f;
+
+	if (!f.open(IDS_HR2_DISK_IMAGE))
+		error("Failed to open file '" IDS_HR2_DISK_IMAGE "'");
+
+	f.seek(IDI_HR2_OFS_INTRO_TEXT);
+
+	_display->setMode(DISPLAY_MODE_TEXT);
+
+	Common::String str = readStringAt(f, IDI_HR2_OFS_INTRO_TEXT);
+
+	if (f.eos() || f.err())
+		error("Error reading disk image");
+
+	_display->printString(str);
+	delay(2000);
 }
 
 void HiRes2Engine::loadData() {
