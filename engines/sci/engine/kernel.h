@@ -452,7 +452,7 @@ reg_t kScrollWindowShow(EngineState *s, int argc, reg_t *argv);
 reg_t kScrollWindowDestroy(EngineState *s, int argc, reg_t *argv);
 
 reg_t kMulDiv(EngineState *s, int argc, reg_t *argv);
-reg_t kCantBeHere32(EngineState *s, int argc, reg_t *argv);
+reg_t kSetNowSeen32(EngineState *s, int argc, reg_t *argv);
 reg_t kRemapColors32(EngineState *s, int argc, reg_t *argv);
 
 reg_t kAddScreenItem(EngineState *s, int argc, reg_t *argv);

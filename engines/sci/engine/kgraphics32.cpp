@@ -71,15 +71,6 @@ reg_t kIsHiRes(EngineState *s, int argc, reg_t *argv) {
 	return make_reg(0, 1);
 }
 
-// SCI32 variant, can't work like sci16 variants
-reg_t kCantBeHere32(EngineState *s, int argc, reg_t *argv) {
-	// TODO
-//	reg_t curObject = argv[0];
-//	reg_t listReference = (argc > 1) ? argv[1] : NULL_REG;
-
-	return NULL_REG;
-}
-
 reg_t kAddScreenItem(EngineState *s, int argc, reg_t *argv) {
 	debugC(6, kDebugLevelGraphics, "kAddScreenItem %x:%x (%s)", argv[0].getSegment(), argv[0].getOffset(), g_sci->getEngineState()->_segMan->getObjectName(argv[0]));
 	g_sci->_gfxFrameout->kernelAddScreenItem(argv[0]);

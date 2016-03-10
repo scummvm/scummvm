@@ -446,10 +446,10 @@ static SciKernelMapEntry s_kernelMap[] = {
 	{ MAP_CALL(AvoidPath),         SIG_EVERYWHERE,           "ii(.*)",                NULL,            NULL },
 	{ MAP_CALL(BaseSetter),        SIG_EVERYWHERE,           "o",                     NULL,            NULL },
 	{ MAP_CALL(CanBeHere),         SIG_EVERYWHERE,           "o(l)",                  NULL,            NULL },
+	{ MAP_CALL(CantBeHere),        SIG_SCI16, SIGFOR_ALL,    "o(l)",                  NULL,            NULL },
 #ifdef ENABLE_SCI32
-	{ "CantBeHere", kCantBeHere32, SIG_SCI32, SIGFOR_ALL,    "ol",                    NULL,            NULL },
+	{ MAP_CALL(CantBeHere),        SIG_SCI32, SIGFOR_ALL,    "ol",                    NULL,            NULL },
 #endif
-	{ MAP_CALL(CantBeHere),        SIG_EVERYWHERE,           "o(l)",                  NULL,            NULL },
 	{ MAP_CALL(CelHigh),           SIG_EVERYWHERE,           "ii(i)",                 NULL,            kCelHigh_workarounds },
 	{ MAP_CALL(CelWide),           SIG_EVERYWHERE,           "ii(i)",                 NULL,            kCelWide_workarounds },
 	{ MAP_CALL(CheckFreeSpace),    SIG_SCI32, SIGFOR_ALL,    "r.*",                   NULL,            NULL },
