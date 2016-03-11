@@ -441,8 +441,15 @@ reg_t kCantBeHere(EngineState *s, int argc, reg_t *argv) {
 	reg_t curObject = argv[0];
 	reg_t listReference = (argc > 1) ? argv[1] : NULL_REG;
 
-	reg_t canBeHere = g_sci->_gfxCompare->kernelCanBeHere(curObject, listReference);
-	return canBeHere;
+#ifdef ENABLE_SCI32
+	if (getSciVersion() >= SCI_VERSION_2) {
+		return g_sci->_gfxCompare->kernelCanBeHere32(curObject, listReference);
+	} else {
+#endif
+		return g_sci->_gfxCompare->kernelCanBeHere(curObject, listReference);
+#ifdef ENABLE_SCI32
+	}
+#endif
 }
 
 reg_t kIsItSkip(EngineState *s, int argc, reg_t *argv) {

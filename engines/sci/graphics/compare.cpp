@@ -67,29 +67,18 @@ uint16 GfxCompare::isOnControl(uint16 screenMask, const Common::Rect &rect) {
 	return result;
 }
 
-reg_t GfxCompare::canBeHereCheckRectList(reg_t checkObject, const Common::Rect &checkRect, List *list) {
+reg_t GfxCompare::canBeHereCheckRectList(const reg_t checkObject, const Common::Rect &checkRect, const List *list, const uint16 signalFlags) const {
 	reg_t curAddress = list->first;
 	Node *curNode = _segMan->lookupNode(curAddress);
 	reg_t curObject;
 	uint16 signal;
 	Common::Rect curRect;
 
-	uint16 flags;
-#ifdef ENABLE_SCI32
-	if (getSciVersion() >= SCI_VERSION_2) {
-		flags = kSignalIgnoreActor | kSignalHidden;
-	} else {
-#endif
-		flags = kSignalIgnoreActor | kSignalRemoveView | kSignalNoUpdate;
-#ifdef ENABLE_SCI32
-	}
-#endif
-
 	while (curNode) {
 		curObject = curNode->value;
 		if (curObject != checkObject) {
 			signal = readSelectorValue(_segMan, curObject, SELECTOR(signal));
-			if (!(signal & flags)) {
+			if (!(signal & signalFlags)) {
 				curRect.left = readSelectorValue(_segMan, curObject, SELECTOR(brLeft));
 				curRect.top = readSelectorValue(_segMan, curObject, SELECTOR(brTop));
 				curRect.right = readSelectorValue(_segMan, curObject, SELECTOR(brRight));
@@ -149,36 +138,44 @@ reg_t GfxCompare::kernelCanBeHere(reg_t curObject, reg_t listReference) {
 	checkRect.bottom = readSelectorValue(_segMan, curObject, SELECTOR(brBottom));
 	uint16 signal = readSelectorValue(_segMan, curObject, SELECTOR(signal));
 
-#ifdef ENABLE_SCI32
-	if (getSciVersion() >= SCI_VERSION_2) {
-		result = 0;
-		if ((signal & (kSignalIgnoreActor | kSignalHidden)) == 0) {
-			List *list = _segMan->lookupList(listReference);
-			if (!list) {
-				error("kCanBeHere called with non-list as parameter");
-			}
-			result = !canBeHereCheckRectList(curObject, checkRect, list).isNull();
-		}
-	} else {
-#endif
-		if (!checkRect.isValidRect()) {	// can occur in Iceman and Mother Goose - HACK? TODO: is this really occuring in sierra sci? check this
-			warning("kCan(t)BeHere - invalid rect %d, %d -> %d, %d", checkRect.left, checkRect.top, checkRect.right, checkRect.bottom);
-			return NULL_REG; // this means "can be here"
-		}
-
-		Common::Rect adjustedRect = _coordAdjuster->onControl(checkRect);
-		uint16 controlMask = readSelectorValue(_segMan, curObject, SELECTOR(illegalBits));
-		result = isOnControl(GFX_SCREEN_MASK_CONTROL, adjustedRect) & controlMask;
-		if ((!result) && (signal & (kSignalIgnoreActor | kSignalRemoveView)) == 0) {
-			List *list = _segMan->lookupList(listReference);
-			if (!list)
-				error("kCanBeHere called with non-list as parameter");
-
-			return canBeHereCheckRectList(curObject, checkRect, list);
-		}
-#ifdef ENABLE_SCI32
+	if (!checkRect.isValidRect()) {	// can occur in Iceman and Mother Goose - HACK? TODO: is this really occuring in sierra sci? check this
+		warning("kCan(t)BeHere - invalid rect %d, %d -> %d, %d", checkRect.left, checkRect.top, checkRect.right, checkRect.bottom);
+		return NULL_REG; // this means "can be here"
 	}
-#endif
+
+	Common::Rect adjustedRect = _coordAdjuster->onControl(checkRect);
+	uint16 controlMask = readSelectorValue(_segMan, curObject, SELECTOR(illegalBits));
+	result = isOnControl(GFX_SCREEN_MASK_CONTROL, adjustedRect) & controlMask;
+	if ((!result) && (signal & (kSignalIgnoreActor | kSignalRemoveView)) == 0) {
+		List *list = _segMan->lookupList(listReference);
+		if (!list)
+			error("kCanBeHere called with non-list as parameter");
+
+		return canBeHereCheckRectList(curObject, checkRect, list, kSignalIgnoreActor | kSignalRemoveView | kSignalNoUpdate);
+	}
+
+	return make_reg(0, result);
+}
+
+reg_t GfxCompare::kernelCanBeHere32(const reg_t curObject, const reg_t listReference) const {
+	Common::Rect checkRect(
+		readSelectorValue(_segMan, curObject, SELECTOR(brLeft)),
+		readSelectorValue(_segMan, curObject, SELECTOR(brTop)),
+		readSelectorValue(_segMan, curObject, SELECTOR(brRight)),
+		readSelectorValue(_segMan, curObject, SELECTOR(brBottom))
+	);
+
+	uint16 result = 0;
+	uint16 signal = readSelectorValue(_segMan, curObject, SELECTOR(signal));
+	const uint16 signalFlags = kSignalIgnoreActor | kSignalHidden;
+
+	if ((signal & signalFlags) == 0) {
+		List *list = _segMan->lookupList(listReference);
+		if (!list) {
+			error("kCanBeHere called with non-list as parameter");
+		}
+		result = !canBeHereCheckRectList(curObject, checkRect, list, signalFlags).isNull();
+	}
 
 	return make_reg(0, result);
 }
