@@ -100,7 +100,7 @@ public:
 	GameConversations * _gameConv;
 	Palette *_palette;
 	Resources *_resources;
-	ScreenSurface _screen;
+	Screen *_screen;
 	SoundManager *_sound;
 	AudioPlayer *_audio;
 	bool _easyMouse;

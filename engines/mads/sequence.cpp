@@ -237,8 +237,8 @@ bool SequenceList::loadSprites(int seqIndex) {
 		if ((seqEntry._flags != 0) || (seqEntry._dynamicHotspotIndex >= 0)) {
 			SpriteAsset &spriteSet = *scene._sprites[seqEntry._spritesIndex];
 			MSprite *frame = spriteSet.getFrame(seqEntry._frameIndex - 1);
-			int width = frame->getWidth() * seqEntry._scale / 200;
-			int height = frame->getHeight() * seqEntry._scale / 100;
+			int width = frame->w * seqEntry._scale / 200;
+			int height = frame->h * seqEntry._scale / 100;
 			Common::Point pt = spriteSlot._position;
 
 			// Handle sprite movement, if present

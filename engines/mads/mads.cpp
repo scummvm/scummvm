@@ -94,7 +94,7 @@ void MADSEngine::initialize() {
 	_palette = new Palette(this);
 	Font::init(this);
 	_font = new Font();
-	_screen.init();
+	_screen = new Screen();
 	_sound = new SoundManager(this, _mixer);
 	_audio = new AudioPlayer(_mixer, getGameID());
 	_game = Game::init(this);
@@ -102,7 +102,7 @@ void MADSEngine::initialize() {
 
 	loadOptions();
 
-	_screen.empty();
+	_screen->clear();
 }
 
 void MADSEngine::loadOptions() {

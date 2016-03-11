@@ -242,13 +242,13 @@ void SceneInfo::load(int sceneId, int variant, const Common::String &resName,
 	int height = _height;
 
 	if (!bgSurface.getPixels() || (bgSurface.w != width) || (bgSurface.h != height)) {
-		bgSurface.setSize(width, height);
+		bgSurface.create(width, height);
 	}
 
 	if (_depthStyle == 2)
 		width >>= 2;
 	if (!depthSurface.getPixels()) {
-		depthSurface.setSize(width, height);
+		depthSurface.create(width, height);
 	}
 
 	loadCodes(depthSurface, variant);
@@ -288,7 +288,7 @@ void SceneInfo::load(int sceneId, int variant, const Common::String &resName,
 		assert(asset && _depthStyle != 2);
 
 		MSprite *spr = asset->getFrame(si._frameNumber);
-		bgSurface.copyFrom(spr, si._position, si._depth, &depthSurface,
+		bgSurface.copyFrom(*spr, si._position, si._depth, &depthSurface,
 			si._scale, false, spr->getTransparencyIndex());
 	}
 
@@ -455,7 +455,7 @@ void SceneInfo::loadMadsV2Background(int sceneId, const Common::String &resName,
 		newHeight = tileCount * tileHeight;
 
 	if (bgSurface.w != newWidth || bgSurface.h != newHeight)
-		bgSurface.setSize(newWidth, newHeight);
+		bgSurface.create(newWidth, newHeight);
 
 	// --------------------------------------------------------------------------------
 
@@ -477,7 +477,7 @@ void SceneInfo::loadMadsV2Background(int sceneId, const Common::String &resName,
 
 		//debugCN(kDebugGraphics, "Tile: %i, compressed size: %i\n", i, compressedTileDataSize);
 
-		newTile->empty();
+		newTile->clear();
 
 		byte *compressedTileData = new byte[compressedTileDataSize];
 
@@ -503,7 +503,8 @@ void SceneInfo::loadMadsV2Background(int sceneId, const Common::String &resName,
 			TileSetIterator tile = tileSet.begin();
 			for (int i = 0; i < tileIndex; i++)
 				++tile;
-			((*tile).get())->copyTo(&bgSurface, Common::Point(x * tileWidth, y * tileHeight));
+
+			bgSurface.blitFrom(*(*tile).get(), Common::Point(x * tileWidth, y * tileHeight));
 			((*tile).get())->free();
 		}
 	}
