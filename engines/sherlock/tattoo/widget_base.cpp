@@ -88,7 +88,7 @@ void WidgetBase::erase() {
 
 	if (_oldBounds.width() > 0) {
 		// Restore the affected area from the secondary back buffer into the first one, and then copy to screen
-		screen._backBuffer1.blitFrom(screen._backBuffer2, Common::Point(_oldBounds.left, _oldBounds.top), _oldBounds);
+		screen._backBuffer1.SHblitFrom(screen._backBuffer2, Common::Point(_oldBounds.left, _oldBounds.top), _oldBounds);
 		screen.slamRect(_oldBounds);
 
 		// Reset the old bounds so it won't be erased again
@@ -111,7 +111,7 @@ void WidgetBase::draw() {
 		drawBackground();
 
 		// Draw the widget onto the back buffer and then slam it to the screen
-		screen._backBuffer1.transBlitFrom(_surface, Common::Point(_bounds.left, _bounds.top));
+		screen._backBuffer1.SHtransBlitFrom(_surface, Common::Point(_bounds.left, _bounds.top));
 		screen.slamRect(_bounds);
 
 		// Store a copy of the drawn area for later erasing
@@ -183,8 +183,8 @@ void WidgetBase::restrictToScreen() {
 		_bounds.moveTo(_bounds.left, 0);
 	if (_bounds.right > (screen._currentScroll.x + SHERLOCK_SCREEN_WIDTH))
 		_bounds.moveTo(screen._currentScroll.x + SHERLOCK_SCREEN_WIDTH - _bounds.width(), _bounds.top);
-	if (_bounds.bottom > screen._backBuffer1.h())
-		_bounds.moveTo(_bounds.left, screen._backBuffer1.h() - _bounds.height());
+	if (_bounds.bottom > screen._backBuffer1.height())
+		_bounds.moveTo(_bounds.left, screen._backBuffer1.height() - _bounds.height());
 }
 
 void WidgetBase::makeInfoArea(Surface &s) {
@@ -192,30 +192,30 @@ void WidgetBase::makeInfoArea(Surface &s) {
 	ImageFile &images = *ui._interfaceImages;
 
 	// Draw the four corners of the Info Box
-	s.transBlitFrom(images[0], Common::Point(0, 0));
-	s.transBlitFrom(images[1], Common::Point(s.w() - images[1]._width, 0));
-	s.transBlitFrom(images[2], Common::Point(0, s.h() - images[2]._height));
-	s.transBlitFrom(images[3], Common::Point(s.w() - images[3]._width, s.h()));
+	s.SHtransBlitFrom(images[0], Common::Point(0, 0));
+	s.SHtransBlitFrom(images[1], Common::Point(s.width() - images[1]._width, 0));
+	s.SHtransBlitFrom(images[2], Common::Point(0, s.height() - images[2]._height));
+	s.SHtransBlitFrom(images[3], Common::Point(s.width() - images[3]._width, s.height()));
 
 	// Draw the top of the Info Box
-	s.hLine(images[0]._width, 0, s.w() - images[1]._width, INFO_TOP);
-	s.hLine(images[0]._width, 1, s.w() - images[1]._width, INFO_MIDDLE);
-	s.hLine(images[0]._width, 2, s.w() - images[1]._width, INFO_BOTTOM);
+	s.hLine(images[0]._width, 0, s.width() - images[1]._width, INFO_TOP);
+	s.hLine(images[0]._width, 1, s.width() - images[1]._width, INFO_MIDDLE);
+	s.hLine(images[0]._width, 2, s.width() - images[1]._width, INFO_BOTTOM);
 
 	// Draw the bottom of the Info Box
-	s.hLine(images[0]._width, s.h()- 3, s.w() - images[1]._width, INFO_TOP);
-	s.hLine(images[0]._width, s.h()- 2, s.w() - images[1]._width, INFO_MIDDLE);
-	s.hLine(images[0]._width, s.h()- 1, s.w() - images[1]._width, INFO_BOTTOM);
+	s.hLine(images[0]._width, s.height()- 3, s.width() - images[1]._width, INFO_TOP);
+	s.hLine(images[0]._width, s.height()- 2, s.width() - images[1]._width, INFO_MIDDLE);
+	s.hLine(images[0]._width, s.height()- 1, s.width() - images[1]._width, INFO_BOTTOM);
 
 	// Draw the left Side of the Info Box
-	s.vLine(0, images[0]._height, s.h()- images[2]._height, INFO_TOP);
-	s.vLine(1, images[0]._height, s.h()- images[2]._height, INFO_MIDDLE);
-	s.vLine(2, images[0]._height, s.h()- images[2]._height, INFO_BOTTOM);
+	s.vLine(0, images[0]._height, s.height()- images[2]._height, INFO_TOP);
+	s.vLine(1, images[0]._height, s.height()- images[2]._height, INFO_MIDDLE);
+	s.vLine(2, images[0]._height, s.height()- images[2]._height, INFO_BOTTOM);
 
 	// Draw the right Side of the Info Box
-	s.vLine(s.w() - 3, images[0]._height, s.h()- images[2]._height, INFO_TOP);
-	s.vLine(s.w() - 2, images[0]._height, s.h()- images[2]._height, INFO_MIDDLE);
-	s.vLine(s.w() - 1, images[0]._height, s.h()- images[2]._height, INFO_BOTTOM);
+	s.vLine(s.width() - 3, images[0]._height, s.height()- images[2]._height, INFO_TOP);
+	s.vLine(s.width() - 2, images[0]._height, s.height()- images[2]._height, INFO_MIDDLE);
+	s.vLine(s.width() - 1, images[0]._height, s.height()- images[2]._height, INFO_BOTTOM);
 }
 
 void WidgetBase::makeInfoArea() {

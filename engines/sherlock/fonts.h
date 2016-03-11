@@ -57,7 +57,7 @@ public:
 	/**
 	 * Frees the font manager
 	 */
-	static void free();
+	static void freeFont();
 
 	/**
 	 * Set the font to use for writing text on the screen

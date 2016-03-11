@@ -201,7 +201,7 @@ void ScalpelInventory::highlight(int index, byte color) {
 	ImageFrame &frame = (*_invShapes[slot])[0];
 
 	bb.fillRect(Common::Rect(8 + slot * 52, 165, (slot + 1) * 52, 194), color);
-	bb.transBlitFrom(frame, Common::Point(6 + slot * 52 + ((47 - frame._width) / 2),
+	bb.SHtransBlitFrom(frame, Common::Point(6 + slot * 52 + ((47 - frame._width) / 2),
 		163 + ((33 - frame._height) / 2)));
 	screen.slamArea(8 + slot * 52, 165, 44, 30);
 }
@@ -217,12 +217,12 @@ void ScalpelInventory::refreshInv() {
 	ui._infoFlag = true;
 	ui.clearInfo();
 
-	screen._backBuffer2.blitFrom(screen._backBuffer1, Common::Point(0, CONTROLS_Y),
+	screen._backBuffer2.SHblitFrom(screen._backBuffer1, Common::Point(0, CONTROLS_Y),
 		Common::Rect(0, CONTROLS_Y, SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT));
 	ui.examine();
 
 	if (!talk._talkToAbort) {
-		screen._backBuffer2.blitFrom((*ui._controlPanel)[0], Common::Point(0, CONTROLS_Y));
+		screen._backBuffer2.SHblitFrom((*ui._controlPanel)[0], Common::Point(0, CONTROLS_Y));
 		loadInv();
 	}
 }
@@ -264,7 +264,7 @@ void ScalpelInventory::putInv(InvSlamMode slamIt) {
 
 		// Draw the item image
 		ImageFrame &frame = (*_invShapes[itemNum])[0];
-		bb.transBlitFrom(frame, Common::Point(6 + itemNum * 52 + ((47 - frame._width) / 2),
+		bb.SHtransBlitFrom(frame, Common::Point(6 + itemNum * 52 + ((47 - frame._width) / 2),
 			163 + ((33 - frame._height) / 2)));
 	}
 

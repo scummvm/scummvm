@@ -148,23 +148,24 @@ void ScalpelUserInterface::reset() {
 void ScalpelUserInterface::drawInterface(int bufferNum) {
 	Screen &screen = *_vm->_screen;
 
-	const ImageFrame &src = (*_controlPanel)[0];
+	const Graphics::Surface &src = (*_controlPanel)[0]._frame;
 	int16 x = (!IS_3DO) ? 0 : UI_OFFSET_3DO;
 
 	if (bufferNum & 1) {
 		if (IS_3DO)
 			screen._backBuffer1.fillRect(Common::Rect(0, CONTROLS_Y,
 				SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT), BLACK);
-		screen._backBuffer1.transBlitFrom(src, Common::Point(x, CONTROLS_Y));
+		screen._backBuffer1.SHtransBlitFrom(src, Common::Point(x, CONTROLS_Y));
 	}
 	if (bufferNum & 2) {
 		if (IS_3DO)
 			screen._backBuffer2.fillRect(Common::Rect(0, CONTROLS_Y,
 				SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT), BLACK);
-		screen._backBuffer2.transBlitFrom(src, Common::Point(x, CONTROLS_Y));
+		screen._backBuffer2.SHtransBlitFrom(src, Common::Point(x, CONTROLS_Y));
 	}
 	if (bufferNum == 3)
-		screen._backBuffer2.fillRect(0, INFO_LINE, SHERLOCK_SCREEN_WIDTH, INFO_LINE + 10, INFO_BLACK);
+		screen._backBuffer2.SHfillRect(Common::Rect(0, INFO_LINE,
+			SHERLOCK_SCREEN_WIDTH, INFO_LINE + 10), INFO_BLACK);
 }
 
 void ScalpelUserInterface::handleInput() {
@@ -426,7 +427,7 @@ void ScalpelUserInterface::depressButton(int num) {
 	offsetButton3DO(pt, num);
 
 	ImageFrame &frame = (*_controls)[num];
-	screen._backBuffer1.transBlitFrom(frame, pt);
+	screen._backBuffer1.SHtransBlitFrom(frame, pt);
 	screen.slamArea(pt.x, pt.y, pt.x + frame._width, pt.y + frame._height);
 }
 
@@ -442,7 +443,7 @@ void ScalpelUserInterface::restoreButton(int num) {
 	events.setCursor(ARROW);
 
 	// Restore the UI on the back buffer
-	screen._backBuffer1.blitFrom(screen._backBuffer2, pt,
+	screen._backBuffer1.SHblitFrom(screen._backBuffer2, pt,
 		Common::Rect(pt.x, pt.y, pt.x + 90, pt.y + 19));
 	screen.slamArea(pt.x, pt.y, pt.x + frame.w, pt.y + frame.h);
 
@@ -489,7 +490,7 @@ void ScalpelUserInterface::toggleButton(uint16 num) {
 			ImageFrame &frame = (*_controls)[num];
 			Common::Point pt(MENU_POINTS[num][0], MENU_POINTS[num][1]);
 			offsetButton3DO(pt, num);
-			screen._backBuffer1.transBlitFrom(frame, pt);
+			screen._backBuffer1.SHtransBlitFrom(frame, pt);
 			screen.slamArea(pt.x, pt.y, pt.x + frame._width, pt.y + frame._height);
 		}
 	} else {
@@ -1272,7 +1273,7 @@ void ScalpelUserInterface::doLookControl() {
 				// Need to close the window and depress the Look button
 				Common::Point pt(MENU_POINTS[0][0], MENU_POINTS[0][1]);
 				offsetButton3DO(pt, 0);
-				screen._backBuffer2.blitFrom((*_controls)[0], pt);
+				screen._backBuffer2.SHblitFrom((*_controls)[0], pt);
 				banishWindow(true);
 
 				_windowBounds.top = CONTROLS_Y1;
@@ -1296,14 +1297,14 @@ void ScalpelUserInterface::doLookControl() {
 			// Looking at an inventory object
 			// Backup the user interface
 			Surface tempSurface(SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT - CONTROLS_Y1);
-			tempSurface.blitFrom(screen._backBuffer2, Common::Point(0, 0),
+			tempSurface.SHblitFrom(screen._backBuffer2, Common::Point(0, 0),
 				Common::Rect(0, CONTROLS_Y1, SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT));
 
 			inv.drawInventory(INVENTORY_DONT_DISPLAY);
 			banishWindow(true);
 
 			// Restore the ui
-			screen._backBuffer2.blitFrom(tempSurface, Common::Point(0, CONTROLS_Y1));
+			screen._backBuffer2.SHblitFrom(tempSurface, Common::Point(0, CONTROLS_Y1));
 
 			_windowBounds.top = CONTROLS_Y1;
 			_key = _oldKey = _hotkeyLook;
@@ -1887,7 +1888,7 @@ void ScalpelUserInterface::journalControl() {
 	// Reset the palette
 	screen.setPalette(screen._cMap);
 
-	screen._backBuffer1.blitFrom(screen._backBuffer2);
+	screen._backBuffer1.SHblitFrom(screen._backBuffer2);
 	scene.updateBackground();
 	screen.slamArea(0, 0, SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT);
 }
@@ -1921,9 +1922,9 @@ void ScalpelUserInterface::printObjectDesc(const Common::String &str, bool first
 				Common::Point pt(MENU_POINTS[0][0], MENU_POINTS[0][1]);
 				offsetButton3DO(pt, 0);
 
-				tempSurface.blitFrom(screen._backBuffer2, Common::Point(0, 0),
-					Common::Rect(pt.x, pt.y, pt.x + tempSurface.w(), pt.y + tempSurface.h()));
-				screen._backBuffer2.transBlitFrom((*_controls)[0], pt);
+				tempSurface.SHblitFrom(screen._backBuffer2, Common::Point(0, 0),
+					Common::Rect(pt.x, pt.y, pt.x + tempSurface.width(), pt.y + tempSurface.height()));
+				screen._backBuffer2.SHtransBlitFrom((*_controls)[0], pt);
 
 				banishWindow(1);
 				events.setCursor(MAGNIFY);
@@ -1933,7 +1934,7 @@ void ScalpelUserInterface::printObjectDesc(const Common::String &str, bool first
 				_menuMode = LOOK_MODE;
 				events.clearEvents();
 
-				screen._backBuffer2.blitFrom(tempSurface, pt);
+				screen._backBuffer2.SHblitFrom(tempSurface, pt);
 			} else {
 				events.setCursor(ARROW);
 				banishWindow(true);
@@ -2071,9 +2072,9 @@ void ScalpelUserInterface::summonWindow(const Surface &bgSurface, bool slideUp) 
 
 	if (slideUp) {
 		// Gradually slide up the display of the window
-		for (int idx = 1; idx <= bgSurface.h(); idx += 2) {
-			screen._backBuffer->blitFrom(bgSurface, Common::Point(0, SHERLOCK_SCREEN_HEIGHT - idx),
-				Common::Rect(0, 0, bgSurface.w(), idx));
+		for (int idx = 1; idx <= bgSurface.height(); idx += 2) {
+			screen._backBuffer->SHblitFrom(bgSurface, Common::Point(0, SHERLOCK_SCREEN_HEIGHT - idx),
+				Common::Rect(0, 0, bgSurface.width(), idx));
 			screen.slamRect(Common::Rect(0, SHERLOCK_SCREEN_HEIGHT - idx,
 				SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT));
 
@@ -2081,21 +2082,21 @@ void ScalpelUserInterface::summonWindow(const Surface &bgSurface, bool slideUp) 
 		}
 	} else {
 		// Gradually slide down the display of the window
-		for (int idx = 1; idx <= bgSurface.h(); idx += 2) {
-			screen._backBuffer->blitFrom(bgSurface,
-				Common::Point(0, SHERLOCK_SCREEN_HEIGHT - bgSurface.h()),
-				Common::Rect(0, bgSurface.h() - idx, bgSurface.w(), bgSurface.h()));
-			screen.slamRect(Common::Rect(0, SHERLOCK_SCREEN_HEIGHT - bgSurface.h(),
-				SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT - bgSurface.h() + idx));
+		for (int idx = 1; idx <= bgSurface.height(); idx += 2) {
+			screen._backBuffer->SHblitFrom(bgSurface,
+				Common::Point(0, SHERLOCK_SCREEN_HEIGHT - bgSurface.height()),
+				Common::Rect(0, bgSurface.height() - idx, bgSurface.width(), bgSurface.height()));
+			screen.slamRect(Common::Rect(0, SHERLOCK_SCREEN_HEIGHT - bgSurface.height(),
+				SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT - bgSurface.height() + idx));
 
 			events.delay(10);
 		}
 	}
 
 	// Final display of the entire window
-	screen._backBuffer->blitFrom(bgSurface, Common::Point(0, SHERLOCK_SCREEN_HEIGHT - bgSurface.h()),
-		Common::Rect(0, 0, bgSurface.w(), bgSurface.h()));
-	screen.slamArea(0, SHERLOCK_SCREEN_HEIGHT - bgSurface.h(), bgSurface.w(), bgSurface.h());
+	screen._backBuffer->SHblitFrom(bgSurface, Common::Point(0, SHERLOCK_SCREEN_HEIGHT - bgSurface.height()),
+		Common::Rect(0, 0, bgSurface.width(), bgSurface.height()));
+	screen.slamArea(0, SHERLOCK_SCREEN_HEIGHT - bgSurface.height(), bgSurface.width(), bgSurface.height());
 
 	_windowOpen = true;
 }
@@ -2106,10 +2107,10 @@ void ScalpelUserInterface::summonWindow(bool slideUp, int height) {
 	// Extract the window that's been drawn on the back buffer
 	Surface tempSurface(SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT - height);
 	Common::Rect r(0, height, SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT);
-	tempSurface.blitFrom(screen._backBuffer1, Common::Point(0, 0), r);
+	tempSurface.SHblitFrom(screen._backBuffer1, Common::Point(0, 0), r);
 
 	// Remove drawn window with original user interface
-	screen._backBuffer1.blitFrom(screen._backBuffer2,
+	screen._backBuffer1.SHblitFrom(screen._backBuffer2,
 		Common::Point(0, height), r);
 
 	// Display the window gradually on-screen
@@ -2133,7 +2134,7 @@ void ScalpelUserInterface::banishWindow(bool slideUp) {
 					Common::copy_backward(pSrc, pSrcEnd, pDest);
 
 					// Restore lines from the ui in the secondary back buffer
-					screen._backBuffer1.blitFrom(screen._backBuffer2,
+					screen._backBuffer1.SHblitFrom(screen._backBuffer2,
 						Common::Point(0, CONTROLS_Y),
 						Common::Rect(0, CONTROLS_Y, SHERLOCK_SCREEN_WIDTH, CONTROLS_Y + idx));
 
@@ -2143,14 +2144,14 @@ void ScalpelUserInterface::banishWindow(bool slideUp) {
 				}
 
 				// Restore final two old lines
-				screen._backBuffer1.blitFrom(screen._backBuffer2,
+				screen._backBuffer1.SHblitFrom(screen._backBuffer2,
 					Common::Point(0, SHERLOCK_SCREEN_HEIGHT - 2),
 					Common::Rect(0, SHERLOCK_SCREEN_HEIGHT - 2,
 						SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT));
 				screen.slamArea(0, SHERLOCK_SCREEN_HEIGHT - 2, SHERLOCK_SCREEN_WIDTH, 2);
 			} else {
 				// Restore old area to completely erase window
-				screen._backBuffer1.blitFrom(screen._backBuffer2,
+				screen._backBuffer1.SHblitFrom(screen._backBuffer2,
 					Common::Point(0, CONTROLS_Y),
 					Common::Rect(0, CONTROLS_Y, SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT));
 				screen.slamRect(Common::Rect(0, CONTROLS_Y, SHERLOCK_SCREEN_WIDTH,
@@ -2170,7 +2171,7 @@ void ScalpelUserInterface::banishWindow(bool slideUp) {
 			}
 
 			// Show entire final area
-			screen._backBuffer1.blitFrom(screen._backBuffer2, Common::Point(0, CONTROLS_Y1),
+			screen._backBuffer1.SHblitFrom(screen._backBuffer2, Common::Point(0, CONTROLS_Y1),
 				Common::Rect(0, CONTROLS_Y1, SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT));
 			screen.slamRect(Common::Rect(0, CONTROLS_Y1, SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT));
 		}

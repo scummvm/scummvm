@@ -46,6 +46,11 @@ struct ImageFrame {
 	Graphics::Surface _frame;
 
 	/**
+	 * Converts an ImageFrame record to a surface for convenience in passing to drawing methods
+	 */
+	operator const Graphics::Surface &() { return _frame; }
+
+	/**
 	 * Decompress a single frame for the sprite
 	 */
 	void decompressFrame(const byte *src, bool isRoseTattoo);

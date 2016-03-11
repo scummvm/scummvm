@@ -37,7 +37,7 @@ void WidgetCredits::initCredits() {
 	Screen &screen = *_vm->_screen;
 	Common::SeekableReadStream *stream = res.load("credits.txt");
 	int spacing = screen.fontHeight() * 2;
-	int yp = screen.h();
+	int yp = screen.height();
 
 	_creditsActive = true;
 	_creditLines.clear();
@@ -60,7 +60,7 @@ void WidgetCredits::initCredits() {
 		} else {
 			int width = screen.stringWidth(line) + 2;
 
-			_creditLines.push_back(CreditLine(line, Common::Point((screen.w() - width) / 2 + 1, yp), width));
+			_creditLines.push_back(CreditLine(line, Common::Point((screen.width() - width) / 2 + 1, yp), width));
 			yp += spacing;
 		}
 	}
@@ -120,10 +120,10 @@ void WidgetCredits::close() {
 
 void WidgetCredits::drawCredits() {
 	Screen &screen = *_vm->_screen;
-	Common::Rect screenRect(0, 0, screen.w(), screen.h());
+	Common::Rect screenRect(0, 0, screen.width(), screen.height());
 	Surface &bb1 = screen._backBuffer1;
 
-	for (uint idx = 0; idx < _creditLines.size() && _creditLines[idx]._position.y < screen.h(); ++idx) {
+	for (uint idx = 0; idx < _creditLines.size() && _creditLines[idx]._position.y < screen.height(); ++idx) {
 		if (screenRect.contains(_creditLines[idx]._position)) {
 			if (!_creditLines[idx]._line2.empty()) {
 				int x1 = _creditLines[idx]._position.x;
@@ -176,7 +176,7 @@ void WidgetCredits::drawCredits() {
 
 void WidgetCredits::blitCredits() {
 	Screen &screen = *_vm->_screen;
-	Common::Rect screenRect(0, -_creditSpeed, screen.w(), screen.h() + _creditSpeed);
+	Common::Rect screenRect(0, -_creditSpeed, screen.width(), screen.height() + _creditSpeed);
 
 	for (uint idx = 0; idx < _creditLines.size(); ++idx) {
 		if (screenRect.contains(_creditLines[idx]._position)) {
@@ -190,7 +190,7 @@ void WidgetCredits::blitCredits() {
 
 void WidgetCredits::eraseCredits() {
 	Screen &screen = *_vm->_screen;
-	Common::Rect screenRect(0, -_creditSpeed, screen.w(), screen.h() + _creditSpeed);
+	Common::Rect screenRect(0, -_creditSpeed, screen.width(), screen.height() + _creditSpeed);
 
 	for (uint idx = 0; idx < _creditLines.size(); ++idx) {
 		if (screenRect.contains(_creditLines[idx]._position)) {
