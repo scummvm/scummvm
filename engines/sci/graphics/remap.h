@@ -85,7 +85,17 @@ struct RemapParams {
 	byte remap[256];
 	bool colorChanged[256];
 
-	RemapParams() : RemapParams(0, 0, 0, 0, 100, kRemappingNone) {
+	RemapParams() {
+		from = to = base = gray = oldGray = percent = oldPercent = 0;
+		type = kRemappingNone;
+
+		// curColor and targetColor are initialized in GfxRemap32::initColorArrays
+		memset(curColor, 0, 256 * sizeof(Color));
+		memset(targetColor, 0, 256 * sizeof(Color));
+		memset(distance, 0, 256);
+		for (int i = 0; i < 236; i++)
+			remap[i] = i;
+		memset(colorChanged, true, 256);
 	}
 
 	RemapParams(byte from_, byte to_, byte base_, byte gray_, byte percent_, ColorRemappingType type_) {
