@@ -1,6 +1,11 @@
 For a more comprehensive changelog of the latest experimental code, see:
         https://github.com/scummvm/scummvm/commits/
 
+1.8.1 (XXXX-XX-XX)
+ SCUMM:
+   - Fixed detection of Maniac Mansion from Day of the Tentacle in the Windows
+     version of ScummVM.
+
 1.8.0 (2016-03-04)
  New Games:
    - Added support for Rex Nebular and the Cosmic Gender Bender.
