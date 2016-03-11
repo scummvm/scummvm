@@ -128,6 +128,7 @@ public:
 	void setRemappingToPercentGray(byte color, byte gray, byte percent);
 	void setNoMatchRange(byte from, byte count);
 	bool remapAllTables(bool palChanged);
+	int getRemapCount() const { return _remapCount; }
 
 private:
 	GfxPalette32 *_palette;
@@ -136,6 +137,7 @@ private:
 	byte _noMapStart, _noMapCount;
 	bool _targetChanged[236];
 	byte _remapEndColor;
+	int _remapCount;
 
 	void initColorArrays(byte index);
 	bool applyRemap(byte index);

@@ -47,6 +47,7 @@
 #include "sci/graphics/paint32.h"
 #include "sci/graphics/palette32.h"
 #include "sci/graphics/picture.h"
+#include "sci/graphics/remap.h"
 #include "sci/graphics/text32.h"
 #include "sci/graphics/plane32.h"
 #include "sci/graphics/screen_item32.h"
@@ -446,8 +447,8 @@ void GfxFrameout::frameOut(const bool shouldShowBits, const Common::Rect &rect) 
 	screenItemLists.resize(_planes.size());
 	eraseLists.resize(_planes.size());
 
-	// _numActiveRemaps was a global in SCI engine
-	if (/* TODO Remap::_numActiveRemaps > 0 */ false && _remapOccurred) {
+	if (g_sci->_gfxRemap32->getRemapCount() > 0 && _remapOccurred) {
+		// TODO
 		// remapMarkRedraw();
 	}
 
@@ -844,11 +845,10 @@ void GfxFrameout::palMorphFrameOut(const int8 *styleRanges, const ShowStyleEntry
 	screenItemLists.resize(_planes.size());
 	eraseLists.resize(_planes.size());
 
-	// TODO: Remap
-	// _numActiveRemaps was a global in SCI engine
-	// if (Remap::_numActiveRemaps > 0 && _remapOccurred) {
-		// _screen->remapMarkRedraw();
-	// }
+	if (g_sci->_gfxRemap32->getRemapCount() > 0 && _remapOccurred) {
+		// TODO
+		//_screen->remapMarkRedraw();
+	}
 
 	calcLists(screenItemLists, eraseLists, calcRect);
 	for (ScreenItemListList::iterator list = screenItemLists.begin(); list != screenItemLists.end(); ++list) {
@@ -907,11 +907,10 @@ void GfxFrameout::palMorphFrameOut(const int8 *styleRanges, const ShowStyleEntry
 //		plane->updateRedrawAllCount();
 	}
 
-	// TODO: Remap
-	// _numActiveRemaps was a global in SCI engine
-	// if (Remap::_numActiveRemaps > 0 && _remapOccurred) {
-	// _screen->remapMarkRedraw();
-	// }
+	if (g_sci->_gfxRemap32->getRemapCount() > 0 && _remapOccurred) {
+		// TODO
+		//_screen->remapMarkRedraw();
+	}
 
 	calcLists(screenItemLists, eraseLists, calcRect);
 	for (ScreenItemListList::iterator list = screenItemLists.begin(); list != screenItemLists.end(); ++list) {
