@@ -130,13 +130,13 @@ void FileManager::openFile(Resource *res, const Common::String &filename) {
 		error("Could not open file - %s", filename.c_str());
 }
 
-void FileManager::loadScreen(Graphics::Surface *dest, int fileNum, int subfile) {
+void FileManager::loadScreen(Graphics::ManagedSurface *dest, int fileNum, int subfile) {
 	Resource *res = loadFile(fileNum, subfile);
 	handleScreen(dest, res);
 	delete res;
 }
 
-void FileManager::handleScreen(Graphics::Surface *dest, Resource *res) {
+void FileManager::handleScreen(Graphics::ManagedSurface *dest, Resource *res) {
 	_vm->_screen->loadRawPalette(res->_stream);
 	if (_setPaletteFlag)
 		_vm->_screen->setPalette();
@@ -147,20 +147,17 @@ void FileManager::handleScreen(Graphics::Surface *dest, Resource *res) {
 	res->_size -= res->_stream->pos();
 	handleFile(res);
 
-	if (dest != _vm->_screen)
-		dest->w = _vm->_screen->w;
+	Graphics::Surface destSurface = dest->getSubArea(Common::Rect(0, 0,
+		_vm->_screen->w, _vm->_screen->h));
 
-	if (dest->w == dest->pitch) {
-		res->_stream->read((byte *)dest->getPixels(), dest->w * dest->h);
+	if (destSurface.w == destSurface.pitch) {
+		res->_stream->read((byte *)destSurface.getPixels(), destSurface.w * destSurface.h);
 	} else {
-		for (int y = 0; y < dest->h; ++y) {
-			byte *pDest = (byte *)dest->getBasePtr(0, y);
-			res->_stream->read(pDest, dest->w);
+		for (int y = 0; y < destSurface.h; ++y) {
+			byte *pDest = (byte *)destSurface.getBasePtr(0, y);
+			res->_stream->read(pDest, destSurface.w);
 		}
 	}
-
-	if (dest == _vm->_screen)
-		_vm->_screen->addDirtyRect(Common::Rect(0, 0, dest->w, dest->h));
 }
 
 void FileManager::loadScreen(int fileNum, int subfile) {

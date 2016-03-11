@@ -157,7 +157,7 @@ void VideoPlayer::playVideo() {
 
 	// If the video is playing on the screen surface, add a dirty rect
 	if (_vidSurface == _vm->_screen)
-		_vm->_screen->addDirtyRect(_videoBounds);
+		_vm->_screen->markAllDirty();
 
 	getFrame();
 	if (++_videoFrame == _frameCount) {

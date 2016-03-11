@@ -436,20 +436,9 @@ void AccessEngine::copyBF1BF2() {
 }
 
 void AccessEngine::copyBF2Vid() {
-	const byte *srcP = (const byte *)_buffer2.getPixels();
-	byte *destP = (byte *)_screen->getBasePtr(_screen->_windowXAdd,
-		_screen->_windowYAdd + _screen->_screenYOff);
-
-	for (int yp = 0; yp < _screen->_vWindowLinesTall; ++yp) {
-		Common::copy(srcP, srcP + _screen->_vWindowBytesWide, destP);
-		srcP += _buffer2.pitch;
-		destP += _screen->pitch;
-	}
-
-	// Add dirty rect for affected area
-	Common::Rect r(_screen->_vWindowBytesWide, _screen->_vWindowLinesTall);
-	r.moveTo(_screen->_windowXAdd, _screen->_windowYAdd + _screen->_screenYOff);
-	_screen->addDirtyRect(r);
+	_screen->blitFrom(_buffer2,
+		Common::Rect(0, 0, _screen->_vWindowBytesWide, _screen->_vWindowLinesTall),
+		Common::Point(_screen->_windowXAdd, _screen->_windowYAdd));
 }
 
 void AccessEngine::playVideo(int videoNum, const Common::Point &pt) {
