@@ -257,6 +257,7 @@ public:
 	void cycleAllOff();
 	void applyAllCycles();
 	void applyCycles();
+	const bool *getCyclemap() { return _cycleMap; }
 
 #pragma mark -
 #pragma mark Fading

@@ -108,7 +108,7 @@ struct RemapParams {
 
 class GfxRemap32 {
 public:
-	GfxRemap32(GfxPalette *_palette);
+	GfxRemap32(GfxPalette32 *palette);
 	~GfxRemap32() {}
 
 	void remapOff(byte color);
@@ -120,6 +120,7 @@ public:
 	bool remapAllTables(bool palChanged);
 
 private:
+	GfxPalette32 *_palette;
 	RemapParams _remaps[REMAP_COLOR_COUNT];
 	bool _update;
 	byte _noMapStart, _noMapCount;
@@ -128,7 +129,7 @@ private:
 
 	void initColorArrays(byte index);
 	bool applyRemap(byte index);
-	bool updateRemap(byte index);
+	bool updateRemap(byte index, bool palChanged);
 };
 #endif
 

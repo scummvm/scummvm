@@ -110,7 +110,7 @@ void GfxRemap::updateRemapping() {
 
 #ifdef ENABLE_SCI32
 
-GfxRemap32::GfxRemap32(GfxPalette *palette) {
+GfxRemap32::GfxRemap32(GfxPalette32 *palette) : _palette(palette) {
 	for (int i = 0; i < REMAP_COLOR_COUNT; i++)
 		_remaps[i] = RemapParams(0, 0, 0, 0, 100, kRemappingNone);
 	_noMapStart = _noMapCount = 0;
@@ -167,19 +167,22 @@ void GfxRemap32::setNoMatchRange(byte from, byte count) {
 }
 
 void GfxRemap32::initColorArrays(byte index) {
-	Palette *curPalette = &g_sci->_gfxPalette32->_sysPalette;
+	Palette *curPalette = &_palette->_sysPalette;
 	RemapParams *curRemap = &_remaps[index];
 
 	memcpy(curRemap->curColor, curPalette->colors, 236 * sizeof(Color));
 	memcpy(curRemap->targetColor, curPalette->colors, 236 * sizeof(Color));
 }
 
-bool GfxRemap32::updateRemap(byte index) {
+bool GfxRemap32::updateRemap(byte index, bool palChanged) {
 	int result;
 	RemapParams *curRemap = &_remaps[index];
-	const Palette *curPalette = &g_sci->_gfxPalette32->_sysPalette;
-	const Palette *nextPalette = g_sci->_gfxPalette32->getNextPalette();
+	const Palette *curPalette = &_palette->_sysPalette;
+	const Palette *nextPalette = _palette->getNextPalette();
 	bool changed = false;
+
+	if (!_update && !palChanged)
+		return false;
 
 	memset(_targetChanged, false, 236);
 
@@ -292,17 +295,63 @@ bool GfxRemap32::updateRemap(byte index) {
 	}
 }
 
+static int colorDistance(Color a, Color b) {
+	int rDiff = (a.r - b.r) * (a.r - b.r);
+	int gDiff = (a.g - b.g) * (a.g - b.g);
+	int bDiff = (a.b - b.b) * (a.b - b.b);
+	return rDiff + gDiff + bDiff;
+}
+
 bool GfxRemap32::applyRemap(byte index) {
-	// TODO
-	//warning("applyRemap");
-	return false;
+	RemapParams *curRemap = &_remaps[index];
+	const bool *cycleMap = _palette->getCyclemap();
+	bool unmappedColors[236];
+	Color newColors[236];
+	bool changed = false;
+
+	memset(unmappedColors, 236, false);
+	if (_noMapCount)
+		memset(unmappedColors + _noMapStart, true, _noMapCount);
+
+	for (int i = 0; i < 236; i++)  {
+		if (cycleMap[i])
+			unmappedColors[i] = true;
+	}
+
+	int curColor = 0;
+	for (int i = 1; i < 236; i++)  {
+		if (curRemap->colorChanged[i] && !unmappedColors[i])
+			newColors[curColor++] = curRemap->curColor[i];
+	}
+
+	for (int i = 1; i < 236; i++)  {
+		Color targetColor = curRemap->targetColor[i];
+		bool colorChanged = curRemap->colorChanged[curRemap->remap[i]];
+
+		if (!_targetChanged[i] && !colorChanged)
+			continue;
+
+		if (_targetChanged[i] && colorChanged)
+			if (curRemap->distance[i] < 100 && colorDistance(targetColor, curRemap->curColor[curRemap->remap[i]]) <= curRemap->distance[i])
+				continue;
+
+		int diff = 0;
+		int16 result = _palette->matchColor(targetColor.r, targetColor.g, targetColor.b, curRemap->distance[i], diff, unmappedColors);
+		if (result != -1 && curRemap->remap[i] != result)  {
+			changed = true;
+			curRemap->remap[i] = result;
+			curRemap->distance[i] = diff;
+		}
+	}
+
+	return changed;
 }
 
 bool GfxRemap32::remapAllTables(bool palChanged) {
 	bool changed = false;
 
 	for (int i = 0; i < REMAP_COLOR_COUNT; i++) {
-		changed |= updateRemap(i);
+		changed |= updateRemap(i, palChanged);
 	}
 
 	_update = false;
