@@ -96,7 +96,7 @@ struct RemapParams {
 		memset(distance, 0, 256);
 		for (int i = 0; i < NON_REMAPPED_COLOR_COUNT; i++)
 			remap[i] = i;
-		memset(colorChanged, true, 256);
+		Common::fill(colorChanged, colorChanged + ARRAYSIZE(colorChanged), true);
 	}
 
 	RemapParams(byte from_, byte to_, byte base_, byte gray_, byte percent_, ColorRemappingType type_) {
@@ -113,7 +113,7 @@ struct RemapParams {
 		memset(distance, 0, 256);
 		for (int i = 0; i < NON_REMAPPED_COLOR_COUNT; i++)
 			remap[i] = i;
-		memset(colorChanged, true, 256);
+		Common::fill(colorChanged, colorChanged + ARRAYSIZE(colorChanged), true);
 	}
 };
 

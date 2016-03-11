@@ -192,7 +192,7 @@ bool GfxRemap32::updateRemap(byte index, bool palChanged) {
 	if (!_update && !palChanged)
 		return false;
 
-	memset(_targetChanged, false, NON_REMAPPED_COLOR_COUNT);
+	Common::fill(_targetChanged, _targetChanged + NON_REMAPPED_COLOR_COUNT, false);
 
 	switch (curRemap->type) {
 	case kRemappingNone:
@@ -237,7 +237,7 @@ bool GfxRemap32::updateRemap(byte index, bool palChanged) {
 		}
 		
 		changed = applyRemap(index);
-		memset(curRemap->colorChanged, false, NON_REMAPPED_COLOR_COUNT);
+		Common::fill(curRemap->colorChanged, curRemap->colorChanged + NON_REMAPPED_COLOR_COUNT, false);
 		curRemap->oldPercent = curRemap->percent;
 		return changed;
 	case kRemappingToGray:
@@ -265,7 +265,7 @@ bool GfxRemap32::updateRemap(byte index, bool palChanged) {
 		}
 
 		changed = applyRemap(index);
-		memset(curRemap->colorChanged, false, NON_REMAPPED_COLOR_COUNT);
+		Common::fill(curRemap->colorChanged, curRemap->colorChanged + NON_REMAPPED_COLOR_COUNT, false);
 		curRemap->oldGray = curRemap->gray;
 		return changed;
 	case kRemappingToPercentGray:
@@ -294,7 +294,7 @@ bool GfxRemap32::updateRemap(byte index, bool palChanged) {
 		}
 
 		changed = applyRemap(index);
-		memset(curRemap->colorChanged, false, NON_REMAPPED_COLOR_COUNT);
+		Common::fill(curRemap->colorChanged, curRemap->colorChanged + NON_REMAPPED_COLOR_COUNT, false);
 		curRemap->oldPercent = curRemap->percent;
 		curRemap->oldGray = curRemap->gray;
 		return changed;
@@ -317,9 +317,9 @@ bool GfxRemap32::applyRemap(byte index) {
 	Color newColors[NON_REMAPPED_COLOR_COUNT];
 	bool changed = false;
 
-	memset(unmappedColors, NON_REMAPPED_COLOR_COUNT, false);
+	Common::fill(unmappedColors, unmappedColors + NON_REMAPPED_COLOR_COUNT, false);
 	if (_noMapCount)
-		memset(unmappedColors + _noMapStart, true, _noMapCount);
+		Common::fill(unmappedColors + _noMapStart, unmappedColors + _noMapStart + _noMapCount, true);
 
 	for (int i = 0; i < NON_REMAPPED_COLOR_COUNT; i++)  {
 		if (cycleMap[i])
