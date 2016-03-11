@@ -33,8 +33,13 @@ class GfxScreen;
 enum ColorRemappingType {
 	kRemappingNone = 0,
 	kRemappingByRange = 1,
-	kRemappingByPercent = 2
+	kRemappingByPercent = 2,
+	kRemappingToGray = 3,
+	kRemappingToPercentGray = 4
 };
+
+#define REMAP_COLOR_COUNT 9
+#define REMAP_END_COLOR 254
 
 /**
  * Remap class, handles color remapping
@@ -43,6 +48,7 @@ class GfxRemap {
 public:
 	GfxRemap(GfxScreen *screen, GfxPalette *_palette);
 	~GfxRemap();
+
 	void resetRemapping();
 	void setRemappingPercent(byte color, byte percent);
 	void setRemappingRange(byte color, byte from, byte to, byte base);
@@ -64,11 +70,65 @@ private:
 };
 
 #ifdef ENABLE_SCI32
+
+struct RemapParams {
+	byte from;
+	byte to;
+	byte base;
+	byte gray;
+	byte oldGray;
+	byte percent;
+	byte oldPercent;
+	ColorRemappingType type;
+	Color curColor[256];
+	Color targetColor[256];
+	byte distance[256];
+	byte remap[256];
+	bool colorChanged[256];
+
+	RemapParams() : RemapParams(0, 0, 0, 0, 100, kRemappingNone) {
+	}
+
+	RemapParams(byte from_, byte to_, byte base_, byte gray_, byte percent_, ColorRemappingType type_) {
+		from = from_;
+		to = to_;
+		base = base_;
+		gray = oldGray = gray_;
+		percent = oldPercent = percent_;
+		type = type_;
+
+		// curColor and targetColor are initialized in GfxRemap32::initColorArrays
+		memset(curColor, 0, 256 * sizeof(Color));
+		memset(targetColor, 0, 256 * sizeof(Color));
+		memset(distance, 0, 256);
+		for (int i = 0; i < 236; i++)
+			remap[i] = i;
+		memset(colorChanged, true, 256);
+	}
+};
+
 class GfxRemap32 {
 public:
-	GfxRemap32(GfxScreen *screen, GfxPalette *_palette) {}
+	GfxRemap32(GfxPalette *_palette);
 	~GfxRemap32() {}
-	//void setRemappingPercentGray(byte color, byte percent);
+
+	void remapOff(byte color);
+	void setRemappingRange(byte color, byte from, byte to, byte base);
+	void setRemappingPercent(byte color, byte percent);
+	void setRemappingToGray(byte color, byte gray);
+	void setRemappingToPercentGray(byte color, byte gray, byte percent);
+	void setNoMatchRange(byte from, byte count);
+	bool remapAllTables(bool palChanged);
+
+private:
+	RemapParams _remaps[REMAP_COLOR_COUNT];
+	bool _update;
+	byte _noMapStart, _noMapCount;
+	bool _targetChanged[236];
+
+	void initColorArrays(byte index);
+	bool applyRemap(byte index);
+	bool updateRemap(byte index);
 };
 #endif
 

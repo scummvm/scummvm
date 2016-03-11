@@ -28,6 +28,7 @@
 #include "sci/event.h"
 #include "sci/resource.h"
 #include "sci/graphics/palette32.h"
+#include "sci/graphics/remap.h"
 #include "sci/graphics/screen.h"
 
 namespace Sci {
@@ -223,9 +224,7 @@ int16 GfxPalette32::matchColor(const byte r, const byte g, const byte b, const i
 bool GfxPalette32::updateForFrame() {
 	applyAll();
 	_versionUpdated = false;
-	// TODO: Implement remapping
-	// return g_sci->_gfxFrameout->remapAllTables(_nextPalette != _sysPalette);
-	return false;
+	return g_sci->_gfxRemap32->remapAllTables(_nextPalette != _sysPalette);
 }
 
 void GfxPalette32::updateFFrame() {
@@ -233,8 +232,7 @@ void GfxPalette32::updateFFrame() {
 		_nextPalette.colors[i] = _sourcePalette.colors[i];
 	}
 	_versionUpdated = false;
-	// TODO: Implement remapping
-	// g_sci->_gfxFrameout->remapAllTables(_nextPalette != _sysPalette);
+	g_sci->_gfxRemap32->remapAllTables(_nextPalette != _sysPalette);
 }
 
 void GfxPalette32::updateHardware() {

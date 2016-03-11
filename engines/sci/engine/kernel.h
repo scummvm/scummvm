@@ -412,7 +412,7 @@ reg_t kPlatform(EngineState *s, int argc, reg_t *argv);
 reg_t kTextColors(EngineState *s, int argc, reg_t *argv);
 reg_t kTextFonts(EngineState *s, int argc, reg_t *argv);
 reg_t kShow(EngineState *s, int argc, reg_t *argv);
-reg_t kRemapColors(EngineState *s, int argc, reg_t *argv);
+reg_t kRemapColors16(EngineState *s, int argc, reg_t *argv);
 reg_t kDummy(EngineState *s, int argc, reg_t *argv);
 reg_t kEmpty(EngineState *s, int argc, reg_t *argv);
 reg_t kStub(EngineState *s, int argc, reg_t *argv);
@@ -452,7 +452,14 @@ reg_t kScrollWindowShow(EngineState *s, int argc, reg_t *argv);
 reg_t kScrollWindowDestroy(EngineState *s, int argc, reg_t *argv);
 
 reg_t kMulDiv(EngineState *s, int argc, reg_t *argv);
-reg_t kRemapColors32(EngineState *s, int argc, reg_t *argv);
+
+reg_t kRemapColors(EngineState *s, int argc, reg_t *argv);
+reg_t kRemapOff(EngineState *s, int argc, reg_t *argv);
+reg_t kRemapByRange(EngineState *s, int argc, reg_t *argv);
+reg_t kRemapByPercent(EngineState *s, int argc, reg_t *argv);
+reg_t kRemapToGray(EngineState *s, int argc, reg_t *argv);
+reg_t kRemapToPercentGray(EngineState *s, int argc, reg_t *argv);
+reg_t kRemapSetNoMatchRange(EngineState *s, int argc, reg_t *argv);
 
 reg_t kAddScreenItem(EngineState *s, int argc, reg_t *argv);
 reg_t kUpdateScreenItem(EngineState *s, int argc, reg_t *argv);

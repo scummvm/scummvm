@@ -23,6 +23,7 @@
 #include "sci/sci.h"
 #include "sci/resource.h"
 #include "sci/graphics/palette.h"
+#include "sci/graphics/palette32.h"
 #include "sci/graphics/remap.h"
 #include "sci/graphics/screen.h"
 
@@ -107,28 +108,198 @@ void GfxRemap::updateRemapping() {
 #pragma mark -
 #pragma mark SCI32 remapping
 
-#if 0
-// TODO
-void GfxRemap32::setRemappingPercentGray(byte color, byte percent) {
-	_remapOn = true;
+#ifdef ENABLE_SCI32
 
-	// We need to defer the setup of the remapping table every time the screen
-	// palette is changed, so that kernelFindColor() can find the correct
-	// colors. Set it once here, in case the palette stays the same and update
-	// it on each palette change by copySysPaletteToScreen().
-	_remappingPercentToSet = percent;
+GfxRemap32::GfxRemap32(GfxPalette *palette) {
+	for (int i = 0; i < REMAP_COLOR_COUNT; i++)
+		_remaps[i] = RemapParams(0, 0, 0, 0, 100, kRemappingNone);
+	_noMapStart = _noMapCount = 0;
+	_update = false;
+}
 
-	// Note: This is not what the original does, but the results are the same visually
-	for (int i = 0; i < 256; i++) {
-		byte rComponent = (byte)(_sysPalette.colors[i].r * _remappingPercentToSet * 0.30 / 100);
-		byte gComponent = (byte)(_sysPalette.colors[i].g * _remappingPercentToSet * 0.59 / 100);
-		byte bComponent = (byte)(_sysPalette.colors[i].b * _remappingPercentToSet * 0.11 / 100);
-		byte luminosity = rComponent + gComponent + bComponent;
-		_remappingByPercent[i] = kernelFindColor(luminosity, luminosity, luminosity);
+void GfxRemap32::remapOff(byte color) {
+	if (!color) {
+		for (int i = 0; i < REMAP_COLOR_COUNT; i++)
+			_remaps[i] = RemapParams(0, 0, 0, 0, 100, kRemappingNone);
+	} else {
+		const byte index = REMAP_END_COLOR - color;
+		_remaps[index] = RemapParams(0, 0, 0, 0, 100, kRemappingNone);
 	}
 
-	_remappingType[color] = kRemappingByPercent;
+	_update = true;
 }
+
+void GfxRemap32::setRemappingRange(byte color, byte from, byte to, byte base) {
+	_remaps[REMAP_END_COLOR - color] = RemapParams(from, to, base, 0, 100, kRemappingByRange);
+	initColorArrays(REMAP_END_COLOR - color);
+	_update = true;
+}
+
+void GfxRemap32::setRemappingPercent(byte color, byte percent) {
+	_remaps[REMAP_END_COLOR - color] = RemapParams(0, 0, 0, 0, percent, kRemappingByPercent);
+	initColorArrays(REMAP_END_COLOR - color);
+	_update = true;
+}
+
+void GfxRemap32::setRemappingToGray(byte color, byte gray) {
+	_remaps[REMAP_END_COLOR - color] = RemapParams(0, 0, 0, gray, 100, kRemappingToGray);
+	initColorArrays(REMAP_END_COLOR - color);
+	_update = true;
+}
+
+void GfxRemap32::setRemappingToPercentGray(byte color, byte gray, byte percent) {
+	_remaps[REMAP_END_COLOR - color] = RemapParams(0, 0, 0, gray, percent, kRemappingToPercentGray);
+	initColorArrays(REMAP_END_COLOR - color);
+	_update = true;
+}
+
+void GfxRemap32::setNoMatchRange(byte from, byte count) {
+	_noMapStart = from;
+	_noMapCount = count;
+}
+
+void GfxRemap32::initColorArrays(byte index) {
+	assert(index < REMAP_COLOR_COUNT);
+	Palette *curPalette = &g_sci->_gfxPalette32->_sysPalette;
+	RemapParams *curRemap = &_remaps[index];
+
+	memcpy(curRemap->curColor, curPalette->colors, 236 * sizeof(Color));
+	memcpy(curRemap->targetColor, curPalette->colors, 236 * sizeof(Color));
+}
+
+bool GfxRemap32::updateRemap(byte index) {
+	int result;
+	RemapParams *curRemap = &_remaps[index];
+	Palette *curPalette = &g_sci->_gfxPalette32->_sysPalette;
+	bool changed = false;
+
+	memset(_targetChanged, false, 236);
+
+	switch (curRemap->type) {
+	case kRemappingNone:
+		return false;
+	case kRemappingByRange:
+		for (int i = 0; i < 236; i++)  {
+			if (curRemap->from <= i && i <= curRemap->to)
+				result = i + curRemap->base;
+			else
+				result = i;
+
+			if (curRemap->remap[i] != result) {
+				changed = true;
+				curRemap->remap[i] = result;
+			}
+
+			curRemap->colorChanged[i] = true;
+		}
+		return changed;
+	case kRemappingByPercent:
+		for (int i = 1; i < 236; i++) {
+			Color color = curPalette->colors[i];
+
+			if (curRemap->curColor[i] != color) {
+				curRemap->colorChanged[i] = true;
+				curRemap->curColor[i] = color;
+			}
+
+			if (curRemap->percent != curRemap->oldPercent || curRemap->colorChanged[i])  {
+				byte red = CLIP<byte>(color.r * curRemap->percent / 100, 0, 255);
+				byte green = CLIP<byte>(color.g * curRemap->percent / 100, 0, 255);
+				byte blue = CLIP<byte>(color.b * curRemap->percent / 100, 0, 255);
+				byte used = curRemap->targetColor[i].used;
+
+				Color newColor = { used, red, green, blue };
+				if (curRemap->targetColor[i] != newColor)  {
+					_targetChanged[i] = true;
+					curRemap->targetColor[i] = newColor;
+				}
+			}
+		}
+		
+		changed = applyRemap(index);
+		memset(curRemap->colorChanged, false, 236);
+		curRemap->oldPercent = curRemap->percent;
+		return changed;
+	case kRemappingToGray:
+		for (int i = 1; i < 236; i++) {
+			Color color = curPalette->colors[i];
+
+			if (curRemap->curColor[i] != color) {
+				curRemap->colorChanged[i] = true;
+				curRemap->curColor[i] = color;
+			}
+
+			if (curRemap->gray != curRemap->oldGray || curRemap->colorChanged[i])  {
+				byte lumosity = ((color.r * 77) + (color.g * 151) + (color.b * 28)) >> 8;
+				byte red = CLIP<byte>(color.r - ((color.r - lumosity) * curRemap->gray / 100), 0, 255);
+				byte green = CLIP<byte>(color.g - ((color.g - lumosity) * curRemap->gray / 100), 0, 255);
+				byte blue = CLIP<byte>(color.b - ((color.b - lumosity) * curRemap->gray / 100), 0, 255);
+				byte used = curRemap->targetColor[i].used;
+
+				Color newColor = { used, red, green, blue };
+				if (curRemap->targetColor[i] != newColor)  {
+					_targetChanged[i] = true;
+					curRemap->targetColor[i] = newColor;
+				}
+			}
+		}
+
+		changed = applyRemap(index);
+		memset(curRemap->colorChanged, false, 236);
+		curRemap->oldGray = curRemap->gray;
+		return changed;
+	case kRemappingToPercentGray:
+		for (int i = 1; i < 236; i++) {
+			Color color = curPalette->colors[i];
+
+			if (curRemap->curColor[i] != color) {
+				curRemap->colorChanged[i] = true;
+				curRemap->curColor[i] = color;
+			}
+
+			if (curRemap->percent != curRemap->oldPercent || curRemap->gray != curRemap->oldGray || curRemap->colorChanged[i])  {
+				byte lumosity = ((color.r * 77) + (color.g * 151) + (color.b * 28)) >> 8;
+				lumosity = lumosity * curRemap->percent / 100;
+				byte red = CLIP<byte>(color.r - ((color.r - lumosity) * curRemap->gray / 100), 0, 255);
+				byte green = CLIP<byte>(color.g - ((color.g - lumosity) * curRemap->gray / 100), 0, 255);
+				byte blue = CLIP<byte>(color.b - ((color.b - lumosity) * curRemap->gray / 100), 0, 255);
+				byte used = curRemap->targetColor[i].used;
+
+				Color newColor = { used, red, green, blue };
+				if (curRemap->targetColor[i] != newColor)  {
+					_targetChanged[i] = true;
+					curRemap->targetColor[i] = newColor;
+				}
+			}
+		}
+
+		changed = applyRemap(index);
+		memset(curRemap->colorChanged, false, 236);
+		curRemap->oldPercent = curRemap->percent;
+		curRemap->oldGray = curRemap->gray;
+		return changed;
+	default:
+		return false;
+	}
+}
+
+bool GfxRemap32::applyRemap(byte index) {
+	// TODO
+	//warning("applyRemap");
+	return false;
+}
+
+bool GfxRemap32::remapAllTables(bool palChanged) {
+	bool changed = false;
+
+	for (int i = 0; i < REMAP_COLOR_COUNT; i++) {
+		changed |= updateRemap(i);
+	}
+
+	_update = false;
+	return changed;
+}
+
 #endif
 
 } // End of namespace Sci

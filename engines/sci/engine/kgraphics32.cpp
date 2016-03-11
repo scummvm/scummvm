@@ -45,6 +45,7 @@
 #include "sci/graphics/paint16.h"
 #include "sci/graphics/picture.h"
 #include "sci/graphics/ports.h"
+#include "sci/graphics/remap.h"
 #include "sci/graphics/screen.h"
 #include "sci/graphics/text16.h"
 #include "sci/graphics/view.h"
@@ -907,79 +908,57 @@ reg_t kPalCycle(EngineState *s, int argc, reg_t *argv) {
 	return s->r_acc;
 }
 
-reg_t kRemapColors32(EngineState *s, int argc, reg_t *argv) {
-	// TODO
-#if 0
-	uint16 operation = argv[0].toUint16();
+reg_t kRemapColors(EngineState *s, int argc, reg_t *argv) {
+	if (!s)
+		return make_reg(0, getSciVersion());
+	error("not supposed to call this");
+}
 
-	switch (operation) {
-	case 0:	{ // turn remapping off
-		// WORKAROUND: Game scripts in QFG4 erroneously turn remapping off in room
-		// 140 (the character point allocation screen) and never turn it back on,
-		// even if it's clearly used in that screen.
-		if (g_sci->getGameId() == GID_QFG4 && s->currentRoomNumber() == 140)
-			return s->r_acc;
+reg_t kRemapOff(EngineState *s, int argc, reg_t *argv) {
+	byte color = (argc >= 1) ? argv[0].toUint16() : 0;
+	g_sci->_gfxRemap32->remapOff(color);
+	return s->r_acc;
+}
 
-		int16 color = (argc >= 2) ? argv[1].toSint16() : 0;
-		if (color > 0)
-			warning("kRemapColors(0) called with base %d", color);
-		//g_sci->_gfxPalette32->resetRemapping();
-		}
-		break;
-	case 1:	{ // remap by range
-		uint16 color = argv[1].toUint16();
-		uint16 from = argv[2].toUint16();
-		uint16 to = argv[3].toUint16();
-		uint16 delta = argv[4].toUint16();
-		uint16 depth = (argc >= 6) ? argv[5].toUint16() : 0;
-		if (depth > 0)
-			warning("kRemapColors(1) called with 6 parameters, depth is %d", depth);
-		//g_sci->_gfxPalette32->setRemappingRange(color, from, to, delta);
-		}
-		break;
-	case 2:	{ // remap by percent
-		uint16 color = argv[1].toUint16();
-		uint16 percent = argv[2].toUint16(); // 0 - 100
-		uint16 depth = (argc >= 4) ? argv[3].toUint16() : 0;
-		if (depth >= 0)
-			warning("RemapByPercent called with 4 parameters, depth is %d", depth);
-		//g_sci->_gfxPalette32->setRemappingPercent(color, percent);
-		}
-		break;
-	case 3:	{ // remap to gray
-		// Example call: QFG4 room 490 (Baba Yaga's hut) - params are color 253, 75% and 0.
-		// In this room, it's used for the cloud before Baba Yaga appears.
-		uint16 color = argv[1].toUint16();
-		uint16 percent = argv[2].toUint16(); // 0 - 100
-		uint16 depth = (argc >= 4) ? argv[3].toUint16() : 0;
-		if (depth >= 0)
-			warning("RemapToGray called with 4 parameters, depth is %d", depth);
-		//g_sci->_gfxPalette32->setRemappingPercentGray(color, percent);
-		}
-		break;
-	case 4:	{ // remap to percent gray
-		// Example call: QFG4 rooms 530/535 (swamp) - params are 253, 100%, 200
-		uint16 color = argv[1].toUint16();
-		uint16 percent = argv[2].toUint16(); // 0 - 100
-		uint16 grayPercent = argv[3].toUint16();
-		uint16 depth = (argc >= 5) ? argv[4].toUint16() : 0;
-		if (argc >= 5)
-			warning("RemapToGrayPercent called with 5 parameters, depth is %d", depth);
-		//g_sci->_gfxPalette32->setRemappingPercentGray(color, percent);
-		}
-		break;
-	case 5:	{ // don't map to range
-		//uint16 start = argv[1].toSint16();
-		//uint16 count = argv[2].toUint16();
+reg_t kRemapByRange(EngineState *s, int argc, reg_t *argv) {
+	byte color = argv[0].toUint16();
+	byte from = argv[1].toUint16();
+	byte to = argv[2].toUint16();
+	byte base = argv[3].toUint16();
+	// The last parameter, depth, is unused
+	g_sci->_gfxRemap32->setRemappingRange(color, from, to, base);
+	return s->r_acc;
+}
 
-		kStub(s, argc, argv);
-		}
-		break;
-	default:
-		break;
-	}
-#endif
+reg_t kRemapByPercent(EngineState *s, int argc, reg_t *argv) {
+	byte color = argv[0].toUint16();
+	byte percent = argv[1].toUint16();
+	// The last parameter, depth, is unused
+	g_sci->_gfxRemap32->setRemappingPercent(color, percent);
+	return s->r_acc;
+}
 
+reg_t kRemapToGray(EngineState *s, int argc, reg_t *argv) {
+	byte color = argv[0].toUint16();
+	byte gray = argv[1].toUint16();
+	// The last parameter, depth, is unused
+	g_sci->_gfxRemap32->setRemappingToGray(color, gray);
+	return s->r_acc;
+}
+
+reg_t kRemapToPercentGray(EngineState *s, int argc, reg_t *argv) {
+	byte color = argv[0].toUint16();
+	byte gray = argv[1].toUint16();
+	byte percent = argv[2].toUint16();
+	// The last parameter, depth, is unused
+	g_sci->_gfxRemap32->setRemappingToPercentGray(color, gray, percent);
+	return s->r_acc;
+}
+
+reg_t kRemapSetNoMatchRange(EngineState *s, int argc, reg_t *argv) {
+	byte from = argv[0].toUint16();
+	byte count = argv[1].toUint16();
+	g_sci->_gfxRemap32->setNoMatchRange(from, count);
 	return s->r_acc;
 }
 
