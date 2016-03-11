@@ -74,7 +74,6 @@ static const ADGameDescription gameDescriptions[] = {
 	// ??? problems with dog bitmap?
 	FANGAMEN("Space Adventure", "SpaceAdventure", "f9f3f1c419f56955f7966355b34ea5c8", 155356),
 	FANGAME("Star Trek", "44aaef4806578700429de5aaf95c266e", 53320),
-	// Crash in bitmap drawing on the first scene
 	FANGAME("Strange Disappearance", "d81f2d03a1e863f04fb1e3a5495b720e", 772282),
 	FANGAME("Time Bomb", "4b0e1a1fbaaa4930accd0f9f0e1519c7", 64564),
 	FANGAMEN("The Hotel Caper", "The Hotel Caper V1.0", "595117cbed33e8de1ab3714b33880205", 231969),
