@@ -1467,7 +1467,7 @@ void ScenePalette::fade(const byte *adjustData, bool fullAdjust, int percent) {
 
 	// Set the altered palette
 	g_system->getPaletteManager()->setPalette((const byte *)&tempPalette[0], 0, 256);
-	GLOBALS._screenSurface.updateScreen();
+	GLOBALS._screen.update();
 }
 
 PaletteRotation *ScenePalette::addRotation(int start, int end, int rotationMode, int duration, Action *action) {
@@ -1524,11 +1524,11 @@ void ScenePalette::changeBackground(const Rect &bounds, FadeMode fadeMode) {
 	if (g_vm->getGameID() != GType_Ringworld && g_vm->getGameID() != GType_Sherlock1)
 		tempRect.setHeight(T2_GLOBALS._interfaceY);
 
-	g_globals->_screenSurface.copyFrom(g_globals->_sceneManager._scene->_backSurface,
+	g_globals->_screen.copyFrom(g_globals->_sceneManager._scene->_backSurface,
 		tempRect, Rect(0, 0, tempRect.width(), tempRect.height()), NULL);
 	if (g_vm->getGameID() == GType_Ringworld2 && !GLOBALS._player._uiEnabled
 			&& T2_GLOBALS._interfaceY == UI_INTERFACE_Y) {
-		g_globals->_screenSurface.fillRect(Rect(0, UI_INTERFACE_Y, SCREEN_WIDTH, SCREEN_HEIGHT - 1), 0);
+		g_globals->_screen.fillRect(Rect(0, UI_INTERFACE_Y, SCREEN_WIDTH, SCREEN_HEIGHT - 1), 0);
 	}
 
 	for (SynchronizedList<PaletteModifier *>::iterator i = tempPalette._listeners.begin(); i != tempPalette._listeners.end(); ++i)
@@ -1796,7 +1796,7 @@ void SceneItem::display(int resNum, int lineNum, ...) {
 		// Keep event on-screen until a mouse or keypress
 		while (!g_vm->shouldQuit() && !g_globals->_events.getEvent(event,
 				EVENT_BUTTON_DOWN | EVENT_KEYPRESS)) {
-			GLOBALS._screenSurface.updateScreen();
+			GLOBALS._screen.update();
 			g_system->delayMillis(10);
 
 			if ((g_vm->getGameID() == GType_Ringworld2) && (R2_GLOBALS._speechSubtitles & SPEECH_VOICE)) {
@@ -2816,7 +2816,7 @@ void SceneObject::updateScreen() {
 		destRect.translate(-sceneBounds.left, -sceneBounds.top);
 		srcRect.translate(-g_globals->_sceneOffset.x, -g_globals->_sceneOffset.y);
 
-		g_globals->_screenSurface.copyFrom(g_globals->_sceneManager._scene->_backSurface, srcRect, destRect);
+		g_globals->_screen.copyFrom(g_globals->_sceneManager._scene->_backSurface, srcRect, destRect);
 	}
 }
 

@@ -139,7 +139,7 @@ void SceneManager::fadeInIfNecessary() {
 				percent = 100;
 
 			g_globals->_scenePalette.fade((const byte *)&adjustData, false, percent);
-			GLOBALS._screenSurface.updateScreen();
+			GLOBALS._screen.update();
 			g_system->delayMillis(10);
 		}
 
@@ -175,7 +175,7 @@ void SceneManager::changeScene(int newSceneNumber) {
 	}
 
 	// Blank out the screen
-	g_globals->_screenSurface.fillRect(g_globals->_screenSurface.getBounds(), 0);
+	g_globals->_screen.fillRect(g_globals->_screen.getBounds(), 0);
 
 	// If there are any fading sounds, wait until fading is complete
 	while (g_globals->_soundManager.isFading()) {
@@ -463,7 +463,7 @@ void Scene::refreshBackground(int xAmount, int yAmount) {
 				// Check if the section is already loaded
 				if ((_enabledSections[xp * 16 + yp] == 0xffff) || ((xAmount == 0) && (yAmount == 0))) {
 					// Chunk isn't loaded, so load it in
-					Graphics::Surface s = _backSurface.lockSurface();
+					Graphics::ManagedSurface s = _backSurface.lockSurface();
 					GfxSurface::loadScreenSection(s, xp - xHalfOffset, yp - yHalfOffset, xp, yp);
 					_backSurface.unlockSurface();
 					changedFlag = true;

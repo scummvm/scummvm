@@ -289,10 +289,10 @@ void Saver::writeSavegameHeader(Common::OutSaveFile *out, tSageSavegameHeader &h
 
 	// Create a thumbnail and save it
 	Graphics::Surface *thumb = new Graphics::Surface();
-	Graphics::Surface s = g_globals->_screenSurface.lockSurface();
+	Graphics::Surface s = g_globals->_screen.lockSurface();
 	::createThumbnail(thumb, (const byte *)s.getPixels(), SCREEN_WIDTH, SCREEN_HEIGHT, thumbPalette);
 	Graphics::saveThumbnail(*out, *thumb);
-	g_globals->_screenSurface.unlockSurface();
+	g_globals->_screen.unlockSurface();
 	thumb->free();
 	delete thumb;
 
