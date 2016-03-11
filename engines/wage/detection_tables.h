@@ -59,10 +59,12 @@ static const ADGameDescription gameDescriptions[] = {
 	FANGAME("Magic Rings", "913812a1ac7a6b0e48dadd1afa1c7763", 109044),
 	FANGAME("Midnight Snack", "913812a1ac7a6b0e48dadd1afa1c7763", 67952),
 	FANGAME("Minitorian", "913812a1ac7a6b0e48dadd1afa1c7763", 586464),
+	FANGAME("Pavilion", "4d991d7d1534d48d90598d86ea6d5d97", 231687),
 	FANGAME("Puzzle Piece Search", "595117cbed33e8de1ab3714b33880205", 247693), // From Joshua's Worlds 1.0
 	// Empty(?)  first scene
 	FANGAME("Pyramid of No Return", "77a55a45f794b4d4a56703d3acce871e", 385145),
 	FANGAME("Queen Quest", "4b0e1a1fbaaa4930accd0f9f0e1519c7", 57026),
+	FANGAME("Quest for T-Rex", "913812a1ac7a6b0e48dadd1afa1c7763", 592584),
 	// Crash in console rendering on the initial scene
 	FANGAME("Quest for the Dark Sword", "b35dd0c078da9f35fc25a455f56bb129", 572576),
 	FANGAME("Radical Castle 1.0", "677bfee4afeca2f7152eb8b76c85ca8d", 347278),
