@@ -87,16 +87,14 @@ void Design::paint(Graphics::Surface *surface, Patterns &patterns, int x, int y)
 	bool needRender = false;
 
 	if (_surface == NULL) {
-		//_boundsCalculationMode = true;
+		_boundsCalculationMode = true;
 		_bounds->debugPrint(4, "Internal bounds:");
-		//_bounds->left = _bounds->top = 10000;
-		//_bounds->right =_bounds->bottom = -10000;
-		//render(patterns);
+		render(patterns);
 		_boundsCalculationMode = false;
 		if (_bounds->right == -10000) {
 			_bounds->left = _bounds->top = _bounds->right = _bounds->bottom = 0;
 		}
-		//_bounds->debugPrint(4, "Calculated bounds:");
+		_bounds->debugPrint(4, "Calculated bounds:");
 
 		_surface = new Graphics::Surface;
 		_surface->create(_bounds->width(), _bounds->height(), Graphics::PixelFormat::createFormatCLUT8());
@@ -201,9 +199,7 @@ bool Design::isPointOpaque(int x, int y) {
 }
 
 void Design::adjustBounds(int16 x, int16 y) {
-	_bounds->left   = MIN(x, _bounds->left);
 	_bounds->right  = MAX(x, _bounds->right);
-	_bounds->top    = MIN(y, _bounds->top);
 	_bounds->bottom = MAX(y, _bounds->bottom);
 }
 
