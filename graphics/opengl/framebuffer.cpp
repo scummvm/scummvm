@@ -21,6 +21,7 @@
  */
 
 #include "common/textconsole.h"
+#include "common/util.h"
 
 #if defined(USE_OPENGL) && !defined(AMIGAOS)
 
@@ -184,11 +185,18 @@ void FrameBuffer::detach() {
 }
 
 #if !defined(USE_GLES2) && !defined(AMIGAOS)
-MultiSampleFrameBuffer::MultiSampleFrameBuffer(uint width, uint height)
+MultiSampleFrameBuffer::MultiSampleFrameBuffer(uint width, uint height, int samples)
 		: FrameBuffer(width,height) {
 	if (!OpenGLContext.framebufferObjectMultisampleSupported) {
 		error("The current OpenGL context does not support multisample framebuffer objects!");
 	}
+
+	if (samples > OpenGLContext.multisampleMaxSamples) {
+		warning("Requested anti-aliasing with '%d' samples, but the current OpenGL context supports '%d' samples at most",
+		        samples, OpenGLContext.multisampleMaxSamples);
+	}
+
+	_msSamples = MIN(samples, OpenGLContext.multisampleMaxSamples);
 
 	init();
 }
@@ -200,18 +208,17 @@ MultiSampleFrameBuffer::~MultiSampleFrameBuffer() {
 	glDeleteFramebuffers(1, &_msFrameBufferId);
 }
 
-//TODO: fallback to fewer samples
 void MultiSampleFrameBuffer::init() {
 	glGenFramebuffers(1, &_msFrameBufferId);
 	glBindFramebuffer(GL_FRAMEBUFFER, _msFrameBufferId);
 
 	glGenRenderbuffers(1, &_msColorId);
 	glBindRenderbuffer(GL_RENDERBUFFER, _msColorId);
-	glRenderbufferStorageMultisample(GL_RENDERBUFFER, 8, GL_RGBA8, getTexWidth(), getTexHeight());
+	glRenderbufferStorageMultisample(GL_RENDERBUFFER, _msSamples, GL_RGBA8, getTexWidth(), getTexHeight());
 
 	glGenRenderbuffers(1, &_msDepthId);
 	glBindRenderbuffer(GL_RENDERBUFFER, _msDepthId);
-	glRenderbufferStorageMultisample(GL_RENDERBUFFER, 8, GL_DEPTH24_STENCIL8, getTexWidth(), getTexHeight());
+	glRenderbufferStorageMultisample(GL_RENDERBUFFER, _msSamples, GL_DEPTH24_STENCIL8, getTexWidth(), getTexHeight());
 
 	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, _msColorId);
 	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, _msDepthId);

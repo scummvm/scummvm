@@ -226,6 +226,7 @@ protected:
 	void drawSideTexturesOpenGL();
 
 	OpenGL::FrameBuffer *_frameBuffer;
+	OpenGL::FrameBuffer *createFramebuffer(uint width, uint height);
 
 	OpenGL::SurfaceRenderer *_surfaceRenderer;
 

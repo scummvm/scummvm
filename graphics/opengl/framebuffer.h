@@ -56,7 +56,7 @@ private:
 #if !defined(USE_GLES2) && !defined(AMIGAOS)
 class MultiSampleFrameBuffer : public FrameBuffer {
 public:
-	MultiSampleFrameBuffer(uint width, uint height);
+	MultiSampleFrameBuffer(uint width, uint height, int samples);
 	virtual ~MultiSampleFrameBuffer();
 
 	virtual void attach();
@@ -67,6 +67,7 @@ private:
 	GLuint _msFrameBufferId;
 	GLuint _msColorId;
 	GLuint _msDepthId;
+	GLuint _msSamples;
 };
 #endif
 

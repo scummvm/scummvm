@@ -344,11 +344,7 @@ void SurfaceSdlGraphicsManager::setupScreen(uint gameWidth, uint gameHeight, boo
 #if defined(USE_OPENGL) && !defined(AMIGAOS)
 	if (gameRenderTarget == kFramebuffer) {
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-		if (_antialiasing) {
-			_frameBuffer = new OpenGL::MultiSampleFrameBuffer(gameWidth, gameHeight);
-		} else {
-			_frameBuffer = new OpenGL::FrameBuffer(gameWidth, gameHeight);
-		}
+		_frameBuffer = createFramebuffer(gameWidth, gameHeight);
 		_frameBuffer->attach();
 	}
 #endif
@@ -616,6 +612,17 @@ void SurfaceSdlGraphicsManager::drawSideTexturesOpenGL() {
 			Math::Rect2d rightRect(_gameRect.getTopRight() - nudge, Math::Vector2d(right, 1.0));
 			_surfaceRenderer->render(_sideTextures[1], rightRect, true);
 		}
+	}
+}
+
+OpenGL::FrameBuffer *SurfaceSdlGraphicsManager::createFramebuffer(uint width, uint height) {
+#ifndef USE_GLES2
+	if (_antialiasing && OpenGLContext.framebufferObjectMultisampleSupported) {
+		return new OpenGL::MultiSampleFrameBuffer(width, height, _antialiasing);
+	} else
+#endif
+	{
+		return new OpenGL::FrameBuffer(width, height);
 	}
 }
 
