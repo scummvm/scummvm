@@ -39,7 +39,6 @@ enum ColorRemappingType {
 };
 
 #define REMAP_COLOR_COUNT 9
-#define REMAP_END_COLOR 254
 
 /**
  * Remap class, handles color remapping
@@ -125,6 +124,7 @@ private:
 	bool _update;
 	byte _noMapStart, _noMapCount;
 	bool _targetChanged[236];
+	byte _remapEndColor;
 
 	void initColorArrays(byte index);
 	bool applyRemap(byte index);
