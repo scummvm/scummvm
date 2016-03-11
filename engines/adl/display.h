@@ -61,7 +61,9 @@ public:
 
 	// Graphics
 	void loadFrameBuffer(Common::ReadStream &stream);
+	void putPixelRaw(const Common::Point &p, byte color);
 	void putPixel(const Common::Point &p, byte color);
+	bool getPixelBit(const Common::Point &p) const;
 	void clear(byte color);
 
 	// Text

@@ -219,9 +219,24 @@ void Display::loadFrameBuffer(Common::ReadStream &stream) {
 		error("Failed to read frame buffer");
 }
 
+void Display::putPixelRaw(const Common::Point &p, byte color) {
+	byte *b = _frameBuf + p.y * DISPLAY_PITCH + (p.x / 7);
+	color ^= *b;
+	color &= 0x80 | (1 << (p.x % 7));
+	*b ^= color;
+}
+
 void Display::putPixel(const Common::Point &p, byte color) {
 	byte offset = p.x / 7;
+	byte mask = 0x80 | (1 << (p.x % 7));
 
+	// Since white and black are in both palettes, we leave
+	// the palette bit alone
+	if ((color & 0x7f) == 0x7f || (color & 0x7f) == 0)
+		mask &= 0x7f;
+
+	// Adjust colors starting with bits '01' or '10' for
+	// odd offsets
 	if (offset & 1) {
 		byte c = color << 1;
 		if (c >= 0x40 && c < 0xc0)
@@ -230,8 +245,13 @@ void Display::putPixel(const Common::Point &p, byte color) {
 
 	byte *b = _frameBuf + p.y * DISPLAY_PITCH + offset;
 	color ^= *b;
-	color &= 1 << (p.x % 7);
+	color &= mask;
 	*b ^= color;
+}
+
+bool Display::getPixelBit(const Common::Point &p) const {
+	byte *b = _frameBuf + p.y * DISPLAY_PITCH + (p.x / 7);
+	return *b & (1 << (p.x % 7));
 }
 
 void Display::clear(byte color) {

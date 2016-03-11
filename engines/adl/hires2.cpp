@@ -28,6 +28,7 @@
 
 #include "adl/hires2.h"
 #include "adl/display.h"
+#include "adl/picture.h"
 
 namespace Adl {
 
@@ -121,9 +122,22 @@ void HiRes2Engine::restartGame() {
 }
 
 void HiRes2Engine::drawPic(byte pic, Common::Point pos) const {
+	// Temp hack
+	PictureD test(*_display);
+
+	Common::File f;
+
+	if (!f.open(IDS_HR2_DISK_IMAGE))
+		error("Failed to open file '" IDS_HR2_DISK_IMAGE "'");
+
+	f.seek(0x1000);
+
+	test.draw(f);
 }
 
 void HiRes2Engine::showRoom() const {
+	drawPic(0, Common::Point());
+	_display->updateHiResScreen();
 }
 
 Engine *HiRes2Engine_create(OSystem *syst, const AdlGameDescription *gd) {
