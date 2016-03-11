@@ -170,7 +170,8 @@ void GfxRemap32::initColorArrays(byte index) {
 bool GfxRemap32::updateRemap(byte index) {
 	int result;
 	RemapParams *curRemap = &_remaps[index];
-	Palette *curPalette = &g_sci->_gfxPalette32->_sysPalette;
+	const Palette *curPalette = &g_sci->_gfxPalette32->_sysPalette;
+	const Palette *nextPalette = g_sci->_gfxPalette32->getNextPalette();
 	bool changed = false;
 
 	memset(_targetChanged, false, 236);
@@ -195,7 +196,8 @@ bool GfxRemap32::updateRemap(byte index) {
 		return changed;
 	case kRemappingByPercent:
 		for (int i = 1; i < 236; i++) {
-			Color color = curPalette->colors[i];
+			// NOTE: This method uses nextPalette instead of curPalette
+			Color color = nextPalette->colors[i];
 
 			if (curRemap->curColor[i] != color) {
 				curRemap->colorChanged[i] = true;
