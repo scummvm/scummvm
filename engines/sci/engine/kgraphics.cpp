@@ -443,7 +443,7 @@ reg_t kCantBeHere(EngineState *s, int argc, reg_t *argv) {
 
 #ifdef ENABLE_SCI32
 	if (getSciVersion() >= SCI_VERSION_2) {
-		return g_sci->_gfxCompare->kernelCanBeHere32(curObject, listReference);
+		return g_sci->_gfxCompare->kernelCantBeHere32(curObject, listReference);
 	} else {
 #endif
 		return g_sci->_gfxCompare->kernelCanBeHere(curObject, listReference);

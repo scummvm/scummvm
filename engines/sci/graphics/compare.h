@@ -40,7 +40,7 @@ public:
 	uint16 kernelOnControl(byte screenMask, const Common::Rect &rect);
 	void kernelSetNowSeen(reg_t objectReference);
 	reg_t kernelCanBeHere(reg_t curObject, reg_t listReference);
-	reg_t kernelCanBeHere32(const reg_t curObject, const reg_t listReference) const;
+	reg_t kernelCantBeHere32(const reg_t curObject, const reg_t listReference) const;
 	bool kernelIsItSkip(GuiResourceId viewId, int16 loopNo, int16 celNo, Common::Point position);
 	void kernelBaseSetter(reg_t object);
 	Common::Rect getNSRect(reg_t object);

@@ -157,7 +157,7 @@ reg_t GfxCompare::kernelCanBeHere(reg_t curObject, reg_t listReference) {
 	return make_reg(0, result);
 }
 
-reg_t GfxCompare::kernelCanBeHere32(const reg_t curObject, const reg_t listReference) const {
+reg_t GfxCompare::kernelCantBeHere32(const reg_t curObject, const reg_t listReference) const {
 	Common::Rect checkRect(
 		readSelectorValue(_segMan, curObject, SELECTOR(brLeft)),
 		readSelectorValue(_segMan, curObject, SELECTOR(brTop)),
@@ -172,7 +172,7 @@ reg_t GfxCompare::kernelCanBeHere32(const reg_t curObject, const reg_t listRefer
 	if ((signal & signalFlags) == 0) {
 		List *list = _segMan->lookupList(listReference);
 		if (!list) {
-			error("kCanBeHere called with non-list as parameter");
+			error("kCantBeHere called with non-list as parameter");
 		}
 		result = !canBeHereCheckRectList(curObject, checkRect, list, signalFlags).isNull();
 	}
