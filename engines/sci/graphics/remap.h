@@ -39,6 +39,7 @@ enum ColorRemappingType {
 };
 
 #define REMAP_COLOR_COUNT 9
+#define NON_REMAPPED_COLOR_COUNT 236
 
 /**
  * Remap class, handles color remapping
@@ -93,7 +94,7 @@ struct RemapParams {
 		memset(curColor, 0, 256 * sizeof(Color));
 		memset(targetColor, 0, 256 * sizeof(Color));
 		memset(distance, 0, 256);
-		for (int i = 0; i < 236; i++)
+		for (int i = 0; i < NON_REMAPPED_COLOR_COUNT; i++)
 			remap[i] = i;
 		memset(colorChanged, true, 256);
 	}
@@ -110,7 +111,7 @@ struct RemapParams {
 		memset(curColor, 0, 256 * sizeof(Color));
 		memset(targetColor, 0, 256 * sizeof(Color));
 		memset(distance, 0, 256);
-		for (int i = 0; i < 236; i++)
+		for (int i = 0; i < NON_REMAPPED_COLOR_COUNT; i++)
 			remap[i] = i;
 		memset(colorChanged, true, 256);
 	}
@@ -135,7 +136,7 @@ private:
 	RemapParams _remaps[REMAP_COLOR_COUNT];
 	bool _update;
 	byte _noMapStart, _noMapCount;
-	bool _targetChanged[236];
+	bool _targetChanged[NON_REMAPPED_COLOR_COUNT];
 	byte _remapEndColor;
 	int _remapCount;
 

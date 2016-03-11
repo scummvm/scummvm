@@ -178,8 +178,8 @@ void GfxRemap32::initColorArrays(byte index) {
 	Palette *curPalette = &_palette->_sysPalette;
 	RemapParams *curRemap = &_remaps[index];
 
-	memcpy(curRemap->curColor, curPalette->colors, 236 * sizeof(Color));
-	memcpy(curRemap->targetColor, curPalette->colors, 236 * sizeof(Color));
+	memcpy(curRemap->curColor, curPalette->colors, NON_REMAPPED_COLOR_COUNT * sizeof(Color));
+	memcpy(curRemap->targetColor, curPalette->colors, NON_REMAPPED_COLOR_COUNT * sizeof(Color));
 }
 
 bool GfxRemap32::updateRemap(byte index, bool palChanged) {
@@ -192,13 +192,13 @@ bool GfxRemap32::updateRemap(byte index, bool palChanged) {
 	if (!_update && !palChanged)
 		return false;
 
-	memset(_targetChanged, false, 236);
+	memset(_targetChanged, false, NON_REMAPPED_COLOR_COUNT);
 
 	switch (curRemap->type) {
 	case kRemappingNone:
 		return false;
 	case kRemappingByRange:
-		for (int i = 0; i < 236; i++)  {
+		for (int i = 0; i < NON_REMAPPED_COLOR_COUNT; i++)  {
 			if (curRemap->from <= i && i <= curRemap->to)
 				result = i + curRemap->base;
 			else
@@ -213,7 +213,7 @@ bool GfxRemap32::updateRemap(byte index, bool palChanged) {
 		}
 		return changed;
 	case kRemappingByPercent:
-		for (int i = 1; i < 236; i++) {
+		for (int i = 1; i < NON_REMAPPED_COLOR_COUNT; i++) {
 			// NOTE: This method uses nextPalette instead of curPalette
 			Color color = nextPalette->colors[i];
 
@@ -237,11 +237,11 @@ bool GfxRemap32::updateRemap(byte index, bool palChanged) {
 		}
 		
 		changed = applyRemap(index);
-		memset(curRemap->colorChanged, false, 236);
+		memset(curRemap->colorChanged, false, NON_REMAPPED_COLOR_COUNT);
 		curRemap->oldPercent = curRemap->percent;
 		return changed;
 	case kRemappingToGray:
-		for (int i = 1; i < 236; i++) {
+		for (int i = 1; i < NON_REMAPPED_COLOR_COUNT; i++) {
 			Color color = curPalette->colors[i];
 
 			if (curRemap->curColor[i] != color) {
@@ -265,11 +265,11 @@ bool GfxRemap32::updateRemap(byte index, bool palChanged) {
 		}
 
 		changed = applyRemap(index);
-		memset(curRemap->colorChanged, false, 236);
+		memset(curRemap->colorChanged, false, NON_REMAPPED_COLOR_COUNT);
 		curRemap->oldGray = curRemap->gray;
 		return changed;
 	case kRemappingToPercentGray:
-		for (int i = 1; i < 236; i++) {
+		for (int i = 1; i < NON_REMAPPED_COLOR_COUNT; i++) {
 			Color color = curPalette->colors[i];
 
 			if (curRemap->curColor[i] != color) {
@@ -294,7 +294,7 @@ bool GfxRemap32::updateRemap(byte index, bool palChanged) {
 		}
 
 		changed = applyRemap(index);
-		memset(curRemap->colorChanged, false, 236);
+		memset(curRemap->colorChanged, false, NON_REMAPPED_COLOR_COUNT);
 		curRemap->oldPercent = curRemap->percent;
 		curRemap->oldGray = curRemap->gray;
 		return changed;
@@ -313,26 +313,26 @@ static int colorDistance(Color a, Color b) {
 bool GfxRemap32::applyRemap(byte index) {
 	RemapParams *curRemap = &_remaps[index];
 	const bool *cycleMap = _palette->getCyclemap();
-	bool unmappedColors[236];
-	Color newColors[236];
+	bool unmappedColors[NON_REMAPPED_COLOR_COUNT];
+	Color newColors[NON_REMAPPED_COLOR_COUNT];
 	bool changed = false;
 
-	memset(unmappedColors, 236, false);
+	memset(unmappedColors, NON_REMAPPED_COLOR_COUNT, false);
 	if (_noMapCount)
 		memset(unmappedColors + _noMapStart, true, _noMapCount);
 
-	for (int i = 0; i < 236; i++)  {
+	for (int i = 0; i < NON_REMAPPED_COLOR_COUNT; i++)  {
 		if (cycleMap[i])
 			unmappedColors[i] = true;
 	}
 
 	int curColor = 0;
-	for (int i = 1; i < 236; i++)  {
+	for (int i = 1; i < NON_REMAPPED_COLOR_COUNT; i++)  {
 		if (curRemap->colorChanged[i] && !unmappedColors[i])
 			newColors[curColor++] = curRemap->curColor[i];
 	}
 
-	for (int i = 1; i < 236; i++)  {
+	for (int i = 1; i < NON_REMAPPED_COLOR_COUNT; i++)  {
 		Color targetColor = curRemap->targetColor[i];
 		bool colorChanged = curRemap->colorChanged[curRemap->remap[i]];
 
