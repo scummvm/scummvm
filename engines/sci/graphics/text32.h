@@ -458,6 +458,20 @@ public:
 	 * Retrieves the width of a line of text.
 	 */
 	int16 getStringWidth(const Common::String &text);
+
+	/**
+	 * Gets the number of characters of `text`, starting
+	 * from `index`, that can be safely rendered into
+	 * `textRect`.
+	 */
+	int16 getTextCount(const Common::String &text, const uint index, const Common::Rect &textRect, const bool doScaling);
+
+	/**
+	 * Gets the number of characters of `text`, starting
+	 * from `index`, that can be safely rendered into
+	 * `textRect` using the given font.
+	 */
+	int16 getTextCount(const Common::String &text, const uint index, const GuiResourceId fontId, const Common::Rect &textRect, const bool doScaling);
 };
 
 } // End of namespace Sci

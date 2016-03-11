@@ -625,4 +625,33 @@ int16 GfxText32::getStringWidth(const Common::String &text) {
 	return getTextWidth(text, 0, 10000);
 }
 
+int16 GfxText32::getTextCount(const Common::String &text, const uint index, const Common::Rect &textRect, const bool doScaling) {
+	const int16 scriptWidth = g_sci->_gfxFrameout->getCurrentBuffer().scriptWidth;
+	const int16 scriptHeight = g_sci->_gfxFrameout->getCurrentBuffer().scriptHeight;
+
+	Common::Rect scaledRect(textRect);
+	if (doScaling) {
+		mulinc(scaledRect, Ratio(_scaledWidth, scriptWidth), Ratio(_scaledHeight, scriptHeight));
+	}
+
+	Common::String oldText = _text;
+	_text = text;
+
+	uint charIndex = index;
+	int16 maxWidth = scaledRect.width();
+	int16 lineCount = (scaledRect.height() - 2) / _font->getHeight();
+	while (lineCount--) {
+		getLongest(&charIndex, maxWidth);
+	}
+
+	_text = oldText;
+	return charIndex - index;
+}
+
+int16 GfxText32::getTextCount(const Common::String &text, const uint index, const GuiResourceId fontId, const Common::Rect &textRect, const bool doScaling) {
+	setFont(fontId);
+	return getTextCount(text, index, textRect, doScaling);
+}
+
+
 } // End of namespace Sci
