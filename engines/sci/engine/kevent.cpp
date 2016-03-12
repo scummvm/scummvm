@@ -83,11 +83,12 @@ reg_t kGetEvent(EngineState *s, int argc, reg_t *argv) {
 	}
 
 	// For a real event we use its associated mouse position
-	mousePos = curEvent.mousePos;
 #ifdef ENABLE_SCI32
-	if (getSciVersion() >= SCI_VERSION_2_1_EARLY)
-		g_sci->_gfxCoordAdjuster->fromDisplayToScript(mousePos.y, mousePos.x);
+	if (getSciVersion() >= SCI_VERSION_2)
+		mousePos = curEvent.mousePosSci;
+	else
 #endif
+		mousePos = curEvent.mousePos;
 	// Limit the mouse cursor position, if necessary
 	g_sci->_gfxCursor->refreshPosition();
 
