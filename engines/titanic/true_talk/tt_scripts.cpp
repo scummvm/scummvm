@@ -32,6 +32,30 @@
 #include "titanic/true_talk/succubus_script.h"
 
 namespace Titanic {
+	
+TTNamedScript *TTNamedScriptList::findById(int charId) const {
+	for (TTNamedScriptList::const_iterator i = begin(); i != end(); ++i) {
+		const TTNamedScriptListItem *item = *i;
+		if (item->_script->_charId == charId)
+			return item->_script;
+	}
+
+	return nullptr;
+}
+
+/*------------------------------------------------------------------------*/
+
+TTUnnamedScript *TTUnnamedScriptList::findById(int scriptId) const {
+	for (TTUnnamedScriptList::const_iterator i = begin(); i != end(); ++i) {
+		const TTUnnamedScriptListItem *item = *i;
+		if (item->_item->_scriptId == scriptId)
+			return item->_item;
+	}
+
+	return nullptr;
+}
+
+/*------------------------------------------------------------------------*/
 
 TTScripts::TTScripts(CTitleEngine *titleEngine) :
 		_titleEngine(titleEngine), _field24(0), _field28(0) {
@@ -40,23 +64,36 @@ TTScripts::TTScripts(CTitleEngine *titleEngine) :
 		addScript(new TTUnnamedScript(scriptNum));
 
 	// Load named scripts
-	addScript(new DoorbotScript(104, "Doorbot", 0, "Fentible", 11, 1, -1, -1, -1, 0));
-	addScript(new BellbotScript(101, "Bellbot", 0, "Krage", 8, 1));
-	addScript(new LiftbotScript(105, "LiftBot", 0, "Nobby", 11, 1, -1, -1, -1, 0));
-	addScript(new DeskbotScript(103, "DeskBot", 0, "Marsinta", 11, 2));
-	addScript(new BarbotScript(100, "Barbot", 0, "Fortillian", 9, 1, -1, -1, -1, 0));
-	addScript(new ParrotScript(107, "Parrot", 0, "The Parrot", 5, 1, -1, -1, -1, 0));
-	addScript(new MaitreDScript(112, "MaitreDBot", 0, "Dastrogaaar", 8, 1));
-	addScript(new SuccUBusScript(111, "Succubus", 0, "Shorbert", 9, 1, -1, -1, -1, 0));
+	addScript(new DoorbotScript(104, "Doorbot", 0, "Fentible", 11, 1, -1, -1, -1, 0), 100);
+	addScript(new BellbotScript(101, "Bellbot", 0, "Krage", 8, 1), 110);
+	addScript(new LiftbotScript(105, "LiftBot", 0, "Nobby", 11, 1, -1, -1, -1, 0), 103);
+	addScript(new DeskbotScript(103, "DeskBot", 0, "Marsinta", 11, 2), 110);
+	addScript(new BarbotScript(100, "Barbot", 0, "Fortillian", 9, 1, -1, -1, -1, 0), 112);
+	addScript(new ParrotScript(107, "Parrot", 0, "The Parrot", 5, 1, -1, -1, -1, 0), 111);
+	addScript(new MaitreDScript(112, "MaitreDBot", 0, "Dastrogaaar", 8, 1), 132);
+	addScript(new SuccUBusScript(111, "Succubus", 0, "Shorbert", 9, 1, -1, -1, -1, 0), 110);
 }
 
-void TTScripts::addScript(TTNamedScript *script) {
+void TTScripts::addScript(TTNamedScript *script, int scriptId) {
 	script->proc13();
-	_namedScripts.push_back(new TTNamedScriptListItem(script));
+	
+	// Find the unnamed script this is associated with
+	TTUnnamedScript *unnamedScript = getUnnamedScript(scriptId);
+	assert(unnamedScript);
+
+	_namedScripts.push_back(new TTNamedScriptListItem(script, unnamedScript));
 }
 
 void TTScripts::addScript(TTUnnamedScript *script) {
 	_unnamedScripts.push_back(new TTUnnamedScriptListItem(script));
+}
+
+TTUnnamedScript *TTScripts::getUnnamedScript(int scriptId) const {
+	return _unnamedScripts.findById(scriptId);
+}
+
+TTNamedScript *TTScripts::getNamedScript(int charId) const {
+	return _namedScripts.findById(charId);
 }
 
 } // End of namespace Titanic

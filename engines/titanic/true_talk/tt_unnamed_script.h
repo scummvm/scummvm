@@ -28,7 +28,7 @@
 namespace Titanic {
 
 class TTUnnamedScriptBase : public TTScriptBase {
-protected:
+public:
 	int _scriptId;
 public:
 	TTUnnamedScriptBase(int scriptId, const char *charClass, const char *charName,

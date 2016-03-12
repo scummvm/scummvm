@@ -37,7 +37,17 @@ private:
 	CTitleEngine _titleEngine;
 	TTScripts _scripts;
 private:
-	void loadStatics(SimpleFile *file);
+	/**
+	 * Loads the statics for the class
+	 */
+	static void loadStatics(SimpleFile *file);
+
+	/**
+	 * Saves the statics associated with the class
+	 */
+	static void saveStatics(SimpleFile *file);
+
+	void saveNPC(SimpleFile *file, int charId) const;
 public:
 	static int _v1;
 	static int _v2;
@@ -64,6 +74,11 @@ public:
 	 * Load the data for the class from file
 	 */
 	void load(SimpleFile *file);
+
+	/**
+	 * Returns the scripts for the manager
+	 */
+	TTScripts &getScripts() { return _scripts; }
 };
 
 } // End of namespace Titanic

@@ -22,6 +22,8 @@
 
 #include "titanic/true_talk/true_talk_manager.h"
 
+#define MKTAG_BE(a3,a2,a1,a0) ((uint32)((a3) | ((a2) << 8) | ((a1) << 16) | ((a0) << 24)))
+
 namespace Titanic {
 
 int CTrueTalkManager::_v1;
@@ -41,14 +43,31 @@ CTrueTalkManager::CTrueTalkManager(CGameManager *owner) :
 }
 
 void CTrueTalkManager::save(SimpleFile *file) const {
+	saveStatics(file);
 
+	saveNPC(file, 101);
+	saveNPC(file, 103);
+	saveNPC(file, 104);
+	saveNPC(file, 105);
+	saveNPC(file, 111);
+	saveNPC(file, 100);
+	saveNPC(file, 112);
+	saveNPC(file, 107);
+	file->writeNumber(0);
 }
 
 void CTrueTalkManager::load(SimpleFile *file) {
 	loadStatics(file);
 
-	int count = file->readNumber();
-	//TODO
+	// Iterate through loading characters
+	int charId = file->readNumber();
+	while (charId) {
+		uint ident = MKTAG_BE('U', 'R', 'A', 'H');
+
+		do {
+
+		} while (1);
+	}
 }
 
 void CTrueTalkManager::loadStatics(SimpleFile *file) {
@@ -73,6 +92,24 @@ void CTrueTalkManager::loadStatics(SimpleFile *file) {
 		if (idx < 41)
 			_v11[idx] = v;
 	}
+}
+
+void CTrueTalkManager::saveStatics(SimpleFile *file) {
+	file->writeNumber(10);
+	file->writeNumber(_v1);
+	file->writeNumber(_v2);
+	file->writeNumber(_v3);
+	file->writeNumber(_v4 ? 1 : 0);
+	file->writeNumber(_v5 ? 1 : 0);
+	file->writeNumber(_v6);
+	file->writeNumber(_v7);
+	file->writeNumber(_v8 ? 1 : 0);
+	file->writeNumber(_v9);
+	file->writeNumber(_v10 ? 1 : 0);
+
+	file->writeNumber(41);
+	for (int idx = 0; idx < 41; ++idx)
+		file->writeNumber(_v11[idx]);
 }
 
 void CTrueTalkManager::setFlags(int index, int val) {
@@ -110,5 +147,13 @@ void CTrueTalkManager::setFlags(int index, int val) {
 	}
 }
 
+void CTrueTalkManager::saveNPC(SimpleFile *file, int charId) const {
+	TTNamedScript *script = _scripts.getNamedScript(charId);
+	if (script) {
+		script->save(file);
+		file->writeNumber(MKTAG_BE('U', 'R', 'A', 'H'));
+		file->writeNumber(MKTAG_BE('A', 'K', 'E', 'R'));
+	}
+}
 
 } // End of namespace Titanic

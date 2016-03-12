@@ -31,11 +31,12 @@ namespace Titanic {
 
 class TTNamedScriptBase : public TTScriptBase {
 protected:
-	int _val1;
 	int _field54;
 	int _val2;
 public:
-	TTNamedScriptBase(int val1, const char *charClass, int v2,
+	int _charId;
+public:
+	TTNamedScriptBase(int charId, const char *charClass, int v2,
 		const char *charName, int v3, int val2, int v4,
 		int v5, int v6, int v7);
 
@@ -46,11 +47,13 @@ public:
 	virtual int proc10() const = 0;
 	virtual int proc11() const = 0;
 	virtual int proc12() const = 0;
+
+	int charId() const { return _charId; }
 };
 
 class TTNamedScript : public TTNamedScriptBase {
 protected:
-	int _field5C;
+	byte *_subPtr;
 	int _field60;
 	int _field64;
 	int _field68;
@@ -66,7 +69,7 @@ protected:
 
 	void randomizeFlags();
 public:
-	TTNamedScript(int val1, const char *charClass, int v2,
+	TTNamedScript(int charId, const char *charClass, int v2,
 		const char *charName, int v3, int val2, int v4,
 		int v5, int v6, int v7);
 
@@ -92,17 +95,19 @@ public:
 	virtual void proc24() = 0;
 	virtual int proc25() const;
 	virtual void proc26();
-	virtual void save1(SimpleFile *file);
-	virtual void proc28(int v);
-	virtual void save2(SimpleFile *file);
-	virtual void proc30(int v);
-	virtual void proc31();
+	virtual void save(SimpleFile *file);
+	virtual void load(SimpleFile *file);
+	virtual void saveBody(SimpleFile *file);
+	virtual void loadBody(SimpleFile *file);
+	virtual int proc31();
 	virtual void proc32();
 	virtual void proc33(int v1, int v2);
 	virtual int proc34();
 	virtual int proc35(int v1, int v2);
 	virtual int proc36() const;
 	virtual int proc37() const;
+
+	void preLoad();
 };
 
 } // End of namespace Titanic

@@ -26,17 +26,17 @@
 
 namespace Titanic {
 
-TTNamedScriptBase::TTNamedScriptBase(int val1, const char *charClass, int v2,
+TTNamedScriptBase::TTNamedScriptBase(int charId, const char *charClass, int v2,
 		const char *charName, int v3, int val2, int v4, int v5, int v6, int v7) :
 		TTScriptBase(0, charClass, v2, charName, v3, v4, v5, v6, v7),
-		_val1(val1), _field54(0), _val2(val2) {
+		_charId(charId), _field54(0), _val2(val2) {
 }
 
 /*------------------------------------------------------------------------*/
 
-TTNamedScript::TTNamedScript(int val1, const char *charClass, int v2,
+TTNamedScript::TTNamedScript(int charId, const char *charClass, int v2,
 		const char *charName, int v3, int val2, int v4, int v5, int v6, int v7) :
-		TTNamedScriptBase(val1, charClass, v2, charName, v3, val2, v4, v5, v6, v7) {
+		TTNamedScriptBase(charId, charClass, v2, charName, v3, val2, v4, v5, v6, v7) {
 	CTrueTalkManager::_v2 = 0;
 	Common::fill(&_array[0], &_array[147], 0);
 
@@ -139,24 +139,66 @@ int TTNamedScript::proc25() const {
 void TTNamedScript::proc26() {
 }
 
-void TTNamedScript::save1(SimpleFile *file) {
-	error("TODO");
+void TTNamedScript::save(SimpleFile *file) {
+	file->writeNumber(charId());
+	saveBody(file);
+
+	file->writeNumber(4);
+	file->writeNumber(_field70);
+	file->writeNumber(_field74);
+	file->writeNumber(_field78);
+	file->writeNumber(_field7C);
+	
+	file->writeNumber(10);
+	for (int idx = 0; idx < 10; ++idx)
+		file->writeNumber(_array[idx]);
 }
 
-void TTNamedScript::proc28(int v) {
+void TTNamedScript::load(SimpleFile *file) {
+	loadBody(file);
+
+	int count = file->readNumber();
+	_field70 = file->readNumber();
+	_field74 = file->readNumber();
+	_field78 = file->readNumber();
+	_field7C = file->readNumber();
+
+	for (int idx = count; idx > 4; --idx)
+		file->readNumber();
+
+	count = file->readNumber();
+	for (int idx = 0; idx < count; ++idx) {
+		int v = file->readNumber();
+		if (idx < 10)
+			_array[idx] = v;
+	}
+}
+
+void TTNamedScript::saveBody(SimpleFile *file) {
+	int v = proc31();
+	file->writeNumber(v);
+
+	if (v > 0 && _subPtr) {
+		warning("TODO");
+	}
+}
+
+void TTNamedScript::loadBody(SimpleFile *file) {
+	int count = file->readNumber();
+	preLoad();
+
+	for (int index = 0; index < count; index += 2) {
+		int v = file->readNumber();
+
+		if (_subPtr) {
+			error("TODO - %d", v);
+		}
+	}
+}
+
+int TTNamedScript::proc31() {
 	warning("TODO");
-}
-
-void TTNamedScript::save2(SimpleFile *file) {
-	error("TODO");
-}
-
-void TTNamedScript::proc30(int v) {
-	warning("TODO");
-}
-
-void TTNamedScript::proc31() {
-	warning("TODO");
+	return 0;
 }
 
 void TTNamedScript::proc32() {
@@ -183,6 +225,12 @@ int TTNamedScript::proc36() const {
 
 int TTNamedScript::proc37() const {
 	return 0;
+}
+
+void TTNamedScript::preLoad() {
+	if (_subPtr) {
+		error("TODO");
+	}
 }
 
 } // End of namespace Titanic

@@ -31,19 +31,33 @@ namespace Titanic {
 
 class CTitleEngine;
 
-PTR_LIST_ITEM(TTNamedScript);
+class TTNamedScriptListItem : public ListItem {
+public:
+	TTNamedScript *_script;
+	TTUnnamedScript *_unnamedScript;
+public:
+	TTNamedScriptListItem() : _script(nullptr), _unnamedScript(nullptr) {}
+	TTNamedScriptListItem(TTNamedScript *script, TTUnnamedScript *unnamedScript) :
+		_script(script), _unnamedScript(unnamedScript) {}
+	virtual ~TTNamedScriptListItem() { delete _script; }
+};
+
 PTR_LIST_ITEM(TTUnnamedScript);
 
 class TTNamedScriptList : public List<TTNamedScriptListItem> {
+public:
+	TTNamedScript *findById(int charId) const;
 };
 
-class TTUnamedScriptList : public List<TTUnnamedScriptListItem> {
+class TTUnnamedScriptList : public List<TTUnnamedScriptListItem> {
+public:
+	TTUnnamedScript *findById(int scriptId) const;
 };
 
 class TTScripts {
 private:
 	TTNamedScriptList _namedScripts;
-	TTUnamedScriptList _unnamedScripts;
+	TTUnnamedScriptList _unnamedScripts;
 	CTitleEngine *_titleEngine;
 	int _field24;
 	int _field28;
@@ -51,7 +65,7 @@ private:
 	/**
 	 * Add a named script to the named scripts list
 	 */
-	void addScript(TTNamedScript *script);
+	void addScript(TTNamedScript *script, int charId);
 
 	/**
 	 * Add an unnamed script to the unnamed scripts list
@@ -59,6 +73,16 @@ private:
 	void addScript(TTUnnamedScript *script);
 public:
 	TTScripts(CTitleEngine *titleEngine);
+
+	/**
+	 * Return a pointer to the specified script
+	 */
+	TTUnnamedScript *getUnnamedScript(int scriptId) const;
+
+	/**
+	 * Return a pointer to the specified named character script
+	 */
+	TTNamedScript *getNamedScript(int charId) const;
 };
 
 } // End of namespace Titanic
