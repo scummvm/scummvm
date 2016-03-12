@@ -24,14 +24,16 @@
 #define TITANIC_SOUND_H
 
 #include "titanic/simple_file.h"
+#include "titanic/sound/sound_manager.h"
 
 namespace Titanic {
 
 class CGameManager;
 
 class CSound {
-public:
+private:
 	CGameManager *_gameManager;
+	QSoundManager _soundManager;
 public:
 	CSound(CGameManager *owner);
 

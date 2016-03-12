@@ -47,6 +47,8 @@ private:
 	 */
 	static void saveStatics(SimpleFile *file);
 
+	void loadNPC(SimpleFile *file, int charId);
+
 	void saveNPC(SimpleFile *file, int charId) const;
 public:
 	static int _v1;

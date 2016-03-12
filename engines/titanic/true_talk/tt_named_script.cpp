@@ -36,7 +36,10 @@ TTNamedScriptBase::TTNamedScriptBase(int charId, const char *charClass, int v2,
 
 TTNamedScript::TTNamedScript(int charId, const char *charClass, int v2,
 		const char *charName, int v3, int val2, int v4, int v5, int v6, int v7) :
-		TTNamedScriptBase(charId, charClass, v2, charName, v3, val2, v4, v5, v6, v7) {
+		TTNamedScriptBase(charId, charClass, v2, charName, v3, val2, v4, v5, v6, v7),
+		_subPtr(nullptr), _field60(0), _field64(0), _field68(0),
+		_field6C(0), _field70(0), _field74(0), _field78(0),
+		_field7C(0), _field80(0) {
 	CTrueTalkManager::_v2 = 0;
 	Common::fill(&_array[0], &_array[147], 0);
 

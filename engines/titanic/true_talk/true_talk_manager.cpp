@@ -62,11 +62,24 @@ void CTrueTalkManager::load(SimpleFile *file) {
 	// Iterate through loading characters
 	int charId = file->readNumber();
 	while (charId) {
-		uint ident = MKTAG_BE('U', 'R', 'A', 'H');
+		loadNPC(file, charId);
 
-		do {
+		int ident1 = file->readNumber();
+		int ident2 = file->readNumber();
+		int v = 0;
 
-		} while (1);
+		if (ident1 != MKTAG_BE('U', 'R', 'A', 'H')) {
+			while (ident2 != MKTAG_BE('A', 'K', 'E', 'R')) {
+				ident1 = ident2;
+				ident2 = file->readNumber();
+
+				if (!ident1)
+					break;
+			}
+		}
+
+		// Get start of next character
+		charId = file->readNumber();
 	}
 }
 
@@ -145,6 +158,12 @@ void CTrueTalkManager::setFlags(int index, int val) {
 			_v11[index] = val;
 		break;
 	}
+}
+
+void CTrueTalkManager::loadNPC(SimpleFile *file, int charId) {
+	TTNamedScript *script = _scripts.getNamedScript(charId);
+	if (script)
+		script->load(file);
 }
 
 void CTrueTalkManager::saveNPC(SimpleFile *file, int charId) const {

@@ -28,11 +28,11 @@ CSound::CSound(CGameManager *owner) : _gameManager(owner) {
 }
 
 void CSound::save(SimpleFile *file) const {
-
+	_soundManager.save(file);
 }
 
 void CSound::load(SimpleFile *file) {
-
+	_soundManager.load(file);
 }
 
 } // End of namespace Titanic z
