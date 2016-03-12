@@ -20,52 +20,8 @@
  *
  */
 
-#ifndef TITANIC_TRUE_TALK_MANAGER_H
-#define TITANIC_TRUE_TALK_MANAGER_H
-
-#include "titanic/simple_file.h"
 #include "titanic/true_talk/title_engine.h"
-#include "titanic/true_talk/tt_scripts.h"
 
 namespace Titanic {
 
-class CGameManager;
-
-class CTrueTalkManager {
-private:
-	CGameManager *_gameManager;
-	CTitleEngine _titleEngine;
-	TTScripts _scripts;
-private:
-	void loadStatics(SimpleFile *file);
-public:
-	static int _v1;
-	static int _v2;
-	static int _v3;
-	static bool _v4;
-	static bool _v5;
-	static int _v6;
-	static int _v7;
-	static bool _v8;
-	static int _v9;
-	static bool _v10;
-	static int _v11[41];
-
-	static void setFlags(int index, int val);
-public:
-	CTrueTalkManager(CGameManager *owner);
-
-	/**
-	 * Save the data for the class to file
-	 */
-	void save(SimpleFile *file) const;
-
-	/**
-	 * Load the data for the class from file
-	 */
-	void load(SimpleFile *file);
-};
-
 } // End of namespace Titanic
-
-#endif /* TITANIC_TRUE_TALK_MANAGER_H */

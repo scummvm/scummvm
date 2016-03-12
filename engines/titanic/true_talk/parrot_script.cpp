@@ -20,52 +20,50 @@
  *
  */
 
-#ifndef TITANIC_TRUE_TALK_MANAGER_H
-#define TITANIC_TRUE_TALK_MANAGER_H
-
-#include "titanic/simple_file.h"
-#include "titanic/true_talk/title_engine.h"
-#include "titanic/true_talk/tt_scripts.h"
+#include "common/textconsole.h"
+#include "titanic/true_talk/parrot_script.h"
 
 namespace Titanic {
 
-class CGameManager;
+int ParrotScript::proc6() const {
+	warning("TODO");
+	return 2;
+}
 
-class CTrueTalkManager {
-private:
-	CGameManager *_gameManager;
-	CTitleEngine _titleEngine;
-	TTScripts _scripts;
-private:
-	void loadStatics(SimpleFile *file);
-public:
-	static int _v1;
-	static int _v2;
-	static int _v3;
-	static bool _v4;
-	static bool _v5;
-	static int _v6;
-	static int _v7;
-	static bool _v8;
-	static int _v9;
-	static bool _v10;
-	static int _v11[41];
+void ParrotScript::proc7(int v1, int v2) {
+	warning("TODO");
+}
 
-	static void setFlags(int index, int val);
-public:
-	CTrueTalkManager(CGameManager *owner);
+int ParrotScript::proc10() const {
+	warning("TODO");
+	return 0;
+}
 
-	/**
-	 * Save the data for the class to file
-	 */
-	void save(SimpleFile *file) const;
+int ParrotScript::proc17() const {
+	warning("TODO");
+	return 0;
+}
 
-	/**
-	 * Load the data for the class from file
-	 */
-	void load(SimpleFile *file);
-};
+int ParrotScript::proc18() const {
+	warning("TODO");
+	return 0;
+}
+
+int ParrotScript::proc23() const {
+	warning("TODO");
+	return 0;
+}
+
+void ParrotScript::proc24() {
+	warning("TODO");
+}
+
+int ParrotScript::proc25() const {
+	warning("TODO");
+	return 0;
+}
+
+void ParrotScript::proc26() {
+}
 
 } // End of namespace Titanic
-
-#endif /* TITANIC_TRUE_TALK_MANAGER_H */

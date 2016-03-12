@@ -424,6 +424,15 @@ MODULE_OBJS := \
 	star_control/star_control_sub13.o \
 	star_control/star_control_sub14.o \
 	star_control/star_control_sub15.o \
+	true_talk/barbot_script.o \
+	true_talk/bellbot_script.o \
+	true_talk/deskbot_script.o \
+	true_talk/doorbot_script.o \
+	true_talk/liftbot_script.o \
+	true_talk/maitred_script.o \
+	true_talk/parrot_script.o \
+	true_talk/succubus_script.o \
+	true_talk/title_engine.o \
 	true_talk/true_talk_manager.o \
 	true_talk/tt_script_base.o \
 	true_talk/tt_unnamed_script.o \

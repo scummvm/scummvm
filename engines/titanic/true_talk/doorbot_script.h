@@ -20,52 +20,39 @@
  *
  */
 
-#ifndef TITANIC_TRUE_TALK_MANAGER_H
-#define TITANIC_TRUE_TALK_MANAGER_H
+#ifndef TITANIC_DOORBOT_SCRIPT_H
+#define TITANIC_DOORBOT_SCRIPT_H
 
-#include "titanic/simple_file.h"
-#include "titanic/true_talk/title_engine.h"
-#include "titanic/true_talk/tt_scripts.h"
+#include "titanic/true_talk/tt_named_script.h"
 
 namespace Titanic {
 
-class CGameManager;
-
-class CTrueTalkManager {
+class DoorbotScript : public TTNamedScript {
 private:
-	CGameManager *_gameManager;
-	CTitleEngine _titleEngine;
-	TTScripts _scripts;
-private:
-	void loadStatics(SimpleFile *file);
+	int _array[148];
 public:
-	static int _v1;
-	static int _v2;
-	static int _v3;
-	static bool _v4;
-	static bool _v5;
-	static int _v6;
-	static int _v7;
-	static bool _v8;
-	static int _v9;
-	static bool _v10;
-	static int _v11[41];
+	DoorbotScript(int val1, const char *charClass, int v2,
+		const char *charName, int v3, int val2, int v4, int v5, int v6, int v7) :
+		TTNamedScript(val1, charClass, v2, charName, v3, val2, v4, v5, v6, v7) {}
 
-	static void setFlags(int index, int val);
-public:
-	CTrueTalkManager(CGameManager *owner);
-
-	/**
-	 * Save the data for the class to file
-	 */
-	void save(SimpleFile *file) const;
-
-	/**
-	 * Load the data for the class from file
-	 */
-	void load(SimpleFile *file);
+	virtual int proc6() const;
+	virtual void proc7(int v1, int v2);
+	virtual int proc10() const;
+	virtual int proc15() const;
+	virtual int proc16() const;
+	virtual int proc17() const;
+	virtual int proc18() const;
+	virtual int proc21(int v);
+	virtual int proc22() const;
+	virtual int proc23() const;
+	virtual void proc24();
+	virtual int proc25() const;
+	virtual void proc26();
+	virtual void proc32();
+	virtual int proc36() const;
+	virtual int proc37() const;
 };
 
 } // End of namespace Titanic
 
-#endif /* TITANIC_TRUE_TALK_MANAGER_H */
+#endif /* TITANIC_TT_CHARACTER1_H */

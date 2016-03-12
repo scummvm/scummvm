@@ -36,7 +36,8 @@ int CTrueTalkManager::_v9;
 bool CTrueTalkManager::_v10;
 int CTrueTalkManager::_v11[41];
 
-CTrueTalkManager::CTrueTalkManager(CGameManager *owner) : _gameManager(owner) {
+CTrueTalkManager::CTrueTalkManager(CGameManager *owner) : 
+		_gameManager(owner), _scripts(&_titleEngine) {
 }
 
 void CTrueTalkManager::save(SimpleFile *file) const {
@@ -73,5 +74,41 @@ void CTrueTalkManager::loadStatics(SimpleFile *file) {
 			_v11[idx] = v;
 	}
 }
+
+void CTrueTalkManager::setFlags(int index, int val) {
+	switch (index) {
+	case 1:
+		if (val >= 1 && val <= 3)
+			_v3 = val;
+		break;
+
+	case 2:
+		_v4 = !val;
+		break;
+
+	case 3:
+		_v5 = val != 0;
+		break;
+
+	case 4:
+		if (val >= 0 && val <= 3)
+			_v6 = val;
+		break;
+
+	case 5:
+		_v7 = val;
+		break;
+
+	case 6:
+		_v8 = val != 0;
+		break;
+
+	default:
+		if (index < 41)
+			_v11[index] = val;
+		break;
+	}
+}
+
 
 } // End of namespace Titanic

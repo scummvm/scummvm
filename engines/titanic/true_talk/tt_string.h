@@ -33,7 +33,7 @@ public:
 public:
 	TTString() : CString(), _status(0) {}
 	TTString(const char *str) : CString(str), _status(0) {}
-	~TTString();
+	virtual ~TTString() {}
 
 	bool isValid() const { return !_status; }
 };

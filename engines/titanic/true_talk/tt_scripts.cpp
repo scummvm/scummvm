@@ -21,8 +21,42 @@
  */
 
 #include "titanic/true_talk/tt_scripts.h"
+#include "titanic/true_talk/title_engine.h"
+#include "titanic/true_talk/barbot_script.h"
+#include "titanic/true_talk/bellbot_script.h"
+#include "titanic/true_talk/deskbot_script.h"
+#include "titanic/true_talk/doorbot_script.h"
+#include "titanic/true_talk/liftbot_script.h"
+#include "titanic/true_talk/maitred_script.h"
+#include "titanic/true_talk/parrot_script.h"
+#include "titanic/true_talk/succubus_script.h"
 
 namespace Titanic {
 
+TTScripts::TTScripts(CTitleEngine *titleEngine) :
+		_titleEngine(titleEngine), _field24(0), _field28(0) {
+	// Load unnamed scripts
+	for (int scriptNum = 100; scriptNum < 133; ++scriptNum)
+		addScript(new TTUnnamedScript(scriptNum));
+
+	// Load named scripts
+	addScript(new DoorbotScript(104, "Doorbot", 0, "Fentible", 11, 1, -1, -1, -1, 0));
+	addScript(new BellbotScript(101, "Bellbot", 0, "Krage", 8, 1));
+	addScript(new LiftbotScript(105, "LiftBot", 0, "Nobby", 11, 1, -1, -1, -1, 0));
+	addScript(new DeskbotScript(103, "DeskBot", 0, "Marsinta", 11, 2));
+	addScript(new BarbotScript(100, "Barbot", 0, "Fortillian", 9, 1, -1, -1, -1, 0));
+	addScript(new ParrotScript(107, "Parrot", 0, "The Parrot", 5, 1, -1, -1, -1, 0));
+	addScript(new MaitreDScript(112, "MaitreDBot", 0, "Dastrogaaar", 8, 1));
+	addScript(new SuccUBusScript(111, "Succubus", 0, "Shorbert", 9, 1, -1, -1, -1, 0));
+}
+
+void TTScripts::addScript(TTNamedScript *script) {
+	script->proc13();
+	_namedScripts.push_back(new TTNamedScriptListItem(script));
+}
+
+void TTScripts::addScript(TTUnnamedScript *script) {
+	_unnamedScripts.push_back(new TTUnnamedScriptListItem(script));
+}
 
 } // End of namespace Titanic

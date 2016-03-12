@@ -23,11 +23,42 @@
 #ifndef TITANIC_TT_SCRIPTS_H
 #define TITANIC_TT_SCRIPTS_H
 
+#include "titanic/core/list.h"
+#include "titanic/true_talk/tt_named_script.h"
+#include "titanic/true_talk/tt_unnamed_script.h"
+
 namespace Titanic {
 
+class CTitleEngine;
+
+PTR_LIST_ITEM(TTNamedScript);
+PTR_LIST_ITEM(TTUnnamedScript);
+
+class TTNamedScriptList : public List<TTNamedScriptListItem> {
+};
+
+class TTUnamedScriptList : public List<TTUnnamedScriptListItem> {
+};
+
 class TTScripts {
+private:
+	TTNamedScriptList _namedScripts;
+	TTUnamedScriptList _unnamedScripts;
+	CTitleEngine *_titleEngine;
+	int _field24;
+	int _field28;
+private:
+	/**
+	 * Add a named script to the named scripts list
+	 */
+	void addScript(TTNamedScript *script);
+
+	/**
+	 * Add an unnamed script to the unnamed scripts list
+	 */
+	void addScript(TTUnnamedScript *script);
 public:
-	TTScripts() {}
+	TTScripts(CTitleEngine *titleEngine);
 };
 
 } // End of namespace Titanic

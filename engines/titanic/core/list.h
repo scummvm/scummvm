@@ -48,6 +48,26 @@ public:
 	virtual void load(SimpleFile *file);
 };
 
+/**
+ * List item macro for managed pointers an item
+ */
+#define PTR_LIST_ITEM(T) class T##ListItem : public ListItem { \
+	public: T *_item; \
+	T##ListItem() : _item(nullptr) {} \
+	T##ListItem(T *item) : _item(item) {} \
+	virtual ~T##ListItem() { delete _item; } \
+	}
+
+template<typename T>
+class PtrListItem : public ListItem {
+public:
+	T *_item;
+public:
+	PtrListItem() : _item(nullptr) {}
+	PtrListItem(T *item) : _item(item) {}
+	virtual ~PtrListItem() { delete _item; }
+};
+
 template<typename T>
 class List : public CSaveableObject, public Common::List<T *> {
 public:

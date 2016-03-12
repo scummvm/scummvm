@@ -22,6 +22,7 @@
 
 #include "common/textconsole.h"
 #include "titanic/true_talk/tt_named_script.h"
+#include "titanic/true_talk/true_talk_manager.h"
 
 namespace Titanic {
 
@@ -36,7 +37,23 @@ TTNamedScriptBase::TTNamedScriptBase(int val1, const char *charClass, int v2,
 TTNamedScript::TTNamedScript(int val1, const char *charClass, int v2,
 		const char *charName, int v3, int val2, int v4, int v5, int v6, int v7) :
 		TTNamedScriptBase(val1, charClass, v2, charName, v3, val2, v4, v5, v6, v7) {
+	CTrueTalkManager::_v2 = 0;
+	Common::fill(&_array[0], &_array[147], 0);
 
+	if (!CTrueTalkManager::_v10) {
+		Common::fill(&CTrueTalkManager::_v11[0], &CTrueTalkManager::_v11[41], 0);
+		CTrueTalkManager::_v10 = true;
+	}
+
+	resetFlags();
+}
+
+void TTNamedScript::resetFlags() {
+	Common::fill(&_array[26], &_array[146], 0);
+}
+
+void TTNamedScript::randomizeFlags() {
+	warning("TODO");
 }
 
 void TTNamedScript::proc4(int v) {

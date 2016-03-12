@@ -39,16 +39,17 @@ public:
 		const char *charName, int v3, int val2, int v4,
 		int v5, int v6, int v7);
 
-	virtual void proc6() = 0;
-	virtual void proc7() = 0;
-	virtual void proc8() = 0;
-	virtual void proc9() = 0;
-	virtual void proc10() = 0;
-	virtual void proc11() = 0;
-	virtual void proc12() = 0;
+	virtual int proc6() const = 0;
+	virtual void proc7(int v1, int v2) = 0;
+	virtual int proc8() const = 0;
+	virtual int proc9() const = 0;
+	virtual int proc10() const = 0;
+	virtual int proc11() const = 0;
+	virtual int proc12() const = 0;
 };
+
 class TTNamedScript : public TTNamedScriptBase {
-private:
+protected:
 	int _field5C;
 	int _field60;
 	int _field64;
@@ -59,6 +60,11 @@ private:
 	int _field78;
 	int _field7C;
 	int _field80;
+	int _array[147];
+protected:
+	void resetFlags();
+
+	void randomizeFlags();
 public:
 	TTNamedScript(int val1, const char *charClass, int v2,
 		const char *charName, int v3, int val2, int v4,
