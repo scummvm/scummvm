@@ -662,9 +662,11 @@ void TuckerEngine::loadData3() {
 void TuckerEngine::loadData4() {
 	loadFile("data4.c", _loadTempBuf);
 	DataTokenizer t(_loadTempBuf, _fileLoadSize);
-	t.findNextToken(kDataTokenDw);
-	_gameDebug = t.getNextInteger() != 0;
-	_displayGameHints = t.getNextInteger() != 0;
+	if ((_gameFlags & kGameFlagDemo) == 0) {
+		t.findNextToken(kDataTokenDw);
+		_gameDebug = t.getNextInteger() != 0;
+		_displayGameHints = t.getNextInteger() != 0;
+	}
 	_locationObjectsCount = 0;
 	if (t.findIndex(_locationNum)) {
 		while (t.findNextToken(kDataTokenDw)) {
