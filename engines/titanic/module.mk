@@ -368,7 +368,6 @@ MODULE_OBJS := \
 	npcs/succubus.o \
 	npcs/summon_bots.o \
 	npcs/titania.o \
-	npcs/true_talk_manager.o \
 	npcs/true_talk_npc.o \
 	pet_control/pet_control.o \
 	pet_control/pet_control_list_item.o \
@@ -424,7 +423,13 @@ MODULE_OBJS := \
 	star_control/star_control_sub12.o \
 	star_control/star_control_sub13.o \
 	star_control/star_control_sub14.o \
-	star_control/star_control_sub15.o
+	star_control/star_control_sub15.o \
+	true_talk/true_talk_manager.o \
+	true_talk/tt_script_base.o \
+	true_talk/tt_unnamed_script.o \
+	true_talk/tt_named_script.o \
+	true_talk/tt_scripts.o \
+	true_talk/tt_string.o
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_TITANIC), DYNAMIC_PLUGIN)

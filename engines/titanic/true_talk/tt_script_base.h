@@ -20,46 +20,51 @@
  *
  */
 
-#ifndef TITANIC_TRUE_TALK_MANAGER_H
-#define TITANIC_TRUE_TALK_MANAGER_H
+#ifndef TITANIC_TT_SCRIPT_BASE_H
+#define TITANIC_TT_SCRIPT_BASE_H
 
-#include "titanic/simple_file.h"
+#include "titanic/true_talk/tt_string.h"
 
 namespace Titanic {
 
-class CGameManager;
-
-class CTrueTalkManager {
+class TTScriptBase {
 private:
-	void loadStatics(SimpleFile *file);
+	void reset();
+protected:
+	int _field4;
+	int _field8;
+	int _fieldC;
+	TTString _charName, _charClass;
+	int _field20;
+	int _field24;
+	int _field28;
+	int _field2C;
+	int _field30;
+	int _field34;
+	int _field38;
+	int _field3C;
+	int _field40;
+	int _field44;
+	int _field48;
+	int _status;
 public:
-	static int _v1;
-	static int _v2;
-	static int _v3;
-	static bool _v4;
-	static bool _v5;
-	static int _v6;
-	static int _v7;
-	static bool _v8;
-	static int _v9;
-	static bool _v10;
-	static int _v11[41];
-public:
-	CGameManager *_gameManager;
-public:
-	CTrueTalkManager(CGameManager *owner);
+	TTScriptBase(int v1, const char *charClass, int v2, const char *charName,
+		int v3, int v4, int v5, int v6, int v7);
 
-	/**
-	 * Save the data for the class to file
-	 */
-	void save(SimpleFile *file) const;
+	bool areNamesValid();
 
-	/**
-	 * Load the data for the class from file
-	 */
-	void load(SimpleFile *file);
+	int getStatus() const { return _status; }
+
+	virtual void proc2(int v);
+
+	virtual void proc3(int v);
+
+	virtual void proc4(int v);
+
+	virtual void proc5();
 };
+
 
 } // End of namespace Titanic
 
-#endif /* TITANIC_TRUE_TALK_MANAGER_H */
+#endif /* TITANIC_TT_SCRIPT_BASE_H */

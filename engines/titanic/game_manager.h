@@ -29,7 +29,7 @@
 #include "titanic/input_translator.h"
 #include "titanic/simple_file.h"
 #include "titanic/video_surface.h"
-#include "titanic/npcs/true_talk_manager.h"
+#include "titanic/true_talk/true_talk_manager.h"
 #include "titanic/sound/music_room.h"
 #include "titanic/sound/sound.h"
 

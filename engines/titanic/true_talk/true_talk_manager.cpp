@@ -20,7 +20,7 @@
  *
  */
 
-#include "titanic/npcs/true_talk_manager.h"
+#include "titanic/true_talk/true_talk_manager.h"
 
 namespace Titanic {
 
