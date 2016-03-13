@@ -218,7 +218,7 @@ void GnapEngine::scene09_updateAnimations() {
 		case kASSearchTrash:
 			_gameSys->setAnimation(0x4C, 120, 0);
 			_gameSys->insertSequence(0x4C, 120, makeRid(_gnapSequenceDatNum, _gnapSequenceId), _gnapId, kSeqSyncWait, 0, 0, 0);
-			_gameSys->removeSequence(0x4B, 2, 1);
+			_gameSys->removeSequence(0x4B, 2, true);
 			_gnapSequenceId = 0x4C;
 			_gnapId = 120;
 			_gnapIdleFacing = 5;

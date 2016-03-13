@@ -65,9 +65,9 @@ struct SpriteDrawItem {
 };
 
 struct RemoveSequenceItem {
-	int sequenceId;
-	int id;
-	int a3;
+	int _sequenceId;
+	int _id;
+	bool _forceFrameReset;
 };
 
 struct RemoveSpriteDrawItem {
@@ -106,7 +106,7 @@ public:
 	~GameSys();
 	void insertSequence(int sequenceId, int a2, int sequenceId2, int a4, int flags, int totalDuration, int16 x, int16 y);
 	void insertDirtyRect(const Common::Rect &rect);
-	void removeSequence(int sequenceId, int a2, int a3);
+	void removeSequence(int sequenceId, int id, bool resetFl);
 	void invalidateGrabCursorSprite(int id, Common::Rect &rect, Graphics::Surface *surface1, Graphics::Surface *surface2);
 	void requestClear2(int a1);
 	void requestClear1();

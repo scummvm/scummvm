@@ -265,7 +265,7 @@ void GnapEngine::scene38_updateAnimations() {
 			_sceneDone = true;
 			break;
 		case kASExitCave:
-			_gameSys->removeSequence(_beaverSequenceId | (_beaverSequenceDatNum << 16), _beaverId, 1);
+			_gameSys->removeSequence(_beaverSequenceId | (_beaverSequenceDatNum << 16), _beaverId, true);
 			_gameSys->insertSequence(0xA3, _gnapId, makeRid(_gnapSequenceDatNum, _gnapSequenceId), _gnapId, kSeqSyncWait, 0, 0, 0);
 			_gnapSequenceId = 0xA3;
 			_gnapSequenceDatNum = 0;
@@ -273,7 +273,7 @@ void GnapEngine::scene38_updateAnimations() {
 			_gnapActionStatus = kASLeaveScene;
 			break;
 		case kASUseHuntingTrophy:
-			_gameSys->removeSequence(0x9B, 0, 1);
+			_gameSys->removeSequence(0x9B, 0, true);
 			_gameSys->insertSequence(0x9C, _gnapId, makeRid(_gnapSequenceDatNum, _gnapSequenceId), _gnapId, kSeqSyncWait, 0, 0, 0);
 			_gnapSequenceId = 0x9C;
 			_gnapSequenceDatNum = 0;

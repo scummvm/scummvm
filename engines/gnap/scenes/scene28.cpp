@@ -429,7 +429,7 @@ void GnapEngine::scene28_updateAnimations() {
 		case 0x119:
 			_gameSys->insertSequence(_s28_nextClownSequenceId, 39, makeRid(_gnapSequenceDatNum, _gnapSequenceId), _gnapId, kSeqSyncWait, 0, 0, 0);
 			_gameSys->setAnimation(_s28_nextClownSequenceId, 39, 0);
-			_gameSys->removeSequence(_s28_currClownSequenceId, 39, 1);
+			_gameSys->removeSequence(_s28_currClownSequenceId, 39, true);
 			_gnapActionStatus = kASGrabHornFailsDone;
 			_gnapSequenceId = _s28_nextClownSequenceId;
 			_gnapSequenceDatNum = 0;

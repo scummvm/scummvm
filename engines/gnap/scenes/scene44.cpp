@@ -462,7 +462,7 @@ void GnapEngine::scene44_updateAnimations() {
 				_beaverSequenceId = 0xFE;
 				_beaverSequenceDatNum = 0;
 				_gameSys->setAnimation(0xFE, _beaverId, 1);
-				_gameSys->removeSequence(_s44_dword_47EB10, 1, 1);
+				_gameSys->removeSequence(_s44_dword_47EB10, 1, true);
 				_beaverActionStatus = 5;
 			}
 			break;

@@ -284,11 +284,11 @@ void GnapEngine::scene15_updateAnimations() {
 			case 0xD8:
 			case 0xDA:
 				if (_s15_currUpperButtonSequenceId != -1) {
-					_gameSys->removeSequence(_s15_currUpperButtonSequenceId, 1, 1);
+					_gameSys->removeSequence(_s15_currUpperButtonSequenceId, 1, true);
 					_s15_currUpperButtonSequenceId = -1;
 				}
 				if (_s15_currLowerButtonSequenceId != -1) {
-					_gameSys->removeSequence(_s15_currLowerButtonSequenceId, 1, 1);
+					_gameSys->removeSequence(_s15_currLowerButtonSequenceId, 1, true);
 					_s15_currLowerButtonSequenceId = -1;
 				}
 				break;
@@ -303,9 +303,9 @@ void GnapEngine::scene15_updateAnimations() {
 				_newSceneNum = 16;
 				_isLeavingScene = true;
 			}
-			_gameSys->removeSequence(_s15_currUpperButtonSequenceId, 1, 1);
+			_gameSys->removeSequence(_s15_currUpperButtonSequenceId, 1, true);
 			_s15_currUpperButtonSequenceId = -1;
-			_gameSys->removeSequence(_s15_currLowerButtonSequenceId, 1, 1);
+			_gameSys->removeSequence(_s15_currLowerButtonSequenceId, 1, true);
 			_s15_currLowerButtonSequenceId = -1;
 		} else if (_s15_nextUpperButtonSequenceId != -1) {
 			_gameSys->setAnimation(_s15_nextUpperButtonSequenceId, 1, 0);

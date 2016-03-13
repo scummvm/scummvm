@@ -413,7 +413,7 @@ void GnapEngine::scene13_updateAnimations() {
 		case kASGrabSink:
 			_gameSys->setAnimation(0xAB, 160, 0);
 			_gameSys->insertSequence(0xAB, 160, makeRid(_gnapSequenceDatNum, _gnapSequenceId), _gnapId, kSeqSyncWait, 0, 0, 0);
-			_gameSys->removeSequence(0xAA, 256, 1);
+			_gameSys->removeSequence(0xAA, 256, true);
 			_gnapSequenceId = 0xAB;
 			_gnapId = 160;
 			_gnapIdleFacing = 1;

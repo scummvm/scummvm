@@ -323,7 +323,7 @@ void GnapEngine::scene51_updateItemAnimation(Scene51Item *item, int index) {
 				item->y = 0;
 			}
 		} else {
-			_gameSys->removeSequence(item->currSequenceId, item->id, 1);
+			_gameSys->removeSequence(item->currSequenceId, item->id, true);
 			_gameSys->setAnimation(0, 0, index + 1);
 			playSound(218, 0);
 			if (scene51_incCashAmount(item->currSequenceId) == 1995) {
@@ -370,7 +370,7 @@ void GnapEngine::scene51_updateItemAnimation(Scene51Item *item, int index) {
 	case 0xC2:
 		// Bouncing coin and banknote
 		_gameSys->setAnimation(0, 0, index + 1);
-		_gameSys->removeSequence(item->currSequenceId, item->id, 1);
+		_gameSys->removeSequence(item->currSequenceId, item->id, true);
 		scene51_clearItem(item);
 		break;
 
@@ -393,7 +393,7 @@ void GnapEngine::scene51_updateItemAnimation(Scene51Item *item, int index) {
 		break;
 
 	case 0xBC:
-		_gameSys->removeSequence(item->currSequenceId, item->id, 1);
+		_gameSys->removeSequence(item->currSequenceId, item->id, true);
 		_gameSys->setAnimation(0, 0, index + 1);
 		scene51_clearItem(item);
 		break;
@@ -414,7 +414,7 @@ void GnapEngine::scene51_updateItemAnimation(Scene51Item *item, int index) {
 void GnapEngine::scene51_removeCollidedItems() {
 	for (int i = 0; i < 6; ++i) {
 		if (_s51_items[i].isCollision) {
-			_gameSys->removeSequence(_s51_items[i].currSequenceId, _s51_items[i].id, 1);
+			_gameSys->removeSequence(_s51_items[i].currSequenceId, _s51_items[i].id, true);
 			_gameSys->setAnimation(0, 0, i + 1);
 			scene51_clearItem(&_s51_items[i]);
 		}

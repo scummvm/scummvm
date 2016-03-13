@@ -408,8 +408,8 @@ void GnapEngine::scene11_updateAnimations() {
 				_gnapSequenceId = 0x1F4;
 				_gnapId = 255;
 				_gnapSequenceDatNum = 0;
-				_gameSys->removeSequence(0x207, 257, 1);
-				_gameSys->removeSequence(0x208, 256, 1);
+				_gameSys->removeSequence(0x207, 257, true);
+				_gameSys->removeSequence(0x208, 256, true);
 				_s11_nextGoggleGuySequenceId = 0x1F8;
 				_timers[5] = getRandom(100) + 75;
 				_gameSys->insertSequence(_s11_nextGoggleGuySequenceId, 121, _s11_currGoggleGuySequenceId, 121, kSeqSyncWait, 0, 0, 0);

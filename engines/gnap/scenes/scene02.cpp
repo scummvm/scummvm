@@ -515,7 +515,7 @@ void GnapEngine::scene02_updateAnimations() {
 		if (_s02_nextChickenSequenceId == 0x150) {
 			_gameSys->setAnimation(_s02_nextChickenSequenceId, 179, 0);
 			_gameSys->insertSequence(_s02_nextChickenSequenceId, 179, makeRid(_gnapSequenceDatNum, _gnapSequenceId), _gnapId, kSeqSyncWait, 0, 0, 0);
-			_gameSys->removeSequence(_s02_currChickenSequenceId, 179, 1);
+			_gameSys->removeSequence(_s02_currChickenSequenceId, 179, true);
 			_s02_nextChickenSequenceId = -1;
 			_s02_currChickenSequenceId = -1;
 			_gnapActionStatus = kASGrabChickenDone;

@@ -438,7 +438,7 @@ void GnapEngine::scene43_updateAnimations() {
 			break;
 		case 6:
 			_gameSys->insertSequence(0x10871, _toyUfoId, _toyUfoSequenceId | 0x10000, _toyUfoId, kSeqSyncWait, 0, 0, 0);
-			_gameSys->removeSequence(0x1086F, 1, 1);
+			_gameSys->removeSequence(0x1086F, 1, true);
 			setFlag(14);
 			scene43_updateHotspots();
 			toyUfoSetStatus(18);

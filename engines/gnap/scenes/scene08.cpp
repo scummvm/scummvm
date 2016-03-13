@@ -475,17 +475,17 @@ void GnapEngine::scene08_updateAnimations() {
 			case 0x149:
 				setFlag(7);
 				_hotspots[kHSMeat].flags = SF_DISABLED | SF_WALKABLE;
-				_gameSys->removeSequence(0x144, 1, 1);
+				_gameSys->removeSequence(0x144, 1, true);
 				break;
 			case 0x14A:
 				setFlag(8);
 				_hotspots[kHSBone].flags = SF_DISABLED | SF_WALKABLE;
-				_gameSys->removeSequence(0x145, 1, 1);
+				_gameSys->removeSequence(0x145, 1, true);
 				break;
 			case 0x14B:
 				setFlag(9);
 				_hotspots[kHSToy].flags = SF_DISABLED | SF_WALKABLE;
-				_gameSys->removeSequence(0x146, 1, 1);
+				_gameSys->removeSequence(0x146, 1, true);
 				break;
 			}
 			_s08_currDogSequenceId = _s08_nextDogSequenceId;

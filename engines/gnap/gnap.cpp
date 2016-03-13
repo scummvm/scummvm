@@ -613,7 +613,7 @@ void GnapEngine::insertDeviceIconActive() {
 }
 
 void GnapEngine::removeDeviceIconActive() {
-	_gameSys->removeSequence(0x1084A, 21, 1);
+	_gameSys->removeSequence(0x1084A, 21, true);
 }
 
 void GnapEngine::setDeviceHotspot(int hotspotIndex, int x1, int y1, int x2, int y2) {
@@ -2337,8 +2337,6 @@ void GnapEngine::cutscene_run() {
 	int duration = 0;
 	bool skip = false;
 
-	int v1 = 0;
-
 	if (_prevSceneNum == 2) {
 		soundId = 0x36B;
 		duration = MAX(1, 300 / getSequenceTotalDuration(_s99_dword_47F370[_s99_itemsCount - 1]));//CHECKME
@@ -2362,6 +2360,7 @@ void GnapEngine::cutscene_run() {
 
 	_mouseClickState.left = false;
 	
+	int v1 = 0;
 	while (!_sceneDone) {
 
 		gameUpdateTick();

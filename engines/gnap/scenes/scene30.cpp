@@ -246,7 +246,7 @@ void GnapEngine::scene30_updateAnimations() {
 			hideCursor();
 			setGrabCursorSprite(-1);
 			addFullScreenSprite(0x3F, 255);
-			_gameSys->removeSequence(0x105, _gnapId, 1);
+			_gameSys->removeSequence(0x105, _gnapId, true);
 			_gameSys->setAnimation(0x102, 256, 0);
 			_gameSys->insertSequence(0x102, 256, 0, 0, kSeqNone, 0, 0, 0);
 			while (_gameSys->getAnimationStatus(0) != 2)

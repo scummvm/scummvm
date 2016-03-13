@@ -314,7 +314,7 @@ void GnapEngine::scene01_updateAnimations() {
 			_gnapActionStatus = kASLookSpaceshipDone;
 			break;
 		case kASLookSpaceshipDone:
-			_gameSys->removeSequence(133, 256, 1);
+			_gameSys->removeSequence(133, 256, true);
 			_gameSys->removeSpriteDrawItem(_s01_spaceshipSurface, 255);
 			deleteSurface(&_s01_spaceshipSurface);
 			_gnapActionStatus = -1;

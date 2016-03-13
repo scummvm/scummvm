@@ -90,12 +90,12 @@ void GameSys::insertDirtyRect(const Common::Rect &rect) {
 	_dirtyRects.push_back(rect);
 }
 
-void GameSys::removeSequence(int sequenceId, int a2, int a3) {
+void GameSys::removeSequence(int sequenceId, int id, bool resetFl) {
 	//WaitForSingleObject(removeSequence2Mutex, INFINITE);
 	if (_removeSequenceItemsCount < kMaxSequenceItems) {
-		_removeSequenceItems[_removeSequenceItemsCount].sequenceId = sequenceId;
-		_removeSequenceItems[_removeSequenceItemsCount].id = a2;
-		_removeSequenceItems[_removeSequenceItemsCount].a3 = a3;
+		_removeSequenceItems[_removeSequenceItemsCount]._sequenceId = sequenceId;
+		_removeSequenceItems[_removeSequenceItemsCount]._id = id;
+		_removeSequenceItems[_removeSequenceItemsCount]._forceFrameReset = resetFl;
 		++_removeSequenceItemsCount;
 		//ResetEvent(removeSequenceItemsEvent);
 		//ReleaseMutex(removeSequence2Mutex);
@@ -964,16 +964,16 @@ void GameSys::handleReqRemoveSequenceItems() {
 	if (_removeSequenceItemsCount > 0) {
 		for (int i = 0; i < _removeSequenceItemsCount; ++i) {
 			int gfxIndex;
-			if (seqFind(_removeSequenceItems[i].sequenceId, _removeSequenceItems[i].id, &gfxIndex))
+			if (seqFind(_removeSequenceItems[i]._sequenceId, _removeSequenceItems[i]._id, &gfxIndex))
 				_seqItems.remove_at(gfxIndex);
-			seqLocateGfx(_removeSequenceItems[i].sequenceId, _removeSequenceItems[i].id, &gfxIndex);
+			seqLocateGfx(_removeSequenceItems[i]._sequenceId, _removeSequenceItems[i]._id, &gfxIndex);
 			for (GfxItem *gfxItem = &_gfxItems[gfxIndex];
-				gfxIndex < _gfxItemsCount && gfxItem->sequenceId == _removeSequenceItems[i].sequenceId && gfxItem->id == _removeSequenceItems[i].id;
+				gfxIndex < _gfxItemsCount && gfxItem->sequenceId == _removeSequenceItems[i]._sequenceId && gfxItem->id == _removeSequenceItems[i]._id;
 				gfxItem = &_gfxItems[gfxIndex]) {
 				gfxItem->sequenceId = -1;
 				gfxItem->animation = 0;
 				gfxItem->soundValue = 0;
-				if (_removeSequenceItems[i].a3) {
+				if (_removeSequenceItems[i]._forceFrameReset) {
 					gfxItem->currFrame.duration = 0;
 					gfxItem->currFrame.spriteId = -1;
 					gfxItem->currFrame.soundId = -1;

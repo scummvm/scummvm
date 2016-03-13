@@ -307,7 +307,7 @@ void GnapEngine::scene33_updateAnimations() {
 		if (_s33_nextChickenSequenceId == 0x81) {
 			_gameSys->setAnimation(_s33_nextChickenSequenceId, 179, 0);
 			_gameSys->insertSequence(_s33_nextChickenSequenceId, 179, makeRid(_gnapSequenceDatNum, _gnapSequenceId), _gnapId, kSeqSyncWait, 0, 0, 0);
-			_gameSys->removeSequence(_s33_currChickenSequenceId, 179, 1);
+			_gameSys->removeSequence(_s33_currChickenSequenceId, 179, true);
 			_s33_nextChickenSequenceId = -1;
 			_s33_currChickenSequenceId = -1;
 			_gnapActionStatus = kASUseChickenDone;

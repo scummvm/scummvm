@@ -267,7 +267,7 @@ void GnapEngine::scene18_platEndPhoning(int a1) {
 			while (_gameSys->getAnimationStatus(3) != 2)
 				gameUpdateTick();
 		}
-		_gameSys->removeSequence(0x21F, 254, 1);
+		_gameSys->removeSequence(0x21F, 254, true);
 		_gameSys->setAnimation(0, 0, 3);
 		clearFlag(26);
 		if (a1) {
@@ -796,14 +796,14 @@ void GnapEngine::scene18_updateAnimations() {
 				_gnapSequenceDatNum = 0;
 				_gnapSequenceId = 0x1FD;
 			}
-			_gameSys->removeSequence(0x1FA, 19, 1);
+			_gameSys->removeSequence(0x1FA, 19, true);
 			setFlag(10);
 			scene18_updateHotspots();
 			_gnapActionStatus = -1;
 			break;
 		case kASGrabGarbageCanFromHydrant:
 			_gameSys->insertSequence(0x1FE, _gnapId, makeRid(_gnapSequenceDatNum, _gnapSequenceId), _gnapId, kSeqSyncWait, 0, 0, 0);
-			_gameSys->removeSequence(0x1F9, 19, 1);
+			_gameSys->removeSequence(0x1F9, 19, true);
 			_gnapSequenceDatNum = 0;
 			_gnapSequenceId = 0x1FE;
 			clearFlag(9);
@@ -813,9 +813,9 @@ void GnapEngine::scene18_updateAnimations() {
 			break;
 		case kASCloseRightValveNoGarbageCan:
 			_gameSys->insertSequence(0x205, _gnapId, makeRid(_gnapSequenceDatNum, _gnapSequenceId), _gnapId, kSeqSyncWait, 0, 0, 0);
-			_gameSys->removeSequence(0x20D, 39, 1);
-			_gameSys->removeSequence(0x212, 39, 1);
-			_gameSys->removeSequence(0x211, 39, 1);
+			_gameSys->removeSequence(0x20D, 39, true);
+			_gameSys->removeSequence(0x212, 39, true);
+			_gameSys->removeSequence(0x211, 39, true);
 			stopSound(0x22B);
 			_gnapSequenceDatNum = 0;
 			_gnapSequenceId = 0x205;
@@ -840,7 +840,7 @@ void GnapEngine::scene18_updateAnimations() {
 			setGrabCursorSprite(-1);
 			_gameSys->insertSequence(0x208, _gnapId, makeRid(_gnapSequenceDatNum, _gnapSequenceId), _gnapId, kSeqSyncWait, 0, 0, 0);
 			_gameSys->insertSequence(0x216, 39, 0, 0, kSeqNone, 21, 0, 0);
-			_gameSys->removeSequence(0x20C, 19, 1);
+			_gameSys->removeSequence(0x20C, 19, true);
 			_gameSys->setAnimation(0x217, 39, 5);
 			_gameSys->insertSequence(0x217, 39, 0x216, 39, 10, 0, 0, 0);
 			while (_gameSys->getAnimationStatus(5) != 2)
@@ -855,9 +855,9 @@ void GnapEngine::scene18_updateAnimations() {
 			break;
 		case kASCloseTopValve:
 			_gameSys->insertSequence(0x206, _gnapId, makeRid(_gnapSequenceDatNum, _gnapSequenceId), _gnapId, kSeqSyncWait, 0, 0, 0);
-			_gameSys->removeSequence(0x20E, 39, 1);
-			_gameSys->removeSequence(0x216, 39, 1);
-			_gameSys->removeSequence(0x217, 39, 1);
+			_gameSys->removeSequence(0x20E, 39, true);
+			_gameSys->removeSequence(0x216, 39, true);
+			_gameSys->removeSequence(0x217, 39, true);
 			stopSound(0x22B);
 			_gnapSequenceDatNum = 0;
 			_gnapSequenceId = 0x206;
@@ -942,7 +942,7 @@ void GnapEngine::scene18_updateAnimations() {
 			_gameSys->insertSequence(0x207, _gnapId, makeRid(_gnapSequenceDatNum, _gnapSequenceId), _gnapId, kSeqSyncWait, 0, 0, 0);
 			_gameSys->insertSequence(0x213, 39, 0, 0, kSeqNone, 21, 0, 0);
 			_gameSys->requestRemoveSequence(0x1F9, 19);
-			_gameSys->removeSequence(0x20B, 19, 1);
+			_gameSys->removeSequence(0x20B, 19, true);
 			_gameSys->setAnimation(0x213, 39, 5);
 			_gameSys->insertSequence(0x214, 39, 0x213, 39, 10, 0, 0, 0);
 			while (_gameSys->getAnimationStatus(5) != 2)
@@ -958,7 +958,7 @@ void GnapEngine::scene18_updateAnimations() {
 			setGrabCursorSprite(-1);
 			_gameSys->insertSequence(0x207, _gnapId, makeRid(_gnapSequenceDatNum, _gnapSequenceId), _gnapId, kSeqSyncWait, 0, 0, 0);
 			_gameSys->insertSequence(0x211, 39, 0, 0, kSeqNone, 21, 0, 0);
-			_gameSys->removeSequence(0x20B, 19, 1);
+			_gameSys->removeSequence(0x20B, 19, true);
 			_gameSys->setAnimation(0x211, 39, 5);
 			_gameSys->insertSequence(0x212, 39, 0x211, 39, 10, 0, 0, 0);
 			while (_gameSys->getAnimationStatus(5) != 2)
@@ -972,7 +972,7 @@ void GnapEngine::scene18_updateAnimations() {
 			break;
 		case kASCloseRightValveWithGarbageCan:
 			_gameSys->insertSequence(0x205, _gnapId, makeRid(_gnapSequenceDatNum, _gnapSequenceId), _gnapId, kSeqSyncWait, 0, 0, 0);
-			_gameSys->removeSequence(0x20D, 39, 1);
+			_gameSys->removeSequence(0x20D, 39, true);
 			_gameSys->insertSequence(0x215, 39, 0x214, 39, kSeqSyncWait, 0, 0, 0);
 			stopSound(0x22B);
 			_gameSys->setAnimation(0x1F9, 19, 0);

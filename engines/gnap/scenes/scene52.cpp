@@ -175,7 +175,7 @@ void GnapEngine::scene52_fireShipCannon(int posX) {
 		playSound(0x2D, 0);
 		if (scene52_shipCannonHitShield(cannonNum)) {
 			_gameSys->setAnimation(0, 0, cannonNum + 8);
-			_gameSys->removeSequence(0x23, cannonNum + 256, 1);
+			_gameSys->removeSequence(0x23, cannonNum + 256, true);
 		} else {
 			_s52_shipCannonFired = 1;
 			_s52_shipCannonPosY -= 13;
@@ -226,7 +226,7 @@ void GnapEngine::scene52_updateShipCannon() {
 		if (_s52_shipCannonPosY - 13 >= 135) {
 			if (scene52_updateHitAlien()) {
 				_gameSys->setAnimation(0, 0, 8);
-				_gameSys->removeSequence(35, 256, 1);
+				_gameSys->removeSequence(35, 256, true);
 				_s52_shipCannonFired = 0;
 				scene52_drawScore(_s52_gameScore);
 			} else {
@@ -236,7 +236,7 @@ void GnapEngine::scene52_updateShipCannon() {
 			}
 		} else {
 			_gameSys->setAnimation(0, 0, 8);
-			_gameSys->removeSequence(35, 256, 1);
+			_gameSys->removeSequence(35, 256, true);
 			_s52_shipCannonFired = 0;
 		}
 	}
@@ -340,7 +340,7 @@ void GnapEngine::scene52_updateAlienRow(int rowNum) {
 				if (_s52_alienRowIds[rowNum] == -1)
 					_s52_alienRowIds[rowNum] = i + 256;
 			} else if (_s52_items[rowNum][i] == -2) {
-				_gameSys->removeSequence(_s52_alienRowKind[rowNum], i + 256, 1);
+				_gameSys->removeSequence(_s52_alienRowKind[rowNum], i + 256, true);
 				_s52_items[rowNum][i] = -1;
 				--_s52_alienSpeed;
 			}
@@ -638,7 +638,7 @@ int GnapEngine::scene52_shipCannonHitAlien() {
 void GnapEngine::scene52_shipExplode() {
 	if (!_s52_aliensCount) {
 		_gameSys->setAnimation(0, 0, 7);
-		_gameSys->removeSequence(_s52_ufoSequenceId, 256, 1);
+		_gameSys->removeSequence(_s52_ufoSequenceId, 256, true);
 		playSound(44, 0);
 		_gameSys->insertSequence(0x21, 266, 0, 0, kSeqNone, 0, _s52_shipPosX, _s52_arcadeScreenBottom);
 		_s52_aliensCount = 1;
@@ -656,7 +656,7 @@ int GnapEngine::scene52_checkAlienRow(int rowNum) {
 
 	for (int j = 0; j < 5; ++j)
 		if (_s52_items[rowNum][j] == -2) {
-			_gameSys->removeSequence(_s52_alienRowKind[rowNum], j + 256, 1);
+			_gameSys->removeSequence(_s52_alienRowKind[rowNum], j + 256, true);
 			_s52_items[rowNum][j] = -1;
 			--_s52_alienSpeed;
 			v4 = 1;

@@ -507,8 +507,8 @@ void GnapEngine::scene04_updateAnimations() {
 			_gnapActionStatus = kASGetKeyAnotherDone;
 			break;
 		case kASGetKeyAnotherDone:
-			_gameSys->removeSequence(0x1FF, 256, 1);
-			_gameSys->removeSequence(0x20A, 256, 1);
+			_gameSys->removeSequence(0x1FF, 256, true);
+			_gameSys->removeSequence(0x20A, 256, true);
 			_gameSys->insertSequence(0x107B5, _gnapId,
 				makeRid(_gnapSequenceDatNum, _gnapSequenceId), 255,
 				kSeqSyncWait, 0, 75 * _gnapX - _gnapGridX, 48 * _gnapY - _gnapGridY);

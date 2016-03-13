@@ -392,7 +392,7 @@ void GnapEngine::scene10_updateAnimations() {
 				_beaverSequenceId | (_beaverSequenceDatNum << 16), _beaverId,
 				kSeqSyncWait, getSequenceTotalDuration(0x109) + getSequenceTotalDuration(0x10A) + getSequenceTotalDuration(0x10843),
 				75 * _platX - _platGridX, 48 * _platY - _platGridY);
-			_gameSys->removeSequence(0x107, 100, 1);
+			_gameSys->removeSequence(0x107, 100, true);
 			_s10_currCookSequenceId = 0x109;
 			_s10_nextCookSequenceId = 0x843;
 			_beaverSequenceId = 0x7C9;
