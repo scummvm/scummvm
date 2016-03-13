@@ -87,6 +87,16 @@ public:
 	void postLoad(CProjectItem *project);
 
 	int fn2() { return _gameState._sub.fn2(); }
+
+	/**
+	 * Lock the input handler
+	 */
+	void lockInputHandler() { _inputHandler.incLockCount(); }
+
+	/**
+	 * Unlock the input handler
+	 */
+	void unlockInputHandler() { _inputHandler.decLockCount(); }
 };
 
 } // End of namespace Titanic

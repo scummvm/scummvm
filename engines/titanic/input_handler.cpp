@@ -28,12 +28,22 @@ namespace Titanic {
 CInputHandler::CInputHandler(CGameManager *owner) :
 		_gameManager(owner), _inputTranslator(nullptr),
 		_field4(0), _field8(0), _fieldC(0), _field10(0), _field14(0),
-		_field18(0), _field1C(0), _field20(0), _field24(0) {
+		_lockCount(0), _field24(0) {
 	CScreenManager::_screenManagerPtr->_inputHandler = this;
 }
 
 void CInputHandler::setTranslator(CInputTranslator *translator) {
 	_inputTranslator = translator;
+}
+
+void CInputHandler::incLockCount() {
+	++_lockCount;
+}
+
+void CInputHandler::decLockCount() {
+	if (--_lockCount == 0 && _inputTranslator) {
+		warning("TODO");
+	}
 }
 
 } // End of namespace Titanic z

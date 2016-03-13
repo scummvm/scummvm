@@ -21,12 +21,14 @@
  */
 
 #include "titanic/game_state.h"
+#include "titanic/game_manager.h"
+#include "titanic/screen_manager.h"
 
 namespace Titanic {
 
 CGameState::CGameState(CGameManager *gameManager) :
 		_gameManager(gameManager), _sub(this),
-		_field8(0), _fieldC(0), _field10(10), _field14(0), _field18(0),
+		_field8(0), _fieldC(0), _mode(10), _field14(0), _field18(0),
 		_field1C(0), _field20(0), _field24(0), _field28(0), _field2C(0),
 		_field30(0), _field34(0), _field38(0) {
 }
@@ -53,6 +55,27 @@ void CGameState::load(SimpleFile *file) {
 
 	_field1C = file->readNumber();
 	_field28 = _field2C = 0;
+}
+
+void CGameState::setMode(int newMode) {
+	CScreenManager *sm = CScreenManager::_screenManagerPtr;
+
+	if (newMode == 2 && newMode != _mode) {
+		if (_gameManager)
+			_gameManager->lockInputHandler();
+
+		if (sm && sm->_mouseCursor)
+			sm->_mouseCursor->hide();
+
+	} else if (newMode != 2 && newMode != _mode) {
+		if (sm && sm->_mouseCursor)
+			sm->_mouseCursor->show();
+	
+		if (_gameManager)
+			_gameManager->unlockInputHandler();
+	}
+
+	_mode = newMode;
 }
 
 } // End of namespace Titanic z

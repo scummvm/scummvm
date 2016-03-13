@@ -23,6 +23,7 @@
 #ifndef TITANIC_INPUT_HANDLER_H
 #define TITANIC_INPUT_HANDLER_H
 
+#include "common/rect.h"
 #include "titanic/input_translator.h"
 
 namespace Titanic {
@@ -38,14 +39,23 @@ public:
 	int _fieldC;
 	int _field10;
 	int _field14;
-	int _field18;
-	int _field1C;
-	int _field20;
+	Common::Point _mousePos;
+	int _lockCount;
 	int _field24;
 public:
 	CInputHandler(CGameManager *owner);
 
 	void setTranslator(CInputTranslator *translator);
+
+	/**
+	 * Increment the lock count
+	 */
+	void incLockCount();
+
+	/**
+	 * Decrement the lock count on the input handler
+	 */
+	void decLockCount();
 };
 
 } // End of namespace Titanic

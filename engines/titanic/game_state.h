@@ -46,7 +46,7 @@ public:
 	CGameStateList _list;
 	int _field8;
 	int _fieldC;
-	int _field10;
+	int _mode;
 	int _field14;
 	int _field18;
 	int _field1C;
@@ -69,6 +69,11 @@ public:
 	 * Load the data for the class from file
 	 */
 	void load(SimpleFile *file);
+
+	/**
+	 * Sets a new mode
+	 */
+	void setMode(int newMode);
 };
 
 } // End of namespace Titanic

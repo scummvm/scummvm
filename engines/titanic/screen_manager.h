@@ -47,6 +47,11 @@ public:
 	CScreenManagerRec();
 };
 
+struct MouseCursor {
+	void show() {}
+	void hide() {}
+};
+
 class CScreenManager {
 protected:
 	TitanicEngine *_vm;
@@ -62,7 +67,7 @@ public:
 	Common::Array<CVideoSurface *> _backSurfaces;
 	CVideoSurface *_frontRenderSurface;
 	CScreenManagerRec _entries[2];
-	void *_mouseCursor;
+	MouseCursor *_mouseCursor;
 	void *_textCursor;
 	CInputHandler *_inputHandler;
 	int _fontNumber;
