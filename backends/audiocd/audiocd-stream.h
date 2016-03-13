@@ -70,17 +70,17 @@ private:
 
 	Common::Queue<int16 *> _bufferQueue;
 	int _bufferFrame;
-        Common::Mutex _mutex;
+	Common::Mutex _mutex;
 
-        bool _forceStop;
-        bool shouldForceStop() const;
-        void forceStop();
-        Common::Mutex _forceStopMutex;
+	bool _forceStop;
+	bool shouldForceStop() const;
+	void forceStop();
+	Common::Mutex _forceStopMutex;
 
-        bool readNextFrame();
-        static void timerProc(void *refCon);
-        void onTimer();
-        void emptyQueue();
+	bool readNextFrame();
+	static void timerProc(void *refCon);
+	void onTimer();
+	void emptyQueue();
 };
 
 #endif

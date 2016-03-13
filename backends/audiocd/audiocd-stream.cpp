@@ -51,7 +51,7 @@ int AudioCDStream::readBuffer(int16 *buffer, const int numSamples) {
 			return samples;
 
 		// Copy the samples over
-		for (_bufferPos = 0; _bufferPos < kSamplesPerFrame && samples < numSamples; )
+		for (_bufferPos = 0; _bufferPos < kSamplesPerFrame && samples < numSamples;)
 			buffer[samples++] = _buffer[_bufferPos++];
 	}
 

@@ -94,7 +94,7 @@ private:
 };
 
 LinuxAudioCDStream::LinuxAudioCDStream(int fd, const cdrom_tocentry &startEntry, const cdrom_tocentry &endEntry) :
-		_fd(fd), _startEntry(startEntry), _endEntry(endEntry) {
+	_fd(fd), _startEntry(startEntry), _endEntry(endEntry) {
 	startTimer();
 }
 
@@ -264,7 +264,7 @@ bool LinuxAudioCDManager::play(int track, int numLoops, int startFrame, int dura
 		return false;
 
 	// HACK: For now, just assume that track number is right
-	// That only works because ScummVM uses the wrong track number anyway	
+	// That only works because ScummVM uses the wrong track number anyway
 
 	if (track >= (int)_tocEntries.size() - 1) {
 		warning("No such track %d", track);
@@ -289,14 +289,14 @@ bool LinuxAudioCDManager::play(int track, int numLoops, int startFrame, int dura
 	_emulating = true;
 
 	_mixer->playStream(
-		Audio::Mixer::kMusicSoundType,
-		&_handle,
-		Audio::makeLoopingAudioStream(audioStream, start, end, (numLoops < 1) ? numLoops + 1 : numLoops),
-		-1,
-		_cd.volume,
-		_cd.balance,
-		DisposeAfterUse::YES,
-		true);
+	    Audio::Mixer::kMusicSoundType,
+	    &_handle,
+	    Audio::makeLoopingAudioStream(audioStream, start, end, (numLoops < 1) ? numLoops + 1 : numLoops),
+	    -1,
+	    _cd.volume,
+	    _cd.balance,
+	    DisposeAfterUse::YES,
+	    true);
 
 	return true;
 }

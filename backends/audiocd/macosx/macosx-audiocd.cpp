@@ -224,7 +224,7 @@ bool MacOSXAudioCDManager::play(int track, int numLoops, int startFrame, int dur
 	_emulating = true;
 
 	_mixer->playStream(Audio::Mixer::kMusicSoundType, &_handle,
-			Audio::makeLoopingAudioStream(seekStream, start, end, (numLoops < 1) ? numLoops + 1 : numLoops), -1, _cd.volume, _cd.balance);
+	                   Audio::makeLoopingAudioStream(seekStream, start, end, (numLoops < 1) ? numLoops + 1 : numLoops), -1, _cd.volume, _cd.balance);
 	return true;
 }
 

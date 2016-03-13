@@ -73,7 +73,7 @@ private:
 };
 
 Win32AudioCDStream::Win32AudioCDStream(HANDLE handle, const TRACK_DATA &startEntry, const TRACK_DATA &endEntry) :
-		_driveHandle(handle), _startEntry(startEntry), _endEntry(endEntry), _buffer(), _frame(0), _bufferPos(kSamplesPerFrame), _bufferFrame(0) {
+	_driveHandle(handle), _startEntry(startEntry), _endEntry(endEntry), _buffer(), _frame(0), _bufferPos(kSamplesPerFrame), _bufferFrame(0) {
 	startTimer();
 }
 
@@ -99,14 +99,14 @@ bool Win32AudioCDStream::readFrame(int frame, int16 *buffer) {
 
 	DWORD bytesReturned;
 	return DeviceIoControl(
-		_driveHandle,
-		IOCTL_CDROM_RAW_READ,
-		&readAudio,
-		sizeof(readAudio),
-		buffer,
-		kBytesPerFrame,
-		&bytesReturned,
-		NULL);
+	           _driveHandle,
+	           IOCTL_CDROM_RAW_READ,
+	           &readAudio,
+	           sizeof(readAudio),
+	           buffer,
+	           kBytesPerFrame,
+	           &bytesReturned,
+	           NULL);
 }
 
 
@@ -173,7 +173,7 @@ bool Win32AudioCDManager::openCD(int drive) {
 		close();
 		return false;
 	}
-	
+
 	return true;
 }
 
@@ -230,7 +230,7 @@ bool Win32AudioCDManager::play(int track, int numLoops, int startFrame, int dura
 		return false;
 
 	// HACK: For now, just assume that track number is right
-	// That only works because ScummVM uses the wrong track number anyway	
+	// That only works because ScummVM uses the wrong track number anyway
 
 	if (track >= (int)_tocEntries.size() - 1) {
 		warning("No such track %d", track);
@@ -255,14 +255,14 @@ bool Win32AudioCDManager::play(int track, int numLoops, int startFrame, int dura
 	_emulating = true;
 
 	_mixer->playStream(
-		Audio::Mixer::kMusicSoundType,
-		&_handle,
-		Audio::makeLoopingAudioStream(audioStream, start, end, (numLoops < 1) ? numLoops + 1 : numLoops),
-		-1,
-		_cd.volume,
-		_cd.balance,
-		DisposeAfterUse::YES,
-		true);
+	    Audio::Mixer::kMusicSoundType,
+	    &_handle,
+	    Audio::makeLoopingAudioStream(audioStream, start, end, (numLoops < 1) ? numLoops + 1 : numLoops),
+	    -1,
+	    _cd.volume,
+	    _cd.balance,
+	    DisposeAfterUse::YES,
+	    true);
 	return true;
 }
 
@@ -272,23 +272,23 @@ bool Win32AudioCDManager::loadTOC() {
 	tocRequest.Format = CDROM_READ_TOC_EX_FORMAT_TOC;
 	tocRequest.Msf = 1;
 	tocRequest.SessionTrack = 0;
-	
+
 	DWORD bytesReturned;
 	CDROM_TOC tocData;
 	bool result = DeviceIoControl(
-		_driveHandle,
-		IOCTL_CDROM_READ_TOC_EX,
-		&tocRequest,
-		sizeof(tocRequest),
-		&tocData,
-		sizeof(tocData),
-		&bytesReturned,
-		NULL);
+	                  _driveHandle,
+	                  IOCTL_CDROM_READ_TOC_EX,
+	                  &tocRequest,
+	                  sizeof(tocRequest),
+	                  &tocData,
+	                  sizeof(tocData),
+	                  &bytesReturned,
+	                  NULL);
 	if (!result) {
 		debug("Failed to query the CD TOC: %d", (int)GetLastError());
 		return false;
 	}
-	
+
 	_firstTrack = tocData.FirstTrack;
 	_lastTrack = tocData.LastTrack;
 #if 0
