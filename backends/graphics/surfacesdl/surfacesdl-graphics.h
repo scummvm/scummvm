@@ -169,9 +169,27 @@ protected:
 	Math::Rect2d _gameRect;
 
 #ifdef USE_OPENGL
+	struct OpenGLPixelFormat {
+		uint bytesPerPixel;
+		uint redSize;
+		uint blueSize;
+		uint greenSize;
+		uint alphaSize;
+		int multisampleSamples;
+
+		OpenGLPixelFormat(uint screenBytesPerPixel, uint red, uint blue, uint green, uint alpha, int samples);
+	};
+
+	/**
+	 * Initialize an OpenGL window matching as closely as possible the required properties
+	 *
+	 * When unable to create a context with anti-aliasing this tries without.
+	 * When unable to create a context with the desired pixel depth this tries lower values.
+	 */
+	void createScreenOpenGL(uint effectiveWidth, uint effectiveHeight);
+
 	// Antialiasing
 	int _antialiasing;
-	void setAntialiasing(bool enable);
 
 	// Overlay
 	Common::Array<OpenGL::Texture *> _overlayTextures;

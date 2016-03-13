@@ -75,6 +75,7 @@ SurfaceSdlGraphicsManager::SurfaceSdlGraphicsManager(SdlEventSource *sdlEventSou
 	{
 		ConfMan.registerDefault("fullscreen_res", "desktop");
 		ConfMan.registerDefault("aspect_ratio", true);
+		ConfMan.registerDefault("antialiasing", 0);
 
 		const SDL_VideoInfo *vi = SDL_GetVideoInfo();
 		_desktopW = vi->current_w;
@@ -193,7 +194,7 @@ void SurfaceSdlGraphicsManager::setupScreen(uint gameWidth, uint gameHeight, boo
 
 #ifdef USE_OPENGL
 	_opengl = accel3d;
-	_antialiasing = 0;
+	_antialiasing = ConfMan.getInt("antialiasing");
 #endif
 	_fullscreen = fullscreen;
 	_lockAspectRatio = ConfMan.getBool("aspect_ratio");
@@ -223,79 +224,18 @@ void SurfaceSdlGraphicsManager::setupScreen(uint gameWidth, uint gameHeight, boo
 	// Compute the rectangle where to draw the game inside the effective screen
 	_gameRect = computeGameRect(gameRenderTarget, gameWidth, gameHeight, effectiveWidth, effectiveHeight);
 
-	uint32 sdlflags;
-	int bpp;
 #ifdef USE_OPENGL
 	if (_opengl) {
-		if (ConfMan.hasKey("antialiasing"))
-			_antialiasing = ConfMan.getInt("antialiasing");
-
-		SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 8);
-		SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 8);
-		SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, 8);
-		SDL_GL_SetAttribute(SDL_GL_ALPHA_SIZE, 8);
-		SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
-		SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
-		SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 8);
-		setAntialiasing(true);
-
-		sdlflags = SDL_OPENGL;
-		bpp = 24;
+		createScreenOpenGL(effectiveWidth, effectiveHeight);
 	} else
 #endif
 	{
-		bpp = 16;
-		sdlflags = SDL_SWSURFACE;
-	}
+		uint32 sdlflags = SDL_SWSURFACE;
+		if (_fullscreen)
+			sdlflags |= SDL_FULLSCREEN;
 
-	if (_fullscreen)
-		sdlflags |= SDL_FULLSCREEN;
-
-	_screen = SDL_SetVideoMode(effectiveWidth, effectiveHeight, bpp, sdlflags);
-#ifdef USE_OPENGL
-	// If 32-bit with antialiasing failed, try 32-bit without antialiasing
-	if (!_screen && _opengl && _antialiasing) {
-		warning("Couldn't create 32-bit visual with AA, trying 32-bit without AA");
-		setAntialiasing(false);
-		_screen = SDL_SetVideoMode(effectiveWidth, effectiveHeight, bpp, sdlflags);
+		_screen = SDL_SetVideoMode(effectiveWidth, effectiveHeight, 16, sdlflags);
 	}
-
-	// If 32-bit failed, try 16-bit
-	if (!_screen && _opengl) {
-		warning("Couldn't create 32-bit visual, trying 16-bit");
-		SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 5);
-		SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 5);
-		SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, 5);
-		SDL_GL_SetAttribute(SDL_GL_ALPHA_SIZE, 1);
-		setAntialiasing(true);
-		_screen = SDL_SetVideoMode(effectiveWidth, effectiveHeight, 0, sdlflags);
-	}
-
-	// If 16-bit with antialiasing failed, try 16-bit without antialiasing
-	if (!_screen && _opengl && _antialiasing) {
-		warning("Couldn't create 16-bit visual with AA, trying 16-bit without AA");
-		setAntialiasing(false);
-		_screen = SDL_SetVideoMode(effectiveWidth, effectiveHeight, 0, sdlflags);
-	}
-
-	// If 16-bit with alpha failed, try 16-bit without alpha
-	if (!_screen && _opengl) {
-		warning("Couldn't create 16-bit visual with alpha, trying without alpha");
-		SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 5);
-		SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 6);
-		SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, 5);
-		SDL_GL_SetAttribute(SDL_GL_ALPHA_SIZE, 0);
-		setAntialiasing(true);
-		_screen = SDL_SetVideoMode(effectiveWidth, effectiveHeight, 0, sdlflags);
-	}
-
-	// If 16-bit without alpha and with antialiasing didn't work, try without antialiasing
-	if (!_screen && _opengl && _antialiasing) {
-		warning("Couldn't create 16-bit visual with AA, trying 16-bit without AA");
-		setAntialiasing(false);
-		_screen = SDL_SetVideoMode(effectiveWidth, effectiveHeight, 0, sdlflags);
-	}
-#endif
 
 	if (!_screen) {
 		warning("Error: %s", SDL_GetError());
@@ -409,7 +349,7 @@ void SurfaceSdlGraphicsManager::setupScreen(uint gameWidth, uint gameHeight, boo
 	}
 #endif
 	if (gameRenderTarget == kSubScreen) {
-		_subScreen = SDL_CreateRGBSurface(SDL_SWSURFACE, gameWidth, gameHeight, bpp, _screen->format->Rmask, _screen->format->Gmask, _screen->format->Bmask, _screen->format->Amask);
+		_subScreen = SDL_CreateRGBSurface(SDL_SWSURFACE, gameWidth, gameHeight, f->BitsPerPixel, f->Rmask, f->Gmask, f->Bmask, f->Amask);
 	}
 }
 
@@ -532,6 +472,68 @@ void SurfaceSdlGraphicsManager::initializeOpenGLContext() const {
 #endif
 
 	OpenGLContext.initialize(type);
+}
+
+SurfaceSdlGraphicsManager::OpenGLPixelFormat::OpenGLPixelFormat(uint screenBytesPerPixel, uint red, uint blue, uint green, uint alpha, int samples) :
+		bytesPerPixel(screenBytesPerPixel),
+		redSize(red),
+		blueSize(blue),
+		greenSize(green),
+		alphaSize(alpha),
+		multisampleSamples(samples) {
+
+}
+
+void SurfaceSdlGraphicsManager::createScreenOpenGL(uint effectiveWidth, uint effectiveHeight) {
+	// Build a list of OpenGL pixel formats usable by ResidualVM
+	Common::Array<OpenGLPixelFormat> pixelFormats;
+	if (_antialiasing > 0) {
+		// Don't enable screen level multisampling when rendering to a framebuffer
+		pixelFormats.push_back(OpenGLPixelFormat(32, 8, 8, 8, 8, _antialiasing));
+		pixelFormats.push_back(OpenGLPixelFormat(16, 5, 5, 5, 1, _antialiasing));
+		pixelFormats.push_back(OpenGLPixelFormat(16, 5, 6, 5, 0, _antialiasing));
+	}
+	pixelFormats.push_back(OpenGLPixelFormat(32, 8, 8, 8, 8, 0));
+	pixelFormats.push_back(OpenGLPixelFormat(16, 5, 5, 5, 1, 0));
+	pixelFormats.push_back(OpenGLPixelFormat(16, 5, 6, 5, 0, 0));
+
+	uint32 sdlflags = SDL_OPENGL;
+	if (_fullscreen)
+		sdlflags |= SDL_FULLSCREEN;
+
+	// Unfortunatly, SDL does not provide a list of valid pixel formats
+	// for the current OpenGL implementation and hardware.
+	// SDL may not be able to create a screen with the preferred pixel format.
+	// Try all the pixel formats in the list until SDL returns a valid screen.
+	Common::Array<OpenGLPixelFormat>::const_iterator it = pixelFormats.begin();
+	for (; it != pixelFormats.end(); it++) {
+		SDL_GL_SetAttribute(SDL_GL_RED_SIZE, it->redSize);
+		SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, it->greenSize);
+		SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, it->blueSize);
+		SDL_GL_SetAttribute(SDL_GL_ALPHA_SIZE, it->alphaSize);
+		SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
+		SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 8);
+		SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
+		SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, it->multisampleSamples > 0);
+		SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, it->multisampleSamples);
+
+		_screen = SDL_SetVideoMode(effectiveWidth, effectiveHeight, it->bytesPerPixel, sdlflags);
+		if (_screen) {
+			break;
+		}
+	}
+
+	// Display a warning if the effective pixel format is not the preferred one
+	if (it != pixelFormats.begin() && it != pixelFormats.end()) {
+		bool wantsAA = pixelFormats.front().multisampleSamples > 0;
+		bool gotAA = it->multisampleSamples > 0;
+
+		warning("Couldn't create a %d-bit visual%s, using to %d-bit%s instead",
+		        pixelFormats.front().bytesPerPixel,
+		        wantsAA && !gotAA ? " with AA" : "",
+		        it->bytesPerPixel,
+		        wantsAA && !gotAA ? " without AA" : "");
+	}
 }
 
 #define BITMAP_TEXTURE_SIZE 256
@@ -1023,23 +1025,6 @@ void SurfaceSdlGraphicsManager::setMouseCursor(const void *buf, uint w, uint h, 
 #ifdef USE_OSD
 void SurfaceSdlGraphicsManager::displayMessageOnOSD(const char *msg) {
 	// ResidualVM: not use it
-}
-#endif
-
-
-#ifdef USE_OPENGL
-void SurfaceSdlGraphicsManager::setAntialiasing(bool enable) {
-	// Antialiasing works without setting MULTISAMPLEBUFFERS, but as SDL's official
-	// tests set both values, this seems to be the standard way to do it. It could
-	// just be that in current OpenGL implementations setting SDL_GL_MULTISAMPLESAMPLES
-	// implicitly sets SDL_GL_MULTISAMPLEBUFFERS as well.
-	if (_antialiasing && enable) {
-		SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 1);
-		SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, _antialiasing);
-	} else {
-		SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 0);
-		SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 0);
-	}
 }
 #endif
 
