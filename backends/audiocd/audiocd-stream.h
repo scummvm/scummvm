@@ -67,7 +67,7 @@ protected:
 	virtual uint getEndFrame() const = 0;
 	virtual bool readFrame(int frame, int16 *buffer) = 0;
 
-	void startTimer();
+	void startTimer(bool fillBuffer = false);
 	void stopTimer();
 
 	enum {

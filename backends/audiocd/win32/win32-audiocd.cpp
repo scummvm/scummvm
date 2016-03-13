@@ -96,7 +96,9 @@ private:
 
 Win32AudioCDStream::Win32AudioCDStream(HANDLE handle, const TRACK_DATA &startEntry, const TRACK_DATA &endEntry) :
 	_driveHandle(handle), _startEntry(startEntry), _endEntry(endEntry), _buffer(), _frame(0), _bufferPos(kSamplesPerFrame), _bufferFrame(0) {
-	startTimer();
+	// We fill the buffer here already to prevent any out of sync issues due
+	// to the CD not yet having spun up.
+	startTimer(true);
 }
 
 Win32AudioCDStream::~Win32AudioCDStream() {

@@ -117,7 +117,9 @@ private:
 
 LinuxAudioCDStream::LinuxAudioCDStream(int fd, const cdrom_tocentry &startEntry, const cdrom_tocentry &endEntry) :
 	_fd(fd), _startEntry(startEntry), _endEntry(endEntry) {
-	startTimer();
+	// We fill the buffer here already to prevent any out of sync issues due
+	// to the CD not yet having spun up.
+	startTimer(true);
 }
 
 LinuxAudioCDStream::~LinuxAudioCDStream() {

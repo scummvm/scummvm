@@ -170,8 +170,11 @@ void AudioCDStream::onTimer() {
 	}
 }
 
-void AudioCDStream::startTimer() {
+void AudioCDStream::startTimer(bool fillBuffer) {
 	_forceStop = false;
+	if (fillBuffer) {
+		onTimer();
+	}
 	g_system->getTimerManager()->installTimerProc(timerProc, 10 * 1000, this, "AudioCDStream");
 }
 
