@@ -13,6 +13,10 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Fixed detection of Maniac Mansion from Day of the Tentacle in the Windows
      version of ScummVM.
 
+ SWORD25:
+   - Add option to use English speech instead of German one when no speech is available
+     for the selected language.
+
 1.8.0 (2016-03-04)
  New Games:
    - Added support for Rex Nebular and the Cosmic Gender Bender.
