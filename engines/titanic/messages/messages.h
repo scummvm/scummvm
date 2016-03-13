@@ -42,7 +42,8 @@ public:
 	CLASSDEF
 	CMessage();
 
-	bool execute(CTreeItem *target, const ClassDef *classDef, int flags);
+	bool execute(CTreeItem *target, const ClassDef *classDef = nullptr,
+		int flags = MSGFLAG_SCAN | MSGFLAG_BREAK_IF_HANDLED);
 
 	virtual bool perform(CTreeItem *treeItem) { return false; }
 

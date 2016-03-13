@@ -27,7 +27,7 @@ namespace Titanic {
 CViewItem::CViewItem() : CNamedItem() {
 	_field24 = 0;
 	_field28 = 0.0;
-	_field30 = 0;
+	_viewNumber = 0;
 	_field50 = 0;
 	_field54 = 0;
 	setData(0.0);
@@ -44,7 +44,7 @@ void CViewItem::save(SimpleFile *file, int indent) const {
 	_resourceKey.save(file, indent);
 	file->writeQuotedLine("V", indent);
 	file->writeFloatLine(_field28, indent + 1);
-	file->writeNumberLine(_field30, indent + 1);
+	file->writeNumberLine(_viewNumber, indent + 1);
 
 	CNamedItem::save(file, indent);
 }
@@ -60,7 +60,7 @@ void CViewItem::load(SimpleFile *file) {
 	default:
 		file->readBuffer();
 		setData(file->readFloat());
-		_field30 = file->readNumber();
+		_viewNumber = file->readNumber();
 		break;
 	}
 

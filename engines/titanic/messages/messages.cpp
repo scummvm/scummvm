@@ -50,7 +50,7 @@ bool CMessage::execute(CTreeItem *target, const ClassDef *classDef, int flags) {
 		if (flags & MSGFLAG_SCAN)
 			nextItem = item->scan(target);
 
-		if (!(flags & MSGFLAG_CLASS_DEF) || item->isInstanceOf(*classDef)) {
+		if (!(flags & MSGFLAG_CLASS_DEF) || item->isInstanceOf(classDef)) {
 			bool handled = perform(item);
 
 			if (handled) {

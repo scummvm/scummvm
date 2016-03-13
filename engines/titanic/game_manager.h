@@ -39,14 +39,19 @@ class CProjectItem;
 class CGameView;
 
 class CGameManagerListItem : public ListItem {
+private:
+	static int _v1;
+public:
+	void postLoad(uint ticks, CProjectItem *project);
 };
 
 class CGameManagerList : public List<CGameManagerListItem> {
+public:
+	void postLoad(uint ticks, CProjectItem *project);
 };
 
 class CGameManager {
 private:
-	CProjectItem *_project;
 	CGameView *_gameView;
 	CGameState _gameState;
 	CSound _sound;
@@ -63,7 +68,10 @@ private:
 	int _field50;
 	int _field54;
 	CVideoSurface *_videoSurface;
-	int _tickCount;
+	uint _tickCount1;
+	uint _tickCount2;
+public:
+	CProjectItem *_project;
 public:
 	CGameManager(CProjectItem *project, CGameView *gameView);
 	~CGameManager();
@@ -76,7 +84,9 @@ public:
 	/**
 	 * Called after loading a game has finished
 	 */
-	void gameLoaded();
+	void postLoad(CProjectItem *project);
+
+	int fn2() { return _gameState._sub.fn2(); }
 };
 
 } // End of namespace Titanic

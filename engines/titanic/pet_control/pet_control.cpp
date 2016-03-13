@@ -49,7 +49,7 @@ void CPetControl::load(SimpleFile *file) {
 	CGameObject::load(file);
 }
 
-void CPetControl::gameLoaded() {
+void CPetControl::postLoad() {
 	// TODO
 }
 

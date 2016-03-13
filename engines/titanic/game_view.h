@@ -24,6 +24,7 @@
 #define TITANIC_GAME_VIEW_H
 
 #include "common/scummsys.h"
+#include "titanic/core/view_item.h"
 
 namespace Titanic {
 
@@ -34,7 +35,8 @@ class CGameView {
 protected:
 	CGameManager *_gameManager;
 	int _field8;
-	int _fieldC;
+public:
+	void *_fieldC;
 public:
 	CGameView();
 
@@ -42,13 +44,26 @@ public:
 	 * Set the game manager
 	 */
 	void setGameManager(CGameManager *gameManager);
+
+	/**
+	 * Called after loading a game has finished
+	 */
+	void postLoad();
+
+	virtual void deleteView(int roomNumber, int nodeNumber, int viewNumber);
+
+	virtual void proc3(int v) = 0;
+	virtual void proc4() = 0;
 };
 
-class CTitanicGameView: public CGameView {
+class CSTGameView: public CGameView {
 private:
 	CMainGameWindow *_gameWindow;
 public:
-	CTitanicGameView(CMainGameWindow *gameWindow);
+	CSTGameView(CMainGameWindow *gameWindow);
+
+	virtual void proc3(int v);
+	virtual void proc4();
 };
 
 } // End of namespace Titanic

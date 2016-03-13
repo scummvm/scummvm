@@ -64,7 +64,11 @@ public:
 	 */
 	void load(SimpleFile *file) {}
 
-	virtual void proc25() {}
+	/**
+	 * Called after loading of a game is completed
+	 */
+	virtual void postLoad() {}
+
 	virtual void proc26() {}
 
 	/**

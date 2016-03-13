@@ -22,20 +22,44 @@
 
 #include "titanic/game_view.h"
 #include "titanic/game_manager.h"
+#include "titanic/main_game_window.h"
 
 namespace Titanic {
 
-CGameView::CGameView() : _gameManager(nullptr), _field8(0), _fieldC(0) {
+CGameView::CGameView() : _gameManager(nullptr), _fieldC(nullptr),
+		_field8(0) {
 }
 
 void CGameView::setGameManager(CGameManager *gameManager) {
 	_gameManager = gameManager;
 }
 
+void CGameView::postLoad() {
+	if (_fieldC)
+		warning("TODO");
+	
+	_fieldC = nullptr;
+}
+
+void CGameView::deleteView(int roomNumber, int nodeNumber, int viewNumber) {
+	CViewItem *view = _gameManager->_project->findView(roomNumber, nodeNumber, viewNumber);
+	if (view)
+		delete view;
+}
+
+
 /*------------------------------------------------------------------------*/
 
-CTitanicGameView::CTitanicGameView(CMainGameWindow *gameWindow) : 
+CSTGameView::CSTGameView(CMainGameWindow *gameWindow) :
 		CGameView(), _gameWindow(gameWindow) {
+}
+
+void CSTGameView::proc3(int v) {
+	_gameWindow->fn1(v);
+}
+
+void CSTGameView::proc4() {
+	_gameWindow->fn2();
 }
 
 } // End of namespace Titanic

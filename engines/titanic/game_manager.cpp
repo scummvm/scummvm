@@ -21,18 +21,33 @@
  */
 
 #include "titanic/game_manager.h"
+#include "titanic/game_view.h"
 #include "titanic/screen_manager.h"
 #include "titanic/core/project_item.h"
 #include "titanic/messages/messages.h"
 
+
 namespace Titanic {
+
+void CGameManagerList::postLoad(uint ticks, CProjectItem *project) {
+	for (iterator i = begin(); i != end(); ++i)
+		(*i)->postLoad(ticks, project);
+}
+
+/*------------------------------------------------------------------------*/
+
+void CGameManagerListItem::postLoad(uint ticks, CProjectItem *project) {
+	warning("TODO");
+}
+
+/*------------------------------------------------------------------------*/
 
 CGameManager::CGameManager(CProjectItem *project, CGameView *gameView):
 		_project(project), _gameView(gameView), _trueTalkManager(this),
 		_inputHandler(this), _inputTranslator(&_inputHandler),		
 		_gameState(this), _sound(this), _musicRoom(this),
-		_field30(0), _field34(0), _field48(0),
-		_field4C(0), _field50(0), _field54(0), _tickCount(0) {
+		_field30(0), _field34(0), _field48(0), _field4C(0), 
+		_field50(0), _field54(0), _tickCount1(0), _tickCount2(0) {
 	_videoSurface = CScreenManager::_screenManagerPtr->createSurface(600, 340);
 	_project->setGameManager(this);
 }
@@ -44,14 +59,29 @@ void CGameManager::load(SimpleFile *file) {
 	_list.load(file);
 	_trueTalkManager.load(file);
 	_sound.load(file);
-
 }
 
-void CGameManager::gameLoaded() {
-	// TODO
+void CGameManager::postLoad(CProjectItem *project) {
+	if (_gameView) {
+		_gameView->postLoad();
 
-	//CLoadSuccessMsg msg(0);
+		if (!_gameView->_fieldC) {
+			int v = fn2();
+			if (v)
+				_gameView->proc3(v);
+		}
+	}
+	
+	// Signal to anything interested that the game has been loaded
+	CLoadSuccessMsg msg(_tickCount1 - _tickCount2);
+	msg.execute(project, nullptr, MSGFLAG_SCAN);
 
+	// Signal to any registered list items
+	_list.postLoad(_tickCount1, _project);
+
+	// Signal the true talk manager and sound
+	_trueTalkManager.postLoad();
+	_sound.postLoad();
 }
 
-} // End of namespace Titanic z
+} // End of namespace Titanic

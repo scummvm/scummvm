@@ -34,6 +34,7 @@ namespace Titanic {
 
 class CGameManager;
 class CPetControl;
+class CViewItem;
 
 /**
  * File list item
@@ -81,12 +82,12 @@ private:
 	/**
 	 * Finds the first child instance of a given class type
 	 */
-	CTreeItem *findChildInstance(ClassDef &classDef) const;
+	CTreeItem *findChildInstance(ClassDef *classDef) const;
 
 	/**
 	 * Finds the next sibling occurance of a given class type
 	 */
-	CTreeItem *findSiblingInstanceOf(ClassDef &classDef, CTreeItem *startItem) const;
+	CTreeItem *findSiblingInstanceOf(ClassDef *classDef, CTreeItem *startItem) const;
 private:
 	/**
 	 * Load project data from the passed file
@@ -101,7 +102,7 @@ private:
 	/**
 	 * Does post-loading processing
 	 */
-	void gameLoaded();
+	void postLoad();
 public:
 	CLASSDEF
 	CProjectItem();
@@ -171,7 +172,15 @@ public:
 	 */
 	CDontSaveFileItem *getDontSaveFileItem() const;
 
+	/**
+	 * Finds the hidden room node of the project
+	 */
 	CRoomItem *findHiddenRoom();
+
+	/**
+	 * Finds a view
+	 */
+	CViewItem *findView(int roomNumber, int nodeNumber, int viewNumber);
 };
 
 } // End of namespace Titanic

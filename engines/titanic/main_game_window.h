@@ -68,6 +68,10 @@ public:
 	 * Called when the application starts
 	 */
 	void applicationStarting();
+
+	void fn1(int v);
+
+	void fn2();
 };
 
 } // End of namespace Titanic

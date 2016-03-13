@@ -42,4 +42,9 @@ void CGameStateSub::load(SimpleFile *file) {
 	_fieldC = file->readNumber();
 }
 
+int CGameStateSub::fn2() {
+	warning("TODO");
+	return 0;
+}
+
 } // End of namespace Titanic z

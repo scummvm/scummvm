@@ -58,7 +58,7 @@ void CMainGameWindow::applicationStarting() {
 	// TODO: Clear surfaces
 
 	// Create game view and manager
-	_gameView = new CTitanicGameView(this);
+	_gameView = new CSTGameView(this);
 	_gameManager = new CGameManager(_project, _gameView);
 	_gameView->setGameManager(_gameManager);
 
@@ -78,6 +78,14 @@ int CMainGameWindow::loadGame() {
 int CMainGameWindow::selectSavegame() {
 	// TODO: For now, hardcoded to -1 for new saves
 	return -1;
+}
+
+void CMainGameWindow::fn1(int v) {
+	warning("TODO");
+}
+
+void CMainGameWindow::fn2() {
+	warning("TODO");
 }
 
 } // End of namespace Titanic

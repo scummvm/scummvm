@@ -32,7 +32,7 @@
 namespace Titanic {
 
 class CRoomItem : public CNamedItem {
-private:
+public:
 	Common::Rect _roomRect;
 	CMovieClipList _clipList;
 	int _roomNumber;

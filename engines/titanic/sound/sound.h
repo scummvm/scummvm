@@ -46,6 +46,11 @@ public:
 	 * Load the data for the class from file
 	 */
 	void load(SimpleFile *file);
+
+	/**
+	 * Called when loading a game is complete
+	 */
+	void postLoad() { _soundManager.postLoad(); }
 };
 
 } // End of namespace Titanic

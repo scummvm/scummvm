@@ -80,7 +80,7 @@ public:
 	CLASSDEF
 	virtual ~CSaveableObject() {}
 	
-	bool isInstanceOf(const ClassDef &classDef);
+	bool isInstanceOf(const ClassDef *classDef);
 
 	/**
 	 * Save the data for the class to file

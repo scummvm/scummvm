@@ -1581,9 +1581,9 @@ void CSaveableObject::saveFooter(SimpleFile *file, int indent) const {
 	file->writeClassEnd(indent);
 }
 
-bool CSaveableObject::isInstanceOf(const ClassDef &classDef) {
+bool CSaveableObject::isInstanceOf(const ClassDef *classDef) {
 	for (ClassDef *def = getType(); def != nullptr; def = def->_parent) {
-		if (def == &classDef)
+		if (def == classDef)
 			return true;
 	}
 

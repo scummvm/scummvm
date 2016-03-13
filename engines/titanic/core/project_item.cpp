@@ -25,7 +25,9 @@
 #include "titanic/game_manager.h"
 #include "titanic/titanic.h"
 #include "titanic/core/dont_save_file_item.h"
+#include "titanic/core/node_item.h"
 #include "titanic/core/project_item.h"
+#include "titanic/core/view_item.h"
 #include "titanic/pet_control/pet_control.h"
 
 namespace Titanic {
@@ -177,7 +179,7 @@ void CProjectItem::loadGame(int slotId) {
 	newProject->destroyAll();
 
 	// Post-load processing
-	gameLoaded();
+	postLoad();
 }
 
 void CProjectItem::saveGame(int slotId) {
@@ -251,7 +253,6 @@ void CProjectItem::saveData(SimpleFile *file, CTreeItem *item) const {
 		item->saveHeader(file, 0);
 		item->save(file, 1);
 		item->saveFooter(file, 0);
-
 	
 		CTreeItem *child = item->getFirstChild();
 		if (child) {
@@ -271,14 +272,14 @@ void CProjectItem::saveData(SimpleFile *file, CTreeItem *item) const {
 	}
 }
 
-void CProjectItem::gameLoaded() {
+void CProjectItem::postLoad() {
 	CGameManager *gameManager = getGameManager();
 	if (gameManager)
-		gameManager->gameLoaded();
+		gameManager->postLoad(this);
 
 	CPetControl *petControl = getPetControl();
 	if (petControl)
-		petControl->gameLoaded();
+		petControl->postLoad();
 }
 
 CPetControl *CProjectItem::getPetControl() const {
@@ -300,10 +301,10 @@ CPetControl *CProjectItem::getPetControl() const {
 }
 
 CRoomItem *CProjectItem::findFirstRoom() const {
-	return dynamic_cast<CRoomItem *>(findChildInstance(*CRoomItem::_type));
+	return dynamic_cast<CRoomItem *>(findChildInstance(CRoomItem::_type));
 }
 
-CTreeItem *CProjectItem::findChildInstance(ClassDef &classDef) const {
+CTreeItem *CProjectItem::findChildInstance(ClassDef *classDef) const {
 	CTreeItem *treeItem = getFirstChild();
 	if (treeItem == nullptr)
 		return nullptr;
@@ -322,10 +323,10 @@ CTreeItem *CProjectItem::findChildInstance(ClassDef &classDef) const {
 }
 
 CRoomItem *CProjectItem::findNextRoom(CRoomItem *priorRoom) const {
-	return dynamic_cast<CRoomItem *>(findSiblingInstanceOf(*CRoomItem::_type, priorRoom));
+	return dynamic_cast<CRoomItem *>(findSiblingInstanceOf(CRoomItem::_type, priorRoom));
 }
 
-CTreeItem *CProjectItem::findSiblingInstanceOf(ClassDef &classDef, CTreeItem *startItem) const {
+CTreeItem *CProjectItem::findSiblingInstanceOf(ClassDef *classDef, CTreeItem *startItem) const {
 	CTreeItem *treeItem = startItem->getParent()->getNextSibling();
 	if (treeItem == nullptr)
 		return nullptr;
@@ -335,7 +336,7 @@ CTreeItem *CProjectItem::findSiblingInstanceOf(ClassDef &classDef, CTreeItem *st
 
 CDontSaveFileItem *CProjectItem::getDontSaveFileItem() const {
 	for (CTreeItem *treeItem = getFirstChild(); treeItem; treeItem = treeItem->getNextSibling()) {
-		if (treeItem->isInstanceOf(*CDontSaveFileItem::_type))
+		if (treeItem->isInstanceOf(CDontSaveFileItem::_type))
 			return dynamic_cast<CDontSaveFileItem *>(treeItem);
 	}
 
@@ -344,6 +345,49 @@ CDontSaveFileItem *CProjectItem::getDontSaveFileItem() const {
 
 CRoomItem *CProjectItem::findHiddenRoom() {
 	return dynamic_cast<CRoomItem *>(findByName("HiddenRoom"));
+}
+
+CViewItem *CProjectItem::findView(int roomNumber, int nodeNumber, int viewNumber) {
+	CTreeItem *treeItem = getFirstChild();
+	CRoomItem *roomItem = nullptr;
+
+	// Scan for the specified room
+	if (treeItem) {
+		do {
+			CTreeItem *childItem = treeItem->getFirstChild();
+			CRoomItem *rItem = dynamic_cast<CRoomItem *>(childItem);
+			if (rItem && rItem->_roomNumber == roomNumber) {
+				roomItem = rItem;
+				break;
+			}
+		} while ((treeItem = treeItem->getNextSibling()) != nullptr);
+	}
+	if (!roomItem)
+		return nullptr;
+
+	// Scan for the specified node within the room
+	CNodeItem *nodeItem = nullptr;
+
+	CNodeItem *nItem = dynamic_cast<CNodeItem *>(
+		roomItem->findChildInstanceOf(CNodeItem::_type));
+	for (; nItem && !nodeItem; nItem = dynamic_cast<CNodeItem *>(
+			findNextInstanceOf(CNodeItem::_type, nItem))) {
+		if (nItem->_nodeNumber == nodeNumber)
+			nodeItem = nItem;
+	}
+	if (!nodeItem)
+		return nullptr;
+
+	// Scan for the specified view within the node
+	CViewItem *viewItem = dynamic_cast<CViewItem *>(
+		nodeItem->findChildInstanceOf(CViewItem::_type));
+	for (; viewItem; viewItem = dynamic_cast<CViewItem *>(
+			findNextInstanceOf(CViewItem::_type, viewItem))) {
+		if (viewItem->_viewNumber == viewNumber)
+			return viewItem;
+	}
+
+	return nullptr;
 }
 
 } // End of namespace Titanic

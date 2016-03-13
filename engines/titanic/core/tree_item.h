@@ -119,6 +119,16 @@ public:
 	CTreeItem *scan(CTreeItem *item) const;
 
 	/**
+	 * Find the first child item that is of a given type
+	 */
+	CTreeItem *findChildInstanceOf(ClassDef *classDef) const;
+
+	/**
+	 * Find the next sibling item that is of the given type
+	 */
+	CTreeItem *findNextInstanceOf(ClassDef *classDef, CTreeItem *startItem) const;
+
+	/**
 	 * Adds the item under another tree item
 	 */
 	void addUnder(CTreeItem *newParent);

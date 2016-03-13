@@ -24,7 +24,7 @@
 
 namespace Titanic {
 
-CNodeItem::CNodeItem() : CNamedItem(), _field24(0), _field28(0), _field2C(0) {
+CNodeItem::CNodeItem() : CNamedItem(), _field24(0), _field28(0), _nodeNumber(0) {
 }
 
 void CNodeItem::save(SimpleFile *file, int indent) const {
@@ -34,7 +34,7 @@ void CNodeItem::save(SimpleFile *file, int indent) const {
 	file->writeNumberLine(_field28, indent + 1);
 
 	file->writeQuotedLine("N", indent);
-	file->writeNumberLine(_field2C, indent + 1);
+	file->writeNumberLine(_nodeNumber, indent + 1);
 
 	CNamedItem::save(file, indent);
 }
@@ -46,7 +46,7 @@ void CNodeItem::load(SimpleFile *file) {
 	_field28 = file->readNumber();
 
 	file->readBuffer();
-	_field2C = file->readNumber();
+	_nodeNumber = file->readNumber();
 
 	CNamedItem::load(file);
 }

@@ -78,6 +78,11 @@ public:
 	void load(SimpleFile *file);
 
 	/**
+	 * Called when loading a game is complete
+	 */
+	void postLoad() {}
+
+	/**
 	 * Returns the scripts for the manager
 	 */
 	TTScripts &getScripts() { return _scripts; }

@@ -88,6 +88,26 @@ CTreeItem *CTreeItem::scan(CTreeItem *item) const {
 	return nullptr;
 }
 
+CTreeItem *CTreeItem::findChildInstanceOf(ClassDef *classDef) const {
+	for (CTreeItem *treeItem = _firstChild; treeItem; treeItem = treeItem->getNextSibling()) {
+		if (treeItem->isInstanceOf(classDef))
+			return treeItem;
+	}
+
+	return nullptr;
+}
+
+CTreeItem *CTreeItem::findNextInstanceOf(ClassDef *classDef, CTreeItem *startItem) const {
+	CTreeItem *treeItem = startItem ? startItem->getNextSibling() : getFirstChild();
+
+	for (; treeItem; treeItem = treeItem->getNextSibling()) {
+		if (treeItem->isInstanceOf(classDef))
+			return treeItem;
+	}
+
+	return nullptr;
+}
+
 void CTreeItem::addUnder(CTreeItem *newParent) {
 	if (newParent->_firstChild)
 		addSibling(newParent->getLastSibling());

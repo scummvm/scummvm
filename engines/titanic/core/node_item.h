@@ -28,10 +28,11 @@
 namespace Titanic {
 
 class CNodeItem : public CNamedItem {
-private:
+protected:
 	int _field24;
 	int _field28;
-	int _field2C;
+public:
+	int _nodeNumber;
 public:
 	CLASSDEF
 	CNodeItem();

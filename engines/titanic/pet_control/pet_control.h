@@ -79,7 +79,7 @@ public:
 	/**
 	 * Called after loading a game has finished
 	 */
-	void gameLoaded();
+	void postLoad();
 };
 
 } // End of namespace Titanic

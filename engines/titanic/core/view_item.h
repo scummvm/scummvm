@@ -34,10 +34,11 @@ private:
 protected:
 	int _field24;
 	double _field28;
-	int _field30;
 	CResourceKey _resourceKey;
 	int _field50;
 	int _field54;
+public:
+	int _viewNumber;
 public:
 	CLASSDEF
 	CViewItem();
