@@ -138,6 +138,30 @@ public:
 	virtual void notifyMousePos(Common::Point mouse);
 
 protected:
+	/**
+	 * Places where the game can be drawn
+	 */
+	enum GameRenderTarget {
+		kScreen,     /** The game is drawn directly on the screen */
+				kSubScreen,  /** The game is drawn to a surface, which is centered on the screen */
+				kFramebuffer /** The game is drawn to a framebuffer, which is scaled to fit the screen */
+	};
+
+	/** Select the best draw target according to the specified parameters */
+	GameRenderTarget selectGameRenderTarget(bool fullscreen, bool accel3d,
+	                                        bool engineSupportsArbitraryResolutions,
+	                                        bool framebufferSupported,
+	                                        bool lockAspectRatio);
+
+	/** Compute the size and position of the game rectangle in the screen */
+	Math::Rect2d computeGameRect(GameRenderTarget gameRenderTarget, uint gameWidth, uint gameHeight,
+	                             uint effectiveWidth, uint effectiveHeight);
+
+	/** Checks if the render target supports drawing at arbitrary resolutions */
+	bool canUsePreferredResolution(GameRenderTarget gameRenderTarget, bool engineSupportsArbitraryResolutions);
+
+	/** Obtain the user configured fullscreen resolution, or default to the desktop resolution */
+	Common::Rect getPreferredFullscreenResolution();
 
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 	SDL_Renderer *_renderer;
@@ -186,7 +210,7 @@ protected:
 	 * When unable to create a context with anti-aliasing this tries without.
 	 * When unable to create a context with the desired pixel depth this tries lower values.
 	 */
-	void createScreenOpenGL(uint effectiveWidth, uint effectiveHeight);
+	void createScreenOpenGL(uint effectiveWidth, uint effectiveHeight, GameRenderTarget gameRenderTarget);
 
 	// Antialiasing
 	int _antialiasing;
@@ -218,31 +242,6 @@ protected:
 	void drawSideTextures();
 
 	bool detectFramebufferSupport();
-
-	/**
-	 * Places where the game can be drawn
-	 */
-	enum GameRenderTarget {
-		kScreen,     /** The game is drawn directly on the screen */
-		kSubScreen,  /** The game is drawn to a surface, which is centered on the screen */
-		kFramebuffer /** The game is drawn to a framebuffer, which is scaled to fit the screen */
-	};
-
-	/** Select the best draw target according to the specified parameters */
-	GameRenderTarget selectGameRenderTarget(bool fullscreen, bool accel3d,
-	                                        bool engineSupportsArbitraryResolutions,
-	                                        bool framebufferSupported,
-	                                        bool lockAspectRatio);
-
-	/** Compute the size and position of the game rectangle in the screen */
-	Math::Rect2d computeGameRect(GameRenderTarget gameRenderTarget, uint gameWidth, uint gameHeight,
-	                             uint effectiveWidth, uint effectiveHeight);
-
-	/** Checks if the render target supports drawing at arbitrary resolutions */
-	bool canUsePreferredResolution(GameRenderTarget gameRenderTarget, bool engineSupportsArbitraryResolutions);
-
-	/** Obtain the user configured fullscreen resolution, or default to the desktop resolution */
-	Common::Rect getPreferredFullscreenResolution();
 };
 
 #endif

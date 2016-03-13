@@ -226,7 +226,7 @@ void SurfaceSdlGraphicsManager::setupScreen(uint gameWidth, uint gameHeight, boo
 
 #ifdef USE_OPENGL
 	if (_opengl) {
-		createScreenOpenGL(effectiveWidth, effectiveHeight);
+		createScreenOpenGL(effectiveWidth, effectiveHeight, gameRenderTarget);
 	} else
 #endif
 	{
@@ -484,10 +484,10 @@ SurfaceSdlGraphicsManager::OpenGLPixelFormat::OpenGLPixelFormat(uint screenBytes
 
 }
 
-void SurfaceSdlGraphicsManager::createScreenOpenGL(uint effectiveWidth, uint effectiveHeight) {
+void SurfaceSdlGraphicsManager::createScreenOpenGL(uint effectiveWidth, uint effectiveHeight, GameRenderTarget gameRenderTarget) {
 	// Build a list of OpenGL pixel formats usable by ResidualVM
 	Common::Array<OpenGLPixelFormat> pixelFormats;
-	if (_antialiasing > 0) {
+	if (_antialiasing > 0 && gameRenderTarget == kScreen) {
 		// Don't enable screen level multisampling when rendering to a framebuffer
 		pixelFormats.push_back(OpenGLPixelFormat(32, 8, 8, 8, 8, _antialiasing));
 		pixelFormats.push_back(OpenGLPixelFormat(16, 5, 5, 5, 1, _antialiasing));
