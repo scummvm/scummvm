@@ -117,8 +117,8 @@ struct SCALER_NoScale {
 	_reader(celObj, FLIP ? celObj._width : maxWidth),
 	_lastIndex(celObj._width - 1) {}
 
-	inline void setSource(const int16 x, const int16 targetY, const int16 scaledPosY) {
-		_row = _reader.getRow(targetY - scaledPosY);
+	inline void setSource(const int16 x, const int16 y) {
+		_row = _reader.getRow(y);
 
 		if (FLIP) {
 			_row += _lastIndex - x;
@@ -153,11 +153,8 @@ struct SCALER_Scale {
 	_table(CelObj::_scaler->getScalerTable(scaleX, scaleY)),
 	_lastIndex(maxWidth - 1) {}
 
-	inline void setSource(const int16 x, const int16 targetY, const int16 scaledPosY) {
-		// look up both targetY + scaledPosY in here, only subtract afterwards
-		// otherwise y won't be correct all the time when uneven scaling is used (for example 5:12)
-		int16 y = _table->valuesY[targetY] - _table->valuesY[scaledPosY];
-		_row = _reader.getRow(y);
+	inline void setSource(const int16 x, const int16 y) {
+		_row = _reader.getRow(_table->valuesY[y]);
 		if (FLIP) {
 			_x = _lastIndex - x;
 		} else {
@@ -578,7 +575,7 @@ struct RENDERER {
 
 	inline void draw(Buffer &target, const Common::Rect &targetRect, const Common::Point &scaledPosition) const {
 		const int16 sourceX = targetRect.left - scaledPosition.x;
-		//const int16 sourceY = targetRect.top - scaledPosition.y;
+		const int16 sourceY = targetRect.top - scaledPosition.y;
 
 		byte *targetPixel = (byte *)target.getPixels() + target.screenWidth * targetRect.top + targetRect.left;
 
@@ -586,7 +583,7 @@ struct RENDERER {
 		const int16 targetWidth = targetRect.width();
 		const int16 targetHeight = targetRect.height();
 		for (int y = 0; y < targetHeight; ++y) {
-			_scaler.setSource(sourceX, targetRect.top + y, scaledPosition.y);
+			_scaler.setSource(sourceX, sourceY + y);
 
 			for (int x = 0; x < targetWidth; ++x) {
 				_mapper.draw(targetPixel++, _scaler.read(), _skipColor);
