@@ -80,6 +80,8 @@ directory. Specifically, you'll need:
 You will need to copy the data files from your Escape from Monkey Island CDs
 into one directory. Specifically, you'll need:
   * All of the .M4B files from both CDs
+    One of the files is easy to miss:
+    Local.m4b is located on CD1 in Monkey4/MonkeyInstall
         Note: The file voiceAll.m4b is repeated on both CDs. Use the
               copy from the first CD, it contains all of the required
               voice data
