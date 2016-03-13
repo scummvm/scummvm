@@ -65,20 +65,6 @@
 #include <ddk/ntddcdrm.h>
 #endif
 
-enum {
-	// The CD-ROM pre-gap is 2s
-	kPreGapFrames = kFramesPerSecond * 2
-};
-
-static int getFrameCount(const TRACK_DATA &data) {
-	int time = data.Address[1];
-	time *= kSecondsPerMinute;
-	time += data.Address[2];
-	time *= kFramesPerSecond;
-	time += data.Address[3];
-	return time;
-}
-
 class Win32AudioCDStream : public AudioCDStream {
 public:
 	Win32AudioCDStream(HANDLE handle, const TRACK_DATA &startEntry, const TRACK_DATA &endEntry);
@@ -92,10 +78,24 @@ protected:
 private:
 	HANDLE _driveHandle;
 	const TRACK_DATA &_startEntry, &_endEntry;
+
+	enum {
+		// The CD-ROM pre-gap is 2s
+		kPreGapFrames = kFramesPerSecond * 2
+	};
+
+	static int getFrameCount(const TRACK_DATA &data) {
+		int time = data.Address[1];
+		time *= kSecondsPerMinute;
+		time += data.Address[2];
+		time *= kFramesPerSecond;
+		time += data.Address[3];
+		return time;
+	}
 };
 
 Win32AudioCDStream::Win32AudioCDStream(HANDLE handle, const TRACK_DATA &startEntry, const TRACK_DATA &endEntry) :
-	_driveHandle(handle), _startEntry(startEntry), _endEntry(endEntry), _buffer(), _frame(0), _bufferPos(kSamplesPerFrame), _bufferFrame(0) {
+	_driveHandle(handle), _startEntry(startEntry), _endEntry(endEntry) {
 	// We fill the buffer here already to prevent any out of sync issues due
 	// to the CD not yet having spun up.
 	startTimer(true);
@@ -110,7 +110,7 @@ uint Win32AudioCDStream::getStartFrame() const {
 }
 
 uint Win32AudioCDStream::getEndFrame() const {
-	return getFrameCount(_endFrame);
+	return getFrameCount(_endEntry);
 }
 
 bool Win32AudioCDStream::readFrame(int frame, int16 *buffer) {
@@ -141,7 +141,7 @@ public:
 
 	bool open();
 	void close();
-	void play(int track, int numLoops, int startFrame, int duration, bool onlyEmulate = false);
+	bool play(int track, int numLoops, int startFrame, int duration, bool onlyEmulate = false);
 
 protected:
 	bool openCD(int drive);
