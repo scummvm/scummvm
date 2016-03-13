@@ -60,10 +60,7 @@ protected:
 
 	virtual Common::WriteStream *createLogFile();
 
-#ifdef USE_LINUXCD
-	// Override createAudioCDManager() for Linux
 	virtual AudioCDManager *createAudioCDManager();
-#endif
 };
 
 #endif

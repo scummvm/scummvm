@@ -243,12 +243,13 @@ bool OSystem_POSIX::displayLogFile() {
 	return WIFEXITED(status) && WEXITSTATUS(status) == 0;
 }
 
-#ifdef USE_LINUXCD
 
 AudioCDManager *OSystem_POSIX::createAudioCDManager() {
+#ifdef USE_LINUXCD
 	return createLinuxAudioCDManager();
-}
-
+#else
+	return OSystem_SDL::createAudioCDManager();
 #endif
+}
 
 #endif
