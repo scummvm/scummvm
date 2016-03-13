@@ -2221,12 +2221,7 @@ bool GnapEngine::toyUfoCheckTimer() {
 	return true;
 }
 
-void GnapEngine::toyUfoFlyTo(int destX, int destY, int a3, int a4, int a5, int a6, int animationIndex) {
-	int v21 = 0;
-	int v14 = 0;
-	int v17 = 36;
-	int v15 = 32;
-	int i = 0;
+void GnapEngine::toyUfoFlyTo(int destX, int destY, int minX, int maxX, int minY, int maxY, int animationIndex) {
 	GridStruct v16[34];
 	
 	if (destX == -1)
@@ -2237,76 +2232,80 @@ void GnapEngine::toyUfoFlyTo(int destX, int destY, int a3, int a4, int a5, int a
 
 	//CHECKME
 	
-	int v25 = CLIP(destX, a3, a4);
-	int v26 = CLIP(destY, a5, a6);
-	int v24, v23;
-	int v13, v20;
+	int clippedDestX = CLIP(destX, minX, maxX);
+	int clippedDestY = CLIP(destY, minY, maxY);
+	int dirX, dirY; // 0, -1 or 1
 
-	if (v25 == _toyUfoX)
-		v24 = 0;
+	if (clippedDestX == _toyUfoX)
+		dirX = 0;
 	else
-		v24 = (v25 - _toyUfoX) / ABS(v25 - _toyUfoX);
+		dirX = (clippedDestX - _toyUfoX) / ABS(clippedDestX - _toyUfoX);
 	
-	if (v26 == _toyUfoY)
-		v23 = 0;
+	if (clippedDestY == _toyUfoY)
+		dirY = 0;
 	else
-		v23 = (v26 - _toyUfoY) / ABS(v26 - _toyUfoY);
+		dirY = (clippedDestY - _toyUfoY) / ABS(clippedDestY - _toyUfoY);
 	
-	v13 = ABS(v25 - _toyUfoX);
-	v20 = ABS(v26 - _toyUfoY);
-	
-	if (v20 > v13) {
-		int v22 = v20 / v15;
-		while (v14 < v20 && i < 34) {
+	int deltaX = ABS(clippedDestX - _toyUfoX);
+	int deltaY = ABS(clippedDestY - _toyUfoY);
+
+	int i = 0;
+	if (deltaY > deltaX) {
+		int v15 = 32;
+		int v22 = deltaY / v15;
+		int v14 = 0;
+		while (v14 < deltaY && i < 34) {
 			if (v22 - 5 >= i) {
 				v15 = MIN(36, 8 * i + 8);
 			} else {
 				v15 = MAX(6, v15 - 3);
 			}
 			v14 += v15;
-			v16[i].gridX1 = _toyUfoX + v24 * v13 * v14 / v20;
-			v16[i].gridY1 = _toyUfoY + v23 * v14;
+			v16[i].gridX1 = _toyUfoX + dirX * deltaX * v14 / deltaY;
+			v16[i].gridY1 = _toyUfoY + dirY * v14;
 			++i;
 		}
 	} else {
-		int v22 = v13 / v17;
-		while (v14 < v13 && i < 34) {
+		int v17 = 36;
+		int v22 = deltaX / v17;
+		int v14 = 0;
+		while (v14 < deltaX && i < 34) {
 			if (v22 - 5 >= i) {
 				v17 = MIN(38, 8 * i + 8);
 			} else {
 				v17 = MAX(6, v17 - 3);
 			}
 			v14 += v17;
-			v16[i].gridX1 = _toyUfoX + v24 * v14;
-			v16[i].gridY1 = _toyUfoY + v23 * v20 * v14 / v13;
+			v16[i].gridX1 = _toyUfoX + dirX * v14;
+			v16[i].gridY1 = _toyUfoY + dirY * deltaY * v14 / deltaX;
 			++i;
 		}
 	}
 
-	v21 = i - 1;
+	int v21 = i - 1;
 	
-	_toyUfoX = v25;
-	_toyUfoY = v26;
+	_toyUfoX = clippedDestX;
+	_toyUfoY = clippedDestY;
 	
-	debug("v21: %d", v21);
+//	debug("v21: %d", v21);
 	
 	if (i - 1 > 0) {
-		int v18;
+		int seqId;
 		if (isFlag(16))
-			v18 = 0x867;
+			seqId = 0x867;
 		else if (isFlag(17))
-			v18 = 0x84F;
+			seqId = 0x84F;
 		else if (isFlag(18))
-			v18 = 0x85F;
+			seqId = 0x85F;
 		else if (isFlag(19))
-			v18 = 0x857;
-		v16[0].sequenceId = v18;
+			seqId = 0x857;
+		v16[0].sequenceId = seqId;
 		v16[0].id = 0;
-		_gameSys->insertSequence(v18 | 0x10000, 0,
+		_gameSys->insertSequence(seqId | 0x10000, 0,
 			_toyUfoSequenceId | 0x10000, _toyUfoId,
 			8, 0, v16[0].gridX1 - 365, v16[0].gridY1 - 128);
 		for (i = 1; i < v21; ++i) {
-			v16[i].sequenceId = v18 + (i % 8);
+			v16[i].sequenceId = seqId + (i % 8);
 			v16[i].id = i;
 			_gameSys->insertSequence(v16[i].sequenceId | 0x10000, v16[i].id,
 				v16[i - 1].sequenceId | 0x10000, v16[i - 1].id,

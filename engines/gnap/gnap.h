@@ -846,7 +846,7 @@ public:
 	void toyUfoSetStatus(int a1);
 	int toyUfoGetSequenceId();
 	bool toyUfoCheckTimer();
-	void toyUfoFlyTo(int destX, int destY, int a3, int a4, int a5, int a6, int animationIndex);
+	void toyUfoFlyTo(int destX, int destY, int minX, int maxX, int minY, int maxY, int animationIndex);
 
 	// Scene 41
 	int _s41_currKidSequenceId, _s41_nextKidSequenceId;
