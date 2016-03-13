@@ -23,12 +23,50 @@
 #include "titanic/core/tree_item.h"
 #include "titanic/core/dont_save_file_item.h"
 #include "titanic/core/file_item.h"
+#include "titanic/core/game_object.h"
+#include "titanic/core/game_object_desc_item.h"
+#include "titanic/core/link_item.h"
 #include "titanic/core/named_item.h"
+#include "titanic/core/node_item.h"
+#include "titanic/core/view_item.h"
+#include "titanic/game/room_item.h"
 
 namespace Titanic {
 
 CTreeItem::CTreeItem() : _parent(nullptr), _firstChild(nullptr),
 	_nextSibling(nullptr), _priorSibling(nullptr), _field14(0) {
+}
+
+bool CTreeItem::isFileItem() const {
+	return isInstanceOf(CFileItem::_type);
+}
+
+bool CTreeItem::isRoomItem() const {
+	return isInstanceOf(CRoomItem::_type);
+}
+
+bool CTreeItem::isNodeItem() const {
+	return isInstanceOf(CNodeItem::_type);
+}
+
+bool CTreeItem::isViewItem() const {
+	return isInstanceOf(CViewItem::_type);
+}
+
+bool CTreeItem::isLinkItem() const {
+	return isInstanceOf(CLinkItem::_type);
+}
+
+bool CTreeItem::isNamedItem() const {
+	return isInstanceOf(CNamedItem::_type);
+}
+
+bool CTreeItem::isGameObject() const {
+	return isInstanceOf(CGameObject::_type);
+}
+
+bool CTreeItem::isGameObjectDescItem() const {
+	return isInstanceOf(CGameObjectDescItem::_type);
 }
 
 void CTreeItem::save(SimpleFile *file, int indent) const {

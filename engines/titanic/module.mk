@@ -62,6 +62,7 @@ MODULE_OBJS := \
 	core/drop_target.o \
 	core/file_item.o \
 	core/game_object.o \
+	core/game_object_desc_item.o \
 	core/link_item.o \
 	core/list.o \
 	core/message_target.o \

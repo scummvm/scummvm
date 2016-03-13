@@ -64,6 +64,8 @@
 #include "titanic/core/dont_save_file_item.h"
 #include "titanic/core/drop_target.h"
 #include "titanic/core/file_item.h"
+#include "titanic/core/game_object.h"
+#include "titanic/core/game_object_desc_item.h"
 #include "titanic/core/link_item.h"
 #include "titanic/core/list.h"
 #include "titanic/core/message_target.h"
@@ -467,6 +469,7 @@ DEFFN(CDropTarget)
 DEFFN(CFileItem)
 DEFFN(CFileListItem)
 DEFFN(CGameObject)
+DEFFN(CGameObjectDescItem)
 DEFFN(CLinkItem)
 DEFFN(ListItem)
 DEFFN(CMessageTarget)
@@ -1031,6 +1034,7 @@ void CSaveableObject::initClassList() {
 	ADDFN(CFileItem, CTreeItem);
 	ADDFN(CFileListItem, ListItem);
 	ADDFN(CGameObject, CNamedItem);
+	ADDFN(CGameObjectDescItem, CTreeItem);
 	ADDFN(CLinkItem, CNamedItem);
 	ADDFN(ListItem, CSaveableObject);
 	ADDFN(CMessageTarget, CSaveableObject);
@@ -1581,7 +1585,7 @@ void CSaveableObject::saveFooter(SimpleFile *file, int indent) const {
 	file->writeClassEnd(indent);
 }
 
-bool CSaveableObject::isInstanceOf(const ClassDef *classDef) {
+bool CSaveableObject::isInstanceOf(const ClassDef *classDef) const {
 	for (ClassDef *def = getType(); def != nullptr; def = def->_parent) {
 		if (def == classDef)
 			return true;
@@ -1589,7 +1593,5 @@ bool CSaveableObject::isInstanceOf(const ClassDef *classDef) {
 
 	return false;
 }
-
-
 
 } // End of namespace Titanic

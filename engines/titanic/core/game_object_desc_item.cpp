@@ -20,59 +20,38 @@
  *
  */
 
-#ifndef TITANIC_GAME_OBJECT_H
-#define TITANIC_GAME_OBJECT_H
-
-#include "common/rect.h"
-#include "titanic/core/movie_clip.h"
-#include "titanic/core/named_item.h"
+#include "titanic/core/game_object_desc_item.h"
 
 namespace Titanic {
 
-class CGameObject : public CNamedItem {
-protected:
-	Common::Rect _bounds;
-	double _field34;
-	double _field38;
-	double _field3C;
-	int _field40;
-	int _field44;
-	int _field48;
-	int _field4C;
-	int _field50;
-	int _field54;
-	int _field58;
-	int _field5C;
-	int _field60;
-	CMovieClipList _clipList1;
-	int _field74;
-	int _field78;
-	CMovieClipList _clipList2;
-	int _field8C;
-	int _field90;
-	int _field94;
-	int _field98;
-	int _field9C;
-	int _fieldA0;
-	int _fieldA4;
-	void *_fieldA8;
-	CString _string;
-	int _fieldB8;
-public:
-	CLASSDEF
-	CGameObject();
+CGameObjectDescItem::CGameObjectDescItem(): CTreeItem() {
+}
 
-	/**
-	 * Save the data for the class to file
-	 */
-	virtual void save(SimpleFile *file, int indent) const;
+void CGameObjectDescItem::save(SimpleFile *file, int indent) const {
+	file->writeNumberLine(1, indent);
+	_clipList.save(file, indent);
+	file->writeQuotedLine(_string1, indent);
+	file->writeQuotedLine(_string2, indent);
+	_list1.save(file, indent);
+	_list2.save(file, indent);
 
-	/**
-	 * Load the data for the class from file
-	 */
-	virtual void load(SimpleFile *file);
-};
+	CTreeItem::save(file, indent);
+}
+
+void CGameObjectDescItem::load(SimpleFile *file) {
+	int val = file->readNumber();
+
+	if (val != 1) {
+		if (val)
+			_clipList.load(file);
+
+		_string1 = file->readString();
+		_string2 = file->readString();
+		_list1.load(file);
+		_list1.load(file);
+	}
+
+	CTreeItem::load(file);
+}
 
 } // End of namespace Titanic
-
-#endif /* TITANIC_GAME_OBJECT_H */

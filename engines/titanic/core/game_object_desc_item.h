@@ -20,47 +20,25 @@
  *
  */
 
-#ifndef TITANIC_GAME_OBJECT_H
-#define TITANIC_GAME_OBJECT_H
+#ifndef TITANIC_GAME_OBJECT_DESK_ITEM_H
+#define TITANIC_GAME_OBJECT_DESK_ITEM_H
 
-#include "common/rect.h"
 #include "titanic/core/movie_clip.h"
-#include "titanic/core/named_item.h"
+#include "titanic/core/tree_item.h"
+#include "titanic/core/list.h"
 
 namespace Titanic {
 
-class CGameObject : public CNamedItem {
+class CGameObjectDescItem : public CTreeItem {
 protected:
-	Common::Rect _bounds;
-	double _field34;
-	double _field38;
-	double _field3C;
-	int _field40;
-	int _field44;
-	int _field48;
-	int _field4C;
-	int _field50;
-	int _field54;
-	int _field58;
-	int _field5C;
-	int _field60;
-	CMovieClipList _clipList1;
-	int _field74;
-	int _field78;
-	CMovieClipList _clipList2;
-	int _field8C;
-	int _field90;
-	int _field94;
-	int _field98;
-	int _field9C;
-	int _fieldA0;
-	int _fieldA4;
-	void *_fieldA8;
-	CString _string;
-	int _fieldB8;
+	CString _string1;
+	CString _string2;
+	List<ListItem> _list1;
+	List<ListItem> _list2;
+	CMovieClipList _clipList;
 public:
 	CLASSDEF
-	CGameObject();
+	CGameObjectDescItem();
 
 	/**
 	 * Save the data for the class to file
@@ -75,4 +53,4 @@ public:
 
 } // End of namespace Titanic
 
-#endif /* TITANIC_GAME_OBJECT_H */
+#endif /* TITANIC_GAME_OBJECT_DESK_ITEM_H */

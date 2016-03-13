@@ -66,4 +66,4 @@ public:
 
 } // End of namespace Titanic
 
-#endif /* TITANIC_PET_CONTROL_H */
+#endif /* TITANIC_PET_CONTROL_SUB1_H */

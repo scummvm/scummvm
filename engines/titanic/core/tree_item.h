@@ -60,12 +60,42 @@ public:
 	/**
 	 * Returns true if the item is a file item
 	 */
-	virtual bool isFileItem() const { return false; }
+	virtual bool isFileItem() const;
+
+	/**
+	 * Returns true if the item is a room item
+	 */
+	virtual bool isRoomItem() const;
+
+	/**
+	 * Returns true if the item is a node item
+	 */
+	virtual bool isNodeItem() const;
+
+	/**
+	 * Returns true if the item is a view item
+	 */
+	virtual bool isViewItem() const;
+
+	/**
+	 * Returns true if the item is a link item
+	 */
+	virtual bool isLinkItem() const;
 
 	/**
 	 * Returns true if the item is a named item
 	 */
-	virtual bool isNamedItem() const { return false; }
+	virtual bool isNamedItem() const;
+
+	/**
+	 * Returns true if the item is a game object
+	 */
+	virtual bool isGameObject() const;
+
+	/**
+	 * Returns true if the item is a game object desc item
+	 */
+	virtual bool isGameObjectDescItem() const;
 
 	/**
 	 * Gets the name of the item, if any
