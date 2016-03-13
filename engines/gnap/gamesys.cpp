@@ -1022,7 +1022,7 @@ void GameSys::fatUpdateFrame() {
 		return;
 	
 	bool updFlag = true;
-	int duration, v20, currFrameNum;
+	int duration, currFrameNum;
 
 	// NOTE Skipped avi code (reqAviStart)
 
@@ -1071,13 +1071,13 @@ void GameSys::fatUpdateFrame() {
 					duration = clockDelta - gfxItem->delayTicks;
 					gfxItem->delayTicks = 0;
 					if (gfxItem->prevFrame.duration <= duration) {
-						v20 = 0;
+						bool v20 = false;
 						if (gfxItem->prevFrame.duration > 0) {
 							duration -= gfxItem->prevFrame.duration;
 							gfxItem->prevFrame.duration = -duration;
 						} else {
 							gfxItem->prevFrame.duration = 0;
-							v20 = 1;
+							v20 = true;
 						}
 						currFrameNum = gfxItem->currFrameNum;
 						if (animation->framesCount > currFrameNum) {
