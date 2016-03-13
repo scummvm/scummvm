@@ -28,7 +28,7 @@
 
 #include "adl/hires2.h"
 #include "adl/display.h"
-#include "adl/picture.h"
+#include "adl/graphics.h"
 
 namespace Adl {
 
@@ -123,7 +123,7 @@ void HiRes2Engine::restartGame() {
 
 void HiRes2Engine::drawPic(byte pic, Common::Point pos) const {
 	// Temp hack
-	PictureD test(*_display);
+	Graphics test(*_display);
 
 	Common::File f;
 

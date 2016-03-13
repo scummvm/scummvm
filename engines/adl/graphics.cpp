@@ -25,7 +25,7 @@
 #include "common/textconsole.h"
 
 #include "adl/display.h"
-#include "adl/picture.h"
+#include "adl/graphics.h"
 
 #define MIN_COMMAND 0xe0
 
@@ -82,7 +82,7 @@ static const byte fillPatterns[NUM_PATTERNS][PATTERN_LEN] = {
 	} while (0)
 
 // Draws a four-connected line
-void PictureD::drawLine(const Common::Point &p1, const Common::Point &p2, byte color) const {
+void Graphics::drawLine(const Common::Point &p1, const Common::Point &p2, byte color) const {
 	int16 deltaX = p2.x - p1.x;
 	int8 xStep = 1;
 
@@ -119,12 +119,12 @@ void PictureD::drawLine(const Common::Point &p1, const Common::Point &p2, byte c
 	}
 }
 
-void PictureD::clear() {
+void Graphics::clear() {
 	_display.clear(0xff);
 	_color = 0;
 }
 
-void PictureD::drawCorners(Common::SeekableReadStream &pic, bool yFirst) {
+void Graphics::drawCorners(Common::SeekableReadStream &pic, bool yFirst) {
 	Common::Point p;
 
 	READ_POINT(p);
@@ -156,7 +156,7 @@ doYStep:
 	}
 }
 
-void PictureD::drawRelativeLines(Common::SeekableReadStream &pic) {
+void Graphics::drawRelativeLines(Common::SeekableReadStream &pic) {
 	Common::Point p1;
 
 	READ_POINT(p1);
@@ -186,7 +186,7 @@ void PictureD::drawRelativeLines(Common::SeekableReadStream &pic) {
 	}
 }
 
-void PictureD::drawAbsoluteLines(Common::SeekableReadStream &pic) {
+void Graphics::drawAbsoluteLines(Common::SeekableReadStream &pic) {
 	Common::Point p1;
 
 	READ_POINT(p1);
@@ -211,7 +211,7 @@ static byte getPatternColor(const Common::Point &p, byte pattern) {
 	return fillPatterns[pattern][offset % PATTERN_LEN];
 }
 
-void PictureD::fillRow(const Common::Point &p, bool stopBit, byte pattern) {
+void Graphics::fillRow(const Common::Point &p, bool stopBit, byte pattern) {
 	const byte color = getPatternColor(p, pattern);
 	_display.putPixelRaw(p, color);
 
@@ -234,7 +234,7 @@ void PictureD::fillRow(const Common::Point &p, bool stopBit, byte pattern) {
 }
 
 // Basic flood fill
-void PictureD::fill(Common::SeekableReadStream &pic) {
+void Graphics::fill(Common::SeekableReadStream &pic) {
 	byte pattern;
 	READ_BYTE(pattern);
 
@@ -261,7 +261,7 @@ void PictureD::fill(Common::SeekableReadStream &pic) {
 	}
 }
 
-void PictureD::draw(Common::SeekableReadStream &pic) {
+void Graphics::draw(Common::SeekableReadStream &pic) {
 	while (true) {
 		byte opcode = pic.readByte();
 

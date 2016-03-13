@@ -32,9 +32,9 @@ namespace Adl {
 
 class Display;
 
-class PictureD {
+class Graphics {
 public:
-	PictureD(Display &display) : _display(display) { }
+	Graphics(Display &display) : _display(display) { }
 
 	void drawLine(const Common::Point &p1, const Common::Point &p2, byte color) const;
 	void draw(Common::SeekableReadStream &pic);
