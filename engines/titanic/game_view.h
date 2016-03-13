@@ -52,7 +52,11 @@ public:
 
 	virtual void deleteView(int roomNumber, int nodeNumber, int viewNumber);
 
-	virtual void proc3(int v) = 0;
+	/**
+	 * Set the currently active view
+	 */
+	virtual void setView(CViewItem *item) = 0;
+	
 	virtual void proc4() = 0;
 };
 
@@ -62,7 +66,11 @@ private:
 public:
 	CSTGameView(CMainGameWindow *gameWindow);
 
-	virtual void proc3(int v);
+	/**
+	 * Set the currently active view
+	 */
+	virtual void setView(CViewItem *item);
+
 	virtual void proc4();
 };
 

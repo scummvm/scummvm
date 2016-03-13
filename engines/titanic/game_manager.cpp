@@ -66,9 +66,9 @@ void CGameManager::postLoad(CProjectItem *project) {
 		_gameView->postLoad();
 
 		if (!_gameView->_fieldC) {
-			int v = fn2();
-			if (v)
-				_gameView->proc3(v);
+			CViewItem *view = getView();
+			if (view)
+				_gameView->setView(view);
 		}
 	}
 	

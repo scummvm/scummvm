@@ -27,6 +27,9 @@
 
 namespace Titanic {
 
+class CNodeItem;
+class CRoomItem;
+
 class CNamedItem: public CTreeItem {
 public:
 	CString _name;
@@ -44,11 +47,6 @@ public:
 	virtual void load(SimpleFile *file);
 
 	/**
-	 * Returns true if the item is a named item
-	 */
-	virtual bool isNamedItem() const { return true; }
-
-	/**
 	 * Gets the name of the item, if any
 	 */
 	virtual const CString getName() const { return _name; }
@@ -57,6 +55,16 @@ public:
 	 * Compares the name of the item to a passed name
 	 */
 	virtual int compareTo(const CString &name, int maxLen) const;
+
+	/**
+	 * Find a parent node for the item
+	 */
+	virtual CNodeItem *findNode() const;
+
+	/**
+	 * Find a parent room item for the item
+	 */
+	virtual CRoomItem *findRoom() const;
 };
 
 } // End of namespace Titanic

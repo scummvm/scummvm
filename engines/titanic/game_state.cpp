@@ -27,7 +27,7 @@
 namespace Titanic {
 
 CGameState::CGameState(CGameManager *gameManager) :
-		_gameManager(gameManager), _sub(this),
+		_gameManager(gameManager), _gameLocation(this),
 		_field8(0), _fieldC(0), _mode(10), _field14(0), _field18(0),
 		_field1C(0), _field20(0), _field24(0), _field28(0), _field2C(0),
 		_field30(0), _field34(0), _field38(0) {
@@ -40,7 +40,7 @@ void CGameState::save(SimpleFile *file) const {
 	file->writeNumber(_field14);
 	file->writeNumber(_field24);
 	file->writeNumber(_field38);
-	_sub.save(file);
+	_gameLocation.save(file);
 	file->writeNumber(_field1C);
 }
 
@@ -51,7 +51,7 @@ void CGameState::load(SimpleFile *file) {
 	_field14 = file->readNumber();
 	_field24 = file->readNumber();
 	_field38 = file->readNumber();
-	_sub.load(file);
+	_gameLocation.load(file);
 
 	_field1C = file->readNumber();
 	_field28 = _field2C = 0;

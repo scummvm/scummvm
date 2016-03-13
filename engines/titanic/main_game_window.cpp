@@ -80,7 +80,7 @@ int CMainGameWindow::selectSavegame() {
 	return -1;
 }
 
-void CMainGameWindow::fn1(int v) {
+void CMainGameWindow::setActiveView(CViewItem *view) {
 	warning("TODO");
 }
 

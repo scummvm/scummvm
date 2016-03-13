@@ -69,7 +69,10 @@ public:
 	 */
 	void applicationStarting();
 
-	void fn1(int v);
+	/**
+	 * Sets the view to be shown
+	 */
+	void setActiveView(CViewItem *view);
 
 	void fn2();
 };

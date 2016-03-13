@@ -21,6 +21,8 @@
  */
 
 #include "titanic/core/named_item.h"
+#include "titanic/core/node_item.h"
+#include "titanic/core/room_item.h"
 
 namespace Titanic {
 
@@ -45,6 +47,26 @@ int CNamedItem::compareTo(const CString &name, int maxLen) const {
 	} else {
 		return getName().compareToIgnoreCase(name);
 	}
+}
+
+CNodeItem *CNamedItem::findNode() const {
+	for (CTreeItem *parent = getParent(); parent; parent = parent->getParent()) {
+		CNodeItem *node = dynamic_cast<CNodeItem *>(parent);
+		if (node)
+			return node;
+	}
+
+	error("Couldn't find parent node");
+}
+
+CRoomItem *CNamedItem::findRoom() const {
+	for (CTreeItem *parent = getParent(); parent; parent = parent->getParent()) {
+		CRoomItem *room = dynamic_cast<CRoomItem *>(parent);
+		if (room)
+			return room;
+	}
+
+	error("Couldn't find parent node");
 }
 
 } // End of namespace Titanic

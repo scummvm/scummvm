@@ -73,6 +73,7 @@
 #include "titanic/core/multi_drop_target.h"
 #include "titanic/core/node_item.h"
 #include "titanic/core/project_item.h"
+#include "titanic/core/room_item.h"
 #include "titanic/core/saveable_object.h"
 #include "titanic/core/static_image.h"
 #include "titanic/core/turn_on_object.h"
@@ -181,7 +182,6 @@
 #include "titanic/game/reserved_table.h"
 #include "titanic/game/restaurant_cylinder_holder.h"
 #include "titanic/game/restaurant_phonograph.h"
-#include "titanic/game/room_item.h"
 #include "titanic/game/sauce_dispensor.h"
 #include "titanic/game/search_point.h"
 #include "titanic/game/season_background.h"
@@ -479,6 +479,7 @@ DEFFN(CNamedItem)
 DEFFN(CNodeItem)
 DEFFN(CProjectItem)
 DEFFN(CResourceKey)
+DEFFN(CRoomItem)
 DEFFN(CSaveableObject)
 DEFFN(CStaticImage)
 DEFFN(CTurnOnObject)
@@ -587,7 +588,6 @@ DEFFN(CReplacementEar)
 DEFFN(CReservedTable)
 DEFFN(CRestaurantCylinderHolder)
 DEFFN(CRestaurantPhonograph)
-DEFFN(CRoomItem)
 DEFFN(CSauceDispensor)
 DEFFN(CSearchPoint)
 DEFFN(CSeasonBackground)
@@ -1044,6 +1044,7 @@ void CSaveableObject::initClassList() {
 	ADDFN(CNodeItem, CNamedItem);
 	ADDFN(CProjectItem, CFileItem);
 	ADDFN(CResourceKey, CSaveableObject);
+	ADDFN(CRoomItem, CNamedItem);
 	ADDFN(CSaveableObject, CSaveableObject);
 	ADDFN(CStaticImage, CGameObject);
 	ADDFN(CTurnOnObject, CBackground);
@@ -1153,7 +1154,6 @@ void CSaveableObject::initClassList() {
 	ADDFN(CReservedTable, CGameObject);
 	ADDFN(CRestaurantCylinderHolder, CDropTarget);
 	ADDFN(CRestaurantPhonograph, CPhonograph);
-	ADDFN(CRoomItem, CNamedItem);
 	ADDFN(CSauceDispensor, CBackground);
 	ADDFN(CSearchPoint, CGameObject);
 	ADDFN(CSeasonBackground, CBackground);

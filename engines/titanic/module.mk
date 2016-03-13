@@ -4,9 +4,9 @@ MODULE_OBJS := \
 	detection.o \
 	direct_draw.o \
 	font.o \
+	game_location.o \
 	game_manager.o \
 	game_state.o \
-	game_state_sub.o \
 	game_view.o \
 	image.o \
 	input_handler.o \
@@ -72,6 +72,7 @@ MODULE_OBJS := \
 	core/node_item.o \
 	core/project_item.o \
 	core/resource_key.o \
+	core/room_item.o \
 	core/saveable_object.o \
 	core/static_image.o \
 	core/turn_on_object.o \
@@ -180,7 +181,6 @@ MODULE_OBJS := \
 	game/reserved_table.o \
 	game/restaurant_cylinder_holder.o \
 	game/restaurant_phonograph.o \
-	game/room_item.o \
 	game/sauce_dispensor.o \
 	game/search_point.o \
 	game/season_background.o \

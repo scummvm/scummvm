@@ -54,8 +54,8 @@ CSTGameView::CSTGameView(CMainGameWindow *gameWindow) :
 		CGameView(), _gameWindow(gameWindow) {
 }
 
-void CSTGameView::proc3(int v) {
-	_gameWindow->fn1(v);
+void CSTGameView::setView(CViewItem *view) {
+	_gameWindow->setActiveView(view);
 }
 
 void CSTGameView::proc4() {

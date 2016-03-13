@@ -20,31 +20,55 @@
  *
  */
 
-#include "titanic/game_state_sub.h"
-#include "titanic/game_state.h"
+#ifndef TITANIC_GAME_LOCATION_H
+#define TITANIC_GAME_LOCATION_H
+
+#include "titanic/simple_file.h"
+#include "titanic/core/node_item.h"
+#include "titanic/core/room_item.h"
+#include "titanic/core/view_item.h"
 
 namespace Titanic {
 
-CGameStateSub::CGameStateSub(CGameState *owner) : _gameState(owner),
-		_field0(0), _field4(0), _field8(0), _fieldC(0) {
-}
+class CGameState;
 
-void CGameStateSub::save(SimpleFile *file) const {
-	file->writeNumber(_field4);
-	file->writeNumber(_field8);
-	file->writeNumber(_fieldC);
-}
+class CGameLocation {
+private:
+	CGameState *_gameState;
+	CViewItem *_view;
 
-void CGameStateSub::load(SimpleFile *file) {
-	_field0 = 0;
-	_field4 = file->readNumber();
-	_field8 = file->readNumber();
-	_fieldC = file->readNumber();
-}
+	int _roomNumber;
+	int _nodeNumber;
+	int _viewNumber;
+public:
+	CGameLocation(CGameState *owner);
 
-int CGameStateSub::fn2() {
-	warning("TODO");
-	return 0;
-}
+	/**
+	 * Save the data for the class to file
+	 */
+	void save(SimpleFile *file) const;
 
-} // End of namespace Titanic z
+	/**
+	 * Load the data for the class from file
+	 */
+	void load(SimpleFile *file);
+
+	/**
+	 * Get the current view
+	 */
+	CViewItem *getView();
+
+	/**
+	 * Get the current node
+	 */
+	CNodeItem *getNode();
+
+	/**
+	 * Get the current room
+	 */
+	CRoomItem *getRoom();
+};
+
+} // End of namespace Titanic
+
+#endif /* TITANIC_GAME_LOCATION_H */

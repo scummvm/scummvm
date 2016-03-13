@@ -20,7 +20,7 @@
  *
  */
 
-#include "titanic/game/room_item.h"
+#include "titanic/core/room_item.h"
 
 namespace Titanic {
 

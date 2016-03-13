@@ -28,7 +28,7 @@
 #include "titanic/core/dont_save_file_item.h"
 #include "titanic/core/file_item.h"
 #include "titanic/core/list.h"
-#include "titanic/game/room_item.h"
+#include "titanic/core/room_item.h"
 
 namespace Titanic {
 

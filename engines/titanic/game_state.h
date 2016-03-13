@@ -25,7 +25,7 @@
 
 #include "titanic/core/list.h"
 #include "titanic/simple_file.h"
-#include "titanic/game_state_sub.h"
+#include "titanic/game_location.h"
 
 namespace Titanic {
 
@@ -42,7 +42,7 @@ public:
 class CGameState {
 public:
 	CGameManager *_gameManager;
-	CGameStateSub _sub;
+	CGameLocation _gameLocation;
 	CGameStateList _list;
 	int _field8;
 	int _fieldC;

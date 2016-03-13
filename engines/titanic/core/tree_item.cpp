@@ -29,7 +29,7 @@
 #include "titanic/core/named_item.h"
 #include "titanic/core/node_item.h"
 #include "titanic/core/view_item.h"
-#include "titanic/game/room_item.h"
+#include "titanic/core/room_item.h"
 
 namespace Titanic {
 

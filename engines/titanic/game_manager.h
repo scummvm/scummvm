@@ -86,7 +86,7 @@ public:
 	 */
 	void postLoad(CProjectItem *project);
 
-	int fn2() { return _gameState._sub.fn2(); }
+	CViewItem *getView() { return _gameState._gameLocation.getView(); }
 
 	/**
 	 * Lock the input handler
