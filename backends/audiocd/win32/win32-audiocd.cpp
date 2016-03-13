@@ -42,6 +42,8 @@
  *
  */
 
+#ifdef WIN32
+
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 #undef ARRAYSIZE // winnt.h defines ARRAYSIZE, but we want our own one...
@@ -375,3 +377,5 @@ bool Win32AudioCDManager::tryAddDrive(char drive, DriveList &drives) {
 AudioCDManager *createWin32AudioCDManager() {
 	return new Win32AudioCDManager();
 }
+
+#endif // WIN32
