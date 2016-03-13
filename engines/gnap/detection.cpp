@@ -63,7 +63,7 @@ public:
 	}
 
 	virtual const char *getOriginalCopyright() const {
-		return "Gnap (C) 1999";
+		return "Gnap (C) Artech Digital Entertainment 1997";
 	}
 
 	virtual bool hasFeature(MetaEngineFeature f) const;
