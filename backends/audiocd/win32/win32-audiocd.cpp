@@ -42,6 +42,10 @@
  *
  */
 
+#define WIN32_LEAN_AND_MEAN
+#include <windows.h>
+#undef ARRAYSIZE // winnt.h defines ARRAYSIZE, but we want our own one...
+
 #include "backends/audiocd/win32/win32-audiocd.h"
 
 #include "audio/audiostream.h"
@@ -54,9 +58,6 @@
 #include "common/queue.h"
 #include "common/str.h"
 #include "common/timer.h"
-
-#define WIN32_LEAN_AND_MEAN
-#include <windows.h>
 
 #ifdef _MSC_VER
 #include <winioctl.h>
