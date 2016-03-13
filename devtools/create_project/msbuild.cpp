@@ -434,7 +434,11 @@ void MSBuildProvider::createBuildProp(const BuildSetup &setup, bool isRelease, b
 		              "\t\t\t<RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>\n"
 		              "\t\t\t<EnablePREfast>" << (configuration == "Analysis" ? "true" : "false") << "</EnablePREfast>\n"
 		              "\t\t</ClCompile>\n"
+		              "\t\t<Lib>\n"
+		              "\t\t\t<LinkTimeCodeGeneration>true</LinkTimeCodeGeneration>\n"
+		              "\t\t</Lib>\n"
 		              "\t\t<Link>\n"
+		              "\t\t\t<LinkTimeCodeGeneration>UseLinkTimeCodeGeneration</LinkTimeCodeGeneration>\n"
 		              "\t\t\t<IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>\n"
 		              "\t\t\t<SetChecksum>true</SetChecksum>\n";
 	} else {
