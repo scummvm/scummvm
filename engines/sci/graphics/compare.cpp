@@ -158,6 +158,10 @@ reg_t GfxCompare::kernelCanBeHere(reg_t curObject, reg_t listReference) {
 }
 
 reg_t GfxCompare::kernelCantBeHere32(const reg_t curObject, const reg_t listReference) const {
+	// Most of SCI32 graphics code converts rects from the VM to exclusive
+	// rects before operating on them, but this call leverages SCI16 engine
+	// code that operates on inclusive rects, so the rect's bottom-right
+	// point is not modified like in other SCI32 kernel calls
 	Common::Rect checkRect(
 		readSelectorValue(_segMan, curObject, SELECTOR(brLeft)),
 		readSelectorValue(_segMan, curObject, SELECTOR(brTop)),
