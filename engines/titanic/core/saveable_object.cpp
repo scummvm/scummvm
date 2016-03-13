@@ -779,6 +779,9 @@ DEFFN(CDropobjectMsg)
 DEFFN(CDropZoneGotObjectMsg)
 DEFFN(CDropZoneLostObjectMsg)
 DEFFN(CEditControlMsg)
+DEFFN(CEnterNodeMsg);
+DEFFN(CEnterRoomMsg);
+DEFFN(CEnterViewMsg);
 DEFFN(CEjectCylinderMsg)
 DEFFN(CErasePhonographCylinderMsg)
 DEFFN(CFreshenCookieMsg)
@@ -1345,6 +1348,9 @@ void CSaveableObject::initClassList() {
 	ADDFN(CDropZoneGotObjectMsg, CMessage);
 	ADDFN(CDropZoneLostObjectMsg, CMessage);
 	ADDFN(CEditControlMsg, CMessage);
+	ADDFN(CEnterNodeMsg, CMessage);
+	ADDFN(CEnterRoomMsg, CMessage);
+	ADDFN(CEnterViewMsg, CMessage);
 	ADDFN(CEjectCylinderMsg, CMessage);
 	ADDFN(CErasePhonographCylinderMsg, CMessage);
 	ADDFN(CFreshenCookieMsg, CMessage);

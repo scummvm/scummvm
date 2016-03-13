@@ -25,6 +25,9 @@
 
 #include "titanic/core/saveable_object.h"
 #include "titanic/core/game_object.h"
+#include "titanic/core/node_item.h"
+#include "titanic/core/room_item.h"
+#include "titanic/core/view_item.h"
 
 namespace Titanic {
 
@@ -241,8 +244,9 @@ MESSAGE1(CDropobjectMsg, int, value, 0);
 MESSAGE1(CDropZoneGotObjectMsg, int, value, 0);
 MESSAGE1(CDropZoneLostObjectMsg, int, value, 0);
 MESSAGE1(CEjectCylinderMsg, int, value, 0);
-MESSAGE0(CEnterNodeMsg);
-MESSAGE0(CEnterViewMsg);
+MESSAGE1(CEnterNodeMsg, CNodeItem *, node, nullptr);
+MESSAGE1(CEnterRoomMsg, CRoomItem *, room, nullptr);
+MESSAGE1(CEnterViewMsg, CViewItem *, view, nullptr);
 MESSAGE0(CErasePhonographCylinderMsg);
 MESSAGE2(CFreshenCookieMsg, int, value1, 0, int, value2, 0);
 MESSAGE1(CGetChevClassBits, int, value, 0);
@@ -259,7 +263,9 @@ MESSAGE0(CInitializeAnimMsg);
 MESSAGE1(CIsEarBowlPuzzleDone, int, value, 0);
 MESSAGE1(CIsParrotPresentMsg, int, value, 0);
 MESSAGE1(CKeyCharMsg, int, value, 32);
-MESSAGE0(CLeaveViewMsg);
+MESSAGE1(CLeaveNodeMsg, CNodeItem *, node, nullptr);
+MESSAGE1(CLeaveRoomMsg, CRoomItem *, room, nullptr);
+MESSAGE1(CLeaveViewMsg, CViewItem *, view, nullptr);
 MESSAGE2(CLemonFallsFromTreeMsg, int, value1, 0, int, value2, 0);
 MESSAGE1(CLoadSuccessMsg, int, ticks, 0);
 MESSAGE1(CLockPhonographMsg, int, value, 0);

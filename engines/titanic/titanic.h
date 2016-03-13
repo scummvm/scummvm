@@ -50,6 +50,9 @@ enum TitanicDebugChannels {
 
 #define TITANIC_SAVEGAME_VERSION 1
 
+#define SCREEN_WIDTH 640
+#define SCREEN_HEIGHT 480
+
 #define ERROR_BASIC 1
 #define ERROR_INTERMEDIATE 2
 #define ERROR_DETAILED 3

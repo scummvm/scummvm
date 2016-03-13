@@ -24,6 +24,7 @@
 #include "titanic/main_game_window.h"
 #include "titanic/game_manager.h"
 #include "titanic/game_view.h"
+#include "titanic/messages/messages.h"
 
 namespace Titanic {
 
@@ -65,7 +66,22 @@ void CMainGameWindow::applicationStarting() {
 	// Load either a new game or selected existing save
 	_project->loadGame(saveSlot);
 
-	// TODO: Cursor/image and message generation
+	// TODO: Cursor/image
+
+	// Generate starting messages
+	CViewItem *view = _gameManager->_gameState._gameLocation.getView();
+	CEnterViewMsg enterViewMsg(view);
+	enterViewMsg.execute(view, nullptr, MSGFLAG_SCAN);
+
+	CNodeItem *node = view->findNode();
+	CEnterNodeMsg enterNodeMsg(node);
+	enterNodeMsg.execute(node, nullptr, MSGFLAG_SCAN);
+
+	CRoomItem *room = view->findRoom();
+	CEnterRoomMsg enterRoomMsg(room);
+	enterRoomMsg.execute(room, nullptr, MSGFLAG_SCAN);
+
+	_gameManager->initBounds();
 }
 
 int CMainGameWindow::loadGame() {

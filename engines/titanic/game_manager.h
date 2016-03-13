@@ -53,7 +53,6 @@ public:
 class CGameManager {
 private:
 	CGameView *_gameView;
-	CGameState _gameState;
 	CSound _sound;
 	CInputHandler _inputHandler;
 	CInputTranslator _inputTranslator;
@@ -72,6 +71,7 @@ private:
 	uint _tickCount2;
 public:
 	CProjectItem *_project;
+	CGameState _gameState;
 public:
 	CGameManager(CProjectItem *project, CGameView *gameView);
 	~CGameManager();
@@ -97,6 +97,11 @@ public:
 	 * Unlock the input handler
 	 */
 	void unlockInputHandler() { _inputHandler.decLockCount(); }
+
+	/**
+	 * Set default screen bounds
+	 */
+	void initBounds();
 };
 
 } // End of namespace Titanic

@@ -20,6 +20,7 @@
  *
  */
 
+#include "titanic/titanic.h"
 #include "titanic/game_manager.h"
 #include "titanic/game_view.h"
 #include "titanic/screen_manager.h"
@@ -82,6 +83,10 @@ void CGameManager::postLoad(CProjectItem *project) {
 	// Signal the true talk manager and sound
 	_trueTalkManager.postLoad();
 	_sound.postLoad();
+}
+
+void CGameManager::initBounds() {
+	_bounds = Common::Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
 }
 
 } // End of namespace Titanic
