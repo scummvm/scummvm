@@ -87,7 +87,20 @@ void TitanicEngine::deinitialize() {
 Common::Error TitanicEngine::run() {
 	initialize();
 
+	// Main event loop
+	while (!shouldQuit()) {
+		processEvents();
+		g_system->delayMillis(5);		
+	}
+
+	deinitialize();
 	return Common::kNoError;
+}
+
+void TitanicEngine::processEvents() {
+	Common::Event evt;
+	g_system->getEventManager()->pollEvent(evt);
+
 }
 
 } // End of namespace Titanic

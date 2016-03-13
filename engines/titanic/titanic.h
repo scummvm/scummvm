@@ -80,6 +80,11 @@ private:
 	 * Handles game deinitialization
 	 */
 	void deinitialize();
+
+	/**
+	 * Processes pending events
+	 */
+	void processEvents();
 protected:
 	const TitanicGameDescription *_gameDescription;
 	int _loadSaveSlot;
