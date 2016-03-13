@@ -395,7 +395,6 @@ void Plane::calcLists(Plane &visiblePlane, const PlaneList &planeList, DrawList 
 	// over the currently inserted entries later.
 	DrawList::size_type drawListSizePrimary = drawList.size();
 
-	// NOTE: Setting this to true fixes the menu bars in GK1
 	if (/* TODO: dword_C6288 */ false) {  // "high resolution pictures"????
 		_screenItemList.sort();
 		bool encounteredPic = false;
