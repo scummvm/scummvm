@@ -37,6 +37,11 @@ public:
 	CLASSDEF
 
 	/**
+	 * Dump the item
+	 */
+	virtual CString dumpItem(int indent) const;
+
+	/**
 	 * Save the data for the class to file
 	 */
 	virtual void save(SimpleFile *file, int indent) const;

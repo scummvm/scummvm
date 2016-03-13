@@ -42,6 +42,17 @@ public:
 	CLASSDEF
 	CTreeItem();
 
+
+	/**
+	 * Dump the item and any of it's children
+	 */
+	void dump(int indent);
+
+	/**
+	 * Dump the item
+	 */
+	virtual CString dumpItem(int indent) const;
+
 	/**
 	 * Save the data for the class to file
 	 */

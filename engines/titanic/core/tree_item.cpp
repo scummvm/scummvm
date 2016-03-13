@@ -37,6 +37,27 @@ CTreeItem::CTreeItem() : _parent(nullptr), _firstChild(nullptr),
 	_nextSibling(nullptr), _priorSibling(nullptr), _field14(0) {
 }
 
+void CTreeItem::dump(int indent) {
+	CString line = dumpItem(indent);
+	debug("%s", line.c_str());
+
+	CTreeItem *item = getFirstChild();
+	while (item) {
+		item->dump(indent + 1);
+		
+		item = item->getNextSibling();
+	}
+}
+
+CString CTreeItem::dumpItem(int indent) const {
+	CString result;
+	for (int idx = 0; idx < indent; ++idx)
+		result += '\t';
+	result += getType()->_className;
+
+	return result;
+}
+
 bool CTreeItem::isFileItem() const {
 	return isInstanceOf(CFileItem::_type);
 }

@@ -26,6 +26,13 @@
 
 namespace Titanic {
 
+CString CNamedItem::dumpItem(int indent) const {
+	CString result = CTreeItem::dumpItem(indent);
+	result += " " + _name;
+
+	return result;
+}
+
 void CNamedItem::save(SimpleFile *file, int indent) const {
 	file->writeNumberLine(0, indent);
 	file->writeQuotedLine(_name, indent);
