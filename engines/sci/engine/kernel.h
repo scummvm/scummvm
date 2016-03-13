@@ -491,6 +491,8 @@ reg_t kSetShowStyle(EngineState *s, int argc, reg_t *argv);
 reg_t kSetPalStyleRange(EngineState *s, int argc, reg_t *argv);
 reg_t kGetHighPlanePri(EngineState *s, int argc, reg_t *argv);
 reg_t kFrameOut(EngineState *s, int argc, reg_t *argv);
+reg_t kCelHigh32(EngineState *s, int argc, reg_t *argv);
+reg_t kCelWide32(EngineState *s, int argc, reg_t *argv);
 
 reg_t kIsOnMe(EngineState *s, int argc, reg_t *argv); // kOnMe for SCI2, kIsOnMe for SCI2.1
 reg_t kInPolygon(EngineState *s, int argc, reg_t *argv);

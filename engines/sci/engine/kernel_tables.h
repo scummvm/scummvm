@@ -461,8 +461,12 @@ static SciKernelMapEntry s_kernelMap[] = {
 #ifdef ENABLE_SCI32
 	{ MAP_CALL(CantBeHere),        SIG_SCI32, SIGFOR_ALL,    "ol",                    NULL,            NULL },
 #endif
-	{ MAP_CALL(CelHigh),           SIG_EVERYWHERE,           "ii(i)",                 NULL,            kCelHigh_workarounds },
-	{ MAP_CALL(CelWide),           SIG_EVERYWHERE,           "ii(i)",                 NULL,            kCelWide_workarounds },
+	{ MAP_CALL(CelHigh),           SIG_SCI16, SIGFOR_ALL,    "ii(i)",                 NULL,            kCelHigh_workarounds },
+	{ MAP_CALL(CelWide),           SIG_SCI16, SIGFOR_ALL,    "ii(i)",                 NULL,            kCelWide_workarounds },
+#ifdef ENABLE_SCI32
+	{ "CelHigh", kCelHigh32,       SIG_SCI32, SIGFOR_ALL,    "iii",                   NULL,            NULL },
+	{ "CelWide", kCelWide32,       SIG_SCI32, SIGFOR_ALL,    "iii",                   NULL,            NULL },
+#endif
 	{ MAP_CALL(CheckFreeSpace),    SIG_SCI32, SIGFOR_ALL,    "r.*",                   NULL,            NULL },
 	{ MAP_CALL(CheckFreeSpace),    SIG_SCI11, SIGFOR_ALL,    "r(i)",                  NULL,            NULL },
 	{ MAP_CALL(CheckFreeSpace),    SIG_EVERYWHERE,           "r",                     NULL,            NULL },

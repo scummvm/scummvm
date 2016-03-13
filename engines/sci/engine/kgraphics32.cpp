@@ -310,6 +310,22 @@ reg_t kSetShowStyle(EngineState *s, int argc, reg_t *argv) {
 	return NULL_REG;
 }
 
+reg_t kCelHigh32(EngineState *s, int argc, reg_t *argv) {
+	GuiResourceId resourceId = argv[0].toUint16();
+	int16 loopNo = argv[1].toSint16();
+	int16 celNo = argv[2].toSint16();
+	CelObjView celObj(resourceId, loopNo, celNo);
+	return make_reg(0, mulru(celObj._height, Ratio(g_sci->_gfxFrameout->getCurrentBuffer().scriptHeight, celObj._scaledHeight)));
+}
+
+reg_t kCelWide32(EngineState *s, int argc, reg_t *argv) {
+	GuiResourceId resourceId = argv[0].toUint16();
+	int16 loopNo = argv[1].toSint16();
+	int16 celNo = argv[2].toSint16();
+	CelObjView celObj(resourceId, loopNo, celNo);
+	return make_reg(0, mulru(celObj._width, Ratio(g_sci->_gfxFrameout->getCurrentBuffer().scriptWidth, celObj._scaledWidth)));
+}
+
 reg_t kCelInfo(EngineState *s, int argc, reg_t *argv) {
 	// Used by Shivers 1, room 23601 to determine what blocks on the red door puzzle board
 	// are occupied by pieces already
