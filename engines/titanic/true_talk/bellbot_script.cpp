@@ -59,17 +59,17 @@ int BellbotScript::proc15() const {
 	return 0;
 }
 
-int BellbotScript::proc16() const {
+bool BellbotScript::proc16() const {
 	warning("TODO");
 	return 0;
 }
 
-int BellbotScript::proc17() const {
+bool BellbotScript::proc17() const {
 	warning("TODO");
 	return 0;
 }
 
-int BellbotScript::proc18() const {
+bool BellbotScript::proc18() const {
 	warning("TODO");
 	return 0;
 }

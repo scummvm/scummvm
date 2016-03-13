@@ -81,12 +81,12 @@ public:
 	virtual int proc10() const;
 	virtual int proc11() const;
 	virtual int proc12() const;
-	virtual void proc13() const;
+	virtual bool proc13() const;
 	virtual void proc14(int v);
 	virtual int proc15() const;
-	virtual int proc16() const;
-	virtual int proc17() const;
-	virtual int proc18() const;
+	virtual bool proc16() const;
+	virtual bool proc17() const;
+	virtual bool proc18() const;
 	virtual void proc19(int v);
 	virtual void proc20(int v);
 	virtual int proc21(int v);

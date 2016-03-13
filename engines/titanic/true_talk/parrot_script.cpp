@@ -39,12 +39,12 @@ int ParrotScript::proc10() const {
 	return 0;
 }
 
-int ParrotScript::proc17() const {
+bool ParrotScript::proc17() const {
 	warning("TODO");
 	return 0;
 }
 
-int ParrotScript::proc18() const {
+bool ParrotScript::proc18() const {
 	warning("TODO");
 	return 0;
 }

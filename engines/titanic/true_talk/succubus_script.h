@@ -39,8 +39,8 @@ public:
 	virtual int proc6() const;
 	virtual void proc7(int v1, int v2);
 	virtual int proc10() const;
-	virtual int proc17() const;
-	virtual int proc18() const;
+	virtual bool proc17() const;
+	virtual bool proc18() const;
 	virtual int proc21(int v);
 	virtual int proc23() const;
 	virtual void proc24();

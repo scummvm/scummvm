@@ -49,17 +49,17 @@ int LiftbotScript::proc15() const {
 	return 0;
 }
 
-int LiftbotScript::proc16() const {
+bool LiftbotScript::proc16() const {
 	warning("TODO");
 	return 0;
 }
 
-int LiftbotScript::proc17() const {
+bool LiftbotScript::proc17() const {
 	warning("TODO");
 	return 0;
 }
 
-int LiftbotScript::proc18() const {
+bool LiftbotScript::proc18() const {
 	warning("TODO");
 	return 0;
 }

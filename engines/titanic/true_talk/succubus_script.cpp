@@ -39,12 +39,12 @@ int SuccUBusScript::proc10() const {
 	return 0;
 }
 
-int SuccUBusScript::proc17() const {
+bool SuccUBusScript::proc17() const {
 	warning("TODO");
 	return 0;
 }
 
-int SuccUBusScript::proc18() const {
+bool SuccUBusScript::proc18() const {
 	warning("TODO");
 	return 0;
 }

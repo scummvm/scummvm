@@ -91,7 +91,7 @@ int TTNamedScript::proc12() const {
 	return 1;
 }
 
-void TTNamedScript::proc13() const {
+bool TTNamedScript::proc13() const {
 	warning("TODO");
 }
 
@@ -103,16 +103,16 @@ int TTNamedScript::proc15() const {
 	return 0;
 }
 
-int TTNamedScript::proc16() const {
-	return 1;
+bool TTNamedScript::proc16() const {
+	return true;
 }
 
-int TTNamedScript::proc17() const {
-	return 1;
+bool TTNamedScript::proc17() const {
+	return true;
 }
 
-int TTNamedScript::proc18() const {
-	return 1;
+bool TTNamedScript::proc18() const {
+	return true;
 }
 
 void TTNamedScript::proc19(int v) {

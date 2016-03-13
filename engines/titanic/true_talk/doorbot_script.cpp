@@ -44,17 +44,17 @@ int DoorbotScript::proc15() const {
 	return 0;
 }
 
-int DoorbotScript::proc16() const {
+bool DoorbotScript::proc16() const {
 	warning("TODO");
 	return 0;
 }
 
-int DoorbotScript::proc17() const {
+bool DoorbotScript::proc17() const {
 	warning("TODO");
 	return 0;
 }
 
-int DoorbotScript::proc18() const {
+bool DoorbotScript::proc18() const {
 	warning("TODO");
 	return 0;
 }

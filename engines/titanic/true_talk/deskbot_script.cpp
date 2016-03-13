@@ -60,17 +60,17 @@ int DeskbotScript::proc15() const {
 	return 0;
 }
 
-int DeskbotScript::proc16() const {
+bool DeskbotScript::proc16() const {
 	warning("TODO");
 	return 0;
 }
 
-int DeskbotScript::proc17() const {
+bool DeskbotScript::proc17() const {
 	warning("TODO");
 	return 0;
 }
 
-int DeskbotScript::proc18() const {
+bool DeskbotScript::proc18() const {
 	warning("TODO");
 	return 0;
 }

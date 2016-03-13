@@ -44,19 +44,19 @@ int BarbotScript::proc15() const {
 	return 0;
 }
 
-int BarbotScript::proc16() const {
+bool BarbotScript::proc16() const {
 	warning("TODO");
-	return 0;
+	return false;
 }
 
-int BarbotScript::proc17() const {
+bool BarbotScript::proc17() const {
 	warning("TODO");
-	return 0;
+	return false;
 }
 
-int BarbotScript::proc18() const {
+bool BarbotScript::proc18() const {
 	warning("TODO");
-	return 0;
+	return false;
 }
 
 int BarbotScript::proc21(int v) {

@@ -53,17 +53,17 @@ int MaitreDScript::proc10() const {
 	return 0;
 }
 
-int MaitreDScript::proc16() const {
+bool MaitreDScript::proc16() const {
 	warning("TODO");
 	return 0;
 }
 
-int MaitreDScript::proc17() const {
+bool MaitreDScript::proc17() const {
 	warning("TODO");
 	return 0;
 }
 
-int MaitreDScript::proc18() const {
+bool MaitreDScript::proc18() const {
 	warning("TODO");
 	return 0;
 }
