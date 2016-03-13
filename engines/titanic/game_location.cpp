@@ -74,8 +74,8 @@ CViewItem *CGameLocation::getView() {
 		_view = nullptr;
 	} else {
 		_viewNumber = _view->_viewNumber;
-		_nodeNumber = getNode()->_nodeNumber;
-		_roomNumber = getRoom()->_roomNumber;
+		_nodeNumber = _view->findNode()->_nodeNumber;
+		_roomNumber = _view->findRoom()->_roomNumber;
 	}
 
 	return _view;

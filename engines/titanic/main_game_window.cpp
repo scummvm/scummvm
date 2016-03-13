@@ -67,9 +67,6 @@ void CMainGameWindow::applicationStarting() {
 	_project->loadGame(saveSlot);
 
 	// TODO: Cursor/image
-	//***DEBUG****
-	_project->dump(0);
-	return;
 
 	// Generate starting messages
 	CViewItem *view = _gameManager->_gameState._gameLocation.getView();

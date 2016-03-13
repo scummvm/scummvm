@@ -169,7 +169,7 @@ CTreeItem *CTreeItem::findNextInstanceOf(ClassDef *classDef, CTreeItem *startIte
 
 void CTreeItem::addUnder(CTreeItem *newParent) {
 	if (newParent->_firstChild)
-		addSibling(newParent->getLastSibling());
+		addSibling(newParent->_firstChild->getLastSibling());
 	else
 		setParent(newParent);
 }
