@@ -61,11 +61,15 @@
 #include "common/str.h"
 #include "common/timer.h"
 
-#ifdef _MSC_VER
+#if defined(_MSC_VER)
 #include <winioctl.h>
 #include <ntddcdrm.h>
-#else
+#elif defined(__MINGW32__) && !defined(__MINGW64__)
+// Classic MinGW uses non standard paths for DDK headers.
 #include <ddk/ntddcdrm.h>
+#else
+#include <winioctl.h>
+#include <ntddcdrm.h>
 #endif
 
 class Win32AudioCDStream : public AudioCDStream {
