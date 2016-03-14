@@ -781,7 +781,8 @@ reg_t kStringCopy(EngineState *s, int argc, reg_t *argv) {
 	// Note: We're accessing from c_str() here because the
 	// string's size ignores the trailing 0 and therefore
 	// triggers an assert when doing string2[i + index2].
-	for (uint16 i = 0; i < count; i++)
+	uint16 size = MIN(string2Size, count);
+	for (uint16 i = 0; i < size; i++)
 		string1->setValue(i + index1, string2[i + index2]);
 
 	return argv[0];
