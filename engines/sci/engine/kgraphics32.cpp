@@ -330,24 +330,27 @@ reg_t kCelInfo(EngineState *s, int argc, reg_t *argv) {
 	// Used by Shivers 1, room 23601 to determine what blocks on the red door puzzle board
 	// are occupied by pieces already
 
-	switch (argv[0].toUint16()) {	// subops 0 - 4
-		// 0 - return the view
-		// 1 - return the loop
-		// 2, 3 - nop
-		case 4: {
-			GuiResourceId viewId = argv[1].toSint16();
-			int16 loopNo = argv[2].toSint16();
-			int16 celNo = argv[3].toSint16();
-			int16 x = argv[4].toUint16();
-			int16 y = argv[5].toUint16();
-			byte color = g_sci->_gfxCache->kernelViewGetColorAtCoordinate(viewId, loopNo, celNo, x, y);
-			return make_reg(0, color);
-		}
-		default: {
-			kStub(s, argc, argv);
-			return s->r_acc;
-		}
+	CelObjView view(argv[1].toUint16(), argv[2].toSint16(), argv[3].toSint16());
+
+	int16 result = 0;
+
+	switch (argv[0].toUint16()) {
+	case 0:
+		result = view._displace.x;
+		break;
+	case 1:
+		result = view._displace.y;
+		break;
+	case 2:
+	case 3:
+		// null operation
+		break;
+	case 4:
+		result = view.readPixel(argv[4].toSint16(), argv[5].toSint16(), view._mirrorX);
+		break;
 	}
+
+	return make_reg(0, result);
 }
 
 reg_t kScrollWindow(EngineState *s, int argc, reg_t *argv) {
