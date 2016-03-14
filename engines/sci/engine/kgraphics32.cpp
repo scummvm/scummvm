@@ -630,29 +630,18 @@ reg_t kBitmapDrawColor(EngineState *s, int argc, reg_t *argv) {
 	// bitmap, left, top, right, bottom, color
 
 	// called e.g. from TextView::init() and TextView::draw() in Torin's Passage, script 64890
-	return kStubNull(s, argc + 1, argv - 1);
-#if 0
-	reg_t hunkId = argv[1];	// obtained from kBitmap(0)
-	uint16 x = argv[2].toUint16();
-	uint16 y = argv[3].toUint16();
-	uint16 fillWidth = argv[4].toUint16();	// width - 1
-	uint16 fillHeight = argv[5].toUint16();	// height - 1
-	uint16 back = argv[6].toUint16();
 
-	byte *memoryPtr = s->_segMan->getHunkPointer(hunkId);
-	// Get totalWidth, totalHeight
-	uint16 totalWidth = READ_LE_UINT16(memoryPtr);
-	uint16 totalHeight = READ_LE_UINT16(memoryPtr + 2);
-	uint16 width = MIN<uint16>(totalWidth - x, fillWidth);
-	uint16 height = MIN<uint16>(totalHeight - y, fillHeight);
-	byte *bitmap = memoryPtr + BITMAP_HEADER_SIZE;
+	BitmapResource bitmap(argv[0]);
+	Common::Rect fillRect(
+		argv[1].toSint16(),
+		argv[2].toSint16(),
+		argv[3].toSint16() + 1,
+		argv[4].toSint16() + 1
+	);
 
-	for (uint16 curY = 0; curY < height; curY++) {
-		for (uint16 curX = 0; curX < width; curX++) {
-			bitmap[(curY + y) * totalWidth + (curX + x)] = back;
-		}
-	}
-#endif
+	Buffer buffer(bitmap.getWidth(), bitmap.getHeight(), bitmap.getPixels());
+	buffer.fillRect(fillRect, argv[5].toSint16());
+	return NULL_REG;
 }
 
 reg_t kBitmapDrawBitmap(EngineState *s, int argc, reg_t *argv) {
