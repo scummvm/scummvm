@@ -72,25 +72,22 @@ struct RemoveSequenceItem {
 
 struct RemoveSpriteDrawItem {
 	int _id;
-	Graphics::Surface *surface;
+	Graphics::Surface *_surface;
 };
 
 struct GfxItem {
-	int sequenceId;
-	int id;
-	int flags;
-	SequenceAnimation *animation;
-	int soundValue;
-	int field_18;
-	int field_1C;
-	int currFrameNum;
-	int delayTicks;
-	bool updFlag;
-	int updRectsCount;
-	Graphics::Surface *surface;
-	Common::Rect updRects[kMaxUpdRects];
-	SequenceFrame prevFrame;
-	SequenceFrame currFrame;
+	int _sequenceId;
+	int _id;
+	int _flags;
+	SequenceAnimation *_animation;
+	int _currFrameNum;
+	int _delayTicks;
+	bool _updFlag;
+	int _updRectsCount;
+	Graphics::Surface *_surface;
+	Common::Rect _updRects[kMaxUpdRects];
+	SequenceFrame _prevFrame;
+	SequenceFrame _currFrame;
 	void testUpdRect(const Common::Rect &updRect);
 };
 
