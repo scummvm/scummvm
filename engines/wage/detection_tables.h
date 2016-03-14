@@ -43,7 +43,7 @@ static const ADGameDescription gameDescriptions[] = {
 	// Polygons with ignored byte 1
 	FANGAME("Double Trouble", "1652e36857a04c01dc560234c4818619", 542371),
 	// Crash at start in GUI rendering
-	FANGAME("Dune Eternity", "94a9c4f8b3dabd1846d76215a49bd221", 290201),
+	FANGAME("Dune Eternity", "94a9c4f8b3dabd1846d76215a49bd221", 290201), // Original file name is "***DUNE ETERNITY*** "
 	FANGAMEN("Dungeon World II", "DungeonWorld2", "0154ea11d3cbb536c13b4ae9e6902d48", 230199),
 	FANGAME("Eidisi I", "595117cbed33e8de1ab3714b33880205", 172552),
 	// Problems(?) with text on the first screen
@@ -75,6 +75,7 @@ static const ADGameDescription gameDescriptions[] = {
 	BIGGAME("scepters", "", "Scepters", "3311deef8bf82f0b4b1cfa15a3b3289d", 346595),
 	// ??? problems with dog bitmap?
 	FANGAMEN("Space Adventure", "SpaceAdventure", "f9f3f1c419f56955f7966355b34ea5c8", 155356),
+	FANGAMEN("Spear of Destiny", "SpearOfDestiny", "913812a1ac7a6b0e48dadd1afa1c7763", 333665), // Original file name "SpearOfDestiny†"
 	FANGAME("Star Trek", "44aaef4806578700429de5aaf95c266e", 53320),
 	FANGAME("Strange Disappearance", "d81f2d03a1e863f04fb1e3a5495b720e", 772282),
 	FANGAME("Time Bomb", "4b0e1a1fbaaa4930accd0f9f0e1519c7", 64564),
@@ -85,6 +86,7 @@ static const ADGameDescription gameDescriptions[] = {
 	// Admission for on 3rd screen is messed up
 	FANGAME("The Tower", "435f420b9dff895ae1ddf1338040c51d", 556539),
 	// Doesn't go past first scene
+	FANGAME("The Village", "913812a1ac7a6b0e48dadd1afa1c7763", 314828),
 	BIGGAME("twisted", "", "Twisted! 1.6", "26207bdf0bb539464f136f0669af885f", 960954),
 	FANGAME("Wishing Well", "913812a1ac7a6b0e48dadd1afa1c7763", 103688),
 	FANGAME("Wizard's Warehouse", "913812a1ac7a6b0e48dadd1afa1c7763", 159748),
