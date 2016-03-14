@@ -137,6 +137,21 @@ BbvsEngine::~BbvsEngine() {
 }
 
 void BbvsEngine::newGame() {
+	memset(_easterEggInput, 0, sizeof(_easterEggInput));
+	_gameTicks = 0;
+	_playVideoNumber = 0;
+	memset(_inventoryItemStatus, 0, sizeof(_inventoryItemStatus));
+	memset(_gameVars, 0, sizeof(_gameVars));
+	memset(_sceneVisited, 0, sizeof(_sceneVisited));
+
+	_mouseX = 160;
+	_mouseY = 120;
+	_mouseButtons = 0;
+
+	_currVerbNum = kVerbLook;
+	_currTalkObjectIndex = -1;
+	_currSceneNum = 0;
+
 	_currInventoryItem = -1;
 	_newSceneNum = 32;
 }
@@ -162,24 +177,10 @@ Common::Error BbvsEngine::run() {
 	_sound = new SoundMan();
 
 	allocSnapshot();
-	memset(_easterEggInput, 0, sizeof(_easterEggInput));
 
-	_gameTicks = 0;
-	_playVideoNumber = 0;
+	newGame();
+
 	_bootSaveSlot = -1;
-
-	memset(_inventoryItemStatus, 0, sizeof(_inventoryItemStatus));
-	memset(_gameVars, 0, sizeof(_gameVars));
-	memset(_sceneVisited, 0, sizeof(_sceneVisited));
-
-	_mouseX = 160;
-	_mouseY = 120;
-	_mouseButtons = 0;
-
-	_currVerbNum = kVerbLook;
-	_currInventoryItem = -1;
-	_currTalkObjectIndex = -1;
-	_currSceneNum = 0;
 	_newSceneNum = 31;
 
 	if (ConfMan.hasKey("save_slot"))
