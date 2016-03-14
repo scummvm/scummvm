@@ -25,6 +25,7 @@
 #include "common/error.h"
 #include "common/file.h"
 #include "common/stream.h"
+#include "common/ptr.h"
 
 #include "adl/hires1.h"
 #include "adl/display.h"
@@ -34,8 +35,7 @@ namespace Adl {
 void HiRes1Engine::runIntro() const {
 	Common::File file;
 
-	if (!file.open(IDS_HR1_EXE_0))
-		error("Failed to open file '" IDS_HR1_EXE_0 "'");
+	openFile(file, IDS_HR1_EXE_0);
 
 	file.seek(IDI_HR1_OFS_LOGO_0);
 	_display->setMode(DISPLAY_MODE_HIRES);
@@ -49,8 +49,7 @@ void HiRes1Engine::runIntro() const {
 	_display->setMode(DISPLAY_MODE_TEXT);
 
 	Common::File basic;
-	if (!basic.open(IDS_HR1_LOADER))
-		error("Failed to open file '" IDS_HR1_LOADER "'");
+	openFile(basic, IDS_HR1_LOADER);
 
 	Common::String str;
 
@@ -126,10 +125,8 @@ void HiRes1Engine::runIntro() const {
 
 	_display->setMode(DISPLAY_MODE_MIXED);
 
-	if (!file.open(IDS_HR1_EXE_1))
-		error("Failed to open file '" IDS_HR1_EXE_1 "'");
-
 	// Title screen shown during loading
+	openFile(file, IDS_HR1_EXE_1);
 	file.seek(IDI_HR1_OFS_LOGO_1);
 	_display->loadFrameBuffer(file);
 	_display->updateHiResScreen();
@@ -140,17 +137,13 @@ void HiRes1Engine::init() {
 	_graphics = new Graphics_v1(*_display);
 
 	Common::File f;
-
-	if (!f.open(IDS_HR1_MESSAGES))
-		error("Failed to open file '" IDS_HR1_MESSAGES "'");
+	openFile(f, IDS_HR1_MESSAGES);
 
 	for (uint i = 0; i < IDI_HR1_NUM_MESSAGES; ++i)
 		_messages.push_back(readString(f, APPLECHAR('\r')) + APPLECHAR('\r'));
 
 	f.close();
-
-	if (!f.open(IDS_HR1_EXE_1))
-		error("Failed to open file '" IDS_HR1_EXE_1 "'");
+	openFile(f, IDS_HR1_EXE_1);
 
 	// Some messages have overrides inside the executable
 	_messages[IDI_HR1_MSG_CANT_GO_THERE - 1] = readStringAt(f, IDI_HR1_OFS_STR_CANT_GO_THERE);
@@ -223,8 +216,7 @@ void HiRes1Engine::initState() {
 	_state.vars.clear();
 	_state.vars.resize(IDI_HR1_NUM_VARS);
 
-	if (!f.open(IDS_HR1_EXE_1))
-		error("Failed to open file '" IDS_HR1_EXE_1 "'");
+	openFile(f, IDS_HR1_EXE_1);
 
 	// Load room data from executable
 	_state.rooms.clear();
@@ -277,9 +269,7 @@ void HiRes1Engine::drawPic(byte pic, Common::Point pos) const {
 	Common::File f;
 	Common::String name = Common::String::format("BLOCK%i", _pictures[pic].block);
 
-	if (!f.open(name))
-		error("Failed to open file '%s'", name.c_str());
-
+	openFile(f, name);
 	f.seek(_pictures[pic].offset);
 	_graphics->drawPic(f, pos, 0x7f);
 }
@@ -305,10 +295,10 @@ void HiRes1Engine::printMessage(uint idx, bool wait) const {
 
 void HiRes1Engine::drawItem(const Item &item, const Common::Point &pos) const {
 	if (item.isLineArt) {
-		Common::File *f = openFile(IDS_HR1_EXE_1);
-		f->seek(_corners[item.picture - 1]);
-		static_cast<Graphics_v1 *>(_graphics)->drawCorners(*f, pos);
-		delete f;
+		Common::File f;
+		openFile(f, IDS_HR1_EXE_1);
+		f.seek(_corners[item.picture - 1]);
+		static_cast<Graphics_v1 *>(_graphics)->drawCorners(f, pos);
 	} else
 		drawPic(item.picture, pos);
 }

@@ -34,10 +34,7 @@ namespace Adl {
 
 void HiRes2Engine::runIntro() const {
 	Common::File f;
-
-	if (!f.open(IDS_HR2_DISK_IMAGE))
-		error("Failed to open file '" IDS_HR2_DISK_IMAGE "'");
-
+	openFile(f, IDS_HR2_DISK_IMAGE);
 	f.seek(IDI_HR2_OFS_INTRO_TEXT);
 
 	_display->setMode(DISPLAY_MODE_TEXT);
@@ -55,9 +52,7 @@ void HiRes2Engine::init() {
 	_graphics = new Graphics_v2(*_display);
 
 	Common::File f;
-
-	if (!f.open(IDS_HR2_DISK_IMAGE))
-		error("Failed to open file '" IDS_HR2_DISK_IMAGE "'");
+	openFile(f, IDS_HR2_DISK_IMAGE);
 
 	for (uint i = 0; i < IDI_HR2_NUM_MESSAGES; ++i) {
 		f.seek(IDI_HR2_OFS_MESSAGES + i * 4);
@@ -97,9 +92,7 @@ void HiRes2Engine::init() {
 
 void HiRes2Engine::initState() {
 	Common::File f;
-
-	if (!f.open(IDS_HR2_DISK_IMAGE))
-		error("Failed to open file '" IDS_HR2_DISK_IMAGE "'");
+	openFile(f, IDS_HR2_DISK_IMAGE);
 
 	_state.rooms.clear();
 	f.seek(IDI_HR2_OFS_ROOMS);
@@ -127,10 +120,7 @@ void HiRes2Engine::drawPic(byte pic, Common::Point pos) const {
 	// Temp hack to show a pic
 
 	Common::File f;
-
-	if (!f.open(IDS_HR2_DISK_IMAGE))
-		error("Failed to open file '" IDS_HR2_DISK_IMAGE "'");
-
+	openFile(f, IDS_HR2_DISK_IMAGE);
 	f.seek(0x1000);
 
 	_graphics->drawPic(f, pos, 0);

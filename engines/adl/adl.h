@@ -143,7 +143,7 @@ protected:
 
 	Common::String readString(Common::ReadStream &stream, byte until = 0) const;
 	Common::String readStringAt(Common::SeekableReadStream &stream, uint offset, byte until = 0) const;
-	Common::File *openFile(const Common::String &name) const;
+	void openFile(Common::File &file, const Common::String &name) const;
 
 	virtual void printMessage(uint idx, bool wait = true) const;
 	void delay(uint32 ms) const;
