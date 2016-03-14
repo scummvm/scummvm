@@ -109,25 +109,42 @@ void CelObj::deinit() {
 
 template<bool FLIP, typename READER>
 struct SCALER_NoScale {
+#ifndef NDEBUG
+	const byte *_rowEdge;
+#endif
 	const byte *_row;
 	READER _reader;
 	const int16 _lastIndex;
+	const int16 _sourceX;
+	const int16 _sourceY;
 
-	SCALER_NoScale(const CelObj &celObj, const int16 maxWidth) :
+	SCALER_NoScale(const CelObj &celObj, const int16 maxWidth, const Common::Point &scaledPosition) :
 	_reader(celObj, FLIP ? celObj._width : maxWidth),
-	_lastIndex(celObj._width - 1) {}
+	_lastIndex(celObj._width - 1),
+	_sourceX(scaledPosition.x),
+	_sourceY(scaledPosition.y) {}
 
-	inline void setSource(const int16 x, const int16 y) {
-		_row = _reader.getRow(y);
+	inline void setTarget(const int16 x, const int16 y) {
+		_row = _reader.getRow(y - _sourceY);
 
 		if (FLIP) {
-			_row += _lastIndex - x;
+#ifndef NDEBUG
+			_rowEdge = _row - 1;
+#endif
+			_row += _lastIndex - (x - _sourceX);
+			assert(_row > _rowEdge);
 		} else {
-			_row += x;
+#ifndef NDEBUG
+			_rowEdge = _row + _lastIndex + 1;
+#endif
+			_row += x - _sourceX;
+			assert(_row < _rowEdge);
 		}
 	}
 
 	inline byte read() {
+		assert(_row != _rowEdge);
+
 		if (FLIP) {
 			return *_row--;
 		} else {
@@ -138,55 +155,96 @@ struct SCALER_NoScale {
 
 template<bool FLIP, typename READER>
 struct SCALER_Scale {
+#ifndef NDEBUG
+	int16 _maxX;
+#endif
 	const byte *_row;
 	READER _reader;
-	const CelScalerTable *_table;
 	int16 _x;
-	const uint16 _lastIndex;
+	static int16 _valuesX[1024];
+	static int16 _valuesY[1024];
 
-	SCALER_Scale(const CelObj &celObj, const int16 maxWidth, const Ratio scaleX, const Ratio scaleY) :
+	SCALER_Scale(const CelObj &celObj, const Common::Rect &targetRect, const Common::Point &scaledPosition, const Ratio scaleX, const Ratio scaleY) :
+#ifndef NDEBUG
+	_maxX(targetRect.right - 1),
+#endif
 	// The maximum width of the scaled object may not be as
 	// wide as the source data it requires if downscaling,
 	// so just always make the reader decompress an entire
 	// line of source data when scaling
-	_reader(celObj, celObj._width),
-	_table(CelObj::_scaler->getScalerTable(scaleX, scaleY)),
-	_lastIndex(maxWidth - 1) {}
+	_reader(celObj, celObj._width) {
+		// In order for scaling ratios to apply equally across objects that
+		// start at different positions on the screen, the pixels that are
+		// read from the source bitmap must all use the same pattern of
+		// division. In other words, cels must follow the same scaling pattern
+		// as if they were drawn starting at an even multiple of the scaling
+		// ratio, even if they were not.
+		//
+		// To get the correct source pixel when reading out through the scaler,
+		// the engine creates a lookup table for each axis that translates
+		// directly from target positions to the indexes of source pixels using
+		// the global cadence for the given scaling ratio.
 
-	inline void setSource(const int16 x, const int16 y) {
-		_row = _reader.getRow(_table->valuesY[y]);
+		const CelScalerTable *table = CelObj::_scaler->getScalerTable(scaleX, scaleY);
+
+		const int16 unscaledX = (scaledPosition.x / scaleX).toInt();
 		if (FLIP) {
-			_x = _lastIndex - x;
+			int lastIndex = celObj._width - 1;
+			for (int16 x = targetRect.left; x < targetRect.right; ++x) {
+				_valuesX[x] = lastIndex - (table->valuesX[x] - unscaledX);
+			}
 		} else {
-			_x = x;
+			for (int16 x = targetRect.left; x < targetRect.right; ++x) {
+				_valuesX[x] = table->valuesX[x] - unscaledX;
+			}
 		}
+
+		const int16 unscaledY = (scaledPosition.y / scaleY).toInt();
+		for (int16 y = targetRect.top; y < targetRect.bottom; ++y) {
+			_valuesY[y] = table->valuesY[y] - unscaledY;
+		}
+	}
+
+	inline void setTarget(const int16 x, const int16 y) {
+		_row = _reader.getRow(_valuesY[y]);
+		_x = x;
+		assert(_x >= 0 && _x <= _maxX);
 	}
 
 	inline byte read() {
-		if (FLIP) {
-			return _row[_table->valuesX[_x--]];
-		} else {
-			return _row[_table->valuesX[_x++]];
-		}
+		assert(_x >= 0 && _x <= _maxX);
+		return _row[_valuesX[_x++]];
 	}
 };
+
+template<bool FLIP, typename READER>
+int16 SCALER_Scale<FLIP, READER>::_valuesX[1024];
+template<bool FLIP, typename READER>
+int16 SCALER_Scale<FLIP, READER>::_valuesY[1024];
 
 #pragma mark -
 #pragma mark CelObj - Resource readers
 
 struct READER_Uncompressed {
 private:
+#ifndef NDEBUG
+	const int16 _sourceHeight;
+#endif
 	byte *_pixels;
 	const int16 _sourceWidth;
 
 public:
 	READER_Uncompressed(const CelObj &celObj, const int16) :
+#ifndef NDEBUG
+	_sourceHeight(celObj._height),
+#endif
 	_sourceWidth(celObj._width) {
 		byte *resource = celObj.getResPointer();
 		_pixels = resource + READ_SCI11ENDIAN_UINT32(resource + celObj._celHeaderOffset + 24);
 	}
 
 	inline const byte *getRow(const int16 y) const {
+		assert(y >= 0 && y < _sourceHeight);
 		return _pixels + y * _sourceWidth;
 	}
 };
@@ -210,7 +268,7 @@ public:
 	_sourceHeight(celObj._height),
 	_transparentColor(celObj._transparentColor),
 	_maxWidth(maxWidth) {
-		assert(_maxWidth <= celObj._width);
+		assert(maxWidth <= celObj._width);
 
 		byte *celHeader = _resource + celObj._celHeaderOffset;
 		_dataOffset = READ_SCI11ENDIAN_UINT32(celHeader + 24);
@@ -219,6 +277,7 @@ public:
 	}
 
 	inline const byte *getRow(const int16 y) {
+		assert(y >= 0 && y < _sourceHeight);
 		if (y != _y) {
 			// compressed data segment for row
 			byte *row = _resource + _dataOffset + READ_SCI11ENDIAN_UINT32(_resource + _controlOffset + y * 4);
@@ -227,7 +286,7 @@ public:
 			byte *literal = _resource + _uncompressedDataOffset + READ_SCI11ENDIAN_UINT32(_resource + _controlOffset + _sourceHeight * 4 + y * 4);
 
 			uint8 length;
-			for (int i = 0; i < _maxWidth; i += length) {
+			for (int16 i = 0; i < _maxWidth; i += length) {
 				byte controlByte = *row++;
 				length = controlByte;
 
@@ -574,18 +633,15 @@ struct RENDERER {
 	_skipColor(skipColor) {}
 
 	inline void draw(Buffer &target, const Common::Rect &targetRect, const Common::Point &scaledPosition) const {
-		const int16 sourceX = targetRect.left - scaledPosition.x;
-		const int16 sourceY = targetRect.top - scaledPosition.y;
-
 		byte *targetPixel = (byte *)target.getPixels() + target.screenWidth * targetRect.top + targetRect.left;
 
 		const int16 skipStride = target.screenWidth - targetRect.width();
 		const int16 targetWidth = targetRect.width();
 		const int16 targetHeight = targetRect.height();
-		for (int y = 0; y < targetHeight; ++y) {
-			_scaler.setSource(sourceX, sourceY + y);
+		for (int16 y = 0; y < targetHeight; ++y) {
+			_scaler.setTarget(targetRect.left, targetRect.top + y);
 
-			for (int x = 0; x < targetWidth; ++x) {
+			for (int16 x = 0; x < targetWidth; ++x) {
 				_mapper.draw(targetPixel++, _scaler.read(), _skipColor);
 			}
 
@@ -598,7 +654,7 @@ template<typename MAPPER, typename SCALER>
 void CelObj::render(Buffer &target, const Common::Rect &targetRect, const Common::Point &scaledPosition) const {
 
 	MAPPER mapper;
-	SCALER scaler(*this, targetRect.left - scaledPosition.x + targetRect.width());
+	SCALER scaler(*this, targetRect.left - scaledPosition.x + targetRect.width(), scaledPosition);
 	RENDERER<MAPPER, SCALER> renderer(mapper, scaler, _transparentColor);
 	renderer.draw(target, targetRect, scaledPosition);
 }
@@ -607,7 +663,7 @@ template<typename MAPPER, typename SCALER>
 void CelObj::render(Buffer &target, const Common::Rect &targetRect, const Common::Point &scaledPosition, const Ratio &scaleX, const Ratio &scaleY) const {
 
 	MAPPER mapper;
-	SCALER scaler(*this, targetRect.left - scaledPosition.x + targetRect.width(), scaleX, scaleY);
+	SCALER scaler(*this, targetRect, scaledPosition, scaleX, scaleY);
 	RENDERER<MAPPER, SCALER> renderer(mapper, scaler, _transparentColor);
 	renderer.draw(target, targetRect, scaledPosition);
 }
