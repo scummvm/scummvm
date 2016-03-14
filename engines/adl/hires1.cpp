@@ -136,7 +136,9 @@ void HiRes1Engine::runIntro() const {
 	delay(2000);
 }
 
-void HiRes1Engine::loadData() {
+void HiRes1Engine::init() {
+	_graphics = new Graphics_v1(*_display);
+
 	Common::File f;
 
 	if (!f.open(IDS_HR1_MESSAGES))
@@ -196,21 +198,10 @@ void HiRes1Engine::loadData() {
 	}
 
 	// Load right-angle line art
-	f.seek(IDI_HR1_OFS_LINE_ART);
-	uint16 lineArtTotal = f.readUint16LE();
-	for (uint i = 0; i < lineArtTotal; ++i) {
-		f.seek(IDI_HR1_OFS_LINE_ART + 2 + i * 2);
-		uint16 offset = f.readUint16LE();
-		f.seek(IDI_HR1_OFS_LINE_ART + offset);
-
-		Common::Array<byte> lineArt;
-		byte b = f.readByte();
-		while (b != 0) {
-			lineArt.push_back(b);
-			b = f.readByte();
-		}
-		_lineArt.push_back(lineArt);
-	}
+	f.seek(IDI_HR1_OFS_CORNERS);
+	uint16 cornersCount = f.readUint16LE();
+	for (uint i = 0; i < cornersCount; ++i)
+		_corners.push_back(IDI_HR1_OFS_CORNERS + f.readUint16LE());
 
 	if (f.eos() || f.err())
 		error("Failed to read game data from '" IDS_HR1_EXE_1 "'");
@@ -290,7 +281,7 @@ void HiRes1Engine::drawPic(byte pic, Common::Point pos) const {
 		error("Failed to open file '%s'", name.c_str());
 
 	f.seek(_pictures[pic].offset);
-	drawPic(f, pos);
+	_graphics->drawPic(f, pos, 0x7f);
 }
 
 void HiRes1Engine::printMessage(uint idx, bool wait) const {
@@ -312,6 +303,16 @@ void HiRes1Engine::printMessage(uint idx, bool wait) const {
 	AdlEngine::printMessage(idx, wait);
 }
 
+void HiRes1Engine::drawItem(const Item &item, const Common::Point &pos) const {
+	if (item.isLineArt) {
+		Common::File *f = openFile(IDS_HR1_EXE_1);
+		f->seek(_corners[item.picture - 1]);
+		static_cast<Graphics_v1 *>(_graphics)->drawCorners(*f, pos);
+		delete f;
+	} else
+		drawPic(item.picture, pos);
+}
+
 void HiRes1Engine::showRoom() const {
 	if (!_state.isDark) {
 		drawPic(getCurRoom().curPicture);
@@ -320,82 +321,6 @@ void HiRes1Engine::showRoom() const {
 
 	_display->updateHiResScreen();
 	printMessage(_roomDesc[_state.room - 1], false);
-}
-
-void HiRes1Engine::drawLine(const Common::Point &p1, const Common::Point &p2, byte color) const {
-	// This draws a four-connected line
-
-	int16 deltaX = p2.x - p1.x;
-	int8 xStep = 1;
-
-	if (deltaX < 0) {
-		deltaX = -deltaX;
-		xStep = -1;
-	}
-
-	int16 deltaY = p2.y - p1.y;
-	int8 yStep = -1;
-
-	if (deltaY > 0) {
-		deltaY = -deltaY;
-		yStep = 1;
-	}
-
-	Common::Point p(p1);
-	int16 steps = deltaX - deltaY + 1;
-	int16 err = deltaX + deltaY;
-
-	while (1) {
-		_display->putPixel(p, color);
-
-		if (--steps == 0)
-			return;
-
-		if (err < 0) {
-			p.y += yStep;
-			err += deltaX;
-		} else {
-			p.x += xStep;
-			err += deltaY;
-		}
-	}
-}
-
-void HiRes1Engine::drawPic(Common::ReadStream &stream, const Common::Point &pos) const {
-	byte x, y;
-	bool bNewLine = false;
-	byte oldX = 0, oldY = 0;
-	while (1) {
-		x = stream.readByte();
-		y = stream.readByte();
-
-		if (stream.err() || stream.eos())
-			error("Failed to read picture");
-
-		if (x == 0xff && y == 0xff)
-			return;
-
-		if (x == 0 && y == 0) {
-			bNewLine = true;
-			continue;
-		}
-
-		x += pos.x;
-		y += pos.y;
-
-		if (y > 160)
-			y = 160;
-
-		if (bNewLine) {
-			_display->putPixel(Common::Point(x, y), 0x7f);
-			bNewLine = false;
-		} else {
-			drawLine(Common::Point(oldX, oldY), Common::Point(x, y), 0x7f);
-		}
-
-		oldX = x;
-		oldY = y;
-	}
 }
 
 Engine *HiRes1Engine_create(OSystem *syst, const AdlGameDescription *gd) {

@@ -70,10 +70,11 @@ public:
 private:
 	// AdlEngine
 	void runIntro() const;
-	void loadData();
+	void init();
 	void initState();
 	void restartGame();
 	void drawPic(byte pic, Common::Point pos) const;
+	void drawItem(const Item &item, const Common::Point &pos) const { }
 	void showRoom() const;
 };
 

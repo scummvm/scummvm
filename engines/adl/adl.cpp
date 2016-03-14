@@ -38,16 +38,19 @@
 #include "adl/adl.h"
 #include "adl/display.h"
 #include "adl/detection.h"
+#include "adl/graphics.h"
 
 namespace Adl {
 
 AdlEngine::~AdlEngine() {
 	delete _display;
+	delete _graphics;
 }
 
 AdlEngine::AdlEngine(OSystem *syst, const AdlGameDescription *gd) :
 		Engine(syst),
 		_display(nullptr),
+		_graphics(nullptr),
 		_gameDescription(gd),
 		_isRestarting(false),
 		_isRestoring(false),
@@ -80,6 +83,14 @@ Common::String AdlEngine::readString(Common::ReadStream &stream, byte until) con
 Common::String AdlEngine::readStringAt(Common::SeekableReadStream &stream, uint offset, byte until) const {
 	stream.seek(offset);
 	return readString(stream, until);
+}
+
+Common::File *AdlEngine::openFile(const Common::String &name) const {
+	Common::File *f = new Common::File();
+	if (!f->open(name))
+		error("Error opening '%s'", name.c_str());
+
+	return f;
 }
 
 void AdlEngine::printMessage(uint idx, bool wait) const {
@@ -281,10 +292,7 @@ void AdlEngine::drawItems() const {
 		if (item->state == IDI_ITEM_MOVED) {
 			if (getCurRoom().picture == getCurRoom().curPicture) {
 				const Common::Point &p =  _itemOffsets[dropped];
-				if (item->isLineArt)
-					drawLineArt(_lineArt[item->picture - 1], p);
-				else
-					drawPic(item->picture, p);
+				drawItem(*item, p);
 				++dropped;
 			}
 			continue;
@@ -294,58 +302,10 @@ void AdlEngine::drawItems() const {
 
 		for (pic = item->roomPictures.begin(); pic != item->roomPictures.end(); ++pic) {
 			if (*pic == getCurRoom().curPicture) {
-				if (item->isLineArt)
-					drawLineArt(_lineArt[item->picture - 1], item->position);
-				else
-					drawPic(item->picture, item->position);
+				drawItem(*item, item->position);
 				continue;
 			}
 		}
-	}
-}
-
-void AdlEngine::drawNextPixel(Common::Point &p, byte color, byte bits, byte quadrant) const {
-	if (bits & 4)
-		_display->putPixel(p, color);
-
-	bits += quadrant;
-
-	if (bits & 1)
-		p.x += (bits & 2 ? -1 : 1);
-	else
-		p.y += (bits & 2 ? 1 : -1);
-}
-
-void AdlEngine::drawLineArt(const Common::Array<byte> &lineArt, const Common::Point &pos, byte rotation, byte scaling, byte color) const {
-	const byte stepping[] = {
-		0xff, 0xfe, 0xfa, 0xf4, 0xec, 0xe1, 0xd4, 0xc5,
-		0xb4, 0xa1, 0x8d, 0x78, 0x61, 0x49, 0x31, 0x18,
-		0xff
-	};
-
-	byte quadrant = rotation >> 4;
-	rotation &= 0xf;
-	byte xStep = stepping[rotation];
-	byte yStep = stepping[(rotation ^ 0xf) + 1] + 1;
-
-	Common::Point p(pos);
-
-	for (uint i = 0; i < lineArt.size(); ++i) {
-		byte b = lineArt[i];
-
-		do {
-			byte xFrac = 0x80;
-			byte yFrac = 0x80;
-			for (uint j = 0; j < scaling; ++j) {
-				if (xFrac + xStep + 1 > 255)
-					drawNextPixel(p, color, b, quadrant);
-				xFrac += xStep + 1;
-				if (yFrac + yStep > 255)
-					drawNextPixel(p, color, b, quadrant + 1);
-				yFrac += yStep;
-			}
-			b >>= 3;
-		} while (b != 0);
 	}
 }
 
@@ -447,7 +407,7 @@ void AdlEngine::dropItem(byte noun) {
 Common::Error AdlEngine::run() {
 	_display = new Display();
 
-	loadData();
+	init();
 
 	int saveSlot = ConfMan.getInt("save_slot");
 	if (saveSlot >= 0) {

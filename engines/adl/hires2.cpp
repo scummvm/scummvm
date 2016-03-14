@@ -51,7 +51,9 @@ void HiRes2Engine::runIntro() const {
 	delay(2000);
 }
 
-void HiRes2Engine::loadData() {
+void HiRes2Engine::init() {
+	_graphics = new Graphics_v2(*_display);
+
 	Common::File f;
 
 	if (!f.open(IDS_HR2_DISK_IMAGE))
@@ -122,8 +124,7 @@ void HiRes2Engine::restartGame() {
 }
 
 void HiRes2Engine::drawPic(byte pic, Common::Point pos) const {
-	// Temp hack
-	Graphics test(*_display);
+	// Temp hack to show a pic
 
 	Common::File f;
 
@@ -132,7 +133,7 @@ void HiRes2Engine::drawPic(byte pic, Common::Point pos) const {
 
 	f.seek(0x1000);
 
-	test.draw(f);
+	_graphics->drawPic(f, pos, 0);
 }
 
 void HiRes2Engine::showRoom() const {

@@ -26,6 +26,7 @@
 #include "common/str.h"
 
 #include "adl/adl.h"
+#include "adl/graphics.h"
 
 namespace Common {
 class ReadStream;
@@ -82,7 +83,7 @@ namespace Adl {
 #define IDI_HR1_OFS_CMDS_1       0x3d00
 
 #define IDI_HR1_OFS_ITEM_OFFSETS 0x68ff
-#define IDI_HR1_OFS_LINE_ART     0x4f00
+#define IDI_HR1_OFS_CORNERS      0x4f00
 
 #define IDI_HR1_OFS_VERBS        0x3800
 #define IDI_HR1_OFS_NOUNS        0x0f00
@@ -94,16 +95,16 @@ public:
 private:
 	// AdlEngine
 	void runIntro() const;
-	void loadData();
+	void init();
 	void initState();
 	void restartGame();
 	void drawPic(byte pic, Common::Point pos = Common::Point()) const;
 	void printMessage(uint idx, bool wait = true) const;
+	void drawItem(const Item &item, const Common::Point &pos) const;
 	void showRoom() const;
 
-	void drawLine(const Common::Point &p1, const Common::Point &p2, byte color) const;
-	void drawPic(Common::ReadStream &stream, const Common::Point &pos) const;
-
+	Common::File _exe;
+	Common::Array<uint> _corners;
 	Common::Array<byte> _roomDesc;
 };
 

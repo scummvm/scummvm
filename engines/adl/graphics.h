@@ -32,12 +32,32 @@ namespace Adl {
 
 class Display;
 
-class Graphics {
+class GraphicsMan {
 public:
-	Graphics(Display &display) : _display(display) { }
+	virtual ~GraphicsMan() { }
+	virtual void drawPic(Common::SeekableReadStream &pic, const Common::Point &pos, byte color) = 0;
 
+protected:
+	GraphicsMan(Display &display) : _display(display) { }
 	void drawLine(const Common::Point &p1, const Common::Point &p2, byte color) const;
-	void draw(Common::SeekableReadStream &pic);
+
+	Display &_display;
+};
+
+class Graphics_v1 : public GraphicsMan {
+public:
+	Graphics_v1(Display &display) : GraphicsMan(display) { }
+	void drawPic(Common::SeekableReadStream &pic, const Common::Point &pos, byte color);
+	void drawCorners(Common::ReadStream &corners, const Common::Point &pos, byte rotation = 0, byte scaling = 1, byte color = 0x7f) const;
+
+private:
+	void drawCornerPixel(Common::Point &p, byte color, byte bits, byte quadrant) const;
+};
+
+class Graphics_v2 : public GraphicsMan {
+public:
+	Graphics_v2(Display &display) : GraphicsMan(display), _color(0) { }
+	void drawPic(Common::SeekableReadStream &pic, const Common::Point &pos, byte color);
 
 private:
 	void clear();
@@ -47,7 +67,6 @@ private:
 	void fillRow(const Common::Point &p, bool fillBit, byte pattern);
 	void fill(Common::SeekableReadStream &pic);
 
-	Display &_display;
 	byte _color;
 };
 

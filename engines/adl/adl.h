@@ -37,6 +37,7 @@ class SeekableReadStream;
 namespace Adl {
 
 class Display;
+class GraphicsMan;
 struct AdlGameDescription;
 
 // Conditional opcodes
@@ -142,6 +143,7 @@ protected:
 
 	Common::String readString(Common::ReadStream &stream, byte until = 0) const;
 	Common::String readStringAt(Common::SeekableReadStream &stream, uint offset, byte until = 0) const;
+	Common::File *openFile(const Common::String &name) const;
 
 	virtual void printMessage(uint idx, bool wait = true) const;
 	void delay(uint32 ms) const;
@@ -155,8 +157,6 @@ protected:
 	// Graphics
 	void clearScreen() const;
 	void drawItems() const;
-	void drawNextPixel(Common::Point &p, byte color, byte bits, byte quadrant) const;
-	void drawLineArt(const Common::Array<byte> &lineArt, const Common::Point &pos, byte rotation = 0, byte scaling = 1, byte color = 0x7f) const;
 
 	// Game state functions
 	const Room &getRoom(uint i) const;
@@ -175,6 +175,7 @@ protected:
 	void doAllCommands(const Commands &commands, byte verb, byte noun);
 
 	Display *_display;
+	GraphicsMan *_graphics;
 
 	// Message strings in data file
 	Common::Array<Common::String> _messages;
@@ -182,9 +183,6 @@ protected:
 	Common::Array<Picture> _pictures;
 	// Dropped item screen offsets
 	Common::Array<Common::Point> _itemOffsets;
-	// Drawings consisting of horizontal and vertical lines only, but
-	// supporting scaling and rotation
-	Common::Array<Common::Array<byte> > _lineArt;
 	// <room, verb, noun, script> lists
 	Commands _roomCommands;
 	Commands _globalCommands;
@@ -213,10 +211,10 @@ protected:
 
 private:
 	virtual void runIntro() const { }
-	virtual void loadData() = 0;
+	virtual void init() = 0;
 	virtual void initState() = 0;
 	virtual void restartGame() = 0;
-	virtual void drawPic(byte pic, Common::Point pos = Common::Point()) const = 0;
+	virtual void drawItem(const Item &item, const Common::Point &pos) const = 0;
 	virtual void showRoom() const = 0;
 
 	// Engine
