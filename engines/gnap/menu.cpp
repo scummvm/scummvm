@@ -255,9 +255,6 @@ void GnapEngine::removeInventorySprites() {
 }
 
 void GnapEngine::runMenu() {
-
-	int v43;
-
 	_spriteHandle = 0;
 	_cursorSprite = 0;
 	_menuSprite1 = 0;
@@ -276,8 +273,6 @@ void GnapEngine::runMenu() {
 		_savegameFilenames[i][0] = 0;
 		_savegameSprites[i] = 0;
 	}
-
-	v43 = 0;
 
 	if (_menuStatus == 0) {
 		invAdd(kItemMagazine);

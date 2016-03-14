@@ -49,19 +49,19 @@ enum {
 };
 
 struct Sequence {
-	int32 sequenceId;
-	int32 id;
-	int32 sequenceId2;
-	int32 id2;
-	uint32 flags;
-	int32 totalDuration;
-	int16 x, y;
+	int32 _sequenceId;
+	int32 _id;
+	int32 _sequenceId2;
+	int32 _id2;
+	uint32 _flags;
+	int32 _totalDuration;
+	int16 _x, _y;
 };
 
 struct SpriteDrawItem {
-	int id;
-	Common::Rect rect;
-	Graphics::Surface *surface;
+	int _id;
+	Common::Rect _rect;
+	Graphics::Surface *_surface;
 };
 
 struct RemoveSequenceItem {
@@ -71,7 +71,7 @@ struct RemoveSequenceItem {
 };
 
 struct RemoveSpriteDrawItem {
-	int id;
+	int _id;
 	Graphics::Surface *surface;
 };
 
@@ -108,15 +108,15 @@ public:
 	void insertDirtyRect(const Common::Rect &rect);
 	void removeSequence(int sequenceId, int id, bool resetFl);
 	void invalidateGrabCursorSprite(int id, Common::Rect &rect, Graphics::Surface *surface1, Graphics::Surface *surface2);
-	void requestClear2(int a1);
+	void requestClear2(bool resetFl);
 	void requestClear1();
-	void requestRemoveSequence(int sequenceId, int a2);
+	void requestRemoveSequence(int sequenceId, int id);
 	void waitForUpdate();
-	int isSequenceActive(int sequenceId, int a2);
+	int isSequenceActive(int sequenceId, int id);
 	void setBackgroundSurface(Graphics::Surface *surface, int a4, int a5, int a6, int a7);
 	void setScaleValues(int a1, int a2, int a3, int a4);
 	void insertSpriteDrawItem(Graphics::Surface *surface, int x, int y, int id);
-	void removeSpriteDrawItem(Graphics::Surface *surface, int a2);
+	void removeSpriteDrawItem(Graphics::Surface *surface, int id);
 	void drawSpriteToBackground(int x, int y, int resourceId);
 	Graphics::Surface *allocSurface(int width, int height);
 	Graphics::Surface *createSurface(int resourceId);
@@ -177,12 +177,12 @@ public:
 	Graphics::Surface *_frontSurface;
 	Common::Rect _screenRect;
 
-	Sequence *seqFind(int sequenceId, int a2, int *outIndex);
+	Sequence *seqFind(int sequenceId, int id, int *outIndex);
 	int seqLocateGfx(int sequenceId, int id, int *outGfxIndex);
 	void seqInsertGfx(int index, int duration);
 	void seqRemoveGfx(int sequenceId, int id);
 	bool updateSequenceDuration(int sequenceId, int id, int *outDuration);
-	void updateAnimationsStatus(int sequenceId, int a2);
+	void updateAnimationsStatus(int sequenceId, int id);
 	
 	void restoreBackgroundRect(const Common::Rect &rect);
 

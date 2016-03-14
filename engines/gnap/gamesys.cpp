@@ -75,14 +75,14 @@ void GameSys::insertSequence(int sequenceId, int a2, int sequenceId2, int a4, in
 	Sequence sequence;
 	SequenceResource *sequenceResource = _vm->_sequenceCache->get(sequenceId);
 	sequenceResource->_sequenceId = sequenceId;
-	sequence.sequenceId = sequenceId;
-	sequence.id = a2 != -1 ? a2 : sequenceResource->_field_8;
-	sequence.sequenceId2 = sequenceId2 != (int32)0x80000000 ? sequenceId2 : sequenceResource->_sequenceId2;
-	sequence.id2 = a4 != -1 ? a4 : sequenceResource->_field_10;
-	sequence.flags = flags != -1 ? flags : sequenceResource->_flags;
-	sequence.totalDuration = totalDuration != -1 ? totalDuration : sequenceResource->_totalDuration;
-	sequence.x = (x < 10000 && x > -10000) ? x : sequenceResource->_xOffs;
-	sequence.y = (y < 10000 && y > -10000) ? y : sequenceResource->_yOffs;
+	sequence._sequenceId = sequenceId;
+	sequence._id = a2 != -1 ? a2 : sequenceResource->_field_8;
+	sequence._sequenceId2 = sequenceId2 != (int32)0x80000000 ? sequenceId2 : sequenceResource->_sequenceId2;
+	sequence._id2 = a4 != -1 ? a4 : sequenceResource->_field_10;
+	sequence._flags = flags != -1 ? flags : sequenceResource->_flags;
+	sequence._totalDuration = totalDuration != -1 ? totalDuration : sequenceResource->_totalDuration;
+	sequence._x = (x < 10000 && x > -10000) ? x : sequenceResource->_xOffs;
+	sequence._y = (y < 10000 && y > -10000) ? y : sequenceResource->_yOffs;
 	_fatSequenceItems.push_back(sequence);
 }
 
@@ -115,7 +115,7 @@ void GameSys::invalidateGrabCursorSprite(int id, Common::Rect &rect, Graphics::S
 	//WaitForSingleObject(grabSpriteEvent, INFINITE);
 }
 
-void GameSys::requestClear2(int a1) {
+void GameSys::requestClear2(bool resetFl) {
 	_fatSequenceItems.clear();
 	_seqItems.clear();
 	for (int i = 0; i < _gfxItemsCount; ++i) {
@@ -123,7 +123,7 @@ void GameSys::requestClear2(int a1) {
 		gfxItem->sequenceId = -1;
 		gfxItem->animation = 0;
 		gfxItem->soundValue = 0;
-		if (a1) {
+		if (resetFl) {
 			gfxItem->currFrame.duration = 0;
 			gfxItem->currFrame.spriteId = -1;
 			gfxItem->currFrame.soundId = -1;
@@ -145,13 +145,13 @@ void GameSys::requestClear1() {
 	_gameSysClock = 0;
 }
 
-void GameSys::requestRemoveSequence(int sequenceId, int a2) {
+void GameSys::requestRemoveSequence(int sequenceId, int id) {
 	//WaitForSingleObject(removeSequence2Mutex, INFINITE);
 	_reqRemoveSequenceItem = true;
 	_removeSequenceItemSequenceId = sequenceId;
-	_removeSequenceItemValue = a2;
+	_removeSequenceItemValue = id;
 	
-	handleReqRemoveSequenceItem();//CHECKME?
+	handleReqRemoveSequenceItem(); //CHECKME?
 	
 	//ResetEvent(reqClearEvent);
 	//ReleaseMutex(removeSequence2Mutex);
@@ -163,9 +163,9 @@ void GameSys::waitForUpdate() {
 	//WaitForSingleObject(updateEvent, INFINITE);
 }
 
-int GameSys::isSequenceActive(int sequenceId, int a2) {
+int GameSys::isSequenceActive(int sequenceId, int id) {
 	for (uint i = 0; i < _seqItems.size(); ++i)
-		if (_seqItems[i].sequenceId == sequenceId && _seqItems[i].id == a2)
+		if (_seqItems[i]._sequenceId == sequenceId && _seqItems[i]._id == id)
 			return true;
 	return false;
 }
@@ -212,16 +212,16 @@ void GameSys::setScaleValues(int a1, int a2, int a3, int a4) {
 
 void GameSys::insertSpriteDrawItem(Graphics::Surface *surface, int x, int y, int id) {
 	if (surface && _newSpriteDrawItemsCount < kMaxSpriteDrawItems) {
-		_newSpriteDrawItems[_newSpriteDrawItemsCount].id = id;
-		_newSpriteDrawItems[_newSpriteDrawItemsCount].rect = Common::Rect(x, y, x + surface->w, y + surface->h);
-		_newSpriteDrawItems[_newSpriteDrawItemsCount].surface = surface;
+		_newSpriteDrawItems[_newSpriteDrawItemsCount]._id = id;
+		_newSpriteDrawItems[_newSpriteDrawItemsCount]._rect = Common::Rect(x, y, x + surface->w, y + surface->h);
+		_newSpriteDrawItems[_newSpriteDrawItemsCount]._surface = surface;
 		++_newSpriteDrawItemsCount;
 	}
 }
 
-void GameSys::removeSpriteDrawItem(Graphics::Surface *surface, int a2) {
+void GameSys::removeSpriteDrawItem(Graphics::Surface *surface, int id) {
 	if (surface && _removeSpriteDrawItemsCount < kMaxSpriteDrawItems) {
-		_removeSpriteDrawItems[_removeSpriteDrawItemsCount].id = a2;
+		_removeSpriteDrawItems[_removeSpriteDrawItemsCount]._id = id;
 		_removeSpriteDrawItems[_removeSpriteDrawItemsCount].surface = surface;
 		++_removeSpriteDrawItemsCount;
 	}
@@ -288,8 +288,8 @@ void GameSys::drawTextToSurface(Graphics::Surface *surface, int x, int y, byte r
 		if (c < 32 || c > 127)
 			c = (byte)'_';
 		c -= 32;
-		int w = dejaVuSans9ptCharDescriptors[c].width;
-		const byte *data = dejaVuSans9ptCharBitmaps + dejaVuSans9ptCharDescriptors[c].offset;
+		int w = _dejaVuSans9ptCharDescriptors[c]._width;
+		const byte *data = _dejaVuSans9ptCharBitmaps + _dejaVuSans9ptCharDescriptors[c]._offset;
 		for (int xc = 0; xc < w; ++xc) {
 			for (int yc = 15; yc >= 0; --yc) {
 				byte *dst = (byte*)surface->getBasePtr(x + xc, y + yc);
@@ -314,7 +314,7 @@ int GameSys::getTextWidth(const char *text) {
 		if (c < 32 || c > 127)
 			c = (byte)'_';
 		c -= 32;
-		width += dejaVuSans9ptCharDescriptors[c].width + 1;
+		width += _dejaVuSans9ptCharDescriptors[c]._width + 1;
 	}
 	return width;
 }
@@ -400,9 +400,9 @@ void GameSys::drawBitmap(int resourceId) {
 	insertDirtyRect(Common::Rect(0, 0, 800, 600));
 }
 
-Sequence *GameSys::seqFind(int sequenceId, int a2, int *outIndex) {
+Sequence *GameSys::seqFind(int sequenceId, int id, int *outIndex) {
 	for (uint i = 0; i < _seqItems.size(); ++i)
-		if (_seqItems[i].sequenceId == sequenceId && _seqItems[i].id == a2) {
+		if (_seqItems[i]._sequenceId == sequenceId && _seqItems[i]._id == id) {
 			if (outIndex)
 				*outIndex = i;
 			return &_seqItems[i];
@@ -430,15 +430,14 @@ int GameSys::seqLocateGfx(int sequenceId, int id, int *outGfxIndex) {
 }
 
 void GameSys::seqInsertGfx(int index, int duration) {
-	
 	Sequence *seqItem = &_seqItems[index];
-	SequenceResource *sequenceResource = _vm->_sequenceCache->get(seqItem->sequenceId);	
+	SequenceResource *sequenceResource = _vm->_sequenceCache->get(seqItem->_sequenceId);	
 
 	if (sequenceResource->_animationsCount > 50 - _gfxItemsCount)
 		return;
 
 	int gfxIndex;
-	seqLocateGfx(seqItem->sequenceId, seqItem->id, &gfxIndex);
+	seqLocateGfx(seqItem->_sequenceId, seqItem->_id, &gfxIndex);
 	
 	if (gfxIndex != _gfxItemsCount)
 		memcpy(&_gfxItems[gfxIndex + sequenceResource->_animationsCount],	&_gfxItems[gfxIndex], sizeof(GfxItem) * (_gfxItemsCount - gfxIndex));
@@ -449,14 +448,14 @@ void GameSys::seqInsertGfx(int index, int duration) {
 		GfxItem *gfxItem = &_gfxItems[i + gfxIndex];
 		SequenceAnimation *animation = &sequenceResource->_animations[i];
 
-		debug(0, "GameSys::seqInsertGfx() seqItem->sequenceId: %08X", seqItem->sequenceId);
+		debug(0, "GameSys::seqInsertGfx() seqItem->sequenceId: %08X", seqItem->_sequenceId);
 
-		gfxItem->sequenceId = seqItem->sequenceId;
-		gfxItem->id = seqItem->id;
+		gfxItem->sequenceId = seqItem->_sequenceId;
+		gfxItem->id = seqItem->_id;
 		gfxItem->animation = animation;
 		gfxItem->currFrameNum = 0;
 		gfxItem->flags = 0;
-		gfxItem->delayTicks = seqItem->totalDuration + animation->field_4;
+		gfxItem->delayTicks = seqItem->_totalDuration + animation->field_4;
 		gfxItem->updFlag = false;
 		gfxItem->updRectsCount = 0;
 		gfxItem->prevFrame.duration = 0;
@@ -464,7 +463,7 @@ void GameSys::seqInsertGfx(int index, int duration) {
 		gfxItem->prevFrame.soundId = -1;
 		gfxItem->prevFrame.unkValue = -1;
 		totalDuration = duration;
-		if ((seqItem->flags & 4) && totalDuration > 0) {
+		if ((seqItem->_flags & 4) && totalDuration > 0) {
 			gfxItem->prevFrame.duration = 1;
 			if (gfxItem->delayTicks <= totalDuration)
 				gfxItem->delayTicks = 0;
@@ -484,15 +483,15 @@ void GameSys::seqInsertGfx(int index, int duration) {
 				gfxItem->currFrame = animation->frames[j++];
 			else
 				gfxItem->currFrame = animation->frames[j - 1];
-			if (gfxItem->currFrame.spriteId != -1 && (seqItem->x != 0 || seqItem->y != 0))
-				gfxItem->currFrame.rect.translate(seqItem->x, seqItem->y);
+			if (gfxItem->currFrame.spriteId != -1 && (seqItem->_x != 0 || seqItem->_y != 0))
+				gfxItem->currFrame.rect.translate(seqItem->_x, seqItem->_y);
 			// Update sprite scaling				
-			if ((seqItem->flags & 1) && gfxItem->currFrame.rect.bottom >= _backgroundImageValue1 && gfxItem->currFrame.rect.bottom <= _backgroundImageValue3) {
-				int v2 = _backgroundImageValue2	+ (gfxItem->currFrame.rect.bottom - _backgroundImageValue1) *
+			if ((seqItem->_flags & 1) && gfxItem->currFrame.rect.bottom >= _backgroundImageValue1 && gfxItem->currFrame.rect.bottom <= _backgroundImageValue3) {
+				int scaleValue = _backgroundImageValue2	+ (gfxItem->currFrame.rect.bottom - _backgroundImageValue1) *
 					(_backgroundImageValue4 - _backgroundImageValue2) /
 					(_backgroundImageValue3 - _backgroundImageValue1);
-				gfxItem->currFrame.rect.top = gfxItem->currFrame.rect.bottom - v2 * (gfxItem->currFrame.rect.bottom - gfxItem->currFrame.rect.top) / 1000;
-				gfxItem->currFrame.rect.right = v2 * (gfxItem->currFrame.rect.right - gfxItem->currFrame.rect.left) / 1000 + gfxItem->currFrame.rect.left;
+				gfxItem->currFrame.rect.top = gfxItem->currFrame.rect.bottom - scaleValue * (gfxItem->currFrame.rect.bottom - gfxItem->currFrame.rect.top) / 1000;
+				gfxItem->currFrame.rect.right = scaleValue * (gfxItem->currFrame.rect.right - gfxItem->currFrame.rect.left) / 1000 + gfxItem->currFrame.rect.left;
 				gfxItem->currFrame.isScaled = 1;
 			}
 			gfxItem->currFrame.duration -= totalDuration;
@@ -507,7 +506,7 @@ void GameSys::seqInsertGfx(int index, int duration) {
 	}
 
 	for (int k = 0; k < kMaxAnimations; ++k) {
-		if (_animations[k].sequenceId != -1 && _animations[k].sequenceId == seqItem->sequenceId && _animations[k].id == seqItem->id) {
+		if (_animations[k].sequenceId != -1 && _animations[k].sequenceId == seqItem->_sequenceId && _animations[k].id == seqItem->_id) {
 			_animations[k].status = 1;
 			break;
 		}
@@ -569,12 +568,12 @@ bool GameSys::updateSequenceDuration(int sequenceId, int id, int *outDuration) {
 	return found;
 }
 
-void GameSys::updateAnimationsStatus(int sequenceId, int a2) {
+void GameSys::updateAnimationsStatus(int sequenceId, int id) {
 
 	Animation *foundAnimation = 0;
 	for (int animationIndex = 0; animationIndex < kMaxAnimations; ++animationIndex) {
 		Animation *animation = &_animations[animationIndex];
-		if (animation->sequenceId != -1 && animation->sequenceId == sequenceId && animation->id == a2) {
+		if (animation->sequenceId != -1 && animation->sequenceId == sequenceId && animation->id == id) {
 			foundAnimation = animation;
 			break;
 		}
@@ -587,7 +586,7 @@ void GameSys::updateAnimationsStatus(int sequenceId, int a2) {
 	for (int i = 0; i < _gfxItemsCount; ++i) {
 		GfxItem *gfxItem = &_gfxItems[i];
 		SequenceAnimation *animation = gfxItem->animation;
-		if (gfxItem->sequenceId == sequenceId && gfxItem->id == a2 && animation) {
+		if (gfxItem->sequenceId == sequenceId && gfxItem->id == id && animation) {
 			foundSequence = true;
 			if (animation->framesCount > gfxItem->currFrameNum ||
 				(gfxItem->updFlag && gfxItem->currFrame.duration > 1) ||
@@ -995,7 +994,7 @@ void GameSys::handleReqRemoveSpriteDrawItems() {
 			for (int i = 0; i < _gfxItemsCount; ++i) {
 				GfxItem *gfxItem = &_gfxItems[i];
 				if (gfxItem->sequenceId == -1 && !gfxItem->animation && (gfxItem->flags & 1) &&
-					gfxItem->id == _removeSpriteDrawItems[j].id && _removeSpriteDrawItems[j].surface == gfxItem->surface) {
+					gfxItem->id == _removeSpriteDrawItems[j]._id && _removeSpriteDrawItems[j].surface == gfxItem->surface) {
 					gfxItem->flags = 0;
 					gfxItem->currFrame.duration = 0;
 					gfxItem->currFrame.spriteId = -1;
@@ -1054,7 +1053,7 @@ void GameSys::fatUpdateFrame() {
 					gfxItem->currFrame.soundId = -1;
 					gfxItem->currFrame.unkValue = -1;
 					gfxItem->updFlag = true;
-				} else if ((seqItem->flags & 4) && clockDelta > 1) {
+				} else if ((seqItem->_flags & 4) && clockDelta > 1) {
 					updFlag = false;
 					if (gfxItem->delayTicks < clockDelta) {
 						duration = clockDelta - gfxItem->delayTicks;
@@ -1093,10 +1092,10 @@ void GameSys::fatUpdateFrame() {
 								gfxItem->currFrame = animation->frames[currFrameNum++];
 							else
 								gfxItem->currFrame = animation->frames[currFrameNum - 1];
-							if (gfxItem->currFrame.spriteId != -1 && (seqItem->x != 0 || seqItem->y != 0))
-								gfxItem->currFrame.rect.translate(seqItem->x, seqItem->y);
+							if (gfxItem->currFrame.spriteId != -1 && (seqItem->_x != 0 || seqItem->_y != 0))
+								gfxItem->currFrame.rect.translate(seqItem->_x, seqItem->_y);
 							// Update sprite scaling										
-							if ((seqItem->flags & 1) && gfxItem->currFrame.rect.bottom >= _backgroundImageValue1 && gfxItem->currFrame.rect.bottom <= _backgroundImageValue3) {
+							if ((seqItem->_flags & 1) && gfxItem->currFrame.rect.bottom >= _backgroundImageValue1 && gfxItem->currFrame.rect.bottom <= _backgroundImageValue3) {
 								int v17 = _backgroundImageValue2 + (gfxItem->currFrame.rect.bottom - _backgroundImageValue1) *
 									(_backgroundImageValue4 - _backgroundImageValue2) /
 									(_backgroundImageValue3 - _backgroundImageValue1);
@@ -1141,28 +1140,28 @@ void GameSys::fatUpdateFrame() {
 		for (int k = 0; k < _newSpriteDrawItemsCount; ++k) {
 			if (_gfxItemsCount < 50) {
 				int insertIndex;
-				seqLocateGfx(-1, _newSpriteDrawItems[k].id, &insertIndex);
+				seqLocateGfx(-1, _newSpriteDrawItems[k]._id, &insertIndex);
 				if (_gfxItemsCount != insertIndex)
 					memcpy(&_gfxItems[insertIndex + 1], &_gfxItems[insertIndex], sizeof(GfxItem) * (_gfxItemsCount - insertIndex));
 				++_gfxItemsCount;
 				GfxItem *gfxItem = &_gfxItems[insertIndex];
 				gfxItem->sequenceId = -1;
-				gfxItem->id = _newSpriteDrawItems[k].id;
+				gfxItem->id = _newSpriteDrawItems[k]._id;
 				gfxItem->animation = 0;
 				gfxItem->currFrameNum = 0;
 				gfxItem->flags = 1;
 				gfxItem->delayTicks = 0;
 				gfxItem->updFlag = true;
 				gfxItem->updRectsCount = 0;
-				gfxItem->surface = _newSpriteDrawItems[k].surface;
+				gfxItem->surface = _newSpriteDrawItems[k]._surface;
 				gfxItem->prevFrame.duration = 0;
 				gfxItem->prevFrame.spriteId = -1;
 				gfxItem->prevFrame.soundId = -1;
 				gfxItem->prevFrame.unkValue = -1;
 				gfxItem->currFrame.duration = 0;
 				gfxItem->currFrame.isScaled = 0;
-				gfxItem->currFrame.rect = _newSpriteDrawItems[k].rect;
-				gfxItem->currFrame.spriteId = _newSpriteDrawItems[k].surface ? 0xCAFEBABE : -1;// TODO
+				gfxItem->currFrame.rect = _newSpriteDrawItems[k]._rect;
+				gfxItem->currFrame.spriteId = _newSpriteDrawItems[k]._surface ? 0xCAFEBABE : -1;// TODO
 				gfxItem->currFrame.soundId = -1;
 				gfxItem->currFrame.unkValue = -1;
 			}
@@ -1195,14 +1194,14 @@ void GameSys::fatUpdateFrame() {
 
 	for (uint i = 0; i < _fatSequenceItems.size(); ++i) {
 		Sequence *seqItem = &_fatSequenceItems[i];
-		if (((seqItem->flags & 8) || (seqItem->flags & 0x20)) && seqItem->sequenceId2 != -1) {
+		if (((seqItem->_flags & 8) || (seqItem->_flags & 0x20)) && seqItem->_sequenceId2 != -1) {
 			duration = 0;
-			if (((seqItem->flags & 0x20) && seqLocateGfx(seqItem->sequenceId2, seqItem->id2, 0)) ||
-				updateSequenceDuration(seqItem->sequenceId2, seqItem->id2, &duration)) {
-				int index;
+			if (((seqItem->_flags & 0x20) && seqLocateGfx(seqItem->_sequenceId2, seqItem->_id2, 0)) ||
+				updateSequenceDuration(seqItem->_sequenceId2, seqItem->_id2, &duration)) {
+				int index = -1;
 				bool found = false;
-				if (seqItem->sequenceId2 == seqItem->sequenceId	&& seqItem->id == seqItem->id2	&&
-					seqFind(seqItem->sequenceId, seqItem->id, &index)) {
+				if (seqItem->_sequenceId2 == seqItem->_sequenceId	&& seqItem->_id == seqItem->_id2	&&
+					seqFind(seqItem->_sequenceId, seqItem->_id, &index)) {
 					_seqItems[index] = *seqItem;
 					found = true;
 				} else if (_seqItems.size() < 50) {
@@ -1212,8 +1211,8 @@ void GameSys::fatUpdateFrame() {
 				}
 				if (found) {
 					updFlag = false;
-					seqRemoveGfx(seqItem->sequenceId2, seqItem->id2);
-					seqRemoveGfx(seqItem->sequenceId, seqItem->id);
+					seqRemoveGfx(seqItem->_sequenceId2, seqItem->_id2);
+					seqRemoveGfx(seqItem->_sequenceId, seqItem->_id);
 					_fatSequenceItems.remove_at(i);
 					--i;
 					seqInsertGfx(index, duration);
@@ -1221,12 +1220,12 @@ void GameSys::fatUpdateFrame() {
 			}
 		} else {
 			updFlag = false;
-			if (seqItem->totalDuration < clockDelta) {
+			if (seqItem->_totalDuration < clockDelta) {
 				int index;
 				bool found = false;
-				duration = clockDelta - seqItem->totalDuration;
-				seqItem->totalDuration = 0;
-				if (seqFind(seqItem->sequenceId, seqItem->id, &index)) {
+				duration = clockDelta - seqItem->_totalDuration;
+				seqItem->_totalDuration = 0;
+				if (seqFind(seqItem->_sequenceId, seqItem->_id, &index)) {
 					_seqItems[index] = *seqItem;
 					found = true;
 				} else if (_seqItems.size() < 50) {
@@ -1235,13 +1234,13 @@ void GameSys::fatUpdateFrame() {
 					found = true;
 				}
 				if (found) {
-					seqRemoveGfx(seqItem->sequenceId, seqItem->id);
+					seqRemoveGfx(seqItem->_sequenceId, seqItem->_id);
 					_fatSequenceItems.remove_at(i);
 					--i;
 					seqInsertGfx(index, duration - 1);
 				}
 			} else {
-				seqItem->totalDuration -= clockDelta;
+				seqItem->_totalDuration -= clockDelta;
 			}
 		}
 	}
@@ -1250,13 +1249,13 @@ void GameSys::fatUpdateFrame() {
 
 	for (uint i = 0; i < _seqItems.size(); ++i) {
 		Sequence *seqItem = &_seqItems[i];
-		if (seqLocateGfx(seqItem->sequenceId, seqItem->id, 0)) {
-			updateAnimationsStatus(seqItem->sequenceId, seqItem->id);
-			if (seqItem->flags & 2) {
+		if (seqLocateGfx(seqItem->_sequenceId, seqItem->_id, 0)) {
+			updateAnimationsStatus(seqItem->_sequenceId, seqItem->_id);
+			if (seqItem->_flags & 2) {
 				int gfxDuration;
 				updFlag = false;
-				if (updateSequenceDuration(seqItem->sequenceId, seqItem->id, &gfxDuration)) {
-					seqRemoveGfx(seqItem->sequenceId, seqItem->id);
+				if (updateSequenceDuration(seqItem->_sequenceId, seqItem->_id, &gfxDuration)) {
+					seqRemoveGfx(seqItem->_sequenceId, seqItem->_id);
 					seqInsertGfx(i, gfxDuration);
 				}
 			}

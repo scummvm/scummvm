@@ -26,8 +26,8 @@
 namespace Gnap {
 
 struct FONT_CHAR_INFO {
-  const byte width;              // width, in bits (or pixels), of the character
-  const uint16 offset;                // offset of the character's bitmap, in bytes, into the the FONT_INFO's data array
+  const byte _width;              // width, in bits (or pixels), of the character
+  const uint16 _offset;           // offset of the character's bitmap, in bytes, into the the FONT_INFO's data array
 };
 
 /* 
@@ -35,8 +35,7 @@ struct FONT_CHAR_INFO {
 */
 
 /* Character bitmaps for DejaVu Sans 9pt */
-const byte dejaVuSans9ptCharBitmaps[] = 
-{
+const byte _dejaVuSans9ptCharBitmaps[] = {
 	/* @0 ' ' (5 pixels wide) */
 	0x00, 0x00, /*                  */
 	0x00, 0x00, /*                  */
@@ -747,8 +746,7 @@ const byte dejaVuSans9ptCharBitmaps[] =
 
 /* Character descriptors for DejaVu Sans 9pt */
 /* { [Char width in bits], [Offset into dejaVuSans9ptCharBitmaps in bytes] } */
-const FONT_CHAR_INFO dejaVuSans9ptCharDescriptors[] =
-{
+const FONT_CHAR_INFO _dejaVuSans9ptCharDescriptors[] = {
 	{5, 0}, 		/*   */
 	{1, 10}, 		/* ! */
 	{3, 12}, 		/* " */

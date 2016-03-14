@@ -36,10 +36,10 @@
 namespace Gnap {
 
 struct DatEntry {
-    uint32 ofs;
-    uint32 outSize1;
-    uint32 type;
-    uint32 outSize2;
+    uint32 _ofs;
+    uint32 _outSize1;
+    uint32 _type;
+    uint32 _outSize2;
 };
 
 class DatArchive {
@@ -48,8 +48,8 @@ public:
 	~DatArchive();
 	byte *load(int index);
 	int getCount() const { return _entriesCount; }
-	uint32 getEntryType(int index) { return _entries[index].type; }
-	uint32 getEntrySize(int index) { return _entries[index].outSize1; }
+	uint32 getEntryType(int index) { return _entries[index]._type; }
+	uint32 getEntrySize(int index) { return _entries[index]._outSize1; }
 protected:
 	Common::File *_fd;
 	int _entriesCount;

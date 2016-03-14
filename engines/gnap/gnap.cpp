@@ -869,11 +869,11 @@ void GnapEngine::afterScene() {
 
 	setGrabCursorSprite(-1);
 
-	_gameSys->requestClear2(0);
+	_gameSys->requestClear2(false);
 	_gameSys->requestClear1();
 	_gameSys->waitForUpdate();
 
-	_gameSys->requestClear2(0);
+	_gameSys->requestClear2(false);
 	_gameSys->requestClear1();
 	_gameSys->waitForUpdate();
 
@@ -2366,8 +2366,8 @@ void GnapEngine::cutscene_run() {
 		gameUpdateTick();
 
 		if (_gameSys->getAnimationStatus(0) == 2 || skip) {
-			skip = 0;
-			_gameSys->requestClear2(0);
+			skip = false;
+			_gameSys->requestClear2(false);
 			_gameSys->requestClear1();
 			_gameSys->setAnimation(0, 0, 0);
 			v1 += _s99_dword_47F330[itemIndex++];

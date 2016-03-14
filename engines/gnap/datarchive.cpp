@@ -44,10 +44,10 @@ DatArchive::DatArchive(const char *filename) {
 	_fd->skip(4); // Skip unknown
 	_entries = new DatEntry[_entriesCount];
 	for (int i = 0; i < _entriesCount; ++i) {
-		_entries[i].ofs = _fd->readUint32LE();
-    	_entries[i].outSize1 = _fd->readUint32LE();
-    	_entries[i].type = _fd->readUint32LE();
-    	_entries[i].outSize2 = _fd->readUint32LE();
+		_entries[i]._ofs = _fd->readUint32LE();
+    	_entries[i]._outSize1 = _fd->readUint32LE();
+    	_entries[i]._type = _fd->readUint32LE();
+    	_entries[i]._outSize2 = _fd->readUint32LE();
 	}
 }
 
@@ -58,10 +58,10 @@ DatArchive::~DatArchive() {
 }
 
 byte *DatArchive::load(int index) {
-	_fd->seek(_entries[index].ofs);
-	debug(1, "_entries[index].outSize2: %d; _entries[index].outSize1: %d", _entries[index].outSize2, _entries[index].outSize1);
-	byte *buffer = new byte[_entries[index].outSize1];
-	if (!Common::decompressDCL(_fd, buffer, 0, _entries[index].outSize1))
+	_fd->seek(_entries[index]._ofs);
+	debug(1, "_entries[index].outSize2: %d; _entries[index].outSize1: %d", _entries[index]._outSize2, _entries[index]._outSize1);
+	byte *buffer = new byte[_entries[index]._outSize1];
+	if (!Common::decompressDCL(_fd, buffer, 0, _entries[index]._outSize1))
 		error("DatArchive::load() Error during decompression of entry %d", index);
 	return buffer;
 }
