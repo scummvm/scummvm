@@ -91,11 +91,11 @@ void GnapEngine::scene25_playAnims(int index) {
 	}
 	_gameSys->insertSpriteDrawItem(_largeSprite, 0, 0, 300);
 	delayTicksCursor(5);
-	while (!_mouseClickState.left && !isKeyStatus1(Common::KEYCODE_ESCAPE) && !isKeyStatus1(Common::KEYCODE_SPACE) &&
+	while (!_mouseClickState._left && !isKeyStatus1(Common::KEYCODE_ESCAPE) && !isKeyStatus1(Common::KEYCODE_SPACE) &&
 		!isKeyStatus1(29)) {
 		gameUpdateTick();
 	}
-	_mouseClickState.left = false;
+	_mouseClickState._left = false;
 	clearKeyStatus1(Common::KEYCODE_ESCAPE);
 	clearKeyStatus1(29);
 	clearKeyStatus1(Common::KEYCODE_SPACE);
@@ -223,16 +223,16 @@ void GnapEngine::scene25_run() {
 				if (isFlag(2)) {
 					_isLeavingScene = true;
 					_newSceneNum = 26;
-					_hotspots[kHSWalkArea1].flags |= SF_WALKABLE;
+					_hotspots[kHSWalkArea1]._flags |= SF_WALKABLE;
 					gnapWalkTo(_hotspotsWalkPos[kHSExitInsideCircusWorld].x, _hotspotsWalkPos[kHSExitInsideCircusWorld].y, 0, 0x107B1, 1);
 					_gnapActionStatus = kASLeaveScene;
 					platypusWalkTo(_hotspotsWalkPos[kHSExitInsideCircusWorld].x + 1, _hotspotsWalkPos[kHSExitInsideCircusWorld].y, -1, 0x107C2, 1);
-					_hotspots[kHSWalkArea1].flags &= ~SF_WALKABLE;
+					_hotspots[kHSWalkArea1]._flags &= ~SF_WALKABLE;
 				} else {
-					_hotspots[kHSWalkArea1].flags |= SF_WALKABLE;
+					_hotspots[kHSWalkArea1]._flags |= SF_WALKABLE;
 					gnapWalkTo(4, 5, 0, 0x107BB, 1);
 					_gnapActionStatus = kASEnterCircusWihoutTicket;
-					_hotspots[kHSWalkArea1].flags &= ~SF_WALKABLE;
+					_hotspots[kHSWalkArea1]._flags &= ~SF_WALKABLE;
 				}
 			}
 			break;
@@ -274,9 +274,9 @@ void GnapEngine::scene25_run() {
 			break;
 		
 		default:
-			if (_mouseClickState.left) {
+			if (_mouseClickState._left) {
 				gnapWalkTo(-1, -1, -1, -1, 1);
-				_mouseClickState.left = false;
+				_mouseClickState._left = false;
 			}
 			break;
 		
@@ -356,10 +356,10 @@ void GnapEngine::scene25_updateAnimations() {
 			_gameSys->insertSequence(0x60, 2, 0, 0, kSeqNone, 0, 0, 0);
 			_s25_currTicketVendorSequenceId = _s25_nextTicketVendorSequenceId;
 			_s25_nextTicketVendorSequenceId = -1;
-			_hotspots[kHSWalkArea1].flags |= SF_WALKABLE;
+			_hotspots[kHSWalkArea1]._flags |= SF_WALKABLE;
 			playGnapIdle(0, 0);
 			gnapWalkTo(_hotspotsWalkPos[3].x, _hotspotsWalkPos[3].y, -1, 0x107BB, 1);
-			_hotspots[kHSWalkArea1].flags &= ~SF_WALKABLE;
+			_hotspots[kHSWalkArea1]._flags &= ~SF_WALKABLE;
 			_gnapActionStatus = kASEnterCircusWihoutTicketDone;
 			break;
 		case kASEnterCircusWihoutTicketDone:

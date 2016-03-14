@@ -271,8 +271,8 @@ void GnapEngine::scene46_run() {
 
 		}
 	
-		if (_mouseClickState.left && _gnapActionStatus < 0) {
-			_mouseClickState.left = false;
+		if (_mouseClickState._left && _gnapActionStatus < 0) {
+			_mouseClickState._left = false;
 			if (isFlag(12)) {
 				_toyUfoActionStatus = 4;
 				toyUfoFlyTo(-1, -1, 0, 799, 0, 300, 2);

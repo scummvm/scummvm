@@ -47,7 +47,7 @@ void GnapEngine::scene14_updateHotspots() {
 	setHotspot(kHSToilet, 225, 250, 510, 500, SF_PLAT_CURSOR | SF_TALK_CURSOR | SF_GRAB_CURSOR | SF_LOOK_CURSOR);
 	setDeviceHotspot(kHSDevice, -1, -1, -1, -1);
 	if (isFlag(2))
-		_hotspots[kHSCoin].flags = SF_DISABLED;
+		_hotspots[kHSCoin]._flags = SF_DISABLED;
 	_hotspotsCount = 5;
 }
 
@@ -143,7 +143,7 @@ void GnapEngine::scene14_run() {
 			break;
 
 		default:
-			_mouseClickState.left = false;
+			_mouseClickState._left = false;
 			break;
 
 		}

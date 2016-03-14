@@ -73,10 +73,10 @@ void GnapEngine::scene06_updateHotspots() {
 	setHotspot(kHSWalkArea5, 0, 0, 800, 504);
 	setDeviceHotspot(kHSDevice, -1, -1, -1, -1);
     if (isFlag(29)) 
-    	_hotspots[kHSLadder].flags = SF_DISABLED;
+    	_hotspots[kHSLadder]._flags = SF_DISABLED;
 	if (_cursorValue == 4) {
-		_hotspots[kHSLadder].flags = SF_DISABLED;
-		_hotspots[kHSGas].flags = SF_DISABLED;
+		_hotspots[kHSLadder]._flags = SF_DISABLED;
+		_hotspots[kHSGas]._flags = SF_DISABLED;
 	}
 	_hotspotsCount = 11;
 }
@@ -174,9 +174,9 @@ void GnapEngine::scene06_run() {
 						if (isFlag(4)) {
 							playGnapImpossible(0, 0);
 						} else if (triedDeviceOnGas) {
-							_hotspots[kHSWalkArea5].flags |= SF_WALKABLE;
+							_hotspots[kHSWalkArea5]._flags |= SF_WALKABLE;
 							gnapWalkTo(_hotspotsWalkPos[1].x, _hotspotsWalkPos[1].y, 0, 0x107BC, 1);
-							_hotspots[kHSWalkArea5].flags &= ~SF_WALKABLE;
+							_hotspots[kHSWalkArea5]._flags &= ~SF_WALKABLE;
 							_gnapActionStatus = kASTryToGetGas;
 						} else {
 							triedDeviceOnGas = true;
@@ -225,9 +225,9 @@ void GnapEngine::scene06_run() {
 		case kHSHorse:
 			if (_gnapActionStatus < 0) {
 				if (_grabCursorSpriteIndex == kItemTwig && _s06_horseTurnedBack) {
-					_hotspots[kHSWalkArea5].flags |= SF_WALKABLE;
+					_hotspots[kHSWalkArea5]._flags |= SF_WALKABLE;
 					gnapWalkTo(_hotspotsWalkPos[3].x, _hotspotsWalkPos[3].y, 0, 0x107BC, 1);
-					_hotspots[kHSWalkArea5].flags &= ~SF_WALKABLE;
+					_hotspots[kHSWalkArea5]._flags &= ~SF_WALKABLE;
 					_gnapIdleFacing = 5;
 					platypusWalkTo(6, 8, 1, 0x107C2, 1);
 					_beaverFacing = 0;
@@ -245,9 +245,9 @@ void GnapEngine::scene06_run() {
 							gnapWalkTo(_hotspotsWalkPos[3].x, _hotspotsWalkPos[3].y, 0, getGnapSequenceId(gskBrainPulsating, 3, 2) | 0x10000, 1);
 						} else {
 							_gnapIdleFacing = 3;
-							_hotspots[kHSWalkArea5].flags |= SF_WALKABLE;
+							_hotspots[kHSWalkArea5]._flags |= SF_WALKABLE;
 							gnapWalkTo(_hotspotsWalkPos[3].x, _hotspotsWalkPos[3].y, 0, getGnapSequenceId(gskBrainPulsating, 0, 0) | 0x10000, 1);
-							_hotspots[kHSWalkArea5].flags &= ~SF_WALKABLE;
+							_hotspots[kHSWalkArea5]._flags &= ~SF_WALKABLE;
 							_gnapActionStatus = kASTalkToHorse;
 						}
 						break;
@@ -282,9 +282,9 @@ void GnapEngine::scene06_run() {
 			break;
 
 		default:
-			if (_mouseClickState.left && _gnapActionStatus < 0) {
+			if (_mouseClickState._left && _gnapActionStatus < 0) {
 				gnapWalkTo(-1, -1, -1, -1, 1);
-				_mouseClickState.left = false;
+				_mouseClickState._left = false;
 			}
 			break;
 
@@ -383,7 +383,7 @@ void GnapEngine::scene06_updateAnimations() {
 			_gameSys->setAnimation(0, 0, 1);
 			invAdd(kItemGas);
 			setFlag(29);
-			_hotspots[kHSLadder].flags = SF_DISABLED;
+			_hotspots[kHSLadder]._flags = SF_DISABLED;
 			setGrabCursorSprite(kItemGas);
 			_beaverActionStatus = -1;
 			_platX = 6;

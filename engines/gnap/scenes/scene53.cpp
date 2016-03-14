@@ -159,7 +159,7 @@ void GnapEngine::scene53_runChitChatLine() {
 		_s53_currHandSequenceId = 0x5E;
 	}
 	
-	_hotspots[1].flags = SF_DISABLED;
+	_hotspots[1]._flags = SF_DISABLED;
 	
 	while (!flag) {
 	

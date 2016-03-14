@@ -85,7 +85,7 @@ void GnapEngine::scene11_run() {
 	
 	_timers[7] = 50;
 	
-	_hotspots[kHSBillard].flags |= SF_DISABLED;
+	_hotspots[kHSBillard]._flags |= SF_DISABLED;
 	
 	_s11_currGoggleGuySequenceId = 0x1F9;
 	
@@ -290,9 +290,9 @@ void GnapEngine::scene11_run() {
 			break;
 			
 		default:
-			if (_mouseClickState.left && _gnapActionStatus < 0) {
+			if (_mouseClickState._left && _gnapActionStatus < 0) {
 				gnapWalkTo(-1, -1, -1, -1, 1);
-				_mouseClickState.left = false;
+				_mouseClickState._left = false;
 			}
 			break;
 			
@@ -434,7 +434,7 @@ void GnapEngine::scene11_updateAnimations() {
 				_s11_nextHookGuySequenceId = -1;
 				_timers[4] = getRandom(40) + 20;
 				_gameSys->insertSequence(0x208, 256, 0, 0, kSeqNone, getSequenceTotalDuration(0x1F4) - 5, 0, 0);
-				_hotspots[kHSBillard].flags |= SF_DISABLED;
+				_hotspots[kHSBillard]._flags |= SF_DISABLED;
 				_gameSys->setAnimation(0x207, 257, 4);
 				_gameSys->insertSequence(0x207, 257, 0, 0, kSeqNone, getSequenceTotalDuration(0x1FE), 0, 0);
 				_gnapActionStatus = -1;
@@ -480,7 +480,7 @@ void GnapEngine::scene11_updateAnimations() {
 	
 	if (_gameSys->getAnimationStatus(4) == 2) {
 		_gameSys->setAnimation(0, 0, 4);
-		_hotspots[kHSBillard].flags &= ~SF_DISABLED;
+		_hotspots[kHSBillard]._flags &= ~SF_DISABLED;
 	}
 
 }

@@ -63,10 +63,10 @@ void GnapEngine::scene43_updateHotspots() {
 		setHotspot(kHSUfoBucket, 475, 290, 545, 365, SF_DISABLED);
 		setDeviceHotspot(kHSUfoDevice, -1, 534, -1, 599);
 		if (isFlag(19))
-			_hotspots[kHSUfoBucket].flags = SF_GRAB_CURSOR;
+			_hotspots[kHSUfoBucket]._flags = SF_GRAB_CURSOR;
 		// NOTE Bug in the original. Key hotspot wasn't disabled.
 		if (isFlag(14))
-			_hotspots[kHSUfoKey].flags = SF_DISABLED;
+			_hotspots[kHSUfoKey]._flags = SF_DISABLED;
 		_hotspotsCount = 6;
 	} else {
 		setHotspot(kHSPlatypus, 0, 0, 0, 0, SF_WALKABLE | SF_TALK_CURSOR | SF_GRAB_CURSOR | SF_LOOK_CURSOR);
@@ -80,7 +80,7 @@ void GnapEngine::scene43_updateHotspots() {
 		setHotspot(kHSWalkArea2, 465, 0, 800, 493);
 		setDeviceHotspot(kHSDevice, -1, -1, -1, -1);
         if (isFlag(14))
-			_hotspots[kHSKey].flags = SF_DISABLED;
+			_hotspots[kHSKey]._flags = SF_DISABLED;
 		_hotspotsCount = 10;
 	}
 }
@@ -311,8 +311,8 @@ void GnapEngine::scene43_run() {
 
 		}
 	
-		if (_mouseClickState.left && _gnapActionStatus < 0) {
-			_mouseClickState.left = false;
+		if (_mouseClickState._left && _gnapActionStatus < 0) {
+			_mouseClickState._left = false;
 			if (isFlag(12) && (_toyUfoActionStatus == 5 || _toyUfoActionStatus == -1)) {
 				_toyUfoActionStatus = 5;
 				toyUfoFlyTo(-1, -1, 0, 799, 0, 300, 3);

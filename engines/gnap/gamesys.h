@@ -92,9 +92,9 @@ struct GfxItem {
 };
 
 struct Animation {
-	int sequenceId;
-	int id;
-	int status;
+	int _sequenceId;
+	int _id;
+	int _status;
 };
 
 class GameSys {
@@ -135,8 +135,6 @@ public:
 	SpriteDrawItem _newSpriteDrawItems[kMaxSpriteDrawItems];	
 	int _newSpriteDrawItemsCount;
 
-	bool _spriteDrawItems1Changed;
-	
 	RemoveSequenceItem _removeSequenceItems[kMaxSequenceItems];
 	int _removeSequenceItemsCount;
 	
@@ -166,7 +164,7 @@ public:
 	
 	int _backgroundImageValue3, _backgroundImageValue1;
 	int _backgroundImageValue4, _backgroundImageValue2;
-	bool _backgroundImageError;
+	bool _backgroundImageError; // CHECKME: Unused
 	
 	int32 _gameSysClock, _lastUpdateClock;
 

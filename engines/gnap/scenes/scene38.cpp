@@ -73,21 +73,21 @@ void GnapEngine::scene38_updateHotspots() {
 	setHotspot(kHSWalkArea6, 393, 0, 698, 445, SF_WALKABLE | SF_DISABLED);
 	setDeviceHotspot(kHSDevice, -1, -1, -1, -1);
 	if (_beaverActionStatus == kASBeaverHoldingTrapDoor)
-		_hotspots[kHSPlatypus].flags = SF_WALKABLE | SF_DISABLED;
+		_hotspots[kHSPlatypus]._flags = SF_WALKABLE | SF_DISABLED;
 	if (_beaverActionStatus == kASBeaverHoldingTrapDoor)
-		_hotspots[kHSExitCave].flags = SF_EXIT_D_CURSOR;
+		_hotspots[kHSExitCave]._flags = SF_EXIT_D_CURSOR;
 	else if (_gnapActionStatus == kASHoldingHuntingTrophy)
-		_hotspots[kHSExitCave].flags = SF_EXIT_D_CURSOR;
+		_hotspots[kHSExitCave]._flags = SF_EXIT_D_CURSOR;
 	if (_beaverActionStatus == kASBeaverHoldingTrapDoor)
-		_hotspots[kHSTrapDoorLid1].flags = SF_DISABLED;
+		_hotspots[kHSTrapDoorLid1]._flags = SF_DISABLED;
 	else if (_gnapActionStatus == kASHoldingHuntingTrophy)
-		_hotspots[kHSTrapDoorLid1].flags = SF_PLAT_CURSOR | SF_TALK_CURSOR | SF_GRAB_CURSOR | SF_LOOK_CURSOR;
+		_hotspots[kHSTrapDoorLid1]._flags = SF_PLAT_CURSOR | SF_TALK_CURSOR | SF_GRAB_CURSOR | SF_LOOK_CURSOR;
 	if (_beaverActionStatus == kASBeaverHoldingTrapDoor)
-		_hotspots[kHSTrapDoorLid2].flags = SF_DISABLED;
+		_hotspots[kHSTrapDoorLid2]._flags = SF_DISABLED;
 	else if (_gnapActionStatus == kASHoldingHuntingTrophy)
-		_hotspots[kHSTrapDoorLid2].flags = SF_PLAT_CURSOR | SF_TALK_CURSOR | SF_GRAB_CURSOR | SF_LOOK_CURSOR;
+		_hotspots[kHSTrapDoorLid2]._flags = SF_PLAT_CURSOR | SF_TALK_CURSOR | SF_GRAB_CURSOR | SF_LOOK_CURSOR;
 	if (_beaverActionStatus == kASBeaverHoldingTrapDoor)
-		_hotspots[kHSWalkArea6].flags = 0;
+		_hotspots[kHSWalkArea6]._flags = SF_NONE;
 	_hotspotsCount = 13;
 }
 
@@ -224,12 +224,12 @@ void GnapEngine::scene38_run() {
 			break;
 			
 		default:
-			if (_mouseClickState.left) {
+			if (_mouseClickState._left) {
 				if (_gnapActionStatus == kASHoldingHuntingTrophy)
 					_gnapActionStatus = kASReleaseHuntingTrophy;
 				else if (_gnapActionStatus < 0)
 					gnapWalkTo(-1, -1, -1, -1, 1);
-				_mouseClickState.left = false;
+				_mouseClickState._left = false;
 			}
 			break;
 

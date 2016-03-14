@@ -70,14 +70,14 @@ void GnapEngine::scene45_updateHotspots() {
 		setHotspot(kHSWalkArea1, 0, 0, 800, 472);
 		setDeviceHotspot(kHSDevice, -1, -1, -1, -1);
 		if (isFlag(22)) {
-			_hotspots[kHSPlatypus].flags = SF_DISABLED;
-			_hotspots[kHSExitUfoParty].flags = SF_DISABLED;
-			_hotspots[kHSExitShoe].flags = SF_DISABLED;
-			_hotspots[kHSExitRight].flags = SF_DISABLED;
-			_hotspots[kHSExitDiscoBall].flags = SF_EXIT_U_CURSOR;
+			_hotspots[kHSPlatypus]._flags = SF_DISABLED;
+			_hotspots[kHSExitUfoParty]._flags = SF_DISABLED;
+			_hotspots[kHSExitShoe]._flags = SF_DISABLED;
+			_hotspots[kHSExitRight]._flags = SF_DISABLED;
+			_hotspots[kHSExitDiscoBall]._flags = SF_EXIT_U_CURSOR;
 		}
 		if (isFlag(23) || isFlag(22))
-			_hotspots[kHSDiscoBall].flags = SF_DISABLED;
+			_hotspots[kHSDiscoBall]._flags = SF_DISABLED;
 		_hotspotsCount = 8;
 	}
 }
@@ -327,8 +327,8 @@ void GnapEngine::scene45_run() {
 		
 		}
 
-		if (_mouseClickState.left && _gnapActionStatus < 0) {
-			_mouseClickState.left = false;
+		if (_mouseClickState._left && _gnapActionStatus < 0) {
+			_mouseClickState._left = false;
 			if (isFlag(12)) {
 				_toyUfoActionStatus = 3;
 				toyUfoFlyTo(-1, -1, 0, 799, 0, 300, 5);

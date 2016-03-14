@@ -87,10 +87,10 @@ void GnapEngine::scene13_showScribble() {
 	hideCursor();
 	_largeSprite = _gameSys->createSurface(0x6F);
 	_gameSys->insertSpriteDrawItem(_largeSprite, 0, 0, 300);
-	while (!_mouseClickState.left && !isKeyStatus1(Common::KEYCODE_ESCAPE) &&
+	while (!_mouseClickState._left && !isKeyStatus1(Common::KEYCODE_ESCAPE) &&
 		!isKeyStatus1(Common::KEYCODE_SPACE) && !isKeyStatus1(29))
 		gameUpdateTick();
-	_mouseClickState.left = false;
+	_mouseClickState._left = false;
 	clearKeyStatus1(Common::KEYCODE_ESCAPE);
 	clearKeyStatus1(29);
 	clearKeyStatus1(Common::KEYCODE_SPACE);
@@ -305,9 +305,9 @@ void GnapEngine::scene13_run() {
 			break;
 			
 		default:
-			if (_mouseClickState.left) {
+			if (_mouseClickState._left) {
 				gnapWalkTo(-1, -1, -1, -1, 1);
-				_mouseClickState.left = false;
+				_mouseClickState._left = false;
 			}
 			break;
 

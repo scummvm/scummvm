@@ -222,9 +222,9 @@ void GnapEngine::scene33_run() {
 			break;
 			
 		default:
-			if (_mouseClickState.left && _gnapActionStatus < 0) {
+			if (_mouseClickState._left && _gnapActionStatus < 0) {
 				gnapWalkTo(-1, -1, -1, -1, 1);
-				_mouseClickState.left = false;
+				_mouseClickState._left = false;
 			}
 			break;
 

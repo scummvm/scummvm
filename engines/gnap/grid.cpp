@@ -80,9 +80,9 @@ bool GnapEngine::isPointBlocked(int gridX, int gridY) {
 	const int y = _gridMinY + 48 * gridY;
 
 	for (int i = 0; i < _hotspotsCount; ++i) {
-		if (x >= _hotspots[i].x1 && x <= _hotspots[i].x2 &&
-			y >= _hotspots[i].y1 && y <= _hotspots[i].y2 &&
-			!(_hotspots[i].flags & SF_WALKABLE))
+		if (x >= _hotspots[i]._x1 && x <= _hotspots[i]._x2 &&
+			y >= _hotspots[i]._y1 && y <= _hotspots[i]._y2 &&
+			!(_hotspots[i]._flags & SF_WALKABLE))
 			return true;
 	}
 

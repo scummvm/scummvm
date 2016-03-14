@@ -70,13 +70,13 @@ void GnapEngine::scene03_updateHotspots() {
 	setHotspot(kHSWalkAreas3, 0, 0, 800, 354);
 	setDeviceHotspot(kHSDevice, -1, -1, -1, -1);
 	if (isFlag(0))
-		_hotspots[kHSPlatypus].flags = SF_WALKABLE | SF_TALK_CURSOR | SF_GRAB_CURSOR | SF_LOOK_CURSOR;
+		_hotspots[kHSPlatypus]._flags = SF_WALKABLE | SF_TALK_CURSOR | SF_GRAB_CURSOR | SF_LOOK_CURSOR;
 	if (isFlag(6))
-		_hotspots[kHSGrass].flags = SF_WALKABLE | SF_DISABLED;
+		_hotspots[kHSGrass]._flags = SF_WALKABLE | SF_DISABLED;
 	if (isFlag(0))
-		_hotspots[kHSTrappedPlatypus].flags = SF_DISABLED;
+		_hotspots[kHSTrappedPlatypus]._flags = SF_DISABLED;
 	if (isFlag(0) || _s03_platypusHypnotized)
-		_hotspots[kHSPlatypusWalkArea].flags |= SF_WALKABLE;
+		_hotspots[kHSPlatypusWalkArea]._flags |= SF_WALKABLE;
 	_hotspotsCount = 10;
 }
 
@@ -181,7 +181,7 @@ void GnapEngine::scene03_run() {
 						playGnapUseDevice(0, 0);
 						_gameSys->insertSequence(0x1B3, 253, 0x1B2, 253, kSeqSyncWait, 0, 0, 0);
 						_gameSys->setAnimation(0x1B3, 253, 5);
-						_hotspots[kHSGrass].flags |= SF_WALKABLE | SF_DISABLED;
+						_hotspots[kHSGrass]._flags |= SF_WALKABLE | SF_DISABLED;
 						break;
 					case TALK_CURSOR:
 					case PLAT_CURSOR:
@@ -195,12 +195,12 @@ void GnapEngine::scene03_run() {
 		case kHSExitTruck:
 			if (_gnapActionStatus < 0) {
 				_isLeavingScene = 1;
-				_hotspots[kHSPlatypusWalkArea].flags |= SF_WALKABLE;
+				_hotspots[kHSPlatypusWalkArea]._flags |= SF_WALKABLE;
 				gnapWalkTo(_hotspotsWalkPos[2].x, _hotspotsWalkPos[2].y, 0, 0x107AD, 1);
 				_gnapActionStatus = kASLeaveScene;
 				if (isFlag(0))
 					platypusWalkTo(_hotspotsWalkPos[2].x, _hotspotsWalkPos[2].y, -1, 0x107C2, 1);
-				_hotspots[kHSPlatypusWalkArea].flags &= ~SF_WALKABLE;
+				_hotspots[kHSPlatypusWalkArea]._flags &= ~SF_WALKABLE;
 				if (_cursorValue == 1)
 					_newSceneNum = 2;
 				else
@@ -219,11 +219,11 @@ void GnapEngine::scene03_run() {
 						break;
 					case GRAB_CURSOR:
 						if (!isFlag(0))
-							_hotspots[kHSPlatypusWalkArea].flags |= SF_WALKABLE;
+							_hotspots[kHSPlatypusWalkArea]._flags |= SF_WALKABLE;
 						if (gnapWalkTo(_hotspotsWalkPos[3].x, _hotspotsWalkPos[3].y, 0, getGnapSequenceId(gskIdle, _hotspotsWalkPos[3].x + 1, _hotspotsWalkPos[3].y + 1) | 0x10000, 1))
 							_gnapActionStatus = kASGrabCreek;
 						if (!isFlag(0))
-							_hotspots[kHSPlatypusWalkArea].flags &= ~SF_WALKABLE;
+							_hotspots[kHSPlatypusWalkArea]._flags &= ~SF_WALKABLE;
 						break;
 					case TALK_CURSOR:
 					case PLAT_CURSOR:
@@ -306,9 +306,9 @@ void GnapEngine::scene03_run() {
 			break;
 			
 		default:
-			if (_mouseClickState.left && _gnapActionStatus < 0) {
+			if (_mouseClickState._left && _gnapActionStatus < 0) {
 				gnapWalkTo(-1, -1, -1, -1, 1);
-				_mouseClickState.left = false;
+				_mouseClickState._left = false;
 			}
 			break;
 			

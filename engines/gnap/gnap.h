@@ -50,24 +50,21 @@ class GameSys;
 class SoundMan;
 
 struct MouseButtonState {
-	bool left;
-	bool right;
-	bool middle;
-	MouseButtonState() : left(false), right(false), middle(false) {
+	bool _left;
+	bool _right;
+	MouseButtonState() : _left(false), _right(false) {
 	}
 };
 
 struct Hotspot {
-	int16 x1, y1, x2, y2;
-	int16 field_10;
-	int16 field_12;
-	uint16 flags;
-	int id;
+	int16 _x1, _y1, _x2, _y2;
+	uint16 _flags;
+	int _id;
 	bool isPointInside(int16 x, int16 y) const {
-		return x >= x1 && x <= x2 && y >= y1 && y <= y2;
+		return x >= _x1 && x <= _x2 && y >= _y1 && y <= _y2;
 	}
 	bool isFlag(uint16 flag) const {
-		return (flags & flag) != 0;
+		return (_flags & flag) != 0;
 	}
 };
 
@@ -82,6 +79,7 @@ const int kMaxGridStructs = 30;
 const int kMaxTimers = 10;
 
 enum {
+	SF_NONE             = 0x0000,
 	SF_LOOK_CURSOR		= 0x0001,
 	SF_GRAB_CURSOR		= 0x0002,
 	SF_TALK_CURSOR		= 0x0004,

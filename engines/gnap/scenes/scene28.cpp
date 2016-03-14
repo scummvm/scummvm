@@ -65,9 +65,9 @@ void GnapEngine::scene28_updateHotspots() {
 	setHotspot(kHSWalkArea2, 0, 0, 0, 0, 7, SF_DISABLED);
 	setDeviceHotspot(kHSDevice, -1, -1, -1, -1);
 	if (invHas(kItemHorn))
-		_hotspots[kHSHorn].flags = SF_DISABLED;
+		_hotspots[kHSHorn]._flags = SF_DISABLED;
 	if (isFlag(22))
-		_hotspots[kHSEmptyBucket].flags = SF_PLAT_CURSOR | SF_TALK_CURSOR | SF_GRAB_CURSOR | SF_LOOK_CURSOR;
+		_hotspots[kHSEmptyBucket]._flags = SF_PLAT_CURSOR | SF_TALK_CURSOR | SF_GRAB_CURSOR | SF_LOOK_CURSOR;
 	_hotspotsCount = 8;
 }
 
@@ -178,9 +178,9 @@ void GnapEngine::scene28_run() {
 						} else {
 							_gnapIdleFacing = 5;
 							gnapWalkTo(2, 8, 0, 0x107BB, 1);
-							_hotspots[kHSWalkArea1].flags |= SF_WALKABLE;
+							_hotspots[kHSWalkArea1]._flags |= SF_WALKABLE;
 							gnapWalkTo(_hotspotsWalkPos[kHSHorn].x, _hotspotsWalkPos[kHSHorn].y, 0, 0x107BB, 1);
-							_hotspots[kHSWalkArea1].flags &= ~SF_WALKABLE;
+							_hotspots[kHSWalkArea1]._flags &= ~SF_WALKABLE;
 							_gnapActionStatus = kASGrabHornFails;
 						}
 						break;
@@ -237,10 +237,10 @@ void GnapEngine::scene28_run() {
 			if (_gnapActionStatus < 0) {
 				_isLeavingScene = true;
 				_newSceneNum = 27;
-				_hotspots[kHSWalkArea1].flags |= SF_WALKABLE;
+				_hotspots[kHSWalkArea1]._flags |= SF_WALKABLE;
 				gnapWalkTo(_hotspotsWalkPos[kHSExitOutsideClown].x, _hotspotsWalkPos[kHSExitOutsideClown].y, 0, 0x107BF, 1);
 				_gnapActionStatus = kASLeaveScene;
-				_hotspots[kHSWalkArea1].flags &= ~SF_WALKABLE;
+				_hotspots[kHSWalkArea1]._flags &= ~SF_WALKABLE;
 				platypusWalkTo(_hotspotsWalkPos[kHSExitOutsideClown].x - 1, _hotspotsWalkPos[kHSExitOutsideClown].y, -1, 0x107C2, 1);
 			}
 			break;
@@ -276,9 +276,9 @@ void GnapEngine::scene28_run() {
 			break;
 			
 		default:
-			if (_mouseClickState.left && _gnapActionStatus < 0) {
+			if (_mouseClickState._left && _gnapActionStatus < 0) {
 				gnapWalkTo(-1, -1, -1, -1, 1);
-				_mouseClickState.left = false;
+				_mouseClickState._left = false;
 			}
 			break;
 			

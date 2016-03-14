@@ -60,9 +60,9 @@ GameSys::GameSys(GnapEngine *vm)
 	_backgroundSurface = 0;
 	_frontSurface = 0;
 	for (int i = 0; i < kMaxAnimations; ++i) {
-		_animations[i].sequenceId = -1;
-		_animations[i].id = 0;
-		_animations[i].status = 0;
+		_animations[i]._sequenceId = -1;
+		_animations[i]._id = 0;
+		_animations[i]._status = 0;
 	}
 	_screenRect = Common::Rect(0, 0, 800, 600);
 }
@@ -330,16 +330,16 @@ void GameSys::fillSurface(Graphics::Surface *surface, int x, int y, int width, i
 
 void GameSys::setAnimation(int sequenceId, int id, int animationIndex) {
 	if (animationIndex < kMaxAnimations) {
-		_animations[animationIndex].sequenceId = sequenceId;
-		_animations[animationIndex].id = id;
-		_animations[animationIndex].status = 0;
+		_animations[animationIndex]._sequenceId = sequenceId;
+		_animations[animationIndex]._id = id;
+		_animations[animationIndex]._status = 0;
 	}
 }
 
 int GameSys::getAnimationStatus(int animationIndex) {
 	int result = -1;
 	if (animationIndex < kMaxAnimations)
-		result = _animations[animationIndex].status;
+		result = _animations[animationIndex]._status;
 	return result;
 }
 
@@ -505,8 +505,8 @@ void GameSys::seqInsertGfx(int index, int duration) {
 	}
 
 	for (int k = 0; k < kMaxAnimations; ++k) {
-		if (_animations[k].sequenceId != -1 && _animations[k].sequenceId == seqItem->_sequenceId && _animations[k].id == seqItem->_id) {
-			_animations[k].status = 1;
+		if (_animations[k]._sequenceId != -1 && _animations[k]._sequenceId == seqItem->_sequenceId && _animations[k]._id == seqItem->_id) {
+			_animations[k]._status = 1;
 			break;
 		}
 	}
@@ -572,7 +572,7 @@ void GameSys::updateAnimationsStatus(int sequenceId, int id) {
 	Animation *foundAnimation = 0;
 	for (int animationIndex = 0; animationIndex < kMaxAnimations; ++animationIndex) {
 		Animation *animation = &_animations[animationIndex];
-		if (animation->sequenceId != -1 && animation->sequenceId == sequenceId && animation->id == id) {
+		if (animation->_sequenceId != -1 && animation->_sequenceId == sequenceId && animation->_id == id) {
 			foundAnimation = animation;
 			break;
 		}
@@ -596,8 +596,8 @@ void GameSys::updateAnimationsStatus(int sequenceId, int id) {
 	}
 
 	if (foundSequence) {
-		foundAnimation->sequenceId = -1;
-		foundAnimation->status = 2;
+		foundAnimation->_sequenceId = -1;
+		foundAnimation->_status = 2;
 	}
 
 }

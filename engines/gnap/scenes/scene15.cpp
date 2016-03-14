@@ -94,10 +94,10 @@ void GnapEngine::scene15_run() {
 		updateMouseCursor();
 		updateCursorByHotspot();
 	
-		_hotspots[kHSPlatypus].x1 = 0;
-		_hotspots[kHSPlatypus].y1 = 0;
-		_hotspots[kHSPlatypus].x2 = 0;
-		_hotspots[kHSPlatypus].y2 = 0;
+		_hotspots[kHSPlatypus]._x1 = 0;
+		_hotspots[kHSPlatypus]._y1 = 0;
+		_hotspots[kHSPlatypus]._x2 = 0;
+		_hotspots[kHSPlatypus]._y2 = 0;
 	
 		_sceneClickedHotspot = getClickedHotspotId();
 		updateGrabCursorSprite(0, 0);
@@ -222,7 +222,7 @@ void GnapEngine::scene15_run() {
 			break;
 
 		default:
-			_mouseClickState.left = false;
+			_mouseClickState._left = false;
 			break;
 
 		}

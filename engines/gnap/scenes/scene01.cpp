@@ -74,9 +74,9 @@ void GnapEngine::scene01_updateHotspots() {
 	setHotspot(kHSWalkArea8, 0, 546, 300, 600);
 	setDeviceHotspot(kHSDevice, -1, -1, -1, -1);
     if (isFlag(0))
-		_hotspots[kHSPlatypus].flags = SF_WALKABLE | SF_TALK_CURSOR | SF_GRAB_CURSOR | SF_LOOK_CURSOR;
+		_hotspots[kHSPlatypus]._flags = SF_WALKABLE | SF_TALK_CURSOR | SF_GRAB_CURSOR | SF_LOOK_CURSOR;
     if (isFlag(1))
-		_hotspots[kHSMud].flags = SF_WALKABLE | SF_DISABLED;
+		_hotspots[kHSMud]._flags = SF_WALKABLE | SF_DISABLED;
 	_hotspotsCount = 14;
 }
 
@@ -259,9 +259,9 @@ void GnapEngine::scene01_run() {
 			break;
 
 		default:
-			if (_mouseClickState.left && _gnapActionStatus < 0) {
+			if (_mouseClickState._left && _gnapActionStatus < 0) {
 				gnapWalkTo(-1, -1, -1, -1, 1);
-				_mouseClickState.left = false;
+				_mouseClickState._left = false;
 			}
 			break;
 

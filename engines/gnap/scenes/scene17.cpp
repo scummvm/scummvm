@@ -73,10 +73,10 @@ void GnapEngine::scene17_updateHotspots() {
 	setHotspot(kHSWalkArea3, 0, 204, 173, 468);
 	setDeviceHotspot(kHSDevice, -1, -1, -1, -1);
 	if (isFlag(6))
-		_hotspots[kHSWrench].flags = 0;
+		_hotspots[kHSWrench]._flags = SF_NONE;
 	if (isFlag(26)) {
-		_hotspots[kHSDevice].flags = SF_DISABLED;
-		_hotspots[kHSPlatypus].flags = SF_DISABLED;
+		_hotspots[kHSDevice]._flags = SF_DISABLED;
+		_hotspots[kHSPlatypus]._flags = SF_DISABLED;
 	}
 	_hotspotsCount = 10;
 }
@@ -85,9 +85,9 @@ void GnapEngine::scene17_update() {
 	gameUpdateTick();
 	updateMouseCursor();
 	updateGrabCursorSprite(0, 0);
-	if (_mouseClickState.left) {
+	if (_mouseClickState._left) {
 		gnapWalkTo(-1, -1, -1, -1, 1);
-		_mouseClickState.left = false;
+		_mouseClickState._left = false;
 	}
 }
 
@@ -476,9 +476,9 @@ void GnapEngine::scene17_run() {
 			break;
 	
 		default:
-			if (_mouseClickState.left && _gnapActionStatus < 0) {
+			if (_mouseClickState._left && _gnapActionStatus < 0) {
 				gnapWalkTo(-1, -1, -1, -1, 1);
-				_mouseClickState.left = 0;
+				_mouseClickState._left = 0;
 			}
 			break;
 		}
@@ -742,9 +742,9 @@ void GnapEngine::scene17_updateAnimations() {
 		case 0x22E:
 		case 0x235:
 			if (_s17_nextWrenchSequenceId == 0x235)
-				_hotspots[kHSWrench].flags &= ~SF_DISABLED;
+				_hotspots[kHSWrench]._flags &= ~SF_DISABLED;
 			else
-				_hotspots[kHSWrench].flags |= SF_DISABLED;
+				_hotspots[kHSWrench]._flags |= SF_DISABLED;
 			_s17_canTryGetWrench = !_s17_canTryGetWrench;
 			_gameSys->setAnimation(_s17_nextWrenchSequenceId, 40, 2);
 			_gameSys->insertSequence(_s17_nextWrenchSequenceId, 40, _s17_currWrenchSequenceId, 40, kSeqSyncWait, 0, 0, 0);

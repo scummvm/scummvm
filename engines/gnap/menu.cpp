@@ -44,39 +44,39 @@ void GnapEngine::initMenuHotspots1() {
 	for (int i = 0; i < 3; ++i) {
 		int v1 = 0;
 		while (v1 < 3) {
-			_hotspots[v2].x1 = 87 * v1 + 262;
-			_hotspots[v2].y1 = 74 * i + 69;
-			_hotspots[v2].x2 = _hotspots[v2].x1 + 79;
-			_hotspots[v2].y2 = _hotspots[v2].y1 + 66;
-			_hotspots[v2].flags = 0;
-			_hotspots[v2].id = v2;
+			_hotspots[v2]._x1 = 87 * v1 + 262;
+			_hotspots[v2]._y1 = 74 * i + 69;
+			_hotspots[v2]._x2 = _hotspots[v2]._x1 + 79;
+			_hotspots[v2]._y2 = _hotspots[v2]._y1 + 66;
+			_hotspots[v2]._flags = SF_NONE;
+			_hotspots[v2]._id = v2;
 			++v1;
 			++v2;
 		}
 	}
 
-	_hotspots[v2].x1 = 330;
-	_hotspots[v2].y1 = 350;
-	_hotspots[v2].x2 = 430;
-	_hotspots[v2].y2 = 460;
-	_hotspots[v2].flags = 2;
-	_hotspots[v2].id = v2;
+	_hotspots[v2]._x1 = 330;
+	_hotspots[v2]._y1 = 350;
+	_hotspots[v2]._x2 = 430;
+	_hotspots[v2]._y2 = 460;
+	_hotspots[v2]._flags = SF_GRAB_CURSOR;
+	_hotspots[v2]._id = v2;
 
 	v0 = v2 + 1;
-	_hotspots[v0].x1 = 180;
-	_hotspots[v0].y1 = 15;
-	_hotspots[v0].x2 = 620;
-	_hotspots[v0].y2 = 580;
-	_hotspots[v0].flags = 0;
-	_hotspots[v0].id = v0;
+	_hotspots[v0]._x1 = 180;
+	_hotspots[v0]._y1 = 15;
+	_hotspots[v0]._x2 = 620;
+	_hotspots[v0]._y2 = 580;
+	_hotspots[v0]._flags = SF_NONE;
+	_hotspots[v0]._id = v0;
 
 	++v0;
-	_hotspots[v0].x1 = 0;
-	_hotspots[v0].y1 = 0;
-	_hotspots[v0].x2 = 799;
-	_hotspots[v0].y2 = 599;
-	_hotspots[v0].flags = 0;
-	_hotspots[v0].id = v0;
+	_hotspots[v0]._x1 = 0;
+	_hotspots[v0]._y1 = 0;
+	_hotspots[v0]._x2 = 799;
+	_hotspots[v0]._y2 = 599;
+	_hotspots[v0]._flags = SF_NONE;
+	_hotspots[v0]._id = v0;
 
 	_hotspotsCount = v0 + 1;
 }
@@ -85,129 +85,129 @@ void GnapEngine::initMenuHotspots2() {
 	int i, v0;
 	
 	for (i = 0; i < 4; ++i) {
-		_hotspots[i].x1 = 312;
-		_hotspots[i].y1 = 48 * i + 85;
-		_hotspots[i].x2 = _hotspots[i].x1 + 153;
-		_hotspots[i].y2 = _hotspots[i].y1 + 37;
-		_hotspots[i].flags = SF_GRAB_CURSOR;
-		_hotspots[i].id = i;
+		_hotspots[i]._x1 = 312;
+		_hotspots[i]._y1 = 48 * i + 85;
+		_hotspots[i]._x2 = _hotspots[i]._x1 + 153;
+		_hotspots[i]._y2 = _hotspots[i]._y1 + 37;
+		_hotspots[i]._flags = SF_GRAB_CURSOR;
+		_hotspots[i]._id = i;
 	}
-	_hotspots[i].x1 = 500;
-	_hotspots[i].y1 = 72;
-	_hotspots[i].x2 = 527;
-	_hotspots[i].y2 = 99;
-	_hotspots[i].flags = SF_DISABLED;
-	_hotspots[i].id = i;
+	_hotspots[i]._x1 = 500;
+	_hotspots[i]._y1 = 72;
+	_hotspots[i]._x2 = 527;
+	_hotspots[i]._y2 = 99;
+	_hotspots[i]._flags = SF_DISABLED;
+	_hotspots[i]._id = i;
 	v0 = i + 1;
-	_hotspots[v0].x1 = 330;
-	_hotspots[v0].y1 = 350;
-	_hotspots[v0].x2 = 430;
-	_hotspots[v0].y2 = 460;
-	_hotspots[v0].flags = SF_GRAB_CURSOR;
-	_hotspots[v0].id = v0;
+	_hotspots[v0]._x1 = 330;
+	_hotspots[v0]._y1 = 350;
+	_hotspots[v0]._x2 = 430;
+	_hotspots[v0]._y2 = 460;
+	_hotspots[v0]._flags = SF_GRAB_CURSOR;
+	_hotspots[v0]._id = v0;
 	++v0;
-	_hotspots[v0].x1 = 180;
-	_hotspots[v0].y1 = 15;
-	_hotspots[v0].x2 = 620;
-	_hotspots[v0].y2 = 580;
-	_hotspots[v0].flags = 0;
-	_hotspots[v0].id = v0;
+	_hotspots[v0]._x1 = 180;
+	_hotspots[v0]._y1 = 15;
+	_hotspots[v0]._x2 = 620;
+	_hotspots[v0]._y2 = 580;
+	_hotspots[v0]._flags = SF_NONE;
+	_hotspots[v0]._id = v0;
 	++v0;
-	_hotspots[v0].x1 = 0;
-	_hotspots[v0].y1 = 0;
-	_hotspots[v0].x2 = 799;
-	_hotspots[v0].y2 = 599;
-	_hotspots[v0].flags = 0;
-	_hotspots[v0].id = v0;
+	_hotspots[v0]._x1 = 0;
+	_hotspots[v0]._y1 = 0;
+	_hotspots[v0]._x2 = 799;
+	_hotspots[v0]._y2 = 599;
+	_hotspots[v0]._flags = SF_NONE;
+	_hotspots[v0]._id = v0;
 	_hotspotsCount = v0 + 1;
 }
 
 void GnapEngine::initMenuQuitQueryHotspots() {
-	_hotspots[0].x1 = 311;
-	_hotspots[0].y1 = 197;
-	_hotspots[0].x2 = 377;
-	_hotspots[0].y2 = 237;
-	_hotspots[0].flags = SF_GRAB_CURSOR;
-	_hotspots[0].id = 0;
-	_hotspots[1].x1 = 403;
-	_hotspots[1].y1 = 197;
-	_hotspots[1].x2 = 469;
-	_hotspots[1].y2 = 237;
-	_hotspots[1].flags = SF_GRAB_CURSOR;
-	_hotspots[1].id = 1;
-	_hotspots[2].x1 = 330;
-	_hotspots[2].y1 = 350;
-	_hotspots[2].x2 = 430;
-	_hotspots[2].y2 = 460;
-	_hotspots[2].flags = SF_GRAB_CURSOR;
-	_hotspots[2].id = 2;
-	_hotspots[3].x1 = 180;
-	_hotspots[3].y1 = 15;
-	_hotspots[3].x2 = 620;
-	_hotspots[3].y2 = 580;
-	_hotspots[3].flags = 0;
-	_hotspots[3].id = 3;
-	_hotspots[4].x1 = 0;
-	_hotspots[4].y1 = 0;
-	_hotspots[4].x2 = 799;
-	_hotspots[4].y2 = 599;
-	_hotspots[4].flags = 0;
-	_hotspots[4].id = 4;
+	_hotspots[0]._x1 = 311;
+	_hotspots[0]._y1 = 197;
+	_hotspots[0]._x2 = 377;
+	_hotspots[0]._y2 = 237;
+	_hotspots[0]._flags = SF_GRAB_CURSOR;
+	_hotspots[0]._id = 0;
+	_hotspots[1]._x1 = 403;
+	_hotspots[1]._y1 = 197;
+	_hotspots[1]._x2 = 469;
+	_hotspots[1]._y2 = 237;
+	_hotspots[1]._flags = SF_GRAB_CURSOR;
+	_hotspots[1]._id = 1;
+	_hotspots[2]._x1 = 330;
+	_hotspots[2]._y1 = 350;
+	_hotspots[2]._x2 = 430;
+	_hotspots[2]._y2 = 460;
+	_hotspots[2]._flags = SF_GRAB_CURSOR;
+	_hotspots[2]._id = 2;
+	_hotspots[3]._x1 = 180;
+	_hotspots[3]._y1 = 15;
+	_hotspots[3]._x2 = 620;
+	_hotspots[3]._y2 = 580;
+	_hotspots[3]._flags = SF_NONE;
+	_hotspots[3]._id = 3;
+	_hotspots[4]._x1 = 0;
+	_hotspots[4]._y1 = 0;
+	_hotspots[4]._x2 = 799;
+	_hotspots[4]._y2 = 599;
+	_hotspots[4]._flags = SF_NONE;
+	_hotspots[4]._id = 4;
 	_hotspotsCount = 5;
 }
 
 void GnapEngine::initSaveLoadHotspots() {
 	int i, v0;
 	for (i = 0; i < 7; ++i ) {
-		_hotspots[i].x1 = 288;
-		_hotspots[i].y1 = 31 * i + 74;
-		_hotspots[i].x2 = _hotspots[i].x1 + 91;
-		_hotspots[i].y2 = _hotspots[i].y1 + 22;
-		_hotspots[i].flags = SF_GRAB_CURSOR;
-		_hotspots[i].id = i;
+		_hotspots[i]._x1 = 288;
+		_hotspots[i]._y1 = 31 * i + 74;
+		_hotspots[i]._x2 = _hotspots[i]._x1 + 91;
+		_hotspots[i]._y2 = _hotspots[i]._y1 + 22;
+		_hotspots[i]._flags = SF_GRAB_CURSOR;
+		_hotspots[i]._id = i;
 	}
 	if (_menuStatus == 2) {
-		_hotspots[i].x1 = 416;
-		_hotspots[i].y1 = 160;
-		_hotspots[i].x2 = 499;
-		_hotspots[i].y2 = 188;
-		_hotspots[i].flags = SF_GRAB_CURSOR;
-		_hotspots[i].id = i;
+		_hotspots[i]._x1 = 416;
+		_hotspots[i]._y1 = 160;
+		_hotspots[i]._x2 = 499;
+		_hotspots[i]._y2 = 188;
+		_hotspots[i]._flags = SF_GRAB_CURSOR;
+		_hotspots[i]._id = i;
 		++i;
 	}
-	_hotspots[i].x1 = 416;
-	_hotspots[i].y1 = 213;
-	_hotspots[i].x2 = 499;
-	_hotspots[i].y2 = 241;
-	_hotspots[i].flags = SF_GRAB_CURSOR;
-	_hotspots[i].id = i;
+	_hotspots[i]._x1 = 416;
+	_hotspots[i]._y1 = 213;
+	_hotspots[i]._x2 = 499;
+	_hotspots[i]._y2 = 241;
+	_hotspots[i]._flags = SF_GRAB_CURSOR;
+	_hotspots[i]._id = i;
 	v0 = i + 1;
-	_hotspots[v0].x1 = 330;
-	_hotspots[v0].y1 = 350;
-	_hotspots[v0].x2 = 430;
-	_hotspots[v0].y2 = 460;
-	_hotspots[v0].flags = SF_GRAB_CURSOR;
-	_hotspots[v0].id = v0;
+	_hotspots[v0]._x1 = 330;
+	_hotspots[v0]._y1 = 350;
+	_hotspots[v0]._x2 = 430;
+	_hotspots[v0]._y2 = 460;
+	_hotspots[v0]._flags = SF_GRAB_CURSOR;
+	_hotspots[v0]._id = v0;
 	++v0;
-	_hotspots[v0].x1 = 180;
-	_hotspots[v0].y1 = 15;
-	_hotspots[v0].x2 = 620;
-	_hotspots[v0].y2 = 580;
-	_hotspots[v0].flags = 0;
-	_hotspots[v0].id = v0;
+	_hotspots[v0]._x1 = 180;
+	_hotspots[v0]._y1 = 15;
+	_hotspots[v0]._x2 = 620;
+	_hotspots[v0]._y2 = 580;
+	_hotspots[v0]._flags = SF_NONE;
+	_hotspots[v0]._id = v0;
 	++v0;
-	_hotspots[v0].x1 = 0;
-	_hotspots[v0].y1 = 0;
-	_hotspots[v0].x2 = 799;
-	_hotspots[v0].y2 = 599;
-	_hotspots[v0].flags = 0;
-	_hotspots[v0].id = v0;
+	_hotspots[v0]._x1 = 0;
+	_hotspots[v0]._y1 = 0;
+	_hotspots[v0]._x2 = 799;
+	_hotspots[v0]._y2 = 599;
+	_hotspots[v0]._flags = SF_NONE;
+	_hotspots[v0]._id = v0;
 	_hotspotsCount = v0 + 1;
 }
 
 void GnapEngine::drawInventoryFrames() {
 	for (int i = 0; i < 9; ++i)
-		_gameSys->drawSpriteToSurface(_menuBackgroundSurface, _hotspots[i].x1 - 93, _hotspots[i].y1, 0x10001);
+		_gameSys->drawSpriteToSurface(_menuBackgroundSurface, _hotspots[i]._x1 - 93, _hotspots[i]._y1, 0x10001);
 }
 
 void GnapEngine::insertInventorySprites() {
@@ -223,16 +223,16 @@ void GnapEngine::insertInventorySprites() {
 	for (int index = 0; index < 30 && _menuSpritesIndex < 9; ++index) {
 		if (invHas(index)) {
 			_gameSys->drawSpriteToSurface(_menuBackgroundSurface,
-				_hotspots[_menuSpritesIndex].x1 - 93, _hotspots[_menuSpritesIndex].y1, 0x10000);
+				_hotspots[_menuSpritesIndex]._x1 - 93, _hotspots[_menuSpritesIndex]._y1, 0x10000);
 			_menuInventorySprites[_menuSpritesIndex] = _gameSys->createSurface(getInventoryItemSpriteNum(index) | 0x10000);
 			if (index != _grabCursorSpriteIndex) {
 				_menuInventoryIndices[_menuSpritesIndex] = index;
 				_gameSys->insertSpriteDrawItem(_menuInventorySprites[_menuSpritesIndex],
-					_hotspots[_menuSpritesIndex].x1 + ((79 - _menuInventorySprites[_menuSpritesIndex]->w) / 2),
-					_hotspots[_menuSpritesIndex].y1 + ((66 - _menuInventorySprites[_menuSpritesIndex]->h) / 2),
+					_hotspots[_menuSpritesIndex]._x1 + ((79 - _menuInventorySprites[_menuSpritesIndex]->w) / 2),
+					_hotspots[_menuSpritesIndex]._y1 + ((66 - _menuInventorySprites[_menuSpritesIndex]->h) / 2),
 					261);
 			}
-			_hotspots[_menuSpritesIndex].flags = SF_GRAB_CURSOR;
+			_hotspots[_menuSpritesIndex]._flags = SF_GRAB_CURSOR;
 			++_menuSpritesIndex;
 		}
 	}
@@ -355,7 +355,7 @@ void GnapEngine::runMenu() {
 
 	clearAllKeyStatus1();
 
-	_mouseClickState.left = false;
+	_mouseClickState._left = false;
 
 	removeDeviceIconActive();
 	
@@ -373,10 +373,10 @@ void GnapEngine::updateMenuStatusInventory() {
 	};
 
 	updateGrabCursorSprite(0, 0);
-	_hotspots[0].x1 = 262;
-	_hotspots[0].y1 = 69;
-	_hotspots[0].x2 = 341;
-	_hotspots[0].y2 = 135;
+	_hotspots[0]._x1 = 262;
+	_hotspots[0]._y1 = 69;
+	_hotspots[0]._x2 = 341;
+	_hotspots[0]._y2 = 135;
 	_sceneClickedHotspot = -1;
 	if (_timers[2] == 0)
 		_sceneClickedHotspot = getClickedHotspotId();
@@ -386,7 +386,7 @@ void GnapEngine::updateMenuStatusInventory() {
 				_timers[2] = 10;
 				playSound(0x108F4, 0);
 				_menuStatus = 1;
-				Common::Rect dirtyRect(_hotspots[0].x1, _hotspots[0].y1, _hotspots[2].x2, _hotspots[_hotspotsCount - 4].y2);
+				Common::Rect dirtyRect(_hotspots[0]._x1, _hotspots[0]._y1, _hotspots[2]._x2, _hotspots[_hotspotsCount - 4]._y2);
 				drawInventoryFrames();
 				initMenuHotspots2();
 				removeInventorySprites();
@@ -409,8 +409,8 @@ void GnapEngine::updateMenuStatusInventory() {
 	} else if (_sceneClickedHotspot != -1 && _menuInventoryIndices[_sceneClickedHotspot] == -1 && _grabCursorSpriteIndex != -1) {
 		_menuInventoryIndices[_sceneClickedHotspot] = _grabCursorSpriteIndex;
 		_gameSys->insertSpriteDrawItem(_menuInventorySprites[_sceneClickedHotspot],
-			_hotspots[_sceneClickedHotspot].x1 + ((79 - _menuInventorySprites[_sceneClickedHotspot]->w) / 2),
-			_hotspots[_sceneClickedHotspot].y1 + (66 - _menuInventorySprites[_sceneClickedHotspot]->h) / 2,
+			_hotspots[_sceneClickedHotspot]._x1 + ((79 - _menuInventorySprites[_sceneClickedHotspot]->w) / 2),
+			_hotspots[_sceneClickedHotspot]._y1 + (66 - _menuInventorySprites[_sceneClickedHotspot]->h) / 2,
 			261);
 		setGrabCursorSprite(-1);
 	} else if (_sceneClickedHotspot != -1 && _menuInventoryIndices[_sceneClickedHotspot] != -1 && _grabCursorSpriteIndex != -1) {
@@ -429,7 +429,7 @@ void GnapEngine::updateMenuStatusInventory() {
 			playSound(0x108AE, 0);
 			deleteSurface(&_spriteHandle); // CHECKME
 			_spriteHandle = _gameSys->createSurface(0x10001);
-			_gameSys->insertSpriteDrawItem(_spriteHandle, _hotspots[_menuSpritesIndex - 1].x1, _hotspots[_menuSpritesIndex - 1].y1, 261);
+			_gameSys->insertSpriteDrawItem(_spriteHandle, _hotspots[_menuSpritesIndex - 1]._x1, _hotspots[_menuSpritesIndex - 1]._y1, 261);
 			setGrabCursorSprite(kCombineItems[combineIndex].resultItem);
 			removeInventorySprites();
 			insertInventorySprites();
@@ -441,10 +441,10 @@ void GnapEngine::updateMenuStatusInventory() {
 }
 
 void GnapEngine::updateMenuStatusMainMenu() {
-	_hotspots[0].x1 = 312;
-	_hotspots[0].y1 = 85;
-	_hotspots[0].x2 = 465;
-	_hotspots[0].y2 = 122;
+	_hotspots[0]._x1 = 312;
+	_hotspots[0]._y1 = 85;
+	_hotspots[0]._x2 = 465;
+	_hotspots[0]._y2 = 122;
 	_sceneClickedHotspot = -1;
 	if (!_timers[2])
 		_sceneClickedHotspot = getClickedHotspotId();
@@ -486,12 +486,12 @@ void GnapEngine::updateMenuStatusMainMenu() {
 						_gameSys->insertDirtyRect(dirtyRect);
 					}
 
-					while (!_mouseClickState.left && !isKeyStatus1(28) && !isKeyStatus1(30) && !isKeyStatus1(29) && !_timers[2]) {
+					while (!_mouseClickState._left && !isKeyStatus1(28) && !isKeyStatus1(30) && !isKeyStatus1(29) && !_timers[2]) {
 						gameUpdateTick();
 					}
 
 					playSound(0x108F5, 0);
-					_mouseClickState.left = false;
+					_mouseClickState._left = false;
 					clearKeyStatus1(28);
 					clearKeyStatus1(29);
 					clearKeyStatus1(30);
@@ -513,7 +513,7 @@ void GnapEngine::updateMenuStatusMainMenu() {
 				if (_menuSprite1)
 					_gameSys->removeSpriteDrawItem(_menuSprite1, 262);
 				insertInventorySprites();
-				Common::Rect dirtyRect(_hotspots[0].x1, _hotspots[0].y1, _hotspots[2].x2, _hotspots[_hotspotsCount - 4].y2);
+				Common::Rect dirtyRect(_hotspots[0]._x1, _hotspots[0]._y1, _hotspots[2]._x2, _hotspots[_hotspotsCount - 4]._y2);
 				_gameSys->insertDirtyRect(dirtyRect);
 			}
 		} else {
@@ -546,7 +546,7 @@ void GnapEngine::updateMenuStatusMainMenu() {
 			if (readSavegameDescription(i + 1, savegameDescription) == 0)
 				strncpy(_savegameFilenames[i], savegameDescription.c_str(), 40);
 			_gameSys->drawTextToSurface(_savegameSprites[i], 0, 0, 255, 0, 0, _savegameFilenames[i]);
-			_gameSys->insertSpriteDrawItem(_savegameSprites[i], 288, _hotspots[i].y1, 263);
+			_gameSys->insertSpriteDrawItem(_savegameSprites[i], 288, _hotspots[i]._y1, 263);
 		}
 		_savegameIndex = -1;
 	}
@@ -729,10 +729,10 @@ void GnapEngine::updateMenuStatusSaveGame() {
 }
 
 void GnapEngine::updateMenuStatusLoadGame() {
-	_hotspots[0].x1 = 288;
-	_hotspots[0].y1 = 74;
-	_hotspots[0].x2 = 379;
-	_hotspots[0].y2 = 96;
+	_hotspots[0]._x1 = 288;
+	_hotspots[0]._y1 = 74;
+	_hotspots[0]._x2 = 379;
+	_hotspots[0]._y2 = 96;
 	_sceneClickedHotspot = -1;
 	if (!_timers[2])
 		_sceneClickedHotspot = getClickedHotspotId();
@@ -762,10 +762,10 @@ void GnapEngine::updateMenuStatusLoadGame() {
 
 void GnapEngine::updateMenuStatusQueryQuit() {
 
-	_hotspots[0].x1 = 311;
-	_hotspots[0].y1 = 197;
-	_hotspots[0].x2 = 377;
-	_hotspots[0].y2 = 237;
+	_hotspots[0]._x1 = 311;
+	_hotspots[0]._y1 = 197;
+	_hotspots[0]._x2 = 377;
+	_hotspots[0]._y2 = 237;
 
 	_sceneClickedHotspot = -1;
 

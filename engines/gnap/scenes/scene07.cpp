@@ -54,7 +54,7 @@ void GnapEngine::scene07_updateHotspots() {
 	setHotspot(kHSWalkArea3, 160, 0, 325, 495);
 	setDeviceHotspot(kHSDevice, -1, -1, -1, -1);
 	if (isFlag(0))
-		_hotspots[kHSDice].flags = SF_DISABLED;
+		_hotspots[kHSDice]._flags = SF_DISABLED;
 	_hotspotsCount = 7;
 }
 
@@ -185,9 +185,9 @@ void GnapEngine::scene07_run() {
 			break;
 
 		default:
-			if (_mouseClickState.left) {
+			if (_mouseClickState._left) {
 				gnapWalkTo(-1, -1, -1, -1, 1);
-				_mouseClickState.left = false;
+				_mouseClickState._left = false;
 			}
 			break;
 			

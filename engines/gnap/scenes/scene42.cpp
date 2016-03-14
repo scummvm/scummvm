@@ -73,7 +73,7 @@ void GnapEngine::scene42_updateHotspots() {
 		setHotspot(kHSUfoHotSauce, 335, 110, 440, 175, SF_DISABLED);
 		setDeviceHotspot(kHSUfoDevice, -1, 534, -1, 599);
 		if ((isFlag(20) || isFlag(18)) && isFlag(23) && !isFlag(24))
-			_hotspots[kHSUfoHotSauce].flags = SF_GRAB_CURSOR;
+			_hotspots[kHSUfoHotSauce]._flags = SF_GRAB_CURSOR;
 		_hotspotsCount = 5;
 	} else {
 		setHotspot(kHSPlatypus, 0, 0, 0, 0, SF_WALKABLE | SF_TALK_CURSOR | SF_GRAB_CURSOR | SF_LOOK_CURSOR);
@@ -311,8 +311,8 @@ void GnapEngine::scene42_run() {
 		
 		}
 	
-		if (_mouseClickState.left && _gnapActionStatus < 0) {
-			_mouseClickState.left = false;
+		if (_mouseClickState._left && _gnapActionStatus < 0) {
+			_mouseClickState._left = false;
 			if (isFlag(12)) {
 				_toyUfoActionStatus = kASToyUfoRefresh;
 				toyUfoFlyTo(-1, -1, 0, 799, 0, 300, 3);

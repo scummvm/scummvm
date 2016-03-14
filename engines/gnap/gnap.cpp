@@ -246,20 +246,20 @@ void GnapEngine::updateEvents() {
   			_mouseY = event.mouse.y;
   			break;
 		case Common::EVENT_LBUTTONUP:
-  			_mouseButtonState.left = false;
+  			_mouseButtonState._left = false;
   			break;
 		case Common::EVENT_LBUTTONDOWN:
 			_leftClickMouseX = event.mouse.x;
 			_leftClickMouseY = event.mouse.y;
-			_mouseButtonState.left = true;
-			_mouseClickState.left = true;
+			_mouseButtonState._left = true;
+			_mouseClickState._left = true;
   			break;
 		case Common::EVENT_RBUTTONUP:
-			_mouseButtonState.right = false;
+			_mouseButtonState._right = false;
   			break;
 		case Common::EVENT_RBUTTONDOWN:
-  			_mouseButtonState.right = true;
-  			_mouseClickState.right = true;
+  			_mouseButtonState._right = true;
+  			_mouseClickState._right = true;
   			break;
 		case Common::EVENT_QUIT:
 			quitGame();
@@ -331,8 +331,8 @@ void GnapEngine::resumeGame() {
 		// TODO stopMidi();
 		_isPaused = false;
 		clearAllKeyStatus1();
-		_mouseClickState.left = false;
-		_mouseClickState.right = false;
+		_mouseClickState._left = false;
+		_mouseClickState._right = false;
 		showCursor();
 		_gameSys->_gameSysClock = 0;
 		_gameSys->_lastUpdateClock = 0;
@@ -375,12 +375,12 @@ void GnapEngine::delayTicksCursor(int a1) {
 
 void GnapEngine::setHotspot(int index, int16 x1, int16 y1, int16 x2, int16 y2, uint16 flags,
 	int16 walkX, int16 walkY) {
-	_hotspots[index].x1 = x1;
-	_hotspots[index].y1 = y1;
-	_hotspots[index].x2 = x2;
-	_hotspots[index].y2 = y2;
-	_hotspots[index].flags = flags;
-	_hotspots[index].id = index;
+	_hotspots[index]._x1 = x1;
+	_hotspots[index]._y1 = y1;
+	_hotspots[index]._x2 = x2;
+	_hotspots[index]._y2 = y2;
+	_hotspots[index]._flags = flags;
+	_hotspots[index]._id = index;
 	_hotspotsWalkPos[index].x = walkX;
 	_hotspotsWalkPos[index].y = walkY;
 }
@@ -406,44 +406,44 @@ void GnapEngine::updateCursorByHotspot() {
 
 		if (hotspotIndex < 0)
 			setCursor(kDisabledCursors[_verbCursor]);
-		else if (_hotspots[hotspotIndex].flags & SF_EXIT_L_CURSOR)
+		else if (_hotspots[hotspotIndex]._flags & SF_EXIT_L_CURSOR)
 			setCursor(EXIT_L_CURSOR);
-		else if (_hotspots[hotspotIndex].flags & SF_EXIT_R_CURSOR)
+		else if (_hotspots[hotspotIndex]._flags & SF_EXIT_R_CURSOR)
 			setCursor(EXIT_R_CURSOR);
-		else if (_hotspots[hotspotIndex].flags & SF_EXIT_U_CURSOR)
+		else if (_hotspots[hotspotIndex]._flags & SF_EXIT_U_CURSOR)
 			setCursor(EXIT_U_CURSOR);
-		else if (_hotspots[hotspotIndex].flags & SF_EXIT_D_CURSOR)
+		else if (_hotspots[hotspotIndex]._flags & SF_EXIT_D_CURSOR)
 			setCursor(EXIT_D_CURSOR);
-		else if (_hotspots[hotspotIndex].flags & SF_EXIT_NE_CURSOR)
+		else if (_hotspots[hotspotIndex]._flags & SF_EXIT_NE_CURSOR)
 			setCursor(EXIT_NE_CURSOR);
-		else if (_hotspots[hotspotIndex].flags & SF_EXIT_NW_CURSOR)
+		else if (_hotspots[hotspotIndex]._flags & SF_EXIT_NW_CURSOR)
 			setCursor(EXIT_NW_CURSOR);
-		else if (_hotspots[hotspotIndex].flags & SF_EXIT_SE_CURSOR)
+		else if (_hotspots[hotspotIndex]._flags & SF_EXIT_SE_CURSOR)
 			setCursor(EXIT_SE_CURSOR);
-		else if (_hotspots[hotspotIndex].flags & SF_EXIT_SW_CURSOR)
+		else if (_hotspots[hotspotIndex]._flags & SF_EXIT_SW_CURSOR)
 			setCursor(EXIT_SW_CURSOR);
-		else if (_hotspots[hotspotIndex].flags & (1 << _verbCursor))
+		else if (_hotspots[hotspotIndex]._flags & (1 << _verbCursor))
 			setCursor(kCursors[_verbCursor]);
 		else
 			setCursor(kDisabledCursors[_verbCursor]);
 	}
 	// Update platypus hotspot
-	_hotspots[0].x1 = _gridMinX + 75 * _platX - 30;
-	_hotspots[0].y1 = _gridMinY + 48 * _platY - 100;
-	_hotspots[0].x2 = _gridMinX + 75 * _platX + 30;
-	_hotspots[0].y2 = _gridMinY + 48 * _platY;
+	_hotspots[0]._x1 = _gridMinX + 75 * _platX - 30;
+	_hotspots[0]._y1 = _gridMinY + 48 * _platY - 100;
+	_hotspots[0]._x2 = _gridMinX + 75 * _platX + 30;
+	_hotspots[0]._y2 = _gridMinY + 48 * _platY;
 }
 
 int GnapEngine::getClickedHotspotId() {
 	int result = -1;
 	if (_isWaiting)
-		_mouseClickState.left = false;
-	else if (_mouseClickState.left) {
+		_mouseClickState._left = false;
+	else if (_mouseClickState._left) {
 		int hotspotIndex = getHotspotIndexAtPos(_leftClickMouseX, _leftClickMouseY);
 		if (hotspotIndex >= 0) {
-			_mouseClickState.left = false;
+			_mouseClickState._left = false;
 			_timers[3] = 300;
-			result = _hotspots[hotspotIndex].id;
+			result = _hotspots[hotspotIndex]._id;
 		}
 	}
 	return result;
@@ -454,9 +454,9 @@ int GnapEngine::getInventoryItemSpriteNum(int index) {
 }
 
 void GnapEngine::updateMouseCursor() {
-	if (_mouseClickState.right) {
+	if (_mouseClickState._right) {
 		// Switch through the verb cursors
-		_mouseClickState.right = false;
+		_mouseClickState._right = false;
 		_timers[3] = 300;
 		_verbCursor = (_verbCursor + 1) % 4;
 		if (!isFlag(0) && _verbCursor == PLAT_CURSOR && _cursorValue == 1)
@@ -592,11 +592,11 @@ void GnapEngine::showFullScreenSprite(int resourceId) {
 	hideCursor();
 	setGrabCursorSprite(-1);
 	addFullScreenSprite(resourceId, 256);
-	while (!_mouseClickState.left && !isKeyStatus1(Common::KEYCODE_ESCAPE) &&
+	while (!_mouseClickState._left && !isKeyStatus1(Common::KEYCODE_ESCAPE) &&
 		!isKeyStatus1(Common::KEYCODE_SPACE) && !isKeyStatus1(29)) {
 		gameUpdateTick();
 	}
-	_mouseClickState.left = false;
+	_mouseClickState._left = false;
 	clearKeyStatus1(Common::KEYCODE_ESCAPE);
 	clearKeyStatus1(29);
 	clearKeyStatus1(Common::KEYCODE_SPACE);
@@ -629,12 +629,12 @@ void GnapEngine::setDeviceHotspot(int hotspotIndex, int x1, int y1, int x2, int 
 		_deviceY1 = 14;
 	if (y2 == -1)
 		_deviceY2 = 79;
-	_hotspots[hotspotIndex].x1 = _deviceX1;
-	_hotspots[hotspotIndex].y1 = _deviceY1;
-	_hotspots[hotspotIndex].x2 = _deviceX2;
-	_hotspots[hotspotIndex].y2 = _deviceY2;
-	_hotspots[hotspotIndex].flags = SF_TALK_CURSOR | SF_GRAB_CURSOR | SF_LOOK_CURSOR;
-	_hotspots[hotspotIndex].id = hotspotIndex;
+	_hotspots[hotspotIndex]._x1 = _deviceX1;
+	_hotspots[hotspotIndex]._y1 = _deviceY1;
+	_hotspots[hotspotIndex]._x2 = _deviceX2;
+	_hotspots[hotspotIndex]._y2 = _deviceY2;
+	_hotspots[hotspotIndex]._flags = SF_TALK_CURSOR | SF_GRAB_CURSOR | SF_LOOK_CURSOR;
+	_hotspots[hotspotIndex]._id = hotspotIndex;
 }
 
 int GnapEngine::getSequenceTotalDuration(int resourceId) {
@@ -819,8 +819,8 @@ void GnapEngine::initScene() {
 	gnapInitBrainPulseRndValue();
 	hideCursor();
 	clearAllKeyStatus1();
-	_mouseClickState.left = false;
-	_mouseClickState.right = false;
+	_mouseClickState._left = false;
+	_mouseClickState._right = false;
 	_sceneClickedHotspot = -1;
 
 	datFilename = Common::String::format("%s_n.dat", kSceneNames[_currentSceneNum]);
@@ -886,8 +886,8 @@ void GnapEngine::afterScene() {
 
 	clearKeyStatus1(Common::KEYCODE_p);
 
-	_mouseClickState.left = false;
-	_mouseClickState.right = false;
+	_mouseClickState._left = false;
+	_mouseClickState._right = false;
 
 }
 
@@ -1720,14 +1720,14 @@ void GnapEngine::updateGnapIdleSequence2() {
 }
 
 bool GnapEngine::testWalk(int animationIndex, int someStatus, int gridX1, int gridY1, int gridX2, int gridY2) {
-	if (_mouseClickState.left && someStatus == _gnapActionStatus) {
+	if (_mouseClickState._left && someStatus == _gnapActionStatus) {
 		_isLeavingScene = false;
 		_gameSys->setAnimation(0, 0, animationIndex);
 		_gnapActionStatus = -1;
 		_beaverActionStatus = -1;
 		gnapWalkTo(gridX1, gridY1, -1, -1, 1);
 		platypusWalkTo(gridX2, gridY2, -1, -1, 1);
-		_mouseClickState.left = false;
+		_mouseClickState._left = false;
 		return true;
 	}
 	return false;
@@ -2358,7 +2358,7 @@ void GnapEngine::cutscene_run() {
 	clearKeyStatus1(Common::KEYCODE_SPACE);
 	clearKeyStatus1(29);
 
-	_mouseClickState.left = false;
+	_mouseClickState._left = false;
 	
 	int v1 = 0;
 	while (!_sceneDone) {

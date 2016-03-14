@@ -266,10 +266,10 @@ void GnapEngine::scene20_run() {
 			initGnapPos(8, 6, 3);
 			initBeaverPos(9, 6, 4);
 			endSceneInit();
-			_hotspots[kHSWalkArea2].flags |= SF_WALKABLE;
+			_hotspots[kHSWalkArea2]._flags |= SF_WALKABLE;
 			gnapWalkTo(8, 8, -1, 0x107BA, 1);
 			platypusWalkTo(9, 9, -1, 0x107C2, 1);
-			_hotspots[kHSWalkArea2].flags &= ~SF_WALKABLE;
+			_hotspots[kHSWalkArea2]._flags &= ~SF_WALKABLE;
 			break;
 		}
 	}
@@ -351,11 +351,11 @@ void GnapEngine::scene20_run() {
 					_timers[4] = 0;
 				_isLeavingScene = 1;
 				_newSceneNum = 18;
-				_hotspots[kHSWalkArea2].flags |= SF_WALKABLE;
+				_hotspots[kHSWalkArea2]._flags |= SF_WALKABLE;
 				gnapWalkTo(_hotspotsWalkPos[kHSExitOutsideToyStore].x, _hotspotsWalkPos[kHSExitOutsideToyStore].y, 0, 0x107AB, 1);
 				_gnapActionStatus = kASLeaveScene;
 				platypusWalkTo(_hotspotsWalkPos[kHSExitOutsideToyStore].x, _hotspotsWalkPos[kHSExitOutsideToyStore].y + 1, -1, 0x107CD, 1);
-				_hotspots[kHSWalkArea2].flags &= ~SF_WALKABLE;
+				_hotspots[kHSWalkArea2]._flags &= ~SF_WALKABLE;
 			}
 			break;
 		
@@ -479,9 +479,9 @@ void GnapEngine::scene20_run() {
 			break;
 		
 		default:
-			if (_mouseClickState.left) {
+			if (_mouseClickState._left) {
 				gnapWalkTo(-1, -1, -1, -1, 1);
-				_mouseClickState.left = false;
+				_mouseClickState._left = false;
 			}
 			break;
 		
@@ -494,9 +494,9 @@ void GnapEngine::scene20_run() {
 	
 		if (!_isLeavingScene) {
 			if (_beaverActionStatus < 0) {
-				_hotspots[kHSWalkArea1].y2 += 48;
+				_hotspots[kHSWalkArea1]._y2 += 48;
 				updateBeaverIdleSequence();
-				_hotspots[kHSWalkArea1].y2 -= 48;
+				_hotspots[kHSWalkArea1]._y2 -= 48;
 			}
 			if (_gnapActionStatus < 0)
 				updateGnapIdleSequence();

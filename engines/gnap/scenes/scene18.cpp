@@ -88,39 +88,39 @@ void GnapEngine::scene18_updateHotspots() {
 	setDeviceHotspot(kHSDevice, -1, -1, -1, -1);
 	if (isFlag(8)) {
 		if (isFlag(9)) {
-			_hotspots[kHSHydrantTopValve].flags = SF_DISABLED;
-			_hotspots[kHSHydrantRightValve].x1 = 148;
-			_hotspots[kHSHydrantRightValve].y1 = 403;
-			_hotspots[kHSGarbageCan].flags = SF_DISABLED;
+			_hotspots[kHSHydrantTopValve]._flags = SF_DISABLED;
+			_hotspots[kHSHydrantRightValve]._x1 = 148;
+			_hotspots[kHSHydrantRightValve]._y1 = 403;
+			_hotspots[kHSGarbageCan]._flags = SF_DISABLED;
 			_hotspotsWalkPos[kHSGarbageCan].x = 3;
 			_hotspotsWalkPos[kHSGarbageCan].y = 7;
 		} else {
-			_hotspots[kHSHydrantTopValve].y1 = 246;
+			_hotspots[kHSHydrantTopValve]._y1 = 246;
 		}
 	} else if (isFlag(7)) {
-		_hotspots[kHSHydrantRightValve].flags = SF_DISABLED;
-		_hotspots[kHSHydrantTopValve].x1 = 105;
-		_hotspots[kHSHydrantTopValve].x2 = 192;
+		_hotspots[kHSHydrantRightValve]._flags = SF_DISABLED;
+		_hotspots[kHSHydrantTopValve]._x1 = 105;
+		_hotspots[kHSHydrantTopValve]._x2 = 192;
 	} else if (isFlag(9)) {
-		_hotspots[kHSGarbageCan].x1 = 115;
-		_hotspots[kHSGarbageCan].y1 = 365;
-		_hotspots[kHSGarbageCan].x2 = 168;
-		_hotspots[kHSGarbageCan].y2 = 470;
-		_hotspots[kHSGarbageCan].flags = SF_WALKABLE | SF_TALK_CURSOR | SF_GRAB_CURSOR | SF_LOOK_CURSOR;
+		_hotspots[kHSGarbageCan]._x1 = 115;
+		_hotspots[kHSGarbageCan]._y1 = 365;
+		_hotspots[kHSGarbageCan]._x2 = 168;
+		_hotspots[kHSGarbageCan]._y2 = 470;
+		_hotspots[kHSGarbageCan]._flags = SF_WALKABLE | SF_TALK_CURSOR | SF_GRAB_CURSOR | SF_LOOK_CURSOR;
 		_hotspotsWalkPos[kHSGarbageCan].x = 3;
 		_hotspotsWalkPos[kHSGarbageCan].y = 7;
 	}
 	if (isFlag(10))
-		_hotspots[kHSGarbageCan].flags = SF_DISABLED;
+		_hotspots[kHSGarbageCan]._flags = SF_DISABLED;
 	if (isFlag(26)) {
-		_hotspots[kHSDevice].flags = SF_DISABLED;
-		_hotspots[kHSHydrantTopValve].flags = SF_DISABLED;
-		_hotspots[kHSHydrantRightValve].flags = SF_DISABLED;
-		_hotspots[kHSPlatypus].flags = SF_DISABLED;
+		_hotspots[kHSDevice]._flags = SF_DISABLED;
+		_hotspots[kHSHydrantTopValve]._flags = SF_DISABLED;
+		_hotspots[kHSHydrantRightValve]._flags = SF_DISABLED;
+		_hotspots[kHSPlatypus]._flags = SF_DISABLED;
 	}
 	if (isFlag(14)) {
-		_hotspots[kHSHydrantTopValve].flags = SF_DISABLED;
-		_hotspots[kHSCowboyHat].flags = SF_DISABLED;
+		_hotspots[kHSHydrantTopValve]._flags = SF_DISABLED;
+		_hotspots[kHSCowboyHat]._flags = SF_DISABLED;
 	}
 	_hotspotsCount = 11;
 }
@@ -571,9 +571,9 @@ void GnapEngine::scene18_run() {
 							break;
 						case GRAB_CURSOR:
 							if (isFlag(7)) {
-								_hotspots[kHSWalkArea2].flags |= SF_WALKABLE;
+								_hotspots[kHSWalkArea2]._flags |= SF_WALKABLE;
 								gnapWalkTo(_hotspotsWalkPos[kHSHydrantTopValve].x, _hotspotsWalkPos[kHSHydrantTopValve].y, 0, 0x107BA, 1);
-								_hotspots[kHSWalkArea2].flags &= ~SF_WALKABLE;
+								_hotspots[kHSWalkArea2]._flags &= ~SF_WALKABLE;
 								_gnapActionStatus = kASCloseTopValve;
 							} else
 								playGnapImpossible(0, 0);
@@ -679,14 +679,14 @@ void GnapEngine::scene18_run() {
 				scene18_closeHydrantValve();
 				_isLeavingScene = 1;
 				_newSceneNum = 20;
-				_hotspots[kHSWalkArea2].flags |= SF_WALKABLE;
+				_hotspots[kHSWalkArea2]._flags |= SF_WALKABLE;
 				gnapWalkTo(_hotspotsWalkPos[kHSExitGrubCity].x, _hotspotsWalkPos[kHSExitGrubCity].y, 0, 0x107B2, 1);
 				_gnapActionStatus = kASLeaveScene;
 				if (isFlag(26))
 					scene18_platEndPhoning(0);
 				else
 					platypusWalkTo(_hotspotsWalkPos[kHSExitGrubCity].x, _hotspotsWalkPos[kHSExitGrubCity].y - 1, -1, 0x107CF, 1);
-				_hotspots[kHSWalkArea2].flags &= ~SF_WALKABLE;
+				_hotspots[kHSWalkArea2]._flags &= ~SF_WALKABLE;
 			}
 			break;
 
@@ -699,19 +699,19 @@ void GnapEngine::scene18_run() {
 				} else {
 					gnapWalkTo(-1, -1, -1, -1, 1);
 				}
-				_mouseClickState.left = false;
+				_mouseClickState._left = false;
 			}
 			break;
 
 		default:
-			if (_gnapActionStatus != kASStandingOnHydrant && _mouseClickState.left) {
+			if (_gnapActionStatus != kASStandingOnHydrant && _mouseClickState._left) {
 				if (isFlag(10)) {
 					scene18_gnapCarryGarbageCanTo(-1, -1, 0, -1, -1);
 					scene18_putDownGarbageCan(0);
 				} else {
 					gnapWalkTo(-1, -1, -1, -1, 1);
 				}
-				_mouseClickState.left = false;
+				_mouseClickState._left = false;
 			}
 			break;
 
@@ -739,11 +739,11 @@ void GnapEngine::scene18_run() {
 						clearFlag(26);
 					}
 				} else {
-					_hotspots[kHSWalkArea1].y2 += 48;
-					_hotspots[kHSWalkArea2].x1 += 75;
+					_hotspots[kHSWalkArea1]._y2 += 48;
+					_hotspots[kHSWalkArea2]._x1 += 75;
 					updateBeaverIdleSequence();
-					_hotspots[kHSWalkArea2].x1 -= 75;
-					_hotspots[kHSWalkArea1].y2 -= 48;
+					_hotspots[kHSWalkArea2]._x1 -= 75;
+					_hotspots[kHSWalkArea1]._y2 -= 48;
 				}
 				if (!_timers[5]) {
 					_timers[5] = getRandom(100) + 100;
@@ -831,9 +831,9 @@ void GnapEngine::scene18_updateAnimations() {
 			playGnapPullOutDevice(2, 7);
 			playGnapUseDevice(0, 0);
 			_gameSys->insertSequence(0x20C, 19, 0, 0, kSeqNone, 0, 0, 0);
-			_hotspots[kHSWalkArea2].flags |= SF_WALKABLE;
+			_hotspots[kHSWalkArea2]._flags |= SF_WALKABLE;
 			gnapWalkTo(_hotspotsWalkPos[kHSHydrantTopValve].x, _hotspotsWalkPos[kHSHydrantTopValve].y, 0, 0x107BB, 1);
-			_hotspots[kHSWalkArea2].flags &= ~SF_WALKABLE;
+			_hotspots[kHSWalkArea2]._flags &= ~SF_WALKABLE;
 			_gnapActionStatus = kASOpenTopValveDone;
 			break;
 		case kASOpenTopValveDone:
@@ -929,9 +929,9 @@ void GnapEngine::scene18_updateAnimations() {
 			playGnapPullOutDevice(2, 7);
 			playGnapUseDevice(0, 0);
 			_gameSys->insertSequence(0x20B, 19, 0, 0, kSeqNone, 0, 0, 0);
-			_hotspots[kHSWalkArea2].flags |= SF_WALKABLE;
+			_hotspots[kHSWalkArea2]._flags |= SF_WALKABLE;
 			gnapWalkTo(_hotspotsWalkPos[kHSHydrantRightValve].x, _hotspotsWalkPos[kHSHydrantRightValve].y, 0, 0x107BA, 1);
-			_hotspots[kHSWalkArea2].flags &= ~SF_WALKABLE;
+			_hotspots[kHSWalkArea2]._flags &= ~SF_WALKABLE;
 			if (_gnapActionStatus == kASOpenRightValveNoGarbageCan)
 				_gnapActionStatus = kASOpenRightValveNoGarbageCanDone;
 			else

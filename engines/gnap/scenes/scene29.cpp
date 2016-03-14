@@ -54,7 +54,7 @@ void GnapEngine::scene29_updateHotspots() {
 	setHotspot(kHSWalkArea1, 0, 0, 800, 478);
 	setDeviceHotspot(kHSDevice, -1, -1, -1, -1);
 	if (invHas(kItemHorn))
-		_hotspots[kHSMonkey].flags = SF_WALKABLE | SF_TALK_CURSOR | SF_GRAB_CURSOR | SF_LOOK_CURSOR;
+		_hotspots[kHSMonkey]._flags = SF_WALKABLE | SF_TALK_CURSOR | SF_GRAB_CURSOR | SF_LOOK_CURSOR;
 	_hotspotsCount = 7;
 }
 
@@ -221,9 +221,9 @@ void GnapEngine::scene29_run() {
 			break;
 		
 		default:
-			if (_mouseClickState.left) {
+			if (_mouseClickState._left) {
 				gnapWalkTo(-1, -1, -1, -1, 1);
-				_mouseClickState.left = false;
+				_mouseClickState._left = false;
 			}
 			break;
 		}

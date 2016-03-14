@@ -151,9 +151,9 @@ void GnapEngine::scene31_run() {
 						break;
 					case GRAB_CURSOR:
 						gnapWalkTo(_hotspotsWalkPos[kHSMeasuringClown].x, _hotspotsWalkPos[kHSMeasuringClown].y + 1, -1, -1, 1);
-						_hotspots[kHSWalkArea1].flags |= SF_WALKABLE;
+						_hotspots[kHSWalkArea1]._flags |= SF_WALKABLE;
 						gnapWalkTo(_hotspotsWalkPos[kHSMeasuringClown].x, _hotspotsWalkPos[kHSMeasuringClown].y, 0, 0x107B9, 1);
-						_hotspots[kHSWalkArea1].flags &= ~SF_WALKABLE;
+						_hotspots[kHSWalkArea1]._flags &= ~SF_WALKABLE;
 						_gnapActionStatus = kASUseMeasuringClown;
 						_timers[4] = 300;
 						break;
@@ -164,9 +164,9 @@ void GnapEngine::scene31_run() {
 						if (!invHas(kItemBucketWithBeer)) {
 							gnapUseDeviceOnBeaver();
 							platypusWalkTo(_hotspotsWalkPos[kHSMeasuringClown].x, _hotspotsWalkPos[kHSMeasuringClown].y + 1, 1, 0x107C2, 1);
-							_hotspots[kHSWalkArea1].flags |= SF_WALKABLE;
+							_hotspots[kHSWalkArea1]._flags |= SF_WALKABLE;
 							platypusWalkTo(_hotspotsWalkPos[kHSMeasuringClown].x, _hotspotsWalkPos[kHSMeasuringClown].y, 1, 0x107C2, 1);
-							_hotspots[kHSWalkArea1].flags &= ~SF_WALKABLE;
+							_hotspots[kHSWalkArea1]._flags &= ~SF_WALKABLE;
 							_beaverActionStatus = kASPlatMeasuringClown;
 							_gnapActionStatus = kASPlatMeasuringClown;
 							_timers[4] = 300;
@@ -241,9 +241,9 @@ void GnapEngine::scene31_run() {
 			break;
 
 		default:
-			if (_mouseClickState.left) {
+			if (_mouseClickState._left) {
 				gnapWalkTo(-1, -1, -1, -1, 1);
-				_mouseClickState.left = false;
+				_mouseClickState._left = false;
 			}
 			break;
 		}

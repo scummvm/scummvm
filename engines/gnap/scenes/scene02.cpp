@@ -79,7 +79,7 @@ void GnapEngine::scene02_updateHotspots() {
 	setHotspot(kHSWalkArea4, 386, 0, 509, 410);
 	setDeviceHotspot(kHSDevice, -1, -1, -1, -1);
 	if (isFlag(0))
-		_hotspots[kHSPlatypus].flags = SF_WALKABLE | SF_TALK_CURSOR | SF_GRAB_CURSOR | SF_LOOK_CURSOR;
+		_hotspots[kHSPlatypus]._flags = SF_WALKABLE | SF_TALK_CURSOR | SF_GRAB_CURSOR | SF_LOOK_CURSOR;
 	_hotspotsCount = 14;
 }
 
@@ -238,10 +238,10 @@ void GnapEngine::scene02_run() {
 							_gnapActionStatus = kASUseTruckNoGas;
 					}
 				} else if (_grabCursorSpriteIndex == kItemGas) {
-					_hotspots[kHSWalkArea4].flags |= SF_WALKABLE;
+					_hotspots[kHSWalkArea4]._flags |= SF_WALKABLE;
 					if (gnapWalkTo(_hotspotsWalkPos[2].x, _hotspotsWalkPos[2].y, 0, getGnapSequenceId(gskIdle, 2, 2) | 0x10000, 1))
 						_gnapActionStatus = kASUseGasWithTruck;
-					_hotspots[kHSWalkArea4].flags &= ~SF_WALKABLE;
+					_hotspots[kHSWalkArea4]._flags &= ~SF_WALKABLE;
 				} else if (_grabCursorSpriteIndex >= 0) {
 					playGnapShowCurrItem(_hotspotsWalkPos[2].x, _hotspotsWalkPos[2].y, 2, 2);
 				} else {
@@ -350,9 +350,9 @@ void GnapEngine::scene02_run() {
 			break;
 
 		default:
-			if (_mouseClickState.left && _gnapActionStatus < 0) {
+			if (_mouseClickState._left && _gnapActionStatus < 0) {
 				gnapWalkTo(-1, -1, -1, -1, 1);
-				_mouseClickState.left = false;
+				_mouseClickState._left = false;
 			}
 			break;
 

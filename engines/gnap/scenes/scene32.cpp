@@ -150,9 +150,9 @@ void GnapEngine::scene32_run() {
 
 		}
 
-		if (_mouseClickState.left && _gnapActionStatus < 0) {
+		if (_mouseClickState._left && _gnapActionStatus < 0) {
 			gnapWalkTo(-1, -1, -1, -1, 1);
-			_mouseClickState.left = 0;
+			_mouseClickState._left = 0;
 		}
 
 		scene32_updateAnimations();

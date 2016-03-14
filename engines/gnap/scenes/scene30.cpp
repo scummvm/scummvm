@@ -127,9 +127,9 @@ void GnapEngine::scene30_run() {
 		case kHSPillMachine:
 			if (_gnapActionStatus < 0) {
 				if (_grabCursorSpriteIndex == kItemDiceQuarterHole && !isFlag(23)) {
-					_hotspots[kHSWalkArea1].flags |= SF_WALKABLE;
+					_hotspots[kHSWalkArea1]._flags |= SF_WALKABLE;
 					gnapWalkTo(_hotspotsWalkPos[kHSPillMachine].x, _hotspotsWalkPos[kHSPillMachine].y, 0, 0x107BC, 1);
-					_hotspots[kHSWalkArea1].flags &= ~SF_WALKABLE;
+					_hotspots[kHSWalkArea1]._flags &= ~SF_WALKABLE;
 					_gnapActionStatus = kASUsePillMachine;
 					hasTakenPill = true;
 				} else if (_grabCursorSpriteIndex >= 0) {
@@ -171,9 +171,9 @@ void GnapEngine::scene30_run() {
 			break;
 
 		default:
-			if (_mouseClickState.left) {
+			if (_mouseClickState._left) {
 				gnapWalkTo(-1, -1, -1, -1, 1);
-				_mouseClickState.left = false;
+				_mouseClickState._left = false;
 			}
 			break;
 	

@@ -81,17 +81,17 @@ void GnapEngine::scene19_updateHotspots() {
 	setHotspot(kHSWalkArea3, 0, 0, 800, 437);
 	setDeviceHotspot(kHSDevice, -1, -1, -1, -1);
 	if (isFlag(26)) {
-		_hotspots[kHSToy1].flags = SF_DISABLED;
-		_hotspots[kHSToy2].flags = SF_DISABLED;
-		_hotspots[kHSToy3].flags = SF_DISABLED;
-		_hotspots[kHSToy4].flags = SF_DISABLED;
-		_hotspots[kHSToy5].flags = SF_DISABLED;
-		_hotspots[kHSToy6].flags = SF_DISABLED;
-		_hotspots[kHSToy7].flags = SF_DISABLED;
-		_hotspots[kHSShopAssistant].flags = SF_DISABLED;
-		_hotspots[kHSPhone].flags = SF_DISABLED;
-		_hotspots[kHSPlatypus].flags = SF_DISABLED;
-		_hotspots[kHSPicture].flags = SF_PLAT_CURSOR | SF_TALK_CURSOR | SF_GRAB_CURSOR | SF_LOOK_CURSOR;
+		_hotspots[kHSToy1]._flags = SF_DISABLED;
+		_hotspots[kHSToy2]._flags = SF_DISABLED;
+		_hotspots[kHSToy3]._flags = SF_DISABLED;
+		_hotspots[kHSToy4]._flags = SF_DISABLED;
+		_hotspots[kHSToy5]._flags = SF_DISABLED;
+		_hotspots[kHSToy6]._flags = SF_DISABLED;
+		_hotspots[kHSToy7]._flags = SF_DISABLED;
+		_hotspots[kHSShopAssistant]._flags = SF_DISABLED;
+		_hotspots[kHSPhone]._flags = SF_DISABLED;
+		_hotspots[kHSPlatypus]._flags = SF_DISABLED;
+		_hotspots[kHSPicture]._flags = SF_PLAT_CURSOR | SF_TALK_CURSOR | SF_GRAB_CURSOR | SF_LOOK_CURSOR;
 	}
 	_hotspotsCount = 16;
 }
@@ -182,14 +182,14 @@ void GnapEngine::scene19_run() {
 			if (_gnapActionStatus < 0) {
 				_isLeavingScene = true;
 				_newSceneNum = 18;
-				_hotspots[kHSWalkArea1].flags |= SF_WALKABLE;
+				_hotspots[kHSWalkArea1]._flags |= SF_WALKABLE;
 				gnapWalkTo(_hotspotsWalkPos[1].x, _hotspotsWalkPos[1].y, 0, 0x107B2, 1);
 				_gnapActionStatus = kASLeaveScene;
 				if (isFlag(26))
 					setFlag(27);
 				else
 					platypusWalkTo(_hotspotsWalkPos[1].x + 1, _hotspotsWalkPos[1].y, -1, 0x107C5, 1);
-				_hotspots[kHSWalkArea1].flags &= ~SF_WALKABLE;
+				_hotspots[kHSWalkArea1]._flags &= ~SF_WALKABLE;
 			}
 			break;
 
@@ -300,9 +300,9 @@ void GnapEngine::scene19_run() {
 			break;
 
 		default:
-			if (_mouseClickState.left) {
+			if (_mouseClickState._left) {
 				gnapWalkTo(-1, -1, -1, -1, 1);
-				_mouseClickState.left = 0;
+				_mouseClickState._left = 0;
 			}
 		}
 

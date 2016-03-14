@@ -60,9 +60,9 @@ void GnapEngine::scene21_updateHotspots() {
 	setHotspot(kHSWalkArea2, 698, 0, 800, 600);
 	setDeviceHotspot(kHSDevice, -1, -1, -1, -1);
 	if (isFlag(4) || !isFlag(3))
-		_hotspots[kHSBanana].flags = SF_WALKABLE | SF_DISABLED;
+		_hotspots[kHSBanana]._flags = SF_WALKABLE | SF_DISABLED;
 	if (isFlag(3))
-		_hotspots[kHSOldLady].flags = SF_DISABLED;
+		_hotspots[kHSOldLady]._flags = SF_DISABLED;
 	_hotspotsCount = 7;
 }
 
@@ -187,10 +187,10 @@ void GnapEngine::scene21_run() {
 						break;
 					case GRAB_CURSOR:
 						_gnapIdleFacing = 5;
-						_hotspots[kHSWalkArea1].flags |= SF_WALKABLE;
+						_hotspots[kHSWalkArea1]._flags |= SF_WALKABLE;
 						gnapWalkTo(7, 6, 0, getGnapSequenceId(gskIdle, 0, 0) | 0x10000, 1);
 						_gnapActionStatus = kASGrabOldLady;
-						_hotspots[kHSWalkArea1].flags &= ~SF_WALKABLE;
+						_hotspots[kHSWalkArea1]._flags &= ~SF_WALKABLE;
 						break;
 					case TALK_CURSOR:
 						_gnapIdleFacing = 7;
@@ -221,9 +221,9 @@ void GnapEngine::scene21_run() {
 			break;
 		
 		default:
-			if (_mouseClickState.left) {
+			if (_mouseClickState._left) {
 				gnapWalkTo(-1, -1, -1, -1, 1);
-				_mouseClickState.left = false;
+				_mouseClickState._left = false;
 			}
 			break;
 		

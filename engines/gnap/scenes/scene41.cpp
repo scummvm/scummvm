@@ -168,10 +168,10 @@ void GnapEngine::scene41_run() {
 			playSound(0x1094B, 1);
 	
 		if (!isFlag(12)) {
-			_hotspots[kHSToyUfo].x1 = _toyUfoX - 25;
-			_hotspots[kHSToyUfo].y1 = _toyUfoY - 20;
-			_hotspots[kHSToyUfo].x2 = _toyUfoX + 25;
-			_hotspots[kHSToyUfo].y2 = _toyUfoY + 20;
+			_hotspots[kHSToyUfo]._x1 = _toyUfoX - 25;
+			_hotspots[kHSToyUfo]._y1 = _toyUfoY - 20;
+			_hotspots[kHSToyUfo]._x2 = _toyUfoX + 25;
+			_hotspots[kHSToyUfo]._y2 = _toyUfoY + 20;
 		}
 	
 		updateMouseCursor();
@@ -354,8 +354,8 @@ void GnapEngine::scene41_run() {
 			}
 		}
 	
-		if (_mouseClickState.left && _gnapActionStatus < 0) {
-			_mouseClickState.left = false;
+		if (_mouseClickState._left && _gnapActionStatus < 0) {
+			_mouseClickState._left = false;
 			if (isFlag(12)) {
 				int sequenceId;
 				if (_leftClickMouseX >= 400) {

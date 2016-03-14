@@ -156,8 +156,8 @@ void GnapEngine::scene40_run() {
 			break;
 	
 		default:
-			if (_mouseClickState.left && _gnapActionStatus < 0)
-				_mouseClickState.left = false;
+			if (_mouseClickState._left && _gnapActionStatus < 0)
+				_mouseClickState._left = false;
 			break;
 		
 		}

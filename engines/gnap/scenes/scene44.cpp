@@ -72,9 +72,9 @@ void GnapEngine::scene44_updateHotspots() {
 		setHotspot(kHSWalkArea2, 617, 0, 800, 600);
 		setDeviceHotspot(kHSDevice, -1, -1, -1, -1);
 		if (isFlag(13))
-			_hotspots[kHSKissingLady].flags = SF_DISABLED;
+			_hotspots[kHSKissingLady]._flags = SF_DISABLED;
 		if (isFlag(15))
-			_hotspots[kHSSpring].flags = SF_DISABLED;
+			_hotspots[kHSSpring]._flags = SF_DISABLED;
 		_hotspotsCount = 10;
 	}
 }
@@ -356,8 +356,8 @@ void GnapEngine::scene44_run() {
 
 		}
 	
-		if (_mouseClickState.left && _gnapActionStatus < 0) {
-			_mouseClickState.left = false;
+		if (_mouseClickState._left && _gnapActionStatus < 0) {
+			_mouseClickState._left = false;
 			if (isFlag(12)) {
 				_toyUfoActionStatus = 7;
 				toyUfoFlyTo(-1, -1, 0, 799, 0, 300, 3);
