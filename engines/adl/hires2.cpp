@@ -110,6 +110,17 @@ void HiRes2Engine::initState() {
 		f.readByte(); // always 1, possibly disk?
 		_state.rooms.push_back(room);
 	}
+
+	loadRoom(_state.room);
+}
+
+void HiRes2Engine::loadRoom(uint i) {
+	Common::File f;
+	openFile(f, IDS_HR2_DISK_IMAGE);
+	Room &room = getRoom(i);
+	uint offset = TSO(room.track, room.sector, room.offset);
+	f.seek(offset);
+	_roomData.description = readStringAt(f, offset + f.readByte(), 0xff);
 }
 
 void HiRes2Engine::restartGame() {
@@ -126,9 +137,72 @@ void HiRes2Engine::drawPic(byte pic, Common::Point pos) const {
 	_graphics->drawPic(f, pos, 0);
 }
 
-void HiRes2Engine::showRoom() const {
+void HiRes2Engine::showRoom() {
+	_linesPrinted = 0;
 	drawPic(0, Common::Point());
 	_display->updateHiResScreen();
+	printString(_roomData.description);
+}
+
+void HiRes2Engine::checkTextOverflow(char c) {
+	if (c != APPLECHAR('\r'))
+		return;
+
+	++_linesPrinted;
+
+	if (_linesPrinted < 4)
+		return;
+
+	_linesPrinted = 0;
+	// Bell
+
+	while (true) {
+		char key = inputKey(false);
+
+		if (shouldQuit())
+			return;
+
+		if (key == APPLECHAR('\r'))
+			break;
+
+		// Bell
+		// Bell
+		// Bell
+	}
+}
+
+void HiRes2Engine::printString(const Common::String &str) {
+	Common::String s(str);
+	byte endPos = TEXT_WIDTH - 1;
+	byte pos = 0;
+
+	while (true) {
+		while (pos != endPos && pos != s.size()) {
+			s.setChar(APPLECHAR(s[pos]), pos);
+			++pos;
+		}
+
+		if (pos == s.size())
+			break;
+
+		while (s[pos] != APPLECHAR(' ') && s[pos] != APPLECHAR('\r'))
+			--pos;
+
+		s.setChar(APPLECHAR('\r'), pos);
+		endPos = pos + TEXT_WIDTH;
+		++pos;
+	}
+
+	pos = 0;
+	while (pos != s.size()) {
+		checkTextOverflow(s[pos]);
+		_display->printChar(s[pos]);
+		++pos;
+	}
+
+	checkTextOverflow(APPLECHAR('\r'));
+	_display->printChar(APPLECHAR('\r'));
+	_display->updateTextScreen();
 }
 
 Engine *HiRes2Engine_create(OSystem *syst, const AdlGameDescription *gd) {

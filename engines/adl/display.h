@@ -40,6 +40,8 @@ namespace Adl {
 
 #define DISPLAY_WIDTH 280
 #define DISPLAY_HEIGHT 192
+#define TEXT_WIDTH 40
+#define TEXT_HEIGHT 24
 
 enum DisplayMode {
 	DISPLAY_MODE_HIRES,
@@ -71,6 +73,7 @@ public:
 	void moveCursorTo(const Common::Point &pos);
 	void moveCursorForward();
 	void moveCursorBackward();
+	void printChar(char c);
 	void printString(const Common::String &str);
 	void printAsciiString(const Common::String &str);
 	void setCharAtCursor(byte c);

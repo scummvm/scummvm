@@ -101,7 +101,7 @@ private:
 	void drawPic(byte pic, Common::Point pos = Common::Point()) const;
 	void printMessage(uint idx, bool wait = true) const;
 	void drawItem(const Item &item, const Common::Point &pos) const;
-	void showRoom() const;
+	void showRoom();
 
 	Common::File _exe;
 	Common::Array<uint> _corners;

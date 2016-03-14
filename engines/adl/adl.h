@@ -149,7 +149,7 @@ protected:
 	void delay(uint32 ms) const;
 
 	Common::String inputString(byte prompt = 0) const;
-	byte inputKey() const;
+	byte inputKey(bool showCursor = true) const;
 
 	void loadWords(Common::ReadStream &stream, WordMap &map) const;
 	void readCommands(Common::ReadStream &stream, Commands &commands);
@@ -215,7 +215,7 @@ private:
 	virtual void initState() = 0;
 	virtual void restartGame() = 0;
 	virtual void drawItem(const Item &item, const Common::Point &pos) const = 0;
-	virtual void showRoom() const = 0;
+	virtual void showRoom() = 0;
 
 	// Engine
 	Common::Error run();

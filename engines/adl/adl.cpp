@@ -161,12 +161,13 @@ Common::String AdlEngine::inputString(byte prompt) const {
 	}
 }
 
-byte AdlEngine::inputKey() const {
+byte AdlEngine::inputKey(bool showCursor) const {
 	Common::EventManager *ev = g_system->getEventManager();
 
 	byte key = 0;
 
-	_display->showCursor(true);
+	if (showCursor)
+		_display->showCursor(true);
 
 	while (!g_engine->shouldQuit() && !_isRestoring && key == 0) {
 		Common::Event event;

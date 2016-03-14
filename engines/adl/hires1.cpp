@@ -303,7 +303,7 @@ void HiRes1Engine::drawItem(const Item &item, const Common::Point &pos) const {
 		drawPic(item.picture, pos);
 }
 
-void HiRes1Engine::showRoom() const {
+void HiRes1Engine::showRoom() {
 	if (!_state.isDark) {
 		drawPic(getCurRoom().curPicture);
 		drawItems();

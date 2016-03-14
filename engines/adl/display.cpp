@@ -41,8 +41,6 @@ namespace Adl {
 #define DISPLAY_PITCH (DISPLAY_WIDTH / 7)
 #define DISPLAY_SIZE (DISPLAY_PITCH * DISPLAY_HEIGHT)
 
-#define TEXT_WIDTH 40
-#define TEXT_HEIGHT 24
 #define TEXT_BUF_SIZE (TEXT_WIDTH * TEXT_HEIGHT)
 
 #define COLOR_PALETTE_ENTRIES 8
@@ -291,21 +289,23 @@ void Display::moveCursorTo(const Common::Point &pos) {
 		error("Cursor position (%i, %i) out of bounds", pos.x, pos.y);
 }
 
+// FIXME: This does not currently update the surfaces
+void Display::printChar(char c) {
+	if (c == APPLECHAR('\r'))
+		_cursorPos = (_cursorPos / TEXT_WIDTH + 1) * TEXT_WIDTH;
+	else if ((byte)c < 0x80 || (byte)c >= 0xa0) {
+		setCharAtCursor(c);
+		++_cursorPos;
+	}
+
+	if (_cursorPos == TEXT_BUF_SIZE)
+		scrollUp();
+}
+
 void Display::printString(const Common::String &str) {
 	Common::String::const_iterator c;
-	for (c = str.begin(); c != str.end(); ++c) {
-		byte b = *c;
-
-		if (*c == APPLECHAR('\r'))
-			_cursorPos = (_cursorPos / TEXT_WIDTH + 1) * TEXT_WIDTH;
-		else if (b < 0x80 || b >= 0xa0) {
-			setCharAtCursor(b);
-			++_cursorPos;
-		}
-
-		if (_cursorPos == TEXT_BUF_SIZE)
-			scrollUp();
-	}
+	for (c = str.begin(); c != str.end(); ++c)
+		printChar(*c);
 
 	updateTextScreen();
 }

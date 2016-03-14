@@ -63,9 +63,20 @@ namespace Adl {
 #define IDI_HR2_OFS_STR_PLAY_AGAIN    TSO(0x1a, 0x8, 0x25)
 #define IDI_HR2_OFS_STR_PRESS_RETURN  TSO(0x1a, 0x8, 0x5f)
 
+struct Picture2 {
+	byte track;
+	byte sector;
+	byte offset;
+};
+
+struct RoomData {
+	Common::String description;
+	Common::Array<Picture2> pictures;
+};
+
 class HiRes2Engine : public AdlEngine {
 public:
-	HiRes2Engine(OSystem *syst, const AdlGameDescription *gd) : AdlEngine(syst, gd) { }
+	HiRes2Engine(OSystem *syst, const AdlGameDescription *gd) : AdlEngine(syst, gd), _linesPrinted(0) { }
 
 private:
 	// AdlEngine
@@ -75,7 +86,14 @@ private:
 	void restartGame();
 	void drawPic(byte pic, Common::Point pos) const;
 	void drawItem(const Item &item, const Common::Point &pos) const { }
-	void showRoom() const;
+	void showRoom();
+
+	void loadRoom(uint i);
+	void checkTextOverflow(char c);
+	void printString(const Common::String &str);
+
+	RoomData _roomData;
+	uint _linesPrinted;
 };
 
 } // End of namespace Adl
