@@ -42,6 +42,8 @@ static const ADGameDescription gameDescriptions[] = {
 	FANGAME("Deep Angst", "b130b3c811cd89024dd5fdd2b71f70b8", 329550),
 	// Polygons with ignored byte 1
 	FANGAME("Double Trouble", "1652e36857a04c01dc560234c4818619", 542371),
+	// Crash at start in GUI rendering
+	FANGAME("Dune Eternity", "94a9c4f8b3dabd1846d76215a49bd221", 290201),
 	FANGAMEN("Dungeon World II", "DungeonWorld2", "0154ea11d3cbb536c13b4ae9e6902d48", 230199),
 	FANGAME("Eidisi I", "595117cbed33e8de1ab3714b33880205", 172552),
 	// Problems(?) with text on the first screen
@@ -87,6 +89,7 @@ static const ADGameDescription gameDescriptions[] = {
 	FANGAME("Wishing Well", "913812a1ac7a6b0e48dadd1afa1c7763", 103688),
 	FANGAME("Wizard's Warehouse", "913812a1ac7a6b0e48dadd1afa1c7763", 159748),
 	FANGAME("ZikTuria", "418e74ca71029a1e9db80d0eb30c0843", 52972),
+	FANGAME("Zoony", "539a64151426edc92da5eedadf39f23c", 154990),
 
 	AD_TABLE_END_MARKER
 };
