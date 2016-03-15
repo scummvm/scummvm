@@ -4,7 +4,6 @@ For a more comprehensive changelog of the latest experimental code, see:
 1.8.1 (XXXX-XX-XX)
  General:
    - Removed TESTING flag from several supported games.
-   - Improved compatibility with ReactOS.
 
  BBVS:
    - Fixed game restart.
@@ -36,6 +35,10 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Fixed resource releasing on game exit.
    - Fixed game restart after language change in-game.
    - Fixed flickering in main Menu.
+
+ Windows port:
+   - Fixed bug in MIDI device listing affecting cases where MIDI devices were
+     not usable.
 
 1.8.0 (2016-03-04)
  New Games:
