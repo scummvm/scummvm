@@ -711,12 +711,12 @@ reg_t kAddLine(EngineState *s, int argc, reg_t *argv) {
 	reg_t plane = argv[0];
 	Common::Point startPoint(argv[1].toUint16(), argv[2].toUint16());
 	Common::Point endPoint(argv[3].toUint16(), argv[4].toUint16());
-	// argv[5] is unknown (a number, usually 200)
+	byte priority = (byte)argv[5].toUint16();
 	byte color = (byte)argv[6].toUint16();
-	byte priority = (byte)argv[7].toUint16();
-	byte control = (byte)argv[8].toUint16();
-	// argv[9] is unknown (usually a small number, 1 or 2). Thickness, perhaps?
-//	return g_sci->_gfxFrameout->addPlaneLine(plane, startPoint, endPoint, color, priority, control);
+	byte style = (byte)argv[7].toUint16();	// 0: solid, 1: dashed, 2: pattern
+	byte pattern = (byte)argv[8].toUint16();
+	byte thickness = (byte)argv[9].toUint16();
+//	return g_sci->_gfxFrameout->addPlaneLine(plane, startPoint, endPoint, color, priority, 0);
 	return s->r_acc;
 #endif
 }
