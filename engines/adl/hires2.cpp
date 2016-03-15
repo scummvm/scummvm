@@ -154,7 +154,8 @@ void HiRes2Engine::checkTextOverflow(char c) {
 		return;
 
 	_linesPrinted = 0;
-	// Bell
+	_display->updateTextScreen();
+	bell();
 
 	while (true) {
 		char key = inputKey(false);
@@ -165,9 +166,7 @@ void HiRes2Engine::checkTextOverflow(char c) {
 		if (key == APPLECHAR('\r'))
 			break;
 
-		// Bell
-		// Bell
-		// Bell
+		bell(3);
 	}
 }
 
