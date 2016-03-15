@@ -3,14 +3,14 @@ For a more comprehensive changelog of the latest experimental code, see:
 
 1.8.1 (XXXX-XX-XX)
  General:
-   - Cleared TESTING flag from several games.
+   - Removed TESTING flag from several supported games.
    - Improved compatibility with ReactOS.
 
  BBVS:
    - Fixed game restart.
 
  CINE:
-   - Fixed SFX loading.
+   - Fixed sound effect loading.
 
  GOB:
    - Fixed lock up for some games during sound initialization.
