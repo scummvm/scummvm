@@ -19,6 +19,13 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Fixed lock-up during ending sequence.
    - Improved internal game controls.
 
+ SCI:
+   - Make cursor workarounds work properly on OpenPandora (and other devices, that
+     support touch screen and analog sticks/mouse at the same time)
+   - Script patch to fix broken ending battle in multilingual King's Quest 5
+     (French, German + Spanish versions are all broken)
+   - Fix invalid memory access, when loading broken King's Quest 5 credit music track
+
  SCUMM:
    - Fixed detection of Maniac Mansion from Day of the Tentacle in the Windows
      version of ScummVM.
