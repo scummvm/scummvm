@@ -110,7 +110,7 @@ void AdlEngine::openFile(Common::File &file, const Common::String &name) const {
 		error("Error opening '%s'", name.c_str());
 }
 
-void AdlEngine::printMessage(uint idx, bool wait) const {
+void AdlEngine::printMessage(uint idx, bool wait) {
 	Common::String msg = _messages[idx - 1];
 	wordWrap(msg);
 	_display->printString(msg);

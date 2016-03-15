@@ -274,7 +274,7 @@ void HiRes1Engine::drawPic(byte pic, Common::Point pos) const {
 	_graphics->drawPic(f, pos, 0x7f);
 }
 
-void HiRes1Engine::printMessage(uint idx, bool wait) const {
+void HiRes1Engine::printMessage(uint idx, bool wait) {
 	// Messages with hardcoded overrides don't delay after printing.
 	// It's unclear if this is a bug or not. In some cases the result
 	// is that these strings will scroll past the four-line text window

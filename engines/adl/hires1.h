@@ -99,7 +99,7 @@ private:
 	void initState();
 	void restartGame();
 	void drawPic(byte pic, Common::Point pos = Common::Point()) const;
-	void printMessage(uint idx, bool wait = true) const;
+	void printMessage(uint idx, bool wait = true);
 	void drawItem(const Item &item, const Common::Point &pos) const;
 	void showRoom();
 

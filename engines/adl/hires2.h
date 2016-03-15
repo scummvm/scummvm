@@ -87,6 +87,7 @@ private:
 	void drawPic(byte pic, Common::Point pos) const;
 	void drawItem(const Item &item, const Common::Point &pos) const { }
 	void showRoom();
+	void printMessage(uint idx, bool wait);
 
 	void loadRoom(uint i);
 	void checkTextOverflow(char c);

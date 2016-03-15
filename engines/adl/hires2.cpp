@@ -59,7 +59,7 @@ void HiRes2Engine::init() {
 		byte track = f.readByte();
 		byte sector = f.readByte();
 		byte offset = f.readByte();
-		// One more byte follows, disk?
+		// One more byte follows, disk? or size maybe?
 
 		uint diskOffset = TSO(track, sector, offset);
 
@@ -142,6 +142,10 @@ void HiRes2Engine::showRoom() {
 	drawPic(0, Common::Point());
 	_display->updateHiResScreen();
 	printString(_roomData.description);
+}
+
+void HiRes2Engine::printMessage(uint idx, bool wait) {
+	printString(_messages[idx - 1]);
 }
 
 void HiRes2Engine::checkTextOverflow(char c) {
