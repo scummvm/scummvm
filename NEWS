@@ -7,13 +7,13 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Improved compatibility with ReactOS.
 
  BBVS:
-   - Fix game restart.
+   - Fixed game restart.
 
  CINE:
    - Fixed SFX loading.
 
  GOB:
-   - Fix lock up for some games during sound initialization.
+   - Fixed lock up for some games during sound initialization.
 
  LAB:
    - Fixed lock-up during ending sequence.
@@ -31,8 +31,8 @@ For a more comprehensive changelog of the latest experimental code, see:
      version of ScummVM.
 
  SWORD25:
-   - Add option to use English speech instead of German one when no speech is available
-     for the selected language.
+   - Added option to use English speech instead of German one when no speech is
+     available for the selected language.
    - Fixed resource releasing on game exit.
    - Fixed game restart after language change in-game.
    - Fixed flickering in main Menu.
