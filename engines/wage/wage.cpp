@@ -132,6 +132,8 @@ Common::Error WageEngine::run() {
 	_shouldQuit = false;
 
 	while (!_shouldQuit) {
+		_debugger->onFrame();
+
 		processEvents();
 
 		_gui->draw();
@@ -182,6 +184,11 @@ void WageEngine::processEvents() {
 				break;
 
 			default:
+				if (event.kbd.ascii == '~') {
+					_debugger->attach();
+					break;
+				}
+
 				if (event.kbd.flags & (Common::KBD_ALT | Common::KBD_CTRL | Common::KBD_META)) {
 					if (event.kbd.ascii >= 0x20 && event.kbd.ascii <= 0x7f) {
 						_gui->processMenuShortCut(event.kbd.flags, event.kbd.ascii);
