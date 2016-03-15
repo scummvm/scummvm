@@ -18,13 +18,13 @@ For a more comprehensive changelog of the latest experimental code, see:
  BBVS:
    - Fixed game restart.
 
- CINE:
+ CinE:
    - Fixed sound effect loading.
 
- GOB:
+ Gob:
    - Fixed lock up for some games during sound initialization.
 
- LAB:
+ Lab:
    - Fixed lock-up during ending sequence.
    - Improved internal game controls.
 
@@ -32,7 +32,7 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Fixed detection of Maniac Mansion from Day of the Tentacle in the Windows
      version of ScummVM.
 
- SWORD25:
+ Broken Sword 2.5:
    - Added option to use English speech instead of German one when no speech is
      available for the selected language.
    - Fixed resource releasing on game exit.
