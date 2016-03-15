@@ -150,8 +150,10 @@ private:
 
 	void assign(byte operandType, int uservar, uint16 value);
 
-	Common::Array<ScriptText *> _scriptText;
 	void convertToText();
+
+public:
+	Common::Array<ScriptText *> _scriptText;
 };
 
 } // End of namespace Wage

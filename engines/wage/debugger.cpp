@@ -24,6 +24,7 @@
 #include "wage/wage.h"
 #include "wage/debugger.h"
 #include "wage/entities.h"
+#include "wage/script.h"
 #include "wage/world.h"
 
 namespace Wage {
@@ -31,15 +32,33 @@ namespace Wage {
 Debugger::Debugger(WageEngine *engine) : GUI::Debugger(), _engine(engine) {
 	registerCmd("continue", WRAP_METHOD(Debugger, cmdExit));
 	registerCmd("scenes", WRAP_METHOD(Debugger, Cmd_ListScenes));
+	registerCmd("script", WRAP_METHOD(Debugger, Cmd_Script));
 }
 
 Debugger::~Debugger() {
 }
 
+static int strToInt(const char *s) {
+	if (!*s)
+		// No string at all
+		return 0;
+	else if (toupper(s[strlen(s) - 1]) != 'H')
+		// Standard decimal string
+		return atoi(s);
+
+	// Hexadecimal string
+	uint tmp = 0;
+	int read = sscanf(s, "%xh", &tmp);
+
+	if (read < 1)
+		error("strToInt failed on string \"%s\"", s);
+	return (int)tmp;
+}
+
 bool Debugger::Cmd_ListScenes(int argc, const char **argv) {
 	int currentScene;
 
-	for (uint i = 0; i < _engine->_world->_orderedScenes.size(); i++) {
+	for (uint i = 1; i < _engine->_world->_orderedScenes.size(); i++) { // #0 is STORAGE@
 		if (_engine->_world->_player->_currentScene == _engine->_world->_orderedScenes[i])
 			currentScene = i;
 
@@ -47,6 +66,30 @@ bool Debugger::Cmd_ListScenes(int argc, const char **argv) {
 	}
 
 	debugPrintf("\nCurrent scene is #%d: %s\n", currentScene, _engine->_world->_orderedScenes[currentScene]->_name.c_str());
+
+	return true;
+}
+
+bool Debugger::Cmd_Script(int argc, const char **argv) {
+	Script *script = _engine->_world->_player->_currentScene->_script;
+
+	if (argc >= 2) {
+		int scriptNum = strToInt(argv[1]);
+
+		if (scriptNum)
+			script = _engine->_world->_orderedScenes[scriptNum]->_script;
+		else
+			script = _engine->_world->_globalScript;
+	}
+
+	if (script == NULL) {
+		debugPrintf("There is no script for current scene\n");
+		return true;
+	}
+
+	for (uint i = 0; i < script->_scriptText.size(); i++) {
+		debugPrintf("%d [%04x]: %s\n", i, script->_scriptText[i]->offset, script->_scriptText[i]->line.c_str());
+	}
 
 	return true;
 }

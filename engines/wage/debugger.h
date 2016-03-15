@@ -35,6 +35,7 @@ protected:
 	WageEngine *_engine;
 
 	bool Cmd_ListScenes(int argc, const char **argv);
+	bool Cmd_Script(int argc, const char **argv);
 
 public:
 	Debugger(WageEngine *engine);
