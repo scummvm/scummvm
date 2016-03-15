@@ -28,7 +28,7 @@
 
 namespace Wage {
 
-Debugger::Debugger(WageEngine *vm) : GUI::Debugger(), _vm(vm) {
+Debugger::Debugger(WageEngine *engine) : GUI::Debugger(), _engine(engine) {
 	registerCmd("continue", WRAP_METHOD(Debugger, cmdExit));
 	registerCmd("scenes", WRAP_METHOD(Debugger, Cmd_ListScenes));
 }
@@ -37,9 +37,16 @@ Debugger::~Debugger() {
 }
 
 bool Debugger::Cmd_ListScenes(int argc, const char **argv) {
-	for (uint i = 0; i < _vm->_world->_orderedScenes.size(); i++) {
-		debugPrintf("%d: %s\n", i, _vm->_world->_orderedScenes[i]->_name.c_str());
+	int currentScene;
+
+	for (uint i = 0; i < _engine->_world->_orderedScenes.size(); i++) {
+		if (_engine->_world->_player->_currentScene == _engine->_world->_orderedScenes[i])
+			currentScene = i;
+
+		debugPrintf("%d: %s\n", i, _engine->_world->_orderedScenes[i]->_name.c_str());
 	}
+
+	debugPrintf("\nCurrent scene is #%d: %s\n", currentScene, _engine->_world->_orderedScenes[currentScene]->_name.c_str());
 
 	return true;
 }

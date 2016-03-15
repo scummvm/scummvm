@@ -32,12 +32,12 @@ class WageEngine;
 
 class Debugger : public GUI::Debugger {
 protected:
-	WageEngine *_vm;
+	WageEngine *_engine;
 
 	bool Cmd_ListScenes(int argc, const char **argv);
 
 public:
-	Debugger(WageEngine *vm);
+	Debugger(WageEngine *engine);
 	virtual ~Debugger();
 };
 
