@@ -3,22 +3,23 @@ For a more comprehensive changelog of the latest experimental code, see:
 
 1.9.0 (XXXX-XX-XX)
  AGI:
-   - Added support for Hercules rendering (green + amber).
-   - Added support for the Hercules hires font (also usable outside of
-     Hercules rendering).
+   - Added support for Hercules rendering. Both green and amber modes are
+     supported.
+   - Added support for the Hercules high resolution font. The font is also
+     usable outside of Hercules rendering.
    - Added optional "pause, when entering commands" feature, that was only
      available in the original interpreter for Hercules rendering.
 
 1.8.1 (XXXX-XX-XX)
  General:
-   - Cleared TESTING flag from several games.
+   - Removed TESTING flag from several supported games.
    - Improved compatibility with ReactOS.
 
  BBVS:
    - Fixed game restart.
 
  CINE:
-   - Fixed SFX loading.
+   - Fixed sound effect loading.
 
  GOB:
    - Fixed lock up for some games during sound initialization.
