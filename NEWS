@@ -2,6 +2,23 @@ For a more comprehensive changelog of the latest experimental code, see:
         https://github.com/scummvm/scummvm/commits/
 
 1.8.1 (XXXX-XX-XX)
+ General:
+   - Cleared TESTING flag from several games.
+   - Improved compatibility with ReactOS.
+
+ BBVS:
+   - Fix game restart.
+
+ CINE:
+   - Fixed SFX loading.
+
+ GOB:
+   - Fix lock up for some games during sound initialization.
+
+ LAB:
+   - Fixed lock-up during ending sequence.
+   - Improved internal game controls.
+
  SCUMM:
    - Fixed detection of Maniac Mansion from Day of the Tentacle in the Windows
      version of ScummVM.
@@ -9,6 +26,9 @@ For a more comprehensive changelog of the latest experimental code, see:
  SWORD25:
    - Add option to use English speech instead of German one when no speech is available
      for the selected language.
+   - Fixed resource releasing on game exit.
+   - Fixed game restart after language change in-game.
+   - Fixed flickering in main Menu.
 
 1.8.0 (2016-03-04)
  New Games:
