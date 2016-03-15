@@ -430,6 +430,8 @@ public:
 	 * and adds them to the given draw and erase lists.
 	 */
 	void redrawAll(Plane *visiblePlane, const PlaneList &planeList, DrawList &drawList, RectList &eraseList);
+
+	void remapMarkRedraw();
 };
 
 #pragma mark -

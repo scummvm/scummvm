@@ -27,6 +27,7 @@
 #include "sci/graphics/frameout.h"
 #include "sci/graphics/lists32.h"
 #include "sci/graphics/plane32.h"
+#include "sci/graphics/remap.h"
 #include "sci/graphics/screen.h"
 #include "sci/graphics/screen_item32.h"
 
@@ -317,7 +318,7 @@ void Plane::calcLists(Plane &visiblePlane, const PlaneList &planeList, DrawList 
 					vitem != nullptr &&
 					!vitem->_screenRect.isEmpty()
 				) {
-					if (/* TODO: g_Remap_numActiveRemaps */ false) { // active remaps?
+					if (g_sci->_gfxRemap32->getRemapCount()) {
 						mergeToRectList(vitem->_screenRect, eraseList);
 					} else {
 						eraseList.add(vitem->_screenRect);
@@ -328,7 +329,7 @@ void Plane::calcLists(Plane &visiblePlane, const PlaneList &planeList, DrawList 
 				item->calcRects(*this);
 
 				if(!item->_screenRect.isEmpty()) {
-					if (/* TODO: g_Remap_numActiveRemaps */ false) { // active remaps?
+					if (g_sci->_gfxRemap32->getRemapCount()) {
 						drawList.add(item, item->_screenRect);
 						mergeToRectList(item->_screenRect, eraseList);
 					} else {
@@ -338,7 +339,7 @@ void Plane::calcLists(Plane &visiblePlane, const PlaneList &planeList, DrawList 
 			} else if (item->_updated) {
 				// add old rect to erase list, new item to draw list
 				item->calcRects(*this);
-				if (/* TODO: g_Remap_numActiveRemaps */ false) { // active remaps
+				if (g_sci->_gfxRemap32->getRemapCount()) {
 					// if item and vitem don't overlap, ...
 					if (item->_screenRect.isEmpty() ||
 						i >= visiblePlaneItemCount ||
@@ -452,7 +453,7 @@ void Plane::calcLists(Plane &visiblePlane, const PlaneList &planeList, DrawList 
 		}
 	}
 
-	if (/* TODO: g_Remap_numActiveRemaps == 0 */ true) { // no remaps active?
+	if (g_sci->_gfxRemap32->getRemapCount() == 0) { // no remaps active?
 		// Add all items that overlap with items in the drawlist and have higher
 		// priority.
 
@@ -806,6 +807,17 @@ void Plane::scrollScreenItems(const int16 deltaX, const int16 deltaY, const bool
 			if (!screenItem._deleted && (screenItem._celInfo.type != kCelTypePic || scrollPics)) {
 				screenItem._position.x += deltaX;
 				screenItem._position.y += deltaY;
+			}
+		}
+	}
+}
+
+void Plane::remapMarkRedraw() {
+	for (ScreenItemList::const_iterator screenItemPtr = _screenItemList.begin(); screenItemPtr != _screenItemList.end(); ++screenItemPtr) {
+		if (*screenItemPtr != nullptr) {
+			ScreenItem &screenItem = **screenItemPtr;
+			if (screenItem.getCelObj()._remap && !screenItem._deleted && !screenItem._created) {
+				screenItem._updated = _screenItemList.size();
 			}
 		}
 	}

@@ -240,6 +240,7 @@ public:
 #pragma mark Screen items
 private:
 	void deleteScreenItem(ScreenItem *screenItem, const reg_t plane);
+	void remapMarkRedraw();
 
 public:
 	void kernelAddScreenItem(const reg_t object);

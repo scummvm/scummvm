@@ -448,8 +448,7 @@ void GfxFrameout::frameOut(const bool shouldShowBits, const Common::Rect &rect) 
 	eraseLists.resize(_planes.size());
 
 	if (g_sci->_gfxRemap32->getRemapCount() > 0 && _remapOccurred) {
-		// TODO
-		// remapMarkRedraw();
+		remapMarkRedraw();
 	}
 
 	calcLists(screenItemLists, eraseLists, rect);
@@ -846,8 +845,7 @@ void GfxFrameout::palMorphFrameOut(const int8 *styleRanges, const ShowStyleEntry
 	eraseLists.resize(_planes.size());
 
 	if (g_sci->_gfxRemap32->getRemapCount() > 0 && _remapOccurred) {
-		// TODO
-		//_screen->remapMarkRedraw();
+		remapMarkRedraw();
 	}
 
 	calcLists(screenItemLists, eraseLists, calcRect);
@@ -908,8 +906,7 @@ void GfxFrameout::palMorphFrameOut(const int8 *styleRanges, const ShowStyleEntry
 	}
 
 	if (g_sci->_gfxRemap32->getRemapCount() > 0 && _remapOccurred) {
-		// TODO
-		//_screen->remapMarkRedraw();
+		remapMarkRedraw();
 	}
 
 	calcLists(screenItemLists, eraseLists, calcRect);
@@ -2051,6 +2048,13 @@ void GfxFrameout::kernelSetNowSeen(const reg_t screenItemObject) const {
 	writeSelectorValue(_segMan, screenItemObject, SELECTOR(nsTop), result.top);
 	writeSelectorValue(_segMan, screenItemObject, SELECTOR(nsRight), result.right - 1);
 	writeSelectorValue(_segMan, screenItemObject, SELECTOR(nsBottom), result.bottom - 1);
+}
+
+void GfxFrameout::remapMarkRedraw() {
+	for (PlaneList::const_iterator it = _planes.begin(); it != _planes.end(); ++it) {
+		Plane *p = *it;
+		p->remapMarkRedraw();
+	}
 }
 
 #pragma mark -

@@ -27,6 +27,7 @@
 #include "sci/graphics/frameout.h"
 #include "sci/graphics/palette32.h"
 #include "sci/graphics/picture.h"
+#include "sci/graphics/remap.h"
 #include "sci/graphics/text32.h"
 #include "sci/graphics/view.h"
 
@@ -381,7 +382,7 @@ void CelObj::draw(Buffer &target, const ScreenItem &screenItem, const Common::Re
 			// NOTE: In the original code this check was `g_Remap_numActiveRemaps && _remap`,
 			// but since we are already in a `_remap` branch, there is no reason to check it
 			// again
-			if (/* TODO: g_Remap_numActiveRemaps */ false) {
+			if (g_sci->_gfxRemap32->getRemapCount()) {
 				if (scaleX.isOne() && scaleY.isOne()) {
 					if (_compressionType == kCelCompressionNone) {
 						if (_drawMirrored) {
