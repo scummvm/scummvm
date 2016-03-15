@@ -612,46 +612,57 @@ void CelObj::drawHzFlip(Buffer &target, const Common::Rect &targetRect, const Co
 	debug("drawHzFlip");
 	dummyFill(target, targetRect);
 }
+
 void CelObj::drawNoFlip(Buffer &target, const Common::Rect &targetRect, const Common::Point &scaledPosition) const {
 	debug("drawNoFlip");
 	dummyFill(target, targetRect);
 }
+
 void CelObj::drawUncompNoFlip(Buffer &target, const Common::Rect &targetRect, const Common::Point &scaledPosition) const {
 	debug("drawUncompNoFlip");
 	dummyFill(target, targetRect);
 }
+
 void CelObj::drawUncompHzFlip(Buffer &target, const Common::Rect &targetRect, const Common::Point &scaledPosition) const {
 	debug("drawUncompHzFlip");
 	dummyFill(target, targetRect);
 }
+
 void CelObj::scaleDraw(Buffer &target, const Ratio &scaleX, const Ratio &scaleY, const Common::Rect &targetRect, const Common::Point &scaledPosition) const {
 	debug("scaleDraw");
 	dummyFill(target, targetRect);
 }
+
 void CelObj::scaleDrawUncomp(Buffer &target, const Ratio &scaleX, const Ratio &scaleY, const Common::Rect &targetRect, const Common::Point &scaledPosition) const {
 	debug("scaleDrawUncomp");
 	dummyFill(target, targetRect);
 }
+
 void CelObj::drawHzFlipMap(Buffer &target, const Common::Rect &targetRect, const Common::Point &scaledPosition) const {
 	debug("drawHzFlipMap");
 	dummyFill(target, targetRect);
 }
+
 void CelObj::drawNoFlipMap(Buffer &target, const Common::Rect &targetRect, const Common::Point &scaledPosition) const {
 	debug("drawNoFlipMap");
 	dummyFill(target, targetRect);
 }
+
 void CelObj::drawUncompNoFlipMap(Buffer &target, const Common::Rect &targetRect, const Common::Point &scaledPosition) const {
 	debug("drawUncompNoFlipMap");
 	dummyFill(target, targetRect);
 }
+
 void CelObj::drawUncompHzFlipMap(Buffer &target, const Common::Rect &targetRect, const Common::Point &scaledPosition) const {
 	debug("drawUncompHzFlipMap");
 	dummyFill(target, targetRect);
 }
+
 void CelObj::scaleDrawMap(Buffer &target, const Ratio &scaleX, const Ratio &scaleY, const Common::Rect &targetRect, const Common::Point &scaledPosition) const {
 	debug("scaleDrawMap");
 	dummyFill(target, targetRect);
 }
+
 void CelObj::scaleDrawUncompMap(Buffer &target, const Ratio &scaleX, const Ratio &scaleY, const Common::Rect &targetRect, const Common::Point &scaledPosition) const {
 	debug("scaleDrawUncompMap");
 	dummyFill(target, targetRect);
@@ -672,27 +683,27 @@ void CelObj::drawUncompNoFlipNoMD(Buffer &target, const Common::Rect &targetRect
 void CelObj::drawUncompNoFlipNoMDNoSkip(Buffer &target, const Common::Rect &targetRect, const Common::Point &scaledPosition) const {
 	render<MAPPER_NoMDNoSkip, SCALER_NoScale<false, READER_Uncompressed> >(target, targetRect, scaledPosition);
 }
+
 void CelObj::drawUncompHzFlipNoMD(Buffer &target, const Common::Rect &targetRect, const Common::Point &scaledPosition) const {
 	render<MAPPER_NoMD, SCALER_NoScale<true, READER_Uncompressed> >(target, targetRect, scaledPosition);
 }
+
 void CelObj::drawUncompHzFlipNoMDNoSkip(Buffer &target, const Common::Rect &targetRect, const Common::Point &scaledPosition) const {
 	render<MAPPER_NoMDNoSkip, SCALER_NoScale<true, READER_Uncompressed> >(target, targetRect, scaledPosition);
 }
 
 void CelObj::scaleDrawNoMD(Buffer &target, const Ratio &scaleX, const Ratio &scaleY, const Common::Rect &targetRect, const Common::Point &scaledPosition) const {
-	if (_drawMirrored) {
+	if (_drawMirrored)
 		render<MAPPER_NoMD, SCALER_Scale<true, READER_Compressed> >(target, targetRect, scaledPosition, scaleX, scaleY);
-	} else {
+	else
 		render<MAPPER_NoMD, SCALER_Scale<false, READER_Compressed> >(target, targetRect, scaledPosition, scaleX, scaleY);
-	}
 }
 
 void CelObj::scaleDrawUncompNoMD(Buffer &target, const Ratio &scaleX, const Ratio &scaleY, const Common::Rect &targetRect, const Common::Point &scaledPosition) const {
-	if (_drawMirrored) {
+	if (_drawMirrored)
 		render<MAPPER_NoMD, SCALER_Scale<true, READER_Uncompressed> >(target, targetRect, scaledPosition, scaleX, scaleY);
-	} else {
+	else
 		render<MAPPER_NoMD, SCALER_Scale<false, READER_Uncompressed> >(target, targetRect, scaledPosition, scaleX, scaleY);
-	}
 }
 
 #pragma mark -
