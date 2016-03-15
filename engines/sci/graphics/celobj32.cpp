@@ -822,7 +822,7 @@ bool CelObjView::analyzeUncompressedForRemap() const {
 	byte *pixels = getResPointer() + READ_SCI11ENDIAN_UINT32(getResPointer() + _celHeaderOffset + 24);
 	for (int i = 0; i < _width * _height; ++i) {
 		uint8 pixel = pixels[i];
-		if (/* TODO: pixel >= Remap::minRemapColor && pixel <= Remap::maxRemapColor */ false && pixel != _transparentColor) {
+		if (pixel >= g_sci->_gfxRemap32->getStartColor() && pixel <= g_sci->_gfxRemap32->getEndColor() && pixel != _transparentColor) {
 			return true;
 		}
 	}

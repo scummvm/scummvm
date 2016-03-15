@@ -130,7 +130,8 @@ public:
 	void setNoMatchRange(byte from, byte count);
 	bool remapAllTables(bool palChanged);
 	int getRemapCount() const { return _remapCount; }
-
+	int getStartColor() const { return _remapEndColor - REMAP_COLOR_COUNT + 1; }
+	int getEndColor() const { return _remapEndColor; }
 private:
 	GfxPalette32 *_palette;
 	RemapParams _remaps[REMAP_COLOR_COUNT];
