@@ -834,7 +834,7 @@ CelObjView::CelObjView(const GuiResourceId viewId, const int16 loopNo, const int
 bool CelObjView::analyzeUncompressedForRemap() const {
 	byte *pixels = getResPointer() + READ_SCI11ENDIAN_UINT32(getResPointer() + _celHeaderOffset + 24);
 	for (int i = 0; i < _width * _height; ++i) {
-		uint8 pixel = pixels[i];
+		byte pixel = pixels[i];
 		if (pixel >= g_sci->_gfxRemap32->getStartColor() && pixel <= g_sci->_gfxRemap32->getEndColor() && pixel != _transparentColor) {
 			return true;
 		}
@@ -843,7 +843,16 @@ bool CelObjView::analyzeUncompressedForRemap() const {
 }
 
 bool CelObjView::analyzeForRemap() const {
-	// TODO: Implement decompression and analysis
+	READER_Compressed reader(*this, _width);
+	for (int y = 0; y < _height; y++) {
+		const byte *curRow = reader.getRow(y);
+		for (int x = 0; x < _width; x++) {
+			byte pixel = curRow[x];
+			if (pixel >= g_sci->_gfxRemap32->getStartColor() && pixel <= g_sci->_gfxRemap32->getEndColor() && pixel != _transparentColor) {
+				return true;
+			}
+		}
+	}
 	return false;
 }
 
