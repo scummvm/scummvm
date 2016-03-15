@@ -206,10 +206,10 @@ void Menu::createCommandsMenu(MenuItem *menu) {
 			char shortcut = 0;
 			const char *shortPtr = strrchr(item.c_str(), '/');
 			if (shortPtr != NULL) {
-				if (strlen(shortPtr) == 2) {
+				if (strlen(shortPtr) >= 2) {
 					shortcut = shortPtr[1];
-					item.deleteLastChar();
-					item.deleteLastChar();
+					item.deleteChar(shortPtr - item.c_str());
+					item.deleteChar(shortPtr - item.c_str());
 				} else {
 					error("Unexpected shortcut: '%s', item '%s' in menu '%s'", shortPtr, item.c_str(), string.c_str());
 				}

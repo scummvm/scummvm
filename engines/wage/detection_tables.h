@@ -53,7 +53,7 @@ static const ADGameDescription gameDescriptions[] = {
 	// Crash in console rendering on the first scene
 	FANGAME("Fantasy Quest", "4b0e1a1fbaaa4930accd0f9f0e1519c7", 762754),
 	FANGAME("Find the Heart", "595117cbed33e8de1ab3714b33880205", 106235), // From Joshua's Worlds 1.0
-	// Unexpected shortcut in menu
+	// Problems with window overlay
 	FANGAMEN("Jumble", "LSJUMBLE", "e12ec4d76d48bdc86567c5e63750547e", 647339), // Original file name is "LSJUMBLE† "
 	FANGAME("Karth of the Jungle", "595117cbed33e8de1ab3714b33880205", 96711),
 	FANGAME("Karth of the Jungle", "595117cbed33e8de1ab3714b33880205", 96960), // Alternative version
