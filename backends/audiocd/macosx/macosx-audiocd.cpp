@@ -42,6 +42,8 @@
  *
  */
 
+#ifdef MACOSX
+
 #include <sys/stat.h>
 #include <sys/mount.h>
 #include <limits.h>
@@ -299,3 +301,5 @@ bool MacOSXAudioCDManager::findTrackNames(const Common::String &drivePath) {
 AudioCDManager *createMacOSXAudioCDManager() {
 	return new MacOSXAudioCDManager();
 }
+
+#endif // MACOSX
