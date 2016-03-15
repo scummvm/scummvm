@@ -279,6 +279,7 @@ bool MacOSXAudioCDManager::findTrackNames(const Common::String &drivePath) {
 			if (fileName.hasSuffix(".aiff") || fileName.hasSuffix(".cdda")) {
 				uint j = 0;
 
+				// Search for the track ID in the file name.
 				for (; j < fileName.size() && !Common::isDigit(fileName[j]); j++)
 					;
 
