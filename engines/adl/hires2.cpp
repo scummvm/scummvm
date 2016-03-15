@@ -110,17 +110,31 @@ void HiRes2Engine::initState() {
 		f.readByte(); // always 1, possibly disk?
 		_state.rooms.push_back(room);
 	}
-
-	loadRoom(_state.room);
 }
 
-void HiRes2Engine::loadRoom(uint i) {
+void HiRes2Engine::loadRoom(byte roomNr) {
 	Common::File f;
 	openFile(f, IDS_HR2_DISK_IMAGE);
-	Room &room = getRoom(i);
+	Room &room = getRoom(roomNr);
 	uint offset = TSO(room.track, room.sector, room.offset);
 	f.seek(offset);
-	_roomData.description = readStringAt(f, offset + f.readByte(), 0xff);
+	uint16 descOffset = f.readUint16LE();
+	/* uint16 commandOffset =*/ f.readUint16LE();
+
+	// There's no picture count. The original engine always checks at most
+	// five pictures. We use the description offset to bound our search.
+	uint16 picCount = (descOffset - 4) / 5;
+
+	for (uint i = 0; i < picCount; ++i) {
+		Picture2 pic;
+		pic.nr = f.readByte();
+		pic.track = f.readByte();
+		pic.sector = f.readByte();
+		pic.offset = f.readByte();
+		f.readByte();
+		_roomData.pictures.push_back(pic);
+	}
+	_roomData.description = readStringAt(f, offset + descOffset, 0xff);
 }
 
 void HiRes2Engine::restartGame() {
@@ -128,18 +142,24 @@ void HiRes2Engine::restartGame() {
 }
 
 void HiRes2Engine::drawPic(byte pic, Common::Point pos) const {
-	// Temp hack to show a pic
+	Common::Array<Picture2>::const_iterator roomPic;
 
-	Common::File f;
-	openFile(f, IDS_HR2_DISK_IMAGE);
-	f.seek(0x1000);
+	for (roomPic = _roomData.pictures.begin(); roomPic != _roomData.pictures.end(); ++roomPic) {
+		if (roomPic->nr == pic) {
+			Common::File f;
+			openFile(f, IDS_HR2_DISK_IMAGE);
+			f.seek(TSO(roomPic->track, roomPic->sector, roomPic->offset));
+			_graphics->drawPic(f, pos, 0);
+		}
+	}
 
-	_graphics->drawPic(f, pos, 0);
+	// Check global pic list here
 }
 
 void HiRes2Engine::showRoom() {
+	loadRoom(_state.room);
 	_linesPrinted = 0;
-	drawPic(0, Common::Point());
+	drawPic(getCurRoom().curPicture, Common::Point());
 	_display->updateHiResScreen();
 	printString(_roomData.description);
 }

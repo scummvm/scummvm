@@ -64,6 +64,7 @@ namespace Adl {
 #define IDI_HR2_OFS_STR_PRESS_RETURN  TSO(0x1a, 0x8, 0x5f)
 
 struct Picture2 {
+	byte nr;
 	byte track;
 	byte sector;
 	byte offset;
@@ -89,7 +90,7 @@ private:
 	void showRoom();
 	void printMessage(uint idx, bool wait);
 
-	void loadRoom(uint i);
+	void loadRoom(byte roomNr);
 	void checkTextOverflow(char c);
 	void printString(const Common::String &str);
 
