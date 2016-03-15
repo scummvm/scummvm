@@ -53,6 +53,8 @@ static const ADGameDescription gameDescriptions[] = {
 	// Crash in console rendering on the first scene
 	FANGAME("Fantasy Quest", "4b0e1a1fbaaa4930accd0f9f0e1519c7", 762754),
 	FANGAME("Find the Heart", "595117cbed33e8de1ab3714b33880205", 106235), // From Joshua's Worlds 1.0
+	// Unexpected shortcut in menu
+	FANGAMEN("Jumble", "LSJUMBLE", "e12ec4d76d48bdc86567c5e63750547e", 647339), // Original file name is "LSJUMBLE† "
 	FANGAME("Karth of the Jungle", "595117cbed33e8de1ab3714b33880205", 96711),
 	FANGAME("Karth of the Jungle", "595117cbed33e8de1ab3714b33880205", 96960), // Alternative version
 	FANGAME("Karth of the Jungle II", "c106835ab4436de054e03aec3ce904ce", 201053),
@@ -78,6 +80,7 @@ static const ADGameDescription gameDescriptions[] = {
 	FANGAMEN("Spear of Destiny", "SpearOfDestiny", "913812a1ac7a6b0e48dadd1afa1c7763", 333665), // Original file name "SpearOfDestiny†"
 	FANGAME("Star Trek", "44aaef4806578700429de5aaf95c266e", 53320),
 	FANGAME("Strange Disappearance", "d81f2d03a1e863f04fb1e3a5495b720e", 772282),
+	FANGAME("Sweetspace Now!", "e12ec4d76d48bdc86567c5e63750547e", 123813), // Comes with Jumble
 	FANGAME("Time Bomb", "4b0e1a1fbaaa4930accd0f9f0e1519c7", 64564),
 	FANGAMEN("The Hotel Caper", "The Hotel Caper V1.0", "595117cbed33e8de1ab3714b33880205", 231969),
 	// Invalid rect in scene "Access Tube 1"
@@ -85,13 +88,14 @@ static const ADGameDescription gameDescriptions[] = {
 	FANGAME("The Sultan's Palace", "358799d446ee4fc12f793febd6c94b95", 456855),
 	// Admission for on 3rd screen is messed up
 	FANGAME("The Tower", "435f420b9dff895ae1ddf1338040c51d", 556539),
-	// Doesn't go past first scene
+	// Polygons with ignored byte 1 and 2 on second scene
 	FANGAME("The Village", "913812a1ac7a6b0e48dadd1afa1c7763", 314828),
+	// Doesn't go past first scene
 	BIGGAME("twisted", "", "Twisted! 1.6", "26207bdf0bb539464f136f0669af885f", 960954),
 	FANGAME("Wishing Well", "913812a1ac7a6b0e48dadd1afa1c7763", 103688),
 	FANGAME("Wizard's Warehouse", "913812a1ac7a6b0e48dadd1afa1c7763", 159748),
 	FANGAME("ZikTuria", "418e74ca71029a1e9db80d0eb30c0843", 52972),
-	FANGAME("Zoony", "539a64151426edc92da5eedadf39f23c", 154990),
+	FANGAME("Zoony", "539a64151426edc92da5eedadf39f23c", 154990), // original filename "Zoony™"
 
 	AD_TABLE_END_MARKER
 };
