@@ -826,9 +826,7 @@ void GfxFrameout::palMorphFrameOut(const int8 *styleRanges, const ShowStyleEntry
 	Palette sourcePalette(*_palette->getNextPalette());
 	alterVmap(sourcePalette, sourcePalette, -1, styleRanges);
 
-	// TODO: unsure if this is what this variable actually
-	// represents, but it is the correct variable number
-	int16 lastRoom = g_sci->getEngineState()->variables[VAR_GLOBAL][12].toSint16();
+	int16 prevRoom = g_sci->getEngineState()->variables[VAR_GLOBAL][12].toSint16();
 
 	Common::Rect rect(_screen->getDisplayWidth(), _screen->getDisplayHeight());
 	_showList.add(rect);
@@ -869,7 +867,7 @@ void GfxFrameout::palMorphFrameOut(const int8 *styleRanges, const ShowStyleEntry
 
 	Palette nextPalette(*_palette->getNextPalette());
 
-	if (lastRoom < 1000) {
+	if (prevRoom < 1000) {
 		for (int i = 0; i < ARRAYSIZE(sourcePalette.colors); ++i) {
 			if (styleRanges[i] == -1 || styleRanges[i] == 0) {
 				sourcePalette.colors[i] = nextPalette.colors[i];
