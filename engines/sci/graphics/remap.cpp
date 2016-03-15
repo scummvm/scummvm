@@ -174,6 +174,21 @@ void GfxRemap32::setNoMatchRange(byte from, byte count) {
 	_noMapCount = count;
 }
 
+bool GfxRemap32::remapEnabled(byte color) const {
+	assert(_remapEndColor - color >= 0 && _remapEndColor - color < REMAP_COLOR_COUNT);
+	const byte index = _remapEndColor - color;
+	return (_remaps[index].type != kRemappingNone);
+}
+
+byte GfxRemap32::remapColor(byte color, byte target) {
+	assert(_remapEndColor - color >= 0 && _remapEndColor - color < REMAP_COLOR_COUNT);
+	const byte index = _remapEndColor - color;
+	if (_remaps[index].type != kRemappingNone)
+		return _remaps[index].remap[target];
+	else
+		return target;
+}
+
 void GfxRemap32::initColorArrays(byte index) {
 	Palette *curPalette = &_palette->_sysPalette;
 	RemapParams *curRemap = &_remaps[index];

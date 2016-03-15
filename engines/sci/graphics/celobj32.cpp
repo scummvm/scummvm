@@ -334,6 +334,19 @@ struct MAPPER_NoMDNoSkip {
 	}
 };
 
+struct MAPPER_Map {
+	inline void draw(byte *target, const byte pixel, const uint8 skipColor) const {
+		if (pixel != skipColor) {
+			if (pixel < g_sci->_gfxRemap32->getStartColor()) {
+				*target = pixel;
+			} else {
+				if (g_sci->_gfxRemap32->remapEnabled(pixel))
+					*target = g_sci->_gfxRemap32->remapColor(pixel, *target);
+			}
+		}
+	}
+};
+
 void CelObj::draw(Buffer &target, const ScreenItem &screenItem, const Common::Rect &targetRect) const {
 	const Common::Point &scaledPosition = screenItem._scaledPosition;
 	const Ratio &scaleX = screenItem._ratioX;
@@ -639,33 +652,33 @@ void CelObj::scaleDrawUncomp(Buffer &target, const Ratio &scaleX, const Ratio &s
 }
 
 void CelObj::drawHzFlipMap(Buffer &target, const Common::Rect &targetRect, const Common::Point &scaledPosition) const {
-	debug("drawHzFlipMap");
-	dummyFill(target, targetRect);
+	render<MAPPER_Map, SCALER_NoScale<true, READER_Compressed> >(target, targetRect, scaledPosition);
 }
 
 void CelObj::drawNoFlipMap(Buffer &target, const Common::Rect &targetRect, const Common::Point &scaledPosition) const {
-	debug("drawNoFlipMap");
-	dummyFill(target, targetRect);
+	render<MAPPER_Map, SCALER_NoScale<false, READER_Compressed> >(target, targetRect, scaledPosition);
 }
 
 void CelObj::drawUncompNoFlipMap(Buffer &target, const Common::Rect &targetRect, const Common::Point &scaledPosition) const {
-	debug("drawUncompNoFlipMap");
-	dummyFill(target, targetRect);
+	render<MAPPER_Map, SCALER_NoScale<false, READER_Uncompressed> >(target, targetRect, scaledPosition);
 }
 
 void CelObj::drawUncompHzFlipMap(Buffer &target, const Common::Rect &targetRect, const Common::Point &scaledPosition) const {
-	debug("drawUncompHzFlipMap");
-	dummyFill(target, targetRect);
+	render<MAPPER_Map, SCALER_NoScale<true, READER_Uncompressed> >(target, targetRect, scaledPosition);
 }
 
 void CelObj::scaleDrawMap(Buffer &target, const Ratio &scaleX, const Ratio &scaleY, const Common::Rect &targetRect, const Common::Point &scaledPosition) const {
-	debug("scaleDrawMap");
-	dummyFill(target, targetRect);
+	if (_drawMirrored)
+		render<MAPPER_Map, SCALER_Scale<true, READER_Compressed> >(target, targetRect, scaledPosition, scaleX, scaleY);
+	else
+		render<MAPPER_Map, SCALER_Scale<false, READER_Compressed> >(target, targetRect, scaledPosition, scaleX, scaleY);
 }
 
 void CelObj::scaleDrawUncompMap(Buffer &target, const Ratio &scaleX, const Ratio &scaleY, const Common::Rect &targetRect, const Common::Point &scaledPosition) const {
-	debug("scaleDrawUncompMap");
-	dummyFill(target, targetRect);
+	if (_drawMirrored)
+		render<MAPPER_Map, SCALER_Scale<true, READER_Uncompressed> >(target, targetRect, scaledPosition, scaleX, scaleY);
+	else
+		render<MAPPER_Map, SCALER_Scale<false, READER_Uncompressed> >(target, targetRect, scaledPosition, scaleX, scaleY);
 }
 
 void CelObj::drawNoFlipNoMD(Buffer &target, const Common::Rect &targetRect, const Common::Point &scaledPosition) const {

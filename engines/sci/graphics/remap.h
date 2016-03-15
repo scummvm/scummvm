@@ -128,6 +128,8 @@ public:
 	void setRemappingToGray(byte color, byte gray);
 	void setRemappingToPercentGray(byte color, byte gray, byte percent);
 	void setNoMatchRange(byte from, byte count);
+	bool remapEnabled(byte color) const;
+	byte remapColor(byte color, byte target);
 	bool remapAllTables(bool palChanged);
 	int getRemapCount() const { return _remapCount; }
 	int getStartColor() const { return _remapEndColor - REMAP_COLOR_COUNT + 1; }
