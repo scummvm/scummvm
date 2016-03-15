@@ -148,8 +148,11 @@ static Common::Error runGame(const EnginePlugin *plugin, OSystem &system, const 
 #endif
 
 	// Verify that the game path refers to an actual directory
-	if (!(dir.exists() && dir.isDirectory()))
+        if (!dir.exists()) {
+		err = Common::kPathDoesNotExist;
+        } else if (!dir.isDirectory()) {
 		err = Common::kPathNotDirectory;
+        }
 
 	// Create the game engine
 	if (err.getCode() == Common::kNoError) {
