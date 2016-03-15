@@ -71,6 +71,8 @@ public:
 	 * Load the data for the class from file
 	 */
 	virtual void load(SimpleFile *file);
+
+	void fn2();
 };
 
 } // End of namespace Titanic

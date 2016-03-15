@@ -126,8 +126,12 @@ void OSScreenManager::proc20() {}
 void OSScreenManager::proc21() {}
 
 CVideoSurface *OSScreenManager::createSurface(int w, int h) {
-	warning("TODO");
-	return nullptr;
+	DirectDrawSurface *ddSurface = _directDrawManager.createSurface(w, h, 0);
+	return new OSVideoSurface(this, ddSurface);
+}
+
+CVideoSurface *OSScreenManager::createSurface(const CResourceKey &key) {
+	return new OSVideoSurface(this, key);
 }
 
 void OSScreenManager::proc23() {}

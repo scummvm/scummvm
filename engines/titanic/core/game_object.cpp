@@ -118,4 +118,8 @@ void CGameObject::load(SimpleFile *file) {
 	CNamedItem::load(file);
 }
 
+void CGameObject::fn2() {
+	error("TODO");
+}
+
 } // End of namespace Titanic

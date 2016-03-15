@@ -31,6 +31,18 @@ namespace Titanic {
 
 class TitanicEngine;
 
+struct DDSurfaceDesc {
+	int _w;
+	int _h;
+	int _flags;
+	int _caps;
+
+	DDSurfaceDesc(int w, int h) : _w(w), _h(h), _flags(0x1006), _caps(64) {}
+};
+
+class DirectDrawSurface : public Graphics::Surface {
+};
+
 class DirectDraw {
 private:
 	TitanicEngine *_vm;
@@ -54,13 +66,18 @@ public:
 	 * Logs diagnostic information
 	 */
 	void diagnostics();
+
+	/**
+	 * Create a surface from a passed description record
+	 */
+	DirectDrawSurface *createSurfaceFromDesc(const DDSurfaceDesc &desc);
 };
 
 class DirectDrawManager {
 public:
 	DirectDraw _directDraw;
-	Graphics::Surface *_mainSurface;
-	Graphics::Surface *_backSurfaces[2];
+	DirectDrawSurface *_mainSurface;
+	DirectDrawSurface *_backSurfaces[2];
 public:
 	DirectDrawManager(TitanicEngine *vm, int v);
 
@@ -83,6 +100,11 @@ public:
 	 * Initializes the surface for the screen
 	 */
 	void initSurface();
+
+	/**
+	 * Create a surface
+	 */
+	DirectDrawSurface *createSurface(int w, int h, int surfaceNum);
 };
 
 } // End of namespace Titanic

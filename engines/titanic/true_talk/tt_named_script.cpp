@@ -93,6 +93,7 @@ int TTNamedScript::proc12() const {
 
 bool TTNamedScript::proc13() const {
 	warning("TODO");
+	return true;
 }
 
 void TTNamedScript::proc14(int v) {

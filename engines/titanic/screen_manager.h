@@ -29,6 +29,7 @@
 #include "titanic/font.h"
 #include "titanic/input_handler.h"
 #include "titanic/video_surface.h"
+#include "titanic/core/resource_key.h"
 
 namespace Titanic {
 
@@ -78,6 +79,8 @@ public:
 	void fn1() {}
 	void fn2() {}
 
+
+
 	virtual void setWindowHandle(int v);
 	virtual bool resetWindowHandle(int v);
 	virtual void setMode(int width, int height, int bpp, uint numBackSurfaces, bool flag2) = 0;
@@ -98,8 +101,17 @@ public:
 	virtual void proc19() = 0;
 	virtual void proc20() = 0;
 	virtual void proc21() = 0;
+
+	/**
+	 * Creates a surface of a given size
+	 */
 	virtual CVideoSurface *createSurface(int w, int h) = 0;
-	virtual void proc23() = 0;
+	
+	/**
+	 * Creates a surface from a specified resource
+	 */
+	virtual CVideoSurface *createSurface(const CResourceKey &key) = 0;
+	
 	virtual void proc24() = 0;
 	virtual void proc25() = 0;
 	virtual void showCursor() = 0;
@@ -147,7 +159,17 @@ public:
 	virtual void proc19();
 	virtual void proc20();
 	virtual void proc21();
+
+	/**
+	 * Creates a surface of a given size
+	 */
 	virtual CVideoSurface *createSurface(int w, int h);
+	
+	/**
+	 * Creates a surface from a specified resource
+	 */
+	virtual CVideoSurface *createSurface(const CResourceKey &key);
+
 	virtual void proc23();
 	virtual void proc24();
 	virtual void proc25();

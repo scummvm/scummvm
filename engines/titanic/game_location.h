@@ -54,6 +54,11 @@ public:
 	void load(SimpleFile *file);
 
 	/**
+	 * Set the current view
+	 */
+	void setView(CViewItem *view);
+
+	/**
 	 * Get the current view
 	 */
 	CViewItem *getView();

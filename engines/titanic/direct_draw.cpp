@@ -22,6 +22,7 @@
 
 #include "common/debug.h"
 #include "engines/util.h"
+#include "graphics/pixelformat.h"
 #include "titanic/titanic.h"
 #include "titanic/direct_draw.h"
 
@@ -46,6 +47,13 @@ void DirectDraw::setDisplayMode(int width, int height, int bpp, int refreshRate)
 
 void DirectDraw::diagnostics() {
 	debugC(ERROR_BASIC, kDebugGraphics, "Running DirectDraw Diagnostic...");
+}
+
+DirectDrawSurface *DirectDraw::createSurfaceFromDesc(const DDSurfaceDesc &desc) {
+	DirectDrawSurface *surface = new DirectDrawSurface();
+	surface->create(desc._w, desc._h, Graphics::PixelFormat::createFormatCLUT8());
+
+	return surface;
 }
 
 /*------------------------------------------------------------------------*/
@@ -87,12 +95,20 @@ void DirectDrawManager::initSurface() {
 	_directDraw.setDisplayMode(_directDraw._width, _directDraw._height,
 		_directDraw._bpp, 0);
 
-	_mainSurface = new Graphics::Surface();
+	_mainSurface = new DirectDrawSurface();
 	_mainSurface->create(_directDraw._width, _directDraw._height,
 		Graphics::PixelFormat::createFormatCLUT8());
-	_backSurfaces[0] = new Graphics::Surface();
+	_backSurfaces[0] = new DirectDrawSurface();
 	_backSurfaces[0]->create(_directDraw._width, _directDraw._height,
 		Graphics::PixelFormat::createFormatCLUT8());
+}
+
+DirectDrawSurface *DirectDrawManager::createSurface(int w, int h, int surfaceNum) {
+	if (surfaceNum)
+		return nullptr;
+
+	assert(_mainSurface);
+	return _directDraw.createSurfaceFromDesc(DDSurfaceDesc(w, h));
 }
 
 } // End of namespace Titanic

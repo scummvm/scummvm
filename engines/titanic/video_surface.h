@@ -25,26 +25,50 @@
 
 #include "common/scummsys.h"
 #include "common/array.h"
-#include "graphics/surface.h"
 #include "titanic/font.h"
+#include "titanic/direct_draw.h"
+#include "titanic/core/list.h"
+#include "titanic/core/resource_key.h"
 
 namespace Titanic {
 
 class CScreenManager;
 
-class CVideoSurface {
+class CVideoSurface : public ListItem {
 private:
+	static int _videoSurfaceCounter;
+protected:
 	CScreenManager *_screenManager;
-	Graphics::Surface *_surface;
+	CResourceKey _resourceKey;
+	DirectDrawSurface *_surface;
+	int _field2C;
+	int _field34;
+	bool _field38;
+	int _field3C;
+	int _field40;
+	int _field44;
+	int _field48;
+	int _videoSurfaceNum;
+	int _field50;
+	int _accessCtr;
 public:
-	CVideoSurface(CScreenManager *screenManager, Graphics::Surface *surface);
+	CVideoSurface(CScreenManager *screenManager);
 
-	void setSurface(CScreenManager *screenManager, Graphics::Surface *surface);
+	void setSurface(CScreenManager *screenManager, DirectDrawSurface *surface);
+
+	virtual void proc8(const CResourceKey &key) = 0;
+
+	virtual void proc43() = 0;
 };
 
 class OSVideoSurface : public CVideoSurface {
 public:
-	OSVideoSurface(CScreenManager *screenManager, Graphics::Surface *surface);
+	OSVideoSurface(CScreenManager *screenManager, DirectDrawSurface *surface);
+	OSVideoSurface(CScreenManager *screenManager, const CResourceKey &key, bool flag = false);
+
+	virtual void proc8(const CResourceKey &key);
+
+	virtual void proc43();
 };
 
 } // End of namespace Titanic

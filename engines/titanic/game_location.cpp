@@ -23,6 +23,7 @@
 #include "titanic/game_location.h"
 #include "titanic/game_manager.h"
 #include "titanic/game_state.h"
+#include "titanic/core/game_object.h"
 #include "titanic/core/project_item.h"
 
 namespace Titanic {
@@ -47,6 +48,26 @@ void CGameLocation::load(SimpleFile *file) {
 	_roomNumber = file->readNumber();
 	_nodeNumber = file->readNumber();
 	_viewNumber = file->readNumber();
+}
+
+void CGameLocation::setView(CViewItem *view) {
+	if (_view) {
+		for (CTreeItem *treeItem = view; treeItem; 
+				treeItem = treeItem->scan(_view)) {
+			CGameObject *obj = dynamic_cast<CGameObject *>(treeItem);
+			if (obj)
+				obj->fn2();
+		}
+	}
+
+	_view = view;
+	if (_view) {
+		_viewNumber = _view->_viewNumber;
+		_nodeNumber = _view->findNode()->_nodeNumber;
+		_roomNumber = _view->findRoom()->_roomNumber;
+	} else {
+		_viewNumber = _nodeNumber = _roomNumber = -1;
+	}
 }
 
 CViewItem *CGameLocation::getView() {

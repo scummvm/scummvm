@@ -24,19 +24,46 @@
 
 namespace Titanic {
 
-CVideoSurface::CVideoSurface(CScreenManager *screenManager, Graphics::Surface *surface):
-			_screenManager(screenManager), _surface(surface) {
+int CVideoSurface::_videoSurfaceCounter = 0;
+
+CVideoSurface::CVideoSurface(CScreenManager *screenManager) :
+		_screenManager(screenManager), _field2C(0),
+		_field34(0), _field38(0), _field3C(0), _field40(0),
+		_field44(4), _field48(0), _field50(1) {
+	_videoSurfaceNum = _videoSurfaceCounter++;
 }
 
-void CVideoSurface::setSurface(CScreenManager *screenManager, Graphics::Surface *surface) {
+void CVideoSurface::setSurface(CScreenManager *screenManager, DirectDrawSurface *surface) {
 	_screenManager = screenManager;
 	_surface = surface;
 }
 
 /*------------------------------------------------------------------------*/
 
-OSVideoSurface::OSVideoSurface(CScreenManager *screenManager, Graphics::Surface *surface):
-		CVideoSurface(screenManager, surface) {
+OSVideoSurface::OSVideoSurface(CScreenManager *screenManager, DirectDrawSurface *surface) :
+		CVideoSurface(screenManager) {
+	_surface = surface;
+}
+
+OSVideoSurface::OSVideoSurface(CScreenManager *screenManager, const CResourceKey &key, bool flag) :
+		CVideoSurface(screenManager) {
+	_surface = nullptr;
+	_field38 = flag;
+	
+	if (_field38) {
+		proc8(key);
+	} else {
+		_resourceKey = key;
+		proc43();
+	}
+}
+
+void OSVideoSurface::proc8(const CResourceKey &key) {
+	warning("TODO");
+}
+
+void OSVideoSurface::proc43() {
+	warning("TODO");
 }
 
 } // End of namespace Titanic
