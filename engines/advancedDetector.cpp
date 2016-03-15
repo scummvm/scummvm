@@ -148,7 +148,7 @@ bool cleanupPirated(ADGameDescList &matched) {
 }
 
 
-GameList AdvancedMetaEngine::detectGames(const Common::FSList &fslist) const {
+GameList AdvancedMetaEngine::detectGames(const Common::FSList &fslist, Common::String *error) const {
 	ADGameDescList matches;
 	GameList detectedGames;
 	FileMap allFiles;
@@ -160,7 +160,7 @@ GameList AdvancedMetaEngine::detectGames(const Common::FSList &fslist) const {
 	composeFileHashMap(allFiles, fslist, (_maxScanDepth == 0 ? 1 : _maxScanDepth));
 
 	// Run the detector on this
-	matches = detectGame(fslist.begin()->getParent(), allFiles, Common::UNK_LANG, Common::kPlatformUnknown, "");
+	matches = detectGame(fslist.begin()->getParent(), allFiles, Common::UNK_LANG, Common::kPlatformUnknown, "", error);
 
 	if (matches.empty()) {
 		// Use fallback detector if there were no matches by other means
@@ -264,7 +264,7 @@ Common::Error AdvancedMetaEngine::createInstance(OSystem *syst, Engine **engine)
 	composeFileHashMap(allFiles, files, (_maxScanDepth == 0 ? 1 : _maxScanDepth));
 
 	// Run the detector on this
-	ADGameDescList matches = detectGame(files.begin()->getParent(), allFiles, language, platform, extra);
+	ADGameDescList matches = detectGame(files.begin()->getParent(), allFiles, language, platform, extra, nullptr);
 
 	if (cleanupPirated(matches))
 		return Common::kNoGameDataFoundError;
@@ -325,7 +325,7 @@ Common::Error AdvancedMetaEngine::createInstance(OSystem *syst, Engine **engine)
 		return Common::kNoError;
 }
 
-void AdvancedMetaEngine::reportUnknown(const Common::FSNode &path, const ADFilePropertiesMap &filesProps) const {
+Common::String AdvancedMetaEngine::reportUnknown(const Common::FSNode &path, const ADFilePropertiesMap &filesProps) const {
 	// TODO: This message should be cleaned up / made more specific.
 	// For example, we should specify at least which engine triggered this.
 	//
@@ -343,6 +343,8 @@ void AdvancedMetaEngine::reportUnknown(const Common::FSNode &path, const ADFileP
 	report += "\n";
 
 	g_system->logMessage(LogMessageType::kInfo, report.c_str());
+
+	return report;
 }
 
 void AdvancedMetaEngine::composeFileHashMap(FileMap &allFiles, const Common::FSList &fslist, int depth) const {
@@ -413,7 +415,7 @@ bool AdvancedMetaEngine::getFileProperties(const Common::FSNode &parent, const F
 	return true;
 }
 
-ADGameDescList AdvancedMetaEngine::detectGame(const Common::FSNode &parent, const FileMap &allFiles, Common::Language language, Common::Platform platform, const Common::String &extra) const {
+ADGameDescList AdvancedMetaEngine::detectGame(const Common::FSNode &parent, const FileMap &allFiles, Common::Language language, Common::Platform platform, const Common::String &extra, Common::String *error) const {
 	ADFilePropertiesMap filesProps;
 
 	const ADGameFileDescription *fileDesc;
@@ -528,7 +530,10 @@ ADGameDescList AdvancedMetaEngine::detectGame(const Common::FSNode &parent, cons
 	// We didn't find a match
 	if (matched.empty()) {
 		if (!filesProps.empty() && gotAnyMatchesWithAllFiles) {
-			reportUnknown(parent, filesProps);
+			Common::String unknownVersion = reportUnknown(parent, filesProps);
+			if (error) {
+				*error += unknownVersion;
+			}
 		}
 
 		// Filename based fallback
