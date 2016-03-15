@@ -50,11 +50,12 @@
 
 #include "engines/engine.h"
 #include "common/debug.h"
-#include "gui/debugger.h"
 #include "common/endian.h"
 #include "common/rect.h"
 #include "common/macresman.h"
 #include "common/random.h"
+
+#include "wage/debugger.h"
 
 struct ADGameDescription;
 
@@ -181,6 +182,8 @@ public:
 public:
 	Common::RandomSource *_rnd;
 
+	Debugger *_debugger;
+
 	Gui *_gui;
 	World *_world;
 
@@ -211,6 +214,8 @@ public:
 	void encounter(Chr *player, Chr *chr);
 	void redrawScene();
 	void saveGame();
+
+	virtual GUI::Debugger *getDebugger() { return _debugger; }
 
 private:
 	Console *_console;
