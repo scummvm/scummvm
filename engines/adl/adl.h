@@ -26,18 +26,26 @@
 #include "common/array.h"
 #include "common/rect.h"
 #include "common/str.h"
+#include "common/hashmap.h"
+#include "common/hash-str.h"
 
 #include "engines/engine.h"
+
+#include "audio/mixer.h"
+#include "audio/softsynth/pcspk.h"
 
 namespace Common {
 class ReadStream;
 class SeekableReadStream;
+class File;
+struct Event;
 }
 
 namespace Adl {
 
 class Display;
 class GraphicsMan;
+class Speaker;
 struct AdlGameDescription;
 
 // Conditional opcodes
@@ -138,6 +146,8 @@ class AdlEngine : public Engine {
 public:
 	virtual ~AdlEngine();
 
+	static bool pollEvent(Common::Event &event);
+
 protected:
 	AdlEngine(OSystem *syst, const AdlGameDescription *gd);
 
@@ -158,6 +168,9 @@ protected:
 	void clearScreen() const;
 	void drawItems() const;
 
+	// Sound
+	void bell(uint count = 1) const;
+
 	// Game state functions
 	const Room &getRoom(uint i) const;
 	Room &getRoom(uint i);
@@ -176,6 +189,7 @@ protected:
 
 	Display *_display;
 	GraphicsMan *_graphics;
+	Speaker *_speaker;
 
 	// Message strings in data file
 	Common::Array<Common::String> _messages;

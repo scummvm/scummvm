@@ -8,7 +8,8 @@ MODULE_OBJS := \
 	graphics_v1.o \
 	graphics_v2.o \
 	hires1.o \
-	hires2.o
+	hires2.o \
+	speaker.o
 
 MODULE_DIRS += \
 	engines/adl

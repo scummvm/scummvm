@@ -39,12 +39,14 @@
 #include "adl/display.h"
 #include "adl/detection.h"
 #include "adl/graphics.h"
+#include "adl/speaker.h"
 
 namespace Adl {
 
 AdlEngine::~AdlEngine() {
 	delete _display;
 	delete _graphics;
+	delete _speaker;
 }
 
 AdlEngine::AdlEngine(OSystem *syst, const AdlGameDescription *gd) :
@@ -60,6 +62,24 @@ AdlEngine::AdlEngine(OSystem *syst, const AdlGameDescription *gd) :
 		_restoreNoun(0),
 		_canSaveNow(false),
 		_canRestoreNow(false) {
+}
+
+bool AdlEngine::pollEvent(Common::Event &event) {
+	if (g_system->getEventManager()->pollEvent(event)) {
+		if (event.type != Common::EVENT_KEYDOWN)
+			return false;
+
+		if (event.kbd.flags & Common::KBD_CTRL) {
+			if (event.kbd.keycode == Common::KEYCODE_q) {
+				quitGame();
+				return false;
+			}
+		}
+
+		return true;
+	}
+
+	return false;
 }
 
 Common::String AdlEngine::readString(Common::ReadStream &stream, byte until) const {
@@ -100,23 +120,11 @@ void AdlEngine::printMessage(uint idx, bool wait) const {
 }
 
 void AdlEngine::delay(uint32 ms) const {
-	Common::EventManager *ev = g_system->getEventManager();
-
 	uint32 start = g_system->getMillis();
 
-	while (!g_engine->shouldQuit() && g_system->getMillis() - start < ms) {
+	while (!shouldQuit() && g_system->getMillis() - start < ms) {
 		Common::Event event;
-		if (ev->pollEvent(event)) {
-			if (event.type == Common::EVENT_KEYDOWN && (event.kbd.flags & Common::KBD_CTRL)) {
-				switch(event.kbd.keycode) {
-				case Common::KEYCODE_q:
-					g_engine->quitGame();
-					break;
-				default:
-					break;
-				}
-			}
-		}
+		pollEvent(event);
 		g_system->delayMillis(16);
 	}
 }
@@ -130,7 +138,7 @@ Common::String AdlEngine::inputString(byte prompt) const {
 	while (1) {
 		byte b = inputKey();
 
-		if (g_engine->shouldQuit() || _isRestoring)
+		if (shouldQuit() || _isRestoring)
 			return 0;
 
 		if (b == 0)
@@ -162,24 +170,16 @@ Common::String AdlEngine::inputString(byte prompt) const {
 }
 
 byte AdlEngine::inputKey(bool showCursor) const {
-	Common::EventManager *ev = g_system->getEventManager();
-
 	byte key = 0;
 
 	if (showCursor)
 		_display->showCursor(true);
 
-	while (!g_engine->shouldQuit() && !_isRestoring && key == 0) {
+	while (!shouldQuit() && !_isRestoring && key == 0) {
 		Common::Event event;
-		if (ev->pollEvent(event)) {
+		if (pollEvent(event)) {
 			if (event.type != Common::EVENT_KEYDOWN)
 				continue;
-
-			if (event.kbd.flags & Common::KBD_CTRL) {
-				if (event.kbd.keycode == Common::KEYCODE_q)
-					g_engine->quitGame();
-				continue;
-			}
 
 			switch (event.kbd.keycode) {
 			case Common::KEYCODE_BACKSPACE:
@@ -307,6 +307,10 @@ void AdlEngine::drawItems() const {
 	}
 }
 
+void AdlEngine::bell(uint count) const {
+	_speaker->bell(count);
+}
+
 const Room &AdlEngine::getRoom(uint i) const {
 	if (i < 1 || i > _state.rooms.size())
 		error("Room %i out of range [1, %i]", i, _state.rooms.size());
@@ -403,6 +407,7 @@ void AdlEngine::dropItem(byte noun) {
 }
 
 Common::Error AdlEngine::run() {
+	_speaker = new Speaker();
 	_display = new Display();
 
 	init();
