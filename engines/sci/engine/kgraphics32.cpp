@@ -657,9 +657,11 @@ reg_t kBitmapInvert(EngineState *s, int argc, reg_t *argv) {
 }
 
 reg_t kBitmapSetDisplace(EngineState *s, int argc, reg_t *argv) {
-	// bitmap, x, y
+	BitmapResource bitmap(argv[0]);
+	Common::Point newPos(argv[1].toUint16(), argv[2].toUint16());
+	bitmap.setDisplace(newPos);
 
-	return kStubNull(s, argc + 1, argv - 1);
+	return s->r_acc;
 }
 
 reg_t kBitmapCreateFromView(EngineState *s, int argc, reg_t *argv) {
