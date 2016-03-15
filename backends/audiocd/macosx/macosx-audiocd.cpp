@@ -44,6 +44,7 @@
 
 #include <sys/stat.h>
 #include <sys/mount.h>
+#include <limits.h>
 
 #include "common/scummsys.h"
 
@@ -274,15 +275,20 @@ bool MacOSXAudioCDManager::findTrackNames(const Common::String &drivePath) {
 			Common::String fileName = children[i].getName();
 
 			if (fileName.hasSuffix(".aiff") || fileName.hasSuffix(".cdda")) {
-				uint trackID = 0, j = 0;
+				uint j = 0;
 
 				for (; j < fileName.size() && !Common::isDigit(fileName[j]); j++)
 					;
 
-				for (; j < fileName.size() && Common::isDigit(fileName[j]); j++)
-					trackID = trackID * 10 + (fileName[j] - '0');
+				const char *trackIDString = fileName.c_str() + j;
+				char *endPtr = nullptr;
+				long trackID = strtol(trackIDString, &endPtr, 10);
 
-				_trackMap[trackID - 1] = drivePath + '/' + fileName;
+				if (trackIDString != endPtr && trackID > 0 && trackID < UINT_MAX) {
+					_trackMap[trackID - 1] = drivePath + '/' + fileName;
+				} else {
+					warning("Invalid track file name: '%s'", fileName.c_str());
+				}
 			}
 		}
 	}
