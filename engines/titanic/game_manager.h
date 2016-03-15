@@ -62,11 +62,11 @@ private:
 	CGameManagerList _list;
 	int _field30;
 	int _field34;
-	int _field48;
+	CVideoSurface *_videoSurface1;
 	int _field4C;
 	int _field50;
 	int _field54;
-	CVideoSurface *_videoSurface;
+	CVideoSurface *_videoSurface2;
 	uint _tickCount1;
 	uint _tickCount2;
 public:

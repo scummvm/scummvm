@@ -28,21 +28,18 @@
 
 namespace Titanic {
 
-DirectDraw::DirectDraw(TitanicEngine *vm) : _vm(vm) {
-	_field8 = 0;
-	_fieldC = 0;
-	_width = 0;
-	_height = 0;
-	_bpp = 0;
-	_numBackSurfaces = 0;
-	_field24 = 0;
+DirectDraw::DirectDraw(TitanicEngine *vm) : _vm(vm),
+		_windowed(false), _fieldC(0), _width(0), _height(0),
+		_bpp(0), _numBackSurfaces(0), _field24(0) {
 }
 
 void DirectDraw::setDisplayMode(int width, int height, int bpp, int refreshRate) {
 	debugC(ERROR_BASIC, kDebugGraphics, "DirectDraw::SetDisplayMode (%d x %d), %d bpp",
 		width, height, bpp);
-	assert(bpp == 8);
-	initGraphics(width, height, true);
+	assert(bpp == 16);
+
+	Graphics::PixelFormat pixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0);
+	initGraphics(width, height, true, &pixelFormat);
 }
 
 void DirectDraw::diagnostics() {
@@ -58,10 +55,10 @@ DirectDrawSurface *DirectDraw::createSurfaceFromDesc(const DDSurfaceDesc &desc) 
 
 /*------------------------------------------------------------------------*/
 
-DirectDrawManager::DirectDrawManager(TitanicEngine *vm, int v) : _directDraw(vm) {
+DirectDrawManager::DirectDrawManager(TitanicEngine *vm, bool windowed) : _directDraw(vm) {
 	_mainSurface = nullptr;
 	_backSurfaces[0] = _backSurfaces[1] = nullptr;
-	_directDraw._field8 = v;
+	_directDraw._windowed = windowed;
 }
 
 void DirectDrawManager::initVideo(int width, int height, int bpp, int numBackSurfaces) {
@@ -71,10 +68,10 @@ void DirectDrawManager::initVideo(int width, int height, int bpp, int numBackSur
 	_directDraw._height = height;
 	_directDraw._bpp = bpp;
 
-	if (numBackSurfaces) {
-		setResolution();
+	if (_directDraw._windowed) {
+		initWindowed();
 	} else {
-		initSurface();
+		initFullScreen();
 	}
 }
 
@@ -90,7 +87,7 @@ void DirectDrawManager::proc3() {
 
 }
 
-void DirectDrawManager::initSurface() {
+void DirectDrawManager::initFullScreen() {
 	debugC(ERROR_BASIC, kDebugGraphics, "Creating surfaces");
 	_directDraw.setDisplayMode(_directDraw._width, _directDraw._height,
 		_directDraw._bpp, 0);

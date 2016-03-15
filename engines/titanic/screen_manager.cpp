@@ -74,7 +74,7 @@ CScreenManager *CScreenManager::setCurrent() {
 /*------------------------------------------------------------------------*/
 
 OSScreenManager::OSScreenManager(TitanicEngine *vm): CScreenManager(vm),
-		_directDrawManager(vm, 0) {
+		_directDrawManager(vm, false) {
 	_field48 = 0;
 	_field4C = 0;
 	_field50 = 0;

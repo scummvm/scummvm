@@ -20,44 +20,42 @@
  *
  */
 
-#ifndef TITANIC_STRING_H
-#define TITANIC_STRING_H
+#ifndef TITANIC_FILES_MANAGER_H
+#define TITANIC_FILES_MANAGER_H
 
-#include "common/scummsys.h"
-#include "common/str.h"
+#include "titanic/core/list.h"
 
 namespace Titanic {
 
-class CString : public Common::String {
+class CGameManager;
+
+class CFilesManagerList : public List<ListItem> {
+};
+
+class CFilesManager {
+private:
+	CGameManager *_gameManager;
+	CFilesManagerList _list;
+	CString _string1;
+	CString _string2;
+	int _field0;
+	int _field14;
+	int _field18;
+	int _field1C;
+	int _field3C;
 public:
-	CString() : Common::String() {}
-	CString(const char *str) : Common::String(str) {}
-	CString(const char *str, uint32 len) : Common::String(str, len) {}
-	CString(const char *beginP, const char *endP) : Common::String(beginP, endP) {}
-	CString(const String &str) : Common::String(str) {}
-	explicit CString(char c) : Common::String(c) {}
+	CFilesManager();
 
 	/**
-	 * Returns the left n characters of the string
+	 * Sets the game manager
 	 */
-	CString left(uint count) const;
+	void setGameManager(CGameManager *gameManager) {
+		_gameManager = gameManager;
+	}
 
-	/**
-	 * Returns the right n characters of the string
-	 */
-	CString right(uint count) const;
-
-	/**
-	 * Returns a substring from within the string
-	 */
-	CString mid(uint start, uint count) const;
-
-	/**
-	 * Returns the index of the first occurance of a given character
-	 */
-	int indexOf(char c);
+	int fn1(const CString &name);
 };
 
 } // End of namespace Titanic
 
-#endif /* TITANIC_STRING_H */
+#endif /* TITANIC_FILES_MANAGER_H */

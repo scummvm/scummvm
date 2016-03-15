@@ -40,8 +40,11 @@
 
 namespace Titanic {
 
+TitanicEngine *g_vm;
+
 TitanicEngine::TitanicEngine(OSystem *syst, const TitanicGameDescription *gameDesc)
 		: _gameDescription(gameDesc), Engine(syst) {
+	g_vm = this;
 	_window = nullptr;
 	_screenManager = nullptr;
 }

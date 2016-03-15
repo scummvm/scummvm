@@ -59,7 +59,15 @@ OSVideoSurface::OSVideoSurface(CScreenManager *screenManager, const CResourceKey
 }
 
 void OSVideoSurface::proc8(const CResourceKey &key) {
-	warning("TODO");
+	_resourceKey = key;
+	_field38 = 1;
+
+	if (hasSurface())
+		proc43();
+}
+
+bool OSVideoSurface::hasSurface() {
+	return _surface != nullptr;
 }
 
 void OSVideoSurface::proc43() {

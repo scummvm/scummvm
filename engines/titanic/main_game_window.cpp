@@ -54,7 +54,7 @@ void CMainGameWindow::applicationStarting() {
 	
 	// Set the video mode
 	CScreenManager *screenManager = CScreenManager::setCurrent();
-	screenManager->setMode(640, 480, 1, 1, false);
+	screenManager->setMode(640, 480, 16, 1, true);
 
 	// TODO: Clear surfaces
 

@@ -28,6 +28,7 @@
 #include "common/serializer.h"
 #include "engines/advancedDetector.h"
 #include "engines/engine.h"
+#include "titanic/files_manager.h"
 #include "titanic/screen_manager.h"
 #include "titanic/main_game_window.h"
 
@@ -93,6 +94,7 @@ protected:
 	virtual Common::Error run();
 	virtual bool hasFeature(EngineFeature f) const;
 public:
+	CFilesManager _filesManager;
 	OSScreenManager *_screenManager;
 	CMainGameWindow *_window;
 public:
@@ -103,6 +105,8 @@ public:
 	bool isDemo() const;
 	Common::Language getLanguage() const;
 };
+
+extern TitanicEngine *g_vm;
 
 } // End of namespace Titanic
 

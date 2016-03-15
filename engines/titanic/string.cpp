@@ -40,4 +40,9 @@ CString CString::mid(uint start, uint count) const {
 		return CString(c_str() + start, MIN(count, size() - start));
 }
 
+int CString::indexOf(char c) {
+	const char *charP = strchr(c_str(), c);
+	return charP ? charP - c_str() : -1;
+}
+
 } // End of namespace Titanic

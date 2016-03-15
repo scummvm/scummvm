@@ -57,7 +57,7 @@ public:
 	void setSurface(CScreenManager *screenManager, DirectDrawSurface *surface);
 
 	virtual void proc8(const CResourceKey &key) = 0;
-
+	virtual bool hasSurface() = 0;
 	virtual void proc43() = 0;
 };
 
@@ -67,7 +67,7 @@ public:
 	OSVideoSurface(CScreenManager *screenManager, const CResourceKey &key, bool flag = false);
 
 	virtual void proc8(const CResourceKey &key);
-
+	virtual bool hasSurface();
 	virtual void proc43();
 };
 

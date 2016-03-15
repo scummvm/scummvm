@@ -20,44 +20,37 @@
  *
  */
 
-#ifndef TITANIC_STRING_H
-#define TITANIC_STRING_H
-
-#include "common/scummsys.h"
-#include "common/str.h"
+#include "titanic/files_manager.h"
+#include "titanic/game_manager.h"
 
 namespace Titanic {
 
-class CString : public Common::String {
-public:
-	CString() : Common::String() {}
-	CString(const char *str) : Common::String(str) {}
-	CString(const char *str, uint32 len) : Common::String(str, len) {}
-	CString(const char *beginP, const char *endP) : Common::String(beginP, endP) {}
-	CString(const String &str) : Common::String(str) {}
-	explicit CString(char c) : Common::String(c) {}
+CFilesManager::CFilesManager() : _gameManager(nullptr), 
+		_field0(0), _field14(0), _field18(0), _field1C(0), _field3C(0) {
+}
 
-	/**
-	 * Returns the left n characters of the string
-	 */
-	CString left(uint count) const;
+int CFilesManager::fn1(const CString &name) {
+	if (name.empty())
+		return 0;
 
-	/**
-	 * Returns the right n characters of the string
-	 */
-	CString right(uint count) const;
+	CString str = name;
+	str.toLowercase();
+	
+	if (str[0] == 'z' || str[0] == 'y') {
+		return 1;
+	} else if (str[0] < 'a' || str[0] > 'c') {
+		return 0;
+	}
 
-	/**
-	 * Returns a substring from within the string
-	 */
-	CString mid(uint start, uint count) const;
+	CString tempStr = str;
+	int idx = tempStr.indexOf('#');
+	if (idx >= 0) {
+		tempStr = tempStr.left(idx);
+		str = str.c_str() + idx + 1;
+		str += ".st";
+	}
 
-	/**
-	 * Returns the index of the first occurance of a given character
-	 */
-	int indexOf(char c);
-};
+	return 0;
+}
 
 } // End of namespace Titanic
-
-#endif /* TITANIC_STRING_H */

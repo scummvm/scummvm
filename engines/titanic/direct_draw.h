@@ -47,7 +47,7 @@ class DirectDraw {
 private:
 	TitanicEngine *_vm;
 public:
-	int _field8;
+	bool _windowed;
 	int _fieldC;
 	int _width;
 	int _height;
@@ -79,7 +79,7 @@ public:
 	DirectDrawSurface *_mainSurface;
 	DirectDrawSurface *_backSurfaces[2];
 public:
-	DirectDrawManager(TitanicEngine *vm, int v);
+	DirectDrawManager(TitanicEngine *vm, bool windowed);
 
 	/**
 	 * Initializes video surfaces
@@ -97,9 +97,14 @@ public:
 	void proc3();
 
 	/**
-	 * Initializes the surface for the screen
+	 * Initializes the surfaces in windowed mode
 	 */
-	void initSurface();
+	void initWindowed() { initFullScreen(); }
+
+	/**
+	 * Initializes the surfaces for the screen
+	 */
+	void initFullScreen();
 
 	/**
 	 * Create a surface
