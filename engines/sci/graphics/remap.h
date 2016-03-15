@@ -46,7 +46,7 @@ enum ColorRemappingType {
  */
 class GfxRemap {
 public:
-	GfxRemap(GfxScreen *screen, GfxPalette *_palette);
+	GfxRemap(GfxPalette *_palette);
 	~GfxRemap();
 
 	void resetRemapping();

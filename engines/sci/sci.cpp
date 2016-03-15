@@ -689,7 +689,7 @@ void SciEngine::initGraphics() {
 #endif
 		_gfxPalette16 = new GfxPalette(_resMan, _gfxScreen);
 		if (getGameId() == GID_QFG4DEMO)
-			_gfxRemap16 = new GfxRemap(_gfxScreen, _gfxPalette16);
+			_gfxRemap16 = new GfxRemap(_gfxPalette16);
 #ifdef ENABLE_SCI32
 	}
 #endif

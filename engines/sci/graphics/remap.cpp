@@ -32,8 +32,8 @@ namespace Sci {
 #pragma mark -
 #pragma mark SCI16 remapping (QFG4 demo)
 
-GfxRemap::GfxRemap(GfxScreen *screen, GfxPalette *palette)
-	: _screen(screen), _palette(palette) {
+GfxRemap::GfxRemap(GfxPalette *palette)
+	: _palette(palette) {
 	_remapOn = false;
 	resetRemapping();
 }
