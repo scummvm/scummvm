@@ -394,18 +394,15 @@ private:
 	void drawUncompHzFlip(Buffer &target, const Common::Rect &targetRect, const Common::Point &scaledPosition) const;
 	void scaleDraw(Buffer &target, const Ratio &scaleX, const Ratio &scaleY, const Common::Rect &targetRect, const Common::Point &scaledPosition) const;
 	void scaleDrawUncomp(Buffer &target, const Ratio &scaleX, const Ratio &scaleY, const Common::Rect &targetRect, const Common::Point &scaledPosition) const;
+
 	void drawHzFlipMap(Buffer &target, const Common::Rect &targetRect, const Common::Point &scaledPosition) const;
 	void drawNoFlipMap(Buffer &target, const Common::Rect &targetRect, const Common::Point &scaledPosition) const;
 	void drawUncompNoFlipMap(Buffer &target, const Common::Rect &targetRect, const Common::Point &scaledPosition) const;
 	void drawUncompHzFlipMap(Buffer &target, const Common::Rect &targetRect, const Common::Point &scaledPosition) const;
 	void scaleDrawMap(Buffer &target, const Ratio &scaleX, const Ratio &scaleY, const Common::Rect &targetRect, const Common::Point &scaledPosition) const;
 	void scaleDrawUncompMap(Buffer &target, const Ratio &scaleX, const Ratio &scaleY, const Common::Rect &targetRect, const Common::Point &scaledPosition) const;
-	void drawHzFlipMap(Buffer &target, const Buffer &priorityMap, const Common::Rect &targetRect, const Common::Point &scaledPosition, const uint8 priority) const;
-	void drawNoFlipMap(Buffer &target, const Buffer &priorityMap, const Common::Rect &targetRect, const Common::Point &scaledPosition, const uint8 priority) const;
-	void drawUncompNoFlipMap(Buffer &target, const Buffer &priorityMap, const Common::Rect &targetRect, const Common::Point &scaledPosition, const uint8 priority) const;
-	void drawUncompHzFlipMap(Buffer &target, const Buffer &priorityMap, const Common::Rect &targetRect, const Common::Point &scaledPosition, const uint8 priority) const;
-	void scaleDrawMap(Buffer &target, const Buffer &priorityMap, const Ratio &scaleX, const Ratio &scaleY, const Common::Rect &targetRect, const Common::Point &scaledPosition, const uint8 priority) const;
-	void scaleDrawUncompMap(Buffer &target, const Buffer &priorityMap, const Ratio &scaleX, const Ratio &scaleY, const Common::Rect &targetRect, const Common::Point &scaledPosition, const uint8 priority) const;
+	// NOTE: The original includes versions of the above functions with priority parameters, which were not actually used in SCI32
+
 	void drawHzFlipNoMD(Buffer &target, const Common::Rect &targetRect, const Common::Point &scaledPosition) const;
 	void drawNoFlipNoMD(Buffer &target, const Common::Rect &targetRect, const Common::Point &scaledPosition) const;
 	void drawUncompNoFlipNoMD(Buffer &target, const Common::Rect &targetRect, const Common::Point &scaledPosition) const;
@@ -414,12 +411,7 @@ private:
 	void drawUncompHzFlipNoMDNoSkip(Buffer &target, const Common::Rect &targetRect, const Common::Point &scaledPosition) const;
 	void scaleDrawNoMD(Buffer &target, const Ratio &scaleX, const Ratio &scaleY, const Common::Rect &targetRect, const Common::Point &scaledPosition) const;
 	void scaleDrawUncompNoMD(Buffer &target, const Ratio &scaleX, const Ratio &scaleY, const Common::Rect &targetRect, const Common::Point &scaledPosition) const;
-	void drawHzFlipNoMD(Buffer &target, const Buffer &priorityMap, const Common::Rect &targetRect, const Common::Point &scaledPosition, const uint8 priority) const;
-	void drawNoFlipNoMD(Buffer &target, const Buffer &priorityMap, const Common::Rect &targetRect, const Common::Point &scaledPosition, const uint8 priority) const;
-	void drawUncompNoFlipNoMD(Buffer &target, const Buffer &priorityMap, const Common::Rect &targetRect, const Common::Point &scaledPosition, const uint8 priority) const;
-	void drawUncompHzFlipNoMD(Buffer &target, const Buffer &priorityMap, const Common::Rect &targetRect, const Common::Point &scaledPosition, const uint8 priority) const;
-	void scaleDrawNoMD(Buffer &target, const Buffer &priorityMap, const Ratio &scaleX, const Ratio &scaleY, const Common::Rect &targetRect, const Common::Point &scaledPosition, const uint8 priority) const;
-	void scaleDrawUncompNoMD(Buffer &target, const Buffer &priorityMap, const Ratio &scaleX, const Ratio &scaleY, const Common::Rect &targetRect, const Common::Point &scaledPosition, const uint8 priority) const;
+	// NOTE: The original includes versions of the above functions with priority parameters, which were not actually used in SCI32
 
 #pragma mark -
 #pragma mark CelObj - Caching

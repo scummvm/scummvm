@@ -335,152 +335,87 @@ struct MAPPER_NoMDNoSkip {
 };
 
 void CelObj::draw(Buffer &target, const ScreenItem &screenItem, const Common::Rect &targetRect) const {
-	const Buffer &priorityMap = g_sci->_gfxFrameout->getPriorityMap();
 	const Common::Point &scaledPosition = screenItem._scaledPosition;
 	const Ratio &scaleX = screenItem._ratioX;
 	const Ratio &scaleY = screenItem._ratioY;
 
 	if (_remap) {
-		if (g_sci->_gfxFrameout->_hasRemappedScreenItem) {
-			const uint8 priority = MAX((int16)0, MIN((int16)255, screenItem._priority));
-
-			// NOTE: In the original engine code, there was a second branch for
-			// _remap here that would then call the following functions if _remap was false:
-			//
-			// drawHzFlip(Buffer &, Buffer &, Common::Rect &, Common::Point &, uint8)
-			// drawNoFlip(Buffer &, Buffer &, Common::Rect &, Common::Point &, uint8)
-			// drawUncompHzFlip(Buffer &, Buffer &, Common::Rect &, Common::Point &, uint8)
-			// drawUncompNoFlip(Buffer &, Buffer &, Common::Rect &, Common::Point &, uint8)
-			// scaleDraw(Buffer &, Buffer &, Ratio &, Ratio &, Common::Rect &, Common::Point &, uint8)
-			// scaleDrawUncomp(Buffer &, Buffer &, Ratio &, Ratio &, Common::Rect &, Common::Point &, uint8)
-			//
-			// However, obviously, _remap cannot be false here. This dead code branch existed in
-			// at least SCI2/GK1 and SCI2.1/SQ6.
-
+		// NOTE: In the original code this check was `g_Remap_numActiveRemaps && _remap`,
+		// but since we are already in a `_remap` branch, there is no reason to check it
+		// again
+		if (g_sci->_gfxRemap32->getRemapCount()) {
 			if (scaleX.isOne() && scaleY.isOne()) {
 				if (_compressionType == kCelCompressionNone) {
 					if (_drawMirrored) {
-						drawUncompHzFlipMap(target, priorityMap, targetRect, scaledPosition, priority);
+						drawUncompHzFlipMap(target, targetRect, scaledPosition);
 					} else {
-						drawUncompNoFlipMap(target, priorityMap, targetRect, scaledPosition, priority);
+						drawUncompNoFlipMap(target, targetRect, scaledPosition);
 					}
 				} else {
 					if (_drawMirrored) {
-						drawHzFlipMap(target, priorityMap, targetRect, scaledPosition, priority);
+						drawHzFlipMap(target, targetRect, scaledPosition);
 					} else {
-						drawNoFlipMap(target, priorityMap, targetRect, scaledPosition, priority);
+						drawNoFlipMap(target, targetRect, scaledPosition);
 					}
 				}
 			} else {
 				if (_compressionType == kCelCompressionNone) {
-					scaleDrawUncompMap(target, priorityMap, scaleX, scaleY, targetRect, scaledPosition, priority);
+					scaleDrawUncompMap(target, scaleX, scaleY, targetRect, scaledPosition);
 				} else {
-					scaleDrawMap(target, priorityMap, scaleX, scaleY, targetRect, scaledPosition, priority);
+					scaleDrawMap(target, scaleX, scaleY, targetRect, scaledPosition);
 				}
 			}
 		} else {
-			// NOTE: In the original code this check was `g_Remap_numActiveRemaps && _remap`,
-			// but since we are already in a `_remap` branch, there is no reason to check it
-			// again
-			if (g_sci->_gfxRemap32->getRemapCount()) {
-				if (scaleX.isOne() && scaleY.isOne()) {
-					if (_compressionType == kCelCompressionNone) {
-						if (_drawMirrored) {
-							drawUncompHzFlipMap(target, targetRect, scaledPosition);
-						} else {
-							drawUncompNoFlipMap(target, targetRect, scaledPosition);
-						}
+			if (scaleX.isOne() && scaleY.isOne()) {
+				if (_compressionType == kCelCompressionNone) {
+					if (_drawMirrored) {
+						drawUncompHzFlip(target, targetRect, scaledPosition);
 					} else {
-						if (_drawMirrored) {
-							drawHzFlipMap(target, targetRect, scaledPosition);
-						} else {
-							drawNoFlipMap(target, targetRect, scaledPosition);
-						}
+						drawUncompNoFlip(target, targetRect, scaledPosition);
 					}
 				} else {
-					if (_compressionType == kCelCompressionNone) {
-						scaleDrawUncompMap(target, scaleX, scaleY, targetRect, scaledPosition);
+					if (_drawMirrored) {
+						drawHzFlip(target, targetRect, scaledPosition);
 					} else {
-						scaleDrawMap(target, scaleX, scaleY, targetRect, scaledPosition);
+						drawNoFlip(target, targetRect, scaledPosition);
 					}
 				}
 			} else {
-				if (scaleX.isOne() && scaleY.isOne()) {
-					if (_compressionType == kCelCompressionNone) {
-						if (_drawMirrored) {
-							drawUncompHzFlip(target, targetRect, scaledPosition);
-						} else {
-							drawUncompNoFlip(target, targetRect, scaledPosition);
-						}
-					} else {
-						if (_drawMirrored) {
-							drawHzFlip(target, targetRect, scaledPosition);
-						} else {
-							drawNoFlip(target, targetRect, scaledPosition);
-						}
-					}
+				if (_compressionType == kCelCompressionNone) {
+					scaleDrawUncomp(target, scaleX, scaleY, targetRect, scaledPosition);
 				} else {
-					if (_compressionType == kCelCompressionNone) {
-						scaleDrawUncomp(target, scaleX, scaleY, targetRect, scaledPosition);
-					} else {
-						scaleDraw(target, scaleX, scaleY, targetRect, scaledPosition);
-					}
+					scaleDraw(target, scaleX, scaleY, targetRect, scaledPosition);
 				}
 			}
 		}
 	} else {
-		if (g_sci->_gfxFrameout->_hasRemappedScreenItem) {
-			const uint8 priority = MAX((int16)0, MIN((int16)255, screenItem._priority));
-			if (scaleX.isOne() && scaleY.isOne()) {
-				if (_compressionType == kCelCompressionNone) {
+		if (scaleX.isOne() && scaleY.isOne()) {
+			if (_compressionType == kCelCompressionNone) {
+				if (_transparent) {
 					if (_drawMirrored) {
-						drawUncompHzFlipNoMD(target, priorityMap, targetRect, scaledPosition, priority);
+						drawUncompHzFlipNoMD(target, targetRect, scaledPosition);
 					} else {
-						drawUncompNoFlipNoMD(target, priorityMap, targetRect, scaledPosition, priority);
+						drawUncompNoFlipNoMD(target, targetRect, scaledPosition);
 					}
 				} else {
 					if (_drawMirrored) {
-						drawHzFlipNoMD(target, priorityMap, targetRect, scaledPosition, priority);
+						drawUncompHzFlipNoMDNoSkip(target, targetRect, scaledPosition);
 					} else {
-						drawNoFlipNoMD(target, priorityMap, targetRect, scaledPosition, priority);
+						drawUncompNoFlipNoMDNoSkip(target, targetRect, scaledPosition);
 					}
 				}
 			} else {
-				if (_compressionType == kCelCompressionNone) {
-					scaleDrawUncompNoMD(target, priorityMap, scaleX, scaleY, targetRect, scaledPosition, priority);
+				if (_drawMirrored) {
+					drawHzFlipNoMD(target, targetRect, scaledPosition);
 				} else {
-					scaleDrawNoMD(target, priorityMap, scaleX, scaleY, targetRect, scaledPosition, priority);
+					drawNoFlipNoMD(target, targetRect, scaledPosition);
 				}
 			}
 		} else {
-			if (scaleX.isOne() && scaleY.isOne()) {
-				if (_compressionType == kCelCompressionNone) {
-					if (_transparent) {
-						if (_drawMirrored) {
-							drawUncompHzFlipNoMD(target, targetRect, scaledPosition);
-						} else {
-							drawUncompNoFlipNoMD(target, targetRect, scaledPosition);
-						}
-					} else {
-						if (_drawMirrored) {
-							drawUncompHzFlipNoMDNoSkip(target, targetRect, scaledPosition);
-						} else {
-							drawUncompNoFlipNoMDNoSkip(target, targetRect, scaledPosition);
-						}
-					}
-				} else {
-					if (_drawMirrored) {
-						drawHzFlipNoMD(target, targetRect, scaledPosition);
-					} else {
-						drawNoFlipNoMD(target, targetRect, scaledPosition);
-					}
-				}
+			if (_compressionType == kCelCompressionNone) {
+				scaleDrawUncompNoMD(target, scaleX, scaleY, targetRect, scaledPosition);
 			} else {
-				if (_compressionType == kCelCompressionNone) {
-					scaleDrawUncompNoMD(target, scaleX, scaleY, targetRect, scaledPosition);
-				} else {
-					scaleDrawNoMD(target, scaleX, scaleY, targetRect, scaledPosition);
-				}
+				scaleDrawNoMD(target, scaleX, scaleY, targetRect, scaledPosition);
 			}
 		}
 	}
@@ -759,20 +694,6 @@ void CelObj::scaleDrawUncompNoMD(Buffer &target, const Ratio &scaleX, const Rati
 		render<MAPPER_NoMD, SCALER_Scale<false, READER_Uncompressed> >(target, targetRect, scaledPosition, scaleX, scaleY);
 	}
 }
-
-// TODO: These functions may all be vestigial.
-void CelObj::drawHzFlipMap(Buffer &target, const Buffer &priorityMap, const Common::Rect &targetRect, const Common::Point &scaledPosition, const uint8 priority) const {}
-void CelObj::drawNoFlipMap(Buffer &target, const Buffer &priorityMap, const Common::Rect &targetRect, const Common::Point &scaledPosition, const uint8 priority) const {}
-void CelObj::drawUncompNoFlipMap(Buffer &target, const Buffer &priorityMap, const Common::Rect &targetRect, const Common::Point &scaledPosition, const uint8 priority) const {}
-void CelObj::drawUncompHzFlipMap(Buffer &target, const Buffer &priorityMap, const Common::Rect &targetRect, const Common::Point &scaledPosition, const uint8 priority) const {}
-void CelObj::scaleDrawMap(Buffer &target, const Buffer &priorityMap, const Ratio &scaleX, const Ratio &scaleY, const Common::Rect &targetRect, const Common::Point &scaledPosition, const uint8 priority) const {}
-void CelObj::scaleDrawUncompMap(Buffer &target, const Buffer &priorityMap, const Ratio &scaleX, const Ratio &scaleY, const Common::Rect &targetRect, const Common::Point &scaledPosition, const uint8 priority) const {}
-void CelObj::drawHzFlipNoMD(Buffer &target, const Buffer &priorityMap, const Common::Rect &targetRect, const Common::Point &scaledPosition, const uint8 priority) const {}
-void CelObj::drawNoFlipNoMD(Buffer &target, const Buffer &priorityMap, const Common::Rect &targetRect, const Common::Point &scaledPosition, const uint8 priority) const {}
-void CelObj::drawUncompNoFlipNoMD(Buffer &target, const Buffer &priorityMap, const Common::Rect &targetRect, const Common::Point &scaledPosition, const uint8 priority) const {}
-void CelObj::drawUncompHzFlipNoMD(Buffer &target, const Buffer &priorityMap, const Common::Rect &targetRect, const Common::Point &scaledPosition, const uint8 priority) const {}
-void CelObj::scaleDrawNoMD(Buffer &target, const Buffer &priorityMap, const Ratio &scaleX, const Ratio &scaleY, const Common::Rect &targetRect, const Common::Point &scaledPosition, const uint8 priority) const {}
-void CelObj::scaleDrawUncompNoMD(Buffer &target, const Buffer &priorityMap, const Ratio &scaleX, const Ratio &scaleY, const Common::Rect &targetRect, const Common::Point &scaledPosition, const uint8 priority) const {}
 
 #pragma mark -
 #pragma mark CelObjView

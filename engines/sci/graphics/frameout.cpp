@@ -82,7 +82,6 @@ GfxFrameout::GfxFrameout(SegManager *segMan, ResourceManager *resMan, GfxCoordAd
 	_showStyles(nullptr),
 	// TODO: Stop using _gfxScreen
 	_currentBuffer(screen->getDisplayWidth(), screen->getDisplayHeight(), nullptr),
-	_priorityMap(screen->getDisplayWidth(), screen->getDisplayHeight(), nullptr),
 	_remapOccurred(false),
 	_frameNowVisible(false),
 	_screenRect(screen->getDisplayWidth(), screen->getDisplayHeight()),
@@ -772,16 +771,6 @@ void GfxFrameout::drawEraseList(const RectList &eraseList, const Plane &plane) {
 }
 
 void GfxFrameout::drawScreenItemList(const DrawList &screenItemList) {
-	_hasRemappedScreenItem = false;
-	if (/* TODO: g_Remap_UnknownCounter2 */ false && !_priorityMap.isNull()) {
-		for (DrawList::const_iterator it = screenItemList.begin(); it != screenItemList.end(); ++it) {
-			if ((*it)->screenItem->getCelObj()._remap) {
-				_hasRemappedScreenItem = true;
-				break;
-			}
-		}
-	}
-
 	for (DrawList::const_iterator it = screenItemList.begin(); it != screenItemList.end(); ++it) {
 		DrawItem &drawItem = **it;
 		mergeToShowList(drawItem.rect, _showList, _overdrawThreshold);

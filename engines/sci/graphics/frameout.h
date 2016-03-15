@@ -352,13 +352,6 @@ private:
 	 */
 	Buffer _currentBuffer;
 
-	// TODO: In SCI2.1/SQ6, priority map pixels are not allocated
-	// by default. In SCI2/GK1, pixels are allocated, but not used
-	// anywhere except within CelObj::Draw in seemingly the same
-	// way they are used in SCI2.1/SQ6: that is, never read, only
-	// written.
-	Buffer _priorityMap;
-
 	/**
 	 * TODO: Documentation
 	 */
@@ -457,12 +450,6 @@ private:
 
 public:
 	/**
-	 * TODO: Document
-	 * This is used by CelObj::Draw.
-	 */
-	bool _hasRemappedScreenItem;
-
-	/**
 	 * Whether palMorphFrameOut should be used instead of
 	 * frameOut for rendering. Used by kMorphOn to
 	 * explicitly enable palMorphFrameOut for one frame.
@@ -487,11 +474,6 @@ public:
 	 * new palette indexes based on matched style ranges.
 	 */
 	void alterVmap(const Palette &palette1, const Palette &palette2, const int8 style, const int8 *const styleRanges);
-
-	// TODO: SCI2 engine never uses priority map?
-	inline Buffer &getPriorityMap() {
-		return _priorityMap;
-	}
 
 	// NOTE: This function is used within ScreenItem subsystem and assigned
 	// to various booleanish fields that seem to represent the state of the
