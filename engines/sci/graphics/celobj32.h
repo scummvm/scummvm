@@ -180,12 +180,15 @@ public:
 	CelScaler() :
 	_scaleTables(),
 	_activeIndex(0) {
-		CelScalerTable &table = _scaleTables[_activeIndex];
+		CelScalerTable &table = _scaleTables[0];
 		table.scaleX = Ratio();
 		table.scaleY = Ratio();
 		for (int i = 0; i < ARRAYSIZE(table.valuesX); ++i) {
 			table.valuesX[i] = i;
 			table.valuesY[i] = i;
+		}
+		for (int i = 1; i < ARRAYSIZE(_scaleTables); ++i) {
+			_scaleTables[i] = _scaleTables[0];
 		}
 	}
 
