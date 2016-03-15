@@ -3,10 +3,11 @@ For a more comprehensive changelog of the latest experimental code, see:
 
 1.9.0 (XXXX-XX-XX)
  AGI:
-   - Added support for Hercules rendering (green + amber)
-   - Added support for the Hercules hires font (also usable outside of Hercules rendering)
-   - Added optional "pause, when entering commands" feature, that was only available
-     in the original interpreter for Hercules rendering.
+   - Added support for Hercules rendering (green + amber).
+   - Added support for the Hercules hires font (also usable outside of
+     Hercules rendering).
+   - Added optional "pause, when entering commands" feature, that was only
+     available in the original interpreter for Hercules rendering.
 
 1.8.1 (XXXX-XX-XX)
  General:
@@ -14,13 +15,13 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Improved compatibility with ReactOS.
 
  BBVS:
-   - Fix game restart.
+   - Fixed game restart.
 
  CINE:
    - Fixed SFX loading.
 
  GOB:
-   - Fix lock up for some games during sound initialization.
+   - Fixed lock up for some games during sound initialization.
 
  LAB:
    - Fixed lock-up during ending sequence.
@@ -31,8 +32,8 @@ For a more comprehensive changelog of the latest experimental code, see:
      version of ScummVM.
 
  SWORD25:
-   - Add option to use English speech instead of German one when no speech is available
-     for the selected language.
+   - Added option to use English speech instead of German one when no speech is
+     available for the selected language.
    - Fixed resource releasing on game exit.
    - Fixed game restart after language change in-game.
    - Fixed flickering in main Menu.
