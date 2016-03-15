@@ -2,6 +2,7 @@ MODULE := engines/wage
 
 MODULE_OBJS := \
 	combat.o \
+	debugger.o \
 	design.o \
 	detection.o \
 	dialog.o \
