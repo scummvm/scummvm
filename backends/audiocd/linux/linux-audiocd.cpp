@@ -42,14 +42,12 @@
  *
  */
 
-#include <errno.h>
-#include <fcntl.h>
-#include <unistd.h>
-#include <linux/cdrom.h>
-#include <sys/ioctl.h>
-#include <sys/stat.h>
+// Enable all forbidden symbols to allow us to include and use necessary APIs.
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
 
 #include "backends/audiocd/linux/linux-audiocd.h"
+
+#ifdef USE_LINUXCD
 
 #include "backends/audiocd/audiocd-stream.h"
 #include "backends/audiocd/default/default-audiocd.h"
@@ -57,6 +55,13 @@
 #include "common/config-manager.h"
 #include "common/str.h"
 #include "common/debug.h"
+
+#include <errno.h>
+#include <fcntl.h>
+#include <unistd.h>
+#include <linux/cdrom.h>
+#include <sys/ioctl.h>
+#include <sys/stat.h>
 
 enum {
 	kLeadoutTrack = 0xAA
@@ -460,3 +465,5 @@ bool LinuxAudioCDManager::hasDevice(const DeviceList &devices, dev_t device) {
 AudioCDManager *createLinuxAudioCDManager() {
 	return new LinuxAudioCDManager();
 }
+
+#endif // USE_LINUXCD

@@ -45,6 +45,8 @@
 #ifndef BACKENDS_AUDIOCD_LINUX_H
 #define BACKENDS_AUDIOCD_LINUX_H
 
+#include "common/scummsys.h"
+
 #ifdef USE_LINUXCD
 
 class AudioCDManager;
