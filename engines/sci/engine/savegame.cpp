@@ -1012,6 +1012,26 @@ void gamestate_afterRestoreFixUp(EngineState *s, int savegameId) {
 		g_sci->_gfxMenu->kernelSetAttribute(1025 >> 8, 1025 & 0xFF, SCI_MENU_ATTRIBUTE_ENABLED, TRUE_REG);  // Status -> Statistics
 		g_sci->_gfxMenu->kernelSetAttribute(1026 >> 8, 1026 & 0xFF, SCI_MENU_ATTRIBUTE_ENABLED, TRUE_REG);  // Status -> Goals
 		break;
+	case GID_KQ6:
+		if (g_sci->isCD()) {
+			// WORKAROUND:
+			// For the CD version of King's Quest 6, set global depending on current hires/lowres state
+			// The game sets a global at the start depending on it and some things check that global
+			// instead of checking platform like for example the game action menu.
+			// This never happened in the original interpreter, because the original DOS interpreter
+			// was only capable of lowres graphics and the original Windows 3.11 interpreter was only capable
+			// of hires graphics. Saved games were not compatible between those two.
+			// Which means saving during lowres mode, then going into hires mode and restoring that saved game,
+			// will result in some graphics being incorrect (lowres).
+			// That's why we are setting the global after restoring a saved game depending on hires/lowres state.
+			// The CD demo of KQ6 does the same and uses the exact same global.
+			if ((g_sci->getPlatform() == Common::kPlatformWindows) || (g_sci->forceHiresGraphics())) {
+				s->variables[VAR_GLOBAL][0xA9].setOffset(1);
+			} else {
+				s->variables[VAR_GLOBAL][0xA9].setOffset(0);
+			}
+		}
+		break;
 	case GID_PQ2:
 		// HACK: Same as above - enable the save game menu option when loading in PQ2 (bug #6875).
 		// It gets disabled in the game's death screen.
