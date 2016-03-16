@@ -18,6 +18,10 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Fixed lock-up during ending sequence.
    - Improved internal game controls.
 
+ SAGA:
+   - Fixed user interface colors in the French and German versions of I Have No
+     Mouth and I Must Scream.
+
  SCI:
    - Make cursor workarounds work properly on OpenPandora (and other devices, that
      support touch screen and analog sticks/mouse at the same time)
