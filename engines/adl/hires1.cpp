@@ -237,7 +237,7 @@ void HiRes1Engine::initState() {
 	_state.items.clear();
 	f.seek(IDI_HR1_OFS_ITEMS);
 	while (f.readByte() != 0xff) {
-		Item item;
+		Item item = { };
 		item.noun = f.readByte();
 		item.room = f.readByte();
 		item.picture = f.readByte();

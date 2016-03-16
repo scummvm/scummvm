@@ -32,6 +32,14 @@
 
 namespace Adl {
 
+static void readPictureMeta(Common::ReadStream &f, Picture2 &pic) {
+	pic.nr = f.readByte();
+	pic.track = f.readByte();
+	pic.sector = f.readByte();
+	pic.offset = f.readByte();
+	f.readByte();
+}
+
 void HiRes2Engine::runIntro() const {
 	Common::File f;
 	openFile(f, IDS_HR2_DISK_IMAGE);
@@ -83,6 +91,14 @@ void HiRes2Engine::init() {
 	_messageIds.itemNotHere = IDI_HR2_MSG_ITEM_NOT_HERE;
 	_messageIds.thanksForPlaying = IDI_HR2_MSG_THANKS_FOR_PLAYING;
 
+	// Load item picture data
+	f.seek(IDI_HR2_OFS_ITEM_PICS);
+	for (uint i = 0; i < IDI_HR2_NUM_ITEM_PICS; ++i) {
+		Picture2 pic;
+		readPictureMeta(f, pic);
+		_itemPics.push_back(pic);
+	}
+
 	// Load commands from executable
 	f.seek(IDI_HR2_OFS_CMDS_1);
 	readCommands(f, _roomCommands);
@@ -124,7 +140,7 @@ void HiRes2Engine::initState() {
 	_state.items.clear();
 	f.seek(IDI_HR2_OFS_ITEMS);
 	while (f.readByte() != 0xff) {
-		Item item;
+		Item item = { };
 		item.noun = f.readByte();
 		item.room = f.readByte();
 		item.picture = f.readByte();
@@ -134,17 +150,17 @@ void HiRes2Engine::initState() {
 		item.state = f.readByte();
 		item.description = f.readByte();
 
+		f.readByte(); // Struct size
+
+		byte picListSize = f.readByte();
+
+		// Flag to keep track of what has been drawn on the screen
 		f.readByte();
 
-		byte size = f.readByte();
-
-		for (uint i = 0; i < size; ++i)
+		for (uint i = 0; i < picListSize; ++i)
 			item.roomPictures.push_back(f.readByte());
 
 		_state.items.push_back(item);
-
-		// One unknown extra byte compared to hires1
-		f.readByte();
 	}
 }
 
@@ -163,11 +179,7 @@ void HiRes2Engine::loadRoom(byte roomNr) {
 
 	for (uint i = 0; i < picCount; ++i) {
 		Picture2 pic;
-		pic.nr = f.readByte();
-		pic.track = f.readByte();
-		pic.sector = f.readByte();
-		pic.offset = f.readByte();
-		f.readByte();
+		readPictureMeta(f, pic);
 		_roomData.pictures.push_back(pic);
 	}
 
@@ -191,15 +203,26 @@ void HiRes2Engine::drawPic(byte pic, Common::Point pos) const {
 			openFile(f, IDS_HR2_DISK_IMAGE);
 			f.seek(TSO(roomPic->track, roomPic->sector, roomPic->offset));
 			_graphics->drawPic(f, pos, 0);
+			return;
 		}
 	}
 
 	// Check global pic list here
 }
 
+void HiRes2Engine::drawItem(const Item &item, const Common::Point &pos) const {
+	const Picture2 &pic = _itemPics[item.picture - 1];
+	Common::File f;
+	openFile(f, IDS_HR2_DISK_IMAGE);
+	f.seek(TSO(pic.track, pic.sector, pic.offset));
+	f.readByte(); // Skip clear opcode
+	_graphics->drawPic(f, pos, 0);
+}
+
 void HiRes2Engine::showRoom() {
 	loadRoom(_state.room);
 	drawPic(getCurRoom().curPicture, Common::Point());
+	drawItems();
 	_display->updateHiResScreen();
 	printString(_roomData.description);
 	_linesPrinted = 0;

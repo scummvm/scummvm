@@ -235,6 +235,8 @@ void Graphics_v2::fill(Common::SeekableReadStream &pic) {
 }
 
 void Graphics_v2::drawPic(Common::SeekableReadStream &pic, const Common::Point &pos, byte color) {
+	_color = color;
+
 	while (true) {
 		byte opcode = pic.readByte();
 
@@ -259,6 +261,30 @@ void Graphics_v2::drawPic(Common::SeekableReadStream &pic, const Common::Point &
 			break;
 		case 0xe5:
 			clear();
+			break;
+		case 0xf0:
+			_color = 0x00;
+			break;
+		case 0xf1:
+			_color = 0x2a;
+			break;
+		case 0xf2:
+			_color = 0x55;
+			break;
+		case 0xf3:
+			_color = 0x7f;
+			break;
+		case 0xf4:
+			_color = 0x80;
+			break;
+		case 0xf5:
+			_color = 0xaa;
+			break;
+		case 0xf6:
+			_color = 0xd5;
+			break;
+		case 0xf7:
+			_color = 0xff;
 			break;
 		case 0xff:
 			return;
