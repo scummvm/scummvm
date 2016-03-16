@@ -578,9 +578,11 @@ ColorId SagaEngine::KnownColor2ColorId(KnownColor knownColor) {
 		}
 #ifdef ENABLE_IHNM
 	} else if (getGameId() == GID_IHNM) {
-		// The default colors in the Spanish version of IHNM are shifted by one
-		// Fixes bug #1848016 - "IHNM: Wrong Subtitles Color (Spanish)"
-		int offset = (getLanguage() == Common::ES_ESP) ? 1 : 0;
+		// The default colors in the Spanish, version of IHNM are shifted by one
+		// Fixes bug #1848016 - "IHNM: Wrong Subtitles Color (Spanish)". This
+		// also applies to the German and French versions (bug #7064 - "IHNM:
+		// text mistake in german version").
+		int offset = (getLanguage() == Common::ES_ESP || getLanguage() == Common::DE_DEU || getLanguage() == Common::FR_FRA) ? 1 : 0;
 
 		switch (knownColor) {
 		case(kKnownColorTransparent):
