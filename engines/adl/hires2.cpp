@@ -120,6 +120,32 @@ void HiRes2Engine::initState() {
 		f.readByte(); // always 1, possibly disk?
 		_state.rooms.push_back(room);
 	}
+
+	_state.items.clear();
+	f.seek(IDI_HR2_OFS_ITEMS);
+	while (f.readByte() != 0xff) {
+		Item item;
+		item.noun = f.readByte();
+		item.room = f.readByte();
+		item.picture = f.readByte();
+		item.isLineArt = f.readByte(); // Is this still used in this way?
+		item.position.x = f.readByte();
+		item.position.y = f.readByte();
+		item.state = f.readByte();
+		item.description = f.readByte();
+
+		f.readByte();
+
+		byte size = f.readByte();
+
+		for (uint i = 0; i < size; ++i)
+			item.roomPictures.push_back(f.readByte());
+
+		_state.items.push_back(item);
+
+		// One unknown extra byte compared to hires1
+		f.readByte();
+	}
 }
 
 void HiRes2Engine::loadRoom(byte roomNr) {

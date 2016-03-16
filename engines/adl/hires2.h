@@ -46,6 +46,7 @@ namespace Adl {
 #define IDI_HR2_OFS_NOUNS       TS(0x22, 0x2)
 #define IDI_HR2_OFS_ROOMS      TSO(0x21, 0x5, 0x0e) // Skip bogus room 0
 #define IDI_HR2_OFS_MESSAGES   TSO(0x1f, 0x2, 0x04) // Skip bogus message 0
+#define IDI_HR2_OFS_ITEMS        T(0x21)
 
 #define IDI_HR2_OFS_CMDS_0      TS(0x1f, 0x7)
 #define IDI_HR2_OFS_CMDS_1      TS(0x1d, 0x7)
