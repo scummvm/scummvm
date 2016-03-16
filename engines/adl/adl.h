@@ -163,6 +163,7 @@ protected:
 
 	void loadWords(Common::ReadStream &stream, WordMap &map) const;
 	void readCommands(Common::ReadStream &stream, Commands &commands);
+	virtual void checkInput(byte verb, byte noun);
 
 	// Graphics
 	void clearScreen() const;

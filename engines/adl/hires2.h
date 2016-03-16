@@ -47,8 +47,12 @@ namespace Adl {
 #define IDI_HR2_OFS_ROOMS      TSO(0x21, 0x5, 0x0e) // Skip bogus room 0
 #define IDI_HR2_OFS_MESSAGES   TSO(0x1f, 0x2, 0x04) // Skip bogus message 0
 
+#define IDI_HR2_OFS_CMDS_0      TS(0x1f, 0x7)
+#define IDI_HR2_OFS_CMDS_1      TS(0x1d, 0x7)
+
 #define IDI_HR2_NUM_ROOMS 135
 #define IDI_HR2_NUM_MESSAGES 254
+#define IDI_HR2_NUM_VARS 40
 
 // Messages used outside of scripts
 #define IDI_HR2_MSG_CANT_GO_THERE      123
@@ -73,6 +77,7 @@ struct Picture2 {
 struct RoomData {
 	Common::String description;
 	Common::Array<Picture2> pictures;
+	Commands commands;
 };
 
 class HiRes2Engine : public AdlEngine {
@@ -89,6 +94,7 @@ private:
 	void drawItem(const Item &item, const Common::Point &pos) const { }
 	void showRoom();
 	void printMessage(uint idx, bool wait);
+	void checkInput(byte verb, byte noun);
 
 	void loadRoom(byte roomNr);
 	void checkTextOverflow(char c);

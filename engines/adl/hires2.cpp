@@ -83,6 +83,13 @@ void HiRes2Engine::init() {
 	_messageIds.itemNotHere = IDI_HR2_MSG_ITEM_NOT_HERE;
 	_messageIds.thanksForPlaying = IDI_HR2_MSG_THANKS_FOR_PLAYING;
 
+	// Load commands from executable
+	f.seek(IDI_HR2_OFS_CMDS_1);
+	readCommands(f, _roomCommands);
+
+	f.seek(IDI_HR2_OFS_CMDS_0);
+	// readCommands(f, _globalCommands);
+
 	f.seek(IDI_HR2_OFS_VERBS);
 	loadWords(f, _verbs);
 
@@ -91,6 +98,9 @@ void HiRes2Engine::init() {
 }
 
 void HiRes2Engine::initState() {
+	_state.vars.clear();
+	_state.vars.resize(IDI_HR2_NUM_VARS);
+
 	Common::File f;
 	openFile(f, IDS_HR2_DISK_IMAGE);
 
@@ -119,7 +129,7 @@ void HiRes2Engine::loadRoom(byte roomNr) {
 	uint offset = TSO(room.track, room.sector, room.offset);
 	f.seek(offset);
 	uint16 descOffset = f.readUint16LE();
-	/* uint16 commandOffset =*/ f.readUint16LE();
+	uint16 commandOffset = f.readUint16LE();
 
 	// There's no picture count. The original engine always checks at most
 	// five pictures. We use the description offset to bound our search.
@@ -134,7 +144,12 @@ void HiRes2Engine::loadRoom(byte roomNr) {
 		f.readByte();
 		_roomData.pictures.push_back(pic);
 	}
+
 	_roomData.description = readStringAt(f, offset + descOffset, 0xff);
+
+	f.seek(offset + commandOffset);
+
+	readCommands(f, _roomData.commands);
 }
 
 void HiRes2Engine::restartGame() {
@@ -158,14 +173,21 @@ void HiRes2Engine::drawPic(byte pic, Common::Point pos) const {
 
 void HiRes2Engine::showRoom() {
 	loadRoom(_state.room);
-	_linesPrinted = 0;
 	drawPic(getCurRoom().curPicture, Common::Point());
 	_display->updateHiResScreen();
 	printString(_roomData.description);
+	_linesPrinted = 0;
 }
 
 void HiRes2Engine::printMessage(uint idx, bool wait) {
 	printString(_messages[idx - 1]);
+}
+
+void HiRes2Engine::checkInput(byte verb, byte noun) {
+	if (doOneCommand(_roomData.commands, verb, noun))
+		return;
+
+	AdlEngine::checkInput(verb, noun);
 }
 
 void HiRes2Engine::checkTextOverflow(char c) {

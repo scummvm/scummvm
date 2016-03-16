@@ -273,6 +273,11 @@ void AdlEngine::readCommands(Common::ReadStream &stream, Commands &commands) {
 	}
 }
 
+void AdlEngine::checkInput(byte verb, byte noun) {
+	if (!doOneCommand(_roomCommands, verb, noun))
+		printMessage(_messageIds.dontUnderstand);
+}
+
 void AdlEngine::clearScreen() const {
 	_display->setMode(DISPLAY_MODE_MIXED);
 	_display->clear(0x00);
@@ -448,8 +453,7 @@ Common::Error AdlEngine::run() {
 			// If we just restored from the GMM, we skip this command
 			// set, as no command has been input by the user
 			if (!_isRestoring)
-				if (!doOneCommand(_roomCommands, verb, noun))
-					printMessage(_messageIds.dontUnderstand);
+				checkInput(verb, noun);
 		}
 
 		if (_isRestoring) {
