@@ -88,7 +88,7 @@ void HiRes2Engine::init() {
 	readCommands(f, _roomCommands);
 
 	f.seek(IDI_HR2_OFS_CMDS_0);
-	// readCommands(f, _globalCommands);
+	readCommands(f, _globalCommands);
 
 	f.seek(IDI_HR2_OFS_VERBS);
 	loadWords(f, _verbs);
