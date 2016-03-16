@@ -35,19 +35,19 @@ CVideoSurface::CVideoSurface(CScreenManager *screenManager) :
 
 void CVideoSurface::setSurface(CScreenManager *screenManager, DirectDrawSurface *surface) {
 	_screenManager = screenManager;
-	_surface = surface;
+	_ddSurface = surface;
 }
 
 /*------------------------------------------------------------------------*/
 
 OSVideoSurface::OSVideoSurface(CScreenManager *screenManager, DirectDrawSurface *surface) :
 		CVideoSurface(screenManager) {
-	_surface = surface;
+	_ddSurface = surface;
 }
 
 OSVideoSurface::OSVideoSurface(CScreenManager *screenManager, const CResourceKey &key, bool flag) :
 		CVideoSurface(screenManager) {
-	_surface = nullptr;
+	_ddSurface = nullptr;
 	_field38 = flag;
 	
 	if (_field38) {
@@ -67,7 +67,7 @@ void OSVideoSurface::proc8(const CResourceKey &key) {
 }
 
 bool OSVideoSurface::hasSurface() {
-	return _surface != nullptr;
+	return _ddSurface != nullptr;
 }
 
 void OSVideoSurface::proc43() {

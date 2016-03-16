@@ -107,7 +107,31 @@ void CMainGameWindow::setActiveView(CViewItem *viewItem) {
 }
 
 void CMainGameWindow::fn2() {
-	warning("TODO");
+	if (_gameManager) {
+		if (_gameView->_surface) {
+			CViewItem *view = _gameManager->getView();
+			if (view)
+				setActiveView(view);
+		}
+
+		CScreenManager *scrManager = CScreenManager::setCurrent();
+		scrManager->clearSurface(0, &_gameManager->_bounds);
+
+		switch (_gameManager->_gameState._mode) {
+		case GSMODE_1:
+		case GSMODE_2:
+			if (_gameManager->_gameState._field18)
+				warning("TODO: Field18_fn1(this)");
+			warning("TODO: Stuff");
+
+		case GSMODE_5:
+			warning("TODO: FilesManager::fn1");
+			break;
+
+		default:
+			break;
+		}
+	}
 }
 
 } // End of namespace Titanic

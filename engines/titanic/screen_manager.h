@@ -99,7 +99,12 @@ public:
 	virtual void getFont() = 0;
 	virtual void proc18() = 0;
 	virtual void proc19() = 0;
-	virtual void proc20() = 0;
+
+	/**
+	 * Clear a portion of a specified surface
+	 */
+	virtual void clearSurface(int surfaceNum, Common::Rect *_bounds) = 0;
+
 	virtual void proc21() = 0;
 
 	/**
@@ -157,7 +162,12 @@ public:
 	virtual void getFont();
 	virtual void proc18();
 	virtual void proc19();
-	virtual void proc20();
+
+	/**
+	 * Clear a portion of the screen surface
+	 */
+	virtual void clearSurface(int surfaceNum, Common::Rect *bounds);
+	
 	virtual void proc21();
 
 	/**

@@ -58,7 +58,6 @@ private:
 	CInputTranslator _inputTranslator;
 	CMusicRoom _musicRoom;
 	CTrueTalkManager _trueTalkManager;
-	Common::Rect _bounds;
 	CGameManagerList _list;
 	int _field30;
 	int _field34;
@@ -72,6 +71,7 @@ private:
 public:
 	CProjectItem *_project;
 	CGameState _gameState;
+	Common::Rect _bounds;
 public:
 	CGameManager(CProjectItem *project, CGameView *gameView);
 	~CGameManager();

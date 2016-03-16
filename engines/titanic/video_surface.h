@@ -40,7 +40,7 @@ private:
 protected:
 	CScreenManager *_screenManager;
 	CResourceKey _resourceKey;
-	DirectDrawSurface *_surface;
+	DirectDrawSurface *_ddSurface;
 	int _field2C;
 	int _field34;
 	bool _field38;

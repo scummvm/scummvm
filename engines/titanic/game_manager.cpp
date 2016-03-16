@@ -69,7 +69,7 @@ void CGameManager::postLoad(CProjectItem *project) {
 	if (_gameView) {
 		_gameView->postLoad();
 
-		if (!_gameView->_fieldC) {
+		if (!_gameView->_surface) {
 			CViewItem *view = getView();
 			if (view)
 				_gameView->setView(view);

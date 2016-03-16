@@ -23,11 +23,11 @@
 #include "titanic/game_view.h"
 #include "titanic/game_manager.h"
 #include "titanic/main_game_window.h"
+#include "titanic/screen_manager.h"
 
 namespace Titanic {
 
-CGameView::CGameView() : _gameManager(nullptr), _fieldC(nullptr),
-		_field8(0) {
+CGameView::CGameView() : _gameManager(nullptr), _surface(nullptr) {
 }
 
 void CGameView::setGameManager(CGameManager *gameManager) {
@@ -35,10 +35,8 @@ void CGameView::setGameManager(CGameManager *gameManager) {
 }
 
 void CGameView::postLoad() {
-	if (_fieldC)
-		warning("TODO");
-	
-	_fieldC = nullptr;
+	delete _surface;
+	_surface = nullptr;
 }
 
 void CGameView::deleteView(int roomNumber, int nodeNumber, int viewNumber) {
@@ -48,7 +46,14 @@ void CGameView::deleteView(int roomNumber, int nodeNumber, int viewNumber) {
 }
 
 void CGameView::createSurface(const CResourceKey &key) {
-
+	// Reset any current view surface
+	_gameManager->initBounds();
+	delete _surface;
+	_surface = nullptr;
+	
+	// Create a fresh surface
+	CScreenManager::setCurrent();
+	_surface = CScreenManager::_currentScreenManagerPtr->createSurface(key);
 }
 
 /*------------------------------------------------------------------------*/

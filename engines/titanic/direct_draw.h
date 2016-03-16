@@ -41,6 +41,12 @@ struct DDSurfaceDesc {
 };
 
 class DirectDrawSurface : public Graphics::Surface {
+public:
+	/**
+	 * Fills an area of the surfae with the specified color. If no bounds are passed,
+	 * then the entire surface is filled
+	 */
+	void fill(const Common::Rect *bounds, uint32 color);
 };
 
 class DirectDraw {

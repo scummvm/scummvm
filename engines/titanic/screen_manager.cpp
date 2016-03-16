@@ -122,7 +122,14 @@ void OSScreenManager::proc16() {}
 void OSScreenManager::getFont() {}
 void OSScreenManager::proc18() {}
 void OSScreenManager::proc19() {}
-void OSScreenManager::proc20() {}
+
+void OSScreenManager::clearSurface(int surfaceNum, Common::Rect *bounds) {
+	if (surfaceNum == -1)
+		_directDrawManager._mainSurface->fill(bounds, 0);
+	else if (surfaceNum >= 0 && surfaceNum < (int)_backSurfaces.size())
+		_directDrawManager._backSurfaces[surfaceNum]->fill(bounds, 0);
+}
+
 void OSScreenManager::proc21() {}
 
 CVideoSurface *OSScreenManager::createSurface(int w, int h) {

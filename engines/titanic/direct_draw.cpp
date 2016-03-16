@@ -108,4 +108,22 @@ DirectDrawSurface *DirectDrawManager::createSurface(int w, int h, int surfaceNum
 	return _directDraw.createSurfaceFromDesc(DDSurfaceDesc(w, h));
 }
 
+/*------------------------------------------------------------------------*/
+
+void DirectDrawSurface::fill(const Common::Rect *bounds, uint32 color) {
+	Common::Rect tempBounds;
+
+	if (bounds) {
+		// Bounds are provided, clip them to the bounds of this surface
+		tempBounds = *bounds;
+		tempBounds.clip(Common::Rect(0, 0, this->w, this->h));
+	} else {
+		// No bounds provided, so use the entire surface
+		tempBounds = Common::Rect(0, 0, this->w, this->h);
+	}
+
+	// Fill the area
+	fillRect(tempBounds, color);
+}
+
 } // End of namespace Titanic

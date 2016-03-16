@@ -25,6 +25,7 @@
 
 #include "common/scummsys.h"
 #include "titanic/core/view_item.h"
+#include "titanic/video_surface.h"
 
 namespace Titanic {
 
@@ -34,9 +35,8 @@ class CGameManager;
 class CGameView {
 protected:
 	CGameManager *_gameManager;
-	int _field8;
 public:
-	void *_fieldC;
+	CVideoSurface *_surface;
 public:
 	CGameView();
 

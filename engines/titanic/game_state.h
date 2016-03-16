@@ -31,6 +31,8 @@ namespace Titanic {
 
 class CGameManager;
 
+enum GameStateMode { GSMODE_0 = 0, GSMODE_1 = 1, GSMODE_2 = 2, GSMODE_3 = 3, GSMODE_4 = 4, GSMODE_5 = 5 };
+
 class CGameStateList : public List<ListItem> {
 public:
 	int _field10;
@@ -46,7 +48,7 @@ public:
 	CGameStateList _list;
 	int _field8;
 	int _fieldC;
-	int _mode;
+	GameStateMode _mode;
 	int _field14;
 	int _field18;
 	int _field1C;
@@ -73,7 +75,7 @@ public:
 	/**
 	 * Sets a new mode
 	 */
-	void setMode(int newMode);
+	void setMode(GameStateMode newMode);
 };
 
 } // End of namespace Titanic
