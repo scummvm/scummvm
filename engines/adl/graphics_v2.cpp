@@ -26,6 +26,7 @@
 
 #include "adl/display.h"
 #include "adl/graphics.h"
+#include "adl/adl.h"
 
 namespace Adl {
 
@@ -175,23 +176,33 @@ static byte getPatternColor(const Common::Point &p, byte pattern) {
 
 void Graphics_v2::fillRow(const Common::Point &p, bool stopBit, byte pattern) {
 	const byte color = getPatternColor(p, pattern);
-	_display.putPixelRaw(p, color);
+	_display.setPixelPalette(p, color);
+	_display.setPixelBit(p, color);
 
 	Common::Point q(p);
 	byte c = color;
 
-	while (++q.x < DISPLAY_WIDTH && _display.getPixelBit(q) != stopBit) {
-		if ((q.x % 7) == 0)
+	while (++q.x < DISPLAY_WIDTH) {
+		if ((q.x % 7) == 0) {
 			c = getPatternColor(q, pattern);
-		_display.putPixelRaw(q, c);
+			// Palette is set before the first bit is tested
+			_display.setPixelPalette(q, c);
+		}
+		if (_display.getPixelBit(q) == stopBit)
+			break;
+		_display.setPixelBit(q, c);
 	}
 
 	q = p;
 	c = color;
-	while (--q.x >= 0 && _display.getPixelBit(q) != stopBit) {
-		if ((q.x % 7) == 6)
+	while (--q.x >= 0) {
+		if ((q.x % 7) == 6) {
 			c = getPatternColor(q, pattern);
-		_display.putPixelRaw(q, c);
+			_display.setPixelPalette(q, c);
+		}
+		if (_display.getPixelBit(q) == stopBit)
+			break;
+		_display.setPixelBit(q, c);
 	}
 }
 

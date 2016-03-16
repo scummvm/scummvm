@@ -217,13 +217,6 @@ void Display::loadFrameBuffer(Common::ReadStream &stream) {
 		error("Failed to read frame buffer");
 }
 
-void Display::putPixelRaw(const Common::Point &p, byte color) {
-	byte *b = _frameBuf + p.y * DISPLAY_PITCH + (p.x / 7);
-	color ^= *b;
-	color &= 0x80 | (1 << (p.x % 7));
-	*b ^= color;
-}
-
 void Display::putPixel(const Common::Point &p, byte color) {
 	byte offset = p.x / 7;
 	byte mask = 0x80 | (1 << (p.x % 7));
@@ -241,14 +234,19 @@ void Display::putPixel(const Common::Point &p, byte color) {
 			color ^= 0x7f;
 	}
 
-	byte *b = _frameBuf + p.y * DISPLAY_PITCH + offset;
-	color ^= *b;
-	color &= mask;
-	*b ^= color;
+	writeFrameBuffer(p, color, mask);
+}
+
+void Display::setPixelBit(const Common::Point &p, byte color) {
+	writeFrameBuffer(p, color, 1 << (p.x % 7));
+}
+
+void Display::setPixelPalette(const Common::Point &p, byte color) {
+	writeFrameBuffer(p, color, 0x80);
 }
 
 bool Display::getPixelBit(const Common::Point &p) const {
-	byte *b = _frameBuf + p.y * DISPLAY_PITCH + (p.x / 7);
+	byte *b = _frameBuf + p.y * DISPLAY_PITCH + p.x / 7;
 	return *b & (1 << (p.x % 7));
 }
 
@@ -326,6 +324,13 @@ void Display::setCharAtCursor(byte c) {
 
 void Display::showCursor(bool enable) {
 	_showCursor = enable;
+}
+
+void Display::writeFrameBuffer(const Common::Point &p, byte color, byte mask) {
+	byte *b = _frameBuf + p.y * DISPLAY_PITCH + p.x / 7;
+	color ^= *b;
+	color &= mask;
+	*b ^= color;
 }
 
 void Display::showScanlines(bool enable) {

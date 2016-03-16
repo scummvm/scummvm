@@ -63,8 +63,9 @@ public:
 
 	// Graphics
 	void loadFrameBuffer(Common::ReadStream &stream);
-	void putPixelRaw(const Common::Point &p, byte color);
 	void putPixel(const Common::Point &p, byte color);
+	void setPixelBit(const Common::Point &p, byte color);
+	void setPixelPalette(const Common::Point &p, byte color);
 	bool getPixelBit(const Common::Point &p) const;
 	void clear(byte color);
 
@@ -80,6 +81,7 @@ public:
 	void showCursor(bool enable);
 
 private:
+	void writeFrameBuffer(const Common::Point &p, byte color, byte mask);
 	void updateHiResSurface();
 	void showScanlines(bool enable);
 
