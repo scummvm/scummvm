@@ -23,10 +23,12 @@
 namespace Wage {
 
 #define ADGF_DEFAULT (ADGF_DROPLANGUAGE|ADGF_DROPPLATFORM|ADGF_MACRESFORK)
-#define ADGF_GENERIC (ADGF_DROPLANGUAGE|ADGF_DROPPLATFORM|ADGF_USEEXTRAASTITLE|ADGF_AUTOGENTARGET|ADGF_MACRESFORK)
+#define ADGF_GENERIC (ADGF_DEFAULT|ADGF_USEEXTRAASTITLE|ADGF_AUTOGENTARGET)
+#define ADGF_DEMO (ADGF_GENERIC|ADGF_DEMO)
 
 #define FANGAME(n,m,s) { "wage",n,AD_ENTRY1s(n,m,s),Common::EN_ANY,Common::kPlatformMacintosh,ADGF_GENERIC,GUIO0()}
 #define FANGAMEN(n,f,m,s) { "wage",n,AD_ENTRY1s(f,m,s),Common::EN_ANY,Common::kPlatformMacintosh,ADGF_GENERIC,GUIO0()}
+#define FANGAMEND(n,f,m,s) { "wage",n,AD_ENTRY1s(f,m,s),Common::EN_ANY,Common::kPlatformMacintosh,ADGF_DEMO,GUIO0()}
 #define BIGGAME(t,v,f,m,s) { t,v,AD_ENTRY1s(f,m,s),Common::EN_ANY,Common::kPlatformMacintosh,ADGF_DEFAULT,GUIO0()}
 
 static const ADGameDescription gameDescriptions[] = {
@@ -37,11 +39,15 @@ static const ADGameDescription gameDescriptions[] = {
 	BIGGAME("cantitoe", "", "Camp Cantitoe", "913812a1ac7a6b0e48dadd1afa1c7763", 616985),
 	// Problems with letter rendering
 	FANGAME("Canal District", "a56aa3cd4a6e070e15ce1d5815c7be0a", 641470),
+	FANGAME("Carbon Copy", "913812a1ac7a6b0e48dadd1afa1c7763", 519445),
 	// Invalid rect in scene "FINALE"
 	FANGAME("Castle of Ert", "327610eb2298a9427a566288312df040", 198955),
 	FANGAME("Deep Angst", "b130b3c811cd89024dd5fdd2b71f70b8", 329550),
+	FANGAME("Deep Ennui", "913812a1ac7a6b0e48dadd1afa1c7763", 86075),
 	// Polygons with ignored byte 1
 	FANGAME("Double Trouble", "1652e36857a04c01dc560234c4818619", 542371),
+	BIGGAME("drakmythcastle", "disk I", "Drakmyth Castle disk I of II", "94a9c4f8b3dabd1846d76215a49bd221", 793784),
+	BIGGAME("drakmythcastle", "disk II", "Drakmyth Castle II", "cc978cc9a5256724702463cb5aaaffa0", 1685659),
 	// Crash at start in GUI rendering
 	FANGAME("Dune Eternity", "94a9c4f8b3dabd1846d76215a49bd221", 290201), // Original file name is "***DUNE ETERNITY*** "
 	FANGAMEN("Dungeon World II", "DungeonWorld2", "0154ea11d3cbb536c13b4ae9e6902d48", 230199),
@@ -88,6 +94,7 @@ static const ADGameDescription gameDescriptions[] = {
 	FANGAME("Swamp Witch", "913812a1ac7a6b0e48dadd1afa1c7763", 739781), // Original file name "Swamp Witch†"
 	FANGAME("Sweetspace Now!", "e12ec4d76d48bdc86567c5e63750547e", 123813), // Comes with Jumble
 	FANGAME("Time Bomb", "4b0e1a1fbaaa4930accd0f9f0e1519c7", 64564),
+	FANGAMEND("The Ashland Revolution", "The Ashland Revolution Demo", "913812a1ac7a6b0e48dadd1afa1c7763", 145023), // Original file name "The Ashland Revolution Demo†"
 	FANGAMEN("The Hotel Caper", "The Hotel Caper V1.0", "595117cbed33e8de1ab3714b33880205", 231969),
 	// Invalid rect in scene "Access Tube 1"
 	FANGAMEN("The Phoenix v1.2", "The Phoenix", "4b0e1a1fbaaa4930accd0f9f0e1519c7", 431640),
