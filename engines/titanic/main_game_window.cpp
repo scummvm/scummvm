@@ -101,7 +101,8 @@ void CMainGameWindow::setActiveView(CViewItem *viewItem) {
 	
 	CResourceKey key;
 	if (viewItem->getResourceKey(&key)) {
-		// TODO
+		// Create a surface based on the key
+		_gameView->createSurface(key);
 	}
 }
 

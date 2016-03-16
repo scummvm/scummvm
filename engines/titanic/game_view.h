@@ -58,6 +58,11 @@ public:
 	virtual void setView(CViewItem *item) = 0;
 	
 	virtual void proc4() = 0;
+
+	/**
+	 * Creates a surface from a specified resource
+	 */
+	void createSurface(const CResourceKey &key);
 };
 
 class CSTGameView: public CGameView {

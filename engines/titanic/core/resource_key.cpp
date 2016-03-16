@@ -60,11 +60,10 @@ void CResourceKey::setValue(const CString &name) {
 CString CResourceKey::exists() {
 	CString name = _key;
 
-	// Check for the resource being within an ST container file
+	// Check for a resource being specified within an ST container
 	int idx = name.indexOf('#');
 	if (idx >= 0) {
-		CString str = name.left(idx);
-		name = name.mid(idx + 1);
+		name = name.left(idx);
 		name += ".st";
 	}
 

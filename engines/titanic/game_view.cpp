@@ -47,6 +47,9 @@ void CGameView::deleteView(int roomNumber, int nodeNumber, int viewNumber) {
 		delete view;
 }
 
+void CGameView::createSurface(const CResourceKey &key) {
+
+}
 
 /*------------------------------------------------------------------------*/
 
