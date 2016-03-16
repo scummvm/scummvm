@@ -817,7 +817,7 @@ void Plane::remapMarkRedraw() {
 		if (*screenItemPtr != nullptr) {
 			ScreenItem &screenItem = **screenItemPtr;
 			if (screenItem.getCelObj()._remap && !screenItem._deleted && !screenItem._created) {
-				screenItem._updated = _screenItemList.size();
+				screenItem._updated = g_sci->_gfxFrameout->getScreenCount();
 			}
 		}
 	}
