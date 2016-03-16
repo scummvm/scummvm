@@ -1124,7 +1124,7 @@ void Script::convertToText() {
 
 		if (c < 0x80) {
 			if (c < 0x20)
-				error("Unknown code 0x%02x at %d", c, _data->pos());
+				error("convertToText: Unknown code 0x%02x at %d", c, _data->pos());
 
 			do {
 				scr->line += c;

@@ -61,8 +61,12 @@ static const ADGameDescription gameDescriptions[] = {
 	FANGAMEN("Little Pythagoras", "Little Pythagoras 1.1.1", "94a9c4f8b3dabd1846d76215a49bd221", 628821),
 	FANGAME("Lost Crystal", "8174c81ea1858d0079ae040dae2cefd3", 771072),
 	FANGAME("Magic Rings", "913812a1ac7a6b0e48dadd1afa1c7763", 109044),
+	// No way to click on the house
+	FANGAME("Messy House", "913812a1ac7a6b0e48dadd1afa1c7763", 177120),
 	FANGAME("Midnight Snack", "913812a1ac7a6b0e48dadd1afa1c7763", 67952),
 	FANGAME("Minitorian", "913812a1ac7a6b0e48dadd1afa1c7763", 586464),
+	// No way to pass through the first screen
+	FANGAME("Nightcrawler Ned", "94a9c4f8b3dabd1846d76215a49bd221", 366542),
 	FANGAME("Pavilion", "4d991d7d1534d48d90598d86ea6d5d97", 231687),
 	FANGAME("Puzzle Piece Search", "595117cbed33e8de1ab3714b33880205", 247693), // From Joshua's Worlds 1.0
 	// Empty(?)  first scene
@@ -80,6 +84,8 @@ static const ADGameDescription gameDescriptions[] = {
 	FANGAMEN("Spear of Destiny", "SpearOfDestiny", "913812a1ac7a6b0e48dadd1afa1c7763", 333665), // Original file name "SpearOfDestiny†"
 	FANGAME("Star Trek", "44aaef4806578700429de5aaf95c266e", 53320),
 	FANGAME("Strange Disappearance", "d81f2d03a1e863f04fb1e3a5495b720e", 772282),
+	// Code 0x03 in text
+	FANGAME("Swamp Witch", "913812a1ac7a6b0e48dadd1afa1c7763", 739781), // Original file name "Swamp Witch†"
 	FANGAME("Sweetspace Now!", "e12ec4d76d48bdc86567c5e63750547e", 123813), // Comes with Jumble
 	FANGAME("Time Bomb", "4b0e1a1fbaaa4930accd0f9f0e1519c7", 64564),
 	FANGAMEN("The Hotel Caper", "The Hotel Caper V1.0", "595117cbed33e8de1ab3714b33880205", 231969),
