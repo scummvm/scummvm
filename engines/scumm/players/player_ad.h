@@ -68,7 +68,7 @@ private:
 
 	OPL::OPL *_opl2;
 
-	int _soundPlaying;
+	int _musicResource;
 	int32 _engineMusicTimer;
 
 	struct SfxSlot;
