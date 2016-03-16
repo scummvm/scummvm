@@ -34,6 +34,7 @@ For a more comprehensive changelog of the latest experimental code, see:
  SCUMM:
    - Fixed detection of Maniac Mansion from Day of the Tentacle in the Windows
      version of ScummVM.
+   - Fixed a sound effect not stopping in Loom EGA with AdLib.
 
  Broken Sword 2.5:
    - Added option to use English speech instead of German one when no speech is

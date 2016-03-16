@@ -178,7 +178,17 @@ int Player_AD::getMusicTimer() {
 }
 
 int Player_AD::getSoundStatus(int sound) const {
-	return (sound == _soundPlaying);
+	if (sound == _soundPlaying) {
+		return true;
+	}
+
+	for (int i = 0; i < ARRAYSIZE(_sfx); ++i) {
+		if (_sfx[i].resource == sound) {
+			return true;
+		}
+	}
+
+	return false;
 }
 
 void Player_AD::saveLoadWithSerializer(Serializer *ser) {
