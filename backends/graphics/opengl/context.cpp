@@ -113,6 +113,7 @@ void OpenGLGraphicsManager::initializeGLContext() {
 	debug(5, "OpenGL maximum texture size: %d", g_context.maxTextureSize);
 
 	const char *extString = (const char *)g_context.glGetString(GL_EXTENSIONS);
+	debug(5, "OpenGL extensions: %s", extString);
 
 	bool ARBShaderObjects = false;
 	bool ARBShadingLanguage100 = false;
