@@ -40,8 +40,19 @@ CString CString::mid(uint start, uint count) const {
 		return CString(c_str() + start, MIN(count, size() - start));
 }
 
+CString CString::mid(uint start) const {
+	uint strSize = size();
+	assert(start <= strSize);
+	return mid(start, strSize - start);
+}
+
 int CString::indexOf(char c) {
 	const char *charP = strchr(c_str(), c);
+	return charP ? charP - c_str() : -1;
+}
+
+int CString::lastIndexOf(char c) {
+	const char *charP = strrchr(c_str(), c);
 	return charP ? charP - c_str() : -1;
 }
 

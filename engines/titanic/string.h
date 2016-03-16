@@ -53,9 +53,19 @@ public:
 	CString mid(uint start, uint count) const;
 
 	/**
+	 * Returns a substring from within the string
+	 */
+	CString mid(uint start) const;
+
+	/**
 	 * Returns the index of the first occurance of a given character
 	 */
 	int indexOf(char c);
+
+	/**
+	 * Returns the index of the last occurance of a given character
+	 */
+	int lastIndexOf(char c);
 };
 
 } // End of namespace Titanic

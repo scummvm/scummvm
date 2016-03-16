@@ -20,16 +20,18 @@
  *
  */
 
+#include "common/file.h"
 #include "titanic/files_manager.h"
 #include "titanic/game_manager.h"
 
 namespace Titanic {
 
 CFilesManager::CFilesManager() : _gameManager(nullptr), 
-		_field0(0), _field14(0), _field18(0), _field1C(0), _field3C(0) {
+		_assetsPath("Assets"), _field0(0), _field14(0), 
+		_field18(0), _field1C(0), _field3C(0) {
 }
 
-int CFilesManager::fn1(const CString &name) {
+bool CFilesManager::fn1(const CString &name) {
 	if (name.empty())
 		return 0;
 
@@ -50,7 +52,14 @@ int CFilesManager::fn1(const CString &name) {
 		str += ".st";
 	}
 
-	return 0;
+
+
+	return true;
+}
+
+bool CFilesManager::fileExists(const CString &name) {
+	Common::File f;
+	return f.exists(name);
 }
 
 } // End of namespace Titanic

@@ -92,4 +92,8 @@ void CGameManager::initBounds() {
 	_bounds = Common::Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
 }
 
+void CGameManager::fn2() {
+	warning("TODO");
+}
+
 } // End of namespace Titanic

@@ -52,6 +52,11 @@ public:
 	 * Load the data for the class from file
 	 */
 	virtual void load(SimpleFile *file);
+
+	/**
+	 * Get the resource key for the view
+	 */
+	bool getResourceKey(CResourceKey *key);
 };
 
 } // End of namespace Titanic

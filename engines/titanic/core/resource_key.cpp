@@ -20,6 +20,7 @@
  *
  */
 
+#include "common/file.h"
 #include "titanic/simple_file.h"
 #include "titanic/core/resource_key.h"
 
@@ -36,12 +37,41 @@ void CResourceKey::save(SimpleFile *file, int indent) const {
 void CResourceKey::load(SimpleFile *file) {
 	int val = file->readNumber();
 	
-	if (val == 1) {
+	if (val == 0 || val == 1) {
 		file->readBuffer();
-		_value = file->readString();
+		CString str = file->readString();
+		setValue(str);
 	}
 
 	CSaveableObject::load(file);
+}
+
+void CResourceKey::setValue(const CString &name) {
+	CString nameStr = name;
+	nameStr.toLowercase();
+	_key = nameStr;
+
+	_value = nameStr;
+	int idx = _value.lastIndexOf('\\');
+	if (idx >= 0)
+		_value = _value.mid(idx + 1);
+}
+
+CString CResourceKey::exists() {
+	CString name = _key;
+
+	// Check for the resource being within an ST container file
+	int idx = name.indexOf('#');
+	if (idx >= 0) {
+		CString str = name.left(idx);
+		name = name.mid(idx + 1);
+		name += ".st";
+	}
+
+	// The original did tests for the file in the different
+	// asset paths, which aren't needed in ScummVM
+	Common::File f;
+	return f.exists(name) ? name : CString();
 }
 
 } // End of namespace Titanic

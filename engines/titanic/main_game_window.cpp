@@ -96,8 +96,13 @@ int CMainGameWindow::selectSavegame() {
 	return -1;
 }
 
-void CMainGameWindow::setActiveView(CViewItem *view) {
-	warning("TODO");
+void CMainGameWindow::setActiveView(CViewItem *viewItem) {
+	_gameManager->_gameState._gameLocation.setView(viewItem);
+	
+	CResourceKey key;
+	if (viewItem->getResourceKey(&key)) {
+		// TODO
+	}
 }
 
 void CMainGameWindow::fn2() {

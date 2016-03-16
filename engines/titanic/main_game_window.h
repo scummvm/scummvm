@@ -72,7 +72,7 @@ public:
 	/**
 	 * Sets the view to be shown
 	 */
-	void setActiveView(CViewItem *view);
+	void setActiveView(CViewItem *viewItem);
 
 	void fn2();
 };

@@ -67,4 +67,10 @@ void CViewItem::load(SimpleFile *file) {
 	CNamedItem::load(file);
 }
 
+bool CViewItem::getResourceKey(CResourceKey *key) {
+	*key = _resourceKey;
+	CString filename = key->exists();
+	return !filename.empty();
+}
+
 } // End of namespace Titanic

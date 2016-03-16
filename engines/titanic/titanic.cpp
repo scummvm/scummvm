@@ -21,6 +21,7 @@
  */
 
 #include "common/scummsys.h"
+#include "common/archive.h"
 #include "common/config-manager.h"
 #include "common/debug-channels.h"
 #include "common/events.h"
@@ -53,6 +54,11 @@ TitanicEngine::~TitanicEngine() {
 	delete _window;
 	delete _screenManager;
 	CSaveableObject::freeClassList();
+}
+
+void TitanicEngine::initializePath(const Common::FSNode &gamePath) {
+	Engine::initializePath(gamePath);
+	SearchMan.addSubDirectoryMatching(gamePath, "assets");
 }
 
 void TitanicEngine::initialize() {

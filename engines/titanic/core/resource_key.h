@@ -32,6 +32,8 @@ class CResourceKey: public CSaveableObject {
 private:
 	CString _key;
 	CString _value;
+
+	void setValue(const CString &name);
 public:
 	CLASSDEF
 
@@ -45,7 +47,16 @@ public:
 	 */
 	virtual void load(SimpleFile *file);
 
+	/**
+	 * Return the key
+	 */
 	const CString &getString() const { return _key; }
+
+	/**
+	 * Checks whether a file for the given key exists,
+	 * and returns it's filename if it does
+	 */
+	CString exists();
 };
 
 } // End of namespace Titanic

@@ -43,6 +43,7 @@ private:
 	int _field18;
 	int _field1C;
 	int _field3C;
+	const CString _assetsPath;
 public:
 	CFilesManager();
 
@@ -53,7 +54,12 @@ public:
 		_gameManager = gameManager;
 	}
 
-	int fn1(const CString &name);
+	bool fn1(const CString &name);
+
+	/**
+	 * Returns true if a file of the given name exists
+	 */
+	static bool fileExists(const CString &name);
 };
 
 } // End of namespace Titanic

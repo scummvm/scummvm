@@ -91,6 +91,7 @@ protected:
 	int _loadSaveSlot;
 
 	// Engine APIs
+	virtual void initializePath(const Common::FSNode &gamePath);
 	virtual Common::Error run();
 	virtual bool hasFeature(EngineFeature f) const;
 public:

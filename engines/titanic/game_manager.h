@@ -102,6 +102,8 @@ public:
 	 * Set default screen bounds
 	 */
 	void initBounds();
+
+	void fn2();
 };
 
 } // End of namespace Titanic
