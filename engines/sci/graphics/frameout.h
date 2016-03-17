@@ -333,7 +333,7 @@ private:
 public:
 	// NOTE: This signature is taken from SCI3 Phantasmagoria 2
 	// and is valid for all implementations of SCI32
-	void kernelSetShowStyle(const uint16 argc, const reg_t &planeObj, const ShowStyleType type, const int16 seconds, const int16 direction, const int16 priority, const int16 animate, const int16 frameOutNow, const reg_t &pFadeArray, const int16 divisions, const int16 blackScreen);
+	void kernelSetShowStyle(const uint16 argc, const reg_t planeObj, const ShowStyleType type, const int16 seconds, const int16 direction, const int16 priority, const int16 animate, const int16 frameOutNow, reg_t pFadeArray, int16 divisions, const int16 blackScreen);
 
 #pragma mark -
 #pragma mark Rendering

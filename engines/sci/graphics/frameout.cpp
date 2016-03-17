@@ -1120,11 +1120,20 @@ inline ShowStyleEntry *GfxFrameout::deleteShowStyleInternal(ShowStyleEntry *cons
 // and need to be fixed in future
 // TODO: SQ6 does not use 'priority' (exists since SCI2) or 'blackScreen' (exists since SCI3);
 // check to see if other versions use or if they are just always ignored
-void GfxFrameout::kernelSetShowStyle(const uint16 argc, const reg_t &planeObj, const ShowStyleType type, const int16 seconds, const int16 back, const int16 priority, const int16 animate, const int16 frameOutNow, const reg_t &pFadeArray, const int16 divisions, const int16 blackScreen) {
+void GfxFrameout::kernelSetShowStyle(const uint16 argc, const reg_t planeObj, const ShowStyleType type, const int16 seconds, const int16 back, const int16 priority, const int16 animate, const int16 frameOutNow, reg_t pFadeArray, int16 divisions, const int16 blackScreen) {
 
 	bool hasDivisions = false;
 	bool hasFadeArray = false;
-	if (getSciVersion() < SCI_VERSION_2_1_MIDDLE) {
+
+	// KQ7 2.0b uses a mismatched version of the Styler script (SCI2.1early script
+	// for SCI2.1mid engine), so the calls it makes to kSetShowStyle are wrong and
+	// put `divisions` where `pFadeArray` is supposed to be
+	if (getSciVersion() == SCI_VERSION_2_1_MIDDLE && g_sci->getGameId() == GID_KQ7) {
+		hasDivisions = argc > 7;
+		hasFadeArray = false;
+		divisions = argc > 7 ? pFadeArray.toSint16() : -1;
+		pFadeArray = NULL_REG;
+	} else if (getSciVersion() < SCI_VERSION_2_1_MIDDLE) {
 		hasDivisions = argc > 7;
 		hasFadeArray = false;
 	} else if (getSciVersion() < SCI_VERSION_3) {
