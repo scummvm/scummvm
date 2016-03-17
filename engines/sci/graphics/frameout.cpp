@@ -888,8 +888,7 @@ void GfxFrameout::palMorphFrameOut(const int8 *styleRanges, const ShowStyleEntry
 	_frameNowVisible = true;
 
 	for (PlaneList::iterator plane = _planes.begin(); plane != _planes.end(); ++plane) {
-// TODO:
-//		plane->updateRedrawAllCount();
+		(*plane)->_redrawAllCount = getScreenCount();
 	}
 
 	if (g_sci->_gfxRemap32->getRemapCount() > 0 && _remapOccurred) {
