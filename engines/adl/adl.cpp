@@ -304,7 +304,8 @@ void AdlEngine::drawItems() const {
 		Common::Array<byte>::const_iterator pic;
 
 		for (pic = item->roomPictures.begin(); pic != item->roomPictures.end(); ++pic) {
-			if (*pic == getCurRoom().curPicture) {
+			// IDI_NONE check was added in hires2
+			if (*pic == getCurRoom().curPicture || *pic == IDI_NONE) {
 				drawItem(*item, item->position);
 				continue;
 			}

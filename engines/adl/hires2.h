@@ -41,21 +41,23 @@ namespace Adl {
 #define TS(TRACK, SECTOR) TSO(TRACK, SECTOR, 0)
 #define T(TRACK) TS(TRACK, 0)
 
-#define IDI_HR2_OFS_INTRO_TEXT TSO(0x00, 0xd, 0x17)
-#define IDI_HR2_OFS_VERBS        T(0x19)
-#define IDI_HR2_OFS_NOUNS       TS(0x22, 0x2)
-#define IDI_HR2_OFS_ROOMS      TSO(0x21, 0x5, 0x0e) // Skip bogus room 0
-#define IDI_HR2_OFS_MESSAGES   TSO(0x1f, 0x2, 0x04) // Skip bogus message 0
-#define IDI_HR2_OFS_ITEM_PICS  TSO(0x1e, 0x9, 0x05) // Skip bogus pic 0
-#define IDI_HR2_OFS_ITEMS        T(0x21)
+#define IDI_HR2_OFS_INTRO_TEXT   TSO(0x00, 0xd, 0x17)
+#define IDI_HR2_OFS_VERBS          T(0x19)
+#define IDI_HR2_OFS_NOUNS         TS(0x22, 0x2)
+#define IDI_HR2_OFS_ROOMS        TSO(0x21, 0x5, 0x0e) // Skip bogus room 0
+#define IDI_HR2_OFS_MESSAGES     TSO(0x1f, 0x2, 0x04) // Skip bogus message 0
+#define IDI_HR2_OFS_ITEM_PICS    TSO(0x1e, 0x9, 0x05) // Skip bogus pic 0
+#define IDI_HR2_OFS_ITEMS          T(0x21)
+#define IDI_HR2_OFS_ITEM_OFFSETS TSO(0x1b, 0x4, 0x15)
 
-#define IDI_HR2_OFS_CMDS_0      TS(0x1f, 0x7)
-#define IDI_HR2_OFS_CMDS_1      TS(0x1d, 0x7)
+#define IDI_HR2_OFS_CMDS_0        TS(0x1f, 0x7)
+#define IDI_HR2_OFS_CMDS_1        TS(0x1d, 0x7)
 
 #define IDI_HR2_NUM_ROOMS 135
 #define IDI_HR2_NUM_MESSAGES 254
 #define IDI_HR2_NUM_VARS 40
 #define IDI_HR2_NUM_ITEM_PICS 38
+#define IDI_HR2_NUM_ITEM_OFFSETS 16
 
 // Messages used outside of scripts
 #define IDI_HR2_MSG_CANT_GO_THERE      123

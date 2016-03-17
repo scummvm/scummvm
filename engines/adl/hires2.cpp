@@ -106,6 +106,15 @@ void HiRes2Engine::init() {
 	f.seek(IDI_HR2_OFS_CMDS_0);
 	readCommands(f, _globalCommands);
 
+	// Load dropped item offsets
+	f.seek(IDI_HR2_OFS_ITEM_OFFSETS);
+	for (uint i = 0; i < IDI_HR2_NUM_ITEM_OFFSETS; ++i) {
+		Common::Point p;
+		p.x = f.readByte();
+		p.y = f.readByte();
+		_itemOffsets.push_back(p);
+	}
+
 	f.seek(IDI_HR2_OFS_VERBS);
 	loadWords(f, _verbs);
 
