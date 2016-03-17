@@ -30,6 +30,8 @@
 
 namespace Adl {
 
+// FIXME: Add clipping
+
 #define NUM_PATTERNS 22
 #define PATTERN_LEN 4
 static const byte fillPatterns[NUM_PATTERNS][PATTERN_LEN] = {
@@ -78,8 +80,10 @@ static const byte fillPatterns[NUM_PATTERNS][PATTERN_LEN] = {
 #define READ_POINT(p) \
 	do { \
 		READ_BYTE(p.x); \
+		p.x += _offset.x; \
 		p.x <<= 1; \
 		READ_BYTE(p.y); \
+		p.y += _offset.y; \
 	} while (0)
 
 void Graphics_v2::clear() {
@@ -99,6 +103,7 @@ void Graphics_v2::drawCorners(Common::SeekableReadStream &pic, bool yFirst) {
 		int16 n;
 
 		READ_BYTE(n);
+		n += _offset.x;
 
 		_display.putPixel(p, _color);
 
@@ -108,6 +113,7 @@ void Graphics_v2::drawCorners(Common::SeekableReadStream &pic, bool yFirst) {
 
 doYStep:
 		READ_BYTE(n);
+		n += _offset.y;
 
 		_display.putPixel(p, _color);
 		drawLine(p, Common::Point(p.x, n), _color);
@@ -236,6 +242,7 @@ void Graphics_v2::fill(Common::SeekableReadStream &pic) {
 
 void Graphics_v2::drawPic(Common::SeekableReadStream &pic, const Common::Point &pos, byte color) {
 	_color = color;
+	_offset = pos;
 
 	while (true) {
 		byte opcode = pic.readByte();

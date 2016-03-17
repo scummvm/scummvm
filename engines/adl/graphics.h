@@ -68,6 +68,7 @@ private:
 	void fill(Common::SeekableReadStream &pic);
 
 	byte _color;
+	Common::Point _offset;
 };
 
 } // End of namespace Adl
