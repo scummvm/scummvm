@@ -35,13 +35,11 @@ CVideoSurface::CVideoSurface(CScreenManager *screenManager) :
 	_videoSurfaceNum = _videoSurfaceCounter++;
 }
 
-
 CVideoSurface::~CVideoSurface() {
 	if (_ddSurface)
 		_videoSurfaceCounter -= freeSurface();
 	--_videoSurfaceCounter;
 }
-
 
 void CVideoSurface::setSurface(CScreenManager *screenManager, DirectDrawSurface *surface) {
 	_screenManager = screenManager;
@@ -76,16 +74,21 @@ void OSVideoSurface::loadResource(const CResourceKey &key) {
 		load();
 }
 
-void OSVideoSurface::loadTarga() {
+void OSVideoSurface::loadTarga(const CResourceKey &key) {
 	warning("TODO");
 }
 
-void OSVideoSurface::loadJPEG() {
-	CString filename = _resourceKey.exists();
+void OSVideoSurface::loadJPEG(const CResourceKey &key) {
+	CString filename = key.exists();
+
+	// Decode the image
 	CJPEGDecode decoder(filename);
+	decoder.decode(*this);
 
+	if (proc26() == 2)
+		shiftColors();
 
-	warning("TODO");
+	_resourceKey = key;
 }
 
 void OSVideoSurface::loadMovie() {
@@ -135,6 +138,14 @@ void OSVideoSurface::resize(int width, int height) {
 		_videoSurfaceCounter += _ddSurface->getSize();
 }
 
+int OSVideoSurface::proc26() {
+	if (!loadIfReady())
+		assert(0);
+
+	warning("TODO");
+	return 0;
+}
+
 bool OSVideoSurface::load() {
 	if (!_resourceKey.scanForFile())
 		return false;
@@ -143,10 +154,10 @@ bool OSVideoSurface::load() {
 	case FILETYPE_IMAGE:
 		switch (_resourceKey.imageTypeSuffix()) {
 		case IMAGETYPE_TARGA:
-			loadTarga();
+			loadTarga(_resourceKey);
 			break;
 		case IMAGETYPE_JPEG:
-			loadJPEG();
+			loadJPEG(_resourceKey);
 			break;
 		default:
 			break;
@@ -160,6 +171,29 @@ bool OSVideoSurface::load() {
 	default:
 		return false;
 	}
+}
+
+void OSVideoSurface::shiftColors() {
+	if (!loadIfReady())
+		return;
+
+	if (!lock())
+		assert(0);
+
+	int width = getWidth();
+	int height = getHeight();
+	int pitch = getPitch();
+	uint16 *pixels = _pixels;
+	uint16 *p;
+	int x, y;
+
+	for (y = 0; y < height; ++y, pixels += pitch) {
+		for (x = 0, p = pixels; x < width; ++x, ++p) {
+			*p = ((*p & 0xFFE0) * 2) | (*p & 0x1F);
+		}
+	}
+
+	unlock();
 }
 
 bool OSVideoSurface::loadIfReady() {

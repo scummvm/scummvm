@@ -58,7 +58,7 @@ void CResourceKey::setValue(const CString &name) {
 		_value = _value.mid(idx + 1);
 }
 
-CString CResourceKey::exists() {
+CString CResourceKey::exists() const {
 	CString name = _key;
 
 	// Check for a resource being specified within an ST container

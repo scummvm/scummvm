@@ -68,12 +68,12 @@ public:
 	/**
 	 * Loads a Targa image file specified by the resource key
 	 */
-	virtual void loadTarga() = 0;
+	virtual void loadTarga(const CResourceKey &key) = 0;
 
 	/**
 	 * Loads a JPEG image file specified by the resource key
 	 */
-	virtual void loadJPEG() = 0;
+	virtual void loadJPEG(const CResourceKey &key) = 0;
 
 	/**
 	 * Loads a movie file specified by the resource key
@@ -115,15 +115,22 @@ public:
 	 */
 	virtual void resize(int width, int height) = 0;
 
+	virtual int proc26() = 0;
+
 	/**
-	 * Loads the surface data based on the currently set resource key
+	 * Shifts the colors of the surface.. maybe greys it out?
 	 */
-	virtual bool load() = 0;
+	virtual void shiftColors() = 0;
 
 	/**
 	 * Loads the surface's resource if there's one pending
 	 */
 	virtual bool loadIfReady() = 0;
+
+	/**
+	 * Loads the surface data based on the currently set resource key
+	 */
+	virtual bool load() = 0;
 
 	/**
 	 * Frees the underlying surface
@@ -144,12 +151,12 @@ public:
 	/**
 	 * Loads a Targa image file specified by the resource key
 	 */
-	virtual void loadTarga();
+	virtual void loadTarga(const CResourceKey &key);
 
 	/**
 	 * Loads a JPEG image file specified by the resource key
 	 */
-	virtual void loadJPEG();
+	virtual void loadJPEG(const CResourceKey &key);
 
 	/**
 	 * Loads a movie file specified by the resource key
@@ -191,15 +198,22 @@ public:
 	 */
 	virtual void resize(int width, int height);
 
+	virtual int proc26();
+
 	/**
-	 * Loads the surface data based on the currently set resource key
+	 * Shifts the colors of the surface.. maybe greys it out?
 	 */
-	virtual bool load();
+	virtual void shiftColors();
 
 	/**
 	 * Loads the surface's resource if there's one pending
 	 */
 	virtual bool loadIfReady();
+
+	/**
+	 * Loads the surface data based on the currently set resource key
+	 */
+	virtual bool load();
 
 	/**
 	 * Frees the underlying surface

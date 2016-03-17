@@ -56,7 +56,7 @@ public:
 	 * Checks whether a file for the given key exists,
 	 * and returns it's filename if it does
 	 */
-	CString exists();
+	CString exists() const;
 
 	/**
 	 * Scans for a file with a matching name
