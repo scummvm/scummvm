@@ -56,8 +56,6 @@
 
 namespace Sci {
 
-// TODO/FIXME: This is partially guesswork
-
 static int dissolveSequences[2][20] = {
 	/* SCI2.1early- */ { 3, 6, 12, 20, 48, 96, 184, 272, 576, 1280, 3232, 6912, 13568, 24576, 46080 },
 	/* SCI2.1mid+ */ { 0, 0, 3, 6, 12, 20, 48, 96, 184, 272, 576, 1280, 3232, 6912, 13568, 24576, 46080, 73728, 132096, 466944 }
