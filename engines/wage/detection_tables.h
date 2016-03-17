@@ -70,10 +70,13 @@ static const ADGameDescription gameDescriptions[] = {
 	// No way to click on the house
 	FANGAME("Messy House", "913812a1ac7a6b0e48dadd1afa1c7763", 177120),
 	FANGAME("Midnight Snack", "913812a1ac7a6b0e48dadd1afa1c7763", 67952),
+	FANGAME("Midnight Snack", "913812a1ac7a6b0e48dadd1afa1c7763", 67966), // Alt version
 	FANGAME("Minitorian", "913812a1ac7a6b0e48dadd1afa1c7763", 586464),
 	// No way to pass through the first screen
 	FANGAME("Nightcrawler Ned", "94a9c4f8b3dabd1846d76215a49bd221", 366542),
 	FANGAME("Pavilion", "4d991d7d1534d48d90598d86ea6d5d97", 231687),
+	// Polygons with byte 1
+	FANGAME("Periapt", "913812a1ac7a6b0e48dadd1afa1c7763", 406006),
 	FANGAME("Puzzle Piece Search", "595117cbed33e8de1ab3714b33880205", 247693), // From Joshua's Worlds 1.0
 	// Empty(?)  first scene
 	FANGAME("Pyramid of No Return", "77a55a45f794b4d4a56703d3acce871e", 385145),
@@ -81,6 +84,7 @@ static const ADGameDescription gameDescriptions[] = {
 	FANGAME("Quest for T-Rex", "913812a1ac7a6b0e48dadd1afa1c7763", 592584),
 	// Crash in console rendering on the initial scene
 	FANGAME("Quest for the Dark Sword", "b35dd0c078da9f35fc25a455f56bb129", 572576),
+	FANGAME("Radical Castle", "677bfee4afeca2f7152eb8b76c85ca8d", 355601),
 	FANGAME("Radical Castle 1.0", "677bfee4afeca2f7152eb8b76c85ca8d", 347278),
 	BIGGAME("raysmaze", "v1.5", "Ray's Maze1.5", "064b16d8c20724f8debbbdc3aafde538", 1408516),
 	BIGGAME("raysmaze", "v1.5/alt", "Ray's Maze1.5", "92cca777800c3d31a77b5ed7f6ee49ad", 1408516),
@@ -94,6 +98,7 @@ static const ADGameDescription gameDescriptions[] = {
 	FANGAME("Swamp Witch", "913812a1ac7a6b0e48dadd1afa1c7763", 739781), // Original file name "Swamp Witch†"
 	FANGAME("Sweetspace Now!", "e12ec4d76d48bdc86567c5e63750547e", 123813), // Comes with Jumble
 	FANGAME("Time Bomb", "4b0e1a1fbaaa4930accd0f9f0e1519c7", 64564),
+	FANGAME("Time Bomb", "4b0e1a1fbaaa4930accd0f9f0e1519c7", 64578), // Alt version
 	FANGAMEND("The Ashland Revolution", "The Ashland Revolution Demo", "913812a1ac7a6b0e48dadd1afa1c7763", 145023), // Original file name "The Ashland Revolution Demo†"
 	FANGAMEN("The Hotel Caper", "The Hotel Caper V1.0", "595117cbed33e8de1ab3714b33880205", 231969),
 	// Invalid rect in scene "Access Tube 1"
