@@ -166,7 +166,7 @@ public:
 	 * another plane and cleared when draw list calculation
 	 * occurs.
 	 */
-	int _priorityChanged; // ?
+	int _priorityChanged;
 
 	/**
 	 * A handle to the VM object corresponding to this
@@ -182,7 +182,12 @@ public:
 	int16 _priority;
 
 	/**
-	 * TODO: Document
+	 * Whether or not all screen items in this plane should
+	 * be redrawn on the next frameout, instead of just
+	 * the screen items marked as updated. This is set when
+	 * visual changes to the plane itself are made that
+	 * affect the rendering of the entire plane, and cleared
+	 * once those changes are rendered by `redrawAll`.
 	 */
 	int _redrawAllCount;
 
