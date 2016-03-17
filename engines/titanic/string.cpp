@@ -26,11 +26,13 @@
 namespace Titanic {
 
 CString CString::left(uint count) const {
-	return (count > size()) ? *this : CString(c_str(), c_str() + count);
+	return (count > size()) ? CString() : CString(c_str(), c_str() + count);
 }
 
 CString CString::right(uint count) const {
-	return (count > size()) ? *this : CString(c_str() - count, c_str());
+	int strSize = size();
+	return (count > strSize) ? CString() : 
+		CString(c_str() + strSize - count, c_str() + strSize);
 }
 
 CString CString::mid(uint start, uint count) const {

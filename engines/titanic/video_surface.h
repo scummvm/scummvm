@@ -43,7 +43,7 @@ protected:
 	DirectDrawSurface *_ddSurface;
 	uint16 *_pixels;
 	int _field34;
-	bool _field38;
+	bool _pendingLoad;
 	int _field3C;
 	int _field40;
 	int _field44;
@@ -114,7 +114,10 @@ public:
 	 */
 	virtual bool load() = 0;
 
-	virtual bool proc42() = 0;
+	/**
+	 * Loads the surface's resource if there's one pending
+	 */
+	virtual bool loadIfReady() = 0;
 };
 
 class OSVideoSurface : public CVideoSurface {
@@ -177,7 +180,10 @@ public:
 	 */
 	virtual bool load();
 
-	virtual bool proc42();
+	/**
+	 * Loads the surface's resource if there's one pending
+	 */
+	virtual bool loadIfReady();
 };
 
 } // End of namespace Titanic

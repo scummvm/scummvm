@@ -29,7 +29,7 @@ int CVideoSurface::_videoSurfaceCounter = 0;
 
 CVideoSurface::CVideoSurface(CScreenManager *screenManager) :
 		_screenManager(screenManager), _pixels(nullptr),
-		_field34(0), _field38(0), _field3C(0), _field40(0),
+		_field34(0), _pendingLoad(false), _field3C(0), _field40(0),
 		_field44(4), _field48(0), _field50(1) {
 	_videoSurfaceNum = _videoSurfaceCounter++;
 }
@@ -46,12 +46,12 @@ OSVideoSurface::OSVideoSurface(CScreenManager *screenManager, DirectDrawSurface 
 	_ddSurface = surface;
 }
 
-OSVideoSurface::OSVideoSurface(CScreenManager *screenManager, const CResourceKey &key, bool flag) :
+OSVideoSurface::OSVideoSurface(CScreenManager *screenManager, const CResourceKey &key, bool pendingLoad) :
 		CVideoSurface(screenManager) {
 	_ddSurface = nullptr;
-	_field38 = flag;
+	_pendingLoad = pendingLoad;
 	
-	if (_field38) {
+	if (_pendingLoad) {
 		loadResource(key);
 	} else {
 		_resourceKey = key;
@@ -61,7 +61,7 @@ OSVideoSurface::OSVideoSurface(CScreenManager *screenManager, const CResourceKey
 
 void OSVideoSurface::loadResource(const CResourceKey &key) {
 	_resourceKey = key;
-	_field38 = 1;
+	_pendingLoad = true;
 
 	if (hasSurface())
 		load();
@@ -80,7 +80,7 @@ void OSVideoSurface::loadMovie() {
 }
 
 bool OSVideoSurface::lock() {
-	if (!proc42())
+	if (!loadIfReady())
 		return false;
 
 	++_lockCount;
@@ -141,12 +141,12 @@ bool OSVideoSurface::load() {
 	}
 }
 
-bool OSVideoSurface::proc42() {
+bool OSVideoSurface::loadIfReady() {
 	_videoSurfaceNum = _videoSurfaceCounter;
 
 	if (hasSurface()) {
 		return true;
-	} else if (_field38) {
+	} else if (_pendingLoad) {
 		_field50 = 1;
 		load();
 		return true;
