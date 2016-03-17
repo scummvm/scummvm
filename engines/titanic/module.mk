@@ -10,6 +10,7 @@ MODULE_OBJS := \
 	game_state.o \
 	game_view.o \
 	image.o \
+	image_decoders.o \
 	input_handler.o \
 	input_translator.o \
 	main_game_window.o \

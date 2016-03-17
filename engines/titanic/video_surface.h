@@ -42,7 +42,7 @@ protected:
 	CResourceKey _resourceKey;
 	DirectDrawSurface *_ddSurface;
 	uint16 *_pixels;
-	int _field34;
+	void *_field34;
 	bool _pendingLoad;
 	int _field3C;
 	int _field40;
@@ -53,6 +53,7 @@ protected:
 	int _lockCount;
 public:
 	CVideoSurface(CScreenManager *screenManager);
+	virtual ~CVideoSurface();
 
 	/**
 	 * Set the underlying surface for this video surface
@@ -110,6 +111,11 @@ public:
 	virtual int getPitch() const = 0;
 	
 	/**
+	 * Reiszes the surface
+	 */
+	virtual void resize(int width, int height) = 0;
+
+	/**
 	 * Loads the surface data based on the currently set resource key
 	 */
 	virtual bool load() = 0;
@@ -118,6 +124,11 @@ public:
 	 * Loads the surface's resource if there's one pending
 	 */
 	virtual bool loadIfReady() = 0;
+
+	/**
+	 * Frees the underlying surface
+	 */
+	virtual int freeSurface() { return 0; }
 };
 
 class OSVideoSurface : public CVideoSurface {
@@ -176,6 +187,11 @@ public:
 	virtual int getPitch() const;
 
 	/**
+	 * Reiszes the surface
+	 */
+	virtual void resize(int width, int height);
+
+	/**
 	 * Loads the surface data based on the currently set resource key
 	 */
 	virtual bool load();
@@ -184,6 +200,11 @@ public:
 	 * Loads the surface's resource if there's one pending
 	 */
 	virtual bool loadIfReady();
+
+	/**
+	 * Frees the underlying surface
+	 */
+	virtual int freeSurface();
 };
 
 } // End of namespace Titanic

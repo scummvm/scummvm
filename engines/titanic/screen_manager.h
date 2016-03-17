@@ -105,7 +105,10 @@ public:
 	 */
 	virtual void clearSurface(int surfaceNum, Common::Rect *_bounds) = 0;
 
-	virtual void proc21() = 0;
+	/**
+	 * Resize the passed surface
+	 */
+	virtual void resizeSurface(CVideoSurface *surface, int width, int height) = 0;
 
 	/**
 	 * Creates a surface of a given size
@@ -167,8 +170,11 @@ public:
 	 * Clear a portion of the screen surface
 	 */
 	virtual void clearSurface(int surfaceNum, Common::Rect *bounds);
-	
-	virtual void proc21();
+
+	/**
+	 * Resize the passed surface
+	 */
+	virtual void resizeSurface(CVideoSurface *surface, int width, int height);
 
 	/**
 	 * Creates a surface of a given size

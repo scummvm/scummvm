@@ -43,6 +43,11 @@ struct DDSurfaceDesc {
 class DirectDrawSurface : public Graphics::Surface {
 public:
 	/**
+	 * Return the size of the surface in ytes
+	 */
+	int getSize() const { return pitch * h; }
+
+	/**
 	 * Lock the surface for access
 	 */
 	void *lock(const Common::Rect *bounds, int flags);

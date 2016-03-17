@@ -21,6 +21,7 @@
  */
 
 #include "titanic/video_surface.h"
+#include "titanic/image_decoders.h"
 #include "titanic/screen_manager.h"
 
 namespace Titanic {
@@ -29,10 +30,18 @@ int CVideoSurface::_videoSurfaceCounter = 0;
 
 CVideoSurface::CVideoSurface(CScreenManager *screenManager) :
 		_screenManager(screenManager), _pixels(nullptr),
-		_field34(0), _pendingLoad(false), _field3C(0), _field40(0),
+		_field34(nullptr), _pendingLoad(false), _field3C(0), _field40(0),
 		_field44(4), _field48(0), _field50(1) {
 	_videoSurfaceNum = _videoSurfaceCounter++;
 }
+
+
+CVideoSurface::~CVideoSurface() {
+	if (_ddSurface)
+		_videoSurfaceCounter -= freeSurface();
+	--_videoSurfaceCounter;
+}
+
 
 void CVideoSurface::setSurface(CScreenManager *screenManager, DirectDrawSurface *surface) {
 	_screenManager = screenManager;
@@ -72,6 +81,10 @@ void OSVideoSurface::loadTarga() {
 }
 
 void OSVideoSurface::loadJPEG() {
+	CString filename = _resourceKey.exists();
+	CJPEGDecode decoder(filename);
+
+
 	warning("TODO");
 }
 
@@ -114,6 +127,14 @@ int OSVideoSurface::getPitch() const {
 	return _ddSurface->pitch;
 }
 
+void OSVideoSurface::resize(int width, int height) {
+	freeSurface();
+
+	_screenManager->resizeSurface(this, width, height);
+	if (_ddSurface)
+		_videoSurfaceCounter += _ddSurface->getSize();
+}
+
 bool OSVideoSurface::load() {
 	if (!_resourceKey.scanForFile())
 		return false;
@@ -153,6 +174,19 @@ bool OSVideoSurface::loadIfReady() {
 	} else {
 		return false;
 	}
+}
+
+int OSVideoSurface::freeSurface() {
+	if (!_ddSurface)
+		return 0;
+	int surfaceSize = _ddSurface->getSize();
+
+	delete _field34;
+	_field34 = nullptr;
+	delete _ddSurface;
+	_ddSurface = nullptr;
+
+	return surfaceSize;
 }
 
 } // End of namespace Titanic
