@@ -90,9 +90,19 @@ typedef Common::Functor1<ScriptEnv &, bool> Opcode;
 
 #define IDI_WORD_SIZE 8
 
+enum Direction {
+	IDI_DIR_NORTH,
+	IDI_DIR_SOUTH,
+	IDI_DIR_EAST,
+	IDI_DIR_WEST,
+	IDI_DIR_UP,
+	IDI_DIR_DOWN,
+	IDI_DIR_TOTAL
+};
+
 struct Room {
 	byte description;
-	byte connections[6];
+	byte connections[IDI_DIR_TOTAL];
 	byte track;
 	byte sector;
 	byte offset;
@@ -207,6 +217,7 @@ protected:
 	bool o1_placeItem(ScriptEnv &env);
 	bool o1_setItemPic(ScriptEnv &env);
 	bool o1_resetPic(ScriptEnv &env);
+	template <Direction D>
 	bool o1_goDirection(ScriptEnv &env);
 	bool o1_takeItem(ScriptEnv &env);
 	bool o1_dropItem(ScriptEnv &env);

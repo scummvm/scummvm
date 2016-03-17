@@ -330,13 +330,13 @@ void AdlEngine::setupOpcodeTables() {
 	Opcode(o1_setItemPic);
 	// 0x14
 	Opcode(o1_resetPic);
-	Opcode(o1_goDirection);
-	Opcode(o1_goDirection);
-	Opcode(o1_goDirection);
+	Opcode(o1_goDirection<IDI_DIR_NORTH>);
+	Opcode(o1_goDirection<IDI_DIR_SOUTH>);
+	Opcode(o1_goDirection<IDI_DIR_EAST>);
 	// 0x18
-	Opcode(o1_goDirection);
-	Opcode(o1_goDirection);
-	Opcode(o1_goDirection);
+	Opcode(o1_goDirection<IDI_DIR_WEST>);
+	Opcode(o1_goDirection<IDI_DIR_UP>);
+	Opcode(o1_goDirection<IDI_DIR_DOWN>);
 	Opcode(o1_takeItem);
 	// 0x1c
 	Opcode(o1_dropItem);
@@ -1017,8 +1017,9 @@ bool AdlEngine::o1_resetPic(ScriptEnv &env) {
 	return true;
 }
 
+template <Direction D>
 bool AdlEngine::o1_goDirection(ScriptEnv &env) {
-	byte room = getCurRoom().connections[ARG(0) - IDO_ACT_GO_NORTH];
+	byte room = getCurRoom().connections[D];
 
 	if (room == 0) {
 		printMessage(_messageIds.cantGoThere);
