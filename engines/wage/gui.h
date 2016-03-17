@@ -84,6 +84,13 @@ enum {
 	kPatternCheckers2 = 4
 };
 
+enum {
+	kBorderNone = 0,
+	kBorderScrollUp,
+	kBorderScrollDown,
+	kBorderCloseButton
+};
+
 class Gui {
 public:
 	Gui(WageEngine *engine);
@@ -116,10 +123,10 @@ public:
 private:
 	void undrawCursor();
 	void drawDesktop();
-	void paintBorder(Graphics::Surface *g, Common::Rect &r, WindowType windowType);
+	void paintBorder(Graphics::Surface *g, Common::Rect &r, WindowType windowType, int highlightedPart = kBorderNone);
 	void renderConsole(Graphics::Surface *g, Common::Rect &r);
 	void drawBox(Graphics::Surface *g, int x, int y, int w, int h);
-	void fillRect(Graphics::Surface *g, int x, int y, int w, int h);
+	void fillRect(Graphics::Surface *g, int x, int y, int w, int h, int color = kColorBlack);
 	void loadFonts();
 	void flowText(Common::String &str);
 	const Graphics::Font *getConsoleFont();
