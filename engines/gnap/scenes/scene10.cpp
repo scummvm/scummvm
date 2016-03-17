@@ -328,10 +328,10 @@ void GnapEngine::scene10_run() {
 				playSound(0x12B, 0);
 			}
 			if (!_timers[5]) {
-				int sequenceId;
 				_timers[5] = getRandom(100) + 100;
 				_gnapRandomValue = getRandom(4);
 				if (_gnapRandomValue) {
+					int sequenceId;
 					if (_gnapRandomValue == 1) {
 						sequenceId = 0x8A5;
 					} else if (_gnapRandomValue == 2) {

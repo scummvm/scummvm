@@ -134,7 +134,7 @@ void GnapEngine::scene18_gnapCarryGarbageCanTo(int x, int y, int animationIndex,
 	};
 	
 	int gnapSeqId, gnapId, gnapDatNum, gnapGridX;
-	int v13, v12, v5, v10, v11, v15, v16, a2;
+	int v13, v12, v5, v10, v11, direction;
 
 	if (x >= 0)
 		v13 = x;
@@ -161,9 +161,9 @@ void GnapEngine::scene18_gnapCarryGarbageCanTo(int x, int y, int animationIndex,
 		gnapDatNum = _gnapSequenceDatNum;
 		gnapGridX = _gnapX;
 		if (_gnapX <= v13)
-			v15 = 1;
+			direction = 1;
 		else
-			v15 = -1;
+			direction = -1;
 	} else {
 		if (_gnapY == _platY) {
 			if (v12 >= _gnapX) {
@@ -177,23 +177,24 @@ void GnapEngine::scene18_gnapCarryGarbageCanTo(int x, int y, int animationIndex,
 		gnapId = _gnapId;
 		gnapDatNum = _gnapSequenceDatNum;
 		gnapGridX = _gnapX;
-		if (v12 < _gnapX)
-			v15 = -1;
-		else
-			v15 = 1;
-		v16 = v15 == -1;
-		a2 = 20 * _gnapY + 1;
+		int seqId = 0;
+		if (v12 < _gnapX) {
+			direction = -1;
+			seqId = 1;
+		} else
+			direction = 1;
+		int a2 = 20 * _gnapY + 1;
 		do {
-			if (isPointBlocked(gnapGridX + v15, _gnapY))
+			if (isPointBlocked(gnapGridX + direction, _gnapY))
 				break;
-			a2 += v15;
-			_gameSys->insertSequence(kSequenceIds[v16], a2,
+			a2 += direction;
+			_gameSys->insertSequence(kSequenceIds[seqId], a2,
 				gnapSeqId | (gnapDatNum << 16), gnapId,
 				kSeqSyncWait, 0, 75 * gnapGridX - _gnapGridX, 48 * _gnapY - _gnapGridY);
-			gnapSeqId = kSequenceIds[v16];
+			gnapSeqId = kSequenceIds[seqId];
 			gnapId = a2;
 			gnapDatNum = 0;
-			gnapGridX += v15;
+			gnapGridX += direction;
 		} while (v12 != gnapGridX);
 	}
 	
@@ -201,14 +202,14 @@ void GnapEngine::scene18_gnapCarryGarbageCanTo(int x, int y, int animationIndex,
 		_gnapSequenceId = ridToEntryIndex(argC);
 		_gnapSequenceDatNum = ridToDatIndex(argC);
 	} else {
-		if (v15 == 1)
+		if (direction == 1)
 			_gnapSequenceId = 0x20A;
 		else
 			_gnapSequenceId = 0x209;
 		_gnapSequenceDatNum = 0;
 	}
 	
-	if (v15 == 1)
+	if (direction == 1)
 		_gnapIdleFacing = 1;
 	else
 		_gnapIdleFacing = 3;
