@@ -130,64 +130,6 @@ struct ShowStyleEntry {
 	bool processed;
 
 	//
-	// Engine-specific properties for SCI2 through 2.1early
-	//
-
-	// TODO: Could union this stuff to save literally
-	// several bytes of memory.
-
-	/**
-	 * The width of the plane. Used to determine the correct
-	 * size of screen items for wipes.
-	 */
-	int width;
-
-	/**
-	 * The height of the plane. Used to determine the correct
-	 * size of screen items for wipes.
-	 */
-	int height;
-
-	/**
-	 * The number of edges that a transition operates on.
-	 * Slide wipe: 1 edge
-	 * Reveal wipe: 2 edges
-	 * Iris wipe: 4 edges
-	 */
-	// TODO: I have no idea why SCI engine stores this instead
-	// of a screenItems count
-	int edgeCount;
-
-	/**
-	 * Used by transition types 1 through 10.
-	 * One screen item per division per edge.
-	 */
-	ScreenItemList screenItems;
-
-	/**
-	 * Used by transition types 11 and 12. A copy of the
-	 * visible frame buffer.
-	 */
-	// TODO: This is a reg_t in SCI engine; not sure if
-	// we can avoid allocation through SegMan or not.
-	reg_t bitmapMemId;
-
-	/**
-	 * Used by transition types 11 and 12. A screen item
-	 * used to display the associated bitmap data.
-	 */
-	ScreenItem *bitmapScreenItem;
-
-	/**
-	 * A number used to pick pixels to dissolve by types
-	 * 11 and 12.
-	 */
-	int dissolveSeed;
-	int unknown3A;
-	// max?
-	int dissolveInitial;
-
-	//
 	// Engine specific properties for SCI2.1mid through SCI3
 	//
 
@@ -326,9 +268,6 @@ private:
 	bool processShowStyleNone(ShowStyleEntry *showStyle);
 	bool processShowStyleMorph(ShowStyleEntry *showStyle);
 	bool processShowStyleFade(const int direction, ShowStyleEntry *showStyle);
-#if 0
-	bool processShowStyleWipe(const int direction, ShowStyleEntry *const showStyle);
-#endif
 
 public:
 	// NOTE: This signature is taken from SCI3 Phantasmagoria 2
