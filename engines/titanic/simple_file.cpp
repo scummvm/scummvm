@@ -331,4 +331,13 @@ void SimpleFile::writeClassEnd(int indent) {
 	write("}\n", 2);
 }
 
+/*------------------------------------------------------------------------*/
+
+StdCWadFile::StdCWadFile(const CString &name): SimpleFile() {
+	if (!_file.open(name))
+		error("Could not open file - %s", name.c_str());
+
+	open(&_file);
+}
+
 } // End of namespace Titanic

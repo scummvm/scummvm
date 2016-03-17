@@ -28,7 +28,7 @@ namespace Titanic {
 int CVideoSurface::_videoSurfaceCounter = 0;
 
 CVideoSurface::CVideoSurface(CScreenManager *screenManager) :
-		_screenManager(screenManager), _field2C(0),
+		_screenManager(screenManager), _pixels(nullptr),
 		_field34(0), _field38(0), _field3C(0), _field40(0),
 		_field44(4), _field48(0), _field50(1) {
 	_videoSurfaceNum = _videoSurfaceCounter++;
@@ -79,6 +79,22 @@ void OSVideoSurface::loadMovie() {
 	warning("TODO");
 }
 
+bool OSVideoSurface::lock() {
+	if (!proc42())
+		return false;
+
+	++_lockCount;
+	_pixels = (uint16 *)_ddSurface->lock(nullptr, 0);
+	return true;
+}
+
+void OSVideoSurface::unlock() {
+	if (_pixels)
+		_ddSurface->unlock();
+	_pixels = nullptr;
+	--_lockCount;
+}
+
 bool OSVideoSurface::hasSurface() {
 	return _ddSurface != nullptr;
 }
@@ -98,11 +114,10 @@ int OSVideoSurface::getPitch() const {
 	return _ddSurface->pitch;
 }
 
-void OSVideoSurface::load() {
+bool OSVideoSurface::load() {
 	if (!_resourceKey.scanForFile())
-		return;
+		return false;
 
-	bool result = true;
 	switch (_resourceKey.fileTypeSuffix()) {
 	case FILETYPE_IMAGE:
 		switch (_resourceKey.imageTypeSuffix()) {
@@ -122,6 +137,20 @@ void OSVideoSurface::load() {
 		return true;
 
 	default:
+		return false;
+	}
+}
+
+bool OSVideoSurface::proc42() {
+	_videoSurfaceNum = _videoSurfaceCounter;
+
+	if (hasSurface()) {
+		return true;
+	} else if (_field38) {
+		_field50 = 1;
+		load();
+		return true;
+	} else {
 		return false;
 	}
 }

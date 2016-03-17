@@ -110,6 +110,15 @@ DirectDrawSurface *DirectDrawManager::createSurface(int w, int h, int surfaceNum
 
 /*------------------------------------------------------------------------*/
 
+void *DirectDrawSurface::lock(const Common::Rect *bounds, int flags) {
+	assert(w != 0 && h != 0);
+	return getPixels();
+}
+
+void DirectDrawSurface::unlock() {
+	assert(w != 0 && h != 0);
+}
+
 void DirectDrawSurface::fill(const Common::Rect *bounds, uint32 color) {
 	Common::Rect tempBounds;
 

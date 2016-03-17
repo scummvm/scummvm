@@ -23,6 +23,7 @@
 #ifndef TITANIC_SIMPLE_FILE_H
 #define TITANIC_SIMPLE_FILE_H
 
+#include "common/file.h"
 #include "common/rect.h"
 #include "common/savefile.h"
 #include "common/stream.h"
@@ -200,6 +201,13 @@ public:
 	virtual void open(Common::OutSaveFile *stream) {
 		SimpleFile::open(Common::wrapCompressedWriteStream(stream));
 	}
+};
+
+class StdCWadFile : public SimpleFile {
+private:
+	Common::File _file;
+public:
+	StdCWadFile(const CString &name);
 };
 
 } // End of namespace Titanic

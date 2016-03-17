@@ -35,13 +35,13 @@ namespace Titanic {
 class CScreenManager;
 
 class CVideoSurface : public ListItem {
-private:
+protected:
 	static int _videoSurfaceCounter;
 protected:
 	CScreenManager *_screenManager;
 	CResourceKey _resourceKey;
 	DirectDrawSurface *_ddSurface;
-	int _field2C;
+	uint16 *_pixels;
 	int _field34;
 	bool _field38;
 	int _field3C;
@@ -50,7 +50,7 @@ protected:
 	int _field48;
 	int _videoSurfaceNum;
 	int _field50;
-	int _accessCtr;
+	int _lockCount;
 public:
 	CVideoSurface(CScreenManager *screenManager);
 
@@ -82,7 +82,7 @@ public:
 	/**
 	 * Lock the surface for direct access to the pixels
 	 */
-	virtual void lock() = 0;
+	virtual bool lock() = 0;
 
 	/**
 	 * Unlocks the surface after prior calls to lock()
@@ -97,7 +97,7 @@ public:
 	/**
 	 * Returns the width of the surface
 	 */
-	virtual int getWidth() = 0;
+	virtual int getWidth() const = 0;
 
 	/**
 	 * Returns the height of the surface
@@ -108,10 +108,13 @@ public:
 	 * Returns the pitch of the surface in bytes
 	 */
 	virtual int getPitch() const = 0;
+	
 	/**
 	 * Loads the surface data based on the currently set resource key
 	 */
-	virtual void load() const = 0;
+	virtual bool load() = 0;
+
+	virtual bool proc42() = 0;
 };
 
 class OSVideoSurface : public CVideoSurface {
@@ -142,7 +145,7 @@ public:
 	/**
 	 * Lock the surface for direct access to the pixels
 	 */
-	virtual void lock();
+	virtual bool lock();
 
 	/**
 	 * Unlocks the surface after prior calls to lock()
@@ -172,7 +175,9 @@ public:
 	/**
 	 * Loads the surface data based on the currently set resource key
 	 */
-	virtual void load();
+	virtual bool load();
+
+	virtual bool proc42();
 };
 
 } // End of namespace Titanic
