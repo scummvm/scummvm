@@ -24,10 +24,11 @@
 #define TITANIC_BARBOT_H
 
 #include "titanic/npcs/true_talk_npc.h"
+#include "titanic/messages/messages.h"
 
 namespace Titanic {
 
-class CBarbot : public CTrueTalkNPC {
+class CBarbot : public CTrueTalkNPC, CEnterRoomMsgTarget {
 private:
 	static int _v0;
 private:
@@ -172,6 +173,8 @@ private:
 	int _field338;
 	int _field33C;
 	int _field340;
+protected:
+	virtual bool handleEvent(const CEnterRoomMsg &msg);
 public:
 	CLASSDEF
 	CBarbot();

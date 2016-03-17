@@ -24,11 +24,12 @@
 #define TITANIC_BOMB_H
 
 #include "titanic/core/background.h"
+#include "titanic/messages/messages.h"
 
 namespace Titanic {
 
-class CBomb : public CBackground {
-public:
+class CBomb : public CBackground, CEnterRoomMsgTarget {
+private:
 	int _fieldE0;
 	int _fieldE4;
 	int _fieldE8;
@@ -37,8 +38,10 @@ public:
 	int _fieldF4;
 	int _fieldF8;
 	int _fieldFC;
-	int _field100;
+	int _startingTicks;
 	int _field104;
+protected:
+	virtual bool handleEvent(const CEnterRoomMsg &msg);
 public:
 	CLASSDEF
 	CBomb();

@@ -50,4 +50,9 @@ void CBarBell::load(SimpleFile *file) {
 	CGameObject::load(file);
 }
 
+bool CBarBell::handleEvent(const CEnterRoomMsg &msg) {
+	_fieldBC = 0;
+	return true;
+}
+
 } // End of namespace Titanic

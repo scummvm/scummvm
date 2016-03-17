@@ -24,11 +24,12 @@
 #define TITANIC_FAN_NOISES_H
 
 #include "titanic/core/game_object.h"
+#include "titanic/messages/messages.h"
 
 namespace Titanic {
 
-class CFanNoises : public CGameObject {
-public:
+class CFanNoises : public CGameObject, CEnterRoomMsgTarget {
+private:
 	int _fieldBC;
 	int _fieldC0;
 	int _fieldC4;
@@ -36,6 +37,8 @@ public:
 	int _fieldCC;
 	int _fieldD0;
 	int _fieldD4;
+protected:
+	virtual bool handleEvent(const CEnterRoomMsg &msg);
 public:
 	CLASSDEF
 	CFanNoises();

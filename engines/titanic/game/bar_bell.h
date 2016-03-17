@@ -24,16 +24,19 @@
 #define TITANIC_BAR_BELL_H
 
 #include "titanic/core/game_object.h"
+#include "titanic/messages/messages.h"
 
 namespace Titanic {
 
-class CBarBell : public CGameObject {
+class CBarBell : public CGameObject, CEnterRoomMsgTarget {
 public:
 	int _fieldBC;
 	int _fieldC0;
 	int _fieldC4;
 	int _fieldC8;
 	int _fieldCC;
+protected:
+	virtual bool handleEvent(const CEnterRoomMsg &msg);
 public:
 	CLASSDEF
 	CBarBell();

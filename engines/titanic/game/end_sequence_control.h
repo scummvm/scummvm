@@ -24,10 +24,13 @@
 #define TITANIC_END_SEQUENCE_CONTROL_H
 
 #include "titanic/core/game_object.h"
+#include "titanic/messages/messages.h"
 
 namespace Titanic {
 
-class CEndSequenceControl : public CGameObject {
+class CEndSequenceControl : public CGameObject, CEnterRoomMsgTarget {
+protected:
+	virtual bool handleEvent(const CEnterRoomMsg &msg);
 public:
 	CLASSDEF
 

@@ -24,13 +24,16 @@
 #define TITANIC_CHICKEN_COOLER_H
 
 #include "titanic/core/game_object.h"
+#include "titanic/messages/messages.h"
 
 namespace Titanic {
 
-class CChickenCooler : public CGameObject {
-public:
+class CChickenCooler : public CGameObject, CEnterRoomMsgTarget {
+private:
 	int _fieldBC;
 	int _fieldC0;
+protected:
+	virtual bool handleEvent(const CEnterRoomMsg &msg);
 public:
 	CLASSDEF
 	CChickenCooler() : CGameObject(), _fieldBC(0), _fieldC0(0) {}

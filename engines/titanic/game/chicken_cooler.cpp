@@ -40,4 +40,9 @@ void CChickenCooler::load(SimpleFile *file) {
 	CGameObject::load(file);
 }
 
+bool CChickenCooler::handleEvent(const CEnterRoomMsg &msg) {
+	warning("CChickenCoolor::handlEvent");
+	return true;
+}
+
 } // End of namespace Titanic

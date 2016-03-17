@@ -46,4 +46,9 @@ void CGetLiftEye2::load(SimpleFile *file) {
 	CGameObject::load(file);
 }
 
+bool CGetLiftEye2::handleEvent(const CEnterRoomMsg &msg) {
+	warning("CGetLiftEye2::handleEvent");
+	return true;
+}
+
 } // End of namespace Titanic

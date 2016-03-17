@@ -38,7 +38,7 @@ void CMessage::load(SimpleFile *file) {
 	CSaveableObject::load(file);
 }
 
-bool CMessage::execute(CTreeItem *target, const ClassDef *classDef, int flags) {
+bool CMessage::execute(CTreeItem *target, const ClassDef *classDef, int flags) const {
 	// If no target was specified, then there's nothing to do
 	if (!target)
 		return false;

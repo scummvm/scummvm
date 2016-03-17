@@ -24,12 +24,15 @@
 #define TITANIC_ENTER_BRIDGE_H
 
 #include "titanic/core/game_object.h"
+#include "titanic/messages/messages.h"
 
 namespace Titanic {
 
-class CEnterBridge : public CGameObject {
-public:
+class CEnterBridge : public CGameObject, CEnterRoomMsgTarget {
+private:
 	int _value;
+protected:
+	virtual bool handleEvent(const CEnterRoomMsg &msg);
 public:
 	CLASSDEF
 	CEnterBridge() : CGameObject(), _value(1) {}

@@ -34,4 +34,9 @@ void CBilgeDispensorEvent::load(SimpleFile *file) {
 	CAutoSoundEvent::load(file);
 }
 
+bool CBilgeDispensorEvent::handleEvent(const CEnterRoomMsg &msg) {
+	_value1 = 0;
+	return true;
+}
+
 } // End of namespace Titanic

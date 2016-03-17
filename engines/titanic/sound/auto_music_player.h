@@ -24,12 +24,15 @@
 #define TITANIC_AUTO_MUSIC_PLAYER_H
 
 #include "titanic/sound/auto_music_player_base.h"
+#include "titanic/messages/messages.h"
 
 namespace Titanic {
 
-class CAutoMusicPlayer : public CAutoMusicPlayerBase {
+class CAutoMusicPlayer : public CAutoMusicPlayerBase, CEnterRoomMsgTarget {
 private:
 	CString _string2;
+protected:
+	virtual bool handleEvent(const CEnterRoomMsg &msg);
 public:
 	CLASSDEF
 	CAutoMusicPlayer();

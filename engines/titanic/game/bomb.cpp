@@ -21,6 +21,7 @@
  */
 
 #include "titanic/game/bomb.h"
+#include "titanic/titanic.h"
 
 namespace Titanic {
 
@@ -33,7 +34,7 @@ CBomb::CBomb() : CBackground() {
 	_fieldF4 = 999;
 	_fieldF8 = 0;
 	_fieldFC = 0;
-	_field100 = 0;
+	_startingTicks = 0;
 	_field104 = 60;
 }
 
@@ -47,7 +48,7 @@ void CBomb::save(SimpleFile *file, int indent) const {
 	file->writeNumberLine(_fieldF4, indent);
 	file->writeNumberLine(_fieldF8, indent);
 	file->writeNumberLine(_fieldFC, indent);
-	file->writeNumberLine(_field100, indent);
+	file->writeNumberLine(_startingTicks, indent);
 	file->writeNumberLine(_field104, indent);
 
 	CBackground::save(file, indent);
@@ -63,10 +64,18 @@ void CBomb::load(SimpleFile *file) {
 	_fieldF4 = file->readNumber();
 	_fieldF8 = file->readNumber();
 	_fieldFC = file->readNumber();
-	_field100 = file->readNumber();
+	_startingTicks = file->readNumber();
 	_field104 = file->readNumber();
 
 	CBackground::load(file);
+}
+
+bool CBomb::handleEvent(const CEnterRoomMsg &msg) {
+	_fieldE8 = 12;
+	_fieldEC = 9;
+	_fieldF0 = 0;
+	_startingTicks = g_vm->_ticksCount;
+	return true;
 }
 
 } // End of namespace Titanic

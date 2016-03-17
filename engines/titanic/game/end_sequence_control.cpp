@@ -34,4 +34,9 @@ void CEndSequenceControl::load(SimpleFile *file) {
 	CGameObject::load(file);
 }
 
+bool CEndSequenceControl::handleEvent(const CEnterRoomMsg &msg) {
+	warning("TODO: CEndSequenceControl::handleEvent");
+	return true;
+}
+
 } // End of namespace Titanic

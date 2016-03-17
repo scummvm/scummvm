@@ -46,9 +46,9 @@ public:
 	CMessage();
 
 	bool execute(CTreeItem *target, const ClassDef *classDef = nullptr,
-		int flags = MSGFLAG_SCAN | MSGFLAG_BREAK_IF_HANDLED);
+		int flags = MSGFLAG_SCAN | MSGFLAG_BREAK_IF_HANDLED) const;
 
-	virtual bool perform(CTreeItem *treeItem) { return false; }
+	virtual bool perform(CTreeItem *treeItem) const { return false; }
 
 	/**
 	 * Save the data for the class to file
@@ -64,7 +64,7 @@ public:
 MSGTARGET(CEditControlMsg);
 class CEditControlMsg : public CMessage {
 protected:
-	virtual bool handleMessage(CEditControlMsg &msg) { return false; }
+	virtual bool handleMessage(const CEditControlMsg &msg) { return false; }
 public:
 	int _field4;
 	int _field8;
@@ -77,7 +77,7 @@ public:
 	CEditControlMsg() : _field4(0), _field8(0), _field18(0),
 		_field1C(0), _field20(0) {}
 
-	virtual bool perform(CTreeItem *treeItem) { 
+	virtual bool perform(CTreeItem *treeItem) const { 
 		CEditControlMsg *dest = dynamic_cast<CEditControlMsg *>(treeItem);
 		return dest != nullptr && dest->handleMessage(*this);
 	}
@@ -86,7 +86,7 @@ public:
 MSGTARGET(CLightsMsg);
 class CLightsMsg : public CMessage {
 protected:
-	virtual bool handleMessage(CLightsMsg &msg) { return false; }
+	virtual bool handleMessage(const CLightsMsg &msg) { return false; }
 public:
 	int _field4;
 	int _field8;
@@ -97,7 +97,7 @@ public:
 	CLightsMsg() : CMessage(), _field4(0), _field8(0),
 		_fieldC(0), _field10(0) {}
 
-	virtual bool perform(CTreeItem *treeItem) {
+	virtual bool perform(CTreeItem *treeItem) const {
 		CLightsMsg *dest = dynamic_cast<CLightsMsg *>(treeItem);
 		return dest != nullptr && dest->handleMessage(*this);
 	}
@@ -106,7 +106,7 @@ public:
 MSGTARGET(CIsHookedOnMsg);
 class CIsHookedOnMsg : public CMessage {
 protected:
-	virtual bool handleMessage(CIsHookedOnMsg &msg) { return false; }
+	virtual bool handleMessage(const CIsHookedOnMsg &msg) { return false; }
 public:
 	int _field4;
 	int _field8;
@@ -119,7 +119,7 @@ public:
 	CIsHookedOnMsg() : CMessage(), _field4(0), _field8(0),
 		_field18(0), _field1C(0), _field20(0) {}
 
-	virtual bool perform(CTreeItem *treeItem) {
+	virtual bool perform(CTreeItem *treeItem) const {
 		CIsHookedOnMsg *dest = dynamic_cast<CIsHookedOnMsg *>(treeItem);
 		return dest != nullptr && dest->handleMessage(*this);
 	}
@@ -128,7 +128,7 @@ public:
 MSGTARGET(CSubAcceptCCarryMsg);
 class CSubAcceptCCarryMsg : public CMessage {
 protected:
-	virtual bool handleMessage(CSubAcceptCCarryMsg &msg) { return false; }
+	virtual bool handleMessage(const CSubAcceptCCarryMsg &msg) { return false; }
 public:
 	CString _string1;
 	int _value1, _value2, _value3;
@@ -136,7 +136,7 @@ public:
 	CLASSDEF
 	CSubAcceptCCarryMsg() : _value1(0), _value2(0), _value3(0) {}
 
-	virtual bool perform(CTreeItem *treeItem) {
+	virtual bool perform(CTreeItem *treeItem) const {
 		CSubAcceptCCarryMsg *dest = dynamic_cast<CSubAcceptCCarryMsg *>(treeItem);
 		return dest != nullptr && dest->handleMessage(*this);
 	}
@@ -145,7 +145,7 @@ public:
 MSGTARGET(CTransportMsg);
 class CTransportMsg : public CMessage {
 protected:
-	virtual bool handleMessage(CTransportMsg &msg) { return false; }
+	virtual bool handleMessage(const CTransportMsg &msg) { return false; }
 public:
 	CString _string;
 	int _value1, _value2;
@@ -153,7 +153,7 @@ public:
 	CLASSDEF
 	CTransportMsg() : _value1(0), _value2(0) {}
 
-	virtual bool perform(CTreeItem *treeItem) {
+	virtual bool perform(CTreeItem *treeItem) const {
 		CTransportMsg *dest = dynamic_cast<CTransportMsg *>(treeItem);
 		return dest != nullptr && dest->handleMessage(*this);
 	}
@@ -163,18 +163,18 @@ public:
 	class NAME: public CMessage { \
 	public: NAME() : CMessage() {} \
 	CLASSDEF \
-	virtual bool handleMessage(NAME &msg) { return false; } \
-	virtual bool perform(CTreeItem *treeItem) { \
+	virtual bool handleMessage(const NAME &msg) { return false; } \
+	virtual bool perform(CTreeItem *treeItem) const { \
 		NAME *dest = dynamic_cast<NAME *>(treeItem); \
 		return dest != nullptr && dest->handleMessage(*this); \
 	} }
 #define MESSAGE1(NAME, F1, N1, V1) MSGTARGET(NAME); \
 	class NAME: public CMessage { \
-	public: F1 _N1; \
-	NAME() : CMessage(), _N1(V1) {} \
-	NAME(F1 N1) : CMessage(), _N1(N1) {} \
+	public: F1 _##N1; \
+	NAME() : CMessage(), _##N1(V1) {} \
+	NAME(F1 N1) : CMessage(), _##N1(N1) {} \
 	CLASSDEF \
-	virtual bool handleMessage(NAME &msg) { return false; } \
+	virtual bool handleMessage(const NAME &msg) { return false; } \
 	virtual bool perform(CTreeItem *treeItem) { \
 		NAME *dest = dynamic_cast<NAME *>(treeItem); \
 		return dest != nullptr && dest->handleMessage(*this); \
@@ -185,7 +185,7 @@ public:
 	NAME() : CMessage(), _N1(V1), _N2(V2) {} \
 	NAME(F1 N1, F2 N2) : CMessage(), _N1(N1), _N2(N2) {} \
 	CLASSDEF \
-	virtual bool handleMessage(NAME &msg) { return false; } \
+	virtual bool handleMessage(const NAME &msg) { return false; } \
 	virtual bool perform(CTreeItem *treeItem) { \
 		NAME *dest = dynamic_cast<NAME *>(treeItem); \
 		return dest != nullptr && dest->handleMessage(*this); \
@@ -196,7 +196,7 @@ public:
 	NAME() : CMessage(), _N1(V1), _N2(V2), _N3(V3) {} \
 	NAME(F1 N1, F2 N2, F3 N3) : CMessage(), _N1(N1), _N2(N2), _N3(N3) {} \
 	CLASSDEF \
-	virtual bool handleMessage(NAME &msg) { return false; } \
+	virtual bool handleMessage(const NAME &msg) { return false; } \
 	virtual bool perform(CTreeItem *treeItem) { \
 		NAME *dest = dynamic_cast<NAME *>(treeItem); \
 		return dest != nullptr && dest->handleMessage(*this); \
@@ -207,7 +207,7 @@ public:
 	NAME() : CMessage(), _N1(V1), _N2(V2), _N3(V3), _N4(V4) {} \
 	NAME(F1 N1, F2 N2, F3 N3, F4 N4) : CMessage(), _N1(N1), _N2(N2), _N3(N3), _N4(N4) {} \
 	CLASSDEF \
-	virtual bool handleMessage(NAME &msg) { return false; } \
+	virtual bool handleMessage(const NAME &msg) { return false; } \
 	virtual bool perform(CTreeItem *treeItem) { \
 		NAME *dest = dynamic_cast<NAME *>(treeItem); \
 		return dest != nullptr && dest->handleMessage(*this); \

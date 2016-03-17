@@ -24,12 +24,14 @@
 #define TITANIC_GET_LIFT_EYE2_H
 
 #include "titanic/core/game_object.h"
-
+#include "titanic/messages/messages.h"
 namespace Titanic {
 
-class CGetLiftEye2 : public CGameObject {
+class CGetLiftEye2 : public CGameObject, CEnterRoomMsgTarget {
 private:
 	static CString *_v1;
+protected:
+	virtual bool handleEvent(const CEnterRoomMsg &msg);
 public:
 	CLASSDEF
 	static void init();

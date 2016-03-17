@@ -41,7 +41,7 @@ class CMouseMoveMsg : public CMouseMsg {
 public:
 	CLASSDEF
 
-	virtual bool handleMessage(CMouseMoveMsg &msg) { return false; }
+	virtual bool handleMessage(const CMouseMoveMsg &msg) { return false; }
 	virtual bool perform(CTreeItem *treeItem) { 
 		CMouseMoveMsg *dest = dynamic_cast<CMouseMoveMsg *>(treeItem);
 		return dest != nullptr && dest->handleMessage(*this);
@@ -61,7 +61,7 @@ class CMouseButtonDownMsg : public CMouseButtonMsg {
 public:
 	CLASSDEF
 
-	virtual bool handleMessage(CMouseButtonDownMsg &msg) { return false; }
+	virtual bool handleMessage(const CMouseButtonDownMsg &msg) { return false; }
 	virtual bool perform(CTreeItem *treeItem) {
 		CMouseButtonDownMsg *dest = dynamic_cast<CMouseButtonDownMsg *>(treeItem);
 		return dest != nullptr && dest->handleMessage(*this);
@@ -73,7 +73,7 @@ class CMouseButtonUpMsg : public CMouseButtonMsg {
 public:
 	CLASSDEF
 
-	virtual bool handleMessage(CMouseButtonUpMsg &msg) { return false; }
+	virtual bool handleMessage(const CMouseButtonUpMsg &msg) { return false; }
 	virtual bool perform(CTreeItem *treeItem) { 
 		CMouseButtonUpMsg *dest = dynamic_cast<CMouseButtonUpMsg *>(treeItem);
 		return dest != nullptr && dest->handleMessage(*this);
@@ -85,7 +85,7 @@ class CMouseButtonDoubleClickMsg : public CMouseButtonMsg {
 public:
 	CLASSDEF
 
-	virtual bool handleMessage(CMouseButtonDoubleClickMsg &msg) { return false; }
+	virtual bool handleMessage(const CMouseButtonDoubleClickMsg &msg) { return false; }
 	virtual bool perform(CTreeItem *treeItem) { 
 		CMouseButtonDoubleClickMsg *dest = dynamic_cast<CMouseButtonDoubleClickMsg *>(treeItem);
 		return dest != nullptr && dest->handleMessage(*this);
@@ -101,7 +101,7 @@ class CMouseDragMoveMsg : public CMouseDragMsg {
 public:
 	CLASSDEF
 
-	virtual bool handleMessage(CMouseDragMoveMsg &msg) { return false; }
+	virtual bool handleMessage(const CMouseDragMoveMsg &msg) { return false; }
 	virtual bool perform(CTreeItem *treeItem) { 
 		CMouseDragMoveMsg *dest = dynamic_cast<CMouseDragMoveMsg *>(treeItem);
 		return dest != nullptr && dest->handleMessage(*this);
@@ -117,7 +117,7 @@ public:
 	CLASSDEF
 	CMouseDragStartMsg() : CMouseDragMsg(), _field10(0), _field14(0) {}
 
-	virtual bool handleMessage(CMouseDragStartMsg &msg) { return false; }
+	virtual bool handleMessage(const CMouseDragStartMsg &msg) { return false; }
 	virtual bool perform(CTreeItem *treeItem) { 
 		CMouseDragStartMsg *dest = dynamic_cast<CMouseDragStartMsg *>(treeItem);
 		return dest != nullptr && dest->handleMessage(*this);
@@ -132,7 +132,7 @@ public:
 	CLASSDEF
 	CMouseDragEndMsg() : CMouseDragMsg(), _field10(0) {}
 
-	virtual bool handleMessage(CMouseDragEndMsg &msg) { return false; }
+	virtual bool handleMessage(const CMouseDragEndMsg &msg) { return false; }
 	virtual bool perform(CTreeItem *treeItem) {
 		CMouseDragEndMsg *dest = dynamic_cast<CMouseDragEndMsg *>(treeItem);
 		return dest != nullptr && dest->handleMessage(*this);

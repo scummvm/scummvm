@@ -55,4 +55,9 @@ void CFanNoises::load(SimpleFile *file) {
 	CGameObject::load(file);
 }
 
+bool CFanNoises::handleEvent(const CEnterRoomMsg &msg) {
+	warning("CFanNoises::handleEvent");
+	return true;
+}
+
 } // End of namespace Titanic

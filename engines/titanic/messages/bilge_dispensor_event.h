@@ -24,10 +24,13 @@
 #define TITANIC_BILGE_DISPENSOR_EVENT_H
 
 #include "titanic/messages/auto_sound_event.h"
+#include "titanic/messages/messages.h"
 
 namespace Titanic {
 
 class CBilgeDispensorEvent : public CAutoSoundEvent {
+protected:
+	virtual bool handleEvent(const CEnterRoomMsg &msg);
 public:
 	CLASSDEF
 

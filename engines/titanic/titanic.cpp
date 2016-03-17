@@ -44,7 +44,8 @@ namespace Titanic {
 TitanicEngine *g_vm;
 
 TitanicEngine::TitanicEngine(OSystem *syst, const TitanicGameDescription *gameDesc)
-		: _gameDescription(gameDesc), Engine(syst) {
+		: _gameDescription(gameDesc), Engine(syst), _randomSource("Titanic"),
+		_ticksCount(0), _frameCounter(0) {
 	g_vm = this;
 	_window = nullptr;
 	_screenManager = nullptr;

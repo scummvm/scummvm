@@ -24,10 +24,11 @@
 #define TITANIC_GONDOLIER_MIXER_H
 
 #include "titanic/game/gondolier/gondolier_base.h"
+#include "titanic/messages/messages.h"
 
 namespace Titanic {
 
-class CGondolierMixer : public CGondolierBase {
+class CGondolierMixer : public CGondolierBase, CEnterRoomMsgTarget {
 private:
 	int _fieldBC;
 	int _fieldC0;
@@ -36,6 +37,8 @@ private:
 	CString _string1;
 	CString _string2;
 	int _fieldE4;
+protected:
+	virtual bool handleEvent(const CEnterRoomMsg &msg);
 public:
 	CLASSDEF
 	CGondolierMixer();

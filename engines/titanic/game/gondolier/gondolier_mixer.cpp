@@ -56,4 +56,12 @@ void CGondolierMixer::load(SimpleFile *file) {
 	CGondolierBase::load(file);
 }
 
+bool CGondolierMixer::handleEvent(const CEnterRoomMsg &msg) {
+	CTreeItem *parent = getParent();
+	if (parent == msg._room)
+		msg.execute(parent);
+	
+	return true;
+}
+
 } // End of namespace Titanic

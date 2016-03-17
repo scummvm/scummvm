@@ -36,4 +36,9 @@ void CEnterBridge::load(SimpleFile *file) {
 	CGameObject::load(file);
 }
 
+bool CEnterBridge::handleEvent(const CEnterRoomMsg &msg) {
+	warning("CEnterBridge::handlEvent");
+	return true;
+}
+
 } // End of namespace Titanic

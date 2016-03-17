@@ -24,6 +24,7 @@
 #define TITANIC_TITANIC_H
 
 #include "common/scummsys.h"
+#include "common/random.h"
 #include "common/system.h"
 #include "common/serializer.h"
 #include "engines/advancedDetector.h"
@@ -98,6 +99,9 @@ public:
 	CFilesManager _filesManager;
 	OSScreenManager *_screenManager;
 	CMainGameWindow *_window;
+	Common::RandomSource _randomSource;
+	uint _frameCounter;
+	uint _ticksCount;
 public:
 	TitanicEngine(OSystem *syst, const TitanicGameDescription *gameDesc);
 	virtual ~TitanicEngine();

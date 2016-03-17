@@ -41,4 +41,12 @@ void CAutoMusicPlayer::load(SimpleFile *file) {
 	CAutoMusicPlayerBase::load(file);
 }
 
+bool CAutoMusicPlayer::handleEvent(const CEnterRoomMsg &msg) {
+	if (!_fieldCC) {
+		warning("TODO");
+	}
+
+	return true;
+}
+
 } // End of namespace Titanic
