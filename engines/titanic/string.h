@@ -28,6 +28,15 @@
 
 namespace Titanic {
 
+enum FileType {
+	FILETYPE_UNKNOWN = 0, FILETYPE_IMAGE = 1, FILETYPE_MOVIE = 2,
+	FILETYPE_WAV = 3, FILETYPE_DLG = 4
+};
+
+enum ImageType {
+	IMAGETYPE_UNKNOWN = 0, IMAGETYPE_TARGA = 1, IMAGETYPE_JPEG = 2
+};
+
 class CString : public Common::String {
 public:
 	CString() : Common::String() {}
@@ -66,6 +75,16 @@ public:
 	 * Returns the index of the last occurance of a given character
 	 */
 	int lastIndexOf(char c);
+
+	/**
+	 * Returns the type of a filename based on it's extension
+	 */
+	FileType fileTypeSuffix() const;
+
+	/**
+	 * Returns the type of an image filename based on it's extension
+	 */
+	ImageType imageTypeSuffix() const;
 };
 
 } // End of namespace Titanic

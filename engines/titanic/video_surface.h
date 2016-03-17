@@ -54,11 +54,64 @@ protected:
 public:
 	CVideoSurface(CScreenManager *screenManager);
 
+	/**
+	 * Set the underlying surface for this video surface
+	 */
 	void setSurface(CScreenManager *screenManager, DirectDrawSurface *surface);
 
-	virtual void proc8(const CResourceKey &key) = 0;
+	/**
+	 * Load the surface with the passed resource
+	 */
+	virtual void loadResource(const CResourceKey &key) = 0;
+
+	/**
+	 * Loads a Targa image file specified by the resource key
+	 */
+	virtual void loadTarga() = 0;
+
+	/**
+	 * Loads a JPEG image file specified by the resource key
+	 */
+	virtual void loadJPEG() = 0;
+
+	/**
+	 * Loads a movie file specified by the resource key
+	 */
+	virtual void loadMovie() = 0;
+
+	/**
+	 * Lock the surface for direct access to the pixels
+	 */
+	virtual void lock() = 0;
+
+	/**
+	 * Unlocks the surface after prior calls to lock()
+	 */
+	virtual void unlock() = 0;
+
+	/**
+	 * Returns true if an underlying raw surface has been set
+	 */
 	virtual bool hasSurface() = 0;
-	virtual void proc43() = 0;
+
+	/**
+	 * Returns the width of the surface
+	 */
+	virtual int getWidth() = 0;
+
+	/**
+	 * Returns the height of the surface
+	 */
+	virtual int getHeight() const = 0;
+
+	/**
+	 * Returns the pitch of the surface in bytes
+	 */
+	virtual int getPitch() const = 0;
+	/**
+	 * Loads the surface data based on the currently set resource key
+	 */
+	virtual void load() const = 0;
 };
 
 class OSVideoSurface : public CVideoSurface {
@@ -66,9 +119,60 @@ public:
 	OSVideoSurface(CScreenManager *screenManager, DirectDrawSurface *surface);
 	OSVideoSurface(CScreenManager *screenManager, const CResourceKey &key, bool flag = false);
 
-	virtual void proc8(const CResourceKey &key);
+	/**
+	 * Load the surface with the passed resource
+	 */
+	virtual void loadResource(const CResourceKey &key);
+
+	/**
+	 * Loads a Targa image file specified by the resource key
+	 */
+	virtual void loadTarga();
+
+	/**
+	 * Loads a JPEG image file specified by the resource key
+	 */
+	virtual void loadJPEG();
+
+	/**
+	 * Loads a movie file specified by the resource key
+	 */
+	virtual void loadMovie();
+
+	/**
+	 * Lock the surface for direct access to the pixels
+	 */
+	virtual void lock();
+
+	/**
+	 * Unlocks the surface after prior calls to lock()
+	 */
+	virtual void unlock();
+
+	/**
+	 * Returns true if an underlying raw surface has been set
+	 */
 	virtual bool hasSurface();
-	virtual void proc43();
+
+	/**
+	 * Returns the width of the surface
+	 */
+	virtual int getWidth() const;
+
+	/**
+	 * Returns the height of the surface
+	 */
+	virtual int getHeight() const;
+
+	/**
+	 * Returns the pitch of the surface in bytes
+	 */
+	virtual int getPitch() const;
+
+	/**
+	 * Loads the surface data based on the currently set resource key
+	 */
+	virtual void load();
 };
 
 } // End of namespace Titanic

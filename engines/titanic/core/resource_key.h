@@ -57,6 +57,21 @@ public:
 	 * and returns it's filename if it does
 	 */
 	CString exists();
+
+	/**
+	 * Scans for a file with a matching name
+	 */
+	bool scanForFile() const;
+
+	/**
+	 * Returns the type of the resource based on it's extension
+	 */
+	FileType fileTypeSuffix() const;
+
+	/**
+	 * Returns the type of the resource based on it's extension
+	 */
+	ImageType imageTypeSuffix() const;
 };
 
 } // End of namespace Titanic

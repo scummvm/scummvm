@@ -56,4 +56,42 @@ int CString::lastIndexOf(char c) {
 	return charP ? charP - c_str() : -1;
 }
 
+FileType CString::fileTypeSuffix() const {
+	CString ext = right(1);
+	if (ext == "0" || ext == "4")
+		return FILETYPE_IMAGE;
+	else if (ext == "1")
+		return FILETYPE_WAV;
+	else if (ext == "2" || ext == "3")
+		return FILETYPE_MOVIE;
+	
+	ext = right(3);
+	if (ext == "tga" || ext == "jpg")
+		return FILETYPE_IMAGE;
+	else if (ext == "wav")
+		return FILETYPE_WAV;
+	else if (ext == "avi" || ext == "mov")
+		return FILETYPE_MOVIE;
+	else if (ext == "dlg")
+		return FILETYPE_DLG;
+	else
+		return FILETYPE_UNKNOWN;
+}
+
+ImageType CString::imageTypeSuffix() const {
+	CString ext = right(1);
+	if (ext == "0")
+		return IMAGETYPE_TARGA;
+	else if (ext == "4")
+		return IMAGETYPE_JPEG;
+
+	ext = right(3);
+	if (ext == "tga")
+		return IMAGETYPE_TARGA;
+	else if (ext == "jpg")
+		return IMAGETYPE_JPEG;
+	else
+		return IMAGETYPE_UNKNOWN;
+}
+
 } // End of namespace Titanic

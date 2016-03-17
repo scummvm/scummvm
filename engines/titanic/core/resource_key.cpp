@@ -21,6 +21,7 @@
  */
 
 #include "common/file.h"
+#include "titanic/titanic.h"
 #include "titanic/simple_file.h"
 #include "titanic/core/resource_key.h"
 
@@ -71,6 +72,18 @@ CString CResourceKey::exists() {
 	// asset paths, which aren't needed in ScummVM
 	Common::File f;
 	return f.exists(name) ? name : CString();
+}
+
+bool CResourceKey::scanForFile() const {
+	return g_vm->_filesManager.scanForFile(_value);
+}
+
+FileType CResourceKey::fileTypeSuffix() const {
+	return _value.fileTypeSuffix();
+}
+
+ImageType CResourceKey::imageTypeSuffix() const {
+	return _value.imageTypeSuffix();
 }
 
 } // End of namespace Titanic

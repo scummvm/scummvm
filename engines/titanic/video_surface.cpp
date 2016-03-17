@@ -21,6 +21,7 @@
  */
 
 #include "titanic/video_surface.h"
+#include "titanic/screen_manager.h"
 
 namespace Titanic {
 
@@ -51,27 +52,78 @@ OSVideoSurface::OSVideoSurface(CScreenManager *screenManager, const CResourceKey
 	_field38 = flag;
 	
 	if (_field38) {
-		proc8(key);
+		loadResource(key);
 	} else {
 		_resourceKey = key;
-		proc43();
+		load();
 	}
 }
 
-void OSVideoSurface::proc8(const CResourceKey &key) {
+void OSVideoSurface::loadResource(const CResourceKey &key) {
 	_resourceKey = key;
 	_field38 = 1;
 
 	if (hasSurface())
-		proc43();
+		load();
+}
+
+void OSVideoSurface::loadTarga() {
+	warning("TODO");
+}
+
+void OSVideoSurface::loadJPEG() {
+	warning("TODO");
+}
+
+void OSVideoSurface::loadMovie() {
+	warning("TODO");
 }
 
 bool OSVideoSurface::hasSurface() {
 	return _ddSurface != nullptr;
 }
 
-void OSVideoSurface::proc43() {
-	warning("TODO");
+int OSVideoSurface::getWidth() const {
+	assert(_ddSurface);
+	return _ddSurface->w;
+}
+
+int OSVideoSurface::getHeight() const {
+	assert(_ddSurface);
+	return _ddSurface->h;
+}
+
+int OSVideoSurface::getPitch() const {
+	assert(_ddSurface);
+	return _ddSurface->pitch;
+}
+
+void OSVideoSurface::load() {
+	if (!_resourceKey.scanForFile())
+		return;
+
+	bool result = true;
+	switch (_resourceKey.fileTypeSuffix()) {
+	case FILETYPE_IMAGE:
+		switch (_resourceKey.imageTypeSuffix()) {
+		case IMAGETYPE_TARGA:
+			loadTarga();
+			break;
+		case IMAGETYPE_JPEG:
+			loadJPEG();
+			break;
+		default:
+			break;
+		}
+		return true;
+
+	case FILETYPE_MOVIE:
+		loadMovie();
+		return true;
+
+	default:
+		return false;
+	}
 }
 
 } // End of namespace Titanic

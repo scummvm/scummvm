@@ -31,35 +31,35 @@ CFilesManager::CFilesManager() : _gameManager(nullptr),
 		_field18(0), _field1C(0), _field3C(0) {
 }
 
-bool CFilesManager::fn1(const CString &name) {
-	if (name.empty())
-		return 0;
-
-	CString str = name;
-	str.toLowercase();
-	
-	if (str[0] == 'z' || str[0] == 'y') {
-		return 1;
-	} else if (str[0] < 'a' || str[0] > 'c') {
-		return 0;
-	}
-
-	CString tempStr = str;
-	int idx = tempStr.indexOf('#');
-	if (idx >= 0) {
-		tempStr = tempStr.left(idx);
-		str = str.c_str() + idx + 1;
-		str += ".st";
-	}
-
-
-
-	return true;
-}
-
 bool CFilesManager::fileExists(const CString &name) {
 	Common::File f;
 	return f.exists(name);
+}
+
+bool CFilesManager::scanForFile(const CString &name) {
+	if (name.empty())
+		return false;
+
+	CString filename = name;
+	filename.toLowercase();
+	
+	if (filename[0] == 'y' || filename[0] == 'z')
+		return true;
+	else if (filename[0] < 'a' || filename[0] > 'c')
+		return false;
+
+	CString fname = filename;
+	int idx = fname.indexOf('#');
+	if (idx >= 0) {
+		fname = fname.left(idx);
+		fname += ".st";
+	}
+
+	// The original had a bunch of code here handling determining
+	// which asset path, if any, the filename was present for,
+	// and storing the "active asset path" it was found on.
+	// This is redundant for ScummVM, which takes care of the paths
+	return fileExists(fname);
 }
 
 } // End of namespace Titanic

@@ -54,12 +54,15 @@ public:
 		_gameManager = gameManager;
 	}
 
-	bool fn1(const CString &name);
-
 	/**
 	 * Returns true if a file of the given name exists
 	 */
 	static bool fileExists(const CString &name);
+
+	/**
+	 * Scans for a file with a matching name
+	 */
+	bool scanForFile(const CString &name);
 };
 
 } // End of namespace Titanic
