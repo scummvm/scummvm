@@ -1966,8 +1966,8 @@ void GfxFrameout::kernelFrameOut(const bool shouldShowBits) {
 		_palMorphIsOn = false;
 	} else {
 // TODO: Window scroll
-//		if (g_ScrollWindow) {
-//			doScroll();
+//		if (g_PlaneScroll) {
+//			processScrolls();
 //		}
 
 		frameOut(shouldShowBits);
