@@ -50,7 +50,7 @@ public:
 	/**
 	 * Lock the surface for access
 	 */
-	void *lock(const Common::Rect *bounds, int flags);
+	Graphics::Surface *lock(const Common::Rect *bounds, int flags);
 
 	/**
 	 * Unlocks the surface at the end of direct accesses

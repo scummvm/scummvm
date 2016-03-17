@@ -23,57 +23,28 @@
 #ifndef TITANIC_IMAGE_DECODERS_H
 #define TITANIC_IMAGE_DECODERS_H
 
+#include "image/jpeg.h"
+#include "image/tga.h"
 #include "titanic/string.h"
 #include "titanic/simple_file.h"
 #include "titanic/video_surface.h"
 
 namespace Titanic {
 
-class CJPEGDecode {
-private:
-	StdCWadFile _file;
-	int _width, _height;
+class CJPEGDecode : public Image::JPEGDecoder {
 public:
-	CJPEGDecode(const CString &name);
-
 	/**
-	 * Return the width of the JPEG
+	 * Decode the image file onto the passed surface
 	 */
-	int getWidth() const { return _width; }
-
-	/**
-	 * Return the height of the JPEG
-	 */
-	int getHeight() const { return _height; }
-
-	/**
-	 * Decode the image onto the passed surface
-	 */
-	void decode(OSVideoSurface &surface);
+	void decode(OSVideoSurface &surface, const CString &name);
 };
 
-class CTargaDecode {
-private:
-	StdCWadFile _file;
-	int _width, _height;
+class CTargaDecode : public Image::TGADecoder {
 public:
-	CTargaDecode(const CString &name);
-
 	/**
-	* Return the width of the JPEG
+	* Decode the image file onto the passed surface
 	*/
-	int getWidth() const { return _width; }
-
-	/**
-	* Return the height of the JPEG
-	*/
-	int getHeight() const { return _height; }
-
-	/**
-	 * Decode the image onto the passed surface
-	 */
-	void decode(OSVideoSurface &surface);
-
+	void decode(OSVideoSurface &surface, const CString &name);
 };
 
 } // End of namespace Titanic

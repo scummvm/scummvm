@@ -24,21 +24,54 @@
 
 namespace Titanic {
 
-CJPEGDecode::CJPEGDecode(const CString &name) : _width(0), _height(0) {
-	_file.open(name);
-}
+void CJPEGDecode::decode(OSVideoSurface &surface, const CString &name) {
+	// Open up the resource
+	StdCWadFile file;
+	file.open(name);
 
-void CJPEGDecode::decode(OSVideoSurface &surface) {
+	// Use the ScucmmVM deoder to decode it
+	loadStream(*file.readStream());
+	const Graphics::Surface *srcSurf = getSurface();
+	
+	// Resize the surface if necessary
+	if (surface.getWidth() != srcSurf->w || surface.getHeight() != srcSurf->h)
+		surface.resize(srcSurf->w, srcSurf->h);
 
+	// Convert the decoded surface to the correct pixel format, and then copy it over
+	surface.lock();
+	Graphics::Surface *convertedSurface = srcSurf->convertTo(surface._rawSurface->format);
+
+	Common::copy((byte *)convertedSurface->getPixels(), (byte *)convertedSurface->getPixels() +
+		surface.getPitch() * surface.getHeight(), (byte *)surface._rawSurface->getPixels());
+
+	delete convertedSurface;
+	surface.unlock();
 }
 
 /*------------------------------------------------------------------------*/
 
+void CTargaDecode::decode(OSVideoSurface &surface, const CString &name) {
+	// Open up the resource
+	StdCWadFile file;
+	file.open(name);
 
-CTargaDecode::CTargaDecode(const CString &name) : _width(0), _height(0) {
-}
+	// Use the ScucmmVM deoder to decode it
+	loadStream(*file.readStream());
+	const Graphics::Surface *srcSurf = getSurface();
 
-void CTargaDecode::decode(OSVideoSurface &surface) {
+	// Resize the surface if necessary
+	if (surface.getWidth() != srcSurf->w || surface.getHeight() != srcSurf->h)
+		surface.resize(srcSurf->w, srcSurf->h);
+
+	// Convert the decoded surface to the correct pixel format, and then copy it over
+	surface.lock();
+	Graphics::Surface *convertedSurface = srcSurf->convertTo(surface._rawSurface->format);
+
+	Common::copy((byte *)convertedSurface->getPixels(), (byte *)convertedSurface->getPixels() +
+		surface.getPitch() * surface.getHeight(), (byte *)surface._rawSurface->getPixels());
+
+	delete convertedSurface;
+	surface.unlock();
 }
 
 } // End of namespace Titanic

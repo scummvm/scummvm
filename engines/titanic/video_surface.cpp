@@ -29,7 +29,7 @@ namespace Titanic {
 int CVideoSurface::_videoSurfaceCounter = 0;
 
 CVideoSurface::CVideoSurface(CScreenManager *screenManager) :
-		_screenManager(screenManager), _pixels(nullptr),
+		_screenManager(screenManager), _rawSurface(nullptr),
 		_field34(nullptr), _pendingLoad(false), _field3C(0), _field40(0),
 		_field44(4), _field48(0), _field50(1) {
 	_videoSurfaceNum = _videoSurfaceCounter++;
@@ -75,13 +75,21 @@ void OSVideoSurface::loadResource(const CResourceKey &key) {
 }
 
 void OSVideoSurface::loadTarga(const CResourceKey &key) {
-	warning("TODO");
+	// Decode the image
+	CTargaDecode decoder;
+	decoder.decode(*this, key.getString());
+
+	if (proc26() == 2)
+		shiftColors();
+
+	_resourceKey = key;
+
 }
 
 void OSVideoSurface::loadJPEG(const CResourceKey &key) {
 	// Decode the image
-	CJPEGDecode decoder(key.getString());
-	decoder.decode(*this);
+	CJPEGDecode decoder;
+	decoder.decode(*this, key.getString());
 
 	if (proc26() == 2)
 		shiftColors();
@@ -98,14 +106,14 @@ bool OSVideoSurface::lock() {
 		return false;
 
 	++_lockCount;
-	_pixels = (uint16 *)_ddSurface->lock(nullptr, 0);
+	_rawSurface = _ddSurface->lock(nullptr, 0);
 	return true;
 }
 
 void OSVideoSurface::unlock() {
-	if (_pixels)
+	if (_rawSurface)
 		_ddSurface->unlock();
-	_pixels = nullptr;
+	_rawSurface = nullptr;
 	--_lockCount;
 }
 
@@ -181,7 +189,7 @@ void OSVideoSurface::shiftColors() {
 	int width = getWidth();
 	int height = getHeight();
 	int pitch = getPitch();
-	uint16 *pixels = _pixels;
+	uint16 *pixels = (uint16 *)_rawSurface->getPixels();
 	uint16 *p;
 	int x, y;
 

@@ -110,9 +110,9 @@ DirectDrawSurface *DirectDrawManager::createSurface(int w, int h, int surfaceNum
 
 /*------------------------------------------------------------------------*/
 
-void *DirectDrawSurface::lock(const Common::Rect *bounds, int flags) {
+Graphics::Surface *DirectDrawSurface::lock(const Common::Rect *bounds, int flags) {
 	assert(w != 0 && h != 0);
-	return getPixels();
+	return this;
 }
 
 void DirectDrawSurface::unlock() {

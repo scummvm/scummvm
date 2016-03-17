@@ -224,6 +224,11 @@ public:
 	 * Open up the specified file
 	 */
 	void open(const CString &name);
+
+	/**
+	 * Return a reference to the read stream
+	 */
+	Common::SeekableReadStream *readStream() const { return _inStream; }
 };
 
 } // End of namespace Titanic

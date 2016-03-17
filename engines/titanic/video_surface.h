@@ -33,15 +33,19 @@
 namespace Titanic {
 
 class CScreenManager;
+class CJPEGDecode;
+class CTargaDecode;
 
 class CVideoSurface : public ListItem {
+	friend class CJPEGDecode;
+	friend class CTargaDecode;
 protected:
 	static int _videoSurfaceCounter;
 protected:
 	CScreenManager *_screenManager;
 	CResourceKey _resourceKey;
 	DirectDrawSurface *_ddSurface;
-	uint16 *_pixels;
+	Graphics::Surface *_rawSurface;
 	void *_field34;
 	bool _pendingLoad;
 	int _field3C;
