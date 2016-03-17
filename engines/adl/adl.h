@@ -28,6 +28,7 @@
 #include "common/str.h"
 #include "common/hashmap.h"
 #include "common/hash-str.h"
+#include "common/func.h"
 
 #include "engines/engine.h"
 
@@ -47,6 +48,9 @@ class Display;
 class GraphicsMan;
 class Speaker;
 struct AdlGameDescription;
+struct ScriptEnv;
+
+typedef Common::Functor1<ScriptEnv &, bool> Opcode;
 
 // Conditional opcodes
 #define IDO_CND_ITEM_IN_ROOM   0x03
@@ -101,11 +105,22 @@ struct Picture {
 	uint16 offset;
 };
 
+typedef Common::Array<byte> Script;
+
 struct Command {
 	byte room;
 	byte verb, noun;
 	byte numCond, numAct;
-	Common::Array<byte> script;
+	Script script;
+};
+
+struct ScriptEnv {
+	ScriptEnv(const Command &cmd_, byte verb_, byte noun_) :
+			cmd(cmd_), verb(verb_), noun(noun_), ip(0) { }
+
+	const Command &cmd;
+	byte verb, noun;
+	byte ip;
 };
 
 enum {
@@ -165,6 +180,38 @@ protected:
 	void readCommands(Common::ReadStream &stream, Commands &commands);
 	virtual void checkInput(byte verb, byte noun);
 
+	virtual void setupOpcodeTables();
+
+	// Opcodes
+	bool o1_isItemInRoom(ScriptEnv &env);
+	bool o1_isMovesGrEq(ScriptEnv &env);
+	bool o1_isVarEq(ScriptEnv &env);
+	bool o1_isCurPicEq(ScriptEnv &env);
+	bool o1_isItemPicEq(ScriptEnv &env);
+
+	bool o1_varAdd(ScriptEnv &env);
+	bool o1_varSub(ScriptEnv &env);
+	bool o1_varSet(ScriptEnv &env);
+	bool o1_listInv(ScriptEnv &env);
+	bool o1_moveItem(ScriptEnv &env);
+	bool o1_setRoom(ScriptEnv &env);
+	bool o1_setCurPic(ScriptEnv &env);
+	bool o1_setPic(ScriptEnv &env);
+	bool o1_printMsg(ScriptEnv &env);
+	bool o1_setLight(ScriptEnv &env);
+	bool o1_setDark(ScriptEnv &env);
+	bool o1_save(ScriptEnv &env);
+	bool o1_restore(ScriptEnv &env);
+	bool o1_restart(ScriptEnv &env);
+	bool o1_quit(ScriptEnv &env);
+	bool o1_placeItem(ScriptEnv &env);
+	bool o1_setItemPic(ScriptEnv &env);
+	bool o1_resetPic(ScriptEnv &env);
+	bool o1_goDirection(ScriptEnv &env);
+	bool o1_takeItem(ScriptEnv &env);
+	bool o1_dropItem(ScriptEnv &env);
+	bool o1_setRoomPic(ScriptEnv &env);
+
 	// Graphics
 	void clearScreen() const;
 	void drawItems() const;
@@ -183,8 +230,8 @@ protected:
 	void setVar(uint i, byte value);
 	void takeItem(byte noun);
 	void dropItem(byte noun);
-	bool matchCommand(const Command &command, byte verb, byte noun, uint *actions = nullptr) const;
-	void doActions(const Command &command, byte noun, byte offset);
+	bool matchCommand(ScriptEnv &env, uint *actions = nullptr) const;
+	void doActions(ScriptEnv &env);
 	bool doOneCommand(const Commands &commands, byte verb, byte noun);
 	void doAllCommands(const Commands &commands, byte verb, byte noun);
 
@@ -192,6 +239,8 @@ protected:
 	GraphicsMan *_graphics;
 	Speaker *_speaker;
 
+	// Opcodes
+	Common::Array<const Opcode *> _condOpcodes, _actOpcodes;
 	// Message strings in data file
 	Common::Array<Common::String> _messages;
 	// Picture data
