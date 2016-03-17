@@ -26,6 +26,7 @@
 #include "graphics/pixelformat.h"
 #include "graphics/surface.h"
 #include "common/rect.h"
+#include "common/types.h"
 
 namespace Graphics {
 
@@ -38,9 +39,27 @@ class Font;
 class ManagedSurface {
 	friend class Font;
 private:
+	/**
+	 * The Graphics::Surface that the managed surface encapsulates
+	 */
 	Surface _innerSurface;
-	bool _isManaged;
+
+	/**
+	 * If set, the inner surface will be freed when the surface is recreated,
+	 * as well as when the surface is destroyed
+	 */
+	DisposeAfterUse::Flag _disposeAfterUse;
+
+	/**
+	 * Stores the owning surface if this If this managed surface represents
+	 * a sub-section of another
+	 */
 	ManagedSurface *_owner;
+
+	/**
+	 * For sub-section areas of an owning parent managed surface, this represents
+	 * the offset from the parent's top-left corner this sub-surface starts at
+	 */
 	Common::Point _offsetFromOwner;
 protected:
 	/**
@@ -65,8 +84,10 @@ public:
 	ManagedSurface();
 
 	/**
-	 * Create a managed surface from another one
-	 * Note that if the source has a managed surface, it will be duplicated
+	 * Create a managed surface from another one.
+	 * If the source surface is maintaining it's own surface data, then
+	 * this surface will create it's own surface of the same size and copy
+	 * the contents from the source surface
 	 */
 	ManagedSurface(const ManagedSurface &surf);
 
@@ -111,9 +132,9 @@ public:
 	bool empty() const { return w == 0 || h == 0 || _innerSurface.getPixels() == nullptr; }
 
 	/**
-	 * Returns true if the surface is managing it's own pixels
+	 * Returns true if the surface is managing its own pixels
 	 */
-	bool isManaged() const { return _isManaged; }
+	DisposeAfterUse::Flag disposeAfterUse() const { return _disposeAfterUse; }
 
 	/**
 	 * Return a pointer to the pixel at the specified point.
@@ -304,7 +325,7 @@ public:
 	 */
 	void drawThickLine(int x0, int y0, int x1, int y1, int penX, int penY, uint32 color) {
 		_innerSurface.drawThickLine(x0, y0, x1, y1, penX, penY, color);
-		addDirtyRect(Common::Rect(x0, y0, x1, y1));
+		addDirtyRect(Common::Rect(x0, y0, x1 + penX, y1 + penY));
 	}
 
 	/**

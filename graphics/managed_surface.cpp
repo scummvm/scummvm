@@ -30,30 +30,30 @@ const int SCALE_THRESHOLD = 0x100;
 
 ManagedSurface::ManagedSurface() : 
 		w(_innerSurface.w), h(_innerSurface.h), pitch(_innerSurface.pitch), format(_innerSurface.format),
-		_isManaged(false), _owner(nullptr) {
+		_disposeAfterUse(DisposeAfterUse::NO), _owner(nullptr) {
 }
 
 ManagedSurface::ManagedSurface(const ManagedSurface &surf) :
 		w(_innerSurface.w), h(_innerSurface.h), pitch(_innerSurface.pitch), format(_innerSurface.format),
-		_isManaged(false), _owner(nullptr) {
+		_disposeAfterUse(DisposeAfterUse::NO), _owner(nullptr) {
 	*this = surf;
 }
 
 ManagedSurface::ManagedSurface(int width, int height) :
 		w(_innerSurface.w), h(_innerSurface.h), pitch(_innerSurface.pitch), format(_innerSurface.format),
-		_isManaged(false), _owner(nullptr) {
+		_disposeAfterUse(DisposeAfterUse::NO), _owner(nullptr) {
 	create(width, height);
 }
 
 ManagedSurface::ManagedSurface(int width, int height, const Graphics::PixelFormat &pixelFormat) :
 		w(_innerSurface.w), h(_innerSurface.h), pitch(_innerSurface.pitch), format(_innerSurface.format),
-		_isManaged(false), _owner(nullptr) {
+		_disposeAfterUse(DisposeAfterUse::NO), _owner(nullptr) {
 	create(width, height, format);
 }
 
 ManagedSurface::ManagedSurface(ManagedSurface &surf, const Common::Rect &bounds) :
 		w(_innerSurface.w), h(_innerSurface.h), pitch(_innerSurface.pitch), format(_innerSurface.format),
-		_isManaged(false), _owner(nullptr) {
+		_disposeAfterUse(DisposeAfterUse::NO), _owner(nullptr) {
 	create(surf, bounds);
 }
 
@@ -62,17 +62,18 @@ ManagedSurface::~ManagedSurface() {
 }
 
 ManagedSurface &ManagedSurface::operator=(const ManagedSurface &surf) {
-	if (surf._isManaged) {
+	// Free any current surface
+	free();
+
+	if (surf._disposeAfterUse == DisposeAfterUse::YES) {
 		// Create a new surface and copy the pixels from the source surface
 		create(surf.w, surf.h, surf.format);
 		Common::copy((const byte *)surf.getPixels(), (const byte *)surf.getPixels() +
 			surf.w * surf.h * surf.format.bytesPerPixel, (byte *)this->getPixels());
 	} else {
-		// Source isn't managed, so simply copy it's fields
-		_isManaged = false;
+		// Source isn't managed, so simply copy its fields
 		_owner = surf._owner;
 		_offsetFromOwner = surf._offsetFromOwner;
-		
 		void *srcPixels = (void *)surf._innerSurface.getPixels();
 		_innerSurface.setPixels(srcPixels);
 		_innerSurface.w = surf.w;
@@ -97,7 +98,7 @@ void ManagedSurface::create(uint16 width, uint16 height, const PixelFormat &pixe
 	free();
 	_innerSurface.create(width, height, pixelFormat);
 
-	_isManaged = true;
+	_disposeAfterUse = DisposeAfterUse::YES;
 	markAllDirty();
 }
 
@@ -111,14 +112,14 @@ void ManagedSurface::create(ManagedSurface &surf, const Common::Rect &bounds) {
 	_innerSurface.w = bounds.width();
 	_innerSurface.h = bounds.height();
 	_owner = &surf;
-	_isManaged = false;
+	_disposeAfterUse = DisposeAfterUse::NO;
 }
 
 void ManagedSurface::free() {
-	if (_isManaged)
+	if (_disposeAfterUse == DisposeAfterUse::YES)
 		_innerSurface.free();
 
-	_isManaged = false;
+	_disposeAfterUse = DisposeAfterUse::NO;
 	_owner = nullptr;
 	_offsetFromOwner = Common::Point(0, 0);
 }
@@ -246,6 +247,7 @@ void ManagedSurface::markAllDirty() {
 void ManagedSurface::addDirtyRect(const Common::Rect &r) {
 	if (_owner) {
 		Common::Rect bounds = r;
+		bounds.clip(Common::Rect(0, 0, this->w, this->h));
 		bounds.translate(_offsetFromOwner.x, _offsetFromOwner.y);
 		_owner->addDirtyRect(bounds);
 	}

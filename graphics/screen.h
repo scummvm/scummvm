@@ -33,6 +33,12 @@ namespace Graphics {
 #define PALETTE_COUNT 256
 #define PALETTE_SIZE (256 * 3)
 
+/**
+ * Implements a specialised surface that represents the screen.
+ * It keeps track of any areas of itself that are updated by drawing
+ * calls, and provides an update that method that blits the affected 
+ * areas to the physical screen
+ */
 class Screen : virtual public ManagedSurface {
 private:
 	/**
@@ -61,12 +67,13 @@ public:
 	Screen(int width, int height, PixelFormat pixelFormat);
 
 	/**
-	 * Returns true if there are any pending screen updates
+	 * Returns true if there are any pending screen updates (dirty areas)
 	 */
-	bool isDirty() const { return _dirtyRects.empty(); }
+	bool isDirty() const { return !_dirtyRects.empty(); }
 
 	/**
-	 * Makes the whole screen dirty
+	 * Marks the whole screen as dirty. This forces the next call to update 
+	 * to copy the entire screen contents
 	 */
 	void makeAllDirty();
 

@@ -245,7 +245,7 @@ GfxSurface::GfxSurface(const GfxSurface &s): Graphics::ManagedSurface() {
 GfxSurface::~GfxSurface() {
 	// Sanity check.. GfxSurface should always be just referencing _rawSurface,
 	// and not directly managing it's own surface
-	assert(!isManaged());
+	assert(disposeAfterUse() == DisposeAfterUse::NO);
 }
 
 void GfxSurface::create(uint16 width, uint16 height) {
@@ -287,7 +287,7 @@ void GfxSurface::synchronize(Serializer &s) {
 
 	if (s.isSaving()) {
 		// Save contents of the surface
-		if (isManaged()) {
+		if (disposeAfterUse() == DisposeAfterUse::YES) {
 			s.syncAsSint16LE(this->w);
 			s.syncAsSint16LE(this->h);
 			s.syncBytes((byte *)getPixels(), this->w * this->h);
