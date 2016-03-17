@@ -48,13 +48,14 @@ protected:
 	Graphics::Surface *_rawSurface;
 	void *_field34;
 	bool _pendingLoad;
-	int _field3C;
 	int _field40;
 	int _field44;
 	int _field48;
 	int _videoSurfaceNum;
 	int _field50;
 	int _lockCount;
+public:
+	bool _field3C;
 public:
 	CVideoSurface(CScreenManager *screenManager);
 	virtual ~CVideoSurface();

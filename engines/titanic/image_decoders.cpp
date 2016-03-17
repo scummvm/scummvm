@@ -34,7 +34,8 @@ void CJPEGDecode::decode(OSVideoSurface &surface, const CString &name) {
 	const Graphics::Surface *srcSurf = getSurface();
 	
 	// Resize the surface if necessary
-	if (surface.getWidth() != srcSurf->w || surface.getHeight() != srcSurf->h)
+	if (!surface.hasSurface() || surface.getWidth() != srcSurf->w 
+			|| surface.getHeight() != srcSurf->h)
 		surface.resize(srcSurf->w, srcSurf->h);
 
 	// Convert the decoded surface to the correct pixel format, and then copy it over
@@ -60,7 +61,8 @@ void CTargaDecode::decode(OSVideoSurface &surface, const CString &name) {
 	const Graphics::Surface *srcSurf = getSurface();
 
 	// Resize the surface if necessary
-	if (surface.getWidth() != srcSurf->w || surface.getHeight() != srcSurf->h)
+	if (!surface.hasSurface() || surface.getWidth() != srcSurf->w
+			|| surface.getHeight() != srcSurf->h)
 		surface.resize(srcSurf->w, srcSurf->h);
 
 	// Convert the decoded surface to the correct pixel format, and then copy it over

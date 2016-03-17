@@ -48,7 +48,9 @@ void DirectDraw::diagnostics() {
 
 DirectDrawSurface *DirectDraw::createSurfaceFromDesc(const DDSurfaceDesc &desc) {
 	DirectDrawSurface *surface = new DirectDrawSurface();
-	surface->create(desc._w, desc._h, Graphics::PixelFormat::createFormatCLUT8());
+
+	Graphics::PixelFormat pixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0);
+	surface->create(desc._w, desc._h, pixelFormat);
 
 	return surface;
 }

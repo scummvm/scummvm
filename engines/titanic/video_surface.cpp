@@ -30,7 +30,7 @@ int CVideoSurface::_videoSurfaceCounter = 0;
 
 CVideoSurface::CVideoSurface(CScreenManager *screenManager) :
 		_screenManager(screenManager), _rawSurface(nullptr),
-		_field34(nullptr), _pendingLoad(false), _field3C(0), _field40(0),
+		_field34(nullptr), _pendingLoad(false), _field3C(false), _field40(0),
 		_field44(4), _field48(0), _field50(1) {
 	_videoSurfaceNum = _videoSurfaceCounter++;
 }
