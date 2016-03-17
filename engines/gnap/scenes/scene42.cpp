@@ -374,8 +374,6 @@ void GnapEngine::scene42_run() {
 }
 
 void GnapEngine::scene42_updateAnimations() {
-	int sequenceId;
-
 	if (_gameSys->getAnimationStatus(0) == 2) {
 		switch (_gnapActionStatus) {
 		case kASLeaveScene:
@@ -391,6 +389,7 @@ void GnapEngine::scene42_updateAnimations() {
 		case kASUseQuarterWithBBQVendor:
 		case kASGrabChickenLeg:
 			if (_gameSys->getAnimationStatus(2) == 2) {
+				int sequenceId;
 				if (_gnapActionStatus == kASUseQuarterWithBBQVendor) {
 					invRemove(kItemDiceQuarterHole);
 					invAdd(kItemChickenBucket);

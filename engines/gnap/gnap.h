@@ -690,9 +690,9 @@ public:
 	Graphics::Surface *_s18_cowboyHatSurface;
 	int scene18_init();
 	void scene18_updateHotspots();
-	void scene18_gnapCarryGarbageCanTo(int a1, int arg4, int animationIndex, int argC, int a5);
+	void scene18_gnapCarryGarbageCanTo(int x, int y, int animationIndex, int argC, int a5);
 	void scene18_putDownGarbageCan(int animationIndex);
-	void scene18_platEndPhoning(int a1);
+	void scene18_platEndPhoning(bool platFl);
 	void scene18_closeHydrantValve();
 	void scene18_waitForGnapAction();
 	void scene18_run();

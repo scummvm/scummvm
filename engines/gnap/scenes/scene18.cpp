@@ -126,24 +126,24 @@ void GnapEngine::scene18_updateHotspots() {
 }
 
 void GnapEngine::scene18_gnapCarryGarbageCanTo(int x, int y, int animationIndex, int argC, int a5) {
+	// CHECKME: (x, y) is always set to (-1, -1)
 
-	// TODO Cleanup
-	
+	// TODO Cleanup	
 	static const int kSequenceIds[] = {
 		0x203, 0x204
 	};
 	
 	int gnapSeqId, gnapId, gnapDatNum, gnapGridX;
-	int v13, v12, v5, v10, v11, direction;
+	int clippedX, v12, v5, v10, v11, direction;
 
 	if (x >= 0)
-		v13 = x;
+		clippedX = x;
 	else
-		v13 = (_leftClickMouseX - _gridMinX + 37) / 75;
-	if (v13 >= _gnapX)
-		v10 = v13 - 1;
+		clippedX = (_leftClickMouseX - _gridMinX + 37) / 75;
+	if (clippedX >= _gnapX)
+		v10 = clippedX - 1;
 	else
-		v10 = v13 + 1;
+		v10 = clippedX + 1;
 
 	if (a5 < 0)
 		a5 = 4;
@@ -160,7 +160,7 @@ void GnapEngine::scene18_gnapCarryGarbageCanTo(int x, int y, int animationIndex,
 		gnapId = _gnapId;
 		gnapDatNum = _gnapSequenceDatNum;
 		gnapGridX = _gnapX;
-		if (_gnapX <= v13)
+		if (_gnapX <= clippedX)
 			direction = 1;
 		else
 			direction = -1;
@@ -257,7 +257,7 @@ void GnapEngine::scene18_putDownGarbageCan(int animationIndex) {
 		gameUpdateTick();
 }
 
-void GnapEngine::scene18_platEndPhoning(int a1) {
+void GnapEngine::scene18_platEndPhoning(bool platFl) {
 	if (isFlag(26)) {
 		_s18_platPhoneIter = 0;
 		_s18_platPhoneCtr = 0;
@@ -271,7 +271,7 @@ void GnapEngine::scene18_platEndPhoning(int a1) {
 		_gameSys->removeSequence(0x21F, 254, true);
 		_gameSys->setAnimation(0, 0, 3);
 		clearFlag(26);
-		if (a1) {
+		if (platFl) {
 			_beaverActionStatus = kASPlatComesHere;
 			_timers[6] = 50;
 			_sceneWaiting = true;
@@ -355,7 +355,7 @@ void GnapEngine::scene18_run() {
 			_gameSys->insertSequence(0x21E, 254, 0, 0, kSeqNone, 0, 0, 0);
 			endSceneInit();
 			_s18_currPhoneSequenceId = -1;
-			scene18_platEndPhoning(1);
+			scene18_platEndPhoning(true);
 			clearFlag(27);
 		} else {
 			_s18_currPhoneSequenceId = kScene18SequenceIds[_s18_platPhoneCtr];
@@ -365,7 +365,7 @@ void GnapEngine::scene18_run() {
 			endSceneInit();
 		}
 		if (isFlag(27)) {
-			scene18_platEndPhoning(1);
+			scene18_platEndPhoning(true);
 			clearFlag(27);
 		} else {
 			_gameSys->setAnimation(_s18_currPhoneSequenceId, 254, 3);
@@ -487,7 +487,7 @@ void GnapEngine::scene18_run() {
 						playGnapImpossible(0, 0);
 				} else {
 					if (isFlag(26))
-						scene18_platEndPhoning(1);
+						scene18_platEndPhoning(true);
 					if (_grabCursorSpriteIndex >= 0) {
 						if (!isFlag(9))
 							playGnapShowCurrItem(_hotspotsWalkPos[kHSGarbageCan].x - (_gnapX < _s18_garbageCanPos ? 1 : -1),
@@ -684,7 +684,7 @@ void GnapEngine::scene18_run() {
 				gnapWalkTo(_hotspotsWalkPos[kHSExitGrubCity].x, _hotspotsWalkPos[kHSExitGrubCity].y, 0, 0x107B2, 1);
 				_gnapActionStatus = kASLeaveScene;
 				if (isFlag(26))
-					scene18_platEndPhoning(0);
+					scene18_platEndPhoning(false);
 				else
 					platypusWalkTo(_hotspotsWalkPos[kHSExitGrubCity].x, _hotspotsWalkPos[kHSExitGrubCity].y - 1, -1, 0x107CF, 1);
 				_hotspots[kHSWalkArea2]._flags &= ~SF_WALKABLE;
@@ -1018,7 +1018,7 @@ void GnapEngine::scene18_updateAnimations() {
 			_gameSys->insertSequence(0x21F, 254, 0x21F, 254, kSeqSyncWait, 0, 0, 0);
 			_s18_currPhoneSequenceId = _s18_nextPhoneSequenceId;
 		} else {
-			scene18_platEndPhoning(1);
+			scene18_platEndPhoning(true);
 		}
 	}
 
