@@ -36,6 +36,15 @@ class Decompressor;
 class DecompressorData;
 
 /**
+ * Simple ScummVM File descendent that throws a wobbly if
+ * the file it tries to open isn't present
+ */
+class File : public Common::File {
+public:
+	virtual bool open(const Common::String &name);
+};
+
+/**
  * This class implements basic reading and writing to files
  */
 class SimpleFile {
@@ -203,11 +212,18 @@ public:
 	}
 };
 
+/**
+ * Derived file that handles WAD archives containing multiple files
+ */
 class StdCWadFile : public SimpleFile {
-private:
-	Common::File _file;
 public:
-	StdCWadFile(const CString &name);
+	StdCWadFile() : SimpleFile() {}
+	virtual ~StdCWadFile() {}
+
+	/**
+	 * Open up the specified file
+	 */
+	void open(const CString &name);
 };
 
 } // End of namespace Titanic

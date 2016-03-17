@@ -79,10 +79,8 @@ void OSVideoSurface::loadTarga(const CResourceKey &key) {
 }
 
 void OSVideoSurface::loadJPEG(const CResourceKey &key) {
-	CString filename = key.exists();
-
 	// Decode the image
-	CJPEGDecode decoder(filename);
+	CJPEGDecode decoder(key.getString());
 	decoder.decode(*this);
 
 	if (proc26() == 2)

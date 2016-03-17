@@ -24,8 +24,8 @@
 
 namespace Titanic {
 
-CJPEGDecode::CJPEGDecode(const CString &name): _file(name),
-		_width(0), _height(0) {
+CJPEGDecode::CJPEGDecode(const CString &name) : _width(0), _height(0) {
+	_file.open(name);
 }
 
 void CJPEGDecode::decode(OSVideoSurface &surface) {
@@ -35,8 +35,7 @@ void CJPEGDecode::decode(OSVideoSurface &surface) {
 /*------------------------------------------------------------------------*/
 
 
-CTargaDecode::CTargaDecode(const CString &name) : _file(name),
-		_width(0), _height(0) {
+CTargaDecode::CTargaDecode(const CString &name) : _width(0), _height(0) {
 }
 
 void CTargaDecode::decode(OSVideoSurface &surface) {

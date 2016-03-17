@@ -25,6 +25,13 @@
 
 namespace Titanic {
 
+bool File::open(const Common::String &name) {
+	if (!Common::File::open(name))
+		error("Could not open file - %s", name.c_str());
+}
+
+/*------------------------------------------------------------------------*/
+
 SimpleFile::SimpleFile(): _inStream(nullptr), _outStream(nullptr), _lineCount(1) {
 }
 
@@ -333,11 +340,45 @@ void SimpleFile::writeClassEnd(int indent) {
 
 /*------------------------------------------------------------------------*/
 
-StdCWadFile::StdCWadFile(const CString &name): SimpleFile() {
-	if (!_file.open(name))
-		error("Could not open file - %s", name.c_str());
+void StdCWadFile::open(const CString &name) {
+	File f;
 
-	open(&_file);
+	// Check for whether it is indeed a file/resource pair
+	int idx = name.indexOf('#');
+
+	if (idx < 0) {
+		// Nope, so open up file for standard reading
+		assert(!name.empty());
+		f.open(name);
+
+		SimpleFile::open(f.readStream(f.size()));
+		return;
+	}
+
+	// Split up the name and resource, and get the resource index
+	CString filename = name.left(idx) + ".st";
+	int extPos = name.lastIndexOf('.');
+	CString resStr = name.mid(idx + 1, extPos - idx - 1);
+	int resIndex = resStr.readInt();
+
+	// Open up the index for access 
+	f.open(filename);
+	int indexSize = f.readUint32LE() / 4;
+	assert(resIndex < indexSize);
+
+	// Get the specific resource's offset, and size by also
+	// getting the offset of the following resource
+	f.seek(resIndex * 4);
+	uint resOffset = f.readUint32LE();
+	uint nextOffset = (resIndex == (indexSize - 1)) ? f.size() :
+		f.readUint32LE();
+
+	// Read in the resource
+	f.seek(resOffset);
+	Common::SeekableReadStream *stream = f.readStream(nextOffset - resOffset);
+	SimpleFile::open(stream);
+
+	f.close();
 }
 
 } // End of namespace Titanic

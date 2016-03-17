@@ -69,12 +69,12 @@ public:
 	/**
 	 * Returns the index of the first occurance of a given character
 	 */
-	int indexOf(char c);
+	int indexOf(char c) const;
 
 	/**
 	 * Returns the index of the last occurance of a given character
 	 */
-	int lastIndexOf(char c);
+	int lastIndexOf(char c) const;
 
 	/**
 	 * Returns the type of a filename based on it's extension
@@ -85,6 +85,13 @@ public:
 	 * Returns the type of an image filename based on it's extension
 	 */
 	ImageType imageTypeSuffix() const;
+
+	/**
+	 * Parses the string as an integer and returns the value
+	 */
+	int readInt() const {
+		return atoi(c_str());
+	}
 };
 
 } // End of namespace Titanic

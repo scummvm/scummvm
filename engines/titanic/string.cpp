@@ -48,12 +48,12 @@ CString CString::mid(uint start) const {
 	return mid(start, strSize - start);
 }
 
-int CString::indexOf(char c) {
+int CString::indexOf(char c) const {
 	const char *charP = strchr(c_str(), c);
 	return charP ? charP - c_str() : -1;
 }
 
-int CString::lastIndexOf(char c) {
+int CString::lastIndexOf(char c) const {
 	const char *charP = strrchr(c_str(), c);
 	return charP ? charP - c_str() : -1;
 }
