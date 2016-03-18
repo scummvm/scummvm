@@ -2,6 +2,7 @@ MODULE := engines/adl
 
 MODULE_OBJS := \
 	adl.o \
+	adl_v2.o \
 	detection.o \
 	display.o \
 	graphics.o \

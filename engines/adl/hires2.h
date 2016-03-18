@@ -25,7 +25,7 @@
 
 #include "common/str.h"
 
-#include "adl/adl.h"
+#include "adl/adl_v2.h"
 
 namespace Common {
 class ReadStream;
@@ -85,9 +85,9 @@ struct RoomData {
 	Commands commands;
 };
 
-class HiRes2Engine : public AdlEngine {
+class HiRes2Engine : public AdlEngine_v2 {
 public:
-	HiRes2Engine(OSystem *syst, const AdlGameDescription *gd) : AdlEngine(syst, gd), _linesPrinted(0) { }
+	HiRes2Engine(OSystem *syst, const AdlGameDescription *gd) : AdlEngine_v2(syst, gd), _linesPrinted(0) { }
 
 private:
 	// AdlEngine
