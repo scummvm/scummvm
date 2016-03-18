@@ -54,6 +54,8 @@ struct ScriptEnv;
 #define IDO_ACT_SAVE           0x0f
 #define IDO_ACT_LOAD           0x10
 
+#define IDI_NONE 0xfe
+
 #define IDI_WORD_SIZE 8
 
 enum Direction {
@@ -92,16 +94,28 @@ struct Command {
 
 class ScriptEnv {
 public:
-	ScriptEnv(const Command &cmd_, byte verb_, byte noun_) :
-			cmd(cmd_), verb(verb_), noun(noun_), ip(0) { }
+	ScriptEnv(const Command &cmd, byte room, byte verb, byte noun) :
+			_cmd(cmd), _room(room), _verb(verb), _noun(noun), _ip(0) { }
 
-	byte op() const { return cmd.script[ip]; }
+	byte op() const { return _cmd.script[_ip]; }
 	// We keep this 1-based for easier comparison with the original engine
-	byte arg(uint i) const { return cmd.script[ip + i]; }
+	byte arg(uint i) const { return _cmd.script[_ip + i]; }
+	void skip(uint i) { _ip += i; }
 
-	const Command &cmd;
-	byte verb, noun;
-	byte ip;
+	bool isMatch() const {
+		return (_cmd.room == IDI_NONE || _cmd.room == _room) &&
+		       (_cmd.verb == IDI_NONE || _cmd.verb == _verb) &&
+		       (_cmd.noun == IDI_NONE || _cmd.noun == _noun);
+	}
+
+	byte getCondCount() const { return _cmd.numCond; }
+	byte getActCount() const { return _cmd.numAct; }
+	byte getNoun() const { return _noun; }
+
+private:
+	const Command &_cmd;
+	const byte _room, _verb, _noun;
+	byte _ip;
 };
 
 enum {
@@ -109,8 +123,6 @@ enum {
 	IDI_ITEM_MOVED,
 	IDI_ITEM_DOESNT_MOVE
 };
-
-#define IDI_NONE 0xfe
 
 struct Item {
 	byte noun;
@@ -212,7 +224,7 @@ protected:
 	void setVar(uint i, byte value);
 	void takeItem(byte noun);
 	void dropItem(byte noun);
-	bool matchCommand(ScriptEnv &env, uint *actions = nullptr) const;
+	bool matchCommand(ScriptEnv &env) const;
 	void doActions(ScriptEnv &env);
 	bool doOneCommand(const Commands &commands, byte verb, byte noun);
 	void doAllCommands(const Commands &commands, byte verb, byte noun);

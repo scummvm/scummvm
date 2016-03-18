@@ -724,10 +724,9 @@ bool AdlEngine::canSaveGameStateCurrently() {
 	// "SAVE GAME". This prevents saving via the GMM in situations where
 	// it wouldn't otherwise be possible to do so.
 	for (cmd = _roomCommands.begin(); cmd != _roomCommands.end(); ++cmd) {
-		ScriptEnv env(*cmd, _saveVerb, _saveNoun);
-		uint offset;
-		if (matchCommand(env, &offset))
-			return cmd->script[offset] == IDO_ACT_SAVE;
+		ScriptEnv env(*cmd, _state.room, _saveVerb, _saveNoun);
+		if (matchCommand(env))
+			return env.op() == IDO_ACT_SAVE;
 	}
 
 	return false;
@@ -1009,12 +1008,12 @@ int AdlEngine::o1_goDirection(ScriptEnv &e) {
 }
 
 int AdlEngine::o1_takeItem(ScriptEnv &e) {
-	takeItem(e.noun);
+	takeItem(e.getNoun());
 	return 0;
 }
 
 int AdlEngine::o1_dropItem(ScriptEnv &e) {
-	dropItem(e.noun);
+	dropItem(e.getNoun());
 	return 0;
 }
 
@@ -1023,18 +1022,12 @@ int AdlEngine::o1_setRoomPic(ScriptEnv &e) {
 	return 2;
 }
 
-bool AdlEngine::matchCommand(ScriptEnv &env, uint *actions) const {
-	if (env.cmd.room != IDI_NONE && env.cmd.room != _state.room)
+bool AdlEngine::matchCommand(ScriptEnv &env) const {
+	if (!env.isMatch())
 		return false;
 
-	if (env.cmd.verb != IDI_NONE && env.cmd.verb != env.verb)
-		return false;
-
-	if (env.cmd.noun != IDI_NONE && env.cmd.noun != env.noun)
-		return false;
-
-	for (uint i = 0; i < env.cmd.numCond; ++i) {
-		byte op = env.cmd.script[env.ip];
+	for (uint i = 0; i < env.getCondCount(); ++i) {
+		byte op = env.op();
 
 		if (!_condOpcodes[op] || !_condOpcodes[op]->isValid())
 			error("Unimplemented condition opcode %02x", op);
@@ -1044,18 +1037,15 @@ bool AdlEngine::matchCommand(ScriptEnv &env, uint *actions) const {
 		if (numArgs < 0)
 			return false;
 
-		env.ip += numArgs + 1;
+		env.skip(numArgs + 1);
 	}
-
-	if (actions)
-		*actions = env.ip;
 
 	return true;
 }
 
 void AdlEngine::doActions(ScriptEnv &env) {
-	for (uint i = 0; i < env.cmd.numAct; ++i) {
-		byte op = env.cmd.script[env.ip];
+	for (uint i = 0; i < env.getActCount(); ++i) {
+		byte op = env.op();
 
 		if (!_actOpcodes[op] || !_actOpcodes[op]->isValid())
 			error("Unimplemented action opcode %02x", op);
@@ -1065,7 +1055,7 @@ void AdlEngine::doActions(ScriptEnv &env) {
 		if (numArgs < 0)
 			return;
 
-		env.ip += numArgs + 1;
+		env.skip(numArgs + 1);
 	}
 }
 
@@ -1073,7 +1063,7 @@ bool AdlEngine::doOneCommand(const Commands &commands, byte verb, byte noun) {
 	Commands::const_iterator cmd;
 
 	for (cmd = commands.begin(); cmd != commands.end(); ++cmd) {
-		ScriptEnv env(*cmd, verb, noun);
+		ScriptEnv env(*cmd, _state.room, verb, noun);
 		if (matchCommand(env)) {
 			doActions(env);
 			return true;
@@ -1087,7 +1077,7 @@ void AdlEngine::doAllCommands(const Commands &commands, byte verb, byte noun) {
 	Commands::const_iterator cmd;
 
 	for (cmd = commands.begin(); cmd != commands.end(); ++cmd) {
-		ScriptEnv env(*cmd, verb, noun);
+		ScriptEnv env(*cmd, _state.room, verb, noun);
 		if (matchCommand(env))
 			doActions(env);
 	}
