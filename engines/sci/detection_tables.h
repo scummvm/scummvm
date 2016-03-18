@@ -2646,6 +2646,28 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		Common::EN_ANY, Common::kPlatformDOS, 0, GUIO4(GUIO_NOSPEECH, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
 
 #ifdef ENABLE_SCI32
+	// Phantasmagoria - English DOS/Windows (from csnover)
+	// Windows executable scanning reports "2.100.002" - "Aug 06 1995"
+	// DOS executable scanning reports "2.100.002" - "May 24 1995"
+	// VERSION file reports "1.000.000"
+	{"phantasmagoria", "", {
+		{"resmap.001", 0, "43c395f312a190e67b90b2c1e93a79e2", 11518},
+		{"ressci.001", 0, "3aae6559aa1df273bc542d5ac6330d75", 65844612},
+		{"resmap.002", 0, "94f142cfe8ec4107b6a42876cb603ed0", 12058},
+		{"ressci.002", 0, "3aae6559aa1df273bc542d5ac6330d75", 71588691},
+		{"resmap.003", 0, "39e9abd4501b5b6168dd07379c0be753", 12334},
+		{"ressci.003", 0, "3aae6559aa1df273bc542d5ac6330d75", 73651084},
+		{"resmap.004", 0, "434f9704658229fef322c863d2422a9a", 12556},
+		{"ressci.004", 0, "3aae6559aa1df273bc542d5ac6330d75", 75811935},
+		{"resmap.005", 0, "3ff9b4f7301800825c0ed008e091205e", 12604},
+		{"ressci.005", 0, "3aae6559aa1df273bc542d5ac6330d75", 78814934},
+		{"resmap.006", 0, "27ad413313e2a3ec3c53250e7ff5b2d1", 12532},
+		{"ressci.006", 0, "3aae6559aa1df273bc542d5ac6330d75", 77901360},
+		{"resmap.007", 0, "aa8175cfc93242af6f5e65bdceaafc0d", 7972},
+		//{"ressci.007", 0, "3aae6559aa1df273bc542d5ac6330d75", 25859038},
+		AD_LISTEND},
+		Common::EN_ANY, Common::kPlatformDOS, ADGF_UNSTABLE, GUIO5(GUIO_NOSPEECH, GUIO_NOASPECT, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
+
 	// Phantasmagoria - English DOS (from jvprat)
 	// Executable scanning reports "2.100.002", VERSION file reports "1.100.000UK"
 	{"phantasmagoria", "", {
