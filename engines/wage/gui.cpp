@@ -588,15 +588,20 @@ Designed *Gui::mouseUp(int x, int y) {
 		}
 	} else if ((borderClick = isInBorder(_consoleTextArea, x, y)) != kBorderNone) {
 		_bordersDirty = true;
+		int _oldScrollPos = _scrollPos;
 
 		switch (borderClick) {
 			case kBorderScrollUp:
 				_scrollPos = MAX<int>(0, _scrollPos - _consoleLineHeight);
+				undrawCursor();
+				_cursorY -= (_scrollPos - _oldScrollPos);
 				_consoleDirty = true;
 				_consoleFullRedraw = true;
 				break;
 			case kBorderScrollDown:
 				_scrollPos = MIN<int>((_lines.size() - 2) * _consoleLineHeight, _scrollPos + _consoleLineHeight);
+				undrawCursor();
+				_cursorY -= (_scrollPos - _oldScrollPos);
 				_consoleDirty = true;
 				_consoleFullRedraw = true;
 				break;
