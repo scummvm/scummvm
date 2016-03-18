@@ -50,41 +50,9 @@ class Speaker;
 struct AdlGameDescription;
 struct ScriptEnv;
 
-// Conditional opcodes
-#define IDO_CND_ITEM_IN_ROOM   0x03
-#define IDO_CND_MOVES_GE       0x05
-#define IDO_CND_VAR_EQ         0x06
-#define IDO_CND_CUR_PIC_EQ     0x09
-#define IDO_CND_ITEM_PIC_EQ    0x0a
-
-// Action opcodes
-#define IDO_ACT_VAR_ADD        0x01
-#define IDO_ACT_VAR_SUB        0x02
-#define IDO_ACT_VAR_SET        0x03
-#define IDO_ACT_LIST_ITEMS     0x04
-#define IDO_ACT_MOVE_ITEM      0x05
-#define IDO_ACT_SET_ROOM       0x06
-#define IDO_ACT_SET_CUR_PIC    0x07
-#define IDO_ACT_SET_PIC        0x08
-#define IDO_ACT_PRINT_MSG      0x09
-#define IDO_ACT_SET_LIGHT      0x0a
-#define IDO_ACT_SET_DARK       0x0b
-#define IDO_ACT_QUIT           0x0d
+// Save and restore opcodes
 #define IDO_ACT_SAVE           0x0f
 #define IDO_ACT_LOAD           0x10
-#define IDO_ACT_RESTART        0x11
-#define IDO_ACT_PLACE_ITEM     0x12
-#define IDO_ACT_SET_ITEM_PIC   0x13
-#define IDO_ACT_RESET_PIC      0x14
-#define IDO_ACT_GO_NORTH       0x15
-#define IDO_ACT_GO_SOUTH       0x16
-#define IDO_ACT_GO_EAST        0x17
-#define IDO_ACT_GO_WEST        0x18
-#define IDO_ACT_GO_UP          0x19
-#define IDO_ACT_GO_DOWN        0x1a
-#define IDO_ACT_TAKE_ITEM      0x1b
-#define IDO_ACT_DROP_ITEM      0x1c
-#define IDO_ACT_SET_ROOM_PIC   0x1d
 
 #define IDI_WORD_SIZE 8
 
