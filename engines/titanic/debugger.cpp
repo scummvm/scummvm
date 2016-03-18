@@ -104,7 +104,7 @@ void Debugger::listRooms() {
 	for (CTreeItem *treeItem = root; treeItem; treeItem = treeItem->scan(root)) {
 		CRoomItem *roomItem = dynamic_cast<CRoomItem *>(treeItem);
 		if (roomItem)
-			debugPrintf("%s\n", roomItem->_name.c_str());
+			debugPrintf("%d - %s\n", roomItem->_roomNumber, roomItem->_name.c_str());
 	}
 }
 
