@@ -142,7 +142,7 @@ void HiRes2Engine::initState() {
 		f.readByte(); // always 1, possibly disk?
 		room.picture = f.readByte();
 		room.curPicture = f.readByte();
-		f.readByte(); // always 1, possibly disk?
+		room.isFirstTime = f.readByte();
 		_state.rooms.push_back(room);
 	}
 

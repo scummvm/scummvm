@@ -76,6 +76,7 @@ struct Room {
 	byte offset;
 	byte picture;
 	byte curPicture;
+	bool isFirstTime;
 };
 
 struct Picture {

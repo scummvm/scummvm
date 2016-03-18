@@ -43,7 +43,7 @@ void AdlEngine_v2::setupOpcodeTables() {
 	OpcodeUnImpl();
 	Opcode(o2_isItemInRoom);
 	// 0x04
-	OpcodeUnImpl();
+	Opcode(o2_isNounNotInRoom);
 	Opcode(o1_isMovesGrEq);
 	Opcode(o1_isVarEq);
 	OpcodeUnImpl();
@@ -93,6 +93,17 @@ void AdlEngine_v2::setupOpcodeTables() {
 	Opcode(o1_setRoomPic);
 }
 
+int AdlEngine_v2::o2_isFirstTime(ScriptEnv &e) {
+	bool oldFlag = getCurRoom().isFirstTime;
+
+	getCurRoom().isFirstTime = false;
+
+	if (!oldFlag)
+		return -1;
+
+	return 0;
+}
+
 int AdlEngine_v2::o2_isItemInRoom(ScriptEnv &e) {
 	byte room = e.arg(2);
 
@@ -103,6 +114,21 @@ int AdlEngine_v2::o2_isItemInRoom(ScriptEnv &e) {
 		return -1;
 
 	return 2;
+}
+
+int AdlEngine_v2::o2_isNounNotInRoom(ScriptEnv &e) {
+	Common::Array<Item>::const_iterator item;
+
+	byte room = e.arg(1);
+
+	if (room == IDI_CUR_ROOM)
+		room = _state.room;
+
+	for (item = _state.items.begin(); item != _state.items.end(); ++item)
+		if (item->noun == e.getNoun() && (item->room == room))
+			return -1;
+
+	return 1;
 }
 
 int AdlEngine_v2::o2_moveItem(ScriptEnv &e) {

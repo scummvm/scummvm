@@ -39,7 +39,9 @@ protected:
 
 	virtual void setupOpcodeTables();
 
+	int o2_isFirstTime(ScriptEnv &e);
 	int o2_isItemInRoom(ScriptEnv &e);
+	int o2_isNounNotInRoom(ScriptEnv &e);
 
 	int o2_moveItem(ScriptEnv &e);
 };
