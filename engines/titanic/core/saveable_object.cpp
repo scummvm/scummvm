@@ -206,6 +206,7 @@
 #include "titanic/game/tow_parrot_nav.h"
 #include "titanic/game/up_lighter.h"
 #include "titanic/game/useless_lever.h"
+#include "titanic/game/volume_control.h"
 #include "titanic/game/wheel_button.h"
 #include "titanic/game/wheel_hotspot.h"
 #include "titanic/game/wheel_spin.h"
@@ -332,7 +333,6 @@
 #include "titanic/gfx/text_skrew.h"
 #include "titanic/gfx/text_up.h"
 #include "titanic/gfx/toggle_switch.h"
-#include "titanic/gfx/volume_control.h"
 
 #include "titanic/messages/messages.h"
 #include "titanic/messages/auto_sound_event.h"
@@ -613,6 +613,7 @@ DEFFN(CTitaniaStillControl)
 DEFFN(CTOWParrotNav)
 DEFFN(CUpLighter)
 DEFFN(CUselessLever)
+DEFFN(CVolumeControl)
 DEFFN(CWheelButton)
 DEFFN(CWheelHotSpot)
 DEFFN(CWheelSpin)
@@ -743,7 +744,6 @@ DEFFN(CTextSkrew)
 DEFFN(CTextUp)
 DEFFN(CToggleButton)
 DEFFN(CToggleSwitch)
-DEFFN(CVolumeControl)
 
 DEFFN(CActMsg)
 DEFFN(CActivationmsg)
@@ -1183,6 +1183,7 @@ void CSaveableObject::initClassList() {
 	ADDFN(CTOWParrotNav, CGameObject);
 	ADDFN(CUpLighter, CDropTarget);
 	ADDFN(CUselessLever, CToggleButton);
+	ADDFN(CVolumeControl, CGameObject);
 	ADDFN(CWheelButton, CBackground);
 	ADDFN(CWheelHotSpot, CBackground);
 	ADDFN(CWheelSpin, CBackground);
@@ -1313,7 +1314,6 @@ void CSaveableObject::initClassList() {
 	ADDFN(CTextUp, CPetGraphic);
 	ADDFN(CToggleButton, CBackground);
 	ADDFN(CToggleSwitch, CGameObject);
-	ADDFN(CVolumeControl, CGameObject);
 	
 	ADDFN(CActMsg, CMessage);
 	ADDFN(CActivationmsg, CMessage);

@@ -24,12 +24,15 @@
 #define TITANIC_NODE_AUTO_SOUND_PLAYER_H
 
 #include "titanic/sound/auto_sound_player.h"
+#include "titanic/messages/messages.h"
 
 namespace Titanic {
 
-class CNodeAutoSoundPlayer : public CAutoSoundPlayer {
+class CNodeAutoSoundPlayer : public CAutoSoundPlayer, CEnterNodeMsgTarget {
 private:
 	int _fieldEC;
+protected:
+	virtual bool handleEvent(const CEnterNodeMsg &msg);
 public:
 	CLASSDEF
 	CNodeAutoSoundPlayer() : CAutoSoundPlayer(), _fieldEC(1) {}

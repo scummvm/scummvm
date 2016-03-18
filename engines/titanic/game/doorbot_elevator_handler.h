@@ -24,13 +24,16 @@
 #define TITANIC_DOORBOT_ELEVATOR_HANDLER_H
 
 #include "titanic/core/game_object.h"
+#include "titanic/messages/messages.h"
 
 namespace Titanic {
 
-class CDoorbotElevatorHandler : public CGameObject {
+class CDoorbotElevatorHandler : public CGameObject, CEnterNodeMsgTarget {
 private:
 	static int _v1;
 	int _value;
+protected:
+	virtual bool handleEvent(const CEnterNodeMsg &msg);
 public:
 	CLASSDEF
 

@@ -28,7 +28,7 @@
 
 namespace Titanic {
 
-class CPhonograph : public CMusicPlayer, CEnterRoomMsgTarget {
+class CPhonograph : public CMusicPlayer {
 protected:
 	CString _string2;
 	int _fieldE0;

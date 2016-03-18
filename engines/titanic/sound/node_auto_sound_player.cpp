@@ -36,4 +36,9 @@ void CNodeAutoSoundPlayer::load(SimpleFile *file) {
 	CAutoSoundPlayer::load(file);
 }
 
+bool CNodeAutoSoundPlayer::handleEvent(const CEnterNodeMsg &msg) {
+	warning("CNodeAutoSoundPlayer::handleEvent");
+	return true;
+}
+
 } // End of namespace Titanic

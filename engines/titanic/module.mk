@@ -208,6 +208,7 @@ MODULE_OBJS := \
 	game/titania_still_control.o \
 	game/up_lighter.o \
 	game/useless_lever.o \
+	game/volume_control.o \
 	game/wheel_button.o \
 	game/wheel_hotspot.o \
 	game/wheel_spin.o \
@@ -328,7 +329,6 @@ MODULE_OBJS := \
 	gfx/text_up.o \
 	gfx/toggle_button.o \
 	gfx/toggle_switch.o \
-	gfx/volume_control.o \
 	messages/auto_sound_event.o \
 	messages/bilge_auto_sound_event.o \
 	messages/bilge_dispensor_event.o \

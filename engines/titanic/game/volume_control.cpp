@@ -20,33 +20,34 @@
  *
  */
 
-#ifndef TITANIC_VOLUME_CONTROL_H
-#define TITANIC_VOLUME_CONTROL_H
-
-#include "titanic/core/game_object.h"
+#include "titanic/game/volume_control.h"
 
 namespace Titanic {
 
-class CVolumeControl : public CGameObject {
-private:
-	int _fieldBC;
-	CString _string1;
-	int _fieldCC;
-public:
-	CLASSDEF
-	CVolumeControl();
+CVolumeControl::CVolumeControl() : CGameObject() {
+}
 
-	/**
-	 * Save the data for the class to file
-	 */
-	virtual void save(SimpleFile *file, int indent) const;
+void CVolumeControl::save(SimpleFile *file, int indent) const {
+	file->writeNumberLine(1, indent);
+	file->writeNumberLine(_fieldBC, indent);
+	file->writeQuotedLine(_string1, indent);
+	file->writeNumberLine(_fieldCC, indent);
 
-	/**
-	 * Load the data for the class from file
-	 */
-	virtual void load(SimpleFile *file);
-};
+	CGameObject::save(file, indent);
+}
+
+void CVolumeControl::load(SimpleFile *file) {
+	file->readNumber();
+	_fieldBC = file->readNumber();
+	_string1 = file->readString();
+	_fieldCC = file->readNumber();
+
+	CGameObject::load(file);
+}
+
+bool CVolumeControl::handleEvent(const CEnterNodeMsg &msg) {
+	warning("CVolumeControl::handleEvent");
+	return true;
+}
 
 } // End of namespace Titanic
-
-#endif /* TITANIC_VOLUME_CONTROL_H */

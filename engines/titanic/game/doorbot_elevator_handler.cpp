@@ -40,4 +40,9 @@ void CDoorbotElevatorHandler::load(SimpleFile *file) {
 	CGameObject::load(file);
 }
 
+bool CDoorbotElevatorHandler::handleEvent(const CEnterNodeMsg &msg) {
+	warning("CDoorbotElevatorHandler::handleEvent");
+	return true;
+}
+
 } // End of namespace Titanic

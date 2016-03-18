@@ -28,7 +28,7 @@
 
 namespace Titanic {
 
-class CLiftindicator : public CLift, CEnterRoomMsgTarget {
+class CLiftindicator : public CLift {
 private:
 	int _fieldFC;
 	Common::Point _pos2;
