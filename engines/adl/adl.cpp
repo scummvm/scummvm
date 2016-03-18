@@ -294,7 +294,7 @@ void AdlEngine::setupOpcodeTables() {
 	Opcode(o1_isItemInRoom);
 	// 0x04
 	OpcodeUnImpl();
-	Opcode(o1_isMovesGrEq);
+	Opcode(o1_isMovesGT);
 	Opcode(o1_isVarEq);
 	OpcodeUnImpl();
 	// 0x08
@@ -859,8 +859,8 @@ int AdlEngine::o1_isItemInRoom(ScriptEnv &e) {
 	return 2;
 }
 
-int AdlEngine::o1_isMovesGrEq(ScriptEnv &e) {
-	if (e.arg(1) > _state.moves)
+int AdlEngine::o1_isMovesGT(ScriptEnv &e) {
+	if (e.arg(1) >= _state.moves)
 		return -1;
 	return 1;
 }

@@ -210,7 +210,7 @@ void HiRes1Engine::initState() {
 	Common::File f;
 
 	_state.room = 1;
-	_state.moves = 0;
+	_state.moves = 1;
 	_state.isDark = false;
 
 	_state.vars.clear();

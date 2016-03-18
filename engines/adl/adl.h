@@ -145,7 +145,7 @@ struct State {
 	uint16 moves;
 	bool isDark;
 
-	State() : room(1), moves(0), isDark(false) { }
+	State() : room(1), moves(1), isDark(false) { }
 };
 
 typedef Common::List<Command> Commands;
@@ -178,7 +178,7 @@ protected:
 
 	// Opcodes
 	int o1_isItemInRoom(ScriptEnv &e);
-	int o1_isMovesGrEq(ScriptEnv &e);
+	int o1_isMovesGT(ScriptEnv &e);
 	int o1_isVarEq(ScriptEnv &e);
 	int o1_isCurPicEq(ScriptEnv &e);
 	int o1_isItemPicEq(ScriptEnv &e);

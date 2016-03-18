@@ -51,7 +51,7 @@ void AdlEngine_v2::setupOpcodeTables() {
 	Opcode(o2_isItemInRoom);
 	// 0x04
 	Opcode(o2_isNounNotInRoom);
-	Opcode(o1_isMovesGrEq);
+	Opcode(o1_isMovesGT);
 	Opcode(o1_isVarEq);
 	OpcodeUnImpl();
 	// 0x08
