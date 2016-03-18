@@ -28,11 +28,15 @@
 #define IDI_CUR_ROOM 0xfc
 #define IDI_VOID_ROOM 0xfd
 
+namespace Common{
+class RandomSource;
+}
+
 namespace Adl {
 
 class AdlEngine_v2 : public AdlEngine {
 public:
-	virtual ~AdlEngine_v2() { }
+	virtual ~AdlEngine_v2();
 
 protected:
 	AdlEngine_v2(OSystem *syst, const AdlGameDescription *gd);
@@ -40,10 +44,14 @@ protected:
 	virtual void setupOpcodeTables();
 
 	int o2_isFirstTime(ScriptEnv &e);
+	int o2_isRandomGT(ScriptEnv &e);
 	int o2_isItemInRoom(ScriptEnv &e);
 	int o2_isNounNotInRoom(ScriptEnv &e);
 
 	int o2_moveItem(ScriptEnv &e);
+
+private:
+	Common::RandomSource *_random;
 };
 
 } // End of namespace Adl

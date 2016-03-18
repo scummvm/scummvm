@@ -20,12 +20,19 @@
  *
  */
 
+#include "common/random.h"
+
 #include "adl/adl_v2.h"
 
 namespace Adl {
 
+AdlEngine_v2::~AdlEngine_v2() {
+	delete _random;
+}
+
 AdlEngine_v2::AdlEngine_v2(OSystem *syst, const AdlGameDescription *gd) :
 		AdlEngine(syst, gd) {
+	_random = new Common::RandomSource("adl");
 }
 
 typedef Common::Functor1Mem<ScriptEnv &, int, AdlEngine_v2> OpcodeV2;
@@ -39,8 +46,8 @@ void AdlEngine_v2::setupOpcodeTables() {
 	SetOpcodeTable(_condOpcodes);
 	// 0x00
 	OpcodeUnImpl();
-	OpcodeUnImpl();
-	OpcodeUnImpl();
+	Opcode(o2_isFirstTime);
+	Opcode(o2_isRandomGT);
 	Opcode(o2_isItemInRoom);
 	// 0x04
 	Opcode(o2_isNounNotInRoom);
@@ -102,6 +109,15 @@ int AdlEngine_v2::o2_isFirstTime(ScriptEnv &e) {
 		return -1;
 
 	return 0;
+}
+
+int AdlEngine_v2::o2_isRandomGT(ScriptEnv &e) {
+	byte rnd = _random->getRandomNumber(255);
+
+	if (e.arg(1) >= rnd)
+		return -1;
+
+	return 1;
 }
 
 int AdlEngine_v2::o2_isItemInRoom(ScriptEnv &e) {
