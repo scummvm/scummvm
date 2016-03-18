@@ -647,13 +647,11 @@ void GnapEngine::scene52_shipExplode() {
 }
 
 int GnapEngine::scene52_checkAlienRow(int rowNum) {
-
-	int v4 = 0;
-
 	for (int i = 0; i < 5; ++i)
 		if (_s52_items[rowNum][i] >= 0)
 			return 0;
 
+	int v4 = 0;
 	for (int j = 0; j < 5; ++j)
 		if (_s52_items[rowNum][j] == -2) {
 			_gameSys->removeSequence(_s52_alienRowKind[rowNum], j + 256, true);
@@ -785,9 +783,9 @@ void GnapEngine::scene52_initAnims() {
 		_gameSys->setAnimation(0, 0, k + 9);
 }
 
-void GnapEngine::scene52_drawScore(int a1) {
+void GnapEngine::scene52_drawScore(int score) {
 	char str[4];
-	sprintf(str, "%03d", a1);
+	sprintf(str, "%03d", score);
 	_gameSys->fillSurface(0, 420, 80, 48, 30, 0, 0, 0);
 	_gameSys->drawTextToSurface(0, 420, 80, 255, 255, 255, str);
 }

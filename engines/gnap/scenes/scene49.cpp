@@ -140,9 +140,9 @@ void GnapEngine::scene49_checkObstacles() {
 
 }
 
-void GnapEngine::scene49_updateObstacle(int i) {
+void GnapEngine::scene49_updateObstacle(int id) {
 
-	Scene49Obstacle &obstacle = _s49_obstacles[i];
+	Scene49Obstacle &obstacle = _s49_obstacles[id];
 	
 	obstacle.currId = obstacle.prevId;
 	
@@ -167,7 +167,7 @@ void GnapEngine::scene49_updateObstacle(int i) {
 	if (obstacle.currSequenceId == obstacle.closerSequenceId) {
 		if (_s49_truckLaneNum == obstacle.laneNum) {
 			if (obstacle.splashSequenceId) {
-				_gameSys->setAnimation(obstacle.collisionSequenceId, obstacle.prevId, i + 2);
+				_gameSys->setAnimation(obstacle.collisionSequenceId, obstacle.prevId, id + 2);
 				_gameSys->insertSequence(obstacle.collisionSequenceId, obstacle.prevId,
 					obstacle.currSequenceId, obstacle.currId,
 					kSeqSyncWait, 0, 0, -50);
@@ -177,14 +177,14 @@ void GnapEngine::scene49_updateObstacle(int i) {
 			} else if ((obstacle.laneNum == 1 && _s49_truckSequenceId == 0xB0) ||
 				(obstacle.laneNum == 2 && (_s49_truckSequenceId == 0xB1 || _s49_truckSequenceId == 0xB2)) ||
 				(obstacle.laneNum == 3 && _s49_truckSequenceId == 0xB3)) {
-				_gameSys->setAnimation(obstacle.passedSequenceId, obstacle.prevId, i + 2);
+				_gameSys->setAnimation(obstacle.passedSequenceId, obstacle.prevId, id + 2);
 				_gameSys->insertSequence(obstacle.passedSequenceId, obstacle.prevId,
 					obstacle.currSequenceId, obstacle.currId,
 					kSeqSyncWait, 0, 0, -50);
 				obstacle.currSequenceId = obstacle.passedSequenceId;
 			} else {
 				_gameSys->setAnimation(obstacle.collisionSequenceId, 256, 0);
-				_gameSys->setAnimation(obstacle.passedSequenceId, obstacle.prevId, i + 2);
+				_gameSys->setAnimation(obstacle.passedSequenceId, obstacle.prevId, id + 2);
 				_gameSys->insertSequence(obstacle.passedSequenceId, obstacle.prevId,
 					obstacle.currSequenceId, obstacle.currId,
 					kSeqSyncWait, 0, 0, -50);
@@ -198,7 +198,7 @@ void GnapEngine::scene49_updateObstacle(int i) {
 				scene49_decreaseScore(30);
 			}
 		} else {
-			_gameSys->setAnimation(obstacle.passedSequenceId, obstacle.prevId, i + 2);
+			_gameSys->setAnimation(obstacle.passedSequenceId, obstacle.prevId, id + 2);
 			_gameSys->insertSequence(obstacle.passedSequenceId, obstacle.prevId,
 				obstacle.currSequenceId, obstacle.currId,
 				kSeqSyncWait, 0, 0, -50);
@@ -207,7 +207,7 @@ void GnapEngine::scene49_updateObstacle(int i) {
 	} else if (obstacle.currSequenceId == obstacle.passedSequenceId) {
 		if (_s49_truckLaneNum == obstacle.laneNum) {
 			if (obstacle.splashSequenceId) {
-				_gameSys->setAnimation(obstacle.collisionSequenceId, obstacle.prevId, i + 2);
+				_gameSys->setAnimation(obstacle.collisionSequenceId, obstacle.prevId, id + 2);
 				_gameSys->insertSequence(obstacle.collisionSequenceId, obstacle.prevId,
 					obstacle.currSequenceId, obstacle.currId,
 					kSeqSyncWait, 0, 0, -50);
@@ -216,15 +216,15 @@ void GnapEngine::scene49_updateObstacle(int i) {
 				scene49_increaseScore(30);
 			}
 		} else if (obstacle.splashSequenceId) {
-			_gameSys->setAnimation(obstacle.splashSequenceId, obstacle.prevId, i + 2);
+			_gameSys->setAnimation(obstacle.splashSequenceId, obstacle.prevId, id + 2);
 			_gameSys->insertSequence(obstacle.splashSequenceId, obstacle.prevId,
 				obstacle.currSequenceId, obstacle.currId,
 				kSeqSyncWait, 0, 0, -50);
 			obstacle.currSequenceId = obstacle.splashSequenceId;
 		}
 	} else {
-		_gameSys->setAnimation(0, 0, i + 2);
-		scene49_clearObstacle(i);
+		_gameSys->setAnimation(0, 0, id + 2);
+		scene49_clearObstacle(id);
 	}
 	
 }

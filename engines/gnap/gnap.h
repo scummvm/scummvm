@@ -841,7 +841,7 @@ public:
 	void scene40_updateAnimations();
 
 	// Scene 4x
-	void toyUfoSetStatus(int a1);
+	void toyUfoSetStatus(int flagNum);
 	int toyUfoGetSequenceId();
 	bool toyUfoCheckTimer();
 	void toyUfoFlyTo(int destX, int destY, int minX, int maxX, int minY, int maxY, int animationIndex);
@@ -917,7 +917,7 @@ public:
 	int scene49_init();
 	void scene49_updateHotspots();
 	void scene49_checkObstacles();
-	void scene49_updateObstacle(int i);
+	void scene49_updateObstacle(int id);
 	void scene49_increaseScore(int amount);
 	void scene49_decreaseScore(int amount);
 	void scene49_refreshScoreBar();
@@ -1057,7 +1057,7 @@ public:
 	int scene52_shipCannonHitShield(int cannonNum);
 	int scene52_shipCannonHitAlien();
 	void scene52_shipExplode();
-	int scene52_checkAlienRow(int a1);
+	int scene52_checkAlienRow(int rowNum);
 	void scene52_updateAlienRowXOfs();
 	void scene52_initAlienSize();
 	void scene52_playSound();
@@ -1066,7 +1066,7 @@ public:
 	void scene52_loseShip();
 	void scene52_initShields();
 	void scene52_initAnims();
-	void scene52_drawScore(int a1);
+	void scene52_drawScore(int score);
 	void scene52_run();
 	
 	// Scene 53

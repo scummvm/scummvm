@@ -2194,12 +2194,12 @@ int GnapEngine::scene00_init() {
 	return 0x37C;
 }
 
-void GnapEngine::toyUfoSetStatus(int a1) {
+void GnapEngine::toyUfoSetStatus(int flagNum) {
 	clearFlag(16);
 	clearFlag(17);
 	clearFlag(18);
 	clearFlag(19);
-	setFlag(a1);
+	setFlag(flagNum);
 }
 
 int GnapEngine::toyUfoGetSequenceId() {
