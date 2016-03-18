@@ -47,6 +47,7 @@ protected:
 	int o2_isRandomGT(ScriptEnv &e);
 	int o2_isItemInRoom(ScriptEnv &e);
 	int o2_isNounNotInRoom(ScriptEnv &e);
+	int o2_isCarryingSomething(ScriptEnv &e);
 
 	int o2_moveItem(ScriptEnv &e);
 

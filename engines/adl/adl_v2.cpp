@@ -53,7 +53,7 @@ void AdlEngine_v2::setupOpcodeTables() {
 	Opcode(o2_isNounNotInRoom);
 	Opcode(o1_isMovesGT);
 	Opcode(o1_isVarEQ);
-	OpcodeUnImpl();
+	Opcode(o2_isCarryingSomething);
 	// 0x08
 	OpcodeUnImpl();
 	Opcode(o1_isCurPicEQ);
@@ -145,6 +145,15 @@ int AdlEngine_v2::o2_isNounNotInRoom(ScriptEnv &e) {
 			return -1;
 
 	return 1;
+}
+
+int AdlEngine_v2::o2_isCarryingSomething(ScriptEnv &e) {
+	Common::Array<Item>::const_iterator item;
+
+	for (item = _state.items.begin(); item != _state.items.end(); ++item)
+		if (item->room == IDI_NONE)
+			return 0;
+	return -1;
 }
 
 int AdlEngine_v2::o2_moveItem(ScriptEnv &e) {
