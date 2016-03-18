@@ -184,6 +184,7 @@ void GnapEngine::scene13_run() {
 					if (_gnapX == 5 && _gnapY == 5) {
 						_s13_backToiletCtr = MIN(5, _s13_backToiletCtr + 1);
 						_gameSys->setAnimation(_s13_backToiletCtr + 0xA3, _gnapId, 0);
+						// CHECKME: Check the value of the flag
 						_gameSys->insertSequence(_s13_backToiletCtr + 0xA3, _gnapId,
 							makeRid(_gnapSequenceDatNum, _gnapSequenceId), _gnapId,
 							9, 0, 0, 0);

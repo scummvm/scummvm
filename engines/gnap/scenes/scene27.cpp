@@ -353,7 +353,7 @@ void GnapEngine::scene27_updateAnimations() {
 			break;
 		case kASTryEnterClownTent:
 			_s27_nextJanitorSequenceId = 0xD1;
-			_gameSys->insertSequence(0xD1, 39, _s27_currJanitorSequenceId, 39, 32, 0, 0, 0);
+			_gameSys->insertSequence(0xD1, 39, _s27_currJanitorSequenceId, 39, kSeqSyncExists, 0, 0, 0);
 			_gameSys->setAnimation(_s27_nextJanitorSequenceId, 39, 3);
 			_gameSys->setAnimation(_s27_nextJanitorSequenceId, 39, 0);
 			_s27_currJanitorSequenceId = _s27_nextJanitorSequenceId;

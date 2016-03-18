@@ -352,7 +352,7 @@ void GnapEngine::scene25_updateAnimations() {
 			_s25_nextTicketVendorSequenceId = 0x5E;
 			_gameSys->setAnimation(0x5E, 39, 0);
 			_gameSys->setAnimation(_s25_nextTicketVendorSequenceId, 39, 3);
-			_gameSys->insertSequence(_s25_nextTicketVendorSequenceId, 39, _s25_currTicketVendorSequenceId, 39, 32, 0, 0, 0);
+			_gameSys->insertSequence(_s25_nextTicketVendorSequenceId, 39, _s25_currTicketVendorSequenceId, 39, kSeqSyncExists, 0, 0, 0);
 			_gameSys->insertSequence(0x60, 2, 0, 0, kSeqNone, 0, 0, 0);
 			_s25_currTicketVendorSequenceId = _s25_nextTicketVendorSequenceId;
 			_s25_nextTicketVendorSequenceId = -1;

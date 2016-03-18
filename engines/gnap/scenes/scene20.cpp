@@ -551,8 +551,8 @@ void GnapEngine::scene20_updateAnimations() {
 		case kASTalkStonerGuyNoJoint:
 			_gameSys->setAnimation(0x170, 21, 2);
 			_gameSys->setAnimation(0x17B, 20, 3);
-			_gameSys->insertSequence(0x17B, 20, _s20_currGroceryStoreGuySequenceId, 20, 32, 0, 0, 0);
-			_gameSys->insertSequence(0x170, 21, _s20_currStonerGuySequenceId, 21, 32, 0, 0, 0);
+			_gameSys->insertSequence(0x17B, 20, _s20_currGroceryStoreGuySequenceId, 20, kSeqSyncExists, 0, 0, 0);
+			_gameSys->insertSequence(0x170, 21, _s20_currStonerGuySequenceId, 21, kSeqSyncExists, 0, 0, 0);
 			stopSound(0x1A1);
 			scene20_stopSounds();
 			_s20_currGroceryStoreGuySequenceId = 0x17B;
@@ -565,8 +565,8 @@ void GnapEngine::scene20_updateAnimations() {
 		case kASTalkStonerGuyHasJoint:
 			_gameSys->setAnimation(0x168, 21, 2);
 			_gameSys->setAnimation(379, 20, 3);
-			_gameSys->insertSequence(0x17B, 20, _s20_currGroceryStoreGuySequenceId, 20, 32, 0, 0, 0);
-			_gameSys->insertSequence(0x170, 21, _s20_currStonerGuySequenceId, 21, 32, 0, 0, 0);
+			_gameSys->insertSequence(0x17B, 20, _s20_currGroceryStoreGuySequenceId, 20, kSeqSyncExists, 0, 0, 0);
+			_gameSys->insertSequence(0x170, 21, _s20_currStonerGuySequenceId, 21, kSeqSyncExists, 0, 0, 0);
 			_gameSys->insertSequence(0x168, 21, 0x170, 21, kSeqSyncWait, 0, 0, 0);
 			stopSound(0x1A1);
 			scene20_stopSounds();
@@ -589,8 +589,8 @@ void GnapEngine::scene20_updateAnimations() {
 		case kASTalkGroceryStoreGuy:
 			_gameSys->setAnimation(0x170, 21, 2);
 			_gameSys->setAnimation(0x17B, 20, 3);
-			_gameSys->insertSequence(0x17B, 20, _s20_currGroceryStoreGuySequenceId, 20, 32, 0, 0, 0);
-			_gameSys->insertSequence(0x170, 21, _s20_currStonerGuySequenceId, 21, 32, 0, 0, 0);
+			_gameSys->insertSequence(0x17B, 20, _s20_currGroceryStoreGuySequenceId, 20, kSeqSyncExists, 0, 0, 0);
+			_gameSys->insertSequence(0x170, 21, _s20_currStonerGuySequenceId, 21, kSeqSyncExists, 0, 0, 0);
 			stopSound(0x1A1);
 			scene20_stopSounds();
 			_s20_currGroceryStoreGuySequenceId = 0x17B;
@@ -606,8 +606,8 @@ void GnapEngine::scene20_updateAnimations() {
 		case kASGrabGroceryStoreGuy:
 			_gameSys->setAnimation(0x170, 21, 2);
 			_gameSys->setAnimation(0x17B, 20, 3);
-			_gameSys->insertSequence(0x170, 21, _s20_currStonerGuySequenceId, 21, 32, 0, 0, 0);
-			_gameSys->insertSequence(0x17B, 20, _s20_currGroceryStoreGuySequenceId, 20, 32, 0, 0, 0);
+			_gameSys->insertSequence(0x170, 21, _s20_currStonerGuySequenceId, 21, kSeqSyncExists, 0, 0, 0);
+			_gameSys->insertSequence(0x17B, 20, _s20_currGroceryStoreGuySequenceId, 20, kSeqSyncExists, 0, 0, 0);
 			stopSound(0x1A1);
 			scene20_stopSounds();
 			_s20_currGroceryStoreGuySequenceId = 0x17B;
@@ -619,8 +619,8 @@ void GnapEngine::scene20_updateAnimations() {
 		case kASGrabGroceryStoreHat:
 			_gameSys->setAnimation(0x170, 21, 2);
 			_gameSys->setAnimation(0x17B, 20, 3);
-			_gameSys->insertSequence(0x17B, 20, _s20_currGroceryStoreGuySequenceId, 20, 32, 0, 0, 0);
-			_gameSys->insertSequence(0x170, 21, _s20_currStonerGuySequenceId, 21, 32, 0, 0, 0);
+			_gameSys->insertSequence(0x17B, 20, _s20_currGroceryStoreGuySequenceId, 20, kSeqSyncExists, 0, 0, 0);
+			_gameSys->insertSequence(0x170, 21, _s20_currStonerGuySequenceId, 21, kSeqSyncExists, 0, 0, 0);
 			stopSound(0x1A1);
 			scene20_stopSounds();
 			_s20_currGroceryStoreGuySequenceId = 0x17B;

@@ -281,7 +281,7 @@ void GnapEngine::scene50_updateAnimations() {
 			_gameSys->setAnimation(_s50_rightTongueNextSequenceId, _s50_rightTongueNextId, 5);
 			_gameSys->setAnimation(0xB9, _s50_leftTongueNextId, 6);
 			_gameSys->insertSequence(_s50_rightTongueNextSequenceId, _s50_rightTongueNextId, _s50_rightTongueSequenceId, _s50_rightTongueId, kSeqSyncWait, 0, 0, 0);
-			_gameSys->insertSequence(0xB9, _s50_leftTongueNextId, _s50_leftTongueSequenceId, _s50_leftTongueId, 32, 0, 0, 0);
+			_gameSys->insertSequence(0xB9, _s50_leftTongueNextId, _s50_leftTongueSequenceId, _s50_leftTongueId, kSeqSyncExists, 0, 0, 0);
 			_s50_rightTongueSequenceId = _s50_rightTongueNextSequenceId;
 			_s50_rightTongueNextSequenceId = -1;
 			_s50_leftTongueSequenceId = 0xB9;
@@ -323,7 +323,7 @@ void GnapEngine::scene50_updateAnimations() {
 			_gameSys->setAnimation(_s50_leftTongueNextSequenceId, _s50_leftTongueNextId, 6);
 			_gameSys->setAnimation(0xC1, _s50_rightTongueNextId, 5);
 			_gameSys->insertSequence(_s50_leftTongueNextSequenceId, _s50_leftTongueNextId, _s50_leftTongueSequenceId, _s50_leftTongueId, kSeqSyncWait, 0, 0, 0);
-			_gameSys->insertSequence(0xC1, _s50_rightTongueNextId, _s50_rightTongueSequenceId, _s50_rightTongueId, 32, 0, 0, 0);
+			_gameSys->insertSequence(0xC1, _s50_rightTongueNextId, _s50_rightTongueSequenceId, _s50_rightTongueId, kSeqSyncExists, 0, 0, 0);
 			_s50_leftTongueSequenceId = _s50_leftTongueNextSequenceId;
 			_s50_leftTongueNextSequenceId = -1;
 			_s50_rightTongueSequenceId = 0xC1;
@@ -344,7 +344,7 @@ void GnapEngine::scene50_updateAnimations() {
 			_gameSys->setAnimation(0xBB, _s50_rightTongueNextId, 5);
 			_gameSys->setAnimation(_s50_leftTongueNextSequenceId, _s50_leftTongueNextId, 6);
 			_gameSys->insertSequence(_s50_leftTongueNextSequenceId, _s50_leftTongueNextId, _s50_leftTongueSequenceId, _s50_leftTongueId, kSeqSyncWait, 0, 0, 0);
-			_gameSys->insertSequence(0xBB, _s50_rightTongueNextId, _s50_rightTongueSequenceId, _s50_rightTongueId, 32, 0, 0, 0);
+			_gameSys->insertSequence(0xBB, _s50_rightTongueNextId, _s50_rightTongueSequenceId, _s50_rightTongueId, kSeqSyncExists, 0, 0, 0);
 			_s50_rightTongueSequenceId = 0xBB;
 			_s50_rightTongueId = _s50_rightTongueNextId;
 			_s50_rightTongueNextSequenceId = -1;

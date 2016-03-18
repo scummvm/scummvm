@@ -406,7 +406,7 @@ void GnapEngine::scene03_updateAnimations() {
 				gameUpdateTick();
 			removeFullScreenSprite();
 			_gameSys->setAnimation(0x1BA, 99, 1);
-			_gameSys->insertSequence(0x1BA, 99, _beaverSequenceId | (_beaverSequenceDatNum << 16), 99, 32, 0, 0, 0);
+			_gameSys->insertSequence(0x1BA, 99, _beaverSequenceId | (_beaverSequenceDatNum << 16), 99, kSeqSyncExists, 0, 0, 0);
 			_beaverSequenceDatNum = 0;
 			_beaverSequenceId = 0x1BA;
 			_gnapActionStatus = -1;
@@ -415,7 +415,7 @@ void GnapEngine::scene03_updateAnimations() {
 			break;
 		case kASHypnotizeScaredPlat:
 			playGnapBrainPulsating(0, 0);
-			_gameSys->insertSequence(0x1BF, 99, _beaverSequenceId | (_beaverSequenceDatNum << 16), 99, 32, 0, 0, 0);
+			_gameSys->insertSequence(0x1BF, 99, _beaverSequenceId | (_beaverSequenceDatNum << 16), 99, kSeqSyncExists, 0, 0, 0);
 			_gameSys->setAnimation(0x1BF, 99, 1);
 			while (_gameSys->getAnimationStatus(1) != 2)
 				gameUpdateTick();

@@ -190,7 +190,7 @@ void GnapEngine::scene49_updateObstacle(int i) {
 					kSeqSyncWait, 0, 0, -50);
 				_gameSys->insertSequence(obstacle.collisionSequenceId, 256,
 					_s49_truckSequenceId, _s49_truckId,
-					32, 0, 0, -50);
+					kSeqSyncExists, 0, 0, -50);
 				_s49_truckSequenceId = obstacle.collisionSequenceId;
 				_s49_truckId = 256;
 				obstacle.currSequenceId = obstacle.passedSequenceId;
@@ -460,7 +460,7 @@ void GnapEngine::scene49_run() {
 				int steerSequenceId = (_s49_truckLaneNum == 3) ? 0xB3 : 0xB1;
 				if (_s49_truckSequenceId == 0xAE || _s49_truckSequenceId == 0xAF) {
 					_gameSys->setAnimation(steerSequenceId, 256, 0);
-					_gameSys->insertSequence(steerSequenceId, 256, _s49_truckSequenceId, _s49_truckId, 32, 0, 0, -50);
+					_gameSys->insertSequence(steerSequenceId, 256, _s49_truckSequenceId, _s49_truckId, kSeqSyncExists, 0, 0, -50);
 					_s49_truckSequenceId = steerSequenceId;
 					_s49_truckId = 256;
 				}
@@ -478,7 +478,7 @@ void GnapEngine::scene49_run() {
 				int steerSequenceId = (_s49_truckLaneNum == 1) ? 0xB0 : 0xB2;
 				if (_s49_truckSequenceId == 0xAD || _s49_truckSequenceId == 0xAE) {
 					_gameSys->setAnimation(steerSequenceId, 256, 0);
-					_gameSys->insertSequence(steerSequenceId, 256, _s49_truckSequenceId, _s49_truckId, 32, 0, 0, -50);
+					_gameSys->insertSequence(steerSequenceId, 256, _s49_truckSequenceId, _s49_truckId, kSeqSyncExists, 0, 0, -50);
 					_s49_truckSequenceId = steerSequenceId;
 					_s49_truckId = 256;
 				}

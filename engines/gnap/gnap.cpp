@@ -165,7 +165,7 @@ Common::Error GnapEngine::run() {
 	
 	_gameSys->setBackgroundSurface(testBack, 0, 500, 1, 1000);
 
-	_gameSys->insertSequence(0x11b, 100, -1, -1, 0, 0, 0, 0);
+	_gameSys->insertSequence(0x11b, 100, -1, -1, kSeqNone, 0, 0, 0);
 
 	CursorMan.showMouse(true);
 	
@@ -1559,7 +1559,7 @@ void GnapEngine::gnapIdle() {
 		_gnapSequenceId == 0x831 || _gnapSequenceId == 0x89A)) {
 		_gameSys->insertSequence(getGnapSequenceId(gskIdle, 0, 0) | 0x10000, _gnapId,
 			makeRid(_gnapSequenceDatNum, _gnapSequenceId), _gnapId,
-			32, 0, 75 * _gnapX - _gnapGridX, 48 * _gnapY - _gnapGridY);
+			kSeqSyncExists, 0, 75 * _gnapX - _gnapGridX, 48 * _gnapY - _gnapGridY);
 		_gnapSequenceId = getGnapSequenceId(gskIdle, 0, 0);
 		_gnapSequenceDatNum = 1;
 	}
@@ -1570,7 +1570,7 @@ void GnapEngine::gnapActionIdle(int sequenceId) {
 		ridToEntryIndex(sequenceId) == _gnapSequenceId) {
 		_gameSys->insertSequence(getGnapSequenceId(gskIdle, 0, 0) | 0x10000, _gnapId,
 			makeRid(_gnapSequenceDatNum, _gnapSequenceId), _gnapId,
-			32, 0, 75 * _gnapX - _gnapGridX, 48 * _gnapY - _gnapGridY);
+			kSeqSyncExists, 0, 75 * _gnapX - _gnapGridX, 48 * _gnapY - _gnapGridY);
 		_gnapSequenceId = getGnapSequenceId(gskIdle, 0, 0);
 		_gnapSequenceDatNum = 1;
 	}
@@ -1580,6 +1580,7 @@ void GnapEngine::playGnapSequence(int sequenceId) {
 	_timers[2] = getRandom(30) + 20;
 	_timers[3] = 300;
 	gnapIdle();
+	// CHECKME: Check the value of the flag
 	_gameSys->insertSequence(sequenceId, _gnapId,
 		makeRid(_gnapSequenceDatNum, _gnapSequenceId), _gnapId,
 		9, 0, 75 * _gnapX - _gnapGridX, 48 * _gnapY - _gnapGridY);
@@ -1668,13 +1669,13 @@ void GnapEngine::updateGnapIdleSequence() {
 			if (_gnapIdleFacing == 1) {
 				_gameSys->insertSequence(0x107BD, _gnapId,
 					makeRid(_gnapSequenceDatNum, _gnapSequenceId), _gnapId,
-					8, 0, 75 * _gnapX - _gnapGridX, 48 * _gnapY - _gnapGridY);
+					kSeqSyncWait, 0, 75 * _gnapX - _gnapGridX, 48 * _gnapY - _gnapGridY);
 				_gnapSequenceId = 0x7BD;
 				_gnapSequenceDatNum = 1;
 			} else if (_gnapIdleFacing == 3) {
 				_gameSys->insertSequence(0x107BE, _gnapId,
 					makeRid(_gnapSequenceDatNum, _gnapSequenceId), _gnapId,
-					8, 0, 75 * _gnapX - _gnapGridX, 48 * _gnapY - _gnapGridY);
+					kSeqSyncWait, 0, 75 * _gnapX - _gnapGridX, 48 * _gnapY - _gnapGridY);
 				_gnapSequenceId = 0x7BE;
 				_gnapSequenceDatNum = 1;
 			}
@@ -1702,13 +1703,13 @@ void GnapEngine::updateGnapIdleSequence2() {
 			if (_gnapIdleFacing == 1) {
 				_gameSys->insertSequence(0x107BD, _gnapId,
 					makeRid(_gnapSequenceDatNum, _gnapSequenceId), _gnapId,
-					8, 0, 75 * _gnapX - _gnapGridX, 48 * _gnapY - _gnapGridY);
+					kSeqSyncWait, 0, 75 * _gnapX - _gnapGridX, 48 * _gnapY - _gnapGridY);
 				_gnapSequenceId = 0x7BD;
 				_gnapSequenceDatNum = 1;
 			} else if (_gnapIdleFacing == 3) {
 				_gameSys->insertSequence(0x107BE, _gnapId,
 					makeRid(_gnapSequenceDatNum, _gnapSequenceId), _gnapId,
-					8, 0, 75 * _gnapX - _gnapGridX, 48 * _gnapY - _gnapGridY);
+					kSeqSyncWait, 0, 75 * _gnapX - _gnapGridX, 48 * _gnapY - _gnapGridY);
 				_gnapSequenceId = 0x7BE;
 				_gnapSequenceDatNum = 1;
 			}
@@ -1752,7 +1753,7 @@ void GnapEngine::initGnapPos(int gridX, int gridY, int facing) {
 	_gnapSequenceDatNum = 1;
 	_gameSys->insertSequence(makeRid(1, _gnapSequenceId), 20 * _gnapY,
 		0, 0,
-		1, 0, 75 * _gnapX - _gnapGridX, 48 * _gnapY - _gnapGridY);
+		kSeqScale, 0, 75 * _gnapX - _gnapGridX, 48 * _gnapY - _gnapGridY);
 }
 
 void GnapEngine::gnapInitBrainPulseRndValue() {
@@ -1766,13 +1767,13 @@ void GnapEngine::gnapUseDeviceOnBeaver() {
 	if (_beaverFacing != 0) {
 		_gameSys->insertSequence(makeRid(1, 0x7D5), _beaverId,
 			makeRid(_beaverSequenceDatNum, _beaverSequenceId), _beaverId,
-			8, 0, 75 * _platX - _platGridX, 48 * _platY - _platGridY);
+			kSeqSyncWait, 0, 75 * _platX - _platGridX, 48 * _platY - _platGridY);
 		_beaverSequenceId = 0x7D5;
 		_beaverSequenceDatNum = 1;
 	} else {
 		_gameSys->insertSequence(makeRid(1, 0x7D4), _beaverId,
 			makeRid(_beaverSequenceDatNum, _beaverSequenceId), _beaverId,
-			8, 0, 75 * _platX - _platGridX, 48 * _platY - _platGridY);
+			kSeqSyncWait, 0, 75 * _platX - _platGridX, 48 * _platY - _platGridY);
 		_beaverSequenceId = 0x7D4;
 		_beaverSequenceDatNum = 1;
 	}
@@ -1780,7 +1781,7 @@ void GnapEngine::gnapUseDeviceOnBeaver() {
 	int newSequenceId = getGnapSequenceId(gskUseDevice, 0, 0);
 	_gameSys->insertSequence(makeRid(1, newSequenceId), _gnapId,
 		makeRid(_gnapSequenceDatNum, _gnapSequenceId), _gnapId,
-		8, 0, 75 * _gnapX - _gnapGridX, 48 * _gnapY - _gnapGridY);
+		kSeqSyncWait, 0, 75 * _gnapX - _gnapGridX, 48 * _gnapY - _gnapGridY);
 	_gnapSequenceId = newSequenceId;
 	_gnapSequenceDatNum = 1;
 
@@ -1838,12 +1839,12 @@ void GnapEngine::gnapKissPlatypus(int callback) {
 		_gameSys->setAnimation(0x10847, _gnapId, 0);
 		_gameSys->insertSequence(0x10847, _gnapId,
 			makeRid(_gnapSequenceDatNum, _gnapSequenceId), _gnapId,
-			8, 0, 15 * (5 * _gnapX - 20) - (21 - _gridMinX), 48 * (_gnapY - 6) - (146 - _gridMinY));
+			kSeqSyncWait, 0, 15 * (5 * _gnapX - 20) - (21 - _gridMinX), 48 * (_gnapY - 6) - (146 - _gridMinY));
 		_gnapSequenceDatNum = 1;
 		_gnapSequenceId = 0x847;
 		_gameSys->insertSequence(0x107CB, _beaverId,
 			makeRid(_beaverSequenceDatNum, _beaverSequenceId), _beaverId,
-			8, getSequenceTotalDuration(0x10847), 75 * _platX - _platGridX, 48 * _platY - _platGridY);
+			kSeqSyncWait, getSequenceTotalDuration(0x10847), 75 * _platX - _platGridX, 48 * _platY - _platGridY);
 		_beaverSequenceDatNum = 1;
 		_beaverSequenceId = 0x7CB;
 		_beaverFacing = 0;
@@ -1868,12 +1869,12 @@ void GnapEngine::gnapUseJointOnPlatypus() {
 		_gameSys->setAnimation(0x10876, _beaverId, 0);
 		_gameSys->insertSequence(0x10875, _gnapId,
 			makeRid(_gnapSequenceDatNum, _gnapSequenceId), _gnapId,
-			8, 0, 15 * (5 * _gnapX - 30), 48 * (_gnapY - 7));
+			kSeqSyncWait, 0, 15 * (5 * _gnapX - 30), 48 * (_gnapY - 7));
 		_gnapSequenceDatNum = 1;
 		_gnapSequenceId = 0x875;
 		_gameSys->insertSequence(0x10876, _beaverId,
 			_beaverSequenceId | (_beaverSequenceDatNum << 16), _beaverId,
-			8, 0, 15 * (5 * _platX - 25), 48 * (_platY - 7));
+			kSeqSyncWait, 0, 15 * (5 * _platX - 25), 48 * (_platY - 7));
 		_beaverSequenceDatNum = 1;
 		_beaverSequenceId = 0x876;
 		_beaverFacing = 0;
@@ -1927,6 +1928,7 @@ int GnapEngine::getBeaverSequenceId(int kind, int gridX, int gridY) {
 }
 
 void GnapEngine::playBeaverSequence(int sequenceId) {
+	// CHECKME: Check the value of the flag
 	_gameSys->insertSequence(sequenceId, _beaverId,
 		makeRid(_beaverSequenceDatNum, _beaverSequenceId), _beaverId,
 		9, 0, 75 * _platX - _platGridX, 48 * _platY - _platGridY);
@@ -2020,7 +2022,7 @@ void GnapEngine::initBeaverPos(int gridX, int gridY, int facing) {
 	_beaverSequenceDatNum = 1;
 	_gameSys->insertSequence(makeRid(1, _beaverSequenceId), 20 * _platY,
 		0, 0,
-		1, 0, 75 * _platX - _platGridX, 48 * _platY - _platGridY);
+		kSeqScale, 0, 75 * _platX - _platGridX, 48 * _platY - _platGridY);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -2166,7 +2168,7 @@ void GnapEngine::playSequences(int fullScreenSpriteId, int sequenceId1, int sequ
 	_gameSys->setAnimation(sequenceId2, _gnapId, 0);
 	_gameSys->insertSequence(sequenceId2, _gnapId,
 		makeRid(_gnapSequenceDatNum, _gnapSequenceId), _gnapId,
-		8, 0, 15 * (5 * _gnapX - 25), 48 * (_gnapY - 8));
+		kSeqSyncWait, 0, 15 * (5 * _gnapX - 25), 48 * (_gnapY - 8));
 	_gnapSequenceId = sequenceId2;
 	_gnapSequenceDatNum = 0;
 	while (_gameSys->getAnimationStatus(0) != 2)
@@ -2180,7 +2182,7 @@ void GnapEngine::playSequences(int fullScreenSpriteId, int sequenceId1, int sequ
 	_gameSys->setAnimation(sequenceId3, _gnapId, 0);
 	_gameSys->insertSequence(sequenceId3, _gnapId,
 		makeRid(_gnapSequenceDatNum, _gnapSequenceId), _gnapId,
-		8, 0, 15 * (5 * _gnapX - 25), 48 * (_gnapY - 8));
+		kSeqSyncWait, 0, 15 * (5 * _gnapX - 25), 48 * (_gnapY - 8));
 	removeFullScreenSprite();
 	showCursor();
 	_gnapSequenceId = sequenceId3;
@@ -2303,13 +2305,13 @@ void GnapEngine::toyUfoFlyTo(int destX, int destY, int minX, int maxX, int minY,
 		v16[0].id = 0;
 		_gameSys->insertSequence(seqId | 0x10000, 0,
 			_toyUfoSequenceId | 0x10000, _toyUfoId,
-			8, 0, v16[0].gridX1 - 365, v16[0].gridY1 - 128);
+			kSeqSyncWait, 0, v16[0].gridX1 - 365, v16[0].gridY1 - 128);
 		for (i = 1; i < v21; ++i) {
 			v16[i].sequenceId = seqId + (i % 8);
 			v16[i].id = i;
 			_gameSys->insertSequence(v16[i].sequenceId | 0x10000, v16[i].id,
 				v16[i - 1].sequenceId | 0x10000, v16[i - 1].id,
-				8, 0,
+				kSeqSyncWait, 0,
 				v16[i].gridX1 - 365, v16[i].gridY1 - 128);
 		}
 	

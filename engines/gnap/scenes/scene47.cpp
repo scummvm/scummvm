@@ -123,13 +123,13 @@ void GnapEngine::scene47_initCutscene6() {
 }
 
 void GnapEngine::scene47_initCutscene7() {
-	int v1 = 4, v0, v4, v2, v3;
+	int v0, v4, v2, v3;
 	
 	_s99_dword_47F370[0] = 0x316;
 	_s99_dword_47F370[1] = 0x31A;
 	_s99_dword_47F370[2] = 0x314;
 	_s99_dword_47F370[3] = 0x31B;
-	v1 = 4;
+	int v1 = 4;
 	if (!isFlag(3)) {
 		_s99_dword_47F370[4] = 0x31C;
 		v1 = 5;

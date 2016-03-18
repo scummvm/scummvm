@@ -236,7 +236,6 @@ int GnapEngine::scene51_checkCollision(int sequenceId) {
 	bool jumpingLeft = false, jumpingRight = false;
 	int v6 = 0;
 	int v2 = 0;
-	int v5 = 0;
 	int v8, v4;
 	int result = 0;
 
@@ -260,18 +259,19 @@ int GnapEngine::scene51_checkCollision(int sequenceId) {
 	}
 
 	if (jumpingRight || jumpingLeft) {
+		int v5 = 0;
 		int i;
 		for (i = 0; i < 6; ++i) {
 			if (_s51_items[i].isCollision) {
 				if (jumpingRight && _s51_items[i].x2 > v8 && _s51_items[i].x2 < v4) {
 					v5 = v8 - 359;
-					if (v8 == 359)
+					if (v5 == 0)
 						v5 = 1;
 					_s51_platypusNextSequenceId = 0xB6;
 					break;
 				} else if (jumpingLeft && _s51_items[i].x2 < v4 && _s51_items[i].x2 > v8) {
 					v5 = v8 - 344;
-					if (v8 == 344)
+					if (v5 == 0)
 						v5 = 1;
 					_s51_platypusNextSequenceId = 0xB7;
 					break;
@@ -294,7 +294,6 @@ int GnapEngine::scene51_checkCollision(int sequenceId) {
 void GnapEngine::scene51_updateItemAnimation(Scene51Item *item, int index) {
 
 	switch (item->currSequenceId) {
-
 	case 0xBD:
 	case 0xC0:
 	case 0xC1:

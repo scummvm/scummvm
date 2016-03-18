@@ -498,7 +498,7 @@ void GnapEngine::scene02_updateAnimations() {
 			break;
 		case kASUseTwigWithChicken:
 			playGnapShowItem(5, 0, 0);
-			_gameSys->insertSequence(0x155, 179, _s02_currChickenSequenceId, 179, 32, 0, 0, 0);
+			_gameSys->insertSequence(0x155, 179, _s02_currChickenSequenceId, 179, kSeqSyncExists, 0, 0, 0);
 			_s02_currChickenSequenceId = 0x155;
 			_s02_nextChickenSequenceId = -1;
 			_gnapActionStatus = -1;

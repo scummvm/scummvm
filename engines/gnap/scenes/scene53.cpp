@@ -110,11 +110,11 @@ void GnapEngine::scene53_runRandomCall() {
 		0x6A, 0x6B, 0x6C, 0x6D, 0x71
 	};
 
-	int index;
-
 	++_s53_callsMadeCtr;
 
 	if (_s53_callsMadeCtr <= 10) {
+		int index;
+
 		do {
 			index = scene53_getRandomCallIndex();
 		} while (!_s53_isGnapPhoning && (index == 0 || index == 3 || index == 4 || index == 11));
