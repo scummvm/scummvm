@@ -27,6 +27,7 @@
 
 namespace Titanic {
 
+class CViewItem;
 class CNodeItem;
 class CRoomItem;
 
@@ -60,6 +61,11 @@ public:
 	 * Compares the name of the item to a passed name
 	 */
 	virtual int compareTo(const CString &name, int maxLen) const;
+
+	/**
+	 * Find a parent node for the item
+	 */
+	virtual CViewItem *findView() const;
 
 	/**
 	 * Find a parent node for the item

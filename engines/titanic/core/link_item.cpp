@@ -21,10 +21,13 @@
  */
 
 #include "titanic/core/link_item.h"
+#include "titanic/core/node_item.h"
+#include "titanic/core/project_item.h"
+#include "titanic/core/view_item.h"
 
 namespace Titanic {
 
-void CLinkItemSub::clear() {
+void CLinkItemHotspot::clear() {
 	_field0 = 0;
 	_field4 = 0;
 	_field8 = 0;
@@ -34,12 +37,17 @@ void CLinkItemSub::clear() {
 /*------------------------------------------------------------------------*/
 
 CLinkItem::CLinkItem() : CNamedItem() {
-	_field24 = -1;
-	_field28 = -1;
-	_field2C = -1;
+	_roomNumber = -1;
+	_nodeNumber = -1;
+	_viewNumber = -1;
 	_field30 = 0;
 	_field34 = 1;
 	_name = "Link";
+}
+
+CString CLinkItem::formName() {
+	warning("TODO: CLinkItem::formName");
+	return "";
 }
 
 void CLinkItem::save(SimpleFile *file, int indent) const {
@@ -47,15 +55,15 @@ void CLinkItem::save(SimpleFile *file, int indent) const {
 	file->writeQuotedLine("L", indent);
 	file->writeNumberLine(_field34, indent + 1);
 	file->writeNumberLine(_field30, indent + 1);
-	file->writeNumberLine(_field24, indent + 1);
-	file->writeNumberLine(_field28, indent + 1);
-	file->writeNumberLine(_field2C, indent + 1);
+	file->writeNumberLine(_roomNumber, indent + 1);
+	file->writeNumberLine(_nodeNumber, indent + 1);
+	file->writeNumberLine(_viewNumber, indent + 1);
 
 	file->writeQuotedLine("Hotspot", indent + 1);
-	file->writeNumberLine(_sub._field0, indent + 2);
-	file->writeNumberLine(_sub._field4, indent + 2);
-	file->writeNumberLine(_sub._field8, indent + 2);
-	file->writeNumberLine(_sub._fieldC, indent + 2);
+	file->writeNumberLine(_hotspot._field0, indent + 2);
+	file->writeNumberLine(_hotspot._field4, indent + 2);
+	file->writeNumberLine(_hotspot._field8, indent + 2);
+	file->writeNumberLine(_hotspot._fieldC, indent + 2);
 
 	CNamedItem::save(file, indent);
 }
@@ -74,15 +82,15 @@ void CLinkItem::load(SimpleFile *file) {
 		// Deliberate fall-through
 
 	case 0:
-		_field24 = file->readNumber();
-		_field28 = file->readNumber();
-		_field2C = file->readNumber();
+		_roomNumber = file->readNumber();
+		_nodeNumber = file->readNumber();
+		_viewNumber = file->readNumber();
 
 		file->readBuffer();
-		_sub._field0 = file->readNumber();
-		_sub._field4 = file->readNumber();
-		_sub._field8 = file->readNumber();
-		_sub._fieldC = file->readNumber();
+		_hotspot._field0 = file->readNumber();
+		_hotspot._field4 = file->readNumber();
+		_hotspot._field8 = file->readNumber();
+		_hotspot._fieldC = file->readNumber();
 		break;
 
 	default:
@@ -107,6 +115,28 @@ void CLinkItem::load(SimpleFile *file) {
 			break;
 		}
 	}
+}
+
+void CLinkItem::setDestination(int roomNumber, int nodeNumber,
+		int viewNumber, int v) {
+	_roomNumber = roomNumber;
+	_nodeNumber = nodeNumber;
+	_viewNumber = viewNumber;
+	_field30 = v;
+
+	_name = formName();
+}
+
+CViewItem *CLinkItem::getDestView() const {
+	return getRoot()->findView(_roomNumber, _nodeNumber, _viewNumber);
+}
+
+CNodeItem *CLinkItem::getDestNode() const {
+	return getDestView()->findNode();
+}
+
+CRoomItem *CLinkItem::getDestRoom() const {
+	return getDestNode()->findRoom();
 }
 
 } // End of namespace Titanic

@@ -28,6 +28,7 @@
 #include "titanic/core/link_item.h"
 #include "titanic/core/named_item.h"
 #include "titanic/core/node_item.h"
+#include "titanic/core/project_item.h"
 #include "titanic/core/view_item.h"
 #include "titanic/core/room_item.h"
 
@@ -104,7 +105,7 @@ CGameManager *CTreeItem::getGameManager() const {
 	return _parent ? _parent->getGameManager() : nullptr;
 }
 
-CTreeItem *CTreeItem::getRoot() const {
+CProjectItem *CTreeItem::getRoot() const {
 	CTreeItem *parent = getParent();
 
 	if (parent) {
@@ -113,7 +114,7 @@ CTreeItem *CTreeItem::getRoot() const {
 		} while (parent->getParent());
 	}
 
-	return parent;
+	return dynamic_cast<CProjectItem *>(parent);
 }
 
 CTreeItem *CTreeItem::getLastSibling() {

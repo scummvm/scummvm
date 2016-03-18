@@ -40,7 +40,7 @@ public:
 	virtual void proc3();
 	virtual void proc4();
 
-	virtual void proc5(CLinkItemSub *linkItem);
+	virtual void proc5(CLinkItemHotspot *linkItem);
 
 	virtual int proc16();
 };

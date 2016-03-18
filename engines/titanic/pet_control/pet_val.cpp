@@ -41,7 +41,7 @@ void CPetVal::proc4() {
 	error("TODO");
 }
 
-void CPetVal::proc5(CLinkItemSub *linkItem) {
+void CPetVal::proc5(CLinkItemHotspot *linkItem) {
 	error("TODO");
 }
 

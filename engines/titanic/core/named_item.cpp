@@ -23,6 +23,7 @@
 #include "titanic/core/named_item.h"
 #include "titanic/core/node_item.h"
 #include "titanic/core/room_item.h"
+#include "titanic/core/view_item.h"
 
 namespace Titanic {
 
@@ -54,6 +55,16 @@ int CNamedItem::compareTo(const CString &name, int maxLen) const {
 	} else {
 		return getName().compareToIgnoreCase(name);
 	}
+}
+
+CViewItem *CNamedItem::findView() const {
+	for (CTreeItem *parent = getParent(); parent; parent = parent->getParent()) {
+		CViewItem *view = dynamic_cast<CViewItem *>(parent);
+		if (view)
+			return view;
+	}
+
+	error("Couldn't find parent view");
 }
 
 CNodeItem *CNamedItem::findNode() const {

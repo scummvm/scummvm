@@ -30,6 +30,7 @@ namespace Titanic {
 class CGameManager;
 class CDontSaveFileItem;
 class CNamedItem;
+class CProjectItem;
 
 class CTreeItem: public CMessageTarget {
 private:
@@ -124,9 +125,9 @@ public:
 	CTreeItem *getParent() const { return _parent; }
 
 	/**
-	 * Jumps up through the parents to find the sub-root item
+	 * Jumps up through the parents to find the root item
 	 */
-	CTreeItem *getRoot() const;
+	CProjectItem *getRoot() const;
 
 	/**
 	 * Get the next sibling

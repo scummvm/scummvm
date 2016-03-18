@@ -27,26 +27,36 @@
 
 namespace Titanic {
 
-class CLinkItemSub {
+class CViewItem;
+class CNodeItem;
+class CRoomItem;
+
+class CLinkItemHotspot {
 public:
 	int _field0;
 	int _field4;
 	int _field8;
 	int _fieldC;
 public:
-	CLinkItemSub() { clear(); }
+	CLinkItemHotspot() { clear(); }
 
 	void clear();
 };
 
 class CLinkItem : public CNamedItem {
+private:
+	/**
+	 * Returns a new name for the link item, based on the
+	 * current values for it's destination
+	 */
+	CString formName();
 protected:
-	int _field24;
-	int _field28;
-	int _field2C;
+	int _roomNumber;
+	int _nodeNumber;
+	int _viewNumber;
 	int _field30;
 	int _field34;
-	CLinkItemSub _sub;
+	CLinkItemHotspot _hotspot;
 public:
 	CLASSDEF
 	CLinkItem();
@@ -60,6 +70,27 @@ public:
 	 * Load the data for the class from file
 	 */
 	virtual void load(SimpleFile *file);
+
+	/**
+	 * Set the destination for the link item
+	 */
+	virtual void setDestination(int roomNumber, int nodeNumber,
+		int viewNumber, int v);
+
+	/**
+	 * Get the destination view for the link item
+	 */
+	virtual CViewItem *getDestView() const;
+
+	/**
+	 * Get the destination node for the link item
+	 */
+	virtual CNodeItem *getDestNode() const;
+
+	/**
+	 * Get the destination view for the link item
+	 */
+	virtual CRoomItem *getDestRoom() const;
 };
 
 } // End of namespace Titanic
