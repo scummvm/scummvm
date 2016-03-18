@@ -24,10 +24,11 @@
 #define TITANIC_LIFT_H
 
 #include "titanic/game/transport/transport.h"
+#include "titanic/messages/messages.h"
 
 namespace Titanic {
 
-class CLift : public CTransport {
+class CLift : public CTransport, CEnterRoomMsgTarget {
 private:
 	static int _v1;
 	static int _v2;
@@ -37,6 +38,8 @@ private:
 	static int _v6;
 
 	int _fieldF8;
+protected:
+	virtual bool handleEvent(const CEnterRoomMsg &msg);
 public:
 	CLASSDEF
 	CLift() : CTransport(), _fieldF8(1) {}

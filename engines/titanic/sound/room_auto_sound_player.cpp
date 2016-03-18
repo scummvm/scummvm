@@ -34,4 +34,9 @@ void CRoomAutoSoundPlayer::load(SimpleFile *file) {
 	CAutoSoundPlayer::load(file);
 }
 
+bool CRoomAutoSoundPlayer::handleEvent(const CEnterRoomMsg &msg) {
+	warning("CRoomAutoSoundPlayer::handleEvent");
+	return true;
+}
+
 } // End of namespace Titanic

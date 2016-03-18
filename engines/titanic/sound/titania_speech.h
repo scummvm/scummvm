@@ -24,12 +24,15 @@
 #define TITANIC_TITANIA_SPEECH_H
 
 #include "titanic/core/game_object.h"
+#include "titanic/messages/messages.h"
 
 namespace Titanic {
 
 class CTitaniaSpeech : public CGameObject {
-public:
+private:
 	int _value1, _value2;
+protected:
+	virtual bool handleEvent(const CEnterRoomMsg &msg);
 public:
 	CLASSDEF
 	CTitaniaSpeech() : CGameObject(), _value1(1), _value2(0) {}

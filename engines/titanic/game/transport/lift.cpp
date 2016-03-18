@@ -57,4 +57,9 @@ void CLift::load(SimpleFile *file) {
 	CTransport::load(file);
 }
 
+bool CLift::handleEvent(const CEnterRoomMsg &msg) {
+	warning("CLift::handleEvent");
+	return true;
+}
+
 } // End of namespace Titanic

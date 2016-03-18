@@ -403,6 +403,7 @@ MODULE_OBJS := \
 	sound/node_auto_sound_player.o \
 	sound/restricted_auto_music_player.o \
 	sound/room_auto_sound_player.o \
+	sound/room_trigger_auto_music_player.o \
 	sound/season_noises.o \
 	sound/seasonal_music_player.o \
 	sound/sound.o \

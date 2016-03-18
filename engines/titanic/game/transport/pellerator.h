@@ -24,13 +24,16 @@
 #define TITANIC_PELLERATOR_H
 
 #include "titanic/game/transport/transport.h"
+#include "titanic/messages/messages.h"
 
 namespace Titanic {
 
-class CPellerator : public CTransport {
+class CPellerator : public CTransport, CEnterRoomMsgTarget {
 private:
 	static int _v1;
 	static int _v2;
+protected:
+	virtual bool handleEvent(const CEnterRoomMsg &msg);
 public:
 	CLASSDEF
 

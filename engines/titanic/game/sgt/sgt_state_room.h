@@ -24,6 +24,7 @@
 #define TITANIC_SGT_STATE_ROOM_H
 
 #include "titanic/core/background.h"
+#include "titanic/messages/messages.h"
 
 namespace Titanic {
 
@@ -44,7 +45,7 @@ struct CSGTStateRoomStatics {
 	int _v14;
 };
 
-class CSGTStateRoom : public CBackground {
+class CSGTStateRoom : public CBackground, CEnterRoomMsgTarget {
 private:
 	static CSGTStateRoomStatics *_statics;
 private:
@@ -53,6 +54,8 @@ private:
 	int _fieldE8;
 	int _fieldEC;
 	int _fieldF0;
+protected:
+	virtual bool handleEvent(const CEnterRoomMsg &msg);
 public:
 	CLASSDEF
 	CSGTStateRoom();

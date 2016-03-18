@@ -24,10 +24,13 @@
 #define TITANIC_PLAYER_MEETS_PARROT_H
 
 #include "titanic/core/game_object.h"
+#include "titanic/messages/messages.h"
 
 namespace Titanic {
 
-class CPlayerMeetsParrot : public CGameObject {
+class CPlayerMeetsParrot : public CGameObject, CEnterRoomMsgTarget {
+protected:
+	virtual bool handleEvent(const CEnterRoomMsg &msg);
 public:
 	CLASSDEF
 

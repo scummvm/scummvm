@@ -50,4 +50,9 @@ void CLightSwitch::load(SimpleFile *file) {
 	CBackground::load(file);
 }
 
+bool CLightSwitch::handleEvent(const CEnterRoomMsg &msg) {
+	warning("CLightSwitch::handleEvent");
+	return true;
+}
+
 } // End of namespace Titanic

@@ -40,4 +40,9 @@ void CTitaniaSpeech::load(SimpleFile *file) {
 	CGameObject::load(file);
 }
 
+bool CTitaniaSpeech::handleEvent(const CEnterRoomMsg &msg) {
+	warning("CTitaniaSpeech::handleEvent");
+	return true;
+}
+
 } // End of namespace Titanic

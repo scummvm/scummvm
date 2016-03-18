@@ -48,4 +48,9 @@ void CLiftBot::load(SimpleFile *file) {
 	CTrueTalkNPC::load(file);
 }
 
+bool CLiftBot::handleEvent(const CEnterRoomMsg &msg) {
+	warning("CLiftBot::handleEvent");
+	return true;
+}
+
 } // End of namespace Titanic

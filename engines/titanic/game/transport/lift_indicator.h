@@ -24,15 +24,18 @@
 #define TITANIC_LIFT_INDICATOR_H
 
 #include "titanic/game/transport/lift.h"
+#include "titanic/messages/messages.h"
 
 namespace Titanic {
 
-class CLiftindicator : public CLift {
+class CLiftindicator : public CLift, CEnterRoomMsgTarget {
 private:
 	int _fieldFC;
 	Common::Point _pos2;
 	int _field108;
 	int _field10C;
+protected:
+	virtual bool handleEvent(const CEnterRoomMsg &msg) { return true; }
 public:
 	CLASSDEF
 	CLiftindicator();

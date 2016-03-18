@@ -24,14 +24,17 @@
 #define TITANIC_LONG_STICK_DISPENSER_H
 
 #include "titanic/core/game_object.h"
+#include "titanic/messages/messages.h"
 
 namespace Titanic {
 
 class CLongStickDispenser : public CGameObject {
-public:
+private:
 	int _fieldBC;
 	int _fieldC0;
 	int _fieldC4;
+protected:
+	virtual bool handleEvent(const CEnterRoomMsg &msg);
 public:
 	CLASSDEF
 	CLongStickDispenser() : CGameObject(), _fieldBC(0),

@@ -24,15 +24,18 @@
 #define TITANIC_SHIP_SETTING_H
 
 #include "titanic/core/background.h"
+#include "titanic/messages/messages.h"
 
 namespace Titanic {
 
-class CShipSetting : public CBackground {
-public:
+class CShipSetting : public CBackground, CEnterRoomMsgTarget {
+private:
 	CString _string3;
 	Common::Point _pos1;
 	CString _string4;
 	CString _string5;
+protected:
+	virtual bool handleEvent(const CEnterRoomMsg &msg);
 public:
 	CLASSDEF
 	CShipSetting();

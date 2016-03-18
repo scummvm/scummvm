@@ -396,6 +396,7 @@
 #include "titanic/sound/node_auto_sound_player.h"
 #include "titanic/sound/restricted_auto_music_player.h"
 #include "titanic/sound/room_auto_sound_player.h"
+#include "titanic/sound/room_trigger_auto_music_player.h"
 #include "titanic/sound/season_noises.h"
 #include "titanic/sound/seasonal_music_player.h"
 #include "titanic/sound/titania_speech.h"
@@ -979,6 +980,7 @@ DEFFN(CMusicPlayer)
 DEFFN(CNodeAutoSoundPlayer)
 DEFFN(CRestrictedAutoMusicPlayer)
 DEFFN(CRoomAutoSoundPlayer)
+DEFFN(CRoomTriggerAutoMusicPlayer);
 DEFFN(CSeasonNoises)
 DEFFN(CSeasonalMusicPlayer)
 DEFFN(CTitaniaSpeech)
@@ -1550,6 +1552,7 @@ void CSaveableObject::initClassList() {
 	ADDFN(CNodeAutoSoundPlayer, CAutoSoundPlayer);
 	ADDFN(CRestrictedAutoMusicPlayer, CAutoMusicPlayer);
 	ADDFN(CRoomAutoSoundPlayer, CAutoSoundPlayer);
+	ADDFN(CRoomTriggerAutoMusicPlayer, CTriggerAutoMusicPlayer);
 	ADDFN(CSeasonNoises, CViewAutoSoundPlayer);
 	ADDFN(CSeasonalMusicPlayer, CAutoMusicPlayerBase);
 	ADDFN(CAutoMusicPlayer, CAutoMusicPlayerBase);

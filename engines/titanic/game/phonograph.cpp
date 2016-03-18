@@ -55,4 +55,9 @@ void CPhonograph::load(SimpleFile *file) {
 	CMusicPlayer::load(file);
 }
 
+bool CPhonograph::handleEvent(const CEnterRoomMsg &msg) {
+	warning("CPhonograph::handleEvent");
+	return true;
+}
+
 } // End of namespace Titanic

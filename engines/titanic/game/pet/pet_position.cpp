@@ -34,4 +34,9 @@ void CPETPosition::load(SimpleFile *file) {
 	CGameObject::load(file);
 }
 
+bool CPETPosition::handleEvent(const CEnterRoomMsg &msg) {
+	warning("CPETPosition::handleEvent");
+	return true;
+}
+
 } // End of namespace Titanic

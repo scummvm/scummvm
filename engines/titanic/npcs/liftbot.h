@@ -24,15 +24,18 @@
 #define TITANIC_LIFTBOT_H
 
 #include "titanic/npcs/true_talk_npc.h"
+#include "titanic/messages/messages.h"
 
 namespace Titanic {
 
-class CLiftBot : public CTrueTalkNPC {
+class CLiftBot : public CTrueTalkNPC, CEnterRoomMsgTarget {
 private:
 	static int _v1;
 	static int _v2;
 private:
 	int _field108;
+protected:
+	virtual bool handleEvent(const CEnterRoomMsg &msg);
 public:
 	CLASSDEF
 	CLiftBot();

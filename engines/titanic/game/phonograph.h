@@ -24,10 +24,11 @@
 #define TITANIC_PHONOGRAPH_H
 
 #include "titanic/sound/music_player.h"
+#include "titanic/messages/messages.h"
 
 namespace Titanic {
 
-class CPhonograph : public CMusicPlayer {
+class CPhonograph : public CMusicPlayer, CEnterRoomMsgTarget {
 protected:
 	CString _string2;
 	int _fieldE0;
@@ -36,6 +37,8 @@ protected:
 	int _fieldEC;
 	int _fieldF0;
 	int _fieldF4;
+protected:
+	virtual bool handleEvent(const CEnterRoomMsg &msg);
 public:
 	CLASSDEF
 	CPhonograph();

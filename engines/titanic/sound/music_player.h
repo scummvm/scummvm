@@ -24,15 +24,18 @@
 #define TITANIC_MUSIC_PLAYER_H
 
 #include "titanic/core/game_object.h"
+#include "titanic/messages/messages.h"
 
 namespace Titanic {
 
-class CMusicPlayer : public CGameObject {
-public:
+class CMusicPlayer : public CGameObject, CEnterRoomMsgTarget {
+protected:
 	int _fieldBC;
 	CString _string1;
 	int _fieldCC;
 	int _fieldD0;
+protected:
+	virtual bool handleEvent(const CEnterRoomMsg &msg);
 public:
 	CLASSDEF
 	CMusicPlayer() : CGameObject(),

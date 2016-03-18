@@ -20,37 +20,23 @@
  *
  */
 
-#ifndef TITANIC_UP_LIGHTER_H
-#define TITANIC_UP_LIGHTER_H
-
-#include "titanic/core/drop_target.h"
-#include "titanic/messages/messages.h"
+#include "titanic/sound/room_trigger_auto_music_player.h"
 
 namespace Titanic {
 
-class CUpLighter : public CDropTarget, CEnterRoomMsgTarget {
-private:
-	int _field118;
-	int _field11C;
-	int _field120;
-	int _field124;
-protected:
-	virtual bool handleEvent(const CEnterRoomMsg &msg);
-public:
-	CLASSDEF
-	CUpLighter();
+void CRoomTriggerAutoMusicPlayer::save(SimpleFile *file, int indent) const {
+	file->writeNumberLine(1, indent);
+	CTriggerAutoMusicPlayer::save(file, indent);
+}
 
-	/**
-	 * Save the data for the class to file
-	 */
-	virtual void save(SimpleFile *file, int indent) const;
+void CRoomTriggerAutoMusicPlayer::load(SimpleFile *file) {
+	file->readNumber();
+	CTriggerAutoMusicPlayer::load(file);
+}
 
-	/**
-	 * Load the data for the class from file
-	 */
-	virtual void load(SimpleFile *file);
-};
+bool CRoomTriggerAutoMusicPlayer::handleEvent(const CEnterRoomMsg &msg) {
+	warning("CRoomTriggerAutoMusicPlayer::handleEvent");
+	return true;
+}
 
 } // End of namespace Titanic
-
-#endif /* TITANIC_UP_LIGHTER_H */

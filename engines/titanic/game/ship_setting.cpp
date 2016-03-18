@@ -48,4 +48,9 @@ void CShipSetting::load(SimpleFile *file) {
 	CBackground::load(file);
 }
 
+bool CShipSetting::handleEvent(const CEnterRoomMsg &msg) {
+	warning("CShipSetting::handleEvent");
+	return true;
+}
+
 } // End of namespace Titanic

@@ -24,16 +24,19 @@
 #define TITANIC_LIGHT_SWITCH_H
 
 #include "titanic/core/background.h"
+#include "titanic/messages/messages.h"
 
 namespace Titanic {
 
-class CLightSwitch : public CBackground {
+class CLightSwitch : public CBackground, CEnterRoomMsgTarget {
 public:
 	static int _v1;
 private:
 	int _fieldE0;
 	int _fieldE4;
 	int _fieldE8;
+protected:
+	virtual bool handleEvent(const CEnterRoomMsg &msg);
 public:
 	CLASSDEF
 	CLightSwitch();

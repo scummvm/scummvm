@@ -24,10 +24,13 @@
 #define TITANIC_PET_MONITOR_H
 
 #include "titanic/core/game_object.h"
+#include "titanic/messages/messages.h"
 
 namespace Titanic {
 
-class CPETMonitor : public CGameObject {
+class CPETMonitor : public CGameObject, CEnterRoomMsgTarget {
+protected:
+	virtual bool handleEvent(const CEnterRoomMsg &msg);
 public:
 	CLASSDEF
 

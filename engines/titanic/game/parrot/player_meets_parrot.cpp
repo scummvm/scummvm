@@ -34,4 +34,9 @@ void CPlayerMeetsParrot::load(SimpleFile *file) {
 	CGameObject::load(file);
 }
 
+bool CPlayerMeetsParrot::handleEvent(const CEnterRoomMsg &msg) {
+	warning("CPlayerMeetsParrot::handleEvent");
+	return true;
+}
+
 } // End of namespace Titanic

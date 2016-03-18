@@ -44,4 +44,9 @@ void CMusicPlayer::load(SimpleFile *file) {
 	CGameObject::load(file);
 }
 
+bool CMusicPlayer::handleEvent(const CEnterRoomMsg &msg) {
+	warning("TODO: CMusicPlayer::handleEvent");
+	return true;
+}
+
 } // End of namespace Titanic

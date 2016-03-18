@@ -90,4 +90,9 @@ void CSGTStateRoom::load(SimpleFile *file) {
 	CBackground::load(file);
 }
 
+bool CSGTStateRoom::handleEvent(const CEnterRoomMsg &msg) {
+	warning("CSGTStateRoom::handleEvent");
+	return true;
+}
+
 } // End of namespace Titanic

@@ -43,4 +43,9 @@ void CPellerator::load(SimpleFile *file) {
 	CTransport::load(file);
 }
 
+bool CPellerator::handleEvent(const CEnterRoomMsg &msg) {
+	warning("CPellerator::handleEvent");
+	return true;
+}
+
 } // End of namespace Titanic

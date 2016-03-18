@@ -24,10 +24,13 @@
 #define TITANIC_ROOM_AUTO_SOUND_PLAYER_H
 
 #include "titanic/sound/auto_sound_player.h"
+#include "titanic/messages/messages.h"
 
 namespace Titanic {
 
-class CRoomAutoSoundPlayer : public CAutoSoundPlayer {
+class CRoomAutoSoundPlayer : public CAutoSoundPlayer, CEnterRoomMsgTarget {
+protected:
+	virtual bool handleEvent(const CEnterRoomMsg &msg);
 public:
 	CLASSDEF
 

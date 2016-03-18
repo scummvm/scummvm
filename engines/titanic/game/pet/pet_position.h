@@ -24,10 +24,13 @@
 #define TITANIC_PET_POSITION_H
 
 #include "titanic/core/game_object.h"
+#include "titanic/messages/messages.h"
 
 namespace Titanic {
 
-class CPETPosition : public CGameObject {
+class CPETPosition : public CGameObject, CEnterRoomMsgTarget {
+protected:
+	virtual bool handleEvent(const CEnterRoomMsg &msg);
 public:
 	CLASSDEF
 

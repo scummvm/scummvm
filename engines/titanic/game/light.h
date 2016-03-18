@@ -24,10 +24,11 @@
 #define TITANIC_LIGHT_H
 
 #include "titanic/core/background.h"
+#include "titanic/messages/messages.h"
 
 namespace Titanic {
 
-class CLight : public CBackground {
+class CLight : public CBackground, CEnterRoomMsgTarget {
 private:
 	int _fieldE0;
 	int _fieldE4;
@@ -37,6 +38,8 @@ private:
 	int _fieldF4;
 	int _fieldF8;
 	int _fieldFC;
+protected:
+	virtual bool handleEvent(const CEnterRoomMsg &msg);
 public:
 	CLASSDEF
 	CLight();

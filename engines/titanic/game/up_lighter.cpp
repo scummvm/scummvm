@@ -48,4 +48,9 @@ void CUpLighter::load(SimpleFile *file) {
 	CDropTarget::load(file);
 }
 
+bool CUpLighter::handleEvent(const CEnterRoomMsg &msg) {
+	warning("CUpLighter::handleEvent");
+	return true;
+}
+
 } // End of namespace Titanic
