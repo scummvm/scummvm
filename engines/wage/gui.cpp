@@ -355,7 +355,7 @@ void Gui::paintBorder(Graphics::Surface *g, Common::Rect &r, WindowType windowTy
 			int color2 = kColorWhite;
 			if (highlightedPart == kBorderScrollUp) {
 				SWAP(color1, color2);
-				fillRect(g, x + width - kBorderWidth, y + size, x + width, y + height / 2);
+				fillRect(g, x + width - kBorderWidth + 2, y + size, size - 4, r.height() / 2);
 			}
 			for (int yy = 0; yy < ARROW_H; yy++) {
 				for (int xx = 0; xx < ARROW_W; xx++) {
@@ -366,15 +366,15 @@ void Gui::paintBorder(Graphics::Surface *g, Common::Rect &r, WindowType windowTy
 					}
 				}
 			}
-			fillRect(g, x + width - 13, y + size + ARROW_H, 8, height - 2 * size - 1 - ARROW_H * 2, color1);
+			fillRect(g, x + width - 13, y + size + ARROW_H, 8, r.height() / 2 - ARROW_H, color1);
 
 			color1 = kColorBlack;
 			color2 = kColorWhite;
 			if (highlightedPart == kBorderScrollDown) {
 				SWAP(color1, color2);
-				fillRect(g, x + width - kBorderWidth, y + height / 2, x + width, y + height - size);
+				fillRect(g, x + width - kBorderWidth + 2, y + size + r.height() / 2, size - 4, r.height() / 2);
 			}
-			fillRect(g, x + width - 13, y + size + ARROW_H, 8, height - 2 * size - 1 - ARROW_H * 2, color1);
+			fillRect(g, x + width - 13, y + size + r.height() / 2, 8, r.height() / 2 - ARROW_H, color1);
 			y1 += height - 2 * size - ARROW_H - 2;
 			for (int yy = 0; yy < ARROW_H; yy++) {
 				for (int xx = 0; xx < ARROW_W; xx++) {
