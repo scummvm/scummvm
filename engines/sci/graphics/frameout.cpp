@@ -1017,7 +1017,10 @@ void GfxFrameout::alterVmap(const Palette &palette1, const Palette &palette2, co
 		int8 styleRangeValue = styleRanges[currentValue];
 		if (styleRangeValue == -1 && styleRangeValue == style) {
 			currentValue = pixels[pixelIndex] = clut[currentValue];
-			styleRangeValue = styleRanges[clut[currentValue]];
+			// NOTE: In original engine this assignment happens outside of the
+			// condition, but if the branch is not followed the value is just
+			// going to be the same as it was before
+			styleRangeValue = styleRanges[currentValue];
 		}
 
 		if (
