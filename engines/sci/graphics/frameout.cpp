@@ -115,6 +115,22 @@ GfxFrameout::GfxFrameout(SegManager *segMan, ResourceManager *resMan, GfxCoordAd
 		_defaultUnknownC = unknownCDefaults[1];
 	}
 
+	switch (g_sci->getGameId()) {
+	case GID_GK2:
+	case GID_LIGHTHOUSE:
+	case GID_LSL7:
+	case GID_PHANTASMAGORIA2:
+	case GID_PQSWAT:
+	case GID_TORIN:
+	case GID_RAMA:
+		_currentBuffer.scriptWidth = 640;
+		_currentBuffer.scriptHeight = 480;
+		break;
+	default:
+		// default script width for other games is 320x200
+		break;
+	}
+
 	// TODO: Nothing in the renderer really uses this. Currently,
 	// the cursor renderer does, and kLocalToGlobal/kGlobalToLocal
 	// do, but in the real engine (1) the cursor is handled in
