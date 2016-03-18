@@ -104,6 +104,10 @@ struct CelInfo32 {
 			bitmap == other.bitmap
 		);
 	}
+
+	inline bool operator!=(const CelInfo32 &other) {
+		return !(*this == other);
+	}
 };
 
 class CelObj;

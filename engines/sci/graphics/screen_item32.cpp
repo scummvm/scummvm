@@ -115,7 +115,17 @@ _screenRect(other._screenRect) {
 }
 
 void ScreenItem::operator=(const ScreenItem &other) {
-	_celInfo = other._celInfo;
+	// NOTE: The original engine did not check for differences in `_celInfo`
+	// to clear `_celObj` here; instead, it unconditionally set `_celInfo`,
+	// didn't clear `_celObj`, and did hacky stuff in `kIsOnMe` to avoid
+	// testing a mismatched `_celObj`. See `GfxFrameout::kernelIsOnMe` for
+	// more detail.
+	if (_celInfo != other._celInfo) {
+		_celInfo = other._celInfo;
+		delete _celObj;
+		_celObj = nullptr;
+	}
+
 	_screenRect = other._screenRect;
 	_mirrorX = other._mirrorX;
 	_useInsetRect = other._useInsetRect;

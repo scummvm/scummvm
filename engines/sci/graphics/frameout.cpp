@@ -1381,7 +1381,7 @@ void GfxFrameout::kernelFrameOut(const bool shouldShowBits) {
 #pragma mark Mouse cursor
 
 reg_t GfxFrameout::kernelIsOnMe(const reg_t object, const Common::Point &position, bool checkPixel) const {
-	reg_t planeObject = readSelector(_segMan, object, SELECTOR(plane));
+	const reg_t planeObject = readSelector(_segMan, object, SELECTOR(plane));
 	Plane *plane = _visiblePlanes.findByObject(planeObject);
 	if (plane == nullptr) {
 		return make_reg(0, 0);
@@ -1392,6 +1392,13 @@ reg_t GfxFrameout::kernelIsOnMe(const reg_t object, const Common::Point &positio
 		return make_reg(0, 0);
 	}
 
+	// NOTE: The original engine passed a copy of the ScreenItem into isOnMe
+	// as a hack around the fact that the screen items in `_visiblePlanes`
+	// did not have their `_celObj` pointers cleared when their CelInfo was
+	// updated by `Plane::decrementScreenItemArrayCounts`. We handle this
+	// this more intelligently by clearing `_celObj` in the copy assignment
+	// operator, which is only ever called by `decrementScreenItemArrayCounts`
+	// anyway.
 	return make_reg(0, isOnMe(*screenItem, *plane, position, checkPixel));
 }
 
