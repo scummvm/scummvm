@@ -24,14 +24,17 @@
 #define TITANIC_AUTO_ANIMATE_H
 
 #include "titanic/core/background.h"
+#include "titanic/messages/messages.h"
 
 namespace Titanic {
 
 class CAutoAnimate : public CBackground {
-public:
+private:
 	int _fieldE0;
 	int _fieldE4;
 	int _fieldE8;
+protected:
+	virtual bool handleEvent(const CEnterViewMsg &msg);
 public:
 	CLASSDEF
 	CAutoAnimate() : CBackground(), _fieldE0(1), _fieldE4(1), _fieldE8(0) {}

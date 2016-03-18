@@ -40,4 +40,9 @@ void CAutoAnimate::load(SimpleFile *file) {
 	CBackground::load(file);
 }
 
+bool CAutoAnimate::handleEvent(const CEnterViewMsg &msg) {
+	warning("CAutoAnimate::handleEvent");
+	return true;
+}
+
 } // End of namespace Titanic
