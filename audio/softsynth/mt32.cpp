@@ -212,6 +212,13 @@ int MidiDriver_MT32::open() {
 	double gain = (double)ConfMan.getInt("midi_gain") / 100.0;
 	_synth->setOutputGain(1.0f * gain);
 	_synth->setReverbOutputGain(0.68f * gain);
+	// We let the synthesizer play MIDI messages immediately. Our MIDI
+	// handling is synchronous to sample generation. This makes delaying MIDI
+	// events result in odd sound output in some cases. For example, the
+	// shattering window in the Indiana Jones and the Fate of Atlantis intro
+	// will sound like a bell if we use any delay here.
+	// Bug #6242 "AUDIO: Built-In MT-32 MUNT Produces Wrong Sounds".
+	_synth->setMIDIDelayMode(MT32Emu::MIDIDelayMode_IMMEDIATE);
 
 	_initializing = false;
 
