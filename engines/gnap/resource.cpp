@@ -43,14 +43,14 @@ void SequenceFrame::loadFromStream(Common::MemoryReadStream &stream) {
 // SequenceAnimation
 
 void SequenceAnimation::loadFromStream(Common::MemoryReadStream &stream) {
-	field_0 = stream.readUint16LE();
-	field_2 = stream.readUint16LE();
-	field_4 = stream.readUint32LE();
-	framesCount = stream.readUint16LE();
-	field_A = stream.readUint16LE();
-	debug(1, "SequenceAnimation() framesCount: %d", framesCount);
-	frames = new SequenceFrame[framesCount];
-	for (int i = 0; i < framesCount; ++i)
+	_unusedVal1 = stream.readUint16LE();
+	_unusedVal2 = stream.readUint16LE();
+	_additionalDelay = stream.readUint32LE();
+	_framesCount = stream.readUint16LE();
+	_maxTotalDuration = stream.readUint16LE();
+	debug(1, "SequenceAnimation() framesCount: %d", _framesCount);
+	frames = new SequenceFrame[_framesCount];
+	for (int i = 0; i < _framesCount; ++i)
 		frames[i].loadFromStream(stream);
 }
 
@@ -58,11 +58,11 @@ void SequenceAnimation::loadFromStream(Common::MemoryReadStream &stream) {
 
 SequenceResource::SequenceResource(int resourceId, byte *data, uint32 size) {
 	Common::MemoryReadStream stream(data, size, DisposeAfterUse::NO);
-	_field_0 = stream.readUint32LE();
+	_unusedVal1 = stream.readUint32LE();
 	_sequenceId = stream.readUint32LE();
-	_field_8 = stream.readUint32LE();
+	_defaultId = stream.readUint32LE();
 	_sequenceId2 = stream.readUint32LE();
-	_field_10 = stream.readUint32LE();
+	_defaultId2 = stream.readUint32LE();
 	_flags = stream.readUint32LE();
 	_totalDuration = stream.readUint32LE();
 	_xOffs = stream.readUint16LE();
@@ -91,8 +91,8 @@ SpriteResource::SpriteResource(int resourceId, byte *data, uint32 size) {
 	_data = data;
 	_width = READ_LE_UINT16(_data);
 	_height = READ_LE_UINT16(_data + 2);
-	_unk1 = READ_LE_UINT16(_data + 4);
-	_unk2 = READ_LE_UINT16(_data + 6);
+	_unknownVal1 = READ_LE_UINT16(_data + 4);
+	_unknownVal2 = READ_LE_UINT16(_data + 6);
 	_transparent = READ_LE_UINT16(_data + 8);
 	_colorsCount = READ_LE_UINT16(_data + 10);
 	_palette = (uint32*)(_data + 12);

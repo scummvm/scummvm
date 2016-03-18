@@ -642,8 +642,8 @@ int GnapEngine::getSequenceTotalDuration(int resourceId) {
 	int maxValue = 0;
 	for (int i = 0; i < sequenceResource->_animationsCount; ++i) {
 		SequenceAnimation *animation = &sequenceResource->_animations[i];
-		if (animation->field_4 + animation->field_A > maxValue)
-			maxValue = animation->field_4 + animation->field_A;
+		if (animation->_additionalDelay + animation->_maxTotalDuration > maxValue)
+			maxValue = animation->_additionalDelay + animation->_maxTotalDuration;
 	}
 	int totalDuration = maxValue + sequenceResource->_totalDuration;
 	_sequenceCache->release(resourceId);

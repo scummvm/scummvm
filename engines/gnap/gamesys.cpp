@@ -70,15 +70,15 @@ GameSys::GameSys(GnapEngine *vm)
 GameSys::~GameSys() {
 }
 
-void GameSys::insertSequence(int sequenceId, int a2, int sequenceId2, int a4, int flags, int totalDuration, int16 x, int16 y) {
-	debug(0, "GameSys::insertSequence() [%08X, %d] -> [%08X, %d] (%d, %d)", sequenceId, a2, sequenceId2, a4, x, y);
+void GameSys::insertSequence(int sequenceId, int id, int sequenceId2, int id2, int flags, int totalDuration, int16 x, int16 y) {
+	debug(0, "GameSys::insertSequence() [%08X, %d] -> [%08X, %d] (%d, %d)", sequenceId, id, sequenceId2, id2, x, y);
 	Sequence sequence;
 	SequenceResource *sequenceResource = _vm->_sequenceCache->get(sequenceId);
 	sequenceResource->_sequenceId = sequenceId;
 	sequence._sequenceId = sequenceId;
-	sequence._id = a2 != -1 ? a2 : sequenceResource->_field_8;
+	sequence._id = id != -1 ? id : sequenceResource->_defaultId;
 	sequence._sequenceId2 = sequenceId2 != (int32)0x80000000 ? sequenceId2 : sequenceResource->_sequenceId2;
-	sequence._id2 = a4 != -1 ? a4 : sequenceResource->_field_10;
+	sequence._id2 = id2 != -1 ? id2 : sequenceResource->_defaultId2;
 	sequence._flags = flags != -1 ? flags : sequenceResource->_flags;
 	sequence._totalDuration = totalDuration != -1 ? totalDuration : sequenceResource->_totalDuration;
 	sequence._x = (x < 10000 && x > -10000) ? x : sequenceResource->_xOffs;
@@ -454,7 +454,7 @@ void GameSys::seqInsertGfx(int index, int duration) {
 		gfxItem->_animation = animation;
 		gfxItem->_currFrameNum = 0;
 		gfxItem->_flags = 0;
-		gfxItem->_delayTicks = seqItem->_totalDuration + animation->field_4;
+		gfxItem->_delayTicks = seqItem->_totalDuration + animation->_additionalDelay;
 		gfxItem->_updFlag = false;
 		gfxItem->_updRectsCount = 0;
 		gfxItem->_prevFrame._duration = 0;
@@ -473,12 +473,12 @@ void GameSys::seqInsertGfx(int index, int duration) {
 			int j;
 			totalDuration -= gfxItem->_delayTicks;
 			gfxItem->_delayTicks = 0;
-			for (j = gfxItem->_currFrameNum; j < animation->framesCount && animation->frames[j]._duration <= totalDuration; ++j) {
+			for (j = gfxItem->_currFrameNum; j < animation->_framesCount && animation->frames[j]._duration <= totalDuration; ++j) {
 				if (animation->frames[j]._soundId != -1)
 					_soundIds.push_back((gfxItem->_sequenceId & 0xFFFF0000) | animation->frames[j]._soundId);
 				totalDuration -= animation->frames[j]._duration;
 			}
-			if (animation->framesCount > j)
+			if (animation->_framesCount > j)
 				gfxItem->_currFrame = animation->frames[j++];
 			else
 				gfxItem->_currFrame = animation->frames[j - 1];
@@ -546,7 +546,7 @@ bool GameSys::updateSequenceDuration(int sequenceId, int id, int *outDuration) {
 			found = true;
 			SequenceAnimation *animation = gfxItem->_animation;
 			if (animation) {
-				if (gfxItem->_currFrameNum < animation->framesCount)
+				if (gfxItem->_currFrameNum < animation->_framesCount)
 					return false;
 				if (gfxItem->_updFlag) {
 					if (gfxItem->_currFrame._duration > 0)
@@ -587,7 +587,7 @@ void GameSys::updateAnimationsStatus(int sequenceId, int id) {
 		SequenceAnimation *animation = gfxItem->_animation;
 		if (gfxItem->_sequenceId == sequenceId && gfxItem->_id == id && animation) {
 			foundSequence = true;
-			if (animation->framesCount > gfxItem->_currFrameNum ||
+			if (animation->_framesCount > gfxItem->_currFrameNum ||
 				(gfxItem->_updFlag && gfxItem->_currFrame._duration > 1) ||
 				gfxItem->_prevFrame._duration > 1)
 				foundSequence = false;
@@ -1077,16 +1077,16 @@ void GameSys::fatUpdateFrame() {
 							v20 = true;
 						}
 						currFrameNum = gfxItem->_currFrameNum;
-						if (animation->framesCount > currFrameNum) {
+						if (animation->_framesCount > currFrameNum) {
 							updFlag = false;
-							while (animation->framesCount > currFrameNum &&
+							while (animation->_framesCount > currFrameNum &&
 								animation->frames[currFrameNum]._duration <= duration) {
 								if (animation->frames[currFrameNum]._soundId != -1)
 									_soundIds.push_back((gfxItem->_sequenceId & 0xFFFF0000) | animation->frames[currFrameNum]._soundId);
 									duration -= animation->frames[currFrameNum]._duration;
 									++currFrameNum;
 							}
-							if (animation->framesCount > currFrameNum)
+							if (animation->_framesCount > currFrameNum)
 								gfxItem->_currFrame = animation->frames[currFrameNum++];
 							else
 								gfxItem->_currFrame = animation->frames[currFrameNum - 1];

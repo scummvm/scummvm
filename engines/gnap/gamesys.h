@@ -101,7 +101,7 @@ class GameSys {
 public:
 	GameSys(GnapEngine *vm);
 	~GameSys();
-	void insertSequence(int sequenceId, int a2, int sequenceId2, int a4, int flags, int totalDuration, int16 x, int16 y);
+	void insertSequence(int sequenceId, int id, int sequenceId2, int id2, int flags, int totalDuration, int16 x, int16 y);
 	void insertDirtyRect(const Common::Rect &rect);
 	void removeSequence(int sequenceId, int id, bool resetFl);
 	void invalidateGrabCursorSprite(int id, Common::Rect &rect, Graphics::Surface *surface1, Graphics::Surface *surface2);

@@ -56,13 +56,13 @@ struct SequenceFrame {
 };
 
 struct SequenceAnimation {
-	int16 field_0;
-	int16 field_2;
-	int32 field_4;
-	int16 framesCount;
-	int16 field_A;
+	int16 _unusedVal1;
+	int16 _unusedVal2;
+	int32 _additionalDelay;
+	int16 _framesCount;
+	int16 _maxTotalDuration;
 	SequenceFrame *frames;
-	SequenceAnimation() : frames(0) {}
+	SequenceAnimation() : frames(nullptr) {}
 	~SequenceAnimation() { delete[] frames; }
 	void loadFromStream(Common::MemoryReadStream &stream);
 };
@@ -72,11 +72,11 @@ public:
 	SequenceResource(int resourceId, byte *data, uint32 size);
 	~SequenceResource();
 public:
-	uint32 _field_0;
+	uint32 _unusedVal1;
 	int32 _sequenceId;
-	int32 _field_8;
+	int32 _defaultId;
 	int32 _sequenceId2;
-	uint32 _field_10;
+	uint32 _defaultId2;
 	uint32 _flags;
 	int32 _totalDuration;
 	int16 _xOffs;
@@ -94,8 +94,8 @@ public:
 	byte *_pixels;
 	uint32 *_palette;
 	int16 _width, _height;
-	uint16 _unk1;
-	uint16 _unk2;
+	uint16 _unknownVal1;
+	uint16 _unknownVal2;
 	uint16 _transparent;
 	uint16 _colorsCount;
 };
