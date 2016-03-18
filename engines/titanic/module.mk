@@ -1,6 +1,7 @@
 MODULE := engines/titanic
 
 MODULE_OBJS := \
+	debugger.o \
 	detection.o \
 	direct_draw.o \
 	files_manager.o \

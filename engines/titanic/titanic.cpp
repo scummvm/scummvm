@@ -29,6 +29,7 @@
 #include "graphics/scaler.h"
 #include "graphics/thumbnail.h"
 #include "titanic/titanic.h"
+#include "titanic/debugger.h"
 #include "titanic/carry/hose.h"
 #include "titanic/core/saveable_object.h"
 #include "titanic/game/get_lift_eye2.h"
@@ -47,11 +48,13 @@ TitanicEngine::TitanicEngine(OSystem *syst, const TitanicGameDescription *gameDe
 		: _gameDescription(gameDesc), Engine(syst), _randomSource("Titanic"),
 		_ticksCount(0), _frameCounter(0) {
 	g_vm = this;
+	_debugger = nullptr;
 	_window = nullptr;
 	_screenManager = nullptr;
 }
 
 TitanicEngine::~TitanicEngine() {
+	delete _debugger;
 	delete _window;
 	delete _screenManager;
 	CSaveableObject::freeClassList();
@@ -79,6 +82,7 @@ void TitanicEngine::initialize() {
 	CExitPellerator::init();
 	CEnterExitSecClassMiniLift::init();
 
+	_debugger = new Debugger(this);
 	_screenManager = new OSScreenManager(this);
 	_window = new CMainGameWindow(this);
 	_window->applicationStarting();
@@ -108,9 +112,24 @@ Common::Error TitanicEngine::run() {
 }
 
 void TitanicEngine::processEvents() {
-	Common::Event evt;
-	g_system->getEventManager()->pollEvent(evt);
+	Common::Event event;
+	g_system->getEventManager()->pollEvent(event);
 
+	// Give time to the debugger
+	_debugger->onFrame();
+
+	switch (event.type) {
+	case Common::EVENT_KEYDOWN:
+		if (event.kbd.keycode == Common::KEYCODE_d && (event.kbd.flags & Common::KBD_CTRL)) {
+			// Attach to the debugger
+			_debugger->attach();
+			_debugger->onFrame();
+		}
+		break;
+
+	default:
+		break;
+	}
 }
 
 } // End of namespace Titanic

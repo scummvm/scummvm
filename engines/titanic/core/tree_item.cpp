@@ -238,7 +238,7 @@ CNamedItem *CTreeItem::findByName(const CString &name, int maxLen) {
 	CString nameLower = name;
 	nameLower.toLowercase();
 
-	for (CTreeItem *treeItem = this; treeItem; treeItem = scan(treeItem)) {
+	for (CTreeItem *treeItem = this; treeItem; treeItem = treeItem->scan(this)) {
 		CString nodeName = treeItem->getName();
 		nodeName.toLowercase();
 
@@ -246,7 +246,7 @@ CNamedItem *CTreeItem::findByName(const CString &name, int maxLen) {
 			if (nodeName.left(maxLen).compareTo(nameLower))
 				return dynamic_cast<CNamedItem *>(treeItem);
 		} else {
-			if (nodeName.compareTo(nameLower))
+			if (!nodeName.compareTo(nameLower))
 				return dynamic_cast<CNamedItem *>(treeItem);
 		}
 	}

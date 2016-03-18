@@ -29,6 +29,7 @@
 #include "common/serializer.h"
 #include "engines/advancedDetector.h"
 #include "engines/engine.h"
+#include "titanic/debugger.h"
 #include "titanic/files_manager.h"
 #include "titanic/screen_manager.h"
 #include "titanic/main_game_window.h"
@@ -97,6 +98,7 @@ protected:
 	virtual bool hasFeature(EngineFeature f) const;
 public:
 	CFilesManager _filesManager;
+	Debugger *_debugger;
 	OSScreenManager *_screenManager;
 	CMainGameWindow *_window;
 	Common::RandomSource _randomSource;
