@@ -588,7 +588,17 @@ Designed *Gui::mouseUp(int x, int y) {
 		}
 	} else if ((borderClick = isInBorder(_consoleTextArea, x, y)) != kBorderNone) {
 		_bordersDirty = true;
-		warning("Border: %d", borderClick);
+
+		switch (borderClick) {
+			case kBorderScrollUp:
+				_scrollPos--;
+				_consoleDirty = true;
+				break;
+			case kBorderScrollDown:
+				_scrollPos++;
+				_consoleDirty = true;
+				break;
+		}
 	}
 
 	return NULL;
