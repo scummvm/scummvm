@@ -124,9 +124,14 @@ struct Command {
 	Script script;
 };
 
-struct ScriptEnv {
+class ScriptEnv {
+public:
 	ScriptEnv(const Command &cmd_, byte verb_, byte noun_) :
 			cmd(cmd_), verb(verb_), noun(noun_), ip(0) { }
+
+	byte op() const { return cmd.script[ip]; }
+	// We keep this 1-based for easier comparison with the original engine
+	byte arg(uint i) const { return cmd.script[ip + i]; }
 
 	const Command &cmd;
 	byte verb, noun;
