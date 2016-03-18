@@ -854,129 +854,129 @@ void AdlEngine::getInput(uint &verb, uint &noun) {
 
 typedef Common::Functor1Mem<ScriptEnv &, bool, AdlEngine> OpcodeV1;
 
-#define ARG(N) (env.cmd.script[env.ip + (N)])
+#define ARG(N) (e.cmd.script[e.ip + (N)])
 
-bool AdlEngine::o1_isItemInRoom(ScriptEnv &env) {
+bool AdlEngine::o1_isItemInRoom(ScriptEnv &e) {
 	if (getItem(ARG(1)).room != ARG(2))
 		return false;
-	env.ip += 3;
+	e.ip += 3;
 	return true;
 }
 
-bool AdlEngine::o1_isMovesGrEq(ScriptEnv &env) {
+bool AdlEngine::o1_isMovesGrEq(ScriptEnv &e) {
 	if (ARG(1) > _state.moves)
 		return false;
-	env.ip += 2;
+	e.ip += 2;
 	return true;
 }
 
-bool AdlEngine::o1_isVarEq(ScriptEnv &env) {
+bool AdlEngine::o1_isVarEq(ScriptEnv &e) {
 	if (getVar(ARG(1)) != ARG(2))
 		return false;
-	env.ip += 3;
+	e.ip += 3;
 	return true;
 }
 
-bool AdlEngine::o1_isCurPicEq(ScriptEnv &env) {
+bool AdlEngine::o1_isCurPicEq(ScriptEnv &e) {
 	if (getCurRoom().curPicture != ARG(1))
 		return false;
-	env.ip += 2;
+	e.ip += 2;
 	return true;
 }
 
-bool AdlEngine::o1_isItemPicEq(ScriptEnv &env) {
+bool AdlEngine::o1_isItemPicEq(ScriptEnv &e) {
 	if (getItem(ARG(1)).picture != ARG(2))
 		return false;
-	env.ip += 3;
+	e.ip += 3;
 	return true;
 }
 
-bool AdlEngine::o1_varAdd(ScriptEnv &env) {
+bool AdlEngine::o1_varAdd(ScriptEnv &e) {
 	setVar(ARG(2), getVar(ARG(2) + ARG(1)));
-	env.ip += 3;
+	e.ip += 3;
 	return true;
 }
 
-bool AdlEngine::o1_varSub(ScriptEnv &env) {
+bool AdlEngine::o1_varSub(ScriptEnv &e) {
 	setVar(ARG(2), getVar(ARG(2)) - ARG(1));
-	env.ip += 3;
+	e.ip += 3;
 	return true;
 }
 
-bool AdlEngine::o1_varSet(ScriptEnv &env) {
+bool AdlEngine::o1_varSet(ScriptEnv &e) {
 	setVar(ARG(1), ARG(2));
-	env.ip += 3;
+	e.ip += 3;
 	return true;
 }
 
-bool AdlEngine::o1_listInv(ScriptEnv &env) {
+bool AdlEngine::o1_listInv(ScriptEnv &e) {
 	Common::Array<Item>::const_iterator item;
 
 	for (item = _state.items.begin(); item != _state.items.end(); ++item)
 		if (item->room == IDI_NONE)
 			printMessage(item->description);
 
-	++env.ip;
+	++e.ip;
 	return true;
 }
 
-bool AdlEngine::o1_moveItem(ScriptEnv &env) {
+bool AdlEngine::o1_moveItem(ScriptEnv &e) {
 	getItem(ARG(1)).room = ARG(2);
-	env.ip += 3;
+	e.ip += 3;
 	return true;
 }
 
-bool AdlEngine::o1_setRoom(ScriptEnv &env) {
+bool AdlEngine::o1_setRoom(ScriptEnv &e) {
 	getCurRoom().curPicture = getCurRoom().picture;
 	_state.room = ARG(1);
-	env.ip += 2;
+	e.ip += 2;
 	return true;
 }
 
-bool AdlEngine::o1_setCurPic(ScriptEnv &env) {
+bool AdlEngine::o1_setCurPic(ScriptEnv &e) {
 	getCurRoom().curPicture = ARG(1);
-	env.ip += 2;
+	e.ip += 2;
 	return true;
 }
 
-bool AdlEngine::o1_setPic(ScriptEnv &env) {
+bool AdlEngine::o1_setPic(ScriptEnv &e) {
 	getCurRoom().picture = getCurRoom().curPicture = ARG(1);
-	env.ip += 2;
+	e.ip += 2;
 	return true;
 }
 
-bool AdlEngine::o1_printMsg(ScriptEnv &env) {
+bool AdlEngine::o1_printMsg(ScriptEnv &e) {
 	printMessage(ARG(1));
-	env.ip += 2;
+	e.ip += 2;
 	return true;
 }
 
-bool AdlEngine::o1_setLight(ScriptEnv &env) {
+bool AdlEngine::o1_setLight(ScriptEnv &e) {
 	_state.isDark = false;
-	++env.ip;
+	++e.ip;
 	return true;
 }
 
-bool AdlEngine::o1_setDark(ScriptEnv &env) {
+bool AdlEngine::o1_setDark(ScriptEnv &e) {
 	_state.isDark = true;
-	++env.ip;
+	++e.ip;
 	return true;
 }
 
-bool AdlEngine::o1_save(ScriptEnv &env) {
+bool AdlEngine::o1_save(ScriptEnv &e) {
 	saveGameState(0, "");
-	++env.ip;
+	++e.ip;
 	return true;
 }
 
-bool AdlEngine::o1_restore(ScriptEnv &env) {
+bool AdlEngine::o1_restore(ScriptEnv &e) {
 	loadGameState(0);
-	++env.ip;
+	++e.ip;
 	_isRestoring = false;
 	return true;
 }
 
-bool AdlEngine::o1_restart(ScriptEnv &env) {
+bool AdlEngine::o1_restart(ScriptEnv &e) {
 	_display->printString(_strings.playAgain);
 	Common::String input = inputString();
 
@@ -988,37 +988,37 @@ bool AdlEngine::o1_restart(ScriptEnv &env) {
 		return false;
 	}
 
-	return o1_quit(env);
+	return o1_quit(e);
 }
 
-bool AdlEngine::o1_quit(ScriptEnv &env) {
+bool AdlEngine::o1_quit(ScriptEnv &e) {
 	printMessage(_messageIds.thanksForPlaying);
 	quitGame();
 	return false;
 }
 
-bool AdlEngine::o1_placeItem(ScriptEnv &env) {
+bool AdlEngine::o1_placeItem(ScriptEnv &e) {
 	getItem(ARG(1)).room = ARG(2);
 	getItem(ARG(1)).position.x = ARG(3);
 	getItem(ARG(1)).position.y = ARG(4);
-	env.ip += 5;
+	e.ip += 5;
 	return true;
 }
 
-bool AdlEngine::o1_setItemPic(ScriptEnv &env) {
+bool AdlEngine::o1_setItemPic(ScriptEnv &e) {
 	getItem(ARG(2)).picture = ARG(1);
-	env.ip += 3;
+	e.ip += 3;
 	return true;
 }
 
-bool AdlEngine::o1_resetPic(ScriptEnv &env) {
+bool AdlEngine::o1_resetPic(ScriptEnv &e) {
 	getCurRoom().curPicture = getCurRoom().picture;
-	++env.ip;
+	++e.ip;
 	return true;
 }
 
 template <Direction D>
-bool AdlEngine::o1_goDirection(ScriptEnv &env) {
+bool AdlEngine::o1_goDirection(ScriptEnv &e) {
 	byte room = getCurRoom().connections[D];
 
 	if (room == 0) {
@@ -1031,21 +1031,21 @@ bool AdlEngine::o1_goDirection(ScriptEnv &env) {
 	return false;
 }
 
-bool AdlEngine::o1_takeItem(ScriptEnv &env) {
-	takeItem(env.noun);
-	++env.ip;
+bool AdlEngine::o1_takeItem(ScriptEnv &e) {
+	takeItem(e.noun);
+	++e.ip;
 	return true;
 }
 
-bool AdlEngine::o1_dropItem(ScriptEnv &env) {
-	dropItem(env.noun);
-	++env.ip;
+bool AdlEngine::o1_dropItem(ScriptEnv &e) {
+	dropItem(e.noun);
+	++e.ip;
 	return true;
 }
 
-bool AdlEngine::o1_setRoomPic(ScriptEnv &env) {
+bool AdlEngine::o1_setRoomPic(ScriptEnv &e) {
 	getRoom(ARG(1)).picture = getRoom(ARG(1)).curPicture = ARG(2);
-	env.ip += 3;
+	e.ip += 3;
 	return true;
 }
 
