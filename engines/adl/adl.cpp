@@ -295,12 +295,12 @@ void AdlEngine::setupOpcodeTables() {
 	// 0x04
 	OpcodeUnImpl();
 	Opcode(o1_isMovesGT);
-	Opcode(o1_isVarEq);
+	Opcode(o1_isVarEQ);
 	OpcodeUnImpl();
 	// 0x08
 	OpcodeUnImpl();
-	Opcode(o1_isCurPicEq);
-	Opcode(o1_isItemPicEq);
+	Opcode(o1_isCurPicEQ);
+	Opcode(o1_isItemPicEQ);
 
 	SetOpcodeTable(_actOpcodes);
 	// 0x00
@@ -854,33 +854,33 @@ void AdlEngine::getInput(uint &verb, uint &noun) {
 typedef Common::Functor1Mem<ScriptEnv &, int, AdlEngine> OpcodeV1;
 
 int AdlEngine::o1_isItemInRoom(ScriptEnv &e) {
-	if (getItem(e.arg(1)).room != e.arg(2))
-		return -1;
-	return 2;
+	if (getItem(e.arg(1)).room == e.arg(2))
+		return 2;
+	return -1;
 }
 
 int AdlEngine::o1_isMovesGT(ScriptEnv &e) {
-	if (e.arg(1) >= _state.moves)
-		return -1;
-	return 1;
+	if (_state.moves > e.arg(1))
+		return 1;
+	return -1;
 }
 
-int AdlEngine::o1_isVarEq(ScriptEnv &e) {
-	if (getVar(e.arg(1)) != e.arg(2))
-		return -1;
-	return 2;
+int AdlEngine::o1_isVarEQ(ScriptEnv &e) {
+	if (getVar(e.arg(1)) == e.arg(2))
+		return 2;
+	return -1;
 }
 
-int AdlEngine::o1_isCurPicEq(ScriptEnv &e) {
-	if (getCurRoom().curPicture != e.arg(1))
-		return -1;
-	return 1;
+int AdlEngine::o1_isCurPicEQ(ScriptEnv &e) {
+	if (getCurRoom().curPicture == e.arg(1))
+		return 1;
+	return -1;
 }
 
-int AdlEngine::o1_isItemPicEq(ScriptEnv &e) {
-	if (getItem(e.arg(1)).picture != e.arg(2))
-		return -1;
-	return 2;
+int AdlEngine::o1_isItemPicEQ(ScriptEnv &e) {
+	if (getItem(e.arg(1)).picture == e.arg(2))
+		return 2;
+	return -1;
 }
 
 int AdlEngine::o1_varAdd(ScriptEnv &e) {

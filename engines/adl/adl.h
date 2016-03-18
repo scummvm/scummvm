@@ -179,9 +179,9 @@ protected:
 	// Opcodes
 	int o1_isItemInRoom(ScriptEnv &e);
 	int o1_isMovesGT(ScriptEnv &e);
-	int o1_isVarEq(ScriptEnv &e);
-	int o1_isCurPicEq(ScriptEnv &e);
-	int o1_isItemPicEq(ScriptEnv &e);
+	int o1_isVarEQ(ScriptEnv &e);
+	int o1_isCurPicEQ(ScriptEnv &e);
+	int o1_isItemPicEQ(ScriptEnv &e);
 
 	int o1_varAdd(ScriptEnv &e);
 	int o1_varSub(ScriptEnv &e);
