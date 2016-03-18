@@ -27,17 +27,17 @@ namespace Gnap {
 // SequenceFrame
 
 void SequenceFrame::loadFromStream(Common::MemoryReadStream &stream) {
-	duration = stream.readUint16LE();
-	isScaled = stream.readUint16LE();
-	rect.left = stream.readUint32LE();
-	rect.top = stream.readUint32LE();
-	rect.right = stream.readUint32LE();
-	rect.bottom = stream.readUint32LE();
-	spriteId = stream.readUint32LE();
-	soundId = stream.readUint32LE();
-	unkValue = stream.readUint32LE();
+	_duration = stream.readUint16LE();
+	_isScaled = stream.readUint16LE();
+	_rect.left = stream.readUint32LE();
+	_rect.top = stream.readUint32LE();
+	_rect.right = stream.readUint32LE();
+	_rect.bottom = stream.readUint32LE();
+	_spriteId = stream.readUint32LE();
+	_soundId = stream.readUint32LE();
+	_unusedVal = stream.readUint32LE();
 	//isScaled = 0;//DEBUG
-	debug(1, "SequenceFrame() spriteId: %d; soundId: %d", spriteId, soundId);
+	debug(1, "SequenceFrame() spriteId: %d; soundId: %d", _spriteId, _soundId);
 }
 
 // SequenceAnimation

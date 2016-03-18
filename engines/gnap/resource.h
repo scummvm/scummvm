@@ -46,12 +46,12 @@ enum {
 };
 
 struct SequenceFrame {
-	int16 duration;
-	int16 isScaled;
-	Common::Rect rect;
-	int32 spriteId;
-	int32 soundId;
-	int32 unkValue;
+	int16 _duration;
+	int16 _isScaled;
+	Common::Rect _rect;
+	int32 _spriteId;
+	int32 _soundId;
+	int32 _unusedVal;
 	void loadFromStream(Common::MemoryReadStream &stream);
 };
 

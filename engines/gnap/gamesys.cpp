@@ -30,8 +30,8 @@ namespace Gnap {
 
 void GfxItem::testUpdRect(const Common::Rect &updRect) {
 	Common::Rect intersectingRect;
-	if (!_updFlag && _prevFrame.spriteId != -1 &&
-		_updRectsCount < 20 && intersectRect(intersectingRect, _prevFrame.rect, updRect))
+	if (!_updFlag && _prevFrame._spriteId != -1 &&
+		_updRectsCount < 20 && intersectRect(intersectingRect, _prevFrame._rect, updRect))
 		_updRects[_updRectsCount++] = intersectingRect;
 }
 
@@ -123,10 +123,10 @@ void GameSys::requestClear2(bool resetFl) {
 		gfxItem->_sequenceId = -1;
 		gfxItem->_animation = nullptr;
 		if (resetFl) {
-			gfxItem->_currFrame.duration = 0;
-			gfxItem->_currFrame.spriteId = -1;
-			gfxItem->_currFrame.soundId = -1;
-			gfxItem->_currFrame.unkValue = -1;
+			gfxItem->_currFrame._duration = 0;
+			gfxItem->_currFrame._spriteId = -1;
+			gfxItem->_currFrame._soundId = -1;
+			gfxItem->_currFrame._unusedVal = -1;
 			gfxItem->_updFlag = true;
 		} else {
 			gfxItem->_updFlag = false;
@@ -457,13 +457,13 @@ void GameSys::seqInsertGfx(int index, int duration) {
 		gfxItem->_delayTicks = seqItem->_totalDuration + animation->field_4;
 		gfxItem->_updFlag = false;
 		gfxItem->_updRectsCount = 0;
-		gfxItem->_prevFrame.duration = 0;
-		gfxItem->_prevFrame.spriteId = -1;
-		gfxItem->_prevFrame.soundId = -1;
-		gfxItem->_prevFrame.unkValue = -1;
+		gfxItem->_prevFrame._duration = 0;
+		gfxItem->_prevFrame._spriteId = -1;
+		gfxItem->_prevFrame._soundId = -1;
+		gfxItem->_prevFrame._unusedVal = -1;
 		totalDuration = duration;
 		if ((seqItem->_flags & 4) && totalDuration > 0) {
-			gfxItem->_prevFrame.duration = 1;
+			gfxItem->_prevFrame._duration = 1;
 			if (gfxItem->_delayTicks <= totalDuration)
 				gfxItem->_delayTicks = 0;
 			else
@@ -473,29 +473,29 @@ void GameSys::seqInsertGfx(int index, int duration) {
 			int j;
 			totalDuration -= gfxItem->_delayTicks;
 			gfxItem->_delayTicks = 0;
-			for (j = gfxItem->_currFrameNum; j < animation->framesCount && animation->frames[j].duration <= totalDuration; ++j) {
-				if (animation->frames[j].soundId != -1)
-					_soundIds.push_back((gfxItem->_sequenceId & 0xFFFF0000) | animation->frames[j].soundId);
-				totalDuration -= animation->frames[j].duration;
+			for (j = gfxItem->_currFrameNum; j < animation->framesCount && animation->frames[j]._duration <= totalDuration; ++j) {
+				if (animation->frames[j]._soundId != -1)
+					_soundIds.push_back((gfxItem->_sequenceId & 0xFFFF0000) | animation->frames[j]._soundId);
+				totalDuration -= animation->frames[j]._duration;
 			}
 			if (animation->framesCount > j)
 				gfxItem->_currFrame = animation->frames[j++];
 			else
 				gfxItem->_currFrame = animation->frames[j - 1];
-			if (gfxItem->_currFrame.spriteId != -1 && (seqItem->_x != 0 || seqItem->_y != 0))
-				gfxItem->_currFrame.rect.translate(seqItem->_x, seqItem->_y);
+			if (gfxItem->_currFrame._spriteId != -1 && (seqItem->_x != 0 || seqItem->_y != 0))
+				gfxItem->_currFrame._rect.translate(seqItem->_x, seqItem->_y);
 			// Update sprite scaling				
-			if ((seqItem->_flags & 1) && gfxItem->_currFrame.rect.bottom >= _backgroundImageValue1 && gfxItem->_currFrame.rect.bottom <= _backgroundImageValue3) {
-				int scaleValue = _backgroundImageValue2	+ (gfxItem->_currFrame.rect.bottom - _backgroundImageValue1) *
+			if ((seqItem->_flags & 1) && gfxItem->_currFrame._rect.bottom >= _backgroundImageValue1 && gfxItem->_currFrame._rect.bottom <= _backgroundImageValue3) {
+				int scaleValue = _backgroundImageValue2	+ (gfxItem->_currFrame._rect.bottom - _backgroundImageValue1) *
 					(_backgroundImageValue4 - _backgroundImageValue2) /
 					(_backgroundImageValue3 - _backgroundImageValue1);
-				gfxItem->_currFrame.rect.top = gfxItem->_currFrame.rect.bottom - scaleValue * (gfxItem->_currFrame.rect.bottom - gfxItem->_currFrame.rect.top) / 1000;
-				gfxItem->_currFrame.rect.right = scaleValue * (gfxItem->_currFrame.rect.right - gfxItem->_currFrame.rect.left) / 1000 + gfxItem->_currFrame.rect.left;
-				gfxItem->_currFrame.isScaled = 1;
+				gfxItem->_currFrame._rect.top = gfxItem->_currFrame._rect.bottom - scaleValue * (gfxItem->_currFrame._rect.bottom - gfxItem->_currFrame._rect.top) / 1000;
+				gfxItem->_currFrame._rect.right = scaleValue * (gfxItem->_currFrame._rect.right - gfxItem->_currFrame._rect.left) / 1000 + gfxItem->_currFrame._rect.left;
+				gfxItem->_currFrame._isScaled = 1;
 			}
-			gfxItem->_currFrame.duration -= totalDuration;
-			if (gfxItem->_currFrame.soundId != -1)
-				_soundIds.push_back((gfxItem->_sequenceId & 0xFFFF0000) | gfxItem->_currFrame.soundId);
+			gfxItem->_currFrame._duration -= totalDuration;
+			if (gfxItem->_currFrame._soundId != -1)
+				_soundIds.push_back((gfxItem->_sequenceId & 0xFFFF0000) | gfxItem->_currFrame._soundId);
 			gfxItem->_currFrameNum = j;
 			gfxItem->_updFlag = true;
 		} else {
@@ -518,17 +518,17 @@ void GameSys::seqRemoveGfx(int sequenceId, int id) {
 	if (seqLocateGfx(sequenceId, id, &gfxIndex)) {
 		GfxItem *gfxItem = &_gfxItems[gfxIndex];
 		while (gfxIndex < _gfxItemsCount && gfxItem->_sequenceId == sequenceId && gfxItem->_id == id) {
-			if (gfxItem->_prevFrame.spriteId == -1) {
+			if (gfxItem->_prevFrame._spriteId == -1) {
 				--_gfxItemsCount;
 				if (gfxIndex != _gfxItemsCount)
 					memcpy(&_gfxItems[gfxIndex], &_gfxItems[gfxIndex + 1], sizeof(GfxItem) * (_gfxItemsCount - gfxIndex));
 			} else {
 				gfxItem->_sequenceId = -1;
 				gfxItem->_animation = nullptr;
-				gfxItem->_currFrame.duration = 0;
-				gfxItem->_currFrame.spriteId = -1;
-				gfxItem->_currFrame.soundId = -1;
-				gfxItem->_currFrame.unkValue = -1;
+				gfxItem->_currFrame._duration = 0;
+				gfxItem->_currFrame._spriteId = -1;
+				gfxItem->_currFrame._soundId = -1;
+				gfxItem->_currFrame._unusedVal = -1;
 				gfxItem->_updFlag = true;
 				++gfxIndex;
 				gfxItem = &_gfxItems[gfxIndex];
@@ -549,15 +549,15 @@ bool GameSys::updateSequenceDuration(int sequenceId, int id, int *outDuration) {
 				if (gfxItem->_currFrameNum < animation->framesCount)
 					return false;
 				if (gfxItem->_updFlag) {
-					if (gfxItem->_currFrame.duration > 0)
+					if (gfxItem->_currFrame._duration > 0)
 						return false;
-					if (-gfxItem->_currFrame.duration < duration)
-						duration = -gfxItem->_currFrame.duration;
+					if (-gfxItem->_currFrame._duration < duration)
+						duration = -gfxItem->_currFrame._duration;
 				} else {
-					if (gfxItem->_prevFrame.duration > 0)
+					if (gfxItem->_prevFrame._duration > 0)
 						return false;
-					if (-gfxItem->_prevFrame.duration < duration)
-						duration = -gfxItem->_prevFrame.duration;
+					if (-gfxItem->_prevFrame._duration < duration)
+						duration = -gfxItem->_prevFrame._duration;
 				}
 			}
 		}
@@ -588,8 +588,8 @@ void GameSys::updateAnimationsStatus(int sequenceId, int id) {
 		if (gfxItem->_sequenceId == sequenceId && gfxItem->_id == id && animation) {
 			foundSequence = true;
 			if (animation->framesCount > gfxItem->_currFrameNum ||
-				(gfxItem->_updFlag && gfxItem->_currFrame.duration > 1) ||
-				gfxItem->_prevFrame.duration > 1)
+				(gfxItem->_updFlag && gfxItem->_currFrame._duration > 1) ||
+				gfxItem->_prevFrame._duration > 1)
 				foundSequence = false;
 			break;
 		}
@@ -736,9 +736,9 @@ void GameSys::blitSpriteScaled32(Graphics::Surface *destSurface, Common::Rect &f
 
 void GameSys::seqDrawStaticFrame(Graphics::Surface *surface, SequenceFrame &frame, Common::Rect *subRect) {
 	debug(1, "GameSys::seqDrawStaticFrame() rect: (%d, %d, %d, %d)",
-		frame.rect.left, frame.rect.top, frame.rect.right, frame.rect.bottom);
+		frame._rect.left, frame._rect.top, frame._rect.right, frame._rect.bottom);
 	
-	Common::Rect srcRect = subRect ? *subRect : frame.rect;
+	Common::Rect srcRect = subRect ? *subRect : frame._rect;
 	Common::Rect clipRect;
 	
 	if (!intersectRect(clipRect, srcRect, _screenRect)) {
@@ -748,7 +748,7 @@ void GameSys::seqDrawStaticFrame(Graphics::Surface *surface, SequenceFrame &fram
 
 	const int x = clipRect.left, y = clipRect.top;
 	
-	clipRect.translate(-frame.rect.left, -frame.rect.top);
+	clipRect.translate(-frame._rect.left, -frame._rect.top);
 
 	// TODO Save transparent flag somewhere
 	blitSurface32(_frontSurface, x, y, surface, clipRect, true);
@@ -757,9 +757,9 @@ void GameSys::seqDrawStaticFrame(Graphics::Surface *surface, SequenceFrame &fram
 
 void GameSys::seqDrawSpriteFrame(SpriteResource *spriteResource, SequenceFrame &frame, Common::Rect *subRect) {
 	debug(1, "GameSys::seqDrawSpriteFrame() spriteId: %04X; rect: (%d, %d, %d, %d)",
-		frame.spriteId, frame.rect.left, frame.rect.top, frame.rect.right, frame.rect.bottom);
+		frame._spriteId, frame._rect.left, frame._rect.top, frame._rect.right, frame._rect.bottom);
 	
-	Common::Rect srcRect = subRect ? *subRect : frame.rect;
+	Common::Rect srcRect = subRect ? *subRect : frame._rect;
 	Common::Rect clipRect;
 	
 	if (!intersectRect(clipRect, srcRect, _screenRect)) {
@@ -772,14 +772,14 @@ void GameSys::seqDrawSpriteFrame(SpriteResource *spriteResource, SequenceFrame &
 
 	const int x = clipRect.left, y = clipRect.top;
 	
-	debug(1, "GameSys::seqDrawSpriteFrame() destX: %d; destY: %d; frame.isScaled: %d", x, y, frame.isScaled);
+	debug(1, "GameSys::seqDrawSpriteFrame() destX: %d; destY: %d; frame.isScaled: %d", x, y, frame._isScaled);
 
 	// 32bit sprite drawing
-	if (frame.isScaled) {
+	if (frame._isScaled) {
 		Common::Rect sourceRect(0, 0, spriteResource->_width, spriteResource->_height);
-		blitSpriteScaled32(_frontSurface,	frame.rect, clipRect, sourcePixels, spriteResource->_width, sourceRect, sourcePalette);
+		blitSpriteScaled32(_frontSurface,	frame._rect, clipRect, sourcePixels, spriteResource->_width, sourceRect, sourcePalette);
 	} else {
-		clipRect.translate(-frame.rect.left, -frame.rect.top);
+		clipRect.translate(-frame._rect.left, -frame._rect.top);
 		blitSprite32(_frontSurface, x, y, sourcePixels, spriteResource->_width, clipRect, sourcePalette, true);//spriteResource->_transparent != 0);
 	}
 
@@ -806,41 +806,41 @@ void GameSys::drawSprites() {
 		if (!gfxItem2->_updFlag)
 			continue;
 
-		if (gfxItem2->_prevFrame.spriteId != -1) {
+		if (gfxItem2->_prevFrame._spriteId != -1) {
 			int transparent = 0;
-			if (gfxItem2->_currFrame.spriteId != -1 && !(gfxItem2->_flags & 2)) {
+			if (gfxItem2->_currFrame._spriteId != -1 && !(gfxItem2->_flags & 2)) {
 				if (gfxItem2->_flags & 1) {
 					transparent = 1;
 				} else {
-					int resourceId = (gfxItem2->_sequenceId & 0xFFFF0000) | gfxItem2->_currFrame.spriteId;
+					int resourceId = (gfxItem2->_sequenceId & 0xFFFF0000) | gfxItem2->_currFrame._spriteId;
 					SpriteResource *spriteResource = _vm->_spriteCache->get(resourceId);
 					transparent = spriteResource->_transparent;
 					_vm->_spriteCache->release(resourceId);
 				}
 			}
-			if ((gfxItem2->_flags & 8) || gfxItem2->_currFrame.spriteId == -1 ||
-				(!(gfxItem2->_flags & 2) && (!gfxItem2->_prevFrame.rect.equals(gfxItem2->_currFrame.rect) || !transparent))) {
-				restoreBackgroundRect(gfxItem2->_prevFrame.rect);
+			if ((gfxItem2->_flags & 8) || gfxItem2->_currFrame._spriteId == -1 ||
+				(!(gfxItem2->_flags & 2) && (!gfxItem2->_prevFrame._rect.equals(gfxItem2->_currFrame._rect) || !transparent))) {
+				restoreBackgroundRect(gfxItem2->_prevFrame._rect);
 				for (int l = 0; l < _gfxItemsCount; ++l)
-					_gfxItems[l].testUpdRect(gfxItem2->_prevFrame.rect);
+					_gfxItems[l].testUpdRect(gfxItem2->_prevFrame._rect);
 			}
 		}
 
-		if (gfxItem2->_currFrame.spriteId != -1) {
+		if (gfxItem2->_currFrame._spriteId != -1) {
 			int transparent = 0;
 			if (gfxItem2->_flags & 1) {
 				transparent = 1;
 			} else if (!(gfxItem2->_flags & 2)) {
-				int resourceId = (gfxItem2->_sequenceId & 0xFFFF0000) | gfxItem2->_currFrame.spriteId;
+				int resourceId = (gfxItem2->_sequenceId & 0xFFFF0000) | gfxItem2->_currFrame._spriteId;
 				SpriteResource *spriteResource = _vm->_spriteCache->get(resourceId);
 				transparent = spriteResource->_transparent;
 				_vm->_spriteCache->release(resourceId);
 			}
 			if (((gfxItem2->_flags & 2) && !(gfxItem2->_flags & 8)) ||
-				gfxItem2->_prevFrame.spriteId == -1 ||
-				!gfxItem2->_prevFrame.rect.equals(gfxItem2->_currFrame.rect) || transparent) {
+				gfxItem2->_prevFrame._spriteId == -1 ||
+				!gfxItem2->_prevFrame._rect.equals(gfxItem2->_currFrame._rect) || transparent) {
 				for (int l = k; l < _gfxItemsCount; ++l)
-					_gfxItems[l].testUpdRect(gfxItem2->_currFrame.rect);
+					_gfxItems[l].testUpdRect(gfxItem2->_currFrame._rect);
 			}
 		}
 
@@ -850,17 +850,17 @@ void GameSys::drawSprites() {
 		GfxItem *gfxItem5 = &_gfxItems[m];
 		
 		debug(0, "DrawGfxItem(%d) updFlag: %d; currFrame.spriteId: %04X; updRectsCount: %d; flags: %04X; sequenceId: %08X",
-			m, gfxItem5->_updFlag, gfxItem5->_currFrame.spriteId, gfxItem5->_updRectsCount, gfxItem5->_flags, gfxItem5->_sequenceId);
+			m, gfxItem5->_updFlag, gfxItem5->_currFrame._spriteId, gfxItem5->_updRectsCount, gfxItem5->_flags, gfxItem5->_sequenceId);
 		
 		if (gfxItem5->_updFlag) {
-			if (gfxItem5->_currFrame.spriteId != -1) {
+			if (gfxItem5->_currFrame._spriteId != -1) {
 				if (gfxItem5->_flags & 1) {
 					seqDrawStaticFrame(gfxItem5->_surface, gfxItem5->_currFrame, 0);
 					//debug("seqDrawStaticFrame");
 				} else if (gfxItem5->_flags & 2) {
 					// TODO seqDrawAviFrame(gfxItem5->currFrame.spriteId, &gfxItem5->currFrame, 0, gfxItem5->flags & 8);
 				} else {
-					int resourceId = (gfxItem5->_sequenceId & 0xFFFF0000) | gfxItem5->_currFrame.spriteId;
+					int resourceId = (gfxItem5->_sequenceId & 0xFFFF0000) | gfxItem5->_currFrame._spriteId;
 					SpriteResource *spriteResource = _vm->_spriteCache->get(resourceId);
 					seqDrawSpriteFrame(spriteResource, gfxItem5->_currFrame, 0);
 					_vm->_spriteCache->release(resourceId);
@@ -877,7 +877,7 @@ void GameSys::drawSprites() {
 					seqDrawAviFrame(spriteData4, &gfxItem5->prevFrame, &gfxItem5->updRects[n], gfxItem5->flags & 8);
 				*/
 			} else {
-				int resourceId = (gfxItem5->_sequenceId & 0xFFFF0000) | gfxItem5->_prevFrame.spriteId;
+				int resourceId = (gfxItem5->_sequenceId & 0xFFFF0000) | gfxItem5->_prevFrame._spriteId;
 				SpriteResource *spriteResource = _vm->_spriteCache->get(resourceId);
 				for (int n = 0; n < gfxItem5->_updRectsCount; ++n)
 					seqDrawSpriteFrame(spriteResource, gfxItem5->_prevFrame, &gfxItem5->_updRects[n]);
@@ -921,12 +921,12 @@ void GameSys::updateScreen() {
 		if (!gfxItem->_updFlag)
 			continue;
 
-		if (gfxItem->_prevFrame.spriteId == -1 ||
-			!intersectRect(srcRect, _screenRect, gfxItem->_prevFrame.rect)) {
-			if (gfxItem->_currFrame.spriteId != -1 && intersectRect(rcSrc2, _screenRect, gfxItem->_currFrame.rect))
+		if (gfxItem->_prevFrame._spriteId == -1 ||
+			!intersectRect(srcRect, _screenRect, gfxItem->_prevFrame._rect)) {
+			if (gfxItem->_currFrame._spriteId != -1 && intersectRect(rcSrc2, _screenRect, gfxItem->_currFrame._rect))
 				updateRect(rcSrc2);
-		} else if (gfxItem->_currFrame.spriteId != -1 &&
-			intersectRect(rcSrc2, _screenRect, gfxItem->_currFrame.rect)) {
+		} else if (gfxItem->_currFrame._spriteId != -1 &&
+			intersectRect(rcSrc2, _screenRect, gfxItem->_currFrame._rect)) {
 			updateRect(srcRect);
 			updateRect(rcSrc2);
 		}
@@ -971,10 +971,10 @@ void GameSys::handleReqRemoveSequenceItems() {
 				gfxItem->_sequenceId = -1;
 				gfxItem->_animation = nullptr;
 				if (_removeSequenceItems[i]._forceFrameReset) {
-					gfxItem->_currFrame.duration = 0;
-					gfxItem->_currFrame.spriteId = -1;
-					gfxItem->_currFrame.soundId = -1;
-					gfxItem->_currFrame.unkValue = -1;
+					gfxItem->_currFrame._duration = 0;
+					gfxItem->_currFrame._spriteId = -1;
+					gfxItem->_currFrame._soundId = -1;
+					gfxItem->_currFrame._unusedVal = -1;
 					gfxItem->_updFlag = true;
 				} else {
 					gfxItem->_updFlag = false;
@@ -994,10 +994,10 @@ void GameSys::handleReqRemoveSpriteDrawItems() {
 				if (gfxItem->_sequenceId == -1 && !gfxItem->_animation && (gfxItem->_flags & 1) &&
 					gfxItem->_id == _removeSpriteDrawItems[j]._id && _removeSpriteDrawItems[j]._surface == gfxItem->_surface) {
 					gfxItem->_flags = 0;
-					gfxItem->_currFrame.duration = 0;
-					gfxItem->_currFrame.spriteId = -1;
-					gfxItem->_currFrame.soundId = -1;
-					gfxItem->_currFrame.unkValue = -1;
+					gfxItem->_currFrame._duration = 0;
+					gfxItem->_currFrame._spriteId = -1;
+					gfxItem->_currFrame._soundId = -1;
+					gfxItem->_currFrame._unusedVal = -1;
 					gfxItem->_updFlag = true;
 				}
 			}
@@ -1027,7 +1027,7 @@ void GameSys::fatUpdateFrame() {
 		GfxItem *gfxItem = &_gfxItems[i];
 		SequenceAnimation *animation = gfxItem->_animation;
 		if ((gfxItem->_sequenceId != -1 && animation) || (gfxItem->_flags & 2) ||
-			gfxItem->_prevFrame.spriteId != -1 || gfxItem->_prevFrame.duration > 0) {
+			gfxItem->_prevFrame._spriteId != -1 || gfxItem->_prevFrame._duration > 0) {
 			if (gfxItem->_sequenceId == -1 || gfxItem->_updFlag) {
 				if ((gfxItem->_flags & 2) && !gfxItem->_updFlag) {
 					// NOTE Skipped avi code
@@ -1038,28 +1038,28 @@ void GameSys::fatUpdateFrame() {
 					updFlag = false;
 					gfxItem->_sequenceId = -1;
 					gfxItem->_animation = nullptr;
-					gfxItem->_currFrame.duration = 0;
-					gfxItem->_currFrame.spriteId = -1;
-					gfxItem->_currFrame.soundId = -1;
-					gfxItem->_currFrame.unkValue = -1;
+					gfxItem->_currFrame._duration = 0;
+					gfxItem->_currFrame._spriteId = -1;
+					gfxItem->_currFrame._soundId = -1;
+					gfxItem->_currFrame._unusedVal = -1;
 					gfxItem->_updFlag = true;
 				} else if (!seqItem) {
 					updFlag = false;
 					gfxItem->_animation = nullptr;
-					gfxItem->_currFrame.duration = 0;
-					gfxItem->_currFrame.spriteId = -1;
-					gfxItem->_currFrame.soundId = -1;
-					gfxItem->_currFrame.unkValue = -1;
+					gfxItem->_currFrame._duration = 0;
+					gfxItem->_currFrame._spriteId = -1;
+					gfxItem->_currFrame._soundId = -1;
+					gfxItem->_currFrame._unusedVal = -1;
 					gfxItem->_updFlag = true;
 				} else if ((seqItem->_flags & 4) && clockDelta > 1) {
 					updFlag = false;
 					if (gfxItem->_delayTicks < clockDelta) {
 						duration = clockDelta - gfxItem->_delayTicks;
 						gfxItem->_delayTicks = 0;
-						if (gfxItem->_prevFrame.duration <= duration)
-							gfxItem->_prevFrame.duration = 1;
+						if (gfxItem->_prevFrame._duration <= duration)
+							gfxItem->_prevFrame._duration = 1;
 						else
-							gfxItem->_prevFrame.duration -= duration;
+							gfxItem->_prevFrame._duration -= duration;
 					} else {
 						gfxItem->_delayTicks -= clockDelta;
 					}
@@ -1067,46 +1067,46 @@ void GameSys::fatUpdateFrame() {
 				} else if (gfxItem->_delayTicks < clockDelta) {
 					duration = clockDelta - gfxItem->_delayTicks;
 					gfxItem->_delayTicks = 0;
-					if (gfxItem->_prevFrame.duration <= duration) {
+					if (gfxItem->_prevFrame._duration <= duration) {
 						bool v20 = false;
-						if (gfxItem->_prevFrame.duration > 0) {
-							duration -= gfxItem->_prevFrame.duration;
-							gfxItem->_prevFrame.duration = -duration;
+						if (gfxItem->_prevFrame._duration > 0) {
+							duration -= gfxItem->_prevFrame._duration;
+							gfxItem->_prevFrame._duration = -duration;
 						} else {
-							gfxItem->_prevFrame.duration = 0;
+							gfxItem->_prevFrame._duration = 0;
 							v20 = true;
 						}
 						currFrameNum = gfxItem->_currFrameNum;
 						if (animation->framesCount > currFrameNum) {
 							updFlag = false;
 							while (animation->framesCount > currFrameNum &&
-								animation->frames[currFrameNum].duration <= duration) {
-								if (animation->frames[currFrameNum].soundId != -1)
-									_soundIds.push_back((gfxItem->_sequenceId & 0xFFFF0000) | animation->frames[currFrameNum].soundId);
-									duration -= animation->frames[currFrameNum].duration;
+								animation->frames[currFrameNum]._duration <= duration) {
+								if (animation->frames[currFrameNum]._soundId != -1)
+									_soundIds.push_back((gfxItem->_sequenceId & 0xFFFF0000) | animation->frames[currFrameNum]._soundId);
+									duration -= animation->frames[currFrameNum]._duration;
 									++currFrameNum;
 							}
 							if (animation->framesCount > currFrameNum)
 								gfxItem->_currFrame = animation->frames[currFrameNum++];
 							else
 								gfxItem->_currFrame = animation->frames[currFrameNum - 1];
-							if (gfxItem->_currFrame.spriteId != -1 && (seqItem->_x != 0 || seqItem->_y != 0))
-								gfxItem->_currFrame.rect.translate(seqItem->_x, seqItem->_y);
+							if (gfxItem->_currFrame._spriteId != -1 && (seqItem->_x != 0 || seqItem->_y != 0))
+								gfxItem->_currFrame._rect.translate(seqItem->_x, seqItem->_y);
 							// Update sprite scaling										
-							if ((seqItem->_flags & 1) && gfxItem->_currFrame.rect.bottom >= _backgroundImageValue1 && gfxItem->_currFrame.rect.bottom <= _backgroundImageValue3) {
-								int v17 = _backgroundImageValue2 + (gfxItem->_currFrame.rect.bottom - _backgroundImageValue1) *
+							if ((seqItem->_flags & 1) && gfxItem->_currFrame._rect.bottom >= _backgroundImageValue1 && gfxItem->_currFrame._rect.bottom <= _backgroundImageValue3) {
+								int v17 = _backgroundImageValue2 + (gfxItem->_currFrame._rect.bottom - _backgroundImageValue1) *
 									(_backgroundImageValue4 - _backgroundImageValue2) /
 									(_backgroundImageValue3 - _backgroundImageValue1);
-								gfxItem->_currFrame.rect.top = gfxItem->_currFrame.rect.bottom - v17 * (gfxItem->_currFrame.rect.bottom - gfxItem->_currFrame.rect.top) / 1000;
-								gfxItem->_currFrame.rect.right = v17 * (gfxItem->_currFrame.rect.right - gfxItem->_currFrame.rect.left) / 1000 + gfxItem->_currFrame.rect.left;
-								gfxItem->_currFrame.isScaled = 1;
+								gfxItem->_currFrame._rect.top = gfxItem->_currFrame._rect.bottom - v17 * (gfxItem->_currFrame._rect.bottom - gfxItem->_currFrame._rect.top) / 1000;
+								gfxItem->_currFrame._rect.right = v17 * (gfxItem->_currFrame._rect.right - gfxItem->_currFrame._rect.left) / 1000 + gfxItem->_currFrame._rect.left;
+								gfxItem->_currFrame._isScaled = 1;
 							}
-							gfxItem->_currFrame.duration -= duration;
-							if (gfxItem->_currFrame.soundId != -1)
-								_soundIds.push_back((gfxItem->_sequenceId & 0xFFFF0000) | gfxItem->_currFrame.soundId);
+							gfxItem->_currFrame._duration -= duration;
+							if (gfxItem->_currFrame._soundId != -1)
+								_soundIds.push_back((gfxItem->_sequenceId & 0xFFFF0000) | gfxItem->_currFrame._soundId);
 							gfxItem->_currFrameNum = currFrameNum;
 							gfxItem->_updFlag = true;
-						} else if (v20 && gfxItem->_prevFrame.spriteId == -1) {
+						} else if (v20 && gfxItem->_prevFrame._spriteId == -1) {
 							--_gfxItemsCount;
 							if (_gfxItemsCount != i)
 								memcpy(&_gfxItems[i], &_gfxItems[i + 1], sizeof(GfxItem) * (_gfxItemsCount - i));
@@ -1116,7 +1116,7 @@ void GameSys::fatUpdateFrame() {
 						}
 					} else {
 						updFlag = false;
-						gfxItem->_prevFrame.duration -= duration;
+						gfxItem->_prevFrame._duration -= duration;
 						gfxItem->_updFlag = false;
 					}
 				} else {
@@ -1152,16 +1152,16 @@ void GameSys::fatUpdateFrame() {
 				gfxItem->_updFlag = true;
 				gfxItem->_updRectsCount = 0;
 				gfxItem->_surface = _newSpriteDrawItems[k]._surface;
-				gfxItem->_prevFrame.duration = 0;
-				gfxItem->_prevFrame.spriteId = -1;
-				gfxItem->_prevFrame.soundId = -1;
-				gfxItem->_prevFrame.unkValue = -1;
-				gfxItem->_currFrame.duration = 0;
-				gfxItem->_currFrame.isScaled = 0;
-				gfxItem->_currFrame.rect = _newSpriteDrawItems[k]._rect;
-				gfxItem->_currFrame.spriteId = _newSpriteDrawItems[k]._surface ? 0xCAFEBABE : -1;// TODO
-				gfxItem->_currFrame.soundId = -1;
-				gfxItem->_currFrame.unkValue = -1;
+				gfxItem->_prevFrame._duration = 0;
+				gfxItem->_prevFrame._spriteId = -1;
+				gfxItem->_prevFrame._soundId = -1;
+				gfxItem->_prevFrame._unusedVal = -1;
+				gfxItem->_currFrame._duration = 0;
+				gfxItem->_currFrame._isScaled = 0;
+				gfxItem->_currFrame._rect = _newSpriteDrawItems[k]._rect;
+				gfxItem->_currFrame._spriteId = _newSpriteDrawItems[k]._surface ? 0xCAFEBABE : -1;// TODO
+				gfxItem->_currFrame._soundId = -1;
+				gfxItem->_currFrame._unusedVal = -1;
 			}
 		}
 		_newSpriteDrawItemsCount = 0;
@@ -1172,12 +1172,12 @@ void GameSys::fatUpdateFrame() {
 			GfxItem *gfxItem = &_gfxItems[i];
 			if (gfxItem->_sequenceId == -1 && !gfxItem->_animation && (gfxItem->_flags & 1) &&
 				gfxItem->_id == _grabSpriteId && gfxItem->_surface == _grabSpriteSurface1) {
-					gfxItem->_currFrame.duration = 0;
-					gfxItem->_currFrame.isScaled = 0;
-					gfxItem->_currFrame.rect = _grabSpriteRect;
-					gfxItem->_currFrame.spriteId = _grabSpriteSurface2 ? 1 : -1;// TODO
-					gfxItem->_currFrame.soundId = -1;
-					gfxItem->_currFrame.unkValue = -1;
+					gfxItem->_currFrame._duration = 0;
+					gfxItem->_currFrame._isScaled = 0;
+					gfxItem->_currFrame._rect = _grabSpriteRect;
+					gfxItem->_currFrame._spriteId = _grabSpriteSurface2 ? 1 : -1;// TODO
+					gfxItem->_currFrame._soundId = -1;
+					gfxItem->_currFrame._unusedVal = -1;
 					gfxItem->_updFlag = true;
 					gfxItem->_surface = _grabSpriteSurface2;
 					break;
