@@ -591,12 +591,14 @@ Designed *Gui::mouseUp(int x, int y) {
 
 		switch (borderClick) {
 			case kBorderScrollUp:
-				_scrollPos--;
+				_scrollPos = MAX<int>(0, _scrollPos - _consoleLineHeight);
 				_consoleDirty = true;
+				_consoleFullRedraw = true;
 				break;
 			case kBorderScrollDown:
-				_scrollPos++;
+				_scrollPos = MIN<int>((_lines.size() - 2) * _consoleLineHeight, _scrollPos + _consoleLineHeight);
 				_consoleDirty = true;
+				_consoleFullRedraw = true;
 				break;
 		}
 	}
