@@ -357,7 +357,7 @@ void AdlEngine::drawItems() const {
 		if (item->room != _state.room)
 			continue;
 
-		if (item->state == IDI_ITEM_MOVED) {
+		if (item->state == IDI_ITEM_DROPPED) {
 			if (getCurRoom().picture == getCurRoom().curPicture) {
 				const Common::Point &p =  _itemOffsets[dropped];
 				drawItem(*item, p);
@@ -444,7 +444,7 @@ void AdlEngine::takeItem(byte noun) {
 			return;
 		}
 
-		if (item->state == IDI_ITEM_MOVED) {
+		if (item->state == IDI_ITEM_DROPPED) {
 			item->room = IDI_NONE;
 			return;
 		}
@@ -453,7 +453,7 @@ void AdlEngine::takeItem(byte noun) {
 		for (pic = item->roomPictures.begin(); pic != item->roomPictures.end(); ++pic) {
 			if (*pic == getCurRoom().curPicture) {
 				item->room = IDI_NONE;
-				item->state = IDI_ITEM_MOVED;
+				item->state = IDI_ITEM_DROPPED;
 				return;
 			}
 		}
@@ -470,7 +470,7 @@ void AdlEngine::dropItem(byte noun) {
 			continue;
 
 		item->room = _state.room;
-		item->state = IDI_ITEM_MOVED;
+		item->state = IDI_ITEM_DROPPED;
 		return;
 	}
 

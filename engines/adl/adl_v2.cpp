@@ -117,7 +117,7 @@ int AdlEngine_v2::o2_moveItem(ScriptEnv &e) {
 
 	// Set items that move from inventory to a room to state "dropped"
 	if (item.room == IDI_NONE && room != IDI_VOID_ROOM)
-		item.state = IDI_ITEM_MOVED;
+		item.state = IDI_ITEM_DROPPED;
 
 	item.room = room;
 	return 2;
