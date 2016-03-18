@@ -278,7 +278,7 @@ void AdlEngine::checkInput(byte verb, byte noun) {
 		printMessage(_messageIds.dontUnderstand);
 }
 
-typedef Common::Functor1Mem<ScriptEnv &, bool, AdlEngine> OpcodeV1;
+typedef Common::Functor1Mem<ScriptEnv &, int, AdlEngine> OpcodeV1;
 #define SetOpcodeTable(x) table = &x;
 #define Opcode(x) table->push_back(new OpcodeV1(this, &AdlEngine::x))
 #define OpcodeUnImpl() table->push_back(new OpcodeV1(this, 0))
@@ -852,129 +852,111 @@ void AdlEngine::getInput(uint &verb, uint &noun) {
 	}
 }
 
-typedef Common::Functor1Mem<ScriptEnv &, bool, AdlEngine> OpcodeV1;
+typedef Common::Functor1Mem<ScriptEnv &, int, AdlEngine> OpcodeV1;
 
-bool AdlEngine::o1_isItemInRoom(ScriptEnv &e) {
+int AdlEngine::o1_isItemInRoom(ScriptEnv &e) {
 	if (getItem(e.arg(1)).room != e.arg(2))
-		return false;
-	e.ip += 3;
-	return true;
+		return -1;
+	return 2;
 }
 
-bool AdlEngine::o1_isMovesGrEq(ScriptEnv &e) {
+int AdlEngine::o1_isMovesGrEq(ScriptEnv &e) {
 	if (e.arg(1) > _state.moves)
-		return false;
-	e.ip += 2;
-	return true;
+		return -1;
+	return 1;
 }
 
-bool AdlEngine::o1_isVarEq(ScriptEnv &e) {
+int AdlEngine::o1_isVarEq(ScriptEnv &e) {
 	if (getVar(e.arg(1)) != e.arg(2))
-		return false;
-	e.ip += 3;
-	return true;
+		return -1;
+	return 2;
 }
 
-bool AdlEngine::o1_isCurPicEq(ScriptEnv &e) {
+int AdlEngine::o1_isCurPicEq(ScriptEnv &e) {
 	if (getCurRoom().curPicture != e.arg(1))
-		return false;
-	e.ip += 2;
-	return true;
+		return -1;
+	return 1;
 }
 
-bool AdlEngine::o1_isItemPicEq(ScriptEnv &e) {
+int AdlEngine::o1_isItemPicEq(ScriptEnv &e) {
 	if (getItem(e.arg(1)).picture != e.arg(2))
-		return false;
-	e.ip += 3;
-	return true;
+		return -1;
+	return 2;
 }
 
-bool AdlEngine::o1_varAdd(ScriptEnv &e) {
+int AdlEngine::o1_varAdd(ScriptEnv &e) {
 	setVar(e.arg(2), getVar(e.arg(2) + e.arg(1)));
-	e.ip += 3;
-	return true;
+	return 2;
 }
 
-bool AdlEngine::o1_varSub(ScriptEnv &e) {
+int AdlEngine::o1_varSub(ScriptEnv &e) {
 	setVar(e.arg(2), getVar(e.arg(2)) - e.arg(1));
-	e.ip += 3;
-	return true;
+	return 2;
 }
 
-bool AdlEngine::o1_varSet(ScriptEnv &e) {
+int AdlEngine::o1_varSet(ScriptEnv &e) {
 	setVar(e.arg(1), e.arg(2));
-	e.ip += 3;
-	return true;
+	return 2;
 }
 
-bool AdlEngine::o1_listInv(ScriptEnv &e) {
+int AdlEngine::o1_listInv(ScriptEnv &e) {
 	Common::Array<Item>::const_iterator item;
 
 	for (item = _state.items.begin(); item != _state.items.end(); ++item)
 		if (item->room == IDI_NONE)
 			printMessage(item->description);
 
-	++e.ip;
-	return true;
+	return 0;
 }
 
-bool AdlEngine::o1_moveItem(ScriptEnv &e) {
+int AdlEngine::o1_moveItem(ScriptEnv &e) {
 	getItem(e.arg(1)).room = e.arg(2);
-	e.ip += 3;
-	return true;
+	return 2;
 }
 
-bool AdlEngine::o1_setRoom(ScriptEnv &e) {
+int AdlEngine::o1_setRoom(ScriptEnv &e) {
 	getCurRoom().curPicture = getCurRoom().picture;
 	_state.room = e.arg(1);
-	e.ip += 2;
-	return true;
+	return 1;
 }
 
-bool AdlEngine::o1_setCurPic(ScriptEnv &e) {
+int AdlEngine::o1_setCurPic(ScriptEnv &e) {
 	getCurRoom().curPicture = e.arg(1);
-	e.ip += 2;
-	return true;
+	return 1;
 }
 
-bool AdlEngine::o1_setPic(ScriptEnv &e) {
+int AdlEngine::o1_setPic(ScriptEnv &e) {
 	getCurRoom().picture = getCurRoom().curPicture = e.arg(1);
-	e.ip += 2;
-	return true;
+	return 1;
 }
 
-bool AdlEngine::o1_printMsg(ScriptEnv &e) {
+int AdlEngine::o1_printMsg(ScriptEnv &e) {
 	printMessage(e.arg(1));
-	e.ip += 2;
-	return true;
+	return 1;
 }
 
-bool AdlEngine::o1_setLight(ScriptEnv &e) {
+int AdlEngine::o1_setLight(ScriptEnv &e) {
 	_state.isDark = false;
-	++e.ip;
-	return true;
+	return 0;
 }
 
-bool AdlEngine::o1_setDark(ScriptEnv &e) {
+int AdlEngine::o1_setDark(ScriptEnv &e) {
 	_state.isDark = true;
-	++e.ip;
-	return true;
+	return 0;
 }
 
-bool AdlEngine::o1_save(ScriptEnv &e) {
+int AdlEngine::o1_save(ScriptEnv &e) {
 	saveGameState(0, "");
-	++e.ip;
-	return true;
+	return 0;
 }
 
-bool AdlEngine::o1_restore(ScriptEnv &e) {
+int AdlEngine::o1_restore(ScriptEnv &e) {
 	loadGameState(0);
-	++e.ip;
 	_isRestoring = false;
-	return true;
+	return 0;
 }
 
-bool AdlEngine::o1_restart(ScriptEnv &e) {
+int AdlEngine::o1_restart(ScriptEnv &e) {
 	_display->printString(_strings.playAgain);
 	Common::String input = inputString();
 
@@ -983,68 +965,62 @@ bool AdlEngine::o1_restart(ScriptEnv &e) {
 		_display->clear(0x00);
 		_display->updateHiResScreen();
 		restartGame();
-		return false;
+		return -1;
 	}
 
 	return o1_quit(e);
 }
 
-bool AdlEngine::o1_quit(ScriptEnv &e) {
+int AdlEngine::o1_quit(ScriptEnv &e) {
 	printMessage(_messageIds.thanksForPlaying);
 	quitGame();
-	return false;
+	return -1;
 }
 
-bool AdlEngine::o1_placeItem(ScriptEnv &e) {
+int AdlEngine::o1_placeItem(ScriptEnv &e) {
 	getItem(e.arg(1)).room = e.arg(2);
 	getItem(e.arg(1)).position.x = e.arg(3);
 	getItem(e.arg(1)).position.y = e.arg(4);
-	e.ip += 5;
-	return true;
+	return 4;
 }
 
-bool AdlEngine::o1_setItemPic(ScriptEnv &e) {
+int AdlEngine::o1_setItemPic(ScriptEnv &e) {
 	getItem(e.arg(2)).picture = e.arg(1);
-	e.ip += 3;
-	return true;
+	return 2;
 }
 
-bool AdlEngine::o1_resetPic(ScriptEnv &e) {
+int AdlEngine::o1_resetPic(ScriptEnv &e) {
 	getCurRoom().curPicture = getCurRoom().picture;
-	++e.ip;
-	return true;
+	return 0;
 }
 
 template <Direction D>
-bool AdlEngine::o1_goDirection(ScriptEnv &e) {
+int AdlEngine::o1_goDirection(ScriptEnv &e) {
 	byte room = getCurRoom().connections[D];
 
 	if (room == 0) {
 		printMessage(_messageIds.cantGoThere);
-		return false;
+		return -1;
 	}
 
 	getCurRoom().curPicture = getCurRoom().picture;
 	_state.room = room;
-	return false;
+	return -1;
 }
 
-bool AdlEngine::o1_takeItem(ScriptEnv &e) {
+int AdlEngine::o1_takeItem(ScriptEnv &e) {
 	takeItem(e.noun);
-	++e.ip;
-	return true;
+	return 0;
 }
 
-bool AdlEngine::o1_dropItem(ScriptEnv &e) {
+int AdlEngine::o1_dropItem(ScriptEnv &e) {
 	dropItem(e.noun);
-	++e.ip;
-	return true;
+	return 0;
 }
 
-bool AdlEngine::o1_setRoomPic(ScriptEnv &e) {
+int AdlEngine::o1_setRoomPic(ScriptEnv &e) {
 	getRoom(e.arg(1)).picture = getRoom(e.arg(1)).curPicture = e.arg(2);
-	e.ip += 3;
-	return true;
+	return 2;
 }
 
 bool AdlEngine::matchCommand(ScriptEnv &env, uint *actions) const {
@@ -1063,8 +1039,12 @@ bool AdlEngine::matchCommand(ScriptEnv &env, uint *actions) const {
 		if (!_condOpcodes[op] || !_condOpcodes[op]->isValid())
 			error("Unimplemented condition opcode %02x", op);
 
-		if (!(*_condOpcodes[op])(env))
+		int numArgs = (*_condOpcodes[op])(env);
+
+		if (numArgs < 0)
 			return false;
+
+		env.ip += numArgs + 1;
 	}
 
 	if (actions)
@@ -1080,8 +1060,12 @@ void AdlEngine::doActions(ScriptEnv &env) {
 		if (!_actOpcodes[op] || !_actOpcodes[op]->isValid())
 			error("Unimplemented action opcode %02x", op);
 
-		if (!(*_actOpcodes[op])(env))
+		int numArgs = (*_actOpcodes[op])(env);
+
+		if (numArgs < 0)
 			return;
+
+		env.ip += numArgs + 1;
 	}
 }
 

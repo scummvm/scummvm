@@ -50,8 +50,6 @@ class Speaker;
 struct AdlGameDescription;
 struct ScriptEnv;
 
-typedef Common::Functor1<ScriptEnv &, bool> Opcode;
-
 // Conditional opcodes
 #define IDO_CND_ITEM_IN_ROOM   0x03
 #define IDO_CND_MOVES_GE       0x05
@@ -198,35 +196,35 @@ protected:
 	virtual void setupOpcodeTables();
 
 	// Opcodes
-	bool o1_isItemInRoom(ScriptEnv &env);
-	bool o1_isMovesGrEq(ScriptEnv &env);
-	bool o1_isVarEq(ScriptEnv &env);
-	bool o1_isCurPicEq(ScriptEnv &env);
-	bool o1_isItemPicEq(ScriptEnv &env);
+	int o1_isItemInRoom(ScriptEnv &e);
+	int o1_isMovesGrEq(ScriptEnv &e);
+	int o1_isVarEq(ScriptEnv &e);
+	int o1_isCurPicEq(ScriptEnv &e);
+	int o1_isItemPicEq(ScriptEnv &e);
 
-	bool o1_varAdd(ScriptEnv &env);
-	bool o1_varSub(ScriptEnv &env);
-	bool o1_varSet(ScriptEnv &env);
-	bool o1_listInv(ScriptEnv &env);
-	bool o1_moveItem(ScriptEnv &env);
-	bool o1_setRoom(ScriptEnv &env);
-	bool o1_setCurPic(ScriptEnv &env);
-	bool o1_setPic(ScriptEnv &env);
-	bool o1_printMsg(ScriptEnv &env);
-	bool o1_setLight(ScriptEnv &env);
-	bool o1_setDark(ScriptEnv &env);
-	bool o1_save(ScriptEnv &env);
-	bool o1_restore(ScriptEnv &env);
-	bool o1_restart(ScriptEnv &env);
-	bool o1_quit(ScriptEnv &env);
-	bool o1_placeItem(ScriptEnv &env);
-	bool o1_setItemPic(ScriptEnv &env);
-	bool o1_resetPic(ScriptEnv &env);
+	int o1_varAdd(ScriptEnv &e);
+	int o1_varSub(ScriptEnv &e);
+	int o1_varSet(ScriptEnv &e);
+	int o1_listInv(ScriptEnv &e);
+	int o1_moveItem(ScriptEnv &e);
+	int o1_setRoom(ScriptEnv &e);
+	int o1_setCurPic(ScriptEnv &e);
+	int o1_setPic(ScriptEnv &e);
+	int o1_printMsg(ScriptEnv &e);
+	int o1_setLight(ScriptEnv &e);
+	int o1_setDark(ScriptEnv &e);
+	int o1_save(ScriptEnv &e);
+	int o1_restore(ScriptEnv &e);
+	int o1_restart(ScriptEnv &e);
+	int o1_quit(ScriptEnv &e);
+	int o1_placeItem(ScriptEnv &e);
+	int o1_setItemPic(ScriptEnv &e);
+	int o1_resetPic(ScriptEnv &e);
 	template <Direction D>
-	bool o1_goDirection(ScriptEnv &env);
-	bool o1_takeItem(ScriptEnv &env);
-	bool o1_dropItem(ScriptEnv &env);
-	bool o1_setRoomPic(ScriptEnv &env);
+	int o1_goDirection(ScriptEnv &e);
+	int o1_takeItem(ScriptEnv &e);
+	int o1_dropItem(ScriptEnv &e);
+	int o1_setRoomPic(ScriptEnv &e);
 
 	// Graphics
 	void clearScreen() const;
@@ -256,6 +254,7 @@ protected:
 	Speaker *_speaker;
 
 	// Opcodes
+	typedef Common::Functor1<ScriptEnv &, int> Opcode;
 	Common::Array<const Opcode *> _condOpcodes, _actOpcodes;
 	// Message strings in data file
 	Common::Array<Common::String> _messages;
