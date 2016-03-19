@@ -32,13 +32,19 @@
 
 namespace Cloud {
 
-  /**
-   * The main cloud API class which can be instantiated to get a new cloud
-   * provider. It implements the state Pattern.
-   */
-  class CloudInstance {
-    class CloudAbstract *cloud;
-    Common::String cloudName;
+enum cloudAuth{
+    VALID,
+    INVALID,
+    OFFLINE
+};
+
+/**
+ * The main cloud API class which can be instantiated to get a new cloud
+ * provider. It implements the state Pattern.
+ */
+class CloudInstance {
+    class CloudAbstract *_cloud;
+    Common::String _cloudName;
     public:
     CloudInstance();
     CloudInstance(CloudAbstract* absCloud);
@@ -46,37 +52,37 @@ namespace Cloud {
 
     /**
      * Attempt to authenticate the provider with the given code. This is a one
-     * time process. Until the provider is authenticated, the services below
+     * time process. Unless the provider is authenticated, the services below
      * won't work.
      * @param code The Authentication Code recieved from visitng provider' URL
      */
-    void Auth(Common::String code);
+    void auth(Common::String code);
 
     /**
-     * @return true if the Provider is already authenticated. False, otherwise
+     * @return enum cloudAuth. Please refer to enum cloudAuth definition for error codes
      */
-    bool checkAuth();
+    cloudAuth checkAuth();
 
     /**
      * Attempt to Sync all the files matching the given pattern
      * @param pattern The Search pattern to match files on the cloud
      * @return 0 if success, failure otherwise
      */
-    int Sync(const Common::String &pattern);
+    int sync(const Common::String &pattern);
 
     /**
      * Attempt to download the file with the given name.
      * @param FileName Name of the file to download
      * @return 0 if success, failure otherwise
      */
-    int Download(const Common::String &FileName);
+    int download(const Common::String &fileName);
 
     /**
      * Attempt to Upload the file with the given name.
      * @param FileName Name of the file to upload
      * @return 0 if success, failure otherwise
      */
-    int Upload(const Common::String &FileName);
+    int upload(const Common::String &fileName);
 
     /**
      * Copy a file from source to destination
@@ -84,20 +90,20 @@ namespace Cloud {
      * @param destFileName Name of the new copied file
      * @return 0 if success, failure otherwise
      */
-    int Copy(const Common::String &srcFilename, const Common::String &destFilename);
+    int copy(const Common::String &srcFileName, const Common::String &destFileName);
 
     /**
      * Remove a file with given name
      * @param filename Name of the file to Delete
      * @return 0 if success, failure otherwise
      */
-    int Remove(const Common::String &filename);
+    int remove(const Common::String &fileName);
 
     /**
      * Use Dropbox service provider. After this is called, this instance
      * will provide dropbox services. This is also the default behaviour
      */
-    void useDropbox();
+    void useDropBox();
 
     /**
      * Use OneDrive service provider. After this is called, this instance
@@ -110,23 +116,25 @@ namespace Cloud {
      * will provide Google Drive services.
      */
     void useGDrive();
-  };
+};
 
-  /**
-   * The Abstract Cloud Class which can be inherited into different cloud
-   * providers
-   */
-  class CloudAbstract {
+/**
+ * The Abstract Cloud Class which can be subclassed into different cloud
+ * providers
+ */
+class CloudAbstract {
     public:
-      virtual void Auth(Common::String code)=0;
-      virtual bool checkAuth()=0;
-      virtual int Sync(const Common::String &pattern)=0;
-      virtual int Download(const Common::String &FileName)=0;
-      virtual int Upload(const Common::String &filename)=0;
-      virtual int Copy(const Common::String &srcFilename, const Common::String &destFilename)=0;
-      virtual int Remove(const Common::String &filename)=0;
-      virtual ~CloudAbstract() {}
-  };  
-  CloudInstance* getDefaultInstance();
+        virtual void auth(Common::String code)=0;
+        virtual cloudAuth checkAuth()=0;
+        virtual int sync(const Common::String &pattern)=0;
+        virtual int download(const Common::String &fileName)=0;
+        virtual int upload(const Common::String &fileName)=0;
+        virtual int copy(const Common::String &srcFileName, const Common::String &destFileName)=0;
+        virtual int remove(const Common::String &fileName)=0;
+        virtual ~CloudAbstract() {}
+};
+
+CloudInstance* getDefaultInstance();
+
 }
 #endif

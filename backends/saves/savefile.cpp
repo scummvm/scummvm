@@ -63,7 +63,7 @@ bool SaveFileManager::copySavefile(const String &oldFilename, const String &newF
 		delete inFile;
 	}
   if (success) {
-    Cloud::getDefaultInstance()->Copy(oldFilename, newFilename);
+    Cloud::getDefaultInstance()->copy(oldFilename, newFilename);
   }
 
 	return success;

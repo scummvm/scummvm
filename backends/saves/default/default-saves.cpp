@@ -76,10 +76,10 @@ Common::StringArray DefaultSaveFileManager::listSavefiles(const Common::String &
 	Common::ArchiveMemberList savefiles;
 	Common::StringArray results;
 	Common::String search(pattern);
-
-  Cloud::getDefaultInstance()->Sync(search);//Download any missing files matching the pattern
-
-  //Recreate FSDirectory as Cloud may have downloaded additional files
+    
+    Cloud::getDefaultInstance()->sync(search);//Download any missing files matching the pattern
+    
+    //Recreate FSDirectory as Cloud may have downloaded additional files
 	dir = Common::FSDirectory (savePath);
 
 	if (dir.listMatchingMembers(savefiles, search) > 0) {
@@ -126,9 +126,9 @@ Common::OutSaveFile *DefaultSaveFileManager::openForSaving(const Common::String 
 
 	// Open the file for saving
 	Common::WriteStream *sf = file.createWriteStream();
-
-  //Save the FSNode for the cloud to save the file later
-  ((StdioStream *)sf)->SaveNode(file);
+    
+    //Save the FSNode for the cloud to save the file later
+    ((StdioStream *)sf)->saveNode(file);
 
 	return compress ? Common::wrapCompressedWriteStream(sf) : sf;
 }
@@ -157,8 +157,8 @@ bool DefaultSaveFileManager::removeSavefile(const Common::String &filename) {
 #endif
 		return false;
 	} else {
-    //TODO: Implement errors for Cloud
-    Cloud::getDefaultInstance()->Remove(filename);
+        //TODO: Implement errors for Cloud
+        Cloud::getDefaultInstance()->remove(filename);
 		return true;
 	}
 }

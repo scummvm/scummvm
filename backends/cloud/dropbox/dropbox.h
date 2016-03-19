@@ -33,23 +33,24 @@
 #include "backends/cloud/cloud.h"
 
 namespace Cloud {
-  class Dropbox:public CloudAbstract {
-    Common::String token;
+
+class DropBox:public CloudAbstract {
+    Common::String _token;
     Common::String getSavePath();
     Common::String getToken();
     Common::String getTokenFromCode(Common::String code);
 
     public:
-    Dropbox();
-    virtual bool checkAuth();
-    virtual void Auth(Common::String code);
+    DropBox();
+    virtual cloudAuth checkAuth();
+    virtual void auth(Common::String code);
 
     /* Until the object is authorized, the following functions are unusable*/
-    virtual int Sync(const Common::String &pattern);
-    virtual int Download(const Common::String &FileName);
-    virtual int Upload(const Common::String &FileName);
-    virtual int Copy(const Common::String &srcFilename, const Common::String &destFilename);
-    virtual int Remove(const Common::String &filename);
-  };
+    virtual int sync(const Common::String &pattern);
+    virtual int download(const Common::String &fileName);
+    virtual int upload(const Common::String &fileName);
+    virtual int copy(const Common::String &srcFileName, const Common::String &destFileName);
+    virtual int remove(const Common::String &fileName);
+};
 }
 #endif

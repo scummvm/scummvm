@@ -373,14 +373,18 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 
 	// Update the config file
 	ConfMan.set("versioninfo", gScummVMVersion, Common::ConfigManager::kApplicationDomain);
-  Cloud::getDefaultInstance()->useDropbox();
-
-  if (!Cloud::getDefaultInstance()->checkAuth()) {
-    char a[25];
-    printf("Please visit https://www.dropbox.com/1/oauth2/authorize?client_id=bgnmkfnaxarvq5z&response_type=code . And Copy Paste the obtained code here: ");
-    scanf("%s", a);
-    Cloud::getDefaultInstance()->Auth(Common::String(a));
-  }
+    
+    /* Below is a temporary setup for cloud. GUI will be introduced later*/
+    Cloud::getDefaultInstance()->useDropBox();
+    
+    if (Cloud::getDefaultInstance()->checkAuth() == Cloud::INVALID) {
+        char a[25];
+        printf("Please visit https://www.dropbox.com/1/oauth2/authorize?client_id=bgnmkfnaxarvq5z&response_type=code . And Copy Paste the obtained code here: ");
+        scanf("%s", a);
+        Cloud::getDefaultInstance()->auth(Common::String(a));
+    } else if (Cloud::getDefaultInstance()->checkAuth() == Cloud::OFFLINE) {
+        warning("The device is offline. Cloud is not being used.");
+    }
 
 	// Load and setup the debuglevel and the debug flags. We do this at the
 	// soonest possible moment to ensure debug output starts early on, if

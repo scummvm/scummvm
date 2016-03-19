@@ -79,10 +79,10 @@ bool StdioStream::flush() {
 
 void StdioStream::finalize () {
   flush();
-  Cloud::getDefaultInstance()->Upload(FileNode.getName());
+  Cloud::getDefaultInstance()->upload(_fileNode.getName());
 }
-void StdioStream::SaveNode(Common::FSNode node) {
-  FileNode = Common::FSNode(node);
+void StdioStream::saveNode(Common::FSNode node) {
+  _fileNode = Common::FSNode(node);
   return;
 }
 StdioStream *StdioStream::makeFromPath(const Common::String &path, bool writeMode) {

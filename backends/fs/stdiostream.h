@@ -33,18 +33,16 @@ class StdioStream : public Common::SeekableReadStream, public Common::WriteStrea
 protected:
 	/** File handle to the actual file. */
 	void *_handle;
-  /* Path to the actual file. To be used for cloud*/
+    Common::FSNode _fileNode;
 
 public:
 	/**
 	 * Given a path, invokes fopen on that path and wrap the result in a
 	 * StdioStream instance.
 	 */
-  Common::FSNode FileNode;
-  void SaveNode(Common::FSNode node);
 
 	static StdioStream *makeFromPath(const Common::String &path, bool writeMode);
-  void finalize();
+    void finalize();
 
 	StdioStream(void *handle);
 	virtual ~StdioStream();
@@ -60,6 +58,8 @@ public:
 	virtual int32 size() const;
 	virtual bool seek(int32 offs, int whence = SEEK_SET);
 	virtual uint32 read(void *dataPtr, uint32 dataSize);
+
+    void saveNode(Common::FSNode node);
 };
 
 #endif
