@@ -362,24 +362,25 @@ void AdlEngine::drawItems() const {
 	uint dropped = 0;
 
 	for (item = _state.items.begin(); item != _state.items.end(); ++item) {
+		// Skip items not in this room
 		if (item->room != _state.room)
 			continue;
 
 		if (item->state == IDI_ITEM_DROPPED) {
+			// Draw dropped item if in normal view
 			if (getCurRoom().picture == getCurRoom().curPicture) {
-				const Common::Point &p =  _itemOffsets[dropped];
-				drawItem(*item, p);
+				drawItem(*item, _itemOffsets[dropped]);
 				++dropped;
 			}
-			continue;
-		}
+		} else {
+			// Draw fixed item if current view is in the pic list
+			Common::Array<byte>::const_iterator pic;
 
-		Common::Array<byte>::const_iterator pic;
-
-		for (pic = item->roomPictures.begin(); pic != item->roomPictures.end(); ++pic) {
-			if (matchesCurrentPic(*pic)) {
-				drawItem(*item, item->position);
-				continue;
+			for (pic = item->roomPictures.begin(); pic != item->roomPictures.end(); ++pic) {
+				if (matchesCurrentPic(*pic)) {
+					drawItem(*item, item->position);
+					break;
+				}
 			}
 		}
 	}
