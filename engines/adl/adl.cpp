@@ -448,14 +448,14 @@ void AdlEngine::takeItem(byte noun) {
 		}
 
 		if (item->state == IDI_ITEM_DROPPED) {
-			item->room = IDI_NONE;
+			item->room = IDI_ANY;
 			return;
 		}
 
 		Common::Array<byte>::const_iterator pic;
 		for (pic = item->roomPictures.begin(); pic != item->roomPictures.end(); ++pic) {
 			if (matchesCurrentPic(*pic)) {
-				item->room = IDI_NONE;
+				item->room = IDI_ANY;
 				item->state = IDI_ITEM_DROPPED;
 				return;
 			}
@@ -469,7 +469,7 @@ void AdlEngine::dropItem(byte noun) {
 	Common::Array<Item>::iterator item;
 
 	for (item = _state.items.begin(); item != _state.items.end(); ++item) {
-		if (item->noun != noun || item->room != IDI_NONE)
+		if (item->noun != noun || item->room != IDI_ANY)
 			continue;
 
 		item->room = _state.room;
@@ -905,7 +905,7 @@ int AdlEngine::o1_listInv(ScriptEnv &e) {
 	Common::Array<Item>::const_iterator item;
 
 	for (item = _state.items.begin(); item != _state.items.end(); ++item)
-		if (item->room == IDI_NONE)
+		if (item->room == IDI_ANY)
 			printMessage(item->description);
 
 	return 0;

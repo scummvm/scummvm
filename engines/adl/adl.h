@@ -54,7 +54,7 @@ struct ScriptEnv;
 #define IDO_ACT_SAVE           0x0f
 #define IDO_ACT_LOAD           0x10
 
-#define IDI_NONE 0xfe
+#define IDI_ANY 0xfe
 
 #define IDI_WORD_SIZE 8
 
@@ -104,9 +104,9 @@ public:
 	void skip(uint i) { _ip += i; }
 
 	bool isMatch() const {
-		return (_cmd.room == IDI_NONE || _cmd.room == _room) &&
-		       (_cmd.verb == IDI_NONE || _cmd.verb == _verb) &&
-		       (_cmd.noun == IDI_NONE || _cmd.noun == _noun);
+		return (_cmd.room == IDI_ANY || _cmd.room == _room) &&
+		       (_cmd.verb == IDI_ANY || _cmd.verb == _verb) &&
+		       (_cmd.noun == IDI_ANY || _cmd.noun == _noun);
 	}
 
 	byte getCondCount() const { return _cmd.numCond; }

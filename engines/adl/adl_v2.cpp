@@ -101,7 +101,7 @@ void AdlEngine_v2::setupOpcodeTables() {
 }
 
 bool AdlEngine_v2::matchesCurrentPic(byte pic) const {
-	return pic == getCurRoom().curPicture || pic == IDI_NONE;
+	return pic == getCurRoom().curPicture || pic == IDI_ANY;
 }
 
 int AdlEngine_v2::o2_isFirstTime(ScriptEnv &e) {
@@ -155,7 +155,7 @@ int AdlEngine_v2::o2_isCarryingSomething(ScriptEnv &e) {
 	Common::Array<Item>::const_iterator item;
 
 	for (item = _state.items.begin(); item != _state.items.end(); ++item)
-		if (item->room == IDI_NONE)
+		if (item->room == IDI_ANY)
 			return 0;
 	return -1;
 }
@@ -169,7 +169,7 @@ int AdlEngine_v2::o2_moveItem(ScriptEnv &e) {
 	Item &item = getItem(e.arg(1));
 
 	// Set items that move from inventory to a room to state "dropped"
-	if (item.room == IDI_NONE && room != IDI_VOID_ROOM)
+	if (item.room == IDI_ANY && room != IDI_VOID_ROOM)
 		item.state = IDI_ITEM_DROPPED;
 
 	item.room = room;
@@ -192,7 +192,7 @@ int AdlEngine_v2::o2_moveAllItems(ScriptEnv &e) {
 	for (item = _state.items.begin(); item != _state.items.end(); ++item)
 		if (item->room == room1) {
 			item->room = room2;
-			if (room1 == IDI_NONE)
+			if (room1 == IDI_ANY)
 				item->state = IDI_ITEM_DROPPED;
 		}
 
