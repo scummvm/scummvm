@@ -74,7 +74,7 @@ bool CBomb::handleEvent(const CEnterRoomMsg &msg) {
 	_fieldE8 = 12;
 	_fieldEC = 9;
 	_fieldF0 = 0;
-	_startingTicks = g_vm->_ticksCount;
+	_startingTicks = g_vm->_events->getTicksCount();
 	return true;
 }
 

@@ -45,16 +45,17 @@ namespace Titanic {
 TitanicEngine *g_vm;
 
 TitanicEngine::TitanicEngine(OSystem *syst, const TitanicGameDescription *gameDesc)
-		: _gameDescription(gameDesc), Engine(syst), _randomSource("Titanic"),
-		_ticksCount(0), _frameCounter(0) {
+		: _gameDescription(gameDesc), Engine(syst), _randomSource("Titanic") {
 	g_vm = this;
 	_debugger = nullptr;
+	_events = nullptr;
 	_window = nullptr;
 	_screenManager = nullptr;
 }
 
 TitanicEngine::~TitanicEngine() {
 	delete _debugger;
+	delete _events;
 	delete _window;
 	delete _screenManager;
 	CSaveableObject::freeClassList();
@@ -83,6 +84,7 @@ void TitanicEngine::initialize() {
 	CEnterExitSecClassMiniLift::init();
 
 	_debugger = new Debugger(this);
+	_events = new Events(this);
 	_screenManager = new OSScreenManager(this);
 	_window = new CMainGameWindow(this);
 	_window->applicationStarting();
@@ -103,33 +105,11 @@ Common::Error TitanicEngine::run() {
 
 	// Main event loop
 	while (!shouldQuit()) {
-		processEvents();
-		g_system->delayMillis(5);		
+		_events->pollEventsAndWait();
 	}
 
 	deinitialize();
 	return Common::kNoError;
-}
-
-void TitanicEngine::processEvents() {
-	Common::Event event;
-	g_system->getEventManager()->pollEvent(event);
-
-	// Give time to the debugger
-	_debugger->onFrame();
-
-	switch (event.type) {
-	case Common::EVENT_KEYDOWN:
-		if (event.kbd.keycode == Common::KEYCODE_d && (event.kbd.flags & Common::KBD_CTRL)) {
-			// Attach to the debugger
-			_debugger->attach();
-			_debugger->onFrame();
-		}
-		break;
-
-	default:
-		break;
-	}
 }
 
 } // End of namespace Titanic

@@ -30,6 +30,7 @@
 #include "engines/advancedDetector.h"
 #include "engines/engine.h"
 #include "titanic/debugger.h"
+#include "titanic/events.h"
 #include "titanic/files_manager.h"
 #include "titanic/screen_manager.h"
 #include "titanic/main_game_window.h"
@@ -83,11 +84,6 @@ private:
 	 * Handles game deinitialization
 	 */
 	void deinitialize();
-
-	/**
-	 * Processes pending events
-	 */
-	void processEvents();
 protected:
 	const TitanicGameDescription *_gameDescription;
 	int _loadSaveSlot;
@@ -99,11 +95,10 @@ protected:
 public:
 	CFilesManager _filesManager;
 	Debugger *_debugger;
+	Events *_events;
 	OSScreenManager *_screenManager;
 	CMainGameWindow *_window;
 	Common::RandomSource _randomSource;
-	uint _frameCounter;
-	uint _ticksCount;
 public:
 	TitanicEngine(OSystem *syst, const TitanicGameDescription *gameDesc);
 	virtual ~TitanicEngine();

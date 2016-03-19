@@ -30,7 +30,7 @@ CString CString::left(uint count) const {
 }
 
 CString CString::right(uint count) const {
-	int strSize = size();
+	uint strSize = size();
 	return (count > strSize) ? CString() : 
 		CString(c_str() + strSize - count, c_str() + strSize);
 }
