@@ -31,8 +31,8 @@
 namespace Gnap {
 
 struct SoundItem {
-	int resourceId;
-	Audio::SoundHandle handle;
+	int _resourceId;
+	Audio::SoundHandle _handle;
 };
 
 class SoundMan {
@@ -48,6 +48,7 @@ public:
 protected:
 	GnapEngine *_vm;
 	Common::Array<SoundItem> _items;
+
 	int find(int resourceId);
 };
 

@@ -35,13 +35,13 @@ SoundMan::~SoundMan() {
 
 void SoundMan::playSound(int resourceId, bool looping) {
 	SoundItem soundItem;
-	soundItem.resourceId = resourceId;
+	soundItem._resourceId = resourceId;
 	
 	SoundResource *soundResource = _vm->_soundCache->get(resourceId);
 	Common::MemoryReadStream *stream = new Common::MemoryReadStream(soundResource->_data, soundResource->_size, DisposeAfterUse::NO);
 	Audio::AudioStream *audioStream = Audio::makeLoopingAudioStream(Audio::makeWAVStream(stream, DisposeAfterUse::YES), looping ? 0 : 1);
 
-	_vm->_mixer->playStream(Audio::Mixer::kPlainSoundType, &soundItem.handle, audioStream);
+	_vm->_mixer->playStream(Audio::Mixer::kPlainSoundType, &soundItem._handle, audioStream);
 	
 	_items.push_back(soundItem);
 	
@@ -50,8 +50,8 @@ void SoundMan::playSound(int resourceId, bool looping) {
 void SoundMan::stopSound(int resourceId) {
 	const int index = find(resourceId);
 	if (index >= 0) {
-		_vm->_soundCache->release(_items[index].resourceId);
-		_vm->_mixer->stopHandle(_items[index].handle);
+		_vm->_soundCache->release(_items[index]._resourceId);
+		_vm->_mixer->stopHandle(_items[index]._handle);
 		_items.remove_at(index);
 	}
 }
@@ -62,20 +62,20 @@ void SoundMan::setSoundVolume(int resourceId, int volume) {
 
 bool SoundMan::isSoundPlaying(int resourceId) {
 	const int index = find(resourceId);
-	return index >= 0 && _vm->_mixer->isSoundHandleActive(_items[index].handle);
+	return index >= 0 && _vm->_mixer->isSoundHandleActive(_items[index]._handle);
 }
 
 void SoundMan::stopAll() {
 	for (int index = 0; index < (int)_items.size(); ++index) {
-		_vm->_soundCache->release(_items[index].resourceId);
-		_vm->_mixer->stopHandle(_items[index].handle);
+		_vm->_soundCache->release(_items[index]._resourceId);
+		_vm->_mixer->stopHandle(_items[index]._handle);
 	}
 }
 
 void SoundMan::update() {
 	for (int index = 0; index < (int)_items.size(); ++index)
-		if (!_vm->_mixer->isSoundHandleActive(_items[index].handle)) {
-			_vm->_soundCache->release(_items[index].resourceId);
+		if (!_vm->_mixer->isSoundHandleActive(_items[index]._handle)) {
+			_vm->_soundCache->release(_items[index]._resourceId);
 			_items.remove_at(index);
 			--index;
 		}
@@ -83,7 +83,7 @@ void SoundMan::update() {
 
 int SoundMan::find(int resourceId) {
 	for (int index = 0; index < (int)_items.size(); ++index)
-		if (_items[index].resourceId == resourceId)
+		if (_items[index]._resourceId == resourceId)
 			return index;
 	return -1;
 }
