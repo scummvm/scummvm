@@ -29,9 +29,6 @@
 // NSDockTile was introduced with Mac OS X 10.5.
 // Try provide backward compatibility by avoiding NSDockTile symbols.
 
-// TODO: Implement recent list, maybe as a custom menu on dock tile when app is not running
-// See Dock Tile plug-in at https://developer.apple.com/library/mac/documentation/Carbon/Conceptual/customizing_docktile/CreatingaDockTilePlug-in/CreatingaDockTilePlug-in.html
-
 #include "backends/taskbar/macosx/macosx-taskbar.h"
 #include "common/config-manager.h"
 #include "common/file.h"
@@ -233,6 +230,81 @@ return (path); \
 	
 	return "";
 }
+
+void MacOSXTaskbarManager::addRecent(const Common::String &name, const Common::String &description) {
+	// TODO: Implement recent list, maybe as a custom menu on dock tile when app is not running
+	// See Dock Tile plug-in at https://developer.apple.com/library/mac/documentation/Carbon/Conceptual/customizing_docktile/CreatingaDockTilePlug-in/CreatingaDockTilePlug-in.html
+
+	//warning("[MacOSXTaskbarManager::addRecent] Adding recent list entry: %s (%s)", name.c_str(), description.c_str());
+	
+	if (_dockTile == nil)
+		return;
+	
+	// Store the game, description and icon in user preferences.
+	// The NSDockTilePlugin will retrieve them there to list them in the dock tile menu.
+	
+	CFStringRef gameName = CFStringCreateWithCString(0, name.c_str(), kCFStringEncodingASCII);
+	CFStringRef desc = CFStringCreateWithCString(0, description.c_str(), kCFStringEncodingASCII);
+	
+	// First build the dictionary for this game.
+	NSMutableDictionary *dict = [[NSMutableDictionary  alloc] init];
+	[dict setObject:(NSString *)gameName forKey:@"game"];
+	[dict setObject:(NSString *)desc forKey:@"description"];
+	
+	// Icon
+	Common::String iconPath = getIconPath(name);
+	if (!iconPath.empty()) {
+		CFStringRef icon = CFStringCreateWithCString(0, iconPath.c_str(), kCFStringEncodingASCII);
+		[dict setObject:(NSString *)icon forKey:@"icon"];
+		CFRelease(icon);
+	}
+	
+	// Retrieve the current list of recent items and update it.
+	NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+	NSArray* oldArray = [defaults arrayForKey:@"recentGames"];
+	if (oldArray == nil) {
+		[defaults setObject:[NSArray arrayWithObject:dict] forKey:@"recentGames"];
+	} else {
+		NSMutableArray* newArray = [[NSMutableArray alloc] initWithArray:oldArray];
+		// Insert the new game at the start
+		[newArray insertObject:dict atIndex:0];
+		// If the game was already present in the array, remove it
+		for (int i = 1 ; i < [newArray count] ; ++i) {
+			NSDictionary* oldDict = newArray[i];
+			if (oldDict == nil)
+				continue;
+			NSString* oldGame = [oldDict valueForKey:@"game"];
+			if (oldGame != nil && [oldGame isEqualToString:(NSString*)gameName]) {
+				[newArray removeObjectAtIndex:i];
+				break;
+			}
+		}
+		// And make sure we limit the size of the array to 5 games
+		if ([newArray count] > 5)
+			[newArray removeLastObject];
+		[defaults setObject:newArray forKey:@"recentGames"];
+		[newArray release];
+	}
+
+	// Finally release the dictionary
+	[dict release];
+	CFRelease(gameName);
+	CFRelease(desc);
+	
+	
+	// The command to use would be "open " + path + " --args " + game.
+	// NSString *cmdString = [NSString stringWithFormat:@"open %@ --args %@", bundlePath, gameName];
+	// We could use [[NSBundle mainBundle] bundlePath] to get the path here and then store it in the user preferences.
+	// Or we can let the NSDockTilePlugin find the path with:
+	// NSString *scummVMPath = [[NSWorkspace sharedWorkspace] absolutePathForAppBundleWithIdentifier:@"org.scummvm.scummvm"];
+	// We can then also use NSWorkspace to launch the app.
+	// if (scummVMPath == nil)
+	//		return;
+	// NSURL* url = [NSURL fileURLWithPath:scummVMPath];
+	// [NSWorkspace launchApplicationAtURL:url options: configuration: error:] to start the application with some arguments
+
+}
+
 
 
 #endif
