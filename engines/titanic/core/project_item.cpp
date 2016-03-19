@@ -189,10 +189,15 @@ void CProjectItem::saveGame(int slotId) {
 		Common::String::format("slot%d.gam", slotId));
 	file.open(saveFile);
 
+	// Signal the game is being saved
+	preSave();
+
 	// Save the contents out
 	saveData(&file, this);
 
+	// Close the file and signal that the saving has finished
 	file.close();
+	postSave();
 }
 
 void CProjectItem::clear() {
@@ -286,6 +291,16 @@ void CProjectItem::postLoad() {
 	CPetControl *petControl = getPetControl();
 	if (petControl)
 		petControl->postLoad();
+}
+
+void CProjectItem::preSave() {
+	if (_gameManager)
+		_gameManager->preSave(this);
+}
+
+void CProjectItem::postSave() {
+	if (_gameManager)
+		_gameManager->postSave();
 }
 
 CPetControl *CProjectItem::getPetControl() const {

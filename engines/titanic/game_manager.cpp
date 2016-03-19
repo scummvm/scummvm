@@ -147,4 +147,18 @@ void CGameManager::updateDiskTicksCount() {
 	_lastDiskTicksCount = g_vm->_events->getTicksCount();
 }
 
+void CGameManager::viewChange() {
+	delete _videoSurface1;
+	delete _videoSurface2;
+
+	_videoSurface1 = nullptr;
+	_videoSurface2 = CScreenManager::_screenManagerPtr->createSurface(600, 340);
+	_trueTalkManager.viewChange();
+
+	for (CTreeItem *treeItem = _project; treeItem; treeItem = treeItem->scan(_project))
+		treeItem->viewChange();
+
+	initBounds();
+}
+
 } // End of namespace Titanic

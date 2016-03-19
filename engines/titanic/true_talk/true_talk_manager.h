@@ -98,6 +98,11 @@ public:
 	void postSave() {}
 
 	/**
+	 * Called when the view changes
+	 */
+	void viewChange();
+
+	/**
 	 * Returns the scripts for the manager
 	 */
 	TTScripts &getScripts() { return _scripts; }

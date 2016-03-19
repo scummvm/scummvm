@@ -59,6 +59,16 @@ CString CTreeItem::dumpItem(int indent) const {
 	return result;
 }
 
+void CTreeItem::save(SimpleFile *file, int indent) const {
+	file->writeNumberLine(0, indent);
+	CMessageTarget::save(file, indent);
+}
+
+void CTreeItem::load(SimpleFile *file) {
+	file->readNumber();
+	CMessageTarget::load(file);
+}
+
 bool CTreeItem::isFileItem() const {
 	return isInstanceOf(CFileItem::_type);
 }
@@ -89,16 +99,6 @@ bool CTreeItem::isGameObject() const {
 
 bool CTreeItem::isGameObjectDescItem() const {
 	return isInstanceOf(CGameObjectDescItem::_type);
-}
-
-void CTreeItem::save(SimpleFile *file, int indent) const {
-	file->writeNumberLine(0, indent);
-	CMessageTarget::save(file, indent);
-}
-
-void CTreeItem::load(SimpleFile *file) {
-	file->readNumber();
-	CMessageTarget::load(file);
 }
 
 CGameManager *CTreeItem::getGameManager() const {

@@ -89,6 +89,16 @@ private:
 	void postLoad();
 
 	/**
+	 * Called when a game is about to be saved
+	 */
+	void preSave();
+
+	/**
+	 * Called when a game has finished being saved
+	 */
+	void postSave();
+
+	/**
 	 * Finds the first child instance of a given class type
 	 */
 	CTreeItem *findChildInstance(ClassDef *classDef) const;

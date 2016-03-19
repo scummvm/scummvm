@@ -155,6 +155,11 @@ public:
 	 * Updates the state of the manager
 	 */
 	void update();
+
+	/**
+	 * Called when the view changes
+	 */
+	void viewChange();
 };
 
 } // End of namespace Titanic

@@ -120,6 +120,16 @@ public:
 	virtual int compareTo(const CString &name, int maxLen) const { return false; }
 
 	/**
+	 * Gets the bounds occupied by the item
+	 */
+	virtual Common::Rect getBounds() { return Common::Rect(); }
+
+	/**
+	 * Called when the view changes
+	 */
+	virtual void viewChange() {}
+
+	/**
 	 * Get the parent for the given item
 	 */
 	CTreeItem *getParent() const { return _parent; }
