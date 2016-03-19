@@ -168,7 +168,7 @@ static const SciKernelMapSubEntry kDoSound_subops[] = {
 	//        signature for SCI21 should be "o"
 	{ SIG_SOUNDSCI21,      9, MAP_CALL(DoSoundStop),               NULL,                   NULL },
 	{ SIG_SOUNDSCI21,     10, MAP_CALL(DoSoundPause),              NULL,                   NULL },
-	{ SIG_SOUNDSCI21,     11, MAP_CALL(DoSoundFade),               NULL,                   kDoSoundFade_workarounds },
+	{ SIG_SOUNDSCI21,     11, MAP_CALL(DoSoundFade),               "oiiii",                kDoSoundFade_workarounds },
 	{ SIG_SOUNDSCI21,     12, MAP_CALL(DoSoundSetHold),            NULL,                   NULL },
 	{ SIG_SOUNDSCI21,     13, MAP_CALL(DoSoundDummy),              NULL,                   NULL },
 	{ SIG_SOUNDSCI21,     14, MAP_CALL(DoSoundSetVolume),          NULL,                   NULL },
@@ -181,6 +181,67 @@ static const SciKernelMapSubEntry kDoSound_subops[] = {
 #endif
 	SCI_SUBOPENTRY_TERMINATOR
 };
+
+#ifdef ENABLE_SCI32
+// NOTE: In SSCI, some 'unused' kDoAudio subops are actually
+// called indirectly by kDoSound:
+//
+// kDoSoundGetAudioCapability -> kDoAudioGetCapability
+// kDoSoundPlay       -> kDoAudioPlay, kDoAudioStop
+// kDoSoundPause      -> kDoAudioPause, kDoAudioResume
+// kDoSoundFade       -> kDoAudioFade
+// kDoSoundSetVolume  -> kDoAudioVolume
+// kDoSoundSetLoop    -> kDoAudioSetLoop
+// kDoSoundUpdateCues -> kDoAudioPosition
+//
+// In ScummVM, logic inside these kernel functions has been
+// moved to methods of Audio32, and direct calls to Audio32
+// are made from kDoSound instead.
+//
+// Some kDoAudio methods are esoteric and appear to be used
+// only by one or two games:
+//
+// kDoAudioMixing: Phantasmagoria (other games call this
+// function, but only to disable the feature)
+// kDoAudioHasSignal: SQ6 TalkRandCycle
+// kDoAudioPan: Rama RegionSFX::pan method
+//
+// Finally, there is a split in SCI2.1mid audio code.
+// QFG4CD & SQ6 do not have opcodes 18 and 19, but they
+// exist in GK2, KQ7 2.00b, Phantasmagoria 1, PQ:SWAT, and
+// Torin. (It is unknown if they exist in MUMG Deluxe or
+// Shivers 1; they are not used in either of these games.)
+
+//    version,         subId, function-mapping,                    signature,              workarounds
+static const SciKernelMapSubEntry kDoAudio_subops[] = {
+	{ SIG_SCI32,           0, MAP_CALL(DoAudioInit),               "",                     NULL },
+	// SCI2 includes a Sync script that would call
+	// kDoAudioWaitForPlay, but SSCI has no opcode 1 until
+	// SCI2.1early
+	{ SIG_SINCE_SCI21,     1, MAP_CALL(DoAudioWaitForPlay),        "(i)(i)(i)(i)(i)(i)(i)", NULL },
+	{ SIG_SCI32,           2, MAP_CALL(DoAudioPlay),               "(i)(i)(i)(i)(i)(i)(i)", NULL },
+	{ SIG_SCI32,           3, MAP_CALL(DoAudioStop),               "(i)(i)(i)(i)(i)",      NULL },
+	{ SIG_SCI32,           4, MAP_CALL(DoAudioPause),              "(i)(i)(i)(i)(i)",      NULL },
+	{ SIG_SCI32,           5, MAP_CALL(DoAudioResume),             "(i)(i)(i)(i)(i)",      NULL },
+	{ SIG_SCI32,           6, MAP_CALL(DoAudioPosition),           "(i)(i)(i)(i)(i)",      NULL },
+	{ SIG_SCI32,           7, MAP_CALL(DoAudioRate),               "(i)",                  NULL },
+	{ SIG_SCI32,           8, MAP_CALL(DoAudioVolume),             "(i)(i)(i)(i)(i)(i)",   NULL },
+	{ SIG_SCI32,           9, MAP_CALL(DoAudioGetCapability),      "",                     NULL },
+	{ SIG_SCI32,          10, MAP_CALL(DoAudioBitDepth),           "(i)",                  NULL },
+	{ SIG_SCI32,          11, MAP_DUMMY(DoAudioDistort),           "(i)",                  NULL },
+	{ SIG_SCI32,          12, MAP_CALL(DoAudioMixing),             "(i)",                  NULL },
+	{ SIG_SCI32,          13, MAP_CALL(DoAudioChannels),           "(i)",                  NULL },
+	{ SIG_SCI32,          14, MAP_CALL(DoAudioPreload),            "(i)",                  NULL },
+	{ SIG_SINCE_SCI21MID, 15, MAP_CALL(DoAudioFade),               "(iiii)(i)(i)",         NULL },
+	{ SIG_SINCE_SCI21MID, 16, MAP_DUMMY(DoAudioFade36),            "iiiii(iii)(i)",        NULL },
+	{ SIG_SINCE_SCI21MID, 17, MAP_CALL(DoAudioHasSignal),          "",                     NULL },
+	{ SIG_SINCE_SCI21MID, 18, MAP_EMPTY(DoAudioCritical),          "",                     NULL },
+	{ SIG_SINCE_SCI21MID, 19, MAP_CALL(DoAudioSetLoop),            "iii(o)",               NULL },
+	{ SIG_SCI3,           20, MAP_DUMMY(DoAudioPan),               "",                     NULL },
+	{ SIG_SCI3,           21, MAP_DUMMY(DoAudioPanOff),            "",                     NULL },
+	SCI_SUBOPENTRY_TERMINATOR
+};
+#endif
 
 //    version,         subId, function-mapping,                    signature,              workarounds
 static const SciKernelMapSubEntry kGraph_subops[] = {
@@ -484,7 +545,10 @@ static SciKernelMapEntry s_kernelMap[] = {
 	{ MAP_CALL(DisposeList),       SIG_EVERYWHERE,           "l",                     NULL,            NULL },
 	{ MAP_CALL(DisposeScript),     SIG_EVERYWHERE,           "i(i*)",                 NULL,            kDisposeScript_workarounds },
 	{ MAP_CALL(DisposeWindow),     SIG_EVERYWHERE,           "i(i)",                  NULL,            NULL },
-	{ MAP_CALL(DoAudio),           SIG_EVERYWHERE,           "i(.*)",                 NULL,            NULL }, // subop
+	{ MAP_CALL(DoAudio),           SCI_VERSION_NONE, SCI_VERSION_2, SIGFOR_ALL, "i(.*)", NULL,         NULL }, // subop
+#ifdef ENABLE_SCI32
+	{ "DoAudio", kDoAudio32,       SIG_SINCE_SCI21, SIGFOR_ALL, "(.*)",          kDoAudio_subops, NULL },
+#endif
 	{ MAP_CALL(DoAvoider),         SIG_EVERYWHERE,           "o(i)",                  NULL,            NULL },
 	{ MAP_CALL(DoBresen),          SIG_EVERYWHERE,           "o",                     NULL,            NULL },
 	{ MAP_CALL(DoSound),           SIG_EVERYWHERE,           "i(.*)",                 kDoSound_subops, NULL },

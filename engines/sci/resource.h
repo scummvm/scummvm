@@ -84,7 +84,10 @@ enum ResourceType {
 	kResourceTypePatch,
 	kResourceTypeBitmap,
 	kResourceTypePalette,
-	kResourceTypeCdAudio,
+	kResourceTypeCdAudio = 12,
+#ifdef ENABLE_SCI32
+	kResourceTypeWave = 12,
+#endif
 	kResourceTypeAudio,
 	kResourceTypeSync,
 	kResourceTypeMessage,
@@ -212,6 +215,10 @@ public:
 		return (_type == other._type) && (_number == other._number) && (_tuple == other._tuple);
 	}
 
+	bool operator!=(const ResourceId &other) const {
+		return !operator==(other);
+	}
+
 	bool operator<(const ResourceId &other) const {
 		return (_type < other._type) || ((_type == other._type) && (_number < other._number))
 			    || ((_type == other._type) && (_number == other._number) && (_tuple < other._tuple));
@@ -258,6 +265,10 @@ public:
 	 * This method is used only by the "dump" debugger command.
 	 */
 	void writeToStream(Common::WriteStream *stream) const;
+
+#ifdef ENABLE_SCI32
+	Common::SeekableReadStream *makeStream() const;
+#endif
 
 	const Common::String &getResourceLocation() const;
 

@@ -68,6 +68,7 @@
 #include "sci/graphics/palette32.h"
 #include "sci/graphics/text32.h"
 #include "sci/graphics/frameout.h"
+#include "sci/sound/audio32.h"
 #include "sci/video/robot_decoder.h"
 #endif
 
@@ -88,6 +89,9 @@ SciEngine::SciEngine(OSystem *syst, const ADGameDescription *desc, SciGameId gam
 
 	_audio = 0;
 	_sync = nullptr;
+#ifdef ENABLE_SCI32
+	_audio32 = nullptr;
+#endif
 	_features = 0;
 	_resMan = 0;
 	_gamestate = 0;
@@ -167,6 +171,7 @@ SciEngine::~SciEngine() {
 	delete _robotDecoder;
 	delete _gfxFrameout;
 	delete _gfxRemap32;
+	delete _audio32;
 #endif
 	delete _gfxMenu;
 	delete _gfxControls16;
@@ -269,7 +274,13 @@ Common::Error SciEngine::run() {
 	// Also, XMAS1990 apparently had a parser too. Refer to http://forums.scummvm.org/viewtopic.php?t=9135
 	if (getGameId() == GID_CHRISTMAS1990)
 		_vocabulary = new Vocabulary(_resMan, false);
-	_audio = new AudioPlayer(_resMan);
+
+#ifdef ENABLE_SCI32
+	if (getSciVersion() >= SCI_VERSION_2_1_EARLY) {
+		_audio32 = new Audio32(_resMan);
+	} else
+#endif
+		_audio = new AudioPlayer(_resMan);
 	_sync = new Sync(_resMan, segMan);
 	_gamestate = new EngineState(segMan);
 	_eventMan = new EventManager(_resMan->detectFontExtended());
@@ -805,7 +816,9 @@ void SciEngine::runGame() {
 void SciEngine::exitGame() {
 	if (_gamestate->abortScriptProcessing != kAbortLoadGame) {
 		_gamestate->_executionStack.clear();
-		_audio->stopAllAudio();
+		if (_audio) {
+			_audio->stopAllAudio();
+		}
 		_sync->stop();
 		_soundCmd->clearPlayList();
 	}

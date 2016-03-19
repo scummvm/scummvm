@@ -25,6 +25,7 @@
 #include "sync.h"
 
 namespace Sci {
+
 Sync::Sync(ResourceManager *resMan, SegManager *segMan) :
 	_resMan(resMan),
 	_segMan(segMan),
