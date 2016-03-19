@@ -24,13 +24,13 @@
 #include "titanic/game_manager.h"
 #include "titanic/screen_manager.h"
 #include "titanic/titanic.h"
+#include "titanic/pet_control/pet_control.h"
 
 namespace Titanic {
 
 CInputHandler::CInputHandler(CGameManager *owner) :
-		_gameManager(owner), _inputTranslator(nullptr),
-		_field4(0), _field8(0), _fieldC(0), _field10(0), _field14(0),
-		_lockCount(0), _field24(0) {
+		_gameManager(owner), _inputTranslator(nullptr), _dragging(false),
+		_buttonDown(false), _dragItem(nullptr),  _lockCount(0), _field24(0) {
 	CScreenManager::_screenManagerPtr->_inputHandler = this;
 }
 
@@ -51,15 +51,91 @@ void CInputHandler::decLockCount() {
 void CInputHandler::handleMessage(const CMessage &msg, bool respectLock) {
 	if (!respectLock || _lockCount <= 0) {
 		if (_gameManager->_gameState._mode == GSMODE_1) {
-			processMessage(msg);
+			processMessage(&msg);
 		} else if (!msg.isMouseMsg()) {
 			g_vm->_filesManager.fn1();
 		}
 	}
 }
 
-void CInputHandler::processMessage(const CMessage &msg) {
-	warning("TODO: CInputHandler::processMessage");
+void CInputHandler::processMessage(const CMessage *msg) {
+	const CMouseMsg *mouseMsg = dynamic_cast<const CMouseMsg *>(msg);
+	_field24 = 0;
+	dispatchMessage(msg);
+
+	if (_field24) {
+		_field24 = 0;
+	} else if (mouseMsg) {
+		// Keep the game state mouse position up to date
+		if (_mousePos != mouseMsg->_mousePos) {
+			_mousePos = mouseMsg->_mousePos;
+			_gameManager->_gameState.setMousePos(mouseMsg->_mousePos);
+		}
+
+		// Set flag for whether a mouse button is currently being pressed
+		if (mouseMsg->isButtonDownMsg())
+			_buttonDown = true;
+		else if (mouseMsg->isButtonUpMsg())
+			_buttonDown = false;
+
+		// Drag events generation
+		if (_dragging) {
+			if (mouseMsg->isMouseMoveMsg()) {
+				if (_dragItem) {
+					CMouseDragMoveMsg moveMsg(_mousePos);
+					moveMsg.execute(_dragItem);
+				}
+			} else {
+				if (mouseMsg->isButtonUpMsg() && _dragItem) {
+					// Mouse drag ended
+					dragEnd(_mousePos, _dragItem);
+					CMouseDragEndMsg endMsg(_mousePos, _dragItem);
+					endMsg.execute(_dragItem);
+				}
+
+				_dragging = false;
+				_dragItem = nullptr;
+			}
+		} else if (_buttonDown) {
+			if (!mouseMsg->isMouseMoveMsg()) {
+				// Save where the drag movement started from
+				_dragStartPos = _mousePos;
+			} else {
+				Common::Point delta = mouseMsg->_mousePos - _dragStartPos;
+				int distance = (int)sqrt(double(delta.x * delta.x + delta.y * delta.y));
+
+				if (distance > 4) {
+					// We've moved far enough with the mouse button held down
+					// to trigger an official dragging operation
+					CMouseDragStartMsg startMsg(_dragStartPos);
+					dispatchMessage(&startMsg);
+
+					// Set the drag item, if any, that a handler will have set on the message
+					_dragItem = startMsg._dragItem;
+					_gameManager->_dragItem = startMsg._dragItem;
+
+					if (_dragItem) {
+						CMouseDragMoveMsg moveMsg(_dragStartPos);
+						dispatchMessage(&moveMsg);
+					}
+
+					_dragging = true;
+				}
+			}
+		}
+	}
+}
+
+void CInputHandler::dispatchMessage(const CMessage *msg) {
+	CPetControl *pet = _gameManager->_project->getPetControl();
+	if (!pet || !msg->execute(pet, nullptr, MSGFLAG_BREAK_IF_HANDLED)) {
+		CViewItem *view = _gameManager->getView();
+		msg->execute(view);
+	}
+}
+
+void CInputHandler::dragEnd(const Common::Point &mousePos, CTreeItem *dragItem) {
+	warning("TODO CInputHandler::dragEnd");
 }
 
 } // End of namespace Titanic z

@@ -48,7 +48,7 @@ CGameManager::CGameManager(CProjectItem *project, CGameView *gameView):
 		_inputHandler(this), _inputTranslator(&_inputHandler),		
 		_gameState(this), _sound(this), _musicRoom(this),
 		_field30(0), _field34(0), _field4C(0), 
-		_field50(0), _field54(0), _tickCount1(0), _tickCount2(0) {
+		_dragItem(nullptr), _field54(0), _tickCount1(0), _tickCount2(0) {
 	
 	_videoSurface1 = nullptr;
 	_videoSurface2 = CScreenManager::_screenManagerPtr->createSurface(600, 340);

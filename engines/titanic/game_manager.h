@@ -61,7 +61,6 @@ private:
 	int _field34;
 	CVideoSurface *_videoSurface1;
 	int _field4C;
-	int _field50;
 	int _field54;
 	CVideoSurface *_videoSurface2;
 	uint _tickCount1;
@@ -72,6 +71,7 @@ public:
 	Common::Rect _bounds;
 	CInputHandler _inputHandler;
 	CInputTranslator _inputTranslator;
+	CTreeItem *_dragItem;
 public:
 	CGameManager(CProjectItem *project, CGameView *gameView);
 	~CGameManager();

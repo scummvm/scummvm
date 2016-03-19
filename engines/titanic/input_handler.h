@@ -25,6 +25,7 @@
 
 #include "common/rect.h"
 #include "titanic/input_translator.h"
+#include "titanic/core/tree_item.h"
 
 namespace Titanic {
 
@@ -35,15 +36,24 @@ private:
 	/**
 	 * Process and dispatch a passed message
 	 */
-	void processMessage(const CMessage &msg);
+	void processMessage(const CMessage *msg);
+
+	/**
+	 * Dispatches a message to the project
+	 */
+	void dispatchMessage(const CMessage *msg);
+
+	/**
+	 * Called when a drag operation has ended
+	 */
+	void dragEnd(const Common::Point &mousePos, CTreeItem *dragItem);
 public:
 	CGameManager *_gameManager;
 	CInputTranslator *_inputTranslator;
-	int _field4;
-	int _field8;
-	int _fieldC;
-	int _field10;
-	int _field14;
+	bool _dragging;
+	bool _buttonDown;
+	CTreeItem *_dragItem;
+	Common::Point _dragStartPos;
 	Common::Point _mousePos;
 	int _lockCount;
 	int _field24;

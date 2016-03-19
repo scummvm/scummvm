@@ -56,8 +56,7 @@ public:
 	int _field24;
 	int _field28;
 	int _field2C;
-	int _field30;
-	int _field34;
+	Common::Point _mousePos;
 	int _field38;
 public:
 	CGameState(CGameManager *gameManager);
@@ -76,6 +75,11 @@ public:
 	 * Sets a new mode
 	 */
 	void setMode(GameStateMode newMode);
+
+	/**
+	 * Sets the current mouse position
+	 */
+	void setMousePos(const Common::Point &pt);
 };
 
 } // End of namespace Titanic

@@ -30,7 +30,7 @@ CGameState::CGameState(CGameManager *gameManager) :
 		_gameManager(gameManager), _gameLocation(this),
 		_field8(0), _fieldC(0), _mode(GSMODE_0), _field14(0), _field18(0),
 		_field1C(0), _field20(0), _field24(0), _field28(0), _field2C(0),
-		_field30(0), _field34(0), _field38(0) {
+		_field38(0) {
 }
 
 void CGameState::save(SimpleFile *file) const {
@@ -76,6 +76,10 @@ void CGameState::setMode(GameStateMode newMode) {
 	}
 
 	_mode = newMode;
+}
+
+void CGameState::setMousePos(const Common::Point &pt) {
+	_mousePos = pt;
 }
 
 } // End of namespace Titanic z

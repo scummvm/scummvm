@@ -109,11 +109,15 @@ public:
 class CMouseDragMsg : public CMouseMsg {
 public:
 	CLASSDEF
+	CMouseDragMsg() : CMouseMsg() {}
+	CMouseDragMsg(const Common::Point &pt) : CMouseMsg(pt, 0) {}
 };
 
 class CMouseDragMoveMsg : public CMouseDragMsg {
 public:
 	CLASSDEF
+	CMouseDragMoveMsg() : CMouseDragMsg() {}
+	CMouseDragMoveMsg(const Common::Point &pt) : CMouseDragMsg(pt) {}
 
 	virtual bool handleMessage(const CMouseDragMoveMsg &msg) { return false; }
 	virtual bool perform(CTreeItem *treeItem) { 
@@ -125,11 +129,13 @@ public:
 MSGTARGET(CMouseDragStartMsg);
 class CMouseDragStartMsg : public CMouseDragMsg {
 public:
-	int _field10;
+	CTreeItem *_dragItem;
 	int _field14;
 public:
 	CLASSDEF
-	CMouseDragStartMsg() : CMouseDragMsg(), _field10(0), _field14(0) {}
+	CMouseDragStartMsg() : CMouseDragMsg(), _dragItem(nullptr), _field14(0) {}
+	CMouseDragStartMsg(const Common::Point &pt) : CMouseDragMsg(pt),
+		_dragItem(nullptr), _field14(0) {}
 
 	virtual bool handleMessage(const CMouseDragStartMsg &msg) { return false; }
 	virtual bool perform(CTreeItem *treeItem) { 
@@ -141,10 +147,12 @@ public:
 MSGTARGET(CMouseDragEndMsg);
 class CMouseDragEndMsg : public CMouseDragMsg {
 public:
-	int _field10;
+	CTreeItem *_dragItem;
 public:
 	CLASSDEF
-	CMouseDragEndMsg() : CMouseDragMsg(), _field10(0) {}
+	CMouseDragEndMsg() : CMouseDragMsg(), _dragItem(nullptr) {}
+	CMouseDragEndMsg(const Common::Point &pt, CTreeItem *dragItem = nullptr) :
+		CMouseDragMsg(pt), _dragItem(dragItem) {}
 
 	virtual bool handleMessage(const CMouseDragEndMsg &msg) { return false; }
 	virtual bool perform(CTreeItem *treeItem) {
