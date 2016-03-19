@@ -88,6 +88,16 @@ public:
 	void postLoad() {}
 
 	/**
+	 * Called when a game is about to be saved
+	 */
+	void preSave() {}
+
+	/**
+	 * Called when a game has finished being saved
+	 */
+	void postSave() {}
+
+	/**
 	 * Returns the scripts for the manager
 	 */
 	TTScripts &getScripts() { return _scripts; }

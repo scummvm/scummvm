@@ -56,6 +56,16 @@ public:
 	 * Called when loading a game is complete
 	 */
 	void postLoad() { _soundManager.postLoad(); }
+
+	/**
+	 * Called when a game is about to be saved
+	 */
+	void preSave() { _soundManager.preSave(); }
+
+	/**
+	 * Called when a game has finished being saved
+	 */
+	void postSave() { _soundManager.postSave(); }
 };
 
 } // End of namespace Titanic

@@ -27,7 +27,6 @@
 #include "titanic/core/project_item.h"
 #include "titanic/messages/messages.h"
 
-
 namespace Titanic {
 
 void CGameManagerList::postLoad(uint ticks, CProjectItem *project) {
@@ -35,10 +34,28 @@ void CGameManagerList::postLoad(uint ticks, CProjectItem *project) {
 		(*i)->postLoad(ticks, project);
 }
 
+void CGameManagerList::preSave() {
+	for (iterator i = begin(); i != end(); ++i)
+		(*i)->preSave();
+}
+
+void CGameManagerList::postSave() {
+	for (iterator i = begin(); i != end(); ++i)
+		(*i)->postSave();
+}
+
 /*------------------------------------------------------------------------*/
 
 void CGameManagerListItem::postLoad(uint ticks, CProjectItem *project) {
 	warning("TODO");
+}
+
+void CGameManagerListItem::preSave() {
+	warning("TODO: CGameManagerListItem::preSave");
+}
+
+void CGameManagerListItem::postSave() {
+	warning("TODO: CGameManagerListItem::postSave");
 }
 
 /*------------------------------------------------------------------------*/
@@ -95,6 +112,23 @@ void CGameManager::postLoad(CProjectItem *project) {
 	// Signal the true talk manager and sound
 	_trueTalkManager.postLoad();
 	_sound.postLoad();
+}
+
+void CGameManager::preSave(CProjectItem *project) {
+	// Generate a message that a save is being done
+	updateDiskTicksCount();
+	CPreSaveMsg msg(_lastDiskTicksCount);
+	msg.execute(project, nullptr, MSGFLAG_SCAN);
+
+	// Notify sub-objects of the save
+	_list.preSave();
+	_trueTalkManager.preSave();
+	_sound.preSave();
+}
+
+void CGameManager::postSave() {
+	_list.postSave();
+	_trueTalkManager.postSave();
 }
 
 void CGameManager::initBounds() {

@@ -42,12 +42,38 @@ class CGameManagerListItem : public ListItem {
 private:
 	static int _v1;
 public:
+	/**
+	 * Called after loading a game has finished
+	 */
 	void postLoad(uint ticks, CProjectItem *project);
+
+	/**
+	 * Called when a game is about to be saved
+	 */
+	void preSave();
+
+	/**
+	 * Called when a game has finished being saved
+	 */
+	void postSave();
 };
 
 class CGameManagerList : public List<CGameManagerListItem> {
 public:
+	/**
+	 * Called after loading a game has finished
+	 */
 	void postLoad(uint ticks, CProjectItem *project);
+
+	/**
+	 * Called when a game is about to be saved
+	 */
+	void preSave();
+
+	/**
+	 * Called when a game has finished being saved
+	 */
+	void postSave();
 };
 
 class CGameManager {
@@ -90,6 +116,16 @@ public:
 	 * Called after loading a game has finished
 	 */
 	void postLoad(CProjectItem *project);
+
+	/**
+	 * Called when a game is about to be saved
+	 */
+	void preSave(CProjectItem *project);
+
+	/**
+	 * Called when a game has finished being saved
+	 */
+	void postSave();
 
 	/**
 	 * Updates the game time when the last disk access started

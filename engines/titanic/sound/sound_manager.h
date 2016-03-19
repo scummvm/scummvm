@@ -73,7 +73,10 @@ public:
 	 */
 	virtual void postLoad() {}
 
-	virtual void proc26() {}
+	/**
+	 * Called when a game is about to be saved
+	 */
+	virtual void preSave() {}
 
 	/**
 	 * Save the data for the class to file
