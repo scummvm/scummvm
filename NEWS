@@ -4,6 +4,7 @@ For a more comprehensive changelog of the latest experimental code, see:
 1.8.1 (XXXX-XX-XX)
  General:
    - Removed TESTING flag from several supported games.
+   - Added Chinese Pinyin translation.
 
  BBVS:
    - Fixed game restart.
