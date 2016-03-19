@@ -55,8 +55,10 @@ void CMainGameWindow::applicationStarting() {
 	// Set the video mode
 	CScreenManager *screenManager = CScreenManager::setCurrent();
 	screenManager->setMode(640, 480, 16, 1, true);
+	_inputAllowed = true;
 
-	// TODO: Clear surfaces
+	// TODO: Remove initial background and palette
+
 
 	// Create game view and manager
 	_gameView = new CSTGameView(this);
