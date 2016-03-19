@@ -757,12 +757,16 @@ static void listAudioDevices() {
 }
 
 /** Display all games in current directory */
-static void autoDetect(){
+static void autoDetect() {
+
 	//Current directory
 	Common::FSNode dir(".");
+
 	Common::FSList files;
+
 	//Collect all files from directory
 	dir.getChildren(files, Common::FSNode::kListAll);
+
 	GameList candidates(EngineMan.detectGames(files));
 	if (candidates.empty()) {
 		printf("%s\n","ScummVM could not find any game in the current directory" );
@@ -1000,7 +1004,7 @@ bool processSettings(Common::String &command, Common::StringMap &settings, Commo
 	} else if (command == "help") {
 		printf(HELP_STRING, s_appName);
 		return true;
-	} else if (command == "auto-detect"){
+	} else if (command == "auto-detect") {
 		autoDetect();
 		return true;
 	}
