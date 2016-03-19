@@ -50,39 +50,48 @@ void CInputTranslator::mouseMove(int special, const Common::Point &pt) {
 }
 
 void CInputTranslator::leftButtonDown(int special, const Common::Point &pt) {
-
+	CMouseButtonDownMsg msg(pt, getButtons(special));
+	_inputHandler->handleMessage(msg);
 }
 
 void CInputTranslator::leftButtonUp(int special, const Common::Point &pt) {
-
+	CMouseButtonUpMsg msg(pt, getButtons(special));
+	_inputHandler->handleMessage(msg);
 }
 
 void CInputTranslator::leftButtonDoubleClick(int special, const Common::Point &pt) {
-
+	CMouseButtonDoubleClickMsg msg(pt, getButtons(special));
+	_inputHandler->handleMessage(msg);
 }
 
 void CInputTranslator::middleButtonDown(int special, const Common::Point &pt) {
-
+	CMouseButtonDownMsg msg(pt, getButtons(special));
+	_inputHandler->handleMessage(msg);
 }
 
 void CInputTranslator::middleButtonUp(int special, const Common::Point &pt) {
-
+	CMouseButtonUpMsg msg(pt, getButtons(special));
+	_inputHandler->handleMessage(msg);
 }
 
 void CInputTranslator::middleButtonDoubleClick(int special, const Common::Point &pt) {
-
+	CMouseButtonDoubleClickMsg msg(pt, getButtons(special));
+	_inputHandler->handleMessage(msg);
 }
 
 void CInputTranslator::rightButtonDown(int special, const Common::Point &pt) {
-
+	CMouseButtonDownMsg msg(pt, getButtons(special));
+	_inputHandler->handleMessage(msg);
 }
 
 void CInputTranslator::rightButtonUp(int special, const Common::Point &pt) {
-
+	CMouseButtonUpMsg msg(pt, getButtons(special));
+	_inputHandler->handleMessage(msg);
 }
 
 void CInputTranslator::rightButtonDoubleClick(int special, const Common::Point &pt) {
-
+	CMouseButtonDoubleClickMsg msg(pt, getButtons(special));
+	_inputHandler->handleMessage(msg);
 }
 
 } // End of namespace Titanic
