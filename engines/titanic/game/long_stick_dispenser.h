@@ -34,7 +34,7 @@ private:
 	int _fieldC0;
 	int _fieldC4;
 protected:
-	virtual bool handleEvent(const CEnterRoomMsg &msg);
+	virtual bool handleEvent(CEnterRoomMsg &msg);
 public:
 	CLASSDEF
 	CLongStickDispenser() : CGameObject(), _fieldBC(0),

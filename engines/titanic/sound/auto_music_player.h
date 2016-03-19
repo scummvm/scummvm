@@ -32,7 +32,7 @@ class CAutoMusicPlayer : public CAutoMusicPlayerBase, CEnterRoomMsgTarget {
 private:
 	CString _string2;
 protected:
-	virtual bool handleEvent(const CEnterRoomMsg &msg);
+	virtual bool handleEvent(CEnterRoomMsg &msg);
 public:
 	CLASSDEF
 	CAutoMusicPlayer();

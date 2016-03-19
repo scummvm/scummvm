@@ -34,7 +34,7 @@ void CPETTransport::load(SimpleFile *file) {
 	CGameObject::load(file);
 }
 
-bool CPETTransport::handleEvent(const CEnterRoomMsg &msg) {
+bool CPETTransport::handleEvent(CEnterRoomMsg &msg) {
 	warning("CPETTransport::handleEvent");
 	return true;
 }

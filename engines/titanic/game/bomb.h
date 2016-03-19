@@ -41,7 +41,7 @@ private:
 	int _startingTicks;
 	int _field104;
 protected:
-	virtual bool handleEvent(const CEnterRoomMsg &msg);
+	virtual bool handleEvent(CEnterRoomMsg &msg);
 public:
 	CLASSDEF
 	CBomb();

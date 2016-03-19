@@ -55,7 +55,7 @@ private:
 	int _fieldEC;
 	int _fieldF0;
 protected:
-	virtual bool handleEvent(const CEnterRoomMsg &msg);
+	virtual bool handleEvent(CEnterRoomMsg &msg);
 public:
 	CLASSDEF
 	CSGTStateRoom();

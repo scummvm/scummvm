@@ -34,7 +34,7 @@ void CBilgeDispensorEvent::load(SimpleFile *file) {
 	CAutoSoundEvent::load(file);
 }
 
-bool CBilgeDispensorEvent::handleEvent(const CEnterRoomMsg &msg) {
+bool CBilgeDispensorEvent::handleEvent(CEnterRoomMsg &msg) {
 	_value1 = 0;
 	return true;
 }

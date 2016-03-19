@@ -39,7 +39,7 @@ private:
 	int _fieldF8;
 	int _fieldFC;
 protected:
-	virtual bool handleEvent(const CEnterRoomMsg &msg);
+	virtual bool handleEvent(CEnterRoomMsg &msg);
 public:
 	CLASSDEF
 	CLight();

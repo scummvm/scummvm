@@ -36,7 +36,7 @@ public:
 	int _fieldC8;
 	int _fieldCC;
 protected:
-	virtual bool handleEvent(const CEnterRoomMsg &msg);
+	virtual bool handleEvent(CEnterRoomMsg &msg);
 public:
 	CLASSDEF
 	CBarBell();

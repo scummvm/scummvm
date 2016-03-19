@@ -57,7 +57,7 @@ void CLift::load(SimpleFile *file) {
 	CTransport::load(file);
 }
 
-bool CLift::handleEvent(const CEnterRoomMsg &msg) {
+bool CLift::handleEvent(CEnterRoomMsg &msg) {
 	warning("CLift::handleEvent");
 	return true;
 }

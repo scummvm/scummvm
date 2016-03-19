@@ -33,7 +33,7 @@ private:
 	static int _v1;
 	int _value;
 protected:
-	virtual bool handleEvent(const CEnterNodeMsg &msg);
+	virtual bool handleEvent(CEnterNodeMsg &msg);
 public:
 	CLASSDEF
 

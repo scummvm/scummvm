@@ -36,7 +36,7 @@ private:
 	int _fieldE4;
 	int _fieldE8;
 protected:
-	virtual bool handleEvent(const CEnterRoomMsg &msg);
+	virtual bool handleEvent(CEnterRoomMsg &msg);
 public:
 	CLASSDEF
 	CLightSwitch();

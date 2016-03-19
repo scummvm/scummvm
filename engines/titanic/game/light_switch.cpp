@@ -50,7 +50,7 @@ void CLightSwitch::load(SimpleFile *file) {
 	CBackground::load(file);
 }
 
-bool CLightSwitch::handleEvent(const CEnterRoomMsg &msg) {
+bool CLightSwitch::handleEvent(CEnterRoomMsg &msg) {
 	warning("CLightSwitch::handleEvent");
 	return true;
 }

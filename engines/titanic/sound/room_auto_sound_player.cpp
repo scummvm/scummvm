@@ -34,7 +34,7 @@ void CRoomAutoSoundPlayer::load(SimpleFile *file) {
 	CAutoSoundPlayer::load(file);
 }
 
-bool CRoomAutoSoundPlayer::handleEvent(const CEnterRoomMsg &msg) {
+bool CRoomAutoSoundPlayer::handleEvent(CEnterRoomMsg &msg) {
 	warning("CRoomAutoSoundPlayer::handleEvent");
 	return true;
 }

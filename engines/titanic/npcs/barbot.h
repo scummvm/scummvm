@@ -174,7 +174,7 @@ private:
 	int _field33C;
 	int _field340;
 protected:
-	virtual bool handleEvent(const CEnterRoomMsg &msg);
+	virtual bool handleEvent(CEnterRoomMsg &msg);
 public:
 	CLASSDEF
 	CBarbot();

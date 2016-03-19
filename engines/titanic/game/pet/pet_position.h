@@ -30,7 +30,7 @@ namespace Titanic {
 
 class CPETPosition : public CGameObject, CEnterRoomMsgTarget {
 protected:
-	virtual bool handleEvent(const CEnterRoomMsg &msg);
+	virtual bool handleEvent(CEnterRoomMsg &msg);
 public:
 	CLASSDEF
 

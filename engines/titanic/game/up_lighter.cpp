@@ -48,7 +48,7 @@ void CUpLighter::load(SimpleFile *file) {
 	CDropTarget::load(file);
 }
 
-bool CUpLighter::handleEvent(const CEnterRoomMsg &msg) {
+bool CUpLighter::handleEvent(CEnterRoomMsg &msg) {
 	warning("CUpLighter::handleEvent");
 	return true;
 }

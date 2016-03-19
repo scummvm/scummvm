@@ -50,7 +50,7 @@ void CBarBell::load(SimpleFile *file) {
 	CGameObject::load(file);
 }
 
-bool CBarBell::handleEvent(const CEnterRoomMsg &msg) {
+bool CBarBell::handleEvent(CEnterRoomMsg &msg) {
 	_fieldBC = 0;
 	return true;
 }

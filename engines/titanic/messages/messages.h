@@ -38,7 +38,7 @@ enum MessageFlag {
 };
 
 #define MSGTARGET(NAME) class NAME; class NAME##Target { public: \
-	virtual bool handleEvent(const NAME &msg) = 0; }
+	virtual bool handleEvent(NAME &msg) = 0; }
 
 class CMessage : public CSaveableObject {
 public:

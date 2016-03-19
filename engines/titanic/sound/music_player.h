@@ -35,7 +35,7 @@ protected:
 	int _fieldCC;
 	int _fieldD0;
 protected:
-	virtual bool handleEvent(const CEnterRoomMsg &msg);
+	virtual bool handleEvent(CEnterRoomMsg &msg);
 public:
 	CLASSDEF
 	CMusicPlayer() : CGameObject(),

@@ -34,7 +34,7 @@ void CEndSequenceControl::load(SimpleFile *file) {
 	CGameObject::load(file);
 }
 
-bool CEndSequenceControl::handleEvent(const CEnterRoomMsg &msg) {
+bool CEndSequenceControl::handleEvent(CEnterRoomMsg &msg) {
 	warning("TODO: CEndSequenceControl::handleEvent");
 	return true;
 }

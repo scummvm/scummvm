@@ -46,7 +46,7 @@ void CGetLiftEye2::load(SimpleFile *file) {
 	CGameObject::load(file);
 }
 
-bool CGetLiftEye2::handleEvent(const CEnterRoomMsg &msg) {
+bool CGetLiftEye2::handleEvent(CEnterRoomMsg &msg) {
 	warning("CGetLiftEye2::handleEvent");
 	return true;
 }

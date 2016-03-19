@@ -34,7 +34,7 @@ private:
 	int _fieldE4;
 	int _fieldE8;
 protected:
-	virtual bool handleEvent(const CEnterViewMsg &msg);
+	virtual bool handleEvent(CEnterViewMsg &msg);
 public:
 	CLASSDEF
 	CAutoAnimate() : CBackground(), _fieldE0(1), _fieldE4(1), _fieldE8(0) {}

@@ -35,7 +35,7 @@ private:
 private:
 	int _field108;
 protected:
-	virtual bool handleEvent(const CEnterRoomMsg &msg);
+	virtual bool handleEvent(CEnterRoomMsg &msg);
 public:
 	CLASSDEF
 	CLiftBot();

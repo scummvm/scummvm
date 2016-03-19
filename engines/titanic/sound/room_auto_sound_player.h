@@ -30,7 +30,7 @@ namespace Titanic {
 
 class CRoomAutoSoundPlayer : public CAutoSoundPlayer, CEnterRoomMsgTarget {
 protected:
-	virtual bool handleEvent(const CEnterRoomMsg &msg);
+	virtual bool handleEvent(CEnterRoomMsg &msg);
 public:
 	CLASSDEF
 

@@ -40,7 +40,7 @@ void CTitaniaSpeech::load(SimpleFile *file) {
 	CGameObject::load(file);
 }
 
-bool CTitaniaSpeech::handleEvent(const CEnterRoomMsg &msg) {
+bool CTitaniaSpeech::handleEvent(CEnterRoomMsg &msg) {
 	warning("CTitaniaSpeech::handleEvent");
 	return true;
 }

@@ -45,7 +45,7 @@ void CVolumeControl::load(SimpleFile *file) {
 	CGameObject::load(file);
 }
 
-bool CVolumeControl::handleEvent(const CEnterNodeMsg &msg) {
+bool CVolumeControl::handleEvent(CEnterNodeMsg &msg) {
 	warning("CVolumeControl::handleEvent");
 	return true;
 }

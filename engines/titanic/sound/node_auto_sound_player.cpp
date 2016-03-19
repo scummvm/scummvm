@@ -36,7 +36,7 @@ void CNodeAutoSoundPlayer::load(SimpleFile *file) {
 	CAutoSoundPlayer::load(file);
 }
 
-bool CNodeAutoSoundPlayer::handleEvent(const CEnterNodeMsg &msg) {
+bool CNodeAutoSoundPlayer::handleEvent(CEnterNodeMsg &msg) {
 	warning("CNodeAutoSoundPlayer::handleEvent");
 	return true;
 }

@@ -34,7 +34,7 @@ private:
 	CString _string1;
 	int _fieldCC;
 protected:
-	virtual bool handleEvent(const CEnterNodeMsg &msg);
+	virtual bool handleEvent(CEnterNodeMsg &msg);
 public:
 	CLASSDEF
 	CVolumeControl();

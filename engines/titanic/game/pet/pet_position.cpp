@@ -34,7 +34,7 @@ void CPETPosition::load(SimpleFile *file) {
 	CGameObject::load(file);
 }
 
-bool CPETPosition::handleEvent(const CEnterRoomMsg &msg) {
+bool CPETPosition::handleEvent(CEnterRoomMsg &msg) {
 	warning("CPETPosition::handleEvent");
 	return true;
 }
