@@ -1666,7 +1666,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.000", 0, "eb63ea3a2c2469dc2d777d351c626404", 206626576},
 		{"resource.aud", 0, "c2a988a16053eb98c7b73a75139902a0", 217716879},
 		AD_LISTEND},
-		Common::EN_ANY, Common::kPlatformDOS, ADGF_UNSTABLE | ADGF_CD, GUIO4(GUIO_NOASPECT, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
+		Common::EN_ANY, Common::kPlatformWindows, ADGF_UNSTABLE | ADGF_CD, GUIO4(GUIO_NOASPECT, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
 
 	// King's Quest 7 - German Windows-interpreter-only (supplied by markcoolio in bug report #2727402)
 	// SCI interpreter version 2.100.002, VERSION file reports "1.51"
@@ -1676,7 +1676,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.000", 0, "eb63ea3a2c2469dc2d777d351c626404", 206626576},
 		{"resource.aud", 0, "3f17bcaf8a9ff6a6c2d4de1a2078fdcc", 258119621},
 		AD_LISTEND},
-		Common::DE_DEU, Common::kPlatformDOS, ADGF_UNSTABLE | ADGF_CD, GUIO4(GUIO_NOASPECT, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
+		Common::DE_DEU, Common::kPlatformWindows, ADGF_UNSTABLE | ADGF_CD, GUIO4(GUIO_NOASPECT, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
 
 	// King's Quest 7 - English Windows (from abevi)
 	// VERSION 1.65c
