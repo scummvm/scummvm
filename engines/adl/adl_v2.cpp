@@ -76,14 +76,14 @@ void AdlEngine_v2::setupOpcodeTables() {
 	Opcode(o1_setLight);
 	Opcode(o1_setDark);
 	// 0x0c
-	OpcodeUnImpl();
+	Opcode(o2_moveAllItems);
 	Opcode(o1_quit);
 	OpcodeUnImpl();
-	Opcode(o1_save);
+	Opcode(o1_save); // TODO
 	// 0x10
-	Opcode(o1_restore);
+	Opcode(o1_restore); // TODO
 	Opcode(o1_restart);
-	Opcode(o1_placeItem);
+	Opcode(o2_placeItem);
 	Opcode(o1_setItemPic);
 	// 0x14
 	Opcode(o1_resetPic);
@@ -98,6 +98,10 @@ void AdlEngine_v2::setupOpcodeTables() {
 	// 0x1c
 	Opcode(o1_dropItem);
 	Opcode(o1_setRoomPic);
+}
+
+bool AdlEngine_v2::matchesCurrentPic(byte pic) const {
+	return pic == getCurRoom().curPicture || pic == IDI_NONE;
 }
 
 int AdlEngine_v2::o2_isFirstTime(ScriptEnv &e) {
@@ -164,14 +168,51 @@ int AdlEngine_v2::o2_moveItem(ScriptEnv &e) {
 
 	Item &item = getItem(e.arg(1));
 
-	// Not implemented: set redraw flag if item room == displayed room
-
 	// Set items that move from inventory to a room to state "dropped"
 	if (item.room == IDI_NONE && room != IDI_VOID_ROOM)
 		item.state = IDI_ITEM_DROPPED;
 
 	item.room = room;
 	return 2;
+}
+
+int AdlEngine_v2::o2_moveAllItems(ScriptEnv &e) {
+	byte room1 = e.arg(1);
+
+	if (room1 == IDI_CUR_ROOM)
+		room1 = _state.room;
+
+	byte room2 = e.arg(2);
+
+	if (room2 == IDI_CUR_ROOM)
+		room2 = _state.room;
+
+	Common::Array<Item>::iterator item;
+
+	for (item = _state.items.begin(); item != _state.items.end(); ++item)
+		if (item->room == room1) {
+			item->room = room2;
+			if (room1 == IDI_NONE)
+				item->state = IDI_ITEM_DROPPED;
+		}
+
+	return 2;
+}
+
+int AdlEngine_v2::o2_placeItem(ScriptEnv &e) {
+	byte room = e.arg(2);
+
+	if (room == IDI_CUR_ROOM)
+		room = _state.room;
+
+	Item &item = getItem(e.arg(1));
+
+	item.room = room;
+	item.position.x = e.arg(3);
+	item.position.y = e.arg(4);
+	item.state = IDI_ITEM_NOT_MOVED;
+
+	return 4;
 }
 
 } // End of namespace Adl

@@ -25,6 +25,9 @@
 
 #include "adl/adl.h"
 
+// Note: this version of ADL redraws only when necessary, but
+// this is not currently implemented.
+
 #define IDI_CUR_ROOM 0xfc
 #define IDI_VOID_ROOM 0xfd
 
@@ -42,12 +45,15 @@ protected:
 	AdlEngine_v2(OSystem *syst, const AdlGameDescription *gd);
 
 	virtual void setupOpcodeTables();
+	bool matchesCurrentPic(byte pic) const;
 
 	int o2_isFirstTime(ScriptEnv &e);
 	int o2_isRandomGT(ScriptEnv &e);
 	int o2_isItemInRoom(ScriptEnv &e);
 	int o2_isNounNotInRoom(ScriptEnv &e);
 	int o2_isCarryingSomething(ScriptEnv &e);
+	int o2_moveAllItems(ScriptEnv &e);
+	int o2_placeItem(ScriptEnv &e);
 
 	int o2_moveItem(ScriptEnv &e);
 

@@ -175,6 +175,7 @@ protected:
 	virtual void checkInput(byte verb, byte noun);
 
 	virtual void setupOpcodeTables();
+	virtual bool matchesCurrentPic(byte pic) const;
 
 	// Opcodes
 	int o1_isItemInRoom(ScriptEnv &e);

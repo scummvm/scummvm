@@ -343,6 +343,10 @@ void AdlEngine::setupOpcodeTables() {
 	Opcode(o1_setRoomPic);
 }
 
+bool AdlEngine::matchesCurrentPic(byte pic) const {
+	return pic == getCurRoom().curPicture;
+}
+
 void AdlEngine::clearScreen() const {
 	_display->setMode(DISPLAY_MODE_MIXED);
 	_display->clear(0x00);
@@ -369,8 +373,7 @@ void AdlEngine::drawItems() const {
 		Common::Array<byte>::const_iterator pic;
 
 		for (pic = item->roomPictures.begin(); pic != item->roomPictures.end(); ++pic) {
-			// IDI_NONE check was added in hires2
-			if (*pic == getCurRoom().curPicture || *pic == IDI_NONE) {
+			if (matchesCurrentPic(*pic)) {
 				drawItem(*item, item->position);
 				continue;
 			}
@@ -451,7 +454,7 @@ void AdlEngine::takeItem(byte noun) {
 
 		Common::Array<byte>::const_iterator pic;
 		for (pic = item->roomPictures.begin(); pic != item->roomPictures.end(); ++pic) {
-			if (*pic == getCurRoom().curPicture) {
+			if (matchesCurrentPic(*pic)) {
 				item->room = IDI_NONE;
 				item->state = IDI_ITEM_DROPPED;
 				return;
