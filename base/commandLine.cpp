@@ -68,6 +68,7 @@ static const char HELP_STRING[] =
 	"  -z, --list-games         Display list of supported games and exit\n"
 	"  -t, --list-targets       Display list of configured targets and exit\n"
 	"  --list-saves=TARGET      Display a list of saved games for the game (TARGET) specified\n"
+	"  --auto-detect            Display a list of games from current directory\n"
 #if defined(WIN32) && !defined(_WIN32_WCE) && !defined(__SYMBIAN32__)
 	"  --console                Enable the console window (default:enabled)\n"
 #endif
@@ -392,6 +393,9 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, const cha
 			END_COMMAND
 
 			DO_COMMAND('z', "list-games")
+			END_COMMAND
+
+			DO_LONG_COMMAND("auto-detect")
 			END_COMMAND
 
 #ifdef DETECTOR_TESTING_HACK
@@ -752,6 +756,24 @@ static void listAudioDevices() {
 	}
 }
 
+/** Display all games in current directory */
+static void autoDetect(){
+	//Current directory
+	Common::FSNode dir(".");
+	Common::FSList files;
+	//Collect all files from directory
+	dir.getChildren(files, Common::FSNode::kListAll);
+	GameList candidates(EngineMan.detectGames(files));
+	if (candidates.empty()) {
+		printf("%s\n","ScummVM could not find any game in the current directory" );
+	} else {
+		printf("ID                   Description\n");
+		printf("-------------------- ---------------------------------------------------------\n");
+		for (GameList::iterator v = candidates.begin(); v != candidates.end(); ++v) {
+			printf("%-20s %s\n", v->gameid().c_str(), v->description().c_str());
+		}
+	}
+}
 
 #ifdef DETECTOR_TESTING_HACK
 static void runDetectorTest() {
@@ -977,6 +999,9 @@ bool processSettings(Common::String &command, Common::StringMap &settings, Commo
 		return true;
 	} else if (command == "help") {
 		printf(HELP_STRING, s_appName);
+		return true;
+	} else if (command == "auto-detect"){
+		autoDetect();
 		return true;
 	}
 #ifdef DETECTOR_TESTING_HACK
