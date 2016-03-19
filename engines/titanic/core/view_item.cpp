@@ -20,9 +20,12 @@
  *
  */
 
+#include "titanic/game_manager.h"
+#include "titanic/core/project_item.h"
+#include "titanic/core/room_item.h"
 #include "titanic/core/view_item.h"
 #include "titanic/messages/messages.h"
-#include "titanic/game_manager.h"
+#include "titanic/pet_control/pet_control.h"
 
 namespace Titanic {
 
@@ -75,7 +78,7 @@ bool CViewItem::getResourceKey(CResourceKey *key) {
 	return !filename.empty();
 }
 
-void CViewItem::viewChange(CViewItem *newView) {
+void CViewItem::leaveView(CViewItem *newView) {
 	// Only do the processing if we've been passed a view, and it's not the same 
 	if (newView && newView != this) {
 		CLeaveViewMsg viewMsg(this, newView);
@@ -96,6 +99,60 @@ void CViewItem::viewChange(CViewItem *newView) {
 
 				CLeaveRoomMsg roomMsg(oldRoom, newRoom);
 				roomMsg.execute(oldRoom, nullptr, MSGFLAG_SCAN);
+			}
+		}
+	}
+}
+
+void CViewItem::preEnterView(CViewItem *newView) {
+	// Only do the processing if we've been passed a view, and it's not the same 
+	if (newView && newView != this) {
+		CPreEnterViewMsg viewMsg(this, newView);
+		viewMsg.execute(this, nullptr, MSGFLAG_SCAN);
+
+		CNodeItem *oldNode = findNode();
+		CNodeItem *newNode = newView->findNode();
+		if (newNode != oldNode) {
+			CPreEnterNodeMsg nodeMsg(oldNode, newNode);
+			nodeMsg.execute(oldNode, nullptr, MSGFLAG_SCAN);
+
+			CRoomItem *oldRoom = oldNode->findRoom();
+			CRoomItem *newRoom = newNode->findRoom();
+			if (newRoom != oldRoom) {
+				CPreEnterRoomMsg roomMsg(oldRoom, newRoom);
+				roomMsg.execute(oldRoom, nullptr, MSGFLAG_SCAN);
+			}
+		}
+	}
+}
+
+void CViewItem::enterView(CViewItem *newView) {
+	// Only do the processing if we've been passed a view, and it's not the same 
+	if (newView && newView != this) {
+		CEnterViewMsg viewMsg(this, newView);
+		viewMsg.execute(this, nullptr, MSGFLAG_SCAN);
+
+		CNodeItem *oldNode = findNode();
+		CNodeItem *newNode = newView->findNode();
+		if (newNode != oldNode) {
+			CEnterNodeMsg nodeMsg(oldNode, newNode);
+			nodeMsg.execute(oldNode, nullptr, MSGFLAG_SCAN);
+
+			CRoomItem *oldRoom = oldNode->findRoom();
+			CRoomItem *newRoom = newNode->findRoom();
+
+			CPetControl *petControl = nullptr;
+			if (newRoom != nullptr) {
+				petControl = newRoom->getRoot()->getPetControl();
+				petControl->enterNode(newNode);
+			}
+
+			if (newRoom != oldRoom) {
+				CEnterRoomMsg roomMsg(oldRoom, newRoom);
+				roomMsg.execute(oldRoom, nullptr, MSGFLAG_SCAN);
+
+				if (petControl)
+					petControl->enterRoom(newRoom);
 			}
 		}
 	}

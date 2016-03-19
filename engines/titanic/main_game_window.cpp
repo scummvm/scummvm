@@ -70,17 +70,18 @@ void CMainGameWindow::applicationStarting() {
 
 	// TODO: Cursor/image
 
-	// Generate starting messages
+	// Generate starting messages for entering the view, node, and room.
+	// Note the old fields are nullptr, since there's no previous view/node/room
 	CViewItem *view = _gameManager->_gameState._gameLocation.getView();
-	CEnterViewMsg enterViewMsg(view);
+	CEnterViewMsg enterViewMsg(nullptr, view);
 	enterViewMsg.execute(view, nullptr, MSGFLAG_SCAN);
 
 	CNodeItem *node = view->findNode();
-	CEnterNodeMsg enterNodeMsg(node);
+	CEnterNodeMsg enterNodeMsg(nullptr, node);
 	enterNodeMsg.execute(node, nullptr, MSGFLAG_SCAN);
 
 	CRoomItem *room = view->findRoom();
-	CEnterRoomMsg enterRoomMsg(room);
+	CEnterRoomMsg enterRoomMsg(nullptr, room);
 	enterRoomMsg.execute(room, nullptr, MSGFLAG_SCAN);
 
 	_gameManager->initBounds();

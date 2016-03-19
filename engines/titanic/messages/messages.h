@@ -196,9 +196,9 @@ public:
 	} }
 #define MESSAGE2(NAME, F1, N1, V1, F2, N2, V2) MSGTARGET(NAME); \
 	class NAME: public CMessage { \
-	public: F1 _N1; F2 _N2; \
-	NAME() : CMessage(), _N1(V1), _N2(V2) {} \
-	NAME(F1 N1, F2 N2) : CMessage(), _N1(N1), _N2(N2) {} \
+	public: F1 _##N1; F2 _##N2; \
+	NAME() : CMessage(), _##N1(V1), _##N2(V2) {} \
+	NAME(F1 N1, F2 N2) : CMessage(), _##N1(N1), _##N2(N2) {} \
 	CLASSDEF \
 	virtual bool handleMessage(const NAME &msg) { return false; } \
 	virtual bool perform(CTreeItem *treeItem) { \
@@ -207,9 +207,9 @@ public:
 	} }
 #define MESSAGE3(NAME, F1, N1, V1, F2, N2, V2, F3, N3, V3) MSGTARGET(NAME); \
 	class NAME: public CMessage { \
-	public: F1 _N1; F2 _N2; F3 _N3; \
-	NAME() : CMessage(), _N1(V1), _N2(V2), _N3(V3) {} \
-	NAME(F1 N1, F2 N2, F3 N3) : CMessage(), _N1(N1), _N2(N2), _N3(N3) {} \
+	public: F1 _##N1; F2 _##N2; F3 _##N3; \
+	NAME() : CMessage(), _##N1(V1), _##N2(V2), _##N3(V3) {} \
+	NAME(F1 N1, F2 N2, F3 N3) : CMessage(), _##N1(N1), _##N2(N2), _##N3(N3) {} \
 	CLASSDEF \
 	virtual bool handleMessage(const NAME &msg) { return false; } \
 	virtual bool perform(CTreeItem *treeItem) { \
@@ -218,9 +218,9 @@ public:
 	} }
 #define MESSAGE4(NAME, F1, N1, V1, F2, N2, V2, F3, N3, V3, F4, N4, V4) MSGTARGET(NAME); \
 	class NAME: public CMessage { \
-	public: F1 _N1; F2 _N2; F3 _N3; F4 _N4; \
-	NAME() : CMessage(), _N1(V1), _N2(V2), _N3(V3), _N4(V4) {} \
-	NAME(F1 N1, F2 N2, F3 N3, F4 N4) : CMessage(), _N1(N1), _N2(N2), _N3(N3), _N4(N4) {} \
+	public: F1 _##N1; F2 _##N2; F3 _##N3; F4 _##N4; \
+	NAME() : CMessage(), _##N1(V1), _##N2(V2), _##N3(V3), _##N4(V4) {} \
+	NAME(F1 N1, F2 N2, F3 N3, F4 N4) : CMessage(), _##N1(N1), _##N2(N2), _##N3(N3), _##N4(N4) {} \
 	CLASSDEF \
 	virtual bool handleMessage(const NAME &msg) { return false; } \
 	virtual bool perform(CTreeItem *treeItem) { \
@@ -259,12 +259,12 @@ MESSAGE1(CDropobjectMsg, int, value, 0);
 MESSAGE1(CDropZoneGotObjectMsg, int, value, 0);
 MESSAGE1(CDropZoneLostObjectMsg, int, value, 0);
 MESSAGE1(CEjectCylinderMsg, int, value, 0);
-MESSAGE1(CPreEnterNodeMsg, CNodeItem *, node, nullptr);
-MESSAGE1(CPreEnterRoomMsg, CRoomItem *, room, nullptr);
-MESSAGE1(CPreEnterViewMsg, CViewItem *, view, nullptr);
-MESSAGE1(CEnterNodeMsg, CNodeItem *, node, nullptr);
-MESSAGE1(CEnterRoomMsg, CRoomItem *, room, nullptr);
-MESSAGE1(CEnterViewMsg, CViewItem *, view, nullptr);
+MESSAGE2(CPreEnterNodeMsg, CNodeItem *, oldNode, nullptr, CNodeItem *, newNode, nullptr);
+MESSAGE2(CPreEnterRoomMsg, CRoomItem *, oldRoom, nullptr, CRoomItem *, newRoom, nullptr);
+MESSAGE2(CPreEnterViewMsg, CViewItem *, oldView, nullptr, CViewItem *, newView, nullptr);
+MESSAGE2(CEnterNodeMsg, CNodeItem *, oldNode, nullptr, CNodeItem *, newNode, nullptr);
+MESSAGE2(CEnterRoomMsg, CRoomItem *, oldRoom, nullptr, CRoomItem *, newRoom, nullptr);
+MESSAGE2(CEnterViewMsg, CViewItem *, oldView, nullptr, CViewItem *, newView, nullptr);
 MESSAGE0(CErasePhonographCylinderMsg);
 MESSAGE2(CFreshenCookieMsg, int, value1, 0, int, value2, 0);
 MESSAGE1(CGetChevClassBits, int, value, 0);

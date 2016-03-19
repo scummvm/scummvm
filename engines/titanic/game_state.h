@@ -54,8 +54,8 @@ public:
 	int _field1C;
 	int _field20;
 	int _field24;
-	int _field28;
-	int _field2C;
+	uint _nodeChangeCtr;
+	uint32 _nodeEnterTicks;
 	Common::Point _mousePos;
 	int _field38;
 public:
@@ -80,6 +80,11 @@ public:
 	 * Sets the current mouse position
 	 */
 	void setMousePos(const Common::Point &pt);
+
+	/**
+	 * Called by the PET when a new node is entered
+	 */
+	void enterNode();
 };
 
 } // End of namespace Titanic

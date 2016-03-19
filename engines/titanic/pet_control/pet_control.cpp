@@ -21,6 +21,8 @@
  */
 
 #include "titanic/pet_control/pet_control.h"
+#include "titanic/game_manager.h"
+#include "titanic/game_state.h"
 
 namespace Titanic {
 
@@ -47,10 +49,6 @@ void CPetControl::load(SimpleFile *file) {
 	}
 
 	CGameObject::load(file);
-}
-
-void CPetControl::postLoad() {
-	// TODO
 }
 
 bool CPetControl::isValid() const {
@@ -82,5 +80,17 @@ void CPetControl::saveSubObjects(SimpleFile *file, int indent) const {
 	_sub8.save(file, indent);
 }
 
+void CPetControl::postLoad() {
+	warning("TODO: CPetControl::postLoad");
+}
+
+void CPetControl::enterNode(CNodeItem *node) {
+	getGameManager()->_gameState.enterNode();
+}
+
+void CPetControl::enterRoom(CRoomItem *room) {
+	_sub2.enterRoom(room);
+	_sub3.enterRoom(room);
+}
 
 } // End of namespace Titanic

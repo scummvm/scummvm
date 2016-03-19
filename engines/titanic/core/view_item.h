@@ -59,9 +59,19 @@ public:
 	bool getResourceKey(CResourceKey *key);
 
 	/**
-	 * Called when changing from one view to another
+	 * Called when leaving the view
 	 */
-	void viewChange(CViewItem *newView);
+	void leaveView(CViewItem *newView);
+
+	/**
+	 * Called on an old view just left, and about to enter a new view
+	 */
+	void preEnterView(CViewItem *newView);
+
+	/**
+	 * Called when a new view is being entered
+	 */
+	void enterView(CViewItem *newView);
 };
 
 } // End of namespace Titanic

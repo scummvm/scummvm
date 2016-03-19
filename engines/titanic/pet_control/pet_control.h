@@ -24,6 +24,8 @@
 #define TITANIC_PET_CONTROL_H
 
 #include "titanic/core/game_object.h"
+#include "titanic/core/node_item.h"
+#include "titanic/core/room_item.h"
 #include "titanic/pet_control/pet_control_sub1.h"
 #include "titanic/pet_control/pet_control_sub2.h"
 #include "titanic/pet_control/pet_control_sub3.h"
@@ -80,6 +82,16 @@ public:
 	 * Called after loading a game has finished
 	 */
 	void postLoad();
+
+	/**
+	 * Called when a new node is entered
+	 */
+	void enterNode(CNodeItem *node);
+
+	/**
+	 * Called when a new room is entered
+	 */
+	void enterRoom(CRoomItem *room);
 };
 
 } // End of namespace Titanic

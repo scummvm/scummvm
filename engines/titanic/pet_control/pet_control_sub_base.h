@@ -24,6 +24,7 @@
 #define TITANIC_PET_CONTROL_SUB_BASE_H
 
 #include "titanic/simple_file.h"
+#include "titanic/core/room_item.h"
 
 namespace Titanic {
 
@@ -81,7 +82,12 @@ public:
 	virtual void proc21() {}
 	virtual void proc22() {}
 	virtual void proc23() {}
-	virtual void proc24() {}
+
+	/**
+	 * Called when a new room is entered
+	 */
+	virtual void enterRoom(CRoomItem *room) {}
+
 	virtual void proc25();
 	virtual int proc26() { return 0; }
 	virtual void proc27();

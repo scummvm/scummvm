@@ -57,9 +57,9 @@ void CGondolierMixer::load(SimpleFile *file) {
 }
 
 bool CGondolierMixer::handleEvent(CEnterRoomMsg &msg) {
-	CTreeItem *parent = getParent();
-	if (parent == msg._room)
-		msg.execute(parent);
+	CTreeItem *parentRoom = getParent();
+	if (parentRoom == msg._newRoom)
+		msg.execute(parentRoom);
 	
 	return true;
 }

@@ -21,6 +21,7 @@
  */
 
 #include "titanic/game_state.h"
+#include "titanic/titanic.h"
 #include "titanic/game_manager.h"
 #include "titanic/screen_manager.h"
 
@@ -29,8 +30,8 @@ namespace Titanic {
 CGameState::CGameState(CGameManager *gameManager) :
 		_gameManager(gameManager), _gameLocation(this),
 		_field8(0), _fieldC(0), _mode(GSMODE_0), _field14(0), _field18(0),
-		_field1C(0), _field20(0), _field24(0), _field28(0), _field2C(0),
-		_field38(0) {
+		_field1C(0), _field20(0), _field24(0), _nodeChangeCtr(0),
+		_nodeEnterTicks(0), _field38(0) {
 }
 
 void CGameState::save(SimpleFile *file) const {
@@ -54,7 +55,8 @@ void CGameState::load(SimpleFile *file) {
 	_gameLocation.load(file);
 
 	_field1C = file->readNumber();
-	_field28 = _field2C = 0;
+	_nodeChangeCtr = 0;
+	_nodeEnterTicks = 0;
 }
 
 void CGameState::setMode(GameStateMode newMode) {
@@ -80,6 +82,11 @@ void CGameState::setMode(GameStateMode newMode) {
 
 void CGameState::setMousePos(const Common::Point &pt) {
 	_mousePos = pt;
+}
+
+void CGameState::enterNode() {
+	++_nodeChangeCtr;
+	_nodeEnterTicks = g_vm->_events->getTicksCount();
 }
 
 } // End of namespace Titanic z
