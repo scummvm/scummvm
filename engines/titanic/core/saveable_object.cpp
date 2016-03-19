@@ -801,6 +801,9 @@ DEFFN(CIsEarBowlPuzzleDone)
 DEFFN(CIsHookedOnMsg)
 DEFFN(CIsParrotPresentMsg)
 DEFFN(CKeyCharMsg)
+DEFFN(CLeaveNodeMsg);
+DEFFN(CLeaveRoomMsg);
+DEFFN(CLeaveViewMsg);
 DEFFN(CLemonFallsFromTreeMsg)
 DEFFN(CLightsMsg)
 DEFFN(CLoadSuccessMsg)
@@ -1374,6 +1377,9 @@ void CSaveableObject::initClassList() {
 	ADDFN(CIsHookedOnMsg, CMessage);
 	ADDFN(CIsParrotPresentMsg, CMessage);
 	ADDFN(CKeyCharMsg, CMessage);
+	ADDFN(CLeaveNodeMsg, CMessage);
+	ADDFN(CLeaveRoomMsg, CMessage);
+	ADDFN(CLeaveViewMsg, CMessage);
 	ADDFN(CLemonFallsFromTreeMsg, CMessage);
 	ADDFN(CLightsMsg, CMessage);
 	ADDFN(CLoadSuccessMsg, CMessage);

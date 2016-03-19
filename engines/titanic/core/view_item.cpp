@@ -21,6 +21,8 @@
  */
 
 #include "titanic/core/view_item.h"
+#include "titanic/messages/messages.h"
+#include "titanic/game_manager.h"
 
 namespace Titanic {
 
@@ -71,6 +73,32 @@ bool CViewItem::getResourceKey(CResourceKey *key) {
 	*key = _resourceKey;
 	CString filename = key->exists();
 	return !filename.empty();
+}
+
+void CViewItem::viewChange(CViewItem *newView) {
+	// Only do the processing if we've been passed a view, and it's not the same 
+	if (newView && newView != this) {
+		CLeaveViewMsg viewMsg(this, newView);
+		viewMsg.execute(this, nullptr, MSGFLAG_SCAN);
+
+		CNodeItem *oldNode = findNode();
+		CNodeItem *newNode = newView->findNode();
+		if (newNode != oldNode) {
+			CLeaveNodeMsg nodeMsg(oldNode, newNode);
+			nodeMsg.execute(oldNode, nullptr, MSGFLAG_SCAN);
+
+			CRoomItem *oldRoom = oldNode->findRoom();
+			CRoomItem *newRoom = newNode->findRoom();
+			if (newRoom != oldRoom) {
+				CGameManager *gm = getGameManager();
+				if (gm)
+					gm->viewChange();
+
+				CLeaveRoomMsg roomMsg(oldRoom, newRoom);
+				roomMsg.execute(oldRoom, nullptr, MSGFLAG_SCAN);
+			}
+		}
+	}
 }
 
 } // End of namespace Titanic
