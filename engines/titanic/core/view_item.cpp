@@ -210,7 +210,8 @@ bool CViewItem::mouseChange(const CMouseMsg *msg, bool flag) {
 			return true;
 		}
 
-		// TODO
+		if (CMouseMsg::isSupportedBy(gameObjects[idx]))
+			result = true;
 	}
 
 	return result;

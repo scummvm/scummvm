@@ -94,6 +94,10 @@ public:
 	CEditControlMsg() : _field4(0), _field8(0), _field18(0),
 		_field1C(0), _field20(0) {}
 
+	static bool isSupportedBy(const CTreeItem *item) {
+		return dynamic_cast<const CEditControlMsg *>(item) != nullptr;
+	}
+
 	virtual bool perform(CTreeItem *treeItem) const { 
 		CEditControlMsg *dest = dynamic_cast<CEditControlMsg *>(treeItem);
 		return dest != nullptr && dest->handleMessage(*this);
@@ -113,6 +117,10 @@ public:
 	CLASSDEF
 	CLightsMsg() : CMessage(), _field4(0), _field8(0),
 		_fieldC(0), _field10(0) {}
+
+	static bool isSupportedBy(const CTreeItem *item) {
+		return dynamic_cast<const CLightsMsg *>(item) != nullptr;
+	}
 
 	virtual bool perform(CTreeItem *treeItem) const {
 		CLightsMsg *dest = dynamic_cast<CLightsMsg *>(treeItem);
@@ -136,6 +144,10 @@ public:
 	CIsHookedOnMsg() : CMessage(), _field4(0), _field8(0),
 		_field18(0), _field1C(0), _field20(0) {}
 
+	static bool isSupportedBy(const CTreeItem *item) {
+		return dynamic_cast<const CIsHookedOnMsg *>(item) != nullptr;
+	}
+
 	virtual bool perform(CTreeItem *treeItem) const {
 		CIsHookedOnMsg *dest = dynamic_cast<CIsHookedOnMsg *>(treeItem);
 		return dest != nullptr && dest->handleMessage(*this);
@@ -152,6 +164,10 @@ public:
 public:
 	CLASSDEF
 	CSubAcceptCCarryMsg() : _value1(0), _value2(0), _value3(0) {}
+
+	static bool isSupportedBy(const CTreeItem *item) {
+		return dynamic_cast<const CSubAcceptCCarryMsg *>(item) != nullptr;
+	}
 
 	virtual bool perform(CTreeItem *treeItem) const {
 		CSubAcceptCCarryMsg *dest = dynamic_cast<CSubAcceptCCarryMsg *>(treeItem);
@@ -170,6 +186,10 @@ public:
 	CLASSDEF
 	CTransportMsg() : _value1(0), _value2(0) {}
 
+	static bool isSupportedBy(const CTreeItem *item) {
+		return dynamic_cast<const CTransportMsg *>(item) != nullptr;
+	}
+
 	virtual bool perform(CTreeItem *treeItem) const {
 		CTransportMsg *dest = dynamic_cast<CTransportMsg *>(treeItem);
 		return dest != nullptr && dest->handleMessage(*this);
@@ -180,6 +200,8 @@ public:
 	class NAME: public CMessage { \
 	public: NAME() : CMessage() {} \
 	CLASSDEF \
+	static bool isSupportedBy(const CTreeItem *item) { \
+		return dynamic_cast<const NAME *>(item) != nullptr; } \
 	virtual bool handleMessage(const NAME &msg) { return false; } \
 	virtual bool perform(CTreeItem *treeItem) const { \
 		NAME *dest = dynamic_cast<NAME *>(treeItem); \
@@ -191,6 +213,8 @@ public:
 	NAME() : CMessage(), _##N1(V1) {} \
 	NAME(F1 N1) : CMessage(), _##N1(N1) {} \
 	CLASSDEF \
+	static bool isSupportedBy(const CTreeItem *item) { \
+		return dynamic_cast<const NAME *>(item) != nullptr; } \
 	virtual bool handleMessage(const NAME &msg) { return false; } \
 	virtual bool perform(CTreeItem *treeItem) { \
 		NAME *dest = dynamic_cast<NAME *>(treeItem); \
@@ -202,6 +226,8 @@ public:
 	NAME() : CMessage(), _##N1(V1), _##N2(V2) {} \
 	NAME(F1 N1, F2 N2) : CMessage(), _##N1(N1), _##N2(N2) {} \
 	CLASSDEF \
+	static bool isSupportedBy(const CTreeItem *item) { \
+		return dynamic_cast<const NAME *>(item) != nullptr; } \
 	virtual bool handleMessage(const NAME &msg) { return false; } \
 	virtual bool perform(CTreeItem *treeItem) { \
 		NAME *dest = dynamic_cast<NAME *>(treeItem); \
@@ -213,6 +239,8 @@ public:
 	NAME() : CMessage(), _##N1(V1), _##N2(V2), _##N3(V3) {} \
 	NAME(F1 N1, F2 N2, F3 N3) : CMessage(), _##N1(N1), _##N2(N2), _##N3(N3) {} \
 	CLASSDEF \
+	static bool isSupportedBy(const CTreeItem *item) { \
+		return dynamic_cast<const NAME *>(item) != nullptr; } \
 	virtual bool handleMessage(const NAME &msg) { return false; } \
 	virtual bool perform(CTreeItem *treeItem) { \
 		NAME *dest = dynamic_cast<NAME *>(treeItem); \
@@ -224,6 +252,8 @@ public:
 	NAME() : CMessage(), _##N1(V1), _##N2(V2), _##N3(V3), _##N4(V4) {} \
 	NAME(F1 N1, F2 N2, F3 N3, F4 N4) : CMessage(), _##N1(N1), _##N2(N2), _##N3(N3), _##N4(N4) {} \
 	CLASSDEF \
+	static bool isSupportedBy(const CTreeItem *item) { \
+		return dynamic_cast<const NAME *>(item) != nullptr; } \
 	virtual bool handleMessage(const NAME &msg) { return false; } \
 	virtual bool perform(CTreeItem *treeItem) { \
 		NAME *dest = dynamic_cast<NAME *>(treeItem); \
