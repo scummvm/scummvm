@@ -21,41 +21,20 @@
  */
 
 #include "common/textconsole.h"
-#include "titanic/pet_control/pet_val.h"
+#include "titanic/mouse_cursor.h"
 
 namespace Titanic {
 
-void CPetVal::proc1() {
-	error("TODO");
+void CMouseCursor::show() {
+	warning("CMouseCursor::show");
 }
 
-void CPetVal::proc2() {
-	error("TODO");
+void CMouseCursor::hide() {
+	warning("CMouseCursor::hide");
 }
 
-void CPetVal::proc3() {
-	error("TODO");
-}
-
-void CPetVal::proc4() {
-	error("TODO");
-}
-
-void CPetVal::proc5(Common::Rect *rect) {
-	error("TODO");
-}
-
-int CPetVal::proc16() {
-	switch (_field14) {
-	case 0:
-		return _field18;
-	case 1:
-		return _field1C;
-	case 2:
-		return _field20;
-	default:
-		return 0;
-	}
+void CMouseCursor::setCursorId(int id) {
+	warning("CMouseCursor::setCursorId");
 }
 
 } // End of namespace Titanic

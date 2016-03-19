@@ -89,4 +89,15 @@ void CGameState::enterNode() {
 	_nodeEnterTicks = g_vm->_events->getTicksCount();
 }
 
+void CGameState::enterView() {
+	CViewItem *oldView = _gameLocation.getView();
+	CViewItem *newView = _list._view;
+	oldView->preEnterView(newView);
+
+	_gameManager->_gameView->setView(newView);
+	CRoomItem *oldRoom = oldView->findNode()->findRoom();
+	CRoomItem *newRoom = newView->findNode()->findRoom();
+	_gameManager->fn10(_list._field14, oldRoom, newRoom);
+}
+
 } // End of namespace Titanic z

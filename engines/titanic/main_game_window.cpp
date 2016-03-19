@@ -128,7 +128,7 @@ void CMainGameWindow::fn2() {
 			warning("TODO: Stuff");
 
 		case GSMODE_5:
-			warning("TODO: FilesManager::fn1");
+			g_vm->_filesManager.fn1();
 			break;
 
 		default:

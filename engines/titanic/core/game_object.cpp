@@ -39,7 +39,7 @@ CGameObject::CGameObject(): CNamedItem() {
 	_field58 = 0;
 	_field5C = 1;
 	_field60 = 0;
-	_field74 = 1;
+	_cursorId = 1;
 	_field78 = 0;
 	_field8C = -1;
 	_field90 = 0;
@@ -70,7 +70,7 @@ void CGameObject::load(SimpleFile *file) {
 		// Deliberate fall-through
 
 	case 6:
-		val = _field74 = file->readNumber();
+		val = _cursorId = file->readNumber();
 		// Deliberate fall-through
 
 	case 5:
@@ -120,6 +120,11 @@ void CGameObject::load(SimpleFile *file) {
 
 void CGameObject::fn2() {
 	error("TODO");
+}
+
+bool CGameObject::checkPoint(const Common::Point &pt, int v0, int v1) {
+	warning("TODO: CGameObject::checkPoint");
+	return false;
 }
 
 } // End of namespace Titanic

@@ -24,6 +24,7 @@
 #define TITANIC_FILES_MANAGER_H
 
 #include "titanic/core/list.h"
+#include "titanic/screen_manager.h"
 
 namespace Titanic {
 
@@ -65,6 +66,8 @@ public:
 	bool scanForFile(const CString &name);
 
 	void fn1();
+
+	void debug(CScreenManager *screenManager);
 };
 
 } // End of namespace Titanic

@@ -21,6 +21,7 @@
  */
 
 #include "titanic/game/gondolier/gondolier_mixer.h"
+#include "titanic/core/room_item.h"
 
 namespace Titanic {
 
@@ -57,7 +58,7 @@ void CGondolierMixer::load(SimpleFile *file) {
 }
 
 bool CGondolierMixer::handleEvent(CEnterRoomMsg &msg) {
-	CTreeItem *parentRoom = getParent();
+	CRoomItem *parentRoom = dynamic_cast<CRoomItem *>(getParent());
 	if (parentRoom == msg._newRoom)
 		msg.execute(parentRoom);
 	

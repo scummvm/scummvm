@@ -25,18 +25,33 @@
 
 #include "titanic/core/named_item.h"
 #include "titanic/core/resource_key.h"
+#include "titanic/messages/mouse_messages.h"
 
 namespace Titanic {
 
-class CViewItem : public CNamedItem {
+class CViewItem : public CNamedItem { //, CMouseButtonDownMsgTarget  {
+private:
+	CTreeItem *_buttonUpTargets[4];
 private:
 	void setData(double v);
+
+	/**
+	 * Called to handle mouse messagaes on the view
+	 */
+	bool mouseChange(const CMouseMsg *msg, bool flag);
+
+	/**
+	 * Handles mouse button up messages
+	 */
+	void mouseButtonUp(const CMouseButtonUpMsg *msg);
 protected:
 	int _field24;
 	double _field28;
 	CResourceKey _resourceKey;
 	int _field50;
 	int _field54;
+protected:
+	virtual bool handleEvent(CMouseButtonDownMsg &msg);
 public:
 	int _viewNumber;
 public:

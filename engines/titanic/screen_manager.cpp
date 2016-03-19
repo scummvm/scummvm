@@ -110,7 +110,16 @@ void OSScreenManager::setMode(int width, int height, int bpp, uint numBackSurfac
 void OSScreenManager::proc5() {}
 void OSScreenManager::proc6() {}
 void OSScreenManager::proc7() {}
-void OSScreenManager::proc8() {}
+
+CVideoSurface *OSScreenManager::getSurface(int surfaceNum) const {
+	if (surfaceNum == -1)
+		return _frontRenderSurface;
+	else if (surfaceNum >= 0 && surfaceNum < (int)_backSurfaces.size())
+		return _backSurfaces[surfaceNum];
+	else
+		return nullptr;
+}
+
 void OSScreenManager::proc9() {}
 void OSScreenManager::proc10() {}
 void OSScreenManager::proc11() {}

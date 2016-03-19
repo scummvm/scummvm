@@ -20,64 +20,21 @@
  *
  */
 
-#ifndef TITANIC_GAME_OBJECT_H
-#define TITANIC_GAME_OBJECT_H
+#ifndef TITANIC_MOUSE_CURSOR_H
+#define TITANIC_MOUSE_CURSOR_H
 
-#include "common/rect.h"
-#include "titanic/core/movie_clip.h"
-#include "titanic/core/named_item.h"
+#include "common/scummsys.h"
 
 namespace Titanic {
 
-class CGameObject : public CNamedItem {
-protected:
-	Common::Rect _bounds;
-	double _field34;
-	double _field38;
-	double _field3C;
-	int _field40;
-	int _field44;
-	int _field48;
-	int _field4C;
-	int _field50;
-	int _field54;
-	int _field58;
-	int _field5C;
-	CMovieClipList _clipList1;
-	int _field78;
-	CMovieClipList _clipList2;
-	int _field8C;
-	int _field90;
-	int _field94;
-	int _field98;
-	int _field9C;
-	int _fieldA0;
-	int _fieldA4;
-	void *_fieldA8;
-	CString _string;
-	int _fieldB8;
+class CMouseCursor {
 public:
-	int _field60;
-	int _cursorId;
-public:
-	CLASSDEF
-	CGameObject();
-
-	/**
-	 * Save the data for the class to file
-	 */
-	virtual void save(SimpleFile *file, int indent) const;
-
-	/**
-	 * Load the data for the class from file
-	 */
-	virtual void load(SimpleFile *file);
-
-	void fn2();
-
-	bool checkPoint(const Common::Point &pt, int v0, int v1);
+	void show();
+	void hide();
+	void setCursorId(int id);
 };
+
 
 } // End of namespace Titanic
 
-#endif /* TITANIC_GAME_OBJECT_H */
+#endif /* TITANIC_MOUSE_CURSOR_H */

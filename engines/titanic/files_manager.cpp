@@ -55,6 +55,9 @@ bool CFilesManager::scanForFile(const CString &name) {
 		fname += ".st";
 	}
 
+	if (_gameManager)
+		_gameManager->viewChange();
+
 	// The original had a bunch of code here handling determining
 	// which asset path, if any, the filename was present for,
 	// and storing the "active asset path" it was found on.
@@ -64,6 +67,10 @@ bool CFilesManager::scanForFile(const CString &name) {
 
 void CFilesManager::fn1() {
 	warning("TODO: CFilesManager::fn1");
+}
+
+void CFilesManager::debug(CScreenManager *screenManager) {
+	warning("TODO: CFilesManager::debug");
 }
 
 } // End of namespace Titanic

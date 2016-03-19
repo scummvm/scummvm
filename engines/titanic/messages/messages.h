@@ -24,10 +24,7 @@
 #define TITANIC_MESSAGES_H
 
 #include "titanic/core/saveable_object.h"
-#include "titanic/core/game_object.h"
-#include "titanic/core/node_item.h"
-#include "titanic/core/room_item.h"
-#include "titanic/core/view_item.h"
+#include "titanic/core/tree_item.h"
 
 namespace Titanic {
 
@@ -39,6 +36,11 @@ enum MessageFlag {
 
 #define MSGTARGET(NAME) class NAME; class NAME##Target { public: \
 	virtual bool handleEvent(NAME &msg) = 0; }
+
+class CGameObject;
+class CRoomItem;
+class CNodeItem;
+class CViewItem;
 
 class CMessage : public CSaveableObject {
 public:

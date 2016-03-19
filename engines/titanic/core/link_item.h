@@ -31,18 +31,6 @@ class CViewItem;
 class CNodeItem;
 class CRoomItem;
 
-class CLinkItemHotspot {
-public:
-	int _field0;
-	int _field4;
-	int _field8;
-	int _fieldC;
-public:
-	CLinkItemHotspot() { clear(); }
-
-	void clear();
-};
-
 class CLinkItem : public CNamedItem {
 private:
 	/**
@@ -56,7 +44,7 @@ protected:
 	int _viewNumber;
 	int _field30;
 	int _field34;
-	CLinkItemHotspot _hotspot;
+	Common::Rect _hotspot;
 public:
 	CLASSDEF
 	CLinkItem();

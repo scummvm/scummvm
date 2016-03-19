@@ -44,7 +44,7 @@ public:
 	virtual void proc3() {}
 	virtual void proc4() {}
 
-	virtual void proc5(CLinkItemHotspot *linkItem);
+	virtual void proc5(Common::Rect *rect);
 
 	virtual int proc6();
 	virtual int proc7();

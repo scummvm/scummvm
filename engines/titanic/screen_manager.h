@@ -28,6 +28,7 @@
 #include "titanic/direct_draw.h"
 #include "titanic/font.h"
 #include "titanic/input_handler.h"
+#include "titanic/mouse_cursor.h"
 #include "titanic/video_surface.h"
 #include "titanic/core/resource_key.h"
 
@@ -48,11 +49,6 @@ public:
 	CScreenManagerRec();
 };
 
-struct MouseCursor {
-	void show() {}
-	void hide() {}
-};
-
 class CScreenManager {
 protected:
 	TitanicEngine *_vm;
@@ -68,7 +64,7 @@ public:
 	Common::Array<CVideoSurface *> _backSurfaces;
 	CVideoSurface *_frontRenderSurface;
 	CScreenManagerRec _entries[2];
-	MouseCursor *_mouseCursor;
+	CMouseCursor *_mouseCursor;
 	void *_textCursor;
 	CInputHandler *_inputHandler;
 	int _fontNumber;
@@ -79,15 +75,13 @@ public:
 	void fn1() {}
 	void fn2() {}
 
-
-
 	virtual void setWindowHandle(int v);
 	virtual bool resetWindowHandle(int v);
 	virtual void setMode(int width, int height, int bpp, uint numBackSurfaces, bool flag2) = 0;
 	virtual void proc5() = 0;
 	virtual void proc6() = 0;
 	virtual void proc7() = 0;
-	virtual void proc8() = 0;
+	virtual CVideoSurface *getSurface(int surfaceNum) const = 0;
 	virtual void proc9() = 0;
 	virtual void proc10() = 0;
 	virtual void proc11() = 0;
@@ -153,7 +147,7 @@ public:
 	virtual void proc5();
 	virtual void proc6();
 	virtual void proc7();
-	virtual void proc8();
+	virtual CVideoSurface *getSurface(int surfaceNum) const;
 	virtual void proc9();
 	virtual void proc10();
 	virtual void proc11();

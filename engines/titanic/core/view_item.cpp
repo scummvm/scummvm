@@ -21,6 +21,7 @@
  */
 
 #include "titanic/game_manager.h"
+#include "titanic/screen_manager.h"
 #include "titanic/core/project_item.h"
 #include "titanic/core/room_item.h"
 #include "titanic/core/view_item.h"
@@ -30,6 +31,7 @@
 namespace Titanic {
 
 CViewItem::CViewItem() : CNamedItem() {
+	Common::fill(&_buttonUpTargets[0], &_buttonUpTargets[3], nullptr);
 	_field24 = 0;
 	_field28 = 0.0;
 	_viewNumber = 0;
@@ -155,6 +157,71 @@ void CViewItem::enterView(CViewItem *newView) {
 					petControl->enterRoom(newRoom);
 			}
 		}
+	}
+}
+
+bool CViewItem::handleEvent(CMouseButtonDownMsg &msg) {
+	if (msg._buttons & MB_LEFT) {
+		mouseChange(&msg, true);
+		// TODO
+	}
+
+	return true;
+}
+
+bool CViewItem::mouseChange(const CMouseMsg *msg, bool flag) {
+	const CMouseButtonUpMsg *upMsg = dynamic_cast<const CMouseButtonUpMsg *>(msg);
+	if (msg->isButtonUpMsg()) {
+		mouseButtonUp(upMsg);
+		return true;
+	}
+
+	Common::Array<CGameObject *> gameObjects;
+	CTreeItem *treeItem = scan(this);
+	while (treeItem) {
+		CGameObject *gameObject = dynamic_cast<CGameObject *>(treeItem);
+		if (gameObject) {
+			if (gameObject->checkPoint(msg->_mousePos, 0, 1) &&
+					(!flag || !gameObject->_field60)) {
+				if (gameObjects.size() < 256)
+					gameObjects.push_back(gameObject);
+			}
+		}
+	}
+
+	const CMouseMoveMsg *moveMsg = dynamic_cast<const CMouseMoveMsg *>(msg);
+	if (moveMsg) {
+		if (gameObjects.size() == 0)
+			return false;
+
+		for (int idx = (int)gameObjects.size() - 1; idx >= 0; ++idx) {
+			if (gameObjects[idx]->_cursorId != 12) {
+				CScreenManager::_screenManagerPtr->_mouseCursor->setCursorId(gameObjects[idx]->_cursorId);
+				break;
+			}
+		}
+	}
+
+	bool result = false;
+	for (int idx = (int)gameObjects.size() - 1; idx >= 0; --idx) {
+		if (msg->execute(gameObjects[idx])) {
+			if (msg->isButtonDownMsg())
+				_buttonUpTargets[msg->_buttons >> 1] = gameObjects[idx];
+			return true;
+		}
+
+		// TODO
+	}
+
+	return result;
+}
+
+void CViewItem::mouseButtonUp(const CMouseButtonUpMsg *msg) {
+	CTreeItem *&target = _buttonUpTargets[msg->_buttons >> 1];
+
+	if (target) {
+		msg->execute(target);
+		target = nullptr;
 	}
 }
 

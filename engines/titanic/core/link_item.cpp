@@ -27,15 +27,6 @@
 
 namespace Titanic {
 
-void CLinkItemHotspot::clear() {
-	_field0 = 0;
-	_field4 = 0;
-	_field8 = 0;
-	_fieldC = 0;
-}
-
-/*------------------------------------------------------------------------*/
-
 CLinkItem::CLinkItem() : CNamedItem() {
 	_roomNumber = -1;
 	_nodeNumber = -1;
@@ -60,10 +51,10 @@ void CLinkItem::save(SimpleFile *file, int indent) const {
 	file->writeNumberLine(_viewNumber, indent + 1);
 
 	file->writeQuotedLine("Hotspot", indent + 1);
-	file->writeNumberLine(_hotspot._field0, indent + 2);
-	file->writeNumberLine(_hotspot._field4, indent + 2);
-	file->writeNumberLine(_hotspot._field8, indent + 2);
-	file->writeNumberLine(_hotspot._fieldC, indent + 2);
+	file->writeNumberLine(_hotspot.left, indent + 2);
+	file->writeNumberLine(_hotspot.top, indent + 2);
+	file->writeNumberLine(_hotspot.right, indent + 2);
+	file->writeNumberLine(_hotspot.bottom, indent + 2);
 
 	CNamedItem::save(file, indent);
 }
@@ -87,10 +78,10 @@ void CLinkItem::load(SimpleFile *file) {
 		_viewNumber = file->readNumber();
 
 		file->readBuffer();
-		_hotspot._field0 = file->readNumber();
-		_hotspot._field4 = file->readNumber();
-		_hotspot._field8 = file->readNumber();
-		_hotspot._fieldC = file->readNumber();
+		_hotspot.left = file->readNumber();
+		_hotspot.top = file->readNumber();
+		_hotspot.right = file->readNumber();
+		_hotspot.bottom = file->readNumber();
 		break;
 
 	default:

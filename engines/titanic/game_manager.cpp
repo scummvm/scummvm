@@ -139,6 +139,10 @@ void CGameManager::fn2() {
 	warning("TODO");
 }
 
+void CGameManager::fn10(void *param1, CRoomItem *oldRoom, CRoomItem *newRoom) {
+	warning("TODO: CGameManager::fn10");
+}
+
 void CGameManager::update() {
 	warning("TODO: CGameManager::update");
 }

@@ -35,10 +35,10 @@ enum GameStateMode { GSMODE_0 = 0, GSMODE_1 = 1, GSMODE_2 = 2, GSMODE_3 = 3, GSM
 
 class CGameStateList : public List<ListItem> {
 public:
-	int _field10;
-	int _field14;
+	CViewItem *_view;
+	void *_field14;
 public:
-	CGameStateList() : List<ListItem>(), _field10(0), _field14(0) {}
+	CGameStateList() : List<ListItem>(), _view(nullptr), _field14(nullptr) {}
 };
 
 class CGameState {
@@ -85,6 +85,11 @@ public:
 	 * Called by the PET when a new node is entered
 	 */
 	void enterNode();
+
+	/**
+	 * Enters a new view
+	 */
+	void enterView();
 };
 
 } // End of namespace Titanic

@@ -16,6 +16,7 @@ MODULE_OBJS := \
 	input_handler.o \
 	input_translator.o \
 	main_game_window.o \
+	mouse_cursor.o \
 	screen_manager.o \
 	simple_file.o \
 	string.o \

@@ -78,7 +78,6 @@ public:
 
 class CGameManager {
 private:
-	CGameView *_gameView;
 	CSound _sound;
 	CTrueTalkManager _trueTalkManager;
 	CGameManagerList _list;
@@ -92,6 +91,7 @@ private:
 	uint _tickCount2;
 public:
 	CProjectItem *_project;
+	CGameView *_gameView;
 	CGameState _gameState;
 	Common::Rect _bounds;
 	CInputHandler _inputHandler;
@@ -150,6 +150,8 @@ public:
 	void initBounds();
 
 	void fn2();
+
+	void fn10(void *param1, CRoomItem *oldRoom, CRoomItem *newRoom);
 
 	/**
 	 * Updates the state of the manager
