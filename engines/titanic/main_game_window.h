@@ -53,7 +53,7 @@ public:
 	CGameView *_gameView;
 	CGameManager *_gameManager;
 	CProjectItem *_project;
-	int _field50;
+	bool _inputAllowed;
 	Image *_image;
 	void *_cursor;
 public:
@@ -75,6 +75,11 @@ public:
 	void setActiveView(CViewItem *viewItem);
 
 	void fn2();
+
+	/**
+	 * Called by the event handler when a mouse event has been generated
+	 */
+	void mouseChanged();
 };
 
 } // End of namespace Titanic

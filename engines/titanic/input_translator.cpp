@@ -22,6 +22,8 @@
 
 #include "titanic/input_handler.h"
 #include "titanic/input_translator.h"
+#include "titanic/events.h"
+#include "titanic/messages/mouse_messages.h"
 
 namespace Titanic {
 
@@ -30,4 +32,57 @@ CInputTranslator::CInputTranslator(CInputHandler *inputHandler) :
 	inputHandler->setTranslator(this);
 }
 
-} // End of namespace Titanic z
+int CInputTranslator::getButtons(int special) const {
+	int buttons = 0;
+	if (special & MK_LBUTTON)
+		buttons |= MB_LEFT;
+	if (special & MK_MBUTTON)
+		buttons |= MB_MIDDLE;
+	if (special & MK_RBUTTON)
+		buttons |= MB_RIGHT;
+
+	return buttons;
+}
+
+void CInputTranslator::mouseMove(int special, const Common::Point &pt) {
+	CMouseMoveMsg msg(pt, getButtons(special));
+	_inputHandler->handleMessage(msg);
+}
+
+void CInputTranslator::leftButtonDown(int special, const Common::Point &pt) {
+
+}
+
+void CInputTranslator::leftButtonUp(int special, const Common::Point &pt) {
+
+}
+
+void CInputTranslator::leftButtonDoubleClick(int special, const Common::Point &pt) {
+
+}
+
+void CInputTranslator::middleButtonDown(int special, const Common::Point &pt) {
+
+}
+
+void CInputTranslator::middleButtonUp(int special, const Common::Point &pt) {
+
+}
+
+void CInputTranslator::middleButtonDoubleClick(int special, const Common::Point &pt) {
+
+}
+
+void CInputTranslator::rightButtonDown(int special, const Common::Point &pt) {
+
+}
+
+void CInputTranslator::rightButtonUp(int special, const Common::Point &pt) {
+
+}
+
+void CInputTranslator::rightButtonDoubleClick(int special, const Common::Point &pt) {
+
+}
+
+} // End of namespace Titanic

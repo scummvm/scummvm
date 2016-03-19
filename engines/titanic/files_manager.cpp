@@ -62,4 +62,8 @@ bool CFilesManager::scanForFile(const CString &name) {
 	return fileExists(fname);
 }
 
+void CFilesManager::fn1() {
+	warning("TODO: CFilesManager::fn1");
+}
+
 } // End of namespace Titanic

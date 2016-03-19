@@ -21,6 +21,7 @@
  */
 
 #include "titanic/messages/messages.h"
+#include "titanic/messages/mouse_messages.h"
 #include "titanic/core/game_object.h"
 #include "titanic/core/tree_item.h"
 
@@ -64,6 +65,62 @@ bool CMessage::execute(CTreeItem *target, const ClassDef *classDef, int flags) c
 	} while (nextItem);
 
 	return result;
+}
+
+bool CMessage::isMouseMsg() const {
+	return dynamic_cast<const CMouseMsg *>(this) != nullptr;
+}
+
+bool CMessage::isButtonDownMsg() const {
+	return dynamic_cast<const CMouseButtonDownMsg *>(this) != nullptr;
+}
+
+bool CMessage::isButtonUpMsg() const {
+	return dynamic_cast<const CMouseButtonUpMsg *>(this) != nullptr;
+}
+
+bool CMessage::isMouseMoveMsg() const {
+	return dynamic_cast<const CMouseMoveMsg *>(this) != nullptr;
+}
+
+bool CMessage::isDoubleClickMsg() const {
+	return dynamic_cast<const CMouseButtonDoubleClickMsg *>(this) != nullptr;
+}
+
+bool CMessage::isEnterRoomMsg() const {
+	return dynamic_cast<const CEnterRoomMsg *>(this) != nullptr;
+}
+
+bool CMessage::isPreEnterRoomMsg() const {
+	return dynamic_cast<const CPreEnterRoomMsg *>(this) != nullptr;
+}
+
+bool CMessage::isleaveRoomMsg() const {
+	return dynamic_cast<const CLeaveRoomMsg *>(this) != nullptr;
+}
+
+bool CMessage::isEnterNodeMsg() const {
+	return dynamic_cast<const CEnterNodeMsg *>(this) != nullptr;
+}
+
+bool CMessage::isPreEnterNodeMsg() const {
+	return dynamic_cast<const CPreEnterNodeMsg *>(this) != nullptr;
+}
+
+bool CMessage::isLeaveNodeMsg() const {
+	return dynamic_cast<const CLeaveNodeMsg *>(this) != nullptr;
+}
+
+bool CMessage::isEnterViewMsg() const {
+	return dynamic_cast<const CEnterViewMsg *>(this) != nullptr;
+}
+
+bool CMessage::isPreEnterViewMsg() const {
+	return dynamic_cast<const CPreEnterViewMsg *>(this) != nullptr;
+}
+
+bool CMessage::isLeaveViewMsg() const {
+	return dynamic_cast<const CLeaveViewMsg *>(this) != nullptr;
 }
 
 } // End of namespace Titanic

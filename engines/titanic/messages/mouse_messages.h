@@ -23,9 +23,12 @@
 #ifndef TITANIC_MOUSE_MESSAGES_H
 #define TITANIC_MOUSE_MESSAGES_H
 
+#include "common/rect.h"
 #include "titanic/messages/messages.h"
 
 namespace Titanic {
+
+enum MouseButton { MB_LEFT = 1, MB_MIDDLE = 2, MB_RIGHT = 4 };
 
 class CMouseMsg : public CMessage {
 public:
@@ -34,12 +37,16 @@ public:
 public:
 	CLASSDEF
 	CMouseMsg() : _buttons(0) {}
+	CMouseMsg(const Common::Point &pt, int buttons) :
+		_mousePos(pt), _buttons(buttons) {}
 };
 
 MSGTARGET(CMouseMoveMsg);
 class CMouseMoveMsg : public CMouseMsg {
 public:
 	CLASSDEF
+	CMouseMoveMsg() : CMouseMsg() {}
+	CMouseMoveMsg(const Common::Point &pt, int buttons) : CMouseMsg(pt, buttons) {}
 
 	virtual bool handleMessage(const CMouseMoveMsg &msg) { return false; }
 	virtual bool perform(CTreeItem *treeItem) { 
@@ -54,12 +61,15 @@ public:
 public:
 	CLASSDEF
 	CMouseButtonMsg() : CMouseMsg(), _field10(0) {}
+	CMouseButtonMsg(const Common::Point &pt, int buttons) : CMouseMsg(pt, buttons) {}
 };
 
 MSGTARGET(CMouseButtonDownMsg);
 class CMouseButtonDownMsg : public CMouseButtonMsg {
 public:
 	CLASSDEF
+	CMouseButtonDownMsg() : CMouseButtonMsg() {}
+	CMouseButtonDownMsg(const Common::Point &pt, int buttons) : CMouseButtonMsg(pt, buttons) {}
 
 	virtual bool handleMessage(const CMouseButtonDownMsg &msg) { return false; }
 	virtual bool perform(CTreeItem *treeItem) {
@@ -72,6 +82,8 @@ MSGTARGET(CMouseButtonUpMsg);
 class CMouseButtonUpMsg : public CMouseButtonMsg {
 public:
 	CLASSDEF
+	CMouseButtonUpMsg() : CMouseButtonMsg() {}
+	CMouseButtonUpMsg(const Common::Point &pt, int buttons) : CMouseButtonMsg(pt, buttons) {}
 
 	virtual bool handleMessage(const CMouseButtonUpMsg &msg) { return false; }
 	virtual bool perform(CTreeItem *treeItem) { 
@@ -84,6 +96,8 @@ MSGTARGET(CMouseButtonDoubleClickMsg);
 class CMouseButtonDoubleClickMsg : public CMouseButtonMsg {
 public:
 	CLASSDEF
+	CMouseButtonDoubleClickMsg() : CMouseButtonMsg() {}
+	CMouseButtonDoubleClickMsg(const Common::Point &pt, int buttons) : CMouseButtonMsg(pt, buttons) {}
 
 	virtual bool handleMessage(const CMouseButtonDoubleClickMsg &msg) { return false; }
 	virtual bool perform(CTreeItem *treeItem) { 

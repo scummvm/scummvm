@@ -26,31 +26,46 @@
 #include "engines/util.h"
 #include "titanic/events.h"
 #include "titanic/titanic.h"
+#include "titanic/main_game_window.h"
 
 namespace Titanic {
 
-Events::Events(TitanicEngine *vm): _vm(vm),
-		_frameCounter(1), _priorFrameTime(0) {
+Events::Events(TitanicEngine *vm): _vm(vm), _specialButtons(0),
+		_frameCounter(1), _priorFrameTime(0), _priorLeftDownTime(0),
+		_priorMiddleDownTime(0), _priorRightDownTime(0) {
 }
 
 void Events::pollEvents() {
 	checkForNextFrameCounter();
 
 	Common::Event event;
-	g_system->getEventManager()->pollEvent(event);
-
-	// Give time to the debugger
-	_vm->_debugger->onFrame();
+	if (!g_system->getEventManager()->pollEvent(event))
+		return;
 
 	switch (event.type) {
-	case Common::EVENT_KEYDOWN:
-		if (event.kbd.keycode == Common::KEYCODE_d && (event.kbd.flags & Common::KBD_CTRL)) {
-			// Attach to the debugger
-			_vm->_debugger->attach();
-			_vm->_debugger->onFrame();
-		}
+	case Common::EVENT_MOUSEMOVE:
+		_mousePos = event.mouse;
+		mouseMove();
 		break;
-
+	case Common::EVENT_LBUTTONDOWN:
+		_mousePos = event.mouse;
+		leftButtonDown();
+		break;
+	case Common::EVENT_LBUTTONUP:
+		_mousePos = event.mouse;
+		leftButtonUp();
+		break;
+	case Common::EVENT_MBUTTONDOWN:
+		_mousePos = event.mouse;
+		middleButtonDown();
+		break;
+	case Common::EVENT_MBUTTONUP:
+		_mousePos = event.mouse;
+		middleButtonUp();
+		break;
+	case Common::EVENT_KEYDOWN:
+		keyDown(event.kbd);
+		break;
 	default:
 		break;
 	}
@@ -84,5 +99,89 @@ uint32 Events::getTicksCount() const {
 	return g_system->getMillis();
 }
 
+#define HANDLE_MESSAGE(method) 	if (_vm->_window->_inputAllowed) { \
+	_vm->_window->_gameManager->_inputTranslator.leftButtonDown(_specialButtons, _mousePos); \
+	_vm->_window->mouseChanged(); \
+	}
+
+
+void Events::mouseMove() {
+	HANDLE_MESSAGE(mouseMove)
+}
+
+void Events::leftButtonDown() {
+	_specialButtons |= MK_LBUTTON;
+
+	if ((getTicksCount() - _priorLeftDownTime) < DOUBLE_CLICK_TIME) {
+		_priorLeftDownTime = 0;
+		leftButtonDoubleClick();
+	} else {
+		_priorLeftDownTime = getTicksCount();
+		HANDLE_MESSAGE(leftButtonDown)
+	}
+}
+
+void Events::leftButtonUp() {
+	_specialButtons &= ~MK_LBUTTON;
+	HANDLE_MESSAGE(leftButtonUp)
+}
+
+void Events::leftButtonDoubleClick() {
+	HANDLE_MESSAGE(leftButtonDoubleClick)
+}
+
+void Events::middleButtonDown() {
+	_specialButtons |= MK_MBUTTON;
+
+	if ((getTicksCount() - _priorMiddleDownTime) < DOUBLE_CLICK_TIME) {
+		_priorMiddleDownTime = 0;
+		middleButtonDoubleClick();
+	} else {
+		_priorMiddleDownTime = getTicksCount();
+		HANDLE_MESSAGE(middleButtonDown)
+	}
+}
+
+void Events::middleButtonUp() {
+	_specialButtons &= ~MK_MBUTTON;
+	HANDLE_MESSAGE(middleButtonUp)
+}
+
+void Events::middleButtonDoubleClick() {
+	HANDLE_MESSAGE(middleButtonDoubleClick)
+}
+
+void Events::rightButtonDown() {
+	_specialButtons |= MK_RBUTTON;
+
+	if ((getTicksCount() - _priorRightDownTime) < DOUBLE_CLICK_TIME) {
+		_priorRightDownTime = 0;
+		rightButtonDoubleClick();
+	} else {
+		_priorRightDownTime = getTicksCount();
+		HANDLE_MESSAGE(rightButtonDown)
+	}
+}
+
+void Events::rightButtonUp() {
+	_specialButtons &= ~MK_RBUTTON;
+	HANDLE_MESSAGE(rightButtonUp)
+}
+
+void Events::rightButtonDoubleClick() {
+	HANDLE_MESSAGE(rightButtonDoubleClick)
+}
+
+void Events::charPress(char c) {
+
+}
+
+void Events::keyDown(Common::KeyState keyState) {
+	if (keyState.keycode == Common::KEYCODE_d && (keyState.flags & Common::KBD_CTRL)) {
+		// Attach to the debugger
+		_vm->_debugger->attach();
+		_vm->_debugger->onFrame();
+	}
+}
 
 } // End of namespace Titanic

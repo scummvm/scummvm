@@ -31,6 +31,11 @@ namespace Titanic {
 class CGameManager;
 
 class CInputHandler {
+private:
+	/**
+	 * Process and dispatch a passed message
+	 */
+	void processMessage(const CMessage &msg);
 public:
 	CGameManager *_gameManager;
 	CInputTranslator *_inputTranslator;
@@ -56,6 +61,11 @@ public:
 	 * Decrement the lock count on the input handler
 	 */
 	void decLockCount();
+
+	/**
+	 * Handles a genereated mouse message
+	 */
+	void handleMessage(const CMessage &msg, bool respectLock = true);
 };
 
 } // End of namespace Titanic

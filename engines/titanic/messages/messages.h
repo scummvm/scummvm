@@ -59,6 +59,21 @@ public:
 	 * Load the data for the class from file
 	 */
 	virtual void load(SimpleFile *file);
+
+	virtual bool isMouseMsg() const;
+	virtual bool isButtonDownMsg() const;
+	virtual bool isButtonUpMsg() const;
+	virtual bool isMouseMoveMsg() const;
+	virtual bool isDoubleClickMsg() const;
+	virtual bool isEnterRoomMsg() const;
+	virtual bool isPreEnterRoomMsg() const;
+	virtual bool isleaveRoomMsg() const;
+	virtual bool isEnterNodeMsg() const;
+	virtual bool isPreEnterNodeMsg() const;
+	virtual bool isLeaveNodeMsg() const;
+	virtual bool isEnterViewMsg() const;
+	virtual bool isPreEnterViewMsg() const;
+	virtual bool isLeaveViewMsg() const;
 };
 
 MSGTARGET(CEditControlMsg);
@@ -244,6 +259,9 @@ MESSAGE1(CDropobjectMsg, int, value, 0);
 MESSAGE1(CDropZoneGotObjectMsg, int, value, 0);
 MESSAGE1(CDropZoneLostObjectMsg, int, value, 0);
 MESSAGE1(CEjectCylinderMsg, int, value, 0);
+MESSAGE1(CPreEnterNodeMsg, CNodeItem *, node, nullptr);
+MESSAGE1(CPreEnterRoomMsg, CRoomItem *, room, nullptr);
+MESSAGE1(CPreEnterViewMsg, CViewItem *, view, nullptr);
 MESSAGE1(CEnterNodeMsg, CNodeItem *, node, nullptr);
 MESSAGE1(CEnterRoomMsg, CRoomItem *, room, nullptr);
 MESSAGE1(CEnterViewMsg, CViewItem *, view, nullptr);

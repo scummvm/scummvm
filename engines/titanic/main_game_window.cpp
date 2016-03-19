@@ -32,7 +32,7 @@ CMainGameWindow::CMainGameWindow(TitanicEngine *vm): _vm(vm) {
 	_gameView = nullptr;
 	_gameManager = nullptr;
 	_project = nullptr;
-	_field50 = 0;
+	_inputAllowed = false;
 	_image = nullptr;
 	_cursor = nullptr;
 }
@@ -132,6 +132,11 @@ void CMainGameWindow::fn2() {
 			break;
 		}
 	}
+}
+
+void CMainGameWindow::mouseChanged() {
+	if (_gameManager->_gameState._mode != GSMODE_5)
+		_gameManager->update();
 }
 
 } // End of namespace Titanic

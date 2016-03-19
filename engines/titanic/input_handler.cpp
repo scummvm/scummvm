@@ -21,7 +21,9 @@
  */
 
 #include "titanic/input_handler.h"
+#include "titanic/game_manager.h"
 #include "titanic/screen_manager.h"
+#include "titanic/titanic.h"
 
 namespace Titanic {
 
@@ -44,6 +46,20 @@ void CInputHandler::decLockCount() {
 	if (--_lockCount == 0 && _inputTranslator) {
 		warning("TODO");
 	}
+}
+
+void CInputHandler::handleMessage(const CMessage &msg, bool respectLock) {
+	if (!respectLock || _lockCount <= 0) {
+		if (_gameManager->_gameState._mode == GSMODE_1) {
+			processMessage(msg);
+		} else if (!msg.isMouseMsg()) {
+			g_vm->_filesManager.fn1();
+		}
+	}
+}
+
+void CInputHandler::processMessage(const CMessage &msg) {
+	warning("TODO: CInputHandler::processMessage");
 }
 
 } // End of namespace Titanic z

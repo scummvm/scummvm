@@ -30,6 +30,12 @@ namespace Titanic {
 
 #define GAME_FRAME_RATE 30
 #define GAME_FRAME_TIME (1000 / GAME_FRAME_RATE)
+#define DOUBLE_CLICK_TIME 100
+
+enum SpecialButtons { 
+	MK_LBUTTON = 1, MK_RBUTTON = 2, MK_SHIFT = 4, MK_CONTROL = 8, 
+	MK_MBUTTON = 0x10
+};
 
 class TitanicEngine;
 
@@ -38,11 +44,29 @@ private:
 	TitanicEngine *_vm;
 	uint32 _frameCounter;
 	uint32 _priorFrameTime;
+	uint32 _priorLeftDownTime;
+	uint32 _priorMiddleDownTime;
+	uint32 _priorRightDownTime;
+	Common::Point _mousePos;
+	int _specialButtons;
 
 	/**
 	 * Check whether it's time to display the next screen frame
 	 */
 	bool checkForNextFrameCounter();
+
+	void mouseMove();
+	void leftButtonDown();
+	void leftButtonUp();
+	void leftButtonDoubleClick();
+	void middleButtonDown();
+	void middleButtonUp();
+	void middleButtonDoubleClick();
+	void rightButtonDown();
+	void rightButtonUp();
+	void rightButtonDoubleClick();
+	void charPress(char c);
+	void keyDown(Common::KeyState keyState);
 public:
 	Events(TitanicEngine *vm);
 	~Events() {}

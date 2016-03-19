@@ -856,6 +856,9 @@ DEFFN(CPhonographRecordMsg)
 DEFFN(CPhonographStopMsg)
 DEFFN(CPlayRangeMsg)
 DEFFN(CPlayerTriesRestaurantTableMsg)
+DEFFN(CPreEnterNodeMsg);
+DEFFN(CPreEnterRoomMsg);
+DEFFN(CPreEnterViewMsg);
 DEFFN(CPreSaveMsg)
 DEFFN(CProdMaitreDMsg)
 DEFFN(CPumpingMsg)
@@ -1426,6 +1429,9 @@ void CSaveableObject::initClassList() {
 	ADDFN(CPhonographStopMsg, CMessage);
 	ADDFN(CPlayRangeMsg, CMessage);
 	ADDFN(CPlayerTriesRestaurantTableMsg, CMessage);
+	ADDFN(CEnterNodeMsg, CMessage);
+	ADDFN(CEnterRoomMsg, CMessage);
+	ADDFN(CEnterViewMsg, CMessage);
 	ADDFN(CPreSaveMsg, CMessage);
 	ADDFN(CProdMaitreDMsg, CMessage);
 	ADDFN(CPumpingMsg, CMessage);

@@ -96,4 +96,8 @@ void CGameManager::fn2() {
 	warning("TODO");
 }
 
+void CGameManager::update() {
+	warning("TODO: CGameManager::update");
+}
+
 } // End of namespace Titanic

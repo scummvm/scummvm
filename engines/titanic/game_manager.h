@@ -54,8 +54,6 @@ class CGameManager {
 private:
 	CGameView *_gameView;
 	CSound _sound;
-	CInputHandler _inputHandler;
-	CInputTranslator _inputTranslator;
 	CMusicRoom _musicRoom;
 	CTrueTalkManager _trueTalkManager;
 	CGameManagerList _list;
@@ -72,6 +70,8 @@ public:
 	CProjectItem *_project;
 	CGameState _gameState;
 	Common::Rect _bounds;
+	CInputHandler _inputHandler;
+	CInputTranslator _inputTranslator;
 public:
 	CGameManager(CProjectItem *project, CGameView *gameView);
 	~CGameManager();
@@ -104,6 +104,11 @@ public:
 	void initBounds();
 
 	void fn2();
+
+	/**
+	 * Updates the state of the manager
+	 */
+	void update();
 };
 
 } // End of namespace Titanic

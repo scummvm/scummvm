@@ -63,6 +63,8 @@ public:
 	 * Scans for a file with a matching name
 	 */
 	bool scanForFile(const CString &name);
+
+	void fn1();
 };
 
 } // End of namespace Titanic

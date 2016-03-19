@@ -23,15 +23,33 @@
 #ifndef TITANIC_INPUT_TRANSLATOR_H
 #define TITANIC_INPUT_TRANSLATOR_H
 
+#include "titanic/messages/mouse_messages.h"
+
 namespace Titanic {
 
 class CInputHandler;
 
 class CInputTranslator {
+private:
+	/**
+	 * Converts the special buttons bitset into a buttons bitset
+	 */
+	int getButtons(int special) const;
 public:
 	CInputHandler *_inputHandler;
 public:
 	CInputTranslator(CInputHandler *inputHandler);
+
+	void mouseMove(int special, const Common::Point &pt);
+	void leftButtonDown(int special, const Common::Point &pt);
+	void leftButtonUp(int special, const Common::Point &pt);
+	void leftButtonDoubleClick(int special, const Common::Point &pt);
+	void middleButtonDown(int special, const Common::Point &pt);
+	void middleButtonUp(int special, const Common::Point &pt);
+	void middleButtonDoubleClick(int special, const Common::Point &pt);
+	void rightButtonDown(int special, const Common::Point &pt);
+	void rightButtonUp(int special, const Common::Point &pt);
+	void rightButtonDoubleClick(int special, const Common::Point &pt);
 };
 
 } // End of namespace Titanic
