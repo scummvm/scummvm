@@ -48,7 +48,7 @@ void AdlEngine_v2::setupOpcodeTables() {
 	OpcodeUnImpl();
 	Opcode(o2_isFirstTime);
 	Opcode(o2_isRandomGT);
-	Opcode(o2_isItemInRoom);
+	Opcode(o1_isItemInRoom);
 	// 0x04
 	Opcode(o2_isNounNotInRoom);
 	Opcode(o1_isMovesGT);
@@ -104,6 +104,12 @@ bool AdlEngine_v2::matchesCurrentPic(byte pic) const {
 	return pic == getCurRoom().curPicture || pic == IDI_ANY;
 }
 
+byte AdlEngine_v2::roomArg(byte room) const {
+	if (room == IDI_CUR_ROOM)
+		return _state.room;
+	return room;
+}
+
 int AdlEngine_v2::o2_isFirstTime(ScriptEnv &e) {
 	bool oldFlag = getCurRoom().isFirstTime;
 
@@ -124,28 +130,11 @@ int AdlEngine_v2::o2_isRandomGT(ScriptEnv &e) {
 	return -1;
 }
 
-int AdlEngine_v2::o2_isItemInRoom(ScriptEnv &e) {
-	byte room = e.arg(2);
-
-	if (room == IDI_CUR_ROOM)
-		room = _state.room;
-
-	if (getItem(e.arg(1)).room == room)
-		return 2;
-
-	return -1;
-}
-
 int AdlEngine_v2::o2_isNounNotInRoom(ScriptEnv &e) {
 	Common::Array<Item>::const_iterator item;
 
-	byte room = e.arg(1);
-
-	if (room == IDI_CUR_ROOM)
-		room = _state.room;
-
 	for (item = _state.items.begin(); item != _state.items.end(); ++item)
-		if (item->noun == e.getNoun() && (item->room == room))
+		if (item->noun == e.getNoun() && (item->room == roomArg(e.arg(1))))
 			return -1;
 
 	return 1;
@@ -161,10 +150,7 @@ int AdlEngine_v2::o2_isCarryingSomething(ScriptEnv &e) {
 }
 
 int AdlEngine_v2::o2_moveItem(ScriptEnv &e) {
-	byte room = e.arg(2);
-
-	if (room == IDI_CUR_ROOM)
-		room = _state.room;
+	byte room = roomArg(e.arg(2));
 
 	Item &item = getItem(e.arg(1));
 
@@ -177,15 +163,8 @@ int AdlEngine_v2::o2_moveItem(ScriptEnv &e) {
 }
 
 int AdlEngine_v2::o2_moveAllItems(ScriptEnv &e) {
-	byte room1 = e.arg(1);
-
-	if (room1 == IDI_CUR_ROOM)
-		room1 = _state.room;
-
-	byte room2 = e.arg(2);
-
-	if (room2 == IDI_CUR_ROOM)
-		room2 = _state.room;
+	byte room1 = roomArg(e.arg(1));
+	byte room2 = roomArg(e.arg(2));
 
 	Common::Array<Item>::iterator item;
 
@@ -200,14 +179,9 @@ int AdlEngine_v2::o2_moveAllItems(ScriptEnv &e) {
 }
 
 int AdlEngine_v2::o2_placeItem(ScriptEnv &e) {
-	byte room = e.arg(2);
-
-	if (room == IDI_CUR_ROOM)
-		room = _state.room;
-
 	Item &item = getItem(e.arg(1));
 
-	item.room = room;
+	item.room = roomArg(e.arg(2));
 	item.position.x = e.arg(3);
 	item.position.y = e.arg(4);
 	item.state = IDI_ITEM_NOT_MOVED;

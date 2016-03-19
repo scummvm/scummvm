@@ -176,6 +176,7 @@ protected:
 
 	virtual void setupOpcodeTables();
 	virtual bool matchesCurrentPic(byte pic) const;
+	virtual byte roomArg(byte room) const;
 
 	// Opcodes
 	int o1_isItemInRoom(ScriptEnv &e);

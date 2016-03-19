@@ -347,6 +347,10 @@ bool AdlEngine::matchesCurrentPic(byte pic) const {
 	return pic == getCurRoom().curPicture;
 }
 
+byte AdlEngine::roomArg(byte room) const {
+	return room;
+}
+
 void AdlEngine::clearScreen() const {
 	_display->setMode(DISPLAY_MODE_MIXED);
 	_display->clear(0x00);
@@ -857,7 +861,7 @@ void AdlEngine::getInput(uint &verb, uint &noun) {
 typedef Common::Functor1Mem<ScriptEnv &, int, AdlEngine> OpcodeV1;
 
 int AdlEngine::o1_isItemInRoom(ScriptEnv &e) {
-	if (getItem(e.arg(1)).room == e.arg(2))
+	if (getItem(e.arg(1)).room == roomArg(e.arg(2)))
 		return 2;
 	return -1;
 }
@@ -980,9 +984,11 @@ int AdlEngine::o1_quit(ScriptEnv &e) {
 }
 
 int AdlEngine::o1_placeItem(ScriptEnv &e) {
-	getItem(e.arg(1)).room = e.arg(2);
-	getItem(e.arg(1)).position.x = e.arg(3);
-	getItem(e.arg(1)).position.y = e.arg(4);
+	Item &item = getItem(e.arg(1));
+
+	item.room = roomArg(e.arg(2));
+	item.position.x = e.arg(3);
+	item.position.y = e.arg(4);
 	return 4;
 }
 

@@ -46,10 +46,10 @@ protected:
 
 	virtual void setupOpcodeTables();
 	bool matchesCurrentPic(byte pic) const;
+	byte roomArg(byte room) const;
 
 	int o2_isFirstTime(ScriptEnv &e);
 	int o2_isRandomGT(ScriptEnv &e);
-	int o2_isItemInRoom(ScriptEnv &e);
 	int o2_isNounNotInRoom(ScriptEnv &e);
 	int o2_isCarryingSomething(ScriptEnv &e);
 	int o2_moveAllItems(ScriptEnv &e);
