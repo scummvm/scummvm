@@ -21,6 +21,7 @@
  */
 
 #include "titanic/sound/sound.h"
+#include "titanic/game_manager.h"
 
 namespace Titanic {
 
@@ -33,6 +34,13 @@ void CSound::save(SimpleFile *file) const {
 
 void CSound::load(SimpleFile *file) {
 	_soundManager.load(file);
+}
+
+void CSound::preLoad() {
+	_soundManager.preLoad();
+
+	if (_gameManager)
+		_gameManager->_musicRoom.preLoad();
 }
 
 } // End of namespace Titanic z

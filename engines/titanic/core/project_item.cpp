@@ -142,8 +142,9 @@ void CProjectItem::resetGameManager() {
 void CProjectItem::loadGame(int slotId) {
 	CompressedFile file;
 
-	// Clear any existing project contents
+	// Clear any existing project contents and call preload code
 	clear();
+	preLoad();
 
 	// Open either an existing savegame slot or the new game template
 	if (slotId >= 0) {
@@ -270,6 +271,11 @@ void CProjectItem::saveData(SimpleFile *file, CTreeItem *item) const {
 		file->write("\n}\n", 3);
 		item = item->getNextSibling();
 	}
+}
+
+void CProjectItem::preLoad() {
+	if (_gameManager)
+		_gameManager->preLoad();
 }
 
 void CProjectItem::postLoad() {

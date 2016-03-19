@@ -48,7 +48,7 @@ CGameManager::CGameManager(CProjectItem *project, CGameView *gameView):
 		_inputHandler(this), _inputTranslator(&_inputHandler),		
 		_gameState(this), _sound(this), _musicRoom(this),
 		_field30(0), _field34(0), _field4C(0), 
-		_dragItem(nullptr), _field54(0), _tickCount1(0), _tickCount2(0) {
+		_dragItem(nullptr), _field54(0), _lastDiskTicksCount(0), _tickCount2(0) {
 	
 	_videoSurface1 = nullptr;
 	_videoSurface2 = CScreenManager::_screenManagerPtr->createSurface(600, 340);
@@ -65,6 +65,15 @@ void CGameManager::load(SimpleFile *file) {
 	_sound.load(file);
 }
 
+void CGameManager::preLoad() {
+	updateDiskTicksCount();
+	_list.destroyContents();
+	_field34 = 0;
+
+	_trueTalkManager.preLoad();
+	_sound.preLoad();
+}
+
 void CGameManager::postLoad(CProjectItem *project) {
 	if (_gameView) {
 		_gameView->postLoad();
@@ -77,11 +86,11 @@ void CGameManager::postLoad(CProjectItem *project) {
 	}
 	
 	// Signal to anything interested that the game has been loaded
-	CLoadSuccessMsg msg(_tickCount1 - _tickCount2);
+	CLoadSuccessMsg msg(_lastDiskTicksCount - _tickCount2);
 	msg.execute(project, nullptr, MSGFLAG_SCAN);
 
 	// Signal to any registered list items
-	_list.postLoad(_tickCount1, _project);
+	_list.postLoad(_lastDiskTicksCount, _project);
 
 	// Signal the true talk manager and sound
 	_trueTalkManager.postLoad();
@@ -98,6 +107,10 @@ void CGameManager::fn2() {
 
 void CGameManager::update() {
 	warning("TODO: CGameManager::update");
+}
+
+void CGameManager::updateDiskTicksCount() {
+	_lastDiskTicksCount = g_vm->_events->getTicksCount();
 }
 
 } // End of namespace Titanic

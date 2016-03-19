@@ -57,7 +57,11 @@ public:
 	virtual void proc20(int v) { _field8 = v; }
 	virtual void proc21(int v) { _fieldC = v; }
 	virtual void proc22(int v) { _field10 = v; }
-	virtual void proc23() { proc10(); }
+
+	/**
+	 * Called when a game is about to be loaded
+	 */
+	virtual void preLoad() { proc10(); }
 
 	/**
 	 * Load the data for the class from file

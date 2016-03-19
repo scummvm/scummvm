@@ -32,6 +32,11 @@ public:
 	CGameManager *_gameManager;
 public:
 	CMusicRoom(CGameManager *owner);
+
+	/**
+	 * Called when a game is about to be loaded
+	 */
+	void preLoad();
 };
 
 } // End of namespace Titanic

@@ -48,6 +48,11 @@ public:
 	void load(SimpleFile *file);
 
 	/**
+	 * Called when a game is about to be loaded
+	 */
+	void preLoad();
+
+	/**
 	 * Called when loading a game is complete
 	 */
 	void postLoad() { _soundManager.postLoad(); }

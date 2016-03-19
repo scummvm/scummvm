@@ -54,7 +54,6 @@ class CGameManager {
 private:
 	CGameView *_gameView;
 	CSound _sound;
-	CMusicRoom _musicRoom;
 	CTrueTalkManager _trueTalkManager;
 	CGameManagerList _list;
 	int _field30;
@@ -63,7 +62,7 @@ private:
 	int _field4C;
 	int _field54;
 	CVideoSurface *_videoSurface2;
-	uint _tickCount1;
+	uint _lastDiskTicksCount;
 	uint _tickCount2;
 public:
 	CProjectItem *_project;
@@ -72,6 +71,7 @@ public:
 	CInputHandler _inputHandler;
 	CInputTranslator _inputTranslator;
 	CTreeItem *_dragItem;
+	CMusicRoom _musicRoom;
 public:
 	CGameManager(CProjectItem *project, CGameView *gameView);
 	~CGameManager();
@@ -82,9 +82,19 @@ public:
 	void load(SimpleFile *file);
 
 	/**
+	 * Called when a game is about to be loaded
+	 */
+	void preLoad();
+
+	/**
 	 * Called after loading a game has finished
 	 */
 	void postLoad(CProjectItem *project);
+
+	/**
+	 * Updates the game time when the last disk access started
+	 */
+	void updateDiskTicksCount();
 
 	CViewItem *getView() { return _gameState._gameLocation.getView(); }
 

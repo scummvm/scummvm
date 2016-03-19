@@ -54,7 +54,6 @@ public:
 	 * Load the data for the class from file
 	 */
 	virtual void load(SimpleFile *file);	
-	
 };
 
 /**
@@ -78,6 +77,16 @@ private:
 	 * Called during save, iterates through the children to do some stuff
 	 */
 	void buildFilesList();
+	
+	/**
+	 * Called at the beginning of loading a game
+	 */
+	void preLoad();
+
+	/**
+	 * Does post-loading processing
+	 */
+	void postLoad();
 
 	/**
 	 * Finds the first child instance of a given class type
@@ -98,11 +107,6 @@ private:
 	 * Save project data to the passed file
 	 */
 	void saveData(SimpleFile *file, CTreeItem *item) const;
-
-	/**
-	 * Does post-loading processing
-	 */
-	void postLoad();
 public:
 	CLASSDEF
 	CProjectItem();

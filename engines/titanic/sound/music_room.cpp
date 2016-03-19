@@ -21,11 +21,16 @@
  */
 
 #include "titanic/sound/music_room.h"
+#include "common/textconsole.h"
 
 namespace Titanic {
 
 CMusicRoom::CMusicRoom(CGameManager *gameManager) :
 		_gameManager(gameManager) {
+}
+
+void CMusicRoom::preLoad() {
+	warning("TODO: CMusicRoom::preLoad");
 }
 
 } // End of namespace Titanic

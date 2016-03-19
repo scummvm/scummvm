@@ -175,4 +175,8 @@ void CTrueTalkManager::saveNPC(SimpleFile *file, int charId) const {
 	}
 }
 
+void CTrueTalkManager::preLoad() {
+	warning("TODO: CTrueTalkManager::preLoad");
+}
+
 } // End of namespace Titanic
