@@ -420,6 +420,26 @@ reg_t kStubNull(EngineState *s, int argc, reg_t *argv);
 
 #ifdef ENABLE_SCI32
 // SCI2 Kernel Functions
+reg_t kDoAudio32(EngineState *s, int argc, reg_t *argv);
+reg_t kDoAudioInit(EngineState *s, int argc, reg_t *argv);
+reg_t kDoAudioWaitForPlay(EngineState *s, int argc, reg_t *argv);
+reg_t kDoAudioPlay(EngineState *s, int argc, reg_t *argv);
+reg_t kDoAudioStop(EngineState *s, int argc, reg_t *argv);
+reg_t kDoAudioPause(EngineState *s, int argc, reg_t *argv);
+reg_t kDoAudioResume(EngineState *s, int argc, reg_t *argv);
+reg_t kDoAudioPosition(EngineState *s, int argc, reg_t *argv);
+reg_t kDoAudioRate(EngineState *s, int argc, reg_t *argv);
+reg_t kDoAudioVolume(EngineState *s, int argc, reg_t *argv);
+reg_t kDoAudioGetCapability(EngineState *s, int argc, reg_t *argv);
+reg_t kDoAudioBitDepth(EngineState *s, int argc, reg_t *argv);
+reg_t kDoAudioDistort(EngineState *s, int argc, reg_t *argv);
+reg_t kDoAudioMixing(EngineState *s, int argc, reg_t *argv);
+reg_t kDoAudioChannels(EngineState *s, int argc, reg_t *argv);
+reg_t kDoAudioPreload(EngineState *s, int argc, reg_t *argv);
+reg_t kDoAudioFade(EngineState *s, int argc, reg_t *argv);
+reg_t kDoAudioHasSignal(EngineState *s, int argc, reg_t *argv);
+reg_t kDoAudioSetLoop(EngineState *s, int argc, reg_t *argv);
+
 reg_t kIsHiRes(EngineState *s, int argc, reg_t *argv);
 reg_t kArray(EngineState *s, int argc, reg_t *argv);
 reg_t kListAt(EngineState *s, int argc, reg_t *argv);

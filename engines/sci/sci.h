@@ -83,6 +83,7 @@ class GfxTransitions;
 #ifdef ENABLE_SCI32
 class RobotDecoder;
 class GfxFrameout;
+class Audio32;
 #endif
 
 // our engine debug levels
@@ -368,6 +369,7 @@ public:
 	GfxMacIconBar *_gfxMacIconBar; // Mac Icon Bar manager
 
 #ifdef ENABLE_SCI32
+	Audio32 *_audio32;
 	RobotDecoder *_robotDecoder;
 	GfxFrameout *_gfxFrameout; // kFrameout and the like for 32-bit gfx
 #endif

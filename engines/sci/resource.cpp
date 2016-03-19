@@ -26,6 +26,9 @@
 #include "common/fs.h"
 #include "common/macresman.h"
 #include "common/textconsole.h"
+#ifdef ENABLE_SCI32
+#include "common/memstream.h"
+#endif
 
 #include "sci/resource.h"
 #include "sci/resource_intern.h"
@@ -221,6 +224,12 @@ void Resource::writeToStream(Common::WriteStream *stream) const {
 	stream->write(data, size);
 }
 
+#ifdef ENABLE_SCI32
+Common::SeekableReadStream *Resource::makeStream() const {
+	return new Common::MemoryReadStream(data, size, DisposeAfterUse::NO);
+}
+#endif
+
 uint32 Resource::getAudioCompressionType() const {
 	return _source->getAudioCompressionType();
 }
@@ -228,7 +237,6 @@ uint32 Resource::getAudioCompressionType() const {
 uint32 AudioVolumeResourceSource::getAudioCompressionType() const {
 	return _audioCompressionType;
 }
-
 
 ResourceSource::ResourceSource(ResSourceType type, const Common::String &name, int volNum, const Common::FSNode *resFile)
  : _sourceType(type), _name(name), _volumeNumber(volNum), _resourceFile(resFile) {
@@ -1445,13 +1453,18 @@ void ResourceManager::readResourcePatchesBase36() {
 		files.clear();
 
 		// audio36 resources start with a @, A, or B
-		// sync36 resources start with a #
+		// sync36 resources start with a #, S, or T
 		if (i == kResourceTypeAudio36) {
 			SearchMan.listMatchingMembers(files, "@???????.???");
 			SearchMan.listMatchingMembers(files, "A???????.???");
 			SearchMan.listMatchingMembers(files, "B???????.???");
-		} else
+		} else {
 			SearchMan.listMatchingMembers(files, "#???????.???");
+#ifdef ENABLE_SCI32
+			SearchMan.listMatchingMembers(files, "S???????.???");
+			SearchMan.listMatchingMembers(files, "T???????.???");
+#endif
+		}
 
 		for (Common::ArchiveMemberList::const_iterator x = files.begin(); x != files.end(); ++x) {
 			name = (*x)->getName();

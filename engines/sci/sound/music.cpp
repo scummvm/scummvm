@@ -212,6 +212,13 @@ void SciMusic::clearPlayList() {
 void SciMusic::pauseAll(bool pause) {
 	const MusicList::iterator end = _playList.end();
 	for (MusicList::iterator i = _playList.begin(); i != end; ++i) {
+#ifdef ENABLE_SCI32
+		// The entire DAC will have been paused by the caller;
+		// do not pause the individual samples too
+		if (_soundVersion >= SCI_VERSION_2_1_EARLY && (*i)->isSample) {
+			continue;
+		}
+#endif
 		soundToggle(*i, pause);
 	}
 }
@@ -472,7 +479,16 @@ void SciMusic::soundPlay(MusicEntry *pSnd) {
 		}
 	}
 
-	if (pSnd->pStreamAud) {
+	if (pSnd->isSample) {
+#ifdef ENABLE_SCI32
+		if (_soundVersion >= SCI_VERSION_2_1_EARLY) {
+			g_sci->_audio32->stop(ResourceId(kResourceTypeAudio, pSnd->resourceId), pSnd->soundObj);
+
+			g_sci->_audio32->play(kNoExistingChannel, ResourceId(kResourceTypeAudio, pSnd->resourceId), true, pSnd->loop != 0 && pSnd->loop != 1, pSnd->volume, pSnd->soundObj, false);
+
+			return;
+		} else
+#endif
 		if (!_pMixer->isSoundHandleActive(pSnd->hCurrentAud)) {
 			if ((_currentlyPlayingSample) && (_pMixer->isSoundHandleActive(_currentlyPlayingSample->hCurrentAud))) {
 				// Another sample is already playing, we have to stop that one
@@ -550,10 +566,18 @@ void SciMusic::soundStop(MusicEntry *pSnd) {
 	pSnd->status = kSoundStopped;
 	if (_soundVersion <= SCI_VERSION_0_LATE)
 		pSnd->isQueued = false;
-	if (pSnd->pStreamAud) {
-		if (_currentlyPlayingSample == pSnd)
-			_currentlyPlayingSample = NULL;
-		_pMixer->stopHandle(pSnd->hCurrentAud);
+	if (pSnd->isSample) {
+#ifdef ENABLE_SCI32
+		if (_soundVersion >= SCI_VERSION_2_1_EARLY) {
+			g_sci->_audio32->stop(ResourceId(kResourceTypeAudio, pSnd->resourceId), pSnd->soundObj);
+		} else {
+#endif
+			if (_currentlyPlayingSample == pSnd)
+				_currentlyPlayingSample = NULL;
+			_pMixer->stopHandle(pSnd->hCurrentAud);
+#ifdef ENABLE_SCI32
+		}
+#endif
 	}
 
 	if (pSnd->pMidiParser) {
@@ -572,9 +596,12 @@ void SciMusic::soundStop(MusicEntry *pSnd) {
 
 void SciMusic::soundSetVolume(MusicEntry *pSnd, byte volume) {
 	assert(volume <= MUSIC_VOLUME_MAX);
-	if (pSnd->pStreamAud) {
-		// we simply ignore volume changes for samples, because sierra sci also
-		//  doesn't support volume for samples via kDoSound
+	if (pSnd->isSample) {
+#ifdef ENABLE_SCI32
+		if (_soundVersion >= SCI_VERSION_2_1_EARLY) {
+			g_sci->_audio32->setVolume(ResourceId(kResourceTypeAudio, pSnd->resourceId), pSnd->soundObj, volume);
+		}
+#endif
 	} else if (pSnd->pMidiParser) {
 		Common::StackLock lock(_mutex);
 		pSnd->pMidiParser->mainThreadBegin();
@@ -614,12 +641,20 @@ void SciMusic::soundKill(MusicEntry *pSnd) {
 
 	_mutex.unlock();
 
-	if (pSnd->pStreamAud) {
-		if (_currentlyPlayingSample == pSnd) {
-			// Forget about this sound, in case it was currently playing
-			_currentlyPlayingSample = NULL;
+	if (pSnd->isSample) {
+#ifdef ENABLE_SCI32
+		if (_soundVersion >= SCI_VERSION_2_1_EARLY) {
+			g_sci->_audio32->stop(ResourceId(kResourceTypeAudio, pSnd->resourceId), pSnd->soundObj);
+		} else {
+#endif
+			if (_currentlyPlayingSample == pSnd) {
+				// Forget about this sound, in case it was currently playing
+				_currentlyPlayingSample = NULL;
+			}
+			_pMixer->stopHandle(pSnd->hCurrentAud);
+#ifdef ENABLE_SCI32
 		}
-		_pMixer->stopHandle(pSnd->hCurrentAud);
+#endif
 		delete pSnd->pStreamAud;
 		pSnd->pStreamAud = NULL;
 		delete pSnd->pLoopStream;
@@ -685,6 +720,18 @@ void SciMusic::soundResume(MusicEntry *pSnd) {
 }
 
 void SciMusic::soundToggle(MusicEntry *pSnd, bool pause) {
+#ifdef ENABLE_SCI32
+	if (_soundVersion >= SCI_VERSION_2_1_EARLY && pSnd->isSample) {
+		if (pause) {
+			g_sci->_audio32->pause(ResourceId(kResourceTypeAudio, pSnd->resourceId), pSnd->soundObj);
+		} else {
+			g_sci->_audio32->resume(ResourceId(kResourceTypeAudio, pSnd->resourceId), pSnd->soundObj);
+		}
+
+		return;
+	}
+#endif
+
 	if (pause)
 		soundPause(pSnd);
 	else
@@ -813,6 +860,7 @@ MusicEntry::MusicEntry() {
 	pStreamAud = 0;
 	pLoopStream = 0;
 	pMidiParser = 0;
+	isSample = false;
 
 	for (int i = 0; i < 16; ++i) {
 		_usedChannels[i] = 0xFF;

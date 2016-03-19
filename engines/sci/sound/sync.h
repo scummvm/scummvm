@@ -38,6 +38,10 @@ class Resource;
 class ResourceManager;
 class SegManager;
 
+/**
+ * Sync class, kDoSync and relevant functions for SCI games.
+ * Provides AV synchronization for animations.
+ */
 class Sync {
 	SegManager *_segMan;
 	ResourceManager *_resMan;
@@ -53,5 +57,5 @@ public:
 	void stop();
 };
 
-}
+} // End of namespace Sci
 #endif
