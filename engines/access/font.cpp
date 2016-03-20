@@ -151,13 +151,12 @@ void Font::drawString(ASurface *s, const Common::String &msg, const Common::Poin
 
 int Font::drawChar(ASurface *s, char c, Common::Point &pt) {
 	Graphics::Surface &ch = _chars[c - ' '];
-
-	s->addDirtyRect(Common::Rect(pt.x, pt.y, pt.x + ch.w, pt.y + ch.h));
+	Graphics::Surface dest = s->getSubArea(Common::Rect(pt.x, pt.y, pt.x + ch.w, pt.y + ch.h));
 
 	// Loop through the lines of the character
 	for (int y = 0; y < ch.h; ++y) {
 		byte *pSrc = (byte *)ch.getBasePtr(0, y);
-		byte *pDest = (byte *)s->getBasePtr(pt.x, pt.y + y);
+		byte *pDest = (byte *)dest.getBasePtr(0, y);
 
 		// Loop through the horizontal pixels of the line
 		for (int x = 0; x < ch.w; ++x, ++pSrc, ++pDest) {

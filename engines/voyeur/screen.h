@@ -27,17 +27,15 @@
 #include "common/array.h"
 #include "common/rect.h"
 #include "common/serializer.h"
-#include "graphics/surface.h"
+#include "graphics/screen.h"
 
 namespace Voyeur {
 
 #define SCREEN_WIDTH 320
 #define SCREEN_HEIGHT 200
-#define PALETTE_COUNT 256
-#define PALETTE_SIZE (256 * 3)
 
 class VoyeurEngine;
-class GraphicsManager;
+class Screen;
 class DisplayResource;
 class PictureResource;
 class ViewPortResource;
@@ -54,12 +52,12 @@ public:
 	DrawInfo(int penColor, const Common::Point &pos);
 };
 
-typedef void (GraphicsManager::*GraphicMethodPtr)();
-typedef void (GraphicsManager::*ViewPortSetupPtr)(ViewPortResource *);
-typedef void (GraphicsManager::*ViewPortAddPtr)(ViewPortResource *, int idx, const Common::Rect &bounds);
-typedef void (GraphicsManager::*ViewPortRestorePtr)(ViewPortResource *);
+typedef void (Screen::*ScreenMethodPtr)();
+typedef void (Screen::*ViewPortSetupPtr)(ViewPortResource *);
+typedef void (Screen::*ViewPortAddPtr)(ViewPortResource *, int idx, const Common::Rect &bounds);
+typedef void (Screen::*ViewPortRestorePtr)(ViewPortResource *);
 
-class GraphicsManager {
+class Screen: public Graphics::Screen {
 public:
 	byte _VGAColors[PALETTE_SIZE];
 	PictureResource *_backgroundPage;
@@ -69,7 +67,6 @@ public:
 	bool _saveBack;
 	Common::Rect *_clipPtr;
 	uint _planeSelect;
-	Graphics::Surface _screenSurface;
 	CMapResource *_backColors;
 	FontInfoResource *_fontPtr;
 	PictureResource *_fontChar;
@@ -81,8 +78,8 @@ private:
 	void restoreBack(Common::Array<Common::Rect> &rectList, int rectListCount,
 		PictureResource *srcPic, PictureResource *destPic);
 public:
-	GraphicsManager(VoyeurEngine *vm);
-	~GraphicsManager();
+	Screen(VoyeurEngine *vm);
+	virtual ~Screen();
 
 	void sInitGraphics();
 
@@ -96,7 +93,6 @@ public:
 	void sDisplayPic(PictureResource *pic);
 	void drawANumber(DisplayResource *display, int num, const Common::Point &pt);
 	void flipPage();
-	void clearPalette();
 	void setPalette(const byte *palette, int start, int count);
 	void setPalette128(const byte *palette, int start, int count);
 	void resetPalette();

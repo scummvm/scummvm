@@ -34,6 +34,7 @@ template<class T> class Array;
 namespace Graphics {
 
 struct Surface;
+class ManagedSurface;
 
 /** Text alignment modes */
 enum TextAlign {
@@ -145,6 +146,8 @@ public:
 	// TODO: Add doxygen comments to this
 	void drawString(Surface *dst, const Common::String &str, int x, int y, int w, uint32 color, TextAlign align = kTextAlignLeft, int deltax = 0, bool useEllipsis = true) const;
 	void drawString(Surface *dst, const Common::U32String &str, int x, int y, int w, uint32 color, TextAlign align = kTextAlignLeft) const;
+	void drawString(ManagedSurface *dst, const Common::String &str, int x, int y, int w, uint32 color, TextAlign align = kTextAlignLeft, int deltax = 0, bool useEllipsis = true) const;
+	void drawString(ManagedSurface *dst, const Common::U32String &str, int x, int y, int w, uint32 color, TextAlign align = kTextAlignLeft) const;
 
 	/**
 	 * Compute and return the width the string str has when rendered using this font.

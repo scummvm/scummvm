@@ -149,7 +149,7 @@ int Rails::scanPath(const Common::Point &srcPos, const Common::Point &destPos) {
 	++xDiff;
 	++yDiff;
 
-	const byte *srcP = _depthSurface->getBasePtr(srcPos.x, srcPos.y);
+	const byte *srcP = (const byte *)_depthSurface->getBasePtr(srcPos.x, srcPos.y);
 	int index = xAmount;
 
 	// Outer loop

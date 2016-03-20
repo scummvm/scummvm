@@ -166,7 +166,7 @@ void WidgetText::render(const Common::String &str) {
 
 	// Allocate a surface for the window
 	_surface.create(_bounds.width(), _bounds.height());
-	_surface.fill(TRANSPARENCY);
+	_surface.clear(TRANSPARENCY);
 
 	// Form the background for the new window
 	makeInfoArea();
@@ -195,7 +195,7 @@ void WidgetMessage::load(const Common::String &str, int time) {
 
 	// Allocate a surface for the window
 	_surface.create(_bounds.width(), _bounds.height());
-	_surface.fill(TRANSPARENCY);
+	_surface.clear(TRANSPARENCY);
 
 	// Form the background for the new window and write the line of text
 	makeInfoArea();

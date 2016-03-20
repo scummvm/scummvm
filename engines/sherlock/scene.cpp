@@ -27,6 +27,7 @@
 #include "sherlock/scalpel/scalpel_people.h"
 #include "sherlock/scalpel/scalpel_scene.h"
 #include "sherlock/scalpel/scalpel_screen.h"
+#include "sherlock/scalpel/3do/scalpel_3do_screen.h"
 #include "sherlock/tattoo/tattoo.h"
 #include "sherlock/tattoo/tattoo_scene.h"
 #include "sherlock/tattoo/tattoo_user_interface.h"
@@ -356,7 +357,7 @@ bool Scene::loadScene(const Common::String &filename) {
 			if (IS_ROSE_TATTOO) {
 				// Resize the screen if necessary
 				int fullWidth = SHERLOCK_SCREEN_WIDTH + bgHeader._scrollSize;
-				if (screen._backBuffer1.w() != fullWidth) {
+				if (screen._backBuffer1.width() != fullWidth) {
 					screen._backBuffer1.create(fullWidth, SHERLOCK_SCREEN_HEIGHT);
 					screen._backBuffer2.create(fullWidth, SHERLOCK_SCREEN_HEIGHT);
 				}
@@ -649,7 +650,7 @@ bool Scene::loadScene(const Common::String &filename) {
 			}
 
 			// Backup the image and set the palette
-			screen._backBuffer2.blitFrom(screen._backBuffer1);
+			screen._backBuffer2.SHblitFrom(screen._backBuffer1);
 			screen.setPalette(screen._cMap);
 
 			delete rrmStream;
@@ -996,12 +997,12 @@ bool Scene::loadScene(const Common::String &filename) {
 
 #if 0
 		// code to show the background
-		screen.blitFrom(screen._backBuffer1);
+		screen.SHblitFrom(screen._backBuffer1);
 		_vm->_events->wait(10000);
 #endif
 
 		// Backup the image
-		screen._backBuffer2.blitFrom(screen._backBuffer1);
+		screen._backBuffer2.SHblitFrom(screen._backBuffer1);
 	}
 
 	// Handle drawing any on-screen interface
@@ -1236,7 +1237,7 @@ void Scene::transitionToScene() {
 
 	// If the scene is capable of scrolling, set the current scroll so that whoever has control 
 	// of the scroll code is in the middle of the screen
-	if (screen._backBuffer1.w() > SHERLOCK_SCREEN_WIDTH)
+	if (screen._backBuffer1.width() > SHERLOCK_SCREEN_WIDTH)
 		people[people._walkControl].centerScreenOnPerson();
 
 	for (uint objIdx = 0; objIdx < _bgShapes.size(); ++objIdx) {

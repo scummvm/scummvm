@@ -21,6 +21,7 @@
  */
 
 #include "graphics/font.h"
+#include "graphics/managed_surface.h"
 
 #include "common/array.h"
 #include "common/util.h"
@@ -271,6 +272,16 @@ void Font::drawString(Surface *dst, const Common::String &str, int x, int y, int
 
 void Font::drawString(Surface *dst, const Common::U32String &str, int x, int y, int w, uint32 color, TextAlign align) const {
 	drawStringImpl(*this, dst, str, x, y, w, color, align, 0);
+}
+
+void Font::drawString(ManagedSurface *dst, const Common::String &str, int x, int y, int w, uint32 color, TextAlign align, int deltax, bool useEllipsis) const {
+	drawString(&dst->_innerSurface, str, x, y, w, color, align, deltax, useEllipsis);
+	dst->addDirtyRect(Common::Rect(x, y, x + w, y + getFontHeight()));
+}
+
+void Font::drawString(ManagedSurface *dst, const Common::U32String &str, int x, int y, int w, uint32 color, TextAlign align) const {
+	drawString(&dst->_innerSurface, str, x, y, w, color, align);
+	dst->addDirtyRect(Common::Rect(x, y, x + w, y + getFontHeight()));
 }
 
 int Font::wordWrapText(const Common::String &str, int maxWidth, Common::Array<Common::String> &lines) const {

@@ -65,7 +65,7 @@ void TattooJournal::show() {
 	delete stream;
 
 	// Set screen to black, and set background
-	screen._backBuffer1.blitFrom((*_journalImages)[0], Common::Point(0, 0));
+	screen._backBuffer1.SHblitFrom((*_journalImages)[0], Common::Point(0, 0));
 	screen.empty();
 	screen.setPalette(palette);
 
@@ -461,7 +461,7 @@ void TattooJournal::loadLocations() {
 void TattooJournal::drawFrame() {
 	Screen &screen = *_vm->_screen;
 
-	screen._backBuffer1.blitFrom((*_journalImages)[0], Common::Point(0, 0));
+	screen._backBuffer1.SHblitFrom((*_journalImages)[0], Common::Point(0, 0));
 	drawControls(0);
 
 }
@@ -486,10 +486,10 @@ void TattooJournal::drawControls(int mode) {
 		screen._backBuffer1.fillRect(inner, MENU_BACKGROUND);
 
 	// Draw the four corners of the info box
-	screen._backBuffer1.transBlitFrom(images[0], Common::Point(r.left, r.top));
-	screen._backBuffer1.transBlitFrom(images[1], Common::Point(r.right - images[1]._width, r.top));
-	screen._backBuffer1.transBlitFrom(images[1], Common::Point(r.left, r.bottom - images[1]._height));
-	screen._backBuffer1.transBlitFrom(images[1], Common::Point(r.right - images[1]._width, r.bottom - images[1]._height));
+	screen._backBuffer1.SHtransBlitFrom(images[0], Common::Point(r.left, r.top));
+	screen._backBuffer1.SHtransBlitFrom(images[1], Common::Point(r.right - images[1]._width, r.top));
+	screen._backBuffer1.SHtransBlitFrom(images[1], Common::Point(r.left, r.bottom - images[1]._height));
+	screen._backBuffer1.SHtransBlitFrom(images[1], Common::Point(r.right - images[1]._width, r.bottom - images[1]._height));
 
 	// Draw the top of the info box
 	screen._backBuffer1.hLine(r.left + images[0]._width, r.top, r.right - images[0]._height, INFO_TOP);
@@ -513,8 +513,8 @@ void TattooJournal::drawControls(int mode) {
 
 	// Draw the sides of the separator bar above the scroll bar
 	int yp = r.top + screen.fontHeight() + 7;
-	screen._backBuffer1.transBlitFrom(images[4], Common::Point(r.left, yp - 1));
-	screen._backBuffer1.transBlitFrom(images[5], Common::Point(r.right - images[5]._width, yp - 1));
+	screen._backBuffer1.SHtransBlitFrom(images[4], Common::Point(r.left, yp - 1));
+	screen._backBuffer1.SHtransBlitFrom(images[5], Common::Point(r.right - images[5]._width, yp - 1));
 
 	// Draw the bar above the scroll bar
 	screen._backBuffer1.hLine(r.left + images[4]._width, yp, r.right - images[5]._width, INFO_TOP);
@@ -525,8 +525,8 @@ void TattooJournal::drawControls(int mode) {
 		// Draw the Bars separating the Journal Commands
 		int xp = r.right / 3;
 		for (int idx = 0; idx < 2; ++idx) {
-			screen._backBuffer1.transBlitFrom(images[6], Common::Point(xp - 2, r.top + 1));
-			screen._backBuffer1.transBlitFrom(images[7], Common::Point(xp - 2, yp - 1));
+			screen._backBuffer1.SHtransBlitFrom(images[6], Common::Point(xp - 2, r.top + 1));
+			screen._backBuffer1.SHtransBlitFrom(images[7], Common::Point(xp - 2, yp - 1));
 
 			screen._backBuffer1.hLine(xp - 1, r.top + 4, yp - 2, INFO_TOP);
 			screen._backBuffer1.hLine(xp, r.top + 4, yp - 2, INFO_MIDDLE);
@@ -779,7 +779,7 @@ int TattooJournal::getFindName(bool printError) {
 	
 	// Backup the area under the text entry
 	Surface bgSurface(r.width() - 6, screen.fontHeight());
-	bgSurface.blitFrom(screen._backBuffer1, Common::Point(0, 0), Common::Rect(r.left + 3, cursorY, 
+	bgSurface.SHblitFrom(screen._backBuffer1, Common::Point(0, 0), Common::Rect(r.left + 3, cursorY, 
 		r.right - 3, cursorY + screen.fontHeight()));
 
 	if (printError) {
@@ -810,7 +810,7 @@ int TattooJournal::getFindName(bool printError) {
 		events.clearEvents();
 
 		// Restore the text background
-		screen._backBuffer1.blitFrom(bgSurface, Common::Point(r.left, cursorY));
+		screen._backBuffer1.SHblitFrom(bgSurface, Common::Point(r.left, cursorY));
 
 		// If there was a name already entered, copy it to name and display it
 		if (!_find.empty()) {
@@ -846,7 +846,7 @@ int TattooJournal::getFindName(bool printError) {
 				}
 				else {
 					// Erase cursor by restoring background and writing current text
-					screen._backBuffer1.blitFrom(bgSurface, Common::Point(r.left + 3, cursorY));
+					screen._backBuffer1.SHblitFrom(bgSurface, Common::Point(r.left + 3, cursorY));
 					screen.gPrint(Common::Point(r.left + screen.widestChar() + 3, cursorY), COMMAND_HIGHLIGHTED, "%s", name.c_str());
 					screen.slamArea(r.left + 3, cursorY, r.width() - 3, screen.fontHeight());
 				}
@@ -912,7 +912,7 @@ int TattooJournal::getFindName(bool printError) {
 			}
 
 			// Redraw the text
-			screen._backBuffer1.blitFrom(bgSurface, Common::Point(r.left + 3, cursorY));
+			screen._backBuffer1.SHblitFrom(bgSurface, Common::Point(r.left + 3, cursorY));
 			screen.gPrint(Common::Point(r.left + screen.widestChar() + 3, cursorY), COMMAND_HIGHLIGHTED,
 				"%s", name.c_str());
 			screen.slamArea(r.left + 3, cursorY, r.right - 3, screen.fontHeight());

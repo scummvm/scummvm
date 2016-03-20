@@ -217,7 +217,7 @@ void Object::erase() {
 	Screen &screen = *_vm->_screen;
 	
 	if (_visage.isLoaded() && !_oldBounds.isEmpty())
-		screen.blitFrom(screen._backBuffer1, Common::Point(_oldBounds.left, _oldBounds.top), _oldBounds);
+		screen.SHblitFrom(screen._backBuffer1, Common::Point(_oldBounds.left, _oldBounds.top), _oldBounds);
 }
 
 void Object::update() {
@@ -246,9 +246,9 @@ void Object::update() {
 		_visage.getFrame(s, _frame);
 
 		// Display the frame
-		_oldBounds = Common::Rect(_position.x, _position.y, _position.x + s.w(), _position.y + s.h());
+		_oldBounds = Common::Rect(_position.x, _position.y, _position.x + s.width(), _position.y + s.height());
 		_oldBounds.translate(-s._centroid.x, -s._centroid.y);
-		screen.transBlitFrom(s, Common::Point(_oldBounds.left, _oldBounds.top));
+		screen.SHtransBlitFrom(s, Common::Point(_oldBounds.left, _oldBounds.top));
 	}
 }
 
@@ -652,7 +652,7 @@ void Logo::loadBackground() {
 	screen.setPalette(palette);
 
 	// Copy the surface to the screen
-	screen.blitFrom(screen._backBuffer1);
+	screen.SHblitFrom(screen._backBuffer1);
 }
 
 void Logo::fade(const byte palette[PALETTE_SIZE], int step) {

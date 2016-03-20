@@ -141,15 +141,15 @@ void TattooScene::drawAllShapes() {
 
 		if (obj._type == ACTIVE_BG_SHAPE && obj._misc == BEHIND) {
 			if (obj._quickDraw && obj._scaleVal == SCALE_THRESHOLD)
-				screen._backBuffer1.blitFrom(*obj._imageFrame, obj._position);
+				screen._backBuffer1.SHblitFrom(*obj._imageFrame, obj._position);
 			else
-				screen._backBuffer1.transBlitFrom(*obj._imageFrame, obj._position, obj._flags & OBJ_FLIPPED, 0, obj._scaleVal);
+				screen._backBuffer1.SHtransBlitFrom(*obj._imageFrame, obj._position, obj._flags & OBJ_FLIPPED, 0, obj._scaleVal);
 		}
 	}
 
 	// Draw the animation if it is behind the person
 	if (_activeCAnim.active() && _activeCAnim._zPlacement == BEHIND)
-		screen._backBuffer1.transBlitFrom(_activeCAnim._imageFrame, _activeCAnim._position,
+		screen._backBuffer1.SHtransBlitFrom(_activeCAnim._imageFrame, _activeCAnim._position,
 			(_activeCAnim._flags & 4) >> 1, 0, _activeCAnim._scaleVal);
 
 	screen.resetDisplayBounds();
@@ -194,13 +194,13 @@ void TattooScene::drawAllShapes() {
 		if (se._shape) {
 			// it's a bg shape
 			if (se._shape->_quickDraw && se._shape->_scaleVal == SCALE_THRESHOLD)
-				screen._backBuffer1.blitFrom(*se._shape->_imageFrame, se._shape->_position);
+				screen._backBuffer1.SHblitFrom(*se._shape->_imageFrame, se._shape->_position);
 			else
-				screen._backBuffer1.transBlitFrom(*se._shape->_imageFrame, se._shape->_position,
+				screen._backBuffer1.SHtransBlitFrom(*se._shape->_imageFrame, se._shape->_position,
 					se._shape->_flags & OBJ_FLIPPED, 0, se._shape->_scaleVal);
 		} else if (se._isAnimation) {
 			// It's an active animation
-			screen._backBuffer1.transBlitFrom(_activeCAnim._imageFrame, _activeCAnim._position,
+			screen._backBuffer1.SHtransBlitFrom(_activeCAnim._imageFrame, _activeCAnim._position,
 				(_activeCAnim._flags & 4) >> 1, 0, _activeCAnim._scaleVal);
 		} else {
 			// Drawing person
@@ -212,7 +212,7 @@ void TattooScene::drawAllShapes() {
 
 			if (p._tempScaleVal == SCALE_THRESHOLD) {
 				p._tempX += adjust.x;
-				screen._backBuffer1.transBlitFrom(*p._imageFrame, Common::Point(p._tempX, p._position.y / FIXED_INT_MULTIPLIER
+				screen._backBuffer1.SHtransBlitFrom(*p._imageFrame, Common::Point(p._tempX, p._position.y / FIXED_INT_MULTIPLIER
 					- p.frameHeight() - adjust.y), p._walkSequences[p._sequenceNumber]._horizFlip, 0, p._tempScaleVal);
 			} else {
 				if (adjust.x) {
@@ -242,7 +242,7 @@ void TattooScene::drawAllShapes() {
 						++adjust.y;
 				}
 
-				screen._backBuffer1.transBlitFrom(*p._imageFrame, Common::Point(p._tempX, p._position.y / FIXED_INT_MULTIPLIER
+				screen._backBuffer1.SHtransBlitFrom(*p._imageFrame, Common::Point(p._tempX, p._position.y / FIXED_INT_MULTIPLIER
 					- p._imageFrame->sDrawYSize(p._tempScaleVal) - adjust.y), p._walkSequences[p._sequenceNumber]._horizFlip, 0, p._tempScaleVal);
 			}
 		}
@@ -255,15 +255,15 @@ void TattooScene::drawAllShapes() {
 
 		if (obj._type == ACTIVE_BG_SHAPE && obj._misc == FORWARD) {
 			if (obj._quickDraw && obj._scaleVal == SCALE_THRESHOLD)
-				screen._backBuffer1.blitFrom(*obj._imageFrame, obj._position);
+				screen._backBuffer1.SHblitFrom(*obj._imageFrame, obj._position);
 			else
-				screen._backBuffer1.transBlitFrom(*obj._imageFrame, obj._position, obj._flags & OBJ_FLIPPED, 0, obj._scaleVal);
+				screen._backBuffer1.SHtransBlitFrom(*obj._imageFrame, obj._position, obj._flags & OBJ_FLIPPED, 0, obj._scaleVal);
 		}
 	}
 
 	// Draw the canimation if it is set as FORWARD
 	if (_activeCAnim.active() && _activeCAnim._zPlacement == FORWARD)
-		screen._backBuffer1.transBlitFrom(_activeCAnim._imageFrame, _activeCAnim._position, (_activeCAnim._flags & 4) >> 1, 0, _activeCAnim._scaleVal);
+		screen._backBuffer1.SHtransBlitFrom(_activeCAnim._imageFrame, _activeCAnim._position, (_activeCAnim._flags & 4) >> 1, 0, _activeCAnim._scaleVal);
 
 	// Draw all NO_SHAPE shapes which have their flag bits clear
 	for (uint idx = 0; idx < _bgShapes.size(); ++idx) {

@@ -72,7 +72,7 @@ TattooUserInterface::~TattooUserInterface() {
 
 void TattooUserInterface::initScrollVars() {
 	Screen &screen = *_vm->_screen;
-	_scrollSize = screen._backBuffer1.w() - SHERLOCK_SCREEN_WIDTH;
+	_scrollSize = screen._backBuffer1.width() - SHERLOCK_SCREEN_WIDTH;
 	_targetScroll = Common::Point(0, 0);
 	screen._currentScroll = Common::Point(0, 0);
 }
@@ -233,7 +233,7 @@ void TattooUserInterface::doJournal() {
 	Common::copy(&lookupTable1[0], &lookupTable1[PALETTE_COUNT], &_lookupTable1[0]);
 
 	// Restore the scene
-	screen._backBuffer1.blitFrom(screen._backBuffer2);
+	screen._backBuffer1.SHblitFrom(screen._backBuffer2);
 	scene.updateBackground();
 	screen.slamArea(screen._currentScroll.x, screen._currentScroll.y, SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT);
 }
@@ -727,7 +727,7 @@ void TattooUserInterface::doBgAnimEraseBackground() {
 
 	if (_mask != nullptr) {
 		// Since a mask is active, restore the screen from the secondary back buffer prior to applying the mask
-		screen._backBuffer1.blitFrom(screen._backBuffer2, screen._currentScroll, Common::Rect(screen._currentScroll.x, 0, 
+		screen._backBuffer1.SHblitFrom(screen._backBuffer2, screen._currentScroll, Common::Rect(screen._currentScroll.x, 0, 
 			screen._currentScroll.x + SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT));
 
 		switch (scene._currentScene) {
@@ -757,7 +757,7 @@ void TattooUserInterface::doBgAnimEraseBackground() {
 		case 53:
 			if (++_maskCounter == 2) {
 				_maskCounter = 0;
-				if (++_maskOffset.x == screen._backBuffer1.w())
+				if (++_maskOffset.x == screen._backBuffer1.width())
 					_maskOffset.x = 0;
 			}
 			break;
@@ -779,7 +779,7 @@ void TattooUserInterface::doBgAnimEraseBackground() {
 						
 			if ((obj._type == ACTIVE_BG_SHAPE && (obj._maxFrames > 1 || obj._delta.x != 0 || obj._delta.y != 0)) || 
 					obj._type == HIDE_SHAPE || obj._type == REMOVE)
-				screen._backBuffer1.blitFrom(screen._backBuffer2, obj._oldPosition, 
+				screen._backBuffer1.SHblitFrom(screen._backBuffer2, obj._oldPosition, 
 					Common::Rect(obj._oldPosition.x, obj._oldPosition.y, obj._oldPosition.x + obj._oldSize.x,
 						obj._oldPosition.y + obj._oldSize.y));
 		}
@@ -793,7 +793,7 @@ void TattooUserInterface::doBgAnimEraseBackground() {
 		Object &obj = scene._bgShapes[idx];
 
 		if (obj._type == NO_SHAPE && (obj._flags & 1) == 0) {
-			screen._backBuffer1.blitFrom(screen._backBuffer2, obj._position, obj.getNoShapeBounds());
+			screen._backBuffer1.SHblitFrom(screen._backBuffer2, obj._position, obj.getNoShapeBounds());
 
 			obj._oldPosition = obj._position;
 			obj._oldSize = obj._noShapeSize;
@@ -870,7 +870,7 @@ void TattooUserInterface::maskArea(Common::SeekableReadStream &mask, const Commo
 	int pixel, len, xp, yp;
 
 	for (yp = 0; yp < ySize; ++yp) {
-		byte *ptr = bb1.getBasePtr(pt.x, pt.y + yp);
+		byte *ptr = (byte *)bb1.getBasePtr(pt.x, pt.y + yp);
 
 		for (xp = 0; xp < xSize;) {
 			// The mask data consists of pairs of pixel/lengths, where all non-zero pixels means that the
@@ -893,7 +893,7 @@ void TattooUserInterface::makeBGArea(const Common::Rect &r) {
 	Screen &screen = *_vm->_screen;
 
 	for (int yp = r.top; yp < r.bottom; ++yp) {
-		byte *ptr = screen._backBuffer1.getBasePtr(r.left, yp);
+		byte *ptr = (byte *)screen._backBuffer1.getBasePtr(r.left, yp);
 
 		for (int xp = r.left; xp < r.right; ++xp, ++ptr)
 			*ptr = _lookupTable[*ptr];

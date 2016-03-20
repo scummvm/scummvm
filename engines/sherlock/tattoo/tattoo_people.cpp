@@ -1042,7 +1042,7 @@ void TattooPerson::walkHolmesToNPC() {
 		holmes._walkDest.x = MAX(_position.x / FIXED_INT_MULTIPLIER - imgFrame.sDrawXSize(scaleVal), 0);
 	} else {
 		holmes._walkDest.x = MIN(_position.x / FIXED_INT_MULTIPLIER + imgFrame.sDrawXSize(scaleVal) * 2,
-			screen._backBuffer1.w() - 1);
+			screen._backBuffer1.width() - 1);
 	}
 
 	// See where Holmes is with respect to the NPC (y coords)
@@ -1168,7 +1168,7 @@ void TattooPerson::centerScreenOnPerson() {
 	TattooUserInterface &ui = *(TattooUserInterface *)_vm->_ui;
 
 	ui._targetScroll.x = CLIP(_position.x / FIXED_INT_MULTIPLIER - SHERLOCK_SCREEN_WIDTH / 2,
-		0, screen._backBuffer1.w() - SHERLOCK_SCREEN_WIDTH);
+		0, screen._backBuffer1.width() - SHERLOCK_SCREEN_WIDTH);
 	screen._currentScroll = ui._targetScroll;
 
 	// Reset the default look position to the center of the screen
@@ -1478,7 +1478,7 @@ const Common::Point TattooPeople::restrictToZone(int zoneId, const Common::Point
 	Screen &screen = *_vm->_screen;
 	Common::Rect &r = scene._zones[zoneId];
 
-	if (destPos.x < 0 || destPos.x > screen._backBuffer1.w())
+	if (destPos.x < 0 || destPos.x > screen._backBuffer1.width())
 		return destPos;
 	else if (destPos.y < r.top && r.left < destPos.x && destPos.x < r.right)
 		return Common::Point(destPos.x, r.top);

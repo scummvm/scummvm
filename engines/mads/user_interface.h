@@ -190,8 +190,6 @@ private:
 	 * Draw a UI textual element
 	 */
 	void writeVocab(ScrCategory category, int id);
-
-	void updateRect(const Common::Rect &bounds);
 public:
 	MSurface _surface;
 	UISlots _uiSlots;

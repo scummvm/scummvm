@@ -110,7 +110,7 @@ void ImageEntryList::addToList(ImageEntry &ie) {
 int ASurface::_clipWidth;
 int ASurface::_clipHeight;
 
-ASurface::ASurface(): Graphics::Surface() {
+ASurface::ASurface(): Graphics::ManagedSurface() {
 	_leftSkip = _rightSkip = 0;
 	_topSkip = _bottomSkip = 0;
 	_lastBoundsX = _lastBoundsY = 0;
@@ -122,17 +122,127 @@ ASurface::ASurface(): Graphics::Surface() {
 }
 
 ASurface::~ASurface() {
-	free();
 	_savedBlock.free();
-}
-
-void ASurface::create(uint16 width, uint16 height) {
-	Graphics::Surface::create(width, height, Graphics::PixelFormat::createFormatCLUT8());
 }
 
 void ASurface::clearBuffer() {
 	byte *pSrc = (byte *)getPixels();
 	Common::fill(pSrc, pSrc + w * h, 0);
+}
+
+void ASurface::plotImage(SpriteResource *sprite, int frameNum, const Common::Point &pt) {
+	SpriteFrame *frame = sprite->getFrame(frameNum);
+	Common::Rect r(pt.x, pt.y, pt.x + frame->w, pt.y + frame->h);
+
+	if (!clip(r)) {
+		_lastBoundsX = r.left;
+		_lastBoundsY = r.top;
+		_lastBoundsW = r.width();
+		_lastBoundsH = r.height();
+
+		plotF(frame, pt);
+	}
+}
+
+void ASurface::copyBuffer(Graphics::ManagedSurface *src) {
+	blitFrom(*src);
+}
+
+void ASurface::plotF(SpriteFrame *frame, const Common::Point &pt) {
+	sPlotF(frame, Common::Rect(pt.x, pt.y, pt.x + frame->w, pt.y + frame->h));
+}
+
+void ASurface::plotB(SpriteFrame *frame, const Common::Point &pt) {
+	sPlotB(frame, Common::Rect(pt.x, pt.y, pt.x + frame->w, pt.y + frame->h));
+}
+
+void ASurface::sPlotF(SpriteFrame *frame, const Common::Rect &bounds) {
+	transBlitFrom(*frame, Common::Rect(0, 0, frame->w, frame->h), bounds, TRANSPARENCY, false);
+}
+
+void ASurface::sPlotB(SpriteFrame *frame, const Common::Rect &bounds) {
+	transBlitFrom(*frame, Common::Rect(0, 0, frame->w, frame->h), bounds, TRANSPARENCY, true);
+}
+
+void ASurface::copyBlock(ASurface *src, const Common::Rect &bounds) {
+	copyRectToSurface(*src, bounds.left, bounds.top, bounds);
+}
+
+void ASurface::copyTo(ASurface *dest) { 
+	if (dest->empty())
+		dest->create(this->w, this->h);
+
+	dest->blitFrom(*this); 
+}
+
+void ASurface::saveBlock(const Common::Rect &bounds) {
+	_savedBounds = bounds;
+	_savedBounds.clip(Common::Rect(0, 0, this->w, this->h));
+
+	_savedBlock.free();
+	_savedBlock.create(bounds.width(), bounds.height(),
+		Graphics::PixelFormat::createFormatCLUT8());
+	_savedBlock.copyRectToSurface(*this, 0, 0, _savedBounds);
+}
+
+void ASurface::restoreBlock() {
+	if (!_savedBounds.isEmpty()) {
+		copyRectToSurface(_savedBlock, _savedBounds.left, _savedBounds.top,
+			Common::Rect(0, 0, _savedBlock.w, _savedBlock.h));
+
+		_savedBlock.free();
+		_savedBounds = Common::Rect(0, 0, 0, 0);
+	}
+}
+
+void ASurface::drawRect() {
+	Graphics::ManagedSurface::fillRect(Common::Rect(_orgX1, _orgY1, _orgX2, _orgY2), _lColor);
+}
+
+void ASurface::drawLine(int x1, int y1, int x2, int y2, int col) {
+	Graphics::ManagedSurface::drawLine(x1, y1, x2, y2, col);
+}
+
+void ASurface::drawLine() {
+	Graphics::ManagedSurface::drawLine(_orgX1, _orgY1, _orgX2, _orgY1, _lColor);
+}
+
+void ASurface::drawBox() {
+	Graphics::ManagedSurface::drawLine(_orgX1, _orgY1, _orgX2, _orgY1, _lColor);
+	Graphics::ManagedSurface::drawLine(_orgX1, _orgY2, _orgX2, _orgY2, _lColor);
+	Graphics::ManagedSurface::drawLine(_orgX2, _orgY1, _orgX2, _orgY1, _lColor);
+	Graphics::ManagedSurface::drawLine(_orgX2, _orgY2, _orgX2, _orgY2, _lColor);
+}
+
+void ASurface::flipHorizontal(ASurface &dest) {
+	dest.create(this->w, this->h);
+	for (int y = 0; y < h; ++y) {
+		const byte *pSrc = (const byte *)getBasePtr(this->w - 1, y);
+		byte *pDest = (byte *)dest.getBasePtr(0, y);
+
+		for (int x = 0; x < w; ++x, --pSrc, ++pDest)
+			*pDest = *pSrc;
+	}
+}
+
+void ASurface::moveBufferLeft() {
+	byte *p = (byte *)getPixels();
+	Common::copy(p + TILE_WIDTH, p + (w * h), p);
+}
+
+void ASurface::moveBufferRight() {
+	byte *p = (byte *)getPixels();
+	Common::copy_backward(p, p + (pitch * h) - TILE_WIDTH, p + (pitch * h));
+}
+
+void ASurface::moveBufferUp() {
+	byte *p = (byte *)getPixels();
+	Common::copy(p + (pitch * TILE_HEIGHT), p + (pitch * h), p);
+}
+
+void ASurface::moveBufferDown() {
+	byte *p = (byte *)getPixels();
+	Common::copy_backward(p, p + (pitch * (h - TILE_HEIGHT)), p + (pitch * h));
 }
 
 bool ASurface::clip(Common::Rect &r) {
@@ -179,198 +289,6 @@ bool ASurface::clip(Common::Rect &r) {
 	}
 
 	return false;
-}
-
-void ASurface::plotImage(SpriteResource *sprite, int frameNum, const Common::Point &pt) {
-	SpriteFrame *frame = sprite->getFrame(frameNum);
-	Common::Rect r(pt.x, pt.y, pt.x + frame->w, pt.y + frame->h);
-
-	if (!clip(r)) {
-		_lastBoundsX = r.left;
-		_lastBoundsY = r.top;
-		_lastBoundsW = r.width();
-		_lastBoundsH = r.height();
-
-		plotF(frame, pt);
-	}
-}
-
-void ASurface::transBlitFrom(ASurface *src, const Common::Point &destPos) {
-	if (getPixels() == nullptr)
-		create(w, h);
-
-	for (int yp = 0; yp < src->h; ++yp) {
-		const byte *srcP = (const byte *)src->getBasePtr(0, yp);
-		byte *destP = (byte *)getBasePtr(destPos.x, destPos.y + yp);
-
-		for (int xp = 0; xp < this->w; ++xp, ++srcP, ++destP) {
-			if (*srcP != TRANSPARENCY)
-				*destP = *srcP;
-		}
-	}
-}
-
-void ASurface::transBlitFrom(ASurface *src, const Common::Rect &bounds) {
-	const int SCALE_LIMIT = 0x100;
-	int scaleX = SCALE_LIMIT * bounds.width() / src->w;
-	int scaleY = SCALE_LIMIT * bounds.height() / src->h;
-	int scaleXCtr = 0, scaleYCtr = 0;
-
-	for (int yCtr = 0, destY = bounds.top; yCtr < src->h; ++yCtr) {
-		// Handle skipping lines if Y scaling
-		scaleYCtr += scaleY;
-		if (scaleYCtr < SCALE_LIMIT)
-			continue;
-		scaleYCtr -= SCALE_LIMIT;
-
-		// Handle off-screen lines
-		if (destY >= this->h)
-			break;
-
-		if (destY >= 0) {
-			// Handle drawing the line
-			const byte *pSrc = (const byte *)src->getBasePtr(0, yCtr);
-			byte *pDest = (byte *)getBasePtr(bounds.left, destY);
-			scaleXCtr = 0;
-			int x = bounds.left;
-
-			for (int xCtr = 0; xCtr < src->w; ++xCtr, ++pSrc) {
-				// Handle horizontal scaling
-				scaleXCtr += scaleX;
-				if (scaleXCtr < SCALE_LIMIT)
-					continue;
-				scaleXCtr -= SCALE_LIMIT;
-
-				// Only handle on-screen pixels
-				if (x >= this->w)
-					break;
-				if (x >= 0 && *pSrc != 0)
-					*pDest = *pSrc;
-
-				++pDest;
-				++x;
-			}
-		}
-
-		++destY;
-	}
-}
-
-void ASurface::transBlitFrom(ASurface &src) {
-	blitFrom(src);
-}
-
-void ASurface::blitFrom(const Graphics::Surface &src) {
-	assert(w >= src.w && h >= src.h);
-	for (int y = 0; y < src.h; ++y) {
-		const byte *srcP = (const byte *)src.getBasePtr(0, y);
-		byte *destP = (byte *)getBasePtr(0, y);
-		Common::copy(srcP, srcP + src.w, destP);
-	}
-}
-
-void ASurface::copyBuffer(Graphics::Surface *src) {
-	blitFrom(*src);
-}
-
-void ASurface::plotF(SpriteFrame *frame, const Common::Point &pt) {
-	sPlotF(frame, Common::Rect(pt.x, pt.y, pt.x + frame->w, pt.y + frame->h));
-}
-
-void ASurface::plotB(SpriteFrame *frame, const Common::Point &pt) {
-	sPlotB(frame, Common::Rect(pt.x, pt.y, pt.x + frame->w, pt.y + frame->h));
-}
-
-void ASurface::sPlotF(SpriteFrame *frame, const Common::Rect &bounds) {
-	transBlitFrom(frame, bounds);
-}
-
-void ASurface::sPlotB(SpriteFrame *frame, const Common::Rect &bounds) {
-	ASurface flippedFrame;
-	frame->flipHorizontal(flippedFrame);
-
-	transBlitFrom(&flippedFrame, bounds);
-}
-
-void ASurface::copyBlock(ASurface *src, const Common::Rect &bounds) {
-	copyRectToSurface(*src, bounds.left, bounds.top, bounds);
-}
-
-void ASurface::copyTo(ASurface *dest) { 
-	if (dest->empty())
-		dest->create(this->w, this->h);
-
-	dest->blitFrom(*this); 
-}
-
-void ASurface::saveBlock(const Common::Rect &bounds) {
-	_savedBounds = bounds;
-	_savedBounds.clip(Common::Rect(0, 0, this->w, this->h));
-
-	_savedBlock.free();
-	_savedBlock.create(bounds.width(), bounds.height(),
-		Graphics::PixelFormat::createFormatCLUT8());
-	_savedBlock.copyRectToSurface(*this, 0, 0, _savedBounds);
-}
-
-void ASurface::restoreBlock() {
-	if (!_savedBounds.isEmpty()) {
-		copyRectToSurface(_savedBlock, _savedBounds.left, _savedBounds.top,
-			Common::Rect(0, 0, _savedBlock.w, _savedBlock.h));
-
-		_savedBlock.free();
-		_savedBounds = Common::Rect(0, 0, 0, 0);
-	}
-}
-
-void ASurface::drawRect() {
-	Graphics::Surface::fillRect(Common::Rect(_orgX1, _orgY1, _orgX2, _orgY2), _lColor);
-}
-
-void ASurface::drawLine(int x1, int y1, int x2, int y2, int col) {
-	Graphics::Surface::drawLine(x1, y1, x2, y2, col);
-}
-
-void ASurface::drawLine() {
-	Graphics::Surface::drawLine(_orgX1, _orgY1, _orgX2, _orgY1, _lColor);
-}
-
-void ASurface::drawBox() {
-	Graphics::Surface::drawLine(_orgX1, _orgY1, _orgX2, _orgY1, _lColor);
-	Graphics::Surface::drawLine(_orgX1, _orgY2, _orgX2, _orgY2, _lColor);
-	Graphics::Surface::drawLine(_orgX2, _orgY1, _orgX2, _orgY1, _lColor);
-	Graphics::Surface::drawLine(_orgX2, _orgY2, _orgX2, _orgY2, _lColor);
-}
-
-void ASurface::flipHorizontal(ASurface &dest) {
-	dest.create(this->w, this->h);
-	for (int y = 0; y < h; ++y) {
-		const byte *pSrc = (const byte *)getBasePtr(this->w - 1, y);
-		byte *pDest = (byte *)dest.getBasePtr(0, y);
-
-		for (int x = 0; x < w; ++x, --pSrc, ++pDest)
-			*pDest = *pSrc;
-	}
-}
-
-void ASurface::moveBufferLeft() {
-	byte *p = (byte *)getPixels();
-	Common::copy(p + TILE_WIDTH, p + (w * h), p);
-}
-
-void ASurface::moveBufferRight() {
-	byte *p = (byte *)getPixels();
-	Common::copy_backward(p, p + (pitch * h) - TILE_WIDTH, p + (pitch * h));
-}
-
-void ASurface::moveBufferUp() {
-	byte *p = (byte *)getPixels();
-	Common::copy(p + (pitch * TILE_HEIGHT), p + (pitch * h), p);
-}
-
-void ASurface::moveBufferDown() {
-	byte *p = (byte *)getPixels();
-	Common::copy_backward(p, p + (pitch * (h - TILE_HEIGHT)), p + (pitch * h));
 }
 
 } // End of namespace Access

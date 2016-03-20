@@ -127,7 +127,7 @@ void WidgetVerbs::render() {
 
 	// Create the drawing surface
 	_surface.create(_bounds.width(), _bounds.height());
-	_surface.fill(TRANSPARENCY);
+	_surface.clear(TRANSPARENCY);
 
 	// Draw basic background
 	makeInfoArea();
@@ -142,8 +142,8 @@ void WidgetVerbs::render() {
 			_surface.hLine(3, (_surface.fontHeight() + 7) * (idx + 1) + 1, _bounds.width() - 4, INFO_MIDDLE);
 			_surface.hLine(3, (_surface.fontHeight() + 7) * (idx + 1) + 2, _bounds.width() - 4, INFO_BOTTOM);
 
-			_surface.transBlitFrom(images[4], Common::Point(0, (_surface.fontHeight() + 7) * (idx + 1) - 1));
-			_surface.transBlitFrom(images[5], Common::Point(_bounds.width() - images[5]._width, 
+			_surface.SHtransBlitFrom(images[4], Common::Point(0, (_surface.fontHeight() + 7) * (idx + 1) - 1));
+			_surface.SHtransBlitFrom(images[5], Common::Point(_bounds.width() - images[5]._width, 
 				(_surface.fontHeight() + 7) * (idx + 1) - 1));
 		}
 	}
