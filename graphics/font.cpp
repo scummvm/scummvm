@@ -265,6 +265,14 @@ int Font::getStringWidth(const Common::U32String &str) const {
 	return getStringWidthImpl(*this, str);
 }
 
+void Font::drawChar(ManagedSurface *dst, uint32 chr, int x, int y, uint32 color) const {
+	drawChar(&dst->_innerSurface, chr, x, y, color);
+
+	Common::Rect charBox = getBoundingBox(chr);
+	charBox.translate(x, y);
+	dst->addDirtyRect(charBox);
+}
+
 void Font::drawString(Surface *dst, const Common::String &str, int x, int y, int w, uint32 color, TextAlign align, int deltax, bool useEllipsis) const {
 	Common::String renderStr = useEllipsis ? handleEllipsis(str, w) : str;
 	drawStringImpl(*this, dst, renderStr, x, y, w, color, align, deltax);
