@@ -511,7 +511,7 @@ int16 GfxText32::getTextWidth(const uint index, uint length) const {
 					--length;
 
 					fontId = fontId * 10 + currentChar - '0';
-				} while (length > 0 && currentChar >= '0' && currentChar <= '9');
+				} while (length > 0 && *text >= '0' && *text <= '9');
 
 				if (length > 0) {
 					font = _cache->getFont(fontId);
@@ -519,7 +519,11 @@ int16 GfxText32::getTextWidth(const uint index, uint length) const {
 			}
 
 			// Forward through any more unknown control character data
-			while (length > 0 && currentChar != '|') {
+			while (length > 0 && *text != '|') {
+				++text;
+				--length;
+			}
+			if (length > 0) {
 				++text;
 				--length;
 			}
@@ -527,8 +531,10 @@ int16 GfxText32::getTextWidth(const uint index, uint length) const {
 			width += font->getCharWidth(currentChar);
 		}
 
-		currentChar = *text++;
-		--length;
+		if (length > 0) {
+			currentChar = *text++;
+			--length;
+		}
 	}
 
 	return width;
