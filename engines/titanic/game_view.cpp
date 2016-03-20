@@ -57,6 +57,17 @@ void CGameView::createSurface(const CResourceKey &key) {
 	_surface->_field3C = true;
 }
 
+void CGameView::draw1() {
+	CScreenManager::setCurrent();
+	Common::Rect rect1 = _gameManager->_bounds;
+	Common::Rect rect2(0, 0, 600, 340);
+	rect2.translate(20, 10);
+
+
+
+	warning("TODO: CGameView_Draw1");
+}
+
 /*------------------------------------------------------------------------*/
 
 CSTGameView::CSTGameView(CMainGameWindow *gameWindow) :

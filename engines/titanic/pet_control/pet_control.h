@@ -78,6 +78,8 @@ public:
 	 */
 	virtual void load(SimpleFile *file);
 
+	virtual void proc26();
+
 	/**
 	 * Called after loading a game has finished
 	 */

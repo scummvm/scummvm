@@ -68,8 +68,17 @@ public:
 
 	virtual void setWindowHandle(int v);
 	virtual bool resetWindowHandle(int v);
+	
+	/**
+	 * Sets the video mode
+	 */
 	virtual void setMode(int width, int height, int bpp, uint numBackSurfaces, bool flag2) = 0;
-	virtual void proc5() = 0;
+
+	/**
+	 * Handles drawing the cursors
+	 */
+	virtual void drawCursors() = 0;
+	
 	virtual void proc6() = 0;
 	virtual void proc7() = 0;
 	virtual CVideoSurface *getSurface(int surfaceNum) const = 0;
@@ -136,8 +145,16 @@ public:
 	OSScreenManager(TitanicEngine *vm);
 	virtual ~OSScreenManager();
 
-	virtual void setMode(int width, int height, int bpp, uint numBackSurfaces, bool flag2);
-	virtual void proc5();
+	/**
+	 * Sets the video mode
+	 */
+	virtual void setMode(int width, int height, int bpp, uint numBackSurfaces, bool flag2) = 0;
+
+	/**
+	 * Handles drawing the cursors
+	 */
+	virtual void drawCursors();
+
 	virtual void proc6();
 	virtual void proc7();
 	virtual CVideoSurface *getSurface(int surfaceNum) const;

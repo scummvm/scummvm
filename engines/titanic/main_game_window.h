@@ -49,6 +49,15 @@ private:
 	 * to use
 	 */
 	int selectSavegame();
+
+	/**
+	 * Used for drawing the PET fullscreen? maybe
+	 */
+	void drawPet(CScreenManager *screenManager);
+
+	void draw1();
+
+	void draw2(CScreenManager *screenManager);
 public:
 	CGameView *_gameView;
 	CGameManager *_gameManager;

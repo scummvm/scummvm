@@ -63,6 +63,8 @@ public:
 	 * Creates a surface from a specified resource
 	 */
 	void createSurface(const CResourceKey &key);
+
+	void draw1();
 };
 
 class CSTGameView: public CGameView {

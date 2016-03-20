@@ -80,6 +80,10 @@ void CPetControl::saveSubObjects(SimpleFile *file, int indent) const {
 	_sub8.save(file, indent);
 }
 
+void CPetControl::proc26() {
+	warning("TODO: CPetControl::proc26");
+}
+
 void CPetControl::postLoad() {
 	warning("TODO: CPetControl::postLoad");
 }

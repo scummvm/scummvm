@@ -105,7 +105,10 @@ void OSScreenManager::setMode(int width, int height, int bpp, uint numBackSurfac
 	loadCursors();
 }
 
-void OSScreenManager::proc5() {}
+void OSScreenManager::drawCursors() {
+	warning("OSScreenManager::drawCursors");
+}
+
 void OSScreenManager::proc6() {}
 void OSScreenManager::proc7() {}
 

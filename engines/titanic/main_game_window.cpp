@@ -25,6 +25,7 @@
 #include "titanic/game_manager.h"
 #include "titanic/game_view.h"
 #include "titanic/messages/messages.h"
+#include "titanic/pet_control/pet_control.h"
 
 namespace Titanic {
 
@@ -125,8 +126,12 @@ void CMainGameWindow::draw() {
 		case GSMODE_1:
 		case GSMODE_2:
 			if (_gameManager->_gameState._field18)
-				warning("TODO: Field18_fn1(this)");
-			warning("TODO: Stuff");
+				drawPet(scrManager);
+
+			draw1();
+			draw2(scrManager);
+			scrManager->drawCursors();
+			break;
 
 		case GSMODE_5:
 			g_vm->_filesManager.debug(scrManager);
@@ -136,6 +141,23 @@ void CMainGameWindow::draw() {
 			break;
 		}
 	}
+}
+
+void CMainGameWindow::drawPet(CScreenManager *screenManager) {
+	if (_gameView && _gameView->_surface) {
+		CPetControl *petControl = _gameManager->_project->getPetControl();
+		if (petControl)
+			petControl->proc26();
+	}
+}
+
+void CMainGameWindow::draw1() {
+	if (_gameView->_surface)
+		_gameView->draw1();
+}
+
+void CMainGameWindow::draw2(CScreenManager *screenManager) {
+
 }
 
 void CMainGameWindow::mouseChanged() {
