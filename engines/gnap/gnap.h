@@ -1090,13 +1090,12 @@ public:
 
 	// Scene 99
 	int _s99_itemsCount;
-	int _s99_dword_47F2F0[16];
-	int _s99_dword_47F330[16];
-	int _s99_dword_47F370[50];
+	int _s99_resourceIdArr[16];
+	int _s99_sequenceCountArr[16];
+	int _s99_sequenceIdArr[50];
 	byte _s99_canSkip[16];
 	int cutscene_init();
 	void cutscene_run();
-
 };
 
 } // End of namespace Gnap

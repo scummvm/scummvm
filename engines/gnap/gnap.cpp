@@ -751,7 +751,7 @@ void GnapEngine::mainLoop() {
 
 	// > DEBUG BEGIN
 	_currentSceneNum = 53;
-	_newSceneNum = 42;
+	_newSceneNum = 48;
 	_newCursorValue = 3;
 	// < DEBUG END
 
@@ -2341,7 +2341,7 @@ void GnapEngine::cutscene_run() {
 
 	if (_prevSceneNum == 2) {
 		soundId = 0x36B;
-		duration = MAX(1, 300 / getSequenceTotalDuration(_s99_dword_47F370[_s99_itemsCount - 1]));//CHECKME
+		duration = MAX(1, 300 / getSequenceTotalDuration(_s99_sequenceIdArr[_s99_itemsCount - 1]));//CHECKME
 		_timers[0] = 0;
 	}
 
@@ -2350,11 +2350,11 @@ void GnapEngine::cutscene_run() {
 
 	hideCursor();
 
-	_gameSys->drawSpriteToBackground(0, 0, _s99_dword_47F2F0[0]);
+	_gameSys->drawSpriteToBackground(0, 0, _s99_resourceIdArr[0]);
 
-	for (int j = 0; j < _s99_dword_47F330[0]; ++j)
-		_gameSys->insertSequence(_s99_dword_47F370[j], j + 2, 0, 0, kSeqNone, 0, 0, 0);
-	_gameSys->setAnimation(_s99_dword_47F370[0], 2, 0);
+	for (int j = 0; j < _s99_sequenceCountArr[0]; ++j)
+		_gameSys->insertSequence(_s99_sequenceIdArr[j], j + 2, 0, 0, kSeqNone, 0, 0, 0);
+	_gameSys->setAnimation(_s99_sequenceIdArr[0], 2, 0);
 		
 	clearKeyStatus1(Common::KEYCODE_ESCAPE);
 	clearKeyStatus1(Common::KEYCODE_SPACE);
@@ -2362,9 +2362,8 @@ void GnapEngine::cutscene_run() {
 
 	_mouseClickState._left = false;
 	
-	int v1 = 0;
+	int firstSequenceIndex = 0;
 	while (!_sceneDone) {
-
 		gameUpdateTick();
 
 		if (_gameSys->getAnimationStatus(0) == 2 || skip) {
@@ -2372,14 +2371,14 @@ void GnapEngine::cutscene_run() {
 			_gameSys->requestClear2(false);
 			_gameSys->requestClear1();
 			_gameSys->setAnimation(0, 0, 0);
-			v1 += _s99_dword_47F330[itemIndex++];
+			firstSequenceIndex += _s99_sequenceCountArr[itemIndex++];
 			if (itemIndex >= _s99_itemsCount) {
 				_sceneDone = true;
 			} else {
-				for (int m = 0; m < _s99_dword_47F330[itemIndex]; ++m)
-					_gameSys->insertSequence(_s99_dword_47F370[v1 + m], m + 2, 0, 0, kSeqNone, 0, 0, 0);
-				_gameSys->drawSpriteToBackground(0, 0, _s99_dword_47F2F0[itemIndex]);
-				_gameSys->setAnimation(_s99_dword_47F370[v1], 2, 0);
+				for (int m = 0; m < _s99_sequenceCountArr[itemIndex]; ++m)
+					_gameSys->insertSequence(_s99_sequenceIdArr[firstSequenceIndex + m], m + 2, 0, 0, kSeqNone, 0, 0, 0);
+				_gameSys->drawSpriteToBackground(0, 0, _s99_resourceIdArr[itemIndex]);
+				_gameSys->setAnimation(_s99_sequenceIdArr[firstSequenceIndex], 2, 0);
 			}
 		}
 
@@ -2398,12 +2397,10 @@ void GnapEngine::cutscene_run() {
 			volume = MAX(1, volume - duration);
 			setSoundVolume(soundId, volume);
 		}
-		
 	}
 
 	if (soundId != -1)
-		stopSound(soundId);
-	
+		stopSound(soundId);	
 }
 
 } // End of namespace Gnap
