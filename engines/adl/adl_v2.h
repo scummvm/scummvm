@@ -63,6 +63,7 @@ protected:
 	int o2_placeItem(ScriptEnv &e);
 	int o2_tellTime(ScriptEnv &e);
 	int o2_setRoomFromVar(ScriptEnv &e);
+	int o2_initDisk(ScriptEnv &e);
 
 	struct {
 		Common::String time;
