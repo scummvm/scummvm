@@ -93,9 +93,9 @@ void GnapEngine::scene45_run() {
 	_gameSys->setAnimation(0x96, 1, 3);
 	_gameSys->insertSequence(0x99, 1, 0, 0, kSeqNone, 0, 0, 0);
 	_gameSys->setAnimation(0x99, 1, 4);
-	_currDancerSequenceId = 0x8F;
-	_gameSys->setAnimation(_currDancerSequenceId, 1, 2);
-	_gameSys->insertSequence(_currDancerSequenceId, 1, 0, 0, kSeqNone, 0, 0, 0);
+	_s45_currDancerSequenceId = 0x8F;
+	_gameSys->setAnimation(_s45_currDancerSequenceId, 1, 2);
+	_gameSys->insertSequence(_s45_currDancerSequenceId, 1, 0, 0, kSeqNone, 0, 0, 0);
 	
 	if (isFlag(12)) {
 		_toyUfoId = 0;
@@ -149,9 +149,9 @@ void GnapEngine::scene45_run() {
 				_gameSys->setAnimation(0, 0, 2);
 				_gnapRandomValue = getRandom(7);
 				int newSeqId = _gnapRandomValue + 0x8F;
-				_gameSys->insertSequence(_gnapRandomValue + 0x8F, 1, _currDancerSequenceId, 1, kSeqSyncWait, 0, 0, 0);
+				_gameSys->insertSequence(_gnapRandomValue + 0x8F, 1, _s45_currDancerSequenceId, 1, kSeqSyncWait, 0, 0, 0);
 				_gameSys->setAnimation(newSeqId, 1, 2);
-				_currDancerSequenceId = newSeqId;
+				_s45_currDancerSequenceId = newSeqId;
 			}
 			if (_gameSys->getAnimationStatus(3) == 2 && _gameSys->getAnimationStatus(4) == 2) {
 				_gameSys->insertSequence(0x96, 1, 0x96, 1, kSeqSyncWait, 0, 0, 0);
@@ -395,9 +395,9 @@ void GnapEngine::scene45_updateAnimations() {
 		_gameSys->setAnimation(0, 0, 2);
 		_gnapRandomValue = getRandom(7);
 		int newSeqId = _gnapRandomValue + 0x8F;
-		_gameSys->insertSequence(_gnapRandomValue + 0x8F, 1, _currDancerSequenceId, 1, kSeqSyncWait, 0, 0, 0);
+		_gameSys->insertSequence(_gnapRandomValue + 0x8F, 1, _s45_currDancerSequenceId, 1, kSeqSyncWait, 0, 0, 0);
 		_gameSys->setAnimation(newSeqId, 1, 2);
-		_currDancerSequenceId = newSeqId;
+		_s45_currDancerSequenceId = newSeqId;
 	}
 	
 	if (_gameSys->getAnimationStatus(3) == 2 && _gameSys->getAnimationStatus(4) == 2) {

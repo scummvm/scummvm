@@ -864,8 +864,8 @@ public:
 	void scene42_updateAnimations();
 
 	// Scene 43
-	int _currTwoHeadedGuySequenceId;
-	int _nextTwoHeadedGuySequenceId;
+	int _s43_currTwoHeadedGuySequenceId;
+	int _s43_nextTwoHeadedGuySequenceId;
 
 	int scene43_init();
 	void scene43_updateHotspots();
@@ -873,17 +873,17 @@ public:
 	void scene43_updateAnimations();
 
 	// Scene 44
-	int _nextSpringGuySequenceId;
-	int _nextKissingLadySequenceId;
-	int _currSpringGuySequenceId;
-	int _currKissingLadySequenceId;
+	int _s44_nextSpringGuySequenceId;
+	int _s44_nextKissingLadySequenceId;
+	int _s44_currSpringGuySequenceId;
+	int _s44_currKissingLadySequenceId;
 	int scene44_init();
 	void scene44_updateHotspots();
 	void scene44_run();
 	void scene44_updateAnimations();
 	
 	// Scene 45
-	int _currDancerSequenceId;
+	int _s45_currDancerSequenceId;
 	int scene45_init();
 	void scene45_updateHotspots();
 	void scene45_run();

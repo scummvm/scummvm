@@ -92,11 +92,11 @@ void GnapEngine::scene43_run() {
 	if (!isFlag(14))
 		_gameSys->insertSequence(0x1086F, 1, 0, 0, kSeqNone, 0, 0, 0);
 	
-	_currTwoHeadedGuySequenceId = 0x13C;
-	_nextTwoHeadedGuySequenceId = -1;
+	_s43_currTwoHeadedGuySequenceId = 0x13C;
+	_s43_nextTwoHeadedGuySequenceId = -1;
 	
 	_gameSys->setAnimation(0x13C, 1, 2);
-	_gameSys->insertSequence(_currTwoHeadedGuySequenceId, 1, 0, 0, kSeqNone, 0, 0, 0);
+	_gameSys->insertSequence(_s43_currTwoHeadedGuySequenceId, 1, 0, 0, kSeqNone, 0, 0, 0);
 	
 	if (isFlag(12)) {
 		_toyUfoId = 0;
@@ -332,27 +332,27 @@ void GnapEngine::scene43_run() {
 				updateGnapIdleSequence();
 			if (!_timers[4] && (!isFlag(12) || !isFlag(19))) {
 				_timers[4] = getRandom(100) + 100;
-				if (_gnapActionStatus < 0 && _beaverActionStatus < 0 && _nextTwoHeadedGuySequenceId == -1) {
+				if (_gnapActionStatus < 0 && _beaverActionStatus < 0 && _s43_nextTwoHeadedGuySequenceId == -1) {
 					_gnapRandomValue = getRandom(5);
 					switch (_gnapRandomValue) {
 					case 0:
-						_nextTwoHeadedGuySequenceId = 0x13C;
+						_s43_nextTwoHeadedGuySequenceId = 0x13C;
 						break;
 					case 1:
-						_nextTwoHeadedGuySequenceId = 0x134;
+						_s43_nextTwoHeadedGuySequenceId = 0x134;
 						break;
 					case 2:
-						_nextTwoHeadedGuySequenceId = 0x135;
+						_s43_nextTwoHeadedGuySequenceId = 0x135;
 						break;
 					case 3:
-						_nextTwoHeadedGuySequenceId = 0x136;
+						_s43_nextTwoHeadedGuySequenceId = 0x136;
 						break;
 					case 4:
-						_nextTwoHeadedGuySequenceId = 0x13A;
+						_s43_nextTwoHeadedGuySequenceId = 0x13A;
 						break;
 					}
-					if (_nextTwoHeadedGuySequenceId == _currTwoHeadedGuySequenceId)
-						_nextTwoHeadedGuySequenceId = -1;
+					if (_s43_nextTwoHeadedGuySequenceId == _s43_currTwoHeadedGuySequenceId)
+						_s43_nextTwoHeadedGuySequenceId = -1;
 				}
 			}
 		}
@@ -391,11 +391,11 @@ void GnapEngine::scene43_updateAnimations() {
 				_gnapSequenceId = 0x13D;
 				_gnapSequenceDatNum = 0;
 				_gameSys->setAnimation(0x13D, _gnapId, 0);
-				_nextTwoHeadedGuySequenceId = 0x13B;
-				_gameSys->insertSequence(0x13B, 1, _currTwoHeadedGuySequenceId, 1, kSeqSyncWait, 0, 0, 0);
-				_gameSys->setAnimation(_nextTwoHeadedGuySequenceId, 1, 2);
-				_currTwoHeadedGuySequenceId = _nextTwoHeadedGuySequenceId;
-				_nextTwoHeadedGuySequenceId = -1;
+				_s43_nextTwoHeadedGuySequenceId = 0x13B;
+				_gameSys->insertSequence(0x13B, 1, _s43_currTwoHeadedGuySequenceId, 1, kSeqSyncWait, 0, 0, 0);
+				_gameSys->setAnimation(_s43_nextTwoHeadedGuySequenceId, 1, 2);
+				_s43_currTwoHeadedGuySequenceId = _s43_nextTwoHeadedGuySequenceId;
+				_s43_nextTwoHeadedGuySequenceId = -1;
 				_timers[4] = getRandom(100) + 100;
 				_gnapActionStatus = -1;
 			}
@@ -409,24 +409,24 @@ void GnapEngine::scene43_updateAnimations() {
 	}
 	
 	if (_gameSys->getAnimationStatus(2) == 2) {
-		if (_currTwoHeadedGuySequenceId == 0x13A) {
+		if (_s43_currTwoHeadedGuySequenceId == 0x13A) {
 			if (isFlag(19)) {
-				_nextTwoHeadedGuySequenceId = 0x13E;
+				_s43_nextTwoHeadedGuySequenceId = 0x13E;
 				stopSound(0x108F6);
 			} else if (getRandom(2) != 0) {
-				_nextTwoHeadedGuySequenceId = 0x137;
+				_s43_nextTwoHeadedGuySequenceId = 0x137;
 			} else {
-				_nextTwoHeadedGuySequenceId = 0x138;
+				_s43_nextTwoHeadedGuySequenceId = 0x138;
 			}
-		} else if (_currTwoHeadedGuySequenceId == 0x13E) {
+		} else if (_s43_currTwoHeadedGuySequenceId == 0x13E) {
 			_sceneDone = true;
 			_newSceneNum = 54;
 		}
-		if (_nextTwoHeadedGuySequenceId != -1) {
-			_gameSys->insertSequence(_nextTwoHeadedGuySequenceId, 1, _currTwoHeadedGuySequenceId, 1, kSeqSyncWait, 0, 0, 0);
-			_gameSys->setAnimation(_nextTwoHeadedGuySequenceId, 1, 2);
-			_currTwoHeadedGuySequenceId = _nextTwoHeadedGuySequenceId;
-			_nextTwoHeadedGuySequenceId = -1;
+		if (_s43_nextTwoHeadedGuySequenceId != -1) {
+			_gameSys->insertSequence(_s43_nextTwoHeadedGuySequenceId, 1, _s43_currTwoHeadedGuySequenceId, 1, kSeqSyncWait, 0, 0, 0);
+			_gameSys->setAnimation(_s43_nextTwoHeadedGuySequenceId, 1, 2);
+			_s43_currTwoHeadedGuySequenceId = _s43_nextTwoHeadedGuySequenceId;
+			_s43_nextTwoHeadedGuySequenceId = -1;
 			_timers[4] = getRandom(100) + 100;
 		}
 	}
@@ -458,7 +458,7 @@ void GnapEngine::scene43_updateAnimations() {
 			_gnapActionStatus = 3;
 			break;
 		case 8:
-			_nextTwoHeadedGuySequenceId = 0x13A;
+			_s43_nextTwoHeadedGuySequenceId = 0x13A;
 			_toyUfoX = 514;
 			_toyUfoY = 125;
 			toyUfoFlyTo(835, 125, 0, 835, 0, 300, 3);
