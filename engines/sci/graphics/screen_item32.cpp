@@ -516,15 +516,22 @@ void ScreenItem::update(const reg_t object) {
 }
 
 void ScreenItem::update() {
-        // TODO: error out if we're not contained in our plane's ScreenItemList
+	Plane *plane = g_sci->_gfxFrameout->getPlanes().findByObject(_plane);
+	if (plane == nullptr) {
+		error("ScreenItem::update: Invalid plane %04x:%04x", PRINT_REG(_plane));
+	}
 
-        if (!_created) {
-                _updated = g_sci->_gfxFrameout->getScreenCount();
-        }
-        _deleted = 0;
+	if (plane->_screenItemList.findByObject(_object) == nullptr) {
+		error("ScreenItem::update: %04x:%04x not in plane %04x:%04x", PRINT_REG(_object), PRINT_REG(_plane));
+	}
 
-        delete _celObj;
-        _celObj = nullptr;
+	if (!_created) {
+		_updated = g_sci->_gfxFrameout->getScreenCount();
+	}
+	_deleted = 0;
+
+	delete _celObj;
+	_celObj = nullptr;
 }
 
 // TODO: This code is quite similar to calcRects, so try to deduplicate

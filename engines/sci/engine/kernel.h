@@ -467,7 +467,16 @@ reg_t kStringTrnExclude(EngineState *s, int argc, reg_t *argv);
 
 reg_t kScrollWindowCreate(EngineState *s, int argc, reg_t *argv);
 reg_t kScrollWindowAdd(EngineState *s, int argc, reg_t *argv);
+reg_t kScrollWindowPageUp(EngineState *s, int argc, reg_t *argv);
+reg_t kScrollWindowPageDown(EngineState *s, int argc, reg_t *argv);
+reg_t kScrollWindowUpArrow(EngineState *s, int argc, reg_t *argv);
+reg_t kScrollWindowDownArrow(EngineState *s, int argc, reg_t *argv);
+reg_t kScrollWindowHome(EngineState *s, int argc, reg_t *argv);
+reg_t kScrollWindowEnd(EngineState *s, int argc, reg_t *argv);
 reg_t kScrollWindowWhere(EngineState *s, int argc, reg_t *argv);
+reg_t kScrollWindowGo(EngineState *s, int argc, reg_t *argv);
+reg_t kScrollWindowModify(EngineState *s, int argc, reg_t *argv);
+reg_t kScrollWindowHide(EngineState *s, int argc, reg_t *argv);
 reg_t kScrollWindowShow(EngineState *s, int argc, reg_t *argv);
 reg_t kScrollWindowDestroy(EngineState *s, int argc, reg_t *argv);
 

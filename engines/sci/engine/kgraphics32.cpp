@@ -360,140 +360,138 @@ reg_t kScrollWindow(EngineState *s, int argc, reg_t *argv) {
 }
 
 reg_t kScrollWindowCreate(EngineState *s, int argc, reg_t *argv) {
-	debug("kScrollWindowCreate");
-	kStub(s, argc, argv);
-	return argv[0];
+	const reg_t object = argv[0];
+	const uint16 maxNumEntries = argv[1].toUint16();
+
+	SegManager *segMan = s->_segMan;
+	const int16 borderColor = readSelectorValue(segMan, object, SELECTOR(borderColor));
+	const TextAlign alignment = (TextAlign)readSelectorValue(segMan, object, SELECTOR(mode));
+	const GuiResourceId fontId = (GuiResourceId)readSelectorValue(segMan, object, SELECTOR(font));
+	const int16 backColor = readSelectorValue(segMan, object, SELECTOR(back));
+	const int16 foreColor = readSelectorValue(segMan, object, SELECTOR(fore));
+	const reg_t plane = readSelector(segMan, object, SELECTOR(plane));
+
+	Common::Rect rect;
+	rect.left = readSelectorValue(segMan, object, SELECTOR(nsLeft));
+	rect.top = readSelectorValue(segMan, object, SELECTOR(nsTop));
+	rect.right = readSelectorValue(segMan, object, SELECTOR(nsRight)) + 1;
+	rect.bottom = readSelectorValue(segMan, object, SELECTOR(nsBottom)) + 1;
+	const Common::Point position(rect.left, rect.top);
+
+	return g_sci->_gfxControls32->makeScrollWindow(rect, position, plane, foreColor, backColor, fontId, alignment, borderColor, maxNumEntries);
 }
 
 reg_t kScrollWindowAdd(EngineState *s, int argc, reg_t *argv) {
-	debug("kScrollWindowAdd");
-	return kStubNull(s, argc, argv);
+	ScrollWindow *scrollWindow = g_sci->_gfxControls32->getScrollWindow(argv[0]);
+
+	const Common::String text = s->_segMan->getString(argv[1]);
+	const GuiResourceId fontId = argv[2].toSint16();
+	const int16 color = argv[3].toSint16();
+	const TextAlign alignment = (TextAlign)argv[4].toSint16();
+	const bool scrollTo = argc > 5 ? (bool)argv[5].toUint16() : true;
+
+	return scrollWindow->add(text, fontId, color, alignment, scrollTo);
 }
 
 reg_t kScrollWindowWhere(EngineState *s, int argc, reg_t *argv) {
-	debug("kScrollWindowWhere");
-	return kStubNull(s, argc, argv);
+	ScrollWindow *scrollWindow = g_sci->_gfxControls32->getScrollWindow(argv[0]);
+
+	const uint16 where = (argv[1].toUint16() * scrollWindow->where()).toInt();
+
+	return make_reg(0, where);
 }
 
-reg_t kScrollWindowShow(EngineState *s, int argc, reg_t *argv) {
-	debug("kScrollWindowShow");
-	return kStubNull(s, argc, argv);
-}
+reg_t kScrollWindowGo(EngineState *s, int argc, reg_t *argv) {
+	ScrollWindow *scrollWindow = g_sci->_gfxControls32->getScrollWindow(argv[0]);
 
-reg_t kScrollWindowDestroy(EngineState *s, int argc, reg_t *argv) {
-	debug("kScrollWindowDestroy");
-	return kStubNull(s, argc, argv);
-}
-
-#if 0
-reg_t kScrollWindow(EngineState *s, int argc, reg_t *argv) {
-	// Used by SQ6 and LSL6 hires for the text area in the bottom of the
-	// screen. The relevant scripts also exist in Phantasmagoria 1, but they're
-	// unused. This is always called by scripts 64906 (ScrollerWindow) and
-	// 64907 (ScrollableWindow).
-
-	reg_t kWindow = argv[1];
-	uint16 op = argv[0].toUint16();
-	switch (op) {
-	case 0:	// Init
-		// TODO: Init reads the nsLeft, nsTop, nsRight, nsBottom,
-		//       borderColor, fore, back, mode, font, plane selectors
-		//       from the window in argv[1].
-		g_sci->_gfxFrameout->initScrollText(argv[2].toUint16());	// maxItems
-		g_sci->_gfxFrameout->clearScrollTexts();
-		return argv[1];	// kWindow
-	case 1: // Show message, called by ScrollableWindow::addString
-	case 14: // Modify message, called by ScrollableWindow::modifyString
-		// TODO: The parameters in Modify are shifted by one: the first
-		//       argument is the handle of the text to modify. The others
-		//       are as Add.
-		{
-		Common::String text = s->_segMan->getString(argv[2]);
-		uint16 x = 0;
-		uint16 y = 0;
-		// TODO: argv[3] is font
-		// TODO: argv[4] is color
-		// TODO: argv[5] is alignment (0 = left, 1 = center, 2 = right)
-		//       font,color,alignment may also be -1. (Maybe same as previous?)
-		// TODO: argv[6] is an optional bool, defaulting to true if not present.
-		//       If true, the old contents are scrolled out of view.
-		// TODO: Return a handle of the inserted text. (Used for modify/insert)
-		//       This handle looks like it should also be usable by kString.
-		g_sci->_gfxFrameout->addScrollTextEntry(text, kWindow, x, y, (op == 14));
-		}
-		break;
-	case 2: // Clear, called by ScrollableWindow::erase
-		g_sci->_gfxFrameout->clearScrollTexts();
-		break;
-	case 3: // Page up, called by ScrollableWindow::scrollTo
-		// TODO
-		kStub(s, argc, argv);
-		break;
-	case 4: // Page down, called by ScrollableWindow::scrollTo
-		// TODO
-		kStub(s, argc, argv);
-		break;
-	case 5: // Up arrow, called by ScrollableWindow::scrollTo
-		g_sci->_gfxFrameout->prevScrollText();
-		break;
-	case 6: // Down arrow, called by ScrollableWindow::scrollTo
-		g_sci->_gfxFrameout->nextScrollText();
-		break;
-	case 7: // Home, called by ScrollableWindow::scrollTo
-		g_sci->_gfxFrameout->firstScrollText();
-		break;
-	case 8: // End, called by ScrollableWindow::scrollTo
-		g_sci->_gfxFrameout->lastScrollText();
-		break;
-	case 9: // Resize, called by ScrollableWindow::resize and ScrollerWindow::resize
-		// TODO: This reads the nsLeft, nsTop, nsRight, nsBottom
-		//       selectors from the SCI object passed in argv[2].
-		kStub(s, argc, argv);
-		break;
-	case 10: // Where, called by ScrollableWindow::where
-		// TODO:
-		// Gives the current relative scroll location as a fraction
-		// with argv[2] as the denominator. (Return value is the numerator.)
-		// Silenced the warnings because of the high amount of console spam
-		//kStub(s, argc, argv);
-		break;
-	case 11: // Go, called by ScrollableWindow::scrollTo
-		// TODO:
-		// Two arguments provide a fraction: argv[2] is num., argv[3] is denom.
-		// Scrolls to the relative location given by the fraction.
-		kStub(s, argc, argv);
-		break;
-	case 12: // Insert, called by ScrollableWindow::insertString
-		// 5 extra parameters here:
-		// handle of insert location (new string takes that position).
-		// text, font, color, alignment
-		// TODO
-		kStub(s, argc, argv);
-		break;
-	// case 13 (Delete) is handled below
-	// case 14 (Modify) is handled above
-	case 15: // Hide, called by ScrollableWindow::hide
-		g_sci->_gfxFrameout->toggleScrollText(false);
-		break;
-	case 16: // Show, called by ScrollableWindow::show
-		g_sci->_gfxFrameout->toggleScrollText(true);
-		break;
-	case 17: // Destroy, called by ScrollableWindow::dispose
-		g_sci->_gfxFrameout->clearScrollTexts();
-		break;
-	case 13: // Delete, unused
-	case 18: // Text, unused
-	case 19: // Reconstruct, unused
-		error("kScrollWindow: Unused subop %d invoked", op);
-		break;
-	default:
-		error("kScrollWindow: unknown subop %d", op);
-		break;
-	}
+	const Ratio scrollTop(argv[1].toSint16(), argv[2].toSint16());
+	scrollWindow->go(scrollTop);
 
 	return s->r_acc;
 }
-#endif
+
+reg_t kScrollWindowModify(EngineState *s, int argc, reg_t *argv) {
+	ScrollWindow *scrollWindow = g_sci->_gfxControls32->getScrollWindow(argv[0]);
+
+	const reg_t entryId = argv[1];
+	const Common::String newText = s->_segMan->getString(argv[2]);
+	const GuiResourceId fontId = argv[3].toSint16();
+	const int16 color = argv[4].toSint16();
+	const TextAlign alignment = (TextAlign)argv[5].toSint16();
+	const bool scrollTo = argc > 6 ? (bool)argv[6].toUint16() : true;
+
+	return scrollWindow->modify(entryId, newText, fontId, color, alignment, scrollTo);
+}
+
+reg_t kScrollWindowHide(EngineState *s, int argc, reg_t *argv) {
+	ScrollWindow *scrollWindow = g_sci->_gfxControls32->getScrollWindow(argv[0]);
+
+	scrollWindow->hide();
+
+	return s->r_acc;
+}
+
+reg_t kScrollWindowShow(EngineState *s, int argc, reg_t *argv) {
+	ScrollWindow *scrollWindow = g_sci->_gfxControls32->getScrollWindow(argv[0]);
+
+	scrollWindow->show();
+
+	return s->r_acc;
+}
+
+reg_t kScrollWindowPageUp(EngineState *s, int argc, reg_t *argv) {
+	ScrollWindow *scrollWindow = g_sci->_gfxControls32->getScrollWindow(argv[0]);
+
+	scrollWindow->pageUp();
+
+	return s->r_acc;
+}
+
+reg_t kScrollWindowPageDown(EngineState *s, int argc, reg_t *argv) {
+	ScrollWindow *scrollWindow = g_sci->_gfxControls32->getScrollWindow(argv[0]);
+
+	scrollWindow->pageDown();
+
+	return s->r_acc;
+}
+
+reg_t kScrollWindowUpArrow(EngineState *s, int argc, reg_t *argv) {
+	ScrollWindow *scrollWindow = g_sci->_gfxControls32->getScrollWindow(argv[0]);
+
+	scrollWindow->upArrow();
+
+	return s->r_acc;
+}
+
+reg_t kScrollWindowDownArrow(EngineState *s, int argc, reg_t *argv) {
+	ScrollWindow *scrollWindow = g_sci->_gfxControls32->getScrollWindow(argv[0]);
+
+	scrollWindow->downArrow();
+
+	return s->r_acc;
+}
+
+reg_t kScrollWindowHome(EngineState *s, int argc, reg_t *argv) {
+	ScrollWindow *scrollWindow = g_sci->_gfxControls32->getScrollWindow(argv[0]);
+
+	scrollWindow->home();
+
+	return s->r_acc;
+}
+
+reg_t kScrollWindowEnd(EngineState *s, int argc, reg_t *argv) {
+	ScrollWindow *scrollWindow = g_sci->_gfxControls32->getScrollWindow(argv[0]);
+
+	scrollWindow->end();
+
+	return s->r_acc;
+}
+
+reg_t kScrollWindowDestroy(EngineState *s, int argc, reg_t *argv) {
+	g_sci->_gfxControls32->destroyScrollWindow(argv[0]);
+
+	return s->r_acc;
+}
 
 reg_t kFont(EngineState *s, int argc, reg_t *argv) {
 	if (!s)

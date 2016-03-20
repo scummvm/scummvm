@@ -237,8 +237,10 @@ void GfxText32::drawTextBox() {
 	int16 textRectWidth = _textRect.width();
 	_drawPosition.y = _textRect.top;
 	uint charIndex = 0;
-	if (getLongest(&charIndex, textRectWidth) == 0) {
-		error("DrawTextBox GetLongest=0");
+	if (g_sci->getGameId() != GID_PHANTASMAGORIA) {
+		if (getLongest(&charIndex, textRectWidth) == 0) {
+			error("DrawTextBox GetLongest=0");
+		}
 	}
 
 	charIndex = 0;
@@ -649,6 +651,70 @@ int16 GfxText32::getTextCount(const Common::String &text, const uint index, cons
 int16 GfxText32::getTextCount(const Common::String &text, const uint index, const GuiResourceId fontId, const Common::Rect &textRect, const bool doScaling) {
 	setFont(fontId);
 	return getTextCount(text, index, textRect, doScaling);
+}
+
+void GfxText32::scrollLine(const Common::String &lineText, int numLines, uint8 color, TextAlign align, GuiResourceId fontId, ScrollDirection dir) {
+	BitmapResource bmr(_bitmap);
+	byte *pixels = bmr.getPixels();
+
+	int h = _font->getHeight();
+
+	if (dir == kScrollUp) {
+		// Scroll existing text down
+		for (int i = 0; i < (numLines - 1) * h; ++i) {
+			int y = _textRect.top + numLines * h - i - 1;
+			memcpy(pixels + y * _width + _textRect.left,
+			       pixels + (y - h) * _width + _textRect.left,
+			       _textRect.width());
+		}
+	} else {
+		// Scroll existing text up
+		for (int i = 0; i < (numLines - 1) * h; ++i) {
+			int y = _textRect.top + i;
+			memcpy(pixels + y * _width + _textRect.left,
+			       pixels + (y + h) * _width + _textRect.left,
+			       _textRect.width());
+		}
+	}
+
+	Common::Rect lineRect = _textRect;
+
+	if (dir == kScrollUp) {
+		lineRect.bottom = lineRect.top + h;
+	} else {
+		// It is unclear to me what the purpose of this bottom++ is.
+		// It does not seem to be the usual inc/exc issue.
+		lineRect.top += (numLines - 1) * h;
+		lineRect.bottom++;
+	}
+
+	erase(lineRect, false);
+
+	_drawPosition.x = _textRect.left;
+	_drawPosition.y = _textRect.top;
+	if (dir == kScrollDown) {
+		_drawPosition.y += (numLines - 1) * h;
+	}
+
+	_foreColor = color;
+	_alignment = align;
+	//int fc = _foreColor;
+
+	setFont(fontId);
+
+	_text = lineText;
+	int16 textWidth = getTextWidth(0, lineText.size());
+
+	if (_alignment == kTextAlignCenter) {
+		_drawPosition.x += (_textRect.width() - textWidth) / 2;
+	} else if (_alignment == kTextAlignRight) {
+		_drawPosition.x += _textRect.width() - textWidth;
+	}
+
+	//_foreColor = fc;
+	//setFont(fontId);
+
+	drawText(0, lineText.size());
 }
 
 

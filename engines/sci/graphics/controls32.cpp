@@ -41,7 +41,31 @@ GfxControls32::GfxControls32(SegManager *segMan, GfxCache *cache, GfxText32 *tex
 	_gfxCache(cache),
 	_gfxText32(text),
 	_overwriteMode(false),
-	_nextCursorFlashTick(0) {}
+	_nextCursorFlashTick(0),
+	// SSCI used a memory handle for a ScrollWindow object
+	// as ID. We use a simple numeric handle instead.
+	_nextScrollWindowId(10000) {}
+
+GfxControls32::~GfxControls32() {
+	ScrollWindowMap::iterator it;
+	for (it = _scrollWindows.begin(); it != _scrollWindows.end(); ++it)
+		delete it->_value;
+}
+
+#pragma mark -
+#pragma mark Garbage collection
+
+Common::Array<reg_t> GfxControls32::listObjectReferences() {
+	Common::Array<reg_t> ret;
+	ScrollWindowMap::const_iterator it;
+	for (it = _scrollWindows.begin(); it != _scrollWindows.end(); ++it)
+		ret.push_back(it->_value->getBitmap());
+
+	return ret;
+}
+
+#pragma mark -
+#pragma mark Text input control
 
 reg_t GfxControls32::kernelEditText(const reg_t controlObject) {
 	SegManager *segMan = _segMan;
@@ -350,4 +374,437 @@ void GfxControls32::flashCursor(TextEditor &editor) {
 		_nextCursorFlashTick = g_sci->getTickCount() + 30;
 	}
 }
+
+#pragma mark -
+#pragma mark Scrollable window control
+
+ScrollWindow::ScrollWindow(SegManager *segMan, const Common::Rect &gameRect, const Common::Point &position, const reg_t plane, const uint8 defaultForeColor, const uint8 defaultBackColor, const GuiResourceId defaultFontId, const TextAlign defaultAlignment, const int16 defaultBorderColor, const uint16 maxNumEntries) :
+	_gfxText32(segMan, g_sci->_gfxCache),
+	_maxNumEntries(maxNumEntries),
+	_firstVisibleChar(0),
+	_topVisibleLine(0),
+	_lastVisibleChar(0),
+	_bottomVisibleLine(0),
+	_numLines(0),
+	_numVisibleLines(0),
+	_plane(plane),
+	_foreColor(defaultForeColor),
+	_backColor(defaultBackColor),
+	_borderColor(defaultBorderColor),
+	_fontId(defaultFontId),
+	_alignment(defaultAlignment),
+	_visible(false),
+	_position(position),
+	_screenItem(nullptr),
+	_nextEntryId(1) {
+
+	_entries.reserve(maxNumEntries);
+
+	_gfxText32.setFont(_fontId);
+	_pointSize = _gfxText32._font->getHeight();
+
+	const uint16 scriptWidth = g_sci->_gfxFrameout->getCurrentBuffer().scriptWidth;
+	const uint16 scriptHeight = g_sci->_gfxFrameout->getCurrentBuffer().scriptHeight;
+
+	Common::Rect bitmapRect(gameRect);
+	mulinc(bitmapRect, Ratio(_gfxText32._scaledWidth, scriptWidth), Ratio(_gfxText32._scaledHeight, scriptHeight));
+
+	_textRect.left = 2;
+	_textRect.top = 2;
+	_textRect.right = bitmapRect.width() - 2;
+	_textRect.bottom = bitmapRect.height() - 2;
+
+	uint8 skipColor = 0;
+	while (skipColor == _foreColor || skipColor == _backColor) {
+		skipColor++;
+	}
+
+	assert(bitmapRect.width() > 0 && bitmapRect.height() > 0);
+	_bitmap = _gfxText32.createFontBitmap(bitmapRect.width(), bitmapRect.height(), _textRect, "", _foreColor, _backColor, skipColor, _fontId, _alignment, _borderColor, false, false);
+
+	debugC(1, kDebugLevelGraphics, "New ScrollWindow: textRect size: %d x %d, bitmap: %04x:%04x", _textRect.width(), _textRect.height(), PRINT_REG(_bitmap));
+}
+
+ScrollWindow::~ScrollWindow() {
+	// _gfxText32._bitmap will get GCed once ScrollWindow is gone.
+	// _screenItem will be deleted by GfxFrameout
+}
+
+Ratio ScrollWindow::where() const {
+	return Ratio(_topVisibleLine, MAX(_numLines, 1));
+}
+
+void ScrollWindow::show() {
+	if (_visible) {
+		return;
+	}
+
+	if (_screenItem == nullptr) {
+		CelInfo32 celInfo;
+		celInfo.type = kCelTypeMem;
+		celInfo.bitmap = _bitmap;
+
+		_screenItem = new ScreenItem(_plane, celInfo, _position, ScaleInfo());
+	}
+
+	Plane *plane = g_sci->_gfxFrameout->getPlanes().findByObject(_plane);
+	plane->_screenItemList.add(_screenItem);
+
+	_visible = true;
+}
+
+void ScrollWindow::hide() {
+	if (!_visible) {
+		return;
+	}
+
+	g_sci->_gfxFrameout->deleteScreenItem(_screenItem, _plane);
+	_screenItem = nullptr;
+	g_sci->_gfxFrameout->frameOut(true);
+
+	_visible = false;
+}
+
+reg_t ScrollWindow::add(const Common::String &text, const GuiResourceId fontId, const int16 foreColor, const TextAlign alignment, const bool scrollTo) {
+	if (_entries.size() == _maxNumEntries) {
+		ScrollWindowEntry removedEntry = _entries.remove_at(0);
+		_text.erase(0, removedEntry.text.size());
+		// `_firstVisibleChar` will be reset shortly if
+		// `scrollTo` is true, so there is no reason to
+		// update it
+		if (!scrollTo) {
+			_firstVisibleChar -= removedEntry.text.size();
+		}
+	}
+
+	_entries.push_back(ScrollWindowEntry());
+	ScrollWindowEntry &entry = _entries.back();
+
+	// NOTE: In SSCI the line ID was a memory handle for the
+	// string of this line. We use a numeric ID instead.
+	entry.id = make_reg(0, _nextEntryId++);
+
+	if (_nextEntryId > _maxNumEntries) {
+		_nextEntryId = 1;
+	}
+
+	// NOTE: In SSCI this was updated after _text was
+	// updated, which meant there was an extra unnecessary
+	// subtraction operation (subtracting `entry.text` size)
+	if (scrollTo) {
+		_firstVisibleChar = _text.size();
+	}
+
+	fillEntry(entry, text, fontId, foreColor, alignment);
+	_text += entry.text;
+
+	computeLineIndices();
+	update(true);
+
+	return entry.id;
+}
+
+void ScrollWindow::fillEntry(ScrollWindowEntry &entry, const Common::String &text, const GuiResourceId fontId, const int16 foreColor, const TextAlign alignment) {
+	entry.alignment = alignment;
+	entry.foreColor = foreColor;
+	entry.fontId = fontId;
+
+	Common::String formattedText;
+
+	// NB: There are inconsistencies here.
+	// If there is a multi-line entry with non-default properties, and it
+	// is only partially displayed, it may not be displayed right, since the
+	// property directives are only added to the first line.
+	// (Verified by trying this in SSCI SQ6 with a custom ScrollWindowAdd call.)
+	//
+	// The converse is also a potential issue (but unverified), where lines
+	// with properties -1 can inherit properties from the previously rendered
+	// line instead of the defaults.
+
+	// NOTE: SSCI added "|s<lineIndex>|" here, but |s| is
+	// not a valid control code, so it just always ended up
+	// getting skipped
+	if (entry.fontId != -1) {
+		formattedText += Common::String::format("|f%d|", entry.fontId);
+	}
+	if (entry.foreColor != -1) {
+		formattedText += Common::String::format("|c%d|", entry.foreColor);
+	}
+	if (entry.alignment != -1) {
+		formattedText += Common::String::format("|a%d|", entry.alignment);
+	}
+	formattedText += text;
+	entry.text = formattedText;
+}
+
+reg_t ScrollWindow::modify(const reg_t id, const Common::String &text, const GuiResourceId fontId, const int16 foreColor, const TextAlign alignment, const bool scrollTo) {
+
+	EntriesList::iterator it = _entries.begin();
+	uint firstCharLocation = 0;
+	for ( ; it != _entries.end(); ++it) {
+		if (it->id == id) {
+			break;
+		}
+		firstCharLocation += it->text.size();
+	}
+
+	if (it == _entries.end()) {
+		return make_reg(0, 0);
+	}
+
+	ScrollWindowEntry &entry = *it;
+
+	uint oldTextLength = entry.text.size();
+
+	fillEntry(entry, text, fontId, foreColor, alignment);
+	_text.replace(firstCharLocation, oldTextLength, entry.text);
+
+	if (scrollTo) {
+		_firstVisibleChar = firstCharLocation;
+	}
+
+	computeLineIndices();
+	update(true);
+
+	return entry.id;
+}
+
+void ScrollWindow::upArrow() {
+	if (_topVisibleLine == 0) {
+		return;
+	}
+
+	_topVisibleLine--;
+	_bottomVisibleLine--;
+
+	if (_bottomVisibleLine - _topVisibleLine + 1 < _numVisibleLines) {
+		_bottomVisibleLine = _numLines - 1;
+	}
+
+	_firstVisibleChar = _startsOfLines[_topVisibleLine];
+	_lastVisibleChar = _startsOfLines[_bottomVisibleLine + 1] - 1;
+
+	_visibleText = Common::String(_text.c_str() + _firstVisibleChar, _text.c_str() + _lastVisibleChar + 1);
+
+	Common::String lineText(_text.c_str() + _startsOfLines[_topVisibleLine], _text.c_str() + _startsOfLines[_topVisibleLine + 1] - 1);
+
+	debugC(3, kDebugLevelGraphics, "ScrollWindow::upArrow: top: %d, bottom: %d, num: %d, numvis: %d, lineText: %s", _topVisibleLine, _bottomVisibleLine, _numLines, _numVisibleLines, lineText.c_str());
+
+	_gfxText32.scrollLine(lineText, _numVisibleLines, _foreColor, _alignment, _fontId, kScrollUp);
+
+	if (_visible) {
+		assert(_screenItem);
+
+		_screenItem->update();
+		g_sci->_gfxFrameout->frameOut(true);
+	}
+}
+
+void ScrollWindow::downArrow() {
+	if (_topVisibleLine + 1 >= _numLines) {
+		return;
+	}
+
+	_topVisibleLine++;
+	_bottomVisibleLine++;
+
+	if (_bottomVisibleLine + 1 >= _numLines) {
+		_bottomVisibleLine = _numLines - 1;
+	}
+
+	_firstVisibleChar = _startsOfLines[_topVisibleLine];
+	_lastVisibleChar = _startsOfLines[_bottomVisibleLine + 1] - 1;
+
+	_visibleText = Common::String(_text.c_str() + _firstVisibleChar, _text.c_str() + _lastVisibleChar + 1);
+
+	Common::String lineText;
+	if (_bottomVisibleLine - _topVisibleLine + 1 == _numVisibleLines) {
+		lineText = Common::String(_text.c_str() + _startsOfLines[_bottomVisibleLine], _text.c_str() + _startsOfLines[_bottomVisibleLine + 1] - 1);
+	} else {
+		// scroll in empty string
+	}
+
+	debugC(3, kDebugLevelGraphics, "ScrollWindow::downArrow: top: %d, bottom: %d, num: %d, numvis: %d, lineText: %s", _topVisibleLine, _bottomVisibleLine, _numLines, _numVisibleLines, lineText.c_str());
+
+
+	_gfxText32.scrollLine(lineText, _numVisibleLines, _foreColor, _alignment, _fontId, kScrollDown);
+
+	if (_visible) {
+		assert(_screenItem);
+
+		_screenItem->update();
+		g_sci->_gfxFrameout->frameOut(true);
+	}
+}
+
+void ScrollWindow::go(const Ratio location) {
+	const int line = (location * _numLines).toInt();
+	if (line < 0 || line > _numLines) {
+		error("Index is Out of Range in ScrollWindow");
+	}
+
+	_firstVisibleChar = _startsOfLines[line];
+	update(true);
+
+	// HACK:
+	// It usually isn't possible to set _topVisibleLine >= _numLines, and so
+	// update() doesn't. However, in this case we should set _topVisibleLine
+	// past the end. This is clearly visible in Phantasmagoria when dragging
+	// the slider in the About dialog to the very end. The slider ends up lower
+	// than where it can be moved by scrolling down with the arrows.
+	if (location.isOne()) {
+		_topVisibleLine = _numLines;
+	}
+}
+
+void ScrollWindow::home() {
+	if (_firstVisibleChar == 0) {
+		return;
+	}
+
+	_firstVisibleChar = 0;
+	update(true);
+}
+
+void ScrollWindow::end() {
+	if (_bottomVisibleLine + 1 >= _numLines) {
+		return;
+	}
+
+	int line = _numLines - _numVisibleLines;
+	if (line < 0) {
+		line = 0;
+	}
+	_firstVisibleChar = _startsOfLines[line];
+	update(true);
+}
+
+void ScrollWindow::pageUp() {
+	if (_topVisibleLine == 0) {
+		return;
+	}
+
+	_topVisibleLine -= _numVisibleLines;
+	if (_topVisibleLine < 0) {
+		_topVisibleLine = 0;
+	}
+
+	_firstVisibleChar = _startsOfLines[_topVisibleLine];
+	update(true);
+}
+
+void ScrollWindow::pageDown() {
+	if (_topVisibleLine + 1 >= _numLines) {
+		return;
+	}
+
+	_topVisibleLine += _numVisibleLines;
+	if (_topVisibleLine + 1 >= _numLines) {
+		_topVisibleLine = _numLines - 1;
+	}
+
+	_firstVisibleChar = _startsOfLines[_topVisibleLine];
+	update(true);
+}
+
+void ScrollWindow::computeLineIndices() {
+	_gfxText32.setFont(_fontId);
+	// NOTE: Unlike SSCI, foreColor and alignment are not
+	// set since these properties do not affect the width of
+	// lines
+
+	if (_gfxText32._font->getHeight() != _pointSize) {
+		error("Illegal font size font = %d pointSize = %d, should be %d.", _fontId, _gfxText32._font->getHeight(), _pointSize);
+	}
+
+	Common::Rect lineRect(0, 0, _textRect.width(), _pointSize + 3);
+
+	_startsOfLines.clear();
+
+	// NOTE: The original engine had a 1000-line limit; we
+	// do not enforce any limit
+	for (uint charIndex = 0; charIndex < _text.size(); ) {
+		_startsOfLines.push_back(charIndex);
+		charIndex += _gfxText32.getTextCount(_text, charIndex, lineRect, false);
+	}
+
+	_numLines = _startsOfLines.size();
+
+	_startsOfLines.push_back(_text.size());
+
+	_lastVisibleChar = _gfxText32.getTextCount(_text, 0, _fontId, _textRect, false) - 1;
+
+	_bottomVisibleLine = 0;
+	while (
+		_bottomVisibleLine < _numLines - 1 &&
+		_startsOfLines[_bottomVisibleLine + 1] < _lastVisibleChar
+	) {
+		++_bottomVisibleLine;
+	}
+
+	_numVisibleLines = _bottomVisibleLine + 1;
+}
+
+void ScrollWindow::update(const bool doFrameOut) {
+	_topVisibleLine = 0;
+	while (
+		_topVisibleLine < _numLines - 1 &&
+		_firstVisibleChar >= _startsOfLines[_topVisibleLine + 1]
+	) {
+		++_topVisibleLine;
+	}
+
+	_bottomVisibleLine = _topVisibleLine + _numVisibleLines - 1;
+	if (_bottomVisibleLine >= _numLines) {
+		_bottomVisibleLine = _numLines - 1;
+	}
+
+	_firstVisibleChar = _startsOfLines[_topVisibleLine];
+
+	if (_bottomVisibleLine >= 0) {
+		_lastVisibleChar = _startsOfLines[_bottomVisibleLine + 1] - 1;
+	} else {
+		_lastVisibleChar = -1;
+	}
+
+	_visibleText = Common::String(_text.c_str() + _firstVisibleChar, _text.c_str() + _lastVisibleChar + 1);
+
+	_gfxText32.erase(_textRect, false);
+	_gfxText32.drawTextBox(_visibleText);
+
+	if (_visible) {
+		assert(_screenItem);
+
+		_screenItem->update();
+		if (doFrameOut) {
+			g_sci->_gfxFrameout->frameOut(true);
+		}
+	}
+}
+
+reg_t GfxControls32::makeScrollWindow(const Common::Rect &gameRect, const Common::Point &position, const reg_t planeObj, const uint8 defaultForeColor, const uint8 defaultBackColor, const GuiResourceId defaultFontId, const TextAlign defaultAlignment, const int16 defaultBorderColor, const uint16 maxNumEntries) {
+
+	ScrollWindow *scrollWindow = new ScrollWindow(_segMan, gameRect, position, planeObj, defaultForeColor, defaultBackColor, defaultFontId, defaultAlignment, defaultBorderColor, maxNumEntries);
+
+	const uint16 id = _nextScrollWindowId++;
+	_scrollWindows[id] = scrollWindow;
+	return make_reg(0, id);
+}
+
+ScrollWindow *GfxControls32::getScrollWindow(const reg_t id) {
+	ScrollWindowMap::iterator it;
+	it = _scrollWindows.find(id.toUint16());
+	if (it == _scrollWindows.end())
+		error("Invalid ScrollWindow ID");
+
+	return it->_value;
+}
+
+void GfxControls32::destroyScrollWindow(const reg_t id) {
+	ScrollWindow *scrollWindow = getScrollWindow(id);
+	scrollWindow->hide();
+	_scrollWindows.erase(id.getOffset());
+	delete scrollWindow;
+}
+
 } // End of namespace Sci
