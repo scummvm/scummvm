@@ -883,8 +883,7 @@ public:
 	void scene44_updateAnimations();
 	
 	// Scene 45
-	int _s45_dword_4749BC;
-	int _s45_dword_4749C0;
+	int _currDancerSequenceId;
 	int scene45_init();
 	void scene45_updateHotspots();
 	void scene45_run();

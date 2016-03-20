@@ -93,9 +93,9 @@ void GnapEngine::scene45_run() {
 	_gameSys->setAnimation(0x96, 1, 3);
 	_gameSys->insertSequence(0x99, 1, 0, 0, kSeqNone, 0, 0, 0);
 	_gameSys->setAnimation(0x99, 1, 4);
-	_s45_dword_4749BC = 0x8F;
-	_gameSys->setAnimation(0x8F, 1, 2);
-	_gameSys->insertSequence(_s45_dword_4749BC, 1, 0, 0, kSeqNone, 0, 0, 0);
+	_currDancerSequenceId = 0x8F;
+	_gameSys->setAnimation(_currDancerSequenceId, 1, 2);
+	_gameSys->insertSequence(_currDancerSequenceId, 1, 0, 0, kSeqNone, 0, 0, 0);
 	
 	if (isFlag(12)) {
 		_toyUfoId = 0;
@@ -148,10 +148,10 @@ void GnapEngine::scene45_run() {
 			if (_gameSys->getAnimationStatus(2) == 2) {
 				_gameSys->setAnimation(0, 0, 2);
 				_gnapRandomValue = getRandom(7);
-				_s45_dword_4749C0 = _gnapRandomValue + 0x8F;
-				_gameSys->insertSequence(_gnapRandomValue + 0x8F, 1, _s45_dword_4749BC, 1, kSeqSyncWait, 0, 0, 0);
-				_gameSys->setAnimation(_s45_dword_4749C0, 1, 2);
-				_s45_dword_4749BC = _s45_dword_4749C0;
+				int newSeqId = _gnapRandomValue + 0x8F;
+				_gameSys->insertSequence(_gnapRandomValue + 0x8F, 1, _currDancerSequenceId, 1, kSeqSyncWait, 0, 0, 0);
+				_gameSys->setAnimation(newSeqId, 1, 2);
+				_currDancerSequenceId = newSeqId;
 			}
 			if (_gameSys->getAnimationStatus(3) == 2 && _gameSys->getAnimationStatus(4) == 2) {
 				_gameSys->insertSequence(0x96, 1, 0x96, 1, kSeqSyncWait, 0, 0, 0);
@@ -394,10 +394,10 @@ void GnapEngine::scene45_updateAnimations() {
 	if (_gameSys->getAnimationStatus(2) == 2) {
 		_gameSys->setAnimation(0, 0, 2);
 		_gnapRandomValue = getRandom(7);
-		_s45_dword_4749C0 = _gnapRandomValue + 0x8F;
-		_gameSys->insertSequence(_gnapRandomValue + 0x8F, 1, _s45_dword_4749BC, 1, kSeqSyncWait, 0, 0, 0);
-		_gameSys->setAnimation(_s45_dword_4749C0, 1, 2);
-		_s45_dword_4749BC = _s45_dword_4749C0;
+		int newSeqId = _gnapRandomValue + 0x8F;
+		_gameSys->insertSequence(_gnapRandomValue + 0x8F, 1, _currDancerSequenceId, 1, kSeqSyncWait, 0, 0, 0);
+		_gameSys->setAnimation(newSeqId, 1, 2);
+		_currDancerSequenceId = newSeqId;
 	}
 	
 	if (_gameSys->getAnimationStatus(3) == 2 && _gameSys->getAnimationStatus(4) == 2) {
