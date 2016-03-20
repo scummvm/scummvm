@@ -232,9 +232,6 @@ return (path); \
 }
 
 void MacOSXTaskbarManager::addRecent(const Common::String &name, const Common::String &description) {
-	// TODO: Implement recent list, maybe as a custom menu on dock tile when app is not running
-	// See Dock Tile plug-in at https://developer.apple.com/library/mac/documentation/Carbon/Conceptual/customizing_docktile/CreatingaDockTilePlug-in/CreatingaDockTilePlug-in.html
-
 	//warning("[MacOSXTaskbarManager::addRecent] Adding recent list entry: %s (%s)", name.c_str(), description.c_str());
 	
 	if (_dockTile == nil)
@@ -290,19 +287,6 @@ void MacOSXTaskbarManager::addRecent(const Common::String &name, const Common::S
 	[dict release];
 	CFRelease(gameName);
 	CFRelease(desc);
-	
-	
-	// The command to use would be "open " + path + " --args " + game.
-	// NSString *cmdString = [NSString stringWithFormat:@"open %@ --args %@", bundlePath, gameName];
-	// We could use [[NSBundle mainBundle] bundlePath] to get the path here and then store it in the user preferences.
-	// Or we can let the NSDockTilePlugin find the path with:
-	// NSString *scummVMPath = [[NSWorkspace sharedWorkspace] absolutePathForAppBundleWithIdentifier:@"org.scummvm.scummvm"];
-	// We can then also use NSWorkspace to launch the app.
-	// if (scummVMPath == nil)
-	//		return;
-	// NSURL* url = [NSURL fileURLWithPath:scummVMPath];
-	// [NSWorkspace launchApplicationAtURL:url options: configuration: error:] to start the application with some arguments
-
 }
 
 

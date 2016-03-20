@@ -128,6 +128,7 @@ _timidity=auto
 _zlib=auto
 _mpeg2=auto
 _sparkle=auto
+_osxdockplugin=auto
 _jpeg=auto
 _png=auto
 _theoradec=auto
@@ -985,6 +986,8 @@ Optional Libraries:
   --with-sparkle-prefix=DIR   Prefix where sparkle is installed (Mac OS X only - optional)
   --disable-sparkle        disable sparkle automatic update support [Mac OS X only - autodetect]
 
+  --disable-osx-dock-plugin disable the NSDockTilePlugin support [Mac OS X only - autodetect]
+
   --with-sdl-prefix=DIR    Prefix where the sdl-config script is
                            installed (optional)
 
@@ -1047,6 +1050,8 @@ for ac_option in $@; do
 	--disable-zlib)           _zlib=no        ;;
 	--enable-sparkle)         _sparkle=yes    ;;
 	--disable-sparkle)        _sparkle=no     ;;
+	--enable-osx-dock-plugin) _osxdockplugin=yes;;
+	--disable-osx-dock-plugin) _osxdockplugin=no;;
 	--enable-nasm)            _nasm=yes       ;;
 	--disable-nasm)           _nasm=no        ;;
 	--enable-mpeg2)           _mpeg2=yes      ;;
@@ -3933,6 +3938,24 @@ fi
 define_in_config_if_yes "$_sparkle" 'USE_SPARKLE'
 fi
 echo "$_sparkle"
+
+#
+# Check is NSDockTilePlugIn protocol is supported
+#
+# NSDockTilePlugIn was added in OS X 10.6, so will not be available when compiling on older OS X versions.
+echocheck "DockTilePlugin"
+if test "$_osxdockplugin" = auto ; then
+	_osxdockplugin=no
+	cat > $TMPC << EOF
+#include <Cocoa/Cocoa.h>
+@interface ScummVMDockTilePlugIn : NSObject <NSDockTilePlugIn> {
+}
+@end
+EOF
+	cc_check -c -ObjC++ && _osxdockplugin=yes
+fi
+define_in_config_if_yes "$_osxdockplugin" 'USE_DOCKTILEPLUGIN'
+echo "$_osxdockplugin"
 
 #
 # Check for FluidSynth
