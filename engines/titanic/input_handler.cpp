@@ -53,7 +53,7 @@ void CInputHandler::handleMessage(const CMessage &msg, bool respectLock) {
 		if (_gameManager->_gameState._mode == GSMODE_1) {
 			processMessage(&msg);
 		} else if (!msg.isMouseMsg()) {
-			g_vm->_filesManager.fn1();
+			g_vm->_filesManager.loadDrive();
 		}
 	}
 }

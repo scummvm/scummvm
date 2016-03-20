@@ -57,7 +57,7 @@ public:
 	 */
 	virtual void setView(CViewItem *item) = 0;
 	
-	virtual void proc4(const Common::Rect &bounds) = 0;
+	virtual void draw(const Common::Rect &bounds) = 0;
 
 	/**
 	 * Creates a surface from a specified resource
@@ -76,7 +76,10 @@ public:
 	 */
 	virtual void setView(CViewItem *item);
 
-	virtual void proc4(const Common::Rect &bounds);
+	/**
+	 * Handles drawing the view
+	 */
+	virtual void draw(const Common::Rect &bounds);
 };
 
 } // End of namespace Titanic

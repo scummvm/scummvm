@@ -67,8 +67,8 @@ void CSTGameView::setView(CViewItem *view) {
 	_gameWindow->setActiveView(view);
 }
 
-void CSTGameView::proc4(const Common::Rect &bounds) {
-	_gameWindow->fn2();
+void CSTGameView::draw(const Common::Rect &bounds) {
+	_gameWindow->draw();
 }
 
 } // End of namespace Titanic

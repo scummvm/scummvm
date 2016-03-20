@@ -51,7 +51,7 @@ void CScreenManager::setWindowHandle(int v) {
 }
 
 bool CScreenManager::resetWindowHandle(int v) {
-	proc27();
+	hideCursor();
 	return true;
 }
 
@@ -79,6 +79,8 @@ OSScreenManager::OSScreenManager(TitanicEngine *vm): CScreenManager(vm),
 
 OSScreenManager::~OSScreenManager() {
 	destroyFrontAndBackBuffers();
+	delete _mouseCursor;
+	delete _textCursor;
 }
 
 void OSScreenManager::setMode(int width, int height, int bpp, uint numBackSurfaces, bool flag2) {
@@ -152,8 +154,14 @@ CVideoSurface *OSScreenManager::createSurface(const CResourceKey &key) {
 void OSScreenManager::proc23() {}
 void OSScreenManager::proc24() {}
 void OSScreenManager::proc25() {}
-void OSScreenManager::showCursor() {}
-void OSScreenManager::proc27() {}
+
+void OSScreenManager::showCursor() {
+
+}
+
+void OSScreenManager::hideCursor() {
+
+}
 
 void OSScreenManager::destroyFrontAndBackBuffers() {
 	delete _frontRenderSurface;
@@ -165,7 +173,16 @@ void OSScreenManager::destroyFrontAndBackBuffers() {
 }
 
 void OSScreenManager::loadCursors() {
-	// TODO
+	if (_mouseCursor) {
+		hideCursor();
+		delete _mouseCursor;
+	}
+	_mouseCursor = new CMouseCursor();
+	showCursor();
+
+	if (!_textCursor) {
+		_textCursor = new CTextCursor();
+	}
 }
 
 } // End of namespace Titanic

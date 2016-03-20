@@ -27,7 +27,7 @@
 namespace Titanic {
 
 CFilesManager::CFilesManager() : _gameManager(nullptr), 
-		_assetsPath("Assets"), _field0(0), _field14(0), 
+		_assetsPath("Assets"), _field0(0), _drive(-1), 
 		_field18(0), _field1C(0), _field3C(0) {
 }
 
@@ -65,12 +65,20 @@ bool CFilesManager::scanForFile(const CString &name) {
 	return fileExists(fname);
 }
 
-void CFilesManager::fn1() {
-	warning("TODO: CFilesManager::fn1");
+void CFilesManager::loadDrive() {
+	assert(_drive == -1);
+	resetView();
 }
 
 void CFilesManager::debug(CScreenManager *screenManager) {
 	warning("TODO: CFilesManager::debug");
+}
+
+void CFilesManager::resetView() {
+	if (_gameManager) {
+		_gameManager->_gameState.setMode(GSMODE_1);
+		_gameManager->initBounds();
+	}
 }
 
 } // End of namespace Titanic

@@ -74,7 +74,10 @@ public:
 	 */
 	void setActiveView(CViewItem *viewItem);
 
-	void fn2();
+	/**
+	 * Main draw method for the window
+	 */
+	void draw();
 
 	/**
 	 * Called by the event handler when a mouse event has been generated

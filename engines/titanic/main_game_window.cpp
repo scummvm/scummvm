@@ -55,7 +55,6 @@ void CMainGameWindow::applicationStarting() {
 	// Set the video mode
 	CScreenManager *screenManager = CScreenManager::setCurrent();
 	screenManager->setMode(640, 480, 16, 1, true);
-	_inputAllowed = true;
 
 	// TODO: Remove initial background and palette
 
@@ -67,6 +66,8 @@ void CMainGameWindow::applicationStarting() {
 
 	// Load either a new game or selected existing save
 	_project->loadGame(saveSlot);
+	_inputAllowed = true;
+	_gameManager->_gameState.setMode(GSMODE_1);
 
 	// TODO: Cursor/image
 
@@ -109,7 +110,7 @@ void CMainGameWindow::setActiveView(CViewItem *viewItem) {
 	}
 }
 
-void CMainGameWindow::fn2() {
+void CMainGameWindow::draw() {
 	if (_gameManager) {
 		if (_gameView->_surface) {
 			CViewItem *view = _gameManager->getView();
@@ -128,7 +129,7 @@ void CMainGameWindow::fn2() {
 			warning("TODO: Stuff");
 
 		case GSMODE_5:
-			g_vm->_filesManager.fn1();
+			g_vm->_filesManager.debug(scrManager);
 			break;
 
 		default:

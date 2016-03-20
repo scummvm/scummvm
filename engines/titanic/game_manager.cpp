@@ -181,8 +181,9 @@ void CGameManager::update() {
 		// Set the surface bounds
 		screenManager->setSurfaceBounds(0, _bounds);
 
+		// Handle redrawing the view
 		if (!_bounds.isEmpty()) {
-			_gameView->proc4(_bounds);
+			_gameView->draw(_bounds);
 			_bounds = Common::Rect();
 		}
 

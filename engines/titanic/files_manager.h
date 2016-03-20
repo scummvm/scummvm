@@ -40,7 +40,7 @@ private:
 	CString _string1;
 	CString _string2;
 	int _field0;
-	int _field14;
+	int _drive;
 	int _field18;
 	int _field1C;
 	int _field3C;
@@ -65,9 +65,17 @@ public:
 	 */
 	bool scanForFile(const CString &name);
 
-	void fn1();
+	/**
+	 * Handles displaying a load drive view if necessary
+	 */
+	void loadDrive();
 
 	void debug(CScreenManager *screenManager);
+
+	/**
+	 * Resets the view being displayed
+	 */
+	void resetView();
 };
 
 } // End of namespace Titanic

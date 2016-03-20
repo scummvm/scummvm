@@ -108,7 +108,7 @@ public:
 	virtual void proc24() = 0;
 	virtual void proc25() = 0;
 	virtual void showCursor() = 0;
-	virtual void proc27() = 0;
+	virtual void hideCursor() = 0;
 
 	void setSurfaceBounds(int surfaceNum, const Common::Rect &r);
 };
@@ -177,7 +177,7 @@ public:
 	virtual void proc24();
 	virtual void proc25();
 	virtual void showCursor();
-	virtual void proc27();
+	virtual void hideCursor();
 };
 
 } // End of namespace Titanic
