@@ -94,7 +94,7 @@ void GnapEngine::scene22_run() {
 			case 1:
 				storeDetectiveSeqId = 0x56;
 				break;
-			case 2:
+			default:
 				storeDetectiveSeqId = 0x57;
 				break;
 			}
