@@ -855,15 +855,18 @@ public:
 	void scene41_updateAnimations();
 
 	// Scene 42
-	int _s42_currBBQVendorSequenceId, _s42_nextBBQVendorSequenceId;
+	int _s42_currBBQVendorSequenceId;
+	int _s42_nextBBQVendorSequenceId;
+
 	int scene42_init();
 	void scene42_updateHotspots();
 	void scene42_run();
 	void scene42_updateAnimations();
 
 	// Scene 43
-	int _s43_dword_47F2B0;
-	int _s43_dword_47F2B4;
+	int _currTwoHeadedGuySequenceId;
+	int _nextTwoHeadedGuySequenceId;
+
 	int scene43_init();
 	void scene43_updateHotspots();
 	void scene43_run();

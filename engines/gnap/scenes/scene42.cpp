@@ -196,11 +196,8 @@ void GnapEngine::scene42_run() {
 				break;
 
 			}
-
 		} else {
-
 			switch (_sceneClickedHotspot) {
-
 			case kHSDevice:
 				runMenu();
 				scene42_updateHotspots();
