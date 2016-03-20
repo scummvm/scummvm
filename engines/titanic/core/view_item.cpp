@@ -162,17 +162,34 @@ void CViewItem::enterView(CViewItem *newView) {
 
 bool CViewItem::handleEvent(CMouseButtonDownMsg &msg) {
 	if (msg._buttons & MB_LEFT) {
-		mouseChange(&msg, true);
+		if (!handleMouseMsg(&msg, true)) {
+			CGameManager *gm = getGameManager();
+			if (gm->test54()) {
+				findNode()->findRoom();
+
+				CLinkItem *linkItem = dynamic_cast<CLinkItem *>(
+					findChildInstanceOf(CLinkItem::_type));
+				while (linkItem) {
+					if (linkItem->_bounds.contains(msg._mousePos)) {
+						gm->_gameState.triggerLink(linkItem);
+						return true;
+					}
+
+					linkItem = dynamic_cast<CLinkItem *>(
+						findNextInstanceOf(CLinkItem::_type, linkItem));
+				}
+			}
+		}
 		// TODO
 	}
 
 	return true;
 }
 
-bool CViewItem::mouseChange(const CMouseMsg *msg, bool flag) {
+bool CViewItem::handleMouseMsg(const CMouseMsg *msg, bool flag) {
 	const CMouseButtonUpMsg *upMsg = dynamic_cast<const CMouseButtonUpMsg *>(msg);
 	if (msg->isButtonUpMsg()) {
-		mouseButtonUp(upMsg);
+		handleButtonUpMsg(upMsg);
 		return true;
 	}
 
@@ -217,7 +234,7 @@ bool CViewItem::mouseChange(const CMouseMsg *msg, bool flag) {
 	return result;
 }
 
-void CViewItem::mouseButtonUp(const CMouseButtonUpMsg *msg) {
+void CViewItem::handleButtonUpMsg(const CMouseButtonUpMsg *msg) {
 	CTreeItem *&target = _buttonUpTargets[msg->_buttons >> 1];
 
 	if (target) {

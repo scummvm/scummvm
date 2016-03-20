@@ -66,6 +66,9 @@ void Events::pollEvents() {
 	case Common::EVENT_KEYDOWN:
 		keyDown(event.kbd);
 		break;
+	case Common::EVENT_KEYUP:
+		keyUp(event.kbd);
+		break;
 	default:
 		break;
 	}
@@ -177,11 +180,29 @@ void Events::charPress(char c) {
 }
 
 void Events::keyDown(Common::KeyState keyState) {
+	handleKbdSpecial(keyState);
+
 	if (keyState.keycode == Common::KEYCODE_d && (keyState.flags & Common::KBD_CTRL)) {
 		// Attach to the debugger
 		_vm->_debugger->attach();
 		_vm->_debugger->onFrame();
 	}
+}
+
+void Events::keyUp(Common::KeyState keyState) {
+	handleKbdSpecial(keyState);
+}
+
+void Events::handleKbdSpecial(Common::KeyState keyState) {
+	if (keyState.flags & Common::KBD_CTRL)
+		_specialButtons |= MK_CONTROL;
+	else
+		_specialButtons &= ~MK_CONTROL;
+
+	if (keyState.flags & Common::KBD_SHIFT)
+		_specialButtons |= MK_SHIFT;
+	else
+		_specialButtons &= ~MK_SHIFT;
 }
 
 } // End of namespace Titanic

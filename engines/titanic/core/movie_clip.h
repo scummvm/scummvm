@@ -32,7 +32,6 @@ namespace Titanic {
  */
 class CMovieClip : public ListItem {
 private:
-	CString _string1;
 	int _field18;
 	int _field1C;
 	int _field20;
@@ -42,6 +41,8 @@ private:
 	int _field30;
 	CString _string2;
 	CString _string3;
+public:
+	CString _name;
 public:
 	CLASSDEF
 	CMovieClip();
@@ -62,6 +63,7 @@ public:
  */
 class CMovieClipList: public List<CMovieClip> {
 public:
+	CMovieClip *findByName(const Common::String &name) const;
 };
 
 } // End of namespace Titanic

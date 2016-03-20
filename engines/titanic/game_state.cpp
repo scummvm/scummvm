@@ -97,7 +97,39 @@ void CGameState::enterView() {
 	_gameManager->_gameView->setView(newView);
 	CRoomItem *oldRoom = oldView->findNode()->findRoom();
 	CRoomItem *newRoom = newView->findNode()->findRoom();
-	_gameManager->fn10(_list._field14, oldRoom, newRoom);
+	_gameManager->playClip(_list._movieClip, oldRoom, newRoom);
 }
 
-} // End of namespace Titanic z
+void CGameState::triggerLink(CLinkItem *link) {
+	changeView(link->getDestView(), link->getClip());
+}
+
+void CGameState::changeView(CViewItem *newView, CMovieClip *clip) {
+	// Signal the old view that it's being left
+	CViewItem *oldView = _gameLocation.getView();
+	oldView->leaveView(newView);
+
+	// If Shift key is pressed, skip showing the transition clip
+	if (g_vm->_events->isSpecialPressed(MK_SHIFT))
+		clip = nullptr;
+
+	if (_mode == GSMODE_2) {
+		_list._view = newView;
+		_list._movieClip = clip;
+	} else {
+		oldView->preEnterView(newView);
+		_gameManager->_gameView->setView(newView);
+		CRoomItem *oldRoom = newView->findNode()->findRoom();
+		CRoomItem *newRoom = newView->findNode()->findRoom();
+
+		// If a transition clip is defined, play it
+		if (clip)
+			_gameManager->playClip(clip, oldRoom, newRoom);
+
+		// Final view change handling
+		_gameManager->_sound.viewChanged(newView, newRoom != oldRoom);
+		oldView->enterView(newView);
+	}
+}
+
+} // End of namespace Titanic

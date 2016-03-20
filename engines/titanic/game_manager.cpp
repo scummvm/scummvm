@@ -139,8 +139,8 @@ void CGameManager::fn2() {
 	warning("TODO");
 }
 
-void CGameManager::fn10(void *param1, CRoomItem *oldRoom, CRoomItem *newRoom) {
-	warning("TODO: CGameManager::fn10");
+void CGameManager::playClip(CMovieClip *clip, CRoomItem *oldRoom, CRoomItem *newRoom) {
+	warning("TODO: CGameManager::playClip");
 }
 
 void CGameManager::update() {

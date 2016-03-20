@@ -54,6 +54,11 @@ public:
 	 * Load the data for the class from file
 	 */
 	virtual void load(SimpleFile *file);
+
+	/**
+	 * Return a movie clip for the room by name
+	 */
+	CMovieClip *findClip(const CString &name) { return _clipList.findByName(name); }
 };
 
 } // End of namespace Titanic

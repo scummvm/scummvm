@@ -38,12 +38,12 @@ private:
 	/**
 	 * Called to handle mouse messagaes on the view
 	 */
-	bool mouseChange(const CMouseMsg *msg, bool flag);
+	bool handleMouseMsg(const CMouseMsg *msg, bool flag);
 
 	/**
 	 * Handles mouse button up messages
 	 */
-	void mouseButtonUp(const CMouseButtonUpMsg *msg);
+	void handleButtonUpMsg(const CMouseButtonUpMsg *msg);
 protected:
 	int _field24;
 	double _field28;

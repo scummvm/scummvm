@@ -51,10 +51,10 @@ void CLinkItem::save(SimpleFile *file, int indent) const {
 	file->writeNumberLine(_viewNumber, indent + 1);
 
 	file->writeQuotedLine("Hotspot", indent + 1);
-	file->writeNumberLine(_hotspot.left, indent + 2);
-	file->writeNumberLine(_hotspot.top, indent + 2);
-	file->writeNumberLine(_hotspot.right, indent + 2);
-	file->writeNumberLine(_hotspot.bottom, indent + 2);
+	file->writeNumberLine(_bounds.left, indent + 2);
+	file->writeNumberLine(_bounds.top, indent + 2);
+	file->writeNumberLine(_bounds.right, indent + 2);
+	file->writeNumberLine(_bounds.bottom, indent + 2);
 
 	CNamedItem::save(file, indent);
 }
@@ -78,10 +78,10 @@ void CLinkItem::load(SimpleFile *file) {
 		_viewNumber = file->readNumber();
 
 		file->readBuffer();
-		_hotspot.left = file->readNumber();
-		_hotspot.top = file->readNumber();
-		_hotspot.right = file->readNumber();
-		_hotspot.bottom = file->readNumber();
+		_bounds.left = file->readNumber();
+		_bounds.top = file->readNumber();
+		_bounds.right = file->readNumber();
+		_bounds.bottom = file->readNumber();
 		break;
 
 	default:
@@ -128,6 +128,10 @@ CNodeItem *CLinkItem::getDestNode() const {
 
 CRoomItem *CLinkItem::getDestRoom() const {
 	return getDestNode()->findRoom();
+}
+
+CMovieClip *CLinkItem::getClip() const {
+	return findRoom()->findClip(getName());
 }
 
 } // End of namespace Titanic

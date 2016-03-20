@@ -78,7 +78,6 @@ public:
 
 class CGameManager {
 private:
-	CSound _sound;
 	CTrueTalkManager _trueTalkManager;
 	CGameManagerList _list;
 	int _field30;
@@ -98,6 +97,7 @@ public:
 	CInputTranslator _inputTranslator;
 	CTreeItem *_dragItem;
 	CMusicRoom _musicRoom;
+	CSound _sound;
 public:
 	CGameManager(CProjectItem *project, CGameView *gameView);
 	~CGameManager();
@@ -151,7 +151,10 @@ public:
 
 	void fn2();
 
-	void fn10(void *param1, CRoomItem *oldRoom, CRoomItem *newRoom);
+	/**
+	 * Plays a movie clip
+	 */
+	void playClip(CMovieClip *clip, CRoomItem *oldRoom, CRoomItem *newRoom);
 
 	/**
 	 * Updates the state of the manager
@@ -162,6 +165,8 @@ public:
 	 * Called when the view changes
 	 */
 	void viewChange();
+
+	bool test54() const { return !_field54; }
 };
 
 } // End of namespace Titanic

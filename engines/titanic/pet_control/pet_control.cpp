@@ -38,9 +38,9 @@ void CPetControl::save(SimpleFile *file, int indent) const {
 
 void CPetControl::load(SimpleFile *file) {
 	int val = file->readNumber();
-	bool valid = isValid();
+	isValid();
 	
-	if (!valid) {
+	if (!val) {
 		_fieldBC = file->readNumber();
 		_string1 = file->readString();
 		_string2 = file->readString();

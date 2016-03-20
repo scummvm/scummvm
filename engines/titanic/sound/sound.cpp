@@ -43,4 +43,8 @@ void CSound::preLoad() {
 		_gameManager->_musicRoom.preLoad();
 }
 
+void CSound::viewChanged(CViewItem *newView, bool isNewRoom) {
+	warning("CSound::viewChanged");
+}
+
 } // End of namespace Titanic z

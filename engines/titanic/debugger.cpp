@@ -160,10 +160,12 @@ bool Debugger::cmdRoom(int argc, const char **argv) {
 			else {
 				CViewItem *viewItem = findView(nodeItem, argv[3]);
 
-				if (!viewItem)
+				if (!viewItem) {
 					debugPrintf("Could not find view - %s\n", argv[3]);
-				else {
-					debugPrintf("Found view. TODO: Jump to it\n");
+				} else {
+					// Change to the specified view
+					g_vm->_window->_gameManager->_gameState.changeView(viewItem, nullptr);
+					return false;
 				}
 			}
 		}

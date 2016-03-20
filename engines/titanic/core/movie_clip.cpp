@@ -30,7 +30,7 @@ CMovieClip::CMovieClip() {
 void CMovieClip::save(SimpleFile *file, int indent) const {
 	file->writeNumberLine(2, indent);
 	file->writeQuotedLine("Clip", indent);
-	file->writeQuotedLine(_string1, indent);
+	file->writeQuotedLine(_name, indent);
 	file->writeNumberLine(_field18, indent);
 	file->writeNumberLine(_field1C, indent);
 
@@ -42,7 +42,7 @@ void CMovieClip::load(SimpleFile *file) {
 
 	switch (val) {
 	case 1:
-		_string1 = file->readString();
+		_name = file->readString();
 		_field18 = file->readNumber();
 		_field1C = file->readNumber();
 		_field20 = file->readNumber();
@@ -54,7 +54,7 @@ void CMovieClip::load(SimpleFile *file) {
 
 	case 2:
 		file->readString();
-		_string1 = file->readString();
+		_name = file->readString();
 		_field18 = file->readNumber();
 		_field1C = file->readNumber();
 		break;
@@ -64,6 +64,16 @@ void CMovieClip::load(SimpleFile *file) {
 	}
 
 	ListItem::load(file);
+}
+
+CMovieClip *CMovieClipList::findByName(const Common::String &name) const {
+	for (const_iterator i = begin(); i != end(); ++i) {
+		CMovieClip *clip = *i;
+		if (clip->_name == name)
+			return clip;
+	}
+
+	return nullptr;
 }
 
 } // End of namespace Titanic

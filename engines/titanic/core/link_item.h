@@ -24,6 +24,7 @@
 #define TITANIC_LINK_ITEM_H
 
 #include "titanic/core/named_item.h"
+#include "titanic/core/movie_clip.h"
 
 namespace Titanic {
 
@@ -44,7 +45,8 @@ protected:
 	int _viewNumber;
 	int _field30;
 	int _field34;
-	Common::Rect _hotspot;
+public:
+	Common::Rect _bounds;
 public:
 	CLASSDEF
 	CLinkItem();
@@ -79,6 +81,11 @@ public:
 	 * Get the destination view for the link item
 	 */
 	virtual CRoomItem *getDestRoom() const;
+
+	/**
+	 * Get the movie clip, if any, that's used when the link is used
+	 */
+	CMovieClip *getClip() const;
 };
 
 } // End of namespace Titanic

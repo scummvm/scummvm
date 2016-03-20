@@ -25,6 +25,7 @@
 
 #include "titanic/simple_file.h"
 #include "titanic/sound/sound_manager.h"
+#include "titanic/core/view_item.h"
 
 namespace Titanic {
 
@@ -66,6 +67,11 @@ public:
 	 * Called when a game has finished being saved
 	 */
 	void postSave() { _soundManager.postSave(); }
+
+	/**
+	 * Called when the view has been changed
+	 */
+	void viewChanged(CViewItem *newView, bool isNewRoom);
 };
 
 } // End of namespace Titanic

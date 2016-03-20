@@ -24,6 +24,7 @@
 #define TITANIC_GAME_STATE_H
 
 #include "titanic/core/list.h"
+#include "titanic/core/link_item.h"
 #include "titanic/simple_file.h"
 #include "titanic/game_location.h"
 
@@ -36,9 +37,9 @@ enum GameStateMode { GSMODE_0 = 0, GSMODE_1 = 1, GSMODE_2 = 2, GSMODE_3 = 3, GSM
 class CGameStateList : public List<ListItem> {
 public:
 	CViewItem *_view;
-	void *_field14;
+	CMovieClip *_movieClip;
 public:
-	CGameStateList() : List<ListItem>(), _view(nullptr), _field14(nullptr) {}
+	CGameStateList() : List<ListItem>(), _view(nullptr), _movieClip(nullptr) {}
 };
 
 class CGameState {
@@ -90,6 +91,16 @@ public:
 	 * Enters a new view
 	 */
 	void enterView();
+
+	/**
+	 * Triggers a link item in a view
+	 */
+	void triggerLink(CLinkItem *link);
+
+	/**
+	 * Changes the current view
+	 */
+	void changeView(CViewItem *newView, CMovieClip *clip);
 };
 
 } // End of namespace Titanic

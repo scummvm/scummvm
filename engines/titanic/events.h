@@ -67,6 +67,8 @@ private:
 	void rightButtonDoubleClick();
 	void charPress(char c);
 	void keyDown(Common::KeyState keyState);
+	void keyUp(Common::KeyState keyState);
+	void handleKbdSpecial(Common::KeyState keyState);
 public:
 	Events(TitanicEngine *vm);
 	~Events() {}
@@ -91,6 +93,11 @@ public:
 	 * Get the elapsed playtime
 	 */
 	uint32 getTicksCount() const;
+
+	/**
+	 * Return whether a given special key is currently pressed
+	 */
+	bool isSpecialPressed(SpecialButtons btn) const { return _specialButtons; }
 };
 
 } // End of namespace Titanic
