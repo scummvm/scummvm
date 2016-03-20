@@ -507,7 +507,7 @@ reg_t kSetFontHeight(EngineState *s, int argc, reg_t *argv) {
 	// which case we could just get the font directly ourselves.
 	g_sci->_gfxText32->setFont(argv[0].toUint16());
 	g_sci->_gfxText32->_scaledHeight = (g_sci->_gfxText32->_font->getHeight() * g_sci->_gfxFrameout->getCurrentBuffer().scriptHeight + g_sci->_gfxText32->_scaledHeight - 1) / g_sci->_gfxText32->_scaledHeight;
-	return NULL_REG;
+	return make_reg(0, g_sci->_gfxText32->_scaledHeight);
 }
 
 reg_t kSetFontRes(EngineState *s, int argc, reg_t *argv) {
