@@ -89,7 +89,7 @@ public:
 	 * this surface will create it's own surface of the same size and copy
 	 * the contents from the source surface
 	 */
-	ManagedSurface(const ManagedSurface &surf);
+	ManagedSurface(ManagedSurface &surf);
 
 	/**
 	 * Create the managed surface
@@ -124,7 +124,7 @@ public:
 	 * Reassign one managed surface to another one
 	 * Note that if the source has a managed surface, it will be duplicated
 	 */
-	ManagedSurface &operator=(const ManagedSurface &surf);
+	ManagedSurface &operator=(ManagedSurface &surf);
 
 	/**
 	 * Returns true if the surface has not yet been allocated
