@@ -175,7 +175,7 @@ void CGameManager::update() {
 		// And the text cursor
 		CScreenManager *screenManager = CScreenManager::_screenManagerPtr;
 		CTextCursor *textCursor = screenManager->_textCursor;
-		if (textCursor->_active)
+		if (textCursor && textCursor->_active)
 			_bounds.extend(textCursor->getBounds());
 		
 		// Set the surface bounds

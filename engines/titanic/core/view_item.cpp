@@ -31,7 +31,7 @@
 namespace Titanic {
 
 CViewItem::CViewItem() : CNamedItem() {
-	Common::fill(&_buttonUpTargets[0], &_buttonUpTargets[3], nullptr);
+	Common::fill(&_buttonUpTargets[0], &_buttonUpTargets[4], nullptr);
 	_field24 = 0;
 	_field28 = 0.0;
 	_viewNumber = 0;

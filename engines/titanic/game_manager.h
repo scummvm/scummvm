@@ -178,7 +178,7 @@ public:
 	void playClip(CMovieClip *clip, CRoomItem *oldRoom, CRoomItem *newRoom);
 
 	/**
-	 * Updates the state of the manager
+	 * Main frame update method for the game
 	 */
 	void update();
 
