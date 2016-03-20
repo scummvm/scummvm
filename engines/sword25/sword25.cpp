@@ -120,7 +120,7 @@ Common::Error Sword25Engine::appStart() {
 	// Pass the command line to the script engine.
 	ScriptEngine *scriptPtr = Kernel::getInstance()->getScript();
 	if (!scriptPtr) {
-		error("Script intialization failed.");
+		error("Script initialization failed.");
 		return Common::kUnknownError;
 	}
 

@@ -41,7 +41,7 @@ struct NeverhoodGameDescription {
 };
 
 const char *NeverhoodEngine::getGameId() const {
-	return _gameDescription->desc.gameid;
+	return _gameDescription->desc.gameId;
 }
 
 uint32 NeverhoodEngine::getFeatures() const {
@@ -181,8 +181,8 @@ static const ExtraGuiOption neverhoodExtraGuiOption3 = {
 class NeverhoodMetaEngine : public AdvancedMetaEngine {
 public:
 	NeverhoodMetaEngine() : AdvancedMetaEngine(Neverhood::gameDescriptions, sizeof(Neverhood::NeverhoodGameDescription), neverhoodGames) {
-		_singleid = "neverhood";
-		_guioptions = GUIO2(GUIO_NOSUBTITLES, GUIO_NOMIDI);
+		_singleId = "neverhood";
+		_guiOptions = GUIO2(GUIO_NOSUBTITLES, GUIO_NOMIDI);
 	}
 
 	virtual const char *getName() const {
@@ -245,7 +245,6 @@ SaveStateList NeverhoodMetaEngine::listSaves(const char *target) const {
 
 	Common::StringArray filenames;
 	filenames = saveFileMan->listSavefiles(pattern.c_str());
-	Common::sort(filenames.begin(), filenames.end());	// Sort (hopefully ensuring we are sorted numerically..)
 
 	SaveStateList saveList;
 	for (Common::StringArray::const_iterator file = filenames.begin(); file != filenames.end(); file++) {
@@ -262,6 +261,8 @@ SaveStateList NeverhoodMetaEngine::listSaves(const char *target) const {
 		}
 	}
 
+	// Sort saves based on slot number.
+	Common::sort(saveList.begin(), saveList.end(), SaveStateDescriptorSlotComparator());
 	return saveList;
 }
 

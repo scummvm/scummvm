@@ -542,7 +542,7 @@ bool Debugger_EoB::cmdSaveOriginal(int argc, const char **argv) {
 				debugPrintf("Failure.\n");
 			}
 		} else {
-			debugPrintf("Syntax:   save_original\n          (Saves game in original file format to a file which can be used with the orginal game executable.)\n\n");
+			debugPrintf("Syntax:   save_original\n          (Saves game in original file format to a file which can be used with the original game executable.)\n\n");
 		}
 		return true;
 
@@ -562,7 +562,7 @@ bool Debugger_EoB::cmdSaveOriginal(int argc, const char **argv) {
 		return true;
 	}
 
-	debugPrintf("Syntax:   save_original <slot>\n          (Saves game in original file format to a file which can be used with the orginal game executable.\n          A save slot between 0 and 5 must be specified.)\n\n");
+	debugPrintf("Syntax:   save_original <slot>\n          (Saves game in original file format to a file which can be used with the original game executable.\n          A save slot between 0 and 5 must be specified.)\n\n");
 	return true;
 }
 

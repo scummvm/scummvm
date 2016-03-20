@@ -165,30 +165,7 @@ static bool tryDelete(const char *filename, int vm)
   return true;
 }
 
-static bool matches(const char *glob, const char *name)
-{
-  while(*glob)
-    if(*glob == '*') {
-      while(*glob == '*')
-	glob++;
-      do {
-	if((*name == *glob || *glob == '?') &&
-	   matches(glob, name))
-	  return true;
-      } while(*name++);
-      return false;
-    } else if(!*name)
-      return false;
-    else if(*glob == '?' || *glob == *name) {
-      glob++;
-      name++;
-    }
-    else
-      return false;
-  return !*name;
-}
-
-static void tryList(const char *glob, int vm, Common::StringArray &list)
+static void tryList(const Common::String &glob, int vm, Common::StringArray &list)
 {
   struct vmsinfo info;
   struct superblock super;
@@ -205,7 +182,7 @@ static void tryList(const char *glob, int vm, Common::StringArray &list)
       char buf[16];
       strncpy(buf, (char *)de.entry+4, 12);
       buf[12] = 0;
-      if (matches(glob, buf))
+      if (Common::matchString(buf, glob.c_str()))
 	list.push_back(buf);
     }
 }
@@ -425,7 +402,7 @@ Common::StringArray VMSaveManager::listSavefiles(const Common::String &pattern)
   Common::StringArray list;
 
   for (int i=0; i<24; i++)
-    tryList(pattern.c_str(), i, list);
+    tryList(pattern, i, list);
 
   return list;
 }

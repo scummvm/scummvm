@@ -58,7 +58,7 @@ void PreAgiEngine::initialize() {
 	initRenderMode();
 
 	_font = new GfxFont(this);
-	_gfx = new GfxMgr(this);
+	_gfx = new GfxMgr(this, _font);
 	_picture = new PictureMgr(this, _gfx);
 
 	_font->init();
@@ -112,7 +112,7 @@ void PreAgiEngine::clearScreen(int attr, bool overrideDefault) {
 }
 
 void PreAgiEngine::clearGfxScreen(int attr) {
-	_gfx->drawDisplayRect(0, 0, GFX_WIDTH - 1, IDI_MAX_ROW_PIC * 8 - 1, (attr & 0xF0) / 0x10);
+	_gfx->drawDisplayRect(0, 0, DISPLAY_DEFAULT_WIDTH - 1, IDI_MAX_ROW_PIC * 8 - 1, (attr & 0xF0) / 0x10);
 }
 
 // String functions

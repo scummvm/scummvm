@@ -636,7 +636,7 @@ void SoundHE::playHESound(int soundID, int heOffset, int heChannel, int heFlags)
 		if (heFlags & 1) {
 			_heChannel[heChannel].timer = 0;
 		} else {
-			_heChannel[heChannel].timer = size * 1000 / rate;
+			_heChannel[heChannel].timer = size * 1000 / (rate * blockAlign);
 		}
 
 		_mixer->stopHandle(_heSoundChannels[heChannel]);
@@ -658,7 +658,7 @@ void SoundHE::playHESound(int soundID, int heOffset, int heChannel, int heFlags)
 
 			_heChannel[heChannel].rate = rate;
 			if (_heChannel[heChannel].timer)
-				_heChannel[heChannel].timer = size * 1000 / rate;
+				_heChannel[heChannel].timer = size * 1000 / (rate * blockAlign);
 
 			// makeADPCMStream returns a stream in native endianness, but RawMemoryStream
 			// defaults to big endian. If we're on a little endian system, set the LE flag.

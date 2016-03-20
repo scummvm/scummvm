@@ -54,7 +54,7 @@ void nullFunc(int) {}
 
 // Function to calculate 2^x, where x is a fixedpoint number with 16 fraction bits
 // using exp would be more accurate and needs less space if mathlibrary is already linked
-// but this function should be faster and doesnt use floats
+// but this function should be faster and doesn't use floats
 #if 1
 inline uint32 pow2Fixed(int32 val) {
 	static const uint16 tablePow2[] = {

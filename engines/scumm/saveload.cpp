@@ -1303,7 +1303,7 @@ void ScummEngine::saveOrLoad(Serializer *s) {
 
 	if (hasTownsData) {
 		// Skip FM-Towns specific data
-		for (int i = 69 * sizeof(uint8) + 44 * sizeof(int16); i; i--)
+		for (i = 69 * sizeof(uint8) + 44 * sizeof(int16); i; i--)
 			s->loadByte();
 	}
 

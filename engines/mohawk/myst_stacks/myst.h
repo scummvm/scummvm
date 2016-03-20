@@ -40,21 +40,20 @@ public:
 	Myst(MohawkEngine_Myst *vm);
 	~Myst();
 
-	virtual void disablePersistentScripts();
-	virtual void runPersistentScripts();
+	virtual void disablePersistentScripts() override;
+	virtual void runPersistentScripts() override;
 
 protected:
 	void setupOpcodes();
-	uint16 getVar(uint16 var);
-	void toggleVar(uint16 var);
-	bool setVarValue(uint16 var, uint16 value);
+	uint16 getVar(uint16 var) override;
+	void toggleVar(uint16 var) override;
+	bool setVarValue(uint16 var, uint16 value) override;
 
-	virtual uint16 getMap() { return 9934; }
+	virtual uint16 getMap() override { return 9934; }
 
 	void towerRotationMap_run();
 	virtual void libraryBookcaseTransform_run();
 	void generatorControlRoom_run();
-	void opcode_212_run();
 	void libraryCombinationBook_run();
 	void clockWheel_run();
 	void matchBurn_run();
@@ -192,11 +191,11 @@ protected:
 	bool _generatorControlRoomRunning;
 	uint16 _generatorVoltage; // 58
 
-	MystResourceType10 *_rocketSlider1; // 248
-	MystResourceType10 *_rocketSlider2; // 252
-	MystResourceType10 *_rocketSlider3; // 256
-	MystResourceType10 *_rocketSlider4; // 260
-	MystResourceType10 *_rocketSlider5; // 264
+	MystAreaSlider *_rocketSlider1; // 248
+	MystAreaSlider *_rocketSlider2; // 252
+	MystAreaSlider *_rocketSlider3; // 256
+	MystAreaSlider *_rocketSlider4; // 260
+	MystAreaSlider *_rocketSlider5; // 264
 	uint16 _rocketSliderSound; // 294
 	uint16 _rocketLeverPosition; // 296
 	VideoHandle _rocketLinkBook;
@@ -214,7 +213,7 @@ protected:
 	uint32 _gullsNextTime; // 216
 
 	bool _libraryBookcaseMoving;
-	MystResourceType6 *_libraryBookcaseMovie; // 104
+	MystAreaVideo *_libraryBookcaseMovie; // 104
 	uint16 _libraryBookcaseSoundId; // 284
 	bool _libraryBookcaseChanged; // 288
 	uint16 _libraryBookSound1; // 298
@@ -223,13 +222,13 @@ protected:
 	uint16 _courtyardBoxSound; // 302
 
 	bool _imagerValidationRunning;
-	MystResourceType8 *_imagerRedButton; // 304
+	MystAreaImageSwitch *_imagerRedButton; // 304
 	uint16 _imagerSound[4]; // 308 to 314
 	uint16 _imagerValidationCard; // 316
 	uint16 _imagerValidationStep; // 318
 
 	bool _imagerRunning;
-	MystResourceType6 *_imagerMovie; // 64
+	MystAreaVideo *_imagerMovie; // 64
 
 	uint16 _fireplaceLines[6]; // 74 to 84
 
@@ -248,8 +247,8 @@ protected:
 	bool _towerRotationBlinkLabel;
 	uint16 _towerRotationBlinkLabelCount;
 	uint16 _towerRotationMapInitialized; // 292
-	MystResourceType11 *_towerRotationMapTower; // 108
-	MystResourceType8 *_towerRotationMapLabel; // 112
+	MystAreaImageSwitch *_towerRotationMapTower; // 108
+	MystAreaImageSwitch *_towerRotationMapLabel; // 112
 	uint16 _towerRotationSpeed; // 124
 	bool _towerRotationMapClicked; // 132
 	bool _towerRotationOverSpot; // 136
@@ -257,10 +256,13 @@ protected:
 	bool _matchBurning;
 	uint16 _matchGoOutCnt;
 	uint16 _cabinDoorOpened; // 56
+	uint16 _cabinHandleDown; // 344
 	uint16 _cabinMatchState; // 60
 	uint32 _matchGoOutTime; // 144
 
 	VideoHandle _cabinFireMovie; // 240
+
+	bool _cabinGaugeMovieEnabled;
 	VideoHandle _cabinGaugeMovie; // 244
 
 	bool _boilerPressureIncreasing;
@@ -269,8 +271,8 @@ protected:
 	bool _basementPressureDecreasing;
 
 	bool _treeStopped; // 236
-	MystResourceType8 *_tree; // 220
-	MystResourceType5 *_treeAlcove; // 224
+	MystAreaImageSwitch *_tree; // 220
+	MystArea *_treeAlcove; // 224
 	uint16 _treeMinPosition; // 228
 	uint16 _treeMinAccessiblePosition; // 230
 	uint16 _treeMaxAccessiblePosition; // 232
@@ -280,21 +282,21 @@ protected:
 	bool _observatoryDayChanging;
 	bool _observatoryYearChanging;
 	bool _observatoryTimeChanging;
-	MystResourceType8 *_observatoryVisualizer; // 184
-	MystResourceType8 *_observatoryGoButton; // 188
-	MystResourceType10 *_observatoryDaySlider; // 192
-	MystResourceType10 *_observatoryMonthSlider; // 196
-	MystResourceType10 *_observatoryYearSlider; // 200
-	MystResourceType10 *_observatoryTimeSlider; // 204
+	MystAreaImageSwitch *_observatoryVisualizer; // 184
+	MystAreaImageSwitch *_observatoryGoButton; // 188
+	MystAreaSlider *_observatoryDaySlider; // 192
+	MystAreaSlider *_observatoryMonthSlider; // 196
+	MystAreaSlider *_observatoryYearSlider; // 200
+	MystAreaSlider *_observatoryTimeSlider; // 204
 	uint32 _observatoryLastTime; // 208
 	bool _observatoryNotInitialized; // 212
 	int16 _observatoryIncrement; // 346
-	MystResourceType10 *_observatoryCurrentSlider; // 348
+	MystAreaSlider *_observatoryCurrentSlider; // 348
 
 	bool _greenBookRunning;
 
 	void generatorRedrawRocket();
-	void generatorButtonValue(MystResource *button, uint16 &offset, uint16 &value);
+	void generatorButtonValue(MystArea *button, uint16 &offset, uint16 &value);
 
 	void rocketSliderMove();
 	uint16 rocketSliderGetSound(uint16 pos);

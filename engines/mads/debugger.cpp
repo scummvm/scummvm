@@ -158,7 +158,7 @@ bool Debugger::Cmd_ShowCodes(int argc, const char **argv) {
 	Scene &scene = _vm->_game->_scene;
 
 	// Copy the depth/walk surface to the background and flag for screen refresh
-	scene._depthSurface.copyTo(&scene._backgroundSurface);
+	scene._depthSurface.blitFrom(scene._backgroundSurface);
 	scene._spriteSlots.fullRefresh();
 
 	// Draw the locations of scene nodes onto the background

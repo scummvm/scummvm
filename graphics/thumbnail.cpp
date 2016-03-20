@@ -67,7 +67,7 @@ HeaderState loadHeader(Common::SeekableReadStream &in, ThumbnailHeader &header, 
 	header.size = in.readUint32BE();
 	header.version = in.readByte();
 
-	// Do a check whether any read errors had occured. If so we cannot use the
+	// Do a check whether any read errors had occurred. If so we cannot use the
 	// values obtained for size and version because they might be bad.
 	if (in.err() || in.eos()) {
 		// TODO: We fake that there is no header. This is actually not quite

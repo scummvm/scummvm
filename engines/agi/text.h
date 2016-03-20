@@ -55,7 +55,7 @@ struct MessageState_Struct {
 	uint16 printed_Height;
 
 	int16 backgroundPos_x;
-	int16 backgroundPos_y;
+	int16 backgroundPos_y; // original AGI used lowerY here, we use upperY so that upscaling is easier
 	int16 backgroundSize_Width;
 	int16 backgroundSize_Height;
 };
@@ -163,6 +163,8 @@ public:
 	bool  _inputEditEnabled;
 	byte  _inputCursorChar;
 
+	bool  _optionCommandPromptWindow;
+
 	bool  _promptEnabled;
 	int16 _promptRow;
 	int16 _promptCursorPos;
@@ -188,6 +190,8 @@ public:
 	void promptRedraw();
 	void promptClear(); // for AGI1
 	void promptRememberForAutoComplete(bool entered = false); // for auto-completion
+
+	void promptCommandWindow(bool recallLastCommand, uint16 newKey);
 
 	int16 _inputStringRow;
 	int16 _inputStringColumn;

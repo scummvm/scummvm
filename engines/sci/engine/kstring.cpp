@@ -661,19 +661,6 @@ reg_t kStrSplit(EngineState *s, int argc, reg_t *argv) {
 
 #ifdef ENABLE_SCI32
 
-reg_t kText(EngineState *s, int argc, reg_t *argv) {
-	switch (argv[0].toUint16()) {
-	case 0:
-		return kTextSize(s, argc - 1, argv + 1);
-	default:
-		// TODO: Other subops here too, perhaps kTextColors and kTextFonts
-		warning("kText(%d)", argv[0].toUint16());
-		break;
-	}
-
-	return s->r_acc;
-}
-
 // TODO: there is an unused second argument, happens at least in LSL6 right during the intro
 reg_t kStringNew(EngineState *s, int argc, reg_t *argv) {
 	reg_t stringHandle;
@@ -778,11 +765,14 @@ reg_t kStringCopy(EngineState *s, int argc, reg_t *argv) {
 	}
 
 	// The original engine ignores bad copies too
-	if (index2 > string2Size)
+	if (index2 >= string2Size)
 		return NULL_REG;
 
 	// A count of -1 means fill the rest of the array
-	uint32 count = argv[4].toSint16() == -1 ? string2Size - index2 + 1 : argv[4].toUint16();
+	uint32 count = string2Size - index2;
+	if (argv[4].toSint16() != -1) {
+		count = MIN(count, (uint32)argv[4].toUint16());
+	}
 //	reg_t strAddress = argv[0];
 
 	SciString *string1 = s->_segMan->lookupString(argv[0]);

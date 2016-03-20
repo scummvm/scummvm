@@ -1943,14 +1943,14 @@ static int liesBefore(const Vertex *v, const Common::Point &p1, const Common::Po
 // indexp1/vertexp1 on the polygon being merged.
 // It ends with the point intersection2, being the analogous intersection.
 struct Patch {
-	unsigned int indexw1;
-	unsigned int indexp1;
+	uint32 indexw1;
+	uint32 indexp1;
 	const Vertex *vertexw1;
 	const Vertex *vertexp1;
 	Common::Point intersection1;
 
-	unsigned int indexw2;
-	unsigned int indexp2;
+	uint32 indexw2;
+	uint32 indexp2;
 	const Vertex *vertexw2;
 	const Vertex *vertexp2;
 	Common::Point intersection2;
@@ -1960,7 +1960,7 @@ struct Patch {
 
 
 // Check if the given vertex on the work polygon is bypassed by this patch.
-static bool isVertexCovered(const Patch &p, unsigned int wi) {
+static bool isVertexCovered(const Patch &p, uint32 wi) {
 
 	//         /             v       (outside)
 	//  ---w1--1----p----w2--2----
@@ -2402,7 +2402,7 @@ reg_t kMergePoly(EngineState *s, int argc, reg_t *argv) {
 
 	// Copy work.vertices into arrayRef
 	Vertex *vertex;
-	unsigned int n = 0;
+	uint32 n = 0;
 	CLIST_FOREACH(vertex, &work.vertices) {
 		if (vertex == work.vertices._head || vertex->v != vertex->_prev->v)
 			writePoint(arrayRef, n++, vertex->v);

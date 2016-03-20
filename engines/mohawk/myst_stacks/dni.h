@@ -40,12 +40,12 @@ public:
 	Dni(MohawkEngine_Myst *vm);
 	~Dni();
 
-	void disablePersistentScripts();
-	void runPersistentScripts();
+	void disablePersistentScripts() override;
+	void runPersistentScripts() override;
 
 private:
 	void setupOpcodes();
-	uint16 getVar(uint16 var);
+	uint16 getVar(uint16 var) override;
 
 	void atrus_run();
 	void loopVideo_run();

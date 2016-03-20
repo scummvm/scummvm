@@ -384,8 +384,8 @@ void AdvertView::show() {
 	// Load the advert background onto the screen
 	SceneInfo *sceneInfo = SceneInfo::init(_vm);
 	sceneInfo->load(screenId, 0, Common::String(), 0, _vm->_game->_scene._depthSurface,
-		_vm->_screen);
-	_vm->_screen.copyRectToScreen(_vm->_screen.getBounds());
+		*_vm->_screen);
+	_vm->_screen->markAllDirty();
 	_vm->_palette->setFullPalette(_vm->_palette->_mainPalette);
 
 	delete sceneInfo;

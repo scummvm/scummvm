@@ -22,6 +22,13 @@
 
 namespace Mohawk {
 
+#define GAMEOPTION_PLAY_MYST_FLYBY         GUIO_GAMEOPTIONS1
+
+#define GUI_OPTIONS_MYST                   GUIO3(GUIO_NOASPECT, GUIO_NOSUBTITLES, GUIO_NOMIDI)
+#define GUI_OPTIONS_MYST_ME                GUIO4(GUIO_NOASPECT, GUIO_NOSUBTITLES, GUIO_NOMIDI, GAMEOPTION_PLAY_MYST_FLYBY)
+#define GUI_OPTIONS_MYST_DEMO              GUIO4(GUIO_NOASPECT, GUIO_NOSUBTITLES, GUIO_NOMIDI, GUIO_NOLAUNCHLOAD)
+#define GUI_OPTIONS_MYST_MAKING_OF         GUIO4(GUIO_NOASPECT, GUIO_NOSUBTITLES, GUIO_NOMIDI, GUIO_NOLAUNCHLOAD)
+
 static const MohawkGameDescription gameDescriptions[] = {
 	// Myst
 	// English Windows 3.11
@@ -34,7 +41,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformWindows,
 			ADGF_UNSTABLE,
-			GUIO1(GUIO_NOASPECT)
+			GUI_OPTIONS_MYST
 		},
 		GType_MYST,
 		0,
@@ -52,7 +59,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformWindows,
 			ADGF_DEMO | ADGF_UNSTABLE,
-			GUIO1(GUIO_NOASPECT)
+			GUI_OPTIONS_MYST_DEMO
 		},
 		GType_MYST,
 		GF_DEMO,
@@ -70,7 +77,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 			Common::DE_DEU,
 			Common::kPlatformWindows,
 			ADGF_UNSTABLE,
-			GUIO1(GUIO_NOASPECT)
+			GUI_OPTIONS_MYST
 		},
 		GType_MYST,
 		0,
@@ -88,7 +95,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 			Common::DE_DEU,
 			Common::kPlatformWindows,
 			ADGF_UNSTABLE,
-			GUIO1(GUIO_NOASPECT)
+			GUI_OPTIONS_MYST
 		},
 		GType_MYST,
 		0,
@@ -106,7 +113,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 			Common::ES_ESP,
 			Common::kPlatformWindows,
 			ADGF_UNSTABLE,
-			GUIO1(GUIO_NOASPECT)
+			GUI_OPTIONS_MYST
 		},
 		GType_MYST,
 		0,
@@ -124,7 +131,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 			Common::IT_ITA,
 			Common::kPlatformWindows,
 			ADGF_UNSTABLE,
-			GUIO1(GUIO_NOASPECT)
+			GUI_OPTIONS_MYST
 		},
 		GType_MYST,
 		0,
@@ -142,7 +149,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 			Common::JA_JPN,
 			Common::kPlatformWindows,
 			ADGF_UNSTABLE,
-			GUIO1(GUIO_NOASPECT)
+			GUI_OPTIONS_MYST
 		},
 		GType_MYST,
 		0,
@@ -160,7 +167,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 			Common::FR_FRA,
 			Common::kPlatformWindows,
 			ADGF_UNSTABLE,
-			GUIO1(GUIO_NOASPECT)
+			GUI_OPTIONS_MYST
 		},
 		GType_MYST,
 		0,
@@ -178,7 +185,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformWindows,
 			ADGF_UNSTABLE,
-			GUIO1(GUIO_NOASPECT)
+			GUI_OPTIONS_MYST_MAKING_OF
 		},
 		GType_MAKINGOF,
 		0,
@@ -196,7 +203,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 			Common::JA_JPN,
 			Common::kPlatformWindows,
 			ADGF_UNSTABLE,
-			GUIO1(GUIO_NOASPECT)
+			GUI_OPTIONS_MYST_MAKING_OF
 		},
 		GType_MAKINGOF,
 		0,
@@ -214,7 +221,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformWindows,
 			ADGF_UNSTABLE,
-			GUIO1(GUIO_NOASPECT)
+			GUI_OPTIONS_MYST_ME
 		},
 		GType_MYST,
 		GF_ME,
@@ -232,7 +239,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 			Common::DE_DEU,
 			Common::kPlatformWindows,
 			ADGF_UNSTABLE,
-			GUIO1(GUIO_NOASPECT)
+			GUI_OPTIONS_MYST_ME
 		},
 		GType_MYST,
 		GF_ME,
@@ -250,7 +257,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 			Common::FR_FRA,
 			Common::kPlatformWindows,
 			ADGF_UNSTABLE,
-			GUIO1(GUIO_NOASPECT)
+			GUI_OPTIONS_MYST_ME
 		},
 		GType_MYST,
 		GF_ME,
@@ -268,7 +275,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 			Common::PL_POL,
 			Common::kPlatformWindows,
 			ADGF_UNSTABLE,
-			GUIO1(GUIO_NOASPECT)
+			GUI_OPTIONS_MYST_ME
 		},
 		GType_MYST,
 		GF_ME,
@@ -2698,7 +2705,7 @@ static const MohawkGameDescription fallbackDescs[] = {
 			Common::UNK_LANG,
 			Common::kPlatformWindows,
 			ADGF_UNSTABLE,
-			GUIO1(GUIO_NOASPECT)
+			GUI_OPTIONS_MYST
 		},
 		GType_MYST,
 		0,
@@ -2713,7 +2720,7 @@ static const MohawkGameDescription fallbackDescs[] = {
 			Common::UNK_LANG,
 			Common::kPlatformWindows,
 			ADGF_UNSTABLE,
-			GUIO1(GUIO_NOASPECT)
+			GUI_OPTIONS_MYST_MAKING_OF
 		},
 		GType_MAKINGOF,
 		0,
@@ -2728,7 +2735,7 @@ static const MohawkGameDescription fallbackDescs[] = {
 			Common::UNK_LANG,
 			Common::kPlatformWindows,
 			ADGF_UNSTABLE,
-			GUIO1(GUIO_NOASPECT)
+			GUI_OPTIONS_MYST_ME
 		},
 		GType_MYST,
 		GF_ME,

@@ -29,6 +29,9 @@
 #include "sci/console.h"
 #include "sci/engine/state.h"
 #include "sci/engine/kernel.h"
+#ifdef ENABLE_SCI32
+#include "sci/graphics/frameout.h"
+#endif
 #include "sci/graphics/screen.h"
 
 namespace Sci {
@@ -44,7 +47,7 @@ static const ScancodeRow scancodeAltifyRows[] = {
 	{ 0x2c, "ZXCVBNM,./"    }
 };
 
-static const byte codepagemap_88591toDOS[0x80] = {
+static const byte codePageMap88591ToDOS[0x80] = {
 	 '?',  '?',  '?',  '?',  '?',  '?',  '?',  '?',  '?',  '?',  '?',  '?',  '?',  '?',  '?',  '?', // 0x8x
 	 '?',  '?',  '?',  '?',  '?',  '?',  '?',  '?',  '?',  '?',  '?',  '?',  '?',  '?',  '?',  '?', // 0x9x
 	 '?', 0xad, 0x9b, 0x9c,  '?', 0x9d,  '?', 0x9e,  '?',  '?', 0xa6, 0xae, 0xaa,  '?',  '?',  '?', // 0xAx
@@ -133,8 +136,13 @@ static int altify(int ch) {
 }
 
 SciEvent EventManager::getScummVMEvent() {
-	SciEvent input = { SCI_EVENT_NONE, 0, 0, Common::Point(0, 0) };
-	SciEvent noEvent = { SCI_EVENT_NONE, 0, 0, Common::Point(0, 0) };
+#ifdef ENABLE_SCI32
+	SciEvent input = { SCI_EVENT_NONE, 0, 0, Common::Point(), Common::Point() };
+	SciEvent noEvent = { SCI_EVENT_NONE, 0, 0, Common::Point(), Common::Point() };
+#else
+	SciEvent input = { SCI_EVENT_NONE, 0, 0, Common::Point() };
+	SciEvent noEvent = { SCI_EVENT_NONE, 0, 0, Common::Point() };
+#endif
 
 	Common::EventManager *em = g_system->getEventManager();
 	Common::Event ev;
@@ -155,7 +163,20 @@ SciEvent EventManager::getScummVMEvent() {
 	// via pollEvent.
 	// We also adjust the position based on the scaling of the screen.
 	Common::Point mousePos = em->getMousePos();
-	g_sci->_gfxScreen->adjustBackUpscaledCoordinates(mousePos.y, mousePos.x);
+
+#if ENABLE_SCI32
+	if (getSciVersion() >= SCI_VERSION_2) {
+		Buffer &screen = g_sci->_gfxFrameout->getCurrentBuffer();
+
+		Common::Point mousePosSci = mousePos;
+		mulru(mousePosSci, Ratio(screen.scriptWidth, screen.screenWidth), Ratio(screen.scriptHeight, screen.screenHeight));
+		noEvent.mousePosSci = input.mousePosSci = mousePosSci;
+	} else {
+#endif
+		g_sci->_gfxScreen->adjustBackUpscaledCoordinates(mousePos.y, mousePos.x);
+#if ENABLE_SCI32
+	}
+#endif
 
 	noEvent.mousePos = input.mousePos = mousePos;
 
@@ -173,7 +194,7 @@ SciEvent EventManager::getScummVMEvent() {
 		return input;
 	}
 
-	int	scummVMKeyFlags;
+	int scummVMKeyFlags;
 
 	switch (ev.type) {
 	case Common::EVENT_KEYDOWN:
@@ -265,7 +286,7 @@ SciEvent EventManager::getScummVMEvent() {
 				return noEvent;
 			// Convert 8859-1 characters to DOS (cp850/437) for
 			// multilingual SCI01 games
-			input.character = codepagemap_88591toDOS[input.character & 0x7f];
+			input.character = codePageMap88591ToDOS[input.character & 0x7f];
 		}
 		if (scummVMKeycode == Common::KEYCODE_TAB) {
 			input.character = SCI_KEY_TAB;
@@ -302,6 +323,11 @@ SciEvent EventManager::getScummVMEvent() {
 		input.character = altify(input.character);
 	if (getSciVersion() <= SCI_VERSION_1_MIDDLE && (scummVMKeyFlags & Common::KBD_CTRL) && input.character > 0 && input.character < 27)
 		input.character += 96; // 0x01 -> 'a'
+#ifdef ENABLE_SCI32
+	if (getSciVersion() >= SCI_VERSION_2 && (scummVMKeyFlags & Common::KBD_CTRL) && input.character == 'c') {
+		input.character = SCI_KEY_ETX;
+	}
+#endif
 
 	// If no actual key was pressed (e.g. if only a modifier key was pressed),
 	// ignore the event
@@ -328,8 +354,12 @@ void EventManager::updateScreen() {
 	}
 }
 
-SciEvent EventManager::getSciEvent(unsigned int mask) {
-	SciEvent event = { SCI_EVENT_NONE, 0, 0, Common::Point(0, 0) };
+SciEvent EventManager::getSciEvent(uint32 mask) {
+#ifdef ENABLE_SCI32
+	SciEvent event = { SCI_EVENT_NONE, 0, 0, Common::Point(), Common::Point() };
+#else
+	SciEvent event = { SCI_EVENT_NONE, 0, 0, Common::Point() };
+#endif
 
 	EventManager::updateScreen();
 
@@ -342,7 +372,7 @@ SciEvent EventManager::getSciEvent(unsigned int mask) {
 
 	// Search for matching event in queue
 	Common::List<SciEvent>::iterator iter = _events.begin();
-	while (iter != _events.end() && !((*iter).type & mask))
+	while (iter != _events.end() && !(iter->type & mask))
 		++iter;
 
 	if (iter != _events.end()) {
@@ -364,17 +394,17 @@ SciEvent EventManager::getSciEvent(unsigned int mask) {
 
 void SciEngine::sleep(uint32 msecs) {
 	uint32 time;
-	const uint32 wakeup_time = g_system->getMillis() + msecs;
+	const uint32 wakeUpTime = g_system->getMillis() + msecs;
 
 	while (true) {
 		// let backend process events and update the screen
 		_eventMan->getSciEvent(SCI_EVENT_PEEK);
 		time = g_system->getMillis();
-		if (time + 10 < wakeup_time) {
+		if (time + 10 < wakeUpTime) {
 			g_system->delayMillis(10);
 		} else {
-			if (time < wakeup_time)
-				g_system->delayMillis(wakeup_time - time);
+			if (time < wakeUpTime)
+				g_system->delayMillis(wakeUpTime - time);
 			break;
 		}
 

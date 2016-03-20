@@ -26,6 +26,11 @@
 	<string>1.9.0git</string>
 	<key>UIApplicationExitsOnSuspend</key>
 	<false/>
+	<key>UIDeviceFamily</key>
+	<array>
+		<integer>1</integer>
+		<integer>2</integer>
+	</array>
 	<key>UIFileSharingEnabled</key>
 	<true/>
 	<key>UILaunchImages</key>

@@ -27,7 +27,7 @@
 #include "voyeur/data.h"
 #include "voyeur/events.h"
 #include "voyeur/files.h"
-#include "voyeur/graphics.h"
+#include "voyeur/screen.h"
 #include "voyeur/sound.h"
 #include "common/scummsys.h"
 #include "common/system.h"
@@ -164,7 +164,7 @@ public:
 	Debugger *_debugger;
 	EventsManager *_eventsManager;
 	FilesManager *_filesManager;
-	GraphicsManager *_graphicsManager;
+	Screen *_screen;
 	SoundManager *_soundManager;
 	SVoy *_voy;
 

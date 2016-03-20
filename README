@@ -48,10 +48,10 @@ Table of Contents:
 4.0) Supported Platforms
 5.0) Running ScummVM
  * 5.1 Command Line Options
- * 5.2 Language Options
+ * 5.2 Global Menu
  * 5.3 Graphics Filters
- * 5.4 Global Menu
- * 5.5 Hotkeys
+ * 5.4 Hotkeys
+ * 5.5 Language Options
 6.0) Saved Games
  * 6.1 Autosaves
  * 6.2 Converting saved games
@@ -1487,6 +1487,7 @@ other games.
     Ctrl-F5                - Displays the Global Menu
     Cmd-q                  - Quit (Mac OS X)
     Ctrl-q                 - Quit (other unices including Linux)
+    Alt-F4                 - Quit (Windows)
     Ctrl-z                 - Quit (other platforms)
     Ctrl-u                 - Mute all sounds
     Ctrl-m                 - Toggle mouse capture

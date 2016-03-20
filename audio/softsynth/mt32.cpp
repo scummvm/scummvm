@@ -140,10 +140,7 @@ MidiDriver_MT32::MidiDriver_MT32(Audio::Mixer *mixer) : MidiDriver_Emulated(mixe
 	}
 	_reportHandler = NULL;
 	_synth = NULL;
-	// Unfortunately bugs in the emulator cause inaccurate tuning
-	// at rates other than 32KHz, thus we produce data at 32KHz and
-	// rely on Mixer to convert.
-	_outputRate = 32000; //_mixer->getOutputRate();
+	_outputRate = 0;
 	_initializing = false;
 
 	// Initialized in open()
@@ -180,7 +177,6 @@ int MidiDriver_MT32::open() {
 	if (_isOpen)
 		return MERR_ALREADY_OPEN;
 
-	MidiDriver_Emulated::open();
 	_reportHandler = new MT32Emu::ReportHandlerScummVM();
 	_synth = new MT32Emu::Synth(_reportHandler);
 
@@ -212,6 +208,18 @@ int MidiDriver_MT32::open() {
 	double gain = (double)ConfMan.getInt("midi_gain") / 100.0;
 	_synth->setOutputGain(1.0f * gain);
 	_synth->setReverbOutputGain(0.68f * gain);
+	// We let the synthesizer play MIDI messages immediately. Our MIDI
+	// handling is synchronous to sample generation. This makes delaying MIDI
+	// events result in odd sound output in some cases. For example, the
+	// shattering window in the Indiana Jones and the Fate of Atlantis intro
+	// will sound like a bell if we use any delay here.
+	// Bug #6242 "AUDIO: Built-In MT-32 MUNT Produces Wrong Sounds".
+	_synth->setMIDIDelayMode(MT32Emu::MIDIDelayMode_IMMEDIATE);
+
+	// We need to report the sample rate MUNT renders at as sample rate of our
+	// AudioStream.
+	_outputRate = _synth->getStereoOutputSampleRate();
+	MidiDriver_Emulated::open();
 
 	_initializing = false;
 

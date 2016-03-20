@@ -470,7 +470,7 @@ void RL2Decoder::play(VoyeurEngine *vm, int resourceOffset,
 		if (hasDirtyPalette()) {
 			const byte *palette = getPalette();
 
-			vm->_graphicsManager->setPalette128(palette, paletteStart, paletteCount);
+			vm->_screen->setPalette128(palette, paletteStart, paletteCount);
 		}
 
 		if (needsUpdate()) {
@@ -482,15 +482,14 @@ void RL2Decoder::play(VoyeurEngine *vm, int resourceOffset,
 					Common::Point pt(READ_LE_UINT16(imgPos + 4 * picCtr) - 32,
 						READ_LE_UINT16(imgPos + 4 * picCtr + 2) - 20);
 
-					vm->_graphicsManager->sDrawPic(newPic, &videoFrame, pt);
+					vm->_screen->sDrawPic(newPic, &videoFrame, pt);
 					++picCtr;
 				}
 			}
 
 			// Decode the next frame and display
 			const Graphics::Surface *frame = decodeNextFrame();
-			Common::copy((const byte *)frame->getPixels(), (const byte *)frame->getPixels() + 320 * 200,
-				(byte *)vm->_graphicsManager->_screenSurface.getPixels());
+			vm->_screen->blitFrom(*frame);
 		}
 
 		vm->_eventsManager->getMouseInfo();

@@ -37,6 +37,7 @@ namespace MystStacks {
 
 Credits::Credits(MohawkEngine_Myst *vm) : MystScriptParser(vm) {
 	setupOpcodes();
+	_curImage = 0;
 }
 
 Credits::~Credits() {
@@ -66,8 +67,10 @@ void Credits::runPersistentScripts() {
 		_curImage++;
 
 		// After the 6th image has shown, it's time to quit
-		if (_curImage == 7)
+		if (_curImage == 7) {
 			_vm->quitGame();
+			return;
+		}
 
 		// Draw next image
 		_vm->drawCardBackground();

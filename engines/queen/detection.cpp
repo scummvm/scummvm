@@ -185,6 +185,19 @@ static const QueenGameDescription gameDescriptions[] = {
 		},
 	},
 
+	// DOS Floppy - Russian
+	{
+		{
+			"queen",
+			"Floppy",
+			AD_ENTRY1s("queen.1", "0d1c10d5c3a1bd90bc0b3859a3258093", 22677657),
+			Common::RU_RUS,
+			Common::kPlatformDOS,
+			ADGF_NO_FLAGS,
+			GUIO1(GUIO_NOSPEECH)
+		},
+	},
+
 	// DOS CD - French
 	{
 		{
@@ -388,7 +401,7 @@ static const QueenGameDescription gameDescriptions[] = {
 class QueenMetaEngine : public AdvancedMetaEngine {
 public:
 	QueenMetaEngine() : AdvancedMetaEngine(Queen::gameDescriptions, sizeof(Queen::QueenGameDescription), queenGames, optionsList) {
-		_singleid = "queen";
+		_singleId = "queen";
 	}
 
 	virtual const char *getName() const {
@@ -430,25 +443,25 @@ const ADGameDescription *QueenMetaEngine::fallbackDetect(const FileMap &allFiles
 			}
 			Queen::DetectedGameVersion version;
 			if (Queen::Resource::detectVersion(&version, &dataFile)) {
-				desc.gameid = "queen";
+				desc.gameId = "queen";
 				desc.language = version.language;
 				desc.platform = version.platform;
 				desc.flags = ADGF_NO_FLAGS;
-				desc.guioptions = GUIO0();
+				desc.guiOptions = GUIO0();
 				if (version.features & Queen::GF_DEMO) {
 					desc.extra = "Demo";
 					desc.flags = ADGF_DEMO;
-					desc.guioptions = GUIO_NOSPEECH;
+					desc.guiOptions = GUIO_NOSPEECH;
 				} else if (version.features & Queen::GF_INTERVIEW) {
 					desc.extra = "Interview";
 					desc.flags = ADGF_DEMO;
-					desc.guioptions = GUIO_NOSPEECH;
+					desc.guiOptions = GUIO_NOSPEECH;
 				} else if (version.features & Queen::GF_FLOPPY) {
 					desc.extra = "Floppy";
-					desc.guioptions = GUIO_NOSPEECH;
+					desc.guiOptions = GUIO_NOSPEECH;
 				} else if (version.features & Queen::GF_TALKIE) {
 					desc.extra = "Talkie";
-					desc.guioptions = GAMEOPTION_ALT_INTRO;
+					desc.guiOptions = GAMEOPTION_ALT_INTRO;
 				}
 				return (const ADGameDescription *)&desc;
 			}
@@ -464,7 +477,6 @@ SaveStateList QueenMetaEngine::listSaves(const char *target) const {
 	Common::String pattern("queen.s##");
 
 	filenames = saveFileMan->listSavefiles(pattern);
-	sort(filenames.begin(), filenames.end());	// Sort (hopefully ensuring we are sorted numerically..)
 
 	SaveStateList saveList;
 	for (Common::StringArray::const_iterator file = filenames.begin(); file != filenames.end(); ++file) {
@@ -483,6 +495,8 @@ SaveStateList QueenMetaEngine::listSaves(const char *target) const {
 		}
 	}
 
+	// Sort saves based on slot number.
+	Common::sort(saveList.begin(), saveList.end(), SaveStateDescriptorSlotComparator());
 	return saveList;
 }
 

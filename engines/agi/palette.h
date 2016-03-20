@@ -60,6 +60,22 @@ static const uint8 PALETTE_CGA[4 * 3] = {
 };
 
 /**
+ * 2 color Hercules (green) palette. Using 8-bit RGB values.
+ */
+static const uint8 PALETTE_HERCULES_GREEN[2 * 3] = {
+	0x00, 0x00, 0x00, // black
+	0x00, 0xdc, 0x28  // green
+};
+
+/**
+ * 2 color Hercules (amber) palette. Using 8-bit RGB values.
+ */
+static const uint8 PALETTE_HERCULES_AMBER[2 * 3] = {
+	0x00, 0x00, 0x00, // black
+	0xdc, 0xb4, 0x00  // amber
+};
+
+/**
  * Atari ST AGI palette.
  * Used by all of the tested Atari ST AGI games
  * from Donald Duck's Playground (1986) to Manhunter II (1989).
@@ -121,6 +137,9 @@ static const uint8 PALETTE_APPLE_II_GS[16 * 3] = {
 	0xE, 0xE, 0x0,
 	0xF, 0xF, 0xF
 };
+
+// Re-use Amiga v1 palette for Apple IIgs Space Quest 1
+#define PALETTE_APPLE_II_GS_SQ1 PALETTE_AMIGA_V1
 
 /**
  * First generation Amiga & Apple IIGS AGI palette.

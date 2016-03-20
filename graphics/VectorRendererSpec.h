@@ -150,7 +150,7 @@ protected:
 	 * @see VectorRendererAA::drawCircleAlg
 	 */
 	virtual void drawLineAlg(int x1, int y1, int x2, int y2,
-	    int dx, int dy, PixelType color);
+	    uint dx, uint dy, PixelType color);
 
 	virtual void drawCircleAlg(int x, int y, int r,
 	    PixelType color, FillMode fill_m);
@@ -278,7 +278,7 @@ protected:
 	 *
 	 * @see VectorRenderer::drawLineAlg()
 	 */
-	virtual void drawLineAlg(int x1, int y1, int x2, int y2, int dx, int dy, PixelType color);
+	virtual void drawLineAlg(int x1, int y1, int x2, int y2, uint dx, uint dy, PixelType color);
 
 	/**
 	 * "Wu's Circle Antialiasing Algorithm" as published by Xiaolin Wu, July 1991

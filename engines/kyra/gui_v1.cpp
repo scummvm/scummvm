@@ -200,7 +200,7 @@ void GUI_v1::processHighlights(Menu &menu) {
 	int mouseY = p.y;
 
 	if (_vm->game() == GI_LOL && menu.highlightedItem != 255) {
-		// LoL doesnt't have default highlighted items.
+		// LoL doesn't have default highlighted items.
 		// We use a highlightedItem value of 255 for this.
 
 		// With LoL no highlighting should take place unless the

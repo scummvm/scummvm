@@ -87,6 +87,9 @@ private:
 	Common::String _currentDirectory;
 	Common::FSNode _rootFolder;
 	Common::List<ArchiveEntry *> _archiveList;
+	
+	bool _useEnglishSpeech;
+	Common::String ensureSpeechLang(const Common::String &fileName);
 
 	Common::ArchiveMemberPtr getArchiveMember(const Common::String &fileName);
 

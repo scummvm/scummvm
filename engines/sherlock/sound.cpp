@@ -120,7 +120,9 @@ byte Sound::decodeSample(byte sample, byte &reference, int16 &scale) {
 }
 
 bool Sound::playSound(const Common::String &name, WaitType waitType, int priority, const char *libraryFilename) {
-	stopSound();
+	// Scalpel has only a single sound handle, so it must be stopped before starting a new sound
+	if (IS_SERRATED_SCALPEL)
+		stopSound();
 
 	Common::String filename = formFilename(name);
 

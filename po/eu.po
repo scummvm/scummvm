@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.5.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
-"POT-Creation-Date: 2016-02-01 21:58+0000\n"
+"POT-Creation-Date: 2016-02-20 21:22+0000\n"
 "PO-Revision-Date: 2011-12-15 14:53+0100\n"
 "Last-Translator: Mikel Iturbe Urretxa <mikel@hamahiru.org>\n"
 "Language-Team: Librezale <librezale@librezale.org>\n"
@@ -30,13 +30,12 @@ msgid "Available engines:"
 msgstr "Motore erabilgarriak:"
 
 #: gui/browser.cpp:68 gui/browser_osx.mm:104
-#, fuzzy
 msgid "Show hidden files"
-msgstr "Kontsola erakutsi / ezkutatu"
+msgstr "Erakutsi fitxategi ezkutuak"
 
 #: gui/browser.cpp:68
 msgid "Show files marked with the hidden attribute"
-msgstr ""
+msgstr "Erakutsi ezkutu modura markaturiko fitxategiak"
 
 #: gui/browser.cpp:72
 msgid "Go up"
@@ -73,7 +72,7 @@ msgstr "Aukeratu"
 
 #: gui/editrecorddialog.cpp:58
 msgid "Author:"
-msgstr ""
+msgstr "Egilea:"
 
 #: gui/editrecorddialog.cpp:59 gui/launcher.cpp:204
 msgid "Name:"
@@ -81,24 +80,23 @@ msgstr "Izena:"
 
 #: gui/editrecorddialog.cpp:60
 msgid "Notes:"
-msgstr ""
+msgstr "Oharrak:"
 
 #: gui/editrecorddialog.cpp:68 gui/predictivedialog.cpp:74
 msgid "Ok"
-msgstr ""
+msgstr "Ados"
 
 #: gui/filebrowser-dialog.cpp:49
 msgid "Choose file for loading"
-msgstr ""
+msgstr "Aukeratu kargatzeko fitxategia"
 
 #: gui/filebrowser-dialog.cpp:49
 msgid "Enter filename for saving"
-msgstr ""
+msgstr "Sartu gordetzeko fitxategi-izena"
 
 #: gui/filebrowser-dialog.cpp:132
-#, fuzzy
 msgid "Do you really want to overwrite the file?"
-msgstr "Ezabatu partida gorde hau?"
+msgstr "Gainidatzi fitxategia?"
 
 #: gui/filebrowser-dialog.cpp:132 gui/fluidsynth-dialog.cpp:217
 #: gui/launcher.cpp:795 gui/launcher.cpp:943 gui/launcher.cpp:1002
@@ -121,59 +119,56 @@ msgid "No"
 msgstr "Ez"
 
 #: gui/fluidsynth-dialog.cpp:68
-#, fuzzy
 msgid "Reverb"
-msgstr "Inoiz ez"
+msgstr "Erreberberazioa"
 
 #: gui/fluidsynth-dialog.cpp:70 gui/fluidsynth-dialog.cpp:102
-#, fuzzy
 msgid "Active"
-msgstr "(Aktiboa)"
+msgstr "Aktiboa"
 
 #: gui/fluidsynth-dialog.cpp:72
 msgid "Room:"
-msgstr ""
+msgstr "Gela:"
 
 #: gui/fluidsynth-dialog.cpp:79
 msgid "Damp:"
-msgstr ""
+msgstr "Moteltzea:"
 
 #: gui/fluidsynth-dialog.cpp:86
 msgid "Width:"
-msgstr ""
+msgstr "Zabalera:"
 
 #: gui/fluidsynth-dialog.cpp:93 gui/fluidsynth-dialog.cpp:111
 msgid "Level:"
-msgstr ""
+msgstr "Maila:"
 
 #: gui/fluidsynth-dialog.cpp:100
 msgid "Chorus"
-msgstr ""
+msgstr "Koroa"
 
 #: gui/fluidsynth-dialog.cpp:104
 msgid "N:"
-msgstr ""
+msgstr "N:"
 
 #: gui/fluidsynth-dialog.cpp:118
-#, fuzzy
 msgid "Speed:"
-msgstr "Ahotsa"
+msgstr "Abiadura:"
 
 #: gui/fluidsynth-dialog.cpp:125
 msgid "Depth:"
-msgstr ""
+msgstr "Sakonera:"
 
 #: gui/fluidsynth-dialog.cpp:132
 msgid "Type:"
-msgstr ""
+msgstr "Mota:"
 
 #: gui/fluidsynth-dialog.cpp:135
 msgid "Sine"
-msgstr ""
+msgstr "Sinua"
 
 #: gui/fluidsynth-dialog.cpp:136
 msgid "Triangle"
-msgstr ""
+msgstr "Triangelua"
 
 #: gui/fluidsynth-dialog.cpp:138 gui/options.cpp:1168
 msgid "Misc"
@@ -181,31 +176,31 @@ msgstr "Beste"
 
 #: gui/fluidsynth-dialog.cpp:140
 msgid "Interpolation:"
-msgstr ""
+msgstr "Interpolazioa:"
 
 #: gui/fluidsynth-dialog.cpp:143
 msgid "None (fastest)"
-msgstr ""
+msgstr "Bat ere ez (azkarrena)"
 
 #: gui/fluidsynth-dialog.cpp:144
 msgid "Linear"
-msgstr ""
+msgstr "Lineala"
 
 #: gui/fluidsynth-dialog.cpp:145
 msgid "Fourth-order"
-msgstr ""
+msgstr "Laugarren ordena"
 
 #: gui/fluidsynth-dialog.cpp:146
 msgid "Seventh-order"
-msgstr ""
+msgstr "Zazpigarren ordena"
 
 #: gui/fluidsynth-dialog.cpp:150
 msgid "Reset"
-msgstr ""
+msgstr "Berrezarri"
 
 #: gui/fluidsynth-dialog.cpp:150
 msgid "Reset all FluidSynth settings to their default values."
-msgstr ""
+msgstr "Berrazarri FluidSynth-en ezarpen guztiak bere balio lehenetsietara"
 
 #: gui/fluidsynth-dialog.cpp:153 gui/KeysDialog.cpp:42 gui/launcher.cpp:352
 #: gui/launcher.cpp:1050 gui/launcher.cpp:1054 gui/massadd.cpp:92
@@ -227,10 +222,9 @@ msgid "OK"
 msgstr "Ados"
 
 #: gui/fluidsynth-dialog.cpp:217
-#, fuzzy
 msgid ""
 "Do you really want to reset all FluidSynth settings to their default values?"
-msgstr "Ziur zaude abiarazlera itzuli nahi duzula?"
+msgstr "FluidSynth-en ezarpen guztiak berrezarri balio lehenetsietara?"
 
 #: gui/gui-manager.cpp:119 backends/keymapper/remap-dialog.cpp:53
 #: engines/scumm/help.cpp:126 engines/scumm/help.cpp:141
@@ -245,11 +239,11 @@ msgstr "Sagu-klika"
 
 #: gui/gui-manager.cpp:126 base/main.cpp:322
 msgid "Display keyboard"
-msgstr "Teklatua erakutsi"
+msgstr "Erakutsi teklatua"
 
 #: gui/gui-manager.cpp:130 base/main.cpp:326
 msgid "Remap keys"
-msgstr "Teklak esleitu"
+msgstr "Esleitu teklak"
 
 #: gui/gui-manager.cpp:133 base/main.cpp:329 engines/scumm/help.cpp:87
 msgid "Toggle fullscreen"
@@ -346,9 +340,8 @@ msgid "Platform:"
 msgstr "Plataforma:"
 
 #: gui/launcher.cpp:237
-#, fuzzy
 msgid "Engine"
-msgstr "Aztertu"
+msgstr "Motorea"
 
 #: gui/launcher.cpp:245 gui/options.cpp:1071 gui/options.cpp:1088
 msgid "Graphics"
@@ -593,16 +586,16 @@ msgid "Search:"
 msgstr "Bilatu:"
 
 #: gui/launcher.cpp:685 engines/dialogs.cpp:115 engines/cruise/menu.cpp:214
-#: engines/mohawk/myst.cpp:245 engines/mohawk/riven.cpp:718
-#: engines/pegasus/pegasus.cpp:353 engines/tsage/scenes.cpp:600
+#: engines/mohawk/riven.cpp:718 engines/pegasus/pegasus.cpp:353
+#: engines/tsage/scenes.cpp:600
 msgid "Load game:"
 msgstr "Jokoa kargatu:"
 
 #: gui/launcher.cpp:685 engines/dialogs.cpp:115
 #: backends/platform/wince/CEActionsPocket.cpp:267
 #: backends/platform/wince/CEActionsSmartphone.cpp:231
-#: engines/cruise/menu.cpp:214 engines/mohawk/myst.cpp:245
-#: engines/mohawk/riven.cpp:718 engines/pegasus/pegasus.cpp:353
+#: engines/cruise/menu.cpp:214 engines/mohawk/riven.cpp:718
+#: engines/parallaction/saveload.cpp:197 engines/pegasus/pegasus.cpp:353
 #: engines/scumm/dialogs.cpp:189 engines/tsage/scenes.cpp:600
 msgid "Load"
 msgstr "Kargatu"
@@ -632,9 +625,8 @@ msgid "Do you really want to remove this game configuration?"
 msgstr "Benetan ezabatu nahi duzu joko-konfigurazio hau?"
 
 #: gui/launcher.cpp:1001
-#, fuzzy
 msgid "Do you want to load saved game?"
-msgstr "Jokoa kargatu edo gorde nahi duzu?"
+msgstr "Gordetako jokoa kargatu?"
 
 #: gui/launcher.cpp:1050
 msgid "This game does not support loading games from the launcher."
@@ -648,11 +640,11 @@ msgstr ""
 
 #: gui/launcher.cpp:1161
 msgid "Mass Add..."
-msgstr "Hainbat gehitu..."
+msgstr "Gehitu hainbat..."
 
 #: gui/launcher.cpp:1163
 msgid "Record..."
-msgstr ""
+msgstr "Grabatu..."
 
 #: gui/massadd.cpp:79 gui/massadd.cpp:82
 msgid "... progress ..."
@@ -681,21 +673,19 @@ msgstr ""
 
 #: gui/onscreendialog.cpp:101 gui/onscreendialog.cpp:103
 msgid "Stop"
-msgstr ""
+msgstr "Gelditu"
 
 #: gui/onscreendialog.cpp:106
 msgid "Edit record description"
-msgstr ""
+msgstr "Editatu grabazioaren desribapena"
 
 #: gui/onscreendialog.cpp:108
-#, fuzzy
 msgid "Switch to Game"
-msgstr "Aldatu"
+msgstr "Aldatu jokora"
 
 #: gui/onscreendialog.cpp:110
-#, fuzzy
 msgid "Fast replay"
-msgstr "Modu bizkorra"
+msgstr "Errepikappen bizkorra"
 
 #: gui/options.cpp:85
 msgid "Never"
@@ -772,7 +762,7 @@ msgid "Special dithering modes supported by some games"
 msgstr "Joko batzuk onarturiko lausotze-modu bereziak"
 
 #: gui/options.cpp:758
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2313
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2316
 msgid "Fullscreen mode"
 msgstr "Pantaila osoa"
 
@@ -875,7 +865,7 @@ msgstr "MIDI irabazia:"
 
 #: gui/options.cpp:872
 msgid "FluidSynth Settings"
-msgstr ""
+msgstr "FluidSynth Ezarpenak"
 
 #: gui/options.cpp:879
 msgid "MT-32 Device:"
@@ -905,15 +895,16 @@ msgid "True Roland MT-32 (no GM emulation)"
 msgstr "Benetako Roland MT-32 (GM emulazio gabe)"
 
 #: gui/options.cpp:889
-#, fuzzy
 msgid "Roland GS Device (enable MT-32 mappings)"
-msgstr "Benetako Roland MT-32 (GM emulazio gabe)"
+msgstr "Roland GS Gailua (gaitu MT-32 bihurketak)"
 
 #: gui/options.cpp:889
 msgid ""
 "Check if you want to enable patch mappings to emulate an MT-32 on a Roland "
 "GS device"
 msgstr ""
+"Markatu Roland GS gailu batean MT-32 bat emulatzea ahalbidetzen "
+"dutenbihurketak gaitzeko"
 
 #: gui/options.cpp:898
 msgid "Don't use Roland MT-32 music"
@@ -1089,39 +1080,38 @@ msgstr ""
 #. I18N: You must leave "#" as is, only word 'next' is translatable
 #: gui/predictivedialog.cpp:86
 msgid "#  next"
-msgstr ""
+msgstr "# hurrengoa"
 
 #: gui/predictivedialog.cpp:87
 msgid "add"
-msgstr ""
+msgstr "gehitu"
 
 #: gui/predictivedialog.cpp:92 gui/predictivedialog.cpp:164
-#, fuzzy
 msgid "Delete char"
-msgstr "Ezabatu"
+msgstr "Ezabatu karakterea"
 
 #: gui/predictivedialog.cpp:97 gui/predictivedialog.cpp:168
 msgid "<"
-msgstr ""
+msgstr "<"
 
 #. I18N: Pre means 'Predictive', leave '*' as is
 #: gui/predictivedialog.cpp:99 gui/predictivedialog.cpp:572
 msgid "*  Pre"
-msgstr ""
+msgstr "* Pre"
 
 #. I18N: 'Num' means Numbers
 #: gui/predictivedialog.cpp:575
 msgid "*  Num"
-msgstr ""
+msgstr "* Zenb"
 
 #. I18N: 'Abc' means Latin alphabet input
 #: gui/predictivedialog.cpp:578
 msgid "*  Abc"
-msgstr ""
+msgstr "* Abc"
 
 #: gui/recorderdialog.cpp:64
 msgid "Recorder or Playback Gameplay"
-msgstr ""
+msgstr "Grabatu edo erreproduzitu jokoko akzioa"
 
 #: gui/recorderdialog.cpp:69 gui/recorderdialog.cpp:156
 #: gui/saveload-dialog.cpp:220 gui/saveload-dialog.cpp:276
@@ -1130,44 +1120,41 @@ msgstr "Ezabatu"
 
 #: gui/recorderdialog.cpp:71
 msgid "Record"
-msgstr ""
+msgstr "Grabatu"
 
 #: gui/recorderdialog.cpp:72
-#, fuzzy
 msgid "Playback"
-msgstr "Jolastu"
+msgstr "Erreproduzitu"
 
 #: gui/recorderdialog.cpp:74
 msgid "Edit"
-msgstr ""
+msgstr "Editatu"
 
 #: gui/recorderdialog.cpp:86 gui/recorderdialog.cpp:243
 #: gui/recorderdialog.cpp:253
 msgid "Author: "
-msgstr ""
+msgstr "Egilea: "
 
 #: gui/recorderdialog.cpp:87 gui/recorderdialog.cpp:244
 #: gui/recorderdialog.cpp:254
 msgid "Notes: "
-msgstr ""
+msgstr "Oharrak: "
 
 #: gui/recorderdialog.cpp:155
-#, fuzzy
 msgid "Do you really want to delete this record?"
-msgstr "Ezabatu partida gorde hau?"
+msgstr "Ezabatu grabazio hau?"
 
 #: gui/recorderdialog.cpp:174
-#, fuzzy
 msgid "Unknown Author"
-msgstr "Errore ezezaguna"
+msgstr "Egile ezezaguna"
 
 #: gui/saveload-dialog.cpp:167
 msgid "List view"
-msgstr ""
+msgstr "Zerrenda ikuspegia"
 
 #: gui/saveload-dialog.cpp:168
 msgid "Grid view"
-msgstr ""
+msgstr "Sareta ikuspegia "
 
 #: gui/saveload-dialog.cpp:211 gui/saveload-dialog.cpp:360
 msgid "No date saved"
@@ -1191,43 +1178,40 @@ msgstr "Data:"
 
 #: gui/saveload-dialog.cpp:389 gui/saveload-dialog.cpp:890
 msgid "Time: "
-msgstr "Ordua"
+msgstr "Ordua: "
 
 #: gui/saveload-dialog.cpp:395 gui/saveload-dialog.cpp:898
 msgid "Playtime: "
-msgstr "Denbora:"
+msgstr "Denbora: "
 
 #: gui/saveload-dialog.cpp:408 gui/saveload-dialog.cpp:496
 msgid "Untitled savestate"
-msgstr "Titulurik gabeko partida"
+msgstr "Titulurik gabeko joko gordea"
 
 #: gui/saveload-dialog.cpp:548
 msgid "Next"
-msgstr ""
+msgstr "Aurr."
 
 #: gui/saveload-dialog.cpp:551
 msgid "Prev"
-msgstr ""
+msgstr "Hurr."
 
 #: gui/saveload-dialog.cpp:748
-#, fuzzy
 msgid "New Save"
 msgstr "Gorde"
 
 #: gui/saveload-dialog.cpp:748
-#, fuzzy
 msgid "Create a new save game"
-msgstr "Ezin izan da jokoa gorde"
+msgstr "Sortu joko gorde berria"
 
 #: gui/saveload-dialog.cpp:877
-#, fuzzy
 msgid "Name: "
-msgstr "Izena:"
+msgstr "Izena: "
 
 #: gui/saveload-dialog.cpp:949
 #, c-format
 msgid "Enter a description for slot %d:"
-msgstr ""
+msgstr "Sartu deskribapena %d zirrikiturako: "
 
 #: gui/themebrowser.cpp:45
 msgid "Select a Theme"
@@ -1243,23 +1227,20 @@ msgid "Disabled GFX"
 msgstr "GFX desgaituta"
 
 #: gui/ThemeEngine.cpp:348
-#, fuzzy
 msgid "Standard Renderer"
-msgstr "Estandarra (16bpp)"
+msgstr "Errendatzaile estandarra"
 
 #: gui/ThemeEngine.cpp:348 engines/scumm/dialogs.cpp:663
 msgid "Standard"
 msgstr "Estandarra"
 
 #: gui/ThemeEngine.cpp:350
-#, fuzzy
 msgid "Antialiased Renderer"
-msgstr "Lausotua (16bpp)"
+msgstr "Errendatzaile lausotua"
 
 #: gui/ThemeEngine.cpp:350
-#, fuzzy
 msgid "Antialiased"
-msgstr "Lausotua (16bpp)"
+msgstr "Lausotua"
 
 #: gui/widget.cpp:323 gui/widget.cpp:325 gui/widget.cpp:331 gui/widget.cpp:333
 msgid "Clear value"
@@ -1372,18 +1353,18 @@ msgstr "Herkules anbar-kolorekoa"
 
 #: common/rendermode.cpp:42
 msgid "PC-9821 (256 Colors)"
-msgstr ""
+msgstr "PC-9821 (256 Kolore)"
 
 #: common/rendermode.cpp:43
 msgid "PC-9801 (16 Colors)"
-msgstr ""
+msgstr "PC-9801 (16 kolore)"
 
-#: common/rendermode.cpp:71
+#: common/rendermode.cpp:73
 msgctxt "lowres"
 msgid "Hercules Green"
 msgstr "Herkules berdea"
 
-#: common/rendermode.cpp:72
+#: common/rendermode.cpp:74
 msgctxt "lowres"
 msgid "Hercules Amber"
 msgstr "Herkules anbar-kolorekoa"
@@ -1434,11 +1415,15 @@ msgctxt "lowres"
 msgid "~R~eturn to Launcher"
 msgstr "It~z~uli abiarazlera"
 
-#: engines/dialogs.cpp:116 engines/agi/saveload.cpp:714
-#: engines/cruise/menu.cpp:212 engines/drascula/saveload.cpp:336
-#: engines/dreamweb/saveload.cpp:261 engines/neverhood/menumodule.cpp:877
-#: engines/pegasus/pegasus.cpp:377 engines/sci/engine/kfile.cpp:769
-#: engines/toltecs/menu.cpp:281 engines/tsage/scenes.cpp:598
+#: engines/dialogs.cpp:116 engines/agi/saveload.cpp:764
+#: engines/avalanche/parser.cpp:1899 engines/cge/events.cpp:74
+#: engines/cge2/events.cpp:67 engines/cruise/menu.cpp:212
+#: engines/drascula/saveload.cpp:336 engines/dreamweb/saveload.cpp:261
+#: engines/hugo/file.cpp:298 engines/neverhood/menumodule.cpp:877
+#: engines/pegasus/pegasus.cpp:377 engines/sci/engine/kfile.cpp:768
+#: engines/sherlock/scalpel/scalpel.cpp:1249
+#: engines/sherlock/tattoo/widget_files.cpp:75 engines/toltecs/menu.cpp:281
+#: engines/toon/toon.cpp:3338 engines/tsage/scenes.cpp:598
 msgid "Save game:"
 msgstr "Gorde jokoa:"
 
@@ -1447,11 +1432,15 @@ msgstr "Gorde jokoa:"
 #: backends/platform/wince/CEActionsPocket.cpp:267
 #: backends/platform/wince/CEActionsSmartphone.cpp:45
 #: backends/platform/wince/CEActionsSmartphone.cpp:231
-#: engines/agi/saveload.cpp:714 engines/cruise/menu.cpp:212
-#: engines/drascula/saveload.cpp:336 engines/dreamweb/saveload.cpp:261
-#: engines/neverhood/menumodule.cpp:877 engines/pegasus/pegasus.cpp:377
-#: engines/sci/engine/kfile.cpp:769 engines/scumm/dialogs.cpp:188
-#: engines/toltecs/menu.cpp:281 engines/tsage/scenes.cpp:598
+#: engines/agi/saveload.cpp:764 engines/avalanche/parser.cpp:1899
+#: engines/cge/events.cpp:74 engines/cge2/events.cpp:67
+#: engines/cruise/menu.cpp:212 engines/drascula/saveload.cpp:336
+#: engines/dreamweb/saveload.cpp:261 engines/hugo/file.cpp:298
+#: engines/neverhood/menumodule.cpp:877 engines/parallaction/saveload.cpp:212
+#: engines/pegasus/pegasus.cpp:377 engines/sci/engine/kfile.cpp:768
+#: engines/scumm/dialogs.cpp:188 engines/sherlock/scalpel/scalpel.cpp:1249
+#: engines/sherlock/tattoo/widget_files.cpp:75 engines/toltecs/menu.cpp:281
+#: engines/toon/toon.cpp:3338 engines/tsage/scenes.cpp:598
 msgid "Save"
 msgstr "Gorde"
 
@@ -1568,7 +1557,7 @@ msgstr "DOSBox OPL emuladorea"
 
 #: audio/fmopl.cpp:67
 msgid "ALSA Direct FM"
-msgstr ""
+msgstr "ALSA FM zuzena"
 
 #: audio/mididrv.cpp:209
 #, c-format
@@ -1625,16 +1614,15 @@ msgstr "Apple II GS emuladorea (INPLEMENTATU GABE)"
 
 #: audio/softsynth/cms.cpp:350
 msgid "Creative Music System Emulator"
-msgstr ""
+msgstr "Creative musika sistema emuladorea"
 
 #: audio/softsynth/fmtowns_pc98/towns_pc98_plugins.cpp:33
 msgid "FM-Towns Audio"
-msgstr ""
+msgstr "FM-Towns soinua"
 
 #: audio/softsynth/fmtowns_pc98/towns_pc98_plugins.cpp:58
-#, fuzzy
 msgid "PC-98 Audio"
-msgstr "Soinua"
+msgstr "PC-98 Soinua"
 
 #: audio/softsynth/mt32.cpp:200
 msgid "Initializing MT-32 Emulator"
@@ -1720,53 +1708,50 @@ msgid "Clicking Disabled"
 msgstr "Klikatzea desgaituta"
 
 #: backends/events/openpandora/op-events.cpp:174
-#, fuzzy
 msgid "Touchscreen 'Tap Mode' - Hover (DPad Clicks)"
-msgstr "Ukimen-pantailako 'kolpetxo modua' - Flotatu (klikik ez)"
+msgstr "Ukimen-pantailako 'kolpetxo modua' - Flotatu (DPad klikak)"
 
 #: backends/events/symbiansdl/symbiansdl-events.cpp:186
 msgid "Do you want to quit ?"
-msgstr "Irten nahi al duzu?"
+msgstr "Benetan irten?"
 
 #. I18N: Trackpad mode toggle status.
 #: backends/events/webossdl/webossdl-events.cpp:308
-#, fuzzy
 msgid "Trackpad mode is now"
-msgstr "Touchpad modua desgaituta."
+msgstr "Trackpad modua orain:"
 
 #. I18N: Trackpad mode on or off.
 #. I18N: Auto-drag on or off.
 #: backends/events/webossdl/webossdl-events.cpp:311
 #: backends/events/webossdl/webossdl-events.cpp:338
 msgid "ON"
-msgstr ""
+msgstr "ON"
 
 #: backends/events/webossdl/webossdl-events.cpp:311
 #: backends/events/webossdl/webossdl-events.cpp:338
 msgid "OFF"
-msgstr ""
+msgstr "OFF"
 
 #: backends/events/webossdl/webossdl-events.cpp:315
 msgid "Swipe two fingers to the right to toggle."
-msgstr ""
+msgstr "Pasatu bi atzamara eskuinean gaitu/desgaitzeko."
 
 #. I18N: Auto-drag toggle status.
 #: backends/events/webossdl/webossdl-events.cpp:335
 msgid "Auto-drag mode is now"
-msgstr ""
+msgstr "Auto-arrastatzea orain:"
 
 #: backends/events/webossdl/webossdl-events.cpp:342
 msgid "Swipe three fingers to the right to toggle."
-msgstr ""
+msgstr "Pasatu hiru atzamar eskuinean gaitu/desgaitzeko."
 
 #: backends/graphics/opengl/opengl-graphics.cpp:119
-#, fuzzy
 msgid "OpenGL"
-msgstr "Ireki"
+msgstr "OpenGL"
 
 #: backends/graphics/opengl/opengl-graphics.cpp:120
 msgid "OpenGL (No filtering)"
-msgstr ""
+msgstr "OpenGL (Iragazi gabe)"
 
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:47
 #: backends/graphics/wincesdl/wincesdl-graphics.cpp:88
@@ -1779,19 +1764,19 @@ msgctxt "lowres"
 msgid "Normal (no scaling)"
 msgstr "Normala"
 
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2212
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2215
 msgid "Enabled aspect ratio correction"
 msgstr "Formatu-ratio zuzenketa gaituta"
 
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2218
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2221
 msgid "Disabled aspect ratio correction"
 msgstr "Formatu-ratio zuzenketa desgaituta"
 
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2273
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2276
 msgid "Active graphics filter:"
 msgstr "Filtro grafiko aktiboa:"
 
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2315
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2318
 msgid "Windowed mode"
 msgstr "Leiho modua"
 
@@ -2053,24 +2038,23 @@ msgstr "Saguaren kontrola"
 
 #: backends/platform/tizen/fs.cpp:259
 msgid "[ Data ]"
-msgstr ""
+msgstr "[ Datuak ]"
 
 #: backends/platform/tizen/fs.cpp:263
 msgid "[ Resources ]"
-msgstr ""
+msgstr "[ Baliabideak ]"
 
 #: backends/platform/tizen/fs.cpp:267
 msgid "[ SDCard ]"
-msgstr ""
+msgstr "[ SD Txartela ]"
 
 #: backends/platform/tizen/fs.cpp:271
 msgid "[ Media ]"
-msgstr ""
+msgstr "[ Multimedia ]"
 
 #: backends/platform/tizen/fs.cpp:275
-#, fuzzy
 msgid "[ Shared ]"
-msgstr "Konpartituriko direktorioa:"
+msgstr "[ Konpartitua ]"
 
 #: backends/platform/wii/options.cpp:51
 msgid "Video"
@@ -2327,7 +2311,7 @@ msgstr "Eguneraketak bilatzen..."
 #: engines/neverhood/detection.cpp:160 engines/sci/detection.cpp:404
 #: engines/toltecs/detection.cpp:200 engines/zvision/detection_tables.h:51
 msgid "Use original save/load screens"
-msgstr ""
+msgstr "Erabili jatorrizko gorde/kargatu pantailak"
 
 #: engines/agi/detection.cpp:148 engines/cine/detection.cpp:71
 #: engines/drascula/detection.cpp:303 engines/dreamweb/detection.cpp:48
@@ -2335,35 +2319,48 @@ msgstr ""
 #: engines/toltecs/detection.cpp:201
 msgid "Use the original save/load screens, instead of the ScummVM ones"
 msgstr ""
+"Erabili jatorrizko gorde/kargatu pantailak, ScummVM-renak erabilibeharrean"
 
 #: engines/agi/detection.cpp:157
 msgid "Use an alternative palette"
-msgstr ""
+msgstr "Erabili paleta alternatiboa"
 
 #: engines/agi/detection.cpp:158
 msgid ""
 "Use an alternative palette, common for all Amiga games. This was the old "
 "behavior"
 msgstr ""
+"Erabili kolore-paleta alternatiboa, Amiga joko guztientzako komuna. Hau zen "
+"konportamendu zaharra"
 
 #: engines/agi/detection.cpp:167
 msgid "Mouse support"
-msgstr ""
+msgstr "Saguaren euskarria"
 
 #: engines/agi/detection.cpp:168
 msgid ""
 "Enables mouse support. Allows to use mouse for movement and in game menus."
 msgstr ""
+"Saguaren euskarria giatzen du. Sagua mugitzeko eta jokoko menuetan "
+"erabiltzea ahalbidetzen du"
 
-#: engines/agi/saveload.cpp:727 engines/drascula/saveload.cpp:349
-#: engines/dreamweb/saveload.cpp:169 engines/neverhood/menumodule.cpp:890
-#: engines/sci/engine/kfile.cpp:868 engines/toltecs/menu.cpp:256
+#: engines/agi/saveload.cpp:777 engines/avalanche/parser.cpp:1887
+#: engines/cge/events.cpp:85 engines/cge2/events.cpp:78
+#: engines/drascula/saveload.cpp:349 engines/dreamweb/saveload.cpp:169
+#: engines/hugo/file.cpp:400 engines/neverhood/menumodule.cpp:890
+#: engines/sci/engine/kfile.cpp:867 engines/sherlock/scalpel/scalpel.cpp:1262
+#: engines/sherlock/tattoo/widget_files.cpp:94 engines/toltecs/menu.cpp:256
+#: engines/toon/toon.cpp:3430
 msgid "Restore game:"
 msgstr "Jokoa kargatu:"
 
-#: engines/agi/saveload.cpp:727 engines/drascula/saveload.cpp:349
-#: engines/dreamweb/saveload.cpp:169 engines/neverhood/menumodule.cpp:890
-#: engines/sci/engine/kfile.cpp:868 engines/toltecs/menu.cpp:256
+#: engines/agi/saveload.cpp:777 engines/avalanche/parser.cpp:1887
+#: engines/cge/events.cpp:85 engines/cge2/events.cpp:78
+#: engines/drascula/saveload.cpp:349 engines/dreamweb/saveload.cpp:169
+#: engines/hugo/file.cpp:400 engines/neverhood/menumodule.cpp:890
+#: engines/sci/engine/kfile.cpp:867 engines/sherlock/scalpel/scalpel.cpp:1262
+#: engines/sherlock/tattoo/widget_files.cpp:94 engines/toltecs/menu.cpp:256
+#: engines/toon/toon.cpp:3430
 msgid "Restore"
 msgstr "Kargatu"
 
@@ -2406,16 +2403,14 @@ msgid "Cutscene file '%s' not found!"
 msgstr "'%s' bideo fitxategia ez da aurkitu!"
 
 #: engines/cge/detection.cpp:105 engines/cge2/detection.cpp:101
-#, fuzzy
 msgid "Color Blind Mode"
-msgstr "Klikatzeko modua"
+msgstr "Daltonikoentzako modua"
 
 #: engines/cge/detection.cpp:106 engines/cge2/detection.cpp:102
 msgid "Enable Color Blind Mode by default"
-msgstr ""
+msgstr "Gaitu daltonikoentzako modua lehenetsi modura"
 
 #: engines/drascula/saveload.cpp:47
-#, fuzzy
 msgid ""
 "ScummVM found that you have old savefiles for Drascula that should be "
 "converted.\n"
@@ -2425,8 +2420,8 @@ msgid ""
 "Press OK to convert them now, otherwise you will be asked again the next "
 "time you start the game.\n"
 msgstr ""
-"ScummVM-k aurkitu du konbertitu beharko liratekeen Broken Sword 1-eko "
-"partida gorde zaharrak dituzula.\n"
+"ScummVM-k aurkitu du konbertitu beharko liratekeen Drascula-ko partida gorde "
+"zaharrak dituzula.\n"
 "Partida gordeen formatu zaharra ez da bateragarria jada, eta beraz ezingo "
 "dituzu zure partidak kargatu ez badituzu formatu berrira pasatzen.\n"
 "\n"
@@ -2434,13 +2429,12 @@ msgstr ""
 "martxan jartzen duzunean.\n"
 
 #: engines/dreamweb/detection.cpp:57
-#, fuzzy
 msgid "Use bright palette mode"
-msgstr "Goiko eskuineko objektua"
+msgstr "Erabili paleta argia"
 
 #: engines/dreamweb/detection.cpp:58
 msgid "Display graphics using the game's bright palette"
-msgstr ""
+msgstr "Erakutsi grafikoak jokoaren paleta argia erabilita"
 
 #: engines/gob/inter_playtoons.cpp:256 engines/gob/inter_v2.cpp:1470
 #: engines/gob/inter_geisha.cpp:232 engines/tinsel/saveload.cpp:532
@@ -2457,13 +2451,12 @@ msgid "Failed to delete file."
 msgstr "Ezin izan da fitxategia ezabatu"
 
 #: engines/groovie/detection.cpp:312
-#, fuzzy
 msgid "Fast movie speed"
-msgstr "Modu bizkorra"
+msgstr "Bideo abiadura azkarra"
 
 #: engines/groovie/detection.cpp:313
 msgid "Play movies at an increased speed"
-msgstr ""
+msgstr "Erreproduzitu bidoeak abiadura handiagoan"
 
 #: engines/groovie/script.cpp:408
 msgid "Failed to save game"
@@ -2471,71 +2464,69 @@ msgstr "Ezin izan da jokoa gorde"
 
 #: engines/hopkins/detection.cpp:76 engines/hopkins/detection.cpp:86
 msgid "Gore Mode"
-msgstr ""
+msgstr "Gore modua"
 
 #: engines/hopkins/detection.cpp:77 engines/hopkins/detection.cpp:87
 msgid "Enable Gore Mode when available"
-msgstr ""
+msgstr "Gaitu Gore modua eskuragarri dagoenean"
 
 #. I18N: Studio audience adds an applause and cheering sounds whenever
 #. Malcolm makes a joke.
 #: engines/kyra/detection.cpp:62
 msgid "Studio audience"
-msgstr ""
+msgstr "Estudio ingurunea"
 
 #: engines/kyra/detection.cpp:63
 msgid "Enable studio audience"
-msgstr ""
+msgstr "Gaitu estudio ingurunea"
 
 #. I18N: This option allows the user to skip text and cutscenes.
 #: engines/kyra/detection.cpp:73
 msgid "Skip support"
-msgstr ""
+msgstr "Jauzi egin"
 
 #: engines/kyra/detection.cpp:74
 msgid "Allow text and cutscenes to be skipped"
-msgstr ""
+msgstr "Utzi testua eta bideoak saltatzen"
 
 #. I18N: Helium mode makes people sound like they've inhaled Helium.
 #: engines/kyra/detection.cpp:84
 msgid "Helium mode"
-msgstr ""
+msgstr "Helio modua"
 
 #: engines/kyra/detection.cpp:85
-#, fuzzy
 msgid "Enable helium mode"
-msgstr "Roland GS modua gaitu"
+msgstr "Gaitu helio modua"
 
 #. I18N: When enabled, this option makes scrolling smoother when
 #. changing from one screen to another.
 #: engines/kyra/detection.cpp:99
 msgid "Smooth scrolling"
-msgstr ""
+msgstr "Korritze leuna"
 
 #: engines/kyra/detection.cpp:100
 msgid "Enable smooth scrolling when walking"
-msgstr ""
+msgstr "Gaitu korritze leuna oinez ibiltzean"
 
 #. I18N: When enabled, this option changes the cursor when it floats to the
 #. edge of the screen to a directional arrow. The player can then click to
 #. walk towards that direction.
 #: engines/kyra/detection.cpp:112
-#, fuzzy
 msgid "Floating cursors"
-msgstr "Kurtsore normala"
+msgstr "Kurtsore flotatzaileak"
 
 #: engines/kyra/detection.cpp:113
 msgid "Enable floating cursors"
-msgstr ""
+msgstr "Gaitu kurtsore flotatzaileak"
 
 #. I18N: HP stands for Hit Points
 #: engines/kyra/detection.cpp:127
 msgid "HP bar graphs"
-msgstr ""
+msgstr "HP barrak"
 
 #: engines/kyra/detection.cpp:128
 msgid "Enable hit point bar graphs"
-msgstr ""
+msgstr "Gaitu bizitza barrak"
 
 #: engines/kyra/lol.cpp:478
 msgid "Attack 1"
@@ -2575,7 +2566,7 @@ msgstr "Eskuinera biratu"
 
 #: engines/kyra/lol.cpp:487
 msgid "Rest"
-msgstr "Kargatu"
+msgstr "Atsedena"
 
 #: engines/kyra/lol.cpp:488
 msgid "Options"
@@ -2586,7 +2577,6 @@ msgid "Choose Spell"
 msgstr "Sorginkeria aukeratu"
 
 #: engines/kyra/sound_midi.cpp:477
-#, fuzzy
 msgid ""
 "You appear to be using a General MIDI device,\n"
 "but your game only supports Roland MT32 MIDI.\n"
@@ -2610,6 +2600,12 @@ msgid ""
 "Do you wish to use this save game file with ScummVM?\n"
 "\n"
 msgstr ""
+"Hurrengo jatorrizko gordetako fitxategia aurkitu da bidean:\n"
+"\n"
+"%s %s\n"
+"\n"
+"Gordetako jokoaren fitxategia ScummVM-rekin erabili?\n"
+"\n"
 
 #: engines/kyra/saveload_eob.cpp:590
 #, c-format
@@ -2617,6 +2613,9 @@ msgid ""
 "A save game file was found in the specified slot %d. Overwrite?\n"
 "\n"
 msgstr ""
+"Joko gorde baten fitxategia aurkitu da zehaztutako %d zirrikituan."
+"Gainidatzi?\n"
+"\n"
 
 #: engines/kyra/saveload_eob.cpp:623
 #, c-format
@@ -2628,6 +2627,10 @@ msgid ""
 "'import_savefile'.\n"
 "\n"
 msgstr ""
+"Jatorrizko %d gordetako joko fitxategi ondo inportatu dira \n"
+"ScummVM-era. Geroago eskuz jatorrizko joko gordeak inportatu\n"
+"nahi izanez gero ScummVM debug konsola ireki eta 'import_savefile'\n"
+"agindau erabili.\n"
 
 #. I18N: Option for fast scene switching
 #: engines/mohawk/dialogs.cpp:92 engines/mohawk/dialogs.cpp:167
@@ -2657,19 +2660,20 @@ msgstr "~U~r-efektua gaituta"
 
 #: engines/neverhood/detection.cpp:167
 msgid "Skip the Hall of Records storyboard scenes"
-msgstr ""
+msgstr "Saltatu Hall of Records-eko eszenak"
 
 #: engines/neverhood/detection.cpp:168
 msgid "Allows the player to skip past the Hall of Records storyboard scenes"
 msgstr ""
+"Erabiltzaileari Halls of Records-eko eszenak ez ikusteko aukera ematen dio"
 
 #: engines/neverhood/detection.cpp:174
 msgid "Scale the making of videos to full screen"
-msgstr ""
+msgstr "Eskalatu bideoen egitea pantaila osora"
 
 #: engines/neverhood/detection.cpp:175
 msgid "Scale the making of videos, so that they use the whole screen"
-msgstr ""
+msgstr "Eskalatu bideoak egiteko era, pantaila osoa erabili dezaten"
 
 #: engines/parallaction/saveload.cpp:133
 #, c-format
@@ -2680,9 +2684,17 @@ msgstr ""
 "Ezin da partida gorde %i zirrikituan\n"
 "\n"
 
+#: engines/parallaction/saveload.cpp:197
+msgid "Load file"
+msgstr "Kargatu fitxategia:"
+
 #: engines/parallaction/saveload.cpp:204
 msgid "Loading game..."
 msgstr "Jokoa kargatzen..."
+
+#: engines/parallaction/saveload.cpp:212
+msgid "Save file"
+msgstr "Gorde fitxategia"
 
 #: engines/parallaction/saveload.cpp:219
 msgid "Saving game..."
@@ -2723,110 +2735,114 @@ msgstr ""
 
 #: engines/pegasus/pegasus.cpp:714
 msgid "Invalid save file name"
-msgstr ""
+msgstr "Gordetako jokoko fitxategi-izen baliogabea"
 
 #: engines/pegasus/pegasus.cpp:2507
 msgid "Up/Zoom In/Move Forward/Open Doors"
-msgstr ""
+msgstr "Gora/Zoom-a hurbildu/Mugitu aurrera/Ireki ateak"
 
 #: engines/pegasus/pegasus.cpp:2508
-#, fuzzy
 msgid "Down/Zoom Out"
-msgstr "Zoom-a hurbildu"
+msgstr "Behera/Zoom-a urrundu"
 
 #: engines/pegasus/pegasus.cpp:2511
 msgid "Display/Hide Inventory Tray"
-msgstr ""
+msgstr "Erakutsi/Ezkutatu inbentorioaren erretilua"
 
 #: engines/pegasus/pegasus.cpp:2512
 msgid "Display/Hide Biochip Tray"
-msgstr ""
+msgstr "Erakutsi/Ezkutatu Biochip erretilua"
 
 #: engines/pegasus/pegasus.cpp:2513
 msgid "Action/Select"
-msgstr ""
+msgstr "Ekintza/Aukeratu"
 
 #: engines/pegasus/pegasus.cpp:2514
 msgid "Toggle Center Data Display"
-msgstr ""
+msgstr "Erakutsi/Ezkutatu Datu Zentroa"
 
 #: engines/pegasus/pegasus.cpp:2515
 msgid "Display/Hide Info Screen"
-msgstr ""
+msgstr "Erakutsi/Ezkutatu informazio pantaila"
 
 #: engines/pegasus/pegasus.cpp:2516
 msgid "Display/Hide Pause Menu"
-msgstr ""
+msgstr "Erakutsi/Ezkutatu pausa menua"
 
 #: engines/queen/detection.cpp:56
 msgid "Alternative intro"
-msgstr ""
+msgstr "Sarrera alternatiboa"
 
 #: engines/queen/detection.cpp:57
 msgid "Use an alternative game intro (CD version only)"
-msgstr ""
+msgstr "Erabili sarrera alternatiboa (CD bertsioa soilik)"
 
 #: engines/sci/detection.cpp:374
 msgid "Skip EGA dithering pass (full color backgrounds)"
-msgstr ""
+msgstr "Saihestu EGA leuntze pausua (koloretako hondoak)"
 
 #: engines/sci/detection.cpp:375
 msgid "Skip dithering pass in EGA games, graphics are shown with full colors"
 msgstr ""
+"Saihestu leuntzea EGA jokoetan, grafikoak kolore guztiekin erakustendira"
 
 #: engines/sci/detection.cpp:384
 msgid "Enable high resolution graphics"
-msgstr ""
+msgstr "Gaitu erresoluzio altuko grafikoak"
 
 #: engines/sci/detection.cpp:385
 msgid "Enable high resolution graphics/content"
-msgstr ""
+msgstr "Gaitu erresoluzio altuko grafikoak/edukiak"
 
 #: engines/sci/detection.cpp:394
-#, fuzzy
 msgid "Prefer digital sound effects"
-msgstr "Soinu efektu berezien bolumena"
+msgstr "Lehenetsi soinu efektu digitalak"
 
 #: engines/sci/detection.cpp:395
 msgid "Prefer digital sound effects instead of synthesized ones"
-msgstr ""
+msgstr "Lehenetsi soinu efektu digitalak sintetizatuen ordez"
 
 #: engines/sci/detection.cpp:414
 msgid "Use IMF/Yamaha FB-01 for MIDI output"
-msgstr ""
+msgstr "Erabili IMF/Yamaha FB-01 MIDI irteerarako"
 
 #: engines/sci/detection.cpp:415
 msgid ""
 "Use an IBM Music Feature card or a Yamaha FB-01 FM synth module for MIDI "
 "output"
 msgstr ""
+"Erabili IBM Music Feature txartela edo Yamaha FB-01 FM "
+"sintetizatzailemodulua MIDI irteerarako"
 
 #: engines/sci/detection.cpp:425
 msgid "Use CD audio"
-msgstr ""
+msgstr "Erabili audio CDa"
 
 #: engines/sci/detection.cpp:426
 msgid "Use CD audio instead of in-game audio, if available"
-msgstr ""
+msgstr "Erabili CD-ko audioa jokokoa beharrean, eskurarri badago"
 
 #: engines/sci/detection.cpp:436
 msgid "Use Windows cursors"
-msgstr ""
+msgstr "Erabili Windows-eko kurtsoreak"
 
 #: engines/sci/detection.cpp:437
 msgid ""
 "Use the Windows cursors (smaller and monochrome) instead of the DOS ones"
 msgstr ""
+"Erabili Windows-eko kurtsoreak (txikiagoak eta monokromoak) DOS-ekoak "
+"erabilibeharrean"
 
 #: engines/sci/detection.cpp:447
-#, fuzzy
 msgid "Use silver cursors"
-msgstr "Kurtsore normala"
+msgstr "Erabili zilarrezko kurtsoreak"
 
 #: engines/sci/detection.cpp:448
 msgid ""
 "Use the alternate set of silver cursors, instead of the normal golden ones"
 msgstr ""
+"Erabili zilar kolorezko kurtsore multzo alternatiboa, urre-koloreko "
+"kursorenormalak erabili beharrean"
 
 #: engines/scumm/dialogs.cpp:176
 #, c-format
@@ -2851,15 +2867,13 @@ msgstr "Joko pausatua. Sakatu ZURIUNEA jarraitzeko."
 #. "Moechten Sie wirklich neu starten?  (J/N)J"
 #. Will react to J as 'Yes'
 #: engines/scumm/dialogs.cpp:183
-#, fuzzy
 msgid "Are you sure you want to restart?  (Y/N)Y"
-msgstr "Ziur zaude berrabiarazi nahi duzula (B/E)B"
+msgstr "Berrabiarazi? (B/E)B"
 
 #. I18N: you may specify 'Yes' symbol at the end of the line. See previous comment
 #: engines/scumm/dialogs.cpp:185
-#, fuzzy
 msgid "Are you sure you want to quit?  (Y/N)Y"
-msgstr "Ziur zaude irten nahi duzula? (B/E)B"
+msgstr "Irten? (B/E)B"
 
 #: engines/scumm/dialogs.cpp:190
 msgid "Play"
@@ -2994,7 +3008,7 @@ msgstr "Alt"
 
 #: engines/scumm/help.cpp:81
 msgid "Save game state 1-10"
-msgstr "1-10 partida gorde"
+msgstr "Gorde 1-10 jokoa"
 
 #: engines/scumm/help.cpp:87 engines/scumm/help.cpp:90
 msgid "Enter"
@@ -3368,23 +3382,23 @@ msgstr "Hirugarren gaztea"
 
 #: engines/scumm/help.cpp:292
 msgid "Toggle Inventory/IQ Points display"
-msgstr ""
+msgstr "Txandakatu Inbentarioa/IQ puntuak"
 
 #: engines/scumm/help.cpp:293
 msgid "Toggle Keyboard/Mouse Fighting (*)"
-msgstr ""
+msgstr "Txandakatu teklatu/sagu bidezko borroka (*)"
 
 #: engines/scumm/help.cpp:295
 msgid "* Keyboard Fighting is always on,"
-msgstr ""
+msgstr "* Teklatu bidezko borroka beti dago gaituta"
 
 #: engines/scumm/help.cpp:296
 msgid "  so despite the in-game message this"
-msgstr ""
+msgstr " beraz, nahiz eta honelako mezuak erakutsi"
 
 #: engines/scumm/help.cpp:297
 msgid "  actually toggles Mouse Fighting Off/On"
-msgstr ""
+msgstr " benetan sagu bidezko borroka gaitu/desgaitzen du"
 
 #: engines/scumm/help.cpp:304
 msgid "Fighting controls (numpad):"
@@ -3421,7 +3435,7 @@ msgstr "Ukabilkada baxua"
 
 #: engines/scumm/help.cpp:315
 msgid "Sucker punch"
-msgstr ""
+msgstr "Ukabilkada inuzentea"
 
 #: engines/scumm/help.cpp:318
 msgid "These are for Indy on left."
@@ -3480,21 +3494,18 @@ msgid "Fly to lower right"
 msgstr "Behera eta eskuinera hegan egin"
 
 #: engines/scumm/input.cpp:580
-#, fuzzy
 msgid "Snap scroll on"
-msgstr "Behera"
+msgstr "Heldutako korritze barra gaituta"
 
 #: engines/scumm/input.cpp:582
 msgid "Snap scroll off"
-msgstr ""
+msgstr "Heldutako korritze barra desgaituta"
 
 #: engines/scumm/input.cpp:595
-#, fuzzy
 msgid "Music volume: "
-msgstr "Musika:"
+msgstr "Musika: "
 
 #: engines/scumm/input.cpp:612
-#, fuzzy
 msgid "Subtitle speed: "
 msgstr "Azpitit. abiadura:"
 
@@ -3508,27 +3519,87 @@ msgstr ""
 "baina %s ez dago eskuragarri. AdLib erabiliko da."
 
 #: engines/scumm/scumm.cpp:2644
-#, fuzzy
 msgid ""
 "Usually, Maniac Mansion would start now. But for that to work, the game "
 "files for Maniac Mansion have to be in the 'Maniac' directory inside the "
 "Tentacle game directory, and the game has to be added to ScummVM."
 msgstr ""
-"Maniac Mansion orain hasi beharko litzateke, baina ScummVM-k ez du "
-"baimentzen oraindik. Jolasteko , joan 'Jokoa gehitu' hasierako menura eta "
-"aukeratu 'Maniac' direktorioa Tentacle-ren joko-direktorioaren barruan."
+"Maniac Mansion orain hasi beharko litzateke, baina horretarako, jokoko "
+"fitxategiak 'Maniac' direktorio barruan egon behar dira, Tentacle jokoko "
+"direktorioan, eta jokoa ScummVM-ra gehitu behar da."
 
 #: engines/scumm/players/player_v3m.cpp:129
 msgid ""
 "Could not find the 'Loom' Macintosh executable to read the\n"
 "instruments from. Music will be disabled."
 msgstr ""
+"Ezin izan da 'Loom' Macintosh exekutagarria aurkitu instrumentuak\n"
+"bertatik irakurtzeko. Musika desgaituta egongo da."
 
 #: engines/scumm/players/player_v5m.cpp:107
 msgid ""
 "Could not find the 'Monkey Island' Macintosh executable to read the\n"
 "instruments from. Music will be disabled."
 msgstr ""
+"Ezin izan da 'Monkey Island' Macintosh exekutagarria aurkitu instrumentuak\n"
+"bertatik irakurtzeko. Musika desgaituta egongo da."
+
+#: engines/sherlock/detection.cpp:71
+msgid "Use original savegame dialog"
+msgstr "Erabili jatorrizko jokoa gordetzeko elkarrizketak"
+
+#: engines/sherlock/detection.cpp:72
+msgid ""
+"Files button in-game shows original savegame dialog rather than the ScummVM "
+"menu"
+msgstr ""
+"Jokoko Fitxategiak botoiak jatorrizko jokoa gordetzeko elkarrizketak erakusten "
+"ditu, ScummVM-ren elkarrizketak erakutsi beharrean"
+
+#: engines/sherlock/detection.cpp:81
+msgid "Pixellated scene transitions"
+msgstr "Eszena trantsizio pixelatuak"
+
+#: engines/sherlock/detection.cpp:82
+msgid "When changing scenes, a randomized pixel transition is done"
+msgstr "Eszenak aldatzean, ausazko pixel trantsizioa egiten da"
+
+#: engines/sherlock/detection.cpp:91
+msgid "Don't show hotspots when moving mouse"
+msgstr "Ez erakutsi puntu interesgarriak sagua mugitzean"
+
+#: engines/sherlock/detection.cpp:92
+msgid ""
+"Only show hotspot names after you actually click on a hotspot or action "
+"button"
+msgstr ""
+"Erakutsi puntu interesgarrien izenak haien gainean edota ekintza botoiaren "
+"gainean klik egin eta gero bakarrik "
+
+#: engines/sherlock/detection.cpp:101
+msgid "Show character portraits"
+msgstr "Erakutsi pertsonaien erretratuak"
+
+#: engines/sherlock/detection.cpp:102
+msgid "Show portraits for the characters when conversing"
+msgstr "Erakutsi pertsonaien erretratuak elkarrizketetan"
+
+#: engines/sherlock/detection.cpp:111
+msgid "Slide dialogs into view"
+msgstr "Irristatu elkarrizketak"
+
+#: engines/sherlock/detection.cpp:112
+msgid "Slide UI dialogs into view, rather than simply showing them immediately"
+msgstr "Irristatu UI elkarrizketak pantailara, osorik bat-batean erakutsi "
+"beharrean"
+
+#: engines/sherlock/detection.cpp:121
+msgid "Transparent windows"
+msgstr "Leiho gardenak"
+
+#: engines/sherlock/detection.cpp:122
+msgid "Show windows with a partially transparent background"
+msgstr "Erakutsi leihoak partzialki gardena den fondoarekin"
 
 #: engines/sky/compact.cpp:130
 msgid ""
@@ -3548,16 +3619,16 @@ msgstr ""
 
 #: engines/sky/detection.cpp:44
 msgid "Floppy intro"
-msgstr ""
+msgstr "Floppy introa"
 
 #: engines/sky/detection.cpp:45
 msgid "Use the floppy version's intro (CD version only)"
-msgstr ""
+msgstr "Erabili floppy bertsioko sarrera (CD bertsioa soilik)"
 
 #: engines/sword1/animation.cpp:524
 #, c-format
 msgid "PSX stream cutscene '%s' cannot be played in paletted mode"
-msgstr ""
+msgstr "'%s' PSX eszena ezin da erreproduzitu paletatutako moduan"
 
 #: engines/sword1/animation.cpp:545 engines/sword2/animation.cpp:445
 msgid "DXA cutscenes found but ScummVM has been built without zlib"
@@ -3565,11 +3636,10 @@ msgstr ""
 "DXA bideoak aurkitu dira, baina ScummVM zlib euskarri gabe konpilatu da"
 
 #: engines/sword1/animation.cpp:561 engines/sword2/animation.cpp:461
-#, fuzzy
 msgid ""
 "MPEG-2 cutscenes found but ScummVM has been built without MPEG-2 support"
 msgstr ""
-"DXA bideoak aurkitu dira, baina ScummVM zlib euskarri gabe konpilatu da"
+"MPEG-2 bideoak aurkitu dira, baina ScummVM MPEG-2 euskarri gabe konpilatu da"
 
 #: engines/sword1/animation.cpp:568 engines/sword2/animation.cpp:470
 #, c-format
@@ -3624,68 +3694,69 @@ msgstr ""
 
 #: engines/sword2/sword2.cpp:79
 msgid "Show object labels"
-msgstr ""
+msgstr "Erakutsi objektuen etiketak"
 
 #: engines/sword2/sword2.cpp:80
 msgid "Show labels for objects on mouse hover"
-msgstr ""
+msgstr "Erakutsi objektuen etiketak sagua pasatzean"
 
 #: engines/teenagent/resources.cpp:95
 msgid ""
 "You're missing the 'teenagent.dat' file. Get it from the ScummVM website"
-msgstr ""
+msgstr "'teenagent.dat' fitxategia falta da. Eskuratu ScummVM webgunean"
 
 #: engines/teenagent/resources.cpp:116
 msgid ""
 "The teenagent.dat file is compressed and zlib hasn't been included in this "
 "executable. Please decompress it"
 msgstr ""
+"teenagent. dat fitxategia konprimituta dago eta zlib ez dago txertatuta "
+"exekutagarri honetan. Deskonprimitu"
 
 #: engines/wintermute/detection.cpp:58
 msgid "Show FPS-counter"
-msgstr ""
+msgstr "Erakutsi FPS kontatzailea"
 
 #: engines/wintermute/detection.cpp:59
 msgid "Show the current number of frames per second in the upper left corner"
-msgstr ""
+msgstr "Erakutsi momentuko FPS (frames per second) goiko ezkerreko ertzean"
 
 #: engines/zvision/detection_tables.h:52
 msgid "Use the original save/load screens instead of the ScummVM interface"
 msgstr ""
+"Erabili jatorrizko gorde/kargatu pantailak ScummVM interfazearenak beharrean"
 
 #: engines/zvision/detection_tables.h:61
 msgid "Double FPS"
-msgstr ""
+msgstr "Bikoiztu FPSa"
 
 #: engines/zvision/detection_tables.h:62
 msgid "Increase framerate from 30 to 60 FPS"
-msgstr ""
+msgstr "Areagotu framerate-a 30etik 60 FPSra"
 
 #: engines/zvision/detection_tables.h:71
-#, fuzzy
 msgid "Enable Venus"
-msgstr "Roland GS modua gaitu"
+msgstr "Gaitu Venus"
 
 #: engines/zvision/detection_tables.h:72
-#, fuzzy
 msgid "Enable the Venus help system"
-msgstr "Roland GS modua gaitu"
+msgstr "Gaitu Venus laguntza sistema"
 
 #: engines/zvision/detection_tables.h:81
 msgid "Disable animation while turning"
-msgstr ""
+msgstr "Desgaitu animazioak biratzean"
 
 #: engines/zvision/detection_tables.h:82
 msgid "Disable animation while turning in panorama mode"
-msgstr ""
+msgstr "Desgaitu animazioak panorama moduan biratzean"
 
 #: engines/zvision/detection_tables.h:91
 msgid "Use high resolution MPEG video"
-msgstr ""
+msgstr "Erabili bereizmen altuko MPEG bideoa"
 
 #: engines/zvision/detection_tables.h:92
 msgid "Use MPEG video from the DVD version, instead of lower resolution AVI"
-msgstr ""
+msgstr "Erabili DVD bertsioko MPEG bideoa, bereizmen baxuagoko AVI-a beharrean"
 
 #~ msgid "EGA undithering"
 #~ msgstr "EGA lausotzea"
@@ -3738,6 +3809,3 @@ msgstr ""
 
 #~ msgid "Enable Roland GS Mode"
 #~ msgstr "Roland GS modua gaitu"
-
-#~ msgid "Save game failed!"
-#~ msgstr "Partida gordeak huts egin du!"

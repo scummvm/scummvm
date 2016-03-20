@@ -26,10 +26,40 @@
 
 #include "common/debug.h"
 #include "common/serializer.h"
+#include "common/system.h"
 #include "common/textconsole.h"
 #include "common/util.h"
 
+#include "graphics/thumbnail.h"
+
 namespace Mohawk {
+
+MystSaveMetadata::MystSaveMetadata() {
+	saveDay = 0;
+	saveMonth = 0;
+	saveYear = 0;
+	saveHour = 0;
+	saveMinute = 0;
+	totalPlayTime = 0;
+}
+
+bool MystSaveMetadata::sync(Common::Serializer &s) {
+	static const Common::Serializer::Version kCurrentVersion = 1;
+
+	if (!s.syncVersion(kCurrentVersion)) {
+		return false;
+	}
+
+	s.syncAsByte(saveDay);
+	s.syncAsByte(saveMonth);
+	s.syncAsUint16LE(saveYear);
+	s.syncAsByte(saveHour);
+	s.syncAsByte(saveMinute);
+	s.syncString(saveDescription);
+	s.syncAsUint32LE(totalPlayTime);
+
+	return true;
+}
 
 MystGameState::MystGameState(MohawkEngine_Myst *vm, Common::SaveFileManager *saveFileMan) : _vm(vm), _saveFileMan(saveFileMan) {
 	// Most of the variables are zero at game start.
@@ -77,28 +107,15 @@ MystGameState::~MystGameState() {
 }
 
 Common::StringArray MystGameState::generateSaveGameList() {
-	return _saveFileMan->listSavefiles("*.mys");
+	return g_system->getSavefileManager()->listSavefiles("*.mys");
 }
 
 bool MystGameState::load(const Common::String &filename) {
-	Common::InSaveFile *loadFile = _saveFileMan->openForLoading(filename);
-	if (!loadFile)
-		return false;
-
-	debugC(kDebugSaveLoad, "Loading game from '%s'", filename.c_str());
-
-	// First, let's make sure we're using a saved game file from this version of Myst
-	// By checking length of file...
-	int32 size = loadFile->size();
-	if (size != 664 && size != 601) {
-		warning("Incompatible saved game version");
-		delete loadFile;
+	if (!loadState(filename)) {
 		return false;
 	}
 
-	Common::Serializer s(loadFile, 0);
-	syncGameState(s, size == 664);
-	delete loadFile;
+	loadMetadata(filename);
 
 	// Set Channelwood elevator state to down, because we start on the lower level
 	_channelwood.elevatorState = 0;
@@ -119,24 +136,163 @@ bool MystGameState::load(const Common::String &filename) {
 	return true;
 }
 
-bool MystGameState::save(const Common::String &fname) {
-	Common::String filename(fname);
-	// Make sure we have the right extension
-	if (!filename.hasSuffix(".mys") && !filename.hasSuffix(".MYS"))
-		filename += ".mys";
-
-	Common::OutSaveFile *saveFile = _saveFileMan->openForSaving(filename);
-	if (!saveFile)
+bool MystGameState::loadState(const Common::String &filename) {
+	Common::InSaveFile *loadFile = _saveFileMan->openForLoading(filename);
+	if (!loadFile) {
 		return false;
+	}
+
+	debugC(kDebugSaveLoad, "Loading game from '%s'", filename.c_str());
+
+	// First, let's make sure we're using a saved game file from this version of Myst
+	// By checking length of file...
+	int32 size = loadFile->size();
+	if (size != 664 && size != 601) {
+		warning("Incompatible saved game version");
+		delete loadFile;
+		return false;
+	}
+
+	Common::Serializer s(loadFile, nullptr);
+	syncGameState(s, size == 664);
+	delete loadFile;
+
+	return true;
+}
+
+void MystGameState::loadMetadata(const Common::String &filename) {
+	// Open the metadata file
+	Common::InSaveFile *metadataFile = openMetadataFile(filename);
+	if (!metadataFile) {
+		return;
+	}
+
+	debugC(kDebugSaveLoad, "Loading metadata from '%s'", filename.c_str());
+
+	Common::Serializer m(metadataFile, nullptr);
+
+	// Read the metadata file
+	if (_metadata.sync(m)) {
+		_vm->setTotalPlayTime(_metadata.totalPlayTime);
+	}
+
+	delete metadataFile;
+}
+
+bool MystGameState::save(const Common::String &filename) {
+	// Make sure the description does not have an extension
+	Common::String desc = filename;
+	if (filename.hasSuffix(".mys") || filename.hasSuffix(".MYS")) {
+		desc = removeExtension(filename);
+	}
+
+	if (!saveState(desc)) {
+		return false;
+	}
+
+	updateMetadateForSaving(desc);
+
+	return saveMetadata(desc);
+}
+
+bool MystGameState::saveState(const Common::String &desc) {
+	// Make sure we have the right extension
+	Common::String filename = desc + ".mys";
+	Common::OutSaveFile *saveFile = _saveFileMan->openForSaving(filename);
+	if (!saveFile) {
+		return false;
+	}
 
 	debugC(kDebugSaveLoad, "Saving game to '%s'", filename.c_str());
 
-	Common::Serializer s(0, saveFile);
+	Common::Serializer s(nullptr, saveFile);
 	syncGameState(s, _vm->getFeatures() & GF_ME);
 	saveFile->finalize();
 	delete saveFile;
 
 	return true;
+}
+
+void MystGameState::updateMetadateForSaving(const Common::String &desc) {
+	// Update save creation info
+	TimeDate t;
+	g_system->getTimeAndDate(t);
+	_metadata.saveYear = t.tm_year + 1900;
+	_metadata.saveMonth = t.tm_mon + 1;
+	_metadata.saveDay = t.tm_mday;
+	_metadata.saveHour = t.tm_hour;
+	_metadata.saveMinute = t.tm_min;
+	_metadata.saveDescription = desc;
+	_metadata.totalPlayTime = _vm->getTotalPlayTime();
+}
+
+bool MystGameState::saveMetadata(const Common::String &desc) {
+	// Write the metadata to a separate file so that the save files
+	// are still compatible with the original engine
+	Common::String metadataFilename = desc + ".mym";
+	Common::OutSaveFile *metadataFile = _saveFileMan->openForSaving(metadataFilename);
+	if (!metadataFile) {
+		return false;
+	}
+
+	// Save the metadata
+	Common::Serializer m(nullptr, metadataFile);
+	_metadata.sync(m);
+
+	// Append a thumbnail
+	Graphics::saveThumbnail(*metadataFile);
+
+	metadataFile->finalize();
+	delete metadataFile;
+
+	return true;
+}
+
+SaveStateDescriptor MystGameState::querySaveMetaInfos(const Common::String filename) {
+	SaveStateDescriptor desc;
+	desc.setDescription(filename);
+
+	// Open the metadata file
+	Common::InSaveFile *metadataFile = openMetadataFile(filename);
+	if (!metadataFile) {
+		return desc;
+	}
+
+	Common::Serializer m(metadataFile, nullptr);
+
+	// Read the metadata file
+	Mohawk::MystSaveMetadata metadata;
+	if (!metadata.sync(m)) {
+		delete metadataFile;
+		return desc;
+	}
+
+	// Set the save description
+	desc.setDescription(metadata.saveDescription);
+	desc.setSaveDate(metadata.saveYear, metadata.saveMonth, metadata.saveDay);
+	desc.setSaveTime(metadata.saveHour, metadata.saveMinute);
+	desc.setPlayTime(metadata.totalPlayTime);
+	desc.setThumbnail(Graphics::loadThumbnail(*metadataFile));
+
+	delete metadataFile;
+
+	return desc;
+}
+
+Common::InSaveFile *MystGameState::openMetadataFile(const Common::String &filename) {
+	// Remove the extension
+	Common::String baseName = removeExtension(filename);
+
+	// Open the metadata file
+	return g_system->getSavefileManager()->openForLoading(baseName + ".mym");
+}
+
+Common::String MystGameState::removeExtension(const Common::String &filename) {
+	Common::String baseName = filename;
+	for (uint i = 0; i < 4; i++) {
+		baseName.deleteLastChar();
+	}
+	return baseName;
 }
 
 void MystGameState::syncGameState(Common::Serializer &s, bool isME) {
@@ -317,11 +473,14 @@ void MystGameState::syncGameState(Common::Serializer &s, bool isME) {
 
 void MystGameState::deleteSave(const Common::String &saveName) {
 	debugC(kDebugSaveLoad, "Deleting save file \'%s\'", saveName.c_str());
-	_saveFileMan->removeSavefile(saveName.c_str());
+	Common::String basename = removeExtension(saveName);
+
+	g_system->getSavefileManager()->removeSavefile(saveName);
+	g_system->getSavefileManager()->removeSavefile(basename + ".mym");
 }
 
 void MystGameState::addZipDest(uint16 stack, uint16 view) {
-	ZipDests *zipDests = 0;
+	ZipDests *zipDests = nullptr;
 
 	// The demo has no zip dest storage
 	if (_vm->getFeatures() & GF_DEMO)

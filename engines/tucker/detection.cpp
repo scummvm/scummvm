@@ -116,7 +116,7 @@ class TuckerMetaEngine : public AdvancedMetaEngine {
 public:
 	TuckerMetaEngine() : AdvancedMetaEngine(tuckerGameDescriptions, sizeof(ADGameDescription), tuckerGames) {
 		_md5Bytes = 512;
-		_singleid = "tucker";
+		_singleId = "tucker";
 	}
 
 	virtual const char *getName() const {
@@ -182,6 +182,8 @@ public:
 				saveList.push_back(SaveStateDescriptor(slot, description));
 			}
 		}
+		// Sort saves based on slot number.
+		Common::sort(saveList.begin(), saveList.end(), SaveStateDescriptorSlotComparator());
 		return saveList;
 	}
 

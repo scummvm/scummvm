@@ -41,8 +41,21 @@ enum {
 };
 
 enum infoSelectorFlags {
-	kInfoFlagClone = 0x0001,
-	kInfoFlagClass = 0x8000
+	kInfoFlagClone        = 0x0001,
+#ifdef ENABLE_SCI32
+	/**
+	 * When set, indicates to game scripts that a screen
+	 * item can be updated.
+	 */
+	kInfoFlagViewVisible  = 0x0008, // TODO: "dirty" ?
+
+	/**
+	 * When set, the object has an associated screen item in
+	 * the rendering tree.
+	 */
+	kInfoFlagViewInserted = 0x0010,
+#endif
+	kInfoFlagClass        = 0x8000
 };
 
 enum ObjectOffsets {
@@ -120,7 +133,24 @@ public:
 			_infoSelectorSci3 = info;
 	}
 
-	// No setter for the -info- selector
+#ifdef ENABLE_SCI32
+	void setInfoSelectorFlag(infoSelectorFlags flag) {
+		if (getSciVersion() < SCI_VERSION_3) {
+			_variables[_offset + 2] |= flag;
+		} else {
+			_infoSelectorSci3 |= flag;
+		}
+	}
+
+	// NOTE: In real engine, -info- is treated as byte size
+	void clearInfoSelectorFlag(infoSelectorFlags flag) {
+		if (getSciVersion() < SCI_VERSION_3) {
+			_variables[_offset + 2] &= ~flag;
+		} else {
+			_infoSelectorSci3 &= ~flag;
+		}
+	}
+#endif
 
 	reg_t getNameSelector() const {
 		if (getSciVersion() < SCI_VERSION_3)
@@ -232,6 +262,8 @@ public:
 	bool initBaseObject(SegManager *segMan, reg_t addr, bool doInitSuperClass = true);
 	void syncBaseObject(const byte *ptr) { _baseObj = ptr; }
 
+	bool mustSetViewVisibleSci3(int selector) const { return _mustSetViewVisible[selector/32]; }
+
 private:
 	void initSelectorsSci3(const byte *buf);
 
@@ -248,6 +280,7 @@ private:
 	reg_t _superClassPosSci3; /**< reg_t pointing to superclass for SCI3 */
 	reg_t _speciesSelectorSci3;	/**< reg_t containing species "selector" for SCI3 */
 	reg_t _infoSelectorSci3; /**< reg_t containing info "selector" for SCI3 */
+	Common::Array<bool> _mustSetViewVisible; /** cached bit of info to make lookup fast, SCI3 only */
 };
 
 

@@ -724,6 +724,10 @@ int PredictiveDialog::binarySearch(const char *const *const dictLine, const Comm
 }
 
 bool PredictiveDialog::matchWord() {
+	// If there is no dictionary, then there is no match.
+	if (_unitedDict.dictLineCount <= 0)
+		return false;
+
 	// If no text has been entered, then there is no match.
 	if (_currentCode.empty())
 		return false;
@@ -981,6 +985,7 @@ void PredictiveDialog::loadAllDictionary(Dict &dict) {
 		Common::File *inFile = new Common::File();
 		if (!inFile->open(ConfMan.get(dict.nameDict))) {
 			warning("Predictive Dialog: cannot read file: %s", dict.defaultFilename.c_str());
+			delete inFile;
 			return;
 		}
 		loadDictionary(inFile, dict);

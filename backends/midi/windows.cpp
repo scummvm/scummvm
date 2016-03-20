@@ -185,6 +185,9 @@ MusicDevices WindowsMusicPlugin::getDevices() const {
 		deviceNames.push_back(tmp.szPname);
 	}
 
+	// Limit us to the number of actually retrieved devices.
+	numDevs = deviceNames.size();
+
 	// Check for non-unique device names. This may happen if someone has devices with identical
 	// names (e. g. more than one USB device of the exact same hardware type). It seems that this
 	// does happen in reality sometimes. We generate index numbers for these devices.

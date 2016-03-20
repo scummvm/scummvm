@@ -39,6 +39,7 @@
 #include "sci/engine/vm_types.h"
 #include "sci/engine/script.h"	// for SCI_OBJ_EXPORTS and SCI_OBJ_SYNONYMS
 #include "sci/graphics/helpers.h"
+#include "sci/graphics/menu.h"
 #include "sci/graphics/palette.h"
 #include "sci/graphics/ports.h"
 #include "sci/graphics/screen.h"
@@ -957,7 +958,8 @@ bool gamestate_save(EngineState *s, Common::WriteStream *fh, const Common::Strin
 extern void showScummVMDialog(const Common::String &message);
 
 void gamestate_delayedrestore(EngineState *s) {
-	Common::String fileName = g_sci->getSavegameName(s->_delayedRestoreGameId);
+	int savegameId = s->_delayedRestoreGameId; // delayedRestoreGameId gets destroyed within gamestate_restore()!
+	Common::String fileName = g_sci->getSavegameName(savegameId);
 	Common::SeekableReadStream *in = g_sci->getSaveFileManager()->openForLoading(fileName);
 
 	if (in) {
@@ -965,11 +967,79 @@ void gamestate_delayedrestore(EngineState *s) {
 		gamestate_restore(s, in);
 		delete in;
 		if (s->r_acc != make_reg(0, 1)) {
+			gamestate_afterRestoreFixUp(s, savegameId);
 			return;
 		}
 	}
 
 	error("Restoring gamestate '%s' failed", fileName.c_str());
+}
+
+void gamestate_afterRestoreFixUp(EngineState *s, int savegameId) {
+	switch (g_sci->getGameId()) {
+	case GID_MOTHERGOOSE:
+		// WORKAROUND: Mother Goose SCI0
+		//  Script 200 / rm200::newRoom will set global C5h directly right after creating a child to the
+		//   current number of children plus 1.
+		//  We can't trust that global, that's why we set the actual savedgame id right here directly after
+		//   restoring a saved game.
+		//  If we didn't, the game would always save to a new slot
+		s->variables[VAR_GLOBAL][0xC5].setOffset(SAVEGAMEID_OFFICIALRANGE_START + savegameId);
+		break;
+	case GID_MOTHERGOOSE256:
+		// WORKAROUND: Mother Goose SCI1/SCI1.1 does some weird things for
+		//  saving a previously restored game.
+		// We set the current savedgame-id directly and remove the script
+		//  code concerning this via script patch.
+		s->variables[VAR_GLOBAL][0xB3].setOffset(SAVEGAMEID_OFFICIALRANGE_START + savegameId);
+		break;
+	case GID_JONES:
+		// HACK: The code that enables certain menu items isn't called when a game is restored from the
+		// launcher, or the "Restore game" option in the game's main menu - bugs #6537 and #6723.
+		// These menu entries are disabled when the game is launched, and are enabled when a new game is
+		// started. The code for enabling these entries is is all in script 1, room1::init, but that code
+		// path is never followed in these two cases (restoring game from the menu, or restoring a game
+		// from the ScummVM launcher). Thus, we perform the calls to enable the menus ourselves here.
+		// These two are needed when restoring from the launcher
+		// FIXME: The original interpreter saves and restores the menu state, so these attributes
+		// are automatically reset there. We may want to do the same.
+		g_sci->_gfxMenu->kernelSetAttribute(257 >> 8, 257 & 0xFF, SCI_MENU_ATTRIBUTE_ENABLED, TRUE_REG);    // Sierra -> About Jones
+		g_sci->_gfxMenu->kernelSetAttribute(258 >> 8, 258 & 0xFF, SCI_MENU_ATTRIBUTE_ENABLED, TRUE_REG);    // Sierra -> Help
+		// The rest are normally enabled from room1::init
+		g_sci->_gfxMenu->kernelSetAttribute(769 >> 8, 769 & 0xFF, SCI_MENU_ATTRIBUTE_ENABLED, TRUE_REG);    // Options -> Delete current player
+		g_sci->_gfxMenu->kernelSetAttribute(513 >> 8, 513 & 0xFF, SCI_MENU_ATTRIBUTE_ENABLED, TRUE_REG);    // Game -> Save Game
+		g_sci->_gfxMenu->kernelSetAttribute(515 >> 8, 515 & 0xFF, SCI_MENU_ATTRIBUTE_ENABLED, TRUE_REG);    // Game -> Restore Game
+		g_sci->_gfxMenu->kernelSetAttribute(1025 >> 8, 1025 & 0xFF, SCI_MENU_ATTRIBUTE_ENABLED, TRUE_REG);  // Status -> Statistics
+		g_sci->_gfxMenu->kernelSetAttribute(1026 >> 8, 1026 & 0xFF, SCI_MENU_ATTRIBUTE_ENABLED, TRUE_REG);  // Status -> Goals
+		break;
+	case GID_KQ6:
+		if (g_sci->isCD()) {
+			// WORKAROUND:
+			// For the CD version of King's Quest 6, set global depending on current hires/lowres state
+			// The game sets a global at the start depending on it and some things check that global
+			// instead of checking platform like for example the game action menu.
+			// This never happened in the original interpreter, because the original DOS interpreter
+			// was only capable of lowres graphics and the original Windows 3.11 interpreter was only capable
+			// of hires graphics. Saved games were not compatible between those two.
+			// Which means saving during lowres mode, then going into hires mode and restoring that saved game,
+			// will result in some graphics being incorrect (lowres).
+			// That's why we are setting the global after restoring a saved game depending on hires/lowres state.
+			// The CD demo of KQ6 does the same and uses the exact same global.
+			if ((g_sci->getPlatform() == Common::kPlatformWindows) || (g_sci->forceHiresGraphics())) {
+				s->variables[VAR_GLOBAL][0xA9].setOffset(1);
+			} else {
+				s->variables[VAR_GLOBAL][0xA9].setOffset(0);
+			}
+		}
+		break;
+	case GID_PQ2:
+		// HACK: Same as above - enable the save game menu option when loading in PQ2 (bug #6875).
+		// It gets disabled in the game's death screen.
+		g_sci->_gfxMenu->kernelSetAttribute(2, 1, SCI_MENU_ATTRIBUTE_ENABLED, TRUE_REG);	// Game -> Save Game
+		break;
+	default:
+		break;
+	}
 }
 
 void gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
@@ -1013,13 +1083,31 @@ void gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 	if (g_sci->_gfxPorts)
 		g_sci->_gfxPorts->reset();
 	// clear screen
-	if (g_sci->_gfxScreen)
-		g_sci->_gfxScreen->clearForRestoreGame();
+	if (getSciVersion() <= SCI_VERSION_1_1) {
+		// Only do clearing the screen for SCI16
+		// Both SCI16 + SCI32 did not clear the screen.
+		// We basically do it for SCI16, because of KQ6.
+		// When hires portraits are shown and the user restores during that time, the portraits
+		// wouldn't get fully removed. In original SCI, the user wasn't able to restore during that time,
+		// so this is basically a workaround, so that ScummVM features work properly.
+		// For SCI32, behavior was verified in DOSBox, that SCI32 does not clear and also not redraw the screen.
+		// It only redraws elements that have changed in comparison to the state before the restore.
+		// If we cleared the screen for SCI32, we would have issues because of this behavior.
+		if (g_sci->_gfxScreen)
+			g_sci->_gfxScreen->clearForRestoreGame();
+	}
 #ifdef ENABLE_SCI32
-	// Also clear any SCI32 planes/screen items currently showing so they
-	// don't show up after the load.
-	if (getSciVersion() >= SCI_VERSION_2)
-		g_sci->_gfxFrameout->clear();
+	// Delete current planes/elements of actively loaded VM, only when our ScummVM dialogs are patched in
+	// We MUST NOT delete all planes/screen items. At least Space Quest 6 has a few in memory like for example
+	// the options plane, which are not re-added and are in memory all the time right from the start of the
+	// game. Sierra SCI32 did not clear planes, only scripts cleared the ones inside planes::elements.
+	if (getSciVersion() >= SCI_VERSION_2) {
+		if (!s->_delayedRestoreFromLauncher) {
+			// Only do it, when we are restoring regulary and not from launcher
+			// As it could result in option planes etc. on the screen (happens in gk1)
+			g_sci->_gfxFrameout->syncWithScripts(false);
+		}
+	}
 #endif
 
 	s->reset(true);
@@ -1044,6 +1132,13 @@ void gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 	if (g_sci->_gfxPorts)
 		g_sci->_gfxPorts->saveLoadWithSerializer(ser);
 
+	// SCI32:
+	// Current planes/screen elements of freshly loaded VM are re-added by scripts in [gameID]::replay
+	// We don't have to do that in here.
+	// But we may have to do it ourselves in case we ever implement some soft-error handling in case
+	// a saved game can't be restored. That way we can restore the game screen.
+	// see _gfxFrameout->syncWithScripts()
+
 	Vocabulary *voc = g_sci->getVocabulary();
 	if (ser.getVersion() >= 30 && voc)
 		voc->saveLoadWithSerializer(ser);
@@ -1061,6 +1156,8 @@ void gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 
 	// signal restored game to game scripts
 	s->gameIsRestarting = GAMEISRESTARTING_RESTORE;
+
+	s->_delayedRestoreFromLauncher = false;
 }
 
 bool get_savegame_metadata(Common::SeekableReadStream *stream, SavegameMetadata *meta) {

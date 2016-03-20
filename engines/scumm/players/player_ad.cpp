@@ -50,7 +50,7 @@ Player_AD::Player_AD(ScummEngine *scumm)
 	writeReg(0x01, 0x20);
 
 	_engineMusicTimer = 0;
-	_soundPlaying = -1;
+	_musicResource = -1;
 
 	_curOffset = 0;
 
@@ -104,8 +104,8 @@ void Player_AD::startSound(int sound) {
 		stopMusic();
 
 		// Lock the new music resource
-		_soundPlaying = sound;
-		_vm->_res->lock(rtSound, _soundPlaying);
+		_musicResource = sound;
+		_vm->_res->lock(rtSound, _musicResource);
 
 		// Start the new music resource
 		_musicData = res;
@@ -150,7 +150,7 @@ void Player_AD::startSound(int sound) {
 void Player_AD::stopSound(int sound) {
 	Common::StackLock lock(_mutex);
 
-	if (sound == _soundPlaying) {
+	if (sound == _musicResource) {
 		stopMusic();
 	} else {
 		for (int i = 0; i < ARRAYSIZE(_sfx); ++i) {
@@ -178,7 +178,17 @@ int Player_AD::getMusicTimer() {
 }
 
 int Player_AD::getSoundStatus(int sound) const {
-	return (sound == _soundPlaying);
+	if (sound == _musicResource) {
+		return true;
+	}
+
+	for (int i = 0; i < ARRAYSIZE(_sfx); ++i) {
+		if (_sfx[i].resource == sound) {
+			return true;
+		}
+	}
+
+	return false;
 }
 
 void Player_AD::saveLoadWithSerializer(Serializer *ser) {
@@ -193,7 +203,7 @@ void Player_AD::saveLoadWithSerializer(Serializer *ser) {
 
 	if (ser->getVersion() >= VER(96)) {
 		int32 res[4] = {
-			_soundPlaying, _sfx[0].resource, _sfx[1].resource, _sfx[2].resource
+			_musicResource, _sfx[0].resource, _sfx[1].resource, _sfx[2].resource
 		};
 
 		// The first thing we save is a list of sound resources being played
@@ -461,13 +471,13 @@ void Player_AD::startMusic() {
 }
 
 void Player_AD::stopMusic() {
-	if (_soundPlaying == -1) {
+	if (_musicResource == -1) {
 		return;
 	}
 
 	// Unlock the music resource if present
-	_vm->_res->unlock(rtSound, _soundPlaying);
-	_soundPlaying = -1;
+	_vm->_res->unlock(rtSound, _musicResource);
+	_musicResource = -1;
 
 	// Stop the music playback
 	_curOffset = 0;
@@ -510,7 +520,7 @@ void Player_AD::updateMusic() {
 			// important to note that we need to parse a command directly
 			// at the new position, i.e. there is no time value we need to
 			// parse.
-			if (_soundPlaying == -1) {
+			if (_musicResource == -1) {
 				return;
 			} else {
 				continue;

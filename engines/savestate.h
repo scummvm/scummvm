@@ -27,7 +27,6 @@
 #include "common/str.h"
 #include "common/ptr.h"
 
-
 namespace Graphics {
 struct Surface;
 }
@@ -205,5 +204,13 @@ private:
 /** List of savestates. */
 typedef Common::Array<SaveStateDescriptor> SaveStateList;
 
+/**
+ * Comparator object to compare SaveStateDescriptor's based on slot.
+ */
+struct SaveStateDescriptorSlotComparator {
+	bool operator()(const SaveStateDescriptor &x, const SaveStateDescriptor &y) const {
+		return x.getSaveSlot() < y.getSaveSlot();
+	}
+};
 
 #endif

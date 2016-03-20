@@ -69,7 +69,7 @@ GroovieEngine::GroovieEngine(OSystem *syst, const GroovieGameDescription *gd) :
 
 	// Initialize the custom debug levels
 	DebugMan.addDebugChannel(kDebugVideo, "Video", "Debug video and audio playback");
-	DebugMan.addDebugChannel(kDebugResource, "Resource", "Debug resouce management");
+	DebugMan.addDebugChannel(kDebugResource, "Resource", "Debug resource management");
 	DebugMan.addDebugChannel(kDebugScript, "Script", "Debug the scripts");
 	DebugMan.addDebugChannel(kDebugUnknown, "Unknown", "Report values of unknown data in files");
 	DebugMan.addDebugChannel(kDebugHotspots, "Hotspots", "Show the hotspots");

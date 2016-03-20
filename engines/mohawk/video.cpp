@@ -146,7 +146,7 @@ VideoHandle::VideoHandle(const VideoHandle &handle) : _ptr(handle._ptr) {
 
 VideoManager::VideoManager(MohawkEngine* vm) : _vm(vm) {
 	// Set dithering enabled, if required
-	_enableDither = _vm->getGameType() == GType_MYST && !(_vm->getFeatures() & GF_ME);
+	_enableDither = (_vm->getGameType() == GType_MYST || _vm->getGameType() == GType_MAKINGOF) && !(_vm->getFeatures() & GF_ME);
 }
 
 VideoManager::~VideoManager() {
@@ -184,7 +184,7 @@ void VideoManager::playMovieBlocking(const Common::String &fileName, uint16 x, u
 	}
 
 	ptr->start();
-	waitUntilMovieEnds(ptr);
+	waitUntilMovieEnds(VideoHandle(ptr));
 }
 
 void VideoManager::playMovieBlockingCentered(const Common::String &fileName, bool clearScreen) {
@@ -200,7 +200,7 @@ void VideoManager::playMovieBlockingCentered(const Common::String &fileName, boo
 
 	ptr->center();
 	ptr->start();
-	waitUntilMovieEnds(ptr);
+	waitUntilMovieEnds(VideoHandle(ptr));
 }
 
 void VideoManager::waitUntilMovieEnds(VideoHandle videoHandle) {
@@ -278,7 +278,7 @@ VideoHandle VideoManager::playMovie(const Common::String &fileName) {
 		return VideoHandle();
 
 	ptr->start();
-	return ptr;
+	return VideoHandle(ptr);
 }
 
 VideoHandle VideoManager::playMovie(uint16 id) {
@@ -287,7 +287,7 @@ VideoHandle VideoManager::playMovie(uint16 id) {
 		return VideoHandle();
 
 	ptr->start();
-	return ptr;
+	return VideoHandle(ptr);
 }
 
 bool VideoManager::updateMovies() {
@@ -317,50 +317,13 @@ bool VideoManager::updateMovies() {
 
 		// Check if we need to draw a frame
 		if (video->needsUpdate()) {
-			const Graphics::Surface *frame = video->decodeNextFrame();
-			Graphics::Surface *convertedFrame = 0;
-
-			if (frame && (*it)->isEnabled()) {
-				Graphics::PixelFormat pixelFormat = _vm->_system->getScreenFormat();
-
-				if (frame->format != pixelFormat) {
-					// We don't support downconverting to 8bpp without having
-					// support in the codec. Set _enableDither if shows up.
-					if (pixelFormat.bytesPerPixel == 1) {
-						warning("Cannot convert high color video frame to 8bpp");
-						(*it)->close();
-						it = _videos.erase(it);
-						continue;
-					}
-
-					// Convert to the current screen format
-					convertedFrame = frame->convertTo(pixelFormat, video->getPalette());
-					frame = convertedFrame;
-				} else if (pixelFormat.bytesPerPixel == 1 && video->hasDirtyPalette()) {
-					// Set the palette when running in 8bpp mode only
-					// Don't do this for Myst, which has its own per-stack handling
-					if (_vm->getGameType() != GType_MYST)
-						_vm->_system->getPaletteManager()->setPalette(video->getPalette(), 0, 256);
-				}
-
-				// Clip the width/height to make sure we stay on the screen (Myst does this a few times)
-				uint16 width = MIN<int32>(video->getWidth(), _vm->_system->getWidth() - (*it)->getX());
-				uint16 height = MIN<int32>(video->getHeight(), _vm->_system->getHeight() - (*it)->getY());
-				_vm->_system->copyRectToScreen(frame->getPixels(), frame->pitch, (*it)->getX(), (*it)->getY(), width, height);
-
-				// We've drawn something to the screen, make sure we update it
+			if (drawNextFrame(*it)) {
 				updateScreen = true;
-
-				// Delete 8bpp conversion surface
-				if (convertedFrame) {
-					convertedFrame->free();
-					delete convertedFrame;
-				}
 			}
 		}
 
 		// Check the video time
-		_vm->doVideoTimer(*it, false);
+		_vm->doVideoTimer(VideoHandle(*it), false);
 
 		// Remember to increase the iterator
 		it++;
@@ -368,6 +331,74 @@ bool VideoManager::updateMovies() {
 
 	// Return true if we need to update the screen
 	return updateScreen;
+}
+
+bool VideoManager::drawNextFrame(VideoEntryPtr videoEntry) {
+	Video::VideoDecoder *video = videoEntry->_video;
+	const Graphics::Surface *frame = video->decodeNextFrame();
+
+	if (!frame || !videoEntry->isEnabled()) {
+		return false;
+	}
+
+	Graphics::Surface *convertedFrame = 0;
+	Graphics::PixelFormat pixelFormat = _vm->_system->getScreenFormat();
+
+	if (frame->format != pixelFormat) {
+		// We don't support downconverting to 8bpp without having
+		// support in the codec. Set _enableDither if shows up.
+		if (pixelFormat.bytesPerPixel == 1) {
+			warning("Cannot convert high color video frame to 8bpp");
+			return false;
+		}
+
+		// Convert to the current screen format
+		convertedFrame = frame->convertTo(pixelFormat, video->getPalette());
+		frame = convertedFrame;
+	} else if (pixelFormat.bytesPerPixel == 1 && video->hasDirtyPalette()) {
+		// Set the palette when running in 8bpp mode only
+		// Don't do this for Myst, which has its own per-stack handling
+		if (_vm->getGameType() != GType_MYST)
+			_vm->_system->getPaletteManager()->setPalette(video->getPalette(), 0, 256);
+	}
+
+	// Clip the video to make sure it stays on the screen (Myst does this a few times)
+	Common::Rect targetRect = Common::Rect(video->getWidth(), video->getHeight());
+	targetRect.translate(videoEntry->getX(), videoEntry->getY());
+
+	Common::Rect frameRect = Common::Rect(video->getWidth(), video->getHeight());
+
+	if (targetRect.left < 0) {
+		frameRect.left -= targetRect.left;
+		targetRect.left = 0;
+	}
+
+	if (targetRect.top < 0) {
+		frameRect.top -= targetRect.top;
+		targetRect.top = 0;
+	}
+
+	if (targetRect.right > _vm->_system->getWidth()) {
+		frameRect.right -= targetRect.right - _vm->_system->getWidth();
+		targetRect.right = _vm->_system->getWidth();
+	}
+
+	if (targetRect.bottom > _vm->_system->getHeight()) {
+		frameRect.bottom -= targetRect.bottom - _vm->_system->getHeight();
+		targetRect.bottom = _vm->_system->getHeight();
+	}
+
+	_vm->_system->copyRectToScreen(frame->getBasePtr(frameRect.left, frameRect.top), frame->pitch,
+	                               targetRect.left, targetRect.top, targetRect.width(), targetRect.height());
+
+	// Delete 8bpp conversion surface
+	if (convertedFrame) {
+		convertedFrame->free();
+		delete convertedFrame;
+	}
+
+	// We've drawn something to the screen, make sure we update it
+	return true;
 }
 
 void VideoManager::activateMLST(uint16 mlstId, uint16 card) {
@@ -430,7 +461,7 @@ VideoHandle VideoManager::playMovieRiven(uint16 id) {
 				ptr->start();
 			}
 
-			return ptr;
+			return VideoHandle(ptr);
 		}
 	}
 
@@ -445,7 +476,7 @@ void VideoManager::playMovieBlockingRiven(uint16 id) {
 			ptr->moveTo(_mlstRecords[i].left, _mlstRecords[i].top);
 			ptr->setVolume(_mlstRecords[i].volume);
 			ptr->start();
-			waitUntilMovieEnds(ptr);
+			waitUntilMovieEnds(VideoHandle(ptr));
 			return;
 		}
 	}
@@ -522,7 +553,7 @@ VideoHandle VideoManager::findVideoHandleRiven(uint16 id) {
 		if (_mlstRecords[i].code == id)
 			for (VideoList::iterator it = _videos.begin(); it != _videos.end(); it++)
 				if ((*it)->getID() == _mlstRecords[i].movieID)
-					return *it;
+					return VideoHandle(*it);
 
 	return VideoHandle();
 }
@@ -533,7 +564,7 @@ VideoHandle VideoManager::findVideoHandle(uint16 id) {
 
 	for (VideoList::iterator it = _videos.begin(); it != _videos.end(); it++)
 		if ((*it)->getID() == id)
-			return *it;
+			return VideoHandle(*it);
 
 	return VideoHandle();
 }
@@ -544,7 +575,7 @@ VideoHandle VideoManager::findVideoHandle(const Common::String &fileName) {
 
 	for (VideoList::iterator it = _videos.begin(); it != _videos.end(); it++)
 		if ((*it)->getFileName().equalsIgnoreCase(fileName))
-			return *it;
+			return VideoHandle(*it);
 
 	return VideoHandle();
 }
@@ -558,12 +589,10 @@ bool VideoManager::isVideoPlaying() {
 }
 
 void VideoManager::drawVideoFrame(VideoHandle handle, const Audio::Timestamp &time) {
-	// FIXME: This should be done separately from the "playing"
-	// videos eventually.
 	assert(handle);
 	handle->seek(time);
-	updateMovies();
-	handle->close();
+	drawNextFrame(handle._ptr);
+	handle->stop();
 }
 
 VideoManager::VideoList::iterator VideoManager::findEntry(VideoEntryPtr ptr) {

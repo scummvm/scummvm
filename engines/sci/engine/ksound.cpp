@@ -206,8 +206,15 @@ reg_t kDoAudio(EngineState *s, int argc, reg_t *argv) {
 			// athrxx: It seems from disasm that the original KQ5 FM-Towns loads a default language (Japanese) audio map at the beginning
 			// right after loading the video and audio drivers. The -1 language argument in here simply means that the original will stick
 			// with Japanese. Instead of doing that we switch to the language selected in the launcher.
-			if (g_sci->getPlatform() == Common::kPlatformFMTowns && language == -1)
-				language = (g_sci->getLanguage() == Common::JA_JPN) ? K_LANG_JAPANESE : K_LANG_ENGLISH;
+			if (g_sci->getPlatform() == Common::kPlatformFMTowns && language == -1) {
+				// FM-Towns calls us to get the current language / also set the default language
+				// This doesn't just happen right at the start, but also when the user clicks on the Sierra logo in the game menu
+				// It uses the result of this call to either show "English Voices" or "Japanese Voices".
+
+				// Language should have been set by setLauncherLanguage() already (or could have been modified by the scripts).
+				// Get this language setting, so that the chosen language will get set for resource manager.
+				language = g_sci->getSciLanguage();
+			}
 
 			debugC(kDebugLevelSound, "kDoAudio: set language to %d", language);
 
@@ -233,19 +240,38 @@ reg_t kDoAudio(EngineState *s, int argc, reg_t *argv) {
 #endif
 		}
 
-		// 3 new subops in Pharkas. kDoAudio in Pharkas sits at seg026:038C
+		// 3 new subops in Pharkas CD (including CD demo). kDoAudio in Pharkas sits at seg026:038C
 	case 11:
 		// Not sure where this is used yet
 		warning("kDoAudio: Unhandled case 11, %d extra arguments passed", argc - 1);
 		break;
 	case 12:
-		// Seems to be some sort of audio sync, used in Pharkas. Silenced the
-		// warning due to the high level of spam it produces. (takes no params)
-		//warning("kDoAudio: Unhandled case 12, %d extra arguments passed", argc - 1);
+		// SSCI calls this function with no parameters from
+		// the TalkRandCycle class and branches on the return
+		// value like a boolean. The conjectured purpose of
+		// this function is to ensure that the talker's mouth
+		// does not move if there is read jitter (slow CD
+		// drive, scratched CD). The old behavior here of not
+		// doing anything caused a nonzero value to be left in
+		// the accumulator by chance. This is equivalent, but
+		// more explicit.
+
+		return make_reg(0, 1);
 		break;
 	case 13:
-		// Used in Pharkas whenever a speech sample starts (takes no params)
-		//warning("kDoAudio: Unhandled case 13, %d extra arguments passed", argc - 1);
+		// SSCI returns a serial number for the played audio
+		// here, used in the PointsSound class. The reason is severalfold:
+
+		// 1. SSCI does not support multiple wave effects at once
+		// 2. FPFP may disable its icon bar during the points sound.
+		// 3. Each new sound preempts any sound already playing.
+		// 4. If the points sound is interrupted before completion,
+		// the icon bar could remain disabled.
+
+		// Since points (1) and (3) do not apply to us, we can simply
+		// return a constant here. This is equivalent to the
+		// old behavior, as above.
+		return make_reg(0, 1);
 		break;
 	case 17:
 		// Seems to be some sort of audio sync, used in SQ6. Silenced the

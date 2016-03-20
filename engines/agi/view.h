@@ -47,10 +47,6 @@ struct AgiView {
 	byte *description;
 	int16 loopCount;
 	AgiViewLoop *loop;
-
-	//struct ViewLoop *loop;
-	//bool agi256_2;
-	//byte *resourceData;
 };
 
 enum MotionType {
@@ -98,7 +94,7 @@ struct ScreenObjEntry {
 	int16 yPos;
 	uint8 currentViewNr;
 	bool viewReplaced;
-	struct AgiView *viewData;
+	struct AgiView *viewResource;
 	uint8 currentLoopNr;
 	uint8 loopCount;
 	struct AgiViewLoop *loopData;

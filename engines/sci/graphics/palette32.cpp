@@ -28,29 +28,41 @@
 #include "sci/event.h"
 #include "sci/resource.h"
 #include "sci/graphics/palette32.h"
+#include "sci/graphics/remap.h"
 #include "sci/graphics/screen.h"
 
 namespace Sci {
-	
+
 GfxPalette32::GfxPalette32(ResourceManager *resMan, GfxScreen *screen)
 	: GfxPalette(resMan, screen),
-	_clutTable(nullptr),
-	// Palette cycling
-	_cyclers(), _cycleMap(),
-	// Palette varying
-	_sourcePalette(_sysPalette), _nextPalette(_sysPalette),
-	_varyTime(0), _varyDirection(0), _varyTargetPercent(0),
-	_varyTargetPalette(nullptr), _varyStartPalette(nullptr),
-	_varyFromColor(0), _varyToColor(255), _varyNumTimesPaused(0),
-	_varyPercent(_varyTargetPercent), _varyLastTick(0),
 	// Palette versioning
-	_version(1), _versionUpdated(false) {
-		memset(_fadeTable, 100, sizeof(_fadeTable));
-
+	_version(1),
+	_versionUpdated(false),
+	_sourcePalette(_sysPalette),
+	_nextPalette(_sysPalette),
+	// Clut
+	_clutTable(nullptr),
+	// Palette varying
+	_varyStartPalette(nullptr),
+	_varyTargetPalette(nullptr),
+	_varyFromColor(0),
+	_varyToColor(255),
+	_varyLastTick(0),
+	_varyTime(0),
+	_varyDirection(0),
+	_varyTargetPercent(0),
+	_varyNumTimesPaused(0),
+	// Palette cycling
+	_cyclers(),
+	_cycleMap() {
+		_varyPercent = _varyTargetPercent;
+		for (int i = 0, len = ARRAYSIZE(_fadeTable); i < len; ++i) {
+			_fadeTable[i] = 100;
+		}
 		// NOTE: In SCI engine, the palette manager constructor loads
 		// the default palette, but in ScummVM this initialisation
 		// is performed by SciEngine::run; see r49523 for details
-	}
+}
 
 GfxPalette32::~GfxPalette32() {
 	unloadClut();
@@ -59,11 +71,15 @@ GfxPalette32::~GfxPalette32() {
 }
 
 inline void mergePaletteInternal(Palette *const to, const Palette *const from) {
-	for (int i = 0; i < ARRAYSIZE(to->colors); ++i) {
+	for (int i = 0, len = ARRAYSIZE(to->colors); i < len; ++i) {
 		if (from->colors[i].used) {
 			to->colors[i] = from->colors[i];
 		}
 	}
+}
+
+const Palette *GfxPalette32::getNextPalette() const {
+	return &_nextPalette;
 }
 
 void GfxPalette32::submit(Palette &palette) {
@@ -205,17 +221,22 @@ int16 GfxPalette32::matchColor(const byte r, const byte g, const byte b, const i
 	return bestIndex;
 }
 
-void GfxPalette32::updateForFrame() {
+bool GfxPalette32::updateForFrame() {
 	applyAll();
 	_versionUpdated = false;
-	// TODO: Implement remapping
-	// g_sci->_gfxFrameout->remapAllTables(_nextPalette != _sysPalette);
+	return g_sci->_gfxRemap32->remapAllTables(_nextPalette != _sysPalette);
+}
+
+void GfxPalette32::updateFFrame() {
+	for (int i = 0; i < ARRAYSIZE(_nextPalette.colors); ++i) {
+		_nextPalette.colors[i] = _sourcePalette.colors[i];
+	}
+	_versionUpdated = false;
+	g_sci->_gfxRemap32->remapAllTables(_nextPalette != _sysPalette);
 }
 
 void GfxPalette32::updateHardware() {
 	if (_sysPalette == _nextPalette) {
-		// TODO: This condition has never been encountered yet
-		debug("Skipping hardware update because palettes are identical");
 		return;
 	}
 
@@ -246,9 +267,8 @@ void GfxPalette32::applyAll() {
 	applyFade();
 }
 
-//
-// Clut
-//
+#pragma mark -
+#pragma mark Colour look-up
 
 bool GfxPalette32::loadClut(uint16 clutId) {
 	// loadClut() will load a color lookup table from a clu file and set
@@ -300,9 +320,8 @@ void GfxPalette32::unloadClut() {
 	_clutTable = nullptr;
 }
 
-//
-// Palette vary
-//
+#pragma mark -
+#pragma mark Varying
 
 inline bool GfxPalette32::createPaletteFromResourceInternal(const GuiResourceId paletteId, Palette *const out) const {
 	Resource *palResource = _resMan->findResource(ResourceId(kResourceTypePalette, paletteId), false);
@@ -409,7 +428,7 @@ void GfxPalette32::setVaryPercent(const int16 percent, const int time, const int
 }
 
 int16 GfxPalette32::getVaryPercent() const {
-	return abs(_varyPercent);
+	return ABS(_varyPercent);
 }
 
 void GfxPalette32::varyOff() {
@@ -542,9 +561,8 @@ void GfxPalette32::applyVary() {
 	}
 }
 
-//
-// Palette cycling
-//
+#pragma mark -
+#pragma mark Cycling
 
 inline void GfxPalette32::clearCycleMap(const uint16 fromColor, const uint16 numColorsToClear) {
 	bool *mapEntry = _cycleMap + fromColor;
@@ -677,14 +695,8 @@ void GfxPalette32::cycleAllOn() {
 }
 
 void GfxPalette32::cycleAllPause() {
-	// TODO: The SCI SQ6 cycleAllPause function does not seem to perform
-	// nullptr checking?? This would definitely cause null pointer
-	// dereference in SCI code. I have not seen anything actually call
-	// this function yet, so it is possible it is just unused and broken
-	// in SCI SQ6. This assert exists so that if this function is called,
-	// it is noticed and can be rechecked in the actual engine.
-	// Obviously this code *does* do nullptr checks instead of crashing. :)
-	assert(0);
+	// NOTE: The original engine did not check for null pointers in the
+	// palette cyclers pointer array.
 	for (int i = 0, len = ARRAYSIZE(_cyclers); i < len; ++i) {
 		PalCycler *cycler = _cyclers[i];
 		if (cycler != nullptr) {
@@ -768,11 +780,16 @@ void GfxPalette32::applyCycles() {
 	}
 }
 
-//
-// Palette fading
-//
+#pragma mark -
+#pragma mark Fading
 
-void GfxPalette32::setFade(uint8 percent, uint8 fromColor, uint16 numColorsToFade) {
+// NOTE: There are some game scripts (like SQ6 Sierra logo and main menu) that call
+// setFade with numColorsToFade set to 256, but other parts of the engine like
+// processShowStyleNone use 255 instead of 256. It is not clear if this is because
+// the last palette entry is intentionally left unmodified, or if this is a bug
+// in the engine. It certainly seems confused because all other places that accept
+// color ranges typically receive values in the range of 0–255.
+void GfxPalette32::setFade(uint16 percent, uint8 fromColor, uint16 numColorsToFade) {
 	if (fromColor > numColorsToFade) {
 		return;
 	}
@@ -794,9 +811,10 @@ void GfxPalette32::applyFade() {
 
 		Color &color = _nextPalette.colors[i];
 
-		color.r = (int16)color.r * _fadeTable[i] / 100;
-		color.g = (int16)color.g * _fadeTable[i] / 100;
-		color.b = (int16)color.b * _fadeTable[i] / 100;
+		color.r = MIN(255, (uint16)color.r * _fadeTable[i] / 100);
+		color.g = MIN(255, (uint16)color.g * _fadeTable[i] / 100);
+		color.b = MIN(255, (uint16)color.b * _fadeTable[i] / 100);
 	}
 }
-}
+
+} // End of namespace Sci

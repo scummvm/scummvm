@@ -61,8 +61,8 @@ public:
 	const byte *getPalette() const { return _palette; }
 
 protected:
-	MohawkSurface *decodeImage(uint16 id);
-	MohawkEngine *getVM() { return (MohawkEngine *)_vm; }
+	MohawkSurface *decodeImage(uint16 id) override;
+	MohawkEngine *getVM() override { return (MohawkEngine *)_vm; }
 
 private:
 	MohawkEngine_Myst *_vm;

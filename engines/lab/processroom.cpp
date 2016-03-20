@@ -238,6 +238,8 @@ void LabEngine::doActions(const ActionList &actionList) {
 	ActionList::const_iterator action;
 	for (action = actionList.begin(); action != actionList.end(); ++action) {
 		updateEvents();
+		if (_quitLab || shouldQuit())
+			return;
 
 		switch (action->_actionType) {
 		case kActionPlaySound:
@@ -381,6 +383,8 @@ void LabEngine::doActions(const ActionList &actionList) {
 
 				while (_system->getMillis() < targetMillis) {
 					updateEvents();
+					if (_quitLab || shouldQuit())
+						return;
 					_anim->diffNextFrame();
 				}
 			}
@@ -409,6 +413,8 @@ void LabEngine::doActions(const ActionList &actionList) {
 		case kActionWaitSound:	// used in scene 44 (heart of the labyrinth / ending)
 			while (_music->isSoundEffectActive()) {
 				updateEvents();
+				if (_quitLab || shouldQuit())
+					return;
 				_anim->diffNextFrame();
 				waitTOF();
 			}

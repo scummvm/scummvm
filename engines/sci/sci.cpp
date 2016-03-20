@@ -58,6 +58,7 @@
 #include "sci/graphics/picture.h"
 #include "sci/graphics/ports.h"
 #include "sci/graphics/palette.h"
+#include "sci/graphics/remap.h"
 #include "sci/graphics/screen.h"
 #include "sci/graphics/text16.h"
 #include "sci/graphics/transitions.h"
@@ -163,6 +164,7 @@ SciEngine::~SciEngine() {
 	delete _gfxText32;
 	delete _robotDecoder;
 	delete _gfxFrameout;
+	delete _gfxRemap32;
 #endif
 	delete _gfxMenu;
 	delete _gfxControls16;
@@ -175,6 +177,7 @@ SciEngine::~SciEngine() {
 	delete _gfxPorts;
 	delete _gfxCache;
 	delete _gfxPalette16;
+	delete _gfxRemap16;
 	delete _gfxCursor;
 	delete _gfxScreen;
 
@@ -238,13 +241,7 @@ Common::Error SciEngine::run() {
 		// Only DOS+Windows
 		switch (_gameId) {
 		case GID_KQ6:
-			if (isCD())
-				_forceHiresGraphics = ConfMan.getBool("enable_high_resolution_graphics");
-			break;
 		case GID_GK1:
-			if ((isCD()) && (!isDemo()))
-				_forceHiresGraphics = ConfMan.getBool("enable_high_resolution_graphics");
-			break;
 		case GID_PQ4:
 			if (isCD())
 				_forceHiresGraphics = ConfMan.getBool("enable_high_resolution_graphics");
@@ -316,6 +313,7 @@ Common::Error SciEngine::run() {
 	if (directSaveSlotLoading >= 0) {
 		_gamestate->_delayedRestoreGame = true;
 		_gamestate->_delayedRestoreGameId = directSaveSlotLoading;
+		_gamestate->_delayedRestoreFromLauncher = true;
 
 		// Jones only initializes its menus when restarting/restoring, thus set
 		// the gameIsRestarting flag here before initializing. Fixes bug #6536.
@@ -529,7 +527,7 @@ void SciEngine::patchGameSaveRestore() {
 	byte kernelIdSave = 0;
 
 	switch (_gameId) {
-	case GID_HOYLE1: // gets confused, although the game doesnt support saving/restoring at all
+	case GID_HOYLE1: // gets confused, although the game doesn't support saving/restoring at all
 	case GID_HOYLE2: // gets confused, see hoyle1
 	case GID_JONES: // gets confused, when we patch us in, the game is only able to save to 1 slot, so hooking is not required
 	case GID_MOTHERGOOSE: // mother goose EGA saves/restores directly and has no save/restore dialogs
@@ -576,17 +574,29 @@ void SciEngine::patchGameSaveRestore() {
 		}
 	}
 
+	const Object *patchObjectSave = nullptr;
+
+	if (getSciVersion() < SCI_VERSION_2) {
+		// Patch gameobject ::save for now for SCI0 - SCI1.1
+		// TODO: It seems this was never adjusted to superclass, but adjusting it now may cause
+		// issues with some game. Needs to get checked and then possibly changed.
+		patchObjectSave = gameObject;
+	} else {
+		// Patch superclass ::save for SCI32
+		patchObjectSave = gameSuperObject;
+	}
+
 	// Search for gameobject ::save, if there is one patch that one too
-	uint16 gameObjectMethodCount = gameObject->getMethodCount();
-	for (uint16 methodNr = 0; methodNr < gameObjectMethodCount; methodNr++) {
-		uint16 selectorId = gameObject->getFuncSelector(methodNr);
+	uint16 patchObjectMethodCount = patchObjectSave->getMethodCount();
+	for (uint16 methodNr = 0; methodNr < patchObjectMethodCount; methodNr++) {
+		uint16 selectorId = patchObjectSave->getFuncSelector(methodNr);
 		Common::String methodName = _kernel->getSelectorName(selectorId);
 		if (methodName == "save") {
 			if (_gameId != GID_FAIRYTALES) {	// Fairy Tales saves automatically without a dialog
 				if (kernelIdSave != kernelIdRestore)
-					patchGameSaveRestoreCode(segMan, gameObject->getFunction(methodNr), kernelIdSave);
+					patchGameSaveRestoreCode(segMan, patchObjectSave->getFunction(methodNr), kernelIdSave);
 				else
-					patchGameSaveRestoreCodeSci21(segMan, gameObject->getFunction(methodNr), kernelIdSave, false);
+					patchGameSaveRestoreCodeSci21(segMan, patchObjectSave->getFunction(methodNr), kernelIdSave, false);
 			}
 			break;
 		}
@@ -653,6 +663,7 @@ void SciEngine::initGraphics() {
 	_gfxPaint = 0;
 	_gfxPaint16 = 0;
 	_gfxPalette16 = 0;
+	_gfxRemap16 = 0;
 	_gfxPorts = 0;
 	_gfxText16 = 0;
 	_gfxTransitions = 0;
@@ -663,6 +674,7 @@ void SciEngine::initGraphics() {
 	_gfxFrameout = 0;
 	_gfxPaint32 = 0;
 	_gfxPalette32 = 0;
+	_gfxRemap32 = 0;
 #endif
 
 	if (hasMacIconBar())
@@ -672,9 +684,12 @@ void SciEngine::initGraphics() {
 	if (getSciVersion() >= SCI_VERSION_2) {
 		_gfxPalette32 = new GfxPalette32(_resMan, _gfxScreen);
 		_gfxPalette16 = _gfxPalette32;
+		_gfxRemap32 = new GfxRemap32(_gfxPalette32);
 	} else {
 #endif
 		_gfxPalette16 = new GfxPalette(_resMan, _gfxScreen);
+		if (getGameId() == GID_QFG4DEMO)
+			_gfxRemap16 = new GfxRemap(_gfxPalette16);
 #ifdef ENABLE_SCI32
 	}
 #endif
@@ -690,10 +705,11 @@ void SciEngine::initGraphics() {
 		_gfxCompare = new GfxCompare(_gamestate->_segMan, _gfxCache, _gfxScreen, _gfxCoordAdjuster);
 		_gfxPaint32 = new GfxPaint32(_resMan, _gfxCoordAdjuster, _gfxScreen, _gfxPalette32);
 		_gfxPaint = _gfxPaint32;
-		_gfxText32 = new GfxText32(_gamestate->_segMan, _gfxCache, _gfxScreen);
-		_gfxControls32 = new GfxControls32(_gamestate->_segMan, _gfxCache, _gfxText32);
 		_robotDecoder = new RobotDecoder(getPlatform() == Common::kPlatformMacintosh);
 		_gfxFrameout = new GfxFrameout(_gamestate->_segMan, _resMan, _gfxCoordAdjuster, _gfxCache, _gfxScreen, _gfxPalette32, _gfxPaint32);
+		_gfxText32 = new GfxText32(_gamestate->_segMan, _gfxCache);
+		_gfxControls32 = new GfxControls32(_gamestate->_segMan, _gfxCache, _gfxText32);
+		_gfxFrameout->run();
 	} else {
 #endif
 		// SCI0-SCI1.1 graphic objects creation
@@ -704,7 +720,7 @@ void SciEngine::initGraphics() {
 		_gfxTransitions = new GfxTransitions(_gfxScreen, _gfxPalette16);
 		_gfxPaint16 = new GfxPaint16(_resMan, _gamestate->_segMan, _gfxCache, _gfxPorts, _gfxCoordAdjuster, _gfxScreen, _gfxPalette16, _gfxTransitions, _audio);
 		_gfxPaint = _gfxPaint16;
-		_gfxAnimate = new GfxAnimate(_gamestate, _gfxCache, _gfxPorts, _gfxPaint16, _gfxScreen, _gfxPalette16, _gfxCursor, _gfxTransitions);
+		_gfxAnimate = new GfxAnimate(_gamestate, _scriptPatcher, _gfxCache, _gfxPorts, _gfxPaint16, _gfxScreen, _gfxPalette16, _gfxCursor, _gfxTransitions);
 		_gfxText16 = new GfxText16(_gfxCache, _gfxPorts, _gfxPaint16, _gfxScreen);
 		_gfxControls16 = new GfxControls16(_gamestate->_segMan, _gfxPorts, _gfxPaint16, _gfxText16, _gfxScreen);
 		_gfxMenu = new GfxMenu(_eventMan, _gamestate->_segMan, _gfxPorts, _gfxPaint16, _gfxText16, _gfxScreen, _gfxCursor);
@@ -820,7 +836,7 @@ Console *SciEngine::getSciDebugger() {
 }
 
 const char *SciEngine::getGameIdStr() const {
-	return _gameDescription->gameid;
+	return _gameDescription->gameId;
 }
 
 Common::Language SciEngine::getLanguage() const {
@@ -897,12 +913,30 @@ int SciEngine::inQfGImportRoom() const {
 void SciEngine::setLauncherLanguage() {
 	if (_gameDescription->flags & ADGF_ADDENGLISH) {
 		// If game is multilingual
-		if (Common::parseLanguage(ConfMan.get("language")) == Common::EN_ANY) {
+		Common::Language chosenLanguage = Common::parseLanguage(ConfMan.get("language"));
+		uint16 languageToSet = 0;
+
+		switch (chosenLanguage) {
+		case Common::EN_ANY:
 			// and English was selected as language
-			if (SELECTOR(printLang) != -1) // set text language to English
-				writeSelectorValue(_gamestate->_segMan, _gameObjectAddress, SELECTOR(printLang), K_LANG_ENGLISH);
-			if (SELECTOR(parseLang) != -1) // and set parser language to English as well
-				writeSelectorValue(_gamestate->_segMan, _gameObjectAddress, SELECTOR(parseLang), K_LANG_ENGLISH);
+			languageToSet = K_LANG_ENGLISH;
+			break;
+		case Common::JA_JPN: {
+			// Set Japanese for FM-Towns games
+			// KQ5 on FM-Towns has no initial language set
+			if (g_sci->getPlatform() == Common::kPlatformFMTowns) {
+				languageToSet = K_LANG_JAPANESE;
+			}
+		}
+		default:
+			break;
+		}
+
+		if (languageToSet) {
+			if (SELECTOR(printLang) != -1) // set text language
+				writeSelectorValue(_gamestate->_segMan, _gameObjectAddress, SELECTOR(printLang), languageToSet);
+			if (SELECTOR(parseLang) != -1) // and set parser language as well
+				writeSelectorValue(_gamestate->_segMan, _gameObjectAddress, SELECTOR(parseLang), languageToSet);
 		}
 	}
 }

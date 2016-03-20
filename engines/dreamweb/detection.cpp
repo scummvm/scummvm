@@ -70,8 +70,8 @@ public:
 	AdvancedMetaEngine(DreamWeb::gameDescriptions,
 	sizeof(DreamWeb::DreamWebGameDescription), dreamWebGames,
 	gameGuiOptions) {
-		_singleid = "dreamweb";
-		_guioptions = GUIO1(GUIO_NOMIDI);
+		_singleId = "dreamweb";
+		_guiOptions = GUIO1(GUIO_NOMIDI);
 	}
 
 	virtual const char *getName() const {
@@ -128,7 +128,6 @@ bool DreamWebMetaEngine::createInstance(OSystem *syst, Engine **engine, const AD
 SaveStateList DreamWebMetaEngine::listSaves(const char *target) const {
 	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
 	Common::StringArray files = saveFileMan->listSavefiles("DREAMWEB.D##");
-	Common::sort(files.begin(), files.end());
 
 	SaveStateList saveList;
 	for (uint i = 0; i < files.size(); ++i) {
@@ -146,6 +145,8 @@ SaveStateList DreamWebMetaEngine::listSaves(const char *target) const {
 		saveList.push_back(sd);
 	}
 
+	// Sort saves based on slot number.
+	Common::sort(saveList.begin(), saveList.end(), SaveStateDescriptorSlotComparator());
 	return saveList;
 }
 

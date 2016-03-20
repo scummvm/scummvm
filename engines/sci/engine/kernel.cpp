@@ -853,7 +853,7 @@ void Kernel::loadKernelNames(GameFeatures *features) {
 				_kernelNames[0x26] = "Portrait";
 			else if (g_sci->getPlatform() == Common::kPlatformMacintosh)
 				_kernelNames[0x84] = "ShowMovie";
-		} else if (g_sci->getGameId() == GID_QFG4 && g_sci->isDemo()) {
+		} else if (g_sci->getGameId() == GID_QFG4DEMO) {
 			_kernelNames[0x7b] = "RemapColors"; // QFG4 Demo has this SCI2 function instead of StrSplit
 		}
 

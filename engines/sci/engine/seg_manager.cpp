@@ -837,10 +837,13 @@ byte *SegManager::allocDynmem(int size, const char *descr, reg_t *addr) {
 
 	d._size = size;
 
-	if (size == 0)
+	// Original SCI only zeroed out heap memory on initialize
+	// They didn't do it again for every allocation
+	if (size) {
+		d._buf = (byte *)calloc(size, 1);
+	} else {
 		d._buf = NULL;
-	else
-		d._buf = (byte *)malloc(size);
+	}
 
 	d._description = descr;
 

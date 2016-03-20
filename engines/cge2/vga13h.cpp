@@ -141,7 +141,7 @@ Sprite::Sprite(CGE2Engine *vm)
 	memset(_actionCtrl, 0, sizeof(_actionCtrl));
 	memset(_file, 0, sizeof(_file));
 	memset(&_flags, 0, sizeof(_flags));
-	_flags._frnt = 1;
+	_flags._frnt = true;
 }
 
 Sprite::Sprite(CGE2Engine *vm, BitmapPtr shpP, int cnt)
@@ -152,7 +152,7 @@ Sprite::Sprite(CGE2Engine *vm, BitmapPtr shpP, int cnt)
 	memset(_actionCtrl, 0, sizeof(_actionCtrl));
 	memset(_file, 0, sizeof(_file));
 	memset(&_flags, 0, sizeof(_flags));
-	_flags._frnt = 1;
+	_flags._frnt = true;
 
 	setShapeList(shpP, cnt);
 }

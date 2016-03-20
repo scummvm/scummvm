@@ -684,21 +684,23 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformDOS, 0, GUIO5(GUIO_NOSPEECH, GAMEOPTION_EGA_UNDITHER, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
 
-	// Gabriel Knight - English DOS CD Demo
+	// Gabriel Knight - English DOS Demo
 	// SCI interpreter version 1.001.092
-	{"gk1", "CD Demo", {
+	// Note: we are not using ADGF_DEMO here, to avoid a game ID like gk1demo-demo
+	{"gk1demo", "Demo", {
 		{"resource.map", 0, "39645952ae0ed8072c7e838f31b75464", 2490},
 		{"resource.000", 0, "eb3ed7477ca4110813fe1fcf35928561", 1718450},
 		AD_LISTEND},
-		Common::EN_ANY, Common::kPlatformDOS, ADGF_DEMO, GUIO3(GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
+		Common::EN_ANY, Common::kPlatformDOS, 0, GUIO3(GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
 
-	// Gabriel Knight - English DOS CD Demo (from DrMcCoy)
+	// Gabriel Knight - English DOS Demo (from DrMcCoy)
 	// SCI interpreter version 1.001.092
-	{"gk1", "CD Demo", {
+	// Note: we are not using ADGF_DEMO here, to avoid a game ID like gk1demo-demo
+	{"gk1demo", "Demo", {
 		{"resource.map", 0, "8cad2a256f41463030cbb7ea1bfb2857", 2490},
 		{"resource.000", 0, "eb3ed7477ca4110813fe1fcf35928561", 1718450},
 		AD_LISTEND},
-		Common::EN_ANY, Common::kPlatformDOS, ADGF_DEMO, GUIO3(GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
+		Common::EN_ANY, Common::kPlatformDOS, 0, GUIO3(GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
 
 #ifdef ENABLE_SCI32
 	// Gabriel Knight - English DOS Floppy
@@ -938,6 +940,15 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 	{"hoyle2", "", {
 		{"resource.map", 0, "db0ba08b953e9904a4960ad99cd29c20", 1356},
 		{"resource.001", 0, "8f2dd70abe01112eca464cda818b5eb6", 216315},
+		AD_LISTEND},
+		Common::EN_ANY, Common::kPlatformDOS, 0, GUIO5(GUIO_NOSPEECH, GAMEOPTION_EGA_UNDITHER, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
+
+	// Hoyle 2 - English DOS (supplied by m_kiewitz)
+	// SCI interpreter version 0.000.668, Ver 1.000.014, 2x5.25"
+	{"hoyle2", "", {
+		{"resource.map", 0, "8cef06c93d17d96f44aacd5902d84b30", 2100},
+		{"resource.001", 0, "8f2dd70abe01112eca464cda818b5eb6", 98289},
+		{"resource.002", 0, "8f2dd70abe01112eca464cda818b5eb6", 197326},
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformDOS, 0, GUIO5(GUIO_NOSPEECH, GAMEOPTION_EGA_UNDITHER, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
 
@@ -1531,13 +1542,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.000", 0, "71afd220d46bde1109c58e6acc0f3a01", 469094},
 		{"resource.001", 0, "72a569f46f1abf2d9d2b1526ad3799c3", 12808839},
 		AD_LISTEND},
-		Common::EN_ANY, Common::kPlatformFMTowns, 0, GUIO2(GUIO_NOASPECT, GUIO_MIDITOWNS) },
-	{"kq5", "", {
-		{"resource.map", 0, "20c7cd248ff1a349ed354568eebd972b", 12733},
-		{"resource.000", 0, "71afd220d46bde1109c58e6acc0f3a01", 469094},
-		{"resource.001", 0, "72a569f46f1abf2d9d2b1526ad3799c3", 12808839},
-		AD_LISTEND},
-		Common::JA_JPN, Common::kPlatformFMTowns, 0, GUIO2(GUIO_NOASPECT, GUIO_MIDITOWNS) },
+		Common::JA_JPN, Common::kPlatformFMTowns, ADGF_ADDENGLISH, GUIO3(GUIO_NOASPECT, GAMEOPTION_ORIGINAL_SAVELOAD, GUIO_MIDITOWNS) },
 
 	// King's Quest 5 - Japanese PC-98 Floppy 0.000.015 (supplied by omer_mor in bug report #3073583)
 	{"kq5", "", {
@@ -1646,19 +1651,38 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 #ifdef ENABLE_SCI32
 
 
-	// King's Quest 7 - English Windows (from abevi)
-	// VERSION 1.65c
-	{"kq7", "", {
-		{"resource.000", 0, "4948e4e1506f1e1c4e1d47abfa06b7f8", 204385195},
-		{"resource.map", 0, "40ccafb2195301504eba2e4f4f2c7f3d", 18925},
-		AD_LISTEND},
-		Common::EN_ANY, Common::kPlatformWindows, ADGF_UNSTABLE | ADGF_CD, GUIO4(GUIO_NOASPECT, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
-
 	// King's Quest 7 - English Windows (from the King's Quest Collection)
 	// Executable scanning reports "2.100.002", VERSION file reports "1.4"
 	{"kq7", "", {
 		{"resource.map", 0, "2be9ab94429c721af8e05c507e048a15", 18697},
 		{"resource.000", 0, "eb63ea3a2c2469dc2d777d351c626404", 203882535},
+		AD_LISTEND},
+		Common::EN_ANY, Common::kPlatformWindows, ADGF_UNSTABLE | ADGF_CD, GUIO4(GUIO_NOASPECT, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
+
+	// King's Quest 7 - English Windows-interpreter-only (supplied by m_kiewitz)
+	// SCI interpreter version 2.100.002, VERSION file reports "1.51"
+	{"kq7", "", {
+		{"resource.map", 0, "838b9ff132bd6962026fee832e8a7ddb", 18697},
+		{"resource.000", 0, "eb63ea3a2c2469dc2d777d351c626404", 206626576},
+		{"resource.aud", 0, "c2a988a16053eb98c7b73a75139902a0", 217716879},
+		AD_LISTEND},
+		Common::EN_ANY, Common::kPlatformWindows, ADGF_UNSTABLE | ADGF_CD, GUIO4(GUIO_NOASPECT, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
+
+	// King's Quest 7 - German Windows-interpreter-only (supplied by markcoolio in bug report #2727402)
+	// SCI interpreter version 2.100.002, VERSION file reports "1.51"
+	// same as English 1.51, only resource.aud/resource.sfx are different
+	{"kq7", "", {
+		{"resource.map", 0, "838b9ff132bd6962026fee832e8a7ddb", 18697},
+		{"resource.000", 0, "eb63ea3a2c2469dc2d777d351c626404", 206626576},
+		{"resource.aud", 0, "3f17bcaf8a9ff6a6c2d4de1a2078fdcc", 258119621},
+		AD_LISTEND},
+		Common::DE_DEU, Common::kPlatformWindows, ADGF_UNSTABLE | ADGF_CD, GUIO4(GUIO_NOASPECT, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
+
+	// King's Quest 7 - English Windows (from abevi)
+	// VERSION 1.65c
+	{"kq7", "", {
+		{"resource.000", 0, "4948e4e1506f1e1c4e1d47abfa06b7f8", 204385195},
+		{"resource.map", 0, "40ccafb2195301504eba2e4f4f2c7f3d", 18925},
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformWindows, ADGF_UNSTABLE | ADGF_CD, GUIO4(GUIO_NOASPECT, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
 
@@ -1677,14 +1701,6 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.000", 0, "51c1ead1163e19a2de8f121c39df7a76", 200764100},
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformWindows, ADGF_UNSTABLE | ADGF_CD, GUIO4(GUIO_NOASPECT, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
-
-	// King's Quest 7 - German Windows (supplied by markcoolio in bug report #2727402)
-	// SCI interpreter version 2.100.002
-	{"kq7", "", {
-		{"resource.map", 0, "838b9ff132bd6962026fee832e8a7ddb", 18697},
-		{"resource.000", 0, "eb63ea3a2c2469dc2d777d351c626404", 206626576},
-		AD_LISTEND},
-		Common::DE_DEU, Common::kPlatformDOS, ADGF_UNSTABLE | ADGF_CD, GUIO4(GUIO_NOASPECT, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
 
 	// King's Quest 7 - Spanish DOS (from jvprat)
 	// Executable scanning reports "2.100.002", VERSION file reports "2.00"
@@ -2286,6 +2302,14 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformDOS, 0, GUIO4(GUIO_NOSPEECH, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
 
+	// Larry 6 - French DOS Floppy - LOWRES (provided by theco33)
+	// SCI interpreter version 1.001.113
+	{"lsl6", "", {
+		{"resource.map", 0, "1e07144d3b06a3269236880170978acb", 6943},
+		{"resource.000", 0, "7884a8db9253e29e6b37a2651fd90ba3", 5749882},
+		AD_LISTEND},
+		Common::FR_FRA, Common::kPlatformDOS, 0, GUIO4(GUIO_NOSPEECH, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
+
 	// Larry 6 - English/German/French DOS CD - LOWRES
 	// SCI interpreter version 1.001.115
 	{"lsl6", "", {
@@ -2593,12 +2617,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.map", 0, "b11e971ccd2040bebba59dfb409a08ef", 5772},
 		{"resource.001", 0, "d49625d9b8005ec01c852f8322a82867", 4330713},
 		AD_LISTEND},
-		Common::EN_ANY, Common::kPlatformFMTowns, 0, GUIO4(GUIO_NOASPECT, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
-	{"mothergoose256", "", {
-		{"resource.map", 0, "b11e971ccd2040bebba59dfb409a08ef", 5772},
-		{"resource.001", 0, "d49625d9b8005ec01c852f8322a82867", 4330713},
-		AD_LISTEND},
-		Common::JA_JPN, Common::kPlatformFMTowns, 0, GUIO4(GUIO_NOASPECT, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
+		Common::JA_JPN, Common::kPlatformFMTowns, ADGF_ADDENGLISH, GUIO4(GUIO_NOASPECT, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
 
 #ifdef ENABLE_SCI32
 	// Mixed-Up Mother Goose Deluxe - English Windows/DOS CD (supplied by markcoolio in bug report #2723810)
@@ -2627,6 +2646,28 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		Common::EN_ANY, Common::kPlatformDOS, 0, GUIO4(GUIO_NOSPEECH, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
 
 #ifdef ENABLE_SCI32
+	// Phantasmagoria - English DOS/Windows (from csnover)
+	// Windows executable scanning reports "2.100.002" - "Aug 06 1995"
+	// DOS executable scanning reports "2.100.002" - "May 24 1995"
+	// VERSION file reports "1.000.000"
+	{"phantasmagoria", "", {
+		{"resmap.001", 0, "43c395f312a190e67b90b2c1e93a79e2", 11518},
+		{"ressci.001", 0, "3aae6559aa1df273bc542d5ac6330d75", 65844612},
+		{"resmap.002", 0, "94f142cfe8ec4107b6a42876cb603ed0", 12058},
+		{"ressci.002", 0, "3aae6559aa1df273bc542d5ac6330d75", 71588691},
+		{"resmap.003", 0, "39e9abd4501b5b6168dd07379c0be753", 12334},
+		{"ressci.003", 0, "3aae6559aa1df273bc542d5ac6330d75", 73651084},
+		{"resmap.004", 0, "434f9704658229fef322c863d2422a9a", 12556},
+		{"ressci.004", 0, "3aae6559aa1df273bc542d5ac6330d75", 75811935},
+		{"resmap.005", 0, "3ff9b4f7301800825c0ed008e091205e", 12604},
+		{"ressci.005", 0, "3aae6559aa1df273bc542d5ac6330d75", 78814934},
+		{"resmap.006", 0, "27ad413313e2a3ec3c53250e7ff5b2d1", 12532},
+		{"ressci.006", 0, "3aae6559aa1df273bc542d5ac6330d75", 77901360},
+		{"resmap.007", 0, "aa8175cfc93242af6f5e65bdceaafc0d", 7972},
+		//{"ressci.007", 0, "3aae6559aa1df273bc542d5ac6330d75", 25859038},
+		AD_LISTEND},
+		Common::EN_ANY, Common::kPlatformDOS, ADGF_UNSTABLE, GUIO5(GUIO_NOSPEECH, GUIO_NOASPECT, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
+
 	// Phantasmagoria - English DOS (from jvprat)
 	// Executable scanning reports "2.100.002", VERSION file reports "1.100.000UK"
 	{"phantasmagoria", "", {
@@ -2875,6 +2916,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		Common::EN_ANY, Common::kPlatformDOS, 0, GUIO5(GUIO_NOSPEECH, GAMEOPTION_EGA_UNDITHER, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
 
 	// Police Quest 2 - Japanese PC-98 (also includes english language)
+	// Executable scanning reports "x.yyy.zzz"
 	// SCI interpreter version unknown
 	{"pq2", "", {
 		{"resource.map", 0, "883804c616dca1d82373bf9fda3a71d2", 4656},
@@ -2882,7 +2924,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.002", 0, "05fdee43a228dd6ea4d1a92ccae3f788", 637662},
 		{"resource.003", 0, "05fdee43a228dd6ea4d1a92ccae3f788", 684395},
 		AD_LISTEND},
-		Common::JA_JPN, Common::kPlatformPC98, ADGF_ADDENGLISH, GUIO5(GUIO_NOSPEECH, GUIO_NOASPECT, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
+		Common::JA_JPN, Common::kPlatformPC98, ADGF_ADDENGLISH, GUIO6(GUIO_NOSPEECH, GUIO_NOASPECT, GAMEOPTION_EGA_UNDITHER, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
 
 	// Police Quest 3 - English Amiga
 	// Executable scanning reports "1.004.024"
@@ -2969,11 +3011,12 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 
 	// Police Quest 4 - English DOS Non-Interactive Demo (from FRG)
 	// SCI interpreter version 1.001.096
-	{"pq4", "Demo", {
+	// Note: we are not using ADGF_DEMO here, to avoid a game ID like pq4demo-demo
+	{"pq4demo", "Demo", {
 		{"resource.map", 0, "be56f87a1c4a13062a30a362df860c2f", 1472},
 		{"resource.000", 0, "527d5684016e6816157cd15d9071b11b", 1121310},
 		AD_LISTEND},
-		Common::EN_ANY, Common::kPlatformDOS, ADGF_DEMO, GUIO4(GUIO_NOSPEECH, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
+		Common::EN_ANY, Common::kPlatformDOS, 0, GUIO4(GUIO_NOSPEECH, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
 
 #ifdef ENABLE_SCI32
 	// Police Quest 4 - English DOS CD (from the Police Quest Collection)
@@ -3381,11 +3424,12 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 
 	// Quest for Glory 4 - English DOS Non-Interactive Demo (from FRG)
 	// SCI interpreter version 1.001.069 (just a guess)
-	{"qfg4", "Demo", {
+	// Note: we are not using ADGF_DEMO here, to avoid a game ID like qfg4demo-demo
+	{"qfg4demo", "Demo", {
 		{"resource.map", 0, "1ba7c7ae1efb315326d45cb931569b1b", 922},
 		{"resource.000", 0, "41ba03f0b188b029132daa3ece0d3e14", 623154},
 		AD_LISTEND},
-		Common::EN_ANY, Common::kPlatformDOS, ADGF_DEMO, GUIO4(GUIO_NOSPEECH, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
+		Common::EN_ANY, Common::kPlatformDOS, 0, GUIO4(GUIO_NOSPEECH, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
 
 #ifdef ENABLE_SCI32
 	// Quest for Glory 4 1.1 Floppy - English DOS (supplied by markcool in bug report #2723852)

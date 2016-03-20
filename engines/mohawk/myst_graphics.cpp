@@ -40,7 +40,7 @@ MystGraphics::MystGraphics(MohawkEngine_Myst* vm) : GraphicsManager(), _vm(vm) {
 
 	if (_vm->getFeatures() & GF_ME) {
 		// High color
-		initGraphics(_viewport.width(), _viewport.height(), true, NULL);
+		initGraphics(_viewport.width(), _viewport.height(), true, nullptr);
 
 		if (_vm->_system->getScreenFormat().bytesPerPixel == 1)
 			error("Myst ME requires greater than 256 colors to run");
@@ -73,7 +73,7 @@ MohawkSurface *MystGraphics::decodeImage(uint16 id) {
 	// if it's a PICT or WDIB resource. If it's Myst ME it's most likely a PICT, and if it's
 	// original it's definitely a WDIB. However, Myst ME throws us another curve ball in
 	// that PICT resources can contain WDIB's instead of PICT's.
-	Common::SeekableReadStream *dataStream = NULL;
+	Common::SeekableReadStream *dataStream = nullptr;
 
 	if (_vm->getFeatures() & GF_ME && _vm->hasResource(ID_PICT, id)) {
 		// The PICT resource exists. However, it could still contain a MystBitmap
@@ -95,13 +95,15 @@ MohawkSurface *MystGraphics::decodeImage(uint16 id) {
 		dataStream->seek(0);
 	}
 
-	MohawkSurface *mhkSurface = 0;
+	MohawkSurface *mhkSurface = nullptr;
 
 	if (isPict) {
 		Image::PICTDecoder pict;
 
 		if (!pict.loadStream(*dataStream))
 			error("Could not decode Myst ME PICT");
+
+		delete dataStream;
 
 		mhkSurface = new MohawkSurface(pict.getSurface()->convertTo(_pixelFormat));
 	} else {
@@ -225,9 +227,8 @@ void MystGraphics::copyBackBufferToScreen(Common::Rect r) {
 
 void MystGraphics::runTransition(TransitionType type, Common::Rect rect, uint16 steps, uint16 delay) {
 
-	// Do not artificially delay during transitions
-	int oldEnableDrawingTimeSimulation = _enableDrawingTimeSimulation;
-	_enableDrawingTimeSimulation = 0;
+	// Transitions are barely visible without adding delays between the draw calls
+	enableDrawingTimeSimulation(true);
 
 	switch (type) {
 	case kTransitionLeftToRight:	{
@@ -288,7 +289,10 @@ void MystGraphics::runTransition(TransitionType type, Common::Rect rect, uint16 
 			debugC(kDebugView, "Dissolve");
 
 			for (int16 step = 0; step < 8; step++) {
-				simulatePreviousDrawDelay(rect);
+				// Only one eighth of the rect pixels are updated by a draw step,
+				// delay by one eighth of the regular time
+				simulatePreviousDrawDelay(Common::Rect(rect.width() / 8, rect.height()));
+
 				transitionDissolve(rect, step);
 			}
 		}
@@ -367,7 +371,7 @@ void MystGraphics::runTransition(TransitionType type, Common::Rect rect, uint16 
 		error("Unknown transition %d", type);
 	}
 
-	_enableDrawingTimeSimulation = oldEnableDrawingTimeSimulation;
+	enableDrawingTimeSimulation(false);
 }
 
 void MystGraphics::transitionDissolve(Common::Rect rect, uint step) {
@@ -639,8 +643,10 @@ void MystGraphics::simulatePreviousDrawDelay(const Common::Rect &dest) {
 		// Do not draw anything new too quickly after the previous draw call
 		// so that images stay at least a little while on screen
 		// This is enabled only for scripted draw calls
-		if (time < _nextAllowedDrawTime)
+		if (time < _nextAllowedDrawTime) {
+			debugC(kDebugView, "Delaying draw call by %d ms", _nextAllowedDrawTime - time);
 			_vm->_system->delayMillis(_nextAllowedDrawTime - time);
+		}
 	}
 
 	// Next draw call allowed at DELAY + AERA * COEFF milliseconds from now

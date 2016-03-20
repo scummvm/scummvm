@@ -719,7 +719,7 @@ bool AccessEngine::playMovie(const Common::String &filename, const Common::Point
 					g_system->getPaletteManager()->setPalette(palette, 0, 256);
 				}
 
-				_screen->updateScreen();
+				_screen->update();
 			}
 		}
 

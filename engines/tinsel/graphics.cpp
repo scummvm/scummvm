@@ -164,7 +164,7 @@ static void t0WrtNonZero(DRAWOBJECT *pObj, uint8 *srcP, uint8 *destP, bool apply
 
 		// Horizontal loop
 		for (int x = 0; x < pObj->width; ) {
-			uint32 numBytes = READ_UINT32(srcP);
+			uint32 numBytes = READ_LE_UINT32(srcP);
 			srcP += sizeof(uint32);
 			bool repeatFlag = (numBytes & 0x80000000L) != 0;
 			numBytes &= 0x7fffffff;

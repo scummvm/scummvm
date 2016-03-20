@@ -106,6 +106,28 @@ void SpritesMgr::buildSpriteListAdd(uint16 givenOrderNr, ScreenObjEntry *screenO
 	spriteEntry.yPos = (screenObj->yPos) - (screenObj->ySize) + 1;
 	spriteEntry.xSize = screenObj->xSize;
 	spriteEntry.ySize = screenObj->ySize;
+
+	// Checking, if xPos/yPos/right/bottom are valid and do not go outside of playscreen (visual screen)
+	// Original AGI did not do this (but it then resulted in memory corruption)
+	if (spriteEntry.xPos < 0) {
+		warning("buildSpriteListAdd(): ignoring screen obj %d, b/c xPos (%d) < 0", screenObj->objectNr, spriteEntry.xPos);
+		return;
+	}
+	if (spriteEntry.yPos < 0) {
+		warning("buildSpriteListAdd(): ignoring screen obj %d, b/c yPos (%d) < 0", screenObj->objectNr, spriteEntry.yPos);
+		return;
+	}
+	int16 xRight = spriteEntry.xPos + spriteEntry.xSize;
+	if (xRight > SCRIPT_HEIGHT) {
+		warning("buildSpriteListAdd(): ignoring screen obj %d, b/c rightPos (%d) > %d", screenObj->objectNr, xRight, SCRIPT_WIDTH);
+		return;
+	}
+	int16 yBottom = spriteEntry.yPos + spriteEntry.ySize;
+	if (yBottom > SCRIPT_HEIGHT) {
+		warning("buildSpriteListAdd(): ignoring screen obj %d, b/c bottomPos (%d) > %d", screenObj->objectNr, yBottom, SCRIPT_HEIGHT);
+		return;
+	}
+
 //	warning("list-add: %d, %d, original yPos: %d, ySize: %d", spriteEntry.xPos, spriteEntry.yPos, screenObj->yPos, screenObj->ySize);
 	spriteEntry.backgroundBuffer = (uint8 *)malloc(spriteEntry.xSize * spriteEntry.ySize * 2); // for visual + priority data
 	assert(spriteEntry.backgroundBuffer);
@@ -332,7 +354,8 @@ void SpritesMgr::showSprite(ScreenObjEntry *screenObj) {
 	}
 
 	// render this block
-	_gfx->render_Block(x, y, width, height);
+	int16 upperY = y - height + 1;
+	_gfx->render_Block(x, upperY, width, height);
 }
 
 void SpritesMgr::showSprites(SpriteList &spriteList) {
@@ -394,7 +417,7 @@ void SpritesMgr::showObject(int16 viewNr) {
 	screenObj.yPos_prev = SCRIPT_HEIGHT - 1;
 	screenObj.yPos = screenObj.yPos_prev;
 	screenObj.priority = 15;
-	screenObj.flags |= fFixedPriority;
+	screenObj.flags = fFixedPriority; // Original AGI did "| fFixedPriority" on uninitialized memory
 	screenObj.objectNr = 255; // ???
 
 	backgroundBuffer = (uint8 *)malloc(screenObj.xSize * screenObj.ySize * 2); // for visual + priority data

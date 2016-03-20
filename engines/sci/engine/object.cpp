@@ -255,6 +255,8 @@ void Object::initSelectorsSci3(const byte *buf) {
 	if (g_sci->getKernel()->getSelectorNamesSize() % 32)
 		++groups;
 
+	_mustSetViewVisible.resize(groups);
+
 	methods = properties = 0;
 
 	// Selectors are divided into groups of 32, of which the first
@@ -270,7 +272,9 @@ void Object::initSelectorsSci3(const byte *buf) {
 			// This object actually has selectors belonging to this group
 			int typeMask = READ_SCI11ENDIAN_UINT32(seeker);
 
-			for (int bit = 2; bit < 32; ++bit) {
+			_mustSetViewVisible[groupNr] = (typeMask & 1);
+
+			 for (int bit = 2; bit < 32; ++bit) {
 				int value = READ_SCI11ENDIAN_UINT16(seeker + bit * 2);
 				if (typeMask & (1 << bit)) { // Property
 					++properties;
@@ -281,7 +285,8 @@ void Object::initSelectorsSci3(const byte *buf) {
 				}
 
 			}
-		}
+		} else
+			_mustSetViewVisible[groupNr] = false;
 	}
 
 	_variables.resize(properties);

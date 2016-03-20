@@ -239,13 +239,13 @@ void Preview::o_library_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Library init", op);
 
 	// Used for Card 3002 (Myst Island Overview)
-	_library = static_cast<MystResourceType8 *>(_invokingResource);
+	_library = getInvokingResource<MystAreaImageSwitch>();
 }
 
 void Preview::o_libraryBookcaseTransformDemo_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	if (_libraryBookcaseChanged) {
-		MystResourceType7 *resource = static_cast<MystResourceType7 *>(_invokingResource);
-		_libraryBookcaseMovie = static_cast<MystResourceType6 *>(resource->getSubResource(getVar(303)));
+		MystAreaActionSwitch *resource = getInvokingResource<MystAreaActionSwitch>();
+		_libraryBookcaseMovie = static_cast<MystAreaVideo *>(resource->getSubResource(getVar(303)));
 		_libraryBookcaseSoundId = argv[0];
 		_libraryBookcaseMoving = true;
 	}

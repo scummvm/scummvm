@@ -27,7 +27,7 @@
 #include "common/file.h"
 #include "common/rect.h"
 #include "common/str.h"
-#include "voyeur/graphics.h"
+#include "voyeur/screen.h"
 
 namespace Voyeur {
 
@@ -112,7 +112,7 @@ public:
 	byte *memberAddr(uint32 id);
 	byte *memberAddrOffset(uint32 id);
 	void resolveIt(uint32 id, byte **p);
-	void resolveFunction(uint32 id, GraphicMethodPtr *fn);
+	void resolveFunction(uint32 id, ScreenMethodPtr *fn);
 
 	BoltEntry &boltEntry(uint16 id);
 	BoltEntry &getBoltEntryFromLong(uint32 id);
@@ -340,7 +340,7 @@ public:
 	int _rectListCount[3];
 
 	Common::Rect _clipRect;
-	GraphicMethodPtr _fn1;
+	ScreenMethodPtr _fn1;
 	ViewPortSetupPtr _setupFn;
 	ViewPortAddPtr _addFn;
 	ViewPortRestorePtr _restoreFn;

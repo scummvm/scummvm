@@ -96,7 +96,9 @@ private:
 	bool cmdAnimateList(int argc, const char **argv);
 	bool cmdWindowList(int argc, const char **argv);
 	bool cmdPlaneList(int argc, const char **argv);
+	bool cmdVisiblePlaneList(int argc, const char **argv);
 	bool cmdPlaneItemList(int argc, const char **argv);
+	bool cmdVisiblePlaneItemList(int argc, const char **argv);
 	bool cmdSavedBits(int argc, const char **argv);
 	bool cmdShowSavedBits(int argc, const char **argv);
 	// Segments
@@ -137,6 +139,7 @@ private:
 	bool cmdSend(int argc, const char **argv);
 	bool cmdGo(int argc, const char **argv);
 	bool cmdLogKernel(int argc, const char **argv);
+	bool cmdMapVocab994(int argc, const char **argv);
 	// Breakpoints
 	bool cmdBreakpointList(int argc, const char **argv);
 	bool cmdBreakpointDelete(int argc, const char **argv);

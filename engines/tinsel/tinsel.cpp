@@ -820,7 +820,7 @@ const char *const TinselEngine::_textFiles[][3] = {
 
 TinselEngine::TinselEngine(OSystem *syst, const TinselGameDescription *gameDesc) :
 		Engine(syst), _gameDescription(gameDesc), _random("tinsel"),
-		_sound(0), _midiMusic(0), _pcmMusic(0), _bmv(0) {
+		_console(0), _sound(0), _midiMusic(0), _pcmMusic(0), _bmv(0) {
 	_vm = this;
 
 	_config = new Config(this);

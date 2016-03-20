@@ -203,7 +203,7 @@ struct List {
 
 struct Hunk {
 	void *mem;
-	unsigned int size;
+	uint32 size;
 	const char *type;
 };
 

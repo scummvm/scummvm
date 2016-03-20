@@ -75,8 +75,8 @@ static const char *directoryGlobs[] = {
 class WintermuteMetaEngine : public AdvancedMetaEngine {
 public:
 	WintermuteMetaEngine() : AdvancedMetaEngine(Wintermute::gameDescriptions, sizeof(WMEGameDescription), Wintermute::wintermuteGames, gameGuiOptions) {
-		_singleid = "wintermute";
-		_guioptions = GUIO2(GUIO_NOMIDI, GAMEOPTION_SHOW_FPS);
+		_singleId = "wintermute";
+		_guiOptions = GUIO2(GUIO_NOMIDI, GAMEOPTION_SHOW_FPS);
 		_maxScanDepth = 2;
 		_directoryGlobs = directoryGlobs;
 	}
@@ -94,8 +94,8 @@ public:
 		s_fallbackDesc.language = Common::UNK_LANG;
 		s_fallbackDesc.flags = ADGF_UNSTABLE;
 		s_fallbackDesc.platform = Common::kPlatformWindows; // default to Windows
-		s_fallbackDesc.gameid = "wintermute";
-		s_fallbackDesc.guioptions = GUIO0();
+		s_fallbackDesc.gameId = "wintermute";
+		s_fallbackDesc.guiOptions = GUIO0();
 
 		if (allFiles.contains("data.dcp")) {
 			Common::String name, caption;
@@ -109,7 +109,7 @@ public:
 				// Prefix to avoid collisions with actually known games
 				name = "wmeunk-" + name;
 				Common::strlcpy(s_fallbackGameIdBuf, name.c_str(), sizeof(s_fallbackGameIdBuf) - 1);
-				s_fallbackDesc.gameid = s_fallbackGameIdBuf;
+				s_fallbackDesc.gameId = s_fallbackGameIdBuf;
 				if (caption != name) {
 					caption += " (unknown version) ";
 					char *offset = s_fallbackGameIdBuf + name.size() + 1;

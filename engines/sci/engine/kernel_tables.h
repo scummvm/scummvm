@@ -60,14 +60,19 @@ struct SciKernelMapSubEntry {
 #define SCI_SUBOPENTRY_TERMINATOR { SCI_VERSION_NONE, SCI_VERSION_NONE, 0, NULL, NULL, NULL, NULL }
 
 
-#define SIG_SCIALL          SCI_VERSION_NONE, SCI_VERSION_NONE
-#define SIG_SCI0            SCI_VERSION_NONE, SCI_VERSION_01
-#define SIG_SCI1            SCI_VERSION_1_EGA_ONLY, SCI_VERSION_1_LATE
-#define SIG_SCI11           SCI_VERSION_1_1, SCI_VERSION_1_1
-#define SIG_SINCE_SCI11     SCI_VERSION_1_1, SCI_VERSION_NONE
-#define SIG_SINCE_SCI21     SCI_VERSION_2_1_EARLY, SCI_VERSION_3
-#define SIG_UNTIL_SCI21MID  SCI_VERSION_2, SCI_VERSION_2_1_MIDDLE
-#define SIG_SINCE_SCI21LATE SCI_VERSION_2_1_LATE, SCI_VERSION_3
+#define SIG_SCIALL           SCI_VERSION_NONE, SCI_VERSION_NONE
+#define SIG_SCI0             SCI_VERSION_NONE, SCI_VERSION_01
+#define SIG_SCI1             SCI_VERSION_1_EGA_ONLY, SCI_VERSION_1_LATE
+#define SIG_SCI11            SCI_VERSION_1_1, SCI_VERSION_1_1
+#define SIG_SINCE_SCI11      SCI_VERSION_1_1, SCI_VERSION_NONE
+#define SIG_SCI2             SCI_VERSION_2, SCI_VERSION_2
+#define SIG_SCI21EARLY       SCI_VERSION_2_1_EARLY, SCI_VERSION_2_1_EARLY
+#define SIG_UNTIL_SCI21EARLY SCI_VERSION_2, SCI_VERSION_2_1_EARLY
+#define SIG_UNTIL_SCI21MID   SCI_VERSION_2, SCI_VERSION_2_1_MIDDLE
+#define SIG_SINCE_SCI21      SCI_VERSION_2_1_EARLY, SCI_VERSION_3
+#define SIG_SINCE_SCI21MID   SCI_VERSION_2_1_MIDDLE, SCI_VERSION_3
+#define SIG_SINCE_SCI21LATE  SCI_VERSION_2_1_LATE, SCI_VERSION_3
+#define SIG_SCI3             SCI_VERSION_3, SCI_VERSION_3
 
 #define SIG_SCI16          SCI_VERSION_NONE, SCI_VERSION_1_1
 #define SIG_SCI32          SCI_VERSION_2, SCI_VERSION_NONE
@@ -210,7 +215,7 @@ static const SciKernelMapSubEntry kPalVary_subops[] = {
 	{ SIG_SCI16,           6, MAP_CALL(PalVaryPauseResume),        "i",                    NULL },
 #ifdef ENABLE_SCI32
 	{ SIG_SCI32,           0, MAP_CALL(PalVarySetVary),            "i(i)(i)(ii)",          NULL },
-	{ SIG_SCI32,           1, MAP_CALL(PalVarySetPercent),         "(i)(i)",               NULL },
+	{ SIG_SCI32,           1, MAP_CALL(PalVarySetPercent),         "(i)(i)",               kPalVarySetPercent_workarounds },
 	{ SIG_SCI32,           2, MAP_CALL(PalVaryGetPercent),         "",                     NULL },
 	{ SIG_SCI32,           3, MAP_CALL(PalVaryOff),                "",                     NULL },
 	{ SIG_SCI32,           4, MAP_CALL(PalVaryMergeTarget),        "i",                    NULL },
@@ -283,6 +288,42 @@ static const SciKernelMapSubEntry kSave_subops[] = {
 };
 
 //    version,         subId, function-mapping,                    signature,              workarounds
+static const SciKernelMapSubEntry kFont_subops[] = {
+	{ SIG_SINCE_SCI21MID,  0, MAP_CALL(SetFontHeight),             "i",                    NULL },
+	{ SIG_SINCE_SCI21MID,  1, MAP_CALL(SetFontRes),                "ii",                   NULL },
+	SCI_SUBOPENTRY_TERMINATOR
+};
+
+//    version,         subId, function-mapping,                    signature,              workarounds
+static const SciKernelMapSubEntry kText_subops[] = {
+	{ SIG_SINCE_SCI21MID,  0, MAP_CALL(TextSize32),                "r[r0]i(i)(i)",         NULL },
+	{ SIG_SINCE_SCI21MID,  1, MAP_CALL(TextWidth),                 "ri",                   NULL },
+	SCI_SUBOPENTRY_TERMINATOR
+};
+
+//    version,         subId, function-mapping,                    signature,              workarounds
+static const SciKernelMapSubEntry kBitmap_subops[] = {
+	{ SIG_SINCE_SCI21,     0, MAP_CALL(BitmapCreate),              "iiii(i)(i)(i)",        NULL },
+	{ SIG_SINCE_SCI21,     1, MAP_CALL(BitmapDestroy),             "r",                    NULL },
+	{ SIG_SINCE_SCI21,     2, MAP_CALL(BitmapDrawLine),            "riiiii(i)(i)",         NULL },
+	{ SIG_SINCE_SCI21,     3, MAP_CALL(BitmapDrawView),            "riii(i)(i)(0)(i)(i)",  NULL },
+	{ SIG_SINCE_SCI21,     4, MAP_CALL(BitmapDrawText),            "rriiiiiiiiiii",        NULL },
+	{ SIG_SINCE_SCI21,     5, MAP_CALL(BitmapDrawColor),           "riiiii",               NULL },
+	{ SIG_SINCE_SCI21,     6, MAP_CALL(BitmapDrawBitmap),          "rr(i)(i)(i)",          NULL },
+	{ SIG_SINCE_SCI21,     7, MAP_CALL(BitmapInvert),              "riiiiii",              NULL },
+	{ SIG_SINCE_SCI21MID,  8, MAP_CALL(BitmapSetDisplace),         "rii",                  NULL },
+	{ SIG_SINCE_SCI21MID,  9, MAP_CALL(BitmapCreateFromView),      "iii(i)(i)(i)([r0])",   NULL },
+	{ SIG_SINCE_SCI21MID, 10, MAP_CALL(BitmapCopyPixels),          "rr",                   NULL },
+	{ SIG_SINCE_SCI21MID, 11, MAP_CALL(BitmapClone),               "r",                    NULL },
+	{ SIG_SINCE_SCI21LATE, 12, MAP_CALL(BitmapGetInfo),            "r(i)(i)",              NULL },
+	{ SIG_SINCE_SCI21LATE, 13, MAP_CALL(BitmapScale),              "r...ii",               NULL },
+	{ SIG_SCI3,           14, MAP_CALL(BitmapCreateFromUnknown),   "......",               NULL },
+	{ SIG_SCI3,           15, MAP_EMPTY(Bitmap),                   "(.*)",                 NULL },
+	{ SIG_SCI3,           16, MAP_EMPTY(Bitmap),                   "(.*)",                 NULL },
+	SCI_SUBOPENTRY_TERMINATOR
+};
+
+//    version,         subId, function-mapping,                    signature,              workarounds
 static const SciKernelMapSubEntry kList_subops[] = {
 	{ SIG_SINCE_SCI21,     0, MAP_CALL(NewList),                   "",                     NULL },
 	{ SIG_SINCE_SCI21,     1, MAP_CALL(DisposeList),               "l",                    NULL },
@@ -307,6 +348,17 @@ static const SciKernelMapSubEntry kList_subops[] = {
 	{ SIG_SINCE_SCI21,    20, MAP_CALL(ListFirstTrue),             "li(.*)",               NULL },
 	{ SIG_SINCE_SCI21,    21, MAP_CALL(ListAllTrue),               "li(.*)",               NULL },
 	{ SIG_SINCE_SCI21,    22, MAP_CALL(Sort),                      "ooo",                  NULL },
+	SCI_SUBOPENTRY_TERMINATOR
+};
+
+//    version,         subId, function-mapping,                    signature,              workarounds
+static const SciKernelMapSubEntry kRemapColors_subops[] = {
+	{ SIG_SCI32,           0, MAP_CALL(RemapOff),                 "(i)",                  NULL },
+	{ SIG_SCI32,           1, MAP_CALL(RemapByRange),             "iiii(i)",              NULL },
+	{ SIG_SCI32,           2, MAP_CALL(RemapByPercent),           "ii(i)",                NULL },
+	{ SIG_SCI32,           3, MAP_CALL(RemapToGray),              "ii(i)",                NULL },
+	{ SIG_SCI32,           4, MAP_CALL(RemapToPercentGray),       "iii(i)",               NULL },
+	{ SIG_SCI32,           5, MAP_CALL(RemapSetNoMatchRange),     "ii",                   NULL },
 	SCI_SUBOPENTRY_TERMINATOR
 };
 
@@ -352,6 +404,31 @@ static const SciKernelMapSubEntry kString_subops[] = {
 	SCI_SUBOPENTRY_TERMINATOR
 };
 
+//    version,         subId, function-mapping,                    signature,              workarounds
+static const SciKernelMapSubEntry kScrollWindow_subops[] = {
+	{ SIG_SCI32,           0, MAP_CALL(ScrollWindowCreate),        "oi",                   NULL },
+	{ SIG_SCI32,           1, MAP_CALL(ScrollWindowAdd),           "o.ii.(.)",             NULL },
+	{ SIG_SCI32,           2, MAP_DUMMY(ScrollWindowClear),        "o",                    NULL },
+	{ SIG_SCI32,           3, MAP_DUMMY(ScrollWindowPageUp),       "o",                    NULL },
+	{ SIG_SCI32,           4, MAP_DUMMY(ScrollWindowPageDown),     "o",                    NULL },
+	{ SIG_SCI32,           5, MAP_DUMMY(ScrollWindowUpArrow),      "o",                    NULL },
+	{ SIG_SCI32,           6, MAP_DUMMY(ScrollWindowDownArrow),    "o",                    NULL },
+	{ SIG_SCI32,           7, MAP_DUMMY(ScrollWindowHome),         "o",                    NULL },
+	{ SIG_SCI32,           8, MAP_DUMMY(ScrollWindowEnd),          "o",                    NULL },
+	{ SIG_SCI32,           9, MAP_DUMMY(ScrollWindowResize),       "o.",                   NULL },
+	{ SIG_SCI32,          10, MAP_CALL(ScrollWindowWhere),         "oi",                   NULL },
+	{ SIG_SCI32,          11, MAP_DUMMY(ScrollWindowGo),           "o..",                  NULL },
+	{ SIG_SCI32,          12, MAP_DUMMY(ScrollWindowInsert),       "o.....",               NULL },
+	{ SIG_SCI32,          13, MAP_DUMMY(ScrollWindowDelete),       "o.",                   NULL },
+	{ SIG_SCI32,          14, MAP_DUMMY(ScrollWindowModify),       "o.....(.)",            NULL },
+	{ SIG_SCI32,          15, MAP_DUMMY(ScrollWindowHide),         "o",                    NULL },
+	{ SIG_SCI32,          16, MAP_CALL(ScrollWindowShow),          "o",                    NULL },
+	{ SIG_SCI32,          17, MAP_CALL(ScrollWindowDestroy),       "o",                    NULL },
+	{ SIG_SCI32,          18, MAP_DUMMY(ScrollWindowText),         "o",                    NULL },
+	{ SIG_SCI32,          19, MAP_DUMMY(ScrollWindowReconstruct),  "o.",                   NULL },
+	SCI_SUBOPENTRY_TERMINATOR
+};
+
 #endif
 
 struct SciKernelMapEntry {
@@ -380,12 +457,16 @@ static SciKernelMapEntry s_kernelMap[] = {
 	{ MAP_CALL(AvoidPath),         SIG_EVERYWHERE,           "ii(.*)",                NULL,            NULL },
 	{ MAP_CALL(BaseSetter),        SIG_EVERYWHERE,           "o",                     NULL,            NULL },
 	{ MAP_CALL(CanBeHere),         SIG_EVERYWHERE,           "o(l)",                  NULL,            NULL },
+	{ MAP_CALL(CantBeHere),        SIG_SCI16, SIGFOR_ALL,    "o(l)",                  NULL,            NULL },
 #ifdef ENABLE_SCI32
-	{ "CantBeHere", kCantBeHere32, SIG_SCI32, SIGFOR_ALL,    "ol",                    NULL,            NULL },
+	{ MAP_CALL(CantBeHere),        SIG_SCI32, SIGFOR_ALL,    "ol",                    NULL,            NULL },
 #endif
-	{ MAP_CALL(CantBeHere),        SIG_EVERYWHERE,           "o(l)",                  NULL,            NULL },
-	{ MAP_CALL(CelHigh),           SIG_EVERYWHERE,           "ii(i)",                 NULL,            kCelHigh_workarounds },
-	{ MAP_CALL(CelWide),           SIG_EVERYWHERE,           "ii(i)",                 NULL,            kCelWide_workarounds },
+	{ MAP_CALL(CelHigh),           SIG_SCI16, SIGFOR_ALL,    "ii(i)",                 NULL,            kCelHigh_workarounds },
+	{ MAP_CALL(CelWide),           SIG_SCI16, SIGFOR_ALL,    "ii(i)",                 NULL,            kCelWide_workarounds },
+#ifdef ENABLE_SCI32
+	{ "CelHigh", kCelHigh32,       SIG_SCI32, SIGFOR_ALL,    "iii",                   NULL,            NULL },
+	{ "CelWide", kCelWide32,       SIG_SCI32, SIGFOR_ALL,    "iii",                   NULL,            NULL },
+#endif
 	{ MAP_CALL(CheckFreeSpace),    SIG_SCI32, SIGFOR_ALL,    "r.*",                   NULL,            NULL },
 	{ MAP_CALL(CheckFreeSpace),    SIG_SCI11, SIGFOR_ALL,    "r(i)",                  NULL,            NULL },
 	{ MAP_CALL(CheckFreeSpace),    SIG_EVERYWHERE,           "r",                     NULL,            NULL },
@@ -484,9 +565,9 @@ static SciKernelMapEntry s_kernelMap[] = {
 	{ MAP_CALL(PriCoord),          SIG_EVERYWHERE,           "i",                     NULL,            NULL },
 	{ MAP_CALL(Random),            SIG_EVERYWHERE,           "i(i)(i)",               NULL,            NULL },
 	{ MAP_CALL(ReadNumber),        SIG_EVERYWHERE,           "r",                     NULL,            kReadNumber_workarounds },
-	{ MAP_CALL(RemapColors),       SIG_SCI11, SIGFOR_ALL,    "i(i)(i)(i)(i)",         NULL,            NULL },
+	{ "RemapColors", kRemapColors16,       SIG_SCI11, SIGFOR_ALL,    "i(i)(i)(i)(i)", NULL,            NULL },
 #ifdef ENABLE_SCI32
-	{ "RemapColors", kRemapColors32, SIG_SCI32, SIGFOR_ALL,  "i(i)(i)(i)(i)(i)",      NULL,            NULL },
+	{ MAP_CALL(RemapColors),       SIG_SCI32, SIGFOR_ALL,    "i(i)(i)(i)(i)(i)",      kRemapColors_subops, NULL },
 #endif
 	{ MAP_CALL(ResCheck),          SIG_EVERYWHERE,           "ii(iiii)",              NULL,            NULL },
 	{ MAP_CALL(RespondsTo),        SIG_EVERYWHERE,           ".i",                    NULL,            NULL },
@@ -502,7 +583,10 @@ static SciKernelMapEntry s_kernelMap[] = {
 	{ MAP_CALL(SetDebug),          SIG_EVERYWHERE,           "(i*)",                  NULL,            NULL },
 	{ MAP_CALL(SetJump),           SIG_EVERYWHERE,           "oiii",                  NULL,            NULL },
 	{ MAP_CALL(SetMenu),           SIG_EVERYWHERE,           "i(.*)",                 NULL,            NULL },
-	{ MAP_CALL(SetNowSeen),        SIG_EVERYWHERE,           "o(i)",                  NULL,            NULL },
+	{ MAP_CALL(SetNowSeen),        SIG_SCI16, SIGFOR_ALL,    "o(i)",                  NULL,            NULL },
+#ifdef ENABLE_SCI32
+	{ MAP_CALL(SetNowSeen),        SIG_SCI32, SIGFOR_ALL,    "o",                     NULL,            NULL },
+#endif
 	{ MAP_CALL(SetPort),           SIG_EVERYWHERE,           "i(iiiii)(i)",           NULL,            kSetPort_workarounds },
 	{ MAP_CALL(SetQuitStr),        SIG_EVERYWHERE,           "r",                     NULL,            NULL },
 	{ MAP_CALL(SetSynonyms),       SIG_EVERYWHERE,           "o",                     NULL,            NULL },
@@ -520,10 +604,10 @@ static SciKernelMapEntry s_kernelMap[] = {
 	{ MAP_CALL(StrEnd),            SIG_EVERYWHERE,           "r",                     NULL,            NULL },
 	{ MAP_CALL(StrLen),            SIG_EVERYWHERE,           "[r0]",                  NULL,            kStrLen_workarounds },
 	{ MAP_CALL(StrSplit),          SIG_EVERYWHERE,           "rr[r0]",                NULL,            NULL },
-	{ MAP_CALL(TextColors),        SIG_EVERYWHERE,           "(i*)",                  NULL,            NULL },
-	{ MAP_CALL(TextFonts),         SIG_EVERYWHERE,           "(i*)",                  NULL,            NULL },
-	{ MAP_CALL(TextSize),          SIG_SCIALL, SIGFOR_MAC,   "r[r0]i(i)(r0)(i)",      NULL,            NULL },
-	{ MAP_CALL(TextSize),          SIG_EVERYWHERE,           "r[r0]i(i)(r0)",         NULL,            NULL },
+	{ MAP_CALL(TextColors),        SIG_SCI16, SIGFOR_ALL,    "(i*)",                  NULL,            NULL },
+	{ MAP_CALL(TextFonts),         SIG_SCI16, SIGFOR_ALL,    "(i*)",                  NULL,            NULL },
+	{ MAP_CALL(TextSize),          SIG_SCI16, SIGFOR_MAC,    "r[r0]i(i)(r0)(i)",      NULL,            NULL },
+	{ MAP_CALL(TextSize),          SIG_SCI16, SIGFOR_ALL,    "r[r0]i(i)(r0)",         NULL,            NULL },
 	{ MAP_CALL(TimesCos),          SIG_EVERYWHERE,           "ii",                    NULL,            NULL },
 	{ "CosMult", kTimesCos,        SIG_EVERYWHERE,           "ii",                    NULL,            NULL },
 	{ MAP_CALL(TimesCot),          SIG_EVERYWHERE,           "ii",                    NULL,            NULL },
@@ -555,14 +639,18 @@ static SciKernelMapEntry s_kernelMap[] = {
 #ifdef ENABLE_SCI32
 	// SCI2 Kernel Functions
 	// TODO: whoever knows his way through those calls, fix the signatures.
+	{ "TextSize", kTextSize32,     SIG_UNTIL_SCI21EARLY, SIGFOR_ALL, "r[r0]i(i)",     NULL,            NULL },
+	{ MAP_DUMMY(TextColors),       SIG_UNTIL_SCI21EARLY, SIGFOR_ALL, "(.*)",          NULL,            NULL },
+	{ MAP_DUMMY(TextFonts),        SIG_UNTIL_SCI21EARLY, SIGFOR_ALL, "(.*)",          NULL,            NULL },
+
 	{ MAP_CALL(AddPlane),          SIG_EVERYWHERE,           "o",                     NULL,            NULL },
 	{ MAP_CALL(AddScreenItem),     SIG_EVERYWHERE,           "o",                     NULL,            NULL },
 	{ MAP_CALL(Array),             SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
 	{ MAP_CALL(CreateTextBitmap),  SIG_EVERYWHERE,           "i(.*)",                 NULL,            NULL },
 	{ MAP_CALL(DeletePlane),       SIG_EVERYWHERE,           "o",                     NULL,            NULL },
 	{ MAP_CALL(DeleteScreenItem),  SIG_EVERYWHERE,           "o",                     NULL,            NULL },
-	{ MAP_CALL(DisposeTextBitmap), SIG_EVERYWHERE,           "r",                     NULL,            NULL },
-	{ MAP_CALL(FrameOut),          SIG_EVERYWHERE,           "",                      NULL,            NULL },
+	{ "DisposeTextBitmap", kBitmapDestroy, SIG_SCI2, SIGFOR_ALL, "r",                 NULL,            NULL },
+	{ MAP_CALL(FrameOut),          SIG_EVERYWHERE,           "(i)",                   NULL,            NULL },
 	{ MAP_CALL(GetHighPlanePri),   SIG_EVERYWHERE,           "",                      NULL,            NULL },
 	{ MAP_CALL(InPolygon),         SIG_EVERYWHERE,           "iio",                   NULL,            NULL },
 	{ MAP_CALL(IsHiRes),           SIG_EVERYWHERE,           "",                      NULL,            NULL },
@@ -623,9 +711,9 @@ static SciKernelMapEntry s_kernelMap[] = {
 	{ MAP_DUMMY(MarkMemory),       SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
 	{ MAP_DUMMY(GetHighItemPri),   SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
 	{ MAP_DUMMY(ShowStylePercent), SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
-	{ MAP_DUMMY(InvertRect),       SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
+	{ MAP_DUMMY(InvertRect),       SIG_UNTIL_SCI21EARLY, SIGFOR_ALL, "(.*)",          NULL,            NULL },
 	{ MAP_DUMMY(InputText),        SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
-	{ MAP_DUMMY(TextWidth),        SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
+	{ MAP_CALL(TextWidth),         SIG_UNTIL_SCI21EARLY, SIGFOR_ALL, "ri",            NULL,            NULL },
 	{ MAP_DUMMY(PointSize),        SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
 
 	// SCI2.1 Kernel Functions
@@ -636,18 +724,18 @@ static SciKernelMapEntry s_kernelMap[] = {
 	{ MAP_CALL(PlayVMD),           SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
 	{ MAP_CALL(Robot),             SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
 	{ MAP_CALL(Save),              SIG_EVERYWHERE,           "i(.*)",                 kSave_subops,    NULL },
-	{ MAP_CALL(Text),              SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
+	{ MAP_CALL(Text),              SIG_SINCE_SCI21MID, SIGFOR_ALL, "i(.*)",           kText_subops,    NULL },
 	{ MAP_CALL(AddPicAt),          SIG_EVERYWHERE,           "oiii",                  NULL,            NULL },
 	{ MAP_CALL(GetWindowsOption),  SIG_EVERYWHERE,           "i",                     NULL,            NULL },
 	{ MAP_CALL(WinHelp),           SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
 	{ MAP_CALL(GetConfig),         SIG_EVERYWHERE,           "ro",                    NULL,            NULL },
 	{ MAP_CALL(GetSierraProfileInt), SIG_EVERYWHERE,         "rri",                   NULL,            NULL },
-	{ MAP_CALL(CelInfo),           SIG_EVERYWHERE,           "iiiiii",                NULL,            NULL },
-	{ MAP_CALL(SetLanguage),       SIG_EVERYWHERE,           "r",                     NULL,            NULL },
-	{ MAP_CALL(ScrollWindow),      SIG_EVERYWHERE,           "io(.*)",                NULL,            NULL },
-	{ MAP_CALL(SetFontRes),        SIG_EVERYWHERE,           "ii",                    NULL,            NULL },
-	{ MAP_CALL(Font),              SIG_EVERYWHERE,           "i(.*)",                 NULL,            NULL },
-	{ MAP_CALL(Bitmap),            SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
+	{ MAP_CALL(CelInfo),           SIG_SINCE_SCI21MID, SIGFOR_ALL, "iiiiii",          NULL,            NULL },
+	{ MAP_CALL(SetLanguage),       SIG_SINCE_SCI21MID, SIGFOR_ALL, "r",               NULL,            NULL },
+	{ MAP_CALL(ScrollWindow),      SIG_EVERYWHERE,           "i(.*)",                 kScrollWindow_subops, NULL },
+	{ MAP_CALL(SetFontRes),        SIG_SCI21EARLY, SIGFOR_ALL, "ii",                  NULL,            NULL },
+	{ MAP_CALL(Font),              SIG_SINCE_SCI21MID, SIGFOR_ALL, "i(.*)",           kFont_subops,    NULL },
+	{ MAP_CALL(Bitmap),            SIG_EVERYWHERE,           "(.*)",                  kBitmap_subops,  NULL },
 	{ MAP_CALL(AddLine),           SIG_EVERYWHERE,           "oiiiiiiiii",            NULL,            NULL },
 	{ MAP_CALL(UpdateLine),        SIG_EVERYWHERE,           "[r0]oiiiiiiiii",        NULL,            NULL },
 	{ MAP_CALL(DeleteLine),        SIG_EVERYWHERE,           "[r0]o",                 NULL,            NULL },
@@ -699,9 +787,9 @@ static SciKernelMapEntry s_kernelMap[] = {
 	//     <lskovlun> The idea, if I understand correctly, is that the engine generates events
 	//     of a special HotRect type continuously when the mouse is on that rectangle
 
-	// MovePlaneItems - used by SQ6 to scroll through the inventory via the up/down buttons
-	// SetPalStyleRange - 2 integer parameters, start and end. All styles from start-end
-	//   (inclusive) are set to 0
+	// Used by SQ6 to scroll through the inventory via the up/down buttons
+	{ MAP_CALL(MovePlaneItems),     SIG_SINCE_SCI21, SIGFOR_ALL, "oii(i)",            NULL,            NULL },
+
 	{ MAP_CALL(SetPalStyleRange),   SIG_EVERYWHERE,           "ii",                   NULL,            NULL },
 
 	{ MAP_CALL(MorphOn),            SIG_EVERYWHERE,           "",                     NULL,            NULL },
@@ -1004,7 +1092,6 @@ static const char *const sci2_default_knames[] = {
 	/*0x89*/ "TextWidth",		  // for debugging(?), only in SCI2, not used in any SCI2 game
 	/*0x8a*/ "PointSize",	      // for debugging(?), only in SCI2, not used in any SCI2 game
 
-	// GK2 Demo (and similar) only kernel functions
 	/*0x8b*/ "AddLine",
 	/*0x8c*/ "DeleteLine",
 	/*0x8d*/ "UpdateLine",

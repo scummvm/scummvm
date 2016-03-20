@@ -307,7 +307,7 @@ bool Resource::loadPatch(Common::SeekableReadStream *file) {
 		error("Can't allocate %d bytes needed for loading %s", res->size + res->_headerSize, res->_id.toString().c_str());
 	}
 
-	unsigned int really_read;
+	uint32 really_read;
 	if (res->_headerSize > 0) {
 		really_read = file->read(res->_header, res->_headerSize);
 		if (really_read != res->_headerSize)
@@ -565,12 +565,11 @@ Resource *ResourceManager::testResource(ResourceId id) {
 }
 
 int ResourceManager::addAppropriateSources() {
-	Common::ArchiveMemberList files;
-
 	if (Common::File::exists("resource.map")) {
 		// SCI0-SCI2 file naming scheme
 		ResourceSource *map = addExternalMap("resource.map");
 
+		Common::ArchiveMemberList files;
 		SearchMan.listMatchingMembers(files, "resource.0??");
 
 		for (Common::ArchiveMemberList::const_iterator x = files.begin(); x != files.end(); ++x) {
@@ -587,20 +586,20 @@ int ResourceManager::addAppropriateSources() {
 #endif
 	} else if (Common::MacResManager::exists("Data1")) {
 		// Mac SCI1.1+ file naming scheme
-		SearchMan.listMatchingMembers(files, "Data?*");
+		Common::StringArray files;
+		Common::MacResManager::listFiles(files, "Data?");
 
-		for (Common::ArchiveMemberList::const_iterator x = files.begin(); x != files.end(); ++x) {
-			Common::String filename = (*x)->getName();
-			addSource(new MacResourceForkResourceSource(filename, atoi(filename.c_str() + 4)));
+		for (Common::StringArray::const_iterator x = files.begin(); x != files.end(); ++x) {
+			addSource(new MacResourceForkResourceSource(*x, atoi(x->c_str() + 4)));
 		}
 
 #ifdef ENABLE_SCI32
 		// There can also be a "Patches" resource fork with patches
-		if (Common::File::exists("Patches"))
+		if (Common::MacResManager::exists("Patches"))
 			addSource(new MacResourceForkResourceSource("Patches", 100));
 	} else {
 		// SCI2.1-SCI3 file naming scheme
-		Common::ArchiveMemberList mapFiles;
+		Common::ArchiveMemberList mapFiles, files;
 		SearchMan.listMatchingMembers(mapFiles, "resmap.0??");
 		SearchMan.listMatchingMembers(files, "ressci.0??");
 
@@ -865,6 +864,7 @@ ResourceManager::ResourceManager() {
 }
 
 void ResourceManager::init() {
+	_maxMemoryLRU = 256 * 1024; // 256KiB
 	_memoryLocked = 0;
 	_memoryLRU = 0;
 	_LRU.clear();
@@ -918,6 +918,14 @@ void ResourceManager::init() {
 
 	debugC(1, kDebugLevelResMan, "resMan: Detected %s", getSciVersionDesc(getSciVersion()));
 
+	// Resources in SCI32 games are significantly larger than SCI16
+	// games and can cause immediate exhaustion of the LRU resource
+	// cache, leading to constant decompression of picture resources
+	// and making the renderer very slow.
+	if (getSciVersion() >= SCI_VERSION_2) {
+		_maxMemoryLRU = 2048 * 1024; // 2MiB
+	}
+
 	switch (_viewType) {
 	case kViewEga:
 		debugC(1, kDebugLevelResMan, "resMan: Detected EGA graphic resources");
@@ -935,33 +943,12 @@ void ResourceManager::init() {
 		debugC(1, kDebugLevelResMan, "resMan: Detected SCI1.1 VGA graphic resources");
 		break;
 	default:
-#ifdef ENABLE_SCI32
-		error("resMan: Couldn't determine view type");
-#else
-		if (getSciVersion() >= SCI_VERSION_2) {
-			// SCI support isn't built in, thus the view type won't be determined for
-			// SCI2+ games. This will be handled further up, so throw no error here
-		} else {
-			error("resMan: Couldn't determine view type");
-		}
-#endif
+		// Throw a warning, but do not error out here, because this is called from the
+		// fallback detector, and the user could be pointing to a folder with a non-SCI
+		// game, but with SCI-like file names (e.g. Pinball Creep)
+		warning("resMan: Couldn't determine view type");
+		break;
 	}
-}
-
-void ResourceManager::initForDetection() {
-	assert(!g_sci);
-
-	_memoryLocked = 0;
-	_memoryLRU = 0;
-	_LRU.clear();
-	_resMap.clear();
-	_audioMapSCI1 = NULL;
-
-	_mapVersion = detectMapVersion();
-	_volVersion = detectVolVersion();
-
-	scanNewSources();
-	detectSciVersion();
 }
 
 ResourceManager::~ResourceManager() {
@@ -998,9 +985,9 @@ void ResourceManager::addToLRU(Resource *res) {
 	_LRU.push_front(res);
 	_memoryLRU += res->size;
 #if SCI_VERBOSE_RESMAN
-	debug("Adding %s.%03d (%d bytes) to lru control: %d bytes total",
-	      getResourceTypeName(res->type), res->number, res->size,
-	      mgr->_memoryLRU);
+	debug("Adding %s (%d bytes) to lru control: %d bytes total",
+	      res->_id.toString().c_str(), res->size,
+	      _memoryLRU);
 #endif
 	res->_status = kResStatusEnqueued;
 }
@@ -1023,13 +1010,13 @@ void ResourceManager::printLRU() {
 }
 
 void ResourceManager::freeOldResources() {
-	while (MAX_MEMORY < _memoryLRU) {
+	while (_maxMemoryLRU < _memoryLRU) {
 		assert(!_LRU.empty());
 		Resource *goner = *_LRU.reverse_begin();
 		removeFromLRU(goner);
 		goner->unalloc();
 #ifdef SCI_VERBOSE_RESMAN
-		debug("resMan-debug: LRU: Freeing %s.%03d (%d bytes)", getResourceTypeName(goner->type), goner->number, goner->size);
+		debug("resMan-debug: LRU: Freeing %s (%d bytes)", goner->_id.toString().c_str(), goner->size);
 #endif
 	}
 }
@@ -2474,7 +2461,9 @@ bool ResourceManager::hasOldScriptHeader() {
 	Resource *res = findResource(ResourceId(kResourceTypeScript, 0), 0);
 
 	if (!res) {
-		error("resMan: Failed to find script.000");
+		// Script 0 missing -> corrupted / non-SCI resource files.
+		// Don't error out here, because this might have been called
+		// from the fallback detector
 		return false;
 	}
 
@@ -2679,7 +2668,9 @@ Common::String ResourceManager::findSierraGameId() {
 		return "";
 
 	// Seek to the name selector of the first export
-	byte *seeker = heap->data + READ_UINT16(heap->data + gameObjectOffset + nameSelector * 2);
+	byte *offsetPtr = heap->data + gameObjectOffset + nameSelector * 2;
+	uint16 offset = !isSci11Mac() ? READ_LE_UINT16(offsetPtr) : READ_BE_UINT16(offsetPtr);
+	byte *seeker = heap->data + offset;
 	Common::String sierraId;
 	sierraId += (const char *)seeker;
 

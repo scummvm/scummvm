@@ -162,6 +162,7 @@ _translation=yes
 # Default platform settings
 _backend=sdl
 _16bit=auto
+_highres=auto
 _savegame_timestamp=auto
 _dynamic_modules=no
 _elf_loader=no
@@ -181,6 +182,7 @@ _stagingpath="staging"
 _win32path="c:/scummvm"
 _amigaospath="Games:ScummVM"
 _staticlibpath=
+_xcodetoolspath=
 _sdlconfig=sdl-config
 _freetypeconfig=freetype-config
 _sdlpath="$PATH"
@@ -201,6 +203,7 @@ add_feature 16bit "16bit color" "_16bit"
 add_feature faad "libfaad" "_faad"
 add_feature flac "FLAC" "_flac"
 add_feature freetype2 "FreeType2" "_freetype2"
+add_feature highres "high resolution" "_highres"
 add_feature mad "MAD" "_mad"
 add_feature jpeg "JPEG" "_jpeg"
 add_feature png "PNG" "_png"
@@ -593,7 +596,7 @@ engine_enable() {
 		parent=`get_subengine_parent ${engine}`
 		if test `get_engine_build ${parent}` = "no" ; then
 			set_var _engine_${parent}_build "yes"
-		fi		
+		fi
 	fi
 
 	if test "$opt" = "static" -o "$opt" = "dynamic" -o "$opt" = "yes" ; then
@@ -903,7 +906,7 @@ Game engines:
   --disable-all-engines    disable all engines
   --enable-engine=<engine name>[,<engine name>...] enable engine(s) listed
   --disable-engine=<engine name>[,<engine name>...] disable engine(s) listed
-  --enable-engine-static=<engine name>[,<engine name>...] 
+  --enable-engine-static=<engine name>[,<engine name>...]
       enable engine(s) listed as static builtin (when plugins are enabled)
   --enable-engine-dynamic=<engine name>[,<engine name>...]
       enable engine(s) listed as dynamic plugin (when plugins are enabled)
@@ -922,6 +925,7 @@ Optional Features:
   --default-dynamic        make plugins dynamic by default
   --disable-mt32emu        don't enable the integrated MT-32 emulator
   --disable-16bit          don't enable 16bit color support
+  --disable-highres        don't enable support for high resolution engines >320x240
   --disable-savegame-timestamp don't use timestamps for blank savegame descriptions
   --disable-scalers        exclude scalers
   --disable-hq-scalers     exclude HQ2x and HQ3x scalers
@@ -1019,6 +1023,8 @@ done # for parm in ...
 for ac_option in $@; do
 	case "$ac_option" in
 	--disable-16bit)          _16bit=no       ;;
+	--enable-highres)         _highres=yes    ;;
+	--disable-highres)        _highres=no     ;;
 	--disable-savegame-timestamp) _savegame_timestamp=no ;;
 	--disable-scalers)        _build_scalers=no ;;
 	--disable-hq-scalers)     _build_hq_scalers=no ;;
@@ -1230,6 +1236,9 @@ for ac_option in $@; do
 	--with-staticlib-prefix=*)
 		_staticlibpath=`echo $ac_option | cut -d '=' -f 2`
 		;;
+	--with-xcodetools-path=*)
+		_xcodetoolspath=`echo $ac_option | cut -d '=' -f 2`
+		;;
 	--host=*)
 		_host=`echo $ac_option | cut -d '=' -f 2`
 		;;
@@ -1318,7 +1327,7 @@ raspberrypi)
 	_host_cpu=arm
 	# This tuple is the one used by the official Rpi toolchain.
 	# It may change in the future.
-	_host_alias=bcm2708hardfp
+	_host_alias=arm-linux-gnueabihf
 	;;
 caanoo)
 	_host_os=gph-linux
@@ -2283,7 +2292,7 @@ case $_host_os in
 
 			LDFLAGS="-L${macport_prefix}/lib $LDFLAGS"
 			CXXFLAGS="-I${macport_prefix}/include $CXXFLAGS"
-			
+
 			if test -z "$_staticlibpath"; then
 				_staticlibpath=${macport_prefix}
 				echo "Set staticlib-prefix to ${_staticlibpath}"
@@ -2343,6 +2352,17 @@ case $_host_os in
 				echo "Set staticlib-prefix to ${_staticlibpath}"
 			else
 				echo "Could not determine prefix for static libraries"
+			fi
+		fi
+		
+		# If _xcodetoolspath is not set yet use xcode-select to get the path
+		if test -z "$_xcodetoolspath"; then
+			_xcodetoolspath=`xcode-select -print-path`/Tools
+			if test -d "$_xcodetoolspath"; then
+				echo "Set xcodetools-path to ${_xcodetoolspath}"
+			else
+				_xcodetoolspath=
+				echo "Could not determine path for Xcode Tools"
 			fi
 		fi
 		;;
@@ -2437,6 +2457,10 @@ case $_host_os in
 		;;
 	mint*)
 		append_var DEFINES "-DSYSTEM_NOT_SUPPORTING_D_TYPE"
+		;;
+	msys)
+		echo ERROR: Using the MSYS shell in msys mode is not supported. Please use the MSYS shell in mingw mode instead.
+		exit 1
 		;;
 	n64)
 		append_var DEFINES "-D__N64__"
@@ -2604,7 +2628,7 @@ if test -n "$_host"; then
 			_mt32emu=no
 			_optimization_level=-O3
 			# Disable alsa midi to get the port build on OpenDingux toolchain
-			_alsa=no 
+			_alsa=no
 			_vkeybd=yes
 			_build_hq_scalers=no
 			_keymapper=no
@@ -2631,7 +2655,7 @@ if test -n "$_host"; then
 			_eventrec=no
 			_build_scalers=no
 			_build_hq_scalers=no
-			# We prefer SDL2 on the Raspberry Pi: acceleration now depends on it 
+			# We prefer SDL2 on the Raspberry Pi: acceleration now depends on it
 			# since SDL2 manages dispmanx/GLES2 very well internally.
 			# SDL1 is bit-rotten on this platform.
 			_sdlconfig=sdl2-config
@@ -2659,7 +2683,11 @@ if test -n "$_host"; then
 			_build_scalers=no
 			_mad=yes
 			_zlib=yes
-			add_line_to_config_mk 'ronindir = /usr/local/ronin'
+			if test -z "$RONINDIR"; then
+				add_line_to_config_mk "ronindir := /usr/local/ronin"
+			else
+				add_line_to_config_mk "ronindir := $RONINDIR"
+			fi
 			_port_mk="backends/platform/dc/dreamcast.mk"
 			;;
 		ds)
@@ -2692,7 +2720,9 @@ if test -n "$_host"; then
 			add_line_to_config_h "/* #define DEBUG_WII_GDB */"
 			add_line_to_config_h "#define USE_WII_DI"
 			;;
-               gcw0)
+		gcw0)
+			_sysroot=`$CXX --print-sysroot`
+			_sdlpath=$_sysroot/usr/bin
 			append_var DEFINES "-DDINGUX -DGCW0"
 			append_var DEFINES "-DREDUCE_MEMORY_USAGE"
 			append_var CXXFLAGS "-mips32"
@@ -2749,11 +2779,8 @@ if test -n "$_host"; then
 			;;
 		ios7)
 			append_var DEFINES "-DIPHONE"
-			append_var CFLAGS "-Wno-shift-count-overflow"
-			append_var CXXFLAGS "-Wno-shift-count-overflow"
 			_backend="ios7"
 			_build_scalers=no
-			_mt32emu=no
 			_seq_midi=no
 			_timidity=no
 			;;
@@ -2770,7 +2797,7 @@ if test -n "$_host"; then
 			append_var INCLUDES "-I/usr/X11R6/include"
 			append_var LIBS "-lX11"
 			append_var LIBS "-L/usr/lib"
-			
+
 			_backend="maemo"
 			_vkeybd=yes
 			_keymapper=yes
@@ -3207,6 +3234,26 @@ case $_backend in
 esac
 
 #
+# Enable High resolution engines (>320x240) support only for backends which support it
+#
+case $_host in
+	gcw0)
+		if test "$_highres" = yes ; then
+			_highres=yes
+		else
+			_highres=no
+		fi
+		;;
+	*)
+		if test "$_highres" = no ; then
+			_highres=no
+		else
+			_highres=yes
+		fi
+		;;
+esac
+
+#
 # Enable Event Recorder only for backends that support it
 #
 case $_backend in
@@ -3517,6 +3564,11 @@ define_in_config_if_yes "$_mt32emu" 'USE_MT32EMU'
 # Check whether 16bit color support is requested
 #
 define_in_config_if_yes "$_16bit" 'USE_RGB_COLOR'
+
+#
+# Check whether High resolution graphics support is requested
+#
+define_in_config_if_yes "$_highres" 'USE_HIGHRES'
 
 #
 # Check whether save games use the current time as default description
@@ -3898,17 +3950,14 @@ fi
 echo "$_sparkle"
 
 #
-# Check for FluidSynth 
+# Check for FluidSynth
 #
 echocheck "FluidSynth"
 
 append_var FLUIDSYNTH_LIBS "-lfluidsynth"
 case $_host_os in
 	mingw*)
-		# NOTE: Windows builds use an older FluidSynth version (1.0.9)
-		# which doesn't require glib, to avoid bundling the complete glib
-		# libraries with Windows builds.
-		FLUIDSYNTH_STATIC_LIBS="$FLUIDSYNTH_LIBS -ldsound -lwinmm"
+		FLUIDSYNTH_STATIC_LIBS="$FLUIDSYNTH_LIBS -lglib-2.0 -lintl -liconv -lws2_32 -lole32 -lshlwapi -lpcre -ldsound -lwinmm"
 	;;
 
 	darwin*)
@@ -4421,6 +4470,10 @@ if test "$_16bit" = yes ; then
 	echo_n ", 16bit color"
 fi
 
+if test "$_highres" = yes ; then
+	echo_n ", high resolution"
+fi
+
 if test "$_savegame_timestamp" = yes ; then
 	echo_n ", savegame timestamp"
 fi
@@ -4434,7 +4487,7 @@ if test "$_build_scalers" = yes ; then
 fi
 
 if test "$_mt32emu" = yes ; then
-	echo_n ", MT-32 emu"
+	echo_n ", MT-32 emulator"
 fi
 
 if test "$_text_console" = yes ; then
@@ -4691,6 +4744,7 @@ STAGINGPATH=$_stagingpath
 WIN32PATH=$_win32path
 AMIGAOSPATH=$_amigaospath
 STATICLIBPATH=$_staticlibpath
+XCODETOOLSPATH=$_xcodetoolspath
 SDLCONFIG=$_sdlconfig
 
 ABI := $ABI

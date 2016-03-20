@@ -107,6 +107,14 @@ enum FixedTextId {
 	kFixedText_InitInventory_Tarot,
 	kFixedText_InitInventory_OrnateKey,
 	kFixedText_InitInventory_PawnTicket,
+	// SH1: User Interface
+	kFixedText_UserInterface_NoThankYou,
+	kFixedText_UserInterface_YouCantDoThat,
+	kFixedText_UserInterface_Done,
+	kFixedText_UserInterface_Use,
+	kFixedText_UserInterface_UseOn,
+	kFixedText_UserInterface_Give,
+	kFixedText_UserInterface_GiveTo,
 	// People names
 	kFixedText_People_SherlockHolmes,
 	kFixedText_People_DrWatson,

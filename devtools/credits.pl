@@ -287,7 +287,7 @@ sub begin_section {
 			# headlines...
 			my $ascii_title = html_entities_to_ascii($title);
 			$title = html_entities_to_cpp($title);
-			if ($ascii_title ne $title) {	
+			if ($ascii_title ne $title) {
 				print '"A1""'.$ascii_title.'",' . "\n";
 			}
 			print '"C1""'.$title.'",' . "\n";
@@ -295,7 +295,7 @@ sub begin_section {
 		} else {
 			my $ascii_title = html_entities_to_ascii($title);
 			$title = html_entities_to_cpp($title);
-			if ($ascii_title ne $title) {	
+			if ($ascii_title ne $title) {
 				print '"A1""'.$ascii_title.'",' . "\n";
 			}
 			print '"C1""'.$title.'",' . "\n";
@@ -428,7 +428,7 @@ sub add_person {
 		if (length $desc > 0) {
 			my $ascii_desc = html_entities_to_ascii($desc);
 			$desc = html_entities_to_cpp($desc);
-			if ($ascii_desc ne $desc) {	
+			if ($ascii_desc ne $desc) {
 				print '"A2""'.$ascii_desc.'",' . "\n";
 			}
 			print '"C2""'.$desc.'",' . "\n";
@@ -572,7 +572,7 @@ begin_credits("Credits");
 				add_person("Arnaud Boutonn&eacute;", "Strangerke", "");
 				add_person("Paul Gilbert", "dreammaster", "");
 			end_section();
-			
+
 			begin_section("CGE2");
 				add_person("Peter Bozs&oacute;", "uruk", "");
 				add_person("Arnaud Boutonn&eacute;", "Strangerke", "");
@@ -803,7 +803,7 @@ begin_credits("Credits");
 				add_person("Einar Johan T. S&oslash;m&aring;en", "somaen", "");
 				add_person("Tobia Tesan", "t0by", "");
 			end_section();
-            
+
 			begin_section("Z-Vision");
 				add_person("Adrian Astley", "RichieSams", "");
 				add_person("Filippos Karapetis", "[md5]", "");
@@ -821,6 +821,10 @@ begin_credits("Credits");
 
 			begin_section("Dreamcast");
 				add_person("Marcus Comstedt", "", "");
+			end_section();
+
+			begin_section("GCW0");
+				add_person("Eugene Sandulenko", "", "");
 			end_section();
 
 			begin_section("GPH Devices (GP2X, GP2XWiz &amp; Caanoo)");

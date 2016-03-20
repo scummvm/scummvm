@@ -20,38 +20,38 @@ Inhaltsverzeichnis:
  * 3.3 Hinweise zu Spielen auf mehreren CDs
  * 3.4 Bekannte Probleme
  * 3.5 Hinweise zu Beneath a Steel Sky
- * 3.6 Hinweise zu Baphomets Fluch
+ * 3.6 Hinweise zu Baphomets Fluch I und II
  * * 3.6.1 Baphomets Fluch
  * * 3.6.2 Baphomets Fluch II
- * * 3.6.3 Zwischenszenen in Baphomets Fluch
- * * 3.6.4 Zwischenszenen in Baphomets Fluch (Rückblick)
+ * * 3.6.3 Zwischensequenzen in Baphomets Fluch
+ * * 3.6.4 Zwischensequenzen in Baphomets Fluch (Rückblick)
  * 3.7 Hinweise zu Day of the Tentacle
  * 3.8 Hinweise zu Discworld II
  * 3.9 Hinweise zu Drači Historie
  * 3.10 Hinweise zu Flight of the Amazon Queen
  * 3.11 Hinweise zu Gobliiins
- * 3.12 Hinweise zu Inherit the Earth: Quest for the Orb
+ * 3.12 Hinweise zu Inherit the Earth: Quest for the Orb (Macintosh)
  * 3.13 Hinweise zu Maniac Mansion (Apple II/NES)
  * 3.14 Hinweise zu Mickey's Space Adventure
- * 3.15 Hinweise zu Nippon Safes Inc.
- * 3.16 Hinweise zu Simon the Sorcerer
+ * 3.15 Hinweise zu Nippon Safes Inc. (Amiga)
+ * 3.16 Hinweise zu Simon the Sorcerer 1 und 2
  * 3.17 Hinweise zu The Curse of Monkey Island
  * 3.18 Hinweise zu Floyd – Es gibt noch Helden
  * 3.19 Hinweise zu The Legend of Kyrandia
  * 3.20 Hinweise zu Troll's Tale
  * 3.21 Hinweise zu Winnie the Pooh
  * 3.22 Hinweise zum vorhersagenden Eingabedialog in AGI-Spielen von Sierra
- * 3.23 Gleichzeitige Sprachausgabe und Untertitel SCI-Spielen von Sierra
+ * 3.23 Gleichzeitige Sprachausgabe und Untertitel in SCI-Spielen von Sierra
  * 3.24 Hinweise zu den Spielen der Zork-Reihe
  * 3.25 Hinweise zu Spielen für den Commodore 64
  * 3.26 Hinweise zu Spielen für den Macintosh
 4.0) Unterstützte Plattformen
 5.0) ScummVM verwenden
  * 5.1 Kommandozeilenoptionen
- * 5.2 Sprachoptionen
+ * 5.2 Globales Menü
  * 5.3 Grafikfilter
- * 5.4 Globales Menü
- * 5.5 Tastenkürzel
+ * 5.4 Tastenkürzel
+ * 5.5 Sprachoptionen
 6.0) Spielstände
  * 6.1 Automatisches Speichern von Spielständen
  * 6.2 Spielstände umwandeln
@@ -69,14 +69,14 @@ Inhaltsverzeichnis:
  * 7.7 TiMidity++-MIDI-Server-Unterstützung
  * 7.8 Komprimierte Audio-Dateien verwenden (MP3, Ogg Vorbis, FLAC)
  * * 7.8.1 MP3-Dateien für CD-Audio verwenden
- * * 7.8.2 Ogg Vorbis-Dateien für CD-Audio verwenden
- * * 7.8.3 Flac-Dateien für CD-Audio verwenden
+ * * 7.8.2 Ogg-Vorbis-Dateien für CD-Audio verwenden
+ * * 7.8.3 FLAC-Dateien für CD-Audio verwenden
  * * 7.8.4 MONSTER.SOU mit MP3 komprimieren
  * * 7.8.5 MONSTER.SOU mit Ogg Vorbis komprimieren
- * * 7.8.6 MONSTER.SOU mit Flac komprimieren
- * * 7.8.7 Musik/Effekte/Sprache in AGOS-Spielen komprimieren
- * * 7.8.8 Sprache/Musik in Baphomets Fluch komprimieren
- * * 7.8.9 Sprache/Musik in Baphomets Fluch II komprimieren
+ * * 7.8.6 MONSTER.SOU mit FLAC komprimieren
+ * * 7.8.7 Musik/Effekte/Sprachausgabe in AGOS-Spielen komprimieren
+ * * 7.8.8 Sprachausgabe/Musik in Baphomets Fluch komprimieren
+ * * 7.8.9 Sprachausgabe/Musik in Baphomets Fluch II komprimieren
  * 7.9 Ausgabefrequenzen
 8.0) Konfigurationsdatei
  * 8.1 Verwendbare Konfigurationsschlüsselwörter
@@ -273,6 +273,7 @@ Spiele von Activision (MADE):
 Spiele von Adventuresoft/Horrorsoft (AGOS):
      Elvira - Mistress of the Dark               [elvira1]
      Elvira II - The Jaws of Cerberus            [elvira2]
+     Floyd - Es gibt noch Helden                 [feeble]
      Personal Nightmare                          [pn]
      Simon the Sorcerer 1                        [simon1]
      Simon the Sorcerer 2                        [simon2]
@@ -284,7 +285,6 @@ Spiele von Adventuresoft/Horrorsoft (AGOS):
          - NoPatience                            [puzzle]
      Simon the Sorcerer's Game Pack
          - Swampy Adventures                     [swampy]
-     Floyd - Es gibt noch Helden                 [feeble]
      Waxworks                                    [waxworks]
 
 Spiele von Coktel Vision (GOB):
@@ -297,10 +297,9 @@ Spiele von Coktel Vision (GOB):
      Lost in Time                                [lostintime]
      Once Upon A Time: Little Red Riding Hood    [littlered]
      Playtoons: Bambou le sauveur de la jungle   [bambou]
-     The Bizarre Adventures of Woodruff
-         and the Schnibble                       [woodruff]
      Urban Runner                                [urban]
      Ween: The Prophecy                          [ween]
+     Woodruff and the Schnibble of Azimuth       [woodruff]
 
 Spiele von Revolution Software:
      Beneath a Steel Sky                         [sky]
@@ -329,7 +328,7 @@ Spiele von Sierra (AGI und preAGI):
      Troll's Tale                                [troll]
      Winnie the Pooh in the Hundred Acre Wood    [winnie]
 
-SCI-Spiele von Sierra Entertainment:
+Spiele von Sierra (SCI):
      Codename: ICEMAN                            [iceman]
      Conquests of Camelot                        [camelot]
      Conquests of the Longbow                    [longbow]
@@ -373,17 +372,22 @@ SCI-Spiele von Sierra Entertainment:
 Andere Spiele:
      3 Skulls of the Toltecs                     [toltecs]
      Amazon: Guardians of Eden                   [access]
+     Baphomets Fluch 2.5:
+         Die Rückkehr der Tempelritter           [sword25]
      Beavis and Butt-head in Virtual Stupidity   [bbvs]
      Blue Force                                  [blueforce]
-     Baphomets Fluch: Die Rückkehr der Templer   [sword25]
      Bud Tucker in Double Trouble                [tucker]
      Chivalry is Not Dead                        [chivalry]
      Cruise for a Corpse                         [cruise]
-     DreamWeb                                    [dreamweb]
+     Die ungelösten Fälle von Sherlock Holmes:
+        Das gezackte Skalpell                    [scalpel]
+     Die ungelösten Fälle von Sherlock Holmes:
+        Die tätowierte Rose                      [rosetattoo]
      Discworld                                   [dw]
      Discworld 2: Vermutlich vermisst            [dw2]
      Drači Historie                              [draci]
      Drascula: The Vampire Strikes Back          [drascula]
+     DreamWeb                                    [dreamweb]
      Erben der Erde: Die große Suche             [ite]
      Eye of the Beholder                         [eob]
      Eye of the Beholder II: The Legend of
@@ -403,25 +407,20 @@ Andere Spiele:
      Return to Ringworld                         [ringworld2]
      Sfinx                                       [sfinx]
      Soltys                                      [soltys]
+     TeenAgent                                   [teenagent]
+     The 7th Guest                               [t7g]
      The Journeyman Project: Pegasus Prime       [pegasus]
      The Legend of Kyrandia                      [kyra1]
      The Legend of Kyrandia: The Hand of Fate    [kyra2]
      The Legend of Kyrandia: Malcolm's Revenge   [kyra3]
-     The Lost Files of Sherlock Holmes: The Case
-        of the Serrated Scalpel                  [scalpel]
-     The Lost Files of Sherlock Holmes: The Case
-        of the Rose Tattoo                       [rosetattoo]
      The Neverhood                               [neverhood]
-     The 7th Guest                               [t7g]
-     TeenAgent                                   [teenagent]
-     Toonstruck                                  [toon]
      Tony Tough and the Night of Roasted Moths   [tony]
      Toonstruck                                  [toon]
      Touché: Die Abenteuer des fünften
          Musketiers                              [touche]
      Voyeur                                      [voyeur]
-     Zork: Grand Inquisitor                      [zgi]
-     Zork Nemesis: The Forbidden Lands           [znemesis]
+     Zork: Der Großinquisitor                    [zgi]
+     Zork Nemesis: Das verbotene Land            [znemesis]
 
 Spiele von Humongous Entertainment (SCUMM):
      Backyard Baseball                           [baseball]
@@ -517,10 +516,10 @@ ScummVM unterstützt:
 
 Seien Sie sich bitte bewusst, dass die Engines („Motoren“ der Spiele) Fehler
 enthalten können und manche Funktionen möglicherweise fehlen, was es unmöglich
-machten kann, das Spiel zu Ende zu spielen. Speichern Sie oft und bitte schicken Sie
-englischsprachige Fehlerberichte ein (Anweisungen zum Senden von Fehlerberichten finden
-Sie oben), wenn Sie einen solchen Fehler in einem „unterstützten“ Spiel
-vorfinden.
+machen kann, das Spiel zu Ende zu spielen. Speichern Sie oft und bitte schicken
+Sie englischsprachige Fehlerberichte ein (Anweisungen zum Senden von
+Fehlerberichten finden Sie oben), wenn Sie einen solchen Fehler in einem
+„unterstützten“ Spiel vorfinden.
 
 
 3.1) Kopierschutz:
@@ -562,16 +561,16 @@ ScummVM wird den Kopierschutz in folgenden Spielen überspringen:
   * Zak McKracken and the Alien Mindbenders
 
 
-3.2) Spieldateien
----- ------------
-Für eine ausführliche Liste der benötigten Spieldateien für unterstützte
-Spiele, besuchen Sie:
+3.2) Spieldateien:
+---- -------------
+Für eine ausführliche Liste der benötigten Spieldateien für unterstützte Spiele,
+besuchen Sie:
 
-  <http://wiki.scummvm.org/index.php/Datafiles>
+  http://wiki.scummvm.org/index.php/Datafiles
 
 
 3.3) Hinweise zu Spielen auf mehreren CDs:
----- -----------------------------------
+---- -------------------------------------
 Allgemein kann ScummVM nicht sehr gut mit Spielen auf mehreren CDs umgehen. Das
 liegt daran, dass ScummVM annimmt, alles von einem Spiel in einem Verzeichnis
 vorzufinden. Selbst wenn ScummVM einige Fälle berücksichtigt und den Anwender
@@ -588,20 +587,20 @@ hineinkopieren.
 
 
 3.4) Bekannte Probleme:
------ ------------------
-Diese Version hat die unten folgenden bekannten Probleme. Es ist
-nicht notwendig, diese zu melden, jedoch sind Patches, um diese zu beheben,
+---- ------------------
+Diese Version hat die unten folgenden bekannten Probleme. Es ist nicht
+notwendig, diese zu melden, jedoch sind Patches, um diese zu beheben,
 willkommen. Wenn Sie einen Fehler entdecken, der weder hier noch auf der
 Kompatibilitätsseite der Website aufgeführt ist, sehen Sie bitte im Abschnitt
 „Fehler melden“ nach, wenn Sie diesen melden möchten.
 
   Spiele mit Ton von CD:
     - Bei Spielen, die auf Audio von CD zurückgreifen (FM-TOWNS-Spiele,
-      CD-Version von Loom usw.), ist es möglich, dass Anwender von Microsoft Windows
-      2000/XP zufällige Abstürze erleben. Das liegt an einem lange bestehenden
-      Windows-Fehler, der dazu führt, dass fehlerhafte Spieldaten von der CD
-      ausgelesen werden. Bitte kopieren Sie die Spieldaten in ein Verzeichnis
-      Ihrer Festplatte, um dies zu vermeiden.
+      CD-Version von Loom usw.), ist es möglich, dass Anwender von Microsoft
+      Windows 2000/XP zufällige Abstürze erleben. Das liegt an einem lange
+      bestehenden Windows-Fehler, der dazu führt, dass fehlerhafte Spieldaten
+      von der CD ausgelesen werden. Bitte kopieren Sie die Spieldaten in ein
+      Verzeichnis Ihrer Festplatte, um dies zu vermeiden.
 
   FM-TOWNS-Versionen:
     - Die Kanji-Versionen erfordern die Schriftart-ROM-Datei von FM-TOWNS.
@@ -636,7 +635,7 @@ Kompatibilitätsseite der Website aufgeführt ist, sehen Sie bitte im Abschnitt
 
   Lure of the Temptress:
     - Keine Unterstützung für Roland MT32
-    - Sound-Unterstützung ist unvollständig und klingt nicht wie das Original
+    - Sound-Unterstützung ist unvollständig und klingt nicht wie ursprünglich.
 
   Simon the Sorcerer 1:
     - Untertitel sind in den deutschen und englischen CD-Versionen nicht
@@ -794,8 +793,8 @@ Sache, da das Entschlüsseln von MPEG-Filmen mit vielen Schwierigkeiten verbunde
 war und diese ohnehin nicht so gut aussahen wie Smacker- und DXA-Versionen.
 
 
-3.7) Hinweise zu Day of the Tentacle
----- -------------------------------
+3.7) Hinweise zu Day of the Tentacle:
+---- --------------------------------
 
 An einem bestimmten Punkt im Spiel kommen Sie an einem Computer vorbei, der
 Ihnen erlaubt, das originale Maniac Mansion zu spielen. ScummVM unterstützt
@@ -816,9 +815,10 @@ festlegen können. Jedoch erlauben nicht alle Spiele die Rückkehr zum Hauptmen�
 Es ist nicht empfehlenswert, Day of the Tentacle selbst als Easter-Egg-Spiel
 festzulegen.
 
-3.8) Hinweise zu Discworld II
----- ------------------------
-Für diese Spiel benötien Sie alle Dateien im Verzeichnis DW2 auf beiden CDs.
+
+3.8) Hinweise zu Discworld II:
+---- -------------------------
+Für diese Spiel benötigen Sie alle Dateien im Verzeichnis DW2 auf beiden CDs.
 Zusätzlich benötigen Sie die Datei SAMPLE.BNK.
 
 Sie müssen ENGISH.SMP, ENGLISH.IDX und ENGLISH.TXT von CD1 zu ENGLISH1.SMP,
@@ -945,8 +945,8 @@ unkomplizierter ist, als sich mit dem Menü umherzubewegen.
 Für dieses Spiel benötigen Sie die Dateien
 disk0, global.table, pointer und it (en, fr, ge für die internationale Version).
 
-Zusätzlich müssen Sie das Diskettenabbild 2 in disk1, Abbild 3 in disk2, Abbild 4
-in disk3 sowie Abbild 5 in disk4 umbenennen.
+Zusätzlich müssen Sie das Diskettenabbild 2 in disk1, Abbild 3 in disk2,
+Abbild 4 in disk3 sowie Abbild 5 in disk4 umbenennen.
 
 
 3.16) Hinweise zu Simon the Sorcerer 1 und 2:
@@ -973,10 +973,11 @@ diesem Fall identisch.
 Amiga/Macintosh:
 Sie benötigen ein kleines Paket mit Zwischensequenzen, welche sowohl in der
 Amiga- als auch in der Macintosh-Version fehlen. Es heißt
-"The Feeble Files- Omni TV and epilogue cutscenes for the Amiga and Macintosh versions"
+„The Feeble Files - Omni TV and epilogue cutscenes for the Amiga and Macintosh
+versions“
 und kann hier heruntergeladen werden:
 
-  <http://www.scummvm.org/games/#feeble>
+  http://www.scummvm.org/games/#feeble
 
 Windows:
 Wenn Sie die Windows-Version von Floyd – Es gibt noch Helden haben, sind einige
@@ -1141,77 +1142,84 @@ Space Quest 4 CD:
     deaktiviert und aktiviert werden.
 
 
-3.24) Hinweise zu den Spielen der Zork-Reihe
------ --------------------------------------
-Um die unterstützen Zork-Spiele (Zork Nemesis: The Forbidden Lands
-und Zork: Grand Inquisitor) zu spielen, müssen Sie einige zusätzliche
+3.24) Hinweise zu den Spielen der Zork-Reihe:
+----- ---------------------------------------
+Um die unterstützen Zork-Spiele (Zork Nemesis: Das verbotene Land und
+Zork: Der Großinquisitor) spielen zu können, müssen Sie einige zusätzliche
 Dateien zu ihren entsprechenden Zielen kopieren.
 
-Zork Nemesis: The Forbidden Lands
+Zork Nemesis: Das verbotene Land
 
 Alle Versionen
-Laden Sie das Liberation(tm)-Schriftartenpaket
-<https://fedorahosted.org/releases/l/i/liberation-fonts/liberation-fonts-ttf-2.00.1.tar.gz>
-herunter und entpacken Sie alle ttf-Dateien in Ihr ScummVM "extras"-Verzeichnis.
-Alternativ können Sie auch das GNU FreeFont TTF-Paket unter
-<https://ftp.gnu.org/gnu/freefont/freefont-ttf.zip> herunterladen und alle ttf-Dateien
-aus dem sfd-Verzeichnis in Ihr ScummVM "extras"-Verzeichnis kopieren. Diese Schriftarten
-können Probleme mit der Textdarstellung verursachen.
-Laden Sie den Untertitel-Patch
-<http://www.thezorklibrary.com/installguides/znpatch.zip> herunter und entpacken
-Sie das Verzeichnis "addon" in das Hauptverzeichnis des Spiels.
+
+Laden Sie das Liberation(tm)-Schriftartenpaket unter
+https://fedorahosted.org/releases/l/i/liberation-fonts/liberation-fonts-ttf-
+2.00.1.tar.gz
+herunter und entpacken Sie alle ttf-Dateien in ScummVMs Extras-Pfad. Alternativ
+können Sie auch das GNU FreeFont TTF-Paket unter
+https://ftp.gnu.org/gnu/freefont/freefont-ttf.zip
+herunterladen und alle ttf-Dateien aus dem sfd-Verzeichnis in ScummVMs Extras-
+Pfad kopieren. Diese Schriftarten können Probleme bei der Textdarstellung
+verursachen. Laden Sie den Untertitel-Patch unter
+http://www.thezorklibrary.com/installguides/znpatch.zip
+herunter und entpacken Sie das Verzeichnis "addon" in das Hauptverzeichnis des
+Spiels.
 
 GoG-Version
 
-Verwenden Sie das GoG-Installationsprogramm. Keine weiteren Dateien müssen kopiert werden.
+Verwenden Sie das GoG-Installationsprogramm. Keine weiteren Dateien müssen
+kopiert werden.
 
 CD-Version
 
-Kopieren Sie folgende Verzeichnisse und Dateien aus dem Verzeichnis "nemesis" auf CD1
-in das Hauptverzeichnis des Spiels:
-Das Verzeichnis "znemmx"
-Das Verzeichnis "znemscr"
+Kopieren Sie folgende Verzeichnisse und Dateien aus dem Verzeichnis "nemesis"
+auf CD1 in das Hauptverzeichnis des Spiels:
+das Verzeichnis "znemmx"
+das Verzeichnis "znemscr"
 nemesis.str
-Von CD1, kopieren Sie das Verzeichnis "zassets" in das Hauptverzeichnis des Spiels.
-Von CD2, kopieren Sie das Verzeichnis "zassets" in das Hauptverzeichnis des Spiels und
-überschreiben Sie alle identischen Dateien.
-Von CD3, kopieren Sie das Verzeichnis "zassets" in das Hauptverzeichnis des Spiels und
-überschreiben Sie alle identischen Dateien.
+Von CD1 kopieren Sie das Verzeichnis "zassets" in das Hauptverzeichnis des
+Spiels.
+Von CD2 kopieren Sie das Verzeichnis "zassets" in das Hauptverzeichnis des
+Spiels und überschreiben Sie alle identischen Dateien.
+Von CD3 kopieren Sie das Verzeichnis "zassets" in das Hauptverzeichnis des
+Spiels und überschreiben Sie alle identischen Dateien.
 
 DVD-Version
 
-Kopieren Sie folgende Verzeichnisse und Dateien aus dem Verzeichnis "nemesis" auf CD1
-in das Hauptverzeichnis des Spiels:
+Kopieren Sie folgende Verzeichnisse und Dateien aus dem Verzeichnis "nemesis"
+auf CD1 in das Hauptverzeichnis des Spiels:
 Das Verzeichnis "znemmx"
 Das Verzeichnis "znemscr"
 nemesis.str
-Hinweis: Sie müssen auch die Datei cursor.zfs vom Verzeichnis "zassets/global" in 
-das Verzeichnis "znemscr" verschieben.
-Kopieren Sie die Verzeichnisse "disc2", "disc3" und "zassets" in das Hauptverzeichnis
-des Spiels.
+Hinweis: Sie müssen auch die Datei cursor.zfs vom Verzeichnis "zassets/global"
+in das Verzeichnis "znemscr" verschieben.
+Kopieren Sie die Verzeichnisse "disc2", "disc3" und "zassets" in das
+Hauptverzeichnis des Spiels.
 
 
-Zork: Grand Inquisitor
-
-Alle Versionen
+Zork: Der Großinquisitor
 
 Alle Versionen
-Laden Sie das Liberation(tm)-Schriftartenpaket
-<https://fedorahosted.org/releases/l/i/liberation-fonts/liberation-fonts-ttf-2.00.1.tar.gz>
-herunter und entpacken Sie alle ttf-Dateien in Ihr ScummVM "extras"-Verzeichnis.
+
+Laden Sie das Liberation(tm)-Schriftartenpaket unter
+https://fedorahosted.org/releases/l/i/liberation-fonts/liberation-fonts-ttf-
+2.00.1.tar.gz
+herunter und entpacken Sie alle ttf-Dateien in ScummVMs Extras-Pfad.
 Alternativ können Sie auch das GNU FreeFont TTF-Paket unter
-<https://ftp.gnu.org/gnu/freefont/freefont-ttf.zip> herunterladen und alle ttf-Dateien
-aus dem sfd-Verzeichnis in Ihr ScummVM "extras"-Verzeichnis kopieren. Diese Schriftarten
-können Probleme mit der Textdarstellung verursachen.
+https://ftp.gnu.org/gnu/freefont/freefont-ttf.zip
+herunterladen und alle ttf-Dateien aus dem sfd-Verzeichnis in ScummVMs Extras-
+Pfad kopieren. Diese Schriftarten können Probleme bei der Textdarstellung
+verursachen.
 
 GoG-Version
 
-Verwenden Sie das GoG-Installationsprogramm. Es müssen keine weiteren Dateien kopiert werden.
+Verwenden Sie das GoG-Installationsprogramm. Es müssen keine weiteren Dateien
+kopiert werden.
 
 CD-Version:
 
-Kopieren Sie die folgenden Verzeichnisse und Dateien aus dem Verzeichnis "zgi" von CD1
-in das Hauptverzeichnis des Spiels:
+Kopieren Sie die folgenden Verzeichnisse und Dateien aus dem Verzeichnis "zgi"
+von CD1 in das Hauptverzeichnis des Spiels:
 das Verzeichnis "zgi_mx"
 cursor.zfs
 death.zfs
@@ -1220,19 +1228,21 @@ inquis.zix
 r.svr
 scripts.zfs
 subtitle.zfs
-Von CD1, kopieren Sie das Verzeichnis "zassets1" in das Hauptverzeichnis des Spiels
-Von CD2, kopieren Sie das Verzeichnis "zassets2" in das Hauptverzeichnis des Spiels
-Es wird empfohlen, den Patch 1.2 anzuwenden.
-<http://www.thezorklibrary.com/installguides/Zpatch.exe>
+Von CD1 kopieren Sie das Verzeichnis "zassets1" in das Hauptverzeichnis des
+Spiels.
+Von CD2 kopieren Sie das Verzeichnis "zassets2" in das Hauptverzeichnis des
+Spiels.
+Es wird empfohlen, den hier erhältlichen Patch 1.2 anzuwenden:
+http://www.thezorklibrary.com/installguides/Zpatch.exe
 Möglicherweise müssen Sie das Spiel zuvor normal installieren, da der Patch ein
 eigenes Installationsprogramm besitzt.
 
 DVD-Version
 
-Kopieren Sie die folgenden Verzeichnisse und Dateien aus dem Verzeichnis "zgi_e" 
+Kopieren Sie die folgenden Verzeichnisse und Dateien aus dem Verzeichnis "zgi_e"
 in das Hauptverzeichnis des Spiels:
-Das Verzeichnis "addon" (Spiel-Patch 1.2)
-Das Verzeichnis zgi_mx
+das Verzeichnis "addon" (Spiel-Patch 1.2)
+das Verzeichnis zgi_mx
 cursor.zfs
 death.zfs
 inquis.str
@@ -1240,13 +1250,13 @@ inquis.zix
 r.svr
 scripts.zfs
 subtitle.zfs
-Kopieren Sie das Verzeichnis "eng_mpeg" (hochauflösende MPEG2-Videodateien") in das
-Hauptverzeichnis des Spiels. Kopieren Sie die Verzeichnisse "zassetsc" und "zassetse"
-ebenfalls in das Hauptverzeichnis des Spiels.
+Kopieren Sie das Verzeichnis "eng_mpeg" (hochauflösende MPEG2-Videodateien) in
+das Hauptverzeichnis des Spiels. Kopieren Sie die Verzeichnisse "zassetsc" und
+"zassetse" ebenfalls in das Hauptverzeichnis des Spiels.
 
 
 3.25) Hinweise zu Spielen für den Commodore 64:
----- ------------------------------------------
+----- -----------------------------------------
 Sowohl Maniac Mansion als auch Zak McKracken laufen, aber Maniac Mansion ist
 noch nicht spielbar. Benennen Sie einfach die D64-Datenträger um in
 „maniac1.d64“ und „maniac2.d64“ und entsprechend „zak1.d64“ und „zak2.d64“, dann
@@ -1260,8 +1270,8 @@ Plattform eingestellt ist. Wir empfehlen, auf die viel einfachere Methode
 zurückzugreifen, die im vorherigen Absatz beschrieben ist.
 
 
-3.5) Hinweise zu Spielen für den Macintosh:
----- --------------------------------------
+3.26) Hinweise zu Spielen für den Macintosh:
+----- --------------------------------------
 Alle auf SCUMM basierenden Adventures von Lucasarts, mit Ausnahme von COMI,
 existieren auch als Versionen für den Macintosh. ScummVM kann die meisten
 (alle?) von diesen verwenden, jedoch ist in manchen Fällen zusätzliche Arbeit
@@ -1431,8 +1441,9 @@ gestartet werden -- siehe nächster Abschnitt.
   --output-rate=FREQUENZ   Wählt Ausgabefrequenz in Hz (z. B. 22050).
   --opl-driver=TREIBER     Wählt AdLib-(OPL-)Emulator (db, mame).
   --aspect-ratio           Aktiviert Seitenverhältniskorrektur.
-  --render-mode=MODUS      Aktiviert zusätzlichen Render-Modus (cga, ega,
-                           hercGreen, hercAmber, amiga).
+  --render-mode=MODUS      Aktiviert zusätzlichen Render-Modus (hercGreen,
+                           hercAmber, cga, ega, vga, amiga, fmtowns, pc9821,
+                           pc9801, 2gs, atari, macintosh).
 
   --alt-intro              Verwendet alternativen Vorspann in CD-Versionen von
                            Beneath a Steel Sky und Flight of the Amazon Queen.
@@ -1582,6 +1593,7 @@ zwischen SCUMM-Spielen und anderen Spielen.
     Strg+F5                - Zeigt globales Menü.
     Cmd+q                  - Beenden (Mac OS X)
     Strg+q                 - Beenden (andere UNIX-Systeme einschließlich Linux)
+    Alt+F4                 - Beenden (Windows)
     Strg+z ODER Alt+x      - Beenden (andere Plattformen)
     Strg+u                 - Allen Ton abschalten - EIN/AUS
     Strg+m                 - Mausbegrenzung in Fenster EIN/AUS
@@ -1735,27 +1747,28 @@ zwischen SCUMM-Spielen und anderen Spielen.
     Escape                 - Beenden
     Leertaste              - Überspringt aktuelle Textzeile.
     t                      - Wechselt zwischen „Nur Sprachausgabe“,
-                             „Sprachausgabe und Text“ und „Nur Text“
+                             „Sprachausgabe und Text“ und „Nur Text“.
 
-  Zork: Grand Inquisitor:
-    Ctrl-s                 - Save
-    Ctrl-r                 - Restore
-    Ctrl-q                 - Quit
-    Ctrl-p                 - Preferences
-    F1                     - Help
-    F5                     - Inventory
-    F6                     - Spellbook
-    F7                     - Score
-    F8                     - Put away current object/forget spell
-    F9                     - Extract coin (must have the coin bag)
-    Space                  - Skips movies
+  Zork: Der Großinquisitor:
+    Strg+s                 - Speichern
+    Strg+r                 - Laden
+    Strg+q                 - Beenden
+    Strg+p                 - Einstellungen
+    F1                     - Hilfe
+    F5                     - Inventar
+    F6                     - Zauberbuch
+    F7                     - Punkte
+    F8                     - Aktuelles Objekt wegtun / Zauberspruch vergessen
+    F9                     - Münze hervorholen (muss Münzentasche haben)
+    Space                  - Überspringt Zwischensequenzen.
 
-  Zork Nemesis: The Forbidden Lands:
-    Ctrl-s                 - Save
-    Ctrl-r                 - Restore
-    Ctrl-q                 - Quit
-    Ctrl-p                 - Preferences
-    Space                  - Skips movies
+  Zork Nemesis: Das verbotene Land:
+    Strg+s                 - Speichern
+    Strg+r                 - Laden
+    Strg+q                 - Beenden
+    Strg+p                 - Einstellungen
+    Leertaste              - Überspringt Zwischensequenzen.
+
 
 Beachten Sie, dass von der Verwendung von Strg+f oder Strg+g abgeraten wird:
 Spiele können abstürzen, wenn sie schneller als mit ihrer normalen
@@ -1838,8 +1851,8 @@ Die folgenden Plattformen haben ein anderes Standard-Verzeichnis:
     $HOME/Documents/ScummVM Savegames/
 
     Andere UNIX-Systeme:
-    Wir befolgen die "XDG Base Directory"-Spezifikation. Dies bedeutet, dass
-    die Spielstände in:
+    Wir befolgen die Spezifikation XDG Base Directory. Dies bedeutet, dass
+    die Spielstände in
     $XDG_DATA_HOME/scummvm/saves/
     gespeichert werden.
 
@@ -1847,8 +1860,8 @@ Die folgenden Plattformen haben ein anderes Standard-Verzeichnis:
     Wert für XDG_DATA_HOME in Übereinstimmung mit der Spezifikation verwendet.
 
     Wenn eine frühere Version von ScummVM auf Ihrem System installiert war, wird
-    das ursprüngliche Standard-Verzeichnis "~/.scummvm" beibehalten. Dies wird daran
-    erkannt, dass der Pfad "~/.scummvm" vorhanden ist.
+    das ursprüngliche Standard-Verzeichnis „~/.scummvm“ beibehalten. Dies wird
+    daran erkannt, dass der Pfad „~/.scummvm“ vorhanden ist.
 
     Windows Vista/7/8/10:
     \Users\Benutzername\AppData\Roaming\ScummVM\Saved games\
@@ -1862,14 +1875,15 @@ Die folgenden Plattformen haben ein anderes Standard-Verzeichnis:
     Application Data\ScummVM\Saved games\
 
 Spielstände werden unter Windows NT4/2000/XP/Vista/7/8/10 in einem versteckten
-Verzeichnis gespeichert, auf welches über den Pfad "%APPDATA%\ScummVM\Saved Games\"
-zugegriffen werden kann. Es wir auch sichtbar, wenn die Anzeige von versteckten
-Dateien im Windows Explorer aktiviert wird.
+Verzeichnis gespeichert, auf welches über den Pfad
+„%APPDATA%\ScummVM\Saved Games\“ zugegriffen werden kann. Es wird auch sichtbar,
+wenn die Anzeige versteckter Dateien im Windows Explorer aktiviert wird.
 
-Hinweis für Anwender von Windows NT4/2000/XP/Vista/7/8/10: Das Standard-Verzeichnis
-für Spielstände wurde bei ScummVM 1.5.0 geändert. Die Stapelverarbeitungsdatei
-migration.bat kann verwendet werden, um die Spielstände vom alten
-Standard-Verzeichnis in das neue zu kopieren.
+Hinweis für Anwender von Windows NT4/2000/XP/Vista/7/8/10: Das Standard-
+Verzeichnis für Spielstände wurde bei ScummVM 1.5.0 geändert. Die
+Stapelverarbeitungsdatei migration.bat kann verwendet werden, um die Spielstände
+vom alten Standard-Verzeichnis in das neue zu kopieren.
+
 
 6.1) Automatische Speicherung der Spielstände:
 ---- -----------------------------------------
@@ -2466,7 +2480,7 @@ Ausgabefrequenz ein Vielfaches der Originalfrequenz ist.
 ---- --------------------
 Standardmäßig wird die Konfigurationsdatei hier gespeichert und geladen:
 
-    Windows Vista/7/8/10:
+    Windows Vista/7:
     \Users\Benutzername\AppData\Roaming\ScummVM\scummvm.ini
 
     Windows 2000/XP:
@@ -2484,8 +2498,8 @@ Standardmäßig wird die Konfigurationsdatei hier gespeichert und geladen:
     der frühere Standard-Ort „<Windows-Verzeichnis>\scummvm.ini“ beibehalten.
 
     Unix:
-    Wir befolgen die "XDG Base Directory"-Spezifikation. Dies bedeutet, dass
-    unsere Konfiguration in:
+    Wir befolgen die Spezifikation XDG Base Directory. Dies bedeutet, dass
+    unsere Konfiguration in
     $XDG_DATA_HOME/scummvm/scummvm.ini
     gefunden werden kann.
 
@@ -2493,9 +2507,8 @@ Standardmäßig wird die Konfigurationsdatei hier gespeichert und geladen:
     Wert für XDG_DATA_HOME in Übereinstimmung mit der Spezifikation verwendet.
 
     Wenn eine frühere Version von ScummVM auf Ihrem System installiert war, wird
-    das ursprüngliche Standard-Verzeichnis "~/.scummvm" beibehalten. Dies wird daran
-    erkannt, dass der Pfad "~/.scummvm" vorhanden ist.
-
+    das ursprüngliche Standard-Verzeichnis „~/.scummvm“ beibehalten. Dies wird
+    daran erkannt, dass der Pfad „~/.scummvm“ vorhanden ist.
 
     Mac OS X:
     ~/Library/Preferences/ScummVM Preferences
@@ -2771,7 +2784,7 @@ Schlüsselwort:
                                 Geschwindigkeit wiedergegeben, um Probleme bei
                                 der Musik-Synchronität zu vermeiden.
 
-Zork Nemesis: The Forbidden Lands verfügt zusätzlich über folgende nicht
+Zork Nemesis: Das verbotene Land verfügt zusätzlich über folgende nicht
 standardmäßige Schlüsselwörter:
 
     originalsaveload   Bool     Falls „true“, werden die originalen Menüs zum
@@ -2782,11 +2795,11 @@ standardmäßige Schlüsselwörter:
     noanimwhileturning Bool     Falls „true“, werden Animationen während des
                                 Drehens im Panorama-Modus deaktiviert.
     mpegmovies         Bool     Falls „true“, werden hochauflösende MPEG-Videos
-                                der DVD-Version im Spiel verwendet, anstelle der
+                                der DVD-Version im Spiel verwendet anstelle der
                                 niedrig auflösenden AVI-Videos.
 
-Zork: Grand Inquisitor verfügt zusätzlich über folgende nicht
-standardmäßige Schlüsselwörter:
+Zork: Der Großinquisitor verfügt zusätzlich über folgende nicht standardmäßige
+Schlüsselwörter:
 
     originalsaveload   Bool     Falls „true“, werden die originalen Menüs zum
                                 Speichern und Laden statt der erweiterten
@@ -2796,12 +2809,12 @@ standardmäßige Schlüsselwörter:
     noanimwhileturning Bool     Falls „true“, werden Animationen während des
                                 Drehens im Panorama-Modus deaktiviert.
     mpegmovies         Bool     Falls „true“, werden hochauflösende MPEG-Videos
-                                der DVD-Version im Spiel verwendet, anstelle der
+                                der DVD-Version im Spiel verwendet anstelle der
                                 niedrig auflösenden AVI-Videos.
 
 
-8.2) Spielspezifische Optionen der grafischen Benutzeroberfläche
----- ---------------------------------------------------------------
+8.2) Spielspezifische Optionen bei der grafischen Benutzeroberfläche:
+---- ----------------------------------------------------------------
 Viele spielspezifische Optionen, die im vorigen Abschnitt aufgeführt wurden,
 können über die grafische Benutzeroberfläche angesprochen werden. Falls eine
 spielspezifische Option für ein bestimmtes Spiel verfügbar ist, erscheint ein
@@ -2813,7 +2826,7 @@ aktualisiert, was die spielspezifischen Optionen zum Vorschein bringt.
 
 
 9.0) Kompilieren:
----- -------------
+---- ------------
 Für eine aktuelle Übersicht dazu, wie man ScummVM für unterschiedliche
 Plattformen kompiliert, schauen Sie bitte in unserem Wiki nach, insbesondere auf
 dieser Seite:
@@ -2821,12 +2834,12 @@ dieser Seite:
 
 Wenn Sie für Windows, Linux oder Mac OS X kompilieren, benötigen Sie SDL-1.2.2
 oder höher (ältere Versionen funktionieren möglicherweise, haben aber keinen
-Support) und einen unterstützten Compiler. Mehrere Compiler,
-einschließlich GCC, mingw und neue Versionen von Microsoft Visual C++ werden
-unterstützt. Wenn Sie mit MP3 komprimierte CD-Titel oder .SOU-Dateien verwenden
-möchten, müssen Sie die MAD-Bibliothek installieren; ebenso benötigen Sie die
-geeigneten Bibliotheken für Sound-Dateien, die mit Ogg Vorbis und FLAC
-komprimiert wurden. Für komprimierte Speicherstände ist zlib erforderlich.
+Support) und einen unterstützten Compiler. Mehrere Compiler, einschließlich GCC,
+mingw und neue Versionen von Microsoft Visual C++ werden unterstützt. Wenn Sie
+mit MP3 komprimierte CD-Titel oder .SOU-Dateien verwenden möchten, müssen Sie
+die MAD-Bibliothek installieren; ebenso benötigen Sie die geeigneten
+Bibliotheken für Sound-Dateien, die mit Ogg Vorbis und FLAC komprimiert wurden.
+Für komprimierte Speicherstände ist zlib erforderlich.
 
 Von einigen Teilen in ScummVM, insbesondere Grafikwandlern, gibt es stark
 optimierte Versionen, die in Assembler geschrieben sind. Wenn Sie diese
@@ -2843,102 +2856,103 @@ Debug-Nachrichten zu durchsuchen
    Windows:
    * Dev-C++
       Weiterführende Informationen finden Sie unter:
-      <http://wiki.scummvm.org/index.php/Compiling_ScummVM/DevCPP>
+      http://wiki.scummvm.org/index.php/Compiling_ScummVM/DevCPP
    * MinGW
       Weiterführende Informationen finden Sie unter:
-      <http://wiki.scummvm.org/index.php/Compiling_ScummVM/MinGW>
+      http://wiki.scummvm.org/index.php/Compiling_ScummVM/MinGW
    * Visual Studio (MSVC)
       Weiterführende Informationen finden Sie unter:
-      <http://wiki.scummvm.org/index.php/Compiling_ScummVM/Visual_Studio>
+      http://wiki.scummvm.org/index.php/Compiling_ScummVM/Visual_Studio
    * Windows CE/Mobile
       Weiterführende Informationen finden Sie unter:
-      <http://wiki.scummvm.org/index.php/Compiling_ScummVM/Windows_CE>
+      http://wiki.scummvm.org/index.php/Compiling_ScummVM/Windows_CE
 
    Linux:
    * GCC
       Weiterführende Informationen finden Sie unter:
-      <http://wiki.scummvm.org/index.php/Compiling_ScummVM/GCC>
+      http://wiki.scummvm.org/index.php/Compiling_ScummVM/GCC
 
    AmigaOS4:
       Weiterführende Informationen finden Sie unter:
-      <http://wiki.scummvm.org/index.php/AmigaOS>
+      http://wiki.scummvm.org/index.php/AmigaOS
 
    Apple iPhone:
       Weiterführende Informationen finden Sie unter:
-      <http://wiki.scummvm.org/index.php/Compiling_ScummVM/iPhone>
+      http://wiki.scummvm.org/index.php/Compiling_ScummVM/iPhone
 
    Atari/FreeMiNT:
       Weiterführende Informationen finden Sie unter:
-      <http://wiki.scummvm.org/index.php/Compiling_ScummVM/Atari/FreeMiNT>
+      http://wiki.scummvm.org/index.php/Compiling_ScummVM/Atari/FreeMiNT
 
    Bada/Tizen:
       Weiterführende Informationen finden Sie unter:
-      <http://wiki.scummvm.org/index.php/Compiling_ScummVM/Bada/Tizen>
+      http://wiki.scummvm.org/index.php/Compiling_ScummVM/Bada/Tizen
 
    BeOS/ZETA/Haiku:
       Weiterführende Informationen finden Sie unter:
-      <http://wiki.scummvm.org/index.php/Compiling_ScummVM/BeOS/ZETA/Haiku>
+      http://wiki.scummvm.org/index.php/Compiling_ScummVM/BeOS/ZETA/Haiku
 
    Google Android:
       Weiterführende Informationen finden Sie unter:
-      <http://wiki.scummvm.org/index.php/Compiling_ScummVM/Android>
+      http://wiki.scummvm.org/index.php/Compiling_ScummVM/Android
 
    HP webOS:
       Weiterführende Informationen finden Sie unter:
-      <http://wiki.scummvm.org/index.php/Compiling_ScummVM/WebOS>
+      http://wiki.scummvm.org/index.php/Compiling_ScummVM/WebOS
 
    Mac OS:
    * Mac OS X
       Weiterführende Informationen finden Sie unter:
-      <http://wiki.scummvm.org/index.php/Mac_OS_X>
+      http://wiki.scummvm.org/index.php/Mac_OS_X
     * Mac OS X 10.2.8
       Weiterführende Informationen finden Sie unter:
-      <http://wiki.scummvm.org/index.php/Compiling_ScummVM/Mac_OS_X_10.2.8>
+      http://wiki.scummvm.org/index.php/Compiling_ScummVM/Mac_OS_X_10.2.8
     * Mac OS X Crosscompiling
       Weiterführende Informationen finden Sie unter:
-      <http://wiki.scummvm.org/index.php/Compiling_ScummVM/Mac_OS_X_Crosscompiling>
+http://wiki.scummvm.org/index.php/Compiling_ScummVM/Mac_OS_X_Crosscompiling
 
    Maemo:
       Weiterführende Informationen finden Sie unter:
-      <http://wiki.scummvm.org/index.php/Compiling_ScummVM/Maemo>
+      http://wiki.scummvm.org/index.php/Compiling_ScummVM/Maemo
 
    Nintendo DS:
       Weiterführende Informationen finden Sie unter:
-      <http://wiki.scummvm.org/index.php/Compiling_ScummVM/Nintendo_DS>
+      http://wiki.scummvm.org/index.php/Compiling_ScummVM/Nintendo_DS
 
    Nintendo Wii and Gamecube:
       Weiterführende Informationen finden Sie unter:
-      <http://wiki.scummvm.org/index.php/Compiling_ScummVM/Wii>
+      http://wiki.scummvm.org/index.php/Compiling_ScummVM/Wii
 
    RaspberryPi:
       Weiterführende Informationen finden Sie unter:
-      <http://wiki.scummvm.org/index.php/Compiling_ScummVM/RPI>
+      http://wiki.scummvm.org/index.php/Compiling_ScummVM/RPI
 
    Sega Dreamcast:
       Weiterführende Informationen finden Sie unter:
-      <http://wiki.scummvm.org/index.php/Compiling_ScummVM/Dreamcast>
+      http://wiki.scummvm.org/index.php/Compiling_ScummVM/Dreamcast
 
    Sony Playstation:
    * Sony PlayStation 2
       Weiterführende Informationen finden Sie unter:
-      <http://wiki.scummvm.org/index.php/Compiling_ScummVM/PlayStation_2>
+      http://wiki.scummvm.org/index.php/Compiling_ScummVM/PlayStation_2
    * Sony PlayStation 3
       Weiterführende Informationen finden Sie unter:
-      <http://wiki.scummvm.org/index.php/PlayStation_3#Building_from_source>
+      http://wiki.scummvm.org/index.php/PlayStation_3#Building_from_source
    * Sony PlayStation Portable
       Weiterführende Informationen finden Sie unter:
-      <http://wiki.scummvm.org/index.php/Compiling_ScummVM/PlayStation_Portable>
+      http://wiki.scummvm.org/index.php/Compiling_ScummVM/PlayStation_Portable
 
    Symbian:
       Weiterführende Informationen finden Sie unter:
-      <http://wiki.scummvm.org/index.php/Compiling_ScummVM/Symbian>
+      http://wiki.scummvm.org/index.php/Compiling_ScummVM/Symbian
 
 
 10.0) Mitwirkende
 ----- -------
-Eine ausführliche Liste derjenigen, die ScummVM ermöglicht haben, finden Sie unter:
+Eine ausführliche Liste derjenigen, die ScummVM ermöglicht haben, finden Sie
+unter:
 
-  <http://www.scummvm.org/credits/>
+  http://www.scummvm.org/credits/
 
 
 ------------------------------------------------------------------------

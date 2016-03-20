@@ -214,12 +214,6 @@ void LabEngine::updateEvents() {
 
 Common::Error LabEngine::loadGameState(int slot) {
 	bool result = loadGame(slot);
-	_curFileName = " ";
-	_closeDataPtr = nullptr;
-	_mainDisplay = true;
-	_followingCrumbs = false;
-	_event->simulateEvent();
-	_graphics->_longWinInFront = false;
 	return (result) ? Common::kNoError : Common::kUserCanceled;
 }
 
@@ -229,11 +223,11 @@ Common::Error LabEngine::saveGameState(int slot, const Common::String &desc) {
 }
 
 bool LabEngine::canLoadGameStateCurrently() {
-	return !_anim->isPlaying() && !_introPlaying;
+	return !_introPlaying;
 }
 
 bool LabEngine::canSaveGameStateCurrently() {
-	return !_anim->isPlaying() && !_introPlaying;
+	return !_introPlaying;
 }
 
 } // End of namespace Lab

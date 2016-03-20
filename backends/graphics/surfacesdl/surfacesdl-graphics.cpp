@@ -127,7 +127,8 @@ SurfaceSdlGraphicsManager::SurfaceSdlGraphicsManager(SdlEventSource *sdlEventSou
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 	_renderer(nullptr), _screenTexture(nullptr),
 	_viewport(), _windowWidth(1), _windowHeight(1),
-#else
+#endif
+#if defined(WIN32) && !SDL_VERSION_ATLEAST(2, 0, 0)
 	_originalBitsPerPixel(0),
 #endif
 	_screen(0), _tmpscreen(0),
@@ -801,8 +802,9 @@ bool SurfaceSdlGraphicsManager::loadGFXMode() {
 	} else
 #endif
 	{
-		// Save the original bpp to be able to restore the video mode on unload
-#if !SDL_VERSION_ATLEAST(2, 0, 0)
+#if defined(WIN32) && !SDL_VERSION_ATLEAST(2, 0, 0)
+		// Save the original bpp to be able to restore the video mode on
+		// unload. See _originalBitsPerPixel documentation.
 		if (_originalBitsPerPixel == 0) {
 			const SDL_VideoInfo *videoInfo = SDL_GetVideoInfo();
 			_originalBitsPerPixel = videoInfo->vfmt->BitsPerPixel;
@@ -947,9 +949,10 @@ void SurfaceSdlGraphicsManager::unloadGFXMode() {
 #endif
 	DestroyScalers();
 
-#if !SDL_VERSION_ATLEAST(2, 0, 0)
-	// Reset video mode to original
-	// This will ensure that any new graphic manager will use the initial BPP when listing available modes
+#if defined(WIN32) && !SDL_VERSION_ATLEAST(2, 0, 0)
+	// Reset video mode to original.
+	// This will ensure that any new graphic manager will use the initial BPP
+	// when listing available modes. See _originalBitsPerPixel documentation.
 	if (_originalBitsPerPixel != 0)
 		SDL_SetVideoMode(_videoMode.screenWidth, _videoMode.screenHeight, _originalBitsPerPixel, _videoMode.fullscreen ? (SDL_FULLSCREEN | SDL_SWSURFACE) : SDL_SWSURFACE);
 #endif

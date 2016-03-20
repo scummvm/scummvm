@@ -44,7 +44,12 @@ int __stdcall WinMain(HINSTANCE /*hInst*/, HINSTANCE /*hPrevInst*/,  LPSTR /*lpC
 	SDL_SetModuleHandle(GetModuleHandle(NULL));
 #endif
 // HACK: __argc, __argv are broken and return zero when using mingwrt 4.0+ on MinGW
-#if defined(__GNUC__) && defined(__MINGW32__) && !defined(__MINGW64__)
+// HACK: MinGW-w64 based toolchains neither feature _argc nor _argv. The 32 bit
+// incarnation only defines __MINGW32__. This leads to build breakage due to
+// missing declarations. Luckily MinGW-w64 based toolchains define
+// __MINGW64_VERSION_foo macros inside _mingw.h, which is included from all
+// system headers. Thus we abuse that to detect them.
+#if defined(__GNUC__) && defined(__MINGW32__) && !defined(__MINGW64_VERSION_MAJOR)
 	return main(_argc, _argv);
 #else
 	return main(__argc, __argv);

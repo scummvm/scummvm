@@ -399,6 +399,9 @@ void Puzzle::hintTimerCallback(void *refCon) {
 }
 
 void Puzzle::solicitHint() {
+	// CHECKME: This is potentially called from a different thread because it is
+	// called from a timer callback. However, it does not seem to take any
+	// precautions to avoid race conditions.
 	int i;
 
 	_vm->_actor->setSpeechColor(1, kITEColorBlack);

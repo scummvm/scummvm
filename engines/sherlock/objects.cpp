@@ -365,8 +365,8 @@ bool BaseObject::checkEndOfSequence() {
 
 			if (seq == 99) {
 				--_frameNumber;
-				screen._backBuffer1.transBlitFrom(*_imageFrame, _position);
-				screen._backBuffer2.transBlitFrom(*_imageFrame, _position);
+				screen._backBuffer1.SHtransBlitFrom(*_imageFrame, _position);
+				screen._backBuffer2.SHtransBlitFrom(*_imageFrame, _position);
 				_type = INVALID;
 			} else if (IS_ROSE_TATTOO && _talkSeq && seq == 0) {
 				setObjTalkSequence(_talkSeq);
@@ -1061,6 +1061,11 @@ void Object::load(Common::SeekableReadStream &s, bool isRoseTattoo) {
 		for (int idx = 0; idx < 6; ++idx)
 			_use[idx].load(s, true);
 
+		// WORKAROUND: Fix German version using hatpin/pin in pillow in Pratt's loft
+		if (_use[1]._target == "Nadel" && _use[1]._verb == "Untersuche"
+				&& _use[2]._target == "Nadel" && _use[2]._verb == "Untersuche")
+			_use[1]._target = "Alte Nadel";
+
 		_quickDraw = s.readByte();
 		_scaleVal = s.readUint16LE();
 		_requiredFlag[1] = s.readSint16LE();
@@ -1338,7 +1343,7 @@ void Object::adjustObject() {
 			frame = 0;
 
 		int imgNum = _sequences[frame];
-		if (imgNum > _maxFrames)
+		if (imgNum > _maxFrames || imgNum == 0)
 			imgNum = 1;
 
 		_imageFrame = &(*_images)[imgNum - 1];
@@ -1424,8 +1429,19 @@ int Object::pickUpObject(FixedTextActionId fixedTextActionId) {
 			ui.clearInfo();
 
 			Common::String itemName = _description;
-			itemName.setChar(tolower(itemName[0]), 0);
-			screen.print(Common::Point(0, INFO_LINE + 1), COL_INFO_FOREGROUND, "Picked up %s", itemName.c_str());
+
+			// It's an item, make it lowercase
+			switch (_vm->getLanguage()) {
+			case Common::DE_DEU:
+				// don't do this for German version
+				break;
+			default:
+				// do it for English + Spanish version
+				itemName.setChar(tolower(itemName[0]), 0);
+				break;
+			}
+
+			screen.print(Common::Point(0, INFO_LINE + 1), COL_INFO_FOREGROUND, fixedText.getObjectPickedUpText(), itemName.c_str());
 			ui._menuCounter = 25;
 		}
 	}

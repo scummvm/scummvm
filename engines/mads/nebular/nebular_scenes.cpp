@@ -323,8 +323,8 @@ void SceneInfoNebular::loadCodes(MSurface &depthSurface, int variant) {
 }
 
 void SceneInfoNebular::loadCodes(MSurface &depthSurface, Common::SeekableReadStream *stream) {
-	byte *destP = depthSurface.getData();
-	byte *endP = depthSurface.getBasePtr(0, depthSurface.h);
+	byte *destP = (byte *)depthSurface.getPixels();
+	byte *endP = (byte *)depthSurface.getBasePtr(0, depthSurface.h);
 
 	byte runLength = stream->readByte();
 	while (destP < endP && runLength > 0) {

@@ -24,6 +24,7 @@
 #include "mohawk/dialogs.h"
 
 #include "gui/gui-manager.h"
+#include "gui/saveload.h"
 #include "gui/ThemeEngine.h"
 #include "gui/widget.h"
 #include "common/system.h"
@@ -82,35 +83,47 @@ enum {
 	kWaterCmd = 'WATR',
 	kDropCmd = 'DROP',
 	kMapCmd = 'SMAP',
-	kMenuCmd = 'MENU'
+	kMenuCmd = 'MENU',
+	kSaveCmd = 'SAVE',
+	kLoadCmd = 'LOAD',
+	kQuitCmd = 'QUIT'
 };
 
 #ifdef ENABLE_MYST
 
-MystOptionsDialog::MystOptionsDialog(MohawkEngine_Myst* vm) : GUI::OptionsDialog("", 120, 120, 360, 200), _vm(vm) {
+MystOptionsDialog::MystOptionsDialog(MohawkEngine_Myst* vm) : GUI::Dialog(0, 0, 360, 200), _vm(vm) {
 	// I18N: Option for fast scene switching
-	_zipModeCheckbox = new GUI::CheckboxWidget(this, 15, 10, 300, 15, _("~Z~ip Mode Activated"), 0, kZipCmd);
-	_transitionsCheckbox = new GUI::CheckboxWidget(this, 15, 30, 300, 15, _("~T~ransitions Enabled"), 0, kTransCmd);
+	_zipModeCheckbox = new GUI::CheckboxWidget(this, 15, 10, 220, 15, _("~Z~ip Mode Activated"), 0, kZipCmd);
+	_transitionsCheckbox = new GUI::CheckboxWidget(this, 15, 30, 220, 15, _("~T~ransitions Enabled"), 0, kTransCmd);
 	// I18N: Drop book page
 	_dropPageButton = new GUI::ButtonWidget(this, 15, 60, 100, 25, _("~D~rop Page"), 0, kDropCmd);
 
 	// Myst ME only has maps
 	if (_vm->getFeatures() & GF_ME)
-		_showMapButton = new GUI::ButtonWidget(this, 15, 95, 100, 25, _("~S~how Map"), 0, kMapCmd);
+		_showMapButton = new GUI::ButtonWidget(this, 15, 95, 100, 25, _("Show ~M~ap"), 0, kMapCmd);
 	else
 		_showMapButton = 0;
 
 	// Myst demo only has a menu
 	if (_vm->getFeatures() & GF_DEMO)
-		_returnToMenuButton = new GUI::ButtonWidget(this, 15, 95, 100, 25, _("~M~ain Menu"), 0, kMenuCmd);
+		_returnToMenuButton = new GUI::ButtonWidget(this, 15, 95, 100, 25, _("Main Men~u~"), 0, kMenuCmd);
 	else
 		_returnToMenuButton = 0;
 
+	_loadButton = new GUI::ButtonWidget(this, 245, 25, 100, 25, _("~L~oad"), 0, kLoadCmd);
+	_saveButton = new GUI::ButtonWidget(this, 245, 60, 100, 25, _("~S~ave"), 0, kSaveCmd);
+	new GUI::ButtonWidget(this, 245, 95, 100, 25, _("~Q~uit"), 0, kQuitCmd);
+
 	new GUI::ButtonWidget(this, 95, 160, 120, 25, _("~O~K"), 0, GUI::kOKCmd);
 	new GUI::ButtonWidget(this, 225, 160, 120, 25, _("~C~ancel"), 0, GUI::kCloseCmd);
+
+	_loadDialog = new GUI::SaveLoadChooser(_("Load game:"), _("Load"), false);
+	_saveDialog = new GUI::SaveLoadChooser(_("Save game:"), _("Save"), true);
 }
 
 MystOptionsDialog::~MystOptionsDialog() {
+	delete _loadDialog;
+	delete _saveDialog;
 }
 
 void MystOptionsDialog::open() {
@@ -133,6 +146,44 @@ void MystOptionsDialog::open() {
 
 	_zipModeCheckbox->setState(_vm->_gameState->_globals.zipMode);
 	_transitionsCheckbox->setState(_vm->_gameState->_globals.transitions);
+
+	_loadButton->setEnabled(_vm->canLoadGameStateCurrently());
+	_saveButton->setEnabled(_vm->canSaveGameStateCurrently());
+}
+
+void MystOptionsDialog::save() {
+	int slot = _saveDialog->runModalWithCurrentTarget();
+
+	if (slot >= 0) {
+		Common::String result(_saveDialog->getResultString());
+		if (result.empty()) {
+			// If the user was lazy and entered no save name, come up with a default name.
+			result = _saveDialog->createDefaultSaveDescription(slot);
+		}
+
+		_vm->saveGameState(slot, result);
+		close();
+	}
+}
+
+void MystOptionsDialog::load() {
+	int slot = _loadDialog->runModalWithCurrentTarget();
+
+	if (slot >= 0) {
+		_vm->loadGameState(slot);
+		close();
+	}
+}
+
+void MystOptionsDialog::reflowLayout() {
+	const int screenW = g_system->getOverlayWidth();
+	const int screenH = g_system->getOverlayHeight();
+
+	// Center the dialog
+	_x = (screenW - getWidth()) / 2;
+	_y = (screenH - getHeight()) / 2;
+
+	Dialog::reflowLayout();
 }
 
 void MystOptionsDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data) {
@@ -144,18 +195,39 @@ void MystOptionsDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd, ui
 	case kMapCmd:
 		_vm->_needsShowMap = true;
 		close();
-	break;
+		break;
 	case kMenuCmd:
 		_vm->_needsShowDemoMenu = true;
 		close();
-	break;
+		break;
+	case kLoadCmd:
+		load();
+		break;
+	case kSaveCmd:
+		save();
+		break;
+	case kQuitCmd: {
+		if (_vm->getGameType() != GType_MAKINGOF) {
+			_vm->_needsShowCredits = true;
+		} else {
+			Common::Event eventQ;
+			eventQ.type = Common::EVENT_QUIT;
+			g_system->getEventManager()->pushEvent(eventQ);
+		}
+		close();
+	}
+		break;
 	case GUI::kOKCmd:
 		_vm->_gameState->_globals.zipMode = _zipModeCheckbox->getState();
 		_vm->_gameState->_globals.transitions = _transitionsCheckbox->getState();
-		GUI::OptionsDialog::handleCommand(sender, cmd, data);
+		setResult(1);
+		close();
+		break;
+	case GUI::kCloseCmd:
+		close();
 		break;
 	default:
-		GUI::OptionsDialog::handleCommand(sender, cmd, data);
+		GUI::Dialog::handleCommand(sender, cmd, data);
 	}
 }
 

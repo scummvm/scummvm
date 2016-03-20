@@ -66,25 +66,27 @@ static const char *const fixedTextEN[] = {
 	"Search Backwards",
 	"Search Forwards",
 	"Text Not Found !",
-
+	// Darts
 	"Holmes",
 	"Jock",
 	"Bull",
-	"Round",
-	"Turn Total",
-	"Dart",
-	"to start",
+	"Round: %d",
+	"Turn Total: %d",
+	"Dart # %d",
 	"Hit a key",
+	"To start",
 	"Press a key",
-	"bullseye", // ??
-	"GAME OVER",
-	"BUSTED",
-	"Wins",
-	"Scored",
-	"points",
-	"Hit %s %d",
-	"Double",
-	"Triple",
+	"GAME OVER!",
+	"BUSTED!",
+	"%s Wins",
+	"Scored %d point", // original: treated 1 point and multiple points the same ("Scored 1 points")
+	"Scored %d points",
+	"Hit a %d",
+	"Hit double %d",
+	"Hit triple %d",
+	"Hit a bullseye",
+	"Hit double bullseye",
+	"Hit triple bullseye",
 
 	"Apply",
 	"Water",
@@ -106,6 +108,8 @@ static const char *const fixedTextEN[] = {
 	"No",
 	"Enter Password",
 	"Going East", // correct password, was not and should not to be translated
+	"Watson's Journal",
+	"Journal saved as journal.txt",
 	// SH2: People names
 	"Sherlock Holmes",
 	"Dr. Watson",
@@ -235,7 +239,7 @@ static const char *const fixedTextDE[] = {
 	"Tagebuch",
 	"Tasche",
 	"Optionen",
-	"L\224osen",
+	"L\224sen",
 	"mit",
 	"Keine Wirkung...",
 	"Diese Person wei\341 im Augenblick nichts zu berichten.",
@@ -243,31 +247,33 @@ static const char *const fixedTextDE[] = {
 
 	"Seite %d",
 	"Schlie\341en",
-	"Lessen", // <--
-	"In Datei sichern",
+	"Durchsuchen", // original: "Lessen"
+	"In Datei sichern", // original: "Speichern"
 	"Suche abbrechen",
 	"R\201ckw\204rts suchen ",
-	"Vorwarts suchen ",
+	"Vorw\204rts suchen ",
 	"Text nicht gefunden",
-
+	// Darts
 	"Holmes",
 	"Jock",
 	"Bull",
 	"Runde: %d",
 	"Gesamt: %d",
 	"Pfeil # %d",
+	"Taste dr\201cken",
 	"zum Starten",
 	"Taste dr\201cken",
-	"Taste dr\201cken",
-	"Bullseye", // ??
 	"SPIEL BEENDET!",
 	"VERLOREN!",
-	"Gewinnt!", // "Holmes Gewinnt!", "%s Gewinnt!"
+	"%s gewinnt!", // "Holmes Gewinnt!", "%s Gewinnt!", original: "%s Gewinnt!"
+	"Erzielte %d Punkt", // original: treated 1 point and multiple points the same ("Scored 1 points")
 	"Erzielte %d Punkte",
-	"Punkte", // ??
-	"Treffer %s %d",
-	"Doppel",
-	"Dreifach",
+	"%d getroffen", // original: "Treffer %s %d"
+	"Doppel %d getroffen", // original: see above
+	"Dreifach %d getroffen", // original: see above
+	"Bullseye getroffen",
+	"Doppel Bullseye getroffen",
+	"Dreifach Bullseye getroffen",
 
 	"Benutze",
 	"Wasser",
@@ -289,6 +295,8 @@ static const char *const fixedTextDE[] = {
 	"Nein",
 	"Pa\341wort eingeben",
 	"Going East", // correct password, was not and should not to be translated
+	"Watsons Tagebuch",
+	"Journal gespeichert als journal.txt",
 	// SH2: People names
 	"Sherlock Holmes", // note: People names were not translated in the German interpreter
 	"Dr. Watson",
@@ -426,31 +434,33 @@ static const char *const fixedTextFR[] = {
 
 	"Page %d",
 	"Fermer",
-	"Lessen", // <--
+	"Rechercher",
 	"Sauvegarder",
 	"Annuler ",
 	"Chercher avant",
 	"Chercher apr\212s",
 	"Texte introuvable !",
-
+	// Darts
 	"Holmes",
 	"Jock",
 	"Bull",
 	"Tour: %d",
 	"Total: %d",
 	"Fl\202chette # %d",
+	"Appuyez sur C",
 	"pour commencer",
 	"Appuyez sur C",
-	"Appuyez sur C",
-	"Bullseye", // ??
 	"FIN DE LA PARTIE!", // original: "Fin de la partie!"
 	"FIASCO!",
-	"Gagnant!", // "Holmes Gagnant!", "%s Gagnant!"
-	"Total des points: %d",
-	"Punkte", // ??
-	"Treffer %s %d",
-	"double",
-	"triple",
+	"%s a gagn\202!", // "Holmes Gagnant!", "%s Gagnant!"
+	"Rapporte %d point", // original: treated 1 point and multiple points the same ("Scored 1 points")
+	"Rapporte %d points", // original: Total des points: %d",
+	"Touche un %d", // original: ???
+	"Touche double %d",
+	"Touche triple %d",
+	"Touche le Bullseye",
+	"Touche double Bullseye",
+	"Touche triple Bullseye",
 
 	"Mouillez",
 	"Puis",
@@ -472,6 +482,8 @@ static const char *const fixedTextFR[] = {
 	"Non",
 	"Entrez le mot de passe",
 	"Going East", // correct password, was not and should not to be translated
+	"Journal de Watson",
+	"Journal enregistree comme journal.txt",
 	// SH2: People names
 	"Sherlock Holmes",
 	"Dr. Watson",
@@ -610,7 +622,7 @@ static const char *const fixedTextES[] = {
 
 	"P\240gina %d",
 	"Cerrar Diario",
-	"Lessen", // <-- not included?!?!
+	"Buscar en Diario",
 	"Salvar en Archivo",
 	"Detener B\243squeda",
 	"Buscar Hacia Atr\240s",
@@ -623,18 +635,20 @@ static const char *const fixedTextES[] = {
 	"Vuelta: %d",
 	"Total del Turno: %d",
 	"Dardo # %d",
+	"Pulsa una tecla",
 	"para empezar",
 	"Pulsa una tecla",
-	"Pulsa una tecla",
-	"Golpe %s ojo de buey", // ??
 	"FIN DE LA PARTIDA!",
 	"ROTO!",
-	"Gana!", // "Holmes Gana!", "%s Gana!"
+	"%s gana!", // "Holmes Gana!", "%s Gana!", original: "%s Gana!"
+	"Puntuado %d punto", // original: treated 1 point and multiple points the same ("Scored 1 points")
 	"Puntuado %d puntos",
-	"puntos", // ??
-	"Golpe %s %d",
-	"doble",
-	"triple",
+	"Golpe un %d",
+	"Gople doble %d",
+	"Gople triple %d",
+	"Golpe un ojo de buey",
+	"Gople doble ojo de buey",
+	"Gople triple ojo de buey",
 
 	"aplicar",
 	"Agua",
@@ -656,6 +670,8 @@ static const char *const fixedTextES[] = {
 	"Non",
 	"Introducir Palabra Clave",
 	"Vas al Este", // correct password, was translated in Spanish version (???)
+	"Diario de Watson",
+	"Diario guarda como journal.txt",
 	// SH2: People names
 	"Sherlock Holmes",
 	"Dr. Watson",
@@ -755,7 +771,6 @@ static const char *const fixedTextES[] = {
 	"Cochero"
 };
 
-// TODO: There also was a Spanish version of Sherlock Holmes 2
 static const FixedTextLanguageEntry fixedTextLanguages[] = {
 	{ Common::DE_DEU,   fixedTextDE },
 	{ Common::ES_ESP,   fixedTextES },

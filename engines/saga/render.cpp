@@ -276,6 +276,9 @@ void Render::fpsTimerCallback(void *refCon) {
 }
 
 void Render::fpsTimer() {
+	// CHECKME: This is potentially called from a different thread because it is
+	// called from a timer callback. However, it does not seem to take any
+	// precautions to avoid race conditions.
 	_fps = _renderedFrameCount;
 	_renderedFrameCount = 0;
 }

@@ -75,6 +75,10 @@ struct SciWorkaroundEntry;	// from workarounds.h
  * vocab.997. This results in much more readable code. Thus, this vocabulary isn't
  * used at all.
  *
+ * 993.voc (unneeded) - Contains the SCI3 equivalent of vocab.994; like its predecessor,
+ * the raw selector numbers can be deduced and used instead. In fact, one version of this
+ * file has turned out to cover all versiona of SCI3.
+ *
  * SCI0 parser vocabularies:
  * - vocab.901 / 901.voc - suffix vocabulary
  * - vocab.900 / 900.voc - parse tree branches
@@ -408,7 +412,7 @@ reg_t kPlatform(EngineState *s, int argc, reg_t *argv);
 reg_t kTextColors(EngineState *s, int argc, reg_t *argv);
 reg_t kTextFonts(EngineState *s, int argc, reg_t *argv);
 reg_t kShow(EngineState *s, int argc, reg_t *argv);
-reg_t kRemapColors(EngineState *s, int argc, reg_t *argv);
+reg_t kRemapColors16(EngineState *s, int argc, reg_t *argv);
 reg_t kDummy(EngineState *s, int argc, reg_t *argv);
 reg_t kEmpty(EngineState *s, int argc, reg_t *argv);
 reg_t kStub(EngineState *s, int argc, reg_t *argv);
@@ -441,24 +445,54 @@ reg_t kStringLower(EngineState *s, int argc, reg_t *argv);
 reg_t kStringTrn(EngineState *s, int argc, reg_t *argv);
 reg_t kStringTrnExclude(EngineState *s, int argc, reg_t *argv);
 
+reg_t kScrollWindowCreate(EngineState *s, int argc, reg_t *argv);
+reg_t kScrollWindowAdd(EngineState *s, int argc, reg_t *argv);
+reg_t kScrollWindowWhere(EngineState *s, int argc, reg_t *argv);
+reg_t kScrollWindowShow(EngineState *s, int argc, reg_t *argv);
+reg_t kScrollWindowDestroy(EngineState *s, int argc, reg_t *argv);
+
 reg_t kMulDiv(EngineState *s, int argc, reg_t *argv);
-reg_t kCantBeHere32(EngineState *s, int argc, reg_t *argv);
-reg_t kRemapColors32(EngineState *s, int argc, reg_t *argv);
-// "Screen items" in SCI32 are views
+
+reg_t kRemapColors(EngineState *s, int argc, reg_t *argv);
+reg_t kRemapOff(EngineState *s, int argc, reg_t *argv);
+reg_t kRemapByRange(EngineState *s, int argc, reg_t *argv);
+reg_t kRemapByPercent(EngineState *s, int argc, reg_t *argv);
+reg_t kRemapToGray(EngineState *s, int argc, reg_t *argv);
+reg_t kRemapToPercentGray(EngineState *s, int argc, reg_t *argv);
+reg_t kRemapSetNoMatchRange(EngineState *s, int argc, reg_t *argv);
+
 reg_t kAddScreenItem(EngineState *s, int argc, reg_t *argv);
 reg_t kUpdateScreenItem(EngineState *s, int argc, reg_t *argv);
 reg_t kDeleteScreenItem(EngineState *s, int argc, reg_t *argv);
-// Text
+
 reg_t kCreateTextBitmap(EngineState *s, int argc, reg_t *argv);
-reg_t kDisposeTextBitmap(EngineState *s, int argc, reg_t *argv);
-// "Planes" in SCI32 are pictures
+reg_t kBitmap(EngineState *s, int argc, reg_t *argv);
+reg_t kBitmapCreate(EngineState *s, int argc, reg_t *argv);
+reg_t kBitmapDestroy(EngineState *s, int argc, reg_t *argv);
+reg_t kBitmapDrawLine(EngineState *s, int argc, reg_t *argv);
+reg_t kBitmapDrawView(EngineState *s, int argc, reg_t *argv);
+reg_t kBitmapDrawText(EngineState *s, int argc, reg_t *argv);
+reg_t kBitmapDrawColor(EngineState *s, int argc, reg_t *argv);
+reg_t kBitmapDrawBitmap(EngineState *s, int argc, reg_t *argv);
+reg_t kBitmapInvert(EngineState *s, int argc, reg_t *argv);
+reg_t kBitmapSetDisplace(EngineState *s, int argc, reg_t *argv);
+reg_t kBitmapCreateFromView(EngineState *s, int argc, reg_t *argv);
+reg_t kBitmapCopyPixels(EngineState *s, int argc, reg_t *argv);
+reg_t kBitmapClone(EngineState *s, int argc, reg_t *argv);
+reg_t kBitmapGetInfo(EngineState *s, int argc, reg_t *argv);
+reg_t kBitmapScale(EngineState *s, int argc, reg_t *argv);
+reg_t kBitmapCreateFromUnknown(EngineState *s, int argc, reg_t *argv);
+
 reg_t kAddPlane(EngineState *s, int argc, reg_t *argv);
 reg_t kDeletePlane(EngineState *s, int argc, reg_t *argv);
 reg_t kUpdatePlane(EngineState *s, int argc, reg_t *argv);
+reg_t kMovePlaneItems(EngineState *s, int argc, reg_t *argv);
 reg_t kSetShowStyle(EngineState *s, int argc, reg_t *argv);
 reg_t kSetPalStyleRange(EngineState *s, int argc, reg_t *argv);
 reg_t kGetHighPlanePri(EngineState *s, int argc, reg_t *argv);
 reg_t kFrameOut(EngineState *s, int argc, reg_t *argv);
+reg_t kCelHigh32(EngineState *s, int argc, reg_t *argv);
+reg_t kCelWide32(EngineState *s, int argc, reg_t *argv);
 
 reg_t kIsOnMe(EngineState *s, int argc, reg_t *argv); // kOnMe for SCI2, kIsOnMe for SCI2.1
 reg_t kInPolygon(EngineState *s, int argc, reg_t *argv);
@@ -473,6 +507,7 @@ reg_t kEditText(EngineState *s, int argc, reg_t *argv);
 reg_t kMakeSaveCatName(EngineState *s, int argc, reg_t *argv);
 reg_t kMakeSaveFileName(EngineState *s, int argc, reg_t *argv);
 reg_t kSetScroll(EngineState *s, int argc, reg_t *argv);
+
 reg_t kPalCycle(EngineState *s, int argc, reg_t *argv);
 reg_t kPaletteSetFade(EngineState *s, int argc, reg_t *argv);
 reg_t kPalVarySetVary(EngineState *s, int argc, reg_t *argv);
@@ -488,6 +523,8 @@ reg_t kPalVaryMergeStart(EngineState *s, int argc, reg_t *argv);
 // SCI2.1 Kernel Functions
 reg_t kMorphOn(EngineState *s, int argc, reg_t *argv);
 reg_t kText(EngineState *s, int argc, reg_t *argv);
+reg_t kTextSize32(EngineState *s, int argc, reg_t *argv);
+reg_t kTextWidth(EngineState *s, int argc, reg_t *argv);
 reg_t kSave(EngineState *s, int argc, reg_t *argv);
 reg_t kAutoSave(EngineState *s, int argc, reg_t *argv);
 reg_t kList(EngineState *s, int argc, reg_t *argv);
@@ -505,9 +542,9 @@ reg_t kGetSierraProfileInt(EngineState *s, int argc, reg_t *argv);
 reg_t kCelInfo(EngineState *s, int argc, reg_t *argv);
 reg_t kSetLanguage(EngineState *s, int argc, reg_t *argv);
 reg_t kScrollWindow(EngineState *s, int argc, reg_t *argv);
+reg_t kSetFontHeight(EngineState *s, int argc, reg_t *argv);
 reg_t kSetFontRes(EngineState *s, int argc, reg_t *argv);
 reg_t kFont(EngineState *s, int argc, reg_t *argv);
-reg_t kBitmap(EngineState *s, int argc, reg_t *argv);
 reg_t kAddLine(EngineState *s, int argc, reg_t *argv);
 reg_t kUpdateLine(EngineState *s, int argc, reg_t *argv);
 reg_t kDeleteLine(EngineState *s, int argc, reg_t *argv);

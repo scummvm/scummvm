@@ -1,14 +1,63 @@
 For a more comprehensive changelog of the latest experimental code, see:
         https://github.com/scummvm/scummvm/commits/
 
-1.8.0 (????-??-??)
+1.9.0 (XXXX-XX-XX)
+ AGI:
+   - Added support for Hercules rendering. Both green and amber modes are
+     supported.
+   - Added support for the Hercules high resolution font. The font is also
+     usable outside of Hercules rendering.
+   - Added optional "pause, when entering commands" feature, that was only
+     available in the original interpreter for Hercules rendering.
+
+1.8.1 (XXXX-XX-XX)
+ General:
+   - Removed TESTING flag from several supported games.
+   - Added Chinese Pinyin translation.
+
+ BBVS:
+   - Fixed game restart.
+
+ CinE:
+   - Fixed sound effect loading.
+
+ Gob:
+   - Fixed lock up for some games during sound initialization.
+
+ Lab:
+   - Fixed lock-up during ending sequence.
+   - Improved internal game controls.
+
+ SAGA:
+   - Fixed user interface colors in the French and German versions of I Have No
+     Mouth and I Must Scream.
+
+ SCUMM:
+   - Fixed detection of Maniac Mansion from Day of the Tentacle in the Windows
+     version of ScummVM.
+   - Fixed a sound effect not stopping in Loom EGA with AdLib.
+
+ Broken Sword 2.5:
+   - Added option to use English speech instead of German one when no speech is
+     available for the selected language.
+   - Fixed resource releasing on game exit.
+   - Fixed game restart after language change in-game.
+   - Fixed flickering in main Menu.
+
+ Windows port:
+   - Fixed bug in MIDI device listing affecting cases where MIDI devices were
+     not usable.
+
+1.8.0 (2016-03-04)
  New Games:
    - Added support for Rex Nebular and the Cosmic Gender Bender.
    - Added support for Sfinx.
    - Added support for Zork Nemesis: The Forbidden Lands.
    - Added support for Zork: Grand Inquisitor.
-   - Added support for The Lost Files of Sherlock Holmes: The Case of the Serrated Scalpel.
-   - Added support for The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo.
+   - Added support for The Lost Files of Sherlock Holmes: The Case of the
+     Serrated Scalpel.
+   - Added support for The Lost Files of Sherlock Holmes: The Case of the Rose
+     Tattoo.
    - Added support for Beavis and Butthead in Virtual Stupidity.
    - Added support for Amazon: Guardians of Eden.
    - Added support for Broken Sword 2.5: The Return of the Templars.
@@ -16,13 +65,13 @@ For a more comprehensive changelog of the latest experimental code, see:
 
  New Ports:
    - Added Raspberry Pi port.
+   - Added GCW0 port.
 
  General:
    - Updated Munt MT-32 emulation code to version 1.5.0.
 
  SDL:
-   - Alt-x no longer quits ScummVM on platforms exhibiting this behavior
-     before. A notable example is our Windows port.
+   - Alt-x no longer quits ScummVM. Use Cmd-q/Ctrl-q/Ctrl-z instead; see README.
    - On POSIX systems we now follow the XDG Base Directory Specification for
      placement of files for users. This effectively results in new locations
      for our configuration file, our log file, and our default savegame path.
@@ -36,15 +85,17 @@ For a more comprehensive changelog of the latest experimental code, see:
  AGI:
    - It is now possible to disable mouse support (except for Amiga versions
      and fanmade games, that require a mouse).
-   - Fix incorrect volume attenuation in PCjr sound code (bug #6858).
+   - Fixed PCjr sound volumes.
    - Major rewrite of graphics subsystem.
-   - Support for Apple IIgs, Amiga + Atari ST transitions, fonts and mouse cursors.
-     (Atari ST 8x8 system font is not included with ScummVM)
-   - Added ability to make for example a PC version look like an Apple IIgs version.
-     (includes palette, cursor, transition and even font). Just set corresponding render mode.
-   - Support for simplified automatic saving/restoring (used by Mixed Up Mother Goose).
-   - Removed forced 2 second delay on every room change, replaced with heuristic.
-   - Now saving controllers (key bindings by scripts) when saving games (bug #5858).
+   - Support for Apple IIgs, Amiga + Atari ST transitions, fonts and mouse
+     cursors. The Atari ST 8x8 system font is not included with ScummVM.
+   - Added ability to make for example a PC version look like an Apple IIgs
+     version. This includes palette, cursor, transition and even font. Just
+     set corresponding render mode.
+   - Fixed Apple IIgs game versions running too fast.
+   - Added support for automatic saving/restoring used by Mixed Up Mother Goose.
+   - Removed forced two second delay on room changes; replaced with heuristic.
+   - Fixed certain key bindings breaking after saving/reloading.
 
  AGOS:
    - Fixed arpeggio effect used in music of Amiga version of Elvira 1.
@@ -56,11 +107,8 @@ For a more comprehensive changelog of the latest experimental code, see:
      output and makes it closer to the original.
 
  Broken Sword 1:
-   - Fix speech endianness detection on big endian systems for the Macintosh
-     version (bug #6720).
-   - Fix crash when reloading a game from the Main Menu while in the bull's
-     head scene (bug #6728). It may have been happening in other scenes as
-     well.
+   - Fixed Macintosh version speech when running on big endian systems.
+   - Fixed loading from Main Menu in bull's head scene, and maybe other scenes.
 
  CinE:
    - Added support for music in CD version of Future Wars.
@@ -74,10 +122,12 @@ For a more comprehensive changelog of the latest experimental code, see:
  SCI:
    - Handling of music priority has been greatly improved.
    - A lot of fixes for original game script bugs that also occurred when
-     using the original interpreter.
-     KQ6 (Dual Mode), LSL5, QfG1 (EGA), QfG1 (VGA), QfG2, QfG3, SQ1, SQ4 (CD)
+     using the original interpreter. This affects the following games:
+     KQ6 (Dual Mode), LSL5, PQ1, QfG1 (EGA), QfG1 (VGA), QfG2, QfG3, SQ1,
+     SQ4 (CD).
    - Restoring from the ScummVM in-game menu should now work all the time.
-   - Improve support for Japanese PC-9801 games.
+   - Improved support for Japanese PC-9801 games.
+   - Default to hi res version of KQ6, changeable using engine option.
 
  SCUMM:
    - Major improvements to Korean versions text rendering.
@@ -85,6 +135,7 @@ For a more comprehensive changelog of the latest experimental code, see:
    - It is now possible to play Maniac Mansion from within Day of the
      Tentacle, with a few caveats. See README for details.
    - Alt-x can now be used to quit SCUMM games on all platforms.
+   - Improved lip sync animation in later HE games.
 
  Tinsel:
    - Improved AdLib music support in Discworld 1.

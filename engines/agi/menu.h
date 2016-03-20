@@ -111,8 +111,8 @@ private:
 
 	uint16 _drawnMenuHeight;
 	uint16 _drawnMenuWidth;
-	int16  _drawnMenuRow;
-	int16  _drawnMenuColumn;
+	int16  _drawnMenuY;
+	int16  _drawnMenuX;
 
 	// Following variables are used in "via mouse" mode
 	int16 _mouseModeItemNr;

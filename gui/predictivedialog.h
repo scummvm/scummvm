@@ -85,6 +85,7 @@ private:
 	struct Dict {
 		Dict() : dictLine(nullptr), dictText(nullptr), dictActLine(nullptr),
 		         dictLineCount(0), dictTextSize(0) {}
+		~Dict() { free(dictText); }
 		char **dictLine;
 		char *dictText;
 		char *dictActLine; // using only for united dict...

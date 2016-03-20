@@ -191,7 +191,7 @@ void SceneInfoPhantom::loadCodes(MSurface &depthSurface, int variant) {
 }
 
 void SceneInfoPhantom::loadCodes(MSurface &depthSurface, Common::SeekableReadStream *stream) {
-	byte *destP = depthSurface.getData();
+	byte *destP = (byte *)depthSurface.getPixels();
 	byte *walkMap = new byte[stream->size()];
 	stream->read(walkMap, stream->size());
 
