@@ -74,19 +74,19 @@ reg_t kIsHiRes(EngineState *s, int argc, reg_t *argv) {
 reg_t kAddScreenItem(EngineState *s, int argc, reg_t *argv) {
 	debugC(6, kDebugLevelGraphics, "kAddScreenItem %x:%x (%s)", PRINT_REG(argv[0]), s->_segMan->getObjectName(argv[0]));
 	g_sci->_gfxFrameout->kernelAddScreenItem(argv[0]);
-	return NULL_REG;
+	return s->r_acc;
 }
 
 reg_t kUpdateScreenItem(EngineState *s, int argc, reg_t *argv) {
 	debugC(7, kDebugLevelGraphics, "kUpdateScreenItem %x:%x (%s)", PRINT_REG(argv[0]), s->_segMan->getObjectName(argv[0]));
 	g_sci->_gfxFrameout->kernelUpdateScreenItem(argv[0]);
-	return NULL_REG;
+	return s->r_acc;
 }
 
 reg_t kDeleteScreenItem(EngineState *s, int argc, reg_t *argv) {
 	debugC(6, kDebugLevelGraphics, "kDeleteScreenItem %x:%x (%s)", PRINT_REG(argv[0]), s->_segMan->getObjectName(argv[0]));
 	g_sci->_gfxFrameout->kernelDeleteScreenItem(argv[0]);
-	return NULL_REG;
+	return s->r_acc;
 }
 
 reg_t kAddPlane(EngineState *s, int argc, reg_t *argv) {
@@ -114,7 +114,7 @@ reg_t kMovePlaneItems(EngineState *s, int argc, reg_t *argv) {
 	const bool scrollPics = argc > 3 ? argv[3].toUint16() : false;
 
 	g_sci->_gfxFrameout->kernelMovePlaneItems(plane, deltaX, deltaY, scrollPics);
-	return NULL_REG;
+	return s->r_acc;
 }
 
 reg_t kAddPicAt(EngineState *s, int argc, reg_t *argv) {
@@ -125,7 +125,7 @@ reg_t kAddPicAt(EngineState *s, int argc, reg_t *argv) {
 	bool mirrorX = argc > 4 ? argv[4].toSint16() : false;
 
 	g_sci->_gfxFrameout->kernelAddPicAt(planeObj, pictureId, x, y, mirrorX);
-	return NULL_REG;
+	return s->r_acc;
 }
 
 reg_t kGetHighPlanePri(EngineState *s, int argc, reg_t *argv) {
@@ -137,12 +137,12 @@ reg_t kFrameOut(EngineState *s, int argc, reg_t *argv) {
 	g_sci->_gfxFrameout->kernelFrameOut(showBits);
 	s->speedThrottler(16);
 	s->_throttleTrigger = true;
-	return NULL_REG;
+	return s->r_acc;
 }
 
 reg_t kSetPalStyleRange(EngineState *s, int argc, reg_t *argv) {
 	g_sci->_gfxFrameout->kernelSetPalStyleRange(argv[0].toUint16(), argv[1].toUint16());
-	return NULL_REG;
+	return s->r_acc;
 }
 
 reg_t kObjectIntersect(EngineState *s, int argc, reg_t *argv) {
@@ -228,7 +228,7 @@ reg_t kTextSize32(EngineState *s, int argc, reg_t *argv) {
 	rect[1] = make_reg(0, textRect.top);
 	rect[2] = make_reg(0, textRect.right - 1);
 	rect[3] = make_reg(0, textRect.bottom - 1);
-	return NULL_REG;
+	return s->r_acc;
 }
 
 reg_t kTextWidth(EngineState *s, int argc, reg_t *argv) {
@@ -307,7 +307,7 @@ reg_t kSetShowStyle(EngineState *s, int argc, reg_t *argv) {
 	// on the KernelMgr
 	g_sci->_gfxFrameout->kernelSetShowStyle(argc, planeObj, type, seconds, back, priority, animate, refFrame, pFadeArray, divisions, blackScreen);
 
-	return NULL_REG;
+	return s->r_acc;
 }
 
 reg_t kCelHigh32(EngineState *s, int argc, reg_t *argv) {
@@ -513,7 +513,7 @@ reg_t kSetFontHeight(EngineState *s, int argc, reg_t *argv) {
 reg_t kSetFontRes(EngineState *s, int argc, reg_t *argv) {
 	g_sci->_gfxText32->_scaledWidth = argv[0].toUint16();
 	g_sci->_gfxText32->_scaledHeight = argv[1].toUint16();
-	return NULL_REG;
+	return s->r_acc;
 }
 
 reg_t kBitmap(EngineState *s, int argc, reg_t *argv) {
@@ -538,7 +538,7 @@ reg_t kBitmapCreate(EngineState *s, int argc, reg_t *argv) {
 
 reg_t kBitmapDestroy(EngineState *s, int argc, reg_t *argv) {
 	s->_segMan->freeHunkEntry(argv[0]);
-	return NULL_REG;
+	return s->r_acc;
 }
 
 reg_t kBitmapDrawLine(EngineState *s, int argc, reg_t *argv) {
@@ -623,7 +623,7 @@ reg_t kBitmapDrawText(EngineState *s, int argc, reg_t *argv) {
 	textCel.draw(bitmapBuffer, textRect, Common::Point(textRect.left, textRect.top), false);
 	s->_segMan->freeHunkEntry(textBitmapObject);
 
-	return NULL_REG;
+	return s->r_acc;
 }
 
 reg_t kBitmapDrawColor(EngineState *s, int argc, reg_t *argv) {
@@ -641,7 +641,7 @@ reg_t kBitmapDrawColor(EngineState *s, int argc, reg_t *argv) {
 
 	Buffer buffer(bitmap.getWidth(), bitmap.getHeight(), bitmap.getPixels());
 	buffer.fillRect(fillRect, argv[5].toSint16());
-	return NULL_REG;
+	return s->r_acc;
 }
 
 reg_t kBitmapDrawBitmap(EngineState *s, int argc, reg_t *argv) {
@@ -773,7 +773,7 @@ reg_t kSetScroll(EngineState *s, int argc, reg_t *argv) {
 // Used by SQ6, script 900, the datacorder reprogramming puzzle (from room 270)
 reg_t kMorphOn(EngineState *s, int argc, reg_t *argv) {
 	g_sci->_gfxFrameout->_palMorphIsOn = true;
-	return NULL_REG;
+	return s->r_acc;
 }
 
 reg_t kPaletteSetFade(EngineState *s, int argc, reg_t *argv) {
@@ -781,7 +781,7 @@ reg_t kPaletteSetFade(EngineState *s, int argc, reg_t *argv) {
 	uint16 toColor = argv[1].toUint16();
 	uint16 percent = argv[2].toUint16();
 	g_sci->_gfxPalette32->setFade(percent, fromColor, toColor);
-	return NULL_REG;
+	return s->r_acc;
 }
 
 reg_t kPalVarySetVary(EngineState *s, int argc, reg_t *argv) {
@@ -799,7 +799,7 @@ reg_t kPalVarySetVary(EngineState *s, int argc, reg_t *argv) {
 	}
 
 	g_sci->_gfxPalette32->kernelPalVarySet(paletteId, percent, time, fromColor, toColor);
-	return NULL_REG;
+	return s->r_acc;
 }
 
 reg_t kPalVarySetPercent(EngineState *s, int argc, reg_t *argv) {
@@ -810,7 +810,7 @@ reg_t kPalVarySetPercent(EngineState *s, int argc, reg_t *argv) {
 	// (during the sunset/sunrise sequence, the parameter is 1)
 
 	g_sci->_gfxPalette32->setVaryPercent(percent, time, -1, -1);
-	return NULL_REG;
+	return s->r_acc;
 }
 
 reg_t kPalVaryGetPercent(EngineState *s, int argc, reg_t *argv) {
@@ -819,7 +819,7 @@ reg_t kPalVaryGetPercent(EngineState *s, int argc, reg_t *argv) {
 
 reg_t kPalVaryOff(EngineState *s, int argc, reg_t *argv) {
 	g_sci->_gfxPalette32->varyOff();
-	return NULL_REG;
+	return s->r_acc;
 }
 
 reg_t kPalVaryMergeTarget(EngineState *s, int argc, reg_t *argv) {
@@ -831,7 +831,7 @@ reg_t kPalVaryMergeTarget(EngineState *s, int argc, reg_t *argv) {
 reg_t kPalVarySetTime(EngineState *s, int argc, reg_t *argv) {
 	int time = argv[0].toSint16() * 60;
 	g_sci->_gfxPalette32->setVaryTime(time);
-	return NULL_REG;
+	return s->r_acc;
 }
 
 reg_t kPalVarySetTarget(EngineState *s, int argc, reg_t *argv) {
