@@ -9,6 +9,7 @@ lib*.a
 /config.log
 /scummvm
 /scummvm-static
+/ScummVMDockTilePlugin*
 /config.h
 /config.mk
 /.gdb_history
@@ -19,6 +20,7 @@ lib*.a
 /MT32_CONTROL.ROM
 /MT32_PCM.ROM
 /ScummVM.app
+/scummvm.docktileplugin
 /scummvm-ps3.pkg
 /*.ipk
 /.project

@@ -53,8 +53,43 @@ ifdef DYNAMIC_MODULES
 endif
 
 # Special target to create a application wrapper for Mac OS X
+
+ifdef USE_DOCKTILEPLUGIN
+
+# The NsDockTilePlugIn needs to be compiled in both 32 and 64 bits irrespective of how ScummVM itself is compiled.
+# Therefore do not use $(CXXFLAGS) and $(LDFLAGS).
+
+ScummVMDockTilePlugin32.o:
+	$(CXX) -mmacosx-version-min=10.6 -arch i386 -O2 -c $(srcdir)/dists/macosx/dockplugin/dockplugin.m -o ScummVMDockTilePlugin32.o
+
+ScummVMDockTilePlugin32: ScummVMDockTilePlugin32.o
+	$(CXX) -mmacosx-version-min=10.6 -arch i386 -bundle -framework Foundation -framework AppKit -fobjc-link-runtime ScummVMDockTilePlugin32.o -o ScummVMDockTilePlugin32
+
+ScummVMDockTilePlugin64.o:
+	$(CXX) -mmacosx-version-min=10.6 -arch x86_64 -O2 -c $(srcdir)/dists/macosx/dockplugin/dockplugin.m -o ScummVMDockTilePlugin64.o
+	
+ScummVMDockTilePlugin64: ScummVMDockTilePlugin64.o
+	$(CXX) -mmacosx-version-min=10.6 -arch x86_64 -bundle -framework Foundation -framework AppKit -fobjc-link-runtime ScummVMDockTilePlugin64.o -o ScummVMDockTilePlugin64
+	
+ScummVMDockTilePlugin: ScummVMDockTilePlugin32 ScummVMDockTilePlugin64
+	lipo -create ScummVMDockTilePlugin32 ScummVMDockTilePlugin64 -output ScummVMDockTilePlugin
+
+dockplugin: ScummVMDockTilePlugin
+	mkdir -p scummvm.docktileplugin/Contents
+	cp $(srcdir)/dists/macosx/dockplugin/Info.plist scummvm.docktileplugin/Contents
+	mkdir -p scummvm.docktileplugin/Contents/MacOS
+	cp ScummVMDockTilePlugIn scummvm.docktileplugin/Contents/MacOS/
+	chmod 644 scummvm.docktileplugin/Contents/MacOS/ScummVMDockTilePlugIn
+	
+endif
+
 bundle_name = ScummVM.app
+
+ifdef USE_DOCKTILEPLUGIN
+bundle: scummvm-static dockplugin
+else
 bundle: scummvm-static
+endif
 	mkdir -p $(bundle_name)/Contents/MacOS
 	mkdir -p $(bundle_name)/Contents/Resources
 	echo "APPL????" > $(bundle_name)/Contents/PkgInfo
@@ -75,6 +110,10 @@ endif
 	cp scummvm-static $(bundle_name)/Contents/MacOS/scummvm
 	chmod 755 $(bundle_name)/Contents/MacOS/scummvm
 	$(STRIP) $(bundle_name)/Contents/MacOS/scummvm
+ifdef USE_DOCKTILEPLUGIN
+	mkdir -p $(bundle_name)/Contents/PlugIns
+	cp -r scummvm.docktileplugin $(bundle_name)/Contents/PlugIns/
+endif
 
 iphonebundle: iphone
 	mkdir -p $(bundle_name)
