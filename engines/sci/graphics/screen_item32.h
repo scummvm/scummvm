@@ -261,6 +261,13 @@ public:
 	void update(const reg_t object);
 
 	/**
+	 * Updates the properties of the screen item for one not belonging
+	 * to a VM object.
+	 */
+	void update();
+
+
+	/**
 	 * Gets the "now seen" rect for the screen item, which
 	 * represents the current size and position of the
 	 * screen item on the screen in script coordinates.

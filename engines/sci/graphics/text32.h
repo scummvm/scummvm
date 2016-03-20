@@ -34,6 +34,11 @@ enum TextAlign {
 	kTextAlignRight  = 2
 };
 
+enum ScrollDirection {
+	kScrollUp,
+	kScrollDown
+};
+
 enum BitmapFlags {
 	kBitmapRemap = 2
 };
@@ -472,6 +477,20 @@ public:
 	 * `textRect` using the given font.
 	 */
 	int16 getTextCount(const Common::String &text, const uint index, const GuiResourceId fontId, const Common::Rect &textRect, const bool doScaling);
+
+	/**
+	 * Scroll up one line. `numLines` is the number of the lines in the
+	 * textarea, and `textLine` contains the text to draw as the newly
+	 * visible line.
+	 */
+	void scrollLineUp(const Common::String &textLine, int numLines, uint8 color, GuiResourceId fontId);
+
+	/**
+	 * Scroll up/down one line. `numLines` is the number of the lines in the
+	 * textarea, and `textLine` contains the text to draw as the newly
+	 * visible line.
+	 */
+	void scrollLine(const Common::String &textLine, int numLines, uint8 color, TextAlign align, GuiResourceId fontId, ScrollDirection dir);
 };
 
 } // End of namespace Sci

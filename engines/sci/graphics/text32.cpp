@@ -669,5 +669,67 @@ int16 GfxText32::getTextCount(const Common::String &text, const uint index, cons
 	return getTextCount(text, index, textRect, doScaling);
 }
 
+void GfxText32::scrollLine(const Common::String &lineText, int numLines, uint8 color, TextAlign align, GuiResourceId fontId, ScrollDirection dir) {
+	byte *bitmap = _segMan->getHunkPointer(_bitmap);
+	byte *pixels = bitmap + READ_SCI11ENDIAN_UINT32(bitmap + 28);
+
+	int h = _font->getHeight();
+
+	if (dir == kScrollUp) {
+		// Scroll existing text down
+		for (int i = 0; i < (numLines - 1) * h; ++i) {
+			int y = _textRect.top + numLines*h - i - 1;
+			memcpy(pixels + y * _width + _textRect.left,
+			       pixels + (y - h) * _width + _textRect.left,
+			       _textRect.width());
+		}
+	} else {
+		// Scroll existing text up
+		for (int i = 0; i < (numLines - 1) * h; ++i) {
+			int y = _textRect.top + i;
+			memcpy(pixels + y * _width + _textRect.left,
+			       pixels + (y + h) * _width + _textRect.left,
+			       _textRect.width());
+		}
+	}
+
+	Common::Rect lineRect = _textRect;
+
+	if (dir == kScrollUp) {
+		lineRect.bottom = lineRect.top + h;
+	} else {
+		lineRect.top += (numLines - 1) * h;
+		// lineRect.bottom++; // ?? (This is not the usual inc/exc, I think.)
+	}
+
+	erase(lineRect, false);
+
+	_drawPosition.x = _textRect.left;
+	_drawPosition.y = _textRect.top;
+	if (dir == kScrollDown) {
+		_drawPosition.y += (numLines - 1) * h;
+	}
+
+	_foreColor = color;
+	_alignment = align;
+	//int fc = _foreColor;
+
+	setFont(fontId);
+
+	_text = lineText;
+	int16 textWidth = getTextWidth(0, lineText.size());
+
+	if (_alignment == kTextAlignCenter) {
+		_drawPosition.x += (_textRect.width() - textWidth) / 2;
+	} else if (_alignment == kTextAlignRight) {
+		_drawPosition.x += _textRect.width() - textWidth;
+	}
+
+	//_foreColor = fc;
+	//setFont(fontId);
+
+	drawText(0, lineText.size());
+}
+
 
 } // End of namespace Sci

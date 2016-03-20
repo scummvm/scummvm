@@ -24,6 +24,10 @@
 #include "common/array.h"
 #include "sci/graphics/ports.h"
 
+#ifdef ENABLE_SCI32
+#include "sci/graphics/controls32.h"
+#endif
+
 namespace Sci {
 
 //#define GC_DEBUG_CODE
@@ -149,6 +153,12 @@ AddrSet *findAllActiveReferences(EngineState *s) {
 			}
 		}
 	}
+
+#ifdef ENABLE_SCI32
+	// Init: ScrollWindows
+	if (g_sci->_gfxControls32)
+		wm.pushArray(g_sci->_gfxControls32->listObjectReferences());
+#endif
 
 	debugC(kDebugLevelGC, "[GC] -- Finished explicitly loaded scripts, done with root set");
 

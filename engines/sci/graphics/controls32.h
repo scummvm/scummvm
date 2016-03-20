@@ -23,11 +23,14 @@
 #ifndef SCI_GRAPHICS_CONTROLS32_H
 #define SCI_GRAPHICS_CONTROLS32_H
 
+#include "sci/graphics/text32.h"
+
 namespace Sci {
 
 class GfxCache;
 class GfxScreen;
 class GfxText32;
+
 
 struct TextEditor {
 	/**
@@ -99,6 +102,95 @@ struct TextEditor {
 	uint16 maxLength;
 };
 
+
+struct ScrollWindowLine {
+	/**
+	 * ID of the line. In SSCI this was actually a memory handle for the
+	 * string of this line. We use a numeric ID instead.
+	 */
+	reg_t _id;
+
+	// Text properties
+	int _alignment;
+	int _foreColor;
+	GuiResourceId _fontId;
+
+	// Actual text
+	Common::String _str;
+};
+
+class ScreenItem;
+
+class ScrollWindow {
+public:
+	ScrollWindow(SegManager *segMan, const Common::Rect &rect,
+	             const Common::Point &point, reg_t plane, uint8 fore,
+	             uint8 back, GuiResourceId font, TextAlign align, uint8 border);
+	~ScrollWindow();
+
+	reg_t add(const Common::String &str, GuiResourceId font, int fore,
+	          int align, bool scrollTo);
+	void show();
+	void hide();
+	Common::Rational where() const;
+
+	void upArrow();
+	void downArrow();
+
+	reg_t getBitmap() { return _bitmap; }
+
+protected:
+
+	void update(bool doFrameOut);
+	void getLineIndices();
+
+
+	GfxText32 *_gfxText32;
+
+	Common::Array<ScrollWindowLine> _lines;
+	Common::Array<int> _startsOfLines;
+
+	Common::String _text;
+	Common::String _visibleText;
+
+	int _firstVisibleChar;
+	int _topVisibleLine;
+
+	int _lastVisibleChar;
+	int _bottomVisibleLine;
+
+	int _numLines;
+	int _numVisibleLines;
+
+	reg_t _plane;
+
+	uint8 _foreColor;
+	uint8 _backColor;
+	uint8 _borderColor;
+
+	GuiResourceId _fontId;
+	TextAlign _alignment;
+
+	int16 _fontScaledWidth;
+	int16 _fontScaledHeight;
+
+	bool _visible;
+
+	Common::Rect _rect10; // ??
+	Common::Rect _rect50; // ??
+	Common::Rect _rect60; // ??
+
+	Common::Point _point74; // ??
+
+	int _pointSize;
+
+	reg_t _bitmap;
+
+	reg_t _lastLineId;
+
+	ScreenItem *_screenItem;
+};
+
 /**
  * Controls class, handles drawing of controls in SCI32 (SCI2, SCI2.1, SCI3) games
  */
@@ -107,6 +199,12 @@ public:
 	GfxControls32(SegManager *segMan, GfxCache *cache, GfxText32 *text);
 
 	reg_t kernelEditText(const reg_t controlObject);
+
+	reg_t registerScrollWindow(ScrollWindow *scrollWindow);
+	ScrollWindow *getScrollWindow(reg_t id);
+	void deregisterScrollWindow(reg_t id);
+
+	Common::Array<reg_t> listObjectReferences();
 
 private:
 	SegManager *_segMan;
@@ -118,6 +216,10 @@ private:
 	void drawCursor(TextEditor &editor);
 	void eraseCursor(TextEditor &editor);
 	void flashCursor(TextEditor &editor);
+
+	reg_t _lastScrollWindowId;
+
+	Common::HashMap<int, ScrollWindow *> _scrollWindows;
 };
 
 } // End of namespace Sci

@@ -360,29 +360,112 @@ reg_t kScrollWindow(EngineState *s, int argc, reg_t *argv) {
 }
 
 reg_t kScrollWindowCreate(EngineState *s, int argc, reg_t *argv) {
-	debug("kScrollWindowCreate");
-	kStub(s, argc, argv);
-	return argv[0];
+	reg_t object = argv[0];
+
+	// Ignoring argv[1], which is the number of lines to allocate.
+
+	SegManager *segMan = s->_segMan;
+	int16 borderColor = readSelectorValue(segMan, object, SELECTOR(borderColor));
+	int16 mode = readSelectorValue(segMan, object, SELECTOR(mode));
+	GuiResourceId fontId = (GuiResourceId)readSelectorValue(segMan, object, SELECTOR(font));
+	int16 backColor = readSelectorValue(segMan, object, SELECTOR(back));
+	int16 foreColor = readSelectorValue(segMan, object, SELECTOR(fore));
+	reg_t plane = readSelector(segMan, object, SELECTOR(plane));
+
+	Common::Rect r;
+	r.left = readSelectorValue(segMan, object, SELECTOR(nsLeft));
+	r.top = readSelectorValue(segMan, object, SELECTOR(nsTop));
+	r.right = readSelectorValue(segMan, object, SELECTOR(nsRight)) + 1;
+	r.bottom = readSelectorValue(segMan, object, SELECTOR(nsBottom)) + 1;
+	Common::Point p(r.left, r.top);
+
+	ScrollWindow *scrollWindow = new ScrollWindow(segMan, r, p, plane,
+	                                              foreColor, backColor, fontId,
+	                                              (TextAlign)mode, borderColor);
+
+	return g_sci->_gfxControls32->registerScrollWindow(scrollWindow);
 }
 
 reg_t kScrollWindowAdd(EngineState *s, int argc, reg_t *argv) {
-	debug("kScrollWindowAdd");
-	return kStubNull(s, argc, argv);
+	ScrollWindow *scrollWindow = g_sci->_gfxControls32->getScrollWindow(argv[0]);
+	if (!scrollWindow)
+		error("Invalid ScrollWindow ID");
+
+	Common::String text = s->_segMan->getString(argv[1]);
+
+	bool scrollTo = true;
+	if (argc >= 6)
+		scrollTo = !argv[5].isNull();
+
+	return scrollWindow->add(text, argv[2].toSint16(), argv[3].toSint16(),
+	                  argv[4].toSint16(), scrollTo);
 }
 
 reg_t kScrollWindowWhere(EngineState *s, int argc, reg_t *argv) {
-	debug("kScrollWindowWhere");
-	return kStubNull(s, argc, argv);
+	ScrollWindow *scrollWindow = g_sci->_gfxControls32->getScrollWindow(argv[0]);
+	if (!scrollWindow)
+		error("Invalid ScrollWindow ID");
+
+	Common::Rational w = scrollWindow->where();
+
+	int ret = (argv[1].toUint16() * w).toInt();
+
+	return make_reg(0, ret);
 }
+
+reg_t kScrollWindowHide(EngineState *s, int argc, reg_t *argv) {
+	ScrollWindow *scrollWindow = g_sci->_gfxControls32->getScrollWindow(argv[0]);
+	if (!scrollWindow)
+		error("Invalid ScrollWindow ID");
+
+	scrollWindow->hide();
+
+	return s->r_acc;
+}
+
 
 reg_t kScrollWindowShow(EngineState *s, int argc, reg_t *argv) {
-	debug("kScrollWindowShow");
-	return kStubNull(s, argc, argv);
+	ScrollWindow *scrollWindow = g_sci->_gfxControls32->getScrollWindow(argv[0]);
+	if (!scrollWindow)
+		error("Invalid ScrollWindow ID");
+
+	scrollWindow->show();
+
+	return s->r_acc;
 }
 
+reg_t kScrollWindowUpArrow(EngineState *s, int argc, reg_t *argv) {
+	ScrollWindow *scrollWindow = g_sci->_gfxControls32->getScrollWindow(argv[0]);
+	if (!scrollWindow)
+		error("Invalid ScrollWindow ID");
+
+	scrollWindow->upArrow();
+
+	return s->r_acc;
+}
+
+reg_t kScrollWindowDownArrow(EngineState *s, int argc, reg_t *argv) {
+	ScrollWindow *scrollWindow = g_sci->_gfxControls32->getScrollWindow(argv[0]);
+	if (!scrollWindow)
+		error("Invalid ScrollWindow ID");
+
+	scrollWindow->downArrow();
+
+	return s->r_acc;
+}
+
+
 reg_t kScrollWindowDestroy(EngineState *s, int argc, reg_t *argv) {
-	debug("kScrollWindowDestroy");
-	return kStubNull(s, argc, argv);
+	ScrollWindow *scrollWindow = g_sci->_gfxControls32->getScrollWindow(argv[0]);
+	if (!scrollWindow)
+		error("Invalid ScrollWindow ID");
+
+	scrollWindow->hide();
+
+	g_sci->_gfxControls32->deregisterScrollWindow(argv[0]);
+	delete scrollWindow;
+
+	return s->r_acc;
 }
 
 #if 0

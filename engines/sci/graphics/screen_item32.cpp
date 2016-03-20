@@ -509,6 +509,19 @@ void ScreenItem::update(const reg_t object) {
 	_deleted = 0;
 }
 
+void ScreenItem::update() {
+	// TODO: error out if we're not contained in our plane's ScreenItemList
+
+	if (!_created) {
+		_updated = g_sci->_gfxFrameout->getScreenCount();
+	}
+	_deleted = 0;
+
+	delete _celObj;
+	_celObj = nullptr;
+}
+
+
 // TODO: This code is quite similar to calcRects, so try to deduplicate
 // if possible
 Common::Rect ScreenItem::getNowSeenRect(const Plane &plane) const {
