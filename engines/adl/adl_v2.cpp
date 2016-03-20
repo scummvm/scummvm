@@ -23,6 +23,7 @@
 #include "common/random.h"
 
 #include "adl/adl_v2.h"
+#include "adl/display.h"
 
 namespace Adl {
 
@@ -31,7 +32,8 @@ AdlEngine_v2::~AdlEngine_v2() {
 }
 
 AdlEngine_v2::AdlEngine_v2(OSystem *syst, const AdlGameDescription *gd) :
-		AdlEngine(syst, gd) {
+		AdlEngine(syst, gd),
+		_linesPrinted(0) {
 	_random = new Common::RandomSource("adl");
 }
 
@@ -98,6 +100,7 @@ void AdlEngine_v2::setupOpcodeTables() {
 	// 0x1c
 	Opcode(o1_dropItem);
 	Opcode(o1_setRoomPic);
+	Opcode(o2_tellTime);
 }
 
 bool AdlEngine_v2::matchesCurrentPic(byte pic) const {
@@ -108,6 +111,81 @@ byte AdlEngine_v2::roomArg(byte room) const {
 	if (room == IDI_CUR_ROOM)
 		return _state.room;
 	return room;
+}
+
+void AdlEngine_v2::advanceClock() {
+	Time &time = _state.time;
+
+	time.minutes += 5;
+
+	if (time.minutes == 60) {
+		time.minutes = 0;
+
+		++time.hours;
+
+		if (time.hours == 13)
+			time.hours = 1;
+	}
+}
+
+void AdlEngine_v2::checkTextOverflow(char c) {
+	if (c != APPLECHAR('\r'))
+		return;
+
+	++_linesPrinted;
+
+	if (_linesPrinted < 4)
+		return;
+
+	_linesPrinted = 0;
+	_display->updateTextScreen();
+	bell();
+
+	while (true) {
+		char key = inputKey(false);
+
+		if (shouldQuit())
+			return;
+
+		if (key == APPLECHAR('\r'))
+			break;
+
+		bell(3);
+	}
+}
+
+void AdlEngine_v2::printString(const Common::String &str) {
+	Common::String s(str);
+	byte endPos = TEXT_WIDTH - 1;
+	byte pos = 0;
+
+	while (true) {
+		while (pos != endPos && pos != s.size()) {
+			s.setChar(APPLECHAR(s[pos]), pos);
+			++pos;
+		}
+
+		if (pos == s.size())
+			break;
+
+		while (s[pos] != APPLECHAR(' ') && s[pos] != APPLECHAR('\r'))
+			--pos;
+
+		s.setChar(APPLECHAR('\r'), pos);
+		endPos = pos + TEXT_WIDTH;
+		++pos;
+	}
+
+	pos = 0;
+	while (pos != s.size()) {
+		checkTextOverflow(s[pos]);
+		_display->printChar(s[pos]);
+		++pos;
+	}
+
+	checkTextOverflow(APPLECHAR('\r'));
+	_display->printChar(APPLECHAR('\r'));
+	_display->updateTextScreen();
 }
 
 int AdlEngine_v2::o2_isFirstTime(ScriptEnv &e) {
@@ -187,6 +265,19 @@ int AdlEngine_v2::o2_placeItem(ScriptEnv &e) {
 	item.state = IDI_ITEM_NOT_MOVED;
 
 	return 4;
+}
+
+int AdlEngine_v2::o2_tellTime(ScriptEnv &e) {
+	Common::String time = _strings_v2.time;
+
+	time.setChar(APPLECHAR('0') + _state.time.hours / 10, 12);
+	time.setChar(APPLECHAR('0') + _state.time.hours % 10, 13);
+	time.setChar(APPLECHAR('0') + _state.time.minutes / 10, 15);
+	time.setChar(APPLECHAR('0') + _state.time.minutes % 10, 16);
+
+	printString(time);
+
+	return 0;
 }
 
 } // End of namespace Adl

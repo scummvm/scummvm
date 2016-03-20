@@ -84,6 +84,7 @@ void HiRes2Engine::init() {
 	_strings.nounError = readStringAt(f, IDI_HR2_OFS_STR_NOUN_ERROR);
 	_strings.playAgain = readStringAt(f, IDI_HR2_OFS_STR_PLAY_AGAIN);
 	_strings.pressReturn = readStringAt(f, IDI_HR2_OFS_STR_PRESS_RETURN);
+	_strings_v2.time = readStringAt(f, IDI_HR2_OFS_STR_TIME, 0xff);
 
 	_messageIds.cantGoThere = IDI_HR2_MSG_CANT_GO_THERE;
 	_messageIds.dontUnderstand = IDI_HR2_MSG_DONT_UNDERSTAND;
@@ -246,66 +247,6 @@ void HiRes2Engine::checkInput(byte verb, byte noun) {
 		return;
 
 	AdlEngine::checkInput(verb, noun);
-}
-
-void HiRes2Engine::checkTextOverflow(char c) {
-	if (c != APPLECHAR('\r'))
-		return;
-
-	++_linesPrinted;
-
-	if (_linesPrinted < 4)
-		return;
-
-	_linesPrinted = 0;
-	_display->updateTextScreen();
-	bell();
-
-	while (true) {
-		char key = inputKey(false);
-
-		if (shouldQuit())
-			return;
-
-		if (key == APPLECHAR('\r'))
-			break;
-
-		bell(3);
-	}
-}
-
-void HiRes2Engine::printString(const Common::String &str) {
-	Common::String s(str);
-	byte endPos = TEXT_WIDTH - 1;
-	byte pos = 0;
-
-	while (true) {
-		while (pos != endPos && pos != s.size()) {
-			s.setChar(APPLECHAR(s[pos]), pos);
-			++pos;
-		}
-
-		if (pos == s.size())
-			break;
-
-		while (s[pos] != APPLECHAR(' ') && s[pos] != APPLECHAR('\r'))
-			--pos;
-
-		s.setChar(APPLECHAR('\r'), pos);
-		endPos = pos + TEXT_WIDTH;
-		++pos;
-	}
-
-	pos = 0;
-	while (pos != s.size()) {
-		checkTextOverflow(s[pos]);
-		_display->printChar(s[pos]);
-		++pos;
-	}
-
-	checkTextOverflow(APPLECHAR('\r'));
-	_display->printChar(APPLECHAR('\r'));
-	_display->updateTextScreen();
 }
 
 Engine *HiRes2Engine_create(OSystem *syst, const AdlGameDescription *gd) {

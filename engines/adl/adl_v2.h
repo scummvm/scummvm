@@ -44,18 +44,30 @@ public:
 protected:
 	AdlEngine_v2(OSystem *syst, const AdlGameDescription *gd);
 
+	// AdlEngine
 	virtual void setupOpcodeTables();
 	bool matchesCurrentPic(byte pic) const;
 	byte roomArg(byte room) const;
+	void advanceClock();
+
+	void checkTextOverflow(char c);
+	void printString(const Common::String &str);
 
 	int o2_isFirstTime(ScriptEnv &e);
 	int o2_isRandomGT(ScriptEnv &e);
 	int o2_isNounNotInRoom(ScriptEnv &e);
 	int o2_isCarryingSomething(ScriptEnv &e);
-	int o2_moveAllItems(ScriptEnv &e);
-	int o2_placeItem(ScriptEnv &e);
 
 	int o2_moveItem(ScriptEnv &e);
+	int o2_moveAllItems(ScriptEnv &e);
+	int o2_placeItem(ScriptEnv &e);
+	int o2_tellTime(ScriptEnv &e);
+
+	struct {
+		Common::String time;
+	} _strings_v2;
+
+	uint _linesPrinted;
 
 private:
 	Common::RandomSource *_random;

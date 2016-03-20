@@ -552,6 +552,7 @@ Common::Error AdlEngine::run() {
 		}
 
 		doAllCommands(_globalCommands, verb, noun);
+		advanceClock();
 		_state.moves++;
 	}
 

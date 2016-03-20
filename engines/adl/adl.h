@@ -136,6 +136,12 @@ struct Item {
 	Common::Array<byte> roomPictures;
 };
 
+struct Time {
+	byte hours, minutes;
+
+	Time() : hours(12), minutes(0) { }
+};
+
 struct State {
 	Common::Array<Room> rooms;
 	Common::Array<Item> items;
@@ -144,6 +150,7 @@ struct State {
 	byte room;
 	uint16 moves;
 	bool isDark;
+	Time time;
 
 	State() : room(1), moves(1), isDark(false) { }
 };
@@ -177,6 +184,7 @@ protected:
 	virtual void setupOpcodeTables();
 	virtual bool matchesCurrentPic(byte pic) const;
 	virtual byte roomArg(byte room) const;
+	virtual void advanceClock() { }
 
 	// Opcodes
 	int o1_isItemInRoom(ScriptEnv &e);
