@@ -277,7 +277,7 @@ void Font::drawString(Surface *dst, const Common::U32String &str, int x, int y, 
 void Font::drawString(ManagedSurface *dst, const Common::String &str, int x, int y, int w, uint32 color, TextAlign align, int deltax, bool useEllipsis) const {
 	drawString(&dst->_innerSurface, str, x, y, w, color, align, deltax, useEllipsis);
 	if (w != 0) {
-		dst->addDirtyRect(getBoundingBox(str, x, y, w, align));
+		dst->addDirtyRect(getBoundingBox(str, x, y, w, align, deltax, useEllipsis));
 	}
 }
 
