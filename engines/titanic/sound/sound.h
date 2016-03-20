@@ -71,7 +71,7 @@ public:
 	/**
 	 * Called when the view has been changed
 	 */
-	void viewChanged(CViewItem *newView, bool isNewRoom);
+	void preEnterView(CViewItem *newView, bool isNewRoom);
 };
 
 } // End of namespace Titanic

@@ -25,15 +25,6 @@
 
 namespace Titanic {
 
-CScreenManagerRec::CScreenManagerRec() {
-	_field0 = 0;
-	_field4 = 0;
-	_field8 = 0;
-	_fieldC = 0;
-}
-
-/*------------------------------------------------------------------------*/
-
 CScreenManager *CScreenManager::_screenManagerPtr;
 CScreenManager *CScreenManager::_currentScreenManagerPtr;
 
@@ -69,6 +60,11 @@ CScreenManager *CScreenManager::setCurrent() {
 		_currentScreenManagerPtr = _screenManagerPtr;
 
 	return _currentScreenManagerPtr;
+}
+
+void CScreenManager::setSurfaceBounds(int surfaceNum, const Common::Rect &r) {
+	if (surfaceNum >= 0 && surfaceNum < (int)_backSurfaces.size())
+		_backSurfaces[surfaceNum]._bounds = r;
 }
 
 /*------------------------------------------------------------------------*/
@@ -115,7 +111,7 @@ CVideoSurface *OSScreenManager::getSurface(int surfaceNum) const {
 	if (surfaceNum == -1)
 		return _frontRenderSurface;
 	else if (surfaceNum >= 0 && surfaceNum < (int)_backSurfaces.size())
-		return _backSurfaces[surfaceNum];
+		return _backSurfaces[surfaceNum]._surface;
 	else
 		return nullptr;
 }
@@ -164,7 +160,7 @@ void OSScreenManager::destroyFrontAndBackBuffers() {
 	_frontRenderSurface = nullptr;
 
 	for (uint idx = 0; idx < _backSurfaces.size(); ++idx)
-		delete _backSurfaces[idx];
+		delete _backSurfaces[idx]._surface;
 	_backSurfaces.clear();
 }
 

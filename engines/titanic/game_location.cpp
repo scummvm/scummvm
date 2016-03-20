@@ -112,4 +112,4 @@ CRoomItem *CGameLocation::getRoom() {
 	return !view ? nullptr : view->findRoom();
 }
 
-} // End of namespace Titanic z
+} // End of namespace Titanic

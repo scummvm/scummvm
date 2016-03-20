@@ -37,4 +37,8 @@ void CMouseCursor::setCursorId(int id) {
 	warning("CMouseCursor::setCursorId");
 }
 
+void CMouseCursor::update() {
+	warning("CMouseCursor::update");
+}
+
 } // End of namespace Titanic

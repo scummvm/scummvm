@@ -106,6 +106,10 @@ public:
 	 * Returns the scripts for the manager
 	 */
 	TTScripts &getScripts() { return _scripts; }
+
+	void update1();
+
+	void update2();
 };
 
 } // End of namespace Titanic

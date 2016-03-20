@@ -29,6 +29,7 @@
 #include "titanic/font.h"
 #include "titanic/input_handler.h"
 #include "titanic/mouse_cursor.h"
+#include "titanic/text_cursor.h"
 #include "titanic/video_surface.h"
 #include "titanic/core/resource_key.h"
 
@@ -36,20 +37,11 @@ namespace Titanic {
 
 class TitanicEngine;
 
-class CSurface {
-};
-
-class CScreenManagerRec {
-public:
-	int _field0;
-	int _field4;
-	int _field8;
-	int _fieldC;
-public:
-	CScreenManagerRec();
-};
-
 class CScreenManager {
+	struct VideoSurfaceEntry {
+		CVideoSurface *_surface;
+		Common::Rect _bounds;
+	};
 protected:
 	TitanicEngine *_vm;
 public:
@@ -61,11 +53,10 @@ public:
 	 */
 	static CScreenManager *setCurrent();
 public:
-	Common::Array<CVideoSurface *> _backSurfaces;
+	Common::Array<VideoSurfaceEntry> _backSurfaces;
 	CVideoSurface *_frontRenderSurface;
-	CScreenManagerRec _entries[2];
 	CMouseCursor *_mouseCursor;
-	void *_textCursor;
+	CTextCursor *_textCursor;
 	CInputHandler *_inputHandler;
 	int _fontNumber;
 public:
@@ -118,6 +109,8 @@ public:
 	virtual void proc25() = 0;
 	virtual void showCursor() = 0;
 	virtual void proc27() = 0;
+
+	void setSurfaceBounds(int surfaceNum, const Common::Rect &r);
 };
 
 class OSScreenManager: CScreenManager {

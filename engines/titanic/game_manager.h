@@ -30,6 +30,7 @@
 #include "titanic/simple_file.h"
 #include "titanic/video_surface.h"
 #include "titanic/true_talk/true_talk_manager.h"
+#include "titanic/sound/background_sound_maker.h"
 #include "titanic/sound/music_room.h"
 #include "titanic/sound/sound.h"
 
@@ -74,6 +75,11 @@ public:
 	 * Called when a game has finished being saved
 	 */
 	void postSave();
+
+	/**
+	 * Handles an update
+	 */
+	void update(uint ticks);
 };
 
 class CGameManager {
@@ -81,13 +87,28 @@ private:
 	CTrueTalkManager _trueTalkManager;
 	CGameManagerList _list;
 	int _field30;
-	int _field34;
+	CBackgroundSoundMaker *_soundMaker;
 	CVideoSurface *_videoSurface1;
 	int _field4C;
 	int _field54;
 	CVideoSurface *_videoSurface2;
 	uint _lastDiskTicksCount;
 	uint _tickCount2;
+private:
+	/**
+	 * Return the current room
+	 */
+	CRoomItem *getRoom();
+
+	/**
+	 * Generates a message for the next game frame
+	 */
+	void frameMessage(CRoomItem *room);
+
+	/**
+	 * Handles any ongoing movie playback
+	 */
+	void handleMovies();
 public:
 	CProjectItem *_project;
 	CGameView *_gameView;
@@ -167,6 +188,10 @@ public:
 	void viewChange();
 
 	bool test54() const { return !_field54; }
+
+	void inc54() { ++_field54; }
+
+	void dec54() { --_field54; }
 };
 
 } // End of namespace Titanic

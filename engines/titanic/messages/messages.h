@@ -298,6 +298,7 @@ MESSAGE2(CEnterNodeMsg, CNodeItem *, oldNode, nullptr, CNodeItem *, newNode, nul
 MESSAGE2(CEnterRoomMsg, CRoomItem *, oldRoom, nullptr, CRoomItem *, newRoom, nullptr);
 MESSAGE2(CEnterViewMsg, CViewItem *, oldView, nullptr, CViewItem *, newView, nullptr);
 MESSAGE0(CErasePhonographCylinderMsg);
+MESSAGE1(CFrameMsg, uint, ticks, 0);
 MESSAGE2(CFreshenCookieMsg, int, value1, 0, int, value2, 0);
 MESSAGE1(CGetChevClassBits, int, value, 0);
 MESSAGE1(CGetChevClassNum, int, value, 0);

@@ -27,6 +27,13 @@
 
 namespace Titanic {
 
+bool CGameStateList::isViewChanging() const {
+	warning("TODO: CGameStateList::isViewChanging");
+	return false;
+}
+
+/*------------------------------------------------------------------------*/
+
 CGameState::CGameState(CGameManager *gameManager) :
 		_gameManager(gameManager), _gameLocation(this),
 		_field8(0), _fieldC(0), _mode(GSMODE_0), _field14(0), _field18(0),
@@ -98,6 +105,13 @@ void CGameState::enterView() {
 	CRoomItem *oldRoom = oldView->findNode()->findRoom();
 	CRoomItem *newRoom = newView->findNode()->findRoom();
 	_gameManager->playClip(_list._movieClip, oldRoom, newRoom);
+
+	_gameManager->_sound.preEnterView(newView, newRoom != oldRoom);
+	_gameManager->dec54();
+	oldView->enterView(newView);
+
+	_list._view = nullptr;
+	_list._movieClip = nullptr;
 }
 
 void CGameState::triggerLink(CLinkItem *link) {
@@ -127,8 +141,16 @@ void CGameState::changeView(CViewItem *newView, CMovieClip *clip) {
 			_gameManager->playClip(clip, oldRoom, newRoom);
 
 		// Final view change handling
-		_gameManager->_sound.viewChanged(newView, newRoom != oldRoom);
+		_gameManager->_sound.preEnterView(newView, newRoom != oldRoom);
 		oldView->enterView(newView);
+	}
+}
+
+void CGameState::checkForViewChange() {
+	if (_mode == GSMODE_2 && _list.isViewChanging()) {
+		setMode(GSMODE_1);
+		if (_list._view)
+			enterView();
 	}
 }
 

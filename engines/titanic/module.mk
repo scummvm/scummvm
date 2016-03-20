@@ -20,6 +20,7 @@ MODULE_OBJS := \
 	screen_manager.o \
 	simple_file.o \
 	string.o \
+	text_cursor.o \
 	titanic.o \
 	video_surface.o \
 	carry/auditory_centre.o \

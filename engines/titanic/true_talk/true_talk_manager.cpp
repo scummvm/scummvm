@@ -183,4 +183,12 @@ void CTrueTalkManager::viewChange() {
 	warning("CTrueTalkManager::viewChange");
 }
 
+void CTrueTalkManager::update1() {
+	warning("CTrueTalkManager::update1");
+}
+
+void CTrueTalkManager::update2() {
+	warning("CTrueTalkManager::update2");
+}
+
 } // End of namespace Titanic

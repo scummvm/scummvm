@@ -40,6 +40,8 @@ public:
 	CMovieClip *_movieClip;
 public:
 	CGameStateList() : List<ListItem>(), _view(nullptr), _movieClip(nullptr) {}
+
+	bool isViewChanging() const;
 };
 
 class CGameState {
@@ -101,6 +103,11 @@ public:
 	 * Changes the current view
 	 */
 	void changeView(CViewItem *newView, CMovieClip *clip);
+
+	/**
+	 * Check for whether it's time to change the active view
+	 */
+	void checkForViewChange();
 };
 
 } // End of namespace Titanic

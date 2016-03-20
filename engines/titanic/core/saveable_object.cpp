@@ -785,6 +785,7 @@ DEFFN(CEnterRoomMsg);
 DEFFN(CEnterViewMsg);
 DEFFN(CEjectCylinderMsg)
 DEFFN(CErasePhonographCylinderMsg)
+DEFFN(CFrameMsg)
 DEFFN(CFreshenCookieMsg)
 DEFFN(CGetChevClassBits)
 DEFFN(CGetChevClassNum)
@@ -1361,6 +1362,7 @@ void CSaveableObject::initClassList() {
 	ADDFN(CEnterViewMsg, CMessage);
 	ADDFN(CEjectCylinderMsg, CMessage);
 	ADDFN(CErasePhonographCylinderMsg, CMessage);
+	ADDFN(CFrameMsg, CMessage);
 	ADDFN(CFreshenCookieMsg, CMessage);
 	ADDFN(CGetChevClassBits, CMessage);
 	ADDFN(CGetChevClassNum, CMessage);

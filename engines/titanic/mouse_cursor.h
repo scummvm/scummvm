@@ -32,6 +32,11 @@ public:
 	void show();
 	void hide();
 	void setCursorId(int id);
+	
+	/**
+	 * Updates the mouse cursor
+	 */
+	void update();
 };
 
 

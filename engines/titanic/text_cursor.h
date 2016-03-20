@@ -20,31 +20,22 @@
  *
  */
 
-#include "titanic/sound/sound.h"
-#include "titanic/game_manager.h"
+#ifndef TITANIC_TEXT_CURSOR_H
+#define TITANIC_TEXT_CURSOR_H
+
+#include "common/scummsys.h"
 
 namespace Titanic {
 
-CSound::CSound(CGameManager *owner) : _gameManager(owner) {
-}
+class CTextCursor {
+public:
+	bool _active;
+public:
+	CTextCursor();
 
-void CSound::save(SimpleFile *file) const {
-	_soundManager.save(file);
-}
+	Common::Rect getBounds();
+};
 
-void CSound::load(SimpleFile *file) {
-	_soundManager.load(file);
-}
+} // End of namespace Titanic
 
-void CSound::preLoad() {
-	_soundManager.preLoad();
-
-	if (_gameManager)
-		_gameManager->_musicRoom.preLoad();
-}
-
-void CSound::preEnterView(CViewItem *newView, bool isNewRoom) {
-	warning("CSound::preEnterView");
-}
-
-} // End of namespace Titanic z
+#endif /* TITANIC_TEXT_CURSOR_H */
