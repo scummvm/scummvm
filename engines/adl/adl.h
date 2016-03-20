@@ -167,6 +167,10 @@ public:
 protected:
 	AdlEngine(OSystem *syst, const AdlGameDescription *gd);
 
+	// Engine
+	Common::Error loadGameState(int slot);
+	Common::Error saveGameState(int slot, const Common::String &desc);
+
 	Common::String readString(Common::ReadStream &stream, byte until = 0) const;
 	Common::String readStringAt(Common::SeekableReadStream &stream, uint offset, byte until = 0) const;
 	void openFile(Common::File &file, const Common::String &name) const;
@@ -279,6 +283,8 @@ protected:
 	// Game state
 	State _state;
 
+	bool _isRestarting, _isRestoring;
+
 private:
 	virtual void runIntro() const { }
 	virtual void init() = 0;
@@ -290,9 +296,7 @@ private:
 	// Engine
 	Common::Error run();
 	bool hasFeature(EngineFeature f) const;
-	Common::Error loadGameState(int slot);
 	bool canLoadGameStateCurrently();
-	Common::Error saveGameState(int slot, const Common::String &desc);
 	bool canSaveGameStateCurrently();
 
 	// Text output
@@ -305,7 +309,6 @@ private:
 	void getInput(uint &verb, uint &noun);
 
 	const AdlGameDescription *_gameDescription;
-	bool _isRestarting, _isRestoring;
 	byte _saveVerb, _saveNoun, _restoreVerb, _restoreNoun;
 	bool _canSaveNow, _canRestoreNow;
 };

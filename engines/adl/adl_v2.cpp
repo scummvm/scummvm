@@ -21,6 +21,7 @@
  */
 
 #include "common/random.h"
+#include "common/error.h"
 
 #include "adl/adl_v2.h"
 #include "adl/display.h"
@@ -81,9 +82,9 @@ void AdlEngine_v2::setupOpcodeTables() {
 	Opcode(o2_moveAllItems);
 	Opcode(o1_quit);
 	OpcodeUnImpl();
-	Opcode(o1_save); // TODO
+	Opcode(o2_save);
 	// 0x10
-	Opcode(o1_restore); // TODO
+	Opcode(o2_restore);
 	Opcode(o1_restart);
 	Opcode(o2_placeItem);
 	Opcode(o1_setItemPic);
@@ -259,6 +260,33 @@ int AdlEngine_v2::o2_moveAllItems(ScriptEnv &e) {
 	return 2;
 }
 
+int AdlEngine_v2::o2_save(ScriptEnv &e) {
+	int slot = askForSlot(_strings_v2.saveInsert);
+
+	if (slot < 0)
+		return -1;
+
+	saveGameState(slot, "");
+
+	_display->printString(_strings_v2.saveReplace);
+	inputString();
+	return 0;
+}
+
+int AdlEngine_v2::o2_restore(ScriptEnv &e) {
+	int slot = askForSlot(_strings_v2.restoreInsert);
+
+	if (slot < 0)
+		return -1;
+
+	loadGameState(slot);
+	_isRestoring = false;
+
+	_display->printString(_strings_v2.restoreReplace);
+	inputString();
+	return 0;
+}
+
 int AdlEngine_v2::o2_placeItem(ScriptEnv &e) {
 	Item &item = getItem(e.arg(1));
 
@@ -292,6 +320,20 @@ int AdlEngine_v2::o2_setRoomFromVar(ScriptEnv &e) {
 int AdlEngine_v2::o2_initDisk(ScriptEnv &e) {
 	printString("NOT REQUIRED");
 	return 0;
+}
+
+int AdlEngine_v2::askForSlot(const Common::String &question) {
+	while (1) {
+		_display->printString(question);
+
+		Common::String input = inputString();
+
+		if (shouldQuit())
+			return -1;
+
+		if (input.size() > 0 && input[0] >= APPLECHAR('A') && input[0] <= APPLECHAR('O'))
+			return input[0] - APPLECHAR('A');
+	}
 }
 
 } // End of namespace Adl

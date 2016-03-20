@@ -60,6 +60,8 @@ protected:
 
 	int o2_moveItem(ScriptEnv &e);
 	int o2_moveAllItems(ScriptEnv &e);
+	int o2_save(ScriptEnv &e);
+	int o2_restore(ScriptEnv &e);
 	int o2_placeItem(ScriptEnv &e);
 	int o2_tellTime(ScriptEnv &e);
 	int o2_setRoomFromVar(ScriptEnv &e);
@@ -67,11 +69,15 @@ protected:
 
 	struct {
 		Common::String time;
+		Common::String saveInsert, saveReplace;
+		Common::String restoreInsert, restoreReplace;
 	} _strings_v2;
 
 	uint _linesPrinted;
 
 private:
+	int askForSlot(const Common::String &question);
+
 	Common::RandomSource *_random;
 };
 

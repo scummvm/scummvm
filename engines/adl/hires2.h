@@ -66,12 +66,16 @@ namespace Adl {
 #define IDI_HR2_MSG_ITEM_NOT_HERE        4
 #define IDI_HR2_MSG_THANKS_FOR_PLAYING 239
 
-#define IDI_HR2_OFS_STR_ENTER_COMMAND TSO(0x1a, 0x1, 0xbc)
-#define IDI_HR2_OFS_STR_VERB_ERROR    TSO(0x1a, 0x1, 0x4f)
-#define IDI_HR2_OFS_STR_NOUN_ERROR    TSO(0x1a, 0x1, 0x8e)
-#define IDI_HR2_OFS_STR_PLAY_AGAIN    TSO(0x1a, 0x8, 0x25)
-#define IDI_HR2_OFS_STR_PRESS_RETURN  TSO(0x1a, 0x8, 0x5f)
-#define IDI_HR2_OFS_STR_TIME          TSO(0x19, 0x7, 0xd7)
+#define IDI_HR2_OFS_STR_ENTER_COMMAND   TSO(0x1a, 0x1, 0xbc)
+#define IDI_HR2_OFS_STR_VERB_ERROR      TSO(0x1a, 0x1, 0x4f)
+#define IDI_HR2_OFS_STR_NOUN_ERROR      TSO(0x1a, 0x1, 0x8e)
+#define IDI_HR2_OFS_STR_PLAY_AGAIN      TSO(0x1a, 0x8, 0x25)
+#define IDI_HR2_OFS_STR_PRESS_RETURN    TSO(0x1a, 0x8, 0x5f)
+#define IDI_HR2_OFS_STR_TIME            TSO(0x19, 0x7, 0xd7)
+#define IDI_HR2_OFS_STR_SAVE_INSERT     TSO(0x1a, 0x6, 0x5f)
+#define IDI_HR2_OFS_STR_SAVE_REPLACE    TSO(0x1a, 0x6, 0xe5)
+#define IDI_HR2_OFS_STR_RESTORE_INSERT  TSO(0x1a, 0x7, 0x32)
+#define IDI_HR2_OFS_STR_RESTORE_REPLACE TSO(0x1a, 0x7, 0xc2)
 
 struct Picture2 {
 	byte nr;

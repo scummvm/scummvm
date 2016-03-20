@@ -85,6 +85,10 @@ void HiRes2Engine::init() {
 	_strings.playAgain = readStringAt(f, IDI_HR2_OFS_STR_PLAY_AGAIN);
 	_strings.pressReturn = readStringAt(f, IDI_HR2_OFS_STR_PRESS_RETURN);
 	_strings_v2.time = readStringAt(f, IDI_HR2_OFS_STR_TIME, 0xff);
+	_strings_v2.saveInsert = readStringAt(f, IDI_HR2_OFS_STR_SAVE_INSERT);
+	_strings_v2.saveReplace = readStringAt(f, IDI_HR2_OFS_STR_SAVE_REPLACE);
+	_strings_v2.restoreInsert = readStringAt(f, IDI_HR2_OFS_STR_RESTORE_INSERT);
+	_strings_v2.restoreReplace = readStringAt(f, IDI_HR2_OFS_STR_RESTORE_REPLACE);
 
 	_messageIds.cantGoThere = IDI_HR2_MSG_CANT_GO_THERE;
 	_messageIds.dontUnderstand = IDI_HR2_MSG_DONT_UNDERSTAND;
