@@ -78,15 +78,15 @@ void GnapEngine::scene46_run() {
 
 	_gameSys->insertSequence(0x4D, 0, 0, 0, kSeqLoop, 0, 0, 0);
 	
-	_s46_dword_47EB18 = 0x4B;
-	_s46_dword_47EB20 = -1;
+	_s46_currSackGuySequenceId = 0x4B;
+	_s46_nextSackGuySequenceId = -1;
 	_gameSys->setAnimation(0x4B, 1, 3);
-	_gameSys->insertSequence(_s46_dword_47EB18, 1, 0, 0, kSeqNone, 0, 0, 0);
+	_gameSys->insertSequence(_s46_currSackGuySequenceId, 1, 0, 0, kSeqNone, 0, 0, 0);
 	
-	_s46_dword_47EB24 = 0x47;
-	_s46_dword_47EB1C = -1;
+	_s46_currItchyGuySequenceId = 0x47;
+	_s46_nextItchyGuySequenceId = -1;
 	_gameSys->setAnimation(0x47, 1, 4);
-	_gameSys->insertSequence(_s46_dword_47EB24, 1, 0, 0, kSeqNone, 0, 0, 0);
+	_gameSys->insertSequence(_s46_currItchyGuySequenceId, 1, 0, 0, kSeqNone, 0, 0, 0);
 	
 	if (isFlag(12)) {
 		_toyUfoId = 0;
@@ -163,11 +163,8 @@ void GnapEngine::scene46_run() {
 				scene46_updateHotspots();
 				break;
 			}
-
 		} else {
-
 			switch (_sceneClickedHotspot) {
-
 			case kHSDevice:
 				runMenu();
 				scene46_updateHotspots();
@@ -266,9 +263,7 @@ void GnapEngine::scene46_run() {
 				if (_gnapActionStatus < 0)
 					gnapWalkTo(-1, -1, -1, -1, 1);
 					break;
-
 			}
-
 		}
 	
 		if (_mouseClickState._left && _gnapActionStatus < 0) {
@@ -292,18 +287,18 @@ void GnapEngine::scene46_run() {
 				updateGnapIdleSequence();
 			if (!_timers[4]) {
 				_timers[4] = getRandom(50) + 80;
-				if (_gnapActionStatus < 0 && _beaverActionStatus < 0 && _s46_dword_47EB1C == -1) {
+				if (_gnapActionStatus < 0 && _beaverActionStatus < 0 && _s46_nextItchyGuySequenceId == -1) {
 					_gnapRandomValue = getRandom(2);
 					if (_gnapRandomValue != 0)
-						_s46_dword_47EB1C = 0x49;
+						_s46_nextItchyGuySequenceId = 0x49;
 					else
-						_s46_dword_47EB1C = 0x48;
+						_s46_nextItchyGuySequenceId = 0x48;
 				}
 			}
 			if (!_timers[5]) {
 				_timers[5] = getRandom(50) + 80;
-				if (_gnapActionStatus < 0 && _beaverActionStatus < 0 && _s46_dword_47EB20 == -1)
-					_s46_dword_47EB20 = 0x4C;
+				if (_gnapActionStatus < 0 && _beaverActionStatus < 0 && _s46_nextSackGuySequenceId == -1)
+					_s46_nextSackGuySequenceId = 0x4C;
 			}
 		}
 	
@@ -316,13 +311,10 @@ void GnapEngine::scene46_run() {
 		}
 		
 		gameUpdateTick();
-	
 	}
-
 }
 
 void GnapEngine::scene46_updateAnimations() {
-
 	if (_gameSys->getAnimationStatus(0) == 2) {
 		_gameSys->setAnimation(0, 0, 0);
 		switch (_gnapActionStatus) {
@@ -330,28 +322,28 @@ void GnapEngine::scene46_updateAnimations() {
 			_sceneDone = true;
 			break;
 		case 1:
-			_s46_dword_47EB1C = 0x46;
+			_s46_nextItchyGuySequenceId = 0x46;
 			break;
 		case 2:
-			_s46_dword_47EB20 = 0x4A;
+			_s46_nextSackGuySequenceId = 0x4A;
 			break;
 		}
 		_gnapActionStatus = -1;
 	}
 	
-	if (_gameSys->getAnimationStatus(3) == 2 && _s46_dword_47EB20 != -1) {
-		_gameSys->insertSequence(_s46_dword_47EB20, 1, _s46_dword_47EB18, 1, kSeqSyncWait, 0, 0, 0);
-		_gameSys->setAnimation(_s46_dword_47EB20, 1, 3);
-		_s46_dword_47EB18 = _s46_dword_47EB20;
-		_s46_dword_47EB20 = -1;
+	if (_gameSys->getAnimationStatus(3) == 2 && _s46_nextSackGuySequenceId != -1) {
+		_gameSys->insertSequence(_s46_nextSackGuySequenceId, 1, _s46_currSackGuySequenceId, 1, kSeqSyncWait, 0, 0, 0);
+		_gameSys->setAnimation(_s46_nextSackGuySequenceId, 1, 3);
+		_s46_currSackGuySequenceId = _s46_nextSackGuySequenceId;
+		_s46_nextSackGuySequenceId = -1;
 		_timers[5] = getRandom(50) + 80;
 	}
 	
-	if (_gameSys->getAnimationStatus(4) == 2 && _s46_dword_47EB1C != -1) {
-		_gameSys->insertSequence(_s46_dword_47EB1C, 1, _s46_dword_47EB24, 1, kSeqSyncWait, 0, 0, 0);
-		_gameSys->setAnimation(_s46_dword_47EB1C, 1, 4);
-		_s46_dword_47EB24 = _s46_dword_47EB1C;
-		_s46_dword_47EB1C = -1;
+	if (_gameSys->getAnimationStatus(4) == 2 && _s46_nextItchyGuySequenceId != -1) {
+		_gameSys->insertSequence(_s46_nextItchyGuySequenceId, 1, _s46_currItchyGuySequenceId, 1, kSeqSyncWait, 0, 0, 0);
+		_gameSys->setAnimation(_s46_nextItchyGuySequenceId, 1, 4);
+		_s46_currItchyGuySequenceId = _s46_nextItchyGuySequenceId;
+		_s46_nextItchyGuySequenceId = -1;
 		_timers[4] = getRandom(50) + 80;
 	}
 	
@@ -372,7 +364,6 @@ void GnapEngine::scene46_updateAnimations() {
 		}
 		_toyUfoActionStatus = -1;
 	}
-
 }
 
 } // End of namespace Gnap

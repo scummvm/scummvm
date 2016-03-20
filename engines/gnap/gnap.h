@@ -890,10 +890,10 @@ public:
 	void scene45_updateAnimations();
 
 	// Scene 46
-	int _s46_dword_47EB18;
-	int _s46_dword_47EB1C;
-	int _s46_dword_47EB20;
-	int _s46_dword_47EB24;
+	int _s46_currSackGuySequenceId;
+	int _s46_nextItchyGuySequenceId;
+	int _s46_nextSackGuySequenceId;
+	int _s46_currItchyGuySequenceId;
 	int scene46_init();
 	void scene46_updateHotspots();
 	void scene46_run();
