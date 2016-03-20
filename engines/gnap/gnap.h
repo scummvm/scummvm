@@ -873,10 +873,10 @@ public:
 	void scene43_updateAnimations();
 
 	// Scene 44
-	int _s44_dword_47EB04;
-	int _s44_dword_47EB08;
-	int _s44_dword_47EB0C;
-	int _s44_dword_47EB10;
+	int _nextSpringGuySequenceId;
+	int _nextKissingLadySequenceId;
+	int _currSpringGuySequenceId;
+	int _currKissingLadySequenceId;
 	int scene44_init();
 	void scene44_updateHotspots();
 	void scene44_run();

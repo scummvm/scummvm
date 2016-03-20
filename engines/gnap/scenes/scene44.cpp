@@ -80,38 +80,37 @@ void GnapEngine::scene44_updateHotspots() {
 }
 
 void GnapEngine::scene44_run() {
-
 	queueInsertDeviceIcon();
 
 	_gameSys->insertSequence(0xF7, 0, 0, 0, kSeqLoop, 0, 0, 0);
 	_gameSys->insertSequence(0xFC, 256, 0, 0, kSeqNone, 0, 0, 0);
 
 	if (isFlag(15))
-		_s44_dword_47EB0C = 0xF8;
+		_currSpringGuySequenceId = 0xF8;
 	else
-		_s44_dword_47EB0C = 0xF9;
+		_currSpringGuySequenceId = 0xF9;
 	
-	_s44_dword_47EB04 = -1;
-	_gameSys->setAnimation(_s44_dword_47EB0C, 1, 4);
-	_gameSys->insertSequence(_s44_dword_47EB0C, 1, 0, 0, kSeqNone, 0, 0, 0);
+	_nextSpringGuySequenceId = -1;
+	_gameSys->setAnimation(_currSpringGuySequenceId, 1, 4);
+	_gameSys->insertSequence(_currSpringGuySequenceId, 1, 0, 0, kSeqNone, 0, 0, 0);
 
 	if (isFlag(13)) {
 		if (_prevSceneNum != 50 || _sceneSavegameLoaded) {
-			_s44_dword_47EB10 = 0xF6;
-			_s44_dword_47EB08 = -1;
+			_currKissingLadySequenceId = 0xF6;
+			_nextKissingLadySequenceId = -1;
 		} else {
 			setGrabCursorSprite(kItemGum);
-			_s44_dword_47EB10 = 0xF5;
-			_s44_dword_47EB08 = 0xF6;
+			_currKissingLadySequenceId = 0xF5;
+			_nextKissingLadySequenceId = 0xF6;
 			_gameSys->setAnimation(0xF5, 1, 2);
 		}
 	} else {
-		_s44_dword_47EB10 = 0xEC;
-		_s44_dword_47EB08 = -1;
+		_currKissingLadySequenceId = 0xEC;
+		_nextKissingLadySequenceId = -1;
 		_gameSys->setAnimation(0xEC, 1, 2);
 	}
 	
-	_gameSys->insertSequence(_s44_dword_47EB10, 1, 0, 0, kSeqNone, 0, 0, 0);
+	_gameSys->insertSequence(_currKissingLadySequenceId, 1, 0, 0, kSeqNone, 0, 0, 0);
 	
 	if (isFlag(12)) {
 		_toyUfoId = 0;
@@ -169,7 +168,6 @@ void GnapEngine::scene44_run() {
 	}
 	
 	while (!_sceneDone) {
-	
 		if (!isSoundPlaying(0x1094B))
 			playSound(0x1094B, 1);
 	
@@ -308,7 +306,7 @@ void GnapEngine::scene44_run() {
 					case GRAB_CURSOR:
 						playGnapPullOutDevice(8, 0);
 						playGnapUseDevice(8, 0);
-						_s44_dword_47EB04 = 0xFB;
+						_nextSpringGuySequenceId = 0xFB;
 						invAdd(kItemSpring);
 						setFlag(15);
 						scene44_updateHotspots();
@@ -371,50 +369,50 @@ void GnapEngine::scene44_run() {
 		toyUfoCheckTimer();
 	
 		if (!_isLeavingScene) {
-			if (_beaverActionStatus < 0 && !isFlag(12) && _s44_dword_47EB10 != 0xF5)
+			if (_beaverActionStatus < 0 && !isFlag(12) && _currKissingLadySequenceId != 0xF5)
 				updateBeaverIdleSequence();
 			if (_gnapActionStatus < 0 && !isFlag(12))
 				updateGnapIdleSequence();
 			if (!_timers[4]) {
 				_timers[4] = getRandom(20) + 20;
-				if (_gnapActionStatus < 0 && _beaverActionStatus < 0 && _s44_dword_47EB08 == -1) {
+				if (_gnapActionStatus < 0 && _beaverActionStatus < 0 && _nextKissingLadySequenceId == -1) {
 					_gnapRandomValue = getRandom(20);
 					switch (_gnapRandomValue) {
 					case 0:
-						_s44_dword_47EB08 = 0xED;
+						_nextKissingLadySequenceId = 0xED;
 						break;
 					case 1:
-						_s44_dword_47EB08 = 0xEE;
+						_nextKissingLadySequenceId = 0xEE;
 						break;
 					case 2:
-						_s44_dword_47EB08 = 0xF0;
+						_nextKissingLadySequenceId = 0xF0;
 						break;
 					case 3:
-						_s44_dword_47EB08 = 0xF3;
+						_nextKissingLadySequenceId = 0xF3;
 						break;
 					case 4:
-						_s44_dword_47EB08 = 0xF4;
+						_nextKissingLadySequenceId = 0xF4;
 						break;
 					default:
-						_s44_dword_47EB08 = 0xEC;
+						_nextKissingLadySequenceId = 0xEC;
 						break;
 					}
-					if (_s44_dword_47EB08 != 0xEC && _s44_dword_47EB08 == _s44_dword_47EB10)
-						_s44_dword_47EB08 = -1;
+					if (_nextKissingLadySequenceId != 0xEC && _nextKissingLadySequenceId == _currKissingLadySequenceId)
+						_nextKissingLadySequenceId = -1;
 				}
 			}
 			if (!_timers[5]) {
 				_timers[5] = getRandom(20) + 20;
-				if (_gnapActionStatus < 0 && _beaverActionStatus < 0 && _s44_dword_47EB04 == -1) {
+				if (_gnapActionStatus < 0 && _beaverActionStatus < 0 && _nextSpringGuySequenceId == -1) {
 					_gnapRandomValue = getRandom(5);
 					if (_gnapRandomValue != 0) {
 						if (!isFlag(15))
-							_s44_dword_47EB04 = 0xF9;
+							_nextSpringGuySequenceId = 0xF9;
 					} else {
 						if (isFlag(15))
-							_s44_dword_47EB04 = 0xF8;
+							_nextSpringGuySequenceId = 0xF8;
 						else
-							_s44_dword_47EB04 = 0xFA;
+							_nextSpringGuySequenceId = 0xFA;
 					}
 				}
 			}
@@ -429,14 +427,11 @@ void GnapEngine::scene44_run() {
 			_timers[4] = getRandom(20) + 20;
 		}
 		
-		gameUpdateTick();
-	
+		gameUpdateTick();	
 	}
-
 }
 
 void GnapEngine::scene44_updateAnimations() {
-
 	if (_gameSys->getAnimationStatus(0) == 2) 	{
 		_gameSys->setAnimation(0, 0, 0);
 		switch (_gnapActionStatus) {
@@ -444,10 +439,10 @@ void GnapEngine::scene44_updateAnimations() {
 			_sceneDone = true;
 			break;
 		case 1:
-			_s44_dword_47EB08 = 0xEF;
+			_nextKissingLadySequenceId = 0xEF;
 			break;
 		case 2:
-			_s44_dword_47EB08 = 0xF2;
+			_nextKissingLadySequenceId = 0xF2;
 			break;
 		}
 		_gnapActionStatus = -1;
@@ -462,7 +457,7 @@ void GnapEngine::scene44_updateAnimations() {
 				_beaverSequenceId = 0xFE;
 				_beaverSequenceDatNum = 0;
 				_gameSys->setAnimation(0xFE, _beaverId, 1);
-				_gameSys->removeSequence(_s44_dword_47EB10, 1, true);
+				_gameSys->removeSequence(_currKissingLadySequenceId, 1, true);
 				_beaverActionStatus = 5;
 			}
 			break;
@@ -477,31 +472,31 @@ void GnapEngine::scene44_updateAnimations() {
 	}
 	
 	if (_gameSys->getAnimationStatus(2) == 2) {
-		if (_s44_dword_47EB08 == 0xF6) {
-			_gameSys->insertSequence(_s44_dword_47EB08, 1, _s44_dword_47EB10, 1, kSeqSyncWait, 0, 0, 0);
+		if (_nextKissingLadySequenceId == 0xF6) {
+			_gameSys->insertSequence(_nextKissingLadySequenceId, 1, _currKissingLadySequenceId, 1, kSeqSyncWait, 0, 0, 0);
 			initBeaverPos(5, 8, 0);
-			_s44_dword_47EB10 = _s44_dword_47EB08;
-			_s44_dword_47EB08 = -1;
+			_currKissingLadySequenceId = _nextKissingLadySequenceId;
+			_nextKissingLadySequenceId = -1;
 			_gameSys->setAnimation(0, 0, 2);
-		} else if (_s44_dword_47EB08 != -1) {
-			_gameSys->insertSequence(_s44_dword_47EB08, 1, _s44_dword_47EB10, 1, kSeqSyncWait, 0, 0, 0);
-			_gameSys->setAnimation(_s44_dword_47EB08, 1, 2);
-			_s44_dword_47EB10 = _s44_dword_47EB08;
-			_s44_dword_47EB08 = -1;
+		} else if (_nextKissingLadySequenceId != -1) {
+			_gameSys->insertSequence(_nextKissingLadySequenceId, 1, _currKissingLadySequenceId, 1, kSeqSyncWait, 0, 0, 0);
+			_gameSys->setAnimation(_nextKissingLadySequenceId, 1, 2);
+			_currKissingLadySequenceId = _nextKissingLadySequenceId;
+			_nextKissingLadySequenceId = -1;
 			_timers[4] = getRandom(20) + 20;
 		}
 	}
 	
 	if (_gameSys->getAnimationStatus(4) == 2) {
-		if (_s44_dword_47EB0C == 0xFB) {
+		if (_currSpringGuySequenceId == 0xFB) {
 			setGrabCursorSprite(kItemSpring);
-			_s44_dword_47EB04 = 0xF8;
+			_nextSpringGuySequenceId = 0xF8;
 		}
-		if (_s44_dword_47EB04 != -1) {
-			_gameSys->insertSequence(_s44_dword_47EB04, 1, _s44_dword_47EB0C, 1, kSeqSyncWait, 0, 0, 0);
-			_gameSys->setAnimation(_s44_dword_47EB04, 1, 4);
-			_s44_dword_47EB0C = _s44_dword_47EB04;
-			_s44_dword_47EB04 = -1;
+		if (_nextSpringGuySequenceId != -1) {
+			_gameSys->insertSequence(_nextSpringGuySequenceId, 1, _currSpringGuySequenceId, 1, kSeqSyncWait, 0, 0, 0);
+			_gameSys->setAnimation(_nextSpringGuySequenceId, 1, 4);
+			_currSpringGuySequenceId = _nextSpringGuySequenceId;
+			_nextSpringGuySequenceId = -1;
 			_timers[5] = getRandom(20) + 20;
 		}
 	}
@@ -523,7 +518,6 @@ void GnapEngine::scene44_updateAnimations() {
 		}
 		_toyUfoActionStatus = -1;
 	}
-	
 }
 
 } // End of namespace Gnap
