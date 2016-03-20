@@ -2766,7 +2766,12 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 	 Common::EN_ANY, Common::kPlatformMacintosh, ADGF_MACRESFORK | ADGF_UNSTABLE, GUIO4(GUIO_NOASPECT, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI) },
 
 #ifdef ENABLE_SCI3_GAMES
-	// Phantasmagoria 2 - English Windows (from jvprat)
+	// Some versions of Phantasmagoria 2 were heavily censored.
+	// Censored versions (data files are currently unknown to us): UK, Australia, first English release in Germany
+
+	// Phantasmagoria 2 - English Windows (from jvprat) - US release
+	// Note: Fully uncensored
+	//
 	// Executable scanning reports "3.000.000", VERSION file reports "001.0.06"
 	{"phantasmagoria2", "", {
 		{"resmap.001", 0, "0a961e135f4f7effb195158325856633", 1108},
@@ -2782,11 +2787,23 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformWindows, ADGF_UNSTABLE, GUIO5(GUIO_NOSPEECH, GUIO_NOASPECT, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
 
-	// Phantasmagoria 2 - German DOS/Windows
+	// Phantasmagoria 2 - English DOS (GOG version) (supplied by littleboy in patch #1360)
+	// Note: Fully uncensored, basically the US release, but ressci.* merged into ressci.000
+	//
+	// Executable scanning reports "3.000.000" - "Dec 07 1996 09:29:03"
+	// VERSION file reports "001.0.06"
+	{"phantasmagoria2", "", {
+		{"ressci.000", 0, "c54f26d9f43f908151263254b6d97053", 108134481},
+		{"resmap.000", 0, "de154a223a9ef4ea7358b76adc38ef5b", 2956},
+		AD_LISTEND},
+		Common::EN_ANY, Common::kPlatformWindows, ADGF_UNSTABLE, GUIO5(GUIO_NOSPEECH, GUIO_NOASPECT, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
+
+	// Phantasmagoria 2 - German DOS/Windows (supplied by AReim1982)
+	// Note: Fully uncensored, but one scene is missing probably because of a mastering error (Curtis + Therese meeting near water cooler)
+	//
 	// Windows executable scanning reports "unknown" - "Dec 07 1996 15:42:02"
 	// DOS executable scanning reports "unknown" - "Dec 07 1996 08:35:12"
 	// VERSION file reports "000.1.0vu" (HEX: 30 30 30 2E 31 00 2E 30 76 FA 0D 0A)
-	// Supplied by AReim1982
 	{"phantasmagoria2", "", {
 		{"resmap.001", 0, "d62f48ff8bddb39503b97e33439482c9", 1114},
 		{"ressci.001", 0, "4ebc2b8455c74ad205ae592eec27313a", 24590716},
@@ -2800,16 +2817,6 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"ressci.005", 0, "e94005890d22dd3b7f605a2a7c025803", 68232146},
 		AD_LISTEND},
 		Common::DE_DEU, Common::kPlatformWindows, ADGF_UNSTABLE, GUIO5(GUIO_NOSPEECH, GUIO_NOASPECT, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI) },
-
-	// Phantasmagoria 2 - English DOS (GOG version) - ressci.* merged in ressci.000
-	// Executable scanning reports "3.000.000" - "Dec 07 1996 09:29:03"
-	// VERSION file reports "001.0.06"
-	// Supplied by littleboy in patch #3112884
-	{"phantasmagoria2", "", {
-		{"ressci.000", 0, "c54f26d9f43f908151263254b6d97053", 108134481},
-		{"resmap.000", 0, "de154a223a9ef4ea7358b76adc38ef5b", 2956},
-		AD_LISTEND},
-		Common::EN_ANY, Common::kPlatformWindows, ADGF_UNSTABLE, GUIO5(GUIO_NOSPEECH, GUIO_NOASPECT, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
 #endif	// ENABLE_SCI3_GAMES
 
 #endif // ENABLE_SCI32
