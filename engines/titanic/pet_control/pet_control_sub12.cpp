@@ -67,6 +67,7 @@ void CPetControlSub12::load(SimpleFile *file, int param) {
 		_field70 = file->readNumber();
 		_field74 = file->readNumber();
 
+		warning("TODO: CPetControlSub12::load %d,%d", var1, var2);
 		assert(_array.size() >= count);
 		for (uint idx = 0; idx < count; ++idx) {
 			_array[idx]._string1 = file->readString();

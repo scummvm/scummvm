@@ -45,7 +45,7 @@ protected:
 	CScreenManager *_screenManager;
 	CResourceKey _resourceKey;
 	DirectDrawSurface *_ddSurface;
-	Graphics::Surface *_rawSurface;
+	Graphics::ManagedSurface *_rawSurface;
 	void *_field34;
 	bool _pendingLoad;
 	int _field40;

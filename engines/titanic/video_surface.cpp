@@ -123,17 +123,17 @@ bool OSVideoSurface::hasSurface() {
 
 int OSVideoSurface::getWidth() const {
 	assert(_ddSurface);
-	return _ddSurface->w;
+	return _ddSurface->getWidth();
 }
 
 int OSVideoSurface::getHeight() const {
 	assert(_ddSurface);
-	return _ddSurface->h;
+	return _ddSurface->getHeight();
 }
 
 int OSVideoSurface::getPitch() const {
 	assert(_ddSurface);
-	return _ddSurface->pitch;
+	return _ddSurface->getPitch();
 }
 
 void OSVideoSurface::resize(int width, int height) {

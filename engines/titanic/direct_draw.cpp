@@ -48,9 +48,7 @@ void DirectDraw::diagnostics() {
 
 DirectDrawSurface *DirectDraw::createSurfaceFromDesc(const DDSurfaceDesc &desc) {
 	DirectDrawSurface *surface = new DirectDrawSurface();
-
-	Graphics::PixelFormat pixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0);
-	surface->create(desc._w, desc._h, pixelFormat);
+	surface->create(desc._w, desc._h);
 
 	return surface;
 }
@@ -95,11 +93,9 @@ void DirectDrawManager::initFullScreen() {
 		_directDraw._bpp, 0);
 
 	_mainSurface = new DirectDrawSurface();
-	_mainSurface->create(_directDraw._width, _directDraw._height,
-		Graphics::PixelFormat::createFormatCLUT8());
+	_mainSurface->create(_directDraw._width, _directDraw._height);
 	_backSurfaces[0] = new DirectDrawSurface();
-	_backSurfaces[0]->create(_directDraw._width, _directDraw._height,
-		Graphics::PixelFormat::createFormatCLUT8());
+	_backSurfaces[0]->create(_directDraw._width, _directDraw._height);
 }
 
 DirectDrawSurface *DirectDrawManager::createSurface(int w, int h, int surfaceNum) {
@@ -108,33 +104,6 @@ DirectDrawSurface *DirectDrawManager::createSurface(int w, int h, int surfaceNum
 
 	assert(_mainSurface);
 	return _directDraw.createSurfaceFromDesc(DDSurfaceDesc(w, h));
-}
-
-/*------------------------------------------------------------------------*/
-
-Graphics::Surface *DirectDrawSurface::lock(const Common::Rect *bounds, int flags) {
-	assert(w != 0 && h != 0);
-	return this;
-}
-
-void DirectDrawSurface::unlock() {
-	assert(w != 0 && h != 0);
-}
-
-void DirectDrawSurface::fill(const Common::Rect *bounds, uint32 color) {
-	Common::Rect tempBounds;
-
-	if (bounds) {
-		// Bounds are provided, clip them to the bounds of this surface
-		tempBounds = *bounds;
-		tempBounds.clip(Common::Rect(0, 0, this->w, this->h));
-	} else {
-		// No bounds provided, so use the entire surface
-		tempBounds = Common::Rect(0, 0, this->w, this->h);
-	}
-
-	// Fill the area
-	fillRect(tempBounds, color);
 }
 
 } // End of namespace Titanic

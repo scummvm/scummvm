@@ -4,6 +4,7 @@ MODULE_OBJS := \
 	debugger.o \
 	detection.o \
 	direct_draw.o \
+	direct_draw_surface.o \
 	events.o \
 	files_manager.o \
 	font.o \

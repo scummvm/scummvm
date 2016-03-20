@@ -25,44 +25,11 @@
 
 #include "common/scummsys.h"
 #include "common/array.h"
-#include "graphics/surface.h"
+#include "titanic/direct_draw_surface.h"
 
 namespace Titanic {
 
 class TitanicEngine;
-
-struct DDSurfaceDesc {
-	int _w;
-	int _h;
-	int _flags;
-	int _caps;
-
-	DDSurfaceDesc(int w, int h) : _w(w), _h(h), _flags(0x1006), _caps(64) {}
-};
-
-class DirectDrawSurface : public Graphics::Surface {
-public:
-	/**
-	 * Return the size of the surface in ytes
-	 */
-	int getSize() const { return pitch * h; }
-
-	/**
-	 * Lock the surface for access
-	 */
-	Graphics::Surface *lock(const Common::Rect *bounds, int flags);
-
-	/**
-	 * Unlocks the surface at the end of direct accesses
-	 */
-	void unlock();
-
-	/**
-	 * Fills an area of the surfae with the specified color. If no bounds are passed,
-	 * then the entire surface is filled
-	 */
-	void fill(const Common::Rect *bounds, uint32 color);
-};
 
 class DirectDraw {
 private:
