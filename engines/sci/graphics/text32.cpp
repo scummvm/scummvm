@@ -324,6 +324,10 @@ void GfxText32::drawText(const uint index, uint length) {
 				++text;
 				--length;
 			}
+			if (length > 0) {
+				++text;
+				--length;
+			}
 		} else {
 			drawChar(currentChar);
 		}
