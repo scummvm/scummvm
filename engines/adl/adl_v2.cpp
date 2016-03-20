@@ -318,7 +318,7 @@ int AdlEngine_v2::o2_setRoomFromVar(ScriptEnv &e) {
 }
 
 int AdlEngine_v2::o2_initDisk(ScriptEnv &e) {
-	printString("NOT REQUIRED");
+	_display->printAsciiString("NOT REQUIRED\r");
 	return 0;
 }
 
