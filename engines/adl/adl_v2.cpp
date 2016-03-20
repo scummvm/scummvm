@@ -101,6 +101,7 @@ void AdlEngine_v2::setupOpcodeTables() {
 	Opcode(o1_dropItem);
 	Opcode(o1_setRoomPic);
 	Opcode(o2_tellTime);
+	Opcode(o2_setRoomFromVar);
 }
 
 bool AdlEngine_v2::matchesCurrentPic(byte pic) const {
@@ -278,6 +279,12 @@ int AdlEngine_v2::o2_tellTime(ScriptEnv &e) {
 	printString(time);
 
 	return 0;
+}
+
+int AdlEngine_v2::o2_setRoomFromVar(ScriptEnv &e) {
+	getCurRoom().curPicture = getCurRoom().picture;
+	_state.room = getVar(e.arg(1));
+	return 1;
 }
 
 } // End of namespace Adl

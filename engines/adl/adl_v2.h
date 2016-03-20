@@ -62,6 +62,7 @@ protected:
 	int o2_moveAllItems(ScriptEnv &e);
 	int o2_placeItem(ScriptEnv &e);
 	int o2_tellTime(ScriptEnv &e);
+	int o2_setRoomFromVar(ScriptEnv &e);
 
 	struct {
 		Common::String time;

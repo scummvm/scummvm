@@ -1040,7 +1040,7 @@ bool AdlEngine::matchCommand(ScriptEnv &env) const {
 	for (uint i = 0; i < env.getCondCount(); ++i) {
 		byte op = env.op();
 
-		if (!_condOpcodes[op] || !_condOpcodes[op]->isValid())
+		if (op >= _condOpcodes.size() || !_condOpcodes[op] || !_condOpcodes[op]->isValid())
 			error("Unimplemented condition opcode %02x", op);
 
 		int numArgs = (*_condOpcodes[op])(env);
@@ -1058,7 +1058,7 @@ void AdlEngine::doActions(ScriptEnv &env) {
 	for (uint i = 0; i < env.getActCount(); ++i) {
 		byte op = env.op();
 
-		if (!_actOpcodes[op] || !_actOpcodes[op]->isValid())
+		if (op >= _actOpcodes.size() || !_actOpcodes[op] || !_actOpcodes[op]->isValid())
 			error("Unimplemented action opcode %02x", op);
 
 		int numArgs = (*_actOpcodes[op])(env);
