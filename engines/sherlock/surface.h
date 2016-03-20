@@ -54,7 +54,7 @@ public:
 	/**
 	 * Set the surface details
 	 */
-	void setPixels(byte *pixelsPtr, int sizeX, int sizeY, const Graphics::PixelFormat &pixFormat);
+	void setPixelsData(byte *pixelsPtr, int sizeX, int sizeY, const Graphics::PixelFormat &pixFormat);
 
 	/**
 	 * Draws a surface on this surface

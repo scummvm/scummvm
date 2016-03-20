@@ -33,7 +33,7 @@ Surface::Surface(int width, int height) : Graphics::ManagedSurface(width, height
 	create(width, height);
 }
 
-void Surface::setPixels(byte *pixelsPtr, int sizeX, int sizeY, const Graphics::PixelFormat &pixFormat) {
+void Surface::setPixelsData(byte *pixelsPtr, int sizeX, int sizeY, const Graphics::PixelFormat &pixFormat) {
 	Graphics::ManagedSurface::setPixels(pixelsPtr);
 	this->format = pixFormat;
 	this->w = sizeX;
