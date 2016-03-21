@@ -1093,7 +1093,7 @@ int Sound::pollCD() const {
 
 void Sound::updateCD() {
 	if (!_isLoomSteam)
-		g_system->getAudioCDManager()->updateCD();
+		g_system->getAudioCDManager()->update();
 }
 
 AudioCDManager::Status Sound::getCDStatus() {

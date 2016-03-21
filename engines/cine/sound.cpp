@@ -939,6 +939,10 @@ PCSound::PCSound(Audio::Mixer *mixer, CineEngine *vm)
 	}
 
 	_player = new PCSoundFxPlayer(_soundDriver);
+
+	// Ensure the CD is open
+	if (_vm->getGameType() == GType_FW && (_vm->getFeatures() & GF_CD))
+		g_system->getAudioCDManager()->open();
 }
 
 PCSound::~PCSound() {

@@ -427,7 +427,7 @@ void AGOSEngine::delay(uint amount) {
 	uint32 cur = start;
 	uint this_delay, vgaPeriod;
 
-	_system->getAudioCDManager()->updateCD();
+	_system->getAudioCDManager()->update();
 
 	_debugger->onFrame();
 
@@ -538,7 +538,7 @@ void AGOSEngine::delay(uint amount) {
 		if (_leftButton == 1)
 			_leftButtonCount++;
 
-		_system->getAudioCDManager()->updateCD();
+		_system->getAudioCDManager()->update();
 
 		_system->updateScreen();
 

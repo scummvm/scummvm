@@ -1275,10 +1275,7 @@ void ScummEngine::setupScumm() {
 	// On some systems it's not safe to run CD audio games from the CD.
 	if (_game.features & GF_AUDIOTRACKS && !Common::File::exists("CDDA.SOU")) {
 		checkCD();
-
-		int cd_num = ConfMan.getInt("cdrom");
-		if (cd_num >= 0)
-			_system->getAudioCDManager()->openCD(cd_num);
+		_system->getAudioCDManager()->open();
 	}
 
 	// Create the sound manager

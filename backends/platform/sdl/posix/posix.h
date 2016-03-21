@@ -59,6 +59,8 @@ protected:
 	virtual Common::String getDefaultConfigFileName();
 
 	virtual Common::WriteStream *createLogFile();
+
+	virtual AudioCDManager *createAudioCDManager();
 };
 
 #endif

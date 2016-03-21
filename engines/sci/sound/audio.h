@@ -97,6 +97,7 @@ private:
 	uint _syncOffset;
 	uint32 _audioCdStart;
 	bool _wPlayFlag;
+	bool _initCD;
 };
 
 } // End of namespace Sci

@@ -545,6 +545,10 @@ Common::Error TeenAgentEngine::run() {
 
 	syncSoundSettings();
 
+	// Initialize CD audio
+	if (_gameDescription->flags & ADGF_CD)
+		g_system->getAudioCDManager()->open();
+
 	setMusic(1);
 	_mixer->playStream(Audio::Mixer::kMusicSoundType, &_musicHandle, music, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO, false);
 

@@ -245,15 +245,7 @@ void OSystem_SDL::initBackend() {
 		_timerManager = new SdlTimerManager();
 #endif
 
-	if (_audiocdManager == 0) {
-		// Audio CD support was removed with SDL 2.0
-#if SDL_VERSION_ATLEAST(2, 0, 0)
-		_audiocdManager = new DefaultAudioCDManager();
-#else
-		_audiocdManager = new SdlAudioCDManager();
-#endif
-
-	}
+	_audiocdManager = createAudioCDManager();
 
 	// Setup a custom program icon.
 	_window->setupIcon();
@@ -488,6 +480,15 @@ Common::TimerManager *OSystem_SDL::getTimerManager() {
 	return g_eventRec.getTimerManager();
 #else
 	return _timerManager;
+#endif
+}
+
+AudioCDManager *OSystem_SDL::createAudioCDManager() {
+	// Audio CD support was removed with SDL 2.0
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+	return new DefaultAudioCDManager();
+#else
+	return new SdlAudioCDManager();
 #endif
 }
 

@@ -841,9 +841,7 @@ TinselEngine::TinselEngine(OSystem *syst, const TinselGameDescription *gameDesc)
 		if (!scumm_stricmp(g->gameid, gameid))
 			_gameId = g->id;
 
-	int cd_num = ConfMan.getInt("cdrom");
-	if (cd_num >= 0)
-		_system->getAudioCDManager()->openCD(cd_num);
+	_system->getAudioCDManager()->open();
 
 	_mousePos.x = 0;
 	_mousePos.y = 0;
@@ -975,7 +973,7 @@ Common::Error TinselEngine::run() {
 		// Check for time to do next game cycle
 		if ((g_system->getMillis() > timerVal + GAME_FRAME_DELAY)) {
 			timerVal = g_system->getMillis();
-			_system->getAudioCDManager()->updateCD();
+			_system->getAudioCDManager()->update();
 			NextGameCycle();
 		}
 

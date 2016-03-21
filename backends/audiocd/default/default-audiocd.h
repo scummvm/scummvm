@@ -26,29 +26,48 @@
 #include "backends/audiocd/audiocd.h"
 #include "audio/mixer.h"
 
+namespace Common {
+class String;
+} // End of namespace Common
+
 /**
  * The default audio cd manager. Implements emulation of audio cd playback.
  */
 class DefaultAudioCDManager : public AudioCDManager {
 public:
 	DefaultAudioCDManager();
-	virtual ~DefaultAudioCDManager() {}
+	virtual ~DefaultAudioCDManager();
 
-	void play(int track, int numLoops, int startFrame, int duration, bool only_emulate = false);
-	void stop();
-	bool isPlaying() const;
-	void setVolume(byte volume);
-	void setBalance(int8 balance);
-	void update();
+	virtual bool open();
+	virtual void close();
+	virtual bool play(int track, int numLoops, int startFrame, int duration, bool onlyEmulate = false);
+	virtual void stop();
+	virtual bool isPlaying() const;
+	virtual void setVolume(byte volume);
+	virtual void setBalance(int8 balance);
+	virtual void update();
 	virtual Status getStatus() const; // Subclasses should override for better status results
 
-	virtual bool openCD(int drive) { return false; }
-	virtual void updateCD() {}
-	virtual bool pollCD() const { return false; }
-	virtual void playCD(int track, int num_loops, int start_frame, int duration) {}
-	virtual void stopCD() {}
-
 protected:
+	/**
+	 * Open a CD using the cdrom config variable
+	 */
+	bool openRealCD();
+
+	/**
+	 * Open a CD using the specified drive index
+	 * @param drive The index of the drive
+	 * @note The index is implementation-defined, but 0 is always the best choice
+	 */
+	virtual bool openCD(int drive) { return false; }
+
+	/**
+	 * Open a CD from a specific drive
+	 * @param drive The name of the drive/path
+	 * @note The drive parameter is platform-specific
+	 */
+	virtual bool openCD(const Common::String &drive) { return false; }
+
 	Audio::SoundHandle _handle;
 	bool _emulating;
 
