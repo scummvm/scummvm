@@ -45,7 +45,7 @@ enum cloudAuth{
 class CloudInstance {
     class CloudAbstract *_cloud;
     Common::String _cloudName;
-    public:
+public:
     CloudInstance();
     CloudInstance(CloudAbstract* absCloud);
     ~CloudInstance(){};
@@ -123,18 +123,19 @@ class CloudInstance {
  * providers
  */
 class CloudAbstract {
-    public:
-        virtual void auth(Common::String code)=0;
-        virtual cloudAuth checkAuth()=0;
-        virtual int sync(const Common::String &pattern)=0;
-        virtual int download(const Common::String &fileName)=0;
-        virtual int upload(const Common::String &fileName)=0;
-        virtual int copy(const Common::String &srcFileName, const Common::String &destFileName)=0;
-        virtual int remove(const Common::String &fileName)=0;
-        virtual ~CloudAbstract() {}
+public:
+    virtual void auth(Common::String code)=0;
+    virtual cloudAuth checkAuth()=0;
+    virtual int sync(const Common::String &pattern)=0;
+    virtual int download(const Common::String &fileName)=0;
+    virtual int upload(const Common::String &fileName)=0;
+    virtual int copy(const Common::String &srcFileName, const Common::String &destFileName)=0;
+    virtual int remove(const Common::String &fileName)=0;
+    virtual ~CloudAbstract() {}
 };
 
 CloudInstance* getDefaultInstance();
 
 }
+
 #endif

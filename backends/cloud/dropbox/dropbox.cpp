@@ -37,8 +37,7 @@ Common::String DropBox::getSavePath() {
 
     dir = ConfMan.get("savepath");
     if (dir == "None") {
-        ConfMan.removeKey("savepath",
-                ConfMan.getActiveDomainName());
+        ConfMan.removeKey("savepath", ConfMan.getActiveDomainName());
         ConfMan.flushToDisk();
         dir = ConfMan.get("savepath");
     }
@@ -59,7 +58,7 @@ void DropBox::auth(Common::String code) {
 
 size_t writeCallback(char *ptr, size_t size, size_t nMemb, void *userData) {
     //Discard response
-    return size*nMemb;
+    return size * nMemb;
 }
 
 cloudAuth DropBox::checkAuth() {
@@ -90,13 +89,13 @@ cloudAuth DropBox::checkAuth() {
         res = curl_easy_perform(curl);
         if (res != CURLE_OK) {
             switch (res) {
-                case CURLE_COULDNT_CONNECT:
-                case CURLE_COULDNT_RESOLVE_HOST:
-                case CURLE_COULDNT_RESOLVE_PROXY:
-                    ret = OFFLINE;
-                    break;
-                default:
-                    ret = OFFLINE;
+            case CURLE_COULDNT_CONNECT:
+            case CURLE_COULDNT_RESOLVE_HOST:
+            case CURLE_COULDNT_RESOLVE_PROXY:
+                ret = OFFLINE;
+                break;
+            default:
+                ret = OFFLINE;
             }
         }
         
@@ -109,10 +108,8 @@ cloudAuth DropBox::checkAuth() {
 
         if (ret == OFFLINE) {
             return ret;
-        } else if (response != 200) {
+        } else if (response != 200 || ret == INVALID) {
             return INVALID;
-        } else if (ret == INVALID) {
-            return ret;
         }
     }
     return ret;
@@ -124,20 +121,19 @@ Common::String DropBox::getToken() {
     return _token = ConfMan.get(Common::String("dropbox_token"));
 }
 
-size_t parseToken(char *ptr, size_t size, size_t nmemb, void *userdata) {
+size_t parseToken(char *ptr, size_t size, size_t nMemb, void *userData) {
     int id = 0;
-    char *pch = strtok (ptr,":{[}\", ");
-    while (pch != NULL)
-    {
+    char *pch = strtok(ptr,":{[}\", ");
+    while (pch != NULL) {
         if (id == 0 && Common::String(pch) != Common::String("access_token")) {
             warning("Authorization failed. Please get a new token by revisiting the URL");
             return 0;
         } else if (id == 1) {
             ConfMan.set(Common::String("dropbox_token"), pch);
             ConfMan.flushToDisk();
-            return size*nmemb;
+            return size * nMemb;
         }
-        pch = strtok (NULL, ":{[}\", ");
+        pch = strtok(NULL, ":{[}\", ");
         id += 1;
     }
     return 0;
@@ -193,8 +189,7 @@ int DropBox::copy(const Common::String &srcfileName, const Common::String &destf
         curl_easy_setopt(curl, CURLOPT_URL, "https://api.dropboxapi.com/2/files/copy");
         curl_easy_setopt(curl, CURLOPT_POST, 1L);
 
-        list = curl_slist_append(list,
-                Common::String("Authorization: Bearer " + getToken()).c_str());
+        list = curl_slist_append(list, Common::String("Authorization: Bearer " + getToken()).c_str());
         list = curl_slist_append(list, "Content-Type: application/json");
 
         curl_easy_setopt(curl, CURLOPT_HTTPHEADER, list);
@@ -210,7 +205,6 @@ int DropBox::copy(const Common::String &srcfileName, const Common::String &destf
         return 0;
     }
     return 1;
-
 }
 
 int DropBox::remove(const Common::String &fileName) {
@@ -240,25 +234,25 @@ int DropBox::remove(const Common::String &fileName) {
 }
 
 static Common::StringArray cloudGames;
-size_t cloudSearch(char *ptr, size_t size, size_t nmemb, void *userdata) {
+size_t cloudSearch(char *ptr, size_t size, size_t nMemb, void *userData) {
     cloudGames = Common::StringArray();
 
     int id = 0;
-    char *pch = strtok (ptr,"{[}\", ");
+    char *pch = strtok(ptr,"{[}\", ");
     while (pch != NULL)
     {
-        if (id%34 == 14) {
+        if (id % 34 == 14) {
             cloudGames.push_back(Common::String(pch));
         }
-        pch = strtok (NULL, "{[}\", ");
+        pch = strtok(NULL, "{[}\", ");
         id += 1;
     }
-    return size*nmemb;
+    return size * nMemb;
 }
 
 int DropBox::sync(const Common::String &pattern) { 
 
-    Common::FSDirectory Dir(getSavePath());
+    Common::FSDirectory dir(getSavePath());
 
     CURL* curl = curl_easy_init();
     struct curl_slist *list = NULL;
@@ -272,7 +266,7 @@ int DropBox::sync(const Common::String &pattern) {
 
         curl_easy_setopt(curl, CURLOPT_HTTPHEADER, list);
 
-        Common::String data = Common::String("{\"path\":\"\",\"query\":\""+pattern+"\"}");
+        Common::String data = Common::String("{\"path\":\"\",\"query\":\"" + pattern + "\"}");
         curl_easy_setopt(curl, CURLOPT_POSTFIELDS, data.c_str());
         curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, cloudSearch);
 
@@ -282,23 +276,23 @@ int DropBox::sync(const Common::String &pattern) {
         curl_slist_free_all(list);
         curl = NULL;
 
-        for (size_t i = 0; i < cloudGames.size(); i++) {
-            if (!Dir.hasFile(cloudGames[i])) {
+        for (uint i = 0; i < cloudGames.size(); i++) {
+            if (!dir.hasFile(cloudGames[i])) {
                 download(cloudGames[i]);
             }
         }
         Common::String search(pattern);
         Common::ArchiveMemberList savefiles;
-        if (Dir.listMatchingMembers(savefiles, search) > 0) {
+        if (dir.listMatchingMembers(savefiles, search) > 0) {
             for (Common::ArchiveMemberList::const_iterator file = savefiles.begin(); file != savefiles.end(); ++file) {
-                bool cloud_has = 0;
-                for (size_t i = 0; i < cloudGames.size(); i++) {
+                bool cloudHas = 0;
+                for (uint i = 0; i < cloudGames.size(); i++) {
                     if (cloudGames[i] == (*file)->getName()) {
-                        cloud_has = 1;
+                        cloudHas = 1;
                         break;
                     }
                 }
-                if (!cloud_has) {
+                if (!cloudHas) {
                     upload((*file)->getName());
                 }
             }
@@ -309,8 +303,8 @@ int DropBox::sync(const Common::String &pattern) {
     return 1;
 }
 
-size_t downloadCallback(char *ptr, size_t size, size_t nmemb, void *userdata) {
-    return ((Common::WriteStream *)userdata)->write(ptr, size*nmemb);
+size_t downloadCallback(char *ptr, size_t size, size_t nMemb, void *userData) {
+    return ((Common::WriteStream *)userData)->write(ptr, size * nMemb);
 }
 int DropBox::download(const Common::String &fileName) {  
 
@@ -331,8 +325,7 @@ int DropBox::download(const Common::String &fileName) {
 
         list = curl_slist_append(list, (Common::String("Authorization: Bearer ") + getToken()).c_str());
 
-        list = curl_slist_append(list,
-                Common::String("Dropbox-API-Arg: {\"path\":\"/"+fileName+"\"}").c_str());
+        list = curl_slist_append(list, Common::String("Dropbox-API-Arg: {\"path\":\"/" + fileName + "\"}").c_str());
         curl_easy_setopt(curl, CURLOPT_HEADER, 0); 
 
         curl_easy_setopt(curl, CURLOPT_HTTPHEADER, list);
@@ -351,8 +344,8 @@ int DropBox::download(const Common::String &fileName) {
     return 1;
 }
 
-size_t uploadCallback(char *buffer, size_t size, size_t nItems, void *instream) {
-    return ((Common::SeekableReadStream *)instream)->read(buffer, size*nItems);
+size_t uploadCallback(char *buffer, size_t size, size_t nItems, void *inStream) {
+    return ((Common::SeekableReadStream *)inStream)->read(buffer, size * nItems);
 }
 
 int DropBox::upload(const Common::String &fileName) {
@@ -366,7 +359,7 @@ int DropBox::upload(const Common::String &fileName) {
         return 1;
     }
 
-    int filesize = fd->size();
+    int fileSize = fd->size();
 
     if (curl) {
         curl_easy_setopt(curl, CURLOPT_URL, "https://content.dropboxapi.com/2/files/upload");
@@ -380,7 +373,7 @@ int DropBox::upload(const Common::String &fileName) {
 
         curl_easy_setopt(curl, CURLOPT_READDATA, fd);
         curl_easy_setopt(curl, CURLOPT_POSTFIELDSIZE,
-                filesize);
+                fileSize);
 
         curl_easy_setopt(curl, CURLOPT_HTTPHEADER, list);
         curl_easy_setopt(curl, CURLOPT_READFUNCTION, uploadCallback); 

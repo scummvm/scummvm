@@ -34,13 +34,13 @@
 
 namespace Cloud {
 
-class DropBox:public CloudAbstract {
+class DropBox : public CloudAbstract {
     Common::String _token;
     Common::String getSavePath();
     Common::String getToken();
     Common::String getTokenFromCode(Common::String code);
 
-    public:
+public:
     DropBox();
     virtual cloudAuth checkAuth();
     virtual void auth(Common::String code);
