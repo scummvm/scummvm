@@ -24,7 +24,7 @@
 #include "gnap/fontdata.h"
 #include "graphics/fontman.h"
 #include "graphics/font.h"
-#include "graphics/decoders/bmp.h"
+#include "image/bmp.h"
 
 namespace Gnap {
 
@@ -365,7 +365,7 @@ Graphics::Surface *GameSys::loadBitmap(int resourceId) {
 	uint32 resourceSize = _vm->_dat->getResourceSize(resourceId);
 	Common::MemoryReadStream stream(resourceData, resourceSize, DisposeAfterUse::NO);
 	Graphics::Surface *bmpSurface;
-	Graphics::BitmapDecoder bmp;
+	Image::BitmapDecoder bmp;
 	if (!bmp.loadStream(stream))
 		error("GameSys::loadBitmap() Could not load bitmap resource %08X", resourceId);
 	bmpSurface = bmp.getSurface()->convertTo(_vm->_system->getScreenFormat());
