@@ -83,6 +83,7 @@ static const ADGameDescription gameDescriptions[] = {
 	// Crash on startup
 	FANGAMEN("Parrot Talk", "PARROT TALKV2", "d81f2d03a1e863f04fb1e3a5495b720e", 118884),
 	FANGAME("Pavilion", "4d991d7d1534d48d90598d86ea6d5d97", 231687),
+	FANGAMEN("Pencils", "Pencils.99", "913812a1ac7a6b0e48dadd1afa1c7763", 408551),
 	// Polygons with byte 1
 	FANGAME("Periapt", "913812a1ac7a6b0e48dadd1afa1c7763", 406006),
 	FANGAME("Puzzle Piece Search", "595117cbed33e8de1ab3714b33880205", 247693), // From Joshua's Worlds 1.0
@@ -96,6 +97,8 @@ static const ADGameDescription gameDescriptions[] = {
 	FANGAME("Radical Castle 1.0", "677bfee4afeca2f7152eb8b76c85ca8d", 347278),
 	BIGGAME("raysmaze", "v1.5", "Ray's Maze1.5", "064b16d8c20724f8debbbdc3aafde538", 1408516),
 	BIGGAME("raysmaze", "v1.5/alt", "Ray's Maze1.5", "92cca777800c3d31a77b5ed7f6ee49ad", 1408516),
+	// Unhandled comparison case
+	FANGAME("Sands of Time", "913812a1ac7a6b0e48dadd1afa1c7763", 122672), // Original file name "Sands of Time†"
 	BIGGAME("scepters", "", "Scepters", "3311deef8bf82f0b4b1cfa15a3b3289d", 346595),
 	// ??? problems with dog bitmap?
 	FANGAMEN("Space Adventure", "SpaceAdventure", "f9f3f1c419f56955f7966355b34ea5c8", 155356),
@@ -105,6 +108,8 @@ static const ADGameDescription gameDescriptions[] = {
 	// Code 0x03 in text
 	FANGAME("Swamp Witch", "913812a1ac7a6b0e48dadd1afa1c7763", 739781), // Original file name "Swamp Witch†"
 	FANGAME("Sweetspace Now!", "e12ec4d76d48bdc86567c5e63750547e", 123813), // Comes with Jumble
+	// Wrong scrolling in the first console text
+	FANGAMEN("Sword of Siegfried", "Sword of Siegfried 1.0", "913812a1ac7a6b0e48dadd1afa1c7763", 234763),
 	FANGAME("Time Bomb", "4b0e1a1fbaaa4930accd0f9f0e1519c7", 64564),
 	FANGAME("Time Bomb", "4b0e1a1fbaaa4930accd0f9f0e1519c7", 64578), // Alt version
 	FANGAMEND("The Ashland Revolution", "The Ashland Revolution Demo", "913812a1ac7a6b0e48dadd1afa1c7763", 145023), // Original file name "The Ashland Revolution Demo†"
