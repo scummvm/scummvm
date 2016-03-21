@@ -66,14 +66,22 @@ static const ADGameDescription gameDescriptions[] = {
 	FANGAME("Karth of the Jungle II", "c106835ab4436de054e03aec3ce904ce", 201053),
 	FANGAMEN("Little Pythagoras", "Little Pythagoras 1.1.1", "94a9c4f8b3dabd1846d76215a49bd221", 628821),
 	FANGAME("Lost Crystal", "8174c81ea1858d0079ae040dae2cefd3", 771072),
+	// Crash in design drawing on startup
+	FANGAMEN("Lost In Kookyville", "Lost In Kookyville 1.2.4", "e6cea2234cee9d0dba7be10bc1ad6055", 721569),
 	FANGAME("Magic Rings", "913812a1ac7a6b0e48dadd1afa1c7763", 109044),
 	// No way to click on the house
 	FANGAME("Messy House", "913812a1ac7a6b0e48dadd1afa1c7763", 177120),
 	FANGAME("Midnight Snack", "913812a1ac7a6b0e48dadd1afa1c7763", 67952),
 	FANGAME("Midnight Snack", "913812a1ac7a6b0e48dadd1afa1c7763", 67966), // Alt version
 	FANGAME("Minitorian", "913812a1ac7a6b0e48dadd1afa1c7763", 586464),
+	// Unhandled comparison case
+	FANGAME("Mountain of Mayhem", "4b0e1a1fbaaa4930accd0f9f0e1519c7", 750003), // Original file name "Mountain of Mayhem †"
 	// No way to pass through the first screen
 	FANGAME("Nightcrawler Ned", "94a9c4f8b3dabd1846d76215a49bd221", 366542),
+	// Crash on startup
+	FANGAMEN("Parrot Talk", "PARROT TALK V1", "d81f2d03a1e863f04fb1e3a5495b720e", 118936),
+	// Crash on startup
+	FANGAMEN("Parrot Talk", "PARROT TALKV2", "d81f2d03a1e863f04fb1e3a5495b720e", 118884),
 	FANGAME("Pavilion", "4d991d7d1534d48d90598d86ea6d5d97", 231687),
 	// Polygons with byte 1
 	FANGAME("Periapt", "913812a1ac7a6b0e48dadd1afa1c7763", 406006),
