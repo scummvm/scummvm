@@ -319,8 +319,9 @@ void Screen::vgaBar(const Common::Rect &r, int color) {
 }
 
 void Screen::setDisplayBounds(const Common::Rect &r) {
-	_sceneSurface.setPixelsData((byte *)_backBuffer1.getBasePtr(r.left, r.top),
-		r.width(), r.height(), _backBuffer1.format);
+	_sceneSurface.create(_backBuffer1, r);
+	assert(_sceneSurface.width()  == r.width());
+	assert(_sceneSurface.height() == r.height());
 
 	_backBuffer = &_sceneSurface;
 }
