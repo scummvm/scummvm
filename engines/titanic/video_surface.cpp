@@ -30,8 +30,8 @@ int CVideoSurface::_videoSurfaceCounter = 0;
 
 CVideoSurface::CVideoSurface(CScreenManager *screenManager) :
 		_screenManager(screenManager), _rawSurface(nullptr),
-		_field34(nullptr), _pendingLoad(false), _field3C(false), _field40(0),
-		_field44(4), _field48(0), _field50(1) {
+		_field34(nullptr), _pendingLoad(false), _blitFlag(false),
+		_field40(0), _field44(4), _field48(0), _field50(1) {
 	_videoSurfaceNum = _videoSurfaceCounter++;
 }
 
@@ -45,6 +45,74 @@ void CVideoSurface::setSurface(CScreenManager *screenManager, DirectDrawSurface 
 	_screenManager = screenManager;
 	_ddSurface = surface;
 }
+
+void CVideoSurface::blitFrom(const Common::Rect &srcRect, const Common::Rect &destRect, CVideoSurface *srcSurface) {
+	// TODO: Cases when _blitFlag is false
+	assert(_blitFlag);
+	error("TODO");
+}
+
+void CVideoSurface::clipBounds(Common::Rect &srcRect, Common::Rect &destRect,
+		CVideoSurface *srcSurface, Common::Rect *subRect, Common::Point *pt) {
+	if (pt) {
+		srcRect.left = pt->x;
+		srcRect.top = pt->y;
+	} else {
+		srcRect.left = srcRect.top = 0;
+	}
+
+	if (subRect) {
+		destRect.right = destRect.left + subRect->width();
+		destRect.bottom = destRect.top + subRect->height();
+		srcRect = *subRect;
+	} else {
+		srcRect.right = srcRect.left + srcSurface->getWidth();
+		srcRect.bottom = srcRect.top + srcSurface->getHeight();
+		srcRect = Common::Rect(0, 0, srcSurface->getWidth(), srcSurface->getHeight());
+	}
+
+	// Clip destination rect to be on-screen
+	if (destRect.left < 0) {
+		srcRect.left -= destRect.left;
+		destRect.left = 0;
+	}
+	if (destRect.top < 0) {
+		srcRect.top -= destRect.top;
+		destRect.top = 0;
+	}
+	if (destRect.right > getWidth()) {
+		srcRect.right += getWidth() - destRect.right;
+		destRect.right = getWidth();
+	}
+	if (destRect.bottom > getHeight()) {
+		srcRect.bottom += getHeight() - destRect.bottom;
+		destRect.bottom = getHeight();
+	}
+
+	// Clip source rect to be within the source surface
+	if (srcRect.left < 0) {
+		destRect.left -= srcRect.left;
+		srcRect.left = 0;
+	}
+	if (srcRect.top < 0) {
+		destRect.top -= srcRect.top;
+		srcRect.top = 0;
+	}
+	if (srcRect.right > srcSurface->getWidth()) {
+		destRect.right += srcSurface->getWidth() - srcRect.right;
+		srcRect.right = srcSurface->getWidth();
+	}
+	if (srcRect.bottom > srcSurface->getHeight()) {
+		destRect.bottom += srcSurface->getHeight() - srcRect.bottom;
+		srcRect.bottom = srcSurface->getHeight();
+	}
+
+	// Validate that the resulting rects are valid
+	if (destRect.left >= destRect.right || destRect.top >= destRect.bottom
+		|| srcRect.left >= srcRect.right || srcRect.top >= srcRect.bottom)
+		error("Invalid rect");
+}
+
 
 /*------------------------------------------------------------------------*/
 

@@ -77,7 +77,13 @@ void DirectDrawSurface::fill(const Common::Rect *bounds, uint32 color) {
 	_surface->fillRect(tempBounds, color);
 }
 
-void DirectDrawSurface::blitFast(const Common::Point &destPos, DirectDrawSurface *srcSurface, Common::Rect *bounds) {
+void DirectDrawSurface::blit(const Common::Rect &destRect, DirectDrawSurface *srcSurface, Common::Rect &srcRect) {
+	assert(srcSurface);
+	if (!destRect.isEmpty())
+		_surface->transBlitFrom(*srcSurface->_surface, srcRect, destRect, (uint)-1);
+}
+
+void DirectDrawSurface::blit(const Common::Point &destPos, DirectDrawSurface *srcSurface, Common::Rect *bounds) {
 	if (bounds)
 		_surface->blitFrom(*srcSurface->_surface, *bounds, destPos);
 	else

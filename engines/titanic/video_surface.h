@@ -39,6 +39,12 @@ class CTargaDecode;
 class CVideoSurface : public ListItem {
 	friend class CJPEGDecode;
 	friend class CTargaDecode;
+private:
+	/**
+	 * Calculates blitting bounds
+	 */
+	void clipBounds(Common::Rect &destRect, Common::Rect &srcRect,
+		CVideoSurface *srcSurface, Common::Rect *bounds2, Common::Point *pt);
 protected:
 	static int _videoSurfaceCounter;
 protected:
@@ -55,7 +61,7 @@ protected:
 	int _field50;
 	int _lockCount;
 public:
-	bool _field3C;
+	bool _blitFlag;
 public:
 	CVideoSurface(CScreenManager *screenManager);
 	virtual ~CVideoSurface();
@@ -141,6 +147,11 @@ public:
 	 * Frees the underlying surface
 	 */
 	virtual int freeSurface() { return 0; }
+
+	/**
+	 * Blit from another surface
+	 */
+	void blitFrom(const Common::Rect &srcRect, const Common::Rect &destRect, CVideoSurface *srcSurface);
 };
 
 class OSVideoSurface : public CVideoSurface {

@@ -54,7 +54,7 @@ void CGameView::createSurface(const CResourceKey &key) {
 	// Create a fresh surface
 	CScreenManager::setCurrent();
 	_surface = CScreenManager::_currentScreenManagerPtr->createSurface(key);
-	_surface->_field3C = true;
+	_surface->_blitFlag = true;
 }
 
 void CGameView::draw1() {

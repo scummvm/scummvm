@@ -102,7 +102,12 @@ public:
 	/**
 	 * Copy data from a source surfcae into this one
 	 */
-	void blitFast(const Common::Point &destPos, DirectDrawSurface *srcSurface, Common::Rect *bounds);
+	void blit(const Common::Rect &destRect, DirectDrawSurface *srcSurface, Common::Rect &srcRect);
+
+	/**
+	 * Copy data from a source surfcae into this one
+	 */
+	void blit(const Common::Point &destPos, DirectDrawSurface *srcSurface, Common::Rect *bounds);
 };
 
 } // End of namespace Titanic

@@ -148,7 +148,7 @@ public:
 	/**
 	 * Sets the video mode
 	 */
-	virtual void setMode(int width, int height, int bpp, uint numBackSurfaces, bool flag2) = 0;
+	virtual void setMode(int width, int height, int bpp, uint numBackSurfaces, bool flag2);
 
 	/**
 	 * Handles drawing the cursors
