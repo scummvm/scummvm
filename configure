@@ -4261,15 +4261,24 @@ define_in_config_if_yes "$_opengles" "USE_GLES"
 #
 # Check for Linux CD-ROM support
 #
-echocheck "Linux CD-ROM"
-linuxcd=no
-cat > $TMPC << EOF
+case $_host_os in
+	*linux*)
+		echocheck "Linux CD-ROM"
+		linuxcd=no
+		cat > $TMPC << EOF
 #include <linux/cdrom.h>
-int main(void) { int x = CDROMREADAUDIO; return 0; }
+#include <sys/types.h>
+int main(void) {
+	int x = CDROMREADAUDIO;
+	dev_t dev;
+	return major(dev) + x;
+}
 EOF
-cc_check && linuxcd=yes
-define_in_config_if_yes "$linuxcd" 'USE_LINUXCD'
-echo "$linuxcd"
+		cc_check && linuxcd=yes
+		define_in_config_if_yes "$linuxcd" 'USE_LINUXCD'
+		echo "$linuxcd"
+		;;
+esac
 
 
 #
