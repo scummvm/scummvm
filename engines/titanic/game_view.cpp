@@ -59,13 +59,16 @@ void CGameView::createSurface(const CResourceKey &key) {
 
 void CGameView::drawView() {
 	CScreenManager::setCurrent();
-	Rect rect1 = _gameManager->_bounds;
+	Rect srcRect = _gameManager->_bounds;
+
 	Rect rect2(0, 0, 600, 340);
 	rect2.translate(20, 10);
+	srcRect.combine2(rect2);
+	srcRect.translate(-20, -10);
+	Common::Point destPos(srcRect.left, srcRect.top);
 
-
-
-	warning("TODO: CGameView_Draw1");
+	CScreenManager::_currentScreenManagerPtr->blitFrom(0, _surface,
+		&destPos, &srcRect);
 }
 
 /*------------------------------------------------------------------------*/

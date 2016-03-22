@@ -123,7 +123,45 @@ CVideoSurface *OSScreenManager::getSurface(int surfaceNum) const {
 
 void OSScreenManager::proc9() {}
 void OSScreenManager::proc10() {}
-void OSScreenManager::proc11() {}
+
+void OSScreenManager::blitFrom(int surfaceNum, CVideoSurface *src,
+	const Point *destPos, const Rect *srcRect) {
+	// Get the dest surface
+	CVideoSurface *destSurface = _frontRenderSurface;
+	if (surfaceNum < -1)
+		return;
+	if (surfaceNum >= 0 && surfaceNum < (int)_backSurfaces.size())
+		destSurface = _backSurfaces[surfaceNum]._surface;
+	if (!destSurface->hasSurface())
+		return;
+	
+	Point destPoint = destPos ? *destPos : Point(0, 0);
+	Rect srcBounds = srcRect ? *srcRect : Rect(0, 0, src->getWidth(), src->getHeight());
+	Rect *bounds = &srcBounds;
+	Rect rect2;
+
+	if (surfaceNum >= 0 && !_backSurfaces[surfaceNum]._bounds.isEmpty()) {
+		// Perform clipping to the bounds of the back surface
+		rect2 = srcBounds;
+		rect2.translate(-srcBounds.left, -srcBounds.top);
+		rect2.translate(destPoint.x, destPoint.y);
+		rect2.combine2(_backSurfaces[surfaceNum]._bounds);
+
+		rect2.translate(-destPoint.x, -destPoint.y);
+		rect2.translate(srcBounds.left, srcBounds.top);
+
+		if (rect2.isEmpty())
+			return;
+
+		destPoint.x += rect2.left - srcBounds.left;
+		destPoint.y += rect2.top - srcBounds.top;
+		bounds = &rect2;
+	}
+
+	if (!bounds->isEmpty())
+		destSurface->blitFrom(destPoint, src, bounds);
+}
+
 void OSScreenManager::proc12() {}
 void OSScreenManager::proc13() {}
 void OSScreenManager::proc14() {}

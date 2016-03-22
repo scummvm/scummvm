@@ -44,8 +44,11 @@ private:
 	/**
 	 * Calculates blitting bounds
 	 */
-	void clipBounds(Rect &destRect, Rect &srcRect,
-		CVideoSurface *srcSurface, Rect *bounds2, Point *pt);
+	void clipBounds(Rect &srcRect, Rect &destRect,
+		CVideoSurface *srcSurface, const Rect *subRect, const Point *pt);
+
+	void blitRect1(const Rect &srcRect, const Rect &destRect, CVideoSurface *src);
+	void blitRect2(const Rect &srcRect, const Rect &destRect, CVideoSurface *src);
 protected:
 	static int _videoSurfaceCounter;
 protected:
@@ -63,6 +66,7 @@ protected:
 	int _lockCount;
 public:
 	bool _blitFlag;
+	bool _blitStyleFlag;
 public:
 	CVideoSurface(CScreenManager *screenManager);
 	virtual ~CVideoSurface();
@@ -152,7 +156,7 @@ public:
 	/**
 	 * Blit from another surface
 	 */
-	void blitFrom(const Rect &srcRect, const Rect &destRect, CVideoSurface *srcSurface);
+	void blitFrom(const Point &destPos, CVideoSurface *src, const Rect *srcRect = nullptr);
 };
 
 class OSVideoSurface : public CVideoSurface {

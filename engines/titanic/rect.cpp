@@ -24,4 +24,21 @@
 
 namespace Titanic {
 
+void Rect::combine1(const Rect &r) {
+	if (isEmpty() || r.isEmpty())
+		return;
+
+	Common::Rect::extend(r);
+}
+
+void Rect::combine2(const Rect &r) {
+	if (!isEmpty()) {
+		if (r.isEmpty()) {
+			clear();
+		} else {
+			Common::Rect::extend(r);
+		}
+	}
+}
+
 } // End of namespace Titanic

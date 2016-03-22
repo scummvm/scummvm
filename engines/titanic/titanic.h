@@ -29,6 +29,7 @@
 #include "common/serializer.h"
 #include "engines/advancedDetector.h"
 #include "engines/engine.h"
+#include "graphics/screen.h"
 #include "titanic/debugger.h"
 #include "titanic/events.h"
 #include "titanic/files_manager.h"
@@ -96,6 +97,7 @@ public:
 	CFilesManager _filesManager;
 	Debugger *_debugger;
 	Events *_events;
+	Graphics::Screen *_screen;
 	OSScreenManager *_screenManager;
 	CMainGameWindow *_window;
 	Common::RandomSource _randomSource;

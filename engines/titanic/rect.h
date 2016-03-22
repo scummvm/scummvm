@@ -35,7 +35,25 @@ public:
 	Rect(int16 w, int16 h) : Common::Rect(w, h) {}
 	Rect(int16 x1, int16 y1, int16 x2, int16 y2) : Common::Rect(x1, y1, x2, y2) {}
 
+	/**
+	 * Returns the top/left corner of the rect as a point
+	 */
 	operator const Point() { return Point(left, top); }
+
+	/**
+	 * Clear the rect
+	 */
+	void clear() { left = top = right = bottom = 0; }
+
+	/**
+	 * Combine another rect into this one
+	 */
+	void combine1(const Rect &r);
+
+	/**
+	 * Combine another rect into this one
+	 */
+	void combine2(const Rect &r);
 };
 
 } // End of namespace Titanic

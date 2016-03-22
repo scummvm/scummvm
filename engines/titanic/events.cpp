@@ -90,7 +90,7 @@ bool Events::checkForNextFrameCounter() {
 		_vm->_debugger->onFrame();
 
 		// Display the frame
-		//_vm->_screen->update();
+		_vm->_screen->update();
 
 		return true;
 	}

@@ -84,7 +84,13 @@ public:
 	virtual CVideoSurface *getSurface(int surfaceNum) const = 0;
 	virtual void proc9() = 0;
 	virtual void proc10() = 0;
-	virtual void proc11() = 0;
+
+	/**
+	 * Blits a surface onto one of the screen surfaces
+	 */
+	virtual void blitFrom(int surfaceNum, CVideoSurface *src, const Point *destPos = nullptr,
+		const Rect *srcRect = nullptr) = 0;
+
 	virtual void proc12() = 0;
 	virtual void proc13() = 0;
 	virtual void proc14() = 0;
@@ -160,7 +166,13 @@ public:
 	virtual CVideoSurface *getSurface(int surfaceNum) const;
 	virtual void proc9();
 	virtual void proc10();
-	virtual void proc11();
+
+	/**
+	 * Blits a surface onto one of the screen surfaces
+	 */
+	virtual void blitFrom(int surfaceNum, CVideoSurface *src, const Point *destPos,
+		const Rect *srcRect = nullptr);
+
 	virtual void proc12();
 	virtual void proc13();
 	virtual void proc14();

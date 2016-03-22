@@ -29,8 +29,8 @@ namespace Titanic {
 int CVideoSurface::_videoSurfaceCounter = 0;
 
 CVideoSurface::CVideoSurface(CScreenManager *screenManager) :
-		_screenManager(screenManager), _rawSurface(nullptr),
-		_field34(nullptr), _pendingLoad(false), _blitFlag(false),
+		_screenManager(screenManager), _rawSurface(nullptr), _field34(nullptr),
+		_pendingLoad(false), _blitStyleFlag(false), _blitFlag(false),
 		_field40(0), _field44(4), _field48(0), _field50(1) {
 	_videoSurfaceNum = _videoSurfaceCounter++;
 }
@@ -46,14 +46,20 @@ void CVideoSurface::setSurface(CScreenManager *screenManager, DirectDrawSurface 
 	_ddSurface = surface;
 }
 
-void CVideoSurface::blitFrom(const Rect &srcRect, const Rect &destRect, CVideoSurface *srcSurface) {
-	// TODO: Cases when _blitFlag is false
-	assert(_blitFlag);
-	error("TODO");
+void CVideoSurface::blitFrom(const Point &destPos, CVideoSurface *src, const Rect *srcRect) {
+	if (loadIfReady() && src->loadIfReady() && _ddSurface && src->_ddSurface) {
+		Rect srcBounds, destBounds;
+		clipBounds(srcBounds, destBounds, src, srcRect, &destPos);
+
+		if (_blitStyleFlag)
+			blitRect2(srcBounds, destBounds, src);
+		else
+			blitRect1(srcBounds, destBounds, src);
+	}
 }
 
 void CVideoSurface::clipBounds(Rect &srcRect, Rect &destRect,
-		CVideoSurface *srcSurface, Rect *subRect, Point *pt) {
+		CVideoSurface *srcSurface, const Rect *subRect, const Point *pt) {
 	if (pt) {
 		srcRect.left = pt->x;
 		srcRect.top = pt->y;
@@ -113,6 +119,21 @@ void CVideoSurface::clipBounds(Rect &srcRect, Rect &destRect,
 		error("Invalid rect");
 }
 
+void CVideoSurface::blitRect1(const Rect &srcRect, const Rect &destRect, CVideoSurface *src) {
+	src->lock();
+	lock();
+
+	// TODO: Do it like the original does it
+	this->_rawSurface->blitFrom(*src->_rawSurface, srcRect, Point(destRect.left, destRect.top));
+	
+	src->unlock();
+	unlock();
+}
+
+void CVideoSurface::blitRect2(const Rect &srcRect, const Rect &destRect, CVideoSurface *src) {
+	// TODO: Do it like the original does it
+	blitRect1(srcRect, destRect, src);
+}
 
 /*------------------------------------------------------------------------*/
 
