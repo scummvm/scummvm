@@ -30,6 +30,7 @@ namespace Scalpel {
 ScalpelScreen::ScalpelScreen(SherlockEngine *vm) : Screen(vm) {
 	_backBuffer1.create(320, 200);
 	_backBuffer2.create(320, 200);
+	activateBackBuffer1();
 }
 
 void ScalpelScreen::makeButton(const Common::Rect &bounds, int textX,
