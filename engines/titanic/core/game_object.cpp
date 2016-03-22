@@ -26,7 +26,7 @@
 namespace Titanic {
 
 CGameObject::CGameObject(): CNamedItem() {
-	_bounds = Common::Rect(0, 0, 15, 15);
+	_bounds = Rect(0, 0, 15, 15);
 	_field34 = 0;
 	_field38 = 0;
 	_field3C = 0;
@@ -122,7 +122,7 @@ void CGameObject::fn2() {
 	error("TODO");
 }
 
-bool CGameObject::checkPoint(const Common::Point &pt, int v0, int v1) {
+bool CGameObject::checkPoint(const Point &pt, int v0, int v1) {
 	warning("TODO: CGameObject::checkPoint");
 	return false;
 }

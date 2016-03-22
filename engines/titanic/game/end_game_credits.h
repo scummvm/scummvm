@@ -30,7 +30,7 @@ namespace Titanic {
 class CEndGameCredits : public CGameObject {
 private:
 	int _fieldBC;
-	Common::Point _pos1;
+	Point _pos1;
 public:
 	CLASSDEF
 	CEndGameCredits();

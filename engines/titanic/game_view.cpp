@@ -57,10 +57,10 @@ void CGameView::createSurface(const CResourceKey &key) {
 	_surface->_blitFlag = true;
 }
 
-void CGameView::draw1() {
+void CGameView::drawView() {
 	CScreenManager::setCurrent();
-	Common::Rect rect1 = _gameManager->_bounds;
-	Common::Rect rect2(0, 0, 600, 340);
+	Rect rect1 = _gameManager->_bounds;
+	Rect rect2(0, 0, 600, 340);
 	rect2.translate(20, 10);
 
 
@@ -78,7 +78,7 @@ void CSTGameView::setView(CViewItem *view) {
 	_gameWindow->setActiveView(view);
 }
 
-void CSTGameView::draw(const Common::Rect &bounds) {
+void CSTGameView::draw(const Rect &bounds) {
 	_gameWindow->draw();
 }
 

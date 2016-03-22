@@ -29,7 +29,7 @@ namespace Titanic {
 
 class CDropTarget : public CGameObject {
 private:
-	Common::Point _pos1;
+	Point _pos1;
 	int _fieldC4;
 	CString _string1;
 	int _fieldD4;

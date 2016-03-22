@@ -46,14 +46,14 @@ void CVideoSurface::setSurface(CScreenManager *screenManager, DirectDrawSurface 
 	_ddSurface = surface;
 }
 
-void CVideoSurface::blitFrom(const Common::Rect &srcRect, const Common::Rect &destRect, CVideoSurface *srcSurface) {
+void CVideoSurface::blitFrom(const Rect &srcRect, const Rect &destRect, CVideoSurface *srcSurface) {
 	// TODO: Cases when _blitFlag is false
 	assert(_blitFlag);
 	error("TODO");
 }
 
-void CVideoSurface::clipBounds(Common::Rect &srcRect, Common::Rect &destRect,
-		CVideoSurface *srcSurface, Common::Rect *subRect, Common::Point *pt) {
+void CVideoSurface::clipBounds(Rect &srcRect, Rect &destRect,
+		CVideoSurface *srcSurface, Rect *subRect, Point *pt) {
 	if (pt) {
 		srcRect.left = pt->x;
 		srcRect.top = pt->y;
@@ -68,7 +68,7 @@ void CVideoSurface::clipBounds(Common::Rect &srcRect, Common::Rect &destRect,
 	} else {
 		srcRect.right = srcRect.left + srcSurface->getWidth();
 		srcRect.bottom = srcRect.top + srcSurface->getHeight();
-		srcRect = Common::Rect(0, 0, srcSurface->getWidth(), srcSurface->getHeight());
+		srcRect = Rect(0, 0, srcSurface->getWidth(), srcSurface->getHeight());
 	}
 
 	// Clip destination rect to be on-screen

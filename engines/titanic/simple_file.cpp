@@ -194,16 +194,16 @@ double SimpleFile::readFloat() {
 	return floatValue;
 }
 
-Common::Point SimpleFile::readPoint() {
-	Common::Point pt;
+Point SimpleFile::readPoint() {
+	Point pt;
 	pt.x = readNumber();
 	pt.y = readNumber();
 
 	return pt;
 }
 
-Common::Rect SimpleFile::readRect() {
-	Common::Rect r;
+Rect SimpleFile::readRect() {
+	Rect r;
 	r.left = readNumber();
 	r.top = readNumber();
 	r.right = readNumber();
@@ -296,16 +296,16 @@ void SimpleFile::writeFloatLine(double val, int indent) {
 	write("\n", 1);
 }
 
-void SimpleFile::writePoint(const Common::Point &pt, int indent) {
+void SimpleFile::writePoint(const Point &pt, int indent) {
 	writeIndent(indent);
 	writeNumber(pt.x);
 	writeNumber(pt.y);
 	write("\n", 1);
 }
 
-void SimpleFile::writeRect(const Common::Rect &r, int indent) {
-	writePoint(Common::Point(r.left, r.top), indent);
-	writePoint(Common::Point(r.right, r.bottom), indent);
+void SimpleFile::writeRect(const Rect &r, int indent) {
+	writePoint(Point(r.left, r.top), indent);
+	writePoint(Point(r.right, r.bottom), indent);
 }
 
 void SimpleFile::writeIndent(uint indent) {

@@ -24,7 +24,7 @@
 #define TITANIC_SIMPLE_FILE_H
 
 #include "common/file.h"
-#include "common/rect.h"
+#include "titanic/rect.h"
 #include "common/savefile.h"
 #include "common/stream.h"
 #include "common/zlib.h"
@@ -104,12 +104,12 @@ public:
 	/**
 	 * Read in a point
 	 */
-	Common::Point readPoint();
+	Point readPoint();
 
 	/**
 	 * Read in a rect
 	 */
-	Common::Rect readRect();
+	Rect readRect();
 
 	/**
 	 * Read a string and copy it into an optionally passed buffer
@@ -159,12 +159,12 @@ public:
 	/**
 	 * Write out a point line
 	 */
-	void writePoint(const Common::Point &pt, int indent);
+	void writePoint(const Point &pt, int indent);
 
 	/**
 	 * Write out a rect line
 	 */
-	void writeRect(const Common::Rect &r, int indent);
+	void writeRect(const Rect &r, int indent);
 
 	/**
 	 * Write out a number of tabs to form an indent in the output

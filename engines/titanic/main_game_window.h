@@ -55,9 +55,15 @@ private:
 	 */
 	void drawPet(CScreenManager *screenManager);
 
-	void draw1();
+	/**
+	 * Draws the background for the view
+	 */
+	void drawView();
 
-	void draw2(CScreenManager *screenManager);
+	/**
+	 * Draws all the items within the view
+	 */
+	void drawViewContents(CScreenManager *screenManager);
 public:
 	CGameView *_gameView;
 	CGameManager *_gameManager;

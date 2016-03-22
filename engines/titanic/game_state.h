@@ -53,13 +53,13 @@ public:
 	int _fieldC;
 	GameStateMode _mode;
 	int _field14;
-	int _field18;
+	bool _petActive;
 	int _field1C;
 	int _field20;
 	int _field24;
 	uint _nodeChangeCtr;
 	uint32 _nodeEnterTicks;
-	Common::Point _mousePos;
+	Point _mousePos;
 	int _field38;
 public:
 	CGameState(CGameManager *gameManager);
@@ -82,7 +82,7 @@ public:
 	/**
 	 * Sets the current mouse position
 	 */
-	void setMousePos(const Common::Point &pt);
+	void setMousePos(const Point &pt);
 
 	/**
 	 * Called by the PET when a new node is entered

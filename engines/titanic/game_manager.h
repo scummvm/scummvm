@@ -113,7 +113,7 @@ public:
 	CProjectItem *_project;
 	CGameView *_gameView;
 	CGameState _gameState;
-	Common::Rect _bounds;
+	Rect _bounds;
 	CInputHandler _inputHandler;
 	CInputTranslator _inputTranslator;
 	CTreeItem *_dragItem;

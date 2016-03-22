@@ -52,7 +52,7 @@ void DirectDrawSurface::free() {
 	_disposeAfterUse = DisposeAfterUse::NO;
 }
 
-Graphics::ManagedSurface *DirectDrawSurface::lock(const Common::Rect *bounds, int flags) {
+Graphics::ManagedSurface *DirectDrawSurface::lock(const Rect *bounds, int flags) {
 	assert(!_surface->empty());
 	return _surface;
 }
@@ -61,29 +61,29 @@ void DirectDrawSurface::unlock() {
 	assert(_surface->w != 0 && _surface->h != 0);
 }
 
-void DirectDrawSurface::fill(const Common::Rect *bounds, uint32 color) {
-	Common::Rect tempBounds;
+void DirectDrawSurface::fill(const Rect *bounds, uint32 color) {
+	Rect tempBounds;
 
 	if (bounds) {
 		// Bounds are provided, clip them to the bounds of this surface
 		tempBounds = *bounds;
-		tempBounds.clip(Common::Rect(0, 0, _surface->w, _surface->h));
+		tempBounds.clip(Rect(0, 0, _surface->w, _surface->h));
 	} else {
 		// No bounds provided, so use the entire surface
-		tempBounds = Common::Rect(0, 0, _surface->w, _surface->h);
+		tempBounds = Rect(0, 0, _surface->w, _surface->h);
 	}
 
 	// Fill the area
 	_surface->fillRect(tempBounds, color);
 }
 
-void DirectDrawSurface::blit(const Common::Rect &destRect, DirectDrawSurface *srcSurface, Common::Rect &srcRect) {
+void DirectDrawSurface::blit(const Rect &destRect, DirectDrawSurface *srcSurface, Rect &srcRect) {
 	assert(srcSurface);
 	if (!destRect.isEmpty())
 		_surface->transBlitFrom(*srcSurface->_surface, srcRect, destRect, (uint)-1);
 }
 
-void DirectDrawSurface::blit(const Common::Point &destPos, DirectDrawSurface *srcSurface, Common::Rect *bounds) {
+void DirectDrawSurface::blit(const Point &destPos, DirectDrawSurface *srcSurface, Rect *bounds) {
 	if (bounds)
 		_surface->blitFrom(*srcSurface->_surface, *bounds, destPos);
 	else

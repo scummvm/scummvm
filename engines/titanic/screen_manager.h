@@ -40,7 +40,7 @@ class TitanicEngine;
 class CScreenManager {
 	struct VideoSurfaceEntry {
 		CVideoSurface *_surface;
-		Common::Rect _bounds;
+		Rect _bounds;
 	};
 protected:
 	TitanicEngine *_vm;
@@ -97,7 +97,7 @@ public:
 	/**
 	 * Clear a portion of a specified surface
 	 */
-	virtual void clearSurface(int surfaceNum, Common::Rect *_bounds) = 0;
+	virtual void clearSurface(int surfaceNum, Rect *_bounds) = 0;
 
 	/**
 	 * Resize the passed surface
@@ -119,7 +119,7 @@ public:
 	virtual void showCursor() = 0;
 	virtual void hideCursor() = 0;
 
-	void setSurfaceBounds(int surfaceNum, const Common::Rect &r);
+	void setSurfaceBounds(int surfaceNum, const Rect &r);
 };
 
 class OSScreenManager: CScreenManager {
@@ -173,7 +173,7 @@ public:
 	/**
 	 * Clear a portion of the screen surface
 	 */
-	virtual void clearSurface(int surfaceNum, Common::Rect *bounds);
+	virtual void clearSurface(int surfaceNum, Rect *bounds);
 
 	/**
 	 * Resize the passed surface

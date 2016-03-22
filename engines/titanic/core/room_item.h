@@ -23,7 +23,7 @@
 #ifndef TITANIC_ROOM_ITEM_H
 #define TITANIC_ROOM_ITEM_H
 
-#include "common/rect.h"
+#include "titanic/rect.h"
 #include "titanic/core/list.h"
 #include "titanic/core/movie_clip.h"
 #include "titanic/core/named_item.h"
@@ -33,7 +33,7 @@ namespace Titanic {
 
 class CRoomItem : public CNamedItem {
 public:
-	Common::Rect _roomRect;
+	Rect _roomRect;
 	CMovieClipList _clipList;
 	int _roomNumber;
 	CResourceKey _transitionMovieKey;

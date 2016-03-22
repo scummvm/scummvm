@@ -27,6 +27,7 @@
 #include "common/array.h"
 #include "titanic/font.h"
 #include "titanic/direct_draw.h"
+#include "titanic/rect.h"
 #include "titanic/core/list.h"
 #include "titanic/core/resource_key.h"
 
@@ -43,8 +44,8 @@ private:
 	/**
 	 * Calculates blitting bounds
 	 */
-	void clipBounds(Common::Rect &destRect, Common::Rect &srcRect,
-		CVideoSurface *srcSurface, Common::Rect *bounds2, Common::Point *pt);
+	void clipBounds(Rect &destRect, Rect &srcRect,
+		CVideoSurface *srcSurface, Rect *bounds2, Point *pt);
 protected:
 	static int _videoSurfaceCounter;
 protected:
@@ -151,7 +152,7 @@ public:
 	/**
 	 * Blit from another surface
 	 */
-	void blitFrom(const Common::Rect &srcRect, const Common::Rect &destRect, CVideoSurface *srcSurface);
+	void blitFrom(const Rect &srcRect, const Rect &destRect, CVideoSurface *srcSurface);
 };
 
 class OSVideoSurface : public CVideoSurface {

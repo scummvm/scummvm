@@ -46,7 +46,7 @@ protected:
 	int _field30;
 	int _field34;
 public:
-	Common::Rect _bounds;
+	Rect _bounds;
 public:
 	CLASSDEF
 	CLinkItem();

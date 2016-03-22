@@ -137,7 +137,7 @@ void CGameManager::postSave() {
 }
 
 void CGameManager::initBounds() {
-	_bounds = Common::Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
+	_bounds = Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
 }
 
 void CGameManager::fn2() {
@@ -160,7 +160,7 @@ void CGameManager::update() {
 	if (view) {
 		// Expand the game manager's bounds to encompass all the view's items
 		for (CTreeItem *item = view; item; item = item->scan(view)) {
-			Common::Rect r = item->getBounds();
+			Rect r = item->getBounds();
 			if (!r.isEmpty())
 				_bounds.extend(r);
 		}
@@ -184,7 +184,7 @@ void CGameManager::update() {
 		// Handle redrawing the view
 		if (!_bounds.isEmpty()) {
 			_gameView->draw(_bounds);
-			_bounds = Common::Rect();
+			_bounds = Rect();
 		}
 
 		_gameState.checkForViewChange();

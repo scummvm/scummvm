@@ -32,8 +32,8 @@ public:
 	CString _string3;
 	int _fieldEC;
 	int _fieldF0;
-	Common::Point _pos1;
-	Common::Point _pos2;
+	Point _pos1;
+	Point _pos2;
 	int _field104;
 	int _field108;
 public:

@@ -41,7 +41,7 @@ void CPetVal::proc4() {
 	error("TODO");
 }
 
-void CPetVal::proc5(Common::Rect *rect) {
+void CPetVal::proc5(Rect *rect) {
 	error("TODO");
 }
 

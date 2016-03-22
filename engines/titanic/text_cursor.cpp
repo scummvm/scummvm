@@ -20,7 +20,6 @@
  *
  */
 
-#include "common/rect.h"
 #include "common/textconsole.h"
 #include "titanic/text_cursor.h"
 
@@ -29,9 +28,9 @@ namespace Titanic {
 CTextCursor::CTextCursor() : _active(false) {
 }
 
-Common::Rect CTextCursor::getBounds() {
+Rect CTextCursor::getBounds() {
 	warning("CTextCursor::getBounds");
-	return Common::Rect();
+	return Rect();
 }
 
 } // End of namespace Titanic

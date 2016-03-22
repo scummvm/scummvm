@@ -18,6 +18,8 @@ MODULE_OBJS := \
 	input_translator.o \
 	main_game_window.o \
 	mouse_cursor.o \
+	movie.o \
+	rect.o \
 	screen_manager.o \
 	simple_file.o \
 	string.o \

@@ -57,14 +57,17 @@ public:
 	 */
 	virtual void setView(CViewItem *item) = 0;
 	
-	virtual void draw(const Common::Rect &bounds) = 0;
+	virtual void draw(const Rect &bounds) = 0;
 
 	/**
 	 * Creates a surface from a specified resource
 	 */
 	void createSurface(const CResourceKey &key);
 
-	void draw1();
+	/**
+	 * Draws the background of a view
+	 */
+	void drawView();
 };
 
 class CSTGameView: public CGameView {
@@ -81,7 +84,7 @@ public:
 	/**
 	 * Handles drawing the view
 	 */
-	virtual void draw(const Common::Rect &bounds);
+	virtual void draw(const Rect &bounds);
 };
 
 } // End of namespace Titanic

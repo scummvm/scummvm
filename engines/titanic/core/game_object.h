@@ -23,7 +23,7 @@
 #ifndef TITANIC_GAME_OBJECT_H
 #define TITANIC_GAME_OBJECT_H
 
-#include "common/rect.h"
+#include "titanic/rect.h"
 #include "titanic/core/movie_clip.h"
 #include "titanic/core/named_item.h"
 
@@ -31,7 +31,7 @@ namespace Titanic {
 
 class CGameObject : public CNamedItem {
 protected:
-	Common::Rect _bounds;
+	Rect _bounds;
 	double _field34;
 	double _field38;
 	double _field3C;
@@ -75,7 +75,7 @@ public:
 
 	void fn2();
 
-	bool checkPoint(const Common::Point &pt, int v0, int v1);
+	bool checkPoint(const Point &pt, int v0, int v1);
 };
 
 } // End of namespace Titanic

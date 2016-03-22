@@ -62,7 +62,7 @@ CScreenManager *CScreenManager::setCurrent() {
 	return _currentScreenManagerPtr;
 }
 
-void CScreenManager::setSurfaceBounds(int surfaceNum, const Common::Rect &r) {
+void CScreenManager::setSurfaceBounds(int surfaceNum, const Rect &r) {
 	if (surfaceNum >= 0 && surfaceNum < (int)_backSurfaces.size())
 		_backSurfaces[surfaceNum]._bounds = r;
 }
@@ -133,7 +133,7 @@ void OSScreenManager::getFont() {}
 void OSScreenManager::proc18() {}
 void OSScreenManager::proc19() {}
 
-void OSScreenManager::clearSurface(int surfaceNum, Common::Rect *bounds) {
+void OSScreenManager::clearSurface(int surfaceNum, Rect *bounds) {
 	if (surfaceNum == -1)
 		_directDrawManager._mainSurface->fill(bounds, 0);
 	else if (surfaceNum >= 0 && surfaceNum < (int)_backSurfaces.size())

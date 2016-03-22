@@ -29,7 +29,7 @@ namespace Titanic {
 
 class CMobile : public CCharacter {
 private:
-	Common::Point _pos1;
+	Point _pos1;
 	int _fieldDC;
 public:
 	CLASSDEF

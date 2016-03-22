@@ -26,6 +26,7 @@
 #include "common/scummsys.h"
 #include "common/array.h"
 #include "graphics/managed_surface.h"
+#include "titanic/rect.h"
 
 namespace Titanic {
 
@@ -86,7 +87,7 @@ public:
 	/**
 	 * Lock the surface for access
 	 */
-	Graphics::ManagedSurface *lock(const Common::Rect *bounds, int flags);
+	Graphics::ManagedSurface *lock(const Rect *bounds, int flags);
 
 	/**
 	 * Unlocks the surface at the end of direct accesses
@@ -97,17 +98,17 @@ public:
 	 * Fills an area of the surfae with the specified color. If no bounds are passed,
 	 * then the entire surface is filled
 	 */
-	void fill(const Common::Rect *bounds, uint32 color);
+	void fill(const Rect *bounds, uint32 color);
 
 	/**
 	 * Copy data from a source surfcae into this one
 	 */
-	void blit(const Common::Rect &destRect, DirectDrawSurface *srcSurface, Common::Rect &srcRect);
+	void blit(const Rect &destRect, DirectDrawSurface *srcSurface, Rect &srcRect);
 
 	/**
 	 * Copy data from a source surfcae into this one
 	 */
-	void blit(const Common::Point &destPos, DirectDrawSurface *srcSurface, Common::Rect *bounds);
+	void blit(const Point &destPos, DirectDrawSurface *srcSurface, Rect *bounds);
 };
 
 } // End of namespace Titanic

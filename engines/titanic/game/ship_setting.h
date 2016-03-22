@@ -31,7 +31,7 @@ namespace Titanic {
 class CShipSetting : public CBackground, CEnterRoomMsgTarget {
 private:
 	CString _string3;
-	Common::Point _pos1;
+	Point _pos1;
 	CString _string4;
 	CString _string5;
 protected:

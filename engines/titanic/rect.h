@@ -20,31 +20,24 @@
  *
  */
 
-#ifndef TITANIC_PET_VAL_H
-#define TITANIC_PET_VAL_H
+#ifndef TITANIC_RECT_H
+#define TITANIC_RECT_H
 
-#include "titanic/pet_control/pet_val_base.h"
+#include "common/rect.h"
 
 namespace Titanic {
 
-class CPetVal: public CPetValBase {
-protected:
-	int _field18;
-	int _field1C;
-	int _field20;
+typedef Common::Point Point;
+
+class Rect : public Common::Rect {
 public:
-	CPetVal() : CPetValBase(), _field18(0), _field1C(0), _field20(0) {}
+	Rect() : Common::Rect() {}
+	Rect(int16 w, int16 h) : Common::Rect(w, h) {}
+	Rect(int16 x1, int16 y1, int16 x2, int16 y2) : Common::Rect(x1, y1, x2, y2) {}
 
-	virtual void proc1();
-	virtual void proc2();
-	virtual void proc3();
-	virtual void proc4();
-
-	virtual void proc5(Rect *linkItem);
-
-	virtual int proc16();
+	operator const Point() { return Point(left, top); }
 };
 
 } // End of namespace Titanic
 
-#endif /* TITANIC_PET_VAL_H */
+#endif /* TITANIC_RECT_H */

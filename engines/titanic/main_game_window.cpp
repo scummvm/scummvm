@@ -125,11 +125,11 @@ void CMainGameWindow::draw() {
 		switch (_gameManager->_gameState._mode) {
 		case GSMODE_1:
 		case GSMODE_2:
-			if (_gameManager->_gameState._field18)
+			if (_gameManager->_gameState._petActive)
 				drawPet(scrManager);
 
-			draw1();
-			draw2(scrManager);
+			drawView();
+			drawViewContents(scrManager);
 			scrManager->drawCursors();
 			break;
 
@@ -151,12 +151,12 @@ void CMainGameWindow::drawPet(CScreenManager *screenManager) {
 	}
 }
 
-void CMainGameWindow::draw1() {
+void CMainGameWindow::drawView() {
 	if (_gameView->_surface)
-		_gameView->draw1();
+		_gameView->drawView();
 }
 
-void CMainGameWindow::draw2(CScreenManager *screenManager) {
+void CMainGameWindow::drawViewContents(CScreenManager *screenManager) {
 
 }
 

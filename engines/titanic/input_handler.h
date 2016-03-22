@@ -23,7 +23,7 @@
 #ifndef TITANIC_INPUT_HANDLER_H
 #define TITANIC_INPUT_HANDLER_H
 
-#include "common/rect.h"
+#include "titanic/rect.h"
 #include "titanic/input_translator.h"
 #include "titanic/core/tree_item.h"
 
@@ -46,15 +46,15 @@ private:
 	/**
 	 * Called when a drag operation has ended
 	 */
-	void dragEnd(const Common::Point &mousePos, CTreeItem *dragItem);
+	void dragEnd(const Point &mousePos, CTreeItem *dragItem);
 public:
 	CGameManager *_gameManager;
 	CInputTranslator *_inputTranslator;
 	bool _dragging;
 	bool _buttonDown;
 	CTreeItem *_dragItem;
-	Common::Point _dragStartPos;
-	Common::Point _mousePos;
+	Point _dragStartPos;
+	Point _mousePos;
 	int _lockCount;
 	int _field24;
 public:

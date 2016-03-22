@@ -29,7 +29,7 @@ namespace Titanic {
 
 class CLemonOnBar : public CPlaceHolder {
 private:
-	Common::Point _pos1;
+	Point _pos1;
 public:
 	CLASSDEF
 

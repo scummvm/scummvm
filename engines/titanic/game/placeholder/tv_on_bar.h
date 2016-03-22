@@ -29,7 +29,7 @@ namespace Titanic {
 
 class CTVOnBar : public CPlaceHolder {
 private:
-	Common::Point _pos1;
+	Point _pos1;
 public:
 	CLASSDEF
 

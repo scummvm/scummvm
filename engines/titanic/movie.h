@@ -20,31 +20,17 @@
  *
  */
 
-#ifndef TITANIC_PET_VAL_H
-#define TITANIC_PET_VAL_H
+#ifndef TITANIC_MOVIE_H
+#define TITANIC_MOVIE_H
 
-#include "titanic/pet_control/pet_val_base.h"
+#include "titanic/core/list.h"
 
 namespace Titanic {
 
-class CPetVal: public CPetValBase {
-protected:
-	int _field18;
-	int _field1C;
-	int _field20;
+class CMovie : public ListItem {
 public:
-	CPetVal() : CPetValBase(), _field18(0), _field1C(0), _field20(0) {}
-
-	virtual void proc1();
-	virtual void proc2();
-	virtual void proc3();
-	virtual void proc4();
-
-	virtual void proc5(Rect *linkItem);
-
-	virtual int proc16();
 };
 
 } // End of namespace Titanic
 
-#endif /* TITANIC_PET_VAL_H */
+#endif /* TITANIC_MOVIE_H */

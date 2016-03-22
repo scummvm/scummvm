@@ -31,7 +31,7 @@ namespace Titanic {
 class CLiftindicator : public CLift {
 private:
 	int _fieldFC;
-	Common::Point _pos2;
+	Point _pos2;
 	int _field108;
 	int _field10C;
 protected:

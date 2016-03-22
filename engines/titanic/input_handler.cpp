@@ -101,7 +101,7 @@ void CInputHandler::processMessage(const CMessage *msg) {
 				// Save where the drag movement started from
 				_dragStartPos = _mousePos;
 			} else {
-				Common::Point delta = mouseMsg->_mousePos - _dragStartPos;
+				Point delta = mouseMsg->_mousePos - _dragStartPos;
 				int distance = (int)sqrt(double(delta.x * delta.x + delta.y * delta.y));
 
 				if (distance > 4) {
@@ -134,7 +134,7 @@ void CInputHandler::dispatchMessage(const CMessage *msg) {
 	}
 }
 
-void CInputHandler::dragEnd(const Common::Point &mousePos, CTreeItem *dragItem) {
+void CInputHandler::dragEnd(const Point &mousePos, CTreeItem *dragItem) {
 	warning("TODO CInputHandler::dragEnd");
 }
 

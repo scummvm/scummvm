@@ -23,7 +23,7 @@
 #ifndef TITANIC_MOUSE_MESSAGES_H
 #define TITANIC_MOUSE_MESSAGES_H
 
-#include "common/rect.h"
+#include "titanic/rect.h"
 #include "titanic/messages/messages.h"
 
 namespace Titanic {
@@ -33,14 +33,14 @@ enum MouseButton { MB_LEFT = 1, MB_MIDDLE = 2, MB_RIGHT = 4 };
 class CMouseMsg : public CMessage {
 public:
 	int _buttons;
-	Common::Point _mousePos;
+	Point _mousePos;
 public:
 	CLASSDEF
 	static bool isSupportedBy(const CTreeItem *item) {
 		return dynamic_cast<const CMouseMsg *>(item) != nullptr;
 	}
 	CMouseMsg() : _buttons(0) {}
-	CMouseMsg(const Common::Point &pt, int buttons) :
+	CMouseMsg(const Point &pt, int buttons) :
 		_mousePos(pt), _buttons(buttons) {}
 };
 
@@ -49,7 +49,7 @@ class CMouseMoveMsg : public CMouseMsg {
 public:
 	CLASSDEF
 	CMouseMoveMsg() : CMouseMsg() {}
-	CMouseMoveMsg(const Common::Point &pt, int buttons) : CMouseMsg(pt, buttons) {}
+	CMouseMoveMsg(const Point &pt, int buttons) : CMouseMsg(pt, buttons) {}
 
 	static bool isSupportedBy(const CTreeItem *item) {
 		return dynamic_cast<const CMouseMoveMsg *>(item) != nullptr;
@@ -67,7 +67,7 @@ public:
 public:
 	CLASSDEF
 	CMouseButtonMsg() : CMouseMsg(), _field10(0) {}
-	CMouseButtonMsg(const Common::Point &pt, int buttons) : CMouseMsg(pt, buttons) {}
+	CMouseButtonMsg(const Point &pt, int buttons) : CMouseMsg(pt, buttons) {}
 
 	static bool isSupportedBy(const CTreeItem *item) {
 		return dynamic_cast<const CMouseButtonMsg *>(item) != nullptr;
@@ -79,7 +79,7 @@ class CMouseButtonDownMsg : public CMouseButtonMsg {
 public:
 	CLASSDEF
 	CMouseButtonDownMsg() : CMouseButtonMsg() {}
-	CMouseButtonDownMsg(const Common::Point &pt, int buttons) : CMouseButtonMsg(pt, buttons) {}
+	CMouseButtonDownMsg(const Point &pt, int buttons) : CMouseButtonMsg(pt, buttons) {}
 
 	static bool isSupportedBy(const CTreeItem *item) {
 		return dynamic_cast<const CMouseButtonDownMsg *>(item) != nullptr;
@@ -96,7 +96,7 @@ class CMouseButtonUpMsg : public CMouseButtonMsg {
 public:
 	CLASSDEF
 	CMouseButtonUpMsg() : CMouseButtonMsg() {}
-	CMouseButtonUpMsg(const Common::Point &pt, int buttons) : CMouseButtonMsg(pt, buttons) {}
+	CMouseButtonUpMsg(const Point &pt, int buttons) : CMouseButtonMsg(pt, buttons) {}
 
 	static bool isSupportedBy(const CTreeItem *item) {
 		return dynamic_cast<const CMouseButtonUpMsg *>(item) != nullptr;
@@ -113,7 +113,7 @@ class CMouseButtonDoubleClickMsg : public CMouseButtonMsg {
 public:
 	CLASSDEF
 	CMouseButtonDoubleClickMsg() : CMouseButtonMsg() {}
-	CMouseButtonDoubleClickMsg(const Common::Point &pt, int buttons) : CMouseButtonMsg(pt, buttons) {}
+	CMouseButtonDoubleClickMsg(const Point &pt, int buttons) : CMouseButtonMsg(pt, buttons) {}
 
 	static bool isSupportedBy(const CTreeItem *item) {
 		return dynamic_cast<const CMouseButtonDoubleClickMsg *>(item) != nullptr;
@@ -129,7 +129,7 @@ class CMouseDragMsg : public CMouseMsg {
 public:
 	CLASSDEF
 	CMouseDragMsg() : CMouseMsg() {}
-	CMouseDragMsg(const Common::Point &pt) : CMouseMsg(pt, 0) {}
+	CMouseDragMsg(const Point &pt) : CMouseMsg(pt, 0) {}
 
 	static bool isSupportedBy(const CTreeItem *item) {
 		return dynamic_cast<const CMouseDragMsg *>(item) != nullptr;
@@ -140,7 +140,7 @@ class CMouseDragMoveMsg : public CMouseDragMsg {
 public:
 	CLASSDEF
 	CMouseDragMoveMsg() : CMouseDragMsg() {}
-	CMouseDragMoveMsg(const Common::Point &pt) : CMouseDragMsg(pt) {}
+	CMouseDragMoveMsg(const Point &pt) : CMouseDragMsg(pt) {}
 
 	static bool isSupportedBy(const CTreeItem *item) {
 		return dynamic_cast<const CMouseDragMoveMsg *>(item) != nullptr;
@@ -160,7 +160,7 @@ public:
 public:
 	CLASSDEF
 	CMouseDragStartMsg() : CMouseDragMsg(), _dragItem(nullptr), _field14(0) {}
-	CMouseDragStartMsg(const Common::Point &pt) : CMouseDragMsg(pt),
+	CMouseDragStartMsg(const Point &pt) : CMouseDragMsg(pt),
 		_dragItem(nullptr), _field14(0) {}
 
 	static bool isSupportedBy(const CTreeItem *item) {
@@ -180,7 +180,7 @@ public:
 public:
 	CLASSDEF
 	CMouseDragEndMsg() : CMouseDragMsg(), _dragItem(nullptr) {}
-	CMouseDragEndMsg(const Common::Point &pt, CTreeItem *dragItem = nullptr) :
+	CMouseDragEndMsg(const Point &pt, CTreeItem *dragItem = nullptr) :
 		CMouseDragMsg(pt), _dragItem(dragItem) {}
 
 	static bool isSupportedBy(const CTreeItem *item) {

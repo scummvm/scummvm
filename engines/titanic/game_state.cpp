@@ -36,13 +36,13 @@ bool CGameStateList::isViewChanging() const {
 
 CGameState::CGameState(CGameManager *gameManager) :
 		_gameManager(gameManager), _gameLocation(this),
-		_field8(0), _fieldC(0), _mode(GSMODE_0), _field14(0), _field18(0),
+		_field8(0), _fieldC(0), _mode(GSMODE_0), _field14(0), _petActive(false),
 		_field1C(0), _field20(0), _field24(0), _nodeChangeCtr(0),
 		_nodeEnterTicks(0), _field38(0) {
 }
 
 void CGameState::save(SimpleFile *file) const {
-	file->writeNumber(_field18);
+	file->writeNumber(_petActive);
 	file->writeNumber(_field8);
 	file->writeNumber(_fieldC);
 	file->writeNumber(_field14);
@@ -53,7 +53,7 @@ void CGameState::save(SimpleFile *file) const {
 }
 
 void CGameState::load(SimpleFile *file) {
-	_field18 = file->readNumber();
+	_petActive = file->readNumber() != 0;
 	_field8 = file->readNumber();
 	_fieldC = file->readNumber();
 	_field14 = file->readNumber();
@@ -87,7 +87,7 @@ void CGameState::setMode(GameStateMode newMode) {
 	_mode = newMode;
 }
 
-void CGameState::setMousePos(const Common::Point &pt) {
+void CGameState::setMousePos(const Point &pt) {
 	_mousePos = pt;
 }
 

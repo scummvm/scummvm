@@ -30,13 +30,13 @@ namespace Titanic {
 class CCarry : public CGameObject {
 private:
 	CString _string1;
-	Common::Point _pos1;
+	Point _pos1;
 	CString _string2;
 	int _fieldDC;
 	int _fieldE0;
 	CString _string3;
 	CString _string4;
-	Common::Point _pos2;
+	Point _pos2;
 	int _field100;
 	int _field104;
 	int _field108;

@@ -24,6 +24,7 @@
 #define TITANIC_TEXT_CURSOR_H
 
 #include "common/scummsys.h"
+#include "titanic/rect.h"
 
 namespace Titanic {
 
@@ -33,7 +34,7 @@ public:
 public:
 	CTextCursor();
 
-	Common::Rect getBounds();
+	Rect getBounds();
 };
 
 } // End of namespace Titanic

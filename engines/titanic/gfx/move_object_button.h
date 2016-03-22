@@ -29,7 +29,7 @@ namespace Titanic {
 
 class CMoveObjectButton : public CSTButton {
 private:
-	Common::Point _pos1;
+	Point _pos1;
 	int _field11C;
 public:
 	CLASSDEF

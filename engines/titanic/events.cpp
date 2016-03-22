@@ -103,7 +103,7 @@ uint32 Events::getTicksCount() const {
 }
 
 #define HANDLE_MESSAGE(method) 	if (_vm->_window->_inputAllowed) { \
-	_vm->_window->_gameManager->_inputTranslator.leftButtonDown(_specialButtons, _mousePos); \
+	_vm->_window->_gameManager->_inputTranslator.leftButtonDown(_specialButtons, Point(_mousePos.x, _mousePos.y)); \
 	_vm->_window->mouseChanged(); \
 	}
 

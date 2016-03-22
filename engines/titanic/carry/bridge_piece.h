@@ -30,7 +30,7 @@ namespace Titanic {
 class CBridgePiece : public CCarry {
 private:
 	CString _string6;
-	Common::Point _pos3;
+	Point _pos3;
 	int _field140;
 public:
 	CLASSDEF

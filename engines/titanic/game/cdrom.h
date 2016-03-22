@@ -29,7 +29,7 @@ namespace Titanic {
 
 class CCDROM : public CGameObject {
 private:
-	Common::Point _pos1;
+	Point _pos1;
 public:
 	CLASSDEF
 	CCDROM();

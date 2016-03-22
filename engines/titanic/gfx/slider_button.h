@@ -32,7 +32,7 @@ private:
 	int _field114;
 	int _field118;
 	int _field11C;
-	Common::Point _pos1;
+	Point _pos1;
 public:
 	CLASSDEF
 	CSliderButton();

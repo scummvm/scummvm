@@ -28,9 +28,9 @@ namespace Titanic {
 CPetValBase::CPetValBase() : _field4(0), _field8(0), _fieldC(0),
 		_field10(0), _field14(0) {}
 
-void CPetValBase::proc5(Common::Rect *rect) {
+void CPetValBase::proc5(Rect *rect) {
 	if (rect)
-		*rect = Common::Rect();
+		*rect = Rect();
 }
 
 int CPetValBase::proc6() {

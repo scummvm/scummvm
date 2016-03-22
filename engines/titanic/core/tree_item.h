@@ -122,7 +122,7 @@ public:
 	/**
 	 * Gets the bounds occupied by the item
 	 */
-	virtual Common::Rect getBounds() { return Common::Rect(); }
+	virtual Rect getBounds() { return Rect(); }
 
 	/**
 	 * Called when the view changes
