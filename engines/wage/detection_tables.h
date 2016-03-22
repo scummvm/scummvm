@@ -51,10 +51,12 @@ static const ADGameDescription gameDescriptions[] = {
 	// Crash at start in GUI rendering
 	FANGAME("Dune Eternity", "94a9c4f8b3dabd1846d76215a49bd221", 290201), // Original file name is "***DUNE ETERNITY*** "
 	FANGAMEN("Dungeon World II", "DungeonWorld2", "0154ea11d3cbb536c13b4ae9e6902d48", 230199),
+	FANGAME("Edg's World", "913812a1ac7a6b0e48dadd1afa1c7763", 106769),
 	FANGAME("Eidisi I", "595117cbed33e8de1ab3714b33880205", 172552),
 	// Problems(?) with text on the first screen
 	FANGAMEN("Enchanted Pencils", "Enchanted Pencils 0.99 (PG)", "595117cbed33e8de1ab3714b33880205", 408913),
 	FANGAME("Escape from School!", "913812a1ac7a6b0e48dadd1afa1c7763", 50105),
+	FANGAME("Everyman 1", "4b0e1a1fbaaa4930accd0f9f0e1519c7", 335705),
 	FANGAME("Exploration Zeta!", "c477921aeee6ed0f8997ba44447eb2d0", 366599),
 	// Crash in console rendering on the first scene
 	FANGAME("Fantasy Quest", "4b0e1a1fbaaa4930accd0f9f0e1519c7", 762754),
@@ -74,6 +76,7 @@ static const ADGameDescription gameDescriptions[] = {
 	FANGAME("Midnight Snack", "913812a1ac7a6b0e48dadd1afa1c7763", 67952),
 	FANGAME("Midnight Snack", "913812a1ac7a6b0e48dadd1afa1c7763", 67966), // Alt version
 	FANGAME("Minitorian", "913812a1ac7a6b0e48dadd1afa1c7763", 586464),
+	FANGAME("M'Lord's Warrior", "7d30b6e68ecf197b2d15492630bdeb89", 465639), // Original file name is "M'Lord's Warrior †"
 	// Unhandled comparison case
 	FANGAME("Mountain of Mayhem", "4b0e1a1fbaaa4930accd0f9f0e1519c7", 750003), // Original file name "Mountain of Mayhem †"
 	// No way to pass through the first screen
