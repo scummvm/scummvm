@@ -33,14 +33,6 @@ Surface::Surface(int width, int height) : Graphics::ManagedSurface(width, height
 	create(width, height);
 }
 
-void Surface::setPixelsData(byte *pixelsPtr, int sizeX, int sizeY, const Graphics::PixelFormat &pixFormat) {
-	Graphics::ManagedSurface::setPixels(pixelsPtr);
-	this->format = pixFormat;
-	this->w = sizeX;
-	this->h = sizeY;
-	this->pitch = sizeX * pixFormat.bytesPerPixel;
-}
-
 void Surface::writeString(const Common::String &str, const Common::Point &pt, uint overrideColor) {
 	Fonts::writeString(this, str, pt, overrideColor);
 }

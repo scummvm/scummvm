@@ -52,11 +52,6 @@ public:
 	Surface(int width, int height);
 
 	/**
-	 * Set the surface details
-	 */
-	void setPixelsData(byte *pixelsPtr, int sizeX, int sizeY, const Graphics::PixelFormat &pixFormat);
-
-	/**
 	 * Draws a surface on this surface
 	 */
 	virtual void SHblitFrom(const Graphics::Surface &src) {

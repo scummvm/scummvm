@@ -42,16 +42,16 @@ class SherlockEngine;
 class Screen : virtual public Graphics::Screen, virtual public Surface {
 private:
 	uint32 _transitionSeed;
-	Surface _sceneSurface;
 
 	// Rose Tattoo fields
 	int _fadeBytesRead, _fadeBytesToRead;
 	int _oldFadePercent;
 protected:
 	SherlockEngine *_vm;
+	Surface _backBuffer;
+
 public:
 	Surface _backBuffer1, _backBuffer2;
-	Surface *_backBuffer;
 	bool _fadeStyle;
 	byte _cMap[PALETTE_SIZE];
 	byte _sMap[PALETTE_SIZE];
@@ -62,6 +62,21 @@ public:
 	static Screen *init(SherlockEngine *vm);
 	Screen(SherlockEngine *vm);
 	virtual ~Screen();
+
+	/**
+	 * Obtain the currently active back buffer.
+	 */
+	Surface *getBackBuffer() { return &_backBuffer; }
+
+	/**
+	 * Makes first back buffer active.
+	 */
+	void activateBackBuffer1();
+
+	/**
+	 * Makes second back buffer active.
+	 */
+	void activateBackBuffer2();
 
 	/**
 	 * Fades from the currently active palette to the passed palette

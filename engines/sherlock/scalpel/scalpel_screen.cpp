@@ -30,12 +30,13 @@ namespace Scalpel {
 ScalpelScreen::ScalpelScreen(SherlockEngine *vm) : Screen(vm) {
 	_backBuffer1.create(320, 200);
 	_backBuffer2.create(320, 200);
+	activateBackBuffer1();
 }
 
 void ScalpelScreen::makeButton(const Common::Rect &bounds, int textX,
 		const Common::String &buttonText, bool textContainsHotkey) {
 
-	Surface &bb = *_backBuffer;
+	Surface &bb = _backBuffer;
 	bb.fillRect(Common::Rect(bounds.left, bounds.top, bounds.right, bounds.top + 1), BUTTON_TOP);
 	bb.fillRect(Common::Rect(bounds.left, bounds.top, bounds.left + 1, bounds.bottom), BUTTON_TOP);
 	bb.fillRect(Common::Rect(bounds.right - 1, bounds.top, bounds.right, bounds.bottom), BUTTON_BOTTOM);
@@ -105,24 +106,24 @@ void ScalpelScreen::buttonPrint(const Common::Point &pt, uint color, bool slamIt
 }
 
 void ScalpelScreen::makePanel(const Common::Rect &r) {
-	_backBuffer->fillRect(r, BUTTON_MIDDLE);
-	_backBuffer->hLine(r.left, r.top, r.right - 2, BUTTON_TOP);
-	_backBuffer->hLine(r.left + 1, r.top + 1, r.right - 3, BUTTON_TOP);
-	_backBuffer->vLine(r.left, r.top, r.bottom - 1, BUTTON_TOP);
-	_backBuffer->vLine(r.left + 1, r.top + 1, r.bottom - 2, BUTTON_TOP);
+	_backBuffer.fillRect(r, BUTTON_MIDDLE);
+	_backBuffer.hLine(r.left, r.top, r.right - 2, BUTTON_TOP);
+	_backBuffer.hLine(r.left + 1, r.top + 1, r.right - 3, BUTTON_TOP);
+	_backBuffer.vLine(r.left, r.top, r.bottom - 1, BUTTON_TOP);
+	_backBuffer.vLine(r.left + 1, r.top + 1, r.bottom - 2, BUTTON_TOP);
 
-	_backBuffer->vLine(r.right - 1, r.top, r.bottom - 1, BUTTON_BOTTOM);
-	_backBuffer->vLine(r.right - 2, r.top + 1, r.bottom - 2, BUTTON_BOTTOM);
-	_backBuffer->hLine(r.left, r.bottom - 1, r.right - 1, BUTTON_BOTTOM);
-	_backBuffer->hLine(r.left + 1, r.bottom - 2, r.right - 1, BUTTON_BOTTOM);
+	_backBuffer.vLine(r.right - 1, r.top, r.bottom - 1, BUTTON_BOTTOM);
+	_backBuffer.vLine(r.right - 2, r.top + 1, r.bottom - 2, BUTTON_BOTTOM);
+	_backBuffer.hLine(r.left, r.bottom - 1, r.right - 1, BUTTON_BOTTOM);
+	_backBuffer.hLine(r.left + 1, r.bottom - 2, r.right - 1, BUTTON_BOTTOM);
 }
 
 void ScalpelScreen::makeField(const Common::Rect &r) {
-	_backBuffer->fillRect(r, BUTTON_MIDDLE);
-	_backBuffer->hLine(r.left, r.top, r.right - 1, BUTTON_BOTTOM);
-	_backBuffer->hLine(r.left + 1, r.bottom - 1, r.right - 1, BUTTON_TOP);
-	_backBuffer->vLine(r.left, r.top + 1, r.bottom - 1, BUTTON_BOTTOM);
-	_backBuffer->vLine(r.right - 1, r.top + 1, r.bottom - 2, BUTTON_TOP);
+	_backBuffer.fillRect(r, BUTTON_MIDDLE);
+	_backBuffer.hLine(r.left, r.top, r.right - 1, BUTTON_BOTTOM);
+	_backBuffer.hLine(r.left + 1, r.bottom - 1, r.right - 1, BUTTON_TOP);
+	_backBuffer.vLine(r.left, r.top + 1, r.bottom - 1, BUTTON_BOTTOM);
+	_backBuffer.vLine(r.right - 1, r.top + 1, r.bottom - 2, BUTTON_TOP);
 }
 
 } // End of namespace Scalpel

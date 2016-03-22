@@ -117,7 +117,7 @@ void Scalpel3DOScreen::fillRect(const Common::Rect &r, uint color) {
 void Scalpel3DOScreen::fadeIntoScreen3DO(int speed) {
 	Events &events = *_vm->_events;
 	uint16 *currentScreenBasePtr = (uint16 *)getPixels();
-	uint16 *targetScreenBasePtr = (uint16 *)_backBuffer->getPixels();
+	uint16 *targetScreenBasePtr = (uint16 *)_backBuffer.getPixels();
 	uint16  currentScreenPixel = 0;
 	uint16  targetScreenPixel = 0;
 
@@ -211,7 +211,7 @@ void Scalpel3DOScreen::fadeIntoScreen3DO(int speed) {
 
 void Scalpel3DOScreen::blitFrom3DOcolorLimit(uint16 limitColor) {
 	uint16 *currentScreenPtr = (uint16 *)getPixels();
-	uint16 *targetScreenPtr = (uint16 *)_backBuffer->getPixels();
+	uint16 *targetScreenPtr = (uint16 *)_backBuffer.getPixels();
 	uint16  currentScreenPixel = 0;
 
 	uint16  screenWidth = SHERLOCK_SCREEN_WIDTH;
