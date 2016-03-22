@@ -27,6 +27,8 @@
 #include "common/str-array.h"
 #include "gui/dialog.h"
 
+#include "common/system.h"
+
 namespace GUI {
 
 class Widget;
@@ -34,9 +36,15 @@ class Widget;
 class Tooltip : public Dialog {
 private:
 	Dialog *_parent;
+	uint32 _bornTime;
+	uint32 _firstKeyDownTime;
+	bool _firstKeyDownTimeSetted;
+	enum{
+		kListenerDelay = 200
+	};
 
 public:
-	Tooltip();
+	Tooltip(uint32 bornTime);
 
 	void setup(Dialog *parent, Widget *widget, int x, int y);
 
@@ -55,7 +63,14 @@ protected:
 		_parent->handleMouseWheel(x + (getAbsX() - _parent->getAbsX()), y + (getAbsX() - _parent->getAbsX()), direction);
 	}
 	virtual void handleKeyDown(Common::KeyState state) {
-		close();
+		// Check if current Tooltip was born after first key down
+		// If it isn't - close Tooltip
+		if (!_firstKeyDownTimeSetted) {
+			_firstKeyDownTimeSetted = true;
+			_firstKeyDownTime = g_system->getMillis(true);
+		}
+		if (_firstKeyDownTime - _bornTime > kListenerDelay)
+			close();
 		_parent->handleKeyDown(state);
 	}
 	virtual void handleKeyUp(Common::KeyState state) {

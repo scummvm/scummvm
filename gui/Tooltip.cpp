@@ -31,8 +31,8 @@
 namespace GUI {
 
 
-Tooltip::Tooltip() :
-	Dialog(-1, -1, -1, -1), _maxWidth(-1) {
+Tooltip::Tooltip(uint32 bornTime) :
+	Dialog(-1, -1, -1, -1), _maxWidth(-1), _bornTime(bornTime), _firstKeyDownTimeSetted(false){
 
 	_backgroundType = GUI::ThemeEngine::kDialogBackgroundTooltip;
 }
