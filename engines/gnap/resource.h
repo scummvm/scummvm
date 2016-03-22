@@ -169,13 +169,13 @@ protected:
 		CacheMapIterator it = _cache.find(resourceId);
 		if (it != _cache.end())
 			return it->_value;
-		return 0;
+		return nullptr;
 	}
 	
 	ResourceClass *load(int resourceId) {
 		if (_dat->getResourceType(resourceId) != ResourceType) {
 			error("ResourceCache::load() Wrong resource type: Expected %d, got %d", ResourceType, _dat->getResourceType(resourceId));
-			return 0;
+			return nullptr;
 		}
 		byte *resourceData = _dat->loadResource(resourceId);
 		uint32 resourceSize = _dat->getResourceSize(resourceId);

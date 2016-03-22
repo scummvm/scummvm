@@ -360,7 +360,7 @@ int GameSys::getSpriteHeightById(int resourceId) {
 Graphics::Surface *GameSys::loadBitmap(int resourceId) {
 	debug("GameSys::loadBitmap() resourceId: %08X", resourceId);
 	if (_vm->_dat->getResourceType(resourceId) != 1)
-		return 0;
+		return nullptr;
 	byte *resourceData = _vm->_dat->loadResource(resourceId);
 	uint32 resourceSize = _vm->_dat->getResourceSize(resourceId);
 	Common::MemoryReadStream stream(resourceData, resourceSize, DisposeAfterUse::NO);
@@ -406,7 +406,7 @@ Sequence *GameSys::seqFind(int sequenceId, int id, int *outIndex) {
 				*outIndex = i;
 			return &_seqItems[i];
 		}
-	return 0;
+	return nullptr;
 }
 
 int GameSys::seqLocateGfx(int sequenceId, int id, int *outGfxIndex) {
