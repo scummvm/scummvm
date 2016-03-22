@@ -124,8 +124,9 @@ void CVideoSurface::blitRect1(const Rect &srcRect, const Rect &destRect, CVideoS
 	lock();
 
 	// TODO: Do it like the original does it
-	this->_rawSurface->blitFrom(*src->_rawSurface, srcRect, Point(destRect.left, destRect.top));
-	
+//	this->_rawSurface->blitFrom(*src->_rawSurface, srcRect, Point(destRect.left, destRect.top));
+	this->_rawSurface->blitFrom(*src->_rawSurface);
+
 	src->unlock();
 	unlock();
 }

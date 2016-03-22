@@ -90,9 +90,10 @@ void OSScreenManager::setMode(int width, int height, int bpp, uint numBackSurfac
 	_frontRenderSurface = new OSVideoSurface(this, nullptr);
 	_frontRenderSurface->setSurface(this, _directDrawManager._mainSurface);
 
+	_backSurfaces.resize(numBackSurfaces);
 	for (uint idx = 0; idx < numBackSurfaces; ++idx) {
-		OSVideoSurface videoSurface(this, nullptr);
-		videoSurface.setSurface(this, _directDrawManager._backSurfaces[idx]);
+		_backSurfaces[idx]._surface = new OSVideoSurface(this, nullptr);
+		_backSurfaces[idx]._surface->setSurface(this, _directDrawManager._backSurfaces[idx]);
 	}
 
 	// Load fonts

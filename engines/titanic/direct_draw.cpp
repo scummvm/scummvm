@@ -93,7 +93,7 @@ void DirectDrawManager::initFullScreen() {
 		_directDraw._bpp, 0);
 
 	_mainSurface = new DirectDrawSurface();
-	_mainSurface->create(_directDraw._width, _directDraw._height);
+	_mainSurface->create(g_vm->_screen);
 	_backSurfaces[0] = new DirectDrawSurface();
 	_backSurfaces[0]->create(_directDraw._width, _directDraw._height);
 }
