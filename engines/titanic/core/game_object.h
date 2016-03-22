@@ -29,7 +29,43 @@
 
 namespace Titanic {
 
+class CVideoSurface;
+
 class CGameObject : public CNamedItem {
+public:
+	static void *_v1;
+private:
+	/**
+	 * Load a visual resource for the object
+	 */
+	void loadResource(const CString &name);
+
+	/**
+	 * Loads a movie
+	 */
+	void loadMovie(const CString &name, bool pendingFlag = true);
+
+	/**
+	 * Loads an image
+	 */
+	void loadImage(const CString &name, bool pendingFlag = true);
+
+	/**
+	 * Loads a frame
+	 */
+	void loadFrame(int frameNumber);
+
+	void processClipList2();
+
+	/**
+	 * Marks the area in the passed rect as dirty, and requiring re-rendering
+	 */
+	void makeDirty(const Rect &r);
+
+	/**
+	 * Marks the area occupied by the object as dirty, requiring re-rendering
+	 */
+	void makeDirty();
 protected:
 	Rect _bounds;
 	double _field34;
@@ -46,15 +82,15 @@ protected:
 	CMovieClipList _clipList1;
 	int _field78;
 	CMovieClipList _clipList2;
-	int _field8C;
+	int _frameNumber;
 	int _field90;
 	int _field94;
 	int _field98;
 	int _field9C;
 	int _fieldA0;
 	int _fieldA4;
-	void *_fieldA8;
-	CString _string;
+	CVideoSurface *_surface;
+	CString _resource;
 	int _fieldB8;
 public:
 	int _field60;

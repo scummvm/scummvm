@@ -76,6 +76,8 @@ public:
 	 * Resets the view being displayed
 	 */
 	void resetView();
+
+	void fn5(const CString &name);
 };
 
 } // End of namespace Titanic

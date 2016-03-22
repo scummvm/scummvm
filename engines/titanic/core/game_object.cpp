@@ -20,10 +20,17 @@
  *
  */
 
+#include "titanic/files_manager.h"
+#include "titanic/game_manager.h"
+#include "titanic/screen_manager.h"
+#include "titanic/titanic.h"
+#include "titanic/video_surface.h"
 #include "titanic/core/game_object.h"
 #include "titanic/core/resource_key.h"
 
 namespace Titanic {
+
+void *CGameObject::_v1 = nullptr;
 
 CGameObject::CGameObject(): CNamedItem() {
 	_bounds = Rect(0, 0, 15, 15);
@@ -41,14 +48,14 @@ CGameObject::CGameObject(): CNamedItem() {
 	_field60 = 0;
 	_cursorId = 1;
 	_field78 = 0;
-	_field8C = -1;
+	_frameNumber = -1;
 	_field90 = 0;
 	_field94 = 0;
 	_field98 = 0;
 	_field9C = 0;
 	_fieldA0 = 0;
 	_fieldA4 = 0;
-	_fieldA8 = nullptr;
+	_surface = nullptr;
 	_fieldB8 = 0;
 }
 
@@ -66,7 +73,7 @@ void CGameObject::load(SimpleFile *file) {
 	switch (val) {
 	case 7:
 		_clipList2.load(file);
-		_field8C = file->readNumber();
+		_frameNumber = file->readNumber();
 		// Deliberate fall-through
 
 	case 6:
@@ -86,7 +93,7 @@ void CGameObject::load(SimpleFile *file) {
 		// Deliberate fall-through
 
 	case 2:
-		_string = file->readString();
+		_resource = file->readString();
 		// Deliberate fall-through
 
 	case 1:
@@ -104,10 +111,10 @@ void CGameObject::load(SimpleFile *file) {
 		_field58 = file->readNumber();
 
 		resourceKey.load(file);		
-		_fieldA8 = nullptr;
+		_surface = nullptr;
 		val = file->readNumber();
 		if (val) {
-			_string = resourceKey.getString();
+			_resource = resourceKey.getString();
 		}
 		break;
 
@@ -128,7 +135,115 @@ bool CGameObject::checkPoint(const Point &pt, int v0, int v1) {
 }
 
 void CGameObject::draw(CScreenManager *screenManager) {
-	warning("TODO: CGameObject::draw");
+	if (!_field5C)
+		return;
+	if (_v1) {
+		error("TODO: Block in CGameObject::draw");
+	}
+
+	if (_field40) {
+		if (_field90) {
+			if (_bounds.intersects(getGameManager()->_bounds))
+				warning("TODO: _field90(screenManager);");
+		}
+	} else {
+		if (!_surface) {
+			if (!_resource.empty()) {
+				loadResource(_resource);
+				_resource = "";
+			}
+		}
+
+		if (_surface) {
+			_bounds.right = _surface->getWidth();
+			_bounds.bottom = _surface->getHeight();
+
+			if (!_bounds.right || !_bounds.bottom)
+				return;
+
+			if (_frameNumber >= 0) {
+				loadFrame(_frameNumber);
+				_frameNumber = -1;
+			}
+
+			if (!_clipList2.empty())
+				processClipList2();
+
+			if (_bounds.intersects(getGameManager()->_bounds)) {
+				if (_surface) {
+					Point destPos(_bounds.left, _bounds.top);
+					screenManager->blitFrom(0, _surface, &destPos);
+				}
+
+				if (_field90)
+					warning("TODO: sub_415f80(screenManager);");
+			}
+		}
+	}
+}
+
+void CGameObject::loadResource(const CString &name) {
+	switch (name.imageTypeSuffix()) {
+	case FILETYPE_IMAGE:
+		loadImage(name);
+		break;
+	case FILETYPE_MOVIE:
+		loadMovie(name);
+		break;
+	}
+}
+
+void CGameObject::loadMovie(const CString &name, bool pendingFlag) {
+	warning("TODO: CGameObject::loadMovie");
+}
+
+void CGameObject::loadImage(const CString &name, bool pendingFlag) {
+	// Get a refernce to the game and screen managers
+	CGameManager *gameManager = getGameManager();
+	CScreenManager *screenManager;
+
+	if (gameManager && (screenManager = CScreenManager::setCurrent()) != nullptr) {
+		// Destroy the object's surface if it already had one
+		if (_surface) {
+			delete _surface;
+			_surface = nullptr;
+		}
+
+		g_vm->_filesManager.fn5(name);
+
+		if (!name.empty()) {
+			_surface = new OSVideoSurface(screenManager, CResourceKey(name), pendingFlag);
+		}
+
+		if (_surface && !pendingFlag) {
+			_bounds.right = _surface->getWidth();
+			_bounds.bottom = _surface->getHeight();
+		}
+
+		// Mark the object's area as dirty, so that on the next frame rendering
+		// this object will be redrawn
+		makeDirty();
+	}
+
+	_field78 = 0;
+}
+
+void CGameObject::loadFrame(int frameNumber) {
+	warning("CGameObject::loadFrame");
+}
+
+void CGameObject::processClipList2() {
+	warning("CGameObject::processClipList2");
+}
+
+void CGameObject::makeDirty(const Rect &r) {
+	CGameManager *gameManager = getGameManager();
+	if (gameManager)
+		gameManager->extendBounds(r);
+}
+
+void CGameObject::makeDirty() {
+	makeDirty(_bounds);
 }
 
 } // End of namespace Titanic

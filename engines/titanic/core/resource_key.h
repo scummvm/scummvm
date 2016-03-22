@@ -36,6 +36,8 @@ private:
 	void setValue(const CString &name);
 public:
 	CLASSDEF
+	CResourceKey() {}
+	CResourceKey(const CString &name) { setValue(name); }
 
 	/**
 	 * Save the data for the class to file

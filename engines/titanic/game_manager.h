@@ -192,6 +192,12 @@ public:
 	void inc54() { ++_field54; }
 
 	void dec54() { --_field54; }
+
+	/**
+	 * Extends the bounds of the currently affected game display area
+	 * to include the passed rect
+	 */
+	void extendBounds(const Rect &r);
 };
 
 } // End of namespace Titanic

@@ -81,4 +81,8 @@ void CFilesManager::resetView() {
 	}
 }
 
+void CFilesManager::fn5(const CString &name) {
+	warning("TODO: CFilesManager::fn5");
+}
+
 } // End of namespace Titanic
