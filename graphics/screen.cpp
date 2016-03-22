@@ -28,7 +28,7 @@
 namespace Graphics {
 
 Screen::Screen(): ManagedSurface() {
-	create(g_system->getWidth(), g_system->getHeight());
+	create(g_system->getWidth(), g_system->getHeight(), g_system->getScreenFormat());
 }
 
 Screen::Screen(int width, int height): ManagedSurface() {
