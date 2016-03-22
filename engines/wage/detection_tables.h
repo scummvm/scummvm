@@ -35,6 +35,9 @@ static const ADGameDescription gameDescriptions[] = {
 	FANGAME("3rd Floor", "913812a1ac7a6b0e48dadd1afa1c7763", 281409),
 	BIGGAME("afm", "v1.8", "Another Fine Mess 1.8", "94a9c4f8b3dabd1846d76215a49bd221", 1420723),
 	BIGGAME("amot", "v1.8", "A Mess O' Trouble 1.8", "26207bdf0bb539464f136f0669af885f", 1843104),
+	// No Next on the first screen?
+	FANGAME("Brownie's Dream", "94a9c4f8b3dabd1846d76215a49bd221", 440704),
+	FANGAMEN("Brownie's Time Travels", "Brownie's Time Travels v1.2", "94a9c4f8b3dabd1846d76215a49bd221", 471589),
 	FANGAME("Bug Hunt", "595117cbed33e8de1ab3714b33880205", 195699),
 	BIGGAME("cantitoe", "", "Camp Cantitoe", "913812a1ac7a6b0e48dadd1afa1c7763", 616985),
 	// Problems with letter rendering
@@ -116,6 +119,7 @@ static const ADGameDescription gameDescriptions[] = {
 	FANGAME("Time Bomb", "4b0e1a1fbaaa4930accd0f9f0e1519c7", 64564),
 	FANGAME("Time Bomb", "4b0e1a1fbaaa4930accd0f9f0e1519c7", 64578), // Alt version
 	FANGAMEND("The Ashland Revolution", "The Ashland Revolution Demo", "913812a1ac7a6b0e48dadd1afa1c7763", 145023), // Original file name "The Ashland Revolution Demo†"
+	FANGAME("The Axe-orcist", "94a9c4f8b3dabd1846d76215a49bd221", 308764),
 	FANGAMEN("The Hotel Caper", "The Hotel Caper V1.0", "595117cbed33e8de1ab3714b33880205", 231969),
 	// Invalid rect in scene "Access Tube 1"
 	FANGAMEN("The Phoenix v1.2", "The Phoenix", "4b0e1a1fbaaa4930accd0f9f0e1519c7", 431640),
