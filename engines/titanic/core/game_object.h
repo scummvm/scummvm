@@ -73,6 +73,11 @@ public:
 	 */
 	virtual void load(SimpleFile *file);
 
+	/**
+	 * Allows the item to draw itself
+	 */
+	virtual void draw(CScreenManager *screenManager);
+
 	void fn2();
 
 	bool checkPoint(const Point &pt, int v0, int v1);

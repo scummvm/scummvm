@@ -31,6 +31,7 @@ class CGameManager;
 class CDontSaveFileItem;
 class CNamedItem;
 class CProjectItem;
+class CScreenManager;
 
 class CTreeItem: public CMessageTarget {
 private:
@@ -118,6 +119,11 @@ public:
 	 * Compares the name of the item to a passed name
 	 */
 	virtual int compareTo(const CString &name, int maxLen) const { return false; }
+
+	/**
+	 * Allows the item to draw itself
+	 */
+	virtual void draw(CScreenManager *screenManager) {}
 
 	/**
 	 * Gets the bounds occupied by the item

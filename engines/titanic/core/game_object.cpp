@@ -127,4 +127,8 @@ bool CGameObject::checkPoint(const Point &pt, int v0, int v1) {
 	return false;
 }
 
+void CGameObject::draw(CScreenManager *screenManager) {
+	warning("TODO: CGameObject::draw");
+}
+
 } // End of namespace Titanic

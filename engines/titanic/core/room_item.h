@@ -59,6 +59,11 @@ public:
 	 * Return a movie clip for the room by name
 	 */
 	CMovieClip *findClip(const CString &name) { return _clipList.findByName(name); }
+
+	/**
+	 * Calculates the positioning of a node within the overall room
+	 */
+	void calcNodePosition(const Point &nodePos, double &xVal, double &yVal) const;
 };
 
 } // End of namespace Titanic

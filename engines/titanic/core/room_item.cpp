@@ -103,4 +103,16 @@ void CRoomItem::loading() {
 	// TODO
 }
 
+void CRoomItem::calcNodePosition(const Point &nodePos, double &xVal, double &yVal) const {
+	xVal = yVal = 0.0;
+	
+	if (_roomDimensionX >= 0.0 && _roomDimensionY >= 0.0) {
+		xVal = _roomRect.width() / _roomDimensionX;
+		yVal = _roomRect.height() / _roomDimensionY;
+
+		xVal = (nodePos.x - _roomRect.left) / xVal;
+		yVal = (nodePos.y - _roomRect.top) / yVal;
+	}
+}
+
 } // End of namespace Titanic
