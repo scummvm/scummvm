@@ -19,10 +19,12 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
  */
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
 
 #include "common/util.h"
 #include "common/savefile.h"
 #include "common/str.h"
+#include "backends/cloud/cloud.h"
 
 namespace Common {
 
@@ -60,6 +62,9 @@ bool SaveFileManager::copySavefile(const String &oldFilename, const String &newF
 		delete outFile;
 		delete inFile;
 	}
+  if (success) {
+    Cloud::getDefaultInstance()->copy(oldFilename, newFilename);
+  }
 
 	return success;
 }

@@ -16,7 +16,9 @@ MODULE_OBJS := \
 	midi/timidity.o \
 	saves/savefile.o \
 	saves/default/default-saves.o \
-	timer/default/default-timer.o
+	timer/default/default-timer.o \
+	cloud/cloud.o \
+	cloud/dropbox/dropbox.o \
 
 
 ifdef USE_ELF_LOADER
