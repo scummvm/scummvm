@@ -123,7 +123,8 @@ public:
 private:
 	void undrawCursor();
 	void drawDesktop();
-	void paintBorder(Graphics::Surface *g, Common::Rect &r, WindowType windowType, int highlightedPart = kBorderNone);
+	void paintBorder(Graphics::Surface *g, Common::Rect &r, WindowType windowType, int highlightedPart = kBorderNone,
+						float scrollPos = 0.0, float scrollSize = 0.0);
 	void renderConsole(Graphics::Surface *g, Common::Rect &r);
 	void drawBox(Graphics::Surface *g, int x, int y, int w, int h);
 	void fillRect(Graphics::Surface *g, int x, int y, int w, int h, int color = kColorBlack);

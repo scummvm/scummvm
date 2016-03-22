@@ -310,7 +310,7 @@ const int arrowPixels[ARROW_H][ARROW_W] = {
 		{0,1,1,1,1,1,1,1,1,1,1,0},
 		{1,1,1,1,1,1,1,1,1,1,1,1}};
 
-void Gui::paintBorder(Graphics::Surface *g, Common::Rect &r, WindowType windowType, int highlightedPart) {
+void Gui::paintBorder(Graphics::Surface *g, Common::Rect &r, WindowType windowType, int highlightedPart, float scrollPos, float scrollSize) {
 	bool active = false, scrollable = false, closeable = false, drawTitle = false;
 	const int size = kBorderWidth;
 	int x = r.left - size;
@@ -351,39 +351,22 @@ void Gui::paintBorder(Graphics::Surface *g, Common::Rect &r, WindowType windowTy
 		} else {
 			int x1 = x + width - 15;
 			int y1 = y + size + 1;
-			int color1 = kColorBlack;
-			int color2 = kColorWhite;
-			if (highlightedPart == kBorderScrollUp) {
-				SWAP(color1, color2);
-				fillRect(g, x + width - kBorderWidth + 2, y + size, size - 4, r.height() / 2);
-			}
-			for (int yy = 0; yy < ARROW_H; yy++) {
-				for (int xx = 0; xx < ARROW_W; xx++) {
-					if (arrowPixels[yy][xx] != 0) {
-						g->hLine(x1 + xx, y1 + yy, x1 + xx, color1);
-					} else {
-						g->hLine(x1 + xx, y1 + yy, x1 + xx, color2);
-					}
-				}
-			}
-			fillRect(g, x + width - 13, y + size + ARROW_H, 8, r.height() / 2 - ARROW_H, color1);
 
-			color1 = kColorBlack;
-			color2 = kColorWhite;
-			if (highlightedPart == kBorderScrollDown) {
-				SWAP(color1, color2);
-				fillRect(g, x + width - kBorderWidth + 2, y + size + r.height() / 2, size - 4, r.height() / 2);
+			for (int yy = 0; yy < ARROW_H; yy++) {
+				for (int xx = 0; xx < ARROW_W; xx++)
+					g->hLine(x1 + xx, y1 + yy, x1 + xx, (arrowPixels[yy][xx] != 0 ? kColorBlack : kColorWhite));
 			}
-			fillRect(g, x + width - 13, y + size + r.height() / 2, 8, r.height() / 2 - ARROW_H, color1);
+
+			fillRect(g, x + width - 13, y + size + ARROW_H, 8, height - 2 * size - 1 - ARROW_H * 2);
+
 			y1 += height - 2 * size - ARROW_H - 2;
 			for (int yy = 0; yy < ARROW_H; yy++) {
-				for (int xx = 0; xx < ARROW_W; xx++) {
-					if (arrowPixels[ARROW_H - yy - 1][xx] != 0) {
-						g->hLine(x1 + xx, y1 + yy, x1 + xx, color1);
-					} else {
-						g->hLine(x1 + xx, y1 + yy, x1 + xx, color2);
-					}
-				}
+				for (int xx = 0; xx < ARROW_W; xx++)
+					g->hLine(x1 + xx, y1 + yy, x1 + xx, (arrowPixels[ARROW_H - yy - 1][xx] != 0 ? kColorBlack : kColorWhite));
+			}
+
+			if (highlightedPart == kBorderScrollUp || highlightedPart == kBorderScrollDown) {
+				fillRect(g, x + width - kBorderWidth + 2, y + size + r.height() * scrollPos, size - 4, r.height() * scrollSize, kColorGray);
 			}
 		}
 		if (closeable) {
@@ -619,7 +602,11 @@ void Gui::mouseDown(int x, int y) {
 	} else if (_consoleTextArea.contains(x, y)) {
 		startMarking(x, y);
 	} else if ((borderClick = isInBorder(_consoleTextArea, x, y)) != kBorderNone) {
-		paintBorder(&_screen, _consoleTextArea, kWindowConsole, borderClick);
+		int textFullSize = _lines.size() * _consoleLineHeight + _consoleTextArea.height();
+		float scrollPos = (float)_scrollPos / textFullSize;
+		float scrollSize = (float)_consoleTextArea.height() / textFullSize;
+
+		paintBorder(&_screen, _consoleTextArea, kWindowConsole, borderClick, scrollPos, scrollSize);
 	}
 }
 
