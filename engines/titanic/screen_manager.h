@@ -35,6 +35,16 @@
 
 namespace Titanic {
 
+/**
+ * The original used page flipping with one primary and one back buffer.
+ * Since we don't need that in ScummVM, the back buffer number below is
+ * remapped to the primary surface
+ */
+enum SurfaceNum {
+	SURFACE_PRIMARY = -1,
+	SURFACE_BACKBUFFER = -1
+};
+
 class TitanicEngine;
 
 class CScreenManager {
@@ -81,14 +91,14 @@ public:
 	
 	virtual void proc6() = 0;
 	virtual void proc7() = 0;
-	virtual CVideoSurface *getSurface(int surfaceNum) const = 0;
+	virtual CVideoSurface *getSurface(SurfaceNum surfaceNum) const = 0;
 	virtual void proc9() = 0;
 	virtual void proc10() = 0;
 
 	/**
 	 * Blits a surface onto one of the screen surfaces
 	 */
-	virtual void blitFrom(int surfaceNum, CVideoSurface *src, const Point *destPos = nullptr,
+	virtual void blitFrom(SurfaceNum surfaceNum, CVideoSurface *src, const Point *destPos = nullptr,
 		const Rect *srcRect = nullptr) = 0;
 
 	virtual void proc12() = 0;
@@ -103,7 +113,7 @@ public:
 	/**
 	 * Clear a portion of a specified surface
 	 */
-	virtual void clearSurface(int surfaceNum, Rect *_bounds) = 0;
+	virtual void clearSurface(SurfaceNum surfaceNum, Rect *_bounds) = 0;
 
 	/**
 	 * Resize the passed surface
@@ -125,7 +135,7 @@ public:
 	virtual void showCursor() = 0;
 	virtual void hideCursor() = 0;
 
-	void setSurfaceBounds(int surfaceNum, const Rect &r);
+	void setSurfaceBounds(SurfaceNum surfaceNum, const Rect &r);
 };
 
 class OSScreenManager: CScreenManager {
@@ -163,14 +173,14 @@ public:
 
 	virtual void proc6();
 	virtual void proc7();
-	virtual CVideoSurface *getSurface(int surfaceNum) const;
+	virtual CVideoSurface *getSurface(SurfaceNum surfaceNum) const;
 	virtual void proc9();
 	virtual void proc10();
 
 	/**
 	 * Blits a surface onto one of the screen surfaces
 	 */
-	virtual void blitFrom(int surfaceNum, CVideoSurface *src, const Point *destPos,
+	virtual void blitFrom(SurfaceNum surfaceNum, CVideoSurface *src, const Point *destPos,
 		const Rect *srcRect = nullptr);
 
 	virtual void proc12();
@@ -185,7 +195,7 @@ public:
 	/**
 	 * Clear a portion of the screen surface
 	 */
-	virtual void clearSurface(int surfaceNum, Rect *bounds);
+	virtual void clearSurface(SurfaceNum surfaceNum, Rect *bounds);
 
 	/**
 	 * Resize the passed surface

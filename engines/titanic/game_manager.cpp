@@ -179,7 +179,7 @@ void CGameManager::update() {
 			_bounds.extend(textCursor->getBounds());
 		
 		// Set the surface bounds
-		screenManager->setSurfaceBounds(0, _bounds);
+		screenManager->setSurfaceBounds(SURFACE_BACKBUFFER, _bounds);
 
 		// Handle redrawing the view
 		if (!_bounds.isEmpty()) {

@@ -67,8 +67,8 @@ void CGameView::drawView() {
 	srcRect.translate(-20, -10);
 	Common::Point destPos(srcRect.left, srcRect.top);
 
-	CScreenManager::_currentScreenManagerPtr->blitFrom(0, _surface,
-		&destPos, &srcRect);
+	CScreenManager::_currentScreenManagerPtr->blitFrom(SURFACE_BACKBUFFER,
+		_surface, &destPos, &srcRect);
 }
 
 /*------------------------------------------------------------------------*/

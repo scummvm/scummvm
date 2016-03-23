@@ -172,7 +172,7 @@ void CGameObject::draw(CScreenManager *screenManager) {
 			if (_bounds.intersects(getGameManager()->_bounds)) {
 				if (_surface) {
 					Point destPos(_bounds.left, _bounds.top);
-					screenManager->blitFrom(0, _surface, &destPos);
+					screenManager->blitFrom(SURFACE_BACKBUFFER, _surface, &destPos);
 				}
 
 				if (_field90)

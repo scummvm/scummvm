@@ -55,7 +55,7 @@ void CMainGameWindow::applicationStarting() {
 	
 	// Set the video mode
 	CScreenManager *screenManager = CScreenManager::setCurrent();
-	screenManager->setMode(640, 480, 16, 1, true);
+	screenManager->setMode(640, 480, 16, 0, true);
 
 	// TODO: Remove initial background and palette
 
@@ -120,7 +120,7 @@ void CMainGameWindow::draw() {
 		}
 
 		CScreenManager *scrManager = CScreenManager::setCurrent();
-		scrManager->clearSurface(0, &_gameManager->_bounds);
+		scrManager->clearSurface(SURFACE_BACKBUFFER, &_gameManager->_bounds);
 
 		switch (_gameManager->_gameState._mode) {
 		case GSMODE_1:
@@ -129,7 +129,7 @@ void CMainGameWindow::draw() {
 				drawPet(scrManager);
 
 			drawView();
-			drawViewContents(scrManager);
+//			drawViewContents(scrManager);
 			scrManager->drawCursors();
 			break;
 

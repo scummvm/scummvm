@@ -21,6 +21,7 @@
  */
 
 #include "titanic/screen_manager.h"
+#include "titanic/titanic.h"
 #include "titanic/video_surface.h"
 
 namespace Titanic {
@@ -62,7 +63,7 @@ CScreenManager *CScreenManager::setCurrent() {
 	return _currentScreenManagerPtr;
 }
 
-void CScreenManager::setSurfaceBounds(int surfaceNum, const Rect &r) {
+void CScreenManager::setSurfaceBounds(SurfaceNum surfaceNum, const Rect &r) {
 	if (surfaceNum >= 0 && surfaceNum < (int)_backSurfaces.size())
 		_backSurfaces[surfaceNum]._bounds = r;
 }
@@ -84,9 +85,11 @@ OSScreenManager::~OSScreenManager() {
 }
 
 void OSScreenManager::setMode(int width, int height, int bpp, uint numBackSurfaces, bool flag2) {
+	assert(bpp == 16);
 	destroyFrontAndBackBuffers();
 	_directDrawManager.initVideo(width, height, bpp, numBackSurfaces);
 
+	_vm->_screen->create(width, height, g_system->getScreenFormat());
 	_frontRenderSurface = new OSVideoSurface(this, nullptr);
 	_frontRenderSurface->setSurface(this, _directDrawManager._mainSurface);
 
@@ -113,7 +116,7 @@ void OSScreenManager::drawCursors() {
 void OSScreenManager::proc6() {}
 void OSScreenManager::proc7() {}
 
-CVideoSurface *OSScreenManager::getSurface(int surfaceNum) const {
+CVideoSurface *OSScreenManager::getSurface(SurfaceNum surfaceNum) const {
 	if (surfaceNum == -1)
 		return _frontRenderSurface;
 	else if (surfaceNum >= 0 && surfaceNum < (int)_backSurfaces.size())
@@ -125,7 +128,7 @@ CVideoSurface *OSScreenManager::getSurface(int surfaceNum) const {
 void OSScreenManager::proc9() {}
 void OSScreenManager::proc10() {}
 
-void OSScreenManager::blitFrom(int surfaceNum, CVideoSurface *src,
+void OSScreenManager::blitFrom(SurfaceNum surfaceNum, CVideoSurface *src,
 	const Point *destPos, const Rect *srcRect) {
 	// Get the dest surface
 	CVideoSurface *destSurface = _frontRenderSurface;
@@ -172,7 +175,7 @@ void OSScreenManager::getFont() {}
 void OSScreenManager::proc18() {}
 void OSScreenManager::proc19() {}
 
-void OSScreenManager::clearSurface(int surfaceNum, Rect *bounds) {
+void OSScreenManager::clearSurface(SurfaceNum surfaceNum, Rect *bounds) {
 	if (surfaceNum == -1)
 		_directDrawManager._mainSurface->fill(bounds, 0);
 	else if (surfaceNum >= 0 && surfaceNum < (int)_backSurfaces.size())

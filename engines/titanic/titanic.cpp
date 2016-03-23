@@ -87,7 +87,7 @@ void TitanicEngine::initialize() {
 
 	_debugger = new Debugger(this);
 	_events = new Events(this);
-	_screen = new Graphics::Screen();
+	_screen = new Graphics::Screen(0, 0);
 	_screenManager = new OSScreenManager(this);
 	_window = new CMainGameWindow(this);
 	_window->applicationStarting();

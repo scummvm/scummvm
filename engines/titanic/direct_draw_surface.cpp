@@ -64,6 +64,7 @@ void DirectDrawSurface::unlock() {
 void DirectDrawSurface::fill(const Rect *bounds, uint32 color) {
 	Rect tempBounds;
 
+	assert(_surface);
 	if (bounds) {
 		// Bounds are provided, clip them to the bounds of this surface
 		tempBounds = *bounds;
