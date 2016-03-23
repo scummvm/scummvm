@@ -294,7 +294,6 @@ void GnapEngine::gameUpdateTick() {
 	_soundMan->update();
 	_system->updateScreen();
 	_system->delayMillis(5);
-
 }
 
 void GnapEngine::saveTimers() {
@@ -793,7 +792,6 @@ void GnapEngine::mainLoop() {
 			if (_debugLevel == 4)
 				_gameDone = true;
 		}
-
 	}
 
 	if (_backgroundSurface)
@@ -804,11 +802,9 @@ void GnapEngine::mainLoop() {
 	// TODO freeFont();
 
 	debug("MainLoop #XXX2");
-
 }
 
 void GnapEngine::initScene() {
-
 	Common::String datFilename;
 	
 	_isLeavingScene = false;
@@ -856,7 +852,6 @@ void GnapEngine::endSceneInit() {
 }
 
 void GnapEngine::afterScene() {
-
 	if (_gameDone)
 		return;
 	
@@ -906,7 +901,6 @@ void GnapEngine::startSoundTimerA(int timerIndex) {
 }
 
 int GnapEngine::playSoundA() {
-
 	static const int kSoundIdsA[] = {
 		0x93E, 0x93F, 0x941, 0x942, 0x943, 0x944,
 		0x945, 0x946, 0x947, 0x948, 0x949
@@ -1030,7 +1024,6 @@ int GnapEngine::getGnapSequenceId(int kind, int gridX, int gridY) {
 	int sequenceId = 0;
 	
 	switch (kind) {
-
 	case gskPullOutDevice:
 		if (gridX > 0 && gridY > 0) {
 			if (_gnapY > gridY) {
@@ -1364,14 +1357,12 @@ int GnapEngine::getGnapSequenceId(int kind, int gridX, int gridY) {
 			_gnapIdleFacing = 1;
 		}
 		break;
-
 	}
 
 	return sequenceId | 0x10000;
 }
 
 int GnapEngine::getGnapShowSequenceId(int index, int gridX, int gridY) {
-
 	int sequenceId;
 	int facing = _gnapIdleFacing;
 
@@ -1761,7 +1752,6 @@ void GnapEngine::gnapInitBrainPulseRndValue() {
 }
 
 void GnapEngine::gnapUseDeviceOnBeaver() {
-	
 	playGnapSequence(makeRid(1, getGnapSequenceId(gskPullOutDevice, _platX, _platY)));
 
 	if (_beaverFacing != 0) {
@@ -1902,6 +1892,7 @@ void GnapEngine::gnapUseDisguiseOnPlatypus() {
 	setFlag(10);
 }
 
+// CHECKME: The 3 parameters are always 0
 int GnapEngine::getBeaverSequenceId(int kind, int gridX, int gridY) {
 	int sequenceId;
 

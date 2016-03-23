@@ -58,13 +58,13 @@ void GnapEngine::scene51_updateHotspots() {
 }
 
 void GnapEngine::scene51_clearItem(Scene51Item *item) {
-	item->currSequenceId = 0;
-	item->droppedSequenceId = 0;
-	item->x = 0;
-	item->y = 0;
-	item->x2 = 0;
-	item->collisionX = 0;
-	item->canCatch = 0;
+	item->_currSequenceId = 0;
+	item->_droppedSequenceId = 0;
+	item->_x = 0;
+	item->_y = 0;
+	item->_x2 = 0;
+	item->_collisionX = 0;
+	item->_canCatch = false;
 }
 
 void GnapEngine::scene51_dropNextItem() {
@@ -74,7 +74,7 @@ void GnapEngine::scene51_dropNextItem() {
 
 	int index = 0;
 
-	while (index < 6 && _s51_items[index].currSequenceId)
+	while (index < 6 && _s51_items[index]._currSequenceId)
 		++index;
 
 	if (index == 6)
@@ -84,10 +84,10 @@ void GnapEngine::scene51_dropNextItem() {
 
 	case 0:
 		if (getRandom(10) != 0 || _s51_itemsCtr2 >= 2) {
-			_s51_items[index].currSequenceId = 0xBD;
+			_s51_items[index]._currSequenceId = 0xBD;
 		} else {
 			--_s51_itemsCtr1;
-			_s51_items[index].currSequenceId = 0xBA;
+			_s51_items[index]._currSequenceId = 0xBA;
 			++_s51_itemsCtr2;
 		}
 		break;
@@ -100,20 +100,20 @@ void GnapEngine::scene51_dropNextItem() {
 				else
 					_s51_itemInsertX += 70;
 			}
-			_s51_items[index].currSequenceId = 0xBD;
+			_s51_items[index]._currSequenceId = 0xBD;
 		} else {
 			--_s51_itemsCtr1;
-			_s51_items[index].currSequenceId = 0xBA;
+			_s51_items[index]._currSequenceId = 0xBA;
 			++_s51_itemsCtr2;
 		}
 		break;
 
 	case 2:
 		if (getRandom(6) != 0 || _s51_itemsCtr2 >= 2) {
-			_s51_items[index].currSequenceId = 0xBD;
+			_s51_items[index]._currSequenceId = 0xBD;
 		} else {
 			--_s51_itemsCtr1;
-			_s51_items[index].currSequenceId = 0xBA;
+			_s51_items[index]._currSequenceId = 0xBA;
 			++_s51_itemsCtr2;
 		}
 		break;
@@ -122,19 +122,19 @@ void GnapEngine::scene51_dropNextItem() {
 	case 4:
 		if (_s51_itemsCtr == 0)
 			_s51_itemsCtr1 = 3;
-		_s51_items[index].currSequenceId = 0xC0;
+		_s51_items[index]._currSequenceId = 0xC0;
 		break;
 
 	case 5:
 	case 6:
 		if (getRandom(5) != 0 || _s51_itemsCtr2 >= 2) {
 			if (getRandom(5) != 0)
-				_s51_items[index].currSequenceId = 0xBD;
+				_s51_items[index]._currSequenceId = 0xBD;
 			else
-				_s51_items[index].currSequenceId = 0xC0;
+				_s51_items[index]._currSequenceId = 0xC0;
 		} else {
 			--_s51_itemsCtr1;
-			_s51_items[index].currSequenceId = 0xBA;
+			_s51_items[index]._currSequenceId = 0xBA;
 			++_s51_itemsCtr2;
 		}
 		break;
@@ -148,12 +148,12 @@ void GnapEngine::scene51_dropNextItem() {
 					_s51_itemInsertX += 40;
 			}
 			if (getRandom(9) != 0)
-				_s51_items[index].currSequenceId = 0xBD;
+				_s51_items[index]._currSequenceId = 0xBD;
 			else
-				_s51_items[index].currSequenceId = 0xC0;
+				_s51_items[index]._currSequenceId = 0xC0;
 		} else {
 			--_s51_itemsCtr1;
-			_s51_items[index].currSequenceId = 0xBA;
+			_s51_items[index]._currSequenceId = 0xBA;
 			++_s51_itemsCtr2;
 		}
 		break;
@@ -161,12 +161,12 @@ void GnapEngine::scene51_dropNextItem() {
 	default:
 		if (getRandom(4) != 0 || _s51_itemsCtr2 >= 2) {
 			if (getRandom(9) != 0)
-				_s51_items[index].currSequenceId = 0xBD;
+				_s51_items[index]._currSequenceId = 0xBD;
 			else
-				_s51_items[index].currSequenceId = 0xC0;
+				_s51_items[index]._currSequenceId = 0xC0;
 		} else {
 			--_s51_itemsCtr1;
-			_s51_items[index].currSequenceId = 0xBA;
+			_s51_items[index]._currSequenceId = 0xBA;
 			++_s51_itemsCtr2;
 		}
 		break;
@@ -193,23 +193,23 @@ void GnapEngine::scene51_dropNextItem() {
 	if (_s51_itemInsertX < 129)
 		_s51_itemInsertX = 129;
 
-	if (_s51_items[index].currSequenceId == 0xBA) {
-		_s51_items[index].x2 = getRandom(350) + 200;
-		_s51_items[index].x = _s51_items[index].x2 - 362;
-		_s51_items[index].y = 15;
-		_s51_items[index].id = 249 - index;
+	if (_s51_items[index]._currSequenceId == 0xBA) {
+		_s51_items[index]._x2 = getRandom(350) + 200;
+		_s51_items[index]._x = _s51_items[index]._x2 - 362;
+		_s51_items[index]._y = 15;
+		_s51_items[index]._id = 249 - index;
 	} else {
-		_s51_items[index].collisionX = _s51_itemInsertX;
-		_s51_items[index].x = _s51_items[index].collisionX - 395;
-		if (_s51_items[index].currSequenceId == 0xC0)
-			_s51_items[index].x -= 65;
-		_s51_items[index].id = index + 250;
-		_s51_items[index].canCatch = 1;
+		_s51_items[index]._collisionX = _s51_itemInsertX;
+		_s51_items[index]._x = _s51_items[index]._collisionX - 395;
+		if (_s51_items[index]._currSequenceId == 0xC0)
+			_s51_items[index]._x -= 65;
+		_s51_items[index]._id = index + 250;
+		_s51_items[index]._canCatch = true;
 	}
 
-	_gameSys->setAnimation(_s51_items[index].currSequenceId, _s51_items[index].id, index + 1);
-	_gameSys->insertSequence(_s51_items[index].currSequenceId, _s51_items[index].id, 0, 0,
-		kSeqNone, 0, _s51_items[index].x, _s51_items[index].y);
+	_gameSys->setAnimation(_s51_items[index]._currSequenceId, _s51_items[index]._id, index + 1);
+	_gameSys->insertSequence(_s51_items[index]._currSequenceId, _s51_items[index]._id, 0, 0,
+		kSeqNone, 0, _s51_items[index]._x, _s51_items[index]._y);
 
 	_timers[0] = _s51_dropSpeedTicks;
 
@@ -234,18 +234,17 @@ void GnapEngine::scene51_updateItemAnimations() {
 
 int GnapEngine::scene51_checkCollision(int sequenceId) {
 	bool jumpingLeft = false, jumpingRight = false;
-	int v6 = 0;
-	int v2 = 0;
 	int v8, v4;
 	int result = 0;
 
 	if (!scene51_isJumping(sequenceId))
 		return false;
 
-	while (v6 < 6)
-		v2 += _s51_items[v6++].isCollision;
+	bool checkFl = false;
+	for (int i = 0; i < 6; i++)
+		checkFl |= _s51_items[i]._isCollision;
 		
-	if (!v2)
+	if (!checkFl)
 		return false;
 		
 	if (scene51_isJumpingRight(sequenceId)) {
@@ -262,14 +261,14 @@ int GnapEngine::scene51_checkCollision(int sequenceId) {
 		int v5 = 0;
 		int i;
 		for (i = 0; i < 6; ++i) {
-			if (_s51_items[i].isCollision) {
-				if (jumpingRight && _s51_items[i].x2 > v8 && _s51_items[i].x2 < v4) {
+			if (_s51_items[i]._isCollision) {
+				if (jumpingRight && _s51_items[i]._x2 > v8 && _s51_items[i]._x2 < v4) {
 					v5 = v8 - 359;
 					if (v5 == 0)
 						v5 = 1;
 					_s51_platypusNextSequenceId = 0xB6;
 					break;
-				} else if (jumpingLeft && _s51_items[i].x2 < v4 && _s51_items[i].x2 > v8) {
+				} else if (jumpingLeft && _s51_items[i]._x2 < v4 && _s51_items[i]._x2 > v8) {
 					v5 = v8 - 344;
 					if (v5 == 0)
 						v5 = 1;
@@ -279,10 +278,10 @@ int GnapEngine::scene51_checkCollision(int sequenceId) {
 			}
 		}
 		if (v5) {
-			_gameSys->setAnimation(0xBC, _s51_items[i].id, i + 1);
-			_gameSys->insertSequence(0xBC, _s51_items[i].id, _s51_items[i].currSequenceId, _s51_items[i].id, kSeqSyncWait, 0, _s51_items[i].x, 15);
-			_s51_items[i].isCollision = 0;
-			_s51_items[i].currSequenceId = 0xBC;
+			_gameSys->setAnimation(0xBC, _s51_items[i]._id, i + 1);
+			_gameSys->insertSequence(0xBC, _s51_items[i]._id, _s51_items[i]._currSequenceId, _s51_items[i]._id, kSeqSyncWait, 0, _s51_items[i]._x, 15);
+			_s51_items[i]._isCollision = false;
+			_s51_items[i]._currSequenceId = 0xBC;
 			--_s51_itemsCtr2;
 		}
 		result = v5;
@@ -293,14 +292,14 @@ int GnapEngine::scene51_checkCollision(int sequenceId) {
 
 void GnapEngine::scene51_updateItemAnimation(Scene51Item *item, int index) {
 
-	switch (item->currSequenceId) {
+	switch (item->_currSequenceId) {
 	case 0xBD:
 	case 0xC0:
 	case 0xC1:
 		// Falling coin and banknote
 		if (!scene51_itemIsCaught(item)) {
 			if (_s51_dropLoseCash) {
-				if (item->currSequenceId == 0xBD)
+				if (item->_currSequenceId == 0xBD)
 					_s51_cashAmount -= 2;
 				else
 					_s51_cashAmount -= 25;
@@ -308,24 +307,24 @@ void GnapEngine::scene51_updateItemAnimation(Scene51Item *item, int index) {
 					_s51_cashAmount = 0;
 				scene51_updateCash(_s51_cashAmount);
 			}
-			item->droppedSequenceId = item->currSequenceId + 1;
-			if (item->currSequenceId != 0xC0) {
-				item->canCatch = 0;
+			item->_droppedSequenceId = item->_currSequenceId + 1;
+			if (item->_currSequenceId != 0xC0) {
+				item->_canCatch = false;
 				_s51_dropLoseCash = true;
 				_s51_itemsCtr = 0;
 				_timers[0] = 10;
 			}
-			if (item->droppedSequenceId) {
-				_gameSys->setAnimation(item->droppedSequenceId, item->id, index + 1);
-				_gameSys->insertSequence(item->droppedSequenceId, item->id, item->currSequenceId, item->id, kSeqSyncWait, 0, item->x, item->y);
-				item->currSequenceId = item->droppedSequenceId;
-				item->y = 0;
+			if (item->_droppedSequenceId) {
+				_gameSys->setAnimation(item->_droppedSequenceId, item->_id, index + 1);
+				_gameSys->insertSequence(item->_droppedSequenceId, item->_id, item->_currSequenceId, item->_id, kSeqSyncWait, 0, item->_x, item->_y);
+				item->_currSequenceId = item->_droppedSequenceId;
+				item->_y = 0;
 			}
 		} else {
-			_gameSys->removeSequence(item->currSequenceId, item->id, true);
+			_gameSys->removeSequence(item->_currSequenceId, item->_id, true);
 			_gameSys->setAnimation(0, 0, index + 1);
 			playSound(218, 0);
-			if (scene51_incCashAmount(item->currSequenceId) == 1995) {
+			if (scene51_incCashAmount(item->_currSequenceId) == 1995) {
 				scene51_winMinigame();
 				_sceneDone = true;
 			} else {
@@ -356,12 +355,12 @@ void GnapEngine::scene51_updateItemAnimation(Scene51Item *item, int index) {
 
 	case 0xBE:
 		// Fallen coin
-		item->droppedSequenceId = item->currSequenceId + 1;
-		if (item->droppedSequenceId) {
-			_gameSys->setAnimation(item->droppedSequenceId, item->id, index + 1);
-			_gameSys->insertSequence(item->droppedSequenceId, item->id, item->currSequenceId, item->id, kSeqSyncWait, 0, item->x, item->y);
-			item->currSequenceId = item->droppedSequenceId;
-			item->y = 0;
+		item->_droppedSequenceId = item->_currSequenceId + 1;
+		if (item->_droppedSequenceId) {
+			_gameSys->setAnimation(item->_droppedSequenceId, item->_id, index + 1);
+			_gameSys->insertSequence(item->_droppedSequenceId, item->_id, item->_currSequenceId, item->_id, kSeqSyncWait, 0, item->_x, item->_y);
+			item->_currSequenceId = item->_droppedSequenceId;
+			item->_y = 0;
 		}
 		break;
 
@@ -369,40 +368,40 @@ void GnapEngine::scene51_updateItemAnimation(Scene51Item *item, int index) {
 	case 0xC2:
 		// Bouncing coin and banknote
 		_gameSys->setAnimation(0, 0, index + 1);
-		_gameSys->removeSequence(item->currSequenceId, item->id, true);
+		_gameSys->removeSequence(item->_currSequenceId, item->_id, true);
 		scene51_clearItem(item);
 		break;
 
 	case 0xBA:
 		// Falling banana peel
-		item->droppedSequenceId = 0xBB;
-		item->y = 15;
-		if (item->droppedSequenceId) {
-			_gameSys->setAnimation(item->droppedSequenceId, item->id, index + 1);
-			_gameSys->insertSequence(item->droppedSequenceId, item->id, item->currSequenceId, item->id, kSeqSyncWait, 0, item->x, item->y);
-			item->currSequenceId = item->droppedSequenceId;
-			item->y = 0;
+		item->_droppedSequenceId = 0xBB;
+		item->_y = 15;
+		if (item->_droppedSequenceId) {
+			_gameSys->setAnimation(item->_droppedSequenceId, item->_id, index + 1);
+			_gameSys->insertSequence(item->_droppedSequenceId, item->_id, item->_currSequenceId, item->_id, kSeqSyncWait, 0, item->_x, item->_y);
+			item->_currSequenceId = item->_droppedSequenceId;
+			item->_y = 0;
 		}
 		break;
 
 	case 0xBB:
-		item->isCollision = 1;
-		item->droppedSequenceId = 0;
+		item->_isCollision = true;
+		item->_droppedSequenceId = 0;
 		_gameSys->setAnimation(0, 0, index + 1);
 		break;
 
 	case 0xBC:
-		_gameSys->removeSequence(item->currSequenceId, item->id, true);
+		_gameSys->removeSequence(item->_currSequenceId, item->_id, true);
 		_gameSys->setAnimation(0, 0, index + 1);
 		scene51_clearItem(item);
 		break;
 
 	default:
-		if (item->droppedSequenceId) {
-			_gameSys->setAnimation(item->droppedSequenceId, item->id, index + 1);
-			_gameSys->insertSequence(item->droppedSequenceId, item->id, item->currSequenceId, item->id, kSeqSyncWait, 0, item->x, item->y);
-			item->currSequenceId = item->droppedSequenceId;
-			item->y = 0;
+		if (item->_droppedSequenceId) {
+			_gameSys->setAnimation(item->_droppedSequenceId, item->_id, index + 1);
+			_gameSys->insertSequence(item->_droppedSequenceId, item->_id, item->_currSequenceId, item->_id, kSeqSyncWait, 0, item->_x, item->_y);
+			item->_currSequenceId = item->_droppedSequenceId;
+			item->_y = 0;
 		}
 		break;
 
@@ -412,8 +411,8 @@ void GnapEngine::scene51_updateItemAnimation(Scene51Item *item, int index) {
 
 void GnapEngine::scene51_removeCollidedItems() {
 	for (int i = 0; i < 6; ++i) {
-		if (_s51_items[i].isCollision) {
-			_gameSys->removeSequence(_s51_items[i].currSequenceId, _s51_items[i].id, true);
+		if (_s51_items[i]._isCollision) {
+			_gameSys->removeSequence(_s51_items[i]._currSequenceId, _s51_items[i]._id, true);
 			_gameSys->setAnimation(0, 0, i + 1);
 			scene51_clearItem(&_s51_items[i]);
 		}
@@ -423,21 +422,21 @@ void GnapEngine::scene51_removeCollidedItems() {
 
 int GnapEngine::scene51_itemIsCaught(Scene51Item *item) {
 	
-	if (!item->canCatch)
+	if (!item->_canCatch)
 		return 0;
 
 	if (scene51_isJumpingRight(_s51_platypusJumpSequenceId)) {
 		int v4 = scene51_getPosRight(_s51_platypusJumpSequenceId) + 97;
-		if (item->collisionX < v4 && v4 - item->collisionX < 56)
+		if (item->_collisionX < v4 && v4 - item->_collisionX < 56)
 			return 1;
 	} else {
 		int v2 = scene51_getPosLeft(_s51_platypusJumpSequenceId);
-		if (item->collisionX > v2 && item->collisionX - v2 < 56)
+		if (item->_collisionX > v2 && item->_collisionX - v2 < 56)
 			return 1;
 	}
 
-	if (item->currSequenceId == 0xC1) {
-		int v3 = item->collisionX + 100;
+	if (item->_currSequenceId == 0xC1) {
+		int v3 = item->_collisionX + 100;
 		if (scene51_isJumpingRight(_s51_platypusJumpSequenceId)) {
 			if (ABS(scene51_getPosRight(_s51_platypusJumpSequenceId) + 46 - v3) < 56)
 				return 1;
@@ -504,15 +503,15 @@ void GnapEngine::scene51_playIntroAnim() {
 	for (int i = 0; i < 6; ++i)
 		scene51_clearItem(&_s51_items[i]);
 
-	_s51_items[0].currSequenceId = 0xBA;
-	_s51_items[0].x2 = 320;
-	_s51_items[0].x = -42;
-	_s51_items[0].y = 15;
-	_s51_items[0].id = 249;
-	_s51_items[0].isCollision = 1;
+	_s51_items[0]._currSequenceId = 0xBA;
+	_s51_items[0]._x2 = 320;
+	_s51_items[0]._x = -42;
+	_s51_items[0]._y = 15;
+	_s51_items[0]._id = 249;
+	_s51_items[0]._isCollision = true;
 
 	_gameSys->insertSequence(_s51_platypusSequenceId, 256, 0, 0, kSeqNone, 0, -179, 0);
-	_gameSys->insertSequence(0xBA, 249, 0, 0, kSeqNone, 0, _s51_items[0].x, _s51_items[0].y);
+	_gameSys->insertSequence(0xBA, 249, 0, 0, kSeqNone, 0, _s51_items[0]._x, _s51_items[0]._y);
 	_gameSys->setAnimation(0xBA, 249, 1);
 	_gameSys->setAnimation(_s51_platypusSequenceId, 256, 0);
 

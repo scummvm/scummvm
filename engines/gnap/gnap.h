@@ -214,25 +214,25 @@ enum {
 	// 0x7B0	Gnap walks to the left 2
 
 struct Scene49Obstacle {
-	int currSequenceId;
-	int closerSequenceId;
-	int passedSequenceId;
-	int splashSequenceId;
-	int collisionSequenceId;
-	int prevId;
-	int currId;
-	int laneNum;
+	int _currSequenceId;
+	int _closerSequenceId;
+	int _passedSequenceId;
+	int _splashSequenceId;
+	int _collisionSequenceId;
+	int _prevId;
+	int _currId;
+	int _laneNum;
 };
 
 struct Scene51Item {
-	int currSequenceId;
-	int droppedSequenceId;
-	int x, y;
-	int collisionX;
-	int canCatch;
-	int isCollision;
-	int x2;
-	int id;
+	int _currSequenceId;
+	int _droppedSequenceId;
+	int _x, _y;
+	int _collisionX;
+	bool _canCatch;
+	bool _isCollision;
+	int _x2;
+	int _id;
 };
 
 class GnapEngine : public Engine {
