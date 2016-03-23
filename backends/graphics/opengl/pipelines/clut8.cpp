@@ -20,20 +20,27 @@
  *
  */
 
-#ifndef BACKENDS_GRAPHICS_OPENGL_DEBUG_H
-#define BACKENDS_GRAPHICS_OPENGL_DEBUG_H
-
-#define OPENGL_DEBUG
-
-#ifdef OPENGL_DEBUG
+#include "backends/graphics/opengl/pipelines/clut8.h"
+#include "backends/graphics/opengl/shader.h"
+#include "backends/graphics/opengl/framebuffer.h"
 
 namespace OpenGL {
-void checkGLError(const char *expr, const char *file, int line);
+
+#if !USE_FORCED_GLES
+CLUT8LookUpPipeline::CLUT8LookUpPipeline()
+    : ShaderPipeline(ShaderMan.query(ShaderManager::kCLUT8LookUp)), _paletteTexture(nullptr) {
+}
+
+void CLUT8LookUpPipeline::drawTexture(const GLTexture &texture, const GLfloat *coordinates) {
+	// Set the palette texture.
+	GL_CALL(glActiveTexture(GL_TEXTURE1));
+	if (_paletteTexture) {
+		_paletteTexture->bind();
+	}
+
+	GL_CALL(glActiveTexture(GL_TEXTURE0));
+	ShaderPipeline::drawTexture(texture, coordinates);
+}
+#endif // !USE_FORCED_GLES
+
 } // End of namespace OpenGL
-
-#define GL_WRAP_DEBUG(call, name) do { (call); OpenGL::checkGLError(#name, __FILE__, __LINE__); } while (false)
-#else
-#define GL_WRAP_DEBUG(call, name) do { (call); } while (false)
-#endif
-
-#endif

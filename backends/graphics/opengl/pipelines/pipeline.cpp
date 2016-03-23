@@ -20,22 +20,47 @@
  *
  */
 
-#ifndef BACKENDS_GRAPHICS_OPENGL_EXTENSIONS_H
-#define BACKENDS_GRAPHICS_OPENGL_EXTENSIONS_H
+#include "backends/graphics/opengl/pipelines/pipeline.h"
+#include "backends/graphics/opengl/framebuffer.h"
 
 namespace OpenGL {
 
-/**
- * Checks for availability of extensions we want to use and initializes them
- * when available.
- */
-void initializeGLExtensions();
+Pipeline::Pipeline()
+    : _activeFramebuffer(nullptr), _isActive(false) {
+}
 
-/**
- * Whether non power of two textures are supported
- */
-extern bool g_extNPOTSupported;
+void Pipeline::activate() {
+	_isActive = true;
+
+	if (_activeFramebuffer) {
+		_activeFramebuffer->activate();
+	}
+
+	activateInternal();
+}
+
+void Pipeline::deactivate() {
+	deactivateInternal();
+
+	if (_activeFramebuffer) {
+		_activeFramebuffer->deactivate();
+	}
+
+	_isActive = false;
+}
+
+Framebuffer *Pipeline::setFramebuffer(Framebuffer *framebuffer) {
+	Framebuffer *oldFramebuffer = _activeFramebuffer;
+	if (_isActive && oldFramebuffer) {
+		oldFramebuffer->deactivate();
+	}
+
+	_activeFramebuffer = framebuffer;
+	if (_isActive && _activeFramebuffer) {
+		_activeFramebuffer->activate();
+	}
+
+	return oldFramebuffer;
+}
 
 } // End of namespace OpenGL
-
-#endif

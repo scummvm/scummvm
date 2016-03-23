@@ -20,20 +20,38 @@
  *
  */
 
-#ifndef BACKENDS_GRAPHICS_OPENGL_DEBUG_H
-#define BACKENDS_GRAPHICS_OPENGL_DEBUG_H
+#ifndef BACKENDS_GRAPHICS_OPENGL_PIPELINES_SHADER_H
+#define BACKENDS_GRAPHICS_OPENGL_PIPELINES_SHADER_H
 
-#define OPENGL_DEBUG
-
-#ifdef OPENGL_DEBUG
+#include "backends/graphics/opengl/pipelines/pipeline.h"
 
 namespace OpenGL {
-void checkGLError(const char *expr, const char *file, int line);
-} // End of namespace OpenGL
 
-#define GL_WRAP_DEBUG(call, name) do { (call); OpenGL::checkGLError(#name, __FILE__, __LINE__); } while (false)
-#else
-#define GL_WRAP_DEBUG(call, name) do { (call); } while (false)
-#endif
+#if !USE_FORCED_GLES
+class Shader;
+
+class ShaderPipeline : public Pipeline {
+public:
+	ShaderPipeline(Shader *shader);
+
+	virtual void setColor(GLfloat r, GLfloat g, GLfloat b, GLfloat a);
+
+	virtual void drawTexture(const GLTexture &texture, const GLfloat *coordinates);
+
+	virtual void setProjectionMatrix(const GLfloat *projectionMatrix);
+
+protected:
+	virtual void activateInternal();
+	virtual void deactivateInternal();
+
+	GLint _vertexAttribLocation;
+	GLint _texCoordAttribLocation;
+	GLint _colorAttribLocation;
+
+	Shader *const _activeShader;
+};
+#endif // !USE_FORCED_GLES
+
+} // End of namespace OpenGL
 
 #endif

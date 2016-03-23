@@ -23,8 +23,10 @@
 
 #include "backends/graphics/opengl/opengl-graphics.h"
 #include "backends/graphics/opengl/texture.h"
-#include "backends/graphics/opengl/debug.h"
-#include "backends/graphics/opengl/extensions.h"
+#include "backends/graphics/opengl/pipelines/pipeline.h"
+#include "backends/graphics/opengl/pipelines/fixed.h"
+#include "backends/graphics/opengl/pipelines/shader.h"
+#include "backends/graphics/opengl/shader.h"
 
 #include "common/textconsole.h"
 #include "common/translation.h"
@@ -45,6 +47,7 @@ namespace OpenGL {
 
 OpenGLGraphicsManager::OpenGLGraphicsManager()
     : _currentState(), _oldState(), _transactionMode(kTransactionNone), _screenChangeID(1 << (sizeof(int) * 8 - 2)),
+      _pipeline(nullptr),
       _outputScreenWidth(0), _outputScreenHeight(0), _displayX(0), _displayY(0),
       _displayWidth(0), _displayHeight(0), _defaultFormat(), _defaultFormatAlpha(),
       _gameScreen(nullptr), _gameScreenShakeOffset(0), _overlay(nullptr),
@@ -58,6 +61,7 @@ OpenGLGraphicsManager::OpenGLGraphicsManager()
 #endif
     {
 	memset(_gamePalette, 0, sizeof(_gamePalette));
+	g_context.reset();
 }
 
 OpenGLGraphicsManager::~OpenGLGraphicsManager() {
@@ -66,6 +70,9 @@ OpenGLGraphicsManager::~OpenGLGraphicsManager() {
 	delete _cursor;
 #ifdef USE_OSD
 	delete _osd;
+#endif
+#if !USE_FORCED_GLES
+	ShaderManager::destroy();
 #endif
 }
 
@@ -215,8 +222,8 @@ OSystem::TransactionError OpenGLGraphicsManager::endGFXTransaction() {
 		   // a context existing before, which means we don't know the maximum
 		   // supported texture size before this. Thus, we check whether the
 		   // requested game resolution is supported over here.
-		   || (   _currentState.gameWidth  > (uint)Texture::getMaximumTextureSize()
-		       || _currentState.gameHeight > (uint)Texture::getMaximumTextureSize())) {
+		   || (   _currentState.gameWidth  > (uint)g_context.maxTextureSize
+		       || _currentState.gameHeight > (uint)g_context.maxTextureSize)) {
 			if (_transactionMode == kTransactionActive) {
 				// Try to setup the old state in case its valid and is
 				// actually different from the new one.
@@ -267,9 +274,9 @@ OSystem::TransactionError OpenGLGraphicsManager::endGFXTransaction() {
 		_gameScreen = nullptr;
 
 #ifdef USE_RGB_COLOR
-		_gameScreen = createTexture(_currentState.gameFormat);
+		_gameScreen = createSurface(_currentState.gameFormat);
 #else
-		_gameScreen = createTexture(Graphics::PixelFormat::createFormatCLUT8());
+		_gameScreen = createSurface(Graphics::PixelFormat::createFormatCLUT8());
 #endif
 		assert(_gameScreen);
 		if (_gameScreen->hasPalette()) {
@@ -365,29 +372,37 @@ void OpenGLGraphicsManager::updateScreen() {
 	}
 	_forceRedraw = false;
 
+	// Update changes to textures.
+	_gameScreen->updateGLTexture();
+	if (_cursor) {
+		_cursor->updateGLTexture();
+	}
+	_overlay->updateGLTexture();
+	_osd->updateGLTexture();
+
 	// Clear the screen buffer.
 	if (_scissorOverride && !_overlayVisible) {
 		// In certain cases we need to assure that the whole screen area is
 		// cleared. For example, when switching from overlay visible to
 		// invisible, we need to assure that all contents are cleared to
 		// properly remove all overlay contents.
-		GLCALL(glDisable(GL_SCISSOR_TEST));
-		GLCALL(glClear(GL_COLOR_BUFFER_BIT));
-		GLCALL(glEnable(GL_SCISSOR_TEST));
+		_backBuffer.enableScissorTest(false);
+		GL_CALL(glClear(GL_COLOR_BUFFER_BIT));
+		_backBuffer.enableScissorTest(true);
 
 		--_scissorOverride;
 	} else {
-		GLCALL(glClear(GL_COLOR_BUFFER_BIT));
+		GL_CALL(glClear(GL_COLOR_BUFFER_BIT));
 	}
 
 	const GLfloat shakeOffset = _gameScreenShakeOffset * (GLfloat)_displayHeight / _gameScreen->getHeight();
 
 	// First step: Draw the (virtual) game screen.
-	_gameScreen->draw(_displayX, _displayY + shakeOffset, _displayWidth, _displayHeight);
+	g_context.getActivePipeline()->drawTexture(_gameScreen->getGLTexture(), _displayX, _displayY + shakeOffset, _displayWidth, _displayHeight);
 
 	// Second step: Draw the overlay if visible.
 	if (_overlayVisible) {
-		_overlay->draw(0, 0, _outputScreenWidth, _outputScreenHeight);
+		g_context.getActivePipeline()->drawTexture(_overlay->getGLTexture(), 0, 0, _outputScreenWidth, _outputScreenHeight);
 	}
 
 	// Third step: Draw the cursor if visible.
@@ -396,9 +411,10 @@ void OpenGLGraphicsManager::updateScreen() {
 		// visible.
 		const GLfloat cursorOffset = _overlayVisible ? 0 : shakeOffset;
 
-		_cursor->draw(_cursorDisplayX - _cursorHotspotXScaled,
-		              _cursorDisplayY - _cursorHotspotYScaled + cursorOffset,
-		              _cursorWidthScaled, _cursorHeightScaled);
+		g_context.getActivePipeline()->drawTexture(_cursor->getGLTexture(),
+		                         _cursorDisplayX - _cursorHotspotXScaled,
+		                         _cursorDisplayY - _cursorHotspotYScaled + cursorOffset,
+		                         _cursorWidthScaled, _cursorHeightScaled);
 	}
 
 #ifdef USE_OSD
@@ -419,13 +435,13 @@ void OpenGLGraphicsManager::updateScreen() {
 		}
 
 		// Set the OSD transparency.
-		GLCALL(glColor4f(1.0f, 1.0f, 1.0f, _osdAlpha / 100.0f));
+		g_context.getActivePipeline()->setColor(1.0f, 1.0f, 1.0f, _osdAlpha / 100.0f);
 
 		// Draw the OSD texture.
-		_osd->draw(0, 0, _outputScreenWidth, _outputScreenHeight);
+		g_context.getActivePipeline()->drawTexture(_osd->getGLTexture(), 0, 0, _outputScreenWidth, _outputScreenHeight);
 
 		// Reset color.
-		GLCALL(glColor4f(1.0f, 1.0f, 1.0f, 1.0f));
+		g_context.getActivePipeline()->setColor(1.0f, 1.0f, 1.0f, 1.0f);
 	}
 #endif
 
@@ -467,7 +483,7 @@ void OpenGLGraphicsManager::showOverlay() {
 	_forceRedraw = true;
 
 	// Allow drawing inside full screen area.
-	GLCALL(glDisable(GL_SCISSOR_TEST));
+	_backBuffer.enableScissorTest(false);
 
 	// Update cursor position.
 	setMousePosition(_cursorX, _cursorY);
@@ -478,7 +494,7 @@ void OpenGLGraphicsManager::hideOverlay() {
 	_forceRedraw = true;
 
 	// Limit drawing to screen area.
-	GLCALL(glEnable(GL_SCISSOR_TEST));
+	_backBuffer.enableScissorTest(true);
 	_scissorOverride = 3;
 
 	// Update cursor position.
@@ -609,7 +625,7 @@ void OpenGLGraphicsManager::setMouseCursor(const void *buf, uint w, uint h, int 
 		} else {
 			textureFormat = _defaultFormatAlpha;
 		}
-		_cursor = createTexture(textureFormat, true);
+		_cursor = createSurface(textureFormat, true);
 		assert(_cursor);
 		_cursor->enableLinearFiltering(_currentState.graphicsMode == GFX_LINEAR);
 	}
@@ -755,18 +771,8 @@ void OpenGLGraphicsManager::setActualScreenSize(uint width, uint height) {
 	_outputScreenWidth = width;
 	_outputScreenHeight = height;
 
-	// Setup coordinates system.
-	GLCALL(glViewport(0, 0, _outputScreenWidth, _outputScreenHeight));
-
-	GLCALL(glMatrixMode(GL_PROJECTION));
-	GLCALL(glLoadIdentity());
-#ifdef USE_GLES
-	GLCALL(glOrthof(0, _outputScreenWidth, _outputScreenHeight, 0, -1, 1));
-#else
-	GLCALL(glOrtho(0, _outputScreenWidth, _outputScreenHeight, 0, -1, 1));
-#endif
-	GLCALL(glMatrixMode(GL_MODELVIEW));
-	GLCALL(glLoadIdentity());
+	// Setup backbuffer size.
+	_backBuffer.setDimensions(width, height);
 
 	uint overlayWidth = width;
 	uint overlayHeight = height;
@@ -777,15 +783,15 @@ void OpenGLGraphicsManager::setActualScreenSize(uint width, uint height) {
 	// possible and then scale it to the physical display size. This sounds
 	// bad but actually all recent chips should support full HD resolution
 	// anyway. Thus, it should not be a real issue for modern hardware.
-	if (   overlayWidth  > (uint)Texture::getMaximumTextureSize()
-	    || overlayHeight > (uint)Texture::getMaximumTextureSize()) {
+	if (   overlayWidth  > (uint)g_context.maxTextureSize
+	    || overlayHeight > (uint)g_context.maxTextureSize) {
 		const frac_t outputAspect = intToFrac(_outputScreenWidth) / _outputScreenHeight;
 
 		if (outputAspect > (frac_t)FRAC_ONE) {
-			overlayWidth  = Texture::getMaximumTextureSize();
+			overlayWidth  = g_context.maxTextureSize;
 			overlayHeight = intToFrac(overlayWidth) / outputAspect;
 		} else {
-			overlayHeight = Texture::getMaximumTextureSize();
+			overlayHeight = g_context.maxTextureSize;
 			overlayWidth  = fracToInt(overlayHeight * outputAspect);
 		}
 	}
@@ -801,7 +807,7 @@ void OpenGLGraphicsManager::setActualScreenSize(uint width, uint height) {
 		delete _overlay;
 		_overlay = nullptr;
 
-		_overlay = createTexture(_defaultFormatAlpha);
+		_overlay = createSurface(_defaultFormatAlpha);
 		assert(_overlay);
 		// We always filter the overlay with GL_LINEAR. This assures it's
 		// readable in case it needs to be scaled and does not affect it
@@ -816,7 +822,7 @@ void OpenGLGraphicsManager::setActualScreenSize(uint width, uint height) {
 		delete _osd;
 		_osd = nullptr;
 
-		_osd = createTexture(_defaultFormatAlpha);
+		_osd = createSurface(_defaultFormatAlpha);
 		assert(_osd);
 		// We always filter the osd with GL_LINEAR. This assures it's
 		// readable in case it needs to be scaled and does not affect it
@@ -836,38 +842,48 @@ void OpenGLGraphicsManager::setActualScreenSize(uint width, uint height) {
 }
 
 void OpenGLGraphicsManager::notifyContextCreate(const Graphics::PixelFormat &defaultFormat, const Graphics::PixelFormat &defaultFormatAlpha) {
-	// Initialize all extensions.
-	initializeGLExtensions();
+	// Initialize context for use.
+	initializeGLContext();
+
+	// Initialize pipeline.
+	delete _pipeline;
+	_pipeline = nullptr;
+
+#if !USE_FORCED_GLES
+	if (g_context.shadersSupported) {
+		ShaderMan.notifyCreate();
+		_pipeline = new ShaderPipeline(ShaderMan.query(ShaderManager::kDefault));
+	}
+#endif
+
+#if !USE_FORCED_GLES2
+	if (_pipeline == nullptr) {
+		_pipeline = new FixedPipeline();
+	}
+#endif
+
+	g_context.setPipeline(_pipeline);
 
 	// Disable 3D properties.
-	GLCALL(glDisable(GL_CULL_FACE));
-	GLCALL(glDisable(GL_DEPTH_TEST));
-	GLCALL(glDisable(GL_LIGHTING));
-	GLCALL(glDisable(GL_FOG));
-	GLCALL(glDisable(GL_DITHER));
-	GLCALL(glShadeModel(GL_FLAT));
-	GLCALL(glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_FASTEST));
+	GL_CALL(glDisable(GL_CULL_FACE));
+	GL_CALL(glDisable(GL_DEPTH_TEST));
+	GL_CALL(glDisable(GL_DITHER));
+
+	g_context.getActivePipeline()->setColor(1.0f, 1.0f, 1.0f, 1.0f);
+
+	GL_CALL(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
+
+	// Setup backbuffer state.
 
 	// Default to black as clear color.
-	GLCALL(glClearColor(0.0f, 0.0f, 0.0f, 0.0f));
-	GLCALL(glColor4f(1.0f, 1.0f, 1.0f, 1.0f));
-
+	_backBuffer.setClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 	// Setup alpha blend (for overlay and cursor).
-	GLCALL(glEnable(GL_BLEND));
-	GLCALL(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
-
-	// Enable rendering with vertex and coord arrays.
-	GLCALL(glEnableClientState(GL_VERTEX_ARRAY));
-	GLCALL(glEnableClientState(GL_TEXTURE_COORD_ARRAY));
-
-	GLCALL(glEnable(GL_TEXTURE_2D));
-
+	_backBuffer.enableBlend(true);
 	// Setup scissor state accordingly.
-	if (_overlayVisible) {
-		GLCALL(glDisable(GL_SCISSOR_TEST));
-	} else {
-		GLCALL(glEnable(GL_SCISSOR_TEST));
-	}
+	_backBuffer.enableScissorTest(!_overlayVisible);
+
+	g_context.getActivePipeline()->setFramebuffer(&_backBuffer);
+
 	// Clear the whole screen for the first three frames to assure any
 	// leftovers are cleared.
 	_scissorOverride = 3;
@@ -875,10 +891,7 @@ void OpenGLGraphicsManager::notifyContextCreate(const Graphics::PixelFormat &def
 	// We use a "pack" alignment (when reading from textures) to 4 here,
 	// since the only place where we really use it is the BMP screenshot
 	// code and that requires the same alignment too.
-	GLCALL(glPixelStorei(GL_PACK_ALIGNMENT, 4));
-
-	// Query information needed by textures.
-	Texture::queryTextureInformation();
+	GL_CALL(glPixelStorei(GL_PACK_ALIGNMENT, 4));
 
 	// Refresh the output screen dimensions if some are set up.
 	if (_outputScreenWidth != 0 && _outputScreenHeight != 0) {
@@ -892,42 +905,56 @@ void OpenGLGraphicsManager::notifyContextCreate(const Graphics::PixelFormat &def
 	_defaultFormatAlpha = defaultFormatAlpha;
 
 	if (_gameScreen) {
-		_gameScreen->recreateInternalTexture();
+		_gameScreen->recreate();
 	}
 
 	if (_overlay) {
-		_overlay->recreateInternalTexture();
+		_overlay->recreate();
 	}
 
 	if (_cursor) {
-		_cursor->recreateInternalTexture();
+		_cursor->recreate();
 	}
 
 #ifdef USE_OSD
 	if (_osd) {
-		_osd->recreateInternalTexture();
+		_osd->recreate();
 	}
 #endif
 }
 
 void OpenGLGraphicsManager::notifyContextDestroy() {
 	if (_gameScreen) {
-		_gameScreen->releaseInternalTexture();
+		_gameScreen->destroy();
 	}
 
 	if (_overlay) {
-		_overlay->releaseInternalTexture();
+		_overlay->destroy();
 	}
 
 	if (_cursor) {
-		_cursor->releaseInternalTexture();
+		_cursor->destroy();
 	}
 
 #ifdef USE_OSD
 	if (_osd) {
-		_osd->releaseInternalTexture();
+		_osd->destroy();
 	}
 #endif
+
+#if !USE_FORCED_GLES
+	if (g_context.shadersSupported) {
+		ShaderMan.notifyDestroy();
+	}
+#endif
+
+	// Destroy rendering pipeline.
+	g_context.setPipeline(nullptr);
+	delete _pipeline;
+	_pipeline = nullptr;
+
+	// Rest our context description since the context is gone soon.
+	g_context.reset();
 }
 
 void OpenGLGraphicsManager::adjustMousePosition(int16 &x, int16 &y) {
@@ -970,9 +997,15 @@ void OpenGLGraphicsManager::setMousePosition(int x, int y) {
 	}
 }
 
-Texture *OpenGLGraphicsManager::createTexture(const Graphics::PixelFormat &format, bool wantAlpha) {
+Surface *OpenGLGraphicsManager::createSurface(const Graphics::PixelFormat &format, bool wantAlpha) {
 	GLenum glIntFormat, glFormat, glType;
 	if (format.bytesPerPixel == 1) {
+#if !USE_FORCED_GLES
+		if (TextureCLUT8GPU::isSupportedByContext()) {
+			return new TextureCLUT8GPU();
+		}
+#endif
+
 		const Graphics::PixelFormat &virtFormat = wantAlpha ? _defaultFormatAlpha : _defaultFormat;
 		const bool supported = getGLPixelFormat(virtFormat, glIntFormat, glFormat, glType);
 		if (!supported) {
@@ -980,6 +1013,15 @@ Texture *OpenGLGraphicsManager::createTexture(const Graphics::PixelFormat &forma
 		} else {
 			return new TextureCLUT8(glIntFormat, glFormat, glType, virtFormat);
 		}
+#if !USE_FORCED_GL
+	} else if (isGLESContext() && format == Graphics::PixelFormat(2, 5, 5, 5, 0, 10, 5, 0, 0)) {
+		// OpenGL ES does not support a texture format usable for RGB555.
+		// Since SCUMM uses this pixel format for some games (and there is no
+		// hope for this to change anytime soon) we use pixel format
+		// conversion to a supported texture format. However, this is a one
+		// time exception.
+		return new TextureRGB555();
+#endif // !USE_FORCED_GL
 	} else {
 		const bool supported = getGLPixelFormat(format, glIntFormat, glFormat, glType);
 		if (!supported) {
@@ -1015,7 +1057,11 @@ bool OpenGLGraphicsManager::getGLPixelFormat(const Graphics::PixelFormat &pixelF
 		glFormat = GL_RGBA;
 		glType = GL_UNSIGNED_SHORT_4_4_4_4;
 		return true;
-#ifndef USE_GLES
+#if !USE_FORCED_GLES && !USE_FORCED_GLES2
+	// The formats below are not supported by every GLES implementation.
+	// Thus, we do not mark them as supported when a GLES context is setup.
+	} else if (isGLESContext()) {
+		return false;
 #ifdef SCUMM_LITTLE_ENDIAN
 	} else if (pixelFormat == Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0)) { // RGBA8888
 		glIntFormat = GL_RGBA;
@@ -1024,16 +1070,9 @@ bool OpenGLGraphicsManager::getGLPixelFormat(const Graphics::PixelFormat &pixelF
 		return true;
 #endif
 	} else if (pixelFormat == Graphics::PixelFormat(2, 5, 5, 5, 0, 10, 5, 0, 0)) { // RGB555
-		// GL_BGRA does not exist in every GLES implementation so should not be configured if
-		// USE_GLES is set.
 		glIntFormat = GL_RGB;
 		glFormat = GL_BGRA;
 		glType = GL_UNSIGNED_SHORT_1_5_5_5_REV;
-		return true;
-	} else if (pixelFormat == Graphics::PixelFormat(4, 8, 8, 8, 8, 16, 8, 0, 24)) { // ARGB8888
-		glIntFormat = GL_RGBA;
-		glFormat = GL_BGRA;
-		glType = GL_UNSIGNED_INT_8_8_8_8_REV;
 		return true;
 	} else if (pixelFormat == Graphics::PixelFormat(2, 4, 4, 4, 4, 8, 4, 0, 12)) { // ARGB4444
 		glIntFormat = GL_RGBA;
@@ -1054,8 +1093,8 @@ bool OpenGLGraphicsManager::getGLPixelFormat(const Graphics::PixelFormat &pixelF
 		return true;
 	} else if (pixelFormat == Graphics::PixelFormat(2, 5, 6, 5, 0, 0, 5, 11, 0)) { // BGR565
 		glIntFormat = GL_RGB;
-		glFormat = GL_BGR;
-		glType = GL_UNSIGNED_SHORT_5_6_5;
+		glFormat = GL_RGB;
+		glType = GL_UNSIGNED_SHORT_5_6_5_REV;
 		return true;
 	} else if (pixelFormat == Graphics::PixelFormat(2, 5, 5, 5, 1, 1, 6, 11, 0)) { // BGRA5551
 		glIntFormat = GL_RGBA;
@@ -1072,7 +1111,7 @@ bool OpenGLGraphicsManager::getGLPixelFormat(const Graphics::PixelFormat &pixelF
 		glFormat = GL_BGRA;
 		glType = GL_UNSIGNED_SHORT_4_4_4_4;
 		return true;
-#endif
+#endif // !USE_FORCED_GLES && !USE_FORCED_GLES2
 	} else {
 		return false;
 	}
@@ -1119,10 +1158,10 @@ void OpenGLGraphicsManager::recalculateDisplayArea() {
 	// Setup drawing limitation for game graphics.
 	// This invovles some trickery because OpenGL's viewport coordinate system
 	// is upside down compared to ours.
-	GLCALL(glScissor(_displayX,
-	                 _outputScreenHeight - _displayHeight - _displayY,
-	                 _displayWidth,
-	                 _displayHeight));
+	_backBuffer.setScissorBox(_displayX,
+	                          _outputScreenHeight - _displayHeight - _displayY,
+	                          _displayWidth,
+	                          _displayHeight);
 	// Clear the whole screen for the first three frames to remove leftovers.
 	_scissorOverride = 3;
 
@@ -1144,20 +1183,7 @@ void OpenGLGraphicsManager::updateCursorPalette() {
 		_cursor->setPalette(0, 256, _gamePalette);
 	}
 
-	// We remove all alpha bits from the palette entry of the color key.
-	// This makes sure its properly handled as color key.
-	const Graphics::PixelFormat &hardwareFormat = _cursor->getHardwareFormat();
-	const uint32 aMask = (0xFF >> hardwareFormat.aLoss) << hardwareFormat.aShift;
-
-	if (hardwareFormat.bytesPerPixel == 2) {
-		uint16 *palette = (uint16 *)_cursor->getPalette() + _cursorKeyColor;
-		*palette &= ~aMask;
-	} else if (hardwareFormat.bytesPerPixel == 4) {
-		uint32 *palette = (uint32 *)_cursor->getPalette() + _cursorKeyColor;
-		*palette &= ~aMask;
-	} else {
-		warning("OpenGLGraphicsManager::updateCursorPalette: Unsupported pixel depth %d", hardwareFormat.bytesPerPixel);
-	}
+	_cursor->setColorKey(_cursorKeyColor);
 }
 
 void OpenGLGraphicsManager::recalculateCursorScaling() {
@@ -1207,7 +1233,7 @@ void OpenGLGraphicsManager::saveScreenshot(const Common::String &filename) const
 	uint8 *pixels = new uint8[lineSize * height];
 
 	// Get pixel data from OpenGL buffer
-	GLCALL(glReadPixels(0, 0, width, height, GL_RGB, GL_UNSIGNED_BYTE, pixels));
+	GL_CALL(glReadPixels(0, 0, width, height, GL_RGB, GL_UNSIGNED_BYTE, pixels));
 
 	// BMP stores as BGR. Since we can't assume that GL_BGR is supported we
 	// will swap the components from the RGB we read to BGR on our own.

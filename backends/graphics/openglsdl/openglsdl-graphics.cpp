@@ -45,6 +45,100 @@ OpenGLSdlGraphicsManager::OpenGLSdlGraphicsManager(uint desktopWidth, uint deskt
 	SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 16);
 	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 
+	// Setup proper SDL OpenGL context creation.
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+	OpenGL::ContextType glContextType;
+
+	// Context version 1.4 is choosen arbitrarily based on what most shader
+	// extensions were written against.
+#define DEFAULT_GL_MAJOR 1
+#define DEFAULT_GL_MINOR 4
+
+#define DEFAULT_GLES_MAJOR 1
+#define DEFAULT_GLES_MINOR 1
+
+#define DEFAULT_GLES2_MAJOR 2
+#define DEFAULT_GLES2_MINOR 0
+
+#if USE_FORCED_GL
+	glContextType = OpenGL::kContextGL;
+	_glContextProfileMask = 0;
+	_glContextMajor = DEFAULT_GL_MAJOR;
+	_glContextMinor = DEFAULT_GL_MINOR;
+#elif USE_FORCED_GLES
+	glContextType = OpenGL::kContextGLES;
+	_glContextProfileMask = SDL_GL_CONTEXT_PROFILE_ES;
+	_glContextMajor = DEFAULT_GLES_MAJOR;
+	_glContextMinor = DEFAULT_GLES_MINOR;
+#elif USE_FORCED_GLES2
+	glContextType = OpenGL::kContextGLES2;
+	_glContextProfileMask = SDL_GL_CONTEXT_PROFILE_ES;
+	_glContextMajor = DEFAULT_GLES2_MAJOR;
+	_glContextMinor = DEFAULT_GLES2_MINOR;
+#else
+	bool noDefaults = false;
+
+	// Obtain the default GL(ES) context SDL2 tries to setup.
+	//
+	// Please note this might not actually be SDL2's defaults when multiple
+	// instances of this object have been created. But that is no issue
+	// because then we already set up what we want to use.
+	//
+	// In case no defaults are given we prefer OpenGL over OpenGL ES.
+	if (SDL_GL_GetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, &_glContextProfileMask) != 0) {
+		_glContextProfileMask = 0;
+		noDefaults = true;
+	}
+
+	if (SDL_GL_GetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, &_glContextMajor) != 0) {
+		noDefaults = true;
+	}
+
+	if (SDL_GL_GetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, &_glContextMinor) != 0) {
+		noDefaults = true;
+	}
+
+	if (noDefaults) {
+		if (_glContextProfileMask == SDL_GL_CONTEXT_PROFILE_ES) {
+			_glContextMajor = DEFAULT_GLES_MAJOR;
+			_glContextMinor = DEFAULT_GLES_MINOR;
+		} else {
+			_glContextProfileMask = 0;
+			_glContextMajor = DEFAULT_GL_MAJOR;
+			_glContextMinor = DEFAULT_GL_MINOR;
+		}
+	}
+
+	if (_glContextProfileMask == SDL_GL_CONTEXT_PROFILE_ES) {
+		if (_glContextMajor >= 2) {
+			glContextType = OpenGL::kContextGLES2;
+		} else {
+			glContextType = OpenGL::kContextGLES;
+		}
+	} else if (_glContextProfileMask == SDL_GL_CONTEXT_PROFILE_CORE) {
+		glContextType = OpenGL::kContextGL;
+
+		// Core profile does not allow legacy functionality, which we use.
+		// Thus we request a standard OpenGL context.
+		_glContextProfileMask = 0;
+		_glContextMajor = DEFAULT_GL_MAJOR;
+		_glContextMinor = DEFAULT_GL_MINOR;
+	} else {
+		glContextType = OpenGL::kContextGL;
+	}
+#undef DEFAULT_GL_MAJOR
+#undef DEFAULT_GL_MINOR
+#undef DEFAULT_GLES_MAJOR
+#undef DEFAULT_GLES_MINOR
+#undef DEFAULT_GLES2_MAJOR
+#undef DEFAULT_GLES2_MINOR
+#endif
+
+	setContextType(glContextType);
+#else
+	setContextType(OpenGL::kContextGL);
+#endif
+
 	// Retrieve a list of working fullscreen modes
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 	const int numModes = SDL_GetNumDisplayModes(0);
@@ -100,6 +194,10 @@ OpenGLSdlGraphicsManager::OpenGLSdlGraphicsManager(uint desktopWidth, uint deskt
 }
 
 OpenGLSdlGraphicsManager::~OpenGLSdlGraphicsManager() {
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+	notifyContextDestroy();
+	SDL_GL_DeleteContext(_glContext);
+#endif
 }
 
 void OpenGLSdlGraphicsManager::activateManager() {
@@ -210,20 +308,26 @@ Common::List<Graphics::PixelFormat> OpenGLSdlGraphicsManager::getSupportedFormat
 	// RGBA4444
 	formats.push_back(Graphics::PixelFormat(2, 4, 4, 4, 4, 12, 8, 4, 0));
 
-#ifndef USE_GLES
-#ifdef SCUMM_LITTLE_ENDIAN
-	// RGBA8888
-	formats.push_back(Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0));
-#else
-	// ABGR8888
-	formats.push_back(Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24));
+#if !USE_FORCED_GLES && !USE_FORCED_GLES2
+#if !USE_FORCED_GL
+	if (!isGLESContext()) {
 #endif
-	// ARGB8888, this should not be here, but Sword25 requires it. :-/
-	formats.push_back(Graphics::PixelFormat(4, 8, 8, 8, 8, 16, 8, 0, 24));
+#ifdef SCUMM_LITTLE_ENDIAN
+		// RGBA8888
+		formats.push_back(Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0));
+#else
+		// ABGR8888
+		formats.push_back(Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24));
+#endif
+#if !USE_FORCED_GL
+	}
+#endif
+#endif
 
 	// RGB555, this is used by SCUMM HE 16 bit games.
+	// This is not natively supported by OpenGL ES implementations, we convert
+	// the pixel format internally.
 	formats.push_back(Graphics::PixelFormat(2, 5, 5, 5, 0, 10, 5, 0, 0));
-#endif
 
 	formats.push_back(Graphics::PixelFormat::createFormatCLUT8());
 
@@ -305,6 +409,10 @@ void OpenGLSdlGraphicsManager::refreshScreen() {
 #endif
 }
 
+void *OpenGLSdlGraphicsManager::getProcAddress(const char *name) const {
+	return SDL_GL_GetProcAddress(name);
+}
+
 bool OpenGLSdlGraphicsManager::setupMode(uint width, uint height) {
 	// In case we request a fullscreen mode we will use the mode the user
 	// has chosen last time or the biggest mode available.
@@ -378,6 +486,11 @@ bool OpenGLSdlGraphicsManager::setupMode(uint width, uint height) {
 		flags |= SDL_WINDOW_RESIZABLE;
 	}
 
+	// Request a OpenGL (ES) context we can use.
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, _glContextProfileMask);
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, _glContextMajor);
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, _glContextMinor);
+
 	if (!_window->createWindow(width, height, flags)) {
 		// We treat fullscreen requests as a "hint" for now. This means in
 		// case it is not available we simply ignore it.
@@ -390,13 +503,6 @@ bool OpenGLSdlGraphicsManager::setupMode(uint width, uint height) {
 		}
 	}
 
-#ifdef USE_GLES
-	// SDL2 will create a GLES2 context by default, so this is needed for GLES1-profile
-	// functions to work.
-	SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_ES);
-	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 1);
-	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 1);
-#endif
 	_glContext = SDL_GL_CreateContext(_window->getSDLWindow());
 	if (!_glContext) {
 		return false;

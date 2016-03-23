@@ -447,9 +447,6 @@ void XcodeProvider::setupFrameworksBuildPhase(const BuildSetup &setup) {
 	DEF_SYSFRAMEWORK("UIKit");
 	DEF_SYSTBD("libiconv");
 
-	// Optionals:
-	DEF_SYSFRAMEWORK("OpenGL");
-
 	// Local libraries
 	DEF_LOCALLIB_STATIC("libFLAC");
 	DEF_LOCALLIB_STATIC("libmad");
@@ -570,8 +567,6 @@ void XcodeProvider::setupFrameworksBuildPhase(const BuildSetup &setup) {
 	frameworks_osx.push_back("IOKit.framework");
 	frameworks_osx.push_back("Cocoa.framework");
 	frameworks_osx.push_back("AudioUnit.framework");
-	// Optionals:
-	frameworks_osx.push_back("OpenGL.framework");
 
 	order = 0;
 	for (ValueList::iterator framework = frameworks_osx.begin(); framework != frameworks_osx.end(); framework++) {

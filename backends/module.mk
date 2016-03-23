@@ -53,10 +53,16 @@ endif
 # OpenGL specific source files.
 ifdef USE_OPENGL
 MODULE_OBJS += \
+	graphics/opengl/context.o \
 	graphics/opengl/debug.o \
-	graphics/opengl/extensions.o \
+	graphics/opengl/framebuffer.o \
 	graphics/opengl/opengl-graphics.o \
-	graphics/opengl/texture.o
+	graphics/opengl/shader.o \
+	graphics/opengl/texture.o \
+	graphics/opengl/pipelines/clut8.o \
+	graphics/opengl/pipelines/fixed.o \
+	graphics/opengl/pipelines/pipeline.o \
+	graphics/opengl/pipelines/shader.o
 endif
 
 # SDL specific source files.
