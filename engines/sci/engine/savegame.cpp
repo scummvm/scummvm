@@ -165,7 +165,6 @@ void syncWithSerializer(Common::Serializer &s, SciString &obj) {
 template<typename T>
 struct DefaultSyncer : Common::BinaryFunction<Common::Serializer, T, void> {
 	void operator()(Common::Serializer &s, T &obj) const {
-		//obj.saveLoadWithSerializer(s);
 		syncWithSerializer(s, obj);
 	}
 };
