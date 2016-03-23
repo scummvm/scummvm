@@ -149,7 +149,7 @@ void OSScreenManager::blitFrom(SurfaceNum surfaceNum, CVideoSurface *src,
 		rect2 = srcBounds;
 		rect2.translate(-srcBounds.left, -srcBounds.top);
 		rect2.translate(destPoint.x, destPoint.y);
-		rect2.combine2(_backSurfaces[surfaceNum]._bounds);
+		rect2.constrain(_backSurfaces[surfaceNum]._bounds);
 
 		rect2.translate(-destPoint.x, -destPoint.y);
 		rect2.translate(srcBounds.left, srcBounds.top);

@@ -44,8 +44,8 @@ private:
 	/**
 	 * Calculates blitting bounds
 	 */
-	void clipBounds(Rect &srcRect, Rect &destRect,
-		CVideoSurface *srcSurface, const Rect *subRect, const Point *pt);
+	void clipBounds(Rect &srcRect, Rect &destRect, CVideoSurface *srcSurface,
+		const Rect *subRect = nullptr, const Point *destPos = nullptr);
 
 	void blitRect1(const Rect &srcRect, const Rect &destRect, CVideoSurface *src);
 	void blitRect2(const Rect &srcRect, const Rect &destRect, CVideoSurface *src);

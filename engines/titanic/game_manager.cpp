@@ -239,7 +239,7 @@ void CGameManager::extendBounds(const Rect &r) {
 	if (_bounds.isEmpty())
 		_bounds = r;
 	else
-		_bounds.combine1(r);
+		_bounds.combine(r);
 }
 
 } // End of namespace Titanic

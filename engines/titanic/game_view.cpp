@@ -27,6 +27,9 @@
 
 namespace Titanic {
 
+#define VIEW_OFFSET_X 20
+#define VIEW_OFFSET_Y 10
+
 CGameView::CGameView() : _gameManager(nullptr), _surface(nullptr) {
 }
 
@@ -62,10 +65,10 @@ void CGameView::drawView() {
 	Rect srcRect = _gameManager->_bounds;
 
 	Rect rect2(0, 0, 600, 340);
-	rect2.translate(20, 10);
-	srcRect.combine2(rect2);
-	srcRect.translate(-20, -10);
+	rect2.translate(VIEW_OFFSET_X, VIEW_OFFSET_Y);
+	srcRect.constrain(rect2);
 	Common::Point destPos(srcRect.left, srcRect.top);
+	srcRect.translate(-VIEW_OFFSET_X, -VIEW_OFFSET_Y);
 
 	CScreenManager::_currentScreenManagerPtr->blitFrom(SURFACE_BACKBUFFER,
 		_surface, &destPos, &srcRect);

@@ -59,12 +59,14 @@ void CVideoSurface::blitFrom(const Point &destPos, CVideoSurface *src, const Rec
 }
 
 void CVideoSurface::clipBounds(Rect &srcRect, Rect &destRect,
-		CVideoSurface *srcSurface, const Rect *subRect, const Point *pt) {
-	if (pt) {
-		srcRect.left = pt->x;
-		srcRect.top = pt->y;
+		CVideoSurface *srcSurface, const Rect *subRect, const Point *destPos) {
+	// Figure out initial source rect and dest rect, based on whether
+	// specific subRect and/or destPos have been passed
+	if (destPos) {
+		destRect.left = destPos->x;
+		destRect.top = destPos->y;
 	} else {
-		srcRect.left = srcRect.top = 0;
+		destRect.left = destRect.top = 0;
 	}
 
 	if (subRect) {
@@ -124,8 +126,7 @@ void CVideoSurface::blitRect1(const Rect &srcRect, const Rect &destRect, CVideoS
 	lock();
 
 	// TODO: Do it like the original does it
-//	this->_rawSurface->blitFrom(*src->_rawSurface, srcRect, Point(destRect.left, destRect.top));
-	this->_rawSurface->blitFrom(*src->_rawSurface);
+	_rawSurface->blitFrom(*src->_rawSurface, srcRect, Point(destRect.left, destRect.top));
 
 	src->unlock();
 	unlock();

@@ -48,12 +48,12 @@ public:
 	/**
 	 * Combine another rect into this one
 	 */
-	void combine1(const Rect &r);
+	void combine(const Rect &r);
 
 	/**
-	 * Combine another rect into this one
+	 * Constrains/clips to the intersection area of the given rect
 	 */
-	void combine2(const Rect &r);
+	void constrain(const Rect &r);
 };
 
 } // End of namespace Titanic
