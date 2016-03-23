@@ -29,27 +29,31 @@
 #include "adl/hires2.h"
 #include "adl/display.h"
 #include "adl/graphics.h"
+#include "adl/disk.h"
 
 namespace Adl {
 
-static void readPictureMeta(Common::ReadStream &f, Picture2 &pic) {
+DataBlockPtr HiRes2Engine::readDataBlockPtr(Common::ReadStream &f) const {
+	byte track = f.readByte();
+	byte sector = f.readByte();
+	byte offset = f.readByte();
+	byte size = f.readByte();
+	return _disk.getDataBlock(track, sector, offset, size);
+}
+
+void HiRes2Engine::readPictureMeta(Common::ReadStream &f, Picture2 &pic) const {
 	pic.nr = f.readByte();
-	pic.track = f.readByte();
-	pic.sector = f.readByte();
-	pic.offset = f.readByte();
-	f.readByte();
+	pic.data = readDataBlockPtr(f);
 }
 
 void HiRes2Engine::runIntro() const {
-	Common::File f;
-	openFile(f, IDS_HR2_DISK_IMAGE);
-	f.seek(IDI_HR2_OFS_INTRO_TEXT);
+	StreamPtr stream(_disk.createReadStream(0x00, 0xd, 0x17, 1));
 
 	_display->setMode(DISPLAY_MODE_TEXT);
 
-	Common::String str = readStringAt(f, IDI_HR2_OFS_INTRO_TEXT);
+	Common::String str = readString(*stream);
 
-	if (f.eos() || f.err())
+	if (stream->eos() || stream->err())
 		error("Error reading disk image");
 
 	_display->printString(str);
@@ -59,36 +63,38 @@ void HiRes2Engine::runIntro() const {
 void HiRes2Engine::init() {
 	_graphics = new Graphics_v2(*_display);
 
-	Common::File f;
-	openFile(f, IDS_HR2_DISK_IMAGE);
+	if (!_disk.open(IDS_HR2_DISK_IMAGE))
+		error("Failed to open disk image '" IDS_HR2_DISK_IMAGE "'");
+
+	StreamPtr stream(_disk.createReadStream(0x1f, 0x2, 0x04, 4));
 
 	for (uint i = 0; i < IDI_HR2_NUM_MESSAGES; ++i) {
-		f.seek(IDI_HR2_OFS_MESSAGES + i * 4);
-		byte track = f.readByte();
-		byte sector = f.readByte();
-		byte offset = f.readByte();
-		// One more byte follows, disk? or size maybe?
+		DataBlockPtr str(readDataBlockPtr(*stream));
 
-		uint diskOffset = TSO(track, sector, offset);
-
-		Common::String str;
-
-		if (diskOffset != 0)
-			str = readStringAt(f, TSO(track, sector, offset), 0xff);
-
-		_messages.push_back(str);
+		if (str->isValid()) {
+			StreamPtr strStream(str->createReadStream());
+			_messages.push_back(readString(*strStream, 0xff));
+		}
 	}
 
-	_strings.enterCommand = readStringAt(f, IDI_HR2_OFS_STR_ENTER_COMMAND);
-	_strings.verbError = readStringAt(f, IDI_HR2_OFS_STR_VERB_ERROR);
-	_strings.nounError = readStringAt(f, IDI_HR2_OFS_STR_NOUN_ERROR);
-	_strings.playAgain = readStringAt(f, IDI_HR2_OFS_STR_PLAY_AGAIN);
-	_strings.pressReturn = readStringAt(f, IDI_HR2_OFS_STR_PRESS_RETURN);
-	_strings_v2.time = readStringAt(f, IDI_HR2_OFS_STR_TIME, 0xff);
-	_strings_v2.saveInsert = readStringAt(f, IDI_HR2_OFS_STR_SAVE_INSERT);
-	_strings_v2.saveReplace = readStringAt(f, IDI_HR2_OFS_STR_SAVE_REPLACE);
-	_strings_v2.restoreInsert = readStringAt(f, IDI_HR2_OFS_STR_RESTORE_INSERT);
-	_strings_v2.restoreReplace = readStringAt(f, IDI_HR2_OFS_STR_RESTORE_REPLACE);
+	// Read parser messages
+	stream.reset(_disk.createReadStream(0x1a, 0x1));
+	_strings.verbError = readStringAt(*stream, 0x4f);
+	_strings.nounError = readStringAt(*stream, 0x8e);
+	_strings.enterCommand = readStringAt(*stream, 0xbc);
+
+	// Read time string
+	stream.reset(_disk.createReadStream(0x19, 0x7, 0xd7));
+	_strings_v2.time = readString(*stream, 0xff);
+
+	// Read opcode strings
+	stream.reset(_disk.createReadStream(0x1a, 0x6, 0x00, 2));
+	_strings_v2.saveInsert = readStringAt(*stream, 0x5f);
+	_strings_v2.saveReplace = readStringAt(*stream, 0xe5);
+	_strings_v2.restoreInsert = readStringAt(*stream, 0x132);
+	_strings_v2.restoreReplace = readStringAt(*stream, 0x1c2);
+	_strings.playAgain = readStringAt(*stream, 0x225);
+	_strings.pressReturn = readStringAt(*stream, 0x25f);
 
 	_messageIds.cantGoThere = IDI_HR2_MSG_CANT_GO_THERE;
 	_messageIds.dontUnderstand = IDI_HR2_MSG_DONT_UNDERSTAND;
@@ -97,95 +103,91 @@ void HiRes2Engine::init() {
 	_messageIds.thanksForPlaying = IDI_HR2_MSG_THANKS_FOR_PLAYING;
 
 	// Load item picture data
-	f.seek(IDI_HR2_OFS_ITEM_PICS);
+	stream.reset(_disk.createReadStream(0x1e, 0x9, 0x05));
 	for (uint i = 0; i < IDI_HR2_NUM_ITEM_PICS; ++i) {
 		Picture2 pic;
-		readPictureMeta(f, pic);
+		readPictureMeta(*stream, pic);
 		_itemPics.push_back(pic);
 	}
 
 	// Load commands from executable
-	f.seek(IDI_HR2_OFS_CMDS_1);
-	readCommands(f, _roomCommands);
+	stream.reset(_disk.createReadStream(0x1d, 0x7, 0x00, 4));
+	readCommands(*stream, _roomCommands);
 
-	f.seek(IDI_HR2_OFS_CMDS_0);
-	readCommands(f, _globalCommands);
+	stream.reset(_disk.createReadStream(0x1f, 0x7, 0x00, 2));
+	readCommands(*stream, _globalCommands);
 
 	// Load dropped item offsets
-	f.seek(IDI_HR2_OFS_ITEM_OFFSETS);
+	stream.reset(_disk.createReadStream(0x1b, 0x4, 0x15));
 	for (uint i = 0; i < IDI_HR2_NUM_ITEM_OFFSETS; ++i) {
 		Common::Point p;
-		p.x = f.readByte();
-		p.y = f.readByte();
+		p.x = stream->readByte();
+		p.y = stream->readByte();
 		_itemOffsets.push_back(p);
 	}
 
-	f.seek(IDI_HR2_OFS_VERBS);
-	loadWords(f, _verbs);
+	// Load verbs
+	stream.reset(_disk.createReadStream(0x19, 0x0, 0x00, 3));
+	loadWords(*stream, _verbs);
 
-	f.seek(IDI_HR2_OFS_NOUNS);
-	loadWords(f, _nouns);
+	// Load nouns
+	stream.reset(_disk.createReadStream(0x22, 0x2, 0x00, 7));
+	loadWords(*stream, _nouns);
 }
 
 void HiRes2Engine::initState() {
 	_state.vars.clear();
 	_state.vars.resize(IDI_HR2_NUM_VARS);
 
-	Common::File f;
-	openFile(f, IDS_HR2_DISK_IMAGE);
+	StreamPtr stream(_disk.createReadStream(0x21, 0x5, 0x0e, 7));
 
 	_state.rooms.clear();
-	f.seek(IDI_HR2_OFS_ROOMS);
 	for (uint i = 0; i < IDI_HR2_NUM_ROOMS; ++i) {
-		Room room = { };
-		f.readByte(); // number
+		Room room;
+		stream->readByte(); // number
 		for (uint j = 0; j < 6; ++j)
-			room.connections[j] = f.readByte();
-		room.track = f.readByte();
-		room.sector = f.readByte();
-		room.offset = f.readByte();
-		f.readByte(); // always 1, possibly disk?
-		room.picture = f.readByte();
-		room.curPicture = f.readByte();
-		room.isFirstTime = f.readByte();
+			room.connections[j] = stream->readByte();
+		room.data = readDataBlockPtr(*stream);
+		room.picture = stream->readByte();
+		room.curPicture = stream->readByte();
+		room.isFirstTime = stream->readByte();
 		_state.rooms.push_back(room);
 	}
 
+	stream.reset(_disk.createReadStream(0x21, 0x0, 0x00, 2));
+
 	_state.items.clear();
-	f.seek(IDI_HR2_OFS_ITEMS);
-	while (f.readByte() != 0xff) {
+	while (stream->readByte() != 0xff) {
 		Item item = { };
-		item.noun = f.readByte();
-		item.room = f.readByte();
-		item.picture = f.readByte();
-		item.isLineArt = f.readByte(); // Is this still used in this way?
-		item.position.x = f.readByte();
-		item.position.y = f.readByte();
-		item.state = f.readByte();
-		item.description = f.readByte();
+		item.noun = stream->readByte();
+		item.room = stream->readByte();
+		item.picture = stream->readByte();
+		item.isLineArt = stream->readByte(); // Is this still used in this way?
+		item.position.x = stream->readByte();
+		item.position.y = stream->readByte();
+		item.state = stream->readByte();
+		item.description = stream->readByte();
 
-		f.readByte(); // Struct size
+		stream->readByte(); // Struct size
 
-		byte picListSize = f.readByte();
+		byte picListSize = stream->readByte();
 
 		// Flag to keep track of what has been drawn on the screen
-		f.readByte();
+		stream->readByte();
 
 		for (uint i = 0; i < picListSize; ++i)
-			item.roomPictures.push_back(f.readByte());
+			item.roomPictures.push_back(stream->readByte());
 
 		_state.items.push_back(item);
 	}
 }
 
 void HiRes2Engine::loadRoom(byte roomNr) {
-	Common::File f;
-	openFile(f, IDS_HR2_DISK_IMAGE);
 	Room &room = getRoom(roomNr);
-	uint offset = TSO(room.track, room.sector, room.offset);
-	f.seek(offset);
-	uint16 descOffset = f.readUint16LE();
-	uint16 commandOffset = f.readUint16LE();
+	StreamPtr stream(room.data->createReadStream());
+
+	uint16 descOffset = stream->readUint16LE();
+	uint16 commandOffset = stream->readUint16LE();
 
 	// There's no picture count. The original engine always checks at most
 	// five pictures. We use the description offset to bound our search.
@@ -193,15 +195,14 @@ void HiRes2Engine::loadRoom(byte roomNr) {
 
 	for (uint i = 0; i < picCount; ++i) {
 		Picture2 pic;
-		readPictureMeta(f, pic);
+		readPictureMeta(*stream, pic);
 		_roomData.pictures.push_back(pic);
 	}
 
-	_roomData.description = readStringAt(f, offset + descOffset, 0xff);
+	_roomData.description = readStringAt(*stream, descOffset, 0xff);
 
-	f.seek(offset + commandOffset);
-
-	readCommands(f, _roomData.commands);
+	stream->seek(commandOffset);
+	readCommands(*stream, _roomData.commands);
 }
 
 void HiRes2Engine::restartGame() {
@@ -213,10 +214,8 @@ void HiRes2Engine::drawPic(byte pic, Common::Point pos) const {
 
 	for (roomPic = _roomData.pictures.begin(); roomPic != _roomData.pictures.end(); ++roomPic) {
 		if (roomPic->nr == pic) {
-			Common::File f;
-			openFile(f, IDS_HR2_DISK_IMAGE);
-			f.seek(TSO(roomPic->track, roomPic->sector, roomPic->offset));
-			_graphics->drawPic(f, pos, 0);
+			StreamPtr stream(roomPic->data->createReadStream());
+			_graphics->drawPic(*stream, pos, 0);
 			return;
 		}
 	}
@@ -226,11 +225,9 @@ void HiRes2Engine::drawPic(byte pic, Common::Point pos) const {
 
 void HiRes2Engine::drawItem(const Item &item, const Common::Point &pos) const {
 	const Picture2 &pic = _itemPics[item.picture - 1];
-	Common::File f;
-	openFile(f, IDS_HR2_DISK_IMAGE);
-	f.seek(TSO(pic.track, pic.sector, pic.offset));
-	f.readByte(); // Skip clear opcode
-	_graphics->drawPic(f, pos, 0);
+	StreamPtr stream(pic.data->createReadStream());
+	stream->readByte(); // Skip clear opcode
+	_graphics->drawPic(*stream, pos, 0);
 }
 
 void HiRes2Engine::showRoom() {

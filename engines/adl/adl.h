@@ -35,6 +35,8 @@
 #include "audio/mixer.h"
 #include "audio/softsynth/pcspk.h"
 
+#include "adl/disk.h"
+
 namespace Common {
 class ReadStream;
 class SeekableReadStream;
@@ -69,11 +71,16 @@ enum Direction {
 };
 
 struct Room {
+	Room() :
+			description(0),
+			picture(0),
+			curPicture(0) {
+		memset(connections, 0, sizeof(connections));
+	}
+
 	byte description;
 	byte connections[IDI_DIR_TOTAL];
-	byte track;
-	byte sector;
-	byte offset;
+	DataBlockPtr data;
 	byte picture;
 	byte curPicture;
 	bool isFirstTime;
