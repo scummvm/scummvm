@@ -277,7 +277,7 @@ void StaticTextWidget::drawWidget() {
 
 ButtonWidget::ButtonWidget(GuiObject *boss, int x, int y, int w, int h, const Common::String &label, const char *tooltip, uint32 cmd, uint8 hotkey)
 	: StaticTextWidget(boss, x, y, w, h, cleanupHotkey(label), Graphics::kTextAlignCenter, tooltip), CommandSender(boss),
-	  _cmd(cmd), _hotkey(hotkey), _lastTime(0) {
+	  _cmd(cmd), _hotkey(hotkey), _lastTime(0), _duringPress(false) {
 
 	if (hotkey == 0)
 		_hotkey = parseHotkey(label);
@@ -288,7 +288,7 @@ ButtonWidget::ButtonWidget(GuiObject *boss, int x, int y, int w, int h, const Co
 
 ButtonWidget::ButtonWidget(GuiObject *boss, const Common::String &name, const Common::String &label, const char *tooltip, uint32 cmd, uint8 hotkey)
 	: StaticTextWidget(boss, name, cleanupHotkey(label), tooltip), CommandSender(boss),
-	  _cmd(cmd), _hotkey(hotkey), _lastTime(0) {
+	  _cmd(cmd), _hotkey(hotkey), _lastTime(0), _duringPress(false) {
 	if (hotkey == 0)
 		_hotkey = parseHotkey(label);
 	setFlags(WIDGET_ENABLED/* | WIDGET_BORDER*/ | WIDGET_CLEARBG);
@@ -296,13 +296,15 @@ ButtonWidget::ButtonWidget(GuiObject *boss, const Common::String &name, const Co
 }
 
 void ButtonWidget::handleMouseUp(int x, int y, int button, int clickCount) {
-	if (isEnabled() && x >= 0 && x < _w && y >= 0 && y < _h) {
+	if (isEnabled() && _duringPress && x >= 0 && x < _w && y >= 0 && y < _h) {
 		startAnimatePressedState();
 		sendCommand(_cmd, 0);
 	}
+	_duringPress = false;
 }
 
 void ButtonWidget::handleMouseDown(int x, int y, int button, int clickCount) {
+	_duringPress = true;
 	setPressedState();
 }
 
@@ -460,9 +462,10 @@ CheckboxWidget::CheckboxWidget(GuiObject *boss, const Common::String &name, cons
 }
 
 void CheckboxWidget::handleMouseUp(int x, int y, int button, int clickCount) {
-	if (isEnabled() && x >= 0 && x < _w && y >= 0 && y < _h) {
+	if (isEnabled() && _duringPress && x >= 0 && x < _w && y >= 0 && y < _h) {
 		toggleState();
 	}
+	_duringPress = false;
 }
 
 void CheckboxWidget::setState(bool state) {
@@ -523,9 +526,10 @@ RadiobuttonWidget::RadiobuttonWidget(GuiObject *boss, const Common::String &name
 }
 
 void RadiobuttonWidget::handleMouseUp(int x, int y, int button, int clickCount) {
-	if (isEnabled() && x >= 0 && x < _w && y >= 0 && y < _h) {
+	if (isEnabled() && _duringPress && x >= 0 && x < _w && y >= 0 && y < _h) {
 		toggleState();
 	}
+	_duringPress = false;
 }
 
 void RadiobuttonWidget::setState(bool state, bool setGroup) {
