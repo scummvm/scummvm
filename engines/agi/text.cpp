@@ -809,6 +809,12 @@ void TextMgr::stringEdit(int16 stringMaxLen) {
 	_inputStringRow = _textPos.row;
 	_inputStringColumn = _textPos.column;
 
+	if (_inputCursorChar) {
+		// Cursor character is shown, which means we are one beyond the start of the input
+		// Adjust the column for predictive input dialog
+		_inputStringColumn--;
+	}
+
 	// Caller can set the input string
 	_inputStringCursorPos = 0;
 	while (_inputStringCursorPos < inputStringLen) {
