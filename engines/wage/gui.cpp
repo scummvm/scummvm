@@ -50,6 +50,7 @@
 #include "graphics/cursorman.h"
 #include "graphics/fonts/bdf.h"
 #include "graphics/palette.h"
+#include "graphics/primitives.h"
 
 #include "wage/wage.h"
 #include "wage/design.h"
@@ -310,6 +311,16 @@ const int arrowPixels[ARROW_H][ARROW_W] = {
 		{0,1,1,1,1,1,1,1,1,1,1,0},
 		{1,1,1,1,1,1,1,1,1,1,1,1}};
 
+static void drawPixelInverted(int x, int y, int color, void *data) {
+	Graphics::Surface *surface = (Graphics::Surface *)data;
+
+	if (x >= 0 && x < surface->w && y >= 0 && y < surface->h) {
+		byte *p = (byte *)surface->getBasePtr(x, y);
+
+		*p = *p == kColorWhite ? kColorBlack : kColorWhite;
+	}
+}
+
 void Gui::paintBorder(Graphics::Surface *g, Common::Rect &r, WindowType windowType, int highlightedPart, float scrollPos, float scrollSize) {
 	bool active = false, scrollable = false, closeable = false, drawTitle = false;
 	const int size = kBorderWidth;
@@ -366,7 +377,13 @@ void Gui::paintBorder(Graphics::Surface *g, Common::Rect &r, WindowType windowTy
 			}
 
 			if (highlightedPart == kBorderScrollUp || highlightedPart == kBorderScrollDown) {
-				fillRect(g, x + width - kBorderWidth + 2, y + size + r.height() * scrollPos, size - 4, r.height() * scrollSize, kColorGray);
+				int rx1 = x + width - kBorderWidth + 2;
+				int ry1 = y + size + r.height() * scrollPos;
+				int rx2 = rx1 + size - 4;
+				int ry2 = ry1 + r.height() * scrollSize;
+				Common::Rect rr(rx1, ry1, rx2, ry2);
+
+				Graphics::drawFilledRect(rr, kColorBlack, drawPixelInverted, g);
 			}
 		}
 		if (closeable) {
