@@ -97,7 +97,7 @@ Common::Array<reg_t> CloneTable::listAllOutgoingReferences(reg_t addr) const {
 		error("Unexpected request for outgoing references from clone at %04x:%04x", PRINT_REG(addr));
 	}
 
-	const Clone *clone = &(_table[addr.getOffset()]);
+	const Clone *clone = &at(addr.getOffset());
 
 	// Emit all member variables (including references to the 'super' delegate)
 	for (uint i = 0; i < clone->getVarCount(); i++)
@@ -112,7 +112,7 @@ Common::Array<reg_t> CloneTable::listAllOutgoingReferences(reg_t addr) const {
 
 void CloneTable::freeAtAddress(SegManager *segMan, reg_t addr) {
 #ifdef GC_DEBUG
-	Object *victim_obj = &(_table[addr.getOffset()]);
+	Object *victim_obj = &at(addr.getOffset());
 
 	if (!(victim_obj->_flags & OBJECT_FLAG_FREED))
 		warning("[GC] Clone %04x:%04x not reachable and not freed (freeing now)", PRINT_REG(addr));
@@ -208,7 +208,7 @@ Common::Array<reg_t> ListTable::listAllOutgoingReferences(reg_t addr) const {
 		error("Invalid list referenced for outgoing references: %04x:%04x", PRINT_REG(addr));
 	}
 
-	const List *list = &(_table[addr.getOffset()]);
+	const List *list = &at(addr.getOffset());
 
 	tmp.push_back(list->first);
 	tmp.push_back(list->last);
@@ -225,7 +225,7 @@ Common::Array<reg_t> NodeTable::listAllOutgoingReferences(reg_t addr) const {
 	if (!isValidEntry(addr.getOffset())) {
 		error("Invalid node referenced for outgoing references: %04x:%04x", PRINT_REG(addr));
 	}
-	const Node *node = &(_table[addr.getOffset()]);
+	const Node *node = &at(addr.getOffset());
 
 	// We need all four here. Can't just stick with 'pred' OR 'succ' because node operations allow us
 	// to walk around from any given node
@@ -252,13 +252,13 @@ SegmentRef DynMem::dereference(reg_t pointer) {
 SegmentRef ArrayTable::dereference(reg_t pointer) {
 	SegmentRef ret;
 	ret.isRaw = false;
-	ret.maxSize = _table[pointer.getOffset()].getSize() * 2;
-	ret.reg = _table[pointer.getOffset()].getRawData();
+	ret.maxSize = at(pointer.getOffset()).getSize() * 2;
+	ret.reg = at(pointer.getOffset()).getRawData();
 	return ret;
 }
 
 void ArrayTable::freeAtAddress(SegManager *segMan, reg_t sub_addr) {
-	_table[sub_addr.getOffset()].destroy();
+	at(sub_addr.getOffset()).destroy();
 	freeEntry(sub_addr.getOffset());
 }
 
@@ -268,7 +268,7 @@ Common::Array<reg_t> ArrayTable::listAllOutgoingReferences(reg_t addr) const {
 		error("Invalid array referenced for outgoing references: %04x:%04x", PRINT_REG(addr));
 	}
 
-	const SciArray<reg_t> *array = &(_table[addr.getOffset()]);
+	const SciArray<reg_t> *array = &at(addr.getOffset());
 
 	for (uint32 i = 0; i < array->getSize(); i++) {
 		reg_t value = array->getValue(i);
@@ -305,8 +305,8 @@ void SciString::fromString(const Common::String &string) {
 SegmentRef StringTable::dereference(reg_t pointer) {
 	SegmentRef ret;
 	ret.isRaw = true;
-	ret.maxSize = _table[pointer.getOffset()].getSize();
-	ret.raw = (byte *)_table[pointer.getOffset()].getRawData();
+	ret.maxSize = at(pointer.getOffset()).getSize();
+	ret.raw = (byte *)at(pointer.getOffset()).getRawData();
 	return ret;
 }
 
