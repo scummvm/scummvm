@@ -129,7 +129,7 @@ void CMainGameWindow::draw() {
 				drawPet(scrManager);
 
 			drawView();
-//			drawViewContents(scrManager);
+			drawViewContents(scrManager);
 			scrManager->drawCursors();
 			break;
 
