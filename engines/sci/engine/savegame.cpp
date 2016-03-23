@@ -88,22 +88,12 @@ void syncWithSerializer(Common::Serializer &s, Class &obj) {
 	syncWithSerializer(s, obj.reg);
 }
 
-void syncWithSerializer(Common::Serializer &s, SegmentObjTable<Clone>::Entry &obj) {
-	s.syncAsSint32LE(obj.next_free);
-
-	syncWithSerializer(s, (Clone &)obj);
-}
-
-void syncWithSerializer(Common::Serializer &s, SegmentObjTable<List>::Entry &obj) {
-	s.syncAsSint32LE(obj.next_free);
-
+void syncWithSerializer(Common::Serializer &s, List &obj) {
 	syncWithSerializer(s, obj.first);
 	syncWithSerializer(s, obj.last);
 }
 
-void syncWithSerializer(Common::Serializer &s, SegmentObjTable<Node>::Entry &obj) {
-	s.syncAsSint32LE(obj.next_free);
-
+void syncWithSerializer(Common::Serializer &s, Node &obj) {
 	syncWithSerializer(s, obj.pred);
 	syncWithSerializer(s, obj.succ);
 	syncWithSerializer(s, obj.key);
@@ -111,9 +101,7 @@ void syncWithSerializer(Common::Serializer &s, SegmentObjTable<Node>::Entry &obj
 }
 
 #ifdef ENABLE_SCI32
-void syncWithSerializer(Common::Serializer &s, SegmentObjTable<SciArray<reg_t> >::Entry &obj) {
-	s.syncAsSint32LE(obj.next_free);
-
+void syncWithSerializer(Common::Serializer &s, SciArray<reg_t> &obj) {
 	byte type = 0;
 	uint32 size = 0;
 
@@ -146,9 +134,7 @@ void syncWithSerializer(Common::Serializer &s, SegmentObjTable<SciArray<reg_t> >
 	}
 }
 
-void syncWithSerializer(Common::Serializer &s, SegmentObjTable<SciString>::Entry &obj) {
-	s.syncAsSint32LE(obj.next_free);
-
+void syncWithSerializer(Common::Serializer &s, SciString &obj) {
 	uint32 size = 0;
 
 	if (s.isSaving()) {
@@ -184,6 +170,16 @@ struct DefaultSyncer : Common::BinaryFunction<Common::Serializer, T, void> {
 	}
 };
 
+// Syncer for entries in a segment obj table
+template<typename T>
+struct SegmentObjTableEntrySyncer : Common::BinaryFunction<Common::Serializer, typename T::Entry &, void> {
+	void operator()(Common::Serializer &s, typename T::Entry &entry) const {
+		s.syncAsSint32LE(entry.next_free);
+
+		syncWithSerializer(s, entry.data);
+	}
+};
+
 /**
  * Sync a Common::Array using a Common::Serializer.
  * When saving, this writes the length of the array, then syncs (writes) all entries.
@@ -216,9 +212,9 @@ struct ArraySyncer : Common::BinaryFunction<Common::Serializer, T, void> {
 };
 
 // Convenience wrapper
-template<typename T>
+template<typename T, class Syncer = DefaultSyncer<T>>
 void syncArray(Common::Serializer &s, Common::Array<T> &arr) {
-	ArraySyncer<T> sync;
+	ArraySyncer<T, Syncer> sync;
 	sync(s, arr);
 }
 
@@ -423,7 +419,7 @@ void sync_Table(Common::Serializer &s, T &obj) {
 	s.syncAsSint32LE(obj.first_free);
 	s.syncAsSint32LE(obj.entries_used);
 
-	syncArray<typename T::Entry>(s, obj._table);
+	syncArray<typename T::Entry, SegmentObjTableEntrySyncer<T> >(s, obj._table);
 }
 
 void CloneTable::saveLoadWithSerializer(Common::Serializer &s) {
@@ -900,7 +896,7 @@ void SegManager::reconstructClones() {
 				if (!isUsed)
 					continue;
 
-				CloneTable::Entry &seeker = ct->_table[j];
+				CloneTable::value_type &seeker = ct->at(j);
 				const Object *baseObj = getObject(seeker.getSpeciesSelector());
 				seeker.cloneFromObject(baseObj);
 				if (!baseObj) {

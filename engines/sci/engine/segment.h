@@ -210,7 +210,8 @@ struct Hunk {
 template<typename T>
 struct SegmentObjTable : public SegmentObj {
 	typedef T value_type;
-	struct Entry : public T {
+	struct Entry {
+		T data;
 		int next_free; /* Only used for free entries */
 	};
 	enum { HEAPENTRY_INVALID = -1 };
@@ -218,7 +219,8 @@ struct SegmentObjTable : public SegmentObj {
 	int first_free; /**< Beginning of a singly linked list for entries */
 	int entries_used; /**< Statistical information */
 
-	Common::Array<Entry> _table;
+	typedef Common::Array<Entry> ArrayType;
+	ArrayType _table;
 
 public:
 	SegmentObjTable(SegmentType type) : SegmentObj(type) {
@@ -274,8 +276,8 @@ public:
 
 	uint size() const { return _table.size(); }
 
-	T &at(uint index) { return _table[index]; }
-	const T &at(uint index) const { return _table[index]; }
+	T &at(uint index) { return _table[index].data; }
+	const T &at(uint index) const { return _table[index].data; }
 
 	T &operator[](uint index) { return at(index); }
 	const T &operator[](uint index) const { return at(index); }
