@@ -28,7 +28,7 @@ namespace OpenGL {
 
 #if !USE_FORCED_GLES
 ShaderPipeline::ShaderPipeline(Shader *shader)
-    : _activeShader(shader) {
+    : _activeShader(shader), _colorAttributes() {
 	_vertexAttribLocation = shader->getAttributeLocation("position");
 	_texCoordAttribLocation = shader->getAttributeLocation("texCoordIn");
 	_colorAttribLocation = shader->getAttributeLocation("blendColorIn");
@@ -37,6 +37,7 @@ ShaderPipeline::ShaderPipeline(Shader *shader)
 void ShaderPipeline::activateInternal() {
 	GL_CALL(glEnableVertexAttribArray(_vertexAttribLocation));
 	GL_CALL(glEnableVertexAttribArray(_texCoordAttribLocation));
+	GL_CALL(glEnableVertexAttribArray(_colorAttribLocation));
 
 	if (g_context.multitextureSupported) {
 		GL_CALL(glActiveTexture(GL_TEXTURE0));
@@ -48,12 +49,21 @@ void ShaderPipeline::activateInternal() {
 void ShaderPipeline::deactivateInternal() {
 	GL_CALL(glDisableVertexAttribArray(_vertexAttribLocation));
 	GL_CALL(glDisableVertexAttribArray(_texCoordAttribLocation));
+	GL_CALL(glDisableVertexAttribArray(_colorAttribLocation));
 
 	_activeShader->deactivate();
 }
 
 void ShaderPipeline::setColor(GLfloat r, GLfloat g, GLfloat b, GLfloat a) {
-	GL_CALL(glVertexAttrib4f(_colorAttribLocation, r, g, b, a));
+	GLfloat *dst = _colorAttributes;
+	for (uint i = 0; i < 4; ++i) {
+		*dst++ = r;
+		*dst++ = g;
+		*dst++ = b;
+		*dst++ = a;
+	}
+
+	GL_CALL(glVertexAttribPointer(_colorAttribLocation, 4, GL_FLOAT, GL_FALSE, 0, _colorAttributes));
 }
 
 void ShaderPipeline::drawTexture(const GLTexture &texture, const GLfloat *coordinates) {
