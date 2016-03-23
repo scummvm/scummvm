@@ -198,7 +198,7 @@ public:
 
 	void handleMouseUp(int x, int y, int button, int clickCount);
 	void handleMouseDown(int x, int y, int button, int clickCount);
-	void handleMouseEntered(int button)	{ setFlags(WIDGET_HILITED); draw(); }
+	void handleMouseEntered(int button)	{ if (_duringPress) { setFlags(WIDGET_PRESSED); } else { setFlags(WIDGET_HILITED); } draw(); }
 	void handleMouseLeft(int button)	{ clearFlags(WIDGET_HILITED | WIDGET_PRESSED); draw(); }
 	void handleTickle();
 
@@ -211,6 +211,7 @@ public:
 protected:
 	void drawWidget();
 	void wantTickle(bool tickled);
+	bool _duringPress;
 private:
 	uint32 _lastTime;
 };
