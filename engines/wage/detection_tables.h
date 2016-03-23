@@ -64,6 +64,11 @@ static const ADGameDescription gameDescriptions[] = {
 	// Crash in console rendering on the first scene
 	FANGAME("Fantasy Quest", "4b0e1a1fbaaa4930accd0f9f0e1519c7", 762754),
 	FANGAME("Find the Heart", "595117cbed33e8de1ab3714b33880205", 106235), // From Joshua's Worlds 1.0
+	FANGAMEN("Fortune Teller", "Fortune Teller 1.1", "e5df11bfec42dd12b675ad4d98479ef3", 73931),
+	// Cropped graphics on first scene
+	FANGAME("Intro to Gothic", "d81f2d03a1e863f04fb1e3a5495b720e", 208067),
+	// No Next button in intro
+	FANGAME("Jamie the Demon Slayer", "94a9c4f8b3dabd1846d76215a49bd221", 232789),
 	// Problems with window overlay
 	FANGAMEN("Jumble", "LSJUMBLE", "e12ec4d76d48bdc86567c5e63750547e", 647339), // Original file name is "LSJUMBLE† "
 	FANGAME("Karth of the Jungle", "595117cbed33e8de1ab3714b33880205", 96711),
