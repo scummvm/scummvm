@@ -4,6 +4,7 @@ MODULE_OBJS := \
 	adl.o \
 	adl_v2.o \
 	detection.o \
+	disk.o \
 	display.o \
 	graphics.o \
 	graphics_v1.o \
