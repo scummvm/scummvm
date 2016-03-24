@@ -125,7 +125,6 @@ int main(int argc, char *argv[]) {
 
 	ProjectType projectType = kProjectNone;
 	int msvcVersion = 12;
-	bool useSDL2 = false;
 
 	// Parse command line arguments
 	using std::cout;
@@ -269,7 +268,7 @@ int main(int argc, char *argv[]) {
 		} else if (!std::strcmp(argv[i], "--tests")) {
 			setup.tests = true;
 		} else if (!std::strcmp(argv[i], "--sdl2")) {
-			useSDL2 = true;
+			setup.useSDL2 = true;
 		} else {
 			std::cerr << "ERROR: Unknown parameter \"" << argv[i] << "\"\n";
 			return -1;
@@ -349,11 +348,15 @@ int main(int argc, char *argv[]) {
 		setup.defines.push_back("IPHONE");
 	}
 	setup.defines.push_back("SDL_BACKEND");
-	if (!useSDL2) {
-		cout << "\nLinking to SDL 1.2\n\n";
+	if (!setup.useSDL2) {
+		cout << "\nBuilding against SDL 1.2\n\n";
 		setup.libraries.push_back("sdl");
 	} else {
-		cout << "\nLinking to SDL 2.0\n\n";
+		cout << "\nBuilding against SDL 2.0\n\n";
+		// TODO: This also defines USE_SDL2 in the preprocessor, we don't do
+		// this in our configure/make based build system. Adapt create_project
+		// to replicate this behavior.
+		setup.defines.push_back("USE_SDL2");
 		setup.libraries.push_back("sdl2");
 	}
 	setup.libraries.push_back("winmm");

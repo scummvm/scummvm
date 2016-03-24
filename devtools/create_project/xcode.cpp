@@ -927,7 +927,11 @@ void XcodeProvider::setupBuildConfiguration(const BuildSetup &setup) {
 	ADD_SETTING_LIST(scummvmOSX_Debug, "GCC_PREPROCESSOR_DEFINITIONS", scummvmOSX_defines, kSettingsNoQuote | kSettingsAsList, 5);
 	ADD_SETTING_QUOTE(scummvmOSX_Debug, "GCC_VERSION", "");
 	ValueList scummvmOSX_HeaderPaths;
-	scummvmOSX_HeaderPaths.push_back("/opt/local/include/SDL");
+	if (setup.useSDL2) {
+		scummvmOSX_HeaderPaths.push_back("/opt/local/include/SDL2");
+	} else {
+		scummvmOSX_HeaderPaths.push_back("/opt/local/include/SDL");
+	}
 	scummvmOSX_HeaderPaths.push_back("/opt/local/include");
 	scummvmOSX_HeaderPaths.push_back("/opt/local/include/freetype2");
 	scummvmOSX_HeaderPaths.push_back("include/");
@@ -943,7 +947,6 @@ void XcodeProvider::setupBuildConfiguration(const BuildSetup &setup) {
 	ADD_SETTING_LIST(scummvmOSX_Debug, "LIBRARY_SEARCH_PATHS", scummvmOSX_LibPaths, kSettingsNoQuote | kSettingsAsList, 5);
 	ADD_SETTING_QUOTE(scummvmOSX_Debug, "OTHER_CFLAGS", "");
 	ValueList scummvmOSX_LdFlags;
-	scummvmOSX_LdFlags.push_back("-lSDLmain");
 	scummvmOSX_LdFlags.push_back("-logg");
 	scummvmOSX_LdFlags.push_back("-lpng");
 	scummvmOSX_LdFlags.push_back("-ljpeg");
@@ -953,7 +956,13 @@ void XcodeProvider::setupBuildConfiguration(const BuildSetup &setup) {
 	scummvmOSX_LdFlags.push_back("-lvorbis");
 	scummvmOSX_LdFlags.push_back("-lmad");
 	scummvmOSX_LdFlags.push_back("-lFLAC");
-	scummvmOSX_LdFlags.push_back("-lSDL");
+	if (setup.useSDL2) {
+		scummvmOSX_LdFlags.push_back("-lSDL2main");
+		scummvmOSX_LdFlags.push_back("-lSDL2");
+	} else {
+		scummvmOSX_LdFlags.push_back("-lSDLmain");
+		scummvmOSX_LdFlags.push_back("-lSDL");
+	}
 	scummvmOSX_LdFlags.push_back("-lz");
 	ADD_SETTING_LIST(scummvmOSX_Debug, "OTHER_LDFLAGS", scummvmOSX_LdFlags, kSettingsAsList, 5);
 	ADD_SETTING(scummvmOSX_Debug, "PREBINDING", "NO");
