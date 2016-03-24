@@ -27,6 +27,7 @@
 #include "common/array.h"
 #include "titanic/font.h"
 #include "titanic/direct_draw.h"
+#include "titanic/movie.h"
 #include "titanic/rect.h"
 #include "titanic/core/list.h"
 #include "titanic/core/resource_key.h"
@@ -56,7 +57,7 @@ protected:
 	CResourceKey _resourceKey;
 	DirectDrawSurface *_ddSurface;
 	Graphics::ManagedSurface *_rawSurface;
-	void *_field34;
+	CMovie *_movie;
 	bool _pendingLoad;
 	void *_field40;
 	int _field44;
@@ -139,6 +140,11 @@ public:
 	virtual void shiftColors() = 0;
 
 	/**
+	 * Stops any movie currently attached to the surface
+	 */
+	virtual void stopMovie() = 0;
+
+	/**
 	 * Loads the surface's resource if there's one pending
 	 */
 	virtual bool loadIfReady() = 0;
@@ -152,6 +158,8 @@ public:
 	 * Frees the underlying surface
 	 */
 	virtual int freeSurface() { return 0; }
+
+
 
 	/**
 	 * Blit from another surface
@@ -234,6 +242,11 @@ public:
 	 * Shifts the colors of the surface.. maybe greys it out?
 	 */
 	virtual void shiftColors();
+
+	/**
+	 * Stops any movie currently attached to the surface
+	 */
+	virtual void stopMovie();
 
 	/**
 	 * Loads the surface's resource if there's one pending

@@ -125,8 +125,9 @@ void CGameObject::load(SimpleFile *file) {
 	CNamedItem::load(file);
 }
 
-void CGameObject::fn2() {
-	error("TODO");
+void CGameObject::stopMovie() {
+	if (_surface)
+		_surface->stopMovie();
 }
 
 bool CGameObject::checkPoint(const Point &pt, int v0, int v1) {

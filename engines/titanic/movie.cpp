@@ -48,7 +48,7 @@ void OSMovie::proc12() {
 	warning("TODO: OSMovie::proc12");
 }
 
-void OSMovie::proc13() {
+void OSMovie::stop() {
 	warning("TODO: OSMovie::proc13");
 }
 

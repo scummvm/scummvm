@@ -29,7 +29,7 @@ namespace Titanic {
 int CVideoSurface::_videoSurfaceCounter = 0;
 
 CVideoSurface::CVideoSurface(CScreenManager *screenManager) :
-		_screenManager(screenManager), _rawSurface(nullptr), _field34(nullptr),
+		_screenManager(screenManager), _rawSurface(nullptr), _movie(nullptr),
 		_pendingLoad(false), _blitStyleFlag(false), _blitFlag(false),
 		_field40(nullptr), _field44(4), _field48(0), _field50(1) {
 	_videoSurfaceNum = _videoSurfaceCounter++;
@@ -299,6 +299,11 @@ void OSVideoSurface::shiftColors() {
 	unlock();
 }
 
+void OSVideoSurface::stopMovie() {
+	if (_movie)
+		_movie->stop();
+}
+
 bool OSVideoSurface::loadIfReady() {
 	_videoSurfaceNum = _videoSurfaceCounter;
 
@@ -318,8 +323,8 @@ int OSVideoSurface::freeSurface() {
 		return 0;
 	int surfaceSize = _ddSurface->getSize();
 
-	delete _field34;
-	_field34 = nullptr;
+	delete _movie;
+	_movie = nullptr;
 	delete _ddSurface;
 	_ddSurface = nullptr;
 

@@ -26,9 +26,10 @@
 #include "video/avi_decoder.h"
 #include "titanic/core/list.h"
 #include "titanic/core/resource_key.h"
-#include "titanic/video_surface.h"
 
 namespace Titanic {
+
+class CVideoSurface;
 
 class CMovie : public ListItem {
 public:
@@ -37,7 +38,7 @@ public:
 	virtual void proc10() = 0;
 	virtual void proc11() = 0;
 	virtual void proc12() = 0;
-	virtual void proc13() = 0;
+	virtual void stop() = 0;
 	virtual void proc14() = 0;
 	virtual void proc15() = 0;
 	virtual void proc16() = 0;
@@ -60,7 +61,7 @@ public:
 	virtual void proc10();
 	virtual void proc11();
 	virtual void proc12();
-	virtual void proc13();
+	virtual void stop();
 	virtual void proc14();
 	virtual void proc15();
 	virtual void proc16();

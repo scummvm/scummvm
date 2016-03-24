@@ -115,7 +115,10 @@ public:
 	 */
 	virtual void draw(CScreenManager *screenManager);
 
-	void fn2();
+	/**
+	 * Stops any movie currently playing for the object
+	 */
+	void stopMovie();
 
 	bool checkPoint(const Point &pt, int v0, int v1);
 };
