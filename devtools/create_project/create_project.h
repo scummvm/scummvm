@@ -229,7 +229,7 @@ struct BuildSetup {
 	StringList testDirs;  ///< List of all folders containing tests
 
 	bool devTools;         ///< Generate project files for the tools
-	bool tests;             ///< Generate project files for the tests
+	bool tests;            ///< Generate project files for the tests
 	bool runBuildEvents;   ///< Run build events as part of the build (generate revision number and copy engine/theme data & needed files to the build folder
 	bool createInstaller;  ///< Create NSIS installer after the build
 
