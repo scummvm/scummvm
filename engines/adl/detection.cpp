@@ -77,13 +77,27 @@ static const PlainGameDescriptor adlGames[] = {
 };
 
 static const AdlGameDescription gameDescriptions[] = {
-	{ // Hi-Res Adventure #1: Mystery House - Apple II - 1987 PD release
+	{ // Hi-Res Adventure #1: Mystery House - Apple II - 1987 PD release - Plain files
 		{
 			"hires1", 0,
 			{
 				{ "ADVENTURE", 0, "22d9e63a11d69fa033ba1738715ad09a", 29952 },
 				{ "AUTO LOAD OBJ", 0, "23bfccfe9fcff9b22cf6c41bde9078ac", 12291 },
 				{ "MYSTERY.HELLO", 0, "2289b7fea300b506e902a4c597968369", 836 },
+				AD_LISTEND
+			},
+			Common::EN_ANY,
+			Common::kPlatformApple2GS, // FIXME
+			ADGF_UNSTABLE,
+			GUIO2(GAMEOPTION_COLOR, GAMEOPTION_SCANLINES)
+		},
+		GAME_TYPE_HIRES1
+	},
+	{ // Hi-Res Adventure #1: Mystery House - Apple II - 1987 PD release - .DSK format
+		{
+			"hires1", 0,
+			{
+				{ "MYSTHOUS.DSK", 0, "34ba05e62bf51404c4475c349ca48921", 143360 },
 				AD_LISTEND
 			},
 			Common::EN_ANY,

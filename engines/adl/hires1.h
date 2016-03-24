@@ -91,7 +91,8 @@ namespace Adl {
 
 class HiRes1Engine : public AdlEngine {
 public:
-	HiRes1Engine(OSystem *syst, const AdlGameDescription *gd) : AdlEngine(syst, gd) { }
+	HiRes1Engine(OSystem *syst, const AdlGameDescription *gd) : AdlEngine(syst, gd), _files(nullptr) { }
+	~HiRes1Engine() { delete _files; }
 
 private:
 	// AdlEngine
@@ -104,7 +105,7 @@ private:
 	void drawItem(const Item &item, const Common::Point &pos) const;
 	void showRoom();
 
-	PlainFiles _files;
+	Files *_files;
 	Common::File _exe;
 	Common::Array<DataBlockPtr> _corners;
 	Common::Array<byte> _roomDesc;

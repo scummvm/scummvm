@@ -33,7 +33,7 @@
 namespace Adl {
 
 void HiRes1Engine::runIntro() const {
-	StreamPtr stream(_files.createReadStream(IDS_HR1_EXE_0));
+	StreamPtr stream(_files->createReadStream(IDS_HR1_EXE_0));
 
 	stream->seek(IDI_HR1_OFS_LOGO_0);
 	_display->setMode(DISPLAY_MODE_HIRES);
@@ -46,7 +46,7 @@ void HiRes1Engine::runIntro() const {
 
 	_display->setMode(DISPLAY_MODE_TEXT);
 
-	StreamPtr basic(_files.createReadStream(IDS_HR1_LOADER));
+	StreamPtr basic(_files->createReadStream(IDS_HR1_LOADER));
 	Common::String str;
 
 	str = readStringAt(*basic, IDI_HR1_OFS_PD_TEXT_0, '"');
@@ -120,7 +120,7 @@ void HiRes1Engine::runIntro() const {
 	_display->setMode(DISPLAY_MODE_MIXED);
 
 	// Title screen shown during loading
-	stream.reset(_files.createReadStream(IDS_HR1_EXE_1));
+	stream.reset(_files->createReadStream(IDS_HR1_EXE_1));
 	stream->seek(IDI_HR1_OFS_LOGO_1);
 	_display->loadFrameBuffer(*stream);
 	_display->updateHiResScreen();
@@ -128,14 +128,21 @@ void HiRes1Engine::runIntro() const {
 }
 
 void HiRes1Engine::init() {
+	if (Common::File::exists("MYSTHOUS.DSK")) {
+		_files = new Files_DOS33();
+		if (!static_cast<Files_DOS33 *>(_files)->open("MYSTHOUS.DSK"))
+			error("Failed to open MYSTHOUS.DSK");
+	} else
+		_files = new PlainFiles();
+
 	_graphics = new Graphics_v1(*_display);
 
-	StreamPtr stream(_files.createReadStream(IDS_HR1_MESSAGES));
+	StreamPtr stream(_files->createReadStream(IDS_HR1_MESSAGES));
 
 	for (uint i = 0; i < IDI_HR1_NUM_MESSAGES; ++i)
 		_messages.push_back(readString(*stream, APPLECHAR('\r')) + APPLECHAR('\r'));
 
-	stream.reset(_files.createReadStream(IDS_HR1_EXE_1));
+	stream.reset(_files->createReadStream(IDS_HR1_EXE_1));
 
 	// Some messages have overrides inside the executable
 	_messages[IDI_HR1_MSG_CANT_GO_THERE - 1] = readStringAt(*stream, IDI_HR1_OFS_STR_CANT_GO_THERE);
@@ -164,7 +171,7 @@ void HiRes1Engine::init() {
 		byte block = stream->readByte();
 		Common::String name = Common::String::format("BLOCK%i", block);
 		uint16 offset = stream->readUint16LE();
-		pic.data = _files.getDataBlock(name, offset);
+		pic.data = _files->getDataBlock(name, offset);
 		_pictures.push_back(pic);
 	}
 
@@ -188,7 +195,7 @@ void HiRes1Engine::init() {
 	stream->seek(IDI_HR1_OFS_CORNERS);
 	uint16 cornersCount = stream->readUint16LE();
 	for (uint i = 0; i < cornersCount; ++i)
-		_corners.push_back(_files.getDataBlock(IDS_HR1_EXE_1, IDI_HR1_OFS_CORNERS + stream->readUint16LE()));
+		_corners.push_back(_files->getDataBlock(IDS_HR1_EXE_1, IDI_HR1_OFS_CORNERS + stream->readUint16LE()));
 
 	if (stream->eos() || stream->err())
 		error("Failed to read game data from '" IDS_HR1_EXE_1 "'");
@@ -208,7 +215,7 @@ void HiRes1Engine::initState() {
 	_state.vars.clear();
 	_state.vars.resize(IDI_HR1_NUM_VARS);
 
-	StreamPtr stream(_files.createReadStream(IDS_HR1_EXE_1));
+	StreamPtr stream(_files->createReadStream(IDS_HR1_EXE_1));
 
 	// Load room data from executable
 	_state.rooms.clear();
