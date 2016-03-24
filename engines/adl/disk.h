@@ -43,6 +43,33 @@ public:
 
 typedef Common::SharedPtr<DataBlock> DataBlockPtr;
 
+class Files {
+public:
+	virtual ~Files() { }
+
+	virtual const DataBlockPtr getDataBlock(const Common::String &filename, uint offset) const = 0;
+	virtual Common::SeekableReadStream *createReadStream(const Common::String &filename, uint offset) const = 0;
+};
+
+class FilesDataBlock : public DataBlock {
+public:
+	FilesDataBlock(const Files *files, const Common::String &filename, uint offset) : _files(files), _filename(filename), _offset(offset) { }
+
+	bool isValid() const { return true; }
+	Common::SeekableReadStream *createReadStream() const;
+
+private:
+	const Common::String _filename;
+	uint _offset;
+	const Files *_files;
+};
+
+class PlainFiles : public Files {
+public:
+	const DataBlockPtr getDataBlock(const Common::String &filename, uint offset = 0) const;
+	Common::SeekableReadStream *createReadStream(const Common::String &filename, uint offset = 0) const;
+};
+
 class DiskImage {
 public:
 	DiskImage();

@@ -21,6 +21,7 @@
  */
 
 #include "common/stream.h"
+#include "common/substream.h"
 
 #include "adl/disk.h"
 
@@ -85,6 +86,26 @@ bool DiskImage_DSK::open(const Common::String &filename) {
 	}
 
 	return true;
+}
+
+Common::SeekableReadStream *FilesDataBlock::createReadStream() const {
+	return _files->createReadStream(_filename, _offset);
+}
+
+const DataBlockPtr PlainFiles::getDataBlock(const Common::String &filename, uint offset) const {
+	return Common::SharedPtr<FilesDataBlock>(new FilesDataBlock(this, filename, offset));
+}
+
+Common::SeekableReadStream *PlainFiles::createReadStream(const Common::String &filename, uint offset) const {
+	Common::File *f(new Common::File());
+
+	if (!f->open(filename))
+		error("Failed to open '%s'", filename.c_str());
+
+	if (offset == 0)
+		return f;
+	else
+		return new Common::SeekableSubReadStream(f, offset, f->size(), DisposeAfterUse::YES);
 }
 
 } // End of namespace Adl
