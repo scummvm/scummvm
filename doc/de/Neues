@@ -4,13 +4,50 @@ Programmcodes finden Sie auf Englisch unter:
 
 1.9.0 (DD.MM.YYYY)
  AGI:
-   - Unterstützung für Hercules-Darstellung (Grün + Bernstein) hinzugefügt
+   - Unterstützung für Hercules-Darstellung (Grün + Bernstein) hinzugefügt.
    - Unterstützung für hochauflösende Hercules-Schriftart hinzugefügt
-     (auch außerhalb der Hercules-Darstellung nutzbar)
+     (auch außerhalb der Hercules-Darstellung nutzbar).
    - Optionale Funktion "Pause, wenn Befehle eingegeben werden" hinzugefügt.
      Diese Funktion war im originalen Interpreter nur im Hercules-Darstellungsmodus
      verfügbar.
 
+1.8.1 (DD.MM.YYYY)
+ Allgemein:
+   - "TESTING"-Markierung von mehreren unterstützten Spielen entfernt.
+   - Chinesische Übersetzung (Pinyin) der Benutzeroberfläche hinzugefügt.
+
+ BBVS:
+   - Fehler beim erneuten Starten des Spiels behoben.
+
+ CinE:
+   - Fehler beim Laden der Soundeffekte behoben.
+
+ Gob:
+   - Aufhängen während Sound-Initialisierung in mehreren Spielen behoben.
+
+ Lab:
+   - Aufhängen während der End-Sequenz behoben.
+   - Interne Spiel-Bedienelemente verbessert.
+
+ SAGA:
+   - Fehlerhafte Farben der Bedienelemente in der französischen und deutschen
+     Version von "I Have No Mouth and I Must Screm" korrigiert.
+
+ SCUMM:
+   - Erkennung von Maniac Mansion innerhalb von Day of the Tentacle in der
+     Windows-Version von ScummVM repariert.
+   - In der EGA-Version von Loom wurde ein Sound-Effekt nicht korrekt angehalten,
+     wenn AdLib verwendet wurde. Dieser Fehler wurde behoben.
+
+ Baphomets Fluch 2.5:
+   - Option zur Auswahl von englischer Sprachausgabe anstelle der deutschen,
+     wenn in der gewählten Sprache keine Sprachausgabe verfügbar ist, hinzugefügt.
+   - Ressourcen-Freigabe beim Beenden des Spiels korrigiert.
+   - Fehler beim Neustart des Spiels nach dem Wechsel der Spiel-Sprache behoben.
+   - Flackern im Hauptmenü behoben.
+   
+ Windows-Portierung:
+   - Absturz im Zusammenhang mit nicht-funktionierenden MIDI-Geräten behoben.
 
 1.8.0 (04.03.2016)
  Neue Spiele:
