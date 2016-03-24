@@ -88,7 +88,7 @@ static const AdlGameDescription gameDescriptions[] = {
 			},
 			Common::EN_ANY,
 			Common::kPlatformApple2GS, // FIXME
-			ADGF_NO_FLAGS,
+			ADGF_UNSTABLE,
 			GUIO2(GAMEOPTION_COLOR, GAMEOPTION_SCANLINES)
 		},
 		GAME_TYPE_HIRES1
@@ -102,7 +102,7 @@ static const AdlGameDescription gameDescriptions[] = {
 			},
 			Common::EN_ANY,
 			Common::kPlatformApple2GS, // FIXME
-			ADGF_NO_FLAGS,
+			ADGF_UNSTABLE,
 			GUIO2(GAMEOPTION_MONO, GAMEOPTION_SCANLINES)
 		},
 		GAME_TYPE_HIRES2
