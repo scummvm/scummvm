@@ -60,7 +60,7 @@ void CInputTranslator::leftButtonUp(int special, const Point &pt) {
 }
 
 void CInputTranslator::leftButtonDoubleClick(int special, const Point &pt) {
-	CMouseButtonDoubleClickMsg msg(pt, getButtons(special));
+	CMouseDoubleClickMsg msg(pt, getButtons(special));
 	_inputHandler->handleMessage(msg);
 }
 
@@ -75,7 +75,7 @@ void CInputTranslator::middleButtonUp(int special, const Point &pt) {
 }
 
 void CInputTranslator::middleButtonDoubleClick(int special, const Point &pt) {
-	CMouseButtonDoubleClickMsg msg(pt, getButtons(special));
+	CMouseDoubleClickMsg msg(pt, getButtons(special));
 	_inputHandler->handleMessage(msg);
 }
 
@@ -90,7 +90,7 @@ void CInputTranslator::rightButtonUp(int special, const Point &pt) {
 }
 
 void CInputTranslator::rightButtonDoubleClick(int special, const Point &pt) {
-	CMouseButtonDoubleClickMsg msg(pt, getButtons(special));
+	CMouseDoubleClickMsg msg(pt, getButtons(special));
 	_inputHandler->handleMessage(msg);
 }
 

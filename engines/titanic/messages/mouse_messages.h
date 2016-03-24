@@ -108,19 +108,19 @@ public:
 	}
 };
 
-MSGTARGET(CMouseButtonDoubleClickMsg);
-class CMouseButtonDoubleClickMsg : public CMouseButtonMsg {
+MSGTARGET(CMouseDoubleClickMsg);
+class CMouseDoubleClickMsg : public CMouseButtonMsg {
 public:
 	CLASSDEF
-	CMouseButtonDoubleClickMsg() : CMouseButtonMsg() {}
-	CMouseButtonDoubleClickMsg(const Point &pt, int buttons) : CMouseButtonMsg(pt, buttons) {}
+	CMouseDoubleClickMsg() : CMouseButtonMsg() {}
+	CMouseDoubleClickMsg(const Point &pt, int buttons) : CMouseButtonMsg(pt, buttons) {}
 
 	static bool isSupportedBy(const CTreeItem *item) {
-		return dynamic_cast<const CMouseButtonDoubleClickMsg *>(item) != nullptr;
+		return dynamic_cast<const CMouseDoubleClickMsg *>(item) != nullptr;
 	}
-	virtual bool handleMessage(const CMouseButtonDoubleClickMsg &msg) { return false; }
+	virtual bool handleMessage(const CMouseDoubleClickMsg &msg) { return false; }
 	virtual bool perform(CTreeItem *treeItem) { 
-		CMouseButtonDoubleClickMsg *dest = dynamic_cast<CMouseButtonDoubleClickMsg *>(treeItem);
+		CMouseDoubleClickMsg *dest = dynamic_cast<CMouseDoubleClickMsg *>(treeItem);
 		return dest != nullptr && dest->handleMessage(*this);
 	}
 };

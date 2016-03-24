@@ -180,7 +180,45 @@ bool CViewItem::handleEvent(CMouseButtonDownMsg &msg) {
 				}
 			}
 		}
-		// TODO
+	}
+
+	return true;
+}
+
+bool CViewItem::handleEvent(CMouseButtonUpMsg &msg) {
+	if (msg._buttons & MB_LEFT)
+		handleMouseMsg(&msg, false);
+
+	return true;
+}
+
+bool CViewItem::handleEvent(CMouseDoubleClickMsg &msg) {
+	if (msg._buttons & MB_LEFT)
+		handleMouseMsg(&msg, false);
+
+	return true;
+}
+
+bool CViewItem::handleEvent(CMouseMoveMsg &msg) {
+	CScreenManager *screenManager = CScreenManager::_screenManagerPtr;
+
+	if (handleMouseMsg(&msg, true)) {
+		screenManager->_mouseCursor->setCursor(CURSOR_1);
+	} else {
+		// Iterate through each link item, and if any is highlighted,
+		// change the mouse cursor to the designated cursor for the item
+		CLinkItem *linkItem = dynamic_cast<CLinkItem *>(getFirstChild());
+		while (linkItem) {
+			if (linkItem->_bounds.contains(msg._mousePos)) {
+				screenManager->_mouseCursor->setCursor(linkItem->_cursorId);
+				return true;
+			}
+
+			linkItem = dynamic_cast<CLinkItem *>(linkItem->getNextSibling());
+		}
+
+		if (!handleMouseMsg(&msg, false))
+			screenManager->_mouseCursor->setCursor(CURSOR_1);
 	}
 
 	return true;
@@ -212,8 +250,8 @@ bool CViewItem::handleMouseMsg(const CMouseMsg *msg, bool flag) {
 			return false;
 
 		for (int idx = (int)gameObjects.size() - 1; idx >= 0; ++idx) {
-			if (gameObjects[idx]->_cursorId != 12) {
-				CScreenManager::_screenManagerPtr->_mouseCursor->setCursorId(gameObjects[idx]->_cursorId);
+			if (gameObjects[idx]->_cursorId != CURSOR_12) {
+				CScreenManager::_screenManagerPtr->_mouseCursor->setCursor(gameObjects[idx]->_cursorId);
 				break;
 			}
 		}

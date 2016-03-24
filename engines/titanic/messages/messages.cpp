@@ -84,7 +84,7 @@ bool CMessage::isMouseMoveMsg() const {
 }
 
 bool CMessage::isDoubleClickMsg() const {
-	return dynamic_cast<const CMouseButtonDoubleClickMsg *>(this) != nullptr;
+	return dynamic_cast<const CMouseDoubleClickMsg *>(this) != nullptr;
 }
 
 bool CMessage::isEnterRoomMsg() const {

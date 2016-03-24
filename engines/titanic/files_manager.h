@@ -77,6 +77,8 @@ public:
 	 */
 	void resetView();
 
+	void fn4(const CString &name);
+
 	void fn5(const CString &name);
 };
 

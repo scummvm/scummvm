@@ -20,25 +20,80 @@
  *
  */
 
+#include "graphics/cursorman.h"
 #include "common/textconsole.h"
 #include "titanic/mouse_cursor.h"
+#include "titanic/movie.h"
+#include "titanic/screen_manager.h"
+#include "titanic/titanic.h"
+#include "titanic/video_surface.h"
+#include "titanic/core/resource_key.h"
 
 namespace Titanic {
 
+static const int CURSOR_DATA[NUM_CURSORS][4] = {
+	{ 1, 136, 19, 18 },
+	{ 2, 139, 1, 1 },
+	{ 3, 140, 32, 1 },
+	{ 4, 137, 13, 0 },
+	{ 5, 145, 13, 0 },
+	{ 6, 144, 13, 22 },
+	{ 7, 137, 14, 0 },
+	{ 8, 148, 22, 40 },
+	{ 9, 136, 19, 18 },
+	{ 10, 143, 11, 11 },
+	{ 11, 146, 11, 11 },
+	{ 12, 136, 19, 18 },
+	{ 13, 136, 19, 25 },
+	{ 14, 136, 13, 22 },
+	{ 15, 138, 20, 28 }
+};
+
+CMouseCursor::CMouseCursor(CScreenManager *screenManager) : 
+		_screenManager(screenManager), _cursorId(CURSOR_1) {
+	loadCursorImages();
+}
+
+CMouseCursor::~CMouseCursor() {
+	for (int idx = 0; idx < NUM_CURSORS; ++idx)
+		delete _cursors[idx]._videoSurface;
+}
+
+void CMouseCursor::loadCursorImages() {
+	const CString name("ycursors.avi");
+	const CResourceKey key(name);
+	g_vm->_filesManager.fn4(name);
+
+	// Iterate through each cursor
+	for (int idx = 0; idx < NUM_CURSORS; ++idx) {
+		assert(CURSOR_DATA[idx][0] == (idx + 1));
+		_cursors[idx]._centroid = Common::Point(CURSOR_DATA[idx][2],
+			CURSOR_DATA[idx][3]);
+
+		CVideoSurface *surface = _screenManager->createSurface(64, 64);
+		_cursors[idx]._videoSurface = surface;
+
+		OSMovie movie(key, surface);
+		movie.setFrame(idx);
+		_cursors[idx]._ptrUnknown = movie.proc21();
+		surface->set40(_cursors[idx]._ptrUnknown);
+	}
+}
+
 void CMouseCursor::show() {
-	warning("CMouseCursor::show");
+	CursorMan.showMouse(true);
 }
 
 void CMouseCursor::hide() {
-	warning("CMouseCursor::hide");
+	CursorMan.showMouse(false);
 }
 
-void CMouseCursor::setCursorId(int id) {
-	warning("CMouseCursor::setCursorId");
+void CMouseCursor::setCursor(CursorId cursorId) {
+	warning("CMouseCursor::setCursor");
 }
 
 void CMouseCursor::update() {
-	warning("CMouseCursor::update");
+	// No implementation needed
 }
 
 } // End of namespace Titanic

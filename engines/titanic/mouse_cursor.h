@@ -24,14 +24,66 @@
 #define TITANIC_MOUSE_CURSOR_H
 
 #include "common/scummsys.h"
+#include "common/rect.h"
 
 namespace Titanic {
 
+#define NUM_CURSORS 15
+
+enum CursorId {
+	CURSOR_1 = 1,
+	CURSOR_2 = 3,
+	CURSOR_3 = 3,
+	CURSOR_4 = 4,
+	CURSOR_5 = 5,
+	CURSOR_6 = 6,
+	CURSOR_7 = 7,
+	CURSOR_8 = 8,
+	CURSOR_9 = 9,
+	CURSOR_10 = 10,
+	CURSOR_11 = 11,
+	CURSOR_12 = 12,
+	CURSOR_13 = 13,
+	CURSOR_14 = 14,
+	CURSOR_15 = 15
+};
+
+class CScreenManager;
+class CVideoSurface;
+
 class CMouseCursor {
+	struct CursorEntry {
+		CVideoSurface *_videoSurface;
+		void *_ptrUnknown;
+		Common::Point _centroid;
+	};
+private:
+	CScreenManager *_screenManager;
+	CursorId _cursorId;
+	CursorEntry _cursors[NUM_CURSORS];
+
+	/**
+	 * Load the images for each cursor
+	 */
+	void loadCursorImages();
 public:
+	CMouseCursor(CScreenManager *screenManager);
+	~CMouseCursor();
+
+	/**
+	 * Make the mouse cursor visible
+	 */
 	void show();
+
+	/**
+	 * Hide the mouse cursor
+	 */
 	void hide();
-	void setCursorId(int id);
+	
+	/**
+	 * Set the cursor
+	 */
+	void setCursor(CursorId cursorId);
 	
 	/**
 	 * Updates the mouse cursor

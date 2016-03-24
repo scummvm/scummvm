@@ -23,6 +23,7 @@
 #ifndef TITANIC_GAME_OBJECT_H
 #define TITANIC_GAME_OBJECT_H
 
+#include "titanic/mouse_cursor.h"
 #include "titanic/rect.h"
 #include "titanic/core/movie_clip.h"
 #include "titanic/core/named_item.h"
@@ -94,7 +95,7 @@ protected:
 	int _fieldB8;
 public:
 	int _field60;
-	int _cursorId;
+	CursorId _cursorId;
 public:
 	CLASSDEF
 	CGameObject();

@@ -23,6 +23,7 @@
 #ifndef TITANIC_LINK_ITEM_H
 #define TITANIC_LINK_ITEM_H
 
+#include "titanic/mouse_cursor.h"
 #include "titanic/core/named_item.h"
 #include "titanic/core/movie_clip.h"
 
@@ -44,9 +45,9 @@ protected:
 	int _nodeNumber;
 	int _viewNumber;
 	int _field30;
-	int _field34;
 public:
 	Rect _bounds;
+	CursorId _cursorId;
 public:
 	CLASSDEF
 	CLinkItem();

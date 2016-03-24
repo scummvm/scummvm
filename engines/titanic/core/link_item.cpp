@@ -32,7 +32,7 @@ CLinkItem::CLinkItem() : CNamedItem() {
 	_nodeNumber = -1;
 	_viewNumber = -1;
 	_field30 = 0;
-	_field34 = 1;
+	_cursorId = CURSOR_1;
 	_name = "Link";
 }
 
@@ -44,7 +44,7 @@ CString CLinkItem::formName() {
 void CLinkItem::save(SimpleFile *file, int indent) const {
 	file->writeNumberLine(2, indent);
 	file->writeQuotedLine("L", indent);
-	file->writeNumberLine(_field34, indent + 1);
+	file->writeNumberLine(_cursorId, indent + 1);
 	file->writeNumberLine(_field30, indent + 1);
 	file->writeNumberLine(_roomNumber, indent + 1);
 	file->writeNumberLine(_nodeNumber, indent + 1);
@@ -65,7 +65,7 @@ void CLinkItem::load(SimpleFile *file) {
 
 	switch (val) {
 	case 2:
-		_field34 = file->readNumber();
+		_cursorId = (CursorId)file->readNumber();
 		// Deliberate fall-through
 
 	case 1:
@@ -93,16 +93,16 @@ void CLinkItem::load(SimpleFile *file) {
 	if (val < 2) {
 		switch (_field30) {
 		case 2:
-			_field34 = 2;
+			_cursorId = CURSOR_2;
 			break;
 		case 3:
-			_field34 = 3;
+			_cursorId = CURSOR_3;
 			break;
 		case 5:
-			_field34 = 7;
+			_cursorId = CURSOR_7;
 			break;
 		default:
-			_field34 = 4;
+			_cursorId = CURSOR_4;
 			break;
 		}
 	}

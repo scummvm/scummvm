@@ -58,7 +58,7 @@ protected:
 	Graphics::ManagedSurface *_rawSurface;
 	void *_field34;
 	bool _pendingLoad;
-	int _field40;
+	void *_field40;
 	int _field44;
 	int _field48;
 	int _videoSurfaceNum;
@@ -157,6 +157,8 @@ public:
 	 * Blit from another surface
 	 */
 	void blitFrom(const Point &destPos, CVideoSurface *src, const Rect *srcRect = nullptr);
+
+	void set40(void *v) { _field40 = v; }
 };
 
 class OSVideoSurface : public CVideoSurface {

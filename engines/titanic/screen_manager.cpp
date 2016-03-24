@@ -222,7 +222,7 @@ void OSScreenManager::loadCursors() {
 		hideCursor();
 		delete _mouseCursor;
 	}
-	_mouseCursor = new CMouseCursor();
+	_mouseCursor = new CMouseCursor(this);
 	showCursor();
 
 	if (!_textCursor) {

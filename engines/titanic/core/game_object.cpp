@@ -46,7 +46,7 @@ CGameObject::CGameObject(): CNamedItem() {
 	_field58 = 0;
 	_field5C = 1;
 	_field60 = 0;
-	_cursorId = 1;
+	_cursorId = CURSOR_1;
 	_field78 = 0;
 	_frameNumber = -1;
 	_field90 = 0;
@@ -77,7 +77,7 @@ void CGameObject::load(SimpleFile *file) {
 		// Deliberate fall-through
 
 	case 6:
-		val = _cursorId = file->readNumber();
+		_cursorId = (CursorId)file->readNumber();
 		// Deliberate fall-through
 
 	case 5:
