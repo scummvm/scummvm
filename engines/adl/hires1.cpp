@@ -33,13 +33,11 @@
 namespace Adl {
 
 void HiRes1Engine::runIntro() const {
-	Common::File file;
+	StreamPtr stream(_files.createReadStream(IDS_HR1_EXE_0));
 
-	openFile(file, IDS_HR1_EXE_0);
-
-	file.seek(IDI_HR1_OFS_LOGO_0);
+	stream->seek(IDI_HR1_OFS_LOGO_0);
 	_display->setMode(DISPLAY_MODE_HIRES);
-	_display->loadFrameBuffer(file);
+	_display->loadFrameBuffer(*stream);
 	_display->updateHiResScreen();
 	delay(4000);
 
@@ -48,21 +46,19 @@ void HiRes1Engine::runIntro() const {
 
 	_display->setMode(DISPLAY_MODE_TEXT);
 
-	Common::File basic;
-	openFile(basic, IDS_HR1_LOADER);
-
+	StreamPtr basic(_files.createReadStream(IDS_HR1_LOADER));
 	Common::String str;
 
-	str = readStringAt(basic, IDI_HR1_OFS_PD_TEXT_0, '"');
+	str = readStringAt(*basic, IDI_HR1_OFS_PD_TEXT_0, '"');
 	_display->printAsciiString(str + '\r');
 
-	str = readStringAt(basic, IDI_HR1_OFS_PD_TEXT_1, '"');
+	str = readStringAt(*basic, IDI_HR1_OFS_PD_TEXT_1, '"');
 	_display->printAsciiString(str + "\r\r");
 
-	str = readStringAt(basic, IDI_HR1_OFS_PD_TEXT_2, '"');
+	str = readStringAt(*basic, IDI_HR1_OFS_PD_TEXT_2, '"');
 	_display->printAsciiString(str + "\r\r");
 
-	str = readStringAt(basic, IDI_HR1_OFS_PD_TEXT_3, '"');
+	str = readStringAt(*basic, IDI_HR1_OFS_PD_TEXT_3, '"');
 	_display->printAsciiString(str + '\r');
 
 	inputKey();
@@ -71,7 +67,7 @@ void HiRes1Engine::runIntro() const {
 
 	_display->setMode(DISPLAY_MODE_MIXED);
 
-	str = readStringAt(file, IDI_HR1_OFS_GAME_OR_HELP);
+	str = readStringAt(*stream, IDI_HR1_OFS_GAME_OR_HELP);
 
 	bool instructions = false;
 
@@ -95,7 +91,7 @@ void HiRes1Engine::runIntro() const {
 
 	if (instructions) {
 		_display->setMode(DISPLAY_MODE_TEXT);
-		file.seek(IDI_HR1_OFS_INTRO_TEXT);
+		stream->seek(IDI_HR1_OFS_INTRO_TEXT);
 
 		const uint pages[] = { 6, 6, 4, 5, 8, 7, 0 };
 
@@ -105,9 +101,9 @@ void HiRes1Engine::runIntro() const {
 
 			uint count = pages[page++];
 			for (uint i = 0; i < count; ++i) {
-				str = readString(file);
+				str = readString(*stream);
 				_display->printString(str);
-				file.seek(3, SEEK_CUR);
+				stream->seek(3, SEEK_CUR);
 			}
 
 			inputString();
@@ -115,20 +111,18 @@ void HiRes1Engine::runIntro() const {
 			if (g_engine->shouldQuit())
 				return;
 
-			file.seek(6, SEEK_CUR);
+			stream->seek(6, SEEK_CUR);
 		}
 	}
 
 	_display->printAsciiString("\r");
 
-	file.close();
-
 	_display->setMode(DISPLAY_MODE_MIXED);
 
 	// Title screen shown during loading
-	openFile(file, IDS_HR1_EXE_1);
-	file.seek(IDI_HR1_OFS_LOGO_1);
-	_display->loadFrameBuffer(file);
+	stream.reset(_files.createReadStream(IDS_HR1_EXE_1));
+	stream->seek(IDI_HR1_OFS_LOGO_1);
+	_display->loadFrameBuffer(*stream);
 	_display->updateHiResScreen();
 	delay(2000);
 }
@@ -136,27 +130,25 @@ void HiRes1Engine::runIntro() const {
 void HiRes1Engine::init() {
 	_graphics = new Graphics_v1(*_display);
 
-	Common::File f;
-	openFile(f, IDS_HR1_MESSAGES);
+	StreamPtr stream(_files.createReadStream(IDS_HR1_MESSAGES));
 
 	for (uint i = 0; i < IDI_HR1_NUM_MESSAGES; ++i)
-		_messages.push_back(readString(f, APPLECHAR('\r')) + APPLECHAR('\r'));
+		_messages.push_back(readString(*stream, APPLECHAR('\r')) + APPLECHAR('\r'));
 
-	f.close();
-	openFile(f, IDS_HR1_EXE_1);
+	stream.reset(_files.createReadStream(IDS_HR1_EXE_1));
 
 	// Some messages have overrides inside the executable
-	_messages[IDI_HR1_MSG_CANT_GO_THERE - 1] = readStringAt(f, IDI_HR1_OFS_STR_CANT_GO_THERE);
-	_messages[IDI_HR1_MSG_DONT_HAVE_IT - 1] = readStringAt(f, IDI_HR1_OFS_STR_DONT_HAVE_IT);
-	_messages[IDI_HR1_MSG_DONT_UNDERSTAND - 1] = readStringAt(f, IDI_HR1_OFS_STR_DONT_UNDERSTAND);
-	_messages[IDI_HR1_MSG_GETTING_DARK - 1] = readStringAt(f, IDI_HR1_OFS_STR_GETTING_DARK);
+	_messages[IDI_HR1_MSG_CANT_GO_THERE - 1] = readStringAt(*stream, IDI_HR1_OFS_STR_CANT_GO_THERE);
+	_messages[IDI_HR1_MSG_DONT_HAVE_IT - 1] = readStringAt(*stream, IDI_HR1_OFS_STR_DONT_HAVE_IT);
+	_messages[IDI_HR1_MSG_DONT_UNDERSTAND - 1] = readStringAt(*stream, IDI_HR1_OFS_STR_DONT_UNDERSTAND);
+	_messages[IDI_HR1_MSG_GETTING_DARK - 1] = readStringAt(*stream, IDI_HR1_OFS_STR_GETTING_DARK);
 
 	// Load other strings from executable
-	_strings.enterCommand = readStringAt(f, IDI_HR1_OFS_STR_ENTER_COMMAND);
-	_strings.verbError = readStringAt(f, IDI_HR1_OFS_STR_VERB_ERROR);
-	_strings.nounError = readStringAt(f, IDI_HR1_OFS_STR_NOUN_ERROR);
-	_strings.playAgain = readStringAt(f, IDI_HR1_OFS_STR_PLAY_AGAIN);
-	_strings.pressReturn = readStringAt(f, IDI_HR1_OFS_STR_PRESS_RETURN);
+	_strings.enterCommand = readStringAt(*stream, IDI_HR1_OFS_STR_ENTER_COMMAND);
+	_strings.verbError = readStringAt(*stream, IDI_HR1_OFS_STR_VERB_ERROR);
+	_strings.nounError = readStringAt(*stream, IDI_HR1_OFS_STR_NOUN_ERROR);
+	_strings.playAgain = readStringAt(*stream, IDI_HR1_OFS_STR_PLAY_AGAIN);
+	_strings.pressReturn = readStringAt(*stream, IDI_HR1_OFS_STR_PRESS_RETURN);
 
 	// Set message IDs
 	_messageIds.cantGoThere = IDI_HR1_MSG_CANT_GO_THERE;
@@ -166,49 +158,49 @@ void HiRes1Engine::init() {
 	_messageIds.thanksForPlaying = IDI_HR1_MSG_THANKS_FOR_PLAYING;
 
 	// Load picture data from executable
-	f.seek(IDI_HR1_OFS_PICS);
+	stream->seek(IDI_HR1_OFS_PICS);
 	for (uint i = 0; i < IDI_HR1_NUM_PICS; ++i) {
 		struct Picture pic;
-		pic.block = f.readByte();
-		pic.offset = f.readUint16LE();
+		byte block = stream->readByte();
+		Common::String name = Common::String::format("BLOCK%i", block);
+		uint16 offset = stream->readUint16LE();
+		pic.data = _files.getDataBlock(name, offset);
 		_pictures.push_back(pic);
 	}
 
 	// Load commands from executable
-	f.seek(IDI_HR1_OFS_CMDS_1);
-	readCommands(f, _roomCommands);
+	stream->seek(IDI_HR1_OFS_CMDS_1);
+	readCommands(*stream, _roomCommands);
 
-	f.seek(IDI_HR1_OFS_CMDS_0);
-	readCommands(f, _globalCommands);
+	stream->seek(IDI_HR1_OFS_CMDS_0);
+	readCommands(*stream, _globalCommands);
 
 	// Load dropped item offsets
-	f.seek(IDI_HR1_OFS_ITEM_OFFSETS);
+	stream->seek(IDI_HR1_OFS_ITEM_OFFSETS);
 	for (uint i = 0; i < IDI_HR1_NUM_ITEM_OFFSETS; ++i) {
 		Common::Point p;
-		p.x = f.readByte();
-		p.y = f.readByte();
+		p.x = stream->readByte();
+		p.y = stream->readByte();
 		_itemOffsets.push_back(p);
 	}
 
 	// Load right-angle line art
-	f.seek(IDI_HR1_OFS_CORNERS);
-	uint16 cornersCount = f.readUint16LE();
+	stream->seek(IDI_HR1_OFS_CORNERS);
+	uint16 cornersCount = stream->readUint16LE();
 	for (uint i = 0; i < cornersCount; ++i)
-		_corners.push_back(IDI_HR1_OFS_CORNERS + f.readUint16LE());
+		_corners.push_back(_files.getDataBlock(IDS_HR1_EXE_1, IDI_HR1_OFS_CORNERS + stream->readUint16LE()));
 
-	if (f.eos() || f.err())
+	if (stream->eos() || stream->err())
 		error("Failed to read game data from '" IDS_HR1_EXE_1 "'");
 
-	f.seek(IDI_HR1_OFS_VERBS);
-	loadWords(f, _verbs);
+	stream->seek(IDI_HR1_OFS_VERBS);
+	loadWords(*stream, _verbs);
 
-	f.seek(IDI_HR1_OFS_NOUNS);
-	loadWords(f, _nouns);
+	stream->seek(IDI_HR1_OFS_NOUNS);
+	loadWords(*stream, _nouns);
 }
 
 void HiRes1Engine::initState() {
-	Common::File f;
-
 	_state.room = 1;
 	_state.moves = 1;
 	_state.isDark = false;
@@ -216,43 +208,43 @@ void HiRes1Engine::initState() {
 	_state.vars.clear();
 	_state.vars.resize(IDI_HR1_NUM_VARS);
 
-	openFile(f, IDS_HR1_EXE_1);
+	StreamPtr stream(_files.createReadStream(IDS_HR1_EXE_1));
 
 	// Load room data from executable
 	_state.rooms.clear();
 	_roomDesc.clear();
-	f.seek(IDI_HR1_OFS_ROOMS);
+	stream->seek(IDI_HR1_OFS_ROOMS);
 	for (uint i = 0; i < IDI_HR1_NUM_ROOMS; ++i) {
 		Room room;
-		f.readByte();
-		_roomDesc.push_back(f.readByte());
+		stream->readByte();
+		_roomDesc.push_back(stream->readByte());
 		for (uint j = 0; j < 6; ++j)
-			room.connections[j] = f.readByte();
-		room.picture = f.readByte();
-		room.curPicture = f.readByte();
+			room.connections[j] = stream->readByte();
+		room.picture = stream->readByte();
+		room.curPicture = stream->readByte();
 		_state.rooms.push_back(room);
 	}
 
 	// Load item data from executable
 	_state.items.clear();
-	f.seek(IDI_HR1_OFS_ITEMS);
-	while (f.readByte() != 0xff) {
+	stream->seek(IDI_HR1_OFS_ITEMS);
+	while (stream->readByte() != 0xff) {
 		Item item = { };
-		item.noun = f.readByte();
-		item.room = f.readByte();
-		item.picture = f.readByte();
-		item.isLineArt = f.readByte();
-		item.position.x = f.readByte();
-		item.position.y = f.readByte();
-		item.state = f.readByte();
-		item.description = f.readByte();
+		item.noun = stream->readByte();
+		item.room = stream->readByte();
+		item.picture = stream->readByte();
+		item.isLineArt = stream->readByte();
+		item.position.x = stream->readByte();
+		item.position.y = stream->readByte();
+		item.state = stream->readByte();
+		item.description = stream->readByte();
 
-		f.readByte();
+		stream->readByte();
 
-		byte size = f.readByte();
+		byte size = stream->readByte();
 
 		for (uint i = 0; i < size; ++i)
-			item.roomPictures.push_back(f.readByte());
+			item.roomPictures.push_back(stream->readByte());
 
 		_state.items.push_back(item);
 	}
@@ -266,12 +258,7 @@ void HiRes1Engine::restartGame() {
 }
 
 void HiRes1Engine::drawPic(byte pic, Common::Point pos) const {
-	Common::File f;
-	Common::String name = Common::String::format("BLOCK%i", _pictures[pic].block);
-
-	openFile(f, name);
-	f.seek(_pictures[pic].offset);
-	_graphics->drawPic(f, pos, 0x7f);
+	_graphics->drawPic(*_pictures[pic].data->createReadStream(), pos, 0x7f);
 }
 
 void HiRes1Engine::printMessage(uint idx, bool wait) {
@@ -295,10 +282,8 @@ void HiRes1Engine::printMessage(uint idx, bool wait) {
 
 void HiRes1Engine::drawItem(const Item &item, const Common::Point &pos) const {
 	if (item.isLineArt) {
-		Common::File f;
-		openFile(f, IDS_HR1_EXE_1);
-		f.seek(_corners[item.picture - 1]);
-		static_cast<Graphics_v1 *>(_graphics)->drawCorners(f, pos);
+		StreamPtr stream(_corners[item.picture - 1]->createReadStream());
+		static_cast<Graphics_v1 *>(_graphics)->drawCorners(*stream, pos);
 	} else
 		drawPic(item.picture, pos);
 }

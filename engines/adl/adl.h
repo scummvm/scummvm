@@ -52,6 +52,8 @@ class Speaker;
 struct AdlGameDescription;
 struct ScriptEnv;
 
+typedef Common::ScopedPtr<Common::SeekableReadStream> StreamPtr;
+
 // Save and restore opcodes
 #define IDO_ACT_SAVE           0x0f
 #define IDO_ACT_LOAD           0x10
@@ -87,8 +89,7 @@ struct Room {
 };
 
 struct Picture {
-	byte block;
-	uint16 offset;
+	DataBlockPtr data;
 };
 
 typedef Common::Array<byte> Script;

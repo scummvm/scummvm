@@ -27,6 +27,7 @@
 
 #include "adl/adl.h"
 #include "adl/graphics.h"
+#include "adl/disk.h"
 
 namespace Common {
 class ReadStream;
@@ -103,8 +104,9 @@ private:
 	void drawItem(const Item &item, const Common::Point &pos) const;
 	void showRoom();
 
+	PlainFiles _files;
 	Common::File _exe;
-	Common::Array<uint> _corners;
+	Common::Array<DataBlockPtr> _corners;
 	Common::Array<byte> _roomDesc;
 };
 

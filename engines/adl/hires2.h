@@ -61,8 +61,6 @@ struct RoomData {
 	Commands commands;
 };
 
-typedef Common::ScopedPtr<Common::SeekableReadStream> StreamPtr;
-
 class HiRes2Engine : public AdlEngine_v2 {
 public:
 	HiRes2Engine(OSystem *syst, const AdlGameDescription *gd) : AdlEngine_v2(syst, gd) { }
