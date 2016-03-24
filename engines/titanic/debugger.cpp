@@ -99,8 +99,15 @@ CViewItem *Debugger::findView(CNodeItem *node, const char *name) {
 }
 
 void Debugger::listRooms() {
-	CTreeItem *root = g_vm->_window->_gameManager->_project;
-
+	CGameManager &gm = *g_vm->_window->_gameManager;
+	CTreeItem *root = gm._project;
+	CViewItem *view = gm._gameState._gameLocation.getView();
+	CNodeItem *node = gm._gameState._gameLocation.getNode();
+	CRoomItem *room = gm._gameState._gameLocation.getRoom();
+	debugPrintf("Current location: %s, %s, %s\n", room->getName().c_str(),
+		node->getName().c_str(), view->getName().c_str());
+	
+	debugPrintf("Available rooms:\n");
 	for (CTreeItem *treeItem = root; treeItem; treeItem = treeItem->scan(root)) {
 		CRoomItem *roomItem = dynamic_cast<CRoomItem *>(treeItem);
 		if (roomItem)
