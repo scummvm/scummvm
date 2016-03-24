@@ -232,8 +232,7 @@ bool CViewItem::handleMouseMsg(CMouseMsg *msg, bool flag) {
 	}
 
 	Common::Array<CGameObject *> gameObjects;
-	CTreeItem *treeItem = scan(this);
-	while (treeItem) {
+	for (CTreeItem *treeItem = scan(this); treeItem; treeItem = treeItem->scan(this)) {
 		CGameObject *gameObject = dynamic_cast<CGameObject *>(treeItem);
 		if (gameObject) {
 			if (gameObject->checkPoint(msg->_mousePos, 0, 1) &&
