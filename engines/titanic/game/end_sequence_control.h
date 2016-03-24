@@ -30,7 +30,7 @@ namespace Titanic {
 
 class CEndSequenceControl : public CGameObject, CEnterRoomMsgTarget {
 protected:
-	virtual bool handleEvent(CEnterRoomMsg &msg);
+	virtual bool handleMessage(CEnterRoomMsg &msg);
 public:
 	CLASSDEF
 

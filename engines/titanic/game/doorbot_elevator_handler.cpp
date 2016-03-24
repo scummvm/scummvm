@@ -40,7 +40,7 @@ void CDoorbotElevatorHandler::load(SimpleFile *file) {
 	CGameObject::load(file);
 }
 
-bool CDoorbotElevatorHandler::handleEvent(CEnterNodeMsg &msg) {
+bool CDoorbotElevatorHandler::handleMessage(CEnterNodeMsg &msg) {
 	warning("CDoorbotElevatorHandler::handleEvent");
 	return true;
 }

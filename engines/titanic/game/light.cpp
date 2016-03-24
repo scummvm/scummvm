@@ -57,7 +57,7 @@ void CLight::load(SimpleFile *file) {
 	CBackground::load(file);
 }
 
-bool CLight::handleEvent(CEnterRoomMsg &msg) {
+bool CLight::handleMessage(CEnterRoomMsg &msg) {
 	warning("CLight::handleEvent");
 	return true;
 }

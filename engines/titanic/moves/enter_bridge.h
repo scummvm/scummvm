@@ -32,7 +32,7 @@ class CEnterBridge : public CGameObject, CEnterRoomMsgTarget {
 private:
 	int _value;
 protected:
-	virtual bool handleEvent(CEnterRoomMsg &msg);
+	virtual bool handleMessage(CEnterRoomMsg &msg);
 public:
 	CLASSDEF
 	CEnterBridge() : CGameObject(), _value(1) {}

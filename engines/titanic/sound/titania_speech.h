@@ -32,7 +32,7 @@ class CTitaniaSpeech : public CGameObject {
 private:
 	int _value1, _value2;
 protected:
-	virtual bool handleEvent(CEnterRoomMsg &msg);
+	virtual bool handleMessage(CEnterRoomMsg &msg);
 public:
 	CLASSDEF
 	CTitaniaSpeech() : CGameObject(), _value1(1), _value2(0) {}

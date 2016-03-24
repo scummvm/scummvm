@@ -39,7 +39,7 @@ void CMessage::load(SimpleFile *file) {
 	CSaveableObject::load(file);
 }
 
-bool CMessage::execute(CTreeItem *target, const ClassDef *classDef, int flags) const {
+bool CMessage::execute(CTreeItem *target, const ClassDef *classDef, int flags) {
 	// If no target was specified, then there's nothing to do
 	if (!target)
 		return false;
@@ -51,7 +51,7 @@ bool CMessage::execute(CTreeItem *target, const ClassDef *classDef, int flags) c
 		if (flags & MSGFLAG_SCAN)
 			nextItem = item->scan(target);
 
-		if (!(flags & MSGFLAG_CLASS_DEF) || item->isInstanceOf(classDef)) {
+		if (!classDef || item->isInstanceOf(classDef)) {
 			bool handled = perform(item);
 
 			if (handled) {

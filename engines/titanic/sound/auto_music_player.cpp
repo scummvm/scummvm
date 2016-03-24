@@ -41,7 +41,7 @@ void CAutoMusicPlayer::load(SimpleFile *file) {
 	CAutoMusicPlayerBase::load(file);
 }
 
-bool CAutoMusicPlayer::handleEvent(CEnterRoomMsg &msg) {
+bool CAutoMusicPlayer::handleMessage(CEnterRoomMsg &msg) {
 	if (!_fieldCC) {
 		warning("TODO");
 	}

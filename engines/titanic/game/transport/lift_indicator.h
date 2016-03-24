@@ -35,7 +35,7 @@ private:
 	int _field108;
 	int _field10C;
 protected:
-	virtual bool handleEvent(CEnterRoomMsg &msg) { return true; }
+	virtual bool handleMessage(CEnterRoomMsg &msg) { return true; }
 public:
 	CLASSDEF
 	CLiftindicator();

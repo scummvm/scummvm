@@ -38,7 +38,7 @@ private:
 	int _fieldD0;
 	int _fieldD4;
 protected:
-	virtual bool handleEvent(CEnterRoomMsg &msg);
+	virtual bool handleMessage(CEnterRoomMsg &msg);
 public:
 	CLASSDEF
 	CFanNoises();

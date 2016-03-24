@@ -57,7 +57,7 @@ void CGondolierMixer::load(SimpleFile *file) {
 	CGondolierBase::load(file);
 }
 
-bool CGondolierMixer::handleEvent(CEnterRoomMsg &msg) {
+bool CGondolierMixer::handleMessage(CEnterRoomMsg &msg) {
 	CRoomItem *parentRoom = dynamic_cast<CRoomItem *>(getParent());
 	if (parentRoom == msg._newRoom)
 		msg.execute(parentRoom);

@@ -34,7 +34,7 @@ void CPlayerMeetsParrot::load(SimpleFile *file) {
 	CGameObject::load(file);
 }
 
-bool CPlayerMeetsParrot::handleEvent(CEnterRoomMsg &msg) {
+bool CPlayerMeetsParrot::handleMessage(CEnterRoomMsg &msg) {
 	warning("CPlayerMeetsParrot::handleEvent");
 	return true;
 }

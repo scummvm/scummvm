@@ -35,7 +35,7 @@ private:
 	int _field120;
 	int _field124;
 protected:
-	virtual bool handleEvent(CEnterRoomMsg &msg);
+	virtual bool handleMessage(CEnterRoomMsg &msg);
 public:
 	CLASSDEF
 	CUpLighter();

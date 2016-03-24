@@ -40,7 +40,7 @@ void CAutoAnimate::load(SimpleFile *file) {
 	CBackground::load(file);
 }
 
-bool CAutoAnimate::handleEvent(CEnterViewMsg &msg) {
+bool CAutoAnimate::handleMessage(CEnterViewMsg &msg) {
 	warning("CAutoAnimate::handleEvent");
 	return true;
 }

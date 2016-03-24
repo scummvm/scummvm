@@ -35,7 +35,7 @@ enum MessageFlag {
 };
 
 #define MSGTARGET(NAME) class NAME; class NAME##Target { public: \
-	virtual bool handleEvent(NAME &msg) = 0; }
+	virtual bool handleMessage(NAME &msg) = 0; }
 
 class CGameObject;
 class CRoomItem;
@@ -47,10 +47,14 @@ public:
 	CLASSDEF
 	CMessage();
 
+	/**
+	 * Executes the message, passing it on to the designated target,
+	 * and optionally it's children
+	 */
 	bool execute(CTreeItem *target, const ClassDef *classDef = nullptr,
-		int flags = MSGFLAG_SCAN | MSGFLAG_BREAK_IF_HANDLED) const;
+		int flags = MSGFLAG_SCAN | MSGFLAG_BREAK_IF_HANDLED);
 
-	virtual bool perform(CTreeItem *treeItem) const { return false; }
+	virtual bool perform(CTreeItem *treeItem) { return false; }
 
 	/**
 	 * Save the data for the class to file
@@ -80,8 +84,6 @@ public:
 
 MSGTARGET(CEditControlMsg);
 class CEditControlMsg : public CMessage {
-protected:
-	virtual bool handleMessage(const CEditControlMsg &msg) { return false; }
 public:
 	int _field4;
 	int _field8;
@@ -95,19 +97,17 @@ public:
 		_field1C(0), _field20(0) {}
 
 	static bool isSupportedBy(const CTreeItem *item) {
-		return dynamic_cast<const CEditControlMsg *>(item) != nullptr;
+		return dynamic_cast<const CEditControlMsgTarget *>(item) != nullptr;
 	}
 
-	virtual bool perform(CTreeItem *treeItem) const { 
-		CEditControlMsg *dest = dynamic_cast<CEditControlMsg *>(treeItem);
+	virtual bool perform(CTreeItem *treeItem) { 
+		CEditControlMsgTarget *dest = dynamic_cast<CEditControlMsgTarget *>(treeItem);
 		return dest != nullptr && dest->handleMessage(*this);
 	}
 };
 
 MSGTARGET(CLightsMsg);
 class CLightsMsg : public CMessage {
-protected:
-	virtual bool handleMessage(const CLightsMsg &msg) { return false; }
 public:
 	int _field4;
 	int _field8;
@@ -119,19 +119,16 @@ public:
 		_fieldC(0), _field10(0) {}
 
 	static bool isSupportedBy(const CTreeItem *item) {
-		return dynamic_cast<const CLightsMsg *>(item) != nullptr;
+		return dynamic_cast<const CLightsMsgTarget *>(item) != nullptr;
 	}
-
-	virtual bool perform(CTreeItem *treeItem) const {
-		CLightsMsg *dest = dynamic_cast<CLightsMsg *>(treeItem);
+	virtual bool perform(CTreeItem *treeItem) {
+		CLightsMsgTarget *dest = dynamic_cast<CLightsMsgTarget *>(treeItem);
 		return dest != nullptr && dest->handleMessage(*this);
 	}
 };
 
 MSGTARGET(CIsHookedOnMsg);
 class CIsHookedOnMsg : public CMessage {
-protected:
-	virtual bool handleMessage(const CIsHookedOnMsg &msg) { return false; }
 public:
 	int _field4;
 	int _field8;
@@ -145,19 +142,16 @@ public:
 		_field18(0), _field1C(0), _field20(0) {}
 
 	static bool isSupportedBy(const CTreeItem *item) {
-		return dynamic_cast<const CIsHookedOnMsg *>(item) != nullptr;
+		return dynamic_cast<const CIsHookedOnMsgTarget *>(item) != nullptr;
 	}
-
-	virtual bool perform(CTreeItem *treeItem) const {
-		CIsHookedOnMsg *dest = dynamic_cast<CIsHookedOnMsg *>(treeItem);
+	virtual bool perform(CTreeItem *treeItem) {
+		CIsHookedOnMsgTarget *dest = dynamic_cast<CIsHookedOnMsgTarget *>(treeItem);
 		return dest != nullptr && dest->handleMessage(*this);
 	}
 };
 
 MSGTARGET(CSubAcceptCCarryMsg);
 class CSubAcceptCCarryMsg : public CMessage {
-protected:
-	virtual bool handleMessage(const CSubAcceptCCarryMsg &msg) { return false; }
 public:
 	CString _string1;
 	int _value1, _value2, _value3;
@@ -166,19 +160,16 @@ public:
 	CSubAcceptCCarryMsg() : _value1(0), _value2(0), _value3(0) {}
 
 	static bool isSupportedBy(const CTreeItem *item) {
-		return dynamic_cast<const CSubAcceptCCarryMsg *>(item) != nullptr;
+		return dynamic_cast<const CSubAcceptCCarryMsgTarget *>(item) != nullptr;
 	}
-
-	virtual bool perform(CTreeItem *treeItem) const {
-		CSubAcceptCCarryMsg *dest = dynamic_cast<CSubAcceptCCarryMsg *>(treeItem);
+	virtual bool perform(CTreeItem *treeItem) {
+		CSubAcceptCCarryMsgTarget *dest = dynamic_cast<CSubAcceptCCarryMsgTarget *>(treeItem);
 		return dest != nullptr && dest->handleMessage(*this);
 	}
 };
 
 MSGTARGET(CTransportMsg);
 class CTransportMsg : public CMessage {
-protected:
-	virtual bool handleMessage(const CTransportMsg &msg) { return false; }
 public:
 	CString _string;
 	int _value1, _value2;
@@ -187,11 +178,10 @@ public:
 	CTransportMsg() : _value1(0), _value2(0) {}
 
 	static bool isSupportedBy(const CTreeItem *item) {
-		return dynamic_cast<const CTransportMsg *>(item) != nullptr;
+		return dynamic_cast<const CTransportMsgTarget *>(item) != nullptr;
 	}
-
-	virtual bool perform(CTreeItem *treeItem) const {
-		CTransportMsg *dest = dynamic_cast<CTransportMsg *>(treeItem);
+	virtual bool perform(CTreeItem *treeItem) {
+		CTransportMsgTarget *dest = dynamic_cast<CTransportMsgTarget *>(treeItem);
 		return dest != nullptr && dest->handleMessage(*this);
 	}
 };
@@ -201,10 +191,9 @@ public:
 	public: NAME() : CMessage() {} \
 	CLASSDEF \
 	static bool isSupportedBy(const CTreeItem *item) { \
-		return dynamic_cast<const NAME *>(item) != nullptr; } \
-	virtual bool handleMessage(const NAME &msg) { return false; } \
-	virtual bool perform(CTreeItem *treeItem) const { \
-		NAME *dest = dynamic_cast<NAME *>(treeItem); \
+		return dynamic_cast<const NAME##Target *>(item) != nullptr; } \
+	virtual bool perform(CTreeItem *treeItem) { \
+		NAME##Target *dest = dynamic_cast<NAME##Target *>(treeItem); \
 		return dest != nullptr && dest->handleMessage(*this); \
 	} }
 #define MESSAGE1(NAME, F1, N1, V1) MSGTARGET(NAME); \
@@ -214,10 +203,9 @@ public:
 	NAME(F1 N1) : CMessage(), _##N1(N1) {} \
 	CLASSDEF \
 	static bool isSupportedBy(const CTreeItem *item) { \
-		return dynamic_cast<const NAME *>(item) != nullptr; } \
-	virtual bool handleMessage(const NAME &msg) { return false; } \
+		return dynamic_cast<const NAME##Target *>(item) != nullptr; } \
 	virtual bool perform(CTreeItem *treeItem) { \
-		NAME *dest = dynamic_cast<NAME *>(treeItem); \
+		NAME##Target *dest = dynamic_cast<NAME##Target *>(treeItem); \
 		return dest != nullptr && dest->handleMessage(*this); \
 	} }
 #define MESSAGE2(NAME, F1, N1, V1, F2, N2, V2) MSGTARGET(NAME); \
@@ -227,10 +215,9 @@ public:
 	NAME(F1 N1, F2 N2) : CMessage(), _##N1(N1), _##N2(N2) {} \
 	CLASSDEF \
 	static bool isSupportedBy(const CTreeItem *item) { \
-		return dynamic_cast<const NAME *>(item) != nullptr; } \
-	virtual bool handleMessage(const NAME &msg) { return false; } \
+		return dynamic_cast<const NAME##Target *>(item) != nullptr; } \
 	virtual bool perform(CTreeItem *treeItem) { \
-		NAME *dest = dynamic_cast<NAME *>(treeItem); \
+		NAME##Target *dest = dynamic_cast<NAME##Target *>(treeItem); \
 		return dest != nullptr && dest->handleMessage(*this); \
 	} }
 #define MESSAGE3(NAME, F1, N1, V1, F2, N2, V2, F3, N3, V3) MSGTARGET(NAME); \
@@ -240,10 +227,9 @@ public:
 	NAME(F1 N1, F2 N2, F3 N3) : CMessage(), _##N1(N1), _##N2(N2), _##N3(N3) {} \
 	CLASSDEF \
 	static bool isSupportedBy(const CTreeItem *item) { \
-		return dynamic_cast<const NAME *>(item) != nullptr; } \
-	virtual bool handleMessage(const NAME &msg) { return false; } \
+		return dynamic_cast<const NAME##Target *>(item) != nullptr; } \
 	virtual bool perform(CTreeItem *treeItem) { \
-		NAME *dest = dynamic_cast<NAME *>(treeItem); \
+		NAME##Target *dest = dynamic_cast<NAME##Target *>(treeItem); \
 		return dest != nullptr && dest->handleMessage(*this); \
 	} }
 #define MESSAGE4(NAME, F1, N1, V1, F2, N2, V2, F3, N3, V3, F4, N4, V4) MSGTARGET(NAME); \
@@ -253,10 +239,9 @@ public:
 	NAME(F1 N1, F2 N2, F3 N3, F4 N4) : CMessage(), _##N1(N1), _##N2(N2), _##N3(N3), _##N4(N4) {} \
 	CLASSDEF \
 	static bool isSupportedBy(const CTreeItem *item) { \
-		return dynamic_cast<const NAME *>(item) != nullptr; } \
-	virtual bool handleMessage(const NAME &msg) { return false; } \
+		return dynamic_cast<const NAME##Target *>(item) != nullptr; } \
 	virtual bool perform(CTreeItem *treeItem) { \
-		NAME *dest = dynamic_cast<NAME *>(treeItem); \
+		NAME##Target *dest = dynamic_cast<NAME##Target *>(treeItem); \
 		return dest != nullptr && dest->handleMessage(*this); \
 	} }
 

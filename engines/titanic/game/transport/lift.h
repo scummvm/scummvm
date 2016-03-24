@@ -39,7 +39,7 @@ private:
 
 	int _fieldF8;
 protected:
-	virtual bool handleEvent(CEnterRoomMsg &msg);
+	virtual bool handleMessage(CEnterRoomMsg &msg);
 public:
 	CLASSDEF
 	CLift() : CTransport(), _fieldF8(1) {}

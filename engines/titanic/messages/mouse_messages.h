@@ -30,6 +30,7 @@ namespace Titanic {
 
 enum MouseButton { MB_LEFT = 1, MB_MIDDLE = 2, MB_RIGHT = 4 };
 
+MSGTARGET(CMouseMsg);
 class CMouseMsg : public CMessage {
 public:
 	int _buttons;
@@ -39,6 +40,11 @@ public:
 	static bool isSupportedBy(const CTreeItem *item) {
 		return dynamic_cast<const CMouseMsg *>(item) != nullptr;
 	}
+	virtual bool perform(CTreeItem *treeItem) {
+		CMouseMsgTarget *dest = dynamic_cast<CMouseMsgTarget *>(treeItem);
+		return dest != nullptr && dest->handleMessage(*this);
+	}
+
 	CMouseMsg() : _buttons(0) {}
 	CMouseMsg(const Point &pt, int buttons) :
 		_mousePos(pt), _buttons(buttons) {}
@@ -52,15 +58,15 @@ public:
 	CMouseMoveMsg(const Point &pt, int buttons) : CMouseMsg(pt, buttons) {}
 
 	static bool isSupportedBy(const CTreeItem *item) {
-		return dynamic_cast<const CMouseMoveMsg *>(item) != nullptr;
+		return dynamic_cast<const CMouseMoveMsgTarget *>(item) != nullptr;
 	}
-	virtual bool handleMessage(const CMouseMoveMsg &msg) { return false; }
 	virtual bool perform(CTreeItem *treeItem) { 
-		CMouseMoveMsg *dest = dynamic_cast<CMouseMoveMsg *>(treeItem);
+		CMouseMoveMsgTarget *dest = dynamic_cast<CMouseMoveMsgTarget *>(treeItem);
 		return dest != nullptr && dest->handleMessage(*this);
 	}
 };
 
+MSGTARGET(CMouseButtonMsg);
 class CMouseButtonMsg : public CMouseMsg {
 public:
 	int _field10;
@@ -70,7 +76,7 @@ public:
 	CMouseButtonMsg(const Point &pt, int buttons) : CMouseMsg(pt, buttons) {}
 
 	static bool isSupportedBy(const CTreeItem *item) {
-		return dynamic_cast<const CMouseButtonMsg *>(item) != nullptr;
+		return dynamic_cast<const CMouseButtonMsgTarget *>(item) != nullptr;
 	}
 };
 
@@ -82,11 +88,10 @@ public:
 	CMouseButtonDownMsg(const Point &pt, int buttons) : CMouseButtonMsg(pt, buttons) {}
 
 	static bool isSupportedBy(const CTreeItem *item) {
-		return dynamic_cast<const CMouseButtonDownMsg *>(item) != nullptr;
+		return dynamic_cast<const CMouseButtonDownMsgTarget *>(item) != nullptr;
 	}
-	virtual bool handleMessage(const CMouseButtonDownMsg &msg) { return false; }
 	virtual bool perform(CTreeItem *treeItem) {
-		CMouseButtonDownMsg *dest = dynamic_cast<CMouseButtonDownMsg *>(treeItem);
+		CMouseButtonDownMsgTarget *dest = dynamic_cast<CMouseButtonDownMsgTarget *>(treeItem);
 		return dest != nullptr && dest->handleMessage(*this);
 	}
 };
@@ -101,9 +106,8 @@ public:
 	static bool isSupportedBy(const CTreeItem *item) {
 		return dynamic_cast<const CMouseButtonUpMsg *>(item) != nullptr;
 	}
-	virtual bool handleMessage(const CMouseButtonUpMsg &msg) { return false; }
 	virtual bool perform(CTreeItem *treeItem) { 
-		CMouseButtonUpMsg *dest = dynamic_cast<CMouseButtonUpMsg *>(treeItem);
+		CMouseButtonUpMsgTarget *dest = dynamic_cast<CMouseButtonUpMsgTarget *>(treeItem);
 		return dest != nullptr && dest->handleMessage(*this);
 	}
 };
@@ -116,15 +120,15 @@ public:
 	CMouseDoubleClickMsg(const Point &pt, int buttons) : CMouseButtonMsg(pt, buttons) {}
 
 	static bool isSupportedBy(const CTreeItem *item) {
-		return dynamic_cast<const CMouseDoubleClickMsg *>(item) != nullptr;
+		return dynamic_cast<const CMouseDoubleClickMsgTarget *>(item) != nullptr;
 	}
-	virtual bool handleMessage(const CMouseDoubleClickMsg &msg) { return false; }
 	virtual bool perform(CTreeItem *treeItem) { 
-		CMouseDoubleClickMsg *dest = dynamic_cast<CMouseDoubleClickMsg *>(treeItem);
+		CMouseDoubleClickMsgTarget *dest = dynamic_cast<CMouseDoubleClickMsgTarget *>(treeItem);
 		return dest != nullptr && dest->handleMessage(*this);
 	}
 };
 
+MSGTARGET(CMouseDragMsg);
 class CMouseDragMsg : public CMouseMsg {
 public:
 	CLASSDEF
@@ -136,6 +140,7 @@ public:
 	}
 };
 
+MSGTARGET(CMouseDragMoveMsg);
 class CMouseDragMoveMsg : public CMouseDragMsg {
 public:
 	CLASSDEF
@@ -143,11 +148,10 @@ public:
 	CMouseDragMoveMsg(const Point &pt) : CMouseDragMsg(pt) {}
 
 	static bool isSupportedBy(const CTreeItem *item) {
-		return dynamic_cast<const CMouseDragMoveMsg *>(item) != nullptr;
+		return dynamic_cast<const CMouseDragMoveMsgTarget *>(item) != nullptr;
 	}
-	virtual bool handleMessage(const CMouseDragMoveMsg &msg) { return false; }
 	virtual bool perform(CTreeItem *treeItem) { 
-		CMouseDragMoveMsg *dest = dynamic_cast<CMouseDragMoveMsg *>(treeItem);
+		CMouseDragMoveMsgTarget *dest = dynamic_cast<CMouseDragMoveMsgTarget *>(treeItem);
 		return dest != nullptr && dest->handleMessage(*this);
 	}
 };
@@ -164,11 +168,10 @@ public:
 		_dragItem(nullptr), _field14(0) {}
 
 	static bool isSupportedBy(const CTreeItem *item) {
-		return dynamic_cast<const CMouseDragStartMsg *>(item) != nullptr;
+		return dynamic_cast<const CMouseDragStartMsgTarget *>(item) != nullptr;
 	}
-	virtual bool handleMessage(const CMouseDragStartMsg &msg) { return false; }
 	virtual bool perform(CTreeItem *treeItem) { 
-		CMouseDragStartMsg *dest = dynamic_cast<CMouseDragStartMsg *>(treeItem);
+		CMouseDragStartMsgTarget *dest = dynamic_cast<CMouseDragStartMsgTarget *>(treeItem);
 		return dest != nullptr && dest->handleMessage(*this);
 	}
 };
@@ -184,11 +187,10 @@ public:
 		CMouseDragMsg(pt), _dragItem(dragItem) {}
 
 	static bool isSupportedBy(const CTreeItem *item) {
-		return dynamic_cast<const CMouseDragEndMsg *>(item) != nullptr;
+		return dynamic_cast<const CMouseDragEndMsgTarget *>(item) != nullptr;
 	}
-	virtual bool handleMessage(const CMouseDragEndMsg &msg) { return false; }
 	virtual bool perform(CTreeItem *treeItem) {
-		CMouseDragEndMsg *dest = dynamic_cast<CMouseDragEndMsg *>(treeItem);
+		CMouseDragEndMsgTarget *dest = dynamic_cast<CMouseDragEndMsgTarget *>(treeItem);
 		return dest != nullptr && dest->handleMessage(*this);
 	}
 };

@@ -69,13 +69,13 @@ private:
 	int _field150;
 	CString _string2;
 protected:
-	virtual bool handleEvent(CActMsg &msg);
-	virtual bool handleEvent(CLeaveViewMsg &msg);	
-	virtual bool handleEvent(CTurnOff &msg);
-	virtual bool handleEvent(CMouseButtonDownMsg &msg);
-	virtual bool handleEvent(CEnterViewMsg &msg);
-	virtual bool handleEvent(CTurnOn &msg);
-	virtual bool handleEvent(CMovieEndMsg &msg);
+	virtual bool handleMessage(CActMsg &msg);
+	virtual bool handleMessage(CLeaveViewMsg &msg);	
+	virtual bool handleMessage(CTurnOff &msg);
+	virtual bool handleMessage(CMouseButtonDownMsg &msg);
+	virtual bool handleMessage(CEnterViewMsg &msg);
+	virtual bool handleMessage(CTurnOn &msg);
+	virtual bool handleMessage(CMovieEndMsg &msg);
 public:
 	CLASSDEF
 	CArboretumGate();

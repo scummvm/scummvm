@@ -32,7 +32,7 @@ class CNodeAutoSoundPlayer : public CAutoSoundPlayer, CEnterNodeMsgTarget {
 private:
 	int _fieldEC;
 protected:
-	virtual bool handleEvent(CEnterNodeMsg &msg);
+	virtual bool handleMessage(CEnterNodeMsg &msg);
 public:
 	CLASSDEF
 	CNodeAutoSoundPlayer() : CAutoSoundPlayer(), _fieldEC(1) {}

@@ -160,7 +160,7 @@ void CViewItem::enterView(CViewItem *newView) {
 	}
 }
 
-bool CViewItem::handleEvent(CMouseButtonDownMsg &msg) {
+bool CViewItem::handleMessage(CMouseButtonDownMsg &msg) {
 	if (msg._buttons & MB_LEFT) {
 		if (!handleMouseMsg(&msg, true)) {
 			CGameManager *gm = getGameManager();
@@ -185,21 +185,21 @@ bool CViewItem::handleEvent(CMouseButtonDownMsg &msg) {
 	return true;
 }
 
-bool CViewItem::handleEvent(CMouseButtonUpMsg &msg) {
+bool CViewItem::handleMessage(CMouseButtonUpMsg &msg) {
 	if (msg._buttons & MB_LEFT)
 		handleMouseMsg(&msg, false);
 
 	return true;
 }
 
-bool CViewItem::handleEvent(CMouseDoubleClickMsg &msg) {
+bool CViewItem::handleMessage(CMouseDoubleClickMsg &msg) {
 	if (msg._buttons & MB_LEFT)
 		handleMouseMsg(&msg, false);
 
 	return true;
 }
 
-bool CViewItem::handleEvent(CMouseMoveMsg &msg) {
+bool CViewItem::handleMessage(CMouseMoveMsg &msg) {
 	CScreenManager *screenManager = CScreenManager::_screenManagerPtr;
 
 	if (handleMouseMsg(&msg, true)) {
@@ -224,8 +224,8 @@ bool CViewItem::handleEvent(CMouseMoveMsg &msg) {
 	return true;
 }
 
-bool CViewItem::handleMouseMsg(const CMouseMsg *msg, bool flag) {
-	const CMouseButtonUpMsg *upMsg = dynamic_cast<const CMouseButtonUpMsg *>(msg);
+bool CViewItem::handleMouseMsg(CMouseMsg *msg, bool flag) {
+	CMouseButtonUpMsg *upMsg = dynamic_cast<CMouseButtonUpMsg *>(msg);
 	if (msg->isButtonUpMsg()) {
 		handleButtonUpMsg(upMsg);
 		return true;
@@ -272,7 +272,7 @@ bool CViewItem::handleMouseMsg(const CMouseMsg *msg, bool flag) {
 	return result;
 }
 
-void CViewItem::handleButtonUpMsg(const CMouseButtonUpMsg *msg) {
+void CViewItem::handleButtonUpMsg(CMouseButtonUpMsg *msg) {
 	CTreeItem *&target = _buttonUpTargets[msg->_buttons >> 1];
 
 	if (target) {

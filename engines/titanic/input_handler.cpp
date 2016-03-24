@@ -48,7 +48,7 @@ void CInputHandler::decLockCount() {
 	}
 }
 
-void CInputHandler::handleMessage(const CMessage &msg, bool respectLock) {
+void CInputHandler::handleMessage(CMessage &msg, bool respectLock) {
 	if (!respectLock || _lockCount <= 0) {
 		if (_gameManager->_gameState._mode == GSMODE_1) {
 			processMessage(&msg);
@@ -58,7 +58,7 @@ void CInputHandler::handleMessage(const CMessage &msg, bool respectLock) {
 	}
 }
 
-void CInputHandler::processMessage(const CMessage *msg) {
+void CInputHandler::processMessage(CMessage *msg) {
 	const CMouseMsg *mouseMsg = dynamic_cast<const CMouseMsg *>(msg);
 	_field24 = 0;
 	dispatchMessage(msg);
@@ -126,7 +126,7 @@ void CInputHandler::processMessage(const CMessage *msg) {
 	}
 }
 
-void CInputHandler::dispatchMessage(const CMessage *msg) {
+void CInputHandler::dispatchMessage(CMessage *msg) {
 	CPetControl *pet = _gameManager->_project->getPetControl();
 	if (!pet || !msg->execute(pet, nullptr, MSGFLAG_BREAK_IF_HANDLED)) {
 		CViewItem *view = _gameManager->getView();

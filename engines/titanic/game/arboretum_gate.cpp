@@ -133,17 +133,17 @@ void CArboretumGate::load(SimpleFile *file) {
 	CBackground::load(file);
 }
 
-bool CArboretumGate::handleEvent(CActMsg &msg) { return false; }
-bool CArboretumGate::handleEvent(CLeaveViewMsg &msg) { return false; }
-bool CArboretumGate::handleEvent(CTurnOff &msg) { return false; }
-bool CArboretumGate::handleEvent(CMouseButtonDownMsg &msg) { return false; }
+bool CArboretumGate::handleMessage(CActMsg &msg) { return false; }
+bool CArboretumGate::handleMessage(CLeaveViewMsg &msg) { return false; }
+bool CArboretumGate::handleMessage(CTurnOff &msg) { return false; }
+bool CArboretumGate::handleMessage(CMouseButtonDownMsg &msg) { return false; }
 
-bool CArboretumGate::handleEvent(CEnterViewMsg &msg) {
+bool CArboretumGate::handleMessage(CEnterViewMsg &msg) {
 	warning("CArboretumGate::handleEvent");
 	return false;
 }
 
-bool CArboretumGate::handleEvent(CTurnOn &msg) { return false; }
-bool CArboretumGate::handleEvent(CMovieEndMsg &msg) { return false; }
+bool CArboretumGate::handleMessage(CTurnOn &msg) { return false; }
+bool CArboretumGate::handleMessage(CMovieEndMsg &msg) { return false; }
 
 } // End of namespace Titanic

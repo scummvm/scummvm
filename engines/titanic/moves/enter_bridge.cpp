@@ -36,7 +36,7 @@ void CEnterBridge::load(SimpleFile *file) {
 	CGameObject::load(file);
 }
 
-bool CEnterBridge::handleEvent(CEnterRoomMsg &msg) {
+bool CEnterBridge::handleMessage(CEnterRoomMsg &msg) {
 	warning("CEnterBridge::handlEvent");
 	return true;
 }

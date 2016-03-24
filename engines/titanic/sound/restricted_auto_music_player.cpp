@@ -44,7 +44,7 @@ void CRestrictedAutoMusicPlayer::load(SimpleFile *file) {
 	CAutoMusicPlayer::load(file);
 }
 
-bool CRestrictedAutoMusicPlayer::handleEvent(CEnterRoomMsg &msg) {
+bool CRestrictedAutoMusicPlayer::handleMessage(CEnterRoomMsg &msg) {
 	warning("CRestrictedAutoMusicPlayer::handleEvent");
 	return true;
 }

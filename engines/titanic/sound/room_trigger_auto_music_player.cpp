@@ -34,7 +34,7 @@ void CRoomTriggerAutoMusicPlayer::load(SimpleFile *file) {
 	CTriggerAutoMusicPlayer::load(file);
 }
 
-bool CRoomTriggerAutoMusicPlayer::handleEvent(CEnterRoomMsg &msg) {
+bool CRoomTriggerAutoMusicPlayer::handleMessage(CEnterRoomMsg &msg) {
 	warning("CRoomTriggerAutoMusicPlayer::handleEvent");
 	return true;
 }

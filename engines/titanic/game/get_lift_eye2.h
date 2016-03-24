@@ -31,7 +31,7 @@ class CGetLiftEye2 : public CGameObject, CEnterRoomMsgTarget {
 private:
 	static CString *_v1;
 protected:
-	virtual bool handleEvent(CEnterRoomMsg &msg);
+	virtual bool handleMessage(CEnterRoomMsg &msg);
 public:
 	CLASSDEF
 	static void init();

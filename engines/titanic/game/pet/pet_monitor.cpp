@@ -34,7 +34,7 @@ void CPETMonitor::load(SimpleFile *file) {
 	CGameObject::load(file);
 }
 
-bool CPETMonitor::handleEvent(CEnterRoomMsg &msg) {
+bool CPETMonitor::handleMessage(CEnterRoomMsg &msg) {
 	warning("CPETMonitor::handleEvent");
 	return true;
 }

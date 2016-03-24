@@ -38,7 +38,7 @@ private:
 	CString _string2;
 	int _fieldE4;
 protected:
-	virtual bool handleEvent(CEnterRoomMsg &msg);
+	virtual bool handleMessage(CEnterRoomMsg &msg);
 public:
 	CLASSDEF
 	CGondolierMixer();

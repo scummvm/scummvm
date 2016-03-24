@@ -42,7 +42,7 @@ void CLongStickDispenser::load(SimpleFile *file) {
 	CGameObject::load(file);
 }
 
-bool CLongStickDispenser::handleEvent(CEnterRoomMsg &msg) {
+bool CLongStickDispenser::handleMessage(CEnterRoomMsg &msg) {
 	_fieldC0 = 0;
 	_fieldC4 = 1;
 	return true;

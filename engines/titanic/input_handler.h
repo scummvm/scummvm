@@ -36,12 +36,12 @@ private:
 	/**
 	 * Process and dispatch a passed message
 	 */
-	void processMessage(const CMessage *msg);
+	void processMessage(CMessage *msg);
 
 	/**
 	 * Dispatches a message to the project
 	 */
-	void dispatchMessage(const CMessage *msg);
+	void dispatchMessage(CMessage *msg);
 
 	/**
 	 * Called when a drag operation has ended
@@ -75,7 +75,7 @@ public:
 	/**
 	 * Handles a genereated mouse message
 	 */
-	void handleMessage(const CMessage &msg, bool respectLock = true);
+	void handleMessage(CMessage &msg, bool respectLock = true);
 };
 
 } // End of namespace Titanic

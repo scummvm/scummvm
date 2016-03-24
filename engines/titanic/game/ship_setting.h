@@ -35,7 +35,7 @@ private:
 	CString _string4;
 	CString _string5;
 protected:
-	virtual bool handleEvent(CEnterRoomMsg &msg);
+	virtual bool handleMessage(CEnterRoomMsg &msg);
 public:
 	CLASSDEF
 	CShipSetting();

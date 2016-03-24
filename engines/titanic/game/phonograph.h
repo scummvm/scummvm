@@ -38,7 +38,7 @@ protected:
 	int _fieldF0;
 	int _fieldF4;
 protected:
-	virtual bool handleEvent(CEnterRoomMsg &msg);
+	virtual bool handleMessage(CEnterRoomMsg &msg);
 public:
 	CLASSDEF
 	CPhonograph();

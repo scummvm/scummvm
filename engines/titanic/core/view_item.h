@@ -39,12 +39,12 @@ private:
 	/**
 	 * Called to handle mouse messagaes on the view
 	 */
-	bool handleMouseMsg(const CMouseMsg *msg, bool flag);
+	bool handleMouseMsg(CMouseMsg *msg, bool flag);
 
 	/**
 	 * Handles mouse button up messages
 	 */
-	void handleButtonUpMsg(const CMouseButtonUpMsg *msg);
+	void handleButtonUpMsg(CMouseButtonUpMsg *msg);
 protected:
 	int _field24;
 	double _field28;
@@ -52,10 +52,10 @@ protected:
 	int _field50;
 	int _field54;
 protected:
-	virtual bool handleEvent(CMouseButtonDownMsg &msg);
-	virtual bool handleEvent(CMouseButtonUpMsg &msg);
-	virtual bool handleEvent(CMouseMoveMsg &msg);
-	virtual bool handleEvent(CMouseDoubleClickMsg &msg);
+	virtual bool handleMessage(CMouseButtonDownMsg &msg);
+	virtual bool handleMessage(CMouseButtonUpMsg &msg);
+	virtual bool handleMessage(CMouseMoveMsg &msg);
+	virtual bool handleMessage(CMouseDoubleClickMsg &msg);
 public:
 	int _viewNumber;
 public:

@@ -55,7 +55,7 @@ void CPhonograph::load(SimpleFile *file) {
 	CMusicPlayer::load(file);
 }
 
-bool CPhonograph::handleEvent(CEnterRoomMsg &msg) {
+bool CPhonograph::handleMessage(CEnterRoomMsg &msg) {
 	warning("CPhonograph::handleEvent");
 	return true;
 }

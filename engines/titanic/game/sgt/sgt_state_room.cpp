@@ -90,7 +90,7 @@ void CSGTStateRoom::load(SimpleFile *file) {
 	CBackground::load(file);
 }
 
-bool CSGTStateRoom::handleEvent(CEnterRoomMsg &msg) {
+bool CSGTStateRoom::handleMessage(CEnterRoomMsg &msg) {
 	warning("CSGTStateRoom::handleEvent");
 	return true;
 }

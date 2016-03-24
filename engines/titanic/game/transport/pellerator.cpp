@@ -43,7 +43,7 @@ void CPellerator::load(SimpleFile *file) {
 	CTransport::load(file);
 }
 
-bool CPellerator::handleEvent(CEnterRoomMsg &msg) {
+bool CPellerator::handleMessage(CEnterRoomMsg &msg) {
 	warning("CPellerator::handleEvent");
 	return true;
 }
