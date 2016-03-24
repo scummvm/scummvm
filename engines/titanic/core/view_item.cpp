@@ -146,7 +146,8 @@ void CViewItem::enterView(CViewItem *newView) {
 			CPetControl *petControl = nullptr;
 			if (newRoom != nullptr) {
 				petControl = newRoom->getRoot()->getPetControl();
-				petControl->enterNode(newNode);
+				if (petControl)
+					petControl->enterNode(newNode);
 			}
 
 			if (newRoom != oldRoom) {
