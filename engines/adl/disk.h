@@ -22,6 +22,7 @@
 
 #include "common/ptr.h"
 #include "common/file.h"
+#include "common/debug.h"
 
 #ifndef ADL_DISK_H
 #define ADL_DISK_H
@@ -47,8 +48,8 @@ class Files {
 public:
 	virtual ~Files() { }
 
-	virtual const DataBlockPtr getDataBlock(const Common::String &filename, uint offset) const = 0;
-	virtual Common::SeekableReadStream *createReadStream(const Common::String &filename, uint offset) const = 0;
+	virtual const DataBlockPtr getDataBlock(const Common::String &filename, uint offset = 0) const = 0;
+	virtual Common::SeekableReadStream *createReadStream(const Common::String &filename, uint offset = 0) const = 0;
 };
 
 class FilesDataBlock : public DataBlock {
@@ -101,6 +102,47 @@ public:
 	bool open(const Common::String &filename);
 	const DataBlockPtr getDataBlock(uint track, uint sector, uint offset, uint size) const;
 	Common::SeekableReadStream *createReadStream(uint track, uint sector, uint offset = 0, uint size = 0) const;
+};
+
+class Files_DOS33 : public Files {
+public:
+	Files_DOS33();
+	~Files_DOS33();
+
+	bool open(const Common::String &filename);
+	const DataBlockPtr getDataBlock(const Common::String &filename, uint offset = 0) const;
+	Common::SeekableReadStream *createReadStream(const Common::String &filename, uint offset = 0) const;
+
+private:
+	enum FileType {
+		kFileTypeText = 0,
+		kFileTypeAppleSoft = 2,
+		kFileTypeBinary = 4 
+	};
+
+	enum {
+		kSectorSize = 256,
+		kFilenameLen = 30
+	};
+
+	struct TrackSector {
+		byte track;
+		byte sector;
+	};
+
+	struct TOCEntry {
+		byte type;
+		uint16 totalSectors;
+		Common::Array<TrackSector> sectors;
+	};
+
+	void readVTOC();
+	void readSectorList(TrackSector start, Common::Array<TrackSector> &list);
+	Common::SeekableReadStream *createReadStreamText(const TOCEntry &entry) const;
+	Common::SeekableReadStream *createReadStreamBinary(const TOCEntry &entry) const;
+
+	DiskImage_DSK *_disk;
+	Common::HashMap<Common::String, TOCEntry> _toc;
 };
 
 } // End of namespace Adl
