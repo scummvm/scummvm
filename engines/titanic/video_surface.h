@@ -158,7 +158,14 @@ public:
 	 */
 	void blitFrom(const Point &destPos, CVideoSurface *src, const Rect *srcRect = nullptr);
 
+	/**
+	 * Blit from another surface
+	 */
+	void blitFrom(const Point &destPos, const Graphics::Surface *src);
+
 	void set40(void *v) { _field40 = v; }
+
+	uint16 *getPixels() { return (uint16 *)_rawSurface->getPixels(); }
 };
 
 class OSVideoSurface : public CVideoSurface {

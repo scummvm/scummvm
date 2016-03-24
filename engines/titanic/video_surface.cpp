@@ -58,6 +58,12 @@ void CVideoSurface::blitFrom(const Point &destPos, CVideoSurface *src, const Rec
 	}
 }
 
+void CVideoSurface::blitFrom(const Point &destPos, const Graphics::Surface *src) {
+	lock();
+	_rawSurface->blitFrom(*src, destPos);
+	unlock();
+}
+
 void CVideoSurface::clipBounds(Rect &srcRect, Rect &destRect,
 		CVideoSurface *srcSurface, const Rect *subRect, const Point *destPos) {
 	// Figure out initial source rect and dest rect, based on whether

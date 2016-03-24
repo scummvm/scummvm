@@ -24,8 +24,8 @@
 
 namespace Titanic {
 
-OSMovie::OSMovie(const CResourceKey &name, CVideoSurface *surface) {
-
+OSMovie::OSMovie(const CResourceKey &name, CVideoSurface *surface) : _videoSurface(surface) {
+//	_aviDecoder.loadFile(name.getString());
 }
 
 void OSMovie::proc8() {
@@ -86,7 +86,12 @@ void *OSMovie::proc21() {
 }
 
 void OSMovie::setFrame(uint frameNumber) {
-
+	/*
+	_aviDecoder.seekToFrame(frameNumber);
+	const Graphics::Surface *s = _aviDecoder.decodeNextFrame();
+	
+	_videoSurface->blitFrom(Common::Point(0, 0), s);
+	*/
 }
 
 } // End of namespace Titanic

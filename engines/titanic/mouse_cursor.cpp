@@ -50,8 +50,9 @@ static const int CURSOR_DATA[NUM_CURSORS][4] = {
 };
 
 CMouseCursor::CMouseCursor(CScreenManager *screenManager) : 
-		_screenManager(screenManager), _cursorId(CURSOR_1) {
+		_screenManager(screenManager), _cursorId(CURSOR_15) {
 	loadCursorImages();
+	setCursor(CURSOR_1);
 }
 
 CMouseCursor::~CMouseCursor() {
@@ -89,7 +90,20 @@ void CMouseCursor::hide() {
 }
 
 void CMouseCursor::setCursor(CursorId cursorId) {
-	warning("CMouseCursor::setCursor");
+	if (cursorId != _cursorId) {
+		CursorEntry &ce = _cursors[cursorId - 1];
+		CVideoSurface &surface = *ce._videoSurface;
+		surface.lock();
+
+		// ***DEBUG*** Dummy cursor
+		Common::fill(surface.getPixels(), surface.getPixels() + 128, 0x5555);
+
+		CursorMan.replaceCursor(surface.getPixels(), surface.getWidth(), surface.getHeight(),
+			ce._centroid.x, ce._centroid.y, 0, false, &g_vm->_screen->format);
+		surface.unlock();
+
+		_cursorId = cursorId;
+	}
 }
 
 void CMouseCursor::update() {

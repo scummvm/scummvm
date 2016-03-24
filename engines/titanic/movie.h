@@ -23,6 +23,7 @@
 #ifndef TITANIC_MOVIE_H
 #define TITANIC_MOVIE_H
 
+#include "video/avi_decoder.h"
 #include "titanic/core/list.h"
 #include "titanic/core/resource_key.h"
 #include "titanic/video_surface.h"
@@ -48,6 +49,9 @@ public:
 };
 
 class OSMovie : public CMovie {
+private:
+	Video::AVIDecoder _aviDecoder;
+	CVideoSurface *_videoSurface;
 public:
 	OSMovie(const CResourceKey &name, CVideoSurface *surface);
 
