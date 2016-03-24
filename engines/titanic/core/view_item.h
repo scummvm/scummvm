@@ -29,8 +29,11 @@
 
 namespace Titanic {
 
-class CViewItem : public CNamedItem, CMouseButtonDownMsgTarget,
-	CMouseButtonUpMsgTarget, CMouseMoveMsgTarget, CMouseDoubleClickMsgTarget {
+class CViewItem : public CNamedItem,
+	public CMouseButtonDownMsgTarget,
+	public CMouseButtonUpMsgTarget,
+	public CMouseMoveMsgTarget,
+	public CMouseDoubleClickMsgTarget {
 private:
 	CTreeItem *_buttonUpTargets[4];
 private:

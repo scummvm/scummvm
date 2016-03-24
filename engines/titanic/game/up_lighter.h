@@ -28,7 +28,8 @@
 
 namespace Titanic {
 
-class CUpLighter : public CDropTarget, CEnterRoomMsgTarget {
+class CUpLighter : public CDropTarget,
+	public CEnterRoomMsgTarget {
 private:
 	int _field118;
 	int _field11C;

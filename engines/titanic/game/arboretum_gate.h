@@ -29,10 +29,14 @@
 
 namespace Titanic {
 
-class CArboretumGate : public CBackground, public CActMsgTarget,
-	public CLeaveViewMsgTarget, public CTurnOffTarget,
-	public CMouseButtonDownMsgTarget, public CEnterViewMsgTarget,
-	public CTurnOnTarget, public CMovieEndMsgTarget {
+class CArboretumGate : public CBackground,
+	public CActMsgTarget,
+	public CLeaveViewMsgTarget,
+	public CTurnOffTarget,
+	public CMouseButtonDownMsgTarget,
+	public CEnterViewMsgTarget,
+	public CTurnOnTarget,
+	public CMovieEndMsgTarget {
 private:
 	static int _v1;
 	static int _v2;

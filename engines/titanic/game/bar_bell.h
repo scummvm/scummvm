@@ -28,7 +28,8 @@
 
 namespace Titanic {
 
-class CBarBell : public CGameObject, CEnterRoomMsgTarget {
+class CBarBell : public CGameObject,
+	public CEnterRoomMsgTarget {
 public:
 	int _fieldBC;
 	int _fieldC0;

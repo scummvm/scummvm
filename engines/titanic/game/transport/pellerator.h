@@ -28,7 +28,8 @@
 
 namespace Titanic {
 
-class CPellerator : public CTransport, CEnterRoomMsgTarget {
+class CPellerator : public CTransport,
+	public CEnterRoomMsgTarget {
 private:
 	static int _v1;
 	static int _v2;

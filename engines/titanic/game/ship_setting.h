@@ -28,7 +28,8 @@
 
 namespace Titanic {
 
-class CShipSetting : public CBackground, CEnterRoomMsgTarget {
+class CShipSetting : public CBackground,
+	public CEnterRoomMsgTarget {
 private:
 	CString _string3;
 	Point _pos1;

@@ -28,7 +28,8 @@
 
 namespace Titanic {
 
-class CPlayerMeetsParrot : public CGameObject, CEnterRoomMsgTarget {
+class CPlayerMeetsParrot : public CGameObject,
+	public CEnterRoomMsgTarget {
 protected:
 	virtual bool handleMessage(CEnterRoomMsg &msg);
 public:
