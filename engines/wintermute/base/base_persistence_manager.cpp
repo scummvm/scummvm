@@ -183,7 +183,7 @@ void BasePersistenceManager::getSaveStateDesc(int slot, SaveStateDescriptor &des
 		}
 	}
 
-	desc.setSaveDate(_savedTimestamp.tm_year, _savedTimestamp.tm_mon, _savedTimestamp.tm_mday);
+	desc.setSaveDate(_savedTimestamp.tm_year + 1900, _savedTimestamp.tm_mon + 1, _savedTimestamp.tm_mday);
 	desc.setSaveTime(_savedTimestamp.tm_hour, _savedTimestamp.tm_min);
 	desc.setPlayTime(0);
 }
