@@ -3918,44 +3918,61 @@ echo "$_mpeg2"
 #
 # Check for Sparkle if updates support is enabled
 #
-echocheck "Sparkle"
-if test "$_updates" = no; then
-	_sparkle=no
-else
-if test "$_sparkle" = auto ; then
-	_sparkle=no
-	cat > $TMPC << EOF
+#
+# Check is NSDockTilePlugIn protocol is supported
+#
+case $_host_os in
+	darwin*)
+		echocheck "Sparkle"
+		if test "$_updates" = no; then
+			_sparkle=no
+		else
+		if test "$_sparkle" = auto ; then
+			_sparkle=no
+			cat > $TMPC << EOF
 #include <Cocoa/Cocoa.h>
 #include <Sparkle/Sparkle.h>
 int main(void) { SUUpdater *updater = [SUUpdater sharedUpdater]; return 0; }
 EOF
-	cc_check $SPARKLE_CFLAGS $SPARKLE_LIBS -framework Sparkle -ObjC++ -lobjc && _sparkle=yes
-fi
-if test "$_sparkle" = yes ; then
-	append_var LIBS "$SPARKLE_LIBS -framework Sparkle"
-	append_var INCLUDES "$SPARKLE_CFLAGS"
-fi
-define_in_config_if_yes "$_sparkle" 'USE_SPARKLE'
-fi
-echo "$_sparkle"
+			cc_check $SPARKLE_CFLAGS $SPARKLE_LIBS -framework Sparkle -ObjC++ -lobjc && _sparkle=yes
+		fi
+		if test "$_sparkle" = yes ; then
+			append_var LIBS "$SPARKLE_LIBS -framework Sparkle"
+			append_var INCLUDES "$SPARKLE_CFLAGS"
+		fi
+		define_in_config_if_yes "$_sparkle" 'USE_SPARKLE'
+		fi
+		echo "$_sparkle"
+	;;
+	*)
+		_sparkle=no
+	;;
+esac
 
 #
 # Check is NSDockTilePlugIn protocol is supported
 #
-# NSDockTilePlugIn was added in OS X 10.6, so will not be available when compiling on older OS X versions.
-echocheck "DockTilePlugin"
-if test "$_osxdockplugin" = auto ; then
-	_osxdockplugin=no
-	cat > $TMPC << EOF
+case $_host_os in
+	darwin*)
+		# NSDockTilePlugIn was added in OS X 10.6, so will not be available when compiling on older OS X versions.
+		echocheck "DockTilePlugin"
+		if test "$_osxdockplugin" = auto ; then
+			_osxdockplugin=no
+			cat > $TMPC << EOF
 #include <Cocoa/Cocoa.h>
 @interface ScummVMDockTilePlugIn : NSObject <NSDockTilePlugIn> {
 }
 @end
 EOF
-	cc_check -c -ObjC++ && _osxdockplugin=yes
-fi
-define_in_config_if_yes "$_osxdockplugin" 'USE_DOCKTILEPLUGIN'
-echo "$_osxdockplugin"
+			cc_check -c -ObjC++ && _osxdockplugin=yes
+		fi
+		define_in_config_if_yes "$_osxdockplugin" 'USE_DOCKTILEPLUGIN'
+		echo "$_osxdockplugin"
+	;;
+	*)
+		_osxdockplugin=no
+	;;
+esac
 
 #
 # Check for FluidSynth
