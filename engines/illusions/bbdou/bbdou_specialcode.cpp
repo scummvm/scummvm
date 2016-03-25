@@ -200,7 +200,7 @@ void BbdouSpecialCode::spcAddCursorSequence(OpCall &opCall) {
 	ARG_SKIP(4);
 	ARG_UINT32(objectId);
 	ARG_UINT32(sequenceId);
-	_cursor->addCursorSequence(objectId, sequenceId);
+	_cursor->addCursorSequenceId(objectId, sequenceId);
 	_vm->notifyThreadId(opCall._threadId);
 }
 
@@ -223,8 +223,8 @@ void BbdouSpecialCode::spcCursorStopHoldingObjectId(OpCall &opCall) {
 void BbdouSpecialCode::spcSetCursorState(OpCall &opCall) {
 	ARG_UINT32(objectId);
 	ARG_UINT32(newState);
-	_cursor->_data._item10._field0 = newState;
-	_cursor->clearCursorDataField14();
+	_cursor->_data._verbState._cursorState = newState;
+	_cursor->resetActiveVerbs();
 	if (newState == 5)
 		setCursorControlRoutine(objectId, 1);
 	else
@@ -252,7 +252,7 @@ void BbdouSpecialCode::spcSetObjectInteractMode(OpCall &opCall) {
 	ARG_SKIP(4);
 	ARG_UINT32(objectId);
 	ARG_INT16(value);
-	_cursor->setStruct8bsValue(objectId, value);
+	_cursor->setObjectInteractMode(objectId, value);
 	_vm->notifyThreadId(opCall._threadId);
 }
 
@@ -466,13 +466,13 @@ void BbdouSpecialCode::playSoundEffect(int soundIndex) {
 	}
 }
 
-void BbdouSpecialCode::resetItem10(uint32 objectId, Item10 *item10) {
-	if (item10->_playSound48 == 1) {
+void BbdouSpecialCode::hideVerbBubble(uint32 objectId, VerbState *verbState) {
+	if (verbState->_isBubbleVisible) {
 		_bubble->hide();
-		item10->_verbId = 0x1B0000;
-		item10->_playSound48 = 0;
-		item10->_objectIds[0] = 0;
-		item10->_objectIds[1] = 0;
+		verbState->_verbId = 0x1B0000;
+		verbState->_isBubbleVisible = false;
+		verbState->_objectIds[0] = 0;
+		verbState->_objectIds[1] = 0;
 	}
 	_vm->_input->discardAllEvents();
 }
@@ -499,7 +499,7 @@ Common::Point BbdouSpecialCode::getBackgroundCursorPos(Common::Point cursorPos) 
 }
 
 void BbdouSpecialCode::showBubble(uint32 objectId, uint32 overlappedObjectId, uint32 holdingObjectId,
-	Item10 *item10, uint32 progResKeywordId) {
+	VerbState *verbState, uint32 progResKeywordId) {
 	
 	Common::Rect collisionRect;
 	Control *overlappedControl, *control2, *control3;
@@ -526,44 +526,44 @@ void BbdouSpecialCode::showBubble(uint32 objectId, uint32 overlappedObjectId, ui
 
 	_bubble->setup(1, bubbleSourcePt, bubbleDestPt, progResKeywordId);
 
-	item10->_objectIds[0] = _bubble->addItem(0, 0x6005A);
-	item10->_objectIds[1] = _bubble->addItem(0, 0x6005A);
-	item10->_index = 0;
+	verbState->_objectIds[0] = _bubble->addItem(0, 0x6005A);
+	verbState->_objectIds[1] = _bubble->addItem(0, 0x6005A);
+	verbState->_index = 0;
 	
-	int value = _cursor->findStruct8bsValue(overlappedControl->_objectId);
+	int value = _cursor->getObjectInteractMode(overlappedControl->_objectId);
 	if (holdingObjectId) {
-		item10->_verbId = 0x1B0003;
+		verbState->_verbId = 0x1B0003;
 	} else if (value == 9) {
-		item10->_verbId = 0x1B0005;
+		verbState->_verbId = 0x1B0005;
 	} else if (value == 8) {
-		item10->_verbId = 0x1B0005;
+		verbState->_verbId = 0x1B0005;
 	} else {
-		item10->_verbId = 0x1B0002;
+		verbState->_verbId = 0x1B0002;
 	}
 	
-	uint32 sequenceId = kStruct10s[item10->_verbId & 0xFFFF]._sequenceId2;
+	uint32 sequenceId = kStruct10s[verbState->_verbId & 0xFFFF]._sequenceId2;
 	_bubble->show();
 	
-	control3 = _vm->_dict->getObjectControl(item10->_objectIds[0]);
+	control3 = _vm->_dict->getObjectControl(verbState->_objectIds[0]);
 	control3->startSequenceActor(sequenceId, 2, 0);
 	control3->appearActor();
 	control3->deactivateObject();
 	
-	item10->_playSound48 = 1;
+	verbState->_isBubbleVisible = true;
 	_vm->_input->discardAllEvents();
 
 }
 
-bool BbdouSpecialCode::findVerbId(Item10 *item10, uint32 currOverlappedObjectId, int always0, uint32 &outVerbId) {
-	if (item10->_playSound48) {
-		int verbNum = item10->_verbId & 0xFFFF;
+bool BbdouSpecialCode::findVerbId(VerbState *verbState, uint32 currOverlappedObjectId, int always0, uint32 &outVerbId) {
+	if (verbState->_isBubbleVisible) {
+		int verbNum = verbState->_verbId & 0xFFFF;
 		int verbNumI = verbNum + 1;
 		while (1) {
 			if (verbNumI >= 32)
 				verbNumI = 0;
 			if (verbNumI++ == verbNum)
 				break;
-			if (item10->_verbActive[verbNumI] && testVerbId(verbNumI | 0x1B0000, always0, currOverlappedObjectId)) {
+			if (verbState->_verbActive[verbNumI] && testVerbId(verbNumI | 0x1B0000, always0, currOverlappedObjectId)) {
 				outVerbId = verbNumI | 0x1B0000;
 				return true;
 			}
@@ -603,18 +603,18 @@ void BbdouSpecialCode::cursorInteractControlRoutine(Control *cursorControl, uint
 			foundOverlapped = false;
 		} else if (_vm->getCurrentScene() == 0x1000D) {
 			foundOverlapped = _vm->_controls->getOverlappedObjectAccurate(cursorControl, cursorPos,
-				&overlappedControl, cursorData._item10._field58);
+				&overlappedControl, cursorData._verbState._minPriority);
 		} else {
 			foundOverlapped = _vm->_controls->getOverlappedObject(cursorControl, cursorPos,
-				&overlappedControl, cursorData._item10._field58);
+				&overlappedControl, cursorData._verbState._minPriority);
 		}
 		
 		if (foundOverlapped) {
 			if (overlappedControl->_objectId != cursorData._currOverlappedObjectId) {
-				if (cursorData._item10._playSound48)
+				if (cursorData._verbState._isBubbleVisible)
 					playSoundEffect(4);
-				resetItem10(cursorControl->_objectId, &cursorData._item10);
-				int value = _cursor->findStruct8bsValue(overlappedControl->_objectId);
+				hideVerbBubble(cursorControl->_objectId, &cursorData._verbState);
+				int value = _cursor->getObjectInteractMode(overlappedControl->_objectId);
 				if (!testValueRange(value)) {
 					if (cursorData._mode == 3)
 						_cursor->restoreInfo();
@@ -626,17 +626,17 @@ void BbdouSpecialCode::cursorInteractControlRoutine(Control *cursorControl, uint
 					}
 					if (value == 10) {
 						if (cursorData._holdingObjectId) {
-							cursorData._item10._verbId = 0x1B0003;
+							cursorData._verbState._verbId = 0x1B0003;
 							cursorData._currOverlappedObjectId = overlappedControl->_objectId;
 						}
 						else {
-							cursorData._item10._verbId = 0x1B0002;
+							cursorData._verbState._verbId = 0x1B0002;
 							cursorData._currOverlappedObjectId = overlappedControl->_objectId;
 						}
 					} else {
 						playSoundEffect(3);
 						showBubble(cursorControl->_objectId, overlappedControl->_objectId,
-							cursorData._holdingObjectId, &cursorData._item10,
+							cursorData._holdingObjectId, &cursorData._verbState,
 							cursorData._progResKeywordId);
 						cursorData._currOverlappedObjectId = overlappedControl->_objectId;
 					}
@@ -644,7 +644,7 @@ void BbdouSpecialCode::cursorInteractControlRoutine(Control *cursorControl, uint
 					if (cursorData._mode != 3) {
 						_cursor->saveInfo();
 						cursorData._mode = 3;
-						cursorData._item10._verbId = 0x1B0006;
+						cursorData._verbState._verbId = 0x1B0006;
 						cursorData._holdingObjectId = 0;
 					}
 					cursorData._sequenceId = _cursor->getSequenceId1(value);
@@ -662,9 +662,9 @@ void BbdouSpecialCode::cursorInteractControlRoutine(Control *cursorControl, uint
 					_cursor->restoreInfo();
 				_cursor->show(cursorControl);
 				cursorControl->setActorIndexTo1();
-				if (cursorData._item10._playSound48)
+				if (cursorData._verbState._isBubbleVisible)
 					playSoundEffect(4);
-				resetItem10(cursorControl->_objectId, &cursorData._item10);
+				hideVerbBubble(cursorControl->_objectId, &cursorData._verbState);
 			}
 			cursorData._currOverlappedObjectId = 0;
 		}
@@ -685,8 +685,8 @@ void BbdouSpecialCode::cursorInteractControlRoutine(Control *cursorControl, uint
 	} else if (cursorData._currOverlappedObjectId) {
 		if (_vm->_input->pollEvent(kEventLeftClick)) {
 			cursorData._idleCtr = 0;
-			if (runCause(cursorControl, cursorData, cursorData._item10._verbId, cursorData._holdingObjectId, cursorData._currOverlappedObjectId, 1)) {
-				resetItem10(cursorControl->_objectId, &cursorData._item10);
+			if (runCause(cursorControl, cursorData, cursorData._verbState._verbId, cursorData._holdingObjectId, cursorData._currOverlappedObjectId, 1)) {
+				hideVerbBubble(cursorControl->_objectId, &cursorData._verbState);
 				cursorData._currOverlappedObjectId = 0;
 				cursorControl->setActorIndexTo1();
 			}
@@ -696,9 +696,9 @@ void BbdouSpecialCode::cursorInteractControlRoutine(Control *cursorControl, uint
 			if (cursorData._holdingObjectId) {
 				runCause(cursorControl, cursorData, 0x1B000B, 0, 0x40003, 0);
 				cursorData._currOverlappedObjectId = 0;
-			} else if (findVerbId(&cursorData._item10, cursorData._currOverlappedObjectId, 0, verbId) &&
+			} else if (findVerbId(&cursorData._verbState, cursorData._currOverlappedObjectId, 0, verbId) &&
 				runCause(cursorControl, cursorData, verbId, cursorData._holdingObjectId, cursorData._currOverlappedObjectId, 1)) {
-				resetItem10(cursorControl->_objectId, &cursorData._item10);
+				hideVerbBubble(cursorControl->_objectId, &cursorData._verbState);
 				cursorData._currOverlappedObjectId = 0;
 				cursorControl->setActorIndexTo1();
 			}
@@ -709,7 +709,7 @@ void BbdouSpecialCode::cursorInteractControlRoutine(Control *cursorControl, uint
 			runCause(cursorControl, cursorData, 0x1B0002, 0, 0x40003, 0);
 		} else if (_vm->_input->pollEvent(kEventInventory)) {
 			cursorData._idleCtr = 0;
-			if (cursorData._item10._field58 <= 1)
+			if (cursorData._verbState._minPriority <= 1)
 				runCause(cursorControl, cursorData, cursorData._holdingObjectId != 0 ? 0x1B000B : 0x1B0004, 0, 0x40003, 0);
 		}
 	}
@@ -779,18 +779,18 @@ void BbdouSpecialCode::cursorCrosshairControlRoutine(Control *cursorControl, uin
 		foundOverlapped = false;
 	else {
 		foundOverlapped = _vm->_controls->getOverlappedObjectAccurate(cursorControl, cursorPos,
-			&overlappedControl, cursorData._item10._field58);
+			&overlappedControl, cursorData._verbState._minPriority);
 	}
 
 	if (foundOverlapped) {
 		if (overlappedControl->_objectId != cursorData._currOverlappedObjectId) {
-			resetItem10(cursorControl->_objectId, &cursorData._item10);
-			int value = _cursor->findStruct8bsValue(overlappedControl->_objectId);
+			hideVerbBubble(cursorControl->_objectId, &cursorData._verbState);
+			int value = _cursor->getObjectInteractMode(overlappedControl->_objectId);
 			if (value == 2 || value == 3 || value == 4 || value == 5 || value == 6 || value == 7) {
 				if (cursorData._mode != 3) {
 					_cursor->saveInfo();
 					cursorData._mode = 3;
-					cursorData._item10._verbId = 0x1B0006;
+					cursorData._verbState._verbId = 0x1B0006;
 					cursorData._holdingObjectId = 0;
 				}
 				switch (value) {
@@ -821,10 +821,10 @@ void BbdouSpecialCode::cursorCrosshairControlRoutine(Control *cursorControl, uin
 				_cursor->show(cursorControl);
 				cursorControl->setActorIndexTo2();
 				if (overlappedControl->_objectId) {
-					cursorData._item10._verbId = 0x1B0003;
+					cursorData._verbState._verbId = 0x1B0003;
 					cursorData._currOverlappedObjectId = overlappedControl->_objectId;
 				} else {
-					cursorData._item10._verbId = 0x1B0002;
+					cursorData._verbState._verbId = 0x1B0002;
 					cursorData._currOverlappedObjectId = overlappedControl->_objectId;
 				}
 			}
@@ -835,7 +835,7 @@ void BbdouSpecialCode::cursorCrosshairControlRoutine(Control *cursorControl, uin
 				_cursor->restoreInfo();
 			_cursor->show(cursorControl);
 			cursorControl->setActorIndexTo1();
-			resetItem10(cursorControl->_objectId, &cursorData._item10);
+			hideVerbBubble(cursorControl->_objectId, &cursorData._verbState);
 		}
 		cursorData._currOverlappedObjectId = 0;
 	}
@@ -848,7 +848,7 @@ void BbdouSpecialCode::cursorCrosshairControlRoutine(Control *cursorControl, uin
 
 			uint32 outSceneId, outVerbId, outObjectId2, outObjectId;
 			bool success = getShooterCause(_vm->getCurrentScene(),
-				cursorData._item10._verbId, cursorData._holdingObjectId, cursorData._currOverlappedObjectId,
+				cursorData._verbState._verbId, cursorData._holdingObjectId, cursorData._currOverlappedObjectId,
 				outSceneId, outVerbId, outObjectId2, outObjectId);
 
 			uint index = (uint)_vm->getRandom(2);
@@ -878,15 +878,15 @@ void BbdouSpecialCode::cursorCrosshairControlRoutine(Control *cursorControl, uin
 				}
 				cursorData._causeThreadId1 = _vm->causeTrigger(outSceneId, outVerbId, outObjectId2, outObjectId, threadId);
 				cursorData._causeThreadId2 = cursorData._causeThreadId1;
-				resetItem10(cursorControl->_objectId, &cursorData._item10);
+				hideVerbBubble(cursorControl->_objectId, &cursorData._verbState);
 				cursorData._currOverlappedObjectId = 0;
 				cursorControl->setActorIndexTo1();
 			}
 
-		} else if (_vm->_input->pollEvent(kEventRightClick) && cursorData._item10._playSound48 == 1 && !cursorData._item10._flag56) {
-			// TODO I don't think this is used; _playSound48 seems to be always 0 here
+		} else if (_vm->_input->pollEvent(kEventRightClick) && cursorData._verbState._isBubbleVisible && !cursorData._verbState._flag56) {
+			// TODO I don't think this is used; _isBubbleVisible seems to be always 0 here
 			debug("Cursor_sub_10004DD0 TODO");
-			// TODO Cursor_sub_10004DD0(controla->objectId, cursorData->currOverlappedObjectId, cursorData->holdingObjectId, &cursorData->item10);
+			// TODO Cursor_sub_10004DD0(controla->objectId, cursorData->currOverlappedObjectId, cursorData->holdingObjectId, &cursorData->verbState);
 		}
 
 	} else if (_vm->_input->pollEvent(kEventLeftClick)) {
@@ -921,7 +921,7 @@ bool BbdouSpecialCode::testVerbId(uint32 verbId, uint32 holdingObjectId, uint32 
 	static const uint32 kVerbIdsH8[] = {0x001B0003, 0x001B0001, 0};
 	
 	const uint32 *verbIds;
-	int value = _cursor->findStruct8bsValue(overlappedObjectId);
+	int value = _cursor->getObjectInteractMode(overlappedObjectId);
   
 	if (holdingObjectId) {
 		if (value == 9)
@@ -1034,7 +1034,7 @@ void BbdouSpecialCode::startHoldingObjectId(uint32 objectId1, uint32 holdingObje
 	if (_cursor->_data._visibleCtr > 0)
 		_cursor->show(control);
 	_cursor->_data._mode = 2;
-	_cursor->_data._item10._verbId = 0x1B0003;
+	_cursor->_data._verbState._verbId = 0x1B0003;
 	if (!doPlaySound)
 		playSoundEffect(5);
 	_inventory->removeInventoryItem(holdingObjectId);
@@ -1049,7 +1049,7 @@ void BbdouSpecialCode::stopHoldingObjectId(uint32 objectId1, bool doPlaySound) {
 		playSoundEffect(6);
 	if (_cursor->_data._visibleCtr > 0)
 		_cursor->show(control);
-	_cursor->_data._item10._verbId = 0x1B0001;
+	_cursor->_data._verbState._verbId = 0x1B0001;
 	if (_cursor->_data._mode == 3)
 		holdingObjectId = _cursor->_data._holdingObjectId2;
 	if (holdingObjectId)

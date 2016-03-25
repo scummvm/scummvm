@@ -30,18 +30,16 @@ namespace Illusions {
 class IllusionsEngine_BBDOU;
 class BbdouSpecialCode;
 class Control;
-struct Item10;
 
-struct Item10 {
-	int _field0;
-	int16 _verbActive[32];
+struct VerbState {
+	int _cursorState;
+	bool _verbActive[32];
 	uint32 _verbId;
-	int16 _playSound48;
-	//field_4A dw
+	bool _isBubbleVisible;
 	uint32 _objectIds[2];
 	int16 _index;
-	int16 _flag56;
-	int _field58;
+	bool _flag56;
+	int _minPriority;
 };
 
 struct CursorData {
@@ -49,7 +47,7 @@ struct CursorData {
 	int _mode2;
 	uint32 _verbId1;
 	uint32 _progResKeywordId;
-	Item10 _item10;
+	VerbState _verbState;
 	uint32 _currOverlappedObjectId;
 	uint32 _overlappedObjectId;
 	uint32 _sequenceId;
@@ -57,16 +55,12 @@ struct CursorData {
 	uint32 _holdingObjectId;
 	uint32 _holdingObjectId2;
 	int _visibleCtr;
-	//field_86 dw
 	uint32 _causeThreadId1;
 	uint32 _causeThreadId2;
 	int16 _field90;
-	//field_92 dw
 	uint _flags;
-	uint32 _sequenceId98;
+	uint32 _currCursorTrackingSequenceId;
 	int16 _idleCtr;
-	//field_9E db
-	//field_9F db
 };
 
 struct CursorSequence {
@@ -75,10 +69,10 @@ struct CursorSequence {
 	CursorSequence() : _objectId(0), _sequenceId(0) {}
 };
 
-struct Struct8b {
+struct ObjectInteractMode {
 	uint32 _objectId;
-	int _value;
-	Struct8b() : _objectId(0), _value(0) {}
+	int _interactMode;
+	ObjectInteractMode() : _objectId(0), _interactMode(0) {}
 };
 
 const uint kMaxCursorSequences = 100;
@@ -91,10 +85,10 @@ public:
 	void enable(uint32 objectId);
 	void disable(uint32 objectId);
 	void reset(uint32 objectId);
-	void addCursorSequence(uint32 objectId, uint32 sequenceId);
+	void addCursorSequenceId(uint32 objectId, uint32 sequenceId);
 	uint32 findCursorSequenceId(uint32 objectId);
-	void setStruct8bsValue(uint32 objectId, int value);
-	int findStruct8bsValue(uint32 objectId);
+	void setObjectInteractMode(uint32 objectId, int value);
+	int getObjectInteractMode(uint32 objectId);
 	bool updateTrackingCursor(Control *control);
 	void saveInfo();
 	void restoreInfo();
@@ -110,8 +104,8 @@ public:
 	Control *_control;
 	CursorData _data;
 	CursorSequence _cursorSequences[kMaxCursorSequences];
-	Struct8b _cursorStruct8bs[512];
-	void clearCursorDataField14();
+	ObjectInteractMode _objectVerbs[512];
+	void resetActiveVerbs();
 	void show(Control *control);
 	void hide(uint32 objectId);
 };

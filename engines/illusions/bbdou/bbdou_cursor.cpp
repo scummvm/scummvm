@@ -63,18 +63,18 @@ void BbdouCursor::init(uint32 objectId, uint32 progResKeywordId) {
 	_data._causeThreadId2 = 0;
 	_data._field90 = 0;
 	_data._flags = 0;
-	_data._item10._field58 = 1;
-	_data._sequenceId98 = 0;
+	_data._verbState._minPriority = 1;
+	_data._currCursorTrackingSequenceId = 0;
 	_data._idleCtr = 0;
-	_data._item10._verbId = 0x1B0000;
-	_data._item10._field0 = 1;
-	_data._item10._playSound48 = 0;
-	_data._item10._objectIds[0] = 0;
-	_data._item10._objectIds[1] = 0;
-	_data._item10._index = 0;
-	_data._item10._flag56 = 0;
+	_data._verbState._verbId = 0x1B0000;
+	_data._verbState._cursorState = 1;
+	_data._verbState._isBubbleVisible = 0;
+	_data._verbState._objectIds[0] = 0;
+	_data._verbState._objectIds[1] = 0;
+	_data._verbState._index = 0;
+	_data._verbState._flag56 = false;
 	
-	clearCursorDataField14();
+	resetActiveVerbs();
 
 	control->setActorIndexTo1();
 
@@ -99,7 +99,7 @@ void BbdouCursor::disable(uint32 objectId) {
 void BbdouCursor::reset(uint32 objectId) {
 	Control *control = _vm->_dict->getObjectControl(objectId);
 
-	_data._item10._field0 = 1;
+	_data._verbState._cursorState = 1;
 	_data._mode = 1;
 	_data._mode2 = 0;
 	_data._verbId1 = 0x1B0000;
@@ -111,25 +111,25 @@ void BbdouCursor::reset(uint32 objectId) {
 	_data._visibleCtr = 0;
 	_data._causeThreadId1 = 0;
 	_data._flags = 0;
-	_data._item10._field58 = 1;
-	_data._sequenceId98 = 0;
+	_data._verbState._minPriority = 1;
+	_data._currCursorTrackingSequenceId = 0;
 	_data._idleCtr = 0;
-	_data._item10._verbId = 0x1B0000;
-	_data._item10._playSound48 = 0;
-	_data._item10._objectIds[0] = 0;
-	_data._item10._objectIds[1] = 0;
-	_data._item10._index = 0;
-	_data._item10._flag56 = 0;
-	clearCursorDataField14();
+	_data._verbState._verbId = 0x1B0000;
+	_data._verbState._isBubbleVisible = 0;
+	_data._verbState._objectIds[0] = 0;
+	_data._verbState._objectIds[1] = 0;
+	_data._verbState._index = 0;
+	_data._verbState._flag56 = false;
+	resetActiveVerbs();
 	control->setActorIndexTo1();
 	control->startSequenceActor(0x60029, 2, 0);
 
-	_bbdou->resetItem10(control->_objectId, &_data._item10);
+	_bbdou->hideVerbBubble(control->_objectId, &_data._verbState);
 	// TODO? control->_actor->setControlRoutine(new Common::Functor2Mem<Control*, uint32, void, BbdouCursor>(this, &BbdouCursor::cursorInteractControlRoutine));
 	
 }
 
-void BbdouCursor::addCursorSequence(uint32 objectId, uint32 sequenceId) {
+void BbdouCursor::addCursorSequenceId(uint32 objectId, uint32 sequenceId) {
 	for (uint i = 0; i < kMaxCursorSequences; ++i)
 		if (_cursorSequences[i]._objectId == 0) {
 			_cursorSequences[i]._objectId = objectId;
@@ -145,49 +145,48 @@ uint32 BbdouCursor::findCursorSequenceId(uint32 objectId) {
 	return 0;
 }
 
-void BbdouCursor::setStruct8bsValue(uint32 objectId, int value) {
-	// TODO Clean this up, preliminary
-	Struct8b *struct8b = 0;
-	for (uint i = 0; i < 512; ++i)
-		if (_cursorStruct8bs[i]._objectId == objectId) {
-			struct8b = &_cursorStruct8bs[i];
+void BbdouCursor::setObjectInteractMode(uint32 objectId, int value) {
+	ObjectInteractMode *objectInteractMode = 0;
+	for (uint i = 0; i < ARRAYSIZE(_objectVerbs); ++i)
+		if (_objectVerbs[i]._objectId == objectId) {
+			objectInteractMode = &_objectVerbs[i];
 			break;
 		}
-	if (!struct8b) {
-		for (uint i = 0; i < 512; ++i)
-			if (_cursorStruct8bs[i]._objectId == 0) {
-				struct8b = &_cursorStruct8bs[i];
+	if (!objectInteractMode) {
+		for (uint i = 0; i < ARRAYSIZE(_objectVerbs); ++i)
+			if (_objectVerbs[i]._objectId == 0) {
+				objectInteractMode = &_objectVerbs[i];
 				break;
 			}
 	}
 	if (value != 11) {
-		struct8b->_objectId = objectId;
-		struct8b->_value = value;
-	} else if (struct8b->_objectId == objectId) {
-		struct8b->_objectId = 0;
-		struct8b->_value = 0;
+		objectInteractMode->_objectId = objectId;
+		objectInteractMode->_interactMode = value;
+	} else if (objectInteractMode->_objectId == objectId) {
+		objectInteractMode->_objectId = 0;
+		objectInteractMode->_interactMode = 0;
 	}
 }
 
-int BbdouCursor::findStruct8bsValue(uint32 objectId) {
-	for (uint i = 0; i < 512; ++i)
-		if (_cursorStruct8bs[i]._objectId == objectId)
-			return _cursorStruct8bs[i]._value;
+int BbdouCursor::getObjectInteractMode(uint32 objectId) {
+	for (uint i = 0; i < ARRAYSIZE(_objectVerbs); ++i)
+		if (_objectVerbs[i]._objectId == objectId)
+			return _objectVerbs[i]._interactMode;
 	return 11;
 }
 
 bool BbdouCursor::updateTrackingCursor(Control *control) {
 	uint32 sequenceId;
 	if (getTrackingCursorSequenceId(control, sequenceId)) {
-		if (_data._sequenceId98 != sequenceId) {
+		if (_data._currCursorTrackingSequenceId != sequenceId) {
 			saveBeforeTrackingCursor(control, sequenceId);
 			show(control);
-			_data._sequenceId98 = sequenceId;
+			_data._currCursorTrackingSequenceId = sequenceId;
 		}
 		return true;
 	} else {
-		if (_data._sequenceId98) {
-			_data._sequenceId98 = 0;
+		if (_data._currCursorTrackingSequenceId) {
+			_data._currCursorTrackingSequenceId = 0;
 			restoreAfterTrackingCursor();
 			show(control);
 		}
@@ -215,9 +214,9 @@ void BbdouCursor::saveBeforeTrackingCursor(Control *control, uint32 sequenceId) 
 		if (_data._mode == 3)
 			restoreInfo();
 		control->setActorIndexTo1();
-		if (_data._item10._playSound48)
+		if (_data._verbState._isBubbleVisible)
 			_bbdou->playSoundEffect(4);
-		_bbdou->resetItem10(control->_objectId, &_data._item10);
+		_bbdou->hideVerbBubble(control->_objectId, &_data._verbState);
 	}
 	_data._currOverlappedObjectId = 0;
 	if (_data._mode != 4) {
@@ -240,7 +239,7 @@ void BbdouCursor::restoreAfterTrackingCursor() {
 	_data._mode2 = 0;
 	_data._sequenceId2 = 0;
 	_data._holdingObjectId2 = 0;
-	_data._sequenceId98 = 0;
+	_data._currCursorTrackingSequenceId = 0;
 }
 
 uint32 BbdouCursor::getSequenceId1(int sequenceIndex) {
@@ -360,17 +359,17 @@ bool BbdouCursor::getTrackingCursorSequenceId(Control *control, uint32 &outSeque
 	return outSequenceId != 0;
 }
 
-void BbdouCursor::clearCursorDataField14() {
+void BbdouCursor::resetActiveVerbs() {
 	for (uint i = 0; i < 32; ++i)
-		_data._item10._verbActive[i] = 0;
-	if (_data._item10._field0 == 1) {
-		_data._item10._verbActive[1] = 1;
-		_data._item10._verbActive[2] = 1;
-		_data._item10._verbActive[3] = 1;
-		_data._item10._verbActive[5] = 1;
-	} else if (_data._item10._field0 == 3) {
-		_data._item10._verbActive[1] = 1;
-		_data._item10._verbActive[2] = 1;
+		_data._verbState._verbActive[i] = false;
+	if (_data._verbState._cursorState == 1) {
+		_data._verbState._verbActive[1] = true;
+		_data._verbState._verbActive[2] = true;
+		_data._verbState._verbActive[3] = true;
+		_data._verbState._verbActive[5] = true;
+	} else if (_data._verbState._cursorState == 3) {
+		_data._verbState._verbActive[1] = true;
+		_data._verbState._verbActive[2] = true;
 	}
 }
 
@@ -384,7 +383,7 @@ void BbdouCursor::hide(uint32 objectId) {
 	if (_data._visibleCtr == 0) {
 		Control *control = _vm->_dict->getObjectControl(objectId);
 		control->startSequenceActor(0x60029, 2, 0);
-		_bbdou->resetItem10(objectId, &_data._item10);
+		_bbdou->hideVerbBubble(objectId, &_data._verbState);
 		_vm->_camera->popCameraMode();
 	}
 	_vm->_input->discardAllEvents();

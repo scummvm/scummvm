@@ -36,7 +36,7 @@ class BbdouCursor;
 class BbdouFoodCtl;
 class BbdouInventory;
 struct CursorData;
-struct Item10;
+struct VerbState;
 
 typedef Common::Functor1<OpCall&, void> SpecialCodeFunction;
 
@@ -152,7 +152,7 @@ public:
 	void spcRunCause(OpCall &opCall);
 
 	void playSoundEffect(int soundIndex);
-	void resetItem10(uint32 objectId, Item10 *item10);
+	void hideVerbBubble(uint32 objectId, VerbState *verbState);
 	void startHoldingObjectId(uint32 objectId1, uint32 holdingObjectId, bool doPlaySound);
 	void stopHoldingObjectId(uint32 objectId1, bool doPlaySound);
 	bool isHoldingObjectId(uint32 objectId);
@@ -163,8 +163,8 @@ protected:
 	void setCursorControlRoutine(uint32 objectId, int num);
 	Common::Point getBackgroundCursorPos(Common::Point cursorPos);
 	void showBubble(uint32 objectId, uint32 overlappedObjectId, uint32 holdingObjectId,
-		Item10 *item10, uint32 progResKeywordId);
-	bool findVerbId(Item10 *item10, uint32 currOverlappedObjectId, int always0, uint32 &outVerbId);
+		VerbState *verbState, uint32 progResKeywordId);
+	bool findVerbId(VerbState *verbState, uint32 currOverlappedObjectId, int always0, uint32 &outVerbId);
 	void cursorInteractControlRoutine(Control *cursorControl, uint32 deltaTime);
 	void cursorCrosshairControlRoutine(Control *cursorControl, uint32 deltaTime);
 	bool testVerbId(uint32 verbId, uint32 holdingObjectId, uint32 overlappedObjectId);
