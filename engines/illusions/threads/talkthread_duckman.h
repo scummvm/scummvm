@@ -41,8 +41,6 @@ public:
 	TalkThread_Duckman(IllusionsEngine_Duckman *vm, uint32 threadId, uint32 callingThreadId, uint notifyFlags,
 		uint32 objectId, uint32 talkId, uint32 sequenceId1, uint32 sequenceId2);
 	virtual int onUpdate();
-	virtual void onSuspend();
-	virtual void onNotify();
 	virtual void onPause();
 	virtual void onUnpause();
 	virtual void onResume();

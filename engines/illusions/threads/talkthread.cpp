@@ -80,7 +80,6 @@ TalkThread::TalkThread(IllusionsEngine *vm, uint32 threadId, uint32 callingThrea
 			_sceneId = callingThread->_sceneId;
 	}
 
-	//debug("New talk thread: %08X %08X", _threadId, _talkId);
 }
 
 int TalkThread::onUpdate() {
@@ -245,21 +244,6 @@ if (true) {
 
 }
 
-void TalkThread::onSuspend() {
-}
-
-void TalkThread::onNotify() {
-}
-
-void TalkThread::onPause() {
-}
-
-void TalkThread::onResume() {
-}
-
-void TalkThread::onTerminated() {
-}
-
 void TalkThread::onKill() {
 	_callingThreadId = 0;
 	sendMessage(kMsgClearSequenceId1, 0);
@@ -313,30 +297,16 @@ static char *debugW2I(byte *wstr) {
 }
 
 int TalkThread::insertText() {
-/*
-	int charCount = 100;
-	debug("%08X %08X [%s]", _threadId, _talkId, debugW2I(_currEntryText));
-	_entryText = 0;
-	// TODO _vm->getDimensions1(&dimensions);
-	// TODO _vm->insertText(_currEntryText, _vm->_currFontId, dimensions, 0, 2, 0, 0, 0, 0, 0, 0, &outTextPtr);
-	// TODO _vm->charCount = (char *)outTextPtr - (char *)text;
-	// TODO _entryText = outTextPtr;
-	// TODO _vm->getPoint1(&pt);
-	// TODO _vm->updateTextInfoPosition(pt);
-	return charCount >> 1;
-*/	
 	debug("%08X %08X [%s]", _threadId, _talkId, debugW2I(_currEntryText));
 	WidthHeight dimensions;
 	_vm->getDefaultTextDimensions(dimensions);
 	uint16 *outTextPtr;
 	_vm->_screenText->insertText((uint16*)_currEntryText, 0x120001, dimensions,
-		//Common::Point(0, 0), 2, 0, 0, _color.r, _color.g, _color.b, outTextPtr);
 		Common::Point(0, 0), 2, 0, 0, 0, 0, 0, outTextPtr);
 	_entryText = (byte*)outTextPtr;
 	Common::Point pt;
 	_vm->getDefaultTextPosition(pt);
 	_vm->_screenText->updateTextInfoPosition(pt);
-	//_vm->_screenText->updateTextInfoPosition(Common::Point(320, 200));
 	int charCount = (_entryText - _currEntryText) / 2;
 	return charCount;
 }

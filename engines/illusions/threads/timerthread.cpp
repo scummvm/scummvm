@@ -77,8 +77,4 @@ void TimerThread::onResume() {
 	onNotify();
 }
 
-void TimerThread::onTerminated() {
-	// Empty
-}
-
 } // End of namespace Illusions

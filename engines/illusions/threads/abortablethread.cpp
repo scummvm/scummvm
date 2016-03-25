@@ -51,19 +51,4 @@ int AbortableThread::onUpdate() {
 	return kTSYield;
 }
 
-void AbortableThread::onSuspend() {
-}
-
-void AbortableThread::onNotify() {
-}
-
-void AbortableThread::onPause() {
-}
-
-void AbortableThread::onResume() {
-}
-
-void AbortableThread::onTerminated() {
-}
-
 } // End of namespace Illusions
