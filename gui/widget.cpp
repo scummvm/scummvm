@@ -299,6 +299,7 @@ void ButtonWidget::handleMouseUp(int x, int y, int button, int clickCount) {
 	if (isEnabled() && x >= 0 && x < _w && y >= 0 && y < _h) {
 		startAnimatePressedState();
 		sendCommand(_cmd, 0);
+		stopAnimatePressedState(); // Call the stop function wo change state immediately;
 	}
 }
 
