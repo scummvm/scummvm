@@ -23,12 +23,12 @@
 #include <Cocoa/Cocoa.h>
 
 @interface ScummVMDockTilePlugIn : NSObject <NSDockTilePlugIn> {
-	NSMenu* recentGamesMenu;
+	NSMenu *recentGamesMenu;
 }
 @end
 
 @interface StartGameMenuItem : NSMenuItem {
-	NSString* game;
+	NSString *game;
 }
 - (IBAction) startGame;
 - (NSMenuItem*)initWithGame:(NSString *)gameId description:(NSString*)desc icon:(NSString*)iconFile;
@@ -56,7 +56,7 @@
 - (NSMenu*)dockMenu {
 	// Get the list or recent games
 	CFPreferencesAppSynchronize(CFSTR("org.scummvm.scummvm"));
-	NSArray* array = CFPreferencesCopyAppValue(CFSTR("recentGames"), CFSTR("org.scummvm.scummvm"));
+	NSArray *array = CFPreferencesCopyAppValue(CFSTR("recentGames"), CFSTR("org.scummvm.scummvm"));
 	if (array == nil)
 		return nil;
 
@@ -67,13 +67,13 @@
 		[recentGamesMenu removeAllItems];
 
 	NSEnumerator *enumerator = [array objectEnumerator];
-	NSDictionary* recentGame;
+	NSDictionary *recentGame;
 	while (recentGame = [enumerator nextObject]) {
-		NSString* gameId = [recentGame valueForKey:@"game"];
-		NSString* desc = [recentGame valueForKey:@"description"];
-		NSString* iconFile = [recentGame valueForKey:@"icon"];
+		NSString *gameId = [recentGame valueForKey:@"game"];
+		NSString *desc = [recentGame valueForKey:@"description"];
+		NSString *iconFile = [recentGame valueForKey:@"icon"];
 		
-		StartGameMenuItem* menuItem = [[StartGameMenuItem alloc] initWithGame:gameId description:desc icon:iconFile];
+		StartGameMenuItem *menuItem = [[StartGameMenuItem alloc] initWithGame:gameId description:desc icon:iconFile];
 		[recentGamesMenu addItem:menuItem];
 		[menuItem release];
 	}
@@ -90,7 +90,7 @@
 	[self setTarget:self];
 	
 	if (iconFile != nil) {
-		NSImage* image = [[NSImage alloc] initWithContentsOfFile:iconFile];
+		NSImage *image = [[NSImage alloc] initWithContentsOfFile:iconFile];
 		[self setImage:image];
 		[image release];
 	}
@@ -115,8 +115,8 @@
 		return;
 	}
 	// Start ScummVM.app with the game ID as argument
-	NSURL* url = [NSURL fileURLWithPath:scummVMPath];
-	NSMutableDictionary* args = [[NSMutableDictionary alloc] init];
+	NSURL *url = [NSURL fileURLWithPath:scummVMPath];
+	NSMutableDictionary *args = [[NSMutableDictionary alloc] init];
 	[args setObject:[NSArray arrayWithObject:game] forKey:NSWorkspaceLaunchConfigurationArguments];
 	[[NSWorkspace sharedWorkspace] launchApplicationAtURL:url options:NSWorkspaceLaunchDefault configuration:args error:nil];
 	[args release];
