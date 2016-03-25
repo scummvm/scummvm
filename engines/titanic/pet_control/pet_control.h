@@ -99,6 +99,12 @@ public:
 	 * Called to clear the PET display
 	 */
 	void clear();
+
+	bool fn1(int val);
+
+	void fn2(int val);
+
+	void fn3(int val);
 };
 
 } // End of namespace Titanic

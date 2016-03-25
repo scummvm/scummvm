@@ -74,7 +74,7 @@ protected:
 	int _field50;
 	int _field54;
 	int _field58;
-	int _field5C;
+	bool _field5C;
 	CMovieClipList _clipList1;
 	int _field78;
 	CMovieClipList _clipList2;
@@ -96,7 +96,10 @@ protected:
 
 	bool soundFn1(int val);
 	void soundFn2(int val, int val2);
-	void set5C(int val);
+	void set5C(bool val);
+	bool petFn1(int val);
+	void petFn2(int val);
+	void petFn3(int val);
 public:
 	int _field60;
 	CursorId _cursorId;
@@ -125,6 +128,8 @@ public:
 	void stopMovie();
 
 	bool checkPoint(const Point &pt, int v0, int v1);
+
+	void fn1(int val1, int val2, int val3);
 };
 
 } // End of namespace Titanic

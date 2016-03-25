@@ -252,7 +252,7 @@ public:
 		return dest != nullptr && dest->handleMessage(*this); \
 	} }
 
-MESSAGE1(CActMsg, CString, value, "");
+MESSAGE1(CActMsg, CString, action, "");
 MESSAGE1(CActivationmsg, CString, value, "");
 MESSAGE1(CAddHeadPieceMsg, CString, value, "NULL");
 MESSAGE1(CAnimateMaitreDMsg, int, value, 0);

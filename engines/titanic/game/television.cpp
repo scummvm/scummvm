@@ -32,7 +32,7 @@ int CTelevision::_v5;
 int CTelevision::_v6;
 
 CTelevision::CTelevision() : CBackground(), _fieldE0(1),
-	_fieldE4(7), _fieldE8(0), _fieldEC(0), _fieldF0(0) {
+	_fieldE4(7), _isOn(false), _fieldEC(0), _fieldF0(0) {
 }
 
 void CTelevision::save(SimpleFile *file, int indent) const {
@@ -41,7 +41,7 @@ void CTelevision::save(SimpleFile *file, int indent) const {
 	file->writeNumberLine(_v1, indent);
 	file->writeNumberLine(_fieldE4, indent);
 	file->writeNumberLine(_v2, indent);
-	file->writeNumberLine(_fieldE8, indent);
+	file->writeNumberLine(_isOn, indent);
 	file->writeNumberLine(_v3, indent);
 	file->writeNumberLine(_fieldEC, indent);
 	file->writeNumberLine(_v4, indent);
@@ -58,7 +58,7 @@ void CTelevision::load(SimpleFile *file) {
 	_v1 = file->readNumber();
 	_fieldE4 = file->readNumber();
 	_v2 = file->readNumber();
-	_fieldE8 = file->readNumber();
+	_isOn = file->readNumber() != 0;
 	_v3 = file->readNumber();
 	_fieldEC = file->readNumber();
 	_v4 = file->readNumber();
@@ -71,14 +71,14 @@ void CTelevision::load(SimpleFile *file) {
 
 bool CTelevision::handleMessage(CLeaveViewMsg &msg) {
 	clearPet();
-	if (_fieldE8) {
+	if (_isOn) {
 		if (soundFn1(_fieldF0))
 			soundFn2(_fieldF0, 0);
 
 		loadFrame(622);
 		stopMovie();
 		set5C(0);
-		_fieldE8 = 0;
+		_isOn = false;
 
 		if (compareRoomNameTo("CSGState")) {
 			CVisibleMsg visibleMsg(1, 0);
@@ -90,26 +90,88 @@ bool CTelevision::handleMessage(CLeaveViewMsg &msg) {
 }
 
 bool CTelevision::handleMessage(CChangeSeasonMsg &msg) {
+	if (msg._season.compareTo("Autumn")) {
+		_v1 = 545;
+		_v3 = 0;
+	} else if (msg._season.compareTo("Winter")) {
+		_v1 = 503;
+		_v3 = 0;
+	} else if (msg._season.compareTo("Spring")) {
+		_v1 = 517;
+		_v3 = 0;
+	} else if (msg._season.compareTo("Winter")) {
+		_v1 = 531;
+		_v3 = 0;
+	}
+
 	return true; 
 }
 
 bool CTelevision::handleMessage(CEnterViewMsg &msg) {
+	petFn1(2);
+	petFn2(2);
+	petFn3(0);
+	set5C(0);
+	_fieldE0 = 1;
+
 	return true;
 }
 
+static const int FRAMES1[9] = { 0, 0, 56, 112, 168, 224, 280, 336, 392 };
+static const int FRAMES2[8] = { 0, 55, 111, 167, 223, 279, 335, 391 };
+
 bool CTelevision::handleMessage(CPETUpMsg &msg) {
+	if (msg._name == "Television" && _isOn) {
+		if (soundFn1(_fieldF0))
+			soundFn2(_fieldF0, 0);
+
+		_fieldE0 = _fieldE0 % _fieldE4 + 1;
+		stopMovie();
+		fn1(FRAMES1[_fieldE0], FRAMES2[_fieldE0], 4);
+	}
+
 	return true;
 }
 
 bool CTelevision::handleMessage(CPETDownMsg &msg) {
-	return true; 
+	if (msg._name == "Television" && _isOn) {
+		if (soundFn1(_fieldF0))
+			soundFn2(_fieldF0, 0);
+		if (--_fieldE0 < 1)
+			_fieldE0 += _fieldE4;
+
+		_fieldE0 = _fieldE0 % _fieldE4 + 1;
+		stopMovie();
+		fn1(FRAMES1[_fieldE0], FRAMES2[_fieldE0], 4);
+	}
+
+	return true;
 }
 
 bool CTelevision::handleMessage(CStatusChangeMsg &msg) {
+	if (_isOn) {
+		stopMovie();
+		// TODO:
+	}
+	warning("TODO");
+
 	return true;
 }
 
 bool CTelevision::handleMessage(CActMsg &msg) {
+	if (msg._action == "TurnTVOnOff") {
+		_isOn = !_isOn;
+		if (_isOn) {
+			set5C(true);
+			CStatusChangeMsg changeMsg;
+			changeMsg.execute(this);
+		} else {
+			// TODO: Should 5C be a boolean?
+			set5C(_isOn);
+			stopMovie();
+		}
+	}
+
 	return true;
 }
 

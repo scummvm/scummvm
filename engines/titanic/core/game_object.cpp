@@ -27,6 +27,7 @@
 #include "titanic/video_surface.h"
 #include "titanic/core/game_object.h"
 #include "titanic/core/resource_key.h"
+#include "titanic/pet_control/pet_control.h"
 
 namespace Titanic {
 
@@ -44,7 +45,7 @@ CGameObject::CGameObject(): CNamedItem() {
 	_field50 = 0;
 	_field54 = 0;
 	_field58 = 0;
-	_field5C = 1;
+	_field5C = true;
 	_field60 = 0;
 	_cursorId = CURSOR_1;
 	_field78 = 0;
@@ -105,7 +106,7 @@ void CGameObject::load(SimpleFile *file) {
 		_field48 = file->readNumber();
 		_field4C = file->readNumber();
 		_fieldB8 = file->readNumber();
-		_field5C = file->readNumber();
+		_field5C = file->readNumber() != 0;
 		_field50 = file->readNumber();
 		_field54 = file->readNumber();
 		_field58 = file->readNumber();
@@ -275,11 +276,32 @@ void CGameObject::soundFn2(int val, int val2) {
 	}
 }
 
-void CGameObject::set5C(int val) {
+void CGameObject::set5C(bool val) {
 	if (val != _field5C) {
 		_field5C = val;
 		makeDirty();
 	}
+}
+
+bool CGameObject::petFn1(int val) {
+	CPetControl *pet = getPetControl();
+	return pet ? pet->fn1(val) : true;
+}
+
+void CGameObject::petFn2(int val) {
+	CPetControl *pet = getPetControl();
+	if (pet)
+		pet->fn2(val);
+}
+
+void CGameObject::petFn3(int val) {
+	CPetControl *pet = getPetControl();
+	if (pet)
+		pet->fn3(val);
+}
+
+void CGameObject::fn1(int val1, int val2, int val3) {
+	warning("TODO: CGameObject::fn1");
 }
 
 } // End of namespace Titanic

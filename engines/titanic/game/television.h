@@ -53,7 +53,7 @@ private:
 private:
 	int _fieldE0;
 	int _fieldE4;
-	int _fieldE8;
+	bool _isOn;
 	int _fieldEC;
 	int _fieldF0;
 protected:

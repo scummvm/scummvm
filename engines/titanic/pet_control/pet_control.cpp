@@ -102,4 +102,17 @@ void CPetControl::clear() {
 	_string2.clear();
 }
 
+bool CPetControl::fn1(int val) {
+	warning("TODO: CPetControl::fn1");
+	return false;
+}
+
+void CPetControl::fn2(int val) {
+	warning("TODO: CPetControl::fn2");
+}
+
+void CPetControl::fn3(int val) {
+	warning("TODO: CPetControl::fn3");
+}
+
 } // End of namespace Titanic
