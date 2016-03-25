@@ -138,7 +138,7 @@ SaveStateDescriptor ChewyMetaEngine::querySaveMetaInfos(const char *target, int 
 	return SaveStateDescriptor();
 } // End of namespace Chewy
 
-#if PLUGIN_ENABLED_DYNAMIC(Chewy)
+#if PLUGIN_ENABLED_DYNAMIC(CHEWY)
 	REGISTER_PLUGIN_DYNAMIC(CHEWY, PLUGIN_TYPE_ENGINE, ChewyMetaEngine);
 #else
 	REGISTER_PLUGIN_STATIC(CHEWY, PLUGIN_TYPE_ENGINE, ChewyMetaEngine);
