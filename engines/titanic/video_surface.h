@@ -57,7 +57,6 @@ protected:
 	CResourceKey _resourceKey;
 	DirectDrawSurface *_ddSurface;
 	Graphics::ManagedSurface *_rawSurface;
-	CMovie *_movie;
 	bool _pendingLoad;
 	void *_field40;
 	int _field44;
@@ -66,6 +65,7 @@ protected:
 	int _field50;
 	int _lockCount;
 public:
+	CMovie *_movie;
 	bool _blitFlag;
 	bool _blitStyleFlag;
 public:
@@ -138,6 +138,8 @@ public:
 	 * Shifts the colors of the surface.. maybe greys it out?
 	 */
 	virtual void shiftColors() = 0;
+
+	virtual void proc32(int v1, CVideoSurface *surface) = 0;
 
 	/**
 	 * Stops any movie currently attached to the surface
@@ -247,6 +249,8 @@ public:
 	 * Shifts the colors of the surface.. maybe greys it out?
 	 */
 	virtual void shiftColors();
+
+	virtual void proc32(int v1, CVideoSurface *surface);
 
 	/**
 	 * Stops any movie currently attached to the surface

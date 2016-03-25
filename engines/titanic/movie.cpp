@@ -21,6 +21,7 @@
  */
 
 #include "titanic/movie.h"
+#include "titanic/titanic.h"
 
 namespace Titanic {
 
@@ -28,7 +29,7 @@ OSMovie::OSMovie(const CResourceKey &name, CVideoSurface *surface) : _videoSurfa
 //	_aviDecoder.loadFile(name.getString());
 }
 
-void OSMovie::proc8() {
+void OSMovie::proc8(int v1, CVideoSurface *surface) {
 	warning("TODO: OSMovie::proc8");
 }
 
@@ -90,5 +91,11 @@ void *OSMovie::proc21() {
 	warning("TODO: OSMovie::proc21");
 	return nullptr;
 }
+
+bool OSMovie::isInGlobalList() const {
+	return g_vm->_movieList.contains(this);
+}
+
+/*------------------------------------------------------------------------*/
 
 } // End of namespace Titanic

@@ -130,6 +130,11 @@ public:
 	bool checkPoint(const Point &pt, int v0, int v1);
 
 	void fn1(int val1, int val2, int val3);
+
+	/**
+	 * Change the object's status
+	 */
+	void changeStatus(int newStatus);
 };
 
 } // End of namespace Titanic

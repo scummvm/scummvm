@@ -71,6 +71,8 @@ public:
 template<typename T>
 class List : public CSaveableObject, public Common::List<T *> {
 public:
+	virtual ~List() { destroyContents(); }
+
 	/**
 	 * Save the data for the class to file
 	 */
@@ -144,6 +146,16 @@ public:
 		T *item = new T();
 		Common::List<T *>::push_back(item);
 		return item;
+	}
+
+	bool contains(const T *item) const {
+		for (Common::List<T *>::const_iterator i = Common::List<T *>::begin(); 
+				i != Common::List<T *>::end(); ++i) {
+			if (*i == item)
+				return true;
+		}
+
+		return false;
 	}
 };
 

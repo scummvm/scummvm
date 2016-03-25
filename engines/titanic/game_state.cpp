@@ -27,9 +27,18 @@
 
 namespace Titanic {
 
-bool CGameStateList::isViewChanging() const {
-	warning("TODO: CGameStateList::isViewChanging");
-	return false;
+bool CGameStateMovieList::clear() {
+	for (iterator i = begin(); i != end(); ) {
+		CMovieListItem *listItem = *i;
+		++i;
+
+		if (!g_vm->_movieList.contains(listItem->_item)) {
+			remove(listItem);
+			delete listItem;
+		}
+	}
+
+	return size() > 0;
 }
 
 /*------------------------------------------------------------------------*/
@@ -98,20 +107,20 @@ void CGameState::enterNode() {
 
 void CGameState::enterView() {
 	CViewItem *oldView = _gameLocation.getView();
-	CViewItem *newView = _list._view;
+	CViewItem *newView = _movieList._view;
 	oldView->preEnterView(newView);
 
 	_gameManager->_gameView->setView(newView);
 	CRoomItem *oldRoom = oldView->findNode()->findRoom();
 	CRoomItem *newRoom = newView->findNode()->findRoom();
-	_gameManager->playClip(_list._movieClip, oldRoom, newRoom);
+	_gameManager->playClip(_movieList._movieClip, oldRoom, newRoom);
 
 	_gameManager->_sound.preEnterView(newView, newRoom != oldRoom);
 	_gameManager->dec54();
 	oldView->enterView(newView);
 
-	_list._view = nullptr;
-	_list._movieClip = nullptr;
+	_movieList._view = nullptr;
+	_movieList._movieClip = nullptr;
 }
 
 void CGameState::triggerLink(CLinkItem *link) {
@@ -128,8 +137,8 @@ void CGameState::changeView(CViewItem *newView, CMovieClip *clip) {
 		clip = nullptr;
 
 	if (_mode == GSMODE_2) {
-		_list._view = newView;
-		_list._movieClip = clip;
+		_movieList._view = newView;
+		_movieList._movieClip = clip;
 	} else {
 		oldView->preEnterView(newView);
 		_gameManager->_gameView->setView(newView);
@@ -147,11 +156,16 @@ void CGameState::changeView(CViewItem *newView, CMovieClip *clip) {
 }
 
 void CGameState::checkForViewChange() {
-	if (_mode == GSMODE_2 && _list.isViewChanging()) {
+	if (_mode == GSMODE_2 && _movieList.clear()) {
 		setMode(GSMODE_1);
-		if (_list._view)
+		if (_movieList._view)
 			enterView();
 	}
+}
+
+void CGameState::addMovie(CMovie *movie) {
+	_movieList.push_back(new CMovieListItem(movie));
+	setMode(GSMODE_2);
 }
 
 } // End of namespace Titanic

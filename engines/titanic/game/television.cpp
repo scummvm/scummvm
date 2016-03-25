@@ -164,7 +164,7 @@ bool CTelevision::handleMessage(CPETDownMsg &msg) {
 bool CTelevision::handleMessage(CStatusChangeMsg &msg) {
 	if (_isOn) {
 		stopMovie();
-		// TODO:
+		changeStatus(1);
 	}
 	warning("TODO");
 

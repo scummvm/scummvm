@@ -304,4 +304,20 @@ void CGameObject::fn1(int val1, int val2, int val3) {
 	warning("TODO: CGameObject::fn1");
 }
 
+void CGameObject::changeStatus(int newStatus) {
+	if (_frameNumber == -1 && !_resource.empty()) {
+		loadResource(_resource);
+		_resource.clear();
+	}
+
+	CVideoSurface *surface = (newStatus & 4) ? _surface : nullptr;
+	if (_surface) {
+		_surface->proc32(newStatus, surface);
+		
+		if (newStatus & 0x10) {
+			getGameManager()->_gameState.addMovie(_surface->_movie);
+		}
+	}
+}
+
 } // End of namespace Titanic

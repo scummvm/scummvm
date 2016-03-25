@@ -27,6 +27,7 @@
 #include "titanic/core/link_item.h"
 #include "titanic/simple_file.h"
 #include "titanic/game_location.h"
+#include "titanic/movie.h"
 
 namespace Titanic {
 
@@ -34,21 +35,25 @@ class CGameManager;
 
 enum GameStateMode { GSMODE_0 = 0, GSMODE_1 = 1, GSMODE_2 = 2, GSMODE_3 = 3, GSMODE_4 = 4, GSMODE_5 = 5 };
 
-class CGameStateList : public List<ListItem> {
+PTR_LIST_ITEM(CMovie);
+class CGameStateMovieList : public List<CMovieListItem> {
 public:
 	CViewItem *_view;
 	CMovieClip *_movieClip;
 public:
-	CGameStateList() : List<ListItem>(), _view(nullptr), _movieClip(nullptr) {}
+	CGameStateMovieList() : List<CMovieListItem>(), _view(nullptr), _movieClip(nullptr) {}
 
-	bool isViewChanging() const;
+	/**
+	 * Clear the movie list
+	 */
+	bool clear();
 };
 
 class CGameState {
 public:
 	CGameManager *_gameManager;
 	CGameLocation _gameLocation;
-	CGameStateList _list;
+	CGameStateMovieList _movieList;
 	int _field8;
 	int _fieldC;
 	GameStateMode _mode;
@@ -108,6 +113,11 @@ public:
 	 * Check for whether it's time to change the active view
 	 */
 	void checkForViewChange();
+
+	/**
+	 * Adds a movie to the movie list
+	 */
+	void addMovie(CMovie *movie);
 };
 
 } // End of namespace Titanic

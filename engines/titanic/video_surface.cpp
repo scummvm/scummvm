@@ -299,6 +299,11 @@ void OSVideoSurface::shiftColors() {
 	unlock();
 }
 
+void OSVideoSurface::proc32(int v1, CVideoSurface *surface) {
+	if (loadIfReady() && _movie)
+		_movie->proc8(v1, surface);
+}
+
 void OSVideoSurface::stopMovie() {
 	if (_movie)
 		_movie->stop();

@@ -33,7 +33,7 @@ class CVideoSurface;
 
 class CMovie : public ListItem {
 public:
-	virtual void proc8() = 0;
+	virtual void proc8(int v1, CVideoSurface *surface) = 0;
 	virtual void proc9() = 0;
 	virtual void proc10() = 0;
 	virtual void proc11() = 0;
@@ -56,7 +56,7 @@ private:
 public:
 	OSMovie(const CResourceKey &name, CVideoSurface *surface);
 
-	virtual void proc8();
+	virtual void proc8(int v1, CVideoSurface *surface);
 	virtual void proc9();
 	virtual void proc10();
 	virtual void proc11();
@@ -75,6 +75,12 @@ public:
 	virtual void proc19();
 	virtual void proc20();
 	virtual void *proc21();
+
+	bool isInGlobalList() const;
+};
+
+class CGlobalMovies : public List<CMovie> {
+public:
 };
 
 } // End of namespace Titanic

@@ -33,6 +33,7 @@
 #include "titanic/debugger.h"
 #include "titanic/events.h"
 #include "titanic/files_manager.h"
+#include "titanic/movie.h"
 #include "titanic/screen_manager.h"
 #include "titanic/main_game_window.h"
 
@@ -101,6 +102,7 @@ public:
 	OSScreenManager *_screenManager;
 	CMainGameWindow *_window;
 	Common::RandomSource _randomSource;
+	CGlobalMovies _movieList;
 public:
 	TitanicEngine(OSystem *syst, const TitanicGameDescription *gameDesc);
 	virtual ~TitanicEngine();
