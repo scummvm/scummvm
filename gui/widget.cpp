@@ -263,9 +263,17 @@ void StaticTextWidget::setLabel(const Common::String &label) {
 }
 
 void StaticTextWidget::setAlign(Graphics::TextAlign align) {
-	_align = align;
-	// TODO: We should automatically redraw when the alignment is changed.
-	// See setLabel() for more insights.
+	if (_align != align){
+		_align = align;
+
+		// same as setLabel() actually, the text
+		// would be redrawn on top of the old one so
+		// we add the CLEARBG flag
+		setFlags(WIDGET_CLEARBG);
+		draw();
+		clearFlags(WIDGET_CLEARBG);
+	}
+	 
 }
 
 
