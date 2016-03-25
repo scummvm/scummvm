@@ -89,6 +89,21 @@ struct ShooterStatus {
 	bool flag;
 };
 
+struct ObjectInteractMode {
+	uint32 _objectId;
+	int _interactMode;
+	ObjectInteractMode() : _objectId(0), _interactMode(0) {}
+};
+
+class ObjectInteractModeMap {
+public:
+	ObjectInteractModeMap();
+	void setObjectInteractMode(uint32 objectId, int value);
+	int getObjectInteractMode(uint32 objectId);
+protected:
+	ObjectInteractMode _objectVerbs[512];
+};
+
 class BbdouSpecialCode : public SpecialCode {
 public:
 	BbdouSpecialCode(IllusionsEngine_BBDOU *vm);
@@ -115,6 +130,8 @@ public:
 	uint _shooterObjectIdIndex;
 
 	BbdouFoodCtl *_foodCtl;
+	
+	ObjectInteractModeMap _objectInteractModeMap;
 
 	// Special code interface functions
 	void spcInitCursor(OpCall &opCall);
