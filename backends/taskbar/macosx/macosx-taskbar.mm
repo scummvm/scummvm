@@ -36,6 +36,9 @@
 #include <AppKit/NSApplication.h>
 #include <AppKit/NSImage.h>
 #include <Foundation/NSString.h>
+#include <Foundation/NSDictionary.h>
+#include <Foundation/NSArray.h>
+#include <Foundation/NSUserDefaults.h>
 #include <AppKit/NSImageView.h>
 #include <AppKit/NSColor.h>
 #include <AppKit/NSBezierPath.h>
