@@ -176,7 +176,7 @@ public:
 
 protected:
 	// Internal functions
-	bool testValueRange(int value);
+	bool testInteractModeRange(int value);
 	void setCursorControlRoutine(uint32 objectId, int num);
 	Common::Point getBackgroundCursorPos(Common::Point cursorPos);
 	void showBubble(uint32 objectId, uint32 overlappedObjectId, uint32 holdingObjectId,
