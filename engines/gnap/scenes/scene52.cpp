@@ -144,11 +144,11 @@ void GnapEngine::scene52_update() {
 }
 
 void GnapEngine::scene52_initShipCannon(int bottomY) {
-	_s52_shipCannonFired = 0;
+	_s52_shipCannonFired = false;
 	_s52_shipCannonWidth = MAX(_gameSys->getSpriteWidthById(14), _gameSys->getSpriteWidthById(16));
 	_s52_shipCannonHeight = MAX(_gameSys->getSpriteHeightById(14), _gameSys->getSpriteHeightById(16));
 	_s52_shipCannonTopY = bottomY - _s52_shipCannonHeight;
-	_s52_shipCannonFiring = 0;
+	_s52_shipCannonFiring = false;
 }
 
 void GnapEngine::scene52_initAlienCannons() {
@@ -177,9 +177,9 @@ void GnapEngine::scene52_fireShipCannon(int posX) {
 			_gameSys->setAnimation(0, 0, cannonNum + 8);
 			_gameSys->removeSequence(0x23, cannonNum + 256, true);
 		} else {
-			_s52_shipCannonFired = 1;
+			_s52_shipCannonFired = true;
 			_s52_shipCannonPosY -= 13;
-			_s52_shipCannonFiring = 1;
+			_s52_shipCannonFiring = true;
 		}
 		_timers[1] = 5;
 	}
@@ -227,7 +227,7 @@ void GnapEngine::scene52_updateShipCannon() {
 			if (scene52_updateHitAlien()) {
 				_gameSys->setAnimation(0, 0, 8);
 				_gameSys->removeSequence(35, 256, true);
-				_s52_shipCannonFired = 0;
+				_s52_shipCannonFired = false;
 				scene52_drawScore(_s52_gameScore);
 			} else {
 				_gameSys->setAnimation(35, 256, 8);
@@ -237,7 +237,7 @@ void GnapEngine::scene52_updateShipCannon() {
 		} else {
 			_gameSys->setAnimation(0, 0, 8);
 			_gameSys->removeSequence(35, 256, true);
-			_s52_shipCannonFired = 0;
+			_s52_shipCannonFired = false;
 		}
 	}
 }

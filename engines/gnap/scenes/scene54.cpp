@@ -46,11 +46,11 @@ void GnapEngine::scene54_initCutscene1() {
 	_s99_sequenceCountArr[2] = 1;
 	_s99_sequenceCountArr[3] = 2;
 	_s99_sequenceCountArr[4] = 1;
-	_s99_canSkip[0] = 0;
-	_s99_canSkip[1] = 0;
-	_s99_canSkip[2] = 0;
-	_s99_canSkip[3] = 0;
-	_s99_canSkip[4] = 0;
+	_s99_canSkip[0] = false;
+	_s99_canSkip[1] = false;
+	_s99_canSkip[2] = false;
+	_s99_canSkip[3] = false;
+	_s99_canSkip[4] = false;
 	_s99_itemsCount = 5;
 }
 
@@ -105,22 +105,22 @@ void GnapEngine::scene54_initCutscene2() {
 	_s99_sequenceCountArr[13] = 1;
 	_s99_sequenceCountArr[14] = 1;
 	_s99_sequenceCountArr[15] = 1;
-	_s99_canSkip[0] = 0;
-	_s99_canSkip[1] = 0;
-	_s99_canSkip[2] = 0;
-	_s99_canSkip[3] = 0;
-	_s99_canSkip[4] = 0;
-	_s99_canSkip[5] = 0;
-	_s99_canSkip[6] = 0;
-	_s99_canSkip[7] = 0;
-	_s99_canSkip[8] = 0;
-	_s99_canSkip[9] = 0;
-	_s99_canSkip[10] = 0;
-	_s99_canSkip[11] = 0;
-	_s99_canSkip[12] = 0;
-	_s99_canSkip[13] = 1;
-	_s99_canSkip[14] = 1;
-	_s99_canSkip[15] = 0;
+	_s99_canSkip[0] = false;
+	_s99_canSkip[1] = false;
+	_s99_canSkip[2] = false;
+	_s99_canSkip[3] = false;
+	_s99_canSkip[4] = false;
+	_s99_canSkip[5] = false;
+	_s99_canSkip[6] = false;
+	_s99_canSkip[7] = false;
+	_s99_canSkip[8] = false;
+	_s99_canSkip[9] = false;
+	_s99_canSkip[10] = false;
+	_s99_canSkip[11] = false;
+	_s99_canSkip[12] = false;
+	_s99_canSkip[13] = true;
+	_s99_canSkip[14] = true;
+	_s99_canSkip[15] = false;
 	_s99_itemsCount = 16;
 }
 

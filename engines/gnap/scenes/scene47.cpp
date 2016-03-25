@@ -42,11 +42,11 @@ void GnapEngine::scene47_initCutscene1() {
 	_s99_sequenceCountArr[2] = 1;
 	_s99_sequenceCountArr[3] = 1;
 	_s99_sequenceCountArr[4] = 1;
-	_s99_canSkip[0] = 0;
-	_s99_canSkip[1] = 0;
-	_s99_canSkip[2] = 0;
-	_s99_canSkip[3] = 0;
-	_s99_canSkip[4] = 0;
+	_s99_canSkip[0] = false;
+	_s99_canSkip[1] = false;
+	_s99_canSkip[2] = false;
+	_s99_canSkip[3] = false;
+	_s99_canSkip[4] = false;
 	_s99_itemsCount = 5;
 }
 
@@ -64,10 +64,10 @@ void GnapEngine::scene47_initCutscene2() {
 	_s99_sequenceCountArr[1] = 1;
 	_s99_sequenceCountArr[2] = 1;
 	_s99_sequenceCountArr[3] = 1;
-	_s99_canSkip[0] = 0;
-	_s99_canSkip[1] = 0;
-	_s99_canSkip[2] = 0;
-	_s99_canSkip[3] = 0;
+	_s99_canSkip[0] = false;
+	_s99_canSkip[1] = false;
+	_s99_canSkip[2] = false;
+	_s99_canSkip[3] = false;
 	_s99_itemsCount = 4;
 }
 
@@ -78,8 +78,8 @@ void GnapEngine::scene47_initCutscene3() {
 	_s99_resourceIdArr[1] = 0x143;
 	_s99_sequenceCountArr[0] = 1;
 	_s99_sequenceCountArr[1] = 1;
-	_s99_canSkip[0] = 0;
-	_s99_canSkip[1] = 0;
+	_s99_canSkip[0] = false;
+	_s99_canSkip[1] = false;
 	_s99_itemsCount = 2;
 }
 
@@ -93,9 +93,9 @@ void GnapEngine::scene47_initCutscene4() {
 	_s99_sequenceCountArr[0] = 1;
 	_s99_sequenceCountArr[1] = 1;
 	_s99_sequenceCountArr[2] = 1;
-	_s99_canSkip[0] = 0;
-	_s99_canSkip[1] = 0;
-	_s99_canSkip[2] = 0;
+	_s99_canSkip[0] = false;
+	_s99_canSkip[1] = false;
+	_s99_canSkip[2] = false;
 	_s99_itemsCount = 3;
 }
 
@@ -108,8 +108,8 @@ void GnapEngine::scene47_initCutscene5() {
 	_s99_resourceIdArr[1] = 0x207;
 	_s99_sequenceCountArr[0] = 3;
 	_s99_sequenceCountArr[1] = 1;
-	_s99_canSkip[0] = 0;
-	_s99_canSkip[1] = 0;
+	_s99_canSkip[0] = false;
+	_s99_canSkip[1] = false;
 	_s99_itemsCount = 2;
 }
 
@@ -118,7 +118,7 @@ void GnapEngine::scene47_initCutscene6() {
 	_s99_sequenceIdArr[1] = 0x31F;
 	_s99_resourceIdArr[0] = 0x2FA;
 	_s99_sequenceCountArr[0] = 2;
-	_s99_canSkip[0] = 0;
+	_s99_canSkip[0] = false;
 	_s99_itemsCount = 1;
 }
 
@@ -160,11 +160,11 @@ void GnapEngine::scene47_initCutscene7() {
 	_s99_sequenceCountArr[2] = v2 - v3;
 	_s99_sequenceCountArr[3] = 1;
 	_s99_sequenceCountArr[4] = 1;
-	_s99_canSkip[0] = 0;
-	_s99_canSkip[1] = 0;
-	_s99_canSkip[2] = 0;
-	_s99_canSkip[3] = 0;
-	_s99_canSkip[4] = 0;
+	_s99_canSkip[0] = false;
+	_s99_canSkip[1] = false;
+	_s99_canSkip[2] = false;
+	_s99_canSkip[3] = false;
+	_s99_canSkip[4] = false;
 	_s99_itemsCount = 5;
 }
 

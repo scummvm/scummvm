@@ -2377,7 +2377,7 @@ void GnapEngine::cutscene_run() {
 			clearKeyStatus1(Common::KEYCODE_ESCAPE);
 			clearKeyStatus1(Common::KEYCODE_SPACE);
 			clearKeyStatus1(29);
-			if (_s99_canSkip[itemIndex] & 1)
+			if (_s99_canSkip[itemIndex])
 				skip = true;
 			else
 				_sceneDone = true;

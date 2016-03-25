@@ -66,19 +66,19 @@ void GnapEngine::scene48_initCutscene() {
 	_s99_sequenceCountArr[10] = 1;
 	_s99_sequenceCountArr[11] = 1;
 	_s99_sequenceCountArr[12] = 1;
-	_s99_canSkip[0] = 0;
-	_s99_canSkip[1] = 0;
-	_s99_canSkip[2] = 0;
-	_s99_canSkip[3] = 0;
-	_s99_canSkip[4] = 0;
-	_s99_canSkip[5] = 0;
-	_s99_canSkip[6] = 0;
-	_s99_canSkip[7] = 0;
-	_s99_canSkip[8] = 0;
-	_s99_canSkip[9] = 0;
-	_s99_canSkip[10] = 0;
-	_s99_canSkip[11] = 0;
-	_s99_canSkip[12] = 0;
+	_s99_canSkip[0] = false;
+	_s99_canSkip[1] = false;
+	_s99_canSkip[2] = false;
+	_s99_canSkip[3] = false;
+	_s99_canSkip[4] = false;
+	_s99_canSkip[5] = false;
+	_s99_canSkip[6] = false;
+	_s99_canSkip[7] = false;
+	_s99_canSkip[8] = false;
+	_s99_canSkip[9] = false;
+	_s99_canSkip[10] = false;
+	_s99_canSkip[11] = false;
+	_s99_canSkip[12] = false;
 	_s99_itemsCount = 13;
 }
 

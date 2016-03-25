@@ -912,7 +912,8 @@ public:
 	void scene48_initCutscene();
 
 	// Scene 49
-	int _s49_scoreBarPos, _s49_scoreLevel, _s49_scoreBarFlash;
+	int _s49_scoreBarPos, _s49_scoreLevel;
+	bool _s49_scoreBarFlash;
 	int _s49_obstacleIndex;
 	Scene49Obstacle _s49_obstacles[5];
 	int _s49_truckSequenceId, _s49_truckId, _s49_truckLaneNum;
@@ -1009,8 +1010,9 @@ public:
 	int _s52_shieldSpriteIds[3];
 	int _s52_shieldPosX[3];
 	int _s52_shipPosX;
-	int _s52_shipCannonFired, _s52_shipCannonPosX, _s52_shipCannonPosY;
-	int _s52_shipCannonFiring;
+	int _s52_shipCannonPosX, _s52_shipCannonPosY;
+	bool _s52_shipCannonFiring;
+	bool _s52_shipCannonFired; 
 	int _s52_shipCannonWidth, _s52_shipCannonHeight;
 	int _s52_shipCannonTopY;
 	int _s52_shipMidX, _s52_shipMidY;
@@ -1093,7 +1095,7 @@ public:
 	int _s99_resourceIdArr[16];
 	int _s99_sequenceCountArr[16];
 	int _s99_sequenceIdArr[50];
-	byte _s99_canSkip[16];
+	bool _s99_canSkip[16];
 	int cutscene_init();
 	void cutscene_run();
 };
