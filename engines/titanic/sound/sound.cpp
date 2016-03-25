@@ -47,4 +47,21 @@ void CSound::preEnterView(CViewItem *newView, bool isNewRoom) {
 	warning("CSound::preEnterView");
 }
 
+bool CSound::fn1(int val) {
+	if (val == 0 || val == -1) {
+		if (!_soundManager.proc14())
+			return true;
+	}
+
+	return false;
+}
+
+void CSound::fn2(int val) {
+	warning("TODO: CSound::fn3");
+}
+
+void CSound::fn3(int val, int val2, int val3) {
+	warning("TODO: CSound::fn3");
+}
+
 } // End of namespace Titanic z

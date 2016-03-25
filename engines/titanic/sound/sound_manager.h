@@ -48,7 +48,7 @@ public:
 	virtual void proc11() = 0;
 	virtual void proc12() {}
 	virtual void proc13() {}
-	virtual void proc14() = 0;
+	virtual bool proc14() = 0;
 	virtual int proc15() const { return 0; }
 	virtual int proc16() const { return 0; }
 	virtual void WaveMixPump() {}
@@ -111,7 +111,7 @@ public:
 	virtual void proc11();
 	virtual void proc12();
 	virtual void proc13();
-	virtual void proc14();
+	virtual bool proc14();
 	virtual int proc15();
 	virtual int proc16();
 	virtual void WaveMixPump();

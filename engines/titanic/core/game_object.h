@@ -93,6 +93,10 @@ protected:
 	CVideoSurface *_surface;
 	CString _resource;
 	int _fieldB8;
+protected:
+	bool soundFn1(int val);
+	void soundFn2(int val, int val2);
+	void set5C(int val);
 public:
 	int _field60;
 	CursorId _cursorId;

@@ -850,6 +850,11 @@ DEFFN(CPETSetStarDestinationMsg)
 DEFFN(CPETStarFieldLockMsg)
 DEFFN(CPETStereoFieldOnOffMsg)
 DEFFN(CPETTargetMsg)
+DEFFN(CPETUpMsg)
+DEFFN(CPETDownMsg)
+DEFFN(CPETLeftMsg)
+DEFFN(CPETRightMsg)
+DEFFN(CPETActivateMsg)
 DEFFN(CPanningAwayFromParrotMsg)
 DEFFN(CParrotSpeakMsg)
 DEFFN(CParrotTriesChickenMsg)
@@ -1427,6 +1432,11 @@ void CSaveableObject::initClassList() {
 	ADDFN(CPETStarFieldLockMsg, CMessage);
 	ADDFN(CPETStereoFieldOnOffMsg, CMessage);
 	ADDFN(CPETTargetMsg, CMessage);
+	ADDFN(CPETUpMsg, CPETTargetMsg);
+	ADDFN(CPETDownMsg, CPETTargetMsg);
+	ADDFN(CPETLeftMsg, CPETTargetMsg);
+	ADDFN(CPETRightMsg, CPETTargetMsg);
+	ADDFN(CPETActivateMsg, CPETTargetMsg);
 	ADDFN(CPanningAwayFromParrotMsg, CMessage);
 	ADDFN(CParrotSpeakMsg, CMessage);
 	ADDFN(CParrotTriesChickenMsg, CMessage);

@@ -96,11 +96,6 @@ private:
 	uint _tickCount2;
 private:
 	/**
-	 * Return the current room
-	 */
-	CRoomItem *getRoom();
-
-	/**
 	 * Generates a message for the next game frame
 	 */
 	void frameMessage(CRoomItem *room);
@@ -153,7 +148,20 @@ public:
 	 */
 	void updateDiskTicksCount();
 
+	/**
+	 * Gets the current view
+	 */
 	CViewItem *getView() { return _gameState._gameLocation.getView(); }
+
+	/**
+	 * Gets the current room node
+	 */
+	CNodeItem *getNode() { return _gameState._gameLocation.getNode(); }
+
+	/**
+	 * Gets the current room
+	 */
+	CRoomItem *getRoom() { return _gameState._gameLocation.getRoom(); }
 
 	/**
 	 * Lock the input handler

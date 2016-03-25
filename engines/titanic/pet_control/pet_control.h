@@ -94,6 +94,11 @@ public:
 	 * Called when a new room is entered
 	 */
 	void enterRoom(CRoomItem *room);
+
+	/**
+	 * Called to clear the PET display
+	 */
+	void clear();
 };
 
 } // End of namespace Titanic

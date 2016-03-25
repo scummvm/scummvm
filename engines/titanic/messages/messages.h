@@ -54,6 +54,13 @@ public:
 	bool execute(CTreeItem *target, const ClassDef *classDef = nullptr,
 		int flags = MSGFLAG_SCAN | MSGFLAG_BREAK_IF_HANDLED);
 
+	/**
+	 * Executes the message, passing it on to the designated target,
+	 * and optionally it's children
+	 */
+	bool execute(const CString &target, const ClassDef *classDef = nullptr,
+		int flags = MSGFLAG_SCAN | MSGFLAG_BREAK_IF_HANDLED);
+
 	virtual bool perform(CTreeItem *treeItem) { return false; }
 
 	/**

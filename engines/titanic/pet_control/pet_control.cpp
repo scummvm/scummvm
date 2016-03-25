@@ -97,4 +97,9 @@ void CPetControl::enterRoom(CRoomItem *room) {
 	_sub3.enterRoom(room);
 }
 
+void CPetControl::clear() {
+	_field1394 = 0;
+	_string2.clear();
+}
+
 } // End of namespace Titanic

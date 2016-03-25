@@ -145,6 +145,11 @@ public:
 	virtual void stopMovie() = 0;
 
 	/**
+	 * Sets the movie to the specified frame number
+	 */
+	virtual void setMovieFrame(uint frameNumber) = 0;
+
+	/**
 	 * Loads the surface's resource if there's one pending
 	 */
 	virtual bool loadIfReady() = 0;
@@ -247,6 +252,11 @@ public:
 	 * Stops any movie currently attached to the surface
 	 */
 	virtual void stopMovie();
+
+	/**
+	 * Sets the movie to the specified frame number
+	 */
+	virtual void setMovieFrame(uint frameNumber);
 
 	/**
 	 * Loads the surface's resource if there's one pending

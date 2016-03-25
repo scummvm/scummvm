@@ -56,8 +56,14 @@ void OSMovie::proc14() {
 	warning("TODO: OSMovie::proc14");
 }
 
-void OSMovie::proc15() {
-	warning("TODO: OSMovie::proc15");
+void OSMovie::setFrame(uint frameNumber) {
+	warning("TODO: OSMovie::setFrame");
+	/*
+	_aviDecoder.seekToFrame(frameNumber);
+	const Graphics::Surface *s = _aviDecoder.decodeNextFrame();
+
+	_videoSurface->blitFrom(Common::Point(0, 0), s);
+	*/
 }
 
 void OSMovie::proc16() {
@@ -83,15 +89,6 @@ void OSMovie::proc20() {
 void *OSMovie::proc21() {
 	warning("TODO: OSMovie::proc21");
 	return nullptr;
-}
-
-void OSMovie::setFrame(uint frameNumber) {
-	/*
-	_aviDecoder.seekToFrame(frameNumber);
-	const Graphics::Surface *s = _aviDecoder.decodeNextFrame();
-	
-	_videoSurface->blitFrom(Common::Point(0, 0), s);
-	*/
 }
 
 } // End of namespace Titanic

@@ -31,6 +31,8 @@
 #include "titanic/core/project_item.h"
 #include "titanic/core/view_item.h"
 #include "titanic/core/room_item.h"
+#include "titanic/pet_control/pet_control.h"
+#include "titanic/game_manager.h"
 
 namespace Titanic {
 
@@ -253,6 +255,33 @@ CNamedItem *CTreeItem::findByName(const CString &name, int maxLen) {
 	}
 
 	return nullptr;
+}
+
+int CTreeItem::compareRoomNameTo(const CString &name) {
+	CRoomItem *room = getGameManager()->getRoom();
+	return room->getName().compareToIgnoreCase(name);
+}
+
+void CTreeItem::clearPet() const {
+	CPetControl *petControl = getPetControl();
+	if (petControl)
+		petControl->clear();
+}
+
+CPetControl *CTreeItem::getPetControl() const {
+	return dynamic_cast<CPetControl *>(getDontSaveChild(CPetControl::_type));
+}
+
+CTreeItem *CTreeItem::getDontSaveChild(ClassDef *classDef) const {
+	CProjectItem *root = getRoot();
+	if (!root)
+		return nullptr;
+
+	CDontSaveFileItem *dontSave = root->getDontSaveFileItem();
+	if (!dontSave)
+		return nullptr;
+
+	return dontSave->findChildInstanceOf(classDef);
 }
 
 } // End of namespace Titanic

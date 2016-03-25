@@ -24,6 +24,7 @@
 #include "titanic/messages/mouse_messages.h"
 #include "titanic/core/game_object.h"
 #include "titanic/core/tree_item.h"
+#include "titanic/titanic.h"
 
 namespace Titanic {
 
@@ -65,6 +66,17 @@ bool CMessage::execute(CTreeItem *target, const ClassDef *classDef, int flags) {
 	} while (nextItem);
 
 	return result;
+}
+
+bool CMessage::execute(const CString &target, const ClassDef *classDef, int flags) {
+	// Scan for the target by name
+	CProjectItem *project = g_vm->_window->_project;
+	for (CTreeItem *treeItem = project; treeItem; treeItem = treeItem->scan(project)) {
+		if (treeItem->getName().compareToIgnoreCase(target))
+			return execute(treeItem, classDef, flags);
+	}
+
+	return false;
 }
 
 bool CMessage::isMouseMsg() const {

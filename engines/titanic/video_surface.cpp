@@ -304,6 +304,11 @@ void OSVideoSurface::stopMovie() {
 		_movie->stop();
 }
 
+void OSVideoSurface::setMovieFrame(uint frameNumber) {
+	if (loadIfReady() && _movie)
+		_movie->setFrame(frameNumber);
+}
+
 bool OSVideoSurface::loadIfReady() {
 	_videoSurfaceNum = _videoSurfaceCounter;
 

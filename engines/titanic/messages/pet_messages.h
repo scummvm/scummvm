@@ -42,6 +42,25 @@ MESSAGE1(CPETStarFieldLockMsg, int, value, 0);
 MESSAGE0(CPETStereoFieldOnOffMsg);
 MESSAGE2(CPETTargetMsg, CString, strValue, "", int, numValue, -1);
 
+#define PET_MESSAGE(NAME) MSGTARGET(NAME); \
+	class NAME: public CPETTargetMsg { \
+	public: \
+	NAME() : CPETTargetMsg() {} \
+	NAME(const CString &name, int num) : CPETTargetMsg(name, num) {} \
+	CLASSDEF \
+	static bool isSupportedBy(const CTreeItem *item) { \
+		return dynamic_cast<const NAME##Target *>(item) != nullptr; } \
+	virtual bool perform(CTreeItem *treeItem) { \
+		NAME##Target *dest = dynamic_cast<NAME##Target *>(treeItem); \
+		return dest != nullptr && dest->handleMessage(*this); \
+	} }
+
+PET_MESSAGE(CPETDownMsg);
+PET_MESSAGE(CPETUpMsg);
+PET_MESSAGE(CPETLeftMsg);
+PET_MESSAGE(CPETRightMsg);
+PET_MESSAGE(CPETActivateMsg);
+
 } // End of namespace Titanic
 
 #endif /* TITANIC_PET_MESSAGES_H */

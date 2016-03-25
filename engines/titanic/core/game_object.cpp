@@ -230,7 +230,13 @@ void CGameObject::loadImage(const CString &name, bool pendingFlag) {
 }
 
 void CGameObject::loadFrame(int frameNumber) {
-	warning("CGameObject::loadFrame");
+	if (frameNumber != -1 && !_resource.empty())
+		loadResource(_resource);
+	
+	if (_surface)
+		_surface->setMovieFrame(frameNumber);
+
+	makeDirty();
 }
 
 void CGameObject::processClipList2() {
@@ -245,6 +251,35 @@ void CGameObject::makeDirty(const Rect &r) {
 
 void CGameObject::makeDirty() {
 	makeDirty(_bounds);
+}
+
+bool CGameObject::soundFn1(int val) {
+	if (val != 0 && val != -1) {
+		CGameManager *gameManager = getGameManager();
+		if (gameManager)
+			return gameManager->_sound.fn1(val);
+	}
+
+	return false;
+}
+
+void CGameObject::soundFn2(int val, int val2) {
+	if (val != 0 && val != -1) {
+		CGameManager *gameManager = getGameManager();
+		if (gameManager) {
+			if (val2)
+				gameManager->_sound.fn3(val, 0, val2);
+			else
+				gameManager->_sound.fn2(val);
+		}
+	}
+}
+
+void CGameObject::set5C(int val) {
+	if (val != _field5C) {
+		_field5C = val;
+		makeDirty();
+	}
 }
 
 } // End of namespace Titanic

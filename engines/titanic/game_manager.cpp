@@ -213,10 +213,6 @@ void CGameManager::viewChange() {
 	initBounds();
 }
 
-CRoomItem *CGameManager::getRoom() {
-	return _gameState._gameLocation.getRoom();
-}
-
 void CGameManager::frameMessage(CRoomItem *room) {
 	if (room) {
 		// Signal the next frame

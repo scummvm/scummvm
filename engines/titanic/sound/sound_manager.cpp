@@ -81,8 +81,9 @@ void QSoundManager::proc13() {
 	warning("TODO");
 }
 
-void QSoundManager::proc14() {
+bool QSoundManager::proc14() {
 	warning("TODO");
+	return false;
 }
 
 int QSoundManager::proc15() {

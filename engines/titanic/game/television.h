@@ -24,10 +24,25 @@
 #define TITANIC_TELEVISION_H
 
 #include "titanic/core/background.h"
+#include "titanic/messages/messages.h"
+#include "titanic/messages/pet_messages.h"
 
 namespace Titanic {
 
-class CTelevision : public CBackground {
+class CTelevision : public CBackground,
+	public CLeaveViewMsgTarget,
+	public CChangeSeasonMsgTarget,
+	public CEnterViewMsgTarget,
+	public CPETUpMsgTarget,
+	public CPETDownMsgTarget,
+	public CStatusChangeMsgTarget,
+	public CActMsgTarget,
+	public CPETActivateMsgTarget,
+	public CMovieEndMsgTarget,
+	public CShipSettingMsgTarget,
+	public CTurnOffTarget,
+	public CTurnOnTarget,
+	public CLightsMsgTarget {
 private:
 	static int _v1;
 	static int _v2;
@@ -41,6 +56,20 @@ private:
 	int _fieldE8;
 	int _fieldEC;
 	int _fieldF0;
+protected:
+	virtual bool handleMessage(CLeaveViewMsg &msg);
+	virtual bool handleMessage(CChangeSeasonMsg &msg);
+	virtual bool handleMessage(CEnterViewMsg &msg);
+	virtual bool handleMessage(CPETUpMsg &msg);
+	virtual bool handleMessage(CPETDownMsg &msg);
+	virtual bool handleMessage(CStatusChangeMsg &msg);
+	virtual bool handleMessage(CActMsg &msg);
+	virtual bool handleMessage(CPETActivateMsg &msg);
+	virtual bool handleMessage(CMovieEndMsg &msg);
+	virtual bool handleMessage(CShipSettingMsg &msg);
+	virtual bool handleMessage(CTurnOff &msg);
+	virtual bool handleMessage(CTurnOn &msg);
+	virtual bool handleMessage(CLightsMsg &msg);
 public:
 	CLASSDEF
 	CTelevision();

@@ -40,7 +40,7 @@ public:
 	virtual void proc12() = 0;
 	virtual void stop() = 0;
 	virtual void proc14() = 0;
-	virtual void proc15() = 0;
+	virtual void setFrame(uint frameNumber) = 0;
 	virtual void proc16() = 0;
 	virtual void proc17() = 0;
 	virtual void proc18() = 0;
@@ -63,18 +63,18 @@ public:
 	virtual void proc12();
 	virtual void stop();
 	virtual void proc14();
-	virtual void proc15();
+
+	/**
+	 * Set the current frame number
+	 */
+	virtual void setFrame(uint frameNumber);
+	
 	virtual void proc16();
 	virtual void proc17();
 	virtual void proc18();
 	virtual void proc19();
 	virtual void proc20();
 	virtual void *proc21();
-
-	/**
-	 * Set the current frame number
-	 */
-	void setFrame(uint frameNumber);
 };
 
 } // End of namespace Titanic

@@ -72,6 +72,10 @@ public:
 	 * Called when the view has been changed
 	 */
 	void preEnterView(CViewItem *newView, bool isNewRoom);
+
+	bool fn1(int val);
+	void fn2(int val);
+	void fn3(int val, int val2, int val3);
 };
 
 } // End of namespace Titanic

@@ -30,6 +30,7 @@ namespace Titanic {
 class CGameManager;
 class CDontSaveFileItem;
 class CNamedItem;
+class CPetControl;
 class CProjectItem;
 class CScreenManager;
 
@@ -220,6 +221,27 @@ public:
 	 * Finds a tree item by name
 	 */
 	CNamedItem *findByName(const CString &name, int maxLen = 0);
+
+	/**
+	 * Compare the name of the parent room to the item to a passed string
+	 */
+	int compareRoomNameTo(const CString &name);
+
+	/**
+	 * Clear the PET display
+	 */
+	void clearPet() const;
+	
+	/**
+	 * Returns the PET control
+	 */
+	CPetControl *getPetControl() const;
+
+	/**
+	 * Returns a child of the Dont Save area of the project of the given class
+	 */
+	CTreeItem *getDontSaveChild(ClassDef *classDef) const;
+
 };
 
 } // End of namespace Titanic

@@ -69,4 +69,56 @@ void CTelevision::load(SimpleFile *file) {
 	CBackground::load(file);
 }
 
+bool CTelevision::handleMessage(CLeaveViewMsg &msg) {
+	return true;
+}
+
+bool CTelevision::handleMessage(CChangeSeasonMsg &msg) {
+	return true; 
+}
+
+bool CTelevision::handleMessage(CEnterViewMsg &msg) {
+	return true;
+}
+
+bool CTelevision::handleMessage(CPETUpMsg &msg) {
+	return true;
+}
+
+bool CTelevision::handleMessage(CPETDownMsg &msg) {
+	return true; 
+}
+
+bool CTelevision::handleMessage(CStatusChangeMsg &msg) {
+	return true;
+}
+
+bool CTelevision::handleMessage(CActMsg &msg) {
+	return true;
+}
+
+bool CTelevision::handleMessage(CPETActivateMsg &msg) {
+	return true;
+}
+
+bool CTelevision::handleMessage(CMovieEndMsg &msg) {
+	return true;
+}
+
+bool CTelevision::handleMessage(CShipSettingMsg &msg) {
+	return true;
+}
+
+bool CTelevision::handleMessage(CTurnOff &msg) {
+	return true;
+}
+
+bool CTelevision::handleMessage(CTurnOn &msg) {
+	return true;
+}
+
+bool CTelevision::handleMessage(CLightsMsg &msg) {
+	return true;
+}
+
 } // End of namespace Titanic
