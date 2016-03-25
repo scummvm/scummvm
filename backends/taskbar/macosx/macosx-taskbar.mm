@@ -120,7 +120,7 @@ void MacOSXTaskbarManager::setOverlayIcon(const Common::String &name, const Comm
 	initOverlayIconView();
 
 	CFStringRef imageFile = CFStringCreateWithCString(0, path.c_str(), kCFStringEncodingASCII);
-	NSImage* image = [[NSImage alloc] initWithContentsOfFile:(NSString *)imageFile];
+	NSImage *image = [[NSImage alloc] initWithContentsOfFile:(NSString *)imageFile];
 	[_overlayIconView setImage:image];
 	[image release];
 	CFRelease(imageFile);
@@ -261,19 +261,19 @@ void MacOSXTaskbarManager::addRecent(const Common::String &name, const Common::S
 	
 	// Retrieve the current list of recent items and update it.
 	NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-	NSArray* oldArray = [defaults arrayForKey:@"recentGames"];
+	NSArray *oldArray = [defaults arrayForKey:@"recentGames"];
 	if (oldArray == nil) {
 		[defaults setObject:[NSArray arrayWithObject:dict] forKey:@"recentGames"];
 	} else {
-		NSMutableArray* newArray = [[NSMutableArray alloc] initWithArray:oldArray];
+		NSMutableArray *newArray = [[NSMutableArray alloc] initWithArray:oldArray];
 		// Insert the new game at the start
 		[newArray insertObject:dict atIndex:0];
 		// If the game was already present in the array, remove it
 		for (int i = 1 ; i < [newArray count] ; ++i) {
-			NSDictionary* oldDict = [newArray objectAtIndex:i];
+			NSDictionary *oldDict = [newArray objectAtIndex:i];
 			if (oldDict == nil)
 				continue;
-			NSString* oldGame = [oldDict valueForKey:@"game"];
+			NSString *oldGame = [oldDict valueForKey:@"game"];
 			if (oldGame != nil && [oldGame isEqualToString:(NSString*)gameName]) {
 				[newArray removeObjectAtIndex:i];
 				break;

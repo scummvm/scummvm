@@ -60,13 +60,13 @@ ifdef USE_DOCKTILEPLUGIN
 # Therefore do not use $(CXXFLAGS) and $(LDFLAGS).
 
 ScummVMDockTilePlugin32.o:
-	$(CXX) -mmacosx-version-min=10.6 -arch i386 -O2 -c $(srcdir)/dists/macosx/dockplugin/dockplugin.m -o ScummVMDockTilePlugin32.o
+	$(CXX) -mmacosx-version-min=10.6 -arch i386 -O2 -c $(srcdir)/backends/taskbar/macosx/dockplugin/dockplugin.m -o ScummVMDockTilePlugin32.o
 
 ScummVMDockTilePlugin32: ScummVMDockTilePlugin32.o
 	$(CXX) -mmacosx-version-min=10.6 -arch i386 -bundle -framework Foundation -framework AppKit -fobjc-link-runtime ScummVMDockTilePlugin32.o -o ScummVMDockTilePlugin32
 
 ScummVMDockTilePlugin64.o:
-	$(CXX) -mmacosx-version-min=10.6 -arch x86_64 -O2 -c $(srcdir)/dists/macosx/dockplugin/dockplugin.m -o ScummVMDockTilePlugin64.o
+	$(CXX) -mmacosx-version-min=10.6 -arch x86_64 -O2 -c $(srcdir)/backends/taskbar/macosx/dockplugin/dockplugin.m -o ScummVMDockTilePlugin64.o
 	
 ScummVMDockTilePlugin64: ScummVMDockTilePlugin64.o
 	$(CXX) -mmacosx-version-min=10.6 -arch x86_64 -bundle -framework Foundation -framework AppKit -fobjc-link-runtime ScummVMDockTilePlugin64.o -o ScummVMDockTilePlugin64
@@ -74,7 +74,7 @@ ScummVMDockTilePlugin64: ScummVMDockTilePlugin64.o
 ScummVMDockTilePlugin: ScummVMDockTilePlugin32 ScummVMDockTilePlugin64
 	lipo -create ScummVMDockTilePlugin32 ScummVMDockTilePlugin64 -output ScummVMDockTilePlugin
 
-dockplugin: ScummVMDockTilePlugin
+scummvm.docktileplugin: ScummVMDockTilePlugin
 	mkdir -p scummvm.docktileplugin/Contents
 	cp $(srcdir)/dists/macosx/dockplugin/Info.plist scummvm.docktileplugin/Contents
 	mkdir -p scummvm.docktileplugin/Contents/MacOS
@@ -86,7 +86,7 @@ endif
 bundle_name = ScummVM.app
 
 ifdef USE_DOCKTILEPLUGIN
-bundle: scummvm-static dockplugin
+bundle: scummvm-static scummvm.docktileplugin
 else
 bundle: scummvm-static
 endif
