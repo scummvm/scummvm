@@ -270,7 +270,7 @@ void MacOSXTaskbarManager::addRecent(const Common::String &name, const Common::S
 		[newArray insertObject:dict atIndex:0];
 		// If the game was already present in the array, remove it
 		for (int i = 1 ; i < [newArray count] ; ++i) {
-			NSDictionary* oldDict = newArray[i];
+			NSDictionary* oldDict = [newArray objectAtIndex:i];
 			if (oldDict == nil)
 				continue;
 			NSString* oldGame = [oldDict valueForKey:@"game"];
