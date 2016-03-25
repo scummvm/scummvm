@@ -34,11 +34,6 @@ public:
 	AbortableThread(IllusionsEngine *vm, uint32 threadId, uint32 callingThreadId, uint notifyFlags,
 		uint32 scriptThreadId, byte *scriptCodeIp);
 	virtual int onUpdate();
-	virtual void onSuspend();
-	virtual void onNotify();
-	virtual void onPause();
-	virtual void onResume();
-	virtual void onTerminated();
 public:
 	int _status;
 	byte *_scriptCodeIp;

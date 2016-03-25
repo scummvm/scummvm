@@ -203,12 +203,6 @@ int TalkThread_Duckman::onUpdate() {
 
 }
 
-void TalkThread_Duckman::onSuspend() {
-}
-
-void TalkThread_Duckman::onNotify() {
-}
-
 void TalkThread_Duckman::onPause() {
 	if (_status == 5) {
 		if (!(_flags & 4)) {

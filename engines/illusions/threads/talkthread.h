@@ -42,11 +42,6 @@ public:
 		int16 duration, uint32 objectId, uint32 talkId, uint32 sequenceId1, uint32 sequenceId2,
 		uint32 namedPointId);
 	virtual int onUpdate();
-	virtual void onSuspend();
-	virtual void onNotify();
-	virtual void onPause();
-	virtual void onResume();
-	virtual void onTerminated();
 	virtual void onKill();
 	virtual uint32 sendMessage(int msgNum, uint32 msgValue);
 public:

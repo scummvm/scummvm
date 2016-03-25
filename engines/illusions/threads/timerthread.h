@@ -39,7 +39,6 @@ public:
 	virtual void onPause();
 	virtual void onUnpause();
 	virtual void onResume();
-	virtual void onTerminated();
 public:
 	uint32 _startTime, _endTime;
 	uint32 _duration, _durationElapsed;
