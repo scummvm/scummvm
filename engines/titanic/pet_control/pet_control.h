@@ -105,6 +105,8 @@ public:
 	void fn2(int val);
 
 	void fn3(int val);
+
+	void fn4();
 };
 
 } // End of namespace Titanic

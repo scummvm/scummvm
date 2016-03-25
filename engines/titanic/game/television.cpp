@@ -21,11 +21,12 @@
  */
 
 #include "titanic/game/television.h"
+#include "titanic/pet_control/pet_control.h"
 
 namespace Titanic {
 
 int CTelevision::_v1;
-int CTelevision::_v2;
+bool CTelevision::_turnOn;
 int CTelevision::_v3;
 int CTelevision::_v4;
 int CTelevision::_v5;
@@ -35,12 +36,24 @@ CTelevision::CTelevision() : CBackground(), _fieldE0(1),
 	_fieldE4(7), _isOn(false), _fieldEC(0), _fieldF0(0) {
 }
 
+void CTelevision::init() {
+	_v1 = 531;
+	_turnOn = true;
+	_v3 = 0;
+	_v4 = 27;
+	_v5 = 1;
+	_v6 = 1;
+}
+
+void CTelevision::deinit() {
+}
+
 void CTelevision::save(SimpleFile *file, int indent) const {
 	file->writeNumberLine(1, indent);
 	file->writeNumberLine(_fieldE0, indent);
 	file->writeNumberLine(_v1, indent);
 	file->writeNumberLine(_fieldE4, indent);
-	file->writeNumberLine(_v2, indent);
+	file->writeNumberLine(_turnOn, indent);
 	file->writeNumberLine(_isOn, indent);
 	file->writeNumberLine(_v3, indent);
 	file->writeNumberLine(_fieldEC, indent);
@@ -57,7 +70,7 @@ void CTelevision::load(SimpleFile *file) {
 	_fieldE0 = file->readNumber();
 	_v1 = file->readNumber();
 	_fieldE4 = file->readNumber();
-	_v2 = file->readNumber();
+	_turnOn = file->readNumber() != 0;
 	_isOn = file->readNumber() != 0;
 	_v3 = file->readNumber();
 	_fieldEC = file->readNumber();
@@ -81,7 +94,7 @@ bool CTelevision::handleMessage(CLeaveViewMsg &msg) {
 		_isOn = false;
 
 		if (compareRoomNameTo("CSGState")) {
-			CVisibleMsg visibleMsg(1, 0);
+			CVisibleMsg visibleMsg(true);
 			visibleMsg.execute("Tellypic");
 		}
 	}
@@ -176,26 +189,57 @@ bool CTelevision::handleMessage(CActMsg &msg) {
 }
 
 bool CTelevision::handleMessage(CPETActivateMsg &msg) {
+	if (msg._name == "Television") {
+		CVisibleMsg visibleMsg(_isOn);
+		_isOn = !_isOn;
+
+		if (_isOn) {
+			set5C(true);
+			fn1(0, 55, 0);
+			_fieldE0 = 1;
+		} else {
+			stopMovie();
+			if (soundFn1(_fieldF0))
+				soundFn2(_fieldF0, 0);
+			
+			set5C(false);
+		}
+
+		if (compareRoomNameTo("SGTState"))
+			visibleMsg.execute("Tellypic");
+	}
+
 	return true;
 }
 
 bool CTelevision::handleMessage(CMovieEndMsg &msg) {
+	warning("TODO: CMovieEndMsg");
 	return true;
 }
 
 bool CTelevision::handleMessage(CShipSettingMsg &msg) {
+	_v4 = msg._value;
 	return true;
 }
 
 bool CTelevision::handleMessage(CTurnOff &msg) {
+	_turnOn = false;
 	return true;
 }
 
 bool CTelevision::handleMessage(CTurnOn &msg) {
+	_turnOn = true;
 	return true;
 }
 
 bool CTelevision::handleMessage(CLightsMsg &msg) {
+	CPetControl *pet = getPetControl();
+	if (pet)
+		pet->fn4();
+
+	if (msg._field8 || !_turnOn)
+		_turnOn = true;
+
 	return true;
 }
 

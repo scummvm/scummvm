@@ -115,4 +115,8 @@ void CPetControl::fn3(int val) {
 	warning("TODO: CPetControl::fn3");
 }
 
+void CPetControl::fn4() {
+	warning("TODO: CPetControl::fn4");
+}
+
 } // End of namespace Titanic

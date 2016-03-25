@@ -33,6 +33,7 @@
 #include "titanic/carry/hose.h"
 #include "titanic/core/saveable_object.h"
 #include "titanic/game/get_lift_eye2.h"
+#include "titanic/game/television.h"
 #include "titanic/game/parrot/parrot_lobby_object.h"
 #include "titanic/game/sgt/sgt_navigation.h"
 #include "titanic/game/sgt/sgt_state_room.h"
@@ -84,6 +85,7 @@ void TitanicEngine::initialize() {
 	CSGTStateRoom::init();
 	CExitPellerator::init();
 	CEnterExitSecClassMiniLift::init();
+	CTelevision::init();
 
 	_debugger = new Debugger(this);
 	_events = new Events(this);
@@ -101,6 +103,7 @@ void TitanicEngine::deinitialize() {
 	CSGTStateRoom::deinit();
 	CExitPellerator::deinit();
 	CEnterExitSecClassMiniLift::deinit();
+	CTelevision::deinit();
 }
 
 Common::Error TitanicEngine::run() {

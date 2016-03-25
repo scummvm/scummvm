@@ -45,7 +45,7 @@ class CTelevision : public CBackground,
 	public CLightsMsgTarget {
 private:
 	static int _v1;
-	static int _v2;
+	static bool _turnOn;
 	static int _v3;
 	static int _v4;
 	static int _v5;
@@ -73,6 +73,8 @@ protected:
 public:
 	CLASSDEF
 	CTelevision();
+	static void init();
+	static void deinit();
 
 	/**
 	 * Save the data for the class to file
