@@ -47,7 +47,7 @@ enum {
 
 struct SequenceFrame {
 	int16 _duration;
-	int16 _isScaled;
+	bool _isScaled;
 	Common::Rect _rect;
 	int32 _spriteId;
 	int32 _soundId;

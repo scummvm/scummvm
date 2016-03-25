@@ -491,7 +491,7 @@ void GameSys::seqInsertGfx(int index, int duration) {
 					(_backgroundImageValue3 - _backgroundImageValue1);
 				gfxItem->_currFrame._rect.top = gfxItem->_currFrame._rect.bottom - scaleValue * (gfxItem->_currFrame._rect.bottom - gfxItem->_currFrame._rect.top) / 1000;
 				gfxItem->_currFrame._rect.right = scaleValue * (gfxItem->_currFrame._rect.right - gfxItem->_currFrame._rect.left) / 1000 + gfxItem->_currFrame._rect.left;
-				gfxItem->_currFrame._isScaled = 1;
+				gfxItem->_currFrame._isScaled = true;
 			}
 			gfxItem->_currFrame._duration -= totalDuration;
 			if (gfxItem->_currFrame._soundId != -1)
@@ -772,7 +772,7 @@ void GameSys::seqDrawSpriteFrame(SpriteResource *spriteResource, SequenceFrame &
 
 	const int x = clipRect.left, y = clipRect.top;
 	
-	debug(1, "GameSys::seqDrawSpriteFrame() destX: %d; destY: %d; frame.isScaled: %d", x, y, frame._isScaled);
+	debug(1, "GameSys::seqDrawSpriteFrame() destX: %d; destY: %d; frame.isScaled: %d", x, y, frame._isScaled ? 1 : 0);
 
 	// 32bit sprite drawing
 	if (frame._isScaled) {
@@ -1099,7 +1099,7 @@ void GameSys::fatUpdateFrame() {
 									(_backgroundImageValue3 - _backgroundImageValue1);
 								gfxItem->_currFrame._rect.top = gfxItem->_currFrame._rect.bottom - v17 * (gfxItem->_currFrame._rect.bottom - gfxItem->_currFrame._rect.top) / 1000;
 								gfxItem->_currFrame._rect.right = v17 * (gfxItem->_currFrame._rect.right - gfxItem->_currFrame._rect.left) / 1000 + gfxItem->_currFrame._rect.left;
-								gfxItem->_currFrame._isScaled = 1;
+								gfxItem->_currFrame._isScaled = true;
 							}
 							gfxItem->_currFrame._duration -= duration;
 							if (gfxItem->_currFrame._soundId != -1)
@@ -1157,7 +1157,7 @@ void GameSys::fatUpdateFrame() {
 				gfxItem->_prevFrame._soundId = -1;
 				gfxItem->_prevFrame._unusedVal = -1;
 				gfxItem->_currFrame._duration = 0;
-				gfxItem->_currFrame._isScaled = 0;
+				gfxItem->_currFrame._isScaled = false;
 				gfxItem->_currFrame._rect = _newSpriteDrawItems[k]._rect;
 				gfxItem->_currFrame._spriteId = _newSpriteDrawItems[k]._surface ? 0xCAFEBABE : -1;// TODO
 				gfxItem->_currFrame._soundId = -1;
@@ -1173,7 +1173,7 @@ void GameSys::fatUpdateFrame() {
 			if (gfxItem->_sequenceId == -1 && !gfxItem->_animation && (gfxItem->_flags & 1) &&
 				gfxItem->_id == _grabSpriteId && gfxItem->_surface == _grabSpriteSurface1) {
 					gfxItem->_currFrame._duration = 0;
-					gfxItem->_currFrame._isScaled = 0;
+					gfxItem->_currFrame._isScaled = false;
 					gfxItem->_currFrame._rect = _grabSpriteRect;
 					gfxItem->_currFrame._spriteId = _grabSpriteSurface2 ? 1 : -1;// TODO
 					gfxItem->_currFrame._soundId = -1;

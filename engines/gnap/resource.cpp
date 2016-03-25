@@ -28,7 +28,7 @@ namespace Gnap {
 
 void SequenceFrame::loadFromStream(Common::MemoryReadStream &stream) {
 	_duration = stream.readUint16LE();
-	_isScaled = stream.readUint16LE();
+	_isScaled = (stream.readUint16LE() != 0);
 	_rect.left = stream.readUint32LE();
 	_rect.top = stream.readUint32LE();
 	_rect.right = stream.readUint32LE();
