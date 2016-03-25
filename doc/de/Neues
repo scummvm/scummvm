@@ -11,6 +11,10 @@ Programmcodes finden Sie auf Englisch unter:
      Diese Funktion war im originalen Interpreter nur im Hercules-Darstellungsmodus
      verfügbar.
 
+ Mac OS X-Portierung:
+   - Das Dock-Menü für ScummVM enthält nun eine Liste der zuletzt gespielten Spiele,
+     wenn ScummVM nicht läuft, und ermöglicht den direkten Start dieser Spiele.
+
 1.8.1 (DD.MM.YYYY)
  Allgemein:
    - "TESTING"-Markierung von mehreren unterstützten Spielen entfernt.
