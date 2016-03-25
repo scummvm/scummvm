@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef DROPBOX_H
-#define DROPBOX_H
+#ifndef CLOUD_DROPBOX_H
+#define CLOUD_DROPBOX_H
 
 #include "common/noncopyable.h"
 #include "common/scummsys.h"
@@ -30,27 +30,28 @@
 #include "common/error.h"
 #include "common/fs.h"
 #include "common/config-manager.h"
+
 #include "backends/cloud/cloud.h"
 
 namespace Cloud {
 
 class DropBox : public CloudAbstract {
-    Common::String _token;
-    Common::String getSavePath();
-    Common::String getToken();
-    Common::String getTokenFromCode(Common::String code);
+	Common::String _token;
+	Common::String getSavePath();
+	Common::String getToken();
+	Common::String getTokenFromCode(Common::String code);
 
 public:
-    DropBox();
-    virtual cloudAuth checkAuth();
-    virtual void auth(Common::String code);
+	DropBox();
+	virtual cloudAuth checkAuth();
+	virtual void auth(Common::String code);
 
-    /* Until the object is authorized, the following functions are unusable*/
-    virtual int sync(const Common::String &pattern);
-    virtual int download(const Common::String &fileName);
-    virtual int upload(const Common::String &fileName);
-    virtual int copy(const Common::String &srcFileName, const Common::String &destFileName);
-    virtual int remove(const Common::String &fileName);
+	/* Until the object is authorized, the following functions are unusable*/
+	virtual int sync(const Common::String &pattern);
+	virtual int download(const Common::String &fileName);
+	virtual int upload(const Common::String &fileName);
+	virtual int copy(const Common::String &srcFileName, const Common::String &destFileName);
+	virtual int remove(const Common::String &fileName);
 };
 }
 #endif

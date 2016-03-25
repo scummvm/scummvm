@@ -20,8 +20,9 @@
  *
  */
 
-#ifndef CLOUD_H
-#define CLOUD_H
+#ifndef BACKEND_CLOUD_H
+#define BACKEND_CLOUD_H
+
 #include "common/noncopyable.h"
 #include "common/scummsys.h"
 #include "common/stream.h"
@@ -33,9 +34,9 @@
 namespace Cloud {
 
 enum cloudAuth{
-    VALID,
-    INVALID,
-    OFFLINE
+	VALID,
+	INVALID,
+	OFFLINE
 };
 
 /**
@@ -43,79 +44,79 @@ enum cloudAuth{
  * provider. It implements the state Pattern.
  */
 class CloudInstance {
-    class CloudAbstract *_cloud;
-    Common::String _cloudName;
+	class CloudAbstract *_cloud;
+	Common::String _cloudName;
 public:
-    CloudInstance();
-    CloudInstance(CloudAbstract* absCloud);
-    ~CloudInstance(){};
+	CloudInstance();
+	CloudInstance(CloudAbstract *absCloud);
+	~CloudInstance(){};
 
-    /**
-     * Attempt to authenticate the provider with the given code. This is a one
-     * time process. Unless the provider is authenticated, the services below
-     * won't work.
-     * @param code The Authentication Code recieved from visitng provider' URL
-     */
-    void auth(Common::String code);
+	/**
+	 * Attempt to authenticate the provider with the given code. This is a one
+	 * time process. Unless the provider is authenticated, the services below
+	 * won't work.
+	 * @param code The Authentication Code recieved from visitng provider' URL
+	 */
+	void auth(Common::String code);
 
-    /**
-     * @return enum cloudAuth. Please refer to enum cloudAuth definition for error codes
-     */
-    cloudAuth checkAuth();
+	/**
+	 * @return enum cloudAuth. Please refer to enum cloudAuth definition for error codes
+	 */
+	cloudAuth checkAuth();
 
-    /**
-     * Attempt to Sync all the files matching the given pattern
-     * @param pattern The Search pattern to match files on the cloud
-     * @return 0 if success, failure otherwise
-     */
-    int sync(const Common::String &pattern);
+	/**
+	 * Attempt to Sync all the files matching the given pattern
+	 * @param pattern The Search pattern to match files on the cloud
+	 * @return 0 if success, failure otherwise
+	 */
+	int sync(const Common::String &pattern);
 
-    /**
-     * Attempt to download the file with the given name.
-     * @param FileName Name of the file to download
-     * @return 0 if success, failure otherwise
-     */
-    int download(const Common::String &fileName);
+	/**
+	 * Attempt to download the file with the given name.
+	 * @param FileName Name of the file to download
+	 * @return 0 if success, failure otherwise
+	 */
+	int download(const Common::String &fileName);
 
-    /**
-     * Attempt to Upload the file with the given name.
-     * @param FileName Name of the file to upload
-     * @return 0 if success, failure otherwise
-     */
-    int upload(const Common::String &fileName);
+	/**
+	 * Attempt to Upload the file with the given name.
+	 * @param FileName Name of the file to upload
+	 * @return 0 if success, failure otherwise
+	 */
+	int upload(const Common::String &fileName);
 
-    /**
-     * Copy a file from source to destination
-     * @param srcFilename Name of the file to copy
-     * @param destFileName Name of the new copied file
-     * @return 0 if success, failure otherwise
-     */
-    int copy(const Common::String &srcFileName, const Common::String &destFileName);
+	/**
+	 * Copy a file from source to destination
+	 * @param srcFilename Name of the file to copy
+	 * @param destFileName Name of the new copied file
+	 * @return 0 if success, failure otherwise
+	 */
+	int copy(const Common::String &srcFileName, const Common::String &destFileName);
 
-    /**
-     * Remove a file with given name
-     * @param filename Name of the file to Delete
-     * @return 0 if success, failure otherwise
-     */
-    int remove(const Common::String &fileName);
+	/**
+	 * Remove a file with given name
+	 * @param filename Name of the file to Delete
+	 * @return 0 if success, failure otherwise
+	 */
+	int remove(const Common::String &fileName);
 
-    /**
-     * Use Dropbox service provider. After this is called, this instance
-     * will provide dropbox services. This is also the default behaviour
-     */
-    void useDropBox();
+	/**
+	 * Use Dropbox service provider. After this is called, this instance
+	 * will provide dropbox services. This is also the default behaviour
+	 */
+	void useDropBox();
 
-    /**
-     * Use OneDrive service provider. After this is called, this instance
-     * will provide OneDrive services.
-     */
-    void useOneDrive();
+	/**
+	 * Use OneDrive service provider. After this is called, this instance
+	 * will provide OneDrive services.
+	 */
+	void useOneDrive();
 
-    /**
-     * Use Google service provider. After this is called, this instance
-     * will provide Google Drive services.
-     */
-    void useGDrive();
+	/**
+	 * Use Google service provider. After this is called, this instance
+	 * will provide Google Drive services.
+	 */
+	void useGDrive();
 };
 
 /**
@@ -124,17 +125,17 @@ public:
  */
 class CloudAbstract {
 public:
-    virtual void auth(Common::String code)=0;
-    virtual cloudAuth checkAuth()=0;
-    virtual int sync(const Common::String &pattern)=0;
-    virtual int download(const Common::String &fileName)=0;
-    virtual int upload(const Common::String &fileName)=0;
-    virtual int copy(const Common::String &srcFileName, const Common::String &destFileName)=0;
-    virtual int remove(const Common::String &fileName)=0;
-    virtual ~CloudAbstract() {}
+	virtual void auth(Common::String code) = 0;
+	virtual cloudAuth checkAuth() = 0;
+	virtual int sync(const Common::String &pattern) = 0;
+	virtual int download(const Common::String &fileName) = 0;
+	virtual int upload(const Common::String &fileName) = 0;
+	virtual int copy(const Common::String &srcFileName, const Common::String &destFileName) = 0;
+	virtual int remove(const Common::String &fileName) = 0;
+	virtual ~CloudAbstract() {}
 };
 
-CloudInstance* getDefaultInstance();
+CloudInstance *getDefaultInstance();
 
 }
 

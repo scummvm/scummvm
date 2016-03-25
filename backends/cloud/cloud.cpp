@@ -28,55 +28,55 @@
 namespace Cloud {
 
 CloudInstance defaultObj;
-CloudInstance* getDefaultInstance() {
-    return &defaultObj;
+CloudInstance *getDefaultInstance() {
+	return &defaultObj;
 }
 
 CloudInstance::CloudInstance() {
-    useDropBox();
+	useDropBox();
 }
 CloudInstance::CloudInstance(CloudAbstract *absCloud) {
-    _cloud = absCloud;
+	_cloud = absCloud;
 }
 void CloudInstance::auth(Common::String code) {
-    _cloud->auth(code);
+	_cloud->auth(code);
 }
 cloudAuth CloudInstance::checkAuth() {
-    return _cloud->checkAuth();
+	return _cloud->checkAuth();
 }
 
 int CloudInstance::sync(const Common::String &pattern) {
-    return _cloud->sync(pattern);
+	return _cloud->sync(pattern);
 }
 
 int CloudInstance::download(const Common::String &fileName) {
-    return _cloud->download(fileName);
+	return _cloud->download(fileName);
 }
 
 int CloudInstance::upload(const Common::String &fileName) {
-    return _cloud->upload(fileName);
+	return _cloud->upload(fileName);
 }
 
 int CloudInstance::copy(const Common::String &srcFileName, const Common::String &destFileName) {
-    return _cloud->copy(srcFileName, destFileName);
+	return _cloud->copy(srcFileName, destFileName);
 }
 
 int CloudInstance::remove(const Common::String &fileName) {
-    return _cloud->remove(fileName);
+	return _cloud->remove(fileName);
 }
 
 void CloudInstance::useDropBox() {
-    CloudAbstract* newcloud = new DropBox();
-    delete _cloud;
-    _cloud = newcloud;
-    _cloudName = Common::String("dropbox_");
+	CloudAbstract *newcloud = new DropBox();
+	delete _cloud;
+	_cloud = newcloud;
+	_cloudName = Common::String("dropbox_");
 }
 
 void CloudInstance::useOneDrive() {
-    //TODO: Implement
+	//TODO: Implement
 }
 void CloudInstance::useGDrive() {
-    //TODO: Implement
+	//TODO: Implement
 }
 
 }
