@@ -324,8 +324,7 @@ void GnapEngine::scene13_run() {
 				updateGnapIdleSequence();
 			if (!_timers[4]) {
 				_timers[4] = getRandom(20) + 20;
-				_gnapRandomValue = getRandom(5);
-				switch (_gnapRandomValue) {
+				switch (getRandom(5)) {
 				case 0:
 					playSound(0xD2, 0);
 					break;
@@ -346,8 +345,7 @@ void GnapEngine::scene13_run() {
 			if (!_timers[5]) {
 				int newSoundId;
 				_timers[5] = getRandom(50) + 50;
-				_gnapRandomValue = getRandom(7);
-				switch (_gnapRandomValue) {
+				switch (getRandom(7)) {
 				case 0:
 					newSoundId = 0xD7;
 					_timers[5] = 2 * getRandom(50) + 100;

@@ -394,8 +394,7 @@ void GnapEngine::scene41_run() {
 			if (!_timers[4]) {
 				_timers[4] = getRandom(100) + 100;
 				if (_gnapActionStatus < 0 && _beaverActionStatus < 0 && _toyUfoActionStatus == -1 && _s41_nextToyVendorSequenceId == -1) {
-					_gnapRandomValue = getRandom(3);
-					switch (_gnapRandomValue) {
+					switch (getRandom(3)) {
 					case 0:
 						_s41_nextToyVendorSequenceId = 0x113;
 						break;

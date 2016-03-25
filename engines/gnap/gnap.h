@@ -487,7 +487,6 @@ public:
 	int _gnapActionStatus;
 	int _gnapBrainPulseNum, _gnapBrainPulseRndValue;
 	int _gnapSequenceId, _gnapSequenceDatNum, _gnapId;
-	int _gnapRandomValue;
 
 	int getGnapSequenceId(int kind, int gridX, int gridY);
 	int getGnapShowSequenceId(int index, int gridX, int gridY);

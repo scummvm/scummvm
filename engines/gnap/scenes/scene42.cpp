@@ -330,8 +330,7 @@ void GnapEngine::scene42_run() {
 			if (!_timers[4]) {
 				_timers[4] = getRandom(20) + 30;
 				if (_gnapActionStatus < 0 && _beaverActionStatus < 0 && _s42_nextBBQVendorSequenceId == -1) {
-					_gnapRandomValue = getRandom(8);
-					switch (_gnapRandomValue) {
+					switch (getRandom(8)) {
 					case 0:
 						_s42_nextBBQVendorSequenceId = 0x14C;
 						break;

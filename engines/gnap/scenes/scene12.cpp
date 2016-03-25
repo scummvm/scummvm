@@ -347,7 +347,7 @@ void GnapEngine::scene12_run() {
 			}
 			if (!_timers[7]) {
 				_timers[7] = getRandom(100) + 100;
-				_gnapRandomValue = getRandom(3);
+				int _gnapRandomValue = getRandom(3);
 				switch (_gnapRandomValue) {
 				case 0:
 					_gameSys->insertSequence(0x8A5 | 0x10000, 179, 0, 0, kSeqNone, 0, 0, 0);
@@ -450,8 +450,7 @@ void GnapEngine::scene12_updateAnimations() {
 			_s12_nextBeardGuySequenceId = 0x1F0;
 			break;
 		case kASTalkBarkeeper:
-			_gnapRandomValue = getRandom(2);
-			if (_gnapRandomValue != 0)
+			if (getRandom(2) != 0)
 				_s12_nextBarkeeperSequenceId = 0x1FD;
 			else
 				_s12_nextBarkeeperSequenceId = 0x1FF;

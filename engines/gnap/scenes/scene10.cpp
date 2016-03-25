@@ -329,7 +329,7 @@ void GnapEngine::scene10_run() {
 			}
 			if (!_timers[5]) {
 				_timers[5] = getRandom(100) + 100;
-				_gnapRandomValue = getRandom(4);
+				int _gnapRandomValue = getRandom(4);
 				if (_gnapRandomValue) {
 					int sequenceId;
 					if (_gnapRandomValue == 1) {
@@ -428,45 +428,46 @@ void GnapEngine::scene10_updateAnimations() {
 		}
 	
 		switch (_s10_currCookSequenceId) {
-		case 0x106:
-			_gnapRandomValue = getRandom(7);
+		case 0x106: {
+			// TODO: Refactor into a if + a switch
+			int rnd = getRandom(7);
 			if (_gnapActionStatus >= 0 || _beaverActionStatus >= 0)
 				_s10_nextCookSequenceId = 0x106;
-			else if (_gnapRandomValue == 0)
+			else if (rnd == 0)
 				_s10_nextCookSequenceId = 0x104;
-			else if (_gnapRandomValue == 1)
+			else if (rnd == 1)
 				_s10_nextCookSequenceId = 0x103;
-			else if (_gnapRandomValue == 2) {
+			else if (rnd == 2) {
 				_s10_nextCookSequenceId = 0x106;
 				_gameSys->insertSequence(0x10D, 1, 0, 0, kSeqNone, 0, 0, 0);
 			} else
 				_s10_nextCookSequenceId = 0x106;
+			}
 			break;
 		case 0x103:
-			_gnapRandomValue = getRandom(7);
 			if (_gnapActionStatus >= 0 || _beaverActionStatus >= 0)
 				_s10_nextCookSequenceId = 0x106;
-			else if (_gnapRandomValue == 0)
+			else if (getRandom(7) == 0)
 				_s10_nextCookSequenceId = 0x104;
 			else
 				_s10_nextCookSequenceId = 0x106;
 			break;
 		case 0x104:
-			_gnapRandomValue = getRandom(7);
 			if (_gnapActionStatus >= 0 || _beaverActionStatus >= 0)
 				_s10_nextCookSequenceId = 0x106;
-			else if (_gnapRandomValue == 0)
+			else if (getRandom(7) == 0)
 				_s10_nextCookSequenceId = 0x103;
 			else
 				_s10_nextCookSequenceId = 0x106;
 			break;
-		case 0x105:
-			_gnapRandomValue = getRandom(7);
+		case 0x105: {
+			// TODO: Refactor into a if + a switch
+			int rnd = getRandom(7);
 			if (_gnapActionStatus >= 0 || _beaverActionStatus >= 0)
 				_s10_nextCookSequenceId = 0x106;
-			else if (_gnapRandomValue == 0)
+			else if (rnd == 0)
 				_s10_nextCookSequenceId = 0x104;
-			else if (_gnapRandomValue == 1)
+			else if (rnd == 1)
 				_s10_nextCookSequenceId = 0x103;
 			else
 				_s10_nextCookSequenceId = 0x106;
@@ -478,6 +479,7 @@ void GnapEngine::scene10_updateAnimations() {
 			_gnapSequenceDatNum = 0;
 			_gnapActionStatus = -1;
 			_beaverActionStatus = -1;
+			}
 			break;
 		}
 		if (_s10_currCookSequenceId == 0x843)
@@ -485,7 +487,6 @@ void GnapEngine::scene10_updateAnimations() {
 		else
 			_gameSys->setAnimation(_s10_currCookSequenceId, 100, 2);
 	}
-
 }
 
 void GnapEngine::scene10_updateAnimationsCb() {

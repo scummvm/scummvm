@@ -364,7 +364,7 @@ void GnapEngine::scene08_run() {
 				_timers[4] = getRandom(50) + 125;
 				if (_gnapActionStatus < 0 && _beaverActionStatus < 0 && _s08_nextManSequenceId == -1 &&
 					(_s08_currDogSequenceId == 0x134 || _s08_currDogSequenceId == 0x135)) {
-					_gnapRandomValue = getRandom(4);
+					int _gnapRandomValue = getRandom(4);
 					switch (_gnapRandomValue) {
 					case 0:
 						_s08_nextManSequenceId = 0x138;

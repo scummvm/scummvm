@@ -311,8 +311,7 @@ void GnapEngine::scene11_run() {
 			if (!_timers[5]) {
 				_timers[5] = getRandom(100) + 75;
 				if (_gnapActionStatus < 0 && _beaverActionStatus < 0 && _s11_nextGoggleGuySequenceId == -1) {
-					_gnapRandomValue = getRandom(2);
-					if (_gnapRandomValue)
+					if (getRandom(2))
 						_s11_nextGoggleGuySequenceId = 0x1F6;
 					else
 						_s11_nextGoggleGuySequenceId = 0x1F9;
@@ -322,8 +321,7 @@ void GnapEngine::scene11_run() {
 				_timers[4] = getRandom(40) + 20;
 				if (_gnapActionStatus < 0 && _beaverActionStatus < 0 && _s11_nextHookGuySequenceId == -1) {
 					if (_s11_currHookGuySequenceId == 0x201) {
-						_gnapRandomValue = getRandom(7);
-						switch (_gnapRandomValue) {
+						switch (getRandom(7)) {
 						case 0:
 							_s11_nextHookGuySequenceId = 0x200;
 							break;
@@ -344,7 +342,7 @@ void GnapEngine::scene11_run() {
 			}
 			if (!_timers[6]) {
 				_timers[6] = getRandom(100) + 100;
-				_gnapRandomValue = getRandom(3);
+				int _gnapRandomValue = getRandom(3);
 				switch (_gnapRandomValue) {
 				case 0:
 					_gameSys->insertSequence(0x8A5 | 0x10000, 179, 0, 0, kSeqNone, 0, 0, 0);

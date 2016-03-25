@@ -1632,9 +1632,8 @@ void GnapEngine::updateGnapIdleSequence() {
 			if (_timers[3] == 0) {
 				_timers[2] = 60;
 				_timers[3] = 300;
-				_gnapRandomValue = getRandom(5);
 				if (_gnapIdleFacing == 1) {
-					switch (_gnapRandomValue) {
+					switch (getRandom(5)) {
 					case 0:
 						playGnapSequence(0x107A6);
 						break;
@@ -1649,7 +1648,7 @@ void GnapEngine::updateGnapIdleSequence() {
 						break;
 					}
 				} else if (_gnapIdleFacing == 3) {
-					if (_gnapRandomValue > 2)
+					if (getRandom(5) > 2)
 						playGnapSequence(0x10832);
 					else
 						playGnapSequence(0x10842);
@@ -1932,19 +1931,19 @@ void GnapEngine::updateBeaverIdleSequence() {
 		if (_timers[0] > 0) {
 			if (_timers[1] == 0) {
 				_timers[1] = getRandom(20) + 30;
-				_gnapRandomValue = getRandom(10);
+				int rnd = getRandom(10);
 				if (_beaverFacing != 0) {
-					if (_gnapRandomValue != 0 || _beaverSequenceId != 0x7CA) {
-						if (_gnapRandomValue != 1 || _beaverSequenceId != 0x7CA)
+					if (rnd != 0 || _beaverSequenceId != 0x7CA) {
+						if (rnd != 1 || _beaverSequenceId != 0x7CA)
 							playBeaverSequence(0x107CA);
 						else
 							playBeaverSequence(0x10845);
 					} else {
 						playBeaverSequence(0x107CC);
 					}
-				} else if (_gnapRandomValue != 0 || _beaverSequenceId != 0x7C9) {
-					if (_gnapRandomValue != 1 || _beaverSequenceId != 0x7C9) {
-						if (_gnapRandomValue != 2 || _beaverSequenceId != 0x7C9)
+				} else if (rnd != 0 || _beaverSequenceId != 0x7C9) {
+					if (rnd != 1 || _beaverSequenceId != 0x7C9) {
+						if (rnd != 2 || _beaverSequenceId != 0x7C9)
 							playBeaverSequence(0x107C9);
 						else
 							playBeaverSequence(0x108A4);
@@ -1970,14 +1969,13 @@ void GnapEngine::beaverSub426234() {
 		if (_timers[0]) {
 			if (!_timers[1]) {
 				_timers[1] = getRandom(20) + 30;
-				_gnapRandomValue = getRandom(10);
 				if (_beaverFacing != 0) {
-					if (_gnapRandomValue >= 2 || _beaverSequenceId != 0x7CA)
+					if (getRandom(10) >= 2 || _beaverSequenceId != 0x7CA)
 						playBeaverSequence(0x107CA);
 					else
 						playBeaverSequence(0x107CC);
 				} else {
-					if (_gnapRandomValue >= 2 || _beaverSequenceId != 0x7C9) {
+					if (getRandom(10) >= 2 || _beaverSequenceId != 0x7C9) {
 						playBeaverSequence(0x107C9);
 					} else {
 						playBeaverSequence(0x107CB);
@@ -2136,8 +2134,7 @@ bool GnapEngine::sceneXX_sub_4466B1() {
 void GnapEngine::sceneXX_playRandomSound(int timerIndex) {
 	if (!_timers[timerIndex]) {
 		_timers[timerIndex] = getRandom(40) + 50;
-		_gnapRandomValue = getRandom(4);
-		switch (_gnapRandomValue) {
+		switch (getRandom(4)) {
 		case 0:
 			playSound(0x1091B, 0);
 			break;

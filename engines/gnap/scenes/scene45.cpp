@@ -147,9 +147,8 @@ void GnapEngine::scene45_run() {
 			gameUpdateTick();
 			if (_gameSys->getAnimationStatus(2) == 2) {
 				_gameSys->setAnimation(0, 0, 2);
-				_gnapRandomValue = getRandom(7);
-				int newSeqId = _gnapRandomValue + 0x8F;
-				_gameSys->insertSequence(_gnapRandomValue + 0x8F, 1, _s45_currDancerSequenceId, 1, kSeqSyncWait, 0, 0, 0);
+				int newSeqId = getRandom(7) + 0x8F;
+				_gameSys->insertSequence(newSeqId, 1, _s45_currDancerSequenceId, 1, kSeqSyncWait, 0, 0, 0);
 				_gameSys->setAnimation(newSeqId, 1, 2);
 				_s45_currDancerSequenceId = newSeqId;
 			}
@@ -393,9 +392,8 @@ void GnapEngine::scene45_updateAnimations() {
 	
 	if (_gameSys->getAnimationStatus(2) == 2) {
 		_gameSys->setAnimation(0, 0, 2);
-		_gnapRandomValue = getRandom(7);
-		int newSeqId = _gnapRandomValue + 0x8F;
-		_gameSys->insertSequence(_gnapRandomValue + 0x8F, 1, _s45_currDancerSequenceId, 1, kSeqSyncWait, 0, 0, 0);
+		int newSeqId = getRandom(7) + 0x8F;
+		_gameSys->insertSequence(newSeqId + 0x8F, 1, _s45_currDancerSequenceId, 1, kSeqSyncWait, 0, 0, 0);
 		_gameSys->setAnimation(newSeqId, 1, 2);
 		_s45_currDancerSequenceId = newSeqId;
 	}

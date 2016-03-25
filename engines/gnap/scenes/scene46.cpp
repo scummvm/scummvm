@@ -288,8 +288,7 @@ void GnapEngine::scene46_run() {
 			if (!_timers[4]) {
 				_timers[4] = getRandom(50) + 80;
 				if (_gnapActionStatus < 0 && _beaverActionStatus < 0 && _s46_nextItchyGuySequenceId == -1) {
-					_gnapRandomValue = getRandom(2);
-					if (_gnapRandomValue != 0)
+					if (getRandom(2) != 0)
 						_s46_nextItchyGuySequenceId = 0x49;
 					else
 						_s46_nextItchyGuySequenceId = 0x48;

@@ -376,8 +376,7 @@ void GnapEngine::scene44_run() {
 			if (!_timers[4]) {
 				_timers[4] = getRandom(20) + 20;
 				if (_gnapActionStatus < 0 && _beaverActionStatus < 0 && _s44_nextKissingLadySequenceId == -1) {
-					_gnapRandomValue = getRandom(20);
-					switch (_gnapRandomValue) {
+					switch (getRandom(20)) {
 					case 0:
 						_s44_nextKissingLadySequenceId = 0xED;
 						break;
@@ -404,8 +403,7 @@ void GnapEngine::scene44_run() {
 			if (!_timers[5]) {
 				_timers[5] = getRandom(20) + 20;
 				if (_gnapActionStatus < 0 && _beaverActionStatus < 0 && _s44_nextSpringGuySequenceId == -1) {
-					_gnapRandomValue = getRandom(5);
-					if (_gnapRandomValue != 0) {
+					if (getRandom(5) != 0) {
 						if (!isFlag(15))
 							_s44_nextSpringGuySequenceId = 0xF9;
 					} else {

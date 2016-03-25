@@ -333,8 +333,7 @@ void GnapEngine::scene43_run() {
 			if (!_timers[4] && (!isFlag(12) || !isFlag(19))) {
 				_timers[4] = getRandom(100) + 100;
 				if (_gnapActionStatus < 0 && _beaverActionStatus < 0 && _s43_nextTwoHeadedGuySequenceId == -1) {
-					_gnapRandomValue = getRandom(5);
-					switch (_gnapRandomValue) {
+					switch (getRandom(5)) {
 					case 0:
 						_s43_nextTwoHeadedGuySequenceId = 0x13C;
 						break;
