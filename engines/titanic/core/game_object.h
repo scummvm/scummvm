@@ -51,11 +51,6 @@ private:
 	 */
 	void loadImage(const CString &name, bool pendingFlag = true);
 
-	/**
-	 * Loads a frame
-	 */
-	void loadFrame(int frameNumber);
-
 	void processClipList2();
 
 	/**
@@ -94,6 +89,11 @@ protected:
 	CString _resource;
 	int _fieldB8;
 protected:
+	/**
+	 * Loads a frame
+	 */
+	void loadFrame(int frameNumber);
+
 	bool soundFn1(int val);
 	void soundFn2(int val, int val2);
 	void set5C(int val);

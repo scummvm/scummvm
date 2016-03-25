@@ -70,6 +70,22 @@ void CTelevision::load(SimpleFile *file) {
 }
 
 bool CTelevision::handleMessage(CLeaveViewMsg &msg) {
+	clearPet();
+	if (_fieldE8) {
+		if (soundFn1(_fieldF0))
+			soundFn2(_fieldF0, 0);
+
+		loadFrame(622);
+		stopMovie();
+		set5C(0);
+		_fieldE8 = 0;
+
+		if (compareRoomNameTo("CSGState")) {
+			CVisibleMsg visibleMsg(1, 0);
+			visibleMsg.execute("Tellypic");
+		}
+	}
+
 	return true;
 }
 
