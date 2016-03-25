@@ -10,6 +10,10 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Added optional "pause, when entering commands" feature, that was only
      available in the original interpreter for Hercules rendering.
 
+ Mac OS X port:
+   - Dock menu for ScummVM now lists recently played games when ScummVM is
+     not running and allows starting those games.
+
 1.8.1 (XXXX-XX-XX)
  General:
    - Removed TESTING flag from several supported games.
