@@ -33,6 +33,8 @@ namespace Illusions {
 // NOTE It's assumed there's only one game cursor object
 // The original stores the _data inside the actor, here it's inside the Cursor class.
 
+// BbdouCursor
+
 BbdouCursor::BbdouCursor(IllusionsEngine_BBDOU *vm, BbdouSpecialCode *bbdou)
 	: _vm(vm), _bbdou(bbdou) {
 }
@@ -143,36 +145,6 @@ uint32 BbdouCursor::findCursorSequenceId(uint32 objectId) {
 		if (_cursorSequences[i]._objectId == objectId)
 			return _cursorSequences[i]._sequenceId;
 	return 0;
-}
-
-void BbdouCursor::setObjectInteractMode(uint32 objectId, int value) {
-	ObjectInteractMode *objectInteractMode = 0;
-	for (uint i = 0; i < ARRAYSIZE(_objectVerbs); ++i)
-		if (_objectVerbs[i]._objectId == objectId) {
-			objectInteractMode = &_objectVerbs[i];
-			break;
-		}
-	if (!objectInteractMode) {
-		for (uint i = 0; i < ARRAYSIZE(_objectVerbs); ++i)
-			if (_objectVerbs[i]._objectId == 0) {
-				objectInteractMode = &_objectVerbs[i];
-				break;
-			}
-	}
-	if (value != 11) {
-		objectInteractMode->_objectId = objectId;
-		objectInteractMode->_interactMode = value;
-	} else if (objectInteractMode->_objectId == objectId) {
-		objectInteractMode->_objectId = 0;
-		objectInteractMode->_interactMode = 0;
-	}
-}
-
-int BbdouCursor::getObjectInteractMode(uint32 objectId) {
-	for (uint i = 0; i < ARRAYSIZE(_objectVerbs); ++i)
-		if (_objectVerbs[i]._objectId == objectId)
-			return _objectVerbs[i]._interactMode;
-	return 11;
 }
 
 bool BbdouCursor::updateTrackingCursor(Control *control) {

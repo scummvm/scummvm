@@ -69,12 +69,6 @@ struct CursorSequence {
 	CursorSequence() : _objectId(0), _sequenceId(0) {}
 };
 
-struct ObjectInteractMode {
-	uint32 _objectId;
-	int _interactMode;
-	ObjectInteractMode() : _objectId(0), _interactMode(0) {}
-};
-
 const uint kMaxCursorSequences = 100;
 
 class BbdouCursor {
@@ -87,8 +81,6 @@ public:
 	void reset(uint32 objectId);
 	void addCursorSequenceId(uint32 objectId, uint32 sequenceId);
 	uint32 findCursorSequenceId(uint32 objectId);
-	void setObjectInteractMode(uint32 objectId, int value);
-	int getObjectInteractMode(uint32 objectId);
 	bool updateTrackingCursor(Control *control);
 	void saveInfo();
 	void restoreInfo();
@@ -104,7 +96,6 @@ public:
 	Control *_control;
 	CursorData _data;
 	CursorSequence _cursorSequences[kMaxCursorSequences];
-	ObjectInteractMode _objectVerbs[512];
 	void resetActiveVerbs();
 	void show(Control *control);
 	void hide(uint32 objectId);

@@ -107,6 +107,41 @@ void RadarMicrophoneThread::initZones() {
 	_currZoneIndex = 0;
 }
 
+// ObjectInteractModeMap
+
+ObjectInteractModeMap::ObjectInteractModeMap() {
+}
+
+void ObjectInteractModeMap::setObjectInteractMode(uint32 objectId, int value) {
+	ObjectInteractMode *objectInteractMode = 0;
+	for (uint i = 0; i < ARRAYSIZE(_objectVerbs); ++i)
+		if (_objectVerbs[i]._objectId == objectId) {
+			objectInteractMode = &_objectVerbs[i];
+			break;
+		}
+	if (!objectInteractMode) {
+		for (uint i = 0; i < ARRAYSIZE(_objectVerbs); ++i)
+			if (_objectVerbs[i]._objectId == 0) {
+				objectInteractMode = &_objectVerbs[i];
+				break;
+			}
+	}
+	if (value != 11) {
+		objectInteractMode->_objectId = objectId;
+		objectInteractMode->_interactMode = value;
+	} else if (objectInteractMode->_objectId == objectId) {
+		objectInteractMode->_objectId = 0;
+		objectInteractMode->_interactMode = 0;
+	}
+}
+
+int ObjectInteractModeMap::getObjectInteractMode(uint32 objectId) {
+	for (uint i = 0; i < ARRAYSIZE(_objectVerbs); ++i)
+		if (_objectVerbs[i]._objectId == objectId)
+			return _objectVerbs[i]._interactMode;
+	return 11;
+}
+
 // BbdouSpecialCode
 
 BbdouSpecialCode::BbdouSpecialCode(IllusionsEngine_BBDOU *vm)
@@ -252,7 +287,7 @@ void BbdouSpecialCode::spcSetObjectInteractMode(OpCall &opCall) {
 	ARG_SKIP(4);
 	ARG_UINT32(objectId);
 	ARG_INT16(value);
-	_cursor->setObjectInteractMode(objectId, value);
+	_objectInteractModeMap.setObjectInteractMode(objectId, value);
 	_vm->notifyThreadId(opCall._threadId);
 }
 
@@ -530,7 +565,7 @@ void BbdouSpecialCode::showBubble(uint32 objectId, uint32 overlappedObjectId, ui
 	verbState->_objectIds[1] = _bubble->addItem(0, 0x6005A);
 	verbState->_index = 0;
 	
-	int value = _cursor->getObjectInteractMode(overlappedControl->_objectId);
+	int value = _objectInteractModeMap.getObjectInteractMode(overlappedControl->_objectId);
 	if (holdingObjectId) {
 		verbState->_verbId = 0x1B0003;
 	} else if (value == 9) {
@@ -614,7 +649,7 @@ void BbdouSpecialCode::cursorInteractControlRoutine(Control *cursorControl, uint
 				if (cursorData._verbState._isBubbleVisible)
 					playSoundEffect(4);
 				hideVerbBubble(cursorControl->_objectId, &cursorData._verbState);
-				int value = _cursor->getObjectInteractMode(overlappedControl->_objectId);
+				int value = _objectInteractModeMap.getObjectInteractMode(overlappedControl->_objectId);
 				if (!testValueRange(value)) {
 					if (cursorData._mode == 3)
 						_cursor->restoreInfo();
@@ -785,7 +820,7 @@ void BbdouSpecialCode::cursorCrosshairControlRoutine(Control *cursorControl, uin
 	if (foundOverlapped) {
 		if (overlappedControl->_objectId != cursorData._currOverlappedObjectId) {
 			hideVerbBubble(cursorControl->_objectId, &cursorData._verbState);
-			int value = _cursor->getObjectInteractMode(overlappedControl->_objectId);
+			int value = _objectInteractModeMap.getObjectInteractMode(overlappedControl->_objectId);
 			if (value == 2 || value == 3 || value == 4 || value == 5 || value == 6 || value == 7) {
 				if (cursorData._mode != 3) {
 					_cursor->saveInfo();
@@ -921,7 +956,7 @@ bool BbdouSpecialCode::testVerbId(uint32 verbId, uint32 holdingObjectId, uint32 
 	static const uint32 kVerbIdsH8[] = {0x001B0003, 0x001B0001, 0};
 	
 	const uint32 *verbIds;
-	int value = _cursor->getObjectInteractMode(overlappedObjectId);
+	int value = _objectInteractModeMap.getObjectInteractMode(overlappedObjectId);
   
 	if (holdingObjectId) {
 		if (value == 9)
