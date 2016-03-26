@@ -182,29 +182,6 @@ void HiRes2Engine::initState() {
 	}
 }
 
-void HiRes2Engine::loadRoom(byte roomNr) {
-	Room &room = getRoom(roomNr);
-	StreamPtr stream(room.data->createReadStream());
-
-	uint16 descOffset = stream->readUint16LE();
-	uint16 commandOffset = stream->readUint16LE();
-
-	// There's no picture count. The original engine always checks at most
-	// five pictures. We use the description offset to bound our search.
-	uint16 picCount = (descOffset - 4) / 5;
-
-	for (uint i = 0; i < picCount; ++i) {
-		Picture2 pic;
-		readPictureMeta(*stream, pic);
-		_roomData.pictures.push_back(pic);
-	}
-
-	_roomData.description = readStringAt(*stream, descOffset, 0xff);
-
-	stream->seek(commandOffset);
-	readCommands(*stream, _roomData.commands);
-}
-
 void HiRes2Engine::restartGame() {
 	initState();
 }
@@ -230,17 +207,35 @@ void HiRes2Engine::drawItem(const Item &item, const Common::Point &pos) const {
 	_graphics->drawPic(*stream, pos, 0);
 }
 
+void HiRes2Engine::loadRoom(byte roomNr) {
+	Room &room = getRoom(roomNr);
+	StreamPtr stream(room.data->createReadStream());
+
+	uint16 descOffset = stream->readUint16LE();
+	uint16 commandOffset = stream->readUint16LE();
+
+	// There's no picture count. The original engine always checks at most
+	// five pictures. We use the description offset to bound our search.
+	uint16 picCount = (descOffset - 4) / 5;
+
+	for (uint i = 0; i < picCount; ++i) {
+		Picture2 pic;
+		readPictureMeta(*stream, pic);
+		_roomData.pictures.push_back(pic);
+	}
+
+	_roomData.description = readStringAt(*stream, descOffset, 0xff);
+
+	stream->seek(commandOffset);
+	readCommands(*stream, _roomData.commands);
+}
+
 void HiRes2Engine::showRoom() {
-	loadRoom(_state.room);
 	drawPic(getCurRoom().curPicture, Common::Point());
 	drawItems();
 	_display->updateHiResScreen();
 	printString(_roomData.description);
 	_linesPrinted = 0;
-}
-
-void HiRes2Engine::printMessage(uint idx) {
-	printString(_messages[idx - 1]);
 }
 
 Engine *HiRes2Engine_create(OSystem *syst, const AdlGameDescription *gd) {

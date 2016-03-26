@@ -104,8 +104,10 @@ private:
 	void initState();
 	void restartGame();
 	void drawPic(byte pic, Common::Point pos = Common::Point()) const;
+	void printString(const Common::String &str);
 	void printMessage(uint idx);
 	void drawItem(const Item &item, const Common::Point &pos) const;
+	void loadRoom(byte roomNr);
 	void showRoom();
 
 	void wordWrap(Common::String &str) const;

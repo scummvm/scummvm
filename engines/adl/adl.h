@@ -192,7 +192,8 @@ protected:
 	Common::String readStringAt(Common::SeekableReadStream &stream, uint offset, byte until = 0) const;
 	void openFile(Common::File &file, const Common::String &name) const;
 
-	virtual void printMessage(uint idx) = 0;
+	virtual void printString(const Common::String &str) = 0;
+	virtual void printMessage(uint idx);
 	void delay(uint32 ms) const;
 
 	Common::String inputString(byte prompt = 0) const;
@@ -310,6 +311,7 @@ private:
 	virtual void initState() = 0;
 	virtual void restartGame() = 0;
 	virtual void drawItem(const Item &item, const Common::Point &pos) const = 0;
+	virtual void loadRoom(byte roomNr) = 0;
 	virtual void showRoom() = 0;
 
 	// Engine

@@ -268,10 +268,17 @@ void HiRes1Engine::drawPic(byte pic, Common::Point pos) const {
 	_graphics->drawPic(*_pictures[pic].data->createReadStream(), pos, 0x7f);
 }
 
+void HiRes1Engine::printString(const Common::String &str) {
+	Common::String wrap = str;
+	wordWrap(wrap);
+	_display->printString(wrap);
+
+	if (_messageDelay)
+		delay(14 * 166018 / 1000);
+}
+
 void HiRes1Engine::printMessage(uint idx) {
-	Common::String msg = _messages[idx - 1];
-	wordWrap(msg);
-	_display->printString(msg);
+	const Common::String &msg = _messages[idx - 1];
 
 	// Messages with hardcoded overrides don't delay after printing.
 	// It's unclear if this is a bug or not. In some cases the result
@@ -285,11 +292,11 @@ void HiRes1Engine::printMessage(uint idx) {
 	case IDI_HR1_MSG_DONT_HAVE_IT:
 	case IDI_HR1_MSG_DONT_UNDERSTAND:
 	case IDI_HR1_MSG_GETTING_DARK:
+		_display->printString(msg);
 		return;
 	}
 
-	if (_messageDelay)
-		delay(14 * 166018 / 1000);
+	printString(msg);
 }
 
 void HiRes1Engine::drawItem(const Item &item, const Common::Point &pos) const {
@@ -300,6 +307,10 @@ void HiRes1Engine::drawItem(const Item &item, const Common::Point &pos) const {
 		drawPic(item.picture, pos);
 }
 
+void HiRes1Engine::loadRoom(byte roomNr) {
+	_roomData.description = _messages[_roomDesc[_state.room - 1] - 1];
+}
+
 void HiRes1Engine::showRoom() {
 	if (!_state.isDark) {
 		drawPic(getCurRoom().curPicture);
@@ -308,7 +319,7 @@ void HiRes1Engine::showRoom() {
 
 	_display->updateHiResScreen();
 	_messageDelay = false;
-	printMessage(_roomDesc[_state.room - 1]);
+	printString(_roomData.description);
 	_messageDelay = true;
 }
 

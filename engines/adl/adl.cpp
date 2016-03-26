@@ -110,6 +110,10 @@ void AdlEngine::openFile(Common::File &file, const Common::String &name) const {
 		error("Error opening '%s'", name.c_str());
 }
 
+void AdlEngine::printMessage(uint idx) {
+	printString(_messages[idx - 1]);
+}
+
 void AdlEngine::delay(uint32 ms) const {
 	uint32 start = g_system->getMillis();
 
@@ -513,6 +517,8 @@ Common::Error AdlEngine::run() {
 		// (Also see comment below.)
 		if (!_isRestoring) {
 			clearScreen();
+			// FIXME: Should only be called when room changes
+			loadRoom(_state.room);
 			showRoom();
 
 			_canSaveNow = _canRestoreNow = true;

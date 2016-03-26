@@ -62,10 +62,9 @@ private:
 	void restartGame();
 	void drawPic(byte pic, Common::Point pos) const;
 	void drawItem(const Item &item, const Common::Point &pos) const;
-	void showRoom();
-	void printMessage(uint idx);
-
 	void loadRoom(byte roomNr);
+	void showRoom();
+
 	DataBlockPtr readDataBlockPtr(Common::ReadStream &f) const;
 	void readPictureMeta(Common::ReadStream &f, Picture2 &pic) const;
 

@@ -49,9 +49,9 @@ protected:
 	bool matchesCurrentPic(byte pic) const;
 	byte roomArg(byte room) const;
 	void advanceClock();
+	void printString(const Common::String &str);
 
 	void checkTextOverflow(char c);
-	void printString(const Common::String &str);
 
 	int o2_isFirstTime(ScriptEnv &e);
 	int o2_isRandomGT(ScriptEnv &e);
