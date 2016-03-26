@@ -164,6 +164,17 @@ struct State {
 typedef Common::List<Command> Commands;
 typedef Common::HashMap<Common::String, uint> WordMap;
 
+struct Picture2 {
+	byte nr;
+	DataBlockPtr data;
+};
+
+struct RoomData {
+	Common::String description;
+	Common::Array<Picture2> pictures;
+	Commands commands;
+};
+
 class AdlEngine : public Engine {
 public:
 	virtual ~AdlEngine();
@@ -189,7 +200,7 @@ protected:
 
 	void loadWords(Common::ReadStream &stream, WordMap &map) const;
 	void readCommands(Common::ReadStream &stream, Commands &commands);
-	virtual void checkInput(byte verb, byte noun);
+	void checkInput(byte verb, byte noun);
 
 	virtual void setupOpcodeTables();
 	virtual bool matchesCurrentPic(byte pic) const;
@@ -266,6 +277,8 @@ protected:
 	// <room, verb, noun, script> lists
 	Commands _roomCommands;
 	Commands _globalCommands;
+	// Data related to the current room
+	RoomData _roomData;
 
 	WordMap _verbs;
 	WordMap _nouns;

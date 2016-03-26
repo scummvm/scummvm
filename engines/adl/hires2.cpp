@@ -243,13 +243,6 @@ void HiRes2Engine::printMessage(uint idx, bool wait) {
 	printString(_messages[idx - 1]);
 }
 
-void HiRes2Engine::checkInput(byte verb, byte noun) {
-	if (doOneCommand(_roomData.commands, verb, noun))
-		return;
-
-	AdlEngine::checkInput(verb, noun);
-}
-
 Engine *HiRes2Engine_create(OSystem *syst, const AdlGameDescription *gd) {
 	return new HiRes2Engine(syst, gd);
 }

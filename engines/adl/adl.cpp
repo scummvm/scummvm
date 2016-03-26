@@ -274,6 +274,11 @@ void AdlEngine::readCommands(Common::ReadStream &stream, Commands &commands) {
 }
 
 void AdlEngine::checkInput(byte verb, byte noun) {
+	// Try room-local command list first
+	if (doOneCommand(_roomData.commands, verb, noun))
+		return;
+
+	// If no match was found, try the global list
 	if (!doOneCommand(_roomCommands, verb, noun))
 		printMessage(_messageIds.dontUnderstand);
 }

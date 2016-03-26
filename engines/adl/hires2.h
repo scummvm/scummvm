@@ -50,17 +50,6 @@ namespace Adl {
 #define IDI_HR2_MSG_ITEM_NOT_HERE        4
 #define IDI_HR2_MSG_THANKS_FOR_PLAYING 239
 
-struct Picture2 {
-	byte nr;
-	DataBlockPtr data;
-};
-
-struct RoomData {
-	Common::String description;
-	Common::Array<Picture2> pictures;
-	Commands commands;
-};
-
 class HiRes2Engine : public AdlEngine_v2 {
 public:
 	HiRes2Engine(OSystem *syst, const AdlGameDescription *gd) : AdlEngine_v2(syst, gd) { }
@@ -75,14 +64,12 @@ private:
 	void drawItem(const Item &item, const Common::Point &pos) const;
 	void showRoom();
 	void printMessage(uint idx, bool wait);
-	void checkInput(byte verb, byte noun);
 
 	void loadRoom(byte roomNr);
 	DataBlockPtr readDataBlockPtr(Common::ReadStream &f) const;
 	void readPictureMeta(Common::ReadStream &f, Picture2 &pic) const;
 
 	DiskImage_DSK _disk;
-	RoomData _roomData;
 	Common::Array<Picture2> _itemPics;
 };
 
