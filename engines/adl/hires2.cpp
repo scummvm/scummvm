@@ -38,6 +38,10 @@ DataBlockPtr HiRes2Engine::readDataBlockPtr(Common::ReadStream &f) const {
 	byte sector = f.readByte();
 	byte offset = f.readByte();
 	byte size = f.readByte();
+
+	if (f.eos() || f.err())
+		error("Error reading DataBlockPtr");
+
 	return _disk.getDataBlock(track, sector, offset, size);
 }
 
@@ -96,6 +100,16 @@ void HiRes2Engine::init() {
 	_messageIds.itemDoesntMove = IDI_HR2_MSG_ITEM_DOESNT_MOVE;
 	_messageIds.itemNotHere = IDI_HR2_MSG_ITEM_NOT_HERE;
 	_messageIds.thanksForPlaying = IDI_HR2_MSG_THANKS_FOR_PLAYING;
+
+	// Load global picture data
+	stream.reset(_disk.createReadStream(0x19, 0xa, 0x80, 0));
+	byte picNr;
+	while ((picNr = stream->readByte()) != 0xff) {
+		if (stream->eos() || stream->err())
+			error("Error reading global pic list");
+
+		_pictures[picNr] = readDataBlockPtr(*stream);
+	}
 
 	// Load item picture data
 	stream.reset(_disk.createReadStream(0x1e, 0x9, 0x05));
