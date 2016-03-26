@@ -192,7 +192,7 @@ protected:
 	Common::String readStringAt(Common::SeekableReadStream &stream, uint offset, byte until = 0) const;
 	void openFile(Common::File &file, const Common::String &name) const;
 
-	virtual void printMessage(uint idx, bool wait = true);
+	virtual void printMessage(uint idx) = 0;
 	void delay(uint32 ms) const;
 
 	Common::String inputString(byte prompt = 0) const;
@@ -317,9 +317,6 @@ private:
 	bool hasFeature(EngineFeature f) const;
 	bool canLoadGameStateCurrently();
 	bool canSaveGameStateCurrently();
-
-	// Text output
-	void wordWrap(Common::String &str) const;
 
 	// Text input
 	byte convertKey(uint16 ascii) const;

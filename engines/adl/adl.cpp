@@ -110,15 +110,6 @@ void AdlEngine::openFile(Common::File &file, const Common::String &name) const {
 		error("Error opening '%s'", name.c_str());
 }
 
-void AdlEngine::printMessage(uint idx, bool wait) {
-	Common::String msg = _messages[idx - 1];
-	wordWrap(msg);
-	_display->printString(msg);
-
-	if (wait)
-		delay(14 * 166018 / 1000);
-}
-
 void AdlEngine::delay(uint32 ms) const {
 	uint32 start = g_system->getMillis();
 
@@ -744,21 +735,6 @@ bool AdlEngine::canSaveGameStateCurrently() {
 	}
 
 	return false;
-}
-
-void AdlEngine::wordWrap(Common::String &str) const {
-	uint end = 39;
-
-	while (1) {
-		if (str.size() <= end)
-			return;
-
-		while (str[end] != APPLECHAR(' '))
-			--end;
-
-		str.setChar(APPLECHAR('\r'), end);
-		end += 40;
-	}
 }
 
 byte AdlEngine::convertKey(uint16 ascii) const {

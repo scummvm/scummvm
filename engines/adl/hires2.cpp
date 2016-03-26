@@ -239,7 +239,7 @@ void HiRes2Engine::showRoom() {
 	_linesPrinted = 0;
 }
 
-void HiRes2Engine::printMessage(uint idx, bool wait) {
+void HiRes2Engine::printMessage(uint idx) {
 	printString(_messages[idx - 1]);
 }
 

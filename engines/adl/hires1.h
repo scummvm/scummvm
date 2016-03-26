@@ -91,7 +91,10 @@ namespace Adl {
 
 class HiRes1Engine : public AdlEngine {
 public:
-	HiRes1Engine(OSystem *syst, const AdlGameDescription *gd) : AdlEngine(syst, gd), _files(nullptr) { }
+	HiRes1Engine(OSystem *syst, const AdlGameDescription *gd) :
+			AdlEngine(syst, gd),
+			_files(nullptr),
+			_messageDelay(true) { }
 	~HiRes1Engine() { delete _files; }
 
 private:
@@ -101,14 +104,17 @@ private:
 	void initState();
 	void restartGame();
 	void drawPic(byte pic, Common::Point pos = Common::Point()) const;
-	void printMessage(uint idx, bool wait = true);
+	void printMessage(uint idx);
 	void drawItem(const Item &item, const Common::Point &pos) const;
 	void showRoom();
+
+	void wordWrap(Common::String &str) const;
 
 	Files *_files;
 	Common::File _exe;
 	Common::Array<DataBlockPtr> _corners;
 	Common::Array<byte> _roomDesc;
+	bool _messageDelay;
 };
 
 } // End of namespace Adl

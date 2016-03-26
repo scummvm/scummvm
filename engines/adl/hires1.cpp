@@ -268,7 +268,11 @@ void HiRes1Engine::drawPic(byte pic, Common::Point pos) const {
 	_graphics->drawPic(*_pictures[pic].data->createReadStream(), pos, 0x7f);
 }
 
-void HiRes1Engine::printMessage(uint idx, bool wait) {
+void HiRes1Engine::printMessage(uint idx) {
+	Common::String msg = _messages[idx - 1];
+	wordWrap(msg);
+	_display->printString(msg);
+
 	// Messages with hardcoded overrides don't delay after printing.
 	// It's unclear if this is a bug or not. In some cases the result
 	// is that these strings will scroll past the four-line text window
@@ -281,10 +285,11 @@ void HiRes1Engine::printMessage(uint idx, bool wait) {
 	case IDI_HR1_MSG_DONT_HAVE_IT:
 	case IDI_HR1_MSG_DONT_UNDERSTAND:
 	case IDI_HR1_MSG_GETTING_DARK:
-		wait = false;
+		return;
 	}
 
-	AdlEngine::printMessage(idx, wait);
+	if (_messageDelay)
+		delay(14 * 166018 / 1000);
 }
 
 void HiRes1Engine::drawItem(const Item &item, const Common::Point &pos) const {
@@ -302,7 +307,24 @@ void HiRes1Engine::showRoom() {
 	}
 
 	_display->updateHiResScreen();
-	printMessage(_roomDesc[_state.room - 1], false);
+	_messageDelay = false;
+	printMessage(_roomDesc[_state.room - 1]);
+	_messageDelay = true;
+}
+
+void HiRes1Engine::wordWrap(Common::String &str) const {
+	uint end = 39;
+
+	while (1) {
+		if (str.size() <= end)
+			return;
+
+		while (str[end] != APPLECHAR(' '))
+			--end;
+
+		str.setChar(APPLECHAR('\r'), end);
+		end += 40;
+	}
 }
 
 Engine *HiRes1Engine_create(OSystem *syst, const AdlGameDescription *gd) {
