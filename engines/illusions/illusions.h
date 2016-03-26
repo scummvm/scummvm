@@ -77,6 +77,7 @@ class TalkInstanceList;
 class ThreadList;
 class UpdateFunctions;
 class GameState;
+class ScreenPaletteBase;
 
 enum {
 	kGameIdBBDOU   = 1,
@@ -108,6 +109,7 @@ public:
 	void updateEvents();
 
 	Screen *_screen;
+	ScreenPaletteBase *_screenPalette;	
 	ScreenText *_screenText;
 	Input *_input;
 	ActorInstanceList *_actorInstances;
@@ -157,8 +159,8 @@ public:
 	int updateActors(uint flags);
 	int updateSequences(uint flags);
 	int updateGraphics(uint flags);
-	int updateSprites(uint flags);
 	int updateSoundMan(uint flags);
+	int updateSprites(uint flags);
 
 	uint32 getElapsedUpdateTime();
 	Common::Point *getObjectActorPositionPtr(uint32 objectId);
@@ -168,9 +170,9 @@ public:
 	void playVideo(uint32 videoId, uint32 objectId, uint32 value, uint32 threadId);
 	bool isSoundActive();
 
-	void updateFader();
-	void pauseFader();
-	void unpauseFader();
+	virtual void updateFader() {};
+	virtual void pauseFader() {};
+	virtual void unpauseFader() {};
 
 	void setCurrFontId(uint32 fontId);
 	bool checkActiveTalkThreads();

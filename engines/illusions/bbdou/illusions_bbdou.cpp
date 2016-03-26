@@ -152,6 +152,7 @@ Common::Error IllusionsEngine_BBDOU::run() {
 	_resSys->addResourceLoader(0x00170000, new SpecialCodeLoader(this));
 
 	_screen = new Screen(this, 640, 480, 16);
+	_screenPalette = new NullScreenPalette();
 	_screenText = new ScreenText(this);
 	_input = new Input();	
 	_actorInstances = new ActorInstanceList(this);

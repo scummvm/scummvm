@@ -111,6 +111,47 @@ struct Fader {
 	Fader() : _active(false), _paused(false) {}
 };
 
+class ScreenPaletteBase {
+public:
+	virtual ~ScreenPaletteBase() {};
+	virtual void setPalette(byte *colors, uint start, uint count) {};
+	virtual void setPaletteEntry(int16 index, byte r, byte g, byte b) {};
+	virtual void getPalette(byte *colors) {};
+	virtual void shiftPalette(int16 fromIndex, int16 toIndex) {};
+	virtual void updatePalette() {};
+	virtual void updateFaderPalette() {};
+	virtual void setFader(int newValue, int firstIndex, int lastIndex) {};
+	virtual bool isFaderActive() const { return false; }
+	virtual const byte* getColorTransTbl() const { return 0; }
+};
+
+class ScreenPalette : public ScreenPaletteBase {
+public:
+	ScreenPalette(IllusionsEngine *vm);
+	void setPalette(byte *colors, uint start, uint count);
+	void setPaletteEntry(int16 index, byte r, byte g, byte b);
+	void getPalette(byte *colors);
+	void shiftPalette(int16 fromIndex, int16 toIndex);
+	void updatePalette();
+	void updateFaderPalette();
+	void setFader(int newValue, int firstIndex, int lastIndex);
+	bool isFaderActive() const { return _isFaderActive; }
+	const byte* getColorTransTbl() const { return _colorTransTbl; }
+protected:
+	IllusionsEngine *_vm;
+	bool _needRefreshPalette;
+	byte _mainPalette[768];
+	byte _colorTransTbl[256];
+	bool _isFaderActive;
+	byte _faderPalette[768];
+	int _newFaderValue, _firstFaderIndex, _lastFaderIndex;
+	void setSystemPalette(byte *palette);
+	void buildColorTransTbl();
+};
+
+class NullScreenPalette : public ScreenPaletteBase {
+};
+
 // TODO Split into two classes (8bit and 16bit)?
 
 class Screen {
@@ -126,13 +167,6 @@ public:
 	void clearScreenOffsetAreas();
 	void decompressSprite(SpriteDecompressQueueItem *item);
 	void drawSurface(Common::Rect &dstRect, Graphics::Surface *surface, Common::Rect &srcRect, int16 scale, uint32 flags);
-	void setPalette(byte *colors, uint start, uint count);
-	void setPaletteEntry(int16 index, byte r, byte g, byte b);
-	void getPalette(byte *colors);
-	void shiftPalette(int16 fromIndex, int16 toIndex);
-	void updatePalette();
-	void updateFaderPalette();
-	void setFader(int newValue, int firstIndex, int lastIndex);
 	void drawText(FontResource *font, Graphics::Surface *surface, int16 x, int16 y, uint16 *text, uint count);
 	void fillSurface(Graphics::Surface *surface, byte color);
 	uint16 convertColor(byte color);
@@ -141,7 +175,6 @@ public:
 	uint16 getColorKey2() const { return _colorKey2; }
 	int16 getScreenWidth() const { return _backSurface->w; }
 	int16 getScreenHeight() const { return _backSurface->h; }
-	bool isFaderActive() const { return _isFaderActive; }
 public:
 	IllusionsEngine *_vm;
 	bool _displayOn;
@@ -151,19 +184,8 @@ public:
 	SpriteDrawQueue *_drawQueue;
 	Graphics::Surface *_backSurface;
 	
-	bool _needRefreshPalette;
-	byte _mainPalette[768];
-	byte _colorTransTbl[256];
-	
-	bool _isFaderActive;
-	byte _faderPalette[768];
-	int _newFaderValue, _firstFaderIndex, _lastFaderIndex;
-
 	bool _isScreenOffsetActive;
 	Common::Point _screenOffsetPt;
-
-	void setSystemPalette(byte *palette);
-	void buildColorTransTbl();
 
 	void drawText8(FontResource *font, Graphics::Surface *surface, int16 x, int16 y, uint16 *text, uint count);
 	int16 drawChar8(FontResource *font, Graphics::Surface *surface, int16 x, int16 y, uint16 c);

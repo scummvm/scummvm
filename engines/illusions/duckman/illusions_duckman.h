@@ -81,7 +81,7 @@ public:
 protected:
 	virtual Common::Error run();
 	virtual bool hasFeature(EngineFeature f) const;
-public:	
+public:
 
 	// TODO ActiveScenes _activeScenes;
 	uint32 _prevSceneId;
@@ -112,6 +112,9 @@ public:
 	int updateScreenShaker(uint flags);
 
 	void startFader(int duration, int minValue, int maxValue, int firstIndex, int lastIndex, uint32 threadId);
+	void updateFader();
+	void pauseFader();
+	void unpauseFader();
 
 	void setDefaultTextCoords();
 

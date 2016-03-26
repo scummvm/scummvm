@@ -206,14 +206,14 @@ int IllusionsEngine::updateGraphics(uint flags) {
 	return kUFNext;
 }
 
-int IllusionsEngine::updateSprites(uint flags) {
-	_screen->updateSprites();
-	_screen->updatePalette();
+int IllusionsEngine::updateSoundMan(uint flags) {
+	_soundMan->update();
 	return kUFNext;
 }
 
-int IllusionsEngine::updateSoundMan(uint flags) {
-	_soundMan->update();
+int IllusionsEngine::updateSprites(uint flags) {
+	_screen->updateSprites();
+	_screenPalette->updatePalette();
 	return kUFNext;
 }
 
@@ -265,39 +265,6 @@ void IllusionsEngine::playVideo(uint32 videoId, uint32 objectId, uint32 priority
 bool IllusionsEngine::isSoundActive() {
 	// TODO
 	return true;
-}
-
-void IllusionsEngine::updateFader() {
-	if (_fader && !_fader->_paused && _fader->_active) {
-		int32 currTime = getCurrentTime();
-		int32 currDuration = currTime - _fader->_startTime;
-		if (currDuration) {
-			int newValue;
-			if (currDuration >= _fader->_duration) {
-				newValue = _fader->_maxValue;
-			} else {
-				newValue = (currDuration * (_fader->_maxValue - _fader->_minValue) / _fader->_duration) + _fader->_minValue;
-			}
-			if (_fader->_currValue != newValue) {
-				_fader->_currValue = newValue;
-				_screen->setFader(newValue, _fader->_firstIndex, _fader->_lastIndex);
-			}
-			if (_fader->_currValue == _fader->_maxValue) {
-				_fader->_active = false;
-				notifyThreadId(_fader->_notifyThreadId);
-			}
-		}
-	}
-}
-
-void IllusionsEngine::pauseFader() {
-	_fader->_paused = true;
-	_fader->_startTime = getCurrentTime() - _fader->_startTime;
-}
-
-void IllusionsEngine::unpauseFader() {
-	_fader->_startTime = getCurrentTime() - _fader->_startTime;
-	_fader->_paused = false;
 }
 
 void IllusionsEngine::setCurrFontId(uint32 fontId) {
