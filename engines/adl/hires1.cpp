@@ -263,7 +263,7 @@ void HiRes1Engine::restartGame() {
 }
 
 void HiRes1Engine::drawPic(byte pic, Common::Point pos) const {
-	_graphics->drawPic(*_pictures[pic]->createReadStream(), pos, 0x7f);
+	_graphics->drawPic(*_pictures[pic]->createReadStream(), pos);
 }
 
 void HiRes1Engine::printString(const Common::String &str) {

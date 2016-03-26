@@ -29,7 +29,7 @@
 
 namespace Adl {
 
-void Graphics_v1::drawPic(Common::SeekableReadStream &pic, const Common::Point &pos, byte color) {
+void Graphics_v1::drawPic(Common::SeekableReadStream &pic, const Common::Point &pos) {
 	byte x, y;
 	bool bNewLine = false;
 	byte oldX = 0, oldY = 0;

@@ -240,8 +240,8 @@ void Graphics_v2::fill(Common::SeekableReadStream &pic) {
 	}
 }
 
-void Graphics_v2::drawPic(Common::SeekableReadStream &pic, const Common::Point &pos, byte color) {
-	_color = color;
+void Graphics_v2::drawPic(Common::SeekableReadStream &pic, const Common::Point &pos) {
+	_color = 0;
 	_offset = pos;
 
 	while (true) {

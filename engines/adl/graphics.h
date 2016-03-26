@@ -35,7 +35,7 @@ class Display;
 class GraphicsMan {
 public:
 	virtual ~GraphicsMan() { }
-	virtual void drawPic(Common::SeekableReadStream &pic, const Common::Point &pos, byte color) = 0;
+	virtual void drawPic(Common::SeekableReadStream &pic, const Common::Point &pos) = 0;
 
 protected:
 	GraphicsMan(Display &display) : _display(display) { }
@@ -47,7 +47,7 @@ protected:
 class Graphics_v1 : public GraphicsMan {
 public:
 	Graphics_v1(Display &display) : GraphicsMan(display) { }
-	void drawPic(Common::SeekableReadStream &pic, const Common::Point &pos, byte color);
+	void drawPic(Common::SeekableReadStream &pic, const Common::Point &pos);
 	void drawCorners(Common::ReadStream &corners, const Common::Point &pos, byte rotation = 0, byte scaling = 1, byte color = 0x7f) const;
 
 private:
@@ -57,7 +57,7 @@ private:
 class Graphics_v2 : public GraphicsMan {
 public:
 	Graphics_v2(Display &display) : GraphicsMan(display), _color(0) { }
-	void drawPic(Common::SeekableReadStream &pic, const Common::Point &pos, byte color);
+	void drawPic(Common::SeekableReadStream &pic, const Common::Point &pos);
 
 private:
 	void clear();
