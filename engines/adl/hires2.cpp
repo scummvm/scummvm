@@ -196,13 +196,6 @@ void HiRes2Engine::restartGame() {
 	initState();
 }
 
-void HiRes2Engine::drawPic(byte pic, Common::Point pos) const {
-	if (_roomData.pictures.contains(pic))
-		_graphics->drawPic(*_roomData.pictures[pic]->createReadStream(), pos);
-	else
-		_graphics->drawPic(*_pictures[pic]->createReadStream(), pos);
-}
-
 void HiRes2Engine::drawItem(const Item &item, const Common::Point &pos) const {
 	StreamPtr stream(_itemPics[item.picture - 1]->createReadStream());
 	stream->readByte(); // Skip clear opcode

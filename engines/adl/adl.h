@@ -234,6 +234,7 @@ protected:
 
 	// Graphics
 	void clearScreen() const;
+	void drawPic(byte pic, Common::Point pos = Common::Point()) const;
 	void drawItems() const;
 
 	// Sound

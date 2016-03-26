@@ -356,6 +356,13 @@ void AdlEngine::clearScreen() const {
 	_display->clear(0x00);
 }
 
+void AdlEngine::drawPic(byte pic, Common::Point pos) const {
+	if (_roomData.pictures.contains(pic))
+		_graphics->drawPic(*_roomData.pictures[pic]->createReadStream(), pos);
+	else
+		_graphics->drawPic(*_pictures[pic]->createReadStream(), pos);
+}
+
 void AdlEngine::drawItems() const {
 	Common::Array<Item>::const_iterator item;
 

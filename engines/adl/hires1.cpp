@@ -262,10 +262,6 @@ void HiRes1Engine::restartGame() {
 	_display->printAsciiString("\r\r\r\r\r");
 }
 
-void HiRes1Engine::drawPic(byte pic, Common::Point pos) const {
-	_graphics->drawPic(*_pictures[pic]->createReadStream(), pos);
-}
-
 void HiRes1Engine::printString(const Common::String &str) {
 	Common::String wrap = str;
 	wordWrap(wrap);

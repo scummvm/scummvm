@@ -60,7 +60,6 @@ private:
 	void init();
 	void initState();
 	void restartGame();
-	void drawPic(byte pic, Common::Point pos) const;
 	void drawItem(const Item &item, const Common::Point &pos) const;
 	void loadRoom(byte roomNr);
 	void showRoom();

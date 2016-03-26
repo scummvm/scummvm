@@ -103,7 +103,6 @@ private:
 	void init();
 	void initState();
 	void restartGame();
-	void drawPic(byte pic, Common::Point pos = Common::Point()) const;
 	void printString(const Common::String &str);
 	void printMessage(uint idx);
 	void drawItem(const Item &item, const Common::Point &pos) const;
