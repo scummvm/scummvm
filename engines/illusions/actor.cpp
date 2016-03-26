@@ -946,7 +946,7 @@ void Control::fillActor(byte color) {
 
 bool Control::isPixelCollision(Common::Point &pt) {
 	Frame *frame = &(*_actor->_frames)[_actor->_frameIndex - 1];
-	return _vm->_screen->isSpritePixelSolid16(pt, _position, _actor->_position,
+	return _vm->_screen->isSpritePixelSolid(pt, _position, _actor->_position,
 		_actor->_surfInfo, _actor->_scale, frame->_flags, frame->_compressedPixels);
 }
 
