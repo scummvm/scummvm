@@ -73,6 +73,8 @@ void HiRes2Engine::init() {
 		if (str->isValid()) {
 			StreamPtr strStream(str->createReadStream());
 			_messages.push_back(readString(*strStream, 0xff));
+		} else {
+			_messages.push_back(Common::String());
 		}
 	}
 
