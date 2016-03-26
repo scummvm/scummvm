@@ -28,35 +28,8 @@
 
 namespace Adl {
 
-DiskImage::DiskImage() :
-		_tracks(0),
-		_sectorsPerTrack(0),
-		_bytesPerSector(0) {
-	_f = new Common::File();
-}
-
-DiskImage::~DiskImage() {
-	delete _f;
-}
-
-DiskImageDataBlock::DiskImageDataBlock(const DiskImage *disk, uint track, uint sector, uint offset, uint size) :
-		_track(track),
-		_sector(sector),
-		_offset(offset),
-		_size(size),
-		_disk(disk) { }
-
-bool DiskImageDataBlock::isValid() const {
-	return _track != 0 || _sector != 0 || _offset != 0 || _size != 0;
-}
-
-Common::SeekableReadStream *DiskImageDataBlock::createReadStream() const {
-	return _disk->createReadStream(_track, _sector, _offset, _size);
-}
-
-// .DSK disk image - 35 tracks, 16 sectors per track, 256 bytes per sector, raw sector layout
 const DataBlockPtr DiskImage_DSK::getDataBlock(uint track, uint sector, uint offset, uint size) const {
-	return Common::SharedPtr<DiskImageDataBlock>(new DiskImageDataBlock(this, track, sector, offset, size));
+	return Common::SharedPtr<DiskImage::DataBlock>(new DiskImage::DataBlock(this, track, sector, offset, size));
 }
 
 Common::SeekableReadStream *DiskImage_DSK::createReadStream(uint track, uint sector, uint offset, uint size) const {
@@ -81,22 +54,20 @@ bool DiskImage_DSK::open(const Common::String &filename) {
 		_tracks = 35;
 		_sectorsPerTrack = 16;
 		_bytesPerSector = 256;
-		return true;
+		break;
+	default:
+		warning("Unrecognized disk image '%s' of size %d bytes", filename.c_str(), filesize);
+		return false;
 	}
 
-	warning("Unrecognized disk image '%s' of size %d bytes", filename.c_str(), filesize);
-	return false;
+	return true;
 }
 
-Common::SeekableReadStream *FilesDataBlock::createReadStream() const {
-	return _files->createReadStream(_filename, _offset);
+const DataBlockPtr Files_Plain::getDataBlock(const Common::String &filename, uint offset) const {
+	return Common::SharedPtr<Files::DataBlock>(new Files::DataBlock(this, filename, offset));
 }
 
-const DataBlockPtr PlainFiles::getDataBlock(const Common::String &filename, uint offset) const {
-	return Common::SharedPtr<FilesDataBlock>(new FilesDataBlock(this, filename, offset));
-}
-
-Common::SeekableReadStream *PlainFiles::createReadStream(const Common::String &filename, uint offset) const {
+Common::SeekableReadStream *Files_Plain::createReadStream(const Common::String &filename, uint offset) const {
 	Common::File *f(new Common::File());
 
 	if (!f->open(filename))
@@ -194,7 +165,7 @@ void Files_DOS33::readVTOC() {
 }
 
 const DataBlockPtr Files_DOS33::getDataBlock(const Common::String &filename, uint offset) const {
-	return Common::SharedPtr<FilesDataBlock>(new FilesDataBlock(this, filename, offset));
+	return Common::SharedPtr<Files::DataBlock>(new Files::DataBlock(this, filename, offset));
 }
 
 Common::SeekableReadStream *Files_DOS33::createReadStreamText(const TOCEntry &entry) const {

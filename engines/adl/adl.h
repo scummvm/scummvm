@@ -52,8 +52,6 @@ class Speaker;
 struct AdlGameDescription;
 struct ScriptEnv;
 
-typedef Common::ScopedPtr<Common::SeekableReadStream> StreamPtr;
-
 // Save and restore opcodes
 #define IDO_ACT_SAVE           0x0f
 #define IDO_ACT_LOAD           0x10

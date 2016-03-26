@@ -133,7 +133,7 @@ void HiRes1Engine::init() {
 		if (!static_cast<Files_DOS33 *>(_files)->open("MYSTHOUS.DSK"))
 			error("Failed to open MYSTHOUS.DSK");
 	} else
-		_files = new PlainFiles();
+		_files = new Files_Plain();
 
 	_graphics = new Graphics_v1(*_display);
 
