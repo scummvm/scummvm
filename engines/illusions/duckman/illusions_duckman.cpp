@@ -104,6 +104,7 @@ Common::Error IllusionsEngine_Duckman::run() {
 	_resSys->addResourceLoader(0x00190000, new GenericResourceLoader(this));
 
 	_screen = new Screen(this, 320, 200, 8);
+	_screenPalette = new ScreenPalette(this);
 	_screenText = new ScreenText(this);
 	_input = new Input();	
 	_actorInstances = new ActorInstanceList(this);
@@ -221,6 +222,7 @@ Common::Error IllusionsEngine_Duckman::run() {
 	delete _actorInstances;
 	delete _input;
 	delete _screenText;
+	delete _screenPalette;
 	delete _screen;
 	delete _resSys;
 	delete _resReader;
@@ -283,7 +285,7 @@ void IllusionsEngine_Duckman::initUpdateFunctions() {
 int IllusionsEngine_Duckman::updateScript(uint flags) {
 	// TODO Some more stuff
 
-	if (_screen->isDisplayOn() && !_screen->isFaderActive() && _pauseCtr == 0) {
+	if (_screen->isDisplayOn() && !_screenPalette->isFaderActive() && _pauseCtr == 0) {
 		if (_input->pollEvent(kEventAbort)) {
 			startScriptThread(0x00020342, 0);
 		} else if (_input->pollEvent(kEventF1)) {
@@ -360,6 +362,39 @@ void IllusionsEngine_Duckman::startFader(int duration, int minValue, int maxValu
 	_fader->_startTime = getCurrentTime();
 	_fader->_duration = duration;
 	_fader->_notifyThreadId = threadId;
+}
+
+void IllusionsEngine_Duckman::updateFader() {
+	if (_fader && !_fader->_paused && _fader->_active) {
+		int32 currTime = getCurrentTime();
+		int32 currDuration = currTime - _fader->_startTime;
+		if (currDuration) {
+			int newValue;
+			if (currDuration >= _fader->_duration) {
+				newValue = _fader->_maxValue;
+			} else {
+				newValue = (currDuration * (_fader->_maxValue - _fader->_minValue) / _fader->_duration) + _fader->_minValue;
+			}
+			if (_fader->_currValue != newValue) {
+				_fader->_currValue = newValue;
+				_screenPalette->setFader(newValue, _fader->_firstIndex, _fader->_lastIndex);
+			}
+			if (_fader->_currValue == _fader->_maxValue) {
+				_fader->_active = false;
+				notifyThreadId(_fader->_notifyThreadId);
+			}
+		}
+	}
+}
+
+void IllusionsEngine_Duckman::pauseFader() {
+	_fader->_paused = true;
+	_fader->_startTime = getCurrentTime() - _fader->_startTime;
+}
+
+void IllusionsEngine_Duckman::unpauseFader() {
+	_fader->_startTime = getCurrentTime() - _fader->_startTime;
+	_fader->_paused = false;
 }
 
 void IllusionsEngine_Duckman::setDefaultTextCoords() {
@@ -1145,7 +1180,7 @@ bool IllusionsEngine_Duckman::loadSavegameFromScript(int16 slotNum, uint32 calli
 
 bool IllusionsEngine_Duckman::saveSavegameFromScript(int16 slotNum, uint32 callingThreadId) {
 	// TODO
-	const char *fileName = getSavegameFilename(slotNum);
+	// const char *fileName = getSavegameFilename(slotNum);
 	bool success = false;//savegame(fileName, _savegameDescription.c_str());
 	return success;
 }

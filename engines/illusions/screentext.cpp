@@ -128,7 +128,7 @@ bool ScreenText::insertText(uint16 *text, uint32 fontId, WidthHeight dimensions,
 	bool done = refreshScreenText(font, screenText->_info._dimensions, screenText->_info._offsPt,
 		text, screenText->_info._flags, screenText->_info._color2, screenText->_info._color1,
 		outTextPtr);
-	_vm->_screen->setPaletteEntry(font->getColorIndex(), screenText->_info._colorR, screenText->_info._colorG, screenText->_info._colorB);
+	_vm->_screenPalette->setPaletteEntry(font->getColorIndex(), screenText->_info._colorR, screenText->_info._colorG, screenText->_info._colorB);
 
 	uint16 *textPart = screenText->_text;
 	while (text != outTextPtr)
@@ -157,7 +157,7 @@ void ScreenText::removeText() {
 			refreshScreenText(font, screenText->_info._dimensions, screenText->_info._offsPt,
 				screenText->_text, screenText->_info._flags, screenText->_info._color2, screenText->_info._color1,
 				outTextPtr);
-			_vm->_screen->setPaletteEntry(font->getColorIndex(), screenText->_info._colorR, screenText->_info._colorG, screenText->_info._colorB);
+			_vm->_screenPalette->setPaletteEntry(font->getColorIndex(), screenText->_info._colorR, screenText->_info._colorG, screenText->_info._colorB);
 			setTextInfoPosition(screenText->_info._position);
 		}
 	}

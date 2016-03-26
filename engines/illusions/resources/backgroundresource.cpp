@@ -404,7 +404,7 @@ void BackgroundInstance::load(Resource *resource) {
 
 	if (_bgRes->_palettesCount > 0) {
 		Palette *palette = _bgRes->getPalette(_bgRes->_paletteIndex - 1);
-		_vm->_screen->setPalette(palette->_palette, 1, palette->_count);
+		_vm->_screenPalette->setPalette(palette->_palette, 1, palette->_count);
 	}
 
 }
@@ -425,7 +425,7 @@ void BackgroundInstance::pause() {
 		_vm->setDefaultTextCoords();
 		_vm->_camera->getActiveState(_savedCameraState);
 		_savedPalette = new byte[1024];
-		_vm->_screen->getPalette(_savedPalette);
+		_vm->_screenPalette->getPalette(_savedPalette);
 		freeSurface();
 	}
 }
@@ -435,7 +435,7 @@ void BackgroundInstance::unpause() {
 	if (_pauseCtr <= 0) {
 		registerResources();
 		initSurface();
-		_vm->_screen->setPalette(_savedPalette, 1, 256);
+		_vm->_screenPalette->setPalette(_savedPalette, 1, 256);
 		delete[] _savedPalette;
 		_savedPalette = 0;
 		// TODO _vm->_screen->_fadeClear();

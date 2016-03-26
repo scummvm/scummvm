@@ -361,13 +361,13 @@ void SequenceOpcodes::opSetPalette(Control *control, OpCall &opCall) {
 	ARG_BYTE(fromIndex);
 	BackgroundResource *bgRes = _vm->_backgroundInstances->getActiveBgResource();
 	Palette *palette = bgRes->getPalette(paletteIndex - 1);
-	_vm->_screen->setPalette(palette->_palette, fromIndex, palette->_count);
+	_vm->_screenPalette->setPalette(palette->_palette, fromIndex, palette->_count);
 }
 
 void SequenceOpcodes::opShiftPalette(Control *control, OpCall &opCall) {
 	ARG_INT16(fromIndex);
 	ARG_INT16(toIndex);
-	_vm->_screen->shiftPalette(fromIndex, toIndex);
+	_vm->_screenPalette->shiftPalette(fromIndex, toIndex);
 }
 
 void SequenceOpcodes::opPlaySound(Control *control, OpCall &opCall) {
