@@ -66,10 +66,9 @@ private:
 	void showRoom();
 
 	DataBlockPtr readDataBlockPtr(Common::ReadStream &f) const;
-	void readPictureMeta(Common::ReadStream &f, Picture2 &pic) const;
 
 	DiskImage_DSK _disk;
-	Common::Array<Picture2> _itemPics;
+	Common::Array<DataBlockPtr> _itemPics;
 };
 
 } // End of namespace Adl

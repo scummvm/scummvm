@@ -166,13 +166,11 @@ void HiRes1Engine::init() {
 
 	// Load picture data from executable
 	stream->seek(IDI_HR1_OFS_PICS);
-	for (uint i = 0; i < IDI_HR1_NUM_PICS; ++i) {
-		struct Picture pic;
+	for (uint i = 1; i <= IDI_HR1_NUM_PICS; ++i) {
 		byte block = stream->readByte();
 		Common::String name = Common::String::format("BLOCK%i", block);
 		uint16 offset = stream->readUint16LE();
-		pic.data = _files->getDataBlock(name, offset);
-		_pictures.push_back(pic);
+		_pictures[i] = _files->getDataBlock(name, offset);
 	}
 
 	// Load commands from executable
@@ -265,7 +263,7 @@ void HiRes1Engine::restartGame() {
 }
 
 void HiRes1Engine::drawPic(byte pic, Common::Point pos) const {
-	_graphics->drawPic(*_pictures[pic].data->createReadStream(), pos, 0x7f);
+	_graphics->drawPic(*_pictures[pic]->createReadStream(), pos, 0x7f);
 }
 
 void HiRes1Engine::printString(const Common::String &str) {

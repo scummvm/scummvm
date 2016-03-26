@@ -86,9 +86,7 @@ struct Room {
 	bool isFirstTime;
 };
 
-struct Picture {
-	DataBlockPtr data;
-};
+typedef Common::HashMap<byte, DataBlockPtr> PictureMap;
 
 typedef Common::Array<byte> Script;
 
@@ -164,14 +162,9 @@ struct State {
 typedef Common::List<Command> Commands;
 typedef Common::HashMap<Common::String, uint> WordMap;
 
-struct Picture2 {
-	byte nr;
-	DataBlockPtr data;
-};
-
 struct RoomData {
 	Common::String description;
-	Common::Array<Picture2> pictures;
+	PictureMap pictures;
 	Commands commands;
 };
 
@@ -272,7 +265,7 @@ protected:
 	// Message strings in data file
 	Common::Array<Common::String> _messages;
 	// Picture data
-	Common::Array<Picture> _pictures;
+	PictureMap _pictures;
 	// Dropped item screen offsets
 	Common::Array<Common::Point> _itemOffsets;
 	// <room, verb, noun, script> lists

@@ -41,11 +41,6 @@ DataBlockPtr HiRes2Engine::readDataBlockPtr(Common::ReadStream &f) const {
 	return _disk.getDataBlock(track, sector, offset, size);
 }
 
-void HiRes2Engine::readPictureMeta(Common::ReadStream &f, Picture2 &pic) const {
-	pic.nr = f.readByte();
-	pic.data = readDataBlockPtr(f);
-}
-
 void HiRes2Engine::runIntro() const {
 	StreamPtr stream(_disk.createReadStream(0x00, 0xd, 0x17, 1));
 
@@ -105,9 +100,8 @@ void HiRes2Engine::init() {
 	// Load item picture data
 	stream.reset(_disk.createReadStream(0x1e, 0x9, 0x05));
 	for (uint i = 0; i < IDI_HR2_NUM_ITEM_PICS; ++i) {
-		Picture2 pic;
-		readPictureMeta(*stream, pic);
-		_itemPics.push_back(pic);
+		stream->readByte(); // number
+		_itemPics.push_back(readDataBlockPtr(*stream));
 	}
 
 	// Load commands from executable
@@ -187,22 +181,14 @@ void HiRes2Engine::restartGame() {
 }
 
 void HiRes2Engine::drawPic(byte pic, Common::Point pos) const {
-	Common::Array<Picture2>::const_iterator roomPic;
-
-	for (roomPic = _roomData.pictures.begin(); roomPic != _roomData.pictures.end(); ++roomPic) {
-		if (roomPic->nr == pic) {
-			StreamPtr stream(roomPic->data->createReadStream());
-			_graphics->drawPic(*stream, pos, 0);
-			return;
-		}
-	}
-
-	// Check global pic list here
+	if (_roomData.pictures.contains(pic))
+		_graphics->drawPic(*_roomData.pictures[pic]->createReadStream(), pos, 0);
+	else
+		_graphics->drawPic(*_pictures[pic]->createReadStream(), pos, 0);
 }
 
 void HiRes2Engine::drawItem(const Item &item, const Common::Point &pos) const {
-	const Picture2 &pic = _itemPics[item.picture - 1];
-	StreamPtr stream(pic.data->createReadStream());
+	StreamPtr stream(_itemPics[item.picture - 1]->createReadStream());
 	stream->readByte(); // Skip clear opcode
 	_graphics->drawPic(*stream, pos, 0);
 }
@@ -220,9 +206,8 @@ void HiRes2Engine::loadRoom(byte roomNr) {
 	uint16 picCount = (descOffset - 4) / 5;
 
 	for (uint i = 0; i < picCount; ++i) {
-		Picture2 pic;
-		readPictureMeta(*stream, pic);
-		_roomData.pictures.push_back(pic);
+		byte nr = stream->readByte();
+		_roomData.pictures[nr] = readDataBlockPtr(*stream);
 	}
 
 	_roomData.description = readStringAt(*stream, descOffset, 0xff);

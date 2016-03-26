@@ -42,7 +42,7 @@ namespace Adl {
 #define IDS_HR1_MESSAGES "MESSAGES"
 
 #define IDI_HR1_NUM_ROOMS         41
-#define IDI_HR1_NUM_PICS          98
+#define IDI_HR1_NUM_PICS          97
 #define IDI_HR1_NUM_VARS          20
 #define IDI_HR1_NUM_ITEM_OFFSETS  21
 #define IDI_HR1_NUM_MESSAGES     167
@@ -79,7 +79,7 @@ namespace Adl {
 
 #define IDI_HR1_OFS_ITEMS        0x0100
 #define IDI_HR1_OFS_ROOMS        0x050a
-#define IDI_HR1_OFS_PICS         0x4b00
+#define IDI_HR1_OFS_PICS         0x4b03
 #define IDI_HR1_OFS_CMDS_0       0x3c00
 #define IDI_HR1_OFS_CMDS_1       0x3d00
 
