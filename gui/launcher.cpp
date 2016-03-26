@@ -96,12 +96,8 @@ public:
 	}
 
 protected:
-	bool tryInsertChar(byte c, int pos) {
-		if (Common::isAlnum(c) || c == '-' || c == '_') {
-			_editString.insertChar(c, pos);
-			return true;
-		}
-		return false;
+	bool isCharValid(byte c) const {
+		return (Common::isAlnum(c) || c == '-' || c == '_');
 	}
 };
 
