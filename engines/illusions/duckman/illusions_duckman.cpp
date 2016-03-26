@@ -103,7 +103,7 @@ Common::Error IllusionsEngine_Duckman::run() {
 	_resSys->addResourceLoader(0x00120000, new FontResourceLoader(this));
 	_resSys->addResourceLoader(0x00190000, new GenericResourceLoader(this));
 
-	_screen = new Screen(this, 320, 200, 8);
+	_screen = new Screen8Bit(this, 320, 200);
 	_screenPalette = new ScreenPalette(this);
 	_screenText = new ScreenText(this);
 	_input = new Input();	

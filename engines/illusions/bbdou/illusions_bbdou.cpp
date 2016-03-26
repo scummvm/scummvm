@@ -151,7 +151,7 @@ Common::Error IllusionsEngine_BBDOU::run() {
 	_resSys->addResourceLoader(0x00120000, new FontResourceLoader(this));
 	_resSys->addResourceLoader(0x00170000, new SpecialCodeLoader(this));
 
-	_screen = new Screen(this, 640, 480, 16);
+	_screen = new Screen16Bit(this, 640, 480);
 	_screenPalette = new NullScreenPalette();
 	_screenText = new ScreenText(this);
 	_input = new Input();	
@@ -569,8 +569,8 @@ void IllusionsEngine_BBDOU::dumpActiveScenes(uint32 sceneId, uint32 threadId) {
 }
 
 void IllusionsEngine_BBDOU::enterMenuPause() {
-      // TODO suspendAudio();
-      _screenText->clearText();
+	// TODO suspendAudio();
+	_screenText->clearText();
 }
 
 void IllusionsEngine_BBDOU::leaveMenuPause() {

@@ -152,12 +152,10 @@ protected:
 class NullScreenPalette : public ScreenPaletteBase {
 };
 
-// TODO Split into two classes (8bit and 16bit)?
-
 class Screen {
 public:
 	Screen(IllusionsEngine *vm, int16 width, int16 height, int bpp);
-	~Screen();
+	virtual ~Screen();
 	Graphics::Surface *allocSurface(int16 width, int16 height);
 	Graphics::Surface *allocSurface(SurfInfo &surfInfo);
 	bool isDisplayOn();
@@ -165,16 +163,17 @@ public:
 	void setScreenOffset(Common::Point offsPt);
 	void updateSprites();
 	void clearScreenOffsetAreas();
-	void decompressSprite(SpriteDecompressQueueItem *item);
-	void drawSurface(Common::Rect &dstRect, Graphics::Surface *surface, Common::Rect &srcRect, int16 scale, uint32 flags);
-	void drawText(FontResource *font, Graphics::Surface *surface, int16 x, int16 y, uint16 *text, uint count);
-	void fillSurface(Graphics::Surface *surface, byte color);
-	uint16 convertColor(byte color);
 	uint16 getColorKey1() const { return _colorKey1; }
 	void setColorKey1(uint16 colorKey) { _colorKey1 = colorKey; }
 	uint16 getColorKey2() const { return _colorKey2; }
 	int16 getScreenWidth() const { return _backSurface->w; }
 	int16 getScreenHeight() const { return _backSurface->h; }
+	virtual void decompressSprite(SpriteDecompressQueueItem *item) = 0;
+	virtual void drawSurface(Common::Rect &dstRect, Graphics::Surface *surface, Common::Rect &srcRect, int16 scale, uint32 flags) = 0;
+	virtual void drawText(FontResource *font, Graphics::Surface *surface, int16 x, int16 y, uint16 *text, uint count) = 0;
+	virtual void fillSurface(Graphics::Surface *surface, byte color) = 0;
+	virtual bool isSpritePixelSolid(Common::Point &testPt, Common::Point &drawPosition, Common::Point &drawOffset,
+		const SurfInfo &surfInfo, int16 scale, uint flags, byte *compressedPixels) = 0;
 public:
 	IllusionsEngine *_vm;
 	bool _displayOn;
@@ -183,31 +182,41 @@ public:
 	SpriteDecompressQueue *_decompressQueue;
 	SpriteDrawQueue *_drawQueue;
 	Graphics::Surface *_backSurface;
-	
 	bool _isScreenOffsetActive;
 	Common::Point _screenOffsetPt;
+};
 
-	void drawText8(FontResource *font, Graphics::Surface *surface, int16 x, int16 y, uint16 *text, uint count);
-	int16 drawChar8(FontResource *font, Graphics::Surface *surface, int16 x, int16 y, uint16 c);
+class Screen8Bit : public Screen {
+public:
+	Screen8Bit(IllusionsEngine *vm, int16 width, int16 height) : Screen(vm, width, height, 8) {}
+	void decompressSprite(SpriteDecompressQueueItem *item);
+	void drawSurface(Common::Rect &dstRect, Graphics::Surface *surface, Common::Rect &srcRect, int16 scale, uint32 flags);
+	void drawText(FontResource *font, Graphics::Surface *surface, int16 x, int16 y, uint16 *text, uint count);
+	void fillSurface(Graphics::Surface *surface, byte color);
+	bool isSpritePixelSolid(Common::Point &testPt, Common::Point &drawPosition, Common::Point &drawOffset,
+		const SurfInfo &surfInfo, int16 scale, uint flags, byte *compressedPixels);
+public:
+	int16 drawChar(FontResource *font, Graphics::Surface *surface, int16 x, int16 y, uint16 c);
+	void drawSurfaceUnscaled(int16 destX, int16 destY, Graphics::Surface *surface, Common::Rect &srcRect);
+	void drawSurfaceScaled(Common::Rect &dstRect, Graphics::Surface *surface, Common::Rect &srcRect);
+};
 
-	void drawText16(FontResource *font, Graphics::Surface *surface, int16 x, int16 y, uint16 *text, uint count);
-	int16 drawChar16(FontResource *font, Graphics::Surface *surface, int16 x, int16 y, uint16 c);
-
-	void decompressSprite8(SpriteDecompressQueueItem *item);
-	void drawSurface8(Common::Rect &dstRect, Graphics::Surface *surface, Common::Rect &srcRect, int16 scale, uint32 flags);
-	void drawSurface81(int16 destX, int16 destY, Graphics::Surface *surface, Common::Rect &srcRect);
-	void drawSurface82(Common::Rect &dstRect, Graphics::Surface *surface, Common::Rect &srcRect);
-
-	void decompressSprite16(SpriteDecompressQueueItem *item);
-	void drawSurface16(Common::Rect &dstRect, Graphics::Surface *surface, Common::Rect &srcRect, int16 scale, uint32 flags);
+class Screen16Bit : public Screen {
+public:
+	Screen16Bit(IllusionsEngine *vm, int16 width, int16 height) : Screen(vm, width, height, 16) {}
+	void decompressSprite(SpriteDecompressQueueItem *item);
+	void drawSurface(Common::Rect &dstRect, Graphics::Surface *surface, Common::Rect &srcRect, int16 scale, uint32 flags);
+	void drawText(FontResource *font, Graphics::Surface *surface, int16 x, int16 y, uint16 *text, uint count);
+	void fillSurface(Graphics::Surface *surface, byte color);
+	bool isSpritePixelSolid(Common::Point &testPt, Common::Point &drawPosition, Common::Point &drawOffset,
+		const SurfInfo &surfInfo, int16 scale, uint flags, byte *compressedPixels);
+public:
+	int16 drawChar(FontResource *font, Graphics::Surface *surface, int16 x, int16 y, uint16 c);
 	void drawSurface10(int16 destX, int16 destY, Graphics::Surface *surface, Common::Rect &srcRect, uint16 colorKey);
 	void drawSurface11(int16 destX, int16 destY, Graphics::Surface *surface, Common::Rect &srcRect);
 	void drawSurface20(Common::Rect &dstRect, Graphics::Surface *surface, Common::Rect &srcRect, uint16 colorKey);
 	void drawSurface21(Common::Rect &dstRect, Graphics::Surface *surface, Common::Rect &srcRect);
-	
-	bool isSpritePixelSolid16(Common::Point &testPt, Common::Point &drawPosition, Common::Point &drawOffset,
-		const SurfInfo &surfInfo, int16 scale, uint flags, byte *compressedPixels);
-
+	uint16 convertColor(byte color);
 	uint16 convertFontColor(byte color);
 };
 

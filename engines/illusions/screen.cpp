@@ -449,111 +449,9 @@ void Screen::clearScreenOffsetAreas() {
 	_backSurface->fillRect(Common::Rect(x1, 0, x2, _backSurface->h), 0);
 }
 
-void Screen::decompressSprite(SpriteDecompressQueueItem *item) {
-	switch (_backSurface->format.bytesPerPixel) {
-	case 1:
-		decompressSprite8(item);
-		break;
-	case 2:
-		decompressSprite16(item);
-		break;
-	default:
-		break;
-	}
-}
+// Screen8Bit
 
-void Screen::drawSurface(Common::Rect &dstRect, Graphics::Surface *surface, Common::Rect &srcRect, int16 scale, uint32 flags) {
-	switch (_backSurface->format.bytesPerPixel) {
-	case 1:
-		drawSurface8(dstRect, surface, srcRect, scale, flags);
-		break;
-	case 2:
-		drawSurface16(dstRect, surface, srcRect, scale, flags);
-		break;
-	default:
-		break;
-	}
-}
-
-void Screen::drawText(FontResource *font, Graphics::Surface *surface, int16 x, int16 y, uint16 *text, uint count) {
-	switch (_backSurface->format.bytesPerPixel) {
-	case 1:
-		drawText8(font, surface, x, y, text, count);
-		break;
-	case 2:
-		drawText16(font, surface, x, y, text, count);
-		break;
-	default:
-		break;
-	}
-}
-
-void Screen::fillSurface(Graphics::Surface *surface, byte color) {
-	Common::Rect r = Common::Rect(surface->w, surface->h);
-	switch (_backSurface->format.bytesPerPixel) {
-	case 1:
-		surface->fillRect(r, color);
-		break;
-	case 2:
-		surface->fillRect(r, convertColor(color));
-		break;
-	default:
-		break;
-	}
-}
-
-uint16 Screen::convertColor(byte color) {
-	if (color == 0)
-		return _colorKey1;
-	if (color == 20)
-		return g_system->getScreenFormat().RGBToColor(255, 255, 255);
-	if (color == 80)
-		return g_system->getScreenFormat().RGBToColor(176, 176, 176);
-	return g_system->getScreenFormat().RGBToColor(16, 16, 16);
-}
-
-void Screen::drawText8(FontResource *font, Graphics::Surface *surface, int16 x, int16 y, uint16 *text, uint count) {
-	for (uint i = 0; i < count; ++i)
-		x += font->_widthC + drawChar8(font, surface, x, y, *text++);
-}
-
-int16 Screen::drawChar8(FontResource *font, Graphics::Surface *surface, int16 x, int16 y, uint16 c) {
-	const CharInfo *charInfo = font->getCharInfo(c);
-	const int16 charWidth = charInfo->_width;
-	byte *dst = (byte*)surface->getBasePtr(x, y);
-	byte *pixels = charInfo->_pixels;
-	for (int16 yc = 0; yc < font->_charHeight; ++yc) {
-		for (int16 xc = 0; xc < charWidth; ++xc)
-			if (pixels[xc])
-				dst[xc] = pixels[xc];
-		dst += surface->pitch;
-		pixels += charWidth;
-	}
-	return charWidth;
-}
-
-void Screen::drawText16(FontResource *font, Graphics::Surface *surface, int16 x, int16 y, uint16 *text, uint count) {
-	for (uint i = 0; i < count; ++i)
-		x += font->_widthC + drawChar16(font, surface, x, y, *text++);
-}
-
-int16 Screen::drawChar16(FontResource *font, Graphics::Surface *surface, int16 x, int16 y, uint16 c) {
-	const CharInfo *charInfo = font->getCharInfo(c);
-	const int16 charWidth = charInfo->_width;
-	byte *pixels = charInfo->_pixels;
-	for (int16 yc = 0; yc < font->_charHeight; ++yc) {
-		byte *dst = (byte*)surface->getBasePtr(x, y + yc);
-		for (int16 xc = 0; xc < charWidth; ++xc) {
-			if (pixels[xc])
-				WRITE_LE_UINT16(dst, convertFontColor(pixels[xc]));
-			dst += 2;
-		}
-		pixels += charWidth;
-	}
-	return charWidth;
-}
-
-void Screen::decompressSprite8(SpriteDecompressQueueItem *item) {
+void Screen8Bit::decompressSprite(SpriteDecompressQueueItem *item) {
 	byte *src = item->_compressedPixels;
 	Graphics::Surface *dstSurface = item->_surface;
 	int dstSize = item->_dimensions._width * item->_dimensions._height;
@@ -587,9 +485,9 @@ void Screen::decompressSprite8(SpriteDecompressQueueItem *item) {
 		y = 0;
 		yincr = 1;
 	}
-	
+
 	byte *dst = (byte*)dstSurface->getBasePtr(x, y);
-	
+
 	while (processedSize < dstSize) {
 		byte op = *src++;
 		if (op & 0x80) {
@@ -627,16 +525,45 @@ void Screen::decompressSprite8(SpriteDecompressQueueItem *item) {
 
 }
 
-void Screen::drawSurface8(Common::Rect &dstRect, Graphics::Surface *surface, Common::Rect &srcRect, int16 scale, uint32 flags) {
+void Screen8Bit::drawSurface(Common::Rect &dstRect, Graphics::Surface *surface, Common::Rect &srcRect, int16 scale, uint32 flags) {
 	if (scale == 100) {
-		drawSurface81(dstRect.left, dstRect.top, surface, srcRect);
+		drawSurfaceUnscaled(dstRect.left, dstRect.top, surface, srcRect);
 	} else {
-		drawSurface82(dstRect, surface, srcRect);
+		drawSurfaceScaled(dstRect, surface, srcRect);
 	}
 }
 
-void Screen::drawSurface81(int16 destX, int16 destY, Graphics::Surface *surface, Common::Rect &srcRect) {
-	// Unscaled
+void Screen8Bit::drawText(FontResource *font, Graphics::Surface *surface, int16 x, int16 y, uint16 *text, uint count) {
+	for (uint i = 0; i < count; ++i)
+		x += font->_widthC + drawChar(font, surface, x, y, *text++);
+}
+
+void Screen8Bit::fillSurface(Graphics::Surface *surface, byte color) {
+	surface->fillRect(Common::Rect(surface->w, surface->h), color);
+}
+
+bool Screen8Bit::isSpritePixelSolid(Common::Point &testPt, Common::Point &drawPosition, Common::Point &drawOffset,
+	const SurfInfo &surfInfo, int16 scale, uint flags, byte *compressedPixels) {
+	// Unused in Duckman
+	return false;
+}
+
+int16 Screen8Bit::drawChar(FontResource *font, Graphics::Surface *surface, int16 x, int16 y, uint16 c) {
+	const CharInfo *charInfo = font->getCharInfo(c);
+	const int16 charWidth = charInfo->_width;
+	byte *dst = (byte*)surface->getBasePtr(x, y);
+	byte *pixels = charInfo->_pixels;
+	for (int16 yc = 0; yc < font->_charHeight; ++yc) {
+		for (int16 xc = 0; xc < charWidth; ++xc)
+			if (pixels[xc])
+				dst[xc] = pixels[xc];
+		dst += surface->pitch;
+		pixels += charWidth;
+	}
+	return charWidth;
+}
+
+void Screen8Bit::drawSurfaceUnscaled(int16 destX, int16 destY, Graphics::Surface *surface, Common::Rect &srcRect) {
 	const int16 w = srcRect.width();
 	const int16 h = srcRect.height();
 	const byte* colorTransTbl = _vm->_screenPalette->getColorTransTbl();
@@ -656,8 +583,7 @@ void Screen::drawSurface81(int16 destX, int16 destY, Graphics::Surface *surface,
 	}
 }
 
-void Screen::drawSurface82(Common::Rect &dstRect, Graphics::Surface *surface, Common::Rect &srcRect) {
-	// Scaled
+void Screen8Bit::drawSurfaceScaled(Common::Rect &dstRect, Graphics::Surface *surface, Common::Rect &srcRect) {
 	const int dstWidth = dstRect.width(), dstHeight = dstRect.height();
 	const int srcWidth = srcRect.width(), srcHeight = srcRect.height();
 	const int errYStart = srcHeight / dstHeight;
@@ -712,7 +638,9 @@ void Screen::drawSurface82(Common::Rect &dstRect, Graphics::Surface *surface, Co
 	}
 }
 
-void Screen::decompressSprite16(SpriteDecompressQueueItem *item) {
+// Screen16Bit
+
+void Screen16Bit::decompressSprite(SpriteDecompressQueueItem *item) {
 	byte *src = item->_compressedPixels;
 	Graphics::Surface *dstSurface = item->_surface;
 	int dstSize = item->_dimensions._width * item->_dimensions._height;
@@ -789,7 +717,7 @@ void Screen::decompressSprite16(SpriteDecompressQueueItem *item) {
 
 }
 
-void Screen::drawSurface16(Common::Rect &dstRect, Graphics::Surface *surface, Common::Rect &srcRect, int16 scale, uint32 flags) {
+void Screen16Bit::drawSurface(Common::Rect &dstRect, Graphics::Surface *surface, Common::Rect &srcRect, int16 scale, uint32 flags) {
 	if (scale == 100) {
 		if (flags & 1)
 			drawSurface10(dstRect.left, dstRect.top, surface, srcRect, _colorKey2);
@@ -803,85 +731,16 @@ void Screen::drawSurface16(Common::Rect &dstRect, Graphics::Surface *surface, Co
 	}
 }
 
-void Screen::drawSurface10(int16 destX, int16 destY, Graphics::Surface *surface, Common::Rect &srcRect, uint16 colorKey) {
-	// Unscaled
-	// TODO
-	//debug("Screen::drawSurface10");
+void Screen16Bit::drawText(FontResource *font, Graphics::Surface *surface, int16 x, int16 y, uint16 *text, uint count) {
+	for (uint i = 0; i < count; ++i)
+		x += font->_widthC + drawChar(font, surface, x, y, *text++);
 }
 
-void Screen::drawSurface11(int16 destX, int16 destY, Graphics::Surface *surface, Common::Rect &srcRect) {
-	// Unscaled
-	//debug("Screen::drawSurface11() destX: %d; destY: %d; srcRect: (%d, %d, %d, %d)", destX, destY, srcRect.left, srcRect.top, srcRect.right, srcRect.bottom);
-	const int16 w = srcRect.width();
-	const int16 h = srcRect.height();
-	for (int16 yc = 0; yc < h; ++yc) {
-		byte *src = (byte*)surface->getBasePtr(srcRect.left, srcRect.top + yc);
-		byte *dst = (byte*)_backSurface->getBasePtr(destX, destY + yc);
-		for (int16 xc = 0; xc < w; ++xc) {
-			uint16 pixel = READ_LE_UINT16(src);
-			if (pixel != _colorKey1)
-				WRITE_LE_UINT16(dst, pixel);
-			src += 2;
-			dst += 2;
-		}
-	}
+void Screen16Bit::fillSurface(Graphics::Surface *surface, byte color) {
+	surface->fillRect(Common::Rect(surface->w, surface->h), convertColor(color));
 }
 
-void Screen::drawSurface20(Common::Rect &dstRect, Graphics::Surface *surface, Common::Rect &srcRect, uint16 colorKey) {
-	// Scaled
-	// TODO
-	//debug("Screen::drawSurface20");
-}
-
-void Screen::drawSurface21(Common::Rect &dstRect, Graphics::Surface *surface, Common::Rect &srcRect) {
-	// Scaled
-	const int dstWidth = dstRect.width(), dstHeight = dstRect.height();
-	const int srcWidth = srcRect.width(), srcHeight = srcRect.height();
-	const int errYStart = srcHeight / dstHeight;
-	const int errYIncr = srcHeight % dstHeight;
-	const int errXStart = srcWidth / dstWidth;
-	const int errXIncr = srcWidth % dstWidth;
-	int h = dstHeight, errY = 0, skipY, srcY = srcRect.top;
-	byte *dst = (byte*)_backSurface->getBasePtr(dstRect.left, dstRect.top);
-	skipY = (dstHeight < srcHeight) ? 0 : dstHeight / (2*srcHeight) + 1;
-	h -= skipY;
-	while (h-- > 0) {
-		int w = dstWidth, errX = 0, skipX;
-		skipX = (dstWidth < srcWidth) ? 0 : dstWidth / (2*srcWidth) + 1;
-		w -= skipX;
-		byte *src = (byte*)surface->getBasePtr(srcRect.left, srcY);
-		byte *dstRow = dst; 
-		while (w-- > 0) {
-			uint16 pixel = READ_LE_UINT16(src);
-			if (pixel != _colorKey1)
-				WRITE_LE_UINT16(dstRow, pixel);
-			dstRow += 2;
-			src += 2 * errXStart;
-			errX += errXIncr;
-			if (errX >= dstWidth) {
-				errX -= dstWidth;
-				src += 2;
-			}
-		}
-		while (skipX-- > 0) {
-			uint16 pixel = READ_LE_UINT16(src);
-			if (pixel != _colorKey1)
-				WRITE_LE_UINT16(dstRow, pixel);
-			src += 2;
-			dstRow += 2;
-		}
-		dst += _backSurface->pitch;
-		srcY += errYStart;
-		errY += errYIncr;
-		if (errY >= dstHeight) {
-			errY -= dstHeight;
-			++srcY;
-		}
-	}
-
-}
-
-bool Screen::isSpritePixelSolid16(Common::Point &testPt, Common::Point &drawPosition, Common::Point &drawOffset,
+bool Screen16Bit::isSpritePixelSolid(Common::Point &testPt, Common::Point &drawPosition, Common::Point &drawOffset,
 	const SurfInfo &surfInfo, int16 scale, uint flags, byte *compressedPixels) {
 
 	int ptX = scale * drawPosition.x / 100 + testPt.x - drawOffset.x;
@@ -937,7 +796,110 @@ bool Screen::isSpritePixelSolid16(Common::Point &testPt, Common::Point &drawPosi
 	return false;
 }
 
-uint16 Screen::convertFontColor(byte color) {
+int16 Screen16Bit::drawChar(FontResource *font, Graphics::Surface *surface, int16 x, int16 y, uint16 c) {
+	const CharInfo *charInfo = font->getCharInfo(c);
+	const int16 charWidth = charInfo->_width;
+	byte *pixels = charInfo->_pixels;
+	for (int16 yc = 0; yc < font->_charHeight; ++yc) {
+		byte *dst = (byte*)surface->getBasePtr(x, y + yc);
+		for (int16 xc = 0; xc < charWidth; ++xc) {
+			if (pixels[xc])
+				WRITE_LE_UINT16(dst, convertFontColor(pixels[xc]));
+			dst += 2;
+		}
+		pixels += charWidth;
+	}
+	return charWidth;
+}
+
+void Screen16Bit::drawSurface10(int16 destX, int16 destY, Graphics::Surface *surface, Common::Rect &srcRect, uint16 colorKey) {
+	// Unscaled
+	// TODO
+	//debug("Screen::drawSurface10");
+}
+
+void Screen16Bit::drawSurface11(int16 destX, int16 destY, Graphics::Surface *surface, Common::Rect &srcRect) {
+	// Unscaled
+	//debug("Screen::drawSurface11() destX: %d; destY: %d; srcRect: (%d, %d, %d, %d)", destX, destY, srcRect.left, srcRect.top, srcRect.right, srcRect.bottom);
+	const int16 w = srcRect.width();
+	const int16 h = srcRect.height();
+	for (int16 yc = 0; yc < h; ++yc) {
+		byte *src = (byte*)surface->getBasePtr(srcRect.left, srcRect.top + yc);
+		byte *dst = (byte*)_backSurface->getBasePtr(destX, destY + yc);
+		for (int16 xc = 0; xc < w; ++xc) {
+			uint16 pixel = READ_LE_UINT16(src);
+			if (pixel != _colorKey1)
+				WRITE_LE_UINT16(dst, pixel);
+			src += 2;
+			dst += 2;
+		}
+	}
+}
+
+void Screen16Bit::drawSurface20(Common::Rect &dstRect, Graphics::Surface *surface, Common::Rect &srcRect, uint16 colorKey) {
+	// Scaled
+	// TODO
+	//debug("Screen::drawSurface20");
+}
+
+void Screen16Bit::drawSurface21(Common::Rect &dstRect, Graphics::Surface *surface, Common::Rect &srcRect) {
+	// Scaled
+	const int dstWidth = dstRect.width(), dstHeight = dstRect.height();
+	const int srcWidth = srcRect.width(), srcHeight = srcRect.height();
+	const int errYStart = srcHeight / dstHeight;
+	const int errYIncr = srcHeight % dstHeight;
+	const int errXStart = srcWidth / dstWidth;
+	const int errXIncr = srcWidth % dstWidth;
+	int h = dstHeight, errY = 0, skipY, srcY = srcRect.top;
+	byte *dst = (byte*)_backSurface->getBasePtr(dstRect.left, dstRect.top);
+	skipY = (dstHeight < srcHeight) ? 0 : dstHeight / (2*srcHeight) + 1;
+	h -= skipY;
+	while (h-- > 0) {
+		int w = dstWidth, errX = 0, skipX;
+		skipX = (dstWidth < srcWidth) ? 0 : dstWidth / (2*srcWidth) + 1;
+		w -= skipX;
+		byte *src = (byte*)surface->getBasePtr(srcRect.left, srcY);
+		byte *dstRow = dst; 
+		while (w-- > 0) {
+			uint16 pixel = READ_LE_UINT16(src);
+			if (pixel != _colorKey1)
+				WRITE_LE_UINT16(dstRow, pixel);
+			dstRow += 2;
+			src += 2 * errXStart;
+			errX += errXIncr;
+			if (errX >= dstWidth) {
+				errX -= dstWidth;
+				src += 2;
+			}
+		}
+		while (skipX-- > 0) {
+			uint16 pixel = READ_LE_UINT16(src);
+			if (pixel != _colorKey1)
+				WRITE_LE_UINT16(dstRow, pixel);
+			src += 2;
+			dstRow += 2;
+		}
+		dst += _backSurface->pitch;
+		srcY += errYStart;
+		errY += errYIncr;
+		if (errY >= dstHeight) {
+			errY -= dstHeight;
+			++srcY;
+		}
+	}
+}
+
+uint16 Screen16Bit::convertColor(byte color) {
+	if (color == 0)
+		return _colorKey1;
+	if (color == 20)
+		return g_system->getScreenFormat().RGBToColor(255, 255, 255);
+	if (color == 80)
+		return g_system->getScreenFormat().RGBToColor(176, 176, 176);
+	return g_system->getScreenFormat().RGBToColor(16, 16, 16);
+}
+
+uint16 Screen16Bit::convertFontColor(byte color) {
 	if (color) {
 		byte r, g, b;
 		if (color == 204) {
