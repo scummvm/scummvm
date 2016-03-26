@@ -214,6 +214,7 @@ void HiRes2Engine::loadRoom(byte roomNr) {
 	uint16 descOffset = stream->readUint16LE();
 	uint16 commandOffset = stream->readUint16LE();
 
+	_roomData.pictures.clear();
 	// There's no picture count. The original engine always checks at most
 	// five pictures. We use the description offset to bound our search.
 	uint16 picCount = (descOffset - 4) / 5;
@@ -226,8 +227,11 @@ void HiRes2Engine::loadRoom(byte roomNr) {
 
 	_roomData.description = readStringAt(*stream, descOffset, 0xff);
 
-	stream->seek(commandOffset);
-	readCommands(*stream, _roomData.commands);
+	_roomData.commands.clear();
+	if (commandOffset != 0) {
+		stream->seek(commandOffset);
+		readCommands(*stream, _roomData.commands);
+	}
 }
 
 void HiRes2Engine::showRoom() {
