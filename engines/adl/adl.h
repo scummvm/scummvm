@@ -35,6 +35,7 @@
 #include "audio/mixer.h"
 #include "audio/softsynth/pcspk.h"
 
+#include "adl/console.h"
 #include "adl/disk.h"
 
 namespace Common {
@@ -46,6 +47,7 @@ struct Event;
 
 namespace Adl {
 
+class Console;
 class Display;
 class GraphicsMan;
 class Speaker;
@@ -172,7 +174,7 @@ class AdlEngine : public Engine {
 public:
 	virtual ~AdlEngine();
 
-	static bool pollEvent(Common::Event &event);
+	bool pollEvent(Common::Event &event) const;
 
 protected:
 	AdlEngine(OSystem *syst, const AdlGameDescription *gd);
@@ -320,6 +322,8 @@ private:
 	Common::String getWord(const Common::String &line, uint &index) const;
 	void getInput(uint &verb, uint &noun);
 
+	Console *_console;
+	GUI::Debugger *getDebugger() { return _console; }
 	const AdlGameDescription *_gameDescription;
 	byte _saveVerb, _saveNoun, _restoreVerb, _restoreNoun;
 	bool _canSaveNow, _canRestoreNow;

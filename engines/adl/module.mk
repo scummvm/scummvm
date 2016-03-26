@@ -3,6 +3,7 @@ MODULE := engines/adl
 MODULE_OBJS := \
 	adl.o \
 	adl_v2.o \
+	console.o \
 	detection.o \
 	disk.o \
 	display.o \

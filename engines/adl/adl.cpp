@@ -47,6 +47,7 @@ AdlEngine::~AdlEngine() {
 	delete _display;
 	delete _graphics;
 	delete _speaker;
+	delete _console;
 }
 
 AdlEngine::AdlEngine(OSystem *syst, const AdlGameDescription *gd) :
@@ -64,7 +65,9 @@ AdlEngine::AdlEngine(OSystem *syst, const AdlGameDescription *gd) :
 		_canRestoreNow(false) {
 }
 
-bool AdlEngine::pollEvent(Common::Event &event) {
+bool AdlEngine::pollEvent(Common::Event &event) const {
+	_console->onFrame();
+
 	if (g_system->getEventManager()->pollEvent(event)) {
 		if (event.type != Common::EVENT_KEYDOWN)
 			return false;
@@ -72,6 +75,11 @@ bool AdlEngine::pollEvent(Common::Event &event) {
 		if (event.kbd.flags & Common::KBD_CTRL) {
 			if (event.kbd.keycode == Common::KEYCODE_q) {
 				quitGame();
+				return false;
+			}
+
+			if (event.kbd.keycode == Common::KEYCODE_d) {
+				_console->attach();
 				return false;
 			}
 		}
@@ -493,6 +501,7 @@ void AdlEngine::dropItem(byte noun) {
 }
 
 Common::Error AdlEngine::run() {
+	_console = new Console(this);
 	_speaker = new Speaker();
 	_display = new Display();
 
