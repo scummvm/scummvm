@@ -245,6 +245,7 @@ static const DreamWebGameDescription gameDescriptions[] = {
 	},
 
 	// Czech fan-made translation
+	// From bug #7078
 	{
 		{
 			"dreamweb",
