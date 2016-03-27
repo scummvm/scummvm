@@ -2306,7 +2306,7 @@ msgstr ""
 
 #: backends/updates/macosx/macosx-updates.mm:67
 msgid "Check for Updates..."
-msgstr "Перевіряю оновлення..."
+msgstr "Перевірити оновлення..."
 
 #: engines/agi/detection.cpp:147 engines/cine/detection.cpp:70
 #: engines/drascula/detection.cpp:302 engines/dreamweb/detection.cpp:47
