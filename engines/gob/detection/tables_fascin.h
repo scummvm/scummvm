@@ -246,8 +246,7 @@
 	kFeaturesNone,
 	"disk0.stk", 0, 0
 },
-// From bug #7069
-{
+{ // From bug #7069
 	{
 		"fascination",
 		"",
