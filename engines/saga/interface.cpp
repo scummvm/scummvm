@@ -1879,7 +1879,7 @@ void Interface::drawStatusBar() {
 	// Fixes bug #1848016 - "IHNM: Wrong Subtitles Color (Spanish)". This
 	// also applies to the German and French versions (bug #7064 - "IHNM:
 	// text mistake in german version").
-	int offset = (_vm->getLanguage() == Common::ES_ESP || _vm->getLanguage() == Common::DE_DEU || _vm->getLanguage() == Common::FR_FRA) ? 1 : 0;
+	int offset = (_vm->getFeatures() & GF_IHNM_COLOR_FIX) ? 1 : 0;
 
 	// Disable the status text in IHNM when the chapter is 8
 	if (_vm->getGameId() == GID_IHNM && _vm->_scene->currentChapterNumber() == 8)

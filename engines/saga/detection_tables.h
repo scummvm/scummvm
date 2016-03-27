@@ -729,7 +729,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 			},
 			Common::DE_DEU,
 			Common::kPlatformDOS,
-			ADGF_NO_FLAGS,
+			GF_IHNM_COLOR_FIX,
 			GUIO1(GUIO_NOASPECT)
 		},
 		GID_IHNM,
@@ -787,7 +787,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 			},
 			Common::ES_ESP,
 			Common::kPlatformDOS,
-			ADGF_NO_FLAGS,
+			GF_IHNM_COLOR_FIX,
 			GUIO1(GUIO_NOASPECT)
 		},
 		GID_IHNM,
@@ -816,7 +816,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 			},
 			Common::FR_FRA,
 			Common::kPlatformDOS,
-			ADGF_NO_FLAGS,
+			GF_IHNM_COLOR_FIX,
 			GUIO1(GUIO_NOASPECT)
 		},
 		GID_IHNM,
