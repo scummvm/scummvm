@@ -246,6 +246,21 @@
 	kFeaturesNone,
 	"disk0.stk", 0, 0
 },
+// From bug #7069
+{
+	{
+		"fascination",
+		"",
+		AD_ENTRY1s("disk0.stk", "fbf73d7919e1a6752d924eccc14838d7", 190498),
+		ES_ESP,
+		kPlatformAmiga,
+		ADGF_NO_FLAGS,
+		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
+	},
+	kGameTypeFascination,
+	kFeaturesNone,
+	"disk0.stk", 0, 0
+},
 
 // -- Atari ST --
 
