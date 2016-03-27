@@ -867,7 +867,7 @@ void Interface::calcOptionSaveSlider() {
 
 void Interface::drawPanelText(InterfacePanel *panel, PanelButton *panelButton) {
 	const char *text;
-	int textWidth;
+	int textWidth, textHeight;
 	Rect rect;
 	Point textPoint;
 	KnownColor textShadowKnownColor = kKnownColorVerbTextShadow;
@@ -900,12 +900,26 @@ void Interface::drawPanelText(InterfacePanel *panel, PanelButton *panelButton) {
 	}
 
 	panel->calcPanelButtonRect(panelButton, rect);
+	if (_vm->getGameId() == GID_ITE) {
+		textWidth = _vm->_font->getStringWidth(kKnownFontMedium, text, 0, kFontNormal);
+		textHeight = _vm->_font->getHeight(kKnownFontMedium);
+	} else {
+		textWidth = _vm->_font->getStringWidth(kKnownFontVerb, text, 0, kFontNormal);
+		textHeight = _vm->_font->getHeight(kKnownFontVerb);
+	}
 	if (panelButton->xOffset < 0) {
-		if (_vm->getGameId() == GID_ITE)
-			textWidth = _vm->_font->getStringWidth(kKnownFontMedium, text, 0, kFontNormal);
-		else
-			textWidth = _vm->_font->getStringWidth(kKnownFontVerb, text, 0, kFontNormal);
+		// Special case: Centered to dialog. This is used for things like the
+		// title of a dialog.
 		rect.left += 2 + (panel->imageWidth - 1 - textWidth) / 2;
+	} else {
+		// The standard case is used for the things that look a bit like buttons
+		// but are not clickable, e.g. texts like "Music", "Sound", etc.
+		if (_vm->getGameId() == GID_ITE) {
+			rect.left = rect.right - textWidth - 3;
+		} else {
+			rect.left = (rect.right + rect.left - textWidth) / 2;
+		}
+		rect.top = (rect.top + rect.bottom - textHeight) / 2;
 	}
 
 	textPoint.x = rect.left;
