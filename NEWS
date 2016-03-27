@@ -48,6 +48,10 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Fixed bug in MIDI device listing affecting cases where MIDI devices were
      not usable.
 
+ Mac OS X port:
+   - Dock menu for ScummVM now lists recently played games when ScummVM is
+     not running and allows starting those games.
+
 1.8.0 (2016-03-04)
  New Games:
    - Added support for Rex Nebular and the Cosmic Gender Bender.
