@@ -171,6 +171,7 @@ struct RoomData {
 };
 
 class AdlEngine : public Engine {
+friend class Console;
 public:
 	virtual ~AdlEngine();
 

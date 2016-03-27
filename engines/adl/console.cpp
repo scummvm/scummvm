@@ -21,11 +21,68 @@
  */
 
 #include "adl/console.h"
+#include "adl/adl.h"
 
 namespace Adl {
 
 Console::Console(AdlEngine *engine) : GUI::Debugger() {
 	_engine = engine;
+
+	registerCmd("help", WRAP_METHOD(Console, Cmd_Help));
+	registerCmd("nouns", WRAP_METHOD(Console, Cmd_Nouns));
+	registerCmd("verbs", WRAP_METHOD(Console, Cmd_Verbs));
+}
+
+static Common::String toAscii(const Common::String &str) {
+	Common::String ascii(str);
+
+	for (uint i = 0; i < ascii.size(); ++i)
+		ascii.setChar(ascii[i] & 0x7f, i);
+
+	return ascii;
+}
+
+bool Console::Cmd_Help(int argc, const char **argv) {
+	debugPrintf("Parser:\n");
+	debugPrintf(" verbs - Lists the vocabulary verbs\n");
+	debugPrintf(" nouns - Lists the vocabulary nouns\n");
+	return true;
+}
+
+bool Console::Cmd_Verbs(int argc, const char **argv) {
+	if (argc != 1) {
+		debugPrintf("Usage: %s\n", argv[0]);
+		return true;
+	}
+
+	debugPrintf("Verbs in alphabetical order:\n");
+	printWordMap(_engine->_verbs);
+	return true;
+}
+
+bool Console::Cmd_Nouns(int argc, const char **argv) {
+	if (argc != 1) {
+		debugPrintf("Usage: %s\n", argv[0]);
+		return true;
+	}
+
+	debugPrintf("Nouns in alphabetical order:\n");
+	printWordMap(_engine->_nouns);
+	return true;
+}
+
+void Console::printWordMap(const WordMap &wordMap) {
+	Common::StringArray words;
+	WordMap::const_iterator verb;
+
+	for (verb = wordMap.begin(); verb != wordMap.end(); ++verb)
+		words.push_back(verb->_key);
+
+	Common::sort(words.begin(), words.end());
+
+	Common::StringArray::const_iterator word;
+	for (word = words.begin(); word != words.end(); ++word)
+		debugPrintf("%s: %d\n", toAscii(*word).c_str(), wordMap[*word]);
 }
 
 } // End of namespace Adl

@@ -25,6 +25,12 @@
 
 #include "gui/debugger.h"
 
+#include "common/hashmap.h"
+
+namespace Common {
+class String;
+}
+
 namespace Adl {
 
 class AdlEngine;
@@ -34,6 +40,12 @@ public:
 	Console(AdlEngine *engine);
 
 private:
+	bool Cmd_Help(int argc, const char **argv);
+	bool Cmd_Nouns(int argc, const char **argv);
+	bool Cmd_Verbs(int argc, const char **argv);
+
+	void printWordMap(const Common::HashMap<Common::String, uint> &wordMap);
+
 	AdlEngine *_engine;
 };
 
