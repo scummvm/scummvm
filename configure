@@ -184,6 +184,7 @@ _win32path="c:/scummvm"
 _amigaospath="Games:ScummVM"
 _staticlibpath=
 _xcodetoolspath=
+_sparklepath=
 _sdlconfig=sdl-config
 _freetypeconfig=freetype-config
 _sdlpath="$PATH"
@@ -1167,8 +1168,7 @@ for ac_option in $@; do
 		;;
 	--with-sparkle-prefix=*)
 		arg=`echo $ac_option | cut -d '=' -f 2`
-		SPARKLE_CFLAGS="-F$arg"
-		SPARKLE_LIBS="-F$arg"
+		_sparklepath=$arg
 		;;
 	--with-readline-prefix=*)
 		arg=`echo $ac_option | cut -d '=' -f 2`
@@ -3942,20 +3942,24 @@ case $_host_os in
 		if test "$_updates" = no; then
 			_sparkle=no
 		else
-		if test "$_sparkle" = auto ; then
-			_sparkle=no
-			cat > $TMPC << EOF
+			if test ! -z $_sparklepath ; then
+				SPARKLE_CFLAGS="-F$_sparklepath"
+				SPARKLE_LIBS="-F$_sparklepath"
+			fi
+			if test "$_sparkle" = auto ; then
+				_sparkle=no
+				cat > $TMPC << EOF
 #include <Cocoa/Cocoa.h>
 #include <Sparkle/Sparkle.h>
 int main(void) { SUUpdater *updater = [SUUpdater sharedUpdater]; return 0; }
 EOF
-			cc_check $SPARKLE_CFLAGS $SPARKLE_LIBS -framework Sparkle -ObjC++ -lobjc && _sparkle=yes
-		fi
-		if test "$_sparkle" = yes ; then
-			append_var LIBS "$SPARKLE_LIBS -framework Sparkle"
-			append_var INCLUDES "$SPARKLE_CFLAGS"
-		fi
-		define_in_config_if_yes "$_sparkle" 'USE_SPARKLE'
+				cc_check $SPARKLE_CFLAGS $SPARKLE_LIBS -framework Sparkle -ObjC++ -lobjc && _sparkle=yes
+			fi
+			if test "$_sparkle" = yes ; then
+				append_var LIBS "$SPARKLE_LIBS -framework Sparkle"
+				append_var INCLUDES "$SPARKLE_CFLAGS"
+			fi
+			define_in_config_if_yes "$_sparkle" 'USE_SPARKLE'
 		fi
 		echo "$_sparkle"
 	;;
@@ -4788,6 +4792,7 @@ WIN32PATH=$_win32path
 AMIGAOSPATH=$_amigaospath
 STATICLIBPATH=$_staticlibpath
 XCODETOOLSPATH=$_xcodetoolspath
+SPARKLEPATH=$_sparklepath
 SDLCONFIG=$_sdlconfig
 
 ABI := $ABI

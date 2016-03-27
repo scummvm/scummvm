@@ -97,7 +97,8 @@ endif
 ifdef USE_SPARKLE
 	mkdir -p $(bundle_name)/Contents/Frameworks
 	cp $(srcdir)/dists/macosx/dsa_pub.pem $(bundle_name)/Contents/Resources/
-	cp -R $(STATICLIBPATH)/Sparkle.framework $(bundle_name)/Contents/Frameworks/
+	rm -rf $(bundle_name)/Contents/Frameworks/Sparkle.framework
+	cp -R $(SPARKLEPATH)/Sparkle.framework $(bundle_name)/Contents/Frameworks/
 endif
 	cp $(srcdir)/icons/scummvm.icns $(bundle_name)/Contents/Resources/
 	cp $(DIST_FILES_DOCS) $(bundle_name)/
@@ -327,7 +328,10 @@ OSX_ZLIB ?= $(STATICLIBPATH)/lib/libz.a
 endif
 
 ifdef USE_SPARKLE
-OSX_STATIC_LIBS += -framework Sparkle -F$(STATICLIBPATH)
+ifneq ($(SPARKLEPATH),)
+OSX_STATIC_LIBS += -F$(SPARKLEPATH)
+endif
+OSX_STATIC_LIBS += -framework Sparkle -Wl,-rpath,@loader_path/../Frameworks
 endif
 
 # Special target to create a static linked binary for Mac OS X.
