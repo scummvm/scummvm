@@ -406,6 +406,9 @@ osxsnap: bundle
 					ScummVM-snapshot.dmg
 	rm -rf ScummVM-snapshot
 
+publish-appcast:
+	scp dists/macosx/scummvm_appcast.xml www.scummvm.org:/var/www/html/
+
 #
 # Windows specific
 #
