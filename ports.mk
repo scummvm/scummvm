@@ -67,10 +67,10 @@ ScummVMDockTilePlugin32: ScummVMDockTilePlugin32.o
 
 ScummVMDockTilePlugin64.o:
 	$(CXX) -mmacosx-version-min=10.6 -arch x86_64 -O2 -c $(srcdir)/backends/taskbar/macosx/dockplugin/dockplugin.m -o ScummVMDockTilePlugin64.o
-	
+
 ScummVMDockTilePlugin64: ScummVMDockTilePlugin64.o
 	$(CXX) -mmacosx-version-min=10.6 -arch x86_64 -bundle -framework Foundation -framework AppKit -fobjc-link-runtime ScummVMDockTilePlugin64.o -o ScummVMDockTilePlugin64
-	
+
 ScummVMDockTilePlugin: ScummVMDockTilePlugin32 ScummVMDockTilePlugin64
 	lipo -create ScummVMDockTilePlugin32 ScummVMDockTilePlugin64 -output ScummVMDockTilePlugin
 
@@ -80,7 +80,7 @@ scummvm.docktileplugin: ScummVMDockTilePlugin
 	mkdir -p scummvm.docktileplugin/Contents/MacOS
 	cp ScummVMDockTilePlugIn scummvm.docktileplugin/Contents/MacOS/
 	chmod 644 scummvm.docktileplugin/Contents/MacOS/ScummVMDockTilePlugIn
-	
+
 endif
 
 bundle_name = ScummVM.app
@@ -487,12 +487,12 @@ CUR_BRANCH := $(shell cd $(srcdir); git describe --all |cut -d '-' -f 4-)
 
 ideprojects: devtools/create_project
 ifeq ($(VER_DIRTY), -dirty)
-	$(error You have uncommitted changes) 
-endif 
+	$(error You have uncommitted changes)
+endif
 ifeq "$(CUR_BRANCH)" "heads/master"
-	$(error You cannot do it on master) 
+	$(error You cannot do it on master)
 else ifeq "$(CUR_BRANCH)" ""
-	$(error You must be on a release branch) 
+	$(error You must be on a release branch)
 endif
 	@echo Creating Code::Blocks project files...
 	@cd $(srcdir)/dists/codeblocks && ../../devtools/create_project/create_project ../.. --codeblocks >/dev/null && git add -f engines/plugins_table.h *.workspace *.cbp
