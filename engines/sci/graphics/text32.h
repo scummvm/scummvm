@@ -362,15 +362,15 @@ public:
 
 	/**
 	 * The size of the x-dimension of the coordinate system
-	 * used by the text renderer.
+	 * used by the text renderer. NB: static
 	 */
-	int16 _scaledWidth;
+	static int16 _scaledWidth;
 
 	/**
 	 * The size of the y-dimension of the coordinate system
-	 * used by the text renderer.
+	 * used by the text renderer. NB: static
 	 */
-	int16 _scaledHeight;
+	static int16 _scaledHeight;
 
 	/**
 	 * The currently active font resource used to write text

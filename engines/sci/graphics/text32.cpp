@@ -39,12 +39,12 @@
 namespace Sci {
 
 int16 GfxText32::_defaultFontId = 0;
+int16 GfxText32::_scaledWidth = 0;
+int16 GfxText32::_scaledHeight = 0;
 
 GfxText32::GfxText32(SegManager *segMan, GfxCache *fonts) :
 	_segMan(segMan),
 	_cache(fonts),
-	_scaledWidth(g_sci->_gfxFrameout->getCurrentBuffer().scriptWidth),
-	_scaledHeight(g_sci->_gfxFrameout->getCurrentBuffer().scriptHeight),
 	// Not a typo, the original engine did not initialise height, only width
 	_width(0),
 	_text(""),
@@ -57,6 +57,12 @@ GfxText32::GfxText32(SegManager *segMan, GfxCache *fonts) :
 	_bitmap(NULL_REG) {
 		_fontId = _defaultFontId;
 		_font = _cache->getFont(_defaultFontId);
+
+		if (_scaledWidth == 0) {
+			// initialize the statics
+			_scaledWidth = g_sci->_gfxFrameout->getCurrentBuffer().scriptWidth;
+			_scaledHeight = g_sci->_gfxFrameout->getCurrentBuffer().scriptHeight;
+		}
 	}
 
 reg_t GfxText32::createFontBitmap(int16 width, int16 height, const Common::Rect &rect, const Common::String &text, const uint8 foreColor, const uint8 backColor, const uint8 skipColor, const GuiResourceId fontId, const TextAlign alignment, const int16 borderColor, const bool dimmed, const bool doScaling) {
