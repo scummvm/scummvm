@@ -51,6 +51,7 @@ For a more comprehensive changelog of the latest experimental code, see:
  Mac OS X port:
    - Dock menu for ScummVM now lists recently played games when ScummVM is
      not running and allows starting those games.
+   - Enabled Sparkle application updater.
 
 1.8.0 (2016-03-04)
  New Games:
