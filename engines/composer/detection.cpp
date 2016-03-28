@@ -253,6 +253,19 @@ static const ComposerGameDescription gameDescriptions[] = {
 		GType_ComposerV2
 	},
 
+	{ // Provided by Niv Baehr, Bugreport #6878
+		{
+			"darby",
+			0,
+			AD_ENTRY1("page99.rsc.ini", "183463d18c050563dcdec2d9f9670515"),
+			Common::HE_ISR,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GType_ComposerV2
+	},
+
 	{
 		{
 			"gregory",
