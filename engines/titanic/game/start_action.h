@@ -24,13 +24,19 @@
 #define TITANIC_START_ACTION_H
 
 #include "titanic/core/background.h"
+#include "titanic/messages/mouse_messages.h"
 
 namespace Titanic {
 
-class CStartAction : public CBackground {
+class CStartAction : public CBackground,
+	public CMouseButtonDownMsgTarget,
+	public CMouseButtonUpMsgTarget {
 protected:
-	CString _string3;
-	CString _string4;
+	CString _msgTarget;
+	CString _msgAction;
+protected:
+	virtual bool handleMessage(CMouseButtonDownMsg &msg);
+	virtual bool handleMessage(CMouseButtonUpMsg &msg);
 public:
 	CLASSDEF
 	CStartAction();

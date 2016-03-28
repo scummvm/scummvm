@@ -21,6 +21,7 @@
  */
 
 #include "titanic/game/start_action.h"
+#include "titanic/messages/messages.h"
 
 namespace Titanic {
 
@@ -29,18 +30,30 @@ CStartAction::CStartAction() : CBackground() {
 
 void CStartAction::save(SimpleFile *file, int indent) const {
 	file->writeNumberLine(1, indent);
-	file->writeQuotedLine(_string3, indent);
-	file->writeQuotedLine(_string4, indent);
+	file->writeQuotedLine(_msgTarget, indent);
+	file->writeQuotedLine(_msgAction, indent);
 
 	CBackground::save(file, indent);
 }
 
 void CStartAction::load(SimpleFile *file) {
 	file->readNumber();
-	_string3 = file->readString();
-	_string4 = file->readString();
+	_msgTarget = file->readString();
+	_msgAction = file->readString();
 
 	CBackground::load(file);
+}
+
+bool CStartAction::handleMessage(CMouseButtonDownMsg &msg) {
+	// Dispatch the desired action to the desired target
+	CActMsg actMsg(_msgAction);
+	actMsg.execute(_msgTarget);
+
+	return true;
+}
+
+bool CStartAction::handleMessage(CMouseButtonUpMsg &msg) {
+	return true;
 }
 
 } // End of namespace Titanic
