@@ -2349,23 +2349,24 @@ msgstr ""
 "управління меню."
 
 #: engines/agi/detection.cpp:177
-#, fuzzy
 msgid "Use Hercules hires font"
-msgstr "Hercules зелений"
+msgstr "Використовувати шрифт Hercules"
 
 #: engines/agi/detection.cpp:178
 msgid "Uses Hercules hires font, when font file is available."
-msgstr ""
+msgstr "Використовує шрифт високого розгалуження Hercules, якщо файл з шрифтом є досупний"
 
 #: engines/agi/detection.cpp:187
 msgid "Pause when entering commands"
-msgstr ""
+msgstr "Ставити на паузу під час вводу команд"
 
 #: engines/agi/detection.cpp:188
 msgid ""
 "Shows a command prompt window and pauses the game (like in SCI) instead of a "
 "real-time prompt."
 msgstr ""
+"Показує вікно для вводу команди та ставить гру на паузу (подібно до SCI),"
+"замість безпосереднього вводу."
 
 #: engines/agi/saveload.cpp:777 engines/avalanche/parser.cpp:1887
 #: engines/cge/events.cpp:85 engines/cge2/events.cpp:78
@@ -2669,12 +2670,10 @@ msgid "~D~rop Page"
 msgstr "Викинути сторінку"
 
 #: engines/mohawk/dialogs.cpp:103
-#, fuzzy
 msgid "Show ~M~ap"
 msgstr "Показати мапу"
 
 #: engines/mohawk/dialogs.cpp:109
-#, fuzzy
 msgid "Main Men~u~"
 msgstr "Головне меню"
 
@@ -3719,12 +3718,13 @@ msgstr "Показувати мітки для об'єктів при наведенні миші"
 
 #: engines/sword25/detection.cpp:46
 msgid "Use English speech"
-msgstr ""
+msgstr "Використовувати озвучення англійською"
 
 #: engines/sword25/detection.cpp:47
 msgid ""
 "Use English speech instead of German for every language other than German"
 msgstr ""
+"Використовувати озвучення англійскою замість німецького для всіх мов окрім німецької"
 
 #: engines/teenagent/resources.cpp:95
 msgid ""
