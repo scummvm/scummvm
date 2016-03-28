@@ -259,7 +259,7 @@ static const ComposerGameDescription gameDescriptions[] = {
 			0,
 			{
 				{"book.ini", 0, "285308372f7dddff2ca5a25c9192cf5c", 2545},
-				{"page99.rsc", 0, "49819f12947b7a88efeab436d4fd5f59", 1286480},
+				{"page99.rsc", 0, "40b4879e9ba6a34d6aa2a9d2e30c5ef7", 1286480},
 				AD_LISTEND
 			},
 			Common::DE_DEU,
@@ -332,7 +332,7 @@ static const ComposerGameDescription gameDescriptions[] = {
 			0,
 			{
 				{"book.ini", 0, "e54fc5c00de5f94e908a969e445af5d0", 2234},
-				{"page99.rsc", 0, "2b0b83ebc769fe5c823abad9c93cc77b", 388644},
+				{"page99.rsc", 0, "1ae6610de621a9901bf87b874fbf331f", 388644},
 				AD_LISTEND
 			},
 			Common::DE_DEU,
