@@ -24,10 +24,19 @@
 #define TITANIC_DEAD_AREA_H
 
 #include "titanic/core/game_object.h"
+#include "titanic/messages/mouse_messages.h"
 
 namespace Titanic {
 
-class CDeadArea : public CGameObject {
+/**
+ * Implements a non-responsive screen area
+ */
+class CDeadArea : public CGameObject,
+	public CMouseButtonDownMsgTarget,
+	public CMouseButtonUpMsgTarget {
+protected:
+	virtual bool handleMessage(CMouseButtonDownMsg &msg) { return true; }
+	virtual bool handleMessage(CMouseButtonUpMsg &msg) { return true; }
 public:
 	CLASSDEF
 	CDeadArea();
