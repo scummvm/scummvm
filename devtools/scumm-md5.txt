@@ -69,6 +69,7 @@ maniac	Maniac Mansion
 	e781230da44a44e2f0770edb2b3b3633	-1	en	Amiga	V2	V2	-	dhewg, Andrea Petrucci
 	ce7733f185b838e248927c7ba1a04204	-1	fr	Amiga	V2	V2	-	Tobias Fleischer
 	9bc548e179cdb0767009401c094d0895	-1	de	Amiga	V2	V2	-	Norbert Lange
+	3cf4b6ff78f735b671d8ccc2bc110b15	-1	es	Amiga	V2	V2	-	vanfanel
 	a570381b028972d891052ee1e51dc011	1988	en	Atari	V2	V2	SS	Andreas Bylund
 	0c331637580950aea2346e012ef2a868	1988	en	Atari	V2	V2	DS	Petr Maruska
 	dd30a53035393baa5a5e222e716559af	-1	fr	Atari	V2	V2	-	Andreas Bylund
