@@ -29,11 +29,11 @@ namespace Common {
 class ReadStream;
 class WriteStream;
 class String;
-class Point;
+struct Point;
 }
 
 namespace Graphics {
-class Surface;
+struct Surface;
 }
 
 namespace Adl {
@@ -96,7 +96,7 @@ private:
 	uint _cursorPos;
 	bool _showCursor;
 };
- 
+
 } // End of namespace Adl
 
 #endif
