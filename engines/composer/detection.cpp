@@ -253,6 +253,23 @@ static const ComposerGameDescription gameDescriptions[] = {
 		GType_ComposerV2
 	},
 
+	{ // Provided by WindlePoons, "100% Kids Darby & Gregor" Pack. Bugreport #6825
+		{
+			"darby",
+			0,
+			{
+				{"book.ini", 0, "285308372f7dddff2ca5a25c9192cf5c", 2545},
+				{"page99.rsc", 0, "49819f12947b7a88efeab436d4fd5f59", 1286480},
+				AD_LISTEND
+			},
+			Common::DE_DEU,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GType_ComposerV2
+	},
+
 	{ // Provided by Niv Baehr, Bugreport #6878
 		{
 			"darby",
@@ -302,6 +319,23 @@ static const ComposerGameDescription gameDescriptions[] = {
 			0,
 			AD_ENTRY1("book.ini", "e54fc5c00de5f94e908a969e445af5d0"),
 			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GType_ComposerV2
+	},
+
+	{ // Provided by WindlePoons, "100% Kids Darby & Gregor" Pack. Bugreport #6825
+		{
+			"gregory",
+			0,
+			{
+				{"book.ini", 0, "e54fc5c00de5f94e908a969e445af5d0", 2234},
+				{"page99.rsc", 0, "2b0b83ebc769fe5c823abad9c93cc77b", 388644},
+				AD_LISTEND
+			},
+			Common::DE_DEU,
 			Common::kPlatformWindows,
 			ADGF_NO_FLAGS,
 			GUIO1(GUIO_NOASPECT)
