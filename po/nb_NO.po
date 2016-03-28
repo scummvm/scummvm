@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
-"POT-Creation-Date: 2016-02-20 21:22+0000\n"
+"POT-Creation-Date: 2016-03-28 12:15+0100\n"
 "PO-Revision-Date: 2016-02-25 23:42+0100\n"
 "Last-Translator: Einar Johan Trøan Sømåen <einarjohants@gmail.com>\n"
 "Language-Team: somaen <einarjohants@gmail.com>\n"
@@ -212,7 +212,7 @@ msgstr "Nullstill alle FluidSynth-instillinger til standardverdier"
 #: backends/platform/wince/CELauncherDialog.cpp:54
 #: engines/agos/animation.cpp:558 engines/drascula/saveload.cpp:49
 #: engines/groovie/script.cpp:408 engines/parallaction/saveload.cpp:274
-#: engines/scumm/dialogs.cpp:193 engines/scumm/scumm.cpp:1834
+#: engines/scumm/dialogs.cpp:193 engines/scumm/scumm.cpp:1831
 #: engines/scumm/players/player_v3m.cpp:130
 #: engines/scumm/players/player_v5m.cpp:108 engines/sky/compact.cpp:131
 #: engines/sky/compact.cpp:141 engines/sword1/animation.cpp:524
@@ -503,7 +503,7 @@ msgstr "Velg mappe for lagrede spill"
 msgid "This game ID is already taken. Please choose another one."
 msgstr "Denne spill-IDen er allerede i bruk. Vennligst velg en annen."
 
-#: gui/launcher.cpp:626 engines/dialogs.cpp:111
+#: gui/launcher.cpp:626 engines/dialogs.cpp:111 engines/mohawk/dialogs.cpp:115
 msgid "~Q~uit"
 msgstr "~A~vslutt"
 
@@ -591,17 +591,18 @@ msgid "Search:"
 msgstr "Søk:"
 
 #: gui/launcher.cpp:685 engines/dialogs.cpp:115 engines/cruise/menu.cpp:214
-#: engines/mohawk/riven.cpp:718 engines/pegasus/pegasus.cpp:353
-#: engines/tsage/scenes.cpp:600
+#: engines/mohawk/dialogs.cpp:120 engines/mohawk/riven.cpp:718
+#: engines/pegasus/pegasus.cpp:353 engines/tsage/scenes.cpp:600
 msgid "Load game:"
 msgstr "Åpne spill:"
 
 #: gui/launcher.cpp:685 engines/dialogs.cpp:115
 #: backends/platform/wince/CEActionsPocket.cpp:267
 #: backends/platform/wince/CEActionsSmartphone.cpp:231
-#: engines/cruise/menu.cpp:214 engines/mohawk/riven.cpp:718
-#: engines/parallaction/saveload.cpp:197 engines/pegasus/pegasus.cpp:353
-#: engines/scumm/dialogs.cpp:189 engines/tsage/scenes.cpp:600
+#: engines/cruise/menu.cpp:214 engines/mohawk/dialogs.cpp:120
+#: engines/mohawk/riven.cpp:718 engines/parallaction/saveload.cpp:197
+#: engines/pegasus/pegasus.cpp:353 engines/scumm/dialogs.cpp:189
+#: engines/tsage/scenes.cpp:600
 msgid "Load"
 msgstr "Åpne"
 
@@ -1368,17 +1369,17 @@ msgctxt "lowres"
 msgid "Hercules Amber"
 msgstr "Hercules Oransje"
 
-#: engines/advancedDetector.cpp:317
+#: engines/advancedDetector.cpp:334
 #, c-format
 msgid "The game in '%s' seems to be unknown."
 msgstr "Spillet i '%s' ser ut til å være ukjent."
 
-#: engines/advancedDetector.cpp:318
+#: engines/advancedDetector.cpp:335
 msgid "Please, report the following data to the ScummVM team along with name"
 msgstr ""
 "Vennligst rapporter de følgende dataene til ScummVM-teamet sammen med navnet"
 
-#: engines/advancedDetector.cpp:320
+#: engines/advancedDetector.cpp:337
 msgid "of the game you tried to add and its version/language/etc.:"
 msgstr "på spillet du forsøkte å legge til, og dets versjon/språk/etc.:"
 
@@ -1386,11 +1387,11 @@ msgstr "på spillet du forsøkte å legge til, og dets versjon/språk/etc.:"
 msgid "~R~esume"
 msgstr "~F~ortsett"
 
-#: engines/dialogs.cpp:87
+#: engines/dialogs.cpp:87 engines/mohawk/dialogs.cpp:113
 msgid "~L~oad"
 msgstr "~Å~pne"
 
-#: engines/dialogs.cpp:91
+#: engines/dialogs.cpp:91 engines/mohawk/dialogs.cpp:114
 msgid "~S~ave"
 msgstr "~L~agre"
 
@@ -1419,9 +1420,9 @@ msgstr "~T~ilbake til oppstarter"
 #: engines/avalanche/parser.cpp:1899 engines/cge/events.cpp:74
 #: engines/cge2/events.cpp:67 engines/cruise/menu.cpp:212
 #: engines/drascula/saveload.cpp:336 engines/dreamweb/saveload.cpp:261
-#: engines/hugo/file.cpp:298 engines/neverhood/menumodule.cpp:877
-#: engines/pegasus/pegasus.cpp:377 engines/sci/engine/kfile.cpp:768
-#: engines/sherlock/scalpel/scalpel.cpp:1249
+#: engines/hugo/file.cpp:298 engines/mohawk/dialogs.cpp:121
+#: engines/neverhood/menumodule.cpp:877 engines/pegasus/pegasus.cpp:377
+#: engines/sci/engine/kfile.cpp:778 engines/sherlock/scalpel/scalpel.cpp:1250
 #: engines/sherlock/tattoo/widget_files.cpp:75 engines/toltecs/menu.cpp:281
 #: engines/toon/toon.cpp:3338 engines/tsage/scenes.cpp:598
 msgid "Save game:"
@@ -1436,9 +1437,10 @@ msgstr "Lagret spill:"
 #: engines/cge/events.cpp:74 engines/cge2/events.cpp:67
 #: engines/cruise/menu.cpp:212 engines/drascula/saveload.cpp:336
 #: engines/dreamweb/saveload.cpp:261 engines/hugo/file.cpp:298
-#: engines/neverhood/menumodule.cpp:877 engines/parallaction/saveload.cpp:212
-#: engines/pegasus/pegasus.cpp:377 engines/sci/engine/kfile.cpp:768
-#: engines/scumm/dialogs.cpp:188 engines/sherlock/scalpel/scalpel.cpp:1249
+#: engines/mohawk/dialogs.cpp:121 engines/neverhood/menumodule.cpp:877
+#: engines/parallaction/saveload.cpp:212 engines/pegasus/pegasus.cpp:377
+#: engines/sci/engine/kfile.cpp:778 engines/scumm/dialogs.cpp:188
+#: engines/sherlock/scalpel/scalpel.cpp:1250
 #: engines/sherlock/tattoo/widget_files.cpp:75 engines/toltecs/menu.cpp:281
 #: engines/toon/toon.cpp:3338 engines/tsage/scenes.cpp:598
 msgid "Save"
@@ -1463,13 +1465,13 @@ msgstr ""
 "Lagring av spilltilstand feilet (%s)! Vennligst konsulter README-filen for "
 "grunnleggende informasjon og instruksjon om hvordan du får ytterligere hjelp."
 
-#: engines/dialogs.cpp:307 engines/mohawk/dialogs.cpp:109
-#: engines/mohawk/dialogs.cpp:170 engines/tsage/dialogs.cpp:106
+#: engines/dialogs.cpp:307 engines/mohawk/dialogs.cpp:117
+#: engines/mohawk/dialogs.cpp:242 engines/tsage/dialogs.cpp:106
 msgid "~O~K"
 msgstr "~O~K"
 
-#: engines/dialogs.cpp:308 engines/mohawk/dialogs.cpp:110
-#: engines/mohawk/dialogs.cpp:171 engines/tsage/dialogs.cpp:107
+#: engines/dialogs.cpp:308 engines/mohawk/dialogs.cpp:118
+#: engines/mohawk/dialogs.cpp:243 engines/tsage/dialogs.cpp:107
 msgid "~C~ancel"
 msgstr "~A~vbryt"
 
@@ -1625,11 +1627,11 @@ msgstr "FM Towns Lyd"
 msgid "PC-98 Audio"
 msgstr "PC-98 Lyd"
 
-#: audio/softsynth/mt32.cpp:200
+#: audio/softsynth/mt32.cpp:196
 msgid "Initializing MT-32 Emulator"
 msgstr "Initialiserer MT-32-Emulator"
 
-#: audio/softsynth/mt32.cpp:426
+#: audio/softsynth/mt32.cpp:434
 msgid "MT-32 Emulator"
 msgstr "MT-32 Emulator"
 
@@ -1746,11 +1748,11 @@ msgstr "Auto-dramodus er nå"
 msgid "Swipe three fingers to the right to toggle."
 msgstr "Sveip tre fingre til høyre for å veksle"
 
-#: backends/graphics/opengl/opengl-graphics.cpp:119
+#: backends/graphics/opengl/opengl-graphics.cpp:126
 msgid "OpenGL"
 msgstr "OpenGL"
 
-#: backends/graphics/opengl/opengl-graphics.cpp:120
+#: backends/graphics/opengl/opengl-graphics.cpp:127
 msgid "OpenGL (No filtering)"
 msgstr "OpenGL (Ingen filtrering)"
 
@@ -2309,14 +2311,14 @@ msgstr "Sjekk for oppdateringer..."
 
 #: engines/agi/detection.cpp:147 engines/cine/detection.cpp:70
 #: engines/drascula/detection.cpp:302 engines/dreamweb/detection.cpp:47
-#: engines/neverhood/detection.cpp:160 engines/sci/detection.cpp:404
+#: engines/neverhood/detection.cpp:160 engines/sci/detection.cpp:410
 #: engines/toltecs/detection.cpp:200 engines/zvision/detection_tables.h:51
 msgid "Use original save/load screens"
 msgstr "Bruk originale lagre/laste-skjermer"
 
 #: engines/agi/detection.cpp:148 engines/cine/detection.cpp:71
 #: engines/drascula/detection.cpp:303 engines/dreamweb/detection.cpp:48
-#: engines/neverhood/detection.cpp:161 engines/sci/detection.cpp:405
+#: engines/neverhood/detection.cpp:161 engines/sci/detection.cpp:411
 #: engines/toltecs/detection.cpp:201
 msgid "Use the original save/load screens, instead of the ScummVM ones"
 msgstr "Bruk de originale lagre/laste-skjermene, istedenfor ScummVM-variantene"
@@ -2343,11 +2345,30 @@ msgid ""
 msgstr ""
 "Aktiver musstøtte. Tillater å bruke mus for bevegelse og i spillmenyer."
 
+#: engines/agi/detection.cpp:177
+#, fuzzy
+msgid "Use Hercules hires font"
+msgstr "Hercules Grønn"
+
+#: engines/agi/detection.cpp:178
+msgid "Uses Hercules hires font, when font file is available."
+msgstr ""
+
+#: engines/agi/detection.cpp:187
+msgid "Pause when entering commands"
+msgstr ""
+
+#: engines/agi/detection.cpp:188
+msgid ""
+"Shows a command prompt window and pauses the game (like in SCI) instead of a "
+"real-time prompt."
+msgstr ""
+
 #: engines/agi/saveload.cpp:777 engines/avalanche/parser.cpp:1887
 #: engines/cge/events.cpp:85 engines/cge2/events.cpp:78
 #: engines/drascula/saveload.cpp:349 engines/dreamweb/saveload.cpp:169
 #: engines/hugo/file.cpp:400 engines/neverhood/menumodule.cpp:890
-#: engines/sci/engine/kfile.cpp:867 engines/sherlock/scalpel/scalpel.cpp:1262
+#: engines/sci/engine/kfile.cpp:877 engines/sherlock/scalpel/scalpel.cpp:1263
 #: engines/sherlock/tattoo/widget_files.cpp:94 engines/toltecs/menu.cpp:256
 #: engines/toon/toon.cpp:3430
 msgid "Restore game:"
@@ -2357,13 +2378,13 @@ msgstr "Gjennopprett spill:"
 #: engines/cge/events.cpp:85 engines/cge2/events.cpp:78
 #: engines/drascula/saveload.cpp:349 engines/dreamweb/saveload.cpp:169
 #: engines/hugo/file.cpp:400 engines/neverhood/menumodule.cpp:890
-#: engines/sci/engine/kfile.cpp:867 engines/sherlock/scalpel/scalpel.cpp:1262
+#: engines/sci/engine/kfile.cpp:877 engines/sherlock/scalpel/scalpel.cpp:1263
 #: engines/sherlock/tattoo/widget_files.cpp:94 engines/toltecs/menu.cpp:256
 #: engines/toon/toon.cpp:3430
 msgid "Restore"
 msgstr "Gjenopprett"
 
-#: engines/agos/saveload.cpp:160 engines/scumm/scumm.cpp:2377
+#: engines/agos/saveload.cpp:160 engines/scumm/scumm.cpp:2374
 #, c-format
 msgid ""
 "Failed to load game state from file:\n"
@@ -2374,7 +2395,7 @@ msgstr ""
 "\n"
 "%s"
 
-#: engines/agos/saveload.cpp:195 engines/scumm/scumm.cpp:2370
+#: engines/agos/saveload.cpp:195 engines/scumm/scumm.cpp:2367
 #, c-format
 msgid ""
 "Failed to save game state to file:\n"
@@ -2385,7 +2406,7 @@ msgstr ""
 "\n"
 "%s"
 
-#: engines/agos/saveload.cpp:203 engines/scumm/scumm.cpp:2388
+#: engines/agos/saveload.cpp:203 engines/scumm/scumm.cpp:2385
 #, c-format
 msgid ""
 "Successfully saved game state in file:\n"
@@ -2631,28 +2652,30 @@ msgstr ""
 "\n"
 
 #. I18N: Option for fast scene switching
-#: engines/mohawk/dialogs.cpp:92 engines/mohawk/dialogs.cpp:167
+#: engines/mohawk/dialogs.cpp:96 engines/mohawk/dialogs.cpp:239
 msgid "~Z~ip Mode Activated"
 msgstr "~Z~ipmodus aktivert"
 
-#: engines/mohawk/dialogs.cpp:93
+#: engines/mohawk/dialogs.cpp:97
 msgid "~T~ransitions Enabled"
 msgstr "~O~verganger aktivert"
 
 #. I18N: Drop book page
-#: engines/mohawk/dialogs.cpp:95
+#: engines/mohawk/dialogs.cpp:99
 msgid "~D~rop Page"
 msgstr "~D~ropp Side"
 
-#: engines/mohawk/dialogs.cpp:99
-msgid "~S~how Map"
+#: engines/mohawk/dialogs.cpp:103
+#, fuzzy
+msgid "Show ~M~ap"
 msgstr "Vi~s~ Kart"
 
-#: engines/mohawk/dialogs.cpp:105
-msgid "~M~ain Menu"
+#: engines/mohawk/dialogs.cpp:109
+#, fuzzy
+msgid "Main Men~u~"
 msgstr "Hoved~m~eny"
 
-#: engines/mohawk/dialogs.cpp:168
+#: engines/mohawk/dialogs.cpp:240
 msgid "~W~ater Effect Enabled"
 msgstr "~V~anneffekt aktivert"
 
@@ -2774,35 +2797,35 @@ msgstr "Alternativ intro"
 msgid "Use an alternative game intro (CD version only)"
 msgstr "Bruk en alternativ intro (Kun for CD-versjon)"
 
-#: engines/sci/detection.cpp:374
+#: engines/sci/detection.cpp:380
 msgid "Skip EGA dithering pass (full color backgrounds)"
 msgstr "Hopp over EGA dithering (fullfarge bakgrunner)"
 
-#: engines/sci/detection.cpp:375
+#: engines/sci/detection.cpp:381
 msgid "Skip dithering pass in EGA games, graphics are shown with full colors"
 msgstr ""
 
-#: engines/sci/detection.cpp:384
+#: engines/sci/detection.cpp:390
 msgid "Enable high resolution graphics"
 msgstr "Aktiver høyoppløselig grafikk"
 
-#: engines/sci/detection.cpp:385
+#: engines/sci/detection.cpp:391
 msgid "Enable high resolution graphics/content"
 msgstr "Aktiver høyoppløselig grafikk/innhold"
 
-#: engines/sci/detection.cpp:394
+#: engines/sci/detection.cpp:400
 msgid "Prefer digital sound effects"
 msgstr "Foretrekk digitale lydeffekter"
 
-#: engines/sci/detection.cpp:395
+#: engines/sci/detection.cpp:401
 msgid "Prefer digital sound effects instead of synthesized ones"
 msgstr "Foretrekk digitale lydeffekter fremfor syntetiske"
 
-#: engines/sci/detection.cpp:414
+#: engines/sci/detection.cpp:420
 msgid "Use IMF/Yamaha FB-01 for MIDI output"
 msgstr "Bruk IMF/Yamaha-FB-01 for MIDI-output"
 
-#: engines/sci/detection.cpp:415
+#: engines/sci/detection.cpp:421
 msgid ""
 "Use an IBM Music Feature card or a Yamaha FB-01 FM synth module for MIDI "
 "output"
@@ -2810,28 +2833,28 @@ msgstr ""
 "Bruk et IBM Music Feature-kort eller en Yamaha FB-01 FM-synthmodul til MIDI "
 "output"
 
-#: engines/sci/detection.cpp:425
+#: engines/sci/detection.cpp:431
 msgid "Use CD audio"
 msgstr "Bruk CD-lyd"
 
-#: engines/sci/detection.cpp:426
+#: engines/sci/detection.cpp:432
 msgid "Use CD audio instead of in-game audio, if available"
 msgstr "Bruk CD-lyd istedenfor spillets lyd, hvis tilgjengelig"
 
-#: engines/sci/detection.cpp:436
+#: engines/sci/detection.cpp:442
 msgid "Use Windows cursors"
 msgstr "Bruk Windows-muspekere"
 
-#: engines/sci/detection.cpp:437
+#: engines/sci/detection.cpp:443
 msgid ""
 "Use the Windows cursors (smaller and monochrome) instead of the DOS ones"
 msgstr "Bruk Windows-muspekerene (mindre, og monokrome) isteden"
 
-#: engines/sci/detection.cpp:447
+#: engines/sci/detection.cpp:453
 msgid "Use silver cursors"
 msgstr "Bruk sølvmuspekere"
 
-#: engines/sci/detection.cpp:448
+#: engines/sci/detection.cpp:454
 msgid ""
 "Use the alternate set of silver cursors, instead of the normal golden ones"
 msgstr ""
@@ -3502,7 +3525,7 @@ msgstr "Musikkvolum: "
 msgid "Subtitle speed: "
 msgstr "Teksthastighet: "
 
-#: engines/scumm/scumm.cpp:1832
+#: engines/scumm/scumm.cpp:1829
 #, c-format
 msgid ""
 "Native MIDI support requires the Roland Upgrade from LucasArts,\n"
@@ -3511,7 +3534,7 @@ msgstr ""
 "Ekte MIDI-støtte krever «Roland Upgrade» fra LucasArts,\n"
 "men %s mangler. Bruker AdLib istedet."
 
-#: engines/scumm/scumm.cpp:2644
+#: engines/scumm/scumm.cpp:2645
 msgid ""
 "Usually, Maniac Mansion would start now. But for that to work, the game "
 "files for Maniac Mansion have to be in the 'Maniac' directory inside the "
@@ -3687,6 +3710,15 @@ msgstr "Vis objektmerkelapper"
 #: engines/sword2/sword2.cpp:80
 msgid "Show labels for objects on mouse hover"
 msgstr "Vis merkelapper for objekter når musa står over dem"
+
+#: engines/sword25/detection.cpp:46
+msgid "Use English speech"
+msgstr ""
+
+#: engines/sword25/detection.cpp:47
+msgid ""
+"Use English speech instead of German for every language other than German"
+msgstr ""
 
 #: engines/teenagent/resources.cpp:95
 msgid ""

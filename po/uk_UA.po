@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
-"POT-Creation-Date: 2016-02-20 21:22+0000\n"
+"POT-Creation-Date: 2016-03-28 12:15+0100\n"
 "PO-Revision-Date: 2015-11-06 10:07+0300\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian\n"
@@ -212,7 +212,7 @@ msgstr "Скинути всі налаштування FluidSynth до їх значень за замовченням"
 #: backends/platform/wince/CELauncherDialog.cpp:54
 #: engines/agos/animation.cpp:558 engines/drascula/saveload.cpp:49
 #: engines/groovie/script.cpp:408 engines/parallaction/saveload.cpp:274
-#: engines/scumm/dialogs.cpp:193 engines/scumm/scumm.cpp:1834
+#: engines/scumm/dialogs.cpp:193 engines/scumm/scumm.cpp:1831
 #: engines/scumm/players/player_v3m.cpp:130
 #: engines/scumm/players/player_v5m.cpp:108 engines/sky/compact.cpp:131
 #: engines/sky/compact.cpp:141 engines/sword1/animation.cpp:524
@@ -504,7 +504,7 @@ msgstr "Виберіть папку для збережень"
 msgid "This game ID is already taken. Please choose another one."
 msgstr "Цей ID гри вже використовується. Будь ласка, виберіть інший."
 
-#: gui/launcher.cpp:626 engines/dialogs.cpp:111
+#: gui/launcher.cpp:626 engines/dialogs.cpp:111 engines/mohawk/dialogs.cpp:115
 msgid "~Q~uit"
 msgstr "~В~ихід"
 
@@ -592,17 +592,18 @@ msgid "Search:"
 msgstr "Пошук:"
 
 #: gui/launcher.cpp:685 engines/dialogs.cpp:115 engines/cruise/menu.cpp:214
-#: engines/mohawk/riven.cpp:718 engines/pegasus/pegasus.cpp:353
-#: engines/tsage/scenes.cpp:600
+#: engines/mohawk/dialogs.cpp:120 engines/mohawk/riven.cpp:718
+#: engines/pegasus/pegasus.cpp:353 engines/tsage/scenes.cpp:600
 msgid "Load game:"
 msgstr "Завантажити гру:"
 
 #: gui/launcher.cpp:685 engines/dialogs.cpp:115
 #: backends/platform/wince/CEActionsPocket.cpp:267
 #: backends/platform/wince/CEActionsSmartphone.cpp:231
-#: engines/cruise/menu.cpp:214 engines/mohawk/riven.cpp:718
-#: engines/parallaction/saveload.cpp:197 engines/pegasus/pegasus.cpp:353
-#: engines/scumm/dialogs.cpp:189 engines/tsage/scenes.cpp:600
+#: engines/cruise/menu.cpp:214 engines/mohawk/dialogs.cpp:120
+#: engines/mohawk/riven.cpp:718 engines/parallaction/saveload.cpp:197
+#: engines/pegasus/pegasus.cpp:353 engines/scumm/dialogs.cpp:189
+#: engines/tsage/scenes.cpp:600
 msgid "Load"
 msgstr "Завантажити"
 
@@ -1371,16 +1372,16 @@ msgctxt "lowres"
 msgid "Hercules Amber"
 msgstr "Hercules бурштинний"
 
-#: engines/advancedDetector.cpp:317
+#: engines/advancedDetector.cpp:334
 #, c-format
 msgid "The game in '%s' seems to be unknown."
 msgstr "Гра у '%s' невідома."
 
-#: engines/advancedDetector.cpp:318
+#: engines/advancedDetector.cpp:335
 msgid "Please, report the following data to the ScummVM team along with name"
 msgstr "Будь ласка, передайте нижченаведену інформацію команді ScummVM разом з"
 
-#: engines/advancedDetector.cpp:320
+#: engines/advancedDetector.cpp:337
 msgid "of the game you tried to add and its version/language/etc.:"
 msgstr "назвою гри, яку ви намагаєтесь додати, а також її версію/мову/та інше:"
 
@@ -1388,11 +1389,11 @@ msgstr "назвою гри, яку ви намагаєтесь додати, а також її версію/мову/та інше:"
 msgid "~R~esume"
 msgstr "Продов~ж~ити"
 
-#: engines/dialogs.cpp:87
+#: engines/dialogs.cpp:87 engines/mohawk/dialogs.cpp:113
 msgid "~L~oad"
 msgstr "~З~авантажити"
 
-#: engines/dialogs.cpp:91
+#: engines/dialogs.cpp:91 engines/mohawk/dialogs.cpp:114
 msgid "~S~ave"
 msgstr "~З~аписати"
 
@@ -1421,9 +1422,9 @@ msgstr "~П~овер.в головне меню"
 #: engines/avalanche/parser.cpp:1899 engines/cge/events.cpp:74
 #: engines/cge2/events.cpp:67 engines/cruise/menu.cpp:212
 #: engines/drascula/saveload.cpp:336 engines/dreamweb/saveload.cpp:261
-#: engines/hugo/file.cpp:298 engines/neverhood/menumodule.cpp:877
-#: engines/pegasus/pegasus.cpp:377 engines/sci/engine/kfile.cpp:768
-#: engines/sherlock/scalpel/scalpel.cpp:1249
+#: engines/hugo/file.cpp:298 engines/mohawk/dialogs.cpp:121
+#: engines/neverhood/menumodule.cpp:877 engines/pegasus/pegasus.cpp:377
+#: engines/sci/engine/kfile.cpp:778 engines/sherlock/scalpel/scalpel.cpp:1250
 #: engines/sherlock/tattoo/widget_files.cpp:75 engines/toltecs/menu.cpp:281
 #: engines/toon/toon.cpp:3338 engines/tsage/scenes.cpp:598
 msgid "Save game:"
@@ -1438,9 +1439,10 @@ msgstr "Зберегти гру: "
 #: engines/cge/events.cpp:74 engines/cge2/events.cpp:67
 #: engines/cruise/menu.cpp:212 engines/drascula/saveload.cpp:336
 #: engines/dreamweb/saveload.cpp:261 engines/hugo/file.cpp:298
-#: engines/neverhood/menumodule.cpp:877 engines/parallaction/saveload.cpp:212
-#: engines/pegasus/pegasus.cpp:377 engines/sci/engine/kfile.cpp:768
-#: engines/scumm/dialogs.cpp:188 engines/sherlock/scalpel/scalpel.cpp:1249
+#: engines/mohawk/dialogs.cpp:121 engines/neverhood/menumodule.cpp:877
+#: engines/parallaction/saveload.cpp:212 engines/pegasus/pegasus.cpp:377
+#: engines/sci/engine/kfile.cpp:778 engines/scumm/dialogs.cpp:188
+#: engines/sherlock/scalpel/scalpel.cpp:1250
 #: engines/sherlock/tattoo/widget_files.cpp:75 engines/toltecs/menu.cpp:281
 #: engines/toon/toon.cpp:3338 engines/tsage/scenes.cpp:598
 msgid "Save"
@@ -1465,13 +1467,13 @@ msgstr ""
 "Збереження стану гри не вдалося (%s)!. Будь-ласка, дивіться файл README для "
 "основної інормації, а також інструкцій, як отримати подальшу допомогу."
 
-#: engines/dialogs.cpp:307 engines/mohawk/dialogs.cpp:109
-#: engines/mohawk/dialogs.cpp:170 engines/tsage/dialogs.cpp:106
+#: engines/dialogs.cpp:307 engines/mohawk/dialogs.cpp:117
+#: engines/mohawk/dialogs.cpp:242 engines/tsage/dialogs.cpp:106
 msgid "~O~K"
 msgstr "~O~K"
 
-#: engines/dialogs.cpp:308 engines/mohawk/dialogs.cpp:110
-#: engines/mohawk/dialogs.cpp:171 engines/tsage/dialogs.cpp:107
+#: engines/dialogs.cpp:308 engines/mohawk/dialogs.cpp:118
+#: engines/mohawk/dialogs.cpp:243 engines/tsage/dialogs.cpp:107
 msgid "~C~ancel"
 msgstr "Ві~д~міна"
 
@@ -1627,11 +1629,11 @@ msgstr "Аудіо FM-Towns"
 msgid "PC-98 Audio"
 msgstr "Аудіо PC-98"
 
-#: audio/softsynth/mt32.cpp:200
+#: audio/softsynth/mt32.cpp:196
 msgid "Initializing MT-32 Emulator"
 msgstr "Налаштовую емулятор MT-32"
 
-#: audio/softsynth/mt32.cpp:426
+#: audio/softsynth/mt32.cpp:434
 msgid "MT-32 Emulator"
 msgstr "Емулятор MT-32"
 
@@ -1748,11 +1750,11 @@ msgstr "Режим самотягнення включено"
 msgid "Swipe three fingers to the right to toggle."
 msgstr "Проведіть трьома пальцямі направо для переключення."
 
-#: backends/graphics/opengl/opengl-graphics.cpp:119
+#: backends/graphics/opengl/opengl-graphics.cpp:126
 msgid "OpenGL"
 msgstr "OpenGL"
 
-#: backends/graphics/opengl/opengl-graphics.cpp:120
+#: backends/graphics/opengl/opengl-graphics.cpp:127
 msgid "OpenGL (No filtering)"
 msgstr "OpenGL (без фільтрів)"
 
@@ -2310,14 +2312,14 @@ msgstr "Перевірити оновлення..."
 
 #: engines/agi/detection.cpp:147 engines/cine/detection.cpp:70
 #: engines/drascula/detection.cpp:302 engines/dreamweb/detection.cpp:47
-#: engines/neverhood/detection.cpp:160 engines/sci/detection.cpp:404
+#: engines/neverhood/detection.cpp:160 engines/sci/detection.cpp:410
 #: engines/toltecs/detection.cpp:200 engines/zvision/detection_tables.h:51
 msgid "Use original save/load screens"
 msgstr "Використовувати ориг. збереження/завантаження екрани"
 
 #: engines/agi/detection.cpp:148 engines/cine/detection.cpp:71
 #: engines/drascula/detection.cpp:303 engines/dreamweb/detection.cpp:48
-#: engines/neverhood/detection.cpp:161 engines/sci/detection.cpp:405
+#: engines/neverhood/detection.cpp:161 engines/sci/detection.cpp:411
 #: engines/toltecs/detection.cpp:201
 msgid "Use the original save/load screens, instead of the ScummVM ones"
 msgstr ""
@@ -2346,11 +2348,30 @@ msgstr ""
 "Включає підтримку миші. Дозволяє використовувати мишу для пересування та "
 "управління меню."
 
+#: engines/agi/detection.cpp:177
+#, fuzzy
+msgid "Use Hercules hires font"
+msgstr "Hercules зелений"
+
+#: engines/agi/detection.cpp:178
+msgid "Uses Hercules hires font, when font file is available."
+msgstr ""
+
+#: engines/agi/detection.cpp:187
+msgid "Pause when entering commands"
+msgstr ""
+
+#: engines/agi/detection.cpp:188
+msgid ""
+"Shows a command prompt window and pauses the game (like in SCI) instead of a "
+"real-time prompt."
+msgstr ""
+
 #: engines/agi/saveload.cpp:777 engines/avalanche/parser.cpp:1887
 #: engines/cge/events.cpp:85 engines/cge2/events.cpp:78
 #: engines/drascula/saveload.cpp:349 engines/dreamweb/saveload.cpp:169
 #: engines/hugo/file.cpp:400 engines/neverhood/menumodule.cpp:890
-#: engines/sci/engine/kfile.cpp:867 engines/sherlock/scalpel/scalpel.cpp:1262
+#: engines/sci/engine/kfile.cpp:877 engines/sherlock/scalpel/scalpel.cpp:1263
 #: engines/sherlock/tattoo/widget_files.cpp:94 engines/toltecs/menu.cpp:256
 #: engines/toon/toon.cpp:3430
 msgid "Restore game:"
@@ -2360,13 +2381,13 @@ msgstr "Відновити гру:"
 #: engines/cge/events.cpp:85 engines/cge2/events.cpp:78
 #: engines/drascula/saveload.cpp:349 engines/dreamweb/saveload.cpp:169
 #: engines/hugo/file.cpp:400 engines/neverhood/menumodule.cpp:890
-#: engines/sci/engine/kfile.cpp:867 engines/sherlock/scalpel/scalpel.cpp:1262
+#: engines/sci/engine/kfile.cpp:877 engines/sherlock/scalpel/scalpel.cpp:1263
 #: engines/sherlock/tattoo/widget_files.cpp:94 engines/toltecs/menu.cpp:256
 #: engines/toon/toon.cpp:3430
 msgid "Restore"
 msgstr "Відновити"
 
-#: engines/agos/saveload.cpp:160 engines/scumm/scumm.cpp:2377
+#: engines/agos/saveload.cpp:160 engines/scumm/scumm.cpp:2374
 #, c-format
 msgid ""
 "Failed to load game state from file:\n"
@@ -2377,7 +2398,7 @@ msgstr ""
 "\n"
 "%s"
 
-#: engines/agos/saveload.cpp:195 engines/scumm/scumm.cpp:2370
+#: engines/agos/saveload.cpp:195 engines/scumm/scumm.cpp:2367
 #, c-format
 msgid ""
 "Failed to save game state to file:\n"
@@ -2388,7 +2409,7 @@ msgstr ""
 "\n"
 "%s"
 
-#: engines/agos/saveload.cpp:203 engines/scumm/scumm.cpp:2388
+#: engines/agos/saveload.cpp:203 engines/scumm/scumm.cpp:2385
 #, c-format
 msgid ""
 "Successfully saved game state in file:\n"
@@ -2634,28 +2655,30 @@ msgstr ""
 "\n"
 
 #. I18N: Option for fast scene switching
-#: engines/mohawk/dialogs.cpp:92 engines/mohawk/dialogs.cpp:167
+#: engines/mohawk/dialogs.cpp:96 engines/mohawk/dialogs.cpp:239
 msgid "~Z~ip Mode Activated"
 msgstr "Режим швидкого переходу активовано"
 
-#: engines/mohawk/dialogs.cpp:93
+#: engines/mohawk/dialogs.cpp:97
 msgid "~T~ransitions Enabled"
 msgstr "Переходи активовано"
 
 #. I18N: Drop book page
-#: engines/mohawk/dialogs.cpp:95
+#: engines/mohawk/dialogs.cpp:99
 msgid "~D~rop Page"
 msgstr "Викинути сторінку"
 
-#: engines/mohawk/dialogs.cpp:99
-msgid "~S~how Map"
+#: engines/mohawk/dialogs.cpp:103
+#, fuzzy
+msgid "Show ~M~ap"
 msgstr "Показати мапу"
 
-#: engines/mohawk/dialogs.cpp:105
-msgid "~M~ain Menu"
+#: engines/mohawk/dialogs.cpp:109
+#, fuzzy
+msgid "Main Men~u~"
 msgstr "Головне меню"
 
-#: engines/mohawk/dialogs.cpp:168
+#: engines/mohawk/dialogs.cpp:240
 msgid "~W~ater Effect Enabled"
 msgstr "Ефекти води увімкнено"
 
@@ -2776,37 +2799,37 @@ msgstr "Алтернативний вступ"
 msgid "Use an alternative game intro (CD version only)"
 msgstr "Використовувати альтернативний вступ гри (тільки CD версія)"
 
-#: engines/sci/detection.cpp:374
+#: engines/sci/detection.cpp:380
 msgid "Skip EGA dithering pass (full color backgrounds)"
 msgstr "Не робити растрування EGA (фони у повному кольорі)"
 
-#: engines/sci/detection.cpp:375
+#: engines/sci/detection.cpp:381
 msgid "Skip dithering pass in EGA games, graphics are shown with full colors"
 msgstr ""
 "Не робити крок растрування у іграх EGA, графіку буде показано у повному "
 "кольорі"
 
-#: engines/sci/detection.cpp:384
+#: engines/sci/detection.cpp:390
 msgid "Enable high resolution graphics"
 msgstr "Увімкнути графіку високого розгалуження"
 
-#: engines/sci/detection.cpp:385
+#: engines/sci/detection.cpp:391
 msgid "Enable high resolution graphics/content"
 msgstr "Увімкнути графіку та контент у високому розгалуженні"
 
-#: engines/sci/detection.cpp:394
+#: engines/sci/detection.cpp:400
 msgid "Prefer digital sound effects"
 msgstr "Надавати перевагу цифровим звуковим ефектам"
 
-#: engines/sci/detection.cpp:395
+#: engines/sci/detection.cpp:401
 msgid "Prefer digital sound effects instead of synthesized ones"
 msgstr "Віддавати перевагу цифровим звуковим ефектам, а не синтезованим"
 
-#: engines/sci/detection.cpp:414
+#: engines/sci/detection.cpp:420
 msgid "Use IMF/Yamaha FB-01 for MIDI output"
 msgstr "Використовувати IMF/Yahama FB-01 для MIDI виходу"
 
-#: engines/sci/detection.cpp:415
+#: engines/sci/detection.cpp:421
 msgid ""
 "Use an IBM Music Feature card or a Yamaha FB-01 FM synth module for MIDI "
 "output"
@@ -2814,28 +2837,28 @@ msgstr ""
 "Використовувати дляв виводу MIDI режим карти IBM Feature або FM сінтез "
 "Yamaha FB-01"
 
-#: engines/sci/detection.cpp:425
+#: engines/sci/detection.cpp:431
 msgid "Use CD audio"
 msgstr "Використовувати CD аудіо"
 
-#: engines/sci/detection.cpp:426
+#: engines/sci/detection.cpp:432
 msgid "Use CD audio instead of in-game audio, if available"
 msgstr "Використовувати CD аудіо замість у-грі аудіо, якщо такі є"
 
-#: engines/sci/detection.cpp:436
+#: engines/sci/detection.cpp:442
 msgid "Use Windows cursors"
 msgstr "Використовувати Windows курсори"
 
-#: engines/sci/detection.cpp:437
+#: engines/sci/detection.cpp:443
 msgid ""
 "Use the Windows cursors (smaller and monochrome) instead of the DOS ones"
 msgstr "Використовувати Windows курсори (менших і монохромних), замість DOS"
 
-#: engines/sci/detection.cpp:447
+#: engines/sci/detection.cpp:453
 msgid "Use silver cursors"
 msgstr "Використовувати срібні курсори"
 
-#: engines/sci/detection.cpp:448
+#: engines/sci/detection.cpp:454
 msgid ""
 "Use the alternate set of silver cursors, instead of the normal golden ones"
 msgstr ""
@@ -3507,7 +3530,7 @@ msgstr "Гучність музики: "
 msgid "Subtitle speed: "
 msgstr "Швид. субтитрів: "
 
-#: engines/scumm/scumm.cpp:1832
+#: engines/scumm/scumm.cpp:1829
 #, c-format
 msgid ""
 "Native MIDI support requires the Roland Upgrade from LucasArts,\n"
@@ -3516,7 +3539,7 @@ msgstr ""
 "Режим \"рідного\" MIDI потребує поновлення Roland Upgrade від\n"
 "LucasArts, проте %s відсутній. Перемикаюсь на AdLib."
 
-#: engines/scumm/scumm.cpp:2644
+#: engines/scumm/scumm.cpp:2645
 msgid ""
 "Usually, Maniac Mansion would start now. But for that to work, the game "
 "files for Maniac Mansion have to be in the 'Maniac' directory inside the "
@@ -3551,8 +3574,8 @@ msgid ""
 "Files button in-game shows original savegame dialog rather than the ScummVM "
 "menu"
 msgstr ""
-"Кнопка \"Файли\" у грі показуватиме оригінальний екран збереження "
-"замість меню ScummVM"
+"Кнопка \"Файли\" у грі показуватиме оригінальний екран збереження замість "
+"меню ScummVM"
 
 #: engines/sherlock/detection.cpp:81
 msgid "Pixellated scene transitions"
@@ -3571,8 +3594,8 @@ msgid ""
 "Only show hotspot names after you actually click on a hotspot or action "
 "button"
 msgstr ""
-"Показувати назви цікавих точок тільки після безпосереднього кліку по ним "
-"або дії з ними"
+"Показувати назви цікавих точок тільки після безпосереднього кліку по ним або "
+"дії з ними"
 
 #: engines/sherlock/detection.cpp:101
 msgid "Show character portraits"
@@ -3693,6 +3716,15 @@ msgstr "Показувати мітки об'єктів"
 #: engines/sword2/sword2.cpp:80
 msgid "Show labels for objects on mouse hover"
 msgstr "Показувати мітки для об'єктів при наведенні миші"
+
+#: engines/sword25/detection.cpp:46
+msgid "Use English speech"
+msgstr ""
+
+#: engines/sword25/detection.cpp:47
+msgid ""
+"Use English speech instead of German for every language other than German"
+msgstr ""
 
 #: engines/teenagent/resources.cpp:95
 msgid ""

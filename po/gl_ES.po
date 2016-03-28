@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
-"POT-Creation-Date: 2016-02-20 21:22+0000\n"
+"POT-Creation-Date: 2016-03-28 12:15+0100\n"
 "PO-Revision-Date: 2016-02-21 00:43+0100\n"
 "Last-Translator: Santiago G. Sanz <s.sanz@uvigo.es>\n"
 "Language-Team: Santiago G. Sanz <s.sanz@uvigo.es>\n"
@@ -211,7 +211,7 @@ msgstr ""
 #: backends/platform/wince/CELauncherDialog.cpp:54
 #: engines/agos/animation.cpp:558 engines/drascula/saveload.cpp:49
 #: engines/groovie/script.cpp:408 engines/parallaction/saveload.cpp:274
-#: engines/scumm/dialogs.cpp:193 engines/scumm/scumm.cpp:1834
+#: engines/scumm/dialogs.cpp:193 engines/scumm/scumm.cpp:1831
 #: engines/scumm/players/player_v3m.cpp:130
 #: engines/scumm/players/player_v5m.cpp:108 engines/sky/compact.cpp:131
 #: engines/sky/compact.cpp:141 engines/sword1/animation.cpp:524
@@ -501,7 +501,7 @@ msgstr "Selecciona un directorio para ficheiros de gardado"
 msgid "This game ID is already taken. Please choose another one."
 msgstr "Este ID de xogo xa está en uso. Selecciona outro."
 
-#: gui/launcher.cpp:626 engines/dialogs.cpp:111
+#: gui/launcher.cpp:626 engines/dialogs.cpp:111 engines/mohawk/dialogs.cpp:115
 msgid "~Q~uit"
 msgstr "~S~aír"
 
@@ -589,17 +589,18 @@ msgid "Search:"
 msgstr "Buscar:"
 
 #: gui/launcher.cpp:685 engines/dialogs.cpp:115 engines/cruise/menu.cpp:214
-#: engines/mohawk/riven.cpp:718 engines/pegasus/pegasus.cpp:353
-#: engines/tsage/scenes.cpp:600
+#: engines/mohawk/dialogs.cpp:120 engines/mohawk/riven.cpp:718
+#: engines/pegasus/pegasus.cpp:353 engines/tsage/scenes.cpp:600
 msgid "Load game:"
 msgstr "Cargar partida:"
 
 #: gui/launcher.cpp:685 engines/dialogs.cpp:115
 #: backends/platform/wince/CEActionsPocket.cpp:267
 #: backends/platform/wince/CEActionsSmartphone.cpp:231
-#: engines/cruise/menu.cpp:214 engines/mohawk/riven.cpp:718
-#: engines/parallaction/saveload.cpp:197 engines/pegasus/pegasus.cpp:353
-#: engines/scumm/dialogs.cpp:189 engines/tsage/scenes.cpp:600
+#: engines/cruise/menu.cpp:214 engines/mohawk/dialogs.cpp:120
+#: engines/mohawk/riven.cpp:718 engines/parallaction/saveload.cpp:197
+#: engines/pegasus/pegasus.cpp:353 engines/scumm/dialogs.cpp:189
+#: engines/tsage/scenes.cpp:600
 msgid "Load"
 msgstr "Cargar"
 
@@ -1367,16 +1368,16 @@ msgctxt "lowres"
 msgid "Hercules Amber"
 msgstr "Hercules ámbar"
 
-#: engines/advancedDetector.cpp:317
+#: engines/advancedDetector.cpp:334
 #, c-format
 msgid "The game in '%s' seems to be unknown."
 msgstr "O xogo de %s semella ser descoñecido."
 
-#: engines/advancedDetector.cpp:318
+#: engines/advancedDetector.cpp:335
 msgid "Please, report the following data to the ScummVM team along with name"
 msgstr "Facilita esta información ao equipo de ScummVM, xunto co nome"
 
-#: engines/advancedDetector.cpp:320
+#: engines/advancedDetector.cpp:337
 msgid "of the game you tried to add and its version/language/etc.:"
 msgstr "do xogo que tentaches engadir, xunto coa versión, lingua, etc.:"
 
@@ -1384,11 +1385,11 @@ msgstr "do xogo que tentaches engadir, xunto coa versión, lingua, etc.:"
 msgid "~R~esume"
 msgstr "~R~etomar"
 
-#: engines/dialogs.cpp:87
+#: engines/dialogs.cpp:87 engines/mohawk/dialogs.cpp:113
 msgid "~L~oad"
 msgstr "~C~argar"
 
-#: engines/dialogs.cpp:91
+#: engines/dialogs.cpp:91 engines/mohawk/dialogs.cpp:114
 msgid "~S~ave"
 msgstr "~G~ardar"
 
@@ -1417,9 +1418,9 @@ msgstr "~V~olver ao Iniciador"
 #: engines/avalanche/parser.cpp:1899 engines/cge/events.cpp:74
 #: engines/cge2/events.cpp:67 engines/cruise/menu.cpp:212
 #: engines/drascula/saveload.cpp:336 engines/dreamweb/saveload.cpp:261
-#: engines/hugo/file.cpp:298 engines/neverhood/menumodule.cpp:877
-#: engines/pegasus/pegasus.cpp:377 engines/sci/engine/kfile.cpp:768
-#: engines/sherlock/scalpel/scalpel.cpp:1249
+#: engines/hugo/file.cpp:298 engines/mohawk/dialogs.cpp:121
+#: engines/neverhood/menumodule.cpp:877 engines/pegasus/pegasus.cpp:377
+#: engines/sci/engine/kfile.cpp:778 engines/sherlock/scalpel/scalpel.cpp:1250
 #: engines/sherlock/tattoo/widget_files.cpp:75 engines/toltecs/menu.cpp:281
 #: engines/toon/toon.cpp:3338 engines/tsage/scenes.cpp:598
 msgid "Save game:"
@@ -1434,9 +1435,10 @@ msgstr "Gardar partida:"
 #: engines/cge/events.cpp:74 engines/cge2/events.cpp:67
 #: engines/cruise/menu.cpp:212 engines/drascula/saveload.cpp:336
 #: engines/dreamweb/saveload.cpp:261 engines/hugo/file.cpp:298
-#: engines/neverhood/menumodule.cpp:877 engines/parallaction/saveload.cpp:212
-#: engines/pegasus/pegasus.cpp:377 engines/sci/engine/kfile.cpp:768
-#: engines/scumm/dialogs.cpp:188 engines/sherlock/scalpel/scalpel.cpp:1249
+#: engines/mohawk/dialogs.cpp:121 engines/neverhood/menumodule.cpp:877
+#: engines/parallaction/saveload.cpp:212 engines/pegasus/pegasus.cpp:377
+#: engines/sci/engine/kfile.cpp:778 engines/scumm/dialogs.cpp:188
+#: engines/sherlock/scalpel/scalpel.cpp:1250
 #: engines/sherlock/tattoo/widget_files.cpp:75 engines/toltecs/menu.cpp:281
 #: engines/toon/toon.cpp:3338 engines/tsage/scenes.cpp:598
 msgid "Save"
@@ -1461,13 +1463,13 @@ msgstr ""
 "Erro ao gardar (%s)! Consulta o ficheiro README para obter información "
 "básica e máis instrucións para acadar asistencia adicional."
 
-#: engines/dialogs.cpp:307 engines/mohawk/dialogs.cpp:109
-#: engines/mohawk/dialogs.cpp:170 engines/tsage/dialogs.cpp:106
+#: engines/dialogs.cpp:307 engines/mohawk/dialogs.cpp:117
+#: engines/mohawk/dialogs.cpp:242 engines/tsage/dialogs.cpp:106
 msgid "~O~K"
 msgstr "~A~ceptar"
 
-#: engines/dialogs.cpp:308 engines/mohawk/dialogs.cpp:110
-#: engines/mohawk/dialogs.cpp:171 engines/tsage/dialogs.cpp:107
+#: engines/dialogs.cpp:308 engines/mohawk/dialogs.cpp:118
+#: engines/mohawk/dialogs.cpp:243 engines/tsage/dialogs.cpp:107
 msgid "~C~ancel"
 msgstr "~C~ancelar"
 
@@ -1623,11 +1625,11 @@ msgstr "FM-Towns Audio"
 msgid "PC-98 Audio"
 msgstr "PC-98 Audio"
 
-#: audio/softsynth/mt32.cpp:200
+#: audio/softsynth/mt32.cpp:196
 msgid "Initializing MT-32 Emulator"
 msgstr "Iniciando emulador de MT-32"
 
-#: audio/softsynth/mt32.cpp:426
+#: audio/softsynth/mt32.cpp:434
 msgid "MT-32 Emulator"
 msgstr "Emulador de MT-32"
 
@@ -1744,11 +1746,11 @@ msgstr "O modo Autoarrastrar está"
 msgid "Swipe three fingers to the right to toggle."
 msgstr "Arrastra tres dedos á dereita para cambiar o estado."
 
-#: backends/graphics/opengl/opengl-graphics.cpp:119
+#: backends/graphics/opengl/opengl-graphics.cpp:126
 msgid "OpenGL"
 msgstr "OpenGL"
 
-#: backends/graphics/opengl/opengl-graphics.cpp:120
+#: backends/graphics/opengl/opengl-graphics.cpp:127
 msgid "OpenGL (No filtering)"
 msgstr "OpenGL (Sen filtraxe)"
 
@@ -2306,14 +2308,14 @@ msgstr "Buscar actualizacións..."
 
 #: engines/agi/detection.cpp:147 engines/cine/detection.cpp:70
 #: engines/drascula/detection.cpp:302 engines/dreamweb/detection.cpp:47
-#: engines/neverhood/detection.cpp:160 engines/sci/detection.cpp:404
+#: engines/neverhood/detection.cpp:160 engines/sci/detection.cpp:410
 #: engines/toltecs/detection.cpp:200 engines/zvision/detection_tables.h:51
 msgid "Use original save/load screens"
 msgstr "Empregar pantallas orixinais de gardado e carga"
 
 #: engines/agi/detection.cpp:148 engines/cine/detection.cpp:71
 #: engines/drascula/detection.cpp:303 engines/dreamweb/detection.cpp:48
-#: engines/neverhood/detection.cpp:161 engines/sci/detection.cpp:405
+#: engines/neverhood/detection.cpp:161 engines/sci/detection.cpp:411
 #: engines/toltecs/detection.cpp:201
 msgid "Use the original save/load screens, instead of the ScummVM ones"
 msgstr ""
@@ -2342,11 +2344,30 @@ msgstr ""
 "Activa a compatibilidade co rato. Permite o uso do rato para o movemento e "
 "os menús do xogo."
 
+#: engines/agi/detection.cpp:177
+#, fuzzy
+msgid "Use Hercules hires font"
+msgstr "Hercules verde"
+
+#: engines/agi/detection.cpp:178
+msgid "Uses Hercules hires font, when font file is available."
+msgstr ""
+
+#: engines/agi/detection.cpp:187
+msgid "Pause when entering commands"
+msgstr ""
+
+#: engines/agi/detection.cpp:188
+msgid ""
+"Shows a command prompt window and pauses the game (like in SCI) instead of a "
+"real-time prompt."
+msgstr ""
+
 #: engines/agi/saveload.cpp:777 engines/avalanche/parser.cpp:1887
 #: engines/cge/events.cpp:85 engines/cge2/events.cpp:78
 #: engines/drascula/saveload.cpp:349 engines/dreamweb/saveload.cpp:169
 #: engines/hugo/file.cpp:400 engines/neverhood/menumodule.cpp:890
-#: engines/sci/engine/kfile.cpp:867 engines/sherlock/scalpel/scalpel.cpp:1262
+#: engines/sci/engine/kfile.cpp:877 engines/sherlock/scalpel/scalpel.cpp:1263
 #: engines/sherlock/tattoo/widget_files.cpp:94 engines/toltecs/menu.cpp:256
 #: engines/toon/toon.cpp:3430
 msgid "Restore game:"
@@ -2356,13 +2377,13 @@ msgstr "Restaurar xogo:"
 #: engines/cge/events.cpp:85 engines/cge2/events.cpp:78
 #: engines/drascula/saveload.cpp:349 engines/dreamweb/saveload.cpp:169
 #: engines/hugo/file.cpp:400 engines/neverhood/menumodule.cpp:890
-#: engines/sci/engine/kfile.cpp:867 engines/sherlock/scalpel/scalpel.cpp:1262
+#: engines/sci/engine/kfile.cpp:877 engines/sherlock/scalpel/scalpel.cpp:1263
 #: engines/sherlock/tattoo/widget_files.cpp:94 engines/toltecs/menu.cpp:256
 #: engines/toon/toon.cpp:3430
 msgid "Restore"
 msgstr "Restaurar"
 
-#: engines/agos/saveload.cpp:160 engines/scumm/scumm.cpp:2377
+#: engines/agos/saveload.cpp:160 engines/scumm/scumm.cpp:2374
 #, c-format
 msgid ""
 "Failed to load game state from file:\n"
@@ -2373,7 +2394,7 @@ msgstr ""
 "\n"
 "%s"
 
-#: engines/agos/saveload.cpp:195 engines/scumm/scumm.cpp:2370
+#: engines/agos/saveload.cpp:195 engines/scumm/scumm.cpp:2367
 #, c-format
 msgid ""
 "Failed to save game state to file:\n"
@@ -2384,7 +2405,7 @@ msgstr ""
 "\n"
 "%s"
 
-#: engines/agos/saveload.cpp:203 engines/scumm/scumm.cpp:2388
+#: engines/agos/saveload.cpp:203 engines/scumm/scumm.cpp:2385
 #, c-format
 msgid ""
 "Successfully saved game state in file:\n"
@@ -2632,28 +2653,30 @@ msgstr ""
 "\n"
 
 #. I18N: Option for fast scene switching
-#: engines/mohawk/dialogs.cpp:92 engines/mohawk/dialogs.cpp:167
+#: engines/mohawk/dialogs.cpp:96 engines/mohawk/dialogs.cpp:239
 msgid "~Z~ip Mode Activated"
 msgstr "Modo ~C~omprimido activado"
 
-#: engines/mohawk/dialogs.cpp:93
+#: engines/mohawk/dialogs.cpp:97
 msgid "~T~ransitions Enabled"
 msgstr "~T~ransicións activadas"
 
 #. I18N: Drop book page
-#: engines/mohawk/dialogs.cpp:95
+#: engines/mohawk/dialogs.cpp:99
 msgid "~D~rop Page"
 msgstr "~D~eixar folla"
 
-#: engines/mohawk/dialogs.cpp:99
-msgid "~S~how Map"
+#: engines/mohawk/dialogs.cpp:103
+#, fuzzy
+msgid "Show ~M~ap"
 msgstr "Mo~s~trar mapa"
 
-#: engines/mohawk/dialogs.cpp:105
-msgid "~M~ain Menu"
+#: engines/mohawk/dialogs.cpp:109
+#, fuzzy
+msgid "Main Men~u~"
 msgstr "~M~enú principal"
 
-#: engines/mohawk/dialogs.cpp:168
+#: engines/mohawk/dialogs.cpp:240
 msgid "~W~ater Effect Enabled"
 msgstr "Efecto de ~a~uga activado"
 
@@ -2775,37 +2798,37 @@ msgstr "Intro alternativa"
 msgid "Use an alternative game intro (CD version only)"
 msgstr "Emprega unha introdución alternativa para o xogo (só versión en CD)."
 
-#: engines/sci/detection.cpp:374
+#: engines/sci/detection.cpp:380
 msgid "Skip EGA dithering pass (full color backgrounds)"
 msgstr "Omitir interpolación de cores EGA (fondos de cor completa)"
 
-#: engines/sci/detection.cpp:375
+#: engines/sci/detection.cpp:381
 msgid "Skip dithering pass in EGA games, graphics are shown with full colors"
 msgstr ""
 "Omite a interpolación de cores EGA. Os gráficos móstranse con cores "
 "completas."
 
-#: engines/sci/detection.cpp:384
+#: engines/sci/detection.cpp:390
 msgid "Enable high resolution graphics"
 msgstr "Activar gráficos de alta resolución"
 
-#: engines/sci/detection.cpp:385
+#: engines/sci/detection.cpp:391
 msgid "Enable high resolution graphics/content"
 msgstr "Activa os gráficos ou o contido de alta resolución."
 
-#: engines/sci/detection.cpp:394
+#: engines/sci/detection.cpp:400
 msgid "Prefer digital sound effects"
 msgstr "Preferir efectos de son dixitais"
 
-#: engines/sci/detection.cpp:395
+#: engines/sci/detection.cpp:401
 msgid "Prefer digital sound effects instead of synthesized ones"
 msgstr "Dá preferencia aos efectos de son dixitais no canto dos sintéticos."
 
-#: engines/sci/detection.cpp:414
+#: engines/sci/detection.cpp:420
 msgid "Use IMF/Yamaha FB-01 for MIDI output"
 msgstr "Empregar IMF/Yamaha FB-01 para a saída de MIDI"
 
-#: engines/sci/detection.cpp:415
+#: engines/sci/detection.cpp:421
 msgid ""
 "Use an IBM Music Feature card or a Yamaha FB-01 FM synth module for MIDI "
 "output"
@@ -2813,30 +2836,30 @@ msgstr ""
 "Emprega unha tarxeta IBM Music Feature ou un módulo de sintetizador Yamaha "
 "FB-01 FM para a saída de MIDI."
 
-#: engines/sci/detection.cpp:425
+#: engines/sci/detection.cpp:431
 msgid "Use CD audio"
 msgstr "Empregar son de CD"
 
-#: engines/sci/detection.cpp:426
+#: engines/sci/detection.cpp:432
 msgid "Use CD audio instead of in-game audio, if available"
 msgstr "Emprega son de CD no canto do do xogo, de ser o caso."
 
-#: engines/sci/detection.cpp:436
+#: engines/sci/detection.cpp:442
 msgid "Use Windows cursors"
 msgstr "Empregar cursores de Windows"
 
-#: engines/sci/detection.cpp:437
+#: engines/sci/detection.cpp:443
 msgid ""
 "Use the Windows cursors (smaller and monochrome) instead of the DOS ones"
 msgstr ""
 "Emprega os cursores de Windows (máis pequenos e monocromos) no canto dos de "
 "DOS."
 
-#: engines/sci/detection.cpp:447
+#: engines/sci/detection.cpp:453
 msgid "Use silver cursors"
 msgstr "Empregar cursores prateados"
 
-#: engines/sci/detection.cpp:448
+#: engines/sci/detection.cpp:454
 msgid ""
 "Use the alternate set of silver cursors, instead of the normal golden ones"
 msgstr ""
@@ -3508,7 +3531,7 @@ msgstr "Volume de música:"
 msgid "Subtitle speed: "
 msgstr "Velocidade dos subtítulos:"
 
-#: engines/scumm/scumm.cpp:1832
+#: engines/scumm/scumm.cpp:1829
 #, c-format
 msgid ""
 "Native MIDI support requires the Roland Upgrade from LucasArts,\n"
@@ -3517,7 +3540,7 @@ msgstr ""
 "A compatibilidade nativa con MIDI precisa a actualización de Roland\n"
 "de LucasArts, mais falla %s. Empregarase AdLib."
 
-#: engines/scumm/scumm.cpp:2644
+#: engines/scumm/scumm.cpp:2645
 msgid ""
 "Usually, Maniac Mansion would start now. But for that to work, the game "
 "files for Maniac Mansion have to be in the 'Maniac' directory inside the "
@@ -3699,6 +3722,15 @@ msgstr "Mostrar etiquetas"
 #: engines/sword2/sword2.cpp:80
 msgid "Show labels for objects on mouse hover"
 msgstr "Mostra as etiquetas dos obxectos ao apuntar co rato."
+
+#: engines/sword25/detection.cpp:46
+msgid "Use English speech"
+msgstr ""
+
+#: engines/sword25/detection.cpp:47
+msgid ""
+"Use English speech instead of German for every language other than German"
+msgstr ""
 
 #: engines/teenagent/resources.cpp:95
 msgid ""
