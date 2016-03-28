@@ -257,7 +257,7 @@ static const ComposerGameDescription gameDescriptions[] = {
 		{
 			"darby",
 			0,
-			AD_ENTRY1("page99.rsc.ini", "183463d18c050563dcdec2d9f9670515"),
+			AD_ENTRY1("page99.rsc", "183463d18c050563dcdec2d9f9670515"),
 			Common::HE_ISR,
 			Common::kPlatformWindows,
 			ADGF_NO_FLAGS,
