@@ -517,6 +517,8 @@ void GuiManager::processEvent(const Common::Event &event, Dialog *const activeDi
 	Common::Point mouse(event.mouse.x - activeDialog->_x, event.mouse.y - activeDialog->_y);
 	switch (event.type) {
 	case Common::EVENT_KEYDOWN:
+		// TODO: Using event.synthetic here is not correct. Repeat key down events are synthetic
+		// but there are other synthetic events (for examples events replayed by the event recorder).
 		activeDialog->handleKeyDown(event.kbd, event.synthetic);
 		break;
 	case Common::EVENT_KEYUP:
