@@ -25,6 +25,7 @@
 
 #include "common/stream.h"
 #include "common/types.h"
+#include "common/util.h"
 
 namespace Common {
 
@@ -170,7 +171,7 @@ private:
 
 		byte *old_data = _data;
 
-		_capacity = new_len + 32;
+		_capacity = MAX(new_len + 32, _capacity * 2);
 		_data = (byte *)malloc(_capacity);
 		_ptr = _data + _pos;
 
