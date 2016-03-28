@@ -96,7 +96,7 @@ public:
 	int16 _width, _height;
 	uint16 _unknownVal1;
 	uint16 _unknownVal2;
-	uint16 _transparent;
+	bool _transparent;
 	uint16 _colorsCount;
 };
 

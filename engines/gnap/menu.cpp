@@ -255,12 +255,12 @@ void GnapEngine::removeInventorySprites() {
 }
 
 void GnapEngine::runMenu() {
-	_spriteHandle = 0;
-	_cursorSprite = 0;
-	_menuSprite1 = 0;
-	_menuSprite2 = 0;
-	_menuSaveLoadSprite = 0;
-	_menuQuitQuerySprite = 0;
+	_spriteHandle = nullptr;
+	_cursorSprite = nullptr;
+	_menuSprite1 = nullptr;
+	_menuSprite2 = nullptr;
+	_menuSaveLoadSprite = nullptr;
+	_menuQuitQuerySprite = nullptr;
 
 	_menuStatus = 0;
 	_menuDone = false;
@@ -271,7 +271,7 @@ void GnapEngine::runMenu() {
 
 	for (int i = 0; i < 7; ++i) {
 		_savegameFilenames[i][0] = 0;
-		_savegameSprites[i] = 0;
+		_savegameSprites[i] = nullptr;
 	}
 
 	if (_menuStatus == 0) {

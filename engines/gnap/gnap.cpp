@@ -97,13 +97,10 @@ GnapEngine::GnapEngine(OSystem *syst, const ADGameDescription *gd) :
 	_random = new Common::RandomSource("gnap");
 	
 	Engine::syncSoundSettings();
-
 }
 
 GnapEngine::~GnapEngine() {
-
 	delete _random;
-
 }
 
 Common::Error GnapEngine::run() {
@@ -122,13 +119,13 @@ Common::Error GnapEngine::run() {
 	_verbCursor = 1;
 	invClear();
 	clearFlags();
-	_grabCursorSprite = 0;
+	_grabCursorSprite = nullptr;
 	_newGrabCursorSpriteIndex = -1;
-	_backgroundSurface = 0;
+	_backgroundSurface = nullptr;
 	_isStockDatLoaded = false;
 	_gameDone = false;
 	_isPaused = false;
-	_pauseSprite = 0;
+	_pauseSprite = nullptr;
 
 	////////////////////////////////////////////////////////////////////////////
 
@@ -143,7 +140,7 @@ Common::Error GnapEngine::run() {
 	_gameSys = new GameSys(this);
 	_soundMan = new SoundMan(this);
 	
-	_menuBackgroundSurface = 0;
+	_menuBackgroundSurface = nullptr;
 	
 	initGlobalSceneVars();
 

@@ -37,9 +37,7 @@ void GfxItem::testUpdRect(const Common::Rect &updRect) {
 
 // GameSys
 
-GameSys::GameSys(GnapEngine *vm)
-	: _vm(vm) {
-	
+GameSys::GameSys(GnapEngine *vm) : _vm(vm) {
 	_newSpriteDrawItemsCount = 0;
 	_removeSequenceItemsCount = 0;
 	_removeSpriteDrawItemsCount = 0;
@@ -52,13 +50,13 @@ GameSys::GameSys(GnapEngine *vm)
 	_animationsCount = 0;
 	_backgroundImageValue3 = 0;
 	_backgroundImageValue1 = 0;
-	_backgroundImageValue4 = 0;
-	_backgroundImageValue2 = 0;
+	_backgroundImageValue4 = 1000;
+	_backgroundImageValue2 = 1000;
 	_backgroundImageError = true;
 	_gameSysClock = 0;
 	_lastUpdateClock = 0;
-	_backgroundSurface = 0;
-	_frontSurface = 0;
+	_backgroundSurface = nullptr;
+	_frontSurface = nullptr;
 	for (int i = 0; i < kMaxAnimations; ++i) {
 		_animations[i]._sequenceId = -1;
 		_animations[i]._id = 0;
@@ -170,7 +168,6 @@ int GameSys::isSequenceActive(int sequenceId, int id) {
 }
 
 void GameSys::setBackgroundSurface(Graphics::Surface *surface, int a4, int a5, int a6, int a7) {
-
 	debug(1, "GameSys::setBackgroundSurface() Setting background image");
 	
 	_backgroundSurface = surface;
@@ -199,7 +196,6 @@ void GameSys::setBackgroundSurface(Graphics::Surface *surface, int a4, int a5, i
 	_backgroundImageValue4 = a7;
 	_lastUpdateClock = 0;
 	_gameSysClock = 0;
-
 }
 
 void GameSys::setScaleValues(int a1, int a2, int a3, int a4) {
@@ -227,7 +223,6 @@ void GameSys::removeSpriteDrawItem(Graphics::Surface *surface, int id) {
 }
 
 void GameSys::drawSpriteToBackground(int x, int y, int resourceId) {
-
 	SpriteResource *spriteResource = _vm->_spriteCache->get(resourceId);
 	uint32 *sourcePalette = spriteResource->_palette;
 	byte *sourcePixels = spriteResource->_pixels;
@@ -270,7 +265,6 @@ void GameSys::drawSpriteToSurface(Graphics::Surface *surface, int x, int y, int 
 }
 
 void GameSys::drawTextToSurface(Graphics::Surface *surface, int x, int y, byte r, byte g, byte b, const char *text) {
-
 	// NOTE Not that nice but will have to do for now
 	
 	bool doDirty = false;
@@ -443,7 +437,6 @@ void GameSys::seqInsertGfx(int index, int duration) {
 	_gfxItemsCount += sequenceResource->_animationsCount;
 	
 	for (int i = 0; i < sequenceResource->_animationsCount; ++i) {
-		int totalDuration;
 		GfxItem *gfxItem = &_gfxItems[i + gfxIndex];
 		SequenceAnimation *animation = &sequenceResource->_animations[i];
 
@@ -461,7 +454,7 @@ void GameSys::seqInsertGfx(int index, int duration) {
 		gfxItem->_prevFrame._spriteId = -1;
 		gfxItem->_prevFrame._soundId = -1;
 		gfxItem->_prevFrame._unusedVal = -1;
-		totalDuration = duration;
+		int totalDuration = duration;
 		if ((seqItem->_flags & 4) && totalDuration > 0) {
 			gfxItem->_prevFrame._duration = 1;
 			if (gfxItem->_delayTicks <= totalDuration)
@@ -510,7 +503,6 @@ void GameSys::seqInsertGfx(int index, int duration) {
 			break;
 		}
 	}
-	
 }
 
 void GameSys::seqRemoveGfx(int sequenceId, int id) {
@@ -568,8 +560,7 @@ bool GameSys::updateSequenceDuration(int sequenceId, int id, int *outDuration) {
 }
 
 void GameSys::updateAnimationsStatus(int sequenceId, int id) {
-
-	Animation *foundAnimation = 0;
+	Animation *foundAnimation = nullptr;
 	for (int animationIndex = 0; animationIndex < kMaxAnimations; ++animationIndex) {
 		Animation *animation = &_animations[animationIndex];
 		if (animation->_sequenceId != -1 && animation->_sequenceId == sequenceId && animation->_id == id) {
@@ -599,7 +590,6 @@ void GameSys::updateAnimationsStatus(int sequenceId, int id) {
 		foundAnimation->_sequenceId = -1;
 		foundAnimation->_status = 2;
 	}
-
 }
 
 void GameSys::restoreBackgroundRect(const Common::Rect &rect) {
@@ -752,7 +742,6 @@ void GameSys::seqDrawStaticFrame(Graphics::Surface *surface, SequenceFrame &fram
 
 	// TODO Save transparent flag somewhere
 	blitSurface32(_frontSurface, x, y, surface, clipRect, true);
-
 }
 
 void GameSys::seqDrawSpriteFrame(SpriteResource *spriteResource, SequenceFrame &frame, Common::Rect *subRect) {
@@ -782,11 +771,9 @@ void GameSys::seqDrawSpriteFrame(SpriteResource *spriteResource, SequenceFrame &
 		clipRect.translate(-frame._rect.left, -frame._rect.top);
 		blitSprite32(_frontSurface, x, y, sourcePixels, spriteResource->_width, clipRect, sourcePalette, true);//spriteResource->_transparent != 0);
 	}
-
 }
 
 void GameSys::drawSprites() {
-
 	debug(1, "GameSys::drawSprites() _gfxItemsCount: %d", _gfxItemsCount);
 
 	// TODO Split into multiple functions for clarity
@@ -807,10 +794,10 @@ void GameSys::drawSprites() {
 			continue;
 
 		if (gfxItem2->_prevFrame._spriteId != -1) {
-			int transparent = 0;
+			bool transparent = false;
 			if (gfxItem2->_currFrame._spriteId != -1 && !(gfxItem2->_flags & 2)) {
 				if (gfxItem2->_flags & 1) {
-					transparent = 1;
+					transparent = true;
 				} else {
 					int resourceId = (gfxItem2->_sequenceId & 0xFFFF0000) | gfxItem2->_currFrame._spriteId;
 					SpriteResource *spriteResource = _vm->_spriteCache->get(resourceId);
@@ -827,9 +814,9 @@ void GameSys::drawSprites() {
 		}
 
 		if (gfxItem2->_currFrame._spriteId != -1) {
-			int transparent = 0;
+			bool transparent = false;
 			if (gfxItem2->_flags & 1) {
-				transparent = 1;
+				transparent = true;
 			} else if (!(gfxItem2->_flags & 2)) {
 				int resourceId = (gfxItem2->_sequenceId & 0xFFFF0000) | gfxItem2->_currFrame._spriteId;
 				SpriteResource *spriteResource = _vm->_spriteCache->get(resourceId);
@@ -843,7 +830,6 @@ void GameSys::drawSprites() {
 					_gfxItems[l].testUpdRect(gfxItem2->_currFrame._rect);
 			}
 		}
-
 	}
 
 	for (int m = 0; m < _gfxItemsCount; ++m) {
@@ -855,7 +841,7 @@ void GameSys::drawSprites() {
 		if (gfxItem5->_updFlag) {
 			if (gfxItem5->_currFrame._spriteId != -1) {
 				if (gfxItem5->_flags & 1) {
-					seqDrawStaticFrame(gfxItem5->_surface, gfxItem5->_currFrame, 0);
+					seqDrawStaticFrame(gfxItem5->_surface, gfxItem5->_currFrame, nullptr);
 					//debug("seqDrawStaticFrame");
 				} else if (gfxItem5->_flags & 2) {
 					// TODO seqDrawAviFrame(gfxItem5->currFrame.spriteId, &gfxItem5->currFrame, 0, gfxItem5->flags & 8);
@@ -887,7 +873,6 @@ void GameSys::drawSprites() {
 	}
 
 	debug(1, "GameSys::drawSprites() OK");
-
 }
 
 void GameSys::updateRect(const Common::Rect &r) {
@@ -900,7 +885,6 @@ void GameSys::updateRect(const Common::Rect &r) {
 }
 
 void GameSys::updateScreen() {
-
 	debug(1, "GameSys::updateScreen()");
 
 	for (uint i = 0; i < _dirtyRects.size(); ++i)
@@ -936,7 +920,6 @@ void GameSys::updateScreen() {
 	updateRect(Common::Rect(0, 0, 800, 600));
 
 	debug(1, "GameSys::updateScreen() OK");
-
 }
 
 void GameSys::handleReqRemoveSequenceItem() {
@@ -1262,11 +1245,9 @@ void GameSys::fatUpdateFrame() {
 			--i;
 		}
 	}
-
 }
 
 void GameSys::fatUpdate() {
-
 	debug(1, "GameSys::fatUpdate() _gfxItemsCount: %d", _gfxItemsCount);
 
 	for (int i = 0; i < _gfxItemsCount; ++i) {
@@ -1280,7 +1261,6 @@ void GameSys::fatUpdate() {
 	// NOTE Skipped avi stuff (reqAviStop)
 	
 	fatUpdateFrame();
-
 }
 
 void GameSys::updatePlaySounds() {
