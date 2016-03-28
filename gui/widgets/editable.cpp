@@ -85,7 +85,7 @@ void EditableWidget::handleTickle() {
 	}
 }
 
-bool EditableWidget::handleKeyDown(Common::KeyState state) {
+bool EditableWidget::handleKeyDown(Common::KeyState state, bool) {
 	bool handled = true;
 	bool dirty = false;
 	bool forcecaret = false;

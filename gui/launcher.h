@@ -49,7 +49,7 @@ public:
 
 	virtual void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
 
-	virtual void handleKeyDown(Common::KeyState state);
+	virtual void handleKeyDown(Common::KeyState state, bool repeatEvent);
 	virtual void handleKeyUp(Common::KeyState state);
 
 protected:

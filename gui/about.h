@@ -51,7 +51,7 @@ public:
 	void drawDialog();
 	void handleTickle();
 	void handleMouseUp(int x, int y, int button, int clickCount);
-	void handleKeyDown(Common::KeyState state);
+	void handleKeyDown(Common::KeyState state, bool repeatEvent);
 	void handleKeyUp(Common::KeyState state);
 
 	void reflowLayout();

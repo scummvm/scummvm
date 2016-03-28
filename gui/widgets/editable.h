@@ -70,7 +70,7 @@ public:
 	virtual const String &getEditString() const		{ return _editString; }
 
 	virtual void handleTickle();
-	virtual bool handleKeyDown(Common::KeyState state);
+	virtual bool handleKeyDown(Common::KeyState state, bool repeatEvent);
 	virtual void reflowLayout();
 
 	bool setCaretPos(int newPos);

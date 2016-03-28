@@ -121,7 +121,7 @@ public:
 	virtual void handleMouseLeft(int button) {}
 	virtual void handleMouseMoved(int x, int y, int button) {}
 	virtual void handleMouseWheel(int x, int y, int direction) {}
-	virtual bool handleKeyDown(Common::KeyState state) { return false; }	// Return true if the event was handled
+	virtual bool handleKeyDown(Common::KeyState state, bool repeatEvent) { return false; }	// Return true if the event was handled
 	virtual bool handleKeyUp(Common::KeyState state) { return false; }	// Return true if the event was handled
 	virtual void handleTickle() {}
 

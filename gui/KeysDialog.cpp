@@ -122,9 +122,9 @@ void KeysDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
 	}
 }
 
-void KeysDialog::handleKeyDown(Common::KeyState state){
+void KeysDialog::handleKeyDown(Common::KeyState state, bool repeatEvent){
 	if (!Actions::Instance()->mappingActive())
-		Dialog::handleKeyDown(state);
+		Dialog::handleKeyDown(state, repeatEvent);
 }
 
 void KeysDialog::handleKeyUp(Common::KeyState state) {

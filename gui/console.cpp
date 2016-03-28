@@ -252,7 +252,7 @@ void ConsoleDialog::handleMouseWheel(int x, int y, int direction) {
 	_scrollBar->handleMouseWheel(x, y, direction);
 }
 
-void ConsoleDialog::handleKeyDown(Common::KeyState state) {
+void ConsoleDialog::handleKeyDown(Common::KeyState state, bool) {
 	int i;
 
 	if (_slideMode != kNoSlideMode)

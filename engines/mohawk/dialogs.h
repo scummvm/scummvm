@@ -56,7 +56,7 @@ public:
 		close();
 	}
 
-	virtual void handleKeyDown(Common::KeyState state) {
+	virtual void handleKeyDown(Common::KeyState state, bool repeatEvent) {
 		setResult(state.ascii);
 		close();
 	}
@@ -67,7 +67,7 @@ public:
 class PauseDialog : public InfoDialog {
 public:
 	PauseDialog(MohawkEngine* vm, const Common::String &message);
-	virtual void handleKeyDown(Common::KeyState state);
+	virtual void handleKeyDown(Common::KeyState state, bool repeatEvent);
 };
 
 #ifdef ENABLE_MYST

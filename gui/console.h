@@ -137,7 +137,7 @@ public:
 	void handleTickle();
 	void reflowLayout();
 	void handleMouseWheel(int x, int y, int direction);
-	void handleKeyDown(Common::KeyState state);
+	void handleKeyDown(Common::KeyState state, bool repeatEvent);
 	void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
 
 	int printFormat(int dummy, const char *format, ...) GCC_PRINTF(3, 4);

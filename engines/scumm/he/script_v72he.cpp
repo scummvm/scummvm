@@ -1356,7 +1356,7 @@ void ScummEngine_v72he::debugInput(byte* string) {
 	runDialog(dialog);
 	while (!dialog.done) {
 		parseEvents();
-		dialog.handleKeyDown(_keyPressed);
+		dialog.handleKeyDown(_keyPressed, false);
 	}
 
 	writeVar(0, 0);

@@ -99,7 +99,7 @@ public:
 	}
 
 	virtual void handleMouseDown(int x, int y, int button, int clickCount);
-	virtual bool handleKeyDown(Common::KeyState state);
+	virtual bool handleKeyDown(Common::KeyState state, bool repeatEvent);
 	virtual void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
 
 	virtual void reflowLayout();

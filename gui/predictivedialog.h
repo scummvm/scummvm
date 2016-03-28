@@ -42,7 +42,7 @@ public:
 
 	virtual void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data);
 	virtual void handleKeyUp(Common::KeyState state);
-	virtual void handleKeyDown(Common::KeyState state);
+	virtual void handleKeyDown(Common::KeyState state, bool repeatEvent);
 	virtual void handleTickle();
 
 	const char *getResult() const { return _predictiveResult; }

@@ -76,7 +76,7 @@ public:
 	PauseDialog();
 
 	virtual void reflowLayout();
-	virtual void handleKeyDown(Common::KeyState state);
+	virtual void handleKeyDown(Common::KeyState state, bool repeatEvent);
 
 private:
 	Common::String _message;
@@ -106,7 +106,7 @@ void PauseDialog::reflowLayout() {
 	_text->setSize(_w - 8, _h);
 }
 
-void PauseDialog::handleKeyDown(Common::KeyState state) {
+void PauseDialog::handleKeyDown(Common::KeyState state, bool) {
 	// Close on CTRL+p
 	if ((state.hasFlags(Common::KBD_CTRL)) && (state.keycode == Common::KEYCODE_p))
 		close();

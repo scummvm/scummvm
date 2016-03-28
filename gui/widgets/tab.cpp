@@ -226,13 +226,13 @@ void TabWidget::handleMouseDown(int x, int y, int button, int clickCount) {
 	}
 }
 
-bool TabWidget::handleKeyDown(Common::KeyState state) {
+bool TabWidget::handleKeyDown(Common::KeyState state, bool repeatEvent) {
 	if (state.hasFlags(Common::KBD_SHIFT) && state.keycode == Common::KEYCODE_TAB)
 		adjustTabs(kTabBackwards);
 	else if (state.keycode == Common::KEYCODE_TAB)
 		adjustTabs(kTabForwards);
 
-	return Widget::handleKeyDown(state);
+	return Widget::handleKeyDown(state, repeatEvent);
 }
 
 void TabWidget::adjustTabs(int value) {
