@@ -36,6 +36,7 @@ Programmcodes finden Sie auf Englisch unter:
    - Ressourcen-Freigabe beim Beenden des Spiels korrigiert.
    - Fehler beim Neustart des Spiels nach dem Wechsel der Spiel-Sprache behoben.
    - Flackern im Hauptmenü behoben.
+   - Lange Dauer des Speichervorgangs unter Windows behoben.
 
  Windows-Portierung:
    - Absturz im Zusammenhang mit nicht-funktionierenden MIDI-Geräten behoben.
@@ -43,6 +44,7 @@ Programmcodes finden Sie auf Englisch unter:
  Mac OS X-Portierung:
    - Das Dock-Menü für ScummVM enthält nun eine Liste der zuletzt gespielten Spiele,
      wenn ScummVM nicht läuft, und ermöglicht den direkten Start dieser Spiele.
+   - Sparkle-Updater für vereinfachte Programmaktualisierungen hinzugefügt.
 
 1.8.0 (04.03.2016)
  Neue Spiele:
