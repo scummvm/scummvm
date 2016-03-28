@@ -3089,6 +3089,8 @@ void Myst::clockReset() {
 }
 
 void Myst::clockResetWeight() {
+	_vm->_sound->replaceSoundMyst(9113);
+
 	_clockWeightVideo = _vm->_video->playMovie(_vm->wrapMovieFilename("cl1wlfch", kMystStack));
 	if (!_clockWeightVideo)
 		error("Failed to open cl1wlfch movie");
