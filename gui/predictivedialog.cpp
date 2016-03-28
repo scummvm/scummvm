@@ -195,7 +195,7 @@ void PredictiveDialog::handleKeyUp(Common::KeyState state) {
 	}
 }
 
-void PredictiveDialog::handleKeyDown(Common::KeyState state) {
+void PredictiveDialog::handleKeyDown(Common::KeyState state, bool repeatEvent) {
 	_curPressedButton = kNoAct;
 	_needRefresh = false;
 
@@ -348,7 +348,7 @@ void PredictiveDialog::handleKeyDown(Common::KeyState state) {
 		_curPressedButton = ButtonId(state.keycode - Common::KEYCODE_KP1);
 		break;
 	default:
-		Dialog::handleKeyDown(state);
+		Dialog::handleKeyDown(state, repeatEvent);
 	}
 
 	if (_lastButton != _curPressedButton)

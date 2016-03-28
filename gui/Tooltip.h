@@ -54,9 +54,10 @@ protected:
 		close();
 		_parent->handleMouseWheel(x + (getAbsX() - _parent->getAbsX()), y + (getAbsX() - _parent->getAbsX()), direction);
 	}
-	virtual void handleKeyDown(Common::KeyState state) {
-		close();
-		_parent->handleKeyDown(state);
+	virtual void handleKeyDown(Common::KeyState state, bool repeatEvent) {
+		if (!repeatEvent)
+			close();
+		_parent->handleKeyDown(state, repeatEvent);
 	}
 	virtual void handleKeyUp(Common::KeyState state) {
 		close();

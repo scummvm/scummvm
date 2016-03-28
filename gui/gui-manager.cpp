@@ -517,7 +517,7 @@ void GuiManager::processEvent(const Common::Event &event, Dialog *const activeDi
 	Common::Point mouse(event.mouse.x - activeDialog->_x, event.mouse.y - activeDialog->_y);
 	switch (event.type) {
 	case Common::EVENT_KEYDOWN:
-		activeDialog->handleKeyDown(event.kbd);
+		activeDialog->handleKeyDown(event.kbd, event.synthetic);
 		break;
 	case Common::EVENT_KEYUP:
 		activeDialog->handleKeyUp(event.kbd);

@@ -284,7 +284,7 @@ static int matchingCharsIgnoringCase(const char *x, const char *y, bool &stop) {
 	return match;
 }
 
-bool ListWidget::handleKeyDown(Common::KeyState state) {
+bool ListWidget::handleKeyDown(Common::KeyState state, bool repeatEvent) {
 	bool handled = true;
 	bool dirty = false;
 	int oldSelectedItem = _selectedItem;
@@ -326,7 +326,7 @@ bool ListWidget::handleKeyDown(Common::KeyState state) {
 		}
 	} else if (_editMode) {
 		// Class EditableWidget handles all text editing related key presses for us
-		handled = EditableWidget::handleKeyDown(state);
+		handled = EditableWidget::handleKeyDown(state, repeatEvent);
 	} else {
 		// not editmode
 

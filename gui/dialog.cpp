@@ -222,9 +222,9 @@ void Dialog::handleMouseWheel(int x, int y, int direction) {
 		w->handleMouseWheel(x - (w->getAbsX() - _x), y - (w->getAbsY() - _y), direction);
 }
 
-void Dialog::handleKeyDown(Common::KeyState state) {
+void Dialog::handleKeyDown(Common::KeyState state, bool repeatEvent) {
 	if (_focusedWidget) {
-		if (_focusedWidget->handleKeyDown(state))
+		if (_focusedWidget->handleKeyDown(state, repeatEvent))
 			return;
 	}
 
@@ -256,7 +256,7 @@ void Dialog::handleKeyDown(Common::KeyState state) {
 		Widget *w = _firstWidget;
 		while (w) {
 			if (w->_type == kTabWidget)
-				if (w->handleKeyDown(state))
+				if (w->handleKeyDown(state, repeatEvent))
 					return;
 
 			w = w->_next;

@@ -125,7 +125,7 @@ public:
 	virtual void handleMouseDown(int x, int y, int button, int clickCount);
 	virtual void handleMouseUp(int x, int y, int button, int clickCount);
 	virtual void handleMouseWheel(int x, int y, int direction);
-	virtual bool handleKeyDown(Common::KeyState state);
+	virtual bool handleKeyDown(Common::KeyState state, bool repeatEvent);
 	virtual bool handleKeyUp(Common::KeyState state);
 	virtual void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
 

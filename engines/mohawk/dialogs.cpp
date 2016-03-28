@@ -70,11 +70,11 @@ void InfoDialog::reflowLayout() {
 PauseDialog::PauseDialog(MohawkEngine *vm, const Common::String &message) : InfoDialog(vm, message) {
 }
 
-void PauseDialog::handleKeyDown(Common::KeyState state) {
+void PauseDialog::handleKeyDown(Common::KeyState state, bool repeatEvent) {
 	if (state.ascii == ' ')
 		close();
 	else
-		InfoDialog::handleKeyDown(state);
+		InfoDialog::handleKeyDown(state, repeatEvent);
 }
 
 enum {

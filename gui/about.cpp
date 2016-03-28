@@ -277,7 +277,7 @@ void AboutDialog::handleMouseUp(int x, int y, int button, int clickCount) {
 	close();
 }
 
-void AboutDialog::handleKeyDown(Common::KeyState state) {
+void AboutDialog::handleKeyDown(Common::KeyState state, bool) {
 	if (state.ascii)
 		_willClose = true;
 }
