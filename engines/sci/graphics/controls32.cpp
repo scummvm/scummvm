@@ -536,12 +536,12 @@ void ScrollWindow::upArrow() {
 		_bottomVisibleLine = _numLines - 1;
 
 	_firstVisibleChar = _startsOfLines[_topVisibleLine];
-	_lastVisibleChar = _startsOfLines[_bottomVisibleLine+1] - 1;
+	_lastVisibleChar = _startsOfLines[_bottomVisibleLine + 1] - 1;
 
 	_visibleText = Common::String(_text.c_str() + _firstVisibleChar, _text.c_str() + _lastVisibleChar + 1);
 
 	// TODO: Double check this -1 at the end (for the \n)
-	Common::String lineText(_text.c_str() + _startsOfLines[_topVisibleLine], _text.c_str() + _startsOfLines[_topVisibleLine+1] - 1);
+	Common::String lineText(_text.c_str() + _startsOfLines[_topVisibleLine], _text.c_str() + _startsOfLines[_topVisibleLine + 1] - 1);
 
 	debugC(3, kDebugLevelGraphics, "ScrollWindow::upArrow: top: %d, bottom: %d, num: %d, numvis: %d, lineText: %s", _topVisibleLine, _bottomVisibleLine, _numLines, _numVisibleLines, lineText.c_str());
 
@@ -566,14 +566,14 @@ void ScrollWindow::downArrow() {
 		_bottomVisibleLine = _numLines - 1;
 
 	_firstVisibleChar = _startsOfLines[_topVisibleLine];
-	_lastVisibleChar = _startsOfLines[_bottomVisibleLine+1] - 1;
+	_lastVisibleChar = _startsOfLines[_bottomVisibleLine + 1] - 1;
 
 	_visibleText = Common::String(_text.c_str() + _firstVisibleChar, _text.c_str() + _lastVisibleChar + 1);
 
 	Common::String lineText;
 	if (_bottomVisibleLine - _topVisibleLine + 1 == _numVisibleLines) {
 		// TODO: Double check this -1 at the end (for the \n)
-		lineText = Common::String(_text.c_str() + _startsOfLines[_bottomVisibleLine], _text.c_str() + _startsOfLines[_bottomVisibleLine+1] - 1);
+		lineText = Common::String(_text.c_str() + _startsOfLines[_bottomVisibleLine], _text.c_str() + _startsOfLines[_bottomVisibleLine + 1] - 1);
 	} else {
 		// scroll in empty string
 	}
@@ -619,7 +619,7 @@ void ScrollWindow::getLineIndices() {
 
 	_bottomVisibleLine = 0;
 	while (_bottomVisibleLine < _numLines - 1 &&
-	       _startsOfLines[_bottomVisibleLine+1] < _lastVisibleChar)
+	       _startsOfLines[_bottomVisibleLine + 1] < _lastVisibleChar)
 		_bottomVisibleLine++;
 
 	_numVisibleLines = _bottomVisibleLine + 1;
@@ -631,7 +631,7 @@ void ScrollWindow::update(bool doFrameOut) {
 
 	_topVisibleLine = 0;
 	while (_topVisibleLine < _numLines - 1 &&
-	       _firstVisibleChar >= _startsOfLines[_topVisibleLine+1])
+	       _firstVisibleChar >= _startsOfLines[_topVisibleLine + 1])
 		++_topVisibleLine;
 
 	_bottomVisibleLine = _topVisibleLine + _numVisibleLines - 1;
@@ -641,7 +641,7 @@ void ScrollWindow::update(bool doFrameOut) {
 	_firstVisibleChar = _startsOfLines[_topVisibleLine];
 
 	if (_bottomVisibleLine >= 0)
-		_lastVisibleChar = _startsOfLines[_bottomVisibleLine+1] - 1;
+		_lastVisibleChar = _startsOfLines[_bottomVisibleLine + 1] - 1;
 	else
 		_lastVisibleChar = -1;
 

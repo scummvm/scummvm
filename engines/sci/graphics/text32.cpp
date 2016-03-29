@@ -678,7 +678,7 @@ void GfxText32::scrollLine(const Common::String &lineText, int numLines, uint8 c
 	if (dir == kScrollUp) {
 		// Scroll existing text down
 		for (int i = 0; i < (numLines - 1) * h; ++i) {
-			int y = _textRect.top + numLines*h - i - 1;
+			int y = _textRect.top + numLines * h - i - 1;
 			memcpy(pixels + y * _width + _textRect.left,
 			       pixels + (y - h) * _width + _textRect.left,
 			       _textRect.width());
