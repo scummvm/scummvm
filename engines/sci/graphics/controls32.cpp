@@ -377,10 +377,10 @@ reg_t GfxControls32::registerScrollWindow(ScrollWindow *scrollWindow) {
 ScrollWindow *GfxControls32::getScrollWindow(reg_t id) {
 	Common::HashMap<int, ScrollWindow *>::iterator i;
 	i = _scrollWindows.find(id.getOffset());
-	if (i != _scrollWindows.end())
-		return i->_value;
-	else
-		return nullptr;
+	if (i == _scrollWindows.end())
+		error("Invalid ScrollWindow ID");
+
+	return i->_value;
 }
 
 void GfxControls32::deregisterScrollWindow(reg_t id) {

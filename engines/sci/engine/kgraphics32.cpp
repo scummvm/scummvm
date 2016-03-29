@@ -388,8 +388,6 @@ reg_t kScrollWindowCreate(EngineState *s, int argc, reg_t *argv) {
 
 reg_t kScrollWindowAdd(EngineState *s, int argc, reg_t *argv) {
 	ScrollWindow *scrollWindow = g_sci->_gfxControls32->getScrollWindow(argv[0]);
-	if (!scrollWindow)
-		error("Invalid ScrollWindow ID");
 
 	Common::String text = s->_segMan->getString(argv[1]);
 
@@ -403,8 +401,6 @@ reg_t kScrollWindowAdd(EngineState *s, int argc, reg_t *argv) {
 
 reg_t kScrollWindowWhere(EngineState *s, int argc, reg_t *argv) {
 	ScrollWindow *scrollWindow = g_sci->_gfxControls32->getScrollWindow(argv[0]);
-	if (!scrollWindow)
-		error("Invalid ScrollWindow ID");
 
 	Common::Rational w = scrollWindow->where();
 
@@ -415,8 +411,6 @@ reg_t kScrollWindowWhere(EngineState *s, int argc, reg_t *argv) {
 
 reg_t kScrollWindowHide(EngineState *s, int argc, reg_t *argv) {
 	ScrollWindow *scrollWindow = g_sci->_gfxControls32->getScrollWindow(argv[0]);
-	if (!scrollWindow)
-		error("Invalid ScrollWindow ID");
 
 	scrollWindow->hide();
 
@@ -426,8 +420,6 @@ reg_t kScrollWindowHide(EngineState *s, int argc, reg_t *argv) {
 
 reg_t kScrollWindowShow(EngineState *s, int argc, reg_t *argv) {
 	ScrollWindow *scrollWindow = g_sci->_gfxControls32->getScrollWindow(argv[0]);
-	if (!scrollWindow)
-		error("Invalid ScrollWindow ID");
 
 	scrollWindow->show();
 
@@ -436,8 +428,6 @@ reg_t kScrollWindowShow(EngineState *s, int argc, reg_t *argv) {
 
 reg_t kScrollWindowUpArrow(EngineState *s, int argc, reg_t *argv) {
 	ScrollWindow *scrollWindow = g_sci->_gfxControls32->getScrollWindow(argv[0]);
-	if (!scrollWindow)
-		error("Invalid ScrollWindow ID");
 
 	scrollWindow->upArrow();
 
@@ -446,8 +436,6 @@ reg_t kScrollWindowUpArrow(EngineState *s, int argc, reg_t *argv) {
 
 reg_t kScrollWindowDownArrow(EngineState *s, int argc, reg_t *argv) {
 	ScrollWindow *scrollWindow = g_sci->_gfxControls32->getScrollWindow(argv[0]);
-	if (!scrollWindow)
-		error("Invalid ScrollWindow ID");
 
 	scrollWindow->downArrow();
 
@@ -457,8 +445,6 @@ reg_t kScrollWindowDownArrow(EngineState *s, int argc, reg_t *argv) {
 
 reg_t kScrollWindowDestroy(EngineState *s, int argc, reg_t *argv) {
 	ScrollWindow *scrollWindow = g_sci->_gfxControls32->getScrollWindow(argv[0]);
-	if (!scrollWindow)
-		error("Invalid ScrollWindow ID");
 
 	scrollWindow->hide();
 
