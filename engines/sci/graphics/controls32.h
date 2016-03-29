@@ -145,7 +145,7 @@ protected:
 	void getLineIndices();
 
 
-	GfxText32 *_gfxText32;
+	GfxText32 _gfxText32;
 
 	Common::Array<ScrollWindowLine> _lines;
 	Common::Array<int> _startsOfLines;
