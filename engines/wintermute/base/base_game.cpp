@@ -361,6 +361,12 @@ bool BaseGame::initConfManSettings() {
 		_debugShowFPS = false;
 	}
 
+	if (ConfMan.hasKey("bilinear_filtering")) {
+		_bilinearFiltering = ConfMan.getBool("bilinear_filtering");
+	} else {
+		_bilinearFiltering = false;
+	}
+
 	if (ConfMan.hasKey("disable_smartcache")) {
 		_smartCache = ConfMan.getBool("disable_smartcache");
 	} else {
