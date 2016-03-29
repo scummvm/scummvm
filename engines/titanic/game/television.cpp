@@ -90,7 +90,7 @@ bool CTelevision::handleMessage(CLeaveViewMsg &msg) {
 
 		loadFrame(622);
 		stopMovie();
-		set5C(0);
+		setVisible(0);
 		_isOn = false;
 
 		if (compareRoomNameTo("CSGState")) {
@@ -124,7 +124,7 @@ bool CTelevision::handleMessage(CEnterViewMsg &msg) {
 	petFn1(2);
 	petFn2(2);
 	petFn3(0);
-	set5C(0);
+	setVisible(0);
 	_fieldE0 = 1;
 
 	return true;
@@ -175,12 +175,12 @@ bool CTelevision::handleMessage(CActMsg &msg) {
 	if (msg._action == "TurnTVOnOff") {
 		_isOn = !_isOn;
 		if (_isOn) {
-			set5C(true);
+			setVisible(true);
 			CStatusChangeMsg changeMsg;
 			changeMsg.execute(this);
 		} else {
 			// TODO: Should 5C be a boolean?
-			set5C(_isOn);
+			setVisible(_isOn);
 			stopMovie();
 		}
 	}
@@ -194,7 +194,7 @@ bool CTelevision::handleMessage(CPETActivateMsg &msg) {
 		_isOn = !_isOn;
 
 		if (_isOn) {
-			set5C(true);
+			setVisible(true);
 			fn1(0, 55, 0);
 			_fieldE0 = 1;
 		} else {
@@ -202,7 +202,7 @@ bool CTelevision::handleMessage(CPETActivateMsg &msg) {
 			if (soundFn1(_fieldF0))
 				soundFn2(_fieldF0, 0);
 			
-			set5C(false);
+			setVisible(false);
 		}
 
 		if (compareRoomNameTo("SGTState"))

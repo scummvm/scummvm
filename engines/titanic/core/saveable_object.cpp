@@ -897,6 +897,7 @@ DEFFN(CSetChevLiftBits)
 DEFFN(CSetChevPanelBitMsg)
 DEFFN(CSetChevPanelButtonsMsg)
 DEFFN(CSetChevRoomBits)
+DEFFN(CSetFrameMsg);
 DEFFN(CSetMusicControlsMsg)
 DEFFN(CSetVarMsg)
 DEFFN(CSetVolumeMsg)
@@ -1479,6 +1480,7 @@ void CSaveableObject::initClassList() {
 	ADDFN(CSetChevPanelBitMsg, CMessage);
 	ADDFN(CSetChevPanelButtonsMsg, CMessage);
 	ADDFN(CSetChevRoomBits, CMessage);
+	ADDFN(CSetFrameMsg, CMessage);
 	ADDFN(CSetMusicControlsMsg, CMessage);
 	ADDFN(CSetVarMsg, CMessage);
 	ADDFN(CSetVolumeMsg, CMessage);

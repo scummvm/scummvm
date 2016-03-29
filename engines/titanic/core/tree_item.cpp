@@ -284,4 +284,9 @@ CTreeItem *CTreeItem::getDontSaveChild(ClassDef *classDef) const {
 	return dontSave->findChildInstanceOf(classDef);
 }
 
+CRoomItem *CTreeItem::getRoom() const {
+	CGameManager *gameManager = getGameManager();
+	return gameManager ? gameManager->getRoom() : nullptr;
+}
+
 } // End of namespace Titanic

@@ -28,8 +28,8 @@
 namespace Titanic {
 
 class CCDROMTray : public CGameObject {
-private:
-	int _fieldBC;
+public:
+	int _state;
 	CString _string1;
 public:
 	CLASSDEF

@@ -33,6 +33,7 @@ class CNamedItem;
 class CPetControl;
 class CProjectItem;
 class CScreenManager;
+class CRoomItem;
 
 class CTreeItem: public CMessageTarget {
 private:
@@ -242,6 +243,10 @@ public:
 	 */
 	CTreeItem *getDontSaveChild(ClassDef *classDef) const;
 
+	/**
+	 * Return the current room
+	 */
+	CRoomItem *getRoom() const;
 };
 
 } // End of namespace Titanic

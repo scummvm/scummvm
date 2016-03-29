@@ -31,6 +31,7 @@
 namespace Titanic {
 
 class CVideoSurface;
+class CMouseDragStartMsg;
 
 class CGameObject : public CNamedItem {
 public:
@@ -74,7 +75,7 @@ protected:
 	int _field50;
 	int _field54;
 	int _field58;
-	bool _field5C;
+	bool _visible;
 	CMovieClipList _clipList1;
 	int _field78;
 	CMovieClipList _clipList2;
@@ -83,8 +84,7 @@ protected:
 	int _field94;
 	int _field98;
 	int _field9C;
-	int _fieldA0;
-	int _fieldA4;
+	Common::Point _savedPos;
 	CVideoSurface *_surface;
 	CString _resource;
 	int _fieldB8;
@@ -94,9 +94,24 @@ protected:
 	 */
 	void loadFrame(int frameNumber);
 
+	/**
+	 * Saves the current position the object is located at
+	 */
+	void savePosition();
+
+	/**
+	 * Resets the object back to the previously saved starting position
+	 */
+	void resetPosition();
+
+	/**
+	 * Check for starting to drag the object
+	 */
+	bool checkStartDragging(CMouseDragStartMsg *msg);
+
 	bool soundFn1(int val);
 	void soundFn2(int val, int val2);
-	void set5C(bool val);
+	void setVisible(bool val);
 	bool petFn1(int val);
 	void petFn2(int val);
 	void petFn3(int val);
@@ -135,6 +150,11 @@ public:
 	 * Change the object's status
 	 */
 	void changeStatus(int newStatus);
+
+	/**
+	 * Set the position of the object
+	 */
+	void setPosition(const Common::Point &newPos);
 };
 
 } // End of namespace Titanic

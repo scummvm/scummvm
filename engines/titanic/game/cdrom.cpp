@@ -21,6 +21,8 @@
  */
 
 #include "titanic/game/cdrom.h"
+#include "titanic/core/room_item.h"
+#include "titanic/game/cdrom_tray.h"
 
 namespace Titanic {
 
@@ -29,14 +31,50 @@ CCDROM::CCDROM() : CGameObject() {
 
 void CCDROM::save(SimpleFile *file, int indent) const {
 	file->writeNumberLine(1, indent);
-	file->writePoint(_pos1, indent);
+	file->writePoint(_tempPos, indent);
 	CGameObject::save(file, indent);
 }
 
 void CCDROM::load(SimpleFile *file) {
 	file->readNumber();
-	_pos1 = file->readPoint();
+	_tempPos = file->readPoint();
 	CGameObject::load(file);
+}
+
+bool CCDROM::handleMessage(CMouseDragStartMsg &msg) {
+	if (checkStartDragging(&msg)) {
+		_tempPos = msg._mousePos - _bounds;
+		setPosition(msg._mousePos - _tempPos);
+		return true;
+	} else {
+		return false;
+	}
+}
+
+bool CCDROM::handleMessage(CMouseDragEndMsg &msg) {
+	if (msg._dropTarget && msg._dropTarget->getName() == "newComputer") {
+		CCDROMTray *newTray = dynamic_cast<CCDROMTray *>(getRoom()->findByName("newTray"));
+
+		if (newTray->_state && newTray->_string1 == "None") {
+			CActMsg actMsg(getName());
+			actMsg.execute(newTray);
+		}
+	}
+
+	resetPosition();
+	return true;
+}
+
+bool CCDROM::handleMessage(CMouseDragMoveMsg &msg) {
+	setPosition(msg._mousePos - _tempPos);
+	return true;
+}
+
+bool CCDROM::handleMessage(CActMsg &msg) {
+	if (msg._action == "Ejected")
+		setVisible(true);
+
+	return true;
 }
 
 } // End of namespace Titanic

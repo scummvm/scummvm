@@ -45,7 +45,7 @@ CGameObject::CGameObject(): CNamedItem() {
 	_field50 = 0;
 	_field54 = 0;
 	_field58 = 0;
-	_field5C = true;
+	_visible = true;
 	_field60 = 0;
 	_cursorId = CURSOR_1;
 	_field78 = 0;
@@ -54,8 +54,6 @@ CGameObject::CGameObject(): CNamedItem() {
 	_field94 = 0;
 	_field98 = 0;
 	_field9C = 0;
-	_fieldA0 = 0;
-	_fieldA4 = 0;
 	_surface = nullptr;
 	_fieldB8 = 0;
 }
@@ -106,7 +104,7 @@ void CGameObject::load(SimpleFile *file) {
 		_field48 = file->readNumber();
 		_field4C = file->readNumber();
 		_fieldB8 = file->readNumber();
-		_field5C = file->readNumber() != 0;
+		_visible = file->readNumber() != 0;
 		_field50 = file->readNumber();
 		_field54 = file->readNumber();
 		_field58 = file->readNumber();
@@ -137,7 +135,7 @@ bool CGameObject::checkPoint(const Point &pt, int v0, int v1) {
 }
 
 void CGameObject::draw(CScreenManager *screenManager) {
-	if (!_field5C)
+	if (!_visible)
 		return;
 	if (_v1) {
 		error("TODO: Block in CGameObject::draw");
@@ -276,9 +274,9 @@ void CGameObject::soundFn2(int val, int val2) {
 	}
 }
 
-void CGameObject::set5C(bool val) {
-	if (val != _field5C) {
-		_field5C = val;
+void CGameObject::setVisible(bool val) {
+	if (val != _visible) {
+		_visible = val;
 		makeDirty();
 	}
 }
@@ -317,6 +315,30 @@ void CGameObject::changeStatus(int newStatus) {
 		if (newStatus & 0x10) {
 			getGameManager()->_gameState.addMovie(_surface->_movie);
 		}
+	}
+}
+
+void CGameObject::savePosition() {
+	_savedPos = _bounds;
+}
+
+void CGameObject::resetPosition() {
+	setPosition(_savedPos);
+}
+
+void CGameObject::setPosition(const Common::Point &newPos) {
+	makeDirty();
+	_bounds.moveTo(newPos);
+	makeDirty();
+}
+
+bool CGameObject::checkStartDragging(CMouseDragStartMsg *msg) {
+	if (_visible && checkPoint(msg->_mousePos, msg->_field14, 1)) {
+		savePosition();
+		msg->_dragItem = this;
+		return true;
+	} else {
+		return false;
 	}
 }
 
