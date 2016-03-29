@@ -36,6 +36,7 @@
 #include "common/system.h"
 #include "common/textconsole.h"
 #include "common/translation.h"
+#include "common/updates.h"
 
 #include "audio/mididrv.h"
 #include "audio/musicplugin.h"
@@ -1228,6 +1229,16 @@ GlobalOptionsDialog::GlobalOptionsDialog()
 #endif // USE_DETECTLANG
 
 #endif // USE_TRANSLATION
+
+#ifdef USE_UPDATES
+	_updatesPopUpDesc = new StaticTextWidget(tab, "GlobalOptions_Misc.UpdatesPopupDesc", _("Update check:"), _("How often to check ScummVM updates"));
+	_updatesPopUp = new PopUpWidget(tab, "GlobalOptions_Misc.UpdatesPopup");
+
+	_updatesPopUp->appendEntry(_("Never"), Common::UpdateManager::kUpdateIntervalNotSupported);
+	_updatesPopUp->appendEntry(_("Daily"), Common::UpdateManager::kUpdateIntervalOneDay);
+	_updatesPopUp->appendEntry(_("Weekly"), Common::UpdateManager::kUpdateIntervalOneWeek);
+	_updatesPopUp->appendEntry(_("Monthly"), Common::UpdateManager::kUpdateIntervalOneMonth);
+#endif
 
 	// Activate the first tab
 	tab->setActiveTab(0);

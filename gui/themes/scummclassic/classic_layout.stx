@@ -507,6 +507,14 @@
 						type = 'PopUp'
 				/>
 			</layout>
+			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '10' center = 'true'>
+				<widget name = 'UpdatesPopupDesc'
+						type = 'OptionsLabel'
+				/>
+				<widget name = 'UpdatesPopup'
+						type = 'PopUp'
+				/>
+			</layout>
 			<widget name='KeysButton'
  				     type='Button'
 			/>
