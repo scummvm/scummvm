@@ -115,17 +115,17 @@ public:
 	/**
 	 * Returns the width of the surface
 	 */
-	virtual int getWidth() const = 0;
+	virtual int getWidth() = 0;
 
 	/**
 	 * Returns the height of the surface
 	 */
-	virtual int getHeight() const = 0;
+	virtual int getHeight() = 0;
 
 	/**
 	 * Returns the pitch of the surface in bytes
 	 */
-	virtual int getPitch() const = 0;
+	virtual int getPitch() = 0;
 	
 	/**
 	 * Reiszes the surface
@@ -236,17 +236,17 @@ public:
 	/**
 	 * Returns the width of the surface
 	 */
-	virtual int getWidth() const;
+	virtual int getWidth();
 
 	/**
 	 * Returns the height of the surface
 	 */
-	virtual int getHeight() const;
+	virtual int getHeight();
 
 	/**
 	 * Returns the pitch of the surface in bytes
 	 */
-	virtual int getPitch() const;
+	virtual int getPitch();
 
 	/**
 	 * Reiszes the surface

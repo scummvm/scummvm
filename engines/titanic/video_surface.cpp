@@ -223,18 +223,24 @@ bool OSVideoSurface::hasSurface() {
 	return _ddSurface != nullptr;
 }
 
-int OSVideoSurface::getWidth() const {
-	assert(_ddSurface);
+int OSVideoSurface::getWidth() {
+	if (!loadIfReady())
+		error("Could not load resource");
+
 	return _ddSurface->getWidth();
 }
 
-int OSVideoSurface::getHeight() const {
-	assert(_ddSurface);
+int OSVideoSurface::getHeight() {
+	if (!loadIfReady())
+		error("Could not load resource");
+
 	return _ddSurface->getHeight();
 }
 
-int OSVideoSurface::getPitch() const {
-	assert(_ddSurface);
+int OSVideoSurface::getPitch() {
+	if (!loadIfReady())
+		error("Could not load resource");
+
 	return _ddSurface->getPitch();
 }
 
