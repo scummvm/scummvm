@@ -618,7 +618,7 @@ void ScrollWindow::computeLineIndices() {
 		error("ScrollWindow font size mismatch");
 	}
 
-	Common::Rect r(0, 0, _textRect.width() + 1, _pointSize + 3);
+	Common::Rect lineRect(0, 0, _textRect.width() + 1, _pointSize + 3);
 
 	_startsOfLines.clear();
 
@@ -627,7 +627,7 @@ void ScrollWindow::computeLineIndices() {
 	while (index < _text.size()) {
 		_startsOfLines.push_back(index);
 
-		index += _gfxText32.getTextCount(_text, index, r, false);
+		index += _gfxText32.getTextCount(_text, index, lineRect, false);
 	}
 	_numLines = _startsOfLines.size();
 
