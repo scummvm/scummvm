@@ -236,6 +236,11 @@ protected:
 	PopUpWidget *_autosavePeriodPopUp;
 	StaticTextWidget *_guiLanguagePopUpDesc;
 	PopUpWidget *_guiLanguagePopUp;
+
+#ifdef USE_UPDATES
+	StaticTextWidget *_updatesPopUpDesc;
+	PopUpWidget *_updatesPopUp;
+#endif
 };
 
 } // End of namespace GUI
