@@ -137,7 +137,7 @@ public:
 	void upArrow();
 	void downArrow();
 
-	reg_t getBitmap() { return _bitmap; }
+	reg_t getBitmap() const { return _bitmap; }
 
 protected:
 
@@ -176,11 +176,10 @@ protected:
 
 	bool _visible;
 
-	Common::Rect _rect10; // ??
-	Common::Rect _rect50; // ??
-	Common::Rect _rect60; // ??
+	Common::Rect _textRect;
+	Common::Rect _screenRect;
 
-	Common::Point _point74; // ??
+	Common::Point _position;
 
 	int _pointSize;
 

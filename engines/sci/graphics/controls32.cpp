@@ -394,8 +394,8 @@ ScrollWindow::ScrollWindow(SegManager *segMan, const Common::Rect &rect,
                            uint8 back, GuiResourceId font, TextAlign align,
                            uint8 border)
 : _plane(plane), _foreColor(fore), _backColor(back),
-  _borderColor(border), _fontId(font), _alignment(align), _rect50(rect),
-  _point74(point) {
+  _borderColor(border), _fontId(font), _alignment(align),
+  _position(point) {
 
 	_gfxText32 = new GfxText32(segMan, g_sci->_gfxCache);
 
@@ -411,15 +411,18 @@ ScrollWindow::ScrollWindow(SegManager *segMan, const Common::Rect &rect,
 
 	_visible = false;
 
-	_rect60.left = (_rect50.left * _fontScaledWidth) / 320;
-	_rect60.right = ((_rect50.right - 1) * _fontScaledWidth) / 320 + 1;
-	_rect60.top = (_rect50.top * _fontScaledHeight) / 200;
-	_rect60.bottom = ((_rect50.bottom - 1) * _fontScaledHeight) / 200 + 1;
+	int scriptWidth = g_sci->_gfxFrameout->getCurrentBuffer().scriptWidth;
+	int scriptHeight = g_sci->_gfxFrameout->getCurrentBuffer().scriptHeight;
 
-	_rect10.left = 2;
-	_rect10.top = 2;
-	_rect10.right = _rect60.width() - 2;
-	_rect10.bottom = _rect60.height() - 2;
+	_screenRect.left = (rect.left * _fontScaledWidth) / scriptWidth;
+	_screenRect.right = ((rect.right - 1) * _fontScaledWidth) / scriptWidth + 1;
+	_screenRect.top = (rect.top * _fontScaledHeight) / scriptHeight;
+	_screenRect.bottom = ((rect.bottom - 1) * _fontScaledHeight) / scriptHeight + 1;
+
+	_textRect.left = 2;
+	_textRect.top = 2;
+	_textRect.right = _screenRect.width() - 2;
+	_textRect.bottom = _screenRect.height() - 2;
 
 	_pointSize = _gfxText32->_font->getHeight();
 
@@ -427,13 +430,13 @@ ScrollWindow::ScrollWindow(SegManager *segMan, const Common::Rect &rect,
 	while (skipColor == _foreColor || skipColor == _backColor)
 		skipColor++;
 
-	assert(_rect60.width() > 0 && _rect60.height() > 0);
-	_bitmap = _gfxText32->createFontBitmap(_rect60.width(), _rect60.height(),
-	                                       _rect10, "", _foreColor, _backColor,
+	assert(_screenRect.width() > 0 && _screenRect.height() > 0);
+	_bitmap = _gfxText32->createFontBitmap(_screenRect.width(), _screenRect.height(),
+	                                       _textRect, "", _foreColor, _backColor,
 	                                       skipColor, _fontId, _alignment,
 	                                       _borderColor, false, false);
 
-	debugC(1, kDebugLevelGraphics, "New ScrollWindow: rect size: %d x %d, bitmap: %04x:%04x", _rect10.width(), _rect10.height(), PRINT_REG(_bitmap));
+	debugC(1, kDebugLevelGraphics, "New ScrollWindow: textRect size: %d x %d, bitmap: %04x:%04x", _textRect.width(), _textRect.height(), PRINT_REG(_bitmap));
 
 	_lastLineId = make_reg(0, 9999);
 
@@ -461,7 +464,7 @@ void ScrollWindow::show() {
 
 		ScaleInfo s;
 
-		_screenItem = new ScreenItem(_plane, c, _point74, s);
+		_screenItem = new ScreenItem(_plane, c, _position, s);
 	}
 
 	Plane *plane = g_sci->_gfxFrameout->getPlanes().findByObject(_plane);
@@ -604,7 +607,7 @@ void ScrollWindow::getLineIndices() {
 		error("ScrollWindow font size mismatch");
 	}
 
-	Common::Rect r(0, 0, _rect10.width() + 1, _pointSize + 3);
+	Common::Rect r(0, 0, _textRect.width() + 1, _pointSize + 3);
 
 	_startsOfLines.clear();
 
@@ -619,7 +622,7 @@ void ScrollWindow::getLineIndices() {
 
 	_startsOfLines.push_back(_text.size());
 
-	_lastVisibleChar = _gfxText32->getTextCount(_text, 0, _fontId, _rect10, false) - 1;
+	_lastVisibleChar = _gfxText32->getTextCount(_text, 0, _fontId, _textRect, false) - 1;
 
 	_bottomVisibleLine = 0;
 	while (_bottomVisibleLine < _numLines - 1 &&
@@ -651,7 +654,7 @@ void ScrollWindow::update(bool doFrameOut) {
 
 	_visibleText = Common::String(_text.c_str() + _firstVisibleChar, _text.c_str() + _lastVisibleChar + 1);
 
-	_gfxText32->erase(_rect10, false);
+	_gfxText32->erase(_textRect, false);
 
 	_gfxText32->drawTextBox(_visibleText);
 
