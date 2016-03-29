@@ -479,16 +479,9 @@ public:
 	int16 getTextCount(const Common::String &text, const uint index, const GuiResourceId fontId, const Common::Rect &textRect, const bool doScaling);
 
 	/**
-	 * Scroll up one line. `numLines` is the number of the lines in the
-	 * textarea, and `textLine` contains the text to draw as the newly
-	 * visible line.
-	 */
-	void scrollLineUp(const Common::String &textLine, int numLines, uint8 color, GuiResourceId fontId);
-
-	/**
 	 * Scroll up/down one line. `numLines` is the number of the lines in the
 	 * textarea, and `textLine` contains the text to draw as the newly
-	 * visible line.
+	 * visible line. Originally FontMgr::DrawOneLine and FontMgr::UpOneLine.
 	 */
 	void scrollLine(const Common::String &textLine, int numLines, uint8 color, TextAlign align, GuiResourceId fontId, ScrollDirection dir);
 };

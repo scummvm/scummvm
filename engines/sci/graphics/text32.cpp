@@ -670,8 +670,8 @@ int16 GfxText32::getTextCount(const Common::String &text, const uint index, cons
 }
 
 void GfxText32::scrollLine(const Common::String &lineText, int numLines, uint8 color, TextAlign align, GuiResourceId fontId, ScrollDirection dir) {
-	byte *bitmap = _segMan->getHunkPointer(_bitmap);
-	byte *pixels = bitmap + READ_SCI11ENDIAN_UINT32(bitmap + 28);
+	BitmapResource bmr(_bitmap);
+	byte *pixels = bmr.getPixels();
 
 	int h = _font->getHeight();
 
@@ -698,8 +698,10 @@ void GfxText32::scrollLine(const Common::String &lineText, int numLines, uint8 c
 	if (dir == kScrollUp) {
 		lineRect.bottom = lineRect.top + h;
 	} else {
+		// It is unclear to me what the purpose of this bottom++ is.
+		// It does not seem to be the usual inc/exc issue.
 		lineRect.top += (numLines - 1) * h;
-		// lineRect.bottom++; // ?? (This is not the usual inc/exc, I think.)
+		lineRect.bottom++;
 	}
 
 	erase(lineRect, false);
