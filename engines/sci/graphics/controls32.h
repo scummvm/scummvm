@@ -110,7 +110,7 @@ struct ScrollWindowLine {
 	 */
 	reg_t _id;
 
-	// Text properties
+	// Text properties. May be -1 to indicate the ScrollWindow's defaults.
 	int _alignment;
 	int _foreColor;
 	GuiResourceId _fontId;
@@ -128,11 +128,16 @@ public:
 	             uint8 back, GuiResourceId font, TextAlign align, uint8 border);
 	~ScrollWindow();
 
+	/**
+	 * Add an entry. The arguments font, fore, align may be -1 to indicate
+	 * the ScrollWindow's defaults.
+	 */
 	reg_t add(const Common::String &str, GuiResourceId font, int fore,
 	          int align, bool scrollTo);
+
 	void show();
 	void hide();
-	Common::Rational where() const;
+	Ratio where() const;
 
 	void upArrow();
 	void downArrow();
@@ -142,7 +147,7 @@ public:
 protected:
 
 	void update(bool doFrameOut);
-	void getLineIndices();
+	void computeLineIndices();
 
 
 	GfxText32 _gfxText32;

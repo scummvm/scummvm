@@ -402,7 +402,7 @@ reg_t kScrollWindowAdd(EngineState *s, int argc, reg_t *argv) {
 reg_t kScrollWindowWhere(EngineState *s, int argc, reg_t *argv) {
 	ScrollWindow *scrollWindow = g_sci->_gfxControls32->getScrollWindow(argv[0]);
 
-	Common::Rational w = scrollWindow->where();
+	Ratio w = scrollWindow->where();
 
 	int ret = (argv[1].toUint16() * w).toInt();
 

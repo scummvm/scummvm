@@ -262,10 +262,9 @@ public:
 
 	/**
 	 * Updates the properties of the screen item for one not belonging
-	 * to a VM object.
+	 * to a VM object. Originally GraphicsMgr::UpdateScreenItem.
 	 */
 	void update();
-
 
 	/**
 	 * Gets the "now seen" rect for the screen item, which

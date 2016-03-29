@@ -374,6 +374,7 @@ reg_t GfxControls32::registerScrollWindow(ScrollWindow *scrollWindow) {
 	return _lastScrollWindowId;
 }
 
+
 ScrollWindow *GfxControls32::getScrollWindow(reg_t id) {
 	Common::HashMap<int, ScrollWindow *>::iterator i;
 	i = _scrollWindows.find(id.getOffset());
@@ -382,6 +383,7 @@ ScrollWindow *GfxControls32::getScrollWindow(reg_t id) {
 
 	return i->_value;
 }
+
 
 void GfxControls32::deregisterScrollWindow(reg_t id) {
 	_scrollWindows.erase(id.getOffset());
@@ -398,7 +400,7 @@ ScrollWindow::ScrollWindow(SegManager *segMan, const Common::Rect &rect,
   _lastVisibleChar(0), _bottomVisibleLine(0),
   _plane(plane), _foreColor(fore), _backColor(back),
   _borderColor(border), _fontId(font), _alignment(align),
-  _visible(false), _position(point) {
+  _visible(false), _position(point), _screenItem(nullptr) {
 
 	_gfxText32.setFont(_fontId);
 
@@ -432,10 +434,11 @@ ScrollWindow::ScrollWindow(SegManager *segMan, const Common::Rect &rect,
 
 	debugC(1, kDebugLevelGraphics, "New ScrollWindow: textRect size: %d x %d, bitmap: %04x:%04x", _textRect.width(), _textRect.height(), PRINT_REG(_bitmap));
 
+	// We give lines handles starting at 10000. This is unlike SSCI, where
+	// line handles were in fact TextIDs.
 	_lastLineId = make_reg(0, 9999);
-
-	_screenItem = nullptr;
 }
+
 
 ScrollWindow::~ScrollWindow() {
 	// _gfxText32._bitmap will get GCed once ScrollWindow is gone.
@@ -443,9 +446,11 @@ ScrollWindow::~ScrollWindow() {
 	delete _screenItem;
 }
 
-Common::Rational ScrollWindow::where() const {
-	return Common::Rational(_topVisibleLine, MAX(_numLines, 1));
+
+Ratio ScrollWindow::where() const {
+	return Ratio(_topVisibleLine, MAX(_numLines, 1));
 }
+
 
 void ScrollWindow::show() {
 	if (_visible)
@@ -465,6 +470,7 @@ void ScrollWindow::show() {
 
 	_visible = true;
 }
+
 
 void ScrollWindow::hide() {
 	if (!_visible)
@@ -489,6 +495,7 @@ void ScrollWindow::hide() {
 	_visible = false;
 }
 
+
 reg_t ScrollWindow::add(const Common::String &str, GuiResourceId font,
                         int fore, int align, bool scrollTo) {
 
@@ -502,6 +509,15 @@ reg_t ScrollWindow::add(const Common::String &str, GuiResourceId font,
 	// string of this line. We use a numeric ID instead.
 	_lastLineId += 1;
 	line._id = _lastLineId;
+
+
+	// TODO: There are potential inconsistencies here, that seem to also exist
+	// in SSCI. When line properties are -1, they in practice are displayed
+	// with the default values from the ScrollWindow. However, if the
+	// whole ScrollWindow is displayed at once, they might instead use the
+	// properties of the previous line. Conversely, if there is a multi-line
+	// entry with non-default properties, all lines except the first one might
+	// be displayed with the defaults.
 
 	Common::String s;
 	s = Common::String::format("|s%d|", _lines.size() - 1);
@@ -524,6 +540,7 @@ reg_t ScrollWindow::add(const Common::String &str, GuiResourceId font,
 
 	return line._id;
 }
+
 
 void ScrollWindow::upArrow() {
 	if (_topVisibleLine == 0)
@@ -554,6 +571,7 @@ void ScrollWindow::upArrow() {
 		g_sci->_gfxFrameout->frameOut(true);
 	}
 }
+
 
 void ScrollWindow::downArrow() {
 	if (_topVisibleLine + 1 >= _numLines)
@@ -592,7 +610,7 @@ void ScrollWindow::downArrow() {
 }
 
 
-void ScrollWindow::getLineIndices() {
+void ScrollWindow::computeLineIndices() {
 	_gfxText32.setFont(_fontId);
 	// set _gfxText32 foreColor, alignment?
 
@@ -604,9 +622,9 @@ void ScrollWindow::getLineIndices() {
 
 	_startsOfLines.clear();
 
-	int index = 0;
+	uint index = 0;
 
-	while (index < (int)_text.size()) {
+	while (index < _text.size()) {
 		_startsOfLines.push_back(index);
 
 		index += _gfxText32.getTextCount(_text, index, r, false);
@@ -625,9 +643,9 @@ void ScrollWindow::getLineIndices() {
 	_numVisibleLines = _bottomVisibleLine + 1;
 }
 
-// Call after changing text or text position
+
 void ScrollWindow::update(bool doFrameOut) {
-	getLineIndices();
+	computeLineIndices();
 
 	_topVisibleLine = 0;
 	while (_topVisibleLine < _numLines - 1 &&
