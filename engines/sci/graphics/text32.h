@@ -367,13 +367,13 @@ public:
 
 	/**
 	 * The size of the x-dimension of the coordinate system
-	 * used by the text renderer. NB: static
+	 * used by the text renderer. Static since it was global in SSCI.
 	 */
 	static int16 _scaledWidth;
 
 	/**
 	 * The size of the y-dimension of the coordinate system
-	 * used by the text renderer. NB: static
+	 * used by the text renderer. Static since it was global in SSCI.
 	 */
 	static int16 _scaledHeight;
 
