@@ -204,10 +204,6 @@ public:
 
 	reg_t kernelEditText(const reg_t controlObject);
 
-	reg_t registerScrollWindow(ScrollWindow *scrollWindow);
-	ScrollWindow *getScrollWindow(reg_t id);
-	void deregisterScrollWindow(reg_t id);
-
 	Common::Array<reg_t> listObjectReferences();
 
 private:
@@ -221,6 +217,11 @@ private:
 	void eraseCursor(TextEditor &editor);
 	void flashCursor(TextEditor &editor);
 
+public:
+	reg_t registerScrollWindow(ScrollWindow *scrollWindow);
+	ScrollWindow *getScrollWindow(reg_t id);
+	void deregisterScrollWindow(reg_t id);
+private:
 	reg_t _lastScrollWindowId;
 
 	Common::HashMap<int, ScrollWindow *> _scrollWindows;
