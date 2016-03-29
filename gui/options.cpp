@@ -1238,6 +1238,11 @@ GlobalOptionsDialog::GlobalOptionsDialog()
 	_updatesPopUp->appendEntry(_("Daily"), Common::UpdateManager::kUpdateIntervalOneDay);
 	_updatesPopUp->appendEntry(_("Weekly"), Common::UpdateManager::kUpdateIntervalOneWeek);
 	_updatesPopUp->appendEntry(_("Monthly"), Common::UpdateManager::kUpdateIntervalOneMonth);
+
+	if (ConfMan.hasKey("updates_check"))
+		_updatesPopUp->setSelectedTag(ConfMan.getInt("updates_check"));
+	else
+		_updatesPopUp->setSelectedTag(Common::UpdateManager::kUpdateIntervalNotSupported);
 #endif
 
 	// Activate the first tab
@@ -1377,6 +1382,10 @@ void GlobalOptionsDialog::close() {
 #endif
 		}
 #endif // USE_TRANSLATION
+
+#ifdef USE_UPDATES
+		ConfMan.setInt("updates_check", _updatesPopUp->getSelectedTag());
+#endif
 
 	}
 	OptionsDialog::close();
