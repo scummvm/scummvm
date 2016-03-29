@@ -142,7 +142,11 @@ public:
 	 */
 	void stopMovie();
 
-	bool checkPoint(const Point &pt, int v0, int v1);
+	/**
+	 * Checks the passed point is validly in the object,
+	 * with extra checking of object flags status
+	 */
+	bool checkPoint(const Point &pt, bool ignore40 = false, bool visibleOnly = false);
 
 	void fn1(int val1, int val2, int val3);
 

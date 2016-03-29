@@ -143,6 +143,11 @@ void CVideoSurface::blitRect2(const Rect &srcRect, const Rect &destRect, CVideoS
 	blitRect1(srcRect, destRect, src);
 }
 
+uint16 CVideoSurface::getTransparencyColor() const {
+	// TODO: Do like the original
+	return 0xF81F;
+}
+
 /*------------------------------------------------------------------------*/
 
 OSVideoSurface::OSVideoSurface(CScreenManager *screenManager, DirectDrawSurface *surface) :
@@ -273,6 +278,20 @@ bool OSVideoSurface::load() {
 
 	default:
 		return false;
+	}
+}
+
+uint16 OSVideoSurface::getPixel(const Common::Point &pt) {
+	if (!loadIfReady())
+		return 0;
+
+	if (pt.x >= 0 && pt.y >= 0 && pt.x < getWidth() && pt.y < getHeight()) {
+		lock();
+		uint16 pixel = *(uint16 *)_rawSurface->getBasePtr(pt.x, pt.y);
+		unlock();
+		return pixel;
+	} else {
+		return getTransparencyColor();
 	}
 }
 

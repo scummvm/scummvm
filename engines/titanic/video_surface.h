@@ -135,6 +135,11 @@ public:
 	virtual int proc26() = 0;
 
 	/**
+	 * Gets the pixel at the specified position within the surface
+	 */
+	virtual uint16 getPixel(const Common::Point &pt) = 0;
+
+	/**
 	 * Shifts the colors of the surface.. maybe greys it out?
 	 */
 	virtual void shiftColors() = 0;
@@ -181,6 +186,11 @@ public:
 	void set40(void *v) { _field40 = v; }
 
 	uint16 *getPixels() { return (uint16 *)_rawSurface->getPixels(); }
+
+	/**
+	 * Returns the transparent color
+	 */
+	uint16 getTransparencyColor() const;
 };
 
 class OSVideoSurface : public CVideoSurface {
@@ -244,6 +254,11 @@ public:
 	virtual void resize(int width, int height);
 
 	virtual int proc26();
+
+	/**
+	 * Gets the pixel at the specified position within the surface
+	 */
+	virtual uint16 getPixel(const Common::Point &pt);
 
 	/**
 	 * Shifts the colors of the surface.. maybe greys it out?

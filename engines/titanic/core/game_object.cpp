@@ -129,9 +129,29 @@ void CGameObject::stopMovie() {
 		_surface->stopMovie();
 }
 
-bool CGameObject::checkPoint(const Point &pt, int v0, int v1) {
-	warning("TODO: CGameObject::checkPoint");
-	return false;
+bool CGameObject::checkPoint(const Point &pt, bool ignore40, bool visibleOnly) {
+	if ((!_visible && visibleOnly) || !_bounds.contains(pt))
+		return false;
+
+	if (ignore40 || _field40)
+		return true;
+
+	if (!_surface) {
+		if (_frameNumber == -1)
+			return true;
+		loadFrame(_frameNumber);
+		if (!_surface)
+			return true;
+	}
+
+	Common::Point pixelPos = pt - _bounds;
+	if (_surface->_blitStyleFlag) {
+		pixelPos.y = ((_bounds.height() - _bounds.top) / 2) * 2 - pixelPos.y;
+	}
+
+	uint transColor = _surface->getTransparencyColor();
+	uint pixel = _surface->getPixel(pixelPos);
+	return pixel != transColor;
 }
 
 void CGameObject::draw(CScreenManager *screenManager) {
