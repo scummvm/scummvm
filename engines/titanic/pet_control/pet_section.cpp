@@ -20,23 +20,41 @@
  *
  */
 
-#include "titanic/pet_control/pet_control_sub4.h"
+#include "common/textconsole.h"
+#include "titanic/pet_control/pet_section.h"
 
 namespace Titanic {
 
-CPetControlSub4::CPetControlSub4() : _field28C(0),
-		_field290(0), _field294(0), _field298(0) {
-	for (int idx = 0; idx < 46; ++idx) {
-		_valArray1[idx] = _valArray2[idx] = 0;
-	}
+void CPetSection::proc4() {
+	error("TODO");
 }
 
-void CPetControlSub4::save(SimpleFile *file, int indent) const {
-
+void CPetSection::proc16() {
+	error("TODO");
 }
 
-void CPetControlSub4::load(SimpleFile *file, int param) {
-	_field298 = file->readNumber();
+void CPetSection::proc25() {
+	error("TODO");
+}
+
+void CPetSection::proc27() {
+	error("TODO");
+}
+
+void CPetSection::proc28() {
+	error("TODO");
+}
+
+void CPetSection::proc29() {
+	error("TODO");
+}
+
+void CPetSection::proc30() {
+	error("TODO");
+}
+
+void CPetSection::proc31() {
+	error("TODO");
 }
 
 } // End of namespace Titanic

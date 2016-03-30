@@ -23,14 +23,14 @@
 #ifndef TITANIC_PET_CONTROL_SUB3_H
 #define TITANIC_PET_CONTROL_SUB3_H
 
-#include "titanic/pet_control/pet_control_sub_base.h"
+#include "titanic/pet_control/pet_section.h"
 #include "titanic/pet_control/pet_control_sub10.h"
 #include "titanic/pet_control/pet_control_sub12.h"
 #include "titanic/pet_control/pet_val.h"
 
 namespace Titanic {
 
-class CPetControlSub3 : public CPetControlSubBase {
+class CPetControlSub3 : public CPetSection {
 private:
 	CPetControlSub10 _sub10;
 	CPetVal _val1;

@@ -20,40 +20,23 @@
  *
  */
 
-#ifndef TITANIC_PET_CONTROL_SUB4_H
-#define TITANIC_PET_CONTROL_SUB4_H
-
-#include "titanic/simple_file.h"
-#include "titanic/pet_control/pet_control_sub_base.h"
-#include "titanic/pet_control/pet_control_sub10.h"
-#include "titanic/pet_control/pet_control_sub12.h"
+#include "titanic/pet_control/pet_inventory_section.h"
 
 namespace Titanic {
 
-class CPetControlSub4 : public CPetControlSubBase {
-private:
-	CPetControlSub12 _sub12;
-	CPetControlSub10 _sub10;
-	int _valArray1[46];
-	int _valArray2[46];
-	int _field28C;
-	int _field290;
-	int _field294;
-	int _field298;
-public:
-	CPetControlSub4();
+CPetInventorySection::CPetInventorySection() : CPetSection(),
+		_field28C(0), _field290(0), _field294(0), _field298(0) {
+	for (int idx = 0; idx < 46; ++idx) {
+		_valArray1[idx] = _valArray2[idx] = 0;
+	}
+}
 
-	/**
-	 * Save the data for the class to file
-	 */
-	virtual void save(SimpleFile *file, int indent) const;
+void CPetInventorySection::save(SimpleFile *file, int indent) const {
+	file->writeNumberLine(_field298, indent);
+}
 
-	/**
-	 * Load the data for the class from file
-	 */
-	virtual void load(SimpleFile *file, int param);
-};
+void CPetInventorySection::load(SimpleFile *file, int param) {
+	_field298 = file->readNumber();
+}
 
 } // End of namespace Titanic
-
-#endif /* TITANIC_PET_CONTROL_SUB4_H */

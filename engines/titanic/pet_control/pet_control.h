@@ -29,7 +29,7 @@
 #include "titanic/pet_control/pet_control_sub1.h"
 #include "titanic/pet_control/pet_control_sub2.h"
 #include "titanic/pet_control/pet_control_sub3.h"
-#include "titanic/pet_control/pet_control_sub4.h"
+#include "titanic/pet_control/pet_inventory_section.h"
 #include "titanic/pet_control/pet_control_sub5.h"
 #include "titanic/pet_control/pet_control_sub6.h"
 #include "titanic/pet_control/pet_control_sub7.h"
@@ -46,7 +46,7 @@ private:
 	CPetControlSub1 _sub1;
 	CPetControlSub2 _sub2;
 	CPetControlSub3 _sub3;
-	CPetControlSub4 _sub4;
+	CPetInventorySection _sub4;
 	CPetControlSub5 _sub5;
 	CPetControlSub6 _sub6;
 	CPetControlSub7 _sub7;

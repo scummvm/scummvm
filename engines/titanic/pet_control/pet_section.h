@@ -20,30 +20,30 @@
  *
  */
 
-#ifndef TITANIC_PET_CONTROL_SUB_BASE_H
-#define TITANIC_PET_CONTROL_SUB_BASE_H
+#ifndef TITANIC_PET_SECTION_H
+#define TITANIC_PET_SECTION_H
 
 #include "titanic/simple_file.h"
 #include "titanic/core/room_item.h"
 
 namespace Titanic {
 
-struct CPetControlSubData {
+struct CPetSectionSubData {
 	int _field0;
 	int _field4;
 	int _field8;
 	int _fieldC;
 
-	CPetControlSubData() : _field0(0), _field4(0),
-		_field8(0), _fieldC(0) {}
+	CPetSectionSubData() : _field0(0), _field4(0), _field8(0),
+		_fieldC(0) {}
 };
 
-class CPetControlSubBase {
+class CPetSection {
 protected:
 	int _field4;
 public:
-	CPetControlSubBase() : _field4(0) {}
-	virtual ~CPetControlSubBase() {}
+	CPetSection() : _field4(0) {}
+	virtual ~CPetSection() {}
 
 	virtual int proc1() { return 0; }
 	virtual int proc2() { return 0; }
@@ -106,4 +106,4 @@ public:
 
 } // End of namespace Titanic
 
-#endif /* TITANIC_PET_CONTROL_SUB_BASE_H */
+#endif /* TITANIC_PET_SECTION_H */
