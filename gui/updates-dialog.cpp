@@ -20,11 +20,11 @@
  *
  */
 
-#include "common/str.h"
 #include "common/system.h"
 #include "common/translation.h"
 #include "common/updates.h"
 #include "common/config-manager.h"
+
 #include "gui/updates-dialog.h"
 #include "gui/gui-manager.h"
 #include "gui/ThemeEval.h"
@@ -106,8 +106,10 @@ UpdatesDialog::UpdatesDialog() : Dialog(30, 20, 260, 124) {
 	int yesButtonPos = (_w - (buttonWidth * 2)) / 2;
 	int noButtonPos = ((_w - (buttonWidth * 2)) / 2) + buttonWidth + 10;
 
-	_yesButton = new ButtonWidget(this, yesButtonPos, _h - buttonHeight - 8, buttonWidth, buttonHeight, _("Yes"), 0, kYesCmd, Common::ASCII_RETURN);
-	_noButton = new ButtonWidget(this, noButtonPos, _h - buttonHeight - 8, buttonWidth, buttonHeight, _("No"), 0, kNoCmd, Common::ASCII_ESCAPE);
+	_yesButton = new ButtonWidget(this, yesButtonPos, _h - buttonHeight - 8, buttonWidth, buttonHeight,
+				_("Yes"), 0, kYesCmd, Common::ASCII_RETURN);
+	_noButton = new ButtonWidget(this, noButtonPos, _h - buttonHeight - 8, buttonWidth, buttonHeight,
+				_("No"), 0, kNoCmd, Common::ASCII_ESCAPE);
 
 	_state = 0;
 }
@@ -125,10 +127,21 @@ void UpdatesDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data
 			draw();
 		} else {
 			ConfMan.setInt("updates_check", _updatesPopUp->getSelectedTag());
+
+			if (g_system->getUpdateManager()) {
+				if (_updatesPopUp->getSelectedTag() == Common::UpdateManager::kUpdateIntervalNotSupported) {
+					g_system->getUpdateManager()->setAutomaticallyChecksForUpdates(Common::UpdateManager::kUpdateStateDisabled);
+				} else {
+					g_system->getUpdateManager()->setAutomaticallyChecksForUpdates(Common::UpdateManager::kUpdateStateEnabled);
+					g_system->getUpdateManager()->setUpdateCheckInterval(_updatesPopUp->getSelectedTag());
+				}
+			}
 			close();
 		}
 	} else if (cmd == kNoCmd) {
 		ConfMan.setInt("updates_check", Common::UpdateManager::kUpdateIntervalNotSupported);
+		g_system->getUpdateManager()->setAutomaticallyChecksForUpdates(Common::UpdateManager::kUpdateStateDisabled);
+
 		close();
 	} else {
 		Dialog::handleCommand(sender, cmd, data);
