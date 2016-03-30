@@ -31,8 +31,8 @@
 namespace GUI {
 
 enum {
-	kOkCmd = 'OK  ',
-	kCancelCmd = 'CNCL'
+	kYesCmd = 'YES ',
+	kNoCmd = 'NO  '
 };
 
 
@@ -48,21 +48,21 @@ UpdatesDialog::UpdatesDialog() : Dialog(30, 20, 260, 124) {
 		"ScummVM now supports automatic check for updates\n"
 		"which requires access to the Internet.\n"
   		"\n"
-		"Would you like to enable this feature?\n"
-	    "(You can always enable it in the options\n"
-		"dialog on the Misc tab)");
+		"Would you like to enable this feature?");
+	const char *message2 = _("(You can always enable it in the options dialog on the Misc tab)");
 
 	// First, determine the size the dialog needs. For this we have to break
 	// down the string into lines, and taking the maximum of their widths.
 	// Using this, and accounting for the space the button(s) need, we can set
 	// the real size of the dialog
-	Common::Array<Common::String> lines;
+	Common::Array<Common::String> lines, lines2;
 	int lineCount, okButtonPos, cancelButtonPos;
 	int maxlineWidth = g_gui.getFont().wordWrapText(message, screenW - 2 * 20, lines);
+	int maxlineWidth2 = g_gui.getFont(ThemeEngine::kFontStyleTooltip).wordWrapText(message2, screenW - 2 * 20, lines2);
 
-	_w = MAX(maxlineWidth, (2 * buttonWidth) + 10) + 20;
+	_w = MAX(MAX(maxlineWidth, maxlineWidth2), (2 * buttonWidth) + 10) + 20;
 
-	lineCount = lines.size();
+	lineCount = lines.size() + 1 + lines2.size();
 
 	_h = 16;
 	_h += buttonHeight + 8;
@@ -80,18 +80,23 @@ UpdatesDialog::UpdatesDialog() : Dialog(30, 20, 260, 124) {
 								lines[i], Graphics::kTextAlignCenter);
 		y += kLineHeight;
 	}
+	for (int i = 0; i < lines2.size(); i++) {
+		new StaticTextWidget(this, 10, y, maxlineWidth2, kLineHeight,
+								lines2[i], Graphics::kTextAlignCenter, 0, ThemeEngine::kFontStyleTooltip);
+		y += kLineHeight;
+	}
 
 	okButtonPos = (_w - (buttonWidth * 2)) / 2;
 	cancelButtonPos = ((_w - (buttonWidth * 2)) / 2) + buttonWidth + 10;
 
-	new ButtonWidget(this, okButtonPos, _h - buttonHeight - 8, buttonWidth, buttonHeight, "OK", 0, kOkCmd, Common::ASCII_RETURN);	// Confirm dialog
-	new ButtonWidget(this, cancelButtonPos, _h - buttonHeight - 8, buttonWidth, buttonHeight, "Cancel", 0, kCancelCmd, Common::ASCII_ESCAPE);	// Cancel dialog
+	new ButtonWidget(this, okButtonPos, _h - buttonHeight - 8, buttonWidth, buttonHeight, _("Yes"), 0, kYesCmd, Common::ASCII_RETURN);	// Confirm dialog
+	new ButtonWidget(this, cancelButtonPos, _h - buttonHeight - 8, buttonWidth, buttonHeight, _("No"), 0, kNoCmd, Common::ASCII_ESCAPE);	// Cancel dialog
 }
 
 void UpdatesDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
-	if (cmd == kOkCmd) {
+	if (cmd == kYesCmd) {
 		close();
-	} else if (cmd == kCancelCmd) {
+	} else if (cmd == kNoCmd) {
 		close();
 	} else {
 		Dialog::handleCommand(sender, cmd, data);
