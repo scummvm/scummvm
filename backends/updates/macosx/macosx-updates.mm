@@ -103,14 +103,14 @@ Common::UpdateManager::UpdateState MacOSXUpdateManager::getAutomaticallyChecksFo
 		return kUpdateStateDisabled;
 }
 
-void MacOSXUpdateManager::setUpdateCheckInterval(UpdateInterval interval) {
+void MacOSXUpdateManager::setUpdateCheckInterval(int interval) {
 	if (interval == kUpdateIntervalNotSupported)
 		return;
 
 	[sparkleUpdater setUpdateCheckInterval:(NSTimeInterval)interval];
 }
 
-Common::UpdateManager::UpdateInterval MacOSXUpdateManager::getUpdateCheckInterval() {
+int MacOSXUpdateManager::getUpdateCheckInterval() {
 	// This is kind of a hack but necessary, as the value stored by Sparkle
 	// might have been changed outside of ScummVM (in which case we return the
 	// default interval of one day)

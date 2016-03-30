@@ -85,14 +85,14 @@ public:
 	 *
 	 * @param  interval    The interval.
 	 */
-	virtual void setUpdateCheckInterval(UpdateInterval interval) {}
+	virtual void setUpdateCheckInterval(int interval) {}
 
 	/**
 	 * Gets the update check interval.
 	 *
 	 * @return  the update check interval.
 	 */
-	virtual UpdateInterval getUpdateCheckInterval() { return kUpdateIntervalNotSupported; }
+	virtual int getUpdateCheckInterval() { return kUpdateIntervalNotSupported; }
 };
 
 } // End of namespace Common
