@@ -1878,6 +1878,23 @@ static const MohawkGameDescription gameDescriptions[] = {
 		"Living Books Player"
 	},
 
+	// From Matthew Winder in bug#6557
+	// v1.0E, English, Windows
+	{
+		{
+			"arthurbday",
+			"",
+			AD_ENTRY1s("AB16B.LB", "c169be346de7b0bbfcd18761fc0a3e49", 3093),
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GType_LIVINGBOOKSV2,
+		0,
+		0,
+	},
+
 	// From Torsten in bug#3422652
 	{
 		{
@@ -2092,6 +2109,22 @@ static const MohawkGameDescription gameDescriptions[] = {
 			AD_ENTRY1("EnglishBO", "7aa2a1694255000b72ff0cc179f8059f"),
 			Common::EN_GRB,
 			Common::kPlatformMacintosh,
+			ADGF_NO_FLAGS,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GType_LIVINGBOOKSV2,
+		0,
+		0
+	},
+
+	// From Matthew Winder in bug#6557
+	{
+		{
+			"lilmonster",
+			"",
+			AD_ENTRY1s("lmasf.lb", "fcb665df1713d0411a41515efb20bebc", 4136),
+			Common::EN_ANY,
+			Common::kPlatformWindows,
 			ADGF_NO_FLAGS,
 			GUIO1(GUIO_NOASPECT)
 		},
