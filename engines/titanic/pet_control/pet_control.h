@@ -30,8 +30,8 @@
 #include "titanic/pet_control/pet_inventory_section.h"
 #include "titanic/pet_control/pet_remote_section.h"
 #include "titanic/pet_control/pet_rooms_section.h"
+#include "titanic/pet_control/pet_save_section.h"
 #include "titanic/pet_control/pet_control_sub5.h"
-#include "titanic/pet_control/pet_control_sub6.h"
 #include "titanic/pet_control/pet_control_sub7.h"
 #include "titanic/pet_control/pet_control_sub8.h"
 
@@ -39,16 +39,16 @@ namespace Titanic {
 
 class CPetControl : public CGameObject {
 private:
-	int _fieldBC;
+	PetArea _currentArea;
 	int _fieldC0;
-	int _fieldC4;
+	int _locked;
 	int _fieldC8;
 	CPetConversationSection _convSection;
 	CPetInventorySection _invSection;
 	CPetRemoteSection _remoteSection;
 	CPetRoomsSection _roomsSection;
+	CPetSaveSection _saveSection;
 	CPetControlSub5 _sub5;
-	CPetControlSub6 _sub6;
 	CPetControlSub7 _sub7;
 	CPetControlSub8 _sub8;
 	int _field1384;
@@ -107,6 +107,16 @@ public:
 	void fn3(int val);
 
 	void fn4();
+
+	/**
+	 * Sets the currently viewed area within the PET
+	 */
+	PetArea setArea(PetArea newSection);
+
+	/**
+	 * Returns true if the current area can be changed
+	 */
+	bool canChangeArea() const { return _locked == 0; }
 };
 
 } // End of namespace Titanic

@@ -33,4 +33,8 @@ CPetControlSub8::CPetControlSub8() {
 		_indexes[INDEXES[idx]] = idx;
 }
 
+void CPetControlSub8::setArea(PetArea newArea) {
+	warning("TODO: CPetControlSub8::setArea");
+}
+
 } // End of namespace Titanic

@@ -20,23 +20,8 @@
  *
  */
 
-#ifndef TITANIC_PET_CONTROL_SUB6_H
-#define TITANIC_PET_CONTROL_SUB6_H
-
-#include "titanic/pet_control/pet_section.h"
-#include "titanic/pet_control/pet_control_sub10.h"
-#include "titanic/pet_control/pet_control_sub12.h"
+#include "titanic/pet_control/pet_save_section.h"
 
 namespace Titanic {
 
-class CPetControlSub6 : public CPetSection {
-private:
-	CPetControlSub10 _sub10;
-	CPetControlSub10 _sub12;
-public:
-
-};
-
 } // End of namespace Titanic
-
-#endif /* TITANIC_PET_CONTROL_SUB6_H */

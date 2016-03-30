@@ -42,6 +42,7 @@ private:
 public:
 	CPetControlSub8();
 
+	void setArea(PetArea newArea);
 };
 
 } // End of namespace Titanic

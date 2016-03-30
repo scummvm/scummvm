@@ -53,16 +53,6 @@ private:
 	void loadImage(const CString &name, bool pendingFlag = true);
 
 	void processClipList2();
-
-	/**
-	 * Marks the area in the passed rect as dirty, and requiring re-rendering
-	 */
-	void makeDirty(const Rect &r);
-
-	/**
-	 * Marks the area occupied by the object as dirty, requiring re-rendering
-	 */
-	void makeDirty();
 protected:
 	Rect _bounds;
 	double _field34;
@@ -108,6 +98,16 @@ protected:
 	 * Check for starting to drag the object
 	 */
 	bool checkStartDragging(CMouseDragStartMsg *msg);
+
+	/**
+	 * Marks the area in the passed rect as dirty, and requiring re-rendering
+	 */
+	void makeDirty(const Rect &r);
+
+	/**
+	 * Marks the area occupied by the object as dirty, requiring re-rendering
+	 */
+	void makeDirty();
 
 	bool soundFn1(int val);
 	void soundFn2(int val, int val2);

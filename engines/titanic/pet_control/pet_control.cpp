@@ -28,7 +28,7 @@ namespace Titanic {
 
 void CPetControl::save(SimpleFile *file, int indent) const {
 	file->writeNumberLine(0, indent);
-	file->writeNumberLine(_fieldBC, indent);
+	file->writeNumberLine(_currentArea, indent);
 	file->writeQuotedLine(_string1, indent);
 	file->writeQuotedLine(_string2, indent);
 
@@ -41,7 +41,7 @@ void CPetControl::load(SimpleFile *file) {
 	isValid();
 	
 	if (!val) {
-		_fieldBC = file->readNumber();
+		_currentArea = (PetArea)file->readNumber();
 		_string1 = file->readString();
 		_string2 = file->readString();
 		
@@ -54,7 +54,7 @@ void CPetControl::load(SimpleFile *file) {
 bool CPetControl::isValid() const {
 	return _convSection.isValid() && _roomsSection.isValid()
 		&& _remoteSection.isValid() && _invSection.isValid()
-		&& _sub5.isValid() && _sub6.isValid()
+		&& _sub5.isValid() && _saveSection.isValid()
 		&& _sub7.isValid() && _sub8.isValid();
 }
 
@@ -64,7 +64,7 @@ void CPetControl::loadSubObjects(SimpleFile *file, int param) {
 	_remoteSection.load(file, param);
 	_invSection.load(file, param);
 	_sub5.load(file, param);
-	_sub6.load(file, param);
+	_saveSection.load(file, param);
 	_sub7.load(file, param);
 	_sub8.load(file, param);
 }
@@ -75,7 +75,7 @@ void CPetControl::saveSubObjects(SimpleFile *file, int indent) const {
 	_remoteSection.save(file, indent);
 	_invSection.save(file, indent);
 	_sub5.save(file, indent);
-	_sub6.save(file, indent);
+	_saveSection.save(file, indent);
 	_sub7.save(file, indent);
 	_sub8.save(file, indent);
 }
@@ -117,6 +117,73 @@ void CPetControl::fn3(int val) {
 
 void CPetControl::fn4() {
 	warning("TODO: CPetControl::fn4");
+}
+
+PetArea CPetControl::setArea(PetArea newArea) {
+	if (newArea == _currentArea || !canChangeArea())
+		return _currentArea;
+
+	// Signal the currently active area that it's being left
+	switch (_currentArea) {
+	case PET_INVENTORY:
+		_invSection.leave();
+		break;
+	case PET_CONVERSATION:
+		_convSection.leave();
+		break;
+	case PET_REMOTE:
+		_remoteSection.leave();
+		break;
+	case PET_ROOMS:
+		_roomsSection.leave();
+		break;
+	case PET_SAVE:
+		_saveSection.leave();
+		break;
+	case PET_5:
+		_sub5.leave();
+		break;
+	case PET_6:
+		_sub7.leave();
+		break;
+	default:
+		break;
+	}
+
+	// Change the current area
+	PetArea oldArea = _currentArea;
+	_sub8.setArea(newArea);
+	_currentArea = newArea;
+
+	// Signal to the new view that it's been activated
+	switch (newArea) {
+	case PET_INVENTORY:
+		_invSection.enter(oldArea);
+		
+		break;
+	case PET_CONVERSATION:
+		_convSection.enter(oldArea);
+		break;
+	case PET_REMOTE:
+		_remoteSection.enter(oldArea);
+		break;
+	case PET_ROOMS:
+		_roomsSection.enter(oldArea);
+		break;
+	case PET_SAVE:
+		_saveSection.enter(oldArea);
+		break;
+	case PET_5:
+		_sub5.enter(oldArea);
+		break;
+	case PET_6:
+		_sub7.enter(oldArea);
+		break;
+	default:
+		break;
+	}
+
+	makeDirty();
 }
 
 } // End of namespace Titanic

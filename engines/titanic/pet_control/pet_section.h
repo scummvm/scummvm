@@ -28,6 +28,11 @@
 
 namespace Titanic {
 
+enum PetArea {
+	PET_INVENTORY = 0, PET_CONVERSATION = 1, PET_REMOTE = 2,
+	PET_ROOMS = 3, PET_SAVE = 4, PET_5 = 5, PET_6 = 6
+};
+
 struct CPetSectionSubData {
 	int _field0;
 	int _field4;
@@ -79,8 +84,16 @@ public:
 	 */
 	virtual void save(SimpleFile *file, int indent) const {}
 
-	virtual void proc21() {}
-	virtual void proc22() {}
+	/**
+	 * Called when a section is switched to
+	 */
+	virtual void enter(PetArea oldArea) {}
+	
+	/**
+	 * Called when a section is being left, to switch to another area
+	 */
+	virtual void leave() {}
+	
 	virtual void proc23() {}
 
 	/**
