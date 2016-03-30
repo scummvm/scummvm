@@ -21,6 +21,7 @@
  */
 
 #include "titanic/pet_control/pet_control.h"
+#include "titanic/core/project_item.h"
 #include "titanic/game_manager.h"
 #include "titanic/game_state.h"
 
@@ -32,7 +33,7 @@ void CPetControl::save(SimpleFile *file, int indent) const {
 	file->writeQuotedLine(_string1, indent);
 	file->writeQuotedLine(_string2, indent);
 
-	saveSubObjects(file, indent);
+	saveAreas(file, indent);
 	CGameObject::save(file, indent);
 }
 
@@ -45,7 +46,7 @@ void CPetControl::load(SimpleFile *file) {
 		_string1 = file->readString();
 		_string2 = file->readString();
 		
-		loadSubObjects(file, 0);
+		loadAreas(file, 0);
 	}
 
 	CGameObject::load(file);
@@ -58,7 +59,7 @@ bool CPetControl::isValid() const {
 		&& _sub7.isValid() && _sub8.isValid();
 }
 
-void CPetControl::loadSubObjects(SimpleFile *file, int param) {
+void CPetControl::loadAreas(SimpleFile *file, int param) {
 	_convSection.load(file, param);
 	_roomsSection.load(file, param);
 	_remoteSection.load(file, param);
@@ -69,7 +70,7 @@ void CPetControl::loadSubObjects(SimpleFile *file, int param) {
 	_sub8.load(file, param);
 }
 
-void CPetControl::saveSubObjects(SimpleFile *file, int indent) const {
+void CPetControl::saveAreas(SimpleFile *file, int indent) const {
 	_convSection.save(file, indent);
 	_roomsSection.save(file, indent);
 	_remoteSection.save(file, indent);
@@ -85,7 +86,26 @@ void CPetControl::proc26() {
 }
 
 void CPetControl::postLoad() {
-	warning("TODO: CPetControl::postLoad");
+	CProjectItem *root = getRoot();
+
+	if (!_string1.empty() && root)
+		_treeItem1 = root->findByName(_string1);
+	if (!_string2.empty() && root)
+		_treeItem2 = root->findByName(_string2);
+
+	setArea(_currentArea);
+	loaded();
+}
+
+void CPetControl::loaded() {
+	_convSection.postLoad();
+	_roomsSection.postLoad();
+	_remoteSection.postLoad();
+	_invSection.postLoad();
+	_sub5.postLoad();
+	_saveSection.postLoad();
+	_sub7.postLoad();
+	_sub8.postLoad();
 }
 
 void CPetControl::enterNode(CNodeItem *node) {
@@ -98,7 +118,7 @@ void CPetControl::enterRoom(CRoomItem *room) {
 }
 
 void CPetControl::clear() {
-	_field1394 = 0;
+	_treeItem2 = nullptr;
 	_string2.clear();
 }
 
@@ -184,6 +204,7 @@ PetArea CPetControl::setArea(PetArea newArea) {
 	}
 
 	makeDirty();
+	return newArea;
 }
 
 } // End of namespace Titanic

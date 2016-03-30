@@ -188,7 +188,7 @@ void CTreeItem::setParent(CTreeItem *newParent) {
 }
 
 void CTreeItem::addSibling(CTreeItem *item) {
-	_priorSibling = item->_nextSibling;
+	_priorSibling = item;
 	_nextSibling = item->_nextSibling;
 	_parent = item->_parent;
 

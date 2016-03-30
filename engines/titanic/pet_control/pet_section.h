@@ -77,7 +77,10 @@ public:
 	 */
 	virtual void load(SimpleFile *file, int param) {}
 
-	virtual void proc19() {}
+	/**
+	 * Called after a game has been loaded
+	 */
+	virtual void postLoad() {}
 
 	/**
 	 * Save the data for the class to file

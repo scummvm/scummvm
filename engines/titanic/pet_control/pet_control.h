@@ -51,9 +51,9 @@ private:
 	CPetControlSub5 _sub5;
 	CPetControlSub7 _sub7;
 	CPetControlSub8 _sub8;
-	int _field1384;
+	CTreeItem *_treeItem1;
 	CString _string1;
-	int _field1394;
+	CTreeItem *_treeItem2;
 	CString _string2;
 	int _field13A4;
 private:
@@ -62,9 +62,20 @@ private:
 	 */
 	bool isValid() const;
 
-	void loadSubObjects(SimpleFile *file, int param);
+	/**
+	 * Loads data for the individual areas
+	 */
+	void loadAreas(SimpleFile *file, int param);
 
-	void saveSubObjects(SimpleFile *file, int indent) const;
+	/**
+	 * Saves data for the individual areas
+	 */
+	void saveAreas(SimpleFile *file, int indent) const;
+
+	/**
+	 * Called at the end of the post game-load handling
+	 */
+	void loaded();
 public:
 	CLASSDEF
 
