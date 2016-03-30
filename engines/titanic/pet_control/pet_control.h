@@ -26,10 +26,10 @@
 #include "titanic/core/game_object.h"
 #include "titanic/core/node_item.h"
 #include "titanic/core/room_item.h"
-#include "titanic/pet_control/pet_control_sub1.h"
-#include "titanic/pet_control/pet_control_sub2.h"
-#include "titanic/pet_control/pet_control_sub3.h"
+#include "titanic/pet_control/pet_conversation_section.h"
 #include "titanic/pet_control/pet_inventory_section.h"
+#include "titanic/pet_control/pet_remote_section.h"
+#include "titanic/pet_control/pet_rooms_section.h"
 #include "titanic/pet_control/pet_control_sub5.h"
 #include "titanic/pet_control/pet_control_sub6.h"
 #include "titanic/pet_control/pet_control_sub7.h"
@@ -43,10 +43,10 @@ private:
 	int _fieldC0;
 	int _fieldC4;
 	int _fieldC8;
-	CPetControlSub1 _sub1;
-	CPetControlSub2 _sub2;
-	CPetControlSub3 _sub3;
-	CPetInventorySection _sub4;
+	CPetConversationSection _convSection;
+	CPetInventorySection _invSection;
+	CPetRemoteSection _remoteSection;
+	CPetRoomsSection _roomsSection;
 	CPetControlSub5 _sub5;
 	CPetControlSub6 _sub6;
 	CPetControlSub7 _sub7;

@@ -382,10 +382,10 @@ MODULE_OBJS := \
 	pet_control/pet_control.o \
 	pet_control/pet_control_list_item.o \
 	pet_control/pet_control_list_item2.o \
+	pet_control/pet_conversation_section.o \
 	pet_control/pet_section.o \
-	pet_control/pet_control_sub1.o \
-	pet_control/pet_control_sub2.o \
-	pet_control/pet_control_sub3.o \
+	pet_control/pet_rooms_section.o \
+	pet_control/pet_remote_section.o \
 	pet_control/pet_inventory_section.o \
 	pet_control/pet_control_sub5.o \
 	pet_control/pet_control_sub6.o \

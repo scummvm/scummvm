@@ -20,38 +20,38 @@
  *
  */
 
-#ifndef TITANIC_PET_CONTROL_SUB2_H
-#define TITANIC_PET_CONTROL_SUB2_H
+#ifndef TITANIC_PET_CONVERSATION_SECTION_H
+#define TITANIC_PET_CONVERSATION_SECTION_H
 
 #include "titanic/pet_control/pet_section.h"
-#include "titanic/pet_control/pet_control_sub11.h"
 #include "titanic/pet_control/pet_control_sub12.h"
-#include "titanic/pet_control/pet_control_list_item2.h"
+#include "titanic/pet_control/pet_val.h"
 
 namespace Titanic {
 
-class CPetControlSub2 : public CPetSection {
+class CPetConversationSection : public CPetSection {
 private:
-	CPetControlSub11 _sub11;
-	CPetControlListItem2 _listItem;
-	int _field100;
-	int _field104;
-	int _field108;
-	int _field10C;
-	int _field110;
-	int _field114;
-	int _field118;
-	int _field11C;
 	CPetVal _val1;
-	CPetControlSub12 _sub12;
-	int _field1C0;
-	int _field1C4;
-	int _field1C8;
-	int _field1CC;
-	int _field1D0;
-	int _field1D4;
+	CPetVal _val2;
+	CPetVal _val3;
+	CPetVal _valArray1[3];
+	CPetVal _val4;
+	CPetVal _val5;
+	CPetVal _val6;
+	int  _field14C;
+	CPetVal _val7;
+	CPetVal _val8;
+	CPetVal _val9;
+	CPetVal _valArray2[9];
+	int _field30C;
+	CPetControlSub12 _sub1;
+	CPetControlSub12 _sub2;
+	int _valArray3[3];
+	int _field414;
+	int _field418;
+	CString _string1;
 public:
-	CPetControlSub2();
+	CPetConversationSection();
 
 	/**
 	 * Save the data for the class to file
@@ -66,4 +66,4 @@ public:
 
 } // End of namespace Titanic
 
-#endif /* TITANIC_PET_CONTROL_SUB2_H */
+#endif /* TITANIC_PET_CONVERSATION_SECTION_H */

@@ -20,23 +20,50 @@
  *
  */
 
-#include "titanic/pet_control/pet_control_sub1.h"
+#ifndef TITANIC_PET_ROOMS_SECTION_H
+#define TITANIC_PET_ROOMS_SECTION_H
+
+#include "titanic/pet_control/pet_section.h"
+#include "titanic/pet_control/pet_control_sub11.h"
+#include "titanic/pet_control/pet_control_sub12.h"
+#include "titanic/pet_control/pet_control_list_item2.h"
 
 namespace Titanic {
 
-CPetControlSub1::CPetControlSub1() : _field414(0), _field418(0) {
-}
+class CPetRoomsSection : public CPetSection {
+private:
+	CPetControlSub11 _sub11;
+	CPetControlListItem2 _listItem;
+	int _field100;
+	int _field104;
+	int _field108;
+	int _field10C;
+	int _field110;
+	int _field114;
+	int _field118;
+	int _field11C;
+	CPetVal _val1;
+	CPetControlSub12 _sub12;
+	int _field1C0;
+	int _field1C4;
+	int _field1C8;
+	int _field1CC;
+	int _field1D0;
+	int _field1D4;
+public:
+	CPetRoomsSection();
 
-void CPetControlSub1::save(SimpleFile *file, int indent) const {
+	/**
+	 * Save the data for the class to file
+	 */
+	virtual void save(SimpleFile *file, int indent) const;
 
-}
-
-void CPetControlSub1::load(SimpleFile *file, int param) {
-	_sub2.load(file, param);
-	_sub1.load(file, param);
-
-	for (int idx = 0; idx < 3; ++idx)
-		_valArray3[idx] = file->readNumber();
-}
+	/**
+	 * Load the data for the class from file
+	 */
+	virtual void load(SimpleFile *file, int param);
+};
 
 } // End of namespace Titanic
+
+#endif /* TITANIC_PET_ROOMS_SECTION_H */

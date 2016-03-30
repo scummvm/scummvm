@@ -20,36 +20,24 @@
  *
  */
 
-#ifndef TITANIC_PET_CONTROL_SUB3_H
-#define TITANIC_PET_CONTROL_SUB3_H
-
-#include "titanic/pet_control/pet_section.h"
-#include "titanic/pet_control/pet_control_sub10.h"
-#include "titanic/pet_control/pet_control_sub12.h"
-#include "titanic/pet_control/pet_val.h"
+#include "titanic/pet_control/pet_conversation_section.h"
 
 namespace Titanic {
 
-class CPetControlSub3 : public CPetSection {
-private:
-	CPetControlSub10 _sub10;
-	CPetVal _val1;
-	CPetVal _val2;
-	CPetVal _val3;
-	CPetVal _val4;
-	CPetVal _val5;
-	CPetVal _val6;
-	CPetVal _val7;
-	CPetVal _val8;
-	CPetVal _val9;
-	CPetVal _val10;
-	CPetVal _val11;
-	CPetControlSub12 _sub12;
-public:
+CPetConversationSection::CPetConversationSection() : CPetSection(),
+		_field414(0), _field418(0) {
+}
 
+void CPetConversationSection::save(SimpleFile *file, int indent) const {
 
-};
+}
+
+void CPetConversationSection::load(SimpleFile *file, int param) {
+	_sub2.load(file, param);
+	_sub1.load(file, param);
+
+	for (int idx = 0; idx < 3; ++idx)
+		_valArray3[idx] = file->readNumber();
+}
 
 } // End of namespace Titanic
-
-#endif /* TITANIC_PET_CONTROL_SUB3_H */

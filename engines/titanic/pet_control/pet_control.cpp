@@ -52,17 +52,17 @@ void CPetControl::load(SimpleFile *file) {
 }
 
 bool CPetControl::isValid() const {
-	return _sub1.isValid() && _sub2.isValid()
-		&& _sub3.isValid() && _sub4.isValid()
+	return _convSection.isValid() && _roomsSection.isValid()
+		&& _remoteSection.isValid() && _invSection.isValid()
 		&& _sub5.isValid() && _sub6.isValid()
 		&& _sub7.isValid() && _sub8.isValid();
 }
 
 void CPetControl::loadSubObjects(SimpleFile *file, int param) {
-	_sub1.load(file, param);
-	_sub2.load(file, param);
-	_sub3.load(file, param);
-	_sub4.load(file, param);
+	_convSection.load(file, param);
+	_roomsSection.load(file, param);
+	_remoteSection.load(file, param);
+	_invSection.load(file, param);
 	_sub5.load(file, param);
 	_sub6.load(file, param);
 	_sub7.load(file, param);
@@ -70,10 +70,10 @@ void CPetControl::loadSubObjects(SimpleFile *file, int param) {
 }
 
 void CPetControl::saveSubObjects(SimpleFile *file, int indent) const {
-	_sub1.save(file, indent);
-	_sub2.save(file, indent);
-	_sub3.save(file, indent);
-	_sub4.save(file, indent);
+	_convSection.save(file, indent);
+	_roomsSection.save(file, indent);
+	_remoteSection.save(file, indent);
+	_invSection.save(file, indent);
 	_sub5.save(file, indent);
 	_sub6.save(file, indent);
 	_sub7.save(file, indent);
@@ -93,8 +93,8 @@ void CPetControl::enterNode(CNodeItem *node) {
 }
 
 void CPetControl::enterRoom(CRoomItem *room) {
-	_sub2.enterRoom(room);
-	_sub3.enterRoom(room);
+	_roomsSection.enterRoom(room);
+	_remoteSection.enterRoom(room);
 }
 
 void CPetControl::clear() {
