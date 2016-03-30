@@ -1385,6 +1385,15 @@ void GlobalOptionsDialog::close() {
 
 #ifdef USE_UPDATES
 		ConfMan.setInt("updates_check", _updatesPopUp->getSelectedTag());
+
+		if (g_system->getUpdateManager()) {
+			if (_updatesPopUp->getSelectedTag() == Common::UpdateManager::kUpdateIntervalNotSupported) {
+				g_system->getUpdateManager()->setAutomaticallyChecksForUpdates(Common::UpdateManager::kUpdateStateDisabled);
+			} else {
+				g_system->getUpdateManager()->setAutomaticallyChecksForUpdates(Common::UpdateManager::kUpdateStateEnabled);
+				g_system->getUpdateManager()->setUpdateCheckInterval(_updatesPopUp->getSelectedTag());
+			}
+		}
 #endif
 
 	}
