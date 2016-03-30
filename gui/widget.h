@@ -168,9 +168,10 @@ class StaticTextWidget : public Widget {
 protected:
 	Common::String			_label;
 	Graphics::TextAlign		_align;
+	ThemeEngine::FontStyle	_font;
 public:
-	StaticTextWidget(GuiObject *boss, int x, int y, int w, int h, const Common::String &text, Graphics::TextAlign align, const char *tooltip = 0);
-	StaticTextWidget(GuiObject *boss, const Common::String &name, const Common::String &text, const char *tooltip = 0);
+	StaticTextWidget(GuiObject *boss, int x, int y, int w, int h, const Common::String &text, Graphics::TextAlign align, const char *tooltip = 0, ThemeEngine::FontStyle font = ThemeEngine::kFontStyleBold);
+	StaticTextWidget(GuiObject *boss, const Common::String &name, const Common::String &text, const char *tooltip = 0, ThemeEngine::FontStyle font = ThemeEngine::kFontStyleBold);
 	void setValue(int value);
 	void setLabel(const Common::String &label);
 	const Common::String &getLabel() const		{ return _label; }
