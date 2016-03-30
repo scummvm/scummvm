@@ -229,20 +229,22 @@ Common::String Widget::cleanupHotkey(const Common::String &label) {
 
 #pragma mark -
 
-StaticTextWidget::StaticTextWidget(GuiObject *boss, int x, int y, int w, int h, const Common::String &text, Graphics::TextAlign align, const char *tooltip)
+StaticTextWidget::StaticTextWidget(GuiObject *boss, int x, int y, int w, int h, const Common::String &text, Graphics::TextAlign align, const char *tooltip, ThemeEngine::FontStyle font)
 	: Widget(boss, x, y, w, h, tooltip), _align(align) {
 	setFlags(WIDGET_ENABLED);
 	_type = kStaticTextWidget;
 	_label = text;
+	_font = font;
 }
 
-StaticTextWidget::StaticTextWidget(GuiObject *boss, const Common::String &name, const Common::String &text, const char *tooltip)
+StaticTextWidget::StaticTextWidget(GuiObject *boss, const Common::String &name, const Common::String &text, const char *tooltip, ThemeEngine::FontStyle font)
 	: Widget(boss, name, tooltip) {
 	setFlags(WIDGET_ENABLED);
 	_type = kStaticTextWidget;
 	_label = text;
 
 	_align = g_gui.xmlEval()->getWidgetTextHAlign(name);
+	_font = font;
 }
 
 void StaticTextWidget::setValue(int value) {
@@ -270,7 +272,7 @@ void StaticTextWidget::setAlign(Graphics::TextAlign align) {
 
 
 void StaticTextWidget::drawWidget() {
-	g_gui.theme()->drawText(Common::Rect(_x, _y, _x+_w, _y+_h), _label, _state, _align);
+	g_gui.theme()->drawText(Common::Rect(_x, _y, _x+_w, _y+_h), _label, _state, _align, ThemeEngine::kTextInversionNone, 0, true, _font);
 }
 
 #pragma mark -
