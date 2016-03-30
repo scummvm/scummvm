@@ -132,7 +132,10 @@ public:
 	 */
 	virtual void resize(int width, int height) = 0;
 
-	virtual int proc26() = 0;
+	/**
+	 * Returns the number of bytes per pixel in the surface
+	 */
+	virtual int getPixelDepth() = 0;
 
 	/**
 	 * Gets the pixel at the specified position within the surface
@@ -190,7 +193,7 @@ public:
 	/**
 	 * Returns the transparent color
 	 */
-	uint16 getTransparencyColor() const;
+	uint getTransparencyColor();
 };
 
 class OSVideoSurface : public CVideoSurface {
@@ -253,7 +256,10 @@ public:
 	 */
 	virtual void resize(int width, int height);
 
-	virtual int proc26();
+	/**
+	 * Returns the number of bytes per pixel in the surface
+	 */
+	virtual int getPixelDepth();
 
 	/**
 	 * Gets the pixel at the specified position within the surface
