@@ -66,25 +66,13 @@ AnsiString PathUtil::combine(const AnsiString &path1, const AnsiString &path2) {
 //////////////////////////////////////////////////////////////////////////
 AnsiString PathUtil::getDirectoryName(const AnsiString &path) {
 	AnsiString newPath = unifySeparators(path);
-	Common::String filename = getFileName(path);
+	Common::String filename = Common::lastPathComponent(newPath, '/');
 	return Common::String(path.c_str(), path.size() - filename.size());
 }
 
 //////////////////////////////////////////////////////////////////////////
-AnsiString PathUtil::getFileName(const AnsiString &path) {
-	AnsiString newPath = unifySeparators(path);
-	Common::String lastPart = Common::lastPathComponent(newPath, '/');
-	if (lastPart[lastPart.size() - 1 ] != '/') {
-		return lastPart;
-	} else {
-		return path;
-	}
-}
-
-//////////////////////////////////////////////////////////////////////////
 AnsiString PathUtil::getFileNameWithoutExtension(const AnsiString &path) {
-	AnsiString fileName = getFileName(path);
-	// TODO: Prettify this.
+	Common::String fileName = Common::lastPathComponent(path, '/');
 	AnsiString extension = Common::lastPathComponent(fileName, '.');
 	for (uint32 i = 0; i < extension.size() + 1; i++) {
 		fileName.deleteLastChar();
@@ -94,7 +82,7 @@ AnsiString PathUtil::getFileNameWithoutExtension(const AnsiString &path) {
 
 //////////////////////////////////////////////////////////////////////////
 AnsiString PathUtil::getExtension(const AnsiString &path) {
-	AnsiString fileName = getFileName(path);
+	Common::String fileName = Common::lastPathComponent(path, '/');
 	return Common::lastPathComponent(path, '.');
 }
 
