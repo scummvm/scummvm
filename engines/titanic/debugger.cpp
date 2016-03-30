@@ -27,9 +27,10 @@
 namespace Titanic {
 
 Debugger::Debugger(TitanicEngine *vm) : GUI::Debugger(), _vm(vm) {
-	registerCmd("continue",	     WRAP_METHOD(Debugger, cmdExit));
-	registerCmd("dump",         WRAP_METHOD(Debugger, cmdDump));
-	registerCmd("room",          WRAP_METHOD(Debugger, cmdRoom));
+	registerCmd("continue",		WRAP_METHOD(Debugger, cmdExit));
+	registerCmd("dump",			WRAP_METHOD(Debugger, cmdDump));
+	registerCmd("room",			WRAP_METHOD(Debugger, cmdRoom));
+	registerCmd("pet",			WRAP_METHOD(Debugger, cmdPET));
 }
 
 int Debugger::strToInt(const char *s) {
@@ -178,6 +179,31 @@ bool Debugger::cmdRoom(int argc, const char **argv) {
 		}
 	}
 
+	return true;
+}
+
+bool Debugger::cmdPET(int argc, const char **argv) {
+	CGameManager &gameManager = *g_vm->_window->_gameManager;
+	CGameState &gameState = gameManager._gameState;
+
+	if (argc == 2) {
+		CString s(argv[1]);
+		s.toLowercase();
+
+		if (s == "on") {
+			gameState._petActive = true;
+			gameManager.update();
+			debugPrintf("PET is now on\n");
+			return true;
+		} else if (s == "off") {
+			gameState._petActive = false;
+			gameManager.update();
+			debugPrintf("PET is now off\n");
+			return true;
+		}
+	}
+	
+	debugPrintf("%s [on | off]\n", argv[0]);
 	return true;
 }
 

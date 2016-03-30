@@ -79,6 +79,11 @@ private:
 	 * List room details, or jump to a specific view
 	 */
 	bool cmdRoom(int argc, const char **argv);
+
+	/**
+	 * Turn the PET on or off
+	 */
+	bool cmdPET(int argc, const char **argv);
 protected:
 	TitanicEngine *_vm;
 public:
