@@ -28,6 +28,7 @@
 namespace GUI {
 
 class CommandSender;
+class ButtonWidget;
 class PopUpWidget;
 class StaticTextWidget;
 
@@ -44,6 +45,10 @@ public:
 private:
 	StaticTextWidget *_updatesPopUpDesc;
 	PopUpWidget *_updatesPopUp;
+	ButtonWidget *_yesButton;
+	ButtonWidget *_noButton;
+
+	int _state;
 };
 
 } // End of namespace GUI

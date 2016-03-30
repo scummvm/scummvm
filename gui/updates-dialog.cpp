@@ -24,6 +24,7 @@
 #include "common/system.h"
 #include "common/translation.h"
 #include "common/updates.h"
+#include "common/config-manager.h"
 #include "gui/updates-dialog.h"
 #include "gui/gui-manager.h"
 #include "gui/ThemeEval.h"
@@ -64,7 +65,7 @@ UpdatesDialog::UpdatesDialog() : Dialog(30, 20, 260, 124) {
 
 	int lineCount = lines.size() + 1 + lines2.size();
 
-	_h = 16;
+	_h = 16 + 3 * kLineHeight;
 	_h += buttonHeight + 8;
 
 	_h += lineCount * kLineHeight;
@@ -86,26 +87,48 @@ UpdatesDialog::UpdatesDialog() : Dialog(30, 20, 260, 124) {
 		y += kLineHeight;
 	}
 
-	_updatesPopUpDesc = new StaticTextWidget(this, "GlobalOptions_Misc.UpdatesPopupDesc", _("Update check:"), _("How often to check ScummVM updates"));
-	_updatesPopUp = new PopUpWidget(this, "GlobalOptions_Misc.UpdatesPopup");
+	y += kLineHeight;
+	_updatesPopUpDesc = new StaticTextWidget(this, 10, y, _w, kLineHeight,  _("How often you would like to check for updates?"), Graphics::kTextAlignCenter);
+	y += kLineHeight + 3;
+
+	_updatesPopUp = new PopUpWidget(this, 10, y, _w - 20, g_gui.xmlEval()->getVar("Globals.PopUp.Height", kLineHeight));
 
 	_updatesPopUp->appendEntry(_("Never"), Common::UpdateManager::kUpdateIntervalNotSupported);
 	_updatesPopUp->appendEntry(_("Daily"), Common::UpdateManager::kUpdateIntervalOneDay);
 	_updatesPopUp->appendEntry(_("Weekly"), Common::UpdateManager::kUpdateIntervalOneWeek);
 	_updatesPopUp->appendEntry(_("Monthly"), Common::UpdateManager::kUpdateIntervalOneMonth);
 
+	_updatesPopUp->setSelectedTag(Common::UpdateManager::kUpdateIntervalOneWeek);
+
+	_updatesPopUp->setVisible(false);
+	_updatesPopUpDesc->setVisible(false);
 
 	int yesButtonPos = (_w - (buttonWidth * 2)) / 2;
 	int noButtonPos = ((_w - (buttonWidth * 2)) / 2) + buttonWidth + 10;
 
-	new ButtonWidget(this, yesButtonPos, _h - buttonHeight - 8, buttonWidth, buttonHeight, _("Yes"), 0, kYesCmd, Common::ASCII_RETURN);	// Confirm dialog
-	new ButtonWidget(this, noButtonPos, _h - buttonHeight - 8, buttonWidth, buttonHeight, _("No"), 0, kNoCmd, Common::ASCII_ESCAPE);	// Cancel dialog
+	_yesButton = new ButtonWidget(this, yesButtonPos, _h - buttonHeight - 8, buttonWidth, buttonHeight, _("Yes"), 0, kYesCmd, Common::ASCII_RETURN);
+	_noButton = new ButtonWidget(this, noButtonPos, _h - buttonHeight - 8, buttonWidth, buttonHeight, _("No"), 0, kNoCmd, Common::ASCII_ESCAPE);
+
+	_state = 0;
 }
 
 void UpdatesDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
 	if (cmd == kYesCmd) {
-		close();
+		if (_state == 0) {
+			_yesButton->setLabel(_("Proceed"));
+			_noButton->setLabel(_("Cancel"));
+			_updatesPopUp->setVisible(true);
+			_updatesPopUpDesc->setVisible(true);
+
+			_state = 1;
+
+			draw();
+		} else {
+			ConfMan.setInt("updates_check", _updatesPopUp->getSelectedTag());
+			close();
+		}
 	} else if (cmd == kNoCmd) {
+		ConfMan.setInt("updates_check", Common::UpdateManager::kUpdateIntervalNotSupported);
 		close();
 	} else {
 		Dialog::handleCommand(sender, cmd, data);
