@@ -97,6 +97,11 @@ BaseSoundBuffer *BaseSoundMgr::addSound(const Common::String &filename, Audio::M
 		return nullptr;
 	}
 
+	if (filename.empty()) {
+		// At least one game, Bickadoodle, calls playSound with an empty filename, see #6594
+		BaseEngine::LOG(0, "addSound called with empty filename");
+	}
+
 	BaseSoundBuffer *sound;
 
 	Common::String useFilename = filename;
