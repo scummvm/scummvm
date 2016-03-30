@@ -23,10 +23,11 @@
 #include "common/str.h"
 #include "common/system.h"
 #include "common/translation.h"
+#include "common/updates.h"
 #include "gui/updates-dialog.h"
 #include "gui/gui-manager.h"
 #include "gui/ThemeEval.h"
-#include "gui/widget.h"
+#include "gui/widgets/popup.h"
 
 namespace GUI {
 
@@ -56,13 +57,12 @@ UpdatesDialog::UpdatesDialog() : Dialog(30, 20, 260, 124) {
 	// Using this, and accounting for the space the button(s) need, we can set
 	// the real size of the dialog
 	Common::Array<Common::String> lines, lines2;
-	int lineCount, okButtonPos, cancelButtonPos;
 	int maxlineWidth = g_gui.getFont().wordWrapText(message, screenW - 2 * 20, lines);
 	int maxlineWidth2 = g_gui.getFont(ThemeEngine::kFontStyleTooltip).wordWrapText(message2, screenW - 2 * 20, lines2);
 
 	_w = MAX(MAX(maxlineWidth, maxlineWidth2), (2 * buttonWidth) + 10) + 20;
 
-	lineCount = lines.size() + 1 + lines2.size();
+	int lineCount = lines.size() + 1 + lines2.size();
 
 	_h = 16;
 	_h += buttonHeight + 8;
@@ -86,11 +86,20 @@ UpdatesDialog::UpdatesDialog() : Dialog(30, 20, 260, 124) {
 		y += kLineHeight;
 	}
 
-	okButtonPos = (_w - (buttonWidth * 2)) / 2;
-	cancelButtonPos = ((_w - (buttonWidth * 2)) / 2) + buttonWidth + 10;
+	_updatesPopUpDesc = new StaticTextWidget(this, "GlobalOptions_Misc.UpdatesPopupDesc", _("Update check:"), _("How often to check ScummVM updates"));
+	_updatesPopUp = new PopUpWidget(this, "GlobalOptions_Misc.UpdatesPopup");
 
-	new ButtonWidget(this, okButtonPos, _h - buttonHeight - 8, buttonWidth, buttonHeight, _("Yes"), 0, kYesCmd, Common::ASCII_RETURN);	// Confirm dialog
-	new ButtonWidget(this, cancelButtonPos, _h - buttonHeight - 8, buttonWidth, buttonHeight, _("No"), 0, kNoCmd, Common::ASCII_ESCAPE);	// Cancel dialog
+	_updatesPopUp->appendEntry(_("Never"), Common::UpdateManager::kUpdateIntervalNotSupported);
+	_updatesPopUp->appendEntry(_("Daily"), Common::UpdateManager::kUpdateIntervalOneDay);
+	_updatesPopUp->appendEntry(_("Weekly"), Common::UpdateManager::kUpdateIntervalOneWeek);
+	_updatesPopUp->appendEntry(_("Monthly"), Common::UpdateManager::kUpdateIntervalOneMonth);
+
+
+	int yesButtonPos = (_w - (buttonWidth * 2)) / 2;
+	int noButtonPos = ((_w - (buttonWidth * 2)) / 2) + buttonWidth + 10;
+
+	new ButtonWidget(this, yesButtonPos, _h - buttonHeight - 8, buttonWidth, buttonHeight, _("Yes"), 0, kYesCmd, Common::ASCII_RETURN);	// Confirm dialog
+	new ButtonWidget(this, noButtonPos, _h - buttonHeight - 8, buttonWidth, buttonHeight, _("No"), 0, kNoCmd, Common::ASCII_ESCAPE);	// Cancel dialog
 }
 
 void UpdatesDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {

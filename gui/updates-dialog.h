@@ -28,6 +28,8 @@
 namespace GUI {
 
 class CommandSender;
+class PopUpWidget;
+class StaticTextWidget;
 
 /**
  * Wizard for updates opt-in
@@ -35,8 +37,13 @@ class CommandSender;
 class UpdatesDialog : public Dialog {
 public:
 	UpdatesDialog();
+	virtual ~UpdatesDialog() {}
 
 	void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
+
+private:
+	StaticTextWidget *_updatesPopUpDesc;
+	PopUpWidget *_updatesPopUp;
 };
 
 } // End of namespace GUI
