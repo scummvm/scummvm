@@ -39,8 +39,8 @@ public:
 	virtual void setAutomaticallyChecksForUpdates(UpdateState state);
 	virtual UpdateState getAutomaticallyChecksForUpdates();
 
-	virtual void setUpdateCheckInterval(UpdateInterval interval);
-	virtual UpdateInterval getUpdateCheckInterval();
+	virtual void setUpdateCheckInterval(int interval);
+	virtual int getUpdateCheckInterval();
 };
 
 #endif
