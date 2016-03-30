@@ -43,6 +43,8 @@ public:
 	CPetControlSub8();
 
 	void setArea(PetArea newArea);
+
+	void drawFrame(CScreenManager *screenManager);
 };
 
 } // End of namespace Titanic

@@ -81,8 +81,46 @@ void CPetControl::saveAreas(SimpleFile *file, int indent) const {
 	_sub8.save(file, indent);
 }
 
-void CPetControl::proc26() {
-	warning("TODO: CPetControl::proc26");
+void CPetControl::draw(CScreenManager *screenManager) {
+	CGameManager *gameManager = getGameManager();
+	Rect bounds = _oldBounds;
+	bounds.constrain(gameManager->_bounds);
+
+	if (!bounds.isEmpty()) {
+		if (_fieldC8 >= 0) {
+			_invSection.proc5(_fieldC8);
+			_fieldC8 = -1;
+		}
+
+		_sub8.drawFrame(screenManager);
+
+		// Draw the specific area that's currently active
+		switch (_currentArea) {
+		case PET_INVENTORY:
+			_invSection.draw(screenManager);
+			break;
+		case PET_CONVERSATION:
+			_convSection.draw(screenManager);
+			break;
+		case PET_REMOTE:
+			_remoteSection.draw(screenManager);
+			break;
+		case PET_ROOMS:
+			_roomsSection.draw(screenManager);
+			break;
+		case PET_SAVE:
+			_saveSection.draw(screenManager);
+			break;
+		case PET_5:
+			_sub5.draw(screenManager);
+			break;
+		case PET_6:
+			_sub7.draw(screenManager);
+			break;
+		default:
+			break;
+		}
+	}
 }
 
 void CPetControl::postLoad() {
@@ -125,14 +163,6 @@ void CPetControl::clear() {
 bool CPetControl::fn1(int val) {
 	warning("TODO: CPetControl::fn1");
 	return false;
-}
-
-void CPetControl::fn2(int val) {
-	warning("TODO: CPetControl::fn2");
-}
-
-void CPetControl::fn3(int val) {
-	warning("TODO: CPetControl::fn3");
 }
 
 void CPetControl::fn4() {
@@ -205,6 +235,42 @@ PetArea CPetControl::setArea(PetArea newArea) {
 
 	makeDirty();
 	return newArea;
+}
+
+void CPetControl::fn2(int val) {
+	switch (_currentArea) {
+	case PET_INVENTORY:
+		_invSection.proc38(val);
+		break;
+	case PET_CONVERSATION:
+		_convSection.proc38(val);
+		break;
+	case PET_REMOTE:
+		_remoteSection.proc38(val);
+		break;
+	case PET_ROOMS:
+		_roomsSection.proc38(val);
+		break;
+	case PET_SAVE:
+		_saveSection.proc38(val);
+		break;
+	case PET_5:
+		_sub5.proc38(val);
+		break;
+	case PET_6:
+		_sub7.proc38(val);
+		break;
+	default:
+		break;
+	}
+}
+
+void CPetControl::fn3(CTreeItem *item) {
+	_treeItem2 = item;
+	if (item)
+		_string2 = item->getName();
+	else
+		_string2.clear();
 }
 
 } // End of namespace Titanic

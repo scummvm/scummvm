@@ -27,6 +27,7 @@
 #include "titanic/rect.h"
 #include "titanic/core/movie_clip.h"
 #include "titanic/core/named_item.h"
+#include "titanic/pet_control/pet_section.h"
 
 namespace Titanic {
 
@@ -109,12 +110,16 @@ protected:
 	 */
 	void makeDirty();
 
+	/**
+	 * Sets a new area in the PET
+	 */
+	void setPetArea(PetArea newArea) const;
+
 	bool soundFn1(int val);
 	void soundFn2(int val, int val2);
 	void setVisible(bool val);
-	bool petFn1(int val);
 	void petFn2(int val);
-	void petFn3(int val);
+	void petFn3(CTreeItem *item);
 public:
 	int _field60;
 	CursorId _cursorId;

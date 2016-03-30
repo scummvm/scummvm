@@ -24,7 +24,6 @@
 #define TITANIC_PET_SECTION_H
 
 #include "titanic/simple_file.h"
-#include "titanic/core/room_item.h"
 
 namespace Titanic {
 
@@ -32,6 +31,9 @@ enum PetArea {
 	PET_INVENTORY = 0, PET_CONVERSATION = 1, PET_REMOTE = 2,
 	PET_ROOMS = 3, PET_SAVE = 4, PET_5 = 5, PET_6 = 6
 };
+
+class CScreenManager;
+class CRoomItem;
 
 struct CPetSectionSubData {
 	int _field0;
@@ -52,9 +54,9 @@ public:
 
 	virtual int proc1() { return 0; }
 	virtual int proc2() { return 0; }
-	virtual void proc3() {}
+	virtual void draw(CScreenManager *screenManager) {}
 	virtual void proc4();
-	virtual void proc5() {}
+	virtual void proc5(int val) {}
 	virtual int proc6() { return 0; }
 	virtual int proc7() { return 0; }
 	virtual int proc8() { return 0; }
@@ -117,7 +119,7 @@ public:
 	virtual void proc35() {}
 	virtual void proc36() {}
 	virtual void proc37() {}
-	virtual void proc38() {}
+	virtual void proc38(int val) {}
 };
 
 } // End of namespace Titanic

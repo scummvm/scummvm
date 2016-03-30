@@ -121,7 +121,7 @@ bool CTelevision::handleMessage(CChangeSeasonMsg &msg) {
 }
 
 bool CTelevision::handleMessage(CEnterViewMsg &msg) {
-	petFn1(2);
+	setPetArea(PET_REMOTE);
 	petFn2(2);
 	petFn3(0);
 	setVisible(0);

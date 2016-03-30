@@ -147,7 +147,7 @@ void CMainGameWindow::drawPet(CScreenManager *screenManager) {
 	if (_gameView && _gameView->_surface) {
 		CPetControl *petControl = _gameManager->_project->getPetControl();
 		if (petControl)
-			petControl->proc26();
+			petControl->draw(screenManager);
 	}
 }
 

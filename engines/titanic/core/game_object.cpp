@@ -301,21 +301,16 @@ void CGameObject::setVisible(bool val) {
 	}
 }
 
-bool CGameObject::petFn1(int val) {
-	CPetControl *pet = getPetControl();
-	return pet ? pet->fn1(val) : true;
-}
-
 void CGameObject::petFn2(int val) {
 	CPetControl *pet = getPetControl();
 	if (pet)
 		pet->fn2(val);
 }
 
-void CGameObject::petFn3(int val) {
+void CGameObject::petFn3(CTreeItem *item) {
 	CPetControl *pet = getPetControl();
 	if (pet)
-		pet->fn3(val);
+		pet->fn3(item);
 }
 
 void CGameObject::fn1(int val1, int val2, int val3) {
@@ -360,6 +355,12 @@ bool CGameObject::checkStartDragging(CMouseDragStartMsg *msg) {
 	} else {
 		return false;
 	}
+}
+
+void CGameObject::setPetArea(PetArea newArea) const {
+	CPetControl *pet = getPetControl();
+	if (pet)
+		pet->setArea(newArea);
 }
 
 } // End of namespace Titanic

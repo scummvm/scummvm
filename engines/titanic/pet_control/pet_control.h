@@ -56,6 +56,7 @@ private:
 	CTreeItem *_treeItem2;
 	CString _string2;
 	int _field13A4;
+	Rect _oldBounds;
 private:
 	/**
 	 * Returns true if the control is in a valid state
@@ -89,7 +90,10 @@ public:
 	 */
 	virtual void load(SimpleFile *file);
 
-	virtual void proc26();
+	/**
+	 * Allows the item to draw itself
+	 */
+	virtual void draw(CScreenManager *screenManager);
 
 	/**
 	 * Called after loading a game has finished
@@ -115,7 +119,7 @@ public:
 
 	void fn2(int val);
 
-	void fn3(int val);
+	void fn3(CTreeItem *item);
 
 	void fn4();
 

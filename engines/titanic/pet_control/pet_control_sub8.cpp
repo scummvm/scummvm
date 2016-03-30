@@ -37,4 +37,8 @@ void CPetControlSub8::setArea(PetArea newArea) {
 	warning("TODO: CPetControlSub8::setArea");
 }
 
+void CPetControlSub8::drawFrame(CScreenManager *screenManager) {
+	warning("TODO: CPetControlSub8::drawFrame");
+}
+
 } // End of namespace Titanic
