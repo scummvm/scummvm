@@ -37,12 +37,15 @@ public:
 		_object2(nullptr) {}
 
 	/**
-	 * Load an object into the element
+	 * Setup the element
 	 */
 	virtual void setup(PetElementMode mode, const CString &name,
 		CPetControl *petControl);
 
-	virtual void setup();
+	/**
+	 * Setup the element
+	 */
+	virtual void setup(const CString &name, CPetControl *petControl);
 
 	/**
 	 * Draw the item

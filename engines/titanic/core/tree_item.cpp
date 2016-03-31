@@ -289,4 +289,14 @@ CRoomItem *CTreeItem::getRoom() const {
 	return gameManager ? gameManager->getRoom() : nullptr;
 }
 
+int CTreeItem::getState8() const {
+	CGameManager *gameManager = getGameManager();
+	return gameManager ? gameManager->_gameState._field8 : 3;
+}
+
+int CTreeItem::getStateC() const {
+	CGameManager *gameManager = getGameManager();
+	return gameManager ? gameManager->_gameState._fieldC : 3;
+}
+
 } // End of namespace Titanic

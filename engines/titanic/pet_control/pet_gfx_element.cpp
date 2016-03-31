@@ -44,8 +44,23 @@ void CPetGfxElement::setup(PetElementMode mode, const CString &name,
 	}
 }
 
-void CPetGfxElement::setup() {
-	error("TODO");
+void CPetGfxElement::setup(const CString &name, CPetControl *petControl) {
+	if (!petControl)
+		return;
+
+	CString numString(3);	
+	int state8 = petControl->getState8();
+
+	if (state8 >= 1 && state8 <= 3) {
+		numString = CString(state8);
+	} else if (state8 == 4) {
+		int stateC = petControl->getStateC();
+		if (stateC == 1)
+			numString = CString(stateC);
+	}
+
+	CString resName = numString + name;
+	setup(resName, petControl);
 }
 
 void CPetGfxElement::draw(CScreenManager *screenManager) {

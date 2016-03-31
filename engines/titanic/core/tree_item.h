@@ -247,6 +247,9 @@ public:
 	 * Return the current room
 	 */
 	CRoomItem *getRoom() const;
+
+	int getState8() const;
+	int getStateC() const;
 };
 
 } // End of namespace Titanic

@@ -25,6 +25,12 @@
 
 namespace Titanic {
 
+CString::CString(char c, uint32 len) : Common::String() {
+	ensureCapacity(len, false);
+	for (uint idx = 0; idx < len; ++idx)
+		(*this) += c;
+}
+
 CString CString::left(uint count) const {
 	return (count > size()) ? CString() : CString(c_str(), c_str() + count);
 }

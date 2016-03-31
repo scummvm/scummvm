@@ -51,7 +51,7 @@ public:
 	/**
 	 * Sets up the element
 	 */
-	virtual void setup() {}
+	virtual void setup(int val, const CString &name, CPetControl *petControl) {}
 	
 	/**
 	 * Draw the item
