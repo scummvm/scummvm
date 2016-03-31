@@ -43,4 +43,19 @@ void CCDROMTray::load(SimpleFile *file) {
 	CGameObject::load(file);
 }
 
+bool CCDROMTray::handleMessage(CActMsg &msg) {
+	// TODO
+	return true;
+}
+
+bool CCDROMTray::handleMessage(CMovieEndMsg &msg) {
+	// TODO
+	return true;
+}
+
+bool CCDROMTray::handleMessage(CStatusChangeMsg &msg) {
+	// TODO
+	return true;
+}
+
 } // End of namespace Titanic

@@ -24,13 +24,21 @@
 #define TITANIC_CDROM_TRAY_H
 
 #include "titanic/core/game_object.h"
+#include "titanic/messages/messages.h"
 
 namespace Titanic {
 
-class CCDROMTray : public CGameObject {
+class CCDROMTray : public CGameObject,
+	public CActMsgTarget,
+	public CMovieEndMsgTarget,
+	public CStatusChangeMsgTarget {
 public:
 	int _state;
 	CString _string1;
+protected:
+	virtual bool handleMessage(CActMsg &msg);
+	virtual bool handleMessage(CMovieEndMsg &msg);
+	virtual bool handleMessage(CStatusChangeMsg &msg);
 public:
 	CLASSDEF
 	CCDROMTray();
