@@ -20,20 +20,20 @@
  *
  */
 
-#ifndef TITANIC_PET_VAL_H
-#define TITANIC_PET_VAL_H
+#ifndef TITANIC_PET_GRAPHIC_H
+#define TITANIC_PET_GRAPHIC_H
 
 #include "titanic/pet_control/pet_element.h"
 
 namespace Titanic {
 
-class CPetVal: public CPetElement {
+class CPetGraphic: public CPetElement {
 protected:
 	CGameObject *_object0;
 	CGameObject *_object1;
 	CGameObject *_object2;
 public:
-	CPetVal() : CPetElement(), _object0(nullptr), _object1(nullptr),
+	CPetGraphic() : CPetElement(), _object0(nullptr), _object1(nullptr),
 		_object2(nullptr) {}
 
 	/**
@@ -67,4 +67,4 @@ public:
 
 } // End of namespace Titanic
 
-#endif /* TITANIC_PET_VAL_H */
+#endif /* TITANIC_PET_GRAPHIC_H */

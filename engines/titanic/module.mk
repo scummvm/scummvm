@@ -385,6 +385,7 @@ MODULE_OBJS := \
 	pet_control/pet_conversation_section.o \
 	pet_control/pet_element.o \
 	pet_control/pet_frame.o \
+	pet_control/pet_graphic.o \
 	pet_control/pet_inventory_section.o \
 	pet_control/pet_rooms_section.o \
 	pet_control/pet_remote_section.o \
@@ -395,7 +396,6 @@ MODULE_OBJS := \
 	pet_control/pet_control_sub10.o \
 	pet_control/pet_control_sub11.o \
 	pet_control/pet_control_sub12.o \
-	pet_control/pet_val.o \
 	sound/auto_music_player.o \
 	sound/auto_music_player_base.o \
 	sound/auto_sound_player.o \

@@ -26,24 +26,24 @@
 #include "titanic/pet_control/pet_section.h"
 #include "titanic/pet_control/pet_control_sub10.h"
 #include "titanic/pet_control/pet_control_sub12.h"
-#include "titanic/pet_control/pet_val.h"
+#include "titanic/pet_control/pet_graphic.h"
 
 namespace Titanic {
 
 class CPetRemoteSection : public CPetSection {
 private:
 	CPetControlSub10 _sub10;
-	CPetVal _val1;
-	CPetVal _val2;
-	CPetVal _val3;
-	CPetVal _val4;
-	CPetVal _val5;
-	CPetVal _val6;
-	CPetVal _val7;
-	CPetVal _val8;
-	CPetVal _val9;
-	CPetVal _val10;
-	CPetVal _val11;
+	CPetGraphic _val1;
+	CPetGraphic _val2;
+	CPetGraphic _val3;
+	CPetGraphic _val4;
+	CPetGraphic _val5;
+	CPetGraphic _val6;
+	CPetGraphic _val7;
+	CPetGraphic _val8;
+	CPetGraphic _val9;
+	CPetGraphic _val10;
+	CPetGraphic _val11;
 	CPetControlSub12 _sub12;
 public:
 

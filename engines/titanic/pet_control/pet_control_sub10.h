@@ -37,9 +37,9 @@ protected:
 	int _field1C;
 	int _field20;
 	int _field24;
-	CPetVal _val1;
-	CPetVal _val2;
-	CPetVal _val3;
+	CPetGraphic _val1;
+	CPetGraphic _val2;
+	CPetGraphic _val3;
 public:
 	CPetControlSub10();
 
