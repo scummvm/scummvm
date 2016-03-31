@@ -46,12 +46,12 @@ void CPetVal::proc5(Rect *rect) {
 }
 
 int CPetVal::proc16() {
-	switch (_field14) {
-	case 0:
+	switch (_mode) {
+	case MODE_0:
 		return _field18;
-	case 1:
+	case MODE_1:
 		return _field1C;
-	case 2:
+	case MODE_2:
 		return _field20;
 	default:
 		return 0;

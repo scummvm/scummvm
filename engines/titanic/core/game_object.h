@@ -81,11 +81,6 @@ protected:
 	int _fieldB8;
 protected:
 	/**
-	 * Loads a frame
-	 */
-	void loadFrame(int frameNumber);
-
-	/**
 	 * Saves the current position the object is located at
 	 */
 	void savePosition();
@@ -164,6 +159,18 @@ public:
 	 * Set the position of the object
 	 */
 	void setPosition(const Common::Point &newPos);
+
+	/**
+	 * Returns true if the object has a currently active movie
+	 */
+	bool hasActiveMovie() const;
+
+	int getMovie19() const;
+
+	/**
+	 * Loads a frame
+	 */
+	void loadFrame(int frameNumber);
 };
 
 } // End of namespace Titanic

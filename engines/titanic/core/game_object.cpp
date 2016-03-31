@@ -363,4 +363,16 @@ void CGameObject::setPetArea(PetArea newArea) const {
 		pet->setArea(newArea);
 }
 
+bool CGameObject::hasActiveMovie() const {
+	if (_surface && _surface->_movie)
+		return _surface->_movie->isActive();
+	return false;
+}
+
+int CGameObject::getMovie19() const {
+	if (_surface && _surface->_movie)
+		return _surface->_movie->proc19();
+	return _field78;
+}
+
 } // End of namespace Titanic

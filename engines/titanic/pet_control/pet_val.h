@@ -23,17 +23,17 @@
 #ifndef TITANIC_PET_VAL_H
 #define TITANIC_PET_VAL_H
 
-#include "titanic/pet_control/pet_val_base.h"
+#include "titanic/pet_control/pet_element.h"
 
 namespace Titanic {
 
-class CPetVal: public CPetValBase {
+class CPetVal: public CPetElement {
 protected:
 	int _field18;
 	int _field1C;
 	int _field20;
 public:
-	CPetVal() : CPetValBase(), _field18(0), _field1C(0), _field20(0) {}
+	CPetVal() : CPetElement(), _field18(0), _field1C(0), _field20(0) {}
 
 	virtual void proc1();
 	virtual void proc2();

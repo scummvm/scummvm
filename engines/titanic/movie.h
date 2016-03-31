@@ -44,9 +44,11 @@ public:
 	virtual void proc16() = 0;
 	virtual void proc17() = 0;
 	virtual void proc18() = 0;
-	virtual void proc19() = 0;
+	virtual int proc19() = 0;
 	virtual void proc20() = 0;
 	virtual void *proc21() = 0;
+
+	bool isActive() const;
 };
 
 class OSMovie : public CMovie {
@@ -72,11 +74,9 @@ public:
 	virtual void proc16();
 	virtual void proc17();
 	virtual void proc18();
-	virtual void proc19();
+	virtual int proc19();
 	virtual void proc20();
 	virtual void *proc21();
-
-	bool isInGlobalList() const;
 };
 
 class CGlobalMovies : public List<CMovie> {

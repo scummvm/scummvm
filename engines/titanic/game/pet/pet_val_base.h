@@ -20,12 +20,12 @@
  *
  */
 
-#ifndef TITANIC_PET_VAL_BASE_H
-#define TITANIC_PET_VAL_BASE_H
+#ifndef TITANIC_pet_element_H
+#define TITANIC_pet_element_H
 
 namespace Titanic {
 
-class CPetValBase {
+class CPetElement {
 protected:
 	int _field4;
 	int _field8;
@@ -33,7 +33,7 @@ protected:
 	int _field10;
 	int _field14;
 public:
-	CPetValBase();
+	CPetElement();
 
 	virtual void proc1() {}
 	virtual void proc2() {}
@@ -58,4 +58,4 @@ public:
 
 } // End of namespace Titanic
 
-#endif /* TITANIC_PET_VAL_BASE_H */
+#endif /* TITANIC_pet_element_H */
