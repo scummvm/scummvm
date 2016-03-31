@@ -20,30 +20,8 @@
  *
  */
 
-#ifndef TITANIC_PET_CONTROL_SUB8_H
-#define TITANIC_PET_CONTROL_SUB8_H
-
-#include "titanic/pet_control/pet_control_sub_base.h"
-#include "titanic/pet_control/pet_val.h"
+#include "titanic/pet_control/pet_remote_section.h"
 
 namespace Titanic {
 
-class CPetControlSub8 : public CPetControlSubBase {
-private:
-	static int _indexes[6];
-
-	CPetVal _valArray1[6];
-	CPetVal _valArray2[6];
-	CPetVal _val1;
-	CPetVal _val2;
-	CPetVal _val3;
-	CPetVal _val4;
-	CPetVal _valArray3[7];
-public:
-	CPetControlSub8();
-
-};
-
 } // End of namespace Titanic
-
-#endif /* TITANIC_PET_CONTROL_SUB8_H */

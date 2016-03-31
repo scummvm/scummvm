@@ -24,12 +24,12 @@
 
 namespace Titanic {
 
-CCDROMTray::CCDROMTray() : CGameObject(), _fieldBC(0) {
+CCDROMTray::CCDROMTray() : CGameObject(), _state(0) {
 }
 
 void CCDROMTray::save(SimpleFile *file, int indent) const {
 	file->writeNumberLine(1, indent);
-	file->writeNumberLine(_fieldBC, indent);
+	file->writeNumberLine(_state, indent);
 	file->writeQuotedLine(_string1, indent);
 
 	CGameObject::save(file, indent);
@@ -37,7 +37,7 @@ void CCDROMTray::save(SimpleFile *file, int indent) const {
 
 void CCDROMTray::load(SimpleFile *file) {
 	file->readNumber();
-	_fieldBC = file->readNumber();
+	_state = file->readNumber();
 	_string1 = file->readString();
 
 	CGameObject::load(file);

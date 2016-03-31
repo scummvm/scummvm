@@ -20,40 +20,51 @@
  *
  */
 
-#ifndef TITANIC_PET_CONTROL_SUB4_H
-#define TITANIC_PET_CONTROL_SUB4_H
+#ifndef TITANIC_PET_GRAPHIC_H
+#define TITANIC_PET_GRAPHIC_H
 
-#include "titanic/simple_file.h"
-#include "titanic/pet_control/pet_control_sub_base.h"
-#include "titanic/pet_control/pet_control_sub10.h"
-#include "titanic/pet_control/pet_control_sub12.h"
+#include "titanic/pet_control/pet_element.h"
 
 namespace Titanic {
 
-class CPetControlSub4 : public CPetControlSubBase {
-private:
-	CPetControlSub12 _sub12;
-	CPetControlSub10 _sub10;
-	int _valArray1[46];
-	int _valArray2[46];
-	int _field28C;
-	int _field290;
-	int _field294;
-	int _field298;
+class CPetGraphic: public CPetElement {
+protected:
+	CGameObject *_object0;
+	CGameObject *_object1;
+	CGameObject *_object2;
 public:
-	CPetControlSub4();
+	CPetGraphic() : CPetElement(), _object0(nullptr), _object1(nullptr),
+		_object2(nullptr) {}
 
 	/**
-	 * Save the data for the class to file
+	 * Load an object into the element
 	 */
-	virtual void save(SimpleFile *file, int indent) const;
+	virtual void loadObject(PetElementMode mode, const CString &name,
+		CPetControl *petControl);
+
+	virtual void proc2();
 
 	/**
-	 * Load the data for the class from file
+	 * Draw the item
 	 */
-	virtual void load(SimpleFile *file, int param);
+	virtual void draw(CScreenManager *screenManager);
+
+	/**
+	 * Draw the item
+	 */
+	virtual void draw(CScreenManager *screenManager, const Common::Point &destPos);
+
+	/**
+	 * Get the bounds for the element
+	 */
+	virtual void getBounds(Rect *rect);
+
+	/**
+	 * Get the game object associated with this item
+	 */
+	virtual CGameObject *getObject() const;
 };
 
 } // End of namespace Titanic
 
-#endif /* TITANIC_PET_CONTROL_SUB4_H */
+#endif /* TITANIC_PET_GRAPHIC_H */

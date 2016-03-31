@@ -20,57 +20,50 @@
  *
  */
 
-#include "common/textconsole.h"
-#include "titanic/pet_control/pet_val_base.h"
+#ifndef TITANIC_PET_ROOMS_SECTION_H
+#define TITANIC_PET_ROOMS_SECTION_H
+
+#include "titanic/pet_control/pet_section.h"
+#include "titanic/pet_control/pet_control_sub11.h"
+#include "titanic/pet_control/pet_control_sub12.h"
+#include "titanic/pet_control/pet_control_list_item2.h"
 
 namespace Titanic {
 
-CPetValBase::CPetValBase() : _field4(0), _field8(0), _fieldC(0),
-		_field10(0), _field14(0) {}
+class CPetRoomsSection : public CPetSection {
+private:
+	CPetControlSub11 _sub11;
+	CPetControlListItem2 _listItem;
+	int _field100;
+	int _field104;
+	int _field108;
+	int _field10C;
+	int _field110;
+	int _field114;
+	int _field118;
+	int _field11C;
+	CPetGraphic _val1;
+	CPetControlSub12 _sub12;
+	int _field1C0;
+	int _field1C4;
+	int _field1C8;
+	int _field1CC;
+	int _field1D0;
+	int _field1D4;
+public:
+	CPetRoomsSection();
 
-void CPetValBase::proc5(Rect *rect) {
-	if (rect)
-		*rect = Rect();
-}
+	/**
+	 * Save the data for the class to file
+	 */
+	virtual void save(SimpleFile *file, int indent) const;
 
-int CPetValBase::proc6() {
-	error("TODO");
-}
-
-int CPetValBase::proc7() {
-	error("TODO");
-}
-
-void CPetValBase::proc8() {
-	error("TODO");
-}
-
-int CPetValBase::proc9() {
-	error("TODO");
-}
-
-void CPetValBase::proc10() {
-	error("TODO");
-}
-
-void CPetValBase::proc11() {
-	error("TODO");
-}
-
-void CPetValBase::proc12() {
-	error("TODO");
-}
-
-void CPetValBase::proc13() {
-	error("TODO");
-}
-
-void CPetValBase::proc14() {
-	error("TODO");
-}
-
-void CPetValBase::proc15() {
-	error("TODO");
-}
+	/**
+	 * Load the data for the class from file
+	 */
+	virtual void load(SimpleFile *file, int param);
+};
 
 } // End of namespace Titanic
+
+#endif /* TITANIC_PET_ROOMS_SECTION_H */

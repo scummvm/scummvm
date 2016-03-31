@@ -25,6 +25,24 @@
 
 namespace Titanic {
 
+CMovie::CMovie() : ListItem(), _state(0), _field10(0) {
+}
+
+bool CMovie::isActive() const {
+	return g_vm->_movieList.contains(this);
+}
+
+bool CMovie::get10() {
+	if (_field10) {
+		_field10 = 0;
+		return true;
+	} else {
+		return false;
+	}
+}
+
+/*------------------------------------------------------------------------*/
+
 OSMovie::OSMovie(const CResourceKey &name, CVideoSurface *surface) : _videoSurface(surface) {
 //	_aviDecoder.loadFile(name.getString());
 }
@@ -79,8 +97,9 @@ void OSMovie::proc18() {
 	warning("TODO: OSMovie::proc18");
 }
 
-void OSMovie::proc19() {
+int OSMovie::proc19() {
 	warning("TODO: OSMovie::proc19");
+	return 0;
 }
 
 void OSMovie::proc20() {
@@ -91,11 +110,5 @@ void *OSMovie::proc21() {
 	warning("TODO: OSMovie::proc21");
 	return nullptr;
 }
-
-bool OSMovie::isInGlobalList() const {
-	return g_vm->_movieList.contains(this);
-}
-
-/*------------------------------------------------------------------------*/
 
 } // End of namespace Titanic

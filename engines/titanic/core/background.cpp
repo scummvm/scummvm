@@ -49,4 +49,16 @@ void CBackground::load(SimpleFile *file) {
 	CGameObject::load(file);
 }
 
+bool CBackground::handleMessage(CStatusChangeMsg &msg) {
+	error("TODO: CBackground::handleMessage");
+}
+
+bool CBackground::handleMessage(CSetFrameMsg &msg) {
+	error("TODO: CBackground::handleMessage");
+}
+
+bool CBackground::handleMessage(CVisibleMsg &msg) {
+	error("TODO: CBackground::handleMessage");
+}
+
 } // End of namespace Titanic

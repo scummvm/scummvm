@@ -20,31 +20,50 @@
  *
  */
 
-#ifndef TITANIC_PET_VAL_H
-#define TITANIC_PET_VAL_H
+#ifndef TITANIC_PET_CONVERSATION_SECTION_H
+#define TITANIC_PET_CONVERSATION_SECTION_H
 
-#include "titanic/pet_control/pet_val_base.h"
+#include "titanic/pet_control/pet_section.h"
+#include "titanic/pet_control/pet_control_sub12.h"
+#include "titanic/pet_control/pet_graphic.h"
 
 namespace Titanic {
 
-class CPetVal: public CPetValBase {
-protected:
-	int _field18;
-	int _field1C;
-	int _field20;
+class CPetConversationSection : public CPetSection {
+private:
+	CPetGraphic _val1;
+	CPetGraphic _val2;
+	CPetGraphic _val3;
+	CPetGraphic _valArray1[3];
+	CPetGraphic _val4;
+	CPetGraphic _val5;
+	CPetGraphic _val6;
+	int  _field14C;
+	CPetGraphic _val7;
+	CPetGraphic _val8;
+	CPetGraphic _val9;
+	CPetGraphic _valArray2[9];
+	int _field30C;
+	CPetControlSub12 _sub1;
+	CPetControlSub12 _sub2;
+	int _valArray3[3];
+	int _field414;
+	int _field418;
+	CString _string1;
 public:
-	CPetVal() : CPetValBase(), _field18(0), _field1C(0), _field20(0) {}
+	CPetConversationSection();
 
-	virtual void proc1();
-	virtual void proc2();
-	virtual void proc3();
-	virtual void proc4();
+	/**
+	 * Save the data for the class to file
+	 */
+	virtual void save(SimpleFile *file, int indent) const;
 
-	virtual void proc5(Rect *linkItem);
-
-	virtual int proc16();
+	/**
+	 * Load the data for the class from file
+	 */
+	virtual void load(SimpleFile *file, int param);
 };
 
 } // End of namespace Titanic
 
-#endif /* TITANIC_PET_VAL_H */
+#endif /* TITANIC_PET_CONVERSATION_SECTION_H */

@@ -45,7 +45,7 @@ CGameObject::CGameObject(): CNamedItem() {
 	_field50 = 0;
 	_field54 = 0;
 	_field58 = 0;
-	_field5C = true;
+	_visible = true;
 	_field60 = 0;
 	_cursorId = CURSOR_1;
 	_field78 = 0;
@@ -54,8 +54,6 @@ CGameObject::CGameObject(): CNamedItem() {
 	_field94 = 0;
 	_field98 = 0;
 	_field9C = 0;
-	_fieldA0 = 0;
-	_fieldA4 = 0;
 	_surface = nullptr;
 	_fieldB8 = 0;
 }
@@ -106,7 +104,7 @@ void CGameObject::load(SimpleFile *file) {
 		_field48 = file->readNumber();
 		_field4C = file->readNumber();
 		_fieldB8 = file->readNumber();
-		_field5C = file->readNumber() != 0;
+		_visible = file->readNumber() != 0;
 		_field50 = file->readNumber();
 		_field54 = file->readNumber();
 		_field58 = file->readNumber();
@@ -131,13 +129,33 @@ void CGameObject::stopMovie() {
 		_surface->stopMovie();
 }
 
-bool CGameObject::checkPoint(const Point &pt, int v0, int v1) {
-	warning("TODO: CGameObject::checkPoint");
-	return false;
+bool CGameObject::checkPoint(const Point &pt, bool ignore40, bool visibleOnly) {
+	if ((!_visible && visibleOnly) || !_bounds.contains(pt))
+		return false;
+
+	if (ignore40 || _field40)
+		return true;
+
+	if (!_surface) {
+		if (_frameNumber == -1)
+			return true;
+		loadFrame(_frameNumber);
+		if (!_surface)
+			return true;
+	}
+
+	Common::Point pixelPos = pt - _bounds;
+	if (_surface->_blitStyleFlag) {
+		pixelPos.y = ((_bounds.height() - _bounds.top) / 2) * 2 - pixelPos.y;
+	}
+
+	uint transColor = _surface->getTransparencyColor();
+	uint pixel = _surface->getPixel(pixelPos);
+	return pixel != transColor;
 }
 
 void CGameObject::draw(CScreenManager *screenManager) {
-	if (!_field5C)
+	if (!_visible)
 		return;
 	if (_v1) {
 		error("TODO: Block in CGameObject::draw");
@@ -180,6 +198,22 @@ void CGameObject::draw(CScreenManager *screenManager) {
 				if (_field90)
 					warning("TODO: sub_415f80(screenManager);");
 			}
+		}
+	}
+}
+
+void CGameObject::draw(CScreenManager *screenManager, const Common::Point &destPos) {
+	if (!_surface && !_resource.empty()) {
+		loadResource(_resource);
+		_resource.clear();
+	}
+
+	if (_surface) {
+		int xSize = _surface->getWidth();
+		int ySize = _surface->getHeight();
+
+		if (xSize > 0 && ySize > 0) {
+			screenManager->blitFrom(SURFACE_BACKBUFFER, _surface, &destPos);
 		}
 	}
 }
@@ -276,16 +310,11 @@ void CGameObject::soundFn2(int val, int val2) {
 	}
 }
 
-void CGameObject::set5C(bool val) {
-	if (val != _field5C) {
-		_field5C = val;
+void CGameObject::setVisible(bool val) {
+	if (val != _visible) {
+		_visible = val;
 		makeDirty();
 	}
-}
-
-bool CGameObject::petFn1(int val) {
-	CPetControl *pet = getPetControl();
-	return pet ? pet->fn1(val) : true;
 }
 
 void CGameObject::petFn2(int val) {
@@ -294,10 +323,10 @@ void CGameObject::petFn2(int val) {
 		pet->fn2(val);
 }
 
-void CGameObject::petFn3(int val) {
+void CGameObject::petFn3(CTreeItem *item) {
 	CPetControl *pet = getPetControl();
 	if (pet)
-		pet->fn3(val);
+		pet->fn3(item);
 }
 
 void CGameObject::fn1(int val1, int val2, int val3) {
@@ -318,6 +347,52 @@ void CGameObject::changeStatus(int newStatus) {
 			getGameManager()->_gameState.addMovie(_surface->_movie);
 		}
 	}
+}
+
+void CGameObject::savePosition() {
+	_savedPos = _bounds;
+}
+
+void CGameObject::resetPosition() {
+	setPosition(_savedPos);
+}
+
+void CGameObject::setPosition(const Common::Point &newPos) {
+	makeDirty();
+	_bounds.moveTo(newPos);
+	makeDirty();
+}
+
+bool CGameObject::checkStartDragging(CMouseDragStartMsg *msg) {
+	if (_visible && checkPoint(msg->_mousePos, msg->_field14, 1)) {
+		savePosition();
+		msg->_dragItem = this;
+		return true;
+	} else {
+		return false;
+	}
+}
+
+void CGameObject::setPetArea(PetArea newArea) const {
+	CPetControl *pet = getPetControl();
+	if (pet)
+		pet->setArea(newArea);
+}
+
+bool CGameObject::hasActiveMovie() const {
+	if (_surface && _surface->_movie)
+		return _surface->_movie->isActive();
+	return false;
+}
+
+int CGameObject::getMovie19() const {
+	if (_surface && _surface->_movie)
+		return _surface->_movie->proc19();
+	return _field78;
+}
+
+int CGameObject::getSurface45() const {
+	return _surface ? _surface->proc45() : 0;
 }
 
 } // End of namespace Titanic

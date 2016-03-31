@@ -24,16 +24,24 @@
 #define TITANIC_BACKGROUND_H
 
 #include "titanic/core/game_object.h"
+#include "titanic/messages/messages.h"
 
 namespace Titanic {
 
-class CBackground : public CGameObject {
+class CBackground : public CGameObject,
+	public CStatusChangeMsgTarget,
+	public CSetFrameMsgTarget,
+	public CVisibleMsgTarget {
 protected:
 	int _fieldBC;
 	int _fieldC0;
 	CString _string1;
 	CString _string2;
 	int _fieldDC;
+protected:
+	virtual bool handleMessage(CStatusChangeMsg &msg);
+	virtual bool handleMessage(CSetFrameMsg &msg);
+	virtual bool handleMessage(CVisibleMsg &msg);
 public:
 	CLASSDEF
 	CBackground();

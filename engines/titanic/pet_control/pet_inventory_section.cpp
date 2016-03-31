@@ -20,23 +20,23 @@
  *
  */
 
-#ifndef TITANIC_PET_CONTROL_SUB6_H
-#define TITANIC_PET_CONTROL_SUB6_H
-
-#include "titanic/pet_control/pet_control_sub_base.h"
-#include "titanic/pet_control/pet_control_sub10.h"
-#include "titanic/pet_control/pet_control_sub12.h"
+#include "titanic/pet_control/pet_inventory_section.h"
 
 namespace Titanic {
 
-class CPetControlSub6 : public CPetControlSubBase {
-private:
-	CPetControlSub10 _sub10;
-	CPetControlSub10 _sub12;
-public:
+CPetInventorySection::CPetInventorySection() : CPetSection(),
+		_field28C(0), _field290(0), _field294(0), _field298(0) {
+	for (int idx = 0; idx < 46; ++idx) {
+		_valArray1[idx] = _valArray2[idx] = 0;
+	}
+}
 
-};
+void CPetInventorySection::save(SimpleFile *file, int indent) const {
+	file->writeNumberLine(_field298, indent);
+}
+
+void CPetInventorySection::load(SimpleFile *file, int param) {
+	_field298 = file->readNumber();
+}
 
 } // End of namespace Titanic
-
-#endif /* TITANIC_PET_CONTROL_SUB6_H */

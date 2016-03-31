@@ -20,29 +20,29 @@
  *
  */
 
-#include "titanic/pet_control/pet_control_sub2.h"
+#include "titanic/pet_control/pet_rooms_section.h"
 
 namespace Titanic {
 
-CPetControlSub2::CPetControlSub2() :
+CPetRoomsSection::CPetRoomsSection() :
 	_field100(0), _field104(0), _field108(0), _field10C(0),
 	_field110(0), _field114(0), _field118(0), _field11C(0),
 	_field1C0(0), _field1C4(0), _field1C8(0), _field1CC(0),
 	_field1D0(0), _field1D4(0) {
 }
 
-void CPetControlSub2::save(SimpleFile *file, int indent) const {
+void CPetRoomsSection::save(SimpleFile *file, int indent) const {
 
 }
 
-void CPetControlSub2::load(SimpleFile *file, int param) {
+void CPetRoomsSection::load(SimpleFile *file, int param) {
 	if (!param) {
 		int count = file->readNumber();
 
 		for (int idx = 0; idx < count; ++idx) {
 			int v1 = file->readNumber();
 			int v2 = file->readNumber();
-			warning("TODO: CPetControlSub2::load - %d,%d", v1, v2);
+			warning("TODO: CPetRoomsSection::load - %d,%d", v1, v2);
 		}
 
 		_listItem.setField34(file->readNumber());

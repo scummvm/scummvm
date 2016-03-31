@@ -20,48 +20,23 @@
  *
  */
 
-#ifndef TITANIC_PET_VAL_BASE_H
-#define TITANIC_PET_VAL_BASE_H
+#ifndef TITANIC_PET_SAVE_SECTION_H
+#define TITANIC_PET_SAVE_SECTION_H
 
-#include "titanic/simple_file.h"
-#include "titanic/core/link_item.h"
+#include "titanic/pet_control/pet_section.h"
+#include "titanic/pet_control/pet_control_sub10.h"
+#include "titanic/pet_control/pet_control_sub12.h"
 
 namespace Titanic {
 
-class CPetValBase {
-protected:
-	int _field4;
-	int _field8;
-	int _fieldC;
-	int _field10;
-	int _field14;
+class CPetSaveSection : public CPetSection {
+private:
+	CPetControlSub10 _sub10;
+	CPetControlSub10 _sub12;
 public:
-	CPetValBase();
-	virtual ~CPetValBase() {}
 
-	virtual void proc1() {}
-	virtual void proc2() {}
-	virtual void proc3() {}
-	virtual void proc4() {}
-
-	virtual void proc5(Rect *rect);
-
-	virtual int proc6();
-	virtual int proc7();
-	virtual void proc8();
-	virtual int proc9();
-	virtual void proc10();
-	virtual void proc11();
-	virtual void proc12();
-	virtual void proc13();
-	virtual void proc14();
-	virtual void proc15();
-
-	virtual int proc16() { return 0; }
-
-	virtual void proc17(int v) { _field14 = v; }
 };
 
 } // End of namespace Titanic
 
-#endif /* TITANIC_PET_VAL_BASE_H */
+#endif /* TITANIC_PET_SAVE_SECTION_H */

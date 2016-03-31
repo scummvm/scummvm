@@ -179,12 +179,12 @@ public:
 MSGTARGET(CMouseDragEndMsg);
 class CMouseDragEndMsg : public CMouseDragMsg {
 public:
-	CTreeItem *_dragItem;
+	CTreeItem *_dropTarget;
 public:
 	CLASSDEF
-	CMouseDragEndMsg() : CMouseDragMsg(), _dragItem(nullptr) {}
+	CMouseDragEndMsg() : CMouseDragMsg(), _dropTarget(nullptr) {}
 	CMouseDragEndMsg(const Point &pt, CTreeItem *dragItem = nullptr) :
-		CMouseDragMsg(pt), _dragItem(dragItem) {}
+		CMouseDragMsg(pt), _dropTarget(dragItem) {}
 
 	static bool isSupportedBy(const CTreeItem *item) {
 		return dynamic_cast<const CMouseDragEndMsgTarget *>(item) != nullptr;

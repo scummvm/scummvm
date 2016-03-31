@@ -28,6 +28,7 @@ namespace Titanic {
 bool File::open(const Common::String &name) {
 	if (!Common::File::open(name))
 		error("Could not open file - %s", name.c_str());
+	return true;
 }
 
 /*------------------------------------------------------------------------*/

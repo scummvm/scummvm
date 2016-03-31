@@ -24,12 +24,23 @@
 #define TITANIC_CDROM_H
 
 #include "titanic/core/game_object.h"
+#include "titanic/messages/messages.h"
+#include "titanic/messages/mouse_messages.h"
 
 namespace Titanic {
 
-class CCDROM : public CGameObject {
+class CCDROM : public CGameObject,
+	public CMouseDragStartMsgTarget,
+	public CMouseDragEndMsgTarget,
+	public CMouseDragMoveMsgTarget,
+	public CActMsgTarget {
 private:
-	Point _pos1;
+	Point _tempPos;
+protected:
+	virtual bool handleMessage(CMouseDragStartMsg &msg);
+	virtual bool handleMessage(CMouseDragEndMsg &msg);
+	virtual bool handleMessage(CMouseDragMoveMsg &msg);
+	virtual bool handleMessage(CActMsg &msg);
 public:
 	CLASSDEF
 	CCDROM();

@@ -20,17 +20,24 @@
  *
  */
 
-#include "titanic/pet_control/pet_control_sub8.h"
+#include "titanic/pet_control/pet_conversation_section.h"
 
 namespace Titanic {
 
-static const int INDEXES[6] = { 1, 0, 2, 3, 4, 5 };
+CPetConversationSection::CPetConversationSection() : CPetSection(),
+		_field414(0), _field418(0) {
+}
 
-int CPetControlSub8::_indexes[6];
+void CPetConversationSection::save(SimpleFile *file, int indent) const {
 
-CPetControlSub8::CPetControlSub8() {
-	for (int idx = 0; idx < 6; ++idx)
-		_indexes[INDEXES[idx]] = idx;
+}
+
+void CPetConversationSection::load(SimpleFile *file, int param) {
+	_sub2.load(file, param);
+	_sub1.load(file, param);
+
+	for (int idx = 0; idx < 3; ++idx)
+		_valArray3[idx] = file->readNumber();
 }
 
 } // End of namespace Titanic

@@ -115,24 +115,32 @@ public:
 	/**
 	 * Returns the width of the surface
 	 */
-	virtual int getWidth() const = 0;
+	virtual int getWidth() = 0;
 
 	/**
 	 * Returns the height of the surface
 	 */
-	virtual int getHeight() const = 0;
+	virtual int getHeight() = 0;
 
 	/**
 	 * Returns the pitch of the surface in bytes
 	 */
-	virtual int getPitch() const = 0;
+	virtual int getPitch() = 0;
 	
 	/**
 	 * Reiszes the surface
 	 */
 	virtual void resize(int width, int height) = 0;
 
-	virtual int proc26() = 0;
+	/**
+	 * Returns the number of bytes per pixel in the surface
+	 */
+	virtual int getPixelDepth() = 0;
+
+	/**
+	 * Gets the pixel at the specified position within the surface
+	 */
+	virtual uint16 getPixel(const Common::Point &pt) = 0;
 
 	/**
 	 * Shifts the colors of the surface.. maybe greys it out?
@@ -161,6 +169,8 @@ public:
 	 */
 	virtual bool load() = 0;
 
+	virtual bool proc45();
+
 	/**
 	 * Frees the underlying surface
 	 */
@@ -181,6 +191,11 @@ public:
 	void set40(void *v) { _field40 = v; }
 
 	uint16 *getPixels() { return (uint16 *)_rawSurface->getPixels(); }
+
+	/**
+	 * Returns the transparent color
+	 */
+	uint getTransparencyColor();
 };
 
 class OSVideoSurface : public CVideoSurface {
@@ -226,24 +241,32 @@ public:
 	/**
 	 * Returns the width of the surface
 	 */
-	virtual int getWidth() const;
+	virtual int getWidth();
 
 	/**
 	 * Returns the height of the surface
 	 */
-	virtual int getHeight() const;
+	virtual int getHeight();
 
 	/**
 	 * Returns the pitch of the surface in bytes
 	 */
-	virtual int getPitch() const;
+	virtual int getPitch();
 
 	/**
 	 * Reiszes the surface
 	 */
 	virtual void resize(int width, int height);
 
-	virtual int proc26();
+	/**
+	 * Returns the number of bytes per pixel in the surface
+	 */
+	virtual int getPixelDepth();
+
+	/**
+	 * Gets the pixel at the specified position within the surface
+	 */
+	virtual uint16 getPixel(const Common::Point &pt);
 
 	/**
 	 * Shifts the colors of the surface.. maybe greys it out?

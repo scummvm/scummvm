@@ -20,50 +20,64 @@
  *
  */
 
-#ifndef TITANIC_PET_CONTROL_SUB1_H
-#define TITANIC_PET_CONTROL_SUB1_H
+#ifndef TITANIC_PET_FRAME_H
+#define TITANIC_PET_FRAME_H
 
-#include "titanic/pet_control/pet_control_sub_base.h"
-#include "titanic/pet_control/pet_control_sub12.h"
-#include "titanic/pet_control/pet_val.h"
+#include "titanic/pet_control/pet_section.h"
+#include "titanic/pet_control/pet_graphic.h"
 
 namespace Titanic {
 
-class CPetControlSub1 : public CPetControlSubBase {
+class CPetFrame : public CPetSection {
 private:
-	CPetVal _val1;
-	CPetVal _val2;
-	CPetVal _val3;
-	CPetVal _valArray1[3];
-	CPetVal _val4;
-	CPetVal _val5;
-	CPetVal _val6;
-	CPetControlSubData _field14C;
-	CPetVal _val7;
-	CPetVal _val8;
-	CPetVal _val9;
-	CPetVal _valArray2[9];
-	int _field30C;
-	CPetControlSub12 _sub1;
-	CPetControlSub12 _sub2;
-	int _valArray3[3];
-	int _field414;
-	int _field418;
-	CString _string1;
+	static int _indexes[6];
+
+	CPetGraphic _modeButtons[6];
+	CPetGraphic _titles[6];
+	CPetGraphic _modeBackground;
+	CPetGraphic _val2;
+	CPetGraphic _val3;
+	CPetGraphic _background;
+	CPetGraphic _indent[7];
+private:
+	/**
+	 * Called to set the owning PET instance and set some initial state
+	 */
+	bool setPetControl(CPetControl *petControl);
 public:
-	CPetControlSub1();
+	CPetFrame();
 
 	/**
-	 * Save the data for the class to file
+	 * Sets up the section
 	 */
-	virtual void save(SimpleFile *file, int indent) const;
+	virtual bool setup(CPetControl *petControl);
+	
+	/**
+	 * Sets up the section
+	 */
+	virtual bool setup();
 
 	/**
-	 * Load the data for the class from file
+	 * Returns true if the object is in a valid state
 	 */
-	virtual void load(SimpleFile *file, int param);
+	virtual bool isValid(CPetControl *petControl);
+
+	/**
+	 * Called after a game has been loaded
+	 */
+	virtual void postLoad();
+
+	/**
+	 * Called when the current PET area changes
+	 */
+	void setArea(PetArea newArea);
+
+	/**
+	 * Draws the PET frame
+	 */
+	void drawFrame(CScreenManager *screenManager);
 };
 
 } // End of namespace Titanic
 
-#endif /* TITANIC_PET_CONTROL_SUB1_H */
+#endif /* TITANIC_PET_FRAME_H */

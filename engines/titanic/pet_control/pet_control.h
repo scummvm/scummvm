@@ -26,47 +26,70 @@
 #include "titanic/core/game_object.h"
 #include "titanic/core/node_item.h"
 #include "titanic/core/room_item.h"
-#include "titanic/pet_control/pet_control_sub1.h"
-#include "titanic/pet_control/pet_control_sub2.h"
-#include "titanic/pet_control/pet_control_sub3.h"
-#include "titanic/pet_control/pet_control_sub4.h"
+#include "titanic/pet_control/pet_conversation_section.h"
+#include "titanic/pet_control/pet_frame.h"
+#include "titanic/pet_control/pet_inventory_section.h"
+#include "titanic/pet_control/pet_remote_section.h"
+#include "titanic/pet_control/pet_rooms_section.h"
+#include "titanic/pet_control/pet_save_section.h"
 #include "titanic/pet_control/pet_control_sub5.h"
-#include "titanic/pet_control/pet_control_sub6.h"
 #include "titanic/pet_control/pet_control_sub7.h"
-#include "titanic/pet_control/pet_control_sub8.h"
 
 namespace Titanic {
 
 class CPetControl : public CGameObject {
 private:
-	int _fieldBC;
+	PetArea _currentArea;
 	int _fieldC0;
-	int _fieldC4;
+	int _locked;
 	int _fieldC8;
-	CPetControlSub1 _sub1;
-	CPetControlSub2 _sub2;
-	CPetControlSub3 _sub3;
-	CPetControlSub4 _sub4;
+	CPetConversationSection _convSection;
+	CPetInventorySection _invSection;
+	CPetRemoteSection _remoteSection;
+	CPetRoomsSection _roomsSection;
+	CPetSaveSection _saveSection;
 	CPetControlSub5 _sub5;
-	CPetControlSub6 _sub6;
 	CPetControlSub7 _sub7;
-	CPetControlSub8 _sub8;
-	int _field1384;
+	CPetFrame _frame;
+	CTreeItem *_treeItem1;
 	CString _string1;
-	int _field1394;
+	CTreeItem *_treeItem2;
 	CString _string2;
-	int _field13A4;
+	CRoomItem *_hiddenRoom;
+	Rect _oldBounds;
 private:
 	/**
 	 * Returns true if the control is in a valid state
 	 */
-	bool isValid() const;
+	bool isValid();
 
-	void loadSubObjects(SimpleFile *file, int param);
+	/**
+	 * Loads data for the individual areas
+	 */
+	void loadAreas(SimpleFile *file, int param);
 
-	void saveSubObjects(SimpleFile *file, int indent) const;
+	/**
+	 * Saves data for the individual areas
+	 */
+	void saveAreas(SimpleFile *file, int indent) const;
+
+	/**
+	 * Called at the end of the post game-load handling
+	 */
+	void loaded();
+
+	/**
+	 * Scan the specified room for an item by name
+	 */
+	CGameObject *findItemInRoom(CRoomItem *room, const CString &name) const;
+
+	/**
+	 * Returns a reference to the special hidden room container
+	 */
+	CRoomItem *getHiddenRoom();
 public:
 	CLASSDEF
+	CPetControl();
 
 	/**
 	 * Save the data for the class to file
@@ -78,7 +101,10 @@ public:
 	 */
 	virtual void load(SimpleFile *file);
 
-	virtual void proc26();
+	/**
+	 * Allows the item to draw itself
+	 */
+	virtual void draw(CScreenManager *screenManager);
 
 	/**
 	 * Called after loading a game has finished
@@ -104,9 +130,25 @@ public:
 
 	void fn2(int val);
 
-	void fn3(int val);
+	void fn3(CTreeItem *item);
 
 	void fn4();
+
+	/**
+	 * Sets the currently viewed area within the PET
+	 */
+	PetArea setArea(PetArea newSection);
+
+	/**
+	 * Returns true if the current area can be changed
+	 */
+	bool canChangeArea() const { return _locked == 0; }
+
+	/**
+	 * Returns a game object used by the PET by name from within the
+	 * special hidden room container
+	 */
+	CGameObject *getHiddenObject(const CString &name);
 };
 
 } // End of namespace Titanic

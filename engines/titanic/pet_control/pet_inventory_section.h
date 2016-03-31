@@ -20,41 +20,40 @@
  *
  */
 
-#include "common/textconsole.h"
-#include "titanic/pet_control/pet_control_sub_base.h"
+#ifndef TITANIC_PET_INVENTORY_SECTION_H
+#define TITANIC_PET_INVENTORY_SECTION_H
+
+#include "titanic/simple_file.h"
+#include "titanic/pet_control/pet_section.h"
+#include "titanic/pet_control/pet_control_sub10.h"
+#include "titanic/pet_control/pet_control_sub12.h"
 
 namespace Titanic {
 
-void CPetControlSubBase::proc4() {
-	error("TODO");
-}
+class CPetInventorySection : public CPetSection {
+private:
+	CPetControlSub12 _sub12;
+	CPetControlSub10 _sub10;
+	int _valArray1[46];
+	int _valArray2[46];
+	int _field28C;
+	int _field290;
+	int _field294;
+	int _field298;
+public:
+	CPetInventorySection();
 
-void CPetControlSubBase::proc16() {
-	error("TODO");
-}
+	/**
+	 * Save the data for the class to file
+	 */
+	virtual void save(SimpleFile *file, int indent) const;
 
-void CPetControlSubBase::proc25() {
-	error("TODO");
-}
-
-void CPetControlSubBase::proc27() {
-	error("TODO");
-}
-
-void CPetControlSubBase::proc28() {
-	error("TODO");
-}
-
-void CPetControlSubBase::proc29() {
-	error("TODO");
-}
-
-void CPetControlSubBase::proc30() {
-	error("TODO");
-}
-
-void CPetControlSubBase::proc31() {
-	error("TODO");
-}
+	/**
+	 * Load the data for the class from file
+	 */
+	virtual void load(SimpleFile *file, int param);
+};
 
 } // End of namespace Titanic
+
+#endif /* TITANIC_PET_INVENTORY_SECTION_H */

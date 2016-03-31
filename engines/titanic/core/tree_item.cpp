@@ -188,7 +188,7 @@ void CTreeItem::setParent(CTreeItem *newParent) {
 }
 
 void CTreeItem::addSibling(CTreeItem *item) {
-	_priorSibling = item->_nextSibling;
+	_priorSibling = item;
 	_nextSibling = item->_nextSibling;
 	_parent = item->_parent;
 
@@ -282,6 +282,11 @@ CTreeItem *CTreeItem::getDontSaveChild(ClassDef *classDef) const {
 		return nullptr;
 
 	return dontSave->findChildInstanceOf(classDef);
+}
+
+CRoomItem *CTreeItem::getRoom() const {
+	CGameManager *gameManager = getGameManager();
+	return gameManager ? gameManager->getRoom() : nullptr;
 }
 
 } // End of namespace Titanic

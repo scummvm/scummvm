@@ -20,42 +20,8 @@
  *
  */
 
-#include "common/textconsole.h"
-#include "titanic/pet_control/pet_val.h"
+#include "titanic/pet_control/pet_save_section.h"
 
 namespace Titanic {
-
-void CPetVal::proc1() {
-	error("TODO");
-}
-
-void CPetVal::proc2() {
-	error("TODO");
-}
-
-void CPetVal::proc3() {
-	error("TODO");
-}
-
-void CPetVal::proc4() {
-	error("TODO");
-}
-
-void CPetVal::proc5(Rect *rect) {
-	error("TODO");
-}
-
-int CPetVal::proc16() {
-	switch (_field14) {
-	case 0:
-		return _field18;
-	case 1:
-		return _field1C;
-	case 2:
-		return _field20;
-	default:
-		return 0;
-	}
-}
 
 } // End of namespace Titanic

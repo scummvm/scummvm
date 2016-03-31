@@ -27,10 +27,12 @@
 #include "titanic/rect.h"
 #include "titanic/core/movie_clip.h"
 #include "titanic/core/named_item.h"
+#include "titanic/pet_control/pet_section.h"
 
 namespace Titanic {
 
 class CVideoSurface;
+class CMouseDragStartMsg;
 
 class CGameObject : public CNamedItem {
 public:
@@ -52,16 +54,6 @@ private:
 	void loadImage(const CString &name, bool pendingFlag = true);
 
 	void processClipList2();
-
-	/**
-	 * Marks the area in the passed rect as dirty, and requiring re-rendering
-	 */
-	void makeDirty(const Rect &r);
-
-	/**
-	 * Marks the area occupied by the object as dirty, requiring re-rendering
-	 */
-	void makeDirty();
 protected:
 	Rect _bounds;
 	double _field34;
@@ -74,7 +66,7 @@ protected:
 	int _field50;
 	int _field54;
 	int _field58;
-	bool _field5C;
+	bool _visible;
 	CMovieClipList _clipList1;
 	int _field78;
 	CMovieClipList _clipList2;
@@ -83,23 +75,46 @@ protected:
 	int _field94;
 	int _field98;
 	int _field9C;
-	int _fieldA0;
-	int _fieldA4;
+	Common::Point _savedPos;
 	CVideoSurface *_surface;
 	CString _resource;
 	int _fieldB8;
 protected:
 	/**
-	 * Loads a frame
+	 * Saves the current position the object is located at
 	 */
-	void loadFrame(int frameNumber);
+	void savePosition();
+
+	/**
+	 * Resets the object back to the previously saved starting position
+	 */
+	void resetPosition();
+
+	/**
+	 * Check for starting to drag the object
+	 */
+	bool checkStartDragging(CMouseDragStartMsg *msg);
+
+	/**
+	 * Marks the area in the passed rect as dirty, and requiring re-rendering
+	 */
+	void makeDirty(const Rect &r);
+
+	/**
+	 * Marks the area occupied by the object as dirty, requiring re-rendering
+	 */
+	void makeDirty();
+
+	/**
+	 * Sets a new area in the PET
+	 */
+	void setPetArea(PetArea newArea) const;
 
 	bool soundFn1(int val);
 	void soundFn2(int val, int val2);
-	void set5C(bool val);
-	bool petFn1(int val);
+	void setVisible(bool val);
 	void petFn2(int val);
-	void petFn3(int val);
+	void petFn3(CTreeItem *item);
 public:
 	int _field60;
 	CursorId _cursorId;
@@ -123,11 +138,20 @@ public:
 	virtual void draw(CScreenManager *screenManager);
 
 	/**
+	 * Allows the item to draw itself
+	 */
+	virtual void draw(CScreenManager *screenManager, const Common::Point &destPos);
+
+	/**
 	 * Stops any movie currently playing for the object
 	 */
 	void stopMovie();
 
-	bool checkPoint(const Point &pt, int v0, int v1);
+	/**
+	 * Checks the passed point is validly in the object,
+	 * with extra checking of object flags status
+	 */
+	bool checkPoint(const Point &pt, bool ignore40 = false, bool visibleOnly = false);
 
 	void fn1(int val1, int val2, int val3);
 
@@ -135,6 +159,24 @@ public:
 	 * Change the object's status
 	 */
 	void changeStatus(int newStatus);
+
+	/**
+	 * Set the position of the object
+	 */
+	void setPosition(const Common::Point &newPos);
+
+	/**
+	 * Returns true if the object has a currently active movie
+	 */
+	bool hasActiveMovie() const;
+
+	int getMovie19() const;
+	int getSurface45() const;
+
+	/**
+	 * Loads a frame
+	 */
+	void loadFrame(int frameNumber);
 };
 
 } // End of namespace Titanic

@@ -132,7 +132,8 @@ void CVideoSurface::blitRect1(const Rect &srcRect, const Rect &destRect, CVideoS
 	lock();
 
 	// TODO: Do it like the original does it
-	_rawSurface->blitFrom(*src->_rawSurface, srcRect, Point(destRect.left, destRect.top));
+	_rawSurface->transBlitFrom(*src->_rawSurface, srcRect, destRect,
+		getTransparencyColor());
 
 	src->unlock();
 	unlock();
@@ -141,6 +142,24 @@ void CVideoSurface::blitRect1(const Rect &srcRect, const Rect &destRect, CVideoS
 void CVideoSurface::blitRect2(const Rect &srcRect, const Rect &destRect, CVideoSurface *src) {
 	// TODO: Do it like the original does it
 	blitRect1(srcRect, destRect, src);
+}
+
+uint CVideoSurface::getTransparencyColor() {
+	uint32 val = -(getPixelDepth() - 2);
+	val &= 0xFFFF8400;
+	val += 0xF81F;
+	return val;
+}
+
+bool CVideoSurface::proc45() {
+	if (_field50) {
+		_field50 = 0;
+		return true;
+	} else if (_movie) {
+		return _movie->get10();
+	} else {
+		return false;
+	}
 }
 
 /*------------------------------------------------------------------------*/
@@ -176,7 +195,7 @@ void OSVideoSurface::loadTarga(const CResourceKey &key) {
 	CTargaDecode decoder;
 	decoder.decode(*this, key.getString());
 
-	if (proc26() == 2)
+	if (getPixelDepth() == 2)
 		shiftColors();
 
 	_resourceKey = key;
@@ -188,7 +207,7 @@ void OSVideoSurface::loadJPEG(const CResourceKey &key) {
 	CJPEGDecode decoder;
 	decoder.decode(*this, key.getString());
 
-	if (proc26() == 2)
+	if (getPixelDepth() == 2)
 		shiftColors();
 
 	_resourceKey = key;
@@ -208,28 +227,35 @@ bool OSVideoSurface::lock() {
 }
 
 void OSVideoSurface::unlock() {
-	if (_rawSurface)
-		_ddSurface->unlock();
-	_rawSurface = nullptr;
-	--_lockCount;
+	if (!--_lockCount) {
+		if (_rawSurface)
+			_ddSurface->unlock();
+		_rawSurface = nullptr;
+	}
 }
 
 bool OSVideoSurface::hasSurface() {
 	return _ddSurface != nullptr;
 }
 
-int OSVideoSurface::getWidth() const {
-	assert(_ddSurface);
+int OSVideoSurface::getWidth() {
+	if (!loadIfReady())
+		error("Could not load resource");
+
 	return _ddSurface->getWidth();
 }
 
-int OSVideoSurface::getHeight() const {
-	assert(_ddSurface);
+int OSVideoSurface::getHeight() {
+	if (!loadIfReady())
+		error("Could not load resource");
+
 	return _ddSurface->getHeight();
 }
 
-int OSVideoSurface::getPitch() const {
-	assert(_ddSurface);
+int OSVideoSurface::getPitch() {
+	if (!loadIfReady())
+		error("Could not load resource");
+
 	return _ddSurface->getPitch();
 }
 
@@ -241,12 +267,19 @@ void OSVideoSurface::resize(int width, int height) {
 		_videoSurfaceCounter += _ddSurface->getSize();
 }
 
-int OSVideoSurface::proc26() {
+int OSVideoSurface::getPixelDepth() {
 	if (!loadIfReady())
 		assert(0);
 
-	warning("TODO");
-	return 0;
+	lock();
+	
+	int result = _rawSurface->format.bytesPerPixel;
+	if (result == 1)
+		// Paletted 8-bit images don't store the color directly in the pixels
+		result = 0;
+
+	unlock();
+	return result;
 }
 
 bool OSVideoSurface::load() {
@@ -276,27 +309,26 @@ bool OSVideoSurface::load() {
 	}
 }
 
+uint16 OSVideoSurface::getPixel(const Common::Point &pt) {
+	if (!loadIfReady())
+		return 0;
+
+	if (pt.x >= 0 && pt.y >= 0 && pt.x < getWidth() && pt.y < getHeight()) {
+		lock();
+		uint16 pixel = *(uint16 *)_rawSurface->getBasePtr(pt.x, pt.y);
+		unlock();
+		return pixel;
+	} else {
+		return getTransparencyColor();
+	}
+}
+
 void OSVideoSurface::shiftColors() {
 	if (!loadIfReady())
 		return;
 
-	if (!lock())
-		assert(0);
-
-	int width = getWidth();
-	int height = getHeight();
-	int pitch = getPitch();
-	uint16 *pixels = (uint16 *)_rawSurface->getPixels();
-	uint16 *p;
-	int x, y;
-
-	for (y = 0; y < height; ++y, pixels += pitch) {
-		for (x = 0, p = pixels; x < width; ++x, ++p) {
-			*p = ((*p & 0xFFE0) * 2) | (*p & 0x1F);
-		}
-	}
-
-	unlock();
+	// Currently no further processing is needed, since for ScummVM,
+	// we already convert 16-bit surfaces as soon as they're loaded
 }
 
 void OSVideoSurface::proc32(int v1, CVideoSurface *surface) {

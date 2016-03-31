@@ -20,23 +20,36 @@
  *
  */
 
-#include "titanic/pet_control/pet_control_sub1.h"
+#ifndef TITANIC_PET_REMOTE_SECTION_H
+#define TITANIC_PET_REMOTE_SECTION_H
+
+#include "titanic/pet_control/pet_section.h"
+#include "titanic/pet_control/pet_control_sub10.h"
+#include "titanic/pet_control/pet_control_sub12.h"
+#include "titanic/pet_control/pet_graphic.h"
 
 namespace Titanic {
 
-CPetControlSub1::CPetControlSub1() : _field414(0), _field418(0) {
-}
+class CPetRemoteSection : public CPetSection {
+private:
+	CPetControlSub10 _sub10;
+	CPetGraphic _val1;
+	CPetGraphic _val2;
+	CPetGraphic _val3;
+	CPetGraphic _val4;
+	CPetGraphic _val5;
+	CPetGraphic _val6;
+	CPetGraphic _val7;
+	CPetGraphic _val8;
+	CPetGraphic _val9;
+	CPetGraphic _val10;
+	CPetGraphic _val11;
+	CPetControlSub12 _sub12;
+public:
 
-void CPetControlSub1::save(SimpleFile *file, int indent) const {
 
-}
-
-void CPetControlSub1::load(SimpleFile *file, int param) {
-	_sub2.load(file, param);
-	_sub1.load(file, param);
-
-	for (int idx = 0; idx < 3; ++idx)
-		_valArray3[idx] = file->readNumber();
-}
+};
 
 } // End of namespace Titanic
+
+#endif /* TITANIC_PET_REMOTE_SECTION_H */
