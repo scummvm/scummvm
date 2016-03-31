@@ -1397,6 +1397,8 @@ void GlobalOptionsDialog::close() {
 			} else {
 				g_system->getUpdateManager()->setAutomaticallyChecksForUpdates(Common::UpdateManager::kUpdateStateEnabled);
 				g_system->getUpdateManager()->setUpdateCheckInterval(_updatesPopUp->getSelectedTag());
+
+				ConfMan.setInt("updates_check", g_system->getUpdateManager()->getUpdateCheckInterval());
 			}
 		}
 #endif
