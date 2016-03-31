@@ -23,6 +23,7 @@
 #ifndef ADL_ADL_H
 #define ADL_ADL_H
 
+#include "common/debug-channels.h"
 #include "common/array.h"
 #include "common/rect.h"
 #include "common/str.h"
@@ -63,6 +64,7 @@ enum kDebugChannels {
 #define IDO_ACT_SAVE           0x0f
 #define IDO_ACT_LOAD           0x10
 
+#define IDI_CUR_ROOM 0xfc
 #define IDI_VOID_ROOM 0xfd
 #define IDI_ANY 0xfe
 
@@ -177,6 +179,32 @@ struct RoomData {
 	PictureMap pictures;
 	Commands commands;
 };
+
+// Opcode debugging macros
+#define OP_DEBUG_0(F) do { \
+	if (DebugMan.isDebugChannelEnabled(kDebugChannelScript) && op_debug(F)) \
+		return 0; \
+} while (0)
+
+#define OP_DEBUG_1(F, P1) do { \
+	if (DebugMan.isDebugChannelEnabled(kDebugChannelScript) && op_debug(F, P1)) \
+		return 1; \
+} while (0)
+
+#define OP_DEBUG_2(F, P1, P2) do { \
+	if (DebugMan.isDebugChannelEnabled(kDebugChannelScript) && op_debug(F, P1, P2)) \
+		return 2; \
+} while (0)
+
+#define OP_DEBUG_3(F, P1, P2, P3) do { \
+	if (DebugMan.isDebugChannelEnabled(kDebugChannelScript) && op_debug(F, P1, P2, P3)) \
+		return 3; \
+} while (0)
+
+#define OP_DEBUG_4(F, P1, P2, P3, P4) do { \
+	if (DebugMan.isDebugChannelEnabled(kDebugChannelScript) && op_debug(F, P1, P2, P3, P4)) \
+		return 4; \
+} while (0)
 
 class AdlEngine : public Engine {
 friend class Console;

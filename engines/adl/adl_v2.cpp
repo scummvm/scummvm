@@ -193,6 +193,8 @@ void AdlEngine_v2::printString(const Common::String &str) {
 }
 
 int AdlEngine_v2::o2_isFirstTime(ScriptEnv &e) {
+	OP_DEBUG_0("\t&& IS_FIRST_TIME()");
+
 	bool oldFlag = getCurRoom().isFirstTime;
 
 	getCurRoom().isFirstTime = false;
@@ -204,6 +206,8 @@ int AdlEngine_v2::o2_isFirstTime(ScriptEnv &e) {
 }
 
 int AdlEngine_v2::o2_isRandomGT(ScriptEnv &e) {
+	OP_DEBUG_1("\t&& RAND() > %d", e.arg(1));
+
 	byte rnd = _random->getRandomNumber(255);
 
 	if (rnd > e.arg(1))
@@ -213,6 +217,8 @@ int AdlEngine_v2::o2_isRandomGT(ScriptEnv &e) {
 }
 
 int AdlEngine_v2::o2_isNounNotInRoom(ScriptEnv &e) {
+	OP_DEBUG_1("\t&& NO_SUCH_ITEMS_IN_ROOM(%s)", itemRoomStr(e.arg(1)).c_str());
+
 	Common::List<Item>::const_iterator item;
 
 	for (item = _state.items.begin(); item != _state.items.end(); ++item)
@@ -223,6 +229,8 @@ int AdlEngine_v2::o2_isNounNotInRoom(ScriptEnv &e) {
 }
 
 int AdlEngine_v2::o2_isCarryingSomething(ScriptEnv &e) {
+	OP_DEBUG_0("\t&& IS_CARRYING_SOMETHING()");
+
 	Common::List<Item>::const_iterator item;
 
 	for (item = _state.items.begin(); item != _state.items.end(); ++item)
@@ -232,6 +240,8 @@ int AdlEngine_v2::o2_isCarryingSomething(ScriptEnv &e) {
 }
 
 int AdlEngine_v2::o2_moveItem(ScriptEnv &e) {
+	OP_DEBUG_2("\tSET_ITEM_ROOM(%s, %s)", itemStr(e.arg(1)).c_str(), itemRoomStr(e.arg(2)).c_str());
+
 	byte room = roomArg(e.arg(2));
 
 	Item &item = getItem(e.arg(1));
@@ -245,6 +255,8 @@ int AdlEngine_v2::o2_moveItem(ScriptEnv &e) {
 }
 
 int AdlEngine_v2::o2_moveAllItems(ScriptEnv &e) {
+	OP_DEBUG_2("\tMOVE_ALL_ITEMS(%d %d)", roomStr(e.arg(1)), roomStr(e.arg(2)));
+
 	byte room1 = roomArg(e.arg(1));
 	byte room2 = roomArg(e.arg(2));
 
@@ -261,6 +273,8 @@ int AdlEngine_v2::o2_moveAllItems(ScriptEnv &e) {
 }
 
 int AdlEngine_v2::o2_save(ScriptEnv &e) {
+	OP_DEBUG_0("\tSAVE_GAME()");
+
 	int slot = askForSlot(_strings_v2.saveInsert);
 
 	if (slot < 0)
@@ -274,6 +288,8 @@ int AdlEngine_v2::o2_save(ScriptEnv &e) {
 }
 
 int AdlEngine_v2::o2_restore(ScriptEnv &e) {
+	OP_DEBUG_0("\tRESTORE_GAME()");
+
 	int slot = askForSlot(_strings_v2.restoreInsert);
 
 	if (slot < 0)
@@ -288,6 +304,8 @@ int AdlEngine_v2::o2_restore(ScriptEnv &e) {
 }
 
 int AdlEngine_v2::o2_placeItem(ScriptEnv &e) {
+	OP_DEBUG_4("\tPLACE_ITEM(%s, %s, (%d, %d))", itemStr(e.arg(1)).c_str(), itemRoomStr(e.arg(2)).c_str(), e.arg(3), e.arg(4));
+
 	Item &item = getItem(e.arg(1));
 
 	item.room = roomArg(e.arg(2));
@@ -299,6 +317,8 @@ int AdlEngine_v2::o2_placeItem(ScriptEnv &e) {
 }
 
 int AdlEngine_v2::o2_tellTime(ScriptEnv &e) {
+	OP_DEBUG_0("\tTELL_TIME()");
+
 	Common::String time = _strings_v2.time;
 
 	time.setChar(APPLECHAR('0') + _state.time.hours / 10, 12);
@@ -312,12 +332,15 @@ int AdlEngine_v2::o2_tellTime(ScriptEnv &e) {
 }
 
 int AdlEngine_v2::o2_setRoomFromVar(ScriptEnv &e) {
+	OP_DEBUG_1("\tROOM = VAR[%d]", e.arg(1));
 	getCurRoom().curPicture = getCurRoom().picture;
 	_state.room = getVar(e.arg(1));
 	return 1;
 }
 
 int AdlEngine_v2::o2_initDisk(ScriptEnv &e) {
+	OP_DEBUG_0("\tINIT_DISK()");
+
 	_display->printAsciiString("NOT REQUIRED\r");
 	return 0;
 }

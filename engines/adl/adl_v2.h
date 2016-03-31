@@ -28,8 +28,6 @@
 // Note: this version of ADL redraws only when necessary, but
 // this is not currently implemented.
 
-#define IDI_CUR_ROOM 0xfc
-
 namespace Common{
 class RandomSource;
 }

@@ -22,7 +22,6 @@
 
 #include "common/scummsys.h"
 #include "common/config-manager.h"
-#include "common/debug-channels.h"
 #include "common/debug.h"
 #include "common/error.h"
 #include "common/file.h"
@@ -896,31 +895,6 @@ bool AdlEngine::op_debug(const char *fmt, ...) const {
 	return false;
 }
 
-#define OP_DEBUG_0(F) do { \
-	if (DebugMan.isDebugChannelEnabled(kDebugChannelScript) && op_debug(F)) \
-		return 0; \
-} while (0)
-
-#define OP_DEBUG_1(F, P1) do { \
-	if (DebugMan.isDebugChannelEnabled(kDebugChannelScript) && op_debug(F, P1)) \
-		return 1; \
-} while (0)
-
-#define OP_DEBUG_2(F, P1, P2) do { \
-	if (DebugMan.isDebugChannelEnabled(kDebugChannelScript) && op_debug(F, P1, P2)) \
-		return 2; \
-} while (0)
-
-#define OP_DEBUG_3(F, P1, P2, P3) do { \
-	if (DebugMan.isDebugChannelEnabled(kDebugChannelScript) && op_debug(F, P1, P2, P3)) \
-		return 3; \
-} while (0)
-
-#define OP_DEBUG_4(F, P1, P2, P3, P4) do { \
-	if (DebugMan.isDebugChannelEnabled(kDebugChannelScript) && op_debug(F, P1, P2, P3, P4)) \
-		return 4; \
-} while (0)
-
 int AdlEngine::o1_isItemInRoom(ScriptEnv &e) {
 	OP_DEBUG_2("\t&& GET_ITEM_ROOM(%s) == %s", itemStr(e.arg(1)).c_str(), itemRoomStr(e.arg(2)).c_str());
 
@@ -1258,6 +1232,8 @@ Common::String AdlEngine::itemRoomStr(uint i) const {
 		return "CARRYING";
 	case IDI_VOID_ROOM:
 		return "GONE";
+	case IDI_CUR_ROOM:
+		return "HERE";
 	default:
 		return Common::String::format("%d", i);
 	}
