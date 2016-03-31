@@ -34,7 +34,8 @@ namespace GUI {
 
 enum {
 	kYesCmd = 'YES ',
-	kNoCmd = 'NO  '
+	kNoCmd = 'NO  ',
+	kCheckBoxCmd = 'CHK '
 };
 
 
@@ -88,7 +89,8 @@ UpdatesDialog::UpdatesDialog() : Dialog(30, 20, 260, 124) {
 	}
 
 	y += kLineHeight;
-	_updatesPopUpDesc = new StaticTextWidget(this, 10, y, _w, kLineHeight,  _("How often you would like to check for updates?"), Graphics::kTextAlignCenter);
+	_updatesCheckbox = new CheckboxWidget(this, 10, y, _w, kLineHeight, _("Check for updates automatically"), 0, kCheckBoxCmd);
+
 	y += kLineHeight + 3;
 
 	_updatesPopUp = new PopUpWidget(this, 10, y, _w - 20, g_gui.xmlEval()->getVar("Globals.PopUp.Height", kLineHeight));
@@ -100,49 +102,42 @@ UpdatesDialog::UpdatesDialog() : Dialog(30, 20, 260, 124) {
 
 	_updatesPopUp->setSelectedTag(Common::UpdateManager::kUpdateIntervalOneWeek);
 
-	_updatesPopUp->setVisible(false);
-	_updatesPopUpDesc->setVisible(false);
-
 	int yesButtonPos = (_w - (buttonWidth * 2)) / 2;
 	int noButtonPos = ((_w - (buttonWidth * 2)) / 2) + buttonWidth + 10;
 
 	_yesButton = new ButtonWidget(this, yesButtonPos, _h - buttonHeight - 8, buttonWidth, buttonHeight,
-				_("Yes"), 0, kYesCmd, Common::ASCII_RETURN);
+				_("Proceed"), 0, kYesCmd, Common::ASCII_RETURN);
 	_noButton = new ButtonWidget(this, noButtonPos, _h - buttonHeight - 8, buttonWidth, buttonHeight,
-				_("No"), 0, kNoCmd, Common::ASCII_ESCAPE);
+				_("Cancel"), 0, kNoCmd, Common::ASCII_ESCAPE);
 
-	_state = 0;
+	_updatesPopUp->setEnabled(false);
+	_yesButton->setEnabled(false);
 }
 
 void UpdatesDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
 	if (cmd == kYesCmd) {
-		if (_state == 0) {
-			_yesButton->setLabel(_("Proceed"));
-			_noButton->setLabel(_("Cancel"));
-			_updatesPopUp->setVisible(true);
-			_updatesPopUpDesc->setVisible(true);
+		ConfMan.setInt("updates_check", _updatesPopUp->getSelectedTag());
 
-			_state = 1;
-
-			draw();
-		} else {
-			ConfMan.setInt("updates_check", _updatesPopUp->getSelectedTag());
-
-			if (g_system->getUpdateManager()) {
-				if (_updatesPopUp->getSelectedTag() == Common::UpdateManager::kUpdateIntervalNotSupported) {
-					g_system->getUpdateManager()->setAutomaticallyChecksForUpdates(Common::UpdateManager::kUpdateStateDisabled);
-				} else {
-					g_system->getUpdateManager()->setAutomaticallyChecksForUpdates(Common::UpdateManager::kUpdateStateEnabled);
-					g_system->getUpdateManager()->setUpdateCheckInterval(_updatesPopUp->getSelectedTag());
-				}
+		if (g_system->getUpdateManager()) {
+			if (_updatesCheckbox->getState() == false ||
+					_updatesPopUp->getSelectedTag() == Common::UpdateManager::kUpdateIntervalNotSupported) {
+				g_system->getUpdateManager()->setAutomaticallyChecksForUpdates(Common::UpdateManager::kUpdateStateDisabled);
+			} else {
+				g_system->getUpdateManager()->setAutomaticallyChecksForUpdates(Common::UpdateManager::kUpdateStateEnabled);
+				g_system->getUpdateManager()->setUpdateCheckInterval(_updatesPopUp->getSelectedTag());
 			}
-			close();
 		}
+		close();
 	} else if (cmd == kNoCmd) {
 		ConfMan.setInt("updates_check", Common::UpdateManager::kUpdateIntervalNotSupported);
 		g_system->getUpdateManager()->setAutomaticallyChecksForUpdates(Common::UpdateManager::kUpdateStateDisabled);
 
 		close();
+	} else if (cmd == kCheckBoxCmd) {
+		_updatesPopUp->setEnabled(_updatesCheckbox->getState());
+		_yesButton->setEnabled(_updatesCheckbox->getState());
+
+		draw();
 	} else {
 		Dialog::handleCommand(sender, cmd, data);
 	}
