@@ -125,19 +125,19 @@ void GnapEngine::scene42_run() {
 		if (_toyUfoSequenceId == 0x872)
 			setGrabCursorSprite(-1);
 	} else if (_prevSceneNum == 41) {
-		initGnapPos(-1, 8, 7);
+		initGnapPos(-1, 8, kDirUpRight);
 		initBeaverPos(-1, 9, 5);
 		endSceneInit();
 		gnapWalkTo(2, 8, -1, 0x107B9, 1);
 		platypusWalkTo(1, 8, -1, 0x107C2, 1);
 	} else if (_prevSceneNum == 43) {
-		initGnapPos(11, 8, 7);
+		initGnapPos(11, 8, kDirUpRight);
 		initBeaverPos(11, 9, 5);
 		endSceneInit();
 		gnapWalkTo(8, 8, -1, 0x107BA, 1);
 		platypusWalkTo(9, 8, -1, 0x107D2, 1);
 	} else {
-		initGnapPos(5, 11, 7);
+		initGnapPos(5, 11, kDirUpRight);
 		initBeaverPos(6, 11, 5);
 		endSceneInit();
 		gnapWalkTo(5, 8, -1, 0x107BA, 1);
@@ -266,7 +266,7 @@ void GnapEngine::scene42_run() {
 						playGnapScratchingHead(_hotspotsWalkPos[kHSBBQVendor].x - 1, 0);
 						break;
 					case TALK_CURSOR:
-						_gnapIdleFacing = 7;
+						_gnapIdleFacing = kDirUpRight;
 						gnapWalkTo(_hotspotsWalkPos[kHSBBQVendor].x, _hotspotsWalkPos[kHSBBQVendor].y, 0, getGnapSequenceId(gskBrainPulsating, 0, 0) | 0x10000, 1);
 						_gnapActionStatus = kASTalkBBQVendor;
 						break;

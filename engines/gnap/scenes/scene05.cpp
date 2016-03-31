@@ -96,7 +96,7 @@ void GnapEngine::scene05_run() {
 	queueInsertDeviceIcon();
 	
 	if (_prevSceneNum != 6 && _prevSceneNum != 36) {
-		initGnapPos(-1, 8, 1);
+		initGnapPos(-1, 8, kDirBottomRight);
 		if (isFlag(0))
 			initBeaverPos(-1, 9, 0);
 		endSceneInit();
@@ -104,7 +104,7 @@ void GnapEngine::scene05_run() {
 			platypusWalkTo(2, 8, -1, 0x107C2, 1);
 		gnapWalkTo(2, 9, -1, 0x107B9, 1);
 	} else {
-		initGnapPos(6, 8, 1);
+		initGnapPos(6, 8, kDirBottomRight);
 		if (isFlag(0))
 			initBeaverPos(7, 9, 0);
 		endSceneInit();
@@ -193,7 +193,7 @@ void GnapEngine::scene05_run() {
 		case kHSChicken:
 			if (_gnapActionStatus < 0) {
 				if (_grabCursorSpriteIndex == kItemTwig) {
-					_gnapIdleFacing = 7;
+					_gnapIdleFacing = kDirUpRight;
 					gnapWalkTo(_hotspotsWalkPos[_sceneClickedHotspot].x, _hotspotsWalkPos[_sceneClickedHotspot].y + 1,
 						0, getGnapSequenceId(gskIdle, 0, 0) | 0x10000, 1);
 					_gnapActionStatus = kASUseTwigWithChicken;
@@ -205,12 +205,12 @@ void GnapEngine::scene05_run() {
 						playGnapMoan2(9, 7);
 						break;
 					case GRAB_CURSOR:
-						_gnapIdleFacing = 1;
+						_gnapIdleFacing = kDirBottomRight;
 						gnapWalkTo(_hotspotsWalkPos[5].x, _hotspotsWalkPos[5].y, 0, getGnapSequenceId(gskIdle, 0, 0) | 0x10000, 1);
 						_gnapActionStatus = kASGrabChicken;
 						break;
 					case TALK_CURSOR:
-						_gnapIdleFacing = 1;
+						_gnapIdleFacing = kDirBottomRight;
 						gnapWalkTo(_hotspotsWalkPos[5].x, _hotspotsWalkPos[5].y, 0, getGnapSequenceId(gskBrainPulsating, 0, 0) | 0x10000, 1);
 						_gnapActionStatus = kASTalkChicken;
 						break;
@@ -232,7 +232,7 @@ void GnapEngine::scene05_run() {
 						playGnapMoan2(2, 4);
 						break;
 					case GRAB_CURSOR:
-						_gnapIdleFacing = 3;
+						_gnapIdleFacing = kDirBottomLeft;
 						gnapWalkTo(_hotspotsWalkPos[3].x, _hotspotsWalkPos[3].y, 0, getGnapSequenceId(gskIdle, 0, 0) | 0x10000, 1);
 						_gnapActionStatus = kASGrabLadder;
 						break;
@@ -267,7 +267,7 @@ void GnapEngine::scene05_run() {
 						playGnapScratchingHead(7, 4);
 						break;
 					case GRAB_CURSOR:
-						_gnapIdleFacing = 7;
+						_gnapIdleFacing = kDirUpRight;
 						gnapWalkTo(_hotspotsWalkPos[_sceneClickedHotspot].x, _hotspotsWalkPos[_sceneClickedHotspot].y,
 							0, getGnapSequenceId(gskIdle, 0, 0) | 0x10000, 1);
 						_gnapActionStatus = kASTryPickPadlock;

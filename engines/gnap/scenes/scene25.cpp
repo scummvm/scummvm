@@ -121,13 +121,13 @@ void GnapEngine::scene25_run() {
 	queueInsertDeviceIcon();
 	
 	if (_prevSceneNum == 24) {
-		initGnapPos(5, 11, 5);
+		initGnapPos(5, 11, kDirUpLeft);
 		initBeaverPos(6, 11, 4);
 		endSceneInit();
 		gnapWalkTo(5, 7, -1, 0x107BA, 1);
 		platypusWalkTo(6, 7, -1, 0x107C2, 1);
 	} else {
-		initGnapPos(5, 6, 1);
+		initGnapPos(5, 6, kDirBottomRight);
 		initBeaverPos(6, 6, 0);
 		endSceneInit();
 		gnapWalkTo(5, 8, -1, 0x107B9, 1);
@@ -195,7 +195,7 @@ void GnapEngine::scene25_run() {
 						_s25_nextTicketVendorSequenceId = (getRandom(2) == 1) ? 0x59 : 0x56;
 						break;
 					case TALK_CURSOR:
-						_gnapIdleFacing = 7;
+						_gnapIdleFacing = kDirUpRight;
 						gnapWalkTo(_hotspotsWalkPos[kHSTicketVendor].x, _hotspotsWalkPos[kHSTicketVendor].y, 0, getGnapSequenceId(gskBrainPulsating, 0, 0) | 0x10000, 1);
 						_gnapActionStatus = kASTalkTicketVendor;
 						break;
@@ -249,11 +249,11 @@ void GnapEngine::scene25_run() {
 					case LOOK_CURSOR:
 						gnapWalkTo(_hotspotsWalkPos[_sceneClickedHotspot].x, _hotspotsWalkPos[_sceneClickedHotspot].y, -1, -1, 1);
 						if (_sceneClickedHotspot == 5 || _sceneClickedHotspot == 6)
-							_gnapIdleFacing = 5;
+							_gnapIdleFacing = kDirUpLeft;
 						else if (_sceneClickedHotspot == 8)
-							_gnapIdleFacing = 1;
+							_gnapIdleFacing = kDirBottomRight;
 						else
-							_gnapIdleFacing = 7;
+							_gnapIdleFacing = kDirUpRight;
 						playGnapIdle(0, 0);
 						scene25_playAnims(8 - _sceneClickedHotspot + 1);
 						break;

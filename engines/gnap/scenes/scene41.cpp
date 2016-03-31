@@ -133,7 +133,7 @@ void GnapEngine::scene41_run() {
 	if (isFlag(12)) {
 		_gnapSequenceId = 0x120;
 		_gnapSequenceDatNum = 0;
-		_gnapIdleFacing = 7;
+		_gnapIdleFacing = kDirUpRight;
 		_gnapX = 7;
 		_gnapY = 7;
 		_gnapId = 140;
@@ -142,19 +142,19 @@ void GnapEngine::scene41_run() {
 		initBeaverPos(8, 10, 3);
 		endSceneInit();
 	} else if (_prevSceneNum == 45) {
-		initGnapPos(-1, 8, 7);
+		initGnapPos(-1, 8, kDirUpRight);
 		initBeaverPos(-2, 8, 5);
 		endSceneInit();
 		platypusWalkTo(1, 8, -1, 0x107C2, 1);
 		gnapWalkTo(2, 8, -1, 0x107B9, 1);
 	} else if (_prevSceneNum == 42) {
-		initGnapPos(11, 8, 7);
+		initGnapPos(11, 8, kDirUpRight);
 		initBeaverPos(11, 9, 5);
 		endSceneInit();
 		gnapWalkTo(8, 8, -1, 0x107BA, 1);
 		platypusWalkTo(9, 8, -1, 0x107D2, 1);
 	} else {
-		initGnapPos(5, 8, 1);
+		initGnapPos(5, 8, kDirBottomRight);
 		initBeaverPos(6, 8, 3);
 		endSceneInit();
 	}
@@ -287,7 +287,7 @@ void GnapEngine::scene41_run() {
 						playGnapImpossible(0, 0);
 						break;
 					case TALK_CURSOR:
-						_gnapIdleFacing = 7;
+						_gnapIdleFacing = kDirUpRight;
 						gnapWalkTo(4, 7, 0, getGnapSequenceId(gskBrainPulsating, 0, 0) | 0x10000, 1);
 						_gnapActionStatus = kASTalkToyVendor;
 						break;
@@ -301,7 +301,7 @@ void GnapEngine::scene41_run() {
 			case kHSKid:
 				if (_grabCursorSpriteIndex == kItemChickenBucket) {
 					gnapWalkTo(7, 7, 0, 0x107BB, 1);
-					_gnapIdleFacing = 7;
+					_gnapIdleFacing = kDirUpRight;
 					_gnapActionStatus = kASUseChickenBucketWithKid;
 				} else if (_grabCursorSpriteIndex >= 0) {
 					playGnapShowCurrItem(7, 7, 8, 0);
@@ -312,11 +312,11 @@ void GnapEngine::scene41_run() {
 						break;
 					case GRAB_CURSOR:
 						gnapWalkTo(7, 7, 0, 0x107BB, 1);
-						_gnapIdleFacing = 7;
+						_gnapIdleFacing = kDirUpRight;
 						_gnapActionStatus = kASGrabKid;
 						break;
 					case TALK_CURSOR:
-						_gnapIdleFacing = 7;
+						_gnapIdleFacing = kDirUpRight;
 						gnapWalkTo(7, 7, 0, getGnapSequenceId(gskBrainPulsating, 0, 0) | 0x10000, 1);
 						break;
 					case PLAT_CURSOR:

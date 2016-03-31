@@ -91,7 +91,7 @@ void GnapEngine::scene03_run() {
 	
 	_s03_platypusHypnotized = false;
 	
-	initGnapPos(3, 4, 1);
+	initGnapPos(3, 4, kDirBottomRight);
 	
 	_gameSys->insertSequence(0x1C6, 253, 0, 0, kSeqNone, 0, 0, 0);
 	
@@ -261,7 +261,7 @@ void GnapEngine::scene03_run() {
 						if (_s03_platypusHypnotized) {
 							playGnapBrainPulsating(8, 4);
 						} else {
-							_gnapIdleFacing = 1;
+							_gnapIdleFacing = kDirBottomRight;
 							gnapWalkTo(_hotspotsWalkPos[4].x, _hotspotsWalkPos[4].y, 0, getGnapSequenceId(gskIdle, 0, 0) | 0x10000, 1);
 							if (_s03_platypusScared)
 								_gnapActionStatus = kASHypnotizeScaredPlat;
@@ -462,7 +462,7 @@ void GnapEngine::scene03_updateAnimations() {
 			_gameSys->insertSequence(_s03_nextPlatSequenceId, 99, _beaverSequenceId | (_beaverSequenceDatNum << 16), 99, kSeqSyncWait, 0, 0, 0);
 			_gnapSequenceId = 0x1B5;
 			_gnapSequenceDatNum = 0;
-			_gnapIdleFacing = 0;
+			_gnapIdleFacing = kDirNone;
 			_beaverSequenceId = _s03_nextPlatSequenceId;
 			_beaverSequenceDatNum = 0;
 			_gameSys->setAnimation(_s03_nextPlatSequenceId, 99, 1);
@@ -477,7 +477,7 @@ void GnapEngine::scene03_updateAnimations() {
 			_gnapId = 20 * _gnapY;
 			_gnapSequenceId = 0x1B6;
 			_gnapSequenceDatNum = 0;
-			_gnapIdleFacing = 0;
+			_gnapIdleFacing = kDirNone;
 			_gnapActionStatus = kASFreePlatypusDone;
 			_s03_nextPlatSequenceId = -1;
 		} else if (_s03_nextPlatSequenceId == 0x1C2 && !_s03_platypusScared) {

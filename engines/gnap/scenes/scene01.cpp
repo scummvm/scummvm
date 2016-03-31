@@ -102,7 +102,7 @@ void GnapEngine::scene01_run() {
 	queueInsertDeviceIcon();
 
 	if (_prevSceneNum == 2) {
-		initGnapPos(11, 6, 3);
+		initGnapPos(11, 6, kDirBottomLeft);
 		if (isFlag(0))
 			initBeaverPos(12, 6, 4);
 		endSceneInit();
@@ -110,7 +110,7 @@ void GnapEngine::scene01_run() {
 			platypusWalkTo(9, 6, -1, 0x107C2, 1);
 		gnapWalkTo(8, 6, -1, 0x107B9, 1);
 	} else {
-		initGnapPos(1, 6, 1);
+		initGnapPos(1, 6, kDirBottomRight);
 		if (isFlag(0))
 			initBeaverPos(1, 7, 0);
 		endSceneInit();
@@ -170,7 +170,7 @@ void GnapEngine::scene01_run() {
 				} else {
 					switch (_verbCursor) {
 					case LOOK_CURSOR:
-						_gnapIdleFacing = 5;
+						_gnapIdleFacing = kDirUpLeft;
 						if (gnapWalkTo(_hotspotsWalkPos[4].x, _hotspotsWalkPos[4].y, 0, getGnapSequenceId(gskIdle, 0, 0) | 0x10000, 1))
 							_gnapActionStatus = kASLookSpaceship;
 						break;
@@ -213,17 +213,17 @@ void GnapEngine::scene01_run() {
 				} else {
 					switch (_verbCursor) {
 					case LOOK_CURSOR:
-						_gnapIdleFacing = 7;
+						_gnapIdleFacing = kDirUpRight;
 						gnapWalkTo(_hotspotsWalkPos[3].x, _hotspotsWalkPos[3].y, 0, getGnapSequenceId(gskIdle, 7, 2) | 0x10000, 1);
 						_gnapActionStatus = kASLookPigs;
 						break;
 					case GRAB_CURSOR:
-						_gnapIdleFacing = 7;
+						_gnapIdleFacing = kDirUpRight;
 						gnapWalkTo(_hotspotsWalkPos[3].x, _hotspotsWalkPos[3].y, 0, getGnapSequenceId(gskIdle, 7, 2) | 0x10000, 1);
 						_gnapActionStatus = kASUsePigs;
 						break;
 					case TALK_CURSOR:
-						_gnapIdleFacing = 7;
+						_gnapIdleFacing = kDirUpRight;
 						gnapWalkTo(_hotspotsWalkPos[3].x, _hotspotsWalkPos[3].y, 0, getGnapSequenceId(gskBrainPulsating, 7, 2) | 0x10000, 1);
 						_gnapActionStatus = kASLookPigs;
 						break;

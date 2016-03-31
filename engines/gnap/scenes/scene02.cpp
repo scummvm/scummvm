@@ -84,7 +84,6 @@ void GnapEngine::scene02_updateHotspots() {
 }
 
 void GnapEngine::scene02_run() {
-
 	playSound(0x1091C, 1);
 	startSoundTimerC(6);
 
@@ -100,7 +99,7 @@ void GnapEngine::scene02_run() {
 	
 	switch (_prevSceneNum) {
 	case 3:
-		initGnapPos(11, 6, 3);
+		initGnapPos(11, 6, kDirBottomLeft);
 		if (isFlag(0))
 			initBeaverPos(12, 6, 4);
 		endSceneInit();
@@ -109,7 +108,7 @@ void GnapEngine::scene02_run() {
 		gnapWalkTo(8, 6, -1, 0x107BA, 1);
 		break;
 	case 4:
-		initGnapPos(_hotspotsWalkPos[6].x, _hotspotsWalkPos[6].y, 3);
+		initGnapPos(_hotspotsWalkPos[6].x, _hotspotsWalkPos[6].y, kDirBottomLeft);
 		if (isFlag(0))
 			initBeaverPos(_hotspotsWalkPos[6].x + 1, _hotspotsWalkPos[6].y, 4);
 		endSceneInit();
@@ -121,18 +120,18 @@ void GnapEngine::scene02_run() {
 		break;
 	case 47:
 		clearFlag(25);
-		initGnapPos(5, 6, 3);
+		initGnapPos(5, 6, kDirBottomLeft);
 		initBeaverPos(6, 7, 4);
 		endSceneInit();
 		break;
 	case 49:
-		initGnapPos(5, 6, 1);
+		initGnapPos(5, 6, kDirBottomRight);
 		if (isFlag(0))
 			initBeaverPos(6, 7, 0);
 		endSceneInit();
 		break;
 	default:
-		initGnapPos(-1, 6, 1);
+		initGnapPos(-1, 6, kDirBottomRight);
 		if (isFlag(0))
 			initBeaverPos(-1, 7, 0);
 		endSceneInit();
@@ -194,7 +193,7 @@ void GnapEngine::scene02_run() {
 		case kHSChicken:
 			if (_gnapActionStatus < 0) {
 				if (_grabCursorSpriteIndex == kItemTwig) {
-					_gnapIdleFacing = 7;
+					_gnapIdleFacing = kDirUpRight;
 					gnapWalkTo(_hotspotsWalkPos[_sceneClickedHotspot].x, _hotspotsWalkPos[_sceneClickedHotspot].y + 1,
 						0, getGnapSequenceId(gskIdle, 0, 0) | 0x10000, 1);
 					_gnapActionStatus = kASUseTwigWithChicken;
@@ -206,14 +205,14 @@ void GnapEngine::scene02_run() {
 						playGnapMoan2(9, 8);
 						break;
 					case GRAB_CURSOR:
-						_gnapIdleFacing = 1;
+						_gnapIdleFacing = kDirBottomRight;
 						if (gnapWalkTo(_hotspotsWalkPos[1].x, _hotspotsWalkPos[1].y, 0, getGnapSequenceId(gskIdle, 0, 0) | 0x10000, 1))
 							_gnapActionStatus = kASGrabChicken;
 						else
 							_gnapActionStatus = -1;
 						break;
 					case TALK_CURSOR:
-						_gnapIdleFacing = 1;
+						_gnapIdleFacing = kDirBottomRight;
 						gnapWalkTo(_hotspotsWalkPos[1].x, _hotspotsWalkPos[1].y, 0, getGnapSequenceId(gskBrainPulsating, 0, 0) | 0x10000, 1);
 						_gnapActionStatus = kASTalkChicken;
 						break;
@@ -258,7 +257,7 @@ void GnapEngine::scene02_run() {
 									_gnapActionStatus = kASUseTruckNoGas;
 							}
 						} else {
-							_gnapIdleFacing = 4;
+							_gnapIdleFacing = kDirUnk4;
 							if (gnapWalkTo(_hotspotsWalkPos[3].x, _hotspotsWalkPos[3].y, 0, getGnapSequenceId(gskIdle, 2, 2) | 0x10000, 1))
 								_gnapActionStatus = kASUseTruckNoKeys;
 						}
@@ -282,7 +281,7 @@ void GnapEngine::scene02_run() {
 						playGnapMoan2(2, 4);
 						break;
 					case GRAB_CURSOR:
-						_gnapIdleFacing = 7;
+						_gnapIdleFacing = kDirUpRight;
 						gnapWalkTo(_hotspotsWalkPos[4].x, _hotspotsWalkPos[4].y, 0, getGnapSequenceId(gskIdle, 0, 0) | 0x10000, 1);
 						_gnapActionStatus = kASGrabTruckGrill;
 						break;

@@ -77,26 +77,26 @@ void GnapEngine::scene33_run() {
 
 	switch (_prevSceneNum) {
 	case 34:
-		initGnapPos(11, 7, 3);
+		initGnapPos(11, 7, kDirBottomLeft);
 		initBeaverPos(12, 7, 4);
 		endSceneInit();
 		gnapWalkTo(8, 7, -1, 0x107BA, 1);
 		platypusWalkTo(9, 7, -1, 0x107D2, 1);
 		break;
 	case 37:
-		initGnapPos(7, 7, 1);
+		initGnapPos(7, 7, kDirBottomRight);
 		initBeaverPos(8, 7, 0);
 		endSceneInit();
 		break;
 	case 32:
-		initGnapPos(-1, 6, 1);
+		initGnapPos(-1, 6, kDirBottomRight);
 		initBeaverPos(-1, 7, 0);
 		endSceneInit();
 		platypusWalkTo(2, 7, -1, 0x107C2, 1);
 		gnapWalkTo(2, 8, -1, 0x107B9, 1);
 		break;
 	default:
-		initGnapPos(3, 7, 1);
+		initGnapPos(3, 7, kDirBottomRight);
 		initBeaverPos(2, 7, 0);
 		endSceneInit();
 		break;
@@ -151,14 +151,14 @@ void GnapEngine::scene33_run() {
 				} else {
 					switch (_verbCursor) {
 					case GRAB_CURSOR:
-						_gnapIdleFacing = 1;
+						_gnapIdleFacing = kDirBottomRight;
 						if (gnapWalkTo(_hotspotsWalkPos[kHSChicken].x, _hotspotsWalkPos[kHSChicken].y, 0, getGnapSequenceId(gskIdle, 0, 0) | 0x10000, 1))
 							_gnapActionStatus = kASUseChicken;
 						else
 							_gnapActionStatus = -1;
 						break;
 					case TALK_CURSOR:
-						_gnapIdleFacing = 1;
+						_gnapIdleFacing = kDirBottomRight;
 						gnapWalkTo(_hotspotsWalkPos[kHSChicken].x, _hotspotsWalkPos[kHSChicken].y, 0, getGnapSequenceId(gskBrainPulsating, 0, 0) | 0x10000, 1);
 						_gnapActionStatus = kASTalkChicken;
 						break;

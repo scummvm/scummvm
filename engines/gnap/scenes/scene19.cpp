@@ -110,7 +110,7 @@ void GnapEngine::scene19_run() {
 		_gameSys->insertSequence(0x69, 19, 0, 0, kSeqNone, 0, 0, 0);
 
 	if (isFlag(26)) {
-		initGnapPos(3, 6, 1);
+		initGnapPos(3, 6, kDirBottomRight);
 		_s19_currShopAssistantSequenceId = kS19ShopAssistantSequenceIds[getRandom(5)];
 		_s19_nextShopAssistantSequenceId = _s19_currShopAssistantSequenceId;
 		_gameSys->setAnimation(_s19_currShopAssistantSequenceId, 20, 4);
@@ -126,7 +126,7 @@ void GnapEngine::scene19_run() {
 		_gameSys->setAnimation(0x6D, 20, 4);
 		_gameSys->insertSequence(_s19_currShopAssistantSequenceId, 20, 0, 0, kSeqNone, 0, 0, 0);
 		_timers[6] = getRandom(40) + 50;
-		initGnapPos(3, 6, 1);
+		initGnapPos(3, 6, kDirBottomRight);
 		initBeaverPos(4, 6, 0);
 		endSceneInit();
 		gnapWalkTo(4, 9, -1, 0x107B9, 1);
@@ -227,7 +227,7 @@ void GnapEngine::scene19_run() {
 						playGnapScratchingHead(6, 2);
 						break;
 					case TALK_CURSOR:
-						_gnapIdleFacing = 7;
+						_gnapIdleFacing = kDirUpRight;
 						gnapWalkTo(_hotspotsWalkPos[_sceneClickedHotspot].x, _hotspotsWalkPos[_sceneClickedHotspot].y, 0, getGnapSequenceId(gskBrainPulsating, 0, 0) | 0x10000, 1);
 						_gnapActionStatus = kASTalkShopAssistant;
 						break;

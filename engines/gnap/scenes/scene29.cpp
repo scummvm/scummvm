@@ -85,13 +85,13 @@ void GnapEngine::scene29_run() {
 	_gameSys->insertSequence(0xF5, 38, 0, 0, kSeqLoop, 0, 0, 0);
 
 	if (_prevSceneNum == 27) {
-		initGnapPos(12, 7, 1);
+		initGnapPos(12, 7, kDirBottomRight);
 		initBeaverPos(12, 8, 0);
 		endSceneInit();
 		gnapWalkTo(8, 7, -1, 0x107B9, 1);
 		platypusWalkTo(8, 8, -1, 0x107C2, 1);
 	} else {
-		initGnapPos(-1, 7, 1);
+		initGnapPos(-1, 7, kDirBottomRight);
 		initBeaverPos(-2, 7, 0);
 		endSceneInit();
 		gnapWalkTo(2, 7, -1, 0x107B9, 1);
@@ -144,7 +144,7 @@ void GnapEngine::scene29_run() {
 		case kHSMonkey:
 			if (_gnapActionStatus < 0) {
 				if (_grabCursorSpriteIndex == kItemBanana) {
-					_gnapIdleFacing = 1;
+					_gnapIdleFacing = kDirBottomRight;
 					gnapWalkTo(_hotspotsWalkPos[kHSMonkey].x, _hotspotsWalkPos[kHSMonkey].y, 0, getGnapSequenceId(gskIdle, 0, 0) | 0x10000, 1);
 					_gnapActionStatus = kASUseBananaWithMonkey;
 					_newSceneNum = 51;

@@ -101,19 +101,19 @@ void GnapEngine::scene46_run() {
 		_gameSys->insertSequence(_toyUfoSequenceId | 0x10000, _toyUfoId, 0, 0, kSeqNone, 0, _toyUfoX - 274, _toyUfoY - 128);
 		endSceneInit();
 	} else if (_prevSceneNum == 44) {
-		initGnapPos(-1, 8, 7);
+		initGnapPos(-1, 8, kDirUpRight);
 		initBeaverPos(-1, 8, 5);
 		endSceneInit();
 		platypusWalkTo(1, 8, -1, 0x107C2, 1);
 		gnapWalkTo(2, 8, -1, 0x107B9, 1);
 	} else if (_prevSceneNum == 45) {
-		initGnapPos(11, 8, 7);
+		initGnapPos(11, 8, kDirUpRight);
 		initBeaverPos(12, 8, 5);
 		endSceneInit();
 		gnapWalkTo(8, 8, -1, 0x107BA, 1);
 		platypusWalkTo(9, 8, -1, 0x107D2, 1);
 	} else {
-		initGnapPos(5, 11, 7);
+		initGnapPos(5, 11, kDirUpRight);
 		initBeaverPos(6, 11, 5);
 		endSceneInit();
 		platypusWalkTo(5, 8, -1, 0x107C2, 1);
@@ -203,7 +203,7 @@ void GnapEngine::scene46_run() {
 						playGnapMoan1(_hotspotsWalkPos[kHSSackGuy].x + 1, 0);
 						break;
 					case TALK_CURSOR:
-						_gnapIdleFacing = 5;
+						_gnapIdleFacing = kDirUpLeft;
 						gnapWalkTo(_hotspotsWalkPos[kHSSackGuy].x, _hotspotsWalkPos[kHSSackGuy].y, 0, getGnapSequenceId(gskBrainPulsating, 0, 0) | 0x10000, 1);
 						_gnapActionStatus = 2;
 						break;
@@ -224,7 +224,7 @@ void GnapEngine::scene46_run() {
 						playGnapMoan1(_hotspotsWalkPos[kHSItchyGuy].x - 1, 0);
 						break;
 					case TALK_CURSOR:
-						_gnapIdleFacing = 7;
+						_gnapIdleFacing = kDirUpRight;
 						gnapWalkTo(_hotspotsWalkPos[kHSItchyGuy].x, _hotspotsWalkPos[kHSItchyGuy].y, 0, getGnapSequenceId(gskBrainPulsating, 0, 0) | 0x10000, 1);
 						_gnapActionStatus = 1;
 						break;

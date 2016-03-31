@@ -106,7 +106,7 @@ void GnapEngine::scene06_run() {
 	
 	queueInsertDeviceIcon();
 	
-	initGnapPos(5, 12, 1);
+	initGnapPos(5, 12, kDirBottomRight);
 	initBeaverPos(6, 12, 0);
 	endSceneInit();
 	
@@ -228,7 +228,7 @@ void GnapEngine::scene06_run() {
 					_hotspots[kHSWalkArea5]._flags |= SF_WALKABLE;
 					gnapWalkTo(_hotspotsWalkPos[3].x, _hotspotsWalkPos[3].y, 0, 0x107BC, 1);
 					_hotspots[kHSWalkArea5]._flags &= ~SF_WALKABLE;
-					_gnapIdleFacing = 5;
+					_gnapIdleFacing = kDirUpLeft;
 					platypusWalkTo(6, 8, 1, 0x107C2, 1);
 					_beaverFacing = 0;
 					_gnapActionStatus = kASUseTwigOnHorse;
@@ -244,7 +244,7 @@ void GnapEngine::scene06_run() {
 						if (_s06_horseTurnedBack) {
 							gnapWalkTo(_hotspotsWalkPos[3].x, _hotspotsWalkPos[3].y, 0, getGnapSequenceId(gskBrainPulsating, 3, 2) | 0x10000, 1);
 						} else {
-							_gnapIdleFacing = 3;
+							_gnapIdleFacing = kDirBottomLeft;
 							_hotspots[kHSWalkArea5]._flags |= SF_WALKABLE;
 							gnapWalkTo(_hotspotsWalkPos[3].x, _hotspotsWalkPos[3].y, 0, getGnapSequenceId(gskBrainPulsating, 0, 0) | 0x10000, 1);
 							_hotspots[kHSWalkArea5]._flags &= ~SF_WALKABLE;

@@ -84,13 +84,13 @@ void GnapEngine::scene24_run() {
 	queueInsertDeviceIcon();
 	
 	if (_prevSceneNum == 20) {
-		initGnapPos(1, 8, 1);
+		initGnapPos(1, 8, kDirBottomRight);
 		initBeaverPos(2, 8, 0);
 		endSceneInit();
 		gnapWalkTo(1, 9, -1, 0x107B9, 1);
 		platypusWalkTo(2, 9, -1, 0x107C2, 1);
 	} else {
-		initGnapPos(8, 8, 3);
+		initGnapPos(8, 8, kDirBottomLeft);
 		initBeaverPos(8, 8, 4);
 		endSceneInit();
 		gnapWalkTo(2, 8, -1, 0x107BA, 1);
@@ -156,7 +156,7 @@ void GnapEngine::scene24_run() {
 			if (_gnapActionStatus < 0) {
 				_isLeavingScene = true;
 				_newSceneNum = 20;
-				_gnapIdleFacing = 7;
+				_gnapIdleFacing = kDirUpRight;
 				gnapWalkTo(_hotspotsWalkPos[kHSExitOutsideGrubCity].x, _hotspotsWalkPos[kHSExitOutsideGrubCity].y, 0, getGnapSequenceId(gskIdle, 0, 0) | 0x10000, 1);
 				_gnapActionStatus = kASLeaveScene;
 				platypusWalkTo(_hotspotsWalkPos[kHSExitOutsideGrubCity].x + 1, _hotspotsWalkPos[kHSExitOutsideGrubCity].y, -1, 0x107C2, 1);

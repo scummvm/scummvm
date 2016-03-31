@@ -84,13 +84,13 @@ void GnapEngine::scene10_run() {
 	queueInsertDeviceIcon();
 	
 	if (_prevSceneNum == 9) {
-		initGnapPos(11, 8, 3);
+		initGnapPos(11, 8, kDirBottomLeft);
 		initBeaverPos(12, 7, 4);
 		endSceneInit();
 		gnapWalkTo(9, 8, -1, 0x107BA, 1);
 		platypusWalkTo(9, 7, -1, 0x107D2, 1);
 	} else {
-		initGnapPos(-1, 7, 1);
+		initGnapPos(-1, 7, kDirBottomRight);
 		initBeaverPos(-2, 8, 0);
 		endSceneInit();
 		gnapWalkTo(1, 7, -1, 0x107B9, 1);
@@ -173,10 +173,10 @@ void GnapEngine::scene10_run() {
 					break;
 				case GRAB_CURSOR:
 					playGnapImpossible(0, 0);
-					_gnapIdleFacing = 1;
+					_gnapIdleFacing = kDirBottomRight;
 					break;
 				case TALK_CURSOR:
-					_gnapIdleFacing = 7;
+					_gnapIdleFacing = kDirUpRight;
 					gnapActionIdle(0x10C);
 					gnapWalkTo(4, 8, 0, getGnapSequenceId(gskBrainPulsating, 0, 0) | 0x10000, 1);
 					_gnapActionStatus = kASAnnoyCook;
@@ -279,7 +279,7 @@ void GnapEngine::scene10_run() {
 					_gameSys->insertSequence(0x10E, 120, makeRid(_gnapSequenceDatNum, _gnapSequenceId), _gnapId, kSeqSyncWait, 0, 0, 0);
 					_gnapSequenceId = 0x10E;
 					_gnapId = 120;
-					_gnapIdleFacing = 7;
+					_gnapIdleFacing = kDirUpRight;
 					_gnapSequenceDatNum = 0;
 					_gnapX = 9;
 					_gnapY = 6;
@@ -475,7 +475,7 @@ void GnapEngine::scene10_updateAnimations() {
 			_timers[3] = 300;
 			_gameSys->insertSequence(0x10C, _gnapId, makeRid(_gnapSequenceDatNum, _gnapSequenceId), _gnapId, kSeqSyncWait, 0, 0, 0);
 			_gnapSequenceId = 0x10C;
-			_gnapIdleFacing = 7;
+			_gnapIdleFacing = kDirUpRight;
 			_gnapSequenceDatNum = 0;
 			_gnapActionStatus = -1;
 			_beaverActionStatus = -1;

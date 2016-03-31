@@ -72,13 +72,13 @@ void GnapEngine::scene32_run() {
 	_timers[4] = getRandom(100) + 300;
 
 	if (_prevSceneNum == 33) {
-		initGnapPos(11, 6, 3);
+		initGnapPos(11, 6, kDirBottomLeft);
 		initBeaverPos(12, 6, 4);
 		endSceneInit();
 		platypusWalkTo(9, 6, -1, 0x107D2, 1);
 		gnapWalkTo(8, 6, -1, 0x107BA, 1);
 	} else {
-		initGnapPos(1, 6, 1);
+		initGnapPos(1, 6, kDirBottomRight);
 		initBeaverPos(1, 7, 0);
 		endSceneInit();
 	}

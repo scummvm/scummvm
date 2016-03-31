@@ -94,12 +94,12 @@ void GnapEngine::scene28_run() {
 			_gameSys->insertSequence(_s28_currClownSequenceId, 39, 0, 0, kSeqNone, 0, 0, 0);
 			_timers[4] = getRandom(20) + 80;
 		}
-		initGnapPos(8, 8, 3);
+		initGnapPos(8, 8, kDirBottomLeft);
 		initBeaverPos(9, 8, 4);
 		endSceneInit();
 	} else {
 		_gameSys->insertSequence(0x11B, 39, 0, 0, kSeqNone, 0, 0, 0);
-		initGnapPos(8, 8, 3);
+		initGnapPos(8, 8, kDirBottomLeft);
 		initBeaverPos(9, 8, 4);
 		endSceneInit();
 		playSequences(0xF7, 0x121, 0x122, 0x123);
@@ -176,7 +176,7 @@ void GnapEngine::scene28_run() {
 								_gnapActionStatus = kASGrabHornSuccess;
 							}
 						} else {
-							_gnapIdleFacing = 5;
+							_gnapIdleFacing = kDirUpLeft;
 							gnapWalkTo(2, 8, 0, 0x107BB, 1);
 							_hotspots[kHSWalkArea1]._flags |= SF_WALKABLE;
 							gnapWalkTo(_hotspotsWalkPos[kHSHorn].x, _hotspotsWalkPos[kHSHorn].y, 0, 0x107BB, 1);
@@ -201,13 +201,13 @@ void GnapEngine::scene28_run() {
 					else
 						playGnapImpossible(0, 0);
 				} else if (_grabCursorSpriteIndex == kItemBucketWithBeer) {
-					_gnapIdleFacing = 5;
+					_gnapIdleFacing = kDirUpLeft;
 					gnapWalkTo(_hotspotsWalkPos[kHSClown].x, _hotspotsWalkPos[kHSClown].y, 0, 0x107BC, 1);
 					playGnapPullOutDevice(0, 0);
 					playGnapUseDevice(0, 0);
 					_gnapActionStatus = kASUseBeerBucketWithClown;
 				} else if (_grabCursorSpriteIndex == kItemBucketWithPill) {
-					_gnapIdleFacing = 5;
+					_gnapIdleFacing = kDirUpLeft;
 					gnapWalkTo(_hotspotsWalkPos[kHSClown].x, _hotspotsWalkPos[kHSClown].y, 0, 0x107BC, 1);
 					playGnapPullOutDevice(0, 0);
 					playGnapUseDevice(0, 0);
@@ -220,7 +220,7 @@ void GnapEngine::scene28_run() {
 						playGnapScratchingHead(5, 2);
 						break;
 					case TALK_CURSOR:
-						_gnapIdleFacing = 5;
+						_gnapIdleFacing = kDirUpLeft;
 						gnapWalkTo(5, 8, 0, getGnapSequenceId(gskBrainPulsating, 0, 0) | 0x10000, 1);
 						_gnapActionStatus = kASTalkClown;
 						break;

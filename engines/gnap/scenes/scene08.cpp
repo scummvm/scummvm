@@ -116,7 +116,7 @@ void GnapEngine::scene08_run() {
 	if (!isFlag(9))
 		_gameSys->insertSequence(0x146, 1, 0, 0, kSeqNone, 0, 0, 0);
 	
-	initGnapPos(-1, 8, 1);
+	initGnapPos(-1, 8, kDirBottomRight);
 	initBeaverPos(-1, 7, 0);
 	
 	endSceneInit();
@@ -202,13 +202,13 @@ void GnapEngine::scene08_run() {
 					gnapActionIdle(0x14D);
 					gnapWalkTo(6, 6, 0, 0x107BB, 1);
 					_gnapActionStatus = kASLookMan;
-					_gnapIdleFacing = 7;
+					_gnapIdleFacing = kDirUpRight;
 					break;
 				case GRAB_CURSOR:
 					playGnapImpossible(0, 0);
 					break;
 				case TALK_CURSOR:
-					_gnapIdleFacing = 5;
+					_gnapIdleFacing = kDirUpLeft;
 					gnapActionIdle(0x14D);
 					gnapWalkTo(8, 6, 0, getGnapSequenceId(gskBrainPulsating, 0, 0) | 0x10000, 1);
 					_gnapActionStatus = kASTalkMan;
@@ -240,10 +240,10 @@ void GnapEngine::scene08_run() {
 				case GRAB_CURSOR:
 					gnapWalkTo(4, 7, 0, 0x107BB, 1);
 					_gnapActionStatus = kASGrabDog;
-					_gnapIdleFacing = 7;
+					_gnapIdleFacing = kDirUpRight;
 					break;
 				case TALK_CURSOR:
-					_gnapIdleFacing = 7;
+					_gnapIdleFacing = kDirUpRight;
 					gnapActionIdle(0x14D);
 					gnapWalkTo(4, 7, 0, getGnapSequenceId(gskBrainPulsating, 0, 0) | 0x10000, 1);
 					_gnapActionStatus = kASTalkDog;
@@ -515,7 +515,7 @@ void GnapEngine::scene08_updateAnimations() {
 				_timers[3] = getRandom(50) + 200;
 				_gameSys->insertSequence(0x14D, _gnapId, makeRid(_gnapSequenceDatNum, _gnapSequenceId), _gnapId, kSeqSyncWait, 0, 0, 0);
 				_gnapSequenceId = 0x14D;
-				_gnapIdleFacing = 7;
+				_gnapIdleFacing = kDirUpRight;
 				_gnapSequenceDatNum = 0;
 				_gnapActionStatus = -1;
 			}

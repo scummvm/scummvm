@@ -58,11 +58,11 @@ int GnapEngine::getGnapWalkStopSequenceId(int deltaX, int deltaY) {
 	return _gnapWalkStopSequenceIds[3 * deltaX + 3 + 1 + deltaY];
 }
 
-int GnapEngine::getGnapWalkFacing(int deltaX, int deltaY) {
-	static const int _gnapWalkFacings[9] = {
-		5, 3, 3,
-		5, 0, 3,
-		7, 1, 1
+Facing GnapEngine::getGnapWalkFacing(int deltaX, int deltaY) {
+	static const Facing _gnapWalkFacings[9] = {
+		kDirUpLeft, kDirBottomLeft, kDirBottomLeft,
+		kDirUpLeft, kDirNone, kDirBottomLeft,
+		kDirUpRight, kDirBottomRight, kDirBottomRight
 	};
 	// CHECKME This is a little weird
 	return _gnapWalkFacings[3 * deltaX + 3 + 1 + deltaY];
@@ -645,17 +645,17 @@ bool GnapEngine::gnapWalkTo(int gridX, int gridY, int animationIndex, int sequen
 			_gnapSequenceId = ridToEntryIndex(sequenceId);
 			_gnapSequenceDatNum = ridToDatIndex(sequenceId);
 			if (_gnapSequenceId == 0x7B9) {
-				_gnapIdleFacing = 1;
+				_gnapIdleFacing = kDirBottomRight;
 			} else {
 				switch (_gnapSequenceId) {
 				case 0x7BA:
-					_gnapIdleFacing = 3;
+					_gnapIdleFacing = kDirBottomLeft;
 					break;
 				case 0x7BB:
-					_gnapIdleFacing = 7;
+					_gnapIdleFacing = kDirUpRight;
 					break;
 				case 0x7BC:
-					_gnapIdleFacing = 5;
+					_gnapIdleFacing = kDirUpLeft;
 					break;
 				}
 			}
@@ -665,13 +665,13 @@ bool GnapEngine::gnapWalkTo(int gridX, int gridY, int animationIndex, int sequen
 				_gnapIdleFacing = getGnapWalkFacing(_gnapWalkNodes[_gnapWalkNodesCount - 1].deltaX, _gnapWalkNodes[_gnapWalkNodesCount - 1].deltaY);
 			} else if (gridX >= 0 || gridY >= 0) {
 				switch (_gnapIdleFacing) {
-				case 1:
+				case kDirBottomRight:
 					_gnapSequenceId = 0x7B9;
 					break;
-				case 3:
+				case kDirBottomLeft:
 					_gnapSequenceId = 0x7BA;
 					break;
-				case 7:
+				case kDirUpRight:
 					_gnapSequenceId = 0x7BB;
 					break;
 				default:

@@ -71,11 +71,11 @@ void GnapEngine::scene22_run() {
 	queueInsertDeviceIcon();
 	
 	if (_prevSceneNum == 20) {
-		initGnapPos(2, 8, 1);
+		initGnapPos(2, 8, kDirBottomRight);
 		initBeaverPos(1, 8, 0);
 		endSceneInit();
 	} else {
-		initGnapPos(11, _hotspotsWalkPos[kHSExitBackGrubCity].y, 1);
+		initGnapPos(11, _hotspotsWalkPos[kHSExitBackGrubCity].y, kDirBottomRight);
 		initBeaverPos(11, _hotspotsWalkPos[kHSExitBackGrubCity].y + 1, 0);
 		endSceneInit();
 		gnapWalkTo(8, 8, -1, 0x107B9, 1);
@@ -193,7 +193,7 @@ void GnapEngine::scene22_run() {
 						playGnapImpossible(0, 0);
 						break;
 					case TALK_CURSOR:
-						_gnapIdleFacing = 7;
+						_gnapIdleFacing = kDirUpRight;
 						gnapWalkTo(_hotspotsWalkPos[kHSCashier].x, _hotspotsWalkPos[kHSCashier].y,
 							0, getGnapSequenceId(gskBrainPulsating, 0, 0) | 0x10000, 1);
 						_gnapActionStatus = kASTalkCashier;

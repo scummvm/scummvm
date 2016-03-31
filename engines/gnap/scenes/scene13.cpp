@@ -107,10 +107,10 @@ void GnapEngine::scene13_run() {
 	_gameSys->insertSequence(0xAA, 256, 0, 0, kSeqNone, 0, 0, 0);
 	
 	if (_prevSceneNum == 14) {
-		initGnapPos(6, 6, 3);
+		initGnapPos(6, 6, kDirBottomLeft);
 		initBeaverPos(9, 8, 0);
 	} else {
-		initGnapPos(3, 7, 1);
+		initGnapPos(3, 7, kDirBottomRight);
 		initBeaverPos(2, 7, 0);
 	}
 
@@ -190,12 +190,12 @@ void GnapEngine::scene13_run() {
 							9, 0, 0, 0);
 						_gnapActionStatus = kASWait;
 						_gnapSequenceId = _s13_backToiletCtr + 0xA3;
-						_gnapIdleFacing = 7;
+						_gnapIdleFacing = kDirUpRight;
 						_gnapSequenceDatNum = 0;
 					} else {
 						gnapWalkTo(5, 5, 0, 0x107BB, 1);
 						_gnapActionStatus = kASBackToilet;
-						_gnapIdleFacing = 7;
+						_gnapIdleFacing = kDirUpRight;
 					}
 					break;
 				case PLAT_CURSOR:
@@ -216,7 +216,7 @@ void GnapEngine::scene13_run() {
 				case PLAT_CURSOR:
 					gnapWalkTo(6, 7, 0, 0xA9, 5);
 					_gnapActionStatus = kASFrontToilet;
-					_gnapIdleFacing = 1;
+					_gnapIdleFacing = kDirBottomRight;
 					break;
 				}
 			}
@@ -230,13 +230,13 @@ void GnapEngine::scene13_run() {
 				case LOOK_CURSOR:
 					gnapWalkTo(7, 7, 0, 0x107BB, 1);
 					_gnapActionStatus = kASLookScribble;
-					_gnapIdleFacing = 7;
+					_gnapIdleFacing = kDirUpRight;
 					break;
 				case GRAB_CURSOR:
 					playGnapScratchingHead(0, 0);
 					break;
 				case TALK_CURSOR:
-					_gnapIdleFacing = 7;
+					_gnapIdleFacing = kDirUpRight;
 					gnapWalkTo(7, 7, -1, getGnapSequenceId(gskBrainPulsating, 0, 0), 1);
 					break;
 				case PLAT_CURSOR:
@@ -415,7 +415,7 @@ void GnapEngine::scene13_updateAnimations() {
 			_gameSys->removeSequence(0xAA, 256, true);
 			_gnapSequenceId = 0xAB;
 			_gnapId = 160;
-			_gnapIdleFacing = 1;
+			_gnapIdleFacing = kDirBottomRight;
 			_gnapSequenceDatNum = 0;
 			_gnapX = 4;
 			_gnapY = 8;
@@ -434,7 +434,7 @@ void GnapEngine::scene13_updateAnimations() {
 			_gameSys->insertSequence(0xA2, 120, makeRid(_gnapSequenceDatNum, _gnapSequenceId), _gnapId, kSeqSyncWait, 0, 0, 0);
 			_gnapSequenceId = 0xA2;
 			_gnapId = 120;
-			_gnapIdleFacing = 3;
+			_gnapIdleFacing = kDirBottomLeft;
 			_gnapSequenceDatNum = 0;
 			_gnapX = 4;
 			_gnapY = 6;

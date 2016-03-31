@@ -890,6 +890,7 @@ void GnapEngine::checkGameKeys() {
 		updatePause();
 	}
 	// TODO? Debug input
+	debug("facing %d", _gnapIdleFacing);
 }
 
 void GnapEngine::startSoundTimerA(int timerIndex) {
@@ -1026,29 +1027,29 @@ int GnapEngine::getGnapSequenceId(int kind, int gridX, int gridY) {
 			if (_gnapY > gridY) {
 				if (_gnapX > gridX) {
 					sequenceId = 0x83F;
-					_gnapIdleFacing = 5;
+					_gnapIdleFacing = kDirUpLeft;
 				} else {
 					sequenceId = 0x83D;
-					_gnapIdleFacing = 7;
+					_gnapIdleFacing = kDirUpRight;
 				}
 			} else {
 				if (_gnapX > gridX) {
 					sequenceId = 0x83B;
-					_gnapIdleFacing = 3;
+					_gnapIdleFacing = kDirBottomLeft;
 				} else {
 					sequenceId = 0x839;
-					_gnapIdleFacing = 1;
+					_gnapIdleFacing = kDirBottomRight;
 				}
 			}
 		} else {
 			switch (_gnapIdleFacing) {
-			case 1:
+			case kDirBottomRight:
 				sequenceId = 0x839;
 				break;
-			case 3:
+			case kDirBottomLeft:
 				sequenceId = 0x83B;
 				break;
-			case 7:
+			case kDirUpRight:
 				sequenceId = 0x83D;
 				break;
 			default:
@@ -1063,29 +1064,29 @@ int GnapEngine::getGnapSequenceId(int kind, int gridX, int gridY) {
 			if (_gnapY > gridY) {
 				if (_gnapX > gridX) {
 					sequenceId = 0x829;
-					_gnapIdleFacing = 5;
+					_gnapIdleFacing = kDirUpLeft;
 				} else {
 					sequenceId = 0x828;
-					_gnapIdleFacing = 7;
+					_gnapIdleFacing = kDirUpRight;
 				}
 			} else {
 				if (_gnapX > gridX) {
 					sequenceId = 0x827;
-					_gnapIdleFacing = 3;
+					_gnapIdleFacing = kDirBottomLeft;
 				} else {
 					sequenceId = 0x826;
-					_gnapIdleFacing = 1;
+					_gnapIdleFacing = kDirBottomRight;
 				}
 			}
 		} else {
 			switch (_gnapIdleFacing) {
-			case 1:
+			case kDirBottomRight:
 				sequenceId = 0x826;
 				break;
-			case 3:
+			case kDirBottomLeft:
 				sequenceId = 0x827;
 				break;
-			case 7:
+			case kDirUpRight:
 				sequenceId = 0x828;
 				break;
 			default:
@@ -1100,37 +1101,37 @@ int GnapEngine::getGnapSequenceId(int kind, int gridX, int gridY) {
 			if (_gnapY > gridY) {
 				if (_gnapX > gridX) {
 					sequenceId = 0x834;
-					_gnapIdleFacing = 3;
+					_gnapIdleFacing = kDirBottomLeft;
 				} else {
 					sequenceId = 0x885;
-					_gnapIdleFacing = 7;
+					_gnapIdleFacing = kDirUpRight;
 				}
 			} else {
 				if (_gnapX > gridX) {
 					sequenceId = 0x834;
-					_gnapIdleFacing = 3;
+					_gnapIdleFacing = kDirBottomLeft;
 				} else {
 					sequenceId = 0x833;
-					_gnapIdleFacing = 1;
+					_gnapIdleFacing = kDirBottomRight;
 				}
 			}
 		} else {
 			switch (_gnapIdleFacing) {
-			case 1:
+			case kDirBottomRight:
 				sequenceId = 0x833;
-				_gnapIdleFacing = 1;
+				_gnapIdleFacing = kDirBottomRight;
 				break;
-			case 3:
+			case kDirBottomLeft:
 				sequenceId = 0x834;
-				_gnapIdleFacing = 3;
+				_gnapIdleFacing = kDirBottomLeft;
 				break;
-			case 7:
+			case kDirUpRight:
 				sequenceId = 0x885;
-				_gnapIdleFacing = 7;
+				_gnapIdleFacing = kDirUpRight;
 				break;
 			default:
 				sequenceId = 0x834;
-				_gnapIdleFacing = 3;
+				_gnapIdleFacing = kDirBottomLeft;
 				break;
 			}
 		}
@@ -1141,29 +1142,29 @@ int GnapEngine::getGnapSequenceId(int kind, int gridX, int gridY) {
 			if (_gnapY > gridY) {
 				if (_gnapX > gridX) {
 					sequenceId = 0x7BC;
-					_gnapIdleFacing = 5;
+					_gnapIdleFacing = kDirUpLeft;
 				} else {
 					sequenceId = 0x7BB;
-					_gnapIdleFacing = 7;
+					_gnapIdleFacing = kDirUpRight;
 				}
 			} else {
 				if (_gnapX > gridX) {
 					sequenceId = 0x7BA;
-					_gnapIdleFacing = 3;
+					_gnapIdleFacing = kDirBottomLeft;
 				} else {
 					sequenceId = 0x7B9;
-					_gnapIdleFacing = 1;
+					_gnapIdleFacing = kDirBottomRight;
 				}
 			}
 		} else {
 			switch (_gnapIdleFacing) {
-			case 1:
+			case kDirBottomRight:
 				sequenceId = 0x7B9;
 				break;
-			case 3:
+			case kDirBottomLeft:
 				sequenceId = 0x7BA;
 				break;
-			case 7:
+			case kDirUpRight:
 				sequenceId = 0x7BB;
 				break;
 			default:
@@ -1179,29 +1180,29 @@ int GnapEngine::getGnapSequenceId(int kind, int gridX, int gridY) {
 			if (_gnapY > gridY) {
 				if (_gnapX > gridX) {
 					sequenceId = _gnapBrainPulseRndValue + _gnapBrainPulseNum + 0x812;
-					_gnapIdleFacing = 5;
+					_gnapIdleFacing = kDirUpLeft;
 				} else {
 					sequenceId = _gnapBrainPulseRndValue + _gnapBrainPulseNum + 0x7FE;
-					_gnapIdleFacing = 7;
+					_gnapIdleFacing = kDirUpRight;
 				}
 			} else {
 				if (_gnapX > gridX) {
 					sequenceId = _gnapBrainPulseRndValue + _gnapBrainPulseNum + 0x7D6;
-					_gnapIdleFacing = 3;
+					_gnapIdleFacing = kDirBottomLeft;
 				} else {
 					sequenceId = _gnapBrainPulseRndValue + _gnapBrainPulseNum + 0x7EA;
-					_gnapIdleFacing = 1;
+					_gnapIdleFacing = kDirBottomRight;
 				}
 			}
 		} else {
 			switch (_gnapIdleFacing) {
-			case 1:
+			case kDirBottomRight:
 				sequenceId = _gnapBrainPulseRndValue + _gnapBrainPulseNum + 0x7EA;
 				break;
-			case 3:
+			case kDirBottomLeft:
 				sequenceId = _gnapBrainPulseRndValue + _gnapBrainPulseNum + 0x7D6;
 				break;
-			case 7:
+			case kDirUpRight:
 				sequenceId = _gnapBrainPulseRndValue + _gnapBrainPulseNum + 0x7FE;
 				break;
 			default:
@@ -1216,32 +1217,32 @@ int GnapEngine::getGnapSequenceId(int kind, int gridX, int gridY) {
 			if (_gnapY > gridY) {
 				if (_gnapX > gridX) {
 					sequenceId = 0x831;
-					_gnapIdleFacing = 3;
+					_gnapIdleFacing = kDirBottomLeft;
 				} else {
 					sequenceId = 0x7A8;
-					_gnapIdleFacing = 1;
+					_gnapIdleFacing = kDirBottomRight;
 				}
 			} else {
 				if (_gnapX > gridX) {
 					sequenceId = 0x831;
-					_gnapIdleFacing = 3;
+					_gnapIdleFacing = kDirBottomLeft;
 				} else {
 					if (_gnapX % 2)
 						sequenceId = 0x7A8;
 					else
 						sequenceId = 0x89A;
-					_gnapIdleFacing = 1;
+					_gnapIdleFacing = kDirBottomRight;
 				}
 			}
-		} else if (_gnapIdleFacing != 1 && _gnapIdleFacing != 7) {
+		} else if (_gnapIdleFacing != kDirBottomRight && _gnapIdleFacing != kDirUpRight) {
 			sequenceId = 0x831;
-			_gnapIdleFacing = 3;
+			_gnapIdleFacing = kDirBottomLeft;
 		} else {
 			if (_currentSceneNum % 2)
 				sequenceId = 0x7A8;
 			else
 				sequenceId = 0x89A;
-			_gnapIdleFacing = 1;
+			_gnapIdleFacing = kDirBottomRight;
 		}
 		break;
 
@@ -1250,32 +1251,32 @@ int GnapEngine::getGnapSequenceId(int kind, int gridX, int gridY) {
 			if (_gnapY > gridY) {
 				if (_gnapX > gridX) {
 					sequenceId = 0x830;
-					_gnapIdleFacing = 5;
+					_gnapIdleFacing = kDirUpLeft;
 				} else {
 					sequenceId = 0x82F;
-					_gnapIdleFacing = 7;
+					_gnapIdleFacing = kDirUpRight;
 				}
 			} else {
 				if (_gnapX > gridX) {
 					sequenceId = 0x82E;
-					_gnapIdleFacing = 3;
+					_gnapIdleFacing = kDirBottomLeft;
 				} else {
 					sequenceId = 0x7A7;
-					_gnapIdleFacing = 1;
+					_gnapIdleFacing = kDirBottomRight;
 				}
 			}
 		} else {
 			switch (_gnapIdleFacing) {
-			case 1:
+			case kDirBottomRight:
 				sequenceId = 0x7A7;
 				break;
-			case 3:
+			case kDirBottomLeft:
 				sequenceId = 0x82E;
 				break;
-			case 5:
+			case kDirUpLeft:
 				sequenceId = 0x830;
 				break;
-			case 7:
+			case kDirUpRight:
 				sequenceId = 0x82F;
 				break;
 			}
@@ -1284,16 +1285,16 @@ int GnapEngine::getGnapSequenceId(int kind, int gridX, int gridY) {
 
 	case gskUseDevice:
 		switch (_gnapIdleFacing) {
-		case 1:
+		case kDirBottomRight:
 			sequenceId = 0x83A;
 			break;
-		case 3:
+		case kDirBottomLeft:
 			sequenceId = 0x83C;
 			break;
-		case 5:
+		case kDirUpLeft:
 			sequenceId = 0x840;
 			break;
-		case 7:
+		case kDirUpRight:
 			sequenceId = 0x83E;
 			break;
 		}
@@ -1304,26 +1305,26 @@ int GnapEngine::getGnapSequenceId(int kind, int gridX, int gridY) {
 			if (_gnapY > gridY) {
 				if (_gnapX > gridX) {
 					sequenceId = 0x832;
-					_gnapIdleFacing = 3;
+					_gnapIdleFacing = kDirBottomLeft;
 				} else {
 					sequenceId = 0x7AA;
-					_gnapIdleFacing = 1;
+					_gnapIdleFacing = kDirBottomRight;
 				}
 			} else {
 				if (_gnapX > gridX) {
 					sequenceId = 0x832;
-					_gnapIdleFacing = 3;
+					_gnapIdleFacing = kDirBottomLeft;
 				} else {
 					sequenceId = 0x7AA;
-					_gnapIdleFacing = 1;
+					_gnapIdleFacing = kDirBottomRight;
 				}
 			}
-		} else if (_gnapIdleFacing != 1 && _gnapIdleFacing != 7) {
+		} else if (_gnapIdleFacing != kDirBottomRight && _gnapIdleFacing != kDirUpRight) {
 			sequenceId = 0x832;
-			_gnapIdleFacing = 3;
+			_gnapIdleFacing = kDirBottomLeft;
 		} else {
 			sequenceId = 0x7AA;
-			_gnapIdleFacing = 1;
+			_gnapIdleFacing = kDirBottomRight;
 		}
 		break;
 
@@ -1332,26 +1333,26 @@ int GnapEngine::getGnapSequenceId(int kind, int gridX, int gridY) {
 			if (_gnapY > gridY) {
 				if (_gnapX > gridX) {
 					sequenceId = 0x832;
-					_gnapIdleFacing = 3;
+					_gnapIdleFacing = kDirBottomLeft;
 				} else {
 					sequenceId = 0x7AA;
-					_gnapIdleFacing = 1;
+					_gnapIdleFacing = kDirBottomRight;
 				}
 			} else {
 				if (_gnapX > gridX) {
 					sequenceId = 0x832;
-					_gnapIdleFacing = 3;
+					_gnapIdleFacing = kDirBottomLeft;
 				} else {
 					sequenceId = 0x7AA;
-					_gnapIdleFacing = 1;
+					_gnapIdleFacing = kDirBottomRight;
 				}
 			}
-		} else if (_gnapIdleFacing != 1 && _gnapIdleFacing != 7) {
+		} else if (_gnapIdleFacing != kDirBottomRight && _gnapIdleFacing != kDirUpRight) {
 			sequenceId = 0x832;
-			_gnapIdleFacing = 3;
+			_gnapIdleFacing = kDirBottomLeft;
 		} else {
 			sequenceId = 0x7AA;
-			_gnapIdleFacing = 1;
+			_gnapIdleFacing = kDirBottomRight;
 		}
 		break;
 	}
@@ -1361,120 +1362,120 @@ int GnapEngine::getGnapSequenceId(int kind, int gridX, int gridY) {
 
 int GnapEngine::getGnapShowSequenceId(int index, int gridX, int gridY) {
 	int sequenceId;
-	int facing = _gnapIdleFacing;
+	Facing facing = _gnapIdleFacing;
 
 	if (gridY > 0 && gridX > 0) {
 		if (_gnapY > gridY) {
 			if (_gnapX > gridX)
-				_gnapIdleFacing = 5;
+				_gnapIdleFacing = kDirUpLeft;
 			else
-				_gnapIdleFacing = 7;
+				_gnapIdleFacing = kDirUpRight;
 		} else {
 			if (_gnapX > gridX)
-				_gnapIdleFacing = 5;
+				_gnapIdleFacing = kDirUpLeft;
 			else
-				_gnapIdleFacing = 7;
+				_gnapIdleFacing = kDirUpRight;
 		}
-	} else if (_gnapIdleFacing != 1 && _gnapIdleFacing != 7) {
-		_gnapIdleFacing = 5;
+	} else if (_gnapIdleFacing != kDirBottomRight && _gnapIdleFacing != kDirUpRight) {
+		_gnapIdleFacing = kDirUpLeft;
 	} else {
-		_gnapIdleFacing = 7;
+		_gnapIdleFacing = kDirUpRight;
 	}
 
 	switch (index) {
 	case 0:
-		if (_gnapIdleFacing == 7)
+		if (_gnapIdleFacing == kDirUpRight)
 			sequenceId = 0x8A0;
 		else
 			sequenceId = 0x8A1;
 		break;
 	case 1:
-		if (_gnapIdleFacing == 7)
+		if (_gnapIdleFacing == kDirUpRight)
 			sequenceId = 0x880;
 		else
 			sequenceId = 0x895;
 		break;
 	case 2:
-		if (_gnapIdleFacing == 7)
+		if (_gnapIdleFacing == kDirUpRight)
 			sequenceId = 0x884;
 		else
 			sequenceId = 0x899;
 		break;
 	//Skip 3
 	case 4:
-		if (_gnapIdleFacing == 7)
+		if (_gnapIdleFacing == kDirUpRight)
 			sequenceId = 0x881;
 		else
 			sequenceId = 0x896;
 		break;
 	case 5:
-		if (_gnapIdleFacing == 7)
+		if (_gnapIdleFacing == kDirUpRight)
 			sequenceId = 0x883;
 		else
 			sequenceId = 0x898;
 		break;
 	case 6:
-		if (_gnapIdleFacing == 7)
+		if (_gnapIdleFacing == kDirUpRight)
 			sequenceId = 0x87E;
 		else
 			sequenceId = 0x893;
 		break;
 	case 7:
-		if (_gnapIdleFacing == 7)
+		if (_gnapIdleFacing == kDirUpRight)
 			sequenceId = 0x848;
 		else
 			sequenceId = 0x890;
 		break;
 	case 8:
-		if (_gnapIdleFacing == 7)
+		if (_gnapIdleFacing == kDirUpRight)
 			sequenceId = 0x87D;
 		else
 			sequenceId = 0x892;
 		break;
 	case 9:
-		if (_gnapIdleFacing == 7)
+		if (_gnapIdleFacing == kDirUpRight)
 			sequenceId = 0x882;
 		else
 			sequenceId = 0x897;
 		break;
 	case 10:
-		if (_gnapIdleFacing == 7)
+		if (_gnapIdleFacing == kDirUpRight)
 			sequenceId = 0x87C;
 		else
 			sequenceId = 0x891;
 		break;
 	case 11:
-		if (_gnapIdleFacing == 7)
+		if (_gnapIdleFacing == kDirUpRight)
 			sequenceId = 0x87C;
 		else
 			sequenceId = 0x891;
 		break;
 	case 12:
-		if (_gnapIdleFacing == 7)
+		if (_gnapIdleFacing == kDirUpRight)
 			sequenceId = 0x87D;
 		else
 			sequenceId = 0x892;
 		break;
 	case 13:
-		if (_gnapIdleFacing == 7)
+		if (_gnapIdleFacing == kDirUpRight)
 			sequenceId = 0x888;
 		else
 			sequenceId = 0x89D;
 		break;
 	case 14:
-		if (_gnapIdleFacing == 7)
+		if (_gnapIdleFacing == kDirUpRight)
 			sequenceId = 0x87F;
 		else
 			sequenceId = 0x894;
 		break;
 	case 15:
-		if (_gnapIdleFacing == 7)
+		if (_gnapIdleFacing == kDirUpRight)
 			sequenceId = 0x87B;
 		else
 			sequenceId = 0x8A3;
 		break;
 	case 16:
-		if (_gnapIdleFacing == 7)
+		if (_gnapIdleFacing == kDirUpRight)
 			sequenceId = 0x877;
 		else
 			sequenceId = 0x88C;
@@ -1484,43 +1485,43 @@ int GnapEngine::getGnapShowSequenceId(int index, int gridX, int gridY) {
 		sequenceId = 0x887;
 		break;
 	case 19:
-		if (_gnapIdleFacing == 7)
+		if (_gnapIdleFacing == kDirUpRight)
 			sequenceId = 0x87A;
 		else
 			sequenceId = 0x88F;
 		break;
 	case 20:
-		if (_gnapIdleFacing == 7)
+		if (_gnapIdleFacing == kDirUpRight)
 			sequenceId = 0x878;
 		else
 			sequenceId = 0x88D;
 		break;
 	case 21:
-		if (_gnapIdleFacing == 7)
+		if (_gnapIdleFacing == kDirUpRight)
 			sequenceId = 0x879;
 		else
 			sequenceId = 0x88E;
 		break;
 	case 22:
-		if (_gnapIdleFacing == 7)
+		if (_gnapIdleFacing == kDirUpRight)
 			sequenceId = 0x88A;
 		else
 			sequenceId = 0x89F;
 		break;
 	case 23:
-		if (_gnapIdleFacing == 7)
+		if (_gnapIdleFacing == kDirUpRight)
 			sequenceId = 0x889;
 		else
 			sequenceId = 0x89E;
 		break;
 	case 24:
-		if (_gnapIdleFacing == 7)
+		if (_gnapIdleFacing == kDirUpRight)
 			sequenceId = 0x886;
 		else
 			sequenceId = 0x89B;
 		break;
 	case 25:
-		if (_gnapIdleFacing == 7)
+		if (_gnapIdleFacing == kDirUpRight)
 			sequenceId = 0x87A;
 		else
 			sequenceId = 0x88F;
@@ -1629,7 +1630,7 @@ void GnapEngine::updateGnapIdleSequence() {
 			if (_timers[3] == 0) {
 				_timers[2] = 60;
 				_timers[3] = 300;
-				if (_gnapIdleFacing == 1) {
+				if (_gnapIdleFacing == kDirBottomRight) {
 					switch (getRandom(5)) {
 					case 0:
 						playGnapSequence(0x107A6);
@@ -1644,7 +1645,7 @@ void GnapEngine::updateGnapIdleSequence() {
 						playGnapSequence(0x108A2);
 						break;
 					}
-				} else if (_gnapIdleFacing == 3) {
+				} else if (_gnapIdleFacing == kDirBottomLeft) {
 					if (getRandom(5) > 2)
 						playGnapSequence(0x10832);
 					else
@@ -1653,13 +1654,13 @@ void GnapEngine::updateGnapIdleSequence() {
 			}
 		} else {
 			_timers[2] = getRandom(30) + 20;
-			if (_gnapIdleFacing == 1) {
+			if (_gnapIdleFacing == kDirBottomRight) {
 				_gameSys->insertSequence(0x107BD, _gnapId,
 					makeRid(_gnapSequenceDatNum, _gnapSequenceId), _gnapId,
 					kSeqSyncWait, 0, 75 * _gnapX - _gnapGridX, 48 * _gnapY - _gnapGridY);
 				_gnapSequenceId = 0x7BD;
 				_gnapSequenceDatNum = 1;
-			} else if (_gnapIdleFacing == 3) {
+			} else if (_gnapIdleFacing == kDirBottomLeft) {
 				_gameSys->insertSequence(0x107BE, _gnapId,
 					makeRid(_gnapSequenceDatNum, _gnapSequenceId), _gnapId,
 					kSeqSyncWait, 0, 75 * _gnapX - _gnapGridX, 48 * _gnapY - _gnapGridY);
@@ -1679,21 +1680,21 @@ void GnapEngine::updateGnapIdleSequence2() {
 			if (_timers[3] == 0) {
 				_timers[2] = 60;
 				_timers[3] = 300;
-				if (_gnapIdleFacing == 1) {
+				if (_gnapIdleFacing == kDirBottomRight) {
 					playGnapSequence(0x107AA);
-				} else if (_gnapIdleFacing == 3) {
+				} else if (_gnapIdleFacing == kDirBottomLeft) {
 					playGnapSequence(0x10832);
 				}
 			}
 		} else {
 			_timers[2] = getRandom(30) + 20;
-			if (_gnapIdleFacing == 1) {
+			if (_gnapIdleFacing == kDirBottomRight) {
 				_gameSys->insertSequence(0x107BD, _gnapId,
 					makeRid(_gnapSequenceDatNum, _gnapSequenceId), _gnapId,
 					kSeqSyncWait, 0, 75 * _gnapX - _gnapGridX, 48 * _gnapY - _gnapGridY);
 				_gnapSequenceId = 0x7BD;
 				_gnapSequenceDatNum = 1;
-			} else if (_gnapIdleFacing == 3) {
+			} else if (_gnapIdleFacing == kDirBottomLeft) {
 				_gameSys->insertSequence(0x107BE, _gnapId,
 					makeRid(_gnapSequenceDatNum, _gnapSequenceId), _gnapId,
 					kSeqSyncWait, 0, 75 * _gnapX - _gnapGridX, 48 * _gnapY - _gnapGridY);
@@ -1721,20 +1722,20 @@ bool GnapEngine::testWalk(int animationIndex, int someStatus, int gridX1, int gr
 	return false;
 }
 
-void GnapEngine::initGnapPos(int gridX, int gridY, int facing) {
+void GnapEngine::initGnapPos(int gridX, int gridY, Facing facing) {
 	_timers[2] = 30;
 	_timers[3] = 300;
 	_gnapX = gridX;
 	_gnapY = gridY;
-	if (facing <= 0)
-		_gnapIdleFacing = 1;
+	if (facing == kDirNone)
+		_gnapIdleFacing = kDirBottomRight;
 	else
 		_gnapIdleFacing = facing;
-	if (_gnapIdleFacing == 3) {
+	if (_gnapIdleFacing == kDirBottomLeft) {
 		_gnapSequenceId = 0x7B8;
   	} else {
 		_gnapSequenceId = 0x7B5;
-		_gnapIdleFacing = 1;
+		_gnapIdleFacing = kDirBottomRight;
 	}
 	_gnapId = 20 * _gnapY;
 	_gnapSequenceDatNum = 1;

@@ -235,6 +235,15 @@ struct Scene51Item {
 	int _id;
 };
 
+enum Facing {
+	kDirNone = 0,
+	kDirBottomRight = 1,
+	kDirBottomLeft = 3,
+	kDirUnk4 = 4,
+	kDirUpLeft = 5,
+	kDirUpRight = 7
+};
+
 class GnapEngine : public Engine {
 protected:
 	Common::Error run();
@@ -458,7 +467,7 @@ public:
 
 	int getGnapWalkSequenceId(int deltaX, int deltaY);
 	int getGnapWalkStopSequenceId(int deltaX, int deltaY);
-	int getGnapWalkFacing(int deltaX, int deltaY);
+	Facing getGnapWalkFacing(int deltaX, int deltaY);
 	bool gridSub41F08B(int gridX, int gridY);
 	bool gridSub41F5FC(int gridX, int gridY, int index);
 	bool gridSub41FAD5(int gridX, int gridY, int index);
@@ -483,7 +492,7 @@ public:
 	void beaverMakeRoom();
 
 	// Gnap
-	int _gnapIdleFacing;
+	Facing _gnapIdleFacing;
 	int _gnapActionStatus;
 	int _gnapBrainPulseNum, _gnapBrainPulseRndValue;
 	int _gnapSequenceId, _gnapSequenceDatNum, _gnapId;
@@ -506,7 +515,7 @@ public:
 	void playGnapShowCurrItem(int gridX, int gridY, int gridLookX, int gridLookY);
 	void updateGnapIdleSequence();
 	void updateGnapIdleSequence2();
-	void initGnapPos(int gridX, int gridY, int facing);
+	void initGnapPos(int gridX, int gridY, Facing facing);
 	void gnapInitBrainPulseRndValue();
 	void gnapUseDeviceOnBeaver();
 	void doCallback(int callback);

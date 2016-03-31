@@ -228,42 +228,42 @@ void GnapEngine::scene20_run() {
 			// checkGameAppStatus();
 			gameUpdateTick();
 		}
-		initGnapPos(11, 8, 3);
+		initGnapPos(11, 8, kDirBottomLeft);
 		initBeaverPos(11, 9, 4);
 		gnapWalkTo(5, 8, -1, 0x107BA, 1);
 		platypusWalkTo(6, 9, -1, 0x107C2, 1);
 	} else {
 		switch (_prevSceneNum) {
 		case 17:
-			initGnapPos(5, 11, 1);
+			initGnapPos(5, 11, kDirBottomRight);
 			initBeaverPos(6, 11, 0);
 			endSceneInit();
 			gnapWalkTo(5, 8, -1, 0x107B9, 1);
 			platypusWalkTo(6, 9, -1, 0x107C2, 1);
 			break;
 		case 18:
-			initGnapPos(11, 8, 3);
+			initGnapPos(11, 8, kDirBottomLeft);
 			initBeaverPos(11, 9, 4);
 			endSceneInit();
 			gnapWalkTo(5, 8, -1, 0x107BA, 1);
 			platypusWalkTo(6, 9, -1, 0x107C2, 1);
 			break;
 		case 21:
-			initGnapPos(-1, 8, 3);
+			initGnapPos(-1, 8, kDirBottomLeft);
 			initBeaverPos(-1, 9, 4);
 			endSceneInit();
 			gnapWalkTo(3, 8, -1, 0x107B9, 1);
 			platypusWalkTo(3, 9, -1, 0x107C2, 1);
 			break;
 		case 22:
-			initGnapPos(7, 6, 1);
+			initGnapPos(7, 6, kDirBottomRight);
 			initBeaverPos(8, 6, 0);
 			endSceneInit();
 			gnapWalkTo(8, 8, -1, 0x107B9, 1);
 			platypusWalkTo(9, 9, -1, 0x107C2, 1);
 			break;
 		default:
-			initGnapPos(8, 6, 3);
+			initGnapPos(8, 6, kDirBottomLeft);
 			initBeaverPos(9, 6, 4);
 			endSceneInit();
 			_hotspots[kHSWalkArea2]._flags |= SF_WALKABLE;
@@ -394,7 +394,7 @@ void GnapEngine::scene20_run() {
 						playGnapMoan2(5, 4);
 						break;
 					case GRAB_CURSOR:
-						_gnapIdleFacing = 7;
+						_gnapIdleFacing = kDirUpRight;
 						gnapWalkTo(_hotspotsWalkPos[kHSStonerGuy].x, _hotspotsWalkPos[kHSStonerGuy].y, 0, getGnapSequenceId(gskIdle, 0, 0) | 0x10000, 1);
 						if (_s20_stonerGuyShowingJoint)
 							_gnapActionStatus = kASGrabJoint;
@@ -402,7 +402,7 @@ void GnapEngine::scene20_run() {
 							playGnapImpossible(0, 0);
 						break;
 					case TALK_CURSOR:
-						_gnapIdleFacing = 7;
+						_gnapIdleFacing = kDirUpRight;
 						gnapWalkTo(_hotspotsWalkPos[kHSStonerGuy].x, _hotspotsWalkPos[kHSStonerGuy].y, 0, getGnapSequenceId(gskBrainPulsating, 0, 0) | 0x10000, 1);
 						if (isFlag(17))
 							_gnapActionStatus = kASTalkStonerGuyNoJoint;
@@ -428,12 +428,12 @@ void GnapEngine::scene20_run() {
 						break;
 					case GRAB_CURSOR:
 						_s20_stonerGuyShowingJoint = false;
-						_gnapIdleFacing = 5;
+						_gnapIdleFacing = kDirUpLeft;
 						gnapWalkTo(_hotspotsWalkPos[kHSGroceryStoreGuy].x, _hotspotsWalkPos[kHSGroceryStoreGuy].y, 0, getGnapSequenceId(gskIdle, 0, 0) | 0x10000, 1);
 						_gnapActionStatus = kASGrabGroceryStoreGuy;
 						break;
 					case TALK_CURSOR:
-						_gnapIdleFacing = 5;
+						_gnapIdleFacing = kDirUpLeft;
 						gnapWalkTo(_hotspotsWalkPos[kHSGroceryStoreGuy].x, _hotspotsWalkPos[kHSGroceryStoreGuy].y, 0, getGnapSequenceId(gskBrainPulsating, 0, 0) | 0x10000, 1);
 						_gnapActionStatus = kASTalkGroceryStoreGuy;
 						break;
@@ -448,7 +448,7 @@ void GnapEngine::scene20_run() {
 		case kHSGroceryStoreHat:
 			if (_gnapActionStatus < 0) {
 				if (_grabCursorSpriteIndex == kItemCowboyHat) {
-					_gnapIdleFacing = 7;
+					_gnapIdleFacing = kDirUpRight;
 					gnapWalkTo(_hotspotsWalkPos[kHSGroceryStoreHat].x, _hotspotsWalkPos[kHSGroceryStoreHat].y, 0, getGnapSequenceId(gskIdle, 0, 0) | 0x10000, 1);
 					_gnapActionStatus = kASSwitchGroceryStoreHat;
 				} else if (_grabCursorSpriteIndex >= 0) {
@@ -460,7 +460,7 @@ void GnapEngine::scene20_run() {
 						break;
 					case GRAB_CURSOR:
 						_s20_stonerGuyShowingJoint = false;
-						_gnapIdleFacing = 5;
+						_gnapIdleFacing = kDirUpLeft;
 						gnapWalkTo(_hotspotsWalkPos[kHSGroceryStoreGuy].x, _hotspotsWalkPos[kHSGroceryStoreGuy].y, 0, getGnapSequenceId(gskIdle, 0, 0) | 0x10000, 1);
 						_gnapActionStatus = kASGrabGroceryStoreHat;
 						break;
@@ -650,7 +650,7 @@ void GnapEngine::scene20_updateAnimations() {
 			removeFullScreenSprite();
 			showCursor();
 			setGrabCursorSprite(kItemGroceryStoreHat);
-			_gnapIdleFacing = 1;
+			_gnapIdleFacing = kDirBottomRight;
 			gnapWalkTo(3, 8, -1, getGnapSequenceId(gskIdle, 0, 0) | 0x10000, 1);
 			_gnapActionStatus = -1;
 			break;

@@ -71,7 +71,7 @@ void GnapEngine::scene07_run() {
 		_gameSys->insertSequence(0x8D, 1, 0, 0, kSeqNone, 0, 0, 0);
 
 	if (_prevSceneNum == 8) {
-		initGnapPos(7, 7, 3);
+		initGnapPos(7, 7, kDirBottomLeft);
 		initBeaverPos(9, 7, 4);
 		endSceneInit();
 	} else {
@@ -80,7 +80,7 @@ void GnapEngine::scene07_run() {
 		_gnapId = 140;
 		_gnapSequenceId = 0x8F;
 		_gnapSequenceDatNum = 0;
-		_gnapIdleFacing = 1;
+		_gnapIdleFacing = kDirBottomRight;
 		_gameSys->insertSequence(0x8F, 140, 0, 0, kSeqNone, 0, 0, 0);
 		_gameSys->setAnimation(makeRid(_gnapSequenceDatNum, _gnapSequenceId), _gnapId, 0);
 		_gnapActionStatus = kASWait;

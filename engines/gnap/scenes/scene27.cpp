@@ -92,28 +92,28 @@ void GnapEngine::scene27_run() {
 
 	switch (_prevSceneNum) {
 	case 26:
-		initGnapPos(7, 12, 1);
+		initGnapPos(7, 12, kDirBottomRight);
 		initBeaverPos(6, 12, 0);
 		endSceneInit();
 		gnapWalkTo(7, 8, -1, 0x107B9, 1);
 		platypusWalkTo(6, 8, -1, 0x107C2, 1);
 		break;
 	case 29:
-		initGnapPos(-1, 8, 1);
+		initGnapPos(-1, 8, kDirBottomRight);
 		initBeaverPos(-1, 9, 0);
 		endSceneInit();
 		gnapWalkTo(3, 8, -1, 0x107B9, 1);
 		platypusWalkTo(3, 9, -1, 0x107C2, 1);
 		break;
 	case 31:
-		initGnapPos(12, 8, 3);
+		initGnapPos(12, 8, kDirBottomLeft);
 		initBeaverPos(12, 9, 4);
 		endSceneInit();
 		gnapWalkTo(8, 8, -1, 0x107BA, 1);
 		platypusWalkTo(8, 9, -1, 0x107C2, 1);
 		break;
 	default:
-		initGnapPos(6, 8, 1);
+		initGnapPos(6, 8, kDirBottomRight);
 		initBeaverPos(5, 9, 0);
 		endSceneInit();
 		break;
@@ -166,7 +166,7 @@ void GnapEngine::scene27_run() {
 		case kHSJanitor:
 			if (_gnapActionStatus < 0) {
 				if (_grabCursorSpriteIndex == kItemPicture) {
-					_gnapIdleFacing = 5;
+					_gnapIdleFacing = kDirUpLeft;
 					if (gnapWalkTo(_hotspotsWalkPos[kHSJanitor].x, _hotspotsWalkPos[kHSJanitor].y, 0, 0x107BC, 1))
 						_gnapActionStatus = kASShowPictureToJanitor;
 				} else if (_grabCursorSpriteIndex >= 0) {
@@ -177,7 +177,7 @@ void GnapEngine::scene27_run() {
 						playGnapScratchingHead(6, 3);
 						break;
 					case TALK_CURSOR:
-						_gnapIdleFacing = 5;
+						_gnapIdleFacing = kDirUpLeft;
 						gnapWalkTo(_hotspotsWalkPos[kHSJanitor].x, _hotspotsWalkPos[kHSJanitor].y, 0, getGnapSequenceId(gskBrainPulsating, 0, 0) | 0x10000, 1);
 						_gnapActionStatus = kASTalkJanitor;
 						break;
@@ -200,7 +200,7 @@ void GnapEngine::scene27_run() {
 						playGnapScratchingHead(3, 3);
 						break;
 					case GRAB_CURSOR:
-						_gnapIdleFacing = 5;
+						_gnapIdleFacing = kDirUpLeft;
 						gnapWalkTo(_gnapX, _gnapY, 0, getGnapSequenceId(gskIdle, _hotspotsWalkPos[kHSBucket].x, _hotspotsWalkPos[kHSBucket].y) | 0x10000, 1);
 						_gnapActionStatus = kASGrabBucket;
 						break;

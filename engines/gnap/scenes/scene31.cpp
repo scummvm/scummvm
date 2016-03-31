@@ -79,13 +79,13 @@ void GnapEngine::scene31_run() {
 	_timers[5] = getRandom(50) + 180;
 
 	if (_prevSceneNum == 27) {
-		initGnapPos(-1, 8, 3);
+		initGnapPos(-1, 8, kDirBottomLeft);
 		initBeaverPos(-1, 9, 4);
 		endSceneInit();
 		gnapWalkTo(3, 8, -1, 0x107BA, 1);
 		platypusWalkTo(3, 9, -1, 0x107D2, 1);
 	} else {
-		initGnapPos(7, 12, 1);
+		initGnapPos(7, 12, kDirBottomRight);
 		initBeaverPos(6, 12, 0);
 		endSceneInit();
 		gnapWalkTo(7, 8, -1, 0x107BA, 1);
@@ -203,7 +203,7 @@ void GnapEngine::scene31_run() {
 						} else {
 							gnapWalkTo(_hotspotsWalkPos[kHSBeerBarrel].x, _hotspotsWalkPos[kHSBeerBarrel].y, 0, 0x107BC, 1);
 							_gnapActionStatus = kASUseBeerBarrel;
-							_gnapIdleFacing = 5;
+							_gnapIdleFacing = kDirUpLeft;
 						}
 						break;
 					case TALK_CURSOR:
@@ -322,7 +322,7 @@ void GnapEngine::scene31_updateAnimations() {
 			_gnapActionStatus = kASFillEmptyBucketWithBeerDone;
 			break;
 		case kASFillEmptyBucketWithBeerDone:
-			_gnapIdleFacing = 3;
+			_gnapIdleFacing = kDirBottomLeft;
 			playGnapPullOutDevice(0, 0);
 			playGnapUseDevice(0, 0);
 			_gameSys->insertSequence(0xF9, 59, 0xF8, 59, kSeqSyncWait, 0, 0, 0);

@@ -77,7 +77,7 @@ void GnapEngine::scene21_run() {
 	
 	if (isFlag(3)) {
 		if (isFlag(5)) {
-			initGnapPos(5, 8, 1);
+			initGnapPos(5, 8, kDirBottomRight);
 			initBeaverPos(6, 8, 0);
 			_gameSys->insertSequence(0x8E, 2, 0, 0, kSeqNone, 0, 0, 0);
 			if (!isFlag(4))
@@ -85,7 +85,7 @@ void GnapEngine::scene21_run() {
 			endSceneInit();
 			clearFlag(5);
 		} else {
-			initGnapPos(5, 11, 1);
+			initGnapPos(5, 11, kDirBottomRight);
 			initBeaverPos(6, 11, 0);
 			if (!isFlag(4))
 				_gameSys->insertSequence(0x8D, 59, 0, 0, kSeqNone, 0, 0, 0);
@@ -94,7 +94,7 @@ void GnapEngine::scene21_run() {
 			platypusWalkTo(6, 8, -1, 0x107C2, 1);
 		}
 	} else {
-		initGnapPos(5, 11, 1);
+		initGnapPos(5, 11, kDirBottomRight);
 		initBeaverPos(6, 11, 0);
 		_s21_currOldLadySequenceId = 0x89;
 		_gameSys->setAnimation(0x89, 79, 3);
@@ -186,14 +186,14 @@ void GnapEngine::scene21_run() {
 						playGnapScratchingHead(7, 4);
 						break;
 					case GRAB_CURSOR:
-						_gnapIdleFacing = 5;
+						_gnapIdleFacing = kDirUpLeft;
 						_hotspots[kHSWalkArea1]._flags |= SF_WALKABLE;
 						gnapWalkTo(7, 6, 0, getGnapSequenceId(gskIdle, 0, 0) | 0x10000, 1);
 						_gnapActionStatus = kASGrabOldLady;
 						_hotspots[kHSWalkArea1]._flags &= ~SF_WALKABLE;
 						break;
 					case TALK_CURSOR:
-						_gnapIdleFacing = 7;
+						_gnapIdleFacing = kDirUpRight;
 						gnapWalkTo(_hotspotsWalkPos[kHSOldLady].x, _hotspotsWalkPos[kHSOldLady].y, 0, getGnapSequenceId(gskBrainPulsating, 0, 0) | 0x10000, 1);
 						_gnapActionStatus = kASTalkOldLady;
 						break;

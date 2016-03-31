@@ -119,19 +119,19 @@ void GnapEngine::scene45_run() {
 		initBeaverPos(4, 8, 0);
 		endSceneInit();
 	} else if (_prevSceneNum == 46) {
-		initGnapPos(-1, 8, 7);
+		initGnapPos(-1, 8, kDirUpRight);
 		initBeaverPos(-1, 9, 5);
 		endSceneInit();
 		platypusWalkTo(4, 8, -1, 0x107C2, 1);
 		gnapWalkTo(2, 7, -1, 0x107B9, 1);
 	} else if (_prevSceneNum == 41) {
-		initGnapPos(11, 8, 7);
+		initGnapPos(11, 8, kDirUpRight);
 		initBeaverPos(11, 9, 5);
 		endSceneInit();
 		platypusWalkTo(4, 8, -1, 0x107D2, 1);
 		gnapWalkTo(10, 9, -1, 0x107BA, 1);
 	} else {
-		initGnapPos(2, 11, 7);
+		initGnapPos(2, 11, kDirUpRight);
 		initBeaverPos(6, 11, 5);
 		endSceneInit();
 		platypusWalkTo(4, 8, -1, 0x107C2, 1);

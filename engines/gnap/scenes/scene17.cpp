@@ -177,13 +177,13 @@ void GnapEngine::scene17_run() {
 
 	if (_prevSceneNum == 53 || _prevSceneNum == 18 || _prevSceneNum == 20 || _prevSceneNum == 19) {
 		if (_prevSceneNum == 20) {
-			initGnapPos(4, 6, 1);
+			initGnapPos(4, 6, kDirBottomRight);
 			initBeaverPos(5, 6, 0);
 			endSceneInit();
 			platypusWalkTo(5, 9, -1, 0x107C2, 1);
 			gnapWalkTo(4, 8, -1, 0x107B9, 1);
 		} else if (isFlag(27)) {
-			initGnapPos(3, 9, 5);
+			initGnapPos(3, 9, kDirUpLeft);
 			_platX = _hotspotsWalkPos[2].x;
 			_platY = _hotspotsWalkPos[2].y;
 			_beaverId = 20 * _hotspotsWalkPos[2].y;
@@ -220,7 +220,7 @@ void GnapEngine::scene17_run() {
 			clearFlag(15);
 			clearFlag(16);
 			_sceneWaiting = true;
-			initGnapPos(3, 9, 5);
+			initGnapPos(3, 9, kDirUpLeft);
 			_platX = _hotspotsWalkPos[2].x;
 			_platY = _hotspotsWalkPos[2].y;
 			_beaverId = 20 * _hotspotsWalkPos[2].y;
@@ -234,18 +234,18 @@ void GnapEngine::scene17_run() {
 			_beaverActionStatus = kASPlatPhoningAssistant;
 			scene17_updateHotspots();
 		} else if (_prevSceneNum == 18) {
-			initGnapPos(6, 6, 1);
+			initGnapPos(6, 6, kDirBottomRight);
 			initBeaverPos(5, 6, 0);
 			endSceneInit();
 			platypusWalkTo(5, 9, -1, 0x107C2, 1);
 			gnapWalkTo(4, 8, -1, 0x107B9, 1);
 		} else {
 			if (isFlag(15)) {
-				initGnapPos(_hotspotsWalkPos[2].x, _hotspotsWalkPos[2].y, 1);
+				initGnapPos(_hotspotsWalkPos[2].x, _hotspotsWalkPos[2].y, kDirBottomRight);
 				initBeaverPos(1, 9, 0);
 				endSceneInit();
 			} else {
-				initGnapPos(3, 7, 1);
+				initGnapPos(3, 7, kDirBottomRight);
 				initBeaverPos(1, 7, 0);
 				endSceneInit();
 			}
@@ -259,7 +259,7 @@ void GnapEngine::scene17_run() {
 		_gnapId = 120;
 		_gnapSequenceId = 0x23D;
 		_gnapSequenceDatNum = 0;
-		_gnapIdleFacing = 1;
+		_gnapIdleFacing = kDirBottomRight;
 		_gameSys->insertSequence(makeRid(_gnapSequenceDatNum, _gnapSequenceId), _gnapId, 0, 0, kSeqNone, 0, 0, 0);
 		_platX = -1;
 		_platY = 8;
@@ -417,7 +417,7 @@ void GnapEngine::scene17_run() {
 						if (isFlag(18)) {
 							scene17_platHangUpPhone();
 							_isLeavingScene = true;
-							_gnapIdleFacing = 5;
+							_gnapIdleFacing = kDirUpLeft;
 							gnapWalkTo(_hotspotsWalkPos[2].x, _hotspotsWalkPos[2].y, 0, getGnapSequenceId(gskIdle, 0, 0) | 0x10000, 1);
 							_gnapActionStatus = kASGnapUsePhone;
 							setFlag(15);
@@ -449,7 +449,7 @@ void GnapEngine::scene17_run() {
 			if (_gnapActionStatus < 0) {
 				_isLeavingScene = true;
 				_newSceneNum = 18;
-				_gnapIdleFacing = 7;
+				_gnapIdleFacing = kDirUpRight;
 				gnapWalkTo(_hotspotsWalkPos[5].x, _hotspotsWalkPos[5].y, 0, 0x107BB, 1);
 				_gnapActionStatus = kASLeaveScene;
 				if (_beaverActionStatus != kASPlatPhoningAssistant)
@@ -462,7 +462,7 @@ void GnapEngine::scene17_run() {
 				scene17_platHangUpPhone();
 				_isLeavingScene = true;
 				_newSceneNum = 20;
-				_gnapIdleFacing = 5;
+				_gnapIdleFacing = kDirUpLeft;
 				gnapWalkTo(_hotspotsWalkPos[3].x, _hotspotsWalkPos[3].y, 0, 0x107BC, 1);
 				_gnapActionStatus = kASLeaveScene;
 				platypusWalkTo(_hotspotsWalkPos[3].x + 1, _hotspotsWalkPos[3].y, -1, 0x107C2, 1);

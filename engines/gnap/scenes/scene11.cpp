@@ -93,22 +93,22 @@ void GnapEngine::scene11_run() {
 	
 	switch (_prevSceneNum) {
 	case 13:
-		initGnapPos(8, 5, 3);
+		initGnapPos(8, 5, kDirBottomLeft);
 		initBeaverPos(9, 6, 4);
 		break;
 	case 47:
-		initGnapPos(8, 5, 3);
+		initGnapPos(8, 5, kDirBottomLeft);
 		initBeaverPos(9, 5, 4);
 		_s11_currGoggleGuySequenceId = 0x1FA;
 		_s11_currHookGuySequenceId = 0x1FF;
 		_timers[7] = 180;
 		break;
 	case 12:
-		initGnapPos(-1, 9, 1);
+		initGnapPos(-1, 9, kDirBottomRight);
 		initBeaverPos(-2, 8, 0);
 		break;
 	default:
-		initGnapPos(6, 6, 3);
+		initGnapPos(6, 6, kDirBottomLeft);
 		initBeaverPos(6, 5, 4);
 		break;
 	}
@@ -213,7 +213,7 @@ void GnapEngine::scene11_run() {
 						playGnapImpossible(0, 0);
 						break;
 					case TALK_CURSOR:
-						_gnapIdleFacing = 5;
+						_gnapIdleFacing = kDirUpLeft;
 						gnapWalkTo(3, 7, 0, getGnapSequenceId(gskBrainPulsating, 0, 0) | 0x10000, 1);
 						_gnapActionStatus = kASTalkGoggleGuy;
 						break;
@@ -224,7 +224,7 @@ void GnapEngine::scene11_run() {
 
 		case kHSHookGuy:
 			if (_gnapActionStatus < 0) {
-				_gnapIdleFacing = 7;
+				_gnapIdleFacing = kDirUpRight;
 				if (_grabCursorSpriteIndex >= 0) {
 					gnapWalkTo(5, 6, 0, 0x107BC, 9);
 					_gnapActionStatus = kASShowItemToHookGuy;
@@ -239,7 +239,7 @@ void GnapEngine::scene11_run() {
 						_gnapActionStatus = kASGrabHookGuy;
 						break;
 					case TALK_CURSOR:
-						_gnapIdleFacing = 3;
+						_gnapIdleFacing = kDirBottomLeft;
 						gnapWalkTo(5, 6, 0, getGnapSequenceId(gskBrainPulsating, 0, 0) | 0x10000, 1);
 						_gnapActionStatus = kASTalkHookGuy;
 						break;

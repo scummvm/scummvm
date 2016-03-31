@@ -97,10 +97,10 @@ void GnapEngine::scene38_run() {
 	_gameSys->insertSequence(0x9B, 0, 0, 0, kSeqNone, 0, 0, 0);
 	
 	if (_prevSceneNum == 39) {
-		initGnapPos(3, 7, 3);
+		initGnapPos(3, 7, kDirBottomLeft);
 		initBeaverPos(4, 7, 4);
 	} else {
-		initGnapPos(3, 8, 1);
+		initGnapPos(3, 8, kDirBottomRight);
 		initBeaverPos(4, 8, 0);
 	}
 	endSceneInit();
@@ -304,7 +304,7 @@ void GnapEngine::scene38_updateAnimations() {
 				_gnapSequenceDatNum = 0;
 				_gnapX = 3;
 				_gnapY = 6;
-				_gnapIdleFacing = 1;
+				_gnapIdleFacing = kDirBottomRight;
 				if (_isLeavingScene) {
 					_sceneWaiting = false;
 					gnapWalkTo(5, 7, 0, 0x107BB, 1);
@@ -319,7 +319,7 @@ void GnapEngine::scene38_updateAnimations() {
 				_gnapSequenceDatNum = 0;
 				_gnapX = 3;
 				_gnapY = 6;
-				_gnapIdleFacing = 1;
+				_gnapIdleFacing = kDirBottomRight;
 				_gameSys->setAnimation(0x9E, _gnapId, 0);
 				_sceneWaiting = false;
 				scene38_updateHotspots();

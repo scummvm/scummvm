@@ -210,9 +210,9 @@ void GnapEngine::scene18_gnapCarryGarbageCanTo(int x, int y, int animationIndex,
 	}
 	
 	if (direction == 1)
-		_gnapIdleFacing = 1;
+		_gnapIdleFacing = kDirBottomRight;
 	else
-		_gnapIdleFacing = 3;
+		_gnapIdleFacing = kDirBottomLeft;
 	
 	_gnapId = 20 * _gnapY + 1;
 	
@@ -233,13 +233,13 @@ void GnapEngine::scene18_putDownGarbageCan(int animationIndex) {
 		while (_gameSys->getAnimationStatus(animationIndex) != 2)
 			gameUpdateTick();
 	}
-	if (_gnapIdleFacing != 0 && _gnapIdleFacing != 1 && _gnapIdleFacing != 7)
+	if (_gnapIdleFacing != kDirNone && _gnapIdleFacing != kDirBottomRight && _gnapIdleFacing != kDirUpRight)
 		_s18_garbageCanPos = _gnapX - 1;
 	else
 		_s18_garbageCanPos = _gnapX + 1;
 	clearFlag(10);
 	scene18_updateHotspots();
-	if (_gnapIdleFacing != 0 && _gnapIdleFacing != 1 && _gnapIdleFacing != 7) {
+	if (_gnapIdleFacing != kDirNone && _gnapIdleFacing != kDirBottomRight && _gnapIdleFacing != kDirUpRight) {
 		_gameSys->insertSequence(0x107BA, _gnapId,
 			makeRid(_gnapSequenceDatNum, _gnapSequenceId), _gnapId,
 			kSeqSyncWait, 0, 75 * _gnapX - _gnapGridX, 48 * _gnapY - _gnapGridY);
@@ -348,9 +348,9 @@ void GnapEngine::scene18_run() {
 	
 	if (isFlag(26)) {
 		if (_prevSceneNum == 17)
-			initGnapPos(4, 11, 1);
+			initGnapPos(4, 11, kDirBottomRight);
 		else
-			initGnapPos(4, 7, 1);
+			initGnapPos(4, 7, kDirBottomRight);
 		_s18_platPhoneCtr = getRandom(5);
 		if (isFlag(27)) {
 			_gameSys->insertSequence(0x21E, 254, 0, 0, kSeqNone, 0, 0, 0);
@@ -379,19 +379,19 @@ void GnapEngine::scene18_run() {
 			_prevSceneNum = 19;
 		}
 		if (_prevSceneNum == 17) {
-			initGnapPos(4, 11, 1);
+			initGnapPos(4, 11, kDirBottomRight);
 			initBeaverPos(5, 11, 0);
 			endSceneInit();
 			gnapWalkTo(4, 8, -1, 0x107B9, 1);
 			platypusWalkTo(5, 9, -1, 0x107C2, 1);
 		} else if (_prevSceneNum == 19) {
-			initGnapPos(7, 7, 1);
+			initGnapPos(7, 7, kDirBottomRight);
 			initBeaverPos(8, 7, 0);
 			endSceneInit();
 			gnapWalkTo(7, 8, -1, 0x107B9, 1);
 			platypusWalkTo(8, 8, -1, 0x107C2, 1);
 		} else {
-			initGnapPos(-1, 10, 1);
+			initGnapPos(-1, 10, kDirBottomRight);
 			initBeaverPos(-1, 10, 0);
 			endSceneInit();
 			gnapWalkTo(3, 7, -1, 0x107B9, 1);
@@ -785,7 +785,7 @@ void GnapEngine::scene18_updateAnimations() {
 		_gameSys->setAnimation(0, 0, 0);
 		switch (_gnapActionStatus) {
 		case kASGrabGarbageCanFromStreet:
-			if (_gnapIdleFacing != 7 && _gnapIdleFacing != 1) {
+			if (_gnapIdleFacing != kDirUpRight && _gnapIdleFacing != kDirBottomRight) {
 				_gameSys->insertSequence(0x1FC, _gnapId,
 					makeRid(_gnapSequenceDatNum, _gnapSequenceId), _gnapId,
 					kSeqSyncWait, 0, 75 * _gnapX - 675, 0);

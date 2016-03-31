@@ -69,7 +69,7 @@ void GnapEngine::scene23_run() {
 	
 	queueInsertDeviceIcon();
 	
-	initGnapPos(-1, 7, 1);
+	initGnapPos(-1, 7, kDirBottomRight);
 	initBeaverPos(-2, 7, 0);
 	_gameSys->insertSequence(0xBD, 255, 0, 0, kSeqNone, 0, 0, 0);
 	_gameSys->insertSequence(0xBF, 2, 0, 0, kSeqNone, 0, 0, 0);
@@ -151,7 +151,7 @@ void GnapEngine::scene23_run() {
 						if (isFlag(11))
 							playGnapImpossible(0, 0);
 						else {
-							_gnapIdleFacing = 1;
+							_gnapIdleFacing = kDirBottomRight;
 							gnapWalkTo(_hotspotsWalkPos[kHSCereals].x, _hotspotsWalkPos[kHSCereals].y,
 								0, getGnapSequenceId(gskIdle, 0, 0) | 0x10000, 1);
 							setFlag(11);

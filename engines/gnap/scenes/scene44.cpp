@@ -127,21 +127,21 @@ void GnapEngine::scene44_run() {
 	} else {
 		switch (_prevSceneNum) {
 		case 43:
-			initGnapPos(-1, 8, 7);
+			initGnapPos(-1, 8, kDirUpRight);
 			initBeaverPos(-1, 7, 5);
 			endSceneInit();
 			gnapWalkTo(2, 8, -1, 0x107B9, 1);
 			platypusWalkTo(1, 8, -1, 0x107C2, 1);
 			break;
 		case 46:
-			initGnapPos(11, 8, 7);
+			initGnapPos(11, 8, kDirUpRight);
 			initBeaverPos(11, 8, 5);
 			endSceneInit();
 			gnapWalkTo(6, 8, -1, 0x107BA, 1);
 			platypusWalkTo(7, 8, -1, 0x107D2, 1);
 			break;
 		case 50:
-			initGnapPos(4, 8, 1);
+			initGnapPos(4, 8, kDirBottomRight);
 			if (_sceneSavegameLoaded) {
 				initBeaverPos(_hotspotsWalkPos[4].x, _hotspotsWalkPos[4].y, 4);
 			} else if (!isFlag(13)) {
@@ -158,7 +158,7 @@ void GnapEngine::scene44_run() {
 			endSceneInit();
 			break;
 		default:
-			initGnapPos(5, 11, 7);
+			initGnapPos(5, 11, kDirUpRight);
 			initBeaverPos(6, 11, 5);
 			endSceneInit();
 			platypusWalkTo(6, 8, -1, 0x107C2, 1);
@@ -279,7 +279,7 @@ void GnapEngine::scene44_run() {
 						playGnapImpossible(0, 0);
 						break;
 					case TALK_CURSOR:
-						_gnapIdleFacing = 5;
+						_gnapIdleFacing = kDirUpLeft;
 						gnapWalkTo(_hotspotsWalkPos[kHSKissingLady].x, _hotspotsWalkPos[kHSKissingLady].y, 0, getGnapSequenceId(gskBrainPulsating, 0, 0) | 0x10000, 1);
 						_gnapActionStatus = 1;
 						break;
@@ -333,7 +333,7 @@ void GnapEngine::scene44_run() {
 							playGnapScratchingHead(8, 7);
 						break;
 					case TALK_CURSOR:
-						_gnapIdleFacing = 7;
+						_gnapIdleFacing = kDirUpRight;
 						gnapWalkTo(_hotspotsWalkPos[kHSSpringGuy].x, _hotspotsWalkPos[kHSSpringGuy].y, -1, getGnapSequenceId(gskBrainPulsating, 0, 0) | 0x10000, 1);
 						break;
 					case GRAB_CURSOR:

@@ -81,13 +81,13 @@ void GnapEngine::scene26_run() {
 	_gameSys->insertSequence(0x5E, 40, 0, 0, kSeqLoop, 0, 0, 0);
 	
 	if (_prevSceneNum == 25) {
-		initGnapPos(-1, 8, 1);
+		initGnapPos(-1, 8, kDirBottomRight);
 		initBeaverPos(-2, 8, 0);
 		endSceneInit();
 		gnapWalkTo(2, 8, -1, 0x107B9, 1);
 		platypusWalkTo(1, 8, -1, 0x107C2, 1);
 	} else {
-		initGnapPos(2, 8, 1);
+		initGnapPos(2, 8, kDirBottomRight);
 		initBeaverPos(3, 8, 0);
 		endSceneInit();
 	}

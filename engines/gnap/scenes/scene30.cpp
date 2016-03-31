@@ -75,7 +75,7 @@ void GnapEngine::scene30_run() {
 	_timers[4] = getRandom(100) + 300;
 
 	_s30_kidSequenceId = 0x101;
-	initGnapPos(7, 12, 1);
+	initGnapPos(7, 12, kDirBottomRight);
 	initBeaverPos(6, 12, 0);
 	endSceneInit();
 	gnapWalkTo(7, 8, -1, 0x107B9, 1);

@@ -111,11 +111,11 @@ void GnapEngine::scene12_run() {
 	_timers[7] = getRandom(100) + 100;
 	
 	if (_prevSceneNum == 15) {
-		initGnapPos(5, 6, 1);
+		initGnapPos(5, 6, kDirBottomRight);
 		initBeaverPos(3, 7, 0);
 		endSceneInit();
 	} else {
-		initGnapPos(11, 8, 3);
+		initGnapPos(11, 8, kDirBottomLeft);
 		initBeaverPos(12, 8, 4);
 		endSceneInit();
 		gnapWalkTo(8, 8, -1, 0x107BA, 1);
@@ -171,18 +171,18 @@ void GnapEngine::scene12_run() {
 			if (_grabCursorSpriteIndex == kItemQuarter) {
 				_largeSprite = _gameSys->createSurface(0x141);
 				gnapWalkTo(3, 7, 0, 0x107BC, 9);
-				_gnapIdleFacing = 5;
+				_gnapIdleFacing = kDirUpLeft;
 				_gnapActionStatus = kASQuarterToToothGuy;
 				playGnapShowItem(_grabCursorSpriteIndex, 2, 0);
 				setGrabCursorSprite(-1);
 			} else if (_grabCursorSpriteIndex == kItemQuarterWithHole) {
 				gnapWalkTo(3, 7, 0, 0x107BC, 9);
-				_gnapIdleFacing = 5;
+				_gnapIdleFacing = kDirUpLeft;
 				_gnapActionStatus = kASQuarterWithHoleToToothGuy;
 				playGnapShowItem(_grabCursorSpriteIndex, 2, 0);
 			} else if (_grabCursorSpriteIndex >= 0) {
 				gnapWalkTo(3, 7, 0, 0x107BC, 9);
-				_gnapIdleFacing = 5;
+				_gnapIdleFacing = kDirUpLeft;
 				_gnapActionStatus = kASShowItemToToothGuy;
 				playGnapShowItem(_grabCursorSpriteIndex, 2, 0);
 			} else {
@@ -195,7 +195,7 @@ void GnapEngine::scene12_run() {
 					_gnapActionStatus = kASGrabToothGuy;
 					break;
 				case TALK_CURSOR:
-					_gnapIdleFacing = 5;
+					_gnapIdleFacing = kDirUpLeft;
 					gnapWalkTo(3, 7, 0, getGnapSequenceId(gskBrainPulsating, 0, 0) | 0x10000, 1);
 					_gnapActionStatus = kASTalkToothGuy;
 					break;
@@ -213,26 +213,26 @@ void GnapEngine::scene12_run() {
 		case kHSBarkeeper:
 			if (_grabCursorSpriteIndex == kItemQuarter || _grabCursorSpriteIndex == kItemQuarterWithHole) {
 				gnapWalkTo(6, 6, 0, 0x107BB, 9);
-				_gnapIdleFacing = 7;
+				_gnapIdleFacing = kDirUpRight;
 				_gnapActionStatus = kASQuarterWithBarkeeper;
 				playGnapShowItem(_grabCursorSpriteIndex, 7, 0);
 			} else if (_grabCursorSpriteIndex >= 0) {
 				gnapWalkTo(6, 6, 0, 0x107BB, 9);
-				_gnapIdleFacing = 7;
+				_gnapIdleFacing = kDirUpRight;
 				_gnapActionStatus = kASShowItemToBarkeeper;
 				playGnapShowItem(_grabCursorSpriteIndex, 7, 0);
 			} else {
 				switch (_verbCursor) {
 				case LOOK_CURSOR:
 					gnapWalkTo(6, 6, 0, 0x107BB, 1);
-					_gnapIdleFacing = 7;
+					_gnapIdleFacing = kDirUpRight;
 					_gnapActionStatus = kASLookBarkeeper;
 					break;
 				case GRAB_CURSOR:
 					playGnapImpossible(0, 0);
 					break;
 				case TALK_CURSOR:
-					_gnapIdleFacing = 7;
+					_gnapIdleFacing = kDirUpRight;
 					gnapWalkTo(6, 6, 0, getGnapSequenceId(gskBrainPulsating, 0, 0) | 0x10000, 1);
 					_gnapActionStatus = kASTalkBarkeeper;
 					break;
@@ -248,24 +248,24 @@ void GnapEngine::scene12_run() {
 		case kHSBeardGuy:
 			if (_grabCursorSpriteIndex >= 0) {
 				gnapWalkTo(7, 6, 0, 0x107BB, 9);
-				_gnapIdleFacing = 7;
+				_gnapIdleFacing = kDirUpRight;
 				_gnapActionStatus = kASShowItemToBeardGuy;
 				playGnapShowItem(_grabCursorSpriteIndex, 8, 0);
 			} else {
 				switch (_verbCursor) {
 				case LOOK_CURSOR:
 					gnapWalkTo(7, 6, 0, 0x107BB, 1);
-					_gnapIdleFacing = 7;
+					_gnapIdleFacing = kDirUpRight;
 					_gnapActionStatus = kASLookBeardGuy;
 					break;
 				case GRAB_CURSOR:
 					// NOTE Bug in the original. It has 9 as flags which seems wrong here.
 					gnapWalkTo(7, 6, 0, 0x107BB, 1);
-					_gnapIdleFacing = 7;
+					_gnapIdleFacing = kDirUpRight;
 					_gnapActionStatus = kASGrabBeardGuy;
 					break;
 				case TALK_CURSOR:
-					_gnapIdleFacing = 7;
+					_gnapIdleFacing = kDirUpRight;
 					gnapWalkTo(7, 6, 0, getGnapSequenceId(gskBrainPulsating, 0, 0) | 0x10000, 1);
 					_gnapActionStatus = kASTalkBeardGuy;
 					break;

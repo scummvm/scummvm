@@ -135,7 +135,7 @@ void GnapEngine::scene04_run() {
 	} else {
 		_gameSys->insertSequence(0x209, 121, 0, 0, kSeqNone, 0, 0, 0);
 		if (_prevSceneNum == 2) {
-			initGnapPos(5, 11, 7);
+			initGnapPos(5, 11, kDirUpRight);
 			if (isFlag(0))
 				initBeaverPos(6, 11, 5);
 			endSceneInit();
@@ -143,11 +143,11 @@ void GnapEngine::scene04_run() {
 				platypusWalkTo(5, 8, -1, 0x107C2, 1);
 			gnapWalkTo(6, 9, -1, 0x107BA, 1);
 		} else if (_prevSceneNum == 38) {
-			initGnapPos(5, 7, 1);
+			initGnapPos(5, 7, kDirBottomRight);
 			initBeaverPos(4, 7, 0);
 			endSceneInit();
 		} else {
-			initGnapPos(12, 9, 1);
+			initGnapPos(12, 9, kDirBottomRight);
 			if (isFlag(0))
 				initBeaverPos(12, 8, 0);
 			endSceneInit();
@@ -242,7 +242,7 @@ void GnapEngine::scene04_run() {
 						playGnapMoan2(_hotspotsWalkPos[3].x, _hotspotsWalkPos[3].y);
 						break;
 					case GRAB_CURSOR:
-						_gnapIdleFacing = 7;
+						_gnapIdleFacing = kDirUpRight;
 						gnapWalkTo(_hotspotsWalkPos[3].x, _hotspotsWalkPos[3].y, 0, getGnapSequenceId(gskIdle, 0, 0) | 0x10000, 1);
 						_gnapActionStatus = kASGrabAxe;
 						setFlag(26);
@@ -270,12 +270,12 @@ void GnapEngine::scene04_run() {
 						}
 						break;
 					case GRAB_CURSOR:
-						_gnapIdleFacing = 1;
+						_gnapIdleFacing = kDirBottomRight;
 						if (gnapWalkTo(_hotspotsWalkPos[2].x, _hotspotsWalkPos[2].y, 0, getGnapSequenceId(gskIdle, 0, 0) | 0x10000, 1))
 							_gnapActionStatus = kASGrabDog;
 						break;
 					case TALK_CURSOR:
-						_gnapIdleFacing = 1;
+						_gnapIdleFacing = kDirBottomRight;
 						if (gnapWalkTo(_gnapX, _gnapY, 0, -1, 1)) {
 							playGnapBrainPulsating(_hotspotsWalkPos[2].x, _hotspotsWalkPos[2].y);
 							_s04_nextDogSequenceId = 0x20E;
@@ -304,7 +304,7 @@ void GnapEngine::scene04_run() {
 							gnapWalkTo(_hotspotsWalkPos[4].x, _hotspotsWalkPos[4].y, 0, 0x107BC, 1);
 							_gnapActionStatus = kASOpenDoor;
 							_timers[5] = 300;
-							_gnapIdleFacing = 5;
+							_gnapIdleFacing = kDirUpLeft;
 						} else {
 							_isLeavingScene = true;
 							gnapWalkTo(_hotspotsWalkPos[4].x, _hotspotsWalkPos[4].y, 0, 0x107BC, 1);
@@ -485,7 +485,7 @@ void GnapEngine::scene04_updateAnimations() {
 			_gameSys->insertSequence(0x107B5, _gnapId,
 				makeRid(_gnapSequenceDatNum, _gnapSequenceId), 255,
 				kSeqSyncWait, 0, 75 * _gnapX - _gnapGridX, 48 * _gnapY - _gnapGridY);
-			_gnapIdleFacing = 1;
+			_gnapIdleFacing = kDirBottomRight;
 			_gnapSequenceId = 0x7B5;
 			_gnapSequenceDatNum = 1;
 			_gnapActionStatus = -1;
@@ -514,7 +514,7 @@ void GnapEngine::scene04_updateAnimations() {
 				kSeqSyncWait, 0, 75 * _gnapX - _gnapGridX, 48 * _gnapY - _gnapGridY);
 			_gnapSequenceId = 0x7B5;
 			_gnapSequenceDatNum = 1;
-			_gnapIdleFacing = 1;
+			_gnapIdleFacing = kDirBottomRight;
 			_gnapActionStatus = -1;
 			break;
 		case kASGrabDog:
