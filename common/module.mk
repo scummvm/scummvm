@@ -56,5 +56,10 @@ MODULE_OBJS += \
 	recorderfile.o
 endif
 
+ifdef USE_UPDATES
+MODULE_OBJS += \
+	updates.o
+endif
+
 # Include common rules
 include $(srcdir)/rules.mk

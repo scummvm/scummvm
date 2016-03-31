@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef BACKENDS_UPDATES_ABSTRACT_H
-#define BACKENDS_UPDATES_ABSTRACT_H
+#ifndef COMMON_UPDATES_H
+#define COMMON_UPDATES_H
 
 #if defined(USE_UPDATES)
 
@@ -93,10 +93,13 @@ public:
 	 * @return  the update check interval.
 	 */
 	virtual int getUpdateCheckInterval() { return kUpdateIntervalNotSupported; }
+
+	static const int *getUpdateIntervals();
+	static const char *updateIntervalToString(int interval);
 };
 
 } // End of namespace Common
 
 #endif
 
-#endif // BACKENDS_UPDATES_ABSTRACT_H
+#endif // COMMON_UPDATES_H
