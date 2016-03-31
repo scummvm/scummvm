@@ -2011,6 +2011,9 @@ void ScummEngine::syncSoundSettings() {
 		_scummVars[632] = ConfMan.getBool("subtitles");
 	}
 
+	if (_game.id == GID_CMI) {
+		_scummVars[176] = ConfMan.getBool("object_labels");
+	}
 }
 
 void ScummEngine::setTalkSpeed(int talkspeed) {
