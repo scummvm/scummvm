@@ -29,6 +29,7 @@
 #include "common/md5.h"
 #include "common/savefile.h"
 #include "common/system.h"
+#include "common/translation.h"
 
 #include "audio/mididrv.h"
 
@@ -957,6 +958,7 @@ public:
 	virtual int getMaximumSaveSlot() const;
 	virtual void removeSaveState(const char *target, int slot) const;
 	virtual SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const;
+	virtual const ExtraGuiOptions getExtraGuiOptions(const Common::String &target) const;
 };
 
 bool ScummMetaEngine::hasFeature(MetaEngineFeature f) const {
@@ -1327,6 +1329,21 @@ SaveStateDescriptor ScummMetaEngine::querySaveMetaInfos(const char *target, int 
 	}
 
 	return desc;
+}
+
+static const ExtraGuiOption scummComiObjectLabelsOption = {
+	_s("Show Object Line"),
+	_s("Show the names of objects at the bottom of the screen"),
+	"object_labels",
+	true
+};
+
+const ExtraGuiOptions ScummMetaEngine::getExtraGuiOptions(const Common::String &target) const {
+	ExtraGuiOptions options;
+	if (target.empty() || ConfMan.get("gameid", target) == "comi") {
+		options.push_back(scummComiObjectLabelsOption);
+	}
+	return options;
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(SCUMM)
