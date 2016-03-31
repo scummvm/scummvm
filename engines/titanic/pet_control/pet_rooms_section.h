@@ -42,7 +42,7 @@ private:
 	int _field114;
 	int _field118;
 	int _field11C;
-	CPetGraphic _val1;
+	CPetGfxElement _val1;
 	CPetControlSub12 _sub12;
 	int _field1C0;
 	int _field1C4;

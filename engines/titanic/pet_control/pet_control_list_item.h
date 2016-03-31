@@ -24,13 +24,13 @@
 #define TITANIC_PET_CONTROL_LIST_ITEM_H
 
 #include "titanic/core/list.h"
-#include "titanic/pet_control/pet_graphic.h"
+#include "titanic/pet_control/pet_gfx_element.h"
 
 namespace Titanic {
 
 class CPetControlListItem : public ListItem {
 protected:
-	CPetGraphic _val;
+	CPetGfxElement _val;
 	int _field30;
 public:
 	CPetControlListItem() : _field30(0) {}

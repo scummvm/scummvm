@@ -20,29 +20,29 @@
  *
  */
 
-#ifndef TITANIC_PET_GRAPHIC_H
-#define TITANIC_PET_GRAPHIC_H
+#ifndef TITANIC_PET_GFX_ELEMENT_H
+#define TITANIC_PET_GFX_ELEMENT_H
 
 #include "titanic/pet_control/pet_element.h"
 
 namespace Titanic {
 
-class CPetGraphic: public CPetElement {
+class CPetGfxElement: public CPetElement {
 protected:
 	CGameObject *_object0;
 	CGameObject *_object1;
 	CGameObject *_object2;
 public:
-	CPetGraphic() : CPetElement(), _object0(nullptr), _object1(nullptr),
+	CPetGfxElement() : CPetElement(), _object0(nullptr), _object1(nullptr),
 		_object2(nullptr) {}
 
 	/**
 	 * Load an object into the element
 	 */
-	virtual void loadObject(PetElementMode mode, const CString &name,
+	virtual void setup(PetElementMode mode, const CString &name,
 		CPetControl *petControl);
 
-	virtual void proc2();
+	virtual void setup();
 
 	/**
 	 * Draw the item
@@ -67,4 +67,4 @@ public:
 
 } // End of namespace Titanic
 
-#endif /* TITANIC_PET_GRAPHIC_H */
+#endif /* TITANIC_PET_GFX_ELEMENT_H */

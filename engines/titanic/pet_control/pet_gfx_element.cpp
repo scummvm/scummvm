@@ -22,12 +22,12 @@
 
 #include "common/textconsole.h"
 #include "titanic/core/game_object.h"
-#include "titanic/pet_control/pet_graphic.h"
+#include "titanic/pet_control/pet_element.h"
 #include "titanic/pet_control/pet_control.h"
 
 namespace Titanic {
 
-void CPetGraphic::loadObject(PetElementMode mode, const CString &name,
+void CPetGfxElement::setup(PetElementMode mode, const CString &name,
 		CPetControl *petControl) {
 	switch (mode) {
 	case MODE_0:
@@ -44,15 +44,15 @@ void CPetGraphic::loadObject(PetElementMode mode, const CString &name,
 	}
 }
 
-void CPetGraphic::proc2() {
+void CPetGfxElement::setup() {
 	error("TODO");
 }
 
-void CPetGraphic::draw(CScreenManager *screenManager) {
+void CPetGfxElement::draw(CScreenManager *screenManager) {
 	draw(screenManager, Common::Point(_bounds.left, _bounds.top));
 }
 
-void CPetGraphic::draw(CScreenManager *screenManager, const Common::Point &destPos) {
+void CPetGfxElement::draw(CScreenManager *screenManager, const Common::Point &destPos) {
 	CGameObject *obj = getObject();
 	if (!obj)
 		obj = _object0;
@@ -61,7 +61,7 @@ void CPetGraphic::draw(CScreenManager *screenManager, const Common::Point &destP
 		obj->draw(screenManager, destPos);
 }
 
-void CPetGraphic::getBounds(Rect *rect) {
+void CPetGfxElement::getBounds(Rect *rect) {
 	if (rect) {
 		CGameObject *obj = getObject();
 		if (!obj)
@@ -74,7 +74,7 @@ void CPetGraphic::getBounds(Rect *rect) {
 	}
 }
 
-CGameObject *CPetGraphic::getObject() const {
+CGameObject *CPetGfxElement::getObject() const {
 	switch (_mode) {
 	case MODE_0:
 		return _object0;

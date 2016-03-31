@@ -24,7 +24,7 @@
 #define TITANIC_PET_FRAME_H
 
 #include "titanic/pet_control/pet_section.h"
-#include "titanic/pet_control/pet_graphic.h"
+#include "titanic/pet_control/pet_gfx_element.h"
 
 namespace Titanic {
 
@@ -32,13 +32,13 @@ class CPetFrame : public CPetSection {
 private:
 	static int _indexes[6];
 
-	CPetGraphic _modeButtons[6];
-	CPetGraphic _titles[6];
-	CPetGraphic _modeBackground;
-	CPetGraphic _val2;
-	CPetGraphic _val3;
-	CPetGraphic _background;
-	CPetGraphic _indent[7];
+	CPetGfxElement _modeButtons[6];
+	CPetGfxElement _titles[6];
+	CPetGfxElement _modeBackground;
+	CPetGfxElement _val2;
+	CPetGfxElement _val3;
+	CPetGfxElement _background;
+	CPetGfxElement _indent[7];
 private:
 	/**
 	 * Called to set the owning PET instance and set some initial state

@@ -385,7 +385,7 @@ MODULE_OBJS := \
 	pet_control/pet_conversation_section.o \
 	pet_control/pet_element.o \
 	pet_control/pet_frame.o \
-	pet_control/pet_graphic.o \
+	pet_control/pet_gfx_element.o \
 	pet_control/pet_inventory_section.o \
 	pet_control/pet_rooms_section.o \
 	pet_control/pet_remote_section.o \

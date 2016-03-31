@@ -25,20 +25,20 @@
 
 #include "titanic/pet_control/pet_section.h"
 #include "titanic/pet_control/pet_control_sub12.h"
-#include "titanic/pet_control/pet_graphic.h"
+#include "titanic/pet_control/pet_gfx_element.h"
 
 namespace Titanic {
 
 class CPetControlSub5 : public CPetSection {
 private:
-	CPetGraphic _val1;
-	CPetGraphic _val2;
-	CPetGraphic _val3;
-	CPetGraphic _val4;
+	CPetGfxElement _val1;
+	CPetGfxElement _val2;
+	CPetGfxElement _val3;
+	CPetGfxElement _val4;
 	int _field98;
 	int _field9C;
 	int _fieldA0;
-	CPetGraphic _valArray1[6];
+	CPetGfxElement _valArray1[6];
 	int _field17C;
 	int _field18C;
 	CPetControlSub12 _sub12;
