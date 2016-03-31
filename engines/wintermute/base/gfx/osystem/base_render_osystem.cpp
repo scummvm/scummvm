@@ -26,6 +26,9 @@
  * Copyright (c) 2011 Jan Nedoma
  */
 
+#include "common/config-manager.h"
+#include "common/queue.h"
+#include "common/system.h"
 #include "engines/wintermute/base/gfx/osystem/base_render_osystem.h"
 #include "engines/wintermute/base/gfx/osystem/base_surface_osystem.h"
 #include "engines/wintermute/base/gfx/osystem/render_ticket.h"
@@ -34,10 +37,7 @@
 #include "engines/wintermute/math/math_util.h"
 #include "engines/wintermute/base/base_game.h"
 #include "engines/wintermute/base/base_sprite.h"
-#include "common/system.h"
 #include "graphics/transparent_surface.h"
-#include "common/queue.h"
-#include "common/config-manager.h"
 
 #define DIRTY_RECT_LIMIT 800
 
