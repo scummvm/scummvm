@@ -835,6 +835,9 @@
 						type = 'SmallLabel'
 				/>
 			</layout>
+			<widget name = 'customOption1Checkbox'
+					type = 'Checkbox'
+			/>
 			<space size = '60'/>
 			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '10'>
 				<widget name='Keys'

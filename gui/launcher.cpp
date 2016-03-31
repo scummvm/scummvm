@@ -151,8 +151,6 @@ protected:
 	CheckboxWidget *_globalMIDIOverride;
 	CheckboxWidget *_globalMT32Override;
 	CheckboxWidget *_globalVolumeOverride;
-
-	ExtraGuiOptions _engineOptions;
 };
 
 EditGameDialog::EditGameDialog(const String &domain, const String &desc)
@@ -236,7 +234,7 @@ EditGameDialog::EditGameDialog(const String &domain, const String &desc)
 	if (_engineOptions.size() > 0) {
 		tab->addTab(_("Engine"));
 
-		addEngineControls(tab, "GameOptions_Engine.", _engineOptions);
+		addEngineControls(tab, "GameOptions_Engine.");
 	}
 
 	//
@@ -416,20 +414,6 @@ void EditGameDialog::open() {
 		_langPopUp->setEnabled(false);
 	}
 
-	// Set the state of engine-specific checkboxes
-	for (uint j = 0; j < _engineOptions.size(); ++j) {
-		// The default values for engine-specific checkboxes are not set when
-		// ScummVM starts, as this would require us to load and poll all of the
-		// engine plugins on startup. Thus, we set the state of each custom
-		// option checkbox to what is specified by the engine plugin, and
-		// update it only if a value has been set in the configuration of the
-		// currently selected game.
-		bool isChecked = _engineOptions[j].defaultState;
-		if (ConfMan.hasKey(_engineOptions[j].configOption, _domain))
-			isChecked = ConfMan.getBool(_engineOptions[j].configOption, _domain);
-		_engineCheckboxes[j]->setState(isChecked);
-	}
-
 	const Common::PlatformDescription *p = Common::g_platforms;
 	const Common::Platform platform = Common::parsePlatform(ConfMan.get("platform", _domain));
 	sel = 0;
@@ -472,11 +456,6 @@ void EditGameDialog::close() {
 			ConfMan.removeKey("platform", _domain);
 		else
 			ConfMan.set("platform", Common::getPlatformCode(platform), _domain);
-
-		// Set the state of engine-specific checkboxes
-		for (uint i = 0; i < _engineOptions.size(); i++) {
-			ConfMan.setBool(_engineOptions[i].configOption, _engineCheckboxes[i]->getState(), _domain);
-		}
 	}
 	OptionsDialog::close();
 }

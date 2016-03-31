@@ -315,6 +315,20 @@ void OptionsDialog::open() {
 		_subSpeedSlider->setValue(speed);
 		_subSpeedLabel->setValue(speed);
 	}
+
+	// Custom engine options
+	for (uint j = 0; j < _engineOptions.size(); ++j) {
+		// The default values for engine-specific checkboxes are not set when
+		// ScummVM starts, as this would require us to load and poll all of the
+		// engine plugins on startup. Thus, we set the state of each custom
+		// option checkbox to what is specified by the engine plugin, and
+		// update it only if a value has been set in the configuration of the
+		// currently selected game.
+		bool isChecked = _engineOptions[j].defaultState;
+		if (ConfMan.hasKey(_engineOptions[j].configOption, _domain))
+			isChecked = ConfMan.getBool(_engineOptions[j].configOption, _domain);
+		_engineCheckboxes[j]->setState(isChecked);
+	}
 }
 
 void OptionsDialog::close() {
@@ -441,6 +455,11 @@ void OptionsDialog::close() {
 			} else {
 				ConfMan.removeKey("music_driver", _domain);
 			}
+		}
+
+		// Custom engine options
+		for (uint i = 0; i < _engineOptions.size(); i++) {
+			ConfMan.setBool(_engineOptions[i].configOption, _engineCheckboxes[i]->getState(), _domain);
 		}
 
 		if (_oplPopUp) {
@@ -990,7 +1009,7 @@ void OptionsDialog::addVolumeControls(GuiObject *boss, const Common::String &pre
 	_enableVolumeSettings = true;
 }
 
-void OptionsDialog::addEngineControls(GuiObject *boss, const Common::String &prefix, const ExtraGuiOptions &engineOptions) {
+void OptionsDialog::addEngineControls(GuiObject *boss, const Common::String &prefix) {
 	// Note: up to 7 engine options can currently fit on screen (the most that
 	// can fit in a 320x200 screen with the classic theme).
 	// TODO: Increase this number by including the checkboxes inside a scroll
@@ -999,7 +1018,7 @@ void OptionsDialog::addEngineControls(GuiObject *boss, const Common::String &pre
 
 	uint i = 1;
 	ExtraGuiOptions::const_iterator iter;
-	for (iter = engineOptions.begin(); iter != engineOptions.end(); ++iter, ++i) {
+	for (iter = _engineOptions.begin(); iter != _engineOptions.end(); ++iter, ++i) {
 		Common::String id = Common::String::format("%d", i);
 		_engineCheckboxes.push_back(new CheckboxWidget(boss,
 			prefix + "customOption" + id + "Checkbox", _(iter->label), _(iter->tooltip)));

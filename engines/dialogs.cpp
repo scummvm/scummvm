@@ -301,6 +301,16 @@ ConfigDialog::ConfigDialog(bool subtitleControls)
 	}
 
 	//
+	// Custom engine options
+	//
+	const EnginePlugin *plugin = 0;
+	EngineMan.findGame(ConfMan.get("gameid"), &plugin);
+	if (plugin) {
+		_engineOptions = (*plugin)->getExtraGuiOptions(_domain);
+		addEngineControls(this, "GlobalConfig.");
+	}
+
+	//
 	// Add the buttons
 	//
 
