@@ -27,10 +27,10 @@
 
 namespace GUI {
 
+class CheckboxWidget;
 class CommandSender;
 class ButtonWidget;
 class PopUpWidget;
-class StaticTextWidget;
 
 /**
  * Wizard for updates opt-in
@@ -43,12 +43,10 @@ public:
 	void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
 
 private:
-	StaticTextWidget *_updatesPopUpDesc;
 	PopUpWidget *_updatesPopUp;
 	ButtonWidget *_yesButton;
 	ButtonWidget *_noButton;
-
-	int _state;
+	CheckboxWidget *_updatesCheckbox;
 };
 
 } // End of namespace GUI
