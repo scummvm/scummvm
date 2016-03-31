@@ -110,6 +110,17 @@ void MacOSXUpdateManager::setUpdateCheckInterval(int interval) {
 	if (interval == kUpdateIntervalNotSupported)
 		return;
 
+	const int *vals = getUpdateIntervals();
+
+	while (*vals != -1) {
+		if (interval == *vals)
+			break;
+		vals++;
+	}
+
+	if (*vals == -1)
+		interval = kUpdateIntervalOneDay;
+
 	[sparkleUpdater setUpdateCheckInterval:(NSTimeInterval)interval];
 }
 
