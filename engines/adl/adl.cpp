@@ -379,7 +379,7 @@ void AdlEngine::drawPic(byte pic, Common::Point pos) const {
 }
 
 void AdlEngine::drawItems() const {
-	Common::Array<Item>::const_iterator item;
+	Common::List<Item>::const_iterator item;
 
 	uint dropped = 0;
 
@@ -435,17 +435,23 @@ Room &AdlEngine::getCurRoom() {
 }
 
 const Item &AdlEngine::getItem(uint i) const {
-	if (i < 1 || i > _state.items.size())
-		error("Item %i out of range [1, %i]", i, _state.items.size());
+	Common::List<Item>::const_iterator item;
 
-	return _state.items[i - 1];
+	for (item = _state.items.begin(); item != _state.items.end(); ++item)
+		if (item->id == i)
+			return *item;
+
+	error("Item %i not found", i);
 }
 
 Item &AdlEngine::getItem(uint i) {
-	if (i < 1 || i > _state.items.size())
-		error("Item %i out of range [1, %i]", i, _state.items.size());
+	Common::List<Item>::iterator item;
 
-	return _state.items[i - 1];
+	for (item = _state.items.begin(); item != _state.items.end(); ++item)
+		if (item->id == i)
+			return *item;
+
+	error("Item %i not found", i);
 }
 
 byte AdlEngine::getVar(uint i) const {
@@ -463,7 +469,7 @@ void AdlEngine::setVar(uint i, byte value) {
 }
 
 void AdlEngine::takeItem(byte noun) {
-	Common::Array<Item>::iterator item;
+	Common::List<Item>::iterator item;
 
 	for (item = _state.items.begin(); item != _state.items.end(); ++item) {
 		if (item->noun != noun || item->room != _state.room)
@@ -493,7 +499,7 @@ void AdlEngine::takeItem(byte noun) {
 }
 
 void AdlEngine::dropItem(byte noun) {
-	Common::Array<Item>::iterator item;
+	Common::List<Item>::iterator item;
 
 	for (item = _state.items.begin(); item != _state.items.end(); ++item) {
 		if (item->noun != noun || item->room != IDI_ANY)
@@ -645,12 +651,13 @@ Common::Error AdlEngine::loadGameState(int slot) {
 	if (size != _state.items.size())
 		error("Item count mismatch (expected %i; found %i)", _state.items.size(), size);
 
-	for (uint i = 0; i < size; ++i) {
-		_state.items[i].room = inFile->readByte();
-		_state.items[i].picture = inFile->readByte();
-		_state.items[i].position.x = inFile->readByte();
-		_state.items[i].position.y = inFile->readByte();
-		_state.items[i].state = inFile->readByte();
+	Common::List<Item>::iterator item;
+	for (item = _state.items.begin(); item != _state.items.end(); ++item) {
+		item->room = inFile->readByte();
+		item->picture = inFile->readByte();
+		item->position.x = inFile->readByte();
+		item->position.y = inFile->readByte();
+		item->state = inFile->readByte();
 	}
 
 	size = inFile->readUint32BE();
@@ -724,12 +731,13 @@ Common::Error AdlEngine::saveGameState(int slot, const Common::String &desc) {
 	}
 
 	outFile->writeUint32BE(_state.items.size());
-	for (uint i = 0; i < _state.items.size(); ++i) {
-		outFile->writeByte(_state.items[i].room);
-		outFile->writeByte(_state.items[i].picture);
-		outFile->writeByte(_state.items[i].position.x);
-		outFile->writeByte(_state.items[i].position.y);
-		outFile->writeByte(_state.items[i].state);
+	Common::List<Item>::const_iterator item;
+	for (item = _state.items.begin(); item != _state.items.end(); ++item) {
+		outFile->writeByte(item->room);
+		outFile->writeByte(item->picture);
+		outFile->writeByte(item->position.x);
+		outFile->writeByte(item->position.y);
+		outFile->writeByte(item->state);
 	}
 
 	outFile->writeUint32BE(_state.vars.size());
@@ -982,7 +990,7 @@ int AdlEngine::o1_varSet(ScriptEnv &e) {
 int AdlEngine::o1_listInv(ScriptEnv &e) {
 	OP_DEBUG_0("\tLIST_INVENTORY()");
 
-	Common::Array<Item>::const_iterator item;
+	Common::List<Item>::const_iterator item;
 
 	for (item = _state.items.begin(); item != _state.items.end(); ++item)
 		if (item->room == IDI_ANY)

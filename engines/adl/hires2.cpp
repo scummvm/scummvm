@@ -167,8 +167,10 @@ void HiRes2Engine::initState() {
 	stream.reset(_disk.createReadStream(0x21, 0x0, 0x00, 2));
 
 	_state.items.clear();
-	while (stream->readByte() != 0xff) {
+	byte id;
+	while ((id = stream->readByte()) != 0xff) {
 		Item item = { };
+		item.id = id;
 		item.noun = stream->readByte();
 		item.room = stream->readByte();
 		item.picture = stream->readByte();

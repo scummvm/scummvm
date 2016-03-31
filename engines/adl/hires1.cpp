@@ -233,8 +233,10 @@ void HiRes1Engine::initState() {
 	// Load item data from executable
 	_state.items.clear();
 	stream->seek(IDI_HR1_OFS_ITEMS);
-	while (stream->readByte() != 0xff) {
+	byte id;
+	while ((id = stream->readByte()) != 0xff) {
 		Item item = { };
+		item.id = id;
 		item.noun = stream->readByte();
 		item.room = stream->readByte();
 		item.picture = stream->readByte();

@@ -139,6 +139,7 @@ enum {
 };
 
 struct Item {
+	byte id;
 	byte noun;
 	byte room;
 	byte picture;
@@ -157,7 +158,7 @@ struct Time {
 
 struct State {
 	Common::Array<Room> rooms;
-	Common::Array<Item> items;
+	Common::List<Item> items;
 	Common::Array<byte> vars;
 
 	byte room;

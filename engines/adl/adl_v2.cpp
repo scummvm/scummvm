@@ -213,7 +213,7 @@ int AdlEngine_v2::o2_isRandomGT(ScriptEnv &e) {
 }
 
 int AdlEngine_v2::o2_isNounNotInRoom(ScriptEnv &e) {
-	Common::Array<Item>::const_iterator item;
+	Common::List<Item>::const_iterator item;
 
 	for (item = _state.items.begin(); item != _state.items.end(); ++item)
 		if (item->noun == e.getNoun() && (item->room == roomArg(e.arg(1))))
@@ -223,7 +223,7 @@ int AdlEngine_v2::o2_isNounNotInRoom(ScriptEnv &e) {
 }
 
 int AdlEngine_v2::o2_isCarryingSomething(ScriptEnv &e) {
-	Common::Array<Item>::const_iterator item;
+	Common::List<Item>::const_iterator item;
 
 	for (item = _state.items.begin(); item != _state.items.end(); ++item)
 		if (item->room == IDI_ANY)
@@ -248,7 +248,7 @@ int AdlEngine_v2::o2_moveAllItems(ScriptEnv &e) {
 	byte room1 = roomArg(e.arg(1));
 	byte room2 = roomArg(e.arg(2));
 
-	Common::Array<Item>::iterator item;
+	Common::List<Item>::iterator item;
 
 	for (item = _state.items.begin(); item != _state.items.end(); ++item)
 		if (item->room == room1) {
