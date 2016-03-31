@@ -202,6 +202,22 @@ void CGameObject::draw(CScreenManager *screenManager) {
 	}
 }
 
+void CGameObject::draw(CScreenManager *screenManager, const Common::Point &destPos) {
+	if (!_surface && !_resource.empty()) {
+		loadResource(_resource);
+		_resource.clear();
+	}
+
+	if (_surface) {
+		int xSize = _surface->getWidth();
+		int ySize = _surface->getHeight();
+
+		if (xSize > 0 && ySize > 0) {
+			screenManager->blitFrom(SURFACE_BACKBUFFER, _surface, &destPos);
+		}
+	}
+}
+
 void CGameObject::loadResource(const CString &name) {
 	switch (name.imageTypeSuffix()) {
 	case FILETYPE_IMAGE:

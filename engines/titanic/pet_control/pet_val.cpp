@@ -48,14 +48,18 @@ void CPetVal::proc2() {
 	error("TODO");
 }
 
-void CPetVal::proc3() {
-	error("TODO");
+void CPetVal::draw(CScreenManager *screenManager) {
+	draw(screenManager, Common::Point(_bounds.left, _bounds.top));
 }
 
-void CPetVal::proc4() {
-	error("TODO");
-}
+void CPetVal::draw(CScreenManager *screenManager, const Common::Point &destPos) {
+	CGameObject *obj = getObject();
+	if (!obj)
+		obj = _object0;
 
+	if (obj)
+		obj->draw(screenManager, destPos);
+}
 
 void CPetVal::getBounds(Rect *rect) {
 	if (rect) {

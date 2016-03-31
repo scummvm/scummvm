@@ -53,9 +53,12 @@ public:
 	/**
 	 * Draw the item
 	 */
-	virtual void draw() {}
-	
-	virtual void proc4() {}
+	virtual void draw(CScreenManager *screenManager) {}
+
+	/**
+	 * Draw the item
+	 */
+	virtual void draw(CScreenManager *screenManager, const Common::Point &destPos) {}
 
 	/**
 	 * Get the bounds for the element

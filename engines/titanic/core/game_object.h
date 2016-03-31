@@ -138,6 +138,11 @@ public:
 	virtual void draw(CScreenManager *screenManager);
 
 	/**
+	 * Allows the item to draw itself
+	 */
+	virtual void draw(CScreenManager *screenManager, const Common::Point &destPos);
+
+	/**
 	 * Stops any movie currently playing for the object
 	 */
 	void stopMovie();

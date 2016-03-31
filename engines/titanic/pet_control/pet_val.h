@@ -43,8 +43,16 @@ public:
 		CPetControl *petControl);
 
 	virtual void proc2();
-	virtual void proc3();
-	virtual void proc4();
+
+	/**
+	 * Draw the item
+	 */
+	virtual void draw(CScreenManager *screenManager);
+
+	/**
+	 * Draw the item
+	 */
+	virtual void draw(CScreenManager *screenManager, const Common::Point &destPos);
 
 	/**
 	 * Get the bounds for the element
