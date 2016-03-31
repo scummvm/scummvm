@@ -62,7 +62,8 @@ enum {
 	kChooseExtraDirCmd		= 'chex',
 	kExtraPathClearCmd		= 'clex',
 	kChoosePluginsDirCmd	= 'chpl',
-	kChooseThemeCmd			= 'chtf'
+	kChooseThemeCmd			= 'chtf',
+	kUpdatesCheckCmd		= 'updc'
 };
 
 enum {
@@ -1245,6 +1246,8 @@ GlobalOptionsDialog::GlobalOptionsDialog()
 		_updatesPopUp->setSelectedTag(ConfMan.getInt("updates_check"));
 	else
 		_updatesPopUp->setSelectedTag(Common::UpdateManager::kUpdateIntervalNotSupported);
+
+	new ButtonWidget(tab, "GlobalOptions_Misc.UpdatesCheckManuallyButton", _("Check now"), 0, kUpdatesCheckCmd);
 #endif
 
 	// Activate the first tab
@@ -1517,6 +1520,12 @@ void GlobalOptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 #ifdef USE_FLUIDSYNTH
 	case kFluidSynthSettingsCmd:
 		_fluidSynthSettingsDialog->runModal();
+		break;
+#endif
+#ifdef USE_UPDATES
+	case kUpdatesCheckCmd:
+		if (g_system->getUpdateManager())
+			g_system->getUpdateManager()->checkForUpdates();
 		break;
 #endif
 	default:

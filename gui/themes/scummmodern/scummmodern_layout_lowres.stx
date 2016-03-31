@@ -517,6 +517,9 @@
 				<widget name = 'UpdatesPopup'
 						type = 'PopUp'
 				/>
+                <widget name = 'UpdatesCheckManuallyButton'
+						type = 'Button'
+				/>
 			</layout>
 			<widget name='KeysButton'
  				     type='Button'
