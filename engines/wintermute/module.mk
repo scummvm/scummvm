@@ -89,7 +89,6 @@ MODULE_OBJS := \
 	base/save_thumb_helper.o \
 	base/timer.o \
 	detection.o \
-	math/math_util.o \
 	math/matrix4.o \
 	math/vector2.o \
 	platform_osystem.o \

@@ -115,6 +115,13 @@ inline float deg2rad(float deg) {
 	return deg * (float)M_PI / 180.0f;
 }
 
+/**
+ * Rounds a float to the nearest integer
+ */
+inline float nearestIntf(float val) {
+	return floor(val + 0.5f);
+}
+
 } // End of namespace Common
 
 #endif // COMMON_MATH_H

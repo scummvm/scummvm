@@ -27,6 +27,7 @@
  */
 
 #include "common/config-manager.h"
+#include "common/math.h"
 #include "common/queue.h"
 #include "common/system.h"
 #include "engines/wintermute/base/gfx/osystem/base_render_osystem.h"
@@ -34,7 +35,6 @@
 #include "engines/wintermute/base/gfx/osystem/render_ticket.h"
 #include "engines/wintermute/base/base_surface_storage.h"
 #include "engines/wintermute/base/gfx/base_image.h"
-#include "engines/wintermute/math/math_util.h"
 #include "engines/wintermute/base/base_game.h"
 #include "engines/wintermute/base/base_sprite.h"
 #include "graphics/transparent_surface.h"
@@ -531,10 +531,10 @@ Rect32 BaseRenderOSystem::getViewPort() {
 //////////////////////////////////////////////////////////////////////////
 void BaseRenderOSystem::modTargetRect(Common::Rect *rect) {
 	return;
-	rect->left = (int16)MathUtil::round(rect->left * _ratioX + _borderLeft);
-	rect->top = (int16)MathUtil::round(rect->top * _ratioY + _borderTop);
 	int newWidth = (int16)ceil(rect->width() * _ratioX);
 	int newHeight = (int16)ceil(rect->height() * _ratioY);
+	rect->left = (int16)Common::nearestIntf(rect->left * _ratioX + _borderLeft);
+	rect->top = (int16)Common::nearestIntf(rect->top * _ratioY + _borderTop);
 	rect->setWidth(newWidth);
 	rect->setHeight(newHeight);
 }
