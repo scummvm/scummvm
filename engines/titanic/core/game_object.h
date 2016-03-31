@@ -166,6 +166,7 @@ public:
 	bool hasActiveMovie() const;
 
 	int getMovie19() const;
+	int getSurface45() const;
 
 	/**
 	 * Loads a frame

@@ -24,6 +24,7 @@
 #define TITANIC_PET_ELEMENT_H
 
 #include "titanic/simple_file.h"
+#include "titanic/string.h"
 #include "titanic/core/link_item.h"
 
 namespace Titanic {
@@ -31,16 +32,22 @@ namespace Titanic {
 enum PetElementMode { MODE_0 = 0, MODE_1 = 1, MODE_2 = 2 };
 
 class CGameObject;
+class CPetControl;
 
 class CPetElement {
 protected:
-	Common::Rect _bounds;
+	Rect _bounds;
 	PetElementMode _mode;
 public:
 	CPetElement();
 	virtual ~CPetElement() {}
 
-	virtual void proc1() {}
+	/**
+	 * Load an object into the element
+	 */
+	virtual void loadObject(PetElementMode mode, const CString &name,
+		CPetControl *petControl) {}
+
 	virtual void proc2() {}
 	
 	/**

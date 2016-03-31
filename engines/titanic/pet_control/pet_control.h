@@ -55,7 +55,7 @@ private:
 	CString _string1;
 	CTreeItem *_treeItem2;
 	CString _string2;
-	int _field13A4;
+	CRoomItem *_hiddenRoom;
 	Rect _oldBounds;
 private:
 	/**
@@ -77,8 +77,19 @@ private:
 	 * Called at the end of the post game-load handling
 	 */
 	void loaded();
+
+	/**
+	 * Scan the specified room for an item by name
+	 */
+	CGameObject *findItemInRoom(CRoomItem *room, const CString &name) const;
+
+	/**
+	 * Returns a reference to the special hidden room container
+	 */
+	CRoomItem *getHiddenRoom();
 public:
 	CLASSDEF
+	CPetControl();
 
 	/**
 	 * Save the data for the class to file
@@ -132,6 +143,12 @@ public:
 	 * Returns true if the current area can be changed
 	 */
 	bool canChangeArea() const { return _locked == 0; }
+
+	/**
+	 * Returns a game object used by the PET by name from within the
+	 * special hidden room container
+	 */
+	CGameObject *getHiddenObject(const CString &name);
 };
 
 } // End of namespace Titanic

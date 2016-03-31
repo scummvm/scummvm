@@ -151,6 +151,17 @@ uint CVideoSurface::getTransparencyColor() {
 	return val;
 }
 
+bool CVideoSurface::proc45() {
+	if (_field50) {
+		_field50 = 0;
+		return true;
+	} else if (_movie) {
+		return _movie->get10();
+	} else {
+		return false;
+	}
+}
+
 /*------------------------------------------------------------------------*/
 
 OSVideoSurface::OSVideoSurface(CScreenManager *screenManager, DirectDrawSurface *surface) :

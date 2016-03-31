@@ -32,7 +32,12 @@ namespace Titanic {
 class CVideoSurface;
 
 class CMovie : public ListItem {
+protected:
+	int _state;
+	int _field10;
 public:
+	CMovie();
+
 	virtual void proc8(int v1, CVideoSurface *surface) = 0;
 	virtual void proc9() = 0;
 	virtual void proc10() = 0;
@@ -49,6 +54,8 @@ public:
 	virtual void *proc21() = 0;
 
 	bool isActive() const;
+
+	bool get10();
 };
 
 class OSMovie : public CMovie {

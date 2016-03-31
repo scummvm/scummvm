@@ -66,7 +66,6 @@ void CTrueTalkManager::load(SimpleFile *file) {
 
 		int ident1 = file->readNumber();
 		int ident2 = file->readNumber();
-		int v = 0;
 
 		if (ident1 != MKTAG_BE('U', 'R', 'A', 'H')) {
 			while (ident2 != MKTAG_BE('A', 'K', 'E', 'R')) {

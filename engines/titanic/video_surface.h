@@ -169,6 +169,8 @@ public:
 	 */
 	virtual bool load() = 0;
 
+	virtual bool proc45();
+
 	/**
 	 * Frees the underlying surface
 	 */

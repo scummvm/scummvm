@@ -375,4 +375,8 @@ int CGameObject::getMovie19() const {
 	return _field78;
 }
 
+int CGameObject::getSurface45() const {
+	return _surface ? _surface->proc45() : 0;
+}
+
 } // End of namespace Titanic

@@ -27,6 +27,11 @@
 
 namespace Titanic {
 
+CPetControl::CPetControl() : CGameObject(), 
+	_currentArea(PET_CONVERSATION), _fieldC0(0), _locked(0), _fieldC8(0),
+	_treeItem1(nullptr), _treeItem2(nullptr), _hiddenRoom(nullptr) {
+}
+
 void CPetControl::save(SimpleFile *file, int indent) const {
 	file->writeNumberLine(0, indent);
 	file->writeNumberLine(_currentArea, indent);
@@ -271,6 +276,33 @@ void CPetControl::fn3(CTreeItem *item) {
 		_string2 = item->getName();
 	else
 		_string2.clear();
+}
+
+CRoomItem *CPetControl::getHiddenRoom() {
+	if (!_hiddenRoom)
+		_hiddenRoom = getHiddenRoom();
+
+	return _hiddenRoom;
+}
+
+CGameObject *CPetControl::findItemInRoom(CRoomItem *room, 
+		const CString &name) const {
+	if (!room)
+		return nullptr;
+
+	for (CTreeItem *treeItem = room->getFirstChild(); treeItem;
+			treeItem = treeItem->scan(room)) {
+		if (!treeItem->getName().compareTo(name)) {
+			return dynamic_cast<CGameObject *>(treeItem);
+		}
+	}
+
+	return nullptr;
+}
+
+CGameObject *CPetControl::getHiddenObject(const CString &name) {
+	CRoomItem *room = getHiddenRoom();
+	return room ? findItemInRoom(room, name) : nullptr;
 }
 
 } // End of namespace Titanic

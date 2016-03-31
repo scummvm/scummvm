@@ -25,8 +25,20 @@
 
 namespace Titanic {
 
+CMovie::CMovie() : ListItem(), _state(0), _field10(0) {
+}
+
 bool CMovie::isActive() const {
 	return g_vm->_movieList.contains(this);
+}
+
+bool CMovie::get10() {
+	if (_field10) {
+		_field10 = 0;
+		return true;
+	} else {
+		return false;
+	}
 }
 
 /*------------------------------------------------------------------------*/

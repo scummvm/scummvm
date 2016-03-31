@@ -29,20 +29,32 @@ namespace Titanic {
 
 class CPetVal: public CPetElement {
 protected:
-	int _field18;
-	int _field1C;
-	int _field20;
+	CGameObject *_object0;
+	CGameObject *_object1;
+	CGameObject *_object2;
 public:
-	CPetVal() : CPetElement(), _field18(0), _field1C(0), _field20(0) {}
+	CPetVal() : CPetElement(), _object0(nullptr), _object1(nullptr),
+		_object2(nullptr) {}
 
-	virtual void proc1();
+	/**
+	 * Load an object into the element
+	 */
+	virtual void loadObject(PetElementMode mode, const CString &name,
+		CPetControl *petControl);
+
 	virtual void proc2();
 	virtual void proc3();
 	virtual void proc4();
 
-	virtual void proc5(Rect *linkItem);
+	/**
+	 * Get the bounds for the element
+	 */
+	virtual void getBounds(Rect *rect);
 
-	virtual int proc16();
+	/**
+	 * Get the game object associated with this item
+	 */
+	virtual CGameObject *getObject() const;
 };
 
 } // End of namespace Titanic

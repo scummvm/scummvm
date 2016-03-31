@@ -21,12 +21,27 @@
  */
 
 #include "common/textconsole.h"
+#include "titanic/core/game_object.h"
 #include "titanic/pet_control/pet_val.h"
+#include "titanic/pet_control/pet_control.h"
 
 namespace Titanic {
 
-void CPetVal::proc1() {
-	error("TODO");
+void CPetVal::loadObject(PetElementMode mode, const CString &name,
+		CPetControl *petControl) {
+	switch (mode) {
+	case MODE_0:
+		_object0 = petControl->getHiddenObject(name);
+		break;
+	case MODE_1:
+		_object1 = petControl->getHiddenObject(name);
+		break;
+	case MODE_2:
+		_object2 = petControl->getHiddenObject(name);
+		break;
+	default:
+		break;
+	}
 }
 
 void CPetVal::proc2() {
@@ -41,20 +56,30 @@ void CPetVal::proc4() {
 	error("TODO");
 }
 
-void CPetVal::proc5(Rect *rect) {
-	error("TODO");
+
+void CPetVal::getBounds(Rect *rect) {
+	if (rect) {
+		CGameObject *obj = getObject();
+		if (!obj)
+			obj = _object0;
+
+		if (obj && obj->getSurface45())
+			*rect = _bounds;
+		else
+			rect->clear();
+	}
 }
 
-int CPetVal::proc16() {
+CGameObject *CPetVal::getObject() const {
 	switch (_mode) {
 	case MODE_0:
-		return _field18;
+		return _object0;
 	case MODE_1:
-		return _field1C;
+		return _object1;
 	case MODE_2:
-		return _field20;
+		return _object2;
 	default:
-		return 0;
+		return nullptr;
 	}
 }
 
