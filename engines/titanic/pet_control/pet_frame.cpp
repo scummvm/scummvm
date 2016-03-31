@@ -1,0 +1,104 @@
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ */
+
+#include "titanic/pet_control/pet_frame.h"
+
+namespace Titanic {
+
+static const int INDEXES[6] = { 1, 0, 2, 3, 4, 5 };
+
+int CPetFrame::_indexes[6];
+
+CPetFrame::CPetFrame() {
+	for (int idx = 0; idx < 6; ++idx)
+		_indexes[INDEXES[idx]] = idx;
+}
+
+bool CPetFrame::setup(CPetControl *petControl) {
+	if (setPetControl(petControl))
+		return setup();
+	return false;
+}
+
+bool CPetFrame::setup() {
+	if (_petControl) {
+		// TODO
+	}
+
+	return true;
+}
+
+bool CPetFrame::isValid(CPetControl *petControl) {
+	bool result = setPetControl(petControl);
+	if (result) {
+		_modeButtons[_indexes[0]].setMode(MODE_0);
+		_modeButtons[_indexes[4]].setMode(MODE_1);
+	}
+
+	return result;
+}
+
+void CPetFrame::postLoad() {
+	setup();
+}
+
+bool CPetFrame::setPetControl(CPetControl *petControl) {
+	if (petControl) {
+		_petControl = petControl;
+
+		// Set the bounds of the individual elements
+		_background.setBounds(Rect(20, 350, 620, 480));
+		_modeBackground.setBounds(Rect(590, 365, 611, 467));
+
+		Rect r(35, 373, 91, 429);
+		for (int idx = 0, xp = 0; xp < 490; ++idx, xp += 70) {
+			_indent[idx].setBounds(r);
+			_indent[idx].translate(xp, 0);
+		}
+
+		r = Rect(590, 365, 606, 381);
+		const int YLIST[] = { 7, 27, 45, 66, 84 };
+		for (int idx = 0; idx < 5; ++idx) {
+			_modeButtons[idx].setBounds(r);
+			_modeButtons[idx].translate(0, YLIST[idx]);
+		}
+		_modeButtons[_indexes[0]].setMode(MODE_1);
+		
+		const int XLIST[] = { 73, 54, 85, 109, 38, 71 };
+		for (int idx = 0; idx < 6; ++idx) {
+			_titles[idx].setBounds(Rect(0, 0, 110, 11));
+			_titles[idx].translate(XLIST[idx], 471);
+		}
+	}
+
+	return true;
+}
+
+void CPetFrame::setArea(PetArea newArea) {
+	warning("TODO: CPetFrame::setArea");
+}
+
+void CPetFrame::drawFrame(CScreenManager *screenManager) {
+	warning("TODO: CPetFrame::drawFrame");
+}
+
+} // End of namespace Titanic

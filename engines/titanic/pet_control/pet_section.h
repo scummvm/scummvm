@@ -32,6 +32,7 @@ enum PetArea {
 	PET_ROOMS = 3, PET_SAVE = 4, PET_5 = 5, PET_6 = 6
 };
 
+class CPetControl;
 class CScreenManager;
 class CRoomItem;
 
@@ -47,14 +48,26 @@ struct CPetSectionSubData {
 
 class CPetSection {
 protected:
-	int _field4;
+	CPetControl *_petControl;
 public:
-	CPetSection() : _field4(0) {}
+	CPetSection() : _petControl(nullptr) {}
 	virtual ~CPetSection() {}
 
-	virtual int proc1() { return 0; }
-	virtual int proc2() { return 0; }
+	/**
+	 * Sets up the section
+	 */
+	virtual bool setup(CPetControl *petControl) { return false; }
+	
+	/**
+	 * Sets up the section
+	 */
+	virtual bool setup() { return false; }
+
+	/**
+	 * Draw the section
+	 */
 	virtual void draw(CScreenManager *screenManager) {}
+	
 	virtual void proc4();
 	virtual void proc5(int val) {}
 	virtual int proc6() { return 0; }
@@ -72,7 +85,7 @@ public:
 	/**
 	 * Returns true if the object is in a valid state
 	 */
-	virtual bool isValid() const { return false; }
+	virtual bool isValid(CPetControl *petControl) { return false; }
 
 	/**
 	 * Load the data for the class from file

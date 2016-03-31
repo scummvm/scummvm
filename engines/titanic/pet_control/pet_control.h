@@ -27,13 +27,13 @@
 #include "titanic/core/node_item.h"
 #include "titanic/core/room_item.h"
 #include "titanic/pet_control/pet_conversation_section.h"
+#include "titanic/pet_control/pet_frame.h"
 #include "titanic/pet_control/pet_inventory_section.h"
 #include "titanic/pet_control/pet_remote_section.h"
 #include "titanic/pet_control/pet_rooms_section.h"
 #include "titanic/pet_control/pet_save_section.h"
 #include "titanic/pet_control/pet_control_sub5.h"
 #include "titanic/pet_control/pet_control_sub7.h"
-#include "titanic/pet_control/pet_control_sub8.h"
 
 namespace Titanic {
 
@@ -50,7 +50,7 @@ private:
 	CPetSaveSection _saveSection;
 	CPetControlSub5 _sub5;
 	CPetControlSub7 _sub7;
-	CPetControlSub8 _sub8;
+	CPetFrame _frame;
 	CTreeItem *_treeItem1;
 	CString _string1;
 	CTreeItem *_treeItem2;
@@ -61,7 +61,7 @@ private:
 	/**
 	 * Returns true if the control is in a valid state
 	 */
-	bool isValid() const;
+	bool isValid();
 
 	/**
 	 * Loads data for the individual areas

@@ -43,12 +43,15 @@ public:
 	virtual ~CPetElement() {}
 
 	/**
-	 * Load an object into the element
+	 * Sets up the element
 	 */
-	virtual void loadObject(PetElementMode mode, const CString &name,
+	virtual void setup(PetElementMode mode, const CString &name,
 		CPetControl *petControl) {}
 
-	virtual void proc2() {}
+	/**
+	 * Sets up the element
+	 */
+	virtual void setup() {}
 	
 	/**
 	 * Draw the item
@@ -107,6 +110,16 @@ public:
 	virtual void changeMode(PetElementMode newMode) { _mode = newMode; }
 
 	void setMode(PetElementMode mode);
+
+	/**
+	 * Set the bounds for the element
+	 */
+	void setBounds(const Rect &r) { _bounds = r; }
+
+	/**
+	 * Translate the position of the element
+	 */
+	void translate(int deltaX, int deltaY) { _bounds.translate(deltaX, deltaY); }
 };
 
 } // End of namespace Titanic

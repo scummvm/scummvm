@@ -57,11 +57,15 @@ void CPetControl::load(SimpleFile *file) {
 	CGameObject::load(file);
 }
 
-bool CPetControl::isValid() const {
-	return _convSection.isValid() && _roomsSection.isValid()
-		&& _remoteSection.isValid() && _invSection.isValid()
-		&& _sub5.isValid() && _saveSection.isValid()
-		&& _sub7.isValid() && _sub8.isValid();
+bool CPetControl::isValid() {
+	return _convSection.isValid(this) &&
+		_roomsSection.isValid(this) && 
+		_remoteSection.isValid(this) &&
+		_invSection.isValid(this) &&
+		_sub5.isValid(this) &&
+		_saveSection.isValid(this) &&
+		_sub7.isValid(this) &&
+		_frame.isValid(this);
 }
 
 void CPetControl::loadAreas(SimpleFile *file, int param) {
@@ -72,7 +76,7 @@ void CPetControl::loadAreas(SimpleFile *file, int param) {
 	_sub5.load(file, param);
 	_saveSection.load(file, param);
 	_sub7.load(file, param);
-	_sub8.load(file, param);
+	_frame.load(file, param);
 }
 
 void CPetControl::saveAreas(SimpleFile *file, int indent) const {
@@ -83,7 +87,7 @@ void CPetControl::saveAreas(SimpleFile *file, int indent) const {
 	_sub5.save(file, indent);
 	_saveSection.save(file, indent);
 	_sub7.save(file, indent);
-	_sub8.save(file, indent);
+	_frame.save(file, indent);
 }
 
 void CPetControl::draw(CScreenManager *screenManager) {
@@ -97,7 +101,7 @@ void CPetControl::draw(CScreenManager *screenManager) {
 			_fieldC8 = -1;
 		}
 
-		_sub8.drawFrame(screenManager);
+		_frame.drawFrame(screenManager);
 
 		// Draw the specific area that's currently active
 		switch (_currentArea) {
@@ -148,7 +152,7 @@ void CPetControl::loaded() {
 	_sub5.postLoad();
 	_saveSection.postLoad();
 	_sub7.postLoad();
-	_sub8.postLoad();
+	_frame.postLoad();
 }
 
 void CPetControl::enterNode(CNodeItem *node) {
@@ -207,7 +211,7 @@ PetArea CPetControl::setArea(PetArea newArea) {
 
 	// Change the current area
 	PetArea oldArea = _currentArea;
-	_sub8.setArea(newArea);
+	_frame.setArea(newArea);
 	_currentArea = newArea;
 
 	// Signal to the new view that it's been activated

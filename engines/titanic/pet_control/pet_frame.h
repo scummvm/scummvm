@@ -20,33 +20,64 @@
  *
  */
 
-#ifndef TITANIC_PET_CONTROL_SUB8_H
-#define TITANIC_PET_CONTROL_SUB8_H
+#ifndef TITANIC_PET_FRAME_H
+#define TITANIC_PET_FRAME_H
 
 #include "titanic/pet_control/pet_section.h"
 #include "titanic/pet_control/pet_val.h"
 
 namespace Titanic {
 
-class CPetControlSub8 : public CPetSection {
+class CPetFrame : public CPetSection {
 private:
 	static int _indexes[6];
 
-	CPetVal _valArray1[6];
-	CPetVal _valArray2[6];
-	CPetVal _val1;
+	CPetVal _modeButtons[6];
+	CPetVal _titles[6];
+	CPetVal _modeBackground;
 	CPetVal _val2;
 	CPetVal _val3;
-	CPetVal _val4;
-	CPetVal _valArray3[7];
+	CPetVal _background;
+	CPetVal _indent[7];
+private:
+	/**
+	 * Called to set the owning PET instance and set some initial state
+	 */
+	bool setPetControl(CPetControl *petControl);
 public:
-	CPetControlSub8();
+	CPetFrame();
 
+	/**
+	 * Sets up the section
+	 */
+	virtual bool setup(CPetControl *petControl);
+	
+	/**
+	 * Sets up the section
+	 */
+	virtual bool setup();
+
+	/**
+	 * Returns true if the object is in a valid state
+	 */
+	virtual bool isValid(CPetControl *petControl);
+
+	/**
+	 * Called after a game has been loaded
+	 */
+	virtual void postLoad();
+
+	/**
+	 * Called when the current PET area changes
+	 */
 	void setArea(PetArea newArea);
 
+	/**
+	 * Draws the PET frame
+	 */
 	void drawFrame(CScreenManager *screenManager);
 };
 
 } // End of namespace Titanic
 
-#endif /* TITANIC_PET_CONTROL_SUB8_H */
+#endif /* TITANIC_PET_FRAME_H */
