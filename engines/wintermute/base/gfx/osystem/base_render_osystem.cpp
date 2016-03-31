@@ -531,10 +531,10 @@ Rect32 BaseRenderOSystem::getViewPort() {
 //////////////////////////////////////////////////////////////////////////
 void BaseRenderOSystem::modTargetRect(Common::Rect *rect) {
 	return;
-	int newWidth = (int16)MathUtil::roundUp(rect->width() * _ratioX);
-	int newHeight = (int16)MathUtil::roundUp(rect->height() * _ratioY);
 	rect->left = (int16)MathUtil::round(rect->left * _ratioX + _borderLeft);
 	rect->top = (int16)MathUtil::round(rect->top * _ratioY + _borderTop);
+	int newWidth = (int16)ceil(rect->width() * _ratioX);
+	int newHeight = (int16)ceil(rect->height() * _ratioY);
 	rect->setWidth(newWidth);
 	rect->setHeight(newHeight);
 }
@@ -548,8 +548,8 @@ void BaseRenderOSystem::pointFromScreen(Point32 *point) {
 
 //////////////////////////////////////////////////////////////////////////
 void BaseRenderOSystem::pointToScreen(Point32 *point) {
-	point->x = (int16)MathUtil::roundUp(point->x * _ratioX) + _borderLeft - _renderRect.left;
-	point->y = (int16)MathUtil::roundUp(point->y * _ratioY) + _borderTop - _renderRect.top;
+	point->x = (int16)ceil(point->x * _ratioX) + _borderLeft - _renderRect.left;
+	point->y = (int16)ceil(point->y * _ratioY) + _borderTop - _renderRect.top;
 }
 
 //////////////////////////////////////////////////////////////////////////
