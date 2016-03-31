@@ -39,10 +39,13 @@ class Console : public GUI::Debugger {
 public:
 	Console(AdlEngine *engine);
 
+	static Common::String toAscii(const Common::String &str);
+
 private:
 	bool Cmd_Help(int argc, const char **argv);
 	bool Cmd_Nouns(int argc, const char **argv);
 	bool Cmd_Verbs(int argc, const char **argv);
+	bool Cmd_DumpScripts(int argc, const char **argv);
 
 	void printWordMap(const Common::HashMap<Common::String, uint> &wordMap);
 

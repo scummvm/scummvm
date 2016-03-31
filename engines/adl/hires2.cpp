@@ -138,11 +138,11 @@ void HiRes2Engine::init() {
 
 	// Load verbs
 	stream.reset(_disk.createReadStream(0x19, 0x0, 0x00, 3));
-	loadWords(*stream, _verbs);
+	loadWords(*stream, _verbs, _priVerbs);
 
 	// Load nouns
 	stream.reset(_disk.createReadStream(0x22, 0x2, 0x00, 7));
-	loadWords(*stream, _nouns);
+	loadWords(*stream, _nouns, _priNouns);
 }
 
 void HiRes2Engine::initState() {

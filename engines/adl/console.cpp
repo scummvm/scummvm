@@ -20,6 +20,8 @@
  *
  */
 
+#include "common/debug-channels.h"
+
 #include "adl/console.h"
 #include "adl/adl.h"
 
@@ -28,25 +30,18 @@ namespace Adl {
 Console::Console(AdlEngine *engine) : GUI::Debugger() {
 	_engine = engine;
 
-	registerCmd("help", WRAP_METHOD(Console, Cmd_Help));
 	registerCmd("nouns", WRAP_METHOD(Console, Cmd_Nouns));
 	registerCmd("verbs", WRAP_METHOD(Console, Cmd_Verbs));
+	registerCmd("dump_scripts", WRAP_METHOD(Console, Cmd_DumpScripts));
 }
 
-static Common::String toAscii(const Common::String &str) {
+Common::String Console::toAscii(const Common::String &str) {
 	Common::String ascii(str);
 
 	for (uint i = 0; i < ascii.size(); ++i)
 		ascii.setChar(ascii[i] & 0x7f, i);
 
 	return ascii;
-}
-
-bool Console::Cmd_Help(int argc, const char **argv) {
-	debugPrintf("Parser:\n");
-	debugPrintf(" verbs - Lists the vocabulary verbs\n");
-	debugPrintf(" nouns - Lists the vocabulary nouns\n");
-	return true;
 }
 
 bool Console::Cmd_Verbs(int argc, const char **argv) {
@@ -68,6 +63,35 @@ bool Console::Cmd_Nouns(int argc, const char **argv) {
 
 	debugPrintf("Nouns in alphabetical order:\n");
 	printWordMap(_engine->_nouns);
+	return true;
+}
+
+bool Console::Cmd_DumpScripts(int argc, const char **argv) {
+	if (argc != 1) {
+		debugPrintf("Usage: %s\n", argv[0]);
+		return true;
+	}
+
+	bool oldFlag = DebugMan.isDebugChannelEnabled(kDebugChannelScript);
+
+	DebugMan.enableDebugChannel("Script");
+
+	_engine->_dumpFile = new Common::DumpFile();
+
+	_engine->_dumpFile->open("GLOBAL.ADL");
+	_engine->doAllCommands(_engine->_globalCommands, IDI_ANY, IDI_ANY);
+	_engine->_dumpFile->close();
+
+	_engine->_dumpFile->open("RESPONSE.ADL");
+	_engine->doAllCommands(_engine->_roomCommands, IDI_ANY, IDI_ANY);
+	_engine->_dumpFile->close();
+
+	delete _engine->_dumpFile;
+	_engine->_dumpFile = nullptr;
+
+	if (!oldFlag)
+		DebugMan.disableDebugChannel("Script");
+
 	return true;
 }
 

@@ -22,6 +22,7 @@
 
 #include "common/scummsys.h"
 #include "common/config-manager.h"
+#include "common/debug-channels.h"
 #include "common/debug.h"
 #include "common/error.h"
 #include "common/file.h"
@@ -48,10 +49,12 @@ AdlEngine::~AdlEngine() {
 	delete _graphics;
 	delete _speaker;
 	delete _console;
+	delete _dumpFile;
 }
 
 AdlEngine::AdlEngine(OSystem *syst, const AdlGameDescription *gd) :
 		Engine(syst),
+		_dumpFile(nullptr),
 		_display(nullptr),
 		_graphics(nullptr),
 		_isRestarting(false),
@@ -63,6 +66,8 @@ AdlEngine::AdlEngine(OSystem *syst, const AdlGameDescription *gd) :
 		_restoreNoun(0),
 		_canSaveNow(false),
 		_canRestoreNow(false) {
+
+	DebugMan.addDebugChannel(kDebugChannelScript, "Script", "Trace script execution");
 }
 
 bool AdlEngine::pollEvent(Common::Event &event) const {
@@ -204,7 +209,7 @@ byte AdlEngine::inputKey(bool showCursor) const {
 	return key;
 }
 
-void AdlEngine::loadWords(Common::ReadStream &stream, WordMap &map) const {
+void AdlEngine::loadWords(Common::ReadStream &stream, WordMap &map, Common::StringArray &pri) const {
 	uint index = 0;
 
 	while (1) {
@@ -219,6 +224,8 @@ void AdlEngine::loadWords(Common::ReadStream &stream, WordMap &map) const {
 
 		if (!map.contains(word))
 			map[word] = index;
+
+		pri.push_back(Console::toAscii(word));
 
 		byte synonyms = stream.readByte();
 
@@ -863,54 +870,118 @@ void AdlEngine::getInput(uint &verb, uint &noun) {
 	}
 }
 
-typedef Common::Functor1Mem<ScriptEnv &, int, AdlEngine> OpcodeV1;
+bool AdlEngine::op_debug(const char *fmt, ...) const {
+	if (DebugMan.isDebugChannelEnabled(kDebugChannelScript)) {
+		va_list va;
+		va_start(va, fmt);
+		Common::String output = Common::String::vformat(fmt, va);
+		va_end(va);
+
+		output += '\n';
+		if (_dumpFile) {
+			_dumpFile->write(output.c_str(), output.size());
+			return true;
+		} else
+			debugN("%s", output.c_str());
+	}
+
+	return false;
+}
+
+#define OP_DEBUG_0(F) do { \
+	if (DebugMan.isDebugChannelEnabled(kDebugChannelScript) && op_debug(F)) \
+		return 0; \
+} while (0)
+
+#define OP_DEBUG_1(F, P1) do { \
+	if (DebugMan.isDebugChannelEnabled(kDebugChannelScript) && op_debug(F, P1)) \
+		return 1; \
+} while (0)
+
+#define OP_DEBUG_2(F, P1, P2) do { \
+	if (DebugMan.isDebugChannelEnabled(kDebugChannelScript) && op_debug(F, P1, P2)) \
+		return 2; \
+} while (0)
+
+#define OP_DEBUG_3(F, P1, P2, P3) do { \
+	if (DebugMan.isDebugChannelEnabled(kDebugChannelScript) && op_debug(F, P1, P2, P3)) \
+		return 3; \
+} while (0)
+
+#define OP_DEBUG_4(F, P1, P2, P3, P4) do { \
+	if (DebugMan.isDebugChannelEnabled(kDebugChannelScript) && op_debug(F, P1, P2, P3, P4)) \
+		return 4; \
+} while (0)
 
 int AdlEngine::o1_isItemInRoom(ScriptEnv &e) {
+	OP_DEBUG_2("\t&& GET_ITEM_ROOM(%s) == %s", itemStr(e.arg(1)).c_str(), itemRoomStr(e.arg(2)).c_str());
+
 	if (getItem(e.arg(1)).room == roomArg(e.arg(2)))
 		return 2;
+
 	return -1;
 }
 
 int AdlEngine::o1_isMovesGT(ScriptEnv &e) {
+	OP_DEBUG_1("\t&& MOVES > %d", e.arg(1));
+
 	if (_state.moves > e.arg(1))
 		return 1;
+
 	return -1;
 }
 
 int AdlEngine::o1_isVarEQ(ScriptEnv &e) {
+	OP_DEBUG_2("\t&& VARS[%d] == %d", e.arg(1), e.arg(2));
+
 	if (getVar(e.arg(1)) == e.arg(2))
 		return 2;
+
 	return -1;
 }
 
 int AdlEngine::o1_isCurPicEQ(ScriptEnv &e) {
+	OP_DEBUG_1("\t&& GET_CURPIC() == %d", e.arg(1));
+
 	if (getCurRoom().curPicture == e.arg(1))
 		return 1;
+
 	return -1;
 }
 
 int AdlEngine::o1_isItemPicEQ(ScriptEnv &e) {
+	OP_DEBUG_2("\t&& GET_ITEM_PIC(%s) == %d", itemStr(e.arg(1)).c_str(), e.arg(2));
+
 	if (getItem(e.arg(1)).picture == e.arg(2))
 		return 2;
+
 	return -1;
 }
 
 int AdlEngine::o1_varAdd(ScriptEnv &e) {
+	OP_DEBUG_2("\tVARS[%d] += %d", e.arg(2), e.arg(1));
+
 	setVar(e.arg(2), getVar(e.arg(2) + e.arg(1)));
 	return 2;
 }
 
 int AdlEngine::o1_varSub(ScriptEnv &e) {
+	OP_DEBUG_2("\tVARS[%d] -= %d", e.arg(2), e.arg(1));
+
 	setVar(e.arg(2), getVar(e.arg(2)) - e.arg(1));
 	return 2;
 }
 
 int AdlEngine::o1_varSet(ScriptEnv &e) {
+	OP_DEBUG_2("\tVARS[%d] = %d", e.arg(1), e.arg(2));
+
 	setVar(e.arg(1), e.arg(2));
 	return 2;
 }
 
 int AdlEngine::o1_listInv(ScriptEnv &e) {
+	OP_DEBUG_0("\tLIST_INVENTORY()");
+
 	Common::Array<Item>::const_iterator item;
 
 	for (item = _state.items.begin(); item != _state.items.end(); ++item)
@@ -921,53 +992,73 @@ int AdlEngine::o1_listInv(ScriptEnv &e) {
 }
 
 int AdlEngine::o1_moveItem(ScriptEnv &e) {
+	OP_DEBUG_2("\tSET_ITEM_ROOM(%s, %s)", itemStr(e.arg(1)).c_str(), itemRoomStr(e.arg(2)).c_str());
+
 	getItem(e.arg(1)).room = e.arg(2);
 	return 2;
 }
 
 int AdlEngine::o1_setRoom(ScriptEnv &e) {
+	OP_DEBUG_1("\tROOM = %d", e.arg(1));
+
 	getCurRoom().curPicture = getCurRoom().picture;
 	_state.room = e.arg(1);
 	return 1;
 }
 
 int AdlEngine::o1_setCurPic(ScriptEnv &e) {
+	OP_DEBUG_1("\tSET_CURPIC(%d)", e.arg(1));
+
 	getCurRoom().curPicture = e.arg(1);
 	return 1;
 }
 
 int AdlEngine::o1_setPic(ScriptEnv &e) {
+	OP_DEBUG_1("\tSET_PIC(%d)", e.arg(1));
+
 	getCurRoom().picture = getCurRoom().curPicture = e.arg(1);
 	return 1;
 }
 
 int AdlEngine::o1_printMsg(ScriptEnv &e) {
+	OP_DEBUG_1("\tPRINT(%s)", msgStr(e.arg(1)).c_str());
+
 	printMessage(e.arg(1));
 	return 1;
 }
 
 int AdlEngine::o1_setLight(ScriptEnv &e) {
+	OP_DEBUG_0("\tLIGHT()");
+
 	_state.isDark = false;
 	return 0;
 }
 
 int AdlEngine::o1_setDark(ScriptEnv &e) {
+	OP_DEBUG_0("\tDARK()");
+
 	_state.isDark = true;
 	return 0;
 }
 
 int AdlEngine::o1_save(ScriptEnv &e) {
+	OP_DEBUG_0("\tSAVE_GAME()");
+
 	saveGameState(0, "");
 	return 0;
 }
 
 int AdlEngine::o1_restore(ScriptEnv &e) {
+	OP_DEBUG_0("\tRESTORE_GAME()");
+
 	loadGameState(0);
 	_isRestoring = false;
 	return 0;
 }
 
 int AdlEngine::o1_restart(ScriptEnv &e) {
+	OP_DEBUG_0("\tRESTART_GAME()");
+
 	_display->printString(_strings.playAgain);
 	Common::String input = inputString();
 
@@ -983,12 +1074,16 @@ int AdlEngine::o1_restart(ScriptEnv &e) {
 }
 
 int AdlEngine::o1_quit(ScriptEnv &e) {
+	OP_DEBUG_0("\tQUIT_GAME()");
+
 	printMessage(_messageIds.thanksForPlaying);
 	quitGame();
 	return -1;
 }
 
 int AdlEngine::o1_placeItem(ScriptEnv &e) {
+	OP_DEBUG_4("\tPLACE_ITEM(%s, %s, (%d, %d))", itemStr(e.arg(1)).c_str(), itemRoomStr(e.arg(2)).c_str(), e.arg(3), e.arg(4));
+
 	Item &item = getItem(e.arg(1));
 
 	item.room = roomArg(e.arg(2));
@@ -998,17 +1093,23 @@ int AdlEngine::o1_placeItem(ScriptEnv &e) {
 }
 
 int AdlEngine::o1_setItemPic(ScriptEnv &e) {
+	OP_DEBUG_2("\tSET_ITEM_PIC(%s, %d)", itemStr(e.arg(2)).c_str(), e.arg(1));
+
 	getItem(e.arg(2)).picture = e.arg(1);
 	return 2;
 }
 
 int AdlEngine::o1_resetPic(ScriptEnv &e) {
+	OP_DEBUG_0("\tRESET_PIC()");
+
 	getCurRoom().curPicture = getCurRoom().picture;
 	return 0;
 }
 
 template <Direction D>
 int AdlEngine::o1_goDirection(ScriptEnv &e) {
+	OP_DEBUG_0((Common::String("\tGO_") + dirStr(D) + "()").c_str());
+
 	byte room = getCurRoom().connections[D];
 
 	if (room == 0) {
@@ -1022,23 +1123,34 @@ int AdlEngine::o1_goDirection(ScriptEnv &e) {
 }
 
 int AdlEngine::o1_takeItem(ScriptEnv &e) {
+	OP_DEBUG_0("\tTAKE_ITEM()");
+
 	takeItem(e.getNoun());
 	return 0;
 }
 
 int AdlEngine::o1_dropItem(ScriptEnv &e) {
+	OP_DEBUG_0("\tDROP_ITEM()");
+
 	dropItem(e.getNoun());
 	return 0;
 }
 
 int AdlEngine::o1_setRoomPic(ScriptEnv &e) {
+	OP_DEBUG_2("\tSET_ROOM_PIC(%d, %d)", e.arg(1), e.arg(2));
+
 	getRoom(e.arg(1)).picture = getRoom(e.arg(1)).curPicture = e.arg(2);
 	return 2;
 }
 
 bool AdlEngine::matchCommand(ScriptEnv &env) const {
-	if (!env.isMatch())
+	if (!env.isMatch() && !_dumpFile)
 		return false;
+
+	if (DebugMan.isDebugChannelEnabled(kDebugChannelScript)) {
+		op_debug("IF\n\tROOM == %s", roomStr(env.getCommand().room).c_str());
+		op_debug("\t&& SAID(%s, %s)", verbStr(env.getCommand().verb).c_str(), nounStr(env.getCommand().noun).c_str());
+	}
 
 	for (uint i = 0; i < env.getCondCount(); ++i) {
 		byte op = env.op();
@@ -1048,8 +1160,11 @@ bool AdlEngine::matchCommand(ScriptEnv &env) const {
 
 		int numArgs = (*_condOpcodes[op])(env);
 
-		if (numArgs < 0)
+		if (numArgs < 0) {
+			if (DebugMan.isDebugChannelEnabled(kDebugChannelScript))
+				op_debug("FAIL\n");
 			return false;
+		}
 
 		env.skip(numArgs + 1);
 	}
@@ -1058,6 +1173,9 @@ bool AdlEngine::matchCommand(ScriptEnv &env) const {
 }
 
 void AdlEngine::doActions(ScriptEnv &env) {
+	if (DebugMan.isDebugChannelEnabled(kDebugChannelScript))
+		op_debug("THEN");
+
 	for (uint i = 0; i < env.getActCount(); ++i) {
 		byte op = env.op();
 
@@ -1066,11 +1184,17 @@ void AdlEngine::doActions(ScriptEnv &env) {
 
 		int numArgs = (*_actOpcodes[op])(env);
 
-		if (numArgs < 0)
+		if (numArgs < 0) {
+			if (DebugMan.isDebugChannelEnabled(kDebugChannelScript))
+				op_debug("ABORT\n");
 			return;
+		}
 
 		env.skip(numArgs + 1);
 	}
+
+	if (DebugMan.isDebugChannelEnabled(kDebugChannelScript))
+		op_debug("END\n");
 }
 
 bool AdlEngine::doOneCommand(const Commands &commands, byte verb, byte noun) {
@@ -1095,6 +1219,70 @@ void AdlEngine::doAllCommands(const Commands &commands, byte verb, byte noun) {
 		if (matchCommand(env))
 			doActions(env);
 	}
+}
+
+Common::String AdlEngine::toAscii(const Common::String &str) {
+	Common::String ascii = Console::toAscii(str);
+	if (ascii.lastChar() == '\r')
+		ascii.deleteLastChar();
+	// FIXME: remove '\r's inside string?
+	return ascii;
+}
+
+Common::String AdlEngine::itemStr(uint i) const {
+	byte desc = getItem(i).description;
+	byte noun = getItem(i).noun;
+	Common::String name = Common::String::format("%d", i);
+	if (noun > 0) {
+		name += "/";
+		name += _priNouns[noun - 1];
+	}
+	if (desc > 0) {
+		name += "/";
+		name += toAscii(_messages[desc - 1]);
+	}
+	return name;
+}
+
+Common::String AdlEngine::itemRoomStr(uint i) const {
+	switch (i) {
+	case IDI_ANY:
+		return "CARRYING";
+	case IDI_VOID_ROOM:
+		return "GONE";
+	default:
+		return Common::String::format("%d", i);
+	}
+}
+
+Common::String AdlEngine::roomStr(uint i) const {
+	if (i == IDI_ANY)
+		return "*";
+	else
+		return Common::String::format("%d", i);
+}
+
+Common::String AdlEngine::verbStr(uint i) const {
+	if (i == IDI_ANY)
+		return "*";
+	else
+		return Common::String::format("%d/%s", i, _priVerbs[i - 1].c_str());
+}
+
+Common::String AdlEngine::nounStr(uint i) const {
+	if (i == IDI_ANY)
+		return "*";
+	else
+		return Common::String::format("%d/%s", i, _priNouns[i - 1].c_str());
+}
+
+Common::String AdlEngine::msgStr(uint i) const {
+	return Common::String::format("%d/%s", i, toAscii(_messages[i - 1]).c_str());
+}
+
+Common::String AdlEngine::dirStr(Direction dir) const {
+	static const char *dirs[] = { "NORTH", "SOUTH", "EAST", "WEST", "UP", "DOWN" };
+	return dirs[dir];
 }
 
 } // End of namespace Adl

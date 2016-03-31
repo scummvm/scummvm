@@ -199,10 +199,10 @@ void HiRes1Engine::init() {
 		error("Failed to read game data from '" IDS_HR1_EXE_1 "'");
 
 	stream->seek(IDI_HR1_OFS_VERBS);
-	loadWords(*stream, _verbs);
+	loadWords(*stream, _verbs, _priVerbs);
 
 	stream->seek(IDI_HR1_OFS_NOUNS);
-	loadWords(*stream, _nouns);
+	loadWords(*stream, _nouns, _priNouns);
 }
 
 void HiRes1Engine::initState() {

@@ -29,6 +29,7 @@
 #include "common/hashmap.h"
 #include "common/hash-str.h"
 #include "common/func.h"
+#include "common/scummsys.h"
 
 #include "engines/engine.h"
 
@@ -54,10 +55,15 @@ class Speaker;
 struct AdlGameDescription;
 struct ScriptEnv;
 
+enum kDebugChannels {
+	kDebugChannelScript = 1 << 0
+};
+
 // Save and restore opcodes
 #define IDO_ACT_SAVE           0x0f
 #define IDO_ACT_LOAD           0x10
 
+#define IDI_VOID_ROOM 0xfd
 #define IDI_ANY 0xfe
 
 #define IDI_WORD_SIZE 8
@@ -118,6 +124,7 @@ public:
 	byte getCondCount() const { return _cmd.numCond; }
 	byte getActCount() const { return _cmd.numAct; }
 	byte getNoun() const { return _noun; }
+	const Command &getCommand() const { return _cmd; }
 
 private:
 	const Command &_cmd;
@@ -195,7 +202,7 @@ protected:
 	Common::String inputString(byte prompt = 0) const;
 	byte inputKey(bool showCursor = true) const;
 
-	void loadWords(Common::ReadStream &stream, WordMap &map) const;
+	void loadWords(Common::ReadStream &stream, WordMap &map, Common::StringArray &pri) const;
 	void readCommands(Common::ReadStream &stream, Commands &commands);
 	void checkInput(byte verb, byte noun);
 
@@ -259,6 +266,18 @@ protected:
 	bool doOneCommand(const Commands &commands, byte verb, byte noun);
 	void doAllCommands(const Commands &commands, byte verb, byte noun);
 
+	// Debug functions
+	static Common::String toAscii(const Common::String &str);
+	Common::String itemStr(uint i) const;
+	Common::String roomStr(uint i) const;
+	Common::String itemRoomStr(uint i) const;
+	Common::String verbStr(uint i) const;
+	Common::String nounStr(uint i) const;
+	Common::String msgStr(uint i) const;
+	Common::String dirStr(Direction dir) const;
+	bool op_debug(const char *fmt, ...) const;
+	Common::DumpFile *_dumpFile;
+
 	Display *_display;
 	GraphicsMan *_graphics;
 	Speaker *_speaker;
@@ -280,6 +299,8 @@ protected:
 
 	WordMap _verbs;
 	WordMap _nouns;
+	Common::StringArray _priVerbs;
+	Common::StringArray _priNouns;
 
 	struct {
 		Common::String enterCommand;

@@ -29,7 +29,6 @@
 // this is not currently implemented.
 
 #define IDI_CUR_ROOM 0xfc
-#define IDI_VOID_ROOM 0xfd
 
 namespace Common{
 class RandomSource;
