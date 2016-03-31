@@ -78,16 +78,13 @@ bool Console::Cmd_DumpScripts(int argc, const char **argv) {
 
 	_engine->_dumpFile = new Common::DumpFile();
 
-	Common::Array<Room>::const_iterator room;
-	byte roomNr = 1;
-	for (room = _engine->_state.rooms.begin(); room != _engine->_state.rooms.end(); ++room) {
+	for (byte roomNr = 1; roomNr <= _engine->_state.rooms.size(); ++roomNr) {
 		_engine->loadRoom(roomNr);
 		if (_engine->_roomData.commands.size() != 0) {
 			_engine->_dumpFile->open(Common::String::format("%03d.ADL", roomNr).c_str());
 			_engine->doAllCommands(_engine->_roomData.commands, IDI_ANY, IDI_ANY);
 			_engine->_dumpFile->close();
 		}
-		++roomNr;
 	}
 	_engine->loadRoom(_engine->_state.room);
 
