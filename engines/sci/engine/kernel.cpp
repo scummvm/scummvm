@@ -91,6 +91,20 @@ const Common::String &Kernel::getKernelName(uint number) const {
 	return _kernelNames[number];
 }
 
+Common::String Kernel::getKernelName(uint number, uint subFunction) const {
+	// FIXME: The following check is a temporary workaround for an issue
+	// leading to crashes when using the debugger's backtrace command.
+	if (number >= _kernelFuncs.size())
+		return _invalid;
+	const KernelFunction &kernelCall = _kernelFuncs[number];
+
+	if (subFunction >= kernelCall.subFunctionCount)
+		return _invalid;
+
+	return kernelCall.subFunctions[subFunction].name;
+}
+
+
 int Kernel::findKernelFuncPos(Common::String kernelFuncName) {
 	for (uint32 i = 0; i < _kernelNames.size(); i++)
 		if (_kernelNames[i] == kernelFuncName)

@@ -240,7 +240,7 @@ ExecStack *execute_method(EngineState *s, uint16 script, uint16 pubfunct, StackP
 	g_sci->checkExportBreakpoint(script, pubfunct);
 
 	ExecStack xstack(calling_obj, calling_obj, sp, argc, argp,
-						seg, make_reg32(seg, exportAddr), -1, pubfunct, -1,
+						seg, make_reg32(seg, exportAddr), -1, -1, -1, pubfunct, -1,
 						s->_executionStack.size() - 1, EXEC_STACK_TYPE_CALL);
 	s->_executionStack.push_back(xstack);
 	return &(s->_executionStack.back());
@@ -313,7 +313,7 @@ ExecStack *send_selector(EngineState *s, reg_t send_obj, reg_t work_obj, StackPt
 			debugSelectorCall(send_obj, selector, argc, argp, varp, funcp, s->_segMan, selectorType);
 
 		ExecStack xstack(work_obj, send_obj, curSP, argc, argp,
-							0xFFFF, curFP, selector, -1, -1,
+							0xFFFF, curFP, selector, -1, -1, -1, -1,
 							origin, stackType);
 
 		if (selectorType == kSelectorVariable)
@@ -335,12 +335,12 @@ ExecStack *send_selector(EngineState *s, reg_t send_obj, reg_t work_obj, StackPt
 	return s->_executionStack.empty() ? NULL : &(s->_executionStack.back());
 }
 
-static void addKernelCallToExecStack(EngineState *s, int kernelCallNr, int argc, reg_t *argv) {
+static void addKernelCallToExecStack(EngineState *s, int kernelCallNr, int kernelSubCallNr, int argc, reg_t *argv) {
 	// Add stack frame to indicate we're executing a callk.
 	// This is useful in debugger backtraces if this
 	// kernel function calls a script itself.
 	ExecStack xstack(NULL_REG, NULL_REG, NULL, argc, argv - 1, 0xFFFF, make_reg32(0, 0),
-						kernelCallNr, -1, -1, s->_executionStack.size() - 1, EXEC_STACK_TYPE_KERNEL);
+						-1, kernelCallNr, kernelSubCallNr, -1, -1, s->_executionStack.size() - 1, EXEC_STACK_TYPE_KERNEL);
 	s->_executionStack.push_back(xstack);
 }
 
@@ -386,7 +386,7 @@ static void callKernelFunc(EngineState *s, int kernelCallNr, int argc) {
 
 	// Call kernel function
 	if (!kernelCall.subFunctionCount) {
-		addKernelCallToExecStack(s, kernelCallNr, argc, argv);
+		addKernelCallToExecStack(s, kernelCallNr, -1, argc, argv);
 		s->r_acc = kernelCall.function(s, argc, argv);
 
 		if (kernelCall.debugLogging)
@@ -444,7 +444,7 @@ static void callKernelFunc(EngineState *s, int kernelCallNr, int argc) {
 		}
 		if (!kernelSubCall.function)
 			error("[VM] k%s: subfunction ID %d requested, but not available", kernelCall.name, subId);
-		addKernelCallToExecStack(s, kernelCallNr, argc, argv);
+		addKernelCallToExecStack(s, kernelCallNr, subId, argc, argv);
 		s->r_acc = kernelSubCall.function(s, argc, argv);
 
 		if (kernelSubCall.debugLogging)
@@ -841,7 +841,7 @@ void run_vm(EngineState *s) {
 			ExecStack xstack(s->xs->objp, s->xs->objp, s->xs->sp,
 							(call_base->requireUint16()) + s->r_rest, call_base,
 							s->xs->local_segment, make_reg32(s->xs->addr.pc.getSegment(), localCallOffset),
-							NULL_SELECTOR, -1, localCallOffset, s->_executionStack.size() - 1,
+							NULL_SELECTOR, -1, -1, -1, localCallOffset, s->_executionStack.size() - 1,
 							EXEC_STACK_TYPE_CALL);
 
 			s->_executionStack.push_back(xstack);
