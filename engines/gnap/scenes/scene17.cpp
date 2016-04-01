@@ -265,9 +265,8 @@ void GnapEngine::scene17_run() {
 		_platY = 8;
 		_beaverId = 160;
 		_gameSys->insertSequence(0x241, 160, 0, 0, kSeqNone, 0, 0, 0);
-		// CHECKME: Check the value of the flag
 		_gameSys->insertSequence(0x107C1, _beaverId, 0x241, _beaverId,
-			9, 0, 75 * _platX - _platGridX, 48 * _platY - _platGridY);
+			kSeqScale | kSeqSyncWait, 0, 75 * _platX - _platGridX, 48 * _platY - _platGridY);
 		_gameSys->insertSequence(0x22C, 2, 0, 0, kSeqNone, 0, 0, 0);
 		// TODO delayTicksA(2, 9);
 		endSceneInit();

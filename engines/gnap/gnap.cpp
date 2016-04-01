@@ -1569,10 +1569,9 @@ void GnapEngine::playGnapSequence(int sequenceId) {
 	_timers[2] = getRandom(30) + 20;
 	_timers[3] = 300;
 	gnapIdle();
-	// CHECKME: Check the value of the flag
 	_gameSys->insertSequence(sequenceId, _gnapId,
 		makeRid(_gnapSequenceDatNum, _gnapSequenceId), _gnapId,
-		9, 0, 75 * _gnapX - _gnapGridX, 48 * _gnapY - _gnapGridY);
+		kSeqScale | kSeqSyncWait, 0, 75 * _gnapX - _gnapGridX, 48 * _gnapY - _gnapGridY);
 	_gnapSequenceId = ridToEntryIndex(sequenceId);
 	_gnapSequenceDatNum = ridToDatIndex(sequenceId);
 }
@@ -1916,10 +1915,9 @@ int GnapEngine::getBeaverSequenceId(int kind, int gridX, int gridY) {
 }
 
 void GnapEngine::playBeaverSequence(int sequenceId) {
-	// CHECKME: Check the value of the flag
 	_gameSys->insertSequence(sequenceId, _beaverId,
 		makeRid(_beaverSequenceDatNum, _beaverSequenceId), _beaverId,
-		9, 0, 75 * _platX - _platGridX, 48 * _platY - _platGridY);
+		kSeqScale | kSeqSyncWait, 0, 75 * _platX - _platGridX, 48 * _platY - _platGridY);
 	_beaverSequenceId = ridToEntryIndex(sequenceId);
 	_beaverSequenceDatNum = ridToDatIndex(sequenceId);
 }

@@ -219,10 +219,9 @@ void GnapEngine::scene18_gnapCarryGarbageCanTo(int x, int y, int animationIndex,
 	if (animationIndex >= 0)
 		_gameSys->setAnimation(makeRid(_gnapSequenceDatNum, _gnapSequenceId), _gnapId, animationIndex);
 	
-	// CHECKME: Check the value of the flag
 	_gameSys->insertSequence(makeRid(_gnapSequenceDatNum, _gnapSequenceId), _gnapId,
 		gnapSeqId | (gnapDatNum << 16), gnapId,
-		9, 0, 75 * gnapGridX - _gnapGridX, 48 * _gnapY - _gnapGridY);
+		kSeqScale | kSeqSyncWait, 0, 75 * gnapGridX - _gnapGridX, 48 * _gnapY - _gnapGridY);
 
 	_gnapX = gnapGridX;
 
@@ -844,8 +843,7 @@ void GnapEngine::scene18_updateAnimations() {
 			_gameSys->insertSequence(0x216, 39, 0, 0, kSeqNone, 21, 0, 0);
 			_gameSys->removeSequence(0x20C, 19, true);
 			_gameSys->setAnimation(0x217, 39, 5);
-			// CHECKME: check the value of the flag
-			_gameSys->insertSequence(0x217, 39, 0x216, 39, 10, 0, 0, 0);
+			_gameSys->insertSequence(0x217, 39, 0x216, 39, kSeqLoop | kSeqSyncWait, 0, 0, 0);
 			while (_gameSys->getAnimationStatus(5) != 2)
 				gameUpdateTick();
 			playSound(0x22B, true);
@@ -947,8 +945,7 @@ void GnapEngine::scene18_updateAnimations() {
 			_gameSys->requestRemoveSequence(0x1F9, 19);
 			_gameSys->removeSequence(0x20B, 19, true);
 			_gameSys->setAnimation(0x213, 39, 5);
-			// CHECKME: check the value of the flag
-			_gameSys->insertSequence(0x214, 39, 0x213, 39, 10, 0, 0, 0);
+			_gameSys->insertSequence(0x214, 39, 0x213, 39, kSeqLoop | kSeqSyncWait, 0, 0, 0);
 			while (_gameSys->getAnimationStatus(5) != 2)
 				gameUpdateTick();
 			playSound(555, true);
@@ -964,8 +961,7 @@ void GnapEngine::scene18_updateAnimations() {
 			_gameSys->insertSequence(0x211, 39, 0, 0, kSeqNone, 21, 0, 0);
 			_gameSys->removeSequence(0x20B, 19, true);
 			_gameSys->setAnimation(0x211, 39, 5);
-			// CHECKME: check the value of the flag
-			_gameSys->insertSequence(0x212, 39, 0x211, 39, 10, 0, 0, 0);
+			_gameSys->insertSequence(0x212, 39, 0x211, 39, kSeqLoop | kSeqSyncWait, 0, 0, 0);
 			while (_gameSys->getAnimationStatus(5) != 2)
 				gameUpdateTick();
 			playSound(0x22B, true);
