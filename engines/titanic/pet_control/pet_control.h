@@ -53,6 +53,7 @@ private:
 	int _fieldC0;
 	int _locked;
 	int _fieldC8;
+	CPetSection *_sections[7];
 	CPetConversationSection _conversations;
 	CPetInventorySection _inventory;
 	CPetRemoteSection _remote;

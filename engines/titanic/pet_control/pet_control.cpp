@@ -32,6 +32,13 @@ CPetControl::CPetControl() : CGameObject(),
 		_treeItem1(nullptr), _treeItem2(nullptr), _hiddenRoom(nullptr),
 		_drawBounds(20, 350, 620, 480) {
 	_timers[0] = _timers[1] = nullptr;
+	_sections[PET_INVENTORY] = &_inventory;
+	_sections[PET_CONVERSATION] = &_conversations;
+	_sections[PET_REMOTE] = &_remote;
+	_sections[PET_ROOMS] = &_rooms;
+	_sections[PET_SAVE] = &_saves;
+	_sections[PET_5] = &_sub5;
+	_sections[PET_6] = &_sub7;
 }
 
 void CPetControl::save(SimpleFile *file, int indent) const {
@@ -106,60 +113,12 @@ void CPetControl::draw(CScreenManager *screenManager) {
 		_frame.drawFrame(screenManager);
 
 		// Draw the specific area that's currently active
-		switch (_currentArea) {
-		case PET_INVENTORY:
-			_inventory.draw(screenManager);
-			break;
-		case PET_CONVERSATION:
-			_conversations.draw(screenManager);
-			break;
-		case PET_REMOTE:
-			_remote.draw(screenManager);
-			break;
-		case PET_ROOMS:
-			_rooms.draw(screenManager);
-			break;
-		case PET_SAVE:
-			_saves.draw(screenManager);
-			break;
-		case PET_5:
-			_sub5.draw(screenManager);
-			break;
-		case PET_6:
-			_sub7.draw(screenManager);
-			break;
-		default:
-			break;
-		}
+		_sections[_currentArea]->draw(screenManager);
 	}
 }
 
 Rect CPetControl::getBounds() {
-	switch (_currentArea) {
-	case PET_INVENTORY:
-		return _inventory.getBounds();
-		break;
-	case PET_CONVERSATION:
-		return _conversations.getBounds();
-		break;
-	case PET_REMOTE:
-		return _remote.getBounds();
-		break;
-	case PET_ROOMS:
-		return _rooms.getBounds();
-		break;
-	case PET_SAVE:
-		return _saves.getBounds();
-		break;
-	case PET_5:
-		return _sub5.getBounds();
-		break;
-	case PET_6:
-		return _sub7.getBounds();
-		break;
-	default:
-		return Rect();
-	}
+	return _sections[_currentArea]->getBounds();
 }
 
 void CPetControl::postLoad() {
@@ -213,31 +172,7 @@ PetArea CPetControl::setArea(PetArea newArea) {
 		return _currentArea;
 
 	// Signal the currently active area that it's being left
-	switch (_currentArea) {
-	case PET_INVENTORY:
-		_inventory.leave();
-		break;
-	case PET_CONVERSATION:
-		_conversations.leave();
-		break;
-	case PET_REMOTE:
-		_remote.leave();
-		break;
-	case PET_ROOMS:
-		_rooms.leave();
-		break;
-	case PET_SAVE:
-		_saves.leave();
-		break;
-	case PET_5:
-		_sub5.leave();
-		break;
-	case PET_6:
-		_sub7.leave();
-		break;
-	default:
-		break;
-	}
+	_sections[_currentArea]->leave();
 
 	// Change the current area
 	PetArea oldArea = _currentArea;
@@ -245,63 +180,14 @@ PetArea CPetControl::setArea(PetArea newArea) {
 	_currentArea = newArea;
 
 	// Signal to the new view that it's been activated
-	switch (newArea) {
-	case PET_INVENTORY:
-		_inventory.enter(oldArea);
-		
-		break;
-	case PET_CONVERSATION:
-		_conversations.enter(oldArea);
-		break;
-	case PET_REMOTE:
-		_remote.enter(oldArea);
-		break;
-	case PET_ROOMS:
-		_rooms.enter(oldArea);
-		break;
-	case PET_SAVE:
-		_saves.enter(oldArea);
-		break;
-	case PET_5:
-		_sub5.enter(oldArea);
-		break;
-	case PET_6:
-		_sub7.enter(oldArea);
-		break;
-	default:
-		break;
-	}
+	_sections[_currentArea]->enter(oldArea);
 
 	makeDirty();
 	return newArea;
 }
 
 void CPetControl::fn2(int val) {
-	switch (_currentArea) {
-	case PET_INVENTORY:
-		_inventory.proc38(val);
-		break;
-	case PET_CONVERSATION:
-		_conversations.proc38(val);
-		break;
-	case PET_REMOTE:
-		_remote.proc38(val);
-		break;
-	case PET_ROOMS:
-		_rooms.proc38(val);
-		break;
-	case PET_SAVE:
-		_saves.proc38(val);
-		break;
-	case PET_5:
-		_sub5.proc38(val);
-		break;
-	case PET_6:
-		_sub7.proc38(val);
-		break;
-	default:
-		break;
-	}
+	_sections[_currentArea]->proc38(val);
 }
 
 void CPetControl::fn3(CTreeItem *item) {
@@ -356,31 +242,7 @@ bool CPetControl::handleMessage(CMouseButtonDownMsg &msg) {
 		result = _frame.handleMessage(msg);
 
 	if (!result) {
-		switch (_currentArea) {
-		case PET_INVENTORY:
-			result = _inventory.handleMessage(msg);
-			break;
-		case PET_CONVERSATION:
-			result = _conversations.handleMessage(msg);
-			break;
-		case PET_REMOTE:
-			result = _remote.handleMessage(msg);
-			break;
-		case PET_ROOMS:
-			result = _rooms.handleMessage(msg);
-			break;
-		case PET_SAVE:
-			result = _saves.handleMessage(msg);
-			break;
-		case PET_5:
-			result = _sub5.handleMessage(msg);
-			break;
-		case PET_6:
-			result = _sub7.handleMessage(msg);
-			break;
-		default:
-			break;
-		}
+		result = _sections[_currentArea]->handleMessage(msg);
 	}
 
 	makeDirty();
@@ -391,87 +253,15 @@ bool CPetControl::handleMessage(CMouseDragStartMsg &msg) {
 	if (!containsPt(msg._mousePos) || getC0())
 		return false;
 
-	switch (_currentArea) {
-	case PET_INVENTORY:
-		return _inventory.handleMessage(msg);
-		break;
-	case PET_CONVERSATION:
-		return _conversations.handleMessage(msg);
-		break;
-	case PET_REMOTE:
-		return _remote.handleMessage(msg);
-		break;
-	case PET_ROOMS:
-		return _rooms.handleMessage(msg);
-		break;
-	case PET_SAVE:
-		return _saves.handleMessage(msg);
-		break;
-	case PET_5:
-		return _sub5.handleMessage(msg);
-		break;
-	case PET_6:
-		return _sub7.handleMessage(msg);
-		break;
-	default:
-		return false;
-	}
+	return _sections[_currentArea]->handleMessage(msg);
 }
 
 bool CPetControl::handleMessage(CMouseDragMoveMsg &msg) {
-	switch (_currentArea) {
-	case PET_INVENTORY:
-		return _inventory.handleMessage(msg);
-		break;
-	case PET_CONVERSATION:
-		return _conversations.handleMessage(msg);
-		break;
-	case PET_REMOTE:
-		return _remote.handleMessage(msg);
-		break;
-	case PET_ROOMS:
-		return _rooms.handleMessage(msg);
-		break;
-	case PET_SAVE:
-		return _saves.handleMessage(msg);
-		break;
-	case PET_5:
-		return _sub5.handleMessage(msg);
-		break;
-	case PET_6:
-		return _sub7.handleMessage(msg);
-		break;
-	default:
-		return false;
-	}
+	return _sections[_currentArea]->handleMessage(msg);
 }
 
 bool CPetControl::handleMessage(CMouseDragEndMsg &msg) {
-	switch (_currentArea) {
-	case PET_INVENTORY:
-		return _inventory.handleMessage(msg);
-		break;
-	case PET_CONVERSATION:
-		return _conversations.handleMessage(msg);
-		break;
-	case PET_REMOTE:
-		return _remote.handleMessage(msg);
-		break;
-	case PET_ROOMS:
-		return _rooms.handleMessage(msg);
-		break;
-	case PET_SAVE:
-		return _saves.handleMessage(msg);
-		break;
-	case PET_5:
-		return _sub5.handleMessage(msg);
-		break;
-	case PET_6:
-		return _sub7.handleMessage(msg);
-		break;
-	default:
-		return false;
-	}
+	return _sections[_currentArea]->handleMessage(msg);
 }
 
 bool CPetControl::handleMessage(CMouseButtonUpMsg &msg) {
@@ -482,33 +272,8 @@ bool CPetControl::handleMessage(CMouseButtonUpMsg &msg) {
 	if (isUnlocked())
 		result = _frame.handleMessage(msg);
 
-	if (!result) {
-		switch (_currentArea) {
-		case PET_INVENTORY:
-			result = _inventory.handleMessage(msg);
-			break;
-		case PET_CONVERSATION:
-			result = _conversations.handleMessage(msg);
-			break;
-		case PET_REMOTE:
-			result = _remote.handleMessage(msg);
-			break;
-		case PET_ROOMS:
-			result = _rooms.handleMessage(msg);
-			break;
-		case PET_SAVE:
-			result = _saves.handleMessage(msg);
-			break;
-		case PET_5:
-			result = _sub5.handleMessage(msg);
-			break;
-		case PET_6:
-			result = _sub7.handleMessage(msg);
-			break;
-		default:
-			break;
-		}
-	}
+	if (!result)
+		result = _sections[_currentArea]->handleMessage(msg);
 
 	makeDirty();
 	return result;
@@ -518,94 +283,21 @@ bool CPetControl::handleMessage(CMouseDoubleClickMsg &msg) {
 	if (!containsPt(msg._mousePos) || getC0())
 		return false;
 
-	switch (_currentArea) {
-	case PET_INVENTORY:
-		return _inventory.handleMessage(msg);
-		break;
-	case PET_CONVERSATION:
-		return _conversations.handleMessage(msg);
-		break;
-	case PET_REMOTE:
-		return _remote.handleMessage(msg);
-		break;
-	case PET_ROOMS:
-		return _rooms.handleMessage(msg);
-		break;
-	case PET_SAVE:
-		return _saves.handleMessage(msg);
-		break;
-	case PET_5:
-		return _sub5.handleMessage(msg);
-		break;
-	case PET_6:
-		return _sub7.handleMessage(msg);
-		break;
-	default:
-		return false;
-	}
+	return _sections[_currentArea]->handleMessage(msg);
 }
 
 bool CPetControl::handleMessage(CKeyCharMsg &msg) {
 	if (getC0())
 		return false;
 
-	switch (_currentArea) {
-	case PET_INVENTORY:
-		return _inventory.handleMessage(msg);
-		break;
-	case PET_CONVERSATION:
-		return _conversations.handleMessage(msg);
-		break;
-	case PET_REMOTE:
-		return _remote.handleMessage(msg);
-		break;
-	case PET_ROOMS:
-		return _rooms.handleMessage(msg);
-		break;
-	case PET_SAVE:
-		return _saves.handleMessage(msg);
-		break;
-	case PET_5:
-		return _sub5.handleMessage(msg);
-		break;
-	case PET_6:
-		return _sub7.handleMessage(msg);
-		break;
-	default:
-		return false;
-	}
+	return _sections[_currentArea]->handleMessage(msg);
 }
 
 bool CPetControl::handleMessage(CVirtualKeyCharMsg &msg) {
 	if (getC0())
 		return false;
 
-	bool result = false;
-	switch (_currentArea) {
-	case PET_INVENTORY:
-		result = _inventory.handleMessage(msg);
-		break;
-	case PET_CONVERSATION:
-		result = _conversations.handleMessage(msg);
-		break;
-	case PET_REMOTE:
-		result = _remote.handleMessage(msg);
-		break;
-	case PET_ROOMS:
-		result = _rooms.handleMessage(msg);
-		break;
-	case PET_SAVE:
-		result = _saves.handleMessage(msg);
-		break;
-	case PET_5:
-		result = _sub5.handleMessage(msg);
-		break;
-	case PET_6:
-		result = _sub7.handleMessage(msg);
-		break;
-	default:
-		break;
-	}
+	bool result = _sections[_currentArea]->handleMessage(msg);
 
 	if (!result) {
 		switch (msg._keyState.keycode) {
