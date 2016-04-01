@@ -618,13 +618,17 @@ void ScrollWindow::go(Ratio loc) {
 	if (line < 0 || line > _numLines)
 		error("Index is Out of Range in ScrollWindow");
 
-	// CHECKME: Phantasmagoria didn't seem to have this check; maybe
-	// its handling of scrolling past the final line is different elsewhere.
-	if (line == _numLines && line > 0)
-		line = _numLines - 1;
-
 	_firstVisibleChar = _startsOfLines[line];
 	update(true);
+
+	// HACK:
+	// It usually isn't possible to set _topVisibleLine >= _numLines, and so
+	// update() doesn't. However, in this case we should set _topVisibleLine
+	// past the end. This is clearly visible in Phantasmagoria when dragging
+	// the slider in the About dialog to the very end. The slider ends up lower
+	// than were it can be moved by scrolling down with the arrows.
+	if (loc.isOne())
+		_topVisibleLine = _numLines;
 }
 
 
