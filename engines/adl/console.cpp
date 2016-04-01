@@ -244,7 +244,8 @@ void Console::printItem(const Item &item) {
 
 	if (item.description > 0) {
 		desc = toAscii(_engine->_messages[item.description - 1]);
-		desc.deleteLastChar();
+		if (desc.lastChar() == '\r')
+			desc.deleteLastChar();
 	}
 
 	switch (item.state) {
