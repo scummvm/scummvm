@@ -118,8 +118,10 @@ static const ADGameDescription gameDescriptions[] = {
 	// Unhandled comparison case
 	FANGAME("Sands of Time", "b00ea866cb04cd87124e5720bc2c84c7", 122672), // Original file name "Sands of Time†"
 	BIGGAME("scepters", "", "Scepters", "f8db17cd96be056cf8a8bb9cfe46cf3a", 346595),
+	BIGGAME("scepters", "", "Scepters", "1fd7ca93ef16f4752fb46ee9cfa0949a", 347540), // alt version
 	// ??? problems with dog bitmap?
 	FANGAMEN("Space Adventure", "SpaceAdventure", "7b6c883b3510e21cfabf4c8caaeb1f16", 155356),
+	FANGAMEN("Space Adventure", "SpaceAdventure", "3bd6fc9327f35db5390a9bf86afcd872", 155356), // alt version
 	FANGAMEN("Spear of Destiny", "SpearOfDestiny", "f1252ff34dd279f4ec1844bb403a578c", 333665), // Original file name "SpearOfDestiny†"
 	FANGAME("Star Trek", "fe20d06bc50c7fcebda0db533e141d4a", 53320),
 	FANGAME("Strange Disappearance", "782fae517f7374cd7f43f428331ce445", 772282),
@@ -136,6 +138,7 @@ static const ADGameDescription gameDescriptions[] = {
 	FANGAMEN("The Hotel Caper", "The Hotel Caper V1.0", "6c80fa6a36d16aa0edef86d8800c90db", 231969), // alt version
 	// Invalid rect in scene "Access Tube 1"
 	FANGAMEN("The Phoenix v1.2", "The Phoenix", "0a4a01b83c993408ae824cc4f63957ea", 431640),
+	FANGAME("The Phoenix", "0a4a01b83c993408ae824cc4f63957ea", 431643),
 	FANGAME("The Sultan's Palace", "98c845323489344d7e2c9d1c3e53d1fc", 456855),
 	// Admission for on 3rd screen is messed up
 	FANGAME("The Tower", "135fe861928d15b5acd8b355460c54bf", 556539),
