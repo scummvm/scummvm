@@ -94,7 +94,19 @@ public:
 	 */
 	virtual int getUpdateCheckInterval() { return kUpdateIntervalNotSupported; }
 
+	/**
+	 * Returns list of supported uptate intervals.
+	 * Ending with '-1' which is not acceptable value.
+	 *
+	 * @return  list of integer values representing update intervals in seconds.
+	 */
 	static const int *getUpdateIntervals();
+
+	/**
+	 * Returns string representation of a given interval.
+	 *
+	 * @return  pointer to localized string of given interval.
+	 */
 	static const char *updateIntervalToString(int interval);
 };
 
