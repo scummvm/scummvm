@@ -85,7 +85,10 @@ public:
 	/**
 	 * Returns true if the object is in a valid state
 	 */
-	virtual bool isValid(CPetControl *petControl) { return false; }
+	virtual bool isValid(CPetControl *petControl) {
+		// TODO: Switch back to false after implementing all sections
+		return true;
+	}
 
 	/**
 	 * Load the data for the class from file

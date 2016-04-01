@@ -31,6 +31,12 @@ CString::CString(char c, uint32 len) : Common::String() {
 		(*this) += c;
 }
 
+CString::CString(int val) : Common::String() {
+	char buffer[16];
+	itoa(val, buffer, 10);
+	*this += buffer;
+}
+
 CString CString::left(uint count) const {
 	return (count > size()) ? CString() : CString(c_str(), c_str() + count);
 }

@@ -46,7 +46,7 @@ public:
 	CString(const String &str) : Common::String(str) {}
 	CString(char c, uint32 len);
 	explicit CString(char c) : Common::String(c) {}
-	explicit CString(int val) : Common::String(Common::String::format("%d", val)) {}
+	explicit CString(int val);
 
 	/**
 	 * Returns the left n characters of the string

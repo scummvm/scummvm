@@ -44,7 +44,7 @@ void CPetGfxElement::setup(PetElementMode mode, const CString &name,
 	}
 }
 
-void CPetGfxElement::setup(const CString &name, CPetControl *petControl) {
+void CPetGfxElement::setup(const CString &name, CPetControl *petControl, PetElementMode mode) {
 	if (!petControl)
 		return;
 
@@ -60,7 +60,7 @@ void CPetGfxElement::setup(const CString &name, CPetControl *petControl) {
 	}
 
 	CString resName = numString + name;
-	setup(resName, petControl);
+	setup(mode, resName, petControl);
 }
 
 void CPetGfxElement::draw(CScreenManager *screenManager) {

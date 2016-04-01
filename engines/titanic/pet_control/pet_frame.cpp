@@ -21,6 +21,7 @@
  */
 
 #include "titanic/pet_control/pet_frame.h"
+#include "titanic/pet_control/pet_control.h"
 
 namespace Titanic {
 
@@ -41,7 +42,23 @@ bool CPetFrame::setup(CPetControl *petControl) {
 
 bool CPetFrame::setup() {
 	if (_petControl) {
-		// TODO
+		_background.setup("PetBackground", _petControl, MODE_0);
+		_modeBackground.setup("PetModeBackground", _petControl, MODE_0);
+
+		for (int idx = 0; idx < 5; ++idx) {
+			CString resName = Common::String::format("PetMode%d", idx);
+			_modeButtons[idx].setup(resName, _petControl, MODE_0);
+		}
+
+		for (int idx = 0; idx < 6; ++idx) {
+			CString resName = Common::String::format("3Pettitle%d", idx);
+			_titles[idx].setup(resName, _petControl, MODE_0);
+		}
+
+		for (int idx = 0; idx < 7; ++idx) {
+			CString resName = Common::String::format("PetIndent%d", idx);
+			_titles[idx].setup(resName, _petControl, MODE_0);
+		}
 	}
 
 	return true;
@@ -98,7 +115,13 @@ void CPetFrame::setArea(PetArea newArea) {
 }
 
 void CPetFrame::drawFrame(CScreenManager *screenManager) {
-	warning("TODO: CPetFrame::drawFrame");
+	_background.draw(screenManager);
+	_modeBackground.draw(screenManager);
+
+	for (int idx = 0; idx < 5; ++idx)
+		_modeButtons[idx].draw(screenManager);
+
+	_titles[_petControl->_currentArea].draw(screenManager);
 }
 
 } // End of namespace Titanic

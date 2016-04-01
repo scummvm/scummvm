@@ -39,7 +39,6 @@ namespace Titanic {
 
 class CPetControl : public CGameObject {
 private:
-	PetArea _currentArea;
 	int _fieldC0;
 	int _locked;
 	int _fieldC8;
@@ -87,6 +86,8 @@ private:
 	 * Returns a reference to the special hidden room container
 	 */
 	CRoomItem *getHiddenRoom();
+public:
+	PetArea _currentArea;
 public:
 	CLASSDEF
 	CPetControl();
