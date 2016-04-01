@@ -26,6 +26,8 @@
 #include "titanic/core/game_object.h"
 #include "titanic/core/node_item.h"
 #include "titanic/core/room_item.h"
+#include "titanic/messages/messages.h"
+#include "titanic/messages/mouse_messages.h"
 #include "titanic/pet_control/pet_conversation_section.h"
 #include "titanic/pet_control/pet_frame.h"
 #include "titanic/pet_control/pet_inventory_section.h"
@@ -37,7 +39,16 @@
 
 namespace Titanic {
 
-class CPetControl : public CGameObject {
+class CPetControl : public CGameObject,
+	public CMouseButtonDownMsgTarget,
+	public CMouseDragStartMsgTarget,
+	public CMouseDragMoveMsgTarget,
+	public CMouseDragEndMsgTarget,
+	public CMouseButtonUpMsgTarget,
+	public CMouseDoubleClickMsgTarget,
+	public CKeyCharMsgTarget,
+	public CVirtualKeyCharMsgTarget,
+	public CTimerMsgTarget {
 private:
 	int _fieldC0;
 	int _locked;
@@ -86,6 +97,18 @@ private:
 	 * Returns true if the draw bounds contains the specified point
 	 */
 	bool containsPt(const Common::Point &pt) const;
+
+	bool getC0() const;
+protected:
+	bool handleMessage(CMouseButtonDownMsg &msg);
+	bool handleMessage(CMouseDragStartMsg &msg);
+	bool handleMessage(CMouseDragMoveMsg &msg);
+	bool handleMessage(CMouseDragEndMsg &msg);
+	bool handleMessage(CMouseButtonUpMsg &msg);
+	bool handleMessage(CMouseDoubleClickMsg &msg);
+	bool handleMessage(CKeyCharMsg &msg);
+	bool handleMessage(CVirtualKeyCharMsg &msg);
+	bool handleMessage(CTimerMsg &msg);
 public:
 	PetArea _currentArea;
 public:

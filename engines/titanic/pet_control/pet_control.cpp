@@ -157,7 +157,7 @@ Rect CPetControl::getBounds() {
 		return _sub7.getBounds();
 		break;
 	default:
-		break;
+		return Rect();
 	}
 }
 
@@ -340,6 +340,103 @@ CGameObject *CPetControl::getHiddenObject(const CString &name) {
 
 bool CPetControl::containsPt(const Common::Point &pt) const {
 	return _drawBounds.contains(pt);
+}
+
+bool CPetControl::getC0() const {
+	return _fieldC0 > 0;
+}
+
+bool CPetControl::handleMessage(CMouseButtonDownMsg &msg) {
+	return true;
+}
+
+bool CPetControl::handleMessage(CMouseDragStartMsg &msg) {
+	return true;
+}
+
+bool CPetControl::handleMessage(CMouseDragMoveMsg &msg) {
+	return true;
+}
+
+bool CPetControl::handleMessage(CMouseDragEndMsg &msg) {
+	return true;
+}
+
+bool CPetControl::handleMessage(CMouseButtonUpMsg &msg) {
+	return true;
+}
+
+bool CPetControl::handleMessage(CMouseDoubleClickMsg &msg) {
+	return true;
+}
+
+bool CPetControl::handleMessage(CKeyCharMsg &msg) {
+	return true;
+}
+
+bool CPetControl::handleMessage(CVirtualKeyCharMsg &msg) {
+	if (getC0())
+		return false;
+
+	bool result = false;
+	switch (_currentArea) {
+	case PET_INVENTORY:
+		result = _inventory.handleMessage(msg);
+		break;
+	case PET_CONVERSATION:
+		result = _conversations.handleMessage(msg);
+		break;
+	case PET_REMOTE:
+		result = _remote.handleMessage(msg);
+		break;
+	case PET_ROOMS:
+		result = _rooms.handleMessage(msg);
+		break;
+	case PET_SAVE:
+		result = _saves.handleMessage(msg);
+		break;
+	case PET_5:
+		result = _sub5.handleMessage(msg);
+		break;
+	case PET_6:
+		result = _sub7.handleMessage(msg);
+		break;
+	default:
+		break;
+	}
+
+	if (!result) {
+		switch (msg._keyState.keycode) {
+		case Common::KEYCODE_F1:
+			result = true;
+			setArea(PET_INVENTORY);
+			break;
+		case Common::KEYCODE_F2:
+			result = true;
+			setArea(PET_CONVERSATION);
+			break;
+		case Common::KEYCODE_F3:
+			result = true;
+			setArea(PET_REMOTE);
+			break;
+		case Common::KEYCODE_F4:
+			result = true;
+			setArea(PET_ROOMS);
+			break;
+		case Common::KEYCODE_F5:
+			result = true;
+			setArea(PET_SAVE);
+			break;
+		default:
+			break;
+		}
+	}
+
+	return result;
+}
+
+bool CPetControl::handleMessage(CTimerMsg &msg) {
+	return true;
 }
 
 } // End of namespace Titanic

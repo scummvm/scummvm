@@ -920,6 +920,7 @@ DEFFN(CTakeHeadPieceMsg)
 DEFFN(CTextInputMsg)
 DEFFN(CTimeDilationMsg)
 DEFFN(CTimeMsg)
+DEFFN(CTimerMsg)
 DEFFN(CTitleSequenceEndedMsg)
 DEFFN(CTransitMsg)
 DEFFN(CTransportMsg)
@@ -1503,6 +1504,7 @@ void CSaveableObject::initClassList() {
 	ADDFN(CTextInputMsg, CMessage);
 	ADDFN(CTimeDilationMsg, CMessage);
 	ADDFN(CTimeMsg, CMessage);
+	ADDFN(CTimerMsg, CTimeMsg);
 	ADDFN(CTitleSequenceEndedMsg, CMessage);
 	ADDFN(CTransitMsg, CMessage);
 	ADDFN(CTransportMsg, CMessage);

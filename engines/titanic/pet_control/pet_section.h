@@ -23,6 +23,7 @@
 #ifndef TITANIC_PET_SECTION_H
 #define TITANIC_PET_SECTION_H
 
+#include "titanic/messages/messages.h"
 #include "titanic/simple_file.h"
 
 namespace Titanic {
@@ -81,7 +82,12 @@ public:
 	virtual int proc10() { return 0; }
 	virtual int proc11() { return 0; }
 	virtual int proc12() { return 0; }
-	virtual int proc13() { return 0; }
+
+	/**
+	 * Handles special keypresses
+	 */
+	virtual bool handleMessage(CVirtualKeyCharMsg &msg) { return false; }
+
 	virtual int proc14() { return 0; }
 	virtual int proc15() { return 0; }
 	virtual void proc16();

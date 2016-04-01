@@ -23,6 +23,7 @@
 #ifndef TITANIC_MESSAGES_H
 #define TITANIC_MESSAGES_H
 
+#include "common/keyboard.h"
 #include "titanic/core/saveable_object.h"
 #include "titanic/core/tree_item.h"
 
@@ -36,6 +37,65 @@ enum MessageFlag {
 
 #define MSGTARGET(NAME) class NAME; class NAME##Target { public: \
 	virtual bool handleMessage(NAME &msg) = 0; }
+
+#define MESSAGE0(NAME) MSGTARGET(NAME); \
+	class NAME: public CMessage { \
+	public: NAME() : CMessage() {} \
+	CLASSDEF \
+	static bool isSupportedBy(const CTreeItem *item) { \
+		return dynamic_cast<const NAME##Target *>(item) != nullptr; } \
+	virtual bool perform(CTreeItem *treeItem) { \
+		NAME##Target *dest = dynamic_cast<NAME##Target *>(treeItem); \
+		return dest != nullptr && dest->handleMessage(*this); \
+	} }
+#define MESSAGE1(NAME, F1, N1, V1) MSGTARGET(NAME); \
+	class NAME: public CMessage { \
+	public: F1 _##N1; \
+	NAME() : CMessage(), _##N1(V1) {} \
+	NAME(F1 N1) : CMessage(), _##N1(N1) {} \
+	CLASSDEF \
+	static bool isSupportedBy(const CTreeItem *item) { \
+		return dynamic_cast<const NAME##Target *>(item) != nullptr; } \
+	virtual bool perform(CTreeItem *treeItem) { \
+		NAME##Target *dest = dynamic_cast<NAME##Target *>(treeItem); \
+		return dest != nullptr && dest->handleMessage(*this); \
+	} }
+#define MESSAGE2(NAME, F1, N1, V1, F2, N2, V2) MSGTARGET(NAME); \
+	class NAME: public CMessage { \
+	public: F1 _##N1; F2 _##N2; \
+	NAME() : CMessage(), _##N1(V1), _##N2(V2) {} \
+	NAME(F1 N1, F2 N2) : CMessage(), _##N1(N1), _##N2(N2) {} \
+	CLASSDEF \
+	static bool isSupportedBy(const CTreeItem *item) { \
+		return dynamic_cast<const NAME##Target *>(item) != nullptr; } \
+	virtual bool perform(CTreeItem *treeItem) { \
+		NAME##Target *dest = dynamic_cast<NAME##Target *>(treeItem); \
+		return dest != nullptr && dest->handleMessage(*this); \
+	} }
+#define MESSAGE3(NAME, F1, N1, V1, F2, N2, V2, F3, N3, V3) MSGTARGET(NAME); \
+	class NAME: public CMessage { \
+	public: F1 _##N1; F2 _##N2; F3 _##N3; \
+	NAME() : CMessage(), _##N1(V1), _##N2(V2), _##N3(V3) {} \
+	NAME(F1 N1, F2 N2, F3 N3) : CMessage(), _##N1(N1), _##N2(N2), _##N3(N3) {} \
+	CLASSDEF \
+	static bool isSupportedBy(const CTreeItem *item) { \
+		return dynamic_cast<const NAME##Target *>(item) != nullptr; } \
+	virtual bool perform(CTreeItem *treeItem) { \
+		NAME##Target *dest = dynamic_cast<NAME##Target *>(treeItem); \
+		return dest != nullptr && dest->handleMessage(*this); \
+	} }
+#define MESSAGE4(NAME, F1, N1, V1, F2, N2, V2, F3, N3, V3, F4, N4, V4) MSGTARGET(NAME); \
+	class NAME: public CMessage { \
+	public: F1 _##N1; F2 _##N2; F3 _##N3; F4 _##N4; \
+	NAME() : CMessage(), _##N1(V1), _##N2(V2), _##N3(V3), _##N4(V4) {} \
+	NAME(F1 N1, F2 N2, F3 N3, F4 N4) : CMessage(), _##N1(N1), _##N2(N2), _##N3(N3), _##N4(N4) {} \
+	CLASSDEF \
+	static bool isSupportedBy(const CTreeItem *item) { \
+		return dynamic_cast<const NAME##Target *>(item) != nullptr; } \
+	virtual bool perform(CTreeItem *treeItem) { \
+		NAME##Target *dest = dynamic_cast<NAME##Target *>(treeItem); \
+		return dest != nullptr && dest->handleMessage(*this); \
+	} }
 
 class CGameObject;
 class CRoomItem;
@@ -193,64 +253,26 @@ public:
 	}
 };
 
-#define MESSAGE0(NAME) MSGTARGET(NAME); \
-	class NAME: public CMessage { \
-	public: NAME() : CMessage() {} \
-	CLASSDEF \
-	static bool isSupportedBy(const CTreeItem *item) { \
-		return dynamic_cast<const NAME##Target *>(item) != nullptr; } \
-	virtual bool perform(CTreeItem *treeItem) { \
-		NAME##Target *dest = dynamic_cast<NAME##Target *>(treeItem); \
-		return dest != nullptr && dest->handleMessage(*this); \
-	} }
-#define MESSAGE1(NAME, F1, N1, V1) MSGTARGET(NAME); \
-	class NAME: public CMessage { \
-	public: F1 _##N1; \
-	NAME() : CMessage(), _##N1(V1) {} \
-	NAME(F1 N1) : CMessage(), _##N1(N1) {} \
-	CLASSDEF \
-	static bool isSupportedBy(const CTreeItem *item) { \
-		return dynamic_cast<const NAME##Target *>(item) != nullptr; } \
-	virtual bool perform(CTreeItem *treeItem) { \
-		NAME##Target *dest = dynamic_cast<NAME##Target *>(treeItem); \
-		return dest != nullptr && dest->handleMessage(*this); \
-	} }
-#define MESSAGE2(NAME, F1, N1, V1, F2, N2, V2) MSGTARGET(NAME); \
-	class NAME: public CMessage { \
-	public: F1 _##N1; F2 _##N2; \
-	NAME() : CMessage(), _##N1(V1), _##N2(V2) {} \
-	NAME(F1 N1, F2 N2) : CMessage(), _##N1(N1), _##N2(N2) {} \
-	CLASSDEF \
-	static bool isSupportedBy(const CTreeItem *item) { \
-		return dynamic_cast<const NAME##Target *>(item) != nullptr; } \
-	virtual bool perform(CTreeItem *treeItem) { \
-		NAME##Target *dest = dynamic_cast<NAME##Target *>(treeItem); \
-		return dest != nullptr && dest->handleMessage(*this); \
-	} }
-#define MESSAGE3(NAME, F1, N1, V1, F2, N2, V2, F3, N3, V3) MSGTARGET(NAME); \
-	class NAME: public CMessage { \
-	public: F1 _##N1; F2 _##N2; F3 _##N3; \
-	NAME() : CMessage(), _##N1(V1), _##N2(V2), _##N3(V3) {} \
-	NAME(F1 N1, F2 N2, F3 N3) : CMessage(), _##N1(N1), _##N2(N2), _##N3(N3) {} \
-	CLASSDEF \
-	static bool isSupportedBy(const CTreeItem *item) { \
-		return dynamic_cast<const NAME##Target *>(item) != nullptr; } \
-	virtual bool perform(CTreeItem *treeItem) { \
-		NAME##Target *dest = dynamic_cast<NAME##Target *>(treeItem); \
-		return dest != nullptr && dest->handleMessage(*this); \
-	} }
-#define MESSAGE4(NAME, F1, N1, V1, F2, N2, V2, F3, N3, V3, F4, N4, V4) MSGTARGET(NAME); \
-	class NAME: public CMessage { \
-	public: F1 _##N1; F2 _##N2; F3 _##N3; F4 _##N4; \
-	NAME() : CMessage(), _##N1(V1), _##N2(V2), _##N3(V3), _##N4(V4) {} \
-	NAME(F1 N1, F2 N2, F3 N3, F4 N4) : CMessage(), _##N1(N1), _##N2(N2), _##N3(N3), _##N4(N4) {} \
-	CLASSDEF \
-	static bool isSupportedBy(const CTreeItem *item) { \
-		return dynamic_cast<const NAME##Target *>(item) != nullptr; } \
-	virtual bool perform(CTreeItem *treeItem) { \
-		NAME##Target *dest = dynamic_cast<NAME##Target *>(treeItem); \
-		return dest != nullptr && dest->handleMessage(*this); \
-	} }
+MESSAGE1(CTimeMsg, int, value, 0);
+
+MSGTARGET(CTimerMsg);
+class CTimerMsg : public CTimeMsg {
+public:
+	int _field8;
+	int _fieldC;
+	CString _string1;
+public:
+	CLASSDEF
+	CTimerMsg() : CTimeMsg(), _field8(0), _fieldC(0) {}
+
+	static bool isSupportedBy(const CTreeItem *item) {
+		return dynamic_cast<const CTimerMsgTarget *>(item) != nullptr;
+	}
+	virtual bool perform(CTreeItem *treeItem) {
+		CTimerMsgTarget *dest = dynamic_cast<CTimerMsgTarget *>(treeItem);
+		return dest != nullptr && dest->handleMessage(*this);
+	}
+};
 
 MESSAGE1(CActMsg, CString, action, "");
 MESSAGE1(CActivationmsg, CString, value, "");
@@ -387,7 +409,6 @@ MESSAGE1(CSummonBotQuerryMsg, CString, value, "");
 MESSAGE1(CTakeHeadPieceMsg, CString, value, "");
 MESSAGE2(CTextInputMsg, CString, value1, "", CString, value2, "");
 MESSAGE1(CTimeDilationMsg, int, value, 0);
-MESSAGE1(CTimeMsg, int, value, 0);
 MESSAGE0(CTitleSequenceEndedMsg);
 MESSAGE0(CTransitMsg);
 MESSAGE1(CTriggerAutoMusicPlayerMsg, int, value, 0);
@@ -405,7 +426,7 @@ MESSAGE0(CTurnOn);
 MESSAGE1(CUse, int, value, 0);
 MESSAGE1(CUseWithCharMsg, int, value, 0);
 MESSAGE1(CUseWithOtherMsg, int, value, 0);
-MESSAGE1(CVirtualKeyCharMsg, int, value, 0);
+MESSAGE1(CVirtualKeyCharMsg, Common::KeyState, keyState, Common::KeyState());
 MESSAGE1(CVisibleMsg, bool, visible, true);
 
 } // End of namespace Titanic
