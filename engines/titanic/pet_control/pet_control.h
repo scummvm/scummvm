@@ -81,11 +81,6 @@ private:
 	 * Scan the specified room for an item by name
 	 */
 	CGameObject *findItemInRoom(CRoomItem *room, const CString &name) const;
-
-	/**
-	 * Returns a reference to the special hidden room container
-	 */
-	CRoomItem *getHiddenRoom();
 public:
 	PetArea _currentArea;
 public:
@@ -150,6 +145,11 @@ public:
 	 * special hidden room container
 	 */
 	CGameObject *getHiddenObject(const CString &name);
+
+	/**
+	 * Returns a reference to the special hidden room container
+	 */
+	CRoomItem *getHiddenRoom();
 };
 
 } // End of namespace Titanic

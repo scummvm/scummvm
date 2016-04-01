@@ -248,6 +248,11 @@ public:
 	 */
 	CRoomItem *getRoom() const;
 
+	/**
+	 * Returns the special hidden room container
+	 */
+	CRoomItem *getHiddenRoom() const;
+
 	int getState8() const;
 	int getStateC() const;
 };

@@ -284,7 +284,7 @@ void CPetControl::fn3(CTreeItem *item) {
 
 CRoomItem *CPetControl::getHiddenRoom() {
 	if (!_hiddenRoom)
-		_hiddenRoom = getHiddenRoom();
+		_hiddenRoom = CTreeItem::getHiddenRoom();
 
 	return _hiddenRoom;
 }

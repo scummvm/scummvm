@@ -289,6 +289,11 @@ CRoomItem *CTreeItem::getRoom() const {
 	return gameManager ? gameManager->getRoom() : nullptr;
 }
 
+CRoomItem *CTreeItem::getHiddenRoom() const {
+	CProjectItem *root = getRoot();
+	return root ? root->findHiddenRoom() : nullptr;
+}
+
 int CTreeItem::getState8() const {
 	CGameManager *gameManager = getGameManager();
 	return gameManager ? gameManager->_gameState._field8 : 3;
