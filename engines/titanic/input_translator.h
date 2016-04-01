@@ -23,6 +23,7 @@
 #ifndef TITANIC_INPUT_TRANSLATOR_H
 #define TITANIC_INPUT_TRANSLATOR_H
 
+#include "common/keyboard.h"
 #include "titanic/messages/mouse_messages.h"
 
 namespace Titanic {
@@ -50,6 +51,7 @@ public:
 	void rightButtonDown(int special, const Point &pt);
 	void rightButtonUp(int special, const Point &pt);
 	void rightButtonDoubleClick(int special, const Point &pt);
+	void keyDown(const Common::KeyState &keyState);
 };
 
 } // End of namespace Titanic

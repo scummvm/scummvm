@@ -187,6 +187,9 @@ void Events::keyDown(Common::KeyState keyState) {
 		_vm->_debugger->attach();
 		_vm->_debugger->onFrame();
 	}
+
+	if (_vm->_window->_inputAllowed)
+		_vm->_window->_gameManager->_inputTranslator.keyDown(keyState);
 }
 
 void Events::keyUp(Common::KeyState keyState) {

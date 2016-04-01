@@ -94,4 +94,16 @@ void CInputTranslator::rightButtonDoubleClick(int special, const Point &pt) {
 	_inputHandler->handleMessage(msg);
 }
 
+void CInputTranslator::keyDown(const Common::KeyState &keyState) {
+	if (keyState.keycode >= Common::KEYCODE_F1 && keyState.keycode <= Common::KEYCODE_F5) {
+		CVirtualKeyCharMsg msg(keyState);
+		_inputHandler->handleMessage(msg);
+	}
+
+	if (keyState.ascii >= 32 && keyState.ascii <= 127) {
+		CKeyCharMsg msg(keyState.ascii);
+		_inputHandler->handleMessage(msg);
+	}
+}
+
 } // End of namespace Titanic
