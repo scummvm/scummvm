@@ -67,6 +67,8 @@ static const ADGameDescription gameDescriptions[] = {
 	// Crash in console rendering on the first scene
 	FANGAME("Fantasy Quest", "b42b0e86e2c84464283640c74b25e015", 762754),
 	FANGAME("Find the Heart", "aa244c15f2ba8cef468714be34223acd", 106235), // From Joshua's Worlds 1.0
+	FANGAME("Find the Heart", "a6834cb230cea1953f5bf1f8f7aacabd", 105885), // From Joshua's Worlds. Alt version
+	FANGAME("Find the Heart", "a6834cb230cea1953f5bf1f8f7aacabd", 105871), // Standalone
 	FANGAMEN("Fortune Teller", "Fortune Teller 1.1", "7d2628eeea67b33379e01c0aef8dd196", 73931),
 	// Cropped graphics on first scene
 	FANGAME("Intro to Gothic", "6f732eaad6e3b85795f8ee6c6a40d837", 208067),
@@ -101,9 +103,11 @@ static const ADGameDescription gameDescriptions[] = {
 	// Polygons with byte 1
 	FANGAME("Periapt", "fb4052819126b88d7e03ebc00c669a9d", 406006),
 	FANGAME("Puzzle Piece Search", "6b4ae6261b405e2feac58c5a2ddb67c5", 247693), // From Joshua's Worlds 1.0
+	FANGAME("The Puzzle Piece Search", "fb99797c429c18ec68418fdd12af17a1", 247338), // From Joshua's Worlds
 	// Empty(?)  first scene
 	FANGAME("Pyramid of No Return", "38383ac85cc16703f13f8d82f1398123", 385145),
 	FANGAME("Queen Quest", "76d33bb847476b92cfe2581a019ff26c", 57026),
+	FANGAME("Queen Quest", "8273e29afe64a984eb0ce7b43fdf3a59", 57039), // alt version
 	FANGAME("Quest for T-Rex", "f16f2cd525c9aeb4733295d8d842b902", 592584),
 	// Crash in console rendering on the initial scene
 	FANGAME("Quest for the Dark Sword", "4815d9a770904b26c463b7e4fcd121c7", 572576),
@@ -129,6 +133,7 @@ static const ADGameDescription gameDescriptions[] = {
 	FANGAMEND("The Ashland Revolution", "The Ashland Revolution Demo", "3c7a1bdeab48a077a4f54fe69da61a9f", 145023), // Original file name "The Ashland Revolution Demo†"
 	FANGAME("The Axe-orcist", "bfdf6a4ce87e6b368977af3b683466db", 308764),
 	FANGAMEN("The Hotel Caper", "The Hotel Caper V1.0", "0d11a6ca1357e27ffff5231fe89cc429", 231969),
+	FANGAMEN("The Hotel Caper", "The Hotel Caper V1.0", "6c80fa6a36d16aa0edef86d8800c90db", 231969), // alt version
 	// Invalid rect in scene "Access Tube 1"
 	FANGAMEN("The Phoenix v1.2", "The Phoenix", "0a4a01b83c993408ae824cc4f63957ea", 431640),
 	FANGAME("The Sultan's Palace", "98c845323489344d7e2c9d1c3e53d1fc", 456855),
