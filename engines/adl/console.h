@@ -34,6 +34,7 @@ class String;
 namespace Adl {
 
 class AdlEngine;
+struct Item;
 
 class Console : public GUI::Debugger {
 public:
@@ -47,7 +48,10 @@ private:
 	bool Cmd_DumpScripts(int argc, const char **argv);
 	bool Cmd_ValidCommands(int argc, const char **argv);
 	bool Cmd_Room(int argc, const char **argv);
+	bool Cmd_Items(int argc, const char **argv);
+	bool Cmd_GiveItem(int argc, const char **argv);
 
+	void printItem(const Item &item);
 	void printWordMap(const Common::HashMap<Common::String, uint> &wordMap);
 
 	AdlEngine *_engine;

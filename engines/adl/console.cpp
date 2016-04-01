@@ -36,6 +36,8 @@ Console::Console(AdlEngine *engine) : GUI::Debugger() {
 	registerCmd("dump_scripts", WRAP_METHOD(Console, Cmd_DumpScripts));
 	registerCmd("valid_cmds", WRAP_METHOD(Console, Cmd_ValidCommands));
 	registerCmd("room", WRAP_METHOD(Console, Cmd_Room));
+	registerCmd("items", WRAP_METHOD(Console, Cmd_Items));
+	registerCmd("give_item", WRAP_METHOD(Console, Cmd_GiveItem));
 }
 
 Common::String Console::toAscii(const Common::String &str) {
@@ -161,6 +163,103 @@ bool Console::Cmd_Room(int argc, const char **argv) {
 	debugPrintf("Current room: %d\n", _engine->_state.room);
 
 	return true;
+}
+
+bool Console::Cmd_Items(int argc, const char **argv) {
+	if (argc != 1) {
+		debugPrintf("Usage: %s\n", argv[0]);
+		return true;
+	}
+
+	Common::List<Item>::const_iterator item;
+
+	for (item = _engine->_state.items.begin(); item != _engine->_state.items.end(); ++item)
+		printItem(*item);
+
+	return true;
+}
+
+bool Console::Cmd_GiveItem(int argc, const char **argv) {
+	if (argc != 2) {
+		debugPrintf("Usage: %s <ID | name>\n", argv[0]);
+		return true;
+	}
+
+	Common::List<Item>::iterator item;
+
+	char *end;
+	int id = strtoul(argv[1], &end, 0);
+
+	if (*end != 0) {
+		Common::Array<Item *> matches;
+
+		Common::String searchName(argv[1]);
+		searchName.toUppercase();
+		while (searchName.size() < IDI_WORD_SIZE)
+			searchName += ' ';
+
+		for (item = _engine->_state.items.begin(); item != _engine->_state.items.end(); ++item) {
+			Common::String itemName;
+
+			if (item->noun > 0)
+				itemName = _engine->_priNouns[item->noun - 1];
+
+			if (itemName == searchName)
+				matches.push_back(&*item);
+		}
+
+		if (matches.size() == 0) {
+			debugPrintf("Item '%s' not found\n", argv[1]);
+			return true;
+		}
+
+		if (matches.size() > 1) {
+			debugPrintf("Multiple matches found, please use item ID:\n");
+			for (uint i = 0; i < matches.size(); ++i)
+				printItem(*matches[i]);
+			return true;
+		}
+
+		matches[0]->room = IDI_ANY;
+		debugPrintf("OK\n");
+		return true;
+	}
+
+	for (item = _engine->_state.items.begin(); item != _engine->_state.items.end(); ++item)
+		if (item->id == id) {
+			item->room = IDI_ANY;
+			debugPrintf("OK\n");
+			return true;
+		}
+
+	debugPrintf("Item %i not found\n", id);
+	return true;
+}
+
+void Console::printItem(const Item &item) {
+	Common::String name, desc, state;
+
+	if (item.noun > 0)
+		name = _engine->_priNouns[item.noun - 1];
+
+	if (item.description > 0) {
+		desc = toAscii(_engine->_messages[item.description - 1]);
+		desc.deleteLastChar();
+	}
+
+	switch (item.state) {
+	case IDI_ITEM_NOT_MOVED:
+		state = "PLACED";
+		break;
+	case IDI_ITEM_DROPPED:
+		state = "DROPPED";
+		break;
+	case IDI_ITEM_DOESNT_MOVE:
+		state = "FIXED";
+		break;
+	}
+
+	debugPrintf("%3d %s %-30s %-10s %-8s (%3d, %3d)\n", item.id, name.c_str(), desc.c_str(), _engine->itemRoomStr(item.room).c_str(), state.c_str(), item.position.x, item.position.y);
 }
 
 void Console::printWordMap(const WordMap &wordMap) {
