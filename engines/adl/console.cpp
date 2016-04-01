@@ -49,6 +49,22 @@ Common::String Console::toAscii(const Common::String &str) {
 	return ascii;
 }
 
+Common::String Console::toAppleWord(const Common::String &str) {
+	Common::String apple(str);
+
+	if (apple.size() > IDI_WORD_SIZE)
+		apple.erase(IDI_WORD_SIZE);
+	apple.toUppercase();
+
+	for (uint i = 0; i < apple.size(); ++i)
+		apple.setChar(APPLECHAR(apple[i]), i);
+
+	while (apple.size() < IDI_WORD_SIZE)
+		apple += APPLECHAR(' ');
+
+	return apple;
+}
+
 bool Console::Cmd_Verbs(int argc, const char **argv) {
 	if (argc != 1) {
 		debugPrintf("Usage: %s\n", argv[0]);
@@ -193,18 +209,17 @@ bool Console::Cmd_GiveItem(int argc, const char **argv) {
 	if (*end != 0) {
 		Common::Array<Item *> matches;
 
-		Common::String searchName(argv[1]);
-		searchName.toUppercase();
-		while (searchName.size() < IDI_WORD_SIZE)
-			searchName += ' ';
+		Common::String name = toAppleWord(argv[1]);
+
+		if (!_engine->_nouns.contains(name)) {
+			debugPrintf("Item '%s' not found\n", argv[1]);
+			return true;
+		}
+
+		byte noun = _engine->_nouns[name];
 
 		for (item = _engine->_state.items.begin(); item != _engine->_state.items.end(); ++item) {
-			Common::String itemName;
-
-			if (item->noun > 0)
-				itemName = _engine->_priNouns[item->noun - 1];
-
-			if (itemName == searchName)
+			if (item->noun == noun)
 				matches.push_back(&*item);
 		}
 
