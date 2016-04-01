@@ -104,6 +104,7 @@ static const ADGameDescription gameDescriptions[] = {
 	FANGAME("Periapt", "fb4052819126b88d7e03ebc00c669a9d", 406006),
 	FANGAME("Puzzle Piece Search", "6b4ae6261b405e2feac58c5a2ddb67c5", 247693), // From Joshua's Worlds 1.0
 	FANGAME("The Puzzle Piece Search", "fb99797c429c18ec68418fdd12af17a1", 247338), // From Joshua's Worlds
+	FANGAME("The Puzzle Piece Search", "fb99797c429c18ec68418fdd12af17a1", 247324), // Stnadalone
 	// Empty(?)  first scene
 	FANGAME("Pyramid of No Return", "38383ac85cc16703f13f8d82f1398123", 385145),
 	FANGAME("Queen Quest", "76d33bb847476b92cfe2581a019ff26c", 57026),
