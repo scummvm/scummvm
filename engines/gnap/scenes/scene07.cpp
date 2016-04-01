@@ -72,7 +72,7 @@ void GnapEngine::scene07_run() {
 
 	if (_prevSceneNum == 8) {
 		initGnapPos(7, 7, kDirBottomLeft);
-		initBeaverPos(9, 7, 4);
+		initBeaverPos(9, 7, kDirUnk4);
 		endSceneInit();
 	} else {
 		_gnapX = 6;
@@ -89,7 +89,7 @@ void GnapEngine::scene07_run() {
 		_beaverId = 160;
 		_beaverSequenceId = 0x91;
 		_beaverSequenceDatNum = 0;
-		_beaverFacing = 0;
+		_beaverFacing = kDirNone;
 		_gameSys->insertSequence(0x91, 160, 0, 0, kSeqNone, 0, 0, 0);
 		endSceneInit();
 	}

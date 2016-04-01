@@ -101,7 +101,7 @@ void GnapEngine::scene02_run() {
 	case 3:
 		initGnapPos(11, 6, kDirBottomLeft);
 		if (isFlag(0))
-			initBeaverPos(12, 6, 4);
+			initBeaverPos(12, 6, kDirUnk4);
 		endSceneInit();
 		if (isFlag(0))
 			platypusWalkTo(9, 6, -1, 0x107C2, 1);
@@ -110,7 +110,7 @@ void GnapEngine::scene02_run() {
 	case 4:
 		initGnapPos(_hotspotsWalkPos[6].x, _hotspotsWalkPos[6].y, kDirBottomLeft);
 		if (isFlag(0))
-			initBeaverPos(_hotspotsWalkPos[6].x + 1, _hotspotsWalkPos[6].y, 4);
+			initBeaverPos(_hotspotsWalkPos[6].x + 1, _hotspotsWalkPos[6].y, kDirUnk4);
 		endSceneInit();
 		gnapWalkTo(7, 6, 0, 0x107B9, 1);
 		if (isFlag(0))
@@ -121,19 +121,19 @@ void GnapEngine::scene02_run() {
 	case 47:
 		clearFlag(25);
 		initGnapPos(5, 6, kDirBottomLeft);
-		initBeaverPos(6, 7, 4);
+		initBeaverPos(6, 7, kDirUnk4);
 		endSceneInit();
 		break;
 	case 49:
 		initGnapPos(5, 6, kDirBottomRight);
 		if (isFlag(0))
-			initBeaverPos(6, 7, 0);
+			initBeaverPos(6, 7, kDirNone);
 		endSceneInit();
 		break;
 	default:
 		initGnapPos(-1, 6, kDirBottomRight);
 		if (isFlag(0))
-			initBeaverPos(-1, 7, 0);
+			initBeaverPos(-1, 7, kDirNone);
 		endSceneInit();
 		if (isFlag(0))
 			platypusWalkTo(2, 7, -1, 0x107C2, 1);

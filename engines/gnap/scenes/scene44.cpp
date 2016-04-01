@@ -128,14 +128,14 @@ void GnapEngine::scene44_run() {
 		switch (_prevSceneNum) {
 		case 43:
 			initGnapPos(-1, 8, kDirUpRight);
-			initBeaverPos(-1, 7, 5);
+			initBeaverPos(-1, 7, kDirUpLeft);
 			endSceneInit();
 			gnapWalkTo(2, 8, -1, 0x107B9, 1);
 			platypusWalkTo(1, 8, -1, 0x107C2, 1);
 			break;
 		case 46:
 			initGnapPos(11, 8, kDirUpRight);
-			initBeaverPos(11, 8, 5);
+			initBeaverPos(11, 8, kDirUpLeft);
 			endSceneInit();
 			gnapWalkTo(6, 8, -1, 0x107BA, 1);
 			platypusWalkTo(7, 8, -1, 0x107D2, 1);
@@ -143,14 +143,14 @@ void GnapEngine::scene44_run() {
 		case 50:
 			initGnapPos(4, 8, kDirBottomRight);
 			if (_sceneSavegameLoaded) {
-				initBeaverPos(_hotspotsWalkPos[4].x, _hotspotsWalkPos[4].y, 4);
+				initBeaverPos(_hotspotsWalkPos[4].x, _hotspotsWalkPos[4].y, kDirUnk4);
 			} else if (!isFlag(13)) {
 				_timers[0] = 50;
 				_timers[1] = 20;
 				_platX = 5;
 				_platY = 8;
 				_beaverSequenceId = 0xFD;
-				_beaverFacing = 0;
+				_beaverFacing = kDirNone;
 				_beaverId = 160;
 				_beaverSequenceDatNum = 0;
 				_gameSys->insertSequence(0xFD, 160, 0, 0, kSeqNone, 0, 0, 0);
@@ -159,7 +159,7 @@ void GnapEngine::scene44_run() {
 			break;
 		default:
 			initGnapPos(5, 11, kDirUpRight);
-			initBeaverPos(6, 11, 5);
+			initBeaverPos(6, 11, kDirUpLeft);
 			endSceneInit();
 			platypusWalkTo(6, 8, -1, 0x107C2, 1);
 			gnapWalkTo(5, 8, -1, 0x107BA, 1);
@@ -472,7 +472,7 @@ void GnapEngine::scene44_updateAnimations() {
 	if (_gameSys->getAnimationStatus(2) == 2) {
 		if (_s44_nextKissingLadySequenceId == 0xF6) {
 			_gameSys->insertSequence(_s44_nextKissingLadySequenceId, 1, _s44_currKissingLadySequenceId, 1, kSeqSyncWait, 0, 0, 0);
-			initBeaverPos(5, 8, 0);
+			initBeaverPos(5, 8, kDirNone);
 			_s44_currKissingLadySequenceId = _s44_nextKissingLadySequenceId;
 			_s44_nextKissingLadySequenceId = -1;
 			_gameSys->setAnimation(0, 0, 2);

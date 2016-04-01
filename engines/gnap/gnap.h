@@ -525,14 +525,14 @@ public:
 	void gnapUseDisguiseOnPlatypus();
 	
 	// Beaver
-	int _beaverFacing;
+	Facing _beaverFacing;
 	int _beaverActionStatus;
 	int _beaverSequenceId, _beaverSequenceDatNum, _beaverId;
 	int getBeaverSequenceId(int kind, int gridX, int gridY);
 	void playBeaverSequence(int sequenceId);
 	void updateBeaverIdleSequence();
 	void beaverSub426234();
-	void initBeaverPos(int gridX, int gridY, int facing);
+	void initBeaverPos(int gridX, int gridY, Facing facing);
 	
 	// Scenes
 	

@@ -108,10 +108,10 @@ void GnapEngine::scene13_run() {
 	
 	if (_prevSceneNum == 14) {
 		initGnapPos(6, 6, kDirBottomLeft);
-		initBeaverPos(9, 8, 0);
+		initBeaverPos(9, 8, kDirNone);
 	} else {
 		initGnapPos(3, 7, kDirBottomRight);
-		initBeaverPos(2, 7, 0);
+		initBeaverPos(2, 7, kDirNone);
 	}
 
 	endSceneInit();

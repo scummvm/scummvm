@@ -85,13 +85,13 @@ void GnapEngine::scene10_run() {
 	
 	if (_prevSceneNum == 9) {
 		initGnapPos(11, 8, kDirBottomLeft);
-		initBeaverPos(12, 7, 4);
+		initBeaverPos(12, 7, kDirUnk4);
 		endSceneInit();
 		gnapWalkTo(9, 8, -1, 0x107BA, 1);
 		platypusWalkTo(9, 7, -1, 0x107D2, 1);
 	} else {
 		initGnapPos(-1, 7, kDirBottomRight);
-		initBeaverPos(-2, 8, 0);
+		initBeaverPos(-2, 8, kDirNone);
 		endSceneInit();
 		gnapWalkTo(1, 7, -1, 0x107B9, 1);
 		platypusWalkTo(1, 8, -1, 0x107C2, 1);
@@ -256,7 +256,7 @@ void GnapEngine::scene10_run() {
 						gnapUseDeviceOnBeaver();
 						platypusWalkTo(7, 6, 1, 0x107D2, 1);
 						_beaverActionStatus = kASPlatWithBox;
-						_beaverFacing = 4;
+						_beaverFacing = kDirUnk4;
 						_largeSprite = _gameSys->createSurface(0xC3);
 						playGnapIdle(7, 6);
 					}
@@ -397,7 +397,7 @@ void GnapEngine::scene10_updateAnimations() {
 			_s10_nextCookSequenceId = 0x843;
 			_beaverSequenceId = 0x7C9;
 			_beaverId = 160;
-			_beaverFacing = 0;
+			_beaverFacing = kDirNone;
 			_beaverSequenceDatNum = 1;
 			break;
 		case 0x843:

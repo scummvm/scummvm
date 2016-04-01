@@ -127,7 +127,7 @@ void GnapEngine::scene19_run() {
 		_gameSys->insertSequence(_s19_currShopAssistantSequenceId, 20, 0, 0, kSeqNone, 0, 0, 0);
 		_timers[6] = getRandom(40) + 50;
 		initGnapPos(3, 6, kDirBottomRight);
-		initBeaverPos(4, 6, 0);
+		initBeaverPos(4, 6, kDirNone);
 		endSceneInit();
 		gnapWalkTo(4, 9, -1, 0x107B9, 1);
 		platypusWalkTo(5, 9, -1, 0x107C2, 1);

@@ -139,23 +139,23 @@ void GnapEngine::scene41_run() {
 		_gnapId = 140;
 		_gameSys->insertSequence(0x120, 140, 0, 0, kSeqNone, 0, 0, 0);
 		_gameSys->setAnimation(makeRid(_gnapSequenceDatNum, _gnapSequenceId), _gnapId, 0);
-		initBeaverPos(8, 10, 3);
+		initBeaverPos(8, 10, kDirBottomLeft);
 		endSceneInit();
 	} else if (_prevSceneNum == 45) {
 		initGnapPos(-1, 8, kDirUpRight);
-		initBeaverPos(-2, 8, 5);
+		initBeaverPos(-2, 8, kDirUpLeft);
 		endSceneInit();
 		platypusWalkTo(1, 8, -1, 0x107C2, 1);
 		gnapWalkTo(2, 8, -1, 0x107B9, 1);
 	} else if (_prevSceneNum == 42) {
 		initGnapPos(11, 8, kDirUpRight);
-		initBeaverPos(11, 9, 5);
+		initBeaverPos(11, 9, kDirUpLeft);
 		endSceneInit();
 		gnapWalkTo(8, 8, -1, 0x107BA, 1);
 		platypusWalkTo(9, 8, -1, 0x107D2, 1);
 	} else {
 		initGnapPos(5, 8, kDirBottomRight);
-		initBeaverPos(6, 8, 3);
+		initBeaverPos(6, 8, kDirBottomLeft);
 		endSceneInit();
 	}
 

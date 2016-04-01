@@ -94,22 +94,22 @@ void GnapEngine::scene11_run() {
 	switch (_prevSceneNum) {
 	case 13:
 		initGnapPos(8, 5, kDirBottomLeft);
-		initBeaverPos(9, 6, 4);
+		initBeaverPos(9, 6, kDirUnk4);
 		break;
 	case 47:
 		initGnapPos(8, 5, kDirBottomLeft);
-		initBeaverPos(9, 5, 4);
+		initBeaverPos(9, 5, kDirUnk4);
 		_s11_currGoggleGuySequenceId = 0x1FA;
 		_s11_currHookGuySequenceId = 0x1FF;
 		_timers[7] = 180;
 		break;
 	case 12:
 		initGnapPos(-1, 9, kDirBottomRight);
-		initBeaverPos(-2, 8, 0);
+		initBeaverPos(-2, 8, kDirNone);
 		break;
 	default:
 		initGnapPos(6, 6, kDirBottomLeft);
-		initBeaverPos(6, 5, 4);
+		initBeaverPos(6, 5, kDirUnk4);
 		break;
 	}
 	

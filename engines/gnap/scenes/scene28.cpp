@@ -95,12 +95,12 @@ void GnapEngine::scene28_run() {
 			_timers[4] = getRandom(20) + 80;
 		}
 		initGnapPos(8, 8, kDirBottomLeft);
-		initBeaverPos(9, 8, 4);
+		initBeaverPos(9, 8, kDirUnk4);
 		endSceneInit();
 	} else {
 		_gameSys->insertSequence(0x11B, 39, 0, 0, kSeqNone, 0, 0, 0);
 		initGnapPos(8, 8, kDirBottomLeft);
-		initBeaverPos(9, 8, 4);
+		initBeaverPos(9, 8, kDirUnk4);
 		endSceneInit();
 		playSequences(0xF7, 0x121, 0x122, 0x123);
 		_s28_currClownSequenceId = 0x115;

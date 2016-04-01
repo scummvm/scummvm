@@ -380,19 +380,19 @@ void GnapEngine::scene18_run() {
 		}
 		if (_prevSceneNum == 17) {
 			initGnapPos(4, 11, kDirBottomRight);
-			initBeaverPos(5, 11, 0);
+			initBeaverPos(5, 11, kDirNone);
 			endSceneInit();
 			gnapWalkTo(4, 8, -1, 0x107B9, 1);
 			platypusWalkTo(5, 9, -1, 0x107C2, 1);
 		} else if (_prevSceneNum == 19) {
 			initGnapPos(7, 7, kDirBottomRight);
-			initBeaverPos(8, 7, 0);
+			initBeaverPos(8, 7, kDirNone);
 			endSceneInit();
 			gnapWalkTo(7, 8, -1, 0x107B9, 1);
 			platypusWalkTo(8, 8, -1, 0x107C2, 1);
 		} else {
 			initGnapPos(-1, 10, kDirBottomRight);
-			initBeaverPos(-1, 10, 0);
+			initBeaverPos(-1, 10, kDirNone);
 			endSceneInit();
 			gnapWalkTo(3, 7, -1, 0x107B9, 1);
 			platypusWalkTo(3, 8, -1, 0x107C2, 1);
@@ -736,7 +736,7 @@ void GnapEngine::scene18_run() {
 					if (!_timers[6]) {
 						_beaverActionStatus = -1;
 						_sceneWaiting = false;
-						initBeaverPos(-1, 10, 0);
+						initBeaverPos(-1, 10, kDirNone);
 						platypusWalkTo(3, 9, -1, 0x107C2, 1);
 						clearFlag(26);
 					}

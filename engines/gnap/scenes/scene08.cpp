@@ -117,7 +117,7 @@ void GnapEngine::scene08_run() {
 		_gameSys->insertSequence(0x146, 1, 0, 0, kSeqNone, 0, 0, 0);
 	
 	initGnapPos(-1, 8, kDirBottomRight);
-	initBeaverPos(-1, 7, 0);
+	initBeaverPos(-1, 7, kDirNone);
 	
 	endSceneInit();
 	
@@ -218,7 +218,7 @@ void GnapEngine::scene08_run() {
 					gnapUseDeviceOnBeaver();
 					platypusWalkTo(6, 6, 1, 0x107C2, 1);
 					_beaverActionStatus = kASPlatWithMan;
-					_beaverFacing = 0;
+					_beaverFacing = kDirNone;
 					playGnapIdle(6, 6);
 					break;
 				}
@@ -254,7 +254,7 @@ void GnapEngine::scene08_run() {
 					gnapUseDeviceOnBeaver();
 					platypusWalkTo(3, 7, 1, 0x107C2, 1);
 					_beaverActionStatus = kASPlatWithDog;
-					_beaverFacing = 0;
+					_beaverFacing = kDirNone;
 					playGnapIdle(3, 7);
 					break;
 				}
@@ -500,7 +500,7 @@ void GnapEngine::scene08_updateAnimations() {
 			_platY = 8;
 			_beaverId = 160;
 			_beaverSequenceId = 0x148;
-			_beaverFacing = 4;
+			_beaverFacing = kDirUnk4;
 			_beaverSequenceDatNum = 0;
 			if (_gnapX == 1 && _gnapY == 8)
 				gnapWalkStep();

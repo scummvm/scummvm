@@ -78,26 +78,26 @@ void GnapEngine::scene33_run() {
 	switch (_prevSceneNum) {
 	case 34:
 		initGnapPos(11, 7, kDirBottomLeft);
-		initBeaverPos(12, 7, 4);
+		initBeaverPos(12, 7, kDirUnk4);
 		endSceneInit();
 		gnapWalkTo(8, 7, -1, 0x107BA, 1);
 		platypusWalkTo(9, 7, -1, 0x107D2, 1);
 		break;
 	case 37:
 		initGnapPos(7, 7, kDirBottomRight);
-		initBeaverPos(8, 7, 0);
+		initBeaverPos(8, 7, kDirNone);
 		endSceneInit();
 		break;
 	case 32:
 		initGnapPos(-1, 6, kDirBottomRight);
-		initBeaverPos(-1, 7, 0);
+		initBeaverPos(-1, 7, kDirNone);
 		endSceneInit();
 		platypusWalkTo(2, 7, -1, 0x107C2, 1);
 		gnapWalkTo(2, 8, -1, 0x107B9, 1);
 		break;
 	default:
 		initGnapPos(3, 7, kDirBottomRight);
-		initBeaverPos(2, 7, 0);
+		initBeaverPos(2, 7, kDirNone);
 		endSceneInit();
 		break;
 	}

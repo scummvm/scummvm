@@ -107,7 +107,7 @@ void GnapEngine::scene06_run() {
 	queueInsertDeviceIcon();
 	
 	initGnapPos(5, 12, kDirBottomRight);
-	initBeaverPos(6, 12, 0);
+	initBeaverPos(6, 12, kDirNone);
 	endSceneInit();
 	
 	platypusWalkTo(6, 8, -1, 0x107C2, 1);
@@ -230,7 +230,7 @@ void GnapEngine::scene06_run() {
 					_hotspots[kHSWalkArea5]._flags &= ~SF_WALKABLE;
 					_gnapIdleFacing = kDirUpLeft;
 					platypusWalkTo(6, 8, 1, 0x107C2, 1);
-					_beaverFacing = 0;
+					_beaverFacing = kDirNone;
 					_gnapActionStatus = kASUseTwigOnHorse;
 					setGrabCursorSprite(-1);
 				} else if (_grabCursorSpriteIndex >= 0) {

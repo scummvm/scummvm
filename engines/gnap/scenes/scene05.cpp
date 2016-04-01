@@ -98,7 +98,7 @@ void GnapEngine::scene05_run() {
 	if (_prevSceneNum != 6 && _prevSceneNum != 36) {
 		initGnapPos(-1, 8, kDirBottomRight);
 		if (isFlag(0))
-			initBeaverPos(-1, 9, 0);
+			initBeaverPos(-1, 9, kDirNone);
 		endSceneInit();
 		if (isFlag(0))
 			platypusWalkTo(2, 8, -1, 0x107C2, 1);
@@ -106,7 +106,7 @@ void GnapEngine::scene05_run() {
 	} else {
 		initGnapPos(6, 8, kDirBottomRight);
 		if (isFlag(0))
-			initBeaverPos(7, 9, 0);
+			initBeaverPos(7, 9, kDirNone);
 		endSceneInit();
 	}
 	
@@ -178,7 +178,7 @@ void GnapEngine::scene05_run() {
 							gnapUseDeviceOnBeaver();
 							if (platypusWalkTo(_hotspotsWalkPos[1].x, _hotspotsWalkPos[1].y, 1, 0x107C2, 1)) {
 								_beaverActionStatus = kASPlatSearchHaystack;
-								_beaverFacing = 4;
+								_beaverFacing = kDirUnk4;
 							}
 							if (_gnapX == 4 && (_gnapY == 8 || _gnapY == 7))
 								gnapWalkStep();

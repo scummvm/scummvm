@@ -70,7 +70,7 @@ void GnapEngine::scene23_run() {
 	queueInsertDeviceIcon();
 	
 	initGnapPos(-1, 7, kDirBottomRight);
-	initBeaverPos(-2, 7, 0);
+	initBeaverPos(-2, 7, kDirNone);
 	_gameSys->insertSequence(0xBD, 255, 0, 0, kSeqNone, 0, 0, 0);
 	_gameSys->insertSequence(0xBF, 2, 0, 0, kSeqNone, 0, 0, 0);
 	endSceneInit();

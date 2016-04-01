@@ -76,7 +76,7 @@ void GnapEngine::scene30_run() {
 
 	_s30_kidSequenceId = 0x101;
 	initGnapPos(7, 12, kDirBottomRight);
-	initBeaverPos(6, 12, 0);
+	initBeaverPos(6, 12, kDirNone);
 	endSceneInit();
 	gnapWalkTo(7, 8, -1, 0x107B9, 1);
 	platypusWalkTo(6, 8, -1, 0x107C2, 1);

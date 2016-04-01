@@ -104,7 +104,7 @@ void GnapEngine::scene01_run() {
 	if (_prevSceneNum == 2) {
 		initGnapPos(11, 6, kDirBottomLeft);
 		if (isFlag(0))
-			initBeaverPos(12, 6, 4);
+			initBeaverPos(12, 6, kDirUnk4);
 		endSceneInit();
 		if (isFlag(0))
 			platypusWalkTo(9, 6, -1, 0x107C2, 1);
@@ -112,7 +112,7 @@ void GnapEngine::scene01_run() {
 	} else {
 		initGnapPos(1, 6, kDirBottomRight);
 		if (isFlag(0))
-			initBeaverPos(1, 7, 0);
+			initBeaverPos(1, 7, kDirNone);
 		endSceneInit();
 	}
 

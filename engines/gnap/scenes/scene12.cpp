@@ -112,11 +112,11 @@ void GnapEngine::scene12_run() {
 	
 	if (_prevSceneNum == 15) {
 		initGnapPos(5, 6, kDirBottomRight);
-		initBeaverPos(3, 7, 0);
+		initBeaverPos(3, 7, kDirNone);
 		endSceneInit();
 	} else {
 		initGnapPos(11, 8, kDirBottomLeft);
-		initBeaverPos(12, 8, 4);
+		initBeaverPos(12, 8, kDirUnk4);
 		endSceneInit();
 		gnapWalkTo(8, 8, -1, 0x107BA, 1);
 		platypusWalkTo(9, 8, -1, 0x107D2, 1);
@@ -203,7 +203,7 @@ void GnapEngine::scene12_run() {
 					gnapUseDeviceOnBeaver();
 					platypusWalkTo(3, 7, 1, 0x107D2, 1);
 					_beaverActionStatus = kASPlatWithToothGuy;
-					_beaverFacing = 4;
+					_beaverFacing = kDirUnk4;
 					playGnapIdle(2, 7);
 					break;
 				}
@@ -273,7 +273,7 @@ void GnapEngine::scene12_run() {
 					gnapUseDeviceOnBeaver();
 					platypusWalkTo(7, 6, 1, 0x107C2, 1);
 					_beaverActionStatus = kASPlatWithBeardGuy;
-					_beaverFacing = 0;
+					_beaverFacing = kDirNone;
 					playGnapIdle(7, 6);
 					break;
 				}

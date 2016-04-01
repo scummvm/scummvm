@@ -71,11 +71,11 @@ void GnapEngine::scene39_run() {
 	_s39_nextGuySequenceId = -1;
 	if (_prevSceneNum == 38) {
 		initGnapPos(3, 7, kDirUpRight);
-		initBeaverPos(2, 7, 5);
+		initBeaverPos(2, 7, kDirUpLeft);
 		endSceneInit();
 	} else {
 		initGnapPos(4, 7, kDirBottomRight);
-		initBeaverPos(5, 7, 0);
+		initBeaverPos(5, 7, kDirNone);
 		endSceneInit();
 	}
 	

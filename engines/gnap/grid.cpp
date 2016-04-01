@@ -1295,13 +1295,13 @@ bool GnapEngine::platypusWalkTo(int gridX, int gridY, int animationIndex, int se
 			_beaverSequenceDatNum = datNum;
 			// CHECKME Not sure if this is correct...
 			if (_platWalkNodes[_platWalkNodesCount - 1].deltaX > 0)
-				_beaverFacing = 0;
+				_beaverFacing = kDirNone;
 			else if (_platWalkNodes[_platWalkNodesCount - 1].deltaX < 0)
-				_beaverFacing = 4;
+				_beaverFacing = kDirUnk4;
 			else if (_platWalkNodes[_platWalkNodesCount - 1].gridX1 % 2)
-				_beaverFacing = 4;
+				_beaverFacing = kDirUnk4;
 			else
-				_beaverFacing = 0;
+				_beaverFacing = kDirNone;
 			if (animationIndex >= 0)
 				_gameSys->setAnimation(makeRid(_beaverSequenceDatNum, _beaverSequenceId), _beaverId, animationIndex);
 		} else if (animationIndex >= 0) {
@@ -1313,27 +1313,27 @@ bool GnapEngine::platypusWalkTo(int gridX, int gridY, int animationIndex, int se
 			_beaverSequenceId = ridToEntryIndex(sequenceId);
 			_beaverSequenceDatNum = ridToDatIndex(sequenceId);
 			if (_beaverSequenceId == 0x7C2) {
-				_beaverFacing = 0;
+				_beaverFacing = kDirNone;
 			} else if (_beaverSequenceId == 0x7D2) {
-				_beaverFacing = 4;
+				_beaverFacing = kDirUnk4;
 			}
 		} else {
 			if (_platWalkNodesCount > 0) {
 				if (_platWalkNodes[_platWalkNodesCount - 1].deltaX > 0) {
 					_beaverSequenceId = 0x7C2;
-					_beaverFacing = 0;
+					_beaverFacing = kDirNone;
 				} else if (_platWalkNodes[_platWalkNodesCount - 1].deltaX < 0) {
 					_beaverSequenceId = 0x7D2;
-					_beaverFacing = 4;
+					_beaverFacing = kDirUnk4;
 				} else if (_platWalkNodes[0].deltaX > 0) {
 					_beaverSequenceId = 0x7C2;
-					_beaverFacing = 0;
+					_beaverFacing = kDirNone;
 				} else if (_platWalkNodes[0].deltaX < 0) {
 					_beaverSequenceId = 0x7D2;
-					_beaverFacing = 4;
+					_beaverFacing = kDirUnk4;
 				} else {
 					_beaverSequenceId = 0x7D2;
-					_beaverFacing = 4;
+					_beaverFacing = kDirUnk4;
 				}
 			} else if (_beaverFacing > 0) {
 				_beaverSequenceId = 0x7D2;

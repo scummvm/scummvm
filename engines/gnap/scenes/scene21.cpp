@@ -78,7 +78,7 @@ void GnapEngine::scene21_run() {
 	if (isFlag(3)) {
 		if (isFlag(5)) {
 			initGnapPos(5, 8, kDirBottomRight);
-			initBeaverPos(6, 8, 0);
+			initBeaverPos(6, 8, kDirNone);
 			_gameSys->insertSequence(0x8E, 2, 0, 0, kSeqNone, 0, 0, 0);
 			if (!isFlag(4))
 				_gameSys->insertSequence(0x8D, 59, 0, 0, kSeqNone, 0, 0, 0);
@@ -86,7 +86,7 @@ void GnapEngine::scene21_run() {
 			clearFlag(5);
 		} else {
 			initGnapPos(5, 11, kDirBottomRight);
-			initBeaverPos(6, 11, 0);
+			initBeaverPos(6, 11, kDirNone);
 			if (!isFlag(4))
 				_gameSys->insertSequence(0x8D, 59, 0, 0, kSeqNone, 0, 0, 0);
 			endSceneInit();
@@ -95,7 +95,7 @@ void GnapEngine::scene21_run() {
 		}
 	} else {
 		initGnapPos(5, 11, kDirBottomRight);
-		initBeaverPos(6, 11, 0);
+		initBeaverPos(6, 11, kDirNone);
 		_s21_currOldLadySequenceId = 0x89;
 		_gameSys->setAnimation(0x89, 79, 3);
 		_gameSys->insertSequence(_s21_currOldLadySequenceId, 79, 0, 0, kSeqNone, 0, 0, 0);

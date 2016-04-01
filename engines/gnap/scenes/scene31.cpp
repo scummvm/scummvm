@@ -80,13 +80,13 @@ void GnapEngine::scene31_run() {
 
 	if (_prevSceneNum == 27) {
 		initGnapPos(-1, 8, kDirBottomLeft);
-		initBeaverPos(-1, 9, 4);
+		initBeaverPos(-1, 9, kDirUnk4);
 		endSceneInit();
 		gnapWalkTo(3, 8, -1, 0x107BA, 1);
 		platypusWalkTo(3, 9, -1, 0x107D2, 1);
 	} else {
 		initGnapPos(7, 12, kDirBottomRight);
-		initBeaverPos(6, 12, 0);
+		initBeaverPos(6, 12, kDirNone);
 		endSceneInit();
 		gnapWalkTo(7, 8, -1, 0x107BA, 1);
 		platypusWalkTo(6, 8, -1, 0x107D2, 1);

@@ -72,11 +72,11 @@ void GnapEngine::scene22_run() {
 	
 	if (_prevSceneNum == 20) {
 		initGnapPos(2, 8, kDirBottomRight);
-		initBeaverPos(1, 8, 0);
+		initBeaverPos(1, 8, kDirNone);
 		endSceneInit();
 	} else {
 		initGnapPos(11, _hotspotsWalkPos[kHSExitBackGrubCity].y, kDirBottomRight);
-		initBeaverPos(11, _hotspotsWalkPos[kHSExitBackGrubCity].y + 1, 0);
+		initBeaverPos(11, _hotspotsWalkPos[kHSExitBackGrubCity].y + 1, kDirNone);
 		endSceneInit();
 		gnapWalkTo(8, 8, -1, 0x107B9, 1);
 		platypusWalkTo(9, 8, -1, 0x107C2, 1);

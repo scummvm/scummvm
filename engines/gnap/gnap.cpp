@@ -1834,7 +1834,7 @@ void GnapEngine::gnapKissPlatypus(int callback) {
 			kSeqSyncWait, getSequenceTotalDuration(0x10847), 75 * _platX - _platGridX, 48 * _platY - _platGridY);
 		_beaverSequenceDatNum = 1;
 		_beaverSequenceId = 0x7CB;
-		_beaverFacing = 0;
+		_beaverFacing = kDirNone;
 		playGnapSequence(0x107B5);
 		while (_gameSys->getAnimationStatus(0) != 2) {
 			updateMouseCursor();
@@ -1864,7 +1864,7 @@ void GnapEngine::gnapUseJointOnPlatypus() {
 			kSeqSyncWait, 0, 15 * (5 * _platX - 25), 48 * (_platY - 7));
 		_beaverSequenceDatNum = 1;
 		_beaverSequenceId = 0x876;
-		_beaverFacing = 0;
+		_beaverFacing = kDirNone;
 		playGnapSequence(0x107B5);
 		gnapWalkStep();
 		while (_gameSys->getAnimationStatus(0) != 2) {
@@ -1900,17 +1900,17 @@ int GnapEngine::getBeaverSequenceId(int kind, int gridX, int gridY) {
 	if (gridX > 0 && gridY > 0) {
 		if (gridX < _platX) {
 			sequenceId = 0x7CC;
-			_beaverFacing = 4;
+			_beaverFacing = kDirUnk4;
 		} else {
 			sequenceId = 0x7CB;
-			_beaverFacing = 0;
+			_beaverFacing = kDirNone;
 		}
-	} else if (_beaverFacing != 0) {
+	} else if (_beaverFacing != kDirNone) {
 		sequenceId = 0x7CC;
-		_beaverFacing = 4;
+		_beaverFacing = kDirUnk4;
 	} else {
 		sequenceId = 0x7CB;
-		_beaverFacing = 0;
+		_beaverFacing = kDirNone;
 	}
 	return sequenceId | 0x10000;
 }
@@ -1990,20 +1990,20 @@ void GnapEngine::beaverSub426234() {
 	}
 }
 
-void GnapEngine::initBeaverPos(int gridX, int gridY, int facing) {
+void GnapEngine::initBeaverPos(int gridX, int gridY, Facing facing) {
 	_timers[0] = 50;
 	_timers[1] = 20;
 	_platX = gridX;
 	_platY = gridY;
-	if (facing <= 0)
-		_beaverFacing = 0;
+	if (facing == kDirNone)
+		_beaverFacing = kDirNone;
 	else
 		_beaverFacing = facing;
-	if (_beaverFacing == 4) {
+	if (_beaverFacing == kDirUnk4) {
 		_beaverSequenceId = 0x7D1;
 	} else {
 		_beaverSequenceId = 0x7C1;
-		_beaverFacing = 0;
+		_beaverFacing = kDirNone;
 	}
 	_beaverId = 20 * _platY;
 	_beaverSequenceDatNum = 1;

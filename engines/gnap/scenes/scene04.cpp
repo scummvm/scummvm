@@ -128,7 +128,7 @@ void GnapEngine::scene04_run() {
 		clearFlag(10);
 		_beaverSequenceId = 0x20C;
 		_beaverSequenceDatNum = 0;
-		_beaverFacing = 1;
+		_beaverFacing = kDirBottomRight;
 		_gnapSequenceId = 0x7B5;
 		_gnapSequenceDatNum = 1;
 		_gameSys->waitForUpdate();
@@ -137,19 +137,19 @@ void GnapEngine::scene04_run() {
 		if (_prevSceneNum == 2) {
 			initGnapPos(5, 11, kDirUpRight);
 			if (isFlag(0))
-				initBeaverPos(6, 11, 5);
+				initBeaverPos(6, 11, kDirUpLeft);
 			endSceneInit();
 			if (isFlag(0))
 				platypusWalkTo(5, 8, -1, 0x107C2, 1);
 			gnapWalkTo(6, 9, -1, 0x107BA, 1);
 		} else if (_prevSceneNum == 38) {
 			initGnapPos(5, 7, kDirBottomRight);
-			initBeaverPos(4, 7, 0);
+			initBeaverPos(4, 7, kDirNone);
 			endSceneInit();
 		} else {
 			initGnapPos(12, 9, kDirBottomRight);
 			if (isFlag(0))
-				initBeaverPos(12, 8, 0);
+				initBeaverPos(12, 8, kDirNone);
 			endSceneInit();
 			if (isFlag(0))
 				platypusWalkTo(9, 8, -1, 0x107C2, 1);

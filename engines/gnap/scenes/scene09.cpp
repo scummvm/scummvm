@@ -68,13 +68,13 @@ void GnapEngine::scene09_run() {
 	
 	if (_prevSceneNum == 8) {
 		initGnapPos(11, 8, kDirBottomLeft);
-		initBeaverPos(12, 7, 4);
+		initBeaverPos(12, 7, kDirUnk4);
 		endSceneInit();
 		gnapWalkTo(9, 8, -1, 0x107BA, 1);
 		platypusWalkTo(9, 7, -1, 0x107D2, 1);
 	} else {
 		initGnapPos(4, 7, kDirBottomRight);
-		initBeaverPos(5, 7, 0);
+		initBeaverPos(5, 7, kDirNone);
 		endSceneInit();
 	}
 
@@ -128,7 +128,7 @@ void GnapEngine::scene09_run() {
 			gnapWalkTo(4, 7, 0, 0x107BF, 1);
 			_gnapActionStatus = kASLeaveScene;
 			platypusWalkTo(4, 8, -1, 0x107D2, 1);
-			_beaverFacing = 4;
+			_beaverFacing = kDirUnk4;
 			break;
 
 		case kHSExitHouse:
@@ -137,7 +137,7 @@ void GnapEngine::scene09_run() {
 			gnapWalkTo(10, -1, 0, 0x107AB, 1);
 			_gnapActionStatus = kASLeaveScene;
 			platypusWalkTo(10, -1, -1, 0x107CD, 1);
-			_beaverFacing = 4;
+			_beaverFacing = kDirUnk4;
 			break;
 
 		case kHSTrash:

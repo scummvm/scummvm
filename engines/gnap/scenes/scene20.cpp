@@ -229,42 +229,42 @@ void GnapEngine::scene20_run() {
 			gameUpdateTick();
 		}
 		initGnapPos(11, 8, kDirBottomLeft);
-		initBeaverPos(11, 9, 4);
+		initBeaverPos(11, 9, kDirUnk4);
 		gnapWalkTo(5, 8, -1, 0x107BA, 1);
 		platypusWalkTo(6, 9, -1, 0x107C2, 1);
 	} else {
 		switch (_prevSceneNum) {
 		case 17:
 			initGnapPos(5, 11, kDirBottomRight);
-			initBeaverPos(6, 11, 0);
+			initBeaverPos(6, 11, kDirNone);
 			endSceneInit();
 			gnapWalkTo(5, 8, -1, 0x107B9, 1);
 			platypusWalkTo(6, 9, -1, 0x107C2, 1);
 			break;
 		case 18:
 			initGnapPos(11, 8, kDirBottomLeft);
-			initBeaverPos(11, 9, 4);
+			initBeaverPos(11, 9, kDirUnk4);
 			endSceneInit();
 			gnapWalkTo(5, 8, -1, 0x107BA, 1);
 			platypusWalkTo(6, 9, -1, 0x107C2, 1);
 			break;
 		case 21:
 			initGnapPos(-1, 8, kDirBottomLeft);
-			initBeaverPos(-1, 9, 4);
+			initBeaverPos(-1, 9, kDirUnk4);
 			endSceneInit();
 			gnapWalkTo(3, 8, -1, 0x107B9, 1);
 			platypusWalkTo(3, 9, -1, 0x107C2, 1);
 			break;
 		case 22:
 			initGnapPos(7, 6, kDirBottomRight);
-			initBeaverPos(8, 6, 0);
+			initBeaverPos(8, 6, kDirNone);
 			endSceneInit();
 			gnapWalkTo(8, 8, -1, 0x107B9, 1);
 			platypusWalkTo(9, 9, -1, 0x107C2, 1);
 			break;
 		default:
 			initGnapPos(8, 6, kDirBottomLeft);
-			initBeaverPos(9, 6, 4);
+			initBeaverPos(9, 6, kDirUnk4);
 			endSceneInit();
 			_hotspots[kHSWalkArea2]._flags |= SF_WALKABLE;
 			gnapWalkTo(8, 8, -1, 0x107BA, 1);
@@ -329,7 +329,7 @@ void GnapEngine::scene20_run() {
 				gnapWalkTo(_hotspotsWalkPos[kHSExitParkingLot].x, _hotspotsWalkPos[kHSExitParkingLot].y, 0, 0x107AF, 1);
 				_gnapActionStatus = kASLeaveScene;
 				platypusWalkTo(_hotspotsWalkPos[kHSExitParkingLot].x, _hotspotsWalkPos[kHSExitParkingLot].y + 1, -1, 0x107CF, 1);
-				_beaverFacing = 4;
+				_beaverFacing = kDirUnk4;
 			}
 			break;
 		
@@ -368,7 +368,7 @@ void GnapEngine::scene20_run() {
 				gnapWalkTo(_hotspotsWalkPos[kHSExitInsideGrubCity].x, _hotspotsWalkPos[kHSExitInsideGrubCity].y - 1, 0, 0x107BB, 1);
 				_gnapActionStatus = kASLeaveScene;
 				platypusWalkTo(_hotspotsWalkPos[kHSExitInsideGrubCity].x + 1, _hotspotsWalkPos[kHSExitInsideGrubCity].y, -1, 0x107C2, 1);
-				_beaverFacing = 4;
+				_beaverFacing = kDirUnk4;
 			}
 			break;
 		

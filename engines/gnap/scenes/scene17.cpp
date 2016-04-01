@@ -178,7 +178,7 @@ void GnapEngine::scene17_run() {
 	if (_prevSceneNum == 53 || _prevSceneNum == 18 || _prevSceneNum == 20 || _prevSceneNum == 19) {
 		if (_prevSceneNum == 20) {
 			initGnapPos(4, 6, kDirBottomRight);
-			initBeaverPos(5, 6, 0);
+			initBeaverPos(5, 6, kDirNone);
 			endSceneInit();
 			platypusWalkTo(5, 9, -1, 0x107C2, 1);
 			gnapWalkTo(4, 8, -1, 0x107B9, 1);
@@ -203,7 +203,7 @@ void GnapEngine::scene17_run() {
 		} else if (isFlag(25)) {
 			clearFlag(15);
 			clearFlag(16);
-			initBeaverPos(7, 9, 0);
+			initBeaverPos(7, 9, kDirNone);
 			_gnapX = _hotspotsWalkPos[2].x;
 			_gnapY = _hotspotsWalkPos[2].y;
 			_gnapId = 20 * _hotspotsWalkPos[2].y;
@@ -235,18 +235,18 @@ void GnapEngine::scene17_run() {
 			scene17_updateHotspots();
 		} else if (_prevSceneNum == 18) {
 			initGnapPos(6, 6, kDirBottomRight);
-			initBeaverPos(5, 6, 0);
+			initBeaverPos(5, 6, kDirNone);
 			endSceneInit();
 			platypusWalkTo(5, 9, -1, 0x107C2, 1);
 			gnapWalkTo(4, 8, -1, 0x107B9, 1);
 		} else {
 			if (isFlag(15)) {
 				initGnapPos(_hotspotsWalkPos[2].x, _hotspotsWalkPos[2].y, kDirBottomRight);
-				initBeaverPos(1, 9, 0);
+				initBeaverPos(1, 9, kDirNone);
 				endSceneInit();
 			} else {
 				initGnapPos(3, 7, kDirBottomRight);
-				initBeaverPos(1, 7, 0);
+				initBeaverPos(1, 7, kDirNone);
 				endSceneInit();
 			}
 			clearFlag(15);
@@ -273,7 +273,7 @@ void GnapEngine::scene17_run() {
 		endSceneInit();
 		_beaverSequenceId = 0x7C1;
 		_beaverSequenceDatNum = 1;
-		_beaverFacing = 1;
+		_beaverFacing = kDirBottomRight;
 		platypusWalkTo(2, 9, -1, 0x107C2, 1);
 	}
 
@@ -388,7 +388,7 @@ void GnapEngine::scene17_run() {
 							scene17_platHangUpPhone();
 							_isLeavingScene = true;
 							gnapUseDeviceOnBeaver();
-							_beaverFacing = 5;
+							_beaverFacing = kDirUpLeft;
 							platypusWalkTo(_hotspotsWalkPos[2].x, _hotspotsWalkPos[2].y, 1, 0x107C2, 1);
 							setFlag(16);
 							_beaverActionStatus = kASPlatUsePhone;
@@ -432,7 +432,7 @@ void GnapEngine::scene17_run() {
 							scene17_platHangUpPhone();
 							_isLeavingScene = true;
 							gnapUseDeviceOnBeaver();
-							_beaverFacing = 5;
+							_beaverFacing = kDirUpLeft;
 							platypusWalkTo(_hotspotsWalkPos[2].x, _hotspotsWalkPos[2].y, 1, 0x107C2, 1);
 							setFlag(16);
 							_beaverActionStatus = kASPlatUsePhone;

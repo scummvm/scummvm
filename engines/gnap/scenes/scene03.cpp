@@ -104,7 +104,7 @@ void GnapEngine::scene03_run() {
 	_timers[5] = getRandom(100) + 200;
 	
 	if (isFlag(0)) {
-		initBeaverPos(5, 4, 0);
+		initBeaverPos(5, 4, kDirNone);
 	} else {
 		_timers[1] = getRandom(40) + 20;
 		_gameSys->setAnimation(0x1C2, 99, 1);
@@ -386,7 +386,7 @@ void GnapEngine::scene03_updateAnimations() {
 			_gnapActionStatus = -1;
 			_platX = 6;
 			_platY = 6;
-			_beaverFacing = 4;
+			_beaverFacing = kDirUnk4;
 			_beaverId = 120;
 			_gameSys->insertSequence(0x107CA, _beaverId, 0x1BC, 99,
 				kSeqSyncWait, 0, 75 * _platX - _platGridX, 48 * _platY - _platGridY);
