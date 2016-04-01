@@ -39,6 +39,7 @@ Console::Console(AdlEngine *engine) : GUI::Debugger() {
 	registerCmd("items", WRAP_METHOD(Console, Cmd_Items));
 	registerCmd("give_item", WRAP_METHOD(Console, Cmd_GiveItem));
 	registerCmd("vars", WRAP_METHOD(Console, Cmd_Vars));
+	registerCmd("var", WRAP_METHOD(Console, Cmd_Var));
 }
 
 Common::String Console::toAscii(const Common::String &str) {
@@ -162,10 +163,10 @@ bool Console::Cmd_Room(int argc, const char **argv) {
 			return true;
 		}
 
-		int roomCount = _engine->_state.rooms.size();
-		int room = strtoul(argv[1], NULL, 0);
+		uint roomCount = _engine->_state.rooms.size();
+		uint room = strtoul(argv[1], NULL, 0);
 		if (room < 1 || room > roomCount) {
-			debugPrintf("Room %i out of valid range [1, %d]\n", room, roomCount);
+			debugPrintf("Room %u out of valid range [1, %u]\n", room, roomCount);
 			return true;
 		}
 
@@ -177,7 +178,7 @@ bool Console::Cmd_Room(int argc, const char **argv) {
 		_engine->_display->updateHiResScreen();
 	}
 
-	debugPrintf("Current room: %d\n", _engine->_state.room);
+	debugPrintf("Current room: %u\n", _engine->_state.room);
 
 	return true;
 }
@@ -205,7 +206,7 @@ bool Console::Cmd_GiveItem(int argc, const char **argv) {
 	Common::List<Item>::iterator item;
 
 	char *end;
-	int id = strtoul(argv[1], &end, 0);
+	uint id = strtoul(argv[1], &end, 0);
 
 	if (*end != 0) {
 		Common::Array<Item *> matches;
@@ -264,6 +265,30 @@ bool Console::Cmd_Vars(int argc, const char **argv) {
 
 	debugPrintf("Variables:\n");
 	debugPrintColumns(vars);
+
+	return true;
+}
+
+bool Console::Cmd_Var(int argc, const char **argv) {
+	if (argc < 2 || argc > 3) {
+		debugPrintf("Usage: %s <index> [<value>]\n", argv[0]);
+		return true;
+	}
+
+	uint varCount = _engine->_state.vars.size();
+	uint var = strtoul(argv[1], NULL, 0);
+
+	if (var >= varCount) {
+		debugPrintf("Variable %u out of valid range [0, %u]\n", var, varCount - 1);
+		return true;
+	}
+
+	if (argc == 3) {
+		uint value = strtoul(argv[2], NULL, 0);
+		_engine->_state.vars[var] = value;
+	}
+
+	debugPrintf("%3d: %3d\n", var, _engine->_state.vars[var]);
 
 	return true;
 }
