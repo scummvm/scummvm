@@ -292,6 +292,28 @@ void AdlEngine::checkInput(byte verb, byte noun) {
 		printMessage(_messageIds.dontUnderstand);
 }
 
+bool AdlEngine::isInputValid(byte verb, byte noun, bool &is_any) {
+	if (isInputValid(_roomData.commands, verb, noun, is_any))
+		return true;
+	return isInputValid(_roomCommands, verb, noun, is_any);
+}
+
+bool AdlEngine::isInputValid(const Commands &commands, byte verb, byte noun, bool &is_any) {
+	Commands::const_iterator cmd;
+
+	is_any = false;
+	for (cmd = commands.begin(); cmd != commands.end(); ++cmd) {
+		ScriptEnv env(*cmd, _state.room, verb, noun);
+		if (matchCommand(env)) {
+			if (cmd->verb == IDI_ANY || cmd->noun == IDI_ANY)
+				is_any = true;
+			return true;
+		}
+	}
+
+	return false;
+}
+
 typedef Common::Functor1Mem<ScriptEnv &, int, AdlEngine> OpcodeV1;
 #define SetOpcodeTable(x) table = &x;
 #define Opcode(x) table->push_back(new OpcodeV1(this, &AdlEngine::x))

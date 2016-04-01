@@ -234,6 +234,8 @@ protected:
 	void loadWords(Common::ReadStream &stream, WordMap &map, Common::StringArray &pri) const;
 	void readCommands(Common::ReadStream &stream, Commands &commands);
 	void checkInput(byte verb, byte noun);
+	virtual bool isInputValid(byte verb, byte noun, bool &is_any);
+	virtual bool isInputValid(const Commands &commands, byte verb, byte noun, bool &is_any);
 
 	virtual void setupOpcodeTables();
 	virtual bool matchesCurrentPic(byte pic) const;

@@ -33,6 +33,7 @@ Console::Console(AdlEngine *engine) : GUI::Debugger() {
 	registerCmd("nouns", WRAP_METHOD(Console, Cmd_Nouns));
 	registerCmd("verbs", WRAP_METHOD(Console, Cmd_Verbs));
 	registerCmd("dump_scripts", WRAP_METHOD(Console, Cmd_DumpScripts));
+	registerCmd("valid_cmds", WRAP_METHOD(Console, Cmd_ValidCommands));
 }
 
 Common::String Console::toAscii(const Common::String &str) {
@@ -63,6 +64,29 @@ bool Console::Cmd_Nouns(int argc, const char **argv) {
 
 	debugPrintf("Nouns in alphabetical order:\n");
 	printWordMap(_engine->_nouns);
+	return true;
+}
+
+bool Console::Cmd_ValidCommands(int argc, const char **argv) {
+	if (argc != 1) {
+		debugPrintf("Usage: %s\n", argv[0]);
+		return true;
+	}
+
+	WordMap::const_iterator verb, noun;
+	bool is_any;
+
+	for (verb = _engine->_verbs.begin(); verb != _engine->_verbs.end(); ++verb) {
+		for (noun = _engine->_nouns.begin(); noun != _engine->_nouns.end(); ++noun) {
+			if (_engine->isInputValid(verb->_value, noun->_value, is_any) && !is_any)
+				debugPrintf("%s %s\n", toAscii(verb->_key).c_str(), toAscii(noun->_key).c_str());
+		}
+		if (_engine->isInputValid(verb->_value, IDI_ANY, is_any))
+			debugPrintf("%s *\n", toAscii(verb->_key).c_str());
+	}
+	if (_engine->isInputValid(IDI_ANY, IDI_ANY, is_any))
+		debugPrintf("* *\n");
+
 	return true;
 }
 
