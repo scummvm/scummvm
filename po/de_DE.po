@@ -2371,7 +2371,7 @@ msgstr ""
 
 #: engines/agi/detection.cpp:177
 msgid "Use Hercules hires font"
-msgstr "Verwende hochauflösende Hercules-Schrift
+msgstr "Verwende hochauflösende Hercules-Schrift"
 
 #: engines/agi/detection.cpp:178
 msgid "Uses Hercules hires font, when font file is available."
