@@ -23,6 +23,7 @@
 #include "common/debug-channels.h"
 
 #include "adl/console.h"
+#include "adl/display.h"
 #include "adl/adl.h"
 
 namespace Adl {
@@ -34,6 +35,7 @@ Console::Console(AdlEngine *engine) : GUI::Debugger() {
 	registerCmd("verbs", WRAP_METHOD(Console, Cmd_Verbs));
 	registerCmd("dump_scripts", WRAP_METHOD(Console, Cmd_DumpScripts));
 	registerCmd("valid_cmds", WRAP_METHOD(Console, Cmd_ValidCommands));
+	registerCmd("room", WRAP_METHOD(Console, Cmd_Room));
 }
 
 Common::String Console::toAscii(const Common::String &str) {
@@ -125,6 +127,38 @@ bool Console::Cmd_DumpScripts(int argc, const char **argv) {
 
 	if (!oldFlag)
 		DebugMan.disableDebugChannel("Script");
+
+	return true;
+}
+
+bool Console::Cmd_Room(int argc, const char **argv) {
+	if (argc > 2) {
+		debugPrintf("Usage: %s [<new_room>]\n", argv[0]);
+		return true;
+	}
+
+	if (argc == 2) {
+		if (!_engine->_canRestoreNow) {
+			debugPrintf("Cannot change rooms right now\n");
+			return true;
+		}
+
+		int roomCount = _engine->_state.rooms.size();
+		int room = strtoul(argv[1], NULL, 0);
+		if (room < 1 || room > roomCount) {
+			debugPrintf("Room %i out of valid range [1, %d]\n", room, roomCount);
+			return true;
+		}
+
+		_engine->_state.room = room;
+		_engine->clearScreen();
+		_engine->loadRoom(_engine->_state.room);
+		_engine->showRoom();
+		_engine->_display->updateTextScreen();
+		_engine->_display->updateHiResScreen();
+	}
+
+	debugPrintf("Current room: %d\n", _engine->_state.room);
 
 	return true;
 }
