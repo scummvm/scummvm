@@ -34,8 +34,6 @@ namespace Titanic {
  */
 class CPetFrame : public CPetSection {
 private:
-	static int _indexes[6];
-
 	CPetGfxElement _modeButtons[6];
 	CPetGfxElement _titles[6];
 	CPetGfxElement _modeBackground;
@@ -60,6 +58,11 @@ public:
 	 * Sets up the section
 	 */
 	virtual bool setup();
+	
+	/**
+	 * Handles mouse down messages
+	 */
+	virtual bool handleMessage(CMouseButtonDownMsg &msg);
 
 	/**
 	 * Returns true if the object is in a valid state

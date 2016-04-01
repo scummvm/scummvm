@@ -25,13 +25,12 @@
 
 namespace Titanic {
 
-static const int INDEXES[6] = { 1, 0, 2, 3, 4, 5 };
+static const PetArea PET_AREAS[6] = {
+	PET_CONVERSATION, PET_INVENTORY, PET_REMOTE,
+	PET_ROOMS, PET_SAVE, PET_5
+};
 
-int CPetFrame::_indexes[6];
-
-CPetFrame::CPetFrame() {
-	for (int idx = 0; idx < 6; ++idx)
-		_indexes[INDEXES[idx]] = idx;
+CPetFrame::CPetFrame() : CPetSection() {
 }
 
 bool CPetFrame::setup(CPetControl *petControl) {
@@ -64,11 +63,24 @@ bool CPetFrame::setup() {
 	return true;
 }
 
+bool CPetFrame::handleMessage(CMouseButtonDownMsg &msg) {
+	for (int idx = 0; idx < 5; ++idx) {
+		if (_modeButtons[idx].handleMessage(msg)) {
+			_petControl->setArea(PET_AREAS[idx]);
+			resetArea();
+			_modeButtons[idx].setMode(MODE_SELECTED);
+			return true;
+		}
+	}
+
+	return false;
+}
+
 bool CPetFrame::isValid(CPetControl *petControl) {
 	bool result = setPetControl(petControl);
 	if (result) {
-		_modeButtons[_indexes[0]].setMode(MODE_UNSELECTED);
-		_modeButtons[_indexes[4]].setMode(MODE_SELECTED);
+		_modeButtons[PET_AREAS[0]].setMode(MODE_UNSELECTED);
+		_modeButtons[PET_AREAS[4]].setMode(MODE_SELECTED);
 	}
 
 	return result;
@@ -98,7 +110,7 @@ bool CPetFrame::setPetControl(CPetControl *petControl) {
 			_modeButtons[idx].setBounds(r);
 			_modeButtons[idx].translate(0, YLIST[idx]);
 		}
-		_modeButtons[_indexes[0]].setMode(MODE_SELECTED);
+		_modeButtons[PET_AREAS[0]].setMode(MODE_SELECTED);
 		
 		const int XLIST[] = { 73, 54, 85, 109, 38, 71 };
 		for (int idx = 0; idx < 6; ++idx) {
@@ -113,7 +125,7 @@ bool CPetFrame::setPetControl(CPetControl *petControl) {
 void CPetFrame::setArea(PetArea newArea) {
 	resetArea();
 	if (newArea < PET_6)
-		_modeButtons[_indexes[newArea]].setMode(MODE_SELECTED);
+		_modeButtons[PET_AREAS[newArea]].setMode(MODE_SELECTED);
 }
 
 void CPetFrame::resetArea() {
