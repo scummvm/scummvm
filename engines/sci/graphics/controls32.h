@@ -143,6 +143,8 @@ public:
 	void home();
 	void upArrow();
 	void downArrow();
+	void pageUp();
+	void pageDown();
 
 	reg_t getBitmap() const { return _bitmap; }
 

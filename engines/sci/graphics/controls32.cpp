@@ -637,6 +637,32 @@ void ScrollWindow::home() {
 }
 
 
+void ScrollWindow::pageUp() {
+	if (_topVisibleLine == 0)
+		return;
+
+	_topVisibleLine -= _numVisibleLines;
+	if (_topVisibleLine < 0)
+		_topVisibleLine = 0;
+
+	_firstVisibleChar = _startsOfLines[_topVisibleLine];
+	update(true);
+}
+
+
+void ScrollWindow::pageDown() {
+	if (_topVisibleLine + 1 >= _numLines)
+		return;
+
+	_topVisibleLine += _numVisibleLines;
+	if (_topVisibleLine + 1 >= _numLines)
+		_topVisibleLine = _numLines - 1;
+
+	_firstVisibleChar = _startsOfLines[_topVisibleLine];
+	update(true);
+}
+
+
 void ScrollWindow::computeLineIndices() {
 	_gfxText32.setFont(_fontId);
 	// set _gfxText32 foreColor, alignment?

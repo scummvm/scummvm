@@ -434,6 +434,22 @@ reg_t kScrollWindowShow(EngineState *s, int argc, reg_t *argv) {
 	return s->r_acc;
 }
 
+reg_t kScrollWindowPageUp(EngineState *s, int argc, reg_t *argv) {
+	ScrollWindow *scrollWindow = g_sci->_gfxControls32->getScrollWindow(argv[0]);
+
+	scrollWindow->pageUp();
+
+	return s->r_acc;
+}
+
+reg_t kScrollWindowPageDown(EngineState *s, int argc, reg_t *argv) {
+	ScrollWindow *scrollWindow = g_sci->_gfxControls32->getScrollWindow(argv[0]);
+
+	scrollWindow->pageDown();
+
+	return s->r_acc;
+}
+
 reg_t kScrollWindowUpArrow(EngineState *s, int argc, reg_t *argv) {
 	ScrollWindow *scrollWindow = g_sci->_gfxControls32->getScrollWindow(argv[0]);
 
