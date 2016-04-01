@@ -134,13 +134,11 @@ void Console::printWordMap(const WordMap &wordMap) {
 	WordMap::const_iterator verb;
 
 	for (verb = wordMap.begin(); verb != wordMap.end(); ++verb)
-		words.push_back(verb->_key);
+		words.push_back(Common::String::format("%s: %3d", toAscii(verb->_key).c_str(), wordMap[verb->_key]));
 
 	Common::sort(words.begin(), words.end());
 
-	Common::StringArray::const_iterator word;
-	for (word = words.begin(); word != words.end(); ++word)
-		debugPrintf("%s: %d\n", toAscii(*word).c_str(), wordMap[*word]);
+	debugPrintColumns(words);
 }
 
 } // End of namespace Adl
