@@ -19,12 +19,14 @@ gui/recorderdialog.cpp
 gui/saveload-dialog.cpp
 gui/themebrowser.cpp
 gui/ThemeEngine.cpp
+gui/updates-dialog.cpp
 gui/widget.cpp
 
 base/main.cpp
 
 common/error.cpp
 common/rendermode.cpp
+common/updates.cpp
 
 engines/advancedDetector.cpp
 engines/dialogs.cpp
