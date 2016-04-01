@@ -1242,10 +1242,7 @@ GlobalOptionsDialog::GlobalOptionsDialog()
 		vals++;
 	}
 
-	if (ConfMan.hasKey("updates_check"))
-		_updatesPopUp->setSelectedTag(Common::UpdateManager::normalizeInterval(ConfMan.getInt("updates_check")));
-	else
-		_updatesPopUp->setSelectedTag(Common::UpdateManager::kUpdateIntervalNotSupported);
+	_updatesPopUp->setSelectedTag(Common::UpdateManager::normalizeInterval(ConfMan.getInt("updates_check")));
 
 	new ButtonWidget(tab, "GlobalOptions_Misc.UpdatesCheckManuallyButton", _("Check now"), 0, kUpdatesCheckCmd);
 #endif
