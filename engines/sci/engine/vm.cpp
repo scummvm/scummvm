@@ -834,7 +834,6 @@ void run_vm(EngineState *s) {
 			int argc = (opparams[1] >> 1) // Given as offset, but we need count
 			           + 1 + s->r_rest;
 			StackPtr call_base = s->xs->sp - argc;
-			s->xs->sp[1].incOffset(s->r_rest);
 
 			uint32 localCallOffset = s->xs->addr.pc.getOffset() + opparams[0];
 
