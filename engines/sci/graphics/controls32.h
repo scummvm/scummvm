@@ -140,6 +140,7 @@ public:
 	Ratio where() const;
 	void go(Ratio loc);
 
+	void home();
 	void upArrow();
 	void downArrow();
 

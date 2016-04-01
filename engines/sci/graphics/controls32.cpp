@@ -398,6 +398,7 @@ ScrollWindow::ScrollWindow(SegManager *segMan, const Common::Rect &rect,
 : _gfxText32(segMan, g_sci->_gfxCache),
   _firstVisibleChar(0), _topVisibleLine(0),
   _lastVisibleChar(0), _bottomVisibleLine(0),
+  _numLines(0), _numVisibleLines(0),
   _plane(plane), _foreColor(fore), _backColor(back),
   _borderColor(border), _fontId(font), _alignment(align),
   _visible(false), _position(point), _screenItem(nullptr) {
@@ -614,11 +615,24 @@ void ScrollWindow::downArrow() {
 
 void ScrollWindow::go(Ratio loc) {
 	int line = (loc * _numLines).toInt();
-	if (line < 0 || line >= _numLines)
+	if (line < 0 || line > _numLines)
 		error("Index is Out of Range in ScrollWindow");
 
-	_firstVisibleChar = _startsOfLines[line];
+	// CHECKME: Phantasmagoria didn't seem to have this check; maybe
+	// its handling of scrolling past the final line is different elsewhere.
+	if (line == _numLines && line > 0)
+		line = _numLines - 1;
 
+	_firstVisibleChar = _startsOfLines[line];
+	update(true);
+}
+
+
+void ScrollWindow::home() {
+	if (_firstVisibleChar == 0)
+		return;
+
+	_firstVisibleChar = 0;
 	update(true);
 }
 

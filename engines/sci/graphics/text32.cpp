@@ -250,8 +250,10 @@ void GfxText32::drawTextBox() {
 	int16 textRectWidth = _textRect.width();
 	_drawPosition.y = _textRect.top;
 	uint charIndex = 0;
-	if (getLongest(&charIndex, textRectWidth) == 0) {
-		error("DrawTextBox GetLongest=0");
+	if (g_sci->getGameId() != GID_PHANTASMAGORIA) {
+		if (getLongest(&charIndex, textRectWidth) == 0) {
+			error("DrawTextBox GetLongest=0");
+		}
 	}
 
 	charIndex = 0;

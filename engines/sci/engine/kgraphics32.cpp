@@ -418,7 +418,6 @@ reg_t kScrollWindowGo(EngineState *s, int argc, reg_t *argv) {
 	return s->r_acc;
 }
 
-
 reg_t kScrollWindowHide(EngineState *s, int argc, reg_t *argv) {
 	ScrollWindow *scrollWindow = g_sci->_gfxControls32->getScrollWindow(argv[0]);
 
@@ -426,7 +425,6 @@ reg_t kScrollWindowHide(EngineState *s, int argc, reg_t *argv) {
 
 	return s->r_acc;
 }
-
 
 reg_t kScrollWindowShow(EngineState *s, int argc, reg_t *argv) {
 	ScrollWindow *scrollWindow = g_sci->_gfxControls32->getScrollWindow(argv[0]);
@@ -452,6 +450,13 @@ reg_t kScrollWindowDownArrow(EngineState *s, int argc, reg_t *argv) {
 	return s->r_acc;
 }
 
+reg_t kScrollWindowHome(EngineState *s, int argc, reg_t *argv) {
+	ScrollWindow *scrollWindow = g_sci->_gfxControls32->getScrollWindow(argv[0]);
+
+	scrollWindow->home();
+
+	return s->r_acc;
+}
 
 reg_t kScrollWindowDestroy(EngineState *s, int argc, reg_t *argv) {
 	ScrollWindow *scrollWindow = g_sci->_gfxControls32->getScrollWindow(argv[0]);
