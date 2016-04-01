@@ -239,6 +239,7 @@ ExecStack *execute_method(EngineState *s, uint16 script, uint16 pubfunct, StackP
 	// Check if a breakpoint is set on this method
 	g_sci->checkExportBreakpoint(script, pubfunct);
 
+	assert(argp[0].toUint16() == argc); // The first argument is argc
 	ExecStack xstack(calling_obj, calling_obj, sp, argc, argp,
 						seg, make_reg32(seg, exportAddr), -1, -1, -1, pubfunct, -1,
 						s->_executionStack.size() - 1, EXEC_STACK_TYPE_CALL);
@@ -312,6 +313,7 @@ ExecStack *send_selector(EngineState *s, reg_t send_obj, reg_t work_obj, StackPt
 		if (activeBreakpointTypes || DebugMan.isDebugChannelEnabled(kDebugLevelScripts))
 			debugSelectorCall(send_obj, selector, argc, argp, varp, funcp, s->_segMan, selectorType);
 
+		assert(argp[0].toUint16() == argc); // The first argument is argc
 		ExecStack xstack(work_obj, send_obj, curSP, argc, argp,
 							0xFFFF, curFP, selector, -1, -1, -1, -1,
 							origin, stackType);
@@ -386,6 +388,7 @@ static void callKernelFunc(EngineState *s, int kernelCallNr, int argc) {
 
 	// Call kernel function
 	if (!kernelCall.subFunctionCount) {
+		argv[-1] = make_reg(0, argc); // The first argument is argc
 		addKernelCallToExecStack(s, kernelCallNr, -1, argc, argv);
 		s->r_acc = kernelCall.function(s, argc, argv);
 
@@ -444,6 +447,7 @@ static void callKernelFunc(EngineState *s, int kernelCallNr, int argc) {
 		}
 		if (!kernelSubCall.function)
 			error("[VM] k%s: subfunction ID %d requested, but not available", kernelCall.name, subId);
+		argv[-1] = make_reg(0, argc); // The first argument is argc
 		addKernelCallToExecStack(s, kernelCallNr, subId, argc, argv);
 		s->r_acc = kernelSubCall.function(s, argc, argv);
 
@@ -837,8 +841,10 @@ void run_vm(EngineState *s) {
 
 			uint32 localCallOffset = s->xs->addr.pc.getOffset() + opparams[0];
 
+			int final_argc = (call_base->requireUint16()) + s->r_rest;
+			call_base[0] = make_reg(0, final_argc); // The first argument is argc
 			ExecStack xstack(s->xs->objp, s->xs->objp, s->xs->sp,
-							(call_base->requireUint16()) + s->r_rest, call_base,
+							final_argc, call_base,
 							s->xs->local_segment, make_reg32(s->xs->addr.pc.getSegment(), localCallOffset),
 							NULL_SELECTOR, -1, -1, -1, localCallOffset, s->_executionStack.size() - 1,
 							EXEC_STACK_TYPE_CALL);

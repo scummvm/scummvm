@@ -115,7 +115,6 @@ struct ExecStack {
 		fp = sp = sp_;
 		argc = argc_;
 		variables_argp = argp_;
-		*variables_argp = make_reg(0, argc);  // The first argument is argc
 		if (localsSegment_ != 0xFFFF)
 			local_segment = localsSegment_;
 		else
