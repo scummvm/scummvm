@@ -33,12 +33,14 @@ namespace Wage {
 
 static const ADGameDescription gameDescriptions[] = {
 	FANGAME("3rd Floor", "3ed49d2163e46d2c9b33fd80927d9e22", 281409),
+	FANGAME("3rd Floor", "3ed49d2163e46d2c9b33fd80927d9e22", 281423), // alt version
 	BIGGAME("afm", "v1.8", "Another Fine Mess 1.8", "abc7188469a9a7083fd4caec55a4f76e", 1420723),
 	BIGGAME("amot", "v1.8", "A Mess O' Trouble 1.8", "6b59e5bb9a4b74ecdd9f66d4e36a59cf", 1843104),
 	// No Next on the first screen?
 	FANGAME("Brownie's Dream", "6fdcce532bcd50b7e4f3f6bab50a0ee6", 440704),
 	FANGAMEN("Brownie's Time Travels", "Brownie's Time Travels v1.2", "55842a100b56e236c5ad69563e01fc24", 471589),
 	FANGAME("Bug Hunt", "738e2e8a1020be48c5ef42da571674ae", 195699),
+	FANGAME("Bug Hunt", "118a41121143488719d28daa9af8cd39", 195779), // alt version
 	BIGGAME("cantitoe", "", "Camp Cantitoe", "1780c41d14b876461a19dbeceebf2a37", 616985),
 	// Problems with letter rendering
 	FANGAME("Canal District", "34e7a8e84b33ba8ea38b4ffd76ef074f", 641470),
@@ -56,6 +58,7 @@ static const ADGameDescription gameDescriptions[] = {
 	FANGAMEN("Dungeon World II", "DungeonWorld2", "753df07166ca48e303d782cc72dd4053", 230199),
 	FANGAME("Edg's World", "0a3a3aaa36088c514b668f1f62120006", 106769),
 	FANGAME("Eidisi I", "3d778c0fe7addf5f29e7593ba0fd3953", 172552),
+	FANGAME("Eidisi I", "8c2fb325a49344568c5536bba36a2556", 172566), // alt version
 	// Problems(?) with text on the first screen
 	FANGAMEN("Enchanted Pencils", "Enchanted Pencils 0.99 (PG)", "9a9777a83e58bebfa6f1662d5e236384", 408913),
 	FANGAME("Escape from School!", "2055747bb874052333190eb993246a7f", 50105),
