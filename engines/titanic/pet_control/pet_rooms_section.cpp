@@ -56,4 +56,10 @@ void CPetRoomsSection::load(SimpleFile *file, int param) {
 	}
 }
 
+bool CPetRoomsSection::isValid(CPetControl *petControl) {
+	// TODO
+	return true;
+}
+
+
 } // End of namespace Titanic

@@ -39,4 +39,9 @@ void CPetInventorySection::load(SimpleFile *file, int param) {
 	_field298 = file->readNumber();
 }
 
+bool CPetInventorySection::isValid(CPetControl *petControl) {
+	// TODO
+	return true;
+}
+
 } // End of namespace Titanic

@@ -40,4 +40,9 @@ void CPetConversationSection::load(SimpleFile *file, int param) {
 		_valArray3[idx] = file->readNumber();
 }
 
+bool CPetConversationSection::isValid(CPetControl *petControl) {
+	// TODO
+	return true;
+}
+
 } // End of namespace Titanic

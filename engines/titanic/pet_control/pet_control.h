@@ -42,11 +42,11 @@ private:
 	int _fieldC0;
 	int _locked;
 	int _fieldC8;
-	CPetConversationSection _convSection;
-	CPetInventorySection _invSection;
-	CPetRemoteSection _remoteSection;
-	CPetRoomsSection _roomsSection;
-	CPetSaveSection _saveSection;
+	CPetConversationSection _conversations;
+	CPetInventorySection _inventory;
+	CPetRemoteSection _remote;
+	CPetRoomsSection _rooms;
+	CPetSaveSection _saves;
 	CPetControlSub5 _sub5;
 	CPetControlSub7 _sub7;
 	CPetFrame _frame;
@@ -55,7 +55,7 @@ private:
 	CTreeItem *_treeItem2;
 	CString _string2;
 	CRoomItem *_hiddenRoom;
-	Rect _oldBounds;
+	Rect _drawBounds;
 private:
 	/**
 	 * Returns true if the control is in a valid state
@@ -81,6 +81,11 @@ private:
 	 * Scan the specified room for an item by name
 	 */
 	CGameObject *findItemInRoom(CRoomItem *room, const CString &name) const;
+
+	/**
+	 * Returns true if the draw bounds contains the specified point
+	 */
+	bool containsPt(const Common::Point &pt) const;
 public:
 	PetArea _currentArea;
 public:
@@ -101,6 +106,11 @@ public:
 	 * Allows the item to draw itself
 	 */
 	virtual void draw(CScreenManager *screenManager);
+
+	/**
+	 * Gets the bounds occupied by the item
+	 */
+	virtual Rect getBounds();
 
 	/**
 	 * Called after loading a game has finished

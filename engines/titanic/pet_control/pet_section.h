@@ -68,7 +68,11 @@ public:
 	 */
 	virtual void draw(CScreenManager *screenManager) {}
 	
-	virtual void proc4();
+	/**
+	 * Get the bounds for the section
+	 */
+	virtual Rect getBounds() { return Rect(); }
+	
 	virtual void proc5(int val) {}
 	virtual int proc6() { return 0; }
 	virtual int proc7() { return 0; }
@@ -85,10 +89,7 @@ public:
 	/**
 	 * Returns true if the object is in a valid state
 	 */
-	virtual bool isValid(CPetControl *petControl) {
-		// TODO: Switch back to false after implementing all sections
-		return true;
-	}
+	virtual bool isValid(CPetControl *petControl) { return false; }
 
 	/**
 	 * Load the data for the class from file

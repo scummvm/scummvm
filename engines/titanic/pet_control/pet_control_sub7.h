@@ -33,7 +33,10 @@ private:
 	CPetControlSub12 _sub1;
 	CPetControlSub12 _sub2;
 public:
-
+	/**
+	 * Returns true if the object is in a valid state
+	 */
+	virtual bool isValid(CPetControl *petControl);
 };
 
 } // End of namespace Titanic

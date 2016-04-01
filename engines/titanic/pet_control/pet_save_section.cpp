@@ -24,4 +24,9 @@
 
 namespace Titanic {
 
+bool CPetSaveSection::isValid(CPetControl *petControl) {
+	// TODO
+	return true;
+}
+
 } // End of namespace Titanic

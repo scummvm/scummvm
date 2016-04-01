@@ -52,6 +52,11 @@ public:
 	 * Load the data for the class from file
 	 */
 	virtual void load(SimpleFile *file, int param);
+
+	/**
+	 * Returns true if the object is in a valid state
+	 */
+	virtual bool isValid(CPetControl *petControl);
 };
 
 } // End of namespace Titanic

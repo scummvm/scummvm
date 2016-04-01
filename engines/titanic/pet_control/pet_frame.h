@@ -28,6 +28,10 @@
 
 namespace Titanic {
 
+/**
+ * This implements the frame and background for the PET display.
+ * This includes the area buttons and title
+ */
 class CPetFrame : public CPetSection {
 private:
 	static int _indexes[6];

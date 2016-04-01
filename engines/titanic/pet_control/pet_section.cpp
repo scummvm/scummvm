@@ -25,10 +25,6 @@
 
 namespace Titanic {
 
-void CPetSection::proc4() {
-	error("TODO");
-}
-
 void CPetSection::proc16() {
 	error("TODO");
 }

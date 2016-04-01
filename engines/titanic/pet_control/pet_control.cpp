@@ -29,7 +29,8 @@ namespace Titanic {
 
 CPetControl::CPetControl() : CGameObject(), 
 	_currentArea(PET_CONVERSATION), _fieldC0(0), _locked(0), _fieldC8(0),
-	_treeItem1(nullptr), _treeItem2(nullptr), _hiddenRoom(nullptr) {
+	_treeItem1(nullptr), _treeItem2(nullptr), _hiddenRoom(nullptr),
+	_drawBounds(20, 350, 620, 480) {
 }
 
 void CPetControl::save(SimpleFile *file, int indent) const {
@@ -58,46 +59,46 @@ void CPetControl::load(SimpleFile *file) {
 }
 
 bool CPetControl::isValid() {
-	return _convSection.isValid(this) &&
-		_roomsSection.isValid(this) && 
-		_remoteSection.isValid(this) &&
-		_invSection.isValid(this) &&
+	return _conversations.isValid(this) &&
+		_rooms.isValid(this) && 
+		_remote.isValid(this) &&
+		_inventory.isValid(this) &&
 		_sub5.isValid(this) &&
-		_saveSection.isValid(this) &&
+		_saves.isValid(this) &&
 		_sub7.isValid(this) &&
 		_frame.isValid(this);
 }
 
 void CPetControl::loadAreas(SimpleFile *file, int param) {
-	_convSection.load(file, param);
-	_roomsSection.load(file, param);
-	_remoteSection.load(file, param);
-	_invSection.load(file, param);
+	_conversations.load(file, param);
+	_rooms.load(file, param);
+	_remote.load(file, param);
+	_inventory.load(file, param);
 	_sub5.load(file, param);
-	_saveSection.load(file, param);
+	_saves.load(file, param);
 	_sub7.load(file, param);
 	_frame.load(file, param);
 }
 
 void CPetControl::saveAreas(SimpleFile *file, int indent) const {
-	_convSection.save(file, indent);
-	_roomsSection.save(file, indent);
-	_remoteSection.save(file, indent);
-	_invSection.save(file, indent);
+	_conversations.save(file, indent);
+	_rooms.save(file, indent);
+	_remote.save(file, indent);
+	_inventory.save(file, indent);
 	_sub5.save(file, indent);
-	_saveSection.save(file, indent);
+	_saves.save(file, indent);
 	_sub7.save(file, indent);
 	_frame.save(file, indent);
 }
 
 void CPetControl::draw(CScreenManager *screenManager) {
 	CGameManager *gameManager = getGameManager();
-	Rect bounds = _oldBounds;
+	Rect bounds = _drawBounds;
 	bounds.constrain(gameManager->_bounds);
 
 	if (!bounds.isEmpty()) {
 		if (_fieldC8 >= 0) {
-			_invSection.proc5(_fieldC8);
+			_inventory.proc5(_fieldC8);
 			_fieldC8 = -1;
 		}
 
@@ -106,19 +107,19 @@ void CPetControl::draw(CScreenManager *screenManager) {
 		// Draw the specific area that's currently active
 		switch (_currentArea) {
 		case PET_INVENTORY:
-			_invSection.draw(screenManager);
+			_inventory.draw(screenManager);
 			break;
 		case PET_CONVERSATION:
-			_convSection.draw(screenManager);
+			_conversations.draw(screenManager);
 			break;
 		case PET_REMOTE:
-			_remoteSection.draw(screenManager);
+			_remote.draw(screenManager);
 			break;
 		case PET_ROOMS:
-			_roomsSection.draw(screenManager);
+			_rooms.draw(screenManager);
 			break;
 		case PET_SAVE:
-			_saveSection.draw(screenManager);
+			_saves.draw(screenManager);
 			break;
 		case PET_5:
 			_sub5.draw(screenManager);
@@ -129,6 +130,34 @@ void CPetControl::draw(CScreenManager *screenManager) {
 		default:
 			break;
 		}
+	}
+}
+
+Rect CPetControl::getBounds() {
+	switch (_currentArea) {
+	case PET_INVENTORY:
+		return _inventory.getBounds();
+		break;
+	case PET_CONVERSATION:
+		return _conversations.getBounds();
+		break;
+	case PET_REMOTE:
+		return _remote.getBounds();
+		break;
+	case PET_ROOMS:
+		return _rooms.getBounds();
+		break;
+	case PET_SAVE:
+		return _saves.getBounds();
+		break;
+	case PET_5:
+		return _sub5.getBounds();
+		break;
+	case PET_6:
+		return _sub7.getBounds();
+		break;
+	default:
+		break;
 	}
 }
 
@@ -145,12 +174,12 @@ void CPetControl::postLoad() {
 }
 
 void CPetControl::loaded() {
-	_convSection.postLoad();
-	_roomsSection.postLoad();
-	_remoteSection.postLoad();
-	_invSection.postLoad();
+	_conversations.postLoad();
+	_rooms.postLoad();
+	_remote.postLoad();
+	_inventory.postLoad();
 	_sub5.postLoad();
-	_saveSection.postLoad();
+	_saves.postLoad();
 	_sub7.postLoad();
 	_frame.postLoad();
 }
@@ -160,8 +189,8 @@ void CPetControl::enterNode(CNodeItem *node) {
 }
 
 void CPetControl::enterRoom(CRoomItem *room) {
-	_roomsSection.enterRoom(room);
-	_remoteSection.enterRoom(room);
+	_rooms.enterRoom(room);
+	_remote.enterRoom(room);
 }
 
 void CPetControl::clear() {
@@ -185,19 +214,19 @@ PetArea CPetControl::setArea(PetArea newArea) {
 	// Signal the currently active area that it's being left
 	switch (_currentArea) {
 	case PET_INVENTORY:
-		_invSection.leave();
+		_inventory.leave();
 		break;
 	case PET_CONVERSATION:
-		_convSection.leave();
+		_conversations.leave();
 		break;
 	case PET_REMOTE:
-		_remoteSection.leave();
+		_remote.leave();
 		break;
 	case PET_ROOMS:
-		_roomsSection.leave();
+		_rooms.leave();
 		break;
 	case PET_SAVE:
-		_saveSection.leave();
+		_saves.leave();
 		break;
 	case PET_5:
 		_sub5.leave();
@@ -217,20 +246,20 @@ PetArea CPetControl::setArea(PetArea newArea) {
 	// Signal to the new view that it's been activated
 	switch (newArea) {
 	case PET_INVENTORY:
-		_invSection.enter(oldArea);
+		_inventory.enter(oldArea);
 		
 		break;
 	case PET_CONVERSATION:
-		_convSection.enter(oldArea);
+		_conversations.enter(oldArea);
 		break;
 	case PET_REMOTE:
-		_remoteSection.enter(oldArea);
+		_remote.enter(oldArea);
 		break;
 	case PET_ROOMS:
-		_roomsSection.enter(oldArea);
+		_rooms.enter(oldArea);
 		break;
 	case PET_SAVE:
-		_saveSection.enter(oldArea);
+		_saves.enter(oldArea);
 		break;
 	case PET_5:
 		_sub5.enter(oldArea);
@@ -249,19 +278,19 @@ PetArea CPetControl::setArea(PetArea newArea) {
 void CPetControl::fn2(int val) {
 	switch (_currentArea) {
 	case PET_INVENTORY:
-		_invSection.proc38(val);
+		_inventory.proc38(val);
 		break;
 	case PET_CONVERSATION:
-		_convSection.proc38(val);
+		_conversations.proc38(val);
 		break;
 	case PET_REMOTE:
-		_remoteSection.proc38(val);
+		_remote.proc38(val);
 		break;
 	case PET_ROOMS:
-		_roomsSection.proc38(val);
+		_rooms.proc38(val);
 		break;
 	case PET_SAVE:
-		_saveSection.proc38(val);
+		_saves.proc38(val);
 		break;
 	case PET_5:
 		_sub5.proc38(val);
@@ -307,6 +336,10 @@ CGameObject *CPetControl::findItemInRoom(CRoomItem *room,
 CGameObject *CPetControl::getHiddenObject(const CString &name) {
 	CRoomItem *room = getHiddenRoom();
 	return room ? findItemInRoom(room, name) : nullptr;
+}
+
+bool CPetControl::containsPt(const Common::Point &pt) const {
+	return _drawBounds.contains(pt);
 }
 
 } // End of namespace Titanic

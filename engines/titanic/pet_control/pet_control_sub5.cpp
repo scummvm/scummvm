@@ -40,4 +40,9 @@ void CPetControlSub5::load(SimpleFile *file, int param) {
 	}
 }
 
+bool CPetControlSub5::isValid(CPetControl *petControl) {
+	// TODO
+	return true; 
+}
+
 } // End of namespace Titanic
