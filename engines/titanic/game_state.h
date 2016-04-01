@@ -33,7 +33,7 @@ namespace Titanic {
 
 class CGameManager;
 
-enum GameStateMode { GSMODE_0 = 0, GSMODE_1 = 1, GSMODE_2 = 2, GSMODE_3 = 3, GSMODE_4 = 4, GSMODE_5 = 5 };
+enum GameStateMode { GSMODE_UNSELECTED = 0, GSMODE_SELECTED = 1, GSMODE_2 = 2, GSMODE_3 = 3, GSMODE_4 = 4, GSMODE_5 = 5 };
 
 PTR_LIST_ITEM(CMovie);
 class CGameStateMovieList : public List<CMovieListItem> {

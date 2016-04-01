@@ -77,6 +77,11 @@ public:
 	void setArea(PetArea newArea);
 
 	/**
+	 * Reset the currently selected area
+	 */
+	void resetArea();
+
+	/**
 	 * Draws the PET frame
 	 */
 	void drawFrame(CScreenManager *screenManager);

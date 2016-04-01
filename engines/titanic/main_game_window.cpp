@@ -68,7 +68,7 @@ void CMainGameWindow::applicationStarting() {
 	// Load either a new game or selected existing save
 	_project->loadGame(saveSlot);
 	_inputAllowed = true;
-	_gameManager->_gameState.setMode(GSMODE_1);
+	_gameManager->_gameState.setMode(GSMODE_SELECTED);
 
 	// TODO: Cursor/image
 
@@ -123,7 +123,7 @@ void CMainGameWindow::draw() {
 		scrManager->clearSurface(SURFACE_BACKBUFFER, &_gameManager->_bounds);
 
 		switch (_gameManager->_gameState._mode) {
-		case GSMODE_1:
+		case GSMODE_SELECTED:
 		case GSMODE_2:
 			if (_gameManager->_gameState._petActive)
 				drawPet(scrManager);

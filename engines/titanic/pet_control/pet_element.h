@@ -29,7 +29,7 @@
 
 namespace Titanic {
 
-enum PetElementMode { MODE_0 = 0, MODE_1 = 1, MODE_2 = 2 };
+enum PetElementMode { MODE_UNSELECTED = 0, MODE_SELECTED = 1, MODE_2 = 2 };
 
 class CGameObject;
 class CPetControl;

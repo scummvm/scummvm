@@ -42,22 +42,22 @@ bool CPetFrame::setup(CPetControl *petControl) {
 
 bool CPetFrame::setup() {
 	if (_petControl) {
-		_background.setup("PetBackground", _petControl, MODE_0);
-		_modeBackground.setup("PetModeBackground", _petControl, MODE_0);
+		_background.setup("PetBackground", _petControl, MODE_UNSELECTED);
+		_modeBackground.setup("PetModeBackground", _petControl, MODE_UNSELECTED);
 
 		for (int idx = 0; idx < 5; ++idx) {
 			CString resName = Common::String::format("PetMode%d", idx);
-			_modeButtons[idx].setup(resName, _petControl, MODE_0);
+			_modeButtons[idx].setup(resName, _petControl, MODE_UNSELECTED);
 		}
 
 		for (int idx = 0; idx < 6; ++idx) {
 			CString resName = Common::String::format("3Pettitle%d", idx);
-			_titles[idx].setup(resName, _petControl, MODE_0);
+			_titles[idx].setup(resName, _petControl, MODE_UNSELECTED);
 		}
 
 		for (int idx = 0; idx < 7; ++idx) {
 			CString resName = Common::String::format("PetIndent%d", idx);
-			_titles[idx].setup(resName, _petControl, MODE_0);
+			_indent[idx].setup(resName, _petControl, MODE_UNSELECTED);
 		}
 	}
 
@@ -67,8 +67,8 @@ bool CPetFrame::setup() {
 bool CPetFrame::isValid(CPetControl *petControl) {
 	bool result = setPetControl(petControl);
 	if (result) {
-		_modeButtons[_indexes[0]].setMode(MODE_0);
-		_modeButtons[_indexes[4]].setMode(MODE_1);
+		_modeButtons[_indexes[0]].setMode(MODE_UNSELECTED);
+		_modeButtons[_indexes[4]].setMode(MODE_SELECTED);
 	}
 
 	return result;
@@ -98,12 +98,12 @@ bool CPetFrame::setPetControl(CPetControl *petControl) {
 			_modeButtons[idx].setBounds(r);
 			_modeButtons[idx].translate(0, YLIST[idx]);
 		}
-		_modeButtons[_indexes[0]].setMode(MODE_1);
+		_modeButtons[_indexes[0]].setMode(MODE_SELECTED);
 		
 		const int XLIST[] = { 73, 54, 85, 109, 38, 71 };
 		for (int idx = 0; idx < 6; ++idx) {
 			_titles[idx].setBounds(Rect(0, 0, 110, 11));
-			_titles[idx].translate(XLIST[idx], 471);
+			_titles[idx].translate(600 - XLIST[idx], 471);
 		}
 	}
 
@@ -111,7 +111,14 @@ bool CPetFrame::setPetControl(CPetControl *petControl) {
 }
 
 void CPetFrame::setArea(PetArea newArea) {
-	warning("TODO: CPetFrame::setArea");
+	resetArea();
+	if (newArea < PET_6)
+		_modeButtons[_indexes[newArea]].setMode(MODE_SELECTED);
+}
+
+void CPetFrame::resetArea() {
+	for (int idx = 0; idx < 6; ++idx)
+		_modeButtons[idx].setMode(MODE_UNSELECTED);
 }
 
 void CPetFrame::drawFrame(CScreenManager *screenManager) {

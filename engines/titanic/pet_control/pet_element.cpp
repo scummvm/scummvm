@@ -26,7 +26,7 @@
 
 namespace Titanic {
 
-CPetElement::CPetElement() : _mode(MODE_0) {}
+CPetElement::CPetElement() : _mode(MODE_UNSELECTED) {}
 
 void CPetElement::getBounds(Rect *rect) {
 	if (rect)
@@ -36,14 +36,14 @@ void CPetElement::getBounds(Rect *rect) {
 bool CPetElement::proc6(const Common::Point &pt) {
 	bool result = _bounds.contains(pt);
 	if (result)
-		setMode(MODE_1);
+		setMode(MODE_SELECTED);
 	return result;
 }
 
 bool CPetElement::proc7(const Common::Point &pt) {
 	bool result = _bounds.contains(pt);
 	if (result)
-		setMode(MODE_0);
+		setMode(MODE_UNSELECTED);
 	return result;
 }
 
@@ -93,7 +93,7 @@ int CPetElement::proc15() {
 }
 
 void CPetElement::setMode(PetElementMode newMode) {
-	if (newMode >= MODE_0 && newMode <= MODE_2)
+	if (newMode >= MODE_UNSELECTED && newMode <= MODE_2)
 		changeMode(newMode);
 }
 

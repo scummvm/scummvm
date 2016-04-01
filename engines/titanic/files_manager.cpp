@@ -76,7 +76,7 @@ void CFilesManager::debug(CScreenManager *screenManager) {
 
 void CFilesManager::resetView() {
 	if (_gameManager) {
-		_gameManager->_gameState.setMode(GSMODE_1);
+		_gameManager->_gameState.setMode(GSMODE_SELECTED);
 		_gameManager->initBounds();
 	}
 }

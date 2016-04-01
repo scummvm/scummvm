@@ -30,10 +30,10 @@ namespace Titanic {
 void CPetGfxElement::setup(PetElementMode mode, const CString &name,
 		CPetControl *petControl) {
 	switch (mode) {
-	case MODE_0:
+	case MODE_UNSELECTED:
 		_object0 = petControl->getHiddenObject(name);
 		break;
-	case MODE_1:
+	case MODE_SELECTED:
 		_object1 = petControl->getHiddenObject(name);
 		break;
 	case MODE_2:
@@ -91,9 +91,9 @@ void CPetGfxElement::getBounds(Rect *rect) {
 
 CGameObject *CPetGfxElement::getObject() const {
 	switch (_mode) {
-	case MODE_0:
+	case MODE_UNSELECTED:
 		return _object0;
-	case MODE_1:
+	case MODE_SELECTED:
 		return _object1;
 	case MODE_2:
 		return _object2;
