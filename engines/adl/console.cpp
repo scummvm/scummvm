@@ -38,6 +38,7 @@ Console::Console(AdlEngine *engine) : GUI::Debugger() {
 	registerCmd("room", WRAP_METHOD(Console, Cmd_Room));
 	registerCmd("items", WRAP_METHOD(Console, Cmd_Items));
 	registerCmd("give_item", WRAP_METHOD(Console, Cmd_GiveItem));
+	registerCmd("vars", WRAP_METHOD(Console, Cmd_Vars));
 }
 
 Common::String Console::toAscii(const Common::String &str) {
@@ -248,6 +249,22 @@ bool Console::Cmd_GiveItem(int argc, const char **argv) {
 		}
 
 	debugPrintf("Item %i not found\n", id);
+	return true;
+}
+
+bool Console::Cmd_Vars(int argc, const char **argv) {
+	if (argc != 1) {
+		debugPrintf("Usage: %s\n", argv[0]);
+		return true;
+	}
+
+	Common::StringArray vars;
+	for (uint i = 0; i < _engine->_state.vars.size(); ++i)
+		vars.push_back(Common::String::format("%3d: %3d", i, _engine->_state.vars[i]));
+
+	debugPrintf("Variables:\n");
+	debugPrintColumns(vars);
+
 	return true;
 }
 
