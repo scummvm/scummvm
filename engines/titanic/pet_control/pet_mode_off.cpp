@@ -20,18 +20,21 @@
  *
  */
 
-#include "titanic/gfx/pet_pannel3.h"
+#include "titanic/pet_control/pet_mode_off.h"
 
 namespace Titanic {
 
-void CPetPannel3::save(SimpleFile *file, int indent) const {
-	file->writeNumberLine(1, indent);
-	CPetGraphic::save(file, indent);
+CPetModeOff::CPetModeOff() : CToggleSwitch() {
 }
 
-void CPetPannel3::load(SimpleFile *file) {
+void CPetModeOff::save(SimpleFile *file, int indent) const {
+	file->writeNumberLine(1, indent);
+	CToggleSwitch::save(file, indent);
+}
+
+void CPetModeOff::load(SimpleFile *file) {
 	file->readNumber();
-	CPetGraphic::load(file);
+	CToggleSwitch::load(file);
 }
 
 } // End of namespace Titanic

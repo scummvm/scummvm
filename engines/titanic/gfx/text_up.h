@@ -23,7 +23,7 @@
 #ifndef TITANIC_TEXT_UP_H
 #define TITANIC_TEXT_UP_H
 
-#include "titanic/gfx/pet_graphic.h"
+#include "titanic/pet_control/pet_graphic.h"
 
 namespace Titanic {
 

@@ -20,14 +20,14 @@
  *
  */
 
-#ifndef TITANIC_PET_PANNEL3_H
-#define TITANIC_PET_PANNEL3_H
+#ifndef TITANIC_PET_PANNEL1_H
+#define TITANIC_PET_PANNEL1_H
 
-#include "titanic/gfx/pet_graphic.h"
+#include "titanic/pet_control/pet_graphic.h"
 
 namespace Titanic {
 
-class CPetPannel3 : public CPetGraphic {
+class CPetPannel1 : public CPetGraphic {
 public:
 	CLASSDEF
 
@@ -44,4 +44,4 @@ public:
 
 } // End of namespace Titanic
 
-#endif /* TITANIC_PET_PANNEL3_H */
+#endif /* TITANIC_PET_PANNEL1_H */

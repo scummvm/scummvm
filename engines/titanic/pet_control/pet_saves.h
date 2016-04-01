@@ -20,31 +20,19 @@
  *
  */
 
-#ifndef TITANIC_PET_REMOTE_SECTION_H
-#define TITANIC_PET_REMOTE_SECTION_H
+#ifndef TITANIC_PET_SAVES_H
+#define TITANIC_PET_SAVES_H
 
 #include "titanic/pet_control/pet_section.h"
 #include "titanic/pet_control/pet_control_sub10.h"
 #include "titanic/pet_control/pet_control_sub12.h"
-#include "titanic/pet_control/pet_gfx_element.h"
 
 namespace Titanic {
 
-class CPetRemoteSection : public CPetSection {
+class CPetSaves : public CPetSection {
 private:
 	CPetControlSub10 _sub10;
-	CPetGfxElement _val1;
-	CPetGfxElement _val2;
-	CPetGfxElement _val3;
-	CPetGfxElement _val4;
-	CPetGfxElement _val5;
-	CPetGfxElement _val6;
-	CPetGfxElement _val7;
-	CPetGfxElement _val8;
-	CPetGfxElement _val9;
-	CPetGfxElement _val10;
-	CPetGfxElement _val11;
-	CPetControlSub12 _sub12;
+	CPetControlSub10 _sub12;
 public:
 	/**
 	 * Returns true if the object is in a valid state
@@ -54,4 +42,4 @@ public:
 
 } // End of namespace Titanic
 
-#endif /* TITANIC_PET_REMOTE_SECTION_H */
+#endif /* TITANIC_PET_SAVES_H */

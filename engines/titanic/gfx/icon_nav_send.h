@@ -23,7 +23,7 @@
 #ifndef TITANIC_ICON_NAV_SEND_H
 #define TITANIC_ICON_NAV_SEND_H
 
-#include "titanic/gfx/pet_graphic.h"
+#include "titanic/pet_control/pet_graphic.h"
 
 namespace Titanic {
 

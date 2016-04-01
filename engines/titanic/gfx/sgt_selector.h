@@ -23,7 +23,7 @@
 #ifndef TITANIC_SGT_SELECTOR_H
 #define TITANIC_SGT_SELECTOR_H
 
-#include "titanic/gfx/pet_graphic.h"
+#include "titanic/pet_control/pet_graphic.h"
 
 namespace Titanic {
 

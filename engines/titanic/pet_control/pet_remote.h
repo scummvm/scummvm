@@ -20,39 +20,32 @@
  *
  */
 
-#ifndef TITANIC_PET_INVENTORY_SECTION_H
-#define TITANIC_PET_INVENTORY_SECTION_H
+#ifndef TITANIC_PET_REMOTE_H
+#define TITANIC_PET_REMOTE_H
 
-#include "titanic/simple_file.h"
 #include "titanic/pet_control/pet_section.h"
 #include "titanic/pet_control/pet_control_sub10.h"
 #include "titanic/pet_control/pet_control_sub12.h"
+#include "titanic/pet_control/pet_gfx_element.h"
 
 namespace Titanic {
 
-class CPetInventorySection : public CPetSection {
+class CPetRemote : public CPetSection {
 private:
-	CPetControlSub12 _sub12;
 	CPetControlSub10 _sub10;
-	int _valArray1[46];
-	int _valArray2[46];
-	int _field28C;
-	int _field290;
-	int _field294;
-	int _field298;
+	CPetGfxElement _val1;
+	CPetGfxElement _val2;
+	CPetGfxElement _val3;
+	CPetGfxElement _val4;
+	CPetGfxElement _val5;
+	CPetGfxElement _val6;
+	CPetGfxElement _val7;
+	CPetGfxElement _val8;
+	CPetGfxElement _val9;
+	CPetGfxElement _val10;
+	CPetGfxElement _val11;
+	CPetControlSub12 _sub12;
 public:
-	CPetInventorySection();
-
-	/**
-	 * Save the data for the class to file
-	 */
-	virtual void save(SimpleFile *file, int indent) const;
-
-	/**
-	 * Load the data for the class from file
-	 */
-	virtual void load(SimpleFile *file, int param);
-
 	/**
 	 * Returns true if the object is in a valid state
 	 */
@@ -61,4 +54,4 @@ public:
 
 } // End of namespace Titanic
 
-#endif /* TITANIC_PET_INVENTORY_SECTION_H */
+#endif /* TITANIC_PET_REMOTE_H */

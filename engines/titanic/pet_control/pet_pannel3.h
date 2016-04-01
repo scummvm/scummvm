@@ -20,18 +20,28 @@
  *
  */
 
-#include "titanic/gfx/pet_drag_chev.h"
+#ifndef TITANIC_PET_PANNEL3_H
+#define TITANIC_PET_PANNEL3_H
+
+#include "titanic/pet_control/pet_graphic.h"
 
 namespace Titanic {
 
-void CPetDragChev::save(SimpleFile *file, int indent) const {
-	file->writeNumberLine(1, indent);
-	CPetGraphic2::save(file, indent);
-}
+class CPetPannel3 : public CPetGraphic {
+public:
+	CLASSDEF
 
-void CPetDragChev::load(SimpleFile *file) {
-	file->readNumber();
-	CPetGraphic2::load(file);
-}
+	/**
+	 * Save the data for the class to file
+	 */
+	virtual void save(SimpleFile *file, int indent) const;
+
+	/**
+	 * Load the data for the class from file
+	 */
+	virtual void load(SimpleFile *file);
+};
 
 } // End of namespace Titanic
+
+#endif /* TITANIC_PET_PANNEL3_H */

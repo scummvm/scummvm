@@ -20,21 +20,45 @@
  *
  */
 
-#include "titanic/gfx/pet_mode_off.h"
+#ifndef TITANIC_PET_INVENTORY_H
+#define TITANIC_PET_INVENTORY_H
+
+#include "titanic/simple_file.h"
+#include "titanic/pet_control/pet_section.h"
+#include "titanic/pet_control/pet_control_sub10.h"
+#include "titanic/pet_control/pet_control_sub12.h"
 
 namespace Titanic {
 
-CPetModeOff::CPetModeOff() : CToggleSwitch() {
-}
+class CPetInventory : public CPetSection {
+private:
+	CPetControlSub12 _sub12;
+	CPetControlSub10 _sub10;
+	int _valArray1[46];
+	int _valArray2[46];
+	int _field28C;
+	int _field290;
+	int _field294;
+	int _field298;
+public:
+	CPetInventory();
 
-void CPetModeOff::save(SimpleFile *file, int indent) const {
-	file->writeNumberLine(1, indent);
-	CToggleSwitch::save(file, indent);
-}
+	/**
+	 * Save the data for the class to file
+	 */
+	virtual void save(SimpleFile *file, int indent) const;
 
-void CPetModeOff::load(SimpleFile *file) {
-	file->readNumber();
-	CToggleSwitch::load(file);
-}
+	/**
+	 * Load the data for the class from file
+	 */
+	virtual void load(SimpleFile *file, int param);
+
+	/**
+	 * Returns true if the object is in a valid state
+	 */
+	virtual bool isValid(CPetControl *petControl);
+};
 
 } // End of namespace Titanic
+
+#endif /* TITANIC_PET_INVENTORY_H */

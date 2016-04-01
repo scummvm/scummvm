@@ -20,18 +20,29 @@
  *
  */
 
-#include "titanic/gfx/pet_leaf.h"
+#include "titanic/pet_control/pet_conversations.h"
 
 namespace Titanic {
 
-void PETLeaf::save(SimpleFile *file, int indent) const {
-	file->writeNumberLine(1, indent);
-	CGameObject::save(file, indent);
+CPetConversations::CPetConversations() : CPetSection(),
+		_field414(0), _field418(0) {
 }
 
-void PETLeaf::load(SimpleFile *file) {
-	file->readNumber();
-	CGameObject::load(file);
+void CPetConversations::save(SimpleFile *file, int indent) const {
+
+}
+
+void CPetConversations::load(SimpleFile *file, int param) {
+	_sub2.load(file, param);
+	_sub1.load(file, param);
+
+	for (int idx = 0; idx < 3; ++idx)
+		_valArray3[idx] = file->readNumber();
+}
+
+bool CPetConversations::isValid(CPetControl *petControl) {
+	// TODO
+	return true;
 }
 
 } // End of namespace Titanic

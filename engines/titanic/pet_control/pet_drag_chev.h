@@ -20,13 +20,28 @@
  *
  */
 
-#include "titanic/pet_control/pet_save_section.h"
+#ifndef TITANIC_PET_DRAG_CHEV_H
+#define TITANIC_PET_DRAG_CHEV_H
+
+#include "titanic/pet_control/pet_graphic2.h"
 
 namespace Titanic {
 
-bool CPetSaveSection::isValid(CPetControl *petControl) {
-	// TODO
-	return true;
-}
+class CPetDragChev : public CPetGraphic2 {
+public:
+	CLASSDEF
+
+	/**
+	 * Save the data for the class to file
+	 */
+	virtual void save(SimpleFile *file, int indent) const;
+
+	/**
+	 * Load the data for the class from file
+	 */
+	virtual void load(SimpleFile *file);
+};
 
 } // End of namespace Titanic
+
+#endif /* TITANIC_PET_DRAG_CHEV_H */

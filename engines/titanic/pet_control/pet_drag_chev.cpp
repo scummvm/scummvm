@@ -20,13 +20,18 @@
  *
  */
 
-#include "titanic/pet_control/pet_remote_section.h"
+#include "titanic/pet_control/pet_drag_chev.h"
 
 namespace Titanic {
 
-bool CPetRemoteSection::isValid(CPetControl *petControl) {
-	// TODO
-	return true;
+void CPetDragChev::save(SimpleFile *file, int indent) const {
+	file->writeNumberLine(1, indent);
+	CPetGraphic2::save(file, indent);
+}
+
+void CPetDragChev::load(SimpleFile *file) {
+	file->readNumber();
+	CPetGraphic2::load(file);
 }
 
 } // End of namespace Titanic

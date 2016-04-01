@@ -311,16 +311,6 @@ MODULE_OBJS := \
 	gfx/keybrd_butt.o \
 	gfx/move_object_button.o \
 	gfx/music_control.o \
-	gfx/pet_drag_chev.o \
-	gfx/pet_graphic2.o \
-	gfx/pet_graphic.o \
-	gfx/pet_leaf.o \
-	gfx/pet_mode_off.o \
-	gfx/pet_mode_on.o \
-	gfx/pet_mode_panel.o \
-	gfx/pet_pannel1.o \
-	gfx/pet_pannel2.o \
-	gfx/pet_pannel3.o \
 	gfx/send_to_succ.o \
 	gfx/sgt_selector.o \
 	gfx/slider_button.o \
@@ -382,20 +372,30 @@ MODULE_OBJS := \
 	pet_control/pet_control.o \
 	pet_control/pet_control_list_item.o \
 	pet_control/pet_control_list_item2.o \
-	pet_control/pet_conversation_section.o \
+	pet_control/pet_conversations.o \
 	pet_control/pet_element.o \
 	pet_control/pet_frame.o \
 	pet_control/pet_gfx_element.o \
-	pet_control/pet_inventory_section.o \
-	pet_control/pet_rooms_section.o \
-	pet_control/pet_remote_section.o \
-	pet_control/pet_save_section.o \
+	pet_control/pet_inventory.o \
+	pet_control/pet_rooms.o \
+	pet_control/pet_remote.o \
+	pet_control/pet_saves.o \
 	pet_control/pet_section.o \
 	pet_control/pet_control_sub5.o \
 	pet_control/pet_control_sub7.o \
 	pet_control/pet_control_sub10.o \
 	pet_control/pet_control_sub11.o \
 	pet_control/pet_control_sub12.o \
+	pet_control/pet_drag_chev.o \
+	pet_control/pet_graphic2.o \
+	pet_control/pet_graphic.o \
+	pet_control/pet_leaf.o \
+	pet_control/pet_mode_off.o \
+	pet_control/pet_mode_on.o \
+	pet_control/pet_mode_panel.o \
+	pet_control/pet_pannel1.o \
+	pet_control/pet_pannel2.o \
+	pet_control/pet_pannel3.o \
 	sound/auto_music_player.o \
 	sound/auto_music_player_base.o \
 	sound/auto_sound_player.o \

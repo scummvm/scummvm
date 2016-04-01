@@ -20,18 +20,18 @@
  *
  */
 
-#include "titanic/gfx/pet_graphic2.h"
+#include "titanic/pet_control/pet_pannel3.h"
 
 namespace Titanic {
 
-void CPetGraphic2::save(SimpleFile *file, int indent) const {
+void CPetPannel3::save(SimpleFile *file, int indent) const {
 	file->writeNumberLine(1, indent);
-	CGameObject::save(file, indent);
+	CPetGraphic::save(file, indent);
 }
 
-void CPetGraphic2::load(SimpleFile *file) {
+void CPetPannel3::load(SimpleFile *file) {
 	file->readNumber();
-	CGameObject::load(file);
+	CPetGraphic::load(file);
 }
 
 } // End of namespace Titanic

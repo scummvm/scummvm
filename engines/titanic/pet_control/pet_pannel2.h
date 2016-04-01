@@ -20,38 +20,16 @@
  *
  */
 
-#ifndef TITANIC_PET_CONVERSATION_SECTION_H
-#define TITANIC_PET_CONVERSATION_SECTION_H
+#ifndef TITANIC_PET_PANNEL2_H
+#define TITANIC_PET_PANNEL2_H
 
-#include "titanic/pet_control/pet_section.h"
-#include "titanic/pet_control/pet_control_sub12.h"
-#include "titanic/pet_control/pet_gfx_element.h"
+#include "titanic/pet_control/pet_graphic.h"
 
 namespace Titanic {
 
-class CPetConversationSection : public CPetSection {
-private:
-	CPetGfxElement _val1;
-	CPetGfxElement _val2;
-	CPetGfxElement _val3;
-	CPetGfxElement _valArray1[3];
-	CPetGfxElement _val4;
-	CPetGfxElement _val5;
-	CPetGfxElement _val6;
-	int  _field14C;
-	CPetGfxElement _val7;
-	CPetGfxElement _val8;
-	CPetGfxElement _val9;
-	CPetGfxElement _valArray2[9];
-	int _field30C;
-	CPetControlSub12 _sub1;
-	CPetControlSub12 _sub2;
-	int _valArray3[3];
-	int _field414;
-	int _field418;
-	CString _string1;
+class CPetPannel2 : public CPetGraphic {
 public:
-	CPetConversationSection();
+	CLASSDEF
 
 	/**
 	 * Save the data for the class to file
@@ -61,14 +39,9 @@ public:
 	/**
 	 * Load the data for the class from file
 	 */
-	virtual void load(SimpleFile *file, int param);
-
-	/**
-	 * Returns true if the object is in a valid state
-	 */
-	virtual bool isValid(CPetControl *petControl);
+	virtual void load(SimpleFile *file);
 };
 
 } // End of namespace Titanic
 
-#endif /* TITANIC_PET_CONVERSATION_SECTION_H */
+#endif /* TITANIC_PET_PANNEL2_H */

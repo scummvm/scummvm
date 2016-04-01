@@ -20,7 +20,7 @@
  *
  */
 
-#include "titanic/pet_control/pet_rooms_section.h"
+#include "titanic/pet_control/pet_rooms.h"
 
 namespace Titanic {
 

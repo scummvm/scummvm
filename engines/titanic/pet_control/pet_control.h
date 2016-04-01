@@ -28,12 +28,12 @@
 #include "titanic/core/room_item.h"
 #include "titanic/messages/messages.h"
 #include "titanic/messages/mouse_messages.h"
-#include "titanic/pet_control/pet_conversation_section.h"
+#include "titanic/pet_control/pet_conversations.h"
 #include "titanic/pet_control/pet_frame.h"
-#include "titanic/pet_control/pet_inventory_section.h"
-#include "titanic/pet_control/pet_remote_section.h"
-#include "titanic/pet_control/pet_rooms_section.h"
-#include "titanic/pet_control/pet_save_section.h"
+#include "titanic/pet_control/pet_inventory.h"
+#include "titanic/pet_control/pet_remote.h"
+#include "titanic/pet_control/pet_rooms.h"
+#include "titanic/pet_control/pet_saves.h"
 #include "titanic/pet_control/pet_control_sub5.h"
 #include "titanic/pet_control/pet_control_sub7.h"
 
@@ -54,11 +54,11 @@ private:
 	int _locked;
 	int _fieldC8;
 	CPetSection *_sections[7];
-	CPetConversationSection _conversations;
-	CPetInventorySection _inventory;
-	CPetRemoteSection _remote;
+	CPetConversations _conversations;
+	CPetInventory _inventory;
+	CPetRemote _remote;
 	CPetRoomsSection _rooms;
-	CPetSaveSection _saves;
+	CPetSaves _saves;
 	CPetControlSub5 _sub5;
 	CPetControlSub7 _sub7;
 	CPetFrame _frame;

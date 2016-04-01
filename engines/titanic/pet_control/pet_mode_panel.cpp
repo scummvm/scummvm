@@ -20,29 +20,21 @@
  *
  */
 
-#include "titanic/pet_control/pet_conversation_section.h"
+#include "titanic/pet_control/pet_mode_panel.h"
 
 namespace Titanic {
 
-CPetConversationSection::CPetConversationSection() : CPetSection(),
-		_field414(0), _field418(0) {
+CPetModePanel::CPetModePanel() : CToggleSwitch() {
 }
 
-void CPetConversationSection::save(SimpleFile *file, int indent) const {
-
+void CPetModePanel::save(SimpleFile *file, int indent) const {
+	file->writeNumberLine(1, indent);
+	CToggleSwitch::save(file, indent);
 }
 
-void CPetConversationSection::load(SimpleFile *file, int param) {
-	_sub2.load(file, param);
-	_sub1.load(file, param);
-
-	for (int idx = 0; idx < 3; ++idx)
-		_valArray3[idx] = file->readNumber();
-}
-
-bool CPetConversationSection::isValid(CPetControl *petControl) {
-	// TODO
-	return true;
+void CPetModePanel::load(SimpleFile *file) {
+	file->readNumber();
+	CToggleSwitch::load(file);
 }
 
 } // End of namespace Titanic

@@ -20,28 +20,18 @@
  *
  */
 
-#include "titanic/pet_control/pet_inventory_section.h"
+#include "titanic/pet_control/pet_pannel1.h"
 
 namespace Titanic {
 
-CPetInventorySection::CPetInventorySection() : CPetSection(),
-		_field28C(0), _field290(0), _field294(0), _field298(0) {
-	for (int idx = 0; idx < 46; ++idx) {
-		_valArray1[idx] = _valArray2[idx] = 0;
-	}
+void CPetPannel1::save(SimpleFile *file, int indent) const {
+	file->writeNumberLine(1, indent);
+	CPetGraphic::save(file, indent);
 }
 
-void CPetInventorySection::save(SimpleFile *file, int indent) const {
-	file->writeNumberLine(_field298, indent);
-}
-
-void CPetInventorySection::load(SimpleFile *file, int param) {
-	_field298 = file->readNumber();
-}
-
-bool CPetInventorySection::isValid(CPetControl *petControl) {
-	// TODO
-	return true;
+void CPetPannel1::load(SimpleFile *file) {
+	file->readNumber();
+	CPetGraphic::load(file);
 }
 
 } // End of namespace Titanic
