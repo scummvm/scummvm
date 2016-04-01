@@ -1243,7 +1243,7 @@ GlobalOptionsDialog::GlobalOptionsDialog()
 	}
 
 	if (ConfMan.hasKey("updates_check"))
-		_updatesPopUp->setSelectedTag(ConfMan.getInt("updates_check"));
+		_updatesPopUp->setSelectedTag(Common::UpdateManager::normalizeInterval(ConfMan.getInt("updates_check")));
 	else
 		_updatesPopUp->setSelectedTag(Common::UpdateManager::kUpdateIntervalNotSupported);
 
@@ -1397,8 +1397,6 @@ void GlobalOptionsDialog::close() {
 			} else {
 				g_system->getUpdateManager()->setAutomaticallyChecksForUpdates(Common::UpdateManager::kUpdateStateEnabled);
 				g_system->getUpdateManager()->setUpdateCheckInterval(_updatesPopUp->getSelectedTag());
-
-				ConfMan.setInt("updates_check", g_system->getUpdateManager()->getUpdateCheckInterval());
 			}
 		}
 #endif

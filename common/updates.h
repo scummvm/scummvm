@@ -105,9 +105,18 @@ public:
 	/**
 	 * Returns string representation of a given interval.
 	 *
+	 * @param  interval    The interval.
 	 * @return  pointer to localized string of given interval.
 	 */
 	static const char *updateIntervalToString(int interval);
+
+	/**
+	 * Rounds up the given interval to acceptable value.
+	 *
+	 * @param  interval    The interval.
+	 * @return  rounded up interval
+	 */
+	static int normalizeInterval(int interval);
 };
 
 } // End of namespace Common

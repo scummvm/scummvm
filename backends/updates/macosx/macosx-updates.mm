@@ -80,7 +80,7 @@ MacOSXUpdateManager::MacOSXUpdateManager() {
 		setAutomaticallyChecksForUpdates(kUpdateStateDisabled);
 	} else {
 		setAutomaticallyChecksForUpdates(kUpdateStateEnabled);
-		setUpdateCheckInterval(ConfMan.getInt("updates_check"));
+		setUpdateCheckInterval(normalizeInterval(ConfMan.getInt("updates_check")));
 	}
 }
 
@@ -110,16 +110,7 @@ void MacOSXUpdateManager::setUpdateCheckInterval(int interval) {
 	if (interval == kUpdateIntervalNotSupported)
 		return;
 
-	const int *vals = getUpdateIntervals();
-
-	while (*vals != -1) {
-		if (interval == *vals)
-			break;
-		vals++;
-	}
-
-	if (*vals == -1)
-		interval = kUpdateIntervalOneDay;
+	interval = normalizeInterval(interval);
 
 	[sparkleUpdater setUpdateCheckInterval:(NSTimeInterval)interval];
 }

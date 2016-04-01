@@ -38,6 +38,16 @@ const int *UpdateManager::getUpdateIntervals() {
 	return updateIntervals;
 }
 
+int UpdateManager::normalizeInterval(int interval) {
+	const int *val = updateIntervals;
+
+	while (*val != -1)
+		if (*val > interval)
+			return *val;
+
+	return val[-1];	// Return maximal acceptable value
+}
+
 const char *UpdateManager::updateIntervalToString(int interval) {
 	switch (interval) {
 	case kUpdateIntervalNotSupported:
