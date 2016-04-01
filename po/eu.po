@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.5.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
-"POT-Creation-Date: 2016-03-28 12:15+0100\n"
+"POT-Creation-Date: 2016-04-01 19:18+0200\n"
 "PO-Revision-Date: 2011-12-15 14:53+0100\n"
 "Last-Translator: Mikel Iturbe Urretxa <mikel@hamahiru.org>\n"
 "Language-Team: Librezale <librezale@librezale.org>\n"
@@ -1243,7 +1243,7 @@ msgstr "Errendatzaile lausotua"
 msgid "Antialiased"
 msgstr "Lausotua"
 
-#: gui/widget.cpp:323 gui/widget.cpp:325 gui/widget.cpp:331 gui/widget.cpp:333
+#: gui/widget.cpp:325 gui/widget.cpp:327 gui/widget.cpp:333 gui/widget.cpp:335
 msgid "Clear value"
 msgstr "Balioa kendu:"
 
@@ -2652,6 +2652,14 @@ msgstr ""
 "ScummVM-era. Geroago eskuz jatorrizko joko gordeak inportatu\n"
 "nahi izanez gero ScummVM debug konsola ireki eta 'import_savefile'\n"
 "agindau erabili.\n"
+
+#: engines/mohawk/detection.cpp:168
+msgid "Play the Myst fly by movie"
+msgstr ""
+
+#: engines/mohawk/detection.cpp:169
+msgid "The Myst fly by movie was not played by the original engine."
+msgstr ""
 
 #. I18N: Option for fast scene switching
 #: engines/mohawk/dialogs.cpp:96 engines/mohawk/dialogs.cpp:239

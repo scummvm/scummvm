@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
-"POT-Creation-Date: 2016-03-28 12:15+0100\n"
+"POT-Creation-Date: 2016-04-01 19:18+0200\n"
 "PO-Revision-Date: 2016-02-21 23:32+0300\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Russian\n"
@@ -1246,7 +1246,7 @@ msgstr "Растеризатор со сглаживанием"
 msgid "Antialiased"
 msgstr "Со сглаживанием"
 
-#: gui/widget.cpp:323 gui/widget.cpp:325 gui/widget.cpp:331 gui/widget.cpp:333
+#: gui/widget.cpp:325 gui/widget.cpp:327 gui/widget.cpp:333 gui/widget.cpp:335
 msgid "Clear value"
 msgstr "Очистить значение"
 
@@ -2358,7 +2358,8 @@ msgstr "Использовать шрифт Hercules"
 
 #: engines/agi/detection.cpp:178
 msgid "Uses Hercules hires font, when font file is available."
-msgstr "Использует шрифт высокого разрешения Hercules, если доступен файл со шрифтом."
+msgstr ""
+"Использует шрифт высокого разрешения Hercules, если доступен файл со шрифтом."
 
 #: engines/agi/detection.cpp:187
 msgid "Pause when entering commands"
@@ -2369,8 +2370,8 @@ msgid ""
 "Shows a command prompt window and pauses the game (like in SCI) instead of a "
 "real-time prompt."
 msgstr ""
-"Показывает окно со строкой ввода команды и ставит игру на паузу (как в SCI) вместо"
-"ввода в реальном времени."
+"Показывает окно со строкой ввода команды и ставит игру на паузу (как в SCI) "
+"вместоввода в реальном времени."
 
 #: engines/agi/saveload.cpp:777 engines/avalanche/parser.cpp:1887
 #: engines/cge/events.cpp:85 engines/cge2/events.cpp:78
@@ -2660,6 +2661,14 @@ msgstr ""
 "Если вы захотите импортировать оригинальные сохранения, вам нужно будет\n"
 "открыть отладочную консоль ScummVM и ввести команду 'import_savefile'.\n"
 "\n"
+
+#: engines/mohawk/detection.cpp:168
+msgid "Play the Myst fly by movie"
+msgstr ""
+
+#: engines/mohawk/detection.cpp:169
+msgid "The Myst fly by movie was not played by the original engine."
+msgstr ""
 
 #. I18N: Option for fast scene switching
 #: engines/mohawk/dialogs.cpp:96 engines/mohawk/dialogs.cpp:239
@@ -3738,7 +3747,8 @@ msgstr "Использовать английскую озвучку"
 msgid ""
 "Use English speech instead of German for every language other than German"
 msgstr ""
-"Использовать английскую озвучку вместо немецкой для всех языков кроме немецкого"
+"Использовать английскую озвучку вместо немецкой для всех языков кроме "
+"немецкого"
 
 #: engines/teenagent/resources.cpp:95
 msgid ""

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
-"POT-Creation-Date: 2016-03-28 12:15+0100\n"
+"POT-Creation-Date: 2016-04-01 19:18+0200\n"
 "PO-Revision-Date: 2013-05-05 14:16+0100\n"
 "Last-Translator: Jordi Vilalta Prat <jvprat@jvprat.com>\n"
 "Language-Team: Catalan <scummvm-devel@lists.sf.net>\n"
@@ -1259,7 +1259,7 @@ msgstr "Pintat amb antialias (16bpp)"
 msgid "Antialiased"
 msgstr "Amb antialias (16bpp)"
 
-#: gui/widget.cpp:323 gui/widget.cpp:325 gui/widget.cpp:331 gui/widget.cpp:333
+#: gui/widget.cpp:325 gui/widget.cpp:327 gui/widget.cpp:333 gui/widget.cpp:335
 msgid "Clear value"
 msgstr "Neteja el valor"
 
@@ -2656,6 +2656,14 @@ msgid ""
 "need to open the ScummVM debug console and use the command "
 "'import_savefile'.\n"
 "\n"
+msgstr ""
+
+#: engines/mohawk/detection.cpp:168
+msgid "Play the Myst fly by movie"
+msgstr ""
+
+#: engines/mohawk/detection.cpp:169
+msgid "The Myst fly by movie was not played by the original engine."
 msgstr ""
 
 #. I18N: Option for fast scene switching
