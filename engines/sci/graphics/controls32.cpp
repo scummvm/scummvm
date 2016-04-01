@@ -536,6 +536,8 @@ reg_t ScrollWindow::add(const Common::String &str, GuiResourceId font,
 	if (scrollTo)
 		_firstVisibleChar = _text.size() - s.size();
 
+	computeLineIndices();
+
 	update(true);
 
 	return line._id;
@@ -610,6 +612,17 @@ void ScrollWindow::downArrow() {
 }
 
 
+void ScrollWindow::go(Ratio loc) {
+	int line = (loc * _numLines).toInt();
+	if (line < 0 || line >= _numLines)
+		error("Index is Out of Range in ScrollWindow");
+
+	_firstVisibleChar = _startsOfLines[line];
+
+	update(true);
+}
+
+
 void ScrollWindow::computeLineIndices() {
 	_gfxText32.setFont(_fontId);
 	// set _gfxText32 foreColor, alignment?
@@ -645,8 +658,6 @@ void ScrollWindow::computeLineIndices() {
 
 
 void ScrollWindow::update(bool doFrameOut) {
-	computeLineIndices();
-
 	_topVisibleLine = 0;
 	while (_topVisibleLine < _numLines - 1 &&
 	       _firstVisibleChar >= _startsOfLines[_topVisibleLine + 1])

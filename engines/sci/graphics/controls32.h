@@ -138,6 +138,7 @@ public:
 	void show();
 	void hide();
 	Ratio where() const;
+	void go(Ratio loc);
 
 	void upArrow();
 	void downArrow();

@@ -450,6 +450,7 @@ reg_t kScrollWindowAdd(EngineState *s, int argc, reg_t *argv);
 reg_t kScrollWindowUpArrow(EngineState *s, int argc, reg_t *argv);
 reg_t kScrollWindowDownArrow(EngineState *s, int argc, reg_t *argv);
 reg_t kScrollWindowWhere(EngineState *s, int argc, reg_t *argv);
+reg_t kScrollWindowGo(EngineState *s, int argc, reg_t *argv);
 reg_t kScrollWindowHide(EngineState *s, int argc, reg_t *argv);
 reg_t kScrollWindowShow(EngineState *s, int argc, reg_t *argv);
 reg_t kScrollWindowDestroy(EngineState *s, int argc, reg_t *argv);

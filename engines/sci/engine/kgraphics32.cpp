@@ -409,6 +409,16 @@ reg_t kScrollWindowWhere(EngineState *s, int argc, reg_t *argv) {
 	return make_reg(0, ret);
 }
 
+reg_t kScrollWindowGo(EngineState *s, int argc, reg_t *argv) {
+	ScrollWindow *scrollWindow = g_sci->_gfxControls32->getScrollWindow(argv[0]);
+
+	Ratio loc = Ratio(argv[1].toSint16(), argv[2].toSint16());
+	scrollWindow->go(loc);
+
+	return s->r_acc;
+}
+
+
 reg_t kScrollWindowHide(EngineState *s, int argc, reg_t *argv) {
 	ScrollWindow *scrollWindow = g_sci->_gfxControls32->getScrollWindow(argv[0]);
 
