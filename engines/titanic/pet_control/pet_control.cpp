@@ -208,7 +208,7 @@ void CPetControl::fn4() {
 }
 
 PetArea CPetControl::setArea(PetArea newArea) {
-	if (newArea == _currentArea || !canChangeArea())
+	if (newArea == _currentArea || !isUnlocked())
 		return _currentArea;
 
 	// Signal the currently active area that it's being left
@@ -347,7 +347,42 @@ bool CPetControl::getC0() const {
 }
 
 bool CPetControl::handleMessage(CMouseButtonDownMsg &msg) {
-	return true;
+	if (!containsPt(msg._mousePos) || getC0())
+		return false;
+
+	bool result = false;
+	if (isUnlocked())
+		result = _frame.handleMessage(msg);
+
+	if (!result) {
+		switch (_currentArea) {
+		case PET_INVENTORY:
+			result = _inventory.handleMessage(msg);
+			break;
+		case PET_CONVERSATION:
+			result = _conversations.handleMessage(msg);
+			break;
+		case PET_REMOTE:
+			result = _remote.handleMessage(msg);
+			break;
+		case PET_ROOMS:
+			result = _rooms.handleMessage(msg);
+			break;
+		case PET_SAVE:
+			result = _saves.handleMessage(msg);
+			break;
+		case PET_5:
+			result = _sub5.handleMessage(msg);
+			break;
+		case PET_6:
+			result = _sub7.handleMessage(msg);
+			break;
+		default:
+			break;
+		}
+	}
+
+	makeDirty();
 }
 
 bool CPetControl::handleMessage(CMouseDragStartMsg &msg) {

@@ -40,8 +40,8 @@ bool CPetElement::proc6(const Common::Point &pt) {
 	return result;
 }
 
-bool CPetElement::proc7(const Common::Point &pt) {
-	bool result = _bounds.contains(pt);
+bool CPetElement::handleMessage(CMouseButtonDownMsg &msg) {
+	bool result = _bounds.contains(msg._mousePos);
 	if (result)
 		setMode(MODE_UNSELECTED);
 	return result;

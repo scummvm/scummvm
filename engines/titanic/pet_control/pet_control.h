@@ -169,9 +169,9 @@ public:
 	PetArea setArea(PetArea newSection);
 
 	/**
-	 * Returns true if the current area can be changed
+	 * Returns true if the PET is currently unlocked
 	 */
-	bool canChangeArea() const { return _locked == 0; }
+	bool isUnlocked() const { return _locked == 0; }
 
 	/**
 	 * Returns a game object used by the PET by name from within the

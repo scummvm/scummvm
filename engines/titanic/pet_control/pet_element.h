@@ -26,6 +26,7 @@
 #include "titanic/simple_file.h"
 #include "titanic/string.h"
 #include "titanic/core/link_item.h"
+#include "titanic/messages/mouse_messages.h"
 
 namespace Titanic {
 
@@ -69,7 +70,7 @@ public:
 	virtual void getBounds(Rect *rect);
 
 	virtual bool proc6(const Common::Point &pt);
-	virtual bool proc7(const Common::Point &pt);
+	virtual bool handleMessage(CMouseButtonDownMsg &msg);
 
 	/**
 	 * Returns whether the passed point falls inside the item

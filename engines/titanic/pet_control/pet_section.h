@@ -23,7 +23,7 @@
 #ifndef TITANIC_PET_SECTION_H
 #define TITANIC_PET_SECTION_H
 
-#include "titanic/messages/messages.h"
+#include "titanic/messages/mouse_messages.h"
 #include "titanic/simple_file.h"
 
 namespace Titanic {
@@ -75,7 +75,8 @@ public:
 	virtual Rect getBounds() { return Rect(); }
 	
 	virtual void proc5(int val) {}
-	virtual int proc6() { return 0; }
+	
+	virtual bool handleMessage(CMouseButtonDownMsg &msg) { return false; }
 	virtual int proc7() { return 0; }
 	virtual int proc8() { return 0; }
 	virtual int proc9() { return 0; }
