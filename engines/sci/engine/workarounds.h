@@ -99,6 +99,7 @@ extern const SciWorkaroundEntry kStrAt_workarounds[];
 extern const SciWorkaroundEntry kStrCpy_workarounds[];
 extern const SciWorkaroundEntry kStrLen_workarounds[];
 extern const SciWorkaroundEntry kUnLoad_workarounds[];
+extern const SciWorkaroundEntry kScrollWindowAdd_workarounds[];
 
 extern SciWorkaroundSolution trackOriginAndFindWorkaround(int index, const SciWorkaroundEntry *workaroundList, SciTrackOriginReply *trackOrigin);
 

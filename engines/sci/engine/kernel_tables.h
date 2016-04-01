@@ -468,7 +468,7 @@ static const SciKernelMapSubEntry kString_subops[] = {
 //    version,         subId, function-mapping,                    signature,              workarounds
 static const SciKernelMapSubEntry kScrollWindow_subops[] = {
 	{ SIG_SCI32,           0, MAP_CALL(ScrollWindowCreate),        "oi",                   NULL },
-	{ SIG_SCI32,           1, MAP_CALL(ScrollWindowAdd),           "iriii(i)",             NULL },
+	{ SIG_SCI32,           1, MAP_CALL(ScrollWindowAdd),           "iriii(i)",             kScrollWindowAdd_workarounds },
 	{ SIG_SCI32,           2, MAP_DUMMY(ScrollWindowClear),        "i",                    NULL },
 	{ SIG_SCI32,           3, MAP_CALL(ScrollWindowPageUp),        "i",                    NULL },
 	{ SIG_SCI32,           4, MAP_CALL(ScrollWindowPageDown),      "i",                    NULL },
