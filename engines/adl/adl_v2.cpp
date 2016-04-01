@@ -255,7 +255,7 @@ int AdlEngine_v2::o2_moveItem(ScriptEnv &e) {
 }
 
 int AdlEngine_v2::o2_moveAllItems(ScriptEnv &e) {
-	OP_DEBUG_2("\tMOVE_ALL_ITEMS(%d %d)", roomStr(e.arg(1)), roomStr(e.arg(2)));
+	OP_DEBUG_2("\tMOVE_ALL_ITEMS(%d %d)", roomStr(e.arg(1)).c_str(), roomStr(e.arg(2)).c_str());
 
 	byte room1 = roomArg(e.arg(1));
 	byte room2 = roomArg(e.arg(2));
