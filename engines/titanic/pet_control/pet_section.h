@@ -76,17 +76,17 @@ public:
 	
 	virtual void proc5(int val) {}
 	
-	virtual bool handleMessage(CMouseButtonDownMsg &msg) { return false; }
-	virtual int proc7() { return 0; }
-	virtual int proc8() { return 0; }
-	virtual int proc9() { return 0; }
-	virtual int proc10() { return 0; }
-	virtual int proc11() { return 0; }
-	virtual int proc12() { return 0; }
-
 	/**
-	 * Handles special keypresses
+	 * Following are handlers for the various messages that the PET can
+	 * pass onto the currently active section/area
 	 */
+	virtual bool handleMessage(CMouseButtonDownMsg &msg) { return false; }
+	virtual bool handleMessage(CMouseDragStartMsg &msg) { return false; }
+	virtual bool handleMessage(CMouseDragMoveMsg &msg) { return false; }
+	virtual bool handleMessage(CMouseDragEndMsg &msg) { return false; }
+	virtual bool handleMessage(CMouseButtonUpMsg &msg) { return false; }
+	virtual bool handleMessage(CMouseDoubleClickMsg &msg) { return false; }
+	virtual bool handleMessage(CKeyCharMsg &msg) { return false; }
 	virtual bool handleMessage(CVirtualKeyCharMsg &msg) { return false; }
 
 	virtual int proc14() { return 0; }

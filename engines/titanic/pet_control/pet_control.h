@@ -67,6 +67,7 @@ private:
 	CString _string2;
 	CRoomItem *_hiddenRoom;
 	Rect _drawBounds;
+	void *_timers[2];
 private:
 	/**
 	 * Returns true if the control is in a valid state

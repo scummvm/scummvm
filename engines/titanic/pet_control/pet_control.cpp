@@ -28,9 +28,10 @@
 namespace Titanic {
 
 CPetControl::CPetControl() : CGameObject(), 
-	_currentArea(PET_CONVERSATION), _fieldC0(0), _locked(0), _fieldC8(0),
-	_treeItem1(nullptr), _treeItem2(nullptr), _hiddenRoom(nullptr),
-	_drawBounds(20, 350, 620, 480) {
+		_currentArea(PET_CONVERSATION), _fieldC0(0), _locked(0), _fieldC8(0),
+		_treeItem1(nullptr), _treeItem2(nullptr), _hiddenRoom(nullptr),
+		_drawBounds(20, 350, 620, 480) {
+	_timers[0] = _timers[1] = nullptr;
 }
 
 void CPetControl::save(SimpleFile *file, int indent) const {
@@ -383,30 +384,196 @@ bool CPetControl::handleMessage(CMouseButtonDownMsg &msg) {
 	}
 
 	makeDirty();
+	return result;
 }
 
 bool CPetControl::handleMessage(CMouseDragStartMsg &msg) {
-	return true;
+	if (!containsPt(msg._mousePos) || getC0())
+		return false;
+
+	switch (_currentArea) {
+	case PET_INVENTORY:
+		return _inventory.handleMessage(msg);
+		break;
+	case PET_CONVERSATION:
+		return _conversations.handleMessage(msg);
+		break;
+	case PET_REMOTE:
+		return _remote.handleMessage(msg);
+		break;
+	case PET_ROOMS:
+		return _rooms.handleMessage(msg);
+		break;
+	case PET_SAVE:
+		return _saves.handleMessage(msg);
+		break;
+	case PET_5:
+		return _sub5.handleMessage(msg);
+		break;
+	case PET_6:
+		return _sub7.handleMessage(msg);
+		break;
+	default:
+		return false;
+	}
 }
 
 bool CPetControl::handleMessage(CMouseDragMoveMsg &msg) {
-	return true;
+	switch (_currentArea) {
+	case PET_INVENTORY:
+		return _inventory.handleMessage(msg);
+		break;
+	case PET_CONVERSATION:
+		return _conversations.handleMessage(msg);
+		break;
+	case PET_REMOTE:
+		return _remote.handleMessage(msg);
+		break;
+	case PET_ROOMS:
+		return _rooms.handleMessage(msg);
+		break;
+	case PET_SAVE:
+		return _saves.handleMessage(msg);
+		break;
+	case PET_5:
+		return _sub5.handleMessage(msg);
+		break;
+	case PET_6:
+		return _sub7.handleMessage(msg);
+		break;
+	default:
+		return false;
+	}
 }
 
 bool CPetControl::handleMessage(CMouseDragEndMsg &msg) {
-	return true;
+	switch (_currentArea) {
+	case PET_INVENTORY:
+		return _inventory.handleMessage(msg);
+		break;
+	case PET_CONVERSATION:
+		return _conversations.handleMessage(msg);
+		break;
+	case PET_REMOTE:
+		return _remote.handleMessage(msg);
+		break;
+	case PET_ROOMS:
+		return _rooms.handleMessage(msg);
+		break;
+	case PET_SAVE:
+		return _saves.handleMessage(msg);
+		break;
+	case PET_5:
+		return _sub5.handleMessage(msg);
+		break;
+	case PET_6:
+		return _sub7.handleMessage(msg);
+		break;
+	default:
+		return false;
+	}
 }
 
 bool CPetControl::handleMessage(CMouseButtonUpMsg &msg) {
-	return true;
+	if (!containsPt(msg._mousePos) || getC0())
+		return false;
+
+	bool result = false;
+	if (isUnlocked())
+		result = _frame.handleMessage(msg);
+
+	if (!result) {
+		switch (_currentArea) {
+		case PET_INVENTORY:
+			result = _inventory.handleMessage(msg);
+			break;
+		case PET_CONVERSATION:
+			result = _conversations.handleMessage(msg);
+			break;
+		case PET_REMOTE:
+			result = _remote.handleMessage(msg);
+			break;
+		case PET_ROOMS:
+			result = _rooms.handleMessage(msg);
+			break;
+		case PET_SAVE:
+			result = _saves.handleMessage(msg);
+			break;
+		case PET_5:
+			result = _sub5.handleMessage(msg);
+			break;
+		case PET_6:
+			result = _sub7.handleMessage(msg);
+			break;
+		default:
+			break;
+		}
+	}
+
+	makeDirty();
+	return result;
 }
 
 bool CPetControl::handleMessage(CMouseDoubleClickMsg &msg) {
-	return true;
+	if (!containsPt(msg._mousePos) || getC0())
+		return false;
+
+	switch (_currentArea) {
+	case PET_INVENTORY:
+		return _inventory.handleMessage(msg);
+		break;
+	case PET_CONVERSATION:
+		return _conversations.handleMessage(msg);
+		break;
+	case PET_REMOTE:
+		return _remote.handleMessage(msg);
+		break;
+	case PET_ROOMS:
+		return _rooms.handleMessage(msg);
+		break;
+	case PET_SAVE:
+		return _saves.handleMessage(msg);
+		break;
+	case PET_5:
+		return _sub5.handleMessage(msg);
+		break;
+	case PET_6:
+		return _sub7.handleMessage(msg);
+		break;
+	default:
+		return false;
+	}
 }
 
 bool CPetControl::handleMessage(CKeyCharMsg &msg) {
-	return true;
+	if (getC0())
+		return false;
+
+	switch (_currentArea) {
+	case PET_INVENTORY:
+		return _inventory.handleMessage(msg);
+		break;
+	case PET_CONVERSATION:
+		return _conversations.handleMessage(msg);
+		break;
+	case PET_REMOTE:
+		return _remote.handleMessage(msg);
+		break;
+	case PET_ROOMS:
+		return _rooms.handleMessage(msg);
+		break;
+	case PET_SAVE:
+		return _saves.handleMessage(msg);
+		break;
+	case PET_5:
+		return _sub5.handleMessage(msg);
+		break;
+	case PET_6:
+		return _sub7.handleMessage(msg);
+		break;
+	default:
+		return false;
+	}
 }
 
 bool CPetControl::handleMessage(CVirtualKeyCharMsg &msg) {
@@ -471,6 +638,7 @@ bool CPetControl::handleMessage(CVirtualKeyCharMsg &msg) {
 }
 
 bool CPetControl::handleMessage(CTimerMsg &msg) {
+	warning("TODO: CPetControl::CTimerMsg");
 	return true;
 }
 
