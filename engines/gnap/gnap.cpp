@@ -1751,7 +1751,7 @@ void GnapEngine::gnapInitBrainPulseRndValue() {
 void GnapEngine::gnapUseDeviceOnBeaver() {
 	playGnapSequence(makeRid(1, getGnapSequenceId(gskPullOutDevice, _platX, _platY)));
 
-	if (_beaverFacing != 0) {
+	if (_beaverFacing != kDirNone) {
 		_gameSys->insertSequence(makeRid(1, 0x7D5), _beaverId,
 			makeRid(_beaverSequenceDatNum, _beaverSequenceId), _beaverId,
 			kSeqSyncWait, 0, 75 * _platX - _platGridX, 48 * _platY - _platGridY);
@@ -1930,7 +1930,7 @@ void GnapEngine::updateBeaverIdleSequence() {
 			if (_timers[1] == 0) {
 				_timers[1] = getRandom(20) + 30;
 				int rnd = getRandom(10);
-				if (_beaverFacing != 0) {
+				if (_beaverFacing != kDirNone) {
 					if (rnd != 0 || _beaverSequenceId != 0x7CA) {
 						if (rnd != 1 || _beaverSequenceId != 0x7CA)
 							playBeaverSequence(0x107CA);
@@ -1967,7 +1967,7 @@ void GnapEngine::beaverSub426234() {
 		if (_timers[0]) {
 			if (!_timers[1]) {
 				_timers[1] = getRandom(20) + 30;
-				if (_beaverFacing != 0) {
+				if (_beaverFacing != kDirNone) {
 					if (getRandom(10) >= 2 || _beaverSequenceId != 0x7CA)
 						playBeaverSequence(0x107CA);
 					else

@@ -332,7 +332,7 @@ void GnapEngine::scene38_updateAnimations() {
 			_gnapSequenceDatNum = 0;
 			_gameSys->setAnimation(0x9F, _gnapId, 0);
 			_gnapActionStatus = kASHoldingHuntingTrophy;
-			if (_beaverFacing)
+			if (_beaverFacing != kDirNone)
 				playBeaverSequence(0x107D5);
 			else
 				playBeaverSequence(0x107D4);

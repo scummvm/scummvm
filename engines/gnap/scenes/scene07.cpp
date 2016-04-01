@@ -203,7 +203,7 @@ void GnapEngine::scene07_run() {
 						_timers[1] = getRandom(20) + 30;
 						int _gnapRandomValue = getRandom(20);
 						// TODO Cleanup
-						if (_beaverFacing != 0) {
+						if (_beaverFacing != kDirNone) {
 							if (_gnapRandomValue != 0 || _beaverSequenceId != 0x7CA) {
 								if (_gnapRandomValue != 1 || _beaverSequenceId != 0x7CA) {
 									if (_platY == 9)

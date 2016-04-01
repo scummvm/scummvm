@@ -1335,7 +1335,7 @@ bool GnapEngine::platypusWalkTo(int gridX, int gridY, int animationIndex, int se
 					_beaverSequenceId = 0x7D2;
 					_beaverFacing = kDirUnk4;
 				}
-			} else if (_beaverFacing > 0) {
+			} else if (_beaverFacing != kDirNone) {
 				_beaverSequenceId = 0x7D2;
 			} else {
 				_beaverSequenceId = 0x7C2;
