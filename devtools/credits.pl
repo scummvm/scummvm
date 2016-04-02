@@ -1007,6 +1007,7 @@ begin_credits("Credits");
 			begin_section("Mac OS X");
 				add_person("Max Horn", "Fingolfin", "(retired)");
 				add_person("Oystein Eftevaag", "vinterstum", "");
+				add_person("Thierry Crozat", "criezy", "");
 			end_section();
 
 			begin_section("Mandriva");
