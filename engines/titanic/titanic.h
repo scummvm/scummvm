@@ -33,9 +33,10 @@
 #include "titanic/debugger.h"
 #include "titanic/events.h"
 #include "titanic/files_manager.h"
+#include "titanic/main_game_window.h"
 #include "titanic/movie.h"
 #include "titanic/screen_manager.h"
-#include "titanic/main_game_window.h"
+#include "titanic/string.h"
 
 /**
  * This is the namespace of the Titanic engine.
@@ -86,6 +87,11 @@ private:
 	 * Handles game deinitialization
 	 */
 	void deinitialize();
+
+	/**
+	 * Sets up the item names, short, and long descriptions
+	 */
+	void setItemNames();
 protected:
 	const TitanicGameDescription *_gameDescription;
 	int _loadSaveSlot;
@@ -103,6 +109,9 @@ public:
 	CMainGameWindow *_window;
 	Common::RandomSource _randomSource;
 	CGlobalMovies _movieList;
+	CString _itemNames[46];
+	CString _itemDescriptions[46];
+	CString _itemShortDesc[40];
 public:
 	TitanicEngine(OSystem *syst, const TitanicGameDescription *gameDesc);
 	virtual ~TitanicEngine();
