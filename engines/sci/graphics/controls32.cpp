@@ -49,17 +49,16 @@ GfxControls32::GfxControls32(SegManager *segMan, GfxCache *cache, GfxText32 *tex
 }
 
 GfxControls32::~GfxControls32() {
-	Common::HashMap<int, ScrollWindow *>::iterator i;
-	for (i = _scrollWindows.begin(); i != _scrollWindows.end(); ++i)
-		delete i->_value;
-	_scrollWindows.clear();
+	Common::HashMap<int, ScrollWindow *>::iterator it;
+	for (it = _scrollWindows.begin(); it != _scrollWindows.end(); ++it)
+		delete it->_value;
 }
 
 Common::Array<reg_t> GfxControls32::listObjectReferences() {
 	Common::Array<reg_t> ret;
-	Common::HashMap<int, ScrollWindow *>::iterator i;
-	for (i = _scrollWindows.begin(); i != _scrollWindows.end(); ++i)
-		ret.push_back(i->_value->getBitmap());
+	Common::HashMap<int, ScrollWindow *>::const_iterator it;
+	for (it = _scrollWindows.begin(); it != _scrollWindows.end(); ++it)
+		ret.push_back(it->_value->getBitmap());
 
 	return ret;
 }
@@ -385,12 +384,12 @@ reg_t GfxControls32::registerScrollWindow(ScrollWindow *scrollWindow) {
 
 
 ScrollWindow *GfxControls32::getScrollWindow(reg_t id) {
-	Common::HashMap<int, ScrollWindow *>::iterator i;
-	i = _scrollWindows.find(id.getOffset());
-	if (i == _scrollWindows.end())
+	Common::HashMap<int, ScrollWindow *>::iterator it;
+	it = _scrollWindows.find(id.getOffset());
+	if (it == _scrollWindows.end())
 		error("Invalid ScrollWindow ID");
 
-	return i->_value;
+	return it->_value;
 }
 
 
