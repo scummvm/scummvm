@@ -106,6 +106,12 @@ void CPetControlSub12::load(SimpleFile *file, int param) {
 }
 
 void CPetControlSub12::draw(CScreenManager *screenManager) {
+	Rect tempRect = _bounds;
+
+	if (_field70) {
+
+	}
+
 	warning("TODO: CPetControlSub12::draw");
 }
 

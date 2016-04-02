@@ -101,6 +101,11 @@ public:
 	void fill(const Rect *bounds, uint32 color);
 
 	/**
+	 * Fill an area with a specific color
+	 */
+	void fillRect(Rect *rect, byte r, byte g, byte b);
+
+	/**
 	 * Copy data from a source surfcae into this one
 	 */
 	void blit(const Rect &destRect, DirectDrawSurface *srcSurface, Rect &srcRect);

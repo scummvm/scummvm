@@ -78,6 +78,13 @@ void DirectDrawSurface::fill(const Rect *bounds, uint32 color) {
 	_surface->fillRect(tempBounds, color);
 }
 
+void DirectDrawSurface::fillRect(Rect *rect, byte r, byte g, byte b) {
+	uint color = _surface->format.RGBToColor(r, g, b);
+	Rect tempRect = rect ? *rect : Rect(0, 0, getWidth(), getHeight());
+
+	_surface->fillRect(tempRect, color);
+}
+
 void DirectDrawSurface::blit(const Rect &destRect, DirectDrawSurface *srcSurface, Rect &srcRect) {
 	assert(srcSurface);
 	if (!destRect.isEmpty())

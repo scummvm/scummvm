@@ -93,7 +93,11 @@ public:
 	virtual void proc7() = 0;
 	virtual CVideoSurface *getSurface(SurfaceNum surfaceNum) const = 0;
 	virtual void proc9() = 0;
-	virtual void proc10() = 0;
+	
+	/**
+	 * Fill an area with a specific color
+	 */
+	virtual void fillRect(SurfaceNum surfaceNum, Rect *rect, byte r, byte g, byte b) = 0;
 
 	/**
 	 * Blits a surface onto one of the screen surfaces
@@ -151,6 +155,11 @@ private:
 	 * Load game cursors
 	 */
 	void loadCursors();
+
+	/**
+	 * Gets an underlying surface
+	 */
+	DirectDrawSurface *getDDSurface(SurfaceNum surfaceNum);
 public:
 	int _field48;
 	int _field4C;
@@ -175,7 +184,11 @@ public:
 	virtual void proc7();
 	virtual CVideoSurface *getSurface(SurfaceNum surfaceNum) const;
 	virtual void proc9();
-	virtual void proc10();
+
+	/**
+	 * Fill an area with a specific color
+	 */
+	virtual void fillRect(SurfaceNum surfaceNum, Rect *rect, byte r, byte g, byte b);
 
 	/**
 	 * Blits a surface onto one of the screen surfaces

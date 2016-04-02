@@ -113,11 +113,20 @@ void OSScreenManager::drawCursors() {
 	warning("OSScreenManager::drawCursors");
 }
 
+DirectDrawSurface *OSScreenManager::getDDSurface(SurfaceNum surfaceNum) {
+	if (surfaceNum == SURFACE_PRIMARY)
+		return _directDrawManager._mainSurface;
+	else if (surfaceNum < (int)_backSurfaces.size())
+		return _directDrawManager._backSurfaces[surfaceNum];
+	else
+		return nullptr;
+}
+
 void OSScreenManager::proc6() {}
 void OSScreenManager::proc7() {}
 
 CVideoSurface *OSScreenManager::getSurface(SurfaceNum surfaceNum) const {
-	if (surfaceNum == -1)
+	if (surfaceNum == SURFACE_PRIMARY)
 		return _frontRenderSurface;
 	else if (surfaceNum >= 0 && surfaceNum < (int)_backSurfaces.size())
 		return _backSurfaces[surfaceNum]._surface;
@@ -126,7 +135,26 @@ CVideoSurface *OSScreenManager::getSurface(SurfaceNum surfaceNum) const {
 }
 
 void OSScreenManager::proc9() {}
-void OSScreenManager::proc10() {}
+
+void OSScreenManager::fillRect(SurfaceNum surfaceNum, Rect *rect, byte r, byte g, byte b) {
+	DirectDrawSurface *surface = getDDSurface(surfaceNum);
+	if (!surface)
+		return;
+
+	// If bounds are provided, clip and use them. Otherwise, use entire surface area
+	Rect surfaceRect(0, 0, surface->getWidth(), surface->getHeight());
+	Rect tempRect;
+
+	if (rect) {
+		tempRect = *rect;
+		tempRect.clip(surfaceRect);
+	} else {
+		tempRect = surfaceRect;
+	}
+
+	if (tempRect.isValidRect())
+		surface->fillRect(&tempRect, r, g, b);
+}
 
 void OSScreenManager::blitFrom(SurfaceNum surfaceNum, CVideoSurface *src,
 	const Point *destPos, const Rect *srcRect) {
@@ -176,7 +204,7 @@ void OSScreenManager::proc18() {}
 void OSScreenManager::proc19() {}
 
 void OSScreenManager::clearSurface(SurfaceNum surfaceNum, Rect *bounds) {
-	if (surfaceNum == -1)
+	if (surfaceNum == SURFACE_PRIMARY)
 		_directDrawManager._mainSurface->fill(bounds, 0);
 	else if (surfaceNum >= 0 && surfaceNum < (int)_backSurfaces.size())
 		_directDrawManager._backSurfaces[surfaceNum]->fill(bounds, 0);
