@@ -141,6 +141,7 @@ public:
 	void go(Ratio loc);
 
 	void home();
+	void end();
 	void upArrow();
 	void downArrow();
 	void pageUp();

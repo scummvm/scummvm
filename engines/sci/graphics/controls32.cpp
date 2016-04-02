@@ -648,6 +648,18 @@ void ScrollWindow::home() {
 }
 
 
+void ScrollWindow::end() {
+	if (_bottomVisibleLine + 1 >= _numLines)
+		return;
+
+	int line = _numLines - _numVisibleLines;
+	if (line < 0)
+		line = 0;
+	_firstVisibleChar = _startsOfLines[line];
+	update(true);
+}
+
+
 void ScrollWindow::pageUp() {
 	if (_topVisibleLine == 0)
 		return;

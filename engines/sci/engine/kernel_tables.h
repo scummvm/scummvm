@@ -414,7 +414,7 @@ static const SciKernelMapSubEntry kScrollWindow_subops[] = {
 	{ SIG_SCI32,           5, MAP_CALL(ScrollWindowUpArrow),       "i",                    NULL },
 	{ SIG_SCI32,           6, MAP_CALL(ScrollWindowDownArrow),     "i",                    NULL },
 	{ SIG_SCI32,           7, MAP_CALL(ScrollWindowHome),          "i",                    NULL },
-	{ SIG_SCI32,           8, MAP_DUMMY(ScrollWindowEnd),          "i",                    NULL },
+	{ SIG_SCI32,           8, MAP_CALL(ScrollWindowEnd),           "i",                    NULL },
 	{ SIG_SCI32,           9, MAP_DUMMY(ScrollWindowResize),       "i.",                   NULL },
 	{ SIG_SCI32,          10, MAP_CALL(ScrollWindowWhere),         "ii",                   NULL },
 	{ SIG_SCI32,          11, MAP_CALL(ScrollWindowGo),            "i..",                  NULL },
