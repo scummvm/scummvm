@@ -519,13 +519,15 @@ reg_t ScrollWindow::add(const Common::String &str, GuiResourceId font,
 	line._id = _lastLineId;
 
 
-	// TODO: There are potential inconsistencies here, that seem to also exist
-	// in SSCI. When line properties are -1, they in practice are displayed
-	// with the default values from the ScrollWindow. However, if the
-	// whole ScrollWindow is displayed at once, they might instead use the
-	// properties of the previous line. Conversely, if there is a multi-line
-	// entry with non-default properties, all lines except the first one might
-	// be displayed with the defaults.
+	// NB: There are inconsistencies here.
+	// If there is a multi-line entry with non-default properties, and it
+	// is only partially displayed, it may not be displayed right, since the
+	// property directives are only added to the first line.
+	// (Verified by trying this in SSCI SQ6 with a custom ScrollWindowAdd call.)
+	//
+	// The converse is also a potential issue (but unverified), where lines
+	// with properties -1 can inherit properties from the previously rendered
+	// line instead of the defaults.
 
 	Common::String s;
 	s = Common::String::format("|s%d|", _lines.size() - 1);
