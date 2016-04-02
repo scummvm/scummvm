@@ -120,7 +120,7 @@ Common::Error TitanicEngine::run() {
 }
 
 void TitanicEngine::setItemNames() {
-	static const char *const NAMES[46] = {
+	static const char *const NAMES[TOTAL_ITEMS] = {
 		"LeftArmWith", "LeftArmWithout", "RightArmWith", "RightArmWithout", "BridgeRed",
 		"BridgeYellow", "BridgeBlue", "BridgeGreen", "Parrot", "CentralCore", "BrainGreen",
 		"BrainYellow", "BrainRed", "BrainBlue", "ChickenGreasy", "ChickenPlain", "ChickenPurple",
@@ -130,11 +130,11 @@ void TitanicEngine::setItemNames() {
 		"Nose", "Perch", "PhonoCylinder", "PhonoCylinder1", "PhonoCylinder2", "PhonoCylinder3",
 		"Photo"
 	};
-	for (uint idx = 0; idx < 46; ++idx)
+	for (uint idx = 0; idx < TOTAL_ITEMS; ++idx)
 		_itemNames[idx] = NAMES[idx];
 
 	// Item descriptions
-	static const char *const DESCRIPTIONS[46] = {
+	static const char *const DESCRIPTIONS[TOTAL_ITEMS] = {
 		"The Maitre d'Bot's left arm holding a key", "The Maitre d'Bot's left arm",
 		"The Maitre d'Bot's right arm holding Titania's auditory center",
 		"The Maitre d'Bot's right arm", "Red Fuse", "Yellow Fuse", "Blue Fuse",
@@ -153,7 +153,7 @@ void TitanicEngine::setItemNames() {
 		"A phonograph cylinder", "A phonograph cylinder", "A phonograph cylinder",
 		"A photograph"
 	};
-	for (uint idx = 0; idx < 46; ++idx)
+	for (uint idx = 0; idx < TOTAL_ITEMS; ++idx)
 		_itemDescriptions[idx] = DESCRIPTIONS[idx];
 
 	// Short descriptions.. maybe?

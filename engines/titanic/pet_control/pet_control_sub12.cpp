@@ -25,8 +25,7 @@
 namespace Titanic {
 
 CPetControlSub12::CPetControlSub12(int count) :
-	_field18(0), _field1C(0), _field20(0), _field24(0),
-	_field28(0), _field30(-1), _field34(0), _field38(-1),
+	_field18(0), _field30(-1), _field34(0), _field38(-1),
 	_field3C(0), _field40(0), _field44(0), _field48(0xff),
 	_field4C(0xff), _field50(0xff), _field54(0), _field58(0),
 	_field5C(200), _field60(0), _field64(0), _field68(0),
@@ -46,15 +45,44 @@ void CPetControlSub12::freeArrays() {
 	_array.clear();
 }
 
+void CPetControlSub12::setup() {
+	for (int idx = 0; idx < (int)_array.size(); ++idx) {
+		_array[idx]._string1.clear();
+		setArrayStr2(idx, _field54, _field58, _field5C);
+		_array[idx]._string3.clear();
+	}
+
+	_field34 = 0;
+	_field18 = 0;
+}
+
+void CPetControlSub12::setArrayStr2(uint idx, int val1, int val2, int val3) {
+	char buffer[6];
+	if (!val1)
+		val1 = 1;
+	if (!val2)
+		val2 = 1;
+	if (!val3)
+		val3 = 1;
+
+	buffer[0] = 27;
+	buffer[1] = val1;
+	buffer[2] = val2;
+	buffer[3] = val3;
+	buffer[4] = 27;
+	buffer[5] = '\0';
+	_array[idx]._string2 = buffer;
+}
+
 void CPetControlSub12::load(SimpleFile *file, int param) {
 	if (!param) {
 		int var1 = file->readNumber();
 		int var2 = file->readNumber();
 		uint count = file->readNumber();
-		_field1C = file->readNumber();
-		_field20 = file->readNumber();
-		_field24 = file->readNumber();
-		_field28 = file->readNumber();
+		_bounds.left = file->readNumber();
+		_bounds.top = file->readNumber();
+		_bounds.right = file->readNumber();
+		_bounds.bottom = file->readNumber();
 		_field3C = file->readNumber();
 		_field40 = file->readNumber();
 		_field44 = file->readNumber();
@@ -76,6 +104,5 @@ void CPetControlSub12::load(SimpleFile *file, int param) {
 		}	
 	}
 }
-
 
 } // End of namespace Titanic

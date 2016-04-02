@@ -37,16 +37,23 @@ protected:
 	int _field1C;
 	int _field20;
 	int _field24;
-	CPetGfxElement _val1;
-	CPetGfxElement _val2;
-	CPetGfxElement _val3;
+	CPetGfxElement _selection;
+	CPetGfxElement _scrollLeft;
+	CPetGfxElement _scrollRight;
 public:
 	CPetControlSub10();
 
 	virtual void proc8();
-	virtual void proc9();
+
+	/**
+	 * Set up the control
+	 */
+	virtual void setup();
+
 	virtual void proc10();
 	virtual void proc11();
+
+	void set20(int val) { _field20 = val; }
 };
 
 } // End of namespace Titanic

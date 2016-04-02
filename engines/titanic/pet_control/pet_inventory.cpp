@@ -21,14 +21,56 @@
  */
 
 #include "titanic/pet_control/pet_inventory.h"
+#include "titanic/pet_control/pet_control.h"
+#include "titanic/titanic.h"
 
 namespace Titanic {
 
 CPetInventory::CPetInventory() : CPetSection(),
 		_field28C(0), _field290(0), _field294(0), _field298(0) {
-	for (int idx = 0; idx < 46; ++idx) {
-		_valArray1[idx] = _valArray2[idx] = 0;
+	for (int idx = 0; idx < TOTAL_ITEMS; ++idx) {
+		_itemBackgrounds[idx] = _itemGlyphs[idx] = nullptr;
 	}
+}
+
+bool CPetInventory::setup(CPetControl *petControl) {
+	return setPetControl(petControl) && setup();
+}
+
+bool CPetInventory::setup() {
+	_sub10.setup();
+	_sub12.setup();
+
+	// TODO
+	return true;
+}
+
+bool CPetInventory::setPetControl(CPetControl *petControl) {
+	if (!petControl)
+		return false;
+
+	_petControl = petControl;
+	_sub10.proc8();
+	_sub10.set20(28);
+
+	Rect tempRect(0, 0, 52, 52);
+	for (uint idx = 0; idx < TOTAL_ITEMS; ++idx) {
+		if (!g_vm->_itemNames[idx].empty()) {
+			CString name = "3Pet" + g_vm->_itemNames[idx];
+			_itemBackgrounds[idx] = petControl->getHiddenObject(name);
+		}
+
+		if (!g_vm->_itemObjects[idx].empty()) {
+			_itemGlyphs[idx] = petControl->getHiddenObject(g_vm->_itemObjects[idx]);
+		}
+	}
+
+	tempRect = Rect(0, 0, 580, 15);
+	tempRect.translate(32, 445);
+	_sub12.setBounds(tempRect);
+	_sub12.set70(0);
+	
+	return true;
 }
 
 void CPetInventory::save(SimpleFile *file, int indent) const {

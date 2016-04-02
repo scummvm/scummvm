@@ -37,10 +37,7 @@ private:
 	Common::Array<ArrayEntry> _array;
 	CString _string1;
 	int _field18;
-	int _field1C;
-	int _field20;
-	int _field24;
-	int _field28;
+	Rect _bounds;
 	int _field30;
 	int _field34;
 	int _field38;
@@ -65,10 +62,27 @@ private:
 	void setupArrays(int count);
 
 	void freeArrays();
+
+	void setArrayStr2(uint idx, int val1, int val2, int val3);
 public:
 	CPetControlSub12(int count = 10);
 
+	/**
+	 * Set up the control
+	 */
+	void setup();
+
+	/**
+	 * Load the data for the control
+	 */
 	void load(SimpleFile *file, int param);
+
+	/**
+	 * Set the bounds for the control
+	 */
+	void setBounds(const Rect &bounds) { _bounds = bounds; }
+
+	void set70(int val) { _field70 = val; }
 };
 
 } // End of namespace Titanic

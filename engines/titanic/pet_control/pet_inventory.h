@@ -30,18 +30,36 @@
 
 namespace Titanic {
 
+/**
+ * Handles displaying the player's inventory in the PET
+ */
 class CPetInventory : public CPetSection {
 private:
 	CPetControlSub12 _sub12;
 	CPetControlSub10 _sub10;
-	int _valArray1[46];
-	int _valArray2[46];
+	CGameObject *_itemBackgrounds[46];
+	CGameObject *_itemGlyphs[46];
 	int _field28C;
 	int _field290;
 	int _field294;
 	int _field298;
+private:
+	/**
+	 * Handles initial setup
+	 */
+	bool setPetControl(CPetControl *petControl);
 public:
 	CPetInventory();
+
+	/**
+	 * Sets up the section
+	 */
+	virtual bool setup(CPetControl *petControl);
+	
+	/**
+	 * Sets up the section
+	 */
+	virtual bool setup();
 
 	/**
 	 * Save the data for the class to file

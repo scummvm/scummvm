@@ -64,6 +64,8 @@ enum TitanicDebugChannels {
 #define ERROR_INTERMEDIATE 2
 #define ERROR_DETAILED 3
 
+#define TOTAL_ITEMS 46
+
 struct TitanicGameDescription;
 class TitanicEngine;
 
@@ -109,8 +111,9 @@ public:
 	CMainGameWindow *_window;
 	Common::RandomSource _randomSource;
 	CGlobalMovies _movieList;
-	CString _itemNames[46];
-	CString _itemDescriptions[46];
+	CString _itemNames[TOTAL_ITEMS];
+	CString _itemDescriptions[TOTAL_ITEMS];
+	CString _itemObjects[TOTAL_ITEMS];
 	CString _itemShortDesc[40];
 public:
 	TitanicEngine(OSystem *syst, const TitanicGameDescription *gameDesc);

@@ -33,8 +33,8 @@ void CPetControlSub10::proc8() {
 	error("TODO");
 }
 
-void CPetControlSub10::proc9() {
-	error("TODO");
+void CPetControlSub10::setup() {
+	warning("TODO: CPetControlSub10::setup");
 }
 
 void CPetControlSub10::proc10() {
