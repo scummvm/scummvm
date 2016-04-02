@@ -24,6 +24,7 @@
 #define TITANIC_PET_CONTROL_SUB12_H
 
 #include "titanic/simple_file.h"
+#include "titanic/screen_manager.h"
 
 namespace Titanic {
 
@@ -83,6 +84,12 @@ public:
 	void setBounds(const Rect &bounds) { _bounds = bounds; }
 
 	void set70(int val) { _field70 = val; }
+
+	/**
+	 * Draw the control
+	 */
+	void draw(CScreenManager *screenManager);
+
 };
 
 } // End of namespace Titanic

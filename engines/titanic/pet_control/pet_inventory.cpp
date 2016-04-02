@@ -45,6 +45,30 @@ bool CPetInventory::setup() {
 	return true;
 }
 
+void CPetInventory::draw(CScreenManager *screenManager) {
+	_petControl->drawIndent(screenManager, 7);
+	_sub10.draw(screenManager);
+	_sub12.draw(screenManager);
+}
+
+Rect CPetInventory::getBounds() { 
+	// TODO
+	return Rect(); 
+}
+
+void CPetInventory::save(SimpleFile *file, int indent) const {
+	file->writeNumberLine(_field298, indent);
+}
+
+void CPetInventory::load(SimpleFile *file, int param) {
+	_field298 = file->readNumber();
+}
+
+bool CPetInventory::isValid(CPetControl *petControl) {
+	// TODO
+	return true;
+}
+
 bool CPetInventory::setPetControl(CPetControl *petControl) {
 	if (!petControl)
 		return false;
@@ -69,20 +93,7 @@ bool CPetInventory::setPetControl(CPetControl *petControl) {
 	tempRect.translate(32, 445);
 	_sub12.setBounds(tempRect);
 	_sub12.set70(0);
-	
-	return true;
-}
 
-void CPetInventory::save(SimpleFile *file, int indent) const {
-	file->writeNumberLine(_field298, indent);
-}
-
-void CPetInventory::load(SimpleFile *file, int param) {
-	_field298 = file->readNumber();
-}
-
-bool CPetInventory::isValid(CPetControl *petControl) {
-	// TODO
 	return true;
 }
 

@@ -334,4 +334,8 @@ bool CPetControl::handleMessage(CTimerMsg &msg) {
 	return true;
 }
 
+void CPetControl::drawIndent(CScreenManager *screenManager, int indent) {
+	_frame.drawIndent(screenManager, indent);
+}
+
 } // End of namespace Titanic

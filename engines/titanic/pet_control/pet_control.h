@@ -185,6 +185,11 @@ public:
 	 * Returns a reference to the special hidden room container
 	 */
 	CRoomItem *getHiddenRoom();
+
+	/**
+	 * Draws the indent
+	 */
+	void drawIndent(CScreenManager *screenManager, int indent);
 };
 
 } // End of namespace Titanic

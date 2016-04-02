@@ -45,4 +45,8 @@ void CPetControlSub10::proc11() {
 	error("TODO");
 }
 
+void CPetControlSub10::draw(CScreenManager *screenManager) {
+	warning("TODO: CPetControlSub10::draw");
+}
+
 } // End of namespace Titanic

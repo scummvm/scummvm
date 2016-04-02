@@ -105,4 +105,8 @@ void CPetControlSub12::load(SimpleFile *file, int param) {
 	}
 }
 
+void CPetControlSub12::draw(CScreenManager *screenManager) {
+	warning("TODO: CPetControlSub12::draw");
+}
+
 } // End of namespace Titanic

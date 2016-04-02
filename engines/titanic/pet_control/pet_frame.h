@@ -89,6 +89,11 @@ public:
 	 * Draws the PET frame
 	 */
 	void drawFrame(CScreenManager *screenManager);
+
+	/**
+	 * Draws the indent
+	 */
+	void drawIndent(CScreenManager *screenManager, int indent);
 };
 
 } // End of namespace Titanic

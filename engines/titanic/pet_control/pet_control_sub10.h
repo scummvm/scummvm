@@ -26,6 +26,7 @@
 #include "titanic/core/list.h"
 #include "titanic/pet_control/pet_control_sub10.h"
 #include "titanic/pet_control/pet_control_list_item.h"
+#include "titanic/screen_manager.h"
 
 namespace Titanic {
 
@@ -54,6 +55,11 @@ public:
 	virtual void proc11();
 
 	void set20(int val) { _field20 = val; }
+
+	/**
+	 * Draw the control
+	 */
+	void draw(CScreenManager *screenManager);
 };
 
 } // End of namespace Titanic

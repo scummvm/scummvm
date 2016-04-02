@@ -62,6 +62,16 @@ public:
 	virtual bool setup();
 
 	/**
+	 * Draw the section
+	 */
+	virtual void draw(CScreenManager *screenManager);
+	
+	/**
+	 * Get the bounds for the section
+	 */
+	virtual Rect getBounds();
+	
+	/**
 	 * Save the data for the class to file
 	 */
 	virtual void save(SimpleFile *file, int indent) const;

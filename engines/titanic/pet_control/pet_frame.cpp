@@ -143,4 +143,10 @@ void CPetFrame::drawFrame(CScreenManager *screenManager) {
 	_titles[_petControl->_currentArea].draw(screenManager);
 }
 
+void CPetFrame::drawIndent(CScreenManager *screenManager, int indent) {
+	indent = CLIP(indent, 0, 7);
+	for (int idx = 0; idx < indent; ++indent)
+		_indent[idx].draw(screenManager);
+}
+
 } // End of namespace Titanic
