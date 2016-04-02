@@ -43,7 +43,16 @@ GfxControls32::GfxControls32(SegManager *segMan, GfxCache *cache, GfxText32 *tex
 	_overwriteMode(false),
 	_nextCursorFlashTick(0)
 {
+	// SSCI used a memory handle for a ScrollWindow object as ID.
+	// We use a simple numeric handle instead.
 	_lastScrollWindowId = make_reg(0, 9999);
+}
+
+GfxControls32::~GfxControls32() {
+	Common::HashMap<int, ScrollWindow *>::iterator i;
+	for (i = _scrollWindows.begin(); i != _scrollWindows.end(); ++i)
+		delete i->_value;
+	_scrollWindows.clear();
 }
 
 Common::Array<reg_t> GfxControls32::listObjectReferences() {
@@ -443,8 +452,7 @@ ScrollWindow::ScrollWindow(SegManager *segMan, const Common::Rect &rect,
 
 ScrollWindow::~ScrollWindow() {
 	// _gfxText32._bitmap will get GCed once ScrollWindow is gone.
-
-	delete _screenItem;
+	// _screenItem will be deleted by GfxFrameout
 }
 
 
