@@ -700,14 +700,16 @@ void GnapEngine::initGameFlags(int num) {
 	}
 
 	//DEBUG!
+#if 0
 //	setFlag(0); // Enable platypus
 	setFlag(25);
 	invClear();
 	invAdd(kItemMagazine);
+#endif
 #if 0
 	invAdd(kItemDisguise);
 #endif
-#if 1
+#if 0
 	//invAdd(kItemGas);
 	invAdd(kItemJoint);
 	//invAdd(kItemKeys);
@@ -741,14 +743,14 @@ void GnapEngine::mainLoop() {
 	invClear();
 	clearFlags();
 	_grabCursorSpriteIndex = -1;
-	_grabCursorSprite = 0;
+	_grabCursorSprite = nullptr;
 
 	debug("MainLoop #1");
 
 	// > DEBUG BEGIN
-	_currentSceneNum = 53;
-	_newSceneNum = 48;
-	_newCursorValue = 3;
+	_currentSceneNum = 0;
+	_newSceneNum = 1;
+	_newCursorValue = 1;
 	// < DEBUG END
 
 	loadStockDat();
@@ -890,7 +892,7 @@ void GnapEngine::checkGameKeys() {
 		updatePause();
 	}
 	// TODO? Debug input
-	debug("facing %d", _gnapIdleFacing);
+//	debug("facing %d", _gnapIdleFacing);
 }
 
 void GnapEngine::startSoundTimerA(int timerIndex) {
@@ -2170,12 +2172,6 @@ void GnapEngine::playSequences(int fullScreenSpriteId, int sequenceId1, int sequ
 	removeFullScreenSprite();
 	showCursor();
 	_gnapSequenceId = sequenceId3;
-}
-
-// Scene 0
-
-int GnapEngine::scene00_init() {
-	return 0x37C;
 }
 
 void GnapEngine::toyUfoSetStatus(int flagNum) {

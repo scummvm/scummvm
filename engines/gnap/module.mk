@@ -9,6 +9,7 @@ MODULE_OBJS := \
 	menu.o \
 	resource.o \
 	sound.o \
+	scenes/scene00.o \
 	scenes/scene01.o \
 	scenes/scene02.o \
 	scenes/scene03.o \

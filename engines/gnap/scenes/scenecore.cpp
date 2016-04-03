@@ -31,12 +31,10 @@ int GnapEngine::initSceneLogic() {
 	int backgroundId = -1;
 
 	switch (_currentSceneNum) {
-#if 0 // TODO			
 	case 0:
 		backgroundId = scene00_init();
 		_gameSys->setScaleValues(0, 500, 1, 1000);
 		break;
-#endif			
 	case 1:
 		backgroundId = scene01_init();
 		scene01_updateHotspots();
@@ -347,12 +345,10 @@ int GnapEngine::initSceneLogic() {
 void GnapEngine::runSceneLogic() {
 	switch (_currentSceneNum) {
 	case 0:
-#if 0 // TODO				
 		scene00_run();
 		if (_newSceneNum == 55)
 			_newSceneNum = 8;
 		break;
-#endif
 	case 1:
 		scene01_run();
 		if (_newSceneNum == 55)

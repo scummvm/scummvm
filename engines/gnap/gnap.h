@@ -550,6 +550,7 @@ public:
 	
 	// Scene 0
 	int scene00_init();
+	void scene00_run();
 	
 	// Scene 1
 	int _s01_pigsIdCtr, _s01_smokeIdCtr;

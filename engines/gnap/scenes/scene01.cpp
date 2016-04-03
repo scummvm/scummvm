@@ -81,7 +81,6 @@ void GnapEngine::scene01_updateHotspots() {
 }
 
 void GnapEngine::scene01_run() {
-
 	// NOTE Removed _s01_dword_474380 which was set when the mud was taken
 	// which is also set in the global game flags.
 	
