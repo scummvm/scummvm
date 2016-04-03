@@ -604,7 +604,8 @@ void MohawkEngine_Myst::changeToCard(uint16 card, TransitionType transition) {
 			_gfx->runTransition(transition, Common::Rect(544, 333), 10, 0);
 		} else {
 			_gfx->copyBackBufferToScreen(Common::Rect(544, 333));
-			_needsUpdate = true;
+			_system->updateScreen();
+			_needsUpdate = false;
 		}
 	}
 
