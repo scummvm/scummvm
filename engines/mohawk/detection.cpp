@@ -221,10 +221,25 @@ SaveStateList MohawkMetaEngine::listSaves(const char *target) const {
 	// Loading games is only supported in Myst/Riven currently.
 #ifdef ENABLE_MYST
 	if (strstr(target, "myst")) {
-		filenames = Mohawk::MystGameState::generateSaveGameList();
+		filenames = g_system->getSavefileManager()->listSavefiles("myst-###.mys");
+		size_t prefixLen = sizeof("myst") - 1;
 
-		for (uint32 i = 0; i < filenames.size(); i++)
-			saveList.push_back(SaveStateDescriptor(i, filenames[i]));
+		for (Common::StringArray::const_iterator filename = filenames.begin(); filename != filenames.end(); ++filename) {
+			// Extract the slot number from the filename
+			char slot[4];
+			slot[0] = (*filename)[prefixLen + 1];
+			slot[1] = (*filename)[prefixLen + 2];
+			slot[2] = (*filename)[prefixLen + 3];
+			slot[3] = '\0';
+
+			int slotNum = atoi(slot);
+
+			// Read the description from the save
+			Common::String description = Mohawk::MystGameState::querySaveDescription(slotNum);
+			saveList.push_back(SaveStateDescriptor(slotNum, description));
+		}
+
+		Common::sort(saveList.begin(), saveList.end(), SaveStateDescriptorSlotComparator());
 	} else
 #endif
 	if (strstr(target, "riven")) {
@@ -238,11 +253,11 @@ SaveStateList MohawkMetaEngine::listSaves(const char *target) const {
 }
 
 void MohawkMetaEngine::removeSaveState(const char *target, int slot) const {
+
 	// Removing saved games is only supported in Myst/Riven currently.
 #ifdef ENABLE_MYST
 	if (strstr(target, "myst")) {
-		Common::StringArray filenames = Mohawk::MystGameState::generateSaveGameList();
-		Mohawk::MystGameState::deleteSave(filenames[slot]);
+		Mohawk::MystGameState::deleteSave(slot);
 	} else
 #endif
 	if (strstr(target, "riven")) {
@@ -254,13 +269,7 @@ void MohawkMetaEngine::removeSaveState(const char *target, int slot) const {
 SaveStateDescriptor MohawkMetaEngine::querySaveMetaInfos(const char *target, int slot) const {
 #ifdef ENABLE_MYST
 	if (strstr(target, "myst")) {
-		Common::StringArray filenames = Mohawk::MystGameState::generateSaveGameList();
-
-		if (slot >= (int) filenames.size()) {
-			return SaveStateDescriptor();
-		}
-
-		return Mohawk::MystGameState::querySaveMetaInfos(filenames[slot]);
+		return Mohawk::MystGameState::querySaveMetaInfos(slot);
 	} else
 #endif
 	{
