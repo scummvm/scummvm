@@ -147,10 +147,10 @@ bool DiskImage_NIB::open(const Common::String &filename) {
 				error("invalid NIB checksum");
 
 			// FIXME: This is a hires0/hires2-specific hack.
-			if (sector == 1)
-				sector = 2;
-			else if (sector == 2)
-				sector = 1;
+			if (track == 1)
+				track = 2;
+			else if (track == 2)
+				track = 1;
 
 			// Epilogue is de/aa plus a gap, but we don't care.
 		} else {
