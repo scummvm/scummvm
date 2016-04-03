@@ -658,6 +658,8 @@ Common::Error AdlEngine::loadGameState(int slot) {
 	_state.room = inFile->readByte();
 	_state.moves = inFile->readByte();
 	_state.isDark = inFile->readByte();
+	_state.time.hours = inFile->readByte();
+	_state.time.minutes = inFile->readByte();
 
 	uint32 size = inFile->readUint32BE();
 	if (size != _state.rooms.size())
@@ -666,6 +668,7 @@ Common::Error AdlEngine::loadGameState(int slot) {
 	for (uint i = 0; i < size; ++i) {
 		_state.rooms[i].picture = inFile->readByte();
 		_state.rooms[i].curPicture = inFile->readByte();
+		_state.rooms[i].isFirstTime = inFile->readByte();
 	}
 
 	size = inFile->readUint32BE();
@@ -744,11 +747,14 @@ Common::Error AdlEngine::saveGameState(int slot, const Common::String &desc) {
 	outFile->writeByte(_state.room);
 	outFile->writeByte(_state.moves);
 	outFile->writeByte(_state.isDark);
+	outFile->writeByte(_state.time.hours);
+	outFile->writeByte(_state.time.minutes);
 
 	outFile->writeUint32BE(_state.rooms.size());
 	for (uint i = 0; i < _state.rooms.size(); ++i) {
 		outFile->writeByte(_state.rooms[i].picture);
 		outFile->writeByte(_state.rooms[i].curPicture);
+		outFile->writeByte(_state.rooms[i].isFirstTime);
 	}
 
 	outFile->writeUint32BE(_state.items.size());
