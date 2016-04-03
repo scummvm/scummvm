@@ -33,21 +33,6 @@
 
 namespace Adl {
 
-DataBlockPtr HiRes2Engine::readDataBlockPtr(Common::ReadStream &f) const {
-	byte track = f.readByte();
-	byte sector = f.readByte();
-	byte offset = f.readByte();
-	byte size = f.readByte();
-
-	if (f.eos() || f.err())
-		error("Error reading DataBlockPtr");
-
-	if (track == 0 && sector == 0 && offset == 0 && size == 0)
-		return DataBlockPtr();
-
-	return _disk->getDataBlock(track, sector, offset, size);
-}
-
 void HiRes2Engine::runIntro() const {
 	StreamPtr stream(_disk->createReadStream(0x00, 0xd, 0x17, 1));
 
@@ -200,46 +185,6 @@ void HiRes2Engine::initState() {
 
 void HiRes2Engine::restartGame() {
 	initState();
-}
-
-void HiRes2Engine::drawItem(const Item &item, const Common::Point &pos) const {
-	StreamPtr stream(_itemPics[item.picture - 1]->createReadStream());
-	stream->readByte(); // Skip clear opcode
-	_graphics->drawPic(*stream, pos);
-}
-
-void HiRes2Engine::loadRoom(byte roomNr) {
-	Room &room = getRoom(roomNr);
-	StreamPtr stream(room.data->createReadStream());
-
-	uint16 descOffset = stream->readUint16LE();
-	uint16 commandOffset = stream->readUint16LE();
-
-	_roomData.pictures.clear();
-	// There's no picture count. The original engine always checks at most
-	// five pictures. We use the description offset to bound our search.
-	uint16 picCount = (descOffset - 4) / 5;
-
-	for (uint i = 0; i < picCount; ++i) {
-		byte nr = stream->readByte();
-		_roomData.pictures[nr] = readDataBlockPtr(*stream);
-	}
-
-	_roomData.description = readStringAt(*stream, descOffset, 0xff);
-
-	_roomData.commands.clear();
-	if (commandOffset != 0) {
-		stream->seek(commandOffset);
-		readCommands(*stream, _roomData.commands);
-	}
-}
-
-void HiRes2Engine::showRoom() {
-	drawPic(getCurRoom().curPicture, Common::Point());
-	drawItems();
-	_display->updateHiResScreen();
-	printString(_roomData.description);
-	_linesPrinted = 0;
 }
 
 Engine *HiRes2Engine_create(OSystem *syst, const AdlGameDescription *gd) {

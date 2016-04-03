@@ -60,13 +60,6 @@ private:
 	void init();
 	void initState();
 	void restartGame();
-	void drawItem(const Item &item, const Common::Point &pos) const;
-	void loadRoom(byte roomNr);
-	void showRoom();
-
-	DataBlockPtr readDataBlockPtr(Common::ReadStream &f) const;
-
-	Common::Array<DataBlockPtr> _itemPics;
 };
 
 } // End of namespace Adl

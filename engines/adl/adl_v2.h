@@ -47,6 +47,11 @@ protected:
 	byte roomArg(byte room) const;
 	void advanceClock();
 	void printString(const Common::String &str);
+	void drawItem(const Item &item, const Common::Point &pos) const;
+	void loadRoom(byte roomNr);
+	void showRoom();
+
+	DataBlockPtr readDataBlockPtr(Common::ReadStream &f) const;
 
 	void checkTextOverflow(char c);
 
@@ -72,6 +77,7 @@ protected:
 
 	uint _linesPrinted;
 	DiskImage *_disk;
+	Common::Array<DataBlockPtr> _itemPics;
 
 private:
 	int askForSlot(const Common::String &question);
