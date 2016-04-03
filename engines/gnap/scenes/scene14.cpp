@@ -52,7 +52,6 @@ void GnapEngine::scene14_updateHotspots() {
 }
 
 void GnapEngine::scene14_run() {
-
 	_largeSprite = nullptr;
 
 	queueInsertDeviceIcon();

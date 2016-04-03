@@ -138,7 +138,7 @@ void GnapEngine::scene53_runRandomCall() {
 
 void GnapEngine::scene53_runChitChatLine() {
 	bool flag = false;
-	int sequenceId;
+	int sequenceId = -1;
 	
 	_gameSys->setAnimation(0x6E, 1, 6);
 	_gameSys->insertSequence(0x6E, 1, 0, 0, kSeqNone, 16, 0, 0);
@@ -189,7 +189,7 @@ void GnapEngine::scene53_runChitChatLine() {
 			sequenceId = -1;
 			flag = 1;
 			_isLeavingScene = true;
-			_sceneDone = 1;
+			_sceneDone = true;
 			_gnapActionStatus = 0;
 			_newSceneNum = 17;
 			break;
@@ -320,18 +320,18 @@ void GnapEngine::scene53_run() {
 					scene53_runChitChatLine();
 					phoneNumber = 0;
 					phoneNumberLen = 0;
-					_sceneDone = 1;
+					_sceneDone = true;
 					_newSceneNum = 17;
 				} else if (phoneNumber != 5556789 || isFlag(20)) {				
 					scene53_runRandomCall();
 					phoneNumber = 0;
 					phoneNumberLen = 0;
-					_sceneDone = 1;
+					_sceneDone = true;
 					_newSceneNum = 17;
 				} else {
 					phoneNumber = 0;
 					phoneNumberLen = 0;
-					_sceneDone = 1;
+					_sceneDone = true;
 					_newSceneNum = 17;
 					if (_s53_isGnapPhoning)
 						setFlag(25);
@@ -359,7 +359,7 @@ void GnapEngine::scene53_run() {
 					_gnapActionStatus = -1;
 				}
 				_isLeavingScene = true;
-				_sceneDone = 1;
+				_sceneDone = true;
 				_gnapActionStatus = 0;
 				_newSceneNum = 17;
 			}
