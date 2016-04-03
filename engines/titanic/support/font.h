@@ -39,7 +39,7 @@ public:
 	size_t _dataSize;
 	int _field8;
 	int _maxCharWidth;
-	Common::Array<CharEntry> _chars;
+	CharEntry _chars[256];
 	int _field810;
 	int _field814;
 	int _field818;
@@ -51,6 +51,11 @@ public:
 	 * Load a specified font
 	 */
 	void load(int fontNumber);
+
+	/**
+	 * Return the width in pixels of the specified text
+	 */
+	int stringWidth(const CString &text) const;
 
 	/**
 	 * Write out a string

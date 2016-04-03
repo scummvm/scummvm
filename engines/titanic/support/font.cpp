@@ -66,4 +66,26 @@ void STFont::writeString(int maxWidth, const CString &text, int *v1, int *v2) {
 	warning("TODO: STFont::writeString");
 }
 
+int STFont::stringWidth(const CString &text) const {
+	if (text.empty())
+		return 0;
+
+	const char *srcP = text.c_str();
+	int total = 0;
+	char c;
+	while (c = *srcP++) {
+		if (c == 26) {
+			// Skip over command parameter bytes
+			srcP += 3;
+		} else if (c == 27) {
+			// Skip over command parameter bytes
+			srcP += 4;
+		} else if (c != '\n') {
+			total += _chars[c]._charWidth;
+		}
+	}
+
+	return total;
+}
+
 } // End of namespace Titanic
