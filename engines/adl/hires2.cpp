@@ -139,12 +139,11 @@ void HiRes2Engine::init() {
 }
 
 void HiRes2Engine::initState() {
-	_state.vars.clear();
+	_state = State();
 	_state.vars.resize(IDI_HR2_NUM_VARS);
 
 	StreamPtr stream(_disk->createReadStream(0x21, 0x5, 0x0e, 7));
 
-	_state.rooms.clear();
 	for (uint i = 0; i < IDI_HR2_NUM_ROOMS; ++i) {
 		Room room;
 		stream->readByte(); // number
@@ -159,7 +158,6 @@ void HiRes2Engine::initState() {
 
 	stream.reset(_disk->createReadStream(0x21, 0x0, 0x00, 2));
 
-	_state.items.clear();
 	byte id;
 	while ((id = stream->readByte()) != 0xff) {
 		Item item = { };

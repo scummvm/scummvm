@@ -207,17 +207,12 @@ void HiRes1Engine::init() {
 }
 
 void HiRes1Engine::initState() {
-	_state.room = 1;
-	_state.moves = 1;
-	_state.isDark = false;
-
-	_state.vars.clear();
+	_state = State();
 	_state.vars.resize(IDI_HR1_NUM_VARS);
 
 	StreamPtr stream(_files->createReadStream(IDS_HR1_EXE_1));
 
 	// Load room data from executable
-	_state.rooms.clear();
 	_roomDesc.clear();
 	stream->seek(IDI_HR1_OFS_ROOMS);
 	for (uint i = 0; i < IDI_HR1_NUM_ROOMS; ++i) {
@@ -232,7 +227,6 @@ void HiRes1Engine::initState() {
 	}
 
 	// Load item data from executable
-	_state.items.clear();
 	stream->seek(IDI_HR1_OFS_ITEMS);
 	byte id;
 	while ((id = stream->readByte()) != 0xff) {
