@@ -66,7 +66,6 @@ private:
 
 	DataBlockPtr readDataBlockPtr(Common::ReadStream &f) const;
 
-	DiskImage_DSK _disk;
 	Common::Array<DataBlockPtr> _itemPics;
 };
 

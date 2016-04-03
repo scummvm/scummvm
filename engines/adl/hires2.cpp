@@ -45,11 +45,11 @@ DataBlockPtr HiRes2Engine::readDataBlockPtr(Common::ReadStream &f) const {
 	if (track == 0 && sector == 0 && offset == 0 && size == 0)
 		return DataBlockPtr();
 
-	return _disk.getDataBlock(track, sector, offset, size);
+	return _disk->getDataBlock(track, sector, offset, size);
 }
 
 void HiRes2Engine::runIntro() const {
-	StreamPtr stream(_disk.createReadStream(0x00, 0xd, 0x17, 1));
+	StreamPtr stream(_disk->createReadStream(0x00, 0xd, 0x17, 1));
 
 	_display->setMode(DISPLAY_MODE_TEXT);
 
@@ -65,10 +65,11 @@ void HiRes2Engine::runIntro() const {
 void HiRes2Engine::init() {
 	_graphics = new Graphics_v2(*_display);
 
-	if (!_disk.open(IDS_HR2_DISK_IMAGE))
+	_disk = new DiskImage_DSK();
+	if (!_disk->open(IDS_HR2_DISK_IMAGE))
 		error("Failed to open disk image '" IDS_HR2_DISK_IMAGE "'");
 
-	StreamPtr stream(_disk.createReadStream(0x1f, 0x2, 0x04, 4));
+	StreamPtr stream(_disk->createReadStream(0x1f, 0x2, 0x04, 4));
 
 	for (uint i = 0; i < IDI_HR2_NUM_MESSAGES; ++i) {
 		DataBlockPtr str(readDataBlockPtr(*stream));
@@ -82,17 +83,17 @@ void HiRes2Engine::init() {
 	}
 
 	// Read parser messages
-	stream.reset(_disk.createReadStream(0x1a, 0x1));
+	stream.reset(_disk->createReadStream(0x1a, 0x1));
 	_strings.verbError = readStringAt(*stream, 0x4f);
 	_strings.nounError = readStringAt(*stream, 0x8e);
 	_strings.enterCommand = readStringAt(*stream, 0xbc);
 
 	// Read time string
-	stream.reset(_disk.createReadStream(0x19, 0x7, 0xd7));
+	stream.reset(_disk->createReadStream(0x19, 0x7, 0xd7));
 	_strings_v2.time = readString(*stream, 0xff);
 
 	// Read opcode strings
-	stream.reset(_disk.createReadStream(0x1a, 0x6, 0x00, 2));
+	stream.reset(_disk->createReadStream(0x1a, 0x6, 0x00, 2));
 	_strings_v2.saveInsert = readStringAt(*stream, 0x5f);
 	_strings_v2.saveReplace = readStringAt(*stream, 0xe5);
 	_strings_v2.restoreInsert = readStringAt(*stream, 0x132);
@@ -107,7 +108,7 @@ void HiRes2Engine::init() {
 	_messageIds.thanksForPlaying = IDI_HR2_MSG_THANKS_FOR_PLAYING;
 
 	// Load global picture data
-	stream.reset(_disk.createReadStream(0x19, 0xa, 0x80, 0));
+	stream.reset(_disk->createReadStream(0x19, 0xa, 0x80, 0));
 	byte picNr;
 	while ((picNr = stream->readByte()) != 0xff) {
 		if (stream->eos() || stream->err())
@@ -117,21 +118,21 @@ void HiRes2Engine::init() {
 	}
 
 	// Load item picture data
-	stream.reset(_disk.createReadStream(0x1e, 0x9, 0x05));
+	stream.reset(_disk->createReadStream(0x1e, 0x9, 0x05));
 	for (uint i = 0; i < IDI_HR2_NUM_ITEM_PICS; ++i) {
 		stream->readByte(); // number
 		_itemPics.push_back(readDataBlockPtr(*stream));
 	}
 
 	// Load commands from executable
-	stream.reset(_disk.createReadStream(0x1d, 0x7, 0x00, 4));
+	stream.reset(_disk->createReadStream(0x1d, 0x7, 0x00, 4));
 	readCommands(*stream, _roomCommands);
 
-	stream.reset(_disk.createReadStream(0x1f, 0x7, 0x00, 2));
+	stream.reset(_disk->createReadStream(0x1f, 0x7, 0x00, 2));
 	readCommands(*stream, _globalCommands);
 
 	// Load dropped item offsets
-	stream.reset(_disk.createReadStream(0x1b, 0x4, 0x15));
+	stream.reset(_disk->createReadStream(0x1b, 0x4, 0x15));
 	for (uint i = 0; i < IDI_HR2_NUM_ITEM_OFFSETS; ++i) {
 		Common::Point p;
 		p.x = stream->readByte();
@@ -140,11 +141,11 @@ void HiRes2Engine::init() {
 	}
 
 	// Load verbs
-	stream.reset(_disk.createReadStream(0x19, 0x0, 0x00, 3));
+	stream.reset(_disk->createReadStream(0x19, 0x0, 0x00, 3));
 	loadWords(*stream, _verbs, _priVerbs);
 
 	// Load nouns
-	stream.reset(_disk.createReadStream(0x22, 0x2, 0x00, 7));
+	stream.reset(_disk->createReadStream(0x22, 0x2, 0x00, 7));
 	loadWords(*stream, _nouns, _priNouns);
 }
 
@@ -152,7 +153,7 @@ void HiRes2Engine::initState() {
 	_state.vars.clear();
 	_state.vars.resize(IDI_HR2_NUM_VARS);
 
-	StreamPtr stream(_disk.createReadStream(0x21, 0x5, 0x0e, 7));
+	StreamPtr stream(_disk->createReadStream(0x21, 0x5, 0x0e, 7));
 
 	_state.rooms.clear();
 	for (uint i = 0; i < IDI_HR2_NUM_ROOMS; ++i) {
@@ -167,7 +168,7 @@ void HiRes2Engine::initState() {
 		_state.rooms.push_back(room);
 	}
 
-	stream.reset(_disk.createReadStream(0x21, 0x0, 0x00, 2));
+	stream.reset(_disk->createReadStream(0x21, 0x0, 0x00, 2));
 
 	_state.items.clear();
 	byte id;

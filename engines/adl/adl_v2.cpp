@@ -30,11 +30,13 @@ namespace Adl {
 
 AdlEngine_v2::~AdlEngine_v2() {
 	delete _random;
+	delete _disk;
 }
 
 AdlEngine_v2::AdlEngine_v2(OSystem *syst, const AdlGameDescription *gd) :
 		AdlEngine(syst, gd),
-		_linesPrinted(0) {
+		_linesPrinted(0),
+		_disk(nullptr) {
 	_random = new Common::RandomSource("adl");
 }
 

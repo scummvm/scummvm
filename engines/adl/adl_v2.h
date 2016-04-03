@@ -71,6 +71,7 @@ protected:
 	} _strings_v2;
 
 	uint _linesPrinted;
+	DiskImage *_disk;
 
 private:
 	int askForSlot(const Common::String &question);
