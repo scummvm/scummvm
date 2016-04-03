@@ -23,6 +23,7 @@
 #ifndef TITANIC_FILES_MANAGER_H
 #define TITANIC_FILES_MANAGER_H
 
+#include "common/winexe_ne.h"
 #include "titanic/core/list.h"
 #include "titanic/screen_manager.h"
 
@@ -36,6 +37,7 @@ class CFilesManagerList : public List<ListItem> {
 class CFilesManager {
 private:
 	CGameManager *_gameManager;
+	Common::NEResources *_exeResources;
 	CFilesManagerList _list;
 	CString _string1;
 	CString _string2;
@@ -47,6 +49,7 @@ private:
 	const CString _assetsPath;
 public:
 	CFilesManager();
+	~CFilesManager();
 
 	/**
 	 * Sets the game manager
@@ -80,6 +83,12 @@ public:
 	void fn4(const CString &name);
 
 	void fn5(const CString &name);
+
+	/**
+	 * Get a resource from the executable
+	 */
+	Common::SeekableReadStream *getResource(const CString &name,
+		const CString &area);
 };
 
 } // End of namespace Titanic

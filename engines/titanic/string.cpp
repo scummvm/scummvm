@@ -108,4 +108,15 @@ ImageType CString::imageTypeSuffix() const {
 		return IMAGETYPE_UNKNOWN;
 }
 
+CString CString::format(const char *fmt, ...) {
+	String output;
+
+	va_list va;
+	va_start(va, fmt);
+	output = String::vformat(fmt, va);
+	va_end(va);
+
+	return output;
+}
+
 } // End of namespace Titanic

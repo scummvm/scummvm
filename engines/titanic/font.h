@@ -24,14 +24,28 @@
 #define TITANIC_FONT_H
 
 #include "common/scummsys.h"
+#include "common/array.h"
 #include "titanic/string.h"
 
 namespace Titanic {
 
 class STFont {
+	struct CharEntry {
+		uint _charWidth;
+		uint _offset;
+	};
 public:
+	byte *_dataPtr;
+	size_t _dataSize;
+	int _field8;
+	int _maxCharWidth;
+	Common::Array<CharEntry> _chars;
+	int _field810;
+	int _field814;
+	int _field818;
 public:
 	STFont();
+	~STFont();
 
 	/**
 	 * Load a specified font

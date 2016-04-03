@@ -27,8 +27,12 @@
 namespace Titanic {
 
 CFilesManager::CFilesManager() : _gameManager(nullptr), 
-		_assetsPath("Assets"), _field0(0), _drive(-1), 
-		_field18(0), _field1C(0), _field3C(0) {
+		_assetsPath("Assets"), _exeResources(nullptr), _field0(0),
+		_drive(-1), _field18(0), _field1C(0), _field3C(0) {
+}
+
+CFilesManager::~CFilesManager() {
+	delete _exeResources;
 }
 
 bool CFilesManager::fileExists(const CString &name) {
@@ -87,6 +91,16 @@ void CFilesManager::fn4(const CString &name) {
 
 void CFilesManager::fn5(const CString &name) {
 	warning("TODO: CFilesManager::fn5");
+}
+
+Common::SeekableReadStream *CFilesManager::getResource(const CString &name,
+		const CString &area) {
+	if (!_exeResources) {
+		_exeResources = new Common::NEResources();
+		_exeResources->loadFromEXE("st.exe");
+	}
+	
+	return nullptr;
 }
 
 } // End of namespace Titanic

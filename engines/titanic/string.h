@@ -94,6 +94,11 @@ public:
 	int readInt() const {
 		return atoi(c_str());
 	}
+
+	/**
+	 * Format a string
+	 */
+	static CString format(const char *fmt, ...);
 };
 
 } // End of namespace Titanic
