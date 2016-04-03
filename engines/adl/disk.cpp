@@ -63,6 +63,159 @@ bool DiskImage_DSK::open(const Common::String &filename) {
 	return true;
 }
 
+const DataBlockPtr DiskImage_NIB::getDataBlock(uint track, uint sector, uint offset, uint size) const {
+	return Common::SharedPtr<DiskImage::DataBlock>(new DiskImage::DataBlock(this, track, sector, offset, size));
+}
+
+Common::SeekableReadStream *DiskImage_NIB::createReadStream(uint track, uint sector, uint offset, uint size) const {
+	_memStream->seek((track * _sectorsPerTrack + sector) * _bytesPerSector + offset);
+	Common::SeekableReadStream *stream = _memStream->readStream(size * _bytesPerSector + _bytesPerSector - offset);
+
+	if (_memStream->eos() || _memStream->err())
+		error("Error reading NIB image");
+
+	return stream;
+}
+
+// 4-and-4 encoding (odd-even)
+static uint8 read44(Common::SeekableReadStream *f) {
+	// 1s in the other fields, so we can just AND
+	uint8 ret = f->readByte();
+	return ((ret << 1) | 1) & f->readByte();
+}
+
+bool DiskImage_NIB::open(const Common::String &filename) {
+	assert(!_f->isOpen());
+
+	if (!_f->open(filename))
+		return false;
+
+	uint filesize = _f->size();
+	switch (filesize) {
+	case 232960:
+		_tracks = 35;
+		_sectorsPerTrack = 13;
+		_bytesPerSector = 256;
+		break;
+	default:
+		error("Unrecognized NIB image '%s' of size %d bytes", filename.c_str(), filesize);
+	}
+
+	// starting at 0xaa, 32 is invalid (see below)
+	const byte c_5and3_lookup[] = { 32, 0, 32, 1, 2, 3, 32, 32, 32, 32, 32, 4, 5, 6, 32, 32, 7, 8, 32, 9, 10, 11, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 12, 13, 32, 32, 14, 15, 32, 16, 17, 18, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 19, 20, 32, 21, 22, 23, 32, 32, 32, 32, 32, 24, 25, 26, 32, 32, 27, 28, 32, 29, 30, 31 };
+
+	uint32 diskSize = _tracks * _sectorsPerTrack * _bytesPerSector;
+	byte *diskImage = (byte *)calloc(diskSize, 1);
+	_memStream = new Common::MemoryReadStream(diskImage, diskSize, DisposeAfterUse::YES);
+
+	bool sawAddress = false;
+	uint8 volNo, track, sector;
+
+	while (_f->pos() < _f->size()) {
+		// Read until we find two sync bytes.
+		if (_f->readByte() != 0xd5 || _f->readByte() != 0xaa)
+			continue;
+
+		byte prologue = _f->readByte();
+
+		if (sawAddress && prologue == 0xb5) {
+			warning("NIB: data for %02x/%02x/%02x missing", volNo, track, sector);
+			sawAddress = false;
+		}
+
+		if (!sawAddress) {
+			sawAddress = true;
+
+			// We should always find the address field first.
+			if (prologue != 0xb5) {
+				// Accept a DOS 3.3(?) header at the start.
+				if (_f->pos() == 3 || prologue == 0x96) {
+					// But skip it.
+					_f->skip(20);
+					sawAddress = false;
+					continue;
+				} else {
+					error("unknown NIB field prologue %02x", prologue);
+				}
+			}
+
+			volNo = read44(_f);
+			track = read44(_f);
+			sector = read44(_f);
+			uint8 checksum = read44(_f);
+			if ((volNo ^ track ^ sector) != checksum)
+				error("invalid NIB checksum");
+
+			// FIXME: This is a hires0/hires2-specific hack.
+			if (sector == 1)
+				sector = 2;
+			else if (sector == 2)
+				sector = 1;
+
+			// Epilogue is de/aa plus a gap, but we don't care.
+		} else {
+			sawAddress = false;
+
+			// We should always find the data field after an address field.
+			// TODO: we ignore volNo?
+			byte *output = diskImage + (track * _sectorsPerTrack + sector) * _bytesPerSector;
+
+			// 5-and-3 uses 410 on-disk bytes, decoding to just over 256 bytes
+			byte inbuffer[410];
+			_f->read(inbuffer, 410);
+
+			bool truncated = false;
+			byte oldVal = 0;
+			for (uint n = 0; n < 410; ++n) {
+				// expand
+				assert(inbuffer[n] >= 0xaa); // corrupt file (TODO: assert?)
+				if (inbuffer[n] == 0xd5) {
+					// Early end of block.
+					truncated = true;
+					_f->seek(-(410 - n), SEEK_CUR);
+					warning("NIB: early end of block @ 0x%x (%x, %x)", _f->pos(), track, sector);
+					break;
+				}
+				byte val = c_5and3_lookup[inbuffer[n] - 0xaa];
+				if (val == 0x20) {
+					// Badly-encoded nibbles, stop trying to decode here.
+					truncated = true;
+					warning("NIB: bad nibble %02x @ 0x%x (%x, %x)", inbuffer[n], _f->pos(), track, sector);
+					_f->seek(-(410 - n), SEEK_CUR);
+					break;
+				}
+				// undo checksum
+				oldVal = val ^ oldVal;
+				inbuffer[n] = oldVal;
+			}
+			if (!truncated) {
+				byte checksum = _f->readByte();
+				if (checksum < 0xaa || oldVal != c_5and3_lookup[checksum - 0xaa])
+					warning("NIB: checksum mismatch @ (%x, %x)", track, sector);
+			}
+
+			// 8 bytes of nibbles expand to 5 bytes
+			// so we have 51 of these batches (255 bytes), plus 2 bytes of 'leftover' nibbles for byte 256
+			for (uint n = 0; n < 51; ++n) {
+				// e.g. figure 3.18 of Beneath Apple DOS
+				byte lowbits1 = inbuffer[51*3 - n];
+				byte lowbits2 = inbuffer[51*2 - n];
+				byte lowbits3 = inbuffer[51*1 - n];
+				byte lowbits4 = (lowbits1 & 2) << 1 | (lowbits2 & 2) | (lowbits3 & 2) >> 1;
+				byte lowbits5 = (lowbits1 & 1) << 2 | (lowbits2 & 1) << 1 | (lowbits3 & 1);
+				output[250 - 5*n] = (inbuffer[n + 51*3 + 1] << 3) | ((lowbits1 >> 2) & 0x7);
+				output[251 - 5*n] = (inbuffer[n + 51*4 + 1] << 3) | ((lowbits2 >> 2) & 0x7);
+				output[252 - 5*n] = (inbuffer[n + 51*5 + 1] << 3) | ((lowbits3 >> 2) & 0x7);
+				output[253 - 5*n] = (inbuffer[n + 51*6 + 1] << 3) | lowbits4;
+				output[254 - 5*n] = (inbuffer[n + 51*7 + 1] << 3) | lowbits5;
+			}
+			output[255] = (inbuffer[409] << 3) | (inbuffer[0] & 0x7);
+		}
+	}
+
+	return true;
+}
+
 const DataBlockPtr Files_Plain::getDataBlock(const Common::String &filename, uint offset) const {
 	return Common::SharedPtr<Files::DataBlock>(new Files::DataBlock(this, filename, offset));
 }

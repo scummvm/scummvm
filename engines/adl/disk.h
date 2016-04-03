@@ -125,6 +125,22 @@ public:
 	Common::SeekableReadStream *createReadStream(uint track, uint sector, uint offset = 0, uint size = 0) const;
 };
 
+// .NIB disk image
+class DiskImage_NIB : public DiskImage {
+public:
+	DiskImage_NIB() : _memStream(nullptr) { }
+	virtual ~DiskImage_NIB() {
+		delete _memStream;
+	}
+
+	bool open(const Common::String &filename);
+	const DataBlockPtr getDataBlock(uint track, uint sector, uint offset = 0, uint size = 0) const;
+	Common::SeekableReadStream *createReadStream(uint track, uint sector, uint offset = 0, uint size = 0) const;
+
+private:
+	Common::SeekableReadStream *_memStream;
+};
+
 // Data in files contained in Apple DOS 3.3 disk image
 class Files_DOS33 : public Files {
 public:
