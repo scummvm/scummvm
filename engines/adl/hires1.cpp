@@ -289,7 +289,35 @@ void HiRes1Engine::printMessage(uint idx) {
 	printString(msg);
 }
 
-void HiRes1Engine::drawItem(const Item &item, const Common::Point &pos) const {
+void HiRes1Engine::drawItems() {
+	Common::List<Item>::iterator item;
+
+	uint dropped = 0;
+
+	for (item = _state.items.begin(); item != _state.items.end(); ++item) {
+		// Skip items not in this room
+		if (item->room != _state.room)
+			continue;
+
+		if (item->state == IDI_ITEM_DROPPED) {
+			// Draw dropped item if in normal view
+			if (getCurRoom().picture == getCurRoom().curPicture)
+				drawItem(*item, _itemOffsets[dropped++]);
+		} else {
+			// Draw fixed item if current view is in the pic list
+			Common::Array<byte>::const_iterator pic;
+
+			for (pic = item->roomPictures.begin(); pic != item->roomPictures.end(); ++pic) {
+				if (*pic == getCurRoom().curPicture) {
+					drawItem(*item, item->position);
+					break;
+				}
+			}
+		}
+	}
+}
+
+void HiRes1Engine::drawItem(Item &item, const Common::Point &pos) {
 	if (item.isLineArt) {
 		StreamPtr stream(_corners[item.picture - 1]->createReadStream());
 		static_cast<Graphics_v1 *>(_graphics)->drawCorners(*stream, pos);
@@ -302,6 +330,9 @@ void HiRes1Engine::loadRoom(byte roomNr) {
 }
 
 void HiRes1Engine::showRoom() {
+	clearScreen();
+	loadRoom(_state.room);
+
 	if (!_state.isDark) {
 		drawPic(getCurRoom().curPicture);
 		drawItems();

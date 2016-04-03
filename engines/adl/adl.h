@@ -150,6 +150,7 @@ struct Item {
 	int state;
 	byte description;
 	Common::Array<byte> roomPictures;
+	bool isOnScreen;
 };
 
 struct Time {
@@ -238,7 +239,6 @@ protected:
 	virtual bool isInputValid(const Commands &commands, byte verb, byte noun, bool &is_any);
 
 	virtual void setupOpcodeTables();
-	virtual bool matchesCurrentPic(byte pic) const;
 	virtual byte roomArg(byte room) const;
 	virtual void advanceClock() { }
 
@@ -276,7 +276,6 @@ protected:
 	// Graphics
 	void clearScreen() const;
 	void drawPic(byte pic, Common::Point pos = Common::Point()) const;
-	void drawItems() const;
 
 	// Sound
 	void bell(uint count = 1) const;
@@ -290,7 +289,7 @@ protected:
 	Item &getItem(uint i);
 	byte getVar(uint i) const;
 	void setVar(uint i, byte value);
-	void takeItem(byte noun);
+	virtual void takeItem(byte noun);
 	void dropItem(byte noun);
 	bool matchCommand(ScriptEnv &env) const;
 	void doActions(ScriptEnv &env);
@@ -359,7 +358,8 @@ private:
 	virtual void runIntro() const { }
 	virtual void init() = 0;
 	virtual void initState() = 0;
-	virtual void drawItem(const Item &item, const Common::Point &pos) const = 0;
+	virtual void drawItems() = 0;
+	virtual void drawItem(Item &item, const Common::Point &pos) = 0;
 	virtual void loadRoom(byte roomNr) = 0;
 	virtual void showRoom() = 0;
 

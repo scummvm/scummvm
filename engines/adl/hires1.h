@@ -106,7 +106,8 @@ private:
 	void restartGame();
 	void printString(const Common::String &str);
 	void printMessage(uint idx);
-	void drawItem(const Item &item, const Common::Point &pos) const;
+	void drawItems();
+	void drawItem(Item &item, const Common::Point &pos);
 	void loadRoom(byte roomNr);
 	void showRoom();
 

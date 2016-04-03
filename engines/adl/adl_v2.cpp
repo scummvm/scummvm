@@ -37,7 +37,11 @@ AdlEngine_v2::~AdlEngine_v2() {
 AdlEngine_v2::AdlEngine_v2(OSystem *syst, const AdlGameDescription *gd) :
 		AdlEngine(syst, gd),
 		_linesPrinted(0),
-		_disk(nullptr) {
+		_disk(nullptr),
+		_itemRemoved(false),
+		_roomOnScreen(0),
+		_picOnScreen(0),
+		_itemsOnScreen(0) {
 	_random = new Common::RandomSource("adl");
 }
 
@@ -108,10 +112,6 @@ void AdlEngine_v2::setupOpcodeTables() {
 	Opcode(o2_setRoomFromVar);
 	// 0x20
 	Opcode(o2_initDisk);
-}
-
-bool AdlEngine_v2::matchesCurrentPic(byte pic) const {
-	return pic == getCurRoom().curPicture || pic == IDI_ANY;
 }
 
 byte AdlEngine_v2::roomArg(byte room) const {
@@ -195,7 +195,8 @@ void AdlEngine_v2::printString(const Common::String &str) {
 	_display->updateTextScreen();
 }
 
-void AdlEngine_v2::drawItem(const Item &item, const Common::Point &pos) const {
+void AdlEngine_v2::drawItem(Item &item, const Common::Point &pos) {
+	item.isOnScreen = true;
 	StreamPtr stream(_itemPics[item.picture - 1]->createReadStream());
 	stream->readByte(); // Skip clear opcode
 	_graphics->drawPic(*stream, pos);
@@ -228,11 +229,101 @@ void AdlEngine_v2::loadRoom(byte roomNr) {
 }
 
 void AdlEngine_v2::showRoom() {
-	drawPic(getCurRoom().curPicture, Common::Point());
-	drawItems();
+	bool redrawPic = false;
+
+	if (_state.room != _roomOnScreen) {
+		loadRoom(_state.room);
+		clearScreen();
+
+		if (!_state.isDark)
+			redrawPic = true;
+	} else {
+		if (getCurRoom().curPicture != _picOnScreen || _itemRemoved)
+			redrawPic = true;
+	}
+
+	if (redrawPic) {
+		_roomOnScreen = _state.room;
+		_picOnScreen = getCurRoom().curPicture;
+
+		drawPic(getCurRoom().curPicture);
+		_itemRemoved = false;
+		_itemsOnScreen = 0;
+
+		Common::List<Item>::iterator item;
+		for (item = _state.items.begin(); item != _state.items.end(); ++item)
+			item->isOnScreen = false;
+	}
+
+	if (!_state.isDark)
+		drawItems();
+
 	_display->updateHiResScreen();
 	printString(_roomData.description);
+
+	// FIXME: move to main loop?
 	_linesPrinted = 0;
+}
+
+void AdlEngine_v2::takeItem(byte noun) {
+	Common::List<Item>::iterator item;
+
+	for (item = _state.items.begin(); item != _state.items.end(); ++item) {
+		if (item->noun != noun || item->room != _state.room)
+			continue;
+
+		if (item->state == IDI_ITEM_DOESNT_MOVE) {
+			printMessage(_messageIds.itemDoesntMove);
+			return;
+		}
+
+		if (item->state == IDI_ITEM_DROPPED) {
+			item->room = IDI_ANY;
+			_itemRemoved = true;
+			return;
+		}
+
+		Common::Array<byte>::const_iterator pic;
+		for (pic = item->roomPictures.begin(); pic != item->roomPictures.end(); ++pic) {
+			if (*pic == getCurRoom().curPicture || *pic == IDI_ANY) {
+				item->room = IDI_ANY;
+				_itemRemoved = true;
+				item->state = IDI_ITEM_DROPPED;
+				return;
+			}
+		}
+	}
+
+	printMessage(_messageIds.itemNotHere);
+}
+
+void AdlEngine_v2::drawItems() {
+	Common::List<Item>::iterator item;
+
+	for (item = _state.items.begin(); item != _state.items.end(); ++item) {
+		// Skip items not in this room
+		if (item->room != _state.room)
+			continue;
+
+		if (item->isOnScreen)
+			continue;
+
+		if (item->state == IDI_ITEM_DROPPED) {
+			// Draw dropped item if in normal view
+			if (getCurRoom().picture == getCurRoom().curPicture)
+				drawItem(*item, _itemOffsets[_itemsOnScreen++]);
+		} else {
+			// Draw fixed item if current view is in the pic list
+			Common::Array<byte>::const_iterator pic;
+
+			for (pic = item->roomPictures.begin(); pic != item->roomPictures.end(); ++pic) {
+				if (*pic == getCurRoom().curPicture || *pic == IDI_ANY) {
+					drawItem(*item, item->position);
+					break;
+				}
+			}
+		}
+	}
 }
 
 DataBlockPtr AdlEngine_v2::readDataBlockPtr(Common::ReadStream &f) const {
@@ -304,6 +395,9 @@ int AdlEngine_v2::o2_moveItem(ScriptEnv &e) {
 
 	Item &item = getItem(e.arg(1));
 
+	if (item.room == _roomOnScreen)
+		_picOnScreen = 0;
+
 	// Set items that move from inventory to a room to state "dropped"
 	if (item.room == IDI_ANY && room != IDI_VOID_ROOM)
 		item.state = IDI_ITEM_DROPPED;
@@ -316,6 +410,10 @@ int AdlEngine_v2::o2_moveAllItems(ScriptEnv &e) {
 	OP_DEBUG_2("\tMOVE_ALL_ITEMS(%d %d)", roomStr(e.arg(1)).c_str(), roomStr(e.arg(2)).c_str());
 
 	byte room1 = roomArg(e.arg(1));
+
+	if (room1 == _state.room)
+		_picOnScreen = 0;
+
 	byte room2 = roomArg(e.arg(2));
 
 	Common::List<Item>::iterator item;
@@ -358,6 +456,8 @@ int AdlEngine_v2::o2_restore(ScriptEnv &e) {
 
 	_display->printString(_strings_v2.restoreReplace);
 	inputString();
+	_picOnScreen = 0;
+	_roomOnScreen = 0;
 	return 0;
 }
 

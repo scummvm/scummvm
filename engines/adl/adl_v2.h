@@ -43,13 +43,14 @@ protected:
 
 	// AdlEngine
 	virtual void setupOpcodeTables();
-	bool matchesCurrentPic(byte pic) const;
 	byte roomArg(byte room) const;
 	void advanceClock();
 	void printString(const Common::String &str);
-	void drawItem(const Item &item, const Common::Point &pos) const;
+	void drawItems();
+	void drawItem(Item &item, const Common::Point &pos);
 	void loadRoom(byte roomNr);
 	void showRoom();
+	void takeItem(byte noun);
 
 	DataBlockPtr readDataBlockPtr(Common::ReadStream &f) const;
 
@@ -78,6 +79,8 @@ protected:
 	uint _linesPrinted;
 	DiskImage *_disk;
 	Common::Array<DataBlockPtr> _itemPics;
+	bool _itemRemoved;
+	byte _roomOnScreen, _picOnScreen, _itemsOnScreen;
 
 private:
 	int askForSlot(const Common::String &question);

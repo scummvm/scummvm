@@ -379,10 +379,6 @@ void AdlEngine::setupOpcodeTables() {
 	Opcode(o1_setRoomPic);
 }
 
-bool AdlEngine::matchesCurrentPic(byte pic) const {
-	return pic == getCurRoom().curPicture;
-}
-
 byte AdlEngine::roomArg(byte room) const {
 	return room;
 }
@@ -397,36 +393,6 @@ void AdlEngine::drawPic(byte pic, Common::Point pos) const {
 		_graphics->drawPic(*_roomData.pictures[pic]->createReadStream(), pos);
 	else
 		_graphics->drawPic(*_pictures[pic]->createReadStream(), pos);
-}
-
-void AdlEngine::drawItems() const {
-	Common::List<Item>::const_iterator item;
-
-	uint dropped = 0;
-
-	for (item = _state.items.begin(); item != _state.items.end(); ++item) {
-		// Skip items not in this room
-		if (item->room != _state.room)
-			continue;
-
-		if (item->state == IDI_ITEM_DROPPED) {
-			// Draw dropped item if in normal view
-			if (getCurRoom().picture == getCurRoom().curPicture) {
-				drawItem(*item, _itemOffsets[dropped]);
-				++dropped;
-			}
-		} else {
-			// Draw fixed item if current view is in the pic list
-			Common::Array<byte>::const_iterator pic;
-
-			for (pic = item->roomPictures.begin(); pic != item->roomPictures.end(); ++pic) {
-				if (matchesCurrentPic(*pic)) {
-					drawItem(*item, item->position);
-					break;
-				}
-			}
-		}
-	}
 }
 
 void AdlEngine::bell(uint count) const {
@@ -508,7 +474,7 @@ void AdlEngine::takeItem(byte noun) {
 
 		Common::Array<byte>::const_iterator pic;
 		for (pic = item->roomPictures.begin(); pic != item->roomPictures.end(); ++pic) {
-			if (matchesCurrentPic(*pic)) {
+			if (*pic == getCurRoom().curPicture) {
 				item->room = IDI_ANY;
 				item->state = IDI_ITEM_DROPPED;
 				return;
@@ -566,9 +532,6 @@ Common::Error AdlEngine::run() {
 		// restoring in-game brings us to the same game state.
 		// (Also see comment below.)
 		if (!_isRestoring) {
-			clearScreen();
-			// FIXME: Should only be called when room changes
-			loadRoom(_state.room);
 			showRoom();
 
 			_canSaveNow = _canRestoreNow = true;
