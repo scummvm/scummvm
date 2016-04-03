@@ -2695,7 +2695,7 @@ msgstr "Das Video, welches den Anflug auf Myst zeigt, wurde in der ursprüngliche
 #. I18N: Option for fast scene switching
 #: engines/mohawk/dialogs.cpp:96 engines/mohawk/dialogs.cpp:239
 msgid "~Z~ip Mode Activated"
-msgstr "Schneller ~R~aumwechsel aktiviert"
+msgstr "~Zip-Modus aktiviert"
 
 #: engines/mohawk/dialogs.cpp:97
 msgid "~T~ransitions Enabled"
@@ -2704,7 +2704,7 @@ msgstr "Über~g~änge aktiviert"
 #. I18N: Drop book page
 #: engines/mohawk/dialogs.cpp:99
 msgid "~D~rop Page"
-msgstr "Seite ~w~egwerfen"
+msgstr "Seite ~a~blegen"
 
 #: engines/mohawk/dialogs.cpp:103
 msgid "Show ~M~ap"
