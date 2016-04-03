@@ -382,8 +382,6 @@ private:
 	bool _canSaveNow, _canRestoreNow;
 };
 
-AdlEngine *HiRes1Engine__create(OSystem *syst, const AdlGameDescription *gd);
-
 } // End of namespace Adl
 
 #endif
