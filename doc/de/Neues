@@ -109,7 +109,7 @@ Neue Portierungen:
      (verwendet von Mixed Up Mother Goose).
    - Feste Verzögerung von 2 Sekunden bei Raumwechseln entfernt und durch
      Heuristik ersetzt.
-   - Fehlerhafte Tastenbelegungen nach abspeichern/laden behoben
+   - Fehlerhafte Tastenbelegungen nach abspeichern/laden behoben.
 
  AGOS:
    - Arpeggio-Effekt in der Musik der Amiga-Version von Elvira 1 repariert.
@@ -121,7 +121,7 @@ Neue Portierungen:
      AdLib-Ausgabe erheblich und erhöht die Originaltreue.
 
  Baphomets Fluch 1:
-   - Sprachausgabe in Macintosh-Versionen korrigiert, wenn ScumMVM
+   - Sprachausgabe in Macintosh-Versionen korrigiert, wenn ScummVM
      auf Big-Endian-Systemen ausgeführt wird.
    - Fehler beim Laden eines Spielstandes aus dem Hauptmenü in der
      Bull's Head Hill-Szene korrigiert. Dieser Fehler trat womöglich auch
