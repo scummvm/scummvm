@@ -3131,7 +3131,7 @@ msgstr "Zwischen Grafikfiltern wechseln"
 
 #: engines/scumm/help.cpp:102
 msgid "Increase / Decrease scale factor"
-msgstr "Größenverhätlnis höher/niedriger"
+msgstr "Größenverhältnis höher/niedriger"
 
 #: engines/scumm/help.cpp:103
 msgid "Toggle aspect-ratio correction"
