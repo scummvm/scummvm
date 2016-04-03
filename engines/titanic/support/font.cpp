@@ -43,11 +43,10 @@ STFont::~STFont() {
 
 void STFont::load(int fontNumber) {
 	assert(!_dataPtr);
-	CString fontNumStr = CString::format("%d", fontNumber);
 	Common::SeekableReadStream *stream = g_vm->_filesManager.getResource(
-		fontNumStr, "STFont");
+		Common::WinResourceID("STFONT"), fontNumber);
 	if (!stream)
-		return;
+		error("Could not locate the specified font");
 
 	_field8 = stream->readUint32LE();
 	_maxCharWidth = stream->readUint32LE();

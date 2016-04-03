@@ -93,14 +93,14 @@ void CFilesManager::fn5(const CString &name) {
 	warning("TODO: CFilesManager::fn5");
 }
 
-Common::SeekableReadStream *CFilesManager::getResource(const CString &name,
-		const CString &area) {
+Common::SeekableReadStream *CFilesManager::getResource(
+	Common::WinResourceID area, Common::WinResourceID name) {
 	if (!_exeResources) {
-		_exeResources = new Common::NEResources();
+		_exeResources = new Common::PEResources();
 		_exeResources->loadFromEXE("st.exe");
 	}
 	
-	return nullptr;
+	return _exeResources->getResource(area, name);
 }
 
 } // End of namespace Titanic
