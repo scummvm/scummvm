@@ -41,9 +41,11 @@ const int *UpdateManager::getUpdateIntervals() {
 int UpdateManager::normalizeInterval(int interval) {
 	const int *val = updateIntervals;
 
-	while (*val != -1)
+	while (*val != -1) {
 		if (*val > interval)
 			return *val;
+		val++;
+	}
 
 	return val[-1];	// Return maximal acceptable value
 }
