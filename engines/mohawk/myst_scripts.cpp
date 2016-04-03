@@ -685,9 +685,14 @@ void MystScriptParser::o_changeBackgroundSound(uint16 op, uint16 var, uint16 arg
 	// Used on Channelwood Card 3225 with argc = 8 i.e. Conditional Sound List
 	debugC(kDebugScript, "Opcode %d: Process Sound Block", op);
 
-	Common::MemoryReadStream stream = Common::MemoryReadStream((const byte *) argv, argc * sizeof(uint16));
+	Common::MemoryWriteStreamDynamic writeStream = Common::MemoryWriteStreamDynamic(DisposeAfterUse::YES);
+	for (uint i = 0; i < argc; i++) {
+		writeStream.writeUint16LE(argv[i]);
+	}
 
-	MystSoundBlock soundBlock = _vm->readSoundBlock(&stream);
+	Common::MemoryReadStream readStream = Common::MemoryReadStream(writeStream.getData(), writeStream.size());
+
+	MystSoundBlock soundBlock = _vm->readSoundBlock(&readStream);
 	_vm->applySoundBlock(soundBlock);
 }
 
