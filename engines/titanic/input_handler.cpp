@@ -22,7 +22,7 @@
 
 #include "titanic/input_handler.h"
 #include "titanic/game_manager.h"
-#include "titanic/screen_manager.h"
+#include "titanic/support/screen_manager.h"
 #include "titanic/titanic.h"
 #include "titanic/pet_control/pet_control.h"
 

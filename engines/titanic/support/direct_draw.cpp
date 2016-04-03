@@ -24,7 +24,7 @@
 #include "engines/util.h"
 #include "graphics/pixelformat.h"
 #include "titanic/titanic.h"
-#include "titanic/direct_draw.h"
+#include "titanic/support/direct_draw.h"
 
 namespace Titanic {
 

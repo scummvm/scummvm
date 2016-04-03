@@ -23,7 +23,7 @@
 #ifndef TITANIC_FILE_ITEM_H
 #define TITANIC_FILE_ITEM_H
 
-#include "titanic/string.h"
+#include "titanic/support/string.h"
 #include "titanic/core/list.h"
 #include "titanic/core/tree_item.h"
 

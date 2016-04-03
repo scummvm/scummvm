@@ -20,7 +20,7 @@
  *
  */
 
-#include "titanic/rect.h"
+#include "titanic/support/rect.h"
 
 namespace Titanic {
 

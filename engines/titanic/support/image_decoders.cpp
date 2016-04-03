@@ -20,7 +20,7 @@
  *
  */
 
-#include "titanic/image_decoders.h"
+#include "titanic/support/image_decoders.h"
 
 namespace Titanic {
 

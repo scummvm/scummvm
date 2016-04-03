@@ -23,7 +23,7 @@
 #ifndef TITANIC_GAME_LOCATION_H
 #define TITANIC_GAME_LOCATION_H
 
-#include "titanic/simple_file.h"
+#include "titanic/support/simple_file.h"
 #include "titanic/core/node_item.h"
 #include "titanic/core/room_item.h"
 #include "titanic/core/view_item.h"

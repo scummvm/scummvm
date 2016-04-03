@@ -24,7 +24,7 @@
 #define TITANIC_PET_SECTION_H
 
 #include "titanic/messages/mouse_messages.h"
-#include "titanic/simple_file.h"
+#include "titanic/support/simple_file.h"
 
 namespace Titanic {
 

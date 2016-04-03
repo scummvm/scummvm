@@ -25,7 +25,7 @@
 
 #include "common/scummsys.h"
 #include "titanic/core/view_item.h"
-#include "titanic/video_surface.h"
+#include "titanic/support/video_surface.h"
 
 namespace Titanic {
 

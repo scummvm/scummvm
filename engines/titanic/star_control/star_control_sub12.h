@@ -23,7 +23,7 @@
 #ifndef TITANIC_STAR_CONTROL_SUB12_H
 #define TITANIC_STAR_CONTROL_SUB12_H
 
-#include "titanic/simple_file.h"
+#include "titanic/support/simple_file.h"
 #include "titanic/star_control/star_control_sub13.h"
 
 namespace Titanic {

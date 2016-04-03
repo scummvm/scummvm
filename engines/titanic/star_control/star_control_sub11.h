@@ -23,7 +23,7 @@
 #ifndef TITANIC_STAR_CONTROL_SUB11_H
 #define TITANIC_STAR_CONTROL_SUB11_H
 
-#include "titanic/simple_file.h"
+#include "titanic/support/simple_file.h"
 #include "titanic/star_control/star_control_sub12.h"
 #include "titanic/star_control/star_control_sub13.h"
 #include "titanic/star_control/star_control_sub15.h"

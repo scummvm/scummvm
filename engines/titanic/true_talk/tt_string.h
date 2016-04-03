@@ -23,7 +23,7 @@
 #ifndef TITANIC_TT_STRING_H
 #define TITANIC_TT_STRING_H
 
-#include "titanic/string.h"
+#include "titanic/support/string.h"
 
 namespace Titanic {
 

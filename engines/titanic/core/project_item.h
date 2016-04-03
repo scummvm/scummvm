@@ -24,7 +24,7 @@
 #define TITANIC_PROJECT_ITEM_H
 
 #include "common/scummsys.h"
-#include "titanic/simple_file.h"
+#include "titanic/support/simple_file.h"
 #include "titanic/core/dont_save_file_item.h"
 #include "titanic/core/file_item.h"
 #include "titanic/core/list.h"

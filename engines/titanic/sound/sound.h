@@ -23,7 +23,7 @@
 #ifndef TITANIC_SOUND_H
 #define TITANIC_SOUND_H
 
-#include "titanic/simple_file.h"
+#include "titanic/support/simple_file.h"
 #include "titanic/sound/sound_manager.h"
 #include "titanic/core/view_item.h"
 

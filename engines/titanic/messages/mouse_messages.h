@@ -23,7 +23,7 @@
 #ifndef TITANIC_MOUSE_MESSAGES_H
 #define TITANIC_MOUSE_MESSAGES_H
 
-#include "titanic/rect.h"
+#include "titanic/support/rect.h"
 #include "titanic/messages/messages.h"
 
 namespace Titanic {

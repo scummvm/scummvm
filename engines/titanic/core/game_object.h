@@ -23,8 +23,8 @@
 #ifndef TITANIC_GAME_OBJECT_H
 #define TITANIC_GAME_OBJECT_H
 
-#include "titanic/mouse_cursor.h"
-#include "titanic/rect.h"
+#include "titanic/support/mouse_cursor.h"
+#include "titanic/support/rect.h"
 #include "titanic/core/movie_clip.h"
 #include "titanic/core/named_item.h"
 #include "titanic/pet_control/pet_section.h"

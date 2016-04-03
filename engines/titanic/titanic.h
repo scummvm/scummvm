@@ -32,11 +32,11 @@
 #include "graphics/screen.h"
 #include "titanic/debugger.h"
 #include "titanic/events.h"
-#include "titanic/files_manager.h"
+#include "titanic/support/files_manager.h"
 #include "titanic/main_game_window.h"
-#include "titanic/movie.h"
-#include "titanic/screen_manager.h"
-#include "titanic/string.h"
+#include "titanic/support/movie.h"
+#include "titanic/support/screen_manager.h"
+#include "titanic/support/string.h"
 
 /**
  * This is the namespace of the Titanic engine.

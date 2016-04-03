@@ -21,16 +21,50 @@
  */
 
 #include "common/textconsole.h"
-#include "titanic/text_cursor.h"
+#include "titanic/support/font.h"
+#include "titanic/support/files_manager.h"
+#include "titanic/titanic.h"
 
 namespace Titanic {
 
-CTextCursor::CTextCursor() : _active(false) {
+STFont::STFont() {
+	_dataPtr = nullptr;
+	_dataSize = 0;
+	_field8 = 0;
+	_maxCharWidth = 0;
+	_field810 = 0;
+	_field814 = 0;
+	_field818 = 0;
 }
 
-Rect CTextCursor::getBounds() {
-	warning("CTextCursor::getBounds");
-	return Rect();
+STFont::~STFont() {
+	delete[] _dataPtr;
+}
+
+void STFont::load(int fontNumber) {
+	assert(!_dataPtr);
+	CString fontNumStr = CString::format("%d", fontNumber);
+	Common::SeekableReadStream *stream = g_vm->_filesManager.getResource(
+		fontNumStr, "STFont");
+	if (!stream)
+		return;
+
+	_field8 = stream->readUint32LE();
+	_maxCharWidth = stream->readUint32LE();
+	for (uint idx = 0; idx < 256; ++idx)
+		_chars[idx]._charWidth = stream->readUint32LE();
+	for (uint idx = 0; idx < 256; ++idx)
+		_chars[idx]._offset = stream->readUint32LE();
+
+	_dataSize = stream->readUint32LE();
+	_dataPtr = new byte[_dataSize];
+	stream->read(_dataPtr, _dataSize);
+
+	delete stream;
+}
+
+void STFont::writeString(int maxWidth, const CString &text, int *v1, int *v2) {
+	warning("TODO: STFont::writeString");
 }
 
 } // End of namespace Titanic

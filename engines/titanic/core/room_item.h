@@ -23,7 +23,7 @@
 #ifndef TITANIC_ROOM_ITEM_H
 #define TITANIC_ROOM_ITEM_H
 
-#include "titanic/rect.h"
+#include "titanic/support/rect.h"
 #include "titanic/core/list.h"
 #include "titanic/core/movie_clip.h"
 #include "titanic/core/named_item.h"

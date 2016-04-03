@@ -26,7 +26,7 @@
 #include "common/scummsys.h"
 #include "common/array.h"
 #include "graphics/managed_surface.h"
-#include "titanic/rect.h"
+#include "titanic/support/rect.h"
 
 namespace Titanic {
 

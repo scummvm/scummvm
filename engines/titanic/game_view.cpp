@@ -23,7 +23,7 @@
 #include "titanic/game_view.h"
 #include "titanic/game_manager.h"
 #include "titanic/main_game_window.h"
-#include "titanic/screen_manager.h"
+#include "titanic/support/screen_manager.h"
 
 namespace Titanic {
 

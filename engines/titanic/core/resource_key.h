@@ -23,7 +23,7 @@
 #ifndef TITANIC_RESOURCE_KEY_H
 #define TITANIC_RESOURCE_KEY_H
 
-#include "titanic/string.h"
+#include "titanic/support/string.h"
 #include "titanic/core/saveable_object.h"
 
 namespace Titanic {

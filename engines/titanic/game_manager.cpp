@@ -23,7 +23,7 @@
 #include "titanic/titanic.h"
 #include "titanic/game_manager.h"
 #include "titanic/game_view.h"
-#include "titanic/screen_manager.h"
+#include "titanic/support/screen_manager.h"
 #include "titanic/core/project_item.h"
 #include "titanic/messages/messages.h"
 #include "titanic/pet_control/pet_control.h"

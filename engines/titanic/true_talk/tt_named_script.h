@@ -23,7 +23,7 @@
 #ifndef TITANIC_TT_NAMED_SCRIPT_H
 #define TITANIC_TT_NAMED_SCRIPT_H
 
-#include "titanic/simple_file.h"
+#include "titanic/support/simple_file.h"
 #include "titanic/true_talk/tt_script_base.h"
 
 namespace Titanic {

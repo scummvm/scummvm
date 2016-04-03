@@ -3,29 +3,15 @@ MODULE := engines/titanic
 MODULE_OBJS := \
 	debugger.o \
 	detection.o \
-	direct_draw.o \
-	direct_draw_surface.o \
 	events.o \
-	files_manager.o \
-	font.o \
 	game_location.o \
 	game_manager.o \
 	game_state.o \
 	game_view.o \
-	image.o \
-	image_decoders.o \
 	input_handler.o \
 	input_translator.o \
 	main_game_window.o \
-	mouse_cursor.o \
-	movie.o \
-	rect.o \
-	screen_manager.o \
-	simple_file.o \
-	string.o \
-	text_cursor.o \
 	titanic.o \
-	video_surface.o \
 	carry/auditory_centre.o \
 	carry/arm.o \
 	carry/bowl_ear.o \
@@ -436,6 +422,20 @@ MODULE_OBJS := \
 	star_control/star_control_sub13.o \
 	star_control/star_control_sub14.o \
 	star_control/star_control_sub15.o \
+	support/direct_draw.o \
+	support/direct_draw_surface.o \
+	support/files_manager.o \
+	support/font.o \
+	support/image.o \
+	support/image_decoders.o \
+	support/mouse_cursor.o \
+	support/movie.o \
+	support/rect.o \
+	support/screen_manager.o \
+	support/simple_file.o \
+	support/string.o \
+	support/text_cursor.o \
+	support/video_surface.o \
 	true_talk/barbot_script.o \
 	true_talk/bellbot_script.o \
 	true_talk/deskbot_script.o \

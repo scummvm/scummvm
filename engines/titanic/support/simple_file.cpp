@@ -21,7 +21,7 @@
  */
 
 #include "common/util.h"
-#include "titanic/simple_file.h"
+#include "titanic/support/simple_file.h"
 
 namespace Titanic {
 

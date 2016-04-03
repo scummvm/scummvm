@@ -25,7 +25,7 @@
 
 #include "common/winexe_ne.h"
 #include "titanic/core/list.h"
-#include "titanic/screen_manager.h"
+#include "titanic/support/screen_manager.h"
 
 namespace Titanic {
 

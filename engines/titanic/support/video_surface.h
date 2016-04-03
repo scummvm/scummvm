@@ -25,10 +25,10 @@
 
 #include "common/scummsys.h"
 #include "common/array.h"
-#include "titanic/font.h"
-#include "titanic/direct_draw.h"
-#include "titanic/movie.h"
-#include "titanic/rect.h"
+#include "titanic/support/font.h"
+#include "titanic/support/direct_draw.h"
+#include "titanic/support/movie.h"
+#include "titanic/support/rect.h"
 #include "titanic/core/list.h"
 #include "titanic/core/resource_key.h"
 

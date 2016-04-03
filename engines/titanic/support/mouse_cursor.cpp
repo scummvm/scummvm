@@ -22,11 +22,11 @@
 
 #include "graphics/cursorman.h"
 #include "common/textconsole.h"
-#include "titanic/mouse_cursor.h"
-#include "titanic/movie.h"
-#include "titanic/screen_manager.h"
+#include "titanic/support/mouse_cursor.h"
+#include "titanic/support/movie.h"
+#include "titanic/support/screen_manager.h"
 #include "titanic/titanic.h"
-#include "titanic/video_surface.h"
+#include "titanic/support/video_surface.h"
 #include "titanic/core/resource_key.h"
 
 namespace Titanic {

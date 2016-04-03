@@ -20,7 +20,7 @@
  *
  */
 
-#include "titanic/screen_manager.h"
+#include "titanic/support/screen_manager.h"
 #include "titanic/star_control/star_control.h"
 
 namespace Titanic {

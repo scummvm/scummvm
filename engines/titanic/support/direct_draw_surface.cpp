@@ -20,8 +20,7 @@
  *
  */
 
-#include "common/rect.h"
-#include "titanic/direct_draw_surface.h"
+#include "titanic/support/direct_draw_surface.h"
 
 namespace Titanic {
 

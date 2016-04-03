@@ -23,8 +23,8 @@
 #ifndef TITANIC_PET_ELEMENT_H
 #define TITANIC_PET_ELEMENT_H
 
-#include "titanic/simple_file.h"
-#include "titanic/string.h"
+#include "titanic/support/simple_file.h"
+#include "titanic/support/string.h"
 #include "titanic/core/link_item.h"
 #include "titanic/messages/mouse_messages.h"
 

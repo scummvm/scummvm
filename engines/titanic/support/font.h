@@ -25,7 +25,7 @@
 
 #include "common/scummsys.h"
 #include "common/array.h"
-#include "titanic/string.h"
+#include "titanic/support/string.h"
 
 namespace Titanic {
 

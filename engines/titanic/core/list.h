@@ -25,7 +25,7 @@
 
 #include "common/scummsys.h"
 #include "common/list.h"
-#include "titanic/simple_file.h"
+#include "titanic/support/simple_file.h"
 #include "titanic/core/saveable_object.h"
 
 namespace Titanic {

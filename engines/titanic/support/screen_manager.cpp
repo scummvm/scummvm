@@ -20,9 +20,9 @@
  *
  */
 
-#include "titanic/screen_manager.h"
+#include "titanic/support/screen_manager.h"
 #include "titanic/titanic.h"
-#include "titanic/video_surface.h"
+#include "titanic/support/video_surface.h"
 
 namespace Titanic {
 

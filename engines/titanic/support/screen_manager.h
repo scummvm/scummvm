@@ -25,12 +25,12 @@
 
 #include "common/scummsys.h"
 #include "common/array.h"
-#include "titanic/direct_draw.h"
-#include "titanic/font.h"
+#include "titanic/support/direct_draw.h"
+#include "titanic/support/font.h"
 #include "titanic/input_handler.h"
-#include "titanic/mouse_cursor.h"
-#include "titanic/text_cursor.h"
-#include "titanic/video_surface.h"
+#include "titanic/support/mouse_cursor.h"
+#include "titanic/support/text_cursor.h"
+#include "titanic/support/video_surface.h"
 #include "titanic/core/resource_key.h"
 
 namespace Titanic {

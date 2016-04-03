@@ -24,11 +24,11 @@
 #define TITANIC_SIMPLE_FILE_H
 
 #include "common/file.h"
-#include "titanic/rect.h"
+#include "titanic/support/rect.h"
 #include "common/savefile.h"
 #include "common/stream.h"
 #include "common/zlib.h"
-#include "titanic/string.h"
+#include "titanic/support/string.h"
 
 namespace Titanic {
 

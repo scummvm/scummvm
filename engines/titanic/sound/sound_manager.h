@@ -23,7 +23,7 @@
 #ifndef TITANIC_SOUND_MANAGER_H
 #define TITANIC_SOUND_MANAGER_H
 
-#include "titanic/simple_file.h"
+#include "titanic/support/simple_file.h"
 
 namespace Titanic {
 

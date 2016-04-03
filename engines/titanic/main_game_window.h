@@ -27,7 +27,7 @@
 #include "common/array.h"
 #include "titanic/game_manager.h"
 #include "titanic/game_view.h"
-#include "titanic/image.h"
+#include "titanic/support/image.h"
 #include "titanic/core/project_item.h"
 
 namespace Titanic {

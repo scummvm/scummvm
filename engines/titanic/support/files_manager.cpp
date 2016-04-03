@@ -21,7 +21,7 @@
  */
 
 #include "common/file.h"
-#include "titanic/files_manager.h"
+#include "titanic/support/files_manager.h"
 #include "titanic/game_manager.h"
 
 namespace Titanic {

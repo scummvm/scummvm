@@ -23,7 +23,7 @@
 #ifndef TITANIC_PET_INVENTORY_H
 #define TITANIC_PET_INVENTORY_H
 
-#include "titanic/simple_file.h"
+#include "titanic/support/simple_file.h"
 #include "titanic/pet_control/pet_section.h"
 #include "titanic/pet_control/pet_control_sub10.h"
 #include "titanic/pet_control/pet_control_sub12.h"

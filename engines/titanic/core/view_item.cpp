@@ -21,7 +21,7 @@
  */
 
 #include "titanic/game_manager.h"
-#include "titanic/screen_manager.h"
+#include "titanic/support/screen_manager.h"
 #include "titanic/core/project_item.h"
 #include "titanic/core/room_item.h"
 #include "titanic/core/view_item.h"

@@ -27,7 +27,7 @@
 #include "common/array.h"
 #include "common/hash-str.h"
 #include "common/list.h"
-#include "titanic/simple_file.h"
+#include "titanic/support/simple_file.h"
 
 namespace Titanic {
 

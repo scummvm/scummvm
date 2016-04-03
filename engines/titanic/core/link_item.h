@@ -23,7 +23,7 @@
 #ifndef TITANIC_LINK_ITEM_H
 #define TITANIC_LINK_ITEM_H
 
-#include "titanic/mouse_cursor.h"
+#include "titanic/support/mouse_cursor.h"
 #include "titanic/core/named_item.h"
 #include "titanic/core/movie_clip.h"
 

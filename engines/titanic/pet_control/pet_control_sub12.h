@@ -23,8 +23,8 @@
 #ifndef TITANIC_PET_CONTROL_SUB12_H
 #define TITANIC_PET_CONTROL_SUB12_H
 
-#include "titanic/simple_file.h"
-#include "titanic/screen_manager.h"
+#include "titanic/support/simple_file.h"
+#include "titanic/support/screen_manager.h"
 
 namespace Titanic {
 

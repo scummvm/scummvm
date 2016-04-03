@@ -21,7 +21,7 @@
  */
 
 #include "common/algorithm.h"
-#include "titanic/string.h"
+#include "titanic/support/string.h"
 
 namespace Titanic {
 

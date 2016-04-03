@@ -24,7 +24,7 @@
 #define TITANIC_TEXT_CURSOR_H
 
 #include "common/scummsys.h"
-#include "titanic/rect.h"
+#include "titanic/support/rect.h"
 
 namespace Titanic {
 

@@ -20,11 +20,11 @@
  *
  */
 
-#include "titanic/files_manager.h"
+#include "titanic/support/files_manager.h"
 #include "titanic/game_manager.h"
-#include "titanic/screen_manager.h"
+#include "titanic/support/screen_manager.h"
 #include "titanic/titanic.h"
-#include "titanic/video_surface.h"
+#include "titanic/support/video_surface.h"
 #include "titanic/core/game_object.h"
 #include "titanic/core/resource_key.h"
 #include "titanic/pet_control/pet_control.h"

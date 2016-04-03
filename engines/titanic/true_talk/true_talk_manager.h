@@ -23,7 +23,7 @@
 #ifndef TITANIC_TRUE_TALK_MANAGER_H
 #define TITANIC_TRUE_TALK_MANAGER_H
 
-#include "titanic/simple_file.h"
+#include "titanic/support/simple_file.h"
 #include "titanic/true_talk/title_engine.h"
 #include "titanic/true_talk/tt_scripts.h"
 

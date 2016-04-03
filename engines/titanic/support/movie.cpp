@@ -20,7 +20,7 @@
  *
  */
 
-#include "titanic/movie.h"
+#include "titanic/support/movie.h"
 #include "titanic/titanic.h"
 
 namespace Titanic {

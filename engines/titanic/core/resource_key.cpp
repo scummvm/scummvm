@@ -22,7 +22,7 @@
 
 #include "common/file.h"
 #include "titanic/titanic.h"
-#include "titanic/simple_file.h"
+#include "titanic/support/simple_file.h"
 #include "titanic/core/resource_key.h"
 
 namespace Titanic {
