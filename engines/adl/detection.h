@@ -32,6 +32,7 @@ namespace Adl {
 
 enum GameType {
 	GAME_TYPE_NONE,
+	GAME_TYPE_HIRES0,
 	GAME_TYPE_HIRES1,
 	GAME_TYPE_HIRES2
 };

@@ -71,6 +71,7 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 };
 
 static const PlainGameDescriptor adlGames[] = {
+	{ "hires0", "Hi-Res Adventure #0: Mission Asteroid" },
 	{ "hires1", "Hi-Res Adventure #1: Mystery House" },
 	{ "hires2", "Hi-Res Adventure #2: Wizard and the Princess" },
 	{ 0, 0 }
@@ -107,7 +108,7 @@ static const AdlGameDescription gameDescriptions[] = {
 		},
 		GAME_TYPE_HIRES1
 	},
-	{ // Hi-Res Adventure #2: Wizard and the Princess - Apple II - 1986 SierraVenture release
+	{ // Hi-Res Adventure #2: Wizard and the Princess - Apple II - Roberta Williams Anthology
 		{
 			"hires2", 0,
 			{
@@ -120,6 +121,20 @@ static const AdlGameDescription gameDescriptions[] = {
 			GUIO2(GAMEOPTION_MONO, GAMEOPTION_SCANLINES)
 		},
 		GAME_TYPE_HIRES2
+	},
+	{ // Hi-Res Adventure #0: Mission Asteroid - Apple II - Roberta Williams Anthology
+		{
+			"hires0", 0,
+			{
+				{ "MISSION.NIB", 0, "b158f6f79681d4edd651e1932f9e01d7", 232960 },
+				AD_LISTEND
+			},
+			Common::EN_ANY,
+			Common::kPlatformApple2GS, // FIXME
+			ADGF_UNSTABLE,
+			GUIO2(GAMEOPTION_MONO, GAMEOPTION_SCANLINES)
+		},
+		GAME_TYPE_HIRES0
 	},
 	{ AD_TABLE_END_MARKER, GAME_TYPE_NONE }
 };
