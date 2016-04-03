@@ -510,6 +510,19 @@
 						type = 'PopUp'
 				/>
 			</layout>
+			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '6' center = 'true'>
+				<widget name = 'UpdatesPopupDesc'
+						width = '80'
+						height = 'Globals.Line.Height'
+						textalign = 'right'
+				/>
+				<widget name = 'UpdatesPopup'
+						type = 'PopUp'
+				/>
+                <widget name = 'UpdatesCheckManuallyButton'
+						type = 'Button'
+				/>
+			</layout>
 			<widget name='KeysButton'
  				     type='Button'
 			/>

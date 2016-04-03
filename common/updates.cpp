@@ -20,29 +20,47 @@
  *
  */
 
-#ifndef BACKENDS_UPDATES_MACOSX_H
-#define BACKENDS_UPDATES_MACOSX_H
-
-#include "common/scummsys.h"
-
-#if defined(MACOSX) && defined(USE_SPARKLE)
-
+#include "common/system.h"
 #include "common/updates.h"
+#include "common/translation.h"
 
-class MacOSXUpdateManager : public Common::UpdateManager {
-public:
-	MacOSXUpdateManager();
-	virtual ~MacOSXUpdateManager();
+namespace Common {
 
-	virtual void checkForUpdates();
-
-	virtual void setAutomaticallyChecksForUpdates(UpdateState state);
-	virtual UpdateState getAutomaticallyChecksForUpdates();
-
-	virtual void setUpdateCheckInterval(int interval);
-	virtual int getUpdateCheckInterval();
+static const int updateIntervals[] = {
+	UpdateManager::kUpdateIntervalNotSupported,
+	UpdateManager::kUpdateIntervalOneDay,
+	UpdateManager::kUpdateIntervalOneWeek,
+	UpdateManager::kUpdateIntervalOneMonth,
+	-1
 };
 
-#endif
+const int *UpdateManager::getUpdateIntervals() {
+	return updateIntervals;
+}
 
-#endif // BACKENDS_UPDATES_MACOSX_H
+int UpdateManager::normalizeInterval(int interval) {
+	const int *val = updateIntervals;
+
+	while (*val != -1)
+		if (*val > interval)
+			return *val;
+
+	return val[-1];	// Return maximal acceptable value
+}
+
+const char *UpdateManager::updateIntervalToString(int interval) {
+	switch (interval) {
+	case kUpdateIntervalNotSupported:
+		return _("Never");
+	case kUpdateIntervalOneDay:
+		return _("Daily");
+	case kUpdateIntervalOneWeek:
+		return _("Weekly");
+	case kUpdateIntervalOneMonth:
+		return _("Monthly");
+	default:
+		return _("<Bad value>");
+	}
+}
+
+} // End of namespace Common

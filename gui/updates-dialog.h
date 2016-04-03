@@ -20,29 +20,35 @@
  *
  */
 
-#ifndef BACKENDS_UPDATES_MACOSX_H
-#define BACKENDS_UPDATES_MACOSX_H
+#ifndef GUI_UPDATES_DIALOG_H
+#define GUI_UPDATES_DIALOG_H
 
-#include "common/scummsys.h"
+#include "gui/dialog.h"
 
-#if defined(MACOSX) && defined(USE_SPARKLE)
+namespace GUI {
 
-#include "common/updates.h"
+class CheckboxWidget;
+class CommandSender;
+class ButtonWidget;
+class PopUpWidget;
 
-class MacOSXUpdateManager : public Common::UpdateManager {
+/**
+ * Wizard for updates opt-in
+ */
+class UpdatesDialog : public Dialog {
 public:
-	MacOSXUpdateManager();
-	virtual ~MacOSXUpdateManager();
+	UpdatesDialog();
+	virtual ~UpdatesDialog() {}
 
-	virtual void checkForUpdates();
+	void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
 
-	virtual void setAutomaticallyChecksForUpdates(UpdateState state);
-	virtual UpdateState getAutomaticallyChecksForUpdates();
-
-	virtual void setUpdateCheckInterval(int interval);
-	virtual int getUpdateCheckInterval();
+private:
+	PopUpWidget *_updatesPopUp;
+	ButtonWidget *_yesButton;
+	ButtonWidget *_noButton;
+	CheckboxWidget *_updatesCheckbox;
 };
 
-#endif
+} // End of namespace GUI
 
-#endif // BACKENDS_UPDATES_MACOSX_H
+#endif

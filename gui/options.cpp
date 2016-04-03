@@ -36,6 +36,7 @@
 #include "common/system.h"
 #include "common/textconsole.h"
 #include "common/translation.h"
+#include "common/updates.h"
 
 #include "audio/mididrv.h"
 #include "audio/musicplugin.h"
@@ -61,7 +62,8 @@ enum {
 	kChooseExtraDirCmd		= 'chex',
 	kExtraPathClearCmd		= 'clex',
 	kChoosePluginsDirCmd	= 'chpl',
-	kChooseThemeCmd			= 'chtf'
+	kChooseThemeCmd			= 'chtf',
+	kUpdatesCheckCmd		= 'updc'
 };
 
 enum {
@@ -1229,6 +1231,22 @@ GlobalOptionsDialog::GlobalOptionsDialog()
 
 #endif // USE_TRANSLATION
 
+#ifdef USE_UPDATES
+	_updatesPopUpDesc = new StaticTextWidget(tab, "GlobalOptions_Misc.UpdatesPopupDesc", _("Update check:"), _("How often to check ScummVM updates"));
+	_updatesPopUp = new PopUpWidget(tab, "GlobalOptions_Misc.UpdatesPopup");
+
+	const int *vals = Common::UpdateManager::getUpdateIntervals();
+
+	while (*vals != -1) {
+		_updatesPopUp->appendEntry(Common::UpdateManager::updateIntervalToString(*vals), *vals);
+		vals++;
+	}
+
+	_updatesPopUp->setSelectedTag(Common::UpdateManager::normalizeInterval(ConfMan.getInt("updates_check")));
+
+	new ButtonWidget(tab, "GlobalOptions_Misc.UpdatesCheckManuallyButton", _("Check now"), 0, kUpdatesCheckCmd);
+#endif
+
 	// Activate the first tab
 	tab->setActiveTab(0);
 	_tabWidget = tab;
@@ -1367,6 +1385,19 @@ void GlobalOptionsDialog::close() {
 		}
 #endif // USE_TRANSLATION
 
+#ifdef USE_UPDATES
+		ConfMan.setInt("updates_check", _updatesPopUp->getSelectedTag());
+
+		if (g_system->getUpdateManager()) {
+			if (_updatesPopUp->getSelectedTag() == Common::UpdateManager::kUpdateIntervalNotSupported) {
+				g_system->getUpdateManager()->setAutomaticallyChecksForUpdates(Common::UpdateManager::kUpdateStateDisabled);
+			} else {
+				g_system->getUpdateManager()->setAutomaticallyChecksForUpdates(Common::UpdateManager::kUpdateStateEnabled);
+				g_system->getUpdateManager()->setUpdateCheckInterval(_updatesPopUp->getSelectedTag());
+			}
+		}
+#endif
+
 	}
 	OptionsDialog::close();
 }
@@ -1486,6 +1517,12 @@ void GlobalOptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 #ifdef USE_FLUIDSYNTH
 	case kFluidSynthSettingsCmd:
 		_fluidSynthSettingsDialog->runModal();
+		break;
+#endif
+#ifdef USE_UPDATES
+	case kUpdatesCheckCmd:
+		if (g_system->getUpdateManager())
+			g_system->getUpdateManager()->checkForUpdates();
 		break;
 #endif
 	default:

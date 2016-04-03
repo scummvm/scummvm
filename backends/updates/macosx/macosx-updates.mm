@@ -27,6 +27,7 @@
 
 #ifdef USE_SPARKLE
 #include "common/translation.h"
+#include "common/config-manager.h"
 
 #include <Cocoa/Cocoa.h>
 #include <Sparkle/Sparkle.h>
@@ -74,11 +75,13 @@ MacOSXUpdateManager::MacOSXUpdateManager() {
 	// Finally give up our references to the objects
 	[menuItem release];
 
-	// Enable automatic update checking once a day (alternatively use
-	// checkForUpdates() here to check for updates on every startup)
-	// TODO: Should be removed when an update settings gui is implemented
-	setAutomaticallyChecksForUpdates(kUpdateStateEnabled);
-	setUpdateCheckInterval(kUpdateIntervalOneDay);
+	if (!ConfMan.hasKey("updates_check")
+			|| ConfMan.getInt("updates_check") == Common::UpdateManager::kUpdateIntervalNotSupported) {
+		setAutomaticallyChecksForUpdates(kUpdateStateDisabled);
+	} else {
+		setAutomaticallyChecksForUpdates(kUpdateStateEnabled);
+		setUpdateCheckInterval(normalizeInterval(ConfMan.getInt("updates_check")));
+	}
 }
 
 MacOSXUpdateManager::~MacOSXUpdateManager() {
@@ -103,14 +106,16 @@ Common::UpdateManager::UpdateState MacOSXUpdateManager::getAutomaticallyChecksFo
 		return kUpdateStateDisabled;
 }
 
-void MacOSXUpdateManager::setUpdateCheckInterval(UpdateInterval interval) {
+void MacOSXUpdateManager::setUpdateCheckInterval(int interval) {
 	if (interval == kUpdateIntervalNotSupported)
 		return;
+
+	interval = normalizeInterval(interval);
 
 	[sparkleUpdater setUpdateCheckInterval:(NSTimeInterval)interval];
 }
 
-Common::UpdateManager::UpdateInterval MacOSXUpdateManager::getUpdateCheckInterval() {
+int MacOSXUpdateManager::getUpdateCheckInterval() {
 	// This is kind of a hack but necessary, as the value stored by Sparkle
 	// might have been changed outside of ScummVM (in which case we return the
 	// default interval of one day)
