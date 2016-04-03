@@ -161,7 +161,7 @@ void LoLEngine::snd_playSoundEffect(int track, int volume) {
 		return;
 
 	_lastSfxTrack = track;
-	if (track == -1 || track >= _ingameSoundListSize)
+	if (track == -1 || track >= _ingameSoundIndexSize)
 		return;
 
 	volume &= 0xFF;
@@ -216,10 +216,10 @@ bool LoLEngine::snd_processEnvironmentalSoundEffect(int soundId, int block) {
 		for (int i = 3; i > 0; i--) {
 			int dir = calcMonsterDirection(cbl & 0x1F, cbl >> 5, block & 0x1F, block >> 5);
 			cbl = (cbl + blockShiftTable[dir]) & 0x3FF;
-			if (cbl != block) {
-				if (testWallFlag(cbl, 0, 1))
-					_environmentSfxVol >>= 1;
-			}
+			if (cbl == block)
+				break;
+			if (testWallFlag(cbl, 0, 1))
+				_environmentSfxVol >>= 1;
 		}
 	}
 
