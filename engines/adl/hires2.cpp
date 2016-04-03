@@ -77,6 +77,10 @@ void HiRes2Engine::init() {
 	stream.reset(_disk->createReadStream(0x19, 0x7, 0xd7));
 	_strings_v2.time = readString(*stream, 0xff);
 
+	// Read line feeds
+	stream.reset(_disk->createReadStream(0x19, 0xb, 0xf8, 1));
+	_strings.lineFeeds = readString(*stream);
+
 	// Read opcode strings
 	stream.reset(_disk->createReadStream(0x1a, 0x6, 0x00, 2));
 	_strings_v2.saveInsert = readStringAt(*stream, 0x5f);
@@ -184,7 +188,9 @@ void HiRes2Engine::initState() {
 }
 
 void HiRes2Engine::restartGame() {
+	_display->printString(_strings.pressReturn);
 	initState();
+	_display->printAsciiString(_strings.lineFeeds);
 }
 
 Engine *HiRes2Engine_create(OSystem *syst, const AdlGameDescription *gd) {

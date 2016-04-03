@@ -339,6 +339,7 @@ protected:
 		Common::String nounError;
 		Common::String playAgain;
 		Common::String pressReturn;
+		Common::String lineFeeds;
 	} _strings;
 
 	struct {

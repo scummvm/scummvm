@@ -552,10 +552,10 @@ Common::Error AdlEngine::run() {
 	} else {
 		runIntro();
 		initState();
+		_display->printAsciiString(_strings.lineFeeds);
 	}
 
 	_display->setMode(DISPLAY_MODE_MIXED);
-	_display->printAsciiString("\r\r\r\r\r");
 
 	while (1) {
 		uint verb = 0, noun = 0;

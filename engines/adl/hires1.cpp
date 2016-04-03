@@ -156,6 +156,7 @@ void HiRes1Engine::init() {
 	_strings.nounError = readStringAt(*stream, IDI_HR1_OFS_STR_NOUN_ERROR);
 	_strings.playAgain = readStringAt(*stream, IDI_HR1_OFS_STR_PLAY_AGAIN);
 	_strings.pressReturn = readStringAt(*stream, IDI_HR1_OFS_STR_PRESS_RETURN);
+	_strings.lineFeeds = readStringAt(*stream, IDI_HR1_OFS_STR_LINE_FEEDS);
 
 	// Set message IDs
 	_messageIds.cantGoThere = IDI_HR1_MSG_CANT_GO_THERE;
@@ -258,10 +259,9 @@ void HiRes1Engine::initState() {
 }
 
 void HiRes1Engine::restartGame() {
-	initState();
 	_display->printString(_strings.pressReturn);
-	inputString(); // Missing in the original
-	_display->printAsciiString("\r\r\r\r\r");
+	initState();
+	_display->printAsciiString(_strings.lineFeeds);
 }
 
 void HiRes1Engine::printString(const Common::String &str) {

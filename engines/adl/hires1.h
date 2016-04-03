@@ -65,6 +65,7 @@ namespace Adl {
 #define IDI_HR1_OFS_STR_DONT_UNDERSTAND 0x6c51
 #define IDI_HR1_OFS_STR_GETTING_DARK    0x6c7c
 #define IDI_HR1_OFS_STR_PRESS_RETURN    0x5f68
+#define IDI_HR1_OFS_STR_LINE_FEEDS      0x59d4
 
 #define IDI_HR1_OFS_PD_TEXT_0    0x005d
 #define IDI_HR1_OFS_PD_TEXT_1    0x012b
