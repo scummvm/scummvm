@@ -92,7 +92,7 @@ bool CPetInventory::setPetControl(CPetControl *petControl) {
 	tempRect = Rect(0, 0, 580, 15);
 	tempRect.translate(32, 445);
 	_sub12.setBounds(tempRect);
-	_sub12.set70(0);
+	_sub12.setHasBorder(false);
 
 	return true;
 }

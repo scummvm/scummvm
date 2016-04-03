@@ -24,6 +24,7 @@
 #define TITANIC_FONT_H
 
 #include "common/scummsys.h"
+#include "titanic/string.h"
 
 namespace Titanic {
 
@@ -32,7 +33,16 @@ public:
 public:
 	STFont();
 
+	/**
+	 * Load a specified font
+	 */
 	void load(int fontNumber);
+
+	/**
+	 * Write out a string
+	 * TODO: Verify this
+	 */
+	void writeString(int maxWidth, const CString &text, int *v1, int *v2);
 };
 
 } // End of namespace Titanic

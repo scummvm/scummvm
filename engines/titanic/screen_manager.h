@@ -109,7 +109,13 @@ public:
 	virtual void proc13() = 0;
 	virtual void proc14() = 0;
 	virtual void proc15() = 0;
-	virtual void proc16() = 0;
+
+
+	/**
+	 * Write out a string
+	 */
+	virtual void writeString(int maxWidth, const CString &text, int *v1, int *v2) = 0;
+
 	virtual void getFont() = 0;
 	virtual void proc18() = 0;
 	virtual void proc19() = 0;
@@ -200,7 +206,12 @@ public:
 	virtual void proc13();
 	virtual void proc14();
 	virtual void proc15();
-	virtual void proc16();
+
+	/**
+	 * Write out a string
+	 */
+	virtual void writeString(int maxWidth, const CString &text, int *v1, int *v2);
+
 	virtual void getFont();
 	virtual void proc18();
 	virtual void proc19();

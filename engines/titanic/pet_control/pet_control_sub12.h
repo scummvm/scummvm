@@ -36,18 +36,18 @@ class CPetControlSub12 {
 	};
 private:
 	Common::Array<ArrayEntry> _array;
-	CString _string1;
-	int _field18;
+	CString _lines;
+	bool _stringsMerged;
 	Rect _bounds;
 	int _field30;
-	int _field34;
+	int _lineCount;
 	int _field38;
 	int _field3C;
 	int _field40;
 	int _field44;
-	int _field48;
-	int _field4C;
-	int _field50;
+	int _backR;
+	int _backG;
+	int _backB;
 	int _field54;
 	int _field58;
 	int _field5C;
@@ -55,7 +55,7 @@ private:
 	int _field64;
 	int _field68;
 	int _field6C;
-	int _field70;
+	bool _hasBorder;
 	int _field74;
 	int _field78;
 	int _field7C;
@@ -65,6 +65,11 @@ private:
 	void freeArrays();
 
 	void setArrayStr2(uint idx, int val1, int val2, int val3);
+
+	/**
+	 * Merges the strings in the strings array
+	 */
+	void mergeStrings();
 public:
 	CPetControlSub12(int count = 10);
 
@@ -83,7 +88,10 @@ public:
 	 */
 	void setBounds(const Rect &bounds) { _bounds = bounds; }
 
-	void set70(int val) { _field70 = val; }
+	/**
+	 * Sets the flag for whether to draw a frame border around the control
+	 */
+	void setHasBorder(bool val) { _hasBorder = val; }
 
 	/**
 	 * Draw the control

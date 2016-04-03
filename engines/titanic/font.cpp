@@ -20,6 +20,7 @@
  *
  */
 
+#include "common/textconsole.h"
 #include "titanic/font.h"
 
 namespace Titanic {
@@ -29,6 +30,10 @@ STFont::STFont() {
 
 void STFont::load(int fontNumber) {
 	// TODO
+}
+
+void STFont::writeString(int maxWidth, const CString &text, int *v1, int *v2) {
+	warning("TODO: STFont::writeString");
 }
 
 } // End of namespace Titanic

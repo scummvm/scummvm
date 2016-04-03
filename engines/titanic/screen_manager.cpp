@@ -198,7 +198,11 @@ void OSScreenManager::proc12() {}
 void OSScreenManager::proc13() {}
 void OSScreenManager::proc14() {}
 void OSScreenManager::proc15() {}
-void OSScreenManager::proc16() {}
+
+void OSScreenManager::writeString(int maxWidth, const CString &text, int *v1, int *v2) {
+	_fonts[_fontNumber].writeString(maxWidth, text, v1, v2);
+}
+
 void OSScreenManager::getFont() {}
 void OSScreenManager::proc18() {}
 void OSScreenManager::proc19() {}

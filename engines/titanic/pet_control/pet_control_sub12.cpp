@@ -25,11 +25,11 @@
 namespace Titanic {
 
 CPetControlSub12::CPetControlSub12(int count) :
-	_field18(0), _field30(-1), _field34(0), _field38(-1),
-	_field3C(0), _field40(0), _field44(0), _field48(0xff),
-	_field4C(0xff), _field50(0xff), _field54(0), _field58(0),
+	_stringsMerged(false), _field30(-1), _lineCount(0), _field38(-1),
+	_field3C(0), _field40(0), _field44(0), _backR(0xff),
+	_backG(0xff), _backB(0xff), _field54(0), _field58(0),
 	_field5C(200), _field60(0), _field64(0), _field68(0),
-	_field6C(0), _field70(1), _field74(0), _field78(0),
+	_field6C(0), _hasBorder(true), _field74(0), _field78(0),
 	_field7C(0) {
 	setupArrays(count);
 }
@@ -52,8 +52,8 @@ void CPetControlSub12::setup() {
 		_array[idx]._string3.clear();
 	}
 
-	_field34 = 0;
-	_field18 = 0;
+	_lineCount = 0;
+	_stringsMerged = false;
 }
 
 void CPetControlSub12::setArrayStr2(uint idx, int val1, int val2, int val3) {
@@ -86,13 +86,13 @@ void CPetControlSub12::load(SimpleFile *file, int param) {
 		_field3C = file->readNumber();
 		_field40 = file->readNumber();
 		_field44 = file->readNumber();
-		_field48 = file->readNumber();
-		_field4C = file->readNumber();
-		_field50 = file->readNumber();
+		_backR = file->readNumber();
+		_backG = file->readNumber();
+		_backB = file->readNumber();
 		_field54 = file->readNumber();
 		_field58 = file->readNumber();
 		_field5C = file->readNumber();
-		_field70 = file->readNumber();
+		_hasBorder = file->readNumber() != 0;
 		_field74 = file->readNumber();
 
 		warning("TODO: CPetControlSub12::load %d,%d", var1, var2);
@@ -108,11 +108,44 @@ void CPetControlSub12::load(SimpleFile *file, int param) {
 void CPetControlSub12::draw(CScreenManager *screenManager) {
 	Rect tempRect = _bounds;
 
-	if (_field70) {
+	if (_hasBorder) {
+		// Create border effect
+		// Top edge
+		tempRect.bottom = tempRect.top + 1;
+		screenManager->fillRect(SURFACE_BACKBUFFER, &tempRect, _backR, _backG, _backB);
 
+		// Bottom edge
+		tempRect.top = _bounds.bottom - 1;
+		tempRect.bottom = _bounds.bottom;
+		screenManager->fillRect(SURFACE_BACKBUFFER, &tempRect, _backR, _backG, _backB);
+
+		// Left edge
+		tempRect = _bounds;
+		tempRect.right = tempRect.left + 1;
+		screenManager->fillRect(SURFACE_BACKBUFFER, &tempRect, _backR, _backG, _backB);
+
+		// Right edge
+		tempRect = _bounds;
+		tempRect.left = tempRect.right - 1;
+		screenManager->fillRect(SURFACE_BACKBUFFER, &tempRect, _backR, _backG, _backB);
 	}
 
 	warning("TODO: CPetControlSub12::draw");
+}
+
+void CPetControlSub12::mergeStrings() {
+	if (!_stringsMerged) {
+		_lines.clear();
+
+		for (int idx = 0; idx < _lineCount; ++idx) {
+			CString line = _array[idx]._string2 + _array[idx]._string3 +
+				_array[idx]._string1 + "\n";
+			_lines += line;
+
+		}
+
+		_stringsMerged = true;
+	}
 }
 
 } // End of namespace Titanic
