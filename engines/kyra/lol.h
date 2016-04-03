@@ -463,6 +463,7 @@ private:
 
 	const uint8 *_musicTrackMap;
 	const uint16 *_ingameSoundIndex;
+	int _ingameSoundIndexSize;
 	const uint8 *_ingameGMSoundIndex;
 	int _ingameGMSoundIndexSize;
 	const uint8 *_ingameMT32SoundIndex;
