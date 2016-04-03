@@ -42,6 +42,9 @@ DataBlockPtr HiRes2Engine::readDataBlockPtr(Common::ReadStream &f) const {
 	if (f.eos() || f.err())
 		error("Error reading DataBlockPtr");
 
+	if (track == 0 && sector == 0 && offset == 0 && size == 0)
+		return DataBlockPtr();
+
 	return _disk.getDataBlock(track, sector, offset, size);
 }
 
@@ -70,7 +73,7 @@ void HiRes2Engine::init() {
 	for (uint i = 0; i < IDI_HR2_NUM_MESSAGES; ++i) {
 		DataBlockPtr str(readDataBlockPtr(*stream));
 
-		if (str->isValid()) {
+		if (str) {
 			StreamPtr strStream(str->createReadStream());
 			_messages.push_back(readString(*strStream, 0xff));
 		} else {

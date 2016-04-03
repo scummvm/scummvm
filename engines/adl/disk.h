@@ -38,7 +38,6 @@ class DataBlock {
 public:
 	virtual ~DataBlock() { }
 
-	virtual bool isValid() const = 0;
 	virtual Common::SeekableReadStream *createReadStream() const = 0;
 };
 
@@ -59,10 +58,6 @@ protected:
 				_files(files),
 				_filename(filename),
 				_offset(offset) { }
-
-		bool isValid() const {
-			return true;
-		}
 
 		Common::SeekableReadStream *createReadStream() const {
 			return _files->createReadStream(_filename, _offset);
@@ -101,10 +96,6 @@ protected:
 				_offset(offset),
 				_size(size),
 				_disk(disk) { }
-
-		bool isValid() const {
-			return _track != 0 || _sector != 0 || _offset != 0 || _size != 0;
-		}
 
 		Common::SeekableReadStream *createReadStream() const {
 			return _disk->createReadStream(_track, _sector, _offset, _size);
