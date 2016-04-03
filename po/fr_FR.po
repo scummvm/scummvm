@@ -2361,23 +2361,24 @@ msgstr ""
 "mouvements et la navigation dans les menus."
 
 #: engines/agi/detection.cpp:177
-#, fuzzy
 msgid "Use Hercules hires font"
-msgstr "Hercules Vert"
+msgstr "Utiliser les polices Hercules haute résolution"
 
 #: engines/agi/detection.cpp:178
 msgid "Uses Hercules hires font, when font file is available."
-msgstr ""
+msgstr "Utilise les polices Hercules haute résolution quand elles sont disponibles."
 
 #: engines/agi/detection.cpp:187
 msgid "Pause when entering commands"
-msgstr ""
+msgstr "Pause lors de la saisie de commandes"
 
 #: engines/agi/detection.cpp:188
 msgid ""
 "Shows a command prompt window and pauses the game (like in SCI) instead of a "
 "real-time prompt."
 msgstr ""
+"Affiche une fenêtre de saisie de commandes et interrompt le jeu (comme pour les jeux SCI) "
+"à la place d'un champ de saisie en temps réel."
 
 #: engines/agi/saveload.cpp:777 engines/avalanche/parser.cpp:1887
 #: engines/cge/events.cpp:85 engines/cge2/events.cpp:78
@@ -2670,11 +2671,11 @@ msgstr ""
 
 #: engines/mohawk/detection.cpp:168
 msgid "Play the Myst fly by movie"
-msgstr ""
+msgstr "Jouer la vidéo du survol de Myst"
 
 #: engines/mohawk/detection.cpp:169
 msgid "The Myst fly by movie was not played by the original engine."
-msgstr ""
+msgstr "La vidéo du survol de Myst n'était pas jouée par le moteur originel."
 
 #. I18N: Option for fast scene switching
 #: engines/mohawk/dialogs.cpp:96 engines/mohawk/dialogs.cpp:239
@@ -2691,12 +2692,10 @@ msgid "~D~rop Page"
 msgstr "~L~acher la Page"
 
 #: engines/mohawk/dialogs.cpp:103
-#, fuzzy
 msgid "Show ~M~ap"
-msgstr "Afficher la Carte"
+msgstr "Afficher la ~C~arte"
 
 #: engines/mohawk/dialogs.cpp:109
-#, fuzzy
 msgid "Main Men~u~"
 msgstr "~M~enu Principal"
 
@@ -3756,12 +3755,14 @@ msgstr "Afficher la description des objets lors de passage du pointeur"
 
 #: engines/sword25/detection.cpp:46
 msgid "Use English speech"
-msgstr ""
+msgstr "Utiliser les voix anglaises"
 
 #: engines/sword25/detection.cpp:47
 msgid ""
 "Use English speech instead of German for every language other than German"
 msgstr ""
+"Utilise les voix anglaises au lieu des voix allemandes pour tous les autres "
+"langages"
 
 #: engines/teenagent/resources.cpp:95
 msgid ""
