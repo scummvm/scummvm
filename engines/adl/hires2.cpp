@@ -139,6 +139,8 @@ void HiRes2Engine::init() {
 }
 
 void HiRes2Engine::initState() {
+	_linesPrinted = 0;
+
 	_state = State();
 	_state.vars.resize(IDI_HR2_NUM_VARS);
 
