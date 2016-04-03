@@ -1070,7 +1070,9 @@ int AdlEngine::o1_restart(ScriptEnv &e) {
 		_isRestarting = true;
 		_display->clear(0x00);
 		_display->updateHiResScreen();
-		restartGame();
+		_display->printString(_strings.pressReturn);
+		initState();
+		_display->printAsciiString(_strings.lineFeeds);
 		return -1;
 	}
 

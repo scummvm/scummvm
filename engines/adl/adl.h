@@ -359,7 +359,6 @@ private:
 	virtual void runIntro() const { }
 	virtual void init() = 0;
 	virtual void initState() = 0;
-	virtual void restartGame() = 0;
 	virtual void drawItem(const Item &item, const Common::Point &pos) const = 0;
 	virtual void loadRoom(byte roomNr) = 0;
 	virtual void showRoom() = 0;

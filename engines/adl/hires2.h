@@ -59,7 +59,6 @@ private:
 	void runIntro() const;
 	void init();
 	void initState();
-	void restartGame();
 };
 
 } // End of namespace Adl

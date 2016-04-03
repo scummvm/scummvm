@@ -187,12 +187,6 @@ void HiRes2Engine::initState() {
 	}
 }
 
-void HiRes2Engine::restartGame() {
-	_display->printString(_strings.pressReturn);
-	initState();
-	_display->printAsciiString(_strings.lineFeeds);
-}
-
 Engine *HiRes2Engine_create(OSystem *syst, const AdlGameDescription *gd) {
 	return new HiRes2Engine(syst, gd);
 }
