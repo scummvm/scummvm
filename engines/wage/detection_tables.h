@@ -47,7 +47,9 @@ static const ADGameDescription gameDescriptions[] = {
 	FANGAME("Carbon Copy", "9e781acd63290ae390d515cffc742011", 519445),
 	// Invalid rect in scene "FINALE"
 	FANGAME("Castle of Ert", "a45b439bb3a9c8a4a14b996024222068", 198955),
-	FANGAME("Deep Angst", "7f8821f7b279269a91f9aadfed98eec0", 329550),
+	FANGAMEN("Castle of Ert", "Castle of Ert.1", "a45b439bb3a9c8a4a14b996024222068", 198983), // alt version
+	FANGAMEND("Death Mall", "Death Mall Demo", "1c78fc15fb037b242a0bc6bac7d4d889", 254874),
+	FANGAME("Deep Angst", "7f8821f7b279269a91f9aadfed98eec0", 329550), // Original gile name "Deep Angst™"
 	FANGAME("Deep Ennui", "7fa4368834a22a9d4b7246a6297b455f", 86075),
 	// Polygons with ignored byte 1
 	FANGAME("Double Trouble", "3f0c032377d87704267283380800633a", 542371),
@@ -56,6 +58,8 @@ static const ADGameDescription gameDescriptions[] = {
 	// Crash at start in GUI rendering
 	FANGAME("Dune Eternity", "6b29f82e235815ffc4c9f30dc09968dd", 290201), // Original file name is "***DUNE ETERNITY*** "
 	FANGAMEN("Dungeon World II", "DungeonWorld2", "753df07166ca48e303d782cc72dd4053", 230199),
+	// Made for bigger resolution
+	FANGAME("Dynasty of Dar", "b2e9a5cca28acb85617b1477a5fca3e2", 275693),
 	FANGAME("Edg's World", "0a3a3aaa36088c514b668f1f62120006", 106769),
 	FANGAME("Eidisi I", "3d778c0fe7addf5f29e7593ba0fd3953", 172552),
 	FANGAME("Eidisi I", "8c2fb325a49344568c5536bba36a2556", 172566), // alt version
