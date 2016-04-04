@@ -65,15 +65,20 @@ static const ADGameDescription gameDescriptions[] = {
 	FANGAME("Eidisi I", "8c2fb325a49344568c5536bba36a2556", 172566), // alt version
 	// Problems(?) with text on the first screen
 	FANGAMEN("Enchanted Pencils", "Enchanted Pencils 0.99 (PG)", "9a9777a83e58bebfa6f1662d5e236384", 408913),
+	FANGAME("Escape!", "3ada261c2d1d9ce6b9da068237472689", 65075), // Original file name "Escape!†"
 	FANGAME("Escape from School!", "2055747bb874052333190eb993246a7f", 50105),
+	FANGAME("Escape from School!", "fcc581e52d1fc8ea4603d7c953fa935a", 50119), // Original file name "Escape from School!†"
 	FANGAME("Everyman 1", "e20cebf0091a1b1bf023aac6f28c9011", 335705),
 	FANGAME("Exploration Zeta!", "6127d9c04ad68f0cbb5f6aa1d95b48a2", 366599),
+	// Cannot proceed past the first scene
+	FANGAMEND("Explorer", "Explorer DEMO", "a9ebdecf6c8de95a03e593d877dacc13", 461228),
 	// Crash in console rendering on the first scene
 	FANGAME("Fantasy Quest", "b42b0e86e2c84464283640c74b25e015", 762754),
 	FANGAME("Find the Heart", "aa244c15f2ba8cef468714be34223acd", 106235), // From Joshua's Worlds 1.0
 	FANGAME("Find the Heart", "a6834cb230cea1953f5bf1f8f7aacabd", 105885), // From Joshua's Worlds. Alt version
 	FANGAME("Find the Heart", "a6834cb230cea1953f5bf1f8f7aacabd", 105871), // Standalone
 	FANGAMEN("Fortune Teller", "Fortune Teller 1.1", "7d2628eeea67b33379e01c0aef8dd196", 73931),
+	FANGAMEN("Haunted House", "Haunted House 1.5", "5db2f95c7abaa9d060b94271a5bc57f8", 177500),
 	// Cropped graphics on first scene
 	FANGAME("Intro to Gothic", "6f732eaad6e3b85795f8ee6c6a40d837", 208067),
 	// No Next button in intro
