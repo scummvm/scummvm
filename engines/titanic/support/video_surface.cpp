@@ -373,4 +373,9 @@ int OSVideoSurface::freeSurface() {
 	return surfaceSize;
 }
 
+uint16 *OSVideoSurface::getBasePtr(int x, int y) {
+	assert(_rawSurface);
+	return (uint16 *)_rawSurface->getBasePtr(x, y);
+}
+
 } // End of namespace Titanic

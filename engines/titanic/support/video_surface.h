@@ -176,7 +176,10 @@ public:
 	 */
 	virtual int freeSurface() { return 0; }
 
-
+	/**
+	 * Get a pointer into the underlying surface
+	 */
+	virtual uint16 *getBasePtr(int x, int y) = 0;
 
 	/**
 	 * Blit from another surface
@@ -299,6 +302,11 @@ public:
 	 * Frees the underlying surface
 	 */
 	virtual int freeSurface();
+
+	/**
+	 * Get a pointer into the underlying surface
+	 */
+	virtual uint16 *getBasePtr(int x, int y);
 };
 
 } // End of namespace Titanic

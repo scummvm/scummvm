@@ -30,11 +30,9 @@ namespace Titanic {
 STFont::STFont() {
 	_dataPtr = nullptr;
 	_dataSize = 0;
-	_field8 = 0;
-	_maxCharWidth = 0;
-	_field810 = 0;
-	_field814 = 0;
-	_field818 = 0;
+	_fontHeight = 0;
+	_dataWidth = 0;
+	_fontR = _fontG = _fontB = 0;
 }
 
 STFont::~STFont() {
@@ -48,10 +46,10 @@ void STFont::load(int fontNumber) {
 	if (!stream)
 		error("Could not locate the specified font");
 
-	_field8 = stream->readUint32LE();
-	_maxCharWidth = stream->readUint32LE();
+	_fontHeight = stream->readUint32LE();
+	_dataWidth = stream->readUint32LE();
 	for (uint idx = 0; idx < 256; ++idx)
-		_chars[idx]._charWidth = stream->readUint32LE();
+		_chars[idx]._width = stream->readUint32LE();
 	for (uint idx = 0; idx < 256; ++idx)
 		_chars[idx]._offset = stream->readUint32LE();
 
@@ -60,6 +58,16 @@ void STFont::load(int fontNumber) {
 	stream->read(_dataPtr, _dataSize);
 
 	delete stream;
+}
+
+void STFont::setColor(byte r, byte g, byte b) {
+	_fontR = r;
+	_fontG = g;
+	_fontB = b;
+}
+
+uint16 STFont::getColor() const {
+	return g_system->getScreenFormat().RGBToColor(_fontR, _fontG, _fontB);
 }
 
 void STFont::writeString(int maxWidth, const CString &text, int *v1, int *v2) {
@@ -81,11 +89,67 @@ int STFont::stringWidth(const CString &text) const {
 			// Skip over command parameter bytes
 			srcP += 4;
 		} else if (c != '\n') {
-			total += _chars[c]._charWidth;
+			total += _chars[c]._width;
 		}
 	}
 
 	return total;
+}
+
+int STFont::writeChar(CVideoSurface *surface, unsigned char c, const Common::Point &pt, Rect *destRect, Rect *srcRect) {
+	if (c == 233)
+		c = '$';
+
+	Rect tempRect;
+	tempRect.left = _chars[c]._offset;
+	tempRect.right = _chars[c]._offset + _chars[c]._width;
+	tempRect.top = 0;
+	tempRect.bottom = _fontHeight;
+	Point destPos(pt.x + destRect->left, pt.y + destRect->top);
+
+	if (srcRect->isEmpty())
+		srcRect = destRect;
+	if (destPos.y > srcRect->bottom)
+		return -2;
+
+	if ((destPos.y + tempRect.height()) > srcRect->bottom) {
+		tempRect.bottom += tempRect.top - destPos.y;
+	}
+
+	if (destPos.y < srcRect->top) {
+		if ((tempRect.height() + destPos.y) < srcRect->top)
+			return -1;
+
+		tempRect.top += srcRect->top - destPos.y;
+		destPos.y = srcRect->top;
+	}
+
+	if (destPos.x < srcRect->left) {
+		if ((tempRect.width() + destPos.x) < srcRect->left)
+			return -3;
+
+		tempRect.left += srcRect->left - destPos.x;
+		destPos.x = srcRect->left;
+	} else {
+		if ((tempRect.width() + destPos.x) > srcRect->right) {
+			if (destPos.x > srcRect->right)
+				return -4;
+
+			tempRect.right += srcRect->left - destPos.x;
+		}
+	}
+
+	copyRect(surface, destPos, tempRect);
+	return 0;
+}
+
+void STFont::copyRect(CVideoSurface *surface, const Common::Point &pt, Rect &rect) {
+	if (surface->lock()) {
+		uint16 *lineP = surface->getBasePtr(pt.x, pt.y);
+		uint16 color = getColor();
+
+		surface->unlock();
+	}
 }
 
 } // End of namespace Titanic

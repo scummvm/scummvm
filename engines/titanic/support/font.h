@@ -25,24 +25,38 @@
 
 #include "common/scummsys.h"
 #include "common/array.h"
+#include "titanic/support/rect.h"
 #include "titanic/support/string.h"
 
 namespace Titanic {
 
+class CVideoSurface;
+
 class STFont {
 	struct CharEntry {
-		uint _charWidth;
+		uint _width;
 		uint _offset;
 	};
+private:
+	/**
+	 * Copys a rectangle representing a character in the font data to
+	 * a given destination position in the surface
+	 */
+	void copyRect(CVideoSurface *surface, const Common::Point &destPos, 
+		Rect &srcRect);
+
+	/**
+	 * Write a character
+	 */
+	int writeChar(CVideoSurface *surface, unsigned char c, 
+		const Common::Point &pt, Rect *destRect, Rect *srcRect);
 public:
 	byte *_dataPtr;
 	size_t _dataSize;
-	int _field8;
-	int _maxCharWidth;
+	int _fontHeight;
+	uint _dataWidth;
 	CharEntry _chars[256];
-	int _field810;
-	int _field814;
-	int _field818;
+	byte _fontR, _fontG, _fontB;
 public:
 	STFont();
 	~STFont();
@@ -62,6 +76,16 @@ public:
 	 * TODO: Verify this
 	 */
 	void writeString(int maxWidth, const CString &text, int *v1, int *v2);
+
+	/**
+	 * Sets the font color
+	 */
+	void setColor(byte r, byte g, byte b);
+
+	/**
+	 * Gets the font color
+	 */
+	uint16 getColor() const;
 };
 
 } // End of namespace Titanic
