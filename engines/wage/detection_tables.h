@@ -113,12 +113,15 @@ static const ADGameDescription gameDescriptions[] = {
 	FANGAMEN("Pencils", "Pencils.99", "9c200938488565080e12989e784586e2", 408551),
 	// Polygons with byte 1
 	FANGAME("Periapt", "fb4052819126b88d7e03ebc00c669a9d", 406006),
+	FANGAME("Psychotic!", "6b4ae6261b405e2feac58c5a2ddb67c5", 247693),
 	FANGAME("Puzzle Piece Search", "6b4ae6261b405e2feac58c5a2ddb67c5", 247693), // From Joshua's Worlds 1.0
 	FANGAME("The Puzzle Piece Search", "fb99797c429c18ec68418fdd12af17a1", 247338), // From Joshua's Worlds
 	FANGAME("The Puzzle Piece Search", "fb99797c429c18ec68418fdd12af17a1", 247324), // Stnadalone
 	// Empty(?)  first scene
 	FANGAME("Pyramid of No Return", "38383ac85cc16703f13f8d82f1398123", 385145),
-	FANGAME("Queen Quest", "76d33bb847476b92cfe2581a019ff26c", 57026),
+	// Cropped graphics at the first scene
+	FANGAME("Psychotic!", "29b30e6aae9cc6db5eccb09f695ff25e", 367309),
+	FANGAME("P-W Adventure", "9bf86fb946683500d23887ef185726ab", 219216),
 	FANGAME("Queen Quest", "8273e29afe64a984eb0ce7b43fdf3a59", 57039), // alt version
 	FANGAME("Quest for T-Rex", "f16f2cd525c9aeb4733295d8d842b902", 592584),
 	// Crash in console rendering on the initial scene
@@ -131,6 +134,7 @@ static const ADGameDescription gameDescriptions[] = {
 	FANGAME("Sands of Time", "b00ea866cb04cd87124e5720bc2c84c7", 122672), // Original file name "Sands of Time†"
 	BIGGAME("scepters", "", "Scepters", "f8db17cd96be056cf8a8bb9cfe46cf3a", 346595),
 	BIGGAME("scepters", "", "Scepters", "1fd7ca93ef16f4752fb46ee9cfa0949a", 347540), // alt version
+	FANGAME("Schmoozer", "e0f416bae626e2c638055b7f495d8c78", 221500),
 	// ??? problems with dog bitmap?
 	FANGAMEN("Space Adventure", "SpaceAdventure", "7b6c883b3510e21cfabf4c8caaeb1f16", 155356),
 	FANGAMEN("Space Adventure", "SpaceAdventure", "3bd6fc9327f35db5390a9bf86afcd872", 155356), // alt version
