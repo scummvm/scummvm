@@ -83,6 +83,7 @@ static const ADGameDescription gameDescriptions[] = {
 	FANGAME("Intro to Gothic", "6f732eaad6e3b85795f8ee6c6a40d837", 208067),
 	// No Next button in intro
 	FANGAME("Jamie the Demon Slayer", "fa0ca9618c18425b6d9bf913f762d91b", 232789),
+	FANGAMEN("Journey", "The Journey 1.6.2 US", "e66f37472e1414a088eb5d5acc4df794", 820572),
 	// Problems with window overlay
 	FANGAMEN("Jumble", "LSJUMBLE", "7c46851d2f90c7da9efe40b1688869c2", 647339), // Original file name is "LSJUMBLE† "
 	FANGAME("Karth of the Jungle", "5f2346834821dc3c4008e139cd37b3cb", 96711),
@@ -97,6 +98,7 @@ static const ADGameDescription gameDescriptions[] = {
 	FANGAME("Messy House", "705df61da9e7d742b7ad678e59eb7bfb", 177120),
 	FANGAME("Midnight Snack", "76986389f9a08dd95450c8b9cf408653", 67952),
 	FANGAME("Midnight Snack", "76986389f9a08dd95450c8b9cf408653", 67966), // Alt version
+	FANGAME("Mike's House", "3d23c2b88cefd958bcbc4d4c711003d8", 87357),
 	FANGAME("Minitorian", "15fbb2bd75d83155ed21edbc5dc9558f", 586464),
 	FANGAME("M'Lord's Warrior", "0bebb2c62529c89590f6c5be6e1e9838", 465639), // Original file name is "M'Lord's Warrior †"
 	// Unhandled comparison case
