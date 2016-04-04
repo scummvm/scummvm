@@ -182,6 +182,34 @@ OSVideoSurface::OSVideoSurface(CScreenManager *screenManager, const CResourceKey
 	}
 }
 
+void OSVideoSurface::setupMap(byte map[0x400], byte val) {
+	byte *pBase = map;
+	int incr = 0;
+
+	for (uint idx1 = 0; idx1 < 32; ++idx1, pBase += 32) {
+		for (uint idx2 = 0, base = 0; idx2 < 32; ++idx2, base += incr) {
+			int64 v = 0x84210843;
+			v *= base;
+			v = ((v >> 32) + base) >> 4;
+			v += (v >> 31);
+			pBase[idx2] = v;
+
+			if (val != 0xff) {
+				v &= 0xff;
+				if (v != idx2) {
+					v = 0x80808081 * val * v * val;
+					v = (v >> 32) + incr;
+					incr = idx1;
+
+					v >>= 7;
+					v += (v >> 31);
+					pBase[idx2] = v;
+				}
+			}
+		}
+	}
+}
+
 void OSVideoSurface::loadResource(const CResourceKey &key) {
 	_resourceKey = key;
 	_pendingLoad = true;
@@ -321,6 +349,10 @@ uint16 OSVideoSurface::getPixel(const Common::Point &pt) {
 	} else {
 		return getTransparencyColor();
 	}
+}
+
+void OSVideoSurface::changePixel(uint16 *pixelP, uint16 color, int val3, int val5) {
+	// TODO
 }
 
 void OSVideoSurface::shiftColors() {

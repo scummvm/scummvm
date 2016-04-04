@@ -143,6 +143,11 @@ public:
 	virtual uint16 getPixel(const Common::Point &pt) = 0;
 
 	/**
+	 * Change a pixel
+	 */
+	virtual void changePixel(uint16 *pixelP, uint16 color, int val3, int val5) = 0;
+
+	/**
 	 * Shifts the colors of the surface.. maybe greys it out?
 	 */
 	virtual void shiftColors() = 0;
@@ -202,6 +207,18 @@ public:
 };
 
 class OSVideoSurface : public CVideoSurface {
+private:
+	static byte _map[0x400];
+
+	/**
+	 * Setup the color mapping table
+	 */
+	static void setupMap(byte map[0x400], byte val);
+public:
+	/**
+	 * Setup statics
+	 */
+	static void setup() { setupMap(_map, 0xff); }
 public:
 	OSVideoSurface(CScreenManager *screenManager, DirectDrawSurface *surface);
 	OSVideoSurface(CScreenManager *screenManager, const CResourceKey &key, bool flag = false);
@@ -270,6 +287,11 @@ public:
 	 * Gets the pixel at the specified position within the surface
 	 */
 	virtual uint16 getPixel(const Common::Point &pt);
+
+	/**
+	 * Change a pixel
+	 */
+	virtual void changePixel(uint16 *pixelP, uint16 color, int val3, int val5);
 
 	/**
 	 * Shifts the colors of the surface.. maybe greys it out?
