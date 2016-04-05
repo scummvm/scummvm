@@ -281,7 +281,7 @@ void WageEngine::performInitialSetup() {
 	debug(5, "Resetting Owners: %d", _world->_orderedObjs.size());
 	for (uint i = 0; i < _world->_orderedObjs.size(); i++) {
 		Obj *obj = _world->_orderedObjs[i];
-		if (!obj->_sceneOrOwner.equalsIgnoreCase(STORAGESCENE)) {
+		if (!isStorageScene(obj->_sceneOrOwner)) {
 			Common::String location = obj->_sceneOrOwner;
 			location.toLowercase();
 			Scene *scene = getSceneByName(location);
@@ -290,7 +290,7 @@ void WageEngine::performInitialSetup() {
 			} else {
 				if (!_world->_chrs.contains(location)) {
 					// Note: PLAYER@ is not a valid target here.
-					warning("Couldn't move %s to %s", obj->_name.c_str(), obj->_sceneOrOwner.c_str());
+					warning("Couldn't move %s to \"%s\"", obj->_name.c_str(), obj->_sceneOrOwner.c_str());
 				} else {
 					// TODO: Add check for max items.
 					_world->move(obj, _world->_chrs[location]);
@@ -302,7 +302,7 @@ void WageEngine::performInitialSetup() {
 	bool playerPlaced = false;
 	for (uint i = 0; i < _world->_orderedChrs.size(); i++) {
 		Chr *chr = _world->_orderedChrs[i];
-		if (!chr->_initialScene.equalsIgnoreCase(STORAGESCENE)) {
+		if (!isStorageScene(chr->_initialScene)) {
 			Common::String key = chr->_initialScene;
 			key.toLowercase();
 			if (_world->_scenes.contains(key) && _world->_scenes[key] != NULL) {

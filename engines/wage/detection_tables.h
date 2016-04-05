@@ -164,6 +164,7 @@ static const ADGameDescription gameDescriptions[] = {
 	// Polygons with ignored byte 1 and 2 on second scene
 	FANGAME("The Village", "b9b5cfbfc7f482eae7587b55edc135ed", 314828),
 	FANGAME("The Wizard's Apprentice", "7eff3cb7d1a3f59639c62cf196039745", 782824),
+	// Messed up first scene
 	FANGAMEND("Tombworld", "Demo TombWorld", "f7c86166e29fb8b57f7a1400d4963a4e", 664252), // Original file name "Demo TombWorld©"
 	// Doesn't go past first scene
 	BIGGAME("twisted", "", "Twisted! 1.6", "97ab265eddf0cfed6d43d062c853cbc0", 960954),

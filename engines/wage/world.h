@@ -50,8 +50,6 @@
 
 namespace Wage {
 
-#define STORAGESCENE "STORAGE@"
-
 class Sound;
 
 class World {
