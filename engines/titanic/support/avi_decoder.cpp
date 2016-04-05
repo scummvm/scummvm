@@ -265,7 +265,10 @@ void AVIDecoder::handleStreamHeader(uint32 size) {
 			}
 		}
 
-		addTrack(new AVIVideoTrack(_header.totalFrames, sHeader, bmInfo, initialPalette));
+		// WORKAROUND: For Titanic engine, the ycursors.avi file has two video tracks,
+		// so we do an explicit check below to ignore any second video track
+		if (getFrameCount() == 0)
+			addTrack(new AVIVideoTrack(_header.totalFrames, sHeader, bmInfo, initialPalette));
 	} else if (sHeader.streamType == ID_AUDS) {
 		PCMWaveFormat wvInfo;
 		wvInfo.tag = _fileStream->readUint16LE();
