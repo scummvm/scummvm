@@ -94,7 +94,7 @@ bool DiskImage_NIB::open(const Common::String &filename) {
 	switch (filesize) {
 	case 232960:
 		_tracks = 35;
-		_sectorsPerTrack = 13;
+		_sectorsPerTrack = 16; // we always pad it out
 		_bytesPerSector = 256;
 		break;
 	default:
@@ -103,6 +103,8 @@ bool DiskImage_NIB::open(const Common::String &filename) {
 
 	// starting at 0xaa, 32 is invalid (see below)
 	const byte c_5and3_lookup[] = { 32, 0, 32, 1, 2, 3, 32, 32, 32, 32, 32, 4, 5, 6, 32, 32, 7, 8, 32, 9, 10, 11, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 12, 13, 32, 32, 14, 15, 32, 16, 17, 18, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 19, 20, 32, 21, 22, 23, 32, 32, 32, 32, 32, 24, 25, 26, 32, 32, 27, 28, 32, 29, 30, 31 };
+	// starting at 0x96, 64 is invalid (see below)
+	const byte c_6and2_lookup[] = { 0, 1, 64, 64, 2, 3, 64, 4, 5, 6, 64, 64, 64, 64, 64, 64, 7, 8, 64, 64, 64, 9, 10, 11, 12, 13, 64, 64, 14, 15, 16, 17, 18, 19, 64, 20, 21, 22, 23, 24, 25, 26, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 27, 64, 28, 29, 30, 64, 64, 64, 31, 64, 64, 32, 33, 64, 34, 35, 36, 37, 38, 39, 40, 64, 64, 64, 64, 64, 41, 42, 43, 64, 44, 45, 46, 47, 48, 49, 50, 64, 64, 51, 52, 53, 54, 55, 56, 64, 57, 58, 59, 60, 61, 62, 63 };
 
 	uint32 diskSize = _tracks * _sectorsPerTrack * _bytesPerSector;
 	byte *diskImage = (byte *)calloc(diskSize, 1);
@@ -110,6 +112,7 @@ bool DiskImage_NIB::open(const Common::String &filename) {
 
 	bool sawAddress = false;
 	uint8 volNo, track, sector;
+	bool newStyle;
 
 	while (_f->pos() < _f->size()) {
 		// Read until we find two sync bytes.
@@ -118,22 +121,20 @@ bool DiskImage_NIB::open(const Common::String &filename) {
 
 		byte prologue = _f->readByte();
 
-		if (sawAddress && prologue == 0xb5) {
+		if (sawAddress && (prologue == 0xb5 || prologue == 0x96)) {
 			warning("NIB: data for %02x/%02x/%02x missing", volNo, track, sector);
 			sawAddress = false;
 		}
 
 		if (!sawAddress) {
 			sawAddress = true;
+			newStyle = false;
 
 			// We should always find the address field first.
 			if (prologue != 0xb5) {
 				// Accept a DOS 3.3(?) header at the start.
-				if (_f->pos() == 3 || prologue == 0x96) {
-					// But skip it.
-					_f->skip(20);
-					sawAddress = false;
-					continue;
+				if (prologue == 0x96) {
+					newStyle = true;
 				} else {
 					error("unknown NIB field prologue %02x", prologue);
 				}
@@ -147,19 +148,59 @@ bool DiskImage_NIB::open(const Common::String &filename) {
 				error("invalid NIB checksum");
 
 			// FIXME: This is a hires0/hires2-specific hack.
-			if (track == 1)
-				track = 2;
-			else if (track == 2)
-				track = 1;
+			if (volNo == 0xfe) {
+				if (track == 1)
+					track = 2;
+				else if (track == 2)
+					track = 1;
+			}
 
 			// Epilogue is de/aa plus a gap, but we don't care.
+			continue;
+		}
+
+		sawAddress = false;
+
+		// We should always find the data field after an address field.
+		// TODO: we ignore volNo?
+		byte *output = diskImage + (track * _sectorsPerTrack + sector) * _bytesPerSector;
+
+		if (newStyle) {
+			// 6-and-2 uses 342 on-disk bytes
+			byte inbuffer[342];
+			_f->read(inbuffer, 342);
+
+			byte oldVal = 0;
+			for (uint n = 0; n < 342; ++n) {
+				// expand
+				assert(inbuffer[n] >= 0x96); // corrupt file (TODO: assert?)
+				byte val = c_6and2_lookup[inbuffer[n] - 0x96];
+				if (val == 0x40) {
+					error("NIB: invalid nibble value %02x", inbuffer[n]);
+				}
+				// undo checksum
+				oldVal = val ^ oldVal;
+				inbuffer[n] = oldVal;
+			}
+
+			byte checksum = _f->readByte();
+			if (checksum < 0x96 || oldVal != c_6and2_lookup[checksum - 0x96])
+				warning("NIB: checksum mismatch @ (%x, %x)", track, sector);
+
+			for (uint n = 0; n < 256; ++n) {
+				output[n] = inbuffer[86 + n] << 2;
+				if (n < 86) { // use first pair of bits
+					output[n] |= ((inbuffer[n] & 1) << 1);
+					output[n] |= ((inbuffer[n] & 2) >> 1);
+				} else if (n < 86*2) { // second pair
+					output[n] |= ((inbuffer[n-86] & 4) >> 1);
+					output[n] |= ((inbuffer[n-86] & 8) >> 3);
+				} else { // third pair
+					output[n] |= ((inbuffer[n-86*2] & 0x10) >> 3);
+					output[n] |= ((inbuffer[n-86*2] & 0x20) >> 5);
+				}
+			}
 		} else {
-			sawAddress = false;
-
-			// We should always find the data field after an address field.
-			// TODO: we ignore volNo?
-			byte *output = diskImage + (track * _sectorsPerTrack + sector) * _bytesPerSector;
-
 			// 5-and-3 uses 410 on-disk bytes, decoding to just over 256 bytes
 			byte inbuffer[410];
 			_f->read(inbuffer, 410);
