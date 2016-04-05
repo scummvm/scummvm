@@ -284,8 +284,9 @@ void WageEngine::performInitialSetup() {
 		if (!obj->_sceneOrOwner.equalsIgnoreCase(STORAGESCENE)) {
 			Common::String location = obj->_sceneOrOwner;
 			location.toLowercase();
-			if (_world->_scenes.contains(location)) {
-				_world->move(obj, _world->_scenes[location]);
+			Scene *scene = getSceneByName(location);
+			if (scene != NULL) {
+				_world->move(obj, scene);
 			} else {
 				if (!_world->_chrs.contains(location)) {
 					// Note: PLAYER@ is not a valid target here.
@@ -328,13 +329,14 @@ void WageEngine::doClose() {
 }
 
 Scene *WageEngine::getSceneByName(Common::String &location) {
-	Scene *scene;
 	if (location.equals("random@")) {
-		scene = _world->getRandomScene();
+		return _world->getRandomScene();
 	} else {
-		scene = _world->_scenes[location];
+		if (_world->_scenes.contains(location))
+			return _world->_scenes[location];
+		else
+			return NULL;
 	}
-	return scene;
 }
 
 void WageEngine::onMove(Designed *what, Designed *from, Designed *to) {
