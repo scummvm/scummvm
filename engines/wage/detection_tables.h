@@ -131,6 +131,8 @@ static const ADGameDescription gameDescriptions[] = {
 	FANGAME("Radical Castle 1.0", "8ae2e29ffeca52a5c7fae66dec4764a3", 347278),
 	BIGGAME("raysmaze", "v1.5", "Ray's Maze1.5", "521583e59bdc1d611f963cef1dc25869", 1408516),
 	BIGGAME("raysmaze", "v1.5/alt", "Ray's Maze1.5", "120e65bec953b981b2e0aed45ad45d70", 1408516),
+	// Next button is not visible
+	FANGAME("Ray's World Builder Demo", "d252ee8e38c9abc50455d071a367d031", 116056),
 	// Unhandled comparison case
 	FANGAME("Sands of Time", "b00ea866cb04cd87124e5720bc2c84c7", 122672), // Original file name "Sands of Time†"
 	BIGGAME("scepters", "", "Scepters", "f8db17cd96be056cf8a8bb9cfe46cf3a", 346595),
@@ -162,11 +164,14 @@ static const ADGameDescription gameDescriptions[] = {
 	FANGAME("The Tower", "135fe861928d15b5acd8b355460c54bf", 556539),
 	// Polygons with ignored byte 1 and 2 on second scene
 	FANGAME("The Village", "b9b5cfbfc7f482eae7587b55edc135ed", 314828),
+	FANGAME("The Wizard's Apprentice", "7eff3cb7d1a3f59639c62cf196039745", 782824),
 	FANGAMEND("Tombworld", "Demo TombWorld", "f7c86166e29fb8b57f7a1400d4963a4e", 664252), // Original file name "Demo TombWorld©"
 	// Doesn't go past first scene
 	BIGGAME("twisted", "", "Twisted! 1.6", "97ab265eddf0cfed6d43d062c853cbc0", 960954),
+	FANGAME("Volcano II", "4dbb7ec6111c0f872da8ed8ba14763c9", 82991), // Original file name "Volcano II†"
 	FANGAME("Wishing Well", "ece06c419cbb2d32941e6b5c7d9d7c1a", 103688),
 	FANGAME("Wizard's Warehouse", "ee1b86841583e2b58ac39bf97017dc7b", 159748),
+	FANGAMEN("Wizard's Warehouse 2", "WizWarehouse 2.0", "6502bd974fe149fe76d6d5ae9d1e6878", 230870),
 	FANGAME("ZikTuria", "1b934fca68d633d231dccd2047d2d274", 52972),
 	FANGAME("Zoony", "7bb293b81117cbd974ce54fafa06f258", 154990), // original filename "Zoony™"
 
