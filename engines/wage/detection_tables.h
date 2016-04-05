@@ -122,6 +122,7 @@ static const ADGameDescription gameDescriptions[] = {
 	// Cropped graphics at the first scene
 	FANGAME("Psychotic!", "29b30e6aae9cc6db5eccb09f695ff25e", 367309),
 	FANGAME("P-W Adventure", "9bf86fb946683500d23887ef185726ab", 219216),
+	FANGAMEN("Pyramid of Ert", "Pyramid of Ert V1.2", "fb931cd35440a66864a434c773b496da", 315783),
 	FANGAME("Queen Quest", "8273e29afe64a984eb0ce7b43fdf3a59", 57039), // alt version
 	FANGAME("Quest for T-Rex", "f16f2cd525c9aeb4733295d8d842b902", 592584),
 	// Crash in console rendering on the initial scene
@@ -146,6 +147,7 @@ static const ADGameDescription gameDescriptions[] = {
 	FANGAME("Sweetspace Now!", "1d419bc0b04c51468ddc40a90125bf00", 123813), // Comes with Jumble
 	// Wrong scrolling in the first console text
 	FANGAMEN("Sword of Siegfried", "Sword of Siegfried 1.0", "1ee92830690f89ea142ac0847176a0c3", 234763),
+	FANGAME("Terrorist", "68208fa5e426312fb12402894add5e4a", 524469), // Original file name "Terrorist†"
 	FANGAME("Time Bomb", "b7a369d57d43ec8d9fd53832fd38d7db", 64564),
 	FANGAME("Time Bomb", "b7a369d57d43ec8d9fd53832fd38d7db", 64578), // Alt version
 	FANGAMEND("The Ashland Revolution", "The Ashland Revolution Demo", "3c7a1bdeab48a077a4f54fe69da61a9f", 145023), // Original file name "The Ashland Revolution Demo†"
@@ -160,6 +162,7 @@ static const ADGameDescription gameDescriptions[] = {
 	FANGAME("The Tower", "135fe861928d15b5acd8b355460c54bf", 556539),
 	// Polygons with ignored byte 1 and 2 on second scene
 	FANGAME("The Village", "b9b5cfbfc7f482eae7587b55edc135ed", 314828),
+	FANGAMEND("Tombworld", "Demo TombWorld", "f7c86166e29fb8b57f7a1400d4963a4e", 664252), // Original file name "Demo TombWorld©"
 	// Doesn't go past first scene
 	BIGGAME("twisted", "", "Twisted! 1.6", "97ab265eddf0cfed6d43d062c853cbc0", 960954),
 	FANGAME("Wishing Well", "ece06c419cbb2d32941e6b5c7d9d7c1a", 103688),
