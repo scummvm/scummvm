@@ -95,9 +95,6 @@ void CMouseCursor::setCursor(CursorId cursorId) {
 		CVideoSurface &surface = *ce._videoSurface;
 		surface.lock();
 
-		// ***DEBUG*** Dummy cursor
-		Common::fill(surface.getPixels(), surface.getPixels() + 128, 0x5555);
-
 		CursorMan.replaceCursor(surface.getPixels(), surface.getWidth(), surface.getHeight(),
 			ce._centroid.x, ce._centroid.y, 0, false, &g_vm->_screen->format);
 		surface.unlock();
