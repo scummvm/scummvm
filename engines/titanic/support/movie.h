@@ -23,7 +23,7 @@
 #ifndef TITANIC_MOVIE_H
 #define TITANIC_MOVIE_H
 
-#include "video/avi_decoder.h"
+#include "video/video_decoder.h"
 #include "titanic/core/list.h"
 #include "titanic/core/resource_key.h"
 
@@ -37,6 +37,7 @@ protected:
 	int _field10;
 public:
 	CMovie();
+	virtual ~CMovie() {}
 
 	virtual void proc8(int v1, CVideoSurface *surface) = 0;
 	virtual void proc9() = 0;
@@ -60,10 +61,11 @@ public:
 
 class OSMovie : public CMovie {
 private:
-	Video::AVIDecoder _aviDecoder;
+	Video::VideoDecoder *_video;
 	CVideoSurface *_videoSurface;
 public:
 	OSMovie(const CResourceKey &name, CVideoSurface *surface);
+	virtual ~OSMovie();
 
 	virtual void proc8(int v1, CVideoSurface *surface);
 	virtual void proc9();

@@ -20,6 +20,8 @@
  *
  */
 
+#include "image/codecs/cinepak.h"
+#include "titanic/support/avi_decoder.h"
 #include "titanic/support/movie.h"
 #include "titanic/titanic.h"
 
@@ -44,7 +46,13 @@ bool CMovie::get10() {
 /*------------------------------------------------------------------------*/
 
 OSMovie::OSMovie(const CResourceKey &name, CVideoSurface *surface) : _videoSurface(surface) {
-//	_aviDecoder.loadFile(name.getString());
+	_video = new AVIDecoder();
+	if (!_video->loadFile(name.getString()))
+		error("Could not open video - %s", name.getString().c_str());
+}
+
+OSMovie::~OSMovie() {
+	delete _video;
 }
 
 void OSMovie::proc8(int v1, CVideoSurface *surface) {
@@ -76,13 +84,12 @@ void OSMovie::proc14() {
 }
 
 void OSMovie::setFrame(uint frameNumber) {
-	warning("TODO: OSMovie::setFrame");
-	/*
-	_aviDecoder.seekToFrame(frameNumber);
-	const Graphics::Surface *s = _aviDecoder.decodeNextFrame();
+	_video->seekToFrame(frameNumber);
+	const Graphics::Surface *s = _video->decodeNextFrame();
+	Graphics::Surface *surf = s->convertTo(g_system->getScreenFormat());
 
-	_videoSurface->blitFrom(Common::Point(0, 0), s);
-	*/
+	_videoSurface->blitFrom(Common::Point(0, 0), surf);
+	delete surf;
 }
 
 void OSMovie::proc16() {
