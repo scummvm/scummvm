@@ -121,6 +121,8 @@ public:
 	void enableNewGameMenus();
 
 private:
+	void drawScene();
+	void drawConsole();
 	void undrawCursor();
 	void drawDesktop();
 	void paintBorder(Graphics::Surface *g, Common::Rect &r, WindowType windowType, int highlightedPart = kBorderNone,

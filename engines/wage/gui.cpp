@@ -239,37 +239,10 @@ void Gui::draw() {
 	}
 
 	if (_scene != _engine->_world->_player->_currentScene || _sceneDirty) {
-		_scene = _engine->_world->_player->_currentScene;
-
-		drawDesktop();
-
-		_sceneDirty = true;
-		_consoleDirty = true;
-		_menuDirty = true;
-		_consoleFullRedraw = true;
-
-		_scene->paint(&_screen, _scene->_designBounds->left, _scene->_designBounds->top);
-
-		_sceneArea.left = _scene->_designBounds->left + kBorderWidth - 2;
-		_sceneArea.top = _scene->_designBounds->top + kBorderWidth - 2;
-		_sceneArea.setWidth(_scene->_designBounds->width() - 2 * kBorderWidth);
-		_sceneArea.setHeight(_scene->_designBounds->height() - 2 * kBorderWidth);
-
-		_consoleTextArea.left = _scene->_textBounds->left + kBorderWidth - 2;
-		_consoleTextArea.top = _scene->_textBounds->top + kBorderWidth - 2;
-		_consoleTextArea.setWidth(_scene->_textBounds->width() - 2 * kBorderWidth);
-		_consoleTextArea.setHeight(_scene->_textBounds->height() - 2 * kBorderWidth);
+		drawScene();
 	}
 
-	if (_scene && (_bordersDirty || _sceneDirty))
-		paintBorder(&_screen, _sceneArea, kWindowScene);
-
-	// Render console
-	if (_consoleDirty || _consoleFullRedraw)
-		renderConsole(&_screen, _consoleTextArea);
-
-	if (_bordersDirty || _consoleDirty || _consoleFullRedraw)
-		paintBorder(&_screen, _consoleTextArea, kWindowConsole);
+	drawConsole();
 
 	if (_menuDirty)
 		_menu->render();
@@ -286,6 +259,41 @@ void Gui::draw() {
 	_bordersDirty = false;
 	_menuDirty = false;
 	_consoleFullRedraw = false;
+}
+
+void Gui::drawScene() {
+	_scene = _engine->_world->_player->_currentScene;
+
+	drawDesktop();
+
+	_sceneDirty = true;
+	_consoleDirty = true;
+	_menuDirty = true;
+	_consoleFullRedraw = true;
+
+	_scene->paint(&_screen, _scene->_designBounds->left, _scene->_designBounds->top);
+
+	_sceneArea.left = _scene->_designBounds->left + kBorderWidth - 2;
+	_sceneArea.top = _scene->_designBounds->top + kBorderWidth - 2;
+	_sceneArea.setWidth(_scene->_designBounds->width() - 2 * kBorderWidth);
+	_sceneArea.setHeight(_scene->_designBounds->height() - 2 * kBorderWidth);
+
+	_consoleTextArea.left = _scene->_textBounds->left + kBorderWidth - 2;
+	_consoleTextArea.top = _scene->_textBounds->top + kBorderWidth - 2;
+	_consoleTextArea.setWidth(_scene->_textBounds->width() - 2 * kBorderWidth);
+	_consoleTextArea.setHeight(_scene->_textBounds->height() - 2 * kBorderWidth);
+
+	if (_scene && (_bordersDirty || _sceneDirty))
+		paintBorder(&_screen, _sceneArea, kWindowScene);
+}
+
+// Render console
+void Gui::drawConsole() {
+	if (_consoleDirty || _consoleFullRedraw)
+		renderConsole(&_screen, _consoleTextArea);
+
+	if (_bordersDirty || _consoleDirty || _consoleFullRedraw)
+		paintBorder(&_screen, _consoleTextArea, kWindowConsole);
 }
 
 void Gui::drawBox(Graphics::Surface *g, int x, int y, int w, int h) {
