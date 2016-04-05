@@ -84,7 +84,6 @@ static const ADGameDescription gameDescriptions[] = {
 	// No Next button in intro
 	FANGAME("Jamie the Demon Slayer", "fa0ca9618c18425b6d9bf913f762d91b", 232789),
 	FANGAMEN("Journey", "The Journey 1.6.2 US", "e66f37472e1414a088eb5d5acc4df794", 820572),
-	// Problems with window overlay
 	FANGAMEN("Jumble", "LSJUMBLE", "7c46851d2f90c7da9efe40b1688869c2", 647339), // Original file name is "LSJUMBLE† "
 	FANGAME("Karth of the Jungle", "5f2346834821dc3c4008e139cd37b3cb", 96711),
 	FANGAME("Karth of the Jungle", "444f9426f342135fbcc32180e5ba5b1c", 96960), // Alternative version
