@@ -53,7 +53,7 @@
 	<key>NSPrincipalClass</key>
 	<string>NSApplication</string>
 	<key>SUFeedURL</key>
-	<string>https://www.scummvm.org/scummvm_appcast.xml</string>
+	<string>https://www.scummvm.org/appcasts/macosx/release.xml</string>
 	<key>NSDockTilePlugIn</key>
 	<string>scummvm.docktileplugin</string>
 	<key>SUPublicDSAKeyFile</key>
