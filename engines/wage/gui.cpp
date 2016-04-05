@@ -238,11 +238,13 @@ void Gui::draw() {
 		return;
 	}
 
-	if (_scene != _engine->_world->_player->_currentScene || _sceneDirty) {
+	if (_sceneIsActive) {
+		drawConsole();
 		drawScene();
+	} else {
+		drawScene();
+		drawConsole();
 	}
-
-	drawConsole();
 
 	if (_menuDirty)
 		_menu->render();
@@ -262,6 +264,9 @@ void Gui::draw() {
 }
 
 void Gui::drawScene() {
+	if (_scene == _engine->_world->_player->_currentScene && !_sceneDirty)
+		return;
+
 	_scene = _engine->_world->_player->_currentScene;
 
 	drawDesktop();
