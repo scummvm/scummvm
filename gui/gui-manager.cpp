@@ -304,9 +304,9 @@ void GuiManager::runLoop() {
 //		_system->updateScreen();
 
 		if (lastRedraw + waitTime < _system->getMillis(true)) {
+			lastRedraw = _system->getMillis(true);
 			_theme->updateScreen();
 			_system->updateScreen();
-			lastRedraw = _system->getMillis(true);
 		}
 
 		Common::Event event;
@@ -342,9 +342,9 @@ void GuiManager::runLoop() {
 
 
 			if (lastRedraw + waitTime < _system->getMillis(true)) {
+				lastRedraw = _system->getMillis(true);
 				_theme->updateScreen();
 				_system->updateScreen();
-				lastRedraw = _system->getMillis(true);
 			}
 		}
 
