@@ -286,7 +286,7 @@ void GuiManager::runLoop() {
 
 	Common::EventManager *eventMan = _system->getEventManager();
 	uint32 lastRedraw = 0;
-	const uint32 waitTime = 1000 / 45;
+	const uint32 waitTime = 1000 / 60;
 
 	bool tooltipCheck = false;
 
