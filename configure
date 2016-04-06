@@ -3234,6 +3234,8 @@ case $_backend in
 		append_var DEFINES "-DSDL_BACKEND"
 		add_line_to_config_mk "SDL_BACKEND = 1"
 		;;
+	3ds)
+		;;
 	sdl)
 		;;
 	*)
