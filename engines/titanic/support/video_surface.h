@@ -153,6 +153,7 @@ public:
 	virtual void shiftColors() = 0;
 
 	virtual void proc32(int v1, CVideoSurface *surface) = 0;
+	virtual void proc34(int v1, int v2, int v3, bool v4) = 0;
 
 	/**
 	 * Stops any movie currently attached to the surface
@@ -299,6 +300,7 @@ public:
 	virtual void shiftColors();
 
 	virtual void proc32(int v1, CVideoSurface *surface);
+	virtual void proc34(int v1, int v2, int v3, bool v4);
 
 	/**
 	 * Stops any movie currently attached to the surface

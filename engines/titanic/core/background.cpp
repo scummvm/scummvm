@@ -50,15 +50,23 @@ void CBackground::load(SimpleFile *file) {
 }
 
 bool CBackground::handleMessage(CStatusChangeMsg &msg) {
-	error("TODO: CBackground::handleMessage");
+	setVisible(true);
+	if (_fieldDC) {
+		fn1(_fieldBC, _fieldC0, 16);
+	} else {
+		fn1(_fieldBC, _fieldC0, 0);
+	}
+	return true;
 }
 
 bool CBackground::handleMessage(CSetFrameMsg &msg) {
-	error("TODO: CBackground::handleMessage");
+	loadFrame(msg._frameNumber);
+	return true;
 }
 
 bool CBackground::handleMessage(CVisibleMsg &msg) {
-	error("TODO: CBackground::handleMessage");
+	setVisible(msg._visible);
+	return true;
 }
 
 } // End of namespace Titanic

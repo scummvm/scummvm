@@ -59,7 +59,7 @@ void OSMovie::proc8(int v1, CVideoSurface *surface) {
 	warning("TODO: OSMovie::proc8");
 }
 
-void OSMovie::proc9() {
+void OSMovie::proc9(int v1, int v2, int v3, bool v4) {
 	warning("TODO: OSMovie::proc9");
 }
 

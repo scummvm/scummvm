@@ -368,6 +368,12 @@ void OSVideoSurface::proc32(int v1, CVideoSurface *surface) {
 		_movie->proc8(v1, surface);
 }
 
+void OSVideoSurface::proc34(int v1, int v2, int v3, bool v4) {
+	if (loadIfReady() && _movie) {
+		_movie->proc9(v1, v2, v3, v4);
+	}
+}
+
 void OSVideoSurface::stopMovie() {
 	if (_movie)
 		_movie->stop();

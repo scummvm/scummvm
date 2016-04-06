@@ -330,7 +330,19 @@ void CGameObject::petFn3(CTreeItem *item) {
 }
 
 void CGameObject::fn1(int val1, int val2, int val3) {
-	warning("TODO: CGameObject::fn1");
+	_frameNumber = -1;
+	if (!_surface) {
+		if (!_resource.empty())
+			loadResource(_resource);
+		_resource.clear();
+	}
+
+	if (_surface) {
+		_surface->proc34(val1, val2, val3, val3 != 0);
+
+		if (val3 & 0x10)
+			getGameManager()->_gameState.addMovie(_surface->_movie);
+	}
 }
 
 void CGameObject::changeStatus(int newStatus) {
