@@ -25,39 +25,66 @@
 namespace Titanic {
 
 CSTButton::CSTButton() : CBackground() {
-	_fieldE0 = 0;
-	_string3 = "NULL";
+	_statusInc = 0;
+	_statusTarget = "NULL";
 	_fieldF0 = 0;
-	_fieldF4 = 0;
+	_newStatus = 0;
 	_string4 = "NULL";
 	_string5 = "NULL";
-	_field110 = 0;
+	_buttonFrame = 0;
 }
 
 void CSTButton::save(SimpleFile *file, int indent) const {
 	file->writeNumberLine(1, indent);
-	file->writeNumberLine(_fieldE0, indent);
-	file->writeQuotedLine(_string3, indent);
+	file->writeNumberLine(_statusInc, indent);
+	file->writeQuotedLine(_statusTarget, indent);
 	file->writeNumberLine(_fieldF0, indent);
-	file->writeNumberLine(_fieldF4, indent);
+	file->writeNumberLine(_newStatus, indent);
 	file->writeQuotedLine(_string4, indent);
 	file->writeQuotedLine(_string5, indent);
-	file->writeNumberLine(_field110, indent);
+	file->writeNumberLine(_buttonFrame, indent);
 
 	CBackground::save(file, indent);
 }
 
 void CSTButton::load(SimpleFile *file) {
 	file->readNumber();
-	_fieldE0 = file->readNumber();
-	_string3 = file->readString();
+	_statusInc = file->readNumber();
+	_statusTarget = file->readString();
 	_fieldF0 = file->readNumber();
-	_fieldF4 = file->readNumber();
+	_newStatus = file->readNumber();
 	_string4 = file->readString();
 	_string5 = file->readString();
-	_field110 = file->readNumber();
+	_buttonFrame = file->readNumber() != 0;
 
 	CBackground::load(file);
+}
+
+bool CSTButton::handleMessage(CMouseButtonDownMsg &msg) {
+	changeStatus(0);
+	// TODO: Obj6c stuff
+
+	return true;
+}
+
+bool CSTButton::handleMessage(CMouseButtonUpMsg &msg) {
+	int value1 = _newStatus;
+	int value2 = _newStatus + _statusInc;
+
+	CStatusChangeMsg statusMsg(value1, value2, 0);
+	_newStatus = value2;
+	statusMsg.execute(_statusTarget);
+
+	if (statusMsg._value3) {
+		_newStatus -= _statusInc;
+	}
+
+	return true;
+}
+
+bool CSTButton::handleMessage(CEnterViewMsg &msg) {
+	loadFrame(_buttonFrame);
+	return true;
 }
 
 } // End of namespace Titanic
