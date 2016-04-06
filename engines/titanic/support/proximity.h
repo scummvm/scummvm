@@ -20,46 +20,43 @@
  *
  */
 
-#ifndef TITANIC_ST_BUTTON_H
-#define TITANIC_ST_BUTTON_H
-
-#include "titanic/core/background.h"
-#include "titanic/messages/mouse_messages.h"
-#include "titanic/messages/messages.h"
+#ifndef TITANIC_PROXIMITY_H
+#define TITANIC_PROXIMITY_H
 
 namespace Titanic {
 
-class CSTButton : public CBackground,
-	public CMouseButtonDownMsgTarget,
-	public CMouseButtonUpMsgTarget,
-	public CEnterViewMsgTarget {
-private:
-	int _statusInc;
-	CString _statusTarget;
-	int _fieldF0;
-	int _currentStatus;
-	CString _string4;
-	CString _string5;
-	int _buttonFrame;
-protected:
-	virtual bool handleMessage(CMouseButtonDownMsg &msg);
-	virtual bool handleMessage(CMouseButtonUpMsg &msg);
-	virtual bool handleMessage(CEnterViewMsg &msg);
+class CProximity {
 public:
-	CLASSDEF
-	CSTButton();
-
-	/**
-	 * Save the data for the class to file
-	 */
-	virtual void save(SimpleFile *file, int indent) const;
-
-	/**
-	 * Load the data for the class from file
-	 */
-	virtual void load(SimpleFile *file);
+	int _field4;
+	int _field8;
+	int _fieldC;
+	int _field10;
+	int _field14;
+	int _field18;
+	int _field1C;
+	int _field20;
+	int _field24;
+	int _field28;
+	int _field2C;
+	int _field30;
+	int _field34;
+	double _double1;
+	double _double2;
+	double _double3;
+	int _field44;
+	int _field48;
+	int _field4C;
+	int _field50;
+	int _field54;
+	int _field58;
+	int _field5C;
+	int _field60;
+	int _field64;
+	int _field68;
+public:
+	CProximity();
 };
 
 } // End of namespace Titanic
 
-#endif /* TITANIC_ST_BUTTON_H */
+#endif /* TITANIC_PROXIMITY_H */

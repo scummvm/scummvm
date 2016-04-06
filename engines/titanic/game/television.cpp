@@ -164,9 +164,8 @@ bool CTelevision::handleMessage(CPETDownMsg &msg) {
 bool CTelevision::handleMessage(CStatusChangeMsg &msg) {
 	if (_isOn) {
 		stopMovie();
-		changeStatus(1);
+		changeStatus(0);
 	}
-	warning("TODO");
 
 	return true;
 }
@@ -179,7 +178,6 @@ bool CTelevision::handleMessage(CActMsg &msg) {
 			CStatusChangeMsg changeMsg;
 			changeMsg.execute(this);
 		} else {
-			// TODO: Should 5C be a boolean?
 			setVisible(_isOn);
 			stopMovie();
 		}

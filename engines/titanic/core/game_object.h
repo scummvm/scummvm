@@ -24,6 +24,7 @@
 #define TITANIC_GAME_OBJECT_H
 
 #include "titanic/support/mouse_cursor.h"
+#include "titanic/support/proximity.h"
 #include "titanic/support/rect.h"
 #include "titanic/core/movie_clip.h"
 #include "titanic/core/named_item.h"
@@ -54,6 +55,7 @@ private:
 	void loadImage(const CString &name, bool pendingFlag = true);
 
 	void processClipList2();
+	void calcProximity(const CString &name, CProximity &obj6C);
 protected:
 	Rect _bounds;
 	double _field34;
@@ -177,6 +179,8 @@ public:
 	 * Loads a frame
 	 */
 	void loadFrame(int frameNumber);
+
+	void calcProximity(const CString &name, int val2, int val3, int val4);
 };
 
 } // End of namespace Titanic

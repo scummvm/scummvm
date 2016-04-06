@@ -395,4 +395,18 @@ int CGameObject::getSurface45() const {
 	return _surface ? _surface->proc45() : 0;
 }
 
+void CGameObject::calcProximity(const CString &name, int val2, int val3, int val4) {
+	CProximity prox;
+	prox._field8 = val2;
+	prox._fieldC = val3;
+	prox._field20 = val4;
+	calcProximity(name, prox);
+}
+
+void CGameObject::calcProximity(const CString &name, CProximity &prox) {
+	if (prox._field28 == 2) {
+		// TODO
+	}
+}
+
 } // End of namespace Titanic

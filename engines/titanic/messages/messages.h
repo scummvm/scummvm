@@ -397,7 +397,7 @@ MESSAGE1(CShowTextMsg, CString, value, "NO TEXT INCLUDED!!!");
 MESSAGE2(CSignalObject, CString, strValue, "", int, numValue, 0);
 MESSAGE2(CSpeechFallsFromTreeMsg, int, value1, 0, int, value2, 0);
 MESSAGE1(CStartMusicMsg, int, value, 0);
-MESSAGE3(CStatusChangeMsg, int, value1, 0, int, value2, 0, int, value3, 0);
+MESSAGE3(CStatusChangeMsg, int, oldStatus, 0, int, newStatus, 0, bool, success, false);
 MESSAGE1(CStopMusicMsg, int, value, 0);
 MESSAGE0(CSubDeliverCCarryMsg);
 MESSAGE0(CSubSendCCarryMsg);

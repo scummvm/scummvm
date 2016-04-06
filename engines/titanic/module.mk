@@ -431,6 +431,7 @@ MODULE_OBJS := \
 	support/image_decoders.o \
 	support/mouse_cursor.o \
 	support/movie.o \
+	support/proximity.o \
 	support/rect.o \
 	support/screen_manager.o \
 	support/simple_file.o \

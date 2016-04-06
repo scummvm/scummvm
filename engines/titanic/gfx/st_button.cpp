@@ -28,7 +28,7 @@ CSTButton::CSTButton() : CBackground() {
 	_statusInc = 0;
 	_statusTarget = "NULL";
 	_fieldF0 = 0;
-	_newStatus = 0;
+	_currentStatus = 0;
 	_string4 = "NULL";
 	_string5 = "NULL";
 	_buttonFrame = 0;
@@ -39,7 +39,7 @@ void CSTButton::save(SimpleFile *file, int indent) const {
 	file->writeNumberLine(_statusInc, indent);
 	file->writeQuotedLine(_statusTarget, indent);
 	file->writeNumberLine(_fieldF0, indent);
-	file->writeNumberLine(_newStatus, indent);
+	file->writeNumberLine(_currentStatus, indent);
 	file->writeQuotedLine(_string4, indent);
 	file->writeQuotedLine(_string5, indent);
 	file->writeNumberLine(_buttonFrame, indent);
@@ -52,7 +52,7 @@ void CSTButton::load(SimpleFile *file) {
 	_statusInc = file->readNumber();
 	_statusTarget = file->readString();
 	_fieldF0 = file->readNumber();
-	_newStatus = file->readNumber();
+	_currentStatus = file->readNumber();
 	_string4 = file->readString();
 	_string5 = file->readString();
 	_buttonFrame = file->readNumber() != 0;
@@ -68,15 +68,15 @@ bool CSTButton::handleMessage(CMouseButtonDownMsg &msg) {
 }
 
 bool CSTButton::handleMessage(CMouseButtonUpMsg &msg) {
-	int value1 = _newStatus;
-	int value2 = _newStatus + _statusInc;
+	int oldStatus = _currentStatus;
+	int newStatus = _currentStatus + _statusInc;
 
-	CStatusChangeMsg statusMsg(value1, value2, 0);
-	_newStatus = value2;
+	CStatusChangeMsg statusMsg(oldStatus, newStatus, false);
+	_currentStatus = newStatus;
 	statusMsg.execute(_statusTarget);
 
-	if (statusMsg._value3) {
-		_newStatus -= _statusInc;
+	if (!statusMsg._success) {
+		_currentStatus -= _statusInc;
 	}
 
 	return true;
