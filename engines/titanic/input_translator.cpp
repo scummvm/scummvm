@@ -50,47 +50,47 @@ void CInputTranslator::mouseMove(int special, const Point &pt) {
 }
 
 void CInputTranslator::leftButtonDown(int special, const Point &pt) {
-	CMouseButtonDownMsg msg(pt, getButtons(special));
+	CMouseButtonDownMsg msg(pt, MB_LEFT);
 	_inputHandler->handleMessage(msg);
 }
 
 void CInputTranslator::leftButtonUp(int special, const Point &pt) {
-	CMouseButtonUpMsg msg(pt, getButtons(special));
+	CMouseButtonUpMsg msg(pt, MB_LEFT);
 	_inputHandler->handleMessage(msg);
 }
 
 void CInputTranslator::leftButtonDoubleClick(int special, const Point &pt) {
-	CMouseDoubleClickMsg msg(pt, getButtons(special));
+	CMouseDoubleClickMsg msg(pt, MB_LEFT);
 	_inputHandler->handleMessage(msg);
 }
 
 void CInputTranslator::middleButtonDown(int special, const Point &pt) {
-	CMouseButtonDownMsg msg(pt, getButtons(special));
+	CMouseButtonDownMsg msg(pt, MB_MIDDLE);
 	_inputHandler->handleMessage(msg);
 }
 
 void CInputTranslator::middleButtonUp(int special, const Point &pt) {
-	CMouseButtonUpMsg msg(pt, getButtons(special));
+	CMouseButtonUpMsg msg(pt, MB_MIDDLE);
 	_inputHandler->handleMessage(msg);
 }
 
 void CInputTranslator::middleButtonDoubleClick(int special, const Point &pt) {
-	CMouseDoubleClickMsg msg(pt, getButtons(special));
+	CMouseDoubleClickMsg msg(pt, MB_MIDDLE);
 	_inputHandler->handleMessage(msg);
 }
 
 void CInputTranslator::rightButtonDown(int special, const Point &pt) {
-	CMouseButtonDownMsg msg(pt, getButtons(special));
+	CMouseButtonDownMsg msg(pt, MB_RIGHT);
 	_inputHandler->handleMessage(msg);
 }
 
 void CInputTranslator::rightButtonUp(int special, const Point &pt) {
-	CMouseButtonUpMsg msg(pt, getButtons(special));
+	CMouseButtonUpMsg msg(pt, MB_RIGHT);
 	_inputHandler->handleMessage(msg);
 }
 
 void CInputTranslator::rightButtonDoubleClick(int special, const Point &pt) {
-	CMouseDoubleClickMsg msg(pt, getButtons(special));
+	CMouseDoubleClickMsg msg(pt, MB_RIGHT);
 	_inputHandler->handleMessage(msg);
 }
 
