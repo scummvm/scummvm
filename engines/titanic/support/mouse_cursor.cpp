@@ -50,9 +50,9 @@ static const int CURSOR_DATA[NUM_CURSORS][4] = {
 };
 
 CMouseCursor::CMouseCursor(CScreenManager *screenManager) : 
-		_screenManager(screenManager), _cursorId(CURSOR_15) {
+		_screenManager(screenManager), _cursorId(CURSOR_HOURGLASS) {
 	loadCursorImages();
-	setCursor(CURSOR_1);
+	setCursor(CURSOR_ARROW);
 }
 
 CMouseCursor::~CMouseCursor() {

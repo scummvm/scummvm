@@ -47,7 +47,7 @@ CGameObject::CGameObject(): CNamedItem() {
 	_field58 = 0;
 	_visible = true;
 	_field60 = 0;
-	_cursorId = CURSOR_1;
+	_cursorId = CURSOR_ARROW;
 	_field78 = 0;
 	_frameNumber = -1;
 	_field90 = 0;

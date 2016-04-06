@@ -204,7 +204,7 @@ bool CViewItem::handleMessage(CMouseMoveMsg &msg) {
 	CScreenManager *screenManager = CScreenManager::_screenManagerPtr;
 
 	if (handleMouseMsg(&msg, true)) {
-		screenManager->_mouseCursor->setCursor(CURSOR_1);
+		screenManager->_mouseCursor->setCursor(CURSOR_ARROW);
 	} else {
 		// Iterate through each link item, and if any is highlighted,
 		// change the mouse cursor to the designated cursor for the item
@@ -219,7 +219,7 @@ bool CViewItem::handleMessage(CMouseMoveMsg &msg) {
 		}
 
 		if (!handleMouseMsg(&msg, false))
-			screenManager->_mouseCursor->setCursor(CURSOR_1);
+			screenManager->_mouseCursor->setCursor(CURSOR_ARROW);
 	}
 
 	return true;
@@ -250,7 +250,7 @@ bool CViewItem::handleMouseMsg(CMouseMsg *msg, bool flag) {
 			return false;
 
 		for (int idx = (int)gameObjects.size() - 1; idx >= 0; ++idx) {
-			if (gameObjects[idx]->_cursorId != CURSOR_12) {
+			if (gameObjects[idx]->_cursorId != CURSOR_ARROW2) {
 				CScreenManager::_screenManagerPtr->_mouseCursor->setCursor(gameObjects[idx]->_cursorId);
 				return true;
 			}

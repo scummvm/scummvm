@@ -32,7 +32,7 @@ CLinkItem::CLinkItem() : CNamedItem() {
 	_nodeNumber = -1;
 	_viewNumber = -1;
 	_field30 = 0;
-	_cursorId = CURSOR_1;
+	_cursorId = CURSOR_ARROW;
 	_name = "Link";
 }
 
@@ -93,16 +93,16 @@ void CLinkItem::load(SimpleFile *file) {
 	if (val < 2) {
 		switch (_field30) {
 		case 2:
-			_cursorId = CURSOR_2;
+			_cursorId = CURSOR_MOVE_LEFT;
 			break;
 		case 3:
-			_cursorId = CURSOR_3;
+			_cursorId = CURSOR_MOVE_RIGHT;
 			break;
 		case 5:
-			_cursorId = CURSOR_7;
+			_cursorId = CURSOR_MOVE_FORWARD;
 			break;
 		default:
-			_cursorId = CURSOR_4;
+			_cursorId = CURSOR_MOVE_FORWARD2;
 			break;
 		}
 	}
