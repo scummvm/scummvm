@@ -741,13 +741,13 @@ void logKernelCall(const KernelFunction *kernelCall, const KernelSubFunction *ke
 					switch (mobj->getType()) {
 					case SEG_TYPE_HUNK:
 					{
-						HunkTable *ht = (HunkTable *)mobj;
+						HunkTable &ht = *(HunkTable *)mobj;
 						int index = argv[parmNr].getOffset();
-						if (ht->isValidEntry(index)) {
+						if (ht.isValidEntry(index)) {
 							// NOTE: This ", deleted" isn't as useful as it could
 							// be because it prints the status _after_ the kernel
 							// call.
-							debugN(" ('%s' hunk%s)", ht->_table[index].type, ht->_table[index].mem ? "" : ", deleted");
+							debugN(" ('%s' hunk%s)", ht[index].type, ht[index].mem ? "" : ", deleted");
 						} else
 							debugN(" (INVALID hunk ref)");
 						break;

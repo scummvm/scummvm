@@ -60,21 +60,122 @@ namespace Sci {
 
 #pragma mark -
 
-// Experimental hack: Use syncWithSerializer to sync. By default, this assume
-// the object to be synced is a subclass of Serializable and thus tries to invoke
-// the saveLoadWithSerializer() method. But it is possible to specialize this
-// template function to handle stuff that is not implementing that interface.
-template<typename T>
-void syncWithSerializer(Common::Serializer &s, T &obj) {
+// These are serialization functions for various objects.
+
+void syncWithSerializer(Common::Serializer &s, Common::Serializable &obj) {
 	obj.saveLoadWithSerializer(s);
 }
+
+// FIXME: Object could implement Serializable to make use of the function
+// above.
+void syncWithSerializer(Common::Serializer &s, Object &obj) {
+	obj.saveLoadWithSerializer(s);
+}
+
+void syncWithSerializer(Common::Serializer &s, reg_t &obj) {
+	// Segment and offset are accessed directly here
+	s.syncAsUint16LE(obj._segment);
+	s.syncAsUint16LE(obj._offset);
+}
+
+void syncWithSerializer(Common::Serializer &s, synonym_t &obj) {
+	s.syncAsUint16LE(obj.replaceant);
+	s.syncAsUint16LE(obj.replacement);
+}
+
+void syncWithSerializer(Common::Serializer &s, Class &obj) {
+	s.syncAsSint32LE(obj.script);
+	syncWithSerializer(s, obj.reg);
+}
+
+void syncWithSerializer(Common::Serializer &s, List &obj) {
+	syncWithSerializer(s, obj.first);
+	syncWithSerializer(s, obj.last);
+}
+
+void syncWithSerializer(Common::Serializer &s, Node &obj) {
+	syncWithSerializer(s, obj.pred);
+	syncWithSerializer(s, obj.succ);
+	syncWithSerializer(s, obj.key);
+	syncWithSerializer(s, obj.value);
+}
+
+#ifdef ENABLE_SCI32
+void syncWithSerializer(Common::Serializer &s, SciArray<reg_t> &obj) {
+	byte type = 0;
+	uint32 size = 0;
+
+	if (s.isSaving()) {
+		type = (byte)obj.getType();
+		size = obj.getSize();
+	}
+	s.syncAsByte(type);
+	s.syncAsUint32LE(size);
+	if (s.isLoading()) {
+		obj.setType((int8)type);
+
+		// HACK: Skip arrays that have a negative type
+		if ((int8)type < 0)
+			return;
+
+		obj.setSize(size);
+	}
+
+	for (uint32 i = 0; i < size; i++) {
+		reg_t value;
+
+		if (s.isSaving())
+			value = obj.getValue(i);
+
+		syncWithSerializer(s, value);
+
+		if (s.isLoading())
+			obj.setValue(i, value);
+	}
+}
+
+void syncWithSerializer(Common::Serializer &s, SciString &obj) {
+	uint32 size = 0;
+
+	if (s.isSaving()) {
+		size = obj.getSize();
+		s.syncAsUint32LE(size);
+	} else {
+		s.syncAsUint32LE(size);
+		obj.setSize(size);
+	}
+
+	for (uint32 i = 0; i < size; i++) {
+		char value = 0;
+
+		if (s.isSaving())
+			value = obj.getValue(i);
+
+		s.syncAsByte(value);
+
+		if (s.isLoading())
+			obj.setValue(i, value);
+	}
+}
+#endif
+
+#pragma mark -
 
 // By default, sync using syncWithSerializer, which in turn can easily be overloaded.
 template<typename T>
 struct DefaultSyncer : Common::BinaryFunction<Common::Serializer, T, void> {
 	void operator()(Common::Serializer &s, T &obj) const {
-		//obj.saveLoadWithSerializer(s);
 		syncWithSerializer(s, obj);
+	}
+};
+
+// Syncer for entries in a segment obj table
+template<typename T>
+struct SegmentObjTableEntrySyncer : Common::BinaryFunction<Common::Serializer, typename T::Entry &, void> {
+	void operator()(Common::Serializer &s, typename T::Entry &entry) const {
+		s.syncAsSint32LE(entry.next_free);
+
+		syncWithSerializer(s, entry.data);
 	}
 };
 
@@ -110,24 +211,10 @@ struct ArraySyncer : Common::BinaryFunction<Common::Serializer, T, void> {
 };
 
 // Convenience wrapper
-template<typename T>
+template<typename T, class Syncer = DefaultSyncer<T>>
 void syncArray(Common::Serializer &s, Common::Array<T> &arr) {
-	ArraySyncer<T> sync;
+	ArraySyncer<T, Syncer> sync;
 	sync(s, arr);
-}
-
-
-template<>
-void syncWithSerializer(Common::Serializer &s, reg_t &obj) {
-	// Segment and offset are accessed directly here
-	s.syncAsUint16LE(obj._segment);
-	s.syncAsUint16LE(obj._offset);
-}
-
-template<>
-void syncWithSerializer(Common::Serializer &s, synonym_t &obj) {
-	s.syncAsUint16LE(obj.replaceant);
-	s.syncAsUint16LE(obj.replacement);
 }
 
 void SegManager::saveLoadWithSerializer(Common::Serializer &s) {
@@ -247,12 +334,6 @@ void SegManager::saveLoadWithSerializer(Common::Serializer &s) {
 }
 
 
-template<>
-void syncWithSerializer(Common::Serializer &s, Class &obj) {
-	s.syncAsSint32LE(obj.script);
-	syncWithSerializer(s, obj.reg);
-}
-
 static void sync_SavegameMetadata(Common::Serializer &s, SavegameMetadata &obj) {
 	s.syncString(obj.name);
 	s.syncVersion(CURRENT_SAVEGAME_VERSION);
@@ -331,102 +412,13 @@ void Object::saveLoadWithSerializer(Common::Serializer &s) {
 	syncArray<reg_t>(s, _variables);
 }
 
-template<>
-void syncWithSerializer(Common::Serializer &s, SegmentObjTable<Clone>::Entry &obj) {
-	s.syncAsSint32LE(obj.next_free);
-
-	syncWithSerializer<Object>(s, obj);
-}
-
-template<>
-void syncWithSerializer(Common::Serializer &s, SegmentObjTable<List>::Entry &obj) {
-	s.syncAsSint32LE(obj.next_free);
-
-	syncWithSerializer(s, obj.first);
-	syncWithSerializer(s, obj.last);
-}
-
-template<>
-void syncWithSerializer(Common::Serializer &s, SegmentObjTable<Node>::Entry &obj) {
-	s.syncAsSint32LE(obj.next_free);
-
-	syncWithSerializer(s, obj.pred);
-	syncWithSerializer(s, obj.succ);
-	syncWithSerializer(s, obj.key);
-	syncWithSerializer(s, obj.value);
-}
-
-#ifdef ENABLE_SCI32
-template<>
-void syncWithSerializer(Common::Serializer &s, SegmentObjTable<SciArray<reg_t> >::Entry &obj) {
-	s.syncAsSint32LE(obj.next_free);
-
-	byte type = 0;
-	uint32 size = 0;
-
-	if (s.isSaving()) {
-		type = (byte)obj.getType();
-		size = obj.getSize();
-	}
-	s.syncAsByte(type);
-	s.syncAsUint32LE(size);
-	if (s.isLoading()) {
-		obj.setType((int8)type);
-
-		// HACK: Skip arrays that have a negative type
-		if ((int8)type < 0)
-			return;
-
-		obj.setSize(size);
-	}
-
-	for (uint32 i = 0; i < size; i++) {
-		reg_t value;
-
-		if (s.isSaving())
-			value = obj.getValue(i);
-
-		syncWithSerializer(s, value);
-
-		if (s.isLoading())
-			obj.setValue(i, value);
-	}
-}
-
-template<>
-void syncWithSerializer(Common::Serializer &s, SegmentObjTable<SciString>::Entry &obj) {
-	s.syncAsSint32LE(obj.next_free);
-
-	uint32 size = 0;
-
-	if (s.isSaving()) {
-		size = obj.getSize();
-		s.syncAsUint32LE(size);
-	} else {
-		s.syncAsUint32LE(size);
-		obj.setSize(size);
-	}
-
-	for (uint32 i = 0; i < size; i++) {
-		char value = 0;
-
-		if (s.isSaving())
-			value = obj.getValue(i);
-
-		s.syncAsByte(value);
-
-		if (s.isLoading())
-			obj.setValue(i, value);
-	}
-}
-#endif
 
 template<typename T>
 void sync_Table(Common::Serializer &s, T &obj) {
 	s.syncAsSint32LE(obj.first_free);
 	s.syncAsSint32LE(obj.entries_used);
 
-	syncArray<typename T::Entry>(s, obj._table);
+	syncArray<typename T::Entry, SegmentObjTableEntrySyncer<T> >(s, obj._table);
 }
 
 void CloneTable::saveLoadWithSerializer(Common::Serializer &s) {
@@ -903,7 +895,7 @@ void SegManager::reconstructClones() {
 				if (!isUsed)
 					continue;
 
-				CloneTable::Entry &seeker = ct->_table[j];
+				CloneTable::value_type &seeker = ct->at(j);
 				const Object *baseObj = getObject(seeker.getSpeciesSelector());
 				seeker.cloneFromObject(baseObj);
 				if (!baseObj) {
