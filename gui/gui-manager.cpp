@@ -351,7 +351,7 @@ void GuiManager::runLoop() {
 		if (tooltipCheck && _lastMousePosition.time + kTooltipDelay < _system->getMillis(true)) {
 			Widget *wdg = activeDialog->findWidget(_lastMousePosition.x, _lastMousePosition.y);
 			if (wdg && wdg->hasTooltip() && !(wdg->getFlags() & WIDGET_PRESSED)) {
-				Tooltip *tooltip = new Tooltip();
+				Tooltip *tooltip = new Tooltip(_system->getMillis(true));
 				tooltip->setup(activeDialog, wdg, _lastMousePosition.x, _lastMousePosition.y);
 				tooltip->runModal();
 				delete tooltip;
