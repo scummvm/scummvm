@@ -63,7 +63,7 @@ public:
 	bool isPlaying() const;
 
 	// Play cdrom audio track
-	void play(int track, int numLoops, int startFrame, int duration, bool onlyEmulate = false);
+	bool play(int track, int numLoops, int startFrame, int duration, bool onlyEmulate = false);
 
 	// Stop cdrom audio track
 	void stop();

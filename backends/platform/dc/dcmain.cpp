@@ -90,12 +90,18 @@ static bool find_track(int track, int &first_sec, int &last_sec)
   return false;
 }
 
-void DCCDManager::play(int track, int numLoops, int startFrame, int duration, bool onlyEmulate) {
+bool DCCDManager::play(int track, int numLoops, int startFrame, int duration, bool onlyEmulate) {
 	DefaultAudioCDManager::play(track, numLoops, startFrame, duration, onlyEmulate);
 
-	// If we're playing now, are set to only emulate, return here
-	if (isPlaying() || onlyEmulate)
-		return;
+	// If we're playing now return here
+	if (isPlaying()) {
+		return true;
+	}
+
+	// If we should only play emulated tracks stop here.
+	if (onlyEmulate) {
+		return false;
+	}
 
 	int firstSec, lastSec;
 #if 1
@@ -106,16 +112,18 @@ void DCCDManager::play(int track, int numLoops, int startFrame, int duration, bo
 	if (numLoops > 14)
 		numLoops = 14;
 	else if (numLoops < 0)
-		num_loops = 15; // infinity
+		numLoops = 15; // infinity
 
 	if (!find_track(track, firstSec, lastSec))
-		return;
+		return false;
 
 	if (duration)
 		lastSec = firstSec + startFrame + duration;
 
- 	firstSec += startFrame;
+	firstSec += startFrame;
 	play_cdda_sectors(firstSec, lastSec, numLoops);
+
+	return true;
 }
 
 void DCCDManager::stop() {
