@@ -213,6 +213,16 @@ Rect SimpleFile::readRect() {
 	return r;
 }
 
+Rect SimpleFile::readBounds() {
+	Rect r;
+	r.left = readNumber();
+	r.top = readNumber();
+	r.setWidth(readNumber());
+	r.setHeight(readNumber());
+
+	return r;
+}
+
 void SimpleFile::readBuffer(char *buffer, size_t count) {
 	CString tempString = readString();
 	if (buffer) {
@@ -307,6 +317,11 @@ void SimpleFile::writePoint(const Point &pt, int indent) {
 void SimpleFile::writeRect(const Rect &r, int indent) {
 	writePoint(Point(r.left, r.top), indent);
 	writePoint(Point(r.right, r.bottom), indent);
+}
+
+void SimpleFile::writeBounds(const Rect &r, int indent) {
+	writePoint(Point(r.left, r.top), indent);
+	writePoint(Point(r.width(), r.height()), indent);
 }
 
 void SimpleFile::writeIndent(uint indent) {

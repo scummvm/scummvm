@@ -96,7 +96,7 @@ void CGameObject::load(SimpleFile *file) {
 		// Deliberate fall-through
 
 	case 1:
-		_bounds = file->readRect();
+		_bounds = file->readBounds();
 		_field34 = file->readFloat();
 		_field38 = file->readFloat();
 		_field3C = file->readFloat();

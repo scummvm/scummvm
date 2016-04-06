@@ -112,6 +112,11 @@ public:
 	Rect readRect();
 
 	/**
+	 * Rect in a bounds
+	 */
+	Rect readBounds();
+
+	/**
 	 * Read a string and copy it into an optionally passed buffer
 	 */
 	void readBuffer(char *buffer = nullptr, size_t count = 0);
@@ -165,6 +170,11 @@ public:
 	 * Write out a rect line
 	 */
 	void writeRect(const Rect &r, int indent);
+
+	/**
+	 * Write out a bounds line
+	 */
+	void writeBounds(const Rect &r, int indent);
 
 	/**
 	 * Write out a number of tabs to form an indent in the output
