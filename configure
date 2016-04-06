@@ -441,7 +441,7 @@ get_system_exe_extension() {
 	arm-riscos)
 		_exeext=",ff8"
 		;;
-	dreamcast | ds | gamecube | n64 | ps2 | psp | wii)
+	dreamcast | ds | 3ds | gamecube | n64 | ps2 | psp | wii)
 		_exeext=".elf"
 		;;
 	gph-linux)
@@ -844,7 +844,7 @@ Usage: $0 [OPTIONS]...
 
 Configuration:
   -h, --help              display this help and exit
-  --backend=BACKEND       backend to build (android, tizen, dc, dingux, ds, gcw0,
+  --backend=BACKEND       backend to build (android, tizen, dc, dingux, ds, 3ds, gcw0,
                           gph, iphone, ios7, linuxmoto, maemo, n64, null, openpandora,
                           ps2, psp, samsungtv, sdl, webos, wii, wince) [sdl]
 
@@ -881,6 +881,7 @@ Special configuration feature:
                                            raspberrypi for Raspberry Pi
                                            dreamcast for Sega Dreamcast
                                            ds for Nintendo DS
+                                           3ds for Nintendo 3DS
                                            gamecube for Nintendo GameCube
                                            gcw0 for GCW Zero
                                            gp2x for GP2X
@@ -1356,6 +1357,11 @@ ds)
 	_host_cpu=arm
 	_host_alias=arm-eabi
 	;;
+3ds)
+	_host_os=3ds
+	_host_cpu=arm
+	_host_alias=arm-none-eabi
+	;;
 gamecube)
 	_host_os=gamecube
 	_host_cpu=powerpc
@@ -1589,7 +1595,7 @@ android)
 		exit 1
 	fi
 	;;
-ds | gamecube | wii)
+ds | 3ds | gamecube | wii)
 	if test -z "$DEVKITPRO"; then
 		echo "Please set DEVKITPRO in your environment. export DEVKITPRO=<path to devkitPRO>"
 		exit 1
@@ -1845,7 +1851,7 @@ if test "$have_gcc" = yes ; then
 			case $_host_os in
 			# newlib-based system include files suppress non-C89 function
 			# declarations under __STRICT_ANSI__
-			amigaos* | android | dreamcast | ds | gamecube | mingw* | n64 | psp | ps2 | ps3 | tizen | wii | wince )
+			amigaos* | android | dreamcast | ds | 3ds | gamecube | mingw* | n64 | psp | ps2 | ps3 | tizen | wii | wince )
 				;;
 			*)
 				append_var CXXFLAGS "-ansi"
@@ -2405,6 +2411,27 @@ case $_host_os in
 		append_var LDFLAGS "-L$DEVKITPRO/libnds/lib"
 		append_var LIBS "-lnds9"
 		;;
+	3ds)
+		_optimization_level=-O2
+		append_var DEFINES "-D__3DS__"
+		append_var DEFINES "-D_3DS"
+		append_var DEFINES "-DARM11"
+		append_var CXXFLAGS "-march=armv6k"
+		append_var CXXFLAGS "-mtune=mpcore"
+		append_var CXXFLAGS "-mword-relocations"
+		append_var CXXFLAGS "-mfloat-abi=hard"
+		append_var CXXFLAGS "-ffunction-sections"
+		append_var CXXFLAGS "-fomit-frame-pointer"
+		append_var CXXFLAGS "-isystem $DEVKITPRO/libctru/include"
+		append_var CXXFLAGS "-isystem $DEVKITPRO/devkitARM/arm-none-eabi/include"
+		append_var CXXFLAGS "-isystem $DEVKITPRO/portlibs/3ds/include"
+		if test "$_dynamic_modules" = no ; then
+			append_var LDFLAGS "-Wl,--gc-sections"
+		else
+			append_var LDFLAGS "-Wl,--no-gc-sections"
+		fi
+		append_var LIBS "-lcitro3d -lctru"
+		;;
 	freebsd*)
 		append_var LDFLAGS "-L/usr/local/lib"
 		append_var CXXFLAGS "-I/usr/local/include"
@@ -2710,6 +2737,25 @@ if test -n "$_host"; then
 			_build_scalers=no
 			_mt32emu=no
 			_port_mk="backends/platform/ds/ds.mk"
+			;;
+		3ds)
+			append_var DEFINES "-DDISABLE_FANCY_THEMES"
+			append_var DEFINES "-DDISABLE_SID"
+			append_var DEFINES "-DDISABLE_NES_APU"
+			append_var DEFINES "-DDISABLE_NES_APU"
+			append_var DEFINES "-DSTREAM_AUDIO_FROM_DISK"
+			_backend="3ds"
+			_build_scalers=no
+			_vkeybd=yes
+			_mt32emu=no
+			_vorbis=no
+			_tremor=yes
+			_mad=yes
+			_zlib=yes
+			_jpeg=yes
+			_png=yes
+			_freetype2=yes
+			_port_mk="backends/platform/3ds/3ds.mk"
 			;;
 		gamecube)
 			_backend="wii"
@@ -3224,7 +3270,7 @@ esac
 # Enable 16bit support only for backends which support it
 #
 case $_backend in
-	android | dingux | dc | gph | iphone | ios7 | maemo | openpandora | psp | samsungtv | sdl | tizen | webos | wii)
+	android | dingux | dc | 3ds | gph | iphone | ios7 | maemo | openpandora | psp | samsungtv | sdl | tizen | webos | wii)
 		if test "$_16bit" = auto ; then
 			_16bit=yes
 		else
@@ -3303,7 +3349,7 @@ case $_host_os in
 	amigaos* | cygwin* | dreamcast | ds | gamecube | mingw* | n64 | ps2 | ps3 | psp | wii | wince)
 		_posix=no
 		;;
-	android | beos* | bsd* | darwin* | freebsd* | gnu* | gph-linux | haiku* | hpux* | iphone | ios7 | irix*| k*bsd*-gnu* | linux* | maemo | mint* | netbsd* | openbsd* | solaris* | sunos* | uclinux* | webos)
+	3ds | android | beos* | bsd* | darwin* | freebsd* | gnu* | gph-linux | haiku* | hpux* | iphone | ios7 | irix*| k*bsd*-gnu* | linux* | maemo | mint* | netbsd* | openbsd* | solaris* | sunos* | uclinux* | webos)
 		_posix=yes
 		;;
 	os2-emx*)
