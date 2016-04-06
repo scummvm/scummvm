@@ -211,7 +211,13 @@ struct ArraySyncer : Common::BinaryFunction<Common::Serializer, T, void> {
 };
 
 // Convenience wrapper
-template<typename T, class Syncer = DefaultSyncer<T>>
+template<typename T>
+void syncArray(Common::Serializer &s, Common::Array<T> &arr) {
+	ArraySyncer<T> sync;
+	sync(s, arr);
+}
+
+template<typename T, class Syncer>
 void syncArray(Common::Serializer &s, Common::Array<T> &arr) {
 	ArraySyncer<T, Syncer> sync;
 	sync(s, arr);
