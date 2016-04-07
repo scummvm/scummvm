@@ -319,9 +319,12 @@ int DrasculaEngine::print_abc_opc(const char *said, int screenY, int game) {
 }
 
 bool DrasculaEngine::textFitsCentered(char *text, int x) {
-	int len = strlen(text);
-	int tmp = CLIP<int>(x - len * CHAR_WIDTH / 2, 60, 255);
-	return (tmp + len * CHAR_WIDTH) <= 320;
+	int half_len = strlen(text) * CHAR_WIDTH / 2;
+	// Clip center between 60 and 255
+	x = CLIP<int>(x, 60, 259);
+	// We want a text centered on x thats fits on screen
+	// CHAR_WIDTH is even so x - length / 2 + length is always equal to x + length / 2
+	return (x - half_len >= 2 && x + half_len <= 317);
 }
 
 void DrasculaEngine::centerText(const char *message, int textX, int textY) {
@@ -340,7 +343,7 @@ void DrasculaEngine::centerText(const char *message, int textX, int textY) {
 
 	// If the message fits on screen as-is, just print it here
 	if (textFitsCentered(msg, textX)) {
-		x = CLIP<int>(textX - strlen(msg) * CHAR_WIDTH / 2, 60, 255);
+		x = CLIP<int>(textX, 60, 259) - strlen(msg) * CHAR_WIDTH / 2;
 		print_abc(msg, x, y);
 		return;
 	}
@@ -351,7 +354,7 @@ void DrasculaEngine::centerText(const char *message, int textX, int textY) {
 	// with the German translation.
 	if (!strchr(msg, ' ')) {
 		int len = strlen(msg);
-		x = CLIP<int>(textX - len * CHAR_WIDTH / 2, 0, 319 - len * CHAR_WIDTH);
+		x = CLIP<int>(textX - len * CHAR_WIDTH / 2, 2, 317 - len * CHAR_WIDTH);
 		print_abc(msg, x, y);
 		return;
 	}
@@ -372,8 +375,8 @@ void DrasculaEngine::centerText(const char *message, int textX, int textY) {
 			// Line doesn't fit, so show the current line on screen and
 			// create a new one
 			// If it goes off screen, print_abc will adjust it
-			x = CLIP<int>(textX - strlen(messageLine) * CHAR_WIDTH / 2, 60, 255);
-			print_abc(messageLine, x, y + curLine * CHAR_HEIGHT);
+			x = CLIP<int>(textX, 60, 259) - strlen(messageLine) * CHAR_WIDTH / 2;
+			print_abc(messageLine, x, y + curLine * (CHAR_HEIGHT + 2));
 			Common::strlcpy(messageLine, curWord, 200);
 			Common::strlcpy(tmpMessageLine, curWord, 200);
 			curLine++;
@@ -383,8 +386,8 @@ void DrasculaEngine::centerText(const char *message, int textX, int textY) {
 		curWord = strtok(NULL, " ");
 
 		if (curWord == NULL) {
-			x = CLIP<int>(textX - strlen(messageLine) * CHAR_WIDTH / 2, 60, 255);
-			print_abc(messageLine, x, y + curLine * CHAR_HEIGHT);
+			x = CLIP<int>(textX, 60, 259) - strlen(messageLine) * CHAR_WIDTH / 2;
+			print_abc(messageLine, x, y + curLine * (CHAR_HEIGHT + 2));
 		}
 	}
 }
