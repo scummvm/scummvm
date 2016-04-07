@@ -1063,15 +1063,15 @@ msgstr "Sprache der ScummVM-Oberfläche"
 
 #: gui/options.cpp:1235
 msgid "Update check:"
-msgstr ""
+msgstr "Suche nach Aktualisierungen:"
 
 #: gui/options.cpp:1235
 msgid "How often to check ScummVM updates"
-msgstr ""
+msgstr "Wie oft nach Aktualisierungen von ScummVM suchen?"
 
 #: gui/options.cpp:1247
 msgid "Check now"
-msgstr ""
+msgstr "Jetzt prüfen"
 
 #: gui/options.cpp:1382
 msgid "You have to restart ScummVM before your changes will take effect."
@@ -1277,19 +1277,22 @@ msgid ""
 "\n"
 "Would you like to enable this feature?"
 msgstr ""
+"ScummVM unterstützt die automatische Suche nach Aktualisierungen,\n"
+"wozu ein Internetzugang erforderlich ist.\n"
+"\n"
+"Möchten Sie diese Funktion aktivieren?"
 
 #: gui/updates-dialog.cpp:55
 msgid "(You can always enable it in the options dialog on the Misc tab)"
-msgstr ""
+msgstr "(Sie können diese auch jederzeit im Options-Dialog unter dem Reiter "Sonstiges" aktivieren)"
 
 #: gui/updates-dialog.cpp:92
-#, fuzzy
 msgid "Check for updates automatically"
-msgstr "Suche nach Aktualisierungen..."
+msgstr "Automatisch nach Aktualisierungen suchen"
 
 #: gui/updates-dialog.cpp:111
 msgid "Proceed"
-msgstr ""
+msgstr "Fortfahren"
 
 #: gui/widget.cpp:327 gui/widget.cpp:329 gui/widget.cpp:335 gui/widget.cpp:337
 msgid "Clear value"
@@ -1420,20 +1423,19 @@ msgstr "Hercules Bernst."
 
 #: common/updates.cpp:58
 msgid "Daily"
-msgstr ""
+msgstr "täglich"
 
 #: common/updates.cpp:60
 msgid "Weekly"
-msgstr ""
+msgstr "wöchentlich"
 
 #: common/updates.cpp:62
 msgid "Monthly"
-msgstr ""
+msgstr "monatlich"
 
 #: common/updates.cpp:64
-#, fuzzy
 msgid "<Bad value>"
-msgstr "Wert löschen"
+msgstr "<Fehlerhafter Wert>"
 
 #: engines/advancedDetector.cpp:334
 #, c-format
@@ -2961,13 +2963,12 @@ msgstr ""
 "goldenen."
 
 #: engines/scumm/detection.cpp:1335
-#, fuzzy
 msgid "Show Object Line"
-msgstr "Objektnamen zeigen"
+msgstr "Objektzeile anzeigen"
 
 #: engines/scumm/detection.cpp:1336
 msgid "Show the names of objects at the bottom of the screen"
-msgstr ""
+msgstr "Zeige die Namen von Objekten im unteren Bereich des Bildschirms"
 
 #: engines/scumm/dialogs.cpp:176
 #, c-format
