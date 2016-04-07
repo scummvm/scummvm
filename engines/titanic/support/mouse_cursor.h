@@ -61,6 +61,7 @@ private:
 	CScreenManager *_screenManager;
 	CursorId _cursorId;
 	CursorEntry _cursors[NUM_CURSORS];
+	uint _setCursorCount;
 
 	/**
 	 * Load the images for each cursor
@@ -89,6 +90,11 @@ public:
 	 * Updates the mouse cursor
 	 */
 	void update();
+
+	/**
+	 * Returns the number of times the cursor has been set
+	 */
+	uint getChangeCount() const { return _setCursorCount; }
 };
 
 

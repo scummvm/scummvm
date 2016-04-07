@@ -50,7 +50,7 @@ static const int CURSOR_DATA[NUM_CURSORS][4] = {
 };
 
 CMouseCursor::CMouseCursor(CScreenManager *screenManager) : 
-		_screenManager(screenManager), _cursorId(CURSOR_HOURGLASS) {
+		_screenManager(screenManager), _cursorId(CURSOR_HOURGLASS), _setCursorCount(0) {
 	loadCursorImages();
 	setCursor(CURSOR_ARROW);
 }
@@ -90,6 +90,8 @@ void CMouseCursor::hide() {
 }
 
 void CMouseCursor::setCursor(CursorId cursorId) {
+	++_setCursorCount;
+
 	if (cursorId != _cursorId) {
 		CursorEntry &ce = _cursors[cursorId - 1];
 		CVideoSurface &surface = *ce._videoSurface;

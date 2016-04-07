@@ -209,9 +209,13 @@ bool CViewItem::MouseDoubleClickMsg(CMouseDoubleClickMsg *msg) {
 
 bool CViewItem::MouseMoveMsg(CMouseMoveMsg *msg) {
 	CScreenManager *screenManager = CScreenManager::_screenManagerPtr;
+	uint changeCount = screenManager->_mouseCursor->getChangeCount();
 
 	if (handleMouseMsg(msg, true)) {
-		screenManager->_mouseCursor->setCursor(CURSOR_ARROW);
+		// If the cursor hasn't been set in the call to handleMouseMsg,
+		// then reset it back to the default arrow cursor
+		if (screenManager->_mouseCursor->getChangeCount() == changeCount)
+			screenManager->_mouseCursor->setCursor(CURSOR_ARROW);
 	} else {
 		// Iterate through each link item, and if any is highlighted,
 		// change the mouse cursor to the designated cursor for the item
@@ -226,7 +230,7 @@ bool CViewItem::MouseMoveMsg(CMouseMoveMsg *msg) {
 			treeItem = treeItem->getNextSibling();
 		}
 
-		if (!handleMouseMsg(msg, false))
+		if (!handleMouseMsg(msg, false) || (screenManager->_mouseCursor->getChangeCount() == changeCount))
 			screenManager->_mouseCursor->setCursor(CURSOR_ARROW);
 	}
 
@@ -244,7 +248,7 @@ bool CViewItem::handleMouseMsg(CMouseMsg *msg, bool flag) {
 	for (CTreeItem *treeItem = scan(this); treeItem; treeItem = treeItem->scan(this)) {
 		CGameObject *gameObject = dynamic_cast<CGameObject *>(treeItem);
 		if (gameObject) {
-			if (gameObject->checkPoint(msg->_mousePos, 0, 1) &&
+			if (gameObject->checkPoint(msg->_mousePos, false, true) &&
 					(!flag || !gameObject->_field60)) {
 				if (gameObjects.size() < 256)
 					gameObjects.push_back(gameObject);
