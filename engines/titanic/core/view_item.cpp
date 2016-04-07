@@ -30,6 +30,13 @@
 
 namespace Titanic {
 
+BEGIN_MESSAGE_MAP(CViewItem, CNamedItem)
+	ON_MESSAGE(MouseButtonDownMsg)
+	ON_MESSAGE(MouseButtonUpMsg)
+	ON_MESSAGE(MouseDoubleClickMsg)
+	ON_MESSAGE(MouseMoveMsg)
+END_MESSAGE_MAP()
+
 CViewItem::CViewItem() : CNamedItem() {
 	Common::fill(&_buttonUpTargets[0], &_buttonUpTargets[4], nullptr);
 	_field24 = 0;
@@ -161,7 +168,7 @@ void CViewItem::enterView(CViewItem *newView) {
 	}
 }
 
-bool CViewItem::handleMessage(CMouseButtonDownMsg &msg) {
+bool CViewItem::MouseButtonDownMsg(CMouseButtonDownMsg &msg) {
 	if (msg._buttons & MB_LEFT) {
 		if (!handleMouseMsg(&msg, true)) {
 			CGameManager *gm = getGameManager();
@@ -186,21 +193,21 @@ bool CViewItem::handleMessage(CMouseButtonDownMsg &msg) {
 	return true;
 }
 
-bool CViewItem::handleMessage(CMouseButtonUpMsg &msg) {
+bool CViewItem::MouseButtonUpMsg(CMouseButtonUpMsg &msg) {
 	if (msg._buttons & MB_LEFT)
 		handleMouseMsg(&msg, false);
 
 	return true;
 }
 
-bool CViewItem::handleMessage(CMouseDoubleClickMsg &msg) {
+bool CViewItem::MouseDoubleClickMsg(CMouseDoubleClickMsg &msg) {
 	if (msg._buttons & MB_LEFT)
 		handleMouseMsg(&msg, false);
 
 	return true;
 }
 
-bool CViewItem::handleMessage(CMouseMoveMsg &msg) {
+bool CViewItem::MouseMoveMsg(CMouseMoveMsg &msg) {
 	CScreenManager *screenManager = CScreenManager::_screenManagerPtr;
 
 	if (handleMouseMsg(&msg, true)) {

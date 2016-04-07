@@ -24,6 +24,12 @@
 
 namespace Titanic {
 
+BEGIN_MESSAGE_MAP(CBackground, CGameObject)
+	ON_MESSAGE(StatusChangeMsg)
+	ON_MESSAGE(SetFrameMsg)
+	ON_MESSAGE(VisibleMsg)
+END_MESSAGE_MAP()
+
 CBackground::CBackground() : CGameObject(), _fieldBC(0), _fieldC0(0), _fieldDC(0) {
 }
 
@@ -49,7 +55,7 @@ void CBackground::load(SimpleFile *file) {
 	CGameObject::load(file);
 }
 
-bool CBackground::handleMessage(CStatusChangeMsg &msg) {
+bool CBackground::StatusChangeMsg(CStatusChangeMsg *msg) {
 	setVisible(true);
 	if (_fieldDC) {
 		fn1(_fieldBC, _fieldC0, 16);
@@ -59,13 +65,13 @@ bool CBackground::handleMessage(CStatusChangeMsg &msg) {
 	return true;
 }
 
-bool CBackground::handleMessage(CSetFrameMsg &msg) {
-	loadFrame(msg._frameNumber);
+bool CBackground::SetFrameMsg(CSetFrameMsg *msg) {
+	loadFrame(msg->_frameNumber);
 	return true;
 }
 
-bool CBackground::handleMessage(CVisibleMsg &msg) {
-	setVisible(msg._visible);
+bool CBackground::VisibleMsg(CVisibleMsg *msg) {
+	setVisible(msg->_visible);
 	return true;
 }
 

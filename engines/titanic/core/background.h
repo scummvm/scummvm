@@ -28,10 +28,7 @@
 
 namespace Titanic {
 
-class CBackground : public CGameObject,
-	public CStatusChangeMsgTarget,
-	public CSetFrameMsgTarget,
-	public CVisibleMsgTarget {
+class CBackground : public CGameObject {
 protected:
 	int _fieldBC;
 	int _fieldC0;
@@ -39,9 +36,11 @@ protected:
 	CString _string2;
 	int _fieldDC;
 protected:
-	virtual bool handleMessage(CStatusChangeMsg &msg);
-	virtual bool handleMessage(CSetFrameMsg &msg);
-	virtual bool handleMessage(CVisibleMsg &msg);
+	DECLARE_MESSAGE_MAP
+
+	virtual bool StatusChangeMsg(CStatusChangeMsg *msg);
+	virtual bool SetFrameMsg(CSetFrameMsg *msg);
+	virtual bool VisibleMsg(CVisibleMsg *msg);
 public:
 	CLASSDEF
 	CBackground();

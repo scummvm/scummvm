@@ -36,6 +36,7 @@ class CVideoSurface;
 class CMouseDragStartMsg;
 
 class CGameObject : public CNamedItem {
+	DECLARE_MESSAGE_MAP
 public:
 	static void *_v1;
 private:

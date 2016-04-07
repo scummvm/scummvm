@@ -29,19 +29,7 @@
 
 namespace Titanic {
 
-class CTelevision : public CBackground,
-	public CLeaveViewMsgTarget,
-	public CChangeSeasonMsgTarget,
-	public CEnterViewMsgTarget,
-	public CPETUpMsgTarget,
-	public CPETDownMsgTarget,
-	public CActMsgTarget,
-	public CPETActivateMsgTarget,
-	public CMovieEndMsgTarget,
-	public CShipSettingMsgTarget,
-	public CTurnOffTarget,
-	public CTurnOnTarget,
-	public CLightsMsgTarget {
+class CTelevision : public CBackground {
 private:
 	static int _v1;
 	static bool _turnOn;

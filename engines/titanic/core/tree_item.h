@@ -36,6 +36,7 @@ class CScreenManager;
 class CRoomItem;
 
 class CTreeItem: public CMessageTarget {
+	DECLARE_MESSAGE_MAP
 private:
 	CTreeItem *_parent;
 	CTreeItem *_nextSibling;

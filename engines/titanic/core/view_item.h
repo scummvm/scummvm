@@ -29,11 +29,8 @@
 
 namespace Titanic {
 
-class CViewItem : public CNamedItem,
-	public CMouseButtonDownMsgTarget,
-	public CMouseButtonUpMsgTarget,
-	public CMouseMoveMsgTarget,
-	public CMouseDoubleClickMsgTarget {
+class CViewItem : public CNamedItem {
+	DECLARE_MESSAGE_MAP
 private:
 	CTreeItem *_buttonUpTargets[4];
 private:
@@ -55,10 +52,10 @@ protected:
 	int _field50;
 	int _field54;
 protected:
-	virtual bool handleMessage(CMouseButtonDownMsg &msg);
-	virtual bool handleMessage(CMouseButtonUpMsg &msg);
-	virtual bool handleMessage(CMouseMoveMsg &msg);
-	virtual bool handleMessage(CMouseDoubleClickMsg &msg);
+	virtual bool MouseButtonDownMsg(CMouseButtonDownMsg &msg);
+	virtual bool MouseButtonUpMsg(CMouseButtonUpMsg &msg);
+	virtual bool MouseMoveMsg(CMouseMoveMsg &msg);
+	virtual bool MouseDoubleClickMsg(CMouseDoubleClickMsg &msg);
 public:
 	int _viewNumber;
 public:

@@ -32,6 +32,7 @@ class CNodeItem;
 class CRoomItem;
 
 class CNamedItem: public CTreeItem {
+	DECLARE_MESSAGE_MAP
 public:
 	CString _name;
 public:

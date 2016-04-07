@@ -23,7 +23,20 @@
 #include "titanic/core/message_target.h"
 
 namespace Titanic {
-	
+
+const MSGMAP *CMessageTarget::getMessageMap() const { 
+	return getThisMessageMap();
+}
+
+const MSGMAP *CMessageTarget::getThisMessageMap() {
+	static const MSGMAP_ENTRY _messageEntries[] = {
+		{ (PMSG)nullptr, nullptr }
+	};
+
+	static const MSGMAP messageMap = { nullptr, &_messageEntries[0] };
+	return &messageMap;
+}
+
 void CMessageTarget::save(SimpleFile *file, int indent) const {
 	file->writeNumberLine(0, indent);
 	CSaveableObject::save(file, indent);

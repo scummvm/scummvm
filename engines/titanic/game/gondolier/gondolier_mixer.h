@@ -28,8 +28,7 @@
 
 namespace Titanic {
 
-class CGondolierMixer : public CGondolierBase, 
-	public CEnterRoomMsgTarget {
+class CGondolierMixer : public CGondolierBase {
 private:
 	int _fieldBC;
 	int _fieldC0;

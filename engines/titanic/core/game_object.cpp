@@ -31,6 +31,9 @@
 
 namespace Titanic {
 
+BEGIN_MESSAGE_MAP(CGameObject, CNamedItem)
+END_MESSAGE_MAP()
+
 void *CGameObject::_v1 = nullptr;
 
 CGameObject::CGameObject(): CNamedItem() {
