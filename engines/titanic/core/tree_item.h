@@ -29,6 +29,7 @@ namespace Titanic {
 
 class CGameManager;
 class CDontSaveFileItem;
+class CMessage;
 class CNamedItem;
 class CPetControl;
 class CProjectItem;
@@ -36,6 +37,7 @@ class CScreenManager;
 class CRoomItem;
 
 class CTreeItem: public CMessageTarget {
+	friend class CMessage;
 	DECLARE_MESSAGE_MAP
 private:
 	CTreeItem *_parent;

@@ -45,8 +45,7 @@ struct CSGTStateRoomStatics {
 	int _v14;
 };
 
-class CSGTStateRoom : public CBackground,
-	public CEnterRoomMsgTarget {
+class CSGTStateRoom : public CBackground {
 private:
 	static CSGTStateRoomStatics *_statics;
 private:

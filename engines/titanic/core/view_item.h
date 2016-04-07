@@ -52,10 +52,10 @@ protected:
 	int _field50;
 	int _field54;
 protected:
-	virtual bool MouseButtonDownMsg(CMouseButtonDownMsg &msg);
-	virtual bool MouseButtonUpMsg(CMouseButtonUpMsg &msg);
-	virtual bool MouseMoveMsg(CMouseMoveMsg &msg);
-	virtual bool MouseDoubleClickMsg(CMouseDoubleClickMsg &msg);
+	virtual bool MouseButtonDownMsg(CMouseButtonDownMsg *msg);
+	virtual bool MouseButtonUpMsg(CMouseButtonUpMsg *msg);
+	virtual bool MouseMoveMsg(CMouseMoveMsg *msg);
+	virtual bool MouseDoubleClickMsg(CMouseDoubleClickMsg *msg);
 public:
 	int _viewNumber;
 public:

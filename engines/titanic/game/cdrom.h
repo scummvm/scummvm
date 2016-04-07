@@ -29,11 +29,7 @@
 
 namespace Titanic {
 
-class CCDROM : public CGameObject,
-	public CMouseDragStartMsgTarget,
-	public CMouseDragEndMsgTarget,
-	public CMouseDragMoveMsgTarget,
-	public CActMsgTarget {
+class CCDROM : public CGameObject {
 private:
 	Point _tempPos;
 protected:

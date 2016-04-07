@@ -62,8 +62,8 @@ public:
 	/**
 	 * Handles mouse down messages
 	 */
-	virtual bool handleMessage(CMouseButtonDownMsg &msg);
-	virtual bool handleMessage(CMouseButtonUpMsg &msg) { return false; }
+	virtual bool MouseButtonDownMsg(CMouseButtonDownMsg *msg);
+	virtual bool MouseButtonUpMsg(CMouseButtonUpMsg *msg) { return false; }
 
 	/**
 	 * Returns true if the object is in a valid state

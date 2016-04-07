@@ -63,9 +63,9 @@ bool CPetFrame::setup() {
 	return true;
 }
 
-bool CPetFrame::handleMessage(CMouseButtonDownMsg &msg) {
+bool CPetFrame::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
 	for (int idx = 0; idx < 5; ++idx) {
-		if (_modeButtons[idx].handleMessage(msg)) {
+		if (_modeButtons[idx].MouseButtonDownMsg(msg)) {
 			_petControl->setArea(PET_AREAS[idx]);
 			resetArea();
 			_modeButtons[idx].setMode(MODE_SELECTED);

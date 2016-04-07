@@ -28,8 +28,7 @@
 
 namespace Titanic {
 
-class CNodeAutoSoundPlayer : public CAutoSoundPlayer,
-	public CEnterNodeMsgTarget {
+class CNodeAutoSoundPlayer : public CAutoSoundPlayer {
 private:
 	int _fieldEC;
 protected:

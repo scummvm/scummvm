@@ -28,8 +28,7 @@
 
 namespace Titanic {
 
-class CAutoMusicPlayer : public CAutoMusicPlayerBase,
-	public CEnterRoomMsgTarget {
+class CAutoMusicPlayer : public CAutoMusicPlayerBase {
 private:
 	CString _string2;
 protected:

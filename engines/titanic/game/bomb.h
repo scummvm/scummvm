@@ -28,8 +28,7 @@
 
 namespace Titanic {
 
-class CBomb : public CBackground,
-	public CEnterRoomMsgTarget {
+class CBomb : public CBackground {
 private:
 	int _fieldE0;
 	int _fieldE4;

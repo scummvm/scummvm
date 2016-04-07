@@ -31,9 +31,7 @@ namespace Titanic {
 /**
  * Implements a non-responsive screen area
  */
-class CDeadArea : public CGameObject,
-	public CMouseButtonDownMsgTarget,
-	public CMouseButtonUpMsgTarget {
+class CDeadArea : public CGameObject {
 protected:
 	virtual bool handleMessage(CMouseButtonDownMsg &msg) { return true; }
 	virtual bool handleMessage(CMouseButtonUpMsg &msg) { return true; }

@@ -28,10 +28,7 @@
 
 namespace Titanic {
 
-class CCDROMTray : public CGameObject,
-	public CActMsgTarget,
-	public CMovieEndMsgTarget,
-	public CStatusChangeMsgTarget {
+class CCDROMTray : public CGameObject {
 public:
 	int _state;
 	CString _string1;

@@ -39,16 +39,8 @@
 
 namespace Titanic {
 
-class CPetControl : public CGameObject,
-	public CMouseButtonDownMsgTarget,
-	public CMouseDragStartMsgTarget,
-	public CMouseDragMoveMsgTarget,
-	public CMouseDragEndMsgTarget,
-	public CMouseButtonUpMsgTarget,
-	public CMouseDoubleClickMsgTarget,
-	public CKeyCharMsgTarget,
-	public CVirtualKeyCharMsgTarget,
-	public CTimerMsgTarget {
+class CPetControl : public CGameObject {
+	DECLARE_MESSAGE_MAP
 private:
 	int _fieldC0;
 	int _locked;
@@ -102,15 +94,15 @@ private:
 
 	bool getC0() const;
 protected:
-	bool handleMessage(CMouseButtonDownMsg &msg);
-	bool handleMessage(CMouseDragStartMsg &msg);
-	bool handleMessage(CMouseDragMoveMsg &msg);
-	bool handleMessage(CMouseDragEndMsg &msg);
-	bool handleMessage(CMouseButtonUpMsg &msg);
-	bool handleMessage(CMouseDoubleClickMsg &msg);
-	bool handleMessage(CKeyCharMsg &msg);
-	bool handleMessage(CVirtualKeyCharMsg &msg);
-	bool handleMessage(CTimerMsg &msg);
+	bool MouseButtonDownMsg(CMouseButtonDownMsg *msg);
+	bool MouseDragStartMsg(CMouseDragStartMsg *msg);
+	bool MouseDragMoveMsg(CMouseDragMoveMsg *msg);
+	bool MouseDragEndMsg(CMouseDragEndMsg *msg);
+	bool MouseButtonUpMsg(CMouseButtonUpMsg *msg);
+	bool MouseDoubleClickMsg(CMouseDoubleClickMsg *msg);
+	bool KeyCharMsg(CKeyCharMsg *msg);
+	bool VirtualKeyCharMsg(CVirtualKeyCharMsg *msg);
+	bool TimerMsg(CTimerMsg *msg);
 public:
 	PetArea _currentArea;
 public:

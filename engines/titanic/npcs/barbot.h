@@ -28,8 +28,7 @@
 
 namespace Titanic {
 
-class CBarbot : public CTrueTalkNPC,
-	public CEnterRoomMsgTarget {
+class CBarbot : public CTrueTalkNPC {
 private:
 	static int _v0;
 private:

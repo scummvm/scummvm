@@ -27,6 +27,18 @@
 
 namespace Titanic {
 
+BEGIN_MESSAGE_MAP(CPetControl, CGameObject)
+	ON_MESSAGE(MouseButtonDownMsg)
+	ON_MESSAGE(MouseDragStartMsg)
+	ON_MESSAGE(MouseDragMoveMsg)
+	ON_MESSAGE(MouseDragEndMsg)
+	ON_MESSAGE(MouseButtonUpMsg)
+	ON_MESSAGE(MouseDoubleClickMsg)
+	ON_MESSAGE(KeyCharMsg)
+	ON_MESSAGE(VirtualKeyCharMsg)
+	ON_MESSAGE(TimerMsg)
+END_MESSAGE_MAP()
+
 CPetControl::CPetControl() : CGameObject(), 
 		_currentArea(PET_CONVERSATION), _fieldC0(0), _locked(0), _fieldC8(0),
 		_treeItem1(nullptr), _treeItem2(nullptr), _hiddenRoom(nullptr),
@@ -233,74 +245,74 @@ bool CPetControl::getC0() const {
 	return _fieldC0 > 0;
 }
 
-bool CPetControl::handleMessage(CMouseButtonDownMsg &msg) {
-	if (!containsPt(msg._mousePos) || getC0())
+bool CPetControl::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
+	if (!containsPt(msg->_mousePos) || getC0())
 		return false;
 
 	bool result = false;
 	if (isUnlocked())
-		result = _frame.handleMessage(msg);
+		result = _frame.MouseButtonDownMsg(msg);
 
 	if (!result) {
-		result = _sections[_currentArea]->handleMessage(msg);
+		result = _sections[_currentArea]->MouseButtonDownMsg(msg);
 	}
 
 	makeDirty();
 	return result;
 }
 
-bool CPetControl::handleMessage(CMouseDragStartMsg &msg) {
-	if (!containsPt(msg._mousePos) || getC0())
+bool CPetControl::MouseDragStartMsg(CMouseDragStartMsg *msg) {
+	if (!containsPt(msg->_mousePos) || getC0())
 		return false;
 
-	return _sections[_currentArea]->handleMessage(msg);
+	return _sections[_currentArea]->MouseDragStartMsg(msg);
 }
 
-bool CPetControl::handleMessage(CMouseDragMoveMsg &msg) {
-	return _sections[_currentArea]->handleMessage(msg);
+bool CPetControl::MouseDragMoveMsg(CMouseDragMoveMsg *msg) {
+	return _sections[_currentArea]->MouseDragMoveMsg(msg);
 }
 
-bool CPetControl::handleMessage(CMouseDragEndMsg &msg) {
-	return _sections[_currentArea]->handleMessage(msg);
+bool CPetControl::MouseDragEndMsg(CMouseDragEndMsg *msg) {
+	return _sections[_currentArea]->MouseDragEndMsg(msg);
 }
 
-bool CPetControl::handleMessage(CMouseButtonUpMsg &msg) {
-	if (!containsPt(msg._mousePos) || getC0())
+bool CPetControl::MouseButtonUpMsg(CMouseButtonUpMsg *msg) {
+	if (!containsPt(msg->_mousePos) || getC0())
 		return false;
 
 	bool result = false;
 	if (isUnlocked())
-		result = _frame.handleMessage(msg);
+		result = _frame.MouseButtonUpMsg(msg);
 
 	if (!result)
-		result = _sections[_currentArea]->handleMessage(msg);
+		result = _sections[_currentArea]->MouseButtonUpMsg(msg);
 
 	makeDirty();
 	return result;
 }
 
-bool CPetControl::handleMessage(CMouseDoubleClickMsg &msg) {
-	if (!containsPt(msg._mousePos) || getC0())
+bool CPetControl::MouseDoubleClickMsg(CMouseDoubleClickMsg *msg) {
+	if (!containsPt(msg->_mousePos) || getC0())
 		return false;
 
-	return _sections[_currentArea]->handleMessage(msg);
+	return _sections[_currentArea]->MouseDoubleClickMsg(msg);
 }
 
-bool CPetControl::handleMessage(CKeyCharMsg &msg) {
+bool CPetControl::KeyCharMsg(CKeyCharMsg *msg) {
 	if (getC0())
 		return false;
 
-	return _sections[_currentArea]->handleMessage(msg);
+	return _sections[_currentArea]->KeyCharMsg(msg);
 }
 
-bool CPetControl::handleMessage(CVirtualKeyCharMsg &msg) {
+bool CPetControl::VirtualKeyCharMsg(CVirtualKeyCharMsg *msg) {
 	if (getC0())
 		return false;
 
-	bool result = _sections[_currentArea]->handleMessage(msg);
+	bool result = _sections[_currentArea]->VirtualKeyCharMsg(msg);
 
 	if (!result) {
-		switch (msg._keyState.keycode) {
+		switch (msg->_keyState.keycode) {
 		case Common::KEYCODE_F1:
 			result = true;
 			setArea(PET_INVENTORY);
@@ -329,7 +341,7 @@ bool CPetControl::handleMessage(CVirtualKeyCharMsg &msg) {
 	return result;
 }
 
-bool CPetControl::handleMessage(CTimerMsg &msg) {
+bool CPetControl::TimerMsg(CTimerMsg *msg) {
 	warning("TODO: CPetControl::CTimerMsg");
 	return true;
 }

@@ -28,8 +28,7 @@
 
 namespace Titanic {
 
-class CFanNoises : public CGameObject,
-	public CEnterRoomMsgTarget {
+class CFanNoises : public CGameObject {
 private:
 	int _fieldBC;
 	int _fieldC0;

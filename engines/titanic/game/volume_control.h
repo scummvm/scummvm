@@ -28,7 +28,7 @@
 
 namespace Titanic {
 
-class CVolumeControl : public CGameObject, CEnterNodeMsgTarget {
+class CVolumeControl : public CGameObject {
 private:
 	int _fieldBC;
 	CString _string1;

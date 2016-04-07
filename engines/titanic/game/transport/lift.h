@@ -28,8 +28,7 @@
 
 namespace Titanic {
 
-class CLift : public CTransport,
-	public CEnterRoomMsgTarget {
+class CLift : public CTransport {
 private:
 	static int _v1;
 	static int _v2;

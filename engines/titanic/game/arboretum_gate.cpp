@@ -24,6 +24,16 @@
 
 namespace Titanic {
 
+BEGIN_MESSAGE_MAP(CArboretumGate, CBackground)
+	ON_MESSAGE(ActMsg)
+	ON_MESSAGE(LeaveViewMsg)
+	ON_MESSAGE(TurnOff)
+	ON_MESSAGE(MouseButtonDownMsg)
+	ON_MESSAGE(EnterViewMsg)
+	ON_MESSAGE(TurnOn)
+	ON_MESSAGE(MovieEndMsg)
+END_MESSAGE_MAP()
+
 int CArboretumGate::_v1;
 int CArboretumGate::_v2;
 int CArboretumGate::_v3;
@@ -133,17 +143,17 @@ void CArboretumGate::load(SimpleFile *file) {
 	CBackground::load(file);
 }
 
-bool CArboretumGate::handleMessage(CActMsg &msg) { return false; }
-bool CArboretumGate::handleMessage(CLeaveViewMsg &msg) { return false; }
-bool CArboretumGate::handleMessage(CTurnOff &msg) { return false; }
-bool CArboretumGate::handleMessage(CMouseButtonDownMsg &msg) { return false; }
+bool CArboretumGate::ActMsg(CActMsg *msg) { return false; }
+bool CArboretumGate::LeaveViewMsg(CLeaveViewMsg *msg) { return false; }
+bool CArboretumGate::TurnOff(CTurnOff *msg) { return false; }
+bool CArboretumGate::MouseButtonDownMsg(CMouseButtonDownMsg *msg) { return false; }
 
-bool CArboretumGate::handleMessage(CEnterViewMsg &msg) {
+bool CArboretumGate::EnterViewMsg(CEnterViewMsg *msg) {
 	warning("CArboretumGate::handleEvent");
 	return false;
 }
 
-bool CArboretumGate::handleMessage(CTurnOn &msg) { return false; }
-bool CArboretumGate::handleMessage(CMovieEndMsg &msg) { return false; }
+bool CArboretumGate::TurnOn(CTurnOn *msg) { return false; }
+bool CArboretumGate::MovieEndMsg(CMovieEndMsg *msg) { return false; }
 
 } // End of namespace Titanic

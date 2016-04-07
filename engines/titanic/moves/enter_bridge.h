@@ -28,8 +28,7 @@
 
 namespace Titanic {
 
-class CEnterBridge : public CGameObject,
-	public CEnterRoomMsgTarget {
+class CEnterBridge : public CGameObject {
 private:
 	int _value;
 protected:

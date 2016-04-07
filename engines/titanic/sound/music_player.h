@@ -28,8 +28,7 @@
 
 namespace Titanic {
 
-class CMusicPlayer : public CGameObject,
-	public CEnterRoomMsgTarget {
+class CMusicPlayer : public CGameObject {
 protected:
 	int _fieldBC;
 	CString _string1;

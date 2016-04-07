@@ -28,8 +28,7 @@
 
 namespace Titanic {
 
-class CEndSequenceControl : public CGameObject,
-	public CEnterRoomMsgTarget {
+class CEndSequenceControl : public CGameObject {
 protected:
 	virtual bool handleMessage(CEnterRoomMsg &msg);
 public:

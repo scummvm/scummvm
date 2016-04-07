@@ -24,6 +24,12 @@
 
 namespace Titanic {
 
+BEGIN_MESSAGE_MAP(CSTButton, CBackground)
+	ON_MESSAGE(MouseButtonDownMsg)
+	ON_MESSAGE(MouseButtonUpMsg)
+	ON_MESSAGE(EnterViewMsg)
+END_MESSAGE_MAP()
+
 CSTButton::CSTButton() : CBackground() {
 	_statusInc = 0;
 	_statusTarget = "NULL";
@@ -60,14 +66,14 @@ void CSTButton::load(SimpleFile *file) {
 	CBackground::load(file);
 }
 
-bool CSTButton::handleMessage(CMouseButtonDownMsg &msg) {
+bool CSTButton::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
 	changeStatus(0);
 	// TODO: Obj6c stuff
 
 	return true;
 }
 
-bool CSTButton::handleMessage(CMouseButtonUpMsg &msg) {
+bool CSTButton::MouseButtonUpMsg(CMouseButtonUpMsg *msg) {
 	int oldStatus = _currentStatus;
 	int newStatus = _currentStatus + _statusInc;
 
@@ -82,7 +88,7 @@ bool CSTButton::handleMessage(CMouseButtonUpMsg &msg) {
 	return true;
 }
 
-bool CSTButton::handleMessage(CEnterViewMsg &msg) {
+bool CSTButton::EnterViewMsg(CEnterViewMsg *msg) {
 	loadFrame(_buttonFrame);
 	return true;
 }

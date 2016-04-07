@@ -70,7 +70,7 @@ public:
 	virtual void getBounds(Rect *rect);
 
 	virtual bool proc6(const Common::Point &pt);
-	virtual bool handleMessage(CMouseButtonDownMsg &msg);
+	virtual bool MouseButtonDownMsg(CMouseButtonDownMsg *msg);
 
 	/**
 	 * Returns whether the passed point falls inside the item

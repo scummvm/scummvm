@@ -28,8 +28,7 @@
 
 namespace Titanic {
 
-class CPETPosition : public CGameObject,
-	public CEnterRoomMsgTarget {
+class CPETPosition : public CGameObject {
 protected:
 	virtual bool handleMessage(CEnterRoomMsg &msg);
 public:

@@ -28,8 +28,7 @@
 
 namespace Titanic {
 
-class CLiftBot : public CTrueTalkNPC,
-	public CEnterRoomMsgTarget {
+class CLiftBot : public CTrueTalkNPC {
 private:
 	static int _v1;
 	static int _v2;

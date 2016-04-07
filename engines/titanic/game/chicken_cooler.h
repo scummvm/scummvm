@@ -28,8 +28,7 @@
 
 namespace Titanic {
 
-class CChickenCooler : public CGameObject,
-	public CEnterRoomMsgTarget {
+class CChickenCooler : public CGameObject {
 private:
 	int _fieldBC;
 	int _fieldC0;

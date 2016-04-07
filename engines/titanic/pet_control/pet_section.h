@@ -80,14 +80,14 @@ public:
 	 * Following are handlers for the various messages that the PET can
 	 * pass onto the currently active section/area
 	 */
-	virtual bool handleMessage(CMouseButtonDownMsg &msg) { return false; }
-	virtual bool handleMessage(CMouseDragStartMsg &msg) { return false; }
-	virtual bool handleMessage(CMouseDragMoveMsg &msg) { return false; }
-	virtual bool handleMessage(CMouseDragEndMsg &msg) { return false; }
-	virtual bool handleMessage(CMouseButtonUpMsg &msg) { return false; }
-	virtual bool handleMessage(CMouseDoubleClickMsg &msg) { return false; }
-	virtual bool handleMessage(CKeyCharMsg &msg) { return false; }
-	virtual bool handleMessage(CVirtualKeyCharMsg &msg) { return false; }
+	virtual bool MouseButtonDownMsg(CMouseButtonDownMsg *msg) { return false; }
+	virtual bool MouseDragStartMsg(CMouseDragStartMsg *msg) { return false; }
+	virtual bool MouseDragMoveMsg(CMouseDragMoveMsg *msg) { return false; }
+	virtual bool MouseDragEndMsg(CMouseDragEndMsg *msg) { return false; }
+	virtual bool MouseButtonUpMsg(CMouseButtonUpMsg *msg) { return false; }
+	virtual bool MouseDoubleClickMsg(CMouseDoubleClickMsg *msg) { return false; }
+	virtual bool KeyCharMsg(CKeyCharMsg *msg) { return false; }
+	virtual bool VirtualKeyCharMsg(CVirtualKeyCharMsg *msg) { return false; }
 
 	virtual int proc14() { return 0; }
 	virtual int proc15() { return 0; }

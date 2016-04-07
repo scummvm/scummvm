@@ -168,9 +168,9 @@ void CViewItem::enterView(CViewItem *newView) {
 	}
 }
 
-bool CViewItem::MouseButtonDownMsg(CMouseButtonDownMsg &msg) {
-	if (msg._buttons & MB_LEFT) {
-		if (!handleMouseMsg(&msg, true)) {
+bool CViewItem::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
+	if (msg->_buttons & MB_LEFT) {
+		if (!handleMouseMsg(msg, true)) {
 			CGameManager *gm = getGameManager();
 			if (gm->test54()) {
 				findNode()->findRoom();
@@ -178,7 +178,7 @@ bool CViewItem::MouseButtonDownMsg(CMouseButtonDownMsg &msg) {
 				CLinkItem *linkItem = dynamic_cast<CLinkItem *>(
 					findChildInstanceOf(CLinkItem::_type));
 				while (linkItem) {
-					if (linkItem->_bounds.contains(msg._mousePos)) {
+					if (linkItem->_bounds.contains(msg->_mousePos)) {
 						gm->_gameState.triggerLink(linkItem);
 						return true;
 					}
@@ -193,24 +193,24 @@ bool CViewItem::MouseButtonDownMsg(CMouseButtonDownMsg &msg) {
 	return true;
 }
 
-bool CViewItem::MouseButtonUpMsg(CMouseButtonUpMsg &msg) {
-	if (msg._buttons & MB_LEFT)
-		handleMouseMsg(&msg, false);
+bool CViewItem::MouseButtonUpMsg(CMouseButtonUpMsg *msg) {
+	if (msg->_buttons & MB_LEFT)
+		handleMouseMsg(msg, false);
 
 	return true;
 }
 
-bool CViewItem::MouseDoubleClickMsg(CMouseDoubleClickMsg &msg) {
-	if (msg._buttons & MB_LEFT)
-		handleMouseMsg(&msg, false);
+bool CViewItem::MouseDoubleClickMsg(CMouseDoubleClickMsg *msg) {
+	if (msg->_buttons & MB_LEFT)
+		handleMouseMsg(msg, false);
 
 	return true;
 }
 
-bool CViewItem::MouseMoveMsg(CMouseMoveMsg &msg) {
+bool CViewItem::MouseMoveMsg(CMouseMoveMsg *msg) {
 	CScreenManager *screenManager = CScreenManager::_screenManagerPtr;
 
-	if (handleMouseMsg(&msg, true)) {
+	if (handleMouseMsg(msg, true)) {
 		screenManager->_mouseCursor->setCursor(CURSOR_ARROW);
 	} else {
 		// Iterate through each link item, and if any is highlighted,
@@ -218,7 +218,7 @@ bool CViewItem::MouseMoveMsg(CMouseMoveMsg &msg) {
 		CTreeItem *treeItem = getFirstChild();
 		while (treeItem) {
 			CLinkItem *linkItem = dynamic_cast<CLinkItem *>(treeItem);
-			if (linkItem && linkItem->_bounds.contains(msg._mousePos)) {
+			if (linkItem && linkItem->_bounds.contains(msg->_mousePos)) {
 				screenManager->_mouseCursor->setCursor(linkItem->_cursorId);
 				return true;
 			}
@@ -226,7 +226,7 @@ bool CViewItem::MouseMoveMsg(CMouseMoveMsg &msg) {
 			treeItem = treeItem->getNextSibling();
 		}
 
-		if (!handleMouseMsg(&msg, false))
+		if (!handleMouseMsg(msg, false))
 			screenManager->_mouseCursor->setCursor(CURSOR_ARROW);
 	}
 

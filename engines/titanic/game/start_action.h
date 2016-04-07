@@ -28,9 +28,7 @@
 
 namespace Titanic {
 
-class CStartAction : public CBackground,
-	public CMouseButtonDownMsgTarget,
-	public CMouseButtonUpMsgTarget {
+class CStartAction : public CBackground {
 protected:
 	CString _msgTarget;
 	CString _msgAction;

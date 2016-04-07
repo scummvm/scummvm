@@ -27,8 +27,7 @@
 #include "titanic/messages/messages.h"
 namespace Titanic {
 
-class CGetLiftEye2 : public CGameObject,
-	public CEnterRoomMsgTarget {
+class CGetLiftEye2 : public CGameObject {
 private:
 	static CString *_v1;
 protected:

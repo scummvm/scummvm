@@ -23,6 +23,7 @@
 #include "titanic/messages/messages.h"
 #include "titanic/messages/mouse_messages.h"
 #include "titanic/core/game_object.h"
+#include "titanic/core/message_target.h"
 #include "titanic/core/tree_item.h"
 #include "titanic/titanic.h"
 
@@ -77,6 +78,33 @@ bool CMessage::execute(const CString &target, const ClassDef *classDef, int flag
 	}
 
 	return false;
+}
+
+const MSGMAP_ENTRY *CMessage::findMapEntry(const CTreeItem *treeItem, const ClassDef *classDef) {
+	// Iterate through the class and any parent classes
+	for (const MSGMAP *msgMap = treeItem->getMessageMap(); msgMap->pFnGetBaseMap;
+			msgMap = msgMap->pFnGetBaseMap()) {
+		// Iterate through the map entries for this class
+		for (const MSGMAP_ENTRY *entry = msgMap->lpEntries;
+				entry->_class != nullptr; ++entry) {
+			// Check if the class or any of it's ancesotrs is handled by this entry
+			for (const ClassDef *entryDef = entry->_class; entryDef; entryDef = entryDef->_parent) {
+				if (entryDef == classDef)
+					return entry;
+			}			
+		}
+	}
+
+	return nullptr;
+}
+
+bool CMessage::perform(CTreeItem *treeItem) {
+	const MSGMAP_ENTRY *entry = findMapEntry(treeItem, getType());
+	return entry && (*treeItem.*(entry->_fn))(this);
+}
+
+bool CMessage::supports(const CTreeItem *treeItem, ClassDef *classDef) {
+	return findMapEntry(treeItem, classDef) != nullptr;
 }
 
 bool CMessage::isMouseMsg() const {
