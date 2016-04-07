@@ -24,6 +24,11 @@
 
 namespace Titanic {
 
+BEGIN_MESSAGE_MAP(CDeadArea, CGameObject)
+	ON_MESSAGE(MouseButtonDownMsg)
+	ON_MESSAGE(MouseButtonUpMsg)
+END_MESSAGE_MAP()
+
 CDeadArea::CDeadArea() : CGameObject() {
 }
 
