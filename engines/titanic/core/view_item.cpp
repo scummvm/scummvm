@@ -208,14 +208,15 @@ bool CViewItem::handleMessage(CMouseMoveMsg &msg) {
 	} else {
 		// Iterate through each link item, and if any is highlighted,
 		// change the mouse cursor to the designated cursor for the item
-		CLinkItem *linkItem = dynamic_cast<CLinkItem *>(getFirstChild());
-		while (linkItem) {
-			if (linkItem->_bounds.contains(msg._mousePos)) {
+		CTreeItem *treeItem = getFirstChild();
+		while (treeItem) {
+			CLinkItem *linkItem = dynamic_cast<CLinkItem *>(treeItem);
+			if (linkItem && linkItem->_bounds.contains(msg._mousePos)) {
 				screenManager->_mouseCursor->setCursor(linkItem->_cursorId);
 				return true;
 			}
 
-			linkItem = dynamic_cast<CLinkItem *>(linkItem->getNextSibling());
+			treeItem = treeItem->getNextSibling();
 		}
 
 		if (!handleMouseMsg(&msg, false))
@@ -252,10 +253,12 @@ bool CViewItem::handleMouseMsg(CMouseMsg *msg, bool flag) {
 		for (int idx = (int)gameObjects.size() - 1; idx >= 0; ++idx) {
 			if (gameObjects[idx]->_cursorId != CURSOR_ARROW2) {
 				CScreenManager::_screenManagerPtr->_mouseCursor->setCursor(gameObjects[idx]->_cursorId);
-				return true;
+				break;
 			}
 		}
 	}
+	if (gameObjects.size() == 0)
+		return false;
 
 	bool result = false;
 	for (int idx = (int)gameObjects.size() - 1; idx >= 0; --idx) {
