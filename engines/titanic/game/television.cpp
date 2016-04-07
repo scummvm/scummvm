@@ -25,6 +25,22 @@
 
 namespace Titanic {
 
+BEGIN_MESSAGE_MAP(CTelevision, CGameObject)
+	ON_MESSAGE(LeaveViewMsg)
+	ON_MESSAGE(ChangeSeasonMsg)
+	ON_MESSAGE(EnterViewMsg)
+	ON_MESSAGE(PETUpMsg)
+	ON_MESSAGE(PETDownMsg)
+	ON_MESSAGE(StatusChangeMsg)
+	ON_MESSAGE(ActMsg)
+	ON_MESSAGE(PETActivateMsg)
+	ON_MESSAGE(MovieEndMsg)
+	ON_MESSAGE(ShipSettingMsg)
+	ON_MESSAGE(TurnOff)
+	ON_MESSAGE(TurnOn)
+	ON_MESSAGE(LightsMsg)
+END_MESSAGE_MAP()
+
 int CTelevision::_v1;
 bool CTelevision::_turnOn;
 int CTelevision::_v3;
@@ -82,7 +98,7 @@ void CTelevision::load(SimpleFile *file) {
 	CBackground::load(file);
 }
 
-bool CTelevision::handleMessage(CLeaveViewMsg &msg) {
+bool CTelevision::LeaveViewMsg(CLeaveViewMsg *msg) {
 	clearPet();
 	if (_isOn) {
 		if (soundFn1(_fieldF0))
@@ -102,17 +118,17 @@ bool CTelevision::handleMessage(CLeaveViewMsg &msg) {
 	return true;
 }
 
-bool CTelevision::handleMessage(CChangeSeasonMsg &msg) {
-	if (msg._season.compareTo("Autumn")) {
+bool CTelevision::ChangeSeasonMsg(CChangeSeasonMsg *msg) {
+	if (msg->_season.compareTo("Autumn")) {
 		_v1 = 545;
 		_v3 = 0;
-	} else if (msg._season.compareTo("Winter")) {
+	} else if (msg->_season.compareTo("Winter")) {
 		_v1 = 503;
 		_v3 = 0;
-	} else if (msg._season.compareTo("Spring")) {
+	} else if (msg->_season.compareTo("Spring")) {
 		_v1 = 517;
 		_v3 = 0;
-	} else if (msg._season.compareTo("Winter")) {
+	} else if (msg->_season.compareTo("Winter")) {
 		_v1 = 531;
 		_v3 = 0;
 	}
@@ -120,7 +136,7 @@ bool CTelevision::handleMessage(CChangeSeasonMsg &msg) {
 	return true; 
 }
 
-bool CTelevision::handleMessage(CEnterViewMsg &msg) {
+bool CTelevision::EnterViewMsg(CEnterViewMsg *msg) {
 	setPetArea(PET_REMOTE);
 	petFn2(2);
 	petFn3(0);
@@ -133,8 +149,8 @@ bool CTelevision::handleMessage(CEnterViewMsg &msg) {
 static const int FRAMES1[9] = { 0, 0, 56, 112, 168, 224, 280, 336, 392 };
 static const int FRAMES2[8] = { 0, 55, 111, 167, 223, 279, 335, 391 };
 
-bool CTelevision::handleMessage(CPETUpMsg &msg) {
-	if (msg._name == "Television" && _isOn) {
+bool CTelevision::PETUpMsg(CPETUpMsg *msg) {
+	if (msg->_name == "Television" && _isOn) {
 		if (soundFn1(_fieldF0))
 			soundFn2(_fieldF0, 0);
 
@@ -146,8 +162,8 @@ bool CTelevision::handleMessage(CPETUpMsg &msg) {
 	return true;
 }
 
-bool CTelevision::handleMessage(CPETDownMsg &msg) {
-	if (msg._name == "Television" && _isOn) {
+bool CTelevision::PETDownMsg(CPETDownMsg *msg) {
+	if (msg->_name == "Television" && _isOn) {
 		if (soundFn1(_fieldF0))
 			soundFn2(_fieldF0, 0);
 		if (--_fieldE0 < 1)
@@ -161,7 +177,7 @@ bool CTelevision::handleMessage(CPETDownMsg &msg) {
 	return true;
 }
 
-bool CTelevision::handleMessage(CStatusChangeMsg &msg) {
+bool CTelevision::StatusChangeMsg(CStatusChangeMsg *msg) {
 	if (_isOn) {
 		stopMovie();
 		changeStatus(0);
@@ -170,8 +186,8 @@ bool CTelevision::handleMessage(CStatusChangeMsg &msg) {
 	return true;
 }
 
-bool CTelevision::handleMessage(CActMsg &msg) {
-	if (msg._action == "TurnTVOnOff") {
+bool CTelevision::ActMsg(CActMsg *msg) {
+	if (msg->_action == "TurnTVOnOff") {
 		_isOn = !_isOn;
 		if (_isOn) {
 			setVisible(true);
@@ -186,8 +202,8 @@ bool CTelevision::handleMessage(CActMsg &msg) {
 	return true;
 }
 
-bool CTelevision::handleMessage(CPETActivateMsg &msg) {
-	if (msg._name == "Television") {
+bool CTelevision::PETActivateMsg(CPETActivateMsg *msg) {
+	if (msg->_name == "Television") {
 		CVisibleMsg visibleMsg(_isOn);
 		_isOn = !_isOn;
 
@@ -210,32 +226,32 @@ bool CTelevision::handleMessage(CPETActivateMsg &msg) {
 	return true;
 }
 
-bool CTelevision::handleMessage(CMovieEndMsg &msg) {
+bool CTelevision::MovieEndMsg(CMovieEndMsg *msg) {
 	warning("TODO: CMovieEndMsg");
 	return true;
 }
 
-bool CTelevision::handleMessage(CShipSettingMsg &msg) {
-	_v4 = msg._value;
+bool CTelevision::ShipSettingMsg(CShipSettingMsg *msg) {
+	_v4 = msg->_value;
 	return true;
 }
 
-bool CTelevision::handleMessage(CTurnOff &msg) {
+bool CTelevision::TurnOff(CTurnOff *msg) {
 	_turnOn = false;
 	return true;
 }
 
-bool CTelevision::handleMessage(CTurnOn &msg) {
+bool CTelevision::TurnOn(CTurnOn *msg) {
 	_turnOn = true;
 	return true;
 }
 
-bool CTelevision::handleMessage(CLightsMsg &msg) {
+bool CTelevision::LightsMsg(CLightsMsg *msg) {
 	CPetControl *pet = getPetControl();
 	if (pet)
 		pet->fn4();
 
-	if (msg._field8 || !_turnOn)
+	if (msg->_field8 || !_turnOn)
 		_turnOn = true;
 
 	return true;
