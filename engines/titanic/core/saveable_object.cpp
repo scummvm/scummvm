@@ -421,7 +421,8 @@ Common::List<ClassDef *> *CSaveableObject::_classDefs;
 
 #define DEFFN(T) ClassDef *T::_type; \
 	CSaveableObject *Function##T() { return new T(); }
-#define ADDFN(CHILD, PARENT) CHILD::_type = new TypeTemplate<CHILD>(#CHILD, nullptr); \
+#define ADDFN(CHILD, PARENT) \
+	CHILD::_type = new TypeTemplate<CHILD>(#CHILD, PARENT::_type); \
 	(*_classList)[#CHILD] = Function##CHILD
 
 DEFFN(CArm)
@@ -1321,7 +1322,7 @@ void CSaveableObject::initClassList() {
 	ADDFN(CSmallChevLeftOn, CToggleSwitch);
 	ADDFN(CSmallChevRightOff, CToggleSwitch);
 	ADDFN(CSmallChevRightOn, CToggleSwitch);
-	ADDFN(CStatusChangeButton, CSTButtonClass);
+	ADDFN(CStatusChangeButton, CSTButton);
 	ADDFN(CSTButton, CBackground);
 	ADDFN(CTextDown, CPetGraphic);
 	ADDFN(CTextSkrew, CPetGraphic);
