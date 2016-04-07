@@ -56,7 +56,6 @@ private:
 	void loadImage(const CString &name, bool pendingFlag = true);
 
 	void processClipList2();
-	void calcProximity(const CString &name, CProximity &obj6C);
 protected:
 	Rect _bounds;
 	double _field34;
@@ -181,7 +180,8 @@ public:
 	 */
 	void loadFrame(int frameNumber);
 
-	void calcProximity(const CString &name, int val2, int val3, int val4);
+	void soundProximity(const CString &name, int val2, int val3, int val4);
+	void soundProximity(const CString &name, CProximity &obj6C);
 };
 
 } // End of namespace Titanic
