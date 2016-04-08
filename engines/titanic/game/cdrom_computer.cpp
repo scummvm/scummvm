@@ -21,31 +21,58 @@
  */
 
 #include "titanic/game/cdrom_computer.h"
+#include "titanic/core/room_item.h"
 
 namespace Titanic {
 
-CCDROMComputer::CCDROMComputer() : CGameObject(),
-		_fieldBC(0), _fieldC0(3), _fieldC4(55), _fieldC8(32) {
+BEGIN_MESSAGE_MAP(CCDROMComputer, CGameObject)
+	ON_MESSAGE(MouseButtonDownMsg)
+END_MESSAGE_MAP()
+
+CCDROMComputer::CCDROMComputer() : CGameObject(), 
+		_clickRect(0, 3, 55, 32) {
 }
 
 void CCDROMComputer::save(SimpleFile *file, int indent) const {
 	file->writeNumberLine(1, indent);
-	file->writeNumberLine(_fieldBC, indent);
-	file->writeNumberLine(_fieldC0, indent);
-	file->writeNumberLine(_fieldC4, indent);
-	file->writeNumberLine(_fieldC8, indent);
+	file->writeNumberLine(_clickRect.left, indent);
+	file->writeNumberLine(_clickRect.top, indent);
+	file->writeNumberLine(_clickRect.right, indent);
+	file->writeNumberLine(_clickRect.bottom, indent);
 
 	CGameObject::save(file, indent);
 }
 
 void CCDROMComputer::load(SimpleFile *file) {
 	file->readNumber();
-	_fieldBC = file->readNumber();
-	_fieldC0 = file->readNumber();
-	_fieldC4 = file->readNumber();
-	_fieldC8 = file->readNumber();
+	_clickRect.left = file->readNumber();
+	_clickRect.top = file->readNumber();
+	_clickRect.right = file->readNumber();
+	_clickRect.bottom = file->readNumber();
 
 	CGameObject::load(file);
+}
+
+bool CCDROMComputer::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
+	CTreeItem *tray = getRoom()->findByName("newTray");
+	if (tray) {
+		CStatusChangeMsg statusMsg;
+		statusMsg.execute(tray);
+		
+		if (!statusMsg._success) {
+			// Check if the mouse is within the clickable area
+			Rect tempRect = _clickRect;
+			tempRect.translate(_bounds.left, _bounds.top);
+
+			if (!tempRect.contains(msg->_mousePos))
+				return true;
+		}
+
+		CActMsg actMsg("ClickedOn");
+		actMsg.execute(tray);
+	}
+
+	return true;
 }
 
 } // End of namespace Titanic

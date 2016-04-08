@@ -24,15 +24,15 @@
 #define TITANIC_CDROM_COMPUTER_H
 
 #include "titanic/core/game_object.h"
+#include "titanic/messages/mouse_messages.h"
 
 namespace Titanic {
 
 class CCDROMComputer : public CGameObject {
+	DECLARE_MESSAGE_MAP
+	bool MouseButtonDownMsg(CMouseButtonDownMsg *msg);
 private:
-	int _fieldBC;
-	int _fieldC0;
-	int _fieldC4;
-	int _fieldC8;
+	Rect _clickRect;
 public:
 	CLASSDEF
 	CCDROMComputer();
