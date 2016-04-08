@@ -86,6 +86,9 @@ bool Events::checkForNextFrameCounter() {
 		++_frameCounter;
 		_priorFrameTime = milli;
 
+		// Handle any idle updates
+		onIdle();
+
 		// Give time to the debugger
 		_vm->_debugger->onFrame();
 
@@ -100,6 +103,22 @@ bool Events::checkForNextFrameCounter() {
 
 uint32 Events::getTicksCount() const {
 	return g_system->getMillis();
+}
+
+void Events::onIdle() {
+	if (!_vm->_window->_inputAllowed)
+		return;
+	CGameManager *gameManager = _vm->_window->_gameManager;
+	if (!gameManager)
+		return;
+
+	// Let the game manager perform any game updates
+	gameManager->update();
+
+	if (gameManager->_gameState._field20) {
+		// Game needs to shut down
+		_vm->quitGame();
+	}
 }
 
 #define HANDLE_MESSAGE(METHOD) 	if (_vm->_window->_inputAllowed) { \

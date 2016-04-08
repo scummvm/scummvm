@@ -55,6 +55,11 @@ private:
 	 */
 	bool checkForNextFrameCounter();
 
+	/**
+	 * Called to handle any regular updates the game requires
+	 */
+	void onIdle();
+
 	void mouseMove();
 	void leftButtonDown();
 	void leftButtonUp();
