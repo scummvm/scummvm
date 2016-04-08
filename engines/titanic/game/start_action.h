@@ -29,12 +29,12 @@
 namespace Titanic {
 
 class CStartAction : public CBackground {
+	DECLARE_MESSAGE_MAP
+	bool MouseButtonDownMsg(CMouseButtonDownMsg *msg);
+	bool MouseButtonUpMsg(CMouseButtonUpMsg *msg);
 protected:
 	CString _msgTarget;
 	CString _msgAction;
-protected:
-	virtual bool handleMessage(CMouseButtonDownMsg &msg);
-	virtual bool handleMessage(CMouseButtonUpMsg &msg);
 public:
 	CLASSDEF
 	CStartAction();

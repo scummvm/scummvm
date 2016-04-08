@@ -29,13 +29,12 @@
 namespace Titanic {
 
 class CLiftBot : public CTrueTalkNPC {
+	bool EnterRoomMsg(CEnterRoomMsg *msg);
 private:
 	static int _v1;
 	static int _v2;
 private:
 	int _field108;
-protected:
-	virtual bool handleMessage(CEnterRoomMsg &msg);
 public:
 	CLASSDEF
 	CLiftBot();

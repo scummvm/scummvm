@@ -44,7 +44,7 @@ void CMusicPlayer::load(SimpleFile *file) {
 	CGameObject::load(file);
 }
 
-bool CMusicPlayer::handleMessage(CEnterRoomMsg &msg) {
+bool CMusicPlayer::EnterRoomMsg(CEnterRoomMsg *msg) {
 	warning("TODO: CMusicPlayer::handleEvent");
 	return true;
 }

@@ -29,6 +29,7 @@
 namespace Titanic {
 
 class CGondolierMixer : public CGondolierBase {
+	bool EnterRoomMsg(CEnterRoomMsg *msg);
 private:
 	int _fieldBC;
 	int _fieldC0;
@@ -37,8 +38,6 @@ private:
 	CString _string1;
 	CString _string2;
 	int _fieldE4;
-protected:
-	virtual bool handleMessage(CEnterRoomMsg &msg);
 public:
 	CLASSDEF
 	CGondolierMixer();

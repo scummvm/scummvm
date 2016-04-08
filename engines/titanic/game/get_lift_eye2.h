@@ -28,10 +28,9 @@
 namespace Titanic {
 
 class CGetLiftEye2 : public CGameObject {
+	bool EnterRoomMsg(CEnterRoomMsg *msg);
 private:
 	static CString *_v1;
-protected:
-	virtual bool handleMessage(CEnterRoomMsg &msg);
 public:
 	CLASSDEF
 	static void init();

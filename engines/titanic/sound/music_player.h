@@ -29,13 +29,12 @@
 namespace Titanic {
 
 class CMusicPlayer : public CGameObject {
+	bool EnterRoomMsg(CEnterRoomMsg *msg);
 protected:
 	int _fieldBC;
 	CString _string1;
 	int _fieldCC;
 	int _fieldD0;
-protected:
-	virtual bool handleMessage(CEnterRoomMsg &msg);
 public:
 	CLASSDEF
 	CMusicPlayer() : CGameObject(),

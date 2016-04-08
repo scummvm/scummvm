@@ -48,7 +48,7 @@ void CShipSetting::load(SimpleFile *file) {
 	CBackground::load(file);
 }
 
-bool CShipSetting::handleMessage(CEnterRoomMsg &msg) {
+bool CShipSetting::EnterRoomMsg(CEnterRoomMsg *msg) {
 	warning("CShipSetting::handleEvent");
 	return true;
 }

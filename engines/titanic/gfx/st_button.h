@@ -31,6 +31,9 @@ namespace Titanic {
 
 class CSTButton : public CBackground {
 	DECLARE_MESSAGE_MAP
+	bool MouseButtonDownMsg(CMouseButtonDownMsg *msg);
+	bool MouseButtonUpMsg(CMouseButtonUpMsg *msg);
+	bool EnterViewMsg(CEnterViewMsg *msg);
 private:
 	int _statusInc;
 	CString _statusTarget;
@@ -39,10 +42,6 @@ private:
 	CString _string4;
 	CString _string5;
 	int _buttonFrame;
-protected:
-	virtual bool MouseButtonDownMsg(CMouseButtonDownMsg *msg);
-	virtual bool MouseButtonUpMsg(CMouseButtonUpMsg *msg);
-	virtual bool EnterViewMsg(CEnterViewMsg *msg);
 public:
 	CLASSDEF
 	CSTButton();

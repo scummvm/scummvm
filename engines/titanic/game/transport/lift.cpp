@@ -24,6 +24,10 @@
 
 namespace Titanic {
 
+BEGIN_MESSAGE_MAP(CLift, CTransport)
+	ON_MESSAGE(EnterRoomMsg)
+END_MESSAGE_MAP()
+
 int CLift::_v1;
 int CLift::_v2;
 int CLift::_v3;
@@ -57,7 +61,7 @@ void CLift::load(SimpleFile *file) {
 	CTransport::load(file);
 }
 
-bool CLift::handleMessage(CEnterRoomMsg &msg) {
+bool CLift::EnterRoomMsg(CEnterRoomMsg *msg) {
 	warning("CLift::handleEvent");
 	return true;
 }

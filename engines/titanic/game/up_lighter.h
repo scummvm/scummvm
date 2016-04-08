@@ -29,13 +29,12 @@
 namespace Titanic {
 
 class CUpLighter : public CDropTarget {
+	bool EnterRoomMsg(CEnterRoomMsg *msg);
 private:
 	int _field118;
 	int _field11C;
 	int _field120;
 	int _field124;
-protected:
-	virtual bool handleMessage(CEnterRoomMsg &msg);
 public:
 	CLASSDEF
 	CUpLighter();

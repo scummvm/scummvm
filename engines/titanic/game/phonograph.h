@@ -29,6 +29,7 @@
 namespace Titanic {
 
 class CPhonograph : public CMusicPlayer {
+	bool EnterRoomMsg(CEnterRoomMsg *msg);
 protected:
 	CString _string2;
 	int _fieldE0;
@@ -37,8 +38,6 @@ protected:
 	int _fieldEC;
 	int _fieldF0;
 	int _fieldF4;
-protected:
-	virtual bool handleMessage(CEnterRoomMsg &msg);
 public:
 	CLASSDEF
 	CPhonograph();

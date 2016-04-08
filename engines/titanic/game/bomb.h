@@ -29,6 +29,7 @@
 namespace Titanic {
 
 class CBomb : public CBackground {
+	bool EnterRoomMsg(CEnterRoomMsg *msg);
 private:
 	int _fieldE0;
 	int _fieldE4;
@@ -40,8 +41,6 @@ private:
 	int _fieldFC;
 	int _startingTicks;
 	int _field104;
-protected:
-	virtual bool handleMessage(CEnterRoomMsg &msg);
 public:
 	CLASSDEF
 	CBomb();

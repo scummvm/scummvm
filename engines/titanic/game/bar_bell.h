@@ -29,14 +29,13 @@
 namespace Titanic {
 
 class CBarBell : public CGameObject {
+	bool EnterRoomMsg(CEnterRoomMsg *msg);
 public:
 	int _fieldBC;
 	int _fieldC0;
 	int _fieldC4;
 	int _fieldC8;
 	int _fieldCC;
-protected:
-	virtual bool handleMessage(CEnterRoomMsg &msg);
 public:
 	CLASSDEF
 	CBarBell();

@@ -24,6 +24,10 @@
 
 namespace Titanic {
 
+BEGIN_MESSAGE_MAP(CLiftindicator, CLift)
+	ON_MESSAGE(EnterRoomMsg)
+END_MESSAGE_MAP()
+
 CLiftindicator::CLiftindicator() : CLift(),
 		_fieldFC(0), _field108(0), _field10C(0) {
 }

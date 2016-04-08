@@ -70,7 +70,7 @@ void CBomb::load(SimpleFile *file) {
 	CBackground::load(file);
 }
 
-bool CBomb::handleMessage(CEnterRoomMsg &msg) {
+bool CBomb::EnterRoomMsg(CEnterRoomMsg *msg) {
 	_fieldE8 = 12;
 	_fieldEC = 9;
 	_fieldF0 = 0;

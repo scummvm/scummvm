@@ -57,10 +57,10 @@ void CGondolierMixer::load(SimpleFile *file) {
 	CGondolierBase::load(file);
 }
 
-bool CGondolierMixer::handleMessage(CEnterRoomMsg &msg) {
+bool CGondolierMixer::EnterRoomMsg(CEnterRoomMsg *msg) {
 	CRoomItem *parentRoom = dynamic_cast<CRoomItem *>(getParent());
-	if (parentRoom == msg._newRoom)
-		msg.execute(parentRoom);
+	if (parentRoom == msg->_newRoom)
+		msg->execute(parentRoom);
 	
 	return true;
 }

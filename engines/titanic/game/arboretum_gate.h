@@ -31,6 +31,13 @@ namespace Titanic {
 
 class CArboretumGate : public CBackground {
 	DECLARE_MESSAGE_MAP
+	bool ActMsg(CActMsg *msg);
+	bool LeaveViewMsg(CLeaveViewMsg *msg);
+	bool TurnOff(CTurnOff *msg);
+	bool MouseButtonDownMsg(CMouseButtonDownMsg *msg);
+	bool EnterViewMsg(CEnterViewMsg *msg);
+	bool TurnOn(CTurnOn *msg);
+	bool MovieEndMsg(CMovieEndMsg *msg);
 private:
 	static int _v1;
 	static int _v2;
@@ -66,14 +73,6 @@ private:
 	int _field14C;
 	int _field150;
 	CString _string2;
-protected:
-	virtual bool ActMsg(CActMsg *msg);
-	virtual bool LeaveViewMsg(CLeaveViewMsg *msg);
-	virtual bool TurnOff(CTurnOff *msg);
-	virtual bool MouseButtonDownMsg(CMouseButtonDownMsg *msg);
-	virtual bool EnterViewMsg(CEnterViewMsg *msg);
-	virtual bool TurnOn(CTurnOn *msg);
-	virtual bool MovieEndMsg(CMovieEndMsg *msg);
 public:
 	CLASSDEF
 	CArboretumGate();

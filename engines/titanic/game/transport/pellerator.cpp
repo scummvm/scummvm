@@ -24,6 +24,10 @@
 
 namespace Titanic {
 
+BEGIN_MESSAGE_MAP(CPellerator, CTransport)
+	ON_MESSAGE(EnterRoomMsg)
+END_MESSAGE_MAP()
+
 int CPellerator::_v1;
 int CPellerator::_v2;
 
@@ -43,7 +47,7 @@ void CPellerator::load(SimpleFile *file) {
 	CTransport::load(file);
 }
 
-bool CPellerator::handleMessage(CEnterRoomMsg &msg) {
+bool CPellerator::EnterRoomMsg(CEnterRoomMsg *msg) {
 	warning("CPellerator::handleEvent");
 	return true;
 }

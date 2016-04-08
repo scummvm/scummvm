@@ -29,11 +29,10 @@
 namespace Titanic {
 
 class CDoorbotElevatorHandler : public CGameObject {
+	bool EnterNodeMsg(CEnterNodeMsg *msg);
 private:
 	static int _v1;
 	int _value;
-protected:
-	virtual bool handleMessage(CEnterNodeMsg &msg);
 public:
 	CLASSDEF
 

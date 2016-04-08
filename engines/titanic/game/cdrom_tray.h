@@ -30,13 +30,12 @@ namespace Titanic {
 
 class CCDROMTray : public CGameObject {
 	DECLARE_MESSAGE_MAP
+	bool ActMsg(CActMsg *msg);
+	bool MovieEndMsg(CMovieEndMsg *msg);
+	bool StatusChangeMsg(CStatusChangeMsg *msg);
 public:
 	int _state;
 	CString _insertedCD;
-protected:
-	virtual bool ActMsg(CActMsg *msg);
-	virtual bool MovieEndMsg(CMovieEndMsg *msg);
-	virtual bool StatusChangeMsg(CStatusChangeMsg *msg);
 public:
 	CLASSDEF
 	CCDROMTray();

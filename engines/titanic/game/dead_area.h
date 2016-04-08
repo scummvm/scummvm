@@ -33,9 +33,8 @@ namespace Titanic {
  */
 class CDeadArea : public CGameObject {
 	DECLARE_MESSAGE_MAP
-protected:
-	virtual bool MouseButtonDownMsg(CMouseButtonDownMsg *msg) { return true; }
-	virtual bool MouseButtonUpMsg(CMouseButtonUpMsg *msg) { return true; }
+	bool MouseButtonDownMsg(CMouseButtonDownMsg *msg) { return true; }
+	bool MouseButtonUpMsg(CMouseButtonUpMsg *msg) { return true; }
 public:
 	CLASSDEF
 	CDeadArea();

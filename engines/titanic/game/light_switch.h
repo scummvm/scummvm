@@ -29,14 +29,13 @@
 namespace Titanic {
 
 class CLightSwitch : public CBackground {
+	bool EnterRoomMsg(CEnterRoomMsg *msg);
 public:
 	static int _v1;
 private:
 	int _fieldE0;
 	int _fieldE4;
 	int _fieldE8;
-protected:
-	virtual bool handleMessage(CEnterRoomMsg &msg);
 public:
 	CLASSDEF
 	CLightSwitch();

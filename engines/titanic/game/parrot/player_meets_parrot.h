@@ -30,7 +30,7 @@ namespace Titanic {
 
 class CPlayerMeetsParrot : public CGameObject {
 protected:
-	virtual bool handleMessage(CEnterRoomMsg &msg);
+	bool EnterRoomMsg(CEnterRoomMsg *msg);
 public:
 	CLASSDEF
 

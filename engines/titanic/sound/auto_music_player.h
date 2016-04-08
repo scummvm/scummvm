@@ -29,10 +29,9 @@
 namespace Titanic {
 
 class CAutoMusicPlayer : public CAutoMusicPlayerBase {
+	bool EnterRoomMsg(CEnterRoomMsg *msg);
 private:
 	CString _string2;
-protected:
-	virtual bool handleMessage(CEnterRoomMsg &msg);
 public:
 	CLASSDEF
 	CAutoMusicPlayer();

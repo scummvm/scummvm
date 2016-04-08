@@ -29,8 +29,8 @@
 namespace Titanic {
 
 class CPETMonitor : public CGameObject {
-protected:
-	virtual bool handleMessage(CEnterRoomMsg &msg);
+	DECLARE_MESSAGE_MAP
+	bool EnterRoomMsg(CEnterRoomMsg *msg);
 public:
 	CLASSDEF
 

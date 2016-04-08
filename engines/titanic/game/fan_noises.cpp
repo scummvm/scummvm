@@ -55,7 +55,7 @@ void CFanNoises::load(SimpleFile *file) {
 	CGameObject::load(file);
 }
 
-bool CFanNoises::handleMessage(CEnterRoomMsg &msg) {
+bool CFanNoises::EnterRoomMsg(CEnterRoomMsg *msg) {
 	warning("CFanNoises::handleEvent");
 	return true;
 }

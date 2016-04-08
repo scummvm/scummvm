@@ -29,12 +29,11 @@
 namespace Titanic {
 
 class CAutoAnimate : public CBackground {
+	bool EnterViewMsg(CEnterViewMsg *msg);
 private:
 	int _fieldE0;
 	int _fieldE4;
 	int _fieldE8;
-protected:
-	virtual bool handleMessage(CEnterViewMsg &msg);
 public:
 	CLASSDEF
 	CAutoAnimate() : CBackground(), _fieldE0(1), _fieldE4(1), _fieldE8(0) {}

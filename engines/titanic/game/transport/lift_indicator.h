@@ -29,13 +29,13 @@
 namespace Titanic {
 
 class CLiftindicator : public CLift {
+	DECLARE_MESSAGE_MAP
+	bool EnterRoomMsg(CEnterRoomMsg *msg) { return true; }
 private:
 	int _fieldFC;
 	Point _pos2;
 	int _field108;
 	int _field10C;
-protected:
-	virtual bool handleMessage(CEnterRoomMsg &msg) { return true; }
 public:
 	CLASSDEF
 	CLiftindicator();

@@ -29,6 +29,7 @@
 namespace Titanic {
 
 class CBarbot : public CTrueTalkNPC {
+	bool EnterRoomMsg(CEnterRoomMsg *msg);
 private:
 	static int _v0;
 private:
@@ -173,8 +174,6 @@ private:
 	int _field338;
 	int _field33C;
 	int _field340;
-protected:
-	virtual bool handleMessage(CEnterRoomMsg &msg);
 public:
 	CLASSDEF
 	CBarbot();

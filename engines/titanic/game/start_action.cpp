@@ -25,6 +25,11 @@
 
 namespace Titanic {
 
+BEGIN_MESSAGE_MAP(CStartAction, CBackground)
+	ON_MESSAGE(MouseButtonDownMsg)
+	ON_MESSAGE(MouseButtonUpMsg)
+END_MESSAGE_MAP()
+
 CStartAction::CStartAction() : CBackground() {
 }
 
@@ -44,7 +49,7 @@ void CStartAction::load(SimpleFile *file) {
 	CBackground::load(file);
 }
 
-bool CStartAction::handleMessage(CMouseButtonDownMsg &msg) {
+bool CStartAction::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
 	// Dispatch the desired action to the desired target
 	CActMsg actMsg(_msgAction);
 	actMsg.execute(_msgTarget);
@@ -52,7 +57,7 @@ bool CStartAction::handleMessage(CMouseButtonDownMsg &msg) {
 	return true;
 }
 
-bool CStartAction::handleMessage(CMouseButtonUpMsg &msg) {
+bool CStartAction::MouseButtonUpMsg(CMouseButtonUpMsg *msg) {
 	return true;
 }
 

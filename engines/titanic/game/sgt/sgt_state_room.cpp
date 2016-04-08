@@ -24,6 +24,10 @@
 
 namespace Titanic {
 
+BEGIN_MESSAGE_MAP(CSGTStateRoom, CBackground)
+	ON_MESSAGE(EnterRoomMsg)
+END_MESSAGE_MAP()
+
 CSGTStateRoomStatics *CSGTStateRoom::_statics;
 
 void CSGTStateRoom::init() {
@@ -90,7 +94,7 @@ void CSGTStateRoom::load(SimpleFile *file) {
 	CBackground::load(file);
 }
 
-bool CSGTStateRoom::handleMessage(CEnterRoomMsg &msg) {
+bool CSGTStateRoom::EnterRoomMsg(CEnterRoomMsg *msg) {
 	warning("CSGTStateRoom::handleEvent");
 	return true;
 }

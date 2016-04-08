@@ -40,7 +40,7 @@ void CChickenCooler::load(SimpleFile *file) {
 	CGameObject::load(file);
 }
 
-bool CChickenCooler::handleMessage(CEnterRoomMsg &msg) {
+bool CChickenCooler::EnterRoomMsg(CEnterRoomMsg *msg) {
 	warning("CChickenCoolor::handlEvent");
 	return true;
 }

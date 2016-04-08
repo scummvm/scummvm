@@ -24,6 +24,10 @@
 
 namespace Titanic {
 
+BEGIN_MESSAGE_MAP(CPETPosition, CGameObject)
+	ON_MESSAGE(EnterRoomMsg)
+END_MESSAGE_MAP()
+
 void CPETPosition::save(SimpleFile *file, int indent) const {
 	file->writeNumberLine(1, indent);
 	CGameObject::save(file, indent);
@@ -34,7 +38,7 @@ void CPETPosition::load(SimpleFile *file) {
 	CGameObject::load(file);
 }
 
-bool CPETPosition::handleMessage(CEnterRoomMsg &msg) {
+bool CPETPosition::EnterRoomMsg(CEnterRoomMsg *msg) {
 	warning("CPETPosition::handleEvent");
 	return true;
 }

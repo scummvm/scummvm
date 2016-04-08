@@ -26,6 +26,13 @@
 
 namespace Titanic {
 
+BEGIN_MESSAGE_MAP(CCDROM, CGameObject)
+	ON_MESSAGE(MouseDragStartMsg)
+	ON_MESSAGE(MouseDragEndMsg)
+	ON_MESSAGE(MouseDragMoveMsg)
+	ON_MESSAGE(ActMsg)
+END_MESSAGE_MAP()
+
 CCDROM::CCDROM() : CGameObject() {
 }
 
@@ -41,18 +48,18 @@ void CCDROM::load(SimpleFile *file) {
 	CGameObject::load(file);
 }
 
-bool CCDROM::handleMessage(CMouseDragStartMsg &msg) {
-	if (checkStartDragging(&msg)) {
-		_tempPos = msg._mousePos - _bounds;
-		setPosition(msg._mousePos - _tempPos);
+bool CCDROM::MouseDragStartMsg(CMouseDragStartMsg *msg) {
+	if (checkStartDragging(msg)) {
+		_tempPos = msg->_mousePos - _bounds;
+		setPosition(msg->_mousePos - _tempPos);
 		return true;
 	} else {
 		return false;
 	}
 }
 
-bool CCDROM::handleMessage(CMouseDragEndMsg &msg) {
-	if (msg._dropTarget && msg._dropTarget->getName() == "newComputer") {
+bool CCDROM::MouseDragEndMsg(CMouseDragEndMsg *msg) {
+	if (msg->_dropTarget && msg->_dropTarget->getName() == "newComputer") {
 		CCDROMTray *newTray = dynamic_cast<CCDROMTray *>(getRoom()->findByName("newTray"));
 
 		if (newTray->_state && newTray->_insertedCD == "None") {
@@ -65,13 +72,13 @@ bool CCDROM::handleMessage(CMouseDragEndMsg &msg) {
 	return true;
 }
 
-bool CCDROM::handleMessage(CMouseDragMoveMsg &msg) {
-	setPosition(msg._mousePos - _tempPos);
+bool CCDROM::MouseDragMoveMsg(CMouseDragMoveMsg *msg) {
+	setPosition(msg->_mousePos - _tempPos);
 	return true;
 }
 
-bool CCDROM::handleMessage(CActMsg &msg) {
-	if (msg._action == "Ejected")
+bool CCDROM::ActMsg(CActMsg *msg) {
+	if (msg->_action == "Ejected")
 		setVisible(true);
 
 	return true;

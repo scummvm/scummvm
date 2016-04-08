@@ -29,10 +29,9 @@
 namespace Titanic {
 
 class CNodeAutoSoundPlayer : public CAutoSoundPlayer {
+	bool EnterNodeMsg(CEnterNodeMsg *msg);
 private:
 	int _fieldEC;
-protected:
-	virtual bool handleMessage(CEnterNodeMsg &msg);
 public:
 	CLASSDEF
 	CNodeAutoSoundPlayer() : CAutoSoundPlayer(), _fieldEC(1) {}

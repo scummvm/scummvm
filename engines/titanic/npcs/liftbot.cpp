@@ -48,7 +48,7 @@ void CLiftBot::load(SimpleFile *file) {
 	CTrueTalkNPC::load(file);
 }
 
-bool CLiftBot::handleMessage(CEnterRoomMsg &msg) {
+bool CLiftBot::EnterRoomMsg(CEnterRoomMsg *msg) {
 	warning("CLiftBot::handleEvent");
 	return true;
 }

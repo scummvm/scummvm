@@ -29,11 +29,10 @@
 namespace Titanic {
 
 class CChickenCooler : public CGameObject {
+	bool EnterRoomMsg(CEnterRoomMsg *msg);
 private:
 	int _fieldBC;
 	int _fieldC0;
-protected:
-	virtual bool handleMessage(CEnterRoomMsg &msg);
 public:
 	CLASSDEF
 	CChickenCooler() : CGameObject(), _fieldBC(0), _fieldC0(0) {}

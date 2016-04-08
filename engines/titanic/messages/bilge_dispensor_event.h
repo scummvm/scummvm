@@ -29,8 +29,7 @@
 namespace Titanic {
 
 class CBilgeDispensorEvent : public CAutoSoundEvent {
-protected:
-	virtual bool handleMessage(CEnterRoomMsg &msg);
+	bool EnterRoomMsg(CEnterRoomMsg *msg);
 public:
 	CLASSDEF
 

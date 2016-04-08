@@ -31,6 +31,19 @@ namespace Titanic {
 
 class CTelevision : public CBackground {
 	DECLARE_MESSAGE_MAP
+	bool LeaveViewMsg(CLeaveViewMsg *msg);
+	bool ChangeSeasonMsg(CChangeSeasonMsg *msg);
+	bool EnterViewMsg(CEnterViewMsg *msg);
+	bool PETUpMsg(CPETUpMsg *msg);
+	bool PETDownMsg(CPETDownMsg *msg);
+	bool StatusChangeMsg(CStatusChangeMsg *msg);
+	bool ActMsg(CActMsg *msg);
+	bool PETActivateMsg(CPETActivateMsg *msg);
+	bool MovieEndMsg(CMovieEndMsg *msg);
+	bool ShipSettingMsg(CShipSettingMsg *msg);
+	bool TurnOff(CTurnOff *msg);
+	bool TurnOn(CTurnOn *msg);
+	bool LightsMsg(CLightsMsg *msg);
 private:
 	static int _v1;
 	static bool _turnOn;
@@ -44,20 +57,6 @@ private:
 	bool _isOn;
 	int _fieldEC;
 	int _fieldF0;
-protected:
-	virtual bool LeaveViewMsg(CLeaveViewMsg *msg);
-	virtual bool ChangeSeasonMsg(CChangeSeasonMsg *msg);
-	virtual bool EnterViewMsg(CEnterViewMsg *msg);
-	virtual bool PETUpMsg(CPETUpMsg *msg);
-	virtual bool PETDownMsg(CPETDownMsg *msg);
-	virtual bool StatusChangeMsg(CStatusChangeMsg *msg);
-	virtual bool ActMsg(CActMsg *msg);
-	virtual bool PETActivateMsg(CPETActivateMsg *msg);
-	virtual bool MovieEndMsg(CMovieEndMsg *msg);
-	virtual bool ShipSettingMsg(CShipSettingMsg *msg);
-	virtual bool TurnOff(CTurnOff *msg);
-	virtual bool TurnOn(CTurnOn *msg);
-	virtual bool LightsMsg(CLightsMsg *msg);
 public:
 	CLASSDEF
 	CTelevision();

@@ -29,8 +29,7 @@
 namespace Titanic {
 
 class CRoomTriggerAutoMusicPlayer : public CTriggerAutoMusicPlayer {
-protected:
-	virtual bool handleMessage(CEnterRoomMsg &msg);
+	bool EnterRoomMsg(CEnterRoomMsg *msg);
 public:
 	CLASSDEF
 

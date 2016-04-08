@@ -29,6 +29,7 @@
 namespace Titanic {
 
 class CLight : public CBackground {
+	bool EnterRoomMsg(CEnterRoomMsg *msg);
 private:
 	int _fieldE0;
 	int _fieldE4;
@@ -38,8 +39,6 @@ private:
 	int _fieldF4;
 	int _fieldF8;
 	int _fieldFC;
-protected:
-	virtual bool handleMessage(CEnterRoomMsg &msg);
 public:
 	CLASSDEF
 	CLight();

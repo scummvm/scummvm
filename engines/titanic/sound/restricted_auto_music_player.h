@@ -29,13 +29,12 @@
 namespace Titanic {
 
 class CRestrictedAutoMusicPlayer : public CAutoMusicPlayer {
+	bool EnterRoomMsg(CEnterRoomMsg *msg);
 private:
 	CString _string3;
 	CString _string4;
 	CString _string5;
 	CString _string6;
-protected:
-	virtual bool handleMessage(CEnterRoomMsg &msg);
 public:
 	CLASSDEF
 

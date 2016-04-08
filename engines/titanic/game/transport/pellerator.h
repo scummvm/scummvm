@@ -29,11 +29,11 @@
 namespace Titanic {
 
 class CPellerator : public CTransport {
+	DECLARE_MESSAGE_MAP
+	bool EnterRoomMsg(CEnterRoomMsg *msg);
 private:
 	static int _v1;
 	static int _v2;
-protected:
-	virtual bool handleMessage(CEnterRoomMsg &msg);
 public:
 	CLASSDEF
 

@@ -29,10 +29,9 @@
 namespace Titanic {
 
 class CEnterBridge : public CGameObject {
+	bool EnterRoomMsg(CEnterRoomMsg *msg);
 private:
 	int _value;
-protected:
-	virtual bool handleMessage(CEnterRoomMsg &msg);
 public:
 	CLASSDEF
 	CEnterBridge() : CGameObject(), _value(1) {}

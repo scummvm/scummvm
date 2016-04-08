@@ -233,7 +233,7 @@ void CBarbot::load(SimpleFile *file) {
 	CTrueTalkNPC::load(file);
 }
 
-bool CBarbot::handleMessage(CEnterRoomMsg &msg) {
+bool CBarbot::EnterRoomMsg(CEnterRoomMsg *msg) {
 	warning("TODO: Barbot::CEnterRoomMsg");
 	return true;
 }

@@ -29,13 +29,12 @@
 namespace Titanic {
 
 class CShipSetting : public CBackground {
+	bool EnterRoomMsg(CEnterRoomMsg *msg);
 private:
 	CString _string3;
 	Point _pos1;
 	CString _string4;
 	CString _string5;
-protected:
-	virtual bool handleMessage(CEnterRoomMsg &msg);
 public:
 	CLASSDEF
 	CShipSetting();

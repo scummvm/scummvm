@@ -29,12 +29,11 @@
 namespace Titanic {
 
 class CLongStickDispenser : public CGameObject {
+	bool EnterRoomMsg(CEnterRoomMsg *msg);
 private:
 	int _fieldBC;
 	int _fieldC0;
 	int _fieldC4;
-protected:
-	virtual bool handleMessage(CEnterRoomMsg &msg);
 public:
 	CLASSDEF
 	CLongStickDispenser() : CGameObject(), _fieldBC(0),

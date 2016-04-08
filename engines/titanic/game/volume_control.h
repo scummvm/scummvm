@@ -29,12 +29,11 @@
 namespace Titanic {
 
 class CVolumeControl : public CGameObject {
+	bool EnterNodeMsg(CEnterNodeMsg *msg);
 private:
 	int _fieldBC;
 	CString _string1;
 	int _fieldCC;
-protected:
-	virtual bool handleMessage(CEnterNodeMsg &msg);
 public:
 	CLASSDEF
 	CVolumeControl();

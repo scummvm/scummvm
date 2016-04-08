@@ -29,6 +29,7 @@
 namespace Titanic {
 
 class CFanNoises : public CGameObject {
+	bool EnterRoomMsg(CEnterRoomMsg *msg);
 private:
 	int _fieldBC;
 	int _fieldC0;
@@ -37,8 +38,6 @@ private:
 	int _fieldCC;
 	int _fieldD0;
 	int _fieldD4;
-protected:
-	virtual bool handleMessage(CEnterRoomMsg &msg);
 public:
 	CLASSDEF
 	CFanNoises();
