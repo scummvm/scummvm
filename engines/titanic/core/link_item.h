@@ -63,6 +63,11 @@ public:
 	virtual void load(SimpleFile *file);
 
 	/**
+	 * Returns true if the given item connects to another specified view
+	 */
+	virtual bool connectsTo(CViewItem *destView) const;
+
+	/**
 	 * Set the destination for the link item
 	 */
 	virtual void setDestination(int roomNumber, int nodeNumber,

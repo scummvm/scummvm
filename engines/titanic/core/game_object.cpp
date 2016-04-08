@@ -424,4 +424,77 @@ void CGameObject::soundProximity(const CString &name, CProximity &prox) {
 	}
 }
 
+void CGameObject::gotoView(const CString &viewName, const CString &clipName) {
+	CViewItem *newView = parseView(viewName);
+	CGameManager *gameManager = getGameManager();
+	CViewItem *oldView = gameManager ? gameManager->getView() : newView;
+	if (!oldView || !newView)
+		return;
+
+	CMovieClip *clip = nullptr;
+	if (clipName.empty()) {
+		CLinkItem *link = oldView->findLink(newView);
+		if (link)
+			clip = link->getClip();
+	} else {
+		clip = oldView->findNode()->findRoom()->findClip(clipName);
+	}
+
+	// Change the view
+	gameManager->_gameState.changeView(newView, clip);
+}
+
+CViewItem *CGameObject::parseView(const CString &viewString) {
+	int firstIndex = viewString.indexOf('.');
+	int lastIndex = viewString.lastIndexOf('.');
+	CString roomName, nodeName, viewName;
+
+	if (firstIndex == -1) {
+		roomName = viewString;
+	} else {
+		roomName = viewString.left(firstIndex);
+
+		if (lastIndex > firstIndex) {
+			nodeName = viewString.mid(firstIndex + 1, lastIndex - firstIndex - 1);
+			viewName = viewString.mid(lastIndex + 1);
+		} else {
+			nodeName = viewString.mid(firstIndex + 1);
+		}
+	}
+
+	CGameManager *gameManager = getGameManager();
+	if (!gameManager)
+		return nullptr;
+
+	CRoomItem *room = gameManager->getRoom();
+	CProjectItem *project = room->getRoot();
+	
+	// Ensure we have the specified room
+	if (project) {
+		if (room->getName() != roomName) {
+			// Scan for the correct room
+			for (room = project->findFirstRoom(); room && room->getName() != roomName;
+					room = project->findNextRoom(room)) ;
+		}			
+	}
+	if (!room)
+		return nullptr;
+
+	// Find the designated node within the room
+	CNodeItem *node = static_cast<CNodeItem *>(room->findChildInstanceOf(CNodeItem::_type));
+	while (node && node->getName() != nodeName)
+		node = static_cast<CNodeItem *>(room->findNextInstanceOf(CNodeItem::_type, node));
+	if (!node)
+		return nullptr;
+
+	CViewItem *view = static_cast<CViewItem *>(node->findChildInstanceOf(CViewItem::_type));
+	while (view && view->getName() != viewName)
+		view = static_cast<CViewItem *>(node->findNextInstanceOf(CViewItem::_type, view));
+	if (!view)
+		return nullptr;
+
+	// Find the view, so return it
+	return view;
+}
+
 } // End of namespace Titanic

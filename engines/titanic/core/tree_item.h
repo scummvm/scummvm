@@ -35,6 +35,7 @@ class CPetControl;
 class CProjectItem;
 class CScreenManager;
 class CRoomItem;
+class CViewItem;
 
 class CTreeItem: public CMessageTarget {
 	friend class CMessage;
@@ -124,6 +125,11 @@ public:
 	 * Compares the name of the item to a passed name
 	 */
 	virtual int compareTo(const CString &name, int maxLen) const { return false; }
+
+	/**
+	 * Returns true if the given item connects to another specified view
+	 */
+	virtual bool connectsTo(CViewItem *destView) const { return false; }
 
 	/**
 	 * Allows the item to draw itself

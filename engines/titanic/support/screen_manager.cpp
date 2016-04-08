@@ -110,7 +110,7 @@ void OSScreenManager::setMode(int width, int height, int bpp, uint numBackSurfac
 }
 
 void OSScreenManager::drawCursors() {
-	warning("OSScreenManager::drawCursors");
+	// Nothing needed here, since ScummVM handles cursor drawing
 }
 
 DirectDrawSurface *OSScreenManager::getDDSurface(SurfaceNum surfaceNum) {

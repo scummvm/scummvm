@@ -28,12 +28,16 @@
 namespace Titanic {
 
 class CComputer : public CBackground {
+	DECLARE_MESSAGE_MAP
+	bool ActMsg(CActMsg *msg);
+	bool MouseButtonDownMsg(CMouseButtonDownMsg *msg);
+	bool MovieEndMsg(CMovieEndMsg *msg);
 public:
-	CString _string3;
-	int _fieldEC;
+	CString _currentCD;
+	int _state;
 public:
 	CLASSDEF
-	CComputer() : CBackground(), _string3("None"), _fieldEC(0) {}
+	CComputer() : CBackground(), _currentCD("None"), _state(0) {}
 
 	/**
 	 * Save the data for the class to file

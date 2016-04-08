@@ -23,6 +23,7 @@
 #ifndef TITANIC_VIEW_ITEM_H
 #define TITANIC_VIEW_ITEM_H
 
+#include "titanic/core/link_item.h"
 #include "titanic/core/named_item.h"
 #include "titanic/core/resource_key.h"
 #include "titanic/messages/mouse_messages.h"
@@ -90,6 +91,11 @@ public:
 	 * Called when a new view is being entered
 	 */
 	void enterView(CViewItem *newView);
+
+	/**
+	 * Finds a link which connects to another designated view
+	 */
+	CLinkItem *findLink(CViewItem *newView);
 };
 
 } // End of namespace Titanic

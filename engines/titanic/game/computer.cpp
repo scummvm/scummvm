@@ -24,18 +24,83 @@
 
 namespace Titanic {
 
+BEGIN_MESSAGE_MAP(CComputer, CBackground)
+	ON_MESSAGE(ActMsg)
+	ON_MESSAGE(MouseButtonDownMsg)
+	ON_MESSAGE(MovieEndMsg)
+END_MESSAGE_MAP()
+
 void CComputer::save(SimpleFile *file, int indent) const {
 	file->writeNumberLine(1, indent);
-	file->writeQuotedLine(_string3, indent);
-	file->writeNumberLine(_fieldEC, indent);
+	file->writeQuotedLine(_currentCD, indent);
+	file->writeNumberLine(_state, indent);
 	CBackground::save(file, indent);
 }
 
 void CComputer::load(SimpleFile *file) {
 	file->readNumber();
-	_string3 = file->readString();
-	_fieldEC = file->readNumber();
+	_currentCD = file->readString();
+	_state = file->readNumber();
 	CBackground::load(file);
+}
+
+bool CComputer::ActMsg(CActMsg *msg) {
+	if (_state) {
+		soundProximity("a#35.wav", 100, 0, 0);
+		fn1(32, 42, 0);
+
+		if (msg->_action == "CD1")
+			fn1(43, 49, 0);
+		else if (msg->_action == "CD2")
+			fn1(50, 79, 0);
+		else if (msg->_action == "STCD")
+			fn1(80, 90, 4);
+
+		_currentCD = msg->_action;
+		_state = 0;
+	}
+
+	return true;
+}
+
+bool CComputer::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
+	if (_currentCD == "None") {
+		if (_state) {
+			soundProximity("a#35.wav", 100, 0, 0);
+			fn1(11, 21, 0);
+			_state = 0;
+		} else {
+			soundProximity("a#34.wav", 100, 0, 0);
+			fn1(0, 10, 0);
+			_state = 1;
+		}
+	} else {
+		if (_state) {
+			loadFrame(11);
+			CActMsg actMsg("EjectCD");
+			actMsg.execute(_currentCD);
+			_currentCD = "None";
+		} else {
+			soundProximity("a#34.wav", 100, 0, 0);
+			fn1(21, 31, 0);
+			_state = 1;
+		}
+	}
+
+	return true;
+}
+
+bool CComputer::MovieEndMsg(CMovieEndMsg *msg) {
+	if (msg->_value2 == 90) {
+		soundProximity("a#32.wav", 100, 0, 0);
+		soundProximity("a#33.wav", 100, 0, 0);
+		soundProximity("a#31.wav", 100, 0, 0);
+		soundProximity("a#0.wav", 100, 0, 0);
+
+		gotoView("Home.Node 4.E", "_TRACK,3,e-cu,4,E");
+	}
+
+	return true;
 }
 
 } // End of namespace Titanic

@@ -112,6 +112,17 @@ protected:
 	 */
 	void setPetArea(PetArea newArea) const;
 
+	/**
+	 * Goto a new view
+	 */
+	void gotoView(const CString &viewName, const CString &clipName);
+
+	/**
+	 * Parses a view into it's components of room, node, and view,
+	 * and locates the designated view
+	 */
+	CViewItem * parseView(const CString &viewString);
+
 	bool soundFn1(int val);
 	void soundFn2(int val, int val2);
 	void setVisible(bool val);

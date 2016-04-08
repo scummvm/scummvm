@@ -168,6 +168,17 @@ void CViewItem::enterView(CViewItem *newView) {
 	}
 }
 
+CLinkItem *CViewItem::findLink(CViewItem *newView) {
+	for (CTreeItem *treeItem = getFirstChild(); treeItem;
+			treeItem = scan(treeItem)) {
+		CLinkItem *link = static_cast<CLinkItem *>(treeItem);
+		if (link && link->connectsTo(newView))
+			return link;
+	}
+
+	return nullptr;
+}
+
 bool CViewItem::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
 	if (msg->_buttons & MB_LEFT) {
 		if (!handleMouseMsg(msg, true)) {

@@ -108,6 +108,15 @@ void CLinkItem::load(SimpleFile *file) {
 	}
 }
 
+bool CLinkItem::connectsTo(CViewItem *destView) const {
+	CNodeItem *destNode = destView->findNode();
+	CRoomItem *destRoom = destNode->findRoom();
+
+	return _viewNumber == destView->_viewNumber &&
+		_nodeNumber == destNode->_nodeNumber &&
+		_roomNumber == destRoom->_roomNumber;
+}
+
 void CLinkItem::setDestination(int roomNumber, int nodeNumber,
 		int viewNumber, int v) {
 	_roomNumber = roomNumber;
