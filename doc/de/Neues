@@ -22,6 +22,9 @@ Programmcodes finden Sie auf Englisch unter:
  CinE:
    - Fehler beim Laden der Soundeffekte behoben.
 
+ Drascula:
+   - Text-Ausrichtung ist jetzt originalgetreu.
+
  Gob:
    - Aufhängen während Sound-Initialisierung in mehreren Spielen behoben.
 
