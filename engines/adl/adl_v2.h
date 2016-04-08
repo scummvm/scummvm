@@ -52,6 +52,7 @@ protected:
 	void showRoom();
 	void takeItem(byte noun);
 
+	virtual void applyDataBlockOffset(byte &track, byte &sector) const { }
 	DataBlockPtr readDataBlockPtr(Common::ReadStream &f) const;
 
 	void checkTextOverflow(char c);

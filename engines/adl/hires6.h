@@ -57,6 +57,9 @@ private:
 	void runIntro() const;
 	void init();
 	void initState();
+
+	// AdlEngine_v2
+	void applyDataBlockOffset(byte &track, byte &sector) const;
 };
 
 } // End of namespace Adl
