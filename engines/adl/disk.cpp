@@ -166,6 +166,11 @@ bool DiskImage_NIB::open(const Common::String &filename) {
 		byte *output = diskImage + (track * _sectorsPerTrack + sector) * _bytesPerSector;
 
 		if (newStyle) {
+			// We hardcode the DOS 3.3 mapping here. TODO: Do we also need raw/prodos?
+			int raw2dos[16] = { 0, 7, 14, 6, 13, 5, 12, 4, 11, 3, 10, 2, 9, 1, 8, 15 };
+			sector = raw2dos[sector];
+			output = diskImage + (track * _sectorsPerTrack + sector) * _bytesPerSector;
+
 			// 6-and-2 uses 342 on-disk bytes
 			byte inbuffer[342];
 			_f->read(inbuffer, 342);
