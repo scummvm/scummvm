@@ -528,7 +528,8 @@ void TattooJournal::drawControls(int mode) {
 			screen._backBuffer1.SHtransBlitFrom(images[6], Common::Point(xp - 2, r.top + 1));
 			screen._backBuffer1.SHtransBlitFrom(images[7], Common::Point(xp - 2, yp - 1));
 
-			screen._backBuffer1.vLine(xp - 1, r.top + 4, yp - 2, INFO_TOP);			screen._backBuffer1.vLine(xp, r.top + 4, yp - 2, INFO_MIDDLE);
+			screen._backBuffer1.vLine(xp - 1, r.top + 4, yp - 2, INFO_TOP);
+			screen._backBuffer1.vLine(xp, r.top + 4, yp - 2, INFO_MIDDLE);
 			screen._backBuffer1.vLine(xp + 1, r.top + 4, yp - 2, INFO_BOTTOM);
 			xp += r.width() / 3;
 		}
