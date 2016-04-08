@@ -46,7 +46,7 @@ bool CGameStateMovieList::clear() {
 CGameState::CGameState(CGameManager *gameManager) :
 		_gameManager(gameManager), _gameLocation(this),
 		_field8(0), _fieldC(0), _mode(GSMODE_UNSELECTED), _field14(0), _petActive(false),
-		_field1C(0), _field20(0), _field24(0), _nodeChangeCtr(0),
+		_field1C(0), _quitGame(false), _field24(0), _nodeChangeCtr(0),
 		_nodeEnterTicks(0), _field38(0) {
 }
 

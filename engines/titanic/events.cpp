@@ -115,7 +115,7 @@ void Events::onIdle() {
 	// Let the game manager perform any game updates
 	gameManager->update();
 
-	if (gameManager->_gameState._field20) {
+	if (gameManager->_gameState._quitGame) {
 		// Game needs to shut down
 		_vm->quitGame();
 	}

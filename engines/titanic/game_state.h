@@ -60,7 +60,7 @@ public:
 	int _field14;
 	bool _petActive;
 	int _field1C;
-	int _field20;
+	bool _quitGame;
 	int _field24;
 	uint _nodeChangeCtr;
 	uint32 _nodeEnterTicks;
