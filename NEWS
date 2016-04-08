@@ -21,6 +21,9 @@ For a more comprehensive changelog of the latest experimental code, see:
  CinE:
    - Fixed sound effect loading.
 
+ Drascula:
+   - Fixed text alignment to be faithful to the original.
+
  Gob:
    - Fixed lock up for some games during sound initialization.
 
