@@ -20,27 +20,43 @@
  *
  */
 
-#ifndef ADL_DETECTION_H
-#define ADL_DETECTION_H
+#ifndef ADL_HIRES6_H
+#define ADL_HIRES6_H
 
-#include "engines/advancedDetector.h"
+#include "common/str.h"
+
+#include "adl/adl_v2.h"
+#include "adl/disk.h"
+
+namespace Common {
+class ReadStream;
+class Point;
+}
 
 namespace Adl {
 
-#define SAVEGAME_VERSION 0
-#define SAVEGAME_NAME_LEN 32
+#define IDI_HR6_NUM_ROOMS 35
+#define IDI_HR6_NUM_MESSAGES 255
+#define IDI_HR6_NUM_VARS 40
+#define IDI_HR6_NUM_ITEM_PICS 15
+#define IDI_HR6_NUM_ITEM_OFFSETS 16
 
-enum GameType {
-	GAME_TYPE_NONE,
-	GAME_TYPE_HIRES0,
-	GAME_TYPE_HIRES1,
-	GAME_TYPE_HIRES2,
-	GAME_TYPE_HIRES6
-};
+// Messages used outside of scripts
+#define IDI_HR6_MSG_CANT_GO_THERE      249
+#define IDI_HR6_MSG_DONT_UNDERSTAND    247
+#define IDI_HR6_MSG_ITEM_DOESNT_MOVE   253
+#define IDI_HR6_MSG_ITEM_NOT_HERE      254
+#define IDI_HR6_MSG_THANKS_FOR_PLAYING 252
 
-struct AdlGameDescription {
-	ADGameDescription desc;
-	GameType gameType;
+class HiRes6Engine : public AdlEngine_v2 {
+public:
+	HiRes6Engine(OSystem *syst, const AdlGameDescription *gd) : AdlEngine_v2(syst, gd) { }
+
+private:
+	// AdlEngine
+	void runIntro() const;
+	void init();
+	void initState();
 };
 
 } // End of namespace Adl

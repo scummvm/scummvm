@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef ADL_HIRES1_H
-#define ADL_HIRES1_H
+#ifndef ADL_HIRES2_H
+#define ADL_HIRES2_H
 
 #include "common/str.h"
 

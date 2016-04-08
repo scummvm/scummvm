@@ -12,6 +12,7 @@ MODULE_OBJS := \
 	graphics_v2.o \
 	hires1.o \
 	hires2.o \
+	hires6.o \
 	speaker.o
 
 MODULE_DIRS += \
