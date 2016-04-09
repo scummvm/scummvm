@@ -226,7 +226,7 @@ protected:
 	void openFile(Common::File &file, const Common::String &name) const;
 
 	virtual void printString(const Common::String &str) = 0;
-	virtual Common::String loadMessage(uint idx) const { return _messages[idx - 1]; }
+	virtual Common::String loadMessage(uint idx) const = 0;
 	virtual void printMessage(uint idx);
 	void delay(uint32 ms) const;
 
@@ -317,7 +317,7 @@ protected:
 	typedef Common::Functor1<ScriptEnv &, int> Opcode;
 	Common::Array<const Opcode *> _condOpcodes, _actOpcodes;
 	// Message strings in data file
-	Common::Array<Common::String> _messages;
+	Common::Array<DataBlockPtr> _messages;
 	// Picture data
 	PictureMap _pictures;
 	// Dropped item screen offsets

@@ -45,7 +45,7 @@ namespace Adl {
 #define IDI_HR1_NUM_PICS          97
 #define IDI_HR1_NUM_VARS          20
 #define IDI_HR1_NUM_ITEM_OFFSETS  21
-#define IDI_HR1_NUM_MESSAGES     167
+#define IDI_HR1_NUM_MESSAGES     168
 
 // Messages used outside of scripts
 #define IDI_HR1_MSG_CANT_GO_THERE      137
@@ -83,6 +83,7 @@ namespace Adl {
 #define IDI_HR1_OFS_PICS         0x4b03
 #define IDI_HR1_OFS_CMDS_0       0x3c00
 #define IDI_HR1_OFS_CMDS_1       0x3d00
+#define IDI_HR1_OFS_MSGS         0x4d00
 
 #define IDI_HR1_OFS_ITEM_OFFSETS 0x68ff
 #define IDI_HR1_OFS_CORNERS      0x4f00
@@ -105,6 +106,7 @@ private:
 	void initState();
 	void restartGame();
 	void printString(const Common::String &str);
+	Common::String loadMessage(uint idx) const;
 	void printMessage(uint idx);
 	void drawItems();
 	void drawItem(Item &item, const Common::Point &pos);
@@ -118,6 +120,13 @@ private:
 	Common::Array<DataBlockPtr> _corners;
 	Common::Array<byte> _roomDesc;
 	bool _messageDelay;
+
+	struct {
+		Common::String cantGoThere;
+		Common::String dontHaveIt;
+		Common::String dontUnderstand;
+		Common::String gettingDark;
+	} _gameStrings;
 };
 
 } // End of namespace Adl

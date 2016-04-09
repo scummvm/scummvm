@@ -115,10 +115,6 @@ void HiRes6Engine::init() {
 	if (!boot->open(disks[0]))
 		error("Failed to open disk image '%s'", disks[0]);
 
-	// TODO (needs refactoring of message handling)
-	for (uint i = 0; i < 256; ++i)
-		_messages.push_back(Common::String());
-
 	StreamPtr stream(loadSectors(boot, 7));
 
 	// Read parser messages
@@ -165,13 +161,18 @@ void HiRes6Engine::init() {
 	}
 
 	// Load global picture data
-	stream.reset(_disk->createReadStream(0x1f, 0xf, 0x16, 0));
+	stream.reset(_disk->createReadStream(0x1f, 0xf, 0x16));
 	byte picNr;
 	while ((picNr = stream->readByte()) != 0xff) {
 		if (stream->eos() || stream->err())
 			error("Error reading global pic list");
 		_pictures[picNr] = readDataBlockPtr(*stream);
 	}
+
+	// Load message offsets
+	stream.reset(_disk->createReadStream(0x1f, 0xb, 0x16, 4));
+	for (uint i = 0; i < IDI_HR6_NUM_MESSAGES; ++i)
+		_messages.push_back(readDataBlockPtr(*stream));
 
 	// Load commands
 	stream.reset(_disk->createReadStream(0x21, 0x4, 0x85, 7));

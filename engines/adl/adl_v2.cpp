@@ -161,6 +161,15 @@ void AdlEngine_v2::checkTextOverflow(char c) {
 	}
 }
 
+Common::String AdlEngine_v2::loadMessage(uint idx) const {
+	if (_messages[idx]) {
+		StreamPtr strStream(_messages[idx]->createReadStream());
+		return readString(*strStream, 0xff);
+	}
+
+	return Common::String();
+}
+
 void AdlEngine_v2::printString(const Common::String &str) {
 	Common::String s(str);
 	byte endPos = TEXT_WIDTH - 1;

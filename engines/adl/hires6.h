@@ -36,7 +36,7 @@ class Point;
 namespace Adl {
 
 #define IDI_HR6_NUM_ROOMS 35
-#define IDI_HR6_NUM_MESSAGES 255
+#define IDI_HR6_NUM_MESSAGES 256
 #define IDI_HR6_NUM_VARS 40
 #define IDI_HR6_NUM_ITEM_PICS 15
 #define IDI_HR6_NUM_ITEM_OFFSETS 16

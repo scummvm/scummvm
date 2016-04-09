@@ -137,18 +137,13 @@ void HiRes1Engine::init() {
 
 	_graphics = new Graphics_v1(*_display);
 
-	StreamPtr stream(_files->createReadStream(IDS_HR1_MESSAGES));
-
-	for (uint i = 0; i < IDI_HR1_NUM_MESSAGES; ++i)
-		_messages.push_back(readString(*stream, APPLECHAR('\r')) + APPLECHAR('\r'));
-
-	stream.reset(_files->createReadStream(IDS_HR1_EXE_1));
+	StreamPtr stream(_files->createReadStream(IDS_HR1_EXE_1));
 
 	// Some messages have overrides inside the executable
-	_messages[IDI_HR1_MSG_CANT_GO_THERE - 1] = readStringAt(*stream, IDI_HR1_OFS_STR_CANT_GO_THERE);
-	_messages[IDI_HR1_MSG_DONT_HAVE_IT - 1] = readStringAt(*stream, IDI_HR1_OFS_STR_DONT_HAVE_IT);
-	_messages[IDI_HR1_MSG_DONT_UNDERSTAND - 1] = readStringAt(*stream, IDI_HR1_OFS_STR_DONT_UNDERSTAND);
-	_messages[IDI_HR1_MSG_GETTING_DARK - 1] = readStringAt(*stream, IDI_HR1_OFS_STR_GETTING_DARK);
+	_gameStrings.cantGoThere = readStringAt(*stream, IDI_HR1_OFS_STR_CANT_GO_THERE);
+	_gameStrings.dontHaveIt = readStringAt(*stream, IDI_HR1_OFS_STR_DONT_HAVE_IT);
+	_gameStrings.dontUnderstand = readStringAt(*stream, IDI_HR1_OFS_STR_DONT_UNDERSTAND);
+	_gameStrings.gettingDark = readStringAt(*stream, IDI_HR1_OFS_STR_GETTING_DARK);
 
 	// Load other strings from executable
 	_strings.enterCommand = readStringAt(*stream, IDI_HR1_OFS_STR_ENTER_COMMAND);
@@ -164,6 +159,11 @@ void HiRes1Engine::init() {
 	_messageIds.itemDoesntMove = IDI_HR1_MSG_ITEM_DOESNT_MOVE;
 	_messageIds.itemNotHere = IDI_HR1_MSG_ITEM_NOT_HERE;
 	_messageIds.thanksForPlaying = IDI_HR1_MSG_THANKS_FOR_PLAYING;
+
+	// Load message offsets
+	stream->seek(IDI_HR1_OFS_MSGS);
+	for (uint i = 0; i < IDI_HR1_NUM_MESSAGES; ++i)
+		_messages.push_back(_files->getDataBlock(IDS_HR1_MESSAGES, stream->readUint16LE()));
 
 	// Load picture data from executable
 	stream->seek(IDI_HR1_OFS_PICS);
@@ -267,9 +267,12 @@ void HiRes1Engine::printString(const Common::String &str) {
 		delay(14 * 166018 / 1000);
 }
 
-void HiRes1Engine::printMessage(uint idx) {
-	const Common::String &msg = loadMessage(idx);
+Common::String HiRes1Engine::loadMessage(uint idx) const {
+	StreamPtr stream(_messages[idx]->createReadStream());
+	return readString(*stream, APPLECHAR('\r')) + APPLECHAR('\r');
+}
 
+void HiRes1Engine::printMessage(uint idx) {
 	// Messages with hardcoded overrides don't delay after printing.
 	// It's unclear if this is a bug or not. In some cases the result
 	// is that these strings will scroll past the four-line text window
@@ -279,14 +282,20 @@ void HiRes1Engine::printMessage(uint idx) {
 	// that system for this game as well.
 	switch (idx) {
 	case IDI_HR1_MSG_CANT_GO_THERE:
-	case IDI_HR1_MSG_DONT_HAVE_IT:
-	case IDI_HR1_MSG_DONT_UNDERSTAND:
-	case IDI_HR1_MSG_GETTING_DARK:
-		_display->printString(msg);
+		_display->printString(_gameStrings.cantGoThere);
 		return;
+	case IDI_HR1_MSG_DONT_HAVE_IT:
+		_display->printString(_gameStrings.dontHaveIt);
+		return;
+	case IDI_HR1_MSG_DONT_UNDERSTAND:
+		_display->printString(_gameStrings.dontUnderstand);
+		return;
+	case IDI_HR1_MSG_GETTING_DARK:
+		_display->printString(_gameStrings.gettingDark);
+		return;
+	default:
+		printString(loadMessage(idx));
 	}
-
-	printString(msg);
 }
 
 void HiRes1Engine::drawItems() {

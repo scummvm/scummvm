@@ -54,18 +54,10 @@ void HiRes2Engine::init() {
 	if (!_disk->open(IDS_HR2_DISK_IMAGE))
 		error("Failed to open disk image '" IDS_HR2_DISK_IMAGE "'");
 
-	StreamPtr stream(_disk->createReadStream(0x1f, 0x2, 0x04, 4));
+	StreamPtr stream(_disk->createReadStream(0x1f, 0x2, 0x00, 4));
 
-	for (uint i = 0; i < IDI_HR2_NUM_MESSAGES; ++i) {
-		DataBlockPtr str(readDataBlockPtr(*stream));
-
-		if (str) {
-			StreamPtr strStream(str->createReadStream());
-			_messages.push_back(readString(*strStream, 0xff));
-		} else {
-			_messages.push_back(Common::String());
-		}
-	}
+	for (uint i = 0; i < IDI_HR2_NUM_MESSAGES; ++i)
+		_messages.push_back(readDataBlockPtr(*stream));
 
 	// Read parser messages
 	stream.reset(_disk->createReadStream(0x1a, 0x1));

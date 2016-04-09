@@ -300,7 +300,7 @@ void Console::printItem(const Item &item) {
 		name = _engine->_priNouns[item.noun - 1];
 
 	if (item.description > 0) {
-		desc = toAscii(_engine->_messages[item.description - 1]);
+		desc = toAscii(_engine->loadMessage(item.description));
 		if (desc.lastChar() == '\r')
 			desc.deleteLastChar();
 	}
