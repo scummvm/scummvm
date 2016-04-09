@@ -268,7 +268,7 @@ void HiRes1Engine::printString(const Common::String &str) {
 }
 
 void HiRes1Engine::printMessage(uint idx) {
-	const Common::String &msg = _messages[idx - 1];
+	const Common::String &msg = loadMessage(idx);
 
 	// Messages with hardcoded overrides don't delay after printing.
 	// It's unclear if this is a bug or not. In some cases the result
@@ -326,7 +326,7 @@ void HiRes1Engine::drawItem(Item &item, const Common::Point &pos) {
 }
 
 void HiRes1Engine::loadRoom(byte roomNr) {
-	_roomData.description = _messages[_roomDesc[_state.room - 1] - 1];
+	_roomData.description = loadMessage(_roomDesc[_state.room - 1]);
 }
 
 void HiRes1Engine::showRoom() {

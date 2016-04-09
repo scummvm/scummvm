@@ -123,7 +123,7 @@ void AdlEngine::openFile(Common::File &file, const Common::String &name) const {
 }
 
 void AdlEngine::printMessage(uint idx) {
-	printString(_messages[idx - 1]);
+	printString(loadMessage(idx));
 }
 
 void AdlEngine::delay(uint32 ms) const {
@@ -1214,7 +1214,7 @@ Common::String AdlEngine::itemStr(uint i) const {
 	}
 	if (desc > 0) {
 		name += "/";
-		name += toAscii(_messages[desc - 1]);
+		name += toAscii(loadMessage(desc));
 	}
 	return name;
 }
@@ -1254,7 +1254,7 @@ Common::String AdlEngine::nounStr(uint i) const {
 }
 
 Common::String AdlEngine::msgStr(uint i) const {
-	return Common::String::format("%d/%s", i, toAscii(_messages[i - 1]).c_str());
+	return Common::String::format("%d/%s", i, toAscii(loadMessage(i)).c_str());
 }
 
 Common::String AdlEngine::dirStr(Direction dir) const {

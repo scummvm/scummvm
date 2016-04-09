@@ -226,6 +226,7 @@ protected:
 	void openFile(Common::File &file, const Common::String &name) const;
 
 	virtual void printString(const Common::String &str) = 0;
+	virtual Common::String loadMessage(uint idx) const { return _messages[idx - 1]; }
 	virtual void printMessage(uint idx);
 	void delay(uint32 ms) const;
 
