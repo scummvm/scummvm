@@ -41,6 +41,8 @@ public:
 
 	virtual void setUpdateCheckInterval(int interval);
 	virtual int getUpdateCheckInterval();
+
+	virtual bool getLastUpdateCheckTimeAndDate(TimeDate &t);
 };
 
 #endif

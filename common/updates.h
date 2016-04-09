@@ -95,6 +95,14 @@ public:
 	virtual int getUpdateCheckInterval() { return kUpdateIntervalNotSupported; }
 
 	/**
+	 * Gets last update check time
+	 *
+	 * @param  t    TimeDate struct to fill out
+	 * @return flag indicating success
+	 */
+	virtual bool getLastUpdateCheckTimeAndDate(TimeDate &t) { return false; }
+
+	/**
 	 * Returns list of supported uptate intervals.
 	 * Ending with '-1' which is not acceptable value.
 	 *
