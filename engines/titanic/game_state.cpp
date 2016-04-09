@@ -32,7 +32,7 @@ bool CGameStateMovieList::clear() {
 		CMovieListItem *listItem = *i;
 		++i;
 
-		if (!g_vm->_movieList.contains(listItem->_item)) {
+		if (!g_vm->_activeMovies.contains(listItem->_item)) {
 			remove(listItem);
 			delete listItem;
 		}

@@ -110,7 +110,7 @@ public:
 	OSScreenManager *_screenManager;
 	CMainGameWindow *_window;
 	Common::RandomSource _randomSource;
-	CGlobalMovies _movieList;
+	CMovieList _activeMovies;
 	CString _itemNames[TOTAL_ITEMS];
 	CString _itemDescriptions[TOTAL_ITEMS];
 	CString _itemObjects[TOTAL_ITEMS];

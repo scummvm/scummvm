@@ -103,7 +103,7 @@ private:
 	/**
 	 * Handles any ongoing movie playback
 	 */
-	void handleMovies();
+	void updateMovies();
 public:
 	CProjectItem *_project;
 	CGameView *_gameView;

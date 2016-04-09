@@ -208,6 +208,7 @@ public:
 };
 
 class OSVideoSurface : public CVideoSurface {
+	friend class OSMovie;
 private:
 	static byte _map[0x400];
 

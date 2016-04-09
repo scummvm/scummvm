@@ -29,11 +29,20 @@
 
 namespace Titanic {
 
+enum MovieState { 
+	MOVIE_STOPPED = -1, MOVIE_NONE = 0, MOVIE_FINISHED = 1, MOVIE_FRAME = 2
+};
+
 class CVideoSurface;
+class CMovie;
+
+class CMovieList : public List<CMovie> {
+public:
+};
 
 class CMovie : public ListItem {
 protected:
-	int _state;
+	MovieState _state;
 	int _field10;
 public:
 	CMovie();
@@ -57,12 +66,20 @@ public:
 	bool isActive() const;
 
 	bool get10();
+
+	virtual MovieState getState() = 0;
+	virtual void update() = 0;
 };
 
 class OSMovie : public CMovie {
 private:
 	Video::VideoDecoder *_video;
 	CVideoSurface *_videoSurface;
+
+	/**
+	 * Decodes the next frame
+	 */
+	void decodeFrame();
 public:
 	OSMovie(const CResourceKey &name, CVideoSurface *surface);
 	virtual ~OSMovie();
@@ -86,10 +103,10 @@ public:
 	virtual int proc19();
 	virtual void proc20();
 	virtual void *proc21();
-};
 
-class CGlobalMovies : public List<CMovie> {
-public:
+
+	virtual MovieState getState();
+	virtual void update();
 };
 
 } // End of namespace Titanic

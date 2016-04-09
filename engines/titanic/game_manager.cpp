@@ -149,7 +149,7 @@ void CGameManager::playClip(CMovieClip *clip, CRoomItem *oldRoom, CRoomItem *new
 }
 
 void CGameManager::update() {
-	handleMovies();
+	updateMovies();
 	frameMessage(getRoom());
 	_list.update(g_vm->_events->getTicksCount());
 	_trueTalkManager.update1();
@@ -191,8 +191,15 @@ void CGameManager::update() {
 	}
 }
 
-void CGameManager::handleMovies() {
-	warning("TODO: CGameManager::handleMovies");
+void CGameManager::updateMovies() {
+	// TODO: Make this more like the original, if I can figuring out
+	// what's it doing with temporary lists and the OSMovie methods
+	for (CMovieList::iterator i = g_vm->_activeMovies.begin();
+			i != g_vm->_activeMovies.end(); ++i) {
+
+	}
+
+	
 }
 
 void CGameManager::updateDiskTicksCount() {

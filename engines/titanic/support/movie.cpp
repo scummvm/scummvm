@@ -27,11 +27,11 @@
 
 namespace Titanic {
 
-CMovie::CMovie() : ListItem(), _state(0), _field10(0) {
+CMovie::CMovie() : ListItem(), _state(MOVIE_STOPPED), _field10(0) {
 }
 
 bool CMovie::isActive() const {
-	return g_vm->_movieList.contains(this);
+	return g_vm->_activeMovies.contains(this);
 }
 
 bool CMovie::get10() {
@@ -52,6 +52,7 @@ OSMovie::OSMovie(const CResourceKey &name, CVideoSurface *surface) : _videoSurfa
 }
 
 OSMovie::~OSMovie() {
+	g_vm->_activeMovies.remove(this);
 	delete _video;
 }
 
@@ -61,6 +62,10 @@ void OSMovie::proc8(int v1, CVideoSurface *surface) {
 
 void OSMovie::proc9(int v1, int v2, int v3, bool v4) {
 	warning("TODO: OSMovie::proc9");
+	//setFrame(v1); ?
+	_video->start();
+	g_vm->_activeMovies.push_back(this);
+	_state = MOVIE_NONE;
 }
 
 void OSMovie::proc10() {
@@ -85,11 +90,7 @@ void OSMovie::proc14() {
 
 void OSMovie::setFrame(uint frameNumber) {
 	_video->seekToFrame(frameNumber);
-	const Graphics::Surface *s = _video->decodeNextFrame();
-	Graphics::Surface *surf = s->convertTo(g_system->getScreenFormat());
-
-	_videoSurface->blitFrom(Common::Point(0, 0), surf);
-	delete surf;
+	decodeFrame();
 }
 
 void OSMovie::proc16() {
@@ -116,6 +117,50 @@ void OSMovie::proc20() {
 void *OSMovie::proc21() {
 	warning("TODO: OSMovie::proc21");
 	return nullptr;
+}
+
+MovieState OSMovie::getState() {
+	if (!_video)
+		_state = MOVIE_STOPPED;
+	return _state;
+}
+
+void OSMovie::update() {
+	if (_state != MOVIE_STOPPED) {
+		if (_video->isPlaying()) {
+			if (_video->needsUpdate()) {
+				decodeFrame();
+				_state = MOVIE_FRAME;
+			} else {
+				_state = MOVIE_NONE;
+			}
+		} else {
+			_state = MOVIE_STOPPED;
+		}
+	}
+}
+
+void OSMovie::decodeFrame() {
+	const Graphics::Surface *frame = _video->decodeNextFrame();
+	OSVideoSurface *videoSurface = static_cast<OSVideoSurface *>(_videoSurface);
+	assert(videoSurface);
+
+	videoSurface->lock();
+	assert(videoSurface->_rawSurface);
+
+	if (frame->format == videoSurface->_rawSurface->format) {
+		// Matching format, so we can copy straight from the video frame
+		videoSurface->_rawSurface->blitFrom(*frame);
+	} else {
+		// Different formats so we have to convert it first
+		Graphics::Surface *s = frame->convertTo(videoSurface->_rawSurface->format);
+		videoSurface->_rawSurface->blitFrom(*s);
+
+		s->free();
+		delete s;
+	}
+
+	videoSurface->unlock();
 }
 
 } // End of namespace Titanic
