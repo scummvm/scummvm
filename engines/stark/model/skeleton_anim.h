@@ -31,38 +31,19 @@ namespace Stark {
 
 class ArchiveReadStream;
 
-class AnimKey {
-public:
-	uint32 _time;
-	Math::Quaternion _rot;
-	Math::Vector3d _pos;
-};
-
-class AnimNode {
-public:
-	~AnimNode() {
-		for (Common::Array<AnimKey *>::iterator it = _keys.begin(); it != _keys.end(); ++it)
-			delete *it;
-	}
-
-	uint32 _bone;
-	Common::Array<AnimKey *> _keys;
-};
-
 /**
  * Data structure responsible for skeletal animation of an actor object.
  */
 class SkeletonAnim {
 public:
 	SkeletonAnim();
-	~SkeletonAnim();
 
 	void createFromStream(ArchiveReadStream *stream);
 
 	/**
 	 * Get the interpolated bone coordinate for a given bone at a given animation timestamp
 	 */
-	void getCoordForBone(uint32 time, int boneIdx, Math::Vector3d &pos, Math::Quaternion &rot);
+	void getCoordForBone(uint32 time, int boneIdx, Math::Vector3d &pos, Math::Quaternion &rot) const;
 
 	/**
 	 * Get total animation length (in ms)
@@ -70,9 +51,19 @@ public:
 	uint32 getLength() const { return _time; }
 
 private:
+	struct AnimKey {
+		uint32 _time;
+		Math::Quaternion _rot;
+		Math::Vector3d _pos;
+	};
+
+	struct BoneAnim {
+		Common::Array<AnimKey> _keys;
+	};
+
 	uint32 _id, _ver, _u1, _u2, _time;
 
-	Common::Array<AnimNode *> _anims;
+	Common::Array<BoneAnim> _boneAnims;
 };
 
 } // End of namespace Stark

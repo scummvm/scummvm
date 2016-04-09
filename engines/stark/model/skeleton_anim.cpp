@@ -27,18 +27,12 @@
 
 namespace Stark {
 
-
 SkeletonAnim::SkeletonAnim() :
 		_id(0),
 		_ver(0),
 		_u1(0),
 		_u2(0),
 		_time(0) {
-}
-
-SkeletonAnim::~SkeletonAnim() {
-	for (Common::Array<AnimNode *>::iterator it = _anims.begin(); it != _anims.end(); ++it)
-		delete *it;
 }
 
 void SkeletonAnim::createFromStream(ArchiveReadStream *stream) {
@@ -58,47 +52,45 @@ void SkeletonAnim::createFromStream(ArchiveReadStream *stream) {
 	}
 
 	uint32 num = stream->readUint32LE();
-	_anims.resize(num);
+	_boneAnims.resize(num);
 	for (uint32 i = 0; i < num; ++i) {
-		AnimNode *node = new AnimNode();
-		node->_bone = stream->readUint32LE();
+		uint32 bone = stream->readUint32LE();
 		uint32 numKeys = stream->readUint32LE();
 
+		BoneAnim &boneAnim = _boneAnims[bone];
+		boneAnim._keys.resize(numKeys);
 		for (uint32 j = 0; j < numKeys; ++j) {
-			AnimKey *key = new AnimKey();
-			key->_time = stream->readUint32LE();
-			key->_rot = stream->readQuaternion();
-			key->_pos = stream->readVector3();
-			node->_keys.push_back(key);
+			AnimKey &key = boneAnim._keys[j];
+			key._time = stream->readUint32LE();
+			key._rot = stream->readQuaternion();
+			key._pos = stream->readVector3();
 		}
-
-		_anims[node->_bone] = node;
 	}
 }
 
-void SkeletonAnim::getCoordForBone(uint32 time, int boneIdx, Math::Vector3d &pos, Math::Quaternion &rot) {
-	const Common::Array<AnimKey *> &keys = _anims[boneIdx]->_keys;
+void SkeletonAnim::getCoordForBone(uint32 time, int boneIdx, Math::Vector3d &pos, Math::Quaternion &rot) const {
+	const Common::Array<AnimKey> &keys = _boneAnims[boneIdx]._keys;
 
 	if (keys.size() == 1) {
 		// There is only one key for this bone, don't bother searching which one to use
-		pos = keys[0]->_pos;
-		rot = keys[0]->_rot;
+		pos = keys[0]._pos;
+		rot = keys[0]._rot;
 
 		return;
 	}
 
-	for (Common::Array<AnimKey *>::const_iterator it = keys.begin(); it < keys.end(); ++it) {
-		if ((*it)->_time == time) {
-			AnimKey *key = *it;
+	for (Common::Array<AnimKey>::const_iterator it = keys.begin(); it < keys.end(); ++it) {
+		if (it->_time == time) {
+			const AnimKey *key = it;
 			pos = key->_pos;
 			rot = key->_rot;
 
 			return;
-		} else if ((*it)->_time > time) {
+		} else if (it->_time > time) {
 			// Between two key frames, interpolate
-			AnimKey *a = *it;
+			const AnimKey *a = it;
 			--it;
-			AnimKey *b = *it;
+			const AnimKey *b = it;
 
 			float t = (float)(time - b->_time) / (float)(a->_time - b->_time);
 
