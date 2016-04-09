@@ -23,6 +23,7 @@
 // Disable symbol overrides so that we can use system headers.
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 
+#include "common/system.h"
 #include "backends/updates/macosx/macosx-updates.h"
 
 #ifdef USE_SPARKLE
@@ -131,6 +132,22 @@ int MacOSXUpdateManager::getUpdateCheckInterval() {
 		// Return the default value (one day)
 		return kUpdateIntervalOneDay;
 	}
+}
+
+bool MacOSXUpdateManager::getLastUpdateCheckTimeAndDate(TimeDate &t) {
+	NSDate *date = [sparkleUpdater lastUpdateCheckDate];
+	NSCalendar *gregorian = [[NSCalendar alloc] initWithCalendarIdentifier:NSGregorianCalendar];
+	NSDateComponents *components = [gregorian components:(NSDayCalendarUnit | NSWeekdayCalendarUnit) fromDate:date];
+
+	t.tm_wday = [components weekday];
+	t.tm_year = [components year];
+	t.tm_mon = [components month];
+	t.tm_mday = [components day];
+	t.tm_hour = [components hour];
+	t.tm_min = [components minute];
+	t.tm_sec = [components second];
+
+	return true;
 }
 
 #endif
