@@ -406,6 +406,7 @@
 #include "titanic/sound/water_lapping_sounds.h"
 
 #include "titanic/star_control/star_control.h"
+#include "titanic/support/time_event_info.h"
 
 namespace Titanic {
 
@@ -1004,6 +1005,7 @@ DEFFN(CViewAutoSoundPlayer)
 DEFFN(CViewTogglesOtherMusic)
 DEFFN(CWaterLappingSounds)
 DEFFN(CStarControl)
+DEFFN(CTimeEventInfo)
 
 void CSaveableObject::initClassList() {
 	_classDefs = new Common::List<ClassDef *>();
@@ -1592,6 +1594,7 @@ void CSaveableObject::initClassList() {
 	ADDFN(CViewTogglesOtherMusic, CEnterViewTogglesOtherMusic);
 	ADDFN(CWaterLappingSounds, CRoomAutoSoundPlayer);
 	ADDFN(CStarControl, CGameObject);
+	ADDFN(CTimeEventInfo, ListItem);
 }
 
 void CSaveableObject::freeClassList() {

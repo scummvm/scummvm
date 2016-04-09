@@ -23,21 +23,61 @@
 #ifndef TITANIC_TIMER_H
 #define TITANIC_TIMER_H
 
+#include "common/algorithm.h"
 #include "titanic/core/list.h"
 
 namespace Titanic {
 
+class CTreeItem;
 class CProjectItem;
 
-class CTimer : public ListItem {
+class CTimeEventInfo : public ListItem {
 private:
-	static int _v1;
+	/**
+	 * Increments the counter
+	 */
+	void lock() { ++_lockCounter; }
+
+	/**
+	 * Called at the end of both post load and post save actions
+	 */
+	void unlock() {
+		_lockCounter = MAX(_lockCounter - 1, 0);
+	}
 public:
+	static uint _nextId;
+public:
+	int _lockCounter;
 	uint _id;
+	uint _field14;
+	uint _firstDuration;
+	uint _duration;
+	CTreeItem *_target;
+	uint _actionVal;
+	CString _action;
+	uint _field2C;
+	uint _field30;
+	uint _timerCtr;
+	uint _lastTimerTicks;
+	uint _field3C;
 	bool _done;
 	uint _field44;
+	CString _targetName;
 public:
-	CTimer();
+	CLASSDEF
+	CTimeEventInfo();
+	CTimeEventInfo(uint ticks, uint f14, uint firstDuration, uint duration,
+		CTreeItem *target, int timerVal3, const CString &action);
+
+	/**
+	 * Save the data for the class to file
+	 */
+	virtual void save(SimpleFile *file, int indent) const;
+
+	/**
+	 * Load the data for the class from file
+	 */
+	virtual void load(SimpleFile *file);
 
 	/**
 	 * Called after loading a game has finished
@@ -47,7 +87,7 @@ public:
 	/**
 	 * Called when a game is about to be saved
 	 */
-	void preSave();
+	void preSave(uint ticks);
 
 	/**
 	 * Called when a game has finished being saved
@@ -59,7 +99,7 @@ public:
 	void set44(uint val) { _field44 = val; }
 };
 
-class CTimerList : public List<CTimer> {
+class CTimeEventInfoList : public List<CTimeEventInfo> {
 public:
 	/**
 	 * Called after loading a game has finished
@@ -69,7 +109,7 @@ public:
 	/**
 	 * Called when a game is about to be saved
 	 */
-	void preSave();
+	void preSave(uint ticks);
 
 	/**
 	 * Called when a game has finished being saved

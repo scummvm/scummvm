@@ -222,16 +222,18 @@ public:
 	}
 };
 
-MESSAGE1(CTimeMsg, int, value, 0);
+MESSAGE1(CTimeMsg, uint, _ticks, 0);
 
 class CTimerMsg : public CTimeMsg {
 public:
-	int _field8;
+	uint _timerCtr;
 	int _fieldC;
-	CString _string1;
+	CString _action;
 public:
 	CLASSDEF
-	CTimerMsg() : CTimeMsg(), _field8(0), _fieldC(0) {}
+	CTimerMsg() : CTimeMsg(), _timerCtr(0), _fieldC(0) {}
+	CTimerMsg(uint ticks, uint timerCtr, int val2, const CString &action) :
+		CTimeMsg(ticks), _timerCtr(timerCtr), _fieldC(val2), _action(action) {}
 
 	static bool isSupportedBy(const CTreeItem *item) {
 		return supports(item, _type);

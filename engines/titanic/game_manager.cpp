@@ -37,6 +37,7 @@ CGameManager::CGameManager(CProjectItem *project, CGameView *gameView):
 		_field30(0), _soundMaker(nullptr), _field4C(0),
 		_dragItem(nullptr), _field54(0), _lastDiskTicksCount(0), _tickCount2(0) {
 	
+	CTimeEventInfo::_nextId = 0;
 	_videoSurface1 = nullptr;
 	_videoSurface2 = CScreenManager::_screenManagerPtr->createSurface(600, 340);
 	_project->setGameManager(this);
@@ -91,7 +92,7 @@ void CGameManager::preSave(CProjectItem *project) {
 	msg.execute(project, nullptr, MSGFLAG_SCAN);
 
 	// Notify sub-objects of the save
-	_timers.preSave();
+	_timers.preSave(_lastDiskTicksCount);
 	_trueTalkManager.preSave();
 	_sound.preSave();
 }

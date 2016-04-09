@@ -28,7 +28,7 @@
 #include "titanic/input_handler.h"
 #include "titanic/input_translator.h"
 #include "titanic/support/simple_file.h"
-#include "titanic/support/timer.h"
+#include "titanic/support/time_event_info.h"
 #include "titanic/support/video_surface.h"
 #include "titanic/true_talk/true_talk_manager.h"
 #include "titanic/sound/background_sound_maker.h"
@@ -43,7 +43,7 @@ class CGameView;
 class CGameManager {
 private:
 	CTrueTalkManager _trueTalkManager;
-	CTimerList _timers;
+	CTimeEventInfoList _timers;
 	int _field30;
 	CBackgroundSoundMaker *_soundMaker;
 	CVideoSurface *_videoSurface1;
@@ -169,6 +169,18 @@ public:
 	 * Set and return the current screen manager
 	 */
 	CScreenManager *setScreenManager() const;
+
+	/**
+	 * Adds a timer
+	 */
+	void addTimer(CTimeEventInfo *timer) { _timers.push_back(timer); }
+
+	/**
+	 * Stops a timer
+	 */
+	void stopTimer(uint id) { _timers.stop(id); }
+
+	void setTimer44(uint id, uint val) { _timers.set44(id, val); }
 };
 
 } // End of namespace Titanic
