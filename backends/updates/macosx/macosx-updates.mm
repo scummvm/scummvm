@@ -147,6 +147,8 @@ bool MacOSXUpdateManager::getLastUpdateCheckTimeAndDate(TimeDate &t) {
 	t.tm_min = [components minute];
 	t.tm_sec = [components second];
 
+	[gregorian release];
+
 	return true;
 }
 
