@@ -189,7 +189,7 @@ public:
 	 * @param t		factor to slerp by.
 	 * @return		the resulting quaternion.
 	 */
-	Quaternion slerpQuat(const Quaternion& to, const float t);
+	Quaternion slerpQuat(const Quaternion& to, const float t) const;
 
 	/**
 	 * Get the direction vector specified by col

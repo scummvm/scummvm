@@ -73,7 +73,7 @@ Quaternion Quaternion::zAxis(const Angle &angle) {
 	return q;
 }
 
-Quaternion Quaternion::slerpQuat(const Quaternion& to, const float t) {
+Quaternion Quaternion::slerpQuat(const Quaternion& to, const float t) const {
 	Quaternion dst;
 	float scale0, scale1;
 	float flip = 1.0f;
