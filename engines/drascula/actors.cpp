@@ -123,6 +123,8 @@ void DrasculaEngine::startWalking() {
 			walkUp();
 		else if (roomY > curY + curHeight)
 			walkDown();
+		else
+			characterMoved = 0;
 	} else {
 		if ((roomX < curX + curWidth / 2 ) && (roomY <= (curY + curHeight)))
 			quadrant_1();
