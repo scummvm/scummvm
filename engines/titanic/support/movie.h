@@ -35,6 +35,7 @@ enum MovieState {
 
 class CVideoSurface;
 class CMovie;
+class CGameObject;
 
 class CMovieList : public List<CMovie> {
 public:
@@ -80,6 +81,8 @@ private:
 	 * Decodes the next frame
 	 */
 	void decodeFrame();
+public:
+	CGameObject *_gameObject;
 public:
 	OSMovie(const CResourceKey &name, CVideoSurface *surface);
 	virtual ~OSMovie();

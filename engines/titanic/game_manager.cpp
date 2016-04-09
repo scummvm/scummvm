@@ -195,11 +195,32 @@ void CGameManager::updateMovies() {
 	// TODO: Make this more like the original, if I can figuring out
 	// what's it doing with temporary lists and the OSMovie methods
 	for (CMovieList::iterator i = g_vm->_activeMovies.begin();
-			i != g_vm->_activeMovies.end(); ++i) {
+			i != g_vm->_activeMovies.end(); ) {
+		OSMovie *movie = static_cast<OSMovie *>(*i);
+		assert(movie && movie->_gameObject);
 
+		movie->update();
+		switch (movie->getState()) {
+		case MOVIE_FINISHED: {
+			CMovieEndMsg endMsg;
+			endMsg.execute(movie->_gameObject);
+
+			i = g_vm->_activeMovies.erase(i);
+			continue;
+		}
+
+		case MOVIE_FRAME: {
+			CMovieFrameMsg frameMsg;
+			frameMsg.execute(movie->_gameObject);
+			break;
+		}
+
+		default:
+			break;
+		}
+
+		++i;
 	}
-
-	
 }
 
 void CGameManager::updateDiskTicksCount() {
@@ -243,6 +264,10 @@ void CGameManager::extendBounds(const Rect &r) {
 		_bounds = r;
 	else
 		_bounds.combine(r);
+}
+
+CScreenManager *CGameManager::setScreenManager() const {
+	return CScreenManager::setCurrent();
 }
 
 } // End of namespace Titanic

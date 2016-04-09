@@ -206,6 +206,11 @@ public:
 	 * to include the passed rect
 	 */
 	void extendBounds(const Rect &r);
+
+	/**
+	 * Set and return the current screen manager
+	 */
+	CScreenManager *setScreenManager() const;
 };
 
 } // End of namespace Titanic

@@ -45,7 +45,8 @@ bool CMovie::get10() {
 
 /*------------------------------------------------------------------------*/
 
-OSMovie::OSMovie(const CResourceKey &name, CVideoSurface *surface) : _videoSurface(surface) {
+OSMovie::OSMovie(const CResourceKey &name, CVideoSurface *surface) :
+		_videoSurface(surface), _gameObject(nullptr) {
 	_video = new AVIDecoder();
 	if (!_video->loadFile(name.getString()))
 		error("Could not open video - %s", name.getString().c_str());

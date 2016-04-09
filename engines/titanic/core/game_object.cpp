@@ -238,7 +238,7 @@ void CGameObject::loadMovie(const CString &name, bool pendingFlag) {
 	// Create the surface if it doesn't already exist
 	if (!_surface) {
 		CGameManager *gameManager = getGameManager();
-		_surface = new OSVideoSurface(CScreenManager::setCurrent(), nullptr);		
+		_surface = new OSVideoSurface(gameManager->setScreenManager(), nullptr);		
 	}
 
 	// Load the new movie resource
@@ -359,6 +359,9 @@ void CGameObject::fn1(int val1, int val2, int val3) {
 	}
 
 	if (_surface) {
+		// TODO: Figure out where to do this legitimately
+		static_cast<OSMovie *>(_surface->_movie)->_gameObject = this;
+
 		_surface->proc34(val1, val2, val3, val3 != 0);
 
 		if (val3 & 0x10)
