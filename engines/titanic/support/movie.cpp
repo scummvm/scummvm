@@ -145,6 +145,11 @@ void OSMovie::decodeFrame() {
 	OSVideoSurface *videoSurface = static_cast<OSVideoSurface *>(_videoSurface);
 	assert(videoSurface);
 
+	// If the video surface doesn't yet have an underlying surface, create it
+	if (!videoSurface->hasSurface())
+		videoSurface->resize(frame->w, frame->h);
+
+	// Lock access to the surface
 	videoSurface->lock();
 	assert(videoSurface->_rawSurface);
 
@@ -160,6 +165,7 @@ void OSMovie::decodeFrame() {
 		delete s;
 	}
 
+	// Unlock the surface
 	videoSurface->unlock();
 }
 

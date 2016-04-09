@@ -70,7 +70,7 @@ protected:
 	int _field58;
 	bool _visible;
 	CMovieClipList _clipList1;
-	int _field78;
+	int _initialFrame;
 	CMovieClipList _clipList2;
 	int _frameNumber;
 	int _field90;

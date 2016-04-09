@@ -93,9 +93,11 @@ public:
 	virtual void loadJPEG(const CResourceKey &key) = 0;
 
 	/**
-	 * Loads a movie file specified by the resource key
+	 * Loads a movie file specified by the resource key.
+	 * @param key			Resource key for movie to load
+	 * @param destroyFlag	Immediately destroy movie after decoding first frame
 	 */
-	virtual void loadMovie() = 0;
+	virtual void loadMovie(const CResourceKey &key, bool destroyFlag = false) = 0;
 
 	/**
 	 * Lock the surface for direct access to the pixels
@@ -241,9 +243,11 @@ public:
 	virtual void loadJPEG(const CResourceKey &key);
 
 	/**
-	 * Loads a movie file specified by the resource key
+	 * Loads a movie file specified by the resource key.
+	 * @param key			Resource key for movie to load
+	 * @param destroyFlag	Immediately destroy movie after decoding first frame
 	 */
-	virtual void loadMovie();
+	virtual void loadMovie(const CResourceKey &key, bool destroyFlag = false);
 
 	/**
 	 * Lock the surface for direct access to the pixels

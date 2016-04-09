@@ -20,14 +20,14 @@
  *
  */
 
-#include "titanic/support/files_manager.h"
-#include "titanic/game_manager.h"
-#include "titanic/support/screen_manager.h"
-#include "titanic/titanic.h"
-#include "titanic/support/video_surface.h"
 #include "titanic/core/game_object.h"
 #include "titanic/core/resource_key.h"
 #include "titanic/pet_control/pet_control.h"
+#include "titanic/support/files_manager.h"
+#include "titanic/support/screen_manager.h"
+#include "titanic/support/video_surface.h"
+#include "titanic/game_manager.h"
+#include "titanic/titanic.h"
 
 namespace Titanic {
 
@@ -51,7 +51,7 @@ CGameObject::CGameObject(): CNamedItem() {
 	_visible = true;
 	_field60 = 0;
 	_cursorId = CURSOR_ARROW;
-	_field78 = 0;
+	_initialFrame = 0;
 	_frameNumber = -1;
 	_field90 = 0;
 	_field94 = 0;
@@ -222,7 +222,7 @@ void CGameObject::draw(CScreenManager *screenManager, const Common::Point &destP
 }
 
 void CGameObject::loadResource(const CString &name) {
-	switch (name.imageTypeSuffix()) {
+	switch (name.fileTypeSuffix()) {
 	case FILETYPE_IMAGE:
 		loadImage(name);
 		break;
@@ -233,7 +233,25 @@ void CGameObject::loadResource(const CString &name) {
 }
 
 void CGameObject::loadMovie(const CString &name, bool pendingFlag) {
-	warning("TODO: CGameObject::loadMovie");
+	g_vm->_filesManager.fn5(name);
+
+	// Create the surface if it doesn't already exist
+	if (!_surface) {
+		CGameManager *gameManager = getGameManager();
+		_surface = new OSVideoSurface(CScreenManager::setCurrent(), nullptr);		
+	}
+
+	// Load the new movie resource
+	CResourceKey key(name);
+	_surface->loadResource(key);
+
+	if (_surface->hasSurface() && !pendingFlag) {
+		_bounds.setWidth(_surface->getWidth());
+		_bounds.setHeight(_surface->getHeight());
+	}
+
+	if (_initialFrame)
+		loadFrame(_initialFrame);
 }
 
 void CGameObject::loadImage(const CString &name, bool pendingFlag) {
@@ -264,7 +282,7 @@ void CGameObject::loadImage(const CString &name, bool pendingFlag) {
 		makeDirty();
 	}
 
-	_field78 = 0;
+	_initialFrame = 0;
 }
 
 void CGameObject::loadFrame(int frameNumber) {
@@ -403,7 +421,7 @@ bool CGameObject::hasActiveMovie() const {
 int CGameObject::getMovie19() const {
 	if (_surface && _surface->_movie)
 		return _surface->_movie->proc19();
-	return _field78;
+	return _initialFrame;
 }
 
 int CGameObject::getSurface45() const {

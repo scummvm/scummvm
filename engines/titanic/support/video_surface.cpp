@@ -241,8 +241,24 @@ void OSVideoSurface::loadJPEG(const CResourceKey &key) {
 	_resourceKey = key;
 }
 
-void OSVideoSurface::loadMovie() {
-	warning("TODO");
+void OSVideoSurface::loadMovie(const CResourceKey &key, bool destroyFlag) {
+	// Delete any prior movie
+	if (_movie) {
+		delete _movie;
+		_movie = nullptr;
+	}
+
+	// Create the new movie and load the first frame to the video surface
+	_movie = new OSMovie(key, this);
+	_movie->setFrame(0);
+
+	// If flagged to destroy, then immediately destroy movie instance
+	if (destroyFlag) {
+		delete _movie;
+		_movie = nullptr;
+	}
+
+	_resourceKey = key;
 }
 
 bool OSVideoSurface::lock() {
@@ -329,7 +345,7 @@ bool OSVideoSurface::load() {
 		return true;
 
 	case FILETYPE_MOVIE:
-		loadMovie();
+		loadMovie(_resourceKey);
 		return true;
 
 	default:
