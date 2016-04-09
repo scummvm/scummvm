@@ -44,88 +44,91 @@ void GnapEngine::freeMenuSprite() {
 }
 
 void GnapEngine::initMenuHotspots1() {
-	
-	int v0, v2 = 0;
+	int curId = 0;
 
 	for (int i = 0; i < 3; ++i) {
-		int v1 = 0;
-		while (v1 < 3) {
-			_hotspots[v2]._x1 = 87 * v1 + 262;
-			_hotspots[v2]._y1 = 74 * i + 69;
-			_hotspots[v2]._x2 = _hotspots[v2]._x1 + 79;
-			_hotspots[v2]._y2 = _hotspots[v2]._y1 + 66;
-			_hotspots[v2]._flags = SF_NONE;
-			_hotspots[v2]._id = v2;
-			++v1;
-			++v2;
+		for (int j = 0; j < 3; ++j) {
+			_hotspots[curId]._x1 = 87 * j + 262;
+			_hotspots[curId]._y1 = 74 * i + 69;
+			_hotspots[curId]._x2 = _hotspots[curId]._x1 + 79;
+			_hotspots[curId]._y2 = _hotspots[curId]._y1 + 66;
+			_hotspots[curId]._flags = SF_NONE;
+			_hotspots[curId]._id = curId;
+			++curId;
 		}
 	}
 
-	_hotspots[v2]._x1 = 330;
-	_hotspots[v2]._y1 = 350;
-	_hotspots[v2]._x2 = 430;
-	_hotspots[v2]._y2 = 460;
-	_hotspots[v2]._flags = SF_GRAB_CURSOR;
-	_hotspots[v2]._id = v2;
+	_hotspots[curId]._x1 = 330;
+	_hotspots[curId]._y1 = 350;
+	_hotspots[curId]._x2 = 430;
+	_hotspots[curId]._y2 = 460;
+	_hotspots[curId]._flags = SF_GRAB_CURSOR;
+	_hotspots[curId]._id = curId;
 
-	v0 = v2 + 1;
-	_hotspots[v0]._x1 = 180;
-	_hotspots[v0]._y1 = 15;
-	_hotspots[v0]._x2 = 620;
-	_hotspots[v0]._y2 = 580;
-	_hotspots[v0]._flags = SF_NONE;
-	_hotspots[v0]._id = v0;
+	++curId;
+	_hotspots[curId]._x1 = 180;
+	_hotspots[curId]._y1 = 15;
+	_hotspots[curId]._x2 = 620;
+	_hotspots[curId]._y2 = 580;
+	_hotspots[curId]._flags = SF_NONE;
+	_hotspots[curId]._id = curId;
 
-	++v0;
-	_hotspots[v0]._x1 = 0;
-	_hotspots[v0]._y1 = 0;
-	_hotspots[v0]._x2 = 799;
-	_hotspots[v0]._y2 = 599;
-	_hotspots[v0]._flags = SF_NONE;
-	_hotspots[v0]._id = v0;
+	++curId;
+	_hotspots[curId]._x1 = 0;
+	_hotspots[curId]._y1 = 0;
+	_hotspots[curId]._x2 = 799;
+	_hotspots[curId]._y2 = 599;
+	_hotspots[curId]._flags = SF_NONE;
+	_hotspots[curId]._id = curId;
 
-	_hotspotsCount = v0 + 1;
+	_hotspotsCount = curId + 1;
 }
 
 void GnapEngine::initMenuHotspots2() {
-	int i, v0;
+	int curId = 0;
 	
-	for (i = 0; i < 4; ++i) {
-		_hotspots[i]._x1 = 312;
-		_hotspots[i]._y1 = 48 * i + 85;
-		_hotspots[i]._x2 = _hotspots[i]._x1 + 153;
-		_hotspots[i]._y2 = _hotspots[i]._y1 + 37;
-		_hotspots[i]._flags = SF_GRAB_CURSOR;
-		_hotspots[i]._id = i;
+	for (int i = 0; i < 4; ++i) {
+		_hotspots[curId]._x1 = 312;
+		_hotspots[curId]._y1 = 48 * i + 85;
+		_hotspots[curId]._x2 = _hotspots[curId]._x1 + 153;
+		_hotspots[curId]._y2 = _hotspots[curId]._y1 + 37;
+		_hotspots[curId]._flags = SF_GRAB_CURSOR;
+		_hotspots[curId]._id = curId;
+		++curId;
 	}
-	_hotspots[i]._x1 = 500;
-	_hotspots[i]._y1 = 72;
-	_hotspots[i]._x2 = 527;
-	_hotspots[i]._y2 = 99;
-	_hotspots[i]._flags = SF_DISABLED;
-	_hotspots[i]._id = i;
-	v0 = i + 1;
-	_hotspots[v0]._x1 = 330;
-	_hotspots[v0]._y1 = 350;
-	_hotspots[v0]._x2 = 430;
-	_hotspots[v0]._y2 = 460;
-	_hotspots[v0]._flags = SF_GRAB_CURSOR;
-	_hotspots[v0]._id = v0;
-	++v0;
-	_hotspots[v0]._x1 = 180;
-	_hotspots[v0]._y1 = 15;
-	_hotspots[v0]._x2 = 620;
-	_hotspots[v0]._y2 = 580;
-	_hotspots[v0]._flags = SF_NONE;
-	_hotspots[v0]._id = v0;
-	++v0;
-	_hotspots[v0]._x1 = 0;
-	_hotspots[v0]._y1 = 0;
-	_hotspots[v0]._x2 = 799;
-	_hotspots[v0]._y2 = 599;
-	_hotspots[v0]._flags = SF_NONE;
-	_hotspots[v0]._id = v0;
-	_hotspotsCount = v0 + 1;
+
+	_hotspots[curId]._x1 = 500;
+	_hotspots[curId]._y1 = 72;
+	_hotspots[curId]._x2 = 527;
+	_hotspots[curId]._y2 = 99;
+	_hotspots[curId]._flags = SF_DISABLED;
+	_hotspots[curId]._id = curId;
+
+	++curId;
+	_hotspots[curId]._x1 = 330;
+	_hotspots[curId]._y1 = 350;
+	_hotspots[curId]._x2 = 430;
+	_hotspots[curId]._y2 = 460;
+	_hotspots[curId]._flags = SF_GRAB_CURSOR;
+	_hotspots[curId]._id = curId;
+
+	++curId;
+	_hotspots[curId]._x1 = 180;
+	_hotspots[curId]._y1 = 15;
+	_hotspots[curId]._x2 = 620;
+	_hotspots[curId]._y2 = 580;
+	_hotspots[curId]._flags = SF_NONE;
+	_hotspots[curId]._id = curId;
+
+	++curId;
+	_hotspots[curId]._x1 = 0;
+	_hotspots[curId]._y1 = 0;
+	_hotspots[curId]._x2 = 799;
+	_hotspots[curId]._y2 = 599;
+	_hotspots[curId]._flags = SF_NONE;
+	_hotspots[curId]._id = curId;
+
+	_hotspotsCount = curId + 1;
 }
 
 void GnapEngine::initMenuQuitQueryHotspots() {
@@ -135,80 +138,93 @@ void GnapEngine::initMenuQuitQueryHotspots() {
 	_hotspots[0]._y2 = 237;
 	_hotspots[0]._flags = SF_GRAB_CURSOR;
 	_hotspots[0]._id = 0;
+
 	_hotspots[1]._x1 = 403;
 	_hotspots[1]._y1 = 197;
 	_hotspots[1]._x2 = 469;
 	_hotspots[1]._y2 = 237;
 	_hotspots[1]._flags = SF_GRAB_CURSOR;
 	_hotspots[1]._id = 1;
+
 	_hotspots[2]._x1 = 330;
 	_hotspots[2]._y1 = 350;
 	_hotspots[2]._x2 = 430;
 	_hotspots[2]._y2 = 460;
 	_hotspots[2]._flags = SF_GRAB_CURSOR;
 	_hotspots[2]._id = 2;
+
 	_hotspots[3]._x1 = 180;
 	_hotspots[3]._y1 = 15;
 	_hotspots[3]._x2 = 620;
 	_hotspots[3]._y2 = 580;
 	_hotspots[3]._flags = SF_NONE;
 	_hotspots[3]._id = 3;
+
 	_hotspots[4]._x1 = 0;
 	_hotspots[4]._y1 = 0;
 	_hotspots[4]._x2 = 799;
 	_hotspots[4]._y2 = 599;
 	_hotspots[4]._flags = SF_NONE;
 	_hotspots[4]._id = 4;
+
 	_hotspotsCount = 5;
 }
 
 void GnapEngine::initSaveLoadHotspots() {
-	int i, v0;
-	for (i = 0; i < 7; ++i ) {
-		_hotspots[i]._x1 = 288;
-		_hotspots[i]._y1 = 31 * i + 74;
-		_hotspots[i]._x2 = _hotspots[i]._x1 + 91;
-		_hotspots[i]._y2 = _hotspots[i]._y1 + 22;
-		_hotspots[i]._flags = SF_GRAB_CURSOR;
-		_hotspots[i]._id = i;
+	int curId = 0;
+
+	for (int i = 0; i < 7; ++i ) {
+		_hotspots[curId]._x1 = 288;
+		_hotspots[curId]._y1 = 31 * i + 74;
+		_hotspots[curId]._x2 = _hotspots[curId]._x1 + 91;
+		_hotspots[curId]._y2 = _hotspots[curId]._y1 + 22;
+		_hotspots[curId]._flags = SF_GRAB_CURSOR;
+		_hotspots[curId]._id = curId;
+		++curId;
 	}
+
 	if (_menuStatus == 2) {
-		_hotspots[i]._x1 = 416;
-		_hotspots[i]._y1 = 160;
-		_hotspots[i]._x2 = 499;
-		_hotspots[i]._y2 = 188;
-		_hotspots[i]._flags = SF_GRAB_CURSOR;
-		_hotspots[i]._id = i;
-		++i;
+		_hotspots[curId]._x1 = 416;
+		_hotspots[curId]._y1 = 160;
+		_hotspots[curId]._x2 = 499;
+		_hotspots[curId]._y2 = 188;
+		_hotspots[curId]._flags = SF_GRAB_CURSOR;
+		_hotspots[curId]._id = curId;
+		++curId;
 	}
-	_hotspots[i]._x1 = 416;
-	_hotspots[i]._y1 = 213;
-	_hotspots[i]._x2 = 499;
-	_hotspots[i]._y2 = 241;
-	_hotspots[i]._flags = SF_GRAB_CURSOR;
-	_hotspots[i]._id = i;
-	v0 = i + 1;
-	_hotspots[v0]._x1 = 330;
-	_hotspots[v0]._y1 = 350;
-	_hotspots[v0]._x2 = 430;
-	_hotspots[v0]._y2 = 460;
-	_hotspots[v0]._flags = SF_GRAB_CURSOR;
-	_hotspots[v0]._id = v0;
-	++v0;
-	_hotspots[v0]._x1 = 180;
-	_hotspots[v0]._y1 = 15;
-	_hotspots[v0]._x2 = 620;
-	_hotspots[v0]._y2 = 580;
-	_hotspots[v0]._flags = SF_NONE;
-	_hotspots[v0]._id = v0;
-	++v0;
-	_hotspots[v0]._x1 = 0;
-	_hotspots[v0]._y1 = 0;
-	_hotspots[v0]._x2 = 799;
-	_hotspots[v0]._y2 = 599;
-	_hotspots[v0]._flags = SF_NONE;
-	_hotspots[v0]._id = v0;
-	_hotspotsCount = v0 + 1;
+
+	_hotspots[curId]._x1 = 416;
+	_hotspots[curId]._y1 = 213;
+	_hotspots[curId]._x2 = 499;
+	_hotspots[curId]._y2 = 241;
+	_hotspots[curId]._flags = SF_GRAB_CURSOR;
+	_hotspots[curId]._id = curId;
+
+	++curId;
+	_hotspots[curId]._x1 = 330;
+	_hotspots[curId]._y1 = 350;
+	_hotspots[curId]._x2 = 430;
+	_hotspots[curId]._y2 = 460;
+	_hotspots[curId]._flags = SF_GRAB_CURSOR;
+	_hotspots[curId]._id = curId;
+
+	++curId;
+	_hotspots[curId]._x1 = 180;
+	_hotspots[curId]._y1 = 15;
+	_hotspots[curId]._x2 = 620;
+	_hotspots[curId]._y2 = 580;
+	_hotspots[curId]._flags = SF_NONE;
+	_hotspots[curId]._id = curId;
+
+	++curId;
+	_hotspots[curId]._x1 = 0;
+	_hotspots[curId]._y1 = 0;
+	_hotspots[curId]._x2 = 799;
+	_hotspots[curId]._y2 = 599;
+	_hotspots[curId]._flags = SF_NONE;
+	_hotspots[curId]._id = curId;
+
+	_hotspotsCount = curId + 1;
 }
 
 void GnapEngine::drawInventoryFrames() {
