@@ -30,41 +30,6 @@
 
 namespace Titanic {
 
-void CGameManagerList::postLoad(uint ticks, CProjectItem *project) {
-	for (iterator i = begin(); i != end(); ++i)
-		(*i)->postLoad(ticks, project);
-}
-
-void CGameManagerList::preSave() {
-	for (iterator i = begin(); i != end(); ++i)
-		(*i)->preSave();
-}
-
-void CGameManagerList::postSave() {
-	for (iterator i = begin(); i != end(); ++i)
-		(*i)->postSave();
-}
-
-void CGameManagerList::update(uint ticks) {
-	warning("TODO: CGameManagerList::update");
-}
-
-/*------------------------------------------------------------------------*/
-
-void CGameManagerListItem::postLoad(uint ticks, CProjectItem *project) {
-	warning("TODO");
-}
-
-void CGameManagerListItem::preSave() {
-	warning("TODO: CGameManagerListItem::preSave");
-}
-
-void CGameManagerListItem::postSave() {
-	warning("TODO: CGameManagerListItem::postSave");
-}
-
-/*------------------------------------------------------------------------*/
-
 CGameManager::CGameManager(CProjectItem *project, CGameView *gameView):
 		_project(project), _gameView(gameView), _trueTalkManager(this),
 		_inputHandler(this), _inputTranslator(&_inputHandler),		
@@ -82,14 +47,14 @@ void CGameManager::load(SimpleFile *file) {
 	file->readNumber();
 
 	_gameState.load(file);
-	_list.load(file);
+	_timers.load(file);
 	_trueTalkManager.load(file);
 	_sound.load(file);
 }
 
 void CGameManager::preLoad() {
 	updateDiskTicksCount();
-	_list.destroyContents();
+	_timers.destroyContents();
 	_soundMaker = nullptr;
 
 	_trueTalkManager.preLoad();
@@ -111,8 +76,8 @@ void CGameManager::postLoad(CProjectItem *project) {
 	CLoadSuccessMsg msg(_lastDiskTicksCount - _tickCount2);
 	msg.execute(project, nullptr, MSGFLAG_SCAN);
 
-	// Signal to any registered list items
-	_list.postLoad(_lastDiskTicksCount, _project);
+	// Signal to any registered timers
+	_timers.postLoad(_lastDiskTicksCount, _project);
 
 	// Signal the true talk manager and sound
 	_trueTalkManager.postLoad();
@@ -126,13 +91,13 @@ void CGameManager::preSave(CProjectItem *project) {
 	msg.execute(project, nullptr, MSGFLAG_SCAN);
 
 	// Notify sub-objects of the save
-	_list.preSave();
+	_timers.preSave();
 	_trueTalkManager.preSave();
 	_sound.preSave();
 }
 
 void CGameManager::postSave() {
-	_list.postSave();
+	_timers.postSave();
 	_trueTalkManager.postSave();
 }
 
@@ -151,7 +116,7 @@ void CGameManager::playClip(CMovieClip *clip, CRoomItem *oldRoom, CRoomItem *new
 void CGameManager::update() {
 	updateMovies();
 	frameMessage(getRoom());
-	_list.update(g_vm->_events->getTicksCount());
+	_timers.update(g_vm->_events->getTicksCount());
 	_trueTalkManager.update1();
 	_trueTalkManager.update2();
 	CScreenManager::_screenManagerPtr->_mouseCursor->update();

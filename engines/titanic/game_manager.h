@@ -28,6 +28,7 @@
 #include "titanic/input_handler.h"
 #include "titanic/input_translator.h"
 #include "titanic/support/simple_file.h"
+#include "titanic/support/timer.h"
 #include "titanic/support/video_surface.h"
 #include "titanic/true_talk/true_talk_manager.h"
 #include "titanic/sound/background_sound_maker.h"
@@ -39,53 +40,10 @@ namespace Titanic {
 class CProjectItem;
 class CGameView;
 
-class CGameManagerListItem : public ListItem {
-private:
-	static int _v1;
-public:
-	/**
-	 * Called after loading a game has finished
-	 */
-	void postLoad(uint ticks, CProjectItem *project);
-
-	/**
-	 * Called when a game is about to be saved
-	 */
-	void preSave();
-
-	/**
-	 * Called when a game has finished being saved
-	 */
-	void postSave();
-};
-
-class CGameManagerList : public List<CGameManagerListItem> {
-public:
-	/**
-	 * Called after loading a game has finished
-	 */
-	void postLoad(uint ticks, CProjectItem *project);
-
-	/**
-	 * Called when a game is about to be saved
-	 */
-	void preSave();
-
-	/**
-	 * Called when a game has finished being saved
-	 */
-	void postSave();
-
-	/**
-	 * Handles an update
-	 */
-	void update(uint ticks);
-};
-
 class CGameManager {
 private:
 	CTrueTalkManager _trueTalkManager;
-	CGameManagerList _list;
+	CTimerList _timers;
 	int _field30;
 	CBackgroundSoundMaker *_soundMaker;
 	CVideoSurface *_videoSurface1;

@@ -437,6 +437,7 @@ MODULE_OBJS := \
 	support/simple_file.o \
 	support/string.o \
 	support/text_cursor.o \
+	support/timer.o \
 	support/video_surface.o \
 	true_talk/barbot_script.o \
 	true_talk/bellbot_script.o \
