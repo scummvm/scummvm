@@ -29,7 +29,9 @@
 
 namespace Stark {
 
+class AnimHandler;
 class Model;
+
 namespace Formats {
 class XRCReadStream;
 }
@@ -53,12 +55,16 @@ public:
 	/** Obtain the mesh object */
 	Model *getModel();
 
+	/** Obtain the mesh animation handler */
+	AnimHandler *getAnimHandler();
+
 protected:
 	void printData() override;
 
 	Common::String _filename;
 	Common::String _archiveName;
 
+	AnimHandler *_animHandler;
 	Model *_model;
 };
 

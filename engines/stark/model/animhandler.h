@@ -20,80 +20,45 @@
  *
  */
 
-#ifndef STARK_MODEL_SKELETON_H
-#define STARK_MODEL_SKELETON_H
+#ifndef STARK_MODEL_ANIM_HANDLER_H
+#define STARK_MODEL_ANIM_HANDLER_H
 
-#include "common/array.h"
-#include "common/str.h"
-
-#include "math/aabb.h"
-#include "math/quat.h"
-#include "math/ray.h"
-#include "math/vector3d.h"
+#include "common/scummsys.h"
 
 namespace Stark {
 
-class ArchiveReadStream;
+class Model;
+class BoneNode;
 class SkeletonAnim;
 
-class BoneNode {
-public:
-	BoneNode() : _parent(-1), _idx(0), _u1(0) {}
-	~BoneNode() { }
-
-	/** Perform a collision test with the ray */
-	bool intersectRay(const Math::Ray &ray) const;
-
-	Common::String _name;
-	float _u1;
-	Common::Array<uint32> _children;
-	int _parent;
-	uint32 _idx;
-
-	Math::Vector3d _animPos;
-	Math::Quaternion _animRot;
-
-	/** Bone space bounding box */
-	Math::AABB _boundingBox;
-};
-
 /**
- * Skeleton manager to load and store skeletal information about an actor
+ * Animate a skeletal model's bones according to an animation
  */
-class Skeleton {
+class AnimHandler {
 public:
-	Skeleton();
-	~Skeleton();
+	AnimHandler();
+	~AnimHandler();
 
 	/**
-	 * Increment the skeleton timestamp, and apply bone animations if required
+	 * Increment the animation timestamp, and apply bone animations if required
 	 */
 	void animate(uint32 time);
 
-	/**
-	 * Start reading animation data from the specified stream
-	 */
+	/** Set the skeletal model to animate */
+	void setModel(Model *model);
+
+	/** Set the skeletal animation to use */
 	void setAnim(SkeletonAnim *anim);
-
-	/**
-	 * Create skeleton object from the specified stream
-	 */
-	void readFromStream(ArchiveReadStream *stream);
-
-	/**
-	 * Obtain the list of bones
-	 */
-	const Common::Array<BoneNode *> getBones();
 
 private:
 	void setNode(uint32 time, BoneNode *bone, const BoneNode *parent);
 
-	Common::Array<BoneNode *> _bones;
 	SkeletonAnim *_anim;
+	Model *_model;
 
 	uint32 _lastTime;
 };
 
 } // End of namespace Stark
 
-#endif // STARK_MODEL_SKELETON_H
+#endif // STARK_MODEL_ANIM_HANDLER_H

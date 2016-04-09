@@ -23,7 +23,7 @@
 #include "engines/stark/model/model.h"
 
 #include "engines/stark/services/archiveloader.h"
-#include "engines/stark/model/skeleton.h"
+#include "engines/stark/model/animhandler.h"
 #include "engines/stark/gfx/texture.h"
 
 #include "math/aabb.h"
@@ -31,8 +31,6 @@
 namespace Stark {
 
 Model::Model() :
-		_skeleton(nullptr),
-		_textureSet(nullptr),
 		_u1(0),
 		_u2(0.0) {
 
@@ -45,8 +43,8 @@ Model::~Model() {
 	for (Common::Array<MeshNode *>::iterator it = _meshes.begin(); it != _meshes.end(); ++it)
 		delete *it;
 
-	if (_skeleton)
-		delete _skeleton;
+	for (Common::Array<BoneNode *>::iterator it = _bones.begin(); it != _bones.end(); ++it)
+		delete *it;
 }
 
 void Model::readFromStream(ArchiveReadStream *stream) {
@@ -89,8 +87,7 @@ void Model::readFromStream(ArchiveReadStream *stream) {
 		error("Found a mesh with numUnknowns != 0");
 	}
 
-	_skeleton = new Skeleton();
-	_skeleton->readFromStream(stream);
+	readBones(stream);
 
 	uint32 numMeshes = stream->readUint32LE();
 
@@ -136,19 +133,32 @@ void Model::readFromStream(ArchiveReadStream *stream) {
 	buildBonesBoundingBoxes();
 }
 
-void Model::setAnim(SkeletonAnim *anim) {
-	_skeleton->setAnim(anim);
-}
+void Model::readBones(ArchiveReadStream *stream) {
+	uint32 numBones = stream->readUint32LE();
+	for (uint32 i = 0; i < numBones; ++i) {
+		BoneNode *node = new BoneNode();
+		node->_name = stream->readString();
+		node->_u1 = stream->readFloat();
 
-void Model::setTextureSet(Gfx::TextureSet *texture) {
-	_textureSet = texture;
+		uint32 len = stream->readUint32LE();
+		for (uint32 j = 0; j < len; ++j)
+			node->_children.push_back(stream->readUint32LE());
+
+		node->_idx = _bones.size();
+		_bones.push_back(node);
+	}
+
+	for (uint32 i = 0; i < numBones; ++i) {
+		BoneNode *node = _bones[i];
+		for (uint j = 0; j < node->_children.size(); ++j) {
+			_bones[node->_children[j]]->_parent = i;
+		}
+	}
 }
 
 void Model::buildBonesBoundingBoxes() {
-	const Common::Array<BoneNode *> &bones = _skeleton->getBones();
-
-	for (uint i = 0; i < bones.size(); i++) {
-		buildBoneBoundingBox(bones[i]);
+	for (uint i = 0; i < _bones.size(); i++) {
+		buildBoneBoundingBox(_bones[i]);
 	}
 }
 
@@ -178,15 +188,21 @@ void Model::buildBoneBoundingBox(BoneNode *bone) const {
 }
 
 bool Model::intersectRay(const Math::Ray &ray) const {
-	const Common::Array<BoneNode *> &bones = _skeleton->getBones();
-
-	for (uint i = 0; i < bones.size(); i++) {
-		if (bones[i]->intersectRay(ray)) {
+	for (uint i = 0; i < _bones.size(); i++) {
+		if (_bones[i]->intersectRay(ray)) {
 			return true;
 		}
 	}
 
 	return false;
+}
+
+bool BoneNode::intersectRay(const Math::Ray &ray) const {
+	Math::Ray localRay = ray;
+	localRay.translate(-_animPos);
+	localRay.rotate(_animRot.inverse());
+
+	return localRay.intersectAABB(_boundingBox);
 }
 
 } // End of namespace Stark

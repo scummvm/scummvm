@@ -36,10 +36,6 @@ class TextureSet;
 }
 
 class ArchiveReadStream;
-class Skeleton;
-class SkeletonAnim;
-
-class BoneNode;
 
 class VertNode {
 public:
@@ -72,7 +68,6 @@ public:
 	Common::Array<TriNode *> _tris;
 };
 
-
 class MeshNode {
 public:
 	MeshNode() {}
@@ -88,13 +83,33 @@ public:
 	Common::Array<FaceNode *> _faces;
 };
 
-
 class MaterialNode {
 public:
 	Common::String _name;
 	uint32 _unknown1;
 	Common::String _texName;
 	float _r, _g, _b;
+};
+
+class BoneNode {
+public:
+	BoneNode() : _parent(-1), _idx(0), _u1(0) {}
+	~BoneNode() { }
+
+	/** Perform a collision test with the ray */
+	bool intersectRay(const Math::Ray &ray) const;
+
+	Common::String _name;
+	float _u1;
+	Common::Array<uint32> _children;
+	int _parent;
+	uint32 _idx;
+
+	Math::Vector3d _animPos;
+	Math::Quaternion _animRot;
+
+	/** Bone space bounding box */
+	Math::AABB _boundingBox;
 };
 
 /**
@@ -112,18 +127,7 @@ public:
 
 	const Common::Array<MeshNode *> &getMeshes() const { return _meshes; }
 	const Common::Array<MaterialNode *> &getMaterials() const { return _materials; }
-	Skeleton *getSkeleton() const { return _skeleton; }
-	const Gfx::TextureSet *getTextureSet() const { return _textureSet; }
-
-	/**
-	 * Load animation data from the specified stream
-	 */
-	void setAnim(SkeletonAnim *anim);
-
-	/**
-	 * Load texture data from the specified stream
-	 */
-	void setTextureSet(Gfx::TextureSet *textureSet);
+	const Common::Array<BoneNode *> &getBones() const { return _bones; };
 
 	/** Perform a collision test with a ray */
 	bool intersectRay(const Math::Ray &ray) const;
@@ -131,14 +135,14 @@ public:
 private:
 	void buildBonesBoundingBoxes();
 	void buildBoneBoundingBox(BoneNode *bone) const;
+	void readBones(ArchiveReadStream *stream);
 
 	uint32 _u1;
 	float _u2;
 
 	Common::Array<MaterialNode *> _materials;
 	Common::Array<MeshNode *> _meshes;
-	Skeleton *_skeleton;
-	Gfx::TextureSet *_textureSet;
+	Common::Array<BoneNode *> _bones;
 };
 
 } // End of namespace Stark

@@ -22,6 +22,7 @@
 
 #include "engines/stark/resources/bonesmesh.h"
 
+#include "engines/stark/model/animhandler.h"
 #include "engines/stark/model/model.h"
 #include "engines/stark/services/archiveloader.h"
 #include "engines/stark/services/services.h"
@@ -32,11 +33,13 @@ namespace Resources {
 
 BonesMesh::~BonesMesh() {
 	delete _model;
+	delete _animHandler;
 }
 
 BonesMesh::BonesMesh(Object *parent, byte subType, uint16 index, const Common::String &name) :
 		Object(parent, subType, index, name),
-		_model(nullptr) {
+		_model(nullptr),
+		_animHandler(nullptr) {
 	_type = TYPE;
 }
 
@@ -51,11 +54,18 @@ void BonesMesh::onPostRead() {
 	_model = new Model();
 	_model->readFromStream(stream);
 
+	_animHandler = new AnimHandler();
+	_animHandler->setModel(_model);
+
 	delete stream;
 }
 
 Model *BonesMesh::getModel() {
 	return _model;
+}
+
+AnimHandler *BonesMesh::getAnimHandler() {
+	return _animHandler;
 }
 
 void BonesMesh::printData() {

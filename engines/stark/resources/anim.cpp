@@ -410,6 +410,7 @@ void AnimSkeleton::applyToItem(Item *item) {
 	TextureSet *texture = modelItem->findTextureSet(TextureSet::kTextureNormal);
 
 	_visual->setModel(mesh->getModel());
+	_visual->setAnimHandler(mesh->getAnimHandler());
 	_visual->setTexture(texture->getTexture());
 	_visual->setAnim(_seletonAnim);
 	_visual->setTime(_currentTime);

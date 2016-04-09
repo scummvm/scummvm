@@ -23,7 +23,6 @@
 #include "engines/stark/model/skeleton_anim.h"
 
 #include "engines/stark/services/archiveloader.h"
-#include "engines/stark/model/skeleton.h"
 
 namespace Stark {
 

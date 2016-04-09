@@ -42,6 +42,7 @@ struct LightEntry;
 class Model;
 class FaceNode;
 class SkeletonAnim;
+class AnimHandler;
 
 
 class VisualActor : public Visual {
@@ -52,6 +53,7 @@ public:
 	virtual ~VisualActor();
 
 	void setModel(Model *model);
+	void setAnimHandler(AnimHandler *animHandler);
 	void setAnim(SkeletonAnim *anim);
 	void setTexture(Gfx::TextureSet *texture);
 	void setTime(uint32 time);
@@ -60,9 +62,11 @@ public:
 	virtual void render(const Math::Vector3d position, float direction, const Common::Array<Gfx::LightEntry *> &lights) = 0;
 
 protected:
+	AnimHandler *_animHandler;
 	Model *_model;
+	Gfx::TextureSet *_textureSet;
 	uint32 _time;
-	bool _meshIsDirty;
+	bool _modelIsDirty;
 
 	Math::Matrix4 getModelMatrix(const Math::Vector3d& position, float direction);
 };

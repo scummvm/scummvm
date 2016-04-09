@@ -23,7 +23,7 @@
 #include "engines/stark/gfx/openglsactor.h"
 
 #include "engines/stark/model/model.h"
-#include "engines/stark/model/skeleton.h"
+#include "engines/stark/model/animhandler.h"
 #include "engines/stark/scene.h"
 #include "engines/stark/services/services.h"
 #include "engines/stark/gfx/opengls.h"
@@ -47,14 +47,14 @@ OpenGLSActorRenderer::~OpenGLSActorRenderer() {
 }
 
 void OpenGLSActorRenderer::render(const Math::Vector3d position, float direction, const LightEntryArray &lights) {
-	if (_meshIsDirty) {
+	if (_modelIsDirty) {
 		// Update the OpenGL Buffer Objects if required
 		clearVertices();
 		uploadVertices();
-		_meshIsDirty = false;
+		_modelIsDirty = false;
 	}
 
-	_model->getSkeleton()->animate(_time);
+	_animHandler->animate(_time);
 
 	_gfx->set3DMode();
 
@@ -83,13 +83,12 @@ void OpenGLSActorRenderer::render(const Math::Vector3d position, float direction
 
 	Common::Array<MeshNode *> meshes = _model->getMeshes();
 	Common::Array<MaterialNode *> mats = _model->getMaterials();
-	const Gfx::TextureSet *texture = _model->getTextureSet();
 
 	for (Common::Array<MeshNode *>::const_iterator mesh = meshes.begin(); mesh != meshes.end(); ++mesh) {
 		for (Common::Array<FaceNode *>::const_iterator face = (*mesh)->_faces.begin(); face != (*mesh)->_faces.end(); ++face) {
 			// For each face draw its vertices from the VBO, indexed by the EBO
 			const MaterialNode *material = mats[(*face)->_matIdx];
-			const Gfx::Texture *tex = texture->getTexture(material->_texName);
+			const Gfx::Texture *tex = _textureSet->getTexture(material->_texName);
 			if (tex) {
 				tex->bind();
 			} else {
@@ -197,7 +196,7 @@ uint32 OpenGLSActorRenderer::createFaceEBO(const FaceNode *face) {
 }
 
 void OpenGLSActorRenderer::setBonePositionArrayUniform(const char *uniform) {
-	const Common::Array<BoneNode *> bones = _model->getSkeleton()->getBones();
+	const Common::Array<BoneNode *> &bones = _model->getBones();
 
 	GLint pos = _shader->getUniformLocation(uniform);
 	if (pos == -1) {
@@ -218,7 +217,7 @@ void OpenGLSActorRenderer::setBonePositionArrayUniform(const char *uniform) {
 }
 
 void OpenGLSActorRenderer::setBoneRotationArrayUniform(const char *uniform) {
-	const Common::Array<BoneNode *> bones = _model->getSkeleton()->getBones();
+	const Common::Array<BoneNode *> &bones = _model->getBones();
 
 	GLint rot = _shader->getUniformLocation(uniform);
 	if (rot == -1) {
