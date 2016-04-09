@@ -42,7 +42,7 @@ int UpdateManager::normalizeInterval(int interval) {
 	const int *val = updateIntervals;
 
 	while (*val != -1) {
-		if (*val > interval)
+		if (*val >= interval)
 			return *val;
 		val++;
 	}
