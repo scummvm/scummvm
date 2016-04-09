@@ -1059,15 +1059,15 @@ msgstr "Langue de l'interface graphique de ScummVM"
 
 #: gui/options.cpp:1235
 msgid "Update check:"
-msgstr ""
+msgstr "Vérif. mises à jour :"
 
 #: gui/options.cpp:1235
 msgid "How often to check ScummVM updates"
-msgstr ""
+msgstr "Fréquence des vérifications"
 
 #: gui/options.cpp:1247
 msgid "Check now"
-msgstr ""
+msgstr "Maintenant"
 
 #: gui/options.cpp:1382
 msgid "You have to restart ScummVM before your changes will take effect."
@@ -1272,19 +1272,24 @@ msgid ""
 "\n"
 "Would you like to enable this feature?"
 msgstr ""
+"ScummVM peut maintenant rechercher les mises à jour\n"
+"automatiquement, ce qui necessite un accès internet.\n"
+"\n"
+"Voulez-vous activer cette options?"
 
 #: gui/updates-dialog.cpp:55
 msgid "(You can always enable it in the options dialog on the Misc tab)"
 msgstr ""
+"(Vous pouvez aussi activer cette option dans le tab 'Divers'\n"
+"du dialogue d'options)"
 
 #: gui/updates-dialog.cpp:92
-#, fuzzy
 msgid "Check for updates automatically"
-msgstr "Recherche des mises à jour..."
+msgstr "Vérifier les mises à jour automatiquement"
 
 #: gui/updates-dialog.cpp:111
 msgid "Proceed"
-msgstr ""
+msgstr "Appliquer"
 
 #: gui/widget.cpp:327 gui/widget.cpp:329 gui/widget.cpp:335 gui/widget.cpp:337
 msgid "Clear value"
@@ -1415,20 +1420,19 @@ msgstr "Hercules Ambre"
 
 #: common/updates.cpp:58
 msgid "Daily"
-msgstr ""
+msgstr "Une fois par jour"
 
 #: common/updates.cpp:60
 msgid "Weekly"
-msgstr ""
+msgstr "Une fois pas semaine"
 
 #: common/updates.cpp:62
 msgid "Monthly"
-msgstr ""
+msgstr "Une fois pas mois"
 
 #: common/updates.cpp:64
-#, fuzzy
 msgid "<Bad value>"
-msgstr "Effacer la valeur"
+msgstr "<Valeur invalide>"
 
 #: engines/advancedDetector.cpp:334
 #, c-format
@@ -2943,13 +2947,12 @@ msgid ""
 msgstr "Utiliser les curseurs argentés au lieu des curseurs normaux  dorés"
 
 #: engines/scumm/detection.cpp:1335
-#, fuzzy
 msgid "Show Object Line"
-msgstr "Afficher la description des objets"
+msgstr "Afficher la barre d'objets"
 
 #: engines/scumm/detection.cpp:1336
 msgid "Show the names of objects at the bottom of the screen"
-msgstr ""
+msgstr "Afficher le nom des objets en bas de l'écran"
 
 #: engines/scumm/dialogs.cpp:176
 #, c-format
