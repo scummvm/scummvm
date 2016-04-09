@@ -1284,7 +1284,7 @@ msgstr ""
 
 #: gui/updates-dialog.cpp:55
 msgid "(You can always enable it in the options dialog on the Misc tab)"
-msgstr "(Sie können diese auch jederzeit im Options-Dialog unter dem Reiter "Sonstiges" aktivieren)"
+msgstr "(Sie können diese auch jederzeit im Options-Dialog unter dem Reiter \"Sonstiges\" aktivieren)"
 
 #: gui/updates-dialog.cpp:92
 msgid "Check for updates automatically"
