@@ -76,11 +76,10 @@ public:
 
 bool GnapMetaEngine::hasFeature(MetaEngineFeature f) const {
 	return
-		false;
+		(f == kSupportsListSaves) ||
+		(f == kSupportsLoadingDuringStartup) ||
+		(f == kSupportsDeleteSave);
 #if 0		
-	    (f == kSupportsListSaves) ||
-	    (f == kSupportsLoadingDuringStartup) ||
-	    (f == kSupportsDeleteSave) ||
 	    (f == kSavesSupportMetaInfo) ||
 	    (f == kSavesSupportThumbnail) ||
 	    (f == kSavesSupportCreationDate);
@@ -97,49 +96,39 @@ int GnapMetaEngine::getMaximumSaveSlot() const { return 99; }
 SaveStateList GnapMetaEngine::listSaves(const char *target) const {
 	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
 	Common::StringArray filenames;
-	Common::String pattern = target;
-	pattern += ".???";
+	Common::String saveDesc;
+	Common::String pattern = Common::String::format("%s.0##", target);
+	Gnap::GnapSavegameHeader header;
 
 	filenames = saveFileMan->listSavefiles(pattern);
-	sort(filenames.begin(), filenames.end());   // Sort (hopefully ensuring we are sorted numerically..)
 
 	SaveStateList saveList;
-#if 0	
-	int slotNum = 0;
-	for (Common::StringArray::const_iterator filename = filenames.begin(); filename != filenames.end(); ++filename) {
-		// Obtain the last 3 digits of the filename, since they correspond to the save slot
-		slotNum = atoi(filename->c_str() + filename->size() - 3);
+	for (Common::StringArray::const_iterator file = filenames.begin(); file != filenames.end(); ++file) {
+		const char *ext = strrchr(file->c_str(), '.');
+		int slot = ext ? atoi(ext + 1) : -1;
 
-		if (slotNum >= 0 && slotNum <= 99) {
-			Common::InSaveFile *file = saveFileMan->openForLoading(*filename);
-			if (file) {
-				int32 version = file->readSint32BE();
-				if (version != GNAP_SAVEGAME_VERSION) {
-					delete file;
-					continue;
+		if (slot >= 0 && slot < getMaximumSaveSlot()) {
+			Common::InSaveFile *in = g_system->getSavefileManager()->openForLoading(*file);
+
+			if (in) {
+				Gnap::GnapEngine::readSavegameHeader(in, header);
+				saveList.push_back(SaveStateDescriptor(slot, header._saveName));
+
+				if (header._thumbnail) {
+					header._thumbnail->free();
+					delete header._thumbnail;
 				}
-
-				// read name
-				uint16 nameSize = file->readUint16BE();
-				if (nameSize >= 255) {
-					delete file;
-					continue;
-				}
-				char name[256];
-				file->read(name, nameSize);
-				name[nameSize] = 0;
-
-				saveList.push_back(SaveStateDescriptor(slotNum, name));
-				delete file;
+				delete in;
 			}
 		}
 	}
-#endif
+
+	// Sort saves based on slot number.
+	Common::sort(saveList.begin(), saveList.end(), SaveStateDescriptorSlotComparator());
 	return saveList;
 }
 
 SaveStateDescriptor GnapMetaEngine::querySaveMetaInfos(const char *target, int slot) const {
-#if 0
 	Common::String fileName = Common::String::format("%s.%03d", target, slot);
 	Common::InSaveFile *file = g_system->getSavefileManager()->openForLoading(fileName);
 	if (file) {
@@ -177,7 +166,7 @@ SaveStateDescriptor GnapMetaEngine::querySaveMetaInfos(const char *target, int s
 		delete file;
 		return desc;
 	}
-#endif
+
 	return SaveStateDescriptor();
 }
 

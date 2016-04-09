@@ -28,6 +28,8 @@
 #include "common/file.h"
 #include "common/memstream.h"
 #include "common/random.h"
+#include "common/savefile.h"
+#include "common/serializer.h"
 #include "common/str.h"
 #include "common/substream.h"
 #include "common/system.h"
@@ -48,6 +50,8 @@ class SequenceResource;
 class SpriteResource;
 class GameSys;
 class SoundMan;
+
+#define GNAP_SAVEGAME_VERSION 1
 
 struct MouseButtonState {
 	bool _left;
@@ -244,6 +248,14 @@ enum Facing {
 	kDirUpRight = 7
 };
 
+struct GnapSavegameHeader {
+	uint8 _version;
+	Common::String _saveName;
+	Graphics::Surface *_thumbnail;
+	int _year, _month, _day;
+	int _hour, _minute;
+};
+
 class GnapEngine : public Engine {
 protected:
 	Common::Error run();
@@ -334,6 +346,12 @@ public:
 	
 	int readSavegameDescription(int savegameNum, Common::String &description);
 	int loadSavegame(int savegameNum);
+	Common::Error saveGameState(int slot, const Common::String &desc);
+	Common::Error loadGameState(int slot);
+	Common::String generateSaveName(int slot);
+	void synchronize(Common::Serializer &s);
+	void writeSavegameHeader(Common::OutSaveFile *out, GnapSavegameHeader &header);
+	static bool readSavegameHeader(Common::InSaveFile *in, GnapSavegameHeader &header);
 	
 	void delayTicks(int a1);
 	void delayTicksCursor(int a1);

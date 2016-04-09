@@ -20,6 +20,12 @@
  *
  */
 
+#include "common/config-manager.h"
+#include "common/savefile.h"
+#include "common/translation.h"
+
+#include "gui/saveload.h"
+
 #include "gnap/gnap.h"
 #include "gnap/datarchive.h"
 #include "gnap/gamesys.h"
@@ -452,6 +458,7 @@ void GnapEngine::updateMenuStatusMainMenu() {
 	if (_sceneClickedHotspot != 1 && _sceneClickedHotspot != 0) {
 		if (_sceneClickedHotspot != 2 && _hotspotsCount - 1 != _sceneClickedHotspot) {
 			if (_sceneClickedHotspot == 3) {
+				// Quit
 				_timers[2] = 10;
 				playSound(0x108F4, 0);
 				_gameSys->removeSpriteDrawItem(_menuSprite1, 262);
@@ -461,13 +468,13 @@ void GnapEngine::updateMenuStatusMainMenu() {
 					_menuQuitQuerySprite = _gameSys->createSurface(0x104FC);
 				_gameSys->insertSpriteDrawItem(_menuQuitQuerySprite, 254, 93, 262);
 			} else if (_sceneClickedHotspot == 4) {
+				// Pause ?
 				playSound(0x108F4, 0);
 				Common::Rect dirtyRect(0, 0, 799, 599);
 				hideCursor();
 				_largeSprite = _gameSys->allocSurface(800, 600);
 
 				for (int i = 0; i < 3; ++i) {
-
 					_timers[2] = 10;
 
 					if (i == 0) {
@@ -502,6 +509,7 @@ void GnapEngine::updateMenuStatusMainMenu() {
 				deleteSurface(&_largeSprite);
 				showCursor();
 			} else if (_hotspotsCount - 3 == _sceneClickedHotspot) {
+				// Button
 				_timers[2] = 10;
 				playSound(0x108F4, 0);
 				initMenuHotspots1();
@@ -517,20 +525,51 @@ void GnapEngine::updateMenuStatusMainMenu() {
 				_gameSys->insertDirtyRect(dirtyRect);
 			}
 		} else {
+			// Resume
 			playSound(0x108F5, 0);
 			_menuDone = true;
 		}
 	} else {
+		// Save / Load
+		_timers[2] = 10;
+		playSound(0x108F4, 0);
+
+		if (_sceneClickedHotspot == 1) {
+			GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(_("Save game:"), _("Save"), true);
+			int16 savegameId = dialog->runModalWithCurrentTarget();
+			Common::String savegameDescription = dialog->getResultString();
+			delete dialog;
+
+			if (savegameId != -1) {
+				saveGameState(savegameId, savegameDescription);
+			}
+		} else {
+			GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(_("Restore game:"), _("Restore"), false);
+			int16 savegameId = dialog->runModalWithCurrentTarget();
+			delete dialog;
+
+			if (savegameId != -1) {
+				loadGameState(savegameId);
+				_wasSavegameLoaded = true;
+				_menuDone = true;
+			}
+		}
+	}
+
+#if 0
+// Original Code
 		_timers[2] = 10;
 		playSound(0x108F4, 0);
 		_gameSys->removeSpriteDrawItem(_menuSprite1, 262);
 		if (_menuSaveLoadSprite)
 			deleteSurface(&_menuSaveLoadSprite);
 		if (_sceneClickedHotspot == 1) {
+			// Save
 			_menuStatus = 2;
 			initSaveLoadHotspots();
 			_menuSaveLoadSprite = _gameSys->createSurface(0x104FB);
 		} else {
+			// Load
 			_menuStatus = 3;
 			initSaveLoadHotspots();
 			_menuSaveLoadSprite = _gameSys->createSurface(0x104FA);
@@ -550,180 +589,278 @@ void GnapEngine::updateMenuStatusMainMenu() {
 		}
 		_savegameIndex = -1;
 	}
+#endif
+}
+
+Common::Error GnapEngine::saveGameState(int slot, const Common::String &desc) {
+	Common::OutSaveFile *out = g_system->getSavefileManager()->openForSaving(
+		generateSaveName(slot));
+	if (!out)
+		return Common::kCreatingFileFailed;
+
+	GnapSavegameHeader header;
+	header._saveName = desc;
+	writeSavegameHeader(out, header);
+
+	Common::Serializer s(nullptr, out);
+	synchronize(s);
+
+	out->finalize();
+	delete out;
+
+	return Common::kNoError;
+}
+
+void GnapEngine::synchronize(Common::Serializer &s) {
+	s.syncAsSint32LE(_newSceneNum);
+	s.syncAsSint32LE(_currentSceneNum);
+	s.syncAsSint32LE(_newCursorValue);
+	s.syncAsUint32LE(_inventory);
+	s.syncAsUint32LE(_gameFlags);
+
+	if (s.isLoading() && isFlag(24)) {
+		_timers[9] = 600;
+	}
+}
+
+const char *const SAVEGAME_STR = "GNAP";
+#define SAVEGAME_STR_SIZE 4
+void GnapEngine::writeSavegameHeader(Common::OutSaveFile *out, GnapSavegameHeader &header) {
+	// Write out a savegame header
+	out->write(SAVEGAME_STR, SAVEGAME_STR_SIZE + 1);
+
+	out->writeByte(GNAP_SAVEGAME_VERSION);
+
+	// Write savegame name
+	out->writeString(header._saveName);
+	out->writeByte('\0');
+
+	// TODO: Add thumbnail
+	
+	// Write out the save date/time
+	TimeDate td;
+	g_system->getTimeAndDate(td);
+	out->writeSint16LE(td.tm_year + 1900);
+	out->writeSint16LE(td.tm_mon + 1);
+	out->writeSint16LE(td.tm_mday);
+	out->writeSint16LE(td.tm_hour);
+	out->writeSint16LE(td.tm_min);
+}
+
+bool GnapEngine::readSavegameHeader(Common::InSaveFile *in, GnapSavegameHeader &header) {
+	char saveIdentBuffer[SAVEGAME_STR_SIZE + 1];
+	header._thumbnail = nullptr;
+
+	// Validate the header Id
+	in->read(saveIdentBuffer, SAVEGAME_STR_SIZE + 1);
+	if (strncmp(saveIdentBuffer, SAVEGAME_STR, SAVEGAME_STR_SIZE))
+		return false;
+
+	header._version = in->readByte();
+	if (header._version > GNAP_SAVEGAME_VERSION)
+		return false;
+
+	// Read in the string
+	header._saveName.clear();
+	char ch;
+	while ((ch = (char)in->readByte()) != '\0')
+		header._saveName += ch;
+
+	// TODO: Get the thumbnail
+	header._thumbnail = nullptr;
+
+	// Read in save date/time
+	header._year = in->readSint16LE();
+	header._month = in->readSint16LE();
+	header._day = in->readSint16LE();
+	header._hour = in->readSint16LE();
+	header._minute = in->readSint16LE();
+
+	return true;
+}
+
+Common::Error GnapEngine::loadGameState(int slot) {
+	Common::InSaveFile *saveFile = g_system->getSavefileManager()->openForLoading(
+		generateSaveName(slot));
+	if (!saveFile)
+		return Common::kReadingFailed;
+
+	Common::Serializer s(saveFile, nullptr);
+
+	// Load the savegame header
+	GnapSavegameHeader header;
+	if (!readSavegameHeader(saveFile, header))
+		error("Invalid savegame");
+
+	if (header._thumbnail) {
+		header._thumbnail->free();
+		delete header._thumbnail;
+	}
+
+	synchronize(s);
+	delete saveFile;
+
+	return Common::kNoError;
+}
+
+Common::String GnapEngine::generateSaveName(int slot) {
+	return Common::String::format("%s.%03d", _targetName.c_str(), slot);
 }
 
 void GnapEngine::updateMenuStatusSaveGame() {
-#if 0 // TODO
-	_hotspots[0].x1 = 288;
-	_hotspots[0].y1 = 74;
-	_hotspots[0].x2 = 379;
-	_hotspots[0].y2 = 96;
+#if 1 // TODO
+	char v43[30];
+	int v46;
+	v43[0] = '\0';
+	_hotspots[0]._x1 = 288;
+	_hotspots[0]._y1 = 74;
+	_hotspots[0]._x2 = 379;
+	_hotspots[0]._y2 = 96;
 	_sceneClickedHotspot = -1;
+
 	if (!_timers[2])
-	_sceneClickedHotspot = getClickedHotspotId();
-	if (_hotspotsCount - 3 == _sceneClickedHotspot)
-	{
-	_timers[2] = 10;
-	playSound(0x108F4, 0);
-	_menuStatus = 1;
-	writeSavegame(_savegameIndex + 1, (int)&_savegameFilenames[30 * _savegameIndex], 1);
+		_sceneClickedHotspot = getClickedHotspotId();
+
+	if (_hotspotsCount - 3 == _sceneClickedHotspot) {
+		// Button
+		_timers[2] = 10;
+		playSound(0x108F4, 0);
+		_menuStatus = 1;
+		warning("writeSavegame(_savegameIndex + 1, (int)&_savegameFilenames[30 * _savegameIndex], 1);");
+	} else if (_hotspotsCount - 4 == _sceneClickedHotspot) {
+		// Cancel
+		_timers[2] = 10;
+		playSound(0x108F5, 0);
+		_menuStatus = 1;
+		if (strcmp(v43, _savegameFilenames[_savegameIndex]) && _savegameIndex != -1) {
+			strcpy(_savegameFilenames[_savegameIndex], v43);
+			if (_savegameSprites[_savegameIndex] != nullptr) {
+				_gameSys->removeSpriteDrawItem(_savegameSprites[_savegameIndex], 263);
+				delayTicksCursor(5);
+				warning("memFreeHandle(_savegameSprites[_savegameIndex]);");
+			}
+			int v16 = _gameSys->getSpriteWidthById(0x104F9);
+			warning("_savegameSprites[_savegameIndex] = allocSprite(v16, 40, 128, 0);");
+		}
+	} else if (_hotspotsCount - 5 == _sceneClickedHotspot) {
+		// OK
+		_timers[2] = 10;
+		playSound(0x108F4, 0);
+		if (_savegameIndex != -1)
+			warning("writeSavegame(_savegameIndex + 1, (int)&_savegameFilenames[30 * _savegameIndex], 1);");
+		_menuStatus = 1;
+	} else if (_hotspotsCount - 1 == _sceneClickedHotspot) {
+		// in background
+		_menuDone = true;
+	} else if (_sceneClickedHotspot != -1 && _hotspotsCount - 2 != _sceneClickedHotspot) {
+		// Savegame name
+		_timers[2] = 10;
+		playSound(0x108F4, 0);
+		if (strcmp(v43, _savegameFilenames[_savegameIndex]) & (_savegameIndex != -1)) {
+			strcpy(_savegameFilenames[_savegameIndex], v43);
+			if (_savegameSprites[_savegameIndex] != nullptr) {
+				_gameSys->removeSpriteDrawItem(_savegameSprites[_savegameIndex], 263);
+				delayTicksCursor(5);
+				warning("memFreeHandle(_savegameSprites[_savegameIndex]);");
+			}
+			int v18 = _gameSys->getSpriteWidthById(0x104F9);
+			_savegameSprites[_savegameIndex] = _gameSys->allocSurface(v18, 40);
+			_gameSys->drawTextToSurface(_savegameSprites[_savegameIndex], 0, 0, 255, 0, 0, _savegameFilenames[_savegameIndex]);
+			_gameSys->insertSpriteDrawItem(_savegameSprites[_savegameIndex], 288, _hotspots[_savegameIndex]._y1, 263);
+		}
+		_savegameIndex = _sceneClickedHotspot;
+		v46 = strlen(_savegameFilenames[_sceneClickedHotspot]);
+		strcpy(v43, _savegameFilenames[_sceneClickedHotspot]);
+		if (_cursorSprite == nullptr) {
+			int v19 = _gameSys->getTextHeight("_");
+			int v20 = _gameSys->getTextWidth("_");
+			_cursorSprite = _gameSys->allocSurface(v20, v19);
+			_gameSys->drawTextToSurface(_cursorSprite, 0, 0, 255, 0, 0, "_");
+		} else {
+			_gameSys->removeSpriteDrawItem(_cursorSprite, 264);
+		}
+		int v21 = _hotspots[_savegameIndex]._x2;
+		int v22 = v21 - _gameSys->getTextWidth("_");
+		if (v22 > _gameSys->getTextWidth(_savegameFilenames[_savegameIndex]) + 288) {
+			int v25 = _gameSys->getTextWidth(_savegameFilenames[_savegameIndex]) + 288;
+			_gameSys->insertSpriteDrawItem(_cursorSprite, v25, _hotspots[_savegameIndex]._y1, 264);
+		} else {
+			int v23 = _hotspots[_savegameIndex]._x2;
+			int v24 = v23 - _gameSys->getTextWidth("_");
+			_gameSys->insertSpriteDrawItem(_cursorSprite, v24, _hotspots[_savegameIndex]._y1, 264);
+		}
 	}
-	else if (_hotspotsCount - 4 == _sceneClickedHotspot)
-	{
-	_timers[2] = 10;
-	playSound(0x108F5, 0);
-	_menuStatus = 1;
-	if (strcmp(&v43, &_savegameFilenames[30 * _savegameIndex]) && _savegameIndex != -1)
-	{
-	strcpy((char *)&_savegameFilenames[30 * _savegameIndex], &v43);
-	if (_savegameSprites[_savegameIndex] != -1)
-	{
-	_gameSys->removeSpriteDrawItem(_savegameSprites[_savegameIndex], 263);
-	delayTicksCursor(5);
-	memFreeHandle(_savegameSprites[_savegameIndex]);
+
+	updateEvents();
+	Common::Event event;
+	_eventMan->pollEvent(event);
+
+	Common::KeyCode keycode = event.kbd.keycode;
+	if (_savegameIndex != -1 && keycode) {
+		if ((keycode < Common::KEYCODE_a || keycode > Common::KEYCODE_z) && (keycode < Common::KEYCODE_0 || keycode > Common::KEYCODE_9) && keycode != Common::KEYCODE_SPACE) {
+			if (keycode == Common::KEYCODE_BACKSPACE) {
+				if (v46 > 0)
+					--v46;
+				_savegameFilenames[_savegameIndex][v46] = '\0';
+				if (_savegameSprites[_savegameIndex] != nullptr) {
+					_gameSys->removeSpriteDrawItem(_savegameSprites[_savegameIndex], 263);
+					warning("memFreeHandle(_savegameSprites[_savegameIndex]);");
+				}
+				int v32 = _gameSys->getSpriteWidthById(0x104F9);
+				_savegameSprites[_savegameIndex] = _gameSys->allocSurface(v32, 40);
+				_gameSys->drawTextToSurface(_savegameSprites[_savegameIndex], 0, 0, 255, 0, 0, _savegameFilenames[_savegameIndex]);
+				_gameSys->insertSpriteDrawItem(_savegameSprites[_savegameIndex], 288, _hotspots[_savegameIndex]._y1, 263);
+				_gameSys->removeSpriteDrawItem(_cursorSprite, 264);
+				int v33 = _hotspots[_savegameIndex]._y1;
+				int v34 = _gameSys->getTextWidth(_savegameFilenames[_savegameIndex]);
+				_gameSys->insertSpriteDrawItem(_cursorSprite, _hotspots[_savegameIndex]._x1 + v34, v33, 264);
+			} else if (keycode == Common::KEYCODE_RETURN) {
+				_menuStatus = 1;
+				warning("writeSavegame(_savegameIndex + 1, (int)&_savegameFilenames[30 * _savegameIndex], 1);");
+			}
+		} else {
+			_savegameFilenames[_savegameIndex][v46] = event.kbd.ascii;
+			if (v46 < 28)
+				++v46;
+			_savegameFilenames[_savegameIndex][v46] = '\0';
+			if (_gameSys->getTextWidth(_savegameFilenames[_savegameIndex]) > 91) {
+				--v46;
+				_savegameFilenames[_savegameIndex][v46] = '\0';
+			}
+			_gameSys->drawTextToSurface(_savegameSprites[_savegameIndex], 0, 0, 255, 0, 0, _savegameFilenames[_savegameIndex]);
+			int v26 = _gameSys->getTextWidth(_savegameFilenames[_savegameIndex]);
+			Common::Rect rect;
+			rect.right = _hotspots[_savegameIndex]._x1 + v26;
+			int v27 = rect.right;
+			rect.left = v27 - 2 * _gameSys->getTextWidth("W");
+			rect.top = _hotspots[_savegameIndex]._y1;
+			rect.bottom = _hotspots[_savegameIndex]._y2;
+			_gameSys->insertDirtyRect(rect);
+			_gameSys->removeSpriteDrawItem(_cursorSprite, 264);
+			int v28 = _hotspots[_savegameIndex]._x2;
+			int v29 = _gameSys->getTextWidth("_");
+			if (v28 - v29 > rect.right)
+				_gameSys->insertSpriteDrawItem(_cursorSprite, rect.right, rect.top, 264);
+			else {
+				int v30 = _hotspots[_savegameIndex]._x2;
+				int v31 = v30 - _gameSys->getTextWidth("_");
+				_gameSys->insertSpriteDrawItem(_cursorSprite, v31, rect.top, 264);
+			}
+			clearKeyStatus1(8);
+		}
 	}
-	v16 = getSpriteWidthById(0x104F9);
-	_savegameSprites[_savegameIndex] = allocSprite(v16, 40, 128, 0);
-	}
-	}
-	else if (_hotspotsCount - 5 == _sceneClickedHotspot)
-	{
-	_timers[2] = 10;
-	playSound(0x108F4, 0);
-	if ((signed int)_savegameIndex > -1)
-	writeSavegame(_savegameIndex + 1, (int)&_savegameFilenames[30 * _savegameIndex], 1);
-	_menuStatus = 1;
-	}
-	else if (_hotspotsCount - 1 == _sceneClickedHotspot)
-	{
-	_menuDone = true;
-	}
-	else if (_sceneClickedHotspot != -1 && _hotspotsCount - 2 != _sceneClickedHotspot)
-	{
-	_timers[2] = 10;
-	playSound(0x108F4, 0);
-	v17 = strcmp(&v43, &_savegameFilenames[30 * _savegameIndex]);
-	if (!v17)
-	LOBYTE(v17) = 0;
-	if ((unsigned int8)v17 & (_savegameIndex < 0xFFFFFFFF))
-	{
-	strcpy((char *)&_savegameFilenames[30 * _savegameIndex], &v43);
-	if (_savegameSprites[_savegameIndex] != -1)
-	{
-	_gameSys->removeSpriteDrawItem(_savegameSprites[_savegameIndex], 263);
-	delayTicksCursor(5);
-	memFreeHandle(_savegameSprites[_savegameIndex]);
-	}
-	v18 = getSpriteWidthById(0x104F9);
-	_savegameSprites[_savegameIndex] = allocSprite(v18, 40, 128, 0);
-	drawTextToSurface(_savegameSprites[_savegameIndex], 0, 0, 255, 0, 0, &_savegameFilenames[30 * _savegameIndex]);
-	insertSpriteDrawItem(_savegameSprites[_savegameIndex], 288, _hotspots[_savegameIndex].y1, 263);
-	}
-	_savegameIndex = _sceneClickedHotspot;
-	v46 = strlen(&_savegameFilenames[30 * _sceneClickedHotspot]);
-	strcpy(&v43, &_savegameFilenames[30 * _sceneClickedHotspot]);
-	if (_cursorSprite == -1)
-	{
-	v19 = getTextHeight("_");
-	v20 = getTextWidth("_");
-	_cursorSprite = allocSprite(v20, v19, 128, 0);
-	drawTextToSurface(_cursorSprite, 0, 0, 255, 0, 0, "_");
-	}
-	else
-	{
-	_gameSys->removeSpriteDrawItem(_cursorSprite, 264);
-	}
-	v21 = _hotspots[_savegameIndex].x2;
-	v22 = v21 - getTextWidth("_");
-	if (v22 > getTextWidth(&_savegameFilenames[30 * _savegameIndex]) + 288)
-	{
-	v25 = getTextWidth(&_savegameFilenames[30 * _savegameIndex]) + 288;
-	insertSpriteDrawItem(_cursorSprite, v25, _hotspots[_savegameIndex].y1, 264);
-	}
-	else
-	{
-	v23 = _hotspots[_savegameIndex].x2;
-	v24 = v23 - getTextWidth("_");
-	insertSpriteDrawItem(_cursorSprite, v24, _hotspots[_savegameIndex].y1, 264);
-	}
-	}
-	if ((signed int)_savegameIndex > -1 && keybChar)
-	{
-	if ((keybChar < 'A' || keybChar > 'Z') && (keybChar < '0' || keybChar > '9') && keybChar != ' ')
-	{
-	if (keybChar == 8)
-	{
-	if ((signed int)v46 > 0)
-	--v46;
-	*(&_savegameFilenames[30 * _savegameIndex] + v46) = 0;
-	if (_savegameSprites[_savegameIndex] != -1)
-	{
-	_gameSys->removeSpriteDrawItem(_savegameSprites[_savegameIndex], 263);
-	memFreeHandle(_savegameSprites[_savegameIndex]);
-	}
-	v32 = getSpriteWidthById(0x104F9);
-	_savegameSprites[_savegameIndex] = allocSprite(v32, 40, 128, 0);
-	drawTextToSurface(_savegameSprites[_savegameIndex], 0, 0, 255, 0, 0, &_savegameFilenames[30 * _savegameIndex]);
-	insertSpriteDrawItem(_savegameSprites[_savegameIndex], 288, _hotspots[_savegameIndex].y1, 263);
-	_gameSys->removeSpriteDrawItem(_cursorSprite, 264);
-	v33 = _hotspots[_savegameIndex].y1;
-	v34 = getTextWidth(&_savegameFilenames[30 * _savegameIndex]);
-	insertSpriteDrawItem(_cursorSprite, LOWORD(_hotspots[_savegameIndex].x1) + v34, v33, 264);
-	}
-	else if (keybChar == 13)
-	{
-	_menuStatus = 1;
-	writeSavegame(_savegameIndex + 1, (int)&_savegameFilenames[30 * _savegameIndex], 1);
-	}
-	}
-	else
-	{
-	*(&_savegameFilenames[30 * _savegameIndex] + v46) = keybChar;
-	if ((signed int)v46 < 28)
-	++v46;
-	*(&_savegameFilenames[30 * _savegameIndex] + v46) = 0;
-	if (getTextWidth(&_savegameFilenames[30 * _savegameIndex]) > 91)
-	{
-	--v46;
-	*(&_savegameFilenames[30 * _savegameIndex] + v46) = 0;
-	}
-	drawTextToSurface(_savegameSprites[_savegameIndex], 0, 0, 255, 0, 0, &_savegameFilenames[30 * _savegameIndex]);
-	v26 = getTextWidth(&_savegameFilenames[30 * _savegameIndex]);
-	rect.right = _hotspots[_savegameIndex].x1 + v26;
-	v27 = rect.right;
-	rect.left = v27 - 2 * getTextWidth("W");
-	rect.top = _hotspots[_savegameIndex].y1;
-	rect.bottom = _hotspots[_savegameIndex].y2;
-	insertDirtyRect(&rect);
-	_gameSys->removeSpriteDrawItem(_cursorSprite, 264);
-	v28 = _hotspots[_savegameIndex].x2;
-	v29 = getTextWidth("_");
-	if (v28 - v29 > rect.right)
-	{
-	insertSpriteDrawItem(_cursorSprite, SLOWORD(rect.right), SLOWORD(rect.top), 264);
-	}
-	else
-	{
-	v30 = _hotspots[_savegameIndex].x2;
-	v31 = v30 - getTextWidth("_");
-	insertSpriteDrawItem(_cursorSprite, v31, SLOWORD(rect.top), 264);
-	}
-	clearKeyStatus1(8);
-	}
-	}
-	keybChar = 0;
-	if (_menuStatus == 1 || _menuDone)
-	{
-	_gameSys->removeSpriteDrawItem(_menuSprite2, 262);
-	_gameSys->removeSpriteDrawItem(_menuSaveLoadSprite, 262);
-	for (i = 0; i < 7; ++i)
-	_gameSys->removeSpriteDrawItem(_savegameSprites[i], 263);
-	_gameSys->removeSpriteDrawItem(_cursorSprite, 264);
-	if (!_menuDone)
-	{
-	initMenuHotspots2();
-	insertSpriteDrawItem(_menuSprite1, 288, 79, 262);
-	}
+
+//	warning("keybChar = 0;");
+	if (_menuStatus == 1 || _menuDone) {
+		_gameSys->removeSpriteDrawItem(_menuSprite2, 262);
+		_gameSys->removeSpriteDrawItem(_menuSaveLoadSprite, 262);
+		for (int i = 0; i < 7; ++i)
+			_gameSys->removeSpriteDrawItem(_savegameSprites[i], 263);
+		_gameSys->removeSpriteDrawItem(_cursorSprite, 264);
+		if (!_menuDone) {
+			initMenuHotspots2();
+			_gameSys->insertSpriteDrawItem(_menuSprite1, 288, 79, 262);
+		}
 	}
 #endif
 }

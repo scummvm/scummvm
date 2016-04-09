@@ -119,6 +119,7 @@ public:
 	Graphics::Surface *createSurface(int resourceId);
 	void drawSpriteToSurface(Graphics::Surface *surface, int x, int y, int resourceId);
 	void drawTextToSurface(Graphics::Surface *surface, int x, int y, byte r, byte g, byte b, const char *text);
+	int getTextHeight(const char *text);
 	int getTextWidth(const char *text);
 	void fillSurface(Graphics::Surface *surface, int x, int y, int width, int height, byte r, byte g, byte b);
 	void setAnimation(int sequenceId, int id, int animationIndex);
