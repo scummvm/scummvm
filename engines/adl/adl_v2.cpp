@@ -176,7 +176,7 @@ void AdlEngine_v2::printString(const Common::String &str) {
 	byte pos = 0;
 
 	while (true) {
-		while (pos != endPos && pos != s.size()) {
+		while (pos <= endPos && pos != s.size()) {
 			s.setChar(APPLECHAR(s[pos]), pos);
 			++pos;
 		}
