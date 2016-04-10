@@ -2736,7 +2736,7 @@ if test -n "$_host"; then
 			_mt32emu=no
 			_seq_midi=no
 			_timidity=no
-			_build_hq_scalers=no
+			_build_scalers=no
 			_optimization_level=-O3
 			_vkeybd=yes
 			_keymapper=yes
