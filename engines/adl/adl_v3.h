@@ -20,46 +20,32 @@
  *
  */
 
-#ifndef ADL_HIRES6_H
-#define ADL_HIRES6_H
+#ifndef ADL_ADL_V3_H
+#define ADL_ADL_V3_H
 
-#include "common/str.h"
+#include "adl/adl_v2.h"
 
-#include "adl/adl_v3.h"
-#include "adl/disk.h"
+// Note: this version of ADL redraws only when necessary, but
+// this is not currently implemented.
 
-namespace Common {
-class ReadStream;
-class Point;
+namespace Common{
+class RandomSource;
 }
 
 namespace Adl {
 
-#define IDI_HR6_NUM_ROOMS 35
-#define IDI_HR6_NUM_MESSAGES 256
-#define IDI_HR6_NUM_VARS 40
-#define IDI_HR6_NUM_ITEM_PICS 15
-#define IDI_HR6_NUM_ITEM_OFFSETS 16
-
-// Messages used outside of scripts
-#define IDI_HR6_MSG_CANT_GO_THERE      249
-#define IDI_HR6_MSG_DONT_UNDERSTAND    247
-#define IDI_HR6_MSG_ITEM_DOESNT_MOVE   253
-#define IDI_HR6_MSG_ITEM_NOT_HERE      254
-#define IDI_HR6_MSG_THANKS_FOR_PLAYING 252
-
-class HiRes6Engine : public AdlEngine_v3 {
+class AdlEngine_v3 : public AdlEngine_v2 {
 public:
-	HiRes6Engine(OSystem *syst, const AdlGameDescription *gd) : AdlEngine_v3(syst, gd) { }
+	virtual ~AdlEngine_v3() { }
 
-private:
+protected:
+	AdlEngine_v3(OSystem *syst, const AdlGameDescription *gd);
+
 	// AdlEngine
-	void runIntro() const;
-	void init();
-	void initState();
+	virtual void setupOpcodeTables();
+	virtual Common::String loadMessage(uint idx) const;
 
-	// AdlEngine_v2
-	void applyDataBlockOffset(byte &track, byte &sector) const;
+	int o3_isVarGT(ScriptEnv &e);
 };
 
 } // End of namespace Adl
