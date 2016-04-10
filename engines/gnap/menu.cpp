@@ -547,6 +547,7 @@ void GnapEngine::updateMenuStatusMainMenu() {
 		}
 	} else {
 		// Save / Load
+#if 1
 		_timers[2] = 10;
 		playSound(0x108F4, 0);
 
@@ -568,12 +569,15 @@ void GnapEngine::updateMenuStatusMainMenu() {
 				loadGameState(savegameId);
 				_wasSavegameLoaded = true;
 				_menuDone = true;
+				_sceneDone = true;
+				playSound(0x108F4, 0);
+			} else {
+				playSound(0x108F5, 0);
 			}
 		}
 	}
-
-#if 0
-// Original Code
+#else
+	// Original Code
 		_timers[2] = 10;
 		playSound(0x108F4, 0);
 		_gameSys->removeSpriteDrawItem(_menuSprite1, 262);
@@ -628,14 +632,21 @@ Common::Error GnapEngine::saveGameState(int slot, const Common::String &desc) {
 }
 
 void GnapEngine::synchronize(Common::Serializer &s) {
-	s.syncAsSint32LE(_newSceneNum);
-	s.syncAsSint32LE(_currentSceneNum);
-	s.syncAsSint32LE(_newCursorValue);
-	s.syncAsUint32LE(_inventory);
-	s.syncAsUint32LE(_gameFlags);
+	if (s.isSaving()) {
+		s.syncAsSint32LE(_currentSceneNum);
+		s.syncAsSint32LE(_prevSceneNum);
+		s.syncAsSint32LE(_cursorValue);
+		s.syncAsUint32LE(_inventory);
+		s.syncAsUint32LE(_gameFlags);
+	} else {
+		s.syncAsSint32LE(_newSceneNum);
+		s.syncAsSint32LE(_currentSceneNum);
+		s.syncAsSint32LE(_newCursorValue);
+		s.syncAsUint32LE(_inventory);
+		s.syncAsUint32LE(_gameFlags);
 
-	if (s.isLoading() && isFlag(kGFUnk24)) {
-		_timers[9] = 600;
+		if (isFlag(kGFUnk24))
+			_timers[9] = 600;
 	}
 }
 
