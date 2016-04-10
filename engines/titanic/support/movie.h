@@ -93,6 +93,7 @@ public:
 	CGameObject *_gameObject;
 public:
 	OSMovie(const CResourceKey &name, CVideoSurface *surface);
+	OSMovie(Common::SeekableReadStream *stream, CVideoSurface *surface);
 	virtual ~OSMovie();
 
 	/**

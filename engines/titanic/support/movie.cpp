@@ -20,8 +20,7 @@
  *
  */
 
-#include "image/codecs/cinepak.h"
-#include "titanic/support/avi_decoder.h"
+#include "video/avi_decoder.h"
 #include "titanic/support/movie.h"
 #include "titanic/titanic.h"
 
@@ -51,9 +50,16 @@ bool CMovie::get10() {
 
 OSMovie::OSMovie(const CResourceKey &name, CVideoSurface *surface) :
 		_videoSurface(surface), _gameObject(nullptr) {
-	_video = new AVIDecoder();
+	_video = new Video::AVIDecoder();
 	if (!_video->loadFile(name.getString()))
 		error("Could not open video - %s", name.getString().c_str());
+}
+
+OSMovie::OSMovie(Common::SeekableReadStream *stream, CVideoSurface *surface) :
+		_videoSurface(surface), _gameObject(nullptr) {
+	_video = new Video::AVIDecoder();
+	if (!_video->loadStream(stream))
+		error("Could not parse movie stream");
 }
 
 OSMovie::~OSMovie() {
@@ -134,7 +140,9 @@ MovieState OSMovie::getState() {
 void OSMovie::update() {
 	if (_state != MOVIE_STOPPED) {
 		if (_video->isPlaying()) {
-			if (_video->needsUpdate()) {
+			if (_video->endOfVideo()) {
+				_state = MOVIE_FINISHED;
+			} else if (_video->needsUpdate()) {
 				decodeFrame();
 				_state = MOVIE_FRAME;
 			} else {

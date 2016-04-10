@@ -422,7 +422,6 @@ MODULE_OBJS := \
 	star_control/star_control_sub13.o \
 	star_control/star_control_sub14.o \
 	star_control/star_control_sub15.o \
-	support/avi_decoder.o \
 	support/direct_draw.o \
 	support/direct_draw_surface.o \
 	support/files_manager.o \
