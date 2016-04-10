@@ -45,8 +45,8 @@ protected:
 	virtual void setupOpcodeTables();
 	byte roomArg(byte room) const;
 	void advanceClock();
-	void printString(const Common::String &str);
-	Common::String loadMessage(uint idx) const;
+	virtual void printString(const Common::String &str);
+	virtual Common::String loadMessage(uint idx) const;
 	void drawItems();
 	void drawItem(Item &item, const Common::Point &pos);
 	void loadRoom(byte roomNr);

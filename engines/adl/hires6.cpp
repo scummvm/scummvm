@@ -246,6 +246,39 @@ void HiRes6Engine::applyDataBlockOffset(byte &track, byte &sector) const {
 	++track;
 }
 
+void HiRes6Engine::printString(const Common::String &str) {
+	Common::String s;
+	uint found = 0;
+
+	// This does not emulate the corner cases of the original, hence this check
+	if (getVar(27) > 1)
+		error("Invalid value %i encountered for variable 27", getVar(27));
+
+	for (uint i = 0; i < str.size(); ++i) {
+		if (str[i] == '%') {
+			++found;
+			if (found == 3)
+				found = 0;
+			continue;
+		}
+
+		switch (found) {
+		case 0:
+			s += str[i];
+			break;
+		case 1:
+			if (getVar(27) == 0)
+				s += str[i];
+			break;
+		case 2:
+			if (getVar(27) == 1)
+				s += str[i];
+		}
+	}
+
+	AdlEngine_v2::printString(s);
+}
+
 Engine *HiRes6Engine_create(OSystem *syst, const AdlGameDescription *gd) {
 	return new HiRes6Engine(syst, gd);
 }
