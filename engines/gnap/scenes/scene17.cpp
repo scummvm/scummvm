@@ -74,7 +74,7 @@ void GnapEngine::scene17_updateHotspots() {
 	setDeviceHotspot(kHSDevice, -1, -1, -1, -1);
 	if (isFlag(kGFGrassTaken))
 		_hotspots[kHSWrench]._flags = SF_NONE;
-	if (isFlag(26)) {
+	if (isFlag(kGFPlatypusTalkingToAssistant)) {
 		_hotspots[kHSDevice]._flags = SF_DISABLED;
 		_hotspots[kHSPlatypus]._flags = SF_DISABLED;
 	}
@@ -109,7 +109,7 @@ void GnapEngine::scene17_platHangUpPhone() {
 		_beaverSequenceDatNum = 0;
 		_s17_currPhoneSequenceId = -1;
 		_s17_nextPhoneSequenceId = -1;
-		clearFlag(26);
+		clearFlag(kGFPlatypusTalkingToAssistant);
 		while (_gameSys->getAnimationStatus(1) != 2)
 			gameUpdateTick();
 		_gnapActionStatus = savedGnapActionStatus;
@@ -182,7 +182,7 @@ void GnapEngine::scene17_run() {
 			endSceneInit();
 			platypusWalkTo(5, 9, -1, 0x107C2, 1);
 			gnapWalkTo(4, 8, -1, 0x107B9, 1);
-		} else if (isFlag(27)) {
+		} else if (isFlag(kGFUnk27)) {
 			initGnapPos(3, 9, kDirUpLeft);
 			_platX = _hotspotsWalkPos[2].x;
 			_platY = _hotspotsWalkPos[2].y;
@@ -197,10 +197,10 @@ void GnapEngine::scene17_run() {
 			_beaverActionStatus = kASPlatPhoningAssistant;
 			scene17_platHangUpPhone();
 			_gameSys->setAnimation(0, 0, 4);
-			clearFlag(26);
-			clearFlag(27);
+			clearFlag(kGFPlatypusTalkingToAssistant);
+			clearFlag(kGFUnk27);
 			scene17_updateHotspots();
-		} else if (isFlag(25)) {
+		} else if (isFlag(kGFUnk25)) {
 			clearFlag(kGFSpringTaken);
 			clearFlag(kGFUnk16);
 			initBeaverPos(7, 9, kDirNone);
@@ -211,12 +211,12 @@ void GnapEngine::scene17_run() {
 			_gnapSequenceDatNum = 0;
 			_gnapSequenceId = 601;
 			_gnapActionStatus = kASGnapHangUpPhone;
-			clearFlag(25);
+			clearFlag(kGFUnk25);
 			_gameSys->insertSequence(0x251, 254, 0, 0, kSeqNone, 0, 0, 0);
 			endSceneInit();
 			_gameSys->setAnimation(0x257, 254, 0);
 			_gameSys->insertSequence(0x257, 254, 0x251, 254, kSeqSyncWait, 0, 0, 0);
-		} else if (isFlag(26)) {
+		} else if (isFlag(kGFPlatypusTalkingToAssistant)) {
 			clearFlag(kGFSpringTaken);
 			clearFlag(kGFUnk16);
 			_sceneWaiting = true;
@@ -683,7 +683,7 @@ void GnapEngine::scene17_updateAnimations() {
 				_beaverSequenceDatNum = 0;
 				_beaverSequenceId = 0x25B;
 				_beaverActionStatus = -1;
-				clearFlag(26);
+				clearFlag(kGFPlatypusTalkingToAssistant);
 				_sceneWaiting = false;
 				scene17_updateHotspots();
 			} else {

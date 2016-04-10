@@ -589,7 +589,7 @@ void GnapEngine::runSceneLogic() {
 			scene47_initCutscene2();
 			_newSceneNum = 11;
 		} else if (!isFlag(kGFPlatyPussDisguised) && _prevSceneNum == 2) {//CHECKME
-			if (isFlag(25)) {
+			if (isFlag(kGFUnk25)) {
 				scene47_initCutscene3();
 				_newSceneNum = 2;
 			} else {

@@ -334,9 +334,9 @@ void GnapEngine::scene53_run() {
 					_sceneDone = true;
 					_newSceneNum = 17;
 					if (_s53_isGnapPhoning)
-						setFlag(25);
+						setFlag(kGFUnk25);
 					else
-						setFlag(26);
+						setFlag(kGFPlatypusTalkingToAssistant);
 				}
 			}
 			break;

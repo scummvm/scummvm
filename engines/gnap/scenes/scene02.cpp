@@ -119,7 +119,7 @@ void GnapEngine::scene02_run() {
 		_gameSys->waitForUpdate();
 		break;
 	case 47:
-		clearFlag(25);
+		clearFlag(kGFUnk25);
 		initGnapPos(5, 6, kDirBottomLeft);
 		initBeaverPos(6, 7, kDirUnk4);
 		endSceneInit();
@@ -454,7 +454,7 @@ void GnapEngine::scene02_updateAnimations() {
 			}
 			_newSceneNum = 47;
 			_sceneDone = true;
-			setFlag(25);
+			setFlag(kGFUnk25);
 			break;
 		case kASGrabTruckGrill:
 			switch (_s02_truckGrillCtr) {

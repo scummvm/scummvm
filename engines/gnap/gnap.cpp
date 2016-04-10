@@ -674,7 +674,7 @@ void GnapEngine::initGameFlags(int num) {
 	invAdd(kItemMagazine);
 	switch (num) {
 	case 1:
-		setFlag(26);
+		setFlag(kGFPlatypusTalkingToAssistant);
 		break;
 	case 2:
 		clearFlags();
@@ -702,7 +702,7 @@ void GnapEngine::initGameFlags(int num) {
 	//DEBUG!
 #if 0
 //	setFlag(kGFPlatypus); // Enable platypus
-	setFlag(25);
+	setFlag(kGFUnk25);
 	invClear();
 	invAdd(kItemMagazine);
 #endif

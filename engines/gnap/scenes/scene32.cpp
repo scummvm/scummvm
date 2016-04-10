@@ -46,7 +46,7 @@ enum {
 
 int GnapEngine::scene32_init() {
 	_gameSys->setAnimation(0, 0, 0);
-	return isFlag(26) ? 0xF : 0x10;
+	return isFlag(kGFPlatypusTalkingToAssistant) ? 0xF : 0x10;
 }
 
 void GnapEngine::scene32_updateHotspots() {

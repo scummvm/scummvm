@@ -77,14 +77,14 @@ void GnapEngine::scene23_run() {
 	
 	platypusWalkTo(1, 7, -1, 0x107C2, 1);
 
-	if (isFlag(24)) {
+	if (isFlag(kGFUnk24)) {
 		gnapWalkTo(2, 7, -1, 0x107B9, 1);
 	} else {
 		gnapWalkTo(2, 7, 0, 0x107B9, 1);
 		while (_gameSys->getAnimationStatus(0) != 2)
 			gameUpdateTick();
 		playSequences(0x48, 0xBA, 0xBB, 0xBC);
-		setFlag(24);
+		setFlag(kGFUnk24);
 	}
 	
 	while (!_sceneDone) {

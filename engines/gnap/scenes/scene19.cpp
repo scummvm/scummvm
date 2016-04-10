@@ -60,7 +60,7 @@ enum {
 
 int GnapEngine::scene19_init() {
 	playSound(0x79, 0);
-	return isFlag(26) ? 0x77 : 0x76;
+	return isFlag(kGFPlatypusTalkingToAssistant) ? 0x77 : 0x76;
 }
 
 void GnapEngine::scene19_updateHotspots() {
@@ -80,7 +80,7 @@ void GnapEngine::scene19_updateHotspots() {
 	setHotspot(kHSWalkArea2, 622, 0, 800, 600);
 	setHotspot(kHSWalkArea3, 0, 0, 800, 437);
 	setDeviceHotspot(kHSDevice, -1, -1, -1, -1);
-	if (isFlag(26)) {
+	if (isFlag(kGFPlatypusTalkingToAssistant)) {
 		_hotspots[kHSToy1]._flags = SF_DISABLED;
 		_hotspots[kHSToy2]._flags = SF_DISABLED;
 		_hotspots[kHSToy3]._flags = SF_DISABLED;
@@ -109,7 +109,7 @@ void GnapEngine::scene19_run() {
 	if (!isFlag(kGFPictureTaken))
 		_gameSys->insertSequence(0x69, 19, 0, 0, kSeqNone, 0, 0, 0);
 
-	if (isFlag(26)) {
+	if (isFlag(kGFPlatypusTalkingToAssistant)) {
 		initGnapPos(3, 6, kDirBottomRight);
 		_s19_currShopAssistantSequenceId = kS19ShopAssistantSequenceIds[getRandom(5)];
 		_s19_nextShopAssistantSequenceId = _s19_currShopAssistantSequenceId;
@@ -185,8 +185,8 @@ void GnapEngine::scene19_run() {
 				_hotspots[kHSWalkArea1]._flags |= SF_WALKABLE;
 				gnapWalkTo(_hotspotsWalkPos[1].x, _hotspotsWalkPos[1].y, 0, 0x107B2, 1);
 				_gnapActionStatus = kASLeaveScene;
-				if (isFlag(26))
-					setFlag(27);
+				if (isFlag(kGFPlatypusTalkingToAssistant))
+					setFlag(kGFUnk27);
 				else
 					platypusWalkTo(_hotspotsWalkPos[1].x + 1, _hotspotsWalkPos[1].y, -1, 0x107C5, 1);
 				_hotspots[kHSWalkArea1]._flags &= ~SF_WALKABLE;
@@ -310,7 +310,7 @@ void GnapEngine::scene19_run() {
 	
 		if (!_isLeavingScene) {
 			updateGnapIdleSequence();
-			if (!isFlag(26)) {
+			if (!isFlag(kGFPlatypusTalkingToAssistant)) {
 				updateBeaverIdleSequence();
 				if (!_timers[6] && _s19_nextShopAssistantSequenceId == -1) {
 					_timers[6] = getRandom(40) + 50;
@@ -387,7 +387,7 @@ void GnapEngine::scene19_updateAnimations() {
 				// checkGameAppStatus();
 				gameUpdateTick();
 			}
-			setFlag(27);
+			setFlag(kGFUnk27);
 			showCursor();
 			_newSceneNum = 17;
 			_isLeavingScene = true;

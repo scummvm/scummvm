@@ -72,7 +72,7 @@ void GnapEngine::scene42_updateHotspots() {
 		setHotspot(kHSUfoExitRight, 790, 0, 799, 599, SF_EXIT_R_CURSOR);
 		setHotspot(kHSUfoHotSauce, 335, 110, 440, 175, SF_DISABLED);
 		setDeviceHotspot(kHSUfoDevice, -1, 534, -1, 599);
-		if ((isFlag(kGFPictureTaken) || isFlag(kGFUnk18)) && isFlag(kGFUnk23) && !isFlag(24))
+		if ((isFlag(kGFPictureTaken) || isFlag(kGFUnk18)) && isFlag(kGFUnk23) && !isFlag(kGFUnk24))
 			_hotspots[kHSUfoHotSauce]._flags = SF_GRAB_CURSOR;
 		_hotspotsCount = 5;
 	} else {
@@ -392,17 +392,17 @@ void GnapEngine::scene42_updateAnimations() {
 					setGrabCursorSprite(-1);
 					sequenceId = 0x150;
 					_s42_nextBBQVendorSequenceId = 0x148;
-				} else if (isFlag(27)) {
-					if (isFlag(28)) {
+				} else if (isFlag(kGFUnk27)) {
+					if (isFlag(kGFUnk28)) {
 						sequenceId = 0x7B7;
 						_s42_nextBBQVendorSequenceId = 0x145;
 					} else {
-						setFlag(28);
+						setFlag(kGFUnk28);
 						sequenceId = 0x14F;
 						_s42_nextBBQVendorSequenceId = 0x147;
 					}
 				} else {
-					setFlag(27);
+					setFlag(kGFUnk27);
 					sequenceId = 0x14E;
 					_s42_nextBBQVendorSequenceId = 0x146;
 				}
@@ -463,7 +463,7 @@ void GnapEngine::scene42_updateAnimations() {
 			break;
 		case kASToyUfoPickUpHotSauce:
 			_gameSys->insertSequence(0x10870, _toyUfoId, _toyUfoSequenceId | 0x10000, _toyUfoId, kSeqSyncWait, 0, 0, 0);
-			setFlag(24);
+			setFlag(kGFUnk24);
 			scene42_updateHotspots();
 			toyUfoSetStatus(19);
 			_toyUfoSequenceId = 0x870;

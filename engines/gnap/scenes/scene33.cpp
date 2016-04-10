@@ -46,7 +46,7 @@ enum {
 };
 
 int GnapEngine::scene33_init() {
-	return isFlag(26) ? 0x84 : 0x85;
+	return isFlag(kGFPlatypusTalkingToAssistant) ? 0x84 : 0x85;
 }
 
 void GnapEngine::scene33_updateHotspots() {

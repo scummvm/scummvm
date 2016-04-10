@@ -77,7 +77,7 @@ void GnapEngine::scene04_updateHotspots() {
 		_hotspots[kHSPlatypus]._flags = SF_WALKABLE | SF_TALK_CURSOR | SF_GRAB_CURSOR | SF_LOOK_CURSOR;
 	if (isFlag(kGFTwigTaken))
 		_hotspots[kHSTwig]._flags = SF_WALKABLE | SF_DISABLED;
-	if (isFlag(26) || _cursorValue == 1)
+	if (isFlag(kGFPlatypusTalkingToAssistant) || _cursorValue == 1)
 		_hotspots[kHSAxe]._flags = SF_DISABLED;
 	_hotspotsCount = 11;
 }
@@ -99,7 +99,7 @@ void GnapEngine::scene04_run() {
 	_timers[7] = getRandom(150) + 200;
 	_timers[8] = getRandom(150) + 400;
 
-	if (!isFlag(26) && _cursorValue == 4)
+	if (!isFlag(kGFPlatypusTalkingToAssistant) && _cursorValue == 4)
 		_gameSys->insertSequence(0x212, 100, 0, 0, kSeqNone, 0, 0, 0);
 	
 	if (!isFlag(kGFTwigTaken))
@@ -245,7 +245,7 @@ void GnapEngine::scene04_run() {
 						_gnapIdleFacing = kDirUpRight;
 						gnapWalkTo(_hotspotsWalkPos[3].x, _hotspotsWalkPos[3].y, 0, getGnapSequenceId(gskIdle, 0, 0) | 0x10000, 1);
 						_gnapActionStatus = kASGrabAxe;
-						setFlag(26);
+						setFlag(kGFPlatypusTalkingToAssistant);
 						scene04_updateHotspots();
 						break;
 					case TALK_CURSOR:

@@ -72,7 +72,7 @@ void GnapEngine::scene06_updateHotspots() {
 	setHotspot(kHSWalkArea4, 475, 469, 800, 505);
 	setHotspot(kHSWalkArea5, 0, 0, 800, 504);
 	setDeviceHotspot(kHSDevice, -1, -1, -1, -1);
-    if (isFlag(29)) 
+    if (isFlag(kGFGasTaken)) 
     	_hotspots[kHSLadder]._flags = SF_DISABLED;
 	if (_cursorValue == 4) {
 		_hotspots[kHSLadder]._flags = SF_DISABLED;
@@ -101,7 +101,7 @@ void GnapEngine::scene06_run() {
 	else
 		_gameSys->insertSequence(0xF8, 20, 0, 0, kSeqNone, 0, 0, 0);
 	
-	if (!isFlag(29) && _cursorValue != 4)
+	if (!isFlag(kGFGasTaken) && _cursorValue != 4)
 		_gameSys->insertSequence(0xFE, 20, 0, 0, kSeqNone, 0, 0, 0);
 	
 	queueInsertDeviceIcon();
@@ -205,12 +205,12 @@ void GnapEngine::scene06_run() {
 						playGnapScratchingHead(8, 4);
 						break;
 					case GRAB_CURSOR:
-						if (isFlag(29))
+						if (isFlag(kGFGasTaken))
 							playGnapImpossible(0, 0);
 						else {
 							gnapWalkTo(_hotspotsWalkPos[2].x, _hotspotsWalkPos[2].y, 0, 0x107BB, 1);
 							_gnapActionStatus = kASTryToClimbLadder;
-							setFlag(29);
+							setFlag(kGFGasTaken);
 						}
 						break;
 					case TALK_CURSOR:
@@ -382,7 +382,7 @@ void GnapEngine::scene06_updateAnimations() {
 		if (_beaverSequenceId == 0xFA) {
 			_gameSys->setAnimation(0, 0, 1);
 			invAdd(kItemGas);
-			setFlag(29);
+			setFlag(kGFGasTaken);
 			_hotspots[kHSLadder]._flags = SF_DISABLED;
 			setGrabCursorSprite(kItemGas);
 			_beaverActionStatus = -1;

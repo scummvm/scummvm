@@ -134,7 +134,7 @@ void GnapEngine::scene47_initCutscene7() {
 		_s99_sequenceIdArr[4] = 0x31C;
 		v1 = 5;
 	}
-	if (!isFlag(26))
+	if (!isFlag(kGFPlatypusTalkingToAssistant))
 		_s99_sequenceIdArr[v1++] = 0x31D;
 	v4 = v1;
 	_s99_sequenceIdArr[v1] = 0x319;
@@ -146,7 +146,7 @@ void GnapEngine::scene47_initCutscene7() {
 	v2 = v0 + 1;
 	if (!isFlag(kGFTwigTaken))
 		_s99_sequenceIdArr[v2++] = 0x31C;
-	if (!isFlag(26))
+	if (!isFlag(kGFPlatypusTalkingToAssistant))
 		_s99_sequenceIdArr[v2++] = 0x31D;
 	_s99_sequenceIdArr[v2] = 0x313;
 	_s99_sequenceIdArr[v2 + 1] = 0x315;

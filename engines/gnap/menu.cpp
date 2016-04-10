@@ -634,7 +634,7 @@ void GnapEngine::synchronize(Common::Serializer &s) {
 	s.syncAsUint32LE(_inventory);
 	s.syncAsUint32LE(_gameFlags);
 
-	if (s.isLoading() && isFlag(24)) {
+	if (s.isLoading() && isFlag(kGFUnk24)) {
 		_timers[9] = 600;
 	}
 }

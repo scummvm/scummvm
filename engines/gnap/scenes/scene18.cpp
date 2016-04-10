@@ -112,7 +112,7 @@ void GnapEngine::scene18_updateHotspots() {
 	}
 	if (isFlag(kGFPlatyPussDisguised))
 		_hotspots[kHSGarbageCan]._flags = SF_DISABLED;
-	if (isFlag(26)) {
+	if (isFlag(kGFPlatypusTalkingToAssistant)) {
 		_hotspots[kHSDevice]._flags = SF_DISABLED;
 		_hotspots[kHSHydrantTopValve]._flags = SF_DISABLED;
 		_hotspots[kHSHydrantRightValve]._flags = SF_DISABLED;
@@ -258,7 +258,7 @@ void GnapEngine::scene18_putDownGarbageCan(int animationIndex) {
 }
 
 void GnapEngine::scene18_platEndPhoning(bool platFl) {
-	if (isFlag(26)) {
+	if (isFlag(kGFPlatypusTalkingToAssistant)) {
 		_s18_platPhoneIter = 0;
 		_s18_platPhoneCtr = 0;
 		_beaverActionStatus = -1;
@@ -270,7 +270,7 @@ void GnapEngine::scene18_platEndPhoning(bool platFl) {
 		}
 		_gameSys->removeSequence(0x21F, 254, true);
 		_gameSys->setAnimation(0, 0, 3);
-		clearFlag(26);
+		clearFlag(kGFPlatypusTalkingToAssistant);
 		if (platFl) {
 			_beaverActionStatus = kASPlatComesHere;
 			_timers[6] = 50;
@@ -345,18 +345,18 @@ void GnapEngine::scene18_run() {
 		}
 	}
 	
-	if (isFlag(26)) {
+	if (isFlag(kGFPlatypusTalkingToAssistant)) {
 		if (_prevSceneNum == 17)
 			initGnapPos(4, 11, kDirBottomRight);
 		else
 			initGnapPos(4, 7, kDirBottomRight);
 		_s18_platPhoneCtr = getRandom(5);
-		if (isFlag(27)) {
+		if (isFlag(kGFUnk27)) {
 			_gameSys->insertSequence(0x21E, 254, 0, 0, kSeqNone, 0, 0, 0);
 			endSceneInit();
 			_s18_currPhoneSequenceId = -1;
 			scene18_platEndPhoning(true);
-			clearFlag(27);
+			clearFlag(kGFUnk27);
 		} else {
 			_s18_currPhoneSequenceId = kScene18SequenceIds[_s18_platPhoneCtr];
 			_s18_platPhoneIter = 0;
@@ -364,9 +364,9 @@ void GnapEngine::scene18_run() {
 			_gameSys->insertSequence(_s18_currPhoneSequenceId, 254, 0, 0, kSeqNone, 0, 0, 0);
 			endSceneInit();
 		}
-		if (isFlag(27)) {
+		if (isFlag(kGFUnk27)) {
 			scene18_platEndPhoning(true);
-			clearFlag(27);
+			clearFlag(kGFUnk27);
 		} else {
 			_gameSys->setAnimation(_s18_currPhoneSequenceId, 254, 3);
 		}
@@ -486,7 +486,7 @@ void GnapEngine::scene18_run() {
 					else
 						playGnapImpossible(0, 0);
 				} else {
-					if (isFlag(26))
+					if (isFlag(kGFPlatypusTalkingToAssistant))
 						scene18_platEndPhoning(true);
 					if (_grabCursorSpriteIndex >= 0) {
 						if (!isFlag(kGFTruckKeysUsed))
@@ -647,7 +647,7 @@ void GnapEngine::scene18_run() {
 					_newSceneNum = 19;
 					gnapWalkTo(_hotspotsWalkPos[kHSExitToyStore].x, _hotspotsWalkPos[kHSExitToyStore].y, 0, 0x107C0, 1);
 					_gnapActionStatus = kASLeaveScene;
-					if (!isFlag(26))
+					if (!isFlag(kGFPlatypusTalkingToAssistant))
 						platypusWalkTo(_hotspotsWalkPos[kHSExitToyStore].x + 1, _hotspotsWalkPos[kHSExitToyStore].y, -1, 0x107C2, 1);
 				}
 			}
@@ -664,8 +664,8 @@ void GnapEngine::scene18_run() {
 				_newSceneNum = 17;
 				gnapWalkTo(_hotspotsWalkPos[kHSExitPhoneBooth].x, _hotspotsWalkPos[kHSExitPhoneBooth].y, 0, 0x107AE, 1);
 				_gnapActionStatus = kASLeaveScene;
-				if (isFlag(26))
-					setFlag(27);
+				if (isFlag(kGFPlatypusTalkingToAssistant))
+					setFlag(kGFUnk27);
 				else
 					platypusWalkTo(_hotspotsWalkPos[kHSExitPhoneBooth].x + 1, _hotspotsWalkPos[kHSExitPhoneBooth].y, -1, 0x107C2, 1);
 			}
@@ -683,7 +683,7 @@ void GnapEngine::scene18_run() {
 				_hotspots[kHSWalkArea2]._flags |= SF_WALKABLE;
 				gnapWalkTo(_hotspotsWalkPos[kHSExitGrubCity].x, _hotspotsWalkPos[kHSExitGrubCity].y, 0, 0x107B2, 1);
 				_gnapActionStatus = kASLeaveScene;
-				if (isFlag(26))
+				if (isFlag(kGFPlatypusTalkingToAssistant))
 					scene18_platEndPhoning(false);
 				else
 					platypusWalkTo(_hotspotsWalkPos[kHSExitGrubCity].x, _hotspotsWalkPos[kHSExitGrubCity].y - 1, -1, 0x107CF, 1);
@@ -730,14 +730,14 @@ void GnapEngine::scene18_run() {
 			playSound(0x22B, true);
 	
 		if (!_isLeavingScene) {
-			if (!isFlag(26)) {
+			if (!isFlag(kGFPlatypusTalkingToAssistant)) {
 				if (_beaverActionStatus == kASPlatComesHere) {
 					if (!_timers[6]) {
 						_beaverActionStatus = -1;
 						_sceneWaiting = false;
 						initBeaverPos(-1, 10, kDirNone);
 						platypusWalkTo(3, 9, -1, 0x107C2, 1);
-						clearFlag(26);
+						clearFlag(kGFPlatypusTalkingToAssistant);
 					}
 				} else {
 					_hotspots[kHSWalkArea1]._y2 += 48;
