@@ -154,8 +154,17 @@ public:
 	 */
 	virtual void shiftColors() = 0;
 
-	virtual void proc32(int v1, CVideoSurface *surface) = 0;
-	virtual void proc34(int v1, int v2, int v3, bool v4) = 0;
+	/**
+	 * Plays a movie, loading it from the specified _resource
+	 * if not already loaded
+	 */
+	virtual void playMovie(int newStatus, CVideoSurface *surface) = 0;
+
+	/**
+	 * Plays a movie, loading it from the specified _resource
+	 * if not already loaded
+	 */
+	virtual void playMovie(int v1, int v2, int v3, bool v4) = 0;
 
 	/**
 	 * Stops any movie currently attached to the surface
@@ -304,8 +313,17 @@ public:
 	 */
 	virtual void shiftColors();
 
-	virtual void proc32(int v1, CVideoSurface *surface);
-	virtual void proc34(int v1, int v2, int v3, bool v4);
+	/**
+	 * Plays a movie, loading it from the specified _resource
+	 * if not already loaded
+	 */
+	virtual void playMovie(int newStatus, CVideoSurface *surface);
+
+	/**
+	 * Plays a movie, loading it from the specified _resource
+	 * if not already loaded
+	 */
+	virtual void playMovie(int v1, int v2, int v3, bool v4);
 
 	/**
 	 * Stops any movie currently attached to the surface

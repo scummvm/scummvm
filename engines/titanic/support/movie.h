@@ -49,8 +49,16 @@ public:
 	CMovie();
 	virtual ~CMovie();
 
-	virtual void proc8(int v1, CVideoSurface *surface) = 0;
-	virtual void proc9(int v1, int v2, int v3, bool v4) = 0;
+	/**
+	 * Plays the movie
+	 */
+	virtual void play(int v1, CVideoSurface *surface) = 0;
+	
+	/**
+	 * Plays the movie
+	 */
+	virtual void play(int v1, int v2, int v3, bool v4) = 0;
+	
 	virtual void proc10() = 0;
 	virtual void proc11() = 0;
 	virtual void proc12() = 0;
@@ -87,8 +95,16 @@ public:
 	OSMovie(const CResourceKey &name, CVideoSurface *surface);
 	virtual ~OSMovie();
 
-	virtual void proc8(int v1, CVideoSurface *surface);
-	virtual void proc9(int v1, int v2, int v3, bool v4);
+	/**
+	 * Plays the movie
+	 */
+	virtual void play(int v1, CVideoSurface *surface);
+	
+	/**
+	 * Plays the movie
+	 */
+	virtual void play(int v1, int v2, int v3, bool v4);
+	
 	virtual void proc10();
 	virtual void proc11();
 	virtual void proc12();

@@ -34,8 +34,10 @@ namespace Titanic {
 
 class CVideoSurface;
 class CMouseDragStartMsg;
+class OSMovie;
 
 class CGameObject : public CNamedItem {
+	friend class OSMovie;
 	DECLARE_MESSAGE_MAP
 public:
 	static void *_v1;

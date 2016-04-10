@@ -379,14 +379,14 @@ void OSVideoSurface::shiftColors() {
 	// we already convert 16-bit surfaces as soon as they're loaded
 }
 
-void OSVideoSurface::proc32(int v1, CVideoSurface *surface) {
+void OSVideoSurface::playMovie(int newStatus, CVideoSurface *surface) {
 	if (loadIfReady() && _movie)
-		_movie->proc8(v1, surface);
+		_movie->play(newStatus, surface);
 }
 
-void OSVideoSurface::proc34(int v1, int v2, int v3, bool v4) {
+void OSVideoSurface::playMovie(int v1, int v2, int v3, bool v4) {
 	if (loadIfReady() && _movie) {
-		_movie->proc9(v1, v2, v3, v4);
+		_movie->play(v1, v2, v3, v4);
 	}
 }
 

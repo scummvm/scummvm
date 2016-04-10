@@ -364,7 +364,7 @@ void CGameObject::fn1(int val1, int val2, int val3) {
 		if (movie)
 			movie->_gameObject = this;
 
-		_surface->proc34(val1, val2, val3, val3 != 0);
+		_surface->playMovie(val1, val2, val3, val3 != 0);
 
 		if (val3 & 0x10)
 			getGameManager()->_gameState.addMovie(_surface->_movie);
@@ -380,8 +380,13 @@ void CGameObject::changeStatus(int newStatus) {
 
 	CVideoSurface *surface = (newStatus & 4) ? _surface : nullptr;
 	if (_surface) {
-		_surface->proc32(newStatus, surface);
+		_surface->playMovie(newStatus, surface);
 		
+		// TODO: Figure out where to do this legitimately
+		OSMovie *movie = static_cast<OSMovie *>(_surface->_movie);
+		if (movie)
+			movie->_gameObject = this;
+
 		if (newStatus & 0x10) {
 			getGameManager()->_gameState.addMovie(_surface->_movie);
 		}

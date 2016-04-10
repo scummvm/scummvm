@@ -61,12 +61,13 @@ OSMovie::~OSMovie() {
 	delete _video;
 }
 
-void OSMovie::proc8(int v1, CVideoSurface *surface) {
+void OSMovie::play(int v1, CVideoSurface *surface) {
 	warning("TODO: OSMovie::proc8");
+	play(0, 0, 0, 0);
 }
 
-void OSMovie::proc9(int v1, int v2, int v3, bool v4) {
-	warning("TODO: OSMovie::proc9");
+void OSMovie::play(int v1, int v2, int v3, bool v4) {
+	warning("TODO: OSMovie::play properly");
 	//setFrame(v1); ?
 	_video->start();
 	g_vm->_activeMovies.push_back(this);
@@ -172,6 +173,9 @@ void OSMovie::decodeFrame() {
 
 	// Unlock the surface
 	videoSurface->unlock();
+
+	if (_gameObject)
+		_gameObject->makeDirty();
 }
 
 } // End of namespace Titanic
