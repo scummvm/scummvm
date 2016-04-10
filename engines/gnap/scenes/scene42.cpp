@@ -108,7 +108,7 @@ void GnapEngine::scene42_run() {
 			_gameSys->insertSequence(_toyUfoSequenceId | 0x10000, _toyUfoId, 0, 0, kSeqNone, 0, 0, 0);
 			_toyUfoX = 317;
 			_toyUfoY = 61;
-			toyUfoSetStatus(17);
+			toyUfoSetStatus(kGFJointTaken);
 			setFlag(kGFPictureTaken);
 			_timers[9] = 600;
 		} else {
@@ -465,7 +465,7 @@ void GnapEngine::scene42_updateAnimations() {
 			_gameSys->insertSequence(0x10870, _toyUfoId, _toyUfoSequenceId | 0x10000, _toyUfoId, kSeqSyncWait, 0, 0, 0);
 			setFlag(kGFUnk24);
 			scene42_updateHotspots();
-			toyUfoSetStatus(19);
+			toyUfoSetStatus(kGFGroceryStoreHatTaken);
 			_toyUfoSequenceId = 0x870;
 			_gameSys->setAnimation(0x10870, _toyUfoId, 3);
 			_toyUfoActionStatus = -1;

@@ -98,7 +98,7 @@ void GnapEngine::scene41_run() {
 			_gnapActionStatus = kASGiveBackToyUfo;
 	} else {
 		if (!isFlag(kGFUnk16) && !isFlag(kGFJointTaken) && !isFlag(kGFUnk18) && !isFlag(kGFGroceryStoreHatTaken))
-			toyUfoSetStatus(16);
+			toyUfoSetStatus(kGFUnk16);
 		_toyUfoX = 600;
 		_toyUfoY = 200;
 	}
@@ -547,7 +547,7 @@ void GnapEngine::scene41_updateAnimations() {
 				kSeqSyncWait, 0, _toyUfoX - 365, _toyUfoY - 128);
 			_toyUfoSequenceId = _toyUfoNextSequenceId;
 			_gameSys->setAnimation(_toyUfoNextSequenceId | 0x10000, _toyUfoId, 2);
-			toyUfoSetStatus(17);
+			toyUfoSetStatus(kGFJointTaken);
 			break;
 		default:
 			_toyUfoNextSequenceId = toyUfoGetSequenceId();

@@ -395,9 +395,7 @@ void GnapEngine::scene08_run() {
 		}
 		
 		gameUpdateTick();
-	
 	}
-	
 }
 
 void GnapEngine::scene08_updateAnimations() {
@@ -521,7 +519,6 @@ void GnapEngine::scene08_updateAnimations() {
 			}
 		}
 	}
-
 }
 
 } // End of namespace Gnap
