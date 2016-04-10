@@ -33,6 +33,8 @@
 #include <Cocoa/Cocoa.h>
 #include <Sparkle/Sparkle.h>
 
+#include <AvailabilityMacros.h>
+
 SUUpdater *sparkleUpdater;
 
 /**
@@ -136,8 +138,13 @@ int MacOSXUpdateManager::getUpdateCheckInterval() {
 
 bool MacOSXUpdateManager::getLastUpdateCheckTimeAndDate(TimeDate &t) {
 	NSDate *date = [sparkleUpdater lastUpdateCheckDate];
+#ifdef MAC_OS_X_VERSION_10_10
+	NSCalendar *gregorian = [[NSCalendar alloc] initWithCalendarIdentifier:NSCalendarIdentifierGregorian];
+	NSDateComponents *components = [gregorian components:(NSCalendarUnitDay | NSCalendarUnitWeekday) fromDate:date];
+#else
 	NSCalendar *gregorian = [[NSCalendar alloc] initWithCalendarIdentifier:NSGregorianCalendar];
 	NSDateComponents *components = [gregorian components:(NSDayCalendarUnit | NSWeekdayCalendarUnit) fromDate:date];
+#endif
 
 	t.tm_wday = [components weekday];
 	t.tm_year = [components year];
