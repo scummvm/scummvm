@@ -2732,17 +2732,15 @@ if test -n "$_host"; then
 			append_var DEFINES "-DREDUCE_MEMORY_USAGE"
 			append_var CXXFLAGS "-mips32"
 			_backend="dingux"
-			_mt32emu=no
-			_optimization_level=-O3
-			# Disable alsa midi to get the port build on OpenDingux toolchain
 			_alsa=no
-			_vkeybd=yes
-			_build_hq_scalers=no
-			_keymapper=yes
-			# Force disable vorbis on dingux, it has terrible performance compared to tremor
-			_vorbis=no
-			# Force disable seq on dingux, no way to use it and it would get enabled by default with configure
+			_mt32emu=no
 			_seq_midi=no
+			_timidity=no
+			_build_hq_scalers=no
+			_optimization_level=-O3
+			_vkeybd=yes
+			_keymapper=yes
+			_vorbis=no
 			_port_mk="backends/platform/dingux/dingux.mk"
 			;;
 		gp2x)
