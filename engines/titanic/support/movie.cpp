@@ -75,6 +75,7 @@ void OSMovie::play(int v1, CVideoSurface *surface) {
 void OSMovie::play(int v1, int v2, int v3, bool v4) {
 	warning("TODO: OSMovie::play properly");
 	//setFrame(v1); ?
+	_video->seek(0);
 	_video->start();
 	g_vm->_activeMovies.push_back(this);
 	_state = MOVIE_NONE;
