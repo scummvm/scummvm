@@ -72,7 +72,7 @@ enum {
 	kSubtitlesBoth
 };
 
-#ifdef SMALL_SCREEN_DEVICE
+#ifdef GUI_ENABLE_KEYSDIALOG
 enum {
 	kChooseKeyMappingCmd    = 'chma'
 };
@@ -206,12 +206,12 @@ void OptionsDialog::open() {
 			_renderModePopUp->setSelectedTag(sel);
 		}
 
-#ifdef SMALL_SCREEN_DEVICE
+#ifdef GUI_ONLY_FULLSCREEN
 		_fullscreenCheckbox->setState(true);
 		_fullscreenCheckbox->setEnabled(false);
 		_aspectCheckbox->setState(false);
 		_aspectCheckbox->setEnabled(false);
-#else // !SMALL_SCREEN_DEVICE
+#else // !GUI_ONLY_FULLSCREEN
 		// Fullscreen setting
 		_fullscreenCheckbox->setState(ConfMan.getBool("fullscreen", _domain));
 
@@ -223,7 +223,7 @@ void OptionsDialog::open() {
 			_aspectCheckbox->setEnabled(true);
 			_aspectCheckbox->setState(ConfMan.getBool("aspect_ratio", _domain));
 		}
-#endif // SMALL_SCREEN_DEVICE
+#endif // GUI_ONLY_FULLSCREEN
 
 	}
 
@@ -606,7 +606,7 @@ void OptionsDialog::setGraphicSettingsState(bool enabled) {
 	_gfxPopUp->setEnabled(enabled);
 	_renderModePopUpDesc->setEnabled(enabled);
 	_renderModePopUp->setEnabled(enabled);
-#ifndef SMALL_SCREEN_DEVICE
+#ifndef GUI_ENABLE_KEYSDIALOG
 	_fullscreenCheckbox->setEnabled(enabled);
 	if (_guioptions.contains(GUIO_NOASPECT))
 		_aspectCheckbox->setEnabled(false);
@@ -1196,7 +1196,7 @@ GlobalOptionsDialog::GlobalOptionsDialog()
 		_autosavePeriodPopUp->appendEntry(_(savePeriodLabels[i]), savePeriodValues[i]);
 	}
 
-#ifdef SMALL_SCREEN_DEVICE
+#ifdef GUI_ENABLE_KEYSDIALOG
 	new ButtonWidget(tab, "GlobalOptions_Misc.KeysButton", _("Keys"), 0, kChooseKeyMappingCmd);
 #endif
 
@@ -1255,7 +1255,7 @@ GlobalOptionsDialog::GlobalOptionsDialog()
 	new ButtonWidget(this, "GlobalOptions.Cancel", _("Cancel"), 0, kCloseCmd);
 	new ButtonWidget(this, "GlobalOptions.Ok", _("OK"), 0, kOKCmd);
 
-#ifdef SMALL_SCREEN_DEVICE
+#ifdef GUI_ENABLE_KEYSDIALOG
 	_keysDialog = new KeysDialog();
 #endif
 
@@ -1265,7 +1265,7 @@ GlobalOptionsDialog::GlobalOptionsDialog()
 }
 
 GlobalOptionsDialog::~GlobalOptionsDialog() {
-#ifdef SMALL_SCREEN_DEVICE
+#ifdef GUI_ENABLE_KEYSDIALOG
 	delete _keysDialog;
 #endif
 
@@ -1509,7 +1509,7 @@ void GlobalOptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 		}
 		break;
 	}
-#ifdef SMALL_SCREEN_DEVICE
+#ifdef GUI_ENABLE_KEYSDIALOG
 	case kChooseKeyMappingCmd:
 		_keysDialog->runModal();
 		break;
