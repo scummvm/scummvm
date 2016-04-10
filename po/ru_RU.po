@@ -1056,15 +1056,15 @@ msgstr "Язык графического интерфейса ScummVM"
 
 #: gui/options.cpp:1235
 msgid "Update check:"
-msgstr ""
+msgstr "Проверять обновления:"
 
 #: gui/options.cpp:1235
 msgid "How often to check ScummVM updates"
-msgstr ""
+msgstr "Как часто проверять обновления ScummVM"
 
 #: gui/options.cpp:1247
 msgid "Check now"
-msgstr ""
+msgstr "Проверить сейчас"
 
 #: gui/options.cpp:1382
 msgid "You have to restart ScummVM before your changes will take effect."
@@ -1266,19 +1266,22 @@ msgid ""
 "\n"
 "Would you like to enable this feature?"
 msgstr ""
+"ScummVM стал поддерживать автоматическую проверку\n"
+"обновлений, которая требует доступа в Интернет\n"
+"\n"
+"Хотели бы вы включить эту опцию?"
 
 #: gui/updates-dialog.cpp:55
 msgid "(You can always enable it in the options dialog on the Misc tab)"
-msgstr ""
+msgstr "(Вы можете всегда её включыть в Опциях на закладку Другое)"
 
 #: gui/updates-dialog.cpp:92
-#, fuzzy
 msgid "Check for updates automatically"
-msgstr "Проверить обновления..."
+msgstr "Автоматически проверить обновления"
 
 #: gui/updates-dialog.cpp:111
 msgid "Proceed"
-msgstr ""
+msgstr "Продолжить"
 
 #: gui/widget.cpp:327 gui/widget.cpp:329 gui/widget.cpp:335 gui/widget.cpp:337
 msgid "Clear value"
@@ -1409,20 +1412,19 @@ msgstr "Hercules Янтарный"
 
 #: common/updates.cpp:58
 msgid "Daily"
-msgstr ""
+msgstr "Ежедневно"
 
 #: common/updates.cpp:60
 msgid "Weekly"
-msgstr ""
+msgstr "Еженедельно"
 
 #: common/updates.cpp:62
 msgid "Monthly"
-msgstr ""
+msgstr "Ежемесячно"
 
 #: common/updates.cpp:64
-#, fuzzy
 msgid "<Bad value>"
-msgstr "Очистить значение"
+msgstr "<Неправильное значение>"
 
 #: engines/advancedDetector.cpp:334
 #, c-format
@@ -2715,11 +2717,11 @@ msgstr ""
 
 #: engines/mohawk/detection.cpp:168
 msgid "Play the Myst fly by movie"
-msgstr ""
+msgstr "Проигрывать ролик пролёта над Myst"
 
 #: engines/mohawk/detection.cpp:169
 msgid "The Myst fly by movie was not played by the original engine."
-msgstr ""
+msgstr "Ролик пролёта над Myst не проигрывался оригинальным движком."
 
 #. I18N: Option for fast scene switching
 #: engines/mohawk/dialogs.cpp:96 engines/mohawk/dialogs.cpp:239
@@ -2936,13 +2938,12 @@ msgstr ""
 "Использовать альтернативный набор серебряных курсоров вместо обычных золотых"
 
 #: engines/scumm/detection.cpp:1335
-#, fuzzy
 msgid "Show Object Line"
-msgstr "Показывать названия объектов"
+msgstr "Показывать линии объектов"
 
 #: engines/scumm/detection.cpp:1336
 msgid "Show the names of objects at the bottom of the screen"
-msgstr ""
+msgstr "Показывать названия объектов внизу экрана"
 
 #: engines/scumm/dialogs.cpp:176
 #, c-format
@@ -3871,70 +3872,3 @@ msgid "Use MPEG video from the DVD version, instead of lower resolution AVI"
 msgstr ""
 "Использовать MPEG-видео из DVD-версии вместо видео низкого разрешения в "
 "формате AVI"
-
-#~ msgid "EGA undithering"
-#~ msgstr "EGA без растра"
-
-#~ msgid "Enable undithering in EGA games"
-#~ msgstr "Включает режим без растрирования в EGA играх"
-
-#~ msgid "MPEG-2 cutscenes found but ScummVM has been built without MPEG-2"
-#~ msgstr ""
-#~ "Найдены заставки в формате MPEG-2, но ScummVM был собран без поддержки "
-#~ "MPEG-2"
-
-#~ msgctxt "lowres"
-#~ msgid "Mass Add..."
-#~ msgstr "Много игр..."
-
-#~ msgid ""
-#~ "Turns off General MIDI mapping for games with Roland MT-32 soundtrack"
-#~ msgstr ""
-#~ "Выключает сопоставление General MIDI для игр с звуковой дорожкой для "
-#~ "Roland MT-32"
-
-#~ msgid "Standard (16bpp)"
-#~ msgstr "Стандартный растеризатор (16bpp)"
-
-#~ msgid "MPEG2 cutscenes are no longer supported"
-#~ msgstr "Заставки в формате MPEG2 больше не поддерживаются"
-
-#~ msgid "OpenGL Normal"
-#~ msgstr "OpenGL без увеличения"
-
-#~ msgid "OpenGL Conserve"
-#~ msgstr "OpenGL с сохранением"
-
-#~ msgid "OpenGL Original"
-#~ msgstr "OpenGL изначальный"
-
-#~ msgid "Current display mode"
-#~ msgstr "Текущий видеорежим"
-
-#~ msgid "Current scale"
-#~ msgstr "Текущий масштаб"
-
-#~ msgid "Active filter mode: Linear"
-#~ msgstr "Активный режим фильтра: Линейный"
-
-#~ msgid "Active filter mode: Nearest"
-#~ msgstr "Активный режим фильтра: Ближайший"
-
-#~ msgid "Enable Roland GS Mode"
-#~ msgstr "Включить режим Roland GS"
-
-#~ msgctxt "lowres"
-#~ msgid "Add Game..."
-#~ msgstr "Доб. игру"
-
-#~ msgid "Add Game..."
-#~ msgstr "Добавить игру..."
-
-#~ msgid "Discovered %d new games."
-#~ msgstr "Найдено %d новых игр."
-
-#~ msgid "Command line argument not processed"
-#~ msgstr "Параметры командной строки не обработаны"
-
-#~ msgid "Invalid Path"
-#~ msgstr "Неверный путь"
