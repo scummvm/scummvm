@@ -178,10 +178,10 @@ void CGameObject::draw(CScreenManager *screenManager) {
 		}
 
 		if (_surface) {
-			_bounds.right = _surface->getWidth();
-			_bounds.bottom = _surface->getHeight();
+			_bounds.setWidth(_surface->getWidth());
+			_bounds.setHeight(_surface->getHeight());
 
-			if (!_bounds.right || !_bounds.bottom)
+			if (!_bounds.width() || !_bounds.height())
 				return;
 
 			if (_frameNumber >= 0) {
