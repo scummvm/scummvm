@@ -78,7 +78,7 @@ void GnapEngine::scene10_run() {
 	_gameSys->insertSequence(0x103, 100, 0, 0, kSeqNone, 0, 0, 0);
 	
 	_s10_nextCookSequenceId = 0x106;
-	if (!isFlag(1))
+	if (!isFlag(kGFMudTaken))
 		_gameSys->insertSequence(0x107, 100, 0, 0, kSeqNone, 0, 0, 0);
 	
 	queueInsertDeviceIcon();
@@ -125,7 +125,7 @@ void GnapEngine::scene10_run() {
 			} else {
 				switch (_verbCursor) {
 				case LOOK_CURSOR:
-					if (isFlag(1))
+					if (isFlag(kGFMudTaken))
 						playGnapMoan1(_platX, _platY);
 					else
 						playGnapScratchingHead(_platX, _platY);
@@ -198,13 +198,13 @@ void GnapEngine::scene10_run() {
 			} else {
 				switch (_verbCursor) {
 				case LOOK_CURSOR:
-					if (isFlag(1))
+					if (isFlag(kGFMudTaken))
 						playGnapMoan2(-1, -1);
 					else
 						playGnapScratchingHead(4, 3);
 					break;
 				case GRAB_CURSOR:
-					if (isFlag(1))
+					if (isFlag(kGFMudTaken))
 						playGnapMoan2(-1, -1);
 					else {
 						gnapActionIdle(0x10C);
@@ -216,7 +216,7 @@ void GnapEngine::scene10_run() {
 					playGnapImpossible(0, 0);
 					break;
 				case PLAT_CURSOR:
-					if (isFlag(1))
+					if (isFlag(kGFMudTaken))
 						playGnapMoan2(-1, -1);
 					else {
 						gnapActionIdle(0x10C);
@@ -247,11 +247,11 @@ void GnapEngine::scene10_run() {
 					playGnapImpossible(0, 0);
 					break;
 				case PLAT_CURSOR:
-					if (isFlag(1))
+					if (isFlag(kGFMudTaken))
 						playGnapMoan2(-1, -1);
 					else {
 						invAdd(kItemTongs);
-						setFlag(1);
+						setFlag(kGFMudTaken);
 						gnapActionIdle(0x10C);
 						gnapUseDeviceOnBeaver();
 						platypusWalkTo(7, 6, 1, 0x107D2, 1);

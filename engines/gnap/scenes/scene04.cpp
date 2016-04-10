@@ -73,9 +73,9 @@ void GnapEngine::scene04_updateHotspots() {
 	setHotspot(kHSWalkArea1, 0, 0, 562, 461);
 	setHotspot(kHSWalkArea2, 562, 0, 800, 500);
 	setDeviceHotspot(kHSDevice, -1, -1, -1, -1);
-	if (isFlag(0))
+	if (isFlag(kGFPlatypus))
 		_hotspots[kHSPlatypus]._flags = SF_WALKABLE | SF_TALK_CURSOR | SF_GRAB_CURSOR | SF_LOOK_CURSOR;
-	if (isFlag(3))
+	if (isFlag(kGFTwigTaken))
 		_hotspots[kHSTwig]._flags = SF_WALKABLE | SF_DISABLED;
 	if (isFlag(26) || _cursorValue == 1)
 		_hotspots[kHSAxe]._flags = SF_DISABLED;
@@ -102,7 +102,7 @@ void GnapEngine::scene04_run() {
 	if (!isFlag(26) && _cursorValue == 4)
 		_gameSys->insertSequence(0x212, 100, 0, 0, kSeqNone, 0, 0, 0);
 	
-	if (!isFlag(3))
+	if (!isFlag(kGFTwigTaken))
 		_gameSys->insertSequence(0x1FE, 100, 0, 0, kSeqNone, 0, 0, 0);
 	
 	queueInsertDeviceIcon();
@@ -124,7 +124,7 @@ void GnapEngine::scene04_run() {
 		endSceneInit();
 		invRemove(kItemDisguise);
 		invAdd(kItemKeys);
-		setFlag(5);
+		setFlag(kGFKeysTaken);
 		clearFlag(10);
 		_beaverSequenceId = 0x20C;
 		_beaverSequenceDatNum = 0;
@@ -136,10 +136,10 @@ void GnapEngine::scene04_run() {
 		_gameSys->insertSequence(0x209, 121, 0, 0, kSeqNone, 0, 0, 0);
 		if (_prevSceneNum == 2) {
 			initGnapPos(5, 11, kDirUpRight);
-			if (isFlag(0))
+			if (isFlag(kGFPlatypus))
 				initBeaverPos(6, 11, kDirUpLeft);
 			endSceneInit();
-			if (isFlag(0))
+			if (isFlag(kGFPlatypus))
 				platypusWalkTo(5, 8, -1, 0x107C2, 1);
 			gnapWalkTo(6, 9, -1, 0x107BA, 1);
 		} else if (_prevSceneNum == 38) {
@@ -148,10 +148,10 @@ void GnapEngine::scene04_run() {
 			endSceneInit();
 		} else {
 			initGnapPos(12, 9, kDirBottomRight);
-			if (isFlag(0))
+			if (isFlag(kGFPlatypus))
 				initBeaverPos(12, 8, kDirNone);
 			endSceneInit();
-			if (isFlag(0))
+			if (isFlag(kGFPlatypus))
 				platypusWalkTo(9, 8, -1, 0x107C2, 1);
 		gnapWalkTo(9, 9, -1, 0x107BA, 1);
 		}
@@ -177,7 +177,7 @@ void GnapEngine::scene04_run() {
 			break;
 
 		case kHSPlatypus:
-			if (_gnapActionStatus < 0 && isFlag(0)) {
+			if (_gnapActionStatus < 0 && isFlag(kGFPlatypus)) {
 				if (_grabCursorSpriteIndex == kItemDisguise) {
 					gnapUseDisguiseOnPlatypus();
 				} else if (_grabCursorSpriteIndex >= 0) {
@@ -185,7 +185,7 @@ void GnapEngine::scene04_run() {
 				} else {
 					switch (_verbCursor) {
 					case LOOK_CURSOR:
-						if (isFlag(5))
+						if (isFlag(kGFKeysTaken))
 							playGnapMoan1(_platX, _platY);
 						else
 							playGnapScratchingHead(_platX, _platY);
@@ -325,7 +325,7 @@ void GnapEngine::scene04_run() {
 				_isLeavingScene = 1;
 				gnapWalkTo(_hotspotsWalkPos[5].x, _hotspotsWalkPos[5].y, 0, 0x107AE, 1);
 				_gnapActionStatus = kASLeaveScene;
-				if (isFlag(0))
+				if (isFlag(kGFPlatypus))
 					platypusWalkTo(_hotspotsWalkPos[5].x, _hotspotsWalkPos[5].y, -1, 0x107C7, 1);
 				if (_cursorValue == 1)
 					_newSceneNum = 2;
@@ -338,7 +338,7 @@ void GnapEngine::scene04_run() {
 			if (_gnapActionStatus < 0) {
 				if (_grabCursorSpriteIndex >= 0) {
 					playGnapShowCurrItem(_hotspotsWalkPos[_sceneClickedHotspot].x, _hotspotsWalkPos[_sceneClickedHotspot].y, 2, 3);
-				} else if (isFlag(5)) {
+				} else if (isFlag(kGFKeysTaken)) {
 					playGnapImpossible(0, 0);
 				} else {
 					switch (_verbCursor) {
@@ -369,7 +369,7 @@ void GnapEngine::scene04_run() {
 				_isLeavingScene = 1;
 				gnapWalkTo(_hotspotsWalkPos[8].x, _hotspotsWalkPos[8].y, 0, 0x107AB, 1);
 				_gnapActionStatus = kASLeaveScene;
-				if (isFlag(0))
+				if (isFlag(kGFPlatypus))
 					platypusWalkTo(_hotspotsWalkPos[8].x, _hotspotsWalkPos[8].y + 1, -1, 0x107C1, 1);
 				if (_cursorValue == 1)
 					_newSceneNum = 5;
@@ -399,7 +399,7 @@ void GnapEngine::scene04_run() {
 			playSound(0x1091C, 1);
 	
 		if (!_isLeavingScene) {
-			if (_beaverActionStatus < 0 && isFlag(0))
+			if (_beaverActionStatus < 0 && isFlag(kGFPlatypus))
 				beaverSub426234();
 			if (_gnapActionStatus < 0)
 				updateGnapIdleSequence2();
@@ -537,7 +537,7 @@ void GnapEngine::scene04_updateAnimations() {
 		_gameSys->setAnimation(0, 0, 2);
 		invAdd(kItemTwig);
 		setGrabCursorSprite(kItemTwig);
-		setFlag(3);
+		setFlag(kGFTwigTaken);
 		scene04_updateHotspots();
 	}
 	

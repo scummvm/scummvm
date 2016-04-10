@@ -69,13 +69,13 @@ void GnapEngine::scene03_updateHotspots() {
 	setHotspot(kHSPlatypusWalkArea, 235, 0, 800, 600);
 	setHotspot(kHSWalkAreas3, 0, 0, 800, 354);
 	setDeviceHotspot(kHSDevice, -1, -1, -1, -1);
-	if (isFlag(0))
+	if (isFlag(kGFPlatypus))
 		_hotspots[kHSPlatypus]._flags = SF_WALKABLE | SF_TALK_CURSOR | SF_GRAB_CURSOR | SF_LOOK_CURSOR;
-	if (isFlag(6))
+	if (isFlag(kGFGrassTaken))
 		_hotspots[kHSGrass]._flags = SF_WALKABLE | SF_DISABLED;
-	if (isFlag(0))
+	if (isFlag(kGFPlatypus))
 		_hotspots[kHSTrappedPlatypus]._flags = SF_DISABLED;
-	if (isFlag(0) || _s03_platypusHypnotized)
+	if (isFlag(kGFPlatypus) || _s03_platypusHypnotized)
 		_hotspots[kHSPlatypusWalkArea]._flags |= SF_WALKABLE;
 	_hotspotsCount = 10;
 }
@@ -103,7 +103,7 @@ void GnapEngine::scene03_run() {
 	_timers[4] = getRandom(100) + 300;
 	_timers[5] = getRandom(100) + 200;
 	
-	if (isFlag(0)) {
+	if (isFlag(kGFPlatypus)) {
 		initBeaverPos(5, 4, kDirNone);
 	} else {
 		_timers[1] = getRandom(40) + 20;
@@ -115,14 +115,14 @@ void GnapEngine::scene03_run() {
 	
 	_gameSys->insertSequence(0x1C4, 255, 0, 0, kSeqNone, 0, 0, 0);
 	
-	if (!isFlag(6))
+	if (!isFlag(kGFGrassTaken))
 		_gameSys->insertSequence(0x1B2, 253, 0, 0, kSeqNone, 0, 0, 0);
 	
 	queueInsertDeviceIcon();
 	
 	endSceneInit();
 	
-	if (isFlag(0))
+	if (isFlag(kGFPlatypus))
 		platypusWalkTo(4, 7, -1, 0x107C2, 1);
 	gnapWalkTo(3, 6, -1, 0x107B9, 1);
 	
@@ -137,7 +137,7 @@ void GnapEngine::scene03_run() {
 		switch (_sceneClickedHotspot) {
 
 		case kHSPlatypus:
-			if (_gnapActionStatus < 0 && isFlag(0)) {
+			if (_gnapActionStatus < 0 && isFlag(kGFPlatypus)) {
 				if (_grabCursorSpriteIndex == kItemDisguise) {
 					gnapUseDisguiseOnPlatypus();
 				} else if (_grabCursorSpriteIndex >= 0) {
@@ -145,7 +145,7 @@ void GnapEngine::scene03_run() {
 				} else {
 					switch (_verbCursor) {
 					case LOOK_CURSOR:
-						if (isFlag(5))
+						if (isFlag(kGFKeysTaken))
 							playGnapMoan1(_platX, _platY);
 						else
 							playGnapScratchingHead(_platX, _platY);
@@ -167,7 +167,7 @@ void GnapEngine::scene03_run() {
 
 		case kHSGrass:
 			if (_gnapActionStatus < 0) {
-				if (isFlag(6)) {
+				if (isFlag(kGFGrassTaken)) {
 					gnapWalkTo(-1, -1, -1, -1, 1);
 				} else if (_grabCursorSpriteIndex >= 0) {
 					playGnapShowItem(_grabCursorSpriteIndex, 9, 6);
@@ -198,7 +198,7 @@ void GnapEngine::scene03_run() {
 				_hotspots[kHSPlatypusWalkArea]._flags |= SF_WALKABLE;
 				gnapWalkTo(_hotspotsWalkPos[2].x, _hotspotsWalkPos[2].y, 0, 0x107AD, 1);
 				_gnapActionStatus = kASLeaveScene;
-				if (isFlag(0))
+				if (isFlag(kGFPlatypus))
 					platypusWalkTo(_hotspotsWalkPos[2].x, _hotspotsWalkPos[2].y, -1, 0x107C2, 1);
 				_hotspots[kHSPlatypusWalkArea]._flags &= ~SF_WALKABLE;
 				if (_cursorValue == 1)
@@ -218,11 +218,11 @@ void GnapEngine::scene03_run() {
 						playGnapMoan2(2, 8);
 						break;
 					case GRAB_CURSOR:
-						if (!isFlag(0))
+						if (!isFlag(kGFPlatypus))
 							_hotspots[kHSPlatypusWalkArea]._flags |= SF_WALKABLE;
 						if (gnapWalkTo(_hotspotsWalkPos[3].x, _hotspotsWalkPos[3].y, 0, getGnapSequenceId(gskIdle, _hotspotsWalkPos[3].x + 1, _hotspotsWalkPos[3].y + 1) | 0x10000, 1))
 							_gnapActionStatus = kASGrabCreek;
-						if (!isFlag(0))
+						if (!isFlag(kGFPlatypus))
 							_hotspots[kHSPlatypusWalkArea]._flags &= ~SF_WALKABLE;
 						break;
 					case TALK_CURSOR:
@@ -236,7 +236,7 @@ void GnapEngine::scene03_run() {
 
 		case kHSTrappedPlatypus:
 			if (_gnapActionStatus < 0) {
-				if (isFlag(0)) {
+				if (isFlag(kGFPlatypus)) {
 					gnapWalkTo(-1, -1, -1, -1, 1);
 				} else if (_grabCursorSpriteIndex >= 0) {
 					playGnapShowItem(_grabCursorSpriteIndex, 8, 4);
@@ -293,7 +293,7 @@ void GnapEngine::scene03_run() {
 
 		case kHSPlatypusWalkArea:
 			if (_gnapActionStatus < 0) {
-				if (isFlag(0) || _s03_platypusHypnotized) {
+				if (isFlag(kGFPlatypus) || _s03_platypusHypnotized) {
 					gnapWalkTo(-1, -1, -1, -1, 1);
 				} else {
 					gnapWalkTo(_hotspotsWalkPos[4].x, _hotspotsWalkPos[4].y, 0, 0x107B5, 1);
@@ -320,13 +320,13 @@ void GnapEngine::scene03_run() {
 			playSound(0x10925, 1);
 	
 		if (!_isLeavingScene) {
-			if (_beaverActionStatus < 0 && isFlag(0))
+			if (_beaverActionStatus < 0 && isFlag(kGFPlatypus))
 				updateBeaverIdleSequence();
 			if (_gnapActionStatus < 0)
 				updateGnapIdleSequence();
 			if (!_timers[1] && !_s03_platypusScared) {
 				_timers[1] = getRandom(40) + 20;
-				if (_gnapActionStatus < 0 && _beaverActionStatus < 0 && !isFlag(0) && !_s03_platypusHypnotized)
+				if (_gnapActionStatus < 0 && _beaverActionStatus < 0 && !isFlag(kGFPlatypus) && !_s03_platypusHypnotized)
 					_s03_nextPlatSequenceId = 450;
 			}
 			if (!_timers[6]) {
@@ -393,7 +393,7 @@ void GnapEngine::scene03_updateAnimations() {
 			_gameSys->insertSequence(0x1B7, 99, 0, 0, kSeqNone, 0, 0, 0);
 			_beaverSequenceDatNum = 1;
 			_beaverSequenceId = 0x7CA;
-			setFlag(0);
+			setFlag(kGFPlatypus);
 			_s03_nextPlatSequenceId = -1;
 			scene03_updateHotspots();
 			break;
@@ -508,7 +508,7 @@ void GnapEngine::scene03_updateAnimations() {
 		_gameSys->setAnimation(0, 0, 5);
 		invAdd(kItemGrass);
 		setGrabCursorSprite(kItemGrass);
-		setFlag(6);
+		setFlag(kGFGrassTaken);
 		scene03_updateHotspots();
 	}
 

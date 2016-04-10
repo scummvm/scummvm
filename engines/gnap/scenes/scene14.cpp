@@ -46,7 +46,7 @@ void GnapEngine::scene14_updateHotspots() {
 	setHotspot(kHSCoin, 330, 390, 375, 440, SF_PLAT_CURSOR | SF_TALK_CURSOR | SF_GRAB_CURSOR | SF_LOOK_CURSOR);
 	setHotspot(kHSToilet, 225, 250, 510, 500, SF_PLAT_CURSOR | SF_TALK_CURSOR | SF_GRAB_CURSOR | SF_LOOK_CURSOR);
 	setDeviceHotspot(kHSDevice, -1, -1, -1, -1);
-	if (isFlag(2))
+	if (isFlag(kGFNeedleTaken))
 		_hotspots[kHSCoin]._flags = SF_DISABLED;
 	_hotspotsCount = 5;
 }
@@ -56,15 +56,15 @@ void GnapEngine::scene14_run() {
 
 	queueInsertDeviceIcon();
 	
-	if (!isFlag(2))
+	if (!isFlag(kGFNeedleTaken))
 		_gameSys->insertSequence(0x23, 10, 0, 0, kSeqNone, 0, 0, 0);
 	
 	endSceneInit();
 	
-	if (!isFlag(2) && invHas(kItemTongs))
+	if (!isFlag(kGFNeedleTaken) && invHas(kItemTongs))
 		_largeSprite = _gameSys->createSurface(1);
 
-	if (!isFlag(2)) {
+	if (!isFlag(kGFNeedleTaken)) {
 		_gameSys->insertSequence(0x24, 10, 0x23, 10, kSeqSyncWait, 0, 0, 0);
 		_gnapSequenceId = 0x24;
 		_timers[2] = getRandom(40) + 50;
@@ -95,7 +95,7 @@ void GnapEngine::scene14_run() {
 		case kHSCoin:
 			if (_grabCursorSpriteIndex == kItemTongs) {
 				invAdd(kItemQuarter);
-				setFlag(2);
+				setFlag(kGFNeedleTaken);
 				setGrabCursorSprite(-1);
 				hideCursor();
 				_gameSys->setAnimation(0x26, 10, 0);
@@ -151,7 +151,7 @@ void GnapEngine::scene14_run() {
 	
 		checkGameKeys();
 	
-		if (!isFlag(2) && !_timers[2]) {
+		if (!isFlag(kGFNeedleTaken) && !_timers[2]) {
 			_gameSys->insertSequence(0x24, 10, _gnapSequenceId, 10, kSeqSyncWait, 0, 0, 0);
 			_gnapSequenceId = 0x24;
 			_timers[2] = getRandom(40) + 50;

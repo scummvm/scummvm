@@ -97,7 +97,7 @@ void GnapEngine::scene18_updateHotspots() {
 		} else {
 			_hotspots[kHSHydrantTopValve]._y1 = 246;
 		}
-	} else if (isFlag(7)) {
+	} else if (isFlag(kGFBarnPadlockOpen)) {
 		_hotspots[kHSHydrantRightValve]._flags = SF_DISABLED;
 		_hotspots[kHSHydrantTopValve]._x1 = 105;
 		_hotspots[kHSHydrantTopValve]._x2 = 192;
@@ -294,7 +294,7 @@ void GnapEngine::scene18_closeHydrantValve() {
 			_gnapActionStatus = kASCloseRightValveNoGarbageCan;
 			scene18_waitForGnapAction();
 		}
-	} else if (isFlag(7)) {
+	} else if (isFlag(kGFBarnPadlockOpen)) {
 		gnapWalkTo(_hotspotsWalkPos[kHSHydrantTopValve].x, _hotspotsWalkPos[kHSHydrantTopValve].y, 0, 0x107BA, 1);
 		_gnapActionStatus = kASCloseTopValve;
 		scene18_waitForGnapAction();
@@ -338,7 +338,7 @@ void GnapEngine::scene18_run() {
 			_gameSys->insertSequence(0x212, 39, 0, 0, kSeqLoop, 0, 0, 0);
 			_gameSys->insertSequence(0x20D, 39, 0, 0, kSeqLoop, 0, 0, 0);
 			playSound(0x22B, true);
-		} else if (isFlag(7)) {
+		} else if (isFlag(kGFBarnPadlockOpen)) {
 			_gameSys->insertSequence(0x20E, 39, 0, 0, kSeqLoop, 0, 0, 0);
 			_gameSys->insertSequence(0x217, 39, 0, 0, kSeqLoop, 0, 0, 0);
 			playSound(0x22B, true);
@@ -542,7 +542,7 @@ void GnapEngine::scene18_run() {
 							if (isFlag(8)) {
 								scene18_gnapCarryGarbageCanTo(-1, -1, 0, -1, 2);
 								_gnapActionStatus = kASPutGarbageCanOnRunningHydrant;
-							} else if (!isFlag(7)) {
+							} else if (!isFlag(kGFBarnPadlockOpen)) {
 								scene18_gnapCarryGarbageCanTo(-1, -1, 0, -1, 2);
 								_gnapActionStatus = kASPutGarbageCanOnHydrant;
 							} else {
@@ -571,7 +571,7 @@ void GnapEngine::scene18_run() {
 							playGnapScratchingHead(1, 5);
 							break;
 						case GRAB_CURSOR:
-							if (isFlag(7)) {
+							if (isFlag(kGFBarnPadlockOpen)) {
 								_hotspots[kHSWalkArea2]._flags |= SF_WALKABLE;
 								gnapWalkTo(_hotspotsWalkPos[kHSHydrantTopValve].x, _hotspotsWalkPos[kHSHydrantTopValve].y, 0, 0x107BA, 1);
 								_hotspots[kHSWalkArea2]._flags &= ~SF_WALKABLE;
@@ -723,7 +723,7 @@ void GnapEngine::scene18_run() {
 		if (!isSoundPlaying(0x10940))
 			playSound(0x10940, true);
 	
-		if ((isFlag(8) || isFlag(7)) && !isSoundPlaying(0x22B) &&
+		if ((isFlag(8) || isFlag(kGFBarnPadlockOpen)) && !isSoundPlaying(0x22B) &&
 			_gnapActionStatus != kASOpenRightValveNoGarbageCanDone && _gnapActionStatus != kASOpenRightValveNoGarbageCan &&
 			_gnapActionStatus != kASOpenTopValve && _gnapActionStatus != kASOpenTopValveDone &&
 			_gnapActionStatus != kASOpenRightValveWithGarbageCan && _gnapActionStatus != kASOpenRightValveWithGarbageCanDone)
@@ -827,7 +827,7 @@ void GnapEngine::scene18_updateAnimations() {
 			_gnapActionStatus = -1;
 			break;
 		case kASOpenTopValve:
-			setFlag(7);
+			setFlag(kGFBarnPadlockOpen);
 			scene18_updateHotspots();
 			playGnapPullOutDevice(2, 7);
 			playGnapUseDevice(0, 0);
@@ -862,7 +862,7 @@ void GnapEngine::scene18_updateAnimations() {
 			stopSound(0x22B);
 			_gnapSequenceDatNum = 0;
 			_gnapSequenceId = 0x206;
-			clearFlag(7);
+			clearFlag(kGFBarnPadlockOpen);
 			invAdd(kItemWrench);
 			setGrabCursorSprite(kItemWrench);
 			scene18_updateHotspots();

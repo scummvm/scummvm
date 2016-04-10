@@ -245,7 +245,7 @@ void GnapEngine::scene27_run() {
 
 		case kHSExitClown:
 			if (_gnapActionStatus < 0) {
-				if (isFlag(0)) {
+				if (isFlag(kGFPlatypus)) {
 					_isLeavingScene = true;
 					_newSceneNum = 28;
 					gnapWalkTo(_hotspotsWalkPos[kHSExitClown].x, _hotspotsWalkPos[kHSExitClown].y, 0, 0x107AD, 1);
@@ -404,7 +404,7 @@ void GnapEngine::scene27_updateAnimations() {
 			_gnapActionStatus = kASEnterClownTent;
 			_s27_currJanitorSequenceId = _s27_nextJanitorSequenceId;
 			_s27_nextJanitorSequenceId = -1;
-			setFlag(0);
+			setFlag(kGFPlatypus);
 			setGrabCursorSprite(-1);
 			invRemove(kItemPicture);
 			_newSceneNum = 28;
@@ -417,7 +417,6 @@ void GnapEngine::scene27_updateAnimations() {
 			break;
 		}
 	}
-  
 }
 
 } // End of namespace Gnap

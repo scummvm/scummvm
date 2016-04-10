@@ -48,7 +48,7 @@ enum {
 
 int GnapEngine::scene21_init() {
 	_gameSys->setAnimation(0, 0, 3);
-	return isFlag(3) ? 0x94 : 0x93;
+	return isFlag(kGFTwigTaken) ? 0x94 : 0x93;
 }
 
 void GnapEngine::scene21_updateHotspots() {
@@ -59,9 +59,9 @@ void GnapEngine::scene21_updateHotspots() {
 	setHotspot(kHSWalkArea1, 0, 0, 800, 440);
 	setHotspot(kHSWalkArea2, 698, 0, 800, 600);
 	setDeviceHotspot(kHSDevice, -1, -1, -1, -1);
-	if (isFlag(4) || !isFlag(3))
+	if (isFlag(kGFUnk04) || !isFlag(kGFTwigTaken))
 		_hotspots[kHSBanana]._flags = SF_WALKABLE | SF_DISABLED;
-	if (isFlag(3))
+	if (isFlag(kGFTwigTaken))
 		_hotspots[kHSOldLady]._flags = SF_DISABLED;
 	_hotspotsCount = 7;
 }
@@ -75,19 +75,19 @@ void GnapEngine::scene21_run() {
 	
 	queueInsertDeviceIcon();
 	
-	if (isFlag(3)) {
-		if (isFlag(5)) {
+	if (isFlag(kGFTwigTaken)) {
+		if (isFlag(kGFKeysTaken)) {
 			initGnapPos(5, 8, kDirBottomRight);
 			initBeaverPos(6, 8, kDirNone);
 			_gameSys->insertSequence(0x8E, 2, 0, 0, kSeqNone, 0, 0, 0);
-			if (!isFlag(4))
+			if (!isFlag(kGFUnk04))
 				_gameSys->insertSequence(0x8D, 59, 0, 0, kSeqNone, 0, 0, 0);
 			endSceneInit();
-			clearFlag(5);
+			clearFlag(kGFKeysTaken);
 		} else {
 			initGnapPos(5, 11, kDirBottomRight);
 			initBeaverPos(6, 11, kDirNone);
-			if (!isFlag(4))
+			if (!isFlag(kGFUnk04))
 				_gameSys->insertSequence(0x8D, 59, 0, 0, kSeqNone, 0, 0, 0);
 			endSceneInit();
 			gnapWalkTo(5, 8, -1, 0x107B9, 1);
@@ -237,7 +237,7 @@ void GnapEngine::scene21_run() {
 		if (!_isLeavingScene) {
 			updateBeaverIdleSequence();
 			updateGnapIdleSequence();
-			if (!isFlag(3) && !_timers[4] && _s21_nextOldLadySequenceId == -1 && _gnapActionStatus == -1) {
+			if (!isFlag(kGFTwigTaken) && !_timers[4] && _s21_nextOldLadySequenceId == -1 && _gnapActionStatus == -1) {
 				_timers[4] = getRandom(30) + 50;
 				switch (getRandom(5)) {
 				case 0:
@@ -284,7 +284,7 @@ void GnapEngine::scene21_updateAnimations() {
 		case kASGrabBanana:
 			_gameSys->setAnimation(0x8C, 59, 0);
 			_gameSys->insertSequence(0x8C, 59, 141, 59, kSeqSyncWait, 0, 0, 0);
-			setFlag(4);
+			setFlag(kGFUnk04);
 			invAdd(kItemBanana);
 			scene21_updateHotspots();
 			_gnapActionStatus = kASGrabBananaDone;

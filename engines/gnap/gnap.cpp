@@ -455,7 +455,7 @@ void GnapEngine::updateMouseCursor() {
 		_mouseClickState._right = false;
 		_timers[3] = 300;
 		_verbCursor = (_verbCursor + 1) % 4;
-		if (!isFlag(0) && _verbCursor == PLAT_CURSOR && _cursorValue == 1)
+		if (!isFlag(kGFPlatypus) && _verbCursor == PLAT_CURSOR && _cursorValue == 1)
 			_verbCursor = (_verbCursor + 1) % 4;
 		if (!_isWaiting)
 			setCursor(kDisabledCursors[_verbCursor]);
@@ -688,20 +688,20 @@ void GnapEngine::initGameFlags(int num) {
 		invAdd(kItemHorn);
 		invAdd(kItemLightbulb);
 		clearFlags();
-		setFlag(0);
-		setFlag(1);
-		setFlag(2);
-		setFlag(3);
-		setFlag(4);
-		setFlag(5);
-		setFlag(6);
-		setFlag(7);
+		setFlag(kGFPlatypus);
+		setFlag(kGFMudTaken);
+		setFlag(kGFNeedleTaken);
+		setFlag(kGFTwigTaken);
+		setFlag(kGFUnk04);
+		setFlag(kGFKeysTaken);
+		setFlag(kGFGrassTaken);
+		setFlag(kGFBarnPadlockOpen);
 		break;
 	}
 
 	//DEBUG!
 #if 0
-//	setFlag(0); // Enable platypus
+//	setFlag(kGFPlatypus); // Enable platypus
 	setFlag(25);
 	invClear();
 	invAdd(kItemMagazine);

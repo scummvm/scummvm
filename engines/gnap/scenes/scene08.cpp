@@ -67,7 +67,7 @@ void GnapEngine::scene08_updateHotspots() {
 	setHotspot(kHSWalkArea1, 290, 340, -1, -1);
 	setHotspot(kHSWalkArea2, 0, 0, 799, 420);
 	setDeviceHotspot(kHSDevice, -1, -1, -1, -1);
-	if (isFlag(7))
+	if (isFlag(kGFBarnPadlockOpen))
 		_hotspots[kHSMeat]._flags = SF_WALKABLE | SF_DISABLED;
 	if (isFlag(8))
 		_hotspots[kHSBone]._flags = SF_WALKABLE | SF_DISABLED;
@@ -107,7 +107,7 @@ void GnapEngine::scene08_run() {
 	
 	_timers[4] = getRandom(50) + 75;
 	
-	if (!isFlag(7))
+	if (!isFlag(kGFBarnPadlockOpen))
 		_gameSys->insertSequence(0x144, 1, 0, 0, kSeqNone, 0, 0, 0);
 	
 	if (!isFlag(8))
@@ -473,7 +473,7 @@ void GnapEngine::scene08_updateAnimations() {
 			_gameSys->insertSequence(_s08_nextDogSequenceId, 100, _s08_currDogSequenceId, 100, kSeqSyncWait, 0, 0, 0);
 			switch (_s08_nextDogSequenceId) {
 			case 0x149:
-				setFlag(7);
+				setFlag(kGFBarnPadlockOpen);
 				_hotspots[kHSMeat]._flags = SF_DISABLED | SF_WALKABLE;
 				_gameSys->removeSequence(0x144, 1, true);
 				break;

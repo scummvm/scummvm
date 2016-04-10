@@ -96,7 +96,7 @@ void GnapEngine::scene06_run() {
 
 	_timers[4] = getRandom(40) + 25;
 
-	if (isFlag(4))
+	if (isFlag(kGFUnk04))
 		_gameSys->insertSequence(0xF7, 20, 0, 0, kSeqNone, 0, 0, 0);
 	else
 		_gameSys->insertSequence(0xF8, 20, 0, 0, kSeqNone, 0, 0, 0);
@@ -141,7 +141,7 @@ void GnapEngine::scene06_run() {
 				} else {
 					switch (_verbCursor) {
 					case LOOK_CURSOR:
-						if (isFlag(5))
+						if (isFlag(kGFKeysTaken))
 							playGnapMoan1(_platX, _platY);
 						else
 							playGnapScratchingHead(_platX, _platY);
@@ -171,7 +171,7 @@ void GnapEngine::scene06_run() {
 						playGnapScratchingHead(5, 0);
 						break;
 					case GRAB_CURSOR:
-						if (isFlag(4)) {
+						if (isFlag(kGFUnk04)) {
 							playGnapImpossible(0, 0);
 						} else if (triedDeviceOnGas) {
 							_hotspots[kHSWalkArea5]._flags |= SF_WALKABLE;
@@ -185,7 +185,7 @@ void GnapEngine::scene06_run() {
 						break;
 					case TALK_CURSOR:
 					case PLAT_CURSOR:
-						if (isFlag(4))
+						if (isFlag(kGFUnk04))
 							playGnapImpossible(0, 0);
 						else
 							playGnapScratchingHead(5, 0);
@@ -391,7 +391,7 @@ void GnapEngine::scene06_updateAnimations() {
 			_gameSys->insertSequence(0x107C1, _beaverId, 0, 0, kSeqNone, 0, 450 - _platGridX, 384 - _platGridY);
 			_beaverSequenceId = 0x7C1;
 			_beaverSequenceDatNum = 1;
-			setFlag(4);
+			setFlag(kGFUnk04);
 			_gnapActionStatus = -1;
 			showCursor();
 		}

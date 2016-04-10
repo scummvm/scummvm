@@ -81,7 +81,7 @@ void GnapEngine::scene28_run() {
 	if (isFlag(22))
 		_gameSys->insertSequence(0x112, 99, 0, 0, kSeqNone, 0, 0, 0);
 
-	if (isFlag(1)) {
+	if (isFlag(kGFMudTaken)) {
 		if (isFlag(21)) {
 			_gameSys->setAnimation(0x11C, 39, 3);
 			_gameSys->insertSequence(0x11C, 39, 0, 0, kSeqNone, 0, 0, 0);
@@ -104,7 +104,7 @@ void GnapEngine::scene28_run() {
 		endSceneInit();
 		playSequences(0xF7, 0x121, 0x122, 0x123);
 		_s28_currClownSequenceId = 0x115;
-		setFlag(1);
+		setFlag(kGFMudTaken);
 		_gameSys->setAnimation(0x115, 39, 3);
 		_gameSys->insertSequence(_s28_currClownSequenceId, 39, 0x11B, 39, kSeqSyncWait, 0, 0, 0);
 		_s28_nextClownSequenceId = -1;

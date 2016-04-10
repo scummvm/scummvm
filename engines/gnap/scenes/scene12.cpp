@@ -497,7 +497,7 @@ void GnapEngine::scene12_updateAnimations() {
 				kSeqSyncWait, 0, 75 * _gnapX - _gnapGridX, 48 * _gnapY - _gnapGridY);
 			_gnapSequenceId = 0x7B7;
 			_gnapSequenceDatNum = 1;
-			setFlag(3);
+			setFlag(kGFTwigTaken);
 			invAdd(kItemQuarterWithHole);
 			invRemove(kItemQuarter);
 		}

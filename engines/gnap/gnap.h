@@ -169,9 +169,36 @@ enum {
 enum {
 	kGFPlatypus				= 0,
 	kGFMudTaken				= 1,
-	
-	
-	kGFEnd
+	kGFNeedleTaken			= 2,
+	kGFTwigTaken			= 3,
+	kGFUnk04				= 4,
+	kGFKeysTaken			= 5,
+	kGFGrassTaken			= 6,
+	kGFBarnPadlockOpen		= 7,
+	kGFTruckFilledWithGas	= 8,
+	kGFTruckKeysUsed		= 9,
+	kGFPlatyPussDisguised	= 10,
+	kGFSceneFlag1			= 11,
+	kGFGnapControlsToyUFO	= 12,
+	kGFUnk13				= 13,
+	kGFUnk14				= 14,
+	kGFSpringTaken			= 15,
+	kGFUnk16				= 16,
+	kGFJointTaken			= 17,
+	kGFUnk18				= 18,
+	kGFGroceryStoreHatTaken	= 19,
+	kGFPictureTaken			= 20,
+	kGFUnk21				= 21,
+	kGFUnk22				= 22,
+	kGFUnk23				= 23,
+	kGFUnk24				= 24,
+	kGFUnk25				= 25,
+	kGFPlatypusTalkingToAssistant = 26,
+	kGFUnk27				= 27,
+	kGFUnk28				= 28,
+	kGFGasTaken				= 29,
+	kGFUnk30				= 30,
+	kGFUnk31				= 31
 };
 
 /*

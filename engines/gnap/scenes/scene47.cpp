@@ -130,7 +130,7 @@ void GnapEngine::scene47_initCutscene7() {
 	_s99_sequenceIdArr[2] = 0x314;
 	_s99_sequenceIdArr[3] = 0x31B;
 	int v1 = 4;
-	if (!isFlag(3)) {
+	if (!isFlag(kGFTwigTaken)) {
 		_s99_sequenceIdArr[4] = 0x31C;
 		v1 = 5;
 	}
@@ -144,7 +144,7 @@ void GnapEngine::scene47_initCutscene7() {
 	_s99_sequenceIdArr[v0++] = 0x312;
 	_s99_sequenceIdArr[v0] = 0x31A;
 	v2 = v0 + 1;
-	if (!isFlag(3))
+	if (!isFlag(kGFTwigTaken))
 		_s99_sequenceIdArr[v2++] = 0x31C;
 	if (!isFlag(26))
 		_s99_sequenceIdArr[v2++] = 0x31D;

@@ -72,7 +72,7 @@ void GnapEngine::scene17_updateHotspots() {
 	setHotspot(kHSWalkArea2, 541, 0, 800, 600);
 	setHotspot(kHSWalkArea3, 0, 204, 173, 468);
 	setDeviceHotspot(kHSDevice, -1, -1, -1, -1);
-	if (isFlag(6))
+	if (isFlag(kGFGrassTaken))
 		_hotspots[kHSWrench]._flags = SF_NONE;
 	if (isFlag(26)) {
 		_hotspots[kHSDevice]._flags = SF_DISABLED;
@@ -150,7 +150,7 @@ void GnapEngine::scene17_run() {
 
 	queueInsertDeviceIcon();
 
-	if (isFlag(6))
+	if (isFlag(kGFGrassTaken))
 		_s17_currWrenchSequenceId = 0x22D;
 	else
 		_s17_currWrenchSequenceId = 0x22F;
@@ -163,7 +163,7 @@ void GnapEngine::scene17_run() {
 	_gameSys->setAnimation(_s17_currWrenchSequenceId, 40, 2);
 	_gameSys->insertSequence(_s17_currWrenchSequenceId, 40, 0, 0, kSeqNone, 0, 0, 0);
 
-	if (isFlag(6)) {
+	if (isFlag(kGFGrassTaken)) {
 		_gameSys->setAnimation(0, 0, 3);
 	} else {
 		_gameSys->setAnimation(_s17_currCarWindowSequenceId, 40, 3);
@@ -296,7 +296,7 @@ void GnapEngine::scene17_run() {
 		case kHSPlatypus:
 			if (_gnapActionStatus < 0) {
 				if (_grabCursorSpriteIndex == kItemJoint) {
-					if (isFlag(6)) {
+					if (isFlag(kGFGrassTaken)) {
 						gnapUseJointOnPlatypus();
 					} else {
 						gnapUseDeviceOnBeaver();
@@ -330,7 +330,7 @@ void GnapEngine::scene17_run() {
 
 		case kHSWrench:
 			if (_gnapActionStatus < 0) {
-				if (isFlag(6)) {
+				if (isFlag(kGFGrassTaken)) {
 					playGnapImpossible(0, 0);
 				} else if (_grabCursorSpriteIndex >= 0) {
 					playGnapShowCurrItem(_hotspotsWalkPos[_sceneClickedHotspot].x, _hotspotsWalkPos[_sceneClickedHotspot].y, 8, 7);
@@ -515,7 +515,7 @@ void GnapEngine::scene17_run() {
 			}
 			if (_beaverActionStatus < 0 && !_timers[5]) {
 				_timers[5] = getRandom(30) + 80;
-				if (isFlag(6) && _s17_nextWrenchSequenceId == -1) {
+				if (isFlag(kGFGrassTaken) && _s17_nextWrenchSequenceId == -1) {
 					_s17_nextWrenchSequenceId = 0x236;
 				} else if (_s17_canTryGetWrench) {
 					switch (getRandom(6)) {
@@ -565,7 +565,7 @@ void GnapEngine::scene17_run() {
 			}
 			if (!_timers[6]) {
 				_timers[6] = getRandom(30) + 200;
-				if (_s17_nextCarWindowSequenceId == -1 && !isFlag(6))
+				if (_s17_nextCarWindowSequenceId == -1 && !isFlag(kGFGrassTaken))
 					_s17_nextCarWindowSequenceId = 0x246;
 			}
 			playSoundA();
@@ -832,7 +832,7 @@ void GnapEngine::scene17_updateAnimations() {
 			_s17_nextCarWindowSequenceId = -1;
 			_s17_currWrenchSequenceId = 0x22D;
 			_s17_nextWrenchSequenceId = -1;
-			setFlag(6);
+			setFlag(kGFGrassTaken);
 			_gnapActionStatus = -1;
 			_beaverActionStatus = 2;
 			scene17_updateHotspots();

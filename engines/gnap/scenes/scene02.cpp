@@ -78,7 +78,7 @@ void GnapEngine::scene02_updateHotspots() {
 	setHotspot(kHSWalkArea3, 0, 0, 386, 445);
 	setHotspot(kHSWalkArea4, 386, 0, 509, 410);
 	setDeviceHotspot(kHSDevice, -1, -1, -1, -1);
-	if (isFlag(0))
+	if (isFlag(kGFPlatypus))
 		_hotspots[kHSPlatypus]._flags = SF_WALKABLE | SF_TALK_CURSOR | SF_GRAB_CURSOR | SF_LOOK_CURSOR;
 	_hotspotsCount = 14;
 }
@@ -100,20 +100,20 @@ void GnapEngine::scene02_run() {
 	switch (_prevSceneNum) {
 	case 3:
 		initGnapPos(11, 6, kDirBottomLeft);
-		if (isFlag(0))
+		if (isFlag(kGFPlatypus))
 			initBeaverPos(12, 6, kDirUnk4);
 		endSceneInit();
-		if (isFlag(0))
+		if (isFlag(kGFPlatypus))
 			platypusWalkTo(9, 6, -1, 0x107C2, 1);
 		gnapWalkTo(8, 6, -1, 0x107BA, 1);
 		break;
 	case 4:
 		initGnapPos(_hotspotsWalkPos[6].x, _hotspotsWalkPos[6].y, kDirBottomLeft);
-		if (isFlag(0))
+		if (isFlag(kGFPlatypus))
 			initBeaverPos(_hotspotsWalkPos[6].x + 1, _hotspotsWalkPos[6].y, kDirUnk4);
 		endSceneInit();
 		gnapWalkTo(7, 6, 0, 0x107B9, 1);
-		if (isFlag(0))
+		if (isFlag(kGFPlatypus))
 			platypusWalkTo(8, 6, 1, 0x107C2, 1);
 		scene02_updateHotspots();
 		_gameSys->waitForUpdate();
@@ -126,16 +126,16 @@ void GnapEngine::scene02_run() {
 		break;
 	case 49:
 		initGnapPos(5, 6, kDirBottomRight);
-		if (isFlag(0))
+		if (isFlag(kGFPlatypus))
 			initBeaverPos(6, 7, kDirNone);
 		endSceneInit();
 		break;
 	default:
 		initGnapPos(-1, 6, kDirBottomRight);
-		if (isFlag(0))
+		if (isFlag(kGFPlatypus))
 			initBeaverPos(-1, 7, kDirNone);
 		endSceneInit();
-		if (isFlag(0))
+		if (isFlag(kGFPlatypus))
 			platypusWalkTo(2, 7, -1, 0x107C2, 1);
 		gnapWalkTo(2, 8, -1, 0x107B9, 1);
 		break;
@@ -162,7 +162,7 @@ void GnapEngine::scene02_run() {
 			break;
 
 		case kHSPlatypus:
-			if (_gnapActionStatus < 0 && isFlag(0)) {
+			if (_gnapActionStatus < 0 && isFlag(kGFPlatypus)) {
 				if (_grabCursorSpriteIndex == kItemDisguise) {
 					gnapUseDisguiseOnPlatypus();
 				} else if (_grabCursorSpriteIndex >= 0) {
@@ -170,7 +170,7 @@ void GnapEngine::scene02_run() {
 				} else {
 					switch (_verbCursor) {
 					case LOOK_CURSOR:
-						if (isFlag(5))
+						if (isFlag(kGFKeysTaken))
 							playGnapMoan1(_platX, _platY);
 						else
 							playGnapScratchingHead(_platX, _platY);
@@ -299,7 +299,7 @@ void GnapEngine::scene02_run() {
 				_isLeavingScene = 1;
 				gnapWalkTo(_hotspotsWalkPos[6].x, _hotspotsWalkPos[6].y, 0, 0x107AD, 1);
 				_gnapActionStatus = kASLeaveScene;
-				if (isFlag(0))
+				if (isFlag(kGFPlatypus))
 					platypusWalkTo(_hotspotsWalkPos[6].x + 1, _hotspotsWalkPos[6].y, -1, 0x107C1, 1);
 				scene02_updateHotspots();
 				_newSceneNum = 4;
@@ -311,7 +311,7 @@ void GnapEngine::scene02_run() {
 				_isLeavingScene = 1;
 				gnapWalkTo(_hotspotsWalkPos[7].x, _hotspotsWalkPos[7].y, 0, 0x107AD, 1);
 				_gnapActionStatus = kASLeaveScene;
-				if (isFlag(0))
+				if (isFlag(kGFPlatypus))
 					platypusWalkTo(_hotspotsWalkPos[7].x + 1, _hotspotsWalkPos[7].y, -1, 0x107C1, 1);
 				scene02_updateHotspots();
 				_newSceneNum = 5;
@@ -323,7 +323,7 @@ void GnapEngine::scene02_run() {
 				_isLeavingScene = 1;
 				gnapWalkTo(_hotspotsWalkPos[8].x, _hotspotsWalkPos[8].y, 0, 0x107AB, 1);
 				_gnapActionStatus = kASLeaveScene;
-				if (isFlag(0))
+				if (isFlag(kGFPlatypus))
 					platypusWalkTo(_hotspotsWalkPos[8].x, _hotspotsWalkPos[8].y, -1, 0x107CD, 1);
 				_newSceneNum = 3;
 			}
@@ -334,7 +334,7 @@ void GnapEngine::scene02_run() {
 				_isLeavingScene = 1;
 				gnapWalkTo(_hotspotsWalkPos[9].x, _hotspotsWalkPos[9].y, 0, 0x107AF, 1);
 				_gnapActionStatus = kASLeaveScene;
-				if (isFlag(0))
+				if (isFlag(kGFPlatypus))
 					platypusWalkTo(_hotspotsWalkPos[9].x, _hotspotsWalkPos[9].y, -1, 0x107CF, 1);
 				_newSceneNum = 1;
 			}
@@ -363,7 +363,7 @@ void GnapEngine::scene02_run() {
 			playSound(0x1091C, 1);
 	
 		if (!_isLeavingScene) {
-			if (_beaverActionStatus < 0 && isFlag(0))
+			if (_beaverActionStatus < 0 && isFlag(kGFPlatypus))
 				updateBeaverIdleSequence();
 			if (_gnapActionStatus < 0)
 				updateGnapIdleSequence();

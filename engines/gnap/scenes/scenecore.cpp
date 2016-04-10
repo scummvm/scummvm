@@ -599,8 +599,8 @@ void GnapEngine::runSceneLogic() {
 		} else if (_prevSceneNum == 21) {
 			scene47_initCutscene5();
 			_newSceneNum = 21;
-			setFlag(3);
-			setFlag(5);
+			setFlag(kGFTwigTaken);
+			setFlag(kGFKeysTaken);
 		} else if (_prevSceneNum == 30) {
 			scene47_initCutscene6();
 			_newSceneNum = 26;

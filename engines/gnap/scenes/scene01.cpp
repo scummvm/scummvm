@@ -73,9 +73,9 @@ void GnapEngine::scene01_updateHotspots() {
 	setHotspot(kHSWalkArea7, 0, 0, 520, 351);
 	setHotspot(kHSWalkArea8, 0, 546, 300, 600);
 	setDeviceHotspot(kHSDevice, -1, -1, -1, -1);
-    if (isFlag(0))
+    if (isFlag(kGFPlatypus))
 		_hotspots[kHSPlatypus]._flags = SF_WALKABLE | SF_TALK_CURSOR | SF_GRAB_CURSOR | SF_LOOK_CURSOR;
-    if (isFlag(1))
+    if (isFlag(kGFMudTaken))
 		_hotspots[kHSMud]._flags = SF_WALKABLE | SF_DISABLED;
 	_hotspotsCount = 14;
 }
@@ -95,22 +95,22 @@ void GnapEngine::scene01_run() {
 
 	_timers[4] = getRandom(100) + 300;
 
-	if (!isFlag(1))
+	if (!isFlag(kGFMudTaken))
 		_gameSys->insertSequence(129, 40, 0, 0, kSeqNone, 0, 0, 0);
 
 	queueInsertDeviceIcon();
 
 	if (_prevSceneNum == 2) {
 		initGnapPos(11, 6, kDirBottomLeft);
-		if (isFlag(0))
+		if (isFlag(kGFPlatypus))
 			initBeaverPos(12, 6, kDirUnk4);
 		endSceneInit();
-		if (isFlag(0))
+		if (isFlag(kGFPlatypus))
 			platypusWalkTo(9, 6, -1, 0x107C2, 1);
 		gnapWalkTo(8, 6, -1, 0x107B9, 1);
 	} else {
 		initGnapPos(1, 6, kDirBottomRight);
-		if (isFlag(0))
+		if (isFlag(kGFPlatypus))
 			initBeaverPos(1, 7, kDirNone);
 		endSceneInit();
 	}
@@ -134,7 +134,7 @@ void GnapEngine::scene01_run() {
 			break;
 
 		case kHSPlatypus:
-			if (_gnapActionStatus < 0 && isFlag(0)) {
+			if (_gnapActionStatus < 0 && isFlag(kGFPlatypus)) {
 				if (_grabCursorSpriteIndex == kItemDisguise) {
 					gnapUseDisguiseOnPlatypus();
 				} else if (_grabCursorSpriteIndex >= 0) {
@@ -142,7 +142,7 @@ void GnapEngine::scene01_run() {
 				} else {
 					switch (_verbCursor) {
 					case LOOK_CURSOR:
-						if (isFlag(5))
+						if (isFlag(kGFKeysTaken))
 							playGnapMoan1(_platX, _platY);
 						else
 							playGnapScratchingHead(_platX, _platY);
@@ -239,7 +239,7 @@ void GnapEngine::scene01_run() {
 				_isLeavingScene = true;
 				gnapWalkTo(_hotspotsWalkPos[1].x, _hotspotsWalkPos[1].y, 0, 0x107AB, 1);
 				_gnapActionStatus = kASLeaveScene;
-				if (isFlag(0))
+				if (isFlag(kGFPlatypus))
 					platypusWalkTo(_hotspotsWalkPos[1].x, _hotspotsWalkPos[1].y + 1, -1, 0x107CD, 1);
 				_newSceneNum = 2;
 			}
@@ -272,7 +272,7 @@ void GnapEngine::scene01_run() {
 			playSound(0x1091C, 1);
 
 		if (!_isLeavingScene) {
-			if (_beaverActionStatus < 0 && isFlag(0))
+			if (_beaverActionStatus < 0 && isFlag(kGFPlatypus))
 				updateBeaverIdleSequence();
 			if (_gnapActionStatus < 0)
 				updateGnapIdleSequence();
@@ -347,7 +347,7 @@ void GnapEngine::scene01_updateAnimations() {
 		_gameSys->setAnimation(0, 0, 3);
 		invAdd(kItemMud);
 		setGrabCursorSprite(kItemMud);
-		setFlag(1);
+		setFlag(kGFMudTaken);
 		scene01_updateHotspots();
 	}
 

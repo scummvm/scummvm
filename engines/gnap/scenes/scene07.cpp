@@ -53,7 +53,7 @@ void GnapEngine::scene07_updateHotspots() {
 	setHotspot(kHSWalkArea2, 325, 0, 799, 445, _isLeavingScene ? SF_WALKABLE : 0);
 	setHotspot(kHSWalkArea3, 160, 0, 325, 495);
 	setDeviceHotspot(kHSDevice, -1, -1, -1, -1);
-	if (isFlag(0))
+	if (isFlag(kGFPlatypus))
 		_hotspots[kHSDice]._flags = SF_DISABLED;
 	_hotspotsCount = 7;
 }
@@ -67,7 +67,7 @@ void GnapEngine::scene07_run() {
 	invRemove(kItemGas);
 	invRemove(kItemNeedle);
 	
-	if (!isFlag(0))
+	if (!isFlag(kGFPlatypus))
 		_gameSys->insertSequence(0x8D, 1, 0, 0, kSeqNone, 0, 0, 0);
 
 	if (_prevSceneNum == 8) {
@@ -147,7 +147,7 @@ void GnapEngine::scene07_run() {
 				case LOOK_CURSOR:
 					break;
 				case GRAB_CURSOR:
-					setFlag(0);
+					setFlag(kGFPlatypus);
 					invAdd(kItemDice);
 					scene07_updateHotspots();
 					playGnapPullOutDevice(3, 3);

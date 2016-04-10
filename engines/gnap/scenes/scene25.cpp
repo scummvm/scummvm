@@ -220,7 +220,7 @@ void GnapEngine::scene25_run() {
 		
 		case kHSExitInsideCircusWorld:
 			if (_gnapActionStatus < 0) {
-				if (isFlag(2)) {
+				if (isFlag(kGFNeedleTaken)) {
 					_isLeavingScene = true;
 					_newSceneNum = 26;
 					_hotspots[kHSWalkArea1]._flags |= SF_WALKABLE;
@@ -368,7 +368,7 @@ void GnapEngine::scene25_updateAnimations() {
 		case kASShowTicketToVendor:
 			setGrabCursorSprite(-1);
 			invRemove(kItemTickets);
-			setFlag(2);
+			setFlag(kGFNeedleTaken);
 			_gameSys->setAnimation(0x61, 40, 0);
 			_gameSys->insertSequence(0x61, 40, 0, 0, kSeqNone, 0, 0, 0);
 			_gnapActionStatus = kASShowTicketToVendorDone;
