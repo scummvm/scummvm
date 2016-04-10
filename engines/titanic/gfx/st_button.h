@@ -40,7 +40,7 @@ private:
 	int _fieldF0;
 	int _currentStatus;
 	CString _string4;
-	CString _string5;
+	CString _soundName;
 	int _buttonFrame;
 public:
 	CLASSDEF

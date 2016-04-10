@@ -192,7 +192,7 @@ public:
 	void loadFrame(int frameNumber);
 
 	void soundProximity(const CString &name, int val2, int val3, int val4);
-	void soundProximity(const CString &name, CProximity &obj6C);
+	void soundProximity(const CString &name, CProximity &prox);
 };
 
 } // End of namespace Titanic

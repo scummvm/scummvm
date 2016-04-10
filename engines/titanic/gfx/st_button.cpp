@@ -36,7 +36,7 @@ CSTButton::CSTButton() : CBackground() {
 	_fieldF0 = 0;
 	_currentStatus = 0;
 	_string4 = "NULL";
-	_string5 = "NULL";
+	_soundName = "NULL";
 	_buttonFrame = 0;
 }
 
@@ -47,7 +47,7 @@ void CSTButton::save(SimpleFile *file, int indent) const {
 	file->writeNumberLine(_fieldF0, indent);
 	file->writeNumberLine(_currentStatus, indent);
 	file->writeQuotedLine(_string4, indent);
-	file->writeQuotedLine(_string5, indent);
+	file->writeQuotedLine(_soundName, indent);
 	file->writeNumberLine(_buttonFrame, indent);
 
 	CBackground::save(file, indent);
@@ -60,7 +60,7 @@ void CSTButton::load(SimpleFile *file) {
 	_fieldF0 = file->readNumber();
 	_currentStatus = file->readNumber();
 	_string4 = file->readString();
-	_string5 = file->readString();
+	_soundName = file->readString();
 	_buttonFrame = file->readNumber() != 0;
 
 	CBackground::load(file);
@@ -68,7 +68,7 @@ void CSTButton::load(SimpleFile *file) {
 
 bool CSTButton::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
 	changeStatus(0);
-	// TODO: Obj6c stuff
+	soundProximity(_soundName, 100, 0, 0);
 
 	return true;
 }
