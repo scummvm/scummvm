@@ -360,7 +360,9 @@ void CGameObject::fn1(int val1, int val2, int val3) {
 
 	if (_surface) {
 		// TODO: Figure out where to do this legitimately
-		static_cast<OSMovie *>(_surface->_movie)->_gameObject = this;
+		OSMovie *movie = static_cast<OSMovie *>(_surface->_movie);
+		if (movie)
+			movie->_gameObject = this;
 
 		_surface->proc34(val1, val2, val3, val3 != 0);
 
@@ -370,7 +372,8 @@ void CGameObject::fn1(int val1, int val2, int val3) {
 }
 
 void CGameObject::changeStatus(int newStatus) {
-	if (_frameNumber == -1 && !_resource.empty()) {
+	_frameNumber = -1;
+	if (!_surface && !_resource.empty()) {
 		loadResource(_resource);
 		_resource.clear();
 	}
