@@ -62,6 +62,7 @@ TitanicEngine::~TitanicEngine() {
 	delete _window;
 	delete _screenManager;
 	CSaveableObject::freeClassList();
+	_activeMovies.clear();
 }
 
 void TitanicEngine::initializePath(const Common::FSNode &gamePath) {

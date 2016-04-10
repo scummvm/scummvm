@@ -30,6 +30,10 @@ namespace Titanic {
 CMovie::CMovie() : ListItem(), _state(MOVIE_STOPPED), _field10(0) {
 }
 
+CMovie::~CMovie() {
+	g_vm->_activeMovies.remove(this);
+}
+
 bool CMovie::isActive() const {
 	return g_vm->_activeMovies.contains(this);
 }
