@@ -88,8 +88,8 @@ void CInputHandler::processMessage(CMessage *msg) {
 			} else {
 				if (mouseMsg->isButtonUpMsg() && _dragItem) {
 					// Mouse drag ended
-					dragEnd(_mousePos, _dragItem);
-					CMouseDragEndMsg endMsg(_mousePos, _dragItem);
+					CTreeItem *target = dragEnd(_mousePos, _dragItem);
+					CMouseDragEndMsg endMsg(_mousePos, target);
 					endMsg.execute(_dragItem);
 				}
 
@@ -134,8 +134,36 @@ void CInputHandler::dispatchMessage(CMessage *msg) {
 	}
 }
 
-void CInputHandler::dragEnd(const Point &mousePos, CTreeItem *dragItem) {
-	warning("TODO CInputHandler::dragEnd");
+CTreeItem *CInputHandler::dragEnd(const Point &pt, CTreeItem *dragItem) {
+	CViewItem *view = _gameManager->getView();
+	if (!view)
+		return nullptr;
+
+	// Scan through the view items to find the item being dropped on
+	CTreeItem *target = nullptr;
+	for (CTreeItem *treeItem = view->scan(view); treeItem; treeItem = treeItem->scan(view)) {
+		CGameObject *gameObject = static_cast<CGameObject *>(treeItem);
+		if (gameObject && gameObject != dragItem) {
+			if (gameObject->checkPoint(pt))
+				target = gameObject;
+		}
+	}
+
+	if (target) {
+		// Check if the cursor is on the PET. If so, pass to the PET
+		// to see what specific element the drag ended on
+		CProjectItem *project = view->getRoot();		
+		if (project) {
+			CPetControl *petControl = project->getPetControl();
+			if (petControl && petControl->contains(pt)) {
+				target = petControl->dragEnd(pt);
+				if (!target)
+					target = petControl;
+			}
+		}
+	}
+
+	return target;
 }
 
-} // End of namespace Titanic z
+} // End of namespace Titanic

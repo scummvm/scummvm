@@ -46,7 +46,7 @@ private:
 	/**
 	 * Called when a drag operation has ended
 	 */
-	void dragEnd(const Point &mousePos, CTreeItem *dragItem);
+	CTreeItem *dragEnd(const Point &pt, CTreeItem *dragItem);
 public:
 	CGameManager *_gameManager;
 	CInputTranslator *_inputTranslator;

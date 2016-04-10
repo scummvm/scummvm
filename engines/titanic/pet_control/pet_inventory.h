@@ -82,6 +82,11 @@ public:
 	virtual void load(SimpleFile *file, int param);
 
 	/**
+	 * Returns item a drag-drop operation has dropped on, if any
+	 */
+	virtual CTreeItem *dragEnd(const Point &pt) const;
+
+	/**
 	 * Returns true if the object is in a valid state
 	 */
 	virtual bool isValid(CPetControl *petControl);

@@ -90,7 +90,12 @@ public:
 	virtual bool VirtualKeyCharMsg(CVirtualKeyCharMsg *msg) { return false; }
 
 	virtual int proc14() { return 0; }
-	virtual int proc15() { return 0; }
+	
+	/**
+	 * Returns item a drag-drop operation has dropped on, if any
+	 */
+	virtual CTreeItem *dragEnd(const Point &pt) const { return nullptr; }
+	
 	virtual void proc16();
 
 	/**

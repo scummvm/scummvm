@@ -182,6 +182,20 @@ public:
 	 * Draws the indent
 	 */
 	void drawIndent(CScreenManager *screenManager, int indent);
+
+	/**
+	 * Returns true if the point is within the PET's draw bounds
+	 */
+	bool contains(const Point &pt) const {
+		return _drawBounds.contains(pt);
+	}
+
+	/**
+	 * Handles drag ends within the PET
+	 */
+	CTreeItem *dragEnd(const Point &pt) const {
+		return _currentArea == PET_INVENTORY ? _inventory.dragEnd(pt) : nullptr;
+	}
 };
 
 } // End of namespace Titanic

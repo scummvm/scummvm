@@ -64,6 +64,11 @@ void CPetInventory::load(SimpleFile *file, int param) {
 	_field298 = file->readNumber();
 }
 
+CTreeItem *CPetInventory::dragEnd(const Point &pt) const {
+	warning("TODO: CPetInventory::dragEnd");
+	return nullptr;
+}
+
 bool CPetInventory::isValid(CPetControl *petControl) {
 	// TODO
 	return true;
