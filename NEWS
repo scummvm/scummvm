@@ -15,6 +15,7 @@ For a more comprehensive changelog of the latest experimental code, see:
  Drascula:
    - Fixed text alignment to be faithful to the original.
    - Fixed character walking off screen.
+   - Fixed loading savegames in the Pendulum scene.
 
  Gob:
    - Fixed lock up for some games during sound initialization.
