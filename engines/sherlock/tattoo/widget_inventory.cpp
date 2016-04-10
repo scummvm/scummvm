@@ -546,7 +546,7 @@ void WidgetInventory::drawBars() {
 		_surface.transBlitFrom(images[7], Common::Point(x - 1, INVENTORY_YSIZE + 2));
 	}
 
-	_surface.hLine(x + 2, INVENTORY_YSIZE + 2, INVENTORY_YSIZE + 8, INFO_BOTTOM);
+	_surface.vLine(x + 2, INVENTORY_YSIZE + 2, INVENTORY_YSIZE + 8, INFO_BOTTOM);
 }
 
 void WidgetInventory::drawInventory() {

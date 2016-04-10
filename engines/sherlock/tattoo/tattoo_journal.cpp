@@ -523,15 +523,15 @@ void TattooJournal::drawControls(int mode) {
 
 	if (mode != 2) {
 		// Draw the Bars separating the Journal Commands
-		int xp = r.right / 3;
+		int xp = r.left + r.width() / 3;
 		for (int idx = 0; idx < 2; ++idx) {
 			screen._backBuffer1.transBlitFrom(images[6], Common::Point(xp - 2, r.top + 1));
 			screen._backBuffer1.transBlitFrom(images[7], Common::Point(xp - 2, yp - 1));
 
-			screen._backBuffer1.hLine(xp - 1, r.top + 4, yp - 2, INFO_TOP);
-			screen._backBuffer1.hLine(xp, r.top + 4, yp - 2, INFO_MIDDLE);
-			screen._backBuffer1.hLine(xp + 1, r.top + 4, yp - 2, INFO_BOTTOM);
-			xp = r.right / 3 * 2;
+			screen._backBuffer1.vLine(xp - 1, r.top + 4, yp - 2, INFO_TOP);
+			screen._backBuffer1.vLine(xp, r.top + 4, yp - 2, INFO_MIDDLE);
+			screen._backBuffer1.vLine(xp + 1, r.top + 4, yp - 2, INFO_BOTTOM);
+			xp += r.width() / 3;
 		}
 	}
 
