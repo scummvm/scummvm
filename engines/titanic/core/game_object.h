@@ -130,6 +130,16 @@ protected:
 	void setVisible(bool val);
 	void petFn2(int val);
 	void petFn3(CTreeItem *item);
+
+	/**
+	 * Plays a sound
+	 */
+	bool playSound(const CString &name, int val2, int val3, int val4);
+
+	/**
+	 * Plays a sound
+	 */
+	bool playSound(const CString &name, CProximity &prox);
 public:
 	int _field60;
 	CursorId _cursorId;
@@ -192,9 +202,6 @@ public:
 	 * Loads a frame
 	 */
 	void loadFrame(int frameNumber);
-
-	void soundProximity(const CString &name, int val2, int val3, int val4);
-	void soundProximity(const CString &name, CProximity &prox);
 };
 
 } // End of namespace Titanic

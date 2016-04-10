@@ -29,7 +29,7 @@ namespace Titanic {
 
 class CGetLiftEye2 : public CGameObject {
 	bool EnterRoomMsg(CEnterRoomMsg *msg);
-private:
+public:
 	static CString *_v1;
 public:
 	CLASSDEF

@@ -20,8 +20,10 @@
  *
  */
 
+#include "titanic/titanic.h"
 #include "titanic/game/television.h"
 #include "titanic/pet_control/pet_control.h"
+#include "titanic/game/get_lift_eye2.h"
 
 namespace Titanic {
 
@@ -227,7 +229,34 @@ bool CTelevision::PETActivateMsg(CPETActivateMsg *msg) {
 }
 
 bool CTelevision::MovieEndMsg(CMovieEndMsg *msg) {
-	warning("TODO: CMovieEndMsg");
+	if (g_vm->getRandomNumber(6) == 0) {
+		CParrotSpeakMsg parrotMsg("Television", "");
+		parrotMsg.execute("PerchedParrot");
+	}
+
+	if (_fieldE0 == 3 && compareRoomNameTo("SGTState") && !getState8()) {
+		playSound("z#47.wav", 100, 0, 0);
+		_fieldF0 = playSound("b#20.wav", 100, 0, 0);
+		CTreeItem *magazine = getRoot()->findByName("Magazine");
+
+		if (magazine) {
+			warning("TODO: CTelevision::MovieEndMsg");
+		}
+
+		loadFrame(561);
+	} else if (_fieldE0 == 2) {
+		loadFrame(_v1);
+	} else if (_fieldE0 == 4 && _v5) {
+		if (_turnOn)
+			loadFrame(502);
+		else
+			warning("There is currently nothing available for your viewing pleasure on this channel.");
+	} else if (_fieldE0 == 5 && *CGetLiftEye2::_v1 != "NULL") {
+		loadFrame(393 + _v4);
+	} else {
+		warning("There is currently nothing available for your viewing pleasure on this channel.");
+	}
+
 	return true;
 }
 

@@ -122,6 +122,11 @@ public:
 	uint32 getFeatures() const;
 	bool isDemo() const;
 	Common::Language getLanguage() const;
+
+	/**
+	 * Gets a random number
+	 */
+	uint getRandomNumber(uint max) { return _randomSource.getRandomNumber(max); }
 };
 
 extern TitanicEngine *g_vm;
