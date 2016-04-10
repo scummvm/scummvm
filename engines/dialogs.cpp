@@ -43,13 +43,13 @@
 #include "engines/engine.h"
 #include "engines/metaengine.h"
 
-#ifdef SMALL_SCREEN_DEVICE
+#ifdef GUI_ENABLE_KEYSDIALOG
 #include "gui/KeysDialog.h"
 #endif
 
 class ConfigDialog : public GUI::OptionsDialog {
 protected:
-#ifdef SMALL_SCREEN_DEVICE
+#ifdef GUI_ENABLE_KEYSDIALOG
 	GUI::Dialog		*_keysDialog;
 #endif
 
@@ -307,14 +307,14 @@ ConfigDialog::ConfigDialog(bool subtitleControls)
 	new GUI::ButtonWidget(this, "GlobalConfig.Ok", _("~O~K"), 0, GUI::kOKCmd);
 	new GUI::ButtonWidget(this, "GlobalConfig.Cancel", _("~C~ancel"), 0, GUI::kCloseCmd);
 
-#ifdef SMALL_SCREEN_DEVICE
+#ifdef GUI_ENABLE_KEYSDIALOG
 	new GUI::ButtonWidget(this, "GlobalConfig.Keys", _("~K~eys"), 0, kKeysCmd);
 	_keysDialog = NULL;
 #endif
 }
 
 ConfigDialog::~ConfigDialog() {
-#ifdef SMALL_SCREEN_DEVICE
+#ifdef GUI_ENABLE_KEYSDIALOG
 	delete _keysDialog;
 #endif
 }
@@ -323,7 +323,7 @@ void ConfigDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 
 	switch (cmd) {
 	case kKeysCmd:
 
-#ifdef SMALL_SCREEN_DEVICE
+#ifdef GUI_ENABLE_KEYSDIALOG
 	//
 	// Create the sub dialog(s)
 	//

@@ -52,7 +52,7 @@
 #include "scumm/help.h"
 #endif
 
-#ifdef SMALL_SCREEN_DEVICE
+#ifdef GUI_ENABLE_KEYSDIALOG
 #include "gui/KeysDialog.h"
 #endif
 
