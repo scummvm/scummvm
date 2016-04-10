@@ -1055,15 +1055,15 @@ msgstr "Мова графічного інтерфейсу ScummVM"
 
 #: gui/options.cpp:1235
 msgid "Update check:"
-msgstr ""
+msgstr "Перевіряти оновлення:"
 
 #: gui/options.cpp:1235
 msgid "How often to check ScummVM updates"
-msgstr ""
+msgstr "Як часто перевіряти оновлення ScummVM"
 
 #: gui/options.cpp:1247
 msgid "Check now"
-msgstr ""
+msgstr "Перевірити зараз"
 
 #: gui/options.cpp:1382
 msgid "You have to restart ScummVM before your changes will take effect."
@@ -1265,19 +1265,22 @@ msgid ""
 "\n"
 "Would you like to enable this feature?"
 msgstr ""
+"ScummVM став підтримувати автоматичну перевірку\n"
+"оновлень, що потребує досупу до Інтернету.\n"
+"\n"
+"Чи хотіли б ви включити таку перевірку?"
 
 #: gui/updates-dialog.cpp:55
 msgid "(You can always enable it in the options dialog on the Misc tab)"
-msgstr ""
+msgstr "(Ви завжди можете включити її у Налаштуваннях на закладці Інше)"
 
 #: gui/updates-dialog.cpp:92
-#, fuzzy
 msgid "Check for updates automatically"
-msgstr "Перевірити оновлення..."
+msgstr "Автоматычно перевіряти оновлення"
 
 #: gui/updates-dialog.cpp:111
 msgid "Proceed"
-msgstr ""
+msgstr "Продовжити"
 
 #: gui/widget.cpp:327 gui/widget.cpp:329 gui/widget.cpp:335 gui/widget.cpp:337
 msgid "Clear value"
@@ -1408,20 +1411,19 @@ msgstr "Hercules бурштинний"
 
 #: common/updates.cpp:58
 msgid "Daily"
-msgstr ""
+msgstr "Щоденно"
 
 #: common/updates.cpp:60
 msgid "Weekly"
-msgstr ""
+msgstr "Щотижня"
 
 #: common/updates.cpp:62
 msgid "Monthly"
-msgstr ""
+msgstr "Щомісяця"
 
 #: common/updates.cpp:64
-#, fuzzy
 msgid "<Bad value>"
-msgstr "Очистити значення"
+msgstr "<Невірне значення>"
 
 #: engines/advancedDetector.cpp:334
 #, c-format
@@ -2710,11 +2712,11 @@ msgstr ""
 
 #: engines/mohawk/detection.cpp:168
 msgid "Play the Myst fly by movie"
-msgstr ""
+msgstr "Показувати ролік польоту над Myst"
 
 #: engines/mohawk/detection.cpp:169
 msgid "The Myst fly by movie was not played by the original engine."
-msgstr ""
+msgstr "Ролік польоту над Myst не показувався оригінальним движком"
 
 #. I18N: Option for fast scene switching
 #: engines/mohawk/dialogs.cpp:96 engines/mohawk/dialogs.cpp:239
@@ -2926,13 +2928,12 @@ msgstr ""
 "золотих"
 
 #: engines/scumm/detection.cpp:1335
-#, fuzzy
 msgid "Show Object Line"
-msgstr "Показувати мітки об'єктів"
+msgstr "Показувати лінії об'єктів"
 
 #: engines/scumm/detection.cpp:1336
 msgid "Show the names of objects at the bottom of the screen"
-msgstr ""
+msgstr "Показувати назви об'єктив внизу екрану"
 
 #: engines/scumm/dialogs.cpp:176
 #, c-format
