@@ -573,6 +573,12 @@ Common::Error AdlEngine::run() {
 		}
 
 		doAllCommands(_globalCommands, verb, noun);
+
+		if (_isRestarting) {
+			_isRestarting = false;
+			continue;
+		}
+
 		advanceClock();
 		_state.moves++;
 	}
@@ -1197,8 +1203,12 @@ void AdlEngine::doAllCommands(const Commands &commands, byte verb, byte noun) {
 
 	for (cmd = commands.begin(); cmd != commands.end(); ++cmd) {
 		ScriptEnv env(*cmd, _state.room, verb, noun);
-		if (matchCommand(env))
+		if (matchCommand(env)) {
 			doActions(env);
+			// The original long jumps on restart, so we need to abort here
+			if (_isRestarting)
+				return;
+		}
 	}
 }
 
