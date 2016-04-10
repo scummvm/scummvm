@@ -328,5 +328,12 @@ void Location::registerCharacterItem(int32 character, ItemVisual *item) {
 void Location::printData() {
 }
 
+void Location::resetAnimationBlending() {
+	Common::Array<ModelItem *> items = listChildren<ModelItem>(Item::kItemModel);
+	for (uint i = 0; i < items.size(); i++) {
+		items[i]->resetAnimationBlending();
+	}
+}
+
 } // End of namespace Resources
 } // End of namespace Stark

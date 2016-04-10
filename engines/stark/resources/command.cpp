@@ -834,6 +834,12 @@ Command *Command::opLocationScrollSet(const ResourceReference &scrollRef) {
 Command *Command::opPlayFullMotionVideo(Script *script, const ResourceReference &movieRef, int32 unknown) {
 	FMV *movie =  movieRef.resolve<FMV>();
 	warning("(TODO: Implement) opPlayFullMotionVideo(%s) : %s - %d", movie->getName().c_str(), movieRef.describe().c_str(), unknown);
+
+	// Characters don't need to continue their previous action after the FMV ends
+	Current *current = StarkGlobal->getCurrent();
+	Location *location = current->getLocation();
+	location->resetAnimationBlending();
+
 	StarkUserInterface->requestFMVPlayback(movie->getFilename());
 
 	// Unconditional suspension

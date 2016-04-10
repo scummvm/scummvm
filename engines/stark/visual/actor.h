@@ -53,10 +53,12 @@ public:
 	virtual ~VisualActor();
 
 	void setModel(Model *model);
+	void setTexture(Gfx::TextureSet *texture);
+
 	void setAnimHandler(AnimHandler *animHandler);
 	void setAnim(SkeletonAnim *anim);
-	void setTexture(Gfx::TextureSet *texture);
 	void setTime(uint32 time);
+	void resetBlending();
 
 	bool intersectRay(const Math::Ray &ray, const Math::Vector3d position, float direction);
 	virtual void render(const Math::Vector3d position, float direction, const Common::Array<Gfx::LightEntry *> &lights) = 0;

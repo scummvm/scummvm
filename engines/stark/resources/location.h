@@ -112,6 +112,9 @@ public:
 	/** Register an item as a character to the location */
 	void registerCharacterItem(int32 character, ItemVisual *item);
 
+	/** Reset animation blending for all the items in the location */
+	void resetAnimationBlending();
+
 protected:
 	void printData() override;
 

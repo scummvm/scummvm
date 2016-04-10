@@ -28,9 +28,15 @@
 namespace Stark {
 
 AnimHandler::AnimHandler() :
-		_anim(nullptr),
 		_model(nullptr),
-		_lastTime(-1) {
+		_anim(nullptr),
+		_animTime(-1),
+		_previousAnim(nullptr),
+		_previousAnimTime(-1),
+		_blendAnim(nullptr),
+		_blendAnimTime(-1),
+		_blendTimeRemaining(0)
+		{
 
 }
 
@@ -38,7 +44,23 @@ AnimHandler::~AnimHandler() {
 }
 
 void AnimHandler::setAnim(SkeletonAnim *anim) {
+	if (_anim == anim) {
+		return;
+	}
+
+	if (_previousAnim) {
+		if (_previousAnim != anim) {
+			// Start blending the new animation up with the previous one
+			startBlending();
+		} else {
+			// The previous animation is the same as the one last used for rendering
+			// Stop blending in case it was started by another anim change since the last frame
+			stopBlending();
+		}
+	}
+
 	_anim = anim;
+	_animTime = 0;
 }
 
 void AnimHandler::setModel(Model *model) {
@@ -48,7 +70,20 @@ void AnimHandler::setModel(Model *model) {
 void AnimHandler::setNode(uint32 time, BoneNode *bone, const BoneNode *parent) {
 	const Common::Array<BoneNode *> &bones = _model->getBones();
 
-	_anim->getCoordForBone(time, bone->_idx, bone->_animPos, bone->_animRot);
+	if (_blendTimeRemaining <= 0) {
+		_anim->getCoordForBone(time, bone->_idx, bone->_animPos, bone->_animRot);
+	} else {
+		// Blend the coordinates of the previous and the current animation
+		Math::Vector3d previousAnimPos, animPos;
+		Math::Quaternion previousAnimRot, animRot;
+		_blendAnim->getCoordForBone(_blendAnimTime, bone->_idx, previousAnimPos, previousAnimRot);
+		_anim->getCoordForBone(time, bone->_idx, animPos, animRot);
+
+		float blendingRatio = 1.0 - _blendTimeRemaining / (float)_blendDuration;
+
+		bone->_animPos = previousAnimPos + (animPos - previousAnimPos) * blendingRatio;
+		bone->_animRot = previousAnimRot.slerpQuat(animRot, blendingRatio);
+	}
 
 	if (parent) {
 		parent->_animRot.transform(bone->_animPos);
@@ -63,17 +98,59 @@ void AnimHandler::setNode(uint32 time, BoneNode *bone, const BoneNode *parent) {
 }
 
 void AnimHandler::animate(uint32 time) {
-	const Common::Array<BoneNode *> &bones = _model->getBones();
+	int32 deltaTime = time - _animTime;
+	if (deltaTime < 0 || time > _blendDuration / 2) {
+		deltaTime = 33;
+	}
+
+	// Store the last anim that was actually used for rendering
+	_previousAnim = _anim;
+	_previousAnimTime = time;
+
+	updateBlending(deltaTime);
 
 	// Start at root bone
 	// For each child
 	//  - Set childs animation coordinate
 	//  - Process that childs children
 
-	if (time != _lastTime) {
+	const Common::Array<BoneNode *> &bones = _model->getBones();
+	if (deltaTime >= 0) {
 		setNode(time, bones[0], nullptr);
-		_lastTime = time;
+		_animTime = time;
 	}
+}
+
+void AnimHandler::startBlending() {
+	_blendTimeRemaining = _blendDuration;
+	_blendAnim = _previousAnim;
+	_blendAnimTime = _previousAnimTime;
+}
+
+void AnimHandler::updateBlending(int32 deltaTime) {
+	_blendTimeRemaining -= deltaTime;
+	if (_blendTimeRemaining > 0) {
+		// If we are blending, also update the previous animation's time
+		_blendAnimTime += deltaTime;
+		if (_blendAnimTime >= (int32) _blendAnim->getLength()) {
+			_blendAnimTime = _blendAnim->getLength() - 1;
+		}
+	} else {
+		// Otherwise make sure blending is not enabled
+		stopBlending();
+	}
+}
+
+void AnimHandler::stopBlending() {
+	_blendAnim = nullptr;
+	_blendAnimTime = -1;
+	_blendTimeRemaining = 0;
+}
+
+void AnimHandler::resetBlending() {
+	stopBlending();
+	_previousAnim = nullptr;
+	_previousAnimTime = -1;
 }
 
 } // End of namespace Stark

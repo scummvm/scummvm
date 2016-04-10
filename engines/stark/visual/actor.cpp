@@ -93,4 +93,10 @@ bool VisualActor::intersectRay(const Math::Ray &ray, const Math::Vector3d positi
 	return _model->intersectRay(localRay);
 }
 
+void VisualActor::resetBlending() {
+	if (_animHandler) {
+		_animHandler->resetBlending();
+	}
+}
+
 } // End of namespace Stark

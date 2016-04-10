@@ -248,6 +248,7 @@ public:
 	void onPostRead() override;
 	void onAllLoaded() override;
 	void onGameLoop() override;
+	void onExitLocation() override;
 	void onPreDestroy() override;
 
 	// Anim API

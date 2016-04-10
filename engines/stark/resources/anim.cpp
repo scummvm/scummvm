@@ -490,6 +490,12 @@ void AnimSkeleton::onGameLoop() {
 	}
 }
 
+void AnimSkeleton::onExitLocation() {
+	Anim::onExitLocation();
+
+	_visual->resetBlending();
+}
+
 void AnimSkeleton::onPreDestroy() {
 	if (_actionItem) {
 		_actionItem->resetActionAnim();

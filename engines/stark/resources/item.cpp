@@ -25,6 +25,7 @@
 #include "engines/stark/formats/xrc.h"
 #include "engines/stark/gfx/renderentry.h"
 #include "engines/stark/movement/movement.h"
+#include "engines/stark/visual/actor.h"
 
 #include "engines/stark/resources/anim.h"
 #include "engines/stark/resources/animhierarchy.h"
@@ -956,6 +957,14 @@ void ModelItem::printData() {
 	FloorPositionedItem::printData();
 
 	debug("reference: %s", _reference.describe().c_str());
+}
+
+void ModelItem::resetAnimationBlending() {
+	Anim *anim = getAnim();
+	VisualActor *visual = anim->getVisual()->get<VisualActor>();
+	if (visual) {
+		visual->resetBlending();
+	}
 }
 
 void ItemTemplate::onEnterLocation() {

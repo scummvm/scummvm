@@ -433,6 +433,9 @@ public:
 	/** Update the item's animation after a texture / mesh change */
 	void updateAnim();
 
+	/** Reset animation blending */
+	void resetAnimationBlending();
+
 protected:
 	void printData() override;
 
