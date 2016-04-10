@@ -129,7 +129,7 @@ void GnapEngine::scene17_run() {
 	_timers[6] = getRandom(30) + 200;
 	_timers[7] = getRandom(100) + 100;
 
-	if (isFlag(9)) {
+	if (isFlag(kGFTruckKeysUsed)) {
 		_gameSys->insertSequence(0x25F, 20, 0, 0, kSeqNone, 0, 0, 0);
 	} else {
 		if (_s18_garbageCanPos >= 8) {
@@ -157,7 +157,7 @@ void GnapEngine::scene17_run() {
 
 	_s17_currCarWindowSequenceId = 0x244;
 
-	if (isFlag(14))
+	if (isFlag(kGFUnk14))
 		_gameSys->insertSequence(0x261, 1, 0, 0, kSeqNone, 0, 0, 0);
 
 	_gameSys->setAnimation(_s17_currWrenchSequenceId, 40, 2);

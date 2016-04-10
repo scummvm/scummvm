@@ -839,7 +839,7 @@ void GnapEngine::initScene() {
 		_gameSys->drawBitmap(backgroundId);
 	}
 
-	if ((_cursorValue == 4 && isFlag(12)) || _currentSceneNum == 41)
+	if ((_cursorValue == 4 && isFlag(kGFGnapControlsToyUFO)) || _currentSceneNum == 41)
 		playSound(makeRid(1, 0x8F6), true);
 
 }
@@ -1887,7 +1887,7 @@ void GnapEngine::gnapUseDisguiseOnPlatypus() {
 	_newSceneNum = 47;
 	_isLeavingScene = true;
 	_sceneDone = true;
-	setFlag(10);
+	setFlag(kGFPlatyPussDisguised);
 }
 
 // CHECKME: The 3 parameters are always 0
@@ -2195,7 +2195,7 @@ int GnapEngine::toyUfoGetSequenceId() {
 }
 
 bool GnapEngine::toyUfoCheckTimer() {
-	if (!isFlag(12) || isFlag(18) || _timers[9] ||
+	if (!isFlag(kGFGnapControlsToyUFO) || isFlag(18) || _timers[9] ||
 		_toyUfoSequenceId == 0x870 || _toyUfoSequenceId == 0x871 || _toyUfoSequenceId == 0x872 || _toyUfoSequenceId == 0x873)
 		return false;
 	_sceneDone = true;

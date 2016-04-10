@@ -53,9 +53,9 @@ int GnapEngine::scene06_init() {
 	_gameSys->setAnimation(0, 0, 0);
 	_gameSys->setAnimation(0, 0, 1);
 	_gameSys->setAnimation(0, 0, 2);
-	if (isFlag(11)) {
+	if (isFlag(kGFSceneFlag1)) {
 		playSound(0x11B, 0);
-		clearFlag(11);
+		clearFlag(kGFSceneFlag1);
 	}
 	return 0x101;
 }

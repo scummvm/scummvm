@@ -219,8 +219,8 @@ void GnapEngine::scene20_run() {
 	
 	queueInsertDeviceIcon();
 	
-	if (isFlag(11)) {
-		clearFlag(11);
+	if (isFlag(kGFSceneFlag1)) {
+		clearFlag(kGFSceneFlag1);
 		endSceneInit();
 		_gameSys->setAnimation(0x182, 140, 0);
 		_gameSys->insertSequence(0x182, 140, 0, 0, kSeqNone, 0, 0, 0);

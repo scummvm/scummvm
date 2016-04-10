@@ -60,7 +60,7 @@ enum {
 
 int GnapEngine::scene02_init() {
 	_gameSys->setAnimation(0, 0, 0);
-	return isFlag(9) ? 0x15A : 0x15B;
+	return isFlag(kGFTruckKeysUsed) ? 0x15A : 0x15B;
 }
 
 void GnapEngine::scene02_updateHotspots() {
@@ -231,7 +231,7 @@ void GnapEngine::scene02_run() {
 					if (gnapWalkTo(_hotspotsWalkPos[3].x, _hotspotsWalkPos[3].y, 0, getGnapSequenceId(gskIdle, 2, 2) | 0x10000, 1)) {
 						setGrabCursorSprite(-1);
 						invRemove(kItemKeys);
-						if (isFlag(8))
+						if (isFlag(kGFTruckFilledWithGas))
 							_gnapActionStatus = kASUseTruckGas;
 						else
 							_gnapActionStatus = kASUseTruckNoGas;
@@ -249,9 +249,9 @@ void GnapEngine::scene02_run() {
 						playGnapScratchingHead(2, 2);
 						break;
 					case GRAB_CURSOR:
-						if (isFlag(9)) {
+						if (isFlag(kGFTruckKeysUsed)) {
 							if (gnapWalkTo(_hotspotsWalkPos[3].x, _hotspotsWalkPos[3].y, 0, getGnapSequenceId(gskIdle, 2, 2) | 0x10000, 1)) {
-								if (isFlag(8))
+								if (isFlag(kGFTruckFilledWithGas))
 									_gnapActionStatus = kASUseTruckGas;
 								else
 									_gnapActionStatus = kASUseTruckNoGas;
@@ -419,7 +419,7 @@ void GnapEngine::scene02_updateAnimations() {
 			_gnapSequenceDatNum = 0;
 			invRemove(kItemGas);
 			setGrabCursorSprite(-1);
-			setFlag(8);
+			setFlag(kGFTruckFilledWithGas);
 			_gnapActionStatus = kASUseGasWithTruckDone;
 			break;
 		case kASUseTruckGas:
@@ -427,10 +427,10 @@ void GnapEngine::scene02_updateAnimations() {
 			_timers[4] = 9999;
 			hideCursor();
 			setGrabCursorSprite(-1);
-			if (!isFlag(9)) {
+			if (!isFlag(kGFTruckKeysUsed)) {
 				_gameSys->insertSequence(0x14F, _gnapId, makeRid(_gnapSequenceDatNum, _gnapSequenceId), _gnapId, kSeqSyncWait, 0, 0, 0);
 				_gameSys->waitForUpdate();
-				setFlag(9);
+				setFlag(kGFTruckKeysUsed);
 				_gnapSequenceId = 0x14F;
 				_gnapSequenceDatNum = 0;
 				invRemove(kItemKeys);
@@ -443,10 +443,10 @@ void GnapEngine::scene02_updateAnimations() {
 			hideCursor();
 			setGrabCursorSprite(-1);
 			_timers[4] = 250;
-			if (!isFlag(9)) {
+			if (!isFlag(kGFTruckKeysUsed)) {
 				_gameSys->insertSequence(0x14F, _gnapId, makeRid(_gnapSequenceDatNum, _gnapSequenceId), _gnapId, kSeqSyncWait, 0, 0, 0);
 				_gameSys->waitForUpdate();
-				setFlag(9);
+				setFlag(kGFTruckKeysUsed);
 				_gnapSequenceId = 0x14F;
 				_gnapSequenceDatNum = 0;
 				invRemove(kItemKeys);

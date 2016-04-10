@@ -67,7 +67,7 @@ void GnapEngine::scene30_run() {
 	if (isFlag(23))
 		_gameSys->insertSequence(0x106, 1, 0, 0, kSeqNone, 0, 0, 0);
 
-	if (!isFlag(13))
+	if (!isFlag(kGFUnk13))
 		_gameSys->insertSequence(0x107, 1, 0, 0, kSeqNone, 0, 0, 0);
 	_timers[5] = getRandom(50) + 180;
 

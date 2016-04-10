@@ -82,7 +82,7 @@ void GnapEngine::scene22_run() {
 		platypusWalkTo(9, 8, -1, 0x107C2, 1);
 	}
 	
-	if (isFlag(11)) {
+	if (isFlag(kGFSceneFlag1)) {
 		int storeDetectiveSeqId;
 		setGrabCursorSprite(-1);
 		invRemove(kItemCereals);

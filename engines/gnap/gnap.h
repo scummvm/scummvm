@@ -180,7 +180,7 @@ enum {
 	kGFPlatyPussDisguised	= 10,
 	kGFSceneFlag1			= 11,
 	kGFGnapControlsToyUFO	= 12,
-	kGFUnk13				= 13,
+	kGFUnk13				= 13, // Tongue Fight Won?
 	kGFUnk14				= 14,
 	kGFSpringTaken			= 15,
 	kGFUnk16				= 16,

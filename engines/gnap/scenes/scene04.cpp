@@ -107,7 +107,7 @@ void GnapEngine::scene04_run() {
 	
 	queueInsertDeviceIcon();
 	
-	if (isFlag(10)) {
+	if (isFlag(kGFPlatyPussDisguised)) {
 		_timers[3] = 300;
 		// TODO setCursor((LPCSTR)IDC_WAIT);
 		setGrabCursorSprite(kItemKeys);
@@ -125,7 +125,7 @@ void GnapEngine::scene04_run() {
 		invRemove(kItemDisguise);
 		invAdd(kItemKeys);
 		setFlag(kGFKeysTaken);
-		clearFlag(10);
+		clearFlag(kGFPlatyPussDisguised);
 		_beaverSequenceId = 0x20C;
 		_beaverSequenceDatNum = 0;
 		_beaverFacing = kDirBottomRight;

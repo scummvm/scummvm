@@ -61,7 +61,7 @@ void GnapEngine::scene50_playWinAnim(int tongueNum, bool fightOver) {
 			scene50_waitForAnim(6);
 			scene50_waitForAnim(5);
 			invAdd(kItemGum);
-			setFlag(13);
+			setFlag(kGFUnk13);
 		} else {
 			_gameSys->insertSequence(0xB4, 100, _s50_leftTongueSequenceId, _s50_leftTongueId, kSeqSyncWait, 0, 0, 0);
 			_gameSys->insertSequence(0xBD, 100, _s50_rightTongueSequenceId, _s50_rightTongueId, kSeqSyncWait, 0, 0, 0);

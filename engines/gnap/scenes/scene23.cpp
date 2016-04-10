@@ -139,7 +139,7 @@ void GnapEngine::scene23_run() {
 				} else {
 					switch (_verbCursor) {
 					case LOOK_CURSOR:
-						if (isFlag(11))
+						if (isFlag(kGFSceneFlag1))
 							playGnapMoan2(0, 0);
 						else {
 							gnapWalkTo(_hotspotsWalkPos[kHSCereals].x, _hotspotsWalkPos[kHSCereals].y,
@@ -148,13 +148,13 @@ void GnapEngine::scene23_run() {
 						}
 						break;
 					case GRAB_CURSOR:
-						if (isFlag(11))
+						if (isFlag(kGFSceneFlag1))
 							playGnapImpossible(0, 0);
 						else {
 							_gnapIdleFacing = kDirBottomRight;
 							gnapWalkTo(_hotspotsWalkPos[kHSCereals].x, _hotspotsWalkPos[kHSCereals].y,
 								0, getGnapSequenceId(gskIdle, 0, 0) | 0x10000, 1);
-							setFlag(11);
+							setFlag(kGFSceneFlag1);
 							_gnapActionStatus = kASGrabCereals;
 							invAdd(kItemCereals);
 						}

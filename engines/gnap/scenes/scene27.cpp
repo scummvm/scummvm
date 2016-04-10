@@ -63,7 +63,7 @@ void GnapEngine::scene27_updateHotspots() {
 	setHotspot(kHSExitClown, 340, 240, 460, 420, SF_EXIT_U_CURSOR, 6, 8);
 	setHotspot(kHSWalkArea1, 0, 0, 800, 507);
 	setDeviceHotspot(kHSDevice, -1, -1, -1, -1);
-	if (isFlag(13))
+	if (isFlag(kGFUnk13))
 		_hotspots[kHSBucket]._flags = SF_DISABLED;
 	_hotspotsCount = 9;
 }
@@ -75,7 +75,7 @@ void GnapEngine::scene27_run() {
 	_timers[7] = getRandom(100) + 300;
 	queueInsertDeviceIcon();
 
-	if (!isFlag(13))
+	if (!isFlag(kGFUnk13))
 		_gameSys->insertSequence(0xD3, 39, 0, 0, kSeqNone, 0, 0, 0);
 
 	if (_debugLevel == 4)
@@ -339,7 +339,7 @@ void GnapEngine::scene27_updateAnimations() {
 			playGnapUseDevice(0, 0);
 			_hotspots[kHSBucket]._flags = SF_DISABLED;
 			invAdd(kItemEmptyBucket);
-			setFlag(13);
+			setFlag(kGFUnk13);
 			_gameSys->setAnimation(0xD2, 39, 0);
 			_gameSys->insertSequence(0xD2, 39, 211, 39, kSeqSyncWait, 0, 0, 0);
 			_gnapActionStatus = kASGrabBucketDone;

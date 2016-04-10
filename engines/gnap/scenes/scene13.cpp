@@ -165,7 +165,7 @@ void GnapEngine::scene13_run() {
 			gnapWalkTo(2, 7, 0, 0x107C0, 1);
 			_gnapActionStatus = kASLeaveScene;
 			platypusWalkTo(2, 8, -1, -1, 1);
-			if (isFlag(14) || isFlag(15)) {
+			if (isFlag(kGFUnk14) || isFlag(15)) {
 				_newSceneNum = 11;
 			} else {
 				setFlag(15);

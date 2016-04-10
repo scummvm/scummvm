@@ -376,7 +376,7 @@ void GnapEngine::scene05_updateAnimations() {
 			_gnapSequenceId = 0x147;
 			_gnapSequenceDatNum = 0;
 			setFlag(kGFBarnPadlockOpen);
-			setFlag(11);
+			setFlag(kGFSceneFlag1);
 			setGrabCursorSprite(-1);
 			_newSceneNum = 6;
 			_timers[2] = 100;

@@ -588,7 +588,7 @@ void GnapEngine::runSceneLogic() {
 		} else if (_prevSceneNum == 13) {
 			scene47_initCutscene2();
 			_newSceneNum = 11;
-		} else if (!isFlag(10) && _prevSceneNum == 2) {//CHECKME
+		} else if (!isFlag(kGFPlatyPussDisguised) && _prevSceneNum == 2) {//CHECKME
 			if (isFlag(25)) {
 				scene47_initCutscene3();
 				_newSceneNum = 2;
@@ -604,7 +604,7 @@ void GnapEngine::runSceneLogic() {
 		} else if (_prevSceneNum == 30) {
 			scene47_initCutscene6();
 			_newSceneNum = 26;
-		} else if (isFlag(10) && _cursorValue == 1) {
+		} else if (isFlag(kGFPlatyPussDisguised) && _cursorValue == 1) {
 			scene47_initCutscene7();
 			_newSceneNum = 4;
 		}

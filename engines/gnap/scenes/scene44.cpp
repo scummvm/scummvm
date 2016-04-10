@@ -54,7 +54,7 @@ int GnapEngine::scene44_init() {
 }
 
 void GnapEngine::scene44_updateHotspots() {
-	if (isFlag(12)) {
+	if (isFlag(kGFGnapControlsToyUFO)) {
 		setHotspot(kHSPlatypus, 0, 0, 0, 0, SF_DISABLED);
 		setHotspot(kHSUfoExitLeft, 0, 0, 10, 599, SF_EXIT_L_CURSOR);
 		setHotspot(kHSUfoExitRight, 790, 0, 799, 599, SF_EXIT_R_CURSOR);
@@ -71,7 +71,7 @@ void GnapEngine::scene44_updateHotspots() {
 		setHotspot(kHSWalkArea1, 0, 0, 800, 445);
 		setHotspot(kHSWalkArea2, 617, 0, 800, 600);
 		setDeviceHotspot(kHSDevice, -1, -1, -1, -1);
-		if (isFlag(13))
+		if (isFlag(kGFUnk13))
 			_hotspots[kHSKissingLady]._flags = SF_DISABLED;
 		if (isFlag(15))
 			_hotspots[kHSSpring]._flags = SF_DISABLED;
@@ -94,7 +94,7 @@ void GnapEngine::scene44_run() {
 	_gameSys->setAnimation(_s44_currSpringGuySequenceId, 1, 4);
 	_gameSys->insertSequence(_s44_currSpringGuySequenceId, 1, 0, 0, kSeqNone, 0, 0, 0);
 
-	if (isFlag(13)) {
+	if (isFlag(kGFUnk13)) {
 		if (_prevSceneNum != 50 || _sceneSavegameLoaded) {
 			_s44_currKissingLadySequenceId = 0xF6;
 			_s44_nextKissingLadySequenceId = -1;
@@ -112,7 +112,7 @@ void GnapEngine::scene44_run() {
 	
 	_gameSys->insertSequence(_s44_currKissingLadySequenceId, 1, 0, 0, kSeqNone, 0, 0, 0);
 	
-	if (isFlag(12)) {
+	if (isFlag(kGFGnapControlsToyUFO)) {
 		_toyUfoId = 0;
 		_toyUfoActionStatus = -1;
 		_toyUfoSequenceId = toyUfoGetSequenceId();
@@ -144,7 +144,7 @@ void GnapEngine::scene44_run() {
 			initGnapPos(4, 8, kDirBottomRight);
 			if (_sceneSavegameLoaded) {
 				initBeaverPos(_hotspotsWalkPos[4].x, _hotspotsWalkPos[4].y, kDirUnk4);
-			} else if (!isFlag(13)) {
+			} else if (!isFlag(kGFUnk13)) {
 				_timers[0] = 50;
 				_timers[1] = 20;
 				_platX = 5;
@@ -179,10 +179,8 @@ void GnapEngine::scene44_run() {
 		_sceneClickedHotspot = getClickedHotspotId();
 		updateGrabCursorSprite(0, 0);
 	
-		if (isFlag(12)) {
-
+		if (isFlag(kGFGnapControlsToyUFO)) {
 			switch (_sceneClickedHotspot) {
-
 			case kHSUfoExitLeft:
 				if (_toyUfoActionStatus < 0) {
 					_isLeavingScene = 1;
@@ -351,12 +349,11 @@ void GnapEngine::scene44_run() {
 				break;
 			
 			}
-
 		}
 	
 		if (_mouseClickState._left && _gnapActionStatus < 0) {
 			_mouseClickState._left = false;
-			if (isFlag(12)) {
+			if (isFlag(kGFGnapControlsToyUFO)) {
 				_toyUfoActionStatus = 7;
 				toyUfoFlyTo(-1, -1, 0, 799, 0, 300, 3);
 			} else {
@@ -369,9 +366,9 @@ void GnapEngine::scene44_run() {
 		toyUfoCheckTimer();
 	
 		if (!_isLeavingScene) {
-			if (_beaverActionStatus < 0 && !isFlag(12) && _s44_currKissingLadySequenceId != 0xF5)
+			if (_beaverActionStatus < 0 && !isFlag(kGFGnapControlsToyUFO) && _s44_currKissingLadySequenceId != 0xF5)
 				updateBeaverIdleSequence();
-			if (_gnapActionStatus < 0 && !isFlag(12))
+			if (_gnapActionStatus < 0 && !isFlag(kGFGnapControlsToyUFO))
 				updateGnapIdleSequence();
 			if (!_timers[4]) {
 				_timers[4] = getRandom(20) + 20;

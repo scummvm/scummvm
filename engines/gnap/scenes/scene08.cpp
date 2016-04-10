@@ -69,9 +69,9 @@ void GnapEngine::scene08_updateHotspots() {
 	setDeviceHotspot(kHSDevice, -1, -1, -1, -1);
 	if (isFlag(kGFBarnPadlockOpen))
 		_hotspots[kHSMeat]._flags = SF_WALKABLE | SF_DISABLED;
-	if (isFlag(8))
+	if (isFlag(kGFTruckFilledWithGas))
 		_hotspots[kHSBone]._flags = SF_WALKABLE | SF_DISABLED;
-	if (isFlag(9))
+	if (isFlag(kGFTruckKeysUsed))
 		_hotspots[kHSToy]._flags = SF_WALKABLE | SF_DISABLED;
 	_hotspotsCount = 11;
 }
@@ -110,10 +110,10 @@ void GnapEngine::scene08_run() {
 	if (!isFlag(kGFBarnPadlockOpen))
 		_gameSys->insertSequence(0x144, 1, 0, 0, kSeqNone, 0, 0, 0);
 	
-	if (!isFlag(8))
+	if (!isFlag(kGFTruckFilledWithGas))
 		_gameSys->insertSequence(0x145, 1, 0, 0, kSeqNone, 0, 0, 0);
 	
-	if (!isFlag(9))
+	if (!isFlag(kGFTruckKeysUsed))
 		_gameSys->insertSequence(0x146, 1, 0, 0, kSeqNone, 0, 0, 0);
 	
 	initGnapPos(-1, 8, kDirBottomRight);
@@ -156,7 +156,7 @@ void GnapEngine::scene08_run() {
 			} else {
 				switch (_verbCursor) {
 				case LOOK_CURSOR:
-					if (isFlag(11))
+					if (isFlag(kGFSceneFlag1))
 						playGnapMoan1(_platX, _platY);
 					else
 						playGnapScratchingHead(_platX, _platY);
@@ -249,7 +249,7 @@ void GnapEngine::scene08_run() {
 					_gnapActionStatus = kASTalkDog;
 					break;
 				case PLAT_CURSOR:
-					setFlag(11);
+					setFlag(kGFSceneFlag1);
 					gnapActionIdle(0x14D);
 					gnapUseDeviceOnBeaver();
 					platypusWalkTo(3, 7, 1, 0x107C2, 1);
@@ -478,12 +478,12 @@ void GnapEngine::scene08_updateAnimations() {
 				_gameSys->removeSequence(0x144, 1, true);
 				break;
 			case 0x14A:
-				setFlag(8);
+				setFlag(kGFTruckFilledWithGas);
 				_hotspots[kHSBone]._flags = SF_DISABLED | SF_WALKABLE;
 				_gameSys->removeSequence(0x145, 1, true);
 				break;
 			case 0x14B:
-				setFlag(9);
+				setFlag(kGFTruckKeysUsed);
 				_hotspots[kHSToy]._flags = SF_DISABLED | SF_WALKABLE;
 				_gameSys->removeSequence(0x146, 1, true);
 				break;

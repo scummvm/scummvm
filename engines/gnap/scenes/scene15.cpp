@@ -148,13 +148,13 @@ void GnapEngine::scene15_run() {
 			} else {
 				switch (_verbCursor) {
 				case LOOK_CURSOR:
-					if (isFlag(12) || isFlag(13))
+					if (isFlag(kGFGnapControlsToyUFO) || isFlag(kGFUnk13))
 						playSound(0x108E9, 0);
 					else
 						_s15_nextSlotSequenceId = 0xDA;
 					break;
 				case GRAB_CURSOR:
-					if (isFlag(12) || isFlag(13))
+					if (isFlag(kGFGnapControlsToyUFO) || isFlag(kGFUnk13))
 						_s15_nextSlotSequenceId = 0xD9;
 					else
 						_s15_nextSlotSequenceId = 0xDA;
@@ -259,22 +259,22 @@ void GnapEngine::scene15_updateAnimations() {
 					invRemove(kItemQuarter);
 				} else {
 					invRemove(kItemQuarterWithHole);
-					setFlag(13);
+					setFlag(kGFUnk13);
 				}
 				setGrabCursorSprite(-1);
 				break;
 			case 0xDB:
-				setFlag(14);
+				setFlag(kGFUnk14);
 				setGrabCursorSprite(-1);
 				_s15_nextSlotSequenceId = 0xD8;
 				break;
 			case 0xD9:
-				if (isFlag(12)) {
-					clearFlag(12);
+				if (isFlag(kGFGnapControlsToyUFO)) {
+					clearFlag(kGFGnapControlsToyUFO);
 					invAdd(kItemQuarter);
 					_newGrabCursorSpriteIndex = kItemQuarter;
-				} else if (isFlag(13)) {
-					clearFlag(13);
+				} else if (isFlag(kGFUnk13)) {
+					clearFlag(kGFUnk13);
 					invAdd(kItemQuarterWithHole);
 					_newGrabCursorSpriteIndex = kItemQuarterWithHole;
 				}
@@ -315,7 +315,7 @@ void GnapEngine::scene15_updateAnimations() {
 				_gameSys->insertSequence(_s15_nextUpperButtonSequenceId, 1, _s15_currUpperButtonSequenceId, 1, kSeqSyncWait, 0, 0, 0);
 			_s15_currUpperButtonSequenceId = _s15_nextUpperButtonSequenceId;
 			_s15_nextUpperButtonSequenceId = -1;
-			if (_s15_currLowerButtonSequenceId != -1 && isFlag(14)) {
+			if (_s15_currLowerButtonSequenceId != -1 && isFlag(kGFUnk14)) {
 				if (_s15_currUpperButtonSequenceId == 0xCC && _s15_currLowerButtonSequenceId == 0xCE)
 					_s15_nextRecordSequenceId = 0xD3;
 				else
@@ -329,7 +329,7 @@ void GnapEngine::scene15_updateAnimations() {
 				_gameSys->insertSequence(_s15_nextLowerButtonSequenceId, 1, _s15_currLowerButtonSequenceId, 1, kSeqSyncWait, 0, 0, 0);
 			_s15_currLowerButtonSequenceId = _s15_nextLowerButtonSequenceId;
 			_s15_nextLowerButtonSequenceId = -1;
-			if (_s15_currUpperButtonSequenceId != -1 && isFlag(14)) {
+			if (_s15_currUpperButtonSequenceId != -1 && isFlag(kGFUnk14)) {
 				if (_s15_currUpperButtonSequenceId == 0xCC && _s15_currLowerButtonSequenceId == 0xCE)
 					_s15_nextRecordSequenceId = 0xD3;
 				else
