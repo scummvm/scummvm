@@ -94,7 +94,8 @@ void OSMovie::proc12() {
 }
 
 void OSMovie::stop() {
-	warning("TODO: OSMovie::proc13");
+	_video->stop();
+	_state = MOVIE_STOPPED;
 }
 
 void OSMovie::proc14() {

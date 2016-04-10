@@ -113,7 +113,7 @@ void CMainGameWindow::setActiveView(CViewItem *viewItem) {
 
 void CMainGameWindow::draw() {
 	if (_gameManager) {
-		if (_gameView->_surface) {
+		if (!_gameView->_surface) {
 			CViewItem *view = _gameManager->getView();
 			if (view)
 				setActiveView(view);

@@ -62,7 +62,12 @@ public:
 	virtual void proc10() = 0;
 	virtual void proc11() = 0;
 	virtual void proc12() = 0;
+
+	/**
+	 * Stops the movie
+	 */
 	virtual void stop() = 0;
+
 	virtual void proc14() = 0;
 	virtual void setFrame(uint frameNumber) = 0;
 	virtual void proc16() = 0;
@@ -109,7 +114,12 @@ public:
 	virtual void proc10();
 	virtual void proc11();
 	virtual void proc12();
+
+	/**
+	 * Stops the movie
+	 */
 	virtual void stop();
+	
 	virtual void proc14();
 
 	/**
