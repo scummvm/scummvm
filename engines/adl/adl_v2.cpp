@@ -114,6 +114,16 @@ void AdlEngine_v2::setupOpcodeTables() {
 	Opcode(o2_initDisk);
 }
 
+void AdlEngine_v2::initState() {
+	AdlEngine::initState();
+
+	_linesPrinted = 0;
+	_picOnScreen = 0;
+	_roomOnScreen = 0;
+	_itemRemoved = false;
+	_itemsOnScreen = 0;
+}
+
 byte AdlEngine_v2::roomArg(byte room) const {
 	if (room == IDI_CUR_ROOM)
 		return _state.room;

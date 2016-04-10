@@ -379,6 +379,12 @@ void AdlEngine::setupOpcodeTables() {
 	Opcode(o1_setRoomPic);
 }
 
+void AdlEngine::initState() {
+	_state = State();
+
+	initGameState();
+}
+
 byte AdlEngine::roomArg(byte room) const {
 	return room;
 }

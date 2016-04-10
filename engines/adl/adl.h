@@ -240,6 +240,7 @@ protected:
 	virtual bool isInputValid(const Commands &commands, byte verb, byte noun, bool &is_any);
 
 	virtual void setupOpcodeTables();
+	virtual void initState();
 	virtual byte roomArg(byte room) const;
 	virtual void advanceClock() { }
 
@@ -358,7 +359,7 @@ protected:
 private:
 	virtual void runIntro() const { }
 	virtual void init() = 0;
-	virtual void initState() = 0;
+	virtual void initGameState() = 0;
 	virtual void drawItems() = 0;
 	virtual void drawItem(Item &item, const Common::Point &pos) = 0;
 	virtual void loadRoom(byte roomNr) = 0;

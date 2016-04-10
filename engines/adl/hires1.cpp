@@ -206,8 +206,7 @@ void HiRes1Engine::init() {
 	loadWords(*stream, _nouns, _priNouns);
 }
 
-void HiRes1Engine::initState() {
-	_state = State();
+void HiRes1Engine::initGameState() {
 	_state.vars.resize(IDI_HR1_NUM_VARS);
 
 	StreamPtr stream(_files->createReadStream(IDS_HR1_EXE_1));

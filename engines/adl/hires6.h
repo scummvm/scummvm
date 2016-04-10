@@ -56,7 +56,7 @@ private:
 	// AdlEngine
 	void runIntro() const;
 	void init();
-	void initState();
+	void initGameState();
 
 	// AdlEngine_v2
 	void printString(const Common::String &str);

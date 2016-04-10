@@ -130,10 +130,7 @@ void HiRes2Engine::init() {
 	loadWords(*stream, _nouns, _priNouns);
 }
 
-void HiRes2Engine::initState() {
-	_linesPrinted = 0;
-
-	_state = State();
+void HiRes2Engine::initGameState() {
 	_state.vars.resize(IDI_HR2_NUM_VARS);
 
 	StreamPtr stream(_disk->createReadStream(0x21, 0x5, 0x0e, 7));

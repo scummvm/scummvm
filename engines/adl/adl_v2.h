@@ -43,6 +43,7 @@ protected:
 
 	// AdlEngine
 	virtual void setupOpcodeTables();
+	virtual void initState();
 	byte roomArg(byte room) const;
 	void advanceClock();
 	virtual void printString(const Common::String &str);

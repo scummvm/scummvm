@@ -192,10 +192,7 @@ void HiRes6Engine::init() {
 	delete boot;
 }
 
-void HiRes6Engine::initState() {
-	_linesPrinted = 0;
-
-	_state = State();
+void HiRes6Engine::initGameState() {
 	_state.vars.resize(IDI_HR6_NUM_VARS);
 
 	StreamPtr stream(_disk->createReadStream(0x20, 0xd, 0x94, 2));

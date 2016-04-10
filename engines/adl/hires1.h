@@ -103,7 +103,7 @@ private:
 	// AdlEngine
 	void runIntro() const;
 	void init();
-	void initState();
+	void initGameState();
 	void restartGame();
 	void printString(const Common::String &str);
 	Common::String loadMessage(uint idx) const;
