@@ -536,10 +536,6 @@ bool DrasculaEngine::runCurrentChapter() {
 			if (!loadGame(_currentSaveSlot)) {
 				return true;
 			}
-			// When loading room 102 while being attached below the pendulum we
-			// need to call activatePendulum() to properly initialized the scene.
-			if (_roomNumber == 102 && flags[1] == 2)
-				activatePendulum();
 			loadPic("auxdr.alg", drawSurface2);
 		}
 	}
