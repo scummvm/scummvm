@@ -52,12 +52,12 @@ public:
 	/**
 	 * Plays the movie
 	 */
-	virtual void play(int v1, CVideoSurface *surface) = 0;
+	virtual void play(uint flags, CVideoSurface *surface) = 0;
 	
 	/**
 	 * Plays the movie
 	 */
-	virtual void play(int v1, int v2, int v3, bool v4) = 0;
+	virtual void play(uint startFrame, uint endFrame, int v3, bool v4) = 0;
 	
 	virtual void proc10() = 0;
 	virtual void proc11() = 0;
@@ -89,6 +89,7 @@ class OSMovie : public CMovie {
 private:
 	Video::VideoDecoder *_video;
 	CVideoSurface *_videoSurface;
+	int _endFrame;
 
 	/**
 	 * Decodes the next frame
@@ -104,12 +105,12 @@ public:
 	/**
 	 * Plays the movie
 	 */
-	virtual void play(int v1, CVideoSurface *surface);
+	virtual void play(uint flags, CVideoSurface *surface);
 	
 	/**
 	 * Plays the movie
 	 */
-	virtual void play(int v1, int v2, int v3, bool v4);
+	virtual void play(uint startFrame, uint endFrame, int v3, bool v4);
 	
 	virtual void proc10();
 	virtual void proc11();

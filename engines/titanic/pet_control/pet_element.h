@@ -84,7 +84,10 @@ public:
 	 */
 	virtual bool contains2(const Common::Point &pt) const;
 
-	virtual void proc11(int val1, int val2) const;
+	/**
+	 * Plays back a range of frames in the loaded video file for the element
+	 */
+	virtual void playMovie(uint startFrame, uint endFrame) const;
 
 	/**
 	 * Change the status of the associated object

@@ -350,7 +350,7 @@ void CGameObject::petFn3(CTreeItem *item) {
 		pet->fn3(item);
 }
 
-void CGameObject::fn1(int val1, int val2, int val3) {
+void CGameObject::playMovie(uint startFrame, uint endFrame, int val3) {
 	_frameNumber = -1;
 	if (!_surface) {
 		if (!_resource.empty())
@@ -364,30 +364,30 @@ void CGameObject::fn1(int val1, int val2, int val3) {
 		if (movie)
 			movie->_gameObject = this;
 
-		_surface->playMovie(val1, val2, val3, val3 != 0);
+		_surface->playMovie(startFrame, endFrame, val3, val3 != 0);
 
 		if (val3 & 0x10)
 			getGameManager()->_gameState.addMovie(_surface->_movie);
 	}
 }
 
-void CGameObject::changeStatus(int newStatus) {
+void CGameObject::playMovie(uint flags) {
 	_frameNumber = -1;
 	if (!_surface && !_resource.empty()) {
 		loadResource(_resource);
 		_resource.clear();
 	}
 
-	CVideoSurface *surface = (newStatus & 4) ? _surface : nullptr;
+	CVideoSurface *surface = (flags & 4) ? _surface : nullptr;
 	if (_surface) {
-		_surface->playMovie(newStatus, surface);
+		_surface->playMovie(flags, surface);
 		
 		// TODO: Figure out where to do this legitimately
 		OSMovie *movie = static_cast<OSMovie *>(_surface->_movie);
 		if (movie)
 			movie->_gameObject = this;
 
-		if (newStatus & 0x10) {
+		if (flags & 0x10) {
 			getGameManager()->_gameState.addMovie(_surface->_movie);
 		}
 	}

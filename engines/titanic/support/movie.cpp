@@ -49,14 +49,14 @@ bool CMovie::get10() {
 /*------------------------------------------------------------------------*/
 
 OSMovie::OSMovie(const CResourceKey &name, CVideoSurface *surface) :
-		_videoSurface(surface), _gameObject(nullptr) {
+		_videoSurface(surface), _gameObject(nullptr), _endFrame(-1) {
 	_video = new Video::AVIDecoder();
 	if (!_video->loadFile(name.getString()))
 		error("Could not open video - %s", name.getString().c_str());
 }
 
 OSMovie::OSMovie(Common::SeekableReadStream *stream, CVideoSurface *surface) :
-		_videoSurface(surface), _gameObject(nullptr) {
+		_videoSurface(surface), _gameObject(nullptr), _endFrame(-1) {
 	_video = new Video::AVIDecoder();
 	if (!_video->loadStream(stream))
 		error("Could not parse movie stream");
@@ -67,16 +67,18 @@ OSMovie::~OSMovie() {
 	delete _video;
 }
 
-void OSMovie::play(int v1, CVideoSurface *surface) {
-	warning("TODO: OSMovie::proc8");
-	play(0, 0, 0, 0);
+void OSMovie::play(uint flags, CVideoSurface *surface) {
+	uint endFrame = _video->getFrameCount();
+	play(0, endFrame, 0, 0);
 }
 
-void OSMovie::play(int v1, int v2, int v3, bool v4) {
+void OSMovie::play(uint startFrame, uint endFrame, int v3, bool v4) {
 	warning("TODO: OSMovie::play properly");
-	//setFrame(v1); ?
-	_video->seek(0);
+
 	_video->start();
+	_video->seekToFrame(startFrame);
+	_endFrame = endFrame;
+
 	g_vm->_activeMovies.push_back(this);
 	_state = MOVIE_NONE;
 }
@@ -142,7 +144,8 @@ MovieState OSMovie::getState() {
 void OSMovie::update() {
 	if (_state != MOVIE_STOPPED) {
 		if (_video->isPlaying()) {
-			if (_video->endOfVideo()) {
+			if (_video->getCurFrame() >= _endFrame) {
+				_video->stop();
 				_state = MOVIE_FINISHED;
 			} else if (_video->needsUpdate()) {
 				decodeFrame();

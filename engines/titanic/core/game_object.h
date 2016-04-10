@@ -178,13 +178,6 @@ public:
 	 */
 	bool checkPoint(const Point &pt, bool ignore40 = false, bool visibleOnly = false);
 
-	void fn1(int val1, int val2, int val3);
-
-	/**
-	 * Change the object's status
-	 */
-	void changeStatus(int newStatus);
-
 	/**
 	 * Set the position of the object
 	 */
@@ -202,6 +195,16 @@ public:
 	 * Loads a frame
 	 */
 	void loadFrame(int frameNumber);
+
+	/**
+	 * Change the object's status
+	 */
+	void playMovie(uint flags);
+
+	/**
+	 * Play the movie specified in _resource
+	 */
+	void playMovie(uint startFrame, uint endFrame, int val3);
 };
 
 } // End of namespace Titanic

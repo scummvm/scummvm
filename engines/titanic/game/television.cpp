@@ -148,8 +148,8 @@ bool CTelevision::EnterViewMsg(CEnterViewMsg *msg) {
 	return true;
 }
 
-static const int FRAMES1[9] = { 0, 0, 56, 112, 168, 224, 280, 336, 392 };
-static const int FRAMES2[8] = { 0, 55, 111, 167, 223, 279, 335, 391 };
+static const int START_FRAMES[9] = { 0, 0, 56, 112, 168, 224, 280, 336, 392 };
+static const int END_FRAMES[8] = { 0, 55, 111, 167, 223, 279, 335, 391 };
 
 bool CTelevision::PETUpMsg(CPETUpMsg *msg) {
 	if (msg->_name == "Television" && _isOn) {
@@ -158,7 +158,7 @@ bool CTelevision::PETUpMsg(CPETUpMsg *msg) {
 
 		_fieldE0 = _fieldE0 % _fieldE4 + 1;
 		stopMovie();
-		fn1(FRAMES1[_fieldE0], FRAMES2[_fieldE0], 4);
+		playMovie(START_FRAMES[_fieldE0], END_FRAMES[_fieldE0], 4);
 	}
 
 	return true;
@@ -173,7 +173,7 @@ bool CTelevision::PETDownMsg(CPETDownMsg *msg) {
 
 		_fieldE0 = _fieldE0 % _fieldE4 + 1;
 		stopMovie();
-		fn1(FRAMES1[_fieldE0], FRAMES2[_fieldE0], 4);
+		playMovie(START_FRAMES[_fieldE0], END_FRAMES[_fieldE0], 4);
 	}
 
 	return true;
@@ -182,7 +182,7 @@ bool CTelevision::PETDownMsg(CPETDownMsg *msg) {
 bool CTelevision::StatusChangeMsg(CStatusChangeMsg *msg) {
 	if (_isOn) {
 		stopMovie();
-		changeStatus(0);
+		playMovie(0);
 	}
 
 	return true;
@@ -211,7 +211,7 @@ bool CTelevision::PETActivateMsg(CPETActivateMsg *msg) {
 
 		if (_isOn) {
 			setVisible(true);
-			fn1(0, 55, 0);
+			playMovie(0, 55, 0);
 			_fieldE0 = 1;
 		} else {
 			stopMovie();

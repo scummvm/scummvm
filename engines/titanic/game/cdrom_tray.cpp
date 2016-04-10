@@ -56,7 +56,7 @@ bool CCDROMTray::ActMsg(CActMsg *msg) {
 	if (msg->_action == "ClickedOn") {
 		if (_state) {
 			if (_insertedCD == "None") {
-				fn1(55, 65, 0);
+				playMovie(55, 65, 0);
 				playSound("a#35.wav", 50, 0, 0);
 				_state = 0;
 			} else {
@@ -70,24 +70,24 @@ bool CCDROMTray::ActMsg(CActMsg *msg) {
 				loadFrame(52);
 			}
 		} else if (_insertedCD == "None") {
-			fn1(44, 54, 0);
+			playMovie(44, 54, 0);
 			playSound("a#34.wav", 50, 0, 0);
 			_state = 1;
 		} else if (_insertedCD == "newCD1" || _insertedCD == "newCD2") {
-			fn1(22, 32, 0);
+			playMovie(22, 32, 0);
 			playSound("a#34.wav", 50, 0, 0);
 			_state = 1;
 		} else if (_insertedCD == "newSTCD") {
-			fn1(0, 10, 0);
+			playMovie(0, 10, 0);
 			playSound("a#34.wav", 50, 0, 0);
 			_state = 1;
 		}
 	} else if (_state) {
 		if (msg->_action == "newCD1" || msg->_action == "newCD2") {
-			fn1(33, 43, 4);
+			playMovie(33, 43, 4);
 			playSound("a#35.wav", 50, 0, 0);
 		} else if (msg->_action == "newSTCD") {
-			fn1(11, 21, 4);
+			playMovie(11, 21, 4);
 			playSound("a#35.wav", 50, 0, 0);
 		} else {
 			return true;

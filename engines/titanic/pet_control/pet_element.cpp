@@ -62,18 +62,18 @@ bool CPetElement::contains2(const Common::Point &pt) const {
 	return _bounds.contains(pt);
 }
 
-void CPetElement::proc11(int val1, int val2) const {
+void CPetElement::playMovie(uint startFrame, uint endFrame) const {
 	CGameObject *gameObject = getObject();
 
 	if (gameObject)
-		gameObject->fn1(val1, val2, 0);
+		gameObject->playMovie(startFrame, endFrame, 0);
 }
 
-void CPetElement::changeStatus(int newStatus) const {
+void CPetElement::changeStatus(int val) const {
 	CGameObject *gameObject = getObject();
 
 	if (gameObject)
-		gameObject->changeStatus(newStatus);
+		gameObject->playMovie(val);
 }
 
 bool CPetElement::hasActiveMovie() const {

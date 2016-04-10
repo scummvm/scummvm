@@ -158,13 +158,13 @@ public:
 	 * Plays a movie, loading it from the specified _resource
 	 * if not already loaded
 	 */
-	virtual void playMovie(int newStatus, CVideoSurface *surface) = 0;
+	virtual void playMovie(uint flags, CVideoSurface *surface) = 0;
 
 	/**
 	 * Plays a movie, loading it from the specified _resource
 	 * if not already loaded
 	 */
-	virtual void playMovie(int v1, int v2, int v3, bool v4) = 0;
+	virtual void playMovie(uint startFrame, uint endFrame, int v3, bool v4) = 0;
 
 	/**
 	 * Stops any movie currently attached to the surface
@@ -317,13 +317,13 @@ public:
 	 * Plays a movie, loading it from the specified _resource
 	 * if not already loaded
 	 */
-	virtual void playMovie(int newStatus, CVideoSurface *surface);
+	virtual void playMovie(uint flags, CVideoSurface *surface);
 
 	/**
 	 * Plays a movie, loading it from the specified _resource
 	 * if not already loaded
 	 */
-	virtual void playMovie(int v1, int v2, int v3, bool v4);
+	virtual void playMovie(uint startFrame, uint endFrame, int v3, bool v4);
 
 	/**
 	 * Stops any movie currently attached to the surface

@@ -47,14 +47,14 @@ void CComputer::load(SimpleFile *file) {
 bool CComputer::ActMsg(CActMsg *msg) {
 	if (_state) {
 		playSound("a#35.wav", 100, 0, 0);
-		fn1(32, 42, 0);
+		playMovie(32, 42, 0);
 
 		if (msg->_action == "CD1")
-			fn1(43, 49, 0);
+			playMovie(43, 49, 0);
 		else if (msg->_action == "CD2")
-			fn1(50, 79, 0);
+			playMovie(50, 79, 0);
 		else if (msg->_action == "STCD")
-			fn1(80, 90, 4);
+			playMovie(80, 90, 4);
 
 		_currentCD = msg->_action;
 		_state = 0;
@@ -67,11 +67,11 @@ bool CComputer::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
 	if (_currentCD == "None") {
 		if (_state) {
 			playSound("a#35.wav", 100, 0, 0);
-			fn1(11, 21, 0);
+			playMovie(11, 21, 0);
 			_state = 0;
 		} else {
 			playSound("a#34.wav", 100, 0, 0);
-			fn1(0, 10, 0);
+			playMovie(0, 10, 0);
 			_state = 1;
 		}
 	} else {
@@ -82,7 +82,7 @@ bool CComputer::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
 			_currentCD = "None";
 		} else {
 			playSound("a#34.wav", 100, 0, 0);
-			fn1(21, 31, 0);
+			playMovie(21, 31, 0);
 			_state = 1;
 		}
 	}
