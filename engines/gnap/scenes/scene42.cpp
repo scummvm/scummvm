@@ -60,7 +60,7 @@ int GnapEngine::scene42_init() {
 	_gameSys->setAnimation(0, 0, 0);
 	_gameSys->setAnimation(0, 0, 1);
 	_gameSys->setAnimation(0, 0, 2);
-	if (isFlag(20) || (isFlag(18) && isFlag(23)))
+	if (isFlag(kGFPictureTaken) || (isFlag(kGFUnk18) && isFlag(kGFUnk23)))
 		return 0x153;
 	return 0x152;
 }
@@ -72,7 +72,7 @@ void GnapEngine::scene42_updateHotspots() {
 		setHotspot(kHSUfoExitRight, 790, 0, 799, 599, SF_EXIT_R_CURSOR);
 		setHotspot(kHSUfoHotSauce, 335, 110, 440, 175, SF_DISABLED);
 		setDeviceHotspot(kHSUfoDevice, -1, 534, -1, 599);
-		if ((isFlag(20) || isFlag(18)) && isFlag(23) && !isFlag(24))
+		if ((isFlag(kGFPictureTaken) || isFlag(kGFUnk18)) && isFlag(kGFUnk23) && !isFlag(24))
 			_hotspots[kHSUfoHotSauce]._flags = SF_GRAB_CURSOR;
 		_hotspotsCount = 5;
 	} else {
@@ -102,14 +102,14 @@ void GnapEngine::scene42_run() {
 	if (isFlag(kGFGnapControlsToyUFO)) {
 		_toyUfoId = 0;
 		_toyUfoActionStatus = -1;
-		if (_prevSceneNum == 43 && isFlag(18)) {
+		if (_prevSceneNum == 43 && isFlag(kGFUnk18)) {
 			_toyUfoSequenceId = 0x872;
 			_toyUfoNextSequenceId = toyUfoGetSequenceId();
 			_gameSys->insertSequence(_toyUfoSequenceId | 0x10000, _toyUfoId, 0, 0, kSeqNone, 0, 0, 0);
 			_toyUfoX = 317;
 			_toyUfoY = 61;
 			toyUfoSetStatus(17);
-			setFlag(20);
+			setFlag(kGFPictureTaken);
 			_timers[9] = 600;
 		} else {
 			_toyUfoSequenceId = toyUfoGetSequenceId();
@@ -180,7 +180,7 @@ void GnapEngine::scene42_run() {
 				break;
 
 			case kHSUfoHotSauce:
-				if (isFlag(17)) {
+				if (isFlag(kGFJointTaken)) {
 					_toyUfoActionStatus = kASToyUfoPickUpHotSauce;
 					toyUfoFlyTo(384, 77, 0, 799, 0, 300, 3);
 					_timers[9] = 600;

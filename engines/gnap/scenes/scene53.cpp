@@ -151,7 +151,7 @@ void GnapEngine::scene53_runChitChatLine() {
 	}
 	_gnapActionStatus = -1;
 
-	if (isFlag(15)) {
+	if (isFlag(kGFSpringTaken)) {
 		_gameSys->insertSequence(0x45, 40, _s53_currHandSequenceId, 40, kSeqSyncWait, 0, 0, 0);
 		_s53_currHandSequenceId = 0x45;
 	} else {
@@ -236,7 +236,7 @@ void GnapEngine::scene53_runChitChatLine() {
 	
 	_gnapActionStatus = 1;
 	
-	if (isFlag(15)) {
+	if (isFlag(kGFSpringTaken)) {
 		_gameSys->setAnimation(0x73, 40, 6);
 		_gameSys->insertSequence(0x73, 40, _s53_currHandSequenceId, 40, kSeqSyncWait, 0, 0, 0);
 		while (_gameSys->getAnimationStatus(6) != 2) {
@@ -256,7 +256,7 @@ void GnapEngine::scene53_run() {
 	
 	queueInsertDeviceIcon();
 	
-	if (isFlag(15)) {
+	if (isFlag(kGFSpringTaken)) {
 		_s53_currHandSequenceId = 0x45;
 		_s53_isGnapPhoning = true;
 	} else {
@@ -305,7 +305,7 @@ void GnapEngine::scene53_run() {
 			debug("phoneNumber: %d", phoneNumber);
 			if (phoneNumberLen == 7) {
 				_gnapActionStatus = 1;
-				if (isFlag(15)) {
+				if (isFlag(kGFSpringTaken)) {
 					_gameSys->setAnimation(0x73, 40, 6);
 					_gameSys->insertSequence(0x73, 40, _s53_currHandSequenceId, 40, kSeqSyncWait, 0, 0, 0);
 					while (_gameSys->getAnimationStatus(6) != 2) {
@@ -322,7 +322,7 @@ void GnapEngine::scene53_run() {
 					phoneNumberLen = 0;
 					_sceneDone = true;
 					_newSceneNum = 17;
-				} else if (phoneNumber != 5556789 || isFlag(20)) {				
+				} else if (phoneNumber != 5556789 || isFlag(kGFPictureTaken)) {				
 					scene53_runRandomCall();
 					phoneNumber = 0;
 					phoneNumberLen = 0;
@@ -347,7 +347,7 @@ void GnapEngine::scene53_run() {
 		case 14:
 			if (_gnapActionStatus < 0) {
 				_gnapActionStatus = 1;
-				if (isFlag(15)) {
+				if (isFlag(kGFSpringTaken)) {
 					_gameSys->setAnimation(0x73, 40, 6);
 					_gameSys->insertSequence(0x73, 40, _s53_currHandSequenceId, 40, kSeqSyncWait, 0, 0, 0);
 					while (_gameSys->getAnimationStatus(6) != 2) {

@@ -106,7 +106,7 @@ void GnapEngine::scene19_run() {
 	_gameSys->insertSequence(0x74, 254, 0, 0, kSeqNone, 0, 0, 0);
 	_gameSys->insertSequence(0x75, 254, 0, 0, kSeqNone, 0, 0, 0);
 
-	if (!isFlag(20))
+	if (!isFlag(kGFPictureTaken))
 		_gameSys->insertSequence(0x69, 19, 0, 0, kSeqNone, 0, 0, 0);
 
 	if (isFlag(26)) {
@@ -203,7 +203,7 @@ void GnapEngine::scene19_run() {
 						playGnapScratchingHead(6, 2);
 						break;
 					case GRAB_CURSOR:
-						if (!isFlag(20)) {
+						if (!isFlag(kGFPictureTaken)) {
 							gnapWalkTo(_gnapX, _gnapY, 0, getGnapSequenceId(gskIdle, _hotspotsWalkPos[_sceneClickedHotspot].x, _hotspotsWalkPos[_sceneClickedHotspot].y) | 0x10000, 1);
 							_gnapActionStatus = kASGrabPicture;
 						}
@@ -316,7 +316,7 @@ void GnapEngine::scene19_run() {
 					_timers[6] = getRandom(40) + 50;
 					if (getRandom(4) != 0) {
 						_s19_nextShopAssistantSequenceId = 0x64;
-					} else if (isFlag(20)) {
+					} else if (isFlag(kGFPictureTaken)) {
 						_s19_nextShopAssistantSequenceId = 0x64;
 					} else {
 						_s19_nextShopAssistantSequenceId = 0x6C;
@@ -373,7 +373,7 @@ void GnapEngine::scene19_updateAnimations() {
 			_gameSys->setAnimation(0x68, 19, 0);
 			_gameSys->insertSequence(0x68, 19, 105, 19, kSeqSyncWait, 0, 0, 0);
 			invAdd(kItemPicture);
-			setFlag(20);
+			setFlag(kGFPictureTaken);
 			scene19_updateHotspots();
 			_gnapActionStatus = kASGrabPictureDone;
 			break;

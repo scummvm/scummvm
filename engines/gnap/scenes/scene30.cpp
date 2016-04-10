@@ -44,7 +44,7 @@ enum {
 };
 
 int GnapEngine::scene30_init() {
-	return isFlag(23) ? 0x10B : 0x10A;
+	return isFlag(kGFUnk23) ? 0x10B : 0x10A;
 }
 
 void GnapEngine::scene30_updateHotspots() {
@@ -64,7 +64,7 @@ void GnapEngine::scene30_run() {
 
 	queueInsertDeviceIcon();
 
-	if (isFlag(23))
+	if (isFlag(kGFUnk23))
 		_gameSys->insertSequence(0x106, 1, 0, 0, kSeqNone, 0, 0, 0);
 
 	if (!isFlag(kGFUnk13))
@@ -126,7 +126,7 @@ void GnapEngine::scene30_run() {
 
 		case kHSPillMachine:
 			if (_gnapActionStatus < 0) {
-				if (_grabCursorSpriteIndex == kItemDiceQuarterHole && !isFlag(23)) {
+				if (_grabCursorSpriteIndex == kItemDiceQuarterHole && !isFlag(kGFUnk23)) {
 					_hotspots[kHSWalkArea1]._flags |= SF_WALKABLE;
 					gnapWalkTo(_hotspotsWalkPos[kHSPillMachine].x, _hotspotsWalkPos[kHSPillMachine].y, 0, 0x107BC, 1);
 					_hotspots[kHSWalkArea1]._flags &= ~SF_WALKABLE;
@@ -203,7 +203,7 @@ void GnapEngine::scene30_run() {
 			if (!_timers[5]) {
 				_timers[5] = getRandom(50) + 180;
 				if (_gnapActionStatus < 0) {
-					if (!isFlag(23) || hasTakenPill)
+					if (!isFlag(kGFUnk23) || hasTakenPill)
 						_gameSys->insertSequence(0x109, 20, 0, 0, kSeqNone, 0, 0, 0);
 					else
 						_gameSys->insertSequence(0x108, 20, 0, 0, kSeqNone, 0, 0, 0);
@@ -257,7 +257,7 @@ void GnapEngine::scene30_updateAnimations() {
 			showCursor();
 			_gnapActionStatus = kASUsePillMachine3;
 			invAdd(kItemPill);
-			setFlag(23);
+			setFlag(kGFUnk23);
 			break;
 		case kASUsePillMachine3:
 			_gameSys->setAnimation(0x104, _gnapId, 0);
@@ -273,7 +273,7 @@ void GnapEngine::scene30_updateAnimations() {
 			_gnapActionStatus = -1;
 			break;
 		case kASLookPillMachine:
-			if (isFlag(23))
+			if (isFlag(kGFUnk23))
 				showFullScreenSprite(0xE3);
 			else
 				showFullScreenSprite(0xE2);

@@ -36,7 +36,7 @@ void GnapEngine::scene54_initCutscene1() {
 	_s99_resourceIdArr[0] = 0x3C;
 	_s99_resourceIdArr[1] = 0x43;
 	_s99_resourceIdArr[2] = 0x44;
-	if (isFlag(20))
+	if (isFlag(kGFPictureTaken))
 		_s99_resourceIdArr[3] = 0x47;
 	else
 		_s99_resourceIdArr[3] = 0x46;

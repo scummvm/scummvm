@@ -96,7 +96,7 @@ void GnapEngine::scene20_updateAnimationsCb() {
 			_s20_currStonerGuySequenceId = 0x16A;
 			_s20_nextStonerGuySequenceId = -1;
 			invAdd(kItemJoint);
-			setFlag(17);
+			setFlag(kGFJointTaken);
 			_s20_stonerGuyShowingJoint = false;
 			_gnapActionStatus = kASGrabJointDone;
 			break;
@@ -212,7 +212,7 @@ void GnapEngine::scene20_run() {
 	_gameSys->insertSequence(0x17C, 20, 0, 0, kSeqNone, 0, 0, 0);
 	
 	_timers[5] = getRandom(50) + 130;
-	if (isFlag(19))
+	if (isFlag(kGFGroceryStoreHatTaken))
 		_gameSys->insertSequence(0x17F, 20, 0, 0, kSeqNone, 0, 0, 0);
 	else
 		_gameSys->insertSequence(0x174, 20, 0, 0, kSeqNone, 0, 0, 0);
@@ -404,7 +404,7 @@ void GnapEngine::scene20_run() {
 					case TALK_CURSOR:
 						_gnapIdleFacing = kDirUpRight;
 						gnapWalkTo(_hotspotsWalkPos[kHSStonerGuy].x, _hotspotsWalkPos[kHSStonerGuy].y, 0, getGnapSequenceId(gskBrainPulsating, 0, 0) | 0x10000, 1);
-						if (isFlag(17))
+						if (isFlag(kGFJointTaken))
 							_gnapActionStatus = kASTalkStonerGuyNoJoint;
 						else
 							_gnapActionStatus = kASTalkStonerGuyHasJoint;
@@ -639,7 +639,7 @@ void GnapEngine::scene20_updateAnimations() {
 			break;
 		case kASSwitchGroceryStoreHatDone:
 			_gameSys->insertSequence(0x17F, 20, 372, 20, kSeqSyncWait, 0, 0, 0);
-			setFlag(19);
+			setFlag(kGFGroceryStoreHatTaken);
 			hideCursor();
 			setGrabCursorSprite(-1);
 			addFullScreenSprite(0x12C, 255);

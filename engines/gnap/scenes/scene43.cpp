@@ -62,7 +62,7 @@ void GnapEngine::scene43_updateHotspots() {
 		setHotspot(kHSUfoKey, 140, 170, 185, 260, SF_GRAB_CURSOR);
 		setHotspot(kHSUfoBucket, 475, 290, 545, 365, SF_DISABLED);
 		setDeviceHotspot(kHSUfoDevice, -1, 534, -1, 599);
-		if (isFlag(19))
+		if (isFlag(kGFGroceryStoreHatTaken))
 			_hotspots[kHSUfoBucket]._flags = SF_GRAB_CURSOR;
 		// NOTE Bug in the original. Key hotspot wasn't disabled.
 		if (isFlag(kGFUnk14))
@@ -184,7 +184,7 @@ void GnapEngine::scene43_run() {
 				break;
 			
 			case kHSUfoKey:
-				if (isFlag(17)) {
+				if (isFlag(kGFJointTaken)) {
 					_toyUfoActionStatus = 6;
 					toyUfoFlyTo(163, 145, 0, 799, 0, 300, 3);
 				} else {
@@ -328,7 +328,7 @@ void GnapEngine::scene43_run() {
 				updateBeaverIdleSequence();
 			if (_gnapActionStatus < 0 && !isFlag(kGFGnapControlsToyUFO))
 				updateGnapIdleSequence();
-			if (!_timers[4] && (!isFlag(kGFGnapControlsToyUFO) || !isFlag(19))) {
+			if (!_timers[4] && (!isFlag(kGFGnapControlsToyUFO) || !isFlag(kGFGroceryStoreHatTaken))) {
 				_timers[4] = getRandom(100) + 100;
 				if (_gnapActionStatus < 0 && _beaverActionStatus < 0 && _s43_nextTwoHeadedGuySequenceId == -1) {
 					switch (getRandom(5)) {
@@ -407,7 +407,7 @@ void GnapEngine::scene43_updateAnimations() {
 	
 	if (_gameSys->getAnimationStatus(2) == 2) {
 		if (_s43_currTwoHeadedGuySequenceId == 0x13A) {
-			if (isFlag(19)) {
+			if (isFlag(kGFGroceryStoreHatTaken)) {
 				_s43_nextTwoHeadedGuySequenceId = 0x13E;
 				stopSound(0x108F6);
 			} else if (getRandom(2) != 0) {
@@ -451,7 +451,7 @@ void GnapEngine::scene43_updateAnimations() {
 			_toyUfoSequenceId = 0x874;
 			_gameSys->setAnimation(0x10874, _toyUfoId, 3);
 			_toyUfoActionStatus = 8;
-			setFlag(17);
+			setFlag(kGFJointTaken);
 			_gnapActionStatus = 3;
 			break;
 		case 8:

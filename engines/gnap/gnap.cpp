@@ -2175,27 +2175,27 @@ void GnapEngine::playSequences(int fullScreenSpriteId, int sequenceId1, int sequ
 }
 
 void GnapEngine::toyUfoSetStatus(int flagNum) {
-	clearFlag(16);
-	clearFlag(17);
-	clearFlag(18);
-	clearFlag(19);
+	clearFlag(kGFUnk16);
+	clearFlag(kGFJointTaken);
+	clearFlag(kGFUnk18);
+	clearFlag(kGFGroceryStoreHatTaken);
 	setFlag(flagNum);
 }
 
 int GnapEngine::toyUfoGetSequenceId() {
-	if (isFlag(16))
+	if (isFlag(kGFUnk16))
 		return 0x84E;
-	if (isFlag(17))
+	if (isFlag(kGFJointTaken))
 		return 0x84B;
-	if (isFlag(18))
+	if (isFlag(kGFUnk18))
 		return 0x84D;
-	if (isFlag(19))
+	if (isFlag(kGFGroceryStoreHatTaken))
 		return 0x84C;
 	return 0x84E;
 }
 
 bool GnapEngine::toyUfoCheckTimer() {
-	if (!isFlag(kGFGnapControlsToyUFO) || isFlag(18) || _timers[9] ||
+	if (!isFlag(kGFGnapControlsToyUFO) || isFlag(kGFUnk18) || _timers[9] ||
 		_toyUfoSequenceId == 0x870 || _toyUfoSequenceId == 0x871 || _toyUfoSequenceId == 0x872 || _toyUfoSequenceId == 0x873)
 		return false;
 	_sceneDone = true;
@@ -2273,13 +2273,13 @@ void GnapEngine::toyUfoFlyTo(int destX, int destY, int minX, int maxX, int minY,
 	
 	if (i - 1 > 0) {
 		int seqId;
-		if (isFlag(16))
+		if (isFlag(kGFUnk16))
 			seqId = 0x867;
-		else if (isFlag(17))
+		else if (isFlag(kGFJointTaken))
 			seqId = 0x84F;
-		else if (isFlag(18))
+		else if (isFlag(kGFUnk18))
 			seqId = 0x85F;
-		else if (isFlag(19))
+		else if (isFlag(kGFGroceryStoreHatTaken))
 			seqId = 0x857;
 		v16[0].sequenceId = seqId;
 		v16[0].id = 0;

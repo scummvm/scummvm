@@ -73,7 +73,7 @@ void GnapEngine::scene44_updateHotspots() {
 		setDeviceHotspot(kHSDevice, -1, -1, -1, -1);
 		if (isFlag(kGFUnk13))
 			_hotspots[kHSKissingLady]._flags = SF_DISABLED;
-		if (isFlag(15))
+		if (isFlag(kGFSpringTaken))
 			_hotspots[kHSSpring]._flags = SF_DISABLED;
 		_hotspotsCount = 10;
 	}
@@ -85,7 +85,7 @@ void GnapEngine::scene44_run() {
 	_gameSys->insertSequence(0xF7, 0, 0, 0, kSeqLoop, 0, 0, 0);
 	_gameSys->insertSequence(0xFC, 256, 0, 0, kSeqNone, 0, 0, 0);
 
-	if (isFlag(15))
+	if (isFlag(kGFSpringTaken))
 		_s44_currSpringGuySequenceId = 0xF8;
 	else
 		_s44_currSpringGuySequenceId = 0xF9;
@@ -306,7 +306,7 @@ void GnapEngine::scene44_run() {
 						playGnapUseDevice(8, 0);
 						_s44_nextSpringGuySequenceId = 0xFB;
 						invAdd(kItemSpring);
-						setFlag(15);
+						setFlag(kGFSpringTaken);
 						scene44_updateHotspots();
 						break;
 					case TALK_CURSOR:
@@ -325,7 +325,7 @@ void GnapEngine::scene44_run() {
 				} else {
 					switch (_verbCursor) {
 					case LOOK_CURSOR:
-						if (isFlag(15))
+						if (isFlag(kGFSpringTaken))
 							playGnapMoan1(8, 7);
 						else
 							playGnapScratchingHead(8, 7);
@@ -401,10 +401,10 @@ void GnapEngine::scene44_run() {
 				_timers[5] = getRandom(20) + 20;
 				if (_gnapActionStatus < 0 && _beaverActionStatus < 0 && _s44_nextSpringGuySequenceId == -1) {
 					if (getRandom(5) != 0) {
-						if (!isFlag(15))
+						if (!isFlag(kGFSpringTaken))
 							_s44_nextSpringGuySequenceId = 0xF9;
 					} else {
-						if (isFlag(15))
+						if (isFlag(kGFSpringTaken))
 							_s44_nextSpringGuySequenceId = 0xF8;
 						else
 							_s44_nextSpringGuySequenceId = 0xFA;

@@ -145,7 +145,7 @@ void GnapEngine::scene17_run() {
 		}
 	}
 
-	if (isFlag(19))
+	if (isFlag(kGFGroceryStoreHatTaken))
 		_gameSys->insertSequence(0x262, 1, 0, 0, kSeqNone, 0, 0, 0);
 
 	queueInsertDeviceIcon();
@@ -172,7 +172,7 @@ void GnapEngine::scene17_run() {
 
 	_s17_canTryGetWrench = true;
 
-	if (isFlag(18))
+	if (isFlag(kGFUnk18))
 		_gameSys->insertSequence(0x24F, 100, 0, 0, kSeqNone, 0, 0, 0);
 
 	if (_prevSceneNum == 53 || _prevSceneNum == 18 || _prevSceneNum == 20 || _prevSceneNum == 19) {
@@ -192,8 +192,8 @@ void GnapEngine::scene17_run() {
 			_beaverSequenceId = 0x25A;
 			_beaverSequenceDatNum = 0;
 			endSceneInit();
-			clearFlag(15);
-			clearFlag(16);
+			clearFlag(kGFSpringTaken);
+			clearFlag(kGFUnk16);
 			_beaverActionStatus = kASPlatPhoningAssistant;
 			scene17_platHangUpPhone();
 			_gameSys->setAnimation(0, 0, 4);
@@ -201,8 +201,8 @@ void GnapEngine::scene17_run() {
 			clearFlag(27);
 			scene17_updateHotspots();
 		} else if (isFlag(25)) {
-			clearFlag(15);
-			clearFlag(16);
+			clearFlag(kGFSpringTaken);
+			clearFlag(kGFUnk16);
 			initBeaverPos(7, 9, kDirNone);
 			_gnapX = _hotspotsWalkPos[2].x;
 			_gnapY = _hotspotsWalkPos[2].y;
@@ -217,8 +217,8 @@ void GnapEngine::scene17_run() {
 			_gameSys->setAnimation(0x257, 254, 0);
 			_gameSys->insertSequence(0x257, 254, 0x251, 254, kSeqSyncWait, 0, 0, 0);
 		} else if (isFlag(26)) {
-			clearFlag(15);
-			clearFlag(16);
+			clearFlag(kGFSpringTaken);
+			clearFlag(kGFUnk16);
 			_sceneWaiting = true;
 			initGnapPos(3, 9, kDirUpLeft);
 			_platX = _hotspotsWalkPos[2].x;
@@ -240,7 +240,7 @@ void GnapEngine::scene17_run() {
 			platypusWalkTo(5, 9, -1, 0x107C2, 1);
 			gnapWalkTo(4, 8, -1, 0x107B9, 1);
 		} else {
-			if (isFlag(15)) {
+			if (isFlag(kGFSpringTaken)) {
 				initGnapPos(_hotspotsWalkPos[2].x, _hotspotsWalkPos[2].y, kDirBottomRight);
 				initBeaverPos(1, 9, kDirNone);
 				endSceneInit();
@@ -249,8 +249,8 @@ void GnapEngine::scene17_run() {
 				initBeaverPos(1, 7, kDirNone);
 				endSceneInit();
 			}
-			clearFlag(15);
-			clearFlag(16);
+			clearFlag(kGFSpringTaken);
+			clearFlag(kGFUnk16);
 			endSceneInit();
 		}
 	} else {
@@ -372,7 +372,7 @@ void GnapEngine::scene17_run() {
 						playGnapScratchingHead(1, 3);
 						break;
 					case GRAB_CURSOR:
-						if (isFlag(18)) {
+						if (isFlag(kGFUnk18)) {
 							scene17_platHangUpPhone();
 							gnapWalkTo(_gnapX, _gnapY, 0, getGnapSequenceId(gskIdle, _hotspotsWalkPos[2].x, _hotspotsWalkPos[2].y) | 0x10000, 1);
 							_gnapActionStatus = kASGetCoinFromPhone;
@@ -383,13 +383,13 @@ void GnapEngine::scene17_run() {
 						playGnapImpossible(0, 0);
 						break;
 					case PLAT_CURSOR:
-						if (isFlag(18)) {
+						if (isFlag(kGFUnk18)) {
 							scene17_platHangUpPhone();
 							_isLeavingScene = true;
 							gnapUseDeviceOnBeaver();
 							_beaverFacing = kDirUpLeft;
 							platypusWalkTo(_hotspotsWalkPos[2].x, _hotspotsWalkPos[2].y, 1, 0x107C2, 1);
-							setFlag(16);
+							setFlag(kGFUnk16);
 							_beaverActionStatus = kASPlatUsePhone;
 							_gnapActionStatus = kASPlatUsePhone;
 						} else
@@ -413,13 +413,13 @@ void GnapEngine::scene17_run() {
 						playGnapScratchingHead(1, 3);
 						break;
 					case GRAB_CURSOR:
-						if (isFlag(18)) {
+						if (isFlag(kGFUnk18)) {
 							scene17_platHangUpPhone();
 							_isLeavingScene = true;
 							_gnapIdleFacing = kDirUpLeft;
 							gnapWalkTo(_hotspotsWalkPos[2].x, _hotspotsWalkPos[2].y, 0, getGnapSequenceId(gskIdle, 0, 0) | 0x10000, 1);
 							_gnapActionStatus = kASGnapUsePhone;
-							setFlag(15);
+							setFlag(kGFSpringTaken);
 						} else
 							playGnapImpossible(0, 0);
 						break;
@@ -427,13 +427,13 @@ void GnapEngine::scene17_run() {
 						playGnapImpossible(0, 0);
 						break;
 					case PLAT_CURSOR:
-						if (isFlag(18)) {
+						if (isFlag(kGFUnk18)) {
 							scene17_platHangUpPhone();
 							_isLeavingScene = true;
 							gnapUseDeviceOnBeaver();
 							_beaverFacing = kDirUpLeft;
 							platypusWalkTo(_hotspotsWalkPos[2].x, _hotspotsWalkPos[2].y, 1, 0x107C2, 1);
-							setFlag(16);
+							setFlag(kGFUnk16);
 							_beaverActionStatus = kASPlatUsePhone;
 							_gnapActionStatus = kASPlatUsePhone;
 						} else
@@ -603,7 +603,7 @@ void GnapEngine::scene17_updateAnimations() {
 			_gameSys->setAnimation(0x250, 100, 0);
 			_gameSys->insertSequence(0x250, 100, 591, 100, kSeqSyncWait, 0, 0, 0);
 			invAdd(kItemDiceQuarterHole);
-			clearFlag(18);
+			clearFlag(kGFUnk18);
 			_gnapActionStatus = kASGetCoinFromPhoneDone;
 			break;
 		case kASGetCoinFromPhoneDone:
@@ -617,7 +617,7 @@ void GnapEngine::scene17_updateAnimations() {
 			_gnapSequenceId = 0x24C;
 			invRemove(kItemDiceQuarterHole);
 			setGrabCursorSprite(-1);
-			setFlag(18);
+			setFlag(kGFUnk18);
 			_gnapActionStatus = kASPutCoinIntoPhoneDone;
 			break;
 		case kASPutCoinIntoPhoneDone:

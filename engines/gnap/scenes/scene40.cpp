@@ -41,7 +41,7 @@ enum {
 int GnapEngine::scene40_init() {
 	_gameSys->setAnimation(0, 0, 0);
 	_gameSys->setAnimation(0, 0, 1);
-	return isFlag(23) ? 0x01 : 0x00;
+	return isFlag(kGFUnk23) ? 0x01 : 0x00;
 }
 
 void GnapEngine::scene40_updateHotspots() {

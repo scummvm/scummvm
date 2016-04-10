@@ -66,7 +66,7 @@ void GnapEngine::scene28_updateHotspots() {
 	setDeviceHotspot(kHSDevice, -1, -1, -1, -1);
 	if (invHas(kItemHorn))
 		_hotspots[kHSHorn]._flags = SF_DISABLED;
-	if (isFlag(22))
+	if (isFlag(kGFUnk22))
 		_hotspots[kHSEmptyBucket]._flags = SF_PLAT_CURSOR | SF_TALK_CURSOR | SF_GRAB_CURSOR | SF_LOOK_CURSOR;
 	_hotspotsCount = 8;
 }
@@ -78,11 +78,11 @@ void GnapEngine::scene28_run() {
 	queueInsertDeviceIcon();
 	_gameSys->insertSequence(0x124, 255, 0, 0, kSeqNone, 0, 0, 0);
 
-	if (isFlag(22))
+	if (isFlag(kGFUnk22))
 		_gameSys->insertSequence(0x112, 99, 0, 0, kSeqNone, 0, 0, 0);
 
 	if (isFlag(kGFMudTaken)) {
-		if (isFlag(21)) {
+		if (isFlag(kGFUnk21)) {
 			_gameSys->setAnimation(0x11C, 39, 3);
 			_gameSys->insertSequence(0x11C, 39, 0, 0, kSeqNone, 0, 0, 0);
 			if (!invHas(kItemHorn))
@@ -170,7 +170,7 @@ void GnapEngine::scene28_run() {
 						playGnapScratchingHead(2, 4);
 						break;
 					case GRAB_CURSOR:
-						if (isFlag(21)) {
+						if (isFlag(kGFUnk21)) {
 							if (!invHas(kItemHorn)) {
 								gnapWalkTo(_gnapX, _gnapY, 0, getGnapSequenceId(gskIdle, _hotspotsWalkPos[kHSHorn].x, _hotspotsWalkPos[kHSHorn].y) | 0x10000, 1);
 								_gnapActionStatus = kASGrabHornSuccess;
@@ -195,7 +195,7 @@ void GnapEngine::scene28_run() {
 
 		case kHSClown:
 			if (_gnapActionStatus < 0) {
-				if (isFlag(21)) {
+				if (isFlag(kGFUnk21)) {
 					if (_verbCursor == LOOK_CURSOR)
 						playGnapScratchingHead(5, 2);
 					else
@@ -249,7 +249,7 @@ void GnapEngine::scene28_run() {
 			if (_gnapActionStatus < 0) {
 				if (_grabCursorSpriteIndex >= 0) {
 					playGnapShowItem(_grabCursorSpriteIndex, 8, 6);
-				} else if (isFlag(21)) {
+				} else if (isFlag(kGFUnk21)) {
 					playGnapImpossible(8, 6);
 				} else {
 					switch (_verbCursor) {
@@ -294,7 +294,7 @@ void GnapEngine::scene28_run() {
 			updateGnapIdleSequence();
 			if (!_timers[4]) {
 				_timers[4] = getRandom(20) + 80;
-				if (_gnapActionStatus < 0 && !isFlag(21))
+				if (_gnapActionStatus < 0 && !isFlag(kGFUnk21))
 					_s28_nextClownSequenceId = 0x114;
 			}
 		}
@@ -319,7 +319,7 @@ void GnapEngine::scene28_updateAnimations() {
 		_gameSys->setAnimation(0, 0, 0);
 		switch (_gnapActionStatus) {
 		case kASUseBeerBucketWithClown:
-			setFlag(22);
+			setFlag(kGFUnk22);
 			_s28_nextClownSequenceId = 0x113;
 			invRemove(kItemBucketWithBeer);
 			scene28_updateHotspots();
@@ -327,8 +327,8 @@ void GnapEngine::scene28_updateAnimations() {
 		case kASUsePillBucketWithClown:
 			_s28_nextClownSequenceId = 0x116;
 			invRemove(kItemBucketWithPill);
-			setFlag(22);
-			setFlag(21);
+			setFlag(kGFUnk22);
+			setFlag(kGFUnk21);
 			scene28_updateHotspots();
 			break;
 		case kASGrabHornFails:
@@ -365,7 +365,7 @@ void GnapEngine::scene28_updateAnimations() {
 			break;
 		case kASGrabEmptyBucketDone:
 			setGrabCursorSprite(kItemEmptyBucket);
-			clearFlag(22);;
+			clearFlag(kGFUnk22);;
 			scene28_updateHotspots();
 			invAdd(kItemEmptyBucket);
 			_gnapActionStatus = -1;

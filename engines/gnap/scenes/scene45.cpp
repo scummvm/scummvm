@@ -50,7 +50,7 @@ int GnapEngine::scene45_init() {
 	_gameSys->setAnimation(0, 0, 3);
 	_gameSys->setAnimation(0, 0, 4);
 	_gameSys->setAnimation(0, 0, 5);
-	return isFlag(23) ? 0xA2 : 0xA1;
+	return isFlag(kGFUnk23) ? 0xA2 : 0xA1;
 }
 
 void GnapEngine::scene45_updateHotspots() {
@@ -69,14 +69,14 @@ void GnapEngine::scene45_updateHotspots() {
 		setHotspot(kHSDiscoBall, 370, 10, 470, 125, SF_PLAT_CURSOR | SF_TALK_CURSOR | SF_GRAB_CURSOR | SF_LOOK_CURSOR, 6, 7);
 		setHotspot(kHSWalkArea1, 0, 0, 800, 472);
 		setDeviceHotspot(kHSDevice, -1, -1, -1, -1);
-		if (isFlag(22)) {
+		if (isFlag(kGFUnk22)) {
 			_hotspots[kHSPlatypus]._flags = SF_DISABLED;
 			_hotspots[kHSExitUfoParty]._flags = SF_DISABLED;
 			_hotspots[kHSExitShoe]._flags = SF_DISABLED;
 			_hotspots[kHSExitRight]._flags = SF_DISABLED;
 			_hotspots[kHSExitDiscoBall]._flags = SF_EXIT_U_CURSOR;
 		}
-		if (isFlag(23) || isFlag(22))
+		if (isFlag(kGFUnk23) || isFlag(kGFUnk22))
 			_hotspots[kHSDiscoBall]._flags = SF_DISABLED;
 		_hotspotsCount = 8;
 	}
@@ -109,7 +109,7 @@ void GnapEngine::scene45_run() {
 		_gameSys->setAnimation(_toyUfoSequenceId | 0x10000, _toyUfoId, 5);
 		_gameSys->insertSequence(_toyUfoSequenceId | 0x10000, _toyUfoId, 0, 0, kSeqNone, 0, _toyUfoX - 274, _toyUfoY - 128);
 		endSceneInit();
-	} else if (isFlag(22)) {
+	} else if (isFlag(kGFUnk22)) {
 		_gnapSequenceId = 0x9E;
 		_gnapSequenceDatNum = 0;
 		_gnapId = 1;
@@ -138,8 +138,8 @@ void GnapEngine::scene45_run() {
 		gnapWalkTo(2, 7, -1, 0x107B9, 1);
 	}
 	
-	if (!isFlag(21) && !isFlag(kGFGnapControlsToyUFO)) {
-		setFlag(21);
+	if (!isFlag(kGFUnk21) && !isFlag(kGFGnapControlsToyUFO)) {
+		setFlag(kGFUnk21);
 		setGrabCursorSprite(-1);
 		_gameSys->setAnimation(0x9D, _gnapId, 0);
 		_gameSys->insertSequence(0x9D, _gnapId, makeRid(_gnapSequenceDatNum, _gnapSequenceId), _gnapId, kSeqSyncWait, 0, 0, 0);
@@ -287,8 +287,8 @@ void GnapEngine::scene45_run() {
 				break;
 
 			case kHSExitDiscoBall:
-				clearFlag(22);
-				setFlag(23);
+				clearFlag(kGFUnk22);
+				setFlag(kGFUnk23);
 				_sceneDone = true;
 				_newSceneNum = 54;
 				break;
@@ -368,7 +368,7 @@ void GnapEngine::scene45_updateAnimations() {
 			break;
 		case 1:
 			_sceneWaiting = 1;
-			setFlag(22);
+			setFlag(kGFUnk22);
 			scene45_updateHotspots();
 			_gameSys->insertSequence(0x9E, _gnapId, makeRid(_gnapSequenceDatNum, _gnapSequenceId), _gnapId, kSeqSyncWait, 0, 0, 0);
 			_gnapSequenceId = 0x9E;

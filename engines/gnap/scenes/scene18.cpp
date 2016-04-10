@@ -640,7 +640,7 @@ void GnapEngine::scene18_run() {
 					scene18_gnapCarryGarbageCanTo(-1, -1, 0, -1, -1);
 					scene18_putDownGarbageCan(0);
 				}
-				if (isFlag(20)) {
+				if (isFlag(kGFPictureTaken)) {
 					playGnapImpossible(0, 0);
 				} else {
 					_isLeavingScene = 1;

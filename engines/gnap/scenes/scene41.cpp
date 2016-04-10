@@ -97,7 +97,7 @@ void GnapEngine::scene41_run() {
 		if (!_timers[9])
 			_gnapActionStatus = kASGiveBackToyUfo;
 	} else {
-		if (!isFlag(16) && !isFlag(17) && !isFlag(18) && !isFlag(19))
+		if (!isFlag(kGFUnk16) && !isFlag(kGFJointTaken) && !isFlag(kGFUnk18) && !isFlag(kGFGroceryStoreHatTaken))
 			toyUfoSetStatus(16);
 		_toyUfoX = 600;
 		_toyUfoY = 200;

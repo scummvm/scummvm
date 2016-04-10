@@ -43,7 +43,7 @@ enum {
 };
 
 int GnapEngine::scene26_init() {
-	return isFlag(23) ? 0x61 : 0x60;
+	return isFlag(kGFUnk23) ? 0x61 : 0x60;
 }
 
 void GnapEngine::scene26_updateHotspots() {
