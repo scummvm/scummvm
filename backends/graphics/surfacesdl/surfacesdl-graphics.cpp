@@ -812,11 +812,7 @@ bool SurfaceSdlGraphicsManager::loadGFXMode() {
 #endif
 
 		_hwscreen = SDL_SetVideoMode(_videoMode.hardwareWidth, _videoMode.hardwareHeight, 16,
-#ifndef GCW0
 			_videoMode.fullscreen ? (SDL_FULLSCREEN|SDL_SWSURFACE) : SDL_SWSURFACE
-#else
-			SDL_HWSURFACE | SDL_TRIPLEBUF
-#endif
 			);
 	}
 
@@ -1262,11 +1258,7 @@ void SurfaceSdlGraphicsManager::internUpdateScreen() {
 
 		// Finally, blit all our changes to the screen
 		if (!_displayDisabled) {
-#ifndef GCW0
 			SDL_UpdateRects(_hwscreen, _numDirtyRects, _dirtyRectList);
-#else
-			SDL_Flip(_hwscreen);
-#endif
 		}
 	}
 
