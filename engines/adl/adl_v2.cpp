@@ -278,7 +278,7 @@ void AdlEngine_v2::showRoom() {
 		drawItems();
 
 	_display->updateHiResScreen();
-	printString(_roomData.description);
+	printRoomDescription();
 
 	// FIXME: move to main loop?
 	_linesPrinted = 0;

@@ -385,6 +385,10 @@ void AdlEngine::initState() {
 	initGameState();
 }
 
+void AdlEngine::printRoomDescription() {
+	printString(_roomData.description);
+}
+
 byte AdlEngine::roomArg(byte room) const {
 	return room;
 }

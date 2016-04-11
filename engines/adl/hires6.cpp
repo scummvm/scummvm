@@ -236,6 +236,13 @@ void HiRes6Engine::initGameState() {
 
 		_state.items.push_back(item);
 	}
+
+	_currVerb = _currNoun = 0;
+}
+
+void HiRes6Engine::printRoomDescription() {
+	setVar(2, 0xff);
+	AdlEngine_v3::printRoomDescription();
 }
 
 void HiRes6Engine::applyDataBlockOffset(byte &track, byte &sector) const {
@@ -256,24 +263,28 @@ void HiRes6Engine::printString(const Common::String &str) {
 			++found;
 			if (found == 3)
 				found = 0;
-			continue;
-		}
-
-		switch (found) {
-		case 0:
-			s += str[i];
-			break;
-		case 1:
-			if (getVar(27) == 0)
-				s += str[i];
-			break;
-		case 2:
-			if (getVar(27) == 1)
+		} else {
+			if (found == 0 || found - 1 == getVar(27))
 				s += str[i];
 		}
 	}
 
-	AdlEngine_v2::printString(s);
+	if (getVar(2) != 0xff) {
+		AdlEngine_v2::printString(s);
+	} else {
+		if (getVar(26) == 0) {
+			if (str.size() != 1 || APPLECHAR(str[0]) != APPLECHAR(' '))
+				return AdlEngine_v2::printString(s);
+			setVar(2, APPLECHAR(' '));
+		} else if (getVar(26) == 0xff) {
+			setVar(2, 'P');
+		} else {
+			setVar(26, _state.room);
+			setVar(2, 1);
+		}
+
+		doAllCommands(_globalCommands, _currVerb, _currNoun);
+	}
 }
 
 Engine *HiRes6Engine_create(OSystem *syst, const AdlGameDescription *gd) {

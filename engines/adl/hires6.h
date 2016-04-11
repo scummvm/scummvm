@@ -50,17 +50,20 @@ namespace Adl {
 
 class HiRes6Engine : public AdlEngine_v3 {
 public:
-	HiRes6Engine(OSystem *syst, const AdlGameDescription *gd) : AdlEngine_v3(syst, gd) { }
+	HiRes6Engine(OSystem *syst, const AdlGameDescription *gd) : AdlEngine_v3(syst, gd), _currVerb(0), _currNoun(0) { }
 
 private:
 	// AdlEngine
 	void runIntro() const;
 	void init();
 	void initGameState();
+	void printRoomDescription();
 
 	// AdlEngine_v2
 	void printString(const Common::String &str);
 	void applyDataBlockOffset(byte &track, byte &sector) const;
+
+	byte _currVerb, _currNoun;
 };
 
 } // End of namespace Adl
