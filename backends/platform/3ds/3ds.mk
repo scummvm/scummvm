@@ -3,7 +3,11 @@ TARGET := scummvm
 APP_TITLE       := ScummVM
 APP_DESCRIPTION := Point-and-click adventure game engines
 APP_AUTHOR      := ScummVM Team
-APP_ICON        := backends/platform/3ds/icon.png
+APP_ICON        := backends/platform/3ds/app/icon.png
+
+APP_RSF         := backends/platform/3ds/app/scummvm.rsf
+APP_BANNER_IMAGE:= backends/platform/3ds/app/banner.png
+APP_BANNER_AUDIO:= backends/platform/3ds/app/banner.wav
 
 ARCH     := -march=armv6k -mtune=mpcore -mfloat-abi=hard -mtp=soft
 CXXFLAGS += -std=gnu++11
@@ -12,19 +16,26 @@ LDFLAGS  += -specs=3dsx.specs $(ARCH) -L$(DEVKITPRO)/libctru/lib -L$(DEVKITPRO)/
 
 .PHONY: clean_3ds
 
-all: $(TARGET).3dsx
-
 clean: clean_3ds
 
 clean_3ds:
 	$(RM) $(TARGET).3dsx
+	$(RM) $(TARGET).cia
 
-$(TARGET).smdh: $(APP_ICON) $(MAKEFILE_LIST)
-	@smdhtool --create "$(APP_TITLE)" "$(APP_DESCRIPTION)" "$(APP_AUTHOR)" $(APP_ICON) $@
+$(TARGET).smdh: $(APP_ICON)
+	@bannertool makesmdh -s "$(APP_TITLE)" -l "$(APP_DESCRIPTION)" -p "$(APP_AUTHOR)" -i $(APP_ICON) -o $@
 	@echo built ... $(notdir $@)
 
 $(TARGET).3dsx: $(EXECUTABLE) $(TARGET).smdh
 	@3dsxtool $< $@ --smdh=$(TARGET).smdh
+	@echo built ... $(notdir $@)
+	
+$(TARGET).bnr: $(APP_BANNER_IMAGE) $(APP_BANNER_AUDIO)
+	@bannertool makebanner -o $@ -i $(APP_BANNER_IMAGE) -a $(APP_BANNER_AUDIO)
+	@echo built ... $(notdir $@)
+	
+$(TARGET).cia: $(EXECUTABLE) $(APP_RSF) $(TARGET).smdh $(TARGET).bnr
+	@makerom -f cia -target t -exefslogo -o $@ -elf $(EXECUTABLE) -rsf $(APP_RSF) -banner $(TARGET).bnr -icon $(TARGET).smdh
 	@echo built ... $(notdir $@)
 
 #---------------------------------------------------------------------------------

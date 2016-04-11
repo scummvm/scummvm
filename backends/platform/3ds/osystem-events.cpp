@@ -21,12 +21,13 @@
  */
 
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
+#include "backends/timer/default/default-timer.h"
 #include "backends/platform/3ds/gui.h"
 #include "osystem.h"
 
 static Common::Mutex *eventMutex;
-static bool exitEventThread = false;
 static InputMode inputMode = MODE_DRAG;
+static aptHookCookie cookie;
 
 static void pushEventQueue(Common::Queue<Common::Event>* queue, Common::Event& event) {
 	Common::StackLock lock(*eventMutex);
@@ -42,8 +43,10 @@ static void eventThreadFunc(void* arg) {
 	bool isRightClick = false;
 	Common::Event event;
 	
-	while(!exitEventThread) {
-		osys->delayMillis(10);
+	while(!osys->exiting) {
+		do {
+			osys->delayMillis(10);
+		} while (osys->sleeping && !osys->exiting);
 		
 		hidScanInput();
 		touchPosition touch;
@@ -51,10 +54,6 @@ static void eventThreadFunc(void* arg) {
 		u32 keysPressed = hidKeysDown();
 		u32 keysReleased = hidKeysUp();
 		
-		if (!aptMainLoop()) {
-			event.type = Common::EVENT_QUIT;
-			pushEventQueue(eventQueue, event);
-		}
 		if (held & KEY_TOUCH) {
 			hidTouchRead(&touch);
 			osys->transformPoint(touch);
@@ -151,15 +150,53 @@ static void eventThreadFunc(void* arg) {
 	}
 }
 
+static void aptHookFunc(APT_HookType hookType, void* param) {
+	auto eventQueue = (Common::Queue<Common::Event>*) param;
+	OSystem_3DS* osys = (OSystem_3DS*) g_system;
+	Common::Event event;
+	
+	switch (hookType) {
+		case APTHOOK_ONSUSPEND:
+		case APTHOOK_ONSLEEP:
+			event.type = Common::EVENT_MAINMENU;
+			pushEventQueue(eventQueue, event);
+			osys->sleeping = true;
+			break;
+		case APTHOOK_ONRESTORE:
+		case APTHOOK_ONWAKEUP:
+			osys->sleeping = false;
+			break;
+		default:
+			event.type = Common::EVENT_QUIT;
+			pushEventQueue(eventQueue, event);
+			break;
+	}
+}
+
+static void timerThreadFunc(void *arg) {
+	OSystem_3DS* osys = (OSystem_3DS*) arg;
+	DefaultTimerManager *tm = (DefaultTimerManager *) osys->getTimerManager();
+	while (!osys->exiting) {
+		tm->handler();
+		g_system->delayMillis(10);
+		aptMainLoop(); // Call apt hook when necessary
+	}
+}
+
 void OSystem_3DS::initEvents() {
 	eventMutex = new Common::Mutex();
 	s32 prio = 0;
 	svcGetThreadPriority(&prio, CUR_THREAD_HANDLE);
-	_eventThread = threadCreate(&eventThreadFunc, &_eventQueue, 2048, prio-1, -2, false);
+	_timerThread = threadCreate(&timerThreadFunc, this, 32*1024, prio-1, -2, false);
+	_eventThread = threadCreate(&eventThreadFunc, &_eventQueue, 32*1024, prio-1, -2, false);
+	
+	aptHook(&cookie, aptHookFunc, &_eventQueue);
 }
 
 void OSystem_3DS::destroyEvents() {
-	exitEventThread = true;
+	threadJoin(_timerThread, U64_MAX);
+	threadFree(_timerThread);
+
 	threadJoin(_eventThread, U64_MAX);
 	threadFree(_eventThread);
 	delete eventMutex;

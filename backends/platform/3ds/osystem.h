@@ -55,6 +55,9 @@ class OSystem_3DS : public EventsBaseBackend, public PaletteManager {
 public:
 	OSystem_3DS();
 	~OSystem_3DS();
+	
+	volatile bool exiting;
+	volatile bool sleeping;
 
 	virtual void initBackend();
 	
@@ -191,6 +194,7 @@ private:
 	
 	// Events
 	Thread _eventThread;
+	Thread _timerThread;
 	Common::Queue<Common::Event> _eventQueue;
 
 	Common::String _messageOSD;

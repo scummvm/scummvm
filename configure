@@ -2414,7 +2414,7 @@ case $_host_os in
 	3ds)
 		_optimization_level=-O2
 		append_var DEFINES "-D__3DS__"
-		append_var DEFINES "-D_3DS"
+		append_var DEFINES "-DARM"
 		append_var DEFINES "-DARM11"
 		append_var CXXFLAGS "-march=armv6k"
 		append_var CXXFLAGS "-mtune=mpcore"
@@ -2742,8 +2742,6 @@ if test -n "$_host"; then
 			append_var DEFINES "-DDISABLE_FANCY_THEMES"
 			append_var DEFINES "-DDISABLE_SID"
 			append_var DEFINES "-DDISABLE_NES_APU"
-			append_var DEFINES "-DDISABLE_NES_APU"
-			append_var DEFINES "-DSTREAM_AUDIO_FROM_DISK"
 			_backend="3ds"
 			_build_scalers=no
 			_vkeybd=yes
@@ -2754,6 +2752,8 @@ if test -n "$_host"; then
 			_zlib=yes
 			_jpeg=yes
 			_png=yes
+			_flac=yes
+			_faad=yes
 			_freetype2=yes
 			_port_mk="backends/platform/3ds/3ds.mk"
 			;;
@@ -4636,6 +4636,9 @@ case $_backend in
 		# Move some libs down here, otherwise some symbols requires by libvorbis aren't found
 		# during linking stage
 		append_var LIBS "-lc -lgcc -lnosys"
+		;;
+	3ds)
+		append_var LIBS "-logg -lpng"
 		;;
 esac
 
