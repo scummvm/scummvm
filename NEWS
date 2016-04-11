@@ -37,6 +37,15 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Fixed user interface colors in the French and German versions of I Have No
      Mouth and I Must Scream.
 
+ SCI:
+   - Make cursor workarounds work properly on OpenPandora (and other devices, that
+     support touch screen and analog sticks/mouse at the same time)
+   - Script patch to fix broken ending battle in multilingual King's Quest 5
+     (French, German + Spanish versions are all broken)
+   - Fixed invalid memory access, when loading broken King's Quest 5 credit music track
+   - Fixed lowres/hires issues in King's Quest 6 when saving, changing the lowres/hires
+     setting and restoring the saved game afterwards.
+
  SCUMM:
    - Fixed detection of Maniac Mansion from Day of the Tentacle in the Windows
      version of ScummVM.
