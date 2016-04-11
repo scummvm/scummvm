@@ -276,7 +276,7 @@ void HiRes6Engine::printString(const Common::String &str) {
 			if (str.size() != 1 || APPLECHAR(str[0]) != APPLECHAR(' '))
 				return AdlEngine_v2::printString(s);
 			setVar(2, APPLECHAR(' '));
-		} else if (getVar(26) == 0xff) {
+		} else if (getVar(26) != 0xff) {
 			setVar(2, 'P');
 		} else {
 			setVar(26, _state.room);
