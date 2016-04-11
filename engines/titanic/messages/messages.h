@@ -319,7 +319,6 @@ MESSAGE0(COpeningCreditsMsg);
 MESSAGE1(CPanningAwayFromParrotMsg, int, value, 0);
 MESSAGE2(CParrotSpeakMsg, CString, value1, "", CString, value2, "");
 MESSAGE2(CParrotTriesChickenMsg, int, value1, 0, int, value2, 0);
-MESSAGE4(CPassOnDragStartMsg, int, value1, 0, int, value2, 0, int, value3, 0, int, value4, 0);
 MESSAGE1(CPhonographPlayMsg, int, value, 0);
 MESSAGE0(CPhonographReadyToPlayMsg);
 MESSAGE1(CPhonographRecordMsg, int, value, 0);

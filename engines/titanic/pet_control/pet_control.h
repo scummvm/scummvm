@@ -193,7 +193,7 @@ public:
 	/**
 	 * Handles drag ends within the PET
 	 */
-	CTreeItem *dragEnd(const Point &pt) const {
+	CGameObject *dragEnd(const Point &pt) const {
 		return _currentArea == PET_INVENTORY ? _inventory.dragEnd(pt) : nullptr;
 	}
 };

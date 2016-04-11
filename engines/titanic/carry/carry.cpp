@@ -57,7 +57,7 @@ void CCarry::save(SimpleFile *file, int indent) const {
 	file->writeNumberLine(_fieldE0, indent);
 	file->writeQuotedLine(_string3, indent);
 	file->writeQuotedLine(_string4, indent);
-	file->writePoint(_pos2, indent);
+	file->writePoint(_tempPos, indent);
 	file->writeNumberLine(_field104, indent);
 	file->writeNumberLine(_field108, indent);
 	file->writeNumberLine(_field10C, indent);
@@ -79,7 +79,7 @@ void CCarry::load(SimpleFile *file) {
 	_fieldE0 = file->readNumber();
 	_string3 = file->readString();
 	_string4 = file->readString();
-	_pos2 = file->readPoint();
+	_tempPos = file->readPoint();
 	_field104 = file->readNumber();
 	_field108 = file->readNumber();
 	_field10C = file->readNumber();
@@ -93,14 +93,34 @@ void CCarry::load(SimpleFile *file) {
 }
 
 bool CCarry::MouseDragStartMsg(CMouseDragStartMsg *msg) {
-	return true;
+	CString name = getName();
+
+	if (_fieldE0) {
+		if (_visible) {
+			CShowTextMsg textMsg("You can't get this.");
+			textMsg.execute("PET");
+		}
+	} else {
+		if (checkStartDragging(msg)) {
+			CPassOnDragStartMsg startMsg(msg->_mousePos);
+			startMsg.execute(this);
+			return true;
+		}
+	}
+
+	return false;
 }
 
 bool CCarry::MouseDragMoveMsg(CMouseDragMoveMsg *msg) {
+	setPosition(msg->_mousePos - _tempPos);
 	return true;
 }
 
 bool CCarry::MouseDragEndMsg(CMouseDragEndMsg *msg) {
+	if (msg->_dropTarget) {
+		// TODO
+	}
+
 	return true;
 }
 

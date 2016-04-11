@@ -139,14 +139,27 @@ public:
 	}
 };
 
+class CPassOnDragStartMsg : public CMessage {
+public:
+	Point _mousePos;
+public:
+	CLASSDEF
+	CPassOnDragStartMsg() : CMessage() {}
+	CPassOnDragStartMsg(const Point &pt) : CMessage(), _mousePos(pt) {}
+
+	static bool isSupportedBy(const CTreeItem *item) {
+		return supports(item, _type);
+	}
+};
+
 class CMouseDragEndMsg : public CMouseDragMsg {
 public:
-	CTreeItem *_dropTarget;
+	CGameObject *_dropTarget;
 public:
 	CLASSDEF
 	CMouseDragEndMsg() : CMouseDragMsg(), _dropTarget(nullptr) {}
-	CMouseDragEndMsg(const Point &pt, CTreeItem *dragItem = nullptr) :
-		CMouseDragMsg(pt), _dropTarget(dragItem) {}
+	CMouseDragEndMsg(const Point &pt, CGameObject *dropTarget = nullptr) :
+		CMouseDragMsg(pt), _dropTarget(dropTarget) {}
 
 	static bool isSupportedBy(const CTreeItem *item) {
 		return supports(item, _type);

@@ -221,6 +221,10 @@ void CGameObject::draw(CScreenManager *screenManager, const Common::Point &destP
 	}
 }
 
+bool CGameObject::isPet() const {
+	return isInstanceOf(CPetControl::_type);
+}
+
 void CGameObject::loadResource(const CString &name) {
 	switch (name.fileTypeSuffix()) {
 	case FILETYPE_IMAGE:

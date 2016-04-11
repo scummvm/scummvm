@@ -168,6 +168,11 @@ public:
 	virtual void draw(CScreenManager *screenManager, const Common::Point &destPos);
 
 	/**
+	 * Returns true if the item is the PET control
+	 */
+	virtual bool isPet() const;
+
+	/**
 	 * Stops any movie currently playing for the object
 	 */
 	void stopMovie();

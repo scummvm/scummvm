@@ -84,7 +84,7 @@ public:
 	/**
 	 * Returns item a drag-drop operation has dropped on, if any
 	 */
-	virtual CTreeItem *dragEnd(const Point &pt) const;
+	virtual CGameObject *dragEnd(const Point &pt) const;
 
 	/**
 	 * Returns true if the object is in a valid state

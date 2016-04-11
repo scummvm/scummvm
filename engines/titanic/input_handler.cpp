@@ -88,7 +88,7 @@ void CInputHandler::processMessage(CMessage *msg) {
 			} else {
 				if (mouseMsg->isButtonUpMsg() && _dragItem) {
 					// Mouse drag ended
-					CTreeItem *target = dragEnd(_mousePos, _dragItem);
+					CGameObject *target = dragEnd(_mousePos, _dragItem);
 					CMouseDragEndMsg endMsg(_mousePos, target);
 					endMsg.execute(_dragItem);
 				}
@@ -134,13 +134,13 @@ void CInputHandler::dispatchMessage(CMessage *msg) {
 	}
 }
 
-CTreeItem *CInputHandler::dragEnd(const Point &pt, CTreeItem *dragItem) {
+CGameObject *CInputHandler::dragEnd(const Point &pt, CTreeItem *dragItem) {
 	CViewItem *view = _gameManager->getView();
 	if (!view)
 		return nullptr;
 
 	// Scan through the view items to find the item being dropped on
-	CTreeItem *target = nullptr;
+	CGameObject *target = nullptr;
 	for (CTreeItem *treeItem = view->scan(view); treeItem; treeItem = treeItem->scan(view)) {
 		CGameObject *gameObject = static_cast<CGameObject *>(treeItem);
 		if (gameObject && gameObject != dragItem) {

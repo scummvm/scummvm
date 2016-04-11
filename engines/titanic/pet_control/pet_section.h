@@ -94,7 +94,7 @@ public:
 	/**
 	 * Returns item a drag-drop operation has dropped on, if any
 	 */
-	virtual CTreeItem *dragEnd(const Point &pt) const { return nullptr; }
+	virtual CGameObject *dragEnd(const Point &pt) const { return nullptr; }
 	
 	virtual void proc16();
 
