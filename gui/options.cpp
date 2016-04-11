@@ -870,10 +870,6 @@ void OptionsDialog::addMIDIControls(GuiObject *boss, const Common::String &prefi
 	_midiGainSlider->setMaxValue(1000);
 	_midiGainLabel = new StaticTextWidget(boss, prefix + "mcMidiGainLabel", "1.00");
 
-#ifdef USE_FLUIDSYNTH
-	new ButtonWidget(boss, prefix + "mcFluidSynthSettings", _("FluidSynth Settings"), 0, kFluidSynthSettingsCmd);
-#endif
-
 	_enableMIDISettings = true;
 }
 
@@ -1110,6 +1106,10 @@ GlobalOptionsDialog::GlobalOptionsDialog()
 	//
 	_midiTabId = tab->addTab(_("MIDI"));
 	addMIDIControls(tab, "GlobalOptions_MIDI.");
+
+#ifdef USE_FLUIDSYNTH
+	new ButtonWidget(tab, "GlobalOptions_MIDI.mcFluidSynthSettings", _("FluidSynth Settings"), 0, kFluidSynthSettingsCmd);
+#endif
 
 	//
 	// 4) The MT-32 tab
