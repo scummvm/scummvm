@@ -261,7 +261,7 @@ bool DrasculaEngine::loadGame(int slot) {
 	// things. Reset those before loading the savegame otherwise we may have some
 	// issues such as the protagonist being invisible after reloading a savegame.
 	if (_roomNumber == 102 && flags[1] == 2) {
-		hare_se_ve = 1;
+		characterVivible = 1;
 		loadPic(96, frontSurface);
 		loadPic(97, frontSurface);
 		loadPic(97, extraSurface);
