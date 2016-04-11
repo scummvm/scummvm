@@ -38,6 +38,18 @@ Programmcodes finden Sie auf Englisch unter:
    - Fehlerhafte Farben der Bedienelemente in der französischen und deutschen
      Version von "I Have No Mouth and I Must Screm" korrigiert.
 
+ SCI:
+   - Cursor-Hilfsroutinen funktionieren nun korrekt auf OpenPandora und anderen
+     Geräten, die einen Touchscreen und analoge Sticks/Mäuse zur gleichen Zeit
+     unterstützen.
+   - Skript-Fehlerbehebung, um den fehlerhaften Endkampf in der mehrsprachigen
+     Version von King's Quest 5 zu korrigieren. Betroffen sind die französische,
+     deutsche und spanische Version.
+   - Ungültiger Speicherzugriff beim Laden der defekten Audiospur im Abspann
+     von King's Quest 5 behoben.
+   - Probleme mit der Einstellung der Bildschirmauflösung beim Speichern in
+     King's Quest 6 behoben.
+
  SCUMM:
    - Erkennung von Maniac Mansion innerhalb von Day of the Tentacle in der
      Windows-Version von ScummVM repariert.
