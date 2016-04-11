@@ -66,7 +66,7 @@ void AdlEngine_v3::setupOpcodeTables() {
 	// 0x08
 	Opcode(o3_isVarGT);
 	Opcode(o1_isCurPicEQ);
-	Opcode(o1_isItemPicEQ);
+	Opcode(o3_skipOneCommand);
 
 	SetOpcodeTable(_actOpcodes);
 	// 0x00
@@ -118,6 +118,16 @@ int AdlEngine_v3::o3_isVarGT(ScriptEnv &e) {
 
 	if (getVar(e.arg(1)) > e.arg(2))
 		return 2;
+
+	return -1;
+}
+
+// FIXME: Move to HiRes6 class?
+int AdlEngine_v3::o3_skipOneCommand(ScriptEnv &e) {
+	OP_DEBUG_0("\t&& SKIP_NEXT_COMMAND()");
+
+	_skipOneCommand = true;
+	setVar(2, 0);
 
 	return -1;
 }

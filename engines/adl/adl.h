@@ -356,6 +356,7 @@ protected:
 	State _state;
 
 	bool _isRestarting, _isRestoring;
+	bool _skipOneCommand;
 
 private:
 	virtual void runIntro() const { }

@@ -46,6 +46,7 @@ protected:
 	virtual Common::String loadMessage(uint idx) const;
 
 	int o3_isVarGT(ScriptEnv &e);
+	int o3_skipOneCommand(ScriptEnv &e);
 };
 
 } // End of namespace Adl
