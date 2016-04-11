@@ -24,6 +24,8 @@ Programmcodes finden Sie auf Englisch unter:
 
  Drascula:
    - Text-Ausrichtung ist jetzt originalgetreu.
+   - Charakter tritt nicht mehr aus dem Bildschirmbereich heraus.
+   - Laden eines Spielstandes in der "Pendulum"-Szene repariert.
 
  Gob:
    - Aufhängen während Sound-Initialisierung in mehreren Spielen behoben.
