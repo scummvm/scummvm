@@ -62,7 +62,7 @@ void DrasculaEngine::gotoObject(int pointX, int pointY) {
 	hideCursor();
 
 	if (currentChapter == 5 || currentChapter == 6) {
-		if (hare_se_ve == 0) {
+		if (characterVivible == 0) {
 			curX = roomX;
 			curY = roomY;
 			updateRoom();
