@@ -1062,7 +1062,7 @@ msgstr "Sprache der ScummVM-Oberfläche"
 
 #: gui/options.cpp:1235
 msgid "Update check:"
-msgstr "Suche nach Aktualisierungen:"
+msgstr "Updates suchen:"
 
 #: gui/options.cpp:1235
 msgid "How often to check ScummVM updates"
