@@ -65,13 +65,16 @@ _cursorHotspotY(0),
 _gameX(0),
 _gameY(0),
 _gameWidth(320),
-_gameHeight(240) {
-	chdir("/");
+_gameHeight(240),
+exiting(false),
+sleeping(false) {
+	chdir("sdmc:/");
 	_fsFactory = new POSIXFilesystemFactory();
 	Posix::assureDirectoryExists("/3ds/scummvm/saves/");
 }
 
 OSystem_3DS::~OSystem_3DS() {
+	exiting = true;
 	destroyEvents();
 	destroyAudio();
 	destroyGraphics();
@@ -81,7 +84,7 @@ OSystem_3DS::~OSystem_3DS() {
 }
 
 void OSystem_3DS::quit() {
-	//
+	printf("OSystem_3DS::quit()\n");
 }
 
 void OSystem_3DS::initBackend() {

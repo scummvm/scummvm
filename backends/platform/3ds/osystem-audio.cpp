@@ -21,8 +21,8 @@
  */
 
 #include "osystem.h"
+#include "audio/mixer.h"
 
-static bool exitAudioThread = false;
 static bool hasAudio = false;
 
 static void audioThreadFunc(void* arg) {
@@ -34,7 +34,7 @@ static void audioThreadFunc(void* arg) {
 	int bufferIndex = 0;
 	const int bufferCount = 3;
 	const int bufferSize = 80000; // Can't be too small, based on delayMillis duration
-	const int sampleRate = 22050;
+	const int sampleRate = mixer->getOutputRate();
 	int sampleLen = 0;
 	uint32 lastTime = osys->getMillis(true);
 	uint32 time = lastTime;
@@ -52,18 +52,18 @@ static void audioThreadFunc(void* arg) {
 	ndspChnSetRate(channel, sampleRate);
 	ndspChnSetFormat(channel, NDSP_FORMAT_STEREO_PCM16);
 
-	while(!exitAudioThread) {
-		bufferIndex++;
-		bufferIndex %= bufferCount;
-		ndspWaveBuf* buf = &buffers[bufferIndex];
-		
+	while(!osys->exiting) {		
 		osys->delayMillis(100); // Note: Increasing the delay requires a bigger buffer
 		
 		time = osys->getMillis(true);
 		sampleLen = (time - lastTime) * 22 * 4; // sampleRate / 1000 * channelCount * sizeof(int16);
 		lastTime = time;
 		
-		if (sampleLen > 0) {
+		if (!osys->sleeping && sampleLen > 0) {
+			bufferIndex++;
+			bufferIndex %= bufferCount;
+			ndspWaveBuf* buf = &buffers[bufferIndex];
+		
 			buf->nsamples = mixer->mixCallback(buf->data_adpcm, sampleLen);
 			if (buf->nsamples > 0) {
 				DSP_FlushDataCache(buf->data_vaddr, bufferSize);
@@ -91,7 +91,6 @@ void OSystem_3DS::initAudio() {
 
 void OSystem_3DS::destroyAudio() {
 	if (hasAudio) {
-		exitAudioThread = true;
 		threadJoin(audioThread, U64_MAX);
 		threadFree(audioThread);
 		ndspExit();

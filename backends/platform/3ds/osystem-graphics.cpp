@@ -180,6 +180,12 @@ void OSystem_3DS::initSize(uint width, uint height,
 	}
 	_gameTexture.setPosition(_gameX, _gameY);
 	_cursorTexture.setScale(_gameTexture.getScaleX(), _gameTexture.getScaleY());
+	
+	float ratio = 400.f / _gameWidth;
+	int y = (_gameHeight * ratio - 240.f) / 2;
+	Mtx_Identity(&_focusMatrix);
+	Mtx_Translate(&_focusMatrix, 0, -y, 0);
+	Mtx_Scale(&_focusMatrix, ratio, ratio, 1.f);
 }
 
 Common::List<Graphics::PixelFormat> OSystem_3DS::getSupportedFormats() const {
@@ -248,8 +254,11 @@ void OSystem_3DS::unlockScreen() {
 }
 
 void OSystem_3DS::updateScreen() {
+
+	if (sleeping || exiting)
+		return;
 	
-	updateFocus();
+// 	updateFocus();
 
 	C3D_FrameBegin(C3D_FRAME_SYNCDRAW);
 		// Render top screen
