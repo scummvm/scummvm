@@ -241,7 +241,7 @@ void DrasculaEngine::print_abc(const char *said, int screenX, int screenY) {
 		}	// for
 
 		copyRect(letterX, letterY, screenX, screenY,
-				 CHAR_WIDTH, CHAR_HEIGHT, _lang == kSpanish ? extraSurface : tableSurface, screenSurface);
+				 CHAR_WIDTH, CHAR_HEIGHT, tableSurface, screenSurface);
 
 		screenX = screenX + CHAR_WIDTH;
 		if (screenX > 317) {
