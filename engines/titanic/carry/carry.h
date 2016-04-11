@@ -61,6 +61,11 @@ private:
 	int _field120;
 	int _field124;
 	int _field128;
+protected:
+	/**
+	 * Called when an item is dropped onto the PET
+	 */
+	void dropOnPet();
 public:
 	CLASSDEF
 	CCarry();

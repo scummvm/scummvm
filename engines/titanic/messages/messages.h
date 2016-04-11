@@ -79,6 +79,8 @@ enum MessageFlag {
 		return supports(item, _type); } \
 }
 
+class CCarry;
+class CCharacter;
 class CGameObject;
 class CRoomItem;
 class CNodeItem;
@@ -267,7 +269,7 @@ MESSAGE0(CDoffNavHelmet);
 MESSAGE0(CDonNavHelmet);
 MESSAGE1(CDoorbotNeededInElevatorMsg, int, value, 0);
 MESSAGE0(CDoorbotNeededInHomeMsg);
-MESSAGE1(CDropobjectMsg, int, value, 0);
+MESSAGE1(CDropObjectMsg, CCarry *, item, nullptr);
 MESSAGE1(CDropZoneGotObjectMsg, int, value, 0);
 MESSAGE1(CDropZoneLostObjectMsg, int, value, 0);
 MESSAGE1(CEjectCylinderMsg, int, value, 0);
@@ -389,8 +391,8 @@ MESSAGE3(CTrueTalkTriggerActionMsg, int, value1, 0, int, value2, 0, int, value3,
 MESSAGE0(CTurnOff);
 MESSAGE0(CTurnOn);
 MESSAGE1(CUse, int, value, 0);
-MESSAGE1(CUseWithCharMsg, int, value, 0);
-MESSAGE1(CUseWithOtherMsg, int, value, 0);
+MESSAGE1(CUseWithCharMsg, CCharacter *, character, nullptr);
+MESSAGE1(CUseWithOtherMsg, CGameObject *, other, 0);
 MESSAGE1(CVirtualKeyCharMsg, Common::KeyState, keyState, Common::KeyState());
 MESSAGE1(CVisibleMsg, bool, visible, true);
 

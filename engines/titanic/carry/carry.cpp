@@ -21,6 +21,8 @@
  */
 
 #include "titanic/carry/carry.h"
+#include "titanic/messages/messages.h"
+#include "titanic/npcs/character.h"
 
 namespace Titanic {
 
@@ -118,8 +120,29 @@ bool CCarry::MouseDragMoveMsg(CMouseDragMoveMsg *msg) {
 
 bool CCarry::MouseDragEndMsg(CMouseDragEndMsg *msg) {
 	if (msg->_dropTarget) {
-		// TODO
+		if (msg->_dropTarget->isPet()) {
+			dropOnPet();
+			return true;
+		}
+
+		CCharacter *npc = static_cast<CCharacter *>(msg->_dropTarget);
+		if (npc) {
+			CUseWithCharMsg charMsg(npc);
+			charMsg.execute(this, nullptr, 0);
+			return true;
+		}
+
+		CDropObjectMsg dropMsg(this);
+		if (dropMsg.execute(msg->_dropTarget))
+			return true;
+
+		// Fall back on a use with other message
+		CUseWithOtherMsg otherMsg(msg->_dropTarget);
+		if (otherMsg.execute(this, nullptr, 0))
+			return true;
 	}
+
+	// TODO
 
 	return true;
 }
@@ -158,6 +181,10 @@ bool CCarry::EnterViewMsg(CEnterViewMsg *msg) {
 
 bool CCarry::PassOnDragStartMsg(CPassOnDragStartMsg *msg) {
 	return true;
+}
+
+void CCarry::dropOnPet() {
+	warning("TODO: dropOnPet");
 }
 
 } // End of namespace Titanic

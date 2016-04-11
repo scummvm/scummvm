@@ -778,7 +778,7 @@ DEFFN(CDonNavHelmet)
 DEFFN(CDoorAutoSoundEvent)
 DEFFN(CDoorbotNeededInElevatorMsg)
 DEFFN(CDoorbotNeededInHomeMsg)
-DEFFN(CDropobjectMsg)
+DEFFN(CDropObjectMsg)
 DEFFN(CDropZoneGotObjectMsg)
 DEFFN(CDropZoneLostObjectMsg)
 DEFFN(CEditControlMsg)
@@ -1363,7 +1363,7 @@ void CSaveableObject::initClassList() {
 	ADDFN(CDoorAutoSoundEvent, CAutoSoundEvent);
 	ADDFN(CDoorbotNeededInElevatorMsg, CMessage);
 	ADDFN(CDoorbotNeededInHomeMsg, CMessage);
-	ADDFN(CDropobjectMsg, CMessage);
+	ADDFN(CDropObjectMsg, CMessage);
 	ADDFN(CDropZoneGotObjectMsg, CMessage);
 	ADDFN(CDropZoneLostObjectMsg, CMessage);
 	ADDFN(CEditControlMsg, CMessage);
