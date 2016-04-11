@@ -69,7 +69,7 @@ void Sprite::create(uint16 width, uint16 height, const Graphics::PixelFormat &f)
 	if (width && height) {
 		pixels = linearAlloc(h * pitch);
 		C3D_TexInit(&texture, w, h, GPU_RGBA8);
-		C3D_TexSetFilter(&texture, GPU_LINEAR, GPU_NEAREST);
+		C3D_TexSetFilter(&texture, GPU_LINEAR, GPU_LINEAR);
 		assert(pixels && texture.data);
 		clear();
 	}
