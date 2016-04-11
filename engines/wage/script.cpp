@@ -1099,7 +1099,7 @@ struct Mapping {
 	{ "\?\?\?(0xf5)", OPCODE },
 	{ "\?\?\?(0xf6)", OPCODE },
 	{ "\?\?\?(0xf7)", OPCODE },
-	{ "\?\?\?(0xf8)", OPCODE }, // 0xa8
+	{ "\?\?\?(0xf8)", OPCODE }, // 0xf8
 	{ "\?\?\?(0xf9)", OPCODE },
 	{ "\?\?\?(0xfa)", OPCODE },
 	{ "\?\?\?(0xfb)", OPCODE },
