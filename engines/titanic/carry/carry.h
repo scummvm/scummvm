@@ -24,10 +24,25 @@
 #define TITANIC_CARRY_H
 
 #include "titanic/core/game_object.h"
+#include "titanic/messages/messages.h"
+#include "titanic/messages/mouse_messages.h"
 
 namespace Titanic {
 
 class CCarry : public CGameObject {
+	DECLARE_MESSAGE_MAP
+	bool MouseDragStartMsg(CMouseDragStartMsg *msg);
+	bool MouseDragMoveMsg(CMouseDragMoveMsg *msg);
+	bool MouseDragEndMsg(CMouseDragEndMsg *msg);
+	bool UseWithCharMsg(CUseWithCharMsg *msg);
+	bool LeaveViewMsg(CLeaveViewMsg *msg);
+	bool UseWithOtherMsg(CUseWithOtherMsg *msg);
+	bool VisibleMsg(CVisibleMsg *msg);
+	bool MouseButtonDownMsg(CMouseButtonDownMsg *msg);
+	bool RemoveFromGameMsg(CRemoveFromGameMsg *msg);
+	bool MoveToStartPosMsg(CMoveToStartPosMsg *msg);
+	bool EnterViewMsg(CEnterViewMsg *msg);
+	bool PassOnDragStartMsg(CPassOnDragStartMsg *msg);
 private:
 	CString _string1;
 	Point _pos1;

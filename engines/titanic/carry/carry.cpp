@@ -24,6 +24,21 @@
 
 namespace Titanic {
 
+BEGIN_MESSAGE_MAP(CCarry, CGameObject)
+	ON_MESSAGE(MouseDragStartMsg)
+	ON_MESSAGE(MouseDragMoveMsg)
+	ON_MESSAGE(MouseDragEndMsg)
+	ON_MESSAGE(UseWithCharMsg)
+	ON_MESSAGE(LeaveViewMsg)
+	ON_MESSAGE(UseWithOtherMsg)
+	ON_MESSAGE(VisibleMsg)
+	ON_MESSAGE(MouseButtonDownMsg)
+	ON_MESSAGE(RemoveFromGameMsg)
+	ON_MESSAGE(MoveToStartPosMsg)
+	ON_MESSAGE(EnterViewMsg)
+	ON_MESSAGE(PassOnDragStartMsg)
+END_MESSAGE_MAP()
+
 CCarry::CCarry() : CGameObject(), _fieldDC(0), _fieldE0(1),
 	_field100(0), _field104(0), _field108(0), _field10C(0),
 	_field110(0), _field120(0), _field124(0), _field128(0),
@@ -75,6 +90,54 @@ void CCarry::load(SimpleFile *file) {
 	_field128 = file->readNumber();
 
 	CGameObject::load(file);
+}
+
+bool CCarry::MouseDragStartMsg(CMouseDragStartMsg *msg) {
+	return true;
+}
+
+bool CCarry::MouseDragMoveMsg(CMouseDragMoveMsg *msg) {
+	return true;
+}
+
+bool CCarry::MouseDragEndMsg(CMouseDragEndMsg *msg) {
+	return true;
+}
+
+bool CCarry::UseWithCharMsg(CUseWithCharMsg *msg) {
+	return true;
+}
+
+bool CCarry::LeaveViewMsg(CLeaveViewMsg *msg) {
+	return true;
+}
+
+bool CCarry::UseWithOtherMsg(CUseWithOtherMsg *msg) {
+	return true;
+}
+
+bool CCarry::VisibleMsg(CVisibleMsg *msg) {
+	return true;
+}
+
+bool CCarry::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
+	return true;
+}
+
+bool CCarry::RemoveFromGameMsg(CRemoveFromGameMsg *msg) {
+	return true;
+}
+
+bool CCarry::MoveToStartPosMsg(CMoveToStartPosMsg *msg) {
+	return true;
+}
+
+bool CCarry::EnterViewMsg(CEnterViewMsg *msg) {
+	return true;
+}
+
+bool CCarry::PassOnDragStartMsg(CPassOnDragStartMsg *msg) {
+	return true;
 }
 
 } // End of namespace Titanic
