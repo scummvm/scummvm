@@ -58,6 +58,7 @@ private:
 	void init();
 	void initGameState();
 	void printRoomDescription();
+	void showRoom();
 
 	// AdlEngine_v2
 	void printString(const Common::String &str);

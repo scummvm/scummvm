@@ -240,9 +240,51 @@ void HiRes6Engine::initGameState() {
 	_currVerb = _currNoun = 0;
 }
 
-void HiRes6Engine::printRoomDescription() {
+void HiRes6Engine::showRoom() {
+	bool redrawPic = false;
+
+	if (getVar(26) == 0xfe)
+		setVar(26, 0);
+	else if (getVar(26) != 0xff)
+		setVar(26, _state.room);
+
+	if (_state.room != _roomOnScreen) {
+		loadRoom(_state.room);
+
+		if (getVar(26) < 0x80 && getCurRoom().isFirstTime)
+			setVar(26, 0);
+
+		clearScreen();
+
+		if (!_state.isDark)
+			redrawPic = true;
+	} else {
+		if (getCurRoom().curPicture != _picOnScreen || _itemRemoved)
+			redrawPic = true;
+	}
+
+	if (redrawPic) {
+		_roomOnScreen = _state.room;
+		_picOnScreen = getCurRoom().curPicture;
+
+		drawPic(getCurRoom().curPicture);
+		_itemRemoved = false;
+		_itemsOnScreen = 0;
+
+		Common::List<Item>::iterator item;
+		for (item = _state.items.begin(); item != _state.items.end(); ++item)
+			item->isOnScreen = false;
+	}
+
+	if (!_state.isDark)
+		drawItems();
+
+	_display->updateHiResScreen();
 	setVar(2, 0xff);
-	AdlEngine_v3::printRoomDescription();
+	printString(_roomData.description);
+
+	// FIXME: move to main loop?
+	_linesPrinted = 0;
 }
 
 void HiRes6Engine::applyDataBlockOffset(byte &track, byte &sector) const {

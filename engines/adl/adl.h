@@ -241,7 +241,6 @@ protected:
 
 	virtual void setupOpcodeTables();
 	virtual void initState();
-	virtual void printRoomDescription();
 	virtual byte roomArg(byte room) const;
 	virtual void advanceClock() { }
 

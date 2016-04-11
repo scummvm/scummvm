@@ -348,7 +348,7 @@ void HiRes1Engine::showRoom() {
 
 	_display->updateHiResScreen();
 	_messageDelay = false;
-	printRoomDescription();
+	printString(_roomData.description);
 	_messageDelay = true;
 }
 

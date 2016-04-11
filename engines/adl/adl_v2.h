@@ -51,7 +51,7 @@ protected:
 	void drawItems();
 	void drawItem(Item &item, const Common::Point &pos);
 	void loadRoom(byte roomNr);
-	void showRoom();
+	virtual void showRoom();
 	void takeItem(byte noun);
 
 	virtual void applyDataBlockOffset(byte &track, byte &sector) const { }
