@@ -144,7 +144,7 @@ DrasculaEngine::DrasculaEngine(OSystem *syst, const DrasculaGameDescription *gam
 	curDirection = 0;
 	trackProtagonist = 0;
 	_characterFrame = 0;
-	characterVivible = 0;
+	characterVisible = 0;
 	roomX = 0;
 	roomY = 0;
 	checkFlags = 0;
@@ -301,7 +301,7 @@ Common::Error DrasculaEngine::run() {
 		characterMoved = 0;
 		trackProtagonist = 3;
 		_characterFrame = 0;
-		characterVivible = 1;
+		characterVisible = 1;
 		checkFlags = 1;
 		doBreak = 0;
 		walkToObject = 0;
