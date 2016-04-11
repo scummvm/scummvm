@@ -58,7 +58,7 @@ enum {
 };
 
 int GnapEngine::scene13_init() {
-	playSound(0x108EC, 0);
+	playSound(0x108EC, false);
 	return 0xAC;
 }
 
@@ -122,7 +122,7 @@ void GnapEngine::scene13_run() {
 	while (!_sceneDone) {
 	
 		if (!isSoundPlaying(0x1091A))
-			playSound(0x1091A, 1);
+			playSound(0x1091A, true);
 	
 		testWalk(0, 0, -1, -1, -1, -1);
 	
@@ -325,19 +325,19 @@ void GnapEngine::scene13_run() {
 				_timers[4] = getRandom(20) + 20;
 				switch (getRandom(5)) {
 				case 0:
-					playSound(0xD2, 0);
+					playSound(0xD2, false);
 					break;
 				case 1:
-					playSound(0xD3, 0);
+					playSound(0xD3, false);
 					break;
 				case 2:
-					playSound(0xD4, 0);
+					playSound(0xD4, false);
 					break;
 				case 3:
-					playSound(0xD5, 0);
+					playSound(0xD5, false);
 					break;
 				case 4:
-					playSound(0xD6, 0);
+					playSound(0xD6, false);
 					break;
 				}
 			}
@@ -362,7 +362,7 @@ void GnapEngine::scene13_run() {
 					break;
 				}
 				if (newSoundId != currSoundId) {
-					playSound(newSoundId, 0);
+					playSound(newSoundId, false);
 					currSoundId = newSoundId;
 				}
 			}

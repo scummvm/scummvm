@@ -83,8 +83,7 @@ void GnapEngine::scene04_updateHotspots() {
 }
 
 void GnapEngine::scene04_run() {
-
-	playSound(0x1091C, 1);
+	playSound(0x1091C, true);
 	startSoundTimerC(4);
 
 	_gameSys->insertSequence(0x210, 139 - _s04_dogIdCtr, 0, 0, kSeqNone, 0, 0, 0);
@@ -396,7 +395,7 @@ void GnapEngine::scene04_run() {
 		scene04_updateAnimations();
 	
 		if (!isSoundPlaying(0x1091C))
-			playSound(0x1091C, 1);
+			playSound(0x1091C, true);
 	
 		if (!_isLeavingScene) {
 			if (_beaverActionStatus < 0 && isFlag(kGFPlatypus))

@@ -70,7 +70,7 @@ void GnapEngine::scene27_updateHotspots() {
 
 void GnapEngine::scene27_run() {
 	
-	playSound(0x1093B, 1);
+	playSound(0x1093B, true);
 	startSoundTimerB(4);
 	_timers[7] = getRandom(100) + 300;
 	queueInsertDeviceIcon();
@@ -277,7 +277,7 @@ void GnapEngine::scene27_run() {
 		scene27_updateAnimations();
 
 		if (!isSoundPlaying(0x1093B))
-			playSound(0x1093B, 1);
+			playSound(0x1093B, true);
 
 		if (!_isLeavingScene) {
 			updateBeaverIdleSequence();

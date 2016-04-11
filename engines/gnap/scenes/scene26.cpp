@@ -62,7 +62,7 @@ void GnapEngine::scene26_updateHotspots() {
 void GnapEngine::scene26_run() {
 	
 	startSoundTimerB(7);
-	playSound(0x1093B, 1);
+	playSound(0x1093B, true);
 
 	_s26_currKidSequenceId = 0x5B;
 	_s26_nextKidSequenceId = -1;
@@ -198,7 +198,7 @@ void GnapEngine::scene26_run() {
 		scene26_updateAnimations();
 
 		if (!isSoundPlaying(0x1093B))
-			playSound(0x1093B, 1);
+			playSound(0x1093B, true);
 
 		if (!_isLeavingScene) {
 			updateBeaverIdleSequence();

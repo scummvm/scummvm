@@ -83,9 +83,8 @@ void GnapEngine::scene45_updateHotspots() {
 }
 
 void GnapEngine::scene45_run() {
-
 	if (!isSoundPlaying(0x1094A))
-		playSound(0x1094A, 1);
+		playSound(0x1094A, true);
 	
 	queueInsertDeviceIcon();
 
@@ -181,9 +180,8 @@ void GnapEngine::scene45_run() {
 	_gameSys->setAnimation(_beaverSequenceId, _beaverId, 1);
 	
 	while (!_sceneDone) {
-		
 		if (!isSoundPlaying(0x1094A))
-			playSound(0x1094A, 1);
+			playSound(0x1094A, true);
 	
 		updateMouseCursor();
 		updateCursorByHotspot();

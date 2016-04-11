@@ -81,8 +81,7 @@ void GnapEngine::scene03_updateHotspots() {
 }
 
 void GnapEngine::scene03_run() {
-
-	playSound(0x10925, 1);
+	playSound(0x10925, true);
 	
 	startSoundTimerC(7);
 	
@@ -317,7 +316,7 @@ void GnapEngine::scene03_run() {
 		scene03_updateAnimations();
 	
 		if (!isSoundPlaying(0x10925))
-			playSound(0x10925, 1);
+			playSound(0x10925, true);
 	
 		if (!_isLeavingScene) {
 			if (_beaverActionStatus < 0 && isFlag(kGFPlatypus))

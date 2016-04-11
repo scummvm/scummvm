@@ -406,7 +406,7 @@ void GnapEngine::updateMenuStatusInventory() {
 		if (_sceneClickedHotspot == _hotspotsCount - 3) {
 			if (_grabCursorSpriteIndex == -1) {
 				_timers[2] = 10;
-				playSound(0x108F4, 0);
+				playSound(0x108F4, false);
 				_menuStatus = 1;
 				Common::Rect dirtyRect(_hotspots[0]._x1, _hotspots[0]._y1, _hotspots[2]._x2, _hotspots[_hotspotsCount - 4]._y2);
 				drawInventoryFrames();
@@ -417,11 +417,11 @@ void GnapEngine::updateMenuStatusInventory() {
 				_gameSys->insertSpriteDrawItem(_menuSprite1, 288, 79, 262);
 				_gameSys->insertDirtyRect(dirtyRect);
 			} else {
-				playSound(0x108F5, 0);
+				playSound(0x108F5, false);
 			}
 		} else if (_sceneClickedHotspot == _hotspotsCount - 1) {
 			_timers[2] = 10;
-			playSound(0x108F5, 0);
+			playSound(0x108F5, false);
 			_menuDone = true;
 		}
 	} else if (_sceneClickedHotspot != -1 && _menuInventoryIndices[_sceneClickedHotspot] != -1 && _grabCursorSpriteIndex == -1) {
@@ -448,7 +448,7 @@ void GnapEngine::updateMenuStatusInventory() {
 			invRemove(kCombineItems[combineIndex].item1);
 			invRemove(kCombineItems[combineIndex].item2);
 			invAdd(kCombineItems[combineIndex].resultItem);
-			playSound(0x108AE, 0);
+			playSound(0x108AE, false);
 			deleteSurface(&_spriteHandle); // CHECKME
 			_spriteHandle = _gameSys->createSurface(0x10001);
 			_gameSys->insertSpriteDrawItem(_spriteHandle, _hotspots[_menuSpritesIndex - 1]._x1, _hotspots[_menuSpritesIndex - 1]._y1, 261);
@@ -457,7 +457,7 @@ void GnapEngine::updateMenuStatusInventory() {
 			insertInventorySprites();
 			delayTicksCursor(5);
 		} else {
-			playSound(0x108F5, 0);
+			playSound(0x108F5, false);
 		}
 	}
 }
@@ -476,7 +476,7 @@ void GnapEngine::updateMenuStatusMainMenu() {
 			if (_sceneClickedHotspot == 3) {
 				// Quit
 				_timers[2] = 10;
-				playSound(0x108F4, 0);
+				playSound(0x108F4, false);
 				_gameSys->removeSpriteDrawItem(_menuSprite1, 262);
 				initMenuQuitQueryHotspots();
 				_menuStatus = 4;
@@ -485,7 +485,7 @@ void GnapEngine::updateMenuStatusMainMenu() {
 				_gameSys->insertSpriteDrawItem(_menuQuitQuerySprite, 254, 93, 262);
 			} else if (_sceneClickedHotspot == 4) {
 				// Pause ?
-				playSound(0x108F4, 0);
+				playSound(0x108F4, false);
 				Common::Rect dirtyRect(0, 0, 799, 599);
 				hideCursor();
 				_largeSprite = _gameSys->allocSurface(800, 600);
@@ -513,7 +513,7 @@ void GnapEngine::updateMenuStatusMainMenu() {
 						gameUpdateTick();
 					}
 
-					playSound(0x108F5, 0);
+					playSound(0x108F5, false);
 					_mouseClickState._left = false;
 					clearKeyStatus1(28);
 					clearKeyStatus1(29);
@@ -527,7 +527,7 @@ void GnapEngine::updateMenuStatusMainMenu() {
 			} else if (_hotspotsCount - 3 == _sceneClickedHotspot) {
 				// Button
 				_timers[2] = 10;
-				playSound(0x108F4, 0);
+				playSound(0x108F4, false);
 				initMenuHotspots1();
 				/* TODO
 				if (_mouseX < 93 || _mouseX > 638 || _mouseY < 0 || _mouseY > 600)
@@ -542,14 +542,14 @@ void GnapEngine::updateMenuStatusMainMenu() {
 			}
 		} else {
 			// Resume
-			playSound(0x108F5, 0);
+			playSound(0x108F5, false);
 			_menuDone = true;
 		}
 	} else {
 		// Save / Load
 #if 1
 		_timers[2] = 10;
-		playSound(0x108F4, 0);
+		playSound(0x108F4, false);
 
 		if (_sceneClickedHotspot == 1) {
 			GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(_("Save game:"), _("Save"), true);
@@ -570,16 +570,16 @@ void GnapEngine::updateMenuStatusMainMenu() {
 				_wasSavegameLoaded = true;
 				_menuDone = true;
 				_sceneDone = true;
-				playSound(0x108F4, 0);
+				playSound(0x108F4, false);
 			} else {
-				playSound(0x108F5, 0);
+				playSound(0x108F5, false);
 			}
 		}
 	}
 #else
 	// Original Code
 		_timers[2] = 10;
-		playSound(0x108F4, 0);
+		playSound(0x108F4, false);
 		_gameSys->removeSpriteDrawItem(_menuSprite1, 262);
 		if (_menuSaveLoadSprite)
 			deleteSurface(&_menuSaveLoadSprite);
@@ -751,13 +751,13 @@ void GnapEngine::updateMenuStatusSaveGame() {
 	if (_hotspotsCount - 3 == _sceneClickedHotspot) {
 		// Button
 		_timers[2] = 10;
-		playSound(0x108F4, 0);
+		playSound(0x108F4, false);
 		_menuStatus = 1;
 		warning("writeSavegame(_savegameIndex + 1, (int)&_savegameFilenames[30 * _savegameIndex], 1);");
 	} else if (_hotspotsCount - 4 == _sceneClickedHotspot) {
 		// Cancel
 		_timers[2] = 10;
-		playSound(0x108F5, 0);
+		playSound(0x108F5, false);
 		_menuStatus = 1;
 		if (strcmp(v43, _savegameFilenames[_savegameIndex]) && _savegameIndex != -1) {
 			strcpy(_savegameFilenames[_savegameIndex], v43);
@@ -772,7 +772,7 @@ void GnapEngine::updateMenuStatusSaveGame() {
 	} else if (_hotspotsCount - 5 == _sceneClickedHotspot) {
 		// OK
 		_timers[2] = 10;
-		playSound(0x108F4, 0);
+		playSound(0x108F4, false);
 		if (_savegameIndex != -1)
 			warning("writeSavegame(_savegameIndex + 1, (int)&_savegameFilenames[30 * _savegameIndex], 1);");
 		_menuStatus = 1;
@@ -782,7 +782,7 @@ void GnapEngine::updateMenuStatusSaveGame() {
 	} else if (_sceneClickedHotspot != -1 && _hotspotsCount - 2 != _sceneClickedHotspot) {
 		// Savegame name
 		_timers[2] = 10;
-		playSound(0x108F4, 0);
+		playSound(0x108F4, false);
 		if (strcmp(v43, _savegameFilenames[_savegameIndex]) & (_savegameIndex != -1)) {
 			strcpy(_savegameFilenames[_savegameIndex], v43);
 			if (_savegameSprites[_savegameIndex] != nullptr) {
@@ -903,7 +903,7 @@ void GnapEngine::updateMenuStatusLoadGame() {
 	if (_sceneClickedHotspot != -1 && _hotspotsCount - 2 != _sceneClickedHotspot) {
 		_timers[2] = 10;
 		if (_hotspotsCount - 4 <= _sceneClickedHotspot) {
-			playSound(0x108F5, 0);
+			playSound(0x108F5, false);
 			_gameSys->removeSpriteDrawItem(_menuSprite2, 262);
 			_gameSys->removeSpriteDrawItem(_menuSaveLoadSprite, 262);
 			for (int i = 0; i < 7; ++i)
@@ -916,9 +916,9 @@ void GnapEngine::updateMenuStatusLoadGame() {
 				_gameSys->insertSpriteDrawItem(_menuSprite1, 288, 79, 262);
 			}
 		} else if (loadSavegame(_sceneClickedHotspot + 1)) {
-			playSound(0x108F5, 0);
+			playSound(0x108F5, false);
 		} else {
-			playSound(0x108F4, 0);
+			playSound(0x108F4, false);
 			_sceneDone = true;
 		}
 	}
@@ -946,18 +946,18 @@ void GnapEngine::updateMenuStatusQueryQuit() {
 
 	if (_sceneClickedHotspot == 0) {
 		// Quit the game
-		playSound(0x108F5, 0);
+		playSound(0x108F5, false);
 		_gameSys->removeSpriteDrawItem(_menuQuitQuerySprite, 262);
 		_sceneDone = true;
 		_gameDone = true;
 	} else if (_sceneClickedHotspot == 4) {
 		// Exit the device
-		playSound(0x108F4, 0);
+		playSound(0x108F4, false);
 		_gameSys->removeSpriteDrawItem(_menuQuitQuerySprite, 262);
 		_menuDone = true;
 	} else if (_sceneClickedHotspot != -1) {
 		// Return to the main menu
-		playSound(0x108F4, 0);
+		playSound(0x108F4, false);
 		_gameSys->removeSpriteDrawItem(_menuQuitQuerySprite, 262);
 		_timers[2] = 10;
 		_menuStatus = 1;

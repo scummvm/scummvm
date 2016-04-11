@@ -72,8 +72,7 @@ void GnapEngine::scene28_updateHotspots() {
 }
 
 void GnapEngine::scene28_run() {
-
-	playSound(0x1093C, 1);
+	playSound(0x1093C, true);
 	_s28_nextClownSequenceId = -1;
 	queueInsertDeviceIcon();
 	_gameSys->insertSequence(0x124, 255, 0, 0, kSeqNone, 0, 0, 0);
@@ -287,7 +286,7 @@ void GnapEngine::scene28_run() {
 		scene28_updateAnimations();
 
 		if (!isSoundPlaying(0x1093C))
-			playSound(0x1093C, 1);
+			playSound(0x1093C, true);
 
 		if (!_isLeavingScene) {
 			updateBeaverIdleSequence();

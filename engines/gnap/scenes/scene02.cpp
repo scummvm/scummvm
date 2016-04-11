@@ -84,7 +84,7 @@ void GnapEngine::scene02_updateHotspots() {
 }
 
 void GnapEngine::scene02_run() {
-	playSound(0x1091C, 1);
+	playSound(0x1091C, true);
 	startSoundTimerC(6);
 
 	_s02_currChickenSequenceId = 0x14B;
@@ -360,7 +360,7 @@ void GnapEngine::scene02_run() {
 		scene02_updateAnimations();
 	
 		if (!isSoundPlaying(0x1091C))
-			playSound(0x1091C, 1);
+			playSound(0x1091C, true);
 	
 		if (!_isLeavingScene) {
 			if (_beaverActionStatus < 0 && isFlag(kGFPlatypus))

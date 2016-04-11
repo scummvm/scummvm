@@ -59,7 +59,7 @@ enum {
 };
 
 int GnapEngine::scene19_init() {
-	playSound(0x79, 0);
+	playSound(0x79, false);
 	return isFlag(kGFPlatypusTalkingToAssistant) ? 0x77 : 0x76;
 }
 

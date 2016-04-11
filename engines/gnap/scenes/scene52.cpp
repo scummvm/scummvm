@@ -47,7 +47,7 @@ void GnapEngine::scene52_update() {
 
 	if (_s52_liveAlienRows == 0 && !_s52_alienSingle) {
 		_s52_alienWave = false;
-		playSound(48, 0);
+		playSound(48, false);
 		++_s52_alienCounter;
 		if (_s52_alienCounter != 3) {
 			_timers[0] = 50;
@@ -172,7 +172,7 @@ void GnapEngine::scene52_fireShipCannon(int posX) {
 		_s52_shipCannonPosY = _s52_shipCannonTopY;
 		_gameSys->setAnimation(0x23, cannonNum + 256, cannonNum + 8);
 		_gameSys->insertSequence(0x23, cannonNum + 256, 0, 0, kSeqNone, 0, _s52_shipCannonPosX, _s52_shipCannonPosY);
-		playSound(0x2D, 0);
+		playSound(0x2D, false);
 		if (scene52_shipCannonHitShield(cannonNum)) {
 			_gameSys->setAnimation(0, 0, cannonNum + 8);
 			_gameSys->removeSequence(0x23, cannonNum + 256, true);
@@ -421,7 +421,7 @@ int GnapEngine::scene52_updateHitAlien() {
 		if (hitAlienNum != -1 && _s52_items[rowNum][hitAlienNum] >= 0) {
 			_s52_gameScore = ((_s52_items[rowNum][hitAlienNum] - 24) % 3 + _s52_gameScore + 1) % 1000;
 			_s52_items[rowNum][hitAlienNum] = -2;
-			playSound(44, 0);
+			playSound(44, false);
 			_gameSys->insertSequence(0x21, 266, 0, 0,
 				kSeqNone, 0, _s52_alienLeftX + hitAlienNum * _s52_alienWidth + _s52_alienRowXOfs[rowNum] - 10, ya - _s52_alienHeight);
 			result = 1;
@@ -540,7 +540,7 @@ int GnapEngine::scene52_alienCannonHitShield(int cannonNum) {
 		}
 		_gameSys->setAnimation(0, 0, cannonNum + 9);
 		_gameSys->insertSequence(0x21, shieldNum + 257, 0, 0, kSeqNone, 0, _s52_alienCannonPosX[cannonNum] - 18, _s52_arcadeScreenBottom - 44);
-		playSound(0x2C, 0);
+		playSound(0x2C, false);
 		result = 1;
 	}
 
@@ -583,7 +583,7 @@ int GnapEngine::scene52_shipCannonHitShield(int cannonNum) {
 			_s52_shieldSpriteIds[shieldNum] = -1;
 		}
 		_gameSys->insertSequence(0x21, shieldNum + 257, 0, 0, kSeqNone, 0, _s52_shipCannonPosX - 18, _s52_arcadeScreenBottom - 44);
-		playSound(0x2C, 0);
+		playSound(0x2C, false);
 		result = 1;
 	}
 
@@ -639,10 +639,10 @@ void GnapEngine::scene52_shipExplode() {
 	if (!_s52_aliensCount) {
 		_gameSys->setAnimation(0, 0, 7);
 		_gameSys->removeSequence(_s52_ufoSequenceId, 256, true);
-		playSound(44, 0);
+		playSound(44, false);
 		_gameSys->insertSequence(0x21, 266, 0, 0, kSeqNone, 0, _s52_shipPosX, _s52_arcadeScreenBottom);
 		_s52_aliensCount = 1;
-		playSound(0x31, 0);
+		playSound(0x31, false);
 	}
 }
 
@@ -735,10 +735,10 @@ void GnapEngine::scene52_initAlienSize() {
 
 void GnapEngine::scene52_playSound() {
 	if (_s52_soundToggle) {
-		playSound(0x2F, 0);
+		playSound(0x2F, false);
 		_s52_soundToggle = false;
 	} else {
-		playSound(0x2E, 0);
+		playSound(0x2E, false);
 		_s52_soundToggle = true;
 	}
 }

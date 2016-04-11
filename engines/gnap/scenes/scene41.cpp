@@ -163,7 +163,7 @@ void GnapEngine::scene41_run() {
 
 	while (!_sceneDone) {
 		if (!isSoundPlaying(0x1094B))
-			playSound(0x1094B, 1);
+			playSound(0x1094B, true);
 	
 		if (!isFlag(kGFGnapControlsToyUFO)) {
 			_hotspots[kHSToyUfo]._x1 = _toyUfoX - 25;

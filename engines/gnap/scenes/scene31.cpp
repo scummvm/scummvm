@@ -61,8 +61,7 @@ void GnapEngine::scene31_updateHotspots() {
 }
 
 void GnapEngine::scene31_run() {
-	
-	playSound(0x1093B, 1);
+	playSound(0x1093B, true);
 	startSoundTimerB(6);
 
 	queueInsertDeviceIcon();
@@ -251,7 +250,7 @@ void GnapEngine::scene31_run() {
 		scene31_updateAnimations();
 	
 		if (!isSoundPlaying(0x1093B))
-			playSound(0x1093B, 1);
+			playSound(0x1093B, true);
 	
 		if (!_isLeavingScene) {
 			if (_beaverActionStatus < 0)

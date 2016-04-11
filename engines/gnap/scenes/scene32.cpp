@@ -65,8 +65,7 @@ void GnapEngine::scene32_updateHotspots() {
 }
 
 void GnapEngine::scene32_run() {
-	
-	playSound(0x1091C, 1);
+	playSound(0x1091C, true);
 	startSoundTimerC(5);
 	queueInsertDeviceIcon();
 	_timers[4] = getRandom(100) + 300;
@@ -84,7 +83,6 @@ void GnapEngine::scene32_run() {
 	}
 	
 	while (!_sceneDone) {
-	
 		updateMouseCursor();
 		updateCursorByHotspot();
 		testWalk(0, 0, -1, -1, -1, -1);
@@ -93,7 +91,6 @@ void GnapEngine::scene32_run() {
 		updateGrabCursorSprite(0, 0);
 	
 		switch (_sceneClickedHotspot) {
-
 		case kHSDevice:
 			if (_gnapActionStatus < 0) {
 				runMenu();
@@ -158,7 +155,7 @@ void GnapEngine::scene32_run() {
 		scene32_updateAnimations();
 		
 		if (!isSoundPlaying(0x1091C))
-			playSound(0x1091C, 1);
+			playSound(0x1091C, true);
 	
 		if (!_isLeavingScene) {
 			if (_beaverActionStatus < 0)

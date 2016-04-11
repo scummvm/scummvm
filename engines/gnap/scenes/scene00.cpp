@@ -136,7 +136,7 @@ void GnapEngine::scene00_run() {
 			else {
 				_gameSys->insertSequence(animIdArr[index], 2, 0, 0, kSeqNone, 0, 0, 0);
 				if (index == 2) {
-					playSound(0x10000, 0);
+					playSound(0x10000, false);
 					_gameSys->insertSequence(0x359, 2, 0, 0, 0, 0, 0, 0);
 				} else if (index == 3)
 					_gameSys->insertSequence(0x35B, 2, 0, 0, kSeqNone, 0, 0, 0);

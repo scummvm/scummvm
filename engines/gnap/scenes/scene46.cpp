@@ -124,9 +124,8 @@ void GnapEngine::scene46_run() {
 	_timers[5] = getRandom(50) + 80;
 
 	while (!_sceneDone) {
-	
 		if (!isSoundPlaying(0x1094B))
-			playSound(0x1094B, 1);
+			playSound(0x1094B, true);
 	
 		updateMouseCursor();
 		updateCursorByHotspot();

@@ -130,10 +130,10 @@ void GnapEngine::scene15_run() {
 				switch (_verbCursor) {
 				case LOOK_CURSOR:
 				case GRAB_CURSOR:
-					playSound(0x108E9, 0);
+					playSound(0x108E9, false);
 					break;
 				case TALK_CURSOR:
-					playSound((getRandom(5) + 0x8D5) | 0x10000, 0);
+					playSound((getRandom(5) + 0x8D5) | 0x10000, false);
 					break;
 				case PLAT_CURSOR:
 					_gameSys->insertSequence(0x107A8, 1, 0, 0, kSeqNone, 0, 900 - _gnapGridX, 576 - _gnapGridY);
@@ -149,7 +149,7 @@ void GnapEngine::scene15_run() {
 				switch (_verbCursor) {
 				case LOOK_CURSOR:
 					if (isFlag(kGFGnapControlsToyUFO) || isFlag(kGFUnk13))
-						playSound(0x108E9, 0);
+						playSound(0x108E9, false);
 					else
 						_s15_nextSlotSequenceId = 0xDA;
 					break;
@@ -160,7 +160,7 @@ void GnapEngine::scene15_run() {
 						_s15_nextSlotSequenceId = 0xDA;
 					break;
 				case TALK_CURSOR:
-					playSound((getRandom(5) + 0x8D5) | 0x10000, 0);
+					playSound((getRandom(5) + 0x8D5) | 0x10000, false);
 					break;
 				case PLAT_CURSOR:
 					_gameSys->insertSequence(0x107A8, 1, 0, 0, kSeqNone, 0, 900 - _gnapGridX, 576 - _gnapGridY);
@@ -180,13 +180,13 @@ void GnapEngine::scene15_run() {
 			} else {
 				switch (_verbCursor) {
 				case LOOK_CURSOR:
-					playSound(0x108E9, 0);
+					playSound(0x108E9, false);
 					break;
 				case GRAB_CURSOR:
 					_s15_nextUpperButtonSequenceId = _sceneClickedHotspot + 0xC5;
 					break;
 				case TALK_CURSOR:
-					playSound((getRandom(5) + 0x8D5) | 0x10000, 0);
+					playSound((getRandom(5) + 0x8D5) | 0x10000, false);
 					break;
 				case PLAT_CURSOR:
 					_gameSys->insertSequence(0x107A8, 1, 0, 0, kSeqNone, 0, 900 - _gnapGridX, 576 - _gnapGridY);
@@ -206,13 +206,13 @@ void GnapEngine::scene15_run() {
 			} else {
 				switch (_verbCursor) {
 				case LOOK_CURSOR:
-					playSound(0x108E9, 0);
+					playSound(0x108E9, false);
 					break;
 				case GRAB_CURSOR:
 					_s15_nextLowerButtonSequenceId = _sceneClickedHotspot + 0xC5;
 					break;
 				case TALK_CURSOR:
-					playSound((getRandom(5) + 0x8D5) | 0x10000, 0);
+					playSound((getRandom(5) + 0x8D5) | 0x10000, false);
 					break;
 				case PLAT_CURSOR:
 					_gameSys->insertSequence(0x107A8, 1, 0, 0, kSeqNone, 0, 900 - _gnapGridX, 576 - _gnapGridY);

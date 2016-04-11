@@ -309,10 +309,9 @@ void GnapEngine::scene18_waitForGnapAction() {
 }
 
 void GnapEngine::scene18_run() {
-
 	_s18_cowboyHatSurface = 0;
 
-	playSound(0x10940, 1);
+	playSound(0x10940, true);
 	startSoundTimerA(4);
 	
 	_timers[5] = getRandom(100) + 100;

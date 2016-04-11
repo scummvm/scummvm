@@ -60,7 +60,7 @@ void GnapEngine::scene29_updateHotspots() {
 
 void GnapEngine::scene29_run() {
 	
-	playSound(0x1093B, 1);
+	playSound(0x1093B, true);
 	startSoundTimerB(6);
 	queueInsertDeviceIcon();
 
@@ -231,7 +231,7 @@ void GnapEngine::scene29_run() {
 		scene29_updateAnimations();
 
 		if (!isSoundPlaying(0x1093B))
-			playSound(0x1093B, 1);
+			playSound(0x1093B, true);
 
 		if (!_isLeavingScene) {
 			if (_gnapActionStatus < 0) {

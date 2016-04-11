@@ -100,7 +100,7 @@ void GnapEngine::scene07_run() {
 	while (!_sceneDone) {
 
 		if (!isSoundPlaying(0x10919))
-			playSound(0x10919, 1);
+			playSound(0x10919, true);
 
 		if (testWalk(0, 1, 8, 7, 6, 7))
 			scene07_updateHotspots();

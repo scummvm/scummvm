@@ -217,13 +217,13 @@ void GnapEngine::scene23_run() {
 				_timers[5] = getRandom(100) + 200;
 				switch (getRandom(3)) {
 				case 0:
-					playSound(0xCE, 0);
+					playSound(0xCE, false);
 					break;
 				case 1:
-					playSound(0xD0, 0);
+					playSound(0xD0, false);
 					break;
 				case 2:
-					playSound(0xCF, 0);
+					playSound(0xCF, false);
 					break;
 				}
 			}

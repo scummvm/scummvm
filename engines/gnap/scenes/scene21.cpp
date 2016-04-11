@@ -67,8 +67,7 @@ void GnapEngine::scene21_updateHotspots() {
 }
 
 void GnapEngine::scene21_run() {
-
-	playSound(0x10940, 1);
+	playSound(0x10940, true);
 	startSoundTimerA(6);
 	
 	_timers[5] = getRandom(100) + 100;
@@ -232,7 +231,7 @@ void GnapEngine::scene21_run() {
 		scene21_updateAnimations();
 	
 		if (!isSoundPlaying(0x10940))
-			playSound(0x10940, 1);
+			playSound(0x10940, true);
 	
 		if (!_isLeavingScene) {
 			updateBeaverIdleSequence();
@@ -267,13 +266,10 @@ void GnapEngine::scene21_run() {
 		}
 		
 		gameUpdateTick();
-	
 	}
-
 }
 
 void GnapEngine::scene21_updateAnimations() {
-
 	if (_gameSys->getAnimationStatus(0) == 2) {
 		_gameSys->setAnimation(0, 0, 0);
 		switch (_gnapActionStatus) {

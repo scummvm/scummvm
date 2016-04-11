@@ -57,8 +57,8 @@ int GnapEngine::scene11_init() {
 	_gameSys->setAnimation(0, 0, 3);
 	_gameSys->setAnimation(0, 0, 2);
 	if (_prevSceneNum == 10 || _prevSceneNum == 13) {
-		playSound(0x108EC, 0);
-		playSound(0x10928, 0);
+		playSound(0x108EC, false);
+		playSound(0x10928, false);
 	}
 	return 0x209;
 }

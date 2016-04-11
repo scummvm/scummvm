@@ -119,8 +119,7 @@ void GnapEngine::scene17_platHangUpPhone() {
 }
 
 void GnapEngine::scene17_run() {
-
-	playSound(0x10940, 1);
+	playSound(0x10940, true);
 	startSoundTimerA(8);
 	_sceneWaiting = false;
 	_timers[4] = getRandom(100) + 200;
@@ -486,7 +485,7 @@ void GnapEngine::scene17_run() {
 		scene17_updateAnimations();
 		
 		if (!isSoundPlaying(0x10940))
-			playSound(0x10940, 1);
+			playSound(0x10940, true);
 	
 		if (!_isLeavingScene) {
 			if (_beaverActionStatus < 0)

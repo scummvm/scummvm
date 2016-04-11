@@ -78,7 +78,7 @@ void GnapEngine::scene05_updateHotspots() {
 
 void GnapEngine::scene05_run() {
 
-	playSound(0x1091C, 1);
+	playSound(0x1091C, true);
 	startSoundTimerC(7);
 	
 	_s05_currChickenSequenceId = 0x142;
@@ -317,7 +317,7 @@ void GnapEngine::scene05_run() {
 		scene05_updateAnimations();
 	
 		if (!isSoundPlaying(0x1091C))
-			playSound(0x1091C, 1);
+			playSound(0x1091C, true);
 	
 		if (!_isLeavingScene) {
 			if (isFlag(kGFPlatypus))

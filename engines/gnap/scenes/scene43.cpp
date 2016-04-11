@@ -143,9 +143,8 @@ void GnapEngine::scene43_run() {
 	}
 	
 	while (!_sceneDone) {
-	
 		if (!isSoundPlaying(0x1094B))
-			playSound(0x1094B, 1);
+			playSound(0x1094B, true);
 	
 		updateMouseCursor();
 		updateCursorByHotspot();
@@ -199,11 +198,8 @@ void GnapEngine::scene43_run() {
 				_timers[9] = 600;
 				break;
 			}
-
 		} else {
-
 			switch (_sceneClickedHotspot) {
-
 			case kHSDevice:
 				runMenu();
 				scene43_updateHotspots();
@@ -364,12 +360,10 @@ void GnapEngine::scene43_run() {
 		}
 		
 		gameUpdateTick();
-	
 	}
 	
 	if (_newSceneNum == 54)
 		clearFlag(kGFGnapControlsToyUFO);
-
 }
 
 void GnapEngine::scene43_updateAnimations() {

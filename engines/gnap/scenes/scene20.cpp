@@ -180,7 +180,7 @@ void GnapEngine::scene20_stopSounds() {
 
 void GnapEngine::scene20_run() {
 	
-	playSound(0x10940, 1);
+	playSound(0x10940, true);
 
 	startSoundTimerA(8);
 
@@ -490,7 +490,7 @@ void GnapEngine::scene20_run() {
 		scene20_updateAnimations();
 
 		if (!isSoundPlaying(0x10940))
-			playSound(0x10940, 1);
+			playSound(0x10940, true);
 	
 		if (!_isLeavingScene) {
 			if (_beaverActionStatus < 0) {

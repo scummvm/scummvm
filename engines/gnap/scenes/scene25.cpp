@@ -106,8 +106,7 @@ void GnapEngine::scene25_playAnims(int index) {
 }
 
 void GnapEngine::scene25_run() {
-
-	playSound(0x10940, 1);
+	playSound(0x10940, true);
 	
 	startSoundTimerA(5);
 	

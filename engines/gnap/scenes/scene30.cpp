@@ -59,7 +59,7 @@ void GnapEngine::scene30_updateHotspots() {
 void GnapEngine::scene30_run() {
 	bool hasTakenPill = false;
 
-	playSound(0x1093B, 1);
+	playSound(0x1093B, true);
 	startSoundTimerB(6);
 
 	queueInsertDeviceIcon();
@@ -182,7 +182,7 @@ void GnapEngine::scene30_run() {
 		scene30_updateAnimations();
 
 		if (!isSoundPlaying(0x1093B))
-			playSound(0x1093B, 1);
+			playSound(0x1093B, true);
 
 		if (!_isLeavingScene) {
 			updateBeaverIdleSequence();
@@ -221,13 +221,10 @@ void GnapEngine::scene30_run() {
 		}
 		
 		gameUpdateTick();
-
 	}
-	
 }
 
-void GnapEngine::scene30_updateAnimations() {
-	
+void GnapEngine::scene30_updateAnimations() {	
 	if (_gameSys->getAnimationStatus(0) == 2) {
 		_gameSys->setAnimation(0, 0, 0);
 		switch (_gnapActionStatus) {
@@ -281,7 +278,6 @@ void GnapEngine::scene30_updateAnimations() {
 			break;
 		}
 	}
-
 }
 
 } // End of namespace Gnap

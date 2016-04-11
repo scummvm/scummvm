@@ -129,7 +129,7 @@ void GnapEngine::scene08_run() {
 	while (!_sceneDone) {
 	
 		if (!isSoundPlaying(0x10919))
-			playSound(0x10919, 1);
+			playSound(0x10919, true);
 	
 		testWalk(0, 0, -1, -1, -1, -1);
 		

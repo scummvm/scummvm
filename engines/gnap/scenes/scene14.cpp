@@ -101,11 +101,11 @@ void GnapEngine::scene14_run() {
 				_gameSys->setAnimation(0x26, 10, 0);
 				_gameSys->insertSequence(0x26, 10, _gnapSequenceId, 10, kSeqSyncWait, 0, 0, 0);
 			} else if (_grabCursorSpriteIndex >= 0) {
-				playSound(0x108E9, 0);
+				playSound(0x108E9, false);
 			} else {
 				switch (_verbCursor) {
 				case LOOK_CURSOR:
-					playSound(0x108E9, 0);
+					playSound(0x108E9, false);
 					break;
 				case GRAB_CURSOR:
 					_gameSys->insertSequence(0x25, 10, _gnapSequenceId, 10, kSeqSyncWait, 0, 0, 0);
@@ -113,7 +113,7 @@ void GnapEngine::scene14_run() {
 					_gnapSequenceId = 0x23;
 					break;
 				case TALK_CURSOR:
-					playSound((getRandom(5) + 0x8D5) | 0x10000, 0);
+					playSound((getRandom(5) + 0x8D5) | 0x10000, false);
 					break;
 				case PLAT_CURSOR:
 					_gameSys->insertSequence(0x107A8, 1, 0, 0, kSeqNone, 0, 900 - _gnapGridX, 576 - _gnapGridY);
@@ -129,10 +129,10 @@ void GnapEngine::scene14_run() {
 				switch (_verbCursor) {
 				case LOOK_CURSOR:
 				case GRAB_CURSOR:
-					playSound(0x108B1, 0);
+					playSound(0x108B1, false);
 					break;
 				case TALK_CURSOR:
-					playSound((getRandom(5) + 0x8D5) | 0x10000, 0);
+					playSound((getRandom(5) + 0x8D5) | 0x10000, false);
 					break;
 				case PLAT_CURSOR:
 					_gameSys->insertSequence(0x107A8, 1, 0, 0, kSeqNone, 0, 900 - _gnapGridX, 576 - _gnapGridY);

@@ -911,7 +911,7 @@ int GnapEngine::playSoundA() {
 	if (!_timers[_soundTimerIndexA]) {
 		_timers[_soundTimerIndexA] = getRandom(50) + 100;
 		soundId = kSoundIdsA[getRandom(11)];
-		playSound(soundId | 0x10000, 0);
+		playSound(soundId | 0x10000, false);
 	}
 	return soundId;
 }
@@ -935,7 +935,7 @@ int GnapEngine::playSoundB() {
 	if (!_timers[_soundTimerIndexB]) {
 		_timers[_soundTimerIndexB] = getRandom(50) + 150;
 		soundId = kSoundIdsB[getRandom(19)];
-		playSound(soundId | 0x10000, 0);
+		playSound(soundId | 0x10000, false);
 	}
 	return soundId;
 }
@@ -957,7 +957,7 @@ int GnapEngine::playSoundC() {
 	if (!_timers[_soundTimerIndexC]) {
 		_timers[_soundTimerIndexC] = getRandom(50) + 150;
 		soundId = kSoundIdsC[getRandom(7)] ;
-		playSound(soundId | 0x10000, 0);
+		playSound(soundId | 0x10000, false);
 	}
 	return soundId;
 }
@@ -2134,16 +2134,16 @@ void GnapEngine::sceneXX_playRandomSound(int timerIndex) {
 		_timers[timerIndex] = getRandom(40) + 50;
 		switch (getRandom(4)) {
 		case 0:
-			playSound(0x1091B, 0);
+			playSound(0x1091B, false);
 			break;
 		case 1:
-			playSound(0x10921, 0);
+			playSound(0x10921, false);
 			break;
 		case 2:
-			playSound(0x10927, 0);
+			playSound(0x10927, false);
 			break;
 		case 3:
-			playSound(0x1091D, 0);
+			playSound(0x1091D, false);
 			break;
 		}
 	}
@@ -2326,7 +2326,7 @@ void GnapEngine::cutscene_run() {
 	}
 
 	if (soundId != -1)
-		playSound(soundId, 0);
+		playSound(soundId, false);
 
 	hideCursor();
 

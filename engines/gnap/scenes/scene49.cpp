@@ -172,7 +172,7 @@ void GnapEngine::scene49_updateObstacle(int id) {
 					obstacle._currSequenceId, obstacle._currId,
 					kSeqSyncWait, 0, 0, -50);
 				obstacle._currSequenceId = obstacle._collisionSequenceId;
-				playSound(224, 0);
+				playSound(224, false);
 				scene49_increaseScore(30);
 			} else if ((obstacle._laneNum == 1 && _s49_truckSequenceId == 0xB0) ||
 				(obstacle._laneNum == 2 && (_s49_truckSequenceId == 0xB1 || _s49_truckSequenceId == 0xB2)) ||
@@ -194,7 +194,7 @@ void GnapEngine::scene49_updateObstacle(int id) {
 				_s49_truckSequenceId = obstacle._collisionSequenceId;
 				_s49_truckId = 256;
 				obstacle._currSequenceId = obstacle._passedSequenceId;
-				playSound(225, 0);
+				playSound(225, false);
 				scene49_decreaseScore(30);
 			}
 		} else {
@@ -212,7 +212,7 @@ void GnapEngine::scene49_updateObstacle(int id) {
 					obstacle._currSequenceId, obstacle._currId,
 					kSeqSyncWait, 0, 0, -50);
 				obstacle._currSequenceId = obstacle._collisionSequenceId;
-				playSound(224, 0);
+				playSound(224, false);
 				scene49_increaseScore(30);
 			}
 		} else if (obstacle._splashSequenceId) {
@@ -275,7 +275,7 @@ void GnapEngine::scene49_run() {
 	bool streetAnimToggle = false;
 	bool bgAnimToggle = false;
 
-	playSound(0xE2, 1);
+	playSound(0xE2, true);
 	setSoundVolume(0xE2, 75);
 
 	hideCursor();

@@ -103,10 +103,10 @@ void GnapEngine::scene10_run() {
 	while (!_sceneDone) {
 	
 		if (!isSoundPlaying(0x1091E))
-			playSound(0x1091E, 1);
+			playSound(0x1091E, true);
 	
 		if (!isSoundPlaying(0x1091A))
-			playSound(0x1091A, 1);
+			playSound(0x1091A, true);
 	
 		updateMouseCursor();
 	
@@ -325,7 +325,7 @@ void GnapEngine::scene10_run() {
 			updateGnapIdleSequence();
 			if (!_timers[4]) {
 				_timers[4] = getRandom(80) + 150;
-				playSound(0x12B, 0);
+				playSound(0x12B, false);
 			}
 			if (!_timers[5]) {
 				_timers[5] = getRandom(100) + 100;

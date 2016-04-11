@@ -270,10 +270,9 @@ void GnapEngine::scene53_run() {
 	
 	setVerbCursor(GRAB_CURSOR);
 	
-	playSound(0xA0, 1);
+	playSound(0xA0, true);
 	
 	while (!_sceneDone) {
-	
 		updateMouseCursor();
 		updateCursorByHotspot();
 	

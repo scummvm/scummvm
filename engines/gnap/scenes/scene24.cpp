@@ -58,7 +58,7 @@ void GnapEngine::scene24_updateHotspots() {
 void GnapEngine::scene24_run() {
 	int counter = 0;
 	
-	playSound(0x10940, 1);
+	playSound(0x10940, true);
 	
 	startSoundTimerA(9);
 	
@@ -182,7 +182,7 @@ void GnapEngine::scene24_run() {
 		scene24_updateAnimations();
 	
 		if (!isSoundPlaying(0x10940))
-			playSound(0x10940, 1);
+			playSound(0x10940, true);
 	
 		if (!_isLeavingScene) {
 			updateBeaverIdleSequence();

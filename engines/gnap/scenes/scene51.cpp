@@ -323,7 +323,7 @@ void GnapEngine::scene51_updateItemAnimation(Scene51Item *item, int index) {
 		} else {
 			_gameSys->removeSequence(item->_currSequenceId, item->_id, true);
 			_gameSys->setAnimation(0, 0, index + 1);
-			playSound(218, 0);
+			playSound(218, false);
 			if (scene51_incCashAmount(item->_currSequenceId) == 1995) {
 				scene51_winMinigame();
 				_sceneDone = true;
@@ -523,7 +523,7 @@ void GnapEngine::scene51_playIntroAnim() {
 		_s51_platypusSequenceId = _s51_platypusNextSequenceId;
 		++soundCtr;
 		if (soundCtr % 4 == 0)
-			playSound(214, 0);
+			playSound(214, false);
 	}
 
 	_s51_platypusNextSequenceId = 0x75;
@@ -541,7 +541,7 @@ void GnapEngine::scene51_playIntroAnim() {
 		} else {
 			++soundCtr;
 			if (soundCtr % 4 == 0)
-				playSound(214, 0);
+				playSound(214, false);
 		}
 	}
 
@@ -604,7 +604,7 @@ int GnapEngine::scene51_incCashAmount(int sequenceId) {
 
 void GnapEngine::scene51_winMinigame() {
 	scene51_updateCash(1995);
-	playSound(218, 0);
+	playSound(218, false);
 	// TODO delayTicksA(1, 5);
 	_newSceneNum = 48;
 	invRemove(kItemBanana);
@@ -781,7 +781,7 @@ void GnapEngine::scene51_run() {
 						} else {
 							++soundCtr;
 							if (soundCtr % 4 == 0)
-								playSound(214, 0);
+								playSound(214, false);
 						}
 					}
 				} else {
@@ -833,7 +833,7 @@ void GnapEngine::scene51_run() {
 						} else {
 							++soundCtr;
 							if (soundCtr % 4 == 0)
-								playSound(214, 0);
+								playSound(214, false);
 						}
 					}
 				} else {

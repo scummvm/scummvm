@@ -82,7 +82,7 @@ void GnapEngine::scene39_run() {
 	while (!_sceneDone) {
 
 		if (!isSoundPlaying(0x1094B)) {
-			playSound(0x1094B, 1);
+			playSound(0x1094B, true);
 			setSoundVolume(0x1094B, 60);
 		}
 		

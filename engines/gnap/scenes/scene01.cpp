@@ -84,7 +84,7 @@ void GnapEngine::scene01_run() {
 	// NOTE Removed _s01_dword_474380 which was set when the mud was taken
 	// which is also set in the global game flags.
 	
-	playSound(0x1091C, 1);
+	playSound(0x1091C, true);
 	startSoundTimerC(5);
 
 	_gameSys->setAnimation(134, 20, 4);
@@ -269,7 +269,7 @@ void GnapEngine::scene01_run() {
 		scene01_updateAnimations();
 
 		if (!isSoundPlaying(0x1091C))
-			playSound(0x1091C, 1);
+			playSound(0x1091C, true);
 
 		if (!_isLeavingScene) {
 			if (_beaverActionStatus < 0 && isFlag(kGFPlatypus))
@@ -329,9 +329,9 @@ void GnapEngine::scene01_updateAnimations() {
 			_gnapActionStatus = -1;
 			break;
 		case kASLookPigs:
-			playSound(138, 0);
-			playSound(139, 0);
-			playSound(140, 0);
+			playSound(138, false);
+			playSound(139, false);
+			playSound(140, false);
 			_gnapActionStatus = -1;
 			break;
 		case kASUsePigs:
