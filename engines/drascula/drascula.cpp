@@ -144,7 +144,7 @@ DrasculaEngine::DrasculaEngine(OSystem *syst, const DrasculaGameDescription *gam
 	curDirection = 0;
 	trackProtagonist = 0;
 	_characterFrame = 0;
-	characterVivible = 0;
+	characterVisible = 0;
 	roomX = 0;
 	roomY = 0;
 	checkFlags = 0;
@@ -299,7 +299,7 @@ Common::Error DrasculaEngine::run() {
 		characterMoved = 0;
 		trackProtagonist = 3;
 		_characterFrame = 0;
-		characterVivible = 1;
+		characterVisible = 1;
 		checkFlags = 1;
 		doBreak = 0;
 		walkToObject = 0;
@@ -365,13 +365,13 @@ Common::Error DrasculaEngine::run() {
 		for (i = 0; i < 25; i++)
 			memcpy(crosshairCursor + i * 40, tableSurface + 225 + (56 + i) * 320, 40);
 
-		if (_lang == kSpanish)
-			loadPic(974, tableSurface);
+		loadPic(97, extraSurface);
+		//if (_lang == kSpanish)
+		//	loadPic(974, extraSurface);
 
 		if (currentChapter != 2) {
 			loadPic(99, cursorSurface);
 			loadPic(99, backSurface);
-			loadPic(97, extraSurface);
 		}
 
 		memset(iconName, 0, sizeof(iconName));

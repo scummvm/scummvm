@@ -191,7 +191,7 @@ void DrasculaEngine::moveCharacters() {
 	}
 
 	if (currentChapter != 2 && currentChapter != 3) {
-		if (characterVivible == 0) {
+		if (characterVisible == 0) {
 			increaseFrameNum();
 			return;
 		}

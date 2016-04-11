@@ -429,7 +429,7 @@ public:
 
 	int frame_y;
 	int curX, curY, characterMoved, curDirection, trackProtagonist, _characterFrame;
-	int characterVivible;
+	int characterVisible;
 	int roomX, roomY, checkFlags;
 	int doBreak;
 	int stepX, stepY;

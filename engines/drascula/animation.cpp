@@ -360,7 +360,7 @@ void DrasculaEngine::animation_2_1() {
 	int l;
 
 	gotoObject(231, 91);
-	characterVivible = 0;
+	characterVisible = 0;
 
 	term_int = 0;
 
@@ -433,7 +433,7 @@ void DrasculaEngine::animation_2_1() {
 		curX = 91;
 		curY = 95;
 		trackProtagonist = 1;
-		characterVivible = 1;
+		characterVisible = 1;
 
 		loadPic("97g.alg", extraSurface);
 		if (animate("lev.bin", 15))
@@ -1434,7 +1434,7 @@ void DrasculaEngine::animation_12_5() {
 
 	doBreak = 1;
 	previousMusic = roomMusic;
-	characterVivible = 1;
+	characterVisible = 1;
 	clearRoom();
 	trackProtagonist = 1;
 	characterMoved = 0;
@@ -1543,7 +1543,7 @@ void DrasculaEngine::animation_1_6() {
 	updateEvents();
 	clearRoom();
 	black();
-	characterVivible = 0;
+	characterVisible = 0;
 	flags[0] = 0;
 	updateRoom();
 	updateScreen();
@@ -1618,7 +1618,7 @@ void DrasculaEngine::animation_6_6() {
 	curX = -1;
 	selectVerb(kVerbNone);
 	enterRoom(58);
-	characterVivible = 1;
+	characterVisible = 1;
 	trackProtagonist = 1;
 	animate("hbp.bin", 14);
 
@@ -2138,7 +2138,7 @@ void DrasculaEngine::animation_5_4(){
 	loadPic("anh_dr.alg", backSurface);
 	gotoObject(99, 160);
 	gotoObject(38, 177);
-	characterVivible = 0;
+	characterVisible = 0;
 	updateRoom();
 	updateScreen();
 	delay(800);
@@ -2156,7 +2156,7 @@ void DrasculaEngine::animation_5_4(){
 	talk_igor(30, kIgorFront);
 	loadPic(96, frontSurface);
 	loadPic(99, backSurface);
-	characterVivible = 1;
+	characterVisible = 1;
 	fadeToBlack(0);
 	exitRoom(0);
 }
@@ -2211,7 +2211,7 @@ void DrasculaEngine::activatePendulum() {
 	debug(4, "activatePendulum()");
 
 	flags[1] = 2;
-	characterVivible = 0;
+	characterVisible = 0;
 	_roomNumber = 102;
 	loadPic(102, bgSurface, HALF_PAL);
 	loadPic("an_p1.alg", drawSurface3);
