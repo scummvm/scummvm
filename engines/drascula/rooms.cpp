@@ -1501,7 +1501,7 @@ void DrasculaEngine::update_102() {
 	if (actorFrames[kFramePendulum] <= 4)
 		pendulumSurface = drawSurface3;
 	else if (actorFrames[kFramePendulum] <= 11)
-		pendulumSurface = extraSurface;
+		pendulumSurface = _lang == kSpanish ? tableSurface : extraSurface;
 	else
 		pendulumSurface = frontSurface;
 

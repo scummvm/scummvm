@@ -440,9 +440,12 @@ void DrasculaEngine::talk(const char *said, const char *filename) {
 				copyRect(x_talk_izq[face], y_mask_talk, curX + 8, curY - 1, TALK_WIDTH, TALK_HEIGHT,
 						extraSurface, screenSurface);
 			else if (notTowers) {
+				byte *srcSurface = extraSurface;
+				if (currentChapter == 6 && _lang == kSpanish)
+					srcSurface = tableSurface;
 				reduce_hare_chico(x_talk_izq[face], y_mask_talk, curX + (int)((8.0f / 100) * factor_red[MIN(201, curY + curHeight)]),
 					curY, TALK_WIDTH, TALK_HEIGHT, factor_red[MIN(201, curY + curHeight)],
-					extraSurface, screenSurface);
+					srcSurface, screenSurface);
 			}
 			updateRefresh();
 		} else if (trackProtagonist == 1) {
@@ -450,8 +453,11 @@ void DrasculaEngine::talk(const char *said, const char *filename) {
 				copyRect(x_talk_dch[face], y_mask_talk, curX + 12, curY, TALK_WIDTH, TALK_HEIGHT,
 					extraSurface, screenSurface);
 			else if (notTowers) {
+				byte *srcSurface = extraSurface;
+				if (currentChapter == 6 && _lang == kSpanish)
+					srcSurface = tableSurface;
 				reduce_hare_chico(x_talk_dch[face], y_mask_talk, curX + (int)((12.0f / 100) * factor_red[MIN(201, curY + curHeight)]),
-					curY, TALK_WIDTH, TALK_HEIGHT, factor_red[MIN(201, curY + curHeight)], extraSurface, screenSurface);
+					curY, TALK_WIDTH, TALK_HEIGHT, factor_red[MIN(201, curY + curHeight)], srcSurface, screenSurface);
 			}
 			updateRefresh();
 		} else if (trackProtagonist == 2) {
