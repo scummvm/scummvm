@@ -81,15 +81,15 @@ void GnapEngine::scene32_run() {
 		initBeaverPos(1, 7, kDirNone);
 		endSceneInit();
 	}
-	
+
 	while (!_sceneDone) {
 		updateMouseCursor();
 		updateCursorByHotspot();
 		testWalk(0, 0, -1, -1, -1, -1);
-		
+
 		_sceneClickedHotspot = getClickedHotspotId();
 		updateGrabCursorSprite(0, 0);
-	
+
 		switch (_sceneClickedHotspot) {
 		case kHSDevice:
 			if (_gnapActionStatus < 0) {
@@ -153,10 +153,10 @@ void GnapEngine::scene32_run() {
 		}
 
 		scene32_updateAnimations();
-		
+
 		if (!isSoundPlaying(0x1091C))
 			playSound(0x1091C, true);
-	
+
 		if (!_isLeavingScene) {
 			if (_beaverActionStatus < 0)
 				updateBeaverIdleSequence();
@@ -171,19 +171,19 @@ void GnapEngine::scene32_run() {
 			}
 			playSoundC();
 		}
-	
+
 		checkGameKeys();
-		
+
 		if (isKeyStatus1(8)) {
 			clearKeyStatus1(8);
 			runMenu();
 			scene32_updateHotspots();
 		}
-		
+
 		gameUpdateTick();
-	
+
 	}
-	
+
 }
 
 void GnapEngine::scene32_updateAnimations() {
@@ -197,4 +197,3 @@ void GnapEngine::scene32_updateAnimations() {
 }
 
 } // End of namespace Gnap
-					

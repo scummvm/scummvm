@@ -95,7 +95,7 @@ void GnapEngine::scene38_run() {
 
 	queueInsertDeviceIcon();
 	_gameSys->insertSequence(0x9B, 0, 0, 0, kSeqNone, 0, 0, 0);
-	
+
 	if (_prevSceneNum == 39) {
 		initGnapPos(3, 7, kDirBottomLeft);
 		initBeaverPos(4, 7, kDirUnk4);
@@ -106,13 +106,13 @@ void GnapEngine::scene38_run() {
 	endSceneInit();
 
 	while (!_sceneDone) {
-	
+
 		updateMouseCursor();
 		updateCursorByHotspot();
 
 		_sceneClickedHotspot = getClickedHotspotId();
 		updateGrabCursorSprite(0, 0);
-	
+
 		switch (_sceneClickedHotspot) {
 
 		case kHSDevice:
@@ -222,7 +222,7 @@ void GnapEngine::scene38_run() {
 			else if (_gnapActionStatus < 0)
 				gnapWalkTo(-1, -1, -1, -1, 1);
 			break;
-			
+
 		default:
 			if (_mouseClickState._left) {
 				if (_gnapActionStatus == kASHoldingHuntingTrophy)
@@ -236,22 +236,22 @@ void GnapEngine::scene38_run() {
 		}
 
 		scene38_updateAnimations();
-	
+
 		if (!_isLeavingScene) {
 			updateBeaverIdleSequence();
 			updateGnapIdleSequence();
 		}
-	
+
 		checkGameKeys();
-	
+
 		if (isKeyStatus1(8)) {
 			clearKeyStatus1(8);
 			runMenu();
 			scene38_updateHotspots();
 		}
-		
+
 		gameUpdateTick();
-	
+
 	}
 
 }
@@ -362,4 +362,3 @@ void GnapEngine::scene38_updateAnimations() {
 }
 
 } // End of namespace Gnap
-					

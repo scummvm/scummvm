@@ -106,10 +106,10 @@ void GnapEngine::scene33_run() {
 		updateMouseCursor();
 		updateCursorByHotspot();
 		testWalk(0, 0, 7, 6, 8, 6);
-		
+
 		_sceneClickedHotspot = getClickedHotspotId();
 		updateGrabCursorSprite(0, 0);
-	
+
 		switch (_sceneClickedHotspot) {
 
 		case kHSDevice:
@@ -169,7 +169,7 @@ void GnapEngine::scene33_run() {
 				}
 			}
 			break;
-	
+
 		case kHSExitHouse:
 			if (_gnapActionStatus < 0) {
 				_isLeavingScene = true;
@@ -181,7 +181,7 @@ void GnapEngine::scene33_run() {
 					gnapWalkTo(6, 7, 0, 0x107B1, 1);
 			}
 			break;
-	
+
 		case kHSExitBarn:
 			if (_gnapActionStatus < 0) {
 				_isLeavingScene = true;
@@ -203,7 +203,7 @@ void GnapEngine::scene33_run() {
 				_newSceneNum = 34;
 			}
 			break;
-	
+
 		case kHSExitPigpen:
 			if (_gnapActionStatus < 0) {
 				_isLeavingScene = true;
@@ -213,13 +213,13 @@ void GnapEngine::scene33_run() {
 				_newSceneNum = 32;
 			}
 			break;
-	
+
 		case kHSWalkArea1:
 		case kHSWalkArea2:
 			if (_gnapActionStatus < 0)
 				gnapWalkTo(-1, -1, -1, -1, 1);
 			break;
-			
+
 		default:
 			if (_mouseClickState._left && _gnapActionStatus < 0) {
 				gnapWalkTo(-1, -1, -1, -1, 1);
@@ -228,12 +228,12 @@ void GnapEngine::scene33_run() {
 			break;
 
 		}
-	
+
 		scene33_updateAnimations();
-	
+
 		if (!isSoundPlaying(0x1091C))
 			playSound(0x1091C, true);
-	
+
 		if (!_isLeavingScene) {
 			if (_beaverActionStatus < 0)
 				updateBeaverIdleSequence();
@@ -257,17 +257,17 @@ void GnapEngine::scene33_run() {
 			}
 			playSoundC();
 		}
-	
+
 		checkGameKeys();
-	
+
 		if (isKeyStatus1(8)) {
 			clearKeyStatus1(8);
 			runMenu();
 			scene33_updateHotspots();
 		}
-		
+
 		gameUpdateTick();
-	
+
 	}
 
 }
@@ -328,4 +328,3 @@ void GnapEngine::scene33_updateAnimations() {
 }
 
 } // End of namespace Gnap
-					
