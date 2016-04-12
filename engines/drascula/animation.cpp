@@ -1504,6 +1504,7 @@ void DrasculaEngine::animation_14_5() {
 void DrasculaEngine::animation_1_6() {
 	debug(4, "animation_1_6()");
 
+	hideCursor();
 	trackProtagonist = 0;
 	curX = 103;
 	curY = 108;
