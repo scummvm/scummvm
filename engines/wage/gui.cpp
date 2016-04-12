@@ -588,12 +588,14 @@ Designed *Gui::mouseUp(int x, int y) {
 			_bordersDirty = true;
 		}
 
-		for (ObjList::const_iterator it = _scene->_objs.begin(); it != _scene->_objs.end(); ++it) {
+		for (ObjList::const_iterator it = _scene->_objs.end(); it != _scene->_objs.begin(); ) {
+			it--;
 			if ((*it)->_design->isPointOpaque(x - _sceneArea.left + kBorderWidth, y - _sceneArea.top + kBorderWidth))
 				return *it;
 		}
 
-		for (ChrList::const_iterator it = _scene->_chrs.begin(); it != _scene->_chrs.end(); ++it) {
+		for (ChrList::const_iterator it = _scene->_chrs.end(); it != _scene->_chrs.begin(); ) {
+			it--;
 			if ((*it)->_design->isPointOpaque(x - _sceneArea.left + kBorderWidth, y - _sceneArea.top + kBorderWidth))
 				return *it;
 		}
