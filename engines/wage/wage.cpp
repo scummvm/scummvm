@@ -388,6 +388,7 @@ void WageEngine::onMove(Designed *what, Designed *from, Designed *to) {
 	if (!_temporarilyHidden) {
 		if (to == currentScene || from == currentScene) {
 			redrawScene();
+			g_system->updateScreen();
 			g_system->delayMillis(100);
 		}
 	}
@@ -399,6 +400,7 @@ void WageEngine::redrawScene() {
 	if (currentScene != NULL) {
 		bool firstTime = (_lastScene != currentScene);
 
+		_gui->draw();
 		updateSoundTimerForScene(currentScene, firstTime);
 	}
 }
