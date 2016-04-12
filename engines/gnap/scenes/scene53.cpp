@@ -301,7 +301,7 @@ void GnapEngine::scene53_run() {
 			stopSound(0xA0);
 			++phoneNumberLen;
 			phoneNumber = scene53_pressPhoneNumberButton(phoneNumber, _sceneClickedHotspot - 1);
-			debug("phoneNumber: %d", phoneNumber);
+			debugC(kDebugBasic, "phoneNumber: %d", phoneNumber);
 			if (phoneNumberLen == 7) {
 				_gnapActionStatus = 1;
 				if (isFlag(kGFSpringTaken)) {

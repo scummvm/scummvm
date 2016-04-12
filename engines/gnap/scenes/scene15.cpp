@@ -102,11 +102,7 @@ void GnapEngine::scene15_run() {
 		_sceneClickedHotspot = getClickedHotspotId();
 		updateGrabCursorSprite(0, 0);
 		
-		if (_sceneClickedHotspot >= 0)
-			debug("_sceneClickedHotspot: %d; _verbCursor: %d", _sceneClickedHotspot, _verbCursor);
-	
 		switch (_sceneClickedHotspot) {
-
 		case kHSDevice:
 			if (_gnapActionStatus < 0) {
 				runMenu();
@@ -238,13 +234,10 @@ void GnapEngine::scene15_run() {
 		}
 		
 		gameUpdateTick();
-		
 	}
-
 }
 
-void GnapEngine::scene15_updateAnimations() {
-	
+void GnapEngine::scene15_updateAnimations() {	
 	if (_gameSys->getAnimationStatus(0) == 2) {
 		if (_isLeavingScene) {
 			_sceneDone = true;
@@ -337,7 +330,6 @@ void GnapEngine::scene15_updateAnimations() {
 			}
 		}
 	}
-	
 }
 
 } // End of namespace Gnap

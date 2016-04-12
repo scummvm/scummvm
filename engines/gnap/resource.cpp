@@ -20,6 +20,7 @@
  *
  */
 
+#include "gnap/gnap.h"
 #include "gnap/resource.h"
 
 namespace Gnap {
@@ -36,8 +37,8 @@ void SequenceFrame::loadFromStream(Common::MemoryReadStream &stream) {
 	_spriteId = stream.readUint32LE();
 	_soundId = stream.readUint32LE();
 	_unusedVal = stream.readUint32LE();
-	//isScaled = 0;//DEBUG
-	debug(1, "SequenceFrame() spriteId: %d; soundId: %d", _spriteId, _soundId);
+
+	debugC(kDebugBasic, "SequenceFrame() spriteId: %d; soundId: %d", _spriteId, _soundId);
 }
 
 // SequenceAnimation
@@ -48,7 +49,7 @@ void SequenceAnimation::loadFromStream(Common::MemoryReadStream &stream) {
 	_additionalDelay = stream.readUint32LE();
 	_framesCount = stream.readUint16LE();
 	_maxTotalDuration = stream.readUint16LE();
-	debug(1, "SequenceAnimation() framesCount: %d", _framesCount);
+	debugC(kDebugBasic, "SequenceAnimation() framesCount: %d", _framesCount);
 	frames = new SequenceFrame[_framesCount];
 	for (int i = 0; i < _framesCount; ++i)
 		frames[i].loadFromStream(stream);
@@ -69,10 +70,10 @@ SequenceResource::SequenceResource(int resourceId, byte *data, uint32 size) {
 	_yOffs = stream.readUint16LE();
 	_animationsCount = stream.readUint32LE();
 	_animations = new SequenceAnimation[_animationsCount];
-	debug(1, "SequenceResource() _animationsCount: %d", _animationsCount);
+	debugC(kDebugBasic, "SequenceResource() _animationsCount: %d", _animationsCount);
 	for (int i = 0; i < _animationsCount; ++i) {
 		uint32 animationOffs = stream.readUint32LE();
-		debug(1, "animationOffs: %08X", animationOffs);
+		debugC(kDebugBasic, "animationOffs: %08X", animationOffs);
 		uint32 oldOffs = stream.pos();
 		stream.seek(animationOffs);
 		_animations[i].loadFromStream(stream);
@@ -97,7 +98,7 @@ SpriteResource::SpriteResource(int resourceId, byte *data, uint32 size) {
 	_colorsCount = READ_LE_UINT16(_data + 10);
 	_palette = (uint32*)(_data + 12);
 	_pixels = _data + 12 + _colorsCount * 4;
-	debug(1, "SpriteResource() width: %d; height: %d; colorsCount: %d", _width, _height, _colorsCount);
+	debugC(kDebugBasic, "SpriteResource() width: %d; height: %d; colorsCount: %d", _width, _height, _colorsCount);
 }
 
 SpriteResource::~SpriteResource() {

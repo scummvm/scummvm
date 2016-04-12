@@ -122,11 +122,11 @@ public:
 	ResourceClass *get(int resourceId) {
 		Resource *resource = find(resourceId);
 		if (!resource) {
-			debug(1, "Loading resource type %d with ID %08X from disk", ResourceType, resourceId);
+			debugC(kDebugBasic, "Loading resource type %d with ID %08X from disk", ResourceType, resourceId);
 			resource = new Resource(load(resourceId));
 			_cache[resourceId] = resource;
 		} else {
-			debug(1, "Resource type %d with ID %08X was in cache", ResourceType, resourceId);
+			debugC(kDebugBasic, "Resource type %d with ID %08X was in cache", ResourceType, resourceId);
 		}
 		resource->_isLocked = true;
 		return resource->_obj;
@@ -139,7 +139,6 @@ public:
 	}
 
 	void purge(bool force = false) {
-		debug("Count before purge: %d", _cache.size());
 		for (CacheMapIterator it = _cache.begin(); it != _cache.end(); ++it) {
 			Resource *resource = it->_value;
 			if (force || !resource->_isLocked) {
@@ -147,7 +146,6 @@ public:
 				_cache.erase(it);
 			}
 		}
-		debug("Count after purge: %d", _cache.size());
 	}
 
 protected:

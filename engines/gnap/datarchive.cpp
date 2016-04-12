@@ -24,6 +24,8 @@
 #include "common/file.h"
 #include "common/stream.h"
 #include "common/substream.h"
+
+#include "gnap/gnap.h"
 #include "gnap/datarchive.h"
 
 #include "engines/util.h"
@@ -40,7 +42,7 @@ DatArchive::DatArchive(const char *filename) {
 	_fd->skip(2); // Skip unknown
 	_fd->skip(2); // Skip unknown
 	_entriesCount = _fd->readUint32LE();
-	debug(1, "_entriesCount: %d", _entriesCount);
+	debugC(kDebugBasic, "_entriesCount: %d", _entriesCount);
 	_fd->skip(4); // Skip unknown
 	_entries = new DatEntry[_entriesCount];
 	for (int i = 0; i < _entriesCount; ++i) {
@@ -59,7 +61,7 @@ DatArchive::~DatArchive() {
 
 byte *DatArchive::load(int index) {
 	_fd->seek(_entries[index]._ofs);
-	debug(1, "_entries[index].outSize2: %d; _entries[index].outSize1: %d", _entries[index]._outSize2, _entries[index]._outSize1);
+	debugC(kDebugBasic, "_entries[index].outSize2: %d; _entries[index].outSize1: %d", _entries[index]._outSize2, _entries[index]._outSize1);
 	byte *buffer = new byte[_entries[index]._outSize1];
 	if (!Common::decompressDCL(_fd, buffer, _entries[index]._outSize2, _entries[index]._outSize1))
 		error("DatArchive::load() Error during decompression of entry %d", index);

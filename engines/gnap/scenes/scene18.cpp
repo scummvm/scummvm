@@ -309,7 +309,7 @@ void GnapEngine::scene18_waitForGnapAction() {
 }
 
 void GnapEngine::scene18_run() {
-	_s18_cowboyHatSurface = 0;
+	_s18_cowboyHatSurface = nullptr;
 
 	playSound(0x10940, true);
 	startSoundTimerA(4);
@@ -398,7 +398,6 @@ void GnapEngine::scene18_run() {
 	}
 
 	while (!_sceneDone) {
-	
 		updateMouseCursor();
 		updateCursorByHotspot();
 	
@@ -407,9 +406,6 @@ void GnapEngine::scene18_run() {
 		_sceneClickedHotspot = getClickedHotspotId();
 		updateGrabCursorSprite(0, 0);
 		
-		if (_sceneClickedHotspot >= 0)
-			debug("_sceneClickedHotspot: %d", _sceneClickedHotspot);
-	
 		switch (_sceneClickedHotspot) {
 
 		case kHSDevice:

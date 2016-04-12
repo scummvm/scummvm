@@ -95,6 +95,7 @@ GnapEngine::GnapEngine(OSystem *syst, const ADGameDescription *gd) :
 	Engine(syst), _gameDescription(gd) {
 	
 	_random = new Common::RandomSource("gnap");
+	DebugMan.addDebugChannel(kDebugBasic, "basic", "Basic debug level");
 	
 	Engine::syncSoundSettings();
 }
@@ -218,8 +219,6 @@ Common::Error GnapEngine::run() {
 	
 	delete _exe;
 
-	debug("run() done");
-	
 	return Common::kNoError;
 }
 
@@ -655,7 +654,7 @@ bool GnapEngine::isSoundPlaying(int resourceId) {
 }
 
 void GnapEngine::playSound(int resourceId, bool looping) {
-	debug(0, "playSound(%08X, %d)", resourceId, looping);
+	debugC(kDebugBasic, "playSound(%08X, %d)", resourceId, looping);
 	_soundMan->playSound(resourceId, looping);
 }
 
@@ -749,8 +748,6 @@ void GnapEngine::mainLoop() {
 	_grabCursorSpriteIndex = -1;
 	_grabCursorSprite = nullptr;
 
-	debug("MainLoop #1");
-
 	// > DEBUG BEGIN
 	_currentSceneNum = 0;
 	_newSceneNum = 1;
@@ -760,16 +757,15 @@ void GnapEngine::mainLoop() {
 	loadStockDat();
 
 	while (!_gameDone) {
-	
-		debug("New scene: %d", _newSceneNum);
-	
+		debugC(kDebugBasic, "New scene: %d", _newSceneNum);	
+
 		_prevSceneNum = _currentSceneNum;
 		_currentSceneNum = _newSceneNum;
 		
-		debug("GnapEngine::mainLoop() _prevSceneNum: %d; _currentSceneNum: %d", _prevSceneNum, _currentSceneNum);
+		debugC(kDebugBasic, "GnapEngine::mainLoop() _prevSceneNum: %d; _currentSceneNum: %d", _prevSceneNum, _currentSceneNum);
 
 		if (_newCursorValue != _cursorValue) {
-			debug("_newCursorValue: %d", _newCursorValue);
+			debugC(kDebugBasic, "_newCursorValue: %d", _newCursorValue);
 			_cursorValue = _newCursorValue;
 			if (!_wasSavegameLoaded)
 				initGameFlags(_cursorValue);
@@ -803,8 +799,6 @@ void GnapEngine::mainLoop() {
 	_dat->close(1);
 	// TODO freeMenuSprite();
 	// TODO freeFont();
-
-	debug("MainLoop #XXX2");
 }
 
 void GnapEngine::initScene() {
@@ -824,7 +818,7 @@ void GnapEngine::initScene() {
 
 	datFilename = Common::String::format("%s_n.dat", kSceneNames[_currentSceneNum]);
 
-	debug("GnapEngine::initScene() datFilename: %s", datFilename.c_str());
+	debugC(kDebugBasic, "GnapEngine::initScene() datFilename: %s", datFilename.c_str());
 
 	_dat->open(0, datFilename.c_str());
 
@@ -896,7 +890,6 @@ void GnapEngine::checkGameKeys() {
 		updatePause();
 	}
 	// TODO? Debug input
-//	debug("facing %d", _gnapIdleFacing);
 }
 
 void GnapEngine::startSoundTimerA(int timerIndex) {
@@ -2272,8 +2265,6 @@ void GnapEngine::toyUfoFlyTo(int destX, int destY, int minX, int maxX, int minY,
 	
 	_toyUfoX = clippedDestX;
 	_toyUfoY = clippedDestY;
-	
-//	debug("v21: %d", v21);
 	
 	if (i - 1 > 0) {
 		int seqId;

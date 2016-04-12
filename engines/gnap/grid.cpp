@@ -575,7 +575,7 @@ bool GnapEngine::gnapWalkTo(int gridX, int gridY, int animationIndex, int sequen
 	int gnapId = _gnapId;
 	int gnapSequenceDatNum = _gnapSequenceDatNum;
 
-	debug(0, "_gnapWalkNodesCount: %d", _gnapWalkNodesCount);
+	debugC(kDebugBasic, "_gnapWalkNodesCount: %d", _gnapWalkNodesCount);
 
 	for (int index = 0; index < _gnapWalkNodesCount; ++index) {
 		_gnapWalkNodes[index].id = index + 20 * _gnapWalkNodes[index].gridY1;

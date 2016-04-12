@@ -83,6 +83,10 @@ struct GridStruct {
 const int kMaxGridStructs = 30;
 const int kMaxTimers = 10;
 
+enum GnapDebugChannels {
+	kDebugBasic	= 1 << 0
+};
+
 enum {
 	SF_NONE             = 0x0000,
 	SF_LOOK_CURSOR		= 0x0001,
