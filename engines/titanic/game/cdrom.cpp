@@ -65,6 +65,7 @@ bool CCDROM::MouseDragEndMsg(CMouseDragEndMsg *msg) {
 		if (newTray->_state && newTray->_insertedCD == "None") {
 			CActMsg actMsg(getName());
 			actMsg.execute(newTray);
+			setVisible(false);
 		}
 	}
 

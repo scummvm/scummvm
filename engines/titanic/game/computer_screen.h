@@ -28,6 +28,11 @@
 namespace Titanic {
 
 class CComputerScreen : public CGameObject {
+	DECLARE_MESSAGE_MAP
+	bool ActMsg(CActMsg *msg);
+	bool MovieEndMsg(CMovieEndMsg *msg);
+	bool EnterViewMsg(CEnterViewMsg *msg);
+	bool TimerMsg(CTimerMsg *msg);
 public:
 	CLASSDEF
 	CComputerScreen();

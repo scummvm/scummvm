@@ -24,6 +24,13 @@
 
 namespace Titanic {
 
+BEGIN_MESSAGE_MAP(CComputerScreen, CGameObject)
+	ON_MESSAGE(ActMsg)
+	ON_MESSAGE(MovieEndMsg)
+	ON_MESSAGE(EnterViewMsg)
+	ON_MESSAGE(TimerMsg)
+END_MESSAGE_MAP()
+
 CComputerScreen::CComputerScreen() : CGameObject() {
 }
 
@@ -35,6 +42,37 @@ void CComputerScreen::save(SimpleFile *file, int indent) const {
 void CComputerScreen::load(SimpleFile *file) {
 	file->readNumber();
 	CGameObject::load(file);
+}
+
+bool CComputerScreen::ActMsg(CActMsg *msg) {
+	if (msg->_action == "newCD1" || msg->_action == "newCD2") {
+		playMovie(27, 53, 16);
+		playMovie(19, 26, 16);
+	} else if (msg->_action == "newSTCD") {
+		playMovie(0, 18, 20);
+	}
+
+	return true;
+}
+
+bool CComputerScreen::MovieEndMsg(CMovieEndMsg *msg) {
+	playSound("z#47.wav", 100, 0, 0);
+	addTimer(0, 3000, 0);
+
+	for (int idx = 0; idx < 10; ++idx)
+		playMovie(0, 18, 0);
+	return true;
+}
+
+bool CComputerScreen::EnterViewMsg(CEnterViewMsg *msg) {
+	loadFrame(26);
+	return true;
+}
+
+bool CComputerScreen::TimerMsg(CTimerMsg *msg) {
+	// TODO
+	warning("TODO: CComputerScreen::TimerMsg");
+	return true;
 }
 
 } // End of namespace Titanic

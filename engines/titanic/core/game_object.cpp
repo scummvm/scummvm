@@ -459,6 +459,14 @@ bool CGameObject::playSound(const CString &name, CProximity &prox) {
 	return false;
 }
 
+int CGameObject::addTimer(int endVal, uint firstDuration, uint duration) {
+	CTimeEventInfo *timer = new CTimeEventInfo(g_vm->_events->getTicksCount(),
+		duration != 0, firstDuration, duration, this, endVal, CString());
+
+	getGameManager()->addTimer(timer);
+	return timer->_id;
+}
+
 void CGameObject::gotoView(const CString &viewName, const CString &clipName) {
 	CViewItem *newView = parseView(viewName);
 	CGameManager *gameManager = getGameManager();

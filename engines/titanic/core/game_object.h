@@ -140,6 +140,11 @@ protected:
 	 * Plays a sound
 	 */
 	bool playSound(const CString &name, CProximity &prox);
+
+	/**
+	 * Adds a timer
+	 */
+	int addTimer(int endVal, uint firstDuration, uint duration);
 public:
 	int _field60;
 	CursorId _cursorId;
