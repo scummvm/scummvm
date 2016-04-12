@@ -141,7 +141,7 @@ void Scene::paint(Graphics::Surface *surface, int x, int y) {
 	_design->paint(surface, ((WageEngine *)g_engine)->_world->_patterns, x, y);
 
 	for (ObjList::const_iterator it = _objs.begin(); it != _objs.end(); ++it) {
-		debug(2, "paining Obj: %s", (*it)->_name.c_str());
+		debug(2, "paining Obj: %s, index: %d, type: %d", (*it)->_name.c_str(), (*it)->_index, (*it)->_type);
 		(*it)->_design->paint(surface, ((WageEngine *)g_engine)->_world->_patterns, x, y);
 	}
 

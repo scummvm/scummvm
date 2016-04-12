@@ -431,9 +431,9 @@ static bool objComparator(const Obj *o1, const Obj *o2) {
 	bool o1Immobile = (o1->_type == Obj::IMMOBILE_OBJECT);
 	bool o2Immobile = (o2->_type == Obj::IMMOBILE_OBJECT);
 	if (o1Immobile == o2Immobile) {
-		return o1->_index - o2->_index;
+		return o1->_index < o2->_index;
 	}
-	return o1Immobile ? -1 : 1;
+	return o1Immobile;
 }
 
 void World::move(Obj *obj, Scene *scene, bool skipSort) {
