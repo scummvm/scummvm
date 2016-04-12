@@ -122,11 +122,11 @@ public:
 	ResourceClass *get(int resourceId) {
 		Resource *resource = find(resourceId);
 		if (!resource) {
-			debugC(kDebugBasic, "Loading resource type %d with ID %08X from disk", ResourceType, resourceId);
+			debug(9, "Loading resource type %d with ID %08X from disk", ResourceType, resourceId);
 			resource = new Resource(load(resourceId));
 			_cache[resourceId] = resource;
 		} else {
-			debugC(kDebugBasic, "Resource type %d with ID %08X was in cache", ResourceType, resourceId);
+			debug(9, "Resource type %d with ID %08X was in cache", ResourceType, resourceId);
 		}
 		resource->_isLocked = true;
 		return resource->_obj;
@@ -156,10 +156,10 @@ protected:
 		Resource(ResourceClass *obj) : _obj(obj), _isLocked(false) {}
 		~Resource() { delete _obj; }
 	};
-	
+
 	typedef Common::HashMap<int, Resource*> CacheMap;
 	typedef typename CacheMap::iterator CacheMapIterator;
-	
+
 	DatManager *_dat;
 	CacheMap _cache;
 
@@ -169,7 +169,7 @@ protected:
 			return it->_value;
 		return nullptr;
 	}
-	
+
 	ResourceClass *load(int resourceId) {
 		if (_dat->getResourceType(resourceId) != ResourceType) {
 			error("ResourceCache::load() Wrong resource type: Expected %d, got %d", ResourceType, _dat->getResourceType(resourceId));
