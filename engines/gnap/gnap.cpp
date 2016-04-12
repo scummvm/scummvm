@@ -93,10 +93,10 @@ static const char *kSceneNames[] = {
 
 GnapEngine::GnapEngine(OSystem *syst, const ADGameDescription *gd) :
 	Engine(syst), _gameDescription(gd) {
-	
+
 	_random = new Common::RandomSource("gnap");
 	DebugMan.addDebugChannel(kDebugBasic, "basic", "Basic debug level");
-	
+
 	Engine::syncSoundSettings();
 }
 
@@ -112,9 +112,9 @@ Common::Error GnapEngine::run() {
 	// We do not support color conversion yet
 	if (_system->getScreenFormat() != format)
 		return Common::kUnsupportedColorMode;
-		
+
 	_lastUpdateClock = 0;
-		
+
 	// >>>>> Variable initialization
 	_cursorIndex = -1;
 	_verbCursor = 1;
@@ -143,7 +143,7 @@ Common::Error GnapEngine::run() {
 	_debugger = new Debugger(this);
 
 	_menuBackgroundSurface = nullptr;
-	
+
 	initGlobalSceneVars();
 
 #if 1
@@ -151,23 +151,23 @@ Common::Error GnapEngine::run() {
 	mainLoop();
 
 #else
-	
+
 	Graphics::Surface *testBack = new Graphics::Surface();
 	testBack->create(800, 600, _system->getScreenFormat());
 	//testBack->fillRect(Common::Rect(0, 0, 800, 600), 0xFFFFFFFF);
 	testBack->fillRect(Common::Rect(0, 0, 800, 600), 0xFF000000);
-	
+
 	_currentSceneNum = 41;
 
     Common::String datFilename = Common::String::format("%s_n.dat", kSceneNames[_currentSceneNum]);
 	_dat->open(0, datFilename.c_str());
-	
+
 	_gameSys->setBackgroundSurface(testBack, 0, 500, 1, 1000);
 
 	_gameSys->insertSequence(0x11b, 100, -1, -1, kSeqNone, 0, 0, 0);
 
 	CursorMan.showMouse(true);
-	
+
 	while (!shouldQuit()) {
 		Common::Event event;
 
@@ -188,7 +188,7 @@ Common::Error GnapEngine::run() {
 				break;
 			}
 		}
-		
+
 		_gameSys->fatUpdate();
 		_gameSys->drawSprites();
 		_gameSys->updateScreen();
@@ -201,7 +201,7 @@ Common::Error GnapEngine::run() {
 	}
 
 	_dat->close(0);
-	
+
 	testBack->free();
 	delete testBack;
 
@@ -216,7 +216,7 @@ Common::Error GnapEngine::run() {
 	delete _spriteCache;
 	delete _dat;
 	delete _debugger;
-	
+
 	delete _exe;
 
 	return Common::kNoError;
@@ -637,7 +637,7 @@ void GnapEngine::setDeviceHotspot(int hotspotIndex, int x1, int y1, int x2, int 
 }
 
 int GnapEngine::getSequenceTotalDuration(int resourceId) {
-	SequenceResource *sequenceResource = _sequenceCache->get(resourceId);	
+	SequenceResource *sequenceResource = _sequenceCache->get(resourceId);
 	int maxValue = 0;
 	for (int i = 0; i < sequenceResource->_animationsCount; ++i) {
 		SequenceAnimation *animation = &sequenceResource->_animations[i];
@@ -737,7 +737,7 @@ void GnapEngine::loadStockDat() {
 }
 
 void GnapEngine::mainLoop() {
-	
+
 	_newCursorValue = 1;
 	_cursorValue = -1;
 	_newSceneNum = 0;
@@ -757,11 +757,11 @@ void GnapEngine::mainLoop() {
 	loadStockDat();
 
 	while (!_gameDone) {
-		debugC(kDebugBasic, "New scene: %d", _newSceneNum);	
+		debugC(kDebugBasic, "New scene: %d", _newSceneNum);
 
 		_prevSceneNum = _currentSceneNum;
 		_currentSceneNum = _newSceneNum;
-		
+
 		debugC(kDebugBasic, "GnapEngine::mainLoop() _prevSceneNum: %d; _currentSceneNum: %d", _prevSceneNum, _currentSceneNum);
 
 		if (_newCursorValue != _cursorValue) {
@@ -775,10 +775,10 @@ void GnapEngine::mainLoop() {
 		_wasSavegameLoaded = false;
 
 		initScene();
-		
+
 		runSceneLogic();
 		afterScene();
-		
+
 		_soundMan->stopAll();
 
 		// Force purge all resources
@@ -795,7 +795,7 @@ void GnapEngine::mainLoop() {
 
 	if (_backgroundSurface)
 		deleteSurface(&_backgroundSurface);
-	
+
 	_dat->close(1);
 	// TODO freeMenuSprite();
 	// TODO freeFont();
@@ -803,7 +803,7 @@ void GnapEngine::mainLoop() {
 
 void GnapEngine::initScene() {
 	Common::String datFilename;
-	
+
 	_isLeavingScene = false;
 	_sceneDone = false;
 	_newSceneNum = 55;
@@ -851,7 +851,7 @@ void GnapEngine::endSceneInit() {
 void GnapEngine::afterScene() {
 	if (_gameDone)
 		return;
-	
+
 	if (_newCursorValue == _cursorValue && _newSceneNum != 0 && _newSceneNum != 16 &&
 		_newSceneNum != 47 && _newSceneNum != 48 && _newSceneNum != 54 && _newSceneNum != 49 &&
 		_newSceneNum != 50 && _newSceneNum != 51 && _newSceneNum != 52)
@@ -904,7 +904,7 @@ int GnapEngine::playSoundA() {
 	};
 
 	int soundId = -1;
-	
+
 	if (!_timers[_soundTimerIndexA]) {
 		_timers[_soundTimerIndexA] = getRandom(50) + 100;
 		soundId = kSoundIdsA[getRandom(11)];
@@ -928,7 +928,7 @@ int GnapEngine::playSoundB() {
 	};
 
 	int soundId = -1;
-	
+
 	if (!_timers[_soundTimerIndexB]) {
 		_timers[_soundTimerIndexB] = getRandom(50) + 150;
 		soundId = kSoundIdsB[getRandom(19)];
@@ -1019,7 +1019,7 @@ void GnapEngine::deleteSurface(Graphics::Surface **surface) {
 
 int GnapEngine::getGnapSequenceId(int kind, int gridX, int gridY) {
 	int sequenceId = 0;
-	
+
 	switch (kind) {
 	case gskPullOutDevice:
 		if (gridX > 0 && gridY > 0) {
@@ -1278,6 +1278,9 @@ int GnapEngine::getGnapSequenceId(int kind, int gridX, int gridY) {
 			case kDirUpRight:
 				sequenceId = 0x82F;
 				break;
+			case kDirNone:
+			case kDirUnk4:
+				break;
 			}
 		}
 		break;
@@ -1295,6 +1298,9 @@ int GnapEngine::getGnapSequenceId(int kind, int gridX, int gridY) {
 			break;
 		case kDirUpRight:
 			sequenceId = 0x83E;
+			break;
+		case kDirNone:
+		case kDirUnk4:
 			break;
 		}
 		break;
@@ -1788,7 +1794,7 @@ void GnapEngine::doCallback(int callback) {
 
 bool GnapEngine::gnapPlatypusAction(int gridX, int gridY, int platSequenceId, int callback) {
 	bool result = false;
-	
+
 	if (_gnapActionStatus <= -1 && _beaverActionStatus <= -1) {
 		_gnapActionStatus = 100;
 		if (isPointBlocked(_platX + gridX, _platY + gridY) && (_platX + gridX != _gnapX || _platY + gridY != _gnapY))
@@ -2017,32 +2023,32 @@ void GnapEngine::initGlobalSceneVars() {
 	_s01_pigsIdCtr = 0;
 	_s01_smokeIdCtr = 0;
 	_s01_spaceshipSurface = 0;
-	
+
 	// Scene 2
 	_s02_truckGrillCtr = 0;
-	
+
 	// Scene 3
 	_s03_nextPlatSequenceId = -1;
 	_s03_platypusScared = false;
 	_s03_platypusHypnotized = false;
-	
+
 	// Scene 4
 	_s04_dogIdCtr = 0;
 	//_s04_triedWindow = true;//??
 	_s04_triedWindow = false;
-	
+
 	// Scene 5
 	_s05_nextChickenSequenceId = -1;
-	
+
 	// Scene 6
 	_s06_nextPlatSequenceId = -1;
-	
+
 	// Scene 11
 	_s11_billardBallCtr = 0;
-	
+
 	// Scene 13
 	_s13_backToiletCtr = -1;
-	
+
 	// Scene 17
 	_s17_platTryGetWrenchCtr = 0;
 	_s17_wrenchCtr = 2;
@@ -2052,14 +2058,14 @@ void GnapEngine::initGlobalSceneVars() {
 	_s17_platPhoneCtr = 0;
 	_s17_nextPhoneSequenceId = -1;
 	_s17_currPhoneSequenceId = -1;
-	
+
 	// Scene 18
 	_s18_garbageCanPos = 8;
 	_s18_platPhoneCtr = 0;
 	_s18_platPhoneIter = 0;
 	_s18_nextPhoneSequenceId = -1;
 	_s18_currPhoneSequenceId = -1;
-	
+
 	// Scene 19
 	_s19_toyGrabCtr = 0;
 	_s19_pictureSurface = 0;
@@ -2069,11 +2075,11 @@ void GnapEngine::initGlobalSceneVars() {
 	_s20_stonerGuyCtr = 3;
 	_s20_stonerGuyShowingJoint = false;
 	_s20_groceryStoreGuyCtr = 0;
-	
+
 	// Scene 22
 	_s22_caughtBefore = false;
 	_s22_cashierCtr = 3;
-	
+
 	// Scene 31
 	_s31_beerGuyDistracted = false;
 	_s31_clerkMeasureMaxCtr = 3;
@@ -2086,13 +2092,13 @@ void GnapEngine::initGlobalSceneVars() {
 	_s50_leftTongueNextIdCtr = 0;
 	_s50_rightTongueEnergyBarPos = 10;
 	_s50_rightTongueNextIdCtr = 0;
-	
+
 	// Scene 52
 	_s52_gameScore = 0;
 	_s52_aliensInitialized = false;
 	_s52_alienDirection = 0;
 	_s52_soundToggle = false;
-	
+
 	// Scene 53
 	_s53_callsMadeCtr = 0;
 	_s53_callsRndUsed = 0;
@@ -2202,15 +2208,15 @@ bool GnapEngine::toyUfoCheckTimer() {
 
 void GnapEngine::toyUfoFlyTo(int destX, int destY, int minX, int maxX, int minY, int maxY, int animationIndex) {
 	GridStruct v16[34];
-	
+
 	if (destX == -1)
 		destX = _leftClickMouseX;
-	
+
 	if (destY == -1)
 		destY = _leftClickMouseY;
 
 	//CHECKME
-	
+
 	int clippedDestX = CLIP(destX, minX, maxX);
 	int clippedDestY = CLIP(destY, minY, maxY);
 	int dirX, dirY; // 0, -1 or 1
@@ -2219,12 +2225,12 @@ void GnapEngine::toyUfoFlyTo(int destX, int destY, int minX, int maxX, int minY,
 		dirX = 0;
 	else
 		dirX = (clippedDestX - _toyUfoX) / ABS(clippedDestX - _toyUfoX);
-	
+
 	if (clippedDestY == _toyUfoY)
 		dirY = 0;
 	else
 		dirY = (clippedDestY - _toyUfoY) / ABS(clippedDestY - _toyUfoY);
-	
+
 	int deltaX = ABS(clippedDestX - _toyUfoX);
 	int deltaY = ABS(clippedDestY - _toyUfoY);
 
@@ -2262,10 +2268,10 @@ void GnapEngine::toyUfoFlyTo(int destX, int destY, int minX, int maxX, int minY,
 	}
 
 	int v21 = i - 1;
-	
+
 	_toyUfoX = clippedDestX;
 	_toyUfoY = clippedDestY;
-	
+
 	if (i - 1 > 0) {
 		int seqId;
 		if (isFlag(kGFUnk16))
@@ -2289,13 +2295,13 @@ void GnapEngine::toyUfoFlyTo(int destX, int destY, int minX, int maxX, int minY,
 				kSeqSyncWait, 0,
 				v16[i].gridX1 - 365, v16[i].gridY1 - 128);
 		}
-	
+
 		_toyUfoSequenceId = v16[v21 - 1].sequenceId;
 		_toyUfoId = v16[v21 - 1].id;
-	
+
 		if (animationIndex >= 0)
 			_gameSys->setAnimation(_toyUfoSequenceId | 0x10000, _toyUfoId, animationIndex);
-	
+
 	}
 
 }
@@ -2307,7 +2313,7 @@ int GnapEngine::cutscene_init() {
 }
 
 void GnapEngine::cutscene_run() {
-	
+
 	int itemIndex = 0;
 	int soundId = -1;
 	int volume = 100;
@@ -2330,13 +2336,13 @@ void GnapEngine::cutscene_run() {
 	for (int j = 0; j < _s99_sequenceCountArr[0]; ++j)
 		_gameSys->insertSequence(_s99_sequenceIdArr[j], j + 2, 0, 0, kSeqNone, 0, 0, 0);
 	_gameSys->setAnimation(_s99_sequenceIdArr[0], 2, 0);
-		
+
 	clearKeyStatus1(Common::KEYCODE_ESCAPE);
 	clearKeyStatus1(Common::KEYCODE_SPACE);
 	clearKeyStatus1(29);
 
 	_mouseClickState._left = false;
-	
+
 	int firstSequenceIndex = 0;
 	while (!_sceneDone) {
 		gameUpdateTick();
@@ -2375,7 +2381,7 @@ void GnapEngine::cutscene_run() {
 	}
 
 	if (soundId != -1)
-		stopSound(soundId);	
+		stopSound(soundId);
 }
 
 } // End of namespace Gnap
