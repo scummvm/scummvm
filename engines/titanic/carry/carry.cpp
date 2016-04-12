@@ -23,6 +23,7 @@
 #include "titanic/carry/carry.h"
 #include "titanic/messages/messages.h"
 #include "titanic/npcs/character.h"
+#include "titanic/npcs/succubus.h"
 
 namespace Titanic {
 
@@ -43,9 +44,9 @@ END_MESSAGE_MAP()
 
 CCarry::CCarry() : CGameObject(), _fieldDC(0), _fieldE0(1),
 	_field100(0), _field104(0), _field108(0), _field10C(0),
-	_field110(0), _field120(0), _field124(0), _field128(0),
+	_itemFrame(0), _enterFrame(0), _enterFrameSet(false), _visibleFrame(0),
 	_string1("None"),
-	_string2("NULL"),
+	_fullViewName("NULL"),
 	_string3("That doesn't seem to do anything."),
 	_string4("It doesn't seem to want this.") {
 }
@@ -53,8 +54,8 @@ CCarry::CCarry() : CGameObject(), _fieldDC(0), _fieldE0(1),
 void CCarry::save(SimpleFile *file, int indent) const {
 	file->writeNumberLine(1, indent);
 	file->writeQuotedLine(_string1, indent);
-	file->writePoint(_pos1, indent);
-	file->writeQuotedLine(_string2, indent);
+	file->writePoint(_origPos, indent);
+	file->writeQuotedLine(_fullViewName, indent);
 	file->writeNumberLine(_fieldDC, indent);
 	file->writeNumberLine(_fieldE0, indent);
 	file->writeQuotedLine(_string3, indent);
@@ -63,11 +64,11 @@ void CCarry::save(SimpleFile *file, int indent) const {
 	file->writeNumberLine(_field104, indent);
 	file->writeNumberLine(_field108, indent);
 	file->writeNumberLine(_field10C, indent);
-	file->writeNumberLine(_field110, indent);
+	file->writeNumberLine(_itemFrame, indent);
 	file->writeQuotedLine(_string5, indent);
-	file->writeNumberLine(_field120, indent);
-	file->writeNumberLine(_field124, indent);
-	file->writeNumberLine(_field128, indent);
+	file->writeNumberLine(_enterFrame, indent);
+	file->writeNumberLine(_enterFrameSet, indent);
+	file->writeNumberLine(_visibleFrame, indent);
 
 	CGameObject::save(file, indent);
 }
@@ -75,8 +76,8 @@ void CCarry::save(SimpleFile *file, int indent) const {
 void CCarry::load(SimpleFile *file) {
 	file->readNumber();
 	_string1 = file->readString();
-	_pos1 = file->readPoint();
-	_string2 = file->readString();
+	_origPos = file->readPoint();
+	_fullViewName = file->readString();
 	_fieldDC = file->readNumber();
 	_fieldE0 = file->readNumber();
 	_string3 = file->readString();
@@ -85,11 +86,11 @@ void CCarry::load(SimpleFile *file) {
 	_field104 = file->readNumber();
 	_field108 = file->readNumber();
 	_field10C = file->readNumber();
-	_field110 = file->readNumber();
+	_itemFrame = file->readNumber();
 	_string5 = file->readString();
-	_field120 = file->readNumber();
-	_field124 = file->readNumber();
-	_field128 = file->readNumber();
+	_enterFrame = file->readNumber();
+	_enterFrameSet = file->readNumber();
+	_visibleFrame = file->readNumber();
 
 	CGameObject::load(file);
 }
@@ -142,12 +143,30 @@ bool CCarry::MouseDragEndMsg(CMouseDragEndMsg *msg) {
 			return true;
 	}
 
-	// TODO
+	CString viewName = getViewFullName();
+	if (viewName.empty() || msg->_mousePos.y >= 360) {
+		sleep(250);
+		dropOnPet();
+	} else {
+		setPosition(_origPos);
+		loadFrame(_itemFrame);
+	}
 
 	return true;
 }
 
 bool CCarry::UseWithCharMsg(CUseWithCharMsg *msg) {
+	CSuccUBus *succubus = static_cast<CSuccUBus *>(msg->_character);
+	if (succubus) {
+		CSubAcceptCCarryMsg carryMsg;
+		carryMsg._item = this;
+		carryMsg.execute(succubus);
+	} else {
+		CShowTextMsg textMsg(_string4);
+		textMsg.execute("PET");
+		dropOnPet();
+	}
+
 	return true;
 }
 
@@ -156,10 +175,25 @@ bool CCarry::LeaveViewMsg(CLeaveViewMsg *msg) {
 }
 
 bool CCarry::UseWithOtherMsg(CUseWithOtherMsg *msg) {
+	CShowTextMsg textMsg(_string3);
+	textMsg.execute("PET");
+
+	_fullViewName = getViewFullName();
+	if (_fullViewName.empty() || _bounds.top >= 360) {
+		sleep(250);
+		dropOnPet();
+	} else {
+		setPosition(_origPos);
+	}
+
 	return true;
 }
 
 bool CCarry::VisibleMsg(CVisibleMsg *msg) {
+	setVisible(msg->_visible);
+	if (msg->_visible && _visibleFrame != -1)
+		loadFrame(_visibleFrame);
+
 	return true;
 }
 
@@ -168,18 +202,38 @@ bool CCarry::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
 }
 
 bool CCarry::RemoveFromGameMsg(CRemoveFromGameMsg *msg) {
+	setPosition(Point(0, 0));
+	setVisible(false);
+
 	return true;
 }
 
 bool CCarry::MoveToStartPosMsg(CMoveToStartPosMsg *msg) {
+	setPosition(_origPos);
 	return true;
 }
 
 bool CCarry::EnterViewMsg(CEnterViewMsg *msg) {
+	if (!_enterFrameSet) {
+		loadFrame(_enterFrame);
+		_enterFrameSet = true;
+	}
+
 	return true;
 }
 
 bool CCarry::PassOnDragStartMsg(CPassOnDragStartMsg *msg) {
+	if (_visibleFrame != -1)
+		loadFrame(_visibleFrame);
+
+	if (msg->_value3) {
+		_tempPos.x = _bounds.width() / 2;
+		_tempPos.y = _bounds.height() / 2;
+	} else {
+		_tempPos = msg->_mousePos - _bounds;
+	}
+
+	setPosition(_tempPos - getMousePos());
 	return true;
 }
 

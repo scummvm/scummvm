@@ -142,10 +142,13 @@ public:
 class CPassOnDragStartMsg : public CMessage {
 public:
 	Point _mousePos;
+	int _value3;
+	int _value4;
 public:
 	CLASSDEF
 	CPassOnDragStartMsg() : CMessage() {}
-	CPassOnDragStartMsg(const Point &pt) : CMessage(), _mousePos(pt) {}
+	CPassOnDragStartMsg(const Point &pt, int v3 = 0, int v4 = 0) : 
+		CMessage(), _mousePos(pt), _value3(v3), _value4(v4) {}
 
 	static bool isSupportedBy(const CTreeItem *item) {
 		return supports(item, _type);

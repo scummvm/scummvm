@@ -145,6 +145,16 @@ protected:
 	 * Adds a timer
 	 */
 	int addTimer(int endVal, uint firstDuration, uint duration);
+
+	/**
+	 * Causes the game to sleep for the specified time
+	 */
+	void sleep(uint milli);
+
+	/**
+	 * Get the current mouse cursor position
+	 */
+	Point getMousePos() const;
 public:
 	int _field60;
 	CursorId _cursorId;
@@ -191,7 +201,7 @@ public:
 	/**
 	 * Set the position of the object
 	 */
-	void setPosition(const Common::Point &newPos);
+	void setPosition(const Point &newPos);
 
 	/**
 	 * Returns true if the object has a currently active movie
@@ -215,6 +225,11 @@ public:
 	 * Play the movie specified in _resource
 	 */
 	void playMovie(uint startFrame, uint endFrame, int val3);
+
+	/**
+	 * Return the current view/node/room as a single string
+	 */
+	CString getViewFullName() const;
 };
 
 } // End of namespace Titanic

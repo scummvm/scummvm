@@ -198,19 +198,6 @@ public:
 	}
 };
 
-class CSubAcceptCCarryMsg : public CMessage {
-public:
-	CString _string1;
-	int _value1, _value2, _value3;
-public:
-	CLASSDEF
-	CSubAcceptCCarryMsg() : _value1(0), _value2(0), _value3(0) {}
-
-	static bool isSupportedBy(const CTreeItem *item) {
-		return supports(item, _type);
-	}
-};
-
 class CTransportMsg : public CMessage {
 public:
 	CString _string;
@@ -366,6 +353,7 @@ MESSAGE2(CSpeechFallsFromTreeMsg, int, value1, 0, int, value2, 0);
 MESSAGE1(CStartMusicMsg, int, value, 0);
 MESSAGE3(CStatusChangeMsg, int, oldStatus, 0, int, newStatus, 0, bool, success, false);
 MESSAGE1(CStopMusicMsg, int, value, 0);
+MESSAGE4(CSubAcceptCCarryMsg, CString, string1, "", int, value1, 0, int, value2, 0, CCarry *, item, nullptr);
 MESSAGE0(CSubDeliverCCarryMsg);
 MESSAGE0(CSubSendCCarryMsg);
 MESSAGE0(CSUBTransition);

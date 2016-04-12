@@ -45,8 +45,8 @@ class CCarry : public CGameObject {
 	bool PassOnDragStartMsg(CPassOnDragStartMsg *msg);
 private:
 	CString _string1;
-	Point _pos1;
-	CString _string2;
+	Point _origPos;
+	CString _fullViewName;
 	int _fieldDC;
 	int _fieldE0;
 	CString _string3;
@@ -56,11 +56,11 @@ private:
 	int _field104;
 	int _field108;
 	int _field10C;
-	int _field110;
+	int _itemFrame;
 	CString _string5;
-	int _field120;
-	int _field124;
-	int _field128;
+	int _enterFrame;
+	bool _enterFrameSet;
+	int _visibleFrame;
 protected:
 	/**
 	 * Called when an item is dropped onto the PET

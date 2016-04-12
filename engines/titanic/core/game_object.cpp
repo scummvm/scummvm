@@ -405,7 +405,7 @@ void CGameObject::resetPosition() {
 	setPosition(_savedPos);
 }
 
-void CGameObject::setPosition(const Common::Point &newPos) {
+void CGameObject::setPosition(const Point &newPos) {
 	makeDirty();
 	_bounds.moveTo(newPos);
 	makeDirty();
@@ -538,6 +538,24 @@ CViewItem *CGameObject::parseView(const CString &viewString) {
 
 	// Find the view, so return it
 	return view;
+}
+
+CString CGameObject::getViewFullName() const {
+	CGameManager *gameManager = getGameManager();
+	CViewItem *view = gameManager->getView();
+	CNodeItem *node = view->findNode();
+	CRoomItem *room = node->findRoom();
+
+	return CString::format("%s.%s.%s", room->getName().c_str(),
+		node->getName().c_str(), view->getName().c_str());
+}
+
+void CGameObject::sleep(uint milli) {
+	g_vm->_events->sleep(milli);
+}
+
+Point CGameObject::getMousePos() const {
+	return getGameManager()->_gameState.getMousePos();
 }
 
 } // End of namespace Titanic

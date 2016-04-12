@@ -227,4 +227,12 @@ void Events::handleKbdSpecial(Common::KeyState keyState) {
 		_specialButtons &= ~MK_SHIFT;
 }
 
+void Events::sleep(uint time) {
+	uint32 delayEnd = g_system->getMillis() + time;
+
+	while (!_vm->shouldQuit() && g_system->getMillis() < delayEnd) {
+		pollEventsAndWait();
+	}
+}
+
 } // End of namespace Titanic

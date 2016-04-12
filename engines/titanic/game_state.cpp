@@ -96,10 +96,6 @@ void CGameState::setMode(GameStateMode newMode) {
 	_mode = newMode;
 }
 
-void CGameState::setMousePos(const Point &pt) {
-	_mousePos = pt;
-}
-
 void CGameState::enterNode() {
 	++_nodeChangeCtr;
 	_nodeEnterTicks = g_vm->_events->getTicksCount();

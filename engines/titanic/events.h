@@ -103,6 +103,11 @@ public:
 	 * Return whether a given special key is currently pressed
 	 */
 	bool isSpecialPressed(SpecialButtons btn) const { return _specialButtons; }
+
+	/**
+	 * Sleep for a specified period of time
+	 */
+	void sleep(uint time);
 };
 
 } // End of namespace Titanic

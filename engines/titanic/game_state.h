@@ -87,7 +87,12 @@ public:
 	/**
 	 * Sets the current mouse position
 	 */
-	void setMousePos(const Point &pt);
+	void setMousePos(const Point &pt) { _mousePos = pt; }
+
+	/**
+	 * Gets the current mouse position
+	 */
+	Point getMousePos() const { return _mousePos; }
 
 	/**
 	 * Called by the PET when a new node is entered
