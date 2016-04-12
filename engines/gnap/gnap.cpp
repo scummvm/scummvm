@@ -139,7 +139,8 @@ Common::Error GnapEngine::run() {
 	_sequenceCache = new SequenceCache(_dat);
 	_gameSys = new GameSys(this);
 	_soundMan = new SoundMan(this);
-	
+	_debugger = new Debugger(this);
+
 	_menuBackgroundSurface = nullptr;
 	
 	initGlobalSceneVars();
@@ -213,6 +214,7 @@ Common::Error GnapEngine::run() {
 	delete _soundCache;
 	delete _spriteCache;
 	delete _dat;
+	delete _debugger;
 	
 	delete _exe;
 
@@ -227,6 +229,13 @@ void GnapEngine::updateEvents() {
 	while (_eventMan->pollEvent(event)) {
 		switch (event.type) {
 		case Common::EVENT_KEYDOWN:
+			// Check for debugger
+			if (event.kbd.keycode == Common::KEYCODE_d && (event.kbd.flags & Common::KBD_CTRL)) {
+				// Attach to the debugger
+				_debugger->attach();
+				_debugger->onFrame();
+			}
+
 			_keyPressState[event.kbd.keycode] = 1;
 			_keyDownState[event.kbd.keycode] = 1;
 			break;
@@ -387,13 +396,13 @@ void GnapEngine::updateCursorByHotspot() {
 	if (!_isWaiting) {
 		int hotspotIndex = getHotspotIndexAtPos(_mouseX, _mouseY);
 
-#if 1
-		// NOTE This causes some display glitches so don't worry
-		char t[256];
-		sprintf(t, "hotspot = %d", hotspotIndex);
-		_gameSys->fillSurface(0, 10, 10, 80, 16, 0, 0, 0);
-		_gameSys->drawTextToSurface(0, 10, 10, 255, 255, 255, t);
-#endif		
+		if (_debugger->_showHotspotNumber) {
+			// NOTE This causes some display glitches so don't worry
+			char t[256];
+			sprintf(t, "hotspot = %d", hotspotIndex);
+			_gameSys->fillSurface(0, 10, 10, 80, 16, 0, 0, 0);
+			_gameSys->drawTextToSurface(0, 10, 10, 255, 255, 255, t);
+		}
 
 		if (hotspotIndex < 0)
 			setCursor(kDisabledCursors[_verbCursor]);

@@ -39,6 +39,7 @@
 #include "graphics/pixelformat.h"
 #include "graphics/wincursor.h"
 
+#include "gnap/debugger.h"
 #include "gnap/resource.h"
 
 struct ADGameDescription;
@@ -304,6 +305,7 @@ public:
 	SequenceCache *_sequenceCache;
 	GameSys *_gameSys;
 	SoundMan *_soundMan;
+	Debugger *_debugger;
 	
 	int _lastUpdateClock;
 	

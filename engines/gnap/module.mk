@@ -2,6 +2,7 @@ MODULE := engines/gnap
 
 MODULE_OBJS := \
 	datarchive.o \
+	debugger.o \
 	detection.o \
 	gamesys.o \
 	gnap.o \
