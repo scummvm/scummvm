@@ -2273,7 +2273,7 @@ void GnapEngine::toyUfoFlyTo(int destX, int destY, int minX, int maxX, int minY,
 	_toyUfoY = clippedDestY;
 
 	if (i - 1 > 0) {
-		int seqId;
+		int seqId = 0;
 		if (isFlag(kGFUnk16))
 			seqId = 0x867;
 		else if (isFlag(kGFJointTaken))
@@ -2282,6 +2282,8 @@ void GnapEngine::toyUfoFlyTo(int destX, int destY, int minX, int maxX, int minY,
 			seqId = 0x85F;
 		else if (isFlag(kGFGroceryStoreHatTaken))
 			seqId = 0x857;
+		else
+			error("Unhandled flag in GnapEngine::toyUfoFlyTo(): 0x%x", _gameFlags);
 		v16[0].sequenceId = seqId;
 		v16[0].id = 0;
 		_gameSys->insertSequence(seqId | 0x10000, 0,
