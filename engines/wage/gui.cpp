@@ -297,7 +297,7 @@ void Gui::drawScene() {
 
 // Render console
 void Gui::drawConsole() {
-	if (!_consoleDirty && !_consoleFullRedraw && !_bordersDirty)
+	if (!_consoleDirty && !_consoleFullRedraw && !_bordersDirty && !_sceneDirty)
 		return;
 
 	renderConsole(&_screen, _consoleTextArea);
