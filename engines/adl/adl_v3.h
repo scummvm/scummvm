@@ -46,7 +46,12 @@ protected:
 	virtual Common::String loadMessage(uint idx) const;
 
 	int o3_isVarGT(ScriptEnv &e);
+	int o3_isItemInRoom(ScriptEnv &e);
+	int o3_isNounNotInRoom(ScriptEnv &e);
 	int o3_skipOneCommand(ScriptEnv &e);
+
+private:
+	byte _curDisk;
 };
 
 } // End of namespace Adl

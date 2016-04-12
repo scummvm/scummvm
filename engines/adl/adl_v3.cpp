@@ -30,7 +30,8 @@
 namespace Adl {
 
 AdlEngine_v3::AdlEngine_v3(OSystem *syst, const AdlGameDescription *gd) :
-		AdlEngine_v2(syst, gd) {
+		AdlEngine_v2(syst, gd),
+		_curDisk(1) {
 }
 
 Common::String AdlEngine_v3::loadMessage(uint idx) const {
@@ -57,9 +58,9 @@ void AdlEngine_v3::setupOpcodeTables() {
 	OpcodeUnImpl();
 	Opcode(o2_isFirstTime);
 	Opcode(o2_isRandomGT);
-	Opcode(o1_isItemInRoom);
+	Opcode(o3_isItemInRoom);
 	// 0x04
-	Opcode(o2_isNounNotInRoom);
+	Opcode(o3_isNounNotInRoom);
 	Opcode(o1_isMovesGT);
 	Opcode(o1_isVarEQ);
 	Opcode(o2_isCarryingSomething);
@@ -122,14 +123,45 @@ int AdlEngine_v3::o3_isVarGT(ScriptEnv &e) {
 	return -1;
 }
 
-// FIXME: Move to HiRes6 class?
 int AdlEngine_v3::o3_skipOneCommand(ScriptEnv &e) {
-	OP_DEBUG_0("\t&& SKIP_NEXT_COMMAND()");
+	OP_DEBUG_0("\t&& SKIP_ONE_COMMAND()");
 
 	_skipOneCommand = true;
 	setVar(2, 0);
 
 	return -1;
+}
+
+int AdlEngine_v3::o3_isItemInRoom(ScriptEnv &e) {
+	OP_DEBUG_2("\t&& GET_ITEM_ROOM(%s) == %s", itemStr(e.arg(1)).c_str(), itemRoomStr(e.arg(2)).c_str());
+
+	const Item &item = getItem(e.arg(1));
+
+	if (e.arg(2) != IDI_ANY && item.isLineArt != _curDisk)
+		return -1;
+
+	if (item.room == roomArg(e.arg(2)))
+		return 2;
+
+	return -1;
+}
+
+int AdlEngine_v3::o3_isNounNotInRoom(ScriptEnv &e) {
+	OP_DEBUG_1("\t&& NO_SUCH_ITEMS_IN_ROOM(%s)", itemRoomStr(e.arg(1)).c_str());
+
+	Common::List<Item>::const_iterator item;
+
+	setVar(24, 0);
+
+	for (item = _state.items.begin(); item != _state.items.end(); ++item)
+		if (item->noun == e.getNoun()) {
+			setVar(24, 1);
+
+			if (item->room == roomArg(e.arg(1)))
+				return -1;
+		}
+
+	return 1;
 }
 
 } // End of namespace Adl
