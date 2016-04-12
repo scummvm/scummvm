@@ -221,11 +221,6 @@ Common::Error GnapEngine::run() {
 	return Common::kNoError;
 }
 
-bool GnapEngine::hasFeature(EngineFeature f) const {
-	return
-		false;
-}
-
 void GnapEngine::updateEvents() {
 	Common::Event event;
 
