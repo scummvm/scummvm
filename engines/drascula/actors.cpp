@@ -196,6 +196,10 @@ void DrasculaEngine::moveCharacters() {
 			return;
 		}
 	}
+	
+	byte *srcSurface = extraSurface;
+	if (currentChapter == 6 && _lang == kSpanish)
+		srcSurface = tableSurface;
 
 	if (characterMoved == 0) {
 		curPos[0] = 0;
@@ -214,17 +218,17 @@ void DrasculaEngine::moveCharacters() {
 			curPos[1] = 0;
 			if (currentChapter == 2)
 				copyRect(curPos[0], curPos[1], curPos[2], curPos[3], curPos[4], curPos[5],
-						 extraSurface, screenSurface);
+						 srcSurface, screenSurface);
 			else
 				reduce_hare_chico(curPos[0], curPos[1], curPos[2], curPos[3], curPos[4], curPos[5],
-									factor_red[curY + curHeight], extraSurface, screenSurface);
+									factor_red[curY + curHeight], srcSurface, screenSurface);
 		} else if (trackProtagonist == 1) {
 			if (currentChapter == 2)
 				copyRect(curPos[0], curPos[1], curPos[2], curPos[3], curPos[4], curPos[5],
-						 extraSurface, screenSurface);
+						 srcSurface, screenSurface);
 			else
 				reduce_hare_chico(curPos[0], curPos[1], curPos[2], curPos[3], curPos[4], curPos[5],
-									factor_red[curY + curHeight], extraSurface, screenSurface);
+									factor_red[curY + curHeight], srcSurface, screenSurface);
 		} else if (trackProtagonist == 2) {
 			if (currentChapter == 2)
 				copyRect(curPos[0], curPos[1], curPos[2], curPos[3], curPos[4], curPos[5],
@@ -256,17 +260,17 @@ void DrasculaEngine::moveCharacters() {
 			curPos[1] = 0;
 			if (currentChapter == 2)
 				copyRect(curPos[0], curPos[1], curPos[2], curPos[3], curPos[4], curPos[5],
-						 extraSurface, screenSurface);
+						 srcSurface, screenSurface);
 			else
 				reduce_hare_chico(curPos[0], curPos[1], curPos[2], curPos[3], curPos[4], curPos[5],
-									factor_red[curY + curHeight], extraSurface, screenSurface);
+									factor_red[curY + curHeight], srcSurface, screenSurface);
 		} else if (trackProtagonist == 1) {
 			if (currentChapter == 2)
 				copyRect(curPos[0], curPos[1], curPos[2], curPos[3], curPos[4], curPos[5],
-						 extraSurface, screenSurface);
+						 srcSurface, screenSurface);
 			else
 				reduce_hare_chico(curPos[0], curPos[1], curPos[2], curPos[3], curPos[4], curPos[5],
-									factor_red[curY + curHeight], extraSurface, screenSurface);
+									factor_red[curY + curHeight], srcSurface, screenSurface);
 		} else if (trackProtagonist == 2) {
 			if (currentChapter == 2)
 				copyRect(curPos[0], curPos[1], curPos[2], curPos[3], curPos[4], curPos[5],

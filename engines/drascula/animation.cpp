@@ -1611,7 +1611,7 @@ void DrasculaEngine::animation_6_6() {
 	removeObject(20);
 	loadPic(96, frontSurface);
 	loadPic(97, frontSurface);
-	loadPic(97, extraSurface);
+	loadPic(97, _lang == kSpanish ? tableSurface : extraSurface);
 	loadPic(99, backSurface);
 	doBreak = 1;
 	objExit = 104;
@@ -2215,7 +2215,7 @@ void DrasculaEngine::activatePendulum() {
 	_roomNumber = 102;
 	loadPic(102, bgSurface, HALF_PAL);
 	loadPic("an_p1.alg", drawSurface3);
-	loadPic("an_p2.alg", extraSurface);
+	loadPic("an_p2.alg", _lang == kSpanish ? tableSurface : extraSurface);
 	loadPic("an_p3.alg", frontSurface);
 
 	copyBackground(0, 171, 0, 0, OBJWIDTH, OBJHEIGHT, backSurface, drawSurface3);
