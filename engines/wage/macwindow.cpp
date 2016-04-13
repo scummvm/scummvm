@@ -50,9 +50,19 @@
 namespace Wage {
 
 MacWindow::MacWindow(WindowType type) : _type(type) {
+	_active = false;
+	_bordersDirty = true;
 }
 
 MacWindow::~MacWindow() {
+}
+
+void MacWindow::setActive(bool active) {
+	if (active == _active)
+		return;
+
+	_active = active;
+	_bordersDirty = true;
 }
 
 void MacWindow::resize(int w, int h) {
@@ -62,7 +72,12 @@ void MacWindow::resize(int w, int h) {
 }
 
 void MacWindow::draw(Graphics::Surface *g, int x, int y) {
+	if (_bordersDirty)
+		drawBorder();
+}
 
+void MacWindow::drawBorder() {
+	_bordersDirty = false;
 }
 
 } // End of namespace Wage

@@ -62,10 +62,18 @@ class MacWindow {
 	~MacWindow();
 	void resize(int w, int h);
 	void draw(Graphics::Surface *g, int x, int y);
+	void setActive(bool active);
+	Graphics::ManagedSurface *getSurface() { return &_surface; }
+
+private:
+	void drawBorder();
 
 private:
 	Graphics::ManagedSurface _surface;
+	Graphics::ManagedSurface _borderSurface;
 	WindowType _type;
+	bool _active;
+	bool _borderIsDirty;
 };
 
 } // End of namespace Wage
