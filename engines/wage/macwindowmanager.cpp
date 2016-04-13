@@ -45,39 +45,14 @@
  *
  */
 
-#include "wage/macwindow.h"
+#include "wage/macwindowmanager.h"
 
 namespace Wage {
 
-MacWindow::MacWindow(WindowType type) : _type(type) {
-	_active = false;
-	_borderIsDirty = true;
+MacWindowManager::MacWindowManager() {
 }
 
-MacWindow::~MacWindow() {
-}
-
-void MacWindow::setActive(bool active) {
-	if (active == _active)
-		return;
-
-	_active = active;
-	_borderIsDirty = true;
-}
-
-void MacWindow::resize(int w, int h) {
-	_surface.free();
-
-	_surface.create(w, h, Graphics::PixelFormat::createFormatCLUT8());
-}
-
-void MacWindow::draw(Graphics::Surface *g, int x, int y) {
-	if (_borderIsDirty)
-		drawBorder();
-}
-
-void MacWindow::drawBorder() {
-	_borderIsDirty = false;
+MacWindowManager::~MacWindowManager() {
 }
 
 } // End of namespace Wage
