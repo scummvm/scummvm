@@ -49,7 +49,7 @@
 
 namespace Wage {
 
-MacWindow::MacWindow(WindowType type) : _type(type) {
+MacWindow::MacWindow(bool scrollable, int id) : _scrollable(scrollable), _id(id) {
 	_active = false;
 	_borderIsDirty = true;
 }
@@ -69,9 +69,16 @@ void MacWindow::resize(int w, int h) {
 	_surface.free();
 
 	_surface.create(w, h, Graphics::PixelFormat::createFormatCLUT8());
+
+	_dims.setWidth(w);
+	_dims.setHeight(h);
 }
 
-void MacWindow::draw(Graphics::Surface *g, int x, int y) {
+void MacWindow::move(int x, int y) {
+	_dims.moveTo(x, y);
+}
+
+void MacWindow::draw(Graphics::Surface *g) {
 	if (_borderIsDirty)
 		drawBorder();
 }

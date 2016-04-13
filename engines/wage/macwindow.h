@@ -58,10 +58,12 @@ enum WindowType {
 };
 
 class MacWindow {
-	MacWindow(WindowType type);
+public:
+	MacWindow(bool scrollable, int id);
 	~MacWindow();
+	void move(int x, int y);
 	void resize(int w, int h);
-	void draw(Graphics::Surface *g, int x, int y);
+	void draw(Graphics::Surface *g);
 	void setActive(bool active);
 	Graphics::ManagedSurface *getSurface() { return &_surface; }
 
@@ -71,9 +73,12 @@ private:
 private:
 	Graphics::ManagedSurface _surface;
 	Graphics::ManagedSurface _borderSurface;
-	WindowType _type;
+	bool _scrollable;
+	int _id;
 	bool _active;
 	bool _borderIsDirty;
+
+	Common::Rect _dims;
 };
 
 } // End of namespace Wage

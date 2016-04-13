@@ -50,9 +50,26 @@
 
 namespace Wage {
 
+class MacWindow;
+
 class MacWindowManager {
+public:
 	MacWindowManager();
 	~MacWindowManager();
+
+	int add(bool scrollable);
+	void setActive(int id);
+
+	void draw(Graphics::Surface *g);
+
+private:
+	Common::List<MacWindow *> _windowStack;
+	Common::Array<MacWindow *> _windows;
+
+	int _lastId;
+	int _activeWindow;
+
+	bool _fullRefresh;
 };
 
 } // End of namespace Wage
