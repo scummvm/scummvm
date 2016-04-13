@@ -21,8 +21,16 @@
  */
 
 #include "titanic/carry/photograph.h"
+#include "titanic/core/room_item.h"
 
 namespace Titanic {
+
+BEGIN_MESSAGE_MAP(CPhotograph, CCarry)
+	ON_MESSAGE(MouseDragStartMsg)
+	ON_MESSAGE(MouseDragEndMsg)
+	ON_MESSAGE(PETGainedObjectMsg)
+	ON_MESSAGE(ActMsg)
+END_MESSAGE_MAP()
 
 int CPhotograph::_v1;
 
@@ -45,6 +53,45 @@ void CPhotograph::load(SimpleFile *file) {
 	_field130 = file->readNumber();
 
 	CCarry::load(file);
+}
+
+bool CPhotograph::MouseDragEndMsg(CMouseDragEndMsg *msg) {
+	_v1 = 0;
+	CGameObject *target = msg->_dropTarget;
+
+	if (target && target->getName() != "NavigationComputer") {
+		warning("TODO: CPhotograph::MouseDragEndMsg");
+	} else {
+		return CCarry::MouseDragEndMsg(msg);
+	}
+}
+
+bool CPhotograph::MouseDragStartMsg(CMouseDragStartMsg *msg) {
+	if (checkPoint(msg->_mousePos, true, true)) {
+		_v1 = true;
+		CActMsg actMsg("PlayerPicksUpPhoto");
+		actMsg.execute("Doorbot");
+	}
+
+	return CCarry::MouseDragStartMsg(msg);
+}
+
+bool CPhotograph::PETGainedObjectMsg(CPETGainedObjectMsg *msg) {
+	if (getRoom()->getName() == "Home") {
+		CActMsg actMsg("PlayerPutsPhotoInPET");
+		actMsg.execute("Doorbot");
+	}
+
+	return true;
+}
+
+bool CPhotograph::ActMsg(CActMsg *msg) {
+	if (msg->_action == "BecomeGettable") {
+		_fieldE0 = 1;
+		_cursorId = CURSOR_HAND;
+	}
+
+	return true;
 }
 
 } // End of namespace Titanic

@@ -24,6 +24,10 @@
 
 namespace Titanic {
 
+BEGIN_MESSAGE_MAP(CPlugIn, CCarry)
+	ON_MESSAGE(UseWithOtherMsg)
+END_MESSAGE_MAP()
+
 CPlugIn::CPlugIn() : CCarry(), _field12C(0) {
 }
 
@@ -35,6 +39,30 @@ void CPlugIn::save(SimpleFile *file, int indent) const {
 void CPlugIn::load(SimpleFile *file) {
 	file->readNumber();
 	CCarry::load(file);
+}
+
+bool CPlugIn::UseWithOtherMsg(CUseWithOtherMsg *msg) {
+	CGameObject *other = msg->_other;
+	CString otherName = other->getName();
+
+	if (otherName == "PET") {
+		return CCarry::UseWithOtherMsg(msg);
+	} else if (otherName == "DatasideTransporter") {
+		CString name = getName();
+		if (name == "DatasideTransporter") {
+			// TODO
+			if (name != "SendYourself") {
+				// TODO
+			}
+		} else {
+			// TODO	
+		}
+	} else {
+		CShowTextMsg textMsg("This item is incorrectly calibrated.");
+		textMsg.execute("PET");
+	}
+
+	return true;
 }
 
 } // End of namespace Titanic

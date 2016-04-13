@@ -24,6 +24,10 @@
 
 namespace Titanic {
 
+BEGIN_MESSAGE_MAP(CSweets, CCarry)
+	ON_MESSAGE(MouseButtonUpMsg)
+END_MESSAGE_MAP()
+
 CSweets::CSweets() : CCarry() {
 }
 
@@ -35,6 +39,10 @@ void CSweets::save(SimpleFile *file, int indent) const {
 void CSweets::load(SimpleFile *file) {
 	file->readNumber();
 	CCarry::load(file);
+}
+
+bool CSweets::MouseButtonUpMsg(CMouseButtonUpMsg *msg) {
+	return true;
 }
 
 } // End of namespace Titanic

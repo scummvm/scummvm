@@ -24,10 +24,18 @@
 #define TITANIC_PHOTOGRAPH_H
 
 #include "titanic/carry/carry.h"
+#include "titanic/messages/messages.h"
+#include "titanic/messages/mouse_messages.h"
+#include "titanic/messages/pet_messages.h"
 
 namespace Titanic {
 
 class CPhotograph : public CCarry {
+	DECLARE_MESSAGE_MAP
+	bool MouseDragEndMsg(CMouseDragEndMsg *msg);
+	bool MouseDragStartMsg(CMouseDragStartMsg *msg);
+	bool PETGainedObjectMsg(CPETGainedObjectMsg *msg);
+	bool ActMsg(CActMsg *msg);
 private:
 	static int _v1;
 private:

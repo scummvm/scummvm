@@ -21,8 +21,17 @@
  */
 
 #include "titanic/carry/phonograph_cylinder.h"
+#include "titanic/game/phonograph.h"
 
 namespace Titanic {
+
+BEGIN_MESSAGE_MAP(CPhonographCylinder, CCarry)
+	ON_MESSAGE(UseWithOtherMsg)
+	ON_MESSAGE(QueryCylinderMsg)
+	ON_MESSAGE(RecordOntoCylinderMsg)
+	ON_MESSAGE(SetMusicControlsMsg)
+	ON_MESSAGE(ErasePhonographCylinderMsg)
+END_MESSAGE_MAP()
 
 CPhonographCylinder::CPhonographCylinder() : CCarry(),
 	_field138(0), _field13C(0), _field140(0),  _field144(0), 
@@ -84,6 +93,32 @@ void CPhonographCylinder::load(SimpleFile *file) {
 	_field184 = file->readNumber();
 
 	CCarry::load(file);
+}
+
+bool CPhonographCylinder::UseWithOtherMsg(CUseWithOtherMsg *msg) {
+	CPhonograph *phonograph = static_cast<CPhonograph *>(msg->_other);
+	if (phonograph) {
+		CSetVarMsg varMsg("m_RecordStatus", 1);
+		return true;
+	} else {
+		return CCarry::UseWithOtherMsg(msg);
+	}
+}
+
+bool CPhonographCylinder::QueryCylinderMsg(CQueryCylinderMsg *msg) {
+	msg->_
+}
+
+bool CPhonographCylinder::RecordOntoCylinderMsg(CRecordOntoCylinderMsg *msg) {
+
+}
+
+bool CPhonographCylinder::SetMusicControlsMsg(CSetMusicControlsMsg *msg) {
+
+}
+
+bool CPhonographCylinder::ErasePhonographCylinderMsg(CErasePhonographCylinderMsg *msg) {
+
 }
 
 } // End of namespace Titanic

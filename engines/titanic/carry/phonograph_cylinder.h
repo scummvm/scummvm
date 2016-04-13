@@ -28,6 +28,12 @@
 namespace Titanic {
 
 class CPhonographCylinder : public CCarry {
+	DECLARE_MESSAGE_MAP
+	bool UseWithOtherMsg(CUseWithOtherMsg *msg);
+	bool QueryCylinderMsg(CQueryCylinderMsg *msg);
+	bool RecordOntoCylinderMsg(CRecordOntoCylinderMsg *msg);
+	bool SetMusicControlsMsg(CSetMusicControlsMsg *msg);
+	bool ErasePhonographCylinderMsg(CErasePhonographCylinderMsg *msg);
 private:
 	CString _string6;
 	int _field138;

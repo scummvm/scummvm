@@ -24,10 +24,13 @@
 #define TITANIC_SWEETS_H
 
 #include "titanic/carry/carry.h"
+#include "titanic/messages/mouse_messages.h"
 
 namespace Titanic {
 
 class CSweets : public CCarry {
+	DECLARE_MESSAGE_MAP
+	bool MouseButtonUpMsg(CMouseButtonUpMsg *msg);
 public:
 	CLASSDEF
 	CSweets();
