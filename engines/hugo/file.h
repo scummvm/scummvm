@@ -30,6 +30,8 @@
 #ifndef HUGO_FILE_H
 #define HUGO_FILE_H
 
+#include "common/file.h"
+
 namespace Hugo {
 /**
  * Enumerate overlay file types

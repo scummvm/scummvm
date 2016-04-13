@@ -29,9 +29,13 @@
 
 #include "common/system.h"
 #include "common/textconsole.h"
+#include "graphics/font.h"
+#include "graphics/pixelformat.h"
 
 #include "hugo/hugo.h"
 #include "hugo/intro.h"
+#include "hugo/file.h"
+#include "hugo/game.h"
 #include "hugo/util.h"
 #include "hugo/display.h"
 #include "hugo/sound.h"

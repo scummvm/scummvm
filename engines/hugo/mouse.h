@@ -29,6 +29,13 @@
 
 #ifndef HUGO_MOUSE_H
 #define HUGO_MOUSE_H
+
+#include "hugo/game.h"
+
+namespace Common {
+class ReadStream;
+}
+
 namespace Hugo {
 
 class MouseHandler {

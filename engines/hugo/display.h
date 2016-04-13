@@ -30,6 +30,11 @@
 #ifndef HUGO_DISPLAY_H
 #define HUGO_DISPLAY_H
 
+namespace Common {
+class ReadStream;
+class WriteStream;
+}
+
 namespace Hugo {
 enum OverlayState {kOvlUndef, kOvlForeground, kOvlBackground}; // Overlay state
 

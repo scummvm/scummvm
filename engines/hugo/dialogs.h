@@ -28,6 +28,8 @@
 
 namespace Hugo {
 
+class HugoEngine;
+
 enum MenuOption {
 	kMenuWhat = 0,
 	kMenuMusic,
