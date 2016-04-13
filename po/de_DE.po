@@ -3894,10 +3894,10 @@ msgstr ""
 #~ "Engine nicht abgespielt."
 
 #~ msgid "Show Object Line"
-#~ msgstr "Objektzeile anzeigen"
+#~ msgstr "Objektzeile zeigen"
 
 #~ msgid "Show the names of objects at the bottom of the screen"
-#~ msgstr "Zeige die Namen von Objekten im unteren Bereich des Bildschirms"
+#~ msgstr "Die Objektzeile wird während des Spiels im unteren Bildbereich eingeblendet"
 
 #~ msgid "EGA undithering"
 #~ msgstr "Antifehlerdiffusion für EGA"
