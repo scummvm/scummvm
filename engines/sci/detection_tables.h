@@ -239,6 +239,19 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformAmiga, 0, GUIO5(GUIO_NOSPEECH, GAMEOPTION_EGA_UNDITHER, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
 
+	// Codename: Iceman - English Atari ST
+	// Game version 1.041
+	// Executable reports "1.002.041"
+	{ "iceman", "",{
+		{ "resource.map", 0, "066e89b685ad788e06bae0b76d0d37d3", 5718 },
+		{ "resource.000", 0, "053278385ce910a3f630f2e45e3c10be", 26987 },
+		{ "resource.001", 0, "32b351072fccf76fc82234d73d28c08b", 438880 },
+		{ "resource.002", 0, "36670a917550757d57df84c96cf9e6d9", 566667 },
+		{ "resource.003", 0, "d97a96f1ab91b41cf46a02cc89b0a04e", 624304 },
+		{ "resource.004", 0, "8613c45fc771d658e5a505b9a4a54f31", 670884 },
+		AD_LISTEND },
+		Common::EN_ANY, Common::kPlatformAtariST, 0, GUIO5(GUIO_NOSPEECH, GAMEOPTION_EGA_UNDITHER, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI) },
+
 	// Codename: Iceman - English DOS Non-Interactive Demo
 	// Executable scanning reports "0.000.685"
 	{"iceman", "Demo", {
