@@ -21,7 +21,6 @@
  */
 
 #include "tsage/blue_force/blueforce_scenes4.h"
-#include "tsage/blue_force/blueforce_dialogs.h"
 #include "tsage/scenes.h"
 #include "tsage/tsage.h"
 #include "tsage/staticres.h"

@@ -23,7 +23,7 @@
 #ifndef TSAGE_RINGWORLD_DIALOGS_H
 #define TSAGE_RINGWORLD_DIALOGS_H
 
-#include "gui/options.h"
+#include "tsage/dialogs.h"
 #include "tsage/events.h"
 #include "tsage/graphics.h"
 #include "common/list.h"

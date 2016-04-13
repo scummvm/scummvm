@@ -22,6 +22,7 @@
 
 #include "common/config-manager.h"
 #include "tsage/ringworld/ringworld_scenes2.h"
+#include "tsage/dialogs.h"
 #include "tsage/scenes.h"
 #include "tsage/tsage.h"
 #include "tsage/staticres.h"

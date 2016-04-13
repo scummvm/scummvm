@@ -21,6 +21,7 @@
  */
 
 #include "tsage/ringworld/ringworld_demo.h"
+#include "tsage/dialogs.h"
 #include "tsage/scenes.h"
 #include "tsage/tsage.h"
 #include "tsage/staticres.h"
@@ -79,11 +80,7 @@ void RingworldDemoGame::processEvent(Event &event) {
 
 		case Common::KEYCODE_F2: {
 			// F2 - Sound Options
-			ConfigDialog *dlg = new ConfigDialog();
-			dlg->runModal();
-			delete dlg;
-			g_globals->_soundManager.syncSounds();
-			g_globals->_events.setCursorFromFlag();
+			SoundDialog::execute();
 			break;
 		}
 
