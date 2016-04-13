@@ -54,14 +54,11 @@
 #include "graphics/surface.h"
 #include "common/rect.h"
 
+#include "wage/macwindow.h"
+
 namespace Wage {
 
 class Menu;
-
-enum WindowType {
-	kWindowScene,
-	kWindowConsole
-};
 
 enum {
 	kMenuHeight = 20,
