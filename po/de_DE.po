@@ -2963,11 +2963,11 @@ msgstr ""
 
 #: engines/scumm/detection.cpp:1335
 msgid "Show Object Line"
-msgstr "Objektzeile anzeigen"
+msgstr "Objektzeile zeigen"
 
 #: engines/scumm/detection.cpp:1336
 msgid "Show the names of objects at the bottom of the screen"
-msgstr "Zeige die Namen von Objekten im unteren Bereich des Bildschirms"
+msgstr "Die Objektzeile wird während des Spiels im unteren Bildbereich eingeblendet"
 
 #: engines/scumm/dialogs.cpp:176
 #, c-format
