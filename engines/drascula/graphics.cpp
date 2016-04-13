@@ -319,12 +319,27 @@ int DrasculaEngine::print_abc_opc(const char *said, int screenY, int game) {
 }
 
 bool DrasculaEngine::textFitsCentered(char *text, int x) {
-	int halfLen = (strlen(text) / 2) * CHAR_WIDTH;
+	int textLen = strlen(text);
+	int halfLen = (textLen / 2) * CHAR_WIDTH;
 
-	// See comment in centerText()
+	//if (x > 160)
+	//	x = 315 - x;
+	//return (halfLen <= x);
+	
+	// The commented out code above is what the original engine is doing. Instead of testing the
+	// upper bound if x is greater than 160 it takes the complement to 315 and test only the lower
+	// bounds.
+	// Also note that since it does an integer division to compute the half length of the string,
+	// in the case where the string has an odd number of characters there is one more character to
+	// the right than to the left. If the string center is beyond 160, this is taken care of by
+	// taking the complement to 315 instead of 320. But if the string center is close to the screen
+	// center, but not greater than 160, this can lead to the string being accepted despite having
+	// one character beyond the right edge of the screen.
+	// In ScummVM we therefore also test the right edge, which leads to differences
+	// with the original engine, but for the better.
 	if (x > 160)
-		x = 315 - x;
-	return (halfLen <= x);
+		return (315 - x - halfLen >= 0);
+	return (x - halfLen >= 0 && x + halfLen + (textLen % 2) * CHAR_WIDTH <= 320);
 }
 
 void DrasculaEngine::centerText(const char *message, int textX, int textY) {
@@ -337,13 +352,7 @@ void DrasculaEngine::centerText(const char *message, int textX, int textY) {
 	// return (x - halfLen >= 0 && x + halfLen <= 319);
 	
 	// The engines does things differently though. It tries to clips text at 315 instead of 319.
-	// And instead of testing the upper bound if x is greater than 160 it takes the complement to 315
-	// and test only the lower bounds. However since 160 is not the middle of 315, we end up having
-	// text that can go beyond 315 (up to 320) if x is in [159, 160].
-	// Also note that if the numbers of characters is odd, there is one more character to the right
-	// than to the left as it computes the half length with an integer division by two BEFORE multiplying
-	// by CHAR_WIDTH. Thus in theory we may end up with one character out of the screen!
-	// Be faithfull to the original and do the same though.
+	// See also the comment in textFitsCentered().
 	
 	textX = CLIP<int>(textX, 60, 255);
 
