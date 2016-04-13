@@ -356,6 +356,7 @@ void ButtonWidget::handleTickle() {
 void ButtonWidget::setPressedState() {
 	wantTickle(true);
 	setFlags(WIDGET_PRESSED);
+	clearFlags(WIDGET_HILITED);
 	draw();
 }
 
