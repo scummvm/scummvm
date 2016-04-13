@@ -115,7 +115,7 @@ void HiRes6Engine::init() {
 	if (!boot->open(disks[0]))
 		error("Failed to open disk image '%s'", disks[0]);
 
-	StreamPtr stream(loadSectors(boot, 7));
+	StreamPtr stream(loadSectors(boot, 0x7));
 
 	// Read parser messages
 	_strings.verbError = readStringAt(*stream, 0x666);
@@ -138,6 +138,12 @@ void HiRes6Engine::init() {
 	_messageIds.itemDoesntMove = IDI_HR6_MSG_ITEM_DOESNT_MOVE;
 	_messageIds.itemNotHere = IDI_HR6_MSG_ITEM_NOT_HERE;
 	_messageIds.thanksForPlaying = IDI_HR6_MSG_THANKS_FOR_PLAYING;
+
+	// Item descriptions
+	stream.reset(loadSectors(boot, 0x6, 0xb, 2));
+	stream->seek(0x34);
+	for (uint i = 0; i < IDI_HR6_NUM_ITEM_DESCS; ++i)
+		_itemDesc.push_back(readString(*stream, 0xff));
 
 	// Load dropped item offsets
 	stream.reset(boot->createReadStream(0x8, 0x9, 0x16));

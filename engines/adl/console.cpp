@@ -299,11 +299,9 @@ void Console::printItem(const Item &item) {
 	if (item.noun > 0)
 		name = _engine->_priNouns[item.noun - 1];
 
-	if (item.description > 0) {
-		desc = toAscii(_engine->loadMessage(item.description));
-		if (desc.lastChar() == '\r')
-			desc.deleteLastChar();
-	}
+	desc = toAscii(_engine->getItemDescription(item));
+	if (desc.lastChar() == '\r')
+		desc.deleteLastChar();
 
 	switch (item.state) {
 	case IDI_ITEM_NOT_MOVED:

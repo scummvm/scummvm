@@ -45,6 +45,10 @@ Common::String AdlEngine_v3::loadMessage(uint idx) const {
 	return str;
 }
 
+Common::String AdlEngine_v3::getItemDescription(const Item &item) const {
+	return _itemDesc[item.id - 1];
+}
+
 typedef Common::Functor1Mem<ScriptEnv &, int, AdlEngine_v3> OpcodeV3;
 #define SetOpcodeTable(x) table = &x;
 #define Opcode(x) table->push_back(new OpcodeV3(this, &AdlEngine_v3::x))

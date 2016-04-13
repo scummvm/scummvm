@@ -44,13 +44,14 @@ protected:
 	// AdlEngine
 	virtual void setupOpcodeTables();
 	virtual Common::String loadMessage(uint idx) const;
+	Common::String getItemDescription(const Item &item) const;
 
 	int o3_isVarGT(ScriptEnv &e);
 	int o3_isItemInRoom(ScriptEnv &e);
 	int o3_isNounNotInRoom(ScriptEnv &e);
 	int o3_skipOneCommand(ScriptEnv &e);
 
-private:
+	Common::Array<Common::String> _itemDesc;
 	byte _curDisk;
 };
 

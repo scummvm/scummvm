@@ -228,6 +228,7 @@ protected:
 	virtual void printString(const Common::String &str) = 0;
 	virtual Common::String loadMessage(uint idx) const = 0;
 	virtual void printMessage(uint idx);
+	virtual Common::String getItemDescription(const Item &item) const;
 	void delay(uint32 ms) const;
 
 	Common::String inputString(byte prompt = 0) const;

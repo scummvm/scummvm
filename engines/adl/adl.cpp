@@ -127,6 +127,13 @@ void AdlEngine::printMessage(uint idx) {
 	printString(loadMessage(idx));
 }
 
+Common::String AdlEngine::getItemDescription(const Item &item) const {
+	if (item.description > 0)
+		return loadMessage(item.description);
+	else
+		return Common::String();
+}
+
 void AdlEngine::delay(uint32 ms) const {
 	uint32 start = g_system->getMillis();
 
