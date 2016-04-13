@@ -21,6 +21,7 @@
  */
 
 #include "common/events.h"
+#include "gui/predictivedialog.h"
 
 #include "agi/agi.h"
 #include "agi/graphics.h"
