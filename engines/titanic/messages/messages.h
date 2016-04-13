@@ -366,6 +366,7 @@ MESSAGE2(CTextInputMsg, CString, value1, "", CString, value2, "");
 MESSAGE1(CTimeDilationMsg, int, value, 0);
 MESSAGE0(CTitleSequenceEndedMsg);
 MESSAGE0(CTransitMsg);
+MESSAGE1(CTranslateObjectMsg, Point, delta, Point());
 MESSAGE1(CTriggerAutoMusicPlayerMsg, int, value, 0);
 MESSAGE1(CTriggerNPCEvent, int, value, 0);
 MESSAGE4(CTrueTalkGetAnimSetMsg, int, value1, 0, int, value2, 0, int, value3, 0, int, value4, 0);

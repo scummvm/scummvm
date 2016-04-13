@@ -558,4 +558,8 @@ Point CGameObject::getMousePos() const {
 	return getGameManager()->_gameState.getMousePos();
 }
 
+bool CGameObject::compareViewNameTo(const CString &name) const {
+	return getViewFullName().compareToIgnoreCase(name);
+}
+
 } // End of namespace Titanic

@@ -925,6 +925,7 @@ DEFFN(CTimeMsg)
 DEFFN(CTimerMsg)
 DEFFN(CTitleSequenceEndedMsg)
 DEFFN(CTransitMsg)
+DEFFN(CTranslateObjectMsg)
 DEFFN(CTransportMsg)
 DEFFN(CTriggerAutoMusicPlayerMsg)
 DEFFN(CTriggerNPCEvent)
@@ -1510,6 +1511,7 @@ void CSaveableObject::initClassList() {
 	ADDFN(CTimerMsg, CTimeMsg);
 	ADDFN(CTitleSequenceEndedMsg, CMessage);
 	ADDFN(CTransitMsg, CMessage);
+	ADDFN(CTranslateObjectMsg, CMessage);
 	ADDFN(CTransportMsg, CMessage);
 	ADDFN(CTriggerAutoMusicPlayerMsg, CMessage);
 	ADDFN(CTriggerNPCEvent, CMessage);

@@ -24,10 +24,20 @@
 
 namespace Titanic {
 
+BEGIN_MESSAGE_MAP(CArm, CCarry)
+	ON_MESSAGE(PuzzleSolvedMsg)
+	ON_MESSAGE(TranslateObjectMsg)
+	ON_MESSAGE(UseWithOtherMsg)
+	ON_MESSAGE(MouseDragStartMsg)
+	ON_MESSAGE(MaitreDHappyMsg)
+	ON_MESSAGE(PETGainedObjectMsg)
+	ON_MESSAGE(MouseDragMoveMsg)
+END_MESSAGE_MAP()
+
 CArm::CArm() : CCarry(), _string6("Key"),
 	_field138(0), _field13C(0), _field140(0), _field144(0),
-	_field148(0), _field158(0), _field15C(220), _field160(208),
-	_field164(409), _field168(350), _field16C(3), _field170(0) {
+	_field148(0), _field158(0), _armRect(220, 208, 409, 350),
+	_field16C(3), _field170(0) {
 }
 
 void CArm::save(SimpleFile *file, int indent) const {
@@ -41,10 +51,10 @@ void CArm::save(SimpleFile *file, int indent) const {
 
 	file->writeQuotedLine(_string7, indent);
 	file->writeNumberLine(_field158, indent);
-	file->writeNumberLine(_field15C, indent);
-	file->writeNumberLine(_field160, indent);
-	file->writeNumberLine(_field164, indent);
-	file->writeNumberLine(_field168, indent);
+	file->writeNumberLine(_armRect.left, indent);
+	file->writeNumberLine(_armRect.top, indent);
+	file->writeNumberLine(_armRect.right, indent);
+	file->writeNumberLine(_armRect.bottom, indent);
 	file->writeNumberLine(_field16C, indent);
 	file->writeNumberLine(_field170, indent);
 
@@ -62,14 +72,80 @@ void CArm::load(SimpleFile *file) {
 
 	_string7 = file->readString();
 	_field158 = file->readNumber();
-	_field15C = file->readNumber();
-	_field160 = file->readNumber();
-	_field164 = file->readNumber();
-	_field168 = file->readNumber();
+	_armRect.left = file->readNumber();
+	_armRect.top = file->readNumber();
+	_armRect.right = file->readNumber();
+	_armRect.bottom = file->readNumber();
 	_field16C = file->readNumber();
 	_field170 = file->readNumber();
 
 	CCarry::load(file);
+}
+
+bool CArm::PuzzleSolvedMsg(CPuzzleSolvedMsg *msg) {
+	_field138 = 0;
+	_fieldE0 = 1;
+
+	CString name = getName();
+	if (name == "Arm1") {
+		CActMsg actMsg("LoseArm");
+		actMsg.execute("MaitreD");
+		CPuzzleSolvedMsg solvedMsg;
+		solvedMsg.execute("AuditoryCentre");
+	} else if (name == "Arm2") {
+		CPuzzleSolvedMsg solvedMsg;
+		solvedMsg.execute("Key");
+	}
+
+	return true;
+}
+
+bool CArm::TranslateObjectMsg(CTranslateObjectMsg *msg) {
+	Point newPos(_bounds.left - msg->_delta.x, _bounds.top - msg->_delta.y);
+	setPosition(newPos);
+	return true;
+}
+
+bool CArm::UseWithOtherMsg(CUseWithOtherMsg *msg) {
+	return true;
+}
+
+bool CArm::MouseDragStartMsg(CMouseDragStartMsg *msg) {
+	return true;
+}
+
+bool CArm::MaitreDHappyMsg(CMaitreDHappyMsg *msg) {
+	// TODO
+	return true;
+}
+
+bool CArm::PETGainedObjectMsg(CPETGainedObjectMsg *msg) {
+	if (_field158) {
+		if (_string6 == "Key" || _string6 == "AuditoryCentre") {
+			CCarry *child = static_cast<CCarry *>(getFirstChild());
+			if (child) {
+				_visibleFrame = _field170;
+				loadFrame(_visibleFrame);
+				child->setVisible(true);
+				child->dropOnPet();
+			}
+
+			_string6 = "None";
+		}
+	}
+
+	return true;
+}
+
+bool CArm::MouseDragMoveMsg(CMouseDragMoveMsg *msg) {
+	setPosition(msg->_mousePos - _tempPos);
+
+	if (_string6 != "None" && compareViewNameTo("FrozenArboretum.Node 5.S")) {
+		loadFrame(_armRect.contains(msg->_mousePos) ?
+			_field16C : _visibleFrame);
+	}
+
+	return true;
 }
 
 } // End of namespace Titanic

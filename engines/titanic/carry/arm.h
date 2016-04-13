@@ -24,10 +24,21 @@
 #define TITANIC_ARM_H
 
 #include "titanic/carry/carry.h"
+#include "titanic/messages/messages.h"
+#include "titanic/messages/mouse_messages.h"
+#include "titanic/messages/pet_messages.h"
 
 namespace Titanic {
 
 class CArm : public CCarry {
+	DECLARE_MESSAGE_MAP
+	bool PuzzleSolvedMsg(CPuzzleSolvedMsg *msg);
+	bool TranslateObjectMsg(CTranslateObjectMsg *msg);
+	bool UseWithOtherMsg(CUseWithOtherMsg *msg);
+	bool MouseDragStartMsg(CMouseDragStartMsg *msg);
+	bool MaitreDHappyMsg(CMaitreDHappyMsg *msg);
+	bool PETGainedObjectMsg(CPETGainedObjectMsg *msg);
+	bool MouseDragMoveMsg(CMouseDragMoveMsg *msg);
 private:
 	CString _string6;
 	int _field138;
@@ -37,10 +48,7 @@ private:
 	int _field148;
 	CString _string7;
 	int _field158;
-	int _field15C;
-	int _field160;
-	int _field164;
-	int _field168;
+	Rect _armRect;
 	int _field16C;
 	int _field170;
 public:

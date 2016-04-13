@@ -43,8 +43,8 @@ BEGIN_MESSAGE_MAP(CCarry, CGameObject)
 END_MESSAGE_MAP()
 
 CCarry::CCarry() : CGameObject(), _fieldDC(0), _fieldE0(1),
-	_field100(0), _field104(0), _field108(0), _field10C(0),
-	_itemFrame(0), _enterFrame(0), _enterFrameSet(false), _visibleFrame(0),
+		_field100(0), _field104(0), _field108(0), _field10C(0),
+		_itemFrame(0), _enterFrame(0), _enterFrameSet(false), _visibleFrame(0),
 	_string1("None"),
 	_fullViewName("NULL"),
 	_string3("That doesn't seem to do anything."),

@@ -127,7 +127,6 @@ protected:
 
 	bool soundFn1(int val);
 	void soundFn2(int val, int val2);
-	void setVisible(bool val);
 	void petFn2(int val);
 	void petFn3(CTreeItem *item);
 
@@ -155,6 +154,12 @@ protected:
 	 * Get the current mouse cursor position
 	 */
 	Point getMousePos() const;
+
+	/*
+	 * Compares the current view's name in a Room.Node.View tuplet
+	 * string form to the passed string
+	 */
+	bool compareViewNameTo(const CString &name) const;
 public:
 	int _field60;
 	CursorId _cursorId;
@@ -230,6 +235,11 @@ public:
 	 * Return the current view/node/room as a single string
 	 */
 	CString getViewFullName() const;
+
+	/**
+	 * Sets whether the object is visible
+	 */
+	void setVisible(bool val);
 };
 
 } // End of namespace Titanic

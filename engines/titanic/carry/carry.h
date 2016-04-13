@@ -43,7 +43,7 @@ class CCarry : public CGameObject {
 	bool MoveToStartPosMsg(CMoveToStartPosMsg *msg);
 	bool EnterViewMsg(CEnterViewMsg *msg);
 	bool PassOnDragStartMsg(CPassOnDragStartMsg *msg);
-private:
+protected:
 	CString _string1;
 	Point _origPos;
 	CString _fullViewName;
@@ -62,10 +62,7 @@ private:
 	bool _enterFrameSet;
 	int _visibleFrame;
 protected:
-	/**
-	 * Called when an item is dropped onto the PET
-	 */
-	void dropOnPet();
+
 public:
 	CLASSDEF
 	CCarry();
@@ -79,6 +76,11 @@ public:
 	 * Load the data for the class from file
 	 */
 	virtual void load(SimpleFile *file);
+
+	/**
+	 * Called to drop an item into the PET
+	 */
+	void dropOnPet();
 };
 
 } // End of namespace Titanic
