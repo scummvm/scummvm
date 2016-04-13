@@ -17,6 +17,8 @@ Programmcodes finden Sie auf Englisch unter:
    - Text-Ausrichtung ist jetzt originalgetreu.
    - Charakter tritt nicht mehr aus dem Bildschirmbereich heraus.
    - Laden eines Spielstandes in der "Pendulum"-Szene repariert.
+   - Falscher Hintergrund für Inventar-Gegenstände im Kapitel 6 in der
+     spanischen Version korrigiert.
 
  Gob:
    - Aufhängen während Sound-Initialisierung in mehreren Spielen behoben.
@@ -27,7 +29,7 @@ Programmcodes finden Sie auf Englisch unter:
 
  SAGA:
    - Fehlerhafte Farben der Bedienelemente in der französischen und deutschen
-     Version von "I Have No Mouth and I Must Screm" korrigiert.
+     Version von "I Have No Mouth and I Must Scream" korrigiert.
 
  SCI:
    - Cursor-Hilfsroutinen funktionieren nun korrekt auf OpenPandora und anderen
