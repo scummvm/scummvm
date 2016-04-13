@@ -26,6 +26,8 @@ Programmcodes finden Sie auf Englisch unter:
    - Text-Ausrichtung ist jetzt originalgetreu.
    - Charakter tritt nicht mehr aus dem Bildschirmbereich heraus.
    - Laden eines Spielstandes in der "Pendulum"-Szene repariert.
+   - Falscher Hintergrund für Inventar-Gegenstände im Kapitel 6 in der
+     spanischen Version korrigiert.
 
  Gob:
    - Aufhängen während Sound-Initialisierung in mehreren Spielen behoben.
