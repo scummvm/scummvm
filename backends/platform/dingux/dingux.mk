@@ -59,7 +59,7 @@ endif
 	echo >> $(gcw0_bundle)/README.man.txt
 	echo '[General README]' >> $(gcw0_bundle)/README.man.txt
 	echo >> $(gcw0_bundle)/README.man.txt
-	cat README | sed -e 's/\[/{/g;s/\]/}/g' >> $(gcw0_bundle)/README.man.txt
+	cat README | sed -e 's/\[/⣏/g' -e 's/\]/⣹/g' >> $(gcw0_bundle)/README.man.txt
 
 #	$(CP) GeneralUser\ GS\ FluidSynth\ v1.44.sf2 $(gcw0_bundle)/
 
