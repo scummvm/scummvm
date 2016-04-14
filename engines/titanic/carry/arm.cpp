@@ -21,6 +21,7 @@
  */
 
 #include "titanic/carry/arm.h"
+#include "titanic/messages/messages.h"
 
 namespace Titanic {
 
@@ -35,19 +36,18 @@ BEGIN_MESSAGE_MAP(CArm, CCarry)
 END_MESSAGE_MAP()
 
 CArm::CArm() : CCarry(), _string6("Key"),
-	_field138(0), _field13C(0), _field140(0), _field144(0),
-	_field148(0), _field158(0), _armRect(220, 208, 409, 350),
-	_field16C(3), _field170(0) {
+	_field138(0), _field158(0), _field16C(3), _field170(0),
+	_armRect(220, 208, 409, 350) {
 }
 
 void CArm::save(SimpleFile *file, int indent) const {
 	file->writeNumberLine(1, indent);
 	file->writeQuotedLine(_string6, indent);
 	file->writeNumberLine(_field138, indent);
-	file->writeNumberLine(_field13C, indent);
-	file->writeNumberLine(_field140, indent);
-	file->writeNumberLine(_field144, indent);
-	file->writeNumberLine(_field148, indent);
+	file->writeNumberLine(_hookedRect.left, indent);
+	file->writeNumberLine(_hookedRect.top, indent);
+	file->writeNumberLine(_hookedRect.right, indent);
+	file->writeNumberLine(_hookedRect.bottom, indent);
 
 	file->writeQuotedLine(_string7, indent);
 	file->writeNumberLine(_field158, indent);
@@ -65,10 +65,10 @@ void CArm::load(SimpleFile *file) {
 	file->readNumber();
 	_string6 = file->readString();
 	_field138 = file->readNumber();
-	_field13C = file->readNumber();
-	_field140 = file->readNumber();
-	_field144 = file->readNumber();
-	_field148 = file->readNumber();
+	_hookedRect.left = file->readNumber();
+	_hookedRect.top = file->readNumber();
+	_hookedRect.right = file->readNumber();
+	_hookedRect.bottom = file->readNumber();
 
 	_string7 = file->readString();
 	_field158 = file->readNumber();
@@ -107,14 +107,58 @@ bool CArm::TranslateObjectMsg(CTranslateObjectMsg *msg) {
 }
 
 bool CArm::UseWithOtherMsg(CUseWithOtherMsg *msg) {
+	if (_string6 != "None") {
+		CShowTextMsg textMsg("The arm is already holding something.");
+		textMsg.execute("PET");
+		return false;
+	} else if (msg->_other->getName() == "GondolierLeftLever") {
+		CIsHookedOnMsg hookedMsg(_hookedRect, 0, getName());
+		hookedMsg._rect.translate(_bounds.left, _bounds.top);
+		hookedMsg.execute("GondolierLeftLever");
+
+		if (hookedMsg._result) {
+			_string7 = "GondolierLeftLever";
+		} else {
+			dropOnPet();
+		}
+	} else if (msg->_other->getName() == "GondolierRightLever") {
+		CIsHookedOnMsg hookedMsg(_hookedRect, 0, getName());
+		hookedMsg._rect.translate(_bounds.left, _bounds.top);
+		hookedMsg.execute("GondolierRightLever");
+
+		if (hookedMsg._result) {
+			_string7 = "GondolierRightLever";
+		} else {
+			dropOnPet();
+		}
+	}
+
 	return true;
 }
 
 bool CArm::MouseDragStartMsg(CMouseDragStartMsg *msg) {
-	return true;
+	if (!_fieldE0) {
+		CShowTextMsg textMsg("You can't get this.");
+		textMsg.execute("PET");
+	} else if (checkStartDragging(msg)) {
+		_tempPos = msg->_mousePos - _bounds;
+		setPosition(msg->_mousePos - _tempPos);
+
+		if (!_string7.empty()) {
+			CActMsg actMsg("Unhook");
+			actMsg.execute(_string7);
+			_string7.clear();
+		}
+
+		loadFrame(_visibleFrame);
+		return true;
+	}
+
+	return false;
 }
 
 bool CArm::MaitreDHappyMsg(CMaitreDHappyMsg *msg) {
+
 	// TODO
 	return true;
 }

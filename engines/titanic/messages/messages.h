@@ -180,24 +180,6 @@ public:
 	}
 };
 
-class CIsHookedOnMsg : public CMessage {
-public:
-	int _field4;
-	int _field8;
-	CString _string1;
-	int _field18;
-	int _field1C;
-	int _field20;
-public:
-	CLASSDEF
-	CIsHookedOnMsg() : CMessage(), _field4(0), _field8(0),
-		_field18(0), _field1C(0), _field20(0) {}
-
-	static bool isSupportedBy(const CTreeItem *item) {
-		return supports(item, _type);
-	}
-};
-
 class CTransportMsg : public CMessage {
 public:
 	CString _string;
@@ -281,6 +263,7 @@ MESSAGE1(CGetChevRoomNum, int, value, 0);
 MESSAGE2(CHoseConnectedMsg, int, value1, 1, int, value2, 0);
 MESSAGE0(CInitializeAnimMsg);
 MESSAGE1(CIsEarBowlPuzzleDone, int, value, 0);
+MESSAGE3(CIsHookedOnMsg, Rect, rect, Rect(), bool, result, false, CString, string1, "");
 MESSAGE1(CIsParrotPresentMsg, int, value, 0);
 MESSAGE1(CKeyCharMsg, int, value, 32);
 MESSAGE2(CLeaveNodeMsg, CNodeItem *, oldNode, nullptr, CNodeItem *, newNode, nullptr);

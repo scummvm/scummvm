@@ -42,10 +42,7 @@ class CArm : public CCarry {
 private:
 	CString _string6;
 	int _field138;
-	int _field13C;
-	int _field140;
-	int _field144;
-	int _field148;
+	Rect _hookedRect;
 	CString _string7;
 	int _field158;
 	Rect _armRect;

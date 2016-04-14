@@ -68,6 +68,7 @@ void CPhonographCylinder::save(SimpleFile *file, int indent) const {
 	file->writeNumberLine(_bassSpeedControl, indent);
 	file->writeNumberLine(_bassPitchControl, indent);
 	file->writeNumberLine(_bassInversionControl, indent);
+	file->writeNumberLine(_bassDirectionControl, indent);
 
 	CCarry::save(file, indent);
 }
@@ -94,6 +95,7 @@ void CPhonographCylinder::load(SimpleFile *file) {
 	_bassSpeedControl = file->readNumber();
 	_bassPitchControl = file->readNumber();
 	_bassInversionControl = file->readNumber();
+	_bassDirectionControl = file->readNumber();
 
 	CCarry::load(file);
 }
