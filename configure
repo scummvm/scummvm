@@ -439,7 +439,7 @@ get_system_exe_extension() {
 	arm-riscos)
 		_exeext=",ff8"
 		;;
-	dreamcast | ds | 3ds | gamecube | n64 | ps2 | psp | wii)
+	3ds | dreamcast | ds | gamecube | n64 | ps2 | psp | wii)
 		_exeext=".elf"
 		;;
 	gph-linux)
@@ -842,9 +842,9 @@ Usage: $0 [OPTIONS]...
 
 Configuration:
   -h, --help              display this help and exit
-  --backend=BACKEND       backend to build (android, tizen, dc, dingux, ds, 3ds, gcw0,
+  --backend=BACKEND       backend to build (3ds, android, dc, dingux, ds, gcw0,
                           gph, iphone, ios7, linuxmoto, maemo, n64, null, openpandora,
-                          ps2, psp, samsungtv, sdl, webos, wii, wince) [sdl]
+                          ps2, psp, samsungtv, sdl, tizen, webos, wii, wince) [sdl]
 
 Installation directories:
   --prefix=PREFIX         install architecture-independent files in PREFIX
@@ -870,16 +870,15 @@ Fine tuning of the installation directories:
 
 Special configuration feature:
   --host=HOST             cross-compile to target HOST (arm-linux, ...)
-                          special targets: android-arm for Android ARM
+                          special targets: 3ds for Nintendo 3DS
+                                           android-arm for Android ARM
                                            android-mips for Android MIPS
                                            android-x86 for Android x86
-                                           tizen for Samsung Tizen
                                            caanoo for Caanoo
                                            dingux for Dingux
                                            raspberrypi for Raspberry Pi
                                            dreamcast for Sega Dreamcast
                                            ds for Nintendo DS
-                                           3ds for Nintendo 3DS
                                            gamecube for Nintendo GameCube
                                            gcw0 for GCW Zero
                                            gp2x for GP2X
@@ -897,6 +896,7 @@ Special configuration feature:
                                            ps3 for PlayStation 3
                                            psp for PlayStation Portable
                                            samsungtv for Samsung TV
+                                           tizen for Samsung Tizen
                                            webos for HP Palm WebOS
                                            wii for Nintendo Wii
                                            wince for Windows CE
@@ -1304,6 +1304,11 @@ get_system_exe_extension $guessed_host
 NATIVEEXEEXT=$_exeext
 
 case $_host in
+3ds)
+	_host_os=3ds
+	_host_cpu=arm
+	_host_alias=arm-none-eabi
+	;;
 android | android-arm | android-v7a | android-arm-v7a | ouya)
 	_host_os=android
 	_host_cpu=arm
@@ -1351,11 +1356,6 @@ ds)
 	_host_os=ds
 	_host_cpu=arm
 	_host_alias=arm-eabi
-	;;
-3ds)
-	_host_os=3ds
-	_host_cpu=arm
-	_host_alias=arm-none-eabi
 	;;
 gamecube)
 	_host_os=gamecube
@@ -1590,7 +1590,7 @@ android)
 		exit 1
 	fi
 	;;
-ds | 3ds | gamecube | wii)
+3ds | ds | gamecube | wii)
 	if test -z "$DEVKITPRO"; then
 		echo "Please set DEVKITPRO in your environment. export DEVKITPRO=<path to devkitPRO>"
 		exit 1
@@ -1846,7 +1846,7 @@ if test "$have_gcc" = yes ; then
 			case $_host_os in
 			# newlib-based system include files suppress non-C89 function
 			# declarations under __STRICT_ANSI__
-			amigaos* | android | dreamcast | ds | 3ds | gamecube | mingw* | n64 | psp | ps2 | ps3 | tizen | wii | wince )
+			3ds | amigaos* | android | dreamcast | ds | gamecube | mingw* | n64 | psp | ps2 | ps3 | tizen | wii | wince )
 				;;
 			*)
 				append_var CXXFLAGS "-ansi"
@@ -2146,6 +2146,27 @@ esac
 echo_n "Checking hosttype... "
 echo $_host_os
 case $_host_os in
+	3ds)
+		_optimization_level=-O2
+		append_var DEFINES "-D__3DS__"
+		append_var DEFINES "-DARM"
+		append_var DEFINES "-DARM11"
+		append_var CXXFLAGS "-march=armv6k"
+		append_var CXXFLAGS "-mtune=mpcore"
+		append_var CXXFLAGS "-mword-relocations"
+		append_var CXXFLAGS "-mfloat-abi=hard"
+		append_var CXXFLAGS "-ffunction-sections"
+		append_var CXXFLAGS "-fomit-frame-pointer"
+		append_var CXXFLAGS "-I$DEVKITPRO/libctru/include"
+		append_var CXXFLAGS "-I$DEVKITPRO/portlibs/3ds/include"
+		if test "$_dynamic_modules" = no ; then
+			append_var LDFLAGS "-Wl,--gc-sections"
+		else
+			append_var LDFLAGS "-Wl,--no-gc-sections"
+		fi
+		append_var LDFLAGS "-L$DEVKITPRO/portlibs/3ds/lib"
+		append_var LIBS "-lcitro3d -lctru"
+		;;
 	amigaos*)
 		append_var LDFLAGS "-Wl,--export-dynamic"
 		append_var LDFLAGS "-L/sdk/local/newlib/lib"
@@ -2406,27 +2427,6 @@ case $_host_os in
 		append_var LDFLAGS "-L$DEVKITPRO/libnds/lib"
 		append_var LIBS "-lnds9"
 		;;
-	3ds)
-		_optimization_level=-O2
-		append_var DEFINES "-D__3DS__"
-		append_var DEFINES "-DARM"
-		append_var DEFINES "-DARM11"
-		append_var CXXFLAGS "-march=armv6k"
-		append_var CXXFLAGS "-mtune=mpcore"
-		append_var CXXFLAGS "-mword-relocations"
-		append_var CXXFLAGS "-mfloat-abi=hard"
-		append_var CXXFLAGS "-ffunction-sections"
-		append_var CXXFLAGS "-fomit-frame-pointer"
-		append_var CXXFLAGS "-isystem $DEVKITPRO/libctru/include"
-		append_var CXXFLAGS "-isystem $DEVKITPRO/devkitARM/arm-none-eabi/include"
-		append_var CXXFLAGS "-isystem $DEVKITPRO/portlibs/3ds/include"
-		if test "$_dynamic_modules" = no ; then
-			append_var LDFLAGS "-Wl,--gc-sections"
-		else
-			append_var LDFLAGS "-Wl,--no-gc-sections"
-		fi
-		append_var LIBS "-lcitro3d -lctru"
-		;;
 	freebsd*)
 		append_var LDFLAGS "-L/usr/local/lib"
 		append_var CXXFLAGS "-I/usr/local/include"
@@ -2604,6 +2604,18 @@ if test -n "$_host"; then
 	# Cross-compiling mode - add your target here if needed
 	echo "Cross-compiling to $_host"
 	case "$_host" in
+		3ds)
+			append_var DEFINES "-DDISABLE_FANCY_THEMES"
+			append_var DEFINES "-DDISABLE_SID"
+			append_var DEFINES "-DDISABLE_NES_APU"
+			_backend="3ds"
+			_build_scalers=no
+			_vkeybd=yes
+			_mt32emu=no
+			# Should use Tremor instead of Vorbis
+			_vorbis=no
+			_port_mk="backends/platform/3ds/3ds.mk"
+			;;
 		android | android-arm | android-v7a | android-arm-v7a | android-mips | android-x86 | ouya)
 			# we link a .so as default
 			append_var LDFLAGS "-shared"
@@ -2732,25 +2744,6 @@ if test -n "$_host"; then
 			_build_scalers=no
 			_mt32emu=no
 			_port_mk="backends/platform/ds/ds.mk"
-			;;
-		3ds)
-			append_var DEFINES "-DDISABLE_FANCY_THEMES"
-			append_var DEFINES "-DDISABLE_SID"
-			append_var DEFINES "-DDISABLE_NES_APU"
-			_backend="3ds"
-			_build_scalers=no
-			_vkeybd=yes
-			_mt32emu=no
-			_vorbis=no
-			_tremor=yes
-			_mad=yes
-			_zlib=yes
-			_jpeg=yes
-			_png=yes
-			_flac=yes
-			_faad=yes
-			_freetype2=yes
-			_port_mk="backends/platform/3ds/3ds.mk"
 			;;
 		gamecube)
 			_backend="wii"
@@ -3081,6 +3074,8 @@ fi
 # Backend related stuff
 #
 case $_backend in
+	3ds)
+		;;
 	android)
 		append_var DEFINES "-DREDUCE_MEMORY_USAGE"
 		append_var CXXFLAGS "-Wa,--noexecstack"
@@ -3183,6 +3178,8 @@ case $_backend in
 		append_var LDFLAGS "-shared"
 		append_var LDFLAGS "-fpic"
 		;;
+	sdl)
+		;;
 	tizen)
 		# dirent.h not available. NONSTANDARD_PORT==ensure portdefs.h is included
 		append_var DEFINES "-DTIZEN -DDISABLE_STDIO_FILESTREAM -DNONSTANDARD_PORT"
@@ -3231,10 +3228,6 @@ case $_backend in
 		append_var DEFINES "-DSDL_BACKEND"
 		add_line_to_config_mk "SDL_BACKEND = 1"
 		;;
-	3ds)
-		;;
-	sdl)
-		;;
 	*)
 		echo "support for $_backend backend not implemented in configure script yet"
 		exit 1
@@ -3269,7 +3262,7 @@ esac
 # Enable 16bit support only for backends which support it
 #
 case $_backend in
-	android | dingux | dc | 3ds | gph | iphone | ios7 | maemo | openpandora | psp | samsungtv | sdl | tizen | webos | wii)
+	3ds | android | dingux | dc | gph | iphone | ios7 | maemo | openpandora | psp | samsungtv | sdl | tizen | webos | wii)
 		if test "$_16bit" = auto ; then
 			_16bit=yes
 		else
@@ -4561,6 +4554,14 @@ fi
 # after all of CXXFLAGS, LDFLAGS, LIBS etc. have been setup
 #
 case $_backend in
+	3ds)
+		if test "$_freetype2" = yes -a "$_png" = yes; then
+			append_var LIBS "-lpng"
+		fi
+		if test "$_tremor" = yes -o "$_flac" = yes; then
+			append_var LIBS "-logg"
+		fi
+		;;
 	android)
 		# ssp at this point so the cxxtests link
 		if test "$_debug_build" = yes; then
@@ -4591,9 +4592,6 @@ case $_backend in
 		# Move some libs down here, otherwise some symbols requires by libvorbis aren't found
 		# during linking stage
 		append_var LIBS "-lc -lgcc -lnosys"
-		;;
-	3ds)
-		append_var LIBS "-logg -lpng"
 		;;
 esac
 
