@@ -24,6 +24,13 @@
 
 namespace Titanic {
 
+BEGIN_MESSAGE_MAP(CMagazine, CCarry)
+	ON_MESSAGE(UseWithCharMsg)
+	ON_MESSAGE(MouseDoubleClickMsg)
+	ON_MESSAGE(VisibleMsg)
+	ON_MESSAGE(UseWithOtherMsg)
+END_MESSAGE_MAP()
+
 CMagazine::CMagazine() : CCarry() {
 }
 
@@ -41,6 +48,26 @@ void CMagazine::load(SimpleFile *file) {
 	_field130 = file->readNumber();
 
 	CCarry::load(file);
+}
+
+bool CMagazine::UseWithCharMsg(CUseWithCharMsg *msg) {
+	// todo
+	return true;
+}
+
+bool CMagazine::MouseDoubleClickMsg(CMouseDoubleClickMsg *msg) {
+	// todo
+	return true;
+}
+
+bool CMagazine::VisibleMsg(CVisibleMsg *msg) {
+	// todo
+	return true;
+}
+
+bool CMagazine::UseWithOtherMsg(CUseWithOtherMsg *msg) {
+	// todo
+	return true;
 }
 
 } // End of namespace Titanic

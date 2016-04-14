@@ -24,10 +24,17 @@
 #define TITANIC_MAGAZINE_H
 
 #include "titanic/carry/carry.h"
+#include "titanic/messages/messages.h"
+#include "titanic/messages/mouse_messages.h"
 
 namespace Titanic {
 
 class CMagazine : public CCarry {
+	DECLARE_MESSAGE_MAP
+	bool UseWithCharMsg(CUseWithCharMsg *msg);
+	bool MouseDoubleClickMsg(CMouseDoubleClickMsg *msg);
+	bool VisibleMsg(CVisibleMsg *msg);
+	bool UseWithOtherMsg(CUseWithOtherMsg *msg);
 private:
 	int _field12C;
 	int _field130;
