@@ -26,6 +26,7 @@
 #include "agos/intern.h"
 #include "agos/agos.h"
 #include "agos/midi.h"
+#include "agos/sound.h"
 #include "agos/vga.h"
 
 namespace AGOS {

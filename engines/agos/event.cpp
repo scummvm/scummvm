@@ -23,6 +23,7 @@
 #include "agos/agos.h"
 #include "agos/animation.h"
 #include "agos/debugger.h"
+#include "agos/sound.h"
 #include "agos/intern.h"
 
 #include "common/events.h"

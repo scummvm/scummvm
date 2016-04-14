@@ -25,6 +25,7 @@
 
 #include "agos/agos.h"
 #include "agos/intern.h"
+#include "agos/sound.h"
 
 #include "common/endian.h"
 #include "common/system.h"
