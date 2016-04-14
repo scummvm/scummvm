@@ -110,21 +110,21 @@ bool GnapEngine::gridSub41F08B(int gridX, int gridY) {
 		_gnapWalkDirY = 0;
 
 	while (_gnapWalkDirXIncr < _gnapWalkDeltaX && _gnapWalkDirYIncr < _gnapWalkDeltaY) {
-		_gnapWalkNodes[_gnapWalkNodesCount].gridX1 = gridX + _gnapWalkDirX * _gnapWalkDirXIncr;
-		_gnapWalkNodes[_gnapWalkNodesCount].gridY1 = gridY + _gnapWalkDirY * _gnapWalkDirYIncr;
-		if (!isPointBlocked(_gnapWalkDirX + _gnapWalkNodes[_gnapWalkNodesCount].gridX1, _gnapWalkDirY + _gnapWalkNodes[_gnapWalkNodesCount].gridY1)) {
-			_gnapWalkNodes[_gnapWalkNodesCount].deltaX = _gnapWalkDirX;
-			_gnapWalkNodes[_gnapWalkNodesCount].deltaY = _gnapWalkDirY;
+		_gnapWalkNodes[_gnapWalkNodesCount]._gridX1 = gridX + _gnapWalkDirX * _gnapWalkDirXIncr;
+		_gnapWalkNodes[_gnapWalkNodesCount]._gridY1 = gridY + _gnapWalkDirY * _gnapWalkDirYIncr;
+		if (!isPointBlocked(_gnapWalkDirX + _gnapWalkNodes[_gnapWalkNodesCount]._gridX1, _gnapWalkDirY + _gnapWalkNodes[_gnapWalkNodesCount]._gridY1)) {
+			_gnapWalkNodes[_gnapWalkNodesCount]._deltaX = _gnapWalkDirX;
+			_gnapWalkNodes[_gnapWalkNodesCount]._deltaY = _gnapWalkDirY;
 			++_gnapWalkDirXIncr;
 			++_gnapWalkDirYIncr;
 		} else if (_gnapWalkDeltaY - _gnapWalkDirYIncr > _gnapWalkDeltaX - _gnapWalkDirXIncr) {
-			if (!isPointBlocked(_gnapWalkNodes[_gnapWalkNodesCount].gridX1, _gnapWalkDirY + _gnapWalkNodes[_gnapWalkNodesCount].gridY1)) {
-				_gnapWalkNodes[_gnapWalkNodesCount].deltaX = 0;
-				_gnapWalkNodes[_gnapWalkNodesCount].deltaY = _gnapWalkDirY;
+			if (!isPointBlocked(_gnapWalkNodes[_gnapWalkNodesCount]._gridX1, _gnapWalkDirY + _gnapWalkNodes[_gnapWalkNodesCount]._gridY1)) {
+				_gnapWalkNodes[_gnapWalkNodesCount]._deltaX = 0;
+				_gnapWalkNodes[_gnapWalkNodesCount]._deltaY = _gnapWalkDirY;
 				++_gnapWalkDirYIncr;
-			} else if (!isPointBlocked(_gnapWalkDirX + _gnapWalkNodes[_gnapWalkNodesCount].gridX1, _gnapWalkNodes[_gnapWalkNodesCount].gridY1)) {
-				_gnapWalkNodes[_gnapWalkNodesCount].deltaX = _gnapWalkDirX;
-				_gnapWalkNodes[_gnapWalkNodesCount].deltaY = 0;
+			} else if (!isPointBlocked(_gnapWalkDirX + _gnapWalkNodes[_gnapWalkNodesCount]._gridX1, _gnapWalkNodes[_gnapWalkNodesCount]._gridY1)) {
+				_gnapWalkNodes[_gnapWalkNodesCount]._deltaX = _gnapWalkDirX;
+				_gnapWalkNodes[_gnapWalkNodesCount]._deltaY = 0;
 				++_gnapWalkDirXIncr;
 			} else {
 				_gnapWalkDeltaX = _gnapWalkDirXIncr;
@@ -132,13 +132,13 @@ bool GnapEngine::gridSub41F08B(int gridX, int gridY) {
 				--_gnapWalkNodesCount;
 			}
 		} else {
-			if (!isPointBlocked(_gnapWalkDirX + _gnapWalkNodes[_gnapWalkNodesCount].gridX1, _gnapWalkNodes[_gnapWalkNodesCount].gridY1)) {
-				_gnapWalkNodes[_gnapWalkNodesCount].deltaX = _gnapWalkDirX;
-				_gnapWalkNodes[_gnapWalkNodesCount].deltaY = 0;
+			if (!isPointBlocked(_gnapWalkDirX + _gnapWalkNodes[_gnapWalkNodesCount]._gridX1, _gnapWalkNodes[_gnapWalkNodesCount]._gridY1)) {
+				_gnapWalkNodes[_gnapWalkNodesCount]._deltaX = _gnapWalkDirX;
+				_gnapWalkNodes[_gnapWalkNodesCount]._deltaY = 0;
 				++_gnapWalkDirXIncr;
-			} else if (!isPointBlocked(_gnapWalkNodes[_gnapWalkNodesCount].gridX1, _gnapWalkDirY + _gnapWalkNodes[_gnapWalkNodesCount].gridY1)) {
-				_gnapWalkNodes[_gnapWalkNodesCount].deltaX = 0;
-				_gnapWalkNodes[_gnapWalkNodesCount].deltaY = _gnapWalkDirY;
+			} else if (!isPointBlocked(_gnapWalkNodes[_gnapWalkNodesCount]._gridX1, _gnapWalkDirY + _gnapWalkNodes[_gnapWalkNodesCount]._gridY1)) {
+				_gnapWalkNodes[_gnapWalkNodesCount]._deltaX = 0;
+				_gnapWalkNodes[_gnapWalkNodesCount]._deltaY = _gnapWalkDirY;
 				++_gnapWalkDirYIncr;
 			} else {
 				_gnapWalkDeltaX = _gnapWalkDirXIncr;
@@ -150,11 +150,11 @@ bool GnapEngine::gridSub41F08B(int gridX, int gridY) {
 	}
 	
 	while (_gnapWalkDirXIncr < _gnapWalkDeltaX) {
-		_gnapWalkNodes[_gnapWalkNodesCount].gridX1 = gridX + _gnapWalkDirX * _gnapWalkDirXIncr;
-		_gnapWalkNodes[_gnapWalkNodesCount].gridY1 = _gnapWalkDestY;
-		if (!isPointBlocked(_gnapWalkDirX + _gnapWalkNodes[_gnapWalkNodesCount].gridX1, _gnapWalkDestY)) {
-			_gnapWalkNodes[_gnapWalkNodesCount].deltaX = _gnapWalkDirX;
-			_gnapWalkNodes[_gnapWalkNodesCount].deltaY = 0;
+		_gnapWalkNodes[_gnapWalkNodesCount]._gridX1 = gridX + _gnapWalkDirX * _gnapWalkDirXIncr;
+		_gnapWalkNodes[_gnapWalkNodesCount]._gridY1 = _gnapWalkDestY;
+		if (!isPointBlocked(_gnapWalkDirX + _gnapWalkNodes[_gnapWalkNodesCount]._gridX1, _gnapWalkDestY)) {
+			_gnapWalkNodes[_gnapWalkNodesCount]._deltaX = _gnapWalkDirX;
+			_gnapWalkNodes[_gnapWalkNodesCount]._deltaY = 0;
 			++_gnapWalkDirXIncr;
 			++_gnapWalkNodesCount;
 		} else {
@@ -163,11 +163,11 @@ bool GnapEngine::gridSub41F08B(int gridX, int gridY) {
 	}
 
 	while (_gnapWalkDirYIncr < _gnapWalkDeltaY) {
-		_gnapWalkNodes[_gnapWalkNodesCount].gridX1 = _gnapWalkDestX;
-		_gnapWalkNodes[_gnapWalkNodesCount].gridY1 = gridY + _gnapWalkDirY * _gnapWalkDirYIncr;
-		if (!isPointBlocked(_gnapWalkDestX, _gnapWalkDirY + _gnapWalkNodes[_gnapWalkNodesCount].gridY1)) {
-			_gnapWalkNodes[_gnapWalkNodesCount].deltaX = 0;
-			_gnapWalkNodes[_gnapWalkNodesCount].deltaY = _gnapWalkDirY;
+		_gnapWalkNodes[_gnapWalkNodesCount]._gridX1 = _gnapWalkDestX;
+		_gnapWalkNodes[_gnapWalkNodesCount]._gridY1 = gridY + _gnapWalkDirY * _gnapWalkDirYIncr;
+		if (!isPointBlocked(_gnapWalkDestX, _gnapWalkDirY + _gnapWalkNodes[_gnapWalkNodesCount]._gridY1)) {
+			_gnapWalkNodes[_gnapWalkNodesCount]._deltaX = 0;
+			_gnapWalkNodes[_gnapWalkNodesCount]._deltaY = _gnapWalkDirY;
 			++_gnapWalkDirYIncr;
 			++_gnapWalkNodesCount;
 		} else {
@@ -204,32 +204,32 @@ bool GnapEngine::gridSub41F5FC(int gridX, int gridY, int index) {
 		_gnapWalkDirY = 0;
 
 	while (_gnapWalkDirXIncr < _gnapWalkDeltaX && _gnapWalkDirYIncr < _gnapWalkDeltaY) {
-		_gnapWalkNodes[_gnapWalkNodesCount].gridX1 = gridX + _gnapWalkDirX * _gnapWalkDirXIncr;
-		_gnapWalkNodes[_gnapWalkNodesCount].gridY1 = gridY + _gnapWalkDirY * _gnapWalkDirYIncr;
-		if (!isPointBlocked(_gnapWalkDirX + _gnapWalkNodes[_gnapWalkNodesCount].gridX1, _gnapWalkDirY + _gnapWalkNodes[_gnapWalkNodesCount].gridY1)) {
-			_gnapWalkNodes[_gnapWalkNodesCount].deltaX = _gnapWalkDirX;
-			_gnapWalkNodes[_gnapWalkNodesCount].deltaY = _gnapWalkDirY;
+		_gnapWalkNodes[_gnapWalkNodesCount]._gridX1 = gridX + _gnapWalkDirX * _gnapWalkDirXIncr;
+		_gnapWalkNodes[_gnapWalkNodesCount]._gridY1 = gridY + _gnapWalkDirY * _gnapWalkDirYIncr;
+		if (!isPointBlocked(_gnapWalkDirX + _gnapWalkNodes[_gnapWalkNodesCount]._gridX1, _gnapWalkDirY + _gnapWalkNodes[_gnapWalkNodesCount]._gridY1)) {
+			_gnapWalkNodes[_gnapWalkNodesCount]._deltaX = _gnapWalkDirX;
+			_gnapWalkNodes[_gnapWalkNodesCount]._deltaY = _gnapWalkDirY;
 			++_gnapWalkDirXIncr;
 			++_gnapWalkDirYIncr;
 		} else if (_gnapWalkDeltaY - _gnapWalkDirYIncr > _gnapWalkDeltaX - _gnapWalkDirXIncr) {
-			if (!isPointBlocked(_gnapWalkNodes[_gnapWalkNodesCount].gridX1, _gnapWalkDirY + _gnapWalkNodes[_gnapWalkNodesCount].gridY1)) {
-				_gnapWalkNodes[_gnapWalkNodesCount].deltaX = 0;
-				_gnapWalkNodes[_gnapWalkNodesCount].deltaY = _gnapWalkDirY;
+			if (!isPointBlocked(_gnapWalkNodes[_gnapWalkNodesCount]._gridX1, _gnapWalkDirY + _gnapWalkNodes[_gnapWalkNodesCount]._gridY1)) {
+				_gnapWalkNodes[_gnapWalkNodesCount]._deltaX = 0;
+				_gnapWalkNodes[_gnapWalkNodesCount]._deltaY = _gnapWalkDirY;
 				++_gnapWalkDirYIncr;
-			} else if (!isPointBlocked(_gnapWalkDirX + _gnapWalkNodes[_gnapWalkNodesCount].gridX1, _gnapWalkNodes[_gnapWalkNodesCount].gridY1)) {
-				_gnapWalkNodes[_gnapWalkNodesCount].deltaX = _gnapWalkDirX;
-				_gnapWalkNodes[_gnapWalkNodesCount].deltaY = 0;
+			} else if (!isPointBlocked(_gnapWalkDirX + _gnapWalkNodes[_gnapWalkNodesCount]._gridX1, _gnapWalkNodes[_gnapWalkNodesCount]._gridY1)) {
+				_gnapWalkNodes[_gnapWalkNodesCount]._deltaX = _gnapWalkDirX;
+				_gnapWalkNodes[_gnapWalkNodesCount]._deltaY = 0;
 				++_gnapWalkDirXIncr;
 			} else
 				return false;
 		} else {
-			if (!isPointBlocked(_gnapWalkDirX + _gnapWalkNodes[_gnapWalkNodesCount].gridX1, _gnapWalkNodes[_gnapWalkNodesCount].gridY1)) {
-				_gnapWalkNodes[_gnapWalkNodesCount].deltaX = _gnapWalkDirX;
-				_gnapWalkNodes[_gnapWalkNodesCount].deltaY = 0;
+			if (!isPointBlocked(_gnapWalkDirX + _gnapWalkNodes[_gnapWalkNodesCount]._gridX1, _gnapWalkNodes[_gnapWalkNodesCount]._gridY1)) {
+				_gnapWalkNodes[_gnapWalkNodesCount]._deltaX = _gnapWalkDirX;
+				_gnapWalkNodes[_gnapWalkNodesCount]._deltaY = 0;
 				++_gnapWalkDirXIncr;
-			} else if (!isPointBlocked(_gnapWalkNodes[_gnapWalkNodesCount].gridX1, _gnapWalkDirY + _gnapWalkNodes[_gnapWalkNodesCount].gridY1)) {
-				_gnapWalkNodes[_gnapWalkNodesCount].deltaX = 0;
-				_gnapWalkNodes[_gnapWalkNodesCount].deltaY = _gnapWalkDirY;
+			} else if (!isPointBlocked(_gnapWalkNodes[_gnapWalkNodesCount]._gridX1, _gnapWalkDirY + _gnapWalkNodes[_gnapWalkNodesCount]._gridY1)) {
+				_gnapWalkNodes[_gnapWalkNodesCount]._deltaX = 0;
+				_gnapWalkNodes[_gnapWalkNodesCount]._deltaY = _gnapWalkDirY;
 				++_gnapWalkDirYIncr;
 			} else
 				return false;
@@ -238,11 +238,11 @@ bool GnapEngine::gridSub41F5FC(int gridX, int gridY, int index) {
 	}
 
 	while (_gnapWalkDirXIncr < _gnapWalkDeltaX) {
-		_gnapWalkNodes[_gnapWalkNodesCount].gridX1 = gridX + _gnapWalkDirX * _gnapWalkDirXIncr;
-		_gnapWalkNodes[_gnapWalkNodesCount].gridY1 = _gnapWalkDestY;
-		if (!isPointBlocked(_gnapWalkDirX + _gnapWalkNodes[_gnapWalkNodesCount].gridX1, _gnapWalkDestY)) {
-			_gnapWalkNodes[_gnapWalkNodesCount].deltaX = _gnapWalkDirX;
-			_gnapWalkNodes[_gnapWalkNodesCount].deltaY = 0;
+		_gnapWalkNodes[_gnapWalkNodesCount]._gridX1 = gridX + _gnapWalkDirX * _gnapWalkDirXIncr;
+		_gnapWalkNodes[_gnapWalkNodesCount]._gridY1 = _gnapWalkDestY;
+		if (!isPointBlocked(_gnapWalkDirX + _gnapWalkNodes[_gnapWalkNodesCount]._gridX1, _gnapWalkDestY)) {
+			_gnapWalkNodes[_gnapWalkNodesCount]._deltaX = _gnapWalkDirX;
+			_gnapWalkNodes[_gnapWalkNodesCount]._deltaY = 0;
 			++_gnapWalkDirXIncr;
 			++_gnapWalkNodesCount;
 		} else
@@ -250,11 +250,11 @@ bool GnapEngine::gridSub41F5FC(int gridX, int gridY, int index) {
 	}
 
 	while (_gnapWalkDirYIncr < _gnapWalkDeltaY) {
-		_gnapWalkNodes[_gnapWalkNodesCount].gridX1 = _gnapWalkDestX;
-		_gnapWalkNodes[_gnapWalkNodesCount].gridY1 = gridY + _gnapWalkDirY * _gnapWalkDirYIncr;
-		if (!isPointBlocked(_gnapWalkDestX, _gnapWalkDirY + _gnapWalkNodes[_gnapWalkNodesCount].gridY1)) {
-			_gnapWalkNodes[_gnapWalkNodesCount].deltaX = 0;
-			_gnapWalkNodes[_gnapWalkNodesCount].deltaY = _gnapWalkDirY;
+		_gnapWalkNodes[_gnapWalkNodesCount]._gridX1 = _gnapWalkDestX;
+		_gnapWalkNodes[_gnapWalkNodesCount]._gridY1 = gridY + _gnapWalkDirY * _gnapWalkDirYIncr;
+		if (!isPointBlocked(_gnapWalkDestX, _gnapWalkDirY + _gnapWalkNodes[_gnapWalkNodesCount]._gridY1)) {
+			_gnapWalkNodes[_gnapWalkNodesCount]._deltaX = 0;
+			_gnapWalkNodes[_gnapWalkNodesCount]._deltaY = _gnapWalkDirY;
 			++_gnapWalkDirYIncr;
 			++_gnapWalkNodesCount;
 		} else
@@ -282,11 +282,11 @@ bool GnapEngine::gridSub41FAD5(int gridX, int gridY, int index) {
 		_gnapWalkDirY = 0;
 
 	while (_gnapWalkDeltaY < _gnapWalkDeltaX - _gnapWalkDirXIncr) {
-		_gnapWalkNodes[_gnapWalkNodesCount].gridX1 = gridX + _gnapWalkDirX * _gnapWalkDirXIncr;
-		_gnapWalkNodes[_gnapWalkNodesCount].gridY1 = gridY;
-		if (!isPointBlocked(_gnapWalkDirX + _gnapWalkNodes[_gnapWalkNodesCount].gridX1, gridY)) {
-			_gnapWalkNodes[_gnapWalkNodesCount].deltaX = _gnapWalkDirX;
-			_gnapWalkNodes[_gnapWalkNodesCount].deltaY = 0;
+		_gnapWalkNodes[_gnapWalkNodesCount]._gridX1 = gridX + _gnapWalkDirX * _gnapWalkDirXIncr;
+		_gnapWalkNodes[_gnapWalkNodesCount]._gridY1 = gridY;
+		if (!isPointBlocked(_gnapWalkDirX + _gnapWalkNodes[_gnapWalkNodesCount]._gridX1, gridY)) {
+			_gnapWalkNodes[_gnapWalkNodesCount]._deltaX = _gnapWalkDirX;
+			_gnapWalkNodes[_gnapWalkNodesCount]._deltaY = 0;
 			++_gnapWalkDirXIncr;
 			++_gnapWalkNodesCount;
 		} else
@@ -294,11 +294,11 @@ bool GnapEngine::gridSub41FAD5(int gridX, int gridY, int index) {
 	}
 
 	while (_gnapWalkDeltaX < _gnapWalkDeltaY - _gnapWalkDirYIncr) {
-		_gnapWalkNodes[_gnapWalkNodesCount].gridX1 = gridX;
-		_gnapWalkNodes[_gnapWalkNodesCount].gridY1 = gridY + _gnapWalkDirY * _gnapWalkDirYIncr;
-		if (!isPointBlocked(gridX, _gnapWalkDirY + _gnapWalkNodes[_gnapWalkNodesCount].gridY1)) {
-			_gnapWalkNodes[_gnapWalkNodesCount].deltaX = 0;
-			_gnapWalkNodes[_gnapWalkNodesCount].deltaY = _gnapWalkDirY;
+		_gnapWalkNodes[_gnapWalkNodesCount]._gridX1 = gridX;
+		_gnapWalkNodes[_gnapWalkNodesCount]._gridY1 = gridY + _gnapWalkDirY * _gnapWalkDirYIncr;
+		if (!isPointBlocked(gridX, _gnapWalkDirY + _gnapWalkNodes[_gnapWalkNodesCount]._gridY1)) {
+			_gnapWalkNodes[_gnapWalkNodesCount]._deltaX = 0;
+			_gnapWalkNodes[_gnapWalkNodesCount]._deltaY = _gnapWalkDirY;
 			++_gnapWalkDirYIncr;
 			++_gnapWalkNodesCount;
 		} else
@@ -306,32 +306,32 @@ bool GnapEngine::gridSub41FAD5(int gridX, int gridY, int index) {
 	}
 
 	while (_gnapWalkDirXIncr < _gnapWalkDeltaX && _gnapWalkDirYIncr < _gnapWalkDeltaY) {
-		_gnapWalkNodes[_gnapWalkNodesCount].gridX1 = gridX + _gnapWalkDirX * _gnapWalkDirXIncr;
-		_gnapWalkNodes[_gnapWalkNodesCount].gridY1 = gridY + _gnapWalkDirY * _gnapWalkDirYIncr;
-		if (!isPointBlocked(_gnapWalkDirX + _gnapWalkNodes[_gnapWalkNodesCount].gridX1, _gnapWalkDirY + _gnapWalkNodes[_gnapWalkNodesCount].gridY1)) {
-			_gnapWalkNodes[_gnapWalkNodesCount].deltaX = _gnapWalkDirX;
-			_gnapWalkNodes[_gnapWalkNodesCount].deltaY = _gnapWalkDirY;
+		_gnapWalkNodes[_gnapWalkNodesCount]._gridX1 = gridX + _gnapWalkDirX * _gnapWalkDirXIncr;
+		_gnapWalkNodes[_gnapWalkNodesCount]._gridY1 = gridY + _gnapWalkDirY * _gnapWalkDirYIncr;
+		if (!isPointBlocked(_gnapWalkDirX + _gnapWalkNodes[_gnapWalkNodesCount]._gridX1, _gnapWalkDirY + _gnapWalkNodes[_gnapWalkNodesCount]._gridY1)) {
+			_gnapWalkNodes[_gnapWalkNodesCount]._deltaX = _gnapWalkDirX;
+			_gnapWalkNodes[_gnapWalkNodesCount]._deltaY = _gnapWalkDirY;
 			++_gnapWalkDirXIncr;
 			++_gnapWalkDirYIncr;
 		} else if (_gnapWalkDeltaY - _gnapWalkDirYIncr > _gnapWalkDeltaX - _gnapWalkDirXIncr) {
-			if (!isPointBlocked(_gnapWalkNodes[_gnapWalkNodesCount].gridX1, _gnapWalkDirY + _gnapWalkNodes[_gnapWalkNodesCount].gridY1)) {
-				_gnapWalkNodes[_gnapWalkNodesCount].deltaX = 0;
-				_gnapWalkNodes[_gnapWalkNodesCount].deltaY = _gnapWalkDirY;
+			if (!isPointBlocked(_gnapWalkNodes[_gnapWalkNodesCount]._gridX1, _gnapWalkDirY + _gnapWalkNodes[_gnapWalkNodesCount]._gridY1)) {
+				_gnapWalkNodes[_gnapWalkNodesCount]._deltaX = 0;
+				_gnapWalkNodes[_gnapWalkNodesCount]._deltaY = _gnapWalkDirY;
 				++_gnapWalkDirYIncr;
-			} else if (!isPointBlocked(_gnapWalkDirX + _gnapWalkNodes[_gnapWalkNodesCount].gridX1, _gnapWalkNodes[_gnapWalkNodesCount].gridY1)) {
-				_gnapWalkNodes[_gnapWalkNodesCount].deltaX = _gnapWalkDirX;
-				_gnapWalkNodes[_gnapWalkNodesCount].deltaY = 0;
+			} else if (!isPointBlocked(_gnapWalkDirX + _gnapWalkNodes[_gnapWalkNodesCount]._gridX1, _gnapWalkNodes[_gnapWalkNodesCount]._gridY1)) {
+				_gnapWalkNodes[_gnapWalkNodesCount]._deltaX = _gnapWalkDirX;
+				_gnapWalkNodes[_gnapWalkNodesCount]._deltaY = 0;
 				++_gnapWalkDirXIncr;
 			} else
 				return false;
 		} else {
-			if (!isPointBlocked(_gnapWalkDirX + _gnapWalkNodes[_gnapWalkNodesCount].gridX1, _gnapWalkNodes[_gnapWalkNodesCount].gridY1)) {
-				_gnapWalkNodes[_gnapWalkNodesCount].deltaX = _gnapWalkDirX;
-				_gnapWalkNodes[_gnapWalkNodesCount].deltaY = 0;
+			if (!isPointBlocked(_gnapWalkDirX + _gnapWalkNodes[_gnapWalkNodesCount]._gridX1, _gnapWalkNodes[_gnapWalkNodesCount]._gridY1)) {
+				_gnapWalkNodes[_gnapWalkNodesCount]._deltaX = _gnapWalkDirX;
+				_gnapWalkNodes[_gnapWalkNodesCount]._deltaY = 0;
 				++_gnapWalkDirXIncr;
-			} else if (!isPointBlocked(_gnapWalkNodes[_gnapWalkNodesCount].gridX1, _gnapWalkDirY + _gnapWalkNodes[_gnapWalkNodesCount].gridY1)) {
-				_gnapWalkNodes[_gnapWalkNodesCount].deltaX = 0;
-				_gnapWalkNodes[_gnapWalkNodesCount].deltaY = _gnapWalkDirY;
+			} else if (!isPointBlocked(_gnapWalkNodes[_gnapWalkNodesCount]._gridX1, _gnapWalkDirY + _gnapWalkNodes[_gnapWalkNodesCount]._gridY1)) {
+				_gnapWalkNodes[_gnapWalkNodesCount]._deltaX = 0;
+				_gnapWalkNodes[_gnapWalkNodesCount]._deltaY = _gnapWalkDirY;
 				++_gnapWalkDirYIncr;
 			} else
 				return false;
@@ -340,11 +340,11 @@ bool GnapEngine::gridSub41FAD5(int gridX, int gridY, int index) {
 	}
 
 	while (_gnapWalkDirXIncr < _gnapWalkDeltaX) {
-		_gnapWalkNodes[_gnapWalkNodesCount].gridX1 = gridX + _gnapWalkDirX * _gnapWalkDirXIncr;
-		_gnapWalkNodes[_gnapWalkNodesCount].gridY1 = _gnapWalkDestY;
-		if (!isPointBlocked(_gnapWalkDirX + _gnapWalkNodes[_gnapWalkNodesCount].gridX1, _gnapWalkDestY)) {
-			_gnapWalkNodes[_gnapWalkNodesCount].deltaX = _gnapWalkDirX;
-			_gnapWalkNodes[_gnapWalkNodesCount].deltaY = 0;
+		_gnapWalkNodes[_gnapWalkNodesCount]._gridX1 = gridX + _gnapWalkDirX * _gnapWalkDirXIncr;
+		_gnapWalkNodes[_gnapWalkNodesCount]._gridY1 = _gnapWalkDestY;
+		if (!isPointBlocked(_gnapWalkDirX + _gnapWalkNodes[_gnapWalkNodesCount]._gridX1, _gnapWalkDestY)) {
+			_gnapWalkNodes[_gnapWalkNodesCount]._deltaX = _gnapWalkDirX;
+			_gnapWalkNodes[_gnapWalkNodesCount]._deltaY = 0;
 			++_gnapWalkDirXIncr;
 			++_gnapWalkNodesCount;
 		} else
@@ -352,11 +352,11 @@ bool GnapEngine::gridSub41FAD5(int gridX, int gridY, int index) {
 	}
 
 	while (_gnapWalkDirYIncr < _gnapWalkDeltaY) {
-		_gnapWalkNodes[_gnapWalkNodesCount].gridX1 = _gnapWalkDestX;
-		_gnapWalkNodes[_gnapWalkNodesCount].gridY1 = gridY + _gnapWalkDirY * _gnapWalkDirYIncr;
-		if (!isPointBlocked(_gnapWalkDestX, _gnapWalkDirY + _gnapWalkNodes[_gnapWalkNodesCount].gridY1)) {
-			_gnapWalkNodes[_gnapWalkNodesCount].deltaX = 0;
-			_gnapWalkNodes[_gnapWalkNodesCount].deltaY = _gnapWalkDirY;
+		_gnapWalkNodes[_gnapWalkNodesCount]._gridX1 = _gnapWalkDestX;
+		_gnapWalkNodes[_gnapWalkNodesCount]._gridY1 = gridY + _gnapWalkDirY * _gnapWalkDirYIncr;
+		if (!isPointBlocked(_gnapWalkDestX, _gnapWalkDirY + _gnapWalkNodes[_gnapWalkNodesCount]._gridY1)) {
+			_gnapWalkNodes[_gnapWalkNodesCount]._deltaX = 0;
+			_gnapWalkNodes[_gnapWalkNodesCount]._deltaY = _gnapWalkDirY;
 			++_gnapWalkDirYIncr;
 			++_gnapWalkNodesCount;
 		} else
@@ -373,160 +373,160 @@ bool GnapEngine::gnapFindPath3(int gridX, int gridY) {
 	while (!done && gridIncr < _gridMaxX) {
 		if (!isPointBlocked(gridX + gridIncr, gridY) && gridSub41F5FC(gridX + gridIncr, gridY, gridIncr)) {
 			for (int i = 0; i < gridIncr; ++i) {
-				_gnapWalkNodes[i].gridX1 = gridX + i;
-				_gnapWalkNodes[i].gridY1 = gridY;
-				_gnapWalkNodes[i].deltaX = 1;
-				_gnapWalkNodes[i].deltaY = 0;
+				_gnapWalkNodes[i]._gridX1 = gridX + i;
+				_gnapWalkNodes[i]._gridY1 = gridY;
+				_gnapWalkNodes[i]._deltaX = 1;
+				_gnapWalkNodes[i]._deltaY = 0;
 			}
 			done = true;
 			break;
 		}
 		if (!isPointBlocked(gridX - gridIncr, gridY) && gridSub41F5FC(gridX - gridIncr, gridY, gridIncr)) {
 			for (int i = 0; i < gridIncr; ++i) {
-				_gnapWalkNodes[i].gridX1 = gridX - i;
-				_gnapWalkNodes[i].gridY1 = gridY;
-				_gnapWalkNodes[i].deltaX = -1;
-				_gnapWalkNodes[i].deltaY = 0;
+				_gnapWalkNodes[i]._gridX1 = gridX - i;
+				_gnapWalkNodes[i]._gridY1 = gridY;
+				_gnapWalkNodes[i]._deltaX = -1;
+				_gnapWalkNodes[i]._deltaY = 0;
 			}
 			done = true;
 			break;
 		}
 		if (!isPointBlocked(gridX, gridY + gridIncr) && gridSub41F5FC(gridX, gridY + gridIncr, gridIncr)) {
 			for (int i = 0; i < gridIncr; ++i) {
-				_gnapWalkNodes[i].gridX1 = gridX;
-				_gnapWalkNodes[i].gridY1 = gridY + i;
-				_gnapWalkNodes[i].deltaX = 0;
-				_gnapWalkNodes[i].deltaY = 1;
+				_gnapWalkNodes[i]._gridX1 = gridX;
+				_gnapWalkNodes[i]._gridY1 = gridY + i;
+				_gnapWalkNodes[i]._deltaX = 0;
+				_gnapWalkNodes[i]._deltaY = 1;
 			}
 			done = true;
 			break;
 		}
 		if (!isPointBlocked(gridX, gridY - gridIncr) && gridSub41F5FC(gridX, gridY - gridIncr, gridIncr)) {
 			for (int i = 0; i < gridIncr; ++i) {
-				_gnapWalkNodes[i].gridX1 = gridX;
-				_gnapWalkNodes[i].gridY1 = gridY - i;
-				_gnapWalkNodes[i].deltaX = 0;
-				_gnapWalkNodes[i].deltaY = -1;
+				_gnapWalkNodes[i]._gridX1 = gridX;
+				_gnapWalkNodes[i]._gridY1 = gridY - i;
+				_gnapWalkNodes[i]._deltaX = 0;
+				_gnapWalkNodes[i]._deltaY = -1;
 			}
 			done = true;
 			break;
 		}
 		if (!isPointBlocked(gridX + gridIncr, gridY + gridIncr) && gridSub41F5FC(gridX + gridIncr, gridY + gridIncr, gridIncr)) {
 			for (int i = 0; i < gridIncr; ++i) {
-				_gnapWalkNodes[i].gridX1 = gridX + i;
-				_gnapWalkNodes[i].gridY1 = gridY + i;
-				_gnapWalkNodes[i].deltaX = 1;
-				_gnapWalkNodes[i].deltaY = 1;
+				_gnapWalkNodes[i]._gridX1 = gridX + i;
+				_gnapWalkNodes[i]._gridY1 = gridY + i;
+				_gnapWalkNodes[i]._deltaX = 1;
+				_gnapWalkNodes[i]._deltaY = 1;
 			}
 			done = true;
 			break;
 		}
 		if (!isPointBlocked(gridX - gridIncr, gridY + gridIncr) && gridSub41F5FC(gridX - gridIncr, gridY + gridIncr, gridIncr)) {
 			for (int i = 0; i < gridIncr; ++i) {
-				_gnapWalkNodes[i].gridX1 = gridX - i;
-				_gnapWalkNodes[i].gridY1 = gridY + i;
-				_gnapWalkNodes[i].deltaX = -1;
-				_gnapWalkNodes[i].deltaY = 1;
+				_gnapWalkNodes[i]._gridX1 = gridX - i;
+				_gnapWalkNodes[i]._gridY1 = gridY + i;
+				_gnapWalkNodes[i]._deltaX = -1;
+				_gnapWalkNodes[i]._deltaY = 1;
 			}
 			done = true;
 			break;
 		}
 		if (!isPointBlocked(gridX + gridIncr, gridY - gridIncr) && gridSub41F5FC(gridX + gridIncr, gridY - gridIncr, gridIncr)) {
 			for (int i = 0; i < gridIncr; ++i) {
-				_gnapWalkNodes[i].gridX1 = gridX + i;
-				_gnapWalkNodes[i].gridY1 = gridY - i;
-				_gnapWalkNodes[i].deltaX = 1;
-				_gnapWalkNodes[i].deltaY = -1;
+				_gnapWalkNodes[i]._gridX1 = gridX + i;
+				_gnapWalkNodes[i]._gridY1 = gridY - i;
+				_gnapWalkNodes[i]._deltaX = 1;
+				_gnapWalkNodes[i]._deltaY = -1;
 			}
 			done = true;
 			break;
 		}
 		if (!isPointBlocked(gridX - gridIncr, gridY - gridIncr) && gridSub41F5FC(gridX - gridIncr, gridY - gridIncr, gridIncr)) {
 			for (int i = 0; i < gridIncr; ++i) {
-				_gnapWalkNodes[i].gridX1 = gridX - i;
-				_gnapWalkNodes[i].gridY1 = gridY - i;
-				_gnapWalkNodes[i].deltaX = -1;
-				_gnapWalkNodes[i].deltaY = -1;
+				_gnapWalkNodes[i]._gridX1 = gridX - i;
+				_gnapWalkNodes[i]._gridY1 = gridY - i;
+				_gnapWalkNodes[i]._deltaX = -1;
+				_gnapWalkNodes[i]._deltaY = -1;
 			}
 			done = true;
 			break;
 		}
 		if (!isPointBlocked(gridX + gridIncr, gridY) && gridSub41FAD5(gridX + gridIncr, gridY, gridIncr)) {
 			for (int i = 0; i < gridIncr; ++i) {
-				_gnapWalkNodes[i].gridX1 = gridX + i;
-				_gnapWalkNodes[i].gridY1 = gridY;
-				_gnapWalkNodes[i].deltaX = 1;
-				_gnapWalkNodes[i].deltaY = 0;
+				_gnapWalkNodes[i]._gridX1 = gridX + i;
+				_gnapWalkNodes[i]._gridY1 = gridY;
+				_gnapWalkNodes[i]._deltaX = 1;
+				_gnapWalkNodes[i]._deltaY = 0;
 			}
 			done = true;
 			break;
 		}
 		if (!isPointBlocked(gridX - gridIncr, gridY) && gridSub41FAD5(gridX - gridIncr, gridY, gridIncr)) {
 			for (int i = 0; i < gridIncr; ++i) {
-				_gnapWalkNodes[i].gridX1 = gridX - i;
-				_gnapWalkNodes[i].gridY1 = gridY;
-				_gnapWalkNodes[i].deltaX = -1;
-				_gnapWalkNodes[i].deltaY = 0;
+				_gnapWalkNodes[i]._gridX1 = gridX - i;
+				_gnapWalkNodes[i]._gridY1 = gridY;
+				_gnapWalkNodes[i]._deltaX = -1;
+				_gnapWalkNodes[i]._deltaY = 0;
 			}
 			done = true;
 			break;
 		}
 		if (!isPointBlocked(gridX, gridY + gridIncr) && gridSub41FAD5(gridX, gridY + gridIncr, gridIncr)) {
 			for (int i = 0; i < gridIncr; ++i) {
-				_gnapWalkNodes[i].gridX1 = gridX;
-				_gnapWalkNodes[i].gridY1 = gridY + i;
-				_gnapWalkNodes[i].deltaX = 0;
-				_gnapWalkNodes[i].deltaY = 1;
+				_gnapWalkNodes[i]._gridX1 = gridX;
+				_gnapWalkNodes[i]._gridY1 = gridY + i;
+				_gnapWalkNodes[i]._deltaX = 0;
+				_gnapWalkNodes[i]._deltaY = 1;
 			}
 			done = true;
 			break;
 		}
 		if (!isPointBlocked(gridX, gridY - gridIncr) && gridSub41FAD5(gridX, gridY - gridIncr, gridIncr)) {
 			for (int i = 0; i < gridIncr; ++i) {
-				_gnapWalkNodes[i].gridX1 = gridX;
-				_gnapWalkNodes[i].gridY1 = gridY - i;
-				_gnapWalkNodes[i].deltaX = 0;
-				_gnapWalkNodes[i].deltaY = -1;
+				_gnapWalkNodes[i]._gridX1 = gridX;
+				_gnapWalkNodes[i]._gridY1 = gridY - i;
+				_gnapWalkNodes[i]._deltaX = 0;
+				_gnapWalkNodes[i]._deltaY = -1;
 			}
 			done = true;
 			break;
 		}
 		if (!isPointBlocked(gridX + gridIncr, gridY + gridIncr) && gridSub41FAD5(gridX + gridIncr, gridY + gridIncr, gridIncr)) {
 			for (int i = 0; i < gridIncr; ++i) {
-				_gnapWalkNodes[i].gridX1 = gridX + i;
-				_gnapWalkNodes[i].gridY1 = gridY + i;
-				_gnapWalkNodes[i].deltaX = 1;
-				_gnapWalkNodes[i].deltaY = 1;
+				_gnapWalkNodes[i]._gridX1 = gridX + i;
+				_gnapWalkNodes[i]._gridY1 = gridY + i;
+				_gnapWalkNodes[i]._deltaX = 1;
+				_gnapWalkNodes[i]._deltaY = 1;
 			}
 			done = true;
 			break;
 		}
 		if (!isPointBlocked(gridX - gridIncr, gridY + gridIncr) && gridSub41FAD5(gridX - gridIncr, gridY + gridIncr, gridIncr)) {
 			for (int i = 0; i < gridIncr; ++i) {
-				_gnapWalkNodes[i].gridX1 = gridX - i;
-				_gnapWalkNodes[i].gridY1 = gridY + i;
-				_gnapWalkNodes[i].deltaX = -1;
-				_gnapWalkNodes[i].deltaY = 1;
+				_gnapWalkNodes[i]._gridX1 = gridX - i;
+				_gnapWalkNodes[i]._gridY1 = gridY + i;
+				_gnapWalkNodes[i]._deltaX = -1;
+				_gnapWalkNodes[i]._deltaY = 1;
 			}
 			done = true;
 			break;
 		}
 		if (!isPointBlocked(gridX + gridIncr, gridY - gridIncr) && gridSub41FAD5(gridX + gridIncr, gridY - gridIncr, gridIncr)) {
 			for (int i = 0; i < gridIncr; ++i) {
-				_gnapWalkNodes[i].gridX1 = gridX + i;
-				_gnapWalkNodes[i].gridY1 = gridY - i;
-				_gnapWalkNodes[i].deltaX = 1;
-				_gnapWalkNodes[i].deltaY = -1;
+				_gnapWalkNodes[i]._gridX1 = gridX + i;
+				_gnapWalkNodes[i]._gridY1 = gridY - i;
+				_gnapWalkNodes[i]._deltaX = 1;
+				_gnapWalkNodes[i]._deltaY = -1;
 			}
 			done = true;
 			break;
 		}
 		if (!isPointBlocked(gridX - gridIncr, gridY - gridIncr) && gridSub41FAD5(gridX - gridIncr, gridY - gridIncr, gridIncr)) {
 			for (int i = 0; i < gridIncr; ++i) {
-				_gnapWalkNodes[i].gridX1 = gridX - i;
-				_gnapWalkNodes[i].gridY1 = gridY - i;
-				_gnapWalkNodes[i].deltaX = -1;
-				_gnapWalkNodes[i].deltaY = -1;
+				_gnapWalkNodes[i]._gridX1 = gridX - i;
+				_gnapWalkNodes[i]._gridY1 = gridY - i;
+				_gnapWalkNodes[i]._deltaX = -1;
+				_gnapWalkNodes[i]._deltaY = -1;
 			}
 			done = true;
 			break;
@@ -578,48 +578,48 @@ bool GnapEngine::gnapWalkTo(int gridX, int gridY, int animationIndex, int sequen
 	debugC(kDebugBasic, "_gnapWalkNodesCount: %d", _gnapWalkNodesCount);
 
 	for (int index = 0; index < _gnapWalkNodesCount; ++index) {
-		_gnapWalkNodes[index].id = index + 20 * _gnapWalkNodes[index].gridY1;
-		if (_gnapWalkNodes[index].deltaX == 1 && _gnapWalkNodes[index].deltaY == 0) {
+		_gnapWalkNodes[index]._id = index + 20 * _gnapWalkNodes[index]._gridY1;
+		if (_gnapWalkNodes[index]._deltaX == 1 && _gnapWalkNodes[index]._deltaY == 0) {
 			if (index % 2) {
-				_gameSys->insertSequence(makeRid(datNum, 0x7AB), _gnapWalkNodes[index].id,
+				_gameSys->insertSequence(makeRid(datNum, 0x7AB), _gnapWalkNodes[index]._id,
 					makeRid(gnapSequenceDatNum, gnapSequenceId), gnapId,
-					kSeqScale | kSeqSyncWait, 0, 75 * _gnapWalkNodes[index].gridX1 - _gnapGridX, 48 * _gnapWalkNodes[index].gridY1 - _gnapGridY);
-				_gnapWalkNodes[index].sequenceId = 0x7AB;
+					kSeqScale | kSeqSyncWait, 0, 75 * _gnapWalkNodes[index]._gridX1 - _gnapGridX, 48 * _gnapWalkNodes[index]._gridY1 - _gnapGridY);
+				_gnapWalkNodes[index]._sequenceId = 0x7AB;
 				gnapSequenceId = 0x7AB;
 			} else {
-				_gameSys->insertSequence(makeRid(datNum, 0x7AC), _gnapWalkNodes[index].id,
+				_gameSys->insertSequence(makeRid(datNum, 0x7AC), _gnapWalkNodes[index]._id,
 					makeRid(gnapSequenceDatNum, gnapSequenceId), gnapId,
-					kSeqScale | kSeqSyncWait, 0, 75 * _gnapWalkNodes[index].gridX1 - _gnapGridX, 48 * _gnapWalkNodes[index].gridY1 - _gnapGridY);
-				_gnapWalkNodes[index].sequenceId = 0x7AC;
+					kSeqScale | kSeqSyncWait, 0, 75 * _gnapWalkNodes[index]._gridX1 - _gnapGridX, 48 * _gnapWalkNodes[index]._gridY1 - _gnapGridY);
+				_gnapWalkNodes[index]._sequenceId = 0x7AC;
 				gnapSequenceId = 0x7AC;
 			}
-		} else if (_gnapWalkNodes[index].deltaX == -1 && _gnapWalkNodes[index].deltaY == 0) {
+		} else if (_gnapWalkNodes[index]._deltaX == -1 && _gnapWalkNodes[index]._deltaY == 0) {
 			if (index % 2) {
-				_gameSys->insertSequence(makeRid(datNum, 0x7AF), _gnapWalkNodes[index].id,
+				_gameSys->insertSequence(makeRid(datNum, 0x7AF), _gnapWalkNodes[index]._id,
 					makeRid(gnapSequenceDatNum, gnapSequenceId), gnapId,
-					kSeqScale | kSeqSyncWait, 0, 75 * _gnapWalkNodes[index].gridX1 - _gnapGridX, 48 * _gnapWalkNodes[index].gridY1 - _gnapGridY);
-				_gnapWalkNodes[index].sequenceId = 0x7AF;
+					kSeqScale | kSeqSyncWait, 0, 75 * _gnapWalkNodes[index]._gridX1 - _gnapGridX, 48 * _gnapWalkNodes[index]._gridY1 - _gnapGridY);
+				_gnapWalkNodes[index]._sequenceId = 0x7AF;
 				gnapSequenceId = 0x7AF;
 			} else {
-				_gameSys->insertSequence(makeRid(datNum, 0x7B0), _gnapWalkNodes[index].id,
+				_gameSys->insertSequence(makeRid(datNum, 0x7B0), _gnapWalkNodes[index]._id,
 					makeRid(gnapSequenceDatNum, gnapSequenceId), gnapId,
-					kSeqScale | kSeqSyncWait, 0, 75 * _gnapWalkNodes[index].gridX1 - _gnapGridX, 48 * _gnapWalkNodes[index].gridY1 - _gnapGridY);
-				_gnapWalkNodes[index].sequenceId = 0x7B0;
+					kSeqScale | kSeqSyncWait, 0, 75 * _gnapWalkNodes[index]._gridX1 - _gnapGridX, 48 * _gnapWalkNodes[index]._gridY1 - _gnapGridY);
+				_gnapWalkNodes[index]._sequenceId = 0x7B0;
 				gnapSequenceId = 0x7B0;
 			}
 		} else {
-			if (_gnapWalkNodes[index].deltaY == -1)
-				_gnapWalkNodes[index].id -= 10;
+			if (_gnapWalkNodes[index]._deltaY == -1)
+				_gnapWalkNodes[index]._id -= 10;
 			else
-				_gnapWalkNodes[index].id += 10;
-			int newSequenceId = getGnapWalkSequenceId(_gnapWalkNodes[index].deltaX, _gnapWalkNodes[index].deltaY);
-			_gameSys->insertSequence(makeRid(datNum, newSequenceId), _gnapWalkNodes[index].id,
+				_gnapWalkNodes[index]._id += 10;
+			int newSequenceId = getGnapWalkSequenceId(_gnapWalkNodes[index]._deltaX, _gnapWalkNodes[index]._deltaY);
+			_gameSys->insertSequence(makeRid(datNum, newSequenceId), _gnapWalkNodes[index]._id,
 				makeRid(gnapSequenceDatNum, gnapSequenceId), gnapId,
-				kSeqScale | kSeqSyncWait, 0, 75 * _gnapWalkNodes[index].gridX1 - _gnapGridX, 48 * _gnapWalkNodes[index].gridY1 - _gnapGridY);
-			_gnapWalkNodes[index].sequenceId = newSequenceId;
+				kSeqScale | kSeqSyncWait, 0, 75 * _gnapWalkNodes[index]._gridX1 - _gnapGridX, 48 * _gnapWalkNodes[index]._gridY1 - _gnapGridY);
+			_gnapWalkNodes[index]._sequenceId = newSequenceId;
 			gnapSequenceId = newSequenceId;
 		}
-		gnapId = _gnapWalkNodes[index].id;
+		gnapId = _gnapWalkNodes[index]._id;
 		gnapSequenceDatNum = datNum;
 	}
 
@@ -627,7 +627,7 @@ bool GnapEngine::gnapWalkTo(int gridX, int gridY, int animationIndex, int sequen
 		if (_gnapWalkNodesCount > 0) {
 			_gnapSequenceId = gnapSequenceId;
 			_gnapId = gnapId;
-			_gnapIdleFacing = getGnapWalkFacing(_gnapWalkNodes[_gnapWalkNodesCount - 1].deltaX, _gnapWalkNodes[_gnapWalkNodesCount - 1].deltaY);
+			_gnapIdleFacing = getGnapWalkFacing(_gnapWalkNodes[_gnapWalkNodesCount - 1]._deltaX, _gnapWalkNodes[_gnapWalkNodesCount - 1]._deltaY);
 			_gnapSequenceDatNum = datNum;
 			if (animationIndex >= 0)
 				_gameSys->setAnimation(makeRid(_gnapSequenceDatNum, _gnapSequenceId), _gnapId, animationIndex);
@@ -656,8 +656,8 @@ bool GnapEngine::gnapWalkTo(int gridX, int gridY, int animationIndex, int sequen
 			}
 		} else {
 			if (_gnapWalkNodesCount > 0) {
-				_gnapSequenceId = getGnapWalkStopSequenceId(_gnapWalkNodes[_gnapWalkNodesCount - 1].deltaX, _gnapWalkNodes[_gnapWalkNodesCount - 1].deltaY);
-				_gnapIdleFacing = getGnapWalkFacing(_gnapWalkNodes[_gnapWalkNodesCount - 1].deltaX, _gnapWalkNodes[_gnapWalkNodesCount - 1].deltaY);
+				_gnapSequenceId = getGnapWalkStopSequenceId(_gnapWalkNodes[_gnapWalkNodesCount - 1]._deltaX, _gnapWalkNodes[_gnapWalkNodesCount - 1]._deltaY);
+				_gnapIdleFacing = getGnapWalkFacing(_gnapWalkNodes[_gnapWalkNodesCount - 1]._deltaX, _gnapWalkNodes[_gnapWalkNodesCount - 1]._deltaY);
 			} else if (gridX >= 0 || gridY >= 0) {
 				switch (_gnapIdleFacing) {
 				case kDirBottomRight:
@@ -767,21 +767,21 @@ bool GnapEngine::gridSub423750(int gridX, int gridY) {
 		_platWalkDirY = 0;
 
 	while (_platWalkDirXIncr < _platWalkDeltaX && _platWalkDirYIncr < _platWalkDeltaY) {
-		_platWalkNodes[_platWalkNodesCount].gridX1 = gridX + _platWalkDirX * _platWalkDirXIncr;
-		_platWalkNodes[_platWalkNodesCount].gridY1 = gridY + _platWalkDirY * _platWalkDirYIncr;
-		if (!isPointBlocked(_platWalkDirX + _platWalkNodes[_platWalkNodesCount].gridX1, _platWalkDirY + _platWalkNodes[_platWalkNodesCount].gridY1)) {
-			_platWalkNodes[_platWalkNodesCount].deltaX = _platWalkDirX;
-			_platWalkNodes[_platWalkNodesCount].deltaY = _platWalkDirY;
+		_platWalkNodes[_platWalkNodesCount]._gridX1 = gridX + _platWalkDirX * _platWalkDirXIncr;
+		_platWalkNodes[_platWalkNodesCount]._gridY1 = gridY + _platWalkDirY * _platWalkDirYIncr;
+		if (!isPointBlocked(_platWalkDirX + _platWalkNodes[_platWalkNodesCount]._gridX1, _platWalkDirY + _platWalkNodes[_platWalkNodesCount]._gridY1)) {
+			_platWalkNodes[_platWalkNodesCount]._deltaX = _platWalkDirX;
+			_platWalkNodes[_platWalkNodesCount]._deltaY = _platWalkDirY;
 			++_platWalkDirXIncr;
 			++_platWalkDirYIncr;
 		} else if (_platWalkDeltaY - _platWalkDirYIncr > _platWalkDeltaX - _platWalkDirXIncr) {
-			if (!isPointBlocked(_platWalkNodes[_platWalkNodesCount].gridX1, _platWalkDirY + _platWalkNodes[_platWalkNodesCount].gridY1)) {
-				_platWalkNodes[_platWalkNodesCount].deltaX = 0;
-				_platWalkNodes[_platWalkNodesCount].deltaY = _platWalkDirY;
+			if (!isPointBlocked(_platWalkNodes[_platWalkNodesCount]._gridX1, _platWalkDirY + _platWalkNodes[_platWalkNodesCount]._gridY1)) {
+				_platWalkNodes[_platWalkNodesCount]._deltaX = 0;
+				_platWalkNodes[_platWalkNodesCount]._deltaY = _platWalkDirY;
 				++_platWalkDirYIncr;
-			} else if (!isPointBlocked(_platWalkDirX + _platWalkNodes[_platWalkNodesCount].gridX1, _platWalkNodes[_platWalkNodesCount].gridY1)) {
-				_platWalkNodes[_platWalkNodesCount].deltaX = _platWalkDirX;
-				_platWalkNodes[_platWalkNodesCount].deltaY = 0;
+			} else if (!isPointBlocked(_platWalkDirX + _platWalkNodes[_platWalkNodesCount]._gridX1, _platWalkNodes[_platWalkNodesCount]._gridY1)) {
+				_platWalkNodes[_platWalkNodesCount]._deltaX = _platWalkDirX;
+				_platWalkNodes[_platWalkNodesCount]._deltaY = 0;
 				++_platWalkDirXIncr;
 			} else {
 				_platWalkDeltaX = _platWalkDirXIncr;
@@ -789,13 +789,13 @@ bool GnapEngine::gridSub423750(int gridX, int gridY) {
 				--_platWalkNodesCount;
 			}
 		} else {
-			if (!isPointBlocked(_platWalkDirX + _platWalkNodes[_platWalkNodesCount].gridX1, _platWalkNodes[_platWalkNodesCount].gridY1)) {
-				_platWalkNodes[_platWalkNodesCount].deltaX = _platWalkDirX;
-				_platWalkNodes[_platWalkNodesCount].deltaY = 0;
+			if (!isPointBlocked(_platWalkDirX + _platWalkNodes[_platWalkNodesCount]._gridX1, _platWalkNodes[_platWalkNodesCount]._gridY1)) {
+				_platWalkNodes[_platWalkNodesCount]._deltaX = _platWalkDirX;
+				_platWalkNodes[_platWalkNodesCount]._deltaY = 0;
 				++_platWalkDirXIncr;
-			} else if (!isPointBlocked(_platWalkNodes[_platWalkNodesCount].gridX1, _platWalkDirY + _platWalkNodes[_platWalkNodesCount].gridY1)) {
-				_platWalkNodes[_platWalkNodesCount].deltaX = 0;
-				_platWalkNodes[_platWalkNodesCount].deltaY = _platWalkDirY;
+			} else if (!isPointBlocked(_platWalkNodes[_platWalkNodesCount]._gridX1, _platWalkDirY + _platWalkNodes[_platWalkNodesCount]._gridY1)) {
+				_platWalkNodes[_platWalkNodesCount]._deltaX = 0;
+				_platWalkNodes[_platWalkNodesCount]._deltaY = _platWalkDirY;
 				++_platWalkDirYIncr;
 			} else {
 				_platWalkDeltaX = _platWalkDirXIncr;
@@ -807,11 +807,11 @@ bool GnapEngine::gridSub423750(int gridX, int gridY) {
 	}
 
 	while (_platWalkDirXIncr < _platWalkDeltaX) {
-		_platWalkNodes[_platWalkNodesCount].gridX1 = gridX + _platWalkDirX * _platWalkDirXIncr;
-		_platWalkNodes[_platWalkNodesCount].gridY1 = _platWalkDestY;
-		if (!isPointBlocked(_platWalkDirX + _platWalkNodes[_platWalkNodesCount].gridX1, _platWalkDestY)) {
-			_platWalkNodes[_platWalkNodesCount].deltaX = _platWalkDirX;
-			_platWalkNodes[_platWalkNodesCount].deltaY = 0;
+		_platWalkNodes[_platWalkNodesCount]._gridX1 = gridX + _platWalkDirX * _platWalkDirXIncr;
+		_platWalkNodes[_platWalkNodesCount]._gridY1 = _platWalkDestY;
+		if (!isPointBlocked(_platWalkDirX + _platWalkNodes[_platWalkNodesCount]._gridX1, _platWalkDestY)) {
+			_platWalkNodes[_platWalkNodesCount]._deltaX = _platWalkDirX;
+			_platWalkNodes[_platWalkNodesCount]._deltaY = 0;
 			++_platWalkDirXIncr;
 			++_platWalkNodesCount;
 		} else {
@@ -820,11 +820,11 @@ bool GnapEngine::gridSub423750(int gridX, int gridY) {
 	}
 
 	while (_platWalkDirYIncr < _platWalkDeltaY) {
-		_platWalkNodes[_platWalkNodesCount].gridX1 = _platWalkDestX;
-		_platWalkNodes[_platWalkNodesCount].gridY1 = gridY + _platWalkDirY * _platWalkDirYIncr;
-		if (!isPointBlocked(_platWalkDestX, _platWalkDirY + _platWalkNodes[_platWalkNodesCount].gridY1)) {
-			_platWalkNodes[_platWalkNodesCount].deltaX = 0;
-			_platWalkNodes[_platWalkNodesCount].deltaY = _platWalkDirY;
+		_platWalkNodes[_platWalkNodesCount]._gridX1 = _platWalkDestX;
+		_platWalkNodes[_platWalkNodesCount]._gridY1 = gridY + _platWalkDirY * _platWalkDirYIncr;
+		if (!isPointBlocked(_platWalkDestX, _platWalkDirY + _platWalkNodes[_platWalkNodesCount]._gridY1)) {
+			_platWalkNodes[_platWalkNodesCount]._deltaX = 0;
+			_platWalkNodes[_platWalkNodesCount]._deltaY = _platWalkDirY;
 			++_platWalkDirYIncr;
 			++_platWalkNodesCount;
 		} else {
@@ -861,32 +861,32 @@ bool GnapEngine::gridSub423CC1(int gridX, int gridY, int index) {
 		_platWalkDirY = 0;
 
 	while (_platWalkDirXIncr < _platWalkDeltaX && _platWalkDirYIncr < _platWalkDeltaY) {
-		_platWalkNodes[_platWalkNodesCount].gridX1 = gridX + _platWalkDirX * _platWalkDirXIncr;
-		_platWalkNodes[_platWalkNodesCount].gridY1 = gridY + _platWalkDirY * _platWalkDirYIncr;
-		if (!isPointBlocked(_platWalkDirX + _platWalkNodes[_platWalkNodesCount].gridX1, _platWalkDirY + _platWalkNodes[_platWalkNodesCount].gridY1)) {
-			_platWalkNodes[_platWalkNodesCount].deltaX = _platWalkDirX;
-			_platWalkNodes[_platWalkNodesCount].deltaY = _platWalkDirY;
+		_platWalkNodes[_platWalkNodesCount]._gridX1 = gridX + _platWalkDirX * _platWalkDirXIncr;
+		_platWalkNodes[_platWalkNodesCount]._gridY1 = gridY + _platWalkDirY * _platWalkDirYIncr;
+		if (!isPointBlocked(_platWalkDirX + _platWalkNodes[_platWalkNodesCount]._gridX1, _platWalkDirY + _platWalkNodes[_platWalkNodesCount]._gridY1)) {
+			_platWalkNodes[_platWalkNodesCount]._deltaX = _platWalkDirX;
+			_platWalkNodes[_platWalkNodesCount]._deltaY = _platWalkDirY;
 			++_platWalkDirXIncr;
 			++_platWalkDirYIncr;
 		} else if (_platWalkDeltaY - _platWalkDirYIncr > _platWalkDeltaX - _platWalkDirXIncr) {
-			if (!isPointBlocked(_platWalkNodes[_platWalkNodesCount].gridX1, _platWalkDirY + _platWalkNodes[_platWalkNodesCount].gridY1)) {
-				_platWalkNodes[_platWalkNodesCount].deltaX = 0;
-				_platWalkNodes[_platWalkNodesCount].deltaY = _platWalkDirY;
+			if (!isPointBlocked(_platWalkNodes[_platWalkNodesCount]._gridX1, _platWalkDirY + _platWalkNodes[_platWalkNodesCount]._gridY1)) {
+				_platWalkNodes[_platWalkNodesCount]._deltaX = 0;
+				_platWalkNodes[_platWalkNodesCount]._deltaY = _platWalkDirY;
 				++_platWalkDirYIncr;
-			} else if (!isPointBlocked(_platWalkDirX + _platWalkNodes[_platWalkNodesCount].gridX1, _platWalkNodes[_platWalkNodesCount].gridY1)) {
-				_platWalkNodes[_platWalkNodesCount].deltaX = _platWalkDirX;
-				_platWalkNodes[_platWalkNodesCount].deltaY = 0;
+			} else if (!isPointBlocked(_platWalkDirX + _platWalkNodes[_platWalkNodesCount]._gridX1, _platWalkNodes[_platWalkNodesCount]._gridY1)) {
+				_platWalkNodes[_platWalkNodesCount]._deltaX = _platWalkDirX;
+				_platWalkNodes[_platWalkNodesCount]._deltaY = 0;
 				++_platWalkDirXIncr;
 			} else
 				return false;
 		} else {
-			if (!isPointBlocked(_platWalkDirX + _platWalkNodes[_platWalkNodesCount].gridX1, _platWalkNodes[_platWalkNodesCount].gridY1)) {
-				_platWalkNodes[_platWalkNodesCount].deltaX = _platWalkDirX;
-				_platWalkNodes[_platWalkNodesCount].deltaY = 0;
+			if (!isPointBlocked(_platWalkDirX + _platWalkNodes[_platWalkNodesCount]._gridX1, _platWalkNodes[_platWalkNodesCount]._gridY1)) {
+				_platWalkNodes[_platWalkNodesCount]._deltaX = _platWalkDirX;
+				_platWalkNodes[_platWalkNodesCount]._deltaY = 0;
 				++_platWalkDirXIncr;
-			} else if (!isPointBlocked(_platWalkNodes[_platWalkNodesCount].gridX1, _platWalkDirY + _platWalkNodes[_platWalkNodesCount].gridY1)) {
-				_platWalkNodes[_platWalkNodesCount].deltaX = 0;
-				_platWalkNodes[_platWalkNodesCount].deltaY = _platWalkDirY;
+			} else if (!isPointBlocked(_platWalkNodes[_platWalkNodesCount]._gridX1, _platWalkDirY + _platWalkNodes[_platWalkNodesCount]._gridY1)) {
+				_platWalkNodes[_platWalkNodesCount]._deltaX = 0;
+				_platWalkNodes[_platWalkNodesCount]._deltaY = _platWalkDirY;
 				++_platWalkDirYIncr;
 			} else
 				return false;
@@ -895,11 +895,11 @@ bool GnapEngine::gridSub423CC1(int gridX, int gridY, int index) {
 	}
 
 	while (_platWalkDirXIncr < _platWalkDeltaX) {
-		_platWalkNodes[_platWalkNodesCount].gridX1 = gridX + _platWalkDirX * _platWalkDirXIncr;
-		_platWalkNodes[_platWalkNodesCount].gridY1 = _platWalkDestY;
-		if (!isPointBlocked(_platWalkDirX + _platWalkNodes[_platWalkNodesCount].gridX1, _platWalkDestY)) {
-			_platWalkNodes[_platWalkNodesCount].deltaX = _platWalkDirX;
-			_platWalkNodes[_platWalkNodesCount].deltaY = 0;
+		_platWalkNodes[_platWalkNodesCount]._gridX1 = gridX + _platWalkDirX * _platWalkDirXIncr;
+		_platWalkNodes[_platWalkNodesCount]._gridY1 = _platWalkDestY;
+		if (!isPointBlocked(_platWalkDirX + _platWalkNodes[_platWalkNodesCount]._gridX1, _platWalkDestY)) {
+			_platWalkNodes[_platWalkNodesCount]._deltaX = _platWalkDirX;
+			_platWalkNodes[_platWalkNodesCount]._deltaY = 0;
 			++_platWalkDirXIncr;
 			++_platWalkNodesCount;
 		} else
@@ -907,11 +907,11 @@ bool GnapEngine::gridSub423CC1(int gridX, int gridY, int index) {
 	}
 
 	while (_platWalkDirYIncr < _platWalkDeltaY) {
-		_platWalkNodes[_platWalkNodesCount].gridX1 = _platWalkDestX;
-		_platWalkNodes[_platWalkNodesCount].gridY1 = gridY + _platWalkDirY * _platWalkDirYIncr;
-		if (!isPointBlocked(_platWalkDestX, _platWalkDirY + _platWalkNodes[_platWalkNodesCount].gridY1)) {
-			_platWalkNodes[_platWalkNodesCount].deltaX = 0;
-			_platWalkNodes[_platWalkNodesCount].deltaY = _platWalkDirY;
+		_platWalkNodes[_platWalkNodesCount]._gridX1 = _platWalkDestX;
+		_platWalkNodes[_platWalkNodesCount]._gridY1 = gridY + _platWalkDirY * _platWalkDirYIncr;
+		if (!isPointBlocked(_platWalkDestX, _platWalkDirY + _platWalkNodes[_platWalkNodesCount]._gridY1)) {
+			_platWalkNodes[_platWalkNodesCount]._deltaX = 0;
+			_platWalkNodes[_platWalkNodesCount]._deltaY = _platWalkDirY;
 			++_platWalkDirYIncr;
 			++_platWalkNodesCount;
 		} else
@@ -939,11 +939,11 @@ bool GnapEngine::gridSub42419A(int gridX, int gridY, int index) {
 		_platWalkDirY = 0;
 
 	while (_platWalkDeltaY < _platWalkDeltaX - _platWalkDirXIncr) {
-		_platWalkNodes[_platWalkNodesCount].gridX1 = gridX + _platWalkDirX * _platWalkDirXIncr;
-		_platWalkNodes[_platWalkNodesCount].gridY1 = gridY;
-		if (!isPointBlocked(_platWalkDirX + _platWalkNodes[_platWalkNodesCount].gridX1, gridY)) {
-			_platWalkNodes[_platWalkNodesCount].deltaX = _platWalkDirX;
-			_platWalkNodes[_platWalkNodesCount].deltaY = 0;
+		_platWalkNodes[_platWalkNodesCount]._gridX1 = gridX + _platWalkDirX * _platWalkDirXIncr;
+		_platWalkNodes[_platWalkNodesCount]._gridY1 = gridY;
+		if (!isPointBlocked(_platWalkDirX + _platWalkNodes[_platWalkNodesCount]._gridX1, gridY)) {
+			_platWalkNodes[_platWalkNodesCount]._deltaX = _platWalkDirX;
+			_platWalkNodes[_platWalkNodesCount]._deltaY = 0;
 			++_platWalkDirXIncr;
 			++_platWalkNodesCount;
 		} else
@@ -951,11 +951,11 @@ bool GnapEngine::gridSub42419A(int gridX, int gridY, int index) {
 	}
 
 	while (_platWalkDeltaX < _platWalkDeltaY - _platWalkDirYIncr) {
-		_platWalkNodes[_platWalkNodesCount].gridX1 = gridX;
-		_platWalkNodes[_platWalkNodesCount].gridY1 = gridY + _platWalkDirY * _platWalkDirYIncr;
-		if (!isPointBlocked(gridX, _platWalkDirY + _platWalkNodes[_platWalkNodesCount].gridY1)) {
-			_platWalkNodes[_platWalkNodesCount].deltaX = 0;
-			_platWalkNodes[_platWalkNodesCount].deltaY = _platWalkDirY;
+		_platWalkNodes[_platWalkNodesCount]._gridX1 = gridX;
+		_platWalkNodes[_platWalkNodesCount]._gridY1 = gridY + _platWalkDirY * _platWalkDirYIncr;
+		if (!isPointBlocked(gridX, _platWalkDirY + _platWalkNodes[_platWalkNodesCount]._gridY1)) {
+			_platWalkNodes[_platWalkNodesCount]._deltaX = 0;
+			_platWalkNodes[_platWalkNodesCount]._deltaY = _platWalkDirY;
 			++_platWalkDirYIncr;
 			++_platWalkNodesCount;
 		} else
@@ -963,32 +963,32 @@ bool GnapEngine::gridSub42419A(int gridX, int gridY, int index) {
 	}
 
 	while (_platWalkDirXIncr < _platWalkDeltaX && _platWalkDirYIncr < _platWalkDeltaY) {
-		_platWalkNodes[_platWalkNodesCount].gridX1 = gridX + _platWalkDirX * _platWalkDirXIncr;
-		_platWalkNodes[_platWalkNodesCount].gridY1 = gridY + _platWalkDirY * _platWalkDirYIncr;
-		if (!isPointBlocked(_platWalkDirX + _platWalkNodes[_platWalkNodesCount].gridX1, _platWalkDirY + _platWalkNodes[_platWalkNodesCount].gridY1)) {
-			_platWalkNodes[_platWalkNodesCount].deltaX = _platWalkDirX;
-			_platWalkNodes[_platWalkNodesCount].deltaY = _platWalkDirY;
+		_platWalkNodes[_platWalkNodesCount]._gridX1 = gridX + _platWalkDirX * _platWalkDirXIncr;
+		_platWalkNodes[_platWalkNodesCount]._gridY1 = gridY + _platWalkDirY * _platWalkDirYIncr;
+		if (!isPointBlocked(_platWalkDirX + _platWalkNodes[_platWalkNodesCount]._gridX1, _platWalkDirY + _platWalkNodes[_platWalkNodesCount]._gridY1)) {
+			_platWalkNodes[_platWalkNodesCount]._deltaX = _platWalkDirX;
+			_platWalkNodes[_platWalkNodesCount]._deltaY = _platWalkDirY;
 			++_platWalkDirXIncr;
 			++_platWalkDirYIncr;
 		} else if (_platWalkDeltaY - _platWalkDirYIncr > _platWalkDeltaX - _platWalkDirXIncr) {
-			if (!isPointBlocked(_platWalkNodes[_platWalkNodesCount].gridX1, _platWalkDirY + _platWalkNodes[_platWalkNodesCount].gridY1)) {
-				_platWalkNodes[_platWalkNodesCount].deltaX = 0;
-				_platWalkNodes[_platWalkNodesCount].deltaY = _platWalkDirY;
+			if (!isPointBlocked(_platWalkNodes[_platWalkNodesCount]._gridX1, _platWalkDirY + _platWalkNodes[_platWalkNodesCount]._gridY1)) {
+				_platWalkNodes[_platWalkNodesCount]._deltaX = 0;
+				_platWalkNodes[_platWalkNodesCount]._deltaY = _platWalkDirY;
 				++_platWalkDirYIncr;
-			} else if (!isPointBlocked(_platWalkDirX + _platWalkNodes[_platWalkNodesCount].gridX1, _platWalkNodes[_platWalkNodesCount].gridY1)) {
-				_platWalkNodes[_platWalkNodesCount].deltaX = _platWalkDirX;
-				_platWalkNodes[_platWalkNodesCount].deltaY = 0;
+			} else if (!isPointBlocked(_platWalkDirX + _platWalkNodes[_platWalkNodesCount]._gridX1, _platWalkNodes[_platWalkNodesCount]._gridY1)) {
+				_platWalkNodes[_platWalkNodesCount]._deltaX = _platWalkDirX;
+				_platWalkNodes[_platWalkNodesCount]._deltaY = 0;
 				++_platWalkDirXIncr;
 			} else
 				return false;
 		} else {
-			if (!isPointBlocked(_platWalkDirX + _platWalkNodes[_platWalkNodesCount].gridX1, _platWalkNodes[_platWalkNodesCount].gridY1)) {
-				_platWalkNodes[_platWalkNodesCount].deltaX = _platWalkDirX;
-				_platWalkNodes[_platWalkNodesCount].deltaY = 0;
+			if (!isPointBlocked(_platWalkDirX + _platWalkNodes[_platWalkNodesCount]._gridX1, _platWalkNodes[_platWalkNodesCount]._gridY1)) {
+				_platWalkNodes[_platWalkNodesCount]._deltaX = _platWalkDirX;
+				_platWalkNodes[_platWalkNodesCount]._deltaY = 0;
 				++_platWalkDirXIncr;
-			} else if (!isPointBlocked(_platWalkNodes[_platWalkNodesCount].gridX1, _platWalkDirY + _platWalkNodes[_platWalkNodesCount].gridY1)) {
-				_platWalkNodes[_platWalkNodesCount].deltaX = 0;
-				_platWalkNodes[_platWalkNodesCount].deltaY = _platWalkDirY;
+			} else if (!isPointBlocked(_platWalkNodes[_platWalkNodesCount]._gridX1, _platWalkDirY + _platWalkNodes[_platWalkNodesCount]._gridY1)) {
+				_platWalkNodes[_platWalkNodesCount]._deltaX = 0;
+				_platWalkNodes[_platWalkNodesCount]._deltaY = _platWalkDirY;
 				++_platWalkDirYIncr;
 			} else
 				return false;
@@ -997,11 +997,11 @@ bool GnapEngine::gridSub42419A(int gridX, int gridY, int index) {
 	}
 
 	while (_platWalkDirXIncr < _platWalkDeltaX) {
-		_platWalkNodes[_platWalkNodesCount].gridX1 = gridX + _platWalkDirX * _platWalkDirXIncr;
-		_platWalkNodes[_platWalkNodesCount].gridY1 = _platWalkDestY;
-		if (!isPointBlocked(_platWalkDirX + _platWalkNodes[_platWalkNodesCount].gridX1, _platWalkDestY)) {
-			_platWalkNodes[_platWalkNodesCount].deltaX = _platWalkDirX;
-			_platWalkNodes[_platWalkNodesCount].deltaY = 0;
+		_platWalkNodes[_platWalkNodesCount]._gridX1 = gridX + _platWalkDirX * _platWalkDirXIncr;
+		_platWalkNodes[_platWalkNodesCount]._gridY1 = _platWalkDestY;
+		if (!isPointBlocked(_platWalkDirX + _platWalkNodes[_platWalkNodesCount]._gridX1, _platWalkDestY)) {
+			_platWalkNodes[_platWalkNodesCount]._deltaX = _platWalkDirX;
+			_platWalkNodes[_platWalkNodesCount]._deltaY = 0;
 			++_platWalkDirXIncr;
 			++_platWalkNodesCount;
 		} else
@@ -1009,11 +1009,11 @@ bool GnapEngine::gridSub42419A(int gridX, int gridY, int index) {
 	}
 
 	while (_platWalkDirYIncr < _platWalkDeltaY) {
-		_platWalkNodes[_platWalkNodesCount].gridX1 = _platWalkDestX;
-		_platWalkNodes[_platWalkNodesCount].gridY1 = gridY + _platWalkDirY * _platWalkDirYIncr;
-		if (!isPointBlocked(_platWalkDestX, _platWalkDirY + _platWalkNodes[_platWalkNodesCount].gridY1)) {
-			_platWalkNodes[_platWalkNodesCount].deltaX = 0;
-			_platWalkNodes[_platWalkNodesCount].deltaY = _platWalkDirY;
+		_platWalkNodes[_platWalkNodesCount]._gridX1 = _platWalkDestX;
+		_platWalkNodes[_platWalkNodesCount]._gridY1 = gridY + _platWalkDirY * _platWalkDirYIncr;
+		if (!isPointBlocked(_platWalkDestX, _platWalkDirY + _platWalkNodes[_platWalkNodesCount]._gridY1)) {
+			_platWalkNodes[_platWalkNodesCount]._deltaX = 0;
+			_platWalkNodes[_platWalkNodesCount]._deltaY = _platWalkDirY;
 			++_platWalkDirYIncr;
 			++_platWalkNodesCount;
 		} else
@@ -1030,160 +1030,160 @@ bool GnapEngine::platFindPath3(int gridX, int gridY) {
 	while (!done && gridIncr < _gridMaxX) {
 		if (!isPointBlocked(_platX + gridIncr, _platY) && gridSub423CC1(_platX + gridIncr, _platY, gridIncr)) {
 			for (int i = 0; i < gridIncr; ++i) {
-				_platWalkNodes[i].gridX1 = _platX + i;
-				_platWalkNodes[i].gridY1 = _platY;
-				_platWalkNodes[i].deltaX = 1;
-				_platWalkNodes[i].deltaY = 0;
+				_platWalkNodes[i]._gridX1 = _platX + i;
+				_platWalkNodes[i]._gridY1 = _platY;
+				_platWalkNodes[i]._deltaX = 1;
+				_platWalkNodes[i]._deltaY = 0;
 			}
 			done = true;
 			break;
 		}
 		if (!isPointBlocked(_platX - gridIncr, _platY) && gridSub423CC1(_platX - gridIncr, _platY, gridIncr)) {
 			for (int i = 0; i < gridIncr; ++i) {
-				_platWalkNodes[i].gridX1 = _platX - i;
-				_platWalkNodes[i].gridY1 = _platY;
-				_platWalkNodes[i].deltaX = -1;
-				_platWalkNodes[i].deltaY = 0;
+				_platWalkNodes[i]._gridX1 = _platX - i;
+				_platWalkNodes[i]._gridY1 = _platY;
+				_platWalkNodes[i]._deltaX = -1;
+				_platWalkNodes[i]._deltaY = 0;
 			}
 			done = true;
 			break;
 		}
 		if (!isPointBlocked(_platX, _platY + gridIncr) && gridSub423CC1(_platX, _platY + gridIncr, gridIncr)) {
 			for (int i = 0; i < gridIncr; ++i) {
-				_platWalkNodes[i].gridX1 = _platX;
-				_platWalkNodes[i].gridY1 = _platY + i;
-				_platWalkNodes[i].deltaX = 0;
-				_platWalkNodes[i].deltaY = 1;
+				_platWalkNodes[i]._gridX1 = _platX;
+				_platWalkNodes[i]._gridY1 = _platY + i;
+				_platWalkNodes[i]._deltaX = 0;
+				_platWalkNodes[i]._deltaY = 1;
 			}
 			done = true;
 			break;
 		}
 		if (!isPointBlocked(_platX, _platY - gridIncr) && gridSub423CC1(_platX, _platY - gridIncr, gridIncr)) {
 			for (int i = 0; i < gridIncr; ++i) {
-				_platWalkNodes[i].gridX1 = _platX;
-				_platWalkNodes[i].gridY1 = _platY - i;
-				_platWalkNodes[i].deltaX = 0;
-				_platWalkNodes[i].deltaY = -1;
+				_platWalkNodes[i]._gridX1 = _platX;
+				_platWalkNodes[i]._gridY1 = _platY - i;
+				_platWalkNodes[i]._deltaX = 0;
+				_platWalkNodes[i]._deltaY = -1;
 			}
 			done = true;
 			break;
 		}
 		if (!isPointBlocked(_platX + gridIncr, _platY + gridIncr) && gridSub423CC1(_platX + gridIncr, _platY + gridIncr, gridIncr)) {
 			for (int i = 0; i < gridIncr; ++i) {
-				_platWalkNodes[i].gridX1 = _platX + i;
-				_platWalkNodes[i].gridY1 = _platY + i;
-				_platWalkNodes[i].deltaX = 1;
-				_platWalkNodes[i].deltaY = 1;
+				_platWalkNodes[i]._gridX1 = _platX + i;
+				_platWalkNodes[i]._gridY1 = _platY + i;
+				_platWalkNodes[i]._deltaX = 1;
+				_platWalkNodes[i]._deltaY = 1;
 			}
 			done = true;
 			break;
 		}
 		if (!isPointBlocked(_platX - gridIncr, _platY + gridIncr) && gridSub423CC1(_platX - gridIncr, _platY + gridIncr, gridIncr)) {
 			for (int i = 0; i < gridIncr; ++i) {
-				_platWalkNodes[i].gridX1 = _platX - i;
-				_platWalkNodes[i].gridY1 = _platY + i;
-				_platWalkNodes[i].deltaX = -1;
-				_platWalkNodes[i].deltaY = 1;
+				_platWalkNodes[i]._gridX1 = _platX - i;
+				_platWalkNodes[i]._gridY1 = _platY + i;
+				_platWalkNodes[i]._deltaX = -1;
+				_platWalkNodes[i]._deltaY = 1;
 			}
 			done = true;
 			break;
 		}
 		if (!isPointBlocked(_platX + gridIncr, _platY - gridIncr) && gridSub423CC1(_platX + gridIncr, _platY - gridIncr, gridIncr)) {
 			for (int i = 0; i < gridIncr; ++i) {
-				_platWalkNodes[i].gridX1 = _platX + i;
-				_platWalkNodes[i].gridY1 = _platY - i;
-				_platWalkNodes[i].deltaX = 1;
-				_platWalkNodes[i].deltaY = -1;
+				_platWalkNodes[i]._gridX1 = _platX + i;
+				_platWalkNodes[i]._gridY1 = _platY - i;
+				_platWalkNodes[i]._deltaX = 1;
+				_platWalkNodes[i]._deltaY = -1;
 			}
 			done = true;
 			break;
 		}
 		if (!isPointBlocked(_platX - gridIncr, _platY - gridIncr) && gridSub423CC1(_platX - gridIncr, _platY - gridIncr, gridIncr)) {
 			for (int i = 0; i < gridIncr; ++i) {
-				_platWalkNodes[i].gridX1 = _platX - i;
-				_platWalkNodes[i].gridY1 = _platY - i;
-				_platWalkNodes[i].deltaX = -1;
-				_platWalkNodes[i].deltaY = -1;
+				_platWalkNodes[i]._gridX1 = _platX - i;
+				_platWalkNodes[i]._gridY1 = _platY - i;
+				_platWalkNodes[i]._deltaX = -1;
+				_platWalkNodes[i]._deltaY = -1;
 			}
 			done = true;
 			break;
 		}
 		if (!isPointBlocked(_platX + gridIncr, _platY) && gridSub42419A(_platX + gridIncr, _platY, gridIncr)) {
 			for (int i = 0; i < gridIncr; ++i) {
-				_platWalkNodes[i].gridX1 = _platX + i;
-				_platWalkNodes[i].gridY1 = _platY;
-				_platWalkNodes[i].deltaX = 1;
-				_platWalkNodes[i].deltaY = 0;
+				_platWalkNodes[i]._gridX1 = _platX + i;
+				_platWalkNodes[i]._gridY1 = _platY;
+				_platWalkNodes[i]._deltaX = 1;
+				_platWalkNodes[i]._deltaY = 0;
 			}
 			done = true;
 			break;
 		}
 		if (!isPointBlocked(_platX - gridIncr, _platY) && gridSub42419A(_platX - gridIncr, _platY, gridIncr)) {
 			for (int i = 0; i < gridIncr; ++i) {
-				_platWalkNodes[i].gridX1 = _platX - i;
-				_platWalkNodes[i].gridY1 = _platY;
-				_platWalkNodes[i].deltaX = -1;
-				_platWalkNodes[i].deltaY = 0;
+				_platWalkNodes[i]._gridX1 = _platX - i;
+				_platWalkNodes[i]._gridY1 = _platY;
+				_platWalkNodes[i]._deltaX = -1;
+				_platWalkNodes[i]._deltaY = 0;
 			}
 			done = true;
 			break;
 		}
 		if (!isPointBlocked(_platX, _platY + gridIncr) && gridSub42419A(_platX, _platY + gridIncr, gridIncr)) {
 			for (int i = 0; i < gridIncr; ++i) {
-				_platWalkNodes[i].gridX1 = _platX;
-				_platWalkNodes[i].gridY1 = _platY + i;
-				_platWalkNodes[i].deltaX = 0;
-				_platWalkNodes[i].deltaY = 1;
+				_platWalkNodes[i]._gridX1 = _platX;
+				_platWalkNodes[i]._gridY1 = _platY + i;
+				_platWalkNodes[i]._deltaX = 0;
+				_platWalkNodes[i]._deltaY = 1;
 			}
 			done = true;
 			break;
 		}
 		if (!isPointBlocked(_platX, _platY - gridIncr) && gridSub42419A(_platX, _platY - gridIncr, gridIncr)) {
 			for (int i = 0; i < gridIncr; ++i) {
-				_platWalkNodes[i].gridX1 = _platX;
-				_platWalkNodes[i].gridY1 = _platY - i;
-				_platWalkNodes[i].deltaX = 0;
-				_platWalkNodes[i].deltaY = -1;
+				_platWalkNodes[i]._gridX1 = _platX;
+				_platWalkNodes[i]._gridY1 = _platY - i;
+				_platWalkNodes[i]._deltaX = 0;
+				_platWalkNodes[i]._deltaY = -1;
 			}
 			done = true;
 			break;
 		}
 		if (!isPointBlocked(_platX + gridIncr, _platY + gridIncr) && gridSub42419A(_platX + gridIncr, _platY + gridIncr, gridIncr)) {
 			for (int i = 0; i < gridIncr; ++i) {
-				_platWalkNodes[i].gridX1 = _platX + i;
-				_platWalkNodes[i].gridY1 = _platY + i;
-				_platWalkNodes[i].deltaX = 1;
-				_platWalkNodes[i].deltaY = 1;
+				_platWalkNodes[i]._gridX1 = _platX + i;
+				_platWalkNodes[i]._gridY1 = _platY + i;
+				_platWalkNodes[i]._deltaX = 1;
+				_platWalkNodes[i]._deltaY = 1;
 			}
 			done = true;
 			break;
 		}
 		if (!isPointBlocked(_platX - gridIncr, _platY + gridIncr) && gridSub42419A(_platX - gridIncr, _platY + gridIncr, gridIncr)) {
 			for (int i = 0; i < gridIncr; ++i) {
-				_platWalkNodes[i].gridX1 = _platX - i;
-				_platWalkNodes[i].gridY1 = _platY + i;
-				_platWalkNodes[i].deltaX = -1;
-				_platWalkNodes[i].deltaY = 1;
+				_platWalkNodes[i]._gridX1 = _platX - i;
+				_platWalkNodes[i]._gridY1 = _platY + i;
+				_platWalkNodes[i]._deltaX = -1;
+				_platWalkNodes[i]._deltaY = 1;
 			}
 			done = true;
 			break;
 		}
 		if (!isPointBlocked(_platX + gridIncr, _platY - gridIncr) && gridSub42419A(_platX + gridIncr, _platY - gridIncr, gridIncr)) {
 			for (int i = 0; i < gridIncr; ++i) {
-				_platWalkNodes[i].gridX1 = _platX + i;
-				_platWalkNodes[i].gridY1 = _platY - i;
-				_platWalkNodes[i].deltaX = 1;
-				_platWalkNodes[i].deltaY = -1;
+				_platWalkNodes[i]._gridX1 = _platX + i;
+				_platWalkNodes[i]._gridY1 = _platY - i;
+				_platWalkNodes[i]._deltaX = 1;
+				_platWalkNodes[i]._deltaY = -1;
 			}
 			done = true;
 			break;
 		}
 		if (!isPointBlocked(_platX - gridIncr, _platY - gridIncr) && gridSub42419A(_platX - gridIncr, _platY - gridIncr, gridIncr)) {
 			for (int i = 0; i < gridIncr; ++i) {
-				_platWalkNodes[i].gridX1 = _platX - i;
-				_platWalkNodes[i].gridY1 = _platY - i;
-				_platWalkNodes[i].deltaX = -1;
-				_platWalkNodes[i].deltaY = -1;
+				_platWalkNodes[i]._gridX1 = _platX - i;
+				_platWalkNodes[i]._gridY1 = _platY - i;
+				_platWalkNodes[i]._deltaX = -1;
+				_platWalkNodes[i]._deltaY = -1;
 			}
 			done = true;
 			break;
@@ -1230,48 +1230,48 @@ bool GnapEngine::platypusWalkTo(int gridX, int gridY, int animationIndex, int se
 	int platSequenceDatNum = _beaverSequenceDatNum;
 
 	for (int index = 0; index < _platWalkNodesCount; ++index) {
-		_platWalkNodes[index].id = index + 20 * _platWalkNodes[index].gridY1;
-		if (_platWalkNodes[index].deltaX == 1 && _platWalkNodes[index].deltaY == 0) {
+		_platWalkNodes[index]._id = index + 20 * _platWalkNodes[index]._gridY1;
+		if (_platWalkNodes[index]._deltaX == 1 && _platWalkNodes[index]._deltaY == 0) {
 			if (index % 2) {
-				_gameSys->insertSequence(makeRid(datNum, 0x7CD), _platWalkNodes[index].id,
+				_gameSys->insertSequence(makeRid(datNum, 0x7CD), _platWalkNodes[index]._id,
 					makeRid(platSequenceDatNum, platSequenceId), platId,
-					kSeqScale | kSeqSyncWait, 0, 75 * _platWalkNodes[index].gridX1 - _platGridX, 48 * _platWalkNodes[index].gridY1 - _platGridY);
-				_platWalkNodes[index].sequenceId = 0x7CD;
+					kSeqScale | kSeqSyncWait, 0, 75 * _platWalkNodes[index]._gridX1 - _platGridX, 48 * _platWalkNodes[index]._gridY1 - _platGridY);
+				_platWalkNodes[index]._sequenceId = 0x7CD;
 				platSequenceId = 0x7CD;
 			} else {
-				_gameSys->insertSequence(makeRid(datNum, 0x7CE), _platWalkNodes[index].id,
+				_gameSys->insertSequence(makeRid(datNum, 0x7CE), _platWalkNodes[index]._id,
 					makeRid(platSequenceDatNum, platSequenceId), platId,
-					kSeqScale | kSeqSyncWait, 0, 75 * _platWalkNodes[index].gridX1 - _platGridX, 48 * _platWalkNodes[index].gridY1 - _platGridY);
-				_platWalkNodes[index].sequenceId = 0x7CE;
+					kSeqScale | kSeqSyncWait, 0, 75 * _platWalkNodes[index]._gridX1 - _platGridX, 48 * _platWalkNodes[index]._gridY1 - _platGridY);
+				_platWalkNodes[index]._sequenceId = 0x7CE;
 				platSequenceId = 0x7CE;
 			}
-		} else if (_platWalkNodes[index].deltaX == -1 && _platWalkNodes[index].deltaY == 0) {
+		} else if (_platWalkNodes[index]._deltaX == -1 && _platWalkNodes[index]._deltaY == 0) {
 			if (index % 2) {
-				_gameSys->insertSequence(makeRid(datNum, 0x7CF), _platWalkNodes[index].id,
+				_gameSys->insertSequence(makeRid(datNum, 0x7CF), _platWalkNodes[index]._id,
 					makeRid(platSequenceDatNum, platSequenceId), platId,
-					kSeqScale | kSeqSyncWait, 0, 75 * _platWalkNodes[index].gridX1 - _platGridX, 48 * _platWalkNodes[index].gridY1 - _platGridY);
-				_platWalkNodes[index].sequenceId = 0x7CF;
+					kSeqScale | kSeqSyncWait, 0, 75 * _platWalkNodes[index]._gridX1 - _platGridX, 48 * _platWalkNodes[index]._gridY1 - _platGridY);
+				_platWalkNodes[index]._sequenceId = 0x7CF;
 				platSequenceId = 0x7CF;
 			} else {
-				_gameSys->insertSequence(makeRid(datNum, 0x7D0), _platWalkNodes[index].id,
+				_gameSys->insertSequence(makeRid(datNum, 0x7D0), _platWalkNodes[index]._id,
 					makeRid(platSequenceDatNum, platSequenceId), platId,
-					kSeqScale | kSeqSyncWait, 0, 75 * _platWalkNodes[index].gridX1 - _platGridX, 48 * _platWalkNodes[index].gridY1 - _platGridY);
-				_platWalkNodes[index].sequenceId = 0x7D0;
+					kSeqScale | kSeqSyncWait, 0, 75 * _platWalkNodes[index]._gridX1 - _platGridX, 48 * _platWalkNodes[index]._gridY1 - _platGridY);
+				_platWalkNodes[index]._sequenceId = 0x7D0;
 				platSequenceId = 0x7D0;
 			}
 		} else {
-			if (_platWalkNodes[index].deltaY == -1)
-				_platWalkNodes[index].id -= 10;
+			if (_platWalkNodes[index]._deltaY == -1)
+				_platWalkNodes[index]._id -= 10;
 			else
-				_platWalkNodes[index].id += 10;
-			int newSequenceId = getBeaverWalkSequenceId(_platWalkNodes[index].deltaX, _platWalkNodes[index].deltaY);
-			_gameSys->insertSequence(makeRid(datNum, newSequenceId), _platWalkNodes[index].id,
+				_platWalkNodes[index]._id += 10;
+			int newSequenceId = getBeaverWalkSequenceId(_platWalkNodes[index]._deltaX, _platWalkNodes[index]._deltaY);
+			_gameSys->insertSequence(makeRid(datNum, newSequenceId), _platWalkNodes[index]._id,
 				makeRid(platSequenceDatNum, platSequenceId), platId,
-				kSeqScale | kSeqSyncWait, 0, 75 * _platWalkNodes[index].gridX1 - _platGridX, 48 * _platWalkNodes[index].gridY1 - _platGridY);
-			_platWalkNodes[index].sequenceId = newSequenceId;
+				kSeqScale | kSeqSyncWait, 0, 75 * _platWalkNodes[index]._gridX1 - _platGridX, 48 * _platWalkNodes[index]._gridY1 - _platGridY);
+			_platWalkNodes[index]._sequenceId = newSequenceId;
 			platSequenceId = newSequenceId;
 		}
-		platId = _platWalkNodes[index].id;
+		platId = _platWalkNodes[index]._id;
 		platSequenceDatNum = datNum;
 	}
 
@@ -1281,11 +1281,11 @@ bool GnapEngine::platypusWalkTo(int gridX, int gridY, int animationIndex, int se
 			_beaverId = platId;
 			_beaverSequenceDatNum = datNum;
 			// CHECKME Not sure if this is correct...
-			if (_platWalkNodes[_platWalkNodesCount - 1].deltaX > 0)
+			if (_platWalkNodes[_platWalkNodesCount - 1]._deltaX > 0)
 				_beaverFacing = kDirNone;
-			else if (_platWalkNodes[_platWalkNodesCount - 1].deltaX < 0)
+			else if (_platWalkNodes[_platWalkNodesCount - 1]._deltaX < 0)
 				_beaverFacing = kDirUnk4;
-			else if (_platWalkNodes[_platWalkNodesCount - 1].gridX1 % 2)
+			else if (_platWalkNodes[_platWalkNodesCount - 1]._gridX1 % 2)
 				_beaverFacing = kDirUnk4;
 			else
 				_beaverFacing = kDirNone;
@@ -1306,16 +1306,16 @@ bool GnapEngine::platypusWalkTo(int gridX, int gridY, int animationIndex, int se
 			}
 		} else {
 			if (_platWalkNodesCount > 0) {
-				if (_platWalkNodes[_platWalkNodesCount - 1].deltaX > 0) {
+				if (_platWalkNodes[_platWalkNodesCount - 1]._deltaX > 0) {
 					_beaverSequenceId = 0x7C2;
 					_beaverFacing = kDirNone;
-				} else if (_platWalkNodes[_platWalkNodesCount - 1].deltaX < 0) {
+				} else if (_platWalkNodes[_platWalkNodesCount - 1]._deltaX < 0) {
 					_beaverSequenceId = 0x7D2;
 					_beaverFacing = kDirUnk4;
-				} else if (_platWalkNodes[0].deltaX > 0) {
+				} else if (_platWalkNodes[0]._deltaX > 0) {
 					_beaverSequenceId = 0x7C2;
 					_beaverFacing = kDirNone;
-				} else if (_platWalkNodes[0].deltaX < 0) {
+				} else if (_platWalkNodes[0]._deltaX < 0) {
 					_beaverSequenceId = 0x7D2;
 					_beaverFacing = kDirUnk4;
 				} else {

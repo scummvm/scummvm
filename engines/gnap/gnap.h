@@ -74,10 +74,10 @@ struct Hotspot {
 };
 
 struct GridStruct {
-	int deltaX, deltaY;
-	int gridX1, gridY1;
-	int sequenceId;
-	int id;
+	int _deltaX, _deltaY;
+	int _gridX1, _gridY1;
+	int _sequenceId;
+	int _id;
 };
 
 const int kMaxGridStructs = 30;

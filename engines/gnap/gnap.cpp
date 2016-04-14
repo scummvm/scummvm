@@ -2246,8 +2246,8 @@ void GnapEngine::toyUfoFlyTo(int destX, int destY, int minX, int maxX, int minY,
 				v15 = MAX(6, v15 - 3);
 			}
 			v14 += v15;
-			v16[i].gridX1 = _toyUfoX + dirX * deltaX * v14 / deltaY;
-			v16[i].gridY1 = _toyUfoY + dirY * v14;
+			v16[i]._gridX1 = _toyUfoX + dirX * deltaX * v14 / deltaY;
+			v16[i]._gridY1 = _toyUfoY + dirY * v14;
 			++i;
 		}
 	} else {
@@ -2261,8 +2261,8 @@ void GnapEngine::toyUfoFlyTo(int destX, int destY, int minX, int maxX, int minY,
 				v17 = MAX(6, v17 - 3);
 			}
 			v14 += v17;
-			v16[i].gridX1 = _toyUfoX + dirX * v14;
-			v16[i].gridY1 = _toyUfoY + dirY * deltaY * v14 / deltaX;
+			v16[i]._gridX1 = _toyUfoX + dirX * v14;
+			v16[i]._gridY1 = _toyUfoY + dirY * deltaY * v14 / deltaX;
 			++i;
 		}
 	}
@@ -2284,22 +2284,22 @@ void GnapEngine::toyUfoFlyTo(int destX, int destY, int minX, int maxX, int minY,
 			seqId = 0x857;
 		else
 			error("Unhandled flag in GnapEngine::toyUfoFlyTo(): 0x%x", _gameFlags);
-		v16[0].sequenceId = seqId;
-		v16[0].id = 0;
+		v16[0]._sequenceId = seqId;
+		v16[0]._id = 0;
 		_gameSys->insertSequence(seqId | 0x10000, 0,
 			_toyUfoSequenceId | 0x10000, _toyUfoId,
-			kSeqSyncWait, 0, v16[0].gridX1 - 365, v16[0].gridY1 - 128);
+			kSeqSyncWait, 0, v16[0]._gridX1 - 365, v16[0]._gridY1 - 128);
 		for (i = 1; i < v21; ++i) {
-			v16[i].sequenceId = seqId + (i % 8);
-			v16[i].id = i;
-			_gameSys->insertSequence(v16[i].sequenceId | 0x10000, v16[i].id,
-				v16[i - 1].sequenceId | 0x10000, v16[i - 1].id,
+			v16[i]._sequenceId = seqId + (i % 8);
+			v16[i]._id = i;
+			_gameSys->insertSequence(v16[i]._sequenceId | 0x10000, v16[i]._id,
+				v16[i - 1]._sequenceId | 0x10000, v16[i - 1]._id,
 				kSeqSyncWait, 0,
-				v16[i].gridX1 - 365, v16[i].gridY1 - 128);
+				v16[i]._gridX1 - 365, v16[i]._gridY1 - 128);
 		}
 
-		_toyUfoSequenceId = v16[v21 - 1].sequenceId;
-		_toyUfoId = v16[v21 - 1].id;
+		_toyUfoSequenceId = v16[v21 - 1]._sequenceId;
+		_toyUfoId = v16[v21 - 1]._id;
 
 		if (animationIndex >= 0)
 			_gameSys->setAnimation(_toyUfoSequenceId | 0x10000, _toyUfoId, animationIndex);
