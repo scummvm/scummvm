@@ -88,7 +88,7 @@ static const char *directoryGlobs[] = {
 class DirectorMetaEngine : public AdvancedMetaEngine {
 public:
 	DirectorMetaEngine() : AdvancedMetaEngine(Director::gameDescriptions, sizeof(Director::DirectorGameDescription), directorGames) {
-		_singleid = "director";
+		_singleId = "director";
 		_maxScanDepth = 2,
 		_directoryGlobs = directoryGlobs;
 	}
@@ -135,12 +135,12 @@ const ADGameDescription *DirectorMetaEngine::fallbackDetect(const FileMap &allFi
 
 	// reset fallback description
 	Director::DirectorGameDescription *desc = &s_fallbackDesc;
-	desc->desc.gameid = "director";
+	desc->desc.gameId = "director";
 	desc->desc.extra = "";
 	desc->desc.language = Common::UNK_LANG;
 	desc->desc.flags = ADGF_NO_FLAGS;
 	desc->desc.platform = Common::kPlatformWindows;
-	desc->desc.guioptions = GUIO0();
+	desc->desc.guiOptions = GUIO0();
 	desc->desc.filesDescriptions[0].fileName = 0;
 	desc->version = 0;
 	desc->gameID = Director::GID_GENERIC;
