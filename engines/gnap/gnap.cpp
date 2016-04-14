@@ -2207,7 +2207,7 @@ bool GnapEngine::toyUfoCheckTimer() {
 }
 
 void GnapEngine::toyUfoFlyTo(int destX, int destY, int minX, int maxX, int minY, int maxY, int animationIndex) {
-	GridStruct v16[34];
+	GridStruct flyNodes[34];
 
 	if (destX == -1)
 		destX = _leftClickMouseX;
@@ -2216,19 +2216,14 @@ void GnapEngine::toyUfoFlyTo(int destX, int destY, int minX, int maxX, int minY,
 		destY = _leftClickMouseY;
 
 	//CHECKME
-
 	int clippedDestX = CLIP(destX, minX, maxX);
 	int clippedDestY = CLIP(destY, minY, maxY);
-	int dirX, dirY; // 0, -1 or 1
+	int dirX = 0, dirY = 0; // 0, -1 or 1
 
-	if (clippedDestX == _toyUfoX)
-		dirX = 0;
-	else
+	if (clippedDestX != _toyUfoX)
 		dirX = (clippedDestX - _toyUfoX) / ABS(clippedDestX - _toyUfoX);
 
-	if (clippedDestY == _toyUfoY)
-		dirY = 0;
-	else
+	if (clippedDestY != _toyUfoY)
 		dirY = (clippedDestY - _toyUfoY) / ABS(clippedDestY - _toyUfoY);
 
 	int deltaX = ABS(clippedDestX - _toyUfoX);
@@ -2236,43 +2231,43 @@ void GnapEngine::toyUfoFlyTo(int destX, int destY, int minX, int maxX, int minY,
 
 	int i = 0;
 	if (deltaY > deltaX) {
-		int v15 = 32;
-		int v22 = deltaY / v15;
-		int v14 = 0;
-		while (v14 < deltaY && i < 34) {
-			if (v22 - 5 >= i) {
-				v15 = MIN(36, 8 * i + 8);
+		int flyDirYIncr = 32;
+		int gridDistY = deltaY / flyDirYIncr;
+		int curMove = 0;
+		while (curMove < deltaY && i < 34) {
+			if (gridDistY - 5 >= i) {
+				flyDirYIncr = MIN(36, 8 * i + 8);
 			} else {
-				v15 = MAX(6, v15 - 3);
+				flyDirYIncr = MAX(6, flyDirYIncr - 3);
 			}
-			v14 += v15;
-			v16[i]._gridX1 = _toyUfoX + dirX * deltaX * v14 / deltaY;
-			v16[i]._gridY1 = _toyUfoY + dirY * v14;
+			curMove += flyDirYIncr;
+			flyNodes[i]._gridX1 = _toyUfoX + dirX * deltaX * curMove / deltaY;
+			flyNodes[i]._gridY1 = _toyUfoY + dirY * curMove;
 			++i;
 		}
 	} else {
-		int v17 = 36;
-		int v22 = deltaX / v17;
-		int v14 = 0;
-		while (v14 < deltaX && i < 34) {
-			if (v22 - 5 >= i) {
-				v17 = MIN(38, 8 * i + 8);
+		int flyDirXIncr = 36;
+		int gridDistX = deltaX / flyDirXIncr;
+		int curMove = 0;
+		while (curMove < deltaX && i < 34) {
+			if (gridDistX - 5 >= i) {
+				flyDirXIncr = MIN(38, 8 * i + 8);
 			} else {
-				v17 = MAX(6, v17 - 3);
+				flyDirXIncr = MAX(6, flyDirXIncr - 3);
 			}
-			v14 += v17;
-			v16[i]._gridX1 = _toyUfoX + dirX * v14;
-			v16[i]._gridY1 = _toyUfoY + dirY * deltaY * v14 / deltaX;
+			curMove += flyDirXIncr;
+			flyNodes[i]._gridX1 = _toyUfoX + dirX * curMove;
+			flyNodes[i]._gridY1 = _toyUfoY + dirY * deltaY * curMove / deltaX;
 			++i;
 		}
 	}
 
-	int v21 = i - 1;
+	int nodesCount = i - 1;
 
 	_toyUfoX = clippedDestX;
 	_toyUfoY = clippedDestY;
 
-	if (i - 1 > 0) {
+	if (nodesCount > 0) {
 		int seqId = 0;
 		if (isFlag(kGFUnk16))
 			seqId = 0x867;
@@ -2284,28 +2279,27 @@ void GnapEngine::toyUfoFlyTo(int destX, int destY, int minX, int maxX, int minY,
 			seqId = 0x857;
 		else
 			error("Unhandled flag in GnapEngine::toyUfoFlyTo(): 0x%x", _gameFlags);
-		v16[0]._sequenceId = seqId;
-		v16[0]._id = 0;
+		flyNodes[0]._sequenceId = seqId;
+		flyNodes[0]._id = 0;
 		_gameSys->insertSequence(seqId | 0x10000, 0,
 			_toyUfoSequenceId | 0x10000, _toyUfoId,
-			kSeqSyncWait, 0, v16[0]._gridX1 - 365, v16[0]._gridY1 - 128);
-		for (i = 1; i < v21; ++i) {
-			v16[i]._sequenceId = seqId + (i % 8);
-			v16[i]._id = i;
-			_gameSys->insertSequence(v16[i]._sequenceId | 0x10000, v16[i]._id,
-				v16[i - 1]._sequenceId | 0x10000, v16[i - 1]._id,
+			kSeqSyncWait, 0, flyNodes[0]._gridX1 - 365, flyNodes[0]._gridY1 - 128);
+		for (i = 1; i < nodesCount; ++i) {
+			flyNodes[i]._sequenceId = seqId + (i % 8);
+			flyNodes[i]._id = i;
+			_gameSys->insertSequence(flyNodes[i]._sequenceId | 0x10000, flyNodes[i]._id,
+				flyNodes[i - 1]._sequenceId | 0x10000, flyNodes[i - 1]._id,
 				kSeqSyncWait, 0,
-				v16[i]._gridX1 - 365, v16[i]._gridY1 - 128);
+				flyNodes[i]._gridX1 - 365, flyNodes[i]._gridY1 - 128);
 		}
 
-		_toyUfoSequenceId = v16[v21 - 1]._sequenceId;
-		_toyUfoId = v16[v21 - 1]._id;
+		_toyUfoSequenceId = flyNodes[nodesCount - 1]._sequenceId;
+		_toyUfoId = flyNodes[nodesCount - 1]._id;
 
 		if (animationIndex >= 0)
 			_gameSys->setAnimation(_toyUfoSequenceId | 0x10000, _toyUfoId, animationIndex);
 
 	}
-
 }
 
 // Scene 99
