@@ -29,14 +29,14 @@
 #include "gob/util.h"
 #include "gob/aniobject.h"
 
-#include "gob/sound/sounddesc.h"
-
 #include "gob/pregob/txtfile.h"
 
 namespace Gob {
 
 class GobEngine;
+class ANIFile;
 class Surface;
+class SoundDesc;
 
 class GCTFile;
 

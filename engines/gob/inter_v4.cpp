@@ -205,7 +205,7 @@ void Inter_v4::o4_playVmdOrMusic() {
 		return;
 	} else if (props.lastFrame == -9) {
 		_vm->_sound->bgStop();
-		_vm->_sound->bgSetPlayMode(BackgroundAtmosphere::kPlayModeRandom);
+		_vm->_sound->bgSetPlayMode(Sound::kPlayModeRandom);
 		_vm->_sound->bgPlay(file.c_str(), "SND", SOUND_SND, props.palStart);
 		return;
 	} else if (props.lastFrame < 0) {

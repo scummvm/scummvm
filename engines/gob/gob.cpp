@@ -26,6 +26,7 @@
 #include "base/plugins.h"
 #include "common/config-manager.h"
 #include "audio/mididrv.h"
+#include "audio/mixer.h"
 
 #include "gui/gui-manager.h"
 #include "gui/dialog.h"
