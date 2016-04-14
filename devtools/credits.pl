@@ -844,6 +844,10 @@ begin_credits("Credits");
 				add_person("Frantisek Dufka", "fanoush", "(retired)");
 				add_person("Tarek Soliman", "tsoliman", "");
 			end_section();
+			
+			begin_section("Nintendo 3DS");
+				add_person("Thomas Edvalson", "Cruel", "");
+			end_section();
 
 			begin_section("Nintendo 64");
 				add_person("Fabio Battaglia", "Hkz", "");
