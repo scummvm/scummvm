@@ -25,7 +25,6 @@
 #include "common/savefile.h"
 #include "common/translation.h"
 
-#include "gui/dialog.h"
 #include "gui/message.h"
 #include "gui/filebrowser-dialog.h"
 

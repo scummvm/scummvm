@@ -33,10 +33,8 @@
 #include "scummhelp.h"
 #endif
 
-#include "gui/about.h"
-
 #include "gui/gui-manager.h"
-#include "gui/widgets/list.h"
+#include "gui/widget.h"
 #include "gui/ThemeEval.h"
 
 #include "scumm/dialogs.h"

@@ -23,7 +23,7 @@
 #ifndef GUI_SAVELOAD_H
 #define GUI_SAVELOAD_H
 
-#include "gui/dialog.h"
+#include "common/str.h"
 #include "engines/metaengine.h"
 
 namespace GUI {

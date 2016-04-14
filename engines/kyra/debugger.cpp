@@ -31,8 +31,6 @@
 #include "common/system.h"
 #include "common/config-manager.h"
 
-#include "gui/message.h"
-
 namespace Kyra {
 
 Debugger::Debugger(KyraEngine_v1 *vm)

@@ -25,10 +25,7 @@
 #include "common/textconsole.h"
 #include "common/translation.h"
 
-#include "gui/dialog.h"
 #include "gui/saveload.h"
-#include "gui/widget.h"
-#include "gui/widgets/list.h"
 #include "gui/message.h"
 
 #include "parallaction/parallaction.h"

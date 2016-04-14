@@ -26,8 +26,6 @@
 #include "graphics/cursorman.h"
 #include "graphics/surface.h"
 
-#include "gui/message.h"
-
 #include "sci/sci.h"
 #include "sci/event.h"
 #include "sci/resource.h"

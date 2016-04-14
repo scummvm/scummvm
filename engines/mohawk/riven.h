@@ -27,8 +27,6 @@
 #include "mohawk/mohawk.h"
 #include "mohawk/riven_scripts.h"
 
-#include "gui/saveload.h"
-
 #include "common/hashmap.h"
 #include "common/hash-str.h"
 #include "common/random.h"

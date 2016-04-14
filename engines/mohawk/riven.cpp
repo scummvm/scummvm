@@ -25,6 +25,7 @@
 #include "common/keyboard.h"
 #include "common/translation.h"
 #include "common/system.h"
+#include "gui/saveload.h"
 
 #include "mohawk/cursors.h"
 #include "mohawk/installer_archive.h"

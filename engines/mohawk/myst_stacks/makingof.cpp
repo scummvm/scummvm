@@ -27,8 +27,6 @@
 #include "mohawk/video.h"
 #include "mohawk/myst_stacks/makingof.h"
 
-#include "gui/message.h"
-
 namespace Mohawk {
 namespace MystStacks {
 
