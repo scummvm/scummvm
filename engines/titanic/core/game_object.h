@@ -160,6 +160,11 @@ protected:
 	 * string form to the passed string
 	 */
 	bool compareViewNameTo(const CString &name) const;
+
+	/**
+	* Display a message in the PET
+	*/
+	void petDisplayMsg(const CString &msg) const;
 public:
 	int _field60;
 	CursorId _cursorId;

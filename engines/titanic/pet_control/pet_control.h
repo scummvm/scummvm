@@ -196,6 +196,11 @@ public:
 	CGameObject *dragEnd(const Point &pt) const {
 		return _currentArea == PET_INVENTORY ? _inventory.dragEnd(pt) : nullptr;
 	}
+
+	/**
+	 * Display a message
+	 */
+	void displayMessage(const CString &msg);
 };
 
 } // End of namespace Titanic

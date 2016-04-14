@@ -24,6 +24,9 @@
 
 namespace Titanic {
 
+BEGIN_MESSAGE_MAP(CParcel, CCarry)
+END_MESSAGE_MAP()
+
 CParcel::CParcel() : CCarry() {
 }
 

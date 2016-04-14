@@ -96,7 +96,10 @@ public:
 	 */
 	virtual CGameObject *dragEnd(const Point &pt) const { return nullptr; }
 	
-	virtual void proc16();
+	/**
+	 * Display a message
+	 */
+	virtual void displayMessage(const CString &msg);
 
 	/**
 	 * Returns true if the object is in a valid state

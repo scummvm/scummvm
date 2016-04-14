@@ -30,7 +30,7 @@ namespace Titanic {
 class CChicken : public CCarry {
 private:
 	static int _v1;
-private:
+public:
 	int _field12C;
 	CString _string6;
 	int _field13C;

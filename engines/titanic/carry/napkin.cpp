@@ -21,8 +21,13 @@
  */
 
 #include "titanic/carry/napkin.h"
+#include "titanic/carry/chicken.h"
 
 namespace Titanic {
+
+BEGIN_MESSAGE_MAP(CNapkin, CCarry)
+	ON_MESSAGE(UseWithOtherMsg)
+END_MESSAGE_MAP()
 
 CNapkin::CNapkin() : CCarry() {
 }
@@ -36,5 +41,21 @@ void CNapkin::load(SimpleFile *file) {
 	file->readNumber();
 	CCarry::load(file);
 }
+
+bool CNapkin::UseWithOtherMsg(CUseWithOtherMsg *msg) {
+	CChicken *chicken = static_cast<CChicken *>(msg->_other);
+	if (chicken) {
+		if (chicken->_string6 == "None" || chicken->_field12C) {
+			CActMsg actMsg("Clean");
+			actMsg.execute("Chicken");
+		} else {
+			petDisplayMsg("The Chicken is already quite clean enough, thank you.");
+		}
+	}
+
+	dropOnPet();
+	return CCarry::UseWithOtherMsg(msg);
+}
+
 
 } // End of namespace Titanic

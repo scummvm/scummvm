@@ -562,4 +562,10 @@ bool CGameObject::compareViewNameTo(const CString &name) const {
 	return getViewFullName().compareToIgnoreCase(name);
 }
 
+void CGameObject::petDisplayMsg(const CString &msg) const {
+	CPetControl *pet = getPetControl();
+	if (pet)
+		pet->displayMessage(msg);
+}
+
 } // End of namespace Titanic

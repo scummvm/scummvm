@@ -24,10 +24,13 @@
 #define TITANIC_NAPKIN_H
 
 #include "titanic/carry/carry.h"
+#include "titanic/messages/messages.h"
 
 namespace Titanic {
 
 class CNapkin : public CCarry {
+	DECLARE_MESSAGE_MAP
+	bool UseWithOtherMsg(CUseWithOtherMsg *msg);
 public:
 	CLASSDEF
 	CNapkin();

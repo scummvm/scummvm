@@ -25,7 +25,7 @@
 
 namespace Titanic {
 
-void CPetSection::proc16() {
+void CPetSection::displayMessage(const CString &msg) {
 	error("TODO");
 }
 

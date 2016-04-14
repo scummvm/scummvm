@@ -24,10 +24,13 @@
 #define TITANIC_NOTE_H
 
 #include "titanic/carry/carry.h"
+#include "titanic/messages/messages.h"
 
 namespace Titanic {
 
 class CNote : public CCarry {
+	DECLARE_MESSAGE_MAP
+	bool MouseDoubleClickMsg(CMouseDoubleClickMsg *msg);
 private:
 	CString _string6;
 	int _field138;

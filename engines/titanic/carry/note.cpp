@@ -24,6 +24,10 @@
 
 namespace Titanic {
 
+BEGIN_MESSAGE_MAP(CNote, CCarry)
+	ON_MESSAGE(MouseDoubleClickMsg)
+END_MESSAGE_MAP()
+
 CNote::CNote() : CCarry(), _field138(1) {
 }
 
@@ -41,6 +45,10 @@ void CNote::load(SimpleFile *file) {
 	_field138 = file->readNumber();
 
 	CCarry::load(file);
+}
+
+bool CNote::MouseDoubleClickMsg(CMouseDoubleClickMsg *msg) {
+	return true;
 }
 
 } // End of namespace Titanic
