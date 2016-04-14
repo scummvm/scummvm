@@ -74,6 +74,9 @@ void MacWindow::setActive(bool active) {
 }
 
 void MacWindow::resize(int w, int h) {
+	if (_surface.w == w && _surface.h == h)
+		return;
+
 	_surface.free();
 	_surface.create(w, h, Graphics::PixelFormat::createFormatCLUT8());
 	_borderSurface.free();
@@ -90,6 +93,11 @@ void MacWindow::resize(int w, int h) {
 void MacWindow::move(int x, int y) {
 	_dims.moveTo(x, y);
 	_borderDims.moveTo(x - kBorderWidth, y - kBorderWidth);
+}
+
+void MacWindow::setDimensions(const Common::Rect &r) {
+	resize(r.width(), r.height());
+	move(r.left, r.top);
 }
 
 void MacWindow::draw(Graphics::Surface *g, bool forceRedraw) {

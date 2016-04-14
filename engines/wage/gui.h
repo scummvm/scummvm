@@ -55,6 +55,7 @@
 #include "common/rect.h"
 
 #include "wage/macwindow.h"
+#include "wage/macwindowmanager.h"
 
 namespace Wage {
 
@@ -176,6 +177,10 @@ private:
 	Common::String _undobuffer;
 
 	int _inputTextLineNum;
+
+	MacWindowManager _wm;
+	int _sceneWindowId;
+	int _consoleWindowId;
 };
 
 } // End of namespace Wage

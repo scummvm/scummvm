@@ -62,6 +62,8 @@ public:
 
 	void draw(Graphics::Surface *g);
 
+	MacWindow *getWindow(int id) { return _windows[id]; }
+
 private:
 	Common::List<MacWindow *> _windowStack;
 	Common::Array<MacWindow *> _windows;

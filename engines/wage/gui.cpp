@@ -186,6 +186,9 @@ Gui::Gui(WageEngine *engine) {
 	g_system->getTimerManager()->installTimerProc(&cursorTimerHandler, 200000, this, "wageCursor");
 
 	_menu = new Menu(this);
+
+	_sceneWindowId = _wm.add(false);
+	_consoleWindowId = _wm.add(true);
 }
 
 Gui::~Gui() {
@@ -277,6 +280,10 @@ void Gui::drawScene() {
 		return;
 
 	_scene = _engine->_world->_player->_currentScene;
+
+	MacWindow *w = _wm.getWindow(_sceneWindowId);
+
+	w->setDimensions(*_scene->_designBounds);
 
 	_sceneDirty = true;
 	_consoleDirty = true;
