@@ -21,6 +21,7 @@
  */
 
 #include "titanic/carry/magazine.h"
+#include "titanic/npcs/deskbot.h"
 
 namespace Titanic {
 
@@ -51,22 +52,41 @@ void CMagazine::load(SimpleFile *file) {
 }
 
 bool CMagazine::UseWithCharMsg(CUseWithCharMsg *msg) {
-	// todo
-	return true;
+	CDeskbot *deskbot = static_cast<CDeskbot *>(msg->_character);
+	if (deskbot) {
+		if (deskbot->_field108) {
+			setVisible(false);
+			setPosition(Point(1000, 1000));
+			CActMsg actMsg("2ndClassUpgrade");
+			actMsg.execute("Deskbot");
+		}
+
+		return true;
+	} else {
+		return CCarry::UseWithCharMsg(msg);
+	}
 }
 
 bool CMagazine::MouseDoubleClickMsg(CMouseDoubleClickMsg *msg) {
-	// todo
 	return true;
 }
 
 bool CMagazine::VisibleMsg(CVisibleMsg *msg) {
-	// todo
+	setVisible(msg->_visible);
 	return true;
 }
 
 bool CMagazine::UseWithOtherMsg(CUseWithOtherMsg *msg) {
-	// todo
+	if (msg->_other->getName() == "SwitchOnDeskbot") {
+		// TODO: other _field108 if
+		if (false) {
+			setVisible(false);
+			setPosition(Point(1000, 1000));
+			CActMsg actMsg("2ndClassUpgrade");
+			actMsg.execute("Deskbot");
+		}
+	}
+
 	return true;
 }
 

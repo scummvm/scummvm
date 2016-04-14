@@ -31,7 +31,7 @@ class CDeskbot : public CTrueTalkNPC {
 private:
 	static int _v1;
 	static int _v2;
-private:
+public:
 	int _field108;
 	int _field10C;
 public:
