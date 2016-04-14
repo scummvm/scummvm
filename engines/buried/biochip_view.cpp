@@ -529,7 +529,9 @@ InterfaceBioChipViewWindow::InterfaceBioChipViewWindow(BuriedEngine *vm, Window 
 	_restore = Common::Rect(313, 37, 421, 74);
 	_quit = Common::Rect(313, 84, 421, 121);
 	_flicker = Common::Rect(14, 146, 164, 166);
-	_transitionSpeed = _vm->isDemo() ? Common::Rect(14, 117, 179, 140) : Common::Rect(14, 100, 125, 140);
+
+	// For whatever reason, the Spanish version uses the demo coordinates.
+	_transitionSpeed = (_vm->getLanguage() == Common::ES_ESP || _vm->isDemo()) ? Common::Rect(14, 117, 179, 140) : Common::Rect(14, 100, 125, 140);
 
 	_curRegion = REGION_NONE;
 	_soundLocation = 0;
@@ -561,10 +563,13 @@ void InterfaceBioChipViewWindow::onPaint() {
 		_vm->_gfx->blit(_cycleCheck, absoluteRect.left + 13, absoluteRect.top + 144);
 
 	if (_caret) {
-		if (_vm->isDemo())
+		if (_vm->isDemo()) {
 			_vm->_gfx->opaqueTransparentBlit(_vm->_gfx->getScreen(), absoluteRect.left + _transLocation + 12, absoluteRect.top + 112, 20, 35, _caret, 0, 0, 0, 255, 255, 255);
-		else
-			_vm->_gfx->opaqueTransparentBlit(_vm->_gfx->getScreen(), absoluteRect.left + _transLocation + 14, absoluteRect.top + 97, 15, 30, _caret, 0, 0, 0, 248, _vm->isTrueColor() ? 252 : 248, 248);
+		} else {
+			// For whatever reason, the Spanish version has to be different.
+			int dy = (_vm->getLanguage() == Common::ES_ESP) ? 115 : 97;
+			_vm->_gfx->opaqueTransparentBlit(_vm->_gfx->getScreen(), absoluteRect.left + _transLocation + 14, absoluteRect.top + dy, 15, 30, _caret, 0, 0, 0, 248, _vm->isTrueColor() ? 252 : 248, 248);
+		}
 	}
 }
 
