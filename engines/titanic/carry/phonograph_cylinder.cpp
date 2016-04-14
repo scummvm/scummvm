@@ -34,63 +34,66 @@ BEGIN_MESSAGE_MAP(CPhonographCylinder, CCarry)
 END_MESSAGE_MAP()
 
 CPhonographCylinder::CPhonographCylinder() : CCarry(),
-	_field138(0), _field13C(0), _field140(0),  _field144(0), 
-	_field148(0), _field14C(0), _field150(0), _field154(0), 
-	_field158(0), _field15C(0), _field160(0), _field164(0), 
-	_field168(0), _field16C(0), _field170(0), _field174(0), 
-	_field178(0), _field17C(0), _field180(0), _field184(0) {
+		_bellsMuteControl(false), _bellsPitchControl(false),
+		_bellsSpeedControl(false), _bellsDirectionControl(false),
+		_bellsInversionControl(false), _snakeMuteControl(false),
+		_snakeSpeedControl(false), _snakePitchControl(false),
+		_snakeInversionControl(false), _snakeDirectionControl(false),
+		_pianoMuteControl(false), _pianoSpeedControl(false),
+		_pianoPitchControl(false), _pianoInversionControl(false),
+		_pianoDirectionControl(false), _bassMuteControl(false),
+		_bassSpeedControl(false), _bassPitchControl(false),
+		_bassInversionControl(false) {
 }
 
 void CPhonographCylinder::save(SimpleFile *file, int indent) const {
 	file->writeNumberLine(1, indent);
-	file->writeQuotedLine(_string6, indent);
-	file->writeNumberLine(_field138, indent);
-	file->writeNumberLine(_field13C, indent);
-	file->writeNumberLine(_field140, indent);
-	file->writeNumberLine(_field144, indent);
-	file->writeNumberLine(_field148, indent);
-	file->writeNumberLine(_field14C, indent);
-	file->writeNumberLine(_field150, indent);
-	file->writeNumberLine(_field154, indent);
-	file->writeNumberLine(_field158, indent);
-	file->writeNumberLine(_field15C, indent);
-	file->writeNumberLine(_field160, indent);
-	file->writeNumberLine(_field164, indent);
-	file->writeNumberLine(_field168, indent);
-	file->writeNumberLine(_field16C, indent);
-	file->writeNumberLine(_field170, indent);
-	file->writeNumberLine(_field174, indent);
-	file->writeNumberLine(_field178, indent);
-	file->writeNumberLine(_field17C, indent);
-	file->writeNumberLine(_field180, indent);
-	file->writeNumberLine(_field184, indent);
+	file->writeQuotedLine(_itemName, indent);
+	file->writeNumberLine(_bellsMuteControl, indent);
+	file->writeNumberLine(_bellsPitchControl, indent);
+	file->writeNumberLine(_bellsSpeedControl, indent);
+	file->writeNumberLine(_bellsDirectionControl, indent);
+	file->writeNumberLine(_bellsInversionControl, indent);
+	file->writeNumberLine(_snakeMuteControl, indent);
+	file->writeNumberLine(_snakeSpeedControl, indent);
+	file->writeNumberLine(_snakePitchControl, indent);
+	file->writeNumberLine(_snakeInversionControl, indent);
+	file->writeNumberLine(_snakeDirectionControl, indent);
+	file->writeNumberLine(_pianoMuteControl, indent);
+	file->writeNumberLine(_pianoSpeedControl, indent);
+	file->writeNumberLine(_pianoPitchControl, indent);
+	file->writeNumberLine(_pianoInversionControl, indent);
+	file->writeNumberLine(_pianoDirectionControl, indent);
+	file->writeNumberLine(_bassMuteControl, indent);
+	file->writeNumberLine(_bassSpeedControl, indent);
+	file->writeNumberLine(_bassPitchControl, indent);
+	file->writeNumberLine(_bassInversionControl, indent);
 
 	CCarry::save(file, indent);
 }
 
 void CPhonographCylinder::load(SimpleFile *file) {
 	file->readNumber();
-	_string6 = file->readString();
-	_field138 = file->readNumber();
-	_field13C = file->readNumber();
-	_field140 = file->readNumber();
-	_field144 = file->readNumber();
-	_field148 = file->readNumber();
-	_field14C = file->readNumber();
-	_field150 = file->readNumber();
-	_field154 = file->readNumber();
-	_field158 = file->readNumber();
-	_field15C = file->readNumber();
-	_field160 = file->readNumber();
-	_field164 = file->readNumber();
-	_field168 = file->readNumber();
-	_field16C = file->readNumber();
-	_field170 = file->readNumber();
-	_field174 = file->readNumber();
-	_field178 = file->readNumber();
-	_field17C = file->readNumber();
-	_field180 = file->readNumber();
-	_field184 = file->readNumber();
+	_itemName = file->readString();
+	_bellsMuteControl = file->readNumber();
+	_bellsPitchControl = file->readNumber();
+	_bellsSpeedControl = file->readNumber();
+	_bellsDirectionControl = file->readNumber();
+	_bellsInversionControl = file->readNumber();
+	_snakeMuteControl = file->readNumber();
+	_snakeSpeedControl = file->readNumber();
+	_snakePitchControl = file->readNumber();
+	_snakeInversionControl = file->readNumber();
+	_snakeDirectionControl = file->readNumber();
+	_pianoMuteControl = file->readNumber();
+	_pianoSpeedControl = file->readNumber();
+	_pianoPitchControl = file->readNumber();
+	_pianoInversionControl = file->readNumber();
+	_pianoDirectionControl = file->readNumber();
+	_bassMuteControl = file->readNumber();
+	_bassSpeedControl = file->readNumber();
+	_bassPitchControl = file->readNumber();
+	_bassInversionControl = file->readNumber();
 
 	CCarry::load(file);
 }
@@ -106,19 +109,68 @@ bool CPhonographCylinder::UseWithOtherMsg(CUseWithOtherMsg *msg) {
 }
 
 bool CPhonographCylinder::QueryCylinderMsg(CQueryCylinderMsg *msg) {
-	msg->_
+	msg->_name = _itemName;
+	return true;
 }
 
 bool CPhonographCylinder::RecordOntoCylinderMsg(CRecordOntoCylinderMsg *msg) {
+	_itemName = "STMusic";
+	
+	CQueryMusicControlSettingMsg queryMsg;
+	queryMsg.execute("Bells Mute Control");
+	_bellsMuteControl = queryMsg._value;
+	queryMsg.execute("Bells Pitch Control");
+	_bellsPitchControl = queryMsg._value;
+	queryMsg.execute("Bells Speed Control");
+	_bellsSpeedControl = queryMsg._value;
+	queryMsg.execute("Bells Direction Control");
+	_bellsDirectionControl = queryMsg._value;
+	queryMsg.execute("Bells Inversion Control");
+	_bellsInversionControl = queryMsg._value;
+	queryMsg.execute("Snake Mute Control");
+	_snakeMuteControl = queryMsg._value;
+	queryMsg.execute("Snake Speed Control");
+	_snakeSpeedControl = queryMsg._value;
+	queryMsg.execute("Snake Pitch Control");
+	_snakePitchControl = queryMsg._value;
+	queryMsg.execute("Snake Inversion Control");
+	_snakeInversionControl = queryMsg._value;
+	queryMsg.execute("Snake Direction Control");
+	_snakeDirectionControl = queryMsg._value;
+	queryMsg.execute("Piano Mute Control");
+	_pianoMuteControl = queryMsg._value;
+	queryMsg.execute("Piano Speed Control");
+	_pianoSpeedControl = queryMsg._value;
+	queryMsg.execute("Piano Pitch Control");
+	_pianoPitchControl = queryMsg._value;	
+	queryMsg.execute("Piano Inversion Control");
+	_pianoInversionControl = queryMsg._value;
+	queryMsg.execute("Piano Direction Control");
+	_pianoDirectionControl = queryMsg._value;
+	queryMsg.execute("Bass Mute Control");
+	_bassMuteControl = queryMsg._value;
+	queryMsg.execute("Bass Speed Control");
+	_bassSpeedControl = queryMsg._value;
+	queryMsg.execute("Bass Pitch Control");
+	_bassPitchControl = queryMsg._value;
+	queryMsg.execute("Bass Inversion Control");
+	_bassInversionControl = queryMsg._value;
 
+	return true;
 }
 
 bool CPhonographCylinder::SetMusicControlsMsg(CSetMusicControlsMsg *msg) {
+	if (_itemName.left(7) == "STMusic") {
+		//todo
+		warning("TODO");
+	}
 
+	return true;
 }
 
 bool CPhonographCylinder::ErasePhonographCylinderMsg(CErasePhonographCylinderMsg *msg) {
-
+	_itemName.clear();
+	return true;
 }
 
 } // End of namespace Titanic

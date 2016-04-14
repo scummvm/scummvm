@@ -61,6 +61,7 @@ bool CPhotograph::MouseDragEndMsg(CMouseDragEndMsg *msg) {
 
 	if (target && target->getName() != "NavigationComputer") {
 		warning("TODO: CPhotograph::MouseDragEndMsg");
+		return true;
 	} else {
 		return CCarry::MouseDragEndMsg(msg);
 	}

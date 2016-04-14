@@ -30,6 +30,7 @@ namespace Titanic {
 class CGameManager;
 class CDontSaveFileItem;
 class CMessage;
+class CMusicRoom;
 class CNamedItem;
 class CPetControl;
 class CProjectItem;
@@ -261,6 +262,11 @@ public:
 	 * Returns the special hidden room container
 	 */
 	CRoomItem *getHiddenRoom() const;
+
+	/**
+	 * Returns the music room instance from the game manager
+	 */
+	CMusicRoom *getMusicRoom() const;
 
 	int getState8() const;
 	int getStateC() const;

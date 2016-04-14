@@ -35,27 +35,27 @@ class CPhonographCylinder : public CCarry {
 	bool SetMusicControlsMsg(CSetMusicControlsMsg *msg);
 	bool ErasePhonographCylinderMsg(CErasePhonographCylinderMsg *msg);
 private:
-	CString _string6;
-	int _field138;
-	int _field13C;
-	int _field140;
-	int _field144;
-	int _field148;
-	int _field14C;
-	int _field150;
-	int _field154;
-	int _field158;
-	int _field15C;
-	int _field160;
-	int _field164;
-	int _field168;
-	int _field16C;
-	int _field170;
-	int _field174;
-	int _field178;
-	int _field17C;
-	int _field180;
-	int _field184;
+	CString _itemName;
+	bool _bellsMuteControl;
+	bool _bellsPitchControl;
+	bool _bellsSpeedControl;
+	bool _bellsDirectionControl;
+	bool _bellsInversionControl;
+	bool _snakeMuteControl;
+	bool _snakeSpeedControl;
+	bool _snakePitchControl;
+	bool _snakeInversionControl;
+	bool _snakeDirectionControl;
+	bool _pianoMuteControl;
+	bool _pianoSpeedControl;
+	bool _pianoPitchControl;
+	bool _pianoInversionControl;
+	bool _pianoDirectionControl;
+	bool _bassMuteControl;
+	bool _bassSpeedControl;
+	bool _bassPitchControl;
+	bool _bassInversionControl;
+	bool _bassDirectionControl;
 public:
 	CLASSDEF
 	CPhonographCylinder();

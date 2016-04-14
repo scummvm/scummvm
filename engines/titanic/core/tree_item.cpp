@@ -297,6 +297,11 @@ CRoomItem *CTreeItem::getHiddenRoom() const {
 	return root ? root->findHiddenRoom() : nullptr;
 }
 
+CMusicRoom *CTreeItem::getMusicRoom() const {
+	CGameManager *gameManager = getGameManager();
+	return gameManager ? &gameManager->_musicRoom : nullptr;
+}
+
 int CTreeItem::getState8() const {
 	CGameManager *gameManager = getGameManager();
 	return gameManager ? gameManager->_gameState._field8 : 3;
