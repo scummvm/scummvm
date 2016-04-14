@@ -20,16 +20,14 @@
  *
  */
 
-#include "common/config-manager.h"
+#include "audio/softsynth/pcspk.h"
+
 #include "common/debug-channels.h"
 #include "common/events.h"
 #include "common/random.h"
-#include "common/textconsole.h"
 
 #include "agi/preagi.h"
 #include "agi/graphics.h"
-#include "agi/keyboard.h"
-#include "agi/text.h"
 
 namespace Agi {
 

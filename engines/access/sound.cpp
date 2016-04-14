@@ -20,9 +20,11 @@
  *
  */
 
-#include "common/algorithm.h"
 #include "common/config-manager.h"
 #include "audio/mixer.h"
+#include "audio/audiostream.h"
+#include "audio/mididrv.h"
+#include "audio/midiparser.h"
 #include "audio/decoders/raw.h"
 #include "audio/decoders/wave.h"
 // Miles Audio

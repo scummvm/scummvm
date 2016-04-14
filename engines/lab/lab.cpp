@@ -31,6 +31,7 @@
 #include "common/config-manager.h"
 #include "common/debug-channels.h"
 #include "common/error.h"
+#include "common/file.h"
 
 #include "engines/util.h"
 

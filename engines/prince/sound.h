@@ -23,13 +23,7 @@
 #ifndef PRINCE_SOUND_H
 #define PRINCE_SOUND_H
 
-#include "audio/audiostream.h"
-#include "audio/decoders/wave.h"
-#include "audio/fmopl.h"
-#include "audio/mididrv.h"
-#include "audio/midiparser.h"
 #include "audio/midiplayer.h"
-#include "audio/mixer.h"
 #include "common/memstream.h"
 
 namespace Prince {

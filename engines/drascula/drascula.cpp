@@ -23,18 +23,12 @@
 #include "common/events.h"
 #include "common/keyboard.h"
 #include "common/file.h"
-#include "common/savefile.h"
 #include "common/config-manager.h"
 #include "common/textconsole.h"
 
 #include "backends/audiocd/audiocd.h"
 
-#include "base/plugins.h"
-#include "base/version.h"
-
 #include "engines/util.h"
-
-#include "audio/mixer.h"
 
 #include "drascula/drascula.h"
 #include "drascula/console.h"

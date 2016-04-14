@@ -25,6 +25,8 @@
 #include "common/debug.h"
 #include "common/file.h"
 
+#include "audio/audiostream.h"
+
 #include "dreamweb/dreamweb.h"
 #include "dreamweb/sound.h"
 

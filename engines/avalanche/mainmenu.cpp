@@ -28,6 +28,8 @@
 #include "avalanche/avalanche.h"
 #include "avalanche/mainmenu.h"
 
+#include "common/system.h"
+
 namespace Avalanche {
 
 MainMenu::MainMenu(AvalancheEngine *vm) {

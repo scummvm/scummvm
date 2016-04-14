@@ -25,13 +25,20 @@
 
 
 #include "common/scummsys.h"
-#include "audio/audiostream.h"
-#include "scumm/imuse_digi/dimuse_bndmgr.h"
+
+namespace Audio {
+class SeekableAudioStream;
+}
+
+namespace Common {
+class SeekableReadStream;
+}
 
 namespace Scumm {
 
 class ScummEngine;
 class BundleMgr;
+class BundleDirCache;
 
 class ImuseDigiSndMgr {
 public:

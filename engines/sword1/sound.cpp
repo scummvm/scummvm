@@ -37,7 +37,6 @@
 #include "audio/decoders/mp3.h"
 #include "audio/decoders/raw.h"
 #include "audio/decoders/vorbis.h"
-#include "audio/decoders/wave.h"
 #include "audio/decoders/xa.h"
 
 namespace Sword1 {

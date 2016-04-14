@@ -23,6 +23,7 @@
 #include "base/plugins.h"
 
 #include "common/algorithm.h"
+#include "common/savefile.h"
 #include "common/system.h"
 #include "common/translation.h"
 

@@ -25,7 +25,9 @@
 
 #include "agi/agi.h"
 
-#include "audio/softsynth/pcspk.h"
+namespace Audio {
+class PCSpeaker;
+}
 
 namespace Agi {
 

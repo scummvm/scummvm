@@ -26,6 +26,7 @@
 #include "sherlock/sherlock.h"
 #include "sherlock/music.h"
 #include "sherlock/scalpel/drivers/mididriver.h"
+#include "audio/audiostream.h"
 // for Miles Audio (Sherlock Holmes 2)
 #include "audio/miles.h"
 // for 3DO digital music

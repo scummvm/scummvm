@@ -40,6 +40,7 @@
 // Required for the YUV to RGB conversion
 #include "graphics/conversion.h"
 #endif
+#include "audio/audiostream.h"
 #include "audio/mixer.h"
 #include "audio/decoders/raw.h"
 

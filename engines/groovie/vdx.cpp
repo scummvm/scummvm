@@ -28,6 +28,7 @@
 #include "common/debug.h"
 #include "common/debug-channels.h"
 #include "common/textconsole.h"
+#include "audio/audiostream.h"
 #include "audio/mixer.h"
 #include "audio/decoders/raw.h"
 #include "graphics/palette.h"

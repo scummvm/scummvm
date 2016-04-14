@@ -35,9 +35,9 @@
 #include "scumm/resource.h"
 #include "scumm/scumm.h"
 #include "scumm/sound.h"
-#include "scumm/util.h"
 
-#include "audio/decoders/adpcm.h"
+#include "audio/audiostream.h"
+#include "audio/timestamp.h"
 #include "audio/decoders/flac.h"
 #include "audio/mididrv.h"
 #include "audio/mixer.h"
@@ -45,7 +45,6 @@
 #include "audio/decoders/raw.h"
 #include "audio/decoders/voc.h"
 #include "audio/decoders/vorbis.h"
-#include "audio/decoders/wave.h"
 
 namespace Scumm {
 

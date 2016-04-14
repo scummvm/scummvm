@@ -22,10 +22,9 @@
 
 #include "sherlock/scalpel/scalpel_debugger.h"
 #include "sherlock/sherlock.h"
+#include "audio/audiostream.h"
 #include "audio/mixer.h"
-#include "audio/decoders/3do.h"
 #include "audio/decoders/aiff.h"
-#include "audio/decoders/wave.h"
 
 namespace Sherlock {
 

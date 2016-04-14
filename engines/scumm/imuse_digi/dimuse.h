@@ -34,8 +34,10 @@
 #include "scumm/music.h"
 #include "scumm/sound.h"
 
-#include "audio/mixer.h"
-#include "audio/audiostream.h"
+namespace Audio {
+class AudioStream;
+class Mixer;
+}
 
 namespace Scumm {
 

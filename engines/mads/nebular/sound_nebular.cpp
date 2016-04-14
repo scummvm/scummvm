@@ -20,15 +20,14 @@
  *
  */
 
-#include "audio/audiostream.h"
 #include "audio/fmopl.h"
-#include "audio/decoders/raw.h"
 #include "common/algorithm.h"
-#include "common/debug.h"
 #include "common/md5.h"
-#include "common/memstream.h"
-#include "mads/sound.h"
 #include "mads/nebular/sound_nebular.h"
+
+namespace Audio {
+class Mixer;
+}
 
 namespace MADS {
 

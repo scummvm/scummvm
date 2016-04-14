@@ -20,7 +20,6 @@
  *
  */
 
-#include "audio/softsynth/emumidi.h"
 #include "common/debug.h"
 #include "common/error.h"
 #include "common/scummsys.h"

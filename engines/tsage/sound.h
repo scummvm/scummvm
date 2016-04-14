@@ -26,11 +26,14 @@
 #include "common/scummsys.h"
 #include "common/mutex.h"
 #include "common/queue.h"
-#include "audio/audiostream.h"
 #include "audio/mixer.h"
 #include "common/list.h"
 #include "tsage/saveload.h"
 #include "tsage/core.h"
+
+namespace Audio {
+class QueuingAudioStream;
+}
 
 namespace OPL {
 class OPL;

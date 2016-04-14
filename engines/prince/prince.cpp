@@ -41,6 +41,7 @@
 #include "engines/advancedDetector.h"
 
 #include "audio/audiostream.h"
+#include "audio/decoders/wave.h"
 
 #include "prince/prince.h"
 #include "prince/font.h"

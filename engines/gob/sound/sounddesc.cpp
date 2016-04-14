@@ -24,7 +24,6 @@
 #include "common/memstream.h"
 #include "common/textconsole.h"
 
-#include "audio/mixer.h"
 #include "audio/decoders/raw.h"
 #include "audio/decoders/wave.h"
 

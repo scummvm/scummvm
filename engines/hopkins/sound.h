@@ -25,9 +25,15 @@
 
 #include "common/scummsys.h"
 #include "common/str.h"
-#include "audio/audiostream.h"
-#include "audio/decoders/wave.h"
 #include "audio/mixer.h"
+
+namespace Audio {
+class RewindableAudioStream;
+}
+
+namespace Common {
+class SeekableReadStream;
+}
 
 namespace Hopkins {
 

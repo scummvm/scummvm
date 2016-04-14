@@ -25,13 +25,10 @@
 #ifndef SAGA_MUSIC_H
 #define SAGA_MUSIC_H
 
+#include "audio/mididrv.h"
 #include "audio/midiplayer.h"
 #include "audio/midiparser.h"
 #include "audio/mixer.h"
-#include "audio/decoders/mp3.h"
-#include "audio/decoders/vorbis.h"
-#include "audio/decoders/flac.h"
-#include "common/mutex.h"
 
 namespace Saga {
 

@@ -28,6 +28,8 @@
  *
  */
 
+#include "common/file.h"
+#include "audio/audiostream.h"
 #include "audio/decoders/raw.h"
 
 #include "lab/lab.h"

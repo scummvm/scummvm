@@ -26,9 +26,6 @@
 
 #include "gui/message.h"
 
-#include "audio/mixer.h"
-#include "audio/mods/infogrames.h"
-
 #include "gob/gob.h"
 #include "gob/inter.h"
 #include "gob/global.h"

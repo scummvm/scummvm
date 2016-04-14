@@ -22,8 +22,8 @@
 
 
 #include "common/scummsys.h"
-#include "common/util.h"
 
+#include "audio/audiostream.h"
 #include "audio/decoders/flac.h"
 #include "audio/decoders/voc.h"
 #include "audio/decoders/vorbis.h"
@@ -31,8 +31,6 @@
 
 #include "scumm/resource.h"
 #include "scumm/scumm.h"
-#include "scumm/util.h"
-#include "scumm/imuse_digi/dimuse.h"
 #include "scumm/imuse_digi/dimuse_bndmgr.h"
 #include "scumm/imuse_digi/dimuse_codecs.h"
 #include "scumm/imuse_digi/dimuse_sndmgr.h"

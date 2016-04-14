@@ -21,7 +21,6 @@
  */
 
 #include "audio/mididrv.h"
-#include "audio/mixer.h"
 
 #include "groovie/script.h"
 #include "groovie/cell.h"

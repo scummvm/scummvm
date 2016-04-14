@@ -24,6 +24,7 @@
 #define NEVERHOOD_SOUND_H
 
 #include "audio/audiostream.h"
+#include "audio/mixer.h"
 #include "common/array.h"
 #include "graphics/surface.h"
 #include "neverhood/neverhood.h"

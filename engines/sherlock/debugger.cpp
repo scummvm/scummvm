@@ -26,9 +26,6 @@
 #include "sherlock/scalpel/scalpel.h"
 #include "sherlock/scalpel/scalpel_debugger.h"
 #include "sherlock/tattoo/tattoo_debugger.h"
-#include "audio/mixer.h"
-#include "audio/decoders/aiff.h"
-#include "audio/decoders/wave.h"
 #include "common/str-array.h"
 
 namespace Sherlock {

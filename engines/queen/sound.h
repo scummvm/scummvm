@@ -23,10 +23,11 @@
 #ifndef QUEEN_SOUND_H
 #define QUEEN_SOUND_H
 
-#include "common/util.h"
 #include "audio/mixer.h"
-#include "audio/mods/rjp1.h"
-#include "queen/defs.h"
+
+namespace Audio {
+class AudioStream;
+}
 
 namespace Common {
 class File;

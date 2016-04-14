@@ -30,6 +30,7 @@
 #include "avalanche/nim.h"
 
 #include "gui/saveload.h"
+#include "common/system.h"
 #include "common/translation.h"
 
 namespace Avalanche {

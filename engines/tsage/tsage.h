@@ -24,9 +24,6 @@
 #define TSAGE_H
 
 #include "engines/engine.h"
-#include "common/rect.h"
-#include "audio/mixer.h"
-#include "common/file.h"
 #include "gui/debugger.h"
 
 #include "tsage/core.h"

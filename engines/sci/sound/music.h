@@ -27,11 +27,15 @@
 #include "common/mutex.h"
 
 #include "audio/mixer.h"
-#include "audio/audiostream.h"
 
 #include "sci/sci.h"
 #include "sci/resource.h"
 #include "sci/sound/drivers/mididriver.h"
+
+namespace Audio {
+class LoopingAudioStream;
+class RewindableAudioStream;
+}
 
 namespace Sci {
 

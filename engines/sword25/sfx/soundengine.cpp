@@ -36,6 +36,7 @@
 #include "sword25/kernel/inputpersistenceblock.h"
 #include "sword25/kernel/outputpersistenceblock.h"
 
+#include "audio/audiostream.h"
 #include "audio/decoders/vorbis.h"
 
 #include "common/system.h"

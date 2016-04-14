@@ -23,8 +23,11 @@
 #ifndef TOLTECS_MOVIE_H
 #define TOLTECS_MOVIE_H
 
-#include "audio/audiostream.h"
 #include "audio/mixer.h"	// for Audio::SoundHandle
+
+namespace Audio {
+class QueuingAudioStream;
+}
 
 namespace Toltecs {
 

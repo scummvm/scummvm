@@ -37,6 +37,7 @@
 #include "audio/decoders/raw.h"
 #include "audio/audiostream.h"
 #include "audio/midiparser.h"
+#include "audio/softsynth/pcspk.h"
 
 #include "hugo/hugo.h"
 #include "hugo/game.h"

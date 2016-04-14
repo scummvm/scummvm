@@ -26,15 +26,17 @@
 #include "common/scummsys.h"
 #include "common/str.h"
 
-#include "audio/audiostream.h"
 #include "audio/mixer.h"
-#include "audio/decoders/adpcm.h"
 
 #include "mohawk/mohawk.h"
 #include "mohawk/resource.h"
 
 class MidiDriver;
 class MidiParser;
+
+namespace Audio {
+class RewindableAudioStream;
+}
 
 namespace Mohawk {
 

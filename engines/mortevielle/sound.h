@@ -28,10 +28,13 @@
 #ifndef MORTEVIELLE_SOUND_H
 #define MORTEVIELLE_SOUND_H
 
-#include "audio/audiostream.h"
 #include "audio/mixer.h"
 #include "common/mutex.h"
 #include "common/queue.h"
+
+namespace Audio {
+class QueuingAudioStream;
+}
 
 namespace Mortevielle {
 class MortevielleEngine;

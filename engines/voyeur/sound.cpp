@@ -22,6 +22,8 @@
 
 #include "audio/audiostream.h"
 #include "audio/decoders/raw.h"
+#include "audio/decoders/voc.h"
+#include "common/file.h"
 #include "common/memstream.h"
 #include "voyeur/sound.h"
 #include "voyeur/staticres.h"

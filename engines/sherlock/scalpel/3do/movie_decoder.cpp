@@ -25,7 +25,6 @@
 #include "common/textconsole.h"
 
 #include "audio/audiostream.h"
-#include "audio/decoders/raw.h"
 #include "audio/decoders/3do.h"
 
 #include "sherlock/scalpel/3do/movie_decoder.h"

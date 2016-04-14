@@ -25,6 +25,7 @@
 #include "teenagent/pack.h"
 #include "teenagent/teenagent.h"
 
+#include "common/debug.h"
 #include "common/endian.h"
 #include "common/stream.h"
 #include "common/textconsole.h"

@@ -44,14 +44,16 @@
 #include "common/mutex.h"
 #include "common/config-manager.h"
 
-#include "audio/mixer.h"
 #include "audio/fmopl.h"
-#include "audio/audiostream.h"
 
 // Basic AdLib Programming:
 // http://www.gamedev.net/reference/articles/article446.asp
 
 #define CALLBACKS_PER_SECOND 72
+
+namespace Audio {
+class Mixer;
+}
 
 namespace Kyra {
 

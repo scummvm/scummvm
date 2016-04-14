@@ -28,6 +28,8 @@
 #include "avalanche/avalanche.h"
 #include "avalanche/nim.h"
 
+#include "common/system.h"
+
 namespace Avalanche {
 
 const char * const Nim::kNames[2] = {"Avalot", "Dogfood"};

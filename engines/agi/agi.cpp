@@ -37,7 +37,6 @@
 #include "graphics/cursorman.h"
 
 #include "audio/mididrv.h"
-#include "audio/mixer.h"
 
 #include "agi/agi.h"
 #include "agi/font.h"

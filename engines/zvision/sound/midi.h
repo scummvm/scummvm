@@ -23,7 +23,7 @@
 #ifndef ZVISION_MIDI_H
 #define ZVISION_MIDI_H
 
-#include "audio/mididrv.h"
+class MidiDriver;
 
 namespace ZVision {
 

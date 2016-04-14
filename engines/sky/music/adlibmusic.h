@@ -24,7 +24,10 @@
 #define SKY_MUSIC_ADLIBMUSIC_H
 
 #include "sky/music/musicbase.h"
-#include "audio/audiostream.h"
+
+namespace Audio {
+class Mixer;
+}
 
 namespace OPL {
 class OPL;

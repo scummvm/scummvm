@@ -23,12 +23,9 @@
 #ifndef SHERLOCK_MUSIC_H
 #define SHERLOCK_MUSIC_H
 
-#include "audio/midiplayer.h"
 #include "audio/midiparser.h"
-//#include "audio/mididrv.h"
-#include "sherlock/scalpel/drivers/mididriver.h"
+#include "audio/mididrv.h"
 // for 3DO digital music
-#include "audio/audiostream.h"
 #include "audio/mixer.h"
 #include "common/mutex.h"
 #include "common/str-array.h"

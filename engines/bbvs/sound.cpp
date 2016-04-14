@@ -21,6 +21,7 @@
  */
 
 #include "bbvs/sound.h"
+#include "audio/audiostream.h"
 #include "audio/decoders/aiff.h"
 #include "common/debug.h"
 #include "common/file.h"

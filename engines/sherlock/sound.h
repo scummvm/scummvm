@@ -25,11 +25,8 @@
 
 #include "common/scummsys.h"
 #include "common/str.h"
-#include "audio/audiostream.h"
 #include "audio/mixer.h"
 #include "access/files.h"
-#include "audio/midiplayer.h"
-#include "audio/midiparser.h"
 
 namespace Sherlock {
 

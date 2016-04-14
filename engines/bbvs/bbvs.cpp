@@ -34,6 +34,7 @@
 #include "bbvs/minigames/minigame.h"
 
 #include "audio/audiostream.h"
+#include "audio/decoders/aiff.h"
 #include "common/config-manager.h"
 #include "common/debug-channels.h"
 #include "common/error.h"

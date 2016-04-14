@@ -28,6 +28,7 @@
 #include "common/system.h"
 #include "common/debug.h"
 #include "common/debug-channels.h"
+#include "common/error.h"
 #include "common/textconsole.h"
 #include "common/rect.h"
 

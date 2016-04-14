@@ -29,7 +29,6 @@
 #include "audio/midiparser.h"
 // Miles Audio for Discworld 1
 #include "audio/miles.h"
-#include "audio/decoders/adpcm.h"
 
 #include "backends/audiocd/audiocd.h"
 

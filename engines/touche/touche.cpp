@@ -32,6 +32,7 @@
 #include "common/keyboard.h"
 #include "common/textconsole.h"
 
+#include "audio/audiostream.h"
 #include "audio/mixer.h"
 
 #include "engines/util.h"

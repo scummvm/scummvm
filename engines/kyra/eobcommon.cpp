@@ -24,16 +24,14 @@
 
 #include "kyra/kyra_rpg.h"
 #include "kyra/resource.h"
-#include "kyra/sound_intern.h"
+#include "engines/kyra/sound.h"
+#include "engines/kyra/sound_adlib.h"
 #include "kyra/script_eob.h"
 #include "kyra/timer.h"
 #include "kyra/debugger.h"
 
 #include "common/config-manager.h"
 #include "common/translation.h"
-
-#include "audio/mididrv.h"
-#include "audio/mixer.h"
 
 #include "backends/keymapper/keymapper.h"
 

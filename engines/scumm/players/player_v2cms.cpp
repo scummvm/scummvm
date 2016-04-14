@@ -22,7 +22,6 @@
 
 #include "scumm/players/player_v2cms.h"
 #include "scumm/scumm.h"
-#include "audio/mididrv.h"
 #include "audio/mixer.h"
 #include "audio/softsynth/cms.h"
 
