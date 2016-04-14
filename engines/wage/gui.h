@@ -68,7 +68,6 @@ enum {
 	kMenuDropdownPadding = 14,
 	kMenuDropdownItemHeight = 16,
 	kMenuItemHeight = 20,
-	kBorderWidth = 17,
 	kDesktopArc = 7,
 	kComponentsPadding = 10,
 	kCursorHeight = 12
@@ -79,13 +78,6 @@ enum {
 	kPatternStripes = 2,
 	kPatternCheckers = 3,
 	kPatternCheckers2 = 4
-};
-
-enum {
-	kBorderNone = 0,
-	kBorderScrollUp,
-	kBorderScrollDown,
-	kBorderCloseButton
 };
 
 class Gui {
@@ -116,6 +108,8 @@ public:
 	void disableUndo();
 	void disableAllMenus();
 	void enableNewGameMenus();
+
+	bool builtInFonts() { return _builtInFonts; }
 
 private:
 	void drawScene();

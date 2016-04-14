@@ -57,28 +57,51 @@ enum WindowType {
 	kWindowConsole
 };
 
+enum {
+	kBorderWidth = 17
+};
+
+enum BorderHighlight {
+	kBorderNone = 0,
+	kBorderScrollUp,
+	kBorderScrollDown,
+	kBorderCloseButton
+};
+
 class MacWindow {
 public:
-	MacWindow(bool scrollable, int id);
+	MacWindow(bool scrollable);
 	~MacWindow();
 	void move(int x, int y);
 	void resize(int w, int h);
-	void draw(Graphics::Surface *g);
+	void draw(Graphics::Surface *g, bool forceRedraw = false);
 	void setActive(bool active);
 	Graphics::ManagedSurface *getSurface() { return &_surface; }
+	void setTitle(Common::String &title) { _title = title; }
+	void setHighlight(BorderHighlight highlightedPart) { _highlightedPart = highlightedPart; }
+	void setScroll(float scrollPos, float scrollSize) { _scrollPos = scrollPos; _scrollSize = scrollSize; }
 
 private:
 	void drawBorder();
+	void drawBox(Graphics::ManagedSurface *g, int x, int y, int w, int h);
+	void fillRect(Graphics::ManagedSurface *g, int x, int y, int w, int h, int color = kColorBlack);
+	const Graphics::Font *getTitleFont();
+	bool builtInFonts();
 
 private:
 	Graphics::ManagedSurface _surface;
 	Graphics::ManagedSurface _borderSurface;
 	bool _scrollable;
-	int _id;
 	bool _active;
 	bool _borderIsDirty;
 
+	BorderHighlight _highlightedPart;
+	float _scrollPos, _scrollSize;
+
 	Common::Rect _dims;
+	Common::Rect _borderDims;
+
+	Common::String _title;
 };
 
 } // End of namespace Wage

@@ -49,6 +49,8 @@
 #include "common/array.h"
 
 #include "graphics/surface.h"
+
+#include "wage/wage.h"
 #include "wage/macwindow.h"
 #include "wage/macwindowmanager.h"
 
@@ -65,7 +67,7 @@ MacWindowManager::~MacWindowManager() {
 }
 
 int MacWindowManager::add(bool scrollable) {
-    MacWindow *w = new MacWindow(scrollable, _lastId);
+    MacWindow *w = new MacWindow(scrollable);
 
     _windows.push_back(w);
     _windowStack.push_back(w);
@@ -93,12 +95,10 @@ void MacWindowManager::setActive(int id) {
 }
 
 void MacWindowManager::draw(Graphics::Surface *g) {
-    if (_fullRefresh) {
-        for (Common::List<MacWindow *>::const_iterator it = _windowStack.begin(); it != _windowStack.end(); it++)
-            (*it)->draw(g);
-    } else {
-        _windowStack.back()->draw(g);
-    }
+    for (Common::List<MacWindow *>::const_iterator it = _windowStack.begin(); it != _windowStack.end(); it++)
+        (*it)->draw(g, _fullRefresh);
+
+    _fullRefresh = false;
 }
 
 } // End of namespace Wage

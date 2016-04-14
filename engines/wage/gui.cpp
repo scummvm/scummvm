@@ -55,6 +55,8 @@
 #include "wage/wage.h"
 #include "wage/design.h"
 #include "wage/entities.h"
+#include "wage/macwindow.h"
+#include "wage/macwindowmanager.h"
 #include "wage/menu.h"
 #include "wage/gui.h"
 #include "wage/world.h"
@@ -65,7 +67,8 @@ static const byte palette[] = {
 	0, 0, 0,           // Black
 	0x80, 0x80, 0x80,  // Gray
 	0xff, 0xff, 0xff,  // White
-	0x00, 0xff, 0x00   // Green
+	0x00, 0xff, 0x00,  // Green
+	0x00, 0x7f, 0x00   // Green2
 };
 
 static byte fillPatterns[][8] = { { 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff }, // kPatternSolid
