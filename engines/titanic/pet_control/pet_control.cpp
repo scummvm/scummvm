@@ -354,4 +354,15 @@ void CPetControl::displayMessage(const CString &msg) {
 	error("TODO: CPetControl::displayMessage");
 }
 
+CGameObject *CPetControl::getFirstObject() const {
+	return static_cast<CGameObject *>(getFirstChild());
+}
+
+CGameObject *CPetControl::getNextObject(CGameObject *prior) const {
+	if (!prior || prior->getParent() != this)
+		return nullptr;
+
+	return static_cast<CGameObject *>(prior->getNextSibling());
+}
+
 } // End of namespace Titanic
