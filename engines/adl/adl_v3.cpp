@@ -81,7 +81,7 @@ void AdlEngine_v3::setupOpcodeTables() {
 	Opcode(o1_varSet);
 	// 0x04
 	Opcode(o1_listInv);
-	Opcode(o2_moveItem);
+	Opcode(o3_moveItem);
 	Opcode(o1_setRoom);
 	Opcode(o1_setCurPic);
 	// 0x08
@@ -136,6 +136,7 @@ int AdlEngine_v3::o3_skipOneCommand(ScriptEnv &e) {
 	return -1;
 }
 
+// FIXME: Rename "isLineArt" and look at code duplication
 int AdlEngine_v3::o3_isItemInRoom(ScriptEnv &e) {
 	OP_DEBUG_2("\t&& GET_ITEM_ROOM(%s) == %s", itemStr(e.arg(1)).c_str(), itemRoomStr(e.arg(2)).c_str());
 
@@ -166,6 +167,25 @@ int AdlEngine_v3::o3_isNounNotInRoom(ScriptEnv &e) {
 		}
 
 	return 1;
+}
+
+int AdlEngine_v3::o3_moveItem(ScriptEnv &e) {
+	OP_DEBUG_2("\tSET_ITEM_ROOM(%s, %s)", itemStr(e.arg(1)).c_str(), itemRoomStr(e.arg(2)).c_str());
+
+	byte room = roomArg(e.arg(2));
+
+	Item &item = getItem(e.arg(1));
+
+	if (item.room == _roomOnScreen)
+		_picOnScreen = 0;
+
+	// Set items that move from inventory to a room to state "dropped"
+	if (item.room == IDI_ANY && room != IDI_VOID_ROOM)
+		item.state = IDI_ITEM_DROPPED;
+
+	item.room = room;
+	item.isLineArt = _curDisk;
+	return 2;
 }
 
 } // End of namespace Adl
