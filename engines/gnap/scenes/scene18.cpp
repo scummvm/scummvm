@@ -770,11 +770,9 @@ void GnapEngine::scene18_run() {
 
 	if (isFlag(kGFGnapControlsToyUFO))
 		deleteSurface(&_s18_cowboyHatSurface);
-
 }
 
 void GnapEngine::scene18_updateAnimations() {
-
 	if (_gameSys->getAnimationStatus(0) == 2) {
 		_gameSys->setAnimation(0, 0, 0);
 		switch (_gnapActionStatus) {
@@ -1016,7 +1014,6 @@ void GnapEngine::scene18_updateAnimations() {
 			scene18_platEndPhoning(true);
 		}
 	}
-
 }
 
 } // End of namespace Gnap

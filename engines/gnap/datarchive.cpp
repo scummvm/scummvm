@@ -72,7 +72,7 @@ byte *DatArchive::load(int index) {
 
 DatManager::DatManager() {
 	for (int i = 0; i < kMaxDatArchives; ++i)
-		_datArchives[i] = 0;
+		_datArchives[i] = nullptr;
 }
 
 DatManager::~DatManager() {
@@ -87,7 +87,7 @@ void DatManager::open(int index, const char *filename) {
 
 void DatManager::close(int index) {
 	delete _datArchives[index];
-	_datArchives[index] = 0;
+	_datArchives[index] = nullptr;
 }
 
 byte *DatManager::loadResource(int resourceId) {

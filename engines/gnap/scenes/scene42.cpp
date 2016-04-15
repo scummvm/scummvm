@@ -145,22 +145,19 @@ void GnapEngine::scene42_run() {
 	}
 
 	while (!_sceneDone) {
-	
 		if (!isSoundPlaying(0x1094B))
 			playSound(0x1094B, true);
-	
+
 		updateMouseCursor();
 		updateCursorByHotspot();
-	
+
 		testWalk(0, 0, -1, -1, -1, -1);
-	
+
 		_sceneClickedHotspot = getClickedHotspotId();
 		updateGrabCursorSprite(0, 0);
-	
+
 		if (isFlag(kGFGnapControlsToyUFO)) {
-
 			switch (_sceneClickedHotspot) {
-
 			case kHSUfoExitLeft:
 				if (_toyUfoActionStatus < 0) {
 					_isLeavingScene = true;
@@ -194,7 +191,6 @@ void GnapEngine::scene42_run() {
 				runMenu();
 				scene42_updateHotspots();
 				break;
-
 			}
 		} else {
 			switch (_sceneClickedHotspot) {
@@ -203,7 +199,7 @@ void GnapEngine::scene42_run() {
 				scene42_updateHotspots();
 				_timers[4] = getRandom(20) + 30;
 				break;
-			
+
 			case kHSPlatypus:
 				if (_gnapActionStatus < 0) {
 					if (_grabCursorSpriteIndex >= 0) {
@@ -277,7 +273,7 @@ void GnapEngine::scene42_run() {
 					}
 				}
 				break;
-			
+
 			case kHSChickenLeg:
 				if (_grabCursorSpriteIndex >= 0) {
 					playGnapShowCurrItem(_hotspotsWalkPos[kHSChickenLeg].x, _hotspotsWalkPos[kHSChickenLeg].y, _hotspotsWalkPos[kHSChickenLeg].x - 1, 0);
@@ -297,17 +293,16 @@ void GnapEngine::scene42_run() {
 					}
 				}
 				break;
-			
+
 			case kHSWalkArea1:
 			case kHSWalkArea2:
 				if (_gnapActionStatus < 0)
 					gnapWalkTo(-1, -1, -1, -1, 1);
 				break;
-			
+
 			}
-		
 		}
-	
+
 		if (_mouseClickState._left && _gnapActionStatus < 0) {
 			_mouseClickState._left = false;
 			if (isFlag(kGFGnapControlsToyUFO)) {
@@ -317,11 +312,11 @@ void GnapEngine::scene42_run() {
 				gnapWalkTo(-1, -1, -1, -1, 1);
 			}
 		}
-	
+
 		scene42_updateAnimations();
-	
+
 		toyUfoCheckTimer();
-	
+
 		if (!_isLeavingScene) {
 			if (_beaverActionStatus < 0 && !isFlag(kGFGnapControlsToyUFO))
 				updateBeaverIdleSequence();
@@ -353,20 +348,18 @@ void GnapEngine::scene42_run() {
 				}
 			}
 		}
-	
+
 		checkGameKeys();
-	
+
 		if (isKeyStatus1(8)) {
 			clearKeyStatus1(8);
 			runMenu();
 			scene42_updateHotspots();
 			_timers[4] = getRandom(20) + 30;
 		}
-		
-		gameUpdateTick();
-	
-	}
 
+		gameUpdateTick();
+	}
 }
 
 void GnapEngine::scene42_updateAnimations() {
@@ -447,7 +440,7 @@ void GnapEngine::scene42_updateAnimations() {
 			break;
 		}
 	}
-	
+
 	if (_gameSys->getAnimationStatus(2) == 2 && _s42_nextBBQVendorSequenceId != -1) {
 		_gameSys->insertSequence(_s42_nextBBQVendorSequenceId, 1, _s42_currBBQVendorSequenceId, 1, kSeqSyncWait, 0, 0, 0);
 		_gameSys->setAnimation(_s42_nextBBQVendorSequenceId, 1, 2);
@@ -455,7 +448,7 @@ void GnapEngine::scene42_updateAnimations() {
 		_s42_nextBBQVendorSequenceId = -1;
 		_timers[4] = getRandom(20) + 30;
 	}
-	
+
 	if (_gameSys->getAnimationStatus(3) == 2) {
 		switch (_toyUfoActionStatus) {
 		case kASToyUfoLeaveScene:
@@ -494,7 +487,6 @@ void GnapEngine::scene42_updateAnimations() {
 		}
 		_toyUfoActionStatus = -1;
 	}
-
 }
 
 } // End of namespace Gnap

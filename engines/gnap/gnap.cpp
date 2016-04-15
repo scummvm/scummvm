@@ -959,7 +959,6 @@ void GnapEngine::startSoundTimerC(int timerIndex) {
 }
 
 int GnapEngine::playSoundC() {
-
 	static const int kSoundIdsC[] = {
 		0x918, 0x91F, 0x920, 0x922, 0x923, 0x924,
 		0x926
