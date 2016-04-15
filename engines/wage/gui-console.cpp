@@ -142,7 +142,7 @@ void Gui::flowText(Common::String &str) {
 		draw();
 }
 
-void Gui::renderConsole(Graphics::Surface *g, Common::Rect &r) {
+void Gui::renderConsole(Graphics::ManagedSurface *g, Common::Rect &r) {
 	bool fullRedraw = _consoleFullRedraw;
 	bool textReflow = false;
 	int surfW = r.width() + kConWOverlap * 2;

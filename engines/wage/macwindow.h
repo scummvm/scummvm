@@ -75,7 +75,7 @@ public:
 	void move(int x, int y);
 	void resize(int w, int h);
 	void setDimensions(const Common::Rect &r);
-	void draw(Graphics::Surface *g, bool forceRedraw = false);
+	void draw(Graphics::ManagedSurface *g, bool forceRedraw = false);
 	void setActive(bool active);
 	Graphics::ManagedSurface *getSurface() { return &_surface; }
 	void setTitle(Common::String &title) { _title = title; }

@@ -100,7 +100,7 @@ void MacWindow::setDimensions(const Common::Rect &r) {
 	move(r.left, r.top);
 }
 
-void MacWindow::draw(Graphics::Surface *g, bool forceRedraw) {
+void MacWindow::draw(Graphics::ManagedSurface *g, bool forceRedraw) {
 	if (_borderIsDirty || forceRedraw)
 		drawBorder();
 }
@@ -124,7 +124,7 @@ const int arrowPixels[ARROW_H][ARROW_W] = {
 		{1,1,1,1,1,1,1,1,1,1,1,1}};
 
 static void drawPixelInverted(int x, int y, int color, void *data) {
-	Graphics::Surface *surface = (Graphics::Surface *)data;
+	Graphics::ManagedSurface *surface = (Graphics::ManagedSurface *)data;
 
 	if (x >= 0 && x < surface->w && y >= 0 && y < surface->h) {
 		byte *p = (byte *)surface->getBasePtr(x, y);

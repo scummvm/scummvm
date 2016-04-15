@@ -111,8 +111,8 @@ public:
 
 private:
 	Gui *_gui;
-	Graphics::Surface _screenCopy;
-	Graphics::Surface _tempSurface;
+	Graphics::ManagedSurface _screenCopy;
+	Graphics::ManagedSurface _tempSurface;
 
 private:
 	const Graphics::Font *getMenuFont();

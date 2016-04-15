@@ -60,7 +60,7 @@ public:
 	int add(bool scrollable);
 	void setActive(int id);
 
-	void draw(Graphics::Surface *g);
+	void draw(Graphics::ManagedSurface *g);
 
 	MacWindow *getWindow(int id) { return _windows[id]; }
 

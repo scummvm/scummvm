@@ -49,7 +49,7 @@
 #define WAGE_ENTITIES_H
 
 namespace Graphics {
-	struct Surface;
+	class ManagedSurface;
 }
 
 namespace Wage {
@@ -326,7 +326,7 @@ public:
 		return _textBounds == NULL ? NULL : new Common::Rect(*_textBounds);
 	}
 
-	void paint(Graphics::Surface *screen, int x, int y);
+	void paint(Graphics::ManagedSurface *screen, int x, int y);
 
 	const char *getFontName();
 };

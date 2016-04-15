@@ -74,7 +74,7 @@ public:
 
 private:
 	Gui *_gui;
-	Graphics::Surface _tempSurface;
+	Graphics::ManagedSurface _tempSurface;
 	Common::Rect _bbox;
 	Common::String _text;
 

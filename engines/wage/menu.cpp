@@ -397,7 +397,7 @@ void Menu::renderSubmenu(MenuItem *menu) {
 		}
 
 		if (!text.empty()) {
-			Graphics::Surface *s = &_gui->_screen;
+			Graphics::ManagedSurface *s = &_gui->_screen;
 			int tx = x, ty = y;
 
 			if (!menu->subitems[i]->enabled) {

@@ -51,7 +51,7 @@
 #include "common/str-array.h"
 #include "graphics/font.h"
 #include "graphics/fontman.h"
-#include "graphics/surface.h"
+#include "graphics/managed_surface.h"
 #include "common/rect.h"
 
 #include "wage/macwindow.h"
@@ -117,11 +117,11 @@ private:
 	void drawConsole();
 	void undrawCursor();
 	void drawDesktop();
-	void paintBorder(Graphics::Surface *g, Common::Rect &r, WindowType windowType, int highlightedPart = kBorderNone,
+	void paintBorder(Graphics::ManagedSurface *g, Common::Rect &r, WindowType windowType, int highlightedPart = kBorderNone,
 						float scrollPos = 0.0, float scrollSize = 0.0);
-	void renderConsole(Graphics::Surface *g, Common::Rect &r);
-	void drawBox(Graphics::Surface *g, int x, int y, int w, int h);
-	void fillRect(Graphics::Surface *g, int x, int y, int w, int h, int color = kColorBlack);
+	void renderConsole(Graphics::ManagedSurface *g, Common::Rect &r);
+	void drawBox(Graphics::ManagedSurface *g, int x, int y, int w, int h);
+	void fillRect(Graphics::ManagedSurface *g, int x, int y, int w, int h, int color = kColorBlack);
 	void loadFonts();
 	void flowText(Common::String &str);
 	const Graphics::Font *getConsoleFont();
@@ -132,7 +132,7 @@ private:
 	void updateTextSelection(int x, int y);
 
 public:
-	Graphics::Surface _screen;
+	Graphics::ManagedSurface _screen;
 	int _cursorX, _cursorY;
 	bool _cursorState;
 	Common::Rect _consoleTextArea;
@@ -149,7 +149,7 @@ public:
 	bool _menuDirty;
 
 private:
-	Graphics::Surface _console;
+	Graphics::ManagedSurface _console;
 	Menu *_menu;
 	Scene *_scene;
 	bool _sceneDirty;

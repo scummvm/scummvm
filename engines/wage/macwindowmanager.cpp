@@ -48,7 +48,7 @@
 #include "common/list.h"
 #include "common/array.h"
 
-#include "graphics/surface.h"
+#include "graphics/managed_surface.h"
 
 #include "wage/wage.h"
 #include "wage/macwindow.h"
@@ -94,7 +94,7 @@ void MacWindowManager::setActive(int id) {
     _fullRefresh = true;
 }
 
-void MacWindowManager::draw(Graphics::Surface *g) {
+void MacWindowManager::draw(Graphics::ManagedSurface *g) {
     for (Common::List<MacWindow *>::const_iterator it = _windowStack.begin(); it != _windowStack.end(); it++)
         (*it)->draw(g, _fullRefresh);
 

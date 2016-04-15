@@ -134,7 +134,7 @@ Scene::~Scene() {
 	delete _textBounds;
 }
 
-void Scene::paint(Graphics::Surface *surface, int x, int y) {
+void Scene::paint(Graphics::ManagedSurface *surface, int x, int y) {
 	Common::Rect r(x + 5, y + 5, _design->getBounds()->width() + x - 10, _design->getBounds()->height() + y - 10);
 	surface->fillRect(r, kColorWhite);
 

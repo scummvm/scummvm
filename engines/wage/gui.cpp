@@ -314,14 +314,14 @@ void Gui::drawConsole() {
 	paintBorder(&_screen, _consoleTextArea, kWindowConsole);
 }
 
-void Gui::drawBox(Graphics::Surface *g, int x, int y, int w, int h) {
+void Gui::drawBox(Graphics::ManagedSurface *g, int x, int y, int w, int h) {
 	Common::Rect r(x, y, x + w + 1, y + h + 1);
 
 	g->fillRect(r, kColorWhite);
 	g->frameRect(r, kColorBlack);
 }
 
-void Gui::fillRect(Graphics::Surface *g, int x, int y, int w, int h, int color) {
+void Gui::fillRect(Graphics::ManagedSurface *g, int x, int y, int w, int h, int color) {
 	Common::Rect r(x, y, x + w, y + h);
 
 	g->fillRect(r, color);
@@ -338,7 +338,7 @@ const int arrowPixels[ARROW_H][ARROW_W] = {
 		{1,1,1,1,1,1,1,1,1,1,1,1}};
 
 static void drawPixelInverted(int x, int y, int color, void *data) {
-	Graphics::Surface *surface = (Graphics::Surface *)data;
+	Graphics::ManagedSurface *surface = (Graphics::ManagedSurface *)data;
 
 	if (x >= 0 && x < surface->w && y >= 0 && y < surface->h) {
 		byte *p = (byte *)surface->getBasePtr(x, y);
@@ -347,7 +347,7 @@ static void drawPixelInverted(int x, int y, int color, void *data) {
 	}
 }
 
-void Gui::paintBorder(Graphics::Surface *g, Common::Rect &r, WindowType windowType, int highlightedPart, float scrollPos, float scrollSize) {
+void Gui::paintBorder(Graphics::ManagedSurface *g, Common::Rect &r, WindowType windowType, int highlightedPart, float scrollPos, float scrollSize) {
 	bool active = false, scrollable = false, closeable = false, drawTitle = false;
 	const int size = kBorderWidth;
 	int x = r.left - size;
