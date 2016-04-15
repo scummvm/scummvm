@@ -139,7 +139,7 @@ static void drawPixelInverted(int x, int y, int color, void *data) {
 void MacWindow::drawBorder() {
 	_borderIsDirty = false;
 
-	bool active = _active, scrollable = _scrollable, closeable = _active, drawTitle = _title.empty();
+	bool active = _active, scrollable = _scrollable, closeable = _active, drawTitle = !_title.empty();
 	const int size = kBorderWidth;
 	int x = 0;
 	int y = 0;
