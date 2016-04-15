@@ -219,6 +219,9 @@ byte AdlEngine::inputKey(bool showCursor) const {
 void AdlEngine::loadWords(Common::ReadStream &stream, WordMap &map, Common::StringArray &pri) const {
 	uint index = 0;
 
+	map.clear();
+	pri.clear();
+
 	while (1) {
 		++index;
 
@@ -255,6 +258,8 @@ void AdlEngine::loadWords(Common::ReadStream &stream, WordMap &map, Common::Stri
 }
 
 void AdlEngine::readCommands(Common::ReadStream &stream, Commands &commands) {
+	commands.clear();
+
 	while (1) {
 		Command command;
 		command.room = stream.readByte();

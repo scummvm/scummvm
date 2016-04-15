@@ -49,9 +49,23 @@ namespace Adl {
 #define IDI_HR6_MSG_ITEM_NOT_HERE      254
 #define IDI_HR6_MSG_THANKS_FOR_PLAYING 252
 
+struct DiskDataDesc {
+	byte track;
+	byte sector;
+	byte offset;
+	byte volume;
+};
+
 class HiRes6Engine : public AdlEngine_v3 {
 public:
-	HiRes6Engine(OSystem *syst, const AdlGameDescription *gd) : AdlEngine_v3(syst, gd), _currVerb(0), _currNoun(0) { }
+	HiRes6Engine(OSystem *syst, const AdlGameDescription *gd) :
+			AdlEngine_v3(syst, gd),
+			_boot(nullptr),
+			_currVerb(0),
+			_currNoun(0) {
+	}
+
+	~HiRes6Engine() { delete _boot; }
 
 private:
 	// AdlEngine
@@ -65,7 +79,11 @@ private:
 	void printString(const Common::String &str);
 	void applyDataBlockOffset(byte &track, byte &sector) const;
 
+	void loadDisk(byte disk);
+
+	DiskImage_DSK *_boot;
 	byte _currVerb, _currNoun;
+	Common::Array<DiskDataDesc> _diskDataDesc;
 };
 
 } // End of namespace Adl

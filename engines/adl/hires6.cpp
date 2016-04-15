@@ -109,13 +109,13 @@ void HiRes6Engine::runIntro() const {
 }
 
 void HiRes6Engine::init() {
-	DiskImage_DSK *boot(new DiskImage_DSK());
+	_boot = new DiskImage_DSK();
 	_graphics = new Graphics_v2(*_display);
 
-	if (!boot->open(disks[0]))
+	if (!_boot->open(disks[0]))
 		error("Failed to open disk image '%s'", disks[0]);
 
-	StreamPtr stream(loadSectors(boot, 0x7));
+	StreamPtr stream(loadSectors(_boot, 0x7));
 
 	// Read parser messages
 	_strings.verbError = readStringAt(*stream, 0x666);
@@ -140,13 +140,13 @@ void HiRes6Engine::init() {
 	_messageIds.thanksForPlaying = IDI_HR6_MSG_THANKS_FOR_PLAYING;
 
 	// Item descriptions
-	stream.reset(loadSectors(boot, 0x6, 0xb, 2));
+	stream.reset(loadSectors(_boot, 0x6, 0xb, 2));
 	stream->seek(0x34);
 	for (uint i = 0; i < IDI_HR6_NUM_ITEM_DESCS; ++i)
 		_itemDesc.push_back(readString(*stream, 0xff));
 
 	// Load dropped item offsets
-	stream.reset(boot->createReadStream(0x8, 0x9, 0x16));
+	stream.reset(_boot->createReadStream(0x8, 0x9, 0x16));
 	for (uint i = 0; i < IDI_HR6_NUM_ITEM_OFFSETS; ++i) {
 		Common::Point p;
 		p.x = stream->readByte();
@@ -154,68 +154,129 @@ void HiRes6Engine::init() {
 		_itemOffsets.push_back(p);
 	}
 
+	// Location of game data for each disc
+	stream.reset(_boot->createReadStream(0x5, 0xa, 0x03));
+	for (uint i = 0; i < sizeof(disks); ++i) {
+		DiskDataDesc desc;
+		desc.track = stream->readByte();
+		desc.sector = stream->readByte();
+		desc.offset = stream->readByte();
+		desc.volume = stream->readByte();
+		_diskDataDesc.push_back(desc);
+	}
+}
+
+void HiRes6Engine::loadDisk(byte disk) {
+	delete _disk;
 	_disk = new DiskImage_NIB();
 
-	if (!_disk->open(disks[1]))
-		error("Failed to open disk image '%s'", disks[1]);
+	if (!_disk->open(disks[disk]))
+		error("Failed to open disk image '%s'", disks[disk]);
 
-	// Load item picture data
-	stream.reset(boot->createReadStream(0xb, 0xd, 0x08));
+	_curDisk = disk;
+
+	byte track = _diskDataDesc[disk].track;
+	byte sector = _diskDataDesc[disk].sector;
+	uint offset = _diskDataDesc[disk].offset;
+
+	applyDataBlockOffset(track, sector);
+
+	StreamPtr stream;
+
+	for (uint block = 0; block < 7; ++block) {
+		stream.reset(_disk->createReadStream(track, sector, offset, 1));
+
+		uint16 addr = stream->readUint16LE();
+		uint16 size = stream->readUint16LE();
+
+		stream.reset(_disk->createReadStream(track, sector, offset, size / 256 + 1));
+		stream->skip(4);
+
+		switch (addr) {
+		case 0x9000: {
+			// Messages
+			_messages.clear();
+			uint count = size / 4;
+			for (uint i = 0; i < count; ++i)
+				_messages.push_back(readDataBlockPtr(*stream));
+			break;
+		}
+		case 0x4a80: {
+			// Global pics
+			_pictures.clear();
+			byte picNr;
+			while ((picNr = stream->readByte()) != 0xff) {
+				if (stream->eos() || stream->err())
+					error("Error reading global pic list");
+				_pictures[picNr] = readDataBlockPtr(*stream);
+			}
+			break;
+		}
+		case 0x4000:
+			// Verbs
+			loadWords(*stream, _verbs, _priVerbs);
+			break;
+		case 0x1800:
+			// Nouns
+			loadWords(*stream, _nouns, _priNouns);
+			break;
+		case 0x0e00: {
+			// Rooms
+			uint count = size / 14 - 1;
+			stream->skip(14); // Skip invalid room 0
+
+			_state.rooms.clear();
+			for (uint i = 0; i < count; ++i) {
+				Room room;
+				stream->readByte(); // number
+				for (uint j = 0; j < 6; ++j)
+					room.connections[j] = stream->readByte();
+				room.data = readDataBlockPtr(*stream);
+				room.picture = stream->readByte();
+				room.curPicture = stream->readByte();
+				room.isFirstTime = stream->readByte();
+				_state.rooms.push_back(room);
+			}
+			break;
+		}
+		case 0x7b00:
+			// Global commands
+			readCommands(*stream, _globalCommands);
+			break;
+		case 0x9500:
+			// Room commands
+			readCommands(*stream, _roomCommands);
+			break;
+		default:
+			error("Unknown data block found (addr %04x; size %04x)", addr, size);
+		}
+
+		offset += 4 + size;
+		while (offset >= 256) {
+			offset -= 256;
+			++sector;
+			if (sector >= 16) {
+				sector = 0;
+				++track;
+			}
+		}
+	}
+
+	// Load item picture data (indexed on boot disk)
+	stream.reset(_boot->createReadStream(0xb, 0xd, 0x08));
+	_itemPics.clear();
 	for (uint i = 0; i < IDI_HR6_NUM_ITEM_PICS; ++i) {
 		stream->readByte();
 		_itemPics.push_back(readDataBlockPtr(*stream));
 	}
-
-	// Load global picture data
-	stream.reset(_disk->createReadStream(0x1f, 0xf, 0x16));
-	byte picNr;
-	while ((picNr = stream->readByte()) != 0xff) {
-		if (stream->eos() || stream->err())
-			error("Error reading global pic list");
-		_pictures[picNr] = readDataBlockPtr(*stream);
-	}
-
-	// Load message offsets
-	stream.reset(_disk->createReadStream(0x1f, 0xb, 0x16, 4));
-	for (uint i = 0; i < IDI_HR6_NUM_MESSAGES; ++i)
-		_messages.push_back(readDataBlockPtr(*stream));
-
-	// Load commands
-	stream.reset(_disk->createReadStream(0x21, 0x4, 0x85, 7));
-	readCommands(*stream, _roomCommands);
-
-	stream.reset(_disk->createReadStream(0x20, 0xf, 0x82, 5));
-	readCommands(*stream, _globalCommands);
-
-	// Load verbs
-	stream.reset(_disk->createReadStream(0x1f, 0xf, 0x56, 6));
-	loadWords(*stream, _verbs, _priVerbs);
-
-	// Load nouns
-	stream.reset(_disk->createReadStream(0x20, 0x5, 0x8e, 8));
-	loadWords(*stream, _nouns, _priNouns);
-
-	delete boot;
 }
 
 void HiRes6Engine::initGameState() {
 	_state.vars.resize(IDI_HR6_NUM_VARS);
 
-	StreamPtr stream(_disk->createReadStream(0x20, 0xd, 0x94, 2));
+	loadDisk(1);
 
-	for (uint i = 0; i < IDI_HR6_NUM_ROOMS; ++i) {
-		Room room;
-		stream->readByte(); // number
-		for (uint j = 0; j < 6; ++j)
-			room.connections[j] = stream->readByte();
-		room.data = readDataBlockPtr(*stream);
-		room.picture = stream->readByte();
-		room.curPicture = stream->readByte();
-		room.isFirstTime = stream->readByte();
-		_state.rooms.push_back(room);
-	}
-
-	stream.reset(_disk->createReadStream(0x22, 0x0, 0x07, 0));
+	StreamPtr stream(_boot->createReadStream(0x3, 0xe, 0x03));
 
 	byte id;
 	while ((id = stream->readByte()) != 0xff) {
