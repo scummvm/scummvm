@@ -291,13 +291,10 @@ void Gui::drawScene() {
 			_screen.pitch, _scene->_designBounds->left - 2, _scene->_designBounds->top - 2,
 			_scene->_designBounds->width(), _scene->_designBounds->height());
 
-
 	_sceneDirty = true;
 	_consoleDirty = true;
 	_menuDirty = true;
 	_consoleFullRedraw = true;
-
-	//_scene->paint(&_screen, _scene->_designBounds->left, _scene->_designBounds->top);
 
 	_sceneArea.left = _scene->_designBounds->left + kBorderWidth - 2;
 	_sceneArea.top = _scene->_designBounds->top + kBorderWidth - 2;
@@ -308,8 +305,6 @@ void Gui::drawScene() {
 	_consoleTextArea.top = _scene->_textBounds->top + kBorderWidth - 2;
 	_consoleTextArea.setWidth(_scene->_textBounds->width() - 2 * kBorderWidth);
 	_consoleTextArea.setHeight(_scene->_textBounds->height() - 2 * kBorderWidth);
-
-	//paintBorder(&_screen, _sceneArea, kWindowScene);
 }
 
 // Render console
@@ -317,8 +312,14 @@ void Gui::drawConsole() {
 	if (!_consoleDirty && !_consoleFullRedraw && !_bordersDirty && !_sceneDirty)
 		return;
 
-	renderConsole(&_screen, _consoleTextArea);
-	paintBorder(&_screen, _consoleTextArea, kWindowConsole);
+	MacWindow *w = _wm.getWindow(_consoleWindowId);
+	w->setDimensions(*_scene->_textBounds);
+	renderConsole(w->getSurface(), Common::Rect(kBorderWidth - 2, kBorderWidth - 2,
+				_scene->_textBounds->width() - kBorderWidth, _scene->_textBounds->height() - kBorderWidth));
+	w->draw(&_screen);
+	g_system->copyRectToScreen(_screen.getBasePtr(_scene->_textBounds->left - 2, _scene->_textBounds->top - 2),
+			_screen.pitch, _scene->_textBounds->left - 2, _scene->_textBounds->top - 2,
+			_scene->_textBounds->width(), _scene->_textBounds->height());
 }
 
 void Gui::drawBox(Graphics::ManagedSurface *g, int x, int y, int w, int h) {

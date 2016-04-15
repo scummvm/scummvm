@@ -142,7 +142,7 @@ void Gui::flowText(Common::String &str) {
 		draw();
 }
 
-void Gui::renderConsole(Graphics::ManagedSurface *g, Common::Rect &r) {
+void Gui::renderConsole(Graphics::ManagedSurface *g, const Common::Rect &r) {
 	bool fullRedraw = _consoleFullRedraw;
 	bool textReflow = false;
 	int surfW = r.width() + kConWOverlap * 2;
@@ -279,7 +279,6 @@ void Gui::renderConsole(Graphics::ManagedSurface *g, Common::Rect &r) {
 		rr.bottom = _screen.h - 1;
 
 	g->copyRectToSurface(_console, xcon, ycon, boundsR);
-	g_system->copyRectToScreen(g->getBasePtr(rr.left, rr.top), g->pitch, rr.left, rr.top, rr.width(), rr.height());
 }
 
 void Gui::drawInput() {

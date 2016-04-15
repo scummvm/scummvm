@@ -119,7 +119,7 @@ private:
 	void drawDesktop();
 	void paintBorder(Graphics::ManagedSurface *g, Common::Rect &r, WindowType windowType, int highlightedPart = kBorderNone,
 						float scrollPos = 0.0, float scrollSize = 0.0);
-	void renderConsole(Graphics::ManagedSurface *g, Common::Rect &r);
+	void renderConsole(Graphics::ManagedSurface *g, const Common::Rect &r);
 	void drawBox(Graphics::ManagedSurface *g, int x, int y, int w, int h);
 	void fillRect(Graphics::ManagedSurface *g, int x, int y, int w, int h, int color = kColorBlack);
 	void loadFonts();
