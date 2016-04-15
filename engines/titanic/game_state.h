@@ -123,6 +123,8 @@ public:
 	 * Adds a movie to the movie list
 	 */
 	void addMovie(CMovie *movie);
+
+	void inc38() { ++_field38; }
 };
 
 } // End of namespace Titanic

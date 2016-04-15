@@ -30,7 +30,7 @@ namespace Titanic {
 
 class CShipSetting : public CBackground {
 	bool EnterRoomMsg(CEnterRoomMsg *msg);
-private:
+public:
 	CString _string3;
 	Point _pos1;
 	CString _string4;

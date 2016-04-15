@@ -369,4 +369,12 @@ void CPetControl::addToInventory(CCarry *item) {
 	_inventory.addItem(item);
 }
 
+void CPetControl::moveToHiddenRoom(CTreeItem *item) {
+	CRoomItem *room = getHiddenRoom();
+	if (room) {
+		item->detach();
+		room->addUnder(item);
+	}
+}
+
 } // End of namespace Titanic

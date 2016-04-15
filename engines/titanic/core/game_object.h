@@ -132,6 +132,7 @@ protected:
 	void soundFn2(int val, int val2);
 	void petFn2(int val);
 	void petFn3(CTreeItem *item);
+	void incState38();
 
 	/**
 	 * Plays a sound
@@ -188,6 +189,16 @@ protected:
 	 * Finds an item in various system areas
 	 */
 	Found find(const CString &name, CGameObject **item, int findAreas);
+
+	/**
+	 * Moves the item from it's original position to be under the hidden room
+	 */
+	void moveToHiddenRoom();
+
+	/**
+	 * Moves the item from it's original position to be under the current view
+	 */
+	void moveToView();
 public:
 	int _field60;
 	CursorId _cursorId;

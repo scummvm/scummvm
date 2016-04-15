@@ -28,6 +28,9 @@
 namespace Titanic {
 
 class CBridgePiece : public CCarry {
+	DECLARE_MESSAGE_MAP
+	bool UseWithOtherMsg(CUseWithOtherMsg *msg);
+	bool PassOnDragStartMsg(CPassOnDragStartMsg *msg);
 private:
 	CString _string6;
 	Point _pos3;

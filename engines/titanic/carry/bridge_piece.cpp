@@ -21,8 +21,14 @@
  */
 
 #include "titanic/carry/bridge_piece.h"
+#include "titanic/game/ship_setting.h"
 
 namespace Titanic {
+
+BEGIN_MESSAGE_MAP(CBridgePiece, CCarry)
+	ON_MESSAGE(UseWithOtherMsg)
+	ON_MESSAGE(PassOnDragStartMsg)
+END_MESSAGE_MAP()
 
 CBridgePiece::CBridgePiece() : CCarry(), _field140(0) {
 }
@@ -43,6 +49,47 @@ void CBridgePiece::load(SimpleFile *file) {
 	_field140 = file->readNumber();
 
 	CCarry::load(file);
+}
+
+bool CBridgePiece::UseWithOtherMsg(CUseWithOtherMsg *msg) {
+	CShipSetting *shipSetting = static_cast<CShipSetting *>(msg->_other);
+	if (!shipSetting) {
+		return CCarry::UseWithOtherMsg(msg);
+	} else if (shipSetting->_string4 == "NULL") {
+		dropOnPet();
+		return true;
+	} else {
+		setVisible(false);
+		playSound("z#54.wav", 100, 0, 0);
+		setPosition(shipSetting->_pos1);
+		shipSetting->_string4 = getName();
+		moveToHiddenRoom();
+
+		CAddHeadPieceMsg headpieceMsg(shipSetting->getName() == _string6 ?
+			"Enable" : "Disable");
+		CSetFrameMsg frameMsg;
+
+		CString name = getName();
+		if (name == "ChickenBridge") {
+			frameMsg._frameNumber = 1;
+		} else if (name == "FanBridge") {
+			frameMsg._frameNumber = 2;
+		} else if (name == "SeasonBridge") {
+			frameMsg._frameNumber = 3;
+		} else if (name == "BeamBridge") {
+			frameMsg._frameNumber = 0;
+		}
+
+		frameMsg.execute(shipSetting);
+		headpieceMsg.execute(shipSetting);
+		return true;
+	}
+}
+
+bool CBridgePiece::PassOnDragStartMsg(CPassOnDragStartMsg *msg) {
+	setVisible(true);
+	moveToView();
+	return CCarry::PassOnDragStartMsg(msg);
 }
 
 } // End of namespace Titanic

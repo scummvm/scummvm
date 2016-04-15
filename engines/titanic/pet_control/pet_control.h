@@ -217,6 +217,11 @@ public:
 	 * Adds an item to the PET inventory
 	 */
 	void addToInventory(CCarry *item);
+
+	/**
+	 * Moves a tree item from it's original position to be under the hidden room
+	 */
+	void moveToHiddenRoom(CTreeItem *item);
 };
 
 } // End of namespace Titanic

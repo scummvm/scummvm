@@ -24,10 +24,19 @@
 #define TITANIC_BRAIN_H
 
 #include "titanic/carry/carry.h"
+#include "titanic/messages/messages.h"
+#include "titanic/messages/mouse_messages.h"
+#include "titanic/messages/pet_messages.h"
 
 namespace Titanic {
 
 class CBrain : public CCarry {
+	DECLARE_MESSAGE_MAP
+	bool UseWithOtherMsg(CUseWithOtherMsg *msg);
+	bool VisibleMsg(CVisibleMsg *msg);
+	bool MouseDragStartMsg(CMouseDragStartMsg *msg);
+	bool PassOnDragStartMsg(CPassOnDragStartMsg *msg);
+	bool PETGainedObjectMsg(CPETGainedObjectMsg *msg);
 private:
 	Point _pos1;
 	int _field134;

@@ -21,8 +21,17 @@
  */
 
 #include "titanic/carry/brain.h"
+#include "titanic/game/brain_slot.h"
 
 namespace Titanic {
+
+BEGIN_MESSAGE_MAP(CBrain, CCarry)
+	ON_MESSAGE(UseWithOtherMsg)
+	ON_MESSAGE(VisibleMsg)
+	ON_MESSAGE(MouseDragStartMsg)
+	ON_MESSAGE(PassOnDragStartMsg)
+	ON_MESSAGE(PETGainedObjectMsg)
+END_MESSAGE_MAP()
 
 CBrain::CBrain() : CCarry(), _field134(0), _field138(0) {
 }
@@ -43,6 +52,83 @@ void CBrain::load(SimpleFile *file) {
 	_field138 = file->readNumber();
 
 	CCarry::load(file);
+}
+
+bool CBrain::UseWithOtherMsg(CUseWithOtherMsg *msg) {
+	CBrainSlot *slot = static_cast<CBrainSlot *>(msg->_other);
+	if (slot) {
+		if (slot->getName() == "CentralCore") {
+			setVisible(false);
+			moveToHiddenRoom();
+			CAddHeadPieceMsg headpieceMsg(getName());
+			headpieceMsg.execute("CentralCoreSlot");
+		}
+		else if (!slot->_value1 && slot->getName() == "CentralCoreSlot") {
+			setVisible(false);
+			moveToHiddenRoom();
+			CAddHeadPieceMsg headpieceMsg(getName());
+			headpieceMsg.execute(msg->_other);
+			playSound("z#116.wav", 100, 0, 0);
+			setPosition(Point(0, 0));
+			setVisible(false);
+			_field134 = 1;
+		}
+
+		return true;
+	}
+	else {
+		return CCarry::UseWithOtherMsg(msg);
+	}
+}
+
+bool CBrain::VisibleMsg(CVisibleMsg *msg) {
+	setVisible(msg->_visible);
+	return true;
+}
+
+bool CBrain::MouseDragStartMsg(CMouseDragStartMsg *msg) {
+	if (!checkStartDragging(msg))
+		return false;
+
+	if (_field134) {
+		CTakeHeadPieceMsg headpieceMsg(getName());
+		headpieceMsg.execute("TitaniaControl");
+
+		_field134 = 0;
+		setVisible(true);
+		moveToView();
+
+		setPosition(Point(msg->_mousePos.x - _bounds.width() / 2,
+			msg->_mousePos.y - _bounds.height() / 2));
+	}
+
+	return CCarry::MouseDragStartMsg(msg);
+}
+
+bool CBrain::PassOnDragStartMsg(CPassOnDragStartMsg *msg) {
+	if (_field134) {
+		CTakeHeadPieceMsg headpieceMsg(getName());
+		headpieceMsg.execute("TitaniaControl");
+		_field134 = 0;
+
+		setVisible(true);
+		moveToView();
+		setPosition(Point(msg->_mousePos.x - _bounds.width() / 2,
+			msg->_mousePos.y - _bounds.height() / 2));
+	}
+
+	return CCarry::PassOnDragStartMsg(msg);
+}
+
+bool CBrain::PETGainedObjectMsg(CPETGainedObjectMsg *msg) {
+	if (!_field138) {
+		if (getName() == "Perch") {
+			incState38();
+			_field138 = 1;
+		}
+	}
+
+	return true;
 }
 
 } // End of namespace Titanic

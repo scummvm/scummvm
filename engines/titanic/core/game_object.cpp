@@ -626,4 +626,22 @@ Found CGameObject::find(const CString &name, CGameObject **item, int findAreas) 
 	return FOUND_NONE;
 }
 
+void CGameObject::moveToHiddenRoom() {
+	CPetControl *pet = getPetControl();
+	if (pet) {
+		makeDirty();
+		pet->moveToHiddenRoom(this);
+	}
+}
+
+void CGameObject::moveToView() {
+	CViewItem *view = getGameManager()->getView();
+	detach();
+	view->addUnder(this);
+}
+
+void CGameObject::incState38() {
+	getGameManager()->_gameState.inc38();
+}
+
 } // End of namespace Titanic
