@@ -1118,10 +1118,10 @@ public:
 	int scene52_getHitAlienNum(int rowNum);
 	int scene52_alienCannonHitShip(int cannonNum);
 	int scene52_alienCannonHitShield(int cannonNum);
-	int scene52_shipCannonHitShield(int cannonNum);
-	int scene52_shipCannonHitAlien();
+	bool scene52_shipCannonHitShield(int cannonNum);
+	bool scene52_shipCannonHitAlien();
 	void scene52_shipExplode();
-	int scene52_checkAlienRow(int rowNum);
+	bool scene52_checkAlienRow(int rowNum);
 	void scene52_updateAlienRowXOfs();
 	void scene52_initAlienSize();
 	void scene52_playSound();

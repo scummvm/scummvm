@@ -547,33 +547,33 @@ int GnapEngine::scene52_alienCannonHitShield(int cannonNum) {
 	return result;
 }
 
-int GnapEngine::scene52_shipCannonHitShield(int cannonNum) {
-	int result = 0;
+bool GnapEngine::scene52_shipCannonHitShield(int cannonNum) {
+	bool result = false;
 	
 	if (_s52_shipCannonPosX < _s52_shieldPosX[0])
-		return 0;
+		return result;
 
 	if (_s52_shipCannonPosX > _s52_shieldPosX[2] + 33)
-		return 0;
+		return result;
 
 	int shieldNum = -1;
 	if (_s52_shipCannonPosX < _s52_shieldPosX[0] + 33)
 		shieldNum = 0;
 
 	if (shieldNum < 0 && _s52_shipCannonPosX < _s52_shieldPosX[1])
-		return 0;
+		return result;
 
 	if (shieldNum < 0 && _s52_shipCannonPosX < _s52_shieldPosX[1] + 33)
 		shieldNum = 1;
 
 	if (shieldNum < 0) {
 		if (_s52_shipCannonPosX < _s52_shieldPosX[2])
-			return 0;
+			return result;
 		shieldNum = 2;
 	}
 
 	if (_s52_shieldSpriteIds[shieldNum] == -1) {
-		result = 0;
+		result = false;
 	} else {
 		++_s52_shieldSpriteIds[shieldNum];
 		if (_s52_shieldSpriteIds[shieldNum] <= 21) {
@@ -584,52 +584,49 @@ int GnapEngine::scene52_shipCannonHitShield(int cannonNum) {
 		}
 		_gameSys->insertSequence(0x21, shieldNum + 257, 0, 0, kSeqNone, 0, _s52_shipCannonPosX - 18, _s52_arcadeScreenBottom - 44);
 		playSound(0x2C, false);
-		result = 1;
+		result = true;
 	}
 
 	return result;
 }
 
-int GnapEngine::scene52_shipCannonHitAlien() {
-	int result = 0;
+bool GnapEngine::scene52_shipCannonHitAlien() {
+	bool result = false;
 	
-	if (_s52_aliensCount) {
-		result = 0;
-	} else if (scene52_checkAlienRow(0)) {
-		result = 0;
-	} else {
-		int v1 = _s52_alienLeftX + _s52_alienRowXOfs[0];
-		if (_s52_shipMidX + _s52_shipPosX >= _s52_alienLeftX + _s52_alienRowXOfs[0]) {
-			int v7 = _s52_alienWidth / 2 - 15;
-			if (v1 + 5 * _s52_alienWidth - v7 >= _s52_shipPosX) {
-				int v2 = v1 + _s52_alienWidth;
-				if (_s52_items[0][0] <= -1 || v2 - v7 <= _s52_shipPosX) {
-					int v3 = v2 + _s52_alienWidth;
-					if (_s52_items[0][1] <= -1 || v3 - v7 <= _s52_shipPosX) {
-						int v4 = v3 + _s52_alienWidth;
-						if (_s52_items[0][2] <= -1 || v4 - v7 <= _s52_shipPosX) {
-							int v5 = v4 + _s52_alienWidth;
-							if (_s52_items[0][3] <= -1 || v5 - v7 <= _s52_shipPosX) {
-								int v6 = v5 + _s52_alienWidth;
-								result = _s52_items[0][4] > -1 && v6 - v7 > _s52_shipPosX;
-							} else {
-								result = 1;
-							}
+	if (_s52_aliensCount || scene52_checkAlienRow(0))
+		return false;
+
+	int alienNextX = _s52_alienLeftX + _s52_alienRowXOfs[0];
+	if (_s52_shipMidX + _s52_shipPosX >= alienNextX) {
+		int startX = _s52_alienWidth / 2 - 15;
+		if (alienNextX + 5 * _s52_alienWidth - startX >= _s52_shipPosX) {
+			int alienNextDeltaX = alienNextX + _s52_alienWidth;
+			if (_s52_items[0][0] <= -1 || alienNextDeltaX - startX <= _s52_shipPosX) {
+				alienNextDeltaX += _s52_alienWidth;
+				if (_s52_items[0][1] <= -1 || alienNextDeltaX - startX <= _s52_shipPosX) {
+					alienNextDeltaX += _s52_alienWidth;
+					if (_s52_items[0][2] <= -1 || alienNextDeltaX - startX <= _s52_shipPosX) {
+						alienNextDeltaX += _s52_alienWidth;
+						if (_s52_items[0][3] <= -1 || alienNextDeltaX - startX <= _s52_shipPosX) {
+							alienNextDeltaX += _s52_alienWidth;
+							result = _s52_items[0][4] > -1 && alienNextDeltaX - startX > _s52_shipPosX;
 						} else {
-							result = 1;
+							result = true;
 						}
 					} else {
-						result = 1;
+						result = true;
 					}
 				} else {
-					result = 1;
+					result = true;
 				}
 			} else {
-				result = 0;
+				result = true;
 			}
 		} else {
-			result = 0;
+			result = false;
 		}
+	} else {
+		result = false;
 	}
 
 	return result;
@@ -646,21 +643,22 @@ void GnapEngine::scene52_shipExplode() {
 	}
 }
 
-int GnapEngine::scene52_checkAlienRow(int rowNum) {
-	for (int i = 0; i < 5; ++i)
+bool GnapEngine::scene52_checkAlienRow(int rowNum) {
+	for (int i = 0; i < 5; ++i) {
 		if (_s52_items[rowNum][i] >= 0)
-			return 0;
+			return false;
+	}
 
-	int v4 = 0;
+	bool found = false;
 	for (int j = 0; j < 5; ++j)
 		if (_s52_items[rowNum][j] == -2) {
 			_gameSys->removeSequence(_s52_alienRowKind[rowNum], j + 256, true);
 			_s52_items[rowNum][j] = -1;
 			--_s52_alienSpeed;
-			v4 = 1;
+			found = true;
 		}
 
-	if (v4) {
+	if (found) {
 		_gameSys->setAnimation(0, 0, _s52_alienRowAnims[rowNum]);
 		--_s52_liveAlienRows;
 	}
@@ -668,7 +666,7 @@ int GnapEngine::scene52_checkAlienRow(int rowNum) {
 	if (_s52_liveAlienRows < 0)
 		_s52_liveAlienRows = 0;
 
-	return 1;
+	return true;
 }
 
 void GnapEngine::scene52_updateAlienRowXOfs() {
@@ -699,11 +697,9 @@ void GnapEngine::scene52_updateAlienRowXOfs() {
 			}
 		}
 	}
-
 }
 
 void GnapEngine::scene52_initAlienSize() {
-
 	_s52_alienWidth = _gameSys->getSpriteWidthById(0);
 	if (_gameSys->getSpriteWidthById(1) > _s52_alienWidth)
 		_s52_alienWidth = _gameSys->getSpriteWidthById(1);
@@ -750,9 +746,10 @@ void GnapEngine::scene52_updateAliens() {
 
 void GnapEngine::scene52_updateAlien(int rowNum) {
 	if (_s52_alienRowKind[rowNum] >= 0 && !scene52_checkAlienRow(rowNum)) {
-		for (int i = 0; i < 5; ++i)
+		for (int i = 0; i < 5; ++i) {
 			if (_s52_items[rowNum][i] >= 0)
 				_s52_items[rowNum][i] = -2;
+		}
 		scene52_checkAlienRow(rowNum);
 	}
 }
@@ -791,7 +788,6 @@ void GnapEngine::scene52_drawScore(int score) {
 }
 
 void GnapEngine::scene52_run() {
-
 	_timers[1] = 0;
 	
 	hideCursor();
@@ -847,7 +843,6 @@ void GnapEngine::scene52_run() {
 	_s52_alienWave = true;
 
 	while (!_sceneDone) {
-
 		gameUpdateTick();
 
 		while (isKeyStatus2(Common::KEYCODE_RIGHT)) {
@@ -893,13 +888,11 @@ void GnapEngine::scene52_run() {
 			clearKeyStatus1(30);
 			_sceneDone = true;
 		}
-
 	}
 
 	// TODO freeFont();
 
 	_gameSys->waitForUpdate();
-	
 }
 
 } // End of namespace Gnap
