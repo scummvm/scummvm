@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
 "POT-Creation-Date: 2016-04-07 08:55+0100\n"
-"PO-Revision-Date: 2016-04-10 11:00+0100\n"
+"PO-Revision-Date: 2016-04-15 11:00+0100\n"
 "Last-Translator: Lothar Serra Mari <rootfather@scummvm.org>\n"
 "Language-Team: Simon Sawatzki <SimSaw@gmx.de>, Lothar Serra Mari "
 "<rootfather@scummvm.org>\n"
@@ -2967,7 +2967,7 @@ msgstr "Objektzeile zeigen"
 
 #: engines/scumm/detection.cpp:1336
 msgid "Show the names of objects at the bottom of the screen"
-msgstr "Die Objektzeile wird während des Spiels im unteren Bildbereich eingeblendet"
+msgstr "Objektnamen und Verben am unteren Bildrand anzeigen"
 
 #: engines/scumm/dialogs.cpp:176
 #, c-format
