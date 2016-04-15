@@ -102,7 +102,7 @@ void MacWindow::draw(Graphics::ManagedSurface *g, bool forceRedraw) {
 		drawBorder();
 
 	// Compose
-	_composeSurface.blitFrom(_surface, _surface.getBounds(), Common::Point(0, 0));
+	_composeSurface.blitFrom(_surface);
 	_composeSurface.transBlitFrom(_borderSurface, kColorGreen);
 
 	g->transBlitFrom(_composeSurface, _composeSurface.getBounds(), Common::Point(_dims.left, _dims.top), kColorGreen2);

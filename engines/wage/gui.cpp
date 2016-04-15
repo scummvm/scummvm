@@ -284,6 +284,7 @@ void Gui::drawScene() {
 	MacWindow *w = _wm.getWindow(_sceneWindowId);
 
 	w->setDimensions(*_scene->_designBounds);
+	w->setTitle(_scene->_name);
 	_scene->paint(w->getSurface(), 0, 0);
 	w->draw(&_screen);
 	g_system->copyRectToScreen(_screen.getBasePtr(_scene->_designBounds->left, _scene->_designBounds->top),
