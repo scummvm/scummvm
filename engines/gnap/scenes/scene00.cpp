@@ -169,6 +169,8 @@ void GnapEngine::scene00_run() {
 
 	_newSceneNum = 1;
 	_newCursorValue = 1;
+
+	_dat->open(1, "stock_n.dat");
 }
 
 } // End of namespace Gnap
