@@ -92,6 +92,7 @@ private:
 private:
 	Graphics::ManagedSurface _surface;
 	Graphics::ManagedSurface _borderSurface;
+	Graphics::ManagedSurface _composeSurface;
 	bool _scrollable;
 	bool _active;
 	bool _borderIsDirty;
@@ -100,7 +101,6 @@ private:
 	float _scrollPos, _scrollSize;
 
 	Common::Rect _dims;
-	Common::Rect _borderDims;
 
 	Common::String _title;
 };

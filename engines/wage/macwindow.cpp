@@ -80,29 +80,32 @@ void MacWindow::resize(int w, int h) {
 	_surface.free();
 	_surface.create(w, h, Graphics::PixelFormat::createFormatCLUT8());
 	_borderSurface.free();
-	_borderSurface.create(w + 2 * kBorderWidth, h + 2 * kBorderWidth, Graphics::PixelFormat::createFormatCLUT8());
+	_borderSurface.create(w, h, Graphics::PixelFormat::createFormatCLUT8());
+	_composeSurface.free();
+	_composeSurface.create(w, h, Graphics::PixelFormat::createFormatCLUT8());
 
 	_dims.setWidth(w);
 	_dims.setHeight(h);
-
-	_borderDims.setWidth(w + 2 * kBorderWidth);
-	_borderDims.setHeight(h + 2 * kBorderWidth);
-	move(_dims.left, _dims.top); // Update _borderDims position
 }
 
 void MacWindow::move(int x, int y) {
 	_dims.moveTo(x, y);
-	_borderDims.moveTo(x - kBorderWidth, y - kBorderWidth);
 }
 
 void MacWindow::setDimensions(const Common::Rect &r) {
 	resize(r.width(), r.height());
-	move(r.left, r.top);
+	_dims.moveTo(r.left, r.top);
 }
 
 void MacWindow::draw(Graphics::ManagedSurface *g, bool forceRedraw) {
 	if (_borderIsDirty || forceRedraw)
 		drawBorder();
+
+	// Compose
+	_composeSurface.blitFrom(_surface, _surface.getBounds(), Common::Point(0, 0));
+	_composeSurface.transBlitFrom(_borderSurface, kColorGreen);
+
+	g->transBlitFrom(_composeSurface, _composeSurface.getBounds(), Common::Point(_dims.left, _dims.top), kColorGreen2);
 }
 
 const Graphics::Font *MacWindow::getTitleFont() {
@@ -145,6 +148,7 @@ void MacWindow::drawBorder() {
 	Graphics::ManagedSurface *g = &_borderSurface;
 
 	g->clear(kColorGreen2);
+	g->fillRect(Common::Rect(kBorderWidth, kBorderWidth, width - kBorderWidth, height - kBorderWidth), kColorGreen);
 
 	drawBox(g, x,                    y,                     size,                 size);
 	drawBox(g, x + width - size - 1, y,                     size,                 size);
