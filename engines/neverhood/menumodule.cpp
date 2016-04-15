@@ -1058,7 +1058,7 @@ static const NRect kSaveGameMenuTextEditRect = { 0, 0, 377, 17 };
 static const NRect kSaveGameMenuMouseRect = { 50, 47, 427, 64 };
 
 SaveGameMenu::SaveGameMenu(NeverhoodEngine *vm, Module *parentModule, SavegameList *savegameList)
-	:  GameStateMenu(vm, parentModule, savegameList, kSaveGameMenuButtonFileHashes, kSaveGameMenuButtonCollisionBounds,
+	: GameStateMenu(vm, parentModule, savegameList, kSaveGameMenuButtonFileHashes, kSaveGameMenuButtonCollisionBounds,
 		0x30084E25, 0x2328121A,
 		0x84E21308, &kSaveGameMenuMouseRect,
 		0x1115A223, 60, 142, kSaveGameMenuListBoxRect,
