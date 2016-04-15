@@ -99,8 +99,7 @@ void Design::paint(Graphics::ManagedSurface *surface, Patterns &patterns, int x,
 		_surface = new Graphics::ManagedSurface;
 		_surface->create(_bounds->width(), _bounds->height(), Graphics::PixelFormat::createFormatCLUT8());
 
-		Common::Rect r(0, 0, _bounds->width(), _bounds->height());
-		_surface->fillRect(r, kColorGreen);
+		_surface->clear(kColorGreen);
 
 		needRender = true;
 	}
@@ -133,16 +132,10 @@ void Design::paint(Graphics::ManagedSurface *surface, Patterns &patterns, int x,
 
 	if (_bounds->width() && _bounds->height()) {
 		const int padding = 3;
-		for (int i = padding; i < _bounds->height() - 2 * padding; i++) {
-			const byte *src = (const byte *)_surface->getBasePtr(padding, i);
-			byte *dst = (byte *)surface->getBasePtr(x + padding, y+i);
-			for (int j = padding; j < _bounds->width() - 2 * padding; j++) {
-				if (*src != kColorGreen)
-					*dst = *src;
-				src++;
-				dst++;
-			}
-		}
+		Common::Rect from(padding, padding, _bounds->width() - 2 * padding, _bounds->height() - 2 * padding);
+		Common::Rect to(from);
+		to.moveTo(x, y);
+		surface->transBlitFrom(*_surface, from, to, kColorGreen);
 	}
 }
 

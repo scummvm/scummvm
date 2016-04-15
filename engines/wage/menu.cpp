@@ -406,7 +406,7 @@ void Menu::renderSubmenu(MenuItem *menu) {
 				ty = 0;
 				accelX -= x;
 
-				_tempSurface.fillRect(Common::Rect(0, 0, _tempSurface.w, _tempSurface.h), kColorGreen);
+				_tempSurface.clear(kColorGreen);
 			}
 
 			_font->drawString(s, text, tx, ty, r->width(), color);

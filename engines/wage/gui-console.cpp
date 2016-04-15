@@ -150,7 +150,6 @@ void Gui::renderConsole(Graphics::ManagedSurface *g, Common::Rect &r) {
 
 	Common::Rect boundsR(kConWOverlap - kConOverscan, kConHOverlap - kConOverscan,
 					r.width() + kConWOverlap + kConOverscan, r.height() + kConHOverlap + kConOverscan);
-	Common::Rect fullR(0, 0, surfW, surfH);
 
 	if (_console.w != surfW || _console.h != surfH) {
 		if (_console.w != surfW)
@@ -163,7 +162,7 @@ void Gui::renderConsole(Graphics::ManagedSurface *g, Common::Rect &r) {
 	}
 
 	if (fullRedraw)
-		_console.fillRect(fullR, kColorWhite);
+		_console.clear(kColorWhite);
 
 	const Graphics::Font *font = getConsoleFont();
 

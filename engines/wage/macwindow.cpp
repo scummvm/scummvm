@@ -144,7 +144,7 @@ void MacWindow::drawBorder() {
 	int height = _borderSurface.h;
 	Graphics::ManagedSurface *g = &_borderSurface;
 
-	g->fillRect(_borderDims, kColorGreen2);
+	g->clear(kColorGreen2);
 
 	drawBox(g, x,                    y,                     size,                 size);
 	drawBox(g, x + width - size - 1, y,                     size,                 size);
