@@ -609,7 +609,8 @@ void TextEditWidget::onClick() {
 				++newCursorPos;
 			_cursorPos = MIN((int)_entryString.size(), newCursorPos);
 		}
-		_cursorSurface->setVisible(true);
+		if (!_readOnly)
+			_cursorSurface->setVisible(true);
 		refresh();
 	}
 	Widget::onClick();
@@ -1089,12 +1090,21 @@ static const NRect kLoadGameMenuButtonCollisionBounds[] = {
 
 static const NRect kLoadGameMenuListBoxRect = { 0, 0, 320, 272 };
 static const NRect kLoadGameMenuTextEditRect = { 0, 0, 320, 17 };
+
+#if 0
+// Unlike the original game, the text widget in our load dialog is read-only so
+// don't change the mouse cursor to indicate that you can type the name of the
+// game to load.
+//
+// Since we allow multiple saved games to have the same name, it's probably
+// better this way.
 static const NRect kLoadGameMenuMouseRect = { 263, 48, 583, 65 };
+#endif
 
 LoadGameMenu::LoadGameMenu(NeverhoodEngine *vm, Module *parentModule, SavegameList *savegameList)
 	: GameStateMenu(vm, parentModule, savegameList, kLoadGameMenuButtonFileHashes, kLoadGameMenuButtonCollisionBounds,
 		0x98620234, 0x201C2474,
-		0x2023098E, &kLoadGameMenuMouseRect,
+		0x2023098E, NULL /* &kLoadGameMenuMouseRect */,
 		0x04040409, 263, 142, kLoadGameMenuListBoxRect,
 		0x10924C03, 0, 263, 48, kLoadGameMenuTextEditRect,
 		0x0BC600A3, 0x0F960021) {
