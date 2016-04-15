@@ -445,6 +445,10 @@ int CGameObject::getSurface45() const {
 	return _surface ? _surface->proc45() : 0;
 }
 
+void CGameObject::sound8(bool flag) const {
+	getGameManager()->_sound.managerProc8(flag ? 3 : 0);
+}
+
 bool CGameObject::playSound(const CString &name, int val2, int val3, int val4) {
 	CProximity prox;
 	prox._field8 = val2;

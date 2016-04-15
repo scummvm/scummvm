@@ -42,7 +42,7 @@ public:
 	virtual int proc5() const { return 0; }
 	virtual void proc6() = 0;
 	virtual void proc7() = 0;
-	virtual void proc8() = 0;
+	virtual void proc8(int v) = 0;
 	virtual void proc9() {}
 	virtual void proc10() = 0;
 	virtual void proc11() = 0;
@@ -105,7 +105,7 @@ public:
 	virtual int proc5();
 	virtual void proc6();
 	virtual void proc7();
-	virtual void proc8();
+	virtual void proc8(int v);
 	virtual void proc9();
 	virtual void proc10();
 	virtual void proc11();

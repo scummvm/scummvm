@@ -28,7 +28,7 @@
 namespace Titanic {
 
 class CParrot : public CTrueTalkNPC {
-private:
+public:
 	static int _v1;
 	static int _v2;
 	static int _v3;

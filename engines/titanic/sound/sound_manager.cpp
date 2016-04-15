@@ -57,7 +57,7 @@ void QSoundManager::proc7() {
 	warning("TODO");
 }
 
-void QSoundManager::proc8() {
+void QSoundManager::proc8(int v) {
 	warning("TODO");
 }
 

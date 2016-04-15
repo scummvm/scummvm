@@ -201,6 +201,13 @@ void CTreeItem::addSibling(CTreeItem *item) {
 	item->_nextSibling = this;
 }
 
+void CTreeItem::moveUnder(CTreeItem *newParent) {
+	if (newParent) {
+		detach();
+		addUnder(newParent);
+	}
+}
+
 void CTreeItem::destroyAll() {
 	destroyOthers();
 	detach();

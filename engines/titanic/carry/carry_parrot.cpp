@@ -21,8 +21,22 @@
  */
 
 #include "titanic/carry/carry_parrot.h"
+#include "titanic/game/cage.h"
+#include "titanic/npcs/parrot.h"
 
 namespace Titanic {
+
+BEGIN_MESSAGE_MAP(CCarryParrot, CCarry)
+	ON_MESSAGE(PETGainedObjectMsg)
+	ON_MESSAGE(TimerMsg)
+	ON_MESSAGE(IsParrotPresentMsg)
+	ON_MESSAGE(LeaveViewMsg)
+	ON_MESSAGE(MouseDragEndMsg)
+	ON_MESSAGE(PassOnDragStartMsg)
+	ON_MESSAGE(PreEnterViewMsg)
+	ON_MESSAGE(UseWithCharMsg)
+	ON_MESSAGE(ActMsg)
+END_MESSAGE_MAP()
 
 CCarryParrot::CCarryParrot() : CCarry(), _string6("PerchedParrot"),
 		_field138(0), _field13C(0), _field140(0), _field144(10),
@@ -47,6 +61,83 @@ void CCarryParrot::load(SimpleFile *file) {
 	_field140 = file->readNumber();
 
 	CCarry::load(file);
+}
+
+bool CCarryParrot::PETGainedObjectMsg(CPETGainedObjectMsg *msg) {
+	CParrot::_v4 = 4;
+	CActMsg actMsg("Shut");
+	actMsg.execute("ParrotCage");
+
+	return true;
+}
+
+bool CCarryParrot::TimerMsg(CTimerMsg *msg) {
+	if (CParrot::_v4 == 1 || CParrot::_v4 == 4) {
+		if (++_field13C >= 30) {
+			CActMsg actMsg("FreeParrot");
+			actMsg.execute(this);
+		}
+	}
+
+	return true;
+}
+
+bool CCarryParrot::IsParrotPresentMsg(CIsParrotPresentMsg *msg) {
+	msg->_value = true;
+	return true;
+}
+
+bool CCarryParrot::LeaveViewMsg(CLeaveViewMsg *msg) {
+	if (_visible) {
+		setVisible(false);
+		_fieldE0 = 0;
+		CParrot::_v4 = 2;
+	}
+
+	return true;
+}
+
+bool CCarryParrot::MouseDragEndMsg(CMouseDragEndMsg *msg) {
+	stopMovie();
+
+	if (msg->_mousePos.y >= 360) {
+		dropOnPet();
+		return true;
+	}
+
+	if (compareViewNameTo("ParrotLobby.Node 1.N")) {
+		if (msg->_mousePos.x >= 75 && msg->_mousePos.x <= 565 &&
+				!CParrot::_v2 && !CCage::_v2) {
+			setVisible(false);
+			// TODO
+		} else {
+			// TODO
+		}
+	} else {
+		// TODO
+	}
+
+	return true;
+}
+
+bool CCarryParrot::PassOnDragStartMsg(CPassOnDragStartMsg *msg) {
+	// TODO
+	return true;
+}
+
+bool CCarryParrot::PreEnterViewMsg(CPreEnterViewMsg *msg) {
+	// TODO
+	return true;
+}
+
+bool CCarryParrot::UseWithCharMsg(CUseWithCharMsg *msg) {
+	// TODO
+	return true;
+}
+
+bool CCarryParrot::ActMsg(CActMsg *msg) {
+	// TODO
+	return true;
 }
 
 } // End of namespace Titanic

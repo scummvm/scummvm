@@ -254,6 +254,7 @@ public:
 
 	int getMovie19() const;
 	int getSurface45() const;
+	void sound8(bool flag) const;
 
 	/**
 	 * Loads a frame
@@ -279,6 +280,8 @@ public:
 	 * Sets whether the object is visible
 	 */
 	void setVisible(bool val);
+
+	
 };
 
 } // End of namespace Titanic

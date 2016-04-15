@@ -76,6 +76,7 @@ public:
 	bool fn1(int val);
 	void fn2(int val);
 	void fn3(int val, int val2, int val3);
+	void managerProc8(int v) { _soundManager.proc8(v); }
 };
 
 } // End of namespace Titanic

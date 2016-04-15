@@ -215,6 +215,11 @@ public:
 	void addSibling(CTreeItem *item);
 
 	/**
+	 * Moves the tree item to be under another parent
+	 */
+	void moveUnder(CTreeItem *newParent);
+
+	/**
 	 * Destroys both the item as well as any of it's children
 	 */
 	void destroyAll();
