@@ -102,10 +102,10 @@ void MacWindow::draw(Graphics::ManagedSurface *g, bool forceRedraw) {
 		drawBorder();
 
 	// Compose
-	_composeSurface.blitFrom(_surface);
+	_composeSurface.blitFrom(_surface, Common::Rect(0, 0, _surface.w - 2, _surface.h - 2), Common::Point(2, 2));
 	_composeSurface.transBlitFrom(_borderSurface, kColorGreen);
 
-	g->transBlitFrom(_composeSurface, _composeSurface.getBounds(), Common::Point(_dims.left, _dims.top), kColorGreen2);
+	g->transBlitFrom(_composeSurface, _composeSurface.getBounds(), Common::Point(_dims.left - 2, _dims.top - 2), kColorGreen2);
 }
 
 const Graphics::Font *MacWindow::getTitleFont() {
