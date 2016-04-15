@@ -43,6 +43,17 @@ public:
 	 * Load the data for the class from file
 	 */
 	virtual void load(SimpleFile *file);
+
+	/**
+	 * Get the first game object stored in the PET
+	 */
+	CGameObject *getFirstObject() const;
+
+	/**
+	 * Get the next game object stored in the PET following
+	 * the passed game object
+	 */
+	CGameObject *getNextObject(CGameObject *prior) const;
 };
 
 } // End of namespace Titanic

@@ -21,7 +21,9 @@
  */
 
 #include "titanic/core/game_object.h"
+#include "titanic/core/mail_man.h"
 #include "titanic/core/resource_key.h"
+#include "titanic/core/room_item.h"
 #include "titanic/pet_control/pet_control.h"
 #include "titanic/support/files_manager.h"
 #include "titanic/support/screen_manager.h"
@@ -566,6 +568,62 @@ void CGameObject::petDisplayMsg(const CString &msg) const {
 	CPetControl *pet = getPetControl();
 	if (pet)
 		pet->displayMessage(msg);
+}
+
+CGameObject *CGameObject::getMailManFirstObject() const {
+	CMailMan *mailMan = getMailMan();
+	return mailMan ? mailMan->getFirstObject() : nullptr;
+}
+
+CGameObject *CGameObject::getMailManNextObject(CGameObject *prior) const {
+	CMailMan *mailMan = getMailMan();
+	return mailMan ? mailMan->getNextObject(prior) : nullptr;
+}
+
+CGameObject *CGameObject::findRoomObject(const CString &name) const {
+	return static_cast<CGameObject *>(findRoom()->findByName(name));
+}
+
+Found CGameObject::find(const CString &name, CGameObject **item, int findAreas) {
+	CGameObject *go;
+	*item = nullptr;
+
+	// Scan under PET if flagged
+	if (findAreas & FIND_PET) {
+		for (go = getPetControl()->getFirstObject(); go; go = getPetControl()->getNextObject(go)) {
+			if (go->getName() == name) {
+				*item = go;
+				return FOUND_PET;
+			}
+		}
+	}
+
+	if (findAreas & FIND_MAILMAN) {
+		for (go = getMailManFirstObject(); go; go = getMailManNextObject(go)) {
+			if (go->getName() == name) {
+				*item = go;
+				return FOUND_MAILMAN;
+			}
+		}
+	}
+
+	if (findAreas & FIND_GLOBAL) {
+		go = static_cast<CGameObject *>(getRoot()->findByName(name));
+		if (go) {
+			*item = go;
+			return FOUND_GLOBAL;
+		}
+	}
+
+	if (findAreas & FIND_ROOM) {
+		go = findRoomObject(name);
+		if (go) {
+			*item = go;
+			return FOUND_ROOM;
+		}
+	}
+
+	return FOUND_NONE;
 }
 
 } // End of namespace Titanic

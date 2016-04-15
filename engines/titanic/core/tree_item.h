@@ -29,6 +29,7 @@ namespace Titanic {
 
 class CGameManager;
 class CDontSaveFileItem;
+class CMailMan;
 class CMessage;
 class CMusicRoom;
 class CNamedItem;
@@ -247,6 +248,11 @@ public:
 	 * Returns the PET control
 	 */
 	CPetControl *getPetControl() const;
+
+	/**
+	 * Returns the MailMan
+	 */
+	CMailMan *getMailMan() const;
 
 	/**
 	 * Returns a child of the Dont Save area of the project of the given class

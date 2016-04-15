@@ -32,6 +32,9 @@
 
 namespace Titanic {
 
+enum Find { FIND_GLOBAL = 1, FIND_ROOM = 2, FIND_PET = 4, FIND_MAILMAN = 8 };
+enum Found { FOUND_NONE = 0, FOUND_GLOBAL = 1, FOUND_ROOM = 2, FOUND_PET = 3, FOUND_MAILMAN = 4 };
+
 class CVideoSurface;
 class CMouseDragStartMsg;
 class OSMovie;
@@ -165,6 +168,26 @@ protected:
 	* Display a message in the PET
 	*/
 	void petDisplayMsg(const CString &msg) const;
+
+	/**
+	 * Gets the first object under the system MailMan
+	 */
+	CGameObject *getMailManFirstObject() const;
+
+	/**
+	 * Gets the next object under the system MailMan
+	 */
+	CGameObject *getMailManNextObject(CGameObject *prior) const;
+
+	/**
+	 * Finds an object by name within the object's room
+	 */
+	CGameObject *findRoomObject(const CString &name) const;
+
+	/**
+	 * Finds an item in various system areas
+	 */
+	Found find(const CString &name, CGameObject **item, int findAreas);
 public:
 	int _field60;
 	CursorId _cursorId;

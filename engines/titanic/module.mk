@@ -60,6 +60,7 @@ MODULE_OBJS := \
 	core/game_object_desc_item.o \
 	core/link_item.o \
 	core/list.o \
+	core/mail_man.o \
 	core/message_target.o \
 	core/movie_clip.o \
 	core/multi_drop_target.o \
@@ -150,7 +151,6 @@ MODULE_OBJS := \
 	game/light_switch.o \
 	game/little_lift_button.o \
 	game/long_stick_dispenser.o \
-	game/mail_man.o \
 	game/missiveomat.o \
 	game/missiveomat_button.o \
 	game/movie_tester.o \

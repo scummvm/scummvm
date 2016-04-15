@@ -68,6 +68,7 @@
 #include "titanic/core/game_object_desc_item.h"
 #include "titanic/core/link_item.h"
 #include "titanic/core/list.h"
+#include "titanic/core/mail_man.h"
 #include "titanic/core/message_target.h"
 #include "titanic/core/movie_clip.h"
 #include "titanic/core/multi_drop_target.h"
@@ -156,7 +157,6 @@
 #include "titanic/game/light_switch.h"
 #include "titanic/game/little_lift_button.h"
 #include "titanic/game/long_stick_dispenser.h"
-#include "titanic/game/mail_man.h"
 #include "titanic/game/missiveomat.h"
 #include "titanic/game/missiveomat_button.h"
 #include "titanic/game/movie_tester.h"
@@ -475,6 +475,7 @@ DEFFN(CGameObject)
 DEFFN(CGameObjectDescItem)
 DEFFN(CLinkItem)
 DEFFN(ListItem)
+DEFFN(CMailMan)
 DEFFN(CMessageTarget)
 DEFFN(CMovieClip)
 DEFFN(CMultiDropTarget)
@@ -565,7 +566,6 @@ DEFFN(CLight)
 DEFFN(CLightSwitch)
 DEFFN(CLittleLiftButton)
 DEFFN(CLongStickDispenser)
-DEFFN(CMailMan)
 DEFFN(CMissiveOMat)
 DEFFN(CMissiveOMatButton)
 DEFFN(CMovieTester)
@@ -1061,6 +1061,7 @@ void CSaveableObject::initClassList() {
 	ADDFN(CLinkItem, CNamedItem);
 	ADDFN(ListItem, CSaveableObject);
 	ADDFN(CMessageTarget, CSaveableObject);
+	ADDFN(CMailMan, CGameObject);
 	ADDFN(CMovieClip, ListItem);
 	ADDFN(CMultiDropTarget, CDropTarget);
 	ADDFN(CNamedItem, CTreeItem);
@@ -1151,7 +1152,6 @@ void CSaveableObject::initClassList() {
 	ADDFN(CLightSwitch, CBackground);
 	ADDFN(CLittleLiftButton, CBackground);
 	ADDFN(CLongStickDispenser, CGameObject);
-	ADDFN(CMailMan, CGameObject);
 	ADDFN(CMissiveOMat, CGameObject);
 	ADDFN(CMissiveOMatButton, CEditControl);
 	ADDFN(CMovieTester, CGameObject);

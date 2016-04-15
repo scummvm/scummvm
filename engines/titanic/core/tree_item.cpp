@@ -26,6 +26,7 @@
 #include "titanic/core/game_object.h"
 #include "titanic/core/game_object_desc_item.h"
 #include "titanic/core/link_item.h"
+#include "titanic/core/mail_man.h"
 #include "titanic/core/named_item.h"
 #include "titanic/core/node_item.h"
 #include "titanic/core/project_item.h"
@@ -273,6 +274,10 @@ void CTreeItem::clearPet() const {
 
 CPetControl *CTreeItem::getPetControl() const {
 	return dynamic_cast<CPetControl *>(getDontSaveChild(CPetControl::_type));
+}
+
+CMailMan *CTreeItem::getMailMan() const {
+	return dynamic_cast<CMailMan *>(getDontSaveChild(CMailMan::_type));
 }
 
 CTreeItem *CTreeItem::getDontSaveChild(ClassDef *classDef) const {

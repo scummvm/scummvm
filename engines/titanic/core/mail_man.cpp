@@ -20,7 +20,7 @@
  *
  */
 
-#include "titanic/game/mail_man.h"
+#include "titanic/core/mail_man.h"
 
 namespace Titanic {
 
@@ -34,6 +34,17 @@ void CMailMan::load(SimpleFile *file) {
 	file->readNumber();
 	_value = file->readNumber();
 	CGameObject::load(file);
+}
+
+CGameObject *CMailMan::getFirstObject() const {
+	return static_cast<CGameObject *>(getFirstChild());
+}
+
+CGameObject *CMailMan::getNextObject(CGameObject *prior) const {
+	if (!prior || prior->getParent() != this)
+		return nullptr;
+
+	return static_cast<CGameObject *>(prior->getNextSibling());
 }
 
 } // End of namespace Titanic
