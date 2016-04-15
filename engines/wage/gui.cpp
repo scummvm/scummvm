@@ -287,8 +287,8 @@ void Gui::drawScene() {
 	w->setTitle(_scene->_name);
 	_scene->paint(w->getSurface(), 0, 0);
 	w->draw(&_screen);
-	g_system->copyRectToScreen(_screen.getBasePtr(_scene->_designBounds->left, _scene->_designBounds->top),
-			_screen.pitch, _scene->_designBounds->left, _scene->_designBounds->top,
+	g_system->copyRectToScreen(_screen.getBasePtr(_scene->_designBounds->left - 2, _scene->_designBounds->top - 2),
+			_screen.pitch, _scene->_designBounds->left - 2, _scene->_designBounds->top - 2,
 			_scene->_designBounds->width(), _scene->_designBounds->height());
 
 
