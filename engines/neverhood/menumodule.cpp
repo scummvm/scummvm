@@ -1069,9 +1069,11 @@ SaveGameMenu::SaveGameMenu(NeverhoodEngine *vm, Module *parentModule, SavegameLi
 }
 
 void SaveGameMenu::performAction() {
-	((MenuModule*)_parentModule)->setSavegameInfo(_textEditWidget->getString(),
-		_listBox->getCurrIndex(), _textEditWidget->isModified());
-	leaveScene(0);
+	if (!_textEditWidget->getString().empty()) {
+		((MenuModule*)_parentModule)->setSavegameInfo(_textEditWidget->getString(),
+			_listBox->getCurrIndex(), _textEditWidget->isModified());
+		leaveScene(0);
+	}
 }
 
 static const uint32 kLoadGameMenuButtonFileHashes[] = {
@@ -1112,8 +1114,11 @@ LoadGameMenu::LoadGameMenu(NeverhoodEngine *vm, Module *parentModule, SavegameLi
 }
 
 void LoadGameMenu::performAction() {
-	((MenuModule*)_parentModule)->setLoadgameInfo(_listBox->getCurrIndex());
-	leaveScene(0);
+	// TODO: The original would display a message here if nothing was selected.
+	if (!_textEditWidget->getString().empty()) {
+		((MenuModule*)_parentModule)->setLoadgameInfo(_listBox->getCurrIndex());
+		leaveScene(0);
+	}
 }
 
 static const uint32 kDeleteGameMenuButtonFileHashes[] = {
@@ -1144,8 +1149,11 @@ DeleteGameMenu::DeleteGameMenu(NeverhoodEngine *vm, Module *parentModule, Savega
 }
 
 void DeleteGameMenu::performAction() {
-	((MenuModule*)_parentModule)->setDeletegameInfo(_listBox->getCurrIndex());
-	leaveScene(0);
+	// TODO: The original would display a message here if no game was selected.
+	if (!_textEditWidget->getString().empty()) {
+		((MenuModule*)_parentModule)->setDeletegameInfo(_listBox->getCurrIndex());
+		leaveScene(0);
+	}
 }
 
 QueryOverwriteMenu::QueryOverwriteMenu(NeverhoodEngine *vm, Module *parentModule, const Common::String &description)
