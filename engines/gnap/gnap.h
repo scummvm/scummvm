@@ -298,6 +298,8 @@ public:
 private:
 	const ADGameDescription *_gameDescription;
 	Graphics::PixelFormat _pixelFormat;
+	int _loadGameSlot;
+
 public:	
 	Common::RandomSource *_random;
 	

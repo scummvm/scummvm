@@ -233,7 +233,6 @@ void GnapEngine::drawInventoryFrames() {
 }
 
 void GnapEngine::insertInventorySprites() {
-	
 	for (int i = 0; i < 9; ++i) {
 		_menuInventoryIndices[i] = -1;
 		_gameSys->removeSpriteDrawItem(_menuInventorySprites[_sceneClickedHotspot], 261);
@@ -258,7 +257,6 @@ void GnapEngine::insertInventorySprites() {
 			++_menuSpritesIndex;
 		}
 	}
-
 }
 
 void GnapEngine::removeInventorySprites() {
@@ -313,7 +311,6 @@ void GnapEngine::runMenu() {
 	_timers[2] = 10;
 
 	while (!isKeyStatus1(8) && !isKeyStatus1(28) && !_sceneDone && !_menuDone) {
-
 		updateCursorByHotspot();
 
 		switch (_menuStatus) {
@@ -335,7 +332,6 @@ void GnapEngine::runMenu() {
 		}
 		
 		gameUpdateTick();
-
 	}
 
 	removeInventorySprites();
@@ -385,7 +381,6 @@ void GnapEngine::runMenu() {
 }
 
 void GnapEngine::updateMenuStatusInventory() {
-
 	static const struct {
 		int item1, item2, resultItem;
 	} kCombineItems[] = {
@@ -727,6 +722,7 @@ Common::Error GnapEngine::loadGameState(int slot) {
 	synchronize(s);
 	delete saveFile;
 
+	_loadGameSlot = slot;
 	return Common::kNoError;
 }
 
@@ -735,7 +731,7 @@ Common::String GnapEngine::generateSaveName(int slot) {
 }
 
 void GnapEngine::updateMenuStatusSaveGame() {
-#if 1 // TODO
+#if 0 // TODO
 	char v43[30];
 	int v46;
 	v43[0] = '\0';
@@ -925,7 +921,6 @@ void GnapEngine::updateMenuStatusLoadGame() {
 }
 
 void GnapEngine::updateMenuStatusQueryQuit() {
-
 	_hotspots[0]._x1 = 311;
 	_hotspots[0]._y1 = 197;
 	_hotspots[0]._x2 = 377;
@@ -964,7 +959,6 @@ void GnapEngine::updateMenuStatusQueryQuit() {
 		initMenuHotspots2();
 		_gameSys->insertSpriteDrawItem(_menuSprite1, 288, 79, 262);
 	}
-
 }
 
 } // End of namespace Gnap

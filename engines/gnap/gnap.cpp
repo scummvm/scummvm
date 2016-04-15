@@ -118,8 +118,14 @@ Common::Error GnapEngine::run() {
 	// >>>>> Variable initialization
 	_cursorIndex = -1;
 	_verbCursor = 1;
+
+	_loadGameSlot = -1;
+	if (ConfMan.hasKey("save_slot"))
+		_loadGameSlot = ConfMan.getInt("save_slot");
+
 	invClear();
 	clearFlags();
+
 	_grabCursorSprite = nullptr;
 	_newGrabCursorSpriteIndex = -1;
 	_backgroundSurface = nullptr;
@@ -737,7 +743,6 @@ void GnapEngine::loadStockDat() {
 }
 
 void GnapEngine::mainLoop() {
-
 	_newCursorValue = 1;
 	_cursorValue = -1;
 	_newSceneNum = 0;
@@ -748,13 +753,24 @@ void GnapEngine::mainLoop() {
 	_grabCursorSpriteIndex = -1;
 	_grabCursorSprite = nullptr;
 
+#if 0
 	// > DEBUG BEGIN
 	_currentSceneNum = 0;
 	_newSceneNum = 1;
 	_newCursorValue = 1;
 	// < DEBUG END
+#endif
 
 	loadStockDat();
+
+	if (_loadGameSlot != -1) {
+		// Load a savegame
+		int slot = _loadGameSlot;
+		_loadGameSlot = -1;
+		loadGameState(slot);
+
+		showCursor();
+	}
 
 	while (!_gameDone) {
 		debugC(kDebugBasic, "New scene: %d", _newSceneNum);
