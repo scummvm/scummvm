@@ -62,7 +62,10 @@ protected:
 	bool _enterFrameSet;
 	int _visibleFrame;
 protected:
-
+	/**
+	 * Add the item to the PET inventory
+	 */
+	void addToInventory();
 public:
 	CLASSDEF
 	CCarry();

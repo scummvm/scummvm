@@ -212,6 +212,11 @@ public:
 	 * the passed game object
 	 */
 	CGameObject *getNextObject(CGameObject *prior) const;
+
+	/**
+	 * Adds an item to the PET inventory
+	 */
+	void addToInventory(CCarry *item);
 };
 
 } // End of namespace Titanic

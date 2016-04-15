@@ -158,8 +158,26 @@ bool CArm::MouseDragStartMsg(CMouseDragStartMsg *msg) {
 }
 
 bool CArm::MaitreDHappyMsg(CMaitreDHappyMsg *msg) {
+	CGameObject *petItem;
+	if (find(getName(), &petItem, FIND_PET)) {
+		if (!_field158)
+			playSound("z#47.wav", 100, 0, 0);
+		if (_string6 == "Key" || _string6 == "AuditoryCentre") {
+			CGameObject *child = static_cast<CGameObject *>(getFirstChild());
+			if (child) {
+				child->setVisible(true);
+				dropOnPet();
+			}
 
-	// TODO
+			_visibleFrame = _field170;
+			loadFrame(_visibleFrame);
+			_string6 = "None";
+			addToInventory();
+		}
+	}
+
+	_field158 = 1;
+	_fieldE0 = 1;
 	return true;
 }
 

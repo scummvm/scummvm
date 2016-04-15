@@ -24,6 +24,7 @@
 #include "titanic/messages/messages.h"
 #include "titanic/npcs/character.h"
 #include "titanic/npcs/succubus.h"
+#include "titanic/pet_control/pet_control.h"
 
 namespace Titanic {
 
@@ -239,6 +240,12 @@ bool CCarry::PassOnDragStartMsg(CPassOnDragStartMsg *msg) {
 
 void CCarry::dropOnPet() {
 	warning("TODO: dropOnPet");
+}
+
+void CCarry::addToInventory() {
+	CPetControl *pet = getPetControl();
+	if (pet)
+		pet->addToInventory(this);
 }
 
 } // End of namespace Titanic

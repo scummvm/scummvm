@@ -365,4 +365,8 @@ CGameObject *CPetControl::getNextObject(CGameObject *prior) const {
 	return static_cast<CGameObject *>(prior->getNextSibling());
 }
 
+void CPetControl::addToInventory(CCarry *item) {
+	_inventory.addItem(item);
+}
+
 } // End of namespace Titanic

@@ -90,6 +90,11 @@ public:
 	 * Returns true if the object is in a valid state
 	 */
 	virtual bool isValid(CPetControl *petControl);
+
+	/**
+	 * Add an item to the inventory
+	 */
+	void addItem(CCarry *item);
 };
 
 } // End of namespace Titanic

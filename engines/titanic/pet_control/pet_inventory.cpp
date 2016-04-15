@@ -102,4 +102,8 @@ bool CPetInventory::setPetControl(CPetControl *petControl) {
 	return true;
 }
 
+void CPetInventory::addItem(CCarry *item) {
+	warning("TODO: CPetInventory::addItem");
+}
+
 } // End of namespace Titanic
