@@ -147,8 +147,11 @@ void MacWindow::drawBorder() {
 	int height = _borderSurface.h;
 	Graphics::ManagedSurface *g = &_borderSurface;
 
+	// We draw rect with outer kColorGreen2 and inner kColorGreen, so on 2 passes we cut out
+	// scene by external shape of the border
+	int sz = kBorderWidth / 2;
 	g->clear(kColorGreen2);
-	g->fillRect(Common::Rect(kBorderWidth, kBorderWidth, width - kBorderWidth, height - kBorderWidth), kColorGreen);
+	g->fillRect(Common::Rect(sz, sz, width - sz, height - sz), kColorGreen);
 
 	drawBox(g, x,                    y,                     size,                 size);
 	drawBox(g, x + width - size - 1, y,                     size,                 size);

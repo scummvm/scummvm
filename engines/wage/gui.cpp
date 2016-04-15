@@ -68,7 +68,7 @@ static const byte palette[] = {
 	0x80, 0x80, 0x80,  // Gray
 	0xff, 0xff, 0xff,  // White
 	0x00, 0xff, 0x00,  // Green
-	0x00, 0x7f, 0x00   // Green2
+	0x00, 0xcf, 0x00   // Green2
 };
 
 static byte fillPatterns[][8] = { { 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff }, // kPatternSolid
@@ -171,7 +171,7 @@ Gui::Gui(WageEngine *engine) {
 
 	_inputTextLineNum = 0;
 
-	g_system->getPaletteManager()->setPalette(palette, 0, 4);
+	g_system->getPaletteManager()->setPalette(palette, 0, ARRAYSIZE(palette) / 3);
 
 	CursorMan.replaceCursorPalette(palette, 0, 4);
 	CursorMan.replaceCursor(macCursorArrow, 11, 16, 1, 1, 3);
