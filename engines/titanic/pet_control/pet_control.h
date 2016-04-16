@@ -224,6 +224,8 @@ public:
 	 */
 	void removeFromInventory(CCarry *item, bool refreshUI = true, bool sendMsg = true);
 
+	void invFn3(CCarry *item);
+
 	/**
 	 * Moves a tree item from it's original position to be under the hidden room
 	 */

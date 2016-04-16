@@ -356,25 +356,25 @@ MODULE_OBJS := \
 	npcs/titania.o \
 	npcs/true_talk_npc.o \
 	pet_control/pet_control.o \
-	pet_control/pet_control_list_item.o \
 	pet_control/pet_control_list_item2.o \
 	pet_control/pet_conversations.o \
 	pet_control/pet_element.o \
 	pet_control/pet_frame.o \
 	pet_control/pet_gfx_element.o \
 	pet_control/pet_inventory.o \
+	pet_control/pet_inventory_glyphs.o \
 	pet_control/pet_rooms.o \
 	pet_control/pet_remote.o \
 	pet_control/pet_saves.o \
 	pet_control/pet_section.o \
 	pet_control/pet_control_sub5.o \
 	pet_control/pet_control_sub7.o \
-	pet_control/pet_control_sub10.o \
 	pet_control/pet_control_sub11.o \
 	pet_control/pet_control_sub12.o \
 	pet_control/pet_drag_chev.o \
 	pet_control/pet_graphic2.o \
 	pet_control/pet_graphic.o \
+	pet_control/pet_glyphs.o \
 	pet_control/pet_leaf.o \
 	pet_control/pet_mode_off.o \
 	pet_control/pet_mode_on.o \

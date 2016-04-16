@@ -25,7 +25,7 @@
 
 #include "titanic/support/simple_file.h"
 #include "titanic/pet_control/pet_section.h"
-#include "titanic/pet_control/pet_control_sub10.h"
+#include "titanic/pet_control/pet_inventory_glyphs.h"
 #include "titanic/pet_control/pet_control_sub12.h"
 
 namespace Titanic {
@@ -36,7 +36,7 @@ namespace Titanic {
 class CPetInventory : public CPetSection {
 private:
 	CPetControlSub12 _sub12;
-	CPetControlSub10 _sub10;
+	CPetInventoryGlyphs _items;
 	CGameObject *_itemBackgrounds[46];
 	CGameObject *_itemGlyphs[46];
 	int _field28C;
@@ -100,6 +100,18 @@ public:
 	 * Called when an item has been removed from the PET
 	 */
 	void itemRemoved(CCarry *item);
+
+	void fn3(CCarry *item);
+
+	/**
+	 * Called when the items under the PET have changed
+	 */
+	void itemsChanged();
+
+	/**
+	 * Called when the inventory can't be shown after adding an item
+	 */
+	void couldntShowInventory(CCarry *item);
 };
 
 } // End of namespace Titanic

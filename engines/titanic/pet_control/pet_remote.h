@@ -24,15 +24,18 @@
 #define TITANIC_PET_REMOTE_H
 
 #include "titanic/pet_control/pet_section.h"
-#include "titanic/pet_control/pet_control_sub10.h"
+#include "titanic/pet_control/pet_glyphs.h"
 #include "titanic/pet_control/pet_control_sub12.h"
 #include "titanic/pet_control/pet_gfx_element.h"
 
 namespace Titanic {
 
+class CPetRemoteGlyphs : public CPetGlyphs<CPetGlyph> {
+};
+
 class CPetRemote : public CPetSection {
 private:
-	CPetControlSub10 _sub10;
+	CPetRemoteGlyphs _items;
 	CPetGfxElement _val1;
 	CPetGfxElement _val2;
 	CPetGfxElement _val3;

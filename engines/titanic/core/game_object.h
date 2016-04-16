@@ -205,11 +205,6 @@ protected:
 	static CGameObject *findUnder(CTreeItem *parent, const CString &name);
 
 	/**
-	 * Moves the item from it's original position to be under the hidden room
-	 */
-	void moveToHiddenRoom();
-
-	/**
 	 * Moves the item from it's original position to be under the current view
 	 */
 	void moveToView();
@@ -313,7 +308,10 @@ public:
 	 */
 	void setVisible(bool val);
 
-	
+	/**
+	 * Moves the item from it's original position to be under the hidden room
+	 */
+	void moveToHiddenRoom();	
 };
 
 } // End of namespace Titanic

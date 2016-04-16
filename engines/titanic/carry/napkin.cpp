@@ -53,7 +53,7 @@ bool CNapkin::UseWithOtherMsg(CUseWithOtherMsg *msg) {
 		}
 	}
 
-	dropOnPet();
+	addToInventory();
 	return CCarry::UseWithOtherMsg(msg);
 }
 

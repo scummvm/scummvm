@@ -23,11 +23,11 @@
 #ifndef TITANIC_PET_CONTROL_LIST_ITEM2_H
 #define TITANIC_PET_CONTROL_LIST_ITEM2_H
 
-#include "titanic/pet_control/pet_control_list_item.h"
+#include "titanic/pet_control/pet_glyphs.h"
 
 namespace Titanic {
 
-class CPetControlListItem2  : public CPetControlListItem {
+class CPetControlListItem2  : public CPetGlyph {
 protected:
 	int _field34;
 	int _field38;

@@ -56,7 +56,7 @@ bool CBridgePiece::UseWithOtherMsg(CUseWithOtherMsg *msg) {
 	if (!shipSetting) {
 		return CCarry::UseWithOtherMsg(msg);
 	} else if (shipSetting->_string4 == "NULL") {
-		dropOnPet();
+		addToInventory();
 		return true;
 	} else {
 		setVisible(false);

@@ -23,11 +23,11 @@
 #ifndef TITANIC_PET_CONTROL_SUB11_H
 #define TITANIC_PET_CONTROL_SUB11_H
 
-#include "titanic/pet_control/pet_control_sub10.h"
+#include "titanic/pet_control/pet_glyphs.h"
 
 namespace Titanic {
 
-class CPetControlSub11 : public CPetControlSub10 {
+class CPetControlSub11 : public CPetGlyphs<CPetGlyph> {
 public:
 };
 

@@ -353,7 +353,30 @@ CGameObject *CPetControl::getNextObject(CGameObject *prior) const {
 }
 
 void CPetControl::addToInventory(CCarry *item) {
-	_inventory.addItem(item);
+	item->detach();
+
+	if (item->getName() == "CarryParcel") {
+		CCarry *child = static_cast<CCarry *>(getLastChild());
+		if (child)
+			child->detach();
+
+		item->moveToHiddenRoom();
+		if (!child)
+			return;
+
+		item = child;
+	}
+
+	item->addUnder(this);
+	_inventory.itemsChanged();
+
+	setArea(PET_INVENTORY);
+	if (_currentArea != PET_INVENTORY)
+		_inventory.couldntShowInventory(item);
+	
+	makeDirty();
+	CPETGainedObjectMsg msg;
+	msg.execute(item);
 }
 
 void CPetControl::removeFromInventory(CCarry *item, CTreeItem *newParent,
@@ -374,6 +397,10 @@ void CPetControl::removeFromInventory(CCarry *item, CTreeItem *newParent,
 void CPetControl::removeFromInventory(CCarry *item, bool refreshUI, bool sendMsg) {
 	CViewItem *view = getGameManager()->getView();
 	removeFromInventory(item, view, refreshUI, sendMsg);
+}
+
+void CPetControl::invFn3(CCarry *item) {
+	_inventory.fn3(item);
 }
 
 void CPetControl::moveToHiddenRoom(CTreeItem *item) {

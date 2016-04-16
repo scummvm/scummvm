@@ -38,7 +38,7 @@ bool CPetInventory::setup(CPetControl *petControl) {
 }
 
 bool CPetInventory::setup() {
-	_sub10.setup();
+	_items.setup();
 	_sub12.setup();
 
 	// TODO
@@ -47,7 +47,7 @@ bool CPetInventory::setup() {
 
 void CPetInventory::draw(CScreenManager *screenManager) {
 	_petControl->drawIndent(screenManager, 7);
-	_sub10.draw(screenManager);
+	_items.draw(screenManager);
 	_sub12.draw(screenManager);
 }
 
@@ -79,8 +79,8 @@ bool CPetInventory::setPetControl(CPetControl *petControl) {
 		return false;
 
 	_petControl = petControl;
-	_sub10.proc8();
-	_sub10.set20(28);
+	_items.proc8();
+	_items.set20(28);
 
 	Rect tempRect(0, 0, 52, 52);
 	for (uint idx = 0; idx < TOTAL_ITEMS; ++idx) {
@@ -103,11 +103,31 @@ bool CPetInventory::setPetControl(CPetControl *petControl) {
 }
 
 void CPetInventory::addItem(CCarry *item) {
+	if (item) {
+		CPetCarry glyphItem(item, 2);
+
+	}
 	warning("TODO: CPetInventory::addItem");
 }
 
 void CPetInventory::itemRemoved(CCarry *item) {
 	warning("TODO: CPetInventory::itemRemoved");
+}
+
+void CPetInventory::fn3(CCarry *item) {
+	warning("TODO: CPetInventory::fn3");
+}
+
+void CPetInventory::itemsChanged() {
+	_items.clear();
+
+	//CGameObject *item = static_cast<CGameObject *>(_petControl->getFirstObject());
+
+
+}
+
+void CPetInventory::couldntShowInventory(CCarry *item) {
+
 }
 
 } // End of namespace Titanic

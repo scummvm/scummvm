@@ -72,13 +72,13 @@ bool CChicken::UseWithOtherMsg(CUseWithOtherMsg *msg) {
 		if (_field12C || _string6 == "None") {
 			CActMsg actMsg("Clean");
 			actMsg.execute(this);
-			dropOnPet();
+			addToInventory();
 		} else {
 			CShowTextMsg textMsg("The chicken is already clean.");
 			textMsg.execute("PET");
 		}
 
-		dropOnPet();
+		addToInventory();
 	} else {
 		CSauceDispensor *dispensor = static_cast<CSauceDispensor *>(msg->_other);
 		if (!dispensor || _string6 == "None") {
@@ -101,7 +101,7 @@ bool CChicken::UseWithCharMsg(CUseWithCharMsg *msg) {
 		acceptMsg._item = this;
 		acceptMsg.execute(succubus);
 	} else {
-		dropOnPet();
+		addToInventory();
 	}
 
 	return true;
@@ -110,7 +110,7 @@ bool CChicken::UseWithCharMsg(CUseWithCharMsg *msg) {
 bool CChicken::ActMsg(CActMsg *msg) {
 	if (msg->_action == "GoToPET") {
 		setVisible(true);
-		dropOnPet();
+		addToInventory();
 	} else if (msg->_action == "Tomato") {
 		_string6 = "Tomato";
 		loadFrame(4);
@@ -171,7 +171,7 @@ bool CChicken::TimerMsg(CTimerMsg *msg) {
 	}
 
 	if (flag) {
-		addToInventory();
+		invFn3();
 		stopTimer(_timerId);
 	}
 

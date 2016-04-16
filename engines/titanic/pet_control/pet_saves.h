@@ -24,15 +24,18 @@
 #define TITANIC_PET_SAVES_H
 
 #include "titanic/pet_control/pet_section.h"
-#include "titanic/pet_control/pet_control_sub10.h"
+#include "titanic/pet_control/pet_glyphs.h"
 #include "titanic/pet_control/pet_control_sub12.h"
 
 namespace Titanic {
 
+class CPetSaveGlyphs : public CPetGlyphs<CPetGlyph> {
+};
+
 class CPetSaves : public CPetSection {
 private:
-	CPetControlSub10 _sub10;
-	CPetControlSub10 _sub12;
+	CPetSaveGlyphs _sub10;
+	CPetSaveGlyphs _sub12;
 public:
 	/**
 	 * Returns true if the object is in a valid state

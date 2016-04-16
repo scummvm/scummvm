@@ -21,32 +21,48 @@
  */
 
 #include "common/textconsole.h"
-#include "titanic/pet_control/pet_control_sub10.h"
+#include "titanic/pet_control/pet_inventory_glyphs.h"
 
 namespace Titanic {
 
-CPetControlSub10::CPetControlSub10() : _field10(0), _field14(7),
+CPetInventoryGlyphs::CPetInventoryGlyphs() : _field10(0), _field14(7),
 	_field18(-1), _field1C(-1), _field20(0), _field24(0) {
 }
 
-void CPetControlSub10::proc8() {
+void CPetInventoryGlyphs::proc8() {
 	error("TODO");
 }
 
-void CPetControlSub10::setup() {
-	warning("TODO: CPetControlSub10::setup");
+void CPetInventoryGlyphs::setup() {
+	warning("TODO: CPetInventoryGlyphs::setup");
 }
 
-void CPetControlSub10::proc10() {
+void CPetInventoryGlyphs::proc10() {
 	error("TODO");
 }
 
-void CPetControlSub10::proc11() {
+void CPetInventoryGlyphs::proc11() {
 	error("TODO");
 }
 
-void CPetControlSub10::draw(CScreenManager *screenManager) {
-	warning("TODO: CPetControlSub10::draw");
+void CPetInventoryGlyphs::draw(CScreenManager *screenManager) {
+	warning("TODO: CPetInventoryGlyphs::draw");
+}
+
+void CPetInventoryGlyphs::addItem(CPetCarry *item) {
+
+
+	warning("TODO");
+}
+
+void CPetInventoryGlyphs::clear() {
+	fn1(-1);
+	destroyContents();
+	_field10 = 0;
+}
+
+void CPetInventoryGlyphs::fn1(int val) {
+	warning("TODO: CPetInventoryGlyphs::fn1");
 }
 
 } // End of namespace Titanic

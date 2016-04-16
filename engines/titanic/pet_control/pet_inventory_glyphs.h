@@ -20,17 +20,37 @@
  *
  */
 
-#ifndef TITANIC_PET_CONTROL_SUB10_H
-#define TITANIC_PET_CONTROL_SUB10_H
+#ifndef TITANIC_PET_INVENTORY_GLYPHS_H
+#define TITANIC_PET_INVENTORY_GLYPHS_H
 
-#include "titanic/core/list.h"
-#include "titanic/pet_control/pet_control_sub10.h"
-#include "titanic/pet_control/pet_control_list_item.h"
+#include "titanic/pet_control/pet_glyphs.h"
 #include "titanic/support/screen_manager.h"
 
 namespace Titanic {
 
-class CPetControlSub10 : public List<CPetControlListItem> {
+class CPetInventoryGlyph : public CPetGlyph {
+public:
+	CCarry *_item;
+	int _field34;
+	int _field38;
+	int _field3C;
+	int _field40;
+public:
+	CPetInventoryGlyph(CCarry *item, int val) : _item(item),
+		_field34(val), _field38(0), _field3C(0), _field40(0) {}
+};
+
+class CPetCarry {
+public:
+	int _val;
+	CCarry *_item;
+public:
+	CPetCarry(CCarry *item, int val) : _item(item), _val(val) {}
+};
+
+class CPetInventoryGlyphs : public CPetGlyphs<CPetInventoryGlyph> {
+private:
+	void fn1(int val);
 protected:
 	int _field10;
 	int _field14;
@@ -42,7 +62,7 @@ protected:
 	CPetGfxElement _scrollLeft;
 	CPetGfxElement _scrollRight;
 public:
-	CPetControlSub10();
+	CPetInventoryGlyphs();
 
 	virtual void proc8();
 
@@ -60,8 +80,18 @@ public:
 	 * Draw the control
 	 */
 	void draw(CScreenManager *screenManager);
+
+	/**
+	 * Add a new item to the list
+	 */
+	void addItem(CPetCarry *item);
+
+	/**
+	 * Clears the glyph list
+	 */
+	void clear();
 };
 
 } // End of namespace Titanic
 
-#endif /* TITANIC_PET_CONTROL_SUB10_H */
+#endif /* TITANIC_PET_INVENTORY_GLYPHS_H */

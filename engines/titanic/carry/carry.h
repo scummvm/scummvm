@@ -63,9 +63,9 @@ protected:
 	int _visibleFrame;
 protected:
 	/**
-	 * Add the item to the PET inventory
+	 *
 	 */
-	void addToInventory();
+	void invFn3();
 public:
 	CLASSDEF
 	CCarry();
@@ -81,9 +81,9 @@ public:
 	virtual void load(SimpleFile *file);
 
 	/**
-	 * Called to drop an item into the PET
+	 * Add the item to the inventory
 	 */
-	void dropOnPet();
+	void addToInventory();
 };
 
 } // End of namespace Titanic
