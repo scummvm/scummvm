@@ -336,6 +336,9 @@ Common::Error SkyEngine::init() {
 	case Common::EN_GRB:
 		_systemVars.language = SKY_ENGLISH;
 		break;
+	case Common::RU_RUS:
+		_systemVars.language = SKY_RUSSIAN;
+		break;
 	default:
 		_systemVars.language = SKY_ENGLISH;
 		break;
