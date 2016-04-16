@@ -34,19 +34,20 @@ int GnapEngine::scene53_init() {
 
 void GnapEngine::scene53_updateHotspots() {
 	setHotspot(0, 0, 0, 0, 0, SF_WALKABLE | SF_TALK_CURSOR | SF_GRAB_CURSOR | SF_LOOK_CURSOR);
-	setHotspot(2, 336, 361, 238, 270, SF_GRAB_CURSOR);
-	setHotspot(3, 376, 405, 243, 274, SF_GRAB_CURSOR);
-	setHotspot(4, 415, 441, 248, 276, SF_GRAB_CURSOR);
-	setHotspot(5, 329, 358, 276, 303, SF_GRAB_CURSOR);
-	setHotspot(6, 378, 408, 282, 311, SF_GRAB_CURSOR);
-	setHotspot(7, 417, 446, 286, 319, SF_GRAB_CURSOR);
-	setHotspot(8, 332, 361, 311, 342, SF_GRAB_CURSOR);
-	setHotspot(9, 376, 407, 318, 349, SF_GRAB_CURSOR);
-	setHotspot(10, 417, 447, 320, 353, SF_GRAB_CURSOR);
-	setHotspot(11, 377, 405, 352, 384, SF_GRAB_CURSOR);
-	setHotspot(12, 419, 450, 358, 394, SF_GRAB_CURSOR);
-	setHotspot(13, 328, 359, 346, 379, SF_GRAB_CURSOR);
-	setHotspot(14, 150, 650, 585, 600, SF_EXIT_D_CURSOR);
+	setHotspot(2, 336, 238, 361, 270, SF_GRAB_CURSOR);
+	setHotspot(3, 376, 243, 405, 274, SF_GRAB_CURSOR);
+	setHotspot(4, 415, 248, 441, 276, SF_GRAB_CURSOR);
+	setHotspot(5, 329, 276, 358, 303, SF_GRAB_CURSOR);
+	setHotspot(6, 378, 282, 408, 311, SF_GRAB_CURSOR);
+	setHotspot(7, 417, 286, 446, 319, SF_GRAB_CURSOR);
+	setHotspot(8, 332, 311, 361, 342, SF_GRAB_CURSOR);
+	setHotspot(9, 376, 318, 407, 349, SF_GRAB_CURSOR);
+	setHotspot(10, 417, 320, 447, 353, SF_GRAB_CURSOR);
+	setHotspot(11, 377, 352, 405, 384, SF_GRAB_CURSOR);
+	setHotspot(12, 419, 358, 450, 394, SF_GRAB_CURSOR);
+	setHotspot(13, 328, 346, 359, 379, SF_GRAB_CURSOR);
+	setHotspot(14, 150, 585, 650, 600, SF_EXIT_D_CURSOR);
+
 	setDeviceHotspot(1, -1, -1, -1, -1);
 	_hotspotsCount = 15;
 }
@@ -374,9 +375,7 @@ void GnapEngine::scene53_run() {
 		}
 		
 		gameUpdateTick();
-	
 	}
-	
 }
 
 } // End of namespace Gnap
