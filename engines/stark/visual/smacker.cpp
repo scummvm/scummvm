@@ -41,7 +41,8 @@ VisualSmacker::VisualSmacker(Gfx::Driver *gfx) :
 		_surface(nullptr),
 		_texture(nullptr),
 		_smacker(nullptr),
-		_position(0, 0) {
+		_position(0, 0),
+		_overridenFramerate(-1) {
 	_surfaceRenderer = _gfx->createSurfaceRenderer();
 }
 
@@ -57,7 +58,7 @@ void VisualSmacker::load(Common::SeekableReadStream *stream) {
 
 	_smacker = new Video::SmackerDecoder();
 	_smacker->loadStream(stream);
-	_smacker->start();
+	rewind();
 
 	_texture = _gfx->createTexture();
 
@@ -147,10 +148,19 @@ uint32 VisualSmacker::getDuration() const {
 void VisualSmacker::rewind() {
 	_smacker->rewind();
 	_smacker->start();
+
+	if (_overridenFramerate != -1) {
+		Common::Rational originalFrameRate = _smacker->getFrameRate();
+		Common::Rational playbackRate = _overridenFramerate / originalFrameRate;
+		_smacker->setRate(playbackRate);
+	}
 }
 
 uint32 VisualSmacker::getCurrentTime() const {
 	return _smacker->getTime();
 }
 
+void VisualSmacker::overrideFrameRate(int32 framerate) {
+	_overridenFramerate = framerate;
+}
 } // End of namespace Stark

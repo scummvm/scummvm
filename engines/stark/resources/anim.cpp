@@ -295,6 +295,7 @@ void AnimVideo::onAllLoaded() {
 
 		_smacker = new VisualSmacker(StarkGfx);
 		_smacker->load(stream);
+		_smacker->overrideFrameRate(_frameRateOverride);
 		updateSmackerPosition();
 	}
 }

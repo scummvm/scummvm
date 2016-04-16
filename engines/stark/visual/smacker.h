@@ -75,6 +75,8 @@ public:
 	/** Get the current time in the video since the beginning */
 	uint32 getCurrentTime() const;
 
+	void overrideFrameRate(int32 framerate);
+
 private:
 	Video::SmackerDecoder *_smacker;
 	const Graphics::Surface *_surface;
@@ -83,6 +85,7 @@ private:
 	Gfx::Driver *_gfx;
 	Gfx::SurfaceRenderer *_surfaceRenderer;
 	Gfx::Texture *_texture;
+	int32 _overridenFramerate;
 };
 
 } // End of namespace Stark
