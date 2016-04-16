@@ -359,16 +359,13 @@ Common::Error DrasculaEngine::run() {
 		for (i = 0; i < 25; i++)
 			memcpy(crosshairCursor + i * 40, tableSurface + 225 + (56 + i) * 320, 40);
 
-		if (_lang == kSpanish)
-			loadPic(currentChapter == 6 ? 97 : 974, tableSurface);
+		if (_lang == kSpanish && currentChapter != 6)
+			loadPic(974, tableSurface);
 
 		if (currentChapter != 2) {
 			loadPic(99, cursorSurface);
 			loadPic(99, backSurface);
-			if (currentChapter == 6 && _lang == kSpanish)
-				loadPic(95, extraSurface);
-			else
-				loadPic(97, extraSurface);
+			loadPic(97, extraSurface);
 		}
 
 		memset(iconName, 0, sizeof(iconName));
