@@ -162,6 +162,10 @@ void GameInterface::itemDoActionAt(Resources::ItemVisual *item, uint32 action, c
 	item->doAction(action, hotspotIndex);
 }
 
+Common::String GameInterface::getItemTitle(Resources::ItemVisual *item) {
+	return item->getHotspotTitle(0);
+}
+
 Common::String GameInterface::getItemTitleAt(Resources::ItemVisual *item, const Common::Point &pos) {
 	int32 hotspotIndex = item->getHotspotIndexForPoint(pos);
 	return item->getHotspotTitle(hotspotIndex);

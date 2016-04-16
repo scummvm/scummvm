@@ -65,6 +65,7 @@ public:
 	void itemDoActionAt(Resources::ItemVisual *item, uint32 action, const Common::Point &position);
 
 	/** Get the item's name */
+	Common::String getItemTitle(Resources::ItemVisual *object);
 	Common::String getItemTitleAt(Resources::ItemVisual *object, const Common::Point &pos);
 
 	/** List the actions available for an item in the current game state */

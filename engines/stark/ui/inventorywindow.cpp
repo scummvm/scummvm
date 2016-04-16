@@ -179,6 +179,13 @@ void InventoryWindow::onMouseMove(const Common::Point &pos) {
 		_cursor->setCursorImage(cursorImage);
 		_cursor->setFading(hoveredItemAction == _selectedInventoryItem);
 	}
+
+	if (hoveredItem) {
+		Common::String hint = StarkGameInterface->getItemTitle(hoveredItem);
+		_cursor->setMouseHint(hint);
+	} else {
+		_cursor->setMouseHint("");
+	}
 }
 
 void InventoryWindow::onClick(const Common::Point &pos) {
