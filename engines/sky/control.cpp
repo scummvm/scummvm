@@ -1584,7 +1584,7 @@ void Control::showGameQuitMsg() {
 	free(textBuf2);
 }
 
-char Control::_quitTexts[16][35] = {
+char Control::_quitTexts[18][35] = {
 	"Game over player one",
 	"BE VIGILANT",
 	"Das Spiel ist aus.",
@@ -1600,7 +1600,9 @@ char Control::_quitTexts[16][35] = {
 	"Fim de jogo para o jogador um",
 	"BE VIGILANT",
 	"Game over player one",
-	"BE VIGILANT"
+	"BE VIGILANT",
+	"Irpa okohseha, irpok 1",
+	"JYD\x96 JDITELEH"
 };
 
 uint8 Control::_crossImg[594] = {
