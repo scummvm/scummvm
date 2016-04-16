@@ -95,6 +95,11 @@ public:
 	 * Add an item to the inventory
 	 */
 	void addItem(CCarry *item);
+
+	/**
+	 * Called when an item has been removed from the PET
+	 */
+	void itemRemoved(CCarry *item);
 };
 
 } // End of namespace Titanic

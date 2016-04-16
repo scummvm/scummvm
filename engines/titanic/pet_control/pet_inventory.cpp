@@ -106,4 +106,8 @@ void CPetInventory::addItem(CCarry *item) {
 	warning("TODO: CPetInventory::addItem");
 }
 
+void CPetInventory::itemRemoved(CCarry *item) {
+	warning("TODO: CPetInventory::itemRemoved");
+}
+
 } // End of namespace Titanic

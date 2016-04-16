@@ -32,8 +32,6 @@ namespace Titanic {
  */
 class CMovieClip : public ListItem {
 private:
-	int _field18;
-	int _field1C;
 	int _field20;
 	int _field24;
 	int _field28;
@@ -43,6 +41,8 @@ private:
 	CString _string3;
 public:
 	CString _name;
+	int _startFrame;
+	int _endFrame;
 public:
 	CLASSDEF
 	CMovieClip();

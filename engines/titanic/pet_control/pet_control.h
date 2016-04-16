@@ -83,11 +83,6 @@ private:
 	void loaded();
 
 	/**
-	 * Scan the specified room for an item by name
-	 */
-	CGameObject *findItemInRoom(CRoomItem *room, const CString &name) const;
-
-	/**
 	 * Returns true if the draw bounds contains the specified point
 	 */
 	bool containsPt(const Common::Point &pt) const;
@@ -219,9 +214,22 @@ public:
 	void addToInventory(CCarry *item);
 
 	/**
+	 * Remove an item from the inventory
+	 */
+	void removeFromInventory(CCarry *item, CTreeItem *newParent,
+		bool refreshUI = true, bool sendMsg = true);
+
+	/**
+	 * Remove an item from the inventory
+	 */
+	void removeFromInventory(CCarry *item, bool refreshUI = true, bool sendMsg = true);
+
+	/**
 	 * Moves a tree item from it's original position to be under the hidden room
 	 */
 	void moveToHiddenRoom(CTreeItem *item);
+
+	void setC8(int val) { _fieldC8 = val; }
 };
 
 } // End of namespace Titanic

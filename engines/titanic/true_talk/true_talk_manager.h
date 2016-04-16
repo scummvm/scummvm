@@ -30,6 +30,7 @@
 namespace Titanic {
 
 class CGameManager;
+class CTreeItem;
 
 class CTrueTalkManager {
 private:
@@ -110,6 +111,8 @@ public:
 	void update1();
 
 	void update2();
+
+	void fn1(CTreeItem *item, int val2, int val3);
 };
 
 } // End of namespace Titanic

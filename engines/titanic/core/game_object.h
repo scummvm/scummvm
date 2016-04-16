@@ -150,6 +150,16 @@ protected:
 	int addTimer(int endVal, uint firstDuration, uint duration);
 
 	/**
+	 * Adds a timer
+	 */
+	int addTimer(uint firstDuration, uint duration);
+
+	/**
+	 * Stops a timer
+	 */
+	void stopTimer(int id);
+
+	/**
 	 * Causes the game to sleep for the specified time
 	 */
 	void sleep(uint milli);
@@ -191,6 +201,11 @@ protected:
 	Found find(const CString &name, CGameObject **item, int findAreas);
 
 	/**
+	 * Scan the specified room for an item by name
+	 */
+	static CGameObject *findUnder(CTreeItem *parent, const CString &name);
+
+	/**
 	 * Moves the item from it's original position to be under the hidden room
 	 */
 	void moveToHiddenRoom();
@@ -199,6 +214,13 @@ protected:
 	 * Moves the item from it's original position to be under the current view
 	 */
 	void moveToView();
+
+	void trueTalkFn1(CTreeItem *item, int val2, int val3);
+
+	/**
+	 * Load the surface
+	 */
+	void loadSurface();
 public:
 	int _field60;
 	CursorId _cursorId;
@@ -270,6 +292,11 @@ public:
 	 * Play the movie specified in _resource
 	 */
 	void playMovie(uint startFrame, uint endFrame, int val3);
+
+	/**
+	 * Play an arbitrary clip
+	 */
+	void playClip(const CString &name, uint flags);
 
 	/**
 	 * Return the current view/node/room as a single string

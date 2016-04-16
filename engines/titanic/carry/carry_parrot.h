@@ -43,9 +43,9 @@ class CCarryParrot : public CCarry {
 	bool ActMsg(CActMsg *msg);
 private:
 	CString _string6;
-	int _field138;
+	int _timerId;
 	int _field13C;
-	int _field140;
+	bool _field140;
 	int _field144;
 	int _field148;
 	int _field14C;

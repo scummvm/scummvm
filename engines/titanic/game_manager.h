@@ -181,6 +181,11 @@ public:
 	void stopTimer(uint id) { _timers.stop(id); }
 
 	void setTimer44(uint id, uint val) { _timers.set44(id, val); }
+
+	/**
+	 * Return the true talk manager
+	 */
+	CTrueTalkManager *getTalkManager() { return &_trueTalkManager; }
 };
 
 } // End of namespace Titanic

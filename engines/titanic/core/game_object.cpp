@@ -377,6 +377,13 @@ void CGameObject::playMovie(uint startFrame, uint endFrame, int val3) {
 	}
 }
 
+void CGameObject::playClip(const CString &name, uint flags) {
+	_frameNumber = -1;
+	CMovieClip *clip = _clipList1.findByName(name);
+	if (clip)
+		playMovie(clip->_startFrame, clip->_endFrame, flags);
+}
+
 void CGameObject::playMovie(uint flags) {
 	_frameNumber = -1;
 	if (!_surface && !_resource.empty()) {
@@ -471,6 +478,18 @@ int CGameObject::addTimer(int endVal, uint firstDuration, uint duration) {
 
 	getGameManager()->addTimer(timer);
 	return timer->_id;
+}
+
+int CGameObject::addTimer(uint firstDuration, uint duration) {
+	CTimeEventInfo *timer = new CTimeEventInfo(g_vm->_events->getTicksCount(),
+		duration != 0, firstDuration, duration, this, 0, CString());
+
+	getGameManager()->addTimer(timer);
+	return timer->_id;
+}
+
+void CGameObject::stopTimer(int id) {
+	getGameManager()->stopTimer(id);
 }
 
 void CGameObject::gotoView(const CString &viewName, const CString &clipName) {
@@ -588,6 +607,20 @@ CGameObject *CGameObject::findRoomObject(const CString &name) const {
 	return static_cast<CGameObject *>(findRoom()->findByName(name));
 }
 
+CGameObject *CGameObject::findUnder(CTreeItem *parent, const CString &name) {
+	if (!parent)
+		return nullptr;
+
+	for (CTreeItem *treeItem = parent->getFirstChild(); treeItem;
+	treeItem = treeItem->scan(parent)) {
+		if (!treeItem->getName().compareTo(name)) {
+			return dynamic_cast<CGameObject *>(treeItem);
+		}
+	}
+
+	return nullptr;
+}
+
 Found CGameObject::find(const CString &name, CGameObject **item, int findAreas) {
 	CGameObject *go;
 	*item = nullptr;
@@ -646,6 +679,25 @@ void CGameObject::moveToView() {
 
 void CGameObject::incState38() {
 	getGameManager()->_gameState.inc38();
+}
+
+void CGameObject::trueTalkFn1(CTreeItem *item, int val2, int val3) {
+	CGameManager *gameManager = getGameManager();
+	if (gameManager) {
+		CTrueTalkManager *talkManager = gameManager->getTalkManager();
+		if (talkManager)
+			talkManager->fn1(item, val2, val3);
+	}
+}
+
+void CGameObject::loadSurface() {
+	if (!_surface && !_resource.empty()) {
+		loadResource(_resource);
+		_resource.clear();
+	}
+
+	if (_surface)
+		_surface->loadIfReady();
 }
 
 } // End of namespace Titanic

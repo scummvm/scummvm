@@ -21,6 +21,7 @@
  */
 
 #include "titanic/true_talk/true_talk_manager.h"
+#include "titanic/core/tree_item.h"
 
 #define MKTAG_BE(a3,a2,a1,a0) ((uint32)((a3) | ((a2) << 8) | ((a1) << 16) | ((a0) << 24)))
 
@@ -188,6 +189,10 @@ void CTrueTalkManager::update1() {
 
 void CTrueTalkManager::update2() {
 	//warning("CTrueTalkManager::update2");
+}
+
+void CTrueTalkManager::fn1(CTreeItem *item, int val2, int val3) {
+	warning("CTrueTalkManager::fn1");
 }
 
 } // End of namespace Titanic

@@ -31,8 +31,8 @@ void CMovieClip::save(SimpleFile *file, int indent) const {
 	file->writeNumberLine(2, indent);
 	file->writeQuotedLine("Clip", indent);
 	file->writeQuotedLine(_name, indent);
-	file->writeNumberLine(_field18, indent);
-	file->writeNumberLine(_field1C, indent);
+	file->writeNumberLine(_startFrame, indent);
+	file->writeNumberLine(_endFrame, indent);
 
 	ListItem::save(file, indent);
 }
@@ -43,8 +43,8 @@ void CMovieClip::load(SimpleFile *file) {
 	switch (val) {
 	case 1:
 		_name = file->readString();
-		_field18 = file->readNumber();
-		_field1C = file->readNumber();
+		_startFrame = file->readNumber();
+		_endFrame = file->readNumber();
 		_field20 = file->readNumber();
 		_field24 = file->readNumber();
 		_field28 = file->readNumber();
@@ -55,8 +55,8 @@ void CMovieClip::load(SimpleFile *file) {
 	case 2:
 		file->readString();
 		_name = file->readString();
-		_field18 = file->readNumber();
-		_field1C = file->readNumber();
+		_startFrame = file->readNumber();
+		_endFrame = file->readNumber();
 		break;
 
 	default:

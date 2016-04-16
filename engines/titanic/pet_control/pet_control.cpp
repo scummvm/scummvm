@@ -21,7 +21,9 @@
  */
 
 #include "titanic/pet_control/pet_control.h"
+#include "titanic/carry/carry.h"
 #include "titanic/core/project_item.h"
+#include "titanic/messages/pet_messages.h"
 #include "titanic/game_manager.h"
 #include "titanic/game_state.h"
 
@@ -217,24 +219,9 @@ CRoomItem *CPetControl::getHiddenRoom() {
 	return _hiddenRoom;
 }
 
-CGameObject *CPetControl::findItemInRoom(CRoomItem *room, 
-		const CString &name) const {
-	if (!room)
-		return nullptr;
-
-	for (CTreeItem *treeItem = room->getFirstChild(); treeItem;
-			treeItem = treeItem->scan(room)) {
-		if (!treeItem->getName().compareTo(name)) {
-			return dynamic_cast<CGameObject *>(treeItem);
-		}
-	}
-
-	return nullptr;
-}
-
 CGameObject *CPetControl::getHiddenObject(const CString &name) {
 	CRoomItem *room = getHiddenRoom();
-	return room ? findItemInRoom(room, name) : nullptr;
+	return room ? findUnder(room, name) : nullptr;
 }
 
 bool CPetControl::containsPt(const Common::Point &pt) const {
@@ -367,6 +354,26 @@ CGameObject *CPetControl::getNextObject(CGameObject *prior) const {
 
 void CPetControl::addToInventory(CCarry *item) {
 	_inventory.addItem(item);
+}
+
+void CPetControl::removeFromInventory(CCarry *item, CTreeItem *newParent,
+		bool refreshUI, bool sendMsg) {
+	if (item && newParent) {
+		item->detach();
+		item->addUnder(newParent);
+
+		if (refreshUI)
+			_inventory.itemRemoved(item);
+		if (sendMsg) {
+			CPETLostObjectMsg lostMsg;
+			lostMsg.execute(item);
+		}
+	}
+}
+
+void CPetControl::removeFromInventory(CCarry *item, bool refreshUI, bool sendMsg) {
+	CViewItem *view = getGameManager()->getView();
+	removeFromInventory(item, view, refreshUI, sendMsg);
 }
 
 void CPetControl::moveToHiddenRoom(CTreeItem *item) {
