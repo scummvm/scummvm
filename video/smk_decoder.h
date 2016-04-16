@@ -67,6 +67,9 @@ public:
 
 	bool rewind();
 
+	// ResidualVM-specific function
+	Common::Rational getFrameRate() const;
+
 protected:
 	void readNextPacket();
 	bool supportsAudioTrackSwitching() const { return true; }
@@ -96,9 +99,10 @@ protected:
 		void decodeFrame(Common::BitStream &bs);
 		void unpackPalette(Common::SeekableReadStream *stream);
 
-	protected:
+		// ResidualVM-specific code
 		Common::Rational getFrameRate() const { return _frameRate; }
 
+	protected:
 		Graphics::Surface *_surface;
 
 	private:
