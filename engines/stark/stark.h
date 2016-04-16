@@ -73,6 +73,7 @@ protected:
 private:
 	void mainLoop();
 	void updateDisplayScene();
+	void processEvents();
 	void setStartupLocation();
 	bool isDemo();
 
