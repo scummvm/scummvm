@@ -82,10 +82,15 @@ void Walk::updatePath() const {
 	Resources::FloorFace *destinationFloorFace = floor->getFace(destinationFloorFaceIndex);
 	Resources::FloorEdge *destinationFloorEdge = destinationFloorFace->findNearestEdge(_destination);
 
+	_path->reset();
+	if (!startFloorEdge || !destinationFloorEdge) {
+		// Unable to find enabled start and destination edges
+		return;
+	}
+
 	ShortestPath pathSearch;
 	ShortestPath::NodeList edgePath = pathSearch.search(startFloorEdge, destinationFloorEdge);
 
-	_path->reset();
 
 	for (ShortestPath::NodeList::const_iterator it = edgePath.begin(); it != edgePath.end(); it++) {
 		_path->addStep((*it)->getPosition());

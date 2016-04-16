@@ -150,7 +150,12 @@ FloorEdge *FloorFace::findNearestEdge(const Math::Vector3d &point) const {
 	FloorEdge *edge = nullptr;
 
 	for (uint i = 0; i < _edges.size(); i++) {
+		if (!_edges[i]->isEnabled()) {
+			continue;
+		}
+
 		float distance = (point - _edges[i]->getPosition()).getSquareMagnitude();
+
 
 		if (!edge || distance < minDistance) {
 			minDistance = distance;
