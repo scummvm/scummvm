@@ -78,7 +78,7 @@ protected:
 	Visual *_visual;
 
 	bool _transparent;
-	uint32 _transparency;
+	uint32 _transparentColor;
 	uint32 _field_44_ADF;
 	uint32 _field_48_ADF;
 

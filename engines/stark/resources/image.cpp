@@ -55,7 +55,7 @@ Image::~Image() {
 Image::Image(Object *parent, byte subType, uint16 index, const Common::String &name) :
 		Object(parent, subType, index, name),
 		_transparent(false),
-		_transparency(0),
+		_transparentColor(0),
 		_field_44_ADF(0),
 		_field_48_ADF(30),
 		_visual(nullptr) {
@@ -66,7 +66,7 @@ void Image::readData(Formats::XRCReadStream *stream) {
 	_filename = stream->readString();
 	_hotspot = stream->readPoint();
 	_transparent = stream->readBool();
-	_transparency = stream->readUint32LE();
+	_transparentColor = stream->readUint32LE();
 
 	uint32 polygonCount = stream->readUint32LE();
 	for (uint32 i = 0; i < polygonCount; i++) {
@@ -92,7 +92,7 @@ void Image::printData() {
 	debug("filename: %s", _filename.c_str());
 	debug("hotspot: x %d, y %d", _hotspot.x, _hotspot.y);
 	debug("transparent: %d", _transparent);
-	debug("transparency: %d", _transparency);
+	debug("transparentColor: %d", _transparentColor);
 	debug("field_44: %d", _field_44_ADF);
 	debug("field_48: %d", _field_48_ADF);
 
