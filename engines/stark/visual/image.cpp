@@ -78,7 +78,7 @@ void VisualImageXMG::setFadeLevel(float fadeLevel) {
 bool VisualImageXMG::isPointSolid(const Common::Point &point) const {
 	assert(_surface);
 
-	if (_surface->w < 32 && _surface->h < 32) {
+	if (_surface->w < 32 || _surface->h < 32) {
 		return true; // Small images are always solid
 	}
 
