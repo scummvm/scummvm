@@ -544,6 +544,7 @@ Common::Error AdlEngine::run() {
 
 	while (1) {
 		uint verb = 0, noun = 0;
+		_isRestarting = false;
 
 		// When restoring from the launcher, we don't read
 		// input on the first iteration. This is needed to
@@ -552,6 +553,9 @@ Common::Error AdlEngine::run() {
 		// (Also see comment below.)
 		if (!_isRestoring) {
 			showRoom();
+
+			if (_isRestarting)
+				continue;
 
 			_canSaveNow = _canRestoreNow = true;
 			getInput(verb, noun);
@@ -580,17 +584,13 @@ Common::Error AdlEngine::run() {
 		}
 
 		// Restarting does end command processing
-		if (_isRestarting) {
-			_isRestarting = false;
+		if (_isRestarting)
 			continue;
-		}
 
 		doAllCommands(_globalCommands, verb, noun);
 
-		if (_isRestarting) {
-			_isRestarting = false;
+		if (_isRestarting)
 			continue;
-		}
 
 		advanceClock();
 		_state.moves++;

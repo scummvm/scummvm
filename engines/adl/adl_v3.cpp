@@ -87,18 +87,18 @@ void AdlEngine_v3::setupOpcodeTables() {
 	// 0x08
 	Opcode(o1_setPic);
 	Opcode(o1_printMsg);
-	Opcode(o1_setLight);
-	Opcode(o1_setDark);
+	Opcode(o3_dummy);
+	Opcode(o3_setTextMode);
 	// 0x0c
 	Opcode(o2_moveAllItems);
 	Opcode(o1_quit);
-	OpcodeUnImpl();
+	Opcode(o3_dummy);
 	Opcode(o2_save);
 	// 0x10
 	Opcode(o2_restore);
 	Opcode(o1_restart);
-	Opcode(o2_placeItem);
-	Opcode(o1_setItemPic);
+	Opcode(o3_setDisk);
+	Opcode(o3_dummy);
 	// 0x14
 	Opcode(o1_resetPic);
 	Opcode(o1_goDirection<IDI_DIR_NORTH>);
@@ -112,8 +112,8 @@ void AdlEngine_v3::setupOpcodeTables() {
 	// 0x1c
 	Opcode(o1_dropItem);
 	Opcode(o1_setRoomPic);
-	Opcode(o2_tellTime);
-	Opcode(o2_setRoomFromVar);
+	Opcode(o3_sound);
+	OpcodeUnImpl();
 	// 0x20
 	Opcode(o2_initDisk);
 }
@@ -186,6 +186,47 @@ int AdlEngine_v3::o3_moveItem(ScriptEnv &e) {
 	item.room = room;
 	item.isLineArt = _curDisk;
 	return 2;
+}
+
+int AdlEngine_v3::o3_dummy(ScriptEnv &e) {
+	OP_DEBUG_0("\tDUMMY()");
+
+	return 0;
+}
+
+int AdlEngine_v3::o3_setTextMode(ScriptEnv &e) {
+	OP_DEBUG_1("\tSET_TEXT_MODE(%d)", e.arg(1));
+
+	// TODO
+	// 1: 4-line mode
+	// 2: 24-line mode
+
+	switch (e.arg(1)) {
+	case 3:
+		// We re-use the restarting flag here, to simulate a long jump
+		_isRestarting = true;
+		return -1;
+	}
+
+	return 1;
+}
+
+int AdlEngine_v3::o3_setDisk(ScriptEnv &e) {
+	OP_DEBUG_2("\tSET_DISK(%d, %d)", e.arg(1), e.arg(2));
+
+	// TODO
+	// Arg 1: disk
+	// Arg 2: room
+
+	return 2;
+}
+
+int AdlEngine_v3::o3_sound(ScriptEnv &e) {
+	OP_DEBUG_0("\tSOUND()");
+
+	// TODO
+
+	return 0;
 }
 
 } // End of namespace Adl

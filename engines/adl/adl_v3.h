@@ -51,6 +51,10 @@ protected:
 	int o3_isNounNotInRoom(ScriptEnv &e);
 	int o3_skipOneCommand(ScriptEnv &e);
 	int o3_moveItem(ScriptEnv &e);
+	int o3_dummy(ScriptEnv &e);
+	int o3_setTextMode(ScriptEnv &e);
+	int o3_setDisk(ScriptEnv &e);
+	int o3_sound(ScriptEnv &e);
 
 	Common::Array<Common::String> _itemDesc;
 	byte _curDisk;
