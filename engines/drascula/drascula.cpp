@@ -891,7 +891,7 @@ void DrasculaEngine::pause(int duration) {
 }
 
 int DrasculaEngine::getTime() {
-	return _system->getMillis() / 20; // originally was 1
+	return _system->getMillis() / 10;
 }
 
 void DrasculaEngine::reduce_hare_chico(int xx1, int yy1, int xx2, int yy2, int width, int height, int factor, byte *dir_inicio, byte *dir_fin) {
