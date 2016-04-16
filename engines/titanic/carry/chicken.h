@@ -24,17 +24,30 @@
 #define TITANIC_CHICKEN_H
 
 #include "titanic/carry/carry.h"
+#include "titanic/messages/messages.h"
+#include "titanic/messages/pet_messages.h"
 
 namespace Titanic {
 
 class CChicken : public CCarry {
+	DECLARE_MESSAGE_MAP
+	bool UseWithOtherMsg(CUseWithOtherMsg *msg);
+	bool UseWithCharMsg(CUseWithCharMsg *msg);
+	bool ActMsg(CActMsg *msg);
+	bool VisibleMsg(CVisibleMsg *msg);
+	bool TimerMsg(CTimerMsg *msg);
+	bool PETGainedObjectMsg(CPETGainedObjectMsg *msg);
+	bool ParrotTriesChickenMsg(CParrotTriesChickenMsg *msg);
+	bool MouseDragEndMsg(CMouseDragEndMsg *msg);
+	bool PETObjectStateMsg(CPETObjectStateMsg *msg);
+	bool PETLostObjectMsg(CPETLostObjectMsg *msg);
 private:
 	static int _v1;
 public:
 	int _field12C;
 	CString _string6;
 	int _field13C;
-	int _field140;
+	int _timerId;
 public:
 	CLASSDEF
 	CChicken();
