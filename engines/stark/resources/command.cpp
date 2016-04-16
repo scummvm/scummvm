@@ -560,7 +560,6 @@ Command *Command::opPlayAnimation(Script *script, const ResourceReference &animR
 	if (suspend) {
 		float animDuration = anim->getDuration();
 		script->pause(animDuration);
-		item->setMovementSuspendedScript(script);
 		return this; // Stay on the same command while suspended
 	} else {
 		return nextCommand();
