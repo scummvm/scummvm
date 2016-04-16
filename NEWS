@@ -27,6 +27,8 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Fixed loading savegames in the Pendulum scene.
    - Fixed wrong background for inventory items during chapter 6 in the
      Spanish version.
+   - Fixed animations speed (they were running two times slower than in the
+     original engine).
 
  Gob:
    - Fixed lock up for some games during sound initialization.
