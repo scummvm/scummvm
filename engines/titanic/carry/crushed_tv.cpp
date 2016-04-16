@@ -21,8 +21,15 @@
  */
 
 #include "titanic/carry/crushed_tv.h"
+#include "titanic/npcs/character.h"
 
 namespace Titanic {
+
+BEGIN_MESSAGE_MAP(CCrushedTV, CCarry)
+	ON_MESSAGE(ActMsg)
+	ON_MESSAGE(UseWithCharMsg)
+	ON_MESSAGE(MouseDragStartMsg)
+END_MESSAGE_MAP()
 
 CCrushedTV::CCrushedTV() : CCarry() {
 }
@@ -36,5 +43,38 @@ void CCrushedTV::load(SimpleFile *file) {
 	file->readNumber();
 	CCarry::load(file);
 }
+
+bool CCrushedTV::ActMsg(CActMsg *msg) {
+	if (msg->_action == "SmashTV") {
+		setVisible(true);
+		_fieldE0 = 1;
+	}
+
+	return true;
+}
+
+bool CCrushedTV::UseWithCharMsg(CUseWithCharMsg *msg) {
+	if (msg->_character->getName() == "Barbot" && msg->_character->_visible) {
+		setVisible(false);
+		CActMsg actMsg("CrushedTV");
+		actMsg.execute(msg->_character);
+		return true;
+	} else {
+		return CCarry::UseWithCharMsg(msg);
+	}
+}
+
+bool CCrushedTV::MouseDragStartMsg(CMouseDragStartMsg *msg) {
+	if (!checkStartDragging(msg)) {
+		return false;
+	} else if (compareViewNameTo("BottomOfWell.Node 7.N")) {
+		changeView("BottomOfWell.Node 12.N", "");
+		CActMsg actMsg("TelevisionTaken");
+		actMsg.execute("BOWTelevisionMonitor");
+	}
+
+	return CCarry::MouseDragStartMsg(msg);
+}
+
 
 } // End of namespace Titanic

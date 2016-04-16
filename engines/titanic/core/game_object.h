@@ -73,7 +73,6 @@ protected:
 	int _field50;
 	int _field54;
 	int _field58;
-	bool _visible;
 	CMovieClipList _clipList1;
 	int _initialFrame;
 	CMovieClipList _clipList2;
@@ -221,9 +220,15 @@ protected:
 	 * Load the surface
 	 */
 	void loadSurface();
+
+	/**
+	 * Change the view
+	 */
+	bool changeView(const CString &viewName, const CString &clipName);
 public:
 	int _field60;
 	CursorId _cursorId;
+	bool _visible;
 public:
 	CLASSDEF
 	CGameObject();

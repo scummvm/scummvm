@@ -700,4 +700,24 @@ void CGameObject::loadSurface() {
 		_surface->loadIfReady();
 }
 
+bool CGameObject::changeView(const CString &viewName, const CString &clipName) {
+	CViewItem *newView = parseView(viewName);
+	CGameManager *gameManager = getGameManager();
+	CViewItem *oldView = gameManager->getView();
+
+	if (!oldView || !newView)
+		return false;
+	
+	CMovieClip *clip = nullptr;
+	if (!clipName.empty()) {
+		clip = oldView->findNode()->findRoom()->findClip(clipName);
+	} else {
+		CLinkItem *link = oldView->findLink(newView);
+		if (link)
+			clip = link->getClip();
+	}
+
+	gameManager->_gameState.changeView(newView, clip);
+}
+
 } // End of namespace Titanic
