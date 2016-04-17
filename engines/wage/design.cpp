@@ -208,9 +208,9 @@ void drawPixel(int x, int y, int color, void *data) {
 		if (p->thickness == 1) {
 			p->design->adjustBounds(x, y);
 		} else {
-			int x1 = x - p->thickness / 2;
+			int x1 = x;
 			int x2 = x1 + p->thickness;
-			int y1 = y - p->thickness / 2;
+			int y1 = y;
 			int y2 = y1 + p->thickness;
 
 			for (y = y1; y < y2; y++)
@@ -233,9 +233,9 @@ void drawPixel(int x, int y, int color, void *data) {
 					color : kColorWhite;
 		}
 	} else {
-		int x1 = x - p->thickness / 2;
+		int x1 = x;
 		int x2 = x1 + p->thickness;
-		int y1 = y - p->thickness / 2;
+		int y1 = y;
 		int y2 = y1 + p->thickness;
 
 		for (y = y1; y < y2; y++)
