@@ -272,6 +272,8 @@ void DrasculaEngine::updateVisible() {
 			visible[2] = 0;
 		if (_roomNumber == 26 && flags[12] == 1)
 			visible[1] = 0;
+		if (_roomNumber == 31 && flags[13] == 1)
+			visible[1] = 0;
 		if (_roomNumber == 35 && flags[14] == 1)
 			visible[2] = 0;
 		if (_roomNumber == 35 && flags[17] == 1)
