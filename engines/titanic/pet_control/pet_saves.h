@@ -29,7 +29,7 @@
 
 namespace Titanic {
 
-class CPetSaveGlyphs : public CPetGlyphs<CPetGlyph> {
+class CPetSaveGlyphs : public CPetGlyphs {
 };
 
 class CPetSaves : public CPetSection {

@@ -22,47 +22,117 @@
 
 #include "common/textconsole.h"
 #include "titanic/pet_control/pet_inventory_glyphs.h"
+#include "titanic/titanic.h"
 
 namespace Titanic {
 
-CPetInventoryGlyphs::CPetInventoryGlyphs() : _field10(0), _field14(7),
-	_field18(-1), _field1C(-1), _field20(0), _field24(0) {
+const uint ITEM_MODES[40] = {
+	0, 2, 11, 10, 12, 13, 9, 40, 7, 6,
+	4, 5, 8, 15, 19, 24, 25, 26, 30, 20,
+	21, 22, 23, 36, 39, 39, 31, 31, 32, 32,
+	33, 34, 35, 38, 41, 42, 43, 44, 45, 37
+};
+
+void CPetInventoryGlyph::setItem(CGameObject *item, int val) {
+	_item = item;
+
+	if (_owner && item) {
+		int v1 = populateItem(item, val);
+		_field3C = static_cast<CPetInventoryGlyphs *>(_owner)->fn1(v1);
+		warning("TODO: CPetInventoryGlyph::setItem");
+	}
 }
 
-void CPetInventoryGlyphs::proc8() {
-	error("TODO");
+int CPetInventoryGlyph::populateItem(CGameObject *item, int val) {
+	// Scan the master item names list
+	CString itemName = item->getName();
+	int itemIndex = -1;
+	for (int idx = 0; idx < 40 && itemIndex == -1; ++idx) {
+		if (itemName == g_vm->_itemIds[idx])
+			itemIndex = idx;
+	}
+	if (itemIndex == -1)
+		return -1;
+
+	switch (ITEM_MODES[itemIndex]) {
+	case 0:
+		switch (subMode(item, val)) {
+		case 0:
+		case 1:
+			return 0;
+		case 2:
+		case 3:
+			return 1;
+		default:
+			return 0;
+		}
+
+	case 2:
+		switch (subMode(item, val)) {
+		case 0:
+			return 2;
+		default:
+			return 3;
+		}
+		break;
+
+	case 15:
+		switch (subMode(item, val)) {
+		case 0:
+		case 1:
+			return 14;
+		case 2:
+			return 16;
+		case 3:
+			return 15;
+		case 4:
+			return 17;
+		case 5:
+			return 18;
+		default:
+			return 15;
+		}
+		break;
+
+	case 26:
+		switch (subMode(item, val)) {
+		case 0:
+			return 26;
+		case 1:
+			return 29;
+		case 2:
+			return 28;
+		case 3:
+			return 27;
+		default:
+			return 26;
+		}
+		break;
+
+	default:
+		return ITEM_MODES[itemIndex];
+	}
 }
 
-void CPetInventoryGlyphs::setup() {
-	warning("TODO: CPetInventoryGlyphs::setup");
+int CPetInventoryGlyph::subMode(CGameObject *item, int val) {
+	int frameNum = item->getFrameNumber();
+	int movieFrame = item->getMovieFrame();
+
+	if (val && frameNum != -1 && frameNum != movieFrame)
+		item->loadFrame(frameNum);
+
+	return frameNum;
 }
 
-void CPetInventoryGlyphs::proc10() {
-	error("TODO");
-}
-
-void CPetInventoryGlyphs::proc11() {
-	error("TODO");
-}
-
-void CPetInventoryGlyphs::draw(CScreenManager *screenManager) {
-	warning("TODO: CPetInventoryGlyphs::draw");
-}
+/*------------------------------------------------------------------------*/
 
 void CPetInventoryGlyphs::addItem(CPetCarry *item) {
 
-
-	warning("TODO");
 }
 
-void CPetInventoryGlyphs::clear() {
-	fn1(-1);
-	destroyContents();
-	_field10 = 0;
-}
-
-void CPetInventoryGlyphs::fn1(int val) {
+int CPetInventoryGlyphs::fn1(int val) {
 	warning("TODO: CPetInventoryGlyphs::fn1");
+	return 0;
 }
 
 } // End of namespace Titanic

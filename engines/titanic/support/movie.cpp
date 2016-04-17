@@ -121,9 +121,9 @@ void OSMovie::proc18() {
 	warning("TODO: OSMovie::proc18");
 }
 
-int OSMovie::proc19() {
-	warning("TODO: OSMovie::proc19");
-	return 0;
+int OSMovie::getFrame() {
+	assert(_video);
+	return _video->getCurFrame();
 }
 
 void OSMovie::proc20() {

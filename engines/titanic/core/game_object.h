@@ -274,7 +274,11 @@ public:
 	 */
 	bool hasActiveMovie() const;
 
-	int getMovie19() const;
+	/**
+	 * Get the current movie frame
+	 */
+	int getMovieFrame() const;
+	
 	int getSurface45() const;
 	void sound8(bool flag) const;
 
@@ -311,7 +315,12 @@ public:
 	/**
 	 * Moves the item from it's original position to be under the hidden room
 	 */
-	void moveToHiddenRoom();	
+	void moveToHiddenRoom();
+
+	/**
+	 * Returns the object's frame number
+	 */
+	int getFrameNumber() const { return _frameNumber; }
 };
 
 } // End of namespace Titanic

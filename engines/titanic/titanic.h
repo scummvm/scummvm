@@ -114,7 +114,7 @@ public:
 	CString _itemNames[TOTAL_ITEMS];
 	CString _itemDescriptions[TOTAL_ITEMS];
 	CString _itemObjects[TOTAL_ITEMS];
-	CString _itemShortDesc[40];
+	CString _itemIds[40];
 public:
 	TitanicEngine(OSystem *syst, const TitanicGameDescription *gameDesc);
 	virtual ~TitanicEngine();

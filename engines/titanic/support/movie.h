@@ -73,7 +73,12 @@ public:
 	virtual void proc16() = 0;
 	virtual void proc17() = 0;
 	virtual void proc18() = 0;
-	virtual int proc19() = 0;
+
+	/**
+	 * Get the current movie frame
+	 */
+	virtual int getFrame() = 0;
+	
 	virtual void proc20() = 0;
 	virtual void *proc21() = 0;
 
@@ -131,7 +136,12 @@ public:
 	virtual void proc16();
 	virtual void proc17();
 	virtual void proc18();
-	virtual int proc19();
+
+	/**
+	 * Get the current movie frame
+	 */
+	virtual int getFrame();
+
 	virtual void proc20();
 	virtual void *proc21();
 

@@ -104,7 +104,10 @@ public:
 	 */
 	virtual void loadFrame(int frameNumber);
 
-	virtual int proc15();
+	/**
+	 * Get the current frame
+	 */
+	virtual int getFrame();
 
 	/**
 	 * Get the game object associated with this item

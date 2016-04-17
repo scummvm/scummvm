@@ -27,7 +27,7 @@
 
 namespace Titanic {
 
-class CPetControlSub11 : public CPetGlyphs<CPetGlyph> {
+class CPetControlSub11 : public CPetGlyphs {
 public:
 };
 

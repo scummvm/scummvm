@@ -23,21 +23,35 @@
 #ifndef TITANIC_PET_INVENTORY_GLYPHS_H
 #define TITANIC_PET_INVENTORY_GLYPHS_H
 
+#include "titanic/carry/carry.h"
 #include "titanic/pet_control/pet_glyphs.h"
 #include "titanic/support/screen_manager.h"
 
 namespace Titanic {
 
 class CPetInventoryGlyph : public CPetGlyph {
+private:
+	/**
+	 * Populate the details for an item
+	 */
+	int populateItem(CGameObject *item, int val);
+
+	int subMode(CGameObject *item, int val);
 public:
-	CCarry *_item;
+	CGameObject *_item;
 	int _field34;
-	int _field38;
 	int _field3C;
 	int _field40;
 public:
+	CPetInventoryGlyph() : _item(nullptr), _field34(0), 
+		_field3C(0), _field40(0) {}
 	CPetInventoryGlyph(CCarry *item, int val) : _item(item),
-		_field34(val), _field38(0), _field3C(0), _field40(0) {}
+		_field34(val), _field3C(0), _field40(0) {}
+
+	/**
+	 * Set the inventory item
+	 */
+	void setItem(CGameObject *item, int val);
 };
 
 class CPetCarry {
@@ -48,48 +62,15 @@ public:
 	CPetCarry(CCarry *item, int val) : _item(item), _val(val) {}
 };
 
-class CPetInventoryGlyphs : public CPetGlyphs<CPetInventoryGlyph> {
+class CPetInventoryGlyphs : public CPetGlyphs {
+	friend class CPetInventoryGlyph;
 private:
-	void fn1(int val);
-protected:
-	int _field10;
-	int _field14;
-	int _field18;
-	int _field1C;
-	int _field20;
-	int _field24;
-	CPetGfxElement _selection;
-	CPetGfxElement _scrollLeft;
-	CPetGfxElement _scrollRight;
+	int fn1(int val);
 public:
-	CPetInventoryGlyphs();
-
-	virtual void proc8();
-
-	/**
-	 * Set up the control
-	 */
-	virtual void setup();
-
-	virtual void proc10();
-	virtual void proc11();
-
-	void set20(int val) { _field20 = val; }
-
-	/**
-	 * Draw the control
-	 */
-	void draw(CScreenManager *screenManager);
-
 	/**
 	 * Add a new item to the list
 	 */
 	void addItem(CPetCarry *item);
-
-	/**
-	 * Clears the glyph list
-	 */
-	void clear();
 };
 
 } // End of namespace Titanic

@@ -442,9 +442,9 @@ bool CGameObject::hasActiveMovie() const {
 	return false;
 }
 
-int CGameObject::getMovie19() const {
+int CGameObject::getMovieFrame() const {
 	if (_surface && _surface->_movie)
-		return _surface->_movie->proc19();
+		return _surface->_movie->getFrame();
 	return _initialFrame;
 }
 
@@ -718,6 +718,7 @@ bool CGameObject::changeView(const CString &viewName, const CString &clipName) {
 	}
 
 	gameManager->_gameState.changeView(newView, clip);
+	return true;
 }
 
 } // End of namespace Titanic

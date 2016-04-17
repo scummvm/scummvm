@@ -22,6 +22,7 @@
 
 #include "titanic/pet_control/pet_inventory.h"
 #include "titanic/pet_control/pet_control.h"
+#include "titanic/carry/carry.h"
 #include "titanic/titanic.h"
 
 namespace Titanic {
@@ -121,9 +122,15 @@ void CPetInventory::fn3(CCarry *item) {
 void CPetInventory::itemsChanged() {
 	_items.clear();
 
-	//CGameObject *item = static_cast<CGameObject *>(_petControl->getFirstObject());
+	CGameObject *item = _petControl->getFirstObject();
+	while (item) {
+		CPetInventoryGlyph *glyph = new CPetInventoryGlyph();
+		glyph->setOwner(_petControl, &_items);
+		glyph->setItem(item, _field290);
 
-
+		_items.push_back(glyph);
+		item = _petControl->getNextObject(item);
+	}
 }
 
 void CPetInventory::couldntShowInventory(CCarry *item) {

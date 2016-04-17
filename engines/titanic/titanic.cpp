@@ -157,8 +157,8 @@ void TitanicEngine::setItemNames() {
 	for (uint idx = 0; idx < TOTAL_ITEMS; ++idx)
 		_itemDescriptions[idx] = DESCRIPTIONS[idx];
 
-	// Short descriptions.. maybe?
-	static const char *const SHORT_DESC[40] = {
+	// Item identifiers
+	static const char *const ITEM_IDS[40] = {
 		"MaitreD Left Arm", "MaitreD Right Arm", "OlfactoryCentre", "AuditoryCentre",
 		"SpeechCentre", "VisionCentre", "CentralCore", "Perch", "SeasonBridge",
 		"FanBridge", "BeamBridge", "ChickenBridge", "CarryParrot", "Chicken",
@@ -169,7 +169,7 @@ void TitanicEngine::setItemNames() {
 		"Phonograph Cylinder 3", "Photograph", "Music System Key"
 	};
 	for (uint idx = 0; idx < 40; ++idx)
-		_itemShortDesc[idx] = SHORT_DESC[idx];
+		_itemIds[idx] = ITEM_IDS[idx];
 }
 
 
