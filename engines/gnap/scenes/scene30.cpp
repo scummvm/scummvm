@@ -50,8 +50,8 @@ int GnapEngine::scene30_init() {
 void GnapEngine::scene30_updateHotspots() {
 	setHotspot(kHSPlatypus, 0, 0, 0, 0, SF_WALKABLE | SF_TALK_CURSOR | SF_GRAB_CURSOR | SF_LOOK_CURSOR);
 	setHotspot(kHSPillMachine, 598, 342, 658, 426, SF_PLAT_CURSOR | SF_TALK_CURSOR | SF_GRAB_CURSOR | SF_LOOK_CURSOR, 9, 7);
-	setHotspot(kHSExitCircus, 100, 590, 700, 600, SF_EXIT_D_CURSOR | SF_WALKABLE, 5, 9);
-	setHotspot(kHSExitCircus, 0, 0, 800, 514);
+	setHotspot(kHSExitCircus, 100, 590 - _deviceY1, 700, 600, SF_EXIT_D_CURSOR | SF_WALKABLE, 5, 9);
+	setHotspot(kHSWalkArea1, 0, 0, 800, 514);
 	setDeviceHotspot(kHSDevice, -1, -1, -1, -1);
 	_hotspotsCount = 5;
 }
@@ -82,7 +82,6 @@ void GnapEngine::scene30_run() {
 	platypusWalkTo(6, 8, -1, 0x107C2, 1);
 
 	while (!_sceneDone) {
-
 		updateMouseCursor();
 		updateCursorByHotspot();
 
@@ -90,7 +89,6 @@ void GnapEngine::scene30_run() {
 		updateGrabCursorSprite(0, 0);
 
 		switch (_sceneClickedHotspot) {
-
 		case kHSDevice:
 			if (_gnapActionStatus < 0) {
 				runMenu();
