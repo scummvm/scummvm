@@ -299,7 +299,7 @@ ButtonWidget::ButtonWidget(GuiObject *boss, const Common::String &name, const Co
 
 void ButtonWidget::handleMouseUp(int x, int y, int button, int clickCount) {
 	if (isEnabled() && _duringPress && x >= 0 && x < _w && y >= 0 && y < _h) {
-		startAnimatePressedState();
+		setUnpressedState();
 		sendCommand(_cmd, 0);
 	}
 	_duringPress = false;
@@ -344,38 +344,15 @@ void ButtonWidget::setHighLighted(bool enable) {
 	draw();
 }
 
-void ButtonWidget::handleTickle() {
-	if (_lastTime) {
-		uint32 curTime = g_system->getMillis();
-		if (curTime - _lastTime > kPressedButtonTime) {
-			stopAnimatePressedState();
-		}
-	}
-}
-
 void ButtonWidget::setPressedState() {
-	wantTickle(true);
 	setFlags(WIDGET_PRESSED);
 	clearFlags(WIDGET_HILITED);
 	draw();
 }
 
-void ButtonWidget::stopAnimatePressedState() {
-	wantTickle(false);
-	_lastTime = 0;
+void ButtonWidget::setUnpressedState() {
 	clearFlags(WIDGET_PRESSED);
 	draw();
-}
-
-void ButtonWidget::startAnimatePressedState() {
-	_lastTime = g_system->getMillis();
-}
-
-void ButtonWidget::wantTickle(bool tickled) {
-	if (tickled)
-		((GUI::Dialog *)_boss)->setTickleWidget(this);
-	else
-		((GUI::Dialog *)_boss)->unSetTickleWidget();
 }
 
 #pragma mark -
