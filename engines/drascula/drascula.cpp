@@ -606,7 +606,6 @@ bool DrasculaEngine::runCurrentChapter() {
 		if (_rightMouseButton == 1 && _menuScreen) {
 #endif
 			_rightMouseButton = 0;
-			delay(100);
 			if (currentChapter == 2) {
 				loadPic(menuBackground, cursorSurface);
 				loadPic(menuBackground, backSurface);
@@ -635,7 +634,6 @@ bool DrasculaEngine::runCurrentChapter() {
 			!(currentChapter == 5 && pickedObject == 16)) {
 #endif
 			_rightMouseButton = 0;
-			delay(100);
 			characterMoved = 0;
 			if (trackProtagonist == 2)
 				trackProtagonist = 1;
@@ -665,9 +663,9 @@ bool DrasculaEngine::runCurrentChapter() {
 		if (_leftMouseButton == 1 && _menuBar) {
 			selectVerbFromBar();
 		} else if (_leftMouseButton == 1 && takeObject == 0) {
-			delay(100);
 			if (verify1())
 				return true;
+			delay(100);
 		} else if (_leftMouseButton == 1 && takeObject == 1) {
 			if (verify2())
 				return true;
