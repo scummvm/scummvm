@@ -4235,7 +4235,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::FR_FRA, Common::kPlatformWindows, ADGF_UNSTABLE | ADGF_CD, GUIO4(GUIO_NOASPECT, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
 
-	// Torin's Passage - Russian Windows CD (SoftClab official translate)
+	// Torin's Passage - Russian Windows CD (SoftClub official translate)
 	// SCI interpreter version 2.100.002
 	// VERSION file "1.0"
 	{ "torin", "",{
