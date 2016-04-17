@@ -20,6 +20,10 @@ For a more comprehensive changelog of the latest experimental code, see:
      Spanish version.
    - Fixed animations speed (they were running two times slower than in the
      original engine).
+   - Fixed noise at start and/or end of speech. This was most noticeable
+     with the Spanish speech.
+   - Fixed delay when interacting with the verb menu and the inventory.
+   - Fixed possibility to pick up the axe in the castle multiple times.
 
  Gob:
    - Fixed lock up for some games during sound initialization.
