@@ -31,7 +31,7 @@ namespace Adl {
 
 AdlEngine_v3::AdlEngine_v3(OSystem *syst, const AdlGameDescription *gd) :
 		AdlEngine_v2(syst, gd),
-		_curDisk(1) {
+		_curDisk(0) {
 }
 
 Common::String AdlEngine_v3::loadMessage(uint idx) const {
@@ -47,6 +47,33 @@ Common::String AdlEngine_v3::loadMessage(uint idx) const {
 
 Common::String AdlEngine_v3::getItemDescription(const Item &item) const {
 	return _itemDesc[item.id - 1];
+}
+
+void AdlEngine_v3::applyDiskOffset(byte &track, byte &sector) const {
+	sector += _diskOffsets[_curDisk].sector;
+	if (sector >= 16) {
+		sector -= 16;
+		++track;
+	}
+
+	track += _diskOffsets[_curDisk].track;
+}
+
+DataBlockPtr AdlEngine_v3::readDataBlockPtr(Common::ReadStream &f) const {
+	byte track = f.readByte();
+	byte sector = f.readByte();
+	byte offset = f.readByte();
+	byte size = f.readByte();
+
+	if (f.eos() || f.err())
+		error("Error reading DataBlockPtr");
+
+	if (track == 0 && sector == 0 && offset == 0 && size == 0)
+		return DataBlockPtr();
+
+	applyDiskOffset(track, sector);
+
+	return _disk->getDataBlock(track, sector, offset, size);
 }
 
 typedef Common::Functor1Mem<ScriptEnv &, int, AdlEngine_v3> OpcodeV3;

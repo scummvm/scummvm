@@ -357,8 +357,6 @@ DataBlockPtr AdlEngine_v2::readDataBlockPtr(Common::ReadStream &f) const {
 	if (track == 0 && sector == 0 && offset == 0 && size == 0)
 		return DataBlockPtr();
 
-	applyDataBlockOffset(track, sector);
-
 	return _disk->getDataBlock(track, sector, offset, size);
 }
 

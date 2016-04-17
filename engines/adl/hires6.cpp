@@ -164,6 +164,15 @@ void HiRes6Engine::init() {
 		desc.volume = stream->readByte();
 		_diskDataDesc.push_back(desc);
 	}
+
+	// DataBlockPtr offsets for each disk
+	stream.reset(_boot->createReadStream(0x3, 0xf, 0x03));
+	for (uint i = 0; i < sizeof(disks); ++i) {
+		DiskOffset offset;
+		offset.track = stream->readByte();
+		offset.sector = stream->readByte();
+		_diskOffsets.push_back(offset);
+	}
 }
 
 void HiRes6Engine::loadDisk(byte disk) {
@@ -173,15 +182,23 @@ void HiRes6Engine::loadDisk(byte disk) {
 	if (!_disk->open(disks[disk]))
 		error("Failed to open disk image '%s'", disks[disk]);
 
+	_curDisk = 0;
+
+	// Load item picture data (indexed on boot disk)
+	StreamPtr stream(_boot->createReadStream(0xb, 0xd, 0x08));
+	_itemPics.clear();
+	for (uint i = 0; i < IDI_HR6_NUM_ITEM_PICS; ++i) {
+		stream->readByte();
+		_itemPics.push_back(readDataBlockPtr(*stream));
+	}
+
 	_curDisk = disk;
 
 	byte track = _diskDataDesc[disk].track;
 	byte sector = _diskDataDesc[disk].sector;
 	uint offset = _diskDataDesc[disk].offset;
 
-	applyDataBlockOffset(track, sector);
-
-	StreamPtr stream;
+	applyDiskOffset(track, sector);
 
 	for (uint block = 0; block < 7; ++block) {
 		stream.reset(_disk->createReadStream(track, sector, offset, 1));
@@ -260,14 +277,6 @@ void HiRes6Engine::loadDisk(byte disk) {
 				++track;
 			}
 		}
-	}
-
-	// Load item picture data (indexed on boot disk)
-	stream.reset(_boot->createReadStream(0xb, 0xd, 0x08));
-	_itemPics.clear();
-	for (uint i = 0; i < IDI_HR6_NUM_ITEM_PICS; ++i) {
-		stream->readByte();
-		_itemPics.push_back(readDataBlockPtr(*stream));
 	}
 }
 
@@ -352,11 +361,6 @@ void HiRes6Engine::showRoom() {
 
 	// FIXME: move to main loop?
 	_linesPrinted = 0;
-}
-
-void HiRes6Engine::applyDataBlockOffset(byte &track, byte &sector) const {
-	// FIXME: this uses a table
-	++track;
 }
 
 void HiRes6Engine::printString(const Common::String &str) {

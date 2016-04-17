@@ -77,7 +77,6 @@ private:
 
 	// AdlEngine_v2
 	void printString(const Common::String &str);
-	void applyDataBlockOffset(byte &track, byte &sector) const;
 
 	void loadDisk(byte disk);
 
