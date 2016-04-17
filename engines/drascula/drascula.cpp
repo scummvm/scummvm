@@ -652,7 +652,6 @@ bool DrasculaEngine::runCurrentChapter() {
 #endif
 
 		if (_leftMouseButton == 1 && _menuBar) {
-			delay(100);
 			selectVerbFromBar();
 		} else if (_leftMouseButton == 1 && takeObject == 0) {
 			delay(100);
