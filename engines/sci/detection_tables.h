@@ -4235,6 +4235,16 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::FR_FRA, Common::kPlatformWindows, ADGF_UNSTABLE | ADGF_CD, GUIO4(GUIO_NOASPECT, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
 
+	// Torin's Passage - Russian Windows CD (SoftClab official translate)
+	// SCI interpreter version 2.100.002
+	// VERSION file "1.0"
+	{ "torin", "",{
+		{ "resource.aud", 0, "f66df699be5ed011b16b3f816cee8a04", 210583510 },
+		{ "ressci.000", 0, "e672da099fb1663b87c78abc6c8ba2a4", 130622695 },
+		{ "resmap.000", 0, "643859f8f2be8e7701611e29b3b65208", 9799 },
+	AD_LISTEND },
+	Common::RU_RUS, Common::kPlatformWindows, ADGF_UNSTABLE | ADGF_CD, GUIO4(GUIO_NOASPECT, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI) },
+
 	// Torin's Passage - English Macintosh
 	{"torin", "", {
 		{"Data1", 0, "63887e33cc282c92dc1f916f54aea8eb", 700786},
