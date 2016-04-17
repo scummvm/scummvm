@@ -171,10 +171,9 @@ protected:
 	}
 
 	ResourceClass *load(int resourceId) {
-		if (_dat->getResourceType(resourceId) != ResourceType) {
+		if (_dat->getResourceType(resourceId) != ResourceType)
 			error("ResourceCache::load() Wrong resource type: Expected %d, got %d", ResourceType, _dat->getResourceType(resourceId));
-			return nullptr;
-		}
+
 		byte *resourceData = _dat->loadResource(resourceId);
 		uint32 resourceSize = _dat->getResourceSize(resourceId);
 		ResourceClass *obj = new ResourceClass(resourceId, resourceData, resourceSize);
