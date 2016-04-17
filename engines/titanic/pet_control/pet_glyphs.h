@@ -62,9 +62,12 @@ public:
 	 * Draw the glyph at a translated position without permanently
 	 * changing the position
 	 */
-	virtual void translateDraw(CScreenManager *screenManager, int deltaX, int deltaY);
+	virtual void drawAt(CScreenManager *screenManager, int x, int y);
 
-	virtual void proc13() {}
+	/**
+	 * Handles any secondary drawing of a glyph as highlighted
+	 */
+	virtual void drawHighlight() {}
 
 	virtual void proc14();
 
@@ -106,10 +109,31 @@ public:
 };
 		
 class CPetGlyphs : public List<CPetGlyph> {
+private:
+	/**
+	 * Get a position for the glyph
+	 */
+	Point getPosition(int index);
+
+	/**
+	 * Returns the on-screen index for the highlight to be shown at
+	 */
+	int getHighlightedIndex(int index);
+
+	/**
+	 * Returns the index of a glyph given the visible on-screen glyph number
+	 */
+	int getItemIndex(int index);
+
+	/**
+	 * Return a specified glyph
+	 */
+	CPetGlyph *getGlyph(int index);
 protected:
-	int _field10;
-	int _field14;
-	int _field18;
+	int _firstVisibleIndex;
+	int _totalGlyphs;
+	int _numVisibleGlyphs;
+	int _highlightIndex;
 	int _field1C;
 	int _field20;
 	int _field24;
@@ -122,9 +146,7 @@ protected:
 	 */
 	void changeHighlight(int index);
 public:
-	CPetGlyphs::CPetGlyphs() : _field10(0), _field14(7),
-		_field18(-1), _field1C(-1), _field20(0), _field24(0) {
-	}
+	CPetGlyphs();
 
 	/**
 	 * Clears the glyph list

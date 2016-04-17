@@ -29,10 +29,10 @@ void CPetGlyph::setOwner(CPetControl *petControl, CPetGlyphs *owner) {
 	_owner = owner;
 }
 
-void CPetGlyph::translateDraw(CScreenManager *screenManager, int deltaX, int deltaY) {
-	_element.translate(deltaX, deltaY);
+void CPetGlyph::drawAt(CScreenManager *screenManager, int x, int y) {
+	_element.translate(x, y);
 	_element.draw(screenManager);
-	_element.translate(-deltaX, -deltaY);
+	_element.translate(-x, -y);
 }
 
 void CPetGlyph::proc14() {
@@ -49,10 +49,14 @@ bool CPetGlyph::translateContains(const Point &delta, const Point &pt) {
 
 /*------------------------------------------------------------------------*/
 
+CPetGlyphs::CPetGlyphs() : _firstVisibleIndex(0),  _numVisibleGlyphs(7),
+		_highlightIndex(-1), _field1C(-1), _field20(0), _field24(0) {
+}
+
 void CPetGlyphs::clear() {
 	changeHighlight(-1);
 	destroyContents();
-	_field10 = 0;
+	_firstVisibleIndex = 0;
 }
 
 void CPetGlyphs::proc8() {
@@ -72,7 +76,51 @@ void CPetGlyphs::proc11() {
 }
 
 void CPetGlyphs::draw(CScreenManager *screenManager) {
-	warning("TODO: CPetGlyphs::draw");
+	if (_highlightIndex != -1) {
+		int index = getHighlightedIndex(_highlightIndex);
+		if (index != -1) {
+			Point tempPoint;
+			Point pt = getPosition(index);
+			pt -= Point(12, 13);
+			_selection.translate(pt.x, pt.y);
+			_selection.draw(screenManager);
+			_selection.translate(-pt.x, -pt.y);
+		}
+	}
+
+	// Iterate through displaying glyphs on the screen 
+	int listSize = size();
+	for (int index = 0; index < _numVisibleGlyphs; ++index) {
+		int itemIndex = getItemIndex(index);
+
+		if (itemIndex >= 0 && itemIndex < listSize) {
+			Point pt = getPosition(itemIndex);
+			CPetGlyph *glyph = getGlyph(itemIndex);
+
+			if (glyph) {
+				// TODO: Comparison with highlighted index, and a redundant push?
+				glyph->drawAt(screenManager, pt.x, pt.y);
+			}
+		}
+	}
+
+	// Draw scrolling arrows if more than a screen's worth of items are showing
+	if (listSize > _numVisibleGlyphs || _field20 != 16) {
+		_scrollLeft.draw(screenManager);
+		_scrollRight.draw(screenManager);
+	}
+
+	// Handle secondary highlight
+	if (_highlightIndex != -1) {
+		CPetGlyph *glyph = getGlyph(_highlightIndex);
+		if (glyph)
+			glyph->drawHighlight();
+	}
+}
+
+Point CPetGlyphs::getPosition(int index) {
+	Point tempPoint(37 + index * 58, 375);
+	return tempPoint;
 }
 
 void CPetGlyphs::changeHighlight(int index) {
@@ -81,6 +129,24 @@ void CPetGlyphs::changeHighlight(int index) {
 
 void CPetGlyphs::highlight(int index) {
 	warning("TODO: CPetGlyphs::highlight");
+}
+
+int CPetGlyphs::getHighlightedIndex(int index) {
+	int idx = index - _firstVisibleIndex;
+	return (idx >= 0 && idx < _numVisibleGlyphs) ? idx : -1;
+}
+
+int CPetGlyphs::getItemIndex(int index) {
+	return _firstVisibleIndex + index;
+}
+
+CPetGlyph *CPetGlyphs::getGlyph(int index) {
+	for (iterator i = begin(); i != end(); ++i) {
+		if (index-- == 0)
+			return *i;
+	}
+
+	return nullptr;
 }
 
 } // End of namespace Titanic
