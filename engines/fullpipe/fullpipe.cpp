@@ -24,6 +24,7 @@
 
 #include "common/archive.h"
 #include "common/config-manager.h"
+#include "audio/mixer.h"
 
 #include "engines/util.h"
 
@@ -112,6 +113,8 @@ FullpipeEngine::FullpipeEngine(OSystem *syst, const ADGameDescription *gameDesc)
 	_musicLocal = 0;
 	_trackStartDelay = 0;
 
+	_sceneTrackHandle = new Audio::SoundHandle();
+
 	memset(_sceneTracks, 0, sizeof(_sceneTracks));
 	memset(_trackName, 0, sizeof(_trackName));
 	memset(_sceneTracksCurrentTrack, 0, sizeof(_sceneTracksCurrentTrack));
@@ -192,6 +195,7 @@ FullpipeEngine::~FullpipeEngine() {
 	delete _rnd;
 	delete _console;
 	delete _globalMessageQueueList;
+	delete _sceneTrackHandle;
 }
 
 void FullpipeEngine::initialize() {

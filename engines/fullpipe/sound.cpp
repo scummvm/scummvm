@@ -30,6 +30,7 @@
 #include "fullpipe/statics.h"
 
 #include "common/memstream.h"
+#include "audio/mixer.h"
 #include "audio/audiostream.h"
 #include "audio/decoders/vorbis.h"
 #include "audio/decoders/wave.h"
@@ -96,12 +97,13 @@ Sound::Sound() {
 	memset(_directSoundBuffers, 0, sizeof(_directSoundBuffers));
 	_description = 0;
 	_volume = 100;
+	_handle = new Audio::SoundHandle();
 }
 
 Sound::~Sound() {
 	freeSound();
-
 	free(_description);
+	delete _handle;
 }
 
 bool Sound::load(MfcArchive &file, NGIArchive *archive) {
@@ -206,14 +208,14 @@ void Sound::setPanAndVolumeByStaticAni() {
 }
 
 void Sound::setPanAndVolume(int vol, int pan) {
-	g_fp->_mixer->setChannelVolume(_handle, vol / 39); // 0..10000
-	g_fp->_mixer->setChannelBalance(_handle, pan / 78); // -10000..10000
+	g_fp->_mixer->setChannelVolume(*_handle, vol / 39); // 0..10000
+	g_fp->_mixer->setChannelBalance(*_handle, pan / 78); // -10000..10000
 }
 
 void Sound::play(int flag) {
-	Audio::SoundHandle handle = getHandle();
+	Audio::SoundHandle *handle = getHandle();
 
-	if (g_fp->_mixer->isSoundHandleActive(handle))
+	if (g_fp->_mixer->isSoundHandleActive(*handle))
 		return;
 
 	byte *soundData = loadData();
@@ -221,7 +223,7 @@ void Sound::play(int flag) {
 	Audio::RewindableAudioStream *wav = Audio::makeWAVStream(dataStream, DisposeAfterUse::YES);
 	Audio::AudioStream *audioStream = new Audio::LoopingAudioStream(wav, (flag == 1) ? 0 : 1);
 
-	g_fp->_mixer->playStream(Audio::Mixer::kSFXSoundType, &handle, audioStream);
+	g_fp->_mixer->playStream(Audio::Mixer::kSFXSoundType, handle, audioStream);
 }
 
 void Sound::freeSound() {
@@ -231,11 +233,11 @@ void Sound::freeSound() {
 }
 
 int Sound::getVolume() {
-	return g_fp->_mixer->getChannelVolume(_handle) * 39;  // 0..10000
+	return g_fp->_mixer->getChannelVolume(*_handle) * 39;  // 0..10000
 }
 
 void Sound::stop() {
-	g_fp->_mixer->stopHandle(_handle);
+	g_fp->_mixer->stopHandle(*_handle);
 }
 
 void FullpipeEngine::setSceneMusicParameters(GameVar *gvar) {
@@ -353,7 +355,7 @@ void FullpipeEngine::startSoundStream1(char *trackName) {
 	stopAllSoundStreams();
 
 #ifdef USE_VORBIS
-	if (_mixer->isSoundHandleActive(_sceneTrackHandle))
+	if (_mixer->isSoundHandleActive(*_sceneTrackHandle))
 		return;
 
 	Common::File *track = new Common::File();
@@ -363,7 +365,7 @@ void FullpipeEngine::startSoundStream1(char *trackName) {
 		return;
 	}
 	Audio::RewindableAudioStream *ogg = Audio::makeVorbisStream(track, DisposeAfterUse::YES);
-	_mixer->playStream(Audio::Mixer::kMusicSoundType, &_sceneTrackHandle, ogg);
+	_mixer->playStream(Audio::Mixer::kMusicSoundType, _sceneTrackHandle, ogg);
 #endif
 }
 
