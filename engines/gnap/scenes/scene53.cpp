@@ -26,6 +26,24 @@
 
 namespace Gnap {
 
+enum {
+	kHSPlatypus		 = 0,
+	kHSDevice		 = 1,
+	kHSPhoneKey1	 = 2,
+	kHSPhoneKey2	 = 3,
+	kHSPhoneKey3	 = 4,
+	kHSPhoneKey4	 = 5,
+	kHSPhoneKey5	 = 6,
+	kHSPhoneKey6	 = 7,
+	kHSPhoneKey7	 = 8,
+	kHSPhoneKey8	 = 9,
+	kHSPhoneKey9	 = 10,
+	kHSPhoneKey0	 = 11,
+	kHSPhoneKeySharp = 12,
+	kHSPhoneKeyStar	 = 13,
+	kHSPhoneExit	 = 14
+};
+
 int GnapEngine::scene53_init() {
 	_gameSys->setAnimation(0, 0, 0);
 	_gameSys->setAnimation(0, 0, 1);
@@ -33,27 +51,26 @@ int GnapEngine::scene53_init() {
 }
 
 void GnapEngine::scene53_updateHotspots() {
-	setHotspot(0, 0, 0, 0, 0, SF_WALKABLE | SF_TALK_CURSOR | SF_GRAB_CURSOR | SF_LOOK_CURSOR);
-	setHotspot(2, 336, 238, 361, 270, SF_GRAB_CURSOR);
-	setHotspot(3, 376, 243, 405, 274, SF_GRAB_CURSOR);
-	setHotspot(4, 415, 248, 441, 276, SF_GRAB_CURSOR);
-	setHotspot(5, 329, 276, 358, 303, SF_GRAB_CURSOR);
-	setHotspot(6, 378, 282, 408, 311, SF_GRAB_CURSOR);
-	setHotspot(7, 417, 286, 446, 319, SF_GRAB_CURSOR);
-	setHotspot(8, 332, 311, 361, 342, SF_GRAB_CURSOR);
-	setHotspot(9, 376, 318, 407, 349, SF_GRAB_CURSOR);
-	setHotspot(10, 417, 320, 447, 353, SF_GRAB_CURSOR);
-	setHotspot(11, 377, 352, 405, 384, SF_GRAB_CURSOR);
-	setHotspot(12, 419, 358, 450, 394, SF_GRAB_CURSOR);
-	setHotspot(13, 328, 346, 359, 379, SF_GRAB_CURSOR);
-	setHotspot(14, 150, 585, 650, 600, SF_EXIT_D_CURSOR);
+	setHotspot(kHSPlatypus, 0, 0, 0, 0, SF_WALKABLE | SF_TALK_CURSOR | SF_GRAB_CURSOR | SF_LOOK_CURSOR);
+	setHotspot(kHSPhoneKey1, 336, 238, 361, 270, SF_GRAB_CURSOR);
+	setHotspot(kHSPhoneKey2, 376, 243, 405, 274, SF_GRAB_CURSOR);
+	setHotspot(kHSPhoneKey3, 415, 248, 441, 276, SF_GRAB_CURSOR);
+	setHotspot(kHSPhoneKey4, 329, 276, 358, 303, SF_GRAB_CURSOR);
+	setHotspot(kHSPhoneKey5, 378, 282, 408, 311, SF_GRAB_CURSOR);
+	setHotspot(kHSPhoneKey6, 417, 286, 446, 319, SF_GRAB_CURSOR);
+	setHotspot(kHSPhoneKey7, 332, 311, 361, 342, SF_GRAB_CURSOR);
+	setHotspot(kHSPhoneKey8, 376, 318, 407, 349, SF_GRAB_CURSOR);
+	setHotspot(kHSPhoneKey9, 417, 320, 447, 353, SF_GRAB_CURSOR);
+	setHotspot(kHSPhoneKey0, 377, 352, 405, 384, SF_GRAB_CURSOR);
+	setHotspot(kHSPhoneKeySharp, 419, 358, 450, 394, SF_GRAB_CURSOR);
+	setHotspot(kHSPhoneKeyStar, 328, 346, 359, 379, SF_GRAB_CURSOR);
+	setHotspot(kHSPhoneExit, 150, 585, 650, 600, SF_EXIT_D_CURSOR);
 
-	setDeviceHotspot(1, -1, -1, -1, -1);
+	setDeviceHotspot(kHSDevice, -1, -1, -1, -1);
 	_hotspotsCount = 15;
 }
 
 int GnapEngine::scene53_pressPhoneNumberButton(int phoneNumber, int buttonNum) {
-
 	static const int kGnapHandSequenceIds[13] = {
 		0x00, 
 		0x46, 0x47, 0x48, 0x49, 0x4A, 0x4B,
@@ -104,7 +121,6 @@ int GnapEngine::scene53_getRandomCallIndex() {
 }
 
 void GnapEngine::scene53_runRandomCall() {
-
 	static const int kCallSequenceIds[15] = {
 		0x60, 0x61, 0x62, 0x63, 0x64,
 		0x65, 0x66, 0x67, 0x68, 0x69,
@@ -134,7 +150,6 @@ void GnapEngine::scene53_runRandomCall() {
 		gameUpdateTick();
 	}
 	_gnapActionStatus = -1;
-
 }
 
 void GnapEngine::scene53_runChitChatLine() {
@@ -160,10 +175,9 @@ void GnapEngine::scene53_runChitChatLine() {
 		_s53_currHandSequenceId = 0x5E;
 	}
 	
-	_hotspots[1]._flags = SF_DISABLED;
+	_hotspots[kHSDevice]._flags = SF_DISABLED;
 	
 	while (!flag) {
-	
 		updateMouseCursor();
 		updateCursorByHotspot();
 	
@@ -230,7 +244,6 @@ void GnapEngine::scene53_runChitChatLine() {
 			}
 			_gnapActionStatus = -1;
 		}
-	
 	}
 	
 	scene53_updateHotspots();
@@ -248,7 +261,6 @@ void GnapEngine::scene53_runChitChatLine() {
 		_s53_currHandSequenceId = 0x73;
 		_gnapActionStatus = -1;
 	}
-
 }
 
 void GnapEngine::scene53_run() {
