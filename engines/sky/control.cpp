@@ -1562,8 +1562,13 @@ void Control::showGameQuitMsg() {
 
 	screenData = _skyScreen->giveCurrent();
 
-	_skyText->displayText(_quitTexts[SkyEngine::_systemVars.language * 2 + 0], textBuf1, true, 320, 255);
-	_skyText->displayText(_quitTexts[SkyEngine::_systemVars.language * 2 + 1], textBuf2, true, 320, 255);
+	if (Common::parseLanguage(ConfMan.get("language")) == Common::RU_RUS)         {
+		_skyText->displayText(_quitTexts[8 * 2 + 0], textBuf1, true, 320, 255);
+		_skyText->displayText(_quitTexts[8 * 2 + 1], textBuf2, true, 320, 255);
+	} else {
+		_skyText->displayText(_quitTexts[SkyEngine::_systemVars.language * 2 + 0], textBuf1, true, 320, 255);
+		_skyText->displayText(_quitTexts[SkyEngine::_systemVars.language * 2 + 1], textBuf2, true, 320, 255);
+	}
 	uint8 *curLine1 = textBuf1 + sizeof(DataFileHeader);
 	uint8 *curLine2 = textBuf2 + sizeof(DataFileHeader);
 	uint8 *targetLine = screenData + GAME_SCREEN_WIDTH * 80;
