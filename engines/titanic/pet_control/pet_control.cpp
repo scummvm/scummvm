@@ -371,8 +371,8 @@ void CPetControl::addToInventory(CCarry *item) {
 	_inventory.itemsChanged();
 
 	setArea(PET_INVENTORY);
-	if (_currentArea != PET_INVENTORY)
-		_inventory.couldntShowInventory(item);
+	if (_currentArea == PET_INVENTORY)
+		_inventory.highlightItem(item);
 	
 	makeDirty();
 	CPETGainedObjectMsg msg;

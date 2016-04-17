@@ -48,6 +48,11 @@ private:
 	 * Handles initial setup
 	 */
 	bool setPetControl(CPetControl *petControl);
+
+	/**
+	 * Get the index of an item added to the PET
+	 */
+	int getItemIndex(CGameObject *item) const;
 public:
 	CPetInventory();
 
@@ -111,7 +116,7 @@ public:
 	/**
 	 * Called when the inventory can't be shown after adding an item
 	 */
-	void couldntShowInventory(CCarry *item);
+	void highlightItem(CGameObject *item);
 };
 
 } // End of namespace Titanic

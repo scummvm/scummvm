@@ -133,8 +133,19 @@ void CPetInventory::itemsChanged() {
 	}
 }
 
-void CPetInventory::couldntShowInventory(CCarry *item) {
-
+void CPetInventory::highlightItem(CGameObject *item) {
+	int itemIndex = getItemIndex(item);
+	_items.highlight(itemIndex);
 }
+
+int CPetInventory::getItemIndex(CGameObject *item) const {
+	int index = 0;
+	for (CGameObject *obj = _petControl->getFirstObject(); obj && obj != item;
+			++index, obj = _petControl->getNextObject(obj)) {
+	}
+
+	return index;
+}
+
 
 } // End of namespace Titanic

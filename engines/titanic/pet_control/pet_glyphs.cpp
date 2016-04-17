@@ -50,7 +50,7 @@ bool CPetGlyph::translateContains(const Point &delta, const Point &pt) {
 /*------------------------------------------------------------------------*/
 
 void CPetGlyphs::clear() {
-	fn1(-1);
+	changeHighlight(-1);
 	destroyContents();
 	_field10 = 0;
 }
@@ -75,8 +75,12 @@ void CPetGlyphs::draw(CScreenManager *screenManager) {
 	warning("TODO: CPetGlyphs::draw");
 }
 
-void CPetGlyphs::fn1(int val) {
-	warning("TODO: CPetGlyphs::fn1");
+void CPetGlyphs::changeHighlight(int index) {
+	warning("TODO: CPetGlyphs::changeHighlight");
+}
+
+void CPetGlyphs::highlight(int index) {
+	warning("TODO: CPetGlyphs::highlight");
 }
 
 } // End of namespace Titanic

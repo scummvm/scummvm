@@ -117,7 +117,10 @@ protected:
 	CPetGfxElement _scrollLeft;
 	CPetGfxElement _scrollRight;
 protected:
-	void fn1(int val);
+	/**
+	 * Change the currently selected glyph
+	 */
+	void changeHighlight(int index);
 public:
 	CPetGlyphs::CPetGlyphs() : _field10(0), _field14(7),
 		_field18(-1), _field1C(-1), _field20(0), _field24(0) {
@@ -145,6 +148,11 @@ public:
 	 * Draw the control
 	 */
 	void draw(CScreenManager *screenManager);
+
+	/**
+	 * Highlight a specific glyph
+	 */
+	void highlight(int index);
 };
 
 } // End of namespace Titanic
