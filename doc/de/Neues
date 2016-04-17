@@ -28,6 +28,8 @@ Programmcodes finden Sie auf Englisch unter:
    - Laden eines Spielstandes in der "Pendulum"-Szene repariert.
    - Falscher Hintergrund für Inventar-Gegenstände im Kapitel 6 in der
      spanischen Version korrigiert.
+   - Geschwindigkeit der Animationen korrigiert. Animationen wurden nur halb
+     so schnell wie im originalen Interpreter abgespielt.
 
  Gob:
    - Aufhängen während Sound-Initialisierung in mehreren Spielen behoben.
