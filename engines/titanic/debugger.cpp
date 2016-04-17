@@ -23,6 +23,7 @@
 #include "titanic/debugger.h"
 #include "titanic/titanic.h"
 #include "titanic/core/tree_item.h"
+#include "titanic/pet_control/pet_control.h"
 
 namespace Titanic {
 
@@ -31,6 +32,7 @@ Debugger::Debugger(TitanicEngine *vm) : GUI::Debugger(), _vm(vm) {
 	registerCmd("dump",			WRAP_METHOD(Debugger, cmdDump));
 	registerCmd("room",			WRAP_METHOD(Debugger, cmdRoom));
 	registerCmd("pet",			WRAP_METHOD(Debugger, cmdPET));
+	registerCmd("item",			WRAP_METHOD(Debugger, cmdItem));
 }
 
 int Debugger::strToInt(const char *s) {
@@ -204,6 +206,52 @@ bool Debugger::cmdPET(int argc, const char **argv) {
 	}
 	
 	debugPrintf("%s [on | off]\n", argv[0]);
+	return true;
+}
+
+bool Debugger::cmdItem(int argc, const char **argv) {
+	if (argc == 1) {
+		// No parameters, so list the available items
+		debugPrintf("item [<name> [ add ]]\n");
+		for (int idx = 0; idx < 40; ++idx)
+			debugPrintf("%s\n", g_vm->_itemIds[idx].c_str());
+	} else {
+		// Ensure the specified name is a valid inventory item
+		int itemIndex;
+		for (itemIndex = 0; itemIndex < 40; ++itemIndex) {
+			if (g_vm->_itemIds[itemIndex] == argv[1])
+				break;
+		}
+		if (itemIndex == 40) {
+			debugPrintf("Could not find item with that name\n");
+			return true;
+		}
+
+		// Get the item
+		CCarry *item = static_cast<CCarry *>(
+			g_vm->_window->_project->findByName(argv[1]));
+		assert(item);
+
+		if (argc == 2) {
+			// List it's details
+			CTreeItem *treeItem = item;
+			CString fullName;
+			while ((treeItem = treeItem->getParent()) != nullptr) {
+				if (!treeItem->getName().empty())
+					fullName = treeItem->getName() + "." + fullName;
+			}
+
+			debugPrintf("Current location: %s\n", fullName.c_str());
+		} else if (CString(argv[2]) == "add") {
+			CPetControl *pet = item->getPetControl();
+			pet->_visible = true;
+			item->addToInventory();
+			return false;
+		} else {
+			debugPrintf("Unknown command\n");
+		}
+	}
+
 	return true;
 }
 

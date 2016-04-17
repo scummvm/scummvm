@@ -84,6 +84,11 @@ private:
 	 * Turn the PET on or off
 	 */
 	bool cmdPET(int argc, const char **argv);
+
+	/**
+	 * Item handling
+	 */
+	bool cmdItem(int argc, const char **argv);
 protected:
 	TitanicEngine *_vm;
 public:
