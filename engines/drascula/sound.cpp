@@ -169,8 +169,8 @@ void DrasculaEngine::MusicFadeout() {
 void DrasculaEngine::playFile(const char *fname) {
 	Common::SeekableReadStream *stream = _archives.open(fname);
 	if (stream) {
-		int startOffset = 0;
-		int soundSize = stream->size() - startOffset;
+		int startOffset = 32;
+		int soundSize = stream->size() - 64;
 
 		if (!strcmp(fname, "3.als") && soundSize == 145166 && _lang != kSpanish) {
 			// WORKAROUND: File 3.als with English speech files has a big silence at
