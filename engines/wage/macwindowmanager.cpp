@@ -74,11 +74,11 @@ int MacWindowManager::add(bool scrollable) {
     _windows.push_back(w);
     _windowStack.push_back(w);
 
-    _activeWindow = _lastId;
+    setActive(_lastId);
 
     _lastId++;
 
-    return _activeWindow;
+    return _lastId - 1;
 }
 
 void MacWindowManager::setActive(int id) {
@@ -87,6 +87,8 @@ void MacWindowManager::setActive(int id) {
 
     if (_activeWindow != -1)
         _windows[_activeWindow]->setActive(false);
+
+    _activeWindow = id;
 
     _windows[id]->setActive(true);
 
