@@ -76,7 +76,7 @@ void GnapEngine::scene30_run() {
 
 	_s30_kidSequenceId = 0x101;
 	initGnapPos(7, 12, kDirBottomRight);
-	initBeaverPos(6, 12, kDirNone);
+	initPlatypusPos(6, 12, kDirNone);
 	endSceneInit();
 	gnapWalkTo(7, 8, -1, 0x107B9, 1);
 	platypusWalkTo(6, 8, -1, 0x107C2, 1);
@@ -112,7 +112,7 @@ void GnapEngine::scene30_run() {
 						break;
 					case TALK_CURSOR:
 						playGnapBrainPulsating(_platX, _platY);
-						playBeaverSequence(getBeaverSequenceId());
+						playPlatypusSequence(getPlatypusSequenceId());
 						break;
 					case PLAT_CURSOR:
 						playGnapImpossible(0, 0);
@@ -183,7 +183,7 @@ void GnapEngine::scene30_run() {
 			playSound(0x1093B, true);
 
 		if (!_isLeavingScene) {
-			updateBeaverIdleSequence();
+			updatePlatypusIdleSequence();
 			if (_gnapActionStatus < 0)
 				updateGnapIdleSequence();
 			if (!_timers[4]) {

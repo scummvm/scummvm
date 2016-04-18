@@ -72,7 +72,7 @@ void GnapEngine::scene07_run() {
 
 	if (_prevSceneNum == 8) {
 		initGnapPos(7, 7, kDirBottomLeft);
-		initBeaverPos(9, 7, kDirUnk4);
+		initPlatypusPos(9, 7, kDirUnk4);
 		endSceneInit();
 	} else {
 		_gnapX = 6;
@@ -86,10 +86,10 @@ void GnapEngine::scene07_run() {
 		_gnapActionStatus = kASWait;
 		_platX = 3;
 		_platY = 8;
-		_beaverId = 160;
-		_beaverSequenceId = 0x91;
-		_beaverSequenceDatNum = 0;
-		_beaverFacing = kDirNone;
+		_platypusId = 160;
+		_platypusSequenceId = 0x91;
+		_platypusSequenceDatNum = 0;
+		_platypusFacing = kDirNone;
 		_gameSys->insertSequence(0x91, 160, 0, 0, kSeqNone, 0, 0, 0);
 		endSceneInit();
 	}
@@ -123,7 +123,7 @@ void GnapEngine::scene07_run() {
 				break;
 			case TALK_CURSOR:
 				playGnapBrainPulsating(_platX, _platY);
-				playBeaverSequence(getBeaverSequenceId());
+				playPlatypusSequence(getPlatypusSequenceId());
 				break;
 			case PLAT_CURSOR:
 				break;
@@ -197,38 +197,38 @@ void GnapEngine::scene07_run() {
 
 		if (!_isLeavingScene) {
 			updateGnapIdleSequence();
-			if (_beaverActionStatus < 0 && _gnapActionStatus < 0) {
+			if (_platypusActionStatus < 0 && _gnapActionStatus < 0) {
 				if (_timers[0]) {
 					if (!_timers[1]) {
 						_timers[1] = getRandom(20) + 30;
 						int _gnapRandomValue = getRandom(20);
 						// TODO Cleanup
-						if (_beaverFacing != kDirNone) {
-							if (_gnapRandomValue != 0 || _beaverSequenceId != 0x7CA) {
-								if (_gnapRandomValue != 1 || _beaverSequenceId != 0x7CA) {
+						if (_platypusFacing != kDirNone) {
+							if (_gnapRandomValue != 0 || _platypusSequenceId != 0x7CA) {
+								if (_gnapRandomValue != 1 || _platypusSequenceId != 0x7CA) {
 									if (_platY == 9)
-										playBeaverSequence(0x107CA);
+										playPlatypusSequence(0x107CA);
 								} else {
-									playBeaverSequence(0x10845);
+									playPlatypusSequence(0x10845);
 								}
 							} else {
-								playBeaverSequence(0x107CC);
+								playPlatypusSequence(0x107CC);
 							}
-						} else if (_gnapRandomValue != 0 || _beaverSequenceId != 0x7C9) {
-							if (_gnapRandomValue != 1 || _beaverSequenceId != 0x7C9) {
+						} else if (_gnapRandomValue != 0 || _platypusSequenceId != 0x7C9) {
+							if (_gnapRandomValue != 1 || _platypusSequenceId != 0x7C9) {
 								if (_platY == 9)
-									playBeaverSequence(0x107C9);
+									playPlatypusSequence(0x107C9);
 							} else {
-								playBeaverSequence(0x10844);
+								playPlatypusSequence(0x10844);
 							}
 						} else {
-							playBeaverSequence(0x107CB);
+							playPlatypusSequence(0x107CB);
 						}
-						_gameSys->setAnimation(_beaverSequenceId | (_beaverSequenceDatNum << 16), _beaverId, 1);
+						_gameSys->setAnimation(_platypusSequenceId | (_platypusSequenceDatNum << 16), _platypusId, 1);
 					}
 				} else {
 					_timers[0] = getRandom(75) + 75;
-					beaverMakeRoom();
+					platypusMakeRoom();
 				}
 			} else {
 				_timers[0] = 100;

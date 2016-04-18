@@ -115,7 +115,7 @@ void GnapEngine::scene04_run() {
 		_gnapId = 140;
 		_platX = 6;
 		_platY = 7;
-		_beaverId = 141;
+		_platypusId = 141;
 		_gameSys->insertSequence(0x107B5, 140, 0, 0, kSeqNone, 0, 300 - _gnapGridX, 336 - _gnapGridY);
 		_gameSys->insertSequence(0x20C, 141, 0, 0, kSeqNone, 0, 0, 0);
 		_gameSys->insertSequence(0x208, 121, 0, 0, kSeqNone, 0, 0, 0);
@@ -125,9 +125,9 @@ void GnapEngine::scene04_run() {
 		invAdd(kItemKeys);
 		setFlag(kGFKeysTaken);
 		clearFlag(kGFPlatyPussDisguised);
-		_beaverSequenceId = 0x20C;
-		_beaverSequenceDatNum = 0;
-		_beaverFacing = kDirBottomRight;
+		_platypusSequenceId = 0x20C;
+		_platypusSequenceDatNum = 0;
+		_platypusFacing = kDirBottomRight;
 		_gnapSequenceId = 0x7B5;
 		_gnapSequenceDatNum = 1;
 		_gameSys->waitForUpdate();
@@ -136,19 +136,19 @@ void GnapEngine::scene04_run() {
 		if (_prevSceneNum == 2) {
 			initGnapPos(5, 11, kDirUpRight);
 			if (isFlag(kGFPlatypus))
-				initBeaverPos(6, 11, kDirUpLeft);
+				initPlatypusPos(6, 11, kDirUpLeft);
 			endSceneInit();
 			if (isFlag(kGFPlatypus))
 				platypusWalkTo(5, 8, -1, 0x107C2, 1);
 			gnapWalkTo(6, 9, -1, 0x107BA, 1);
 		} else if (_prevSceneNum == 38) {
 			initGnapPos(5, 7, kDirBottomRight);
-			initBeaverPos(4, 7, kDirNone);
+			initPlatypusPos(4, 7, kDirNone);
 			endSceneInit();
 		} else {
 			initGnapPos(12, 9, kDirBottomRight);
 			if (isFlag(kGFPlatypus))
-				initBeaverPos(12, 8, kDirNone);
+				initPlatypusPos(12, 8, kDirNone);
 			endSceneInit();
 			if (isFlag(kGFPlatypus))
 				platypusWalkTo(9, 8, -1, 0x107C2, 1);
@@ -197,7 +197,7 @@ void GnapEngine::scene04_run() {
 						break;
 					case TALK_CURSOR:
 						playGnapBrainPulsating(_platX, _platY);
-						playBeaverSequence(getBeaverSequenceId());
+						playPlatypusSequence(getPlatypusSequenceId());
 						break;
 					case PLAT_CURSOR:
 						playGnapImpossible(0, 0);
@@ -398,8 +398,8 @@ void GnapEngine::scene04_run() {
 			playSound(0x1091C, true);
 	
 		if (!_isLeavingScene) {
-			if (_beaverActionStatus < 0 && isFlag(kGFPlatypus))
-				beaverSub426234();
+			if (_platypusActionStatus < 0 && isFlag(kGFPlatypus))
+				platypusSub426234();
 			if (_gnapActionStatus < 0)
 				updateGnapIdleSequence2();
 			if (!_timers[5]) {

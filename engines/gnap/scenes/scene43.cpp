@@ -114,27 +114,27 @@ void GnapEngine::scene43_run() {
 		switch (_prevSceneNum) {
 		case 42:
 			initGnapPos(-1, 8, kDirUpRight);
-			initBeaverPos(-1, 9, kDirUpLeft);
+			initPlatypusPos(-1, 9, kDirUpLeft);
 			endSceneInit();
 			gnapWalkTo(2, 8, -1, 0x107B9, 1);
 			platypusWalkTo(1, 8, -1, 0x107C2, 1);
 			break;
 		case 44:
 			initGnapPos(11, 8, kDirUpRight);
-			initBeaverPos(11, 9, kDirUpLeft);
+			initPlatypusPos(11, 9, kDirUpLeft);
 			endSceneInit();
 			gnapWalkTo(8, 8, -1, 0x107BA, 1);
 			platypusWalkTo(9, 8, -1, 0x107D2, 1);
 			break;
 		case 54:
 			initGnapPos(4, 7, kDirBottomLeft);
-			initBeaverPos(11, 8, kDirUpLeft);
+			initPlatypusPos(11, 8, kDirUpLeft);
 			endSceneInit();
 			platypusWalkTo(9, 8, -1, 0x107D2, 1);
 			break;
 		default:
 			initGnapPos(5, 11, kDirUpRight);
-			initBeaverPos(6, 11, kDirUpLeft);
+			initPlatypusPos(6, 11, kDirUpLeft);
 			endSceneInit();
 			gnapWalkTo(5, 8, -1, 0x107BA, 1);
 			platypusWalkTo(6, 8, -1, 0x107C2, 1);
@@ -220,7 +220,7 @@ void GnapEngine::scene43_run() {
 							break;
 						case TALK_CURSOR:
 							playGnapBrainPulsating(_platX, _platY);
-							playBeaverSequence(getBeaverSequenceId());
+							playPlatypusSequence(getPlatypusSequenceId());
 							break;
 						case PLAT_CURSOR:
 							playGnapImpossible(_platX, _platY);
@@ -320,13 +320,13 @@ void GnapEngine::scene43_run() {
 		toyUfoCheckTimer();
 	
 		if (!_isLeavingScene) {
-			if (_beaverActionStatus < 0 && !isFlag(kGFGnapControlsToyUFO))
-				updateBeaverIdleSequence();
+			if (_platypusActionStatus < 0 && !isFlag(kGFGnapControlsToyUFO))
+				updatePlatypusIdleSequence();
 			if (_gnapActionStatus < 0 && !isFlag(kGFGnapControlsToyUFO))
 				updateGnapIdleSequence();
 			if (!_timers[4] && (!isFlag(kGFGnapControlsToyUFO) || !isFlag(kGFGroceryStoreHatTaken))) {
 				_timers[4] = getRandom(100) + 100;
-				if (_gnapActionStatus < 0 && _beaverActionStatus < 0 && _s43_nextTwoHeadedGuySequenceId == -1) {
+				if (_gnapActionStatus < 0 && _platypusActionStatus < 0 && _s43_nextTwoHeadedGuySequenceId == -1) {
 					switch (getRandom(5)) {
 					case 0:
 						_s43_nextTwoHeadedGuySequenceId = 0x13C;

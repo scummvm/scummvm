@@ -79,13 +79,13 @@ void GnapEngine::scene31_run() {
 
 	if (_prevSceneNum == 27) {
 		initGnapPos(-1, 8, kDirBottomLeft);
-		initBeaverPos(-1, 9, kDirUnk4);
+		initPlatypusPos(-1, 9, kDirUnk4);
 		endSceneInit();
 		gnapWalkTo(3, 8, -1, 0x107BA, 1);
 		platypusWalkTo(3, 9, -1, 0x107D2, 1);
 	} else {
 		initGnapPos(7, 12, kDirBottomRight);
-		initBeaverPos(6, 12, kDirNone);
+		initPlatypusPos(6, 12, kDirNone);
 		endSceneInit();
 		gnapWalkTo(7, 8, -1, 0x107BA, 1);
 		platypusWalkTo(6, 8, -1, 0x107D2, 1);
@@ -124,7 +124,7 @@ void GnapEngine::scene31_run() {
 						break;
 					case TALK_CURSOR:
 						playGnapBrainPulsating(_platX, _platY);
-						playBeaverSequence(getBeaverSequenceId());
+						playPlatypusSequence(getPlatypusSequenceId());
 						break;
 					case PLAT_CURSOR:
 						playGnapImpossible(0, 0);
@@ -161,12 +161,12 @@ void GnapEngine::scene31_run() {
 						break;
 					case PLAT_CURSOR:
 						if (!invHas(kItemBucketWithBeer)) {
-							gnapUseDeviceOnBeaver();
+							gnapUseDeviceOnPlatypuss();
 							platypusWalkTo(_hotspotsWalkPos[kHSMeasuringClown].x, _hotspotsWalkPos[kHSMeasuringClown].y + 1, 1, 0x107C2, 1);
 							_hotspots[kHSWalkArea1]._flags |= SF_WALKABLE;
 							platypusWalkTo(_hotspotsWalkPos[kHSMeasuringClown].x, _hotspotsWalkPos[kHSMeasuringClown].y, 1, 0x107C2, 1);
 							_hotspots[kHSWalkArea1]._flags &= ~SF_WALKABLE;
-							_beaverActionStatus = kASPlatMeasuringClown;
+							_platypusActionStatus = kASPlatMeasuringClown;
 							_gnapActionStatus = kASPlatMeasuringClown;
 							_timers[4] = 300;
 						} else
@@ -253,8 +253,8 @@ void GnapEngine::scene31_run() {
 			playSound(0x1093B, true);
 	
 		if (!_isLeavingScene) {
-			if (_beaverActionStatus < 0)
-				updateBeaverIdleSequence();
+			if (_platypusActionStatus < 0)
+				updatePlatypusIdleSequence();
 			if (_gnapActionStatus < 0)
 				updateGnapIdleSequence();
 			if (!_timers[4]) {
@@ -343,7 +343,7 @@ void GnapEngine::scene31_updateAnimations() {
 
 	if (_gameSys->getAnimationStatus(1) == 2) {
 		_gameSys->setAnimation(0, 0, 1);
-		if (_beaverActionStatus == kASPlatMeasuringClown) {
+		if (_platypusActionStatus == kASPlatMeasuringClown) {
 			_sceneWaiting = true;
 			_s31_beerGuyDistracted = true;
 			_s28_nextClerkSequenceId = 0xFA;
@@ -364,7 +364,7 @@ void GnapEngine::scene31_updateAnimations() {
 			++_s31_clerkMeasureCtr;
 			if (_s31_clerkMeasureCtr >= _s31_clerkMeasureMaxCtr) {
 				if (_gnapActionStatus != 5)
-					_beaverActionStatus = -1;
+					_platypusActionStatus = -1;
 				_timers[0] = 40;
 				_gameSys->insertSequence(0xFD, 39, _s28_currClerkSequenceId, 39, kSeqSyncWait, 0, 0, 0);
 				_s28_currClerkSequenceId = 0xFD;

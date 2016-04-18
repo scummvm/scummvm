@@ -126,19 +126,19 @@ void GnapEngine::scene42_run() {
 			setGrabCursorSprite(-1);
 	} else if (_prevSceneNum == 41) {
 		initGnapPos(-1, 8, kDirUpRight);
-		initBeaverPos(-1, 9, kDirUpLeft);
+		initPlatypusPos(-1, 9, kDirUpLeft);
 		endSceneInit();
 		gnapWalkTo(2, 8, -1, 0x107B9, 1);
 		platypusWalkTo(1, 8, -1, 0x107C2, 1);
 	} else if (_prevSceneNum == 43) {
 		initGnapPos(11, 8, kDirUpRight);
-		initBeaverPos(11, 9, kDirUpLeft);
+		initPlatypusPos(11, 9, kDirUpLeft);
 		endSceneInit();
 		gnapWalkTo(8, 8, -1, 0x107BA, 1);
 		platypusWalkTo(9, 8, -1, 0x107D2, 1);
 	} else {
 		initGnapPos(5, 11, kDirUpRight);
-		initBeaverPos(6, 11, kDirUpLeft);
+		initPlatypusPos(6, 11, kDirUpLeft);
 		endSceneInit();
 		gnapWalkTo(5, 8, -1, 0x107BA, 1);
 		platypusWalkTo(6, 8, -1, 0x107C2, 1);
@@ -214,7 +214,7 @@ void GnapEngine::scene42_run() {
 							break;
 						case TALK_CURSOR:
 							playGnapBrainPulsating(_platX, _platY);
-							playBeaverSequence(getBeaverSequenceId());
+							playPlatypusSequence(getPlatypusSequenceId());
 							break;
 						case PLAT_CURSOR:
 							playGnapImpossible(_platX, _platY);
@@ -318,13 +318,13 @@ void GnapEngine::scene42_run() {
 		toyUfoCheckTimer();
 
 		if (!_isLeavingScene) {
-			if (_beaverActionStatus < 0 && !isFlag(kGFGnapControlsToyUFO))
-				updateBeaverIdleSequence();
+			if (_platypusActionStatus < 0 && !isFlag(kGFGnapControlsToyUFO))
+				updatePlatypusIdleSequence();
 			if (_gnapActionStatus < 0 && !isFlag(kGFGnapControlsToyUFO))
 				updateGnapIdleSequence();
 			if (!_timers[4]) {
 				_timers[4] = getRandom(20) + 30;
-				if (_gnapActionStatus < 0 && _beaverActionStatus < 0 && _s42_nextBBQVendorSequenceId == -1) {
+				if (_gnapActionStatus < 0 && _platypusActionStatus < 0 && _s42_nextBBQVendorSequenceId == -1) {
 					switch (getRandom(8)) {
 					case 0:
 						_s42_nextBBQVendorSequenceId = 0x14C;

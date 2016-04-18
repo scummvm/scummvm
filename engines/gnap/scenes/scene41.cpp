@@ -138,23 +138,23 @@ void GnapEngine::scene41_run() {
 		_gnapId = 140;
 		_gameSys->insertSequence(0x120, 140, 0, 0, kSeqNone, 0, 0, 0);
 		_gameSys->setAnimation(makeRid(_gnapSequenceDatNum, _gnapSequenceId), _gnapId, 0);
-		initBeaverPos(8, 10, kDirBottomLeft);
+		initPlatypusPos(8, 10, kDirBottomLeft);
 		endSceneInit();
 	} else if (_prevSceneNum == 45) {
 		initGnapPos(-1, 8, kDirUpRight);
-		initBeaverPos(-2, 8, kDirUpLeft);
+		initPlatypusPos(-2, 8, kDirUpLeft);
 		endSceneInit();
 		platypusWalkTo(1, 8, -1, 0x107C2, 1);
 		gnapWalkTo(2, 8, -1, 0x107B9, 1);
 	} else if (_prevSceneNum == 42) {
 		initGnapPos(11, 8, kDirUpRight);
-		initBeaverPos(11, 9, kDirUpLeft);
+		initPlatypusPos(11, 9, kDirUpLeft);
 		endSceneInit();
 		gnapWalkTo(8, 8, -1, 0x107BA, 1);
 		platypusWalkTo(9, 8, -1, 0x107D2, 1);
 	} else {
 		initGnapPos(5, 8, kDirBottomRight);
-		initBeaverPos(6, 8, kDirBottomLeft);
+		initPlatypusPos(6, 8, kDirBottomLeft);
 		endSceneInit();
 	}
 
@@ -236,7 +236,7 @@ void GnapEngine::scene41_run() {
 							break;
 						case TALK_CURSOR:
 							playGnapBrainPulsating(_platX, _platY);
-							playBeaverSequence(getBeaverSequenceId());
+							playPlatypusSequence(getPlatypusSequenceId());
 							break;
 						case PLAT_CURSOR:
 							playGnapImpossible(_platX, _platY);
@@ -384,13 +384,13 @@ void GnapEngine::scene41_run() {
 		scene41_updateAnimations();
 	
 		if (!_isLeavingScene) {
-			if (_beaverActionStatus < 0)
-				updateBeaverIdleSequence();
+			if (_platypusActionStatus < 0)
+				updatePlatypusIdleSequence();
 			if (_gnapActionStatus < 0 && !isFlag(kGFGnapControlsToyUFO))
 				updateGnapIdleSequence();
 			if (!_timers[4]) {
 				_timers[4] = getRandom(100) + 100;
-				if (_gnapActionStatus < 0 && _beaverActionStatus < 0 && _toyUfoActionStatus == -1 && _s41_nextToyVendorSequenceId == -1) {
+				if (_gnapActionStatus < 0 && _platypusActionStatus < 0 && _toyUfoActionStatus == -1 && _s41_nextToyVendorSequenceId == -1) {
 					switch (getRandom(3)) {
 					case 0:
 						_s41_nextToyVendorSequenceId = 0x113;
@@ -408,7 +408,7 @@ void GnapEngine::scene41_run() {
 			}
 			if (!_timers[5]) {
 				_timers[5] = getRandom(30) + 20;
-				if (_gnapActionStatus < 0 && _beaverActionStatus < 0 && _toyUfoActionStatus == -1 && _s41_nextKidSequenceId == -1) {
+				if (_gnapActionStatus < 0 && _platypusActionStatus < 0 && _toyUfoActionStatus == -1 && _s41_nextKidSequenceId == -1) {
 					if (isFlag(kGFGnapControlsToyUFO))
 						_s41_nextKidSequenceId = 0x11B;
 					else if (getRandom(3) != 0)

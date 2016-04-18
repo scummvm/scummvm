@@ -102,19 +102,19 @@ void GnapEngine::scene46_run() {
 		endSceneInit();
 	} else if (_prevSceneNum == 44) {
 		initGnapPos(-1, 8, kDirUpRight);
-		initBeaverPos(-1, 8, kDirUpLeft);
+		initPlatypusPos(-1, 8, kDirUpLeft);
 		endSceneInit();
 		platypusWalkTo(1, 8, -1, 0x107C2, 1);
 		gnapWalkTo(2, 8, -1, 0x107B9, 1);
 	} else if (_prevSceneNum == 45) {
 		initGnapPos(11, 8, kDirUpRight);
-		initBeaverPos(12, 8, kDirUpLeft);
+		initPlatypusPos(12, 8, kDirUpLeft);
 		endSceneInit();
 		gnapWalkTo(8, 8, -1, 0x107BA, 1);
 		platypusWalkTo(9, 8, -1, 0x107D2, 1);
 	} else {
 		initGnapPos(5, 11, kDirUpRight);
-		initBeaverPos(6, 11, kDirUpLeft);
+		initPlatypusPos(6, 11, kDirUpLeft);
 		endSceneInit();
 		platypusWalkTo(5, 8, -1, 0x107C2, 1);
 		gnapWalkTo(6, 8, -1, 0x107BA, 1);
@@ -183,7 +183,7 @@ void GnapEngine::scene46_run() {
 							break;
 						case TALK_CURSOR:
 							playGnapBrainPulsating(_platX, _platY);
-							playBeaverSequence(getBeaverSequenceId());
+							playPlatypusSequence(getPlatypusSequenceId());
 							break;
 						case PLAT_CURSOR:
 							playGnapImpossible(_platX, _platY);
@@ -280,13 +280,13 @@ void GnapEngine::scene46_run() {
 		toyUfoCheckTimer();
 	
 		if (!_isLeavingScene) {
-			if (_beaverActionStatus < 0 && !isFlag(kGFGnapControlsToyUFO))
-				updateBeaverIdleSequence();
+			if (_platypusActionStatus < 0 && !isFlag(kGFGnapControlsToyUFO))
+				updatePlatypusIdleSequence();
 			if (_gnapActionStatus < 0 && !isFlag(kGFGnapControlsToyUFO))
 				updateGnapIdleSequence();
 			if (!_timers[4]) {
 				_timers[4] = getRandom(50) + 80;
-				if (_gnapActionStatus < 0 && _beaverActionStatus < 0 && _s46_nextItchyGuySequenceId == -1) {
+				if (_gnapActionStatus < 0 && _platypusActionStatus < 0 && _s46_nextItchyGuySequenceId == -1) {
 					if (getRandom(2) != 0)
 						_s46_nextItchyGuySequenceId = 0x49;
 					else
@@ -295,7 +295,7 @@ void GnapEngine::scene46_run() {
 			}
 			if (!_timers[5]) {
 				_timers[5] = getRandom(50) + 80;
-				if (_gnapActionStatus < 0 && _beaverActionStatus < 0 && _s46_nextSackGuySequenceId == -1)
+				if (_gnapActionStatus < 0 && _platypusActionStatus < 0 && _s46_nextSackGuySequenceId == -1)
 					_s46_nextSackGuySequenceId = 0x4C;
 			}
 		}

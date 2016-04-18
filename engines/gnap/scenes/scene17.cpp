@@ -94,19 +94,19 @@ void GnapEngine::scene17_update() {
 void GnapEngine::scene17_platHangUpPhone() {
 	int savedGnapActionStatus = _gnapActionStatus;
 
-	if (_beaverActionStatus == kASPlatPhoningAssistant) {
+	if (_platypusActionStatus == kASPlatPhoningAssistant) {
 		_gnapActionStatus = kASPlatHangUpPhone;
 		updateMouseCursor();
 		_s17_platPhoneCtr = 0;
-		_beaverActionStatus = -1;
+		_platypusActionStatus = -1;
 		_gameSys->setAnimation(0x257, 254, 4);
 		_gameSys->insertSequence(0x257, 254, _s17_currPhoneSequenceId, 254, kSeqSyncExists, 0, 0, 0);
 		while (_gameSys->getAnimationStatus(4) != 2)
 			gameUpdateTick();
-		_gameSys->setAnimation(0x25B, _beaverId, 1);
-		_gameSys->insertSequence(0x25B, _beaverId, _beaverSequenceId | (_beaverSequenceDatNum << 16), _beaverId, kSeqSyncWait, 0, 0, 0);
-		_beaverSequenceId = 0x25B;
-		_beaverSequenceDatNum = 0;
+		_gameSys->setAnimation(0x25B, _platypusId, 1);
+		_gameSys->insertSequence(0x25B, _platypusId, _platypusSequenceId | (_platypusSequenceDatNum << 16), _platypusId, kSeqSyncWait, 0, 0, 0);
+		_platypusSequenceId = 0x25B;
+		_platypusSequenceDatNum = 0;
 		_s17_currPhoneSequenceId = -1;
 		_s17_nextPhoneSequenceId = -1;
 		clearFlag(kGFPlatypusTalkingToAssistant);
@@ -177,7 +177,7 @@ void GnapEngine::scene17_run() {
 	if (_prevSceneNum == 53 || _prevSceneNum == 18 || _prevSceneNum == 20 || _prevSceneNum == 19) {
 		if (_prevSceneNum == 20) {
 			initGnapPos(4, 6, kDirBottomRight);
-			initBeaverPos(5, 6, kDirNone);
+			initPlatypusPos(5, 6, kDirNone);
 			endSceneInit();
 			platypusWalkTo(5, 9, -1, 0x107C2, 1);
 			gnapWalkTo(4, 8, -1, 0x107B9, 1);
@@ -185,15 +185,15 @@ void GnapEngine::scene17_run() {
 			initGnapPos(3, 9, kDirUpLeft);
 			_platX = _hotspotsWalkPos[2].x;
 			_platY = _hotspotsWalkPos[2].y;
-			_beaverId = 20 * _hotspotsWalkPos[2].y;
+			_platypusId = 20 * _hotspotsWalkPos[2].y;
 			_gameSys->insertSequence(0x25A, 20 * _hotspotsWalkPos[2].y, 0, 0, kSeqNone, 0, 0, 0);
 			_gameSys->insertSequence(0x257, 254, 0, 0, kSeqNone, 0, 0, 0);
-			_beaverSequenceId = 0x25A;
-			_beaverSequenceDatNum = 0;
+			_platypusSequenceId = 0x25A;
+			_platypusSequenceDatNum = 0;
 			endSceneInit();
 			clearFlag(kGFSpringTaken);
 			clearFlag(kGFUnk16);
-			_beaverActionStatus = kASPlatPhoningAssistant;
+			_platypusActionStatus = kASPlatPhoningAssistant;
 			scene17_platHangUpPhone();
 			_gameSys->setAnimation(0, 0, 4);
 			clearFlag(kGFPlatypusTalkingToAssistant);
@@ -202,7 +202,7 @@ void GnapEngine::scene17_run() {
 		} else if (isFlag(kGFUnk25)) {
 			clearFlag(kGFSpringTaken);
 			clearFlag(kGFUnk16);
-			initBeaverPos(7, 9, kDirNone);
+			initPlatypusPos(7, 9, kDirNone);
 			_gnapX = _hotspotsWalkPos[2].x;
 			_gnapY = _hotspotsWalkPos[2].y;
 			_gnapId = 20 * _hotspotsWalkPos[2].y;
@@ -222,30 +222,30 @@ void GnapEngine::scene17_run() {
 			initGnapPos(3, 9, kDirUpLeft);
 			_platX = _hotspotsWalkPos[2].x;
 			_platY = _hotspotsWalkPos[2].y;
-			_beaverId = 20 * _hotspotsWalkPos[2].y;
+			_platypusId = 20 * _hotspotsWalkPos[2].y;
 			_s17_currPhoneSequenceId = 0x251;
 			_gameSys->insertSequence(0x25A, 20 * _hotspotsWalkPos[2].y, 0, 0, kSeqNone, 0, 0, 0);
 			_gameSys->insertSequence(_s17_currPhoneSequenceId, 254, 0, 0, kSeqNone, 0, 0, 0);
-			_beaverSequenceId = 0x25A;
-			_beaverSequenceDatNum = 0;
+			_platypusSequenceId = 0x25A;
+			_platypusSequenceDatNum = 0;
 			endSceneInit();
 			_gameSys->setAnimation(_s17_currPhoneSequenceId, 254, 1);
-			_beaverActionStatus = kASPlatPhoningAssistant;
+			_platypusActionStatus = kASPlatPhoningAssistant;
 			scene17_updateHotspots();
 		} else if (_prevSceneNum == 18) {
 			initGnapPos(6, 6, kDirBottomRight);
-			initBeaverPos(5, 6, kDirNone);
+			initPlatypusPos(5, 6, kDirNone);
 			endSceneInit();
 			platypusWalkTo(5, 9, -1, 0x107C2, 1);
 			gnapWalkTo(4, 8, -1, 0x107B9, 1);
 		} else {
 			if (isFlag(kGFSpringTaken)) {
 				initGnapPos(_hotspotsWalkPos[2].x, _hotspotsWalkPos[2].y, kDirBottomRight);
-				initBeaverPos(1, 9, kDirNone);
+				initPlatypusPos(1, 9, kDirNone);
 				endSceneInit();
 			} else {
 				initGnapPos(3, 7, kDirBottomRight);
-				initBeaverPos(1, 7, kDirNone);
+				initPlatypusPos(1, 7, kDirNone);
 				endSceneInit();
 			}
 			clearFlag(kGFSpringTaken);
@@ -262,16 +262,16 @@ void GnapEngine::scene17_run() {
 		_gameSys->insertSequence(makeRid(_gnapSequenceDatNum, _gnapSequenceId), _gnapId, 0, 0, kSeqNone, 0, 0, 0);
 		_platX = -1;
 		_platY = 8;
-		_beaverId = 160;
+		_platypusId = 160;
 		_gameSys->insertSequence(0x241, 160, 0, 0, kSeqNone, 0, 0, 0);
-		_gameSys->insertSequence(0x107C1, _beaverId, 0x241, _beaverId,
+		_gameSys->insertSequence(0x107C1, _platypusId, 0x241, _platypusId,
 			kSeqScale | kSeqSyncWait, 0, 75 * _platX - _platGridX, 48 * _platY - _platGridY);
 		_gameSys->insertSequence(0x22C, 2, 0, 0, kSeqNone, 0, 0, 0);
 		// TODO delayTicksA(2, 9);
 		endSceneInit();
-		_beaverSequenceId = 0x7C1;
-		_beaverSequenceDatNum = 1;
-		_beaverFacing = kDirBottomRight;
+		_platypusSequenceId = 0x7C1;
+		_platypusSequenceDatNum = 1;
+		_platypusFacing = kDirBottomRight;
 		platypusWalkTo(2, 9, -1, 0x107C2, 1);
 	}
 
@@ -298,10 +298,10 @@ void GnapEngine::scene17_run() {
 					if (isFlag(kGFGrassTaken)) {
 						gnapUseJointOnPlatypus();
 					} else {
-						gnapUseDeviceOnBeaver();
+						gnapUseDeviceOnPlatypuss();
 						platypusWalkTo(_hotspotsWalkPos[6].x, _hotspotsWalkPos[6].y, 1, 0x107C2, 1);
 						gnapWalkTo(_hotspotsWalkPos[6].x + 1, _hotspotsWalkPos[6].y, 0, 0x107BA, 1);
-						_beaverActionStatus = kASGetWrench1;
+						_platypusActionStatus = kASGetWrench1;
 						_gnapActionStatus = kASGetWrench1;
 						_timers[5] = getRandom(30) + 80;
 						setGrabCursorSprite(-1);
@@ -317,7 +317,7 @@ void GnapEngine::scene17_run() {
 						break;
 					case TALK_CURSOR:
 						playGnapBrainPulsating(_platX, _platY);
-						playBeaverSequence(getBeaverSequenceId());
+						playPlatypusSequence(getPlatypusSequenceId());
 						break;
 					case PLAT_CURSOR:
 						playGnapImpossible(0, 0);
@@ -345,9 +345,9 @@ void GnapEngine::scene17_run() {
 					case PLAT_CURSOR:
 						if (_s17_canTryGetWrench) {
 							scene17_platHangUpPhone();
-							gnapUseDeviceOnBeaver();
+							gnapUseDeviceOnPlatypuss();
 							platypusWalkTo(_hotspotsWalkPos[6].x + 1, _hotspotsWalkPos[6].y, 1, 0x107C2, 1);
-							_beaverActionStatus = kASTryGetWrench;
+							_platypusActionStatus = kASTryGetWrench;
 							_gnapActionStatus = kASTryGetWrench;
 							_timers[5] = getRandom(30) + 80;
 						} else
@@ -385,11 +385,11 @@ void GnapEngine::scene17_run() {
 						if (isFlag(kGFUnk18)) {
 							scene17_platHangUpPhone();
 							_isLeavingScene = true;
-							gnapUseDeviceOnBeaver();
-							_beaverFacing = kDirUpLeft;
+							gnapUseDeviceOnPlatypuss();
+							_platypusFacing = kDirUpLeft;
 							platypusWalkTo(_hotspotsWalkPos[2].x, _hotspotsWalkPos[2].y, 1, 0x107C2, 1);
 							setFlag(kGFUnk16);
-							_beaverActionStatus = kASPlatUsePhone;
+							_platypusActionStatus = kASPlatUsePhone;
 							_gnapActionStatus = kASPlatUsePhone;
 						} else
 							playGnapImpossible(0, 0);
@@ -429,11 +429,11 @@ void GnapEngine::scene17_run() {
 						if (isFlag(kGFUnk18)) {
 							scene17_platHangUpPhone();
 							_isLeavingScene = true;
-							gnapUseDeviceOnBeaver();
-							_beaverFacing = kDirUpLeft;
+							gnapUseDeviceOnPlatypuss();
+							_platypusFacing = kDirUpLeft;
 							platypusWalkTo(_hotspotsWalkPos[2].x, _hotspotsWalkPos[2].y, 1, 0x107C2, 1);
 							setFlag(kGFUnk16);
-							_beaverActionStatus = kASPlatUsePhone;
+							_platypusActionStatus = kASPlatUsePhone;
 							_gnapActionStatus = kASPlatUsePhone;
 						} else
 							playGnapImpossible(0, 0);
@@ -450,7 +450,7 @@ void GnapEngine::scene17_run() {
 				_gnapIdleFacing = kDirUpRight;
 				gnapWalkTo(_hotspotsWalkPos[5].x, _hotspotsWalkPos[5].y, 0, 0x107BB, 1);
 				_gnapActionStatus = kASLeaveScene;
-				if (_beaverActionStatus != kASPlatPhoningAssistant)
+				if (_platypusActionStatus != kASPlatPhoningAssistant)
 					platypusWalkTo(_hotspotsWalkPos[5].x - 1, _hotspotsWalkPos[5].y, -1, 0x107C2, 1);
 			}
 			break;
@@ -488,17 +488,17 @@ void GnapEngine::scene17_run() {
 			playSound(0x10940, true);
 	
 		if (!_isLeavingScene) {
-			if (_beaverActionStatus < 0)
-				beaverSub426234();
+			if (_platypusActionStatus < 0)
+				platypusSub426234();
 			updateGnapIdleSequence2();
 			if (!_timers[4]) {
 				_timers[4] = getRandom(100) + 200;
-				if (_gnapActionStatus < 0 && _beaverActionStatus < 0)
+				if (_gnapActionStatus < 0 && _platypusActionStatus < 0)
 					_gameSys->insertSequence(0x22B, 21, 0, 0, kSeqNone, 0, 0, 0);
 			}
 			if (!_timers[7]) {
 				_timers[7] = getRandom(100) + 100;
-				if (_gnapActionStatus < 0 && _beaverActionStatus < 0) {
+				if (_gnapActionStatus < 0 && _platypusActionStatus < 0) {
 					switch (getRandom(3)) {
 					case 0:
 						_gameSys->insertSequence(0x25C, 255, 0, 0, kSeqNone, 0, 0, 0);
@@ -512,7 +512,7 @@ void GnapEngine::scene17_run() {
 					}
 				}
 			}
-			if (_beaverActionStatus < 0 && !_timers[5]) {
+			if (_platypusActionStatus < 0 && !_timers[5]) {
 				_timers[5] = getRandom(30) + 80;
 				if (isFlag(kGFGrassTaken) && _s17_nextWrenchSequenceId == -1) {
 					_s17_nextWrenchSequenceId = 0x236;
@@ -643,9 +643,9 @@ void GnapEngine::scene17_updateAnimations() {
 
 	if (_gameSys->getAnimationStatus(1) == 2) {
 		_gameSys->setAnimation(0, 0, 1);
-		switch (_beaverActionStatus) {
+		switch (_platypusActionStatus) {
 		case kASTryGetWrench:
-			_beaverActionStatus = -1;
+			_platypusActionStatus = -1;
 			++_s17_platTryGetWrenchCtr;
 			if (_s17_platTryGetWrenchCtr % 2 != 0)
 				_s17_nextWrenchSequenceId = 0x233;
@@ -660,16 +660,16 @@ void GnapEngine::scene17_updateAnimations() {
 			_s17_nextCarWindowSequenceId = 0x249;
 			break;
 		case kASGetWrenchDone:
-			_beaverActionStatus = -1;
+			_platypusActionStatus = -1;
 			invAdd(kItemWrench);
 			setGrabCursorSprite(kItemWrench);
 			break;
 		case kASPlatUsePhone:
-			_gameSys->setAnimation(0x24E, _beaverId, 1);
-			_gameSys->insertSequence(0x24E, _beaverId, _beaverSequenceId | (_beaverSequenceDatNum << 16), _beaverId, kSeqSyncWait, 0, 0, 0);
-			_beaverSequenceDatNum = 0;
-			_beaverSequenceId = 0x24E;
-			_beaverActionStatus = kASLeaveScene;
+			_gameSys->setAnimation(0x24E, _platypusId, 1);
+			_gameSys->insertSequence(0x24E, _platypusId, _platypusSequenceId | (_platypusSequenceDatNum << 16), _platypusId, kSeqSyncWait, 0, 0, 0);
+			_platypusSequenceDatNum = 0;
+			_platypusSequenceId = 0x24E;
+			_platypusActionStatus = kASLeaveScene;
 			_newSceneNum = 53;
 			break;
 		case kASPlatPhoningAssistant:
@@ -678,10 +678,10 @@ void GnapEngine::scene17_updateAnimations() {
 				_s17_platPhoneCtr = 0;
 				_s17_nextPhoneSequenceId = -1;
 				_s17_currPhoneSequenceId = -1;
-				_gameSys->insertSequence(0x25B, _beaverId, 0x25A, _beaverId, kSeqSyncWait, 0, 0, 0);
-				_beaverSequenceDatNum = 0;
-				_beaverSequenceId = 0x25B;
-				_beaverActionStatus = -1;
+				_gameSys->insertSequence(0x25B, _platypusId, 0x25A, _platypusId, kSeqSyncWait, 0, 0, 0);
+				_platypusSequenceDatNum = 0;
+				_platypusSequenceId = 0x25B;
+				_platypusActionStatus = -1;
 				clearFlag(kGFPlatypusTalkingToAssistant);
 				_sceneWaiting = false;
 				scene17_updateHotspots();
@@ -689,9 +689,9 @@ void GnapEngine::scene17_updateAnimations() {
 				_s17_nextPhoneSequenceId = kPlatPhoneSequenceIds[_s17_platPhoneCtr];
 				_gameSys->setAnimation(_s17_nextPhoneSequenceId, 254, 1);
 				_gameSys->insertSequence(_s17_nextPhoneSequenceId, 254, _s17_currPhoneSequenceId, 254, kSeqSyncWait, 0, 0, 0);
-				_gameSys->insertSequence(0x25A, _beaverId, 0x25A, _beaverId, kSeqSyncWait, 0, 0, 0);
-				_beaverSequenceDatNum = 0;
-				_beaverSequenceId = 0x25A;
+				_gameSys->insertSequence(0x25A, _platypusId, 0x25A, _platypusId, kSeqSyncWait, 0, 0, 0);
+				_platypusSequenceDatNum = 0;
+				_platypusSequenceId = 0x25A;
 				_s17_currPhoneSequenceId = _s17_nextPhoneSequenceId;
 			}
 			break;
@@ -705,27 +705,27 @@ void GnapEngine::scene17_updateAnimations() {
 		switch (_s17_nextWrenchSequenceId) {
 		case 0x233:
 			_gnapActionStatus = -1;
-			_gameSys->insertSequence(0x243, _beaverId,
-				_beaverSequenceId | (_beaverSequenceDatNum << 16), _beaverId,
+			_gameSys->insertSequence(0x243, _platypusId,
+				_platypusSequenceId | (_platypusSequenceDatNum << 16), _platypusId,
 				kSeqSyncWait, 0, 0, 0);
 			_gameSys->insertSequence(_s17_nextWrenchSequenceId, 40, _s17_currWrenchSequenceId, 40, kSeqSyncWait, 0, 0, 0);
 			_s17_currWrenchSequenceId = _s17_nextWrenchSequenceId;
 			_s17_nextWrenchSequenceId = -1;
-			_beaverSequenceId = 0x243;
-			_beaverSequenceDatNum = 0;
-			_gameSys->setAnimation(0x243, _beaverId, 1);
+			_platypusSequenceId = 0x243;
+			_platypusSequenceDatNum = 0;
+			_gameSys->setAnimation(0x243, _platypusId, 1);
 			break;
 		case 0x234:
 			_gnapActionStatus = -1;
-			_gameSys->insertSequence(0x242, _beaverId,
-				_beaverSequenceId | (_beaverSequenceDatNum << 16), _beaverId,
+			_gameSys->insertSequence(0x242, _platypusId,
+				_platypusSequenceId | (_platypusSequenceDatNum << 16), _platypusId,
 				kSeqSyncWait, 0, 0, 0);
 			_gameSys->insertSequence(_s17_nextWrenchSequenceId, 40, _s17_currWrenchSequenceId, 40, kSeqSyncWait, 0, 0, 0);
 			_s17_currWrenchSequenceId = _s17_nextWrenchSequenceId;
 			_s17_nextWrenchSequenceId = -1;
-			_beaverSequenceId = 0x242;
-			_beaverSequenceDatNum = 0;
-			_gameSys->setAnimation(0x242, _beaverId, 1);
+			_platypusSequenceId = 0x242;
+			_platypusSequenceDatNum = 0;
+			_gameSys->setAnimation(0x242, _platypusId, 1);
 			break;
 		case 0x231:
 			if (getRandom(2) != 0)
@@ -758,17 +758,17 @@ void GnapEngine::scene17_updateAnimations() {
 					_s17_currWrenchSequenceId = 0x22E;
 					_s17_canTryGetWrench = false;
 				}
-				_gameSys->setAnimation(0x23F, _beaverId, 1);
+				_gameSys->setAnimation(0x23F, _platypusId, 1);
 				_gameSys->insertSequence(0x10875, _gnapId, makeRid(_gnapSequenceDatNum, _gnapSequenceId), _gnapId, kSeqSyncWait, 0, 0, 0);
-				_gameSys->insertSequence(0x23F, _beaverId,
-					_beaverSequenceId | (_beaverSequenceDatNum << 16), _beaverId,
+				_gameSys->insertSequence(0x23F, _platypusId,
+					_platypusSequenceId | (_platypusSequenceDatNum << 16), _platypusId,
 					kSeqSyncWait, 0, 0, 0);
 				_gnapSequenceDatNum = 1;
-				_beaverSequenceDatNum = 0;
+				_platypusSequenceDatNum = 0;
 				_gnapSequenceId = 0x875;
-				_beaverSequenceId = 0x23F;
+				_platypusSequenceId = 0x23F;
 				gnapWalkTo(3, 8, -1, 0x107B9, 1);
-				_beaverActionStatus = kASGetWrench2;
+				_platypusActionStatus = kASGetWrench2;
 			}
 			break;
 		default:
@@ -806,15 +806,15 @@ void GnapEngine::scene17_updateAnimations() {
 			break;
 		case 0x249:
 			_gameSys->setAnimation(0x230, 40, 2);
-			_gameSys->setAnimation(0x240, _beaverId, 1);
+			_gameSys->setAnimation(0x240, _platypusId, 1);
 			_gameSys->insertSequence(0x230, 40, _s17_currWrenchSequenceId, 40, kSeqSyncWait, 0, 0, 0);
 			_gameSys->insertSequence(_s17_nextCarWindowSequenceId, 40, _s17_currCarWindowSequenceId, 40, kSeqSyncWait, 0, 0, 0);
-			_gameSys->insertSequence(0x240, _beaverId, _beaverSequenceId, _beaverId, kSeqSyncWait, 0, 0, 0);
+			_gameSys->insertSequence(0x240, _platypusId, _platypusSequenceId, _platypusId, kSeqSyncWait, 0, 0, 0);
 			_gameSys->insertSequence(0x23E, _gnapId, makeRid(_gnapSequenceDatNum, _gnapSequenceId), _gnapId, kSeqSyncWait, 0, 0, 0);
 			_gnapSequenceId = 0x23E;
 			_gnapSequenceDatNum = 0;
-			_beaverSequenceId = 0x240;
-			_beaverSequenceDatNum = 0;
+			_platypusSequenceId = 0x240;
+			_platypusSequenceDatNum = 0;
 			_gameSys->setAnimation(0x24A, 40, 3);
 			_gameSys->insertSequence(0x24A, 40, _s17_nextCarWindowSequenceId, 40, kSeqSyncWait, 0, 0, 0);
 			while (_gameSys->getAnimationStatus(2) != 2) {
@@ -833,7 +833,7 @@ void GnapEngine::scene17_updateAnimations() {
 			_s17_nextWrenchSequenceId = -1;
 			setFlag(kGFGrassTaken);
 			_gnapActionStatus = -1;
-			_beaverActionStatus = 2;
+			_platypusActionStatus = 2;
 			scene17_updateHotspots();
 			_timers[5] = getRandom(30) + 80;
 			break;

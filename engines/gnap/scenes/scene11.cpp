@@ -94,22 +94,22 @@ void GnapEngine::scene11_run() {
 	switch (_prevSceneNum) {
 	case 13:
 		initGnapPos(8, 5, kDirBottomLeft);
-		initBeaverPos(9, 6, kDirUnk4);
+		initPlatypusPos(9, 6, kDirUnk4);
 		break;
 	case 47:
 		initGnapPos(8, 5, kDirBottomLeft);
-		initBeaverPos(9, 5, kDirUnk4);
+		initPlatypusPos(9, 5, kDirUnk4);
 		_s11_currGoggleGuySequenceId = 0x1FA;
 		_s11_currHookGuySequenceId = 0x1FF;
 		_timers[7] = 180;
 		break;
 	case 12:
 		initGnapPos(-1, 9, kDirBottomRight);
-		initBeaverPos(-2, 8, kDirNone);
+		initPlatypusPos(-2, 8, kDirNone);
 		break;
 	default:
 		initGnapPos(6, 6, kDirBottomLeft);
-		initBeaverPos(6, 5, kDirUnk4);
+		initPlatypusPos(6, 5, kDirUnk4);
 		break;
 	}
 	
@@ -163,7 +163,7 @@ void GnapEngine::scene11_run() {
 					break;
 				case TALK_CURSOR:
 					playGnapBrainPulsating(_platX, _platY);
-					playBeaverSequence(getBeaverSequenceId());
+					playPlatypusSequence(getPlatypusSequenceId());
 					break;
 				case PLAT_CURSOR:
 					break;
@@ -306,11 +306,11 @@ void GnapEngine::scene11_run() {
 				_gameSys->setAnimation(0x207, 257, 4);
 				_gameSys->insertSequence(0x207, 257, 0, 0, kSeqNone, 0, 0, 0);
 			}
-			beaverSub426234();
+			platypusSub426234();
 			updateGnapIdleSequence2();
 			if (!_timers[5]) {
 				_timers[5] = getRandom(100) + 75;
-				if (_gnapActionStatus < 0 && _beaverActionStatus < 0 && _s11_nextGoggleGuySequenceId == -1) {
+				if (_gnapActionStatus < 0 && _platypusActionStatus < 0 && _s11_nextGoggleGuySequenceId == -1) {
 					if (getRandom(2))
 						_s11_nextGoggleGuySequenceId = 0x1F6;
 					else
@@ -319,7 +319,7 @@ void GnapEngine::scene11_run() {
 			}
 			if (!_timers[4]) {
 				_timers[4] = getRandom(40) + 20;
-				if (_gnapActionStatus < 0 && _beaverActionStatus < 0 && _s11_nextHookGuySequenceId == -1) {
+				if (_gnapActionStatus < 0 && _platypusActionStatus < 0 && _s11_nextHookGuySequenceId == -1) {
 					if (_s11_currHookGuySequenceId == 0x201) {
 						switch (getRandom(7)) {
 						case 0:

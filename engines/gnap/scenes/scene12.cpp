@@ -112,11 +112,11 @@ void GnapEngine::scene12_run() {
 	
 	if (_prevSceneNum == 15) {
 		initGnapPos(5, 6, kDirBottomRight);
-		initBeaverPos(3, 7, kDirNone);
+		initPlatypusPos(3, 7, kDirNone);
 		endSceneInit();
 	} else {
 		initGnapPos(11, 8, kDirBottomLeft);
-		initBeaverPos(12, 8, kDirUnk4);
+		initPlatypusPos(12, 8, kDirUnk4);
 		endSceneInit();
 		gnapWalkTo(8, 8, -1, 0x107BA, 1);
 		platypusWalkTo(9, 8, -1, 0x107D2, 1);
@@ -152,7 +152,7 @@ void GnapEngine::scene12_run() {
 				break;
 			case TALK_CURSOR:
 				playGnapBrainPulsating(_platX, _platY);
-				playBeaverSequence(getBeaverSequenceId());
+				playPlatypusSequence(getPlatypusSequenceId());
 				break;
 			case PLAT_CURSOR:
 				break;
@@ -200,10 +200,10 @@ void GnapEngine::scene12_run() {
 					_gnapActionStatus = kASTalkToothGuy;
 					break;
 				case PLAT_CURSOR:
-					gnapUseDeviceOnBeaver();
+					gnapUseDeviceOnPlatypuss();
 					platypusWalkTo(3, 7, 1, 0x107D2, 1);
-					_beaverActionStatus = kASPlatWithToothGuy;
-					_beaverFacing = kDirUnk4;
+					_platypusActionStatus = kASPlatWithToothGuy;
+					_platypusFacing = kDirUnk4;
 					playGnapIdle(2, 7);
 					break;
 				}
@@ -270,10 +270,10 @@ void GnapEngine::scene12_run() {
 					_gnapActionStatus = kASTalkBeardGuy;
 					break;
 				case PLAT_CURSOR:
-					gnapUseDeviceOnBeaver();
+					gnapUseDeviceOnPlatypuss();
 					platypusWalkTo(7, 6, 1, 0x107C2, 1);
-					_beaverActionStatus = kASPlatWithBeardGuy;
-					_beaverFacing = kDirNone;
+					_platypusActionStatus = kASPlatWithBeardGuy;
+					_platypusFacing = kDirNone;
 					playGnapIdle(7, 6);
 					break;
 				}
@@ -307,12 +307,12 @@ void GnapEngine::scene12_run() {
 		scene12_updateAnimations();
 	
 		if (!_isLeavingScene) {
-			updateBeaverIdleSequence();
+			updatePlatypusIdleSequence();
 			updateGnapIdleSequence();
 			if (!_timers[4]) {
 				_timers[4] = 15;
 				if (_s12_nextToothGuySequenceId == -1) {
-					if (v18 == 0 && _s12_currBeardGuySequenceId == 0x202 && _s12_currBarkeeperSequenceId == 0x203 && _gnapActionStatus < 0 && _beaverActionStatus < 0) {
+					if (v18 == 0 && _s12_currBeardGuySequenceId == 0x202 && _s12_currBarkeeperSequenceId == 0x203 && _gnapActionStatus < 0 && _platypusActionStatus < 0) {
 						if (getRandom(2) != 0)
 							_s12_nextToothGuySequenceId = 0x1EC;
 						else
@@ -324,8 +324,8 @@ void GnapEngine::scene12_run() {
 			}
 			if (!_timers[5]) {
 				_timers[5] = getRandom(30) + 20;
-				if (_s12_nextBarkeeperSequenceId == -1 && _gnapActionStatus < 0 && _beaverActionStatus < 0) {
-					if (v18 == 0 && _s12_currToothGuySequenceId == 0x200 && _s12_currBeardGuySequenceId == 0x202 && _gnapActionStatus < 0 && _beaverActionStatus < 0) {
+				if (_s12_nextBarkeeperSequenceId == -1 && _gnapActionStatus < 0 && _platypusActionStatus < 0) {
+					if (v18 == 0 && _s12_currToothGuySequenceId == 0x200 && _s12_currBeardGuySequenceId == 0x202 && _gnapActionStatus < 0 && _platypusActionStatus < 0) {
 						if (getRandom(2) != 0)
 							_s12_nextBarkeeperSequenceId = 0x208;
 						else
@@ -337,8 +337,8 @@ void GnapEngine::scene12_run() {
 			}
 			if (!_timers[6]) {
 				_timers[6] = getRandom(30) + 15;
-				if (_s12_nextBeardGuySequenceId == -1 && _gnapActionStatus < 0 && _beaverActionStatus < 0) {
-					if (v18 == 0 && _s12_currToothGuySequenceId == 0x200 && _s12_currBarkeeperSequenceId == 0x203 && _gnapActionStatus < 0 && _beaverActionStatus < 0)
+				if (_s12_nextBeardGuySequenceId == -1 && _gnapActionStatus < 0 && _platypusActionStatus < 0) {
+					if (v18 == 0 && _s12_currToothGuySequenceId == 0x200 && _s12_currBarkeeperSequenceId == 0x203 && _gnapActionStatus < 0 && _platypusActionStatus < 0)
 						_s12_nextBeardGuySequenceId = 0x1F2;
 					else
 						_s12_nextBeardGuySequenceId = 0x202;
@@ -475,7 +475,7 @@ void GnapEngine::scene12_updateAnimations() {
 	
 	if (_gameSys->getAnimationStatus(1) == 2) {
 		_gameSys->setAnimation(0, 0, 1);
-		switch (_beaverActionStatus) {
+		switch (_platypusActionStatus) {
 		case kASPlatWithToothGuy:
 			_s12_nextToothGuySequenceId = 0x1EB;
 			break;
@@ -523,8 +523,8 @@ void GnapEngine::scene12_updateAnimations() {
 			if (_gnapActionStatus >= kASTalkToothGuy && _gnapActionStatus <= kASQuarterToToothGuy && _s12_currToothGuySequenceId != 0x1E9 &&
 				_s12_currToothGuySequenceId != 0x1EC && _s12_currToothGuySequenceId != 0x200)
 				_gnapActionStatus = -1;
-			if (_beaverActionStatus == kASPlatWithToothGuy)
-				_beaverActionStatus = -1;
+			if (_platypusActionStatus == kASPlatWithToothGuy)
+				_platypusActionStatus = -1;
 		}
 	}
 	
@@ -554,8 +554,8 @@ void GnapEngine::scene12_updateAnimations() {
 		_timers[6] = getRandom(30) + 20;
 		if (_gnapActionStatus >= kASTalkBeardGuy && _gnapActionStatus <= kASShowItemToBeardGuy && _s12_currBeardGuySequenceId != 0x202 && _s12_currBeardGuySequenceId != 0x1F2)
 			_gnapActionStatus = -1;
-		if (_beaverActionStatus == kASPlatWithBeardGuy)
-			_beaverActionStatus = -1;
+		if (_platypusActionStatus == kASPlatWithBeardGuy)
+			_platypusActionStatus = -1;
 	}
 
 }

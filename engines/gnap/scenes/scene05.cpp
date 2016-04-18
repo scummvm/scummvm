@@ -98,7 +98,7 @@ void GnapEngine::scene05_run() {
 	if (_prevSceneNum != 6 && _prevSceneNum != 36) {
 		initGnapPos(-1, 8, kDirBottomRight);
 		if (isFlag(kGFPlatypus))
-			initBeaverPos(-1, 9, kDirNone);
+			initPlatypusPos(-1, 9, kDirNone);
 		endSceneInit();
 		if (isFlag(kGFPlatypus))
 			platypusWalkTo(2, 8, -1, 0x107C2, 1);
@@ -106,7 +106,7 @@ void GnapEngine::scene05_run() {
 	} else {
 		initGnapPos(6, 8, kDirBottomRight);
 		if (isFlag(kGFPlatypus))
-			initBeaverPos(7, 9, kDirNone);
+			initPlatypusPos(7, 9, kDirNone);
 		endSceneInit();
 	}
 	
@@ -148,7 +148,7 @@ void GnapEngine::scene05_run() {
 						break;
 					case TALK_CURSOR:
 						playGnapBrainPulsating(_platX, _platY);
-						playBeaverSequence(getBeaverSequenceId());
+						playPlatypusSequence(getPlatypusSequenceId());
 						break;
 					case PLAT_CURSOR:
 						playGnapImpossible(0, 0);
@@ -159,7 +159,7 @@ void GnapEngine::scene05_run() {
 			break;
 
 		case kHSHaystack:
-			if (_gnapActionStatus < 0 && _beaverActionStatus < 0) {
+			if (_gnapActionStatus < 0 && _platypusActionStatus < 0) {
 				if (_grabCursorSpriteIndex >= 0) {
 					playGnapShowCurrItem(_hotspotsWalkPos[1].x - 2, _hotspotsWalkPos[1].y, 4, 5);
 				} else if (isFlag(kGFNeedleTaken)) {
@@ -175,10 +175,10 @@ void GnapEngine::scene05_run() {
 						break;
 					case PLAT_CURSOR:
 						if (isFlag(kGFPlatypus)) {
-							gnapUseDeviceOnBeaver();
+							gnapUseDeviceOnPlatypuss();
 							if (platypusWalkTo(_hotspotsWalkPos[1].x, _hotspotsWalkPos[1].y, 1, 0x107C2, 1)) {
-								_beaverActionStatus = kASPlatSearchHaystack;
-								_beaverFacing = kDirUnk4;
+								_platypusActionStatus = kASPlatSearchHaystack;
+								_platypusFacing = kDirUnk4;
 							}
 							if (_gnapX == 4 && (_gnapY == 8 || _gnapY == 7))
 								gnapWalkStep();
@@ -321,7 +321,7 @@ void GnapEngine::scene05_run() {
 	
 		if (!_isLeavingScene) {
 			if (isFlag(kGFPlatypus))
-				updateBeaverIdleSequence();
+				updatePlatypusIdleSequence();
 			updateGnapIdleSequence();
 			if (!_timers[5]) {
 				_timers[5] = getRandom(20) + 30;
@@ -417,28 +417,28 @@ void GnapEngine::scene05_updateAnimations() {
 	}
 	
 	if (_gameSys->getAnimationStatus(1) == 2) {
-		if (_beaverSequenceId == 0x146) {
+		if (_platypusSequenceId == 0x146) {
 			_platX = 4;
 			_platY = 8;
 			_gameSys->insertSequence(0x107C1, 160, 0x146, 256, kSeqSyncWait, 0, 300 - _platGridX, 384 - _platGridY);
-			_beaverSequenceId = 0x7C1;
-			_beaverSequenceDatNum = 1;
-			_beaverId = 20 * _platY;
+			_platypusSequenceId = 0x7C1;
+			_platypusSequenceDatNum = 1;
+			_platypusId = 20 * _platY;
 			invAdd(kItemNeedle);
 			setFlag(kGFNeedleTaken);
 			setGrabCursorSprite(kItemNeedle);
 			showCursor();
 			_timers[1] = 30;
-			_beaverActionStatus = -1;
+			_platypusActionStatus = -1;
 		}
-		if (_beaverActionStatus == kASPlatSearchHaystack) {
+		if (_platypusActionStatus == kASPlatSearchHaystack) {
 			_gameSys->setAnimation(0, 0, 1);
-			_gameSys->insertSequence(0x145, _beaverId, _beaverSequenceId | (_beaverSequenceDatNum << 16), _beaverId, kSeqSyncWait, 0, 0, 0);
-			_gameSys->insertSequence(0x146, 256, 0x145, _beaverId, kSeqSyncWait, 0, 0, 0);
+			_gameSys->insertSequence(0x145, _platypusId, _platypusSequenceId | (_platypusSequenceDatNum << 16), _platypusId, kSeqSyncWait, 0, 0, 0);
+			_gameSys->insertSequence(0x146, 256, 0x145, _platypusId, kSeqSyncWait, 0, 0, 0);
 			hideCursor();
 			setGrabCursorSprite(-1);
-			_beaverSequenceId = 0x146;
-			_beaverSequenceDatNum = 0;
+			_platypusSequenceId = 0x146;
+			_platypusSequenceDatNum = 0;
 			_gameSys->setAnimation(0x146, 256, 1);
 			_timers[1] = 300;
 		}

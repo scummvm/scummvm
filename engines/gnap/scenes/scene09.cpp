@@ -68,13 +68,13 @@ void GnapEngine::scene09_run() {
 	
 	if (_prevSceneNum == 8) {
 		initGnapPos(11, 8, kDirBottomLeft);
-		initBeaverPos(12, 7, kDirUnk4);
+		initPlatypusPos(12, 7, kDirUnk4);
 		endSceneInit();
 		gnapWalkTo(9, 8, -1, 0x107BA, 1);
 		platypusWalkTo(9, 7, -1, 0x107D2, 1);
 	} else {
 		initGnapPos(4, 7, kDirBottomRight);
-		initBeaverPos(5, 7, kDirNone);
+		initPlatypusPos(5, 7, kDirNone);
 		endSceneInit();
 	}
 
@@ -115,7 +115,7 @@ void GnapEngine::scene09_run() {
 				break;
 			case TALK_CURSOR:
 				playGnapBrainPulsating(_platX, _platY);
-				playBeaverSequence(getBeaverSequenceId());
+				playPlatypusSequence(getPlatypusSequenceId());
 				break;
 			case PLAT_CURSOR:
 				break;
@@ -128,7 +128,7 @@ void GnapEngine::scene09_run() {
 			gnapWalkTo(4, 7, 0, 0x107BF, 1);
 			_gnapActionStatus = kASLeaveScene;
 			platypusWalkTo(4, 8, -1, 0x107D2, 1);
-			_beaverFacing = kDirUnk4;
+			_platypusFacing = kDirUnk4;
 			break;
 
 		case kHSExitHouse:
@@ -137,7 +137,7 @@ void GnapEngine::scene09_run() {
 			gnapWalkTo(10, -1, 0, 0x107AB, 1);
 			_gnapActionStatus = kASLeaveScene;
 			platypusWalkTo(10, -1, -1, 0x107CD, 1);
-			_beaverFacing = kDirUnk4;
+			_platypusFacing = kDirUnk4;
 			break;
 
 		case kHSTrash:
@@ -178,7 +178,7 @@ void GnapEngine::scene09_run() {
 		scene09_updateAnimations();
 	
 		if (!_isLeavingScene && _gnapActionStatus != 1 && _gnapActionStatus != 2) {
-			updateBeaverIdleSequence();
+			updatePlatypusIdleSequence();
 			updateGnapIdleSequence();
 			if (!_timers[4]) {
 				_timers[4] = getRandom(150) + 100;

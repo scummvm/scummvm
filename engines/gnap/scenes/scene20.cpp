@@ -229,42 +229,42 @@ void GnapEngine::scene20_run() {
 			gameUpdateTick();
 		}
 		initGnapPos(11, 8, kDirBottomLeft);
-		initBeaverPos(11, 9, kDirUnk4);
+		initPlatypusPos(11, 9, kDirUnk4);
 		gnapWalkTo(5, 8, -1, 0x107BA, 1);
 		platypusWalkTo(6, 9, -1, 0x107C2, 1);
 	} else {
 		switch (_prevSceneNum) {
 		case 17:
 			initGnapPos(5, 11, kDirBottomRight);
-			initBeaverPos(6, 11, kDirNone);
+			initPlatypusPos(6, 11, kDirNone);
 			endSceneInit();
 			gnapWalkTo(5, 8, -1, 0x107B9, 1);
 			platypusWalkTo(6, 9, -1, 0x107C2, 1);
 			break;
 		case 18:
 			initGnapPos(11, 8, kDirBottomLeft);
-			initBeaverPos(11, 9, kDirUnk4);
+			initPlatypusPos(11, 9, kDirUnk4);
 			endSceneInit();
 			gnapWalkTo(5, 8, -1, 0x107BA, 1);
 			platypusWalkTo(6, 9, -1, 0x107C2, 1);
 			break;
 		case 21:
 			initGnapPos(-1, 8, kDirBottomLeft);
-			initBeaverPos(-1, 9, kDirUnk4);
+			initPlatypusPos(-1, 9, kDirUnk4);
 			endSceneInit();
 			gnapWalkTo(3, 8, -1, 0x107B9, 1);
 			platypusWalkTo(3, 9, -1, 0x107C2, 1);
 			break;
 		case 22:
 			initGnapPos(7, 6, kDirBottomRight);
-			initBeaverPos(8, 6, kDirNone);
+			initPlatypusPos(8, 6, kDirNone);
 			endSceneInit();
 			gnapWalkTo(8, 8, -1, 0x107B9, 1);
 			platypusWalkTo(9, 9, -1, 0x107C2, 1);
 			break;
 		default:
 			initGnapPos(8, 6, kDirBottomLeft);
-			initBeaverPos(9, 6, kDirUnk4);
+			initPlatypusPos(9, 6, kDirUnk4);
 			endSceneInit();
 			_hotspots[kHSWalkArea2]._flags |= SF_WALKABLE;
 			gnapWalkTo(8, 8, -1, 0x107BA, 1);
@@ -310,7 +310,7 @@ void GnapEngine::scene20_run() {
 						break;
 					case TALK_CURSOR:
 						playGnapBrainPulsating(_platX, _platY);
-						playBeaverSequence(getBeaverSequenceId());
+						playPlatypusSequence(getPlatypusSequenceId());
 						break;
 					case PLAT_CURSOR:
 						playGnapImpossible(0, 0);
@@ -329,7 +329,7 @@ void GnapEngine::scene20_run() {
 				gnapWalkTo(_hotspotsWalkPos[kHSExitParkingLot].x, _hotspotsWalkPos[kHSExitParkingLot].y, 0, 0x107AF, 1);
 				_gnapActionStatus = kASLeaveScene;
 				platypusWalkTo(_hotspotsWalkPos[kHSExitParkingLot].x, _hotspotsWalkPos[kHSExitParkingLot].y + 1, -1, 0x107CF, 1);
-				_beaverFacing = kDirUnk4;
+				_platypusFacing = kDirUnk4;
 			}
 			break;
 		
@@ -368,7 +368,7 @@ void GnapEngine::scene20_run() {
 				gnapWalkTo(_hotspotsWalkPos[kHSExitInsideGrubCity].x, _hotspotsWalkPos[kHSExitInsideGrubCity].y - 1, 0, 0x107BB, 1);
 				_gnapActionStatus = kASLeaveScene;
 				platypusWalkTo(_hotspotsWalkPos[kHSExitInsideGrubCity].x + 1, _hotspotsWalkPos[kHSExitInsideGrubCity].y, -1, 0x107C2, 1);
-				_beaverFacing = kDirUnk4;
+				_platypusFacing = kDirUnk4;
 			}
 			break;
 		
@@ -493,9 +493,9 @@ void GnapEngine::scene20_run() {
 			playSound(0x10940, true);
 	
 		if (!_isLeavingScene) {
-			if (_beaverActionStatus < 0) {
+			if (_platypusActionStatus < 0) {
 				_hotspots[kHSWalkArea1]._y2 += 48;
-				updateBeaverIdleSequence();
+				updatePlatypusIdleSequence();
 				_hotspots[kHSWalkArea1]._y2 -= 48;
 			}
 			if (_gnapActionStatus < 0)
@@ -509,7 +509,7 @@ void GnapEngine::scene20_run() {
 			}
 			if (!_timers[7]) {
 				_timers[7] = getRandom(100) + 100;
-				if (_gnapActionStatus < 0 && _beaverActionStatus < 0) {
+				if (_gnapActionStatus < 0 && _platypusActionStatus < 0) {
 					switch (getRandom(3)) {
 					case 0:
 						_gameSys->insertSequence(0x183, 253, 0, 0, kSeqNone, 0, 0, 0);

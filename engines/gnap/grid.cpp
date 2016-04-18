@@ -555,7 +555,7 @@ bool GnapEngine::gnapWalkTo(int gridX, int gridY, int animationIndex, int sequen
 	_gnapWalkDestY = CLIP(gridY, 0, _gridMaxY - 1);
 	
 	if (animationIndex >= 0 && _gnapWalkDestX == _platX && _gnapWalkDestY == _platY)
-		beaverMakeRoom();
+		platypusMakeRoom();
 
 	if (gridSub41F5FC(_gnapX, _gnapY, 0))
 		done = true;
@@ -737,7 +737,7 @@ void GnapEngine::gnapWalkStep() {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-int GnapEngine::getBeaverWalkSequenceId(int deltaX, int deltaY) {
+int GnapEngine::getPlatypusWalkSequenceId(int deltaX, int deltaY) {
 	static const int _beaverWalkSequenceIds[9] = {
 		0x7C5, 0x000, 0x7C8,
 		0x7C4, 0x000, 0x7C7,
@@ -1225,9 +1225,9 @@ bool GnapEngine::platypusWalkTo(int gridX, int gridY, int animationIndex, int se
 	if (!done)
 		gridSub423750(_platX, _platY);
 
-	int platSequenceId = _beaverSequenceId;
-	int platId = _beaverId;
-	int platSequenceDatNum = _beaverSequenceDatNum;
+	int platSequenceId = _platypusSequenceId;
+	int platId = _platypusId;
+	int platSequenceDatNum = _platypusSequenceDatNum;
 
 	for (int index = 0; index < _platWalkNodesCount; ++index) {
 		_platWalkNodes[index]._id = index + 20 * _platWalkNodes[index]._gridY1;
@@ -1264,7 +1264,7 @@ bool GnapEngine::platypusWalkTo(int gridX, int gridY, int animationIndex, int se
 				_platWalkNodes[index]._id -= 10;
 			else
 				_platWalkNodes[index]._id += 10;
-			int newSequenceId = getBeaverWalkSequenceId(_platWalkNodes[index]._deltaX, _platWalkNodes[index]._deltaY);
+			int newSequenceId = getPlatypusWalkSequenceId(_platWalkNodes[index]._deltaX, _platWalkNodes[index]._deltaY);
 			_gameSys->insertSequence(makeRid(datNum, newSequenceId), _platWalkNodes[index]._id,
 				makeRid(platSequenceDatNum, platSequenceId), platId,
 				kSeqScale | kSeqSyncWait, 0, 75 * _platWalkNodes[index]._gridX1 - _platGridX, 48 * _platWalkNodes[index]._gridY1 - _platGridY);
@@ -1277,72 +1277,72 @@ bool GnapEngine::platypusWalkTo(int gridX, int gridY, int animationIndex, int se
 
 	if (flags & 8) {
 		if (_platWalkNodesCount > 0) {
-			_beaverSequenceId = platSequenceId;
-			_beaverId = platId;
-			_beaverSequenceDatNum = datNum;
+			_platypusSequenceId = platSequenceId;
+			_platypusId = platId;
+			_platypusSequenceDatNum = datNum;
 			// CHECKME Not sure if this is correct...
 			if (_platWalkNodes[_platWalkNodesCount - 1]._deltaX > 0)
-				_beaverFacing = kDirNone;
+				_platypusFacing = kDirNone;
 			else if (_platWalkNodes[_platWalkNodesCount - 1]._deltaX < 0)
-				_beaverFacing = kDirUnk4;
+				_platypusFacing = kDirUnk4;
 			else if (_platWalkNodes[_platWalkNodesCount - 1]._gridX1 % 2)
-				_beaverFacing = kDirUnk4;
+				_platypusFacing = kDirUnk4;
 			else
-				_beaverFacing = kDirNone;
+				_platypusFacing = kDirNone;
 			if (animationIndex >= 0)
-				_gameSys->setAnimation(makeRid(_beaverSequenceDatNum, _beaverSequenceId), _beaverId, animationIndex);
+				_gameSys->setAnimation(makeRid(_platypusSequenceDatNum, _platypusSequenceId), _platypusId, animationIndex);
 		} else if (animationIndex >= 0) {
 			_gameSys->setAnimation(0x107D3, 1, animationIndex);
 			_gameSys->insertSequence(0x107D3, 1, 0, 0, kSeqNone, 0, 0, 0);
 		}
 	} else {
 		if (sequenceId >= 0 && sequenceId != -1) {
-			_beaverSequenceId = ridToEntryIndex(sequenceId);
-			_beaverSequenceDatNum = ridToDatIndex(sequenceId);
-			if (_beaverSequenceId == 0x7C2) {
-				_beaverFacing = kDirNone;
-			} else if (_beaverSequenceId == 0x7D2) {
-				_beaverFacing = kDirUnk4;
+			_platypusSequenceId = ridToEntryIndex(sequenceId);
+			_platypusSequenceDatNum = ridToDatIndex(sequenceId);
+			if (_platypusSequenceId == 0x7C2) {
+				_platypusFacing = kDirNone;
+			} else if (_platypusSequenceId == 0x7D2) {
+				_platypusFacing = kDirUnk4;
 			}
 		} else {
 			if (_platWalkNodesCount > 0) {
 				if (_platWalkNodes[_platWalkNodesCount - 1]._deltaX > 0) {
-					_beaverSequenceId = 0x7C2;
-					_beaverFacing = kDirNone;
+					_platypusSequenceId = 0x7C2;
+					_platypusFacing = kDirNone;
 				} else if (_platWalkNodes[_platWalkNodesCount - 1]._deltaX < 0) {
-					_beaverSequenceId = 0x7D2;
-					_beaverFacing = kDirUnk4;
+					_platypusSequenceId = 0x7D2;
+					_platypusFacing = kDirUnk4;
 				} else if (_platWalkNodes[0]._deltaX > 0) {
-					_beaverSequenceId = 0x7C2;
-					_beaverFacing = kDirNone;
+					_platypusSequenceId = 0x7C2;
+					_platypusFacing = kDirNone;
 				} else if (_platWalkNodes[0]._deltaX < 0) {
-					_beaverSequenceId = 0x7D2;
-					_beaverFacing = kDirUnk4;
+					_platypusSequenceId = 0x7D2;
+					_platypusFacing = kDirUnk4;
 				} else {
-					_beaverSequenceId = 0x7D2;
-					_beaverFacing = kDirUnk4;
+					_platypusSequenceId = 0x7D2;
+					_platypusFacing = kDirUnk4;
 				}
-			} else if (_beaverFacing != kDirNone) {
-				_beaverSequenceId = 0x7D2;
+			} else if (_platypusFacing != kDirNone) {
+				_platypusSequenceId = 0x7D2;
 			} else {
-				_beaverSequenceId = 0x7C2;
+				_platypusSequenceId = 0x7C2;
 			}
-			_beaverSequenceDatNum = datNum;
+			_platypusSequenceDatNum = datNum;
 		}
 
 		if (animationIndex < 0) {
-			_beaverId = 20 * _platWalkDestY;
+			_platypusId = 20 * _platWalkDestY;
 		} else {
-			_beaverId = animationIndex + 20 * _platWalkDestY;
-			_gameSys->setAnimation(makeRid(_beaverSequenceDatNum, _beaverSequenceId), animationIndex + 20 * _platWalkDestY, animationIndex);
+			_platypusId = animationIndex + 20 * _platWalkDestY;
+			_gameSys->setAnimation(makeRid(_platypusSequenceDatNum, _platypusSequenceId), animationIndex + 20 * _platWalkDestY, animationIndex);
 		}
 
 		if (flags & 4)
-			_gameSys->insertSequence(makeRid(_beaverSequenceDatNum, _beaverSequenceId), _beaverId,
+			_gameSys->insertSequence(makeRid(_platypusSequenceDatNum, _platypusSequenceId), _platypusId,
 				makeRid(platSequenceDatNum, platSequenceId), platId,
 				9, 0, 0, 0);
 		else
-			_gameSys->insertSequence(makeRid(_beaverSequenceDatNum, _beaverSequenceId), _beaverId,
+			_gameSys->insertSequence(makeRid(_platypusSequenceDatNum, _platypusSequenceId), _platypusId,
 				makeRid(platSequenceDatNum, platSequenceId), platId,
 				9, 0, 75 * _platWalkDestX - _platGridX, 48 * _platWalkDestY - _platGridY);
 	}
@@ -1378,7 +1378,7 @@ void GnapEngine::platypusWalkStep() {
 	}
 }
 
-void GnapEngine::beaverMakeRoom() {
+void GnapEngine::platypusMakeRoom() {
 	int rndGridX, rndGridY;
 	do {
 		rndGridY = getRandom(_gridMaxY);

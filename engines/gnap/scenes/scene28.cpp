@@ -94,12 +94,12 @@ void GnapEngine::scene28_run() {
 			_timers[4] = getRandom(20) + 80;
 		}
 		initGnapPos(8, 8, kDirBottomLeft);
-		initBeaverPos(9, 8, kDirUnk4);
+		initPlatypusPos(9, 8, kDirUnk4);
 		endSceneInit();
 	} else {
 		_gameSys->insertSequence(0x11B, 39, 0, 0, kSeqNone, 0, 0, 0);
 		initGnapPos(8, 8, kDirBottomLeft);
-		initBeaverPos(9, 8, kDirUnk4);
+		initPlatypusPos(9, 8, kDirUnk4);
 		endSceneInit();
 		playSequences(0xF7, 0x121, 0x122, 0x123);
 		_s28_currClownSequenceId = 0x115;
@@ -149,7 +149,7 @@ void GnapEngine::scene28_run() {
 						break;
 					case TALK_CURSOR:
 						playGnapBrainPulsating(_platX, _platY);
-						playBeaverSequence(getBeaverSequenceId());
+						playPlatypusSequence(getPlatypusSequenceId());
 						break;
 					case PLAT_CURSOR:
 						playGnapImpossible(0, 0);
@@ -289,7 +289,7 @@ void GnapEngine::scene28_run() {
 			playSound(0x1093C, true);
 
 		if (!_isLeavingScene) {
-			updateBeaverIdleSequence();
+			updatePlatypusIdleSequence();
 			updateGnapIdleSequence();
 			if (!_timers[4]) {
 				_timers[4] = getRandom(20) + 80;

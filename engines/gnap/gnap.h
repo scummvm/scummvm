@@ -528,21 +528,21 @@ public:
 	bool gnapWalkTo(int gridX, int gridY, int animationIndex, int sequenceId, int flags);
 	void gnapWalkStep();
 	
-	// Beaver walking
+	// Platypus walking
 	int _platWalkNodesCount;
 	GridStruct _platWalkNodes[kMaxGridStructs];
 	int _platX, _platY;
 	int _platWalkDestX, _platWalkDestY;
 	int _platWalkDeltaX, _platWalkDeltaY, _platWalkDirX, _platWalkDirY, _platWalkDirXIncr, _platWalkDirYIncr;
 	
-	int getBeaverWalkSequenceId(int deltaX, int deltaY);
+	int getPlatypusWalkSequenceId(int deltaX, int deltaY);
 	bool gridSub423750(int gridX, int gridY);
 	bool gridSub423CC1(int gridX, int gridY, int index);
 	bool gridSub42419A(int gridX, int gridY, int index);
 	bool platFindPath3(int gridX, int gridY);
 	bool platypusWalkTo(int gridX, int gridY, int animationIndex, int sequenceId, int flags);
 	void platypusWalkStep();
-	void beaverMakeRoom();
+	void platypusMakeRoom();
 
 	// Gnap
 	Facing _gnapIdleFacing;
@@ -570,22 +570,22 @@ public:
 	void updateGnapIdleSequence2();
 	void initGnapPos(int gridX, int gridY, Facing facing);
 	void gnapInitBrainPulseRndValue();
-	void gnapUseDeviceOnBeaver();
+	void gnapUseDeviceOnPlatypuss();
 	void doCallback(int callback);
 	bool gnapPlatypusAction(int gridX, int gridY, int platSequenceId, int callback);
 	void gnapKissPlatypus(int callback);
 	void gnapUseJointOnPlatypus();
 	void gnapUseDisguiseOnPlatypus();
 	
-	// Beaver
-	Facing _beaverFacing;
-	int _beaverActionStatus;
-	int _beaverSequenceId, _beaverSequenceDatNum, _beaverId;
-	int getBeaverSequenceId();
-	void playBeaverSequence(int sequenceId);
-	void updateBeaverIdleSequence();
-	void beaverSub426234();
-	void initBeaverPos(int gridX, int gridY, Facing facing);
+	// Platypus
+	Facing _platypusFacing;
+	int _platypusActionStatus;
+	int _platypusSequenceId, _platypusSequenceDatNum, _platypusId;
+	int getPlatypusSequenceId();
+	void playPlatypusSequence(int sequenceId);
+	void updatePlatypusIdleSequence();
+	void platypusSub426234();
+	void initPlatypusPos(int gridX, int gridY, Facing facing);
 	
 	// Scenes
 	

@@ -115,23 +115,23 @@ void GnapEngine::scene45_run() {
 		_gameSys->setAnimation(0x9E, 1, 0);
 		_gnapActionStatus = 1;
 		_gameSys->insertSequence(_gnapSequenceId, _gnapId, 0, 0, kSeqNone, 0, 0, 0);
-		initBeaverPos(4, 8, kDirNone);
+		initPlatypusPos(4, 8, kDirNone);
 		endSceneInit();
 	} else if (_prevSceneNum == 46) {
 		initGnapPos(-1, 8, kDirUpRight);
-		initBeaverPos(-1, 9, kDirUpLeft);
+		initPlatypusPos(-1, 9, kDirUpLeft);
 		endSceneInit();
 		platypusWalkTo(4, 8, -1, 0x107C2, 1);
 		gnapWalkTo(2, 7, -1, 0x107B9, 1);
 	} else if (_prevSceneNum == 41) {
 		initGnapPos(11, 8, kDirUpRight);
-		initBeaverPos(11, 9, kDirUpLeft);
+		initPlatypusPos(11, 9, kDirUpLeft);
 		endSceneInit();
 		platypusWalkTo(4, 8, -1, 0x107D2, 1);
 		gnapWalkTo(10, 9, -1, 0x107BA, 1);
 	} else {
 		initGnapPos(2, 11, kDirUpRight);
-		initBeaverPos(6, 11, kDirUpLeft);
+		initPlatypusPos(6, 11, kDirUpLeft);
 		endSceneInit();
 		platypusWalkTo(4, 8, -1, 0x107C2, 1);
 		gnapWalkTo(2, 7, -1, 0x107B9, 1);
@@ -176,8 +176,8 @@ void GnapEngine::scene45_run() {
 		_gnapSequenceDatNum = 1;
 	}
 	
-	playBeaverSequence(0x9A);
-	_gameSys->setAnimation(_beaverSequenceId, _beaverId, 1);
+	playPlatypusSequence(0x9A);
+	_gameSys->setAnimation(_platypusSequenceId, _platypusId, 1);
 	
 	while (!_sceneDone) {
 		if (!isSoundPlaying(0x1094A))
@@ -240,12 +240,12 @@ void GnapEngine::scene45_run() {
 							break;
 						case GRAB_CURSOR:
 							gnapKissPlatypus(0);
-							playBeaverSequence(0x9A);
-							_gameSys->setAnimation(_beaverSequenceId, _beaverId, 1);
+							playPlatypusSequence(0x9A);
+							_gameSys->setAnimation(_platypusSequenceId, _platypusId, 1);
 							break;
 						case TALK_CURSOR:
 							playGnapBrainPulsating(_platX, _platY);
-							playBeaverSequence(getBeaverSequenceId());
+							playPlatypusSequence(getPlatypusSequenceId());
 							break;
 						case PLAT_CURSOR:
 							playGnapImpossible(_platX, _platY);
@@ -382,10 +382,10 @@ void GnapEngine::scene45_updateAnimations() {
 	if (_gameSys->getAnimationStatus(1) == 2) {
 		_gameSys->setAnimation(0, 0, 1);
 		if (getRandom(2) != 0)
-			playBeaverSequence(0x9B);
+			playPlatypusSequence(0x9B);
 		else
-			playBeaverSequence(0x9C);
-		_gameSys->setAnimation(_beaverSequenceId, _beaverId, 1);
+			playPlatypusSequence(0x9C);
+		_gameSys->setAnimation(_platypusSequenceId, _platypusId, 1);
 	}
 	
 	if (_gameSys->getAnimationStatus(2) == 2) {

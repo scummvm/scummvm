@@ -108,10 +108,10 @@ void GnapEngine::scene13_run() {
 	
 	if (_prevSceneNum == 14) {
 		initGnapPos(6, 6, kDirBottomLeft);
-		initBeaverPos(9, 8, kDirNone);
+		initPlatypusPos(9, 8, kDirNone);
 	} else {
 		initGnapPos(3, 7, kDirBottomRight);
-		initBeaverPos(2, 7, kDirNone);
+		initPlatypusPos(2, 7, kDirNone);
 	}
 
 	endSceneInit();
@@ -153,7 +153,7 @@ void GnapEngine::scene13_run() {
 				break;
 			case TALK_CURSOR:
 				playGnapBrainPulsating(_platX, _platY);
-				playBeaverSequence(getBeaverSequenceId());
+				playPlatypusSequence(getPlatypusSequenceId());
 				break;
 			case PLAT_CURSOR:
 				break;
@@ -316,7 +316,7 @@ void GnapEngine::scene13_run() {
 		scene13_updateAnimations();
 	
 		if (!_isLeavingScene) {
-			updateBeaverIdleSequence();
+			updatePlatypusIdleSequence();
 			if (_platY == 5 || _platY == 6)
 				platypusWalkTo(-1, 7, -1, -1, 1);
 			if (_gnapActionStatus < 0)
@@ -445,7 +445,7 @@ void GnapEngine::scene13_updateAnimations() {
 	
 	if (_gameSys->getAnimationStatus(1) == 2) {
 		_gameSys->setAnimation(0, 0, 1);
-		_beaverActionStatus = -1;
+		_platypusActionStatus = -1;
 	}
 
 }

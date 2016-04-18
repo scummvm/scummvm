@@ -85,13 +85,13 @@ void GnapEngine::scene10_run() {
 	
 	if (_prevSceneNum == 9) {
 		initGnapPos(11, 8, kDirBottomLeft);
-		initBeaverPos(12, 7, kDirUnk4);
+		initPlatypusPos(12, 7, kDirUnk4);
 		endSceneInit();
 		gnapWalkTo(9, 8, -1, 0x107BA, 1);
 		platypusWalkTo(9, 7, -1, 0x107D2, 1);
 	} else {
 		initGnapPos(-1, 7, kDirBottomRight);
-		initBeaverPos(-2, 8, kDirNone);
+		initPlatypusPos(-2, 8, kDirNone);
 		endSceneInit();
 		gnapWalkTo(1, 7, -1, 0x107B9, 1);
 		platypusWalkTo(1, 8, -1, 0x107C2, 1);
@@ -135,7 +135,7 @@ void GnapEngine::scene10_run() {
 					break;
 				case TALK_CURSOR:
 					playGnapBrainPulsating(_platX, _platY);
-					playBeaverSequence(getBeaverSequenceId());
+					playPlatypusSequence(getPlatypusSequenceId());
 					break;
 				case PLAT_CURSOR:
 					break;
@@ -183,7 +183,7 @@ void GnapEngine::scene10_run() {
 					break;
 				case PLAT_CURSOR:
 					gnapActionIdle(0x10C);
-					gnapUseDeviceOnBeaver();
+					gnapUseDeviceOnPlatypuss();
 					platypusWalkTo(4, 6, -1, -1, 1);
 					gnapWalkTo(4, 8, 0, 0x107BB, 1);
 					_gnapActionStatus = kASAnnoyCook;
@@ -220,7 +220,7 @@ void GnapEngine::scene10_run() {
 						playGnapMoan2(-1, -1);
 					else {
 						gnapActionIdle(0x10C);
-						gnapUseDeviceOnBeaver();
+						gnapUseDeviceOnPlatypuss();
 						platypusWalkTo(3, 7, -1, -1, 1);
 						gnapWalkTo(4, 8, 0, 0x107BB, 1);
 						_gnapActionStatus = kASAnnoyCook;
@@ -253,10 +253,10 @@ void GnapEngine::scene10_run() {
 						invAdd(kItemTongs);
 						setFlag(kGFMudTaken);
 						gnapActionIdle(0x10C);
-						gnapUseDeviceOnBeaver();
+						gnapUseDeviceOnPlatypuss();
 						platypusWalkTo(7, 6, 1, 0x107D2, 1);
-						_beaverActionStatus = kASPlatWithBox;
-						_beaverFacing = kDirUnk4;
+						_platypusActionStatus = kASPlatWithBox;
+						_platypusFacing = kDirUnk4;
 						_largeSprite = _gameSys->createSurface(0xC3);
 						playGnapIdle(7, 6);
 					}
@@ -321,7 +321,7 @@ void GnapEngine::scene10_run() {
 		scene10_updateAnimations();
 	
 		if (!_isLeavingScene) {
-			updateBeaverIdleSequence();
+			updatePlatypusIdleSequence();
 			updateGnapIdleSequence();
 			if (!_timers[4]) {
 				_timers[4] = getRandom(80) + 150;
@@ -374,7 +374,7 @@ void GnapEngine::scene10_updateAnimations() {
 	
 	if (_gameSys->getAnimationStatus(1) == 2) {
 		_gameSys->setAnimation(0, 0, 1);
-		switch (_beaverActionStatus) {
+		switch (_platypusActionStatus) {
 		case kASPlatWithBox:
 			_s10_nextCookSequenceId = 0x109;
 			break;
@@ -389,16 +389,16 @@ void GnapEngine::scene10_updateAnimations() {
 			_platY = 8;
 			_gameSys->insertSequence(0x109, 100, _s10_currCookSequenceId, 100, kSeqSyncWait, 0, 0, 0);
 			_gameSys->insertSequence(0x107C9, 160,
-				_beaverSequenceId | (_beaverSequenceDatNum << 16), _beaverId,
+				_platypusSequenceId | (_platypusSequenceDatNum << 16), _platypusId,
 				kSeqSyncWait, getSequenceTotalDuration(0x109) + getSequenceTotalDuration(0x10A) + getSequenceTotalDuration(0x10843),
 				75 * _platX - _platGridX, 48 * _platY - _platGridY);
 			_gameSys->removeSequence(0x107, 100, true);
 			_s10_currCookSequenceId = 0x109;
 			_s10_nextCookSequenceId = 0x843;
-			_beaverSequenceId = 0x7C9;
-			_beaverId = 160;
-			_beaverFacing = kDirNone;
-			_beaverSequenceDatNum = 1;
+			_platypusSequenceId = 0x7C9;
+			_platypusId = 160;
+			_platypusFacing = kDirNone;
+			_platypusSequenceDatNum = 1;
 			break;
 		case 0x843:
 			hideCursor();
@@ -416,8 +416,8 @@ void GnapEngine::scene10_updateAnimations() {
 			delayTicksCursor(5);
 			deleteSurface(&_largeSprite);
 			setGrabCursorSprite(kItemTongs);
-			if (_beaverActionStatus == kASPlatWithBox)
-				_beaverActionStatus = -1;
+			if (_platypusActionStatus == kASPlatWithBox)
+				_platypusActionStatus = -1;
 			if (_gnapX == 4 && _gnapY == 8)
 				gnapWalkStep();
 			break;
@@ -431,7 +431,7 @@ void GnapEngine::scene10_updateAnimations() {
 		case 0x106: {
 			// TODO: Refactor into a if + a switch
 			int rnd = getRandom(7);
-			if (_gnapActionStatus >= 0 || _beaverActionStatus >= 0)
+			if (_gnapActionStatus >= 0 || _platypusActionStatus >= 0)
 				_s10_nextCookSequenceId = 0x106;
 			else if (rnd == 0)
 				_s10_nextCookSequenceId = 0x104;
@@ -445,7 +445,7 @@ void GnapEngine::scene10_updateAnimations() {
 			}
 			break;
 		case 0x103:
-			if (_gnapActionStatus >= 0 || _beaverActionStatus >= 0)
+			if (_gnapActionStatus >= 0 || _platypusActionStatus >= 0)
 				_s10_nextCookSequenceId = 0x106;
 			else if (getRandom(7) == 0)
 				_s10_nextCookSequenceId = 0x104;
@@ -453,7 +453,7 @@ void GnapEngine::scene10_updateAnimations() {
 				_s10_nextCookSequenceId = 0x106;
 			break;
 		case 0x104:
-			if (_gnapActionStatus >= 0 || _beaverActionStatus >= 0)
+			if (_gnapActionStatus >= 0 || _platypusActionStatus >= 0)
 				_s10_nextCookSequenceId = 0x106;
 			else if (getRandom(7) == 0)
 				_s10_nextCookSequenceId = 0x103;
@@ -463,7 +463,7 @@ void GnapEngine::scene10_updateAnimations() {
 		case 0x105: {
 			// TODO: Refactor into a if + a switch
 			int rnd = getRandom(7);
-			if (_gnapActionStatus >= 0 || _beaverActionStatus >= 0)
+			if (_gnapActionStatus >= 0 || _platypusActionStatus >= 0)
 				_s10_nextCookSequenceId = 0x106;
 			else if (rnd == 0)
 				_s10_nextCookSequenceId = 0x104;
@@ -478,7 +478,7 @@ void GnapEngine::scene10_updateAnimations() {
 			_gnapIdleFacing = kDirUpRight;
 			_gnapSequenceDatNum = 0;
 			_gnapActionStatus = -1;
-			_beaverActionStatus = -1;
+			_platypusActionStatus = -1;
 			}
 			break;
 		}

@@ -77,7 +77,7 @@ void GnapEngine::scene21_run() {
 	if (isFlag(kGFTwigTaken)) {
 		if (isFlag(kGFKeysTaken)) {
 			initGnapPos(5, 8, kDirBottomRight);
-			initBeaverPos(6, 8, kDirNone);
+			initPlatypusPos(6, 8, kDirNone);
 			_gameSys->insertSequence(0x8E, 2, 0, 0, kSeqNone, 0, 0, 0);
 			if (!isFlag(kGFUnk04))
 				_gameSys->insertSequence(0x8D, 59, 0, 0, kSeqNone, 0, 0, 0);
@@ -85,7 +85,7 @@ void GnapEngine::scene21_run() {
 			clearFlag(kGFKeysTaken);
 		} else {
 			initGnapPos(5, 11, kDirBottomRight);
-			initBeaverPos(6, 11, kDirNone);
+			initPlatypusPos(6, 11, kDirNone);
 			if (!isFlag(kGFUnk04))
 				_gameSys->insertSequence(0x8D, 59, 0, 0, kSeqNone, 0, 0, 0);
 			endSceneInit();
@@ -94,7 +94,7 @@ void GnapEngine::scene21_run() {
 		}
 	} else {
 		initGnapPos(5, 11, kDirBottomRight);
-		initBeaverPos(6, 11, kDirNone);
+		initPlatypusPos(6, 11, kDirNone);
 		_s21_currOldLadySequenceId = 0x89;
 		_gameSys->setAnimation(0x89, 79, 3);
 		_gameSys->insertSequence(_s21_currOldLadySequenceId, 79, 0, 0, kSeqNone, 0, 0, 0);
@@ -138,7 +138,7 @@ void GnapEngine::scene21_run() {
 						break;
 					case TALK_CURSOR:
 						playGnapBrainPulsating(_platX, _platY);
-						playBeaverSequence(getBeaverSequenceId());
+						playPlatypusSequence(getPlatypusSequenceId());
 						break;
 					case PLAT_CURSOR:
 						playGnapImpossible(0, 0);
@@ -234,7 +234,7 @@ void GnapEngine::scene21_run() {
 			playSound(0x10940, true);
 	
 		if (!_isLeavingScene) {
-			updateBeaverIdleSequence();
+			updatePlatypusIdleSequence();
 			updateGnapIdleSequence();
 			if (!isFlag(kGFTwigTaken) && !_timers[4] && _s21_nextOldLadySequenceId == -1 && _gnapActionStatus == -1) {
 				_timers[4] = getRandom(30) + 50;

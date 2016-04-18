@@ -86,13 +86,13 @@ void GnapEngine::scene29_run() {
 
 	if (_prevSceneNum == 27) {
 		initGnapPos(12, 7, kDirBottomRight);
-		initBeaverPos(12, 8, kDirNone);
+		initPlatypusPos(12, 8, kDirNone);
 		endSceneInit();
 		gnapWalkTo(8, 7, -1, 0x107B9, 1);
 		platypusWalkTo(8, 8, -1, 0x107C2, 1);
 	} else {
 		initGnapPos(-1, 7, kDirBottomRight);
-		initBeaverPos(-2, 7, kDirNone);
+		initPlatypusPos(-2, 7, kDirNone);
 		endSceneInit();
 		gnapWalkTo(2, 7, -1, 0x107B9, 1);
 		platypusWalkTo(1, 7, -1, 0x107C2, 1);
@@ -131,7 +131,7 @@ void GnapEngine::scene29_run() {
 						break;
 					case TALK_CURSOR:
 						playGnapBrainPulsating(_platX, _platY);
-						playBeaverSequence(getBeaverSequenceId());
+						playPlatypusSequence(getPlatypusSequenceId());
 						break;
 					case PLAT_CURSOR:
 						playGnapImpossible(0, 0);
@@ -236,7 +236,7 @@ void GnapEngine::scene29_run() {
 		if (!_isLeavingScene) {
 			if (_gnapActionStatus < 0) {
 				updateGnapIdleSequence();
-				updateBeaverIdleSequence();
+				updatePlatypusIdleSequence();
 			}
 			if (!_timers[4]) {
 				if (invHas(kItemHorn)) {

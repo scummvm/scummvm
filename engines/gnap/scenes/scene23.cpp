@@ -70,7 +70,7 @@ void GnapEngine::scene23_run() {
 	queueInsertDeviceIcon();
 	
 	initGnapPos(-1, 7, kDirBottomRight);
-	initBeaverPos(-2, 7, kDirNone);
+	initPlatypusPos(-2, 7, kDirNone);
 	_gameSys->insertSequence(0xBD, 255, 0, 0, kSeqNone, 0, 0, 0);
 	_gameSys->insertSequence(0xBF, 2, 0, 0, kSeqNone, 0, 0, 0);
 	endSceneInit();
@@ -122,7 +122,7 @@ void GnapEngine::scene23_run() {
 						break;
 					case TALK_CURSOR:
 						playGnapBrainPulsating(_platX, _platY);
-						playBeaverSequence(getBeaverSequenceId());
+						playPlatypusSequence(getPlatypusSequenceId());
 						break;
 					case PLAT_CURSOR:
 						playGnapImpossible(0, 0);
@@ -196,7 +196,7 @@ void GnapEngine::scene23_run() {
 		scene23_updateAnimations();
 	
 		if (!_isLeavingScene) {
-			updateBeaverIdleSequence();
+			updatePlatypusIdleSequence();
 			updateGnapIdleSequence();
 			if (!_timers[4] && _gnapActionStatus == -1) {
 				_timers[4] = getRandom(100) + 200;

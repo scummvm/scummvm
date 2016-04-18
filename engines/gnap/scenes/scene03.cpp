@@ -103,13 +103,13 @@ void GnapEngine::scene03_run() {
 	_timers[5] = getRandom(100) + 200;
 	
 	if (isFlag(kGFPlatypus)) {
-		initBeaverPos(5, 4, kDirNone);
+		initPlatypusPos(5, 4, kDirNone);
 	} else {
 		_timers[1] = getRandom(40) + 20;
 		_gameSys->setAnimation(0x1C2, 99, 1);
 		_gameSys->insertSequence(0x1C2, 99, 0, 0, kSeqNone, 0, 0, 0);
-		_beaverSequenceId = 0x1C2;
-		_beaverSequenceDatNum = 0;
+		_platypusSequenceId = 0x1C2;
+		_platypusSequenceDatNum = 0;
 	}
 	
 	_gameSys->insertSequence(0x1C4, 255, 0, 0, kSeqNone, 0, 0, 0);
@@ -154,7 +154,7 @@ void GnapEngine::scene03_run() {
 						break;
 					case TALK_CURSOR:
 						playGnapBrainPulsating(_platX, _platY);
-						playBeaverSequence(getBeaverSequenceId());
+						playPlatypusSequence(getPlatypusSequenceId());
 						break;
 					case PLAT_CURSOR:
 						playGnapImpossible(0, 0);
@@ -319,18 +319,18 @@ void GnapEngine::scene03_run() {
 			playSound(0x10925, true);
 	
 		if (!_isLeavingScene) {
-			if (_beaverActionStatus < 0 && isFlag(kGFPlatypus))
-				updateBeaverIdleSequence();
+			if (_platypusActionStatus < 0 && isFlag(kGFPlatypus))
+				updatePlatypusIdleSequence();
 			if (_gnapActionStatus < 0)
 				updateGnapIdleSequence();
 			if (!_timers[1] && !_s03_platypusScared) {
 				_timers[1] = getRandom(40) + 20;
-				if (_gnapActionStatus < 0 && _beaverActionStatus < 0 && !isFlag(kGFPlatypus) && !_s03_platypusHypnotized)
+				if (_gnapActionStatus < 0 && _platypusActionStatus < 0 && !isFlag(kGFPlatypus) && !_s03_platypusHypnotized)
 					_s03_nextPlatSequenceId = 450;
 			}
 			if (!_timers[6]) {
 				_timers[6] = getRandom(20) + 30;
-				if (_gnapActionStatus < 0 && _beaverActionStatus < 0 && _s03_nextFrogSequenceId == -1) {
+				if (_gnapActionStatus < 0 && _platypusActionStatus < 0 && _s03_nextFrogSequenceId == -1) {
 					if (getRandom(5) == 1)
 						_s03_nextFrogSequenceId = 0x1C6;
 					else
@@ -340,12 +340,12 @@ void GnapEngine::scene03_run() {
 			if (!_timers[4]) {
 				// Update bird animation
 				_timers[4] = getRandom(100) + 300;
-				if (_gnapActionStatus < 0 && _beaverActionStatus < 0)
+				if (_gnapActionStatus < 0 && _platypusActionStatus < 0)
 					_gameSys->insertSequence(getRandom(2) != 0 ? 0x1C8 : 0x1C3, 253, 0, 0, kSeqNone, 0, 0, 0);
 			}
 			if (!_timers[5]) {
 				_timers[5] = getRandom(100) + 200;
-				if (_gnapActionStatus < 0 && _beaverActionStatus < 0) {
+				if (_gnapActionStatus < 0 && _platypusActionStatus < 0) {
 					_gameSys->setAnimation(0x1C5, 253, 4);
 					_gameSys->insertSequence(0x1C5, 253, 0, 0, kSeqNone, 0, 0, 0);
 				}
@@ -385,13 +385,13 @@ void GnapEngine::scene03_updateAnimations() {
 			_gnapActionStatus = -1;
 			_platX = 6;
 			_platY = 6;
-			_beaverFacing = kDirUnk4;
-			_beaverId = 120;
-			_gameSys->insertSequence(0x107CA, _beaverId, 0x1BC, 99,
+			_platypusFacing = kDirUnk4;
+			_platypusId = 120;
+			_gameSys->insertSequence(0x107CA, _platypusId, 0x1BC, 99,
 				kSeqSyncWait, 0, 75 * _platX - _platGridX, 48 * _platY - _platGridY);
 			_gameSys->insertSequence(0x1B7, 99, 0, 0, kSeqNone, 0, 0, 0);
-			_beaverSequenceDatNum = 1;
-			_beaverSequenceId = 0x7CA;
+			_platypusSequenceDatNum = 1;
+			_platypusSequenceId = 0x7CA;
 			setFlag(kGFPlatypus);
 			_s03_nextPlatSequenceId = -1;
 			scene03_updateHotspots();
@@ -405,16 +405,16 @@ void GnapEngine::scene03_updateAnimations() {
 				gameUpdateTick();
 			removeFullScreenSprite();
 			_gameSys->setAnimation(0x1BA, 99, 1);
-			_gameSys->insertSequence(0x1BA, 99, _beaverSequenceId | (_beaverSequenceDatNum << 16), 99, kSeqSyncExists, 0, 0, 0);
-			_beaverSequenceDatNum = 0;
-			_beaverSequenceId = 0x1BA;
+			_gameSys->insertSequence(0x1BA, 99, _platypusSequenceId | (_platypusSequenceDatNum << 16), 99, kSeqSyncExists, 0, 0, 0);
+			_platypusSequenceDatNum = 0;
+			_platypusSequenceId = 0x1BA;
 			_gnapActionStatus = -1;
 			_s03_platypusHypnotized = true;
 			scene03_updateHotspots();
 			break;
 		case kASHypnotizeScaredPlat:
 			playGnapBrainPulsating(0, 0);
-			_gameSys->insertSequence(0x1BF, 99, _beaverSequenceId | (_beaverSequenceDatNum << 16), 99, kSeqSyncExists, 0, 0, 0);
+			_gameSys->insertSequence(0x1BF, 99, _platypusSequenceId | (_platypusSequenceDatNum << 16), 99, kSeqSyncExists, 0, 0, 0);
 			_gameSys->setAnimation(0x1BF, 99, 1);
 			while (_gameSys->getAnimationStatus(1) != 2)
 				gameUpdateTick();
@@ -426,8 +426,8 @@ void GnapEngine::scene03_updateAnimations() {
 			removeFullScreenSprite();
 			_gameSys->setAnimation(0x1BA, 99, 1);
 			_gameSys->insertSequence(0x1BA, 99, 447, 99, kSeqSyncWait, 0, 0, 0);
-			_beaverSequenceDatNum = 0;
-			_beaverSequenceId = 0x1BA;
+			_platypusSequenceDatNum = 0;
+			_platypusSequenceId = 0x1BA;
 			_gnapActionStatus = -1;
 			_s03_platypusHypnotized = true;
 			scene03_updateHotspots();
@@ -458,12 +458,12 @@ void GnapEngine::scene03_updateAnimations() {
 			_gameSys->setAnimation(0, 0, 1);
 			_s03_platypusScared = true;
 			_gameSys->insertSequence(0x1B5, _gnapId, makeRid(_gnapSequenceDatNum, _gnapSequenceId), _gnapId, kSeqSyncWait, 0, 0, 0);
-			_gameSys->insertSequence(_s03_nextPlatSequenceId, 99, _beaverSequenceId | (_beaverSequenceDatNum << 16), 99, kSeqSyncWait, 0, 0, 0);
+			_gameSys->insertSequence(_s03_nextPlatSequenceId, 99, _platypusSequenceId | (_platypusSequenceDatNum << 16), 99, kSeqSyncWait, 0, 0, 0);
 			_gnapSequenceId = 0x1B5;
 			_gnapSequenceDatNum = 0;
 			_gnapIdleFacing = kDirNone;
-			_beaverSequenceId = _s03_nextPlatSequenceId;
-			_beaverSequenceDatNum = 0;
+			_platypusSequenceId = _s03_nextPlatSequenceId;
+			_platypusSequenceDatNum = 0;
 			_gameSys->setAnimation(_s03_nextPlatSequenceId, 99, 1);
 			_s03_nextPlatSequenceId = -1;
 			_gnapActionStatus = -1;
@@ -471,7 +471,7 @@ void GnapEngine::scene03_updateAnimations() {
 			_gnapX = 3;
 			_gnapY = 6;
 			_gameSys->insertSequence(0x1B6, 120, makeRid(_gnapSequenceDatNum, _gnapSequenceId), _gnapId, kSeqSyncWait, 0, 0, 0);
-			_gameSys->insertSequence(0x1BC, 99, _beaverSequenceId | (_beaverSequenceDatNum << 16), 99, kSeqSyncWait, 0, 0, 0);
+			_gameSys->insertSequence(0x1BC, 99, _platypusSequenceId | (_platypusSequenceDatNum << 16), 99, kSeqSyncWait, 0, 0, 0);
 			_gameSys->setAnimation(0x1BC, 99, 0);
 			_gnapId = 20 * _gnapY;
 			_gnapSequenceId = 0x1B6;
@@ -481,17 +481,17 @@ void GnapEngine::scene03_updateAnimations() {
 			_s03_nextPlatSequenceId = -1;
 		} else if (_s03_nextPlatSequenceId == 0x1C2 && !_s03_platypusScared) {
 			_gameSys->setAnimation(0, 0, 1);
-			_gameSys->insertSequence(0x1C2, 99, _beaverSequenceId | (_beaverSequenceDatNum << 16), 99, kSeqSyncWait, 0, 0, 0);
-			_beaverSequenceId = 0x1C2;
-			_beaverSequenceDatNum = 0;
+			_gameSys->insertSequence(0x1C2, 99, _platypusSequenceId | (_platypusSequenceDatNum << 16), 99, kSeqSyncWait, 0, 0, 0);
+			_platypusSequenceId = 0x1C2;
+			_platypusSequenceDatNum = 0;
 			_gameSys->setAnimation(0x1C2, 99, 1);
 			_s03_nextPlatSequenceId = -1;
 		} else if (_s03_nextPlatSequenceId == -1 && _s03_platypusScared && !_s03_platypusHypnotized) {
 			_gameSys->setAnimation(0, 0, 1);
 			_gameSys->setAnimation(0x1BE, 99, 1);
-			_gameSys->insertSequence(0x1BE, 99, _beaverSequenceId | (_beaverSequenceDatNum << 16), 99, kSeqSyncWait, 0, 0, 0);
-			_beaverSequenceId = 0x1BE;
-			_beaverSequenceDatNum = 0;
+			_gameSys->insertSequence(0x1BE, 99, _platypusSequenceId | (_platypusSequenceDatNum << 16), 99, kSeqSyncWait, 0, 0, 0);
+			_platypusSequenceId = 0x1BE;
+			_platypusSequenceDatNum = 0;
 			_s03_nextPlatSequenceId = -1;
 		}
 	}
