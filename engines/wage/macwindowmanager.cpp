@@ -64,7 +64,7 @@ MacWindowManager::MacWindowManager() {
 }
 
 MacWindowManager::~MacWindowManager() {
-    for (uint i = 0; i < _lastId; i++)
+    for (int i = 0; i < _lastId; i++)
         delete _windows[i];
 }
 
