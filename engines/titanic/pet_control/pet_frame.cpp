@@ -45,12 +45,12 @@ bool CPetFrame::reset() {
 		_modeBackground.reset("PetModeBackground", _petControl, MODE_UNSELECTED);
 
 		for (int idx = 0; idx < 5; ++idx) {
-			CString resName = Common::String::format("PetMode%d", idx);
-			_modeButtons[idx].reset(resName, _petControl, MODE_UNSELECTED);
+			CString resName = Common::String::format("PetMode%d", idx + 1);
+			_modeButtons[idx].reset(resName, _petControl, MODE_SELECTED);
 		}
 
 		for (int idx = 0; idx < 6; ++idx) {
-			CString resName = Common::String::format("3Pettitle%d", idx);
+			CString resName = Common::String::format("3Pettitle%d", idx + 1);
 			_titles[idx].reset(resName, _petControl, MODE_UNSELECTED);
 		}
 
@@ -110,7 +110,7 @@ bool CPetFrame::setPetControl(CPetControl *petControl) {
 		const int YLIST[] = { 7, 27, 45, 66, 84 };
 		for (int idx = 0; idx < 5; ++idx) {
 			_modeButtons[idx].setBounds(r);
-			_modeButtons[idx].translate(0, YLIST[idx]);
+			_modeButtons[idx].translate(4, YLIST[idx]);
 		}
 		_modeButtons[PET_AREAS[0]].setMode(MODE_SELECTED);
 		
