@@ -20,29 +20,16 @@
  *
  */
 
-#ifndef TITANIC_PET_SAVES_H
-#define TITANIC_PET_SAVES_H
+#ifndef TITANIC_PET_SAVE_H
+#define TITANIC_PET_SAVE_H
 
-#include "titanic/pet_control/pet_section.h"
-#include "titanic/pet_control/pet_glyphs.h"
-#include "titanic/pet_control/pet_control_sub12.h"
+#include "titanic/pet_control/pet_load_save.h"
 
 namespace Titanic {
 
-class CPetSaveGlyphs : public CPetGlyphs {
-};
-
-class CPetSaves : public CPetSection {
-private:
-	CPetSaveGlyphs _sub10;
-	CPetSaveGlyphs _sub12;
-public:
-	/**
-	 * Returns true if the object is in a valid state
-	 */
-	virtual bool isValid(CPetControl *petControl);
+class CPetSave : public CPetLoadSave {
 };
 
 } // End of namespace Titanic
 
-#endif /* TITANIC_PET_SAVES_H */
+#endif /* TITANIC_PET_SAVE_H */

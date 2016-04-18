@@ -51,7 +51,7 @@ CPetControl::CPetControl() : CGameObject(),
 	_sections[PET_CONVERSATION] = &_conversations;
 	_sections[PET_REMOTE] = &_remote;
 	_sections[PET_ROOMS] = &_rooms;
-	_sections[PET_SAVE] = &_saves;
+	_sections[PET_REAL_LIFE] = &_realLife;
 	_sections[PET_5] = &_sub5;
 	_sections[PET_6] = &_sub7;
 }
@@ -87,7 +87,7 @@ void CPetControl::setup() {
 	_remote.setup(this);
 	_inventory.setup(this);
 	_sub5.setup(this);
-	_saves.setup(this);
+	_realLife.setup(this);
 	_sub7.setup(this);
 	_frame.setup(this);
 }
@@ -98,7 +98,7 @@ bool CPetControl::isValid() {
 		_remote.isValid(this) &&
 		_inventory.isValid(this) &&
 		_sub5.isValid(this) &&
-		_saves.isValid(this) &&
+		_realLife.isValid(this) &&
 		_sub7.isValid(this) &&
 		_frame.isValid(this);
 }
@@ -109,7 +109,7 @@ void CPetControl::loadAreas(SimpleFile *file, int param) {
 	_remote.load(file, param);
 	_inventory.load(file, param);
 	_sub5.load(file, param);
-	_saves.load(file, param);
+	_realLife.load(file, param);
 	_sub7.load(file, param);
 	_frame.load(file, param);
 }
@@ -120,7 +120,7 @@ void CPetControl::saveAreas(SimpleFile *file, int indent) const {
 	_remote.save(file, indent);
 	_inventory.save(file, indent);
 	_sub5.save(file, indent);
-	_saves.save(file, indent);
+	_realLife.save(file, indent);
 	_sub7.save(file, indent);
 	_frame.save(file, indent);
 }
@@ -165,7 +165,7 @@ void CPetControl::loaded() {
 	_remote.postLoad();
 	_inventory.postLoad();
 	_sub5.postLoad();
-	_saves.postLoad();
+	_realLife.postLoad();
 	_sub7.postLoad();
 	_frame.postLoad();
 }
@@ -330,7 +330,7 @@ bool CPetControl::VirtualKeyCharMsg(CVirtualKeyCharMsg *msg) {
 			break;
 		case Common::KEYCODE_F5:
 			result = true;
-			setArea(PET_SAVE);
+			setArea(PET_REAL_LIFE);
 			break;
 		default:
 			break;

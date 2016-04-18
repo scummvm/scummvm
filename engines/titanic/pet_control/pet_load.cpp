@@ -20,13 +20,9 @@
  *
  */
 
-#include "titanic/pet_control/pet_saves.h"
+#include "titanic/pet_control/pet_load.h"
 
 namespace Titanic {
 
-bool CPetSaves::isValid(CPetControl *petControl) {
-	// TODO
-	return true;
-}
 
 } // End of namespace Titanic

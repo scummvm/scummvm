@@ -365,7 +365,7 @@ MODULE_OBJS := \
 	pet_control/pet_inventory_glyphs.o \
 	pet_control/pet_rooms.o \
 	pet_control/pet_remote.o \
-	pet_control/pet_saves.o \
+	pet_control/pet_real_life.o \
 	pet_control/pet_section.o \
 	pet_control/pet_control_sub5.o \
 	pet_control/pet_control_sub7.o \
@@ -376,12 +376,18 @@ MODULE_OBJS := \
 	pet_control/pet_graphic.o \
 	pet_control/pet_glyphs.o \
 	pet_control/pet_leaf.o \
+	pet_control/pet_load.o \
+	pet_control/pet_load_save.o \
 	pet_control/pet_mode_off.o \
 	pet_control/pet_mode_on.o \
 	pet_control/pet_mode_panel.o \
 	pet_control/pet_pannel1.o \
 	pet_control/pet_pannel2.o \
 	pet_control/pet_pannel3.o \
+	pet_control/pet_quit.o \
+	pet_control/pet_save.o \
+	pet_control/pet_slider.o \
+	pet_control/pet_sound.o \
 	sound/auto_music_player.o \
 	sound/auto_music_player_base.o \
 	sound/auto_sound_player.o \

@@ -20,54 +20,44 @@
  *
  */
 
-#ifndef TITANIC_PET_SECTION_H
-#define TITANIC_PET_SECTION_H
+#ifndef TITANIC_PET_REAL_LIFE_H
+#define TITANIC_PET_REAL_LIFE_H
 
-#include "titanic/messages/mouse_messages.h"
-#include "titanic/support/simple_file.h"
+#include "titanic/pet_control/pet_section.h"
+#include "titanic/pet_control/pet_glyphs.h"
+#include "titanic/pet_control/pet_control_sub12.h"
 
 namespace Titanic {
 
-enum PetArea {
-	PET_INVENTORY = 0, PET_CONVERSATION = 1, PET_REMOTE = 2,
-	PET_ROOMS = 3, PET_REAL_LIFE = 4, PET_5 = 5, PET_6 = 6
+class CPetSaveGlyphs : public CPetGlyphs {
 };
 
-class CPetControl;
-class CScreenManager;
-class CRoomItem;
-
-struct CPetSectionSubData {
-	int _field0;
-	int _field4;
-	int _field8;
-	int _fieldC;
-
-	CPetSectionSubData() : _field0(0), _field4(0), _field8(0),
-		_fieldC(0) {}
-};
-
-class CPetSection {
+class CPetRealLife : public CPetSection {
+private:
+	CPetGlyphs _glyphs;
+	CPetSaveGlyphs _sub12;
+private:
+	/**
+	 * Does setup
+	 */
+	bool setupControl(CPetControl *petControl);
 public:
-	CPetControl *_petControl;
-public:
-	CPetSection() : _petControl(nullptr) {}
-	virtual ~CPetSection() {}
+	virtual ~CPetRealLife() {}
 
 	/**
 	 * Sets up the section
 	 */
-	virtual bool setup(CPetControl *petControl) { return false; }
+	virtual bool setup(CPetControl *petControl);
 	
 	/**
 	 * Reset the section
 	 */
-	virtual bool reset() { return false; }
+	virtual bool reset();
 
 	/**
 	 * Draw the section
 	 */
-	virtual void draw(CScreenManager *screenManager) {}
+	virtual void draw(CScreenManager *screenManager);
 	
 	/**
 	 * Get the bounds for the section
@@ -99,12 +89,12 @@ public:
 	/**
 	 * Display a message
 	 */
-	virtual void displayMessage(const CString &msg);
+	virtual void displayMessage(const CString &msg) {}
 
 	/**
 	 * Returns true if the object is in a valid state
 	 */
-	virtual bool isValid(CPetControl *petControl) { return false; }
+	virtual bool isValid(CPetControl *petControl);
 
 	/**
 	 * Load the data for the class from file
@@ -138,24 +128,8 @@ public:
 	 */
 	virtual void enterRoom(CRoomItem *room) {}
 
-	virtual void proc25();
-	virtual int proc26() { return 0; }
-	virtual void proc27();
-	virtual void proc28();
-	virtual void proc29();
-	virtual void proc30();
-
-	virtual CGameObject *getBackground(int index) const { return nullptr; }
-
-	virtual void proc32() {}
-	virtual void proc33() {}
-	virtual void proc34() {}
-	virtual void proc35() {}
-	virtual void proc36() {}
-	virtual void proc37() {}
-	virtual void proc38(int val) {}
 };
 
 } // End of namespace Titanic
 
-#endif /* TITANIC_PET_SECTION_H */
+#endif /* TITANIC_PET_REAL_LIFE_H */
