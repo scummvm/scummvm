@@ -244,6 +244,8 @@ bool Debugger::cmdItem(int argc, const char **argv) {
 			debugPrintf("Current location: %s\n", fullName.c_str());
 		} else if (CString(argv[2]) == "add") {
 			CPetControl *pet = item->getPetControl();
+			assert(pet);
+
 			pet->_visible = true;
 			item->addToInventory();
 			return false;

@@ -52,14 +52,19 @@ public:
 	 * Set the inventory item
 	 */
 	void setItem(CGameObject *item, int val);
+
+	/**
+	 * Does a processing action on the glyph
+	 */
+	virtual bool doAction(CGlyphAction *action);
 };
 
-class CPetCarry {
+class CInventoryGlyphAction : public CGlyphAction {
 public:
-	int _val;
 	CCarry *_item;
 public:
-	CPetCarry(CCarry *item, int val) : _item(item), _val(val) {}
+	CInventoryGlyphAction(CCarry *item, GlyphActionMode mode) : 
+		CGlyphAction(mode), _item(item) {}
 };
 
 class CPetInventoryGlyphs : public CPetGlyphs {
@@ -68,9 +73,9 @@ private:
 	int fn1(int val);
 public:
 	/**
-	 * Add a new item to the list
+	 * 
 	 */
-	void addItem(CPetCarry *item);
+	bool change(CInventoryGlyphAction *item);
 };
 
 } // End of namespace Titanic

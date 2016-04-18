@@ -35,11 +35,11 @@ CPetInventory::CPetInventory() : CPetSection(),
 }
 
 bool CPetInventory::setup(CPetControl *petControl) {
-	return setPetControl(petControl) && setup();
+	return setPetControl(petControl) && reset();
 }
 
-bool CPetInventory::setup() {
-	_items.setup();
+bool CPetInventory::reset() {
+	_items.reset();
 	_sub12.setup();
 
 	// TODO
@@ -80,7 +80,7 @@ bool CPetInventory::setPetControl(CPetControl *petControl) {
 		return false;
 
 	_petControl = petControl;
-	_items.proc8();
+	_items.setup(7,  this);
 	_items.set20(28);
 
 	Rect tempRect(0, 0, 52, 52);
@@ -103,20 +103,18 @@ bool CPetInventory::setPetControl(CPetControl *petControl) {
 	return true;
 }
 
-void CPetInventory::addItem(CCarry *item) {
+void CPetInventory::change(CCarry *item) {
 	if (item) {
-		CPetCarry glyphItem(item, 2);
-
+		CInventoryGlyphAction action(item, ACTION_CHANGE);
+		_items.change(&action);
 	}
-	warning("TODO: CPetInventory::addItem");
 }
 
 void CPetInventory::itemRemoved(CCarry *item) {
-	warning("TODO: CPetInventory::itemRemoved");
-}
-
-void CPetInventory::fn3(CCarry *item) {
-	warning("TODO: CPetInventory::fn3");
+	if (item) {
+		CInventoryGlyphAction action(item, ACTION_REMOVED);
+		_items.change(&action);
+	}
 }
 
 void CPetInventory::itemsChanged() {

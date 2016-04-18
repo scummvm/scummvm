@@ -171,7 +171,7 @@ bool CChicken::TimerMsg(CTimerMsg *msg) {
 	}
 
 	if (flag) {
-		invFn3();
+		invChange();
 		stopTimer(_timerId);
 	}
 

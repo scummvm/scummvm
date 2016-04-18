@@ -53,18 +53,24 @@ CPetGlyphs::CPetGlyphs() : _firstVisibleIndex(0),  _numVisibleGlyphs(7),
 		_highlightIndex(-1), _field1C(-1), _field20(0), _field24(0) {
 }
 
+void CPetGlyphs::setNumVisible(int total) {
+	if (total > 0)
+		_numVisibleGlyphs = total;
+}
+
 void CPetGlyphs::clear() {
 	changeHighlight(-1);
 	destroyContents();
 	_firstVisibleIndex = 0;
 }
 
-void CPetGlyphs::proc8() {
+void CPetGlyphs::setup(int numVisible, CPetSection *owner) {
 	error("TODO");
 }
 
-void CPetGlyphs::setup() {
-	warning("TODO: CPetGlyphs::setup");
+void CPetGlyphs::reset() {
+
+	warning("TODO: CPetGlyphs::reset");
 }
 
 void CPetGlyphs::proc10() {

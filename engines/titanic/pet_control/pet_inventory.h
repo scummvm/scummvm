@@ -64,7 +64,7 @@ public:
 	/**
 	 * Sets up the section
 	 */
-	virtual bool setup();
+	virtual bool reset();
 
 	/**
 	 * Draw the section
@@ -97,16 +97,14 @@ public:
 	virtual bool isValid(CPetControl *petControl);
 
 	/**
-	 * Add an item to the inventory
+	 * 
 	 */
-	void addItem(CCarry *item);
+	void change(CCarry *item);
 
 	/**
 	 * Called when an item has been removed from the PET
 	 */
 	void itemRemoved(CCarry *item);
-
-	void fn3(CCarry *item);
 
 	/**
 	 * Called when the items under the PET have changed

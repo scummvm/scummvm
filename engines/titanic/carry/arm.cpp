@@ -172,7 +172,7 @@ bool CArm::MaitreDHappyMsg(CMaitreDHappyMsg *msg) {
 			_visibleFrame = _field170;
 			loadFrame(_visibleFrame);
 			_string6 = "None";
-			invFn3();
+			invChange();
 		}
 	}
 

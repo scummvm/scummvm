@@ -124,10 +124,39 @@ int CPetInventoryGlyph::subMode(CGameObject *item, int val) {
 	return frameNum;
 }
 
+bool CPetInventoryGlyph::doAction(CGlyphAction *action) {
+	CInventoryGlyphAction *invAction = static_cast<CInventoryGlyphAction *>(action);
+	CPetInventoryGlyphs *owner = static_cast<CPetInventoryGlyphs *>(_owner);
+	if (!invAction)
+		return false; 
+
+	switch (invAction->getMode()) {
+	case ACTION_REMOVED:
+		if (invAction->_item == _item) {
+			_item = nullptr;
+			_field3C = 0;
+			_field34 = 0;
+		}
+		break;
+
+	case ACTION_REMOVE:
+		if (_item == invAction->_item && _owner) {
+			int v = populateItem(_item, 0);
+			_field3C = owner->fn1(v);
+		}
+	}
+
+	return true;
+}
+
 /*------------------------------------------------------------------------*/
 
-void CPetInventoryGlyphs::addItem(CPetCarry *item) {
+bool CPetInventoryGlyphs::change(CInventoryGlyphAction *action) {
+	for (iterator i = begin(); i != end(); ++i) {
+		(*i)->doAction(action);
+	}
 
+	return true;
 }
 
 int CPetInventoryGlyphs::fn1(int val) {

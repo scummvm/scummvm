@@ -44,7 +44,7 @@ void CPetGfxElement::setup(PetElementMode mode, const CString &name,
 	}
 }
 
-void CPetGfxElement::setup(const CString &name, CPetControl *petControl, PetElementMode mode) {
+void CPetGfxElement::reset(const CString &name, CPetControl *petControl, PetElementMode mode) {
 	if (!petControl)
 		return;
 

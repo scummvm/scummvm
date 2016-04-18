@@ -50,10 +50,10 @@ public:
 		CPetControl *petControl) {}
 
 	/**
-	 * Sets up the element
+	 * Reset the element
 	 */
-	virtual void setup(int val, const CString &name, CPetControl *petControl) {}
-	
+	virtual void reset(const CString &name, CPetControl *petControl, PetElementMode mode) {}
+
 	/**
 	 * Draw the item
 	 */

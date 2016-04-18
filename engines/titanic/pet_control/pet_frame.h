@@ -57,7 +57,7 @@ public:
 	/**
 	 * Sets up the section
 	 */
-	virtual bool setup();
+	virtual bool reset();
 	
 	/**
 	 * Handles mouse down messages

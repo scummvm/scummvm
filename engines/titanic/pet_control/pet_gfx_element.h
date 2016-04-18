@@ -43,9 +43,9 @@ public:
 		CPetControl *petControl);
 
 	/**
-	 * Setup the element
+	 * Reset the element
 	 */
-	virtual void setup(const CString &name, CPetControl *petControl, PetElementMode mode);
+	virtual void reset(const CString &name, CPetControl *petControl, PetElementMode mode);
 
 	/**
 	 * Draw the item

@@ -280,7 +280,7 @@ void CTreeItem::clearPet() const {
 }
 
 CPetControl *CTreeItem::getPetControl() const {
-	return dynamic_cast<CPetControl *>(getDontSaveChild(CPetControl::_type));
+	return static_cast<CPetControl *>(getDontSaveChild(CPetControl::_type));
 }
 
 CMailMan *CTreeItem::getMailMan() const {

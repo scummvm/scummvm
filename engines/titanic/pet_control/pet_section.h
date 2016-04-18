@@ -60,9 +60,9 @@ public:
 	virtual bool setup(CPetControl *petControl) { return false; }
 	
 	/**
-	 * Sets up the section
+	 * Reset the section
 	 */
-	virtual bool setup() { return false; }
+	virtual bool reset() { return false; }
 
 	/**
 	 * Draw the section

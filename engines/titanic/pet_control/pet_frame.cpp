@@ -35,28 +35,28 @@ CPetFrame::CPetFrame() : CPetSection() {
 
 bool CPetFrame::setup(CPetControl *petControl) {
 	if (setPetControl(petControl))
-		return setup();
+		return reset();
 	return false;
 }
 
-bool CPetFrame::setup() {
+bool CPetFrame::reset() {
 	if (_petControl) {
-		_background.setup("PetBackground", _petControl, MODE_UNSELECTED);
-		_modeBackground.setup("PetModeBackground", _petControl, MODE_UNSELECTED);
+		_background.reset("PetBackground", _petControl, MODE_UNSELECTED);
+		_modeBackground.reset("PetModeBackground", _petControl, MODE_UNSELECTED);
 
 		for (int idx = 0; idx < 5; ++idx) {
 			CString resName = Common::String::format("PetMode%d", idx);
-			_modeButtons[idx].setup(resName, _petControl, MODE_UNSELECTED);
+			_modeButtons[idx].reset(resName, _petControl, MODE_UNSELECTED);
 		}
 
 		for (int idx = 0; idx < 6; ++idx) {
 			CString resName = Common::String::format("3Pettitle%d", idx);
-			_titles[idx].setup(resName, _petControl, MODE_UNSELECTED);
+			_titles[idx].reset(resName, _petControl, MODE_UNSELECTED);
 		}
 
 		for (int idx = 0; idx < 7; ++idx) {
 			CString resName = Common::String::format("PetIndent%d", idx);
-			_indent[idx].setup(resName, _petControl, MODE_UNSELECTED);
+			_indent[idx].reset(resName, _petControl, MODE_UNSELECTED);
 		}
 	}
 
@@ -87,7 +87,7 @@ bool CPetFrame::isValid(CPetControl *petControl) {
 }
 
 void CPetFrame::postLoad() {
-	setup();
+	reset();
 }
 
 bool CPetFrame::setPetControl(CPetControl *petControl) {

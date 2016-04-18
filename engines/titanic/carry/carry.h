@@ -65,7 +65,7 @@ protected:
 	/**
 	 *
 	 */
-	void invFn3();
+	void invChange();
 public:
 	CLASSDEF
 	CCarry();

@@ -30,6 +30,19 @@
 namespace Titanic {
 
 class CPetGlyphs;
+class CPetSection;
+
+enum GlyphActionMode { ACTION_REMOVE = 0, ACTION_REMOVED = 1, ACTION_CHANGE = 2 };
+
+class CGlyphAction {
+protected:
+	GlyphActionMode _mode;
+public:
+	CGlyphAction() : _mode(ACTION_REMOVED) {}
+	CGlyphAction(GlyphActionMode mode) : _mode(mode) {}
+
+	GlyphActionMode getMode() const { return _mode; }
+};
 
 class CPetGlyph : public ListItem {
 public:
@@ -105,7 +118,11 @@ public:
 	virtual int proc35() { return 0; }
 	virtual void proc36() {}
 	virtual int proc37() { return 0; }
-	virtual int proc38() { return 1; }
+
+	/**
+	 * Does a processing action on the glyph
+	 */
+	virtual bool doAction(CGlyphAction *action) { return true; }
 };
 		
 class CPetGlyphs : public List<CPetGlyph> {
@@ -149,17 +166,25 @@ public:
 	CPetGlyphs();
 
 	/**
+	 * Set the number of visible glyphs
+	 */
+	void setNumVisible(int total);
+
+	/**
 	 * Clears the glyph list
 	 */
 	void clear();
 
 
-	virtual void proc8();
+	/**
+	 * The visual dimensions for the control and it's components
+	 */
+	virtual void setup(int numVisible, CPetSection *owner);
 
 	/**
 	 * Set up the control
 	 */
-	virtual void setup();
+	virtual void reset();
 
 	virtual void proc10();
 	virtual void proc11();

@@ -45,6 +45,7 @@ CPetControl::CPetControl() : CGameObject(),
 		_currentArea(PET_CONVERSATION), _fieldC0(0), _locked(0), _fieldC8(0),
 		_treeItem1(nullptr), _treeItem2(nullptr), _hiddenRoom(nullptr),
 		_drawBounds(20, 350, 620, 480) {
+	setup();
 	_timers[0] = _timers[1] = nullptr;
 	_sections[PET_INVENTORY] = &_inventory;
 	_sections[PET_CONVERSATION] = &_conversations;
@@ -78,6 +79,17 @@ void CPetControl::load(SimpleFile *file) {
 	}
 
 	CGameObject::load(file);
+}
+
+void CPetControl::setup() {
+	warning("TODO: CPetControl::setup");
+	_rooms.setup(this);
+	_remote.setup(this);
+	_inventory.setup(this);
+	_sub5.setup(this);
+	_saves.setup(this);
+	_sub7.setup(this);
+	_frame.setup(this);
 }
 
 bool CPetControl::isValid() {
@@ -399,8 +411,8 @@ void CPetControl::removeFromInventory(CCarry *item, bool refreshUI, bool sendMsg
 	removeFromInventory(item, view, refreshUI, sendMsg);
 }
 
-void CPetControl::invFn3(CCarry *item) {
-	_inventory.fn3(item);
+void CPetControl::invChange(CCarry *item) {
+	_inventory.change(item);
 }
 
 void CPetControl::moveToHiddenRoom(CTreeItem *item) {

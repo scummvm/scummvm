@@ -240,14 +240,16 @@ bool CCarry::PassOnDragStartMsg(CPassOnDragStartMsg *msg) {
 
 void CCarry::addToInventory() {
 	CPetControl *pet = getPetControl();
-	if (pet)
+	if (pet) {
+		makeDirty();
 		pet->addToInventory(this);
+	}
 }
 
-void CCarry::invFn3() {
+void CCarry::invChange() {
 	CPetControl *pet = getPetControl();
 	if (pet)
-		pet->invFn3(this);
+		pet->invChange(this);
 }
 
 } // End of namespace Titanic
