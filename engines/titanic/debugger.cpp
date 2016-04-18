@@ -210,6 +210,9 @@ bool Debugger::cmdPET(int argc, const char **argv) {
 }
 
 bool Debugger::cmdItem(int argc, const char **argv) {
+	CGameManager &gameManager = *g_vm->_window->_gameManager;
+	CGameState &gameState = gameManager._gameState;
+
 	if (argc == 1) {
 		// No parameters, so list the available items
 		debugPrintf("item [<name> [ add ]]\n");
@@ -243,11 +246,11 @@ bool Debugger::cmdItem(int argc, const char **argv) {
 
 			debugPrintf("Current location: %s\n", fullName.c_str());
 		} else if (CString(argv[2]) == "add") {
-			CPetControl *pet = item->getPetControl();
-			assert(pet);
-
-			pet->_visible = true;
+			// Ensure the PET is active and add the item to the inventory
+			gameState._petActive = true;
+			gameManager.initBounds();
 			item->addToInventory();
+
 			return false;
 		} else {
 			debugPrintf("Unknown command\n");
