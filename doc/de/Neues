@@ -30,6 +30,10 @@ Programmcodes finden Sie auf Englisch unter:
      spanischen Version korrigiert.
    - Geschwindigkeit der Animationen korrigiert. Animationen wurden nur halb
      so schnell wie im originalen Interpreter abgespielt.
+   - Rauschen am Beginn und/oder am Ende der Sprachausgabe behoben.
+     Dieser Fehler trat hauptsächlich in der spanischen Version auf.
+   - Verzögerung während der Interaktion mit dem Verben-Menü und dem Inventar behoben.
+   - Fehler behoben, durch den die Axt im Schloss mehrfach aufgehoben werden konnte.
 
  Gob:
    - Aufhängen während Sound-Initialisierung in mehreren Spielen behoben.
@@ -76,6 +80,9 @@ Programmcodes finden Sie auf Englisch unter:
      wenn ScummVM nicht läuft, und ermöglicht den direkten Start dieser Spiele.
    - Sparkle-Updater für vereinfachte Programmaktualisierungen hinzugefügt.
 
+ GCW0-Portierung:
+   - Verbesserte Unterstützung für die in ScummVM integrierte Dokumentation.
+
 1.8.0 (04.03.2016)
  Neue Spiele:
    - Unterstützung für Rex Nebular and the Cosmic Gender Bender hinzugefügt.
@@ -92,7 +99,7 @@ Programmcodes finden Sie auf Englisch unter:
      hinzugefügt.
    - Unterstützung für Labyrinth of Time hinzugefügt.
 
-Neue Portierungen:
+ Neue Portierungen:
    - Portierung für den Raspberry Pi hinzugefügt.
    - Portierung für den GCW Zero (GCW0) hinzugefügt.
 
@@ -102,7 +109,7 @@ Neue Portierungen:
  SDL:
    - Alt+x beendet ScummVM nicht mehr. Verwenden Sie stattdessen
      Cmd+q/Strg+q/Strg+z und beachten Sie die Hinweise in der Liesmich-Datei.
-  -  Auf POSIX-Systemen befolgen wir nun die Spezifikation XDG Base Directory
+   - Auf POSIX-Systemen befolgen wir nun die Spezifikation XDG Base Directory
      für die Speicherung von Benutzerdaten. Dies führt zu neuen
      Speicherorten für unsere Konfigurationsdatei, unsere Log-Datei sowie für
      den standardmäßig voreingestellten Speicherort für Spielstände. Wir
