@@ -48,7 +48,7 @@ struct CPetSectionSubData {
 };
 
 class CPetSection {
-protected:
+public:
 	CPetControl *_petControl;
 public:
 	CPetSection() : _petControl(nullptr) {}
@@ -144,7 +144,9 @@ public:
 	virtual void proc28();
 	virtual void proc29();
 	virtual void proc30();
-	virtual void proc31();
+
+	virtual CGameObject *getBackground(int index) const { return nullptr; }
+
 	virtual void proc32() {}
 	virtual void proc33() {}
 	virtual void proc34() {}

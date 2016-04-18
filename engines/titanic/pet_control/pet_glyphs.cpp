@@ -21,10 +21,11 @@
  */
 
 #include "titanic/pet_control/pet_glyphs.h"
+#include "titanic/pet_control/pet_section.h"
 
 namespace Titanic {
 
-void CPetGlyph::setOwner(CPetControl *petControl, CPetGlyphs *owner) {
+void CPetGlyph::setup(CPetControl *petControl, CPetGlyphs *owner) {
 	_element.setBounds(Rect(0, 0, 52, 50));
 	_owner = owner;
 }
@@ -45,6 +46,10 @@ bool CPetGlyph::translateContains(const Point &delta, const Point &pt) {
 	translateBack(delta);
 
 	return result;
+}
+
+CPetSection *CPetGlyph::getPetSection() const {
+	return _owner ? _owner->getOwner() : nullptr;
 }
 
 /*------------------------------------------------------------------------*/
@@ -78,8 +83,17 @@ void CPetGlyphs::setup(int numVisible, CPetSection *owner) {
 }
 
 void CPetGlyphs::reset() {
+	if (_owner && _owner->_petControl) {
+		CPetControl *pet = _owner->_petControl;
 
-	warning("TODO: CPetGlyphs::reset");
+		_scrollLeft.reset("PetScrollLeft", pet, MODE_UNSELECTED);
+		_scrollRight.reset("PetScrollRight", pet, MODE_UNSELECTED);
+		_selection.reset("PetSelection", pet, MODE_UNSELECTED);
+
+		for (iterator i = begin(); i != end(); ++i) {
+			(*i)->reset();
+		}
+	}
 }
 
 void CPetGlyphs::proc10() {

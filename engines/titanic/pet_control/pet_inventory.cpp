@@ -123,7 +123,7 @@ void CPetInventory::itemsChanged() {
 	CGameObject *item = _petControl->getFirstObject();
 	while (item) {
 		CPetInventoryGlyph *glyph = new CPetInventoryGlyph();
-		glyph->setOwner(_petControl, &_items);
+		glyph->setup(_petControl, &_items);
 		glyph->setItem(item, _field290);
 
 		_items.push_back(glyph);
@@ -145,5 +145,40 @@ int CPetInventory::getItemIndex(CGameObject *item) const {
 	return index;
 }
 
+CGameObject *CPetInventory::getImage(int index) {
+	if (index >= 0 && index < 46) {
+		int offset = index - 20;
+		int bits;
+		switch (offset) {
+		case 0:
+			bits = 4;
+			break;
+		case 1:
+			bits = 8;
+			break;
+		case 2:
+			bits = 1;
+			break;
+		case 23:
+			bits = 2;
+			break;
+		case 36:
+			bits = 32;
+			break;
+		case 39:
+			bits = 16;
+			break;
+		default:
+			break;
+		}
+
+		if (!(bits & _field298)) {
+			_field298 = bits | _field298;
+			return _itemGlyphs[index];
+		}
+	}
+	
+	return nullptr;
+}
 
 } // End of namespace Titanic

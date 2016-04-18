@@ -47,6 +47,11 @@ public:
 };
 
 class CPetGlyph : public ListItem {
+protected:
+	/**
+	 * Get the overall pet section owner
+	 */
+	CPetSection *getPetSection() const;
 public:
 	CPetGfxElement _element;
 	CPetGlyphs *_owner;
@@ -64,11 +69,14 @@ public:
 	void translateBack(const Point &pt) { _element.translate(-pt.x, -pt.y); }
 
 	/**
-	 * Set the glyph
+	 * Setup the glyph
 	 */
-	virtual void setOwner(CPetControl *petControl, CPetGlyphs *owner);
+	virtual void setup(CPetControl *petControl, CPetGlyphs *owner);
 
-	virtual int proc9() { return 0; }
+	/**
+	 * Reset the glyph
+	 */
+	virtual bool reset() { return false; }
 
 	virtual void proc10() {}
 	virtual void proc11() {}
@@ -202,6 +210,11 @@ public:
 	 * Highlight a specific glyph
 	 */
 	void highlight(int index);
+
+	/**
+	 * Get the owning section for the glyphs
+	 */
+	CPetSection *getOwner() const { return _owner; }
 };
 
 } // End of namespace Titanic

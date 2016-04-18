@@ -49,8 +49,4 @@ void CPetSection::proc30() {
 	error("TODO");
 }
 
-void CPetSection::proc31() {
-	error("TODO");
-}
-
 } // End of namespace Titanic

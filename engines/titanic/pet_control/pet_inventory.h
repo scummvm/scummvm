@@ -96,6 +96,10 @@ public:
 	 */
 	virtual bool isValid(CPetControl *petControl);
 
+	virtual CGameObject *getBackground(int index) const {
+		return (index >= 0 && index < 46) ? _itemBackgrounds[index] : nullptr;
+	}
+
 	/**
 	 * 
 	 */
@@ -115,6 +119,8 @@ public:
 	 * Called when the inventory can't be shown after adding an item
 	 */
 	void highlightItem(CGameObject *item);
+
+	CGameObject *getImage(int index);
 };
 
 } // End of namespace Titanic

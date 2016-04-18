@@ -22,6 +22,7 @@
 
 #include "common/textconsole.h"
 #include "titanic/pet_control/pet_inventory_glyphs.h"
+#include "titanic/pet_control/pet_inventory.h"
 #include "titanic/titanic.h"
 
 namespace Titanic {
@@ -38,8 +39,8 @@ void CPetInventoryGlyph::setItem(CGameObject *item, int val) {
 
 	if (_owner && item) {
 		int v1 = populateItem(item, val);
-		_field3C = static_cast<CPetInventoryGlyphs *>(_owner)->fn1(v1);
-		warning("TODO: CPetInventoryGlyph::setItem");
+		_background = static_cast<CPetInventoryGlyphs *>(_owner)->getBackground(v1);
+		_image = static_cast<CPetInventory *>(getPetSection())->getImage(v1);
 	}
 }
 
@@ -134,7 +135,7 @@ bool CPetInventoryGlyph::doAction(CGlyphAction *action) {
 	case ACTION_REMOVED:
 		if (invAction->_item == _item) {
 			_item = nullptr;
-			_field3C = 0;
+			_background = nullptr;
 			_field34 = 0;
 		}
 		break;
@@ -142,7 +143,7 @@ bool CPetInventoryGlyph::doAction(CGlyphAction *action) {
 	case ACTION_REMOVE:
 		if (_item == invAction->_item && _owner) {
 			int v = populateItem(_item, 0);
-			_field3C = owner->fn1(v);
+			_background = owner->getBackground(v);
 		}
 	}
 
@@ -159,9 +160,8 @@ bool CPetInventoryGlyphs::change(CInventoryGlyphAction *action) {
 	return true;
 }
 
-int CPetInventoryGlyphs::fn1(int val) {
-	warning("TODO: CPetInventoryGlyphs::fn1");
-	return 0;
+CGameObject *CPetInventoryGlyphs::getBackground(int index) {
+	return _owner ? _owner->getBackground(index) : nullptr;
 }
 
 } // End of namespace Titanic

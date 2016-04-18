@@ -40,13 +40,13 @@ private:
 public:
 	CGameObject *_item;
 	int _field34;
-	int _field3C;
-	int _field40;
+	CGameObject *_background;
+	CGameObject *_image;
 public:
 	CPetInventoryGlyph() : _item(nullptr), _field34(0), 
-		_field3C(0), _field40(0) {}
+		_background(nullptr), _image(nullptr) {}
 	CPetInventoryGlyph(CCarry *item, int val) : _item(item),
-		_field34(val), _field3C(0), _field40(0) {}
+		_field34(val), _background(nullptr), _image(nullptr) {}
 
 	/**
 	 * Set the inventory item
@@ -70,7 +70,7 @@ public:
 class CPetInventoryGlyphs : public CPetGlyphs {
 	friend class CPetInventoryGlyph;
 private:
-	int fn1(int val);
+	CGameObject *getBackground(int index);
 public:
 	/**
 	 * 
