@@ -581,7 +581,7 @@ public:
 	Facing _beaverFacing;
 	int _beaverActionStatus;
 	int _beaverSequenceId, _beaverSequenceDatNum, _beaverId;
-	int getBeaverSequenceId(int kind, int gridX, int gridY);
+	int getBeaverSequenceId();
 	void playBeaverSequence(int sequenceId);
 	void updateBeaverIdleSequence();
 	void beaverSub426234();

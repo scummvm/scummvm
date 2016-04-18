@@ -149,7 +149,7 @@ void GnapEngine::scene28_run() {
 						break;
 					case TALK_CURSOR:
 						playGnapBrainPulsating(_platX, _platY);
-						playBeaverSequence(getBeaverSequenceId(0, 0, 0) | 0x10000);
+						playBeaverSequence(getBeaverSequenceId());
 						break;
 					case PLAT_CURSOR:
 						playGnapImpossible(0, 0);

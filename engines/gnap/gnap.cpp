@@ -1908,29 +1908,17 @@ void GnapEngine::gnapUseDisguiseOnPlatypus() {
 	setFlag(kGFPlatyPussDisguised);
 }
 
-// CHECKME: The 3 parameters are always 0
-int GnapEngine::getBeaverSequenceId(int kind, int gridX, int gridY) {
-	int sequenceId;
+int GnapEngine::getBeaverSequenceId() {
+	// The original had 3 parameters, all always set to 0.
+	// The code to handle the other values has been removed.
 
-	// TODO kind is always 0, remove that parameter
-	if (kind != 0)
-		return 0;
+	int sequenceId = 0x7CB;
 
-	if (gridX > 0 && gridY > 0) {
-		if (gridX < _platX) {
-			sequenceId = 0x7CC;
-			_beaverFacing = kDirUnk4;
-		} else {
-			sequenceId = 0x7CB;
-			_beaverFacing = kDirNone;
-		}
-	} else if (_beaverFacing != kDirNone) {
+	if (_beaverFacing != kDirNone) {
 		sequenceId = 0x7CC;
 		_beaverFacing = kDirUnk4;
-	} else {
-		sequenceId = 0x7CB;
-		_beaverFacing = kDirNone;
 	}
+
 	return sequenceId | 0x10000;
 }
 
