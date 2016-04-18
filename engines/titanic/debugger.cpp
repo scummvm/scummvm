@@ -194,7 +194,7 @@ bool Debugger::cmdPET(int argc, const char **argv) {
 
 		if (s == "on") {
 			gameState._petActive = true;
-			gameManager.update();
+			gameManager.initBounds();
 			debugPrintf("PET is now on\n");
 			return true;
 		} else if (s == "off") {
