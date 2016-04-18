@@ -54,9 +54,9 @@ bool CPetFrame::reset() {
 			_titles[idx].reset(resName, _petControl, MODE_UNSELECTED);
 		}
 
-		for (int idx = 0; idx < 7; ++idx) {
-			CString resName = Common::String::format("PetIndent%d", idx);
-			_indent[idx].reset(resName, _petControl, MODE_UNSELECTED);
+		for (int idx = 0; idx < TOTAL_GLYPHS; ++idx) {
+			CString resName = Common::String::format("PetIndent%d", idx + 1);
+			_squares[idx].reset(resName, _petControl, MODE_UNSELECTED);
 		}
 	}
 
@@ -97,13 +97,15 @@ bool CPetFrame::setPetControl(CPetControl *petControl) {
 		// Set the bounds of the individual elements
 		_background.setBounds(Rect(20, 350, 620, 480));
 		_modeBackground.setBounds(Rect(590, 365, 611, 467));
-
+		
+		// Squares used for holding glyphs in various tabs
 		Rect r(35, 373, 91, 429);
-		for (int idx = 0, xp = 0; xp < 490; ++idx, xp += 70) {
-			_indent[idx].setBounds(r);
-			_indent[idx].translate(xp, 0);
+		for (int idx = 0, xp = 0; idx < TOTAL_GLYPHS; ++idx, xp += 70) {
+			_squares[idx].setBounds(r);
+			_squares[idx].translate(xp, 0);
 		}
 
+		// Draw the mode buttons vertically on the right edge of the PET
 		r = Rect(590, 365, 606, 381);
 		const int YLIST[] = { 7, 27, 45, 66, 84 };
 		for (int idx = 0; idx < 5; ++idx) {
@@ -143,10 +145,10 @@ void CPetFrame::drawFrame(CScreenManager *screenManager) {
 	_titles[_petControl->_currentArea].draw(screenManager);
 }
 
-void CPetFrame::drawIndent(CScreenManager *screenManager, int indent) {
-	indent = CLIP(indent, 0, 7);
-	for (int idx = 0; idx < indent; ++idx)
-		_indent[idx].draw(screenManager);
+void CPetFrame::drawSquares(CScreenManager *screenManager, int count) {
+	count = CLIP(count, 0, TOTAL_GLYPHS);
+	for (int idx = 0; idx < count; ++idx)
+		_squares[idx].draw(screenManager);
 }
 
 } // End of namespace Titanic

@@ -49,7 +49,7 @@ bool CPetGlyph::translateContains(const Point &delta, const Point &pt) {
 
 /*------------------------------------------------------------------------*/
 
-CPetGlyphs::CPetGlyphs() : _firstVisibleIndex(0),  _numVisibleGlyphs(7),
+CPetGlyphs::CPetGlyphs() : _firstVisibleIndex(0),  _numVisibleGlyphs(TOTAL_GLYPHS),
 		_highlightIndex(-1), _field1C(-1), _field20(0), _owner(nullptr) {
 }
 

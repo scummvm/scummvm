@@ -29,6 +29,8 @@
 
 namespace Titanic {
 
+#define TOTAL_GLYPHS 7
+
 class CPetGlyphs;
 class CPetSection;
 

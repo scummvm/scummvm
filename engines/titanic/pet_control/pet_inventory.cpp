@@ -47,7 +47,7 @@ bool CPetInventory::reset() {
 }
 
 void CPetInventory::draw(CScreenManager *screenManager) {
-	_petControl->drawIndent(screenManager, 7);
+	_petControl->drawSquares(screenManager, 7);
 	_items.draw(screenManager);
 	_sub12.draw(screenManager);
 }

@@ -40,7 +40,7 @@ private:
 	CPetGfxElement _val2;
 	CPetGfxElement _val3;
 	CPetGfxElement _background;
-	CPetGfxElement _indent[7];
+	CPetGfxElement _squares[7];
 private:
 	/**
 	 * Called to set the owning PET instance and set some initial state
@@ -93,7 +93,7 @@ public:
 	/**
 	 * Draws the indent
 	 */
-	void drawIndent(CScreenManager *screenManager, int indent);
+	void drawSquares(CScreenManager *screenManager, int count);
 };
 
 } // End of namespace Titanic

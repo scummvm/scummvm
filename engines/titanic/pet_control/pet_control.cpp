@@ -345,8 +345,8 @@ bool CPetControl::TimerMsg(CTimerMsg *msg) {
 	return true;
 }
 
-void CPetControl::drawIndent(CScreenManager *screenManager, int indent) {
-	_frame.drawIndent(screenManager, indent);
+void CPetControl::drawSquares(CScreenManager *screenManager, int count) {
+	_frame.drawSquares(screenManager, count);
 }
 
 void CPetControl::displayMessage(const CString &msg) {

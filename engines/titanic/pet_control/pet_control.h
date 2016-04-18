@@ -179,9 +179,9 @@ public:
 	CRoomItem *getHiddenRoom();
 
 	/**
-	 * Draws the indent
+	 * Draws squares for showing glyphs inside
 	 */
-	void drawIndent(CScreenManager *screenManager, int indent);
+	void drawSquares(CScreenManager *screenManager, int count);
 
 	/**
 	 * Returns true if the point is within the PET's draw bounds
