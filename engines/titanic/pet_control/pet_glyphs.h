@@ -153,7 +153,7 @@ protected:
 	int _highlightIndex;
 	int _field1C;
 	int _field20;
-	int _field24;
+	CPetSection *_owner;
 	CPetGfxElement _selection;
 	CPetGfxElement _scrollLeft;
 	CPetGfxElement _scrollRight;

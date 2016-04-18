@@ -50,7 +50,7 @@ bool CPetGlyph::translateContains(const Point &delta, const Point &pt) {
 /*------------------------------------------------------------------------*/
 
 CPetGlyphs::CPetGlyphs() : _firstVisibleIndex(0),  _numVisibleGlyphs(7),
-		_highlightIndex(-1), _field1C(-1), _field20(0), _field24(0) {
+		_highlightIndex(-1), _field1C(-1), _field20(0), _owner(nullptr) {
 }
 
 void CPetGlyphs::setNumVisible(int total) {
@@ -65,7 +65,16 @@ void CPetGlyphs::clear() {
 }
 
 void CPetGlyphs::setup(int numVisible, CPetSection *owner) {
-	error("TODO");
+	setNumVisible(numVisible);
+	_owner = owner;
+	_selection.setBounds(Rect(0, 0, 76, 76));
+
+	int buttonsLeft = numVisible * 7 * 5 + 21;
+
+	_scrollLeft.setBounds(Rect(0, 0, 31, 15));
+	_scrollLeft.translate(buttonsLeft, 373);
+	_scrollRight.setBounds(Rect(0, 0, 31, 15));
+	_scrollRight.translate(buttonsLeft, 413);
 }
 
 void CPetGlyphs::reset() {
