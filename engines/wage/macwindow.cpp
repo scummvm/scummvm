@@ -90,11 +90,15 @@ void MacWindow::resize(int w, int h) {
 
 void MacWindow::move(int x, int y) {
 	_dims.moveTo(x, y);
+
+	_innerDims.setWidth(0); // Invalidate rect
 }
 
 void MacWindow::setDimensions(const Common::Rect &r) {
 	resize(r.width(), r.height());
 	_dims.moveTo(r.left, r.top);
+
+	_innerDims.setWidth(0); // Invalidate rect
 }
 
 bool MacWindow::draw(Graphics::ManagedSurface *g, bool forceRedraw) {
@@ -143,6 +147,11 @@ static void drawPixelInverted(int x, int y, int color, void *data) {
 
 void MacWindow::drawBorder() {
 	_borderIsDirty = false;
+
+	if (_innerDims.isEmpty()) {
+		_innerDims = _dims;
+		_innerDims.grow(-kBorderWidth);
+	}
 
 	bool active = _active, scrollable = _scrollable, closeable = _active, drawTitle = !_title.empty();
 	const int size = kBorderWidth;
@@ -235,8 +244,43 @@ void MacWindow::fillRect(Graphics::ManagedSurface *g, int x, int y, int w, int h
 	g->fillRect(r, color);
 }
 
-WindowClick MacWindow::mouseDown(int x, int y) {
+static WindowClick isInBorder(Common::Rect &rect, int x, int y) {
+	if (x >= rect.left - kBorderWidth && x < rect.left && y >= rect.top - kBorderWidth && y < rect.top)
+		return kBorderCloseButton;
+
+	if (x >= rect.right && x < rect.right + kBorderWidth) {
+		if (y < rect.top - kBorderWidth)
+			return kBorderNone;
+
+		if (y >= rect.bottom + kBorderWidth)
+			return kBorderNone;
+
+		if (y >= rect.top + rect.height() / 2)
+			return kBorderScrollDown;
+
+		return kBorderScrollUp;
+	}
+
 	return kBorderNone;
+}
+
+void MacWindow::mouseDown(int x, int y) {
+	if (_innerDims.contains(x, y)) {
+		// (*callback)(x - _dims.left, y - dims.top);
+		return;
+	}
+
+	WindowClick click = isInBorder(_innerDims, x, y);
+
+	if (click == kBorderNone)
+		return;
+
+	setHighlight(click);
+
+	if (click == kBorderScrollUp || click == kBorderScrollDown) {
+		// TODO
+	}
+
 }
 
 } // End of namespace Wage

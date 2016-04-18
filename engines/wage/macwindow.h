@@ -85,7 +85,7 @@ public:
 	void setScroll(float scrollPos, float scrollSize) { _scrollPos = scrollPos; _scrollSize = scrollSize; }
 	void setDirty(bool dirty) { _contentIsDirty = dirty; }
 	int getId() { return _id; }
-	WindowClick mouseDown(int x, int y);
+	void mouseDown(int x, int y);
 
 private:
 	void drawBorder();
@@ -108,6 +108,7 @@ private:
 	float _scrollPos, _scrollSize;
 
 	Common::Rect _dims;
+	Common::Rect _innerDims;
 
 	Common::String _title;
 };

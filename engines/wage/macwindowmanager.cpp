@@ -122,14 +122,7 @@ bool MacWindowManager::mouseDown(int x, int y) {
 
         if (w->getDimensions().contains(x, y)) {
             setActive(w->getId());
-
-            WindowClick click = w->mouseDown(x, y);
-
-            if (click == kBorderInner) {
-
-            } else {
-                w->setHighlight(click);
-            }
+            w->mouseDown(x, y);
 
             return true;
         }
