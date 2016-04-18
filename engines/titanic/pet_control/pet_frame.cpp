@@ -145,7 +145,7 @@ void CPetFrame::drawFrame(CScreenManager *screenManager) {
 
 void CPetFrame::drawIndent(CScreenManager *screenManager, int indent) {
 	indent = CLIP(indent, 0, 7);
-	for (int idx = 0; idx < indent; ++indent)
+	for (int idx = 0; idx < indent; ++idx)
 		_indent[idx].draw(screenManager);
 }
 
