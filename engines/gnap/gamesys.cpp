@@ -1001,7 +1001,6 @@ void GameSys::handleReqRemoveSpriteDrawItems() {
 }
 
 void GameSys::fatUpdateFrame() {
-
 	debugC(kDebugBasic, "GameSys::fatUpdateFrame()");
 	
 	int32 clockDelta = _gameSysClock - _lastUpdateClock;
@@ -1012,7 +1011,6 @@ void GameSys::fatUpdateFrame() {
 	if (clockDelta <= 0)
 		return;
 	
-	bool updFlag = true;
 	int duration, currFrameNum;
 
 	// NOTE Skipped avi code (reqAviStart)
@@ -1029,7 +1027,6 @@ void GameSys::fatUpdateFrame() {
 			} else {
 				Sequence *seqItem = seqFind(gfxItem->_sequenceId, gfxItem->_id, 0);
 				if (!animation) {
-					updFlag = false;
 					gfxItem->_sequenceId = -1;
 					gfxItem->_animation = nullptr;
 					gfxItem->_currFrame._duration = 0;
@@ -1038,7 +1035,6 @@ void GameSys::fatUpdateFrame() {
 					gfxItem->_currFrame._unusedVal = -1;
 					gfxItem->_updFlag = true;
 				} else if (!seqItem) {
-					updFlag = false;
 					gfxItem->_animation = nullptr;
 					gfxItem->_currFrame._duration = 0;
 					gfxItem->_currFrame._spriteId = -1;
@@ -1046,7 +1042,6 @@ void GameSys::fatUpdateFrame() {
 					gfxItem->_currFrame._unusedVal = -1;
 					gfxItem->_updFlag = true;
 				} else if ((seqItem->_flags & 4) && clockDelta > 1) {
-					updFlag = false;
 					if (gfxItem->_delayTicks < clockDelta) {
 						duration = clockDelta - gfxItem->_delayTicks;
 						gfxItem->_delayTicks = 0;
@@ -1072,7 +1067,6 @@ void GameSys::fatUpdateFrame() {
 						}
 						currFrameNum = gfxItem->_currFrameNum;
 						if (animation->_framesCount > currFrameNum) {
-							updFlag = false;
 							while (animation->_framesCount > currFrameNum &&
 								animation->frames[currFrameNum]._duration <= duration) {
 								if (animation->frames[currFrameNum]._soundId != -1)
@@ -1109,12 +1103,10 @@ void GameSys::fatUpdateFrame() {
 							gfxItem->_updFlag = false;
 						}
 					} else {
-						updFlag = false;
 						gfxItem->_prevFrame._duration -= duration;
 						gfxItem->_updFlag = false;
 					}
 				} else {
-					updFlag = false;
 					gfxItem->_delayTicks -= clockDelta;
 					gfxItem->_updFlag = false;
 				}
@@ -1202,7 +1194,6 @@ void GameSys::fatUpdateFrame() {
 					found = true;
 				}
 				if (found) {
-					updFlag = false;
 					seqRemoveGfx(seqItem->_sequenceId2, seqItem->_id2);
 					seqRemoveGfx(seqItem->_sequenceId, seqItem->_id);
 					_fatSequenceItems.remove_at(i);
@@ -1211,7 +1202,6 @@ void GameSys::fatUpdateFrame() {
 				}
 			}
 		} else {
-			updFlag = false;
 			if (seqItem->_totalDuration < clockDelta) {
 				int index;
 				bool found = false;
@@ -1245,7 +1235,6 @@ void GameSys::fatUpdateFrame() {
 			updateAnimationsStatus(seqItem->_sequenceId, seqItem->_id);
 			if (seqItem->_flags & 2) {
 				int gfxDuration;
-				updFlag = false;
 				if (updateSequenceDuration(seqItem->_sequenceId, seqItem->_id, &gfxDuration)) {
 					seqRemoveGfx(seqItem->_sequenceId, seqItem->_id);
 					seqInsertGfx(i, gfxDuration);
