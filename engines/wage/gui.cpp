@@ -249,16 +249,15 @@ void Gui::draw() {
 	if (_scene != _engine->_world->_player->_currentScene)
 		_sceneDirty = true;
 
-	if (_sceneDirty || _bordersDirty)
+	if (_sceneDirty || _bordersDirty) {
 		drawDesktop();
-
-	if (_sceneIsActive) {
-		drawConsole();
-		drawScene();
-	} else {
-		drawScene();
-		drawConsole();
+		_wm.setFullRefresh(true);
 	}
+
+	drawScene();
+	drawConsole();
+
+	_wm.draw();
 
 	if (_menuDirty)
 		_menu->render();
@@ -288,11 +287,7 @@ void Gui::drawScene() {
 	w->setDimensions(*_scene->_designBounds);
 	w->setTitle(_scene->_name);
 	_scene->paint(w->getSurface(), 0, 0);
-	w->draw(&_screen);
 	w->setDirty(true);
-	g_system->copyRectToScreen(_screen.getBasePtr(_scene->_designBounds->left - 2, _scene->_designBounds->top - 2),
-			_screen.pitch, _scene->_designBounds->left - 2, _scene->_designBounds->top - 2,
-			_scene->_designBounds->width(), _scene->_designBounds->height());
 
 	_sceneDirty = true;
 	_consoleDirty = true;
@@ -319,11 +314,7 @@ void Gui::drawConsole() {
 	w->setDimensions(*_scene->_textBounds);
 	renderConsole(w->getSurface(), Common::Rect(kBorderWidth - 2, kBorderWidth - 2,
 				_scene->_textBounds->width() - kBorderWidth, _scene->_textBounds->height() - kBorderWidth));
-	w->draw(&_screen);
 	w->setDirty(true);
-	g_system->copyRectToScreen(_screen.getBasePtr(_scene->_textBounds->left - 2, _scene->_textBounds->top - 2),
-			_screen.pitch, _scene->_textBounds->left - 2, _scene->_textBounds->top - 2,
-			_scene->_textBounds->width(), _scene->_textBounds->height());
 }
 
 void Gui::drawBox(Graphics::ManagedSurface *g, int x, int y, int w, int h) {

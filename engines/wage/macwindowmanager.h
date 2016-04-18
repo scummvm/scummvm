@@ -62,6 +62,8 @@ public:
 	int add(bool scrollable);
 	void setActive(int id);
 
+	void setFullRefresh(bool redraw) { _fullRefresh = true; }
+
 	void draw();
 
 	MacWindow *getWindow(int id) { return _windows[id]; }
