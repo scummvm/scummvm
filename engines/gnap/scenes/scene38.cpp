@@ -48,8 +48,8 @@ enum {
 	kASUseHuntingTrophy			= 2,
 	kASHoldingHuntingTrophy		= 3,
 	kASReleaseHuntingTrophy		= 4,
-	kASUseBeaverWithTrapDoor	= 5,
-	kASBeaverHoldingTrapDoor	= 6
+	kASUsePlatypusWithTrapDoor	= 5,
+	kASPlatypusHoldingTrapDoor	= 6
 };
 
 int GnapEngine::scene38_init() {
@@ -72,21 +72,21 @@ void GnapEngine::scene38_updateHotspots() {
 	setHotspot(kHSWalkArea5, 770, 0, 799, 445);
 	setHotspot(kHSWalkArea6, 393, 0, 698, 445, SF_WALKABLE | SF_DISABLED);
 	setDeviceHotspot(kHSDevice, -1, -1, -1, -1);
-	if (_platypusActionStatus == kASBeaverHoldingTrapDoor)
+	if (_platypusActionStatus == kASPlatypusHoldingTrapDoor)
 		_hotspots[kHSPlatypus]._flags = SF_WALKABLE | SF_DISABLED;
-	if (_platypusActionStatus == kASBeaverHoldingTrapDoor)
+	if (_platypusActionStatus == kASPlatypusHoldingTrapDoor)
 		_hotspots[kHSExitCave]._flags = SF_EXIT_D_CURSOR;
 	else if (_gnapActionStatus == kASHoldingHuntingTrophy)
 		_hotspots[kHSExitCave]._flags = SF_EXIT_D_CURSOR;
-	if (_platypusActionStatus == kASBeaverHoldingTrapDoor)
+	if (_platypusActionStatus == kASPlatypusHoldingTrapDoor)
 		_hotspots[kHSTrapDoorLid1]._flags = SF_DISABLED;
 	else if (_gnapActionStatus == kASHoldingHuntingTrophy)
 		_hotspots[kHSTrapDoorLid1]._flags = SF_PLAT_CURSOR | SF_TALK_CURSOR | SF_GRAB_CURSOR | SF_LOOK_CURSOR;
-	if (_platypusActionStatus == kASBeaverHoldingTrapDoor)
+	if (_platypusActionStatus == kASPlatypusHoldingTrapDoor)
 		_hotspots[kHSTrapDoorLid2]._flags = SF_DISABLED;
 	else if (_gnapActionStatus == kASHoldingHuntingTrophy)
 		_hotspots[kHSTrapDoorLid2]._flags = SF_PLAT_CURSOR | SF_TALK_CURSOR | SF_GRAB_CURSOR | SF_LOOK_CURSOR;
-	if (_platypusActionStatus == kASBeaverHoldingTrapDoor)
+	if (_platypusActionStatus == kASPlatypusHoldingTrapDoor)
 		_hotspots[kHSWalkArea6]._flags = SF_NONE;
 	_hotspotsCount = 13;
 }
@@ -158,9 +158,9 @@ void GnapEngine::scene38_run() {
 		case kHSExitCave:
 			if (_gnapActionStatus == kASHoldingHuntingTrophy) {
 				_gnapActionStatus = kASReleaseHuntingTrophy;
-				if (_platypusActionStatus == kASBeaverHoldingTrapDoor)
+				if (_platypusActionStatus == kASPlatypusHoldingTrapDoor)
 					_isLeavingScene = true;
-			} else if (_platypusActionStatus == kASBeaverHoldingTrapDoor) {
+			} else if (_platypusActionStatus == kASPlatypusHoldingTrapDoor) {
 				_sceneWaiting = false;
 				_isLeavingScene = true;
 				gnapWalkTo(5, 7, 0, 0x107BB, 1);
@@ -172,8 +172,8 @@ void GnapEngine::scene38_run() {
 		case kHSTrapDoorLid1:
 		case kHSTrapDoorLid2:
 			if (_gnapActionStatus == kASHoldingHuntingTrophy) {
-				if (_verbCursor == PLAT_CURSOR && _platypusActionStatus != kASBeaverHoldingTrapDoor)
-					_gnapActionStatus = kASUseBeaverWithTrapDoor;
+				if (_verbCursor == PLAT_CURSOR && _platypusActionStatus != kASPlatypusHoldingTrapDoor)
+					_gnapActionStatus = kASUsePlatypusWithTrapDoor;
 				else
 					_gnapActionStatus = kASReleaseHuntingTrophy;
 			}
@@ -189,7 +189,7 @@ void GnapEngine::scene38_run() {
 						playGnapScratchingHead(0, 0);
 						break;
 					case GRAB_CURSOR:
-						if (_platypusActionStatus == kASBeaverHoldingTrapDoor)
+						if (_platypusActionStatus == kASPlatypusHoldingTrapDoor)
 							playGnapImpossible(0, 0);
 						else {
 							gnapWalkTo(3, 6, 0, 0x107BB, 1);
@@ -282,7 +282,7 @@ void GnapEngine::scene38_updateAnimations() {
 			scene38_updateHotspots();
 			break;
 		case kASHoldingHuntingTrophy:
-			if (_platypusActionStatus != kASBeaverHoldingTrapDoor)
+			if (_platypusActionStatus != kASPlatypusHoldingTrapDoor)
 				_sceneWaiting = true;
 			if (_gnapSequenceId == 0xA4) {
 				_gameSys->insertSequence(0x9D, _gnapId, makeRid(_gnapSequenceDatNum, _gnapSequenceId), _gnapId, kSeqSyncWait, 0, 0, 0);
@@ -298,7 +298,7 @@ void GnapEngine::scene38_updateAnimations() {
 			if (_gnapSequenceId == 0x9E) {
 				_gameSys->insertSequence(0x9B, 0, 0, 0, kSeqNone, 0, 0, 0);
 				_gnapActionStatus = -1;
-			} else if (_platypusActionStatus == kASBeaverHoldingTrapDoor) {
+			} else if (_platypusActionStatus == kASPlatypusHoldingTrapDoor) {
 				_gameSys->insertSequence(0xA0, _gnapId, makeRid(_gnapSequenceDatNum, _gnapSequenceId), _gnapId, kSeqSyncWait, 0, 0, 0);
 				_gnapSequenceId = 0xA0;
 				_gnapSequenceDatNum = 0;
@@ -325,7 +325,7 @@ void GnapEngine::scene38_updateAnimations() {
 				scene38_updateHotspots();
 			}
 			break;
-		case kASUseBeaverWithTrapDoor:
+		case kASUsePlatypusWithTrapDoor:
 			_sceneWaiting = false;
 			_gameSys->insertSequence(0x9F, _gnapId, makeRid(_gnapSequenceDatNum, _gnapSequenceId), _gnapId, kSeqSyncWait, 0, 0, 0);
 			_gnapSequenceId = 0x9F;
@@ -342,7 +342,7 @@ void GnapEngine::scene38_updateAnimations() {
 			_platypusSequenceDatNum = 0;
 			_platypusId = _gnapId + 1;
 			_gameSys->setAnimation(0xA1, _gnapId + 1, 1);
-			_platypusActionStatus = kASBeaverHoldingTrapDoor;
+			_platypusActionStatus = kASPlatypusHoldingTrapDoor;
 			scene38_updateHotspots();
 			break;
 		}
@@ -350,7 +350,7 @@ void GnapEngine::scene38_updateAnimations() {
 
 	if (_gameSys->getAnimationStatus(1) == 2) {
 		_gameSys->setAnimation(0, 0, 1);
-		if (_platypusActionStatus == kASBeaverHoldingTrapDoor) {
+		if (_platypusActionStatus == kASPlatypusHoldingTrapDoor) {
 			_gameSys->insertSequence(0xA2, _platypusId, _platypusSequenceId | (_platypusSequenceDatNum << 16), _platypusId, kSeqSyncWait, 0, 0, 0);
 			_platypusSequenceId = 0xA2;
 			_platypusSequenceDatNum = 0;

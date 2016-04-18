@@ -738,13 +738,13 @@ void GnapEngine::gnapWalkStep() {
 ////////////////////////////////////////////////////////////////////////////////
 
 int GnapEngine::getPlatypusWalkSequenceId(int deltaX, int deltaY) {
-	static const int _beaverWalkSequenceIds[9] = {
+	static const int _platypusWalkSequenceIds[9] = {
 		0x7C5, 0x000, 0x7C8,
 		0x7C4, 0x000, 0x7C7,
 		0x7C3, 0x000, 0x7C6
 	};
 	// CHECKME This is a little weird
-	return _beaverWalkSequenceIds[3 * deltaX + 3 + 1 + deltaY];
+	return _platypusWalkSequenceIds[3 * deltaX + 3 + 1 + deltaY];
 }
 
 bool GnapEngine::gridSub423750(int gridX, int gridY) {
