@@ -69,7 +69,7 @@ MacWindowManager::~MacWindowManager() {
 }
 
 int MacWindowManager::add(bool scrollable) {
-    MacWindow *w = new MacWindow(scrollable);
+    MacWindow *w = new MacWindow(_lastId, scrollable);
 
     _windows.push_back(w);
     _windowStack.push_back(w);
@@ -111,6 +111,29 @@ void MacWindowManager::draw() {
     }
 
     _fullRefresh = false;
+}
+
+bool MacWindowManager::mouseDown(int x, int y) {
+    for (Common::List<MacWindow *>::const_iterator it = _windowStack.end(); it != _windowStack.begin();) {
+        it--;
+        MacWindow *w = *it;
+
+        if (w->getDimensions().contains(x, y)) {
+            setActive(w->getId());
+
+            WindowClick click = w->mouseDown(x, y);
+
+            if (click == kBorderInner) {
+
+            } else {
+                w->setHighlight(click);
+            }
+
+            return true;
+        }
+    }
+
+    return false;
 }
 
 } // End of namespace Wage

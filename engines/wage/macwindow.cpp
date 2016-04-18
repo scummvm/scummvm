@@ -53,7 +53,7 @@
 
 namespace Wage {
 
-MacWindow::MacWindow(bool scrollable) : _scrollable(scrollable) {
+MacWindow::MacWindow(int id, bool scrollable) : _scrollable(scrollable), _id(id) {
 	_active = false;
 	_borderIsDirty = true;
 
@@ -233,6 +233,10 @@ void MacWindow::fillRect(Graphics::ManagedSurface *g, int x, int y, int w, int h
 	Common::Rect r(x, y, x + w, y + h);
 
 	g->fillRect(r, color);
+}
+
+WindowClick MacWindow::mouseDown(int x, int y) {
+	return kBorderNone;
 }
 
 } // End of namespace Wage

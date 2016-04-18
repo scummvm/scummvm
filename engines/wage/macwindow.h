@@ -61,16 +61,17 @@ enum {
 	kBorderWidth = 17
 };
 
-enum BorderHighlight {
+enum WindowClick {
 	kBorderNone = 0,
 	kBorderScrollUp,
 	kBorderScrollDown,
-	kBorderCloseButton
+	kBorderCloseButton,
+	kBorderInner
 };
 
 class MacWindow {
 public:
-	MacWindow(bool scrollable);
+	MacWindow(int id, bool scrollable);
 	~MacWindow();
 	void move(int x, int y);
 	void resize(int w, int h);
@@ -80,9 +81,11 @@ public:
 	void setActive(bool active);
 	Graphics::ManagedSurface *getSurface() { return &_surface; }
 	void setTitle(Common::String &title) { _title = title; }
-	void setHighlight(BorderHighlight highlightedPart) { _highlightedPart = highlightedPart; }
+	void setHighlight(WindowClick highlightedPart) { _highlightedPart = highlightedPart; }
 	void setScroll(float scrollPos, float scrollSize) { _scrollPos = scrollPos; _scrollSize = scrollSize; }
 	void setDirty(bool dirty) { _contentIsDirty = dirty; }
+	int getId() { return _id; }
+	WindowClick mouseDown(int x, int y);
 
 private:
 	void drawBorder();
@@ -99,8 +102,9 @@ private:
 	bool _active;
 	bool _borderIsDirty;
 	bool _contentIsDirty;
+	int _id;
 
-	BorderHighlight _highlightedPart;
+	WindowClick _highlightedPart;
 	float _scrollPos, _scrollSize;
 
 	Common::Rect _dims;

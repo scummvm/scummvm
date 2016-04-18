@@ -66,6 +66,8 @@ public:
 
 	void draw();
 
+	bool mouseDown(int x, int y);
+
 	MacWindow *getWindow(int id) { return _windows[id]; }
 
 private:

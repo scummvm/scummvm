@@ -645,6 +645,8 @@ Designed *Gui::mouseUp(int x, int y) {
 void Gui::mouseDown(int x, int y) {
 	int borderClick;
 
+	_wm.mouseDown(x, y);
+
 	if (_menu->mouseClick(x, y)) {
 		_menuDirty = true;
 	} else if (_consoleTextArea.contains(x, y)) {
