@@ -75,12 +75,14 @@ public:
 	void move(int x, int y);
 	void resize(int w, int h);
 	void setDimensions(const Common::Rect &r);
-	void draw(Graphics::ManagedSurface *g, bool forceRedraw = false);
+	const Common::Rect &getDimensions() { return _dims; }
+	bool draw(Graphics::ManagedSurface *g, bool forceRedraw = false);
 	void setActive(bool active);
 	Graphics::ManagedSurface *getSurface() { return &_surface; }
 	void setTitle(Common::String &title) { _title = title; }
 	void setHighlight(BorderHighlight highlightedPart) { _highlightedPart = highlightedPart; }
 	void setScroll(float scrollPos, float scrollSize) { _scrollPos = scrollPos; _scrollSize = scrollSize; }
+	void setDirty(bool dirty) { _contentIsDirty = dirty; }
 
 private:
 	void drawBorder();
@@ -96,6 +98,7 @@ private:
 	bool _scrollable;
 	bool _active;
 	bool _borderIsDirty;
+	bool _contentIsDirty;
 
 	BorderHighlight _highlightedPart;
 	float _scrollPos, _scrollSize;

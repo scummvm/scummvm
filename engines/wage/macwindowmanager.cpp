@@ -47,6 +47,7 @@
 
 #include "common/list.h"
 #include "common/array.h"
+#include "common/system.h"
 
 #include "graphics/managed_surface.h"
 
@@ -57,6 +58,7 @@
 namespace Wage {
 
 MacWindowManager::MacWindowManager() {
+    _screen = 0;
     _lastId = 0;
     _activeWindow = -1;
 }
@@ -94,9 +96,19 @@ void MacWindowManager::setActive(int id) {
     _fullRefresh = true;
 }
 
-void MacWindowManager::draw(Graphics::ManagedSurface *g) {
-    for (Common::List<MacWindow *>::const_iterator it = _windowStack.begin(); it != _windowStack.end(); it++)
-        (*it)->draw(g, _fullRefresh);
+void MacWindowManager::draw() {
+    assert(_screen);
+
+    for (Common::List<MacWindow *>::const_iterator it = _windowStack.begin(); it != _windowStack.end(); it++) {
+        MacWindow *w = *it;
+        if (w->draw(_screen, _fullRefresh)) {
+            w->setDirty(false);
+
+            g_system->copyRectToScreen(_screen->getBasePtr(w->getDimensions().left - 2, w->getDimensions().top - 2),
+                    _screen->pitch, w->getDimensions().left - 2, w->getDimensions().top - 2,
+                    w->getDimensions().width(), w->getDimensions().height());
+        }
+    }
 
     _fullRefresh = false;
 }

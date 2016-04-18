@@ -97,7 +97,10 @@ void MacWindow::setDimensions(const Common::Rect &r) {
 	_dims.moveTo(r.left, r.top);
 }
 
-void MacWindow::draw(Graphics::ManagedSurface *g, bool forceRedraw) {
+bool MacWindow::draw(Graphics::ManagedSurface *g, bool forceRedraw) {
+	if (!_borderIsDirty && !_contentIsDirty && !forceRedraw)
+		return false;
+
 	if (_borderIsDirty || forceRedraw)
 		drawBorder();
 
@@ -106,6 +109,8 @@ void MacWindow::draw(Graphics::ManagedSurface *g, bool forceRedraw) {
 	_composeSurface.transBlitFrom(_borderSurface, kColorGreen);
 
 	g->transBlitFrom(_composeSurface, _composeSurface.getBounds(), Common::Point(_dims.left - 2, _dims.top - 2), kColorGreen2);
+
+	return true;
 }
 
 const Graphics::Font *MacWindow::getTitleFont() {

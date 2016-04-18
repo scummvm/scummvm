@@ -57,14 +57,18 @@ public:
 	MacWindowManager();
 	~MacWindowManager();
 
+	void setScreen(Graphics::ManagedSurface *screen) { _screen = screen; }
+
 	int add(bool scrollable);
 	void setActive(int id);
 
-	void draw(Graphics::ManagedSurface *g);
+	void draw();
 
 	MacWindow *getWindow(int id) { return _windows[id]; }
 
 private:
+	Graphics::ManagedSurface *_screen;
+
 	Common::List<MacWindow *> _windowStack;
 	Common::Array<MacWindow *> _windows;
 

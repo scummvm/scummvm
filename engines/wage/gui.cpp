@@ -154,6 +154,8 @@ Gui::Gui(WageEngine *engine) {
 	_consoleFullRedraw = true;
 	_screen.create(g_system->getWidth(), g_system->getHeight(), Graphics::PixelFormat::createFormatCLUT8());
 
+	_wm.setScreen(&_screen);
+
 	_scrollPos = 0;
 	_consoleLineHeight = 8; // Dummy value which makes sense
 	_consoleNumLines = 24; // Dummy value
@@ -287,6 +289,7 @@ void Gui::drawScene() {
 	w->setTitle(_scene->_name);
 	_scene->paint(w->getSurface(), 0, 0);
 	w->draw(&_screen);
+	w->setDirty(true);
 	g_system->copyRectToScreen(_screen.getBasePtr(_scene->_designBounds->left - 2, _scene->_designBounds->top - 2),
 			_screen.pitch, _scene->_designBounds->left - 2, _scene->_designBounds->top - 2,
 			_scene->_designBounds->width(), _scene->_designBounds->height());
@@ -317,6 +320,7 @@ void Gui::drawConsole() {
 	renderConsole(w->getSurface(), Common::Rect(kBorderWidth - 2, kBorderWidth - 2,
 				_scene->_textBounds->width() - kBorderWidth, _scene->_textBounds->height() - kBorderWidth));
 	w->draw(&_screen);
+	w->setDirty(true);
 	g_system->copyRectToScreen(_screen.getBasePtr(_scene->_textBounds->left - 2, _scene->_textBounds->top - 2),
 			_screen.pitch, _scene->_textBounds->left - 2, _scene->_textBounds->top - 2,
 			_scene->_textBounds->width(), _scene->_textBounds->height());
