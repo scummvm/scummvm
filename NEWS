@@ -76,7 +76,7 @@ For a more comprehensive changelog of the latest experimental code, see:
      not running and allows starting those games.
    - Enabled Sparkle application updater.
 
-GCW0 port:
+ GCW0 port:
    - Improved support for built-in ScummVM documentation.
 
 1.8.0 (2016-03-04)
