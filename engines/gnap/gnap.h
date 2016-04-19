@@ -41,6 +41,7 @@
 
 #include "gnap/debugger.h"
 #include "gnap/resource.h"
+#include "gnap/scenes/scenecore.h"
 
 struct ADGameDescription;
 
@@ -312,7 +313,8 @@ public:
 	GameSys *_gameSys;
 	SoundMan *_soundMan;
 	Debugger *_debugger;
-	
+	Scene *_scene;
+
 	int _lastUpdateClock;
 	
 	int _debugLevel;
@@ -604,15 +606,7 @@ public:
 	// Scene 0
 	int scene00_init();
 	void scene00_run();
-	
-	// Scene 1
-	int _s01_pigsIdCtr, _s01_smokeIdCtr;
-	Graphics::Surface *_s01_spaceshipSurface;
-	int scene01_init();
-	void scene01_updateHotspots();
-	void scene01_run();
-	void scene01_updateAnimations();
-	
+		
 	// Scene 2
 	int _s02_truckGrillCtr;
 	int _s02_nextChickenSequenceId, _s02_currChickenSequenceId;

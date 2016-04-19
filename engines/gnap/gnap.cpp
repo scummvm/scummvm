@@ -98,6 +98,7 @@ GnapEngine::GnapEngine(OSystem *syst, const ADGameDescription *gd) :
 	DebugMan.addDebugChannel(kDebugBasic, "basic", "Basic debug level");
 
 	Engine::syncSoundSettings();
+	_scene = nullptr;
 }
 
 GnapEngine::~GnapEngine() {
@@ -2021,12 +2022,6 @@ void GnapEngine::initPlatypusPos(int gridX, int gridY, Facing facing) {
 ////////////////////////////////////////////////////////////////////////////////
 
 void GnapEngine::initGlobalSceneVars() {
-
-	// Scene 1
-	_s01_pigsIdCtr = 0;
-	_s01_smokeIdCtr = 0;
-	_s01_spaceshipSurface = 0;
-
 	// Scene 2
 	_s02_truckGrillCtr = 0;
 
