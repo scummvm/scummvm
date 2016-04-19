@@ -33,6 +33,7 @@ class GnapEngine;
 class Scene01: public Scene {
 public:
 	Scene01(GnapEngine *vm);
+	~Scene01();
 
 	virtual int init();
 	virtual void updateHotspots();

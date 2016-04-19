@@ -59,6 +59,10 @@ Scene01::Scene01(GnapEngine *vm) : Scene(vm) {
 	_s01_spaceshipSurface = nullptr;
 }
 
+Scene01::~Scene01() {
+	delete _s01_spaceshipSurface;
+}
+
 int Scene01::init() {
 	_vm->_gameSys->setAnimation(0, 0, 0);
 	_vm->_gameSys->setAnimation(0, 0, 3);
