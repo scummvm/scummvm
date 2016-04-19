@@ -69,6 +69,16 @@ public:
 	void translateBack(const Point &pt) { _element.translate(-pt.x, -pt.y); }
 
 	/**
+	 * Get the PET control
+	 */
+	CPetControl *getPetControl() const;
+
+	/**
+	 * Sets new name and default bounds for glyph
+	 */
+	void setName(const CString &name, CPetControl *petControl);
+
+	/**
 	 * Setup the glyph
 	 */
 	virtual void setup(CPetControl *petControl, CPetGlyphs *owner);
@@ -215,6 +225,11 @@ public:
 	 * Get the owning section for the glyphs
 	 */
 	CPetSection *getOwner() const { return _owner; }
+
+	/**
+	 * Get the PET control
+	 */
+	CPetControl *getPetControl() const;
 };
 
 } // End of namespace Titanic

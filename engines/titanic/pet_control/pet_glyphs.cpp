@@ -52,6 +52,16 @@ CPetSection *CPetGlyph::getPetSection() const {
 	return _owner ? _owner->getOwner() : nullptr;
 }
 
+CPetControl *CPetGlyph::getPetControl() const {
+	return _owner ? _owner->getPetControl() : nullptr;
+}
+
+void CPetGlyph::setName(const CString &name, CPetControl *petControl) {
+	Rect r(0, 0, 52, 52);
+	_element.setBounds(r);
+	_element.reset(name, petControl, MODE_UNSELECTED);
+}
+
 /*------------------------------------------------------------------------*/
 
 CPetGlyphs::CPetGlyphs() : _firstVisibleIndex(0),  _numVisibleGlyphs(TOTAL_GLYPHS),
@@ -176,6 +186,10 @@ CPetGlyph *CPetGlyphs::getGlyph(int index) {
 	}
 
 	return nullptr;
+}
+
+CPetControl *CPetGlyphs::getPetControl() const {
+	return _owner ? _owner->getPetControl() : nullptr;
 }
 
 } // End of namespace Titanic

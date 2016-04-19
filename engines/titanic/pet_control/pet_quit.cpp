@@ -21,8 +21,34 @@
  */
 
 #include "titanic/pet_control/pet_quit.h"
+#include "titanic/pet_control/pet_real_life.h"
+#include "titanic/support/rect.h"
 
 namespace Titanic {
 
+void CPetQuit::setup(CPetControl *petControl, CPetGlyphs *owner) {
+	CPetGlyph::setup(petControl, owner);
+	Rect tempRect(0, 0, 280, 16);
+	tempRect.moveTo(32, 407);
+	_sub12.setBounds(tempRect);
+	_sub12.resize(3);
+	_sub12.setHasBorder(true);
+	_sub12.setup();
+
+	Rect elementRect(0, 0, 496, 388);
+	elementRect.moveTo(496, 388);
+	_element.setBounds(elementRect);
+}
+
+bool CPetQuit::reset() {
+	CPetControl *pet = getPetControl();
+	if (!pet)
+		return false;
+
+	setName("PetExit", pet);
+	// TODO
+
+	return true;
+}
 
 } // End of namespace Titanic

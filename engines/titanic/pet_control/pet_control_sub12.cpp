@@ -148,4 +148,12 @@ void CPetControlSub12::mergeStrings() {
 	}
 }
 
+void CPetControlSub12::resize(uint count) {
+	if (!count || _array.size() == count)
+		return;
+	_array.clear();
+	_array.resize(count);
+}
+
+
 } // End of namespace Titanic

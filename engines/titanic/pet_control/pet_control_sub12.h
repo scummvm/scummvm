@@ -98,6 +98,7 @@ public:
 	 */
 	void draw(CScreenManager *screenManager);
 
+	void resize(uint count);
 };
 
 } // End of namespace Titanic

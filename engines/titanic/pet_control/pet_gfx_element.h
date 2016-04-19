@@ -28,7 +28,7 @@
 namespace Titanic {
 
 class CPetGfxElement: public CPetElement {
-protected:
+public:
 	CGameObject *_object0;
 	CGameObject *_object1;
 	CGameObject *_object2;

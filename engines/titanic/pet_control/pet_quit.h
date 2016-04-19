@@ -34,6 +34,15 @@ private:
 	CPetControlSub12 _sub12;
 	CPetGfxElement _element;
 public:
+	/**
+	 * Setup the glyph
+	 */
+	virtual void setup(CPetControl *petControl, CPetGlyphs *owner);
+
+	/**
+	 * Reset the glyph
+	 */
+	virtual bool reset();
 };
 
 } // End of namespace Titanic

@@ -154,6 +154,11 @@ public:
 	virtual void proc36() {}
 	virtual void proc37() {}
 	virtual void proc38(int val) {}
+
+	/**
+	 * Get the PET control
+	 */
+	CPetControl *getPetControl() const { return _petControl; }
 };
 
 } // End of namespace Titanic
