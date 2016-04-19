@@ -2022,10 +2022,6 @@ void GnapEngine::initPlatypusPos(int gridX, int gridY, Facing facing) {
 ////////////////////////////////////////////////////////////////////////////////
 
 void GnapEngine::initGlobalSceneVars() {
-	// Scene 4
-	_s04_dogIdCtr = 0;
-	//_s04_triedWindow = true;//??
-	_s04_triedWindow = false;
 
 	// Scene 5
 	_s05_nextChickenSequenceId = -1;
