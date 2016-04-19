@@ -235,6 +235,24 @@ void MacWindow::drawBorder() {
 	}
 }
 
+void MacWindow::setHighlight(WindowClick highlightedPart) {
+	if (_highlightedPart == highlightedPart)
+		return;
+
+	_highlightedPart = highlightedPart;
+	_borderIsDirty = true;
+ }
+
+ void MacWindow::setScroll(float scrollPos, float scrollSize) {
+	if (_scrollPos == scrollPos && _scrollSize == scrollSize)
+		return;
+
+	_scrollPos = scrollPos;
+	_scrollSize = scrollSize;
+	_borderIsDirty = true;
+ }
+
+
 void MacWindow::drawBox(Graphics::ManagedSurface *g, int x, int y, int w, int h) {
 	Common::Rect r(x, y, x + w + 1, y + h + 1);
 
@@ -277,6 +295,7 @@ bool MacWindow::processEvent(Common::Event &event) {
 		mouseDown(event);
 		break;
 	case Common::EVENT_LBUTTONUP:
+		setHighlight(kBorderNone);
 #if 0
 		{
 			Designed *obj = mouseUp(event.mouse.x, event.mouse.y);
@@ -294,7 +313,6 @@ bool MacWindow::processEvent(Common::Event &event) {
 }
 
 void MacWindow::mouseDown(Common::Event &event) {
-	_innerDims.debugPrint();
 	if (_innerDims.contains(event.mouse.x, event.mouse.y)) {
 		if (!_callback)
 			return;
@@ -304,7 +322,6 @@ void MacWindow::mouseDown(Common::Event &event) {
 	}
 
 	WindowClick click = isInBorder(_innerDims, event.mouse.x, event.mouse.y);
-	warning("click: %d", click);
 
 	if (click == kBorderNone)
 		return;

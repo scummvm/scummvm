@@ -252,8 +252,18 @@ void Gui::draw() {
 		return;
 	}
 
-	if (_scene != _engine->_world->_player->_currentScene)
+	if (!_engine->_world->_player->_currentScene)
+		return;
+
+	if (_scene != _engine->_world->_player->_currentScene) {
 		_sceneDirty = true;
+
+		_scene = _engine->_world->_player->_currentScene;
+
+		_sceneWindow->setDimensions(*_scene->_designBounds);
+		_sceneWindow->setTitle(_scene->_name);
+		_consoleWindow->setDimensions(*_scene->_textBounds);
+	}
 
 	if (_sceneDirty || _bordersDirty) {
 		drawDesktop();
@@ -286,10 +296,6 @@ void Gui::drawScene() {
 	if (!_sceneDirty && !_bordersDirty)
 		return;
 
-	_scene = _engine->_world->_player->_currentScene;
-
-	_sceneWindow->setDimensions(*_scene->_designBounds);
-	_sceneWindow->setTitle(_scene->_name);
 	_scene->paint(_sceneWindow->getSurface(), 0, 0);
 	_sceneWindow->setDirty(true);
 
@@ -317,7 +323,6 @@ void Gui::drawConsole() {
 	if (!_consoleDirty && !_consoleFullRedraw && !_bordersDirty && !_sceneDirty)
 		return;
 
-	_consoleWindow->setDimensions(*_scene->_textBounds);
 	renderConsole(_consoleWindow->getSurface(), Common::Rect(kBorderWidth - 2, kBorderWidth - 2,
 				_scene->_textBounds->width() - kBorderWidth, _scene->_textBounds->height() - kBorderWidth));
 	_consoleWindow->setDirty(true);
@@ -332,8 +337,6 @@ static void consoleWindowCallback(WindowClick click, Common::Event &event, void 
 		float scrollSize = (float)gui->getConsoleTextAreaHeight() / textFullSize;
 
 		gui->_consoleWindow->setScroll(scrollPos, scrollSize);
-
-		warning("pos: %f size: %f", scrollPos, scrollSize);
 
 		return;
 	}
