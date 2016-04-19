@@ -189,8 +189,8 @@ Gui::Gui(WageEngine *engine) {
 
 	_menu = new Menu(this);
 
-	_sceneWindowId = _wm.add(false);
-	_consoleWindowId = _wm.add(true);
+	_sceneWindow = _wm.add(false);
+	_consoleWindow = _wm.add(true);
 }
 
 Gui::~Gui() {
@@ -282,12 +282,10 @@ void Gui::drawScene() {
 
 	_scene = _engine->_world->_player->_currentScene;
 
-	MacWindow *w = _wm.getWindow(_sceneWindowId);
-
-	w->setDimensions(*_scene->_designBounds);
-	w->setTitle(_scene->_name);
-	_scene->paint(w->getSurface(), 0, 0);
-	w->setDirty(true);
+	_sceneWindow->setDimensions(*_scene->_designBounds);
+	_sceneWindow->setTitle(_scene->_name);
+	_scene->paint(_sceneWindow->getSurface(), 0, 0);
+	_sceneWindow->setDirty(true);
 
 	_sceneDirty = true;
 	_consoleDirty = true;
@@ -310,11 +308,10 @@ void Gui::drawConsole() {
 	if (!_consoleDirty && !_consoleFullRedraw && !_bordersDirty && !_sceneDirty)
 		return;
 
-	MacWindow *w = _wm.getWindow(_consoleWindowId);
-	w->setDimensions(*_scene->_textBounds);
-	renderConsole(w->getSurface(), Common::Rect(kBorderWidth - 2, kBorderWidth - 2,
+	_consoleWindow->setDimensions(*_scene->_textBounds);
+	renderConsole(_consoleWindow->getSurface(), Common::Rect(kBorderWidth - 2, kBorderWidth - 2,
 				_scene->_textBounds->width() - kBorderWidth, _scene->_textBounds->height() - kBorderWidth));
-	w->setDirty(true);
+	_consoleWindow->setDirty(true);
 }
 
 void Gui::drawBox(Graphics::ManagedSurface *g, int x, int y, int w, int h) {

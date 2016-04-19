@@ -59,7 +59,7 @@ public:
 
 	void setScreen(Graphics::ManagedSurface *screen) { _screen = screen; }
 
-	int add(bool scrollable);
+	MacWindow *add(bool scrollable);
 	void setActive(int id);
 
 	void setFullRefresh(bool redraw) { _fullRefresh = true; }

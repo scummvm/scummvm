@@ -69,7 +69,7 @@ MacWindowManager::~MacWindowManager() {
         delete _windows[i];
 }
 
-int MacWindowManager::add(bool scrollable) {
+MacWindow *MacWindowManager::add(bool scrollable) {
     MacWindow *w = new MacWindow(_lastId, scrollable);
 
     _windows.push_back(w);
@@ -79,7 +79,7 @@ int MacWindowManager::add(bool scrollable) {
 
     _lastId++;
 
-    return _lastId - 1;
+    return w;
 }
 
 void MacWindowManager::setActive(int id) {

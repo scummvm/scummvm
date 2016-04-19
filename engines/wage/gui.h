@@ -181,8 +181,8 @@ private:
 	int _inputTextLineNum;
 
 	MacWindowManager _wm;
-	int _sceneWindowId;
-	int _consoleWindowId;
+	MacWindow *_sceneWindow;
+	MacWindow *_consoleWindow;
 };
 
 } // End of namespace Wage
