@@ -25,14 +25,18 @@
 #include "gnap/gnap.h"
 #include "gnap/gamesys.h"
 #include "gnap/resource.h"
+#include "gnap/scenes/scene00.h"
 
 namespace Gnap {
 
-int GnapEngine::scene00_init() {
+Scene00::Scene00(GnapEngine *vm) : Scene(vm) {
+}
+
+int Scene00::init() {
 	return 0x37C;
 }
 
-void GnapEngine::scene00_run() {
+void Scene00::run() {
 	const int animIdArr[] = {
 		0x356, 0x357, 0x358, 0x35A, 0x35F,
 		0x360, 0x361, 0x362, 0x363, 0x364,
@@ -53,8 +57,9 @@ void GnapEngine::scene00_run() {
 
 	int index = 0;
 	bool skip = false;
-	hideCursor();
-	_dat->open(1, "musop_n.dat");
+
+	_vm->hideCursor();
+	_vm->_dat->open(1, "musop_n.dat");
 
 	Video::VideoDecoder *videoDecoder = new Video::AVIDecoder();
 	if (!videoDecoder->loadFile("hoffman.avi")) {
@@ -68,17 +73,17 @@ void GnapEngine::scene00_run() {
 	int vidPosY = (600 - videoDecoder->getHeight()) / 2;
 	bool skipVideo = false;
 
-	screenEffect(1, 255, 255, 255);
+	_vm->screenEffect(1, 255, 255, 255);
 
-	while (!shouldQuit() && !videoDecoder->endOfVideo() && !skipVideo) {
+	while (!_vm->shouldQuit() && !videoDecoder->endOfVideo() && !skipVideo) {
 		if (videoDecoder->needsUpdate()) {
 			const Graphics::Surface *frame = videoDecoder->decodeNextFrame();
 			if (frame) {
 				if (frame->format.bytesPerPixel == 1) {
-					_system->copyRectToScreen(frame->getPixels(), frame->pitch, vidPosX, vidPosY, frame->w, frame->h);
+					_vm->_system->copyRectToScreen(frame->getPixels(), frame->pitch, vidPosX, vidPosY, frame->w, frame->h);
 				} else if (frame->format.bytesPerPixel != 4) {
-					Graphics::Surface *frame1 = frame->convertTo(_system->getScreenFormat());
-					_system->copyRectToScreen(frame1->getPixels(), frame1->pitch, vidPosX, vidPosY, frame1->w, frame1->h);
+					Graphics::Surface *frame1 = frame->convertTo(_vm->_system->getScreenFormat());
+					_vm->_system->copyRectToScreen(frame1->getPixels(), frame1->pitch, vidPosX, vidPosY, frame1->w, frame1->h);
 					frame1->free();
 					delete frame1;
 				} else {
@@ -95,12 +100,12 @@ void GnapEngine::scene00_run() {
 						}
 					}
 
-					Graphics::Surface *frame1 = frame->convertTo(_system->getScreenFormat());
-					_system->copyRectToScreen(frame1->getPixels(), frame1->pitch, vidPosX, vidPosY, frame1->w, frame1->h);
+					Graphics::Surface *frame1 = frame->convertTo(_vm->_system->getScreenFormat());
+					_vm->_system->copyRectToScreen(frame1->getPixels(), frame1->pitch, vidPosX, vidPosY, frame1->w, frame1->h);
 					frame1->free();
 					delete frame1;
 				}
-				_system->updateScreen();
+				_vm->_system->updateScreen();
 			}
 		}
 
@@ -111,66 +116,66 @@ void GnapEngine::scene00_run() {
 				skipVideo = true;
 		}
 
-		_system->delayMillis(10);
+		_vm->_system->delayMillis(10);
 	}
 
 	delete videoDecoder;
 
-	_gameSys->drawSpriteToBackground(0, 0, backgroundIdArr[index]);
-	_gameSys->insertSequence(0x356, 2, 0, 0, kSeqNone, 0, 0, 0);
-	_gameSys->setAnimation(0x356, 2, 0);
+	_vm->_gameSys->drawSpriteToBackground(0, 0, backgroundIdArr[index]);
+	_vm->_gameSys->insertSequence(0x356, 2, 0, 0, kSeqNone, 0, 0, 0);
+	_vm->_gameSys->setAnimation(0x356, 2, 0);
 
-	while (!_sceneDone) {
-		gameUpdateTick();
+	while (!_vm->_sceneDone) {
+		_vm->gameUpdateTick();
 
-		if (_gameSys->getAnimationStatus(0) == 2 || skip ) {
+		if (_vm->_gameSys->getAnimationStatus(0) == 2 || skip ) {
 			skip = false;
-			_gameSys->requestClear2(false);
-			_gameSys->requestClear1();
+			_vm->_gameSys->requestClear2(false);
+			_vm->_gameSys->requestClear1();
 			if ( index == 11 || index == 1 )
-				screenEffect(0, 0, 0, 0);
+				_vm->screenEffect(0, 0, 0, 0);
 
-			_gameSys->setAnimation(0, 0, 0);
+			_vm->_gameSys->setAnimation(0, 0, 0);
 			if (++index >= 31)
-				_sceneDone = true;
+				_vm->_sceneDone = true;
 			else {
-				_gameSys->insertSequence(animIdArr[index], 2, 0, 0, kSeqNone, 0, 0, 0);
+				_vm->_gameSys->insertSequence(animIdArr[index], 2, 0, 0, kSeqNone, 0, 0, 0);
 				if (index == 2) {
-					playSound(0x10000, false);
-					_gameSys->insertSequence(0x359, 2, 0, 0, 0, 0, 0, 0);
+					_vm->playSound(0x10000, false);
+					_vm->_gameSys->insertSequence(0x359, 2, 0, 0, 0, 0, 0, 0);
 				} else if (index == 3)
-					_gameSys->insertSequence(0x35B, 2, 0, 0, kSeqNone, 0, 0, 0);
+					_vm->_gameSys->insertSequence(0x35B, 2, 0, 0, kSeqNone, 0, 0, 0);
 				else if (index == 12)
-					_gameSys->insertSequence(0x36A, 2, 0, 0, kSeqNone, 0, 0, 0);
+					_vm->_gameSys->insertSequence(0x36A, 2, 0, 0, kSeqNone, 0, 0, 0);
 
-				_gameSys->drawSpriteToBackground(0, 0, backgroundIdArr[index]);
-				_gameSys->setAnimation(animIdArr[index], 2, 0);
+				_vm->_gameSys->drawSpriteToBackground(0, 0, backgroundIdArr[index]);
+				_vm->_gameSys->setAnimation(animIdArr[index], 2, 0);
 
 				if (index == 11)
-					stopSound(0x10000);
+					_vm->stopSound(0x10000);
 			}
 		}
 
-		if (isKeyStatus1(Common::KEYCODE_ESCAPE) || isKeyStatus1(Common::KEYCODE_SPACE) || isKeyStatus1(29)) {
-			clearKeyStatus1(Common::KEYCODE_ESCAPE);
-			clearKeyStatus1(Common::KEYCODE_SPACE);
-			clearKeyStatus1(29);
+		if (_vm->isKeyStatus1(Common::KEYCODE_ESCAPE) || _vm->isKeyStatus1(Common::KEYCODE_SPACE) || _vm->isKeyStatus1(29)) {
+			_vm->clearKeyStatus1(Common::KEYCODE_ESCAPE);
+			_vm->clearKeyStatus1(Common::KEYCODE_SPACE);
+			_vm->clearKeyStatus1(29);
 			if (index == 0) {
 				skip = true;
-				stopSound(0x3CF);
+				_vm->stopSound(0x3CF);
 			} else if (index == 1)
 				skip = true;
 			else
-				_sceneDone = true;
+				_vm->_sceneDone = true;
 		}
 	}
 
-	stopSound(0x10000);
+	_vm->stopSound(0x10000);
 
-	_newSceneNum = 1;
-	_newCursorValue = 1;
+	_vm->_newSceneNum = 1;
+	_vm->_newCursorValue = 1;
 
-	_dat->open(1, "stock_n.dat");
+	_vm->_dat->open(1, "stock_n.dat");
 }
 
 } // End of namespace Gnap
