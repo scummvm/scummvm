@@ -141,6 +141,7 @@ void OpenGLSDriver::start2DMode() {
 	//glBlendEquation(GL_FUNC_ADD); // It's the default
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
+	glDisable(GL_DEPTH_TEST);
 	glDepthMask(GL_FALSE);
 }
 
@@ -148,6 +149,7 @@ void OpenGLSDriver::end2DMode() {
 	// Disable alpha blending
 	glDisable(GL_BLEND);
 
+	glEnable(GL_DEPTH_TEST);
 	glDepthMask(GL_TRUE);
 }
 
