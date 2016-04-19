@@ -2022,9 +2022,6 @@ void GnapEngine::initPlatypusPos(int gridX, int gridY, Facing facing) {
 ////////////////////////////////////////////////////////////////////////////////
 
 void GnapEngine::initGlobalSceneVars() {
-	// Scene 2
-	_s02_truckGrillCtr = 0;
-
 	// Scene 3
 	_s03_nextPlatSequenceId = -1;
 	_s03_platypusScared = false;

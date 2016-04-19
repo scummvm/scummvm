@@ -23,6 +23,7 @@
 #include "gnap/gnap.h"
 #include "gnap/gamesys.h"
 #include "gnap/resource.h"
+#include "gnap/scenes/scene02.h"
 
 namespace Gnap {
 
@@ -58,132 +59,136 @@ enum {
 	kASUseTwigWithChicken		= 16
 };
 
-int GnapEngine::scene02_init() {
-	_gameSys->setAnimation(0, 0, 0);
-	return isFlag(kGFTruckKeysUsed) ? 0x15A : 0x15B;
+Scene02::Scene02(GnapEngine *vm) : Scene(vm) {
+	_s02_truckGrillCtr = 0;
+	_s02_nextChickenSequenceId = 0;
+	_s02_currChickenSequenceId = 0;
+	_s02_gnapTruckSequenceId = 0;
 }
 
-void GnapEngine::scene02_updateHotspots() {
-	setHotspot(kHSPlatypus, 0, 0, 0, 0, SF_DISABLED | SF_WALKABLE);
-	setHotspot(kHSChicken, 606, 455, 702, 568, SF_PLAT_CURSOR | SF_TALK_CURSOR | SF_GRAB_CURSOR | SF_LOOK_CURSOR, 7, 8);
-	setHotspot(kHSTruck1, 385, 258, 464, 304, SF_PLAT_CURSOR | SF_TALK_CURSOR | SF_GRAB_CURSOR | SF_LOOK_CURSOR, 6, 5);
-	setHotspot(kHSTruck2, 316, 224, 390, 376, SF_PLAT_CURSOR | SF_TALK_CURSOR | SF_GRAB_CURSOR | SF_LOOK_CURSOR, 5, 6);
-	setHotspot(kHSTruckGrill, 156, 318, 246, 390, SF_PLAT_CURSOR | SF_TALK_CURSOR | SF_GRAB_CURSOR | SF_LOOK_CURSOR, 2, 7);
-	setHotspot(kHSExitHouse, 480, 120, 556, 240, SF_EXIT_U_CURSOR, 7, 5);
-	setHotspot(kHSExitBarn, 610, 0, 800, 164, SF_EXIT_U_CURSOR, 10, 5);
-	setHotspot(kHSExitCreek, 780, 336, 800, 556, SF_EXIT_R_CURSOR | SF_WALKABLE, 10, 8);
-	setHotspot(kHSExitPigpen, 0, 300, 20, 600, SF_EXIT_L_CURSOR | SF_WALKABLE, 0, 8);
-	setHotspot(kHSWalkArea1, 92, 140, 304, 430, 0, 3, 1);
-	setHotspot(kHSWalkArea2, 0, 0, 800, 380);
-	setHotspot(kHSWalkArea3, 0, 0, 386, 445);
-	setHotspot(kHSWalkArea4, 386, 0, 509, 410);
-	setDeviceHotspot(kHSDevice, -1, -1, -1, -1);
-	if (isFlag(kGFPlatypus))
-		_hotspots[kHSPlatypus]._flags = SF_WALKABLE | SF_TALK_CURSOR | SF_GRAB_CURSOR | SF_LOOK_CURSOR;
-	_hotspotsCount = 14;
+int Scene02::init() {
+	_vm->_gameSys->setAnimation(0, 0, 0);
+	return _vm->isFlag(kGFTruckKeysUsed) ? 0x15A : 0x15B;
 }
 
-void GnapEngine::scene02_run() {
-	playSound(0x1091C, true);
-	startSoundTimerC(6);
+void Scene02::updateHotspots() {
+	_vm->setHotspot(kHSPlatypus, 0, 0, 0, 0, SF_DISABLED | SF_WALKABLE);
+	_vm->setHotspot(kHSChicken, 606, 455, 702, 568, SF_PLAT_CURSOR | SF_TALK_CURSOR | SF_GRAB_CURSOR | SF_LOOK_CURSOR, 7, 8);
+	_vm->setHotspot(kHSTruck1, 385, 258, 464, 304, SF_PLAT_CURSOR | SF_TALK_CURSOR | SF_GRAB_CURSOR | SF_LOOK_CURSOR, 6, 5);
+	_vm->setHotspot(kHSTruck2, 316, 224, 390, 376, SF_PLAT_CURSOR | SF_TALK_CURSOR | SF_GRAB_CURSOR | SF_LOOK_CURSOR, 5, 6);
+	_vm->setHotspot(kHSTruckGrill, 156, 318, 246, 390, SF_PLAT_CURSOR | SF_TALK_CURSOR | SF_GRAB_CURSOR | SF_LOOK_CURSOR, 2, 7);
+	_vm->setHotspot(kHSExitHouse, 480, 120, 556, 240, SF_EXIT_U_CURSOR, 7, 5);
+	_vm->setHotspot(kHSExitBarn, 610, 0, 800, 164, SF_EXIT_U_CURSOR, 10, 5);
+	_vm->setHotspot(kHSExitCreek, 780, 336, 800, 556, SF_EXIT_R_CURSOR | SF_WALKABLE, 10, 8);
+	_vm->setHotspot(kHSExitPigpen, 0, 300, 20, 600, SF_EXIT_L_CURSOR | SF_WALKABLE, 0, 8);
+	_vm->setHotspot(kHSWalkArea1, 92, 140, 304, 430, 0, 3, 1);
+	_vm->setHotspot(kHSWalkArea2, 0, 0, 800, 380);
+	_vm->setHotspot(kHSWalkArea3, 0, 0, 386, 445);
+	_vm->setHotspot(kHSWalkArea4, 386, 0, 509, 410);
+	_vm->setDeviceHotspot(kHSDevice, -1, -1, -1, -1);
+	if (_vm->isFlag(kGFPlatypus))
+		_vm->_hotspots[kHSPlatypus]._flags = SF_WALKABLE | SF_TALK_CURSOR | SF_GRAB_CURSOR | SF_LOOK_CURSOR;
+	_vm->_hotspotsCount = 14;
+}
+
+void Scene02::run() {
+	_vm->playSound(0x1091C, true);
+	_vm->startSoundTimerC(6);
 
 	_s02_currChickenSequenceId = 0x14B;
-	_gameSys->setAnimation(0x14B, 179, 2);
-	_gameSys->insertSequence(0x14B, 179, 0, 0, kSeqNone, 0, 0, 0);
+	_vm->_gameSys->setAnimation(0x14B, 179, 2);
+	_vm->_gameSys->insertSequence(0x14B, 179, 0, 0, kSeqNone, 0, 0, 0);
 
 	_s02_nextChickenSequenceId = -1;
-	_timers[5] = getRandom(20) + 30;
-	_timers[4] = getRandom(100) + 300;
+	_vm->_timers[5] = _vm->getRandom(20) + 30;
+	_vm->_timers[4] = _vm->getRandom(100) + 300;
 	
-	queueInsertDeviceIcon();
+	_vm->queueInsertDeviceIcon();
 	
-	switch (_prevSceneNum) {
+	switch (_vm->_prevSceneNum) {
 	case 3:
-		initGnapPos(11, 6, kDirBottomLeft);
-		if (isFlag(kGFPlatypus))
-			initPlatypusPos(12, 6, kDirUnk4);
-		endSceneInit();
-		if (isFlag(kGFPlatypus))
-			platypusWalkTo(9, 6, -1, 0x107C2, 1);
-		gnapWalkTo(8, 6, -1, 0x107BA, 1);
+		_vm->initGnapPos(11, 6, kDirBottomLeft);
+		if (_vm->isFlag(kGFPlatypus))
+			_vm->initPlatypusPos(12, 6, kDirUnk4);
+		_vm->endSceneInit();
+		if (_vm->isFlag(kGFPlatypus))
+			_vm->platypusWalkTo(9, 6, -1, 0x107C2, 1);
+		_vm->gnapWalkTo(8, 6, -1, 0x107BA, 1);
 		break;
 	case 4:
-		initGnapPos(_hotspotsWalkPos[6].x, _hotspotsWalkPos[6].y, kDirBottomLeft);
-		if (isFlag(kGFPlatypus))
-			initPlatypusPos(_hotspotsWalkPos[6].x + 1, _hotspotsWalkPos[6].y, kDirUnk4);
-		endSceneInit();
-		gnapWalkTo(7, 6, 0, 0x107B9, 1);
-		if (isFlag(kGFPlatypus))
-			platypusWalkTo(8, 6, 1, 0x107C2, 1);
-		scene02_updateHotspots();
-		_gameSys->waitForUpdate();
+		_vm->initGnapPos(_vm->_hotspotsWalkPos[6].x, _vm->_hotspotsWalkPos[6].y, kDirBottomLeft);
+		if (_vm->isFlag(kGFPlatypus))
+			_vm->initPlatypusPos(_vm->_hotspotsWalkPos[6].x + 1, _vm->_hotspotsWalkPos[6].y, kDirUnk4);
+		_vm->endSceneInit();
+		_vm->gnapWalkTo(7, 6, 0, 0x107B9, 1);
+		if (_vm->isFlag(kGFPlatypus))
+			_vm->platypusWalkTo(8, 6, 1, 0x107C2, 1);
+		updateHotspots();
+		_vm->_gameSys->waitForUpdate();
 		break;
 	case 47:
-		clearFlag(kGFUnk25);
-		initGnapPos(5, 6, kDirBottomLeft);
-		initPlatypusPos(6, 7, kDirUnk4);
-		endSceneInit();
+		_vm->clearFlag(kGFUnk25);
+		_vm->initGnapPos(5, 6, kDirBottomLeft);
+		_vm->initPlatypusPos(6, 7, kDirUnk4);
+		_vm->endSceneInit();
 		break;
 	case 49:
-		initGnapPos(5, 6, kDirBottomRight);
-		if (isFlag(kGFPlatypus))
-			initPlatypusPos(6, 7, kDirNone);
-		endSceneInit();
+		_vm->initGnapPos(5, 6, kDirBottomRight);
+		if (_vm->isFlag(kGFPlatypus))
+			_vm->initPlatypusPos(6, 7, kDirNone);
+		_vm->endSceneInit();
 		break;
 	default:
-		initGnapPos(-1, 6, kDirBottomRight);
-		if (isFlag(kGFPlatypus))
-			initPlatypusPos(-1, 7, kDirNone);
-		endSceneInit();
-		if (isFlag(kGFPlatypus))
-			platypusWalkTo(2, 7, -1, 0x107C2, 1);
-		gnapWalkTo(2, 8, -1, 0x107B9, 1);
+		_vm->initGnapPos(-1, 6, kDirBottomRight);
+		if (_vm->isFlag(kGFPlatypus))
+			_vm->initPlatypusPos(-1, 7, kDirNone);
+		_vm->endSceneInit();
+		if (_vm->isFlag(kGFPlatypus))
+			_vm->platypusWalkTo(2, 7, -1, 0x107C2, 1);
+		_vm->gnapWalkTo(2, 8, -1, 0x107B9, 1);
 		break;
 	}
 	
-	while (!_sceneDone) {
+	while (!_vm->_sceneDone) {
+		_vm->updateMouseCursor();	
+		_vm->updateCursorByHotspot();
 	
-		updateMouseCursor();
+		_vm->testWalk(0, 6, 7, 6, 8, 6);
 	
-		updateCursorByHotspot();
+		_vm->_sceneClickedHotspot = _vm->getClickedHotspotId();
+		_vm->updateGrabCursorSprite(0, 0);
 	
-		testWalk(0, 6, 7, 6, 8, 6);
-	
-		_sceneClickedHotspot = getClickedHotspotId();
-		updateGrabCursorSprite(0, 0);
-	
-		switch (_sceneClickedHotspot) {
-
+		switch (_vm->_sceneClickedHotspot) {
 		case kHSDevice:
-			if (_gnapActionStatus < 0) {
-				runMenu();
-				scene02_updateHotspots();
+			if (_vm->_gnapActionStatus < 0) {
+				_vm->runMenu();
+				updateHotspots();
 			}
 			break;
 
 		case kHSPlatypus:
-			if (_gnapActionStatus < 0 && isFlag(kGFPlatypus)) {
-				if (_grabCursorSpriteIndex == kItemDisguise) {
-					gnapUseDisguiseOnPlatypus();
-				} else if (_grabCursorSpriteIndex >= 0) {
-					playGnapImpossible(0, 0);
+			if (_vm->_gnapActionStatus < 0 && _vm->isFlag(kGFPlatypus)) {
+				if (_vm->_grabCursorSpriteIndex == kItemDisguise) {
+					_vm->gnapUseDisguiseOnPlatypus();
+				} else if (_vm->_grabCursorSpriteIndex >= 0) {
+					_vm->playGnapImpossible(0, 0);
 				} else {
-					switch (_verbCursor) {
+					switch (_vm->_verbCursor) {
 					case LOOK_CURSOR:
-						if (isFlag(kGFKeysTaken))
-							playGnapMoan1(_platX, _platY);
+						if (_vm->isFlag(kGFKeysTaken))
+							_vm->playGnapMoan1(_vm->_platX, _vm->_platY);
 						else
-							playGnapScratchingHead(_platX, _platY);
+							_vm->playGnapScratchingHead(_vm->_platX, _vm->_platY);
 						break;
 					case GRAB_CURSOR:
-						gnapKissPlatypus(0);
+						_vm->gnapKissPlatypus(0);
 						break;
 					case TALK_CURSOR:
-						playGnapBrainPulsating(_platX, _platY);
-						playPlatypusSequence(getPlatypusSequenceId());
+						_vm->playGnapBrainPulsating(_vm->_platX, _vm->_platY);
+						_vm->playPlatypusSequence(_vm->getPlatypusSequenceId());
 						break;
 					case PLAT_CURSOR:
-						playGnapImpossible(0, 0);
+						_vm->playGnapImpossible(0, 0);
 						break;
 					}
 				}
@@ -191,33 +196,33 @@ void GnapEngine::scene02_run() {
 			break;
 
 		case kHSChicken:
-			if (_gnapActionStatus < 0) {
-				if (_grabCursorSpriteIndex == kItemTwig) {
-					_gnapIdleFacing = kDirUpRight;
-					gnapWalkTo(_hotspotsWalkPos[_sceneClickedHotspot].x, _hotspotsWalkPos[_sceneClickedHotspot].y + 1,
-						0, getGnapSequenceId(gskIdle, 0, 0) | 0x10000, 1);
-					_gnapActionStatus = kASUseTwigWithChicken;
-				} else if (_grabCursorSpriteIndex >= 0) {
-					playGnapShowCurrItem(_hotspotsWalkPos[1].x, _hotspotsWalkPos[1].y + 1, 9, 8);
+			if (_vm->_gnapActionStatus < 0) {
+				if (_vm->_grabCursorSpriteIndex == kItemTwig) {
+					_vm->_gnapIdleFacing = kDirUpRight;
+					_vm->gnapWalkTo(_vm->_hotspotsWalkPos[_vm->_sceneClickedHotspot].x, _vm->_hotspotsWalkPos[_vm->_sceneClickedHotspot].y + 1,
+						0, _vm->getGnapSequenceId(gskIdle, 0, 0) | 0x10000, 1);
+					_vm->_gnapActionStatus = kASUseTwigWithChicken;
+				} else if (_vm->_grabCursorSpriteIndex >= 0) {
+					_vm->playGnapShowCurrItem(_vm->_hotspotsWalkPos[1].x, _vm->_hotspotsWalkPos[1].y + 1, 9, 8);
 				} else {
-					switch (_verbCursor) {
+					switch (_vm->_verbCursor) {
 					case LOOK_CURSOR:
-						playGnapMoan2(9, 8);
+						_vm->playGnapMoan2(9, 8);
 						break;
 					case GRAB_CURSOR:
-						_gnapIdleFacing = kDirBottomRight;
-						if (gnapWalkTo(_hotspotsWalkPos[1].x, _hotspotsWalkPos[1].y, 0, getGnapSequenceId(gskIdle, 0, 0) | 0x10000, 1))
-							_gnapActionStatus = kASGrabChicken;
+						_vm->_gnapIdleFacing = kDirBottomRight;
+						if (_vm->gnapWalkTo(_vm->_hotspotsWalkPos[1].x, _vm->_hotspotsWalkPos[1].y, 0, _vm->getGnapSequenceId(gskIdle, 0, 0) | 0x10000, 1))
+							_vm->_gnapActionStatus = kASGrabChicken;
 						else
-							_gnapActionStatus = -1;
+							_vm->_gnapActionStatus = -1;
 						break;
 					case TALK_CURSOR:
-						_gnapIdleFacing = kDirBottomRight;
-						gnapWalkTo(_hotspotsWalkPos[1].x, _hotspotsWalkPos[1].y, 0, getGnapSequenceId(gskBrainPulsating, 0, 0) | 0x10000, 1);
-						_gnapActionStatus = kASTalkChicken;
+						_vm->_gnapIdleFacing = kDirBottomRight;
+						_vm->gnapWalkTo(_vm->_hotspotsWalkPos[1].x, _vm->_hotspotsWalkPos[1].y, 0, _vm->getGnapSequenceId(gskBrainPulsating, 0, 0) | 0x10000, 1);
+						_vm->_gnapActionStatus = kASTalkChicken;
 						break;
 					case PLAT_CURSOR:
-						playGnapImpossible(0, 0);
+						_vm->playGnapImpossible(0, 0);
 						break;
 					}
 				}
@@ -226,45 +231,45 @@ void GnapEngine::scene02_run() {
 
 		case kHSTruck1:
 		case kHSTruck2:
-			if (_gnapActionStatus < 0) {
-				if (_grabCursorSpriteIndex == kItemKeys) {
-					if (gnapWalkTo(_hotspotsWalkPos[3].x, _hotspotsWalkPos[3].y, 0, getGnapSequenceId(gskIdle, 2, 2) | 0x10000, 1)) {
-						setGrabCursorSprite(-1);
-						invRemove(kItemKeys);
-						if (isFlag(kGFTruckFilledWithGas))
-							_gnapActionStatus = kASUseTruckGas;
+			if (_vm->_gnapActionStatus < 0) {
+				if (_vm->_grabCursorSpriteIndex == kItemKeys) {
+					if (_vm->gnapWalkTo(_vm->_hotspotsWalkPos[3].x, _vm->_hotspotsWalkPos[3].y, 0, _vm->getGnapSequenceId(gskIdle, 2, 2) | 0x10000, 1)) {
+						_vm->setGrabCursorSprite(-1);
+						_vm->invRemove(kItemKeys);
+						if (_vm->isFlag(kGFTruckFilledWithGas))
+							_vm->_gnapActionStatus = kASUseTruckGas;
 						else
-							_gnapActionStatus = kASUseTruckNoGas;
+							_vm->_gnapActionStatus = kASUseTruckNoGas;
 					}
-				} else if (_grabCursorSpriteIndex == kItemGas) {
-					_hotspots[kHSWalkArea4]._flags |= SF_WALKABLE;
-					if (gnapWalkTo(_hotspotsWalkPos[2].x, _hotspotsWalkPos[2].y, 0, getGnapSequenceId(gskIdle, 2, 2) | 0x10000, 1))
-						_gnapActionStatus = kASUseGasWithTruck;
-					_hotspots[kHSWalkArea4]._flags &= ~SF_WALKABLE;
-				} else if (_grabCursorSpriteIndex >= 0) {
-					playGnapShowCurrItem(_hotspotsWalkPos[2].x, _hotspotsWalkPos[2].y, 2, 2);
+				} else if (_vm->_grabCursorSpriteIndex == kItemGas) {
+					_vm->_hotspots[kHSWalkArea4]._flags |= SF_WALKABLE;
+					if (_vm->gnapWalkTo(_vm->_hotspotsWalkPos[2].x, _vm->_hotspotsWalkPos[2].y, 0, _vm->getGnapSequenceId(gskIdle, 2, 2) | 0x10000, 1))
+						_vm->_gnapActionStatus = kASUseGasWithTruck;
+					_vm->_hotspots[kHSWalkArea4]._flags &= ~SF_WALKABLE;
+				} else if (_vm->_grabCursorSpriteIndex >= 0) {
+					_vm->playGnapShowCurrItem(_vm->_hotspotsWalkPos[2].x, _vm->_hotspotsWalkPos[2].y, 2, 2);
 				} else {
-					switch (_verbCursor) {
+					switch (_vm->_verbCursor) {
 					case LOOK_CURSOR:
-						playGnapScratchingHead(2, 2);
+						_vm->playGnapScratchingHead(2, 2);
 						break;
 					case GRAB_CURSOR:
-						if (isFlag(kGFTruckKeysUsed)) {
-							if (gnapWalkTo(_hotspotsWalkPos[3].x, _hotspotsWalkPos[3].y, 0, getGnapSequenceId(gskIdle, 2, 2) | 0x10000, 1)) {
-								if (isFlag(kGFTruckFilledWithGas))
-									_gnapActionStatus = kASUseTruckGas;
+						if (_vm->isFlag(kGFTruckKeysUsed)) {
+							if (_vm->gnapWalkTo(_vm->_hotspotsWalkPos[3].x, _vm->_hotspotsWalkPos[3].y, 0, _vm->getGnapSequenceId(gskIdle, 2, 2) | 0x10000, 1)) {
+								if (_vm->isFlag(kGFTruckFilledWithGas))
+									_vm->_gnapActionStatus = kASUseTruckGas;
 								else
-									_gnapActionStatus = kASUseTruckNoGas;
+									_vm->_gnapActionStatus = kASUseTruckNoGas;
 							}
 						} else {
-							_gnapIdleFacing = kDirUnk4;
-							if (gnapWalkTo(_hotspotsWalkPos[3].x, _hotspotsWalkPos[3].y, 0, getGnapSequenceId(gskIdle, 2, 2) | 0x10000, 1))
-								_gnapActionStatus = kASUseTruckNoKeys;
+							_vm->_gnapIdleFacing = kDirUnk4;
+							if (_vm->gnapWalkTo(_vm->_hotspotsWalkPos[3].x, _vm->_hotspotsWalkPos[3].y, 0, _vm->getGnapSequenceId(gskIdle, 2, 2) | 0x10000, 1))
+								_vm->_gnapActionStatus = kASUseTruckNoKeys;
 						}
 						break;
 					case TALK_CURSOR:
 					case PLAT_CURSOR:
-						playGnapImpossible(0, 0);
+						_vm->playGnapImpossible(0, 0);
 						break;
 					}
 				}
@@ -272,22 +277,22 @@ void GnapEngine::scene02_run() {
 			break;
 
 		case kHSTruckGrill:
-			if (_gnapActionStatus < 0) {
-				if (_grabCursorSpriteIndex >= 0) {
-					playGnapShowCurrItem(_hotspotsWalkPos[4].x, _hotspotsWalkPos[4].y, 2, 4);
+			if (_vm->_gnapActionStatus < 0) {
+				if (_vm->_grabCursorSpriteIndex >= 0) {
+					_vm->playGnapShowCurrItem(_vm->_hotspotsWalkPos[4].x, _vm->_hotspotsWalkPos[4].y, 2, 4);
 				} else {
-					switch (_verbCursor) {
+					switch (_vm->_verbCursor) {
 					case LOOK_CURSOR:
-						playGnapMoan2(2, 4);
+						_vm->playGnapMoan2(2, 4);
 						break;
 					case GRAB_CURSOR:
-						_gnapIdleFacing = kDirUpRight;
-						gnapWalkTo(_hotspotsWalkPos[4].x, _hotspotsWalkPos[4].y, 0, getGnapSequenceId(gskIdle, 0, 0) | 0x10000, 1);
-						_gnapActionStatus = kASGrabTruckGrill;
+						_vm->_gnapIdleFacing = kDirUpRight;
+						_vm->gnapWalkTo(_vm->_hotspotsWalkPos[4].x, _vm->_hotspotsWalkPos[4].y, 0, _vm->getGnapSequenceId(gskIdle, 0, 0) | 0x10000, 1);
+						_vm->_gnapActionStatus = kASGrabTruckGrill;
 						break;
 					case TALK_CURSOR:
 					case PLAT_CURSOR:
-						playGnapImpossible(0, 0);
+						_vm->playGnapImpossible(0, 0);
 						break;
 					}
 				}
@@ -295,48 +300,48 @@ void GnapEngine::scene02_run() {
 			break;
 
 		case kHSExitHouse:
-			if (_gnapActionStatus < 0) {
-				_isLeavingScene = 1;
-				gnapWalkTo(_hotspotsWalkPos[6].x, _hotspotsWalkPos[6].y, 0, 0x107AD, 1);
-				_gnapActionStatus = kASLeaveScene;
-				if (isFlag(kGFPlatypus))
-					platypusWalkTo(_hotspotsWalkPos[6].x + 1, _hotspotsWalkPos[6].y, -1, 0x107C1, 1);
-				scene02_updateHotspots();
-				_newSceneNum = 4;
+			if (_vm->_gnapActionStatus < 0) {
+				_vm->_isLeavingScene = 1;
+				_vm->gnapWalkTo(_vm->_hotspotsWalkPos[6].x, _vm->_hotspotsWalkPos[6].y, 0, 0x107AD, 1);
+				_vm->_gnapActionStatus = kASLeaveScene;
+				if (_vm->isFlag(kGFPlatypus))
+					_vm->platypusWalkTo(_vm->_hotspotsWalkPos[6].x + 1, _vm->_hotspotsWalkPos[6].y, -1, 0x107C1, 1);
+				updateHotspots();
+				_vm->_newSceneNum = 4;
 			}
 			break;
 
 		case kHSExitBarn:
-			if (_gnapActionStatus < 0) {
-				_isLeavingScene = 1;
-				gnapWalkTo(_hotspotsWalkPos[7].x, _hotspotsWalkPos[7].y, 0, 0x107AD, 1);
-				_gnapActionStatus = kASLeaveScene;
-				if (isFlag(kGFPlatypus))
-					platypusWalkTo(_hotspotsWalkPos[7].x + 1, _hotspotsWalkPos[7].y, -1, 0x107C1, 1);
-				scene02_updateHotspots();
-				_newSceneNum = 5;
+			if (_vm->_gnapActionStatus < 0) {
+				_vm->_isLeavingScene = 1;
+				_vm->gnapWalkTo(_vm->_hotspotsWalkPos[7].x, _vm->_hotspotsWalkPos[7].y, 0, 0x107AD, 1);
+				_vm->_gnapActionStatus = kASLeaveScene;
+				if (_vm->isFlag(kGFPlatypus))
+					_vm->platypusWalkTo(_vm->_hotspotsWalkPos[7].x + 1, _vm->_hotspotsWalkPos[7].y, -1, 0x107C1, 1);
+				updateHotspots();
+				_vm->_newSceneNum = 5;
 			}
 			break;
 
 		case kHSExitCreek:
-			if (_gnapActionStatus < 0) {
-				_isLeavingScene = 1;
-				gnapWalkTo(_hotspotsWalkPos[8].x, _hotspotsWalkPos[8].y, 0, 0x107AB, 1);
-				_gnapActionStatus = kASLeaveScene;
-				if (isFlag(kGFPlatypus))
-					platypusWalkTo(_hotspotsWalkPos[8].x, _hotspotsWalkPos[8].y, -1, 0x107CD, 1);
-				_newSceneNum = 3;
+			if (_vm->_gnapActionStatus < 0) {
+				_vm->_isLeavingScene = 1;
+				_vm->gnapWalkTo(_vm->_hotspotsWalkPos[8].x, _vm->_hotspotsWalkPos[8].y, 0, 0x107AB, 1);
+				_vm->_gnapActionStatus = kASLeaveScene;
+				if (_vm->isFlag(kGFPlatypus))
+					_vm->platypusWalkTo(_vm->_hotspotsWalkPos[8].x, _vm->_hotspotsWalkPos[8].y, -1, 0x107CD, 1);
+				_vm->_newSceneNum = 3;
 			}
 			break;
 
 		case kHSExitPigpen:
-			if (_gnapActionStatus < 0) {
-				_isLeavingScene = 1;
-				gnapWalkTo(_hotspotsWalkPos[9].x, _hotspotsWalkPos[9].y, 0, 0x107AF, 1);
-				_gnapActionStatus = kASLeaveScene;
-				if (isFlag(kGFPlatypus))
-					platypusWalkTo(_hotspotsWalkPos[9].x, _hotspotsWalkPos[9].y, -1, 0x107CF, 1);
-				_newSceneNum = 1;
+			if (_vm->_gnapActionStatus < 0) {
+				_vm->_isLeavingScene = 1;
+				_vm->gnapWalkTo(_vm->_hotspotsWalkPos[9].x, _vm->_hotspotsWalkPos[9].y, 0, 0x107AF, 1);
+				_vm->_gnapActionStatus = kASLeaveScene;
+				if (_vm->isFlag(kGFPlatypus))
+					_vm->platypusWalkTo(_vm->_hotspotsWalkPos[9].x, _vm->_hotspotsWalkPos[9].y, -1, 0x107CF, 1);
+				_vm->_newSceneNum = 1;
 			}
 			break;
 
@@ -344,117 +349,113 @@ void GnapEngine::scene02_run() {
 		case kHSWalkArea2:
 		case kHSWalkArea3:
 		case kHSWalkArea4:
-			if (_gnapActionStatus < 0)
-				gnapWalkTo(-1, -1, -1, -1, 1);
+			if (_vm->_gnapActionStatus < 0)
+				_vm->gnapWalkTo(-1, -1, -1, -1, 1);
 			break;
 
 		default:
-			if (_mouseClickState._left && _gnapActionStatus < 0) {
-				gnapWalkTo(-1, -1, -1, -1, 1);
-				_mouseClickState._left = false;
+			if (_vm->_mouseClickState._left && _vm->_gnapActionStatus < 0) {
+				_vm->gnapWalkTo(-1, -1, -1, -1, 1);
+				_vm->_mouseClickState._left = false;
 			}
 			break;
-
 		}
 	
-		scene02_updateAnimations();
+		updateAnimations();
 	
-		if (!isSoundPlaying(0x1091C))
-			playSound(0x1091C, true);
+		if (!_vm->isSoundPlaying(0x1091C))
+			_vm->playSound(0x1091C, true);
 	
-		if (!_isLeavingScene) {
-			if (_platypusActionStatus < 0 && isFlag(kGFPlatypus))
-				updatePlatypusIdleSequence();
-			if (_gnapActionStatus < 0)
-				updateGnapIdleSequence();
-			if (!_timers[4]) {
+		if (!_vm->_isLeavingScene) {
+			if (_vm->_platypusActionStatus < 0 && _vm->isFlag(kGFPlatypus))
+				_vm->updatePlatypusIdleSequence();
+			if (_vm->_gnapActionStatus < 0)
+				_vm->updateGnapIdleSequence();
+			if (!_vm->_timers[4]) {
 				// Update bird animation
-				_timers[4] = getRandom(100) + 300;
-				if (getRandom(2) != 0)
-					_gameSys->insertSequence(0x156, 256, 0, 0, kSeqNone, 0, 0, 0);
+				_vm->_timers[4] = _vm->getRandom(100) + 300;
+				if (_vm->getRandom(2) != 0)
+					_vm->_gameSys->insertSequence(0x156, 256, 0, 0, kSeqNone, 0, 0, 0);
 				else
-					_gameSys->insertSequence(0x154, 256, 0, 0, kSeqNone, 0, 0, 0);
+					_vm->_gameSys->insertSequence(0x154, 256, 0, 0, kSeqNone, 0, 0, 0);
 			}
-			if (!_timers[5] && _s02_nextChickenSequenceId == -1 && _gnapActionStatus != 7 && _gnapActionStatus != 8) {
-				if (getRandom(6) != 0) {
+			if (!_vm->_timers[5] && _s02_nextChickenSequenceId == -1 && _vm->_gnapActionStatus != 7 && _vm->_gnapActionStatus != 8) {
+				if (_vm->getRandom(6) != 0) {
 					_s02_nextChickenSequenceId = 0x14B;
-					_timers[5] = getRandom(20) + 30;
+					_vm->_timers[5] = _vm->getRandom(20) + 30;
 				} else {
 					_s02_nextChickenSequenceId = 0x14D;
-					_timers[5] = getRandom(20) + 50;
+					_vm->_timers[5] = _vm->getRandom(20) + 50;
 				}
 			}
-			playSoundC();
+			_vm->playSoundC();
 		}
 	
-		checkGameKeys();
+		_vm->checkGameKeys();
 	
-		if (isKeyStatus1(8)) {
-			clearKeyStatus1(8);
-			runMenu();
-			scene02_updateHotspots();
+		if (_vm->isKeyStatus1(8)) {
+			_vm->clearKeyStatus1(8);
+			_vm->runMenu();
+			updateHotspots();
 		}
 		
-		gameUpdateTick();
-	
+		_vm->gameUpdateTick();
 	}
-
 }
 
-void GnapEngine::scene02_updateAnimations() {
-
-	if (_gameSys->getAnimationStatus(0) == 2) {
-		switch (_gnapActionStatus) {
+void Scene02::updateAnimations() {
+	if (_vm->_gameSys->getAnimationStatus(0) == 2) {
+		switch (_vm->_gnapActionStatus) {
 		case kASUseTruckNoKeys:
-			_gameSys->insertSequence(0x14E, _gnapId, makeRid(_gnapSequenceDatNum, _gnapSequenceId), _gnapId, kSeqSyncWait, 0, 0, 0);
-			_gameSys->setAnimation(0x14E, _gnapId, 0);
-			_gnapSequenceId = 0x14E;
-			_gnapSequenceDatNum = 0;
-			_gnapActionStatus = kASUseTruckNoKeysDone;
+			_vm->_gameSys->insertSequence(0x14E, _vm->_gnapId, makeRid(_vm->_gnapSequenceDatNum, _vm->_gnapSequenceId), _vm->_gnapId, kSeqSyncWait, 0, 0, 0);
+			_vm->_gameSys->setAnimation(0x14E, _vm->_gnapId, 0);
+			_vm->_gnapSequenceId = 0x14E;
+			_vm->_gnapSequenceDatNum = 0;
+			_vm->_gnapActionStatus = kASUseTruckNoKeysDone;
 			break;
 		case kASUseGasWithTruck:
-			_gameSys->insertSequence(0x151, _gnapId, makeRid(_gnapSequenceDatNum, _gnapSequenceId), _gnapId, kSeqSyncWait, 0, 0, 0);
-			_gameSys->setAnimation(0x151, _gnapId, 0);
-			_gnapSequenceId = 0x151;
-			_gnapSequenceDatNum = 0;
-			invRemove(kItemGas);
-			setGrabCursorSprite(-1);
-			setFlag(kGFTruckFilledWithGas);
-			_gnapActionStatus = kASUseGasWithTruckDone;
+			_vm->_gameSys->insertSequence(0x151, _vm->_gnapId, makeRid(_vm->_gnapSequenceDatNum, _vm->_gnapSequenceId), _vm->_gnapId, kSeqSyncWait, 0, 0, 0);
+			_vm->_gameSys->setAnimation(0x151, _vm->_gnapId, 0);
+			_vm->_gnapSequenceId = 0x151;
+			_vm->_gnapSequenceDatNum = 0;
+			_vm->invRemove(kItemGas);
+			_vm->setGrabCursorSprite(-1);
+			_vm->setFlag(kGFTruckFilledWithGas);
+			_vm->_gnapActionStatus = kASUseGasWithTruckDone;
 			break;
 		case kASUseTruckGas:
-			_timers[5] = 9999;
-			_timers[4] = 9999;
-			hideCursor();
-			setGrabCursorSprite(-1);
-			if (!isFlag(kGFTruckKeysUsed)) {
-				_gameSys->insertSequence(0x14F, _gnapId, makeRid(_gnapSequenceDatNum, _gnapSequenceId), _gnapId, kSeqSyncWait, 0, 0, 0);
-				_gameSys->waitForUpdate();
-				setFlag(kGFTruckKeysUsed);
-				_gnapSequenceId = 0x14F;
-				_gnapSequenceDatNum = 0;
-				invRemove(kItemKeys);
-				setGrabCursorSprite(-1);
+			_vm->_timers[5] = 9999;
+			_vm->_timers[4] = 9999;
+			_vm->hideCursor();
+			_vm->setGrabCursorSprite(-1);
+			if (!_vm->isFlag(kGFTruckKeysUsed)) {
+				_vm->_gameSys->insertSequence(0x14F, _vm->_gnapId, makeRid(_vm->_gnapSequenceDatNum, _vm->_gnapSequenceId), _vm->_gnapId, kSeqSyncWait, 0, 0, 0);
+				_vm->_gameSys->waitForUpdate();
+				_vm->setFlag(kGFTruckKeysUsed);
+				_vm->_gnapSequenceId = 0x14F;
+				_vm->_gnapSequenceDatNum = 0;
+				_vm->invRemove(kItemKeys);
+				_vm->setGrabCursorSprite(-1);
 			}
-			_newSceneNum = 47;
-			_sceneDone = true;
+			_vm->_newSceneNum = 47;
+			_vm->_sceneDone = true;
 			break;
 		case kASUseTruckNoGas:
-			hideCursor();
-			setGrabCursorSprite(-1);
-			_timers[4] = 250;
-			if (!isFlag(kGFTruckKeysUsed)) {
-				_gameSys->insertSequence(0x14F, _gnapId, makeRid(_gnapSequenceDatNum, _gnapSequenceId), _gnapId, kSeqSyncWait, 0, 0, 0);
-				_gameSys->waitForUpdate();
-				setFlag(kGFTruckKeysUsed);
-				_gnapSequenceId = 0x14F;
-				_gnapSequenceDatNum = 0;
-				invRemove(kItemKeys);
-				setGrabCursorSprite(-1);
+			_vm->hideCursor();
+			_vm->setGrabCursorSprite(-1);
+			_vm->_timers[4] = 250;
+			if (!_vm->isFlag(kGFTruckKeysUsed)) {
+				_vm->_gameSys->insertSequence(0x14F, _vm->_gnapId, makeRid(_vm->_gnapSequenceDatNum, _vm->_gnapSequenceId), _vm->_gnapId, kSeqSyncWait, 0, 0, 0);
+				_vm->_gameSys->waitForUpdate();
+				_vm->setFlag(kGFTruckKeysUsed);
+				_vm->_gnapSequenceId = 0x14F;
+				_vm->_gnapSequenceDatNum = 0;
+				_vm->invRemove(kItemKeys);
+				_vm->setGrabCursorSprite(-1);
 			}
-			_newSceneNum = 47;
-			_sceneDone = true;
-			setFlag(kGFUnk25);
+			_vm->_newSceneNum = 47;
+			_vm->_sceneDone = true;
+			_vm->setFlag(kGFUnk25);
 			break;
 		case kASGrabTruckGrill:
 			switch (_s02_truckGrillCtr) {
@@ -469,70 +470,69 @@ void GnapEngine::scene02_updateAnimations() {
 				break;
 			}
 			_s02_truckGrillCtr = (_s02_truckGrillCtr + 1) % 3;
-			_gameSys->insertSequence(_s02_gnapTruckSequenceId, _gnapId, makeRid(_gnapSequenceDatNum, _gnapSequenceId), _gnapId, kSeqSyncWait, 0, 0, 0);
-			_gameSys->setAnimation(_s02_gnapTruckSequenceId, _gnapId, 0);
-			_gnapSequenceId = _s02_gnapTruckSequenceId;
-			_gnapSequenceDatNum = 0;
-			_gnapActionStatus = -1;
+			_vm->_gameSys->insertSequence(_s02_gnapTruckSequenceId, _vm->_gnapId, makeRid(_vm->_gnapSequenceDatNum, _vm->_gnapSequenceId), _vm->_gnapId, kSeqSyncWait, 0, 0, 0);
+			_vm->_gameSys->setAnimation(_s02_gnapTruckSequenceId, _vm->_gnapId, 0);
+			_vm->_gnapSequenceId = _s02_gnapTruckSequenceId;
+			_vm->_gnapSequenceDatNum = 0;
+			_vm->_gnapActionStatus = -1;
 			break;
 		case kASLeaveScene:
-			_sceneDone = true;
+			_vm->_sceneDone = true;
 			break;
 		case kASTalkChicken:
 			_s02_nextChickenSequenceId = 0x14C;
 			break;
 		case kASGrabChicken:
 			_s02_nextChickenSequenceId = 0x150;
-			_timers[2] = 100;
+			_vm->_timers[2] = 100;
 			break;
 		case kASGrabChickenDone:
-			_gameSys->insertSequence(0x107B5, _gnapId, 0x150, 179, kSeqSyncWait, 0, 75 * _gnapX - _gnapGridX, 48 * _gnapY - _gnapGridY);
-			_gnapSequenceId = 0x7B5;
-			_gnapSequenceDatNum = 1;
+			_vm->_gameSys->insertSequence(0x107B5, _vm->_gnapId, 0x150, 179, kSeqSyncWait, 0, 75 * _vm->_gnapX - _vm->_gnapGridX, 48 * _vm->_gnapY - _vm->_gnapGridY);
+			_vm->_gnapSequenceId = 0x7B5;
+			_vm->_gnapSequenceDatNum = 1;
 			_s02_currChickenSequenceId = 0x14B;
-			_gameSys->setAnimation(0x14B, 179, 2);
-			_gameSys->insertSequence(_s02_currChickenSequenceId, 179, 0, 0, kSeqNone, 0, 0, 0);
-			_gnapActionStatus = -1;
-			_timers[5] = 30;
+			_vm->_gameSys->setAnimation(0x14B, 179, 2);
+			_vm->_gameSys->insertSequence(_s02_currChickenSequenceId, 179, 0, 0, kSeqNone, 0, 0, 0);
+			_vm->_gnapActionStatus = -1;
+			_vm->_timers[5] = 30;
 			break;
 		case kASUseTwigWithChicken:
-			playGnapShowItem(5, 0, 0);
-			_gameSys->insertSequence(0x155, 179, _s02_currChickenSequenceId, 179, kSeqSyncExists, 0, 0, 0);
+			_vm->playGnapShowItem(5, 0, 0);
+			_vm->_gameSys->insertSequence(0x155, 179, _s02_currChickenSequenceId, 179, kSeqSyncExists, 0, 0, 0);
 			_s02_currChickenSequenceId = 0x155;
 			_s02_nextChickenSequenceId = -1;
-			_gnapActionStatus = -1;
+			_vm->_gnapActionStatus = -1;
 			break;
 		case kASUseTruckNoKeysDone:
 		case kASUseGasWithTruckDone:
 		default:
-			_gnapActionStatus = -1;
+			_vm->_gnapActionStatus = -1;
 			break;
 		}
 	}
 	
-	if (_gameSys->getAnimationStatus(2) == 2) {
+	if (_vm->_gameSys->getAnimationStatus(2) == 2) {
 		if (_s02_nextChickenSequenceId == 0x150) {
-			_gameSys->setAnimation(_s02_nextChickenSequenceId, 179, 0);
-			_gameSys->insertSequence(_s02_nextChickenSequenceId, 179, makeRid(_gnapSequenceDatNum, _gnapSequenceId), _gnapId, kSeqSyncWait, 0, 0, 0);
-			_gameSys->removeSequence(_s02_currChickenSequenceId, 179, true);
+			_vm->_gameSys->setAnimation(_s02_nextChickenSequenceId, 179, 0);
+			_vm->_gameSys->insertSequence(_s02_nextChickenSequenceId, 179, makeRid(_vm->_gnapSequenceDatNum, _vm->_gnapSequenceId), _vm->_gnapId, kSeqSyncWait, 0, 0, 0);
+			_vm->_gameSys->removeSequence(_s02_currChickenSequenceId, 179, true);
 			_s02_nextChickenSequenceId = -1;
 			_s02_currChickenSequenceId = -1;
-			_gnapActionStatus = kASGrabChickenDone;
-			_timers[5] = 500;
+			_vm->_gnapActionStatus = kASGrabChickenDone;
+			_vm->_timers[5] = 500;
 		} else if (_s02_nextChickenSequenceId == 0x14C) {
-			_gameSys->setAnimation(_s02_nextChickenSequenceId, 179, 2);
-			_gameSys->insertSequence(_s02_nextChickenSequenceId, 179, _s02_currChickenSequenceId, 179, kSeqSyncWait, 0, 0, 0);
+			_vm->_gameSys->setAnimation(_s02_nextChickenSequenceId, 179, 2);
+			_vm->_gameSys->insertSequence(_s02_nextChickenSequenceId, 179, _s02_currChickenSequenceId, 179, kSeqSyncWait, 0, 0, 0);
 			_s02_currChickenSequenceId = _s02_nextChickenSequenceId;
 			_s02_nextChickenSequenceId = -1;
-			_gnapActionStatus = -1;
+			_vm->_gnapActionStatus = -1;
 		} else if (_s02_nextChickenSequenceId != -1) {
-			_gameSys->setAnimation(_s02_nextChickenSequenceId, 179, 2);
-			_gameSys->insertSequence(_s02_nextChickenSequenceId, 179, _s02_currChickenSequenceId, 179, kSeqSyncWait, 0, 0, 0);
+			_vm->_gameSys->setAnimation(_s02_nextChickenSequenceId, 179, 2);
+			_vm->_gameSys->insertSequence(_s02_nextChickenSequenceId, 179, _s02_currChickenSequenceId, 179, kSeqSyncWait, 0, 0, 0);
 			_s02_currChickenSequenceId = _s02_nextChickenSequenceId;
 			_s02_nextChickenSequenceId = -1;
 		}
 	}
-
 }
 
 } // End of namespace Gnap
