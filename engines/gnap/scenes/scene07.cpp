@@ -59,7 +59,6 @@ void GnapEngine::scene07_updateHotspots() {
 }
 
 void GnapEngine::scene07_run() {
-	
 	queueInsertDeviceIcon();
 	_gameSys->insertSequence(0x8C, 1, 0, 0, kSeqLoop, 0, 0, 0);
 	_gameSys->insertSequence(0x90, 1, 0, 0, kSeqLoop, 0, 0, 0);

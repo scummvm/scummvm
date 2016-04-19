@@ -161,7 +161,7 @@ void GnapEngine::scene13_run() {
 			break;
 
 		case kHSExitBar:
-			_isLeavingScene = 1;
+			_isLeavingScene = true;
 			gnapWalkTo(2, 7, 0, 0x107C0, 1);
 			_gnapActionStatus = kASLeaveScene;
 			platypusWalkTo(2, 8, -1, -1, 1);

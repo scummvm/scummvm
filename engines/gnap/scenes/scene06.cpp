@@ -262,7 +262,7 @@ void GnapEngine::scene06_run() {
 
 		case kHSExitOutsideBarn:
 			if (_gnapActionStatus < 0) {
-				_isLeavingScene = 1;
+				_isLeavingScene = true;
 				gnapWalkTo(_hotspotsWalkPos[4].x, _hotspotsWalkPos[4].y, 0, 0x107AE, 1);
 				_gnapActionStatus = kASLeaveScene;
 				if (_cursorValue == 1)

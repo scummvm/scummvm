@@ -206,7 +206,7 @@ void GnapEngine::scene21_run() {
 		
 		case kHSExitOutsideGrubCity:
 			if (_gnapActionStatus < 0) {
-				_isLeavingScene = 1;
+				_isLeavingScene = true;
 				_newSceneNum = 20;
 				gnapWalkTo(_hotspotsWalkPos[kHSExitOutsideGrubCity].x, _hotspotsWalkPos[kHSExitOutsideGrubCity].y, 0, 0x107B3, 1);
 				_gnapActionStatus = kASLeaveScene;

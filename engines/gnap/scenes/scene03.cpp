@@ -193,7 +193,7 @@ void GnapEngine::scene03_run() {
 
 		case kHSExitTruck:
 			if (_gnapActionStatus < 0) {
-				_isLeavingScene = 1;
+				_isLeavingScene = true;
 				_hotspots[kHSPlatypusWalkArea]._flags |= SF_WALKABLE;
 				gnapWalkTo(_hotspotsWalkPos[2].x, _hotspotsWalkPos[2].y, 0, 0x107AD, 1);
 				_gnapActionStatus = kASLeaveScene;

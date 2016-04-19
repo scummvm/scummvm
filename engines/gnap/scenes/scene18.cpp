@@ -638,7 +638,7 @@ void GnapEngine::scene18_run() {
 				if (isFlag(kGFPictureTaken)) {
 					playGnapImpossible(0, 0);
 				} else {
-					_isLeavingScene = 1;
+					_isLeavingScene = true;
 					_newSceneNum = 19;
 					gnapWalkTo(_hotspotsWalkPos[kHSExitToyStore].x, _hotspotsWalkPos[kHSExitToyStore].y, 0, 0x107C0, 1);
 					_gnapActionStatus = kASLeaveScene;
@@ -655,7 +655,7 @@ void GnapEngine::scene18_run() {
 					scene18_putDownGarbageCan(0);
 				}
 				scene18_closeHydrantValve();
-				_isLeavingScene = 1;
+				_isLeavingScene = true;
 				_newSceneNum = 17;
 				gnapWalkTo(_hotspotsWalkPos[kHSExitPhoneBooth].x, _hotspotsWalkPos[kHSExitPhoneBooth].y, 0, 0x107AE, 1);
 				_gnapActionStatus = kASLeaveScene;
@@ -673,7 +673,7 @@ void GnapEngine::scene18_run() {
 					scene18_putDownGarbageCan(0);
 				}
 				scene18_closeHydrantValve();
-				_isLeavingScene = 1;
+				_isLeavingScene = true;
 				_newSceneNum = 20;
 				_hotspots[kHSWalkArea2]._flags |= SF_WALKABLE;
 				gnapWalkTo(_hotspotsWalkPos[kHSExitGrubCity].x, _hotspotsWalkPos[kHSExitGrubCity].y, 0, 0x107B2, 1);

@@ -162,7 +162,7 @@ void GnapEngine::scene22_run() {
 
 		case kHSExitOutsideGrubCity:
 			if (_gnapActionStatus < 0) {
-				_isLeavingScene = 1;
+				_isLeavingScene = true;
 				_newSceneNum = 20;
 				gnapWalkTo(_hotspotsWalkPos[kHSExitOutsideGrubCity].x, _hotspotsWalkPos[kHSExitOutsideGrubCity].y, 0, 0x107AF, 1);
 				_gnapActionStatus = kASLeaveScene;
@@ -172,7 +172,7 @@ void GnapEngine::scene22_run() {
 
 		case kHSExitBackGrubCity:
 			if (_gnapActionStatus < 0) {
-				_isLeavingScene = 1;
+				_isLeavingScene = true;
 				_newSceneNum = 23;
 				gnapWalkTo(_hotspotsWalkPos[kHSExitBackGrubCity].x, _hotspotsWalkPos[kHSExitBackGrubCity].y, 0, 0x107AB, 1);
 				_gnapActionStatus = kASLeaveScene;

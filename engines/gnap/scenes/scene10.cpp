@@ -144,7 +144,7 @@ void GnapEngine::scene10_run() {
 			break;
 
 		case kHSExitBar:
-			_isLeavingScene = 1;
+			_isLeavingScene = true;
 			gnapActionIdle(0x10C);
 			gnapWalkTo(0, 7, 0, 0x107AF, 1);
 			_gnapActionStatus = kASLeaveScene;
@@ -153,7 +153,7 @@ void GnapEngine::scene10_run() {
 			break;
 
 		case kHSExitBackdoor:
-			_isLeavingScene = 1;
+			_isLeavingScene = true;
 			gnapActionIdle(0x10C);
 			gnapWalkTo(2, 9, 0, 0x107AE, 1);
 			_gnapActionStatus = kASLeaveScene;

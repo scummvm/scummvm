@@ -160,7 +160,7 @@ void GnapEngine::scene12_run() {
 			break;
 
 		case kHSExitRight:
-			_isLeavingScene = 1;
+			_isLeavingScene = true;
 			gnapWalkTo(10, -1, 0, 0x107AB, 1);
 			_gnapActionStatus = kASLeaveScene;
 			platypusWalkTo(10, -1, -1, -1, 1);
@@ -282,7 +282,7 @@ void GnapEngine::scene12_run() {
 
 		case kHSJukebox:
 			_newSceneNum = 15;
-			_isLeavingScene = 1;
+			_isLeavingScene = true;
 			gnapWalkTo(5, 6, 0, 0x107BC, 1);
 			_gnapActionStatus = kASLeaveScene;
 			break;

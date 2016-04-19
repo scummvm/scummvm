@@ -324,7 +324,7 @@ void GnapEngine::scene20_run() {
 			if (_gnapActionStatus < 0) {
 				if (_s20_stonerGuyShowingJoint)
 					_timers[4] = 0;
-				_isLeavingScene = 1;
+				_isLeavingScene = true;
 				_newSceneNum = 21;
 				gnapWalkTo(_hotspotsWalkPos[kHSExitParkingLot].x, _hotspotsWalkPos[kHSExitParkingLot].y, 0, 0x107AF, 1);
 				_gnapActionStatus = kASLeaveScene;
@@ -337,7 +337,7 @@ void GnapEngine::scene20_run() {
 			if (_gnapActionStatus < 0) {
 				if (_s20_stonerGuyShowingJoint)
 					_timers[4] = 0;
-				_isLeavingScene = 1;
+				_isLeavingScene = true;
 				_newSceneNum = 17;
 				gnapWalkTo(_hotspotsWalkPos[kHSExitPhone].x, _hotspotsWalkPos[kHSExitPhone].y, 0, 0x107AE, 1);
 				_gnapActionStatus = kASLeaveScene;
@@ -349,7 +349,7 @@ void GnapEngine::scene20_run() {
 			if (_gnapActionStatus < 0) {
 				if (_s20_stonerGuyShowingJoint)
 					_timers[4] = 0;
-				_isLeavingScene = 1;
+				_isLeavingScene = true;
 				_newSceneNum = 18;
 				_hotspots[kHSWalkArea2]._flags |= SF_WALKABLE;
 				gnapWalkTo(_hotspotsWalkPos[kHSExitOutsideToyStore].x, _hotspotsWalkPos[kHSExitOutsideToyStore].y, 0, 0x107AB, 1);
@@ -363,7 +363,7 @@ void GnapEngine::scene20_run() {
 			if (_gnapActionStatus < 0) {
 				if (_s20_stonerGuyShowingJoint)
 					_timers[4] = 0;
-				_isLeavingScene = 1;
+				_isLeavingScene = true;
 				_newSceneNum = 22;
 				gnapWalkTo(_hotspotsWalkPos[kHSExitInsideGrubCity].x, _hotspotsWalkPos[kHSExitInsideGrubCity].y - 1, 0, 0x107BB, 1);
 				_gnapActionStatus = kASLeaveScene;
@@ -376,7 +376,7 @@ void GnapEngine::scene20_run() {
 			if (_gnapActionStatus < 0) {
 				if (_s20_stonerGuyShowingJoint)
 					_timers[4] = 0;
-				_isLeavingScene = 1;
+				_isLeavingScene = true;
 				_newSceneNum = 24;
 				gnapWalkTo(_hotspotsWalkPos[kHSExitOutsideCircusWorld].x, _hotspotsWalkPos[kHSExitOutsideCircusWorld].y, 0, 0x107BB, 1);
 				_gnapActionStatus = kASLeaveScene;

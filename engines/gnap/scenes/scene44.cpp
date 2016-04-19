@@ -183,7 +183,7 @@ void GnapEngine::scene44_run() {
 			switch (_sceneClickedHotspot) {
 			case kHSUfoExitLeft:
 				if (_toyUfoActionStatus < 0) {
-					_isLeavingScene = 1;
+					_isLeavingScene = true;
 					_toyUfoActionStatus = 6;
 					_newSceneNum = 43;
 					toyUfoFlyTo(-35, -1, -35, 799, 0, 300, 3);
@@ -192,7 +192,7 @@ void GnapEngine::scene44_run() {
 
 			case kHSUfoExitRight:
 				if (_toyUfoActionStatus < 0) {
-					_isLeavingScene = 1;
+					_isLeavingScene = true;
 					_toyUfoActionStatus = 6;
 					_newSceneNum = 46;
 					toyUfoFlyTo(835, -1, 0, 835, 0, 300, 3);
@@ -242,14 +242,14 @@ void GnapEngine::scene44_run() {
 				break;
 
 			case kHSExitUfoParty:
-				_isLeavingScene = 1;
+				_isLeavingScene = true;
 				gnapWalkTo(_hotspotsWalkPos[kHSExitUfoParty].x, _hotspotsWalkPos[kHSExitUfoParty].y, 0, 0x107AE, 1);
 				_gnapActionStatus = 0;
 				_newSceneNum = 40;
 				break;
 			
 			case kHSExitUfo:
-				_isLeavingScene = 1;
+				_isLeavingScene = true;
 				gnapWalkTo(_hotspotsWalkPos[kHSExitUfo].x, _gnapY, 0, 0x107AF, 1);
 				_gnapActionStatus = 0;
 				platypusWalkTo(_hotspotsWalkPos[kHSExitUfo].x, _platY, -1, 0x107CF, 1);
@@ -257,7 +257,7 @@ void GnapEngine::scene44_run() {
 				break;
 			
 			case kHSExitShow:
-				_isLeavingScene = 1;
+				_isLeavingScene = true;
 				gnapWalkTo(_hotspotsWalkPos[kHSExitShow].x, _hotspotsWalkPos[kHSExitShow].y, 0, 0x107AB, 1);
 				_gnapActionStatus = 0;
 				_newSceneNum = 46;

@@ -321,7 +321,7 @@ void GnapEngine::scene04_run() {
 		
 		case kHSExitTruck:
 			if (_gnapActionStatus < 0) {
-				_isLeavingScene = 1;
+				_isLeavingScene = true;
 				gnapWalkTo(_hotspotsWalkPos[5].x, _hotspotsWalkPos[5].y, 0, 0x107AE, 1);
 				_gnapActionStatus = kASLeaveScene;
 				if (isFlag(kGFPlatypus))
@@ -365,7 +365,7 @@ void GnapEngine::scene04_run() {
 		
 		case kHSExitBarn:
 			if (_gnapActionStatus < 0) {
-				_isLeavingScene = 1;
+				_isLeavingScene = true;
 				gnapWalkTo(_hotspotsWalkPos[8].x, _hotspotsWalkPos[8].y, 0, 0x107AB, 1);
 				_gnapActionStatus = kASLeaveScene;
 				if (isFlag(kGFPlatypus))

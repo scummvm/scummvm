@@ -216,7 +216,7 @@ void GnapEngine::scene31_run() {
 
 		case kHSExitCircus:
 			if (_gnapActionStatus < 0) {
-				_isLeavingScene = 1;
+				_isLeavingScene = true;
 				_newSceneNum = 26;
 				gnapWalkTo(-1, _hotspotsWalkPos[kHSExitCircus].y, 0, 0x107AE, 1);
 				_gnapActionStatus = kASLeaveScene;
@@ -226,7 +226,7 @@ void GnapEngine::scene31_run() {
 
 		case kHSExitOutsideClown:
 			if (_gnapActionStatus < 0) {
-				_isLeavingScene = 1;
+				_isLeavingScene = true;
 				_newSceneNum = 27;
 				gnapWalkTo(-1, _hotspotsWalkPos[kHSExitOutsideClown].y, 0, 0x107AF, 1);
 				_gnapActionStatus = kASLeaveScene;

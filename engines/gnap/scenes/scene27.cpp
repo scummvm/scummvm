@@ -235,7 +235,7 @@ void GnapEngine::scene27_run() {
 
 		case kHSExitBeerStand:
 			if (_gnapActionStatus < 0) {
-				_isLeavingScene = 1;
+				_isLeavingScene = true;
 				_newSceneNum = 31;
 				gnapWalkTo(-1, _hotspotsWalkPos[kHSExitBeerStand].y, 0, 0x107AB, 1);
 				_gnapActionStatus = kASLeaveScene;

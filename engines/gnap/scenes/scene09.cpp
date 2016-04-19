@@ -123,7 +123,7 @@ void GnapEngine::scene09_run() {
 			break;
 
 		case kHSExitKitchen:
-			_isLeavingScene = 1;
+			_isLeavingScene = true;
 			_newSceneNum = 10;
 			gnapWalkTo(4, 7, 0, 0x107BF, 1);
 			_gnapActionStatus = kASLeaveScene;
@@ -132,7 +132,7 @@ void GnapEngine::scene09_run() {
 			break;
 
 		case kHSExitHouse:
-			_isLeavingScene = 1;
+			_isLeavingScene = true;
 			_newSceneNum = 8;
 			gnapWalkTo(10, -1, 0, 0x107AB, 1);
 			_gnapActionStatus = kASLeaveScene;

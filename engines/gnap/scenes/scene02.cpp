@@ -301,7 +301,7 @@ void Scene02::run() {
 
 		case kHSExitHouse:
 			if (_vm->_gnapActionStatus < 0) {
-				_vm->_isLeavingScene = 1;
+				_vm->_isLeavingScene = true;
 				_vm->gnapWalkTo(_vm->_hotspotsWalkPos[6].x, _vm->_hotspotsWalkPos[6].y, 0, 0x107AD, 1);
 				_vm->_gnapActionStatus = kASLeaveScene;
 				if (_vm->isFlag(kGFPlatypus))
@@ -313,7 +313,7 @@ void Scene02::run() {
 
 		case kHSExitBarn:
 			if (_vm->_gnapActionStatus < 0) {
-				_vm->_isLeavingScene = 1;
+				_vm->_isLeavingScene = true;
 				_vm->gnapWalkTo(_vm->_hotspotsWalkPos[7].x, _vm->_hotspotsWalkPos[7].y, 0, 0x107AD, 1);
 				_vm->_gnapActionStatus = kASLeaveScene;
 				if (_vm->isFlag(kGFPlatypus))
@@ -325,7 +325,7 @@ void Scene02::run() {
 
 		case kHSExitCreek:
 			if (_vm->_gnapActionStatus < 0) {
-				_vm->_isLeavingScene = 1;
+				_vm->_isLeavingScene = true;
 				_vm->gnapWalkTo(_vm->_hotspotsWalkPos[8].x, _vm->_hotspotsWalkPos[8].y, 0, 0x107AB, 1);
 				_vm->_gnapActionStatus = kASLeaveScene;
 				if (_vm->isFlag(kGFPlatypus))
@@ -336,7 +336,7 @@ void Scene02::run() {
 
 		case kHSExitPigpen:
 			if (_vm->_gnapActionStatus < 0) {
-				_vm->_isLeavingScene = 1;
+				_vm->_isLeavingScene = true;
 				_vm->gnapWalkTo(_vm->_hotspotsWalkPos[9].x, _vm->_hotspotsWalkPos[9].y, 0, 0x107AF, 1);
 				_vm->_gnapActionStatus = kASLeaveScene;
 				if (_vm->isFlag(kGFPlatypus))
