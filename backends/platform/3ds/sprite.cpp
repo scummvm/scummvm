@@ -19,9 +19,9 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
  */
-#define FORBIDDEN_SYMBOL_ALLOW_ALL
+
 #include "backends/platform/3ds/sprite.h"
-#include <algorithm>
+#include "common/util.h"
 #include <3ds.h>
 
 static uint nextHigher2(uint v) {
@@ -37,18 +37,18 @@ static uint nextHigher2(uint v) {
 }
 
 Sprite::Sprite()
-: dirtyPixels(true)
-, dirtyMatrix(true)
-, actualWidth(0)
-, actualHeight(0)
-, posX(0)
-, posY(0)
-, scaleX(1.f)
-, scaleY(1.f)
+	: dirtyPixels(true)
+	, dirtyMatrix(true)
+	, actualWidth(0)
+	, actualHeight(0)
+	, posX(0)
+	, posY(0)
+	, scaleX(1.f)
+	, scaleY(1.f)
 {
 	Mtx_Identity(&modelview);
 
-	vertices = (vertex*)linearAlloc(sizeof(vertex) * 4);
+	vertices = (vertex *)linearAlloc(sizeof(vertex) * 4);
 }
 
 Sprite::~Sprite() {
@@ -61,8 +61,8 @@ void Sprite::create(uint16 width, uint16 height, const Graphics::PixelFormat &f)
 	actualWidth = width;
 	actualHeight = height;
 	format = f;
-	w = std::max(nextHigher2(width), 64u);
-	h = std::max(nextHigher2(height), 64u);;
+	w = MAX(nextHigher2(width), 64u);
+	h = MAX(nextHigher2(height), 64u);;
 	pitch = w * format.bytesPerPixel;
 	dirtyPixels = true;
 
@@ -110,7 +110,7 @@ void Sprite::render() {
 	}
 	C3D_TexBind(0, &texture);
 
-	C3D_BufInfo* bufInfo = C3D_GetBufInfo();
+	C3D_BufInfo *bufInfo = C3D_GetBufInfo();
 	BufInfo_Init(bufInfo);
 	BufInfo_Add(bufInfo, vertices, sizeof(vertex), 2, 0x10);
 	C3D_DrawArrays(GPU_TRIANGLE_STRIP, 0, 4);
