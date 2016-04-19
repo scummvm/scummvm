@@ -25,7 +25,7 @@
 
 #include "titanic/pet_control/pet_glyphs.h"
 #include "titanic/pet_control/pet_gfx_element.h"
-#include "titanic/pet_control/pet_control_sub12.h"
+#include "titanic/pet_control/pet_text.h"
 
 namespace Titanic {
 

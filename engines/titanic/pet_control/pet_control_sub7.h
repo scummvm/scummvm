@@ -24,14 +24,14 @@
 #define TITANIC_PET_CONTROL_SUB7_H
 
 #include "titanic/pet_control/pet_section.h"
-#include "titanic/pet_control/pet_control_sub12.h"
+#include "titanic/pet_control/pet_text.h"
 
 namespace Titanic {
 
 class CPetControlSub7 : public CPetSection {
 private:
-	CPetControlSub12 _sub1;
-	CPetControlSub12 _sub2;
+	CPetText _text1;
+	CPetText _text2;
 public:
 	/**
 	 * Returns true if the object is in a valid state

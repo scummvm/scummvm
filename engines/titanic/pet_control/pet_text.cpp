@@ -20,11 +20,11 @@
  *
  */
 
-#include "titanic/pet_control/pet_control_sub12.h"
+#include "titanic/pet_control/pet_text.h"
 
 namespace Titanic {
 
-CPetControlSub12::CPetControlSub12(int count) :
+CPetText::CPetText(uint count) :
 	_stringsMerged(false), _field30(-1), _lineCount(0), _field38(-1),
 	_field3C(0), _field40(0), _field44(0), _backR(0xff),
 	_backG(0xff), _backB(0xff), _field54(0), _field58(0),
@@ -34,18 +34,18 @@ CPetControlSub12::CPetControlSub12(int count) :
 	setupArrays(count);
 }
 
-void CPetControlSub12::setupArrays(int count) {
+void CPetText::setupArrays(int count) {
 	freeArrays();
 	if (count < 10 || count > 60)
 		count = 10;
 	_array.resize(count);
 }
 
-void CPetControlSub12::freeArrays() {
+void CPetText::freeArrays() {
 	_array.clear();
 }
 
-void CPetControlSub12::setup() {
+void CPetText::setup() {
 	for (int idx = 0; idx < (int)_array.size(); ++idx) {
 		_array[idx]._string1.clear();
 		setArrayStr2(idx, _field54, _field58, _field5C);
@@ -56,7 +56,7 @@ void CPetControlSub12::setup() {
 	_stringsMerged = false;
 }
 
-void CPetControlSub12::setArrayStr2(uint idx, int val1, int val2, int val3) {
+void CPetText::setArrayStr2(uint idx, int val1, int val2, int val3) {
 	char buffer[6];
 	if (!val1)
 		val1 = 1;
@@ -74,7 +74,7 @@ void CPetControlSub12::setArrayStr2(uint idx, int val1, int val2, int val3) {
 	_array[idx]._string2 = buffer;
 }
 
-void CPetControlSub12::load(SimpleFile *file, int param) {
+void CPetText::load(SimpleFile *file, int param) {
 	if (!param) {
 		int var1 = file->readNumber();
 		int var2 = file->readNumber();
@@ -95,7 +95,7 @@ void CPetControlSub12::load(SimpleFile *file, int param) {
 		_hasBorder = file->readNumber() != 0;
 		_field74 = file->readNumber();
 
-		warning("TODO: CPetControlSub12::load %d,%d", var1, var2);
+		warning("TODO: CPetText::load %d,%d", var1, var2);
 		assert(_array.size() >= count);
 		for (uint idx = 0; idx < count; ++idx) {
 			_array[idx]._string1 = file->readString();
@@ -105,7 +105,7 @@ void CPetControlSub12::load(SimpleFile *file, int param) {
 	}
 }
 
-void CPetControlSub12::draw(CScreenManager *screenManager) {
+void CPetText::draw(CScreenManager *screenManager) {
 	Rect tempRect = _bounds;
 
 	if (_hasBorder) {
@@ -130,10 +130,10 @@ void CPetControlSub12::draw(CScreenManager *screenManager) {
 		screenManager->fillRect(SURFACE_BACKBUFFER, &tempRect, _backR, _backG, _backB);
 	}
 
-	warning("TODO: CPetControlSub12::draw");
+	warning("TODO: CPetText::draw");
 }
 
-void CPetControlSub12::mergeStrings() {
+void CPetText::mergeStrings() {
 	if (!_stringsMerged) {
 		_lines.clear();
 
@@ -148,12 +148,20 @@ void CPetControlSub12::mergeStrings() {
 	}
 }
 
-void CPetControlSub12::resize(uint count) {
+void CPetText::resize(uint count) {
 	if (!count || _array.size() == count)
 		return;
 	_array.clear();
 	_array.resize(count);
 }
 
+void CPetText::setText(const CString &str) {
+	setup();
+	changeText(str);
+}
+
+void CPetText::changeText(const CString &str) {
+	warning("TODO: CPetText::changeText");
+}
 
 } // End of namespace Titanic

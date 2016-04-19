@@ -25,7 +25,7 @@
 
 #include "titanic/pet_control/pet_section.h"
 #include "titanic/pet_control/pet_glyphs.h"
-#include "titanic/pet_control/pet_control_sub12.h"
+#include "titanic/pet_control/pet_text.h"
 
 namespace Titanic {
 
@@ -35,7 +35,7 @@ class CPetSaveGlyphs : public CPetGlyphs {
 class CPetRealLife : public CPetSection {
 private:
 	CPetGlyphs _glyphs;
-	CPetSaveGlyphs _sub12;
+	CPetText _text;
 private:
 	/**
 	 * Does setup

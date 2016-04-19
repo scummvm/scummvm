@@ -370,7 +370,6 @@ MODULE_OBJS := \
 	pet_control/pet_control_sub5.o \
 	pet_control/pet_control_sub7.o \
 	pet_control/pet_control_sub11.o \
-	pet_control/pet_control_sub12.o \
 	pet_control/pet_drag_chev.o \
 	pet_control/pet_graphic2.o \
 	pet_control/pet_graphic.o \
@@ -388,6 +387,7 @@ MODULE_OBJS := \
 	pet_control/pet_save.o \
 	pet_control/pet_slider.o \
 	pet_control/pet_sound.o \
+	pet_control/pet_text.o \
 	sound/auto_music_player.o \
 	sound/auto_music_player_base.o \
 	sound/auto_sound_player.o \
@@ -424,7 +424,7 @@ MODULE_OBJS := \
 	star_control/star_control_sub9.o \
 	star_control/star_control_sub10.o \
 	star_control/star_control_sub11.o \
-	star_control/star_control_sub12.o \
+	star_control/star_control_text.o \
 	star_control/star_control_sub13.o \
 	star_control/star_control_sub14.o \
 	star_control/star_control_sub15.o \

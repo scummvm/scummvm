@@ -30,10 +30,10 @@ void CPetQuit::setup(CPetControl *petControl, CPetGlyphs *owner) {
 	CPetGlyph::setup(petControl, owner);
 	Rect tempRect(0, 0, 280, 16);
 	tempRect.moveTo(32, 407);
-	_sub12.setBounds(tempRect);
-	_sub12.resize(3);
-	_sub12.setHasBorder(true);
-	_sub12.setup();
+	_text.setBounds(tempRect);
+	_text.resize(3);
+	_text.setHasBorder(true);
+	_text.setup();
 
 	Rect elementRect(0, 0, 496, 388);
 	elementRect.moveTo(496, 388);

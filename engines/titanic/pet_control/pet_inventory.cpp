@@ -40,7 +40,7 @@ bool CPetInventory::setup(CPetControl *petControl) {
 
 bool CPetInventory::reset() {
 	_items.reset();
-	_sub12.setup();
+	_text.setup();
 
 	// TODO
 	return true;
@@ -49,7 +49,7 @@ bool CPetInventory::reset() {
 void CPetInventory::draw(CScreenManager *screenManager) {
 	_petControl->drawSquares(screenManager, 7);
 	_items.draw(screenManager);
-	_sub12.draw(screenManager);
+	_text.draw(screenManager);
 }
 
 Rect CPetInventory::getBounds() { 
@@ -97,8 +97,8 @@ bool CPetInventory::setPetControl(CPetControl *petControl) {
 
 	tempRect = Rect(0, 0, 580, 15);
 	tempRect.translate(32, 445);
-	_sub12.setBounds(tempRect);
-	_sub12.setHasBorder(false);
+	_text.setBounds(tempRect);
+	_text.setHasBorder(false);
 
 	return true;
 }

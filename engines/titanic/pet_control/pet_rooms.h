@@ -25,7 +25,7 @@
 
 #include "titanic/pet_control/pet_section.h"
 #include "titanic/pet_control/pet_control_sub11.h"
-#include "titanic/pet_control/pet_control_sub12.h"
+#include "titanic/pet_control/pet_text.h"
 #include "titanic/pet_control/pet_control_list_item2.h"
 
 namespace Titanic {
@@ -43,7 +43,7 @@ private:
 	int _field118;
 	int _field11C;
 	CPetGfxElement _val1;
-	CPetControlSub12 _sub12;
+	CPetText _text;
 	int _field1C0;
 	int _field1C4;
 	int _field1C8;

@@ -33,8 +33,8 @@ void CPetConversations::save(SimpleFile *file, int indent) const {
 }
 
 void CPetConversations::load(SimpleFile *file, int param) {
-	_sub2.load(file, param);
-	_sub1.load(file, param);
+	_text2.load(file, param);
+	_text1.load(file, param);
 
 	for (int idx = 0; idx < 3; ++idx)
 		_valArray3[idx] = file->readNumber();

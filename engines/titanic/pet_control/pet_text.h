@@ -20,15 +20,15 @@
  *
  */
 
-#ifndef TITANIC_PET_CONTROL_SUB12_H
-#define TITANIC_PET_CONTROL_SUB12_H
+#ifndef TITANIC_PET_TEXT_H
+#define TITANIC_PET_TEXT_H
 
 #include "titanic/support/simple_file.h"
 #include "titanic/support/screen_manager.h"
 
 namespace Titanic {
 
-class CPetControlSub12 {
+class CPetText {
 	struct ArrayEntry {
 		CString _string1;
 		CString _string2;
@@ -70,8 +70,13 @@ private:
 	 * Merges the strings in the strings array
 	 */
 	void mergeStrings();
+
+	/**
+	 * Change the text
+	 */
+	void changeText(const CString &str);
 public:
-	CPetControlSub12(int count = 10);
+	CPetText(uint count = 10);
 
 	/**
 	 * Set up the control
@@ -99,8 +104,13 @@ public:
 	void draw(CScreenManager *screenManager);
 
 	void resize(uint count);
+
+	/**
+	 * Set the text
+	 */
+	void setText(const CString &str);
 };
 
 } // End of namespace Titanic
 
-#endif /* TITANIC_PET_CONTROL_SUB12_H */
+#endif /* TITANIC_PET_TEXT_H */

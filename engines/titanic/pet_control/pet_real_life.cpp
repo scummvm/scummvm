@@ -38,7 +38,7 @@ bool CPetRealLife::reset() {
 void CPetRealLife::draw(CScreenManager *screenManager) {
 	_petControl->drawSquares(screenManager, 4);
 	_glyphs.draw(screenManager);
-	_sub12.draw(screenManager);
+	_text.draw(screenManager);
 }
 
 bool CPetRealLife::setupControl(CPetControl *petControl) {

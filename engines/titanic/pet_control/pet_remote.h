@@ -25,7 +25,7 @@
 
 #include "titanic/pet_control/pet_section.h"
 #include "titanic/pet_control/pet_glyphs.h"
-#include "titanic/pet_control/pet_control_sub12.h"
+#include "titanic/pet_control/pet_text.h"
 #include "titanic/pet_control/pet_gfx_element.h"
 
 namespace Titanic {
@@ -47,7 +47,7 @@ private:
 	CPetGfxElement _val9;
 	CPetGfxElement _val10;
 	CPetGfxElement _val11;
-	CPetControlSub12 _sub12;
+	CPetText _text;
 public:
 	/**
 	 * Returns true if the object is in a valid state
