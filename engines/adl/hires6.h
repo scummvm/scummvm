@@ -74,6 +74,8 @@ private:
 	void initGameState();
 	void printRoomDescription();
 	void showRoom();
+	Common::String formatVerbError(const Common::String &verbStr) const;
+	Common::String formatNounError(const Common::String &verbStr, const Common::String &nounStr) const;
 
 	// AdlEngine_v2
 	void printString(const Common::String &str);

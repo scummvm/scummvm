@@ -234,6 +234,8 @@ protected:
 	Common::String inputString(byte prompt = 0) const;
 	byte inputKey(bool showCursor = true) const;
 
+	virtual Common::String formatVerbError(const Common::String &verbStr) const;
+	virtual Common::String formatNounError(const Common::String &verbStr, const Common::String &nounStr) const;
 	void loadWords(Common::ReadStream &stream, WordMap &map, Common::StringArray &pri) const;
 	void readCommands(Common::ReadStream &stream, Commands &commands);
 	void checkInput(byte verb, byte noun);

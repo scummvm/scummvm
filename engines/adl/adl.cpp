@@ -855,6 +855,22 @@ Common::String AdlEngine::getWord(const Common::String &line, uint &index) const
 	}
 }
 
+Common::String AdlEngine::formatVerbError(const Common::String &verbStr) const {
+	Common::String err = _strings.verbError;
+	for (uint i = 0; i < verbStr.size(); ++i)
+		err.setChar(verbStr[i], i + 19);
+	return err;
+}
+
+Common::String AdlEngine::formatNounError(const Common::String &verbStr, const Common::String &nounStr) const {
+	Common::String err = _strings.nounError;
+	for (uint i = 0; i < verbStr.size(); ++i)
+		err.setChar(verbStr[i], i + 19);
+	for (uint i = 0; i < nounStr.size(); ++i)
+		err.setChar(nounStr[i], i + 30);
+	return err;
+}
+
 void AdlEngine::getInput(uint &verb, uint &noun) {
 	while (1) {
 		_display->printString(_strings.enterCommand);
@@ -867,10 +883,7 @@ void AdlEngine::getInput(uint &verb, uint &noun) {
 		Common::String verbStr = getWord(line, index);
 
 		if (!_verbs.contains(verbStr)) {
-			Common::String err = _strings.verbError;
-			for (uint i = 0; i < verbStr.size(); ++i)
-				err.setChar(verbStr[i], i + 19);
-			_display->printString(err);
+			_display->printString(formatVerbError(verbStr));
 			continue;
 		}
 
@@ -879,12 +892,7 @@ void AdlEngine::getInput(uint &verb, uint &noun) {
 		Common::String nounStr = getWord(line, index);
 
 		if (!_nouns.contains(nounStr)) {
-			Common::String err = _strings.nounError;
-			for (uint i = 0; i < verbStr.size(); ++i)
-				err.setChar(verbStr[i], i + 19);
-			for (uint i = 0; i < nounStr.size(); ++i)
-				err.setChar(nounStr[i], i + 30);
-			_display->printString(err);
+			_display->printString(formatNounError(verbStr, nounStr));
 			continue;
 		}
 
