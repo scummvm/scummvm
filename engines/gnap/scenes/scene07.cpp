@@ -50,7 +50,7 @@ void GnapEngine::scene07_updateHotspots() {
 	setHotspot(kHSExitHouse, 700, 125, 799, 290, SF_EXIT_NE_CURSOR);
 	setHotspot(kHSDice, 200, 290, 270, 360, SF_PLAT_CURSOR | SF_TALK_CURSOR | SF_GRAB_CURSOR | SF_LOOK_CURSOR);
 	setHotspot(kHSWalkArea1, 0, 0, 325, 445);
-	setHotspot(kHSWalkArea2, 325, 0, 799, 445, _isLeavingScene ? SF_WALKABLE : 0);
+	setHotspot(kHSWalkArea2, 325, 0, 799, 445, _isLeavingScene ? SF_WALKABLE : SF_NONE);
 	setHotspot(kHSWalkArea3, 160, 0, 325, 495);
 	setDeviceHotspot(kHSDevice, -1, -1, -1, -1);
 	if (isFlag(kGFPlatypus))
