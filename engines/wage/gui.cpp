@@ -343,7 +343,6 @@ static void consoleWindowCallback(WindowClick click, Common::Event &event, void 
 	Gui *gui = (Gui *)g;
 
 	gui->processConsoleEvents(click, event);
-
 }
 
 void Gui::processConsoleEvents(WindowClick click, Common::Event &event) {
@@ -481,11 +480,7 @@ bool Gui::processEvent(Common::Event &event) {
 		mouseDown(event.mouse.x, event.mouse.y);
 		break;
 	case Common::EVENT_LBUTTONUP:
-		{
-			Designed *obj = mouseUp(event.mouse.x, event.mouse.y);
-			if (obj != NULL)
-				_engine->processTurn(NULL, obj);
-		}
+		mouseUp(event.mouse.x, event.mouse.y);
 		break;
 
 	default:
@@ -495,7 +490,7 @@ bool Gui::processEvent(Common::Event &event) {
 	return true;
 }
 
-Designed *Gui::mouseUp(int x, int y) {
+void Gui::mouseUp(int x, int y) {
 	if (_menu->_menuActivated) {
 		if (_menu->mouseRelease(x, y)) {
 			_sceneDirty = true;
@@ -504,7 +499,7 @@ Designed *Gui::mouseUp(int x, int y) {
 			_menuDirty = true;
 		}
 
-		return NULL;
+		return;
 	}
 
 	if (_inTextSelection) {
@@ -528,7 +523,7 @@ Designed *Gui::mouseUp(int x, int y) {
 		}
 	}
 
-	return NULL;
+	return;
 }
 
 void Gui::mouseDown(int x, int y) {

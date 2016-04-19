@@ -93,7 +93,7 @@ public:
 	bool processEvent(Common::Event &event);
 	void mouseMove(int x, int y);
 	void mouseDown(int x, int y);
-	Designed *mouseUp(int x, int y);
+	void mouseUp(int x, int y);
 	void drawInput();
 	void setSceneDirty() { _sceneDirty = true; }
 	const Graphics::Font *getFont(const char *name, Graphics::FontManager::FontUsage fallback);
