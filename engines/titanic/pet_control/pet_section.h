@@ -159,6 +159,9 @@ public:
 	 * Get the PET control
 	 */
 	CPetControl *getPetControl() const { return _petControl; }
+
+	uint getDataIndex(int index);
+	const uint *getDataTable(int index = -1);
 };
 
 } // End of namespace Titanic

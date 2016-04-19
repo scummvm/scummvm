@@ -22,8 +22,21 @@
 
 #include "common/textconsole.h"
 #include "titanic/pet_control/pet_section.h"
+#include "titanic/pet_control/pet_control.h"
 
 namespace Titanic {
+
+static const uint ARRAY1[6] = {
+	0xA7C0DB, 0x9CFFFE, 0x73AEFF, 0xA7C0DB, 0x9CFFFE, 0
+};
+
+static const uint ARRAY2[6] = {
+	0x10101, 0x1013C, 0xC80101, 0x10101, 0x800101, 0
+};
+
+static const uint ARRAY3[5] = {
+	0x10101, 0x1013C, 0xC80101, 0x10101, 0x800101
+};
 
 void CPetSection::displayMessage(const CString &msg) {
 	error("TODO");
@@ -47,6 +60,23 @@ void CPetSection::proc29() {
 
 void CPetSection::proc30() {
 	error("TODO");
+}
+
+uint CPetSection::getDataIndex(int index) {
+	return getDataTable()[index];
+}
+
+const uint *CPetSection::getDataTable(int index) {
+	if (index == -1) {
+		CPetControl *pet = getPetControl();
+		index = pet ? pet->getState8() : 3;
+	}
+
+	switch (index) {
+	case 1: return ARRAY1;
+	case 2: return ARRAY2;
+	default: return ARRAY3;
+	}
 }
 
 } // End of namespace Titanic

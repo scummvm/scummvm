@@ -46,6 +46,8 @@ bool CPetQuit::reset() {
 		return false;
 
 	setName("PetExit", pet);
+	uint v = getPetSection()->getDataIndex(0);
+
 	// TODO
 
 	return true;
