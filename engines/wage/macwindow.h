@@ -86,6 +86,7 @@ public:
 	void setDirty(bool dirty) { _contentIsDirty = dirty; }
 	int getId() { return _id; }
 	bool processEvent(Common::Event &event);
+	void setCallback(void (*callback)(WindowClick, Common::Event &, void *), void *data) { _callback = callback; _dataPtr = data; }
 
 private:
 	void drawBorder();
@@ -94,7 +95,7 @@ private:
 	const Graphics::Font *getTitleFont();
 	bool builtInFonts();
 
-	void mouseDown(int x, int y);
+	void mouseDown(Common::Event &event);
 
 private:
 	Graphics::ManagedSurface _surface;
@@ -113,6 +114,9 @@ private:
 	Common::Rect _innerDims;
 
 	Common::String _title;
+
+	void (*_callback)(WindowClick, Common::Event &, void *);
+	void *_dataPtr;
 };
 
 } // End of namespace Wage

@@ -61,6 +61,9 @@ MacWindow::MacWindow(int id, bool scrollable) : _scrollable(scrollable), _id(id)
 	_highlightedPart = kBorderNone;
 
 	_scrollPos = _scrollSize = 0.0;
+
+	_callback = 0;
+	_dataPtr = 0;
 }
 
 MacWindow::~MacWindow() {
@@ -271,7 +274,7 @@ bool MacWindow::processEvent(Common::Event &event) {
 		//mouseMove(event.mouse.x, event.mouse.y);
 		break;
 	case Common::EVENT_LBUTTONDOWN:
-		mouseDown(event.mouse.x, event.mouse.y);
+		mouseDown(event);
 		break;
 	case Common::EVENT_LBUTTONUP:
 #if 0
@@ -290,13 +293,16 @@ bool MacWindow::processEvent(Common::Event &event) {
 	return true;
 }
 
-void MacWindow::mouseDown(int x, int y) {
-	if (_innerDims.contains(x, y)) {
-		// (*callback)(x - _dims.left, y - dims.top);
+void MacWindow::mouseDown(Common::Event &event) {
+	if (_innerDims.contains(event.mouse.x, event.mouse.y)) {
+		if (!_callback)
+			return;
+
+		(*_callback)(kBorderInner, event, _dataPtr);
 		return;
 	}
 
-	WindowClick click = isInBorder(_innerDims, x, y);
+	WindowClick click = isInBorder(_innerDims, event.mouse.x, event.mouse.y);
 
 	if (click == kBorderNone)
 		return;
@@ -304,9 +310,11 @@ void MacWindow::mouseDown(int x, int y) {
 	setHighlight(click);
 
 	if (click == kBorderScrollUp || click == kBorderScrollDown) {
-		// TODO
-	}
+		if (!_callback)
+			return;
 
+		(*_callback)(click, event, _dataPtr);
+	}
 }
 
 } // End of namespace Wage
