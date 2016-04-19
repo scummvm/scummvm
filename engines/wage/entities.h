@@ -322,6 +322,8 @@ public:
 	Scene(Common::String name, Common::SeekableReadStream *data);
 	~Scene();
 
+	Designed *lookUpEntity(int x, int y);
+
 	Common::Rect *getTextBounds() {
 		return _textBounds == NULL ? NULL : new Common::Rect(*_textBounds);
 	}

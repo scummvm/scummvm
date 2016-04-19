@@ -155,13 +155,13 @@ public:
 
 	bool _menuDirty;
 
+	Scene *_scene;
 	MacWindow *_sceneWindow;
 	MacWindow *_consoleWindow;
 
 private:
 	Graphics::ManagedSurface _console;
 	Menu *_menu;
-	Scene *_scene;
 	bool _sceneDirty;
 	bool _consoleDirty;
 	bool _bordersDirty;

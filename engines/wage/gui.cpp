@@ -315,7 +315,18 @@ void Gui::drawScene() {
 	_consoleTextArea.setHeight(_scene->_textBounds->height() - 2 * kBorderWidth);
 }
 
-static void sceneWindowCallback(WindowClick click, Common::Event &event, void *gui) {
+static void sceneWindowCallback(WindowClick click, Common::Event &event, void *g) {
+	Gui *gui = (Gui *)g;
+
+	if (click == kBorderInner && event.type == Common::EVENT_LBUTTONUP) {
+		Designed *obj = gui->_scene->lookUpEntity(event.mouse.x - gui->_sceneWindow->getDimensions().left,
+												  event.mouse.y - gui->_sceneWindow->getDimensions().top);
+
+		if (obj != nullptr)
+			gui->_engine->processTurn(NULL, obj);
+
+		return;
+	}
 }
 
 // Render console

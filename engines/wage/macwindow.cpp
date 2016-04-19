@@ -267,6 +267,9 @@ void MacWindow::fillRect(Graphics::ManagedSurface *g, int x, int y, int w, int h
 }
 
 static WindowClick isInBorder(Common::Rect &rect, int x, int y) {
+	if (rect.contains(x, y))
+		return kBorderInner;
+
 	if (x >= rect.left - kBorderWidth && x < rect.left && y >= rect.top - kBorderWidth && y < rect.top)
 		return kBorderCloseButton;
 
@@ -294,15 +297,12 @@ bool MacWindow::processEvent(Common::Event &event) {
 	case Common::EVENT_LBUTTONDOWN:
 		mouseDown(event);
 		break;
-	case Common::EVENT_LBUTTONUP:
-		setHighlight(kBorderNone);
-#if 0
-		{
-			Designed *obj = mouseUp(event.mouse.x, event.mouse.y);
-			if (obj != NULL)
-				_engine->processTurn(NULL, obj);
+	case Common::EVENT_LBUTTONUP: {
+			setHighlight(kBorderNone);
+
+			WindowClick click = isInBorder(_innerDims, event.mouse.x, event.mouse.y);
+			(*_callback)(click, event, _dataPtr);
 		}
-#endif
 		break;
 
 	default:
@@ -313,14 +313,6 @@ bool MacWindow::processEvent(Common::Event &event) {
 }
 
 void MacWindow::mouseDown(Common::Event &event) {
-	if (_innerDims.contains(event.mouse.x, event.mouse.y)) {
-		if (!_callback)
-			return;
-
-		(*_callback)(kBorderInner, event, _dataPtr);
-		return;
-	}
-
 	WindowClick click = isInBorder(_innerDims, event.mouse.x, event.mouse.y);
 
 	if (click == kBorderNone)
@@ -328,7 +320,7 @@ void MacWindow::mouseDown(Common::Event &event) {
 
 	setHighlight(click);
 
-	if (click == kBorderScrollUp || click == kBorderScrollDown) {
+	if (click == kBorderScrollUp || click == kBorderScrollDown || click == kBorderInner) {
 		if (!_callback)
 			return;
 

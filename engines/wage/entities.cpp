@@ -202,6 +202,22 @@ const char *Scene::getFontName() {
 	return "Unknown";
 }
 
+Designed *Scene::lookUpEntity(int x, int y) {
+	for (ObjList::const_iterator it = _objs.end(); it != _objs.begin(); ) {
+		it--;
+		if ((*it)->_design->isPointOpaque(x, y))
+			return *it;
+	}
+
+	for (ChrList::const_iterator it = _chrs.end(); it != _chrs.begin(); ) {
+		it--;
+		if ((*it)->_design->isPointOpaque(x, y))
+			return *it;
+	}
+
+	return nullptr;
+}
+
 Obj::Obj() : _currentOwner(NULL), _currentScene(NULL) {
 	_index = 0;
 	_namePlural = false;
