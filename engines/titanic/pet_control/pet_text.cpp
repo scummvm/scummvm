@@ -164,4 +164,8 @@ void CPetText::changeText(const CString &str) {
 	warning("TODO: CPetText::changeText");
 }
 
+void CPetText::setColor(int val1, int val2) {
+	warning("CPetText::setColor");
+}
+
 } // End of namespace Titanic

@@ -32,7 +32,7 @@ namespace Titanic {
 class CPetQuit : public CPetGlyph {
 private:
 	CPetText _text;
-	CPetGfxElement _element;
+	CPetGfxElement _btnYes;
 public:
 	/**
 	 * Setup the glyph

@@ -46,9 +46,13 @@ bool CPetQuit::reset() {
 		return false;
 
 	setName("PetExit", pet);
-	uint v = getPetSection()->getDataIndex(0);
 
-	// TODO
+	uint col = getPetSection()->getDataIndex(0);	
+	_text.setText("Are you sure you want to quit?");
+	_text.setColor(0, col);
+
+	_btnYes.reset("PetQuitOut", pet, MODE_UNSELECTED);
+	_btnYes.reset("PetQuitIn", pet, MODE_SELECTED);
 
 	return true;
 }

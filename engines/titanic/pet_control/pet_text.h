@@ -109,6 +109,8 @@ public:
 	 * Set the text
 	 */
 	void setText(const CString &str);
+
+	void setColor(int val1, int val2);
 };
 
 } // End of namespace Titanic
