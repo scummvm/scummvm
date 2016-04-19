@@ -21,11 +21,9 @@
  *
  */
 
-#define FORBIDDEN_SYMBOL_ALLOW_ALL
 #include "backends/platform/3ds/osystem.h"
 #include "backends/platform/3ds/shader_shbin.h"
-#include <common/rect.h>
-#include <algorithm>
+#include "common/rect.h"
 
 // Used to transfer the final rendered display to the framebuffer
 #define DISPLAY_TRANSFER_FLAGS                                                 \
@@ -62,7 +60,7 @@ void OSystem_3DS::initGraphics() {
 	_projectionLocation = shaderInstanceGetUniformLocation(_program.vertexShader, "projection");
 	_modelviewLocation = shaderInstanceGetUniformLocation(_program.vertexShader, "modelView");
 	
-	C3D_AttrInfo* attrInfo = C3D_GetAttrInfo();
+	C3D_AttrInfo *attrInfo = C3D_GetAttrInfo();
 	AttrInfo_Init(attrInfo);
 	AttrInfo_AddLoader(attrInfo, 0, GPU_FLOAT, 3); // v0=position
 	AttrInfo_AddLoader(attrInfo, 1, GPU_FLOAT, 2); // v1=texcoord
@@ -70,7 +68,7 @@ void OSystem_3DS::initGraphics() {
 	Mtx_OrthoTilt(&_projectionTop, 0.0, 400.0, 240.0, 0.0, 0.0, 1.0);
 	Mtx_OrthoTilt(&_projectionBottom, 0.0, 320.0, 240.0, 0.0, 0.0, 1.0);
 	
-	C3D_TexEnv* env = C3D_GetTexEnv(0);
+	C3D_TexEnv *env = C3D_GetTexEnv(0);
 	C3D_TexEnvSrc(env, C3D_Both, GPU_TEXTURE0, 0, 0);
 	C3D_TexEnvOp(env, C3D_Both, 0, 0, 0);
 	C3D_TexEnvFunc(env, C3D_Both, GPU_REPLACE);
@@ -138,7 +136,7 @@ bool OSystem_3DS::setGraphicsMode(int mode) {
 }
 
 void OSystem_3DS::resetGraphicsScale() {
-	printf("resetGraphicsScale\n");
+	debug("resetGraphicsScale");
 }
 
 int OSystem_3DS::getGraphicsMode() const {
@@ -146,14 +144,14 @@ int OSystem_3DS::getGraphicsMode() const {
 }
 void OSystem_3DS::initSize(uint width, uint height,
                                    const Graphics::PixelFormat *format) {
-	printf("3ds initsize w:%d h:%d\n", width, height);
+	debug("3ds initsize w:%d h:%d", width, height);
 	_gameWidth = width;
 	_gameHeight = height;
 	_gameTexture.create(width, height, _pfGameTexture);
 	_overlay.create(getOverlayWidth(), getOverlayHeight(), _pfGameTexture);
 	
 	if (format) {
-		printf("pixelformat: %d %d %d %d %d\n", format->bytesPerPixel, format->rBits(), format->gBits(), format->bBits(), format->aBits());;
+		debug("pixelformat: %d %d %d %d %d", format->bytesPerPixel, format->rBits(), format->gBits(), format->bBits(), format->aBits());;
 		_pfGame = *format;
 	}
 
@@ -207,7 +205,6 @@ OSystem::TransactionError OSystem_3DS::endGFXTransaction() {
 }
 
 void OSystem_3DS::setPalette(const byte *colors, uint start, uint num) {
-// 	printf("setPalette\n");
 	assert(start + num <= 256);
 	memcpy(_palette + 3 * start, colors, 3 * num);
 	
@@ -217,7 +214,6 @@ void OSystem_3DS::setPalette(const byte *colors, uint start, uint num) {
 	}
 }
 void OSystem_3DS::grabPalette(byte *colors, uint start, uint num) {
-// 	printf("grabPalette\n");
 	assert(start + num <= 256);
 	memcpy(colors, _palette + 3 * start, 3 * num);
 }
@@ -245,11 +241,9 @@ void OSystem_3DS::flushGameScreen() {
 }
 
 Graphics::Surface *OSystem_3DS::lockScreen() {
-	printf("lockScreen\n");
 	return &_gameScreen;
 }
 void OSystem_3DS::unlockScreen() {
-	printf("unlockScreen\n");
 	flushGameScreen();
 }
 
@@ -291,7 +285,7 @@ void OSystem_3DS::setShakePos(int shakeOffset) {
 }
 
 void OSystem_3DS::setFocusRectangle(const Common::Rect &rect) {
-// 	printf("setfocus: %d %d %d %d\n", rect.left, rect.top, rect.width(), rect.height());
+	debug("setfocus: %d %d %d %d", rect.left, rect.top, rect.width(), rect.height());
 	_focusRect = rect;
 	_focusDirty = true;
 	_focusClearTime = 0;
@@ -388,7 +382,7 @@ void OSystem_3DS::clearOverlay() {
 }
 
 void OSystem_3DS::grabOverlay(void *buf, int pitch) {
-	for(int y = 0; y < getOverlayHeight(); ++y) {
+	for (int y = 0; y < getOverlayHeight(); ++y) {
 		memcpy(buf, _overlay.getBasePtr(0, y), pitch);
 	}
 }

@@ -20,30 +20,29 @@
  *
  */
 
-#define FORBIDDEN_SYMBOL_ALLOW_ALL
 #include "backends/timer/default/default-timer.h"
-#include "backends/platform/3ds/gui.h"
+#include "gui.h"
 #include "osystem.h"
 
 static Common::Mutex *eventMutex;
 static InputMode inputMode = MODE_DRAG;
 static aptHookCookie cookie;
 
-static void pushEventQueue(Common::Queue<Common::Event>* queue, Common::Event& event) {
+static void pushEventQueue(Common::Queue<Common::Event> *queue, Common::Event &event) {
 	Common::StackLock lock(*eventMutex);
 	queue->push(event);
 }
 
-static void eventThreadFunc(void* arg) {
-	OSystem_3DS* osys = (OSystem_3DS*) g_system;
-	auto eventQueue = (Common::Queue<Common::Event>*) arg;
+static void eventThreadFunc(void *arg) {
+	OSystem_3DS *osys = (OSystem_3DS *)g_system;
+	auto eventQueue = (Common::Queue<Common::Event> *)arg;
 	
 	uint32 touchStartTime = osys->getMillis();
-	touchPosition lastTouch = {0,0};
+	touchPosition lastTouch = {0, 0};
 	bool isRightClick = false;
 	Common::Event event;
 	
-	while(!osys->exiting) {
+	while (!osys->exiting) {
 		do {
 			osys->delayMillis(10);
 		} while (osys->sleeping && !osys->exiting);
@@ -69,23 +68,19 @@ static void eventThreadFunc(void* arg) {
 					event.type = isRightClick ? Common::EVENT_RBUTTONDOWN : Common::EVENT_LBUTTONDOWN;
 					pushEventQueue(eventQueue, event);
 				}
-			}
-			else if (touch.px != lastTouch.px || touch.py != lastTouch.py) {
+			} else if (touch.px != lastTouch.px || touch.py != lastTouch.py) {
 				event.type = Common::EVENT_MOUSEMOVE;
 				pushEventQueue(eventQueue, event);
 			}
 			
 			lastTouch = touch;
-		}
-		else if (keysReleased & KEY_TOUCH) {
+		} else if (keysReleased & KEY_TOUCH) {
 			event.mouse.x = lastTouch.px;
 			event.mouse.y = lastTouch.py;
-			printf("clicked %u, %u\n", lastTouch.px, lastTouch.py);
 			if (inputMode == MODE_DRAG) {
 				event.type = isRightClick ? Common::EVENT_RBUTTONUP : Common::EVENT_LBUTTONUP;
 				pushEventQueue(eventQueue, event);
-			}
-			else if (osys->getMillis() - touchStartTime < 200) {
+			} else if (osys->getMillis() - touchStartTime < 200) {
 				// Process click in MODE_HOVER
 				event.type = Common::EVENT_MOUSEMOVE;
 				pushEventQueue(eventQueue, event);
@@ -144,15 +139,15 @@ static void eventThreadFunc(void* arg) {
 			event.kbd.flags = 0;
 			pushEventQueue(eventQueue, event);
 		}
-
+		
 		// TODO: EVENT_PREDICTIVE_DIALOG
 		// EVENT_SCREEN_CHANGED
 	}
 }
 
-static void aptHookFunc(APT_HookType hookType, void* param) {
-	auto eventQueue = (Common::Queue<Common::Event>*) param;
-	OSystem_3DS* osys = (OSystem_3DS*) g_system;
+static void aptHookFunc(APT_HookType hookType, void *param) {
+	auto eventQueue = (Common::Queue<Common::Event> *)param;
+	OSystem_3DS *osys = (OSystem_3DS *)g_system;
 	Common::Event event;
 	
 	switch (hookType) {
@@ -174,8 +169,8 @@ static void aptHookFunc(APT_HookType hookType, void* param) {
 }
 
 static void timerThreadFunc(void *arg) {
-	OSystem_3DS* osys = (OSystem_3DS*) arg;
-	DefaultTimerManager *tm = (DefaultTimerManager *) osys->getTimerManager();
+	OSystem_3DS *osys = (OSystem_3DS *)arg;
+	DefaultTimerManager *tm = (DefaultTimerManager *)osys->getTimerManager();
 	while (!osys->exiting) {
 		tm->handler();
 		g_system->delayMillis(10);
@@ -187,8 +182,8 @@ void OSystem_3DS::initEvents() {
 	eventMutex = new Common::Mutex();
 	s32 prio = 0;
 	svcGetThreadPriority(&prio, CUR_THREAD_HANDLE);
-	_timerThread = threadCreate(&timerThreadFunc, this, 32*1024, prio-1, -2, false);
-	_eventThread = threadCreate(&eventThreadFunc, &_eventQueue, 32*1024, prio-1, -2, false);
+	_timerThread = threadCreate(&timerThreadFunc, this, 32 * 1024, prio - 1, -2, false);
+	_eventThread = threadCreate(&eventThreadFunc, &_eventQueue, 32 * 1024, prio - 1, -2, false);
 	
 	aptHook(&cookie, aptHookFunc, &_eventQueue);
 }

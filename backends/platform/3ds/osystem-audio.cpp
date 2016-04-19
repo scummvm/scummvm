@@ -25,9 +25,9 @@
 
 static bool hasAudio = false;
 
-static void audioThreadFunc(void* arg) {
-	Audio::MixerImpl *mixer = (Audio::MixerImpl *) arg;
-	OSystem_3DS *osys = (OSystem_3DS*)g_system;
+static void audioThreadFunc(void *arg) {
+	Audio::MixerImpl *mixer = (Audio::MixerImpl *)arg;
+	OSystem_3DS *osys = (OSystem_3DS *)g_system;
 
 	int i;
 	const int channel = 0;
@@ -40,7 +40,7 @@ static void audioThreadFunc(void* arg) {
 	uint32 time = lastTime;
 	ndspWaveBuf buffers[bufferCount];
 	
-	for(i = 0; i < bufferCount; ++i) {
+	for (i = 0; i < bufferCount; ++i) {
 		memset(&buffers[i], 0, sizeof(ndspWaveBuf));
 		buffers[i].data_vaddr = linearAlloc(bufferSize);
 		buffers[i].looping = false;
@@ -52,7 +52,7 @@ static void audioThreadFunc(void* arg) {
 	ndspChnSetRate(channel, sampleRate);
 	ndspChnSetFormat(channel, NDSP_FORMAT_STEREO_PCM16);
 
-	while(!osys->exiting) {		
+	while (!osys->exiting) {		
 		osys->delayMillis(100); // Note: Increasing the delay requires a bigger buffer
 		
 		time = osys->getMillis(true);
@@ -62,7 +62,7 @@ static void audioThreadFunc(void* arg) {
 		if (!osys->sleeping && sampleLen > 0) {
 			bufferIndex++;
 			bufferIndex %= bufferCount;
-			ndspWaveBuf* buf = &buffers[bufferIndex];
+			ndspWaveBuf *buf = &buffers[bufferIndex];
 		
 			buf->nsamples = mixer->mixCallback(buf->data_adpcm, sampleLen);
 			if (buf->nsamples > 0) {
@@ -72,7 +72,7 @@ static void audioThreadFunc(void* arg) {
 		}
 	}
 	
-	for(i = 0; i < bufferCount; ++i)
+	for (i = 0; i < bufferCount; ++i)
 		linearFree(buffers[i].data_pcm8);
 }
 
@@ -85,7 +85,7 @@ void OSystem_3DS::initAudio() {
 	if (hasAudio) {
 		s32 prio = 0;
 		svcGetThreadPriority(&prio, CUR_THREAD_HANDLE);
-		audioThread = threadCreate(&audioThreadFunc, _mixer, 32*1048, prio-1, -2, false);
+		audioThread = threadCreate(&audioThreadFunc, _mixer, 32 * 1048, prio - 1, -2, false);
 	}
 }
 

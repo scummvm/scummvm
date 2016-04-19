@@ -20,7 +20,9 @@
  *
  */
 
-#define FORBIDDEN_SYMBOL_ALLOW_ALL
+#define FORBIDDEN_SYMBOL_EXCEPTION_printf
+#define FORBIDDEN_SYMBOL_EXCEPTION_time_h
+#define FORBIDDEN_SYMBOL_EXCEPTION_unistd_h
 
 #include "osystem.h"
 
@@ -38,36 +40,37 @@
 #include <time.h>
 
 OSystem_3DS::OSystem_3DS():
-_focusDirty(true),
-_focusRect(Common::Rect(1,1)),
-_focusPosX(0),
-_focusPosY(0),
-_focusTargetPosX(0),
-_focusTargetPosY(0),
-_focusStepPosX(0),
-_focusStepPosY(0),
-_focusScaleX(1.f),
-_focusScaleY(1.f),
-_focusTargetScaleX(1.f),
-_focusTargetScaleY(1.f),
-_focusStepScaleX(0.f),
-_focusStepScaleY(0.f),
-_focusClearTime(0),
-_showMessageOSD(false),
-_isFullscreen(false),
-_cursorVisible(false),
-_cursorScalable(false),
-_cursorPaletteEnabled(false),
-_cursorX(0),
-_cursorY(0),
-_cursorHotspotX(0),
-_cursorHotspotY(0),
-_gameX(0),
-_gameY(0),
-_gameWidth(320),
-_gameHeight(240),
-exiting(false),
-sleeping(false) {
+	_focusDirty(true),
+	_focusRect(Common::Rect(1, 1)),
+	_focusPosX(0),
+	_focusPosY(0),
+	_focusTargetPosX(0),
+	_focusTargetPosY(0),
+	_focusStepPosX(0),
+	_focusStepPosY(0),
+	_focusScaleX(1.f),
+	_focusScaleY(1.f),
+	_focusTargetScaleX(1.f),
+	_focusTargetScaleY(1.f),
+	_focusStepScaleX(0.f),
+	_focusStepScaleY(0.f),
+	_focusClearTime(0),
+	_showMessageOSD(false),
+	_isFullscreen(false),
+	_cursorVisible(false),
+	_cursorScalable(false),
+	_cursorPaletteEnabled(false),
+	_cursorX(0),
+	_cursorY(0),
+	_cursorHotspotX(0),
+	_cursorHotspotY(0),
+	_gameX(0),
+	_gameY(0),
+	_gameWidth(320),
+	_gameHeight(240),
+	exiting(false),
+	sleeping(false)
+{
 	chdir("sdmc:/");
 	_fsFactory = new POSIXFilesystemFactory();
 	Posix::assureDirectoryExists("/3ds/scummvm/saves/");
@@ -133,18 +136,18 @@ void OSystem_3DS::getTimeAndDate(TimeDate& td) const {
 }
 
 OSystem::MutexRef OSystem_3DS::createMutex() {
-	RecursiveLock* mutex = new RecursiveLock();
+	RecursiveLock *mutex = new RecursiveLock();
 	RecursiveLock_Init(mutex);
 	return (OSystem::MutexRef) mutex;
 }
 void OSystem_3DS::lockMutex(MutexRef mutex) {
-	RecursiveLock_Lock((RecursiveLock *)mutex);
+	RecursiveLock_Lock((RecursiveLock*)mutex);
 }
 void OSystem_3DS::unlockMutex(MutexRef mutex) {
-	RecursiveLock_Unlock((RecursiveLock *)mutex);
+	RecursiveLock_Unlock((RecursiveLock*)mutex);
 }
 void OSystem_3DS::deleteMutex(MutexRef mutex) {
-	delete (RecursiveLock *)mutex;
+	delete (RecursiveLock*)mutex;
 }
 
 Common::String OSystem_3DS::getSystemLanguage() const {
