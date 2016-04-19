@@ -603,16 +603,6 @@ public:
 	void sceneXX_playRandomSound(int timerIndex);
 	void playSequences(int fullScreenSpriteId, int sequenceId1, int sequenceId2, int sequenceId3);
 	
-	// Scene 3
-	bool _s03_platypusHypnotized;	
-	bool _s03_platypusScared;
-	int _s03_nextPlatSequenceId;
-	int _s03_nextFrogSequenceId, _s03_currFrogSequenceId;
-	int scene03_init();
-	void scene03_updateHotspots();
-	void scene03_run();
-	void scene03_updateAnimations();
-
 	// Scene 4
 	bool _s04_triedWindow;
 	int _s04_dogIdCtr;

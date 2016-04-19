@@ -27,11 +27,12 @@
 
 #include "gnap/scenes/scene00.h"
 #include "gnap/scenes/scene01.h"
+#include "gnap/scenes/scene02.h"
+#include "gnap/scenes/scene03.h"
 
 namespace Gnap {
 
 int GnapEngine::initSceneLogic() {
-
 	int backgroundId = -1;
 
 	switch (_currentSceneNum) {
@@ -48,14 +49,16 @@ int GnapEngine::initSceneLogic() {
 		initSceneGrid(21, 146, 11, 10);
 		break;
 	case 2:
+		_scene = new Scene02(this);
 		backgroundId = _scene->init();
 		_scene->updateHotspots();
 		_gameSys->setScaleValues(0, 500, 1, 1000);
 		initSceneGrid(21, 146, 11, 10);
 		break;
 	case 3:
-		backgroundId = scene03_init();
-		scene03_updateHotspots();
+		_scene = new Scene03(this);
+		backgroundId = _scene->init();
+		_scene->updateHotspots();
 		_gameSys->setScaleValues(0, 500, 1, 1000);
 		initSceneGrid(21, 146, 11, 10);
 		break;
@@ -239,8 +242,9 @@ int GnapEngine::initSceneLogic() {
 		initSceneGrid(21, 146, 11, 10);
 		break;
 	case 34:
-		backgroundId = scene03_init();
-		scene03_updateHotspots();
+		_scene = new Scene03(this);
+		backgroundId = _scene->init();
+		_scene->updateHotspots();
 		_gameSys->setScaleValues(0, 500, 1, 1000);
 		initSceneGrid(21, 146, 11, 10);
 		break;
@@ -369,7 +373,8 @@ void GnapEngine::runSceneLogic() {
 			_newSceneNum = 4;
 		break;
 	case 3:
-		scene03_run();
+		_scene->run();
+		delete _scene;
 		if (_newSceneNum == 55)
 			_newSceneNum = 4;
 		break;
@@ -525,7 +530,8 @@ void GnapEngine::runSceneLogic() {
 			_newSceneNum = 37;
 		break;
 	case 34:
-		scene03_run();
+		_scene->run();
+		delete _scene;
 		if (_newSceneNum == 55)
 			_newSceneNum = 37;
 		break;
