@@ -148,23 +148,13 @@ void WageEngine::processEvents() {
 	Common::Event event;
 
 	while (_eventMan->pollEvent(event)) {
+		if (_gui->processEvent(event))
+			continue;
+
 		switch (event.type) {
 		case Common::EVENT_QUIT:
 			if (saveDialog())
 				_shouldQuit = true;
-			break;
-		case Common::EVENT_MOUSEMOVE:
-			_gui->mouseMove(event.mouse.x, event.mouse.y);
-			break;
-		case Common::EVENT_LBUTTONDOWN:
-			_gui->mouseDown(event.mouse.x, event.mouse.y);
-			break;
-		case Common::EVENT_LBUTTONUP:
-			{
-				Designed *obj = _gui->mouseUp(event.mouse.x, event.mouse.y);
-				if (obj != NULL)
-					processTurn(NULL, obj);
-			}
 			break;
 		case Common::EVENT_KEYDOWN:
 			switch (event.kbd.keycode) {

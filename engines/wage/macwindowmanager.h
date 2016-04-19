@@ -66,7 +66,7 @@ public:
 
 	void draw();
 
-	bool mouseDown(int x, int y);
+	bool processEvent(Common::Event &event);
 
 	MacWindow *getWindow(int id) { return _windows[id]; }
 

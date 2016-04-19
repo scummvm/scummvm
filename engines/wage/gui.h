@@ -52,6 +52,7 @@
 #include "graphics/font.h"
 #include "graphics/fontman.h"
 #include "graphics/managed_surface.h"
+#include "common/events.h"
 #include "common/rect.h"
 
 #include "wage/macwindow.h"
@@ -89,6 +90,7 @@ public:
 	void draw();
 	void appendText(const char *str);
 	void clearOutput();
+	bool processEvent(Common::Event &event);
 	void mouseMove(int x, int y);
 	void mouseDown(int x, int y);
 	Designed *mouseUp(int x, int y);

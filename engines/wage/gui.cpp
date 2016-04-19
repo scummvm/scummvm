@@ -55,10 +55,10 @@
 #include "wage/wage.h"
 #include "wage/design.h"
 #include "wage/entities.h"
+#include "wage/gui.h"
 #include "wage/macwindow.h"
 #include "wage/macwindowmanager.h"
 #include "wage/menu.h"
-#include "wage/gui.h"
 #include "wage/world.h"
 
 namespace Wage {
@@ -540,6 +540,32 @@ void Gui::popCursor() {
 	CursorMan.popCursor();
 }
 
+bool Gui::processEvent(Common::Event &event) {
+	if (_wm.processEvent(event))
+		return true;
+
+	switch (event.type) {
+	case Common::EVENT_MOUSEMOVE:
+		mouseMove(event.mouse.x, event.mouse.y);
+		break;
+	case Common::EVENT_LBUTTONDOWN:
+		mouseDown(event.mouse.x, event.mouse.y);
+		break;
+	case Common::EVENT_LBUTTONUP:
+		{
+			Designed *obj = mouseUp(event.mouse.x, event.mouse.y);
+			if (obj != NULL)
+				_engine->processTurn(NULL, obj);
+		}
+		break;
+
+	default:
+		return false;
+	}
+
+	return true;
+}
+
 static int isInBorder(Common::Rect &rect, int x, int y) {
 	if (x >= rect.left - kBorderWidth && x < rect.left && y >= rect.top - kBorderWidth && y < rect.top)
 		return kBorderCloseButton;
@@ -644,8 +670,6 @@ Designed *Gui::mouseUp(int x, int y) {
 
 void Gui::mouseDown(int x, int y) {
 	int borderClick;
-
-	_wm.mouseDown(x, y);
 
 	if (_menu->mouseClick(x, y)) {
 		_menuDirty = true;

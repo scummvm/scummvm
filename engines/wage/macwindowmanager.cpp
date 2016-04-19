@@ -45,8 +45,9 @@
  *
  */
 
-#include "common/list.h"
 #include "common/array.h"
+#include "common/events.h"
+#include "common/list.h"
 #include "common/system.h"
 
 #include "graphics/managed_surface.h"
@@ -115,16 +116,20 @@ void MacWindowManager::draw() {
     _fullRefresh = false;
 }
 
-bool MacWindowManager::mouseDown(int x, int y) {
+bool MacWindowManager::processEvent(Common::Event &event) {
+    if (event.type != Common::EVENT_MOUSEMOVE && event.type != Common::EVENT_LBUTTONDOWN &&
+            event.type != Common::EVENT_LBUTTONUP)
+        return false;
+
     for (Common::List<MacWindow *>::const_iterator it = _windowStack.end(); it != _windowStack.begin();) {
         it--;
         MacWindow *w = *it;
 
-        if (w->getDimensions().contains(x, y)) {
-            setActive(w->getId());
-            w->mouseDown(x, y);
+        if (w->getDimensions().contains(event.mouse.x, event.mouse.y)) {
+            if (event.type == Common::EVENT_LBUTTONDOWN || event.type == Common::EVENT_LBUTTONUP)
+                setActive(w->getId());
 
-            return true;
+            return w->processEvent(event);
         }
     }
 

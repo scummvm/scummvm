@@ -85,7 +85,7 @@ public:
 	void setScroll(float scrollPos, float scrollSize) { _scrollPos = scrollPos; _scrollSize = scrollSize; }
 	void setDirty(bool dirty) { _contentIsDirty = dirty; }
 	int getId() { return _id; }
-	void mouseDown(int x, int y);
+	bool processEvent(Common::Event &event);
 
 private:
 	void drawBorder();
@@ -93,6 +93,8 @@ private:
 	void fillRect(Graphics::ManagedSurface *g, int x, int y, int w, int h, int color = kColorBlack);
 	const Graphics::Font *getTitleFont();
 	bool builtInFonts();
+
+	void mouseDown(int x, int y);
 
 private:
 	Graphics::ManagedSurface _surface;

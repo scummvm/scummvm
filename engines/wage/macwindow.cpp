@@ -46,6 +46,7 @@
  */
 
 #include "graphics/primitives.h"
+#include "common/events.h"
 
 #include "wage/wage.h"
 #include "wage/gui.h"
@@ -262,6 +263,31 @@ static WindowClick isInBorder(Common::Rect &rect, int x, int y) {
 	}
 
 	return kBorderNone;
+}
+
+bool MacWindow::processEvent(Common::Event &event) {
+	switch (event.type) {
+	case Common::EVENT_MOUSEMOVE:
+		//mouseMove(event.mouse.x, event.mouse.y);
+		break;
+	case Common::EVENT_LBUTTONDOWN:
+		mouseDown(event.mouse.x, event.mouse.y);
+		break;
+	case Common::EVENT_LBUTTONUP:
+#if 0
+		{
+			Designed *obj = mouseUp(event.mouse.x, event.mouse.y);
+			if (obj != NULL)
+				_engine->processTurn(NULL, obj);
+		}
+#endif
+		break;
+
+	default:
+		return false;
+	}
+
+	return true;
 }
 
 void MacWindow::mouseDown(int x, int y) {
