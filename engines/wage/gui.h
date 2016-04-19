@@ -114,21 +114,14 @@ public:
 
 	bool builtInFonts() { return _builtInFonts; }
 
-	uint getScrollPos() { return _scrollPos; }
-	uint getLinesSize() { return _lines.size(); }
-	int getConsoleLineHeight() { return _consoleLineHeight; }
-	int getConsoleTextAreaHeight() { return _consoleTextArea.height(); }
+	void processConsoleEvents(WindowClick click, Common::Event &event);
 
 private:
 	void drawScene();
 	void drawConsole();
 	void undrawCursor();
 	void drawDesktop();
-	void paintBorder(Graphics::ManagedSurface *g, Common::Rect &r, WindowType windowType, int highlightedPart = kBorderNone,
-						float scrollPos = 0.0, float scrollSize = 0.0);
 	void renderConsole(Graphics::ManagedSurface *g, const Common::Rect &r);
-	void drawBox(Graphics::ManagedSurface *g, int x, int y, int w, int h);
-	void fillRect(Graphics::ManagedSurface *g, int x, int y, int w, int h, int color = kColorBlack);
 	void loadFonts();
 	void flowText(Common::String &str);
 	const Graphics::Font *getConsoleFont();
