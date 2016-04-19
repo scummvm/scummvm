@@ -114,6 +114,11 @@ public:
 
 	bool builtInFonts() { return _builtInFonts; }
 
+	uint getScrollPos() { return _scrollPos; }
+	uint getLinesSize() { return _lines.size(); }
+	int getConsoleLineHeight() { return _consoleLineHeight; }
+	int getConsoleTextAreaHeight() { return _consoleTextArea.height(); }
+
 private:
 	void drawScene();
 	void drawConsole();
@@ -150,6 +155,9 @@ public:
 
 	bool _menuDirty;
 
+	MacWindow *_sceneWindow;
+	MacWindow *_consoleWindow;
+
 private:
 	Graphics::ManagedSurface _console;
 	Menu *_menu;
@@ -181,8 +189,6 @@ private:
 	int _inputTextLineNum;
 
 	MacWindowManager _wm;
-	MacWindow *_sceneWindow;
-	MacWindow *_consoleWindow;
 };
 
 } // End of namespace Wage

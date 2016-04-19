@@ -294,6 +294,7 @@ bool MacWindow::processEvent(Common::Event &event) {
 }
 
 void MacWindow::mouseDown(Common::Event &event) {
+	_innerDims.debugPrint();
 	if (_innerDims.contains(event.mouse.x, event.mouse.y)) {
 		if (!_callback)
 			return;
@@ -303,6 +304,7 @@ void MacWindow::mouseDown(Common::Event &event) {
 	}
 
 	WindowClick click = isInBorder(_innerDims, event.mouse.x, event.mouse.y);
+	warning("click: %d", click);
 
 	if (click == kBorderNone)
 		return;

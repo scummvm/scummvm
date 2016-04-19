@@ -82,7 +82,7 @@ public:
 	Graphics::ManagedSurface *getSurface() { return &_surface; }
 	void setTitle(Common::String &title) { _title = title; }
 	void setHighlight(WindowClick highlightedPart) { _highlightedPart = highlightedPart; }
-	void setScroll(float scrollPos, float scrollSize) { _scrollPos = scrollPos; _scrollSize = scrollSize; }
+	void setScroll(float scrollPos, float scrollSize) { _scrollPos = scrollPos; _scrollSize = scrollSize; _borderIsDirty = true; }
 	void setDirty(bool dirty) { _contentIsDirty = dirty; }
 	int getId() { return _id; }
 	bool processEvent(Common::Event &event);

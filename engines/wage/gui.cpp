@@ -143,6 +143,9 @@ static void cursorTimerHandler(void *refCon) {
 	gui->_cursorDirty = true;
 }
 
+static void sceneWindowCallback(WindowClick click, Common::Event &event, void *gui);
+static void consoleWindowCallback(WindowClick click, Common::Event &event, void *gui);
+
 Gui::Gui(WageEngine *engine) {
 	_engine = engine;
 	_scene = NULL;
@@ -190,7 +193,10 @@ Gui::Gui(WageEngine *engine) {
 	_menu = new Menu(this);
 
 	_sceneWindow = _wm.add(false);
+	_sceneWindow->setCallback(sceneWindowCallback, this);
+
 	_consoleWindow = _wm.add(true);
+	_consoleWindow->setCallback(consoleWindowCallback, this);
 }
 
 Gui::~Gui() {
@@ -303,6 +309,9 @@ void Gui::drawScene() {
 	_consoleTextArea.setHeight(_scene->_textBounds->height() - 2 * kBorderWidth);
 }
 
+static void sceneWindowCallback(WindowClick click, Common::Event &event, void *gui) {
+}
+
 // Render console
 void Gui::drawConsole() {
 	if (!_consoleDirty && !_consoleFullRedraw && !_bordersDirty && !_sceneDirty)
@@ -312,6 +321,22 @@ void Gui::drawConsole() {
 	renderConsole(_consoleWindow->getSurface(), Common::Rect(kBorderWidth - 2, kBorderWidth - 2,
 				_scene->_textBounds->width() - kBorderWidth, _scene->_textBounds->height() - kBorderWidth));
 	_consoleWindow->setDirty(true);
+}
+
+static void consoleWindowCallback(WindowClick click, Common::Event &event, void *g) {
+	Gui *gui = (Gui *)g;
+
+	if (click == kBorderScrollUp || click == kBorderScrollDown) {
+		int textFullSize = gui->getLinesSize() * gui->getConsoleLineHeight() + gui->getConsoleTextAreaHeight();
+		float scrollPos = (float)gui->getScrollPos() / textFullSize;
+		float scrollSize = (float)gui->getConsoleTextAreaHeight() / textFullSize;
+
+		gui->_consoleWindow->setScroll(scrollPos, scrollSize);
+
+		warning("pos: %f size: %f", scrollPos, scrollSize);
+
+		return;
+	}
 }
 
 void Gui::drawBox(Graphics::ManagedSurface *g, int x, int y, int w, int h) {
