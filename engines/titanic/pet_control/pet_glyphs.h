@@ -82,7 +82,7 @@ public:
 	/**
 	 * Setup the glyph
 	 */
-	virtual void setup(CPetControl *petControl, CPetGlyphs *owner);
+	virtual bool setup(CPetControl *petControl, CPetGlyphs *owner);
 
 	/**
 	 * Reset the glyph

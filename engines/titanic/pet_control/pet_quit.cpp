@@ -28,7 +28,7 @@
 
 namespace Titanic {
 
-void CPetQuit::setup(CPetControl *petControl, CPetGlyphs *owner) {
+bool CPetQuit::setup(CPetControl *petControl, CPetGlyphs *owner) {
 	CPetGlyph::setup(petControl, owner);
 	Rect tempRect(0, 0, 280, 16);
 	tempRect.moveTo(32, 407);
@@ -40,6 +40,8 @@ void CPetQuit::setup(CPetControl *petControl, CPetGlyphs *owner) {
 	Rect elementRect(0, 0, 496, 388);
 	elementRect.moveTo(496, 388);
 	_element.setBounds(elementRect);
+	
+	return true;
 }
 
 bool CPetQuit::reset() {
@@ -49,7 +51,7 @@ bool CPetQuit::reset() {
 
 	setName("PetExit", pet);
 
-	uint col = getPetSection()->getDataIndex(0);	
+	uint col = getPetSection()->getColor(0);	
 	_text.setText("Are you sure you want to quit?");
 	_text.setColor(0, col);
 

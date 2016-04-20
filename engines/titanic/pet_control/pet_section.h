@@ -160,8 +160,16 @@ public:
 	 */
 	CPetControl *getPetControl() const { return _petControl; }
 
-	uint getDataIndex(int index);
-	const uint *getDataTable(int index = -1);
+	/**
+	 * Get a specified color in the currently active UI color table
+	 */
+	uint getColor(uint index);
+	
+	/**
+	 * Get one of the game's three UI color tables. If the default
+	 * tableNum of -1 is used, the table is taken from the game state
+	 */
+	const uint *getColorTable(int tableNum = -1);
 };
 
 } // End of namespace Titanic

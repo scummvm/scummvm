@@ -48,9 +48,9 @@ private:
 	int _backR;
 	int _backG;
 	int _backB;
-	int _field54;
-	int _field58;
-	int _field5C;
+	int _textR;
+	int _textG;
+	int _textB;
 	int _field60;
 	int _field64;
 	int _field68;
@@ -110,7 +110,15 @@ public:
 	 */
 	void setText(const CString &str);
 
-	void setColor(int val1, int val2);
+	/**
+	 * Set text color
+	 */
+	void setColor(int val1, uint col);
+
+	/**
+	 * Set text color
+	 */
+	void setColor(uint col);
 };
 
 } // End of namespace Titanic

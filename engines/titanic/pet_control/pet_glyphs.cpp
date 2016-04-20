@@ -25,9 +25,10 @@
 
 namespace Titanic {
 
-void CPetGlyph::setup(CPetControl *petControl, CPetGlyphs *owner) {
+bool CPetGlyph::setup(CPetControl *petControl, CPetGlyphs *owner) {
 	_element.setBounds(Rect(0, 0, 52, 50));
 	_owner = owner;
+	return true;
 }
 
 void CPetGlyph::drawAt(CScreenManager *screenManager, const Point &pt) {

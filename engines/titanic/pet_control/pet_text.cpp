@@ -25,12 +25,12 @@
 namespace Titanic {
 
 CPetText::CPetText(uint count) :
-	_stringsMerged(false), _field30(-1), _lineCount(0), _field38(-1),
-	_field3C(0), _field40(0), _field44(0), _backR(0xff),
-	_backG(0xff), _backB(0xff), _field54(0), _field58(0),
-	_field5C(200), _field60(0), _field64(0), _field68(0),
-	_field6C(0), _hasBorder(true), _field74(0), _field78(0),
-	_field7C(0) {
+		_stringsMerged(false), _field30(-1), _lineCount(0),
+		_field38(-1), _field3C(0), _field40(0), _field44(0),
+		_backR(0xff), _backG(0xff), _backB(0xff), 
+		_textR(0), _textG(0), _textB(200),
+		_field60(0), _field64(0), _field68(0), _field6C(0),
+		_hasBorder(true), _field74(0), _field78(0), _field7C(0) {
 	setupArrays(count);
 }
 
@@ -48,7 +48,7 @@ void CPetText::freeArrays() {
 void CPetText::setup() {
 	for (int idx = 0; idx < (int)_array.size(); ++idx) {
 		_array[idx]._string1.clear();
-		setArrayStr2(idx, _field54, _field58, _field5C);
+		setArrayStr2(idx, _textR, _textG, _textB);
 		_array[idx]._string3.clear();
 	}
 
@@ -89,9 +89,9 @@ void CPetText::load(SimpleFile *file, int param) {
 		_backR = file->readNumber();
 		_backG = file->readNumber();
 		_backB = file->readNumber();
-		_field54 = file->readNumber();
-		_field58 = file->readNumber();
-		_field5C = file->readNumber();
+		_textR = file->readNumber();
+		_textG = file->readNumber();
+		_textB = file->readNumber();
 		_hasBorder = file->readNumber() != 0;
 		_field74 = file->readNumber();
 
@@ -164,8 +164,14 @@ void CPetText::changeText(const CString &str) {
 	warning("TODO: CPetText::changeText");
 }
 
-void CPetText::setColor(int val1, int val2) {
+void CPetText::setColor(int val1, uint col) {
 	warning("CPetText::setColor");
+}
+
+void CPetText::setColor(uint col) {
+	_textR = col & 0xff;
+	_textG = (col >> 8) & 0xff;
+	_textB = (col >> 16) & 0xff;
 }
 
 } // End of namespace Titanic

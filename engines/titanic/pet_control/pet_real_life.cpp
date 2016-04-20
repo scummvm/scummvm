@@ -36,6 +36,11 @@ bool CPetRealLife::setup(CPetControl *petControl) {
 }
 
 bool CPetRealLife::reset() {
+	_glyphs.reset();
+	uint col = getColor(0);
+	_text.setColor(col);
+	_text.setColor(0, col);
+
 	return true;
 }
 
@@ -67,7 +72,10 @@ bool CPetRealLife::setupControl(CPetControl *petControl) {
 }
 
 void CPetRealLife::addButton(CPetGlyph *glyph) {
-
+	if (glyph) {
+		if (glyph->setup(_petControl, &_glyphs))
+			_glyphs.push_back(glyph);
+	}
 }
 
 bool CPetRealLife::isValid(CPetControl *petControl) {
