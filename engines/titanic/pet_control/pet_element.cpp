@@ -33,7 +33,7 @@ void CPetElement::getBounds(Rect *rect) {
 		*rect = Rect();
 }
 
-bool CPetElement::proc6(const Common::Point &pt) {
+bool CPetElement::proc6(const Point &pt) {
 	bool result = _bounds.contains(pt);
 	if (result)
 		setMode(MODE_SELECTED);
@@ -47,18 +47,18 @@ bool CPetElement::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
 	return result;
 }
 
-bool CPetElement::contains1(const Common::Point &pt) const {
+bool CPetElement::contains1(const Point &pt) const {
 	return _bounds.contains(pt);
 }
 
-int CPetElement::proc9(const Common::Point &pt) {
+int CPetElement::proc9(const Point &pt) {
 	bool result = _bounds.contains(pt);
 	if (result)
 		setMode(MODE_2);
 	return result;
 }
 
-bool CPetElement::contains2(const Common::Point &pt) const {
+bool CPetElement::contains2(const Point &pt) const {
 	return _bounds.contains(pt);
 }
 

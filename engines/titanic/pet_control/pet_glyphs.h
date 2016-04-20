@@ -33,6 +33,7 @@ namespace Titanic {
 
 class CPetGlyphs;
 class CPetSection;
+class CPetText;
 
 enum GlyphActionMode { ACTION_REMOVE = 0, ACTION_REMOVED = 1, ACTION_CHANGE = 2 };
 
@@ -92,15 +93,14 @@ public:
 	virtual void proc11() {}
 
 	/**
-	 * Draw the glyph at a translated position without permanently
-	 * changing the position
+	 * Draw the glyph at a specified position
 	 */
-	virtual void drawAt(CScreenManager *screenManager, int x, int y);
+	virtual void drawAt(CScreenManager *screenManager, const Point &pt);
 
 	/**
-	 * Handles any secondary drawing of a glyph as highlighted
+	 * Handles any secondary drawing of the glyph
 	 */
-	virtual void drawHighlight() {}
+	virtual void draw2(CScreenManager *screenManager) {}
 
 	virtual void proc14();
 
@@ -113,7 +113,7 @@ public:
 	virtual int proc17() { return 0; }
 	virtual int proc18() { return 0; }
 	virtual int proc19() { return 0; }
-	virtual int proc20() { return 0; }
+	virtual bool MouseButtonDownMsg(CMouseButtonDownMsg *msg) { return false; }
 	virtual int proc21() { return 0; }
 	virtual int proc22() { return 0; }
 	virtual int proc23() { return 0; }
@@ -125,12 +125,16 @@ public:
 	virtual int proc29() { return 0; }
 
 	/**
-	 * Returns true if the glyph's bounds, shifted by a given delta,
+	 * Returns true if the glyph's bounds, shifted to a given position,
 	 * will contain the specified point
 	 */
-	virtual bool translateContains(const Point &delta, const Point &pt);
+	virtual bool contains(const Point &delta, const Point &pt);
 
-	virtual void proc31() {}
+	/**
+	 * Returns the tooltip text for when the glyph is selected
+	 */
+	virtual void getTooltip(CPetText *text) {}
+
 	virtual void proc32() {}
 
 	virtual int proc33() { return 1; }

@@ -21,8 +21,10 @@
  */
 
 #include "titanic/pet_control/pet_quit.h"
+#include "titanic/pet_control/pet_control.h"
 #include "titanic/pet_control/pet_real_life.h"
 #include "titanic/support/rect.h"
+#include "titanic/game_manager.h"
 
 namespace Titanic {
 
@@ -55,6 +57,31 @@ bool CPetQuit::reset() {
 	_btnYes.reset("PetQuitIn", pet, MODE_SELECTED);
 
 	return true;
+}
+
+void CPetQuit::draw2(CScreenManager *screenManager) {
+	_text.draw(screenManager);
+	_btnYes.draw(screenManager);
+}
+
+bool CPetQuit::proc16(const Point &pt) {
+	return !_btnYes.proc6(pt);
+}
+
+bool CPetQuit::mouseButtonDownMsg(CMouseButtonDownMsg *msg) {
+	CPetControl *pet = getPetControl();
+	if (_btnYes.MouseButtonDownMsg(msg) && pet) {
+		CGameManager *gameManager = pet->getGameManager();
+		if (gameManager)
+			gameManager->_gameState._quitGame = true;
+		return true;
+	} else {
+		return false;
+	}
+}
+
+void CPetQuit::getTooltip(CPetText *text) {
+	text->setText("Quit the game.");
 }
 
 } // End of namespace Titanic

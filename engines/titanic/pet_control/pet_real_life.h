@@ -41,6 +41,11 @@ private:
 	 * Does setup
 	 */
 	bool setupControl(CPetControl *petControl);
+
+	/**
+	 * Adds one of the four button glyphs for display
+	 */
+	void addButton(CPetGlyph *glyph);
 public:
 	virtual ~CPetRealLife() {}
 

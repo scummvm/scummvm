@@ -148,7 +148,7 @@ int CPetInventory::getItemIndex(CGameObject *item) const {
 CGameObject *CPetInventory::getImage(int index) {
 	if (index >= 0 && index < 46) {
 		int offset = index - 20;
-		int bits;
+		int bits = 0;
 		switch (offset) {
 		case 0:
 			bits = 4;

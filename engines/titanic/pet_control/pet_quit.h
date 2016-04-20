@@ -43,6 +43,20 @@ public:
 	 * Reset the glyph
 	 */
 	virtual bool reset();
+
+	/**
+	 * Handles any secondary drawing of the glyph
+	 */
+	virtual void draw2(CScreenManager *screenManager);
+
+	virtual bool proc16(const Point &pt);
+
+	virtual bool mouseButtonDownMsg(CMouseButtonDownMsg *msg);
+
+	/**
+	 * Returns the tooltip text for when the glyph is selected
+	 */
+	virtual void getTooltip(CPetText *text);
 };
 
 } // End of namespace Titanic

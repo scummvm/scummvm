@@ -29,10 +29,8 @@
 
 namespace Titanic {
 
-class CPetQuit : public CPetGlyph {
+class CPetSound : public CPetGlyph {
 private:
-	CPetControlSub12 _sub12;
-	CPetGfxElement _element;
 public:
 };
 

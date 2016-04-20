@@ -62,27 +62,27 @@ public:
 	/**
 	 * Draw the item
 	 */
-	virtual void draw(CScreenManager *screenManager, const Common::Point &destPos) {}
+	virtual void draw(CScreenManager *screenManager, const Point &destPos) {}
 
 	/**
 	 * Get the bounds for the element
 	 */
 	virtual void getBounds(Rect *rect);
 
-	virtual bool proc6(const Common::Point &pt);
+	virtual bool proc6(const Point &pt);
 	virtual bool MouseButtonDownMsg(CMouseButtonDownMsg *msg);
 
 	/**
 	 * Returns whether the passed point falls inside the item
 	 */
-	virtual bool contains1(const Common::Point &pt) const;
+	virtual bool contains1(const Point &pt) const;
 
-	virtual int proc9(const Common::Point &pt);
+	virtual int proc9(const Point &pt);
 
 	/**
 	 * Returns whether the passed point falls inside the item
 	 */
-	virtual bool contains2(const Common::Point &pt) const;
+	virtual bool contains2(const Point &pt) const;
 
 	/**
 	 * Plays back a range of frames in the loaded video file for the element

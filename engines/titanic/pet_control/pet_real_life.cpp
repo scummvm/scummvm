@@ -22,6 +22,10 @@
 
 #include "titanic/pet_control/pet_real_life.h"
 #include "titanic/pet_control/pet_control.h"
+#include "titanic/pet_control/pet_load.h"
+#include "titanic/pet_control/pet_save.h"
+#include "titanic/pet_control/pet_sound.h"
+#include "titanic/pet_control/pet_quit.h"
 
 namespace Titanic {
 
@@ -43,15 +47,34 @@ void CPetRealLife::draw(CScreenManager *screenManager) {
 
 bool CPetRealLife::setupControl(CPetControl *petControl) {
 	if (petControl) {
+		_petControl = petControl;
+		_glyphs.setup(4, this);
+		_glyphs.set20(6);
 
+		addButton(new CPetLoad());
+		addButton(new CPetSave());
+		addButton(new CPetSound());
+		addButton(new CPetQuit());
+
+		Rect textRect(0, 0, 32, 436);
+		textRect.moveTo(32, 436);
+		_text.setBounds(textRect);
+		_text.setHasBorder(false);
+		_text.setup();
 	}
 
 	return true;
+}
+
+void CPetRealLife::addButton(CPetGlyph *glyph) {
+
 }
 
 bool CPetRealLife::isValid(CPetControl *petControl) {
 	setupControl(petControl);
 	return true;
 }
+
+
 
 } // End of namespace Titanic

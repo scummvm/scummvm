@@ -30,17 +30,17 @@ void CPetGlyph::setup(CPetControl *petControl, CPetGlyphs *owner) {
 	_owner = owner;
 }
 
-void CPetGlyph::drawAt(CScreenManager *screenManager, int x, int y) {
-	_element.translate(x, y);
+void CPetGlyph::drawAt(CScreenManager *screenManager, const Point &pt) {
+	_element.translate(pt.x, pt.y);
 	_element.draw(screenManager);
-	_element.translate(-x, -y);
+	_element.translate(-pt.x, -pt.y);
 }
 
 void CPetGlyph::proc14() {
 	warning("TODO: CPetGlyph::proc14");
 }
 
-bool CPetGlyph::translateContains(const Point &delta, const Point &pt) {
+bool CPetGlyph::contains(const Point &delta, const Point &pt) {
 	translate(delta);
 	bool result = _element.contains2(pt);
 	translateBack(delta);
@@ -138,7 +138,7 @@ void CPetGlyphs::draw(CScreenManager *screenManager) {
 
 			if (glyph) {
 				// TODO: Comparison with highlighted index, and a redundant push?
-				glyph->drawAt(screenManager, pt.x, pt.y);
+				glyph->drawAt(screenManager, pt);
 			}
 		}
 	}
@@ -153,7 +153,7 @@ void CPetGlyphs::draw(CScreenManager *screenManager) {
 	if (_highlightIndex != -1) {
 		CPetGlyph *glyph = getGlyph(_highlightIndex);
 		if (glyph)
-			glyph->drawHighlight();
+			glyph->draw2(screenManager);
 	}
 }
 
