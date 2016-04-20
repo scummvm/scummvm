@@ -23,6 +23,7 @@
 #include "gnap/gnap.h"
 #include "gnap/gamesys.h"
 #include "gnap/resource.h"
+#include "gnap/scenes/scene10.h"
 
 namespace Gnap {
 
@@ -47,95 +48,97 @@ enum {
 	kASPlatWithBox		= 4
 };
 
-int GnapEngine::scene10_init() {
-	_gameSys->setAnimation(0, 0, 0);
-	_gameSys->setAnimation(0, 0, 1);
-	_gameSys->setAnimation(0, 0, 2);
+Scene10::Scene10(GnapEngine *vm) : Scene(vm) {
+	_s10_nextCookSequenceId = -1;
+	_s10_currCookSequenceId = -1;
+}
+
+int Scene10::init() {
+	_vm->_gameSys->setAnimation(0, 0, 0);
+	_vm->_gameSys->setAnimation(0, 0, 1);
+	_vm->_gameSys->setAnimation(0, 0, 2);
 	return 0x10F;
 }
 
-void GnapEngine::scene10_updateHotspots() {
-	setHotspot(kHSPlatypus, 0, 0, 0, 0, SF_WALKABLE | SF_TALK_CURSOR | SF_GRAB_CURSOR | SF_LOOK_CURSOR);
-	setHotspot(kHSExitBar, 0, 75, 85, 455, SF_EXIT_NW_CURSOR);
-	setHotspot(kHSExitBackdoor, 75, 590, 500, 599, SF_EXIT_D_CURSOR | SF_WALKABLE);
-	setHotspot(kHSCook, 370, 205, 495, 460, SF_PLAT_CURSOR | SF_TALK_CURSOR | SF_GRAB_CURSOR | SF_LOOK_CURSOR);
-	setHotspot(kHSTongs, 250, 290, 350, 337, SF_PLAT_CURSOR | SF_TALK_CURSOR | SF_GRAB_CURSOR | SF_LOOK_CURSOR);
-	setHotspot(kHSBox, 510, 275, 565, 330, SF_PLAT_CURSOR | SF_TALK_CURSOR | SF_GRAB_CURSOR | SF_LOOK_CURSOR);
-	setHotspot(kHSOven, 690, 280, 799, 420, SF_PLAT_CURSOR | SF_TALK_CURSOR | SF_GRAB_CURSOR | SF_LOOK_CURSOR);
-	setHotspot(kHSWalkArea1, 59, 0, 495, 460);
-	setHotspot(kHSWalkArea2, 495, 0, 650, 420);
-	setHotspot(kHSWalkArea3, 651, 0, 725, 400);
-	setHotspot(kHSWalkArea4, 725, 0, 799, 441);
-	setDeviceHotspot(kHSDevice, -1, -1, -1, -1);
-	_hotspotsCount = 12;
+void Scene10::updateHotspots() {
+	_vm->setHotspot(kHSPlatypus, 0, 0, 0, 0, SF_WALKABLE | SF_TALK_CURSOR | SF_GRAB_CURSOR | SF_LOOK_CURSOR);
+	_vm->setHotspot(kHSExitBar, 0, 75, 85, 455, SF_EXIT_NW_CURSOR);
+	_vm->setHotspot(kHSExitBackdoor, 75, 590, 500, 599, SF_EXIT_D_CURSOR | SF_WALKABLE);
+	_vm->setHotspot(kHSCook, 370, 205, 495, 460, SF_PLAT_CURSOR | SF_TALK_CURSOR | SF_GRAB_CURSOR | SF_LOOK_CURSOR);
+	_vm->setHotspot(kHSTongs, 250, 290, 350, 337, SF_PLAT_CURSOR | SF_TALK_CURSOR | SF_GRAB_CURSOR | SF_LOOK_CURSOR);
+	_vm->setHotspot(kHSBox, 510, 275, 565, 330, SF_PLAT_CURSOR | SF_TALK_CURSOR | SF_GRAB_CURSOR | SF_LOOK_CURSOR);
+	_vm->setHotspot(kHSOven, 690, 280, 799, 420, SF_PLAT_CURSOR | SF_TALK_CURSOR | SF_GRAB_CURSOR | SF_LOOK_CURSOR);
+	_vm->setHotspot(kHSWalkArea1, 59, 0, 495, 460);
+	_vm->setHotspot(kHSWalkArea2, 495, 0, 650, 420);
+	_vm->setHotspot(kHSWalkArea3, 651, 0, 725, 400);
+	_vm->setHotspot(kHSWalkArea4, 725, 0, 799, 441);
+	_vm->setDeviceHotspot(kHSDevice, -1, -1, -1, -1);
+	_vm->_hotspotsCount = 12;
 }
 
-void GnapEngine::scene10_run() {
-
+void Scene10::run() {
 	_s10_currCookSequenceId = 0x103;
 	
-	_gameSys->setAnimation(0x103, 100, 2);
-	_gameSys->insertSequence(0x103, 100, 0, 0, kSeqNone, 0, 0, 0);
+	_vm->_gameSys->setAnimation(0x103, 100, 2);
+	_vm->_gameSys->insertSequence(0x103, 100, 0, 0, kSeqNone, 0, 0, 0);
 	
 	_s10_nextCookSequenceId = 0x106;
-	if (!isFlag(kGFMudTaken))
-		_gameSys->insertSequence(0x107, 100, 0, 0, kSeqNone, 0, 0, 0);
+	if (!_vm->isFlag(kGFMudTaken))
+		_vm->_gameSys->insertSequence(0x107, 100, 0, 0, kSeqNone, 0, 0, 0);
 	
-	queueInsertDeviceIcon();
+	_vm->queueInsertDeviceIcon();
 	
-	if (_prevSceneNum == 9) {
-		initGnapPos(11, 8, kDirBottomLeft);
-		initPlatypusPos(12, 7, kDirUnk4);
-		endSceneInit();
-		gnapWalkTo(9, 8, -1, 0x107BA, 1);
-		platypusWalkTo(9, 7, -1, 0x107D2, 1);
+	if (_vm->_prevSceneNum == 9) {
+		_vm->initGnapPos(11, 8, kDirBottomLeft);
+		_vm->initPlatypusPos(12, 7, kDirUnk4);
+		_vm->endSceneInit();
+		_vm->gnapWalkTo(9, 8, -1, 0x107BA, 1);
+		_vm->platypusWalkTo(9, 7, -1, 0x107D2, 1);
 	} else {
-		initGnapPos(-1, 7, kDirBottomRight);
-		initPlatypusPos(-2, 8, kDirNone);
-		endSceneInit();
-		gnapWalkTo(1, 7, -1, 0x107B9, 1);
-		platypusWalkTo(1, 8, -1, 0x107C2, 1);
+		_vm->initGnapPos(-1, 7, kDirBottomRight);
+		_vm->initPlatypusPos(-2, 8, kDirNone);
+		_vm->endSceneInit();
+		_vm->gnapWalkTo(1, 7, -1, 0x107B9, 1);
+		_vm->platypusWalkTo(1, 8, -1, 0x107C2, 1);
 	}
 
-	_timers[4] = getRandom(80) + 150;
-	_timers[5] = getRandom(100) + 100;
+	_vm->_timers[4] = _vm->getRandom(80) + 150;
+	_vm->_timers[5] = _vm->getRandom(100) + 100;
 
-	while (!_sceneDone) {
+	while (!_vm->_sceneDone) {
+		if (!_vm->isSoundPlaying(0x1091E))
+			_vm->playSound(0x1091E, true);
 	
-		if (!isSoundPlaying(0x1091E))
-			playSound(0x1091E, true);
+		if (!_vm->isSoundPlaying(0x1091A))
+			_vm->playSound(0x1091A, true);
 	
-		if (!isSoundPlaying(0x1091A))
-			playSound(0x1091A, true);
+		_vm->updateMouseCursor();
 	
-		updateMouseCursor();
+		_vm->testWalk(0, 0, -1, -1, -1, -1);
 	
-		testWalk(0, 0, -1, -1, -1, -1);
+		_vm->updateCursorByHotspot();
 	
-		updateCursorByHotspot();
+		_vm->_sceneClickedHotspot = _vm->getClickedHotspotId();
+		_vm->updateGrabCursorSprite(0, 0);
 	
-		_sceneClickedHotspot = getClickedHotspotId();
-		updateGrabCursorSprite(0, 0);
-	
-		switch (_sceneClickedHotspot) {
-
+		switch (_vm->_sceneClickedHotspot) {
 		case kHSPlatypus:
-			if (_grabCursorSpriteIndex >= 0) {
-				playGnapImpossible(0, 0);
+			if (_vm->_grabCursorSpriteIndex >= 0) {
+				_vm->playGnapImpossible(0, 0);
 			} else {
-				switch (_verbCursor) {
+				switch (_vm->_verbCursor) {
 				case LOOK_CURSOR:
-					if (isFlag(kGFMudTaken))
-						playGnapMoan1(_platX, _platY);
+					if (_vm->isFlag(kGFMudTaken))
+						_vm->playGnapMoan1(_vm->_platX, _vm->_platY);
 					else
-						playGnapScratchingHead(_platX, _platY);
+						_vm->playGnapScratchingHead(_vm->_platX, _vm->_platY);
 					break;
 				case GRAB_CURSOR:
-					gnapKissPlatypus(10);
+					_vm->gnapKissPlatypus(10);
 					break;
 				case TALK_CURSOR:
-					playGnapBrainPulsating(_platX, _platY);
-					playPlatypusSequence(getPlatypusSequenceId());
+					_vm->playGnapBrainPulsating(_vm->_platX, _vm->_platY);
+					_vm->playPlatypusSequence(_vm->getPlatypusSequenceId());
 					break;
 				case PLAT_CURSOR:
 					break;
@@ -144,86 +147,86 @@ void GnapEngine::scene10_run() {
 			break;
 
 		case kHSExitBar:
-			_isLeavingScene = true;
-			gnapActionIdle(0x10C);
-			gnapWalkTo(0, 7, 0, 0x107AF, 1);
-			_gnapActionStatus = kASLeaveScene;
-			platypusWalkTo(0, 7, -1, 0x107CF, 1);
-			_newSceneNum = 11;
+			_vm->_isLeavingScene = true;
+			_vm->gnapActionIdle(0x10C);
+			_vm->gnapWalkTo(0, 7, 0, 0x107AF, 1);
+			_vm->_gnapActionStatus = kASLeaveScene;
+			_vm->platypusWalkTo(0, 7, -1, 0x107CF, 1);
+			_vm->_newSceneNum = 11;
 			break;
 
 		case kHSExitBackdoor:
-			_isLeavingScene = true;
-			gnapActionIdle(0x10C);
-			gnapWalkTo(2, 9, 0, 0x107AE, 1);
-			_gnapActionStatus = kASLeaveScene;
-			platypusWalkTo(3, 9, -1, 0x107C7, 1);
-			_newSceneNum = 9;
+			_vm->_isLeavingScene = true;
+			_vm->gnapActionIdle(0x10C);
+			_vm->gnapWalkTo(2, 9, 0, 0x107AE, 1);
+			_vm->_gnapActionStatus = kASLeaveScene;
+			_vm->platypusWalkTo(3, 9, -1, 0x107C7, 1);
+			_vm->_newSceneNum = 9;
 			break;
 
 		case kHSCook:
-			if (_grabCursorSpriteIndex >= 0) {
-				playGnapShowCurrItem(4, 8, 6, 0);
-				_gameSys->setAnimation(makeRid(_gnapSequenceDatNum, _gnapSequenceId), _gnapId, 0);
-				_gnapActionStatus = kASAnnoyCook;
+			if (_vm->_grabCursorSpriteIndex >= 0) {
+				_vm->playGnapShowCurrItem(4, 8, 6, 0);
+				_vm->_gameSys->setAnimation(makeRid(_vm->_gnapSequenceDatNum, _vm->_gnapSequenceId), _vm->_gnapId, 0);
+				_vm->_gnapActionStatus = kASAnnoyCook;
 			} else {
-				switch (_verbCursor) {
+				switch (_vm->_verbCursor) {
 				case LOOK_CURSOR:
-					playGnapScratchingHead(6, 0);
+					_vm->playGnapScratchingHead(6, 0);
 					break;
 				case GRAB_CURSOR:
-					playGnapImpossible(0, 0);
-					_gnapIdleFacing = kDirBottomRight;
+					_vm->playGnapImpossible(0, 0);
+					_vm->_gnapIdleFacing = kDirBottomRight;
 					break;
 				case TALK_CURSOR:
-					_gnapIdleFacing = kDirUpRight;
-					gnapActionIdle(0x10C);
-					gnapWalkTo(4, 8, 0, getGnapSequenceId(gskBrainPulsating, 0, 0) | 0x10000, 1);
-					_gnapActionStatus = kASAnnoyCook;
+					_vm->_gnapIdleFacing = kDirUpRight;
+					_vm->gnapActionIdle(0x10C);
+					_vm->gnapWalkTo(4, 8, 0, _vm->getGnapSequenceId(gskBrainPulsating, 0, 0) | 0x10000, 1);
+					_vm->_gnapActionStatus = kASAnnoyCook;
 					break;
 				case PLAT_CURSOR:
-					gnapActionIdle(0x10C);
-					gnapUseDeviceOnPlatypuss();
-					platypusWalkTo(4, 6, -1, -1, 1);
-					gnapWalkTo(4, 8, 0, 0x107BB, 1);
-					_gnapActionStatus = kASAnnoyCook;
+					_vm->gnapActionIdle(0x10C);
+					_vm->gnapUseDeviceOnPlatypuss();
+					_vm->platypusWalkTo(4, 6, -1, -1, 1);
+					_vm->gnapWalkTo(4, 8, 0, 0x107BB, 1);
+					_vm->_gnapActionStatus = kASAnnoyCook;
 					break;
 				}
 			}
 			break;
 
 		case kHSTongs:
-			if (_grabCursorSpriteIndex >= 0) {
-				playGnapShowCurrItem(3, 7, 4, 0);
+			if (_vm->_grabCursorSpriteIndex >= 0) {
+				_vm->playGnapShowCurrItem(3, 7, 4, 0);
 			} else {
-				switch (_verbCursor) {
+				switch (_vm->_verbCursor) {
 				case LOOK_CURSOR:
-					if (isFlag(kGFMudTaken))
-						playGnapMoan2(-1, -1);
+					if (_vm->isFlag(kGFMudTaken))
+						_vm->playGnapMoan2(-1, -1);
 					else
-						playGnapScratchingHead(4, 3);
+						_vm->playGnapScratchingHead(4, 3);
 					break;
 				case GRAB_CURSOR:
-					if (isFlag(kGFMudTaken))
-						playGnapMoan2(-1, -1);
+					if (_vm->isFlag(kGFMudTaken))
+						_vm->playGnapMoan2(-1, -1);
 					else {
-						gnapActionIdle(0x10C);
-						gnapWalkTo(4, 8, 0, 0x107BB, 1);
-						_gnapActionStatus = kASAnnoyCook;
+						_vm->gnapActionIdle(0x10C);
+						_vm->gnapWalkTo(4, 8, 0, 0x107BB, 1);
+						_vm->_gnapActionStatus = kASAnnoyCook;
 					}
 					break;
 				case TALK_CURSOR:
-					playGnapImpossible(0, 0);
+					_vm->playGnapImpossible(0, 0);
 					break;
 				case PLAT_CURSOR:
-					if (isFlag(kGFMudTaken))
-						playGnapMoan2(-1, -1);
+					if (_vm->isFlag(kGFMudTaken))
+						_vm->playGnapMoan2(-1, -1);
 					else {
-						gnapActionIdle(0x10C);
-						gnapUseDeviceOnPlatypuss();
-						platypusWalkTo(3, 7, -1, -1, 1);
-						gnapWalkTo(4, 8, 0, 0x107BB, 1);
-						_gnapActionStatus = kASAnnoyCook;
+						_vm->gnapActionIdle(0x10C);
+						_vm->gnapUseDeviceOnPlatypuss();
+						_vm->platypusWalkTo(3, 7, -1, -1, 1);
+						_vm->gnapWalkTo(4, 8, 0, 0x107BB, 1);
+						_vm->_gnapActionStatus = kASAnnoyCook;
 					}
 					break;
 				}
@@ -231,34 +234,34 @@ void GnapEngine::scene10_run() {
 			break;
 
 		case kHSBox:
-			if (_grabCursorSpriteIndex >= 0) {
-				playGnapShowCurrItem(7, 6, 6, 0);
+			if (_vm->_grabCursorSpriteIndex >= 0) {
+				_vm->playGnapShowCurrItem(7, 6, 6, 0);
 			} else {
-				switch (_verbCursor) {
+				switch (_vm->_verbCursor) {
 				case LOOK_CURSOR:
-					playGnapScratchingHead(7, 3);
+					_vm->playGnapScratchingHead(7, 3);
 					break;
 				case GRAB_CURSOR:
-					gnapActionIdle(0x10C);
-					gnapWalkTo(4, 8, 0, 0x107BB, 1);
-					_gnapActionStatus = kASAnnoyCook;
+					_vm->gnapActionIdle(0x10C);
+					_vm->gnapWalkTo(4, 8, 0, 0x107BB, 1);
+					_vm->_gnapActionStatus = kASAnnoyCook;
 					break;
 				case TALK_CURSOR:
-					playGnapImpossible(0, 0);
+					_vm->playGnapImpossible(0, 0);
 					break;
 				case PLAT_CURSOR:
-					if (isFlag(kGFMudTaken))
-						playGnapMoan2(-1, -1);
+					if (_vm->isFlag(kGFMudTaken))
+						_vm->playGnapMoan2(-1, -1);
 					else {
-						invAdd(kItemTongs);
-						setFlag(kGFMudTaken);
-						gnapActionIdle(0x10C);
-						gnapUseDeviceOnPlatypuss();
-						platypusWalkTo(7, 6, 1, 0x107D2, 1);
-						_platypusActionStatus = kASPlatWithBox;
-						_platypusFacing = kDirUnk4;
-						_largeSprite = _gameSys->createSurface(0xC3);
-						playGnapIdle(7, 6);
+						_vm->invAdd(kItemTongs);
+						_vm->setFlag(kGFMudTaken);
+						_vm->gnapActionIdle(0x10C);
+						_vm->gnapUseDeviceOnPlatypuss();
+						_vm->platypusWalkTo(7, 6, 1, 0x107D2, 1);
+						_vm->_platypusActionStatus = kASPlatWithBox;
+						_vm->_platypusFacing = kDirUnk4;
+						_vm->_largeSprite = _vm->_gameSys->createSurface(0xC3);
+						_vm->playGnapIdle(7, 6);
 					}
 					break;
 				}
@@ -266,28 +269,28 @@ void GnapEngine::scene10_run() {
 			break;
 
 		case kHSOven:
-			if (_grabCursorSpriteIndex >= 0) {
-				playGnapShowCurrItem(9, 6, 10, 0);
+			if (_vm->_grabCursorSpriteIndex >= 0) {
+				_vm->playGnapShowCurrItem(9, 6, 10, 0);
 			} else {
-				switch (_verbCursor) {
+				switch (_vm->_verbCursor) {
 				case LOOK_CURSOR:
-					playGnapSequence(getGnapSequenceId(gskDeflect, 10, 5) | 0x10000);
+					_vm->playGnapSequence(_vm->getGnapSequenceId(gskDeflect, 10, 5) | 0x10000);
 					break;
 				case GRAB_CURSOR:
-					gnapActionIdle(0x10C);
-					gnapWalkTo(9, 6, 0, 0x107BB, 1);
-					_gameSys->insertSequence(0x10E, 120, makeRid(_gnapSequenceDatNum, _gnapSequenceId), _gnapId, kSeqSyncWait, 0, 0, 0);
-					_gnapSequenceId = 0x10E;
-					_gnapId = 120;
-					_gnapIdleFacing = kDirUpRight;
-					_gnapSequenceDatNum = 0;
-					_gnapX = 9;
-					_gnapY = 6;
-					_timers[2] = 360;
+					_vm->gnapActionIdle(0x10C);
+					_vm->gnapWalkTo(9, 6, 0, 0x107BB, 1);
+					_vm->_gameSys->insertSequence(0x10E, 120, makeRid(_vm->_gnapSequenceDatNum, _vm->_gnapSequenceId), _vm->_gnapId, kSeqSyncWait, 0, 0, 0);
+					_vm->_gnapSequenceId = 0x10E;
+					_vm->_gnapId = 120;
+					_vm->_gnapIdleFacing = kDirUpRight;
+					_vm->_gnapSequenceDatNum = 0;
+					_vm->_gnapX = 9;
+					_vm->_gnapY = 6;
+					_vm->_timers[2] = 360;
 					break;
 				case TALK_CURSOR:
 				case PLAT_CURSOR:
-					playGnapImpossible(0, 0);
+					_vm->playGnapImpossible(0, 0);
 					break;
 				}
 			}
@@ -297,39 +300,38 @@ void GnapEngine::scene10_run() {
 		case kHSWalkArea2:
 		case kHSWalkArea3:
 		case kHSWalkArea4:
-			gnapActionIdle(0x10C);
-			gnapWalkTo(-1, -1, -1, -1, 1);
+			_vm->gnapActionIdle(0x10C);
+			_vm->gnapWalkTo(-1, -1, -1, -1, 1);
 			break;
 
 		case kHSDevice:
-			if (_gnapActionStatus < 0) {
-				runMenu();
-				scene10_updateHotspots();
+			if (_vm->_gnapActionStatus < 0) {
+				_vm->runMenu();
+				updateHotspots();
 			}
 			break;
 			
 		default:
-			if (_mouseClickState._left) {
-				gnapActionIdle(0x10C);
-				gnapWalkTo(-1, -1, -1, -1, 1);
-				_mouseClickState._left = false;
+			if (_vm->_mouseClickState._left) {
+				_vm->gnapActionIdle(0x10C);
+				_vm->gnapWalkTo(-1, -1, -1, -1, 1);
+				_vm->_mouseClickState._left = false;
 			}
 			break;
-
 		}
 	
-		scene10_updateAnimations();
+		updateAnimations();
 	
-		if (!_isLeavingScene) {
-			updatePlatypusIdleSequence();
-			updateGnapIdleSequence();
-			if (!_timers[4]) {
-				_timers[4] = getRandom(80) + 150;
-				playSound(0x12B, false);
+		if (!_vm->_isLeavingScene) {
+			_vm->updatePlatypusIdleSequence();
+			_vm->updateGnapIdleSequence();
+			if (!_vm->_timers[4]) {
+				_vm->_timers[4] = _vm->getRandom(80) + 150;
+				_vm->playSound(0x12B, false);
 			}
-			if (!_timers[5]) {
-				_timers[5] = getRandom(100) + 100;
-				int _gnapRandomValue = getRandom(4);
+			if (!_vm->_timers[5]) {
+				_vm->_timers[5] = _vm->getRandom(100) + 100;
+				int _gnapRandomValue = _vm->getRandom(4);
 				if (_gnapRandomValue) {
 					int sequenceId;
 					if (_gnapRandomValue == 1) {
@@ -339,32 +341,29 @@ void GnapEngine::scene10_run() {
 					} else {
 						sequenceId = 0x8A7;
 					}
-					_gameSys->insertSequence(sequenceId | 0x10000, 179, 0, 0, kSeqNone, 0, 0, 0);
+					_vm->_gameSys->insertSequence(sequenceId | 0x10000, 179, 0, 0, kSeqNone, 0, 0, 0);
 				}
 			}
 		}
 	
-		checkGameKeys();
+		_vm->checkGameKeys();
 	
-		if (isKeyStatus1(8)) {
-			clearKeyStatus1(8);
-			runMenu();
-			scene10_updateHotspots();
+		if (_vm->isKeyStatus1(8)) {
+			_vm->clearKeyStatus1(8);
+			_vm->runMenu();
+			updateHotspots();
 		}
 		
-		gameUpdateTick();
-		
+		_vm->gameUpdateTick();
 	}
-
 }
 
-void GnapEngine::scene10_updateAnimations() {
-
-	if (_gameSys->getAnimationStatus(0) == 2) {
-		_gameSys->setAnimation(0, 0, 0);
-		switch (_gnapActionStatus) {
+void Scene10::updateAnimations() {
+	if (_vm->_gameSys->getAnimationStatus(0) == 2) {
+		_vm->_gameSys->setAnimation(0, 0, 0);
+		switch (_vm->_gnapActionStatus) {
 		case kASLeaveScene:
-			_sceneDone = true;
+			_vm->_sceneDone = true;
 			break;
 		case kASAnnoyCook:
 			_s10_nextCookSequenceId = 0x105;
@@ -372,57 +371,57 @@ void GnapEngine::scene10_updateAnimations() {
 		}
 	}
 	
-	if (_gameSys->getAnimationStatus(1) == 2) {
-		_gameSys->setAnimation(0, 0, 1);
-		switch (_platypusActionStatus) {
+	if (_vm->_gameSys->getAnimationStatus(1) == 2) {
+		_vm->_gameSys->setAnimation(0, 0, 1);
+		switch (_vm->_platypusActionStatus) {
 		case kASPlatWithBox:
 			_s10_nextCookSequenceId = 0x109;
 			break;
 		}
 	}
 	
-	if (_gameSys->getAnimationStatus(2) == 2 && _s10_nextCookSequenceId != -1) {
+	if (_vm->_gameSys->getAnimationStatus(2) == 2 && _s10_nextCookSequenceId != -1) {
 		
 		switch (_s10_nextCookSequenceId) {
 		case 0x109:
-			_platX = 4;
-			_platY = 8;
-			_gameSys->insertSequence(0x109, 100, _s10_currCookSequenceId, 100, kSeqSyncWait, 0, 0, 0);
-			_gameSys->insertSequence(0x107C9, 160,
-				_platypusSequenceId | (_platypusSequenceDatNum << 16), _platypusId,
-				kSeqSyncWait, getSequenceTotalDuration(0x109) + getSequenceTotalDuration(0x10A) + getSequenceTotalDuration(0x10843),
-				75 * _platX - _platGridX, 48 * _platY - _platGridY);
-			_gameSys->removeSequence(0x107, 100, true);
+			_vm->_platX = 4;
+			_vm->_platY = 8;
+			_vm->_gameSys->insertSequence(0x109, 100, _s10_currCookSequenceId, 100, kSeqSyncWait, 0, 0, 0);
+			_vm->_gameSys->insertSequence(0x107C9, 160,
+				_vm->_platypusSequenceId | (_vm->_platypusSequenceDatNum << 16), _vm->_platypusId,
+				kSeqSyncWait, _vm->getSequenceTotalDuration(0x109) + _vm->getSequenceTotalDuration(0x10A) + _vm->getSequenceTotalDuration(0x10843),
+				75 * _vm->_platX - _vm->_platGridX, 48 * _vm->_platY - _vm->_platGridY);
+			_vm->_gameSys->removeSequence(0x107, 100, true);
 			_s10_currCookSequenceId = 0x109;
 			_s10_nextCookSequenceId = 0x843;
-			_platypusSequenceId = 0x7C9;
-			_platypusId = 160;
-			_platypusFacing = kDirNone;
-			_platypusSequenceDatNum = 1;
+			_vm->_platypusSequenceId = 0x7C9;
+			_vm->_platypusId = 160;
+			_vm->_platypusFacing = kDirNone;
+			_vm->_platypusSequenceDatNum = 1;
 			break;
 		case 0x843:
-			hideCursor();
-			_gameSys->insertSpriteDrawItem(_largeSprite, 0, 0, 300);
-			_gameSys->insertSequence(0x10843, 301, _s10_currCookSequenceId, 100, kSeqSyncWait, 0, 0, 0);
+			_vm->hideCursor();
+			_vm->_gameSys->insertSpriteDrawItem(_vm->_largeSprite, 0, 0, 300);
+			_vm->_gameSys->insertSequence(0x10843, 301, _s10_currCookSequenceId, 100, kSeqSyncWait, 0, 0, 0);
 			_s10_currCookSequenceId = 0x843;
 			_s10_nextCookSequenceId = 0x10A;
 			break;
 		case 0x10A:
-			_gameSys->insertSequence(_s10_nextCookSequenceId, 100, 0x10843, 301, kSeqSyncWait, 0, 0, 0);
+			_vm->_gameSys->insertSequence(_s10_nextCookSequenceId, 100, 0x10843, 301, kSeqSyncWait, 0, 0, 0);
 			_s10_currCookSequenceId = _s10_nextCookSequenceId;
 			_s10_nextCookSequenceId = 0x104;
-			showCursor();
-			_gameSys->removeSpriteDrawItem(_largeSprite, 300);
-			delayTicksCursor(5);
-			deleteSurface(&_largeSprite);
-			setGrabCursorSprite(kItemTongs);
-			if (_platypusActionStatus == kASPlatWithBox)
-				_platypusActionStatus = -1;
-			if (_gnapX == 4 && _gnapY == 8)
-				gnapWalkStep();
+			_vm->showCursor();
+			_vm->_gameSys->removeSpriteDrawItem(_vm->_largeSprite, 300);
+			_vm->delayTicksCursor(5);
+			_vm->deleteSurface(&_vm->_largeSprite);
+			_vm->setGrabCursorSprite(kItemTongs);
+			if (_vm->_platypusActionStatus == kASPlatWithBox)
+				_vm->_platypusActionStatus = -1;
+			if (_vm->_gnapX == 4 && _vm->_gnapY == 8)
+				_vm->gnapWalkStep();
 			break;
 		default:
-			_gameSys->insertSequence(_s10_nextCookSequenceId, 100, _s10_currCookSequenceId, 100, kSeqSyncWait, 0, 0, 0);
+			_vm->_gameSys->insertSequence(_s10_nextCookSequenceId, 100, _s10_currCookSequenceId, 100, kSeqSyncWait, 0, 0, 0);
 			_s10_currCookSequenceId = _s10_nextCookSequenceId;
 			break;
 		}
@@ -430,8 +429,8 @@ void GnapEngine::scene10_updateAnimations() {
 		switch (_s10_currCookSequenceId) {
 		case 0x106: {
 			// TODO: Refactor into a if + a switch
-			int rnd = getRandom(7);
-			if (_gnapActionStatus >= 0 || _platypusActionStatus >= 0)
+			int rnd = _vm->getRandom(7);
+			if (_vm->_gnapActionStatus >= 0 || _vm->_platypusActionStatus >= 0)
 				_s10_nextCookSequenceId = 0x106;
 			else if (rnd == 0)
 				_s10_nextCookSequenceId = 0x104;
@@ -439,31 +438,31 @@ void GnapEngine::scene10_updateAnimations() {
 				_s10_nextCookSequenceId = 0x103;
 			else if (rnd == 2) {
 				_s10_nextCookSequenceId = 0x106;
-				_gameSys->insertSequence(0x10D, 1, 0, 0, kSeqNone, 0, 0, 0);
+				_vm->_gameSys->insertSequence(0x10D, 1, 0, 0, kSeqNone, 0, 0, 0);
 			} else
 				_s10_nextCookSequenceId = 0x106;
 			}
 			break;
 		case 0x103:
-			if (_gnapActionStatus >= 0 || _platypusActionStatus >= 0)
+			if (_vm->_gnapActionStatus >= 0 || _vm->_platypusActionStatus >= 0)
 				_s10_nextCookSequenceId = 0x106;
-			else if (getRandom(7) == 0)
+			else if (_vm->getRandom(7) == 0)
 				_s10_nextCookSequenceId = 0x104;
 			else
 				_s10_nextCookSequenceId = 0x106;
 			break;
 		case 0x104:
-			if (_gnapActionStatus >= 0 || _platypusActionStatus >= 0)
+			if (_vm->_gnapActionStatus >= 0 || _vm->_platypusActionStatus >= 0)
 				_s10_nextCookSequenceId = 0x106;
-			else if (getRandom(7) == 0)
+			else if (_vm->getRandom(7) == 0)
 				_s10_nextCookSequenceId = 0x103;
 			else
 				_s10_nextCookSequenceId = 0x106;
 			break;
 		case 0x105: {
 			// TODO: Refactor into a if + a switch
-			int rnd = getRandom(7);
-			if (_gnapActionStatus >= 0 || _platypusActionStatus >= 0)
+			int rnd = _vm->getRandom(7);
+			if (_vm->_gnapActionStatus >= 0 || _vm->_platypusActionStatus >= 0)
 				_s10_nextCookSequenceId = 0x106;
 			else if (rnd == 0)
 				_s10_nextCookSequenceId = 0x104;
@@ -471,28 +470,28 @@ void GnapEngine::scene10_updateAnimations() {
 				_s10_nextCookSequenceId = 0x103;
 			else
 				_s10_nextCookSequenceId = 0x106;
-			_timers[2] = getRandom(30) + 20;
-			_timers[3] = 300;
-			_gameSys->insertSequence(0x10C, _gnapId, makeRid(_gnapSequenceDatNum, _gnapSequenceId), _gnapId, kSeqSyncWait, 0, 0, 0);
-			_gnapSequenceId = 0x10C;
-			_gnapIdleFacing = kDirUpRight;
-			_gnapSequenceDatNum = 0;
-			_gnapActionStatus = -1;
-			_platypusActionStatus = -1;
+			_vm->_timers[2] = _vm->getRandom(30) + 20;
+			_vm->_timers[3] = 300;
+			_vm->_gameSys->insertSequence(0x10C, _vm->_gnapId, makeRid(_vm->_gnapSequenceDatNum, _vm->_gnapSequenceId), _vm->_gnapId, kSeqSyncWait, 0, 0, 0);
+			_vm->_gnapSequenceId = 0x10C;
+			_vm->_gnapIdleFacing = kDirUpRight;
+			_vm->_gnapSequenceDatNum = 0;
+			_vm->_gnapActionStatus = -1;
+			_vm->_platypusActionStatus = -1;
 			}
 			break;
 		}
 		if (_s10_currCookSequenceId == 0x843)
-			_gameSys->setAnimation(_s10_currCookSequenceId | 0x10000, 301, 2);
+			_vm->_gameSys->setAnimation(_s10_currCookSequenceId | 0x10000, 301, 2);
 		else
-			_gameSys->setAnimation(_s10_currCookSequenceId, 100, 2);
+			_vm->_gameSys->setAnimation(_s10_currCookSequenceId, 100, 2);
 	}
 }
 
-void GnapEngine::scene10_updateAnimationsCb() {
-	if (_gameSys->getAnimationStatus(2) == 2) {
-		_gameSys->setAnimation(_s10_nextCookSequenceId, 100, 2);
-		_gameSys->insertSequence(_s10_nextCookSequenceId, 100, _s10_currCookSequenceId, 100, kSeqSyncWait, 0, 0, 0);
+void Scene10::updateAnimationsCb() {
+	if (_vm->_gameSys->getAnimationStatus(2) == 2) {
+		_vm->_gameSys->setAnimation(_s10_nextCookSequenceId, 100, 2);
+		_vm->_gameSys->insertSequence(_s10_nextCookSequenceId, 100, _s10_currCookSequenceId, 100, kSeqSyncWait, 0, 0, 0);
 		_s10_currCookSequenceId = _s10_nextCookSequenceId;
 		_s10_nextCookSequenceId = 0x106;
 	}

@@ -603,14 +603,6 @@ public:
 	void sceneXX_playRandomSound(int timerIndex);
 	void playSequences(int fullScreenSpriteId, int sequenceId1, int sequenceId2, int sequenceId3);
 	
-	// Scene 10
-	int _s10_nextCookSequenceId, _s10_currCookSequenceId;
-	int scene10_init();
-	void scene10_updateHotspots();
-	void scene10_run();
-	void scene10_updateAnimations();
-	void scene10_updateAnimationsCb();
-
 	// Scene 11
 	int _s11_billardBallCtr;
 	int _s11_nextHookGuySequenceId, _s11_currHookGuySequenceId;
