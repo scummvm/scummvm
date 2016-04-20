@@ -33,6 +33,7 @@
 #include "gnap/scenes/scene05.h"
 #include "gnap/scenes/scene06.h"
 #include "gnap/scenes/scene07.h"
+#include "gnap/scenes/scene08.h"
 
 namespace Gnap {
 
@@ -95,8 +96,9 @@ int GnapEngine::initSceneLogic() {
 		initSceneGrid(21, 146, 11, 10);
 		break;
 	case 8:
-		backgroundId = scene08_init();
-		scene08_updateHotspots();
+		_scene = new Scene08(this);
+		backgroundId = _scene->init();
+		_scene->updateHotspots();
 		_gameSys->setScaleValues(0, 500, 1, 1000);
 		initSceneGrid(21, 146, 11, 10);
 		break;
@@ -414,7 +416,8 @@ void GnapEngine::runSceneLogic() {
 			_newSceneNum = 8;
 		break;
 	case 8:
-		scene08_run();
+		_scene->run();
+		delete _scene;
 		if (_newSceneNum == 55)
 			_newSceneNum = 9;
 		break;

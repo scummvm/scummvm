@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef GNAP_SCENE05_H
-#define GNAP_SCENE05_H
+#ifndef GNAP_SCENE08_H
+#define GNAP_SCENE08_H
 
 #include "gnap/debugger.h"
 #include "gnap/scenes/scenecore.h"
@@ -30,22 +30,23 @@ namespace Gnap {
 
 class GnapEngine;
 
-class Scene05: public Scene {
+class Scene08: public Scene {
 public:
-	Scene05(GnapEngine *vm);
-	~Scene05() {}
+	Scene08(GnapEngine *vm);
+	~Scene08() {}
 
 	virtual int init();
 	virtual void updateHotspots();
 	virtual void run();
 	virtual void updateAnimations();
-	virtual void updateAnimationsCb() {}
+	virtual void updateAnimationsCb();
 
 private:
-	int _s05_nextChickenSequenceId;
-	int _s05_currChickenSequenceId;
+	int _s08_nextDogSequenceId;
+	int _s08_currDogSequenceId;
+	int _s08_nextManSequenceId;
+	int _s08_currManSequenceId;
 };
 
 } // End of namespace Gnap
-
-#endif // GNAP_SCENE05_H
+#endif // GNAP_SCENE08_H

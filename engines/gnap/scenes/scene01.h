@@ -39,6 +39,7 @@ public:
 	virtual void updateHotspots();
 	virtual void run();
 	virtual void updateAnimations();
+	virtual void updateAnimationsCb() {}
 
 private:
 	int _s01_pigsIdCtr, _s01_smokeIdCtr;

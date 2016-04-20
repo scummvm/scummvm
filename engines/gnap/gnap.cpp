@@ -1797,13 +1797,9 @@ void GnapEngine::gnapUseDeviceOnPlatypuss() {
 void GnapEngine::doCallback(int callback) {
 	switch (callback) {
 	case 8:
-		scene08_updateAnimationsCb();
-		break;
 	case 10:
-		scene10_updateAnimationsCb();
-		break;
 	case 20:
-		scene20_updateAnimationsCb();
+		_scene->updateAnimationsCb();
 		break;
 	}
 }

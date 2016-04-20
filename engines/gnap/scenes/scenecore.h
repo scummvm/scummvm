@@ -38,6 +38,7 @@ public:
 	virtual void updateHotspots() = 0;
 	virtual void run() = 0;
 	virtual void updateAnimations() = 0;
+	virtual void updateAnimationsCb() = 0;
 
 protected:
 	GnapEngine *_vm;

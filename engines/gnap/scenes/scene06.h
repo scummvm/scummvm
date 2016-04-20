@@ -39,6 +39,7 @@ public:
 	virtual void updateHotspots();
 	virtual void run();
 	virtual void updateAnimations();
+	virtual void updateAnimationsCb() {}
 
 private:
 	bool _s06_horseTurnedBack;
@@ -49,4 +50,4 @@ private:
 
 } // End of namespace Gnap
 
-#endif // GNAP_SCENE05_H
+#endif // GNAP_SCENE06_H

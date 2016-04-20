@@ -39,10 +39,9 @@ public:
 	virtual void updateHotspots();
 	virtual void run();
 	virtual void updateAnimations();
-
-private:
+	virtual void updateAnimationsCb() {}
 };
 
 } // End of namespace Gnap
 
-#endif // GNAP_SCENE05_H
+#endif // GNAP_SCENE07_H
