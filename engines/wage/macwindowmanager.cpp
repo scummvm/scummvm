@@ -62,6 +62,8 @@ MacWindowManager::MacWindowManager() {
     _screen = 0;
     _lastId = 0;
     _activeWindow = -1;
+
+	_fullRefresh = true;
 }
 
 MacWindowManager::~MacWindowManager() {

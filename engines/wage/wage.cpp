@@ -86,6 +86,7 @@ WageEngine::WageEngine(OSystem *syst, const ADGameDescription *desc) : Engine(sy
 	_offer = NULL;
 
 	_resManager = NULL;
+	_debugger = NULL;
 
 	debug("WageEngine::WageEngine()");
 }

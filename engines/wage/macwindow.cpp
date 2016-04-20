@@ -57,6 +57,7 @@ namespace Wage {
 MacWindow::MacWindow(int id, bool scrollable) : _scrollable(scrollable), _id(id) {
 	_active = false;
 	_borderIsDirty = true;
+	_contentIsDirty = true;
 
 	_highlightedPart = kBorderNone;
 
