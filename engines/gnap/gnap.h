@@ -603,15 +603,6 @@ public:
 	void sceneXX_playRandomSound(int timerIndex);
 	void playSequences(int fullScreenSpriteId, int sequenceId1, int sequenceId2, int sequenceId3);
 	
-	// Scene 6
-	bool _s06_horseTurnedBack;
-	int _s06_nextPlatSequenceId;
-	int _s06_nextHorseSequenceId, _s06_currHorseSequenceId;
-	int scene06_init();
-	void scene06_updateHotspots();
-	void scene06_run();
-	void scene06_updateAnimations();
-
 	// Scene 7
 	int scene07_init();
 	void scene07_updateHotspots();

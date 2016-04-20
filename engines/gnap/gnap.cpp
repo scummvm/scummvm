@@ -2022,9 +2022,6 @@ void GnapEngine::initPlatypusPos(int gridX, int gridY, Facing facing) {
 ////////////////////////////////////////////////////////////////////////////////
 
 void GnapEngine::initGlobalSceneVars() {
-	// Scene 6
-	_s06_nextPlatSequenceId = -1;
-
 	// Scene 11
 	_s11_billardBallCtr = 0;
 
