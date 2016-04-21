@@ -2018,9 +2018,6 @@ void GnapEngine::initPlatypusPos(int gridX, int gridY, Facing facing) {
 ////////////////////////////////////////////////////////////////////////////////
 
 void GnapEngine::initGlobalSceneVars() {
-	// Scene 13
-	_s13_backToiletCtr = -1;
-
 	// Scene 17
 	_s17_platTryGetWrenchCtr = 0;
 	_s17_wrenchCtr = 2;

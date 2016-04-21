@@ -602,14 +602,6 @@ public:
     bool sceneXX_sub_4466B1();
 	void sceneXX_playRandomSound(int timerIndex);
 	void playSequences(int fullScreenSpriteId, int sequenceId1, int sequenceId2, int sequenceId3);
-	
-	// Scene 13
-	int _s13_backToiletCtr;
-	int scene13_init();
-	void scene13_updateHotspots();
-	void scene13_showScribble();
-	void scene13_run();
-	void scene13_updateAnimations();
 
 	// Scene 14
 	int scene14_init();
