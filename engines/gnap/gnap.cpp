@@ -1029,7 +1029,7 @@ void GnapEngine::deleteSurface(Graphics::Surface **surface) {
 	if (surface && *surface) {
 		(*surface)->free();
 		delete *surface;
-		*surface = 0;
+		*surface = nullptr;
 	}
 }
 

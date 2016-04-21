@@ -165,7 +165,6 @@ void Scene14::run() {
 		}
 		
 		_vm->gameUpdateTick();
-
 	}
 	
 	if (_vm->_largeSprite)
