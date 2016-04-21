@@ -23,6 +23,7 @@
 #include "gnap/gnap.h"
 #include "gnap/gamesys.h"
 #include "gnap/resource.h"
+#include "gnap/scenes/scene15.h"
 
 namespace Gnap {
 
@@ -46,33 +47,43 @@ enum {
 	kHSDevice		= 16
 };
 
-int GnapEngine::scene15_init() {
+Scene15::Scene15(GnapEngine *vm) : Scene(vm) {
+	_s15_nextRecordSequenceId = -1;
+	_s15_currRecordSequenceId = -1;
+	_s15_nextSlotSequenceId = -1;
+	_s15_currSlotSequenceId = -1;
+	_s15_nextUpperButtonSequenceId = -1;
+	_s15_currUpperButtonSequenceId = -1;
+	_s15_nextLowerButtonSequenceId = -1;
+	_s15_currLowerButtonSequenceId = -1;
+}
+
+int Scene15::init() {
 	return 0xDD;
 }
 
-void GnapEngine::scene15_updateHotspots() {
-	setHotspot(kHSPlatypus, 0, 0, 0, 0, SF_DISABLED);
-	setHotspot(kHSExit, 50, 590, 750, 599, SF_EXIT_D_CURSOR);
-	setHotspot(kHSButton1, 210, 425, 260, 475, SF_PLAT_CURSOR | SF_TALK_CURSOR | SF_GRAB_CURSOR | SF_LOOK_CURSOR);
-	setHotspot(kHSButton2, 280, 425, 325, 475, SF_PLAT_CURSOR | SF_TALK_CURSOR | SF_GRAB_CURSOR | SF_LOOK_CURSOR);
-	setHotspot(kHSButton3, 340, 425, 385, 475, SF_PLAT_CURSOR | SF_TALK_CURSOR | SF_GRAB_CURSOR | SF_LOOK_CURSOR);
-	setHotspot(kHSButton4, 400, 425, 445, 475, SF_PLAT_CURSOR | SF_TALK_CURSOR | SF_GRAB_CURSOR | SF_LOOK_CURSOR);
-	setHotspot(kHSButton5, 460, 425, 510, 475, SF_PLAT_CURSOR | SF_TALK_CURSOR | SF_GRAB_CURSOR | SF_LOOK_CURSOR);
-	setHotspot(kHSButton6, 520, 425, 560, 475, SF_PLAT_CURSOR | SF_TALK_CURSOR | SF_GRAB_CURSOR | SF_LOOK_CURSOR);
-	setHotspot(kHSButtonA, 205, 480, 250, 535, SF_PLAT_CURSOR | SF_TALK_CURSOR | SF_GRAB_CURSOR | SF_LOOK_CURSOR);
-	setHotspot(kHSButtonB, 270, 480, 320, 535, SF_PLAT_CURSOR | SF_TALK_CURSOR | SF_GRAB_CURSOR | SF_LOOK_CURSOR);
-	setHotspot(kHSButtonC, 335, 480, 380, 535, SF_PLAT_CURSOR | SF_TALK_CURSOR | SF_GRAB_CURSOR | SF_LOOK_CURSOR);
-	setHotspot(kHSButtonD, 395, 480, 445, 535, SF_PLAT_CURSOR | SF_TALK_CURSOR | SF_GRAB_CURSOR | SF_LOOK_CURSOR);
-	setHotspot(kHSButtonE, 460, 480, 505, 535, SF_PLAT_CURSOR | SF_TALK_CURSOR | SF_GRAB_CURSOR | SF_LOOK_CURSOR);
-	setHotspot(kHSButtonF, 515, 480, 560, 535, SF_PLAT_CURSOR | SF_TALK_CURSOR | SF_GRAB_CURSOR | SF_LOOK_CURSOR);
-	setHotspot(kHSCoinSlot, 585, 475, 620, 535, SF_PLAT_CURSOR | SF_TALK_CURSOR | SF_GRAB_CURSOR | SF_LOOK_CURSOR);
-	setHotspot(kHSPlayButton, 622, 431, 650, 482, SF_PLAT_CURSOR | SF_TALK_CURSOR | SF_GRAB_CURSOR | SF_LOOK_CURSOR);
-	setDeviceHotspot(kHSDevice, -1, -1, -1, -1);
-	_hotspotsCount = 17;
+void Scene15::updateHotspots() {
+	_vm->setHotspot(kHSPlatypus, 0, 0, 0, 0, SF_DISABLED);
+	_vm->setHotspot(kHSExit, 50, 590, 750, 599, SF_EXIT_D_CURSOR);
+	_vm->setHotspot(kHSButton1, 210, 425, 260, 475, SF_PLAT_CURSOR | SF_TALK_CURSOR | SF_GRAB_CURSOR | SF_LOOK_CURSOR);
+	_vm->setHotspot(kHSButton2, 280, 425, 325, 475, SF_PLAT_CURSOR | SF_TALK_CURSOR | SF_GRAB_CURSOR | SF_LOOK_CURSOR);
+	_vm->setHotspot(kHSButton3, 340, 425, 385, 475, SF_PLAT_CURSOR | SF_TALK_CURSOR | SF_GRAB_CURSOR | SF_LOOK_CURSOR);
+	_vm->setHotspot(kHSButton4, 400, 425, 445, 475, SF_PLAT_CURSOR | SF_TALK_CURSOR | SF_GRAB_CURSOR | SF_LOOK_CURSOR);
+	_vm->setHotspot(kHSButton5, 460, 425, 510, 475, SF_PLAT_CURSOR | SF_TALK_CURSOR | SF_GRAB_CURSOR | SF_LOOK_CURSOR);
+	_vm->setHotspot(kHSButton6, 520, 425, 560, 475, SF_PLAT_CURSOR | SF_TALK_CURSOR | SF_GRAB_CURSOR | SF_LOOK_CURSOR);
+	_vm->setHotspot(kHSButtonA, 205, 480, 250, 535, SF_PLAT_CURSOR | SF_TALK_CURSOR | SF_GRAB_CURSOR | SF_LOOK_CURSOR);
+	_vm->setHotspot(kHSButtonB, 270, 480, 320, 535, SF_PLAT_CURSOR | SF_TALK_CURSOR | SF_GRAB_CURSOR | SF_LOOK_CURSOR);
+	_vm->setHotspot(kHSButtonC, 335, 480, 380, 535, SF_PLAT_CURSOR | SF_TALK_CURSOR | SF_GRAB_CURSOR | SF_LOOK_CURSOR);
+	_vm->setHotspot(kHSButtonD, 395, 480, 445, 535, SF_PLAT_CURSOR | SF_TALK_CURSOR | SF_GRAB_CURSOR | SF_LOOK_CURSOR);
+	_vm->setHotspot(kHSButtonE, 460, 480, 505, 535, SF_PLAT_CURSOR | SF_TALK_CURSOR | SF_GRAB_CURSOR | SF_LOOK_CURSOR);
+	_vm->setHotspot(kHSButtonF, 515, 480, 560, 535, SF_PLAT_CURSOR | SF_TALK_CURSOR | SF_GRAB_CURSOR | SF_LOOK_CURSOR);
+	_vm->setHotspot(kHSCoinSlot, 585, 475, 620, 535, SF_PLAT_CURSOR | SF_TALK_CURSOR | SF_GRAB_CURSOR | SF_LOOK_CURSOR);
+	_vm->setHotspot(kHSPlayButton, 622, 431, 650, 482, SF_PLAT_CURSOR | SF_TALK_CURSOR | SF_GRAB_CURSOR | SF_LOOK_CURSOR);
+	_vm->setDeviceHotspot(kHSDevice, -1, -1, -1, -1);
+	_vm->_hotspotsCount = 17;
 }
 
-void GnapEngine::scene15_run() {
-	
+void Scene15::run() {
 	_s15_currSlotSequenceId = -1;
 	_s15_currUpperButtonSequenceId = -1;
 	_s15_currLowerButtonSequenceId = -1;
@@ -82,84 +93,83 @@ void GnapEngine::scene15_run() {
 	_s15_currRecordSequenceId = 0xD5;
 	_s15_nextRecordSequenceId = -1;
 
-	_gameSys->setAnimation(0xD5, 1, 0);
-	_gameSys->insertSequence(_s15_currRecordSequenceId, 1, 0, 0, kSeqNone, 0, 0, 0);
+	_vm->_gameSys->setAnimation(0xD5, 1, 0);
+	_vm->_gameSys->insertSequence(_s15_currRecordSequenceId, 1, 0, 0, kSeqNone, 0, 0, 0);
 	
-	queueInsertDeviceIcon();
+	_vm->queueInsertDeviceIcon();
 	
-	endSceneInit();
+	_vm->endSceneInit();
 	
-	while (!_sceneDone) {
+	while (!_vm->_sceneDone) {
+		_vm->updateMouseCursor();
+		_vm->updateCursorByHotspot();
 	
-		updateMouseCursor();
-		updateCursorByHotspot();
+		_vm->_hotspots[kHSPlatypus]._x1 = 0;
+		_vm->_hotspots[kHSPlatypus]._y1 = 0;
+		_vm->_hotspots[kHSPlatypus]._x2 = 0;
+		_vm->_hotspots[kHSPlatypus]._y2 = 0;
 	
-		_hotspots[kHSPlatypus]._x1 = 0;
-		_hotspots[kHSPlatypus]._y1 = 0;
-		_hotspots[kHSPlatypus]._x2 = 0;
-		_hotspots[kHSPlatypus]._y2 = 0;
-	
-		_sceneClickedHotspot = getClickedHotspotId();
-		updateGrabCursorSprite(0, 0);
+		_vm->_sceneClickedHotspot = _vm->getClickedHotspotId();
+		_vm->updateGrabCursorSprite(0, 0);
 		
-		switch (_sceneClickedHotspot) {
+		switch (_vm->_sceneClickedHotspot) {
 		case kHSDevice:
-			if (_gnapActionStatus < 0) {
-				runMenu();
-				scene15_updateHotspots();
+			if (_vm->_gnapActionStatus < 0) {
+				_vm->runMenu();
+				updateHotspots();
 			}
 			break;
 
 		case kHSExit:
-			_newSceneNum = 12;
-			_isLeavingScene = true;
+			_vm->_newSceneNum = 12;
+			_vm->_isLeavingScene = true;
 			break;
 
 		case kHSCoinSlot:
-			if (_grabCursorSpriteIndex == kItemQuarter || _grabCursorSpriteIndex == kItemQuarterWithHole) {
+			if (_vm->_grabCursorSpriteIndex == kItemQuarter || _vm->_grabCursorSpriteIndex == kItemQuarterWithHole) {
 				_s15_nextSlotSequenceId = 0xDC; // Insert coin
-			} else if (_grabCursorSpriteIndex == kItemDiceQuarterHole) {
+			} else if (_vm->_grabCursorSpriteIndex == kItemDiceQuarterHole) {
 				_s15_nextSlotSequenceId = 0xDB;
-			} else if (_grabCursorSpriteIndex >= 0) {
-				_gameSys->insertSequence(0x107A8, 1, 0, 0, kSeqNone, 0, 900 - _gnapGridX, 576 - _gnapGridY);
+			} else if (_vm->_grabCursorSpriteIndex >= 0) {
+				_vm->_gameSys->insertSequence(0x107A8, 1, 0, 0, kSeqNone, 0, 900 - _vm->_gnapGridX, 576 - _vm->_gnapGridY);
 			} else {
-				switch (_verbCursor) {
+				switch (_vm->_verbCursor) {
 				case LOOK_CURSOR:
 				case GRAB_CURSOR:
-					playSound(0x108E9, false);
+					_vm->playSound(0x108E9, false);
 					break;
 				case TALK_CURSOR:
-					playSound((getRandom(5) + 0x8D5) | 0x10000, false);
+					_vm->playSound((_vm->getRandom(5) + 0x8D5) | 0x10000, false);
 					break;
 				case PLAT_CURSOR:
-					_gameSys->insertSequence(0x107A8, 1, 0, 0, kSeqNone, 0, 900 - _gnapGridX, 576 - _gnapGridY);
+					_vm->_gameSys->insertSequence(0x107A8, 1, 0, 0, kSeqNone, 0, 900 - _vm->_gnapGridX, 576 - _vm->_gnapGridY);
 					break;
 				}
 			}
 			break;
 
 		case kHSPlayButton:
-			if (_grabCursorSpriteIndex >= 0) {
-				_gameSys->insertSequence(0x107A8, 1, 0, 0, kSeqNone, 0, 900 - _gnapGridX, 576 - _gnapGridY);
+			if (_vm->_grabCursorSpriteIndex >= 0) {
+				_vm->_gameSys->insertSequence(0x107A8, 1, 0, 0, kSeqNone, 0, 900 - _vm->_gnapGridX, 576 - _vm->_gnapGridY);
 			} else {
-				switch (_verbCursor) {
+				switch (_vm->_verbCursor) {
 				case LOOK_CURSOR:
-					if (isFlag(kGFGnapControlsToyUFO) || isFlag(kGFUnk13))
-						playSound(0x108E9, false);
+					if (_vm->isFlag(kGFGnapControlsToyUFO) || _vm->isFlag(kGFUnk13))
+						_vm->playSound(0x108E9, false);
 					else
 						_s15_nextSlotSequenceId = 0xDA;
 					break;
 				case GRAB_CURSOR:
-					if (isFlag(kGFGnapControlsToyUFO) || isFlag(kGFUnk13))
+					if (_vm->isFlag(kGFGnapControlsToyUFO) || _vm->isFlag(kGFUnk13))
 						_s15_nextSlotSequenceId = 0xD9;
 					else
 						_s15_nextSlotSequenceId = 0xDA;
 					break;
 				case TALK_CURSOR:
-					playSound((getRandom(5) + 0x8D5) | 0x10000, false);
+					_vm->playSound((_vm->getRandom(5) + 0x8D5) | 0x10000, false);
 					break;
 				case PLAT_CURSOR:
-					_gameSys->insertSequence(0x107A8, 1, 0, 0, kSeqNone, 0, 900 - _gnapGridX, 576 - _gnapGridY);
+					_vm->_gameSys->insertSequence(0x107A8, 1, 0, 0, kSeqNone, 0, 900 - _vm->_gnapGridX, 576 - _vm->_gnapGridY);
 					break;
 				}
 			}
@@ -171,21 +181,21 @@ void GnapEngine::scene15_run() {
 		case kHSButton4:
 		case kHSButton5:
 		case kHSButton6:
-			if (_grabCursorSpriteIndex >= 0) {
-				_gameSys->insertSequence(0x107A8, 1, 0, 0, kSeqNone, 0, 900 - _gnapGridX, 576 - _gnapGridY);
+			if (_vm->_grabCursorSpriteIndex >= 0) {
+				_vm->_gameSys->insertSequence(0x107A8, 1, 0, 0, kSeqNone, 0, 900 - _vm->_gnapGridX, 576 - _vm->_gnapGridY);
 			} else {
-				switch (_verbCursor) {
+				switch (_vm->_verbCursor) {
 				case LOOK_CURSOR:
-					playSound(0x108E9, false);
+					_vm->playSound(0x108E9, false);
 					break;
 				case GRAB_CURSOR:
-					_s15_nextUpperButtonSequenceId = _sceneClickedHotspot + 0xC5;
+					_s15_nextUpperButtonSequenceId = _vm->_sceneClickedHotspot + 0xC5;
 					break;
 				case TALK_CURSOR:
-					playSound((getRandom(5) + 0x8D5) | 0x10000, false);
+					_vm->playSound((_vm->getRandom(5) + 0x8D5) | 0x10000, false);
 					break;
 				case PLAT_CURSOR:
-					_gameSys->insertSequence(0x107A8, 1, 0, 0, kSeqNone, 0, 900 - _gnapGridX, 576 - _gnapGridY);
+					_vm->_gameSys->insertSequence(0x107A8, 1, 0, 0, kSeqNone, 0, 900 - _vm->_gnapGridX, 576 - _vm->_gnapGridY);
 					break;
 				}
 			}
@@ -197,132 +207,131 @@ void GnapEngine::scene15_run() {
 		case kHSButtonD:
 		case kHSButtonE:
 		case kHSButtonF:
-			if (_grabCursorSpriteIndex >= 0) {
-				_gameSys->insertSequence(0x107A8, 1, 0, 0, kSeqNone, 0, 900 - _gnapGridX, 576 - _gnapGridY);
+			if (_vm->_grabCursorSpriteIndex >= 0) {
+				_vm->_gameSys->insertSequence(0x107A8, 1, 0, 0, kSeqNone, 0, 900 - _vm->_gnapGridX, 576 - _vm->_gnapGridY);
 			} else {
-				switch (_verbCursor) {
+				switch (_vm->_verbCursor) {
 				case LOOK_CURSOR:
-					playSound(0x108E9, false);
+					_vm->playSound(0x108E9, false);
 					break;
 				case GRAB_CURSOR:
-					_s15_nextLowerButtonSequenceId = _sceneClickedHotspot + 0xC5;
+					_s15_nextLowerButtonSequenceId = _vm->_sceneClickedHotspot + 0xC5;
 					break;
 				case TALK_CURSOR:
-					playSound((getRandom(5) + 0x8D5) | 0x10000, false);
+					_vm->playSound((_vm->getRandom(5) + 0x8D5) | 0x10000, false);
 					break;
 				case PLAT_CURSOR:
-					_gameSys->insertSequence(0x107A8, 1, 0, 0, kSeqNone, 0, 900 - _gnapGridX, 576 - _gnapGridY);
+					_vm->_gameSys->insertSequence(0x107A8, 1, 0, 0, kSeqNone, 0, 900 - _vm->_gnapGridX, 576 - _vm->_gnapGridY);
 					break;
 				}
 			}
 			break;
 
 		default:
-			_mouseClickState._left = false;
+			_vm->_mouseClickState._left = false;
 			break;
 
 		}
 	
-		scene15_updateAnimations();
+		updateAnimations();
+		_vm->checkGameKeys();
 	
-		checkGameKeys();
-	
-		if (isKeyStatus1(8)) {
-			clearKeyStatus1(8);
-			runMenu();
-			scene15_updateHotspots();
+		if (_vm->isKeyStatus1(8)) {
+			_vm->clearKeyStatus1(8);
+			_vm->runMenu();
+			updateHotspots();
 		}
 		
-		gameUpdateTick();
+		_vm->gameUpdateTick();
 	}
 }
 
-void GnapEngine::scene15_updateAnimations() {	
-	if (_gameSys->getAnimationStatus(0) == 2) {
-		if (_isLeavingScene) {
-			_sceneDone = true;
+void Scene15::updateAnimations() {	
+	if (_vm->_gameSys->getAnimationStatus(0) == 2) {
+		if (_vm->_isLeavingScene) {
+			_vm->_sceneDone = true;
 		} else if (_s15_nextSlotSequenceId != -1) {
-			_gameSys->setAnimation(_s15_nextSlotSequenceId, 1, 0);
-			_gameSys->insertSequence(_s15_nextSlotSequenceId, 1, 0, 0, kSeqNone, 0, 0, 0);
+			_vm->_gameSys->setAnimation(_s15_nextSlotSequenceId, 1, 0);
+			_vm->_gameSys->insertSequence(_s15_nextSlotSequenceId, 1, 0, 0, kSeqNone, 0, 0, 0);
 			_s15_currSlotSequenceId = _s15_nextSlotSequenceId;
 			_s15_nextSlotSequenceId = -1;
 			switch (_s15_currSlotSequenceId) {
 			case 0xDC:
-				if (_grabCursorSpriteIndex == kItemQuarter) {
-					invRemove(kItemQuarter);
+				if (_vm->_grabCursorSpriteIndex == kItemQuarter) {
+					_vm->invRemove(kItemQuarter);
 				} else {
-					invRemove(kItemQuarterWithHole);
-					setFlag(kGFUnk13);
+					_vm->invRemove(kItemQuarterWithHole);
+					_vm->setFlag(kGFUnk13);
 				}
-				setGrabCursorSprite(-1);
+				_vm->setGrabCursorSprite(-1);
 				break;
 			case 0xDB:
-				setFlag(kGFUnk14);
-				setGrabCursorSprite(-1);
+				_vm->setFlag(kGFUnk14);
+				_vm->setGrabCursorSprite(-1);
 				_s15_nextSlotSequenceId = 0xD8;
 				break;
 			case 0xD9:
-				if (isFlag(kGFGnapControlsToyUFO)) {
-					clearFlag(kGFGnapControlsToyUFO);
-					invAdd(kItemQuarter);
-					_newGrabCursorSpriteIndex = kItemQuarter;
-				} else if (isFlag(kGFUnk13)) {
-					clearFlag(kGFUnk13);
-					invAdd(kItemQuarterWithHole);
-					_newGrabCursorSpriteIndex = kItemQuarterWithHole;
+				if (_vm->isFlag(kGFGnapControlsToyUFO)) {
+					_vm->clearFlag(kGFGnapControlsToyUFO);
+					_vm->invAdd(kItemQuarter);
+					_vm->_newGrabCursorSpriteIndex = kItemQuarter;
+				} else if (_vm->isFlag(kGFUnk13)) {
+					_vm->clearFlag(kGFUnk13);
+					_vm->invAdd(kItemQuarterWithHole);
+					_vm->_newGrabCursorSpriteIndex = kItemQuarterWithHole;
 				}
-				_newSceneNum = 12;
-				_isLeavingScene = true;
+				_vm->_newSceneNum = 12;
+				_vm->_isLeavingScene = true;
 				break;
 			case 0xD8:
 			case 0xDA:
 				if (_s15_currUpperButtonSequenceId != -1) {
-					_gameSys->removeSequence(_s15_currUpperButtonSequenceId, 1, true);
+					_vm->_gameSys->removeSequence(_s15_currUpperButtonSequenceId, 1, true);
 					_s15_currUpperButtonSequenceId = -1;
 				}
 				if (_s15_currLowerButtonSequenceId != -1) {
-					_gameSys->removeSequence(_s15_currLowerButtonSequenceId, 1, true);
+					_vm->_gameSys->removeSequence(_s15_currLowerButtonSequenceId, 1, true);
 					_s15_currLowerButtonSequenceId = -1;
 				}
 				break;
 			}
 		} else if (_s15_nextRecordSequenceId != -1) {
-			_gameSys->setAnimation(_s15_nextRecordSequenceId, 1, 0);
-			_gameSys->insertSequence(_s15_nextRecordSequenceId, 1, _s15_currRecordSequenceId, 1, kSeqSyncWait, 0, 0, 0);
+			_vm->_gameSys->setAnimation(_s15_nextRecordSequenceId, 1, 0);
+			_vm->_gameSys->insertSequence(_s15_nextRecordSequenceId, 1, _s15_currRecordSequenceId, 1, kSeqSyncWait, 0, 0, 0);
 			_s15_currRecordSequenceId = _s15_nextRecordSequenceId;
 			_s15_nextRecordSequenceId = -1;
 			if (_s15_currRecordSequenceId == 0xD3) {
-				invRemove(kItemDiceQuarterHole);
-				_newSceneNum = 16;
-				_isLeavingScene = true;
+				_vm->invRemove(kItemDiceQuarterHole);
+				_vm->_newSceneNum = 16;
+				_vm->_isLeavingScene = true;
 			}
-			_gameSys->removeSequence(_s15_currUpperButtonSequenceId, 1, true);
+			_vm->_gameSys->removeSequence(_s15_currUpperButtonSequenceId, 1, true);
 			_s15_currUpperButtonSequenceId = -1;
-			_gameSys->removeSequence(_s15_currLowerButtonSequenceId, 1, true);
+			_vm->_gameSys->removeSequence(_s15_currLowerButtonSequenceId, 1, true);
 			_s15_currLowerButtonSequenceId = -1;
 		} else if (_s15_nextUpperButtonSequenceId != -1) {
-			_gameSys->setAnimation(_s15_nextUpperButtonSequenceId, 1, 0);
+			_vm->_gameSys->setAnimation(_s15_nextUpperButtonSequenceId, 1, 0);
 			if (_s15_currUpperButtonSequenceId == -1)
-				_gameSys->insertSequence(_s15_nextUpperButtonSequenceId, 1, 0, 0, kSeqNone, 0, 0, 0);
+				_vm->_gameSys->insertSequence(_s15_nextUpperButtonSequenceId, 1, 0, 0, kSeqNone, 0, 0, 0);
 			else
-				_gameSys->insertSequence(_s15_nextUpperButtonSequenceId, 1, _s15_currUpperButtonSequenceId, 1, kSeqSyncWait, 0, 0, 0);
+				_vm->_gameSys->insertSequence(_s15_nextUpperButtonSequenceId, 1, _s15_currUpperButtonSequenceId, 1, kSeqSyncWait, 0, 0, 0);
 			_s15_currUpperButtonSequenceId = _s15_nextUpperButtonSequenceId;
 			_s15_nextUpperButtonSequenceId = -1;
-			if (_s15_currLowerButtonSequenceId != -1 && isFlag(kGFUnk14)) {
+			if (_s15_currLowerButtonSequenceId != -1 && _vm->isFlag(kGFUnk14)) {
 				if (_s15_currUpperButtonSequenceId == 0xCC && _s15_currLowerButtonSequenceId == 0xCE)
 					_s15_nextRecordSequenceId = 0xD3;
 				else
 					_s15_nextRecordSequenceId = 0xD4;
 			}
 		} else if (_s15_nextLowerButtonSequenceId != -1) {
-			_gameSys->setAnimation(_s15_nextLowerButtonSequenceId, 1, 0);
+			_vm->_gameSys->setAnimation(_s15_nextLowerButtonSequenceId, 1, 0);
 			if (_s15_currLowerButtonSequenceId == -1)
-				_gameSys->insertSequence(_s15_nextLowerButtonSequenceId, 1, 0, 0, kSeqNone, 0, 0, 0);
+				_vm->_gameSys->insertSequence(_s15_nextLowerButtonSequenceId, 1, 0, 0, kSeqNone, 0, 0, 0);
 			else
-				_gameSys->insertSequence(_s15_nextLowerButtonSequenceId, 1, _s15_currLowerButtonSequenceId, 1, kSeqSyncWait, 0, 0, 0);
+				_vm->_gameSys->insertSequence(_s15_nextLowerButtonSequenceId, 1, _s15_currLowerButtonSequenceId, 1, kSeqSyncWait, 0, 0, 0);
 			_s15_currLowerButtonSequenceId = _s15_nextLowerButtonSequenceId;
 			_s15_nextLowerButtonSequenceId = -1;
-			if (_s15_currUpperButtonSequenceId != -1 && isFlag(kGFUnk14)) {
+			if (_s15_currUpperButtonSequenceId != -1 && _vm->isFlag(kGFUnk14)) {
 				if (_s15_currUpperButtonSequenceId == 0xCC && _s15_currLowerButtonSequenceId == 0xCE)
 					_s15_nextRecordSequenceId = 0xD3;
 				else

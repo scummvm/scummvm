@@ -40,6 +40,7 @@
 #include "gnap/scenes/scene12.h"
 #include "gnap/scenes/scene13.h"
 #include "gnap/scenes/scene14.h"
+#include "gnap/scenes/scene15.h"
 
 namespace Gnap {
 
@@ -150,8 +151,9 @@ int GnapEngine::initSceneLogic() {
 		_gameSys->setScaleValues(0, 500, 1, 1000);
 		break;
 	case 15:
-		backgroundId = scene15_init();
-		scene15_updateHotspots();
+		_scene = new Scene15(this);
+		backgroundId = _scene->init();
+		_scene->updateHotspots();
 		_gameSys->setScaleValues(0, 500, 1, 1000);
 		break;
 	case 16:
@@ -470,7 +472,8 @@ void GnapEngine::runSceneLogic() {
 			_newSceneNum = 13;
 		break;
 	case 15:
-		scene15_run();
+		_scene->run();
+		delete _scene;
 		if (_newSceneNum == 55)
 			_newSceneNum = 12;
 		break;
