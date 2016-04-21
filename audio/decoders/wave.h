@@ -84,7 +84,7 @@ extern bool loadWAVFromStream(
  * @param disposeAfterUse	whether to delete the stream after use
  * @return	a new RewindableAudioStream, or NULL, if an error occurred
  */
-RewindableAudioStream *makeWAVStream(
+SeekableAudioStream *makeWAVStream(
 	Common::SeekableReadStream *stream,
 	DisposeAfterUse::Flag disposeAfterUse);
 

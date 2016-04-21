@@ -158,7 +158,7 @@ bool loadWAVFromStream(Common::SeekableReadStream &stream, int &size, int &rate,
 	return true;
 }
 
-RewindableAudioStream *makeWAVStream(Common::SeekableReadStream *stream, DisposeAfterUse::Flag disposeAfterUse) {
+SeekableAudioStream *makeWAVStream(Common::SeekableReadStream *stream, DisposeAfterUse::Flag disposeAfterUse) {
 	int size, rate;
 	byte flags;
 	uint16 type;
