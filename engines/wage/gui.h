@@ -114,7 +114,8 @@ public:
 
 	bool builtInFonts() { return _builtInFonts; }
 
-	void processConsoleEvents(WindowClick click, Common::Event &event);
+	bool processSceneEvents(WindowClick click, Common::Event &event);
+	bool processConsoleEvents(WindowClick click, Common::Event &event);
 
 private:
 	void drawScene();

@@ -143,8 +143,8 @@ static void cursorTimerHandler(void *refCon) {
 	gui->_cursorDirty = true;
 }
 
-static void sceneWindowCallback(WindowClick click, Common::Event &event, void *gui);
-static void consoleWindowCallback(WindowClick click, Common::Event &event, void *gui);
+static bool sceneWindowCallback(WindowClick click, Common::Event &event, void *gui);
+static bool consoleWindowCallback(WindowClick click, Common::Event &event, void *gui);
 
 Gui::Gui(WageEngine *engine) {
 	_engine = engine;
@@ -315,18 +315,29 @@ void Gui::drawScene() {
 	_consoleTextArea.setHeight(_scene->_textBounds->height() - 2 * kBorderWidth);
 }
 
-static void sceneWindowCallback(WindowClick click, Common::Event &event, void *g) {
+static bool sceneWindowCallback(WindowClick click, Common::Event &event, void *g) {
 	Gui *gui = (Gui *)g;
 
+	return gui->processSceneEvents(click, event);
+}
+
+bool Gui::processSceneEvents(WindowClick click, Common::Event &event) {
+	if (_cursorIsArrow == false) {
+		CursorMan.replaceCursor(macCursorArrow, 11, 16, 1, 1, 3);
+		_cursorIsArrow = true;
+	}
+
 	if (click == kBorderInner && event.type == Common::EVENT_LBUTTONUP) {
-		Designed *obj = gui->_scene->lookUpEntity(event.mouse.x - gui->_sceneWindow->getDimensions().left,
-												  event.mouse.y - gui->_sceneWindow->getDimensions().top);
+		Designed *obj = _scene->lookUpEntity(event.mouse.x - _sceneWindow->getDimensions().left,
+												  event.mouse.y - _sceneWindow->getDimensions().top);
 
 		if (obj != nullptr)
-			gui->_engine->processTurn(NULL, obj);
+			_engine->processTurn(NULL, obj);
 
-		return;
+		return true;
 	}
+
+	return false;
 }
 
 // Render console
@@ -339,13 +350,18 @@ void Gui::drawConsole() {
 	_consoleWindow->setDirty(true);
 }
 
-static void consoleWindowCallback(WindowClick click, Common::Event &event, void *g) {
+static bool consoleWindowCallback(WindowClick click, Common::Event &event, void *g) {
 	Gui *gui = (Gui *)g;
 
-	gui->processConsoleEvents(click, event);
+	return gui->processConsoleEvents(click, event);
 }
 
-void Gui::processConsoleEvents(WindowClick click, Common::Event &event) {
+bool Gui::processConsoleEvents(WindowClick click, Common::Event &event) {
+	if (click != kBorderInner && _cursorIsArrow == false) {
+		CursorMan.replaceCursor(macCursorArrow, 11, 16, 1, 1, 3);
+		_cursorIsArrow = true;
+	}
+
 	if (click == kBorderScrollUp || click == kBorderScrollDown) {
 		if (event.type == Common::EVENT_LBUTTONDOWN) {
 			int textFullSize = _lines.size() * _consoleLineHeight + _consoleTextArea.height();
@@ -376,8 +392,49 @@ void Gui::processConsoleEvents(WindowClick click, Common::Event &event) {
 			}
 		}
 
-		return;
+		return true;
 	}
+
+	if (click == kBorderInner) {
+		if (event.type == Common::EVENT_LBUTTONDOWN) {
+			startMarking(event.mouse.x, event.mouse.y);
+		} else if (event.type == Common::EVENT_LBUTTONUP) {
+			if (_inTextSelection) {
+				_inTextSelection = false;
+
+				if (_selectionEndY == -1 ||
+						(_selectionEndX == _selectionStartX && _selectionEndY == _selectionStartY)) {
+					_selectionStartY = _selectionEndY = -1;
+					_consoleFullRedraw = true;
+					_menu->enableCommand(kMenuEdit, kMenuActionCopy, false);
+				} else {
+					_menu->enableCommand(kMenuEdit, kMenuActionCopy, true);
+
+					bool cutAllowed = false;
+
+					if (_selectionStartY == _selectionEndY && _selectionStartY == (int)_lines.size() - 1)
+						cutAllowed = true;
+
+					_menu->enableCommand(kMenuEdit, kMenuActionCut, cutAllowed);
+					_menu->enableCommand(kMenuEdit, kMenuActionClear, cutAllowed);
+				}
+			}
+		} else if (event.type == Common::EVENT_MOUSEMOVE) {
+			if (_inTextSelection) {
+				updateTextSelection(event.mouse.x, event.mouse.y);
+				return true;
+			}
+
+			if (_cursorIsArrow) {
+				CursorMan.replaceCursor(macCursorBeam, 11, 16, 3, 8, 3);
+				_cursorIsArrow = false;
+			}
+		}
+
+		return true;
+	}
+
+	return false;
 }
 
 void Gui::loadFonts() {
@@ -443,21 +500,6 @@ void Gui::mouseMove(int x, int y) {
 
 		return;
 	}
-
-	if (_inTextSelection) {
-		updateTextSelection(x, y);
-		return;
-	}
-
-	if (_consoleTextArea.contains(x, y)) {
-		if (_cursorIsArrow) {
-			CursorMan.replaceCursor(macCursorBeam, 11, 16, 3, 8, 3);
-			_cursorIsArrow = false;
-		}
-	} else if (_cursorIsArrow == false) {
-		CursorMan.replaceCursor(macCursorArrow, 11, 16, 1, 1, 3);
-		_cursorIsArrow = true;
-	}
 }
 
 void Gui::pushArrowCursor() {
@@ -502,35 +544,12 @@ void Gui::mouseUp(int x, int y) {
 		return;
 	}
 
-	if (_inTextSelection) {
-		_inTextSelection = false;
-
-		if (_selectionEndY == -1 ||
-				(_selectionEndX == _selectionStartX && _selectionEndY == _selectionStartY)) {
-			_selectionStartY = _selectionEndY = -1;
-			_consoleFullRedraw = true;
-			_menu->enableCommand(kMenuEdit, kMenuActionCopy, false);
-		} else {
-			_menu->enableCommand(kMenuEdit, kMenuActionCopy, true);
-
-			bool cutAllowed = false;
-
-			if (_selectionStartY == _selectionEndY && _selectionStartY == (int)_lines.size() - 1)
-				cutAllowed = true;
-
-			_menu->enableCommand(kMenuEdit, kMenuActionCut, cutAllowed);
-			_menu->enableCommand(kMenuEdit, kMenuActionClear, cutAllowed);
-		}
-	}
-
 	return;
 }
 
 void Gui::mouseDown(int x, int y) {
 	if (_menu->mouseClick(x, y)) {
 		_menuDirty = true;
-	} else if (_consoleTextArea.contains(x, y)) {
-		startMarking(x, y);
 	}
 }
 

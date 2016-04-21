@@ -86,7 +86,7 @@ public:
 	void setDirty(bool dirty) { _contentIsDirty = dirty; }
 	int getId() { return _id; }
 	bool processEvent(Common::Event &event);
-	void setCallback(void (*callback)(WindowClick, Common::Event &, void *), void *data) { _callback = callback; _dataPtr = data; }
+	void setCallback(bool (*callback)(WindowClick, Common::Event &, void *), void *data) { _callback = callback; _dataPtr = data; }
 
 private:
 	void drawBorder();
@@ -94,8 +94,6 @@ private:
 	void fillRect(Graphics::ManagedSurface *g, int x, int y, int w, int h, int color = kColorBlack);
 	const Graphics::Font *getTitleFont();
 	bool builtInFonts();
-
-	void mouseDown(Common::Event &event);
 
 private:
 	Graphics::ManagedSurface _surface;
@@ -115,7 +113,7 @@ private:
 
 	Common::String _title;
 
-	void (*_callback)(WindowClick, Common::Event &, void *);
+	bool (*_callback)(WindowClick, Common::Event &, void *);
 	void *_dataPtr;
 };
 

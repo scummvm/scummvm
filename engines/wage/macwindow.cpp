@@ -291,42 +291,22 @@ static WindowClick isInBorder(Common::Rect &rect, int x, int y) {
 }
 
 bool MacWindow::processEvent(Common::Event &event) {
+	WindowClick click = isInBorder(_innerDims, event.mouse.x, event.mouse.y);
+
 	switch (event.type) {
 	case Common::EVENT_MOUSEMOVE:
-		//mouseMove(event.mouse.x, event.mouse.y);
 		break;
 	case Common::EVENT_LBUTTONDOWN:
-		mouseDown(event);
+		setHighlight(click);
 		break;
-	case Common::EVENT_LBUTTONUP: {
-			setHighlight(kBorderNone);
-
-			WindowClick click = isInBorder(_innerDims, event.mouse.x, event.mouse.y);
-			(*_callback)(click, event, _dataPtr);
-		}
+	case Common::EVENT_LBUTTONUP:
+		setHighlight(kBorderNone);
 		break;
-
 	default:
 		return false;
 	}
 
-	return true;
-}
-
-void MacWindow::mouseDown(Common::Event &event) {
-	WindowClick click = isInBorder(_innerDims, event.mouse.x, event.mouse.y);
-
-	if (click == kBorderNone)
-		return;
-
-	setHighlight(click);
-
-	if (click == kBorderScrollUp || click == kBorderScrollDown || click == kBorderInner) {
-		if (!_callback)
-			return;
-
-		(*_callback)(click, event, _dataPtr);
-	}
+	return (*_callback)(click, event, _dataPtr);
 }
 
 } // End of namespace Wage
