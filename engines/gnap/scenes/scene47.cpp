@@ -23,10 +23,13 @@
 #include "gnap/gnap.h"
 #include "gnap/gamesys.h"
 #include "gnap/resource.h"
+#include "gnap/scenes/scene47.h"
 
 namespace Gnap {
 
-void GnapEngine::scene47_initCutscene1() {
+Scene471::Scene471(GnapEngine *vm) : CutScene(vm) {}
+
+int Scene471::init() {
 	_s99_sequenceIdArr[0] = 0x301;
 	_s99_sequenceIdArr[1] = 0x305;
 	_s99_sequenceIdArr[2] = 0x302;
@@ -48,9 +51,13 @@ void GnapEngine::scene47_initCutscene1() {
 	_s99_canSkip[3] = false;
 	_s99_canSkip[4] = false;
 	_s99_itemsCount = 5;
+
+	return -1;
 }
 
-void GnapEngine::scene47_initCutscene2() {
+Scene472::Scene472(GnapEngine *vm) : CutScene(vm) {}
+
+int Scene472::init() {
 	_s99_sequenceIdArr[0] = 0x306;
 	_s99_sequenceIdArr[1] = 0x309;
 	_s99_sequenceIdArr[2] = 0x307;
@@ -69,9 +76,13 @@ void GnapEngine::scene47_initCutscene2() {
 	_s99_canSkip[2] = false;
 	_s99_canSkip[3] = false;
 	_s99_itemsCount = 4;
+
+	return -1;
 }
 
-void GnapEngine::scene47_initCutscene3() {
+Scene473::Scene473(GnapEngine *vm) : CutScene(vm) {}
+
+int Scene473::init() {
 	_s99_sequenceIdArr[0] = 0x320;
 	_s99_sequenceIdArr[1] = 0x321;
 	_s99_resourceIdArr[0] = 0x142;
@@ -81,9 +92,13 @@ void GnapEngine::scene47_initCutscene3() {
 	_s99_canSkip[0] = false;
 	_s99_canSkip[1] = false;
 	_s99_itemsCount = 2;
+
+	return -1;
 }
 
-void GnapEngine::scene47_initCutscene4() {
+Scene474::Scene474(GnapEngine *vm) : CutScene(vm) {}
+
+int Scene474::init() {
 	_s99_sequenceIdArr[0] = 0x30C;
 	_s99_sequenceIdArr[1] = 0x30D;
 	_s99_sequenceIdArr[2] = 0x30B;
@@ -97,9 +112,13 @@ void GnapEngine::scene47_initCutscene4() {
 	_s99_canSkip[1] = false;
 	_s99_canSkip[2] = false;
 	_s99_itemsCount = 3;
+
+	return -1;
 }
 
-void GnapEngine::scene47_initCutscene5() {
+Scene475::Scene475(GnapEngine *vm) : CutScene(vm) {}
+
+int Scene475::init() {
 	_s99_sequenceIdArr[0] = 0x30E;
 	_s99_sequenceIdArr[1] = 0x30F;
 	_s99_sequenceIdArr[2] = 0x310;
@@ -111,18 +130,26 @@ void GnapEngine::scene47_initCutscene5() {
 	_s99_canSkip[0] = false;
 	_s99_canSkip[1] = false;
 	_s99_itemsCount = 2;
+
+	return -1;
 }
 
-void GnapEngine::scene47_initCutscene6() {
+Scene476::Scene476(GnapEngine *vm) : CutScene(vm) {}
+
+int Scene476::init() {
 	_s99_sequenceIdArr[0] = 0x31E;
 	_s99_sequenceIdArr[1] = 0x31F;
 	_s99_resourceIdArr[0] = 0x2FA;
 	_s99_sequenceCountArr[0] = 2;
 	_s99_canSkip[0] = false;
 	_s99_itemsCount = 1;
+
+	return -1;
 }
 
-void GnapEngine::scene47_initCutscene7() {
+Scene477::Scene477(GnapEngine *vm) : CutScene(vm) {}
+
+int Scene477::init() {
 	int v0, v4, v2, v3;
 	
 	_s99_sequenceIdArr[0] = 0x316;
@@ -130,11 +157,11 @@ void GnapEngine::scene47_initCutscene7() {
 	_s99_sequenceIdArr[2] = 0x314;
 	_s99_sequenceIdArr[3] = 0x31B;
 	int v1 = 4;
-	if (!isFlag(kGFTwigTaken)) {
+	if (!_vm->isFlag(kGFTwigTaken)) {
 		_s99_sequenceIdArr[4] = 0x31C;
 		v1 = 5;
 	}
-	if (!isFlag(kGFPlatypusTalkingToAssistant))
+	if (!_vm->isFlag(kGFPlatypusTalkingToAssistant))
 		_s99_sequenceIdArr[v1++] = 0x31D;
 	v4 = v1;
 	_s99_sequenceIdArr[v1] = 0x319;
@@ -144,9 +171,9 @@ void GnapEngine::scene47_initCutscene7() {
 	_s99_sequenceIdArr[v0++] = 0x312;
 	_s99_sequenceIdArr[v0] = 0x31A;
 	v2 = v0 + 1;
-	if (!isFlag(kGFTwigTaken))
+	if (!_vm->isFlag(kGFTwigTaken))
 		_s99_sequenceIdArr[v2++] = 0x31C;
-	if (!isFlag(kGFPlatypusTalkingToAssistant))
+	if (!_vm->isFlag(kGFPlatypusTalkingToAssistant))
 		_s99_sequenceIdArr[v2++] = 0x31D;
 	_s99_sequenceIdArr[v2] = 0x313;
 	_s99_sequenceIdArr[v2 + 1] = 0x315;
@@ -166,6 +193,8 @@ void GnapEngine::scene47_initCutscene7() {
 	_s99_canSkip[3] = false;
 	_s99_canSkip[4] = false;
 	_s99_itemsCount = 5;
+
+	return -1;
 }
 
 } // End of namespace Gnap

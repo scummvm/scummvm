@@ -20,50 +20,23 @@
  *
  */
 
-#ifndef GNAP_SCENECORE_H
-#define GNAP_SCENECORE_H
+#ifndef GNAP_SCENE16_H
+#define GNAP_SCENE16_H
 
 #include "gnap/debugger.h"
+#include "gnap/scenes/scenecore.h"
 
 namespace Gnap {
 
 class GnapEngine;
 
-class Scene {
+class Scene16: public CutScene {
 public:
-	Scene(GnapEngine *vm) : _vm(vm) {};
-	~Scene() {};
+	Scene16(GnapEngine *vm);
+	~Scene16() {}
 
-	virtual int init() = 0;
-	virtual void updateHotspots() = 0;
-	virtual void run() = 0;
-	virtual void updateAnimations() = 0;
-	virtual void updateAnimationsCb() = 0;
-
-protected:
-	GnapEngine *_vm;
+	virtual int init();
 };
 
-class CutScene : public Scene {
-public:
-	CutScene(GnapEngine *vm) : Scene(vm) {};
-	~CutScene() {};
-
-	virtual int init() = 0;
-	void updateHotspots() {}
-	void run();
-	void updateAnimations() {}
-	void updateAnimationsCb() {}
-
-protected:
-	GnapEngine *_vm;
-
-	int _s99_itemsCount;
-	int _s99_resourceIdArr[16];
-	int _s99_sequenceCountArr[16];
-	int _s99_sequenceIdArr[50];
-	bool _s99_canSkip[16];
-};
 } // End of namespace Gnap
-
-#endif // GNAP_SCENECORE_H
+#endif // GNAP_SCENE16_H

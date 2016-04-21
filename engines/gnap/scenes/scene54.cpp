@@ -23,10 +23,13 @@
 #include "gnap/gnap.h"
 #include "gnap/gamesys.h"
 #include "gnap/resource.h"
+#include "gnap/scenes/scene54.h"
 
 namespace Gnap {
 
-void GnapEngine::scene54_initCutscene1() {
+Scene541::Scene541(GnapEngine *vm) : CutScene(vm) {}
+
+int Scene541::init() {
 	_s99_sequenceIdArr[0] = 0x1BE;
 	_s99_sequenceIdArr[1] = 0x1BF;
 	_s99_sequenceIdArr[2] = 0x1BA;
@@ -36,7 +39,7 @@ void GnapEngine::scene54_initCutscene1() {
 	_s99_resourceIdArr[0] = 0x3C;
 	_s99_resourceIdArr[1] = 0x43;
 	_s99_resourceIdArr[2] = 0x44;
-	if (isFlag(kGFPictureTaken))
+	if (_vm->isFlag(kGFPictureTaken))
 		_s99_resourceIdArr[3] = 0x47;
 	else
 		_s99_resourceIdArr[3] = 0x46;
@@ -52,9 +55,13 @@ void GnapEngine::scene54_initCutscene1() {
 	_s99_canSkip[3] = false;
 	_s99_canSkip[4] = false;
 	_s99_itemsCount = 5;
+
+	return -1;
 }
 
-void GnapEngine::scene54_initCutscene2() {
+Scene542::Scene542(GnapEngine *vm) : CutScene(vm) {}
+
+int Scene542::init() {
 	_s99_sequenceIdArr[0] = 0x1C9;
 	_s99_sequenceIdArr[1] = 0x1C7;
 	_s99_sequenceIdArr[2] = 0x1CC;
@@ -122,6 +129,8 @@ void GnapEngine::scene54_initCutscene2() {
 	_s99_canSkip[14] = true;
 	_s99_canSkip[15] = false;
 	_s99_itemsCount = 16;
+
+	return -1;
 }
 
 } // End of namespace Gnap

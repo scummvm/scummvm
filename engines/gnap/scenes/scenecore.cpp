@@ -41,6 +41,10 @@
 #include "gnap/scenes/scene13.h"
 #include "gnap/scenes/scene14.h"
 #include "gnap/scenes/scene15.h"
+#include "gnap/scenes/scene16.h"
+#include "gnap/scenes/scene47.h"
+#include "gnap/scenes/scene48.h"
+#include "gnap/scenes/scene54.h"
 
 namespace Gnap {
 
@@ -160,7 +164,7 @@ int GnapEngine::initSceneLogic() {
 	case 47:
 	case 48:
 	case 54:
-		backgroundId = cutscene_init();
+		backgroundId = -1;
 		_gameSys->setScaleValues(0, 500, 1, 1000);
 		break;
 	case 17:
@@ -478,10 +482,12 @@ void GnapEngine::runSceneLogic() {
 			_newSceneNum = 12;
 		break;
 	case 16:
-		scene16_initCutscene();
+		_scene = new Scene16(this);
+		_scene->init();
 		_newSceneNum = 17;
 		_newCursorValue = 3;
-		cutscene_run();
+		_scene->run();
+		delete _scene;
 		break;
 	case 17:
 		scene17_run();
@@ -639,39 +645,49 @@ void GnapEngine::runSceneLogic() {
 		break;
 	case 47:
 		if (_prevSceneNum == 49) {
-			scene47_initCutscene1();
+			_scene = new Scene471(this);
+			_scene->init();
 			_newSceneNum = 7;
 			_newCursorValue = 2;
 		} else if (_prevSceneNum == 13) {
-			scene47_initCutscene2();
+			_scene = new Scene472(this);
+			_scene->init();
 			_newSceneNum = 11;
 		} else if (!isFlag(kGFPlatyPussDisguised) && _prevSceneNum == 2) {//CHECKME
 			if (isFlag(kGFUnk25)) {
-				scene47_initCutscene3();
+				_scene = new Scene473(this);
+				_scene->init();
 				_newSceneNum = 2;
 			} else {
-				scene47_initCutscene4();
+				_scene = new Scene474(this);
+				_scene->init();
 				_newSceneNum = 49;
 			}
 		} else if (_prevSceneNum == 21) {
-			scene47_initCutscene5();
+			_scene = new Scene475(this);
+			_scene->init();
 			_newSceneNum = 21;
 			setFlag(kGFTwigTaken);
 			setFlag(kGFKeysTaken);
 		} else if (_prevSceneNum == 30) {
-			scene47_initCutscene6();
+			_scene = new Scene476(this);
+			_scene->init();
 			_newSceneNum = 26;
 		} else if (isFlag(kGFPlatyPussDisguised) && _cursorValue == 1) {
-			scene47_initCutscene7();
+			_scene = new Scene477(this);
+			_scene->init();
 			_newSceneNum = 4;
 		}
-		cutscene_run();
+		_scene->run();
+		delete _scene;
 		break;
 	case 48:
-		scene48_initCutscene();
+		_scene = new Scene48(this);
+		_scene->init();
 		_newSceneNum = 33;
 		_newCursorValue = 4;
-		cutscene_run();
+		_scene->run();
+		delete _scene;
 		break;
 	case 49:
 		scene49_run();
@@ -696,16 +712,91 @@ void GnapEngine::runSceneLogic() {
 		break;
 	case 54:
 		if (_prevSceneNum == 45) {
-			scene54_initCutscene1();
+			_scene = new Scene541(this);
+			_scene->init();
 			_newSceneNum = 43;
-			cutscene_run();
+			_scene->run();
+			delete _scene;
 		} else {
-			scene54_initCutscene2();
-			cutscene_run();
+			_scene = new Scene542(this);
+			_scene->init();
+			_scene->run();
+			delete _scene;
 			_gameDone = true;
 		}
 		break;
 	}
+}
+
+void CutScene::run() {
+	int itemIndex = 0;
+	int soundId = -1;
+	int volume = 100;
+	int duration = 0;
+	bool skip = false;
+
+	if (_vm->_prevSceneNum == 2) {
+		soundId = 0x36B;
+		duration = MAX(1, 300 / _vm->getSequenceTotalDuration(_s99_sequenceIdArr[_s99_itemsCount - 1]));//CHECKME
+		_vm->_timers[0] = 0;
+	}
+
+	if (soundId != -1)
+		_vm->playSound(soundId, false);
+
+	_vm->hideCursor();
+
+	_vm->_gameSys->drawSpriteToBackground(0, 0, _s99_resourceIdArr[0]);
+
+	for (int j = 0; j < _s99_sequenceCountArr[0]; ++j)
+		_vm->_gameSys->insertSequence(_s99_sequenceIdArr[j], j + 2, 0, 0, kSeqNone, 0, 0, 0);
+	_vm->_gameSys->setAnimation(_s99_sequenceIdArr[0], 2, 0);
+
+	_vm->clearKeyStatus1(Common::KEYCODE_ESCAPE);
+	_vm->clearKeyStatus1(Common::KEYCODE_SPACE);
+	_vm->clearKeyStatus1(29);
+
+	_vm->_mouseClickState._left = false;
+
+	int firstSequenceIndex = 0;
+	while (!_vm->_sceneDone) {
+		_vm->gameUpdateTick();
+
+		if (_vm->_gameSys->getAnimationStatus(0) == 2 || skip) {
+			skip = false;
+			_vm->_gameSys->requestClear2(false);
+			_vm->_gameSys->requestClear1();
+			_vm->_gameSys->setAnimation(0, 0, 0);
+			firstSequenceIndex += _s99_sequenceCountArr[itemIndex++];
+			if (itemIndex >= _s99_itemsCount) {
+				_vm->_sceneDone = true;
+			} else {
+				for (int m = 0; m < _s99_sequenceCountArr[itemIndex]; ++m)
+					_vm->_gameSys->insertSequence(_s99_sequenceIdArr[firstSequenceIndex + m], m + 2, 0, 0, kSeqNone, 0, 0, 0);
+				_vm->_gameSys->drawSpriteToBackground(0, 0, _s99_resourceIdArr[itemIndex]);
+				_vm->_gameSys->setAnimation(_s99_sequenceIdArr[firstSequenceIndex], 2, 0);
+			}
+		}
+
+		if (_vm->isKeyStatus1(Common::KEYCODE_ESCAPE) || _vm->isKeyStatus1(Common::KEYCODE_SPACE) || _vm->isKeyStatus1(29)) {
+			_vm->clearKeyStatus1(Common::KEYCODE_ESCAPE);
+			_vm->clearKeyStatus1(Common::KEYCODE_SPACE);
+			_vm->clearKeyStatus1(29);
+			if (_s99_canSkip[itemIndex])
+				skip = true;
+			else
+				_vm->_sceneDone = true;
+		}
+
+		if (!_vm->_timers[0] && itemIndex == _s99_itemsCount - 1) {
+			_vm->_timers[0] = 2;
+			volume = MAX(1, volume - duration);
+			_vm->setSoundVolume(soundId, volume);
+		}
+	}
+
+	if (soundId != -1)
+		_vm->stopSound(soundId);
 }
 
 } // End of namespace Gnap

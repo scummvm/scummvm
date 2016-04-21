@@ -2077,11 +2077,9 @@ void GnapEngine::initGlobalSceneVars() {
 	_toyUfoActionStatus = -1;
 	_toyUfoX = 0;
 	_toyUfoY = 50;
-
 }
 
 bool GnapEngine::sceneXX_sub_4466B1() {
-
 	if (isKeyStatus1(Common::KEYCODE_ESCAPE)) {
 		clearKeyStatus1(Common::KEYCODE_ESCAPE);
 		clearKeyStatus1(Common::KEYCODE_UP);
@@ -2098,7 +2096,6 @@ bool GnapEngine::sceneXX_sub_4466B1() {
 	}
 
 	return false;
-
 }
 
 void GnapEngine::sceneXX_playRandomSound(int timerIndex) {
@@ -2269,84 +2266,6 @@ void GnapEngine::toyUfoFlyTo(int destX, int destY, int minX, int maxX, int minY,
 			_gameSys->setAnimation(_toyUfoSequenceId | 0x10000, _toyUfoId, animationIndex);
 
 	}
-}
-
-// Scene 99
-
-int GnapEngine::cutscene_init() {
-	return -1;
-}
-
-void GnapEngine::cutscene_run() {
-
-	int itemIndex = 0;
-	int soundId = -1;
-	int volume = 100;
-	int duration = 0;
-	bool skip = false;
-
-	if (_prevSceneNum == 2) {
-		soundId = 0x36B;
-		duration = MAX(1, 300 / getSequenceTotalDuration(_s99_sequenceIdArr[_s99_itemsCount - 1]));//CHECKME
-		_timers[0] = 0;
-	}
-
-	if (soundId != -1)
-		playSound(soundId, false);
-
-	hideCursor();
-
-	_gameSys->drawSpriteToBackground(0, 0, _s99_resourceIdArr[0]);
-
-	for (int j = 0; j < _s99_sequenceCountArr[0]; ++j)
-		_gameSys->insertSequence(_s99_sequenceIdArr[j], j + 2, 0, 0, kSeqNone, 0, 0, 0);
-	_gameSys->setAnimation(_s99_sequenceIdArr[0], 2, 0);
-
-	clearKeyStatus1(Common::KEYCODE_ESCAPE);
-	clearKeyStatus1(Common::KEYCODE_SPACE);
-	clearKeyStatus1(29);
-
-	_mouseClickState._left = false;
-
-	int firstSequenceIndex = 0;
-	while (!_sceneDone) {
-		gameUpdateTick();
-
-		if (_gameSys->getAnimationStatus(0) == 2 || skip) {
-			skip = false;
-			_gameSys->requestClear2(false);
-			_gameSys->requestClear1();
-			_gameSys->setAnimation(0, 0, 0);
-			firstSequenceIndex += _s99_sequenceCountArr[itemIndex++];
-			if (itemIndex >= _s99_itemsCount) {
-				_sceneDone = true;
-			} else {
-				for (int m = 0; m < _s99_sequenceCountArr[itemIndex]; ++m)
-					_gameSys->insertSequence(_s99_sequenceIdArr[firstSequenceIndex + m], m + 2, 0, 0, kSeqNone, 0, 0, 0);
-				_gameSys->drawSpriteToBackground(0, 0, _s99_resourceIdArr[itemIndex]);
-				_gameSys->setAnimation(_s99_sequenceIdArr[firstSequenceIndex], 2, 0);
-			}
-		}
-
-		if (isKeyStatus1(Common::KEYCODE_ESCAPE) || isKeyStatus1(Common::KEYCODE_SPACE) || isKeyStatus1(29)) {
-			clearKeyStatus1(Common::KEYCODE_ESCAPE);
-			clearKeyStatus1(Common::KEYCODE_SPACE);
-			clearKeyStatus1(29);
-			if (_s99_canSkip[itemIndex])
-				skip = true;
-			else
-				_sceneDone = true;
-		}
-
-		if (!_timers[0] && itemIndex == _s99_itemsCount - 1) {
-			_timers[0] = 2;
-			volume = MAX(1, volume - duration);
-			setSoundVolume(soundId, volume);
-		}
-	}
-
-	if (soundId != -1)
-		stopSound(soundId);
 }
 
 } // End of namespace Gnap

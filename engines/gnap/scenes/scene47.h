@@ -20,50 +20,70 @@
  *
  */
 
-#ifndef GNAP_SCENECORE_H
-#define GNAP_SCENECORE_H
+#ifndef GNAP_SCENE47_H
+#define GNAP_SCENE47_H
 
 #include "gnap/debugger.h"
+#include "gnap/scenes/scenecore.h"
 
 namespace Gnap {
 
 class GnapEngine;
 
-class Scene {
+class Scene471: public CutScene {
 public:
-	Scene(GnapEngine *vm) : _vm(vm) {};
-	~Scene() {};
+	Scene471(GnapEngine *vm);
+	~Scene471() {}
 
-	virtual int init() = 0;
-	virtual void updateHotspots() = 0;
-	virtual void run() = 0;
-	virtual void updateAnimations() = 0;
-	virtual void updateAnimationsCb() = 0;
-
-protected:
-	GnapEngine *_vm;
+	virtual int init();
 };
 
-class CutScene : public Scene {
+class Scene472: public CutScene {
 public:
-	CutScene(GnapEngine *vm) : Scene(vm) {};
-	~CutScene() {};
+	Scene472(GnapEngine *vm);
+	~Scene472() {}
 
-	virtual int init() = 0;
-	void updateHotspots() {}
-	void run();
-	void updateAnimations() {}
-	void updateAnimationsCb() {}
+	virtual int init();
+};
 
-protected:
-	GnapEngine *_vm;
+class Scene473: public CutScene {
+public:
+	Scene473(GnapEngine *vm);
+	~Scene473() {}
 
-	int _s99_itemsCount;
-	int _s99_resourceIdArr[16];
-	int _s99_sequenceCountArr[16];
-	int _s99_sequenceIdArr[50];
-	bool _s99_canSkip[16];
+	virtual int init();
+};
+
+class Scene474: public CutScene {
+public:
+	Scene474(GnapEngine *vm);
+	~Scene474() {}
+
+	virtual int init();
+};
+
+class Scene475: public CutScene {
+public:
+	Scene475(GnapEngine *vm);
+	~Scene475() {}
+
+	virtual int init();
+};
+
+class Scene476: public CutScene {
+public:
+	Scene476(GnapEngine *vm);
+	~Scene476() {}
+
+	virtual int init();
+};
+
+class Scene477: public CutScene {
+public:
+	Scene477(GnapEngine *vm);
+	~Scene477() {}
+
+	virtual int init();
 };
 } // End of namespace Gnap
-
-#endif // GNAP_SCENECORE_H
+#endif // GNAP_SCENE47_H

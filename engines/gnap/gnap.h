@@ -603,9 +603,6 @@ public:
 	void sceneXX_playRandomSound(int timerIndex);
 	void playSequences(int fullScreenSpriteId, int sequenceId1, int sequenceId2, int sequenceId3);
 
-	// Scene 16
-	void scene16_initCutscene();
-
 	// Scene 17
 	bool _s17_canTryGetWrench;
 	int _s17_wrenchCtr, _s17_platPhoneCtr, _s17_platTryGetWrenchCtr;
@@ -836,18 +833,6 @@ public:
 	void scene46_run();
 	void scene46_updateAnimations();
 	
-	// Scene 47
-	void scene47_initCutscene1();
-	void scene47_initCutscene2();
-	void scene47_initCutscene3();
-	void scene47_initCutscene4();
-	void scene47_initCutscene5();
-	void scene47_initCutscene6();
-	void scene47_initCutscene7();
-
-	// Scene 48
-	void scene48_initCutscene();
-
 	// Scene 49
 	int _s49_scoreBarPos, _s49_scoreLevel;
 	bool _s49_scoreBarFlash;
@@ -1026,15 +1011,6 @@ public:
 	// Scene 54
 	void scene54_initCutscene1();
 	void scene54_initCutscene2();
-
-	// Scene 99
-	int _s99_itemsCount;
-	int _s99_resourceIdArr[16];
-	int _s99_sequenceCountArr[16];
-	int _s99_sequenceIdArr[50];
-	bool _s99_canSkip[16];
-	int cutscene_init();
-	void cutscene_run();
 };
 
 } // End of namespace Gnap

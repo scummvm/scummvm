@@ -23,10 +23,13 @@
 #include "gnap/gnap.h"
 #include "gnap/gamesys.h"
 #include "gnap/resource.h"
+#include "gnap/scenes/scene16.h"
 
 namespace Gnap {
 
-void GnapEngine::scene16_initCutscene() {
+Scene16::Scene16(GnapEngine *vm) : CutScene(vm) {}
+
+int Scene16::init() {
 	_s99_sequenceIdArr[0] = 0x1F2;
 	_s99_sequenceIdArr[1] = 0x201;
 	_s99_sequenceIdArr[2] = 0x1FC;
@@ -77,6 +80,8 @@ void GnapEngine::scene16_initCutscene() {
 	_s99_sequenceCountArr[11] = 1;
 	_s99_sequenceCountArr[12] = 1;
 	_s99_itemsCount = 13;
+
+	return -1;
 }
 
 } // End of namespace Gnap
