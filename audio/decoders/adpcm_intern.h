@@ -39,7 +39,7 @@
 
 namespace Audio {
 
-class ADPCMStream : public RewindableAudioStream {
+class ADPCMStream : public SeekableAudioStream {
 protected:
 	Common::DisposablePtr<Common::SeekableReadStream> _stream;
 	int32 _startpos;
@@ -67,6 +67,8 @@ public:
 	virtual int getRate() const { return _rate; }
 
 	virtual bool rewind();
+	virtual bool seek(const Timestamp &where) { return false; }
+	virtual Timestamp getLength() const { return -1; }
 
 	/**
 	 * This table is used by some ADPCM variants (IMA and OKI) to adjust the
