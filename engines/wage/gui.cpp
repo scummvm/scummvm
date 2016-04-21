@@ -369,6 +369,8 @@ bool Gui::processConsoleEvents(WindowClick click, Common::Event &event) {
 			float scrollSize = (float)_consoleTextArea.height() / textFullSize;
 
 			_consoleWindow->setScroll(scrollPos, scrollSize);
+
+			return true;
 		} else if (event.type == Common::EVENT_LBUTTONUP) {
 			int oldScrollPos = _scrollPos;
 
@@ -388,16 +390,20 @@ bool Gui::processConsoleEvents(WindowClick click, Common::Event &event) {
 				_consoleFullRedraw = true;
 				break;
 			default:
-				break;
+				return false;
 			}
+
+			return true;
 		}
 
-		return true;
+		return false;
 	}
 
 	if (click == kBorderInner) {
 		if (event.type == Common::EVENT_LBUTTONDOWN) {
 			startMarking(event.mouse.x, event.mouse.y);
+
+			return true;
 		} else if (event.type == Common::EVENT_LBUTTONUP) {
 			if (_inTextSelection) {
 				_inTextSelection = false;
@@ -419,6 +425,8 @@ bool Gui::processConsoleEvents(WindowClick click, Common::Event &event) {
 					_menu->enableCommand(kMenuEdit, kMenuActionClear, cutAllowed);
 				}
 			}
+
+			return true;
 		} else if (event.type == Common::EVENT_MOUSEMOVE) {
 			if (_inTextSelection) {
 				updateTextSelection(event.mouse.x, event.mouse.y);
@@ -431,7 +439,7 @@ bool Gui::processConsoleEvents(WindowClick click, Common::Event &event) {
 			}
 		}
 
-		return true;
+		return false;
 	}
 
 	return false;
