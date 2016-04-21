@@ -24,6 +24,8 @@
 #include "gnap/gamesys.h"
 #include "gnap/resource.h"
 
+#include "gnap/scenes/scene14.h"
+
 namespace Gnap {
 
 enum {
@@ -34,160 +36,156 @@ enum {
 	kHSDevice		= 4
 };
 
-int GnapEngine::scene14_init() {
-	_gameSys->setAnimation(0, 0, 0);
-	_gameSys->setAnimation(0, 0, 1);
+Scene14::Scene14(GnapEngine *vm) : Scene(vm) {
+}
+
+int Scene14::init() {
+	_vm->_gameSys->setAnimation(0, 0, 0);
+	_vm->_gameSys->setAnimation(0, 0, 1);
 	return 0x27;
 }
 
-void GnapEngine::scene14_updateHotspots() {
-	setHotspot(kHSPlatypus, 0, 0, 0, 0);
-	setHotspot(kHSExit, 0, 590, 799, 599, SF_EXIT_D_CURSOR);
-	setHotspot(kHSCoin, 330, 390, 375, 440, SF_PLAT_CURSOR | SF_TALK_CURSOR | SF_GRAB_CURSOR | SF_LOOK_CURSOR);
-	setHotspot(kHSToilet, 225, 250, 510, 500, SF_PLAT_CURSOR | SF_TALK_CURSOR | SF_GRAB_CURSOR | SF_LOOK_CURSOR);
-	setDeviceHotspot(kHSDevice, -1, -1, -1, -1);
-	if (isFlag(kGFNeedleTaken))
-		_hotspots[kHSCoin]._flags = SF_DISABLED;
-	_hotspotsCount = 5;
+void Scene14::updateHotspots() {
+	_vm->setHotspot(kHSPlatypus, 0, 0, 0, 0);
+	_vm->setHotspot(kHSExit, 0, 590, 799, 599, SF_EXIT_D_CURSOR);
+	_vm->setHotspot(kHSCoin, 330, 390, 375, 440, SF_PLAT_CURSOR | SF_TALK_CURSOR | SF_GRAB_CURSOR | SF_LOOK_CURSOR);
+	_vm->setHotspot(kHSToilet, 225, 250, 510, 500, SF_PLAT_CURSOR | SF_TALK_CURSOR | SF_GRAB_CURSOR | SF_LOOK_CURSOR);
+	_vm->setDeviceHotspot(kHSDevice, -1, -1, -1, -1);
+	if (_vm->isFlag(kGFNeedleTaken))
+		_vm->_hotspots[kHSCoin]._flags = SF_DISABLED;
+	_vm->_hotspotsCount = 5;
 }
 
-void GnapEngine::scene14_run() {
-	_largeSprite = nullptr;
+void Scene14::run() {
+	_vm->_largeSprite = nullptr;
 
-	queueInsertDeviceIcon();
+	_vm->queueInsertDeviceIcon();
 	
-	if (!isFlag(kGFNeedleTaken))
-		_gameSys->insertSequence(0x23, 10, 0, 0, kSeqNone, 0, 0, 0);
+	if (!_vm->isFlag(kGFNeedleTaken))
+		_vm->_gameSys->insertSequence(0x23, 10, 0, 0, kSeqNone, 0, 0, 0);
 	
-	endSceneInit();
+	_vm->endSceneInit();
 	
-	if (!isFlag(kGFNeedleTaken) && invHas(kItemTongs))
-		_largeSprite = _gameSys->createSurface(1);
+	if (!_vm->isFlag(kGFNeedleTaken) && _vm->invHas(kItemTongs))
+		_vm->_largeSprite = _vm->_gameSys->createSurface(1);
 
-	if (!isFlag(kGFNeedleTaken)) {
-		_gameSys->insertSequence(0x24, 10, 0x23, 10, kSeqSyncWait, 0, 0, 0);
-		_gnapSequenceId = 0x24;
-		_timers[2] = getRandom(40) + 50;
+	if (!_vm->isFlag(kGFNeedleTaken)) {
+		_vm->_gameSys->insertSequence(0x24, 10, 0x23, 10, kSeqSyncWait, 0, 0, 0);
+		_vm->_gnapSequenceId = 0x24;
+		_vm->_timers[2] = _vm->getRandom(40) + 50;
 	}
 	
-	while (!_sceneDone) {
+	while (!_vm->_sceneDone) {	
+		_vm->updateMouseCursor();
+		_vm->updateCursorByHotspot();
 	
-		updateMouseCursor();
-		updateCursorByHotspot();
+		_vm->_sceneClickedHotspot = _vm->getClickedHotspotId();
+		_vm->updateGrabCursorSprite(0, 0);
 	
-		_sceneClickedHotspot = getClickedHotspotId();
-		updateGrabCursorSprite(0, 0);
-	
-		switch (_sceneClickedHotspot) {
-
+		switch (_vm->_sceneClickedHotspot) {
 		case kHSDevice:
-			if (_gnapActionStatus < 0) {
-				runMenu();
-				scene14_updateHotspots();
+			if (_vm->_gnapActionStatus < 0) {
+				_vm->runMenu();
+				updateHotspots();
 			}
 			break;
 
 		case kHSExit:
-			_sceneDone = true;
-			_newSceneNum = 13;
+			_vm->_sceneDone = true;
+			_vm->_newSceneNum = 13;
 			break;
 
 		case kHSCoin:
-			if (_grabCursorSpriteIndex == kItemTongs) {
-				invAdd(kItemQuarter);
-				setFlag(kGFNeedleTaken);
-				setGrabCursorSprite(-1);
-				hideCursor();
-				_gameSys->setAnimation(0x26, 10, 0);
-				_gameSys->insertSequence(0x26, 10, _gnapSequenceId, 10, kSeqSyncWait, 0, 0, 0);
-			} else if (_grabCursorSpriteIndex >= 0) {
-				playSound(0x108E9, false);
+			if (_vm->_grabCursorSpriteIndex == kItemTongs) {
+				_vm->invAdd(kItemQuarter);
+				_vm->setFlag(kGFNeedleTaken);
+				_vm->setGrabCursorSprite(-1);
+				_vm->hideCursor();
+				_vm->_gameSys->setAnimation(0x26, 10, 0);
+				_vm->_gameSys->insertSequence(0x26, 10, _vm->_gnapSequenceId, 10, kSeqSyncWait, 0, 0, 0);
+			} else if (_vm->_grabCursorSpriteIndex >= 0) {
+				_vm->playSound(0x108E9, false);
 			} else {
-				switch (_verbCursor) {
+				switch (_vm->_verbCursor) {
 				case LOOK_CURSOR:
-					playSound(0x108E9, false);
+					_vm->playSound(0x108E9, false);
 					break;
 				case GRAB_CURSOR:
-					_gameSys->insertSequence(0x25, 10, _gnapSequenceId, 10, kSeqSyncWait, 0, 0, 0);
-					_gameSys->insertSequence(0x23, 10, 0x25, 10, kSeqSyncWait, 0, 0, 0);
-					_gnapSequenceId = 0x23;
+					_vm->_gameSys->insertSequence(0x25, 10, _vm->_gnapSequenceId, 10, kSeqSyncWait, 0, 0, 0);
+					_vm->_gameSys->insertSequence(0x23, 10, 0x25, 10, kSeqSyncWait, 0, 0, 0);
+					_vm->_gnapSequenceId = 0x23;
 					break;
 				case TALK_CURSOR:
-					playSound((getRandom(5) + 0x8D5) | 0x10000, false);
+					_vm->playSound((_vm->getRandom(5) + 0x8D5) | 0x10000, false);
 					break;
 				case PLAT_CURSOR:
-					_gameSys->insertSequence(0x107A8, 1, 0, 0, kSeqNone, 0, 900 - _gnapGridX, 576 - _gnapGridY);
+					_vm->_gameSys->insertSequence(0x107A8, 1, 0, 0, kSeqNone, 0, 900 - _vm->_gnapGridX, 576 - _vm->_gnapGridY);
 					break;
 				}
 			}
 			break;
 
 		case kHSToilet:
-			if (_grabCursorSpriteIndex >= 0) {
-				_gameSys->insertSequence(0x107A8, 1, 0, 0, kSeqNone, 0, 900 - _gnapGridX, 576 - _gnapGridY);
+			if (_vm->_grabCursorSpriteIndex >= 0) {
+				_vm->_gameSys->insertSequence(0x107A8, 1, 0, 0, kSeqNone, 0, 900 - _vm->_gnapGridX, 576 - _vm->_gnapGridY);
 			} else {
-				switch (_verbCursor) {
+				switch (_vm->_verbCursor) {
 				case LOOK_CURSOR:
 				case GRAB_CURSOR:
-					playSound(0x108B1, false);
+					_vm->playSound(0x108B1, false);
 					break;
 				case TALK_CURSOR:
-					playSound((getRandom(5) + 0x8D5) | 0x10000, false);
+					_vm->playSound((_vm->getRandom(5) + 0x8D5) | 0x10000, false);
 					break;
 				case PLAT_CURSOR:
-					_gameSys->insertSequence(0x107A8, 1, 0, 0, kSeqNone, 0, 900 - _gnapGridX, 576 - _gnapGridY);
+					_vm->_gameSys->insertSequence(0x107A8, 1, 0, 0, kSeqNone, 0, 900 - _vm->_gnapGridX, 576 - _vm->_gnapGridY);
 					break;
 				}
 			}
 			break;
 
 		default:
-			_mouseClickState._left = false;
+			_vm->_mouseClickState._left = false;
 			break;
-
 		}
 	
-		scene14_updateAnimations();
+		updateAnimations();
+		_vm->checkGameKeys();
 	
-		checkGameKeys();
-	
-		if (!isFlag(kGFNeedleTaken) && !_timers[2]) {
-			_gameSys->insertSequence(0x24, 10, _gnapSequenceId, 10, kSeqSyncWait, 0, 0, 0);
-			_gnapSequenceId = 0x24;
-			_timers[2] = getRandom(40) + 50;
+		if (!_vm->isFlag(kGFNeedleTaken) && !_vm->_timers[2]) {
+			_vm->_gameSys->insertSequence(0x24, 10, _vm->_gnapSequenceId, 10, kSeqSyncWait, 0, 0, 0);
+			_vm->_gnapSequenceId = 0x24;
+			_vm->_timers[2] = _vm->getRandom(40) + 50;
 		}
 	
-		if (isKeyStatus1(8)) {
-			clearKeyStatus1(8);
-			runMenu();
-			scene14_updateHotspots();
+		if (_vm->isKeyStatus1(8)) {
+			_vm->clearKeyStatus1(8);
+			_vm->runMenu();
+			updateHotspots();
 		}
 		
-		gameUpdateTick();
+		_vm->gameUpdateTick();
 
 	}
 	
-	if (_largeSprite)
-		deleteSurface(&_largeSprite);
-
+	if (_vm->_largeSprite)
+		_vm->deleteSurface(&_vm->_largeSprite);
 }
 
-void GnapEngine::scene14_updateAnimations() {
-	
-	if (_gameSys->getAnimationStatus(0) == 2) {
-		_gameSys->setAnimation(0, 0, 0);
-		_gameSys->insertSpriteDrawItem(_largeSprite, 0, 0, 300);
-		_gameSys->setAnimation(0x10843, 301, 1);
-		_gameSys->insertSequence(0x10843, 301, 0x26, 10, kSeqSyncWait, 0, 0, 0);
+void Scene14::updateAnimations() {	
+	if (_vm->_gameSys->getAnimationStatus(0) == 2) {
+		_vm->_gameSys->setAnimation(0, 0, 0);
+		_vm->_gameSys->insertSpriteDrawItem(_vm->_largeSprite, 0, 0, 300);
+		_vm->_gameSys->setAnimation(0x10843, 301, 1);
+		_vm->_gameSys->insertSequence(0x10843, 301, 0x26, 10, kSeqSyncWait, 0, 0, 0);
 	}
 	
-	if (_gameSys->getAnimationStatus(1) == 2) {
-		_gameSys->setAnimation(0, 0, 1);
-		_sceneDone = true;
-		_newSceneNum = 13;
-		_grabCursorSpriteIndex = kItemQuarter;
+	if (_vm->_gameSys->getAnimationStatus(1) == 2) {
+		_vm->_gameSys->setAnimation(0, 0, 1);
+		_vm->_sceneDone = true;
+		_vm->_newSceneNum = 13;
+		_vm->_grabCursorSpriteIndex = kItemQuarter;
 	}
-	
 }
 
 } // End of namespace Gnap
