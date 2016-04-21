@@ -285,10 +285,7 @@ void Gui::drawInput() {
 	if (!_screen.getPixels())
 		return;
 
-	if (_sceneIsActive) {
-		_sceneIsActive = false;
-		_bordersDirty = true;
-	}
+	_wm.setActive(_consoleWindow->getId());
 
 	_out.pop_back();
 	_lines.pop_back();

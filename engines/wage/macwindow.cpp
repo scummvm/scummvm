@@ -91,12 +91,20 @@ void MacWindow::resize(int w, int h) {
 
 	_dims.setWidth(w);
 	_dims.setHeight(h);
+
+	_contentIsDirty = true;
+	_borderIsDirty = true;
 }
 
 void MacWindow::move(int x, int y) {
+	if (_dims.left == x && _dims.top == y)
+		return;
+
 	_dims.moveTo(x, y);
 
 	_innerDims.setWidth(0); // Invalidate rect
+
+	_contentIsDirty = true;
 }
 
 void MacWindow::setDimensions(const Common::Rect &r) {
@@ -112,6 +120,8 @@ bool MacWindow::draw(Graphics::ManagedSurface *g, bool forceRedraw) {
 
 	if (_borderIsDirty || forceRedraw)
 		drawBorder();
+
+	_contentIsDirty = false;
 
 	// Compose
 	_composeSurface.blitFrom(_surface, Common::Rect(0, 0, _surface.w - 2, _surface.h - 2), Common::Point(2, 2));

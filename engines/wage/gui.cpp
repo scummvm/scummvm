@@ -151,7 +151,6 @@ Gui::Gui(WageEngine *engine) {
 	_scene = NULL;
 	_sceneDirty = true;
 	_consoleDirty = true;
-	_bordersDirty = true;
 	_menuDirty = true;
 	_cursorDirty = false;
 	_consoleFullRedraw = true;
@@ -163,7 +162,6 @@ Gui::Gui(WageEngine *engine) {
 	_consoleLineHeight = 8; // Dummy value which makes sense
 	_consoleNumLines = 24; // Dummy value
 	_builtInFonts = false;
-	_sceneIsActive = false;
 
 	_cursorX = 0;
 	_cursorY = 0;
@@ -262,10 +260,12 @@ void Gui::draw() {
 
 		_sceneWindow->setDimensions(*_scene->_designBounds);
 		_sceneWindow->setTitle(_scene->_name);
+		_sceneWindow->setDirty(true);
 		_consoleWindow->setDimensions(*_scene->_textBounds);
+		_consoleWindow->setDirty(true);
 	}
 
-	if (_sceneDirty || _bordersDirty) {
+	if (_sceneDirty) {
 		drawDesktop();
 		_wm.setFullRefresh(true);
 	}
@@ -287,13 +287,12 @@ void Gui::draw() {
 
 	_sceneDirty = false;
 	_consoleDirty = false;
-	_bordersDirty = false;
 	_menuDirty = false;
 	_consoleFullRedraw = false;
 }
 
 void Gui::drawScene() {
-	if (!_sceneDirty && !_bordersDirty)
+	if (!_sceneDirty)
 		return;
 
 	_scene->paint(_sceneWindow->getSurface(), 0, 0);
@@ -303,11 +302,6 @@ void Gui::drawScene() {
 	_consoleDirty = true;
 	_menuDirty = true;
 	_consoleFullRedraw = true;
-
-	_sceneArea.left = _scene->_designBounds->left + kBorderWidth - 2;
-	_sceneArea.top = _scene->_designBounds->top + kBorderWidth - 2;
-	_sceneArea.setWidth(_scene->_designBounds->width() - 2 * kBorderWidth);
-	_sceneArea.setHeight(_scene->_designBounds->height() - 2 * kBorderWidth);
 
 	_consoleTextArea.left = _scene->_textBounds->left + kBorderWidth - 2;
 	_consoleTextArea.top = _scene->_textBounds->top + kBorderWidth - 2;
@@ -342,7 +336,7 @@ bool Gui::processSceneEvents(WindowClick click, Common::Event &event) {
 
 // Render console
 void Gui::drawConsole() {
-	if (!_consoleDirty && !_consoleFullRedraw && !_bordersDirty && !_sceneDirty)
+	if (!_consoleDirty && !_consoleFullRedraw && !_sceneDirty)
 		return;
 
 	renderConsole(_consoleWindow->getSurface(), Common::Rect(kBorderWidth - 2, kBorderWidth - 2,
@@ -545,7 +539,6 @@ void Gui::mouseUp(int x, int y) {
 		if (_menu->mouseRelease(x, y)) {
 			_sceneDirty = true;
 			_consoleDirty = true;
-			_bordersDirty = true;
 			_menuDirty = true;
 		}
 

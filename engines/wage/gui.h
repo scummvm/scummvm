@@ -158,7 +158,6 @@ private:
 	Menu *_menu;
 	bool _sceneDirty;
 	bool _consoleDirty;
-	bool _bordersDirty;
 
 	Common::StringArray _out;
 	Common::StringArray _lines;
@@ -167,8 +166,6 @@ private:
 	uint _consoleNumLines;
 	bool _consoleFullRedraw;
 
-	Common::Rect _sceneArea;
-	bool _sceneIsActive;
 	bool _cursorIsArrow;
 
 	bool _inTextSelection;
