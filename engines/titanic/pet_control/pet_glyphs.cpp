@@ -85,7 +85,7 @@ void CPetGlyphs::setup(int numVisible, CPetSection *owner) {
 	_owner = owner;
 	_selection.setBounds(Rect(0, 0, 76, 76));
 
-	int buttonsLeft = numVisible * 7 * 5 + 21;
+	int buttonsLeft = numVisible * 70 + 21;
 
 	_scrollLeft.setBounds(Rect(0, 0, 31, 15));
 	_scrollLeft.translate(buttonsLeft, 373);
