@@ -2020,10 +2020,6 @@ void GnapEngine::initPlatypusPos(int gridX, int gridY, Facing facing) {
 void GnapEngine::initGlobalSceneVars() {
 	// Scene 18
 	_s18_garbageCanPos = 8;
-	_s18_platPhoneCtr = 0;
-	_s18_platPhoneIter = 0;
-	_s18_nextPhoneSequenceId = -1;
-	_s18_currPhoneSequenceId = -1;
 
 	// Scene 19
 	_s19_toyGrabCtr = 0;

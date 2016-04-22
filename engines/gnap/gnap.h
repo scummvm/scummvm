@@ -605,19 +605,6 @@ public:
 
 	// Scene 18
 	int _s18_garbageCanPos;
-	int _s18_platPhoneCtr;
-	int _s18_platPhoneIter;
-	int _s18_nextPhoneSequenceId, _s18_currPhoneSequenceId;
-	Graphics::Surface *_s18_cowboyHatSurface;
-	int scene18_init();
-	void scene18_updateHotspots();
-	void scene18_gnapCarryGarbageCanTo(int x, int y, int animationIndex, int argC, int a5);
-	void scene18_putDownGarbageCan(int animationIndex);
-	void scene18_platEndPhoning(bool platFl);
-	void scene18_closeHydrantValve();
-	void scene18_waitForGnapAction();
-	void scene18_run();
-	void scene18_updateAnimations();
 
 	// Scene 19
 	int _s19_currShopAssistantSequenceId, _s19_nextShopAssistantSequenceId;

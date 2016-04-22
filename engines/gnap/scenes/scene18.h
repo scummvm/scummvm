@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef GNAP_SCENE17_H
-#define GNAP_SCENE17_H
+#ifndef GNAP_SCENE18_H
+#define GNAP_SCENE18_H
 
 #include "gnap/debugger.h"
 #include "gnap/scenes/scenecore.h"
@@ -30,10 +30,10 @@ namespace Gnap {
 
 class GnapEngine;
 
-class Scene17: public Scene {
+class Scene18: public Scene {
 public:
-	Scene17(GnapEngine *vm);
-	~Scene17() {}
+	Scene18(GnapEngine *vm);
+	~Scene18();
 
 	virtual int init();
 	virtual void updateHotspots();
@@ -42,20 +42,19 @@ public:
 	virtual void updateAnimationsCb() {};
 
 private:
-	bool _s17_canTryGetWrench;
-	int _s17_wrenchCtr;
-	int _s17_platPhoneCtr;
-	int _s17_platTryGetWrenchCtr;
-	int _s17_nextPhoneSequenceId;
-	int _s17_currPhoneSequenceId;
-	int _s17_nextWrenchSequenceId;
-	int _s17_currWrenchSequenceId;
-	int _s17_nextCarWindowSequenceId;
-	int _s17_currCarWindowSequenceId;
+	Graphics::Surface *_s18_cowboyHatSurface;
 
-	void update();
-	void platHangUpPhone();
+	int _s18_platPhoneCtr;
+	int _s18_platPhoneIter;
+	int _s18_nextPhoneSequenceId;
+	int _s18_currPhoneSequenceId;
+
+	void gnapCarryGarbageCanTo(int x, int y, int animationIndex, int argC, int a5);
+	void putDownGarbageCan(int animationIndex);
+	void platEndPhoning(bool platFl);
+	void closeHydrantValve();
+	void waitForGnapAction();
 };
 
 } // End of namespace Gnap
-#endif // GNAP_SCENE17_H
+#endif // GNAP_SCENE18_H
