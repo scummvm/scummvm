@@ -21,6 +21,7 @@
  */
 
 #include "titanic/pet_control/pet_slider.h"
+#include "titanic/pet_control/pet_control.h"
 
 namespace Titanic {
 
@@ -84,6 +85,20 @@ void CPetSlider::proc17() {
 
 void CPetSlider::proc18() {
 
+}
+
+/*------------------------------------------------------------------------*/
+
+void CPetSoundSlider::setupBackground(const CString &name, CPetControl *petControl) {
+	if (petControl) {
+		_background = petControl->getHiddenObject(name);
+	}
+}
+
+void CPetSoundSlider::setupThumb(const CString &name, CPetControl *petControl) {
+	if (petControl) {
+		_thumb = petControl->getHiddenObject(name);
+	}
 }
 
 } // End of namespace Titanic

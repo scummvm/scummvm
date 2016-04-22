@@ -25,8 +25,11 @@
 
 #include "titanic/support/rect.h"
 #include "titanic/support/string.h"
+#include "titanic/core/game_object.h"
 
 namespace Titanic {
+
+class CPetControl;
 
 class CPetSlider {
 private:
@@ -44,9 +47,25 @@ private:
 public:
 	CPetSlider();
 
-	virtual void proc1() {}
-	virtual void proc2() {}
-	virtual void proc3() {}
+	/**
+	 * Setup the background
+	 */
+	virtual void setupBackground(const CString &name, CPetControl *petControl) {}
+
+	/**
+	 * Setup the thumb
+	 */
+	virtual void setupThumb(const CString &name, CPetControl *petControl) {}
+
+	/**
+	 * Setup the background
+	 */
+	virtual void setupBackground(const CString &name, CTreeItem *treeItem) {}
+
+	/**
+	 * Setup the thumb
+	 */
+	virtual void setupThumb(const CString &name, CTreeItem *treeItem) {}
 
 	/**
 	 * Reset the slider
@@ -81,9 +100,21 @@ public:
 
 class CPetSoundSlider : public CPetSlider {
 public:
-
+	CGameObject *_background;
+	CGameObject *_thumb;
 public:
+	CPetSoundSlider() : CPetSlider(), _background(nullptr),
+		_thumb(0) {}
 
+	/**
+	 * Setup the background
+	 */
+	virtual void setupBackground(const CString &name, CPetControl *petControl);
+
+	/**
+	 * Setup the thumb
+	 */
+	virtual void setupThumb(const CString &name, CPetControl *petControl);
 };
 
 } // End of namespace Titanic
