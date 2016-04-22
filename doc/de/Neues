@@ -6,6 +6,8 @@ Programmcodes finden Sie auf Englisch unter:
  Allgemein:
    - "TESTING"-Markierung von mehreren unterstützten Spielen entfernt.
    - Chinesische Übersetzung (Pinyin) der Benutzeroberfläche hinzugefügt.
+   - Ruckeln des Mauszeigers im ScummVM-Programmfenster behoben, welches auf
+     einigen Systemen auftrat.
 
  BBVS:
    - Fehler beim erneuten Starten des Spiels behoben.
