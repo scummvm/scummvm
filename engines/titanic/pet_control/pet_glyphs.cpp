@@ -159,7 +159,7 @@ void CPetGlyphs::draw(CScreenManager *screenManager) {
 }
 
 Point CPetGlyphs::getPosition(int index) {
-	Point tempPoint(37 + index * 58, 375);
+	Point tempPoint(37 + index * 70, 375);
 	return tempPoint;
 }
 
