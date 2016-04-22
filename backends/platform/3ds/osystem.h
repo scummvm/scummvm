@@ -35,7 +35,9 @@
 #include "common/queue.h"
 
 #define TICKS_PER_MSEC 268123
-	
+
+namespace _3DS {
+
 enum {
 	GFX_LINEAR = 0,
 	GFX_NEAREST = 1
@@ -54,7 +56,7 @@ static const OSystem::GraphicsMode s_graphicsModes[] = {
 class OSystem_3DS : public EventsBaseBackend, public PaletteManager {
 public:
 	OSystem_3DS();
-	~OSystem_3DS();
+	virtual ~OSystem_3DS();
 	
 	volatile bool exiting;
 	volatile bool sleeping;
@@ -130,9 +132,14 @@ public:
 	                    const Graphics::PixelFormat *format = NULL);
 	void setCursorPalette(const byte *colors, uint start, uint num);
 	
+	// Transform point from touchscreen coords into gamescreen coords
 	void transformPoint(touchPosition &point);
 	
+	void setCursorDelta(float deltaX, float deltaY);
+	
 	void updateFocus();
+	void updateConfig();
+	void updateSize();
 	
 private:
 	void initGraphics();
@@ -150,8 +157,8 @@ protected:
 	
 private:
 	u16 _gameWidth, _gameHeight;
-	u16 _gameX, _gameY;
-	float _gameRatio;
+	u16 _gameTopX, _gameTopY;
+	u16 _gameBottomX, _gameBottomY;
 	
 	// Audio
 	Thread audioThread;
@@ -164,12 +171,12 @@ private:
 	byte _cursorPalette[3 * 256];
 	
 	Graphics::Surface _gameScreen;
-	Sprite _gameTexture;
+	Sprite _gameTopTexture;
+	Sprite _gameBottomTexture;
 	Sprite _overlay;
 	
 	int _screenShakeOffset;
 	bool _overlayVisible;
-	bool _isFullscreen;
 	
 	DVLB_s *_dvlb;
 	shaderProgram_s _program;
@@ -196,9 +203,6 @@ private:
 	Thread _eventThread;
 	Thread _timerThread;
 	Common::Queue<Common::Event> _eventQueue;
-
-	Common::String _messageOSD;
-	bool _showMessageOSD;
 	
 	// Cursor
 	Graphics::Surface _cursor;
@@ -206,9 +210,12 @@ private:
 	bool _cursorPaletteEnabled;
 	bool _cursorVisible;
 	bool _cursorScalable;
-	int _cursorX, _cursorY;
+	float _cursorX, _cursorY;
+	float _cursorDeltaX, _cursorDeltaY;
 	int _cursorHotspotX, _cursorHotspotY;
 	uint32 _cursorKeyColor;
 };
+
+} // namespace _3DS
 
 #endif

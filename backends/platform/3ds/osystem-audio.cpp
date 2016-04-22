@@ -23,6 +23,8 @@
 #include "osystem.h"
 #include "audio/mixer.h"
 
+namespace _3DS {
+
 static bool hasAudio = false;
 
 static void audioThreadFunc(void *arg) {
@@ -104,3 +106,5 @@ Audio::Mixer *OSystem_3DS::getMixer() {
 	assert(_mixer);
 	return _mixer;
 }
+
+} // namespace _3DS

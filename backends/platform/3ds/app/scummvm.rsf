@@ -170,6 +170,7 @@ AccessControlInfo:
    - soc:U
    - ssl:C
    - y2r:u
+   - gsp::Lcd
 
 
 SystemControlInfo:
