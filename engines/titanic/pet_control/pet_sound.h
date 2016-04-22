@@ -26,12 +26,32 @@
 #include "titanic/pet_control/pet_glyphs.h"
 #include "titanic/pet_control/pet_gfx_element.h"
 #include "titanic/pet_control/pet_text.h"
+#include "titanic/pet_control/pet_slider.h"
 
 namespace Titanic {
 
 class CPetSound : public CPetGlyph {
 private:
+	CPetGfxElement _element;
+	CPetSlider _slider1;
+	CPetSlider _slider2;
+	CPetSlider _slider3;
+	CPetSlider _slider4;
+	CPetText _text[4];
+	int _field198;
+	int _field19C;
 public:
+	CPetSound();
+
+	/**
+	 * Setup the glyph
+	 */
+	virtual bool setup(CPetControl *petControl, CPetGlyphs *owner);
+
+	/**
+	 * Reset the glyph
+	 */
+	virtual bool reset();
 };
 
 } // End of namespace Titanic

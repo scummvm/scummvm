@@ -24,6 +24,7 @@
 #define TITANIC_PET_SLIDER_H
 
 #include "titanic/support/rect.h"
+#include "titanic/support/string.h"
 
 namespace Titanic {
 
@@ -46,7 +47,12 @@ public:
 	virtual void proc1() {}
 	virtual void proc2() {}
 	virtual void proc3() {}
-	virtual void proc4() {}
+
+	/**
+	 * Reset the slider
+	 */
+	virtual void reset(const CString &name) {}
+	
 	virtual void proc5() {}
 	virtual void proc6() {}
 	
