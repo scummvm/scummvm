@@ -20,46 +20,38 @@
  *
  */
 
-#ifndef BACKENDS_FS_STDIOSTREAM_H
-#define BACKENDS_FS_STDIOSTREAM_H
+#ifndef CLOUD_DROPBOX_H
+#define CLOUD_DROPBOX_H
 
-#include "common/scummsys.h"
 #include "common/noncopyable.h"
+#include "common/scummsys.h"
 #include "common/stream.h"
-#include "common/str.h"
+#include "common/str-array.h"
+#include "common/error.h"
 #include "common/fs.h"
+#include "common/config-manager.h"
 
-class StdioStream : public Common::SeekableReadStream, public Common::WriteStream, public Common::NonCopyable {
-protected:
-	/** File handle to the actual file. */
-	void *_handle;
-    Common::FSNode _fileNode;
+#include "backends/cloud/cloud.h"
+
+namespace Cloud {
+
+class DropBox : public CloudAbstract {
+	Common::String _token;
+	Common::String getSavePath();
+	Common::String getToken();
+	Common::String getTokenFromCode(Common::String code);
 
 public:
-	/**
-	 * Given a path, invokes fopen on that path and wrap the result in a
-	 * StdioStream instance.
-	 */
+	DropBox();
+	virtual cloudAuth checkAuth();
+	virtual void auth(Common::String code);
 
-	static StdioStream *makeFromPath(const Common::String &path, bool writeMode);
-    void finalize();
-
-	StdioStream(void *handle);
-	virtual ~StdioStream();
-
-	virtual bool err() const;
-	virtual void clearErr();
-	virtual bool eos() const;
-
-	virtual uint32 write(const void *dataPtr, uint32 dataSize);
-	virtual bool flush();
-
-	virtual int32 pos() const;
-	virtual int32 size() const;
-	virtual bool seek(int32 offs, int whence = SEEK_SET);
-	virtual uint32 read(void *dataPtr, uint32 dataSize);
-
-    void saveNode(Common::FSNode node);
+	/* Until the object is authorized, the following functions are unusable*/
+	virtual int sync(const Common::String &pattern);
+	virtual int download(const Common::String &fileName);
+	virtual int upload(const Common::String &fileName);
+	virtual int copy(const Common::String &srcFileName, const Common::String &destFileName);
+	virtual int remove(const Common::String &fileName);
 };
-
+}
 #endif

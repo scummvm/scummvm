@@ -26,11 +26,11 @@
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 
 #include "backends/fs/stdiostream.h"
+#include "backends/cloud/cloud.h"
 
 StdioStream::StdioStream(void *handle) : _handle(handle) {
 	assert(handle);
 }
-
 StdioStream::~StdioStream() {
 	fclose((FILE *)_handle);
 }
@@ -73,9 +73,18 @@ uint32 StdioStream::write(const void *ptr, uint32 len) {
 }
 
 bool StdioStream::flush() {
+
 	return fflush((FILE *)_handle) == 0;
 }
 
+void StdioStream::finalize () {
+  flush();
+  Cloud::getDefaultInstance()->upload(_fileNode.getName());
+}
+void StdioStream::saveNode(Common::FSNode node) {
+  _fileNode = Common::FSNode(node);
+  return;
+}
 StdioStream *StdioStream::makeFromPath(const Common::String &path, bool writeMode) {
 	FILE *handle = fopen(path.c_str(), writeMode ? "wb" : "rb");
 
