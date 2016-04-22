@@ -107,11 +107,6 @@ protected:
 	void makeDirty(const Rect &r);
 
 	/**
-	 * Marks the area occupied by the object as dirty, requiring re-rendering
-	 */
-	void makeDirty();
-
-	/**
 	 * Sets a new area in the PET
 	 */
 	void setPetArea(PetArea newArea) const;
@@ -321,6 +316,11 @@ public:
 	 * Returns the object's frame number
 	 */
 	int getFrameNumber() const { return _frameNumber; }
+
+	/**
+	 * Marks the area occupied by the object as dirty, requiring re-rendering
+	 */
+	void makeDirty();
 };
 
 } // End of namespace Titanic

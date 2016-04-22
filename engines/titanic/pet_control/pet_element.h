@@ -69,7 +69,14 @@ public:
 	 */
 	virtual void getBounds(Rect *rect);
 
-	virtual bool proc6(const Point &pt);
+	/**
+	 * Highlights the element if the cursor is on it
+	 */
+	virtual bool highlightBounds(const Point &pt);
+
+	/**
+	 * Handles processing mouse button messages
+	 */
 	virtual bool MouseButtonDownMsg(CMouseButtonDownMsg *msg);
 
 	/**

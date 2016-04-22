@@ -49,7 +49,11 @@ public:
 	 */
 	virtual void draw2(CScreenManager *screenManager);
 
-	virtual bool proc16(const Point &pt);
+	/**
+	 * Checks and updates any highlight of the glyph or any contextual
+	 * information it displays
+	 */
+	virtual bool checkHighlight(const Point &pt);
 
 	virtual bool mouseButtonDownMsg(CMouseButtonDownMsg *msg);
 

@@ -21,7 +21,37 @@
  */
 
 #include "titanic/pet_control/pet_save.h"
+#include "titanic/pet_control/pet_control.h"
 
 namespace Titanic {
+
+bool CPetSave::reset() {
+	CPetLoadSave::reset();
+	
+	CPetControl *pet = getPetControl();
+	if (pet) {
+		setName("PetSave", pet);
+		_btnLoadSave.reset("PetSaveOut", pet, MODE_UNSELECTED);
+		_btnLoadSave.reset("PetSaveIn", pet, MODE_SELECTED);
+	}
+
+	return true;
+}
+
+void CPetSave::getTooltip(CPetText *text) {
+	text->setText("Save the game.");
+}
+
+void CPetSave::highlightSave(int index) {
+	warning("TODO: CPetSave::highlightSave");
+}
+
+void CPetSave::unhighlightSave(int index) {
+	warning("TODO: CPetSave::unhighlightSave");
+}
+
+void CPetSave::execute() {
+	warning("TODO: CPetSave::execute");
+}
 
 } // End of namespace Titanic

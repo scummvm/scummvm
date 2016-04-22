@@ -119,6 +119,8 @@ public:
 	 * Set text color
 	 */
 	void setColor(uint col);
+
+	void set30(int val);
 };
 
 } // End of namespace Titanic

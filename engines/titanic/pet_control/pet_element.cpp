@@ -33,7 +33,7 @@ void CPetElement::getBounds(Rect *rect) {
 		*rect = Rect();
 }
 
-bool CPetElement::proc6(const Point &pt) {
+bool CPetElement::highlightBounds(const Point &pt) {
 	bool result = _bounds.contains(pt);
 	if (result)
 		setMode(MODE_SELECTED);

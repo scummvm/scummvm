@@ -28,6 +28,37 @@
 namespace Titanic {
 
 class CPetLoad : public CPetLoadSave {
+public:
+	/**
+	 * Reset the glyph
+	 */
+	virtual bool reset();
+	
+	/**
+	 * Highlight any currently highlighted element
+	 */
+	virtual void highlightCurrent() { resetSlots(); }
+
+	/**
+	 * Returns the tooltip text for when the glyph is selected
+	 */
+	virtual void getTooltip(CPetText *text);
+
+	/**
+	 * Highlights a save slot
+	 */
+	virtual void highlightSave(int index) {}
+
+	/**
+	 * Unhighlight a save slot
+	 */
+	virtual void unhighlightSave(int index) {}
+
+	/**
+	 * Executes the loading or saving
+	 */
+	virtual void execute();
+
 };
 
 } // End of namespace Titanic

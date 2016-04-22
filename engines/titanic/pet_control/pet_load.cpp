@@ -21,8 +21,29 @@
  */
 
 #include "titanic/pet_control/pet_load.h"
+#include "titanic/pet_control/pet_control.h"
 
 namespace Titanic {
 
+bool CPetLoad::reset() {
+	CPetLoadSave::reset();
+	
+	CPetControl *pet = getPetControl();
+	if (pet) {
+		setName("PetLoad", pet);
+		_btnLoadSave.reset("PetLoadOut", pet, MODE_UNSELECTED);
+		_btnLoadSave.reset("PetLoadIn", pet, MODE_SELECTED);
+	}
+
+	return true;
+}
+
+void CPetLoad::getTooltip(CPetText *text) {
+	text->setText("Load the game.");
+}
+
+void CPetLoad::execute() {
+	warning("TODO: CPetLoad::execute");
+}
 
 } // End of namespace Titanic

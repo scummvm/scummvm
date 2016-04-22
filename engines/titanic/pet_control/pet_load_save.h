@@ -24,14 +24,96 @@
 #define TITANIC_PET_LOAD_SAVE_H
 
 #include "titanic/pet_control/pet_glyphs.h"
+#include "titanic/pet_control/pet_text.h"
 
 namespace Titanic {
 
+#define SAVEGAME_SLOTS_COUNT 5
+
 class CPetLoadSave : public CPetGlyph {
+private:
+	/**
+	 * Get the rect area for a given savegame name will be displayed in
+	 */
+	Rect getSlotBounds(int index);
+
+	/**
+	 * Highlight one of the slots
+	 */
+	void highlightSlot(int index);
+
+	/**
+	 * Called when savegame slot highlight changes or the view is reset
+	 */
+	void highlightChange();
+
+	/**
+	 * Check for whether a slot is under the passed point
+	 */
+	bool checkSlotsHighlight(const Point &pt);
+
+	/**
+	 * Checks if a point is within a given saveame slot
+	 */
+	bool isSlotHighlighted(int index, const Point &pt);
 protected:
-	CPetGfxElement _element1;
-	CPetGfxElement _element2;
+	CPetText _slotNames[SAVEGAME_SLOTS_COUNT];
+	CPetGfxElement _btnLoadSave;
+	CPetGfxElement _gutter;
+	static int _savegameSlotNum;
+protected:
+	/**
+	 * Reset the slot names list
+	 */
+	void resetSlots();
 public:
+	/**
+	 * Setup the glyph
+	 */
+	virtual bool setup(CPetControl *petControl, CPetGlyphs *owner);
+
+	/**
+	 * Reset the glyph
+	 */
+	virtual bool reset();
+
+	/**
+	 * Handles any secondary drawing of the glyph
+	 */
+	virtual void draw2(CScreenManager *screenManager);
+
+	/**
+	 * Checks and updates any highlight of the glyph or any contextual
+	 * information it displays
+	 */
+	virtual bool checkHighlight(const Point &pt);
+
+	/**
+	 * Handles mouse button messages
+	 */
+	virtual bool MouseButtonDownMsg(CMouseButtonDownMsg *msg);
+
+	/**
+	 * Handles keypresses when the glyph is focused
+	 */
+	virtual bool KeyCharMsg(Common::KeyCode key);
+
+	virtual void resetSaves() { resetSlots(); }
+
+	/**
+	 * Highlights a save slot
+	 */
+	virtual void highlightSave(int index) = 0;
+
+	/**
+	 * Unhighlight a save slot
+	 */
+	virtual void unhighlightSave(int index) = 0;
+
+	/**
+	 * Executes the loading or saving
+	 */
+	virtual void execute() = 0;
 };
 
 } // End of namespace Titanic

@@ -21,8 +21,163 @@
  */
 
 #include "titanic/pet_control/pet_load_save.h"
+#include "titanic/pet_control/pet_control.h"
+#include "titanic/core/project_item.h"
 
 namespace Titanic {
 
+int CPetLoadSave::_savegameSlotNum;
+
+bool CPetLoadSave::setup(CPetControl *petControl, CPetGlyphs *owner) {
+	CPetGlyph::setup(petControl, owner);
+	_savegameSlotNum = -1;
+
+	for (int idx = 0; idx < SAVEGAME_SLOTS_COUNT; ++idx) {
+		Rect slotRect = getSlotBounds(idx);
+		_slotNames[idx].setBounds(slotRect);
+		_slotNames[idx].resize(3);
+		_slotNames[idx].set30(22);
+		_slotNames[idx].setHasBorder(false);
+		_slotNames[idx].setup();
+	}
+
+	Rect r1(0, 0, 68, 52);
+	r1.moveTo(496, 388);
+	_btnLoadSave.setBounds(r1);
+
+	Rect r2(0, 0, 168, 78);
+	r2.moveTo(309, 377);
+	_gutter.setBounds(r2);
+	return true;
+}
+
+bool CPetLoadSave::reset() {
+	highlightChange();
+
+	CPetControl *pet = getPetControl();
+	if (pet) {
+		_gutter.reset("PetSaveGutter", pet, MODE_UNSELECTED);
+	}
+
+	return true;
+}
+
+void CPetLoadSave::draw2(CScreenManager *screenManager) {
+	_gutter.draw(screenManager);
+
+	for (int idx = 0; idx < SAVEGAME_SLOTS_COUNT; ++idx)
+		_slotNames[idx].draw(screenManager);
+
+	_btnLoadSave.draw(screenManager);
+}
+
+bool CPetLoadSave::checkHighlight(const Point &pt) {
+	if (_btnLoadSave.highlightBounds(pt))
+		return true;
+	
+	checkSlotsHighlight(pt);
+	return false;
+}
+
+bool CPetLoadSave::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
+	if (_btnLoadSave.MouseButtonDownMsg(msg)) {
+		execute();
+		resetSlots();
+		return true;
+	} else {
+		return false;
+	}
+}
+
+bool CPetLoadSave::KeyCharMsg(Common::KeyCode key) {
+	switch (key) {
+	case Common::KEYCODE_TAB:
+	case Common::KEYCODE_DOWN:
+	case Common::KEYCODE_KP2:
+		if (_savegameSlotNum != -1) {
+			highlightSlot((_savegameSlotNum + 1) % 5);
+			getPetControl()->makeDirty();
+		}
+		return true;
+
+	case Common::KEYCODE_UP:
+	case Common::KEYCODE_KP8:
+		if (_savegameSlotNum != -1) {
+			int slotNum = --_savegameSlotNum;			
+			highlightSlot((slotNum == -1) ? SAVEGAME_SLOTS_COUNT - 1 : slotNum);
+			getPetControl()->makeDirty();
+		}
+		return true;
+
+	case Common::KEYCODE_RETURN:
+	case Common::KEYCODE_KP_ENTER:
+		execute();
+		return true;
+
+	default:
+		return false;
+	}
+}
+
+Rect CPetLoadSave::getSlotBounds(int index) {
+	return Rect(323, 376 + index * 16, 473, 392 + index * 16);
+}
+
+void CPetLoadSave::resetSlots() {
+	CPetControl *pet = getPetControl();
+	CProjectItem *project = pet ? pet->getRoot() : nullptr;
+
+	for (int idx = 0; idx < SAVEGAME_SLOTS_COUNT; ++idx) {
+		_slotNames[idx].setText("Empty");
+
+		if (project) {
+			warning("TODO: Get savegame name");
+		}
+	}
+
+	highlightSlot(_savegameSlotNum);
+}
+
+void CPetLoadSave::highlightSlot(int index) {
+	unhighlightSave(_savegameSlotNum);
+	_savegameSlotNum = index;
+	highlightChange();
+	highlightSave(_savegameSlotNum);
+}
+
+void CPetLoadSave::highlightChange() {
+	CPetSection *section = getPetSection();
+
+	uint col = section ? section->getColor(3) : 0;
+	for (int idx = 0; idx < SAVEGAME_SLOTS_COUNT; ++idx)
+		_slotNames[idx].setColor(col);
+
+	// TODO: Unknown if check
+	if (true) {
+		col = section ? section->getColor(4) : 0;
+		_slotNames[_savegameSlotNum].setColor(0, col);
+	}
+}
+
+bool CPetLoadSave::checkSlotsHighlight(const Point &pt) {
+	for (int idx = 0; idx < SAVEGAME_SLOTS_COUNT; ++idx) {
+		if (isSlotHighlighted(idx, pt)) {
+			highlightSlot(idx);
+			return true;
+		}
+	}
+
+	return false;
+}
+
+bool CPetLoadSave::isSlotHighlighted(int index, const Point &pt) {
+	Rect r = getSlotBounds(index);
+	if (r.contains(pt)) {
+		highlightSlot(index);
+		return true;
+	} else {
+		return false;
+	}
+}
 
 } // End of namespace Titanic

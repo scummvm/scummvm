@@ -174,4 +174,9 @@ void CPetText::setColor(uint col) {
 	_textB = (col >> 16) & 0xff;
 }
 
+void CPetText::set30(int val) {
+	if (val >= -1 && val < 257)
+		_field30 = val;
+}
+
 } // End of namespace Titanic

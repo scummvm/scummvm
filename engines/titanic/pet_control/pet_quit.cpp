@@ -66,8 +66,8 @@ void CPetQuit::draw2(CScreenManager *screenManager) {
 	_btnYes.draw(screenManager);
 }
 
-bool CPetQuit::proc16(const Point &pt) {
-	return !_btnYes.proc6(pt);
+bool CPetQuit::checkHighlight(const Point &pt) {
+	return !_btnYes.highlightBounds(pt);
 }
 
 bool CPetQuit::mouseButtonDownMsg(CMouseButtonDownMsg *msg) {

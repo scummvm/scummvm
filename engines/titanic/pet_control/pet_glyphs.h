@@ -23,6 +23,7 @@
 #ifndef TITANIC_PET_GLYPHS_H
 #define TITANIC_PET_GLYPHS_H
 
+#include "common/keyboard.h"
 #include "titanic/core/list.h"
 #include "titanic/pet_control/pet_gfx_element.h"
 #include "titanic/support/rect.h"
@@ -109,17 +110,41 @@ public:
 	 */
 	virtual Rect getBounds() { return Rect(); }
 
-	virtual int proc16() { return 0; }
+	/**
+	 * Checks and updates any highlight of the glyph or any contextual
+	 * information it displays
+	 */
+	virtual bool checkHighlight(const Point &pt) { return false; }
+
 	virtual int proc17() { return 0; }
 	virtual int proc18() { return 0; }
 	virtual int proc19() { return 0; }
+
+	/**
+	 * Handles mouse button messages
+	 */
 	virtual bool MouseButtonDownMsg(CMouseButtonDownMsg *msg) { return false; }
+	
 	virtual int proc21() { return 0; }
 	virtual int proc22() { return 0; }
-	virtual int proc23() { return 0; }
+
+	/**
+	 * Handles keypresses when the glyph is focused
+	 */
+	virtual bool KeyCharMsg(Common::KeyCode key) { return false; }
+	
 	virtual int proc24() { return 0; }
-	virtual void proc25() {}
-	virtual void proc26() {}
+
+	/**
+	 * Unhighlight any currently highlighted element
+	 */
+	virtual void unhighlightCurrent() {}
+
+	/**
+	 * Highlight any currently highlighted element
+	 */
+	virtual void highlightCurrent() {}
+
 	virtual void proc27() {}
 	virtual void proc28() {}
 	virtual int proc29() { return 0; }
