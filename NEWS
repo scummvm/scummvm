@@ -14,6 +14,7 @@ For a more comprehensive changelog of the latest experimental code, see:
  General:
    - Removed TESTING flag from several supported games.
    - Added Chinese Pinyin translation.
+   - Fixed cursor stuttering in the launcher that occured on some systems.
 
  BBVS:
    - Fixed game restart.
