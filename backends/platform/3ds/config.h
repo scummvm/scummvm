@@ -20,35 +20,26 @@
  *
  */
 
-#include "osystem.h"
-#include <3ds.h>
+#ifndef CONFIG_3DS_H
+#define CONFIG_3DS_H
 
-int main(int argc, char *argv[]) {
-	// Initialize basic libctru stuff
-	gfxInitDefault();
-	cfguInit();
-	osSetSpeedupEnable(true);
-// 	consoleInit(GFX_TOP, NULL);
+#include "common/str.h"
 
-	g_system = new _3DS::OSystem_3DS();
-	assert(g_system);
-
-	// Invoke the actual ScummVM main entry point
-// 	if (argc > 2)
-// 		res = scummvm_main(argc-2, &argv[2]);
-// 	else
-// 		res = scummvm_main(argc, argv);
-	scummvm_main(0, nullptr);
-
-	delete dynamic_cast<_3DS::OSystem_3DS*>(g_system);
+namespace _3DS {
 	
-	// Turn on both screen backlights before exiting.
-	if (R_SUCCEEDED(gspLcdInit())) {
-		GSPLCD_PowerOnBacklight(GSPLCD_SCREEN_BOTH);
-		gspLcdExit();
-	}
-	
-	cfguExit();
-	gfxExit();
-	return 0;
-}
+struct Config {
+	bool showCursor;
+	bool snapToBorder;
+	bool stretchToFit;
+	int sensitivity;
+	int screen;
+};
+
+extern Config config;
+
+void loadConfig();
+void saveConfig();
+
+} // namespace _3DS
+
+#endif // CONFIG_3DS_H

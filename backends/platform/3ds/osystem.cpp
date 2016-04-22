@@ -33,11 +33,14 @@
 #include "common/scummsys.h"
 #include "common/config-manager.h"
 #include "common/str.h"
+#include "config.h"
 
 #include "backends/fs/posix/posix-fs-factory.h"
 #include "backends/fs/posix/posix-fs.h"
 #include <unistd.h>
 #include <time.h>
+
+namespace _3DS {
 
 OSystem_3DS::OSystem_3DS():
 	_focusDirty(true),
@@ -55,19 +58,20 @@ OSystem_3DS::OSystem_3DS():
 	_focusStepScaleX(0.f),
 	_focusStepScaleY(0.f),
 	_focusClearTime(0),
-	_showMessageOSD(false),
-	_isFullscreen(false),
+	_cursorPaletteEnabled(false),
 	_cursorVisible(false),
 	_cursorScalable(false),
-	_cursorPaletteEnabled(false),
 	_cursorX(0),
 	_cursorY(0),
 	_cursorHotspotX(0),
 	_cursorHotspotY(0),
-	_gameX(0),
-	_gameY(0),
+	_gameTopX(0),
+	_gameTopY(0),
+	_gameBottomX(0),
+	_gameBottomY(0),
 	_gameWidth(320),
 	_gameHeight(240),
+	_overlayVisible(false),
 	exiting(false),
 	sleeping(false)
 {
@@ -91,6 +95,7 @@ void OSystem_3DS::quit() {
 }
 
 void OSystem_3DS::initBackend() {
+	loadConfig();
 	ConfMan.registerDefault("fullscreen", true);
 	ConfMan.registerDefault("aspect_ratio", true);
 	if (!ConfMan.hasKey("vkeybd_pack_name"))
@@ -109,6 +114,13 @@ void OSystem_3DS::initBackend() {
 	initAudio();
 	initEvents();
 	EventsBaseBackend::initBackend();
+}
+
+void OSystem_3DS::updateConfig() {
+	if (_gameScreen.getPixels()) {
+		updateSize();
+		warpMouse(_cursorX, _cursorY);
+	}
 }
 
 Common::String OSystem_3DS::getDefaultConfigFileName() {
@@ -177,3 +189,5 @@ void OSystem_3DS::fatalError() {
 void OSystem_3DS::logMessage(LogMessageType::Type type, const char *message) {
 	printf("3DS log: %s\n", message);
 }
+
+} // namespace _3DS

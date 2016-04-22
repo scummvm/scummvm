@@ -5,6 +5,8 @@ MODULE_OBJS := \
 	shader.shbin.o \
 	sprite.o \
 	gui.o \
+	config.o \
+	options-dialog.o \
 	osystem.o \
 	osystem-graphics.o \
 	osystem-audio.o \
