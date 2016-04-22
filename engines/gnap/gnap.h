@@ -603,19 +603,6 @@ public:
 	void sceneXX_playRandomSound(int timerIndex);
 	void playSequences(int fullScreenSpriteId, int sequenceId1, int sequenceId2, int sequenceId3);
 
-	// Scene 17
-	bool _s17_canTryGetWrench;
-	int _s17_wrenchCtr, _s17_platPhoneCtr, _s17_platTryGetWrenchCtr;
-	int _s17_nextPhoneSequenceId, _s17_currPhoneSequenceId;
-	int _s17_nextWrenchSequenceId, _s17_currWrenchSequenceId;
-	int _s17_nextCarWindowSequenceId, _s17_currCarWindowSequenceId;
-	int scene17_init();
-	void scene17_updateHotspots();
-	void scene17_update();
-	void scene17_platHangUpPhone();
-	void scene17_run();
-	void scene17_updateAnimations();
-
 	// Scene 18
 	int _s18_garbageCanPos;
 	int _s18_platPhoneCtr;
