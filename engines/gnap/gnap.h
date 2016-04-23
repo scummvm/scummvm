@@ -606,29 +606,6 @@ public:
 	// Scene 18
 	int _s18_garbageCanPos;
 
-	// Scene 19
-	int _s19_currShopAssistantSequenceId, _s19_nextShopAssistantSequenceId;
-	int _s19_toyGrabCtr;
-	int _s19_shopAssistantCtr;
-	Graphics::Surface *_s19_pictureSurface;
-	int scene19_init();
-	void scene19_updateHotspots();
-	void scene19_run();
-	void scene19_updateAnimations();
-
-	// Scene 20
-	int _s20_currStonerGuySequenceId, _s20_nextStonerGuySequenceId;
-	int _s20_currGroceryStoreGuySequenceId, _s20_nextGroceryStoreGuySequenceId;
-	int _s20_stonerGuyCtr;
-	bool _s20_stonerGuyShowingJoint;
-	int _s20_groceryStoreGuyCtr;
-	int scene20_init();
-	void scene20_updateHotspots();
-	void scene20_updateAnimationsCb();
-	void scene20_stopSounds();
-	void scene20_run();
-	void scene20_updateAnimations();
-
 	// Scene 21
 	int _s21_currOldLadySequenceId, _s21_nextOldLadySequenceId;
 	int scene21_init();

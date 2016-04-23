@@ -2021,16 +2021,6 @@ void GnapEngine::initGlobalSceneVars() {
 	// Scene 18
 	_s18_garbageCanPos = 8;
 
-	// Scene 19
-	_s19_toyGrabCtr = 0;
-	_s19_pictureSurface = 0;
-	_s19_shopAssistantCtr = 0;
-
-	// Scene 20
-	_s20_stonerGuyCtr = 3;
-	_s20_stonerGuyShowingJoint = false;
-	_s20_groceryStoreGuyCtr = 0;
-
 	// Scene 22
 	_s22_caughtBefore = false;
 	_s22_cashierCtr = 3;
