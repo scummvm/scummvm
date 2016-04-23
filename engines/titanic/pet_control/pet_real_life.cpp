@@ -51,32 +51,32 @@ void CPetRealLife::draw(CScreenManager *screenManager) {
 }
 
 bool CPetRealLife::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
-	return _glyphs.mouseButtonDown(msg->_mousePos);
+	return _glyphs.MouseButtonDownMsg(msg->_mousePos);
 }
 
 bool CPetRealLife::MouseDragStartMsg(CMouseDragStartMsg *msg) {
-	return _glyphs.mouseDragStart(msg);
+	return _glyphs.MouseDragStartMsg(msg);
 }
 
 bool CPetRealLife::MouseDragMoveMsg(CMouseDragMoveMsg *msg) {
-	return _glyphs.mouseDragMove(msg);
+	return _glyphs.MouseDragMoveMsg(msg);
 }
 
 bool CPetRealLife::MouseDragEndMsg(CMouseDragEndMsg *msg) {
-	return _glyphs.mouseDragEnd(msg);
+	return _glyphs.MouseDragEndMsg(msg);
 }
 
 bool CPetRealLife::MouseButtonUpMsg(CMouseButtonUpMsg *msg) {
-	return _glyphs.mouseButtonUp(msg->_mousePos);
+	return _glyphs.MouseButtonUpMsg(msg->_mousePos);
 }
 
 bool CPetRealLife::KeyCharMsg(CKeyCharMsg *msg) {
-	_glyphs.keyCharMsg(msg->_key);
+	_glyphs.KeyCharMsg(msg->_key);
 	return true;
 }
 
 bool CPetRealLife::VirtualKeyCharMsg(CVirtualKeyCharMsg *msg) {
-	return _glyphs.virtualKeyCharMsg(msg->_keyState.keycode);
+	return _glyphs.VirtualKeyCharMsg(msg->_keyState.keycode);
 }
 
 void CPetRealLife::postLoad() {

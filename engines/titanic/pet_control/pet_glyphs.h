@@ -128,9 +128,9 @@ public:
 	virtual int proc19() { return 0; }
 
 	/**
-	 * Handles mouse button messages
+	 * Handles mouse button up messages
 	 */
-	virtual bool MouseButtonMsg(const Point &pt) { return false; }
+	virtual bool MouseButtonUpMsg(const Point &pt) { return false; }
 	
 	virtual int proc21() { return 0; }
 	virtual int proc22() { return 0; }
@@ -312,37 +312,37 @@ public:
 	/**
 	 * Mouse button down message
 	 */
-	bool mouseButtonDown(const Point &pt);
+	bool MouseButtonDownMsg(const Point &pt);
 
 	/**
 	 * Mouse button up message
 	 */
-	bool mouseButtonUp(const Point &pt);
+	bool MouseButtonUpMsg(const Point &pt);
 
 	/**
 	 * Mouse drag start messagge
 	 */
-	bool mouseDragStart(CMouseDragStartMsg *msg);
+	bool MouseDragStartMsg(CMouseDragStartMsg *msg);
 
 	/**
 	 * Mouse drag move message
 	 */
-	bool mouseDragMove(CMouseDragMoveMsg *msg);
+	bool MouseDragMoveMsg(CMouseDragMoveMsg *msg);
 
 	/**
 	 * Mouse drag end message
 	 */
-	bool mouseDragEnd(CMouseDragEndMsg *msg);
+	bool MouseDragEndMsg(CMouseDragEndMsg *msg);
 
 	/**
 	 * Key character message
 	 */
-	bool keyCharMsg(int key);
+	bool KeyCharMsg(int key);
 
 	/**
 	 * Virtual key message
 	 */
-	bool virtualKeyCharMsg(int key);
+	bool VirtualKeyCharMsg(int key);
 
 	/**
 	 * When the PET section is entered, passes onto the highlighted

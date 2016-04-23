@@ -291,7 +291,7 @@ void CPetGlyphs::makePetDirty() {
 		_owner->_petControl->makeDirty();
 }
 
-bool CPetGlyphs::mouseButtonDown(const Point &pt) {
+bool CPetGlyphs::MouseButtonDownMsg(const Point &pt) {
 	if (_scrollLeft.contains2(pt)) {
 		scrollLeft();
 		return true;
@@ -338,11 +338,11 @@ bool CPetGlyphs::mouseButtonDown(const Point &pt) {
 	return false;
 }
 
-bool CPetGlyphs::mouseButtonUp(const Point &pt) {
+bool CPetGlyphs::MouseButtonUpMsg(const Point &pt) {
 	if (_highlightIndex >= 0) {
 		CPetGlyph *glyph = getGlyph(_highlightIndex);
 		if (glyph) {
-			if (glyph->MouseButtonMsg(pt))
+			if (glyph->MouseButtonUpMsg(pt))
 				return true;
 		}
 	}
@@ -350,7 +350,7 @@ bool CPetGlyphs::mouseButtonUp(const Point &pt) {
 	return false;
 }
 
-bool CPetGlyphs::mouseDragStart(CMouseDragStartMsg *msg) {
+bool CPetGlyphs::MouseDragStartMsg(CMouseDragStartMsg *msg) {
 	if (!(_field20 & 1) && _highlightIndex >= 0) {
 		CPetGlyph *glyph = getGlyph(_highlightIndex);
 		int index = getHighlightedIndex(_highlightIndex);
@@ -365,7 +365,7 @@ bool CPetGlyphs::mouseDragStart(CMouseDragStartMsg *msg) {
 	return false;
 }
 
-bool CPetGlyphs::mouseDragMove(CMouseDragMoveMsg *msg) {
+bool CPetGlyphs::MouseDragMoveMsg(CMouseDragMoveMsg *msg) {
 	if (_field94) {
 		error("TODO");
 	} else {
@@ -373,7 +373,7 @@ bool CPetGlyphs::mouseDragMove(CMouseDragMoveMsg *msg) {
 	}
 }
 
-bool CPetGlyphs::mouseDragEnd(CMouseDragEndMsg *msg) {
+bool CPetGlyphs::MouseDragEndMsg(CMouseDragEndMsg *msg) {
 	if (_field94) {
 		error("TODO");
 	} else {
@@ -381,7 +381,7 @@ bool CPetGlyphs::mouseDragEnd(CMouseDragEndMsg *msg) {
 	}
 }
 
-bool CPetGlyphs::keyCharMsg(int key) {
+bool CPetGlyphs::KeyCharMsg(int key) {
 	if (_highlightIndex >= 0) {
 		CPetGlyph *glyph = getGlyph(_highlightIndex);
 
@@ -392,7 +392,7 @@ bool CPetGlyphs::keyCharMsg(int key) {
 	return false;
 }
 
-bool CPetGlyphs::virtualKeyCharMsg(int key) {
+bool CPetGlyphs::VirtualKeyCharMsg(int key) {
 	bool handled = false;
 	warning("TODO: CPetGlyphs::virtualKeyCharMsg");
 

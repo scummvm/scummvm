@@ -80,7 +80,7 @@ bool CPetLoadSave::checkHighlight(const Point &pt) {
 }
 
 bool CPetLoadSave::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
-	if (_btnLoadSave.MouseButtonDownMsg(msg)) {
+	if (_btnLoadSave.MouseButtonDownMsg(msg->_mousePos)) {
 		execute();
 		resetSlots();
 		return true;

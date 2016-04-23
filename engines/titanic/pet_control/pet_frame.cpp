@@ -65,7 +65,7 @@ bool CPetFrame::reset() {
 
 bool CPetFrame::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
 	for (int idx = 0; idx < 5; ++idx) {
-		if (_modeButtons[idx].MouseButtonDownMsg(msg)) {
+		if (_modeButtons[idx].MouseButtonDownMsg(msg->_mousePos)) {
 			_petControl->setArea(PET_AREAS[idx]);
 			resetArea();
 			_modeButtons[idx].setMode(MODE_SELECTED);

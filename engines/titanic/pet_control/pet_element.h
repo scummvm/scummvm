@@ -77,7 +77,7 @@ public:
 	/**
 	 * Handles processing mouse button messages
 	 */
-	virtual bool MouseButtonDownMsg(CMouseButtonDownMsg *msg);
+	virtual bool MouseButtonDownMsg(const Point &pt);
 
 	/**
 	 * Returns whether the passed point falls inside the item

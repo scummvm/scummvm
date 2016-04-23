@@ -40,8 +40,8 @@ bool CPetElement::highlightBounds(const Point &pt) {
 	return result;
 }
 
-bool CPetElement::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
-	bool result = _bounds.contains(msg->_mousePos);
+bool CPetElement::MouseButtonDownMsg(const Point &pt) {
+	bool result = _bounds.contains(pt);
 	if (result)
 		setMode(MODE_UNSELECTED);
 	return result;

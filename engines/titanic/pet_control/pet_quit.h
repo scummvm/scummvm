@@ -55,8 +55,11 @@ public:
 	 */
 	virtual bool checkHighlight(const Point &pt);
 
-	virtual bool mouseButtonDownMsg(CMouseButtonDownMsg *msg);
-
+	/**
+	 * Handles mouse button up messages
+	 */
+	virtual bool MouseButtonUpMsg(const Point &pt);
+	
 	/**
 	 * Returns the tooltip text for when the glyph is selected
 	 */
