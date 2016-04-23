@@ -134,6 +134,11 @@ public:
 	 * Translate the position of the element
 	 */
 	void translate(int deltaX, int deltaY) { _bounds.translate(deltaX, deltaY); }
+
+	/**
+	 * Translate the position of the element
+	 */
+	void translate(const Point &delta) { _bounds.translate(delta.x, delta.y); }
 };
 
 } // End of namespace Titanic

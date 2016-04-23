@@ -26,7 +26,7 @@
 namespace Titanic {
 
 CPetSlider::CPetSlider() {
-	_flags = 0;
+	_orientation = 0;
 	_thumbWidth = 0;
 	_thumbHeight = 0;
 	_sliderOffset = 0;
@@ -53,12 +53,9 @@ bool CPetSlider::resetThumbFocus() {
 	return result;
 }
 
-void CPetSlider::proc10() {
-
-}
-
-void CPetSlider::proc11() {
-
+void CPetSlider::proc10(const Point &pt) {
+	int newOffset = calcSliderOffset(pt);
+	setOffsetPixels(newOffset);
 }
 
 bool CPetSlider::proc12(const Point &pt) {
@@ -68,16 +65,8 @@ bool CPetSlider::proc12(const Point &pt) {
 		return false;
 
 	int newOffset = calcSliderOffset(pt);
-	setSliderOffset(newOffset);
+	setOffsetPixels(newOffset);
 	return true;
-}
-
-void CPetSlider::proc13() {
-
-}
-
-void CPetSlider::proc14() {
-
 }
 
 bool CPetSlider::contains(const Point &pt) const {
@@ -86,12 +75,12 @@ bool CPetSlider::contains(const Point &pt) const {
 
 double CPetSlider::getOffsetPixels() const {
 	int maxVal = 0, minVal = 0;
-	if (_flags & ORIENTATION_HORIZONTAL) {
+	if (_orientation & ORIENTATION_HORIZONTAL) {
 		maxVal = _slidingRect.right;
 		minVal = _slidingRect.left;
 	}
 
-	if (_flags & ORIENTATION_VERTICAL) {
+	if (_orientation & ORIENTATION_VERTICAL) {
 		maxVal = _slidingRect.bottom;
 		minVal = _slidingRect.top;
 	}
@@ -103,10 +92,10 @@ double CPetSlider::getOffsetPixels() const {
 }
 
 void CPetSlider::setSliderOffset(double offset) {
-	if (_flags & ORIENTATION_HORIZONTAL)
+	if (_orientation & ORIENTATION_HORIZONTAL)
 		_sliderOffset = offset * (_slidingRect.right - _slidingRect.left);
 
-	if (_flags & ORIENTATION_VERTICAL)
+	if (_orientation & ORIENTATION_VERTICAL)
 		_sliderOffset = offset * (_slidingRect.bottom - _slidingRect.top);
 }
 
@@ -136,12 +125,12 @@ Point CPetSlider::getThumbDrawPos() {
 Point CPetSlider::getThumbCentroidPos() const {
 	Point pt;
 
-	if (_flags & ORIENTATION_HORIZONTAL) {
+	if (_orientation & ORIENTATION_HORIZONTAL) {
 		pt = Point(_slidingRect.left + _sliderOffset,
 			_slidingRect.top + _slidingRect.height() / 2);
 	}
 
-	if (_flags & ORIENTATION_VERTICAL) {
+	if (_orientation & ORIENTATION_VERTICAL) {
 		pt = Point(_slidingRect.left + _slidingRect.width() / 2,
 			_slidingRect.top + _sliderOffset);
 	}
@@ -164,15 +153,19 @@ Rect CPetSlider::getThumbRect() const {
 int CPetSlider::calcSliderOffset(const Point &pt) const {
 	int result = 0;
 
-	if (_flags & ORIENTATION_HORIZONTAL) {
+	if (_orientation & ORIENTATION_HORIZONTAL) {
 		result = CLIP(pt.x, _slidingRect.left, _slidingRect.right) - _slidingRect.left;
 	}
 	
-	if (_flags & ORIENTATION_VERTICAL) {
+	if (_orientation & ORIENTATION_VERTICAL) {
 		result = CLIP(pt.y, _slidingRect.top, _slidingRect.bottom) - _slidingRect.top;
 	}
 
 	return result;
+}
+
+void CPetSlider::setOrientation(SliderOrientation orientation) {
+	_orientation |= orientation;
 }
 
 /*------------------------------------------------------------------------*/

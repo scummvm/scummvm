@@ -30,7 +30,58 @@ CPetSound::CPetSound() : CPetGlyph(), _field198(0), _field19C(0) {
 
 bool CPetSound::setup(CPetControl *petControl, CPetGlyphs *owner) {
 	CPetGlyph::setup(petControl, owner);
-	// TODO
+
+	_masterVolume.setOrientation(ORIENTATION_HORIZONTAL);
+	_masterVolume.setBounds(Rect(17, 0, 147, 15));
+	_masterVolume.setSlidingBounds(Rect(35, 5, 127, 11));
+	_masterVolume.setThumbSize(Point(25, 15));
+	_masterVolume.translate(Point(415, 376));
+
+	_musicVolume.setOrientation(ORIENTATION_HORIZONTAL);
+	_musicVolume.setBounds(Rect(17, 20, 147, 35));
+	_musicVolume.setSlidingBounds(Rect(35, 25, 127, 31));
+	_musicVolume.setThumbSize(Point(25, 15));
+	_musicVolume.translate(Point(415, 376));
+
+	_parrotVolume.setOrientation(ORIENTATION_HORIZONTAL);
+	_parrotVolume.setBounds(Rect(17, 40, 147, 55));
+	_parrotVolume.setSlidingBounds(Rect(35, 45, 127, 51));
+	_parrotVolume.setThumbSize(Point(25, 15));
+	_parrotVolume.translate(Point(415, 376));
+
+	_parrotVolume.setOrientation(ORIENTATION_HORIZONTAL);
+	_parrotVolume.setBounds(Rect(17, 60, 147, 75));
+	_parrotVolume.setSlidingBounds(Rect(35, 65, 127, 71));
+	_parrotVolume.setThumbSize(Point(25, 15));
+	_parrotVolume.translate(Point(415, 376));
+
+	_element.setBounds(Rect(0, 0, 165, 77));
+	_element.translate(Point(415, 376));
+
+	Rect rect(0, 0, 88, 16);
+	rect.translate(320, 376);
+	_textMasterVolume.setBounds(rect);
+	_textMasterVolume.resize(3);
+	_textMasterVolume.setHasBorder(false);
+	_textMasterVolume.setText("Master volume");
+
+	rect.translate(0, 20);
+	_textMusicVolume.setBounds(rect);
+	_textMusicVolume.resize(3);
+	_textMusicVolume.setHasBorder(false);
+	_textMusicVolume.setText("Music volume");
+
+	rect.translate(0, 20);
+	_textParrotVolume.setBounds(rect);
+	_textParrotVolume.resize(3);
+	_textParrotVolume.setHasBorder(false);
+	_textParrotVolume.setText("Parrot volume");
+
+	rect.translate(0, 20);
+	_textSpeechVolume.setBounds(rect);
+	_textSpeechVolume.resize(3);
+	_textSpeechVolume.setHasBorder(false);
+	_textSpeechVolume.setText("Speech volume");
 
 	return true;
 }
@@ -40,15 +91,17 @@ bool CPetSound::reset() {
 	if (pet) {
 		setName("PetSound", pet);
 		_element.reset("PetVolChannels", pet, MODE_UNSELECTED);
-		_slider1.reset("PetVolSlug");
-		_slider2.reset("PetVolSlug");
-		_slider3.reset("PetVolSlug");
-		_slider4.reset("PetVolSlug");
+		_musicVolume.reset("PetVolSlug");
+		_masterVolume.reset("PetVolSlug");
+		_parrotVolume.reset("PetVolSlug");
+		_speechVolume.reset("PetVolSlug");
 
 		CPetSection *section = getPetSection();
 		uint col = section->getColor(0);
-		for (int idx = 0; idx < 4; ++idx)
-			_text[idx].setColor(0, col);
+		_textMusicVolume.setColor(0, col);
+		_textMasterVolume.setColor(0, col);
+		_textParrotVolume.setColor(0, col);
+		_textSpeechVolume.setColor(0, col);
 	}
 
 	return false;

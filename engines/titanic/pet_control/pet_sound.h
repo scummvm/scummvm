@@ -33,11 +33,14 @@ namespace Titanic {
 class CPetSound : public CPetGlyph {
 private:
 	CPetGfxElement _element;
-	CPetSlider _slider1;
-	CPetSlider _slider2;
-	CPetSlider _slider3;
-	CPetSlider _slider4;
-	CPetText _text[4];
+	CPetSlider _masterVolume;
+	CPetSlider _musicVolume;
+	CPetSlider _parrotVolume;
+	CPetSlider _speechVolume;
+	CPetText _textMasterVolume;
+	CPetText _textMusicVolume;
+	CPetText _textParrotVolume;
+	CPetText _textSpeechVolume;
 	int _field198;
 	int _field19C;
 public:

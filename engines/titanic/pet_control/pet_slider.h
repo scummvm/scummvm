@@ -35,7 +35,7 @@ class CPetControl;
 
 class CPetSlider {
 private:
-	int _flags;
+	int _orientation;
 	Rect _bounds;
 	Rect _slidingRect;
 	int _thumbWidth;
@@ -126,11 +126,11 @@ public:
 	 */
 	virtual bool resetThumbFocus();
 
-	virtual void proc10();
-	virtual void proc11();
+	virtual void proc10(const Point &pt);
+	virtual bool proc11() { return true; }
 	virtual bool proc12(const Point &pt);
-	virtual void proc13();
-	virtual void proc14();
+	virtual bool proc13() { return false; }
+	virtual bool proc14() { return false; }
 	
 	
 	virtual bool contains(const Point &pt) const;
@@ -149,6 +149,37 @@ public:
 	 * Set a new slider offset in pixels
 	 */
 	virtual void setOffsetPixels(int offset);
+
+	/**
+	 * Enables a given orientation
+	 */
+	void setOrientation(SliderOrientation orientation);
+
+	/**
+	 * Set the bounds for the slider
+	 */
+	void setBounds(const Rect &r) { _bounds = r; }
+
+	/**
+	 * Set the sliding bounds for the slider
+	 */
+	void setSlidingBounds(const Rect &r) { _slidingRect = r; }
+
+	/**
+	 * Set the size of the slider thumb
+	 */
+	void setThumbSize(const Point &pt) {
+		_thumbWidth = pt.x;
+		_thumbHeight = pt.y;
+	}
+
+	/**
+	 * Move the slider
+	 */
+	void translate(const Point &pt) {
+		_bounds.translate(pt.x, pt.y);
+		_slidingRect.translate(pt.x, pt.y);
+	}
 };
 
 class CPetSoundSlider : public CPetSlider {
