@@ -180,6 +180,11 @@ public:
 		_bounds.translate(pt.x, pt.y);
 		_slidingRect.translate(pt.x, pt.y);
 	}
+
+	/**
+	 * Change the current position of a slider by a step amount
+	 */
+	void stepPosition(int direction);
 };
 
 class CPetSoundSlider : public CPetSlider {

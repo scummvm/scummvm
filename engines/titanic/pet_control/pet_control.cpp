@@ -423,4 +423,12 @@ void CPetControl::moveToHiddenRoom(CTreeItem *item) {
 	}
 }
 
+void CPetControl::playSound(int soundNum) {
+	CTreeItem *player = getHiddenObject("PETSoundPlayer");
+	if (player) {
+		CPETPlaySoundMsg playMsg(soundNum);
+		playMsg.execute(player);
+	}
+}
+
 } // End of namespace Titanic

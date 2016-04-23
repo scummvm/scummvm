@@ -43,6 +43,11 @@ private:
 	CPetText _textSpeechVolume;
 	int _field198;
 	int _field19C;
+private:
+	/**
+	 * Called when a slider has changed
+	 */
+	void sliderChanged(double offset, int sliderNum);
 public:
 	CPetSound();
 
@@ -60,6 +65,12 @@ public:
 	 * Handles any secondary drawing of the glyph
 	 */
 	virtual void draw2(CScreenManager *screenManager);
+
+	/**
+	 * Checks and updates any highlight of the glyph or any contextual
+	 * information it displays
+	 */
+	virtual bool checkHighlight(const Point &pt);
 };
 
 } // End of namespace Titanic

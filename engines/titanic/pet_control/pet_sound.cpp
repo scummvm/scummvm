@@ -22,6 +22,7 @@
 
 #include "titanic/pet_control/pet_sound.h"
 #include "titanic/pet_control/pet_control.h"
+#include "titanic/game_manager.h"
 
 namespace Titanic {
 
@@ -119,6 +120,82 @@ void CPetSound::draw2(CScreenManager *screenManager) {
 	_textMasterVolume.draw(screenManager);
 	_textParrotVolume.draw(screenManager);
 	_textSpeechVolume.draw(screenManager);
+}
+
+bool CPetSound::checkHighlight(const Point &pt) {
+	if (_musicVolume.checkThumb(pt) || _masterVolume.checkThumb(pt) ||
+		_speechVolume.checkThumb(pt))
+		return true;
+
+	if (_parrotVolume.checkThumb(pt)) {
+		CPetControl *pet = getPetControl();
+		if (pet)
+			pet->playSound(2);
+
+		return true;
+	}
+
+	Rect rectLeft(0, 0, 10, 11);
+	Rect rectRight(0, 0, 10, 11);
+	rectLeft.translate(415, 379);
+	rectRight.translate(567, 378);
+
+	CPetSlider *sliders[4] = { &_masterVolume, &_musicVolume, &_parrotVolume, &_speechVolume };
+	for (int idx = 0; idx < 4; ++idx) {
+		CPetSlider *slider = sliders[idx];
+		bool isLeft = rectLeft.contains(pt);
+		bool isRight = rectRight.contains(pt);
+		int offset;
+
+		if (isLeft) {
+			slider->stepPosition(-1);
+			offset = slider->getOffsetPixels();
+		} else if (isRight) {
+			slider->stepPosition(1);
+			offset = slider->getOffsetPixels();
+		}
+
+		if (isLeft || isRight) {
+			sliderChanged(offset, idx);
+			return true;
+		}
+
+		// Move to next slider row
+		rectLeft.translate(0, 20);
+		rectRight.translate(0, 20);
+	}
+
+	return false;
+}
+
+void CPetSound::sliderChanged(double offset, int sliderNum) {
+	CPetControl *pet = getPetControl();
+	if (!pet)
+		return;
+	
+	CGameManager *gameManager = pet->getGameManager();
+	if (!gameManager)
+		return;
+
+	QSoundManager &soundManager = gameManager->_sound._soundManager;
+	double percent = offset * 100.0;
+
+	switch (sliderNum) {
+	case 0:
+		soundManager.setMasterPercent(percent);
+		break;
+	case 1:
+		soundManager.setMusicPercent(percent);
+		break;
+	case 2:
+		soundManager.setParrotPercent(percent);
+		break;
+	case 3:
+		soundManager.setSpeechPercent(percent);
+		break;
+	default:
+		break;
+	}
 }
 
 } // End of namespace Titanic

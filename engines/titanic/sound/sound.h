@@ -34,6 +34,7 @@ class CGameManager;
 class CSound {
 private:
 	CGameManager *_gameManager;
+public:
 	QSoundManager _soundManager;
 public:
 	CSound(CGameManager *owner);

@@ -240,6 +240,11 @@ public:
 	void moveToHiddenRoom(CTreeItem *item);
 
 	void setC8(int val) { _fieldC8 = val; }
+
+	/**
+	 * Play a sound
+	 */
+	void playSound(int soundNum);
 };
 
 } // End of namespace Titanic

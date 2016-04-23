@@ -168,6 +168,18 @@ void CPetSlider::setOrientation(SliderOrientation orientation) {
 	_orientation |= orientation;
 }
 
+void CPetSlider::stepPosition(int direction) {
+	double val = getOffsetPixels();
+
+	if (direction == -1) {
+		val = MAX(val - 0.1, 0.0);
+	} else if (direction == 1) {
+		val = MIN(val + 0.1, 1.0);
+	}
+
+	setSliderOffset(val);
+}
+
 /*------------------------------------------------------------------------*/
 
 void CPetSoundSlider::setupBackground(const CString &name, CPetControl *petControl) {

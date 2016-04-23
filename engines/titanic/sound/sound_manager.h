@@ -29,10 +29,10 @@ namespace Titanic {
 
 class SoundManager {
 protected:
-	int _field4;
-	int _field8;
-	int _fieldC;
-	int _field10;
+	double _musicPercent;
+	double _speechPercent;
+	double _masterPercent;
+	double _parrotPercent;
 	int _field14;
 public:
 	SoundManager();
@@ -53,10 +53,10 @@ public:
 	virtual int proc16() const { return 0; }
 	virtual void WaveMixPump() {}
 	virtual int proc18() const { return 0; }
-	virtual void proc19(int v) { _field4 = v; }
-	virtual void proc20(int v) { _field8 = v; }
-	virtual void proc21(int v) { _fieldC = v; }
-	virtual void proc22(int v) { _field10 = v; }
+	virtual void setMusicPercent(double percent) { _musicPercent = percent; }
+	virtual void setSpeechPercent(double percent) { _speechPercent = percent; }
+	virtual void setMasterPercent(double percent) { _masterPercent = percent; }
+	virtual void setParrotPercent(double percent) { _parrotPercent = percent; }
 
 	/**
 	 * Called when a game is about to be loaded
