@@ -112,9 +112,7 @@ public:
 	 */
 	virtual void leave();
 	
-	virtual CGameObject *getBackground(int index) const {
-		return (index >= 0 && index < 46) ? _itemBackgrounds[index] : nullptr;
-	}
+	virtual CGameObject *getBackground(int index) const;
 
 	/**
 	 * 

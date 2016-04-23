@@ -90,6 +90,10 @@ void CPetInventory::leave() {
 	_items.leave();
 }
 
+CGameObject *CPetInventory::getBackground(int index) const {
+	return (index >= 0 && index < 46) ? _itemBackgrounds[index] : nullptr;
+}
+
 bool CPetInventory::setPetControl(CPetControl *petControl) {
 	if (!petControl)
 		return false;

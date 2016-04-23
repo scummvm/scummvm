@@ -110,7 +110,7 @@ public:
 	 */
 	virtual void draw2(CScreenManager *screenManager) {}
 
-	virtual void proc14(const Point &pt);
+	virtual void proc14();
 
 	/**
 	 * Get the bounds for the glyph
@@ -150,7 +150,7 @@ public:
 	/**
 	 * Highlight any currently highlighted element
 	 */
-	virtual void highlightCurrent() {}
+	virtual void highlightCurrent(const Point &pt) {}
 
 	virtual void proc27(const Point &pt, bool flag) {}
 	virtual void proc28(const Point &pt) {}

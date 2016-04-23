@@ -38,7 +38,7 @@ void CPetGlyph::drawAt(CScreenManager *screenManager, const Point &pt) {
 	_element.translate(-pt.x, -pt.y);
 }
 
-void CPetGlyph::proc14(const Point &pt) {
+void CPetGlyph::proc14() {
 	warning("TODO: CPetGlyph::proc14");
 }
 
@@ -183,7 +183,34 @@ Rect CPetGlyphs::getRect(int index) {
 }
 
 void CPetGlyphs::changeHighlight(int index) {
-	warning("TODO: CPetGlyphs::changeHighlight");
+	if (index == _highlightIndex)
+		return;
+
+	if (_highlightIndex >= 0 && (_field20 & 4)) {
+		CPetGlyph *glyph = getGlyph(_highlightIndex);
+		if (glyph)
+			glyph->unhighlightCurrent();
+	}
+
+	_highlightIndex = index;
+	if (index >= 0) {
+		CPetGlyph *glyph = getGlyph(_highlightIndex);
+
+		if (glyph) {
+			if (_field20 & 4) {
+				Point pt;
+				int idx = getHighlightedIndex(_highlightIndex);
+				if (idx >= 0)
+					pt = getPosition(idx);
+
+				glyph->highlightCurrent(pt);
+			}
+
+			glyph->proc14();
+		}
+	} else if (_owner) {
+		_owner->proc28();
+	}
 }
 
 void CPetGlyphs::highlight(int index) {
@@ -281,11 +308,10 @@ bool CPetGlyphs::mouseButtonDown(const Point &pt) {
 			int index = getItemIndex(idx);
 			CPetGlyph *glyph = getGlyph(index);
 			if (glyph) {
-				if (index == _highlightIndex) {
-					glyph->proc28(glyphRect);
-					glyph->proc14(pt);
+				if (glyph->checkHighlight(pt))
 					return true;
-				} else {
+
+				if (!(_field20 & 2)) {
 					changeHighlight(index);
 					makePetDirty();
 					return true;
