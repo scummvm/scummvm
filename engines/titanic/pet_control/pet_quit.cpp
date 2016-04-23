@@ -37,9 +37,9 @@ bool CPetQuit::setup(CPetControl *petControl, CPetGlyphs *owner) {
 	_text.setHasBorder(true);
 	_text.setup();
 
-	Rect elementRect(0, 0, 496, 388);
-	elementRect.moveTo(496, 388);
-	_element.setBounds(elementRect);
+	Rect btnRect(0, 0, 496, 388);
+	btnRect.moveTo(496, 388);
+	_btnYes.setBounds(btnRect);
 	
 	return true;
 }

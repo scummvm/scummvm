@@ -308,14 +308,15 @@ bool CPetGlyphs::mouseButtonDown(const Point &pt) {
 			int index = getItemIndex(idx);
 			CPetGlyph *glyph = getGlyph(index);
 			if (glyph) {
-				if (glyph->checkHighlight(pt))
-					return true;
-
-				if (!(_field20 & 2)) {
+				if (_highlightIndex == index) {
+					glyph->proc28(glyphRect);
+					glyph->proc14();
+				} else {
 					changeHighlight(index);
 					makePetDirty();
-					return true;
 				}
+
+				return true;
 			}
 		}
 	}
