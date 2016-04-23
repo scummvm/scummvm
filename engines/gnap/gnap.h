@@ -606,22 +606,6 @@ public:
 	// Scene 18
 	int _s18_garbageCanPos;
 
-	// Scene 22
-	int _s22_currCashierSequenceId, _s22_nextCashierSequenceId;
-	bool _s22_caughtBefore;
-	int _s22_cashierCtr;
-	int scene22_init();
-	void scene22_updateHotspots();
-	void scene22_run();
-	void scene22_updateAnimations();
-
-	// Scene 23
-	int _s23_currStoreClerkSequenceId, _s23_nextStoreClerkSequenceId;
-	int scene23_init();
-	void scene23_updateHotspots();
-	void scene23_run();
-	void scene23_updateAnimations();
-
 	// Scene 24
 	int _s24_currWomanSequenceId, _s24_nextWomanSequenceId;
 	int _s24_boySequenceId;

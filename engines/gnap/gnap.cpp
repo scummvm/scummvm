@@ -2018,12 +2018,8 @@ void GnapEngine::initPlatypusPos(int gridX, int gridY, Facing facing) {
 ////////////////////////////////////////////////////////////////////////////////
 
 void GnapEngine::initGlobalSceneVars() {
-	// Scene 18
+	// Shared by scenes 17 && 18
 	_s18_garbageCanPos = 8;
-
-	// Scene 22
-	_s22_caughtBefore = false;
-	_s22_cashierCtr = 3;
 
 	// Scene 31
 	_s31_beerGuyDistracted = false;
