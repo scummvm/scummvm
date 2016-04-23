@@ -49,6 +49,7 @@
 #include "gnap/scenes/scene21.h"
 #include "gnap/scenes/scene22.h"
 #include "gnap/scenes/scene23.h"
+#include "gnap/scenes/scene24.h"
 #include "gnap/scenes/scene47.h"
 #include "gnap/scenes/scene48.h"
 #include "gnap/scenes/scene54.h"
@@ -224,8 +225,9 @@ int GnapEngine::initSceneLogic() {
 		initSceneGrid(21, 146, 11, 10);
 		break;
 	case 24:
-		backgroundId = scene24_init();
-		scene24_updateHotspots();
+		_scene = new Scene24(this);
+		backgroundId = _scene->init();
+		_scene->updateHotspots();
 		_gameSys->setScaleValues(0, 500, 1, 1000);
 		initSceneGrid(21, 136, 11, 10);
 		break;
@@ -546,7 +548,8 @@ void GnapEngine::runSceneLogic() {
 			_newSceneNum = 20;
 		break;
 	case 24:
-		scene24_run();
+		_scene->run();
+		delete _scene;
 		if (_newSceneNum == 55)
 			_newSceneNum = 20;
 		break;

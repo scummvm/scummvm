@@ -606,15 +606,6 @@ public:
 	// Scene 18
 	int _s18_garbageCanPos;
 
-	// Scene 24
-	int _s24_currWomanSequenceId, _s24_nextWomanSequenceId;
-	int _s24_boySequenceId;
-	int _s24_girlSequenceId;
-	int scene24_init();
-	void scene24_updateHotspots();
-	void scene24_run();
-	void scene24_updateAnimations();
-
 	// Scene 25
 	int _s25_currTicketVendorSequenceId, _s25_nextTicketVendorSequenceId;
 	int scene25_init();
