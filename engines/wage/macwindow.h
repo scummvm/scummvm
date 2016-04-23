@@ -66,7 +66,8 @@ enum WindowClick {
 	kBorderScrollUp,
 	kBorderScrollDown,
 	kBorderCloseButton,
-	kBorderInner
+	kBorderInner,
+	kBorderHeader
 };
 
 class MacWindow {
@@ -104,6 +105,9 @@ private:
 	bool _borderIsDirty;
 	bool _contentIsDirty;
 	int _id;
+
+	bool _beingDragged;
+	int _draggedX, _draggedY;
 
 	WindowClick _highlightedPart;
 	float _scrollPos, _scrollSize;

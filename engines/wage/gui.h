@@ -150,6 +150,8 @@ public:
 	bool _menuDirty;
 
 	Scene *_scene;
+
+	MacWindowManager _wm;
 	MacWindow *_sceneWindow;
 	MacWindow *_consoleWindow;
 
@@ -178,8 +180,6 @@ private:
 	Common::String _undobuffer;
 
 	int _inputTextLineNum;
-
-	MacWindowManager _wm;
 };
 
 } // End of namespace Wage

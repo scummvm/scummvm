@@ -65,6 +65,8 @@ MacWindow::MacWindow(int id, bool scrollable) : _scrollable(scrollable), _id(id)
 
 	_callback = 0;
 	_dataPtr = 0;
+
+	_beingDragged = false;
 }
 
 MacWindow::~MacWindow() {
@@ -284,6 +286,9 @@ static WindowClick isInBorder(Common::Rect &rect, int x, int y) {
 	if (x >= rect.left - kBorderWidth && x < rect.left && y >= rect.top - kBorderWidth && y < rect.top)
 		return kBorderCloseButton;
 
+	if (y >= rect.top - kBorderWidth && y < rect.top)
+		return kBorderHeader;
+
 	if (x >= rect.right && x < rect.right + kBorderWidth) {
 		if (y < rect.top - kBorderWidth)
 			return kBorderNone;
@@ -305,11 +310,31 @@ bool MacWindow::processEvent(Common::Event &event) {
 
 	switch (event.type) {
 	case Common::EVENT_MOUSEMOVE:
+		if (_beingDragged) {
+			_dims.translate(event.mouse.x - _draggedX, event.mouse.y - _draggedY);
+			_draggedX = event.mouse.x;
+			_draggedY = event.mouse.y;
+
+			_innerDims.setWidth(0);
+
+			((WageEngine *)g_engine)->_gui->_wm.setFullRefresh(true);
+		}
 		break;
 	case Common::EVENT_LBUTTONDOWN:
 		setHighlight(click);
+
+		if (click == kBorderHeader) {
+			_beingDragged = true;
+
+			_draggedX = event.mouse.x;
+			_draggedY = event.mouse.y;
+		}
+
 		break;
 	case Common::EVENT_LBUTTONUP:
+		if (_beingDragged)
+			_beingDragged = false;
+
 		setHighlight(kBorderNone);
 		break;
 	default:
