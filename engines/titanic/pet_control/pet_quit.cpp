@@ -30,14 +30,15 @@ namespace Titanic {
 
 bool CPetQuit::setup(CPetControl *petControl, CPetGlyphs *owner) {
 	CPetGlyph::setup(petControl, owner);
+
 	Rect tempRect(0, 0, 280, 16);
-	tempRect.moveTo(32, 407);
+	tempRect.moveTo(322, 407);
 	_text.setBounds(tempRect);
 	_text.resize(3);
 	_text.setHasBorder(true);
 	_text.setup();
 
-	Rect btnRect(0, 0, 496, 388);
+	Rect btnRect(0, 0, 68, 52);
 	btnRect.moveTo(496, 388);
 	_btnYes.setBounds(btnRect);
 	
@@ -62,7 +63,7 @@ bool CPetQuit::reset() {
 }
 
 void CPetQuit::draw2(CScreenManager *screenManager) {
-//	_text.draw(screenManager);
+	_text.draw(screenManager);
 	_btnYes.draw(screenManager);
 }
 
