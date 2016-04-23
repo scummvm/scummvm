@@ -606,14 +606,6 @@ public:
 	// Scene 18
 	int _s18_garbageCanPos;
 
-	// Scene 27
-	int _s27_nextJanitorSequenceId;
-	int _s27_currJanitorSequenceId;
-	int scene27_init();
-	void scene27_updateHotspots();
-	void scene27_run();
-	void scene27_updateAnimations();
-		
 	// Scene 28
 	int _s28_currClownSequenceId, _s28_nextClownSequenceId;
 	int _s28_clownTalkCtr;
