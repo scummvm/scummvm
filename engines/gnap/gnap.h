@@ -603,16 +603,8 @@ public:
 	void sceneXX_playRandomSound(int timerIndex);
 	void playSequences(int fullScreenSpriteId, int sequenceId1, int sequenceId2, int sequenceId3);
 
-	// Scene 18
+	// Shared by scenes 17 & 18
 	int _s18_garbageCanPos;
-
-	// Scene 29
-	int _s28_currMonkeySequenceId, _s28_nextMonkeySequenceId;
-	int _s28_currManSequenceId, _s28_nextManSequenceId;
-	int scene29_init();
-	void scene29_updateHotspots();
-	void scene29_run();
-	void scene29_updateAnimations();
 
 	// Scene 30
 	int _s30_kidSequenceId;
