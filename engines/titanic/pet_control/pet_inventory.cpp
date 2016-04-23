@@ -100,7 +100,7 @@ bool CPetInventory::setPetControl(CPetControl *petControl) {
 
 	_petControl = petControl;
 	_items.setup(7,  this);
-	_items.set20(28);
+	_items.setFlags(28);
 
 	Rect tempRect(0, 0, 52, 52);
 	for (uint idx = 0; idx < TOTAL_ITEMS; ++idx) {

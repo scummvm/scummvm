@@ -62,7 +62,7 @@ bool CPetQuit::reset() {
 }
 
 void CPetQuit::draw2(CScreenManager *screenManager) {
-	_text.draw(screenManager);
+//	_text.draw(screenManager);
 	_btnYes.draw(screenManager);
 }
 

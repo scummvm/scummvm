@@ -100,7 +100,7 @@ bool CPetRealLife::setupControl(CPetControl *petControl) {
 	if (petControl) {
 		_petControl = petControl;
 		_glyphs.setup(4, this);
-		_glyphs.set20(6);
+		_glyphs.setFlags(6);
 
 		addButton(new CPetLoad());
 		addButton(new CPetSave());

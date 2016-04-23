@@ -67,7 +67,7 @@ void CPetGlyph::setName(const CString &name, CPetControl *petControl) {
 /*------------------------------------------------------------------------*/
 
 CPetGlyphs::CPetGlyphs() : _firstVisibleIndex(0),  _numVisibleGlyphs(TOTAL_GLYPHS),
-		_highlightIndex(-1), _field1C(-1), _field20(0),
+		_highlightIndex(-1), _field1C(-1), _flags(0),
 		_field94(nullptr), _owner(nullptr) {
 }
 
@@ -159,7 +159,7 @@ void CPetGlyphs::draw(CScreenManager *screenManager) {
 	}
 
 	// Draw scrolling arrows if more than a screen's worth of items are showing
-	if (listSize > _numVisibleGlyphs || _field20 != 16) {
+	if (listSize > _numVisibleGlyphs || (_flags & GFLAG_16)) {
 		_scrollLeft.draw(screenManager);
 		_scrollRight.draw(screenManager);
 	}
@@ -186,7 +186,7 @@ void CPetGlyphs::changeHighlight(int index) {
 	if (index == _highlightIndex)
 		return;
 
-	if (_highlightIndex >= 0 && (_field20 & 4)) {
+	if (_highlightIndex >= 0 && (_flags & GFLAG_4)) {
 		CPetGlyph *glyph = getGlyph(_highlightIndex);
 		if (glyph)
 			glyph->unhighlightCurrent();
@@ -197,7 +197,7 @@ void CPetGlyphs::changeHighlight(int index) {
 		CPetGlyph *glyph = getGlyph(_highlightIndex);
 
 		if (glyph) {
-			if (_field20 & 4) {
+			if (_flags & GFLAG_4) {
 				Point pt;
 				int idx = getHighlightedIndex(_highlightIndex);
 				if (idx >= 0)
@@ -243,7 +243,7 @@ void CPetGlyphs::setFirstVisible(int index) {
 	if (index != _firstVisibleIndex) {
 		_firstVisibleIndex = index;
 
-		if ((_field20 & 8) && _highlightIndex != -1) {
+		if ((_flags & GFLAG_8) && _highlightIndex != -1) {
 			CPetGlyph *glyph = getGlyph(_highlightIndex);
 			
 			if (glyph) {
@@ -328,7 +328,7 @@ bool CPetGlyphs::MouseButtonDownMsg(const Point &pt) {
 			if (glyph->checkHighlight(pt))
 				return true;
 
-			if (!(_field20 & 2)) {
+			if (!(_flags & GFLAG_2)) {
 				changeHighlight(-1);
 				makePetDirty();
 			}
@@ -351,7 +351,7 @@ bool CPetGlyphs::MouseButtonUpMsg(const Point &pt) {
 }
 
 bool CPetGlyphs::MouseDragStartMsg(CMouseDragStartMsg *msg) {
-	if (!(_field20 & 1) && _highlightIndex >= 0) {
+	if (!(_flags & GFLAG_1) && _highlightIndex >= 0) {
 		CPetGlyph *glyph = getGlyph(_highlightIndex);
 		int index = getHighlightedIndex(_highlightIndex);
 		Rect glyphRect = getRect(index);

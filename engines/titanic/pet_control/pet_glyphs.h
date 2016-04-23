@@ -38,6 +38,8 @@ class CPetText;
 
 enum GlyphActionMode { ACTION_REMOVE = 0, ACTION_REMOVED = 1, ACTION_CHANGE = 2 };
 
+enum GlyphFlag { GFLAG_1 = 1, GFLAG_2 = 2, GFLAG_4 = 4, GFLAG_8 = 8, GFLAG_16 = 16 };
+
 class CGlyphAction {
 protected:
 	GlyphActionMode _mode;
@@ -242,7 +244,7 @@ protected:
 	int _numVisibleGlyphs;
 	int _highlightIndex;
 	int _field1C;
-	int _field20;
+	int _flags;
 	void *_field94;
 	CPetSection *_owner;
 	CPetGfxElement _selection;
@@ -287,7 +289,7 @@ public:
 	 */
 	virtual bool leave();
 
-	void set20(int val) { _field20 = val; }
+	void setFlags(int flags) { _flags = flags; }
 
 	/**
 	 * Draw the control
