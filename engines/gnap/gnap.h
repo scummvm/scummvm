@@ -606,13 +606,6 @@ public:
 	// Scene 18
 	int _s18_garbageCanPos;
 
-	// Scene 21
-	int _s21_currOldLadySequenceId, _s21_nextOldLadySequenceId;
-	int scene21_init();
-	void scene21_updateHotspots();
-	void scene21_run();
-	void scene21_updateAnimations();
-
 	// Scene 22
 	int _s22_currCashierSequenceId, _s22_nextCashierSequenceId;
 	bool _s22_caughtBefore;
