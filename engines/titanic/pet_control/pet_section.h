@@ -34,6 +34,7 @@ enum PetArea {
 };
 
 class CPetControl;
+class CPetText;
 class CScreenManager;
 class CRoomItem;
 
@@ -139,7 +140,12 @@ public:
 	virtual void enterRoom(CRoomItem *room) {}
 
 	virtual void proc25();
-	virtual int proc26() { return 0; }
+
+	/**
+	 * Get a reference to the tooltip text associated with the section
+	 */
+	virtual CPetText *getText() { return nullptr; }
+
 	virtual void proc27();
 	virtual void proc28();
 	virtual void proc29();

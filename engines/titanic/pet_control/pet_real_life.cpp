@@ -50,6 +50,52 @@ void CPetRealLife::draw(CScreenManager *screenManager) {
 	_text.draw(screenManager);
 }
 
+bool CPetRealLife::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
+	return _glyphs.mouseButtonDown(msg->_mousePos);
+}
+
+bool CPetRealLife::MouseDragStartMsg(CMouseDragStartMsg *msg) {
+	return _glyphs.mouseDragStart(msg);
+}
+
+bool CPetRealLife::MouseDragMoveMsg(CMouseDragMoveMsg *msg) {
+	return _glyphs.mouseDragMove(msg);
+}
+
+bool CPetRealLife::MouseDragEndMsg(CMouseDragEndMsg *msg) {
+	return _glyphs.mouseDragEnd(msg);
+}
+
+bool CPetRealLife::MouseButtonUpMsg(CMouseButtonUpMsg *msg) {
+	return _glyphs.mouseButtonUp(msg->_mousePos);
+}
+
+bool CPetRealLife::KeyCharMsg(CKeyCharMsg *msg) {
+	_glyphs.keyCharMsg(msg->_key);
+	return true;
+}
+
+bool CPetRealLife::VirtualKeyCharMsg(CVirtualKeyCharMsg *msg) {
+	return _glyphs.virtualKeyCharMsg(msg->_keyState.keycode);
+}
+
+void CPetRealLife::postLoad() {
+	reset();
+}
+
+bool CPetRealLife::isValid(CPetControl *petControl) {
+	setupControl(petControl);
+	return true;
+}
+
+void CPetRealLife::enter(PetArea oldArea) {
+	_glyphs.enterHighlighted();
+}
+
+void CPetRealLife::leave() {
+	_glyphs.leaveHighlighted();
+}
+
 bool CPetRealLife::setupControl(CPetControl *petControl) {
 	if (petControl) {
 		_petControl = petControl;
@@ -76,11 +122,6 @@ void CPetRealLife::addButton(CPetGlyph *glyph) {
 		if (glyph->setup(_petControl, &_glyphs))
 			_glyphs.push_back(glyph);
 	}
-}
-
-bool CPetRealLife::isValid(CPetControl *petControl) {
-	setupControl(petControl);
-	return true;
 }
 
 

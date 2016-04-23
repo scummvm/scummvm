@@ -91,11 +91,27 @@ public:
 	 */
 	virtual CGameObject *dragEnd(const Point &pt) const;
 
+
 	/**
 	 * Returns true if the object is in a valid state
 	 */
 	virtual bool isValid(CPetControl *petControl);
 
+	/**
+	 * Called after a game has been loaded
+	 */
+	virtual void postLoad();
+
+	/**
+	 * Called when a section is switched to
+	 */
+	virtual void enter(PetArea oldArea);
+	
+	/**
+	 * Called when a section is being left, to switch to another area
+	 */
+	virtual void leave();
+	
 	virtual CGameObject *getBackground(int index) const {
 		return (index >= 0 && index < 46) ? _itemBackgrounds[index] : nullptr;
 	}

@@ -57,22 +57,37 @@ Rect CPetInventory::getBounds() {
 	return Rect(); 
 }
 
-void CPetInventory::save(SimpleFile *file, int indent) const {
-	file->writeNumberLine(_field298, indent);
-}
-
-void CPetInventory::load(SimpleFile *file, int param) {
-	_field298 = file->readNumber();
-}
-
 CGameObject *CPetInventory::dragEnd(const Point &pt) const {
 	warning("TODO: CPetInventory::dragEnd");
 	return nullptr;
 }
 
 bool CPetInventory::isValid(CPetControl *petControl) {
-	// TODO
+	setPetControl(petControl);
 	return true;
+}
+
+void CPetInventory::load(SimpleFile *file, int param) {
+	_field298 = file->readNumber();
+}
+
+void CPetInventory::postLoad() {
+	reset();
+	_field290 = 1;
+	itemsChanged();
+	_field290 = 0;
+}
+
+void CPetInventory::save(SimpleFile *file, int indent) const {
+	file->writeNumberLine(_field298, indent);
+}
+
+void CPetInventory::enter(PetArea oldArea) {
+	_items.enter();
+}
+
+void CPetInventory::leave() {
+	_items.leave();
 }
 
 bool CPetInventory::setPetControl(CPetControl *petControl) {

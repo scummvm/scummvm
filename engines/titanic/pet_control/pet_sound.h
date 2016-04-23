@@ -55,6 +55,11 @@ public:
 	 * Reset the glyph
 	 */
 	virtual bool reset();
+
+	/**
+	 * Handles any secondary drawing of the glyph
+	 */
+	virtual void draw2(CScreenManager *screenManager);
 };
 
 } // End of namespace Titanic

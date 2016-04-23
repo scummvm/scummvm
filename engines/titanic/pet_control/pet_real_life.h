@@ -75,14 +75,13 @@ public:
 	 * Following are handlers for the various messages that the PET can
 	 * pass onto the currently active section/area
 	 */
-	virtual bool MouseButtonDownMsg(CMouseButtonDownMsg *msg) { return false; }
-	virtual bool MouseDragStartMsg(CMouseDragStartMsg *msg) { return false; }
-	virtual bool MouseDragMoveMsg(CMouseDragMoveMsg *msg) { return false; }
-	virtual bool MouseDragEndMsg(CMouseDragEndMsg *msg) { return false; }
-	virtual bool MouseButtonUpMsg(CMouseButtonUpMsg *msg) { return false; }
-	virtual bool MouseDoubleClickMsg(CMouseDoubleClickMsg *msg) { return false; }
-	virtual bool KeyCharMsg(CKeyCharMsg *msg) { return false; }
-	virtual bool VirtualKeyCharMsg(CVirtualKeyCharMsg *msg) { return false; }
+	virtual bool MouseButtonDownMsg(CMouseButtonDownMsg *msg);
+	virtual bool MouseDragStartMsg(CMouseDragStartMsg *msg);
+	virtual bool MouseDragMoveMsg(CMouseDragMoveMsg *msg);
+	virtual bool MouseDragEndMsg(CMouseDragEndMsg *msg);
+	virtual bool MouseButtonUpMsg(CMouseButtonUpMsg *msg);
+	virtual bool KeyCharMsg(CKeyCharMsg *msg);
+	virtual bool VirtualKeyCharMsg(CVirtualKeyCharMsg *msg);
 
 	virtual int proc14() { return 0; }
 	
@@ -109,7 +108,7 @@ public:
 	/**
 	 * Called after a game has been loaded
 	 */
-	virtual void postLoad() {}
+	virtual void postLoad();
 
 	/**
 	 * Save the data for the class to file
@@ -119,19 +118,22 @@ public:
 	/**
 	 * Called when a section is switched to
 	 */
-	virtual void enter(PetArea oldArea) {}
+	virtual void enter(PetArea oldArea);
 	
 	/**
 	 * Called when a section is being left, to switch to another area
 	 */
-	virtual void leave() {}
-	
-	virtual void proc23() {}
+	virtual void leave();
 
 	/**
 	 * Called when a new room is entered
 	 */
 	virtual void enterRoom(CRoomItem *room) {}
+
+	/**
+	 * Get a reference to the tooltip text associated with the section
+	 */
+	virtual CPetText *getText() { return &_text; }
 
 };
 

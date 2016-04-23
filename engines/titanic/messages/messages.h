@@ -265,7 +265,7 @@ MESSAGE0(CInitializeAnimMsg);
 MESSAGE1(CIsEarBowlPuzzleDone, int, value, 0);
 MESSAGE3(CIsHookedOnMsg, Rect, rect, Rect(), bool, result, false, CString, string1, "");
 MESSAGE1(CIsParrotPresentMsg, bool, value, false);
-MESSAGE1(CKeyCharMsg, int, value, 32);
+MESSAGE1(CKeyCharMsg, int, key, 32);
 MESSAGE2(CLeaveNodeMsg, CNodeItem *, oldNode, nullptr, CNodeItem *, newNode, nullptr);
 MESSAGE2(CLeaveRoomMsg, CRoomItem *, oldRoom, nullptr, CRoomItem *, newRoom, nullptr);
 MESSAGE2(CLeaveViewMsg, CViewItem *, oldView, nullptr, CViewItem *, newView, nullptr);

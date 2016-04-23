@@ -90,8 +90,15 @@ public:
 	 */
 	virtual bool reset() { return false; }
 
-	virtual void proc10() {}
-	virtual void proc11() {}
+	/**
+	 * Called when the PET area is entered
+	 */
+	virtual bool enter() { return false; }
+	
+	/**
+	 * Called when the PET area is left
+	 */
+	virtual bool leave() { return false; }
 
 	/**
 	 * Draw the glyph at a specified position
@@ -103,7 +110,7 @@ public:
 	 */
 	virtual void draw2(CScreenManager *screenManager) {}
 
-	virtual void proc14();
+	virtual void proc14(const Point &pt);
 
 	/**
 	 * Get the bounds for the glyph
@@ -116,14 +123,14 @@ public:
 	 */
 	virtual bool checkHighlight(const Point &pt) { return false; }
 
-	virtual int proc17() { return 0; }
+	virtual bool MouseDragStartMsg(const CMouseDragStartMsg *msg) { return false; }
 	virtual int proc18() { return 0; }
 	virtual int proc19() { return 0; }
 
 	/**
 	 * Handles mouse button messages
 	 */
-	virtual bool MouseButtonDownMsg(CMouseButtonDownMsg *msg) { return false; }
+	virtual bool MouseButtonMsg(const Point &pt) { return false; }
 	
 	virtual int proc21() { return 0; }
 	virtual int proc22() { return 0; }
@@ -131,9 +138,9 @@ public:
 	/**
 	 * Handles keypresses when the glyph is focused
 	 */
-	virtual bool KeyCharMsg(Common::KeyCode key) { return false; }
+	virtual bool KeyCharMsg(int key) { return false; }
 	
-	virtual int proc24() { return 0; }
+	virtual bool VirtualKeyCharMsg(int key) { return false; }
 
 	/**
 	 * Unhighlight any currently highlighted element
@@ -145,9 +152,9 @@ public:
 	 */
 	virtual void highlightCurrent() {}
 
-	virtual void proc27() {}
-	virtual void proc28() {}
-	virtual int proc29() { return 0; }
+	virtual void proc27(const Point &pt, bool flag) {}
+	virtual void proc28(const Point &pt) {}
+	virtual int proc29(const Point &pt) { return 0; }
 
 	/**
 	 * Returns true if the glyph's bounds, shifted to a given position,
@@ -164,8 +171,17 @@ public:
 
 	virtual int proc33() { return 1; }
 	virtual int proc34() { return 1; }
-	virtual int proc35() { return 0; }
-	virtual void proc36() {}
+
+	/**
+	 * Called on a highlighted item when PET area is entered
+	 */
+	virtual bool enterHighlighted() { return false; }
+	
+	/**
+	 * Called on a highlighted item when PET area is left
+	 */
+	virtual bool leaveHighlighted() { return false; }
+
 	virtual int proc37() { return 0; }
 
 	/**
@@ -182,6 +198,11 @@ private:
 	Point getPosition(int index);
 
 	/**
+	 * Get a rect for the glyph
+	 */
+	Rect getRect(int index);
+
+	/**
 	 * Returns the on-screen index for the highlight to be shown at
 	 */
 	int getHighlightedIndex(int index);
@@ -195,6 +216,26 @@ private:
 	 * Return a specified glyph
 	 */
 	CPetGlyph *getGlyph(int index);
+
+	/**
+	 * Scrolls the glyphs to the left
+	 */
+	void scrollLeft();
+
+	/**
+	 * Scrolls the glyphs to the right
+	 */
+	void scrollRight();
+
+	/**
+	 * Set the first visible glyph index
+	 */
+	void setFirstVisible(int index);
+
+	/**
+	 * Make the PET dirty
+	 */
+	void makePetDirty();
 protected:
 	int _firstVisibleIndex;
 	int _totalGlyphs;
@@ -202,6 +243,7 @@ protected:
 	int _highlightIndex;
 	int _field1C;
 	int _field20;
+	void *_field94;
 	CPetSection *_owner;
 	CPetGfxElement _selection;
 	CPetGfxElement _scrollLeft;
@@ -235,8 +277,15 @@ public:
 	 */
 	virtual void reset();
 
-	virtual void proc10();
-	virtual void proc11();
+	/**
+	 * Called when PET area is entered
+	 */
+	virtual bool enter();
+
+	/**
+	 * Called when PET area is left
+	 */
+	virtual bool leave();
 
 	void set20(int val) { _field20 = val; }
 
@@ -259,6 +308,53 @@ public:
 	 * Get the PET control
 	 */
 	CPetControl *getPetControl() const;
+
+	/**
+	 * Mouse button down message
+	 */
+	bool mouseButtonDown(const Point &pt);
+
+	/**
+	 * Mouse button up message
+	 */
+	bool mouseButtonUp(const Point &pt);
+
+	/**
+	 * Mouse drag start messagge
+	 */
+	bool mouseDragStart(CMouseDragStartMsg *msg);
+
+	/**
+	 * Mouse drag move message
+	 */
+	bool mouseDragMove(CMouseDragMoveMsg *msg);
+
+	/**
+	 * Mouse drag end message
+	 */
+	bool mouseDragEnd(CMouseDragEndMsg *msg);
+
+	/**
+	 * Key character message
+	 */
+	bool keyCharMsg(int key);
+
+	/**
+	 * Virtual key message
+	 */
+	bool virtualKeyCharMsg(int key);
+
+	/**
+	 * When the PET section is entered, passes onto the highlighted
+	 * glyph, if any
+	 */
+	bool enterHighlighted();
+
+	/**
+	 * When the PET section is left, passes onto the highlighted
+	 * glyph, if any
+	 */
+	bool leaveHighlighted();
 };
 
 } // End of namespace Titanic

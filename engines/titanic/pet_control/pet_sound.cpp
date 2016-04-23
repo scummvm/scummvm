@@ -107,5 +107,18 @@ bool CPetSound::reset() {
 	return false;
 }
 
+void CPetSound::draw2(CScreenManager *screenManager) {
+	_element.draw(screenManager);
+	
+	_musicVolume.draw(screenManager);
+	_masterVolume.draw(screenManager);
+	_parrotVolume.draw(screenManager);
+	_speechVolume.draw(screenManager);
+
+	_textMusicVolume.draw(screenManager);
+	_textMasterVolume.draw(screenManager);
+	_textParrotVolume.draw(screenManager);
+	_textSpeechVolume.draw(screenManager);
+}
 
 } // End of namespace Titanic

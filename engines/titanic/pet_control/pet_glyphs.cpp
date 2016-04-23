@@ -22,6 +22,7 @@
 
 #include "titanic/pet_control/pet_glyphs.h"
 #include "titanic/pet_control/pet_section.h"
+#include "titanic/pet_control/pet_control.h"
 
 namespace Titanic {
 
@@ -37,7 +38,7 @@ void CPetGlyph::drawAt(CScreenManager *screenManager, const Point &pt) {
 	_element.translate(-pt.x, -pt.y);
 }
 
-void CPetGlyph::proc14() {
+void CPetGlyph::proc14(const Point &pt) {
 	warning("TODO: CPetGlyph::proc14");
 }
 
@@ -66,7 +67,8 @@ void CPetGlyph::setName(const CString &name, CPetControl *petControl) {
 /*------------------------------------------------------------------------*/
 
 CPetGlyphs::CPetGlyphs() : _firstVisibleIndex(0),  _numVisibleGlyphs(TOTAL_GLYPHS),
-		_highlightIndex(-1), _field1C(-1), _field20(0), _owner(nullptr) {
+		_highlightIndex(-1), _field1C(-1), _field20(0),
+		_field94(nullptr), _owner(nullptr) {
 }
 
 void CPetGlyphs::setNumVisible(int total) {
@@ -107,12 +109,24 @@ void CPetGlyphs::reset() {
 	}
 }
 
-void CPetGlyphs::proc10() {
-	error("TODO");
+bool CPetGlyphs::enter() {
+	if (_highlightIndex != -1) {
+		CPetGlyph *glyph = getGlyph(_highlightIndex);
+		if (glyph && glyph->enter())
+			return true;
+	}
+
+	return false;
 }
 
-void CPetGlyphs::proc11() {
-	error("TODO");
+bool CPetGlyphs::leave() {
+	if (_highlightIndex != -1) {
+		CPetGlyph *glyph = getGlyph(_highlightIndex);
+		if (glyph && glyph->leave())
+			return true;
+	}
+
+	return false;
 }
 
 void CPetGlyphs::draw(CScreenManager *screenManager) {
@@ -163,6 +177,11 @@ Point CPetGlyphs::getPosition(int index) {
 	return tempPoint;
 }
 
+Rect CPetGlyphs::getRect(int index) {
+	Point pt = getPosition(index);
+	return Rect(pt.x, pt.y, pt.x + 52, pt.y + 52);
+}
+
 void CPetGlyphs::changeHighlight(int index) {
 	warning("TODO: CPetGlyphs::changeHighlight");
 }
@@ -191,6 +210,186 @@ CPetGlyph *CPetGlyphs::getGlyph(int index) {
 
 CPetControl *CPetGlyphs::getPetControl() const {
 	return _owner ? _owner->getPetControl() : nullptr;
+}
+
+void CPetGlyphs::setFirstVisible(int index) {
+	if (index != _firstVisibleIndex) {
+		_firstVisibleIndex = index;
+
+		if ((_field20 & 8) && _highlightIndex != -1) {
+			CPetGlyph *glyph = getGlyph(_highlightIndex);
+			
+			if (glyph) {
+				int idx = getHighlightedIndex(_highlightIndex);
+				if (idx != -1) {
+					Point tempPt = getPosition(idx);
+					glyph->proc27(tempPt, true);
+				}
+			}
+		}
+	}
+}
+
+void CPetGlyphs::scrollLeft() {
+	if (_firstVisibleIndex > 0) {
+		setFirstVisible(_firstVisibleIndex - 1);
+		if (_highlightIndex != -1) {
+			int index = getHighlightedIndex(_highlightIndex);
+			if (index == -1)
+				changeHighlight(_highlightIndex - 1);
+		}
+
+		makePetDirty();
+	}
+}
+
+void CPetGlyphs::scrollRight() {
+	int count = size();
+	int right = count - _numVisibleGlyphs;
+
+	if (_firstVisibleIndex < right) {
+		setFirstVisible(_firstVisibleIndex + 1);
+		if (_highlightIndex != -1) {
+			int index = getHighlightedIndex(_highlightIndex);
+			if (index == -1)
+				changeHighlight(_highlightIndex + 1);
+		}
+
+		makePetDirty();
+	}
+}
+
+void CPetGlyphs::makePetDirty() {
+	if (_owner && _owner->_petControl)
+		_owner->_petControl->makeDirty();
+}
+
+bool CPetGlyphs::mouseButtonDown(const Point &pt) {
+	if (_scrollLeft.contains2(pt)) {
+		scrollLeft();
+		return true;
+	}
+
+	if (_scrollRight.contains2(pt)) {
+		scrollRight();
+		return true;
+	}
+
+	for (int idx = 0; idx < _numVisibleGlyphs; ++idx) {
+		Rect glyphRect = getRect(idx);
+		if (glyphRect.contains(pt)) {
+			int index = getItemIndex(idx);
+			CPetGlyph *glyph = getGlyph(index);
+			if (glyph) {
+				if (index == _highlightIndex) {
+					glyph->proc28(glyphRect);
+					glyph->proc14(pt);
+					return true;
+				} else {
+					changeHighlight(index);
+					makePetDirty();
+					return true;
+				}
+			}
+		}
+	}
+
+	if (_highlightIndex != -1) {
+		CPetGlyph *glyph = getGlyph(_highlightIndex);
+
+		if (glyph) {
+			if (glyph->checkHighlight(pt))
+				return true;
+
+			if (!(_field20 & 2)) {
+				changeHighlight(-1);
+				makePetDirty();
+			}
+		}
+	}
+
+	return false;
+}
+
+bool CPetGlyphs::mouseButtonUp(const Point &pt) {
+	if (_highlightIndex >= 0) {
+		CPetGlyph *glyph = getGlyph(_highlightIndex);
+		if (glyph) {
+			if (glyph->MouseButtonMsg(pt))
+				return true;
+		}
+	}
+
+	return false;
+}
+
+bool CPetGlyphs::mouseDragStart(CMouseDragStartMsg *msg) {
+	if (!(_field20 & 1) && _highlightIndex >= 0) {
+		CPetGlyph *glyph = getGlyph(_highlightIndex);
+		int index = getHighlightedIndex(_highlightIndex);
+		Rect glyphRect = getRect(index);
+
+		if (glyphRect.contains(msg->_mousePos))
+			return glyph->proc29(glyphRect);
+		else
+			return glyph->MouseDragStartMsg(msg);
+	}
+
+	return false;
+}
+
+bool CPetGlyphs::mouseDragMove(CMouseDragMoveMsg *msg) {
+	if (_field94) {
+		error("TODO");
+	} else {
+		return false;
+	}
+}
+
+bool CPetGlyphs::mouseDragEnd(CMouseDragEndMsg *msg) {
+	if (_field94) {
+		error("TODO");
+	} else {
+		return false;
+	}
+}
+
+bool CPetGlyphs::keyCharMsg(int key) {
+	if (_highlightIndex >= 0) {
+		CPetGlyph *glyph = getGlyph(_highlightIndex);
+
+		if (glyph && glyph->KeyCharMsg(key))
+			return true;
+	}
+
+	return false;
+}
+
+bool CPetGlyphs::virtualKeyCharMsg(int key) {
+	bool handled = false;
+	warning("TODO: CPetGlyphs::virtualKeyCharMsg");
+
+	if (!handled && _highlightIndex >= 0) {
+		CPetGlyph *glyph = getGlyph(_highlightIndex);
+		if (glyph && glyph->VirtualKeyCharMsg(key))
+			handled = true;
+	}
+
+	return handled;
+}
+
+bool CPetGlyphs::enterHighlighted() {
+	if (_highlightIndex >= 0)
+		return getGlyph(_highlightIndex)->enterHighlighted();
+	else
+		return false;
+}
+
+bool CPetGlyphs::leaveHighlighted() {
+	if (_highlightIndex >= 0)
+		return getGlyph(_highlightIndex)->leaveHighlighted();
+	else
+		return false;
 }
 
 } // End of namespace Titanic
