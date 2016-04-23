@@ -109,9 +109,10 @@ void MacWindowManager::draw() {
         if (w->draw(_screen, _fullRefresh)) {
             w->setDirty(false);
 
-            g_system->copyRectToScreen(_screen->getBasePtr(w->getDimensions().left - 2, w->getDimensions().top - 2),
-                    _screen->pitch, w->getDimensions().left - 2, w->getDimensions().top - 2,
-                    w->getDimensions().width(), w->getDimensions().height());
+			Common::Rect clip(w->getDimensions().left - 2, w->getDimensions().top - 2, w->getDimensions().right - 2, w->getDimensions().bottom - 2);
+			clip.clip(_screen->getBounds());
+
+            g_system->copyRectToScreen(_screen->getBasePtr(clip.left, clip.top), _screen->pitch, clip.left, clip.top, clip.width(), clip.height());
         }
     }
 
