@@ -29,21 +29,55 @@
 
 namespace Titanic {
 
+enum SliderOrientation { ORIENTATION_HORIZONTAL = 1, ORIENTATION_VERTICAL = 2 };
+
 class CPetControl;
 
 class CPetSlider {
 private:
-	int _field4;
-	int _field8;
+	int _flags;
 	Rect _bounds;
-	int _field1C;
-	int _field20;
-	int _field24;
-	int _field28;
-	int _field2C;
-	int _field30;
-	int _field34;
-	Rect _bounds2;
+	Rect _slidingRect;
+	int _thumbWidth;
+	int _thumbHeight;
+	int _sliderOffset;
+	bool _thumbFocused;
+	Rect _dirtyArea;
+private:
+	/**
+	 * Center the center position of the slider's thumb
+	 */
+	Point getThumbCentroidPos() const;
+
+	/**
+	 * Returns true if the passed point is within the thumb
+	 */
+	bool thumbContains(const Point &pt) const;
+
+	/**
+	 * Gets the area the slider's thumbnail covers
+	 */
+	Rect getThumbRect() const;
+
+	/**
+	 * Calculates the slider offset at the specificed position
+	 */
+	int calcSliderOffset(const Point &pt) const;
+protected:
+	/**
+	 * Get the position to draw the background at
+	 */
+	Point getBackgroundDrawPos();
+
+	/**
+	 * Get the position to draw the slider thumbnail at
+	 */
+	Point getThumbDrawPos();
+
+	/**
+	 * Returns true if the passed point falls within the slider's bounds
+	 */
+	bool containsPt(const Point &pt) const { return _bounds.contains(pt); }
 public:
 	CPetSlider();
 
@@ -60,42 +94,61 @@ public:
 	/**
 	 * Setup the background
 	 */
-	virtual void setupBackground(const CString &name, CTreeItem *treeItem) {}
+	virtual void setupBackground2(const CString &name, CPetControl *petControl) {}
 
 	/**
 	 * Setup the thumb
 	 */
-	virtual void setupThumb(const CString &name, CTreeItem *treeItem) {}
+	virtual void setupThumb2(const CString &name, CPetControl *petControl) {}
 
 	/**
 	 * Reset the slider
 	 */
 	virtual void reset(const CString &name) {}
 	
-	virtual void proc5() {}
-	virtual void proc6() {}
-	
 	/**
-	 * Reset the bounds of the slider
+	 * Draw the slider
 	 */
-	virtual void initBounds(Rect *rect);
-	
-	virtual void proc8();
-	virtual void proc9();
-	virtual void proc10();
-	virtual void proc11();
-	virtual void proc12();
-	virtual void proc13();
-	virtual void proc14();
-	virtual void proc15();
-	virtual void proc16();
-	virtual void proc17();
-	virtual void proc18();
+	virtual void draw(CScreenManager *screenManager) {}
 
 	/**
-	 * Returns true if the passed point falls within the slider's bounds
+	 * Reset the dirty area
 	 */
-	bool contains(const Point &pt) const { return _bounds.contains(pt); }
+	virtual Rect clearDirtyArea();
+	
+	/**
+	 * Checks whether the slider is highlighted
+	 */
+	virtual bool checkThumb(const Point &pt);
+
+	/**
+	 * Resets the thumb focused flag
+	 */
+	virtual bool resetThumbFocus();
+
+	virtual void proc10();
+	virtual void proc11();
+	virtual bool proc12(const Point &pt);
+	virtual void proc13();
+	virtual void proc14();
+	
+	
+	virtual bool contains(const Point &pt) const;
+
+	/**
+	 * Returns the slider offset in pixels
+	 */
+	virtual double getOffsetPixels() const;
+
+	/**
+	 * Sets the slider offset
+	 */
+	virtual void setSliderOffset(double offset);
+
+	/**
+	 * Set a new slider offset in pixels
+	 */
+	virtual void setOffsetPixels(int offset);
 };
 
 class CPetSoundSlider : public CPetSlider {
@@ -115,6 +168,21 @@ public:
 	 * Setup the thumb
 	 */
 	virtual void setupThumb(const CString &name, CPetControl *petControl);
+
+	/**
+	 * Setup the background
+	 */
+	virtual void setupBackground2(const CString &name, CPetControl *petControl);
+
+	/**
+	 * Setup the thumb
+	 */
+	virtual void setupThumb2(const CString &name, CPetControl *petControl);
+
+	/**
+	 * Draw the slider
+	 */
+	virtual void draw(CScreenManager *screenManager);
 };
 
 } // End of namespace Titanic
