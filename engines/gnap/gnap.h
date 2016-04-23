@@ -606,13 +606,6 @@ public:
 	// Shared by scenes 17 & 18
 	int _s18_garbageCanPos;
 
-	// Scene 30
-	int _s30_kidSequenceId;
-	int scene30_init();
-	void scene30_updateHotspots();
-	void scene30_run();
-	void scene30_updateAnimations();
-	
 	// Scene 31
 	int _s28_currClerkSequenceId, _s28_nextClerkSequenceId;
 	bool _s31_beerGuyDistracted;
