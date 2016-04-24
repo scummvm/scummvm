@@ -43,10 +43,10 @@ enum {
 };
 
 Scene29::Scene29(GnapEngine *vm) : Scene(vm) {
-	_s28_currMonkeySequenceId = -1;
-	_s28_nextMonkeySequenceId = -1;
-	_s28_currManSequenceId = -1;
-	_s28_nextManSequenceId = -1;
+	_s29_currMonkeySequenceId = -1;
+	_s29_nextMonkeySequenceId = -1;
+	_s29_currManSequenceId = -1;
+	_s29_nextManSequenceId = -1;
 }
 
 int Scene29::init() {
@@ -72,13 +72,13 @@ void Scene29::run() {
 	_vm->queueInsertDeviceIcon();
 
 	if (_vm->invHas(kItemHorn)) {
-		_s28_currMonkeySequenceId = 0xE8;
-		_s28_nextMonkeySequenceId = -1;
+		_s29_currMonkeySequenceId = 0xE8;
+		_s29_nextMonkeySequenceId = -1;
 		_vm->_gameSys->setAnimation(0xE8, 159, 4);
-		_vm->_gameSys->insertSequence(_s28_currMonkeySequenceId, 159, 0, 0, kSeqNone, 0, 0, 0);
+		_vm->_gameSys->insertSequence(_s29_currMonkeySequenceId, 159, 0, 0, kSeqNone, 0, 0, 0);
 		_vm->_gameSys->insertSequence(0xED, 39, 0, 0, kSeqNone, 0, 0, 0);
-		_s28_currManSequenceId = 0xED;
-		_s28_nextManSequenceId = -1;
+		_s29_currManSequenceId = 0xED;
+		_s29_nextManSequenceId = -1;
 		_vm->_gameSys->setAnimation(0xED, 39, 3);
 		_vm->_timers[4] = _vm->getRandom(20) + 60;
 	} else {
@@ -249,19 +249,19 @@ void Scene29::run() {
 					if (_vm->_gnapActionStatus < 0) {
 						switch (_vm->getRandom(5)) {
 						case 0:
-							_s28_nextManSequenceId = 0xED;
+							_s29_nextManSequenceId = 0xED;
 							break;
 						case 1:
-							_s28_nextManSequenceId = 0xEE;
+							_s29_nextManSequenceId = 0xEE;
 							break;
 						case 2:
-							_s28_nextManSequenceId = 0xEF;
+							_s29_nextManSequenceId = 0xEF;
 							break;
 						case 3:
-							_s28_nextManSequenceId = 0xF0;
+							_s29_nextManSequenceId = 0xF0;
 							break;
 						case 4:
-							_s28_nextManSequenceId = 0xF1;
+							_s29_nextManSequenceId = 0xF1;
 							break;
 						}
 					}
@@ -287,7 +287,7 @@ void Scene29::updateAnimations() {
 		_vm->_gameSys->setAnimation(0, 0, 0);
 		switch (_vm->_gnapActionStatus) {
 		case kASUseBananaWithMonkey:
-			_s28_nextMonkeySequenceId = 0xE5;
+			_s29_nextMonkeySequenceId = 0xE5;
 			break;
 		case kASLeaveScene:
 			_vm->_sceneDone = true;
@@ -295,61 +295,61 @@ void Scene29::updateAnimations() {
 		}
 	}
 
-	if (_vm->_gameSys->getAnimationStatus(3) == 2 && _s28_nextManSequenceId != -1) {
-		_vm->_gameSys->insertSequence(_s28_nextManSequenceId, 39, _s28_currManSequenceId, 39, kSeqSyncWait, 0, 0, 0);
-		_vm->_gameSys->setAnimation(_s28_nextManSequenceId, 39, 3);
-		_s28_currManSequenceId = _s28_nextManSequenceId;
-		_s28_nextManSequenceId = -1;
+	if (_vm->_gameSys->getAnimationStatus(3) == 2 && _s29_nextManSequenceId != -1) {
+		_vm->_gameSys->insertSequence(_s29_nextManSequenceId, 39, _s29_currManSequenceId, 39, kSeqSyncWait, 0, 0, 0);
+		_vm->_gameSys->setAnimation(_s29_nextManSequenceId, 39, 3);
+		_s29_currManSequenceId = _s29_nextManSequenceId;
+		_s29_nextManSequenceId = -1;
 	}
 
 	if (_vm->_gameSys->getAnimationStatus(4) == 2) {
-		if (_s28_nextMonkeySequenceId == 0xE5) {
+		if (_s29_nextMonkeySequenceId == 0xE5) {
 			_vm->_gameSys->insertSequence(0xF2, _vm->_gnapId, makeRid(_vm->_gnapSequenceDatNum, _vm->_gnapSequenceId), _vm->_gnapId, kSeqSyncWait, 0, 0, 0);
 			_vm->_gnapSequenceDatNum = 0;
 			_vm->_gnapSequenceId = 0xF2;
 			_vm->_gameSys->setAnimation(0xE6, 159, 0);
 			_vm->_gameSys->setAnimation(0, 159, 4);
-			_vm->_gameSys->insertSequence(_s28_nextMonkeySequenceId, 159, _s28_currMonkeySequenceId, 159, kSeqSyncWait, 0, 0, 0);
-			_vm->_gameSys->insertSequence(0xE6, 159, _s28_nextMonkeySequenceId, 159, kSeqSyncWait, 0, 0, 0);
+			_vm->_gameSys->insertSequence(_s29_nextMonkeySequenceId, 159, _s29_currMonkeySequenceId, 159, kSeqSyncWait, 0, 0, 0);
+			_vm->_gameSys->insertSequence(0xE6, 159, _s29_nextMonkeySequenceId, 159, kSeqSyncWait, 0, 0, 0);
 			_vm->_gnapActionStatus = kASLeaveScene;
-			_s28_currMonkeySequenceId = 0xE6;
-			_s28_nextMonkeySequenceId = -1;
+			_s29_currMonkeySequenceId = 0xE6;
+			_s29_nextMonkeySequenceId = -1;
 			_vm->_timers[5] = 30;
 			while (_vm->_timers[5])
 				_vm->gameUpdateTick();
 			_vm->platypusWalkTo(0, 8, 1, 0x107CF, 1);
 			while (_vm->_gameSys->getAnimationStatus(1) != 2)
 				_vm->gameUpdateTick();
-		} else if (_s28_nextMonkeySequenceId == -1) {
+		} else if (_s29_nextMonkeySequenceId == -1) {
 			switch (_vm->getRandom(6)) {
 			case 0:
-				_s28_nextMonkeySequenceId = 0xE8;
+				_s29_nextMonkeySequenceId = 0xE8;
 				break;
 			case 1:
-				_s28_nextMonkeySequenceId = 0xE9;
+				_s29_nextMonkeySequenceId = 0xE9;
 				break;
 			case 2:
-				_s28_nextMonkeySequenceId = 0xEA;
+				_s29_nextMonkeySequenceId = 0xEA;
 				break;
 			case 3:
-				_s28_nextMonkeySequenceId = 0xEB;
+				_s29_nextMonkeySequenceId = 0xEB;
 				break;
 			case 4:
-				_s28_nextMonkeySequenceId = 0xEC;
+				_s29_nextMonkeySequenceId = 0xEC;
 				break;
 			case 5:
-				_s28_nextMonkeySequenceId = 0xE7;
+				_s29_nextMonkeySequenceId = 0xE7;
 				break;
 			}
-			_vm->_gameSys->insertSequence(_s28_nextMonkeySequenceId, 159, _s28_currMonkeySequenceId, 159, kSeqSyncWait, 0, 0, 0);
-			_vm->_gameSys->setAnimation(_s28_nextMonkeySequenceId, 159, 4);
-			_s28_currMonkeySequenceId = _s28_nextMonkeySequenceId;
-			_s28_nextMonkeySequenceId = -1;
+			_vm->_gameSys->insertSequence(_s29_nextMonkeySequenceId, 159, _s29_currMonkeySequenceId, 159, kSeqSyncWait, 0, 0, 0);
+			_vm->_gameSys->setAnimation(_s29_nextMonkeySequenceId, 159, 4);
+			_s29_currMonkeySequenceId = _s29_nextMonkeySequenceId;
+			_s29_nextMonkeySequenceId = -1;
 		} else {
-			_vm->_gameSys->insertSequence(_s28_nextMonkeySequenceId, 159, _s28_currMonkeySequenceId, 159, kSeqSyncWait, 0, 0, 0);
-			_vm->_gameSys->setAnimation(_s28_nextMonkeySequenceId, 159, 4);
-			_s28_currMonkeySequenceId = _s28_nextMonkeySequenceId;
-			_s28_nextMonkeySequenceId = -1;
+			_vm->_gameSys->insertSequence(_s29_nextMonkeySequenceId, 159, _s29_currMonkeySequenceId, 159, kSeqSyncWait, 0, 0, 0);
+			_vm->_gameSys->setAnimation(_s29_nextMonkeySequenceId, 159, 4);
+			_s29_currMonkeySequenceId = _s29_nextMonkeySequenceId;
+			_s29_nextMonkeySequenceId = -1;
 		}
 	}
 	

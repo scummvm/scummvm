@@ -42,10 +42,10 @@ public:
 	virtual void updateAnimationsCb() {};
 
 private:
-	int _s28_currMonkeySequenceId;
-	int _s28_nextMonkeySequenceId;
-	int _s28_currManSequenceId;
-	int _s28_nextManSequenceId;
+	int _s29_currMonkeySequenceId;
+	int _s29_nextMonkeySequenceId;
+	int _s29_currManSequenceId;
+	int _s29_nextManSequenceId;
 };
 
 } // End of namespace Gnap
