@@ -90,7 +90,11 @@ Common::String ResourceReference::describe() const {
 	Common::String desc;
 
 	for (uint i = 0; i < _path.size(); i++) {
-		desc += _path[i].describe() + " ";
+		desc += _path[i].describe();
+
+		if (i != _path.size() - 1) {
+			desc += " ";
+		}
 	}
 
 	return desc;
