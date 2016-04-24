@@ -235,7 +235,7 @@ void Scene07::run() {
 				_vm->_timers[0] = 100;
 				_vm->_timers[1] = 35;
 			}
-			_vm->sceneXX_playRandomSound(4);
+			playRandomSound(4);
 		}
 
 		_vm->checkGameKeys();

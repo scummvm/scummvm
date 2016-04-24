@@ -821,6 +821,45 @@ void GnapEngine::runSceneLogic() {
 	}
 }
 
+void Scene::playRandomSound(int timerIndex) {
+	if (!_vm->_timers[timerIndex]) {
+		_vm->_timers[timerIndex] = _vm->getRandom(40) + 50;
+		switch (_vm->getRandom(4)) {
+		case 0:
+			_vm->playSound(0x1091B, false);
+			break;
+		case 1:
+			_vm->playSound(0x10921, false);
+			break;
+		case 2:
+			_vm->playSound(0x10927, false);
+			break;
+		case 3:
+			_vm->playSound(0x1091D, false);
+			break;
+		}
+	}
+}
+
+bool Scene::clearKeyStatus() {
+	if (_vm->isKeyStatus1(Common::KEYCODE_ESCAPE)) {
+		_vm->clearKeyStatus1(Common::KEYCODE_ESCAPE);
+		_vm->clearKeyStatus1(Common::KEYCODE_UP);
+		_vm->clearKeyStatus1(Common::KEYCODE_RIGHT);
+		_vm->clearKeyStatus1(Common::KEYCODE_LEFT);
+		_vm->clearKeyStatus1(Common::KEYCODE_p);
+		return true;
+	}
+
+	if (_vm->isKeyStatus1(Common::KEYCODE_p)) {
+		_vm->clearKeyStatus1(Common::KEYCODE_p);
+		_vm->pauseGame();
+		_vm->updatePause();
+	}
+
+	return false;
+}
+
 void CutScene::run() {
 	int itemIndex = 0;
 	int soundId = -1;

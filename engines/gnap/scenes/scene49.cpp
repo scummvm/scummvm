@@ -451,7 +451,7 @@ void Scene49::run() {
 
 		updateAnimations();
 
-		if (_vm->sceneXX_sub_4466B1()) {
+		if (clearKeyStatus()) {
 			_vm->_sceneDone = true;
 			_vm->_newSceneNum = 2;
 			_vm->_newCursorValue = 1;

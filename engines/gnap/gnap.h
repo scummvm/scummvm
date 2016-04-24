@@ -576,9 +576,6 @@ public:
 	int _toyUfoY;
 	
 	void initGlobalSceneVars();
-
-    bool sceneXX_sub_4466B1();
-	void sceneXX_playRandomSound(int timerIndex);
 	void playSequences(int fullScreenSpriteId, int sequenceId1, int sequenceId2, int sequenceId3);
 
 	// Shared by scenes 17 & 18
@@ -589,10 +586,6 @@ public:
 	int toyUfoGetSequenceId();
 	bool toyUfoCheckTimer();
 	void toyUfoFlyTo(int destX, int destY, int minX, int maxX, int minY, int maxY, int animationIndex);
-
-	// Scene 54
-	void scene54_initCutscene1();
-	void scene54_initCutscene2();
 };
 
 } // End of namespace Gnap

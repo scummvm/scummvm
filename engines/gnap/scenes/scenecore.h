@@ -34,6 +34,9 @@ public:
 	Scene(GnapEngine *vm) : _vm(vm) {};
 	~Scene() {};
 
+	void playRandomSound(int timerIndex);
+	bool clearKeyStatus();
+
 	virtual int init() = 0;
 	virtual void updateHotspots() = 0;
 	virtual void run() = 0;

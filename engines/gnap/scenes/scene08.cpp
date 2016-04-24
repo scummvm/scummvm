@@ -385,7 +385,7 @@ void Scene08::run() {
 					}
 				}
 			}
-			_vm->sceneXX_playRandomSound(5);
+			playRandomSound(5);
 		}
 	
 		_vm->checkGameKeys();

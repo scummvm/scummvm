@@ -2028,45 +2028,6 @@ void GnapEngine::initGlobalSceneVars() {
 	_toyUfoY = 50;
 }
 
-bool GnapEngine::sceneXX_sub_4466B1() {
-	if (isKeyStatus1(Common::KEYCODE_ESCAPE)) {
-		clearKeyStatus1(Common::KEYCODE_ESCAPE);
-		clearKeyStatus1(Common::KEYCODE_UP);
-		clearKeyStatus1(Common::KEYCODE_RIGHT);
-		clearKeyStatus1(Common::KEYCODE_LEFT);
-		clearKeyStatus1(Common::KEYCODE_p);
-		return true;
-	}
-
-	if (isKeyStatus1(Common::KEYCODE_p)) {
-		clearKeyStatus1(Common::KEYCODE_p);
-		pauseGame();
-		updatePause();
-	}
-
-	return false;
-}
-
-void GnapEngine::sceneXX_playRandomSound(int timerIndex) {
-	if (!_timers[timerIndex]) {
-		_timers[timerIndex] = getRandom(40) + 50;
-		switch (getRandom(4)) {
-		case 0:
-			playSound(0x1091B, false);
-			break;
-		case 1:
-			playSound(0x10921, false);
-			break;
-		case 2:
-			playSound(0x10927, false);
-			break;
-		case 3:
-			playSound(0x1091D, false);
-			break;
-		}
-	}
-}
-
 void GnapEngine::playSequences(int fullScreenSpriteId, int sequenceId1, int sequenceId2, int sequenceId3) {
 	setGrabCursorSprite(-1);
 	_gameSys->setAnimation(sequenceId2, _gnapId, 0);

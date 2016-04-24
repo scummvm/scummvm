@@ -877,7 +877,7 @@ void Scene52::run() {
 		
 		update();
 		
-		if (_vm->sceneXX_sub_4466B1()) {
+		if (clearKeyStatus()) {
 			_s52_alienWave = false;
 			_vm->_gameSys->waitForUpdate();
 			initAnims();

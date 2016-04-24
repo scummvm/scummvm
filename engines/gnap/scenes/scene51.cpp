@@ -724,7 +724,7 @@ void Scene51::run() {
 	bool startWalk = true;
 
 	while (!_vm->_sceneDone) {
-		if (_vm->sceneXX_sub_4466B1())
+		if (clearKeyStatus())
 			_vm->_sceneDone = true;
 
 		_vm->gameUpdateTick();

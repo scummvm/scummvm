@@ -187,7 +187,7 @@ void Scene09::run() {
 				else
 					_vm->_gameSys->insertSequence(0x4A, 1, 0, 0, kSeqNone, 0, 0, 0);
 			}
-			_vm->sceneXX_playRandomSound(5);
+			playRandomSound(5);
 		}
 	
 		_vm->checkGameKeys();
