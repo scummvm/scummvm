@@ -30,6 +30,8 @@
 
 namespace Titanic {
 
+class CPetRealLife;
+
 class CPetSound : public CPetGlyph {
 private:
 	CPetGfxElement _element;
@@ -41,8 +43,8 @@ private:
 	CPetText _textMusicVolume;
 	CPetText _textParrotVolume;
 	CPetText _textSpeechVolume;
-	int _field198;
-	int _field19C;
+	CPetSlider *_draggingSlider;
+	int _draggingSliderNum;
 private:
 	/**
 	 * Called when a slider has changed
@@ -71,6 +73,36 @@ public:
 	 * information it displays
 	 */
 	virtual bool checkHighlight(const Point &pt);
+
+	/**
+	 * Called when mouse drag starts
+	 */
+	virtual bool MouseDragStartMsg(CMouseDragStartMsg *msg);
+
+	/**
+	 * Called during mouse drags
+	 */
+	virtual bool MouseDragMoveMsg(CMouseDragMoveMsg *msg);
+
+	/**
+	 * Called when mouse drag ends
+	 */
+	virtual bool MouseDragEndMsg(CMouseDragEndMsg *msg);
+
+	/**
+	 * Handles mouse button up messages
+	 */
+	virtual bool MouseButtonUpMsg(const Point &pt);
+
+	/**
+	 * Returns the tooltip text for when the glyph is selected
+	 */
+	virtual void getTooltip(CPetText *text);
+
+	/**
+	 * Get the parent RealLife area
+	 */
+	CPetGlyphs *getOwner() { return _owner; }
 };
 
 } // End of namespace Titanic

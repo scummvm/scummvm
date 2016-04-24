@@ -68,7 +68,7 @@ void CPetGlyph::setName(const CString &name, CPetControl *petControl) {
 
 CPetGlyphs::CPetGlyphs() : _firstVisibleIndex(0),  _numVisibleGlyphs(TOTAL_GLYPHS),
 		_highlightIndex(-1), _field1C(-1), _flags(0),
-		_field94(nullptr), _owner(nullptr) {
+		_dragGlyph(nullptr), _owner(nullptr) {
 }
 
 void CPetGlyphs::setNumVisible(int total) {
@@ -366,16 +366,16 @@ bool CPetGlyphs::MouseDragStartMsg(CMouseDragStartMsg *msg) {
 }
 
 bool CPetGlyphs::MouseDragMoveMsg(CMouseDragMoveMsg *msg) {
-	if (_field94) {
-		error("TODO");
+	if (_dragGlyph) {
+		return _dragGlyph->MouseDragMoveMsg(msg);
 	} else {
 		return false;
 	}
 }
 
 bool CPetGlyphs::MouseDragEndMsg(CMouseDragEndMsg *msg) {
-	if (_field94) {
-		error("TODO");
+	if (_dragGlyph) {
+		return _dragGlyph->MouseDragEndMsg(msg);
 	} else {
 		return false;
 	}
@@ -417,6 +417,17 @@ bool CPetGlyphs::leaveHighlighted() {
 		return getGlyph(_highlightIndex)->leaveHighlighted();
 	else
 		return false;
+}
+
+void CPetGlyphs::startDragging(CPetGlyph *glyph, CMouseDragStartMsg *msg) {
+	if (glyph) {
+		_dragGlyph = glyph;
+		msg->_dragItem = getPetControl();
+	}
+}
+
+void CPetGlyphs::endDragging() {
+	_dragGlyph = nullptr;
 }
 
 } // End of namespace Titanic

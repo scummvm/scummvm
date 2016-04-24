@@ -22,11 +22,12 @@
 
 #include "titanic/pet_control/pet_sound.h"
 #include "titanic/pet_control/pet_control.h"
+#include "titanic/pet_control/pet_real_life.h"
 #include "titanic/game_manager.h"
 
 namespace Titanic {
 
-CPetSound::CPetSound() : CPetGlyph(), _field198(0), _field19C(0) {
+CPetSound::CPetSound() : CPetGlyph(), _draggingSlider(nullptr), _draggingSliderNum(0) {
 }
 
 bool CPetSound::setup(CPetControl *petControl, CPetGlyphs *owner) {
@@ -196,6 +197,85 @@ void CPetSound::sliderChanged(double offset, int sliderNum) {
 	default:
 		break;
 	}
+}
+
+bool CPetSound::MouseDragStartMsg(CMouseDragStartMsg *msg) {
+	if (_musicVolume.resetThumbFocus()) {
+		_draggingSlider = &_musicVolume;
+		getOwner()->startDragging(this, msg);
+		_draggingSliderNum = 0;
+		return true;
+	} else if (_masterVolume.resetThumbFocus()) {
+		_draggingSlider = &_masterVolume;
+		getOwner()->startDragging(this, msg);
+		_draggingSliderNum = 1;
+		return true;
+	} else if (_parrotVolume.resetThumbFocus()) {
+		_draggingSlider = &_parrotVolume;
+		getOwner()->startDragging(this, msg);
+		_draggingSliderNum = 2;
+		return true;
+	} else if (_speechVolume.resetThumbFocus()) {
+		_draggingSlider = &_speechVolume;
+		getOwner()->startDragging(this, msg);
+		_draggingSliderNum = 3;
+		return true;
+	}
+
+	_draggingSlider = nullptr;
+	return false;
+}
+
+bool CPetSound::MouseDragMoveMsg(CMouseDragMoveMsg *msg) {
+	if (!_draggingSlider)
+		return false;
+
+	if (_draggingSlider->MouseDragMoveMsg(msg->_mousePos)) {
+		double offset = _draggingSlider->getOffsetPixels();
+		sliderChanged(offset, _draggingSliderNum);
+		getPetControl()->makeDirty();
+		return true;
+	}
+
+	return false;
+}
+
+bool CPetSound::MouseDragEndMsg(CMouseDragEndMsg *msg) {
+	if (!_draggingSlider)
+		return false;
+
+	_draggingSlider->MouseDragEndMsg(msg->_mousePos);
+	getOwner()->endDragging();
+
+	return false;
+}
+
+bool CPetSound::MouseButtonUpMsg(const Point &pt) {
+	int sliderNum = 0;
+	CPetSlider *slider = nullptr;
+
+	if (_musicVolume.MouseButtonUpMsg(pt)) {
+		sliderNum = 0;
+		slider = &_musicVolume;
+	} else if (_masterVolume.MouseButtonUpMsg(pt)) {
+		sliderNum = 1;
+		slider = &_masterVolume;
+	} else if (_parrotVolume.MouseButtonUpMsg(pt)) {
+		sliderNum = 2;
+		slider = &_parrotVolume;
+	} else if (_speechVolume.MouseButtonUpMsg(pt)) {
+		sliderNum = 3;
+		slider = &_speechVolume;
+	} else {
+		return false;
+	}
+
+	double offset = slider->getOffsetPixels();
+	sliderChanged(offset, sliderNum);
+}
+
+void CPetSound::getTooltip(CPetText *text) {
+	text->setText("Change the volume settings.");
 }
 
 } // End of namespace Titanic

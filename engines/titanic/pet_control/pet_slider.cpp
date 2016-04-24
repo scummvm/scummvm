@@ -53,12 +53,13 @@ bool CPetSlider::resetThumbFocus() {
 	return result;
 }
 
-void CPetSlider::proc10(const Point &pt) {
+bool CPetSlider::MouseDragMoveMsg(const Point &pt) {
 	int newOffset = calcSliderOffset(pt);
 	setOffsetPixels(newOffset);
+	return true;
 }
 
-bool CPetSlider::proc12(const Point &pt) {
+bool CPetSlider::MouseButtonUpMsg(const Point &pt) {
 	if (thumbContains(pt))
 		return true;
 	if (!containsPt(pt))

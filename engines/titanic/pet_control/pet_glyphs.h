@@ -25,6 +25,7 @@
 
 #include "common/keyboard.h"
 #include "titanic/core/list.h"
+#include "titanic/messages/mouse_messages.h"
 #include "titanic/pet_control/pet_gfx_element.h"
 #include "titanic/support/rect.h"
 
@@ -125,9 +126,20 @@ public:
 	 */
 	virtual bool checkHighlight(const Point &pt) { return false; }
 
-	virtual bool MouseDragStartMsg(const CMouseDragStartMsg *msg) { return false; }
-	virtual int proc18() { return 0; }
-	virtual int proc19() { return 0; }
+	/**
+	 * Called when mouse drag starts
+	 */
+	virtual bool MouseDragStartMsg(CMouseDragStartMsg *msg) { return false; }
+
+	/**
+	 * Called during mouse drags
+	 */
+	virtual bool MouseDragMoveMsg(CMouseDragMoveMsg *msg) { return false; }
+
+	/**
+	 * Called when mouse drag ends
+	 */
+	virtual bool MouseDragEndMsg(CMouseDragEndMsg *msg) { return false; }
 
 	/**
 	 * Handles mouse button up messages
@@ -245,7 +257,7 @@ protected:
 	int _highlightIndex;
 	int _field1C;
 	int _flags;
-	void *_field94;
+	CPetGlyph *_dragGlyph;
 	CPetSection *_owner;
 	CPetGfxElement _selection;
 	CPetGfxElement _scrollLeft;
@@ -357,6 +369,16 @@ public:
 	 * glyph, if any
 	 */
 	bool leaveHighlighted();
+
+	/**
+	 * Called when a dragging operation starts
+	 */
+	void startDragging(CPetGlyph *glyph, CMouseDragStartMsg *msg);
+
+	/**
+	 * Called when a dragging operation ends
+	 */
+	void endDragging();
 };
 
 } // End of namespace Titanic

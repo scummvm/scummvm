@@ -126,9 +126,21 @@ public:
 	 */
 	virtual bool resetThumbFocus();
 
-	virtual void proc10(const Point &pt);
-	virtual bool proc11() { return true; }
-	virtual bool proc12(const Point &pt);
+	/**
+	 * Handles dragging the slider
+	 */
+	virtual bool MouseDragMoveMsg(const Point &pt);
+	
+	/**
+	 * Called when a slider drag ends
+	 */
+	virtual bool MouseDragEndMsg(const Point &pt) { return true; }
+
+	/**
+	 * Handles mouse button up messaes
+	 */
+	virtual bool MouseButtonUpMsg(const Point &pt);
+
 	virtual bool proc13() { return false; }
 	virtual bool proc14() { return false; }
 	
