@@ -454,35 +454,10 @@ void GnapEngine::runSceneLogic() {
 			_newSceneNum = 8;
 		break;
 	case 1:
-		_scene->run();
-		delete _scene;
-		if (_newSceneNum == 55)
-			_newSceneNum = 4;
-		break;
 	case 2:
-		_scene->run();
-		delete _scene;
-		if (_newSceneNum == 55)
-			_newSceneNum = 4;
-		break;
 	case 3:
-		_scene->run();
-		delete _scene;
-		if (_newSceneNum == 55)
-			_newSceneNum = 4;
-		break;
 	case 4:
-		_scene->run();
-		delete _scene;
-		if (_newSceneNum == 55)
-			_newSceneNum = 4;
-		break;
 	case 5:
-		_scene->run();
-		delete _scene;
-		if (_newSceneNum == 55)
-			_newSceneNum = 4;
-		break;
 	case 6:
 		_scene->run();
 		delete _scene;
@@ -508,40 +483,25 @@ void GnapEngine::runSceneLogic() {
 			_newSceneNum = 10;
 		break;
 	case 10:
-		_scene->run();
-		delete _scene;
-		if (_newSceneNum == 55)
-			_newSceneNum = 11;
-		break;
-	case 11:
-		_scene->run();
-		delete _scene;
-		if (_newSceneNum == 55)
-			_newSceneNum = 12;
-		break;
 	case 12:
-		_scene->run();
-		delete _scene;
-		if (_newSceneNum == 55)
-			_newSceneNum = 11;
-		break;
 	case 13:
 		_scene->run();
 		delete _scene;
 		if (_newSceneNum == 55)
 			_newSceneNum = 11;
 		break;
-	case 14:
-		_scene->run();
-		delete _scene;
-		if (_newSceneNum == 55)
-			_newSceneNum = 13;
-		break;
+	case 11:
 	case 15:
 		_scene->run();
 		delete _scene;
 		if (_newSceneNum == 55)
 			_newSceneNum = 12;
+		break;
+	case 14:
+		_scene->run();
+		delete _scene;
+		if (_newSceneNum == 55)
+			_newSceneNum = 13;
 		break;
 	case 16:
 		_scene = new Scene16(this);
@@ -552,12 +512,18 @@ void GnapEngine::runSceneLogic() {
 		delete _scene;
 		break;
 	case 17:
-		_scene->run();
-		delete _scene;
-		if (_newSceneNum == 55)
-			_newSceneNum = 20;
-		break;
 	case 18:
+	case 21:
+	case 22:
+	case 23:
+	case 24:
+	case 25:
+	case 26:
+	case 27:
+	case 28:
+	case 29:
+	case 30:
+	case 31:
 		_scene->run();
 		delete _scene;
 		if (_newSceneNum == 55)
@@ -575,156 +541,20 @@ void GnapEngine::runSceneLogic() {
 		if (_newSceneNum == 55)
 			_newSceneNum = 22;
 		break;
-	case 21:
-		_scene->run();
-		delete _scene;
-		if (_newSceneNum == 55)
-			_newSceneNum = 20;
-		break;
-	case 22:
-		_scene->run();
-		delete _scene;
-		if (_newSceneNum == 55)
-			_newSceneNum = 20;
-		break;
-	case 23:
-		_scene->run();
-		delete _scene;
-		if (_newSceneNum == 55)
-			_newSceneNum = 20;
-		break;
-	case 24:
-		_scene->run();
-		delete _scene;
-		if (_newSceneNum == 55)
-			_newSceneNum = 20;
-		break;
-	case 25:
-		_scene->run();
-		delete _scene;
-		if (_newSceneNum == 55)
-			_newSceneNum = 20;
-		break;
-	case 26:
-		_scene->run();
-		delete _scene;
-		if (_newSceneNum == 55)
-			_newSceneNum = 20;
-		break;
-	case 27:
-		_scene->run();
-		delete _scene;
-		if (_newSceneNum == 55)
-			_newSceneNum = 20;
-		break;
-	case 28:
-		_scene->run();
-		delete _scene;
-		if (_newSceneNum == 55)
-			_newSceneNum = 20;
-		break;
-	case 29:
-		_scene->run();
-		delete _scene;
-		if (_newSceneNum == 55)
-			_newSceneNum = 20;
-		break;
-	case 30:
-		_scene->run();
-		delete _scene;
-		if (_newSceneNum == 55)
-			_newSceneNum = 20;
-		break;
-	case 31:
-		_scene->run();
-		delete _scene;
-		if (_newSceneNum == 55)
-			_newSceneNum = 20;
-		break;
 	case 32:
-		_scene->run();
-		delete _scene;
-		if (_newSceneNum == 55)
-			_newSceneNum = 37;
-		break;
 	case 33:
-		_scene->run();
-		delete _scene;
-		if (_newSceneNum == 55)
-			_newSceneNum = 37;
-		break;
 	case 34:
-		_scene->run();
-		delete _scene;
-		if (_newSceneNum == 55)
-			_newSceneNum = 37;
-		break;
 	case 35:
-		_scene->run();
-		delete _scene;
-		if (_newSceneNum == 55)
-			_newSceneNum = 37;
-		break;
 	case 36:
-		_scene->run();
-		delete _scene;
-		if (_newSceneNum == 55)
-			_newSceneNum = 37;
-		break;
 	case 37:
-		_scene->run();
-		delete _scene;
-		if (_newSceneNum == 55)
-			_newSceneNum = 37;
-		break;
 	case 38:
-		_scene->run();
-		delete _scene;
-		if (_newSceneNum == 55)
-			_newSceneNum = 37;
-		break;
 	case 39:
-		_scene->run();
-		delete _scene;
-		if (_newSceneNum == 55)
-			_newSceneNum = 37;
-		break;
 	case 40:
-		_scene->run();
-		delete _scene;
-		if (_newSceneNum == 55)
-			_newSceneNum = 37;
-		break;
 	case 41:
-		_scene->run();
-		delete _scene;
-		if (_newSceneNum == 55)
-			_newSceneNum = 37;
-		break;
 	case 42:
-		_scene->run();
-		delete _scene;
-		if (_newSceneNum == 55)
-			_newSceneNum = 37;
-		break;
 	case 43:
-		_scene->run();
-		delete _scene;
-		if (_newSceneNum == 55)
-			_newSceneNum = 37;
-		break;
 	case 44:
-		_scene->run();
-		delete _scene;
-		if (_newSceneNum == 55)
-			_newSceneNum = 37;
-		break;
 	case 45:
-		_scene->run();
-		delete _scene;
-		if (_newSceneNum == 55)
-			_newSceneNum = 37;
-		break;
 	case 46:
 		_scene->run();
 		delete _scene;

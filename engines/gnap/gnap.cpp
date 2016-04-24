@@ -936,7 +936,6 @@ void GnapEngine::startSoundTimerB(int timerIndex) {
 }
 
 int GnapEngine::playSoundB() {
-
 	static const int kSoundIdsB[] = {
 		0x93D, 0x929, 0x92A, 0x92B, 0x92C, 0x92D,
 		0x92E, 0x92F, 0x930, 0x931, 0x932, 0x933,
@@ -1791,7 +1790,6 @@ void GnapEngine::gnapUseDeviceOnPlatypuss() {
 		kSeqSyncWait, 0, 75 * _gnapX - _gnapGridX, 48 * _gnapY - _gnapGridY);
 	_gnapSequenceId = newSequenceId;
 	_gnapSequenceDatNum = 1;
-
 }
 
 void GnapEngine::doCallback(int callback) {
