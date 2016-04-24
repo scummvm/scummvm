@@ -1175,27 +1175,6 @@ void Command::readData(Formats::XRCReadStream *stream) {
 	}
 }
 
-void Command::printData() {
-	for (uint i = 0; i < _arguments.size(); i++) {
-		switch (_arguments[i].type) {
-		case Argument::kTypeInteger1:
-		case Argument::kTypeInteger2:
-			debug("%d: %d", i, _arguments[i].intValue);
-			break;
-
-		case Argument::kTypeResourceReference: {
-			debug("%d: %s", i, _arguments[i].referenceValue.describe().c_str());
-		}
-			break;
-		case Argument::kTypeString:
-			debug("%d: %s", i, _arguments[i].stringValue.c_str());
-			break;
-		default:
-			error("Unknown argument type %d", _arguments[i].type);
-		}
-	}
-}
-
 Common::Array<Command::Argument> Command::getArguments() const {
 	return _arguments;
 }

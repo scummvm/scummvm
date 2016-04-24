@@ -190,7 +190,6 @@ public:
 
 protected:
 	void readData(Formats::XRCReadStream *stream) override;
-	void printData() override;
 
 	Command *resolveArgumentSiblingReference(const Argument &argument);
 
