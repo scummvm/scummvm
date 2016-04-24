@@ -92,7 +92,7 @@ const char *Type::getName() const {
 	return nullptr;
 }
 
-Type::ResourceType Type::get() {
+Type::ResourceType Type::get() const {
 	return _type;
 }
 
@@ -169,29 +169,34 @@ void Object::onPreDestroy() {
 }
 
 void Object::print(uint depth) {
-	// Display value for the resource type
-	Common::String type(_type.getName());
-	if (type.empty()) {
-		type = Common::String::format("%d", _type.get());
-	}
-
-	// Build the resource description
-	Common::String description;
-	for (uint i = 0; i < depth; i++) {
-		description += "-";
-	}
-	description += Common::String::format(" %s - %s - (sub=%d, index=%d)", type.c_str(), _name.c_str(), _subType, _index);
-
-	// Print the resource description
-	debug("%s ", description.c_str());
-
-	// Print the resource data
+	printDescription(depth);
 	printData();
 
 	// Recursively print the children resources
 	for (uint i = 0; i < _children.size(); i++) {
 		_children[i]->print(depth + 1);
 	}
+}
+
+void Object::printDescription(uint depth) const {
+	// Build the resource type string
+	Common::String type(_type.getName());
+	if (type.empty()) {
+		type = Common::String::format("%d", _type.get());
+	}
+
+	// Build the resource description
+	Common::String description = Common::String::format("%s - %s - (sub=%d, index=%d)", type.c_str(), _name.c_str(), _subType, _index);
+	printWithDepth(depth, description);
+}
+
+void Object::printWithDepth(uint depth, const Common::String &string) const {
+	Common::String prefix;
+	for (uint i = 0; i < depth; i++) {
+		prefix += "-";
+	}
+
+	debug("%s %s", prefix.c_str(), string.c_str());
 }
 
 Object *Object::findChildWithIndex(Type type, uint16 index, int subType) const {
