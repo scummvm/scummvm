@@ -612,14 +612,6 @@ public:
 	bool toyUfoCheckTimer();
 	void toyUfoFlyTo(int destX, int destY, int minX, int maxX, int minY, int maxY, int animationIndex);
 
-	// Scene 41
-	int _s41_currKidSequenceId, _s41_nextKidSequenceId;
-	int _s41_currToyVendorSequenceId, _s41_nextToyVendorSequenceId;
-	int scene41_init();
-	void scene41_updateHotspots();
-	void scene41_run();
-	void scene41_updateAnimations();
-
 	// Scene 42
 	int _s42_currBBQVendorSequenceId;
 	int _s42_nextBBQVendorSequenceId;
