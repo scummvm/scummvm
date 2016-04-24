@@ -41,7 +41,7 @@ private:
 	CGameObject *_chevLeftOffLit;
 	CGameObject *_chevRightOnLit;
 	CGameObject *_chevRightOffLit;
-	CPetGfxElement _element;
+	CPetGfxElement _plinth;
 	CPetText _text;
 	int _field1C0;
 	int _field1C4;
@@ -54,6 +54,20 @@ private:
 	 * Setup the control
 	 */
 	bool setupControl(CPetControl *petControl);
+
+	/**
+	 * Returns the glyth position
+	 */
+	Point getGlyphPos() const { return Point(509, 388); }
+
+	/**
+	 * Reset the highlight
+	 */
+	void resetHighlight();
+
+	int fn1();
+
+	void areaChanged(PetArea area);
 public:
 	CPetRooms();
 
@@ -82,7 +96,7 @@ public:
 	virtual bool MouseDoubleClickMsg(CMouseDoubleClickMsg *msg);
 	virtual bool VirtualKeyCharMsg(CVirtualKeyCharMsg *msg);
 
-	virtual int proc14();
+	virtual bool proc14(void *v1);
 
 	/**
 	 * Display a message

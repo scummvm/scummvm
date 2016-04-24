@@ -41,43 +41,71 @@ bool CPetRooms::setup(CPetControl *petControl) {
 }
 
 bool CPetRooms::reset() {
+	if (_petControl) {
+		_plinth.reset("PetChevPlinth", _petControl, MODE_UNSELECTED);
+		_glyphs.reset();
+
+		uint col = getColor(0);
+		_text.setColor(col);
+		_text.setColor(0, col);
+	}
+
 	return true;
 }
 
 void CPetRooms::draw(CScreenManager *screenManager) {
-
+	_petControl->drawSquares(screenManager, 6);
+	_plinth.draw(screenManager);
+	_glyphItem.drawAt(screenManager, getGlyphPos());
+	_text.draw(screenManager);
 }
 
 bool CPetRooms::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
+	if (_glyphs.MouseButtonDownMsg(msg->_mousePos))
+		return true;
+
+	if (!_glyphItem.contains(getGlyphPos(), msg->_mousePos))
+		return false;
+
+	_glyphItem.MouseButtonDownMsg(msg->_mousePos);
 	return true;
 }
 
 bool CPetRooms::MouseDragStartMsg(CMouseDragStartMsg *msg) {
+	if (_glyphs.MouseDragStartMsg(msg))
+		return true;
+
+	if (!_glyphItem.contains(getGlyphPos(), msg->_mousePos))
+		return false;
+
+	_glyphItem.proc29(msg->_mousePos);
 	return true;
 }
 
 bool CPetRooms::MouseButtonUpMsg(CMouseButtonUpMsg *msg) {
-	return true;
+	return false;
 }
 
 bool CPetRooms::MouseDoubleClickMsg(CMouseDoubleClickMsg *msg) {
-	return true;
+	return !_glyphs.MouseButtonDownMsg(msg->_mousePos);
 }
 
 bool CPetRooms::VirtualKeyCharMsg(CVirtualKeyCharMsg *msg) {
-	return true;
+	return _glyphs.VirtualKeyCharMsg(msg->_keyState.keycode);
 }
 
-int CPetRooms::proc14() {
-	return 0;
+bool CPetRooms::proc14(void *v1) {
+	warning("TODO: proc14");
+	return false;
 }
 
 void CPetRooms::displayMessage(const CString &msg) {
-
+	_glyphs.resetHighlight();
+	CPetSection::displayMessage(msg);
 }
 
 bool CPetRooms::isValid(CPetControl *petControl) {
-	return true;
+	return setupControl(petControl);
 }
 
 void CPetRooms::load(SimpleFile *file, int param) {
@@ -102,15 +130,16 @@ void CPetRooms::load(SimpleFile *file, int param) {
 }
 
 void CPetRooms::postLoad() {
-
+	reset();
 }
 
 void CPetRooms::save(SimpleFile *file, int indent) const {
-
+	warning("TODO: CPetRooms::save");
 }
 
 void CPetRooms::enter(PetArea oldArea) {
-
+	if (!_glyphs.highlighted14())
+		_text.setText("");
 }
 
 void CPetRooms::enterRoom(CRoomItem *room) {
@@ -137,7 +166,7 @@ bool CPetRooms::setupControl(CPetControl *petControl) {
 
 	Rect rect2(0, 0, 81, 81);
 	rect2.moveTo(374, 494);
-	_element.setBounds(rect2);
+	_plinth.setBounds(rect2);
 
 	_chevLeftOnDim = petControl->getHiddenObject("3PetChevLeftOnDim");
 	_chevLeftOffDim = petControl->getHiddenObject("3PetChevLeftOffDim");
@@ -152,6 +181,24 @@ bool CPetRooms::setupControl(CPetControl *petControl) {
 	_glyphs.setFlags(GFLAG_16);
 	_glyphItem.setup(petControl, &_glyphs);
 	_glyphItem.set38(1);
+	return true;
+}
+
+void CPetRooms::resetHighlight() {
+	_glyphItem.set34(fn1());
+	_glyphs.resetHighlight();
+	_glyphItem.proc14();
+	areaChanged(PET_ROOMS);
+}
+
+int CPetRooms::fn1() {
+	warning("TODO: CPetRooms::fn1");
+	return 0;
+}
+
+void CPetRooms::areaChanged(PetArea area) {
+	if (_petControl && _petControl->_currentArea == area)
+		_petControl->makeDirty();
 }
 
 } // End of namespace Titanic

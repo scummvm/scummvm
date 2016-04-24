@@ -307,7 +307,7 @@ bool CPetGlyphs::MouseButtonDownMsg(const Point &pt) {
 			CPetGlyph *glyph = getGlyph(index);
 			if (glyph) {
 				if (_highlightIndex == index) {
-					glyph->proc28(glyphRect);
+					glyph->MouseButtonDownMsg(glyphRect);
 					glyph->proc14();
 				} else {
 					changeHighlight(index);
@@ -424,6 +424,18 @@ void CPetGlyphs::startDragging(CPetGlyph *glyph, CMouseDragStartMsg *msg) {
 
 void CPetGlyphs::endDragging() {
 	_dragGlyph = nullptr;
+}
+
+bool CPetGlyphs::highlighted14() {
+	if (_highlightIndex != -1) {
+		CPetGlyph *pet = getGlyph(_highlightIndex);
+		if (pet) {
+			pet->proc14();
+			return true;
+		}
+	}
+
+	return false;
 }
 
 } // End of namespace Titanic

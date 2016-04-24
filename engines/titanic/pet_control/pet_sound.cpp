@@ -272,6 +272,7 @@ bool CPetSound::MouseButtonUpMsg(const Point &pt) {
 
 	double offset = slider->getOffsetPixels();
 	sliderChanged(offset, sliderNum);
+	return true;
 }
 
 void CPetSound::getTooltip(CPetText *text) {

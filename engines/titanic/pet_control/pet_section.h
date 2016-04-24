@@ -90,7 +90,7 @@ public:
 	virtual bool KeyCharMsg(CKeyCharMsg *msg) { return false; }
 	virtual bool VirtualKeyCharMsg(CVirtualKeyCharMsg *msg) { return false; }
 
-	virtual int proc14() { return 0; }
+	virtual bool proc14(void *v1) { return false; }
 	
 	/**
 	 * Returns item a drag-drop operation has dropped on, if any

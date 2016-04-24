@@ -172,7 +172,12 @@ public:
 	virtual void highlightCurrent(const Point &pt) {}
 
 	virtual void proc27(const Point &pt, bool flag) {}
-	virtual void proc28(const Point &pt) {}
+
+	/**
+	 * Handles mouse button down messages
+	 */
+	virtual void MouseButtonDownMsg(const Point &pt) {}
+	
 	virtual int proc29(const Point &pt) { return 0; }
 
 	/**
@@ -384,6 +389,13 @@ public:
 	 * Called when a dragging operation ends
 	 */
 	void endDragging();
+
+	/**
+	 * Reset the highlight
+	 */
+	void resetHighlight() { changeHighlight(-1); }
+
+	bool highlighted14();
 };
 
 } // End of namespace Titanic

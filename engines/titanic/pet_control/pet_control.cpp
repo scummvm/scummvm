@@ -431,4 +431,9 @@ void CPetControl::playSound(int soundNum) {
 	}
 }
 
+CString CPetControl::getRoomName() const {
+	CRoomItem *room = getRoom();
+	return room ? room->getName() : CString();
+}
+
 } // End of namespace Titanic

@@ -62,7 +62,11 @@ public:
 	 */
 	virtual void draw2(CScreenManager *screenManager) {}
 
-	virtual void proc28(const Point &pt);
+	/**
+	 * Handles mouse button down messages
+	 */
+	virtual void MouseButtonDownMsg(const Point &pt);
+
 	virtual int proc29(const Point &pt);
 	virtual void proc32();
 	virtual int proc33();

@@ -245,6 +245,11 @@ public:
 	 * Play a sound
 	 */
 	void playSound(int soundNum);
+
+	/**
+	 * Get the room name
+	 */
+	CString getRoomName() const;
 };
 
 } // End of namespace Titanic
