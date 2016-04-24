@@ -2021,10 +2021,6 @@ void GnapEngine::initGlobalSceneVars() {
 	// Shared by scenes 17 && 18
 	_s18_garbageCanPos = 8;
 
-	// Scene 53
-	_s53_callsMadeCtr = 0;
-	_s53_callsRndUsed = 0;
-
 	// Toy UFO
 	_toyUfoId = 0;
 	_toyUfoActionStatus = -1;

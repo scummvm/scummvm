@@ -590,19 +590,6 @@ public:
 	bool toyUfoCheckTimer();
 	void toyUfoFlyTo(int destX, int destY, int minX, int maxX, int minY, int maxY, int animationIndex);
 
-	// Scene 53
-	int _s53_currHandSequenceId;
-	bool _s53_isGnapPhoning;
-	int _s53_callsMadeCtr;
-	uint _s53_callsRndUsed;
-	int scene53_init();
-	void scene53_updateHotspots();
-	int scene53_pressPhoneNumberButton(int phoneNumber, int buttonNum);
-	int scene53_getRandomCallIndex();
-	void scene53_runRandomCall();
-	void scene53_runChitChatLine();
-	void scene53_run();
-
 	// Scene 54
 	void scene54_initCutscene1();
 	void scene54_initCutscene2();

@@ -23,6 +23,7 @@
 #include "gnap/gnap.h"
 #include "gnap/gamesys.h"
 #include "gnap/resource.h"
+#include "gnap/scenes/scene53.h"
 
 namespace Gnap {
 
@@ -44,33 +45,40 @@ enum {
 	kHSPhoneExit	 = 14
 };
 
-int GnapEngine::scene53_init() {
-	_gameSys->setAnimation(0, 0, 0);
-	_gameSys->setAnimation(0, 0, 1);
+Scene53::Scene53(GnapEngine *vm) : Scene(vm) {
+	_s53_isGnapPhoning = false;
+	_s53_currHandSequenceId = -1;
+	_s53_callsMadeCtr = 0;
+	_s53_callsRndUsed = 0;
+}
+
+int Scene53::init() {
+	_vm->_gameSys->setAnimation(0, 0, 0);
+	_vm->_gameSys->setAnimation(0, 0, 1);
 	return 0x75;
 }
 
-void GnapEngine::scene53_updateHotspots() {
-	setHotspot(kHSPlatypus, 0, 0, 0, 0, SF_WALKABLE | SF_TALK_CURSOR | SF_GRAB_CURSOR | SF_LOOK_CURSOR);
-	setHotspot(kHSPhoneKey1, 336, 238, 361, 270, SF_GRAB_CURSOR);
-	setHotspot(kHSPhoneKey2, 376, 243, 405, 274, SF_GRAB_CURSOR);
-	setHotspot(kHSPhoneKey3, 415, 248, 441, 276, SF_GRAB_CURSOR);
-	setHotspot(kHSPhoneKey4, 329, 276, 358, 303, SF_GRAB_CURSOR);
-	setHotspot(kHSPhoneKey5, 378, 282, 408, 311, SF_GRAB_CURSOR);
-	setHotspot(kHSPhoneKey6, 417, 286, 446, 319, SF_GRAB_CURSOR);
-	setHotspot(kHSPhoneKey7, 332, 311, 361, 342, SF_GRAB_CURSOR);
-	setHotspot(kHSPhoneKey8, 376, 318, 407, 349, SF_GRAB_CURSOR);
-	setHotspot(kHSPhoneKey9, 417, 320, 447, 353, SF_GRAB_CURSOR);
-	setHotspot(kHSPhoneKey0, 377, 352, 405, 384, SF_GRAB_CURSOR);
-	setHotspot(kHSPhoneKeySharp, 419, 358, 450, 394, SF_GRAB_CURSOR);
-	setHotspot(kHSPhoneKeyStar, 328, 346, 359, 379, SF_GRAB_CURSOR);
-	setHotspot(kHSPhoneExit, 150, 585, 650, 600, SF_EXIT_D_CURSOR);
+void Scene53::updateHotspots() {
+	_vm->setHotspot(kHSPlatypus, 0, 0, 0, 0, SF_WALKABLE | SF_TALK_CURSOR | SF_GRAB_CURSOR | SF_LOOK_CURSOR);
+	_vm->setHotspot(kHSPhoneKey1, 336, 238, 361, 270, SF_GRAB_CURSOR);
+	_vm->setHotspot(kHSPhoneKey2, 376, 243, 405, 274, SF_GRAB_CURSOR);
+	_vm->setHotspot(kHSPhoneKey3, 415, 248, 441, 276, SF_GRAB_CURSOR);
+	_vm->setHotspot(kHSPhoneKey4, 329, 276, 358, 303, SF_GRAB_CURSOR);
+	_vm->setHotspot(kHSPhoneKey5, 378, 282, 408, 311, SF_GRAB_CURSOR);
+	_vm->setHotspot(kHSPhoneKey6, 417, 286, 446, 319, SF_GRAB_CURSOR);
+	_vm->setHotspot(kHSPhoneKey7, 332, 311, 361, 342, SF_GRAB_CURSOR);
+	_vm->setHotspot(kHSPhoneKey8, 376, 318, 407, 349, SF_GRAB_CURSOR);
+	_vm->setHotspot(kHSPhoneKey9, 417, 320, 447, 353, SF_GRAB_CURSOR);
+	_vm->setHotspot(kHSPhoneKey0, 377, 352, 405, 384, SF_GRAB_CURSOR);
+	_vm->setHotspot(kHSPhoneKeySharp, 419, 358, 450, 394, SF_GRAB_CURSOR);
+	_vm->setHotspot(kHSPhoneKeyStar, 328, 346, 359, 379, SF_GRAB_CURSOR);
+	_vm->setHotspot(kHSPhoneExit, 150, 585, 650, 600, SF_EXIT_D_CURSOR);
 
-	setDeviceHotspot(kHSDevice, -1, -1, -1, -1);
-	_hotspotsCount = 15;
+	_vm->setDeviceHotspot(kHSDevice, -1, -1, -1, -1);
+	_vm->_hotspotsCount = 15;
 }
 
-int GnapEngine::scene53_pressPhoneNumberButton(int phoneNumber, int buttonNum) {
+int Scene53::pressPhoneNumberButton(int phoneNumber, int buttonNum) {
 	static const int kGnapHandSequenceIds[13] = {
 		0x00, 
 		0x46, 0x47, 0x48, 0x49, 0x4A, 0x4B,
@@ -84,22 +92,22 @@ int GnapEngine::scene53_pressPhoneNumberButton(int phoneNumber, int buttonNum) {
 	};
 
 	if (_s53_isGnapPhoning) {
-		_gameSys->setAnimation(kGnapHandSequenceIds[buttonNum], 40, 6);
-		_gameSys->insertSequence(kGnapHandSequenceIds[buttonNum], 40, _s53_currHandSequenceId, 40, kSeqSyncWait, 0, 0, 0);
+		_vm->_gameSys->setAnimation(kGnapHandSequenceIds[buttonNum], 40, 6);
+		_vm->_gameSys->insertSequence(kGnapHandSequenceIds[buttonNum], 40, _s53_currHandSequenceId, 40, kSeqSyncWait, 0, 0, 0);
 		_s53_currHandSequenceId = kGnapHandSequenceIds[buttonNum];
 	} else {
-		_gameSys->setAnimation(kPlatypusHandSequenceIds[buttonNum], 40, 6);
-		_gameSys->insertSequence(kPlatypusHandSequenceIds[buttonNum], 40, _s53_currHandSequenceId, 40, kSeqSyncWait, 0, 0, 0);
+		_vm->_gameSys->setAnimation(kPlatypusHandSequenceIds[buttonNum], 40, 6);
+		_vm->_gameSys->insertSequence(kPlatypusHandSequenceIds[buttonNum], 40, _s53_currHandSequenceId, 40, kSeqSyncWait, 0, 0, 0);
 		_s53_currHandSequenceId = kPlatypusHandSequenceIds[buttonNum];
 	}
 
-	_gnapActionStatus = 6;
-	while (_gameSys->getAnimationStatus(6) != 2) {
+	_vm->_gnapActionStatus = 6;
+	while (_vm->_gameSys->getAnimationStatus(6) != 2) {
 		// checkGameAppStatus();
-		updateMouseCursor();
-		gameUpdateTick();
+		_vm->updateMouseCursor();
+		_vm->gameUpdateTick();
 	}
-	_gnapActionStatus = -1;
+	_vm->_gnapActionStatus = -1;
 
 	if (buttonNum < 11)
 		phoneNumber = buttonNum % 10 + 10 * phoneNumber;
@@ -107,12 +115,12 @@ int GnapEngine::scene53_pressPhoneNumberButton(int phoneNumber, int buttonNum) {
 	return phoneNumber;
 }
 
-int GnapEngine::scene53_getRandomCallIndex() {
+int Scene53::getRandomCallIndex() {
 	int index, tries = 0;
 	if (_s53_callsRndUsed == 0x7FFF)
 		_s53_callsRndUsed = 0;
 	do {
-		index = getRandom(16);
+		index = _vm->getRandom(16);
 		if (++tries == 300)
 			_s53_callsRndUsed = 0;
 	} while (_s53_callsRndUsed & (1 << index));
@@ -120,7 +128,7 @@ int GnapEngine::scene53_getRandomCallIndex() {
 	return index;
 }
 
-void GnapEngine::scene53_runRandomCall() {
+void Scene53::runRandomCall() {
 	static const int kCallSequenceIds[15] = {
 		0x60, 0x61, 0x62, 0x63, 0x64,
 		0x65, 0x66, 0x67, 0x68, 0x69,
@@ -133,61 +141,59 @@ void GnapEngine::scene53_runRandomCall() {
 		int index;
 
 		do {
-			index = scene53_getRandomCallIndex();
+			index = getRandomCallIndex();
 		} while (!_s53_isGnapPhoning && (index == 0 || index == 3 || index == 4 || index == 11));
-		_gameSys->setAnimation(kCallSequenceIds[index], 1, 6);
-		_gameSys->insertSequence(kCallSequenceIds[index], 1, 0, 0, kSeqNone, 16, 0, 0);
+		_vm->_gameSys->setAnimation(kCallSequenceIds[index], 1, 6);
+		_vm->_gameSys->insertSequence(kCallSequenceIds[index], 1, 0, 0, kSeqNone, 16, 0, 0);
 	} else {
-		_gameSys->setAnimation(0x74, 1, 6);
-		_gameSys->insertSequence(0x74, 1, 0, 0, kSeqNone, 16, 0, 0);
+		_vm->_gameSys->setAnimation(0x74, 1, 6);
+		_vm->_gameSys->insertSequence(0x74, 1, 0, 0, kSeqNone, 16, 0, 0);
 		_s53_callsMadeCtr = 0;
 	}
 	
-	_gnapActionStatus = 1;
-	while (_gameSys->getAnimationStatus(6) != 2) {
-		updateMouseCursor();
+	_vm->_gnapActionStatus = 1;
+	while (_vm->_gameSys->getAnimationStatus(6) != 2) {
+		_vm->updateMouseCursor();
 		// checkGameAppStatus();
-		gameUpdateTick();
+		_vm->gameUpdateTick();
 	}
-	_gnapActionStatus = -1;
+	_vm->_gnapActionStatus = -1;
 }
 
-void GnapEngine::scene53_runChitChatLine() {
+void Scene53::runChitChatLine() {
 	bool flag = false;
 	int sequenceId = -1;
 	
-	_gameSys->setAnimation(0x6E, 1, 6);
-	_gameSys->insertSequence(0x6E, 1, 0, 0, kSeqNone, 16, 0, 0);
+	_vm->_gameSys->setAnimation(0x6E, 1, 6);
+	_vm->_gameSys->insertSequence(0x6E, 1, 0, 0, kSeqNone, 16, 0, 0);
 
-	_gnapActionStatus = 1;
-	while (_gameSys->getAnimationStatus(6) != 2) {
-		updateMouseCursor();
+	_vm->_gnapActionStatus = 1;
+	while (_vm->_gameSys->getAnimationStatus(6) != 2) {
+		_vm->updateMouseCursor();
 		// checkGameAppStatus();
-		gameUpdateTick();
+		_vm->gameUpdateTick();
 	}
-	_gnapActionStatus = -1;
+	_vm->_gnapActionStatus = -1;
 
-	if (isFlag(kGFSpringTaken)) {
-		_gameSys->insertSequence(0x45, 40, _s53_currHandSequenceId, 40, kSeqSyncWait, 0, 0, 0);
+	if (_vm->isFlag(kGFSpringTaken)) {
+		_vm->_gameSys->insertSequence(0x45, 40, _s53_currHandSequenceId, 40, kSeqSyncWait, 0, 0, 0);
 		_s53_currHandSequenceId = 0x45;
 	} else {
-		_gameSys->insertSequence(0x45, 40, _s53_currHandSequenceId, 40, kSeqSyncWait, 0, 0, 0);
+		_vm->_gameSys->insertSequence(0x45, 40, _s53_currHandSequenceId, 40, kSeqSyncWait, 0, 0, 0);
 		_s53_currHandSequenceId = 0x5E;
 	}
 	
-	_hotspots[kHSDevice]._flags = SF_DISABLED;
+	_vm->_hotspots[kHSDevice]._flags = SF_DISABLED;
 	
 	while (!flag) {
-		updateMouseCursor();
-		updateCursorByHotspot();
+		_vm->updateMouseCursor();
+		_vm->updateCursorByHotspot();
 	
-		testWalk(0, 0, -1, -1, -1, -1);
+		_vm->testWalk(0, 0, -1, -1, -1, -1);
+		_vm->_sceneClickedHotspot = _vm->getClickedHotspotId();
+		_vm->updateGrabCursorSprite(0, 0);
 		
-		_sceneClickedHotspot = getClickedHotspotId();
-		
-		updateGrabCursorSprite(0, 0);
-		
-		switch (_sceneClickedHotspot) {
+		switch (_vm->_sceneClickedHotspot) {
 		case 2:
 			sequenceId = 0x6F;
 			flag = 1;
@@ -203,10 +209,10 @@ void GnapEngine::scene53_runChitChatLine() {
 		case 14:
 			sequenceId = -1;
 			flag = 1;
-			_isLeavingScene = true;
-			_sceneDone = true;
-			_gnapActionStatus = 0;
-			_newSceneNum = 17;
+			_vm->_isLeavingScene = true;
+			_vm->_sceneDone = true;
+			_vm->_gnapActionStatus = 0;
+			_vm->_newSceneNum = 17;
 			break;
 		case 5:
 		case 6:
@@ -217,59 +223,59 @@ void GnapEngine::scene53_runChitChatLine() {
 		case 11:
 		case 12:
 		case 13:
-			scene53_pressPhoneNumberButton(0, _sceneClickedHotspot - 1);
+			pressPhoneNumberButton(0, _vm->_sceneClickedHotspot - 1);
 			break;
 		}
 	
 		if (flag && sequenceId != -1) {
-			stopSound(0xA0);
-			scene53_pressPhoneNumberButton(0, _sceneClickedHotspot - 1);
-			_gnapActionStatus = 1;
-			_gameSys->setAnimation(sequenceId, 1, 6);
-			_gameSys->insertSequence(sequenceId, 1, 0, 0, kSeqNone, 16, 0, 0);
-			_gnapActionStatus = 1;
-			while (_gameSys->getAnimationStatus(6) != 2) {
-				updateMouseCursor();
+			_vm->stopSound(0xA0);
+			pressPhoneNumberButton(0, _vm->_sceneClickedHotspot - 1);
+			_vm->_gnapActionStatus = 1;
+			_vm->_gameSys->setAnimation(sequenceId, 1, 6);
+			_vm->_gameSys->insertSequence(sequenceId, 1, 0, 0, kSeqNone, 16, 0, 0);
+			_vm->_gnapActionStatus = 1;
+			while (_vm->_gameSys->getAnimationStatus(6) != 2) {
+				_vm->updateMouseCursor();
 				// checkGameAppStatus();
-				gameUpdateTick();
+				_vm->gameUpdateTick();
 			}
-			_gnapActionStatus = -1;
-			_gameSys->setAnimation(0x72, 1, 6);
-			_gameSys->insertSequence(0x72, 1, 0, 0, kSeqNone, 16, 0, 0);
-			_gnapActionStatus = 1;
-			while (_gameSys->getAnimationStatus(6) != 2) {
-				updateMouseCursor();
+			_vm->_gnapActionStatus = -1;
+			_vm->_gameSys->setAnimation(0x72, 1, 6);
+			_vm->_gameSys->insertSequence(0x72, 1, 0, 0, kSeqNone, 16, 0, 0);
+			_vm->_gnapActionStatus = 1;
+			while (_vm->_gameSys->getAnimationStatus(6) != 2) {
+				_vm->updateMouseCursor();
 				// checkGameAppStatus();
-				gameUpdateTick();
+				_vm->gameUpdateTick();
 			}
-			_gnapActionStatus = -1;
+			_vm->_gnapActionStatus = -1;
 		}
 	}
 	
-	scene53_updateHotspots();
+	updateHotspots();
 	
-	_gnapActionStatus = 1;
+	_vm->_gnapActionStatus = 1;
 	
-	if (isFlag(kGFSpringTaken)) {
-		_gameSys->setAnimation(0x73, 40, 6);
-		_gameSys->insertSequence(0x73, 40, _s53_currHandSequenceId, 40, kSeqSyncWait, 0, 0, 0);
-		while (_gameSys->getAnimationStatus(6) != 2) {
-			updateMouseCursor();
+	if (_vm->isFlag(kGFSpringTaken)) {
+		_vm->_gameSys->setAnimation(0x73, 40, 6);
+		_vm->_gameSys->insertSequence(0x73, 40, _s53_currHandSequenceId, 40, kSeqSyncWait, 0, 0, 0);
+		while (_vm->_gameSys->getAnimationStatus(6) != 2) {
+			_vm->updateMouseCursor();
 			// checkGameAppStatus();
-			gameUpdateTick();
+			_vm->gameUpdateTick();
 		}
 		_s53_currHandSequenceId = 0x73;
-		_gnapActionStatus = -1;
+		_vm->_gnapActionStatus = -1;
 	}
 }
 
-void GnapEngine::scene53_run() {
+void Scene53::run() {
 	int phoneNumber = 0;
 	int phoneNumberLen = 0;
 	
-	queueInsertDeviceIcon();
+	_vm->queueInsertDeviceIcon();
 	
-	if (isFlag(kGFSpringTaken)) {
+	if (_vm->isFlag(kGFSpringTaken)) {
 		_s53_currHandSequenceId = 0x45;
 		_s53_isGnapPhoning = true;
 	} else {
@@ -277,28 +283,25 @@ void GnapEngine::scene53_run() {
 		_s53_isGnapPhoning = false;
 	}
 	
-	_gameSys->insertSequence(_s53_currHandSequenceId, 40, 0, 0, kSeqNone, 0, 0, 0);
+	_vm->_gameSys->insertSequence(_s53_currHandSequenceId, 40, 0, 0, kSeqNone, 0, 0, 0);
+	_vm->endSceneInit();
+	_vm->setVerbCursor(GRAB_CURSOR);
+	_vm->playSound(0xA0, true);
 	
-	endSceneInit();
+	while (!_vm->_sceneDone) {
+		_vm->updateMouseCursor();
+		_vm->updateCursorByHotspot();
 	
-	setVerbCursor(GRAB_CURSOR);
+		_vm->testWalk(0, 0, -1, -1, -1, -1);
 	
-	playSound(0xA0, true);
+		_vm->_sceneClickedHotspot = _vm->getClickedHotspotId();
+		_vm->updateGrabCursorSprite(0, 0);
 	
-	while (!_sceneDone) {
-		updateMouseCursor();
-		updateCursorByHotspot();
-	
-		testWalk(0, 0, -1, -1, -1, -1);
-	
-		_sceneClickedHotspot = getClickedHotspotId();
-		updateGrabCursorSprite(0, 0);
-	
-		switch (_sceneClickedHotspot) {
+		switch (_vm->_sceneClickedHotspot) {
 		case 1:
-			if (_gnapActionStatus < 0) {
-				runMenu();
-				scene53_updateHotspots();
+			if (_vm->_gnapActionStatus < 0) {
+				_vm->runMenu();
+				updateHotspots();
 			}
 			break;
 		case 2:
@@ -311,82 +314,81 @@ void GnapEngine::scene53_run() {
 		case 9:
 		case 10:
 		case 11:
-			stopSound(0xA0);
+			_vm->stopSound(0xA0);
 			++phoneNumberLen;
-			phoneNumber = scene53_pressPhoneNumberButton(phoneNumber, _sceneClickedHotspot - 1);
+			phoneNumber = pressPhoneNumberButton(phoneNumber, _vm->_sceneClickedHotspot - 1);
 			debugC(kDebugBasic, "phoneNumber: %d", phoneNumber);
 			if (phoneNumberLen == 7) {
-				_gnapActionStatus = 1;
-				if (isFlag(kGFSpringTaken)) {
-					_gameSys->setAnimation(0x73, 40, 6);
-					_gameSys->insertSequence(0x73, 40, _s53_currHandSequenceId, 40, kSeqSyncWait, 0, 0, 0);
-					while (_gameSys->getAnimationStatus(6) != 2) {
-						updateMouseCursor();
+				_vm->_gnapActionStatus = 1;
+				if (_vm->isFlag(kGFSpringTaken)) {
+					_vm->_gameSys->setAnimation(0x73, 40, 6);
+					_vm->_gameSys->insertSequence(0x73, 40, _s53_currHandSequenceId, 40, kSeqSyncWait, 0, 0, 0);
+					while (_vm->_gameSys->getAnimationStatus(6) != 2) {
+						_vm->updateMouseCursor();
 						// checkGameAppStatus();
-						gameUpdateTick();
+						_vm->gameUpdateTick();
 					}
 					_s53_currHandSequenceId = 0x73;
-					_gnapActionStatus = -1;
+					_vm->_gnapActionStatus = -1;
 				}
 				if (phoneNumber == 7284141) {
-					scene53_runChitChatLine();
+					runChitChatLine();
 					phoneNumber = 0;
 					phoneNumberLen = 0;
-					_sceneDone = true;
-					_newSceneNum = 17;
-				} else if (phoneNumber != 5556789 || isFlag(kGFPictureTaken)) {				
-					scene53_runRandomCall();
+					_vm->_sceneDone = true;
+					_vm->_newSceneNum = 17;
+				} else if (phoneNumber != 5556789 || _vm->isFlag(kGFPictureTaken)) {				
+					runRandomCall();
 					phoneNumber = 0;
 					phoneNumberLen = 0;
-					_sceneDone = true;
-					_newSceneNum = 17;
+					_vm->_sceneDone = true;
+					_vm->_newSceneNum = 17;
 				} else {
 					phoneNumber = 0;
 					phoneNumberLen = 0;
-					_sceneDone = true;
-					_newSceneNum = 17;
+					_vm->_sceneDone = true;
+					_vm->_newSceneNum = 17;
 					if (_s53_isGnapPhoning)
-						setFlag(kGFUnk25);
+						_vm->setFlag(kGFUnk25);
 					else
-						setFlag(kGFPlatypusTalkingToAssistant);
+						_vm->setFlag(kGFPlatypusTalkingToAssistant);
 				}
 			}
 			break;
 		case 12:
 		case 13:
-			scene53_pressPhoneNumberButton(0, _sceneClickedHotspot - 1);
+			pressPhoneNumberButton(0, _vm->_sceneClickedHotspot - 1);
 			break;
 		case 14:
-			if (_gnapActionStatus < 0) {
-				_gnapActionStatus = 1;
-				if (isFlag(kGFSpringTaken)) {
-					_gameSys->setAnimation(0x73, 40, 6);
-					_gameSys->insertSequence(0x73, 40, _s53_currHandSequenceId, 40, kSeqSyncWait, 0, 0, 0);
-					while (_gameSys->getAnimationStatus(6) != 2) {
-						updateMouseCursor();
+			if (_vm->_gnapActionStatus < 0) {
+				_vm->_gnapActionStatus = 1;
+				if (_vm->isFlag(kGFSpringTaken)) {
+					_vm->_gameSys->setAnimation(0x73, 40, 6);
+					_vm->_gameSys->insertSequence(0x73, 40, _s53_currHandSequenceId, 40, kSeqSyncWait, 0, 0, 0);
+					while (_vm->_gameSys->getAnimationStatus(6) != 2) {
+						_vm->updateMouseCursor();
 						// checkGameAppStatus();
-						gameUpdateTick();
+						_vm->gameUpdateTick();
 					}
 					_s53_currHandSequenceId = 0x73;
-					_gnapActionStatus = -1;
+					_vm->_gnapActionStatus = -1;
 				}
-				_isLeavingScene = true;
-				_sceneDone = true;
-				_gnapActionStatus = 0;
-				_newSceneNum = 17;
+				_vm->_isLeavingScene = true;
+				_vm->_sceneDone = true;
+				_vm->_gnapActionStatus = 0;
+				_vm->_newSceneNum = 17;
 			}
 			break;
 		}
 	
-		checkGameKeys();
+		_vm->checkGameKeys();
 	
-		if (isKeyStatus1(8)) {
-			clearKeyStatus1(8);
-			runMenu();
-			scene53_updateHotspots();
+		if (_vm->isKeyStatus1(8)) {
+			_vm->clearKeyStatus1(8);
+			_vm->runMenu();
+			updateHotspots();
 		}
-		
-		gameUpdateTick();
+		_vm->gameUpdateTick();
 	}
 }
 
