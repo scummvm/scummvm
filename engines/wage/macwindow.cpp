@@ -103,8 +103,7 @@ void MacWindow::move(int x, int y) {
 		return;
 
 	_dims.moveTo(x, y);
-
-	_innerDims.setWidth(0); // Invalidate rect
+	updateInnerDims();
 
 	_contentIsDirty = true;
 }
@@ -112,8 +111,7 @@ void MacWindow::move(int x, int y) {
 void MacWindow::setDimensions(const Common::Rect &r) {
 	resize(r.width(), r.height());
 	_dims.moveTo(r.left, r.top);
-
-	_innerDims.setWidth(0); // Invalidate rect
+	updateInnerDims();
 }
 
 bool MacWindow::draw(Graphics::ManagedSurface *g, bool forceRedraw) {
@@ -162,13 +160,13 @@ static void drawPixelInverted(int x, int y, int color, void *data) {
 	}
 }
 
+void MacWindow::updateInnerDims() {
+	_innerDims = _dims;
+	_innerDims.grow(-kBorderWidth);
+}
+
 void MacWindow::drawBorder() {
 	_borderIsDirty = false;
-
-	if (_innerDims.isEmpty()) {
-		_innerDims = _dims;
-		_innerDims.grow(-kBorderWidth);
-	}
 
 	bool active = _active, scrollable = _scrollable, closeable = _active, drawTitle = !_title.empty();
 	const int size = kBorderWidth;
@@ -312,10 +310,10 @@ bool MacWindow::processEvent(Common::Event &event) {
 	case Common::EVENT_MOUSEMOVE:
 		if (_beingDragged) {
 			_dims.translate(event.mouse.x - _draggedX, event.mouse.y - _draggedY);
+			updateInnerDims();
+
 			_draggedX = event.mouse.x;
 			_draggedY = event.mouse.y;
-
-			_innerDims.setWidth(0);
 
 			((WageEngine *)g_engine)->_gui->_wm.setFullRefresh(true);
 		}

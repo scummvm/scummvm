@@ -128,7 +128,7 @@ bool MacWindowManager::processEvent(Common::Event &event) {
         it--;
         MacWindow *w = *it;
 
-        if (w->getDimensions().contains(event.mouse.x, event.mouse.y)) {
+        if (w->beingDragged() || w->getDimensions().contains(event.mouse.x, event.mouse.y)) {
             if (event.type == Common::EVENT_LBUTTONDOWN || event.type == Common::EVENT_LBUTTONUP)
                 setActive(w->getId());
 

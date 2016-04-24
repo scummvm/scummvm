@@ -88,6 +88,7 @@ public:
 	int getId() { return _id; }
 	bool processEvent(Common::Event &event);
 	void setCallback(bool (*callback)(WindowClick, Common::Event &, void *), void *data) { _callback = callback; _dataPtr = data; }
+	bool beingDragged() { return _beingDragged; }
 
 private:
 	void drawBorder();
@@ -95,6 +96,7 @@ private:
 	void fillRect(Graphics::ManagedSurface *g, int x, int y, int w, int h, int color = kColorBlack);
 	const Graphics::Font *getTitleFont();
 	bool builtInFonts();
+	void updateInnerDims();
 
 private:
 	Graphics::ManagedSurface _surface;
