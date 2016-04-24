@@ -114,7 +114,7 @@ enum {
 
 void Gui::flowText(Common::String &str) {
 	Common::StringArray wrappedLines;
-	int textW = _consoleTextArea.width() - kConWPadding * 2;
+	int textW = _consoleWindow->getInnerDimensions().width() - kConWPadding * 2;
 	const Graphics::Font *font = getConsoleFont();
 
 	font->wordWrapText(str, textW, wrappedLines);
@@ -297,17 +297,17 @@ void Gui::drawInput() {
 	if (_engine->_inputText.contains('\n')) {
 		_consoleDirty = true;
 	} else {
-		int x = kConWPadding + _consoleTextArea.left;
-		int y = _cursorY + _consoleTextArea.top;
+		int x = kConWPadding + _consoleWindow->getInnerDimensions().left;
+		int y = _cursorY + _consoleWindow->getInnerDimensions().top;
 
-		Common::Rect r(x, y, x + _consoleTextArea.width() - kConWPadding, y + font->getFontHeight());
+		Common::Rect r(x, y, x + _consoleWindow->getInnerDimensions().width() - kConWPadding, y + font->getFontHeight());
 		_screen.fillRect(r, kColorWhite);
 
 		undrawCursor();
 
 		font->drawString(&_screen, _out[_inputTextLineNum], x, y, _screen.w, kColorBlack);
 
-		g_system->copyRectToScreen(_screen.getBasePtr(x, y), _screen.pitch, x, y, _consoleTextArea.width(), font->getFontHeight());
+		g_system->copyRectToScreen(_screen.getBasePtr(x, y), _screen.pitch, x, y, _consoleWindow->getInnerDimensions().width(), font->getFontHeight());
 	}
 
 	_cursorX = font->getStringWidth(_out[_inputTextLineNum]) + kConHPadding;

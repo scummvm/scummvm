@@ -127,8 +127,8 @@ static void cursorTimerHandler(void *refCon) {
 	if (!gui->_screen.getPixels())
 		return;
 
-	x += gui->_consoleTextArea.left;
-	y += gui->_consoleTextArea.top;
+	x += gui->_consoleWindow->getInnerDimensions().left;
+	y += gui->_consoleWindow->getInnerDimensions().top;
 
 	gui->_screen.vLine(x, y, y + kCursorHeight, gui->_cursorState ? kColorBlack : kColorWhite);
 
@@ -302,11 +302,6 @@ void Gui::drawScene() {
 	_consoleDirty = true;
 	_menuDirty = true;
 	_consoleFullRedraw = true;
-
-	_consoleTextArea.left = _scene->_textBounds->left + kBorderWidth - 2;
-	_consoleTextArea.top = _scene->_textBounds->top + kBorderWidth - 2;
-	_consoleTextArea.setWidth(_scene->_textBounds->width() - 2 * kBorderWidth);
-	_consoleTextArea.setHeight(_scene->_textBounds->height() - 2 * kBorderWidth);
 }
 
 static bool sceneWindowCallback(WindowClick click, Common::Event &event, void *g) {
@@ -340,7 +335,7 @@ void Gui::drawConsole() {
 		return;
 
 	renderConsole(_consoleWindow->getSurface(), Common::Rect(kBorderWidth - 2, kBorderWidth - 2,
-				_scene->_textBounds->width() - kBorderWidth, _scene->_textBounds->height() - kBorderWidth));
+				_consoleWindow->getDimensions().width(), _consoleWindow->getDimensions().height()));
 	_consoleWindow->setDirty(true);
 }
 
@@ -358,9 +353,10 @@ bool Gui::processConsoleEvents(WindowClick click, Common::Event &event) {
 
 	if (click == kBorderScrollUp || click == kBorderScrollDown) {
 		if (event.type == Common::EVENT_LBUTTONDOWN) {
-			int textFullSize = _lines.size() * _consoleLineHeight + _consoleTextArea.height();
+			int consoleHeight = _consoleWindow->getInnerDimensions().height();
+			int textFullSize = _lines.size() * _consoleLineHeight + consoleHeight;
 			float scrollPos = (float)_scrollPos / textFullSize;
-			float scrollSize = (float)_consoleTextArea.height() / textFullSize;
+			float scrollSize = (float)consoleHeight / textFullSize;
 
 			_consoleWindow->setScroll(scrollPos, scrollSize);
 
@@ -374,7 +370,7 @@ bool Gui::processConsoleEvents(WindowClick click, Common::Event &event) {
 				undrawCursor();
 				_cursorY -= (_scrollPos - oldScrollPos);
 				_consoleDirty = true;
-				_consoleFullRedraw = true;
+					_consoleFullRedraw = true;
 				break;
 			case kBorderScrollDown:
 				_scrollPos = MIN<int>((_lines.size() - 2) * _consoleLineHeight, _scrollPos + _consoleLineHeight);
@@ -569,7 +565,7 @@ int Gui::calcTextX(int x, int textLine) {
 
 	Common::String str = _lines[textLine];
 
-	x -= _consoleTextArea.left;
+	x -= _consoleWindow->getInnerDimensions().left;
 
 	for (int i = str.size(); i >= 0; i--) {
 		if (font->getStringWidth(str) < x) {
@@ -583,7 +579,7 @@ int Gui::calcTextX(int x, int textLine) {
 }
 
 int Gui::calcTextY(int y) {
-	y -= _consoleTextArea.top;
+	y -= _consoleWindow->getInnerDimensions().top;
 
 	if (y < 0)
 		y = 0;

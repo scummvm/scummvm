@@ -96,6 +96,8 @@ void MacWindow::resize(int w, int h) {
 	_dims.setWidth(w);
 	_dims.setHeight(h);
 
+	updateInnerDims();
+
 	_contentIsDirty = true;
 	_borderIsDirty = true;
 }
@@ -322,9 +324,8 @@ bool MacWindow::processEvent(Common::Event &event) {
 		}
 
 		if (_beingResized) {
-			_dims.setWidth(MAX(kBorderWidth * 4, _dims.width() + event.mouse.x - _draggedX));
-			_dims.setHeight(MAX(kBorderWidth * 4, _dims.height() + event.mouse.y - _draggedY));
-			updateInnerDims();
+			resize(MAX(kBorderWidth * 4, _dims.width()  + event.mouse.x - _draggedX),
+				   MAX(kBorderWidth * 4, _dims.height() + event.mouse.y - _draggedY));
 
 			_draggedX = event.mouse.x;
 			_draggedY = event.mouse.y;

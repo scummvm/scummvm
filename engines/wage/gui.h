@@ -136,7 +136,6 @@ public:
 	Graphics::ManagedSurface _screen;
 	int _cursorX, _cursorY;
 	bool _cursorState;
-	Common::Rect _consoleTextArea;
 
 	bool _builtInFonts;
 	WageEngine *_engine;
