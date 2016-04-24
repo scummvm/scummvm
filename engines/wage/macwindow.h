@@ -67,12 +67,13 @@ enum WindowClick {
 	kBorderScrollDown,
 	kBorderCloseButton,
 	kBorderInner,
-	kBorderHeader
+	kBorderBorder,
+	kBorderResizeButton
 };
 
 class MacWindow {
 public:
-	MacWindow(int id, bool scrollable);
+	MacWindow(int id, bool scrollable, bool resizable);
 	~MacWindow();
 	void move(int x, int y);
 	void resize(int w, int h);
@@ -89,6 +90,7 @@ public:
 	bool processEvent(Common::Event &event);
 	void setCallback(bool (*callback)(WindowClick, Common::Event &, void *), void *data) { _callback = callback; _dataPtr = data; }
 	bool beingDragged() { return _beingDragged; }
+	bool beingResized() { return _beingResized; }
 
 private:
 	void drawBorder();
@@ -97,18 +99,20 @@ private:
 	const Graphics::Font *getTitleFont();
 	bool builtInFonts();
 	void updateInnerDims();
+	WindowClick isInBorder(int x, int y);
 
 private:
 	Graphics::ManagedSurface _surface;
 	Graphics::ManagedSurface _borderSurface;
 	Graphics::ManagedSurface _composeSurface;
 	bool _scrollable;
+	bool _resizable;
 	bool _active;
 	bool _borderIsDirty;
 	bool _contentIsDirty;
 	int _id;
 
-	bool _beingDragged;
+	bool _beingDragged, _beingResized;
 	int _draggedX, _draggedY;
 
 	WindowClick _highlightedPart;

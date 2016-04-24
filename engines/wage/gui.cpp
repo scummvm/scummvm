@@ -190,10 +190,10 @@ Gui::Gui(WageEngine *engine) {
 
 	_menu = new Menu(this);
 
-	_sceneWindow = _wm.add(false);
+	_sceneWindow = _wm.add(false, false);
 	_sceneWindow->setCallback(sceneWindowCallback, this);
 
-	_consoleWindow = _wm.add(true);
+	_consoleWindow = _wm.add(true, true);
 	_consoleWindow->setCallback(consoleWindowCallback, this);
 }
 
@@ -391,6 +391,13 @@ bool Gui::processConsoleEvents(WindowClick click, Common::Event &event) {
 		}
 
 		return false;
+	}
+
+	if (click == kBorderResizeButton) {
+		_consoleDirty = true;
+		_consoleFullRedraw = true;
+
+		return true;
 	}
 
 	if (click == kBorderInner) {

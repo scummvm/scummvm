@@ -71,8 +71,8 @@ MacWindowManager::~MacWindowManager() {
         delete _windows[i];
 }
 
-MacWindow *MacWindowManager::add(bool scrollable) {
-    MacWindow *w = new MacWindow(_lastId, scrollable);
+MacWindow *MacWindowManager::add(bool scrollable, bool resizable) {
+    MacWindow *w = new MacWindow(_lastId, scrollable, resizable);
 
     _windows.push_back(w);
     _windowStack.push_back(w);
@@ -128,7 +128,7 @@ bool MacWindowManager::processEvent(Common::Event &event) {
         it--;
         MacWindow *w = *it;
 
-        if (w->beingDragged() || w->getDimensions().contains(event.mouse.x, event.mouse.y)) {
+        if (w->beingDragged() || w->beingResized() || w->getDimensions().contains(event.mouse.x, event.mouse.y)) {
             if (event.type == Common::EVENT_LBUTTONDOWN || event.type == Common::EVENT_LBUTTONUP)
                 setActive(w->getId());
 

@@ -54,7 +54,8 @@
 
 namespace Wage {
 
-MacWindow::MacWindow(int id, bool scrollable) : _scrollable(scrollable), _id(id) {
+MacWindow::MacWindow(int id, bool scrollable, bool resizable) :
+		_scrollable(scrollable), _id(id), _resizable(resizable) {
 	_active = false;
 	_borderIsDirty = true;
 	_contentIsDirty = true;
@@ -67,6 +68,7 @@ MacWindow::MacWindow(int id, bool scrollable) : _scrollable(scrollable), _id(id)
 	_dataPtr = 0;
 
 	_beingDragged = false;
+	_beingResized = false;
 }
 
 MacWindow::~MacWindow() {
@@ -277,34 +279,35 @@ void MacWindow::fillRect(Graphics::ManagedSurface *g, int x, int y, int w, int h
 	g->fillRect(r, color);
 }
 
-static WindowClick isInBorder(Common::Rect &rect, int x, int y) {
-	if (rect.contains(x, y))
+WindowClick MacWindow::isInBorder(int x, int y) {
+	if (_innerDims.contains(x, y))
 		return kBorderInner;
 
-	if (x >= rect.left - kBorderWidth && x < rect.left && y >= rect.top - kBorderWidth && y < rect.top)
+	if (x >= _innerDims.left - kBorderWidth && x < _innerDims.left && y >= _innerDims.top - kBorderWidth && y < _innerDims.top)
 		return kBorderCloseButton;
 
-	if (y >= rect.top - kBorderWidth && y < rect.top)
-		return kBorderHeader;
+	if (_resizable)
+		if (x >= _innerDims.right && x < _innerDims.right + kBorderWidth && y >= _innerDims.bottom && y < _innerDims.bottom + kBorderWidth)
+			return kBorderResizeButton;
 
-	if (x >= rect.right && x < rect.right + kBorderWidth) {
-		if (y < rect.top - kBorderWidth)
-			return kBorderNone;
+	if (_scrollable && x >= _innerDims.right && x < _innerDims.right + kBorderWidth) {
+		if (y < _innerDims.top - kBorderWidth)
+			return kBorderBorder;
 
-		if (y >= rect.bottom + kBorderWidth)
-			return kBorderNone;
+		if (y >= _innerDims.bottom + kBorderWidth)
+			return kBorderBorder;
 
-		if (y >= rect.top + rect.height() / 2)
+		if (y >= _innerDims.top + _innerDims.height() / 2)
 			return kBorderScrollDown;
 
 		return kBorderScrollUp;
 	}
 
-	return kBorderNone;
+	return kBorderBorder;
 }
 
 bool MacWindow::processEvent(Common::Event &event) {
-	WindowClick click = isInBorder(_innerDims, event.mouse.x, event.mouse.y);
+	WindowClick click = isInBorder(event.mouse.x, event.mouse.y);
 
 	switch (event.type) {
 	case Common::EVENT_MOUSEMOVE:
@@ -317,12 +320,31 @@ bool MacWindow::processEvent(Common::Event &event) {
 
 			((WageEngine *)g_engine)->_gui->_wm.setFullRefresh(true);
 		}
+
+		if (_beingResized) {
+			_dims.setWidth(MAX(kBorderWidth * 4, _dims.width() + event.mouse.x - _draggedX));
+			_dims.setHeight(MAX(kBorderWidth * 4, _dims.height() + event.mouse.y - _draggedY));
+			updateInnerDims();
+
+			_draggedX = event.mouse.x;
+			_draggedY = event.mouse.y;
+
+			((WageEngine *)g_engine)->_gui->_wm.setFullRefresh(true);
+			(*_callback)(click, event, _dataPtr);
+		}
 		break;
 	case Common::EVENT_LBUTTONDOWN:
 		setHighlight(click);
 
-		if (click == kBorderHeader) {
+		if (click == kBorderBorder) {
 			_beingDragged = true;
+
+			_draggedX = event.mouse.x;
+			_draggedY = event.mouse.y;
+		}
+
+		if (click == kBorderResizeButton) {
+			_beingResized = true;
 
 			_draggedX = event.mouse.x;
 			_draggedY = event.mouse.y;
@@ -330,8 +352,8 @@ bool MacWindow::processEvent(Common::Event &event) {
 
 		break;
 	case Common::EVENT_LBUTTONUP:
-		if (_beingDragged)
-			_beingDragged = false;
+		_beingDragged = false;
+		_beingResized = false;
 
 		setHighlight(kBorderNone);
 		break;
