@@ -348,7 +348,7 @@ void Scene45::run() {
 		_vm->gameUpdateTick();
 	}
 
-	_vm->_sceneWaiting = 0;
+	_vm->_sceneWaiting = false;
 }
 
 void Scene45::updateAnimations() {
@@ -359,7 +359,7 @@ void Scene45::updateAnimations() {
 			_vm->_sceneDone = true;
 			break;
 		case 1:
-			_vm->_sceneWaiting = 1;
+			_vm->_sceneWaiting = true;
 			_vm->setFlag(kGFUnk22);
 			updateHotspots();
 			_vm->_gameSys->insertSequence(0x9E, _vm->_gnapId, makeRid(_vm->_gnapSequenceDatNum, _vm->_gnapSequenceId), _vm->_gnapId, kSeqSyncWait, 0, 0, 0);

@@ -461,7 +461,7 @@ void Scene18::run() {
 		case kHSCowboyHat:
 			if (_vm->_gnapActionStatus == kASStandingOnHydrant) {
 				_vm->_gnapActionStatus = kASGrabCowboyHat;
-				_vm->_sceneWaiting = 0;
+				_vm->_sceneWaiting = false;
 			} else if (_vm->_gnapActionStatus < 0) {
 				if (_vm->isFlag(kGFPlatyPussDisguised)) {
 					gnapCarryGarbageCanTo(-1, -1, 0, -1, -1);
