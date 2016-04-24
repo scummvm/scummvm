@@ -50,6 +50,17 @@ private:
 	 */
 	int writeChar(CVideoSurface *surface, unsigned char c, 
 		const Common::Point &pt, Rect *destRect, Rect *srcRect);
+
+	/**
+	 * Extends a passed text area by the space required for
+	 * the given character
+	 */
+	void extendBounds(Point &textSize, byte c, int maxWidth) const;
+
+	/**
+	 * Called at spacing between words, checks for line wrapping
+	 */
+	void checkLineWrap(Point &textSize, int maxWidth, const char *&str) const;
 public:
 	byte *_dataPtr;
 	size_t _dataSize;
@@ -72,10 +83,13 @@ public:
 	int stringWidth(const CString &text) const;
 
 	/**
-	 * Write out a string
-	 * TODO: Verify this
+	 * Get the text area a string will fit into
+	 * @param str		String
+	 * @param maxWidth	Maximum width in pixels
+	 * @param sizeOut	Optional pointer to output size (width, height)
+	 * @returns			Required height
 	 */
-	void writeString(int maxWidth, const CString &text, int *v1, int *v2);
+	int getTextBounds(const CString &str, int maxWidth, Point *sizeOut) const;
 
 	/**
 	 * Sets the font color

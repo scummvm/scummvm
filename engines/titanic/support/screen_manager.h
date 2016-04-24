@@ -110,14 +110,25 @@ public:
 	virtual void proc14() = 0;
 	virtual void proc15() = 0;
 
+	/**
+	 * Get the text area a string will fit into
+	 * @param str		String
+	 * @param maxWidth	Maximum width in pixels
+	 * @param sizeOut	Optional pointer to output size
+	 * @returns			Required height
+	 */
+	virtual int getTextBounds(const CString &str, int maxWidth, Point *sizeOut = nullptr) const = 0;
 
 	/**
-	 * Write out a string
+	 * Get the current font height
 	 */
-	virtual void writeString(int maxWidth, const CString &text, int *v1, int *v2) = 0;
+	virtual int getFontHeight() const = 0;
 
-	virtual void getFont() = 0;
-	virtual void proc18() = 0;
+	/**
+	 * Returns the width of a given string in pixels
+	 */
+	virtual int stringWidth(const CString &str) = 0;
+
 	virtual void proc19() = 0;
 
 	/**
@@ -216,12 +227,24 @@ public:
 	virtual void proc15();
 
 	/**
-	 * Write out a string
+	 * Get the text area a string will fit into
+	 * @param str		String
+	 * @param maxWidth	Maximum width in pixels
+	 * @param sizeOut	Optional pointer to output size
+	 * @returns			Required height
 	 */
-	virtual void writeString(int maxWidth, const CString &text, int *v1, int *v2);
+	virtual int getTextBounds(const CString &str, int maxWidth, Point *sizeOut = nullptr) const;
 
-	virtual void getFont();
-	virtual void proc18();
+	/**
+	 * Get the current font height
+	 */
+	virtual int getFontHeight() const;
+
+	/**
+	 * Returns the width of a given string in pixels
+	 */
+	virtual int stringWidth(const CString &str);
+
 	virtual void proc19();
 
 	/**

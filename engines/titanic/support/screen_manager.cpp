@@ -199,12 +199,18 @@ void OSScreenManager::proc13() {}
 void OSScreenManager::proc14() {}
 void OSScreenManager::proc15() {}
 
-void OSScreenManager::writeString(int maxWidth, const CString &text, int *v1, int *v2) {
-	_fonts[_fontNumber].writeString(maxWidth, text, v1, v2);
+int OSScreenManager::getTextBounds(const CString &str, int maxWidth, Point *sizeOut) const {
+	return _fonts[_fontNumber].getTextBounds(str, maxWidth, sizeOut);
 }
 
-void OSScreenManager::getFont() {}
-void OSScreenManager::proc18() {}
+int OSScreenManager::getFontHeight() const {
+	return _fonts[_fontNumber]._fontHeight;
+}
+
+int OSScreenManager::stringWidth(const CString &str) {
+	return _fonts[_fontNumber].stringWidth(str);
+}
+
 void OSScreenManager::proc19() {}
 
 void OSScreenManager::clearSurface(SurfaceNum surfaceNum, Rect *bounds) {

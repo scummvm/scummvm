@@ -70,8 +70,39 @@ uint16 STFont::getColor() const {
 	return g_system->getScreenFormat().RGBToColor(_fontR, _fontG, _fontB);
 }
 
-void STFont::writeString(int maxWidth, const CString &text, int *v1, int *v2) {
-	warning("TODO: STFont::writeString");
+int STFont::getTextBounds(const CString &str, int maxWidth, Point *sizeOut) const {
+	Point textSize;
+
+	// Reset output dimensions if provided
+	if (sizeOut)
+		*sizeOut = Point(0, 0);
+
+	if (_fontHeight == 0 || !_dataPtr)
+		// No font, so return immediately
+		return 0;
+	
+	// Loop through the characters of the string
+	if (!str.empty()) {
+		for (const char *strP = str.c_str(); *strP; ++strP) {
+			if (*strP == 26) {
+				strP += 3;
+			} else if (*strP == 27) {
+				strP += 4;
+			} else {
+				if (*strP == ' ') {
+					// Check fo rline wrapping
+					checkLineWrap(textSize, maxWidth, strP);
+				}
+
+				extendBounds(textSize, *strP, maxWidth);
+			}
+		}
+	}
+
+	if (sizeOut)
+		*sizeOut = textSize;
+
+	return textSize.y + _fontHeight;
 }
 
 int STFont::stringWidth(const CString &text) const {
@@ -157,6 +188,38 @@ void STFont::copyRect(CVideoSurface *surface, const Common::Point &pt, Rect &rec
 		}
 
 		surface->unlock();
+	}
+}
+
+void STFont::extendBounds(Point &textSize, byte c, int maxWidth) const {
+	textSize.x += _chars[c]._width;
+
+	if (textSize.x == '\n' || textSize.x > maxWidth) {
+		textSize.x = 0;
+		textSize.y += _fontHeight;
+	}
+}
+
+void STFont::checkLineWrap(Point &textSize, int maxWidth, const char *&str) const {
+	bool flag = false;
+	int totalWidth = 0;
+	for (const char *srcPtr = str; *srcPtr; ++srcPtr) {
+		if (*srcPtr == ' ' && flag)
+			break;
+
+		if (*srcPtr == 26)
+			srcPtr += 3;
+		else if (*srcPtr == 27)
+			srcPtr += 4;
+		else
+			totalWidth += _chars[*srcPtr]._width;
+	}
+	
+	if ((textSize.x + totalWidth) >= maxWidth && totalWidth < maxWidth) {
+		// Word wrap
+		textSize.x = 0;
+		textSize.y += _fontHeight;
+		++str;
 	}
 }
 
