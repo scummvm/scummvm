@@ -23,6 +23,7 @@
 #include "gnap/gnap.h"
 #include "gnap/gamesys.h"
 #include "gnap/resource.h"
+#include "gnap/scenes/scene40.h"
 
 namespace Gnap {
 
@@ -38,68 +39,68 @@ enum {
 	kHSDevice			= 8
 };
 
-int GnapEngine::scene40_init() {
-	_gameSys->setAnimation(0, 0, 0);
-	_gameSys->setAnimation(0, 0, 1);
-	return isFlag(kGFUnk23) ? 0x01 : 0x00;
+Scene40::Scene40(GnapEngine *vm) : Scene(vm) {
 }
 
-void GnapEngine::scene40_updateHotspots() {
-	setHotspot(kHSPlatypus, 0, 0, 0, 0, SF_WALKABLE | SF_DISABLED | SF_TALK_CURSOR | SF_GRAB_CURSOR | SF_LOOK_CURSOR);
-	setHotspot(kHSExitCave, 169, 510, 264, 600, SF_EXIT_D_CURSOR, 0, 8);
-	setHotspot(kHSExitToyStand, 238, 297, 328, 376, SF_EXIT_L_CURSOR, 0, 8);
-	setHotspot(kHSExitBBQ, 328, 220, 401, 306, SF_EXIT_L_CURSOR, 0, 8);
-	setHotspot(kHSExitUfo, 421, 215, 501, 282, SF_EXIT_U_CURSOR, 0, 8);
-	setHotspot(kHSExitKissinBooth, 476, 284, 556, 345, SF_EXIT_R_CURSOR, 0, 8);
-	setHotspot(kHSExitDancefloor, 317, 455, 445, 600, SF_EXIT_D_CURSOR, 0, 8);
-	setHotspot(kHSExitShoe, 455, 346, 549, 417, SF_EXIT_D_CURSOR, 0, 8);
-	setDeviceHotspot(kHSDevice, -1, -1, -1, -1);
-	_hotspotsCount = 9;
+int Scene40::init() {
+	_vm->_gameSys->setAnimation(0, 0, 0);
+	_vm->_gameSys->setAnimation(0, 0, 1);
+	return _vm->isFlag(kGFUnk23) ? 0x01 : 0x00;
 }
 
-void GnapEngine::scene40_run() {
+void Scene40::updateHotspots() {
+	_vm->setHotspot(kHSPlatypus, 0, 0, 0, 0, SF_WALKABLE | SF_DISABLED | SF_TALK_CURSOR | SF_GRAB_CURSOR | SF_LOOK_CURSOR);
+	_vm->setHotspot(kHSExitCave, 169, 510, 264, 600, SF_EXIT_D_CURSOR, 0, 8);
+	_vm->setHotspot(kHSExitToyStand, 238, 297, 328, 376, SF_EXIT_L_CURSOR, 0, 8);
+	_vm->setHotspot(kHSExitBBQ, 328, 220, 401, 306, SF_EXIT_L_CURSOR, 0, 8);
+	_vm->setHotspot(kHSExitUfo, 421, 215, 501, 282, SF_EXIT_U_CURSOR, 0, 8);
+	_vm->setHotspot(kHSExitKissinBooth, 476, 284, 556, 345, SF_EXIT_R_CURSOR, 0, 8);
+	_vm->setHotspot(kHSExitDancefloor, 317, 455, 445, 600, SF_EXIT_D_CURSOR, 0, 8);
+	_vm->setHotspot(kHSExitShoe, 455, 346, 549, 417, SF_EXIT_D_CURSOR, 0, 8);
+	_vm->setDeviceHotspot(kHSDevice, -1, -1, -1, -1);
+	_vm->_hotspotsCount = 9;
+}
 
-	queueInsertDeviceIcon();
-	endSceneInit();
+void Scene40::run() {
+	_vm->queueInsertDeviceIcon();
+	_vm->endSceneInit();
 
-	while (!_sceneDone) {
+	while (!_vm->_sceneDone) {
+		if (!_vm->isSoundPlaying(0x1094B))
+			_vm->playSound(0x1094B, true);
 
-		if (!isSoundPlaying(0x1094B))
-			playSound(0x1094B, true);
-
-		updateMouseCursor();
-		updateCursorByHotspot();
+		_vm->updateMouseCursor();
+		_vm->updateCursorByHotspot();
 	
-		testWalk(0, 0, -1, -1, -1, -1);
+		_vm->testWalk(0, 0, -1, -1, -1, -1);
 
-		_sceneClickedHotspot = getClickedHotspotId();
-		updateGrabCursorSprite(0, 0);
+		_vm->_sceneClickedHotspot = _vm->getClickedHotspotId();
+		_vm->updateGrabCursorSprite(0, 0);
 	
-		switch (_sceneClickedHotspot) {
-
+		switch (_vm->_sceneClickedHotspot) {
 		case kHSDevice:
-			runMenu();
-			scene40_updateHotspots();
+			_vm->runMenu();
+			updateHotspots();
 			break;
 			
 		case kHSPlatypus:
-			if (_gnapActionStatus < 0) {
-				if (_grabCursorSpriteIndex >= 0) {
-					playGnapImpossible(_platX, _platY);
+			if (_vm->_gnapActionStatus < 0) {
+				if (_vm->_grabCursorSpriteIndex >= 0) {
+					_vm->playGnapImpossible(_vm->_platX, _vm->_platY);
 				} else {
-					switch (_verbCursor) {
+					switch (_vm->_verbCursor) {
 					case LOOK_CURSOR:
-						playGnapMoan1(_platX, _platY);
+						_vm->playGnapMoan1(_vm->_platX, _vm->_platY);
 						break;
 					case GRAB_CURSOR:
-						gnapKissPlatypus(0);
+						_vm->gnapKissPlatypus(0);
 						break;
 					case TALK_CURSOR:
-						playGnapBrainPulsating(_platX, _platY);
-						playPlatypusSequence(getPlatypusSequenceId());
+						_vm->playGnapBrainPulsating(_vm->_platX, _vm->_platY);
+						_vm->playPlatypusSequence(_vm->getPlatypusSequenceId());
 						break;
 					case PLAT_CURSOR:
-						playGnapImpossible(_platX, _platY);
+						_vm->playGnapImpossible(_vm->_platX, _vm->_platY);
 						break;
 					}
 				}
@@ -107,87 +108,82 @@ void GnapEngine::scene40_run() {
 			break;
 	
 		case kHSExitCave:
-			if (_gnapActionStatus < 0) {
-				_newSceneNum = 39;
-				_sceneDone = true;
+			if (_vm->_gnapActionStatus < 0) {
+				_vm->_newSceneNum = 39;
+				_vm->_sceneDone = true;
 			}
 			break;
 	
 		case kHSExitToyStand:
-			if (_gnapActionStatus < 0) {
-				_newSceneNum = 41;
-				_sceneDone = true;
+			if (_vm->_gnapActionStatus < 0) {
+				_vm->_newSceneNum = 41;
+				_vm->_sceneDone = true;
 			}
 			break;
 	
 		case kHSExitBBQ:
-			if (_gnapActionStatus < 0) {
-				_newSceneNum = 42;
-				_sceneDone = true;
+			if (_vm->_gnapActionStatus < 0) {
+				_vm->_newSceneNum = 42;
+				_vm->_sceneDone = true;
 			}
 			break;
 	
 		case kHSExitUfo:
-			if (_gnapActionStatus < 0) {
-				_newSceneNum = 43;
-				_sceneDone = true;
+			if (_vm->_gnapActionStatus < 0) {
+				_vm->_newSceneNum = 43;
+				_vm->_sceneDone = true;
 			}
 			break;
 	
 		case kHSExitKissinBooth:
-			if (_gnapActionStatus < 0) {
-				_newSceneNum = 44;
-				_sceneDone = true;
+			if (_vm->_gnapActionStatus < 0) {
+				_vm->_newSceneNum = 44;
+				_vm->_sceneDone = true;
 			}
 			break;
 	
 		case kHSExitDancefloor:
-			if (_gnapActionStatus < 0) {
-				_newSceneNum = 45;
-				_sceneDone = true;
+			if (_vm->_gnapActionStatus < 0) {
+				_vm->_newSceneNum = 45;
+				_vm->_sceneDone = true;
 			}
 			break;
 	
 		case kHSExitShoe:
-			if (_gnapActionStatus < 0) {
-				_newSceneNum = 46;
-				_sceneDone = true;
+			if (_vm->_gnapActionStatus < 0) {
+				_vm->_newSceneNum = 46;
+				_vm->_sceneDone = true;
 			}
 			break;
 	
 		default:
-			if (_mouseClickState._left && _gnapActionStatus < 0)
-				_mouseClickState._left = false;
+			if (_vm->_mouseClickState._left && _vm->_gnapActionStatus < 0)
+				_vm->_mouseClickState._left = false;
 			break;
 		
 		}
 	
-		scene40_updateAnimations();
-		
-		checkGameKeys();
+		updateAnimations();
+		_vm->checkGameKeys();
 	
-		if (isKeyStatus1(8)) {
-			clearKeyStatus1(8);
-			runMenu();
-			scene40_updateHotspots();
+		if (_vm->isKeyStatus1(8)) {
+			_vm->clearKeyStatus1(8);
+			_vm->runMenu();
+			updateHotspots();
 		}
 		
-		gameUpdateTick();
-	
+		_vm->gameUpdateTick();
 	}
-
 }
 
-void GnapEngine::scene40_updateAnimations() {
-	
-	if (_gameSys->getAnimationStatus(0) == 2) {
-		_gameSys->setAnimation(0, 0, 0);
-		if (_gnapActionStatus)
-			_gnapActionStatus = -1;
+void Scene40::updateAnimations() {
+	if (_vm->_gameSys->getAnimationStatus(0) == 2) {
+		_vm->_gameSys->setAnimation(0, 0, 0);
+		if (_vm->_gnapActionStatus)
+			_vm->_gnapActionStatus = -1;
 		else
-			_sceneDone = true;
+			_vm->_sceneDone = true;
 	}
-
 }
 
 } // End of namespace Gnap

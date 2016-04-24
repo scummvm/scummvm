@@ -605,12 +605,6 @@ public:
 
 	// Shared by scenes 17 & 18
 	int _s18_garbageCanPos;
-	
-	// Scene 40
-	int scene40_init();
-	void scene40_updateHotspots();
-	void scene40_run();
-	void scene40_updateAnimations();
 
 	// Scene 4x
 	void toyUfoSetStatus(int flagNum);
