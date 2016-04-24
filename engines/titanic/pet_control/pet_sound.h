@@ -98,11 +98,6 @@ public:
 	 * Returns the tooltip text for when the glyph is selected
 	 */
 	virtual void getTooltip(CPetText *text);
-
-	/**
-	 * Get the parent RealLife area
-	 */
-	CPetGlyphs *getOwner() { return _owner; }
 };
 
 } // End of namespace Titanic

@@ -74,6 +74,11 @@ public:
 	void translateBack(const Point &pt) { _element.translate(-pt.x, -pt.y); }
 
 	/**
+	 * Get the parent RealLife area
+	 */
+	CPetGlyphs *getOwner() { return _owner; }
+
+	/**
 	 * Get the PET control
 	 */
 	CPetControl *getPetControl() const;
@@ -106,7 +111,7 @@ public:
 	/**
 	 * Draw the glyph at a specified position
 	 */
-	virtual void drawAt(CScreenManager *screenManager, const Point &pt);
+	virtual void drawAt(CScreenManager *screenManager, const Point &pt, bool isHighlighted);
 
 	/**
 	 * Handles any secondary drawing of the glyph

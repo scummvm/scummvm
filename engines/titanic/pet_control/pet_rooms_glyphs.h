@@ -32,20 +32,41 @@ protected:
 	int _field34;
 	int _field38;
 	int _field3C;
-	int _field40;
-	int _field44;
-	int _field48;
-	int _field4C;
-	int _field50;
-	int _field54;
-	int _field58;
-	int _field5C;
+	CGameObject *_field40;
+	CGameObject *_field44;
+	CGameObject *_field48;
+	CGameObject *_field4C;
+	CGameObject *_field50;
+	CGameObject *_field54;
+	CGameObject *_field58;
+	CGameObject *_field5C;
 public:
 	CPetRoomsGlyph();
 
 	void set34(int val);
 
 	void set38(int val);
+
+	/**
+	 * Setup the glyph
+	 */
+	virtual bool setup(CPetControl *petControl, CPetGlyphs *owner);
+
+	/**
+	 * Draw the glyph at a specified position
+	 */
+	virtual void drawAt(CScreenManager *screenManager, const Point &pt);
+
+	/**
+	 * Handles any secondary drawing of the glyph
+	 */
+	virtual void draw2(CScreenManager *screenManager) {}
+
+	virtual void proc28(const Point &pt);
+	virtual int proc29(const Point &pt);
+	virtual void proc32();
+	virtual int proc33();
+	virtual void proc39();
 };
 
 class CPetRoomsGlyphs : public CPetGlyphs {

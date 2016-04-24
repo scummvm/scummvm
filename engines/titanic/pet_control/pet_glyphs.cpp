@@ -32,7 +32,7 @@ bool CPetGlyph::setup(CPetControl *petControl, CPetGlyphs *owner) {
 	return true;
 }
 
-void CPetGlyph::drawAt(CScreenManager *screenManager, const Point &pt) {
+void CPetGlyph::drawAt(CScreenManager *screenManager, const Point &pt, bool isHighlighted) {
 	_element.translate(pt.x, pt.y);
 	_element.draw(screenManager);
 	_element.translate(-pt.x, -pt.y);
@@ -151,10 +151,8 @@ void CPetGlyphs::draw(CScreenManager *screenManager) {
 			Point pt = getPosition(itemIndex);
 			CPetGlyph *glyph = getGlyph(itemIndex);
 
-			if (glyph) {
-				// TODO: Comparison with highlighted index, and a redundant push?
-				glyph->drawAt(screenManager, pt);
-			}
+			if (glyph)
+				glyph->drawAt(screenManager, pt, index == _highlightIndex);
 		}
 	}
 
