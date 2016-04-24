@@ -2021,10 +2021,6 @@ void GnapEngine::initGlobalSceneVars() {
 	// Shared by scenes 17 && 18
 	_s18_garbageCanPos = 8;
 
-	// Scene 31
-	_s31_beerGuyDistracted = false;
-	_s31_clerkMeasureMaxCtr = 3;
-
 	// Scene 50
 	_s50_timesPlayed = 0;
 	_s50_timesPlayedModifier = 0;
