@@ -80,6 +80,7 @@ public:
 		kLocationGoToNewCD = 22,
 		kGameEnd = 23,
 		kInventoryOpen = 24,
+		kBookOfSecretsOpen = 26,
 
 		kItem3DPlaceOn = 81,
 		kItem3DWalkTo = 82,
