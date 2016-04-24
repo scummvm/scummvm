@@ -49,7 +49,7 @@ private:
 	CPetConversations _conversations;
 	CPetInventory _inventory;
 	CPetRemote _remote;
-	CPetRoomsSection _rooms;
+	CPetRooms _rooms;
 	CPetRealLife _realLife;
 	CPetControlSub5 _sub5;
 	CPetControlSub7 _sub7;

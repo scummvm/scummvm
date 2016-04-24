@@ -20,8 +20,22 @@
  *
  */
 
-#include "titanic/pet_control/pet_control_sub11.h"
+#include "titanic/pet_control/pet_rooms_glyphs.h"
 
 namespace Titanic {
+
+CPetRoomsGlyph::CPetRoomsGlyph() : CPetGlyph(),
+	_field34(0), _field38(0), _field3C(0), _field40(0),
+	_field44(0), _field48(0), _field4C(0), _field50(0),
+	_field54(0), _field58(0), _field5C(0) {
+}
+
+void CPetRoomsGlyph::set34(int val) {
+	_field34 = val;
+}
+
+void CPetRoomsGlyph::set38(int val) {
+	_field38 = val;
+}
 
 } // End of namespace Titanic

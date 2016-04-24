@@ -20,14 +20,14 @@
  *
  */
 
-#ifndef TITANIC_PET_CONTROL_LIST_ITEM2_H
-#define TITANIC_PET_CONTROL_LIST_ITEM2_H
+#ifndef TITANIC_PET_ROOMS_GLYPHS_H
+#define TITANIC_PET_ROOMS_GLYPHS_H
 
 #include "titanic/pet_control/pet_glyphs.h"
 
 namespace Titanic {
 
-class CPetControlListItem2  : public CPetGlyph {
+class CPetRoomsGlyph : public CPetGlyph {
 protected:
 	int _field34;
 	int _field38;
@@ -41,11 +41,16 @@ protected:
 	int _field58;
 	int _field5C;
 public:
-	CPetControlListItem2();
+	CPetRoomsGlyph();
 
-	void setField34(int val);
+	void set34(int val);
+
+	void set38(int val);
+};
+
+class CPetRoomsGlyphs : public CPetGlyphs {
 };
 
 } // End of namespace Titanic
 
-#endif /* TITANIC_PET_CONTROL_LIST_ITEM2_H */
+#endif /* TITANIC_PET_ROOMS_GLYPHS_H */

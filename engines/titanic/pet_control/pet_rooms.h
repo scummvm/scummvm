@@ -20,29 +20,28 @@
  *
  */
 
-#ifndef TITANIC_PET_ROOMS_SECTION_H
-#define TITANIC_PET_ROOMS_SECTION_H
+#ifndef TITANIC_PET_ROOMS_H
+#define TITANIC_PET_ROOMS_H
 
 #include "titanic/pet_control/pet_section.h"
-#include "titanic/pet_control/pet_control_sub11.h"
 #include "titanic/pet_control/pet_text.h"
-#include "titanic/pet_control/pet_control_list_item2.h"
+#include "titanic/pet_control/pet_rooms_glyphs.h"
 
 namespace Titanic {
 
-class CPetRoomsSection : public CPetSection {
+class CPetRooms : public CPetSection {
 private:
-	CPetControlSub11 _sub11;
-	CPetControlListItem2 _listItem;
-	int _field100;
-	int _field104;
-	int _field108;
-	int _field10C;
-	int _field110;
-	int _field114;
-	int _field118;
-	int _field11C;
-	CPetGfxElement _val1;
+	CPetRoomsGlyphs _glyphs;
+	CPetRoomsGlyph _glyphItem;
+	CGameObject *_chevLeftOnDim;
+	CGameObject *_chevLeftOffDim;
+	CGameObject *_chevRightOnDim;
+	CGameObject *_chevRightOffDim;
+	CGameObject *_chevLeftOnLit;
+	CGameObject *_chevLeftOffLit;
+	CGameObject *_chevRightOnLit;
+	CGameObject *_chevRightOffLit;
+	CPetGfxElement _element;
 	CPetText _text;
 	int _field1C0;
 	int _field1C4;
@@ -50,13 +49,50 @@ private:
 	int _field1CC;
 	int _field1D0;
 	int _field1D4;
+private:
+	/**
+	 * Setup the control
+	 */
+	bool setupControl(CPetControl *petControl);
 public:
-	CPetRoomsSection();
+	CPetRooms();
 
 	/**
-	 * Save the data for the class to file
+	 * Sets up the section
 	 */
-	virtual void save(SimpleFile *file, int indent) const;
+	virtual bool setup(CPetControl *petControl);
+	
+	/**
+	 * Reset the section
+	 */
+	virtual bool reset();
+
+	/**
+	 * Draw the section
+	 */
+	virtual void draw(CScreenManager *screenManager);
+		
+	/**
+	 * Following are handlers for the various messages that the PET can
+	 * pass onto the currently active section/area
+	 */
+	virtual bool MouseButtonDownMsg(CMouseButtonDownMsg *msg);
+	virtual bool MouseDragStartMsg(CMouseDragStartMsg *msg);
+	virtual bool MouseButtonUpMsg(CMouseButtonUpMsg *msg);
+	virtual bool MouseDoubleClickMsg(CMouseDoubleClickMsg *msg);
+	virtual bool VirtualKeyCharMsg(CVirtualKeyCharMsg *msg);
+
+	virtual int proc14();
+
+	/**
+	 * Display a message
+	 */
+	virtual void displayMessage(const CString &msg);
+
+	/**
+	 * Returns true if the object is in a valid state
+	 */
+	virtual bool isValid(CPetControl *petControl);
 
 	/**
 	 * Load the data for the class from file
@@ -64,9 +100,31 @@ public:
 	virtual void load(SimpleFile *file, int param);
 
 	/**
-	 * Returns true if the object is in a valid state
+	 * Called after a game has been loaded
 	 */
-	virtual bool isValid(CPetControl *petControl);
+	virtual void postLoad();
+
+	/**
+	 * Save the data for the class to file
+	 */
+	virtual void save(SimpleFile *file, int indent) const;
+
+	/**
+	 * Called when a section is switched to
+	 */
+	virtual void enter(PetArea oldArea);
+
+	/**
+	 * Called when a new room is entered
+	 */
+	virtual void enterRoom(CRoomItem *room);
+
+	/**
+	 * Get a reference to the tooltip text associated with the section
+	 */
+	virtual CPetText *getText();
+
+	virtual CGameObject *getBackground(int index);
 };
 
 } // End of namespace Titanic
