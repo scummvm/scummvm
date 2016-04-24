@@ -58,7 +58,6 @@ public:
 	 * Executes the loading or saving
 	 */
 	virtual void execute();
-
 };
 
 } // End of namespace Titanic

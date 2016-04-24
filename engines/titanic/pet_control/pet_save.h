@@ -50,6 +50,19 @@ public:
 	virtual void getTooltip(CPetText *text);
 
 	/**
+	 * Called on a highlighted item when PET area is entered
+	 */
+	virtual bool enterHighlighted() { 
+		highlightSave(_savegameSlotNum);
+		return true;
+	}
+	
+	/**
+	 * Called on a highlighted item when PET area is left
+	 */
+	virtual void leaveHighlighted() { unhighlightSave(_savegameSlotNum); }
+
+	/**
 	 * Highlights a save slot
 	 */
 	virtual void highlightSave(int index);

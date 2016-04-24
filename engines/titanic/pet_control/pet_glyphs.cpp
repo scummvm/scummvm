@@ -412,11 +412,9 @@ bool CPetGlyphs::enterHighlighted() {
 		return false;
 }
 
-bool CPetGlyphs::leaveHighlighted() {
+void CPetGlyphs::leaveHighlighted() {
 	if (_highlightIndex >= 0)
-		return getGlyph(_highlightIndex)->leaveHighlighted();
-	else
-		return false;
+		getGlyph(_highlightIndex)->leaveHighlighted();
 }
 
 void CPetGlyphs::startDragging(CPetGlyph *glyph, CMouseDragStartMsg *msg) {

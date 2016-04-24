@@ -194,7 +194,7 @@ public:
 	/**
 	 * Called on a highlighted item when PET area is left
 	 */
-	virtual bool leaveHighlighted() { return false; }
+	virtual void leaveHighlighted() {}
 
 	virtual int proc37() { return 0; }
 
@@ -368,7 +368,7 @@ public:
 	 * When the PET section is left, passes onto the highlighted
 	 * glyph, if any
 	 */
-	bool leaveHighlighted();
+	void leaveHighlighted();
 
 	/**
 	 * Called when a dragging operation starts
