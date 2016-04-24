@@ -250,17 +250,6 @@ enum {
 	// 0x7AF	Gnap walks to the left 1
 	// 0x7B0	Gnap walks to the left 2
 
-struct Scene49Obstacle {
-	int _currSequenceId;
-	int _closerSequenceId;
-	int _passedSequenceId;
-	int _splashSequenceId;
-	int _collisionSequenceId;
-	int _prevId;
-	int _currId;
-	int _laneNum;
-};
-
 struct Scene51Item {
 	int _currSequenceId;
 	int _droppedSequenceId;
@@ -611,23 +600,6 @@ public:
 	int toyUfoGetSequenceId();
 	bool toyUfoCheckTimer();
 	void toyUfoFlyTo(int destX, int destY, int minX, int maxX, int minY, int maxY, int animationIndex);
-
-	// Scene 49
-	int _s49_scoreBarPos, _s49_scoreLevel;
-	bool _s49_scoreBarFlash;
-	int _s49_obstacleIndex;
-	Scene49Obstacle _s49_obstacles[5];
-	int _s49_truckSequenceId, _s49_truckId, _s49_truckLaneNum;
-	int scene49_init();
-	void scene49_updateHotspots();
-	void scene49_checkObstacles();
-	void scene49_updateObstacle(int id);
-	void scene49_increaseScore(int amount);
-	void scene49_decreaseScore(int amount);
-	void scene49_refreshScoreBar();
-	void scene49_clearObstacle(int index);
-	void scene49_run();
-	void scene49_updateAnimations();
 
 	// Scene 50
 	bool _s50_fightDone;
