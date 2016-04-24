@@ -116,6 +116,8 @@ void MacWindow::setDimensions(const Common::Rect &r) {
 	resize(r.width(), r.height());
 	_dims.moveTo(r.left, r.top);
 	updateInnerDims();
+
+	_contentIsDirty = true;
 }
 
 bool MacWindow::draw(Graphics::ManagedSurface *g, bool forceRedraw) {

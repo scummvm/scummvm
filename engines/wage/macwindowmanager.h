@@ -71,6 +71,9 @@ public:
 	MacWindow *getWindow(int id) { return _windows[id]; }
 
 private:
+	void drawDesktop();
+
+private:
 	Graphics::ManagedSurface *_screen;
 
 	Common::List<MacWindow *> _windowStack;
@@ -80,6 +83,8 @@ private:
 	int _activeWindow;
 
 	bool _fullRefresh;
+
+	Patterns _patterns;
 };
 
 } // End of namespace Wage

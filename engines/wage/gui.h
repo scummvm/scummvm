@@ -78,8 +78,7 @@ enum {
 enum {
 	kPatternSolid = 1,
 	kPatternStripes = 2,
-	kPatternCheckers = 3,
-	kPatternCheckers2 = 4
+	kPatternCheckers2 = 3
 };
 
 class Gui {
@@ -117,11 +116,12 @@ public:
 	bool processSceneEvents(WindowClick click, Common::Event &event);
 	bool processConsoleEvents(WindowClick click, Common::Event &event);
 
+	Patterns &getPatterns() { return _patterns; }
+
 private:
 	void drawScene();
 	void drawConsole();
 	void undrawCursor();
-	void drawDesktop();
 	void renderConsole(Graphics::ManagedSurface *g, const Common::Rect &r);
 	void loadFonts();
 	void flowText(Common::String &str);

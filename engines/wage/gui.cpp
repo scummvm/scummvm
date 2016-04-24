@@ -73,7 +73,6 @@ static const byte palette[] = {
 
 static byte fillPatterns[][8] = { { 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff }, // kPatternSolid
 								  { 0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55 }, // kPatternStripes
-								  { 0xaa, 0x55, 0xaa, 0x55, 0xaa, 0x55, 0xaa, 0x55 }, // kPatternCheckers
 								  { 0x55, 0xaa, 0x55, 0xaa, 0x55, 0xaa, 0x55, 0xaa }  // kPatternCheckers2
 };
 
@@ -231,17 +230,11 @@ const Graphics::Font *Gui::getTitleFont() {
 	return getFont("Chicago-12", Graphics::FontManager::kBigGUIFont);
 }
 
-void Gui::drawDesktop() {
-	// Draw desktop
-	Common::Rect r(0, 0, _screen.w - 1, _screen.h - 1);
-	Design::drawFilledRoundRect(&_screen, r, kDesktopArc, kColorBlack, _patterns, kPatternCheckers);
-	g_system->copyRectToScreen(_screen.getPixels(), _screen.pitch, 0, 0, _screen.w, _screen.h);
-}
-
 void Gui::draw() {
 	if (_engine->_isGameOver) {
 		if (_menuDirty) {
-			drawDesktop();
+			_wm.setFullRefresh(true);
+			_wm.draw();
 			_menu->render();
 		}
 
@@ -260,13 +253,8 @@ void Gui::draw() {
 
 		_sceneWindow->setDimensions(*_scene->_designBounds);
 		_sceneWindow->setTitle(_scene->_name);
-		_sceneWindow->setDirty(true);
 		_consoleWindow->setDimensions(*_scene->_textBounds);
-		_consoleWindow->setDirty(true);
-	}
 
-	if (_sceneDirty) {
-		drawDesktop();
 		_wm.setFullRefresh(true);
 	}
 
@@ -370,7 +358,7 @@ bool Gui::processConsoleEvents(WindowClick click, Common::Event &event) {
 				undrawCursor();
 				_cursorY -= (_scrollPos - oldScrollPos);
 				_consoleDirty = true;
-					_consoleFullRedraw = true;
+				_consoleFullRedraw = true;
 				break;
 			case kBorderScrollDown:
 				_scrollPos = MIN<int>((_lines.size() - 2) * _consoleLineHeight, _scrollPos + _consoleLineHeight);

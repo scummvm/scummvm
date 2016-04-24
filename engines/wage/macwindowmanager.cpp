@@ -53,10 +53,20 @@
 #include "graphics/managed_surface.h"
 
 #include "wage/wage.h"
+#include "wage/design.h"
+#include "wage/gui.h"
 #include "wage/macwindow.h"
 #include "wage/macwindowmanager.h"
 
 namespace Wage {
+
+enum {
+	kPatternCheckers = 1
+};
+
+static byte fillPatterns[][8] = { { 0xaa, 0x55, 0xaa, 0x55, 0xaa, 0x55, 0xaa, 0x55 } // kPatternCheckers
+};
+
 
 MacWindowManager::MacWindowManager() {
     _screen = 0;
@@ -64,6 +74,9 @@ MacWindowManager::MacWindowManager() {
     _activeWindow = -1;
 
 	_fullRefresh = true;
+
+	for (int i = 0; i < ARRAYSIZE(fillPatterns); i++)
+		_patterns.push_back(fillPatterns[i]);
 }
 
 MacWindowManager::~MacWindowManager() {
@@ -104,6 +117,9 @@ void MacWindowManager::setActive(int id) {
 void MacWindowManager::draw() {
     assert(_screen);
 
+	if (_fullRefresh)
+		drawDesktop();
+
     for (Common::List<MacWindow *>::const_iterator it = _windowStack.begin(); it != _windowStack.end(); it++) {
         MacWindow *w = *it;
         if (w->draw(_screen, _fullRefresh)) {
@@ -117,6 +133,13 @@ void MacWindowManager::draw() {
     }
 
     _fullRefresh = false;
+}
+
+void MacWindowManager::drawDesktop() {
+	Common::Rect r(_screen->getBounds());
+
+	Design::drawFilledRoundRect(_screen, r, kDesktopArc, kColorBlack, _patterns, kPatternCheckers);
+	g_system->copyRectToScreen(_screen->getPixels(), _screen->pitch, 0, 0, _screen->w, _screen->h);
 }
 
 bool MacWindowManager::processEvent(Common::Event &event) {
