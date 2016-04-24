@@ -23,6 +23,7 @@
 #include "gnap/gnap.h"
 #include "gnap/gamesys.h"
 #include "gnap/resource.h"
+#include "gnap/scenes/scene51.h"
 
 namespace Gnap {
 
@@ -46,18 +47,54 @@ static const int kDigitPositions[4] = {
 	0x76	Platypus jumping (right)
 */
 
-int GnapEngine::scene51_init() {
-	_gameSys->setAnimation(0, 0, 0);
+Scene51::Scene51(GnapEngine *vm) : Scene(vm) {
+	_s51_dropLoseCash = false;
+
+	_s51_cashAmount = -1;
+	_s51_guySequenceId = -1;
+	_s51_guyNextSequenceId = -1;
+	_s51_itemsCaughtCtr = -1;
+	_s51_dropSpeedTicks = -1;
+	_s51_nextDropItemKind = -1;
+	_s51_itemInsertX = -1;
+	_s51_itemInsertDirection = -1;
+	_s51_platypusSequenceId = -1;
+	_s51_platypusNextSequenceId = -1;
+	_s51_platypusJumpSequenceId = -1;
+	_s51_itemsCtr = -1;
+	_s51_itemsCtr1 = -1;
+	_s51_itemsCtr2 = -1;
+
+	for (int i = 0; i < 4; i++) {
+		_s51_digits[i] = 0;
+		_s51_digitSequenceIds[4] = -1;
+	}
+
+	for (int i = 0; i < 6; i++) {
+		_s51_items[i]._currSequenceId = -1;
+		_s51_items[i]._droppedSequenceId;
+		_s51_items[i]._x = 0;
+		_s51_items[i]._y = 0;
+		_s51_items[i]._collisionX;
+		_s51_items[i]._canCatch = false;
+		_s51_items[i]._isCollision = false;
+		_s51_items[i]._x2 = 0;
+		_s51_items[i]._id = -1;
+	}
+}
+
+int Scene51::init() {
+	_vm->_gameSys->setAnimation(0, 0, 0);
 	for (int i = 0; i < 6; ++i)
-		_gameSys->setAnimation(0, 0, i + 1);
+		_vm->_gameSys->setAnimation(0, 0, i + 1);
 	return 0xD4;
 }
 
-void GnapEngine::scene51_updateHotspots() {
-	_hotspotsCount = 0;
+void Scene51::updateHotspots() {
+	_vm->_hotspotsCount = 0;
 }
 
-void GnapEngine::scene51_clearItem(Scene51Item *item) {
+void Scene51::clearItem(Scene51Item *item) {
 	item->_currSequenceId = 0;
 	item->_droppedSequenceId = 0;
 	item->_x = 0;
@@ -67,13 +104,11 @@ void GnapEngine::scene51_clearItem(Scene51Item *item) {
 	item->_canCatch = false;
 }
 
-void GnapEngine::scene51_dropNextItem() {
-
-	if (_timers[0])
+void Scene51::dropNextItem() {
+	if (_vm->_timers[0])
 		return;
 
 	int index = 0;
-
 	while (index < 6 && _s51_items[index]._currSequenceId)
 		++index;
 
@@ -81,9 +116,8 @@ void GnapEngine::scene51_dropNextItem() {
 		return;
 
 	switch (_s51_nextDropItemKind) {
-
 	case 0:
-		if (getRandom(10) != 0 || _s51_itemsCtr2 >= 2) {
+		if (_vm->getRandom(10) != 0 || _s51_itemsCtr2 >= 2) {
 			_s51_items[index]._currSequenceId = 0xBD;
 		} else {
 			--_s51_itemsCtr1;
@@ -93,8 +127,8 @@ void GnapEngine::scene51_dropNextItem() {
 		break;
 
 	case 1:
-		if (getRandom(8) != 0 || _s51_itemsCtr2 >= 2) {
-			if (getRandom(5) == 0) {
+		if (_vm->getRandom(8) != 0 || _s51_itemsCtr2 >= 2) {
+			if (_vm->getRandom(5) == 0) {
 				if (_s51_itemInsertDirection)
 					_s51_itemInsertX -= 70;
 				else
@@ -109,7 +143,7 @@ void GnapEngine::scene51_dropNextItem() {
 		break;
 
 	case 2:
-		if (getRandom(6) != 0 || _s51_itemsCtr2 >= 2) {
+		if (_vm->getRandom(6) != 0 || _s51_itemsCtr2 >= 2) {
 			_s51_items[index]._currSequenceId = 0xBD;
 		} else {
 			--_s51_itemsCtr1;
@@ -127,8 +161,8 @@ void GnapEngine::scene51_dropNextItem() {
 
 	case 5:
 	case 6:
-		if (getRandom(5) != 0 || _s51_itemsCtr2 >= 2) {
-			if (getRandom(5) != 0)
+		if (_vm->getRandom(5) != 0 || _s51_itemsCtr2 >= 2) {
+			if (_vm->getRandom(5) != 0)
 				_s51_items[index]._currSequenceId = 0xBD;
 			else
 				_s51_items[index]._currSequenceId = 0xC0;
@@ -140,14 +174,14 @@ void GnapEngine::scene51_dropNextItem() {
 		break;
 
 	case 7:
-		if (getRandom(5) != 0 || _s51_itemsCtr2 >= 2) {
-			if (getRandom(5) == 0) {
+		if (_vm->getRandom(5) != 0 || _s51_itemsCtr2 >= 2) {
+			if (_vm->getRandom(5) == 0) {
 				if (_s51_itemInsertDirection)
 					_s51_itemInsertX -= 40;
 				else
 					_s51_itemInsertX += 40;
 			}
-			if (getRandom(9) != 0)
+			if (_vm->getRandom(9) != 0)
 				_s51_items[index]._currSequenceId = 0xBD;
 			else
 				_s51_items[index]._currSequenceId = 0xC0;
@@ -159,8 +193,8 @@ void GnapEngine::scene51_dropNextItem() {
 		break;
 
 	default:
-		if (getRandom(4) != 0 || _s51_itemsCtr2 >= 2) {
-			if (getRandom(9) != 0)
+		if (_vm->getRandom(4) != 0 || _s51_itemsCtr2 >= 2) {
+			if (_vm->getRandom(9) != 0)
 				_s51_items[index]._currSequenceId = 0xBD;
 			else
 				_s51_items[index]._currSequenceId = 0xC0;
@@ -170,7 +204,6 @@ void GnapEngine::scene51_dropNextItem() {
 			++_s51_itemsCtr2;
 		}
 		break;
-
 	}
 
 	if (_s51_itemInsertDirection) {
@@ -194,7 +227,7 @@ void GnapEngine::scene51_dropNextItem() {
 		_s51_itemInsertX = 129;
 
 	if (_s51_items[index]._currSequenceId == 0xBA) {
-		_s51_items[index]._x2 = getRandom(350) + 200;
+		_s51_items[index]._x2 = _vm->getRandom(350) + 200;
 		_s51_items[index]._x = _s51_items[index]._x2 - 362;
 		_s51_items[index]._y = 15;
 		_s51_items[index]._id = 249 - index;
@@ -207,37 +240,37 @@ void GnapEngine::scene51_dropNextItem() {
 		_s51_items[index]._canCatch = true;
 	}
 
-	_gameSys->setAnimation(_s51_items[index]._currSequenceId, _s51_items[index]._id, index + 1);
-	_gameSys->insertSequence(_s51_items[index]._currSequenceId, _s51_items[index]._id, 0, 0,
+	_vm->_gameSys->setAnimation(_s51_items[index]._currSequenceId, _s51_items[index]._id, index + 1);
+	_vm->_gameSys->insertSequence(_s51_items[index]._currSequenceId, _s51_items[index]._id, 0, 0,
 		kSeqNone, 0, _s51_items[index]._x, _s51_items[index]._y);
 
-	_timers[0] = _s51_dropSpeedTicks;
+	_vm->_timers[0] = _s51_dropSpeedTicks;
 
 	if (_s51_nextDropItemKind >= 3)
-		_timers[0] = 20;
+		_vm->_timers[0] = 20;
 
 	if (_s51_nextDropItemKind >= 5)
-		_timers[0] = 5;
+		_vm->_timers[0] = 5;
 
 	if (_s51_nextDropItemKind == 8)
-		_timers[0] = 4;
+		_vm->_timers[0] = 4;
 
 	++_s51_itemsCtr;
-
 }
 
-void GnapEngine::scene51_updateItemAnimations() {
-	for (int i = 0; i < 6; ++i)
-		if (_gameSys->getAnimationStatus(i + 1) == 2)
-			scene51_updateItemAnimation(&_s51_items[i], i);
+void Scene51::updateItemAnimations() {
+	for (int i = 0; i < 6; ++i) {
+		if (_vm->_gameSys->getAnimationStatus(i + 1) == 2)
+			updateItemAnimation(&_s51_items[i], i);
+	}
 }
 
-int GnapEngine::scene51_checkCollision(int sequenceId) {
+int Scene51::checkCollision(int sequenceId) {
 	bool jumpingLeft = false, jumpingRight = false;
 	int v8, v4;
 	int result = 0;
 
-	if (!scene51_isJumping(sequenceId))
+	if (!isJumping(sequenceId))
 		return false;
 
 	bool checkFl = false;
@@ -247,13 +280,13 @@ int GnapEngine::scene51_checkCollision(int sequenceId) {
 	if (!checkFl)
 		return false;
 		
-	if (scene51_isJumpingRight(sequenceId)) {
-		v8 = scene51_getPosRight(sequenceId);
-		v4 = scene51_getPosRight(sequenceId + 1);
+	if (isJumpingRight(sequenceId)) {
+		v8 = getPosRight(sequenceId);
+		v4 = getPosRight(sequenceId + 1);
 		jumpingRight = true;
-	} else if (scene51_isJumpingLeft(sequenceId)) {
-		v4 = scene51_getPosLeft(sequenceId - 1) + 33;
-		v8 = scene51_getPosLeft(sequenceId) + 33;
+	} else if (isJumpingLeft(sequenceId)) {
+		v4 = getPosLeft(sequenceId - 1) + 33;
+		v8 = getPosLeft(sequenceId) + 33;
 		jumpingLeft = true;
 	}
 
@@ -278,8 +311,8 @@ int GnapEngine::scene51_checkCollision(int sequenceId) {
 			}
 		}
 		if (v5) {
-			_gameSys->setAnimation(0xBC, _s51_items[i]._id, i + 1);
-			_gameSys->insertSequence(0xBC, _s51_items[i]._id, _s51_items[i]._currSequenceId, _s51_items[i]._id, kSeqSyncWait, 0, _s51_items[i]._x, 15);
+			_vm->_gameSys->setAnimation(0xBC, _s51_items[i]._id, i + 1);
+			_vm->_gameSys->insertSequence(0xBC, _s51_items[i]._id, _s51_items[i]._currSequenceId, _s51_items[i]._id, kSeqSyncWait, 0, _s51_items[i]._x, 15);
 			_s51_items[i]._isCollision = false;
 			_s51_items[i]._currSequenceId = 0xBC;
 			--_s51_itemsCtr2;
@@ -290,14 +323,14 @@ int GnapEngine::scene51_checkCollision(int sequenceId) {
 	return result;
 }
 
-void GnapEngine::scene51_updateItemAnimation(Scene51Item *item, int index) {
+void Scene51::updateItemAnimation(Scene51Item *item, int index) {
 
 	switch (item->_currSequenceId) {
 	case 0xBD:
 	case 0xC0:
 	case 0xC1:
 		// Falling coin and banknote
-		if (!scene51_itemIsCaught(item)) {
+		if (!itemIsCaught(item)) {
 			if (_s51_dropLoseCash) {
 				if (item->_currSequenceId == 0xBD)
 					_s51_cashAmount -= 2;
@@ -305,30 +338,30 @@ void GnapEngine::scene51_updateItemAnimation(Scene51Item *item, int index) {
 					_s51_cashAmount -= 25;
 				if (_s51_cashAmount < 0)
 					_s51_cashAmount = 0;
-				scene51_updateCash(_s51_cashAmount);
+				updateCash(_s51_cashAmount);
 			}
 			item->_droppedSequenceId = item->_currSequenceId + 1;
 			if (item->_currSequenceId != 0xC0) {
 				item->_canCatch = false;
 				_s51_dropLoseCash = true;
 				_s51_itemsCtr = 0;
-				_timers[0] = 10;
+				_vm->_timers[0] = 10;
 			}
 			if (item->_droppedSequenceId) {
-				_gameSys->setAnimation(item->_droppedSequenceId, item->_id, index + 1);
-				_gameSys->insertSequence(item->_droppedSequenceId, item->_id, item->_currSequenceId, item->_id, kSeqSyncWait, 0, item->_x, item->_y);
+				_vm->_gameSys->setAnimation(item->_droppedSequenceId, item->_id, index + 1);
+				_vm->_gameSys->insertSequence(item->_droppedSequenceId, item->_id, item->_currSequenceId, item->_id, kSeqSyncWait, 0, item->_x, item->_y);
 				item->_currSequenceId = item->_droppedSequenceId;
 				item->_y = 0;
 			}
 		} else {
-			_gameSys->removeSequence(item->_currSequenceId, item->_id, true);
-			_gameSys->setAnimation(0, 0, index + 1);
-			playSound(218, false);
-			if (scene51_incCashAmount(item->_currSequenceId) == 1995) {
-				scene51_winMinigame();
-				_sceneDone = true;
+			_vm->_gameSys->removeSequence(item->_currSequenceId, item->_id, true);
+			_vm->_gameSys->setAnimation(0, 0, index + 1);
+			_vm->playSound(218, false);
+			if (incCashAmount(item->_currSequenceId) == 1995) {
+				winMinigame();
+				_vm->_sceneDone = true;
 			} else {
-				scene51_clearItem(item);
+				clearItem(item);
 				++_s51_itemsCaughtCtr;
 				if (_s51_itemsCaughtCtr == 5)
 					--_s51_dropSpeedTicks;
@@ -347,7 +380,7 @@ void GnapEngine::scene51_updateItemAnimation(Scene51Item *item, int index) {
 					_s51_itemsCtr1 = 20;
 					_s51_dropLoseCash = false;
 					_s51_itemsCaughtCtr = 0;
-					scene51_removeCollidedItems();
+					removeCollidedItems();
 				}
 			}
 		}
@@ -357,8 +390,8 @@ void GnapEngine::scene51_updateItemAnimation(Scene51Item *item, int index) {
 		// Fallen coin
 		item->_droppedSequenceId = item->_currSequenceId + 1;
 		if (item->_droppedSequenceId) {
-			_gameSys->setAnimation(item->_droppedSequenceId, item->_id, index + 1);
-			_gameSys->insertSequence(item->_droppedSequenceId, item->_id, item->_currSequenceId, item->_id, kSeqSyncWait, 0, item->_x, item->_y);
+			_vm->_gameSys->setAnimation(item->_droppedSequenceId, item->_id, index + 1);
+			_vm->_gameSys->insertSequence(item->_droppedSequenceId, item->_id, item->_currSequenceId, item->_id, kSeqSyncWait, 0, item->_x, item->_y);
 			item->_currSequenceId = item->_droppedSequenceId;
 			item->_y = 0;
 		}
@@ -367,9 +400,9 @@ void GnapEngine::scene51_updateItemAnimation(Scene51Item *item, int index) {
 	case 0xBF:
 	case 0xC2:
 		// Bouncing coin and banknote
-		_gameSys->setAnimation(0, 0, index + 1);
-		_gameSys->removeSequence(item->_currSequenceId, item->_id, true);
-		scene51_clearItem(item);
+		_vm->_gameSys->setAnimation(0, 0, index + 1);
+		_vm->_gameSys->removeSequence(item->_currSequenceId, item->_id, true);
+		clearItem(item);
 		break;
 
 	case 0xBA:
@@ -377,8 +410,8 @@ void GnapEngine::scene51_updateItemAnimation(Scene51Item *item, int index) {
 		item->_droppedSequenceId = 0xBB;
 		item->_y = 15;
 		if (item->_droppedSequenceId) {
-			_gameSys->setAnimation(item->_droppedSequenceId, item->_id, index + 1);
-			_gameSys->insertSequence(item->_droppedSequenceId, item->_id, item->_currSequenceId, item->_id, kSeqSyncWait, 0, item->_x, item->_y);
+			_vm->_gameSys->setAnimation(item->_droppedSequenceId, item->_id, index + 1);
+			_vm->_gameSys->insertSequence(item->_droppedSequenceId, item->_id, item->_currSequenceId, item->_id, kSeqSyncWait, 0, item->_x, item->_y);
 			item->_currSequenceId = item->_droppedSequenceId;
 			item->_y = 0;
 		}
@@ -387,60 +420,57 @@ void GnapEngine::scene51_updateItemAnimation(Scene51Item *item, int index) {
 	case 0xBB:
 		item->_isCollision = true;
 		item->_droppedSequenceId = 0;
-		_gameSys->setAnimation(0, 0, index + 1);
+		_vm->_gameSys->setAnimation(0, 0, index + 1);
 		break;
 
 	case 0xBC:
-		_gameSys->removeSequence(item->_currSequenceId, item->_id, true);
-		_gameSys->setAnimation(0, 0, index + 1);
-		scene51_clearItem(item);
+		_vm->_gameSys->removeSequence(item->_currSequenceId, item->_id, true);
+		_vm->_gameSys->setAnimation(0, 0, index + 1);
+		clearItem(item);
 		break;
 
 	default:
 		if (item->_droppedSequenceId) {
-			_gameSys->setAnimation(item->_droppedSequenceId, item->_id, index + 1);
-			_gameSys->insertSequence(item->_droppedSequenceId, item->_id, item->_currSequenceId, item->_id, kSeqSyncWait, 0, item->_x, item->_y);
+			_vm->_gameSys->setAnimation(item->_droppedSequenceId, item->_id, index + 1);
+			_vm->_gameSys->insertSequence(item->_droppedSequenceId, item->_id, item->_currSequenceId, item->_id, kSeqSyncWait, 0, item->_x, item->_y);
 			item->_currSequenceId = item->_droppedSequenceId;
 			item->_y = 0;
 		}
 		break;
-
 	}
-
 }
 
-void GnapEngine::scene51_removeCollidedItems() {
+void Scene51::removeCollidedItems() {
 	for (int i = 0; i < 6; ++i) {
 		if (_s51_items[i]._isCollision) {
-			_gameSys->removeSequence(_s51_items[i]._currSequenceId, _s51_items[i]._id, true);
-			_gameSys->setAnimation(0, 0, i + 1);
-			scene51_clearItem(&_s51_items[i]);
+			_vm->_gameSys->removeSequence(_s51_items[i]._currSequenceId, _s51_items[i]._id, true);
+			_vm->_gameSys->setAnimation(0, 0, i + 1);
+			clearItem(&_s51_items[i]);
 		}
 	}
 	_s51_itemsCtr2 = 0;
 }
 
-int GnapEngine::scene51_itemIsCaught(Scene51Item *item) {
-	
+int Scene51::itemIsCaught(Scene51Item *item) {
 	if (!item->_canCatch)
 		return 0;
 
-	if (scene51_isJumpingRight(_s51_platypusJumpSequenceId)) {
-		int v4 = scene51_getPosRight(_s51_platypusJumpSequenceId) + 97;
+	if (isJumpingRight(_s51_platypusJumpSequenceId)) {
+		int v4 = getPosRight(_s51_platypusJumpSequenceId) + 97;
 		if (item->_collisionX < v4 && v4 - item->_collisionX < 56)
 			return 1;
 	} else {
-		int v2 = scene51_getPosLeft(_s51_platypusJumpSequenceId);
+		int v2 = getPosLeft(_s51_platypusJumpSequenceId);
 		if (item->_collisionX > v2 && item->_collisionX - v2 < 56)
 			return 1;
 	}
 
 	if (item->_currSequenceId == 0xC1) {
 		int v3 = item->_collisionX + 100;
-		if (scene51_isJumpingRight(_s51_platypusJumpSequenceId)) {
-			if (ABS(scene51_getPosRight(_s51_platypusJumpSequenceId) + 46 - v3) < 56)
+		if (isJumpingRight(_s51_platypusJumpSequenceId)) {
+			if (ABS(getPosRight(_s51_platypusJumpSequenceId) + 46 - v3) < 56)
 				return 1;
-		} else if (ABS(scene51_getPosLeft(_s51_platypusJumpSequenceId) + 46 - v3) < 56) {
+		} else if (ABS(getPosLeft(_s51_platypusJumpSequenceId) + 46 - v3) < 56) {
 			return 1;
 		}
 	}
@@ -448,27 +478,27 @@ int GnapEngine::scene51_itemIsCaught(Scene51Item *item) {
 	return 0;
 }
 
-bool GnapEngine::scene51_isJumpingRight(int sequenceId) {
+bool Scene51::isJumpingRight(int sequenceId) {
 	return sequenceId >= 0x76 && sequenceId <= 0x95;
 }
 
-bool GnapEngine::scene51_isJumpingLeft(int sequenceId) {
+bool Scene51::isJumpingLeft(int sequenceId) {
 	return sequenceId >= 0x96 && sequenceId <= 0xB5;
 }
 
-bool GnapEngine::scene51_isJumping(int sequenceId) {
+bool Scene51::isJumping(int sequenceId) {
 	return sequenceId >= 0x76 && sequenceId <= 0xB5;
 }
 
-void GnapEngine::scene51_waitForAnim(int animationIndex) {
-	while (_gameSys->getAnimationStatus(animationIndex) != 2) {
+void Scene51::waitForAnim(int animationIndex) {
+	while (_vm->_gameSys->getAnimationStatus(animationIndex) != 2) {
 		// pollMessages();
-		scene51_updateItemAnimations();
-		gameUpdateTick();
+		updateItemAnimations();
+		_vm->gameUpdateTick();
 	}
 }
 
-int GnapEngine::scene51_getPosRight(int sequenceId) {
+int Scene51::getPosRight(int sequenceId) {
 	static const int kRightPosTbl[] = {
 		131, 159, 178, 195, 203, 219, 238, 254,
 		246, 274, 293, 310, 318, 334, 353, 369,
@@ -481,7 +511,7 @@ int GnapEngine::scene51_getPosRight(int sequenceId) {
 	return -1;
 }
 
-int GnapEngine::scene51_getPosLeft(int sequenceId) {
+int Scene51::getPosLeft(int sequenceId) {
 	static const int kLeftPosTbl[] = {
 		580, 566, 550, 536, 526, 504, 488, 469,
 		460, 446, 430, 416, 406, 384, 368, 349,
@@ -494,14 +524,14 @@ int GnapEngine::scene51_getPosLeft(int sequenceId) {
 	return -1;
 }
 
-void GnapEngine::scene51_playIntroAnim() {
+void Scene51::playIntroAnim() {
 	int soundCtr = 0;
 
 	_s51_platypusSequenceId = 0x76;
 	_s51_platypusNextSequenceId = 0x76;
 
 	for (int i = 0; i < 6; ++i)
-		scene51_clearItem(&_s51_items[i]);
+		clearItem(&_s51_items[i]);
 
 	_s51_items[0]._currSequenceId = 0xBA;
 	_s51_items[0]._x2 = 320;
@@ -510,51 +540,48 @@ void GnapEngine::scene51_playIntroAnim() {
 	_s51_items[0]._id = 249;
 	_s51_items[0]._isCollision = true;
 
-	_gameSys->insertSequence(_s51_platypusSequenceId, 256, 0, 0, kSeqNone, 0, -179, 0);
-	_gameSys->insertSequence(0xBA, 249, 0, 0, kSeqNone, 0, _s51_items[0]._x, _s51_items[0]._y);
-	_gameSys->setAnimation(0xBA, 249, 1);
-	_gameSys->setAnimation(_s51_platypusSequenceId, 256, 0);
+	_vm->_gameSys->insertSequence(_s51_platypusSequenceId, 256, 0, 0, kSeqNone, 0, -179, 0);
+	_vm->_gameSys->insertSequence(0xBA, 249, 0, 0, kSeqNone, 0, _s51_items[0]._x, _s51_items[0]._y);
+	_vm->_gameSys->setAnimation(0xBA, 249, 1);
+	_vm->_gameSys->setAnimation(_s51_platypusSequenceId, 256, 0);
 
 	while (_s51_platypusSequenceId < 0x80) {
-		scene51_waitForAnim(0);
+		waitForAnim(0);
 		++_s51_platypusNextSequenceId;
-		_gameSys->setAnimation(_s51_platypusNextSequenceId, 256, 0);
-		_gameSys->insertSequence(_s51_platypusNextSequenceId, 256, _s51_platypusSequenceId, 256, kSeqSyncWait, 0, -179, 0);
+		_vm->_gameSys->setAnimation(_s51_platypusNextSequenceId, 256, 0);
+		_vm->_gameSys->insertSequence(_s51_platypusNextSequenceId, 256, _s51_platypusSequenceId, 256, kSeqSyncWait, 0, -179, 0);
 		_s51_platypusSequenceId = _s51_platypusNextSequenceId;
 		++soundCtr;
 		if (soundCtr % 4 == 0)
-			playSound(214, false);
+			_vm->playSound(214, false);
 	}
 
 	_s51_platypusNextSequenceId = 0x75;
 
 	while (_s51_platypusSequenceId != 0x84) {
-		scene51_waitForAnim(0);
+		waitForAnim(0);
 		++_s51_platypusNextSequenceId;
 		int oldSequenceId = _s51_platypusNextSequenceId;
-		int v0 = scene51_checkCollision(_s51_platypusNextSequenceId);
-		_gameSys->setAnimation(_s51_platypusNextSequenceId, 256, 0);
-		_gameSys->insertSequence(_s51_platypusNextSequenceId, 256, _s51_platypusSequenceId, 256, kSeqSyncWait, 0, v0, 0);
+		int v0 = checkCollision(_s51_platypusNextSequenceId);
+		_vm->_gameSys->setAnimation(_s51_platypusNextSequenceId, 256, 0);
+		_vm->_gameSys->insertSequence(_s51_platypusNextSequenceId, 256, _s51_platypusSequenceId, 256, kSeqSyncWait, 0, v0, 0);
 		_s51_platypusSequenceId = _s51_platypusNextSequenceId;
 		if (v0) {
 			_s51_platypusNextSequenceId = oldSequenceId;
 		} else {
 			++soundCtr;
 			if (soundCtr % 4 == 0)
-				playSound(214, false);
+				_vm->playSound(214, false);
 		}
 	}
-
-	scene51_waitForAnim(0);
-
+	waitForAnim(0);
 }
 
-void GnapEngine::scene51_updateGuyAnimation() {
-	
-	if (!_timers[4]) {
-		_timers[4] = getRandom(20) + 60;
+void Scene51::updateGuyAnimation() {
+	if (!_vm->_timers[4]) {
+		_vm->_timers[4] = _vm->getRandom(20) + 60;
 
-		switch (getRandom(5)) {
+		switch (_vm->getRandom(5)) {
 		case 0:
 			_s51_guyNextSequenceId = 0xC3;
 			break;
@@ -572,15 +599,13 @@ void GnapEngine::scene51_updateGuyAnimation() {
 			break;
 		}
 	
-		_gameSys->insertSequence(_s51_guyNextSequenceId, 39, _s51_guySequenceId, 39, kSeqSyncWait, 0, 0, 0);
+		_vm->_gameSys->insertSequence(_s51_guyNextSequenceId, 39, _s51_guySequenceId, 39, kSeqSyncWait, 0, 0, 0);
 		_s51_guySequenceId = _s51_guyNextSequenceId;
 		_s51_guyNextSequenceId = -1;
-
 	}
-
 }
 
-int GnapEngine::scene51_incCashAmount(int sequenceId) {
+int Scene51::incCashAmount(int sequenceId) {
 	switch (sequenceId) {
 	case 0xBD:
 		_s51_cashAmount += 10;
@@ -591,44 +616,44 @@ int GnapEngine::scene51_incCashAmount(int sequenceId) {
 		break;
 	case 0xB6:
 	case 0xB7:
-		_s51_cashAmount -= 10 * getRandom(5) + 50;
+		_s51_cashAmount -= 10 * _vm->getRandom(5) + 50;
 		if (_s51_cashAmount < 0)
 			_s51_cashAmount = 0;
 		break;
 	}
 	if (_s51_cashAmount > 1995)
 		_s51_cashAmount = 1995;
-	scene51_updateCash(_s51_cashAmount);
+	updateCash(_s51_cashAmount);
 	return _s51_cashAmount;
 }
 
-void GnapEngine::scene51_winMinigame() {
-	scene51_updateCash(1995);
-	playSound(218, false);
+void Scene51::winMinigame() {
+	updateCash(1995);
+	_vm->playSound(218, false);
 	// TODO delayTicksA(1, 5);
-	_newSceneNum = 48;
-	invRemove(kItemBanana);
+	_vm->_newSceneNum = 48;
+	_vm->invRemove(kItemBanana);
 }
 
-void GnapEngine::scene51_playCashAppearAnim() {
-	_gameSys->setAnimation(0xC8, 252, 0);
-	_gameSys->insertSequence(0xC8, 252, 0, 0, kSeqNone, 0, -20, -20);
-	while (_gameSys->getAnimationStatus(0) != 2) {
-		gameUpdateTick();
+void Scene51::playCashAppearAnim() {
+	_vm->_gameSys->setAnimation(0xC8, 252, 0);
+	_vm->_gameSys->insertSequence(0xC8, 252, 0, 0, kSeqNone, 0, -20, -20);
+	while (_vm->_gameSys->getAnimationStatus(0) != 2) {
+		_vm->gameUpdateTick();
 		// checkGameAppStatus();
 	}
 }
 
-void GnapEngine::scene51_updateCash(int amount) {
-	scene51_drawDigit(amount / 1000, 0);
-	scene51_drawDigit(amount / 100 % 10, 1);
-	scene51_drawDigit(amount / 10 % 10, 2);
-	scene51_drawDigit(amount % 10, 3);
+void Scene51::updateCash(int amount) {
+	drawDigit(amount / 1000, 0);
+	drawDigit(amount / 100 % 10, 1);
+	drawDigit(amount / 10 % 10, 2);
+	drawDigit(amount % 10, 3);
 }
 
-void GnapEngine::scene51_drawDigit(int digit, int position) {
+void Scene51::drawDigit(int digit, int position) {
 	if (digit != _s51_digits[position]) {
-		_gameSys->insertSequence(kDigitSequenceIds[digit], 253,
+		_vm->_gameSys->insertSequence(kDigitSequenceIds[digit], 253,
 			_s51_digitSequenceIds[position], 253,
 			kSeqSyncWait, 0, kDigitPositions[position] - 20, -20);
 		_s51_digitSequenceIds[position] = kDigitSequenceIds[digit];
@@ -636,44 +661,42 @@ void GnapEngine::scene51_drawDigit(int digit, int position) {
 	}
 }
 
-void GnapEngine::scene51_initCashDisplay() {
+void Scene51::initCashDisplay() {
 	for (int position = 0; position < 4; ++position) {
 		_s51_digits[position] = 0;
 		_s51_digitSequenceIds[position] = kDigitSequenceIds[0];
-		_gameSys->insertSequence(kDigitSequenceIds[0], 253, 0, 0,
+		_vm->_gameSys->insertSequence(kDigitSequenceIds[0], 253, 0, 0,
 			kSeqNone, 0, kDigitPositions[position] - 20, -20);
 	}
 	_s51_cashAmount = 0;
 }
 
-void GnapEngine::scene51_run() {
-	
+void Scene51::run() {
 	int soundCtr = 0;
 	bool isIdle = true;
 
 	_s51_itemsCtr = 0;
-	_newSceneNum = _prevSceneNum;
+	_vm->_newSceneNum = _vm->_prevSceneNum;
 	_s51_cashAmount = 0;
 	_s51_platypusJumpSequenceId = 0x84;
-	endSceneInit();
+	_vm->endSceneInit();
 
-	hideCursor();
-	setGrabCursorSprite(-1);
+	_vm->hideCursor();
+	_vm->setGrabCursorSprite(-1);
 
 	_s51_guySequenceId = 0xC3;
 	_s51_guyNextSequenceId = -1;
 
-	_gameSys->insertSequence(0xC3, 39, 0, 0, kSeqNone, 0, 0, 0);
+	_vm->_gameSys->insertSequence(0xC3, 39, 0, 0, kSeqNone, 0, 0, 0);
+	_vm->_timers[4] = _vm->getRandom(20) + 60;
 
-	_timers[4] = getRandom(20) + 60;
-
-	scene51_playCashAppearAnim();
-	scene51_initCashDisplay();
-	scene51_playIntroAnim();
+	playCashAppearAnim();
+	initCashDisplay();
+	playIntroAnim();
 
 	_s51_platypusNextSequenceId = 0x74;
-	_gameSys->setAnimation(0x74, 256, 0);
-	_gameSys->insertSequence(_s51_platypusNextSequenceId, 256, _s51_platypusSequenceId, 256, kSeqSyncWait, 0, scene51_getPosRight(_s51_platypusJumpSequenceId) - 362, 0);
+	_vm->_gameSys->setAnimation(0x74, 256, 0);
+	_vm->_gameSys->insertSequence(_s51_platypusNextSequenceId, 256, _s51_platypusSequenceId, 256, kSeqSyncWait, 0, getPosRight(_s51_platypusJumpSequenceId) - 362, 0);
 	_s51_platypusSequenceId = _s51_platypusNextSequenceId;
 
 	_s51_itemInsertDirection = 0;
@@ -682,55 +705,53 @@ void GnapEngine::scene51_run() {
 	_s51_nextDropItemKind = 0;
 
 	for (int i = 0; i < 6; ++i)
-		scene51_clearItem(&_s51_items[i]);
+		clearItem(&_s51_items[i]);
 
-	_s51_itemInsertX = getRandom(556) + 129;
-
-	_timers[0] = 15;
+	_s51_itemInsertX = _vm->getRandom(556) + 129;
+	_vm->_timers[0] = 15;
 
 	_s51_itemsCaughtCtr = 0;
 	_s51_dropLoseCash = false;
 	_s51_itemsCtr1 = 20;
 
-	clearKeyStatus1(Common::KEYCODE_RIGHT);
-	clearKeyStatus1(Common::KEYCODE_LEFT);
-	clearKeyStatus1(Common::KEYCODE_UP);
-	clearKeyStatus1(Common::KEYCODE_SPACE);
-	clearKeyStatus1(Common::KEYCODE_ESCAPE);
+	_vm->clearKeyStatus1(Common::KEYCODE_RIGHT);
+	_vm->clearKeyStatus1(Common::KEYCODE_LEFT);
+	_vm->clearKeyStatus1(Common::KEYCODE_UP);
+	_vm->clearKeyStatus1(Common::KEYCODE_SPACE);
+	_vm->clearKeyStatus1(Common::KEYCODE_ESCAPE);
 
 	bool isCollision = false;
 	bool startWalk = true;
 
-	while (!_sceneDone) {
+	while (!_vm->_sceneDone) {
+		if (_vm->sceneXX_sub_4466B1())
+			_vm->_sceneDone = true;
 
-		if (sceneXX_sub_4466B1())
-			_sceneDone = true;
+		_vm->gameUpdateTick();
 
-		gameUpdateTick();
+		updateGuyAnimation();
+		dropNextItem();
+		updateItemAnimations();
 
-		scene51_updateGuyAnimation();
-		scene51_dropNextItem();
-		scene51_updateItemAnimations();
-
-		if (isKeyStatus2(Common::KEYCODE_UP) || isKeyStatus2(Common::KEYCODE_SPACE)) {
-			clearKeyStatus1(Common::KEYCODE_UP);
-			clearKeyStatus1(Common::KEYCODE_SPACE);
-			if (scene51_isJumpingRight(_s51_platypusJumpSequenceId)) {
-				scene51_waitForAnim(0);
-				_gameSys->setAnimation(0xB8, 256, 0);
-				_gameSys->insertSequence(0xB8, 256, _s51_platypusSequenceId, 256, kSeqSyncWait, 0, scene51_getPosRight(_s51_platypusJumpSequenceId) - 348, 0);
+		if (_vm->isKeyStatus2(Common::KEYCODE_UP) || _vm->isKeyStatus2(Common::KEYCODE_SPACE)) {
+			_vm->clearKeyStatus1(Common::KEYCODE_UP);
+			_vm->clearKeyStatus1(Common::KEYCODE_SPACE);
+			if (isJumpingRight(_s51_platypusJumpSequenceId)) {
+				waitForAnim(0);
+				_vm->_gameSys->setAnimation(0xB8, 256, 0);
+				_vm->_gameSys->insertSequence(0xB8, 256, _s51_platypusSequenceId, 256, kSeqSyncWait, 0, getPosRight(_s51_platypusJumpSequenceId) - 348, 0);
 				_s51_platypusSequenceId = 0xB8;
-				scene51_waitForAnim(0);
+				waitForAnim(0);
 				_s51_platypusNextSequenceId += 6;
 				if (_s51_platypusNextSequenceId > 0x95)
 					_s51_platypusNextSequenceId = 0x95;
 				_s51_platypusJumpSequenceId = _s51_platypusNextSequenceId;
 			} else {
-				scene51_waitForAnim(0);
-				_gameSys->setAnimation(0xB9, 256, 0);
-				_gameSys->insertSequence(0xB9, 256, _s51_platypusSequenceId, 256, kSeqSyncWait, 0, scene51_getPosLeft(_s51_platypusJumpSequenceId) - 338, 0);
+				waitForAnim(0);
+				_vm->_gameSys->setAnimation(0xB9, 256, 0);
+				_vm->_gameSys->insertSequence(0xB9, 256, _s51_platypusSequenceId, 256, kSeqSyncWait, 0, getPosLeft(_s51_platypusJumpSequenceId) - 338, 0);
 				_s51_platypusSequenceId = 0xB9;
-				scene51_waitForAnim(0);
+				waitForAnim(0);
 				_s51_platypusNextSequenceId += 6;
 				if (_s51_platypusNextSequenceId > 0xB5)
 					_s51_platypusNextSequenceId = 0xB5;
@@ -739,22 +760,22 @@ void GnapEngine::scene51_run() {
 			isIdle = false;
 		}
 
-		while (isKeyStatus2(Common::KEYCODE_RIGHT) && _s51_platypusNextSequenceId != 0x96) {
+		while (_vm->isKeyStatus2(Common::KEYCODE_RIGHT) && _s51_platypusNextSequenceId != 0x96) {
 			// pollMessages();
 			if (_s51_platypusNextSequenceId == 0xB6)
 				_s51_platypusNextSequenceId = 0x76;
-			scene51_updateItemAnimations();
+			updateItemAnimations();
 			if (startWalk) {
 				_s51_platypusNextSequenceId = 0x86;
 				startWalk = false;
 			}
 
-			if (_gameSys->getAnimationStatus(0) == 2) {
-				int collisionX = scene51_checkCollision(_s51_platypusNextSequenceId);
+			if (_vm->_gameSys->getAnimationStatus(0) == 2) {
+				int collisionX = checkCollision(_s51_platypusNextSequenceId);
 				if (collisionX)
-					scene51_incCashAmount(_s51_platypusNextSequenceId);
-				_gameSys->setAnimation(_s51_platypusNextSequenceId, 256, 0);
-				_gameSys->insertSequence(_s51_platypusNextSequenceId, 256, _s51_platypusSequenceId, 256, kSeqSyncWait, 0, collisionX, 0);
+					incCashAmount(_s51_platypusNextSequenceId);
+				_vm->_gameSys->setAnimation(_s51_platypusNextSequenceId, 256, 0);
+				_vm->_gameSys->insertSequence(_s51_platypusNextSequenceId, 256, _s51_platypusSequenceId, 256, kSeqSyncWait, 0, collisionX, 0);
 				_s51_platypusSequenceId = _s51_platypusNextSequenceId;
 				if (collisionX) {
 					isCollision = true;
@@ -763,17 +784,17 @@ void GnapEngine::scene51_run() {
 				} else {
 					_s51_platypusJumpSequenceId = _s51_platypusNextSequenceId;
 				}
-				if (scene51_isJumpingRight(_s51_platypusJumpSequenceId)) {
+				if (isJumpingRight(_s51_platypusJumpSequenceId)) {
 					++_s51_platypusNextSequenceId;
 					if (!isCollision) {
-						if (isKeyStatus2(Common::KEYCODE_UP) || isKeyStatus2(Common::KEYCODE_SPACE)) {
-							clearKeyStatus1(Common::KEYCODE_UP);
-							clearKeyStatus1(Common::KEYCODE_SPACE);
-							scene51_waitForAnim(0);
-							_gameSys->setAnimation(0xB8, 256, 0);
-							_gameSys->insertSequence(0xB8, 256, _s51_platypusSequenceId, 256, kSeqSyncWait, 0, scene51_getPosRight(_s51_platypusJumpSequenceId) - 348, 0);
+						if (_vm->isKeyStatus2(Common::KEYCODE_UP) || _vm->isKeyStatus2(Common::KEYCODE_SPACE)) {
+							_vm->clearKeyStatus1(Common::KEYCODE_UP);
+							_vm->clearKeyStatus1(Common::KEYCODE_SPACE);
+							waitForAnim(0);
+							_vm->_gameSys->setAnimation(0xB8, 256, 0);
+							_vm->_gameSys->insertSequence(0xB8, 256, _s51_platypusSequenceId, 256, kSeqSyncWait, 0, getPosRight(_s51_platypusJumpSequenceId) - 348, 0);
 							_s51_platypusSequenceId = 0xB8;
-							scene51_waitForAnim(0);
+							waitForAnim(0);
 							_s51_platypusNextSequenceId += 6;
 							if (_s51_platypusNextSequenceId > 0x95)
 								_s51_platypusNextSequenceId = 0x95;
@@ -781,7 +802,7 @@ void GnapEngine::scene51_run() {
 						} else {
 							++soundCtr;
 							if (soundCtr % 4 == 0)
-								playSound(214, false);
+								_vm->playSound(214, false);
 						}
 					}
 				} else {
@@ -790,23 +811,23 @@ void GnapEngine::scene51_run() {
 				isCollision = false;
 				isIdle = false;
 			}
-			gameUpdateTick();
+			_vm->gameUpdateTick();
 		}
 
-		while (isKeyStatus2(Common::KEYCODE_LEFT) && _s51_platypusNextSequenceId != 0xB6) {
+		while (_vm->isKeyStatus2(Common::KEYCODE_LEFT) && _s51_platypusNextSequenceId != 0xB6) {
 			// pollMessages();
-			scene51_updateItemAnimations();
+			updateItemAnimations();
 			if (startWalk) {
 				_s51_platypusNextSequenceId = 0xA5;
 				startWalk = false;
 			}
 
-			if (_gameSys->getAnimationStatus(0) == 2) {
-				int collisionX = scene51_checkCollision(_s51_platypusNextSequenceId);
+			if (_vm->_gameSys->getAnimationStatus(0) == 2) {
+				int collisionX = checkCollision(_s51_platypusNextSequenceId);
 				if (collisionX)
-					scene51_incCashAmount(_s51_platypusNextSequenceId);
-				_gameSys->setAnimation(_s51_platypusNextSequenceId, 256, 0);
-				_gameSys->insertSequence(_s51_platypusNextSequenceId, 256, _s51_platypusSequenceId, 256, kSeqSyncWait, 0, collisionX, 0);
+					incCashAmount(_s51_platypusNextSequenceId);
+				_vm->_gameSys->setAnimation(_s51_platypusNextSequenceId, 256, 0);
+				_vm->_gameSys->insertSequence(_s51_platypusNextSequenceId, 256, _s51_platypusSequenceId, 256, kSeqSyncWait, 0, collisionX, 0);
 				_s51_platypusSequenceId = _s51_platypusNextSequenceId;
 				if (collisionX) {
 					isCollision = true;
@@ -815,17 +836,17 @@ void GnapEngine::scene51_run() {
 				} else {
 					_s51_platypusJumpSequenceId = _s51_platypusNextSequenceId;
 				}
-				if (scene51_isJumpingLeft(_s51_platypusJumpSequenceId)) {
+				if (isJumpingLeft(_s51_platypusJumpSequenceId)) {
 					++_s51_platypusNextSequenceId;
 					if (!isCollision) {
-						if (isKeyStatus2(Common::KEYCODE_UP) || isKeyStatus2(Common::KEYCODE_SPACE)) {
-							clearKeyStatus1(Common::KEYCODE_UP);
-							clearKeyStatus1(Common::KEYCODE_SPACE);
-							scene51_waitForAnim(0);
-							_gameSys->setAnimation(0xB9, 256, 0);
-							_gameSys->insertSequence(0xB9, 256, _s51_platypusSequenceId, 256, kSeqSyncWait, 0, scene51_getPosLeft(_s51_platypusJumpSequenceId) - 338, 0);
+						if (_vm->isKeyStatus2(Common::KEYCODE_UP) || _vm->isKeyStatus2(Common::KEYCODE_SPACE)) {
+							_vm->clearKeyStatus1(Common::KEYCODE_UP);
+							_vm->clearKeyStatus1(Common::KEYCODE_SPACE);
+							waitForAnim(0);
+							_vm->_gameSys->setAnimation(0xB9, 256, 0);
+							_vm->_gameSys->insertSequence(0xB9, 256, _s51_platypusSequenceId, 256, kSeqSyncWait, 0, getPosLeft(_s51_platypusJumpSequenceId) - 338, 0);
 							_s51_platypusSequenceId = 0xB9;
-							scene51_waitForAnim(0);
+							waitForAnim(0);
 							_s51_platypusNextSequenceId += 6;
 							if (_s51_platypusNextSequenceId > 0xB5)
 								_s51_platypusNextSequenceId = 0xB5;
@@ -833,7 +854,7 @@ void GnapEngine::scene51_run() {
 						} else {
 							++soundCtr;
 							if (soundCtr % 4 == 0)
-								playSound(214, false);
+								_vm->playSound(214, false);
 						}
 					}
 				} else {
@@ -842,37 +863,35 @@ void GnapEngine::scene51_run() {
 				isCollision = false;
 				isIdle = false;
 			}
-			gameUpdateTick();
+			_vm->gameUpdateTick();
 		}
 
-		if (!isIdle && _gameSys->getAnimationStatus(0) == 2) {
-			if (scene51_isJumpingRight(_s51_platypusJumpSequenceId)) {
-				_gameSys->setAnimation(0x74, 256, 0);
-				_gameSys->insertSequence(0x74, 256, _s51_platypusSequenceId, 256, kSeqSyncWait, 0, scene51_getPosRight(_s51_platypusJumpSequenceId) - 362, 0);
+		if (!isIdle && _vm->_gameSys->getAnimationStatus(0) == 2) {
+			if (isJumpingRight(_s51_platypusJumpSequenceId)) {
+				_vm->_gameSys->setAnimation(0x74, 256, 0);
+				_vm->_gameSys->insertSequence(0x74, 256, _s51_platypusSequenceId, 256, kSeqSyncWait, 0, getPosRight(_s51_platypusJumpSequenceId) - 362, 0);
 				_s51_platypusSequenceId = 0x74;
 			} else {
-				_gameSys->setAnimation(0x75, 256, 0);
-				_gameSys->insertSequence(0x75, 256, _s51_platypusSequenceId, 256, kSeqSyncWait, 0, scene51_getPosLeft(_s51_platypusJumpSequenceId) - 341, 0);
+				_vm->_gameSys->setAnimation(0x75, 256, 0);
+				_vm->_gameSys->insertSequence(0x75, 256, _s51_platypusSequenceId, 256, kSeqSyncWait, 0, getPosLeft(_s51_platypusJumpSequenceId) - 341, 0);
 				_s51_platypusSequenceId = 0x75;
 			}
-			scene51_waitForAnim(0);
+			waitForAnim(0);
 			isIdle = true;
 		}
-
 	}
 
-	clearKeyStatus1(Common::KEYCODE_ESCAPE);
-	clearKeyStatus1(Common::KEYCODE_UP);
-	clearKeyStatus1(Common::KEYCODE_SPACE);
-	clearKeyStatus1(Common::KEYCODE_RIGHT);
-	clearKeyStatus1(Common::KEYCODE_LEFT);
+	_vm->clearKeyStatus1(Common::KEYCODE_ESCAPE);
+	_vm->clearKeyStatus1(Common::KEYCODE_UP);
+	_vm->clearKeyStatus1(Common::KEYCODE_SPACE);
+	_vm->clearKeyStatus1(Common::KEYCODE_RIGHT);
+	_vm->clearKeyStatus1(Common::KEYCODE_LEFT);
 
-	_gameSys->setAnimation(0, 0, 0);
+	_vm->_gameSys->setAnimation(0, 0, 0);
 	for (int i = 0; i < 6; ++i)
-		_gameSys->setAnimation(0, 0, i + 1);
+		_vm->_gameSys->setAnimation(0, 0, i + 1);
 
-	showCursor();
-
+	_vm->showCursor();
 }
 
 } // End of namespace Gnap

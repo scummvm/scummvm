@@ -250,17 +250,6 @@ enum {
 	// 0x7AF	Gnap walks to the left 1
 	// 0x7B0	Gnap walks to the left 2
 
-struct Scene51Item {
-	int _currSequenceId;
-	int _droppedSequenceId;
-	int _x, _y;
-	int _collisionX;
-	bool _canCatch;
-	bool _isCollision;
-	int _x2;
-	int _id;
-};
-
 enum Facing {
 	kDirNone = 0,
 	kDirBottomRight = 1,
@@ -601,118 +590,6 @@ public:
 	bool toyUfoCheckTimer();
 	void toyUfoFlyTo(int destX, int destY, int minX, int maxX, int minY, int maxY, int animationIndex);
 
-	// Scene 51
-	int _s51_cashAmount;
-	int _s51_digits[4];
-	int _s51_digitSequenceIds[4];
-	int _s51_guySequenceId, _s51_guyNextSequenceId;
-	int _s51_itemsCaughtCtr;
-	int _s51_dropSpeedTicks;
-	int _s51_nextDropItemKind, _s51_itemInsertX, _s51_itemInsertDirection;
-	int _s51_platypusSequenceId, _s51_platypusNextSequenceId, _s51_platypusJumpSequenceId;
-	bool _s51_dropLoseCash;
-	int _s51_itemsCtr,_s51_itemsCtr1, _s51_itemsCtr2;
-	Scene51Item _s51_items[6];
-
-	int scene51_init();
-	void scene51_updateHotspots();
-	void scene51_clearItem(Scene51Item *item);
-	void scene51_dropNextItem();
-	void scene51_updateItemAnimations();
-	int scene51_checkCollision(int sequenceId);
-	void scene51_updateItemAnimation(Scene51Item *item, int index);
-	void scene51_removeCollidedItems();
-	int scene51_itemIsCaught(Scene51Item *item);
-	bool scene51_isJumpingRight(int sequenceId);
-	bool scene51_isJumpingLeft(int sequenceId);
-	bool scene51_isJumping(int sequenceId);
-	void scene51_waitForAnim(int animationIndex);
-	int scene51_getPosRight(int sequenceId);
-	int scene51_getPosLeft(int sequenceId);
-	void scene51_playIntroAnim();
-	void scene51_updateGuyAnimation();
-	int scene51_incCashAmount(int sequenceId);
-	void scene51_winMinigame();
-	void scene51_playCashAppearAnim();
-	void scene51_updateCash(int amount);
-	void scene51_drawDigit(int digit, int position);
-	void scene51_initCashDisplay();
-	void scene51_run();
-	
-	// Scene 52
-	int _s52_liveAlienRows;
-	int _s52_gameScore;
-	bool _s52_soundToggle;
-	int _s52_arcadeScreenLeft;
-	int _s52_arcadeScreenRight;
-	int _s52_arcadeScreenBottom;
-	int _s52_shipsLeft;
-	int _s52_shieldSpriteIds[3];
-	int _s52_shieldPosX[3];
-	int _s52_shipPosX;
-	int _s52_shipCannonPosX, _s52_shipCannonPosY;
-	bool _s52_shipCannonFiring;
-	bool _s52_shipCannonFired; 
-	int _s52_shipCannonWidth, _s52_shipCannonHeight;
-	int _s52_shipCannonTopY;
-	int _s52_shipMidX, _s52_shipMidY;
-	bool _s52_shipFlag;
-	bool _s52_aliensInitialized;
-	int _s52_alienSpeed, _s52_alienDirection;
-	int _s52_alienWidth, _s52_alienHeight;
-	int _s52_alienLeftX, _s52_alienTopY;
-	int _s52_alienRowDownCtr;
-	int _s52_alienRowKind[7];
-	int _s52_alienRowAnims[7];
-	int _s52_alienRowIds[7];
-	int _s52_alienRowXOfs[7];
-	int _s52_alienCannonFired[3];
-	int _s52_alienCannonPosX[3];
-	int _s52_alienCannonPosY[3];
-	int _s52_alienCannonSequenceIds[3];
-	int _s52_alienCannonIds[3];
-	bool _s52_alienWave, _s52_alienSingle;
-	int _s52_alienCounter;
-	bool _s52_bottomAlienFlag;
-	int _s52_aliensCount;
-	int _s52_items[8][5];
-	int _s52_nextUfoSequenceId, _s52_ufoSequenceId;
-	int scene52_init();
-	void scene52_updateHotspots();
-	void scene52_update();
-	void scene52_initShipCannon(int bottomY);
-	void scene52_initAlienCannons();
-	void scene52_fireShipCannon(int posX);
-	void scene52_fireAlienCannon();
-	int scene52_getFreeShipCannon();
-	int scene52_getFreeAlienCannon();
-	void scene52_updateShipCannon();
-	void scene52_updateAlienCannons();
-	void scene52_initAliens();
-	void scene52_initAlienRowKind(int rowNum, int alienKind);
-	void scene52_insertAlienRow(int rowNum);
-	void scene52_insertAlienRowAliens(int rowNum);
-	void scene52_updateAlienRow(int rowNum);
-	void scene52_moveDownAlienRow();
-	int scene52_updateHitAlien();
-	int scene52_getHitAlienNum(int rowNum);
-	int scene52_alienCannonHitShip(int cannonNum);
-	int scene52_alienCannonHitShield(int cannonNum);
-	bool scene52_shipCannonHitShield(int cannonNum);
-	bool scene52_shipCannonHitAlien();
-	void scene52_shipExplode();
-	bool scene52_checkAlienRow(int rowNum);
-	void scene52_updateAlienRowXOfs();
-	void scene52_initAlienSize();
-	void scene52_playSound();
-	void scene52_updateAliens();
-	void scene52_updateAlien(int rowNum);
-	void scene52_loseShip();
-	void scene52_initShields();
-	void scene52_initAnims();
-	void scene52_drawScore(int score);
-	void scene52_run();
-	
 	// Scene 53
 	int _s53_currHandSequenceId;
 	bool _s53_isGnapPhoning;
