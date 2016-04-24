@@ -145,7 +145,15 @@ public:
 	virtual void showCursor() = 0;
 	virtual void hideCursor() = 0;
 
+	/**
+	 * Set drawing bounds for a specified surface
+	 */
 	void setSurfaceBounds(SurfaceNum surfaceNum, const Rect &r);
+
+	/**
+	 * Set the current font number
+	 */
+	void setFontNumber(int fontNumber) { _fontNumber = fontNumber; }
 };
 
 class OSScreenManager: CScreenManager {

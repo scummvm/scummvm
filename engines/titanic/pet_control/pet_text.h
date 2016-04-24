@@ -39,9 +39,9 @@ private:
 	CString _lines;
 	bool _stringsMerged;
 	Rect _bounds;
-	int _field30;
+	int _maxCharsPerLine;
 	int _lineCount;
-	int _field38;
+	int _fontNumber1;
 	int _field3C;
 	int _field40;
 	int _field44;
@@ -51,7 +51,7 @@ private:
 	int _textR;
 	int _textG;
 	int _textB;
-	int _field60;
+	int _fontNumber2;
 	int _field64;
 	int _field68;
 	int _field6C;
@@ -75,6 +75,10 @@ private:
 	 * Change the text
 	 */
 	void changeText(const CString &str);
+
+	void updateStr3(int lineNum);
+
+	void draw2(CScreenManager *screenManager);
 public:
 	CPetText(uint count = 10);
 
@@ -120,7 +124,10 @@ public:
 	 */
 	void setColor(uint col);
 
-	void set30(int val);
+	/**
+	 * Sets the maximum number of characters per line
+	 */
+	void setMaxCharsPerLine(int maxChars);
 };
 
 } // End of namespace Titanic

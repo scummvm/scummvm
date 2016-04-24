@@ -36,7 +36,7 @@ bool CPetLoadSave::setup(CPetControl *petControl, CPetGlyphs *owner) {
 		Rect slotRect = getSlotBounds(idx);
 		_slotNames[idx].setBounds(slotRect);
 		_slotNames[idx].resize(3);
-		_slotNames[idx].set30(22);
+		_slotNames[idx].setMaxCharsPerLine(22);
 		_slotNames[idx].setHasBorder(false);
 		_slotNames[idx].setup();
 	}

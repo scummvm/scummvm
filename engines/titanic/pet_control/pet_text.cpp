@@ -25,11 +25,11 @@
 namespace Titanic {
 
 CPetText::CPetText(uint count) :
-		_stringsMerged(false), _field30(-1), _lineCount(0),
-		_field38(-1), _field3C(0), _field40(0), _field44(0),
+		_stringsMerged(false), _maxCharsPerLine(-1), _lineCount(0),
+		_fontNumber1(-1), _field3C(0), _field40(0), _field44(0),
 		_backR(0xff), _backG(0xff), _backB(0xff), 
 		_textR(0), _textG(0), _textB(200),
-		_field60(0), _field64(0), _field68(0), _field6C(0),
+		_fontNumber2(0), _field64(0), _field68(0), _field6C(0),
 		_hasBorder(true), _field74(0), _field78(0), _field7C(0) {
 	setupArrays(count);
 }
@@ -130,7 +130,16 @@ void CPetText::draw(CScreenManager *screenManager) {
 		screenManager->fillRect(SURFACE_BACKBUFFER, &tempRect, _backR, _backG, _backB);
 	}
 
-	warning("TODO: CPetText::draw");
+	draw2(screenManager);
+
+	tempRect = _bounds;
+	tempRect.grow(-2);
+	screenManager->setFontNumber(_fontNumber2);
+
+//	int var14 = 0;
+//	screenManager->writeLines(0, &var14, _field74, )
+	warning("TODO: CPetText_Draw");
+	screenManager->setFontNumber(_fontNumber1);
 }
 
 void CPetText::mergeStrings() {
@@ -161,7 +170,22 @@ void CPetText::setText(const CString &str) {
 }
 
 void CPetText::changeText(const CString &str) {
-	warning("TODO: CPetText::changeText");
+	int lineSize = _array[_lineCount]._string1.size();
+	int strSize = str.size();
+
+	if (_maxCharsPerLine == -1) {
+		// No limit on horizontal characters, so append string to current line
+		_array[_lineCount]._string1 += str;
+	} else if ((lineSize + strSize) <= _maxCharsPerLine) {
+		// New string fits into line, so add it on
+		_array[_lineCount]._string1 += str;
+	} else {
+		// Only add part of the str up to the maximum allowed limit for line
+		_array[_lineCount]._string1 += str.left(_maxCharsPerLine - lineSize);
+	}
+	
+	updateStr3(_lineCount);
+	_stringsMerged = false;
 }
 
 void CPetText::setColor(int val1, uint col) {
@@ -174,9 +198,27 @@ void CPetText::setColor(uint col) {
 	_textB = (col >> 16) & 0xff;
 }
 
-void CPetText::set30(int val) {
-	if (val >= -1 && val < 257)
-		_field30 = val;
+void CPetText::setMaxCharsPerLine(int maxChars) {
+	if (maxChars >= -1 && maxChars < 257)
+		_maxCharsPerLine = maxChars;
+}
+
+void CPetText::updateStr3(int lineNum) {
+	if (_field64 > 0 && _field68 > 0) {
+		char line[5];
+		line[0] = line[3] = 26;
+		line[1] = _field64;
+		line[2] = _field68;
+		line[4] = '\0';
+		_array[lineNum]._string3 = CString(line);
+		
+		_stringsMerged = false;
+		_field64 = _field68 = 0;
+	}
+}
+
+void CPetText::draw2(CScreenManager *screenManager) {
+
 }
 
 } // End of namespace Titanic
