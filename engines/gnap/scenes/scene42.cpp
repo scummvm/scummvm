@@ -23,6 +23,7 @@
 #include "gnap/gnap.h"
 #include "gnap/gamesys.h"
 #include "gnap/resource.h"
+#include "gnap/scenes/scene42.h"
 
 namespace Gnap {
 
@@ -56,168 +57,172 @@ enum {
 	kASToyUfoPickUpHotSauce			= 7
 };
 
-int GnapEngine::scene42_init() {
-	_gameSys->setAnimation(0, 0, 0);
-	_gameSys->setAnimation(0, 0, 1);
-	_gameSys->setAnimation(0, 0, 2);
-	if (isFlag(kGFPictureTaken) || (isFlag(kGFUnk18) && isFlag(kGFUnk23)))
+Scene42::Scene42(GnapEngine *vm) : Scene(vm) {
+	_s42_currBBQVendorSequenceId = -1;
+	_s42_nextBBQVendorSequenceId = -1;
+}
+
+int Scene42::init() {
+	_vm->_gameSys->setAnimation(0, 0, 0);
+	_vm->_gameSys->setAnimation(0, 0, 1);
+	_vm->_gameSys->setAnimation(0, 0, 2);
+	if (_vm->isFlag(kGFPictureTaken) || (_vm->isFlag(kGFUnk18) && _vm->isFlag(kGFUnk23)))
 		return 0x153;
 	return 0x152;
 }
 
-void GnapEngine::scene42_updateHotspots() {
-	if (isFlag(kGFGnapControlsToyUFO)) {
-		setHotspot(kHSPlatypus, 0, 0, 0, 0, SF_DISABLED);
-		setHotspot(kHSUfoExitLeft, 0, 0, 10, 599, SF_EXIT_L_CURSOR);
-		setHotspot(kHSUfoExitRight, 790, 0, 799, 599, SF_EXIT_R_CURSOR);
-		setHotspot(kHSUfoHotSauce, 335, 110, 440, 175, SF_DISABLED);
-		setDeviceHotspot(kHSUfoDevice, -1, 534, -1, 599);
-		if ((isFlag(kGFPictureTaken) || isFlag(kGFUnk18)) && isFlag(kGFUnk23) && !isFlag(kGFUnk24))
-			_hotspots[kHSUfoHotSauce]._flags = SF_GRAB_CURSOR;
-		_hotspotsCount = 5;
+void Scene42::updateHotspots() {
+	if (_vm->isFlag(kGFGnapControlsToyUFO)) {
+		_vm->setHotspot(kHSPlatypus, 0, 0, 0, 0, SF_DISABLED);
+		_vm->setHotspot(kHSUfoExitLeft, 0, 0, 10, 599, SF_EXIT_L_CURSOR);
+		_vm->setHotspot(kHSUfoExitRight, 790, 0, 799, 599, SF_EXIT_R_CURSOR);
+		_vm->setHotspot(kHSUfoHotSauce, 335, 110, 440, 175, SF_DISABLED);
+		_vm->setDeviceHotspot(kHSUfoDevice, -1, 534, -1, 599);
+		if ((_vm->isFlag(kGFPictureTaken) || _vm->isFlag(kGFUnk18)) && _vm->isFlag(kGFUnk23) && !_vm->isFlag(kGFUnk24))
+			_vm->_hotspots[kHSUfoHotSauce]._flags = SF_GRAB_CURSOR;
+		_vm->_hotspotsCount = 5;
 	} else {
-		setHotspot(kHSPlatypus, 0, 0, 0, 0, SF_WALKABLE | SF_TALK_CURSOR | SF_GRAB_CURSOR | SF_LOOK_CURSOR);
-		setHotspot(kHSExitUfoParty, 150, 585, 650, 600, SF_EXIT_D_CURSOR | SF_WALKABLE, 5, 9);
-		setHotspot(kHSExitToyStand, 0, 100, 10, 599, SF_EXIT_L_CURSOR, 0, 8);
-		setHotspot(kHSExitUfo, 790, 100, 799, 599, SF_EXIT_R_CURSOR, 10, 8);
-		setHotspot(kHSBBQVendor, 410, 200, 520, 365, SF_PLAT_CURSOR | SF_TALK_CURSOR | SF_GRAB_CURSOR | SF_LOOK_CURSOR, 4, 8);
-		setHotspot(kHSChickenLeg, 530, 340, 620, 430, SF_PLAT_CURSOR | SF_TALK_CURSOR | SF_GRAB_CURSOR | SF_LOOK_CURSOR, 8, 7);
-		setHotspot(kHSWalkArea1, 0, 0, 800, 445);
-		setHotspot(kHSWalkArea2, 240, 0, 550, 495);
-		setDeviceHotspot(kHSDevice, -1, -1, -1, -1);
-		_hotspotsCount = 9;
+		_vm->setHotspot(kHSPlatypus, 0, 0, 0, 0, SF_WALKABLE | SF_TALK_CURSOR | SF_GRAB_CURSOR | SF_LOOK_CURSOR);
+		_vm->setHotspot(kHSExitUfoParty, 150, 585, 650, 600, SF_EXIT_D_CURSOR | SF_WALKABLE, 5, 9);
+		_vm->setHotspot(kHSExitToyStand, 0, 100, 10, 599, SF_EXIT_L_CURSOR, 0, 8);
+		_vm->setHotspot(kHSExitUfo, 790, 100, 799, 599, SF_EXIT_R_CURSOR, 10, 8);
+		_vm->setHotspot(kHSBBQVendor, 410, 200, 520, 365, SF_PLAT_CURSOR | SF_TALK_CURSOR | SF_GRAB_CURSOR | SF_LOOK_CURSOR, 4, 8);
+		_vm->setHotspot(kHSChickenLeg, 530, 340, 620, 430, SF_PLAT_CURSOR | SF_TALK_CURSOR | SF_GRAB_CURSOR | SF_LOOK_CURSOR, 8, 7);
+		_vm->setHotspot(kHSWalkArea1, 0, 0, 800, 445);
+		_vm->setHotspot(kHSWalkArea2, 240, 0, 550, 495);
+		_vm->setDeviceHotspot(kHSDevice, -1, -1, -1, -1);
+		_vm->_hotspotsCount = 9;
 	}
 }
 
-void GnapEngine::scene42_run() {
-
-	queueInsertDeviceIcon();
+void Scene42::run() {
+	_vm->queueInsertDeviceIcon();
 
 	_s42_currBBQVendorSequenceId = 0x14A;
 	_s42_nextBBQVendorSequenceId = -1;
 
-	_gameSys->setAnimation(0x14A, 1, 2);
-	_gameSys->insertSequence(_s42_currBBQVendorSequenceId, 1, 0, 0, kSeqNone, 0, 0, 0);
+	_vm->_gameSys->setAnimation(0x14A, 1, 2);
+	_vm->_gameSys->insertSequence(_s42_currBBQVendorSequenceId, 1, 0, 0, kSeqNone, 0, 0, 0);
 
-	if (isFlag(kGFGnapControlsToyUFO)) {
-		_toyUfoId = 0;
-		_toyUfoActionStatus = -1;
-		if (_prevSceneNum == 43 && isFlag(kGFUnk18)) {
-			_toyUfoSequenceId = 0x872;
-			_toyUfoNextSequenceId = toyUfoGetSequenceId();
-			_gameSys->insertSequence(_toyUfoSequenceId | 0x10000, _toyUfoId, 0, 0, kSeqNone, 0, 0, 0);
-			_toyUfoX = 317;
-			_toyUfoY = 61;
-			toyUfoSetStatus(kGFJointTaken);
-			setFlag(kGFPictureTaken);
-			_timers[9] = 600;
+	if (_vm->isFlag(kGFGnapControlsToyUFO)) {
+		_vm->_toyUfoId = 0;
+		_vm->_toyUfoActionStatus = -1;
+		if (_vm->_prevSceneNum == 43 && _vm->isFlag(kGFUnk18)) {
+			_vm->_toyUfoSequenceId = 0x872;
+			_vm->_toyUfoNextSequenceId = _vm->toyUfoGetSequenceId();
+			_vm->_gameSys->insertSequence(_vm->_toyUfoSequenceId | 0x10000, _vm->_toyUfoId, 0, 0, kSeqNone, 0, 0, 0);
+			_vm->_toyUfoX = 317;
+			_vm->_toyUfoY = 61;
+			_vm->toyUfoSetStatus(kGFJointTaken);
+			_vm->setFlag(kGFPictureTaken);
+			_vm->_timers[9] = 600;
 		} else {
-			_toyUfoSequenceId = toyUfoGetSequenceId();
-			_toyUfoNextSequenceId = _toyUfoSequenceId;
-			if (_prevSceneNum == 41)
-				_toyUfoX = 30;
+			_vm->_toyUfoSequenceId = _vm->toyUfoGetSequenceId();
+			_vm->_toyUfoNextSequenceId = _vm->_toyUfoSequenceId;
+			if (_vm->_prevSceneNum == 41)
+				_vm->_toyUfoX = 30;
 			else
-				_toyUfoX = 770;
-			_gameSys->insertSequence(_toyUfoSequenceId | 0x10000, _toyUfoId, 0, 0, kSeqNone, 0, _toyUfoX - 274, _toyUfoY - 128);
+				_vm->_toyUfoX = 770;
+			_vm->_gameSys->insertSequence(_vm->_toyUfoSequenceId | 0x10000, _vm->_toyUfoId, 0, 0, kSeqNone, 0, _vm->_toyUfoX - 274, _vm->_toyUfoY - 128);
 		}
-		_gameSys->setAnimation(_toyUfoSequenceId | 0x10000, _toyUfoId, 3);
-		endSceneInit();
-		if (_toyUfoSequenceId == 0x872)
-			setGrabCursorSprite(-1);
-	} else if (_prevSceneNum == 41) {
-		initGnapPos(-1, 8, kDirUpRight);
-		initPlatypusPos(-1, 9, kDirUpLeft);
-		endSceneInit();
-		gnapWalkTo(2, 8, -1, 0x107B9, 1);
-		platypusWalkTo(1, 8, -1, 0x107C2, 1);
-	} else if (_prevSceneNum == 43) {
-		initGnapPos(11, 8, kDirUpRight);
-		initPlatypusPos(11, 9, kDirUpLeft);
-		endSceneInit();
-		gnapWalkTo(8, 8, -1, 0x107BA, 1);
-		platypusWalkTo(9, 8, -1, 0x107D2, 1);
+		_vm->_gameSys->setAnimation(_vm->_toyUfoSequenceId | 0x10000, _vm->_toyUfoId, 3);
+		_vm->endSceneInit();
+		if (_vm->_toyUfoSequenceId == 0x872)
+			_vm->setGrabCursorSprite(-1);
+	} else if (_vm->_prevSceneNum == 41) {
+		_vm->initGnapPos(-1, 8, kDirUpRight);
+		_vm->initPlatypusPos(-1, 9, kDirUpLeft);
+		_vm->endSceneInit();
+		_vm->gnapWalkTo(2, 8, -1, 0x107B9, 1);
+		_vm->platypusWalkTo(1, 8, -1, 0x107C2, 1);
+	} else if (_vm->_prevSceneNum == 43) {
+		_vm->initGnapPos(11, 8, kDirUpRight);
+		_vm->initPlatypusPos(11, 9, kDirUpLeft);
+		_vm->endSceneInit();
+		_vm->gnapWalkTo(8, 8, -1, 0x107BA, 1);
+		_vm->platypusWalkTo(9, 8, -1, 0x107D2, 1);
 	} else {
-		initGnapPos(5, 11, kDirUpRight);
-		initPlatypusPos(6, 11, kDirUpLeft);
-		endSceneInit();
-		gnapWalkTo(5, 8, -1, 0x107BA, 1);
-		platypusWalkTo(6, 8, -1, 0x107C2, 1);
+		_vm->initGnapPos(5, 11, kDirUpRight);
+		_vm->initPlatypusPos(6, 11, kDirUpLeft);
+		_vm->endSceneInit();
+		_vm->gnapWalkTo(5, 8, -1, 0x107BA, 1);
+		_vm->platypusWalkTo(6, 8, -1, 0x107C2, 1);
 	}
 
-	while (!_sceneDone) {
-		if (!isSoundPlaying(0x1094B))
-			playSound(0x1094B, true);
+	while (!_vm->_sceneDone) {
+		if (!_vm->isSoundPlaying(0x1094B))
+			_vm->playSound(0x1094B, true);
 
-		updateMouseCursor();
-		updateCursorByHotspot();
+		_vm->updateMouseCursor();
+		_vm->updateCursorByHotspot();
 
-		testWalk(0, 0, -1, -1, -1, -1);
+		_vm->testWalk(0, 0, -1, -1, -1, -1);
 
-		_sceneClickedHotspot = getClickedHotspotId();
-		updateGrabCursorSprite(0, 0);
+		_vm->_sceneClickedHotspot = _vm->getClickedHotspotId();
+		_vm->updateGrabCursorSprite(0, 0);
 
-		if (isFlag(kGFGnapControlsToyUFO)) {
-			switch (_sceneClickedHotspot) {
+		if (_vm->isFlag(kGFGnapControlsToyUFO)) {
+			switch (_vm->_sceneClickedHotspot) {
 			case kHSUfoExitLeft:
-				if (_toyUfoActionStatus < 0) {
-					_isLeavingScene = true;
-					_toyUfoActionStatus = kASToyUfoLeaveScene;
-					_newSceneNum = 41;
-					toyUfoFlyTo(-35, -1, -35, 799, 0, 300, 3);
+				if (_vm->_toyUfoActionStatus < 0) {
+					_vm->_isLeavingScene = true;
+					_vm->_toyUfoActionStatus = kASToyUfoLeaveScene;
+					_vm->_newSceneNum = 41;
+					_vm->toyUfoFlyTo(-35, -1, -35, 799, 0, 300, 3);
 				}
 				break;
 
 			case kHSUfoExitRight:
-				if (_toyUfoActionStatus < 0) {
-					_isLeavingScene = true;
-					_toyUfoActionStatus = kASToyUfoLeaveScene;
-					_newSceneNum = 43;
-					toyUfoFlyTo(835, -1, 0, 835, 0, 300, 3);
+				if (_vm->_toyUfoActionStatus < 0) {
+					_vm->_isLeavingScene = true;
+					_vm->_toyUfoActionStatus = kASToyUfoLeaveScene;
+					_vm->_newSceneNum = 43;
+					_vm->toyUfoFlyTo(835, -1, 0, 835, 0, 300, 3);
 				}
 				break;
 
 			case kHSUfoHotSauce:
-				if (isFlag(kGFJointTaken)) {
-					_toyUfoActionStatus = kASToyUfoPickUpHotSauce;
-					toyUfoFlyTo(384, 77, 0, 799, 0, 300, 3);
-					_timers[9] = 600;
+				if (_vm->isFlag(kGFJointTaken)) {
+					_vm->_toyUfoActionStatus = kASToyUfoPickUpHotSauce;
+					_vm->toyUfoFlyTo(384, 77, 0, 799, 0, 300, 3);
+					_vm->_timers[9] = 600;
 				} else {
-					_toyUfoActionStatus = kASToyUfoRefresh;
-					toyUfoFlyTo(-1, -1, 0, 799, 0, 300, 3);
+					_vm->_toyUfoActionStatus = kASToyUfoRefresh;
+					_vm->toyUfoFlyTo(-1, -1, 0, 799, 0, 300, 3);
 				}
 				break;
 
 			case kHSUfoDevice:
-				runMenu();
-				scene42_updateHotspots();
+				_vm->runMenu();
+				updateHotspots();
 				break;
 			}
 		} else {
-			switch (_sceneClickedHotspot) {
+			switch (_vm->_sceneClickedHotspot) {
 			case kHSDevice:
-				runMenu();
-				scene42_updateHotspots();
-				_timers[4] = getRandom(20) + 30;
+				_vm->runMenu();
+				updateHotspots();
+				_vm->_timers[4] = _vm->getRandom(20) + 30;
 				break;
 
 			case kHSPlatypus:
-				if (_gnapActionStatus < 0) {
-					if (_grabCursorSpriteIndex >= 0) {
-						playGnapImpossible(_platX, _platY);
+				if (_vm->_gnapActionStatus < 0) {
+					if (_vm->_grabCursorSpriteIndex >= 0) {
+						_vm->playGnapImpossible(_vm->_platX, _vm->_platY);
 					} else {
-						switch (_verbCursor) {
+						switch (_vm->_verbCursor) {
 						case LOOK_CURSOR:
-							playGnapMoan1(_platX, _platY);
+							_vm->playGnapMoan1(_vm->_platX, _vm->_platY);
 							break;
 						case GRAB_CURSOR:
-							gnapKissPlatypus(0);
+							_vm->gnapKissPlatypus(0);
 							break;
 						case TALK_CURSOR:
-							playGnapBrainPulsating(_platX, _platY);
-							playPlatypusSequence(getPlatypusSequenceId());
+							_vm->playGnapBrainPulsating(_vm->_platX, _vm->_platY);
+							_vm->playPlatypusSequence(_vm->getPlatypusSequenceId());
 							break;
 						case PLAT_CURSOR:
-							playGnapImpossible(_platX, _platY);
+							_vm->playGnapImpossible(_vm->_platX, _vm->_platY);
 							break;
 						}
 					}
@@ -225,70 +230,70 @@ void GnapEngine::scene42_run() {
 				break;
 
 			case kHSExitUfoParty:
-				_isLeavingScene = true;
-				gnapWalkTo(_gnapX, _hotspotsWalkPos[kHSExitUfoParty].y, 0, 0x107AE, 1);
-				_gnapActionStatus = kASLeaveScene;
-				platypusWalkTo(_platX, _hotspotsWalkPos[kHSExitUfoParty].y, -1, 0x107C7, 1);
-				_newSceneNum = 40;
+				_vm->_isLeavingScene = true;
+				_vm->gnapWalkTo(_vm->_gnapX, _vm->_hotspotsWalkPos[kHSExitUfoParty].y, 0, 0x107AE, 1);
+				_vm->_gnapActionStatus = kASLeaveScene;
+				_vm->platypusWalkTo(_vm->_platX, _vm->_hotspotsWalkPos[kHSExitUfoParty].y, -1, 0x107C7, 1);
+				_vm->_newSceneNum = 40;
 				break;
 
 			case kHSExitToyStand:
-				_isLeavingScene = true;
-				gnapWalkTo(_hotspotsWalkPos[kHSExitToyStand].x, _gnapY, 0, 0x107AF, 1);
-				_gnapActionStatus = kASLeaveScene;
-				platypusWalkTo(_hotspotsWalkPos[kHSExitToyStand].x, _hotspotsWalkPos[kHSExitToyStand].y, -1, 0x107CF, 1);
-				_newSceneNum = 41;
+				_vm->_isLeavingScene = true;
+				_vm->gnapWalkTo(_vm->_hotspotsWalkPos[kHSExitToyStand].x, _vm->_gnapY, 0, 0x107AF, 1);
+				_vm->_gnapActionStatus = kASLeaveScene;
+				_vm->platypusWalkTo(_vm->_hotspotsWalkPos[kHSExitToyStand].x, _vm->_hotspotsWalkPos[kHSExitToyStand].y, -1, 0x107CF, 1);
+				_vm->_newSceneNum = 41;
 				break;
 
 			case kHSExitUfo:
-				_isLeavingScene = true;
-				gnapWalkTo(_hotspotsWalkPos[kHSExitUfo].x, _gnapY, 0, 0x107AB, 1);
-				_gnapActionStatus = kASLeaveScene;
-				platypusWalkTo(_hotspotsWalkPos[kHSExitUfo].x, _hotspotsWalkPos[kHSExitUfo].y, -1, 0x107CD, 1);
-				_newSceneNum = 43;
+				_vm->_isLeavingScene = true;
+				_vm->gnapWalkTo(_vm->_hotspotsWalkPos[kHSExitUfo].x, _vm->_gnapY, 0, 0x107AB, 1);
+				_vm->_gnapActionStatus = kASLeaveScene;
+				_vm->platypusWalkTo(_vm->_hotspotsWalkPos[kHSExitUfo].x, _vm->_hotspotsWalkPos[kHSExitUfo].y, -1, 0x107CD, 1);
+				_vm->_newSceneNum = 43;
 				break;
 
 			case kHSBBQVendor:
-				if (_grabCursorSpriteIndex == kItemDiceQuarterHole) {
-					gnapWalkTo(_hotspotsWalkPos[kHSBBQVendor].x, _hotspotsWalkPos[kHSBBQVendor].y, 0, 0x107BB, 1);
-					_gnapActionStatus = kASUseQuarterWithBBQVendor;
-					if (_platY < 9)
-						platypusWalkTo(_platX, 9, -1, -1, 1);
-				} else if (_grabCursorSpriteIndex >= 0) {
-					playGnapShowCurrItem(_hotspotsWalkPos[kHSBBQVendor].x, _hotspotsWalkPos[kHSBBQVendor].y, _hotspotsWalkPos[kHSBBQVendor].x + 1, 0);
+				if (_vm->_grabCursorSpriteIndex == kItemDiceQuarterHole) {
+					_vm->gnapWalkTo(_vm->_hotspotsWalkPos[kHSBBQVendor].x, _vm->_hotspotsWalkPos[kHSBBQVendor].y, 0, 0x107BB, 1);
+					_vm->_gnapActionStatus = kASUseQuarterWithBBQVendor;
+					if (_vm->_platY < 9)
+						_vm->platypusWalkTo(_vm->_platX, 9, -1, -1, 1);
+				} else if (_vm->_grabCursorSpriteIndex >= 0) {
+					_vm->playGnapShowCurrItem(_vm->_hotspotsWalkPos[kHSBBQVendor].x, _vm->_hotspotsWalkPos[kHSBBQVendor].y, _vm->_hotspotsWalkPos[kHSBBQVendor].x + 1, 0);
 				} else {
-					switch (_verbCursor) {
+					switch (_vm->_verbCursor) {
 					case LOOK_CURSOR:
-						playGnapScratchingHead(_hotspotsWalkPos[kHSBBQVendor].x - 1, 0);
+						_vm->playGnapScratchingHead(_vm->_hotspotsWalkPos[kHSBBQVendor].x - 1, 0);
 						break;
 					case TALK_CURSOR:
-						_gnapIdleFacing = kDirUpRight;
-						gnapWalkTo(_hotspotsWalkPos[kHSBBQVendor].x, _hotspotsWalkPos[kHSBBQVendor].y, 0, getGnapSequenceId(gskBrainPulsating, 0, 0) | 0x10000, 1);
-						_gnapActionStatus = kASTalkBBQVendor;
+						_vm->_gnapIdleFacing = kDirUpRight;
+						_vm->gnapWalkTo(_vm->_hotspotsWalkPos[kHSBBQVendor].x, _vm->_hotspotsWalkPos[kHSBBQVendor].y, 0, _vm->getGnapSequenceId(gskBrainPulsating, 0, 0) | 0x10000, 1);
+						_vm->_gnapActionStatus = kASTalkBBQVendor;
 						break;
 					case GRAB_CURSOR:
 					case PLAT_CURSOR:
-						playGnapImpossible(0, 0);
+						_vm->playGnapImpossible(0, 0);
 						break;
 					}
 				}
 				break;
 
 			case kHSChickenLeg:
-				if (_grabCursorSpriteIndex >= 0) {
-					playGnapShowCurrItem(_hotspotsWalkPos[kHSChickenLeg].x, _hotspotsWalkPos[kHSChickenLeg].y, _hotspotsWalkPos[kHSChickenLeg].x - 1, 0);
+				if (_vm->_grabCursorSpriteIndex >= 0) {
+					_vm->playGnapShowCurrItem(_vm->_hotspotsWalkPos[kHSChickenLeg].x, _vm->_hotspotsWalkPos[kHSChickenLeg].y, _vm->_hotspotsWalkPos[kHSChickenLeg].x - 1, 0);
 				} else {
-					switch (_verbCursor) {
+					switch (_vm->_verbCursor) {
 					case LOOK_CURSOR:
-						playGnapScratchingHead(_hotspotsWalkPos[kHSChickenLeg].x - 1, 0);
+						_vm->playGnapScratchingHead(_vm->_hotspotsWalkPos[kHSChickenLeg].x - 1, 0);
 						break;
 					case GRAB_CURSOR:
-						gnapWalkTo(_hotspotsWalkPos[kHSChickenLeg].x, _hotspotsWalkPos[kHSChickenLeg].y, 0, 0x107BC, 1);
-						_gnapActionStatus = kASGrabChickenLeg;
+						_vm->gnapWalkTo(_vm->_hotspotsWalkPos[kHSChickenLeg].x, _vm->_hotspotsWalkPos[kHSChickenLeg].y, 0, 0x107BC, 1);
+						_vm->_gnapActionStatus = kASGrabChickenLeg;
 						break;
 					case TALK_CURSOR:
 					case PLAT_CURSOR:
-						playGnapImpossible(0, 0);
+						_vm->playGnapImpossible(0, 0);
 						break;
 					}
 				}
@@ -296,36 +301,36 @@ void GnapEngine::scene42_run() {
 
 			case kHSWalkArea1:
 			case kHSWalkArea2:
-				if (_gnapActionStatus < 0)
-					gnapWalkTo(-1, -1, -1, -1, 1);
+				if (_vm->_gnapActionStatus < 0)
+					_vm->gnapWalkTo(-1, -1, -1, -1, 1);
 				break;
 
 			}
 		}
 
-		if (_mouseClickState._left && _gnapActionStatus < 0) {
-			_mouseClickState._left = false;
-			if (isFlag(kGFGnapControlsToyUFO)) {
-				_toyUfoActionStatus = kASToyUfoRefresh;
-				toyUfoFlyTo(-1, -1, 0, 799, 0, 300, 3);
+		if (_vm->_mouseClickState._left && _vm->_gnapActionStatus < 0) {
+			_vm->_mouseClickState._left = false;
+			if (_vm->isFlag(kGFGnapControlsToyUFO)) {
+				_vm->_toyUfoActionStatus = kASToyUfoRefresh;
+				_vm->toyUfoFlyTo(-1, -1, 0, 799, 0, 300, 3);
 			} else {
-				gnapWalkTo(-1, -1, -1, -1, 1);
+				_vm->gnapWalkTo(-1, -1, -1, -1, 1);
 			}
 		}
 
-		scene42_updateAnimations();
+		updateAnimations();
 
-		toyUfoCheckTimer();
+		_vm->toyUfoCheckTimer();
 
-		if (!_isLeavingScene) {
-			if (_platypusActionStatus < 0 && !isFlag(kGFGnapControlsToyUFO))
-				updatePlatypusIdleSequence();
-			if (_gnapActionStatus < 0 && !isFlag(kGFGnapControlsToyUFO))
-				updateGnapIdleSequence();
-			if (!_timers[4]) {
-				_timers[4] = getRandom(20) + 30;
-				if (_gnapActionStatus < 0 && _platypusActionStatus < 0 && _s42_nextBBQVendorSequenceId == -1) {
-					switch (getRandom(8)) {
+		if (!_vm->_isLeavingScene) {
+			if (_vm->_platypusActionStatus < 0 && !_vm->isFlag(kGFGnapControlsToyUFO))
+				_vm->updatePlatypusIdleSequence();
+			if (_vm->_gnapActionStatus < 0 && !_vm->isFlag(kGFGnapControlsToyUFO))
+				_vm->updateGnapIdleSequence();
+			if (!_vm->_timers[4]) {
+				_vm->_timers[4] = _vm->getRandom(20) + 30;
+				if (_vm->_gnapActionStatus < 0 && _vm->_platypusActionStatus < 0 && _s42_nextBBQVendorSequenceId == -1) {
+					switch (_vm->getRandom(8)) {
 					case 0:
 						_s42_nextBBQVendorSequenceId = 0x14C;
 						break;
@@ -349,143 +354,143 @@ void GnapEngine::scene42_run() {
 			}
 		}
 
-		checkGameKeys();
+		_vm->checkGameKeys();
 
-		if (isKeyStatus1(8)) {
-			clearKeyStatus1(8);
-			runMenu();
-			scene42_updateHotspots();
-			_timers[4] = getRandom(20) + 30;
+		if (_vm->isKeyStatus1(8)) {
+			_vm->clearKeyStatus1(8);
+			_vm->runMenu();
+			updateHotspots();
+			_vm->_timers[4] = _vm->getRandom(20) + 30;
 		}
 
-		gameUpdateTick();
+		_vm->gameUpdateTick();
 	}
 }
 
-void GnapEngine::scene42_updateAnimations() {
-	if (_gameSys->getAnimationStatus(0) == 2) {
-		switch (_gnapActionStatus) {
+void Scene42::updateAnimations() {
+	if (_vm->_gameSys->getAnimationStatus(0) == 2) {
+		switch (_vm->_gnapActionStatus) {
 		case kASLeaveScene:
-			_gameSys->setAnimation(0, 0, 0);
-			_gnapActionStatus = -1;
-			_sceneDone = true;
+			_vm->_gameSys->setAnimation(0, 0, 0);
+			_vm->_gnapActionStatus = -1;
+			_vm->_sceneDone = true;
 			break;
 		case kASTalkBBQVendor:
-			_gameSys->setAnimation(0, 0, 0);
-			_gnapActionStatus = -1;
+			_vm->_gameSys->setAnimation(0, 0, 0);
+			_vm->_gnapActionStatus = -1;
 			_s42_nextBBQVendorSequenceId = 0x14B;
 			break;
 		case kASUseQuarterWithBBQVendor:
 		case kASGrabChickenLeg:
-			if (_gameSys->getAnimationStatus(2) == 2) {
+			if (_vm->_gameSys->getAnimationStatus(2) == 2) {
 				int sequenceId;
-				if (_gnapActionStatus == kASUseQuarterWithBBQVendor) {
-					invRemove(kItemDiceQuarterHole);
-					invAdd(kItemChickenBucket);
-					setGrabCursorSprite(-1);
+				if (_vm->_gnapActionStatus == kASUseQuarterWithBBQVendor) {
+					_vm->invRemove(kItemDiceQuarterHole);
+					_vm->invAdd(kItemChickenBucket);
+					_vm->setGrabCursorSprite(-1);
 					sequenceId = 0x150;
 					_s42_nextBBQVendorSequenceId = 0x148;
-				} else if (isFlag(kGFUnk27)) {
-					if (isFlag(kGFUnk28)) {
+				} else if (_vm->isFlag(kGFUnk27)) {
+					if (_vm->isFlag(kGFUnk28)) {
 						sequenceId = 0x7B7;
 						_s42_nextBBQVendorSequenceId = 0x145;
 					} else {
-						setFlag(kGFUnk28);
+						_vm->setFlag(kGFUnk28);
 						sequenceId = 0x14F;
 						_s42_nextBBQVendorSequenceId = 0x147;
 					}
 				} else {
-					setFlag(kGFUnk27);
+					_vm->setFlag(kGFUnk27);
 					sequenceId = 0x14E;
 					_s42_nextBBQVendorSequenceId = 0x146;
 				}
 				if (sequenceId == 0x7B7) {
-					_gameSys->insertSequence(0x107B7, _gnapId,
-						makeRid(_gnapSequenceDatNum, _gnapSequenceId), _gnapId,
-						kSeqSyncWait, getSequenceTotalDuration(_s42_nextBBQVendorSequenceId),
-						75 * _gnapX - _gnapGridX, 48 * _gnapY - _gnapGridY);
-					_gnapSequenceDatNum = 1;
+					_vm->_gameSys->insertSequence(0x107B7, _vm->_gnapId,
+						makeRid(_vm->_gnapSequenceDatNum, _vm->_gnapSequenceId), _vm->_gnapId,
+						kSeqSyncWait, _vm->getSequenceTotalDuration(_s42_nextBBQVendorSequenceId),
+						75 * _vm->_gnapX - _vm->_gnapGridX, 48 * _vm->_gnapY - _vm->_gnapGridY);
+					_vm->_gnapSequenceDatNum = 1;
 				} else {
-					_gameSys->insertSequence(sequenceId, _gnapId,
-						makeRid(_gnapSequenceDatNum, _gnapSequenceId), _gnapId,
+					_vm->_gameSys->insertSequence(sequenceId, _vm->_gnapId,
+						makeRid(_vm->_gnapSequenceDatNum, _vm->_gnapSequenceId), _vm->_gnapId,
 						kSeqSyncWait, 0, 0, 0);
-					_gnapSequenceDatNum = 0;
+					_vm->_gnapSequenceDatNum = 0;
 				}
-				_gnapSequenceId = sequenceId;
-				_gameSys->setAnimation(sequenceId | (_gnapSequenceDatNum << 16), _gnapId, 0);
-				if (_gnapActionStatus == kASUseQuarterWithBBQVendor)
-					_gnapActionStatus = kASUseQuarterWithBBQVendorDone;
+				_vm->_gnapSequenceId = sequenceId;
+				_vm->_gameSys->setAnimation(sequenceId | (_vm->_gnapSequenceDatNum << 16), _vm->_gnapId, 0);
+				if (_vm->_gnapActionStatus == kASUseQuarterWithBBQVendor)
+					_vm->_gnapActionStatus = kASUseQuarterWithBBQVendorDone;
 				else
-					_gnapActionStatus = -1;
-				_gameSys->insertSequence(_s42_nextBBQVendorSequenceId, 1, _s42_currBBQVendorSequenceId, 1, kSeqSyncWait, 0, 0, 0);
-				_gameSys->setAnimation(_s42_nextBBQVendorSequenceId, 1, 2);
+					_vm->_gnapActionStatus = -1;
+				_vm->_gameSys->insertSequence(_s42_nextBBQVendorSequenceId, 1, _s42_currBBQVendorSequenceId, 1, kSeqSyncWait, 0, 0, 0);
+				_vm->_gameSys->setAnimation(_s42_nextBBQVendorSequenceId, 1, 2);
 				_s42_currBBQVendorSequenceId = _s42_nextBBQVendorSequenceId;
 				if (_s42_nextBBQVendorSequenceId == 0x145)
 					_s42_nextBBQVendorSequenceId = 0x14A;
 				else
 					_s42_nextBBQVendorSequenceId = -1;
-				_timers[4] = getRandom(20) + 30;
-				_timers[2] = getRandom(30) + 20;
-				_timers[3] = getRandom(50) + 200;
+				_vm->_timers[4] = _vm->getRandom(20) + 30;
+				_vm->_timers[2] = _vm->getRandom(30) + 20;
+				_vm->_timers[3] = _vm->getRandom(50) + 200;
 			}
 			break;
 		case kASUseQuarterWithBBQVendorDone:
-			_gameSys->setAnimation(0, 0, 0);
-			setGrabCursorSprite(kItemChickenBucket);
-			_gnapActionStatus = -1;
+			_vm->_gameSys->setAnimation(0, 0, 0);
+			_vm->setGrabCursorSprite(kItemChickenBucket);
+			_vm->_gnapActionStatus = -1;
 			break;
 		default:
-			_gameSys->setAnimation(0, 0, 0);
-			_gnapActionStatus = -1;
+			_vm->_gameSys->setAnimation(0, 0, 0);
+			_vm->_gnapActionStatus = -1;
 			break;
 		}
 	}
 
-	if (_gameSys->getAnimationStatus(2) == 2 && _s42_nextBBQVendorSequenceId != -1) {
-		_gameSys->insertSequence(_s42_nextBBQVendorSequenceId, 1, _s42_currBBQVendorSequenceId, 1, kSeqSyncWait, 0, 0, 0);
-		_gameSys->setAnimation(_s42_nextBBQVendorSequenceId, 1, 2);
+	if (_vm->_gameSys->getAnimationStatus(2) == 2 && _s42_nextBBQVendorSequenceId != -1) {
+		_vm->_gameSys->insertSequence(_s42_nextBBQVendorSequenceId, 1, _s42_currBBQVendorSequenceId, 1, kSeqSyncWait, 0, 0, 0);
+		_vm->_gameSys->setAnimation(_s42_nextBBQVendorSequenceId, 1, 2);
 		_s42_currBBQVendorSequenceId = _s42_nextBBQVendorSequenceId;
 		_s42_nextBBQVendorSequenceId = -1;
-		_timers[4] = getRandom(20) + 30;
+		_vm->_timers[4] = _vm->getRandom(20) + 30;
 	}
 
-	if (_gameSys->getAnimationStatus(3) == 2) {
-		switch (_toyUfoActionStatus) {
+	if (_vm->_gameSys->getAnimationStatus(3) == 2) {
+		switch (_vm->_toyUfoActionStatus) {
 		case kASToyUfoLeaveScene:
-			_sceneDone = true;
+			_vm->_sceneDone = true;
 			break;
 		case kASToyUfoPickUpHotSauce:
-			_gameSys->insertSequence(0x10870, _toyUfoId, _toyUfoSequenceId | 0x10000, _toyUfoId, kSeqSyncWait, 0, 0, 0);
-			setFlag(kGFUnk24);
-			scene42_updateHotspots();
-			toyUfoSetStatus(kGFGroceryStoreHatTaken);
-			_toyUfoSequenceId = 0x870;
-			_gameSys->setAnimation(0x10870, _toyUfoId, 3);
-			_toyUfoActionStatus = -1;
-			_toyUfoX = 0x181;
-			_toyUfoY = 53;
+			_vm->_gameSys->insertSequence(0x10870, _vm->_toyUfoId, _vm->_toyUfoSequenceId | 0x10000, _vm->_toyUfoId, kSeqSyncWait, 0, 0, 0);
+			_vm->setFlag(kGFUnk24);
+			updateHotspots();
+			_vm->toyUfoSetStatus(kGFGroceryStoreHatTaken);
+			_vm->_toyUfoSequenceId = 0x870;
+			_vm->_gameSys->setAnimation(0x10870, _vm->_toyUfoId, 3);
+			_vm->_toyUfoActionStatus = -1;
+			_vm->_toyUfoX = 0x181;
+			_vm->_toyUfoY = 53;
 			break;
 		default:
-			if (_toyUfoSequenceId == 0x872) {
-				hideCursor();
-				addFullScreenSprite(0x13E, 255);
-				_gameSys->setAnimation(0x151, 256, 0);
-				_gameSys->insertSequence(0x151, 256, 0, 0, kSeqNone, 0, 0, 0);
-				while (_gameSys->getAnimationStatus(0) != 2)
-					gameUpdateTick();
-				removeFullScreenSprite();
-				showCursor();
+			if (_vm->_toyUfoSequenceId == 0x872) {
+				_vm->hideCursor();
+				_vm->addFullScreenSprite(0x13E, 255);
+				_vm->_gameSys->setAnimation(0x151, 256, 0);
+				_vm->_gameSys->insertSequence(0x151, 256, 0, 0, kSeqNone, 0, 0, 0);
+				while (_vm->_gameSys->getAnimationStatus(0) != 2)
+					_vm->gameUpdateTick();
+				_vm->removeFullScreenSprite();
+				_vm->showCursor();
 			}
-			_toyUfoNextSequenceId = toyUfoGetSequenceId();
-			_gameSys->setAnimation(_toyUfoNextSequenceId | 0x10000, (_toyUfoId + 1) % 10, 3);
-			_gameSys->insertSequence(_toyUfoNextSequenceId | 0x10000, (_toyUfoId + 1) % 10,
-				_toyUfoSequenceId | 0x10000, _toyUfoId,
-				kSeqSyncWait, 0, _toyUfoX - 274, _toyUfoY - 128);
-			_toyUfoSequenceId = _toyUfoNextSequenceId;
-			_toyUfoId = (_toyUfoId + 1) % 10;
+			_vm->_toyUfoNextSequenceId = _vm->toyUfoGetSequenceId();
+			_vm->_gameSys->setAnimation(_vm->_toyUfoNextSequenceId | 0x10000, (_vm->_toyUfoId + 1) % 10, 3);
+			_vm->_gameSys->insertSequence(_vm->_toyUfoNextSequenceId | 0x10000, (_vm->_toyUfoId + 1) % 10,
+				_vm->_toyUfoSequenceId | 0x10000, _vm->_toyUfoId,
+				kSeqSyncWait, 0, _vm->_toyUfoX - 274, _vm->_toyUfoY - 128);
+			_vm->_toyUfoSequenceId = _vm->_toyUfoNextSequenceId;
+			_vm->_toyUfoId = (_vm->_toyUfoId + 1) % 10;
 			break;
 		}
-		_toyUfoActionStatus = -1;
+		_vm->_toyUfoActionStatus = -1;
 	}
 }
 
