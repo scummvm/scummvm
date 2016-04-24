@@ -185,6 +185,9 @@ public:
 	/** Obtain the next command to be executed, depending on a predicate */
 	Command *nextCommandIf(bool predicate);
 
+	/** Get the command's list of arguments */
+	Common::Array<Argument> getArguments() const;
+
 protected:
 	void readData(Formats::XRCReadStream *stream) override;
 	void printData() override;

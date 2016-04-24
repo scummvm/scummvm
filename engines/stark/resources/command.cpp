@@ -1196,5 +1196,9 @@ void Command::printData() {
 	}
 }
 
+Common::Array<Command::Argument> Command::getArguments() const {
+	return _arguments;
+}
+
 } // End of namespace Resources
 } // End of namespace Stark
