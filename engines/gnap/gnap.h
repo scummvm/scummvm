@@ -601,39 +601,6 @@ public:
 	bool toyUfoCheckTimer();
 	void toyUfoFlyTo(int destX, int destY, int minX, int maxX, int minY, int maxY, int animationIndex);
 
-	// Scene 50
-	bool _s50_fightDone;
-	int _s50_timesPlayed, _s50_timesPlayedModifier;
-	int _s50_attackCounter;
-	int _s50_roundNum, _s50_timeRemaining;
-	int _s50_leftTongueRoundsWon, _s50_rightTongueRoundsWon;
-	int _s50_leftTongueEnergyBarPos, _s50_rightTongueEnergyBarPos;
-	int _s50_leftTongueSequenceId, _s50_leftTongueId;
-	int _s50_leftTongueNextSequenceId, _s50_leftTongueNextId, _s50_leftTongueNextIdCtr;
-	int _s50_rightTongueSequenceId, _s50_rightTongueId;
-	int _s50_rightTongueNextSequenceId, _s50_rightTongueNextId, _s50_rightTongueNextIdCtr;
-	int _s50_leftTongueEnergy, _s50_rightTongueEnergy;
-	int scene50_init();
-	void scene50_updateHotspots();
-	bool scene50_tongueWinsRound(int tongueNum);
-	void scene50_playWinAnim(int tongueNum, bool fightOver);
-	void scene50_delayTicks();
-	void scene50_initRound();
-	bool scene50_updateCountdown();
-	void scene50_drawCountdown(int value);
-	void scene50_playTonguesIdle();
-	void scene50_playRoundAnim(int roundNum);
-	bool scene50_updateEnergyBars(int newLeftBarPos, int newRightBarPos);
-	void scene50_waitForAnim(int animationIndex);
-	int scene50_checkInput();
-	int scene50_getRightTongueAction();
-	void scene50_updateAnimations();
-	int scene50_getRightTongueActionTicks();
-	int scene50_getLeftTongueNextId();
-	int scene50_getRightTongueNextId();
-	void scene50_playWinBadgeAnim(int tongueNum);
-	void scene50_run();
-	
 	// Scene 51
 	int _s51_cashAmount;
 	int _s51_digits[4];

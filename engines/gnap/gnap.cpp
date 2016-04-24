@@ -2021,15 +2021,6 @@ void GnapEngine::initGlobalSceneVars() {
 	// Shared by scenes 17 && 18
 	_s18_garbageCanPos = 8;
 
-	// Scene 50
-	_s50_timesPlayed = 0;
-	_s50_timesPlayedModifier = 0;
-	_s50_attackCounter = 0;
-	_s50_leftTongueEnergyBarPos = 10;
-	_s50_leftTongueNextIdCtr = 0;
-	_s50_rightTongueEnergyBarPos = 10;
-	_s50_rightTongueNextIdCtr = 0;
-
 	// Scene 52
 	_s52_gameScore = 0;
 	_s52_aliensInitialized = false;
