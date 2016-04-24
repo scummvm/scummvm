@@ -606,12 +606,6 @@ public:
 	// Shared by scenes 17 & 18
 	int _s18_garbageCanPos;
 	
-	// Scene 38
-	int scene38_init();
-	void scene38_updateHotspots();
-	void scene38_run();
-	void scene38_updateAnimations();
-
 	// Scene 39
 	int _s39_currGuySequenceId, _s39_nextGuySequenceId;
 	int scene39_init();
