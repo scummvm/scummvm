@@ -87,6 +87,8 @@ private:
 	bool _fullRefresh;
 
 	Patterns _patterns;
+
+	Menu *_menu;
 };
 
 } // End of namespace Wage

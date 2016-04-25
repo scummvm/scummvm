@@ -150,7 +150,6 @@ Gui::Gui(WageEngine *engine) {
 	_scene = NULL;
 	_sceneDirty = true;
 	_consoleDirty = true;
-	_menuDirty = true;
 	_cursorDirty = false;
 	_consoleFullRedraw = true;
 	_screen.create(g_system->getWidth(), g_system->getHeight(), Graphics::PixelFormat::createFormatCLUT8());
@@ -200,7 +199,6 @@ Gui::~Gui() {
 	_screen.free();
 	_console.free();
 	g_system->getTimerManager()->removeTimerProc(&cursorTimerHandler);
-	delete _menu;
 }
 
 void Gui::undrawCursor() {
@@ -232,13 +230,7 @@ const Graphics::Font *Gui::getTitleFont() {
 
 void Gui::draw() {
 	if (_engine->_isGameOver) {
-		if (_menuDirty) {
-			_wm.setFullRefresh(true);
-			_wm.draw();
-			_menu->draw(&_screen);
-		}
-
-		_menuDirty = false;
+		_wm.draw();
 
 		return;
 	}
@@ -263,9 +255,6 @@ void Gui::draw() {
 
 	_wm.draw();
 
-	if (_menuDirty)
-		_menu->draw(&_screen);
-
 	if (_cursorDirty && _cursorRect.left < _screen.w && _cursorRect.bottom < _screen.h) {
 		g_system->copyRectToScreen(_screen.getBasePtr(_cursorRect.left, _cursorRect.top), _screen.pitch,
 				_cursorRect.left, _cursorRect.top, _cursorRect.width(), _cursorRect.height());
@@ -275,7 +264,6 @@ void Gui::draw() {
 
 	_sceneDirty = false;
 	_consoleDirty = false;
-	_menuDirty = false;
 	_consoleFullRedraw = false;
 }
 
@@ -288,7 +276,7 @@ void Gui::drawScene() {
 
 	_sceneDirty = true;
 	_consoleDirty = true;
-	_menuDirty = true;
+	_menu->setDirty(true);
 	_consoleFullRedraw = true;
 }
 
@@ -489,7 +477,7 @@ void Gui::processMenuShortCut(byte flags, uint16 ascii) {
 void Gui::mouseMove(int x, int y) {
 	if (_menu->hasAllFocus()) {
 		if (_menu->mouseMove(x, y))
-			_menuDirty = true;
+			_menu->setDirty(true);
 
 		return;
 	}
@@ -526,22 +514,15 @@ bool Gui::processEvent(Common::Event &event) {
 }
 
 void Gui::mouseUp(int x, int y) {
-	if (_menu->hasAllFocus()) {
-		if (_menu->mouseRelease(x, y)) {
-			_sceneDirty = true;
-			_consoleDirty = true;
-			_menuDirty = true;
-		}
-
-		return;
-	}
+	if (_menu->hasAllFocus())
+		_menu->mouseRelease(x, y);
 
 	return;
 }
 
 void Gui::mouseDown(int x, int y) {
 	if (_menu->mouseClick(x, y)) {
-		_menuDirty = true;
+		_menu->setDirty(true);
 	}
 }
 

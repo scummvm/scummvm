@@ -341,6 +341,11 @@ void Menu::calcMenuBounds(MenuItem *menu) {
 bool Menu::draw(Graphics::ManagedSurface *g, bool forceRedraw) {
 	Common::Rect r(_bbox);
 
+	if (!_contentIsDirty)
+		return false;
+
+	_contentIsDirty = true;
+
 	Design::drawFilledRoundRect(&_gui->_screen, r, kDesktopArc, kColorWhite, _gui->_patterns, kPatternSolid);
 	r.top = 7;
 	Design::drawFilledRect(&_gui->_screen, r, kColorWhite, _gui->_patterns, kPatternSolid);
@@ -506,6 +511,8 @@ bool Menu::mouseRelease(int x, int y) {
 		_activeItem = -1;
 		_activeSubItem = -1;
 
+		_gui->_wm.setFullRefresh(true);
+
 		return true;
 	}
 
@@ -566,12 +573,16 @@ void Menu::enableCommand(int menunum, int action, bool state) {
 	for (uint i = 0; i < _items[menunum]->subitems.size(); i++)
 		if (_items[menunum]->subitems[i]->action == action)
 			_items[menunum]->subitems[i]->enabled = state;
+
+	_contentIsDirty = true;
 }
 
 void Menu::disableAllMenus() {
 	for (uint i = 1; i < _items.size(); i++) // Leave About menu on
 		for (uint j = 0; j < _items[i]->subitems.size(); j++)
 			_items[i]->subitems[j]->enabled = false;
+
+	_contentIsDirty = true;
 }
 
 } // End of namespace Wage

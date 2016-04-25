@@ -74,6 +74,8 @@ MacWindowManager::MacWindowManager() {
     _lastId = 0;
     _activeWindow = -1;
 
+	_menu = 0;
+
 	_fullRefresh = true;
 
 	for (int i = 0; i < ARRAYSIZE(fillPatterns); i++)
@@ -99,13 +101,13 @@ MacWindow *MacWindowManager::addWindow(bool scrollable, bool resizable) {
 }
 
 Menu *MacWindowManager::addMenu(Gui *g) {
-    Menu *m = new Menu(_lastId, g);
+	_menu = new Menu(_lastId, g);
 
-	_windows.push_back(m);
+	_windows.push_back(_menu);
 
 	_lastId++;
 
-	return m;
+	return _menu;
 }
 
 void MacWindowManager::setActive(int id) {
@@ -143,6 +145,10 @@ void MacWindowManager::draw() {
         }
     }
 
+	// Menu is drawn on top of everything and always
+	if (_menu)
+		_menu->draw(_screen, _fullRefresh);
+
     _fullRefresh = false;
 }
 
@@ -154,6 +160,9 @@ void MacWindowManager::drawDesktop() {
 }
 
 bool MacWindowManager::processEvent(Common::Event &event) {
+	if (_menu && _menu->processEvent(event))
+		return true;
+
     if (event.type != Common::EVENT_MOUSEMOVE && event.type != Common::EVENT_LBUTTONDOWN &&
             event.type != Common::EVENT_LBUTTONUP)
         return false;

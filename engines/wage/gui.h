@@ -146,8 +146,6 @@ public:
 	Common::Rect _cursorRect;
 	bool _cursorOff;
 
-	bool _menuDirty;
-
 	Scene *_scene;
 
 	MacWindowManager _wm;
