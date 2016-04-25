@@ -127,6 +127,13 @@ void MacWindowManager::setActive(int id) {
     _fullRefresh = true;
 }
 
+void MacWindowManager::drawDesktop() {
+	Common::Rect r(_screen->getBounds());
+
+	Design::drawFilledRoundRect(_screen, r, kDesktopArc, kColorBlack, _patterns, kPatternCheckers);
+	g_system->copyRectToScreen(_screen->getPixels(), _screen->pitch, 0, 0, _screen->w, _screen->h);
+}
+
 void MacWindowManager::draw() {
     assert(_screen);
 
@@ -152,14 +159,8 @@ void MacWindowManager::draw() {
     _fullRefresh = false;
 }
 
-void MacWindowManager::drawDesktop() {
-	Common::Rect r(_screen->getBounds());
-
-	Design::drawFilledRoundRect(_screen, r, kDesktopArc, kColorBlack, _patterns, kPatternCheckers);
-	g_system->copyRectToScreen(_screen->getPixels(), _screen->pitch, 0, 0, _screen->w, _screen->h);
-}
-
 bool MacWindowManager::processEvent(Common::Event &event) {
+	// Menu gets events first fir shortcuts and menu bar
 	if (_menu && _menu->processEvent(event))
 		return true;
 
