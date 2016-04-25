@@ -104,7 +104,7 @@ struct MenuData {
 	{ 0, NULL,			0, 0, false }
 };
 
-Menu::Menu(Gui *gui) : _gui(gui) {
+Menu::Menu(int id, Gui *gui) : BaseMacWindow(id), _gui(gui) {
 	assert(_gui->_engine);
 	assert(_gui->_engine->_world);
 
@@ -338,7 +338,7 @@ void Menu::calcMenuBounds(MenuItem *menu) {
 	menu->subbbox.bottom = y2;
 }
 
-void Menu::render() {
+bool Menu::draw(Graphics::ManagedSurface *g, bool forceRedraw) {
 	Common::Rect r(_bbox);
 
 	Design::drawFilledRoundRect(&_gui->_screen, r, kDesktopArc, kColorWhite, _gui->_patterns, kPatternSolid);
@@ -368,6 +368,8 @@ void Menu::render() {
 	}
 
 	g_system->copyRectToScreen(_gui->_screen.getPixels(), _gui->_screen.pitch, 0, 0, _gui->_screen.w, kMenuHeight);
+
+	return true;
 }
 
 void Menu::renderSubmenu(MenuItem *menu) {
@@ -437,6 +439,10 @@ void Menu::renderSubmenu(MenuItem *menu) {
 	}
 
 	g_system->copyRectToScreen(_gui->_screen.getBasePtr(r->left, r->top), _gui->_screen.pitch, r->left, r->top, r->width() + 3, r->height() + 3);
+}
+
+bool Menu::processEvent(Common::Event &event) {
+	return false;
 }
 
 bool Menu::mouseClick(int x, int y) {

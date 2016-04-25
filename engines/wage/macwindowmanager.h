@@ -51,6 +51,7 @@
 namespace Wage {
 
 class MacWindow;
+class Menu;
 
 class MacWindowManager {
 public:
@@ -60,6 +61,7 @@ public:
 	void setScreen(Graphics::ManagedSurface *screen) { _screen = screen; }
 
 	MacWindow *addWindow(bool scrollable, bool resizable);
+	Menu *addMenu(Gui *gui);
 	void setActive(int id);
 
 	void setFullRefresh(bool redraw) { _fullRefresh = true; }

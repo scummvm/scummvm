@@ -187,7 +187,7 @@ Gui::Gui(WageEngine *engine) {
 
 	g_system->getTimerManager()->installTimerProc(&cursorTimerHandler, 200000, this, "wageCursor");
 
-	_menu = new Menu(this);
+	_menu = _wm.addMenu(this);
 
 	_sceneWindow = _wm.addWindow(false, false);
 	_sceneWindow->setCallback(sceneWindowCallback, this);
@@ -235,7 +235,7 @@ void Gui::draw() {
 		if (_menuDirty) {
 			_wm.setFullRefresh(true);
 			_wm.draw();
-			_menu->render();
+			_menu->draw(&_screen);
 		}
 
 		_menuDirty = false;
@@ -264,7 +264,7 @@ void Gui::draw() {
 	_wm.draw();
 
 	if (_menuDirty)
-		_menu->render();
+		_menu->draw(&_screen);
 
 	if (_cursorDirty && _cursorRect.left < _screen.w && _cursorRect.bottom < _screen.h) {
 		g_system->copyRectToScreen(_screen.getBasePtr(_cursorRect.left, _cursorRect.top), _screen.pitch,
@@ -487,7 +487,7 @@ void Gui::processMenuShortCut(byte flags, uint16 ascii) {
 }
 
 void Gui::mouseMove(int x, int y) {
-	if (_menu->_menuActivated) {
+	if (_menu->hasAllFocus()) {
 		if (_menu->mouseMove(x, y))
 			_menuDirty = true;
 
@@ -526,7 +526,7 @@ bool Gui::processEvent(Common::Event &event) {
 }
 
 void Gui::mouseUp(int x, int y) {
-	if (_menu->_menuActivated) {
+	if (_menu->hasAllFocus()) {
 		if (_menu->mouseRelease(x, y)) {
 			_sceneDirty = true;
 			_consoleDirty = true;

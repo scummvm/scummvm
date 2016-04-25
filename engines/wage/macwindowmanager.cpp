@@ -57,6 +57,7 @@
 #include "wage/gui.h"
 #include "wage/macwindow.h"
 #include "wage/macwindowmanager.h"
+#include "wage/menu.h"
 
 namespace Wage {
 
@@ -95,6 +96,16 @@ MacWindow *MacWindowManager::addWindow(bool scrollable, bool resizable) {
     _lastId++;
 
     return w;
+}
+
+Menu *MacWindowManager::addMenu(Gui *g) {
+    Menu *m = new Menu(_lastId, g);
+
+	_windows.push_back(m);
+
+	_lastId++;
+
+	return m;
 }
 
 void MacWindowManager::setActive(int id) {

@@ -90,12 +90,14 @@ enum {
 	kMenuActionCommand
 };
 
-class Menu {
+class Menu : public BaseMacWindow {
 public:
-	Menu(Gui *gui);
+	Menu(int id, Gui *gui);
 	~Menu();
 
-	void render();
+	bool draw(Graphics::ManagedSurface *g, bool forceRedraw = false);
+	bool processEvent(Common::Event &event);
+
 	bool mouseClick(int x, int y);
 	bool mouseRelease(int x, int y);
 	bool mouseMove(int x, int y);
@@ -106,7 +108,9 @@ public:
 	void enableCommand(int menunum, int action, bool state);
 	void disableAllMenus();
 
-	bool _menuActivated;
+	void setActive(bool active) { _menuActivated = active; }
+	bool hasAllFocus() { return _menuActivated; }
+
 	Common::Rect _bbox;
 
 private:
@@ -129,6 +133,8 @@ private:
 	MenuItem *_commands;
 
 	const Graphics::Font *_font;
+
+	bool _menuActivated;
 
 	int _activeItem;
 	int _activeSubItem;

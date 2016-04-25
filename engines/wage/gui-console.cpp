@@ -45,6 +45,7 @@
  *
  */
 
+#include "common/events.h"
 #include "common/timer.h"
 #include "common/unzip.h"
 #include "graphics/cursorman.h"
@@ -54,6 +55,7 @@
 #include "wage/wage.h"
 #include "wage/design.h"
 #include "wage/entities.h"
+#include "wage/macwindow.h"
 #include "wage/menu.h"
 #include "wage/gui.h"
 #include "wage/world.h"
