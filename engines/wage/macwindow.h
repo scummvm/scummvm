@@ -53,8 +53,9 @@
 namespace Wage {
 
 enum WindowType {
-	kWindowScene,
-	kWindowConsole
+	kWindowUnknown,
+	kWindowWindow,
+	kWindowMenu
 };
 
 enum {
@@ -73,22 +74,29 @@ enum WindowClick {
 
 class BaseMacWindow {
 public:
-	BaseMacWindow(int id) : _id(id) {}
-	~BaseMacWindow() {}
+	BaseMacWindow(int id);
+	virtual ~BaseMacWindow() {}
 
 	const Common::Rect &getDimensions() { return _dims; }
 	int getId() { return _id; }
+	WindowType getType() { return _type; }
 	Graphics::ManagedSurface *getSurface() { return &_surface; }
+	virtual void setActive(bool active) = 0;
+	void setDirty(bool dirty) { _contentIsDirty = dirty; }
 
-	bool draw(Graphics::ManagedSurface *g, bool forceRedraw = false) { return false; }
-	bool processEvent(Common::Event &event) { return false; }
+	virtual bool draw(Graphics::ManagedSurface *g, bool forceRedraw = false) = 0;
+	virtual bool processEvent(Common::Event &event) = 0;
+
+	virtual bool hasAllFocus() = 0;
 
 	void setCallback(bool (*callback)(WindowClick, Common::Event &, void *), void *data) { _callback = callback; _dataPtr = data; }
 
 protected:
 	int _id;
+	WindowType _type;
 
 	Graphics::ManagedSurface _surface;
+	bool _contentIsDirty;
 
 	Common::Rect _dims;
 
@@ -99,7 +107,7 @@ protected:
 class MacWindow : public BaseMacWindow {
 public:
 	MacWindow(int id, bool scrollable, bool resizable);
-	~MacWindow();
+	virtual ~MacWindow();
 	void move(int x, int y);
 	void resize(int w, int h);
 	void setDimensions(const Common::Rect &r);
@@ -111,10 +119,8 @@ public:
 	void setTitle(Common::String &title) { _title = title; }
 	void setHighlight(WindowClick highlightedPart);
 	void setScroll(float scrollPos, float scrollSize);
-	void setDirty(bool dirty) { _contentIsDirty = dirty; }
 	bool processEvent(Common::Event &event);
-	bool beingDragged() { return _beingDragged; }
-	bool beingResized() { return _beingResized; }
+	bool hasAllFocus() { return _beingDragged || _beingResized; }
 
 private:
 	void drawBorder();
@@ -132,7 +138,6 @@ private:
 	bool _resizable;
 	bool _active;
 	bool _borderIsDirty;
-	bool _contentIsDirty;
 
 	bool _beingDragged, _beingResized;
 	int _draggedX, _draggedY;

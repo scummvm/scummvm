@@ -189,10 +189,10 @@ Gui::Gui(WageEngine *engine) {
 
 	_menu = new Menu(this);
 
-	_sceneWindow = _wm.add(false, false);
+	_sceneWindow = _wm.addWindow(false, false);
 	_sceneWindow->setCallback(sceneWindowCallback, this);
 
-	_consoleWindow = _wm.add(true, true);
+	_consoleWindow = _wm.addWindow(true, true);
 	_consoleWindow->setCallback(consoleWindowCallback, this);
 }
 

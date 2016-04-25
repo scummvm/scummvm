@@ -54,21 +54,28 @@
 
 namespace Wage {
 
+BaseMacWindow::BaseMacWindow(int id) : _id(id) {
+	_callback = 0;
+	_dataPtr = 0;
+
+	_contentIsDirty = true;
+
+	_type = kWindowUnknown;
+}
+
 MacWindow::MacWindow(int id, bool scrollable, bool resizable) :
 		BaseMacWindow(id), _scrollable(scrollable), _resizable(resizable) {
 	_active = false;
 	_borderIsDirty = true;
-	_contentIsDirty = true;
 
 	_highlightedPart = kBorderNone;
 
 	_scrollPos = _scrollSize = 0.0;
 
-	_callback = 0;
-	_dataPtr = 0;
-
 	_beingDragged = false;
 	_beingResized = false;
+
+	_type = kWindowWindow;
 }
 
 MacWindow::~MacWindow() {

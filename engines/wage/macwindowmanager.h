@@ -59,7 +59,7 @@ public:
 
 	void setScreen(Graphics::ManagedSurface *screen) { _screen = screen; }
 
-	MacWindow *add(bool scrollable, bool resizable);
+	MacWindow *addWindow(bool scrollable, bool resizable);
 	void setActive(int id);
 
 	void setFullRefresh(bool redraw) { _fullRefresh = true; }
@@ -68,7 +68,7 @@ public:
 
 	bool processEvent(Common::Event &event);
 
-	MacWindow *getWindow(int id) { return _windows[id]; }
+	BaseMacWindow *getWindow(int id) { return _windows[id]; }
 
 private:
 	void drawDesktop();
@@ -76,8 +76,8 @@ private:
 private:
 	Graphics::ManagedSurface *_screen;
 
-	Common::List<MacWindow *> _windowStack;
-	Common::Array<MacWindow *> _windows;
+	Common::List<BaseMacWindow *> _windowStack;
+	Common::Array<BaseMacWindow *> _windows;
 
 	int _lastId;
 	int _activeWindow;

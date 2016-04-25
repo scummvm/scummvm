@@ -84,7 +84,7 @@ MacWindowManager::~MacWindowManager() {
         delete _windows[i];
 }
 
-MacWindow *MacWindowManager::add(bool scrollable, bool resizable) {
+MacWindow *MacWindowManager::addWindow(bool scrollable, bool resizable) {
     MacWindow *w = new MacWindow(_lastId, scrollable, resizable);
 
     _windows.push_back(w);
@@ -120,8 +120,8 @@ void MacWindowManager::draw() {
 	if (_fullRefresh)
 		drawDesktop();
 
-    for (Common::List<MacWindow *>::const_iterator it = _windowStack.begin(); it != _windowStack.end(); it++) {
-        MacWindow *w = *it;
+    for (Common::List<BaseMacWindow *>::const_iterator it = _windowStack.begin(); it != _windowStack.end(); it++) {
+        BaseMacWindow *w = *it;
         if (w->draw(_screen, _fullRefresh)) {
             w->setDirty(false);
 
@@ -147,11 +147,11 @@ bool MacWindowManager::processEvent(Common::Event &event) {
             event.type != Common::EVENT_LBUTTONUP)
         return false;
 
-    for (Common::List<MacWindow *>::const_iterator it = _windowStack.end(); it != _windowStack.begin();) {
+    for (Common::List<BaseMacWindow *>::const_iterator it = _windowStack.end(); it != _windowStack.begin();) {
         it--;
-        MacWindow *w = *it;
+        BaseMacWindow *w = *it;
 
-        if (w->beingDragged() || w->beingResized() || w->getDimensions().contains(event.mouse.x, event.mouse.y)) {
+        if (w->hasAllFocus() || w->getDimensions().contains(event.mouse.x, event.mouse.y)) {
             if (event.type == Common::EVENT_LBUTTONDOWN || event.type == Common::EVENT_LBUTTONUP)
                 setActive(w->getId());
 
