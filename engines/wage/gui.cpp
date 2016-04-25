@@ -266,7 +266,7 @@ void Gui::draw() {
 	if (_menuDirty)
 		_menu->render();
 
-	if (_cursorDirty) {
+	if (_cursorDirty && _cursorRect.left < _screen.w && _cursorRect.bottom < _screen.h) {
 		g_system->copyRectToScreen(_screen.getBasePtr(_cursorRect.left, _cursorRect.top), _screen.pitch,
 				_cursorRect.left, _cursorRect.top, _cursorRect.width(), _cursorRect.height());
 
