@@ -45,6 +45,14 @@ static const ADGameDescription gameDescriptions[] = {
 		},
 		Common::EN_ANY, Common::kPlatformWindows, ADGF_NO_FLAGS, GUIO0()
 	},
+	{
+		"gnap", "",
+		{
+			{"stock_n.dat", 0, "46819043d019a2f36b727cc2bdd6980f", 12995485},
+			AD_LISTEND
+		},
+		Common::RU_RUS, Common::kPlatformWindows, ADGF_NO_FLAGS, GUIO0()
+	},
 
 	AD_TABLE_END_MARKER
 };
