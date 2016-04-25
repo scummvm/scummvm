@@ -42,8 +42,8 @@ public:
 	virtual void updateAnimationsCb() {};
 
 private:
-	int _s43_currTwoHeadedGuySequenceId;
-	int _s43_nextTwoHeadedGuySequenceId;
+	int _currTwoHeadedGuySequenceId;
+	int _nextTwoHeadedGuySequenceId;
 };
 
 } // End of namespace Gnap

@@ -49,14 +49,16 @@ enum {
 };
 
 Scene43::Scene43(GnapEngine *vm) : Scene(vm) {
-	_s43_currTwoHeadedGuySequenceId = -1;
-	_s43_nextTwoHeadedGuySequenceId = -1;
+	_currTwoHeadedGuySequenceId = -1;
+	_nextTwoHeadedGuySequenceId = -1;
 }
 
 int Scene43::init() {
-	_vm->_gameSys->setAnimation(0, 0, 0);
-	_vm->_gameSys->setAnimation(0, 0, 1);
-	_vm->_gameSys->setAnimation(0, 0, 2);
+	GameSys gameSys = *_vm->_gameSys;
+
+	gameSys.setAnimation(0, 0, 0);
+	gameSys.setAnimation(0, 0, 1);
+	gameSys.setAnimation(0, 0, 2);
 	return 0x13F;
 }
 
@@ -92,16 +94,18 @@ void Scene43::updateHotspots() {
 }
 
 void Scene43::run() {
+	GameSys gameSys = *_vm->_gameSys;
+
 	_vm->queueInsertDeviceIcon();
 
 	if (!_vm->isFlag(kGFUnk14))
-		_vm->_gameSys->insertSequence(0x1086F, 1, 0, 0, kSeqNone, 0, 0, 0);
+		gameSys.insertSequence(0x1086F, 1, 0, 0, kSeqNone, 0, 0, 0);
 	
-	_s43_currTwoHeadedGuySequenceId = 0x13C;
-	_s43_nextTwoHeadedGuySequenceId = -1;
+	_currTwoHeadedGuySequenceId = 0x13C;
+	_nextTwoHeadedGuySequenceId = -1;
 	
-	_vm->_gameSys->setAnimation(0x13C, 1, 2);
-	_vm->_gameSys->insertSequence(_s43_currTwoHeadedGuySequenceId, 1, 0, 0, kSeqNone, 0, 0, 0);
+	gameSys.setAnimation(0x13C, 1, 2);
+	gameSys.insertSequence(_currTwoHeadedGuySequenceId, 1, 0, 0, kSeqNone, 0, 0, 0);
 	
 	if (_vm->isFlag(kGFGnapControlsToyUFO)) {
 		_vm->_toyUfoId = 0;
@@ -112,8 +116,8 @@ void Scene43::run() {
 			_vm->_toyUfoX = 30;
 		else
 			_vm->_toyUfoX = 770;
-		_vm->_gameSys->setAnimation(_vm->_toyUfoSequenceId | 0x10000, _vm->_toyUfoId, 3);
-		_vm->_gameSys->insertSequence(_vm->_toyUfoSequenceId | 0x10000, _vm->_toyUfoId, 0, 0, kSeqNone, 0, _vm->_toyUfoX - 274, _vm->_toyUfoY - 128);
+		gameSys.setAnimation(_vm->_toyUfoSequenceId | 0x10000, _vm->_toyUfoId, 3);
+		gameSys.insertSequence(_vm->_toyUfoSequenceId | 0x10000, _vm->_toyUfoId, 0, 0, kSeqNone, 0, _vm->_toyUfoX - 274, _vm->_toyUfoY - 128);
 		_vm->endSceneInit();
 	} else {
 		switch (_vm->_prevSceneNum) {
@@ -329,26 +333,26 @@ void Scene43::run() {
 				_vm->updateGnapIdleSequence();
 			if (!_vm->_timers[4] && (!_vm->isFlag(kGFGnapControlsToyUFO) || !_vm->isFlag(kGFGroceryStoreHatTaken))) {
 				_vm->_timers[4] = _vm->getRandom(100) + 100;
-				if (_vm->_gnapActionStatus < 0 && _vm->_platypusActionStatus < 0 && _s43_nextTwoHeadedGuySequenceId == -1) {
+				if (_vm->_gnapActionStatus < 0 && _vm->_platypusActionStatus < 0 && _nextTwoHeadedGuySequenceId == -1) {
 					switch (_vm->getRandom(5)) {
 					case 0:
-						_s43_nextTwoHeadedGuySequenceId = 0x13C;
+						_nextTwoHeadedGuySequenceId = 0x13C;
 						break;
 					case 1:
-						_s43_nextTwoHeadedGuySequenceId = 0x134;
+						_nextTwoHeadedGuySequenceId = 0x134;
 						break;
 					case 2:
-						_s43_nextTwoHeadedGuySequenceId = 0x135;
+						_nextTwoHeadedGuySequenceId = 0x135;
 						break;
 					case 3:
-						_s43_nextTwoHeadedGuySequenceId = 0x136;
+						_nextTwoHeadedGuySequenceId = 0x136;
 						break;
 					case 4:
-						_s43_nextTwoHeadedGuySequenceId = 0x13A;
+						_nextTwoHeadedGuySequenceId = 0x13A;
 						break;
 					}
-					if (_s43_nextTwoHeadedGuySequenceId == _s43_currTwoHeadedGuySequenceId)
-						_s43_nextTwoHeadedGuySequenceId = -1;
+					if (_nextTwoHeadedGuySequenceId == _currTwoHeadedGuySequenceId)
+						_nextTwoHeadedGuySequenceId = -1;
 				}
 			}
 		}
@@ -370,89 +374,91 @@ void Scene43::run() {
 }
 
 void Scene43::updateAnimations() {
-	if (_vm->_gameSys->getAnimationStatus(0) == 2) {
+	GameSys gameSys = *_vm->_gameSys;
+
+	if (gameSys.getAnimationStatus(0) == 2) {
 		switch (_vm->_gnapActionStatus) {
 		case 0:
-			_vm->_gameSys->setAnimation(0, 0, 0);
+			gameSys.setAnimation(0, 0, 0);
 			_vm->_sceneDone = true;
 			break;
 
 		case 1:
-			if (_vm->_gameSys->getAnimationStatus(2) == 2) {
+			if (gameSys.getAnimationStatus(2) == 2) {
 				_vm->_timers[2] = _vm->getRandom(30) + 20;
 				_vm->_timers[3] = _vm->getRandom(50) + 200;
-				_vm->_gameSys->insertSequence(0x13D, _vm->_gnapId, makeRid(_vm->_gnapSequenceDatNum, _vm->_gnapSequenceId), _vm->_gnapId, kSeqSyncWait, 0, 0, 0);
+				gameSys.insertSequence(0x13D, _vm->_gnapId, makeRid(_vm->_gnapSequenceDatNum, _vm->_gnapSequenceId), _vm->_gnapId, kSeqSyncWait, 0, 0, 0);
 				_vm->_gnapSequenceId = 0x13D;
 				_vm->_gnapSequenceDatNum = 0;
-				_vm->_gameSys->setAnimation(0x13D, _vm->_gnapId, 0);
-				_s43_nextTwoHeadedGuySequenceId = 0x13B;
-				_vm->_gameSys->insertSequence(0x13B, 1, _s43_currTwoHeadedGuySequenceId, 1, kSeqSyncWait, 0, 0, 0);
-				_vm->_gameSys->setAnimation(_s43_nextTwoHeadedGuySequenceId, 1, 2);
-				_s43_currTwoHeadedGuySequenceId = _s43_nextTwoHeadedGuySequenceId;
-				_s43_nextTwoHeadedGuySequenceId = -1;
+				gameSys.setAnimation(0x13D, _vm->_gnapId, 0);
+				_nextTwoHeadedGuySequenceId = 0x13B;
+				gameSys.insertSequence(0x13B, 1, _currTwoHeadedGuySequenceId, 1, kSeqSyncWait, 0, 0, 0);
+				gameSys.setAnimation(_nextTwoHeadedGuySequenceId, 1, 2);
+				_currTwoHeadedGuySequenceId = _nextTwoHeadedGuySequenceId;
+				_nextTwoHeadedGuySequenceId = -1;
 				_vm->_timers[4] = _vm->getRandom(100) + 100;
 				_vm->_gnapActionStatus = -1;
 			}
 			break;
 
 		default:
-			_vm->_gameSys->setAnimation(0, 0, 0);
+			gameSys.setAnimation(0, 0, 0);
 			_vm->_gnapActionStatus = -1;
 			break;
 		}
 	}
 	
-	if (_vm->_gameSys->getAnimationStatus(2) == 2) {
-		if (_s43_currTwoHeadedGuySequenceId == 0x13A) {
+	if (gameSys.getAnimationStatus(2) == 2) {
+		if (_currTwoHeadedGuySequenceId == 0x13A) {
 			if (_vm->isFlag(kGFGroceryStoreHatTaken)) {
-				_s43_nextTwoHeadedGuySequenceId = 0x13E;
+				_nextTwoHeadedGuySequenceId = 0x13E;
 				_vm->stopSound(0x108F6);
 			} else if (_vm->getRandom(2) != 0) {
-				_s43_nextTwoHeadedGuySequenceId = 0x137;
+				_nextTwoHeadedGuySequenceId = 0x137;
 			} else {
-				_s43_nextTwoHeadedGuySequenceId = 0x138;
+				_nextTwoHeadedGuySequenceId = 0x138;
 			}
-		} else if (_s43_currTwoHeadedGuySequenceId == 0x13E) {
+		} else if (_currTwoHeadedGuySequenceId == 0x13E) {
 			_vm->_sceneDone = true;
 			_vm->_newSceneNum = 54;
 		}
-		if (_s43_nextTwoHeadedGuySequenceId != -1) {
-			_vm->_gameSys->insertSequence(_s43_nextTwoHeadedGuySequenceId, 1, _s43_currTwoHeadedGuySequenceId, 1, kSeqSyncWait, 0, 0, 0);
-			_vm->_gameSys->setAnimation(_s43_nextTwoHeadedGuySequenceId, 1, 2);
-			_s43_currTwoHeadedGuySequenceId = _s43_nextTwoHeadedGuySequenceId;
-			_s43_nextTwoHeadedGuySequenceId = -1;
+		if (_nextTwoHeadedGuySequenceId != -1) {
+			gameSys.insertSequence(_nextTwoHeadedGuySequenceId, 1, _currTwoHeadedGuySequenceId, 1, kSeqSyncWait, 0, 0, 0);
+			gameSys.setAnimation(_nextTwoHeadedGuySequenceId, 1, 2);
+			_currTwoHeadedGuySequenceId = _nextTwoHeadedGuySequenceId;
+			_nextTwoHeadedGuySequenceId = -1;
 			_vm->_timers[4] = _vm->getRandom(100) + 100;
 		}
 	}
 	
-	if (_vm->_gameSys->getAnimationStatus(3) == 2) {
+	if (gameSys.getAnimationStatus(3) == 2) {
 		switch (_vm->_toyUfoActionStatus) {
 		case 4:
 			_vm->_sceneDone = true;
 			_vm->_toyUfoActionStatus = -1;
 			break;
 		case 6:
-			_vm->_gameSys->insertSequence(0x10871, _vm->_toyUfoId, _vm->_toyUfoSequenceId | 0x10000, _vm->_toyUfoId, kSeqSyncWait, 0, 0, 0);
-			_vm->_gameSys->removeSequence(0x1086F, 1, true);
+			gameSys.insertSequence(0x10871, _vm->_toyUfoId, _vm->_toyUfoSequenceId | 0x10000, _vm->_toyUfoId, kSeqSyncWait, 0, 0, 0);
+			gameSys.removeSequence(0x1086F, 1, true);
 			_vm->setFlag(kGFUnk14);
 			updateHotspots();
 			_vm->toyUfoSetStatus(kGFUnk18);
 			_vm->_toyUfoSequenceId = 0x871;
-			_vm->_gameSys->setAnimation(0x10871, _vm->_toyUfoId, 3);
+			gameSys.setAnimation(0x10871, _vm->_toyUfoId, 3);
 			_vm->_toyUfoActionStatus = -1;
 			_vm->_toyUfoX = 96;
 			_vm->_toyUfoY = 131;
 			break;
 		case 7:
-			_vm->_gameSys->insertSequence(0x10874, _vm->_toyUfoId, _vm->_toyUfoSequenceId | 0x10000, _vm->_toyUfoId, kSeqSyncWait, 0, 0, 0);
+			gameSys.insertSequence(0x10874, _vm->_toyUfoId, _vm->_toyUfoSequenceId | 0x10000, _vm->_toyUfoId, kSeqSyncWait, 0, 0, 0);
 			_vm->_toyUfoSequenceId = 0x874;
-			_vm->_gameSys->setAnimation(0x10874, _vm->_toyUfoId, 3);
+			gameSys.setAnimation(0x10874, _vm->_toyUfoId, 3);
 			_vm->_toyUfoActionStatus = 8;
 			_vm->setFlag(kGFJointTaken);
 			_vm->_gnapActionStatus = 3;
 			break;
 		case 8:
-			_s43_nextTwoHeadedGuySequenceId = 0x13A;
+			_nextTwoHeadedGuySequenceId = 0x13A;
 			_vm->_toyUfoX = 514;
 			_vm->_toyUfoY = 125;
 			_vm->toyUfoFlyTo(835, 125, 0, 835, 0, 300, 3);
@@ -463,12 +469,12 @@ void Scene43::updateAnimations() {
 			break;
 		default:
 			_vm->_toyUfoNextSequenceId = _vm->toyUfoGetSequenceId();
-			_vm->_gameSys->insertSequence(_vm->_toyUfoNextSequenceId | 0x10000, _vm->_toyUfoId + 1,
+			gameSys.insertSequence(_vm->_toyUfoNextSequenceId | 0x10000, _vm->_toyUfoId + 1,
 				_vm->_toyUfoSequenceId | 0x10000, _vm->_toyUfoId,
 				kSeqSyncWait, 0, _vm->_toyUfoX - 274, _vm->_toyUfoY - 128);
 			_vm->_toyUfoSequenceId = _vm->_toyUfoNextSequenceId;
 			++_vm->_toyUfoId;
-			_vm->_gameSys->setAnimation(_vm->_toyUfoNextSequenceId | 0x10000, _vm->_toyUfoId, 3);
+			gameSys.setAnimation(_vm->_toyUfoNextSequenceId | 0x10000, _vm->_toyUfoId, 3);
 			_vm->_toyUfoActionStatus = -1;
 			break;
 		}

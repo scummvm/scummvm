@@ -42,7 +42,7 @@ public:
 	virtual void updateAnimationsCb() {};
 
 private:
-	int _s45_currDancerSequenceId;
+	int _currDancerSequenceId;
 };
 
 } // End of namespace Gnap

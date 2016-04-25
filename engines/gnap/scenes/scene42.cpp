@@ -58,14 +58,16 @@ enum {
 };
 
 Scene42::Scene42(GnapEngine *vm) : Scene(vm) {
-	_s42_currBBQVendorSequenceId = -1;
-	_s42_nextBBQVendorSequenceId = -1;
+	_currBBQVendorSequenceId = -1;
+	_nextBBQVendorSequenceId = -1;
 }
 
 int Scene42::init() {
-	_vm->_gameSys->setAnimation(0, 0, 0);
-	_vm->_gameSys->setAnimation(0, 0, 1);
-	_vm->_gameSys->setAnimation(0, 0, 2);
+	GameSys gameSys = *_vm->_gameSys;
+
+	gameSys.setAnimation(0, 0, 0);
+	gameSys.setAnimation(0, 0, 1);
+	gameSys.setAnimation(0, 0, 2);
 	if (_vm->isFlag(kGFPictureTaken) || (_vm->isFlag(kGFUnk18) && _vm->isFlag(kGFUnk23)))
 		return 0x153;
 	return 0x152;
@@ -96,13 +98,15 @@ void Scene42::updateHotspots() {
 }
 
 void Scene42::run() {
+	GameSys gameSys = *_vm->_gameSys;
+
 	_vm->queueInsertDeviceIcon();
 
-	_s42_currBBQVendorSequenceId = 0x14A;
-	_s42_nextBBQVendorSequenceId = -1;
+	_currBBQVendorSequenceId = 0x14A;
+	_nextBBQVendorSequenceId = -1;
 
-	_vm->_gameSys->setAnimation(0x14A, 1, 2);
-	_vm->_gameSys->insertSequence(_s42_currBBQVendorSequenceId, 1, 0, 0, kSeqNone, 0, 0, 0);
+	gameSys.setAnimation(0x14A, 1, 2);
+	gameSys.insertSequence(_currBBQVendorSequenceId, 1, 0, 0, kSeqNone, 0, 0, 0);
 
 	if (_vm->isFlag(kGFGnapControlsToyUFO)) {
 		_vm->_toyUfoId = 0;
@@ -110,7 +114,7 @@ void Scene42::run() {
 		if (_vm->_prevSceneNum == 43 && _vm->isFlag(kGFUnk18)) {
 			_vm->_toyUfoSequenceId = 0x872;
 			_vm->_toyUfoNextSequenceId = _vm->toyUfoGetSequenceId();
-			_vm->_gameSys->insertSequence(_vm->_toyUfoSequenceId | 0x10000, _vm->_toyUfoId, 0, 0, kSeqNone, 0, 0, 0);
+			gameSys.insertSequence(_vm->_toyUfoSequenceId | 0x10000, _vm->_toyUfoId, 0, 0, kSeqNone, 0, 0, 0);
 			_vm->_toyUfoX = 317;
 			_vm->_toyUfoY = 61;
 			_vm->toyUfoSetStatus(kGFJointTaken);
@@ -123,9 +127,9 @@ void Scene42::run() {
 				_vm->_toyUfoX = 30;
 			else
 				_vm->_toyUfoX = 770;
-			_vm->_gameSys->insertSequence(_vm->_toyUfoSequenceId | 0x10000, _vm->_toyUfoId, 0, 0, kSeqNone, 0, _vm->_toyUfoX - 274, _vm->_toyUfoY - 128);
+			gameSys.insertSequence(_vm->_toyUfoSequenceId | 0x10000, _vm->_toyUfoId, 0, 0, kSeqNone, 0, _vm->_toyUfoX - 274, _vm->_toyUfoY - 128);
 		}
-		_vm->_gameSys->setAnimation(_vm->_toyUfoSequenceId | 0x10000, _vm->_toyUfoId, 3);
+		gameSys.setAnimation(_vm->_toyUfoSequenceId | 0x10000, _vm->_toyUfoId, 3);
 		_vm->endSceneInit();
 		if (_vm->_toyUfoSequenceId == 0x872)
 			_vm->setGrabCursorSprite(-1);
@@ -329,27 +333,27 @@ void Scene42::run() {
 				_vm->updateGnapIdleSequence();
 			if (!_vm->_timers[4]) {
 				_vm->_timers[4] = _vm->getRandom(20) + 30;
-				if (_vm->_gnapActionStatus < 0 && _vm->_platypusActionStatus < 0 && _s42_nextBBQVendorSequenceId == -1) {
+				if (_vm->_gnapActionStatus < 0 && _vm->_platypusActionStatus < 0 && _nextBBQVendorSequenceId == -1) {
 					switch (_vm->getRandom(8)) {
 					case 0:
-						_s42_nextBBQVendorSequenceId = 0x14C;
+						_nextBBQVendorSequenceId = 0x14C;
 						break;
 					case 1:
 					case 2:
-						_s42_nextBBQVendorSequenceId = 0x149;
+						_nextBBQVendorSequenceId = 0x149;
 						break;
 					case 3:
 					case 4:
 					case 5:
 					case 6:
-						_s42_nextBBQVendorSequenceId = 0x14D;
+						_nextBBQVendorSequenceId = 0x14D;
 						break;
 					case 7:
-						_s42_nextBBQVendorSequenceId = 0x14A;
+						_nextBBQVendorSequenceId = 0x14A;
 						break;
 					}
-					if (_s42_nextBBQVendorSequenceId == _s42_currBBQVendorSequenceId && _s42_nextBBQVendorSequenceId != 0x14D)
-						_s42_nextBBQVendorSequenceId = -1;
+					if (_nextBBQVendorSequenceId == _currBBQVendorSequenceId && _nextBBQVendorSequenceId != 0x14D)
+						_nextBBQVendorSequenceId = -1;
 				}
 			}
 		}
@@ -368,104 +372,106 @@ void Scene42::run() {
 }
 
 void Scene42::updateAnimations() {
-	if (_vm->_gameSys->getAnimationStatus(0) == 2) {
+	GameSys gameSys = *_vm->_gameSys;
+
+	if (gameSys.getAnimationStatus(0) == 2) {
 		switch (_vm->_gnapActionStatus) {
 		case kASLeaveScene:
-			_vm->_gameSys->setAnimation(0, 0, 0);
+			gameSys.setAnimation(0, 0, 0);
 			_vm->_gnapActionStatus = -1;
 			_vm->_sceneDone = true;
 			break;
 		case kASTalkBBQVendor:
-			_vm->_gameSys->setAnimation(0, 0, 0);
+			gameSys.setAnimation(0, 0, 0);
 			_vm->_gnapActionStatus = -1;
-			_s42_nextBBQVendorSequenceId = 0x14B;
+			_nextBBQVendorSequenceId = 0x14B;
 			break;
 		case kASUseQuarterWithBBQVendor:
 		case kASGrabChickenLeg:
-			if (_vm->_gameSys->getAnimationStatus(2) == 2) {
+			if (gameSys.getAnimationStatus(2) == 2) {
 				int sequenceId;
 				if (_vm->_gnapActionStatus == kASUseQuarterWithBBQVendor) {
 					_vm->invRemove(kItemDiceQuarterHole);
 					_vm->invAdd(kItemChickenBucket);
 					_vm->setGrabCursorSprite(-1);
 					sequenceId = 0x150;
-					_s42_nextBBQVendorSequenceId = 0x148;
+					_nextBBQVendorSequenceId = 0x148;
 				} else if (_vm->isFlag(kGFUnk27)) {
 					if (_vm->isFlag(kGFUnk28)) {
 						sequenceId = 0x7B7;
-						_s42_nextBBQVendorSequenceId = 0x145;
+						_nextBBQVendorSequenceId = 0x145;
 					} else {
 						_vm->setFlag(kGFUnk28);
 						sequenceId = 0x14F;
-						_s42_nextBBQVendorSequenceId = 0x147;
+						_nextBBQVendorSequenceId = 0x147;
 					}
 				} else {
 					_vm->setFlag(kGFUnk27);
 					sequenceId = 0x14E;
-					_s42_nextBBQVendorSequenceId = 0x146;
+					_nextBBQVendorSequenceId = 0x146;
 				}
 				if (sequenceId == 0x7B7) {
-					_vm->_gameSys->insertSequence(0x107B7, _vm->_gnapId,
+					gameSys.insertSequence(0x107B7, _vm->_gnapId,
 						makeRid(_vm->_gnapSequenceDatNum, _vm->_gnapSequenceId), _vm->_gnapId,
-						kSeqSyncWait, _vm->getSequenceTotalDuration(_s42_nextBBQVendorSequenceId),
+						kSeqSyncWait, _vm->getSequenceTotalDuration(_nextBBQVendorSequenceId),
 						75 * _vm->_gnapX - _vm->_gnapGridX, 48 * _vm->_gnapY - _vm->_gnapGridY);
 					_vm->_gnapSequenceDatNum = 1;
 				} else {
-					_vm->_gameSys->insertSequence(sequenceId, _vm->_gnapId,
+					gameSys.insertSequence(sequenceId, _vm->_gnapId,
 						makeRid(_vm->_gnapSequenceDatNum, _vm->_gnapSequenceId), _vm->_gnapId,
 						kSeqSyncWait, 0, 0, 0);
 					_vm->_gnapSequenceDatNum = 0;
 				}
 				_vm->_gnapSequenceId = sequenceId;
-				_vm->_gameSys->setAnimation(sequenceId | (_vm->_gnapSequenceDatNum << 16), _vm->_gnapId, 0);
+				gameSys.setAnimation(sequenceId | (_vm->_gnapSequenceDatNum << 16), _vm->_gnapId, 0);
 				if (_vm->_gnapActionStatus == kASUseQuarterWithBBQVendor)
 					_vm->_gnapActionStatus = kASUseQuarterWithBBQVendorDone;
 				else
 					_vm->_gnapActionStatus = -1;
-				_vm->_gameSys->insertSequence(_s42_nextBBQVendorSequenceId, 1, _s42_currBBQVendorSequenceId, 1, kSeqSyncWait, 0, 0, 0);
-				_vm->_gameSys->setAnimation(_s42_nextBBQVendorSequenceId, 1, 2);
-				_s42_currBBQVendorSequenceId = _s42_nextBBQVendorSequenceId;
-				if (_s42_nextBBQVendorSequenceId == 0x145)
-					_s42_nextBBQVendorSequenceId = 0x14A;
+				gameSys.insertSequence(_nextBBQVendorSequenceId, 1, _currBBQVendorSequenceId, 1, kSeqSyncWait, 0, 0, 0);
+				gameSys.setAnimation(_nextBBQVendorSequenceId, 1, 2);
+				_currBBQVendorSequenceId = _nextBBQVendorSequenceId;
+				if (_nextBBQVendorSequenceId == 0x145)
+					_nextBBQVendorSequenceId = 0x14A;
 				else
-					_s42_nextBBQVendorSequenceId = -1;
+					_nextBBQVendorSequenceId = -1;
 				_vm->_timers[4] = _vm->getRandom(20) + 30;
 				_vm->_timers[2] = _vm->getRandom(30) + 20;
 				_vm->_timers[3] = _vm->getRandom(50) + 200;
 			}
 			break;
 		case kASUseQuarterWithBBQVendorDone:
-			_vm->_gameSys->setAnimation(0, 0, 0);
+			gameSys.setAnimation(0, 0, 0);
 			_vm->setGrabCursorSprite(kItemChickenBucket);
 			_vm->_gnapActionStatus = -1;
 			break;
 		default:
-			_vm->_gameSys->setAnimation(0, 0, 0);
+			gameSys.setAnimation(0, 0, 0);
 			_vm->_gnapActionStatus = -1;
 			break;
 		}
 	}
 
-	if (_vm->_gameSys->getAnimationStatus(2) == 2 && _s42_nextBBQVendorSequenceId != -1) {
-		_vm->_gameSys->insertSequence(_s42_nextBBQVendorSequenceId, 1, _s42_currBBQVendorSequenceId, 1, kSeqSyncWait, 0, 0, 0);
-		_vm->_gameSys->setAnimation(_s42_nextBBQVendorSequenceId, 1, 2);
-		_s42_currBBQVendorSequenceId = _s42_nextBBQVendorSequenceId;
-		_s42_nextBBQVendorSequenceId = -1;
+	if (gameSys.getAnimationStatus(2) == 2 && _nextBBQVendorSequenceId != -1) {
+		gameSys.insertSequence(_nextBBQVendorSequenceId, 1, _currBBQVendorSequenceId, 1, kSeqSyncWait, 0, 0, 0);
+		gameSys.setAnimation(_nextBBQVendorSequenceId, 1, 2);
+		_currBBQVendorSequenceId = _nextBBQVendorSequenceId;
+		_nextBBQVendorSequenceId = -1;
 		_vm->_timers[4] = _vm->getRandom(20) + 30;
 	}
 
-	if (_vm->_gameSys->getAnimationStatus(3) == 2) {
+	if (gameSys.getAnimationStatus(3) == 2) {
 		switch (_vm->_toyUfoActionStatus) {
 		case kASToyUfoLeaveScene:
 			_vm->_sceneDone = true;
 			break;
 		case kASToyUfoPickUpHotSauce:
-			_vm->_gameSys->insertSequence(0x10870, _vm->_toyUfoId, _vm->_toyUfoSequenceId | 0x10000, _vm->_toyUfoId, kSeqSyncWait, 0, 0, 0);
+			gameSys.insertSequence(0x10870, _vm->_toyUfoId, _vm->_toyUfoSequenceId | 0x10000, _vm->_toyUfoId, kSeqSyncWait, 0, 0, 0);
 			_vm->setFlag(kGFUnk24);
 			updateHotspots();
 			_vm->toyUfoSetStatus(kGFGroceryStoreHatTaken);
 			_vm->_toyUfoSequenceId = 0x870;
-			_vm->_gameSys->setAnimation(0x10870, _vm->_toyUfoId, 3);
+			gameSys.setAnimation(0x10870, _vm->_toyUfoId, 3);
 			_vm->_toyUfoActionStatus = -1;
 			_vm->_toyUfoX = 0x181;
 			_vm->_toyUfoY = 53;
@@ -474,16 +480,16 @@ void Scene42::updateAnimations() {
 			if (_vm->_toyUfoSequenceId == 0x872) {
 				_vm->hideCursor();
 				_vm->addFullScreenSprite(0x13E, 255);
-				_vm->_gameSys->setAnimation(0x151, 256, 0);
-				_vm->_gameSys->insertSequence(0x151, 256, 0, 0, kSeqNone, 0, 0, 0);
-				while (_vm->_gameSys->getAnimationStatus(0) != 2)
+				gameSys.setAnimation(0x151, 256, 0);
+				gameSys.insertSequence(0x151, 256, 0, 0, kSeqNone, 0, 0, 0);
+				while (gameSys.getAnimationStatus(0) != 2)
 					_vm->gameUpdateTick();
 				_vm->removeFullScreenSprite();
 				_vm->showCursor();
 			}
 			_vm->_toyUfoNextSequenceId = _vm->toyUfoGetSequenceId();
-			_vm->_gameSys->setAnimation(_vm->_toyUfoNextSequenceId | 0x10000, (_vm->_toyUfoId + 1) % 10, 3);
-			_vm->_gameSys->insertSequence(_vm->_toyUfoNextSequenceId | 0x10000, (_vm->_toyUfoId + 1) % 10,
+			gameSys.setAnimation(_vm->_toyUfoNextSequenceId | 0x10000, (_vm->_toyUfoId + 1) % 10, 3);
+			gameSys.insertSequence(_vm->_toyUfoNextSequenceId | 0x10000, (_vm->_toyUfoId + 1) % 10,
 				_vm->_toyUfoSequenceId | 0x10000, _vm->_toyUfoId,
 				kSeqSyncWait, 0, _vm->_toyUfoX - 274, _vm->_toyUfoY - 128);
 			_vm->_toyUfoSequenceId = _vm->_toyUfoNextSequenceId;

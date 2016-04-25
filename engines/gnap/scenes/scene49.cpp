@@ -41,31 +41,33 @@ static const ObstacleDef kObstacleDefs[] = {
 };
 
 Scene49::Scene49(GnapEngine *vm) : Scene(vm) {
-	_s49_scoreBarFlash = false;
-	_s49_scoreBarPos = -1;
-	_s49_scoreLevel = -1;
-	_s49_obstacleIndex = -1;
-	_s49_truckSequenceId = -1;
-	_s49_truckId = -1;
-	_s49_truckLaneNum = -1;
+	_scoreBarFlash = false;
+	_scoreBarPos = -1;
+	_scoreLevel = -1;
+	_obstacleIndex = -1;
+	_truckSequenceId = -1;
+	_truckId = -1;
+	_truckLaneNum = -1;
 
 	for (int i = 0; i < 5; i++) {
-		_s49_obstacles[i]._currSequenceId = -1;
-		_s49_obstacles[i]._closerSequenceId = -1;
-		_s49_obstacles[i]._passedSequenceId = -1;
-		_s49_obstacles[i]._splashSequenceId = -1;
-		_s49_obstacles[i]._collisionSequenceId = -1;
-		_s49_obstacles[i]._prevId = -1;
-		_s49_obstacles[i]._currId = -1;
-		_s49_obstacles[i]._laneNum = -1;
+		_obstacles[i]._currSequenceId = -1;
+		_obstacles[i]._closerSequenceId = -1;
+		_obstacles[i]._passedSequenceId = -1;
+		_obstacles[i]._splashSequenceId = -1;
+		_obstacles[i]._collisionSequenceId = -1;
+		_obstacles[i]._prevId = -1;
+		_obstacles[i]._currId = -1;
+		_obstacles[i]._laneNum = -1;
 	}
 }
 
 int Scene49::init() {
-	_vm->_gameSys->setAnimation(0, 0, 0);
-	_vm->_gameSys->setAnimation(0, 0, 1);
+	GameSys gameSys = *_vm->_gameSys;
+
+	gameSys.setAnimation(0, 0, 0);
+	gameSys.setAnimation(0, 0, 1);
 	for (int i = 0; i < 5; ++i)
-		_vm->_gameSys->setAnimation(0, 0, i + 2);
+		gameSys.setAnimation(0, 0, i + 2);
 	_vm->_timers[2] = 0;
 	_vm->_timers[0] = 0;
 	_vm->_timers[1] = 0;
@@ -87,68 +89,68 @@ void Scene49::checkObstacles() {
 		}
 
 		for (int j = 0; j < 5; ++j) {
-			if (_s49_obstacles[j]._currSequenceId == 0) {
+			if (_obstacles[j]._currSequenceId == 0) {
 				_vm->_timers[3] = 35;
-				_s49_obstacles[j]._currSequenceId = kObstacleDefs[_s49_obstacleIndex]._sequenceId;
-				switch (_s49_obstacles[j]._currSequenceId) {
+				_obstacles[j]._currSequenceId = kObstacleDefs[_obstacleIndex]._sequenceId;
+				switch (_obstacles[j]._currSequenceId) {
 				case 0xB4:
-					_s49_obstacles[j]._laneNum = 1;
-					_s49_obstacles[j]._closerSequenceId = 180;
-					_s49_obstacles[j]._passedSequenceId = 181;
-					_s49_obstacles[j]._splashSequenceId = 182;
-					_s49_obstacles[j]._collisionSequenceId = 192;
+					_obstacles[j]._laneNum = 1;
+					_obstacles[j]._closerSequenceId = 180;
+					_obstacles[j]._passedSequenceId = 181;
+					_obstacles[j]._splashSequenceId = 182;
+					_obstacles[j]._collisionSequenceId = 192;
 					break;
 				case 0xB7:
-					_s49_obstacles[j]._laneNum = 2;
-					_s49_obstacles[j]._closerSequenceId = 183;
-					_s49_obstacles[j]._passedSequenceId = 184;
-					_s49_obstacles[j]._splashSequenceId = 185;
-					_s49_obstacles[j]._collisionSequenceId = 193;
+					_obstacles[j]._laneNum = 2;
+					_obstacles[j]._closerSequenceId = 183;
+					_obstacles[j]._passedSequenceId = 184;
+					_obstacles[j]._splashSequenceId = 185;
+					_obstacles[j]._collisionSequenceId = 193;
 					break;
 				case 0xBD:
-					_s49_obstacles[j]._laneNum = 3;
-					_s49_obstacles[j]._closerSequenceId = 189;
-					_s49_obstacles[j]._passedSequenceId = 190;
-					_s49_obstacles[j]._splashSequenceId = 191;
-					_s49_obstacles[j]._collisionSequenceId = 195;
+					_obstacles[j]._laneNum = 3;
+					_obstacles[j]._closerSequenceId = 189;
+					_obstacles[j]._passedSequenceId = 190;
+					_obstacles[j]._splashSequenceId = 191;
+					_obstacles[j]._collisionSequenceId = 195;
 					break;
 				case 0xBA:
-					_s49_obstacles[j]._laneNum = 2;
-					_s49_obstacles[j]._closerSequenceId = 186;
-					_s49_obstacles[j]._passedSequenceId = 187;
-					_s49_obstacles[j]._splashSequenceId = 188;
-					_s49_obstacles[j]._collisionSequenceId = 194;
+					_obstacles[j]._laneNum = 2;
+					_obstacles[j]._closerSequenceId = 186;
+					_obstacles[j]._passedSequenceId = 187;
+					_obstacles[j]._splashSequenceId = 188;
+					_obstacles[j]._collisionSequenceId = 194;
 					break;
 				case 0xCB:
-					_s49_obstacles[j]._laneNum = 1;
-					_s49_obstacles[j]._closerSequenceId = 203;
-					_s49_obstacles[j]._passedSequenceId = 204;
-					_s49_obstacles[j]._splashSequenceId = 0;
-					_s49_obstacles[j]._collisionSequenceId = 209;
+					_obstacles[j]._laneNum = 1;
+					_obstacles[j]._closerSequenceId = 203;
+					_obstacles[j]._passedSequenceId = 204;
+					_obstacles[j]._splashSequenceId = 0;
+					_obstacles[j]._collisionSequenceId = 209;
 					break;
 				case 0xCD:
-					_s49_obstacles[j]._laneNum = 2;
-					_s49_obstacles[j]._closerSequenceId = 205;
-					_s49_obstacles[j]._passedSequenceId = 206;
-					_s49_obstacles[j]._splashSequenceId = 0;
-					_s49_obstacles[j]._collisionSequenceId = 210;
+					_obstacles[j]._laneNum = 2;
+					_obstacles[j]._closerSequenceId = 205;
+					_obstacles[j]._passedSequenceId = 206;
+					_obstacles[j]._splashSequenceId = 0;
+					_obstacles[j]._collisionSequenceId = 210;
 					break;
 				case 0xCF:
-					_s49_obstacles[j]._laneNum = 3;
-					_s49_obstacles[j]._closerSequenceId = 207;
-					_s49_obstacles[j]._passedSequenceId = 208;
-					_s49_obstacles[j]._splashSequenceId = 0;
-					_s49_obstacles[j]._collisionSequenceId = 211;
+					_obstacles[j]._laneNum = 3;
+					_obstacles[j]._closerSequenceId = 207;
+					_obstacles[j]._passedSequenceId = 208;
+					_obstacles[j]._splashSequenceId = 0;
+					_obstacles[j]._collisionSequenceId = 211;
 					break;
 				}
-				_s49_obstacles[j]._prevId = _s49_truckId;
-				_s49_obstacles[j]._currId = _s49_obstacles[j]._prevId;
-				_vm->_gameSys->setAnimation(_s49_obstacles[j]._currSequenceId, _s49_obstacles[j]._currId, j + 2);
-				_vm->_gameSys->insertSequence(_s49_obstacles[j]._currSequenceId, _s49_obstacles[j]._currId, 0, 0, kSeqNone, 0, 0, -50);
-				_vm->_timers[2] = kObstacleDefs[_s49_obstacleIndex]._ticks;
-				++_s49_obstacleIndex;
-				if (_s49_obstacleIndex == 50)
-					_s49_obstacleIndex = 0;
+				_obstacles[j]._prevId = _truckId;
+				_obstacles[j]._currId = _obstacles[j]._prevId;
+				_vm->_gameSys->setAnimation(_obstacles[j]._currSequenceId, _obstacles[j]._currId, j + 2);
+				_vm->_gameSys->insertSequence(_obstacles[j]._currSequenceId, _obstacles[j]._currId, 0, 0, kSeqNone, 0, 0, -50);
+				_vm->_timers[2] = kObstacleDefs[_obstacleIndex]._ticks;
+				++_obstacleIndex;
+				if (_obstacleIndex == 50)
+					_obstacleIndex = 0;
 				break;
 			}
 		}
@@ -158,72 +160,74 @@ void Scene49::checkObstacles() {
 }
 
 void Scene49::updateObstacle(int id) {
-	Scene49Obstacle &obstacle = _s49_obstacles[id];
+	GameSys gameSys = *_vm->_gameSys;
+	Scene49Obstacle &obstacle = _obstacles[id];
+
 	obstacle._currId = obstacle._prevId;
 
 	switch (obstacle._laneNum) {
 	case 1:
-		obstacle._prevId = _s49_truckId + 1;
+		obstacle._prevId = _truckId + 1;
 		break;
 	case 2:
-		if (_s49_truckLaneNum != 2 && _s49_truckLaneNum != 3)
-			obstacle._prevId = _s49_truckId - 1;
+		if (_truckLaneNum != 2 && _truckLaneNum != 3)
+			obstacle._prevId = _truckId - 1;
 		else
-			obstacle._prevId = _s49_truckId + 1;
+			obstacle._prevId = _truckId + 1;
 		break;
 	case 3:
-		if (_s49_truckLaneNum != 1 && _s49_truckLaneNum != 2)
-			obstacle._prevId = _s49_truckId;
+		if (_truckLaneNum != 1 && _truckLaneNum != 2)
+			obstacle._prevId = _truckId;
 		else
-			obstacle._prevId = _s49_truckId - 1;
+			obstacle._prevId = _truckId - 1;
 		break;
 	}
 
 	if (obstacle._currSequenceId == obstacle._closerSequenceId) {
-		if (_s49_truckLaneNum == obstacle._laneNum) {
+		if (_truckLaneNum == obstacle._laneNum) {
 			if (obstacle._splashSequenceId) {
-				_vm->_gameSys->setAnimation(obstacle._collisionSequenceId, obstacle._prevId, id + 2);
-				_vm->_gameSys->insertSequence(obstacle._collisionSequenceId, obstacle._prevId,
+				gameSys.setAnimation(obstacle._collisionSequenceId, obstacle._prevId, id + 2);
+				gameSys.insertSequence(obstacle._collisionSequenceId, obstacle._prevId,
 					obstacle._currSequenceId, obstacle._currId,
 					kSeqSyncWait, 0, 0, -50);
 				obstacle._currSequenceId = obstacle._collisionSequenceId;
 				_vm->playSound(224, false);
 				increaseScore(30);
-			} else if ((obstacle._laneNum == 1 && _s49_truckSequenceId == 0xB0) ||
-				(obstacle._laneNum == 2 && (_s49_truckSequenceId == 0xB1 || _s49_truckSequenceId == 0xB2)) ||
-				(obstacle._laneNum == 3 && _s49_truckSequenceId == 0xB3)) {
-				_vm->_gameSys->setAnimation(obstacle._passedSequenceId, obstacle._prevId, id + 2);
-				_vm->_gameSys->insertSequence(obstacle._passedSequenceId, obstacle._prevId,
+			} else if ((obstacle._laneNum == 1 && _truckSequenceId == 0xB0) ||
+				(obstacle._laneNum == 2 && (_truckSequenceId == 0xB1 || _truckSequenceId == 0xB2)) ||
+				(obstacle._laneNum == 3 && _truckSequenceId == 0xB3)) {
+				gameSys.setAnimation(obstacle._passedSequenceId, obstacle._prevId, id + 2);
+				gameSys.insertSequence(obstacle._passedSequenceId, obstacle._prevId,
 					obstacle._currSequenceId, obstacle._currId,
 					kSeqSyncWait, 0, 0, -50);
 				obstacle._currSequenceId = obstacle._passedSequenceId;
 			} else {
-				_vm->_gameSys->setAnimation(obstacle._collisionSequenceId, 256, 0);
-				_vm->_gameSys->setAnimation(obstacle._passedSequenceId, obstacle._prevId, id + 2);
-				_vm->_gameSys->insertSequence(obstacle._passedSequenceId, obstacle._prevId,
+				gameSys.setAnimation(obstacle._collisionSequenceId, 256, 0);
+				gameSys.setAnimation(obstacle._passedSequenceId, obstacle._prevId, id + 2);
+				gameSys.insertSequence(obstacle._passedSequenceId, obstacle._prevId,
 					obstacle._currSequenceId, obstacle._currId,
 					kSeqSyncWait, 0, 0, -50);
-				_vm->_gameSys->insertSequence(obstacle._collisionSequenceId, 256,
-					_s49_truckSequenceId, _s49_truckId,
+				gameSys.insertSequence(obstacle._collisionSequenceId, 256,
+					_truckSequenceId, _truckId,
 					kSeqSyncExists, 0, 0, -50);
-				_s49_truckSequenceId = obstacle._collisionSequenceId;
-				_s49_truckId = 256;
+				_truckSequenceId = obstacle._collisionSequenceId;
+				_truckId = 256;
 				obstacle._currSequenceId = obstacle._passedSequenceId;
 				_vm->playSound(225, false);
 				decreaseScore(30);
 			}
 		} else {
-			_vm->_gameSys->setAnimation(obstacle._passedSequenceId, obstacle._prevId, id + 2);
-			_vm->_gameSys->insertSequence(obstacle._passedSequenceId, obstacle._prevId,
+			gameSys.setAnimation(obstacle._passedSequenceId, obstacle._prevId, id + 2);
+			gameSys.insertSequence(obstacle._passedSequenceId, obstacle._prevId,
 				obstacle._currSequenceId, obstacle._currId,
 				kSeqSyncWait, 0, 0, -50);
 			obstacle._currSequenceId = obstacle._passedSequenceId;
 		}
 	} else if (obstacle._currSequenceId == obstacle._passedSequenceId) {
-		if (_s49_truckLaneNum == obstacle._laneNum) {
+		if (_truckLaneNum == obstacle._laneNum) {
 			if (obstacle._splashSequenceId) {
-				_vm->_gameSys->setAnimation(obstacle._collisionSequenceId, obstacle._prevId, id + 2);
-				_vm->_gameSys->insertSequence(obstacle._collisionSequenceId, obstacle._prevId,
+				gameSys.setAnimation(obstacle._collisionSequenceId, obstacle._prevId, id + 2);
+				gameSys.insertSequence(obstacle._collisionSequenceId, obstacle._prevId,
 					obstacle._currSequenceId, obstacle._currId,
 					kSeqSyncWait, 0, 0, -50);
 				obstacle._currSequenceId = obstacle._collisionSequenceId;
@@ -231,56 +235,58 @@ void Scene49::updateObstacle(int id) {
 				increaseScore(30);
 			}
 		} else if (obstacle._splashSequenceId) {
-			_vm->_gameSys->setAnimation(obstacle._splashSequenceId, obstacle._prevId, id + 2);
-			_vm->_gameSys->insertSequence(obstacle._splashSequenceId, obstacle._prevId,
+			gameSys.setAnimation(obstacle._splashSequenceId, obstacle._prevId, id + 2);
+			gameSys.insertSequence(obstacle._splashSequenceId, obstacle._prevId,
 				obstacle._currSequenceId, obstacle._currId,
 				kSeqSyncWait, 0, 0, -50);
 			obstacle._currSequenceId = obstacle._splashSequenceId;
 		}
 	} else {
-		_vm->_gameSys->setAnimation(0, 0, id + 2);
+		gameSys.setAnimation(0, 0, id + 2);
 		clearObstacle(id);
 	}
 }
 
 void Scene49::increaseScore(int amount) {
-	if (_s49_scoreBarPos + amount <= 556) {
-		_s49_scoreBarPos += amount;
-		_vm->_gameSys->fillSurface(0, _s49_scoreBarPos, 508, amount, 22, 255, 0, 0);
+	if (_scoreBarPos + amount <= 556) {
+		_scoreBarPos += amount;
+		_vm->_gameSys->fillSurface(0, _scoreBarPos, 508, amount, 22, 255, 0, 0);
 	}
-	_s49_scoreLevel = _s49_scoreBarPos + amount >= 556;
+	_scoreLevel = _scoreBarPos + amount >= 556;
 }
 
 void Scene49::decreaseScore(int amount) {
-	if (_s49_scoreBarPos >= 226 && _s49_scoreLevel == 0) {
-		if (_s49_scoreBarFlash)
+	if (_scoreBarPos >= 226 && _scoreLevel == 0) {
+		if (_scoreBarFlash)
 			refreshScoreBar();
-		_vm->_gameSys->fillSurface(0, _s49_scoreBarPos, 508, amount, 22, 89, 0, 5);
-		_s49_scoreBarPos -= amount;
-		_s49_scoreLevel = 0;
+		_vm->_gameSys->fillSurface(0, _scoreBarPos, 508, amount, 22, 89, 0, 5);
+		_scoreBarPos -= amount;
+		_scoreLevel = 0;
 	}
 }
 
 void Scene49::refreshScoreBar() {
-	if (_s49_scoreBarFlash)
+	if (_scoreBarFlash)
 		_vm->_gameSys->fillSurface(0, 226, 508, 330, 22, 255, 0, 0);
 	else
 		_vm->_gameSys->fillSurface(0, 226, 508, 330, 22, 89, 0, 5);
-	_s49_scoreBarFlash = !_s49_scoreBarFlash;
+	_scoreBarFlash = !_scoreBarFlash;
 }
 
 void Scene49::clearObstacle(int index) {
-	_s49_obstacles[index]._currSequenceId = 0;
-	_s49_obstacles[index]._closerSequenceId = 0;
-	_s49_obstacles[index]._passedSequenceId = 0;
-	_s49_obstacles[index]._splashSequenceId = 0;
-	_s49_obstacles[index]._collisionSequenceId = 0;
-	_s49_obstacles[index]._prevId = 0;
-	_s49_obstacles[index]._currId = 0;
-	_s49_obstacles[index]._laneNum = 0;
+	_obstacles[index]._currSequenceId = 0;
+	_obstacles[index]._closerSequenceId = 0;
+	_obstacles[index]._passedSequenceId = 0;
+	_obstacles[index]._splashSequenceId = 0;
+	_obstacles[index]._collisionSequenceId = 0;
+	_obstacles[index]._prevId = 0;
+	_obstacles[index]._currId = 0;
+	_obstacles[index]._laneNum = 0;
 }
 
 void Scene49::run() {
+	GameSys gameSys = *_vm->_gameSys;
+
 	bool animToggle6 = false;
 	bool animToggle5 = false;
 	bool animToggle4 = false;
@@ -294,64 +300,64 @@ void Scene49::run() {
 	_vm->hideCursor();
 	_vm->setGrabCursorSprite(-1);
 
-	_s49_scoreBarPos = 196;
-	_s49_scoreLevel = 0;
-	_s49_scoreBarFlash = false;
+	_scoreBarPos = 196;
+	_scoreLevel = 0;
+	_scoreBarFlash = false;
 
 	switch (_vm->getRandom(3)) {
 	case 0:
-		_s49_truckSequenceId = 0xAD;
-		_s49_truckLaneNum = 1;
+		_truckSequenceId = 0xAD;
+		_truckLaneNum = 1;
 		break;
 	case 1:
-		_s49_truckSequenceId = 0xAE;
-		_s49_truckLaneNum = 2;
+		_truckSequenceId = 0xAE;
+		_truckLaneNum = 2;
 		break;
 	case 2:
-		_s49_truckSequenceId = 0xAF;
-		_s49_truckLaneNum = 3;
+		_truckSequenceId = 0xAF;
+		_truckLaneNum = 3;
 		break;
 	}
 
-	int bgWidth1 = _vm->_gameSys->getSpriteWidthById(0x5E);
+	int bgWidth1 = gameSys.getSpriteWidthById(0x5E);
 	int bgX1 = 600;
 
-	int bgWidth2 = _vm->_gameSys->getSpriteWidthById(0x5F);
+	int bgWidth2 = gameSys.getSpriteWidthById(0x5F);
 	int bgX2 = 400;
 
-	int bgWidth3 = _vm->_gameSys->getSpriteWidthById(4);
+	int bgWidth3 = gameSys.getSpriteWidthById(4);
 	int bgX3 = 700;
 
-	int bgWidth4 = _vm->_gameSys->getSpriteWidthById(5);
+	int bgWidth4 = gameSys.getSpriteWidthById(5);
 	int bgX4 = 500;
 
-	int bgWidth5 = _vm->_gameSys->getSpriteWidthById(6);
+	int bgWidth5 = gameSys.getSpriteWidthById(6);
 	int bgX5 = 300;
 
-	int bgWidth6 = _vm->_gameSys->getSpriteWidthById(7);
+	int bgWidth6 = gameSys.getSpriteWidthById(7);
 	int bgX6 = 100;
 
-	_vm->_gameSys->setAnimation(0xC8, 251, 1);
-	_vm->_gameSys->setAnimation(_s49_truckSequenceId, 256, 0);
-	_vm->_gameSys->insertSequence(0xC9, 256, 0, 0, kSeqNone, 0, 600, 85);
-	_vm->_gameSys->insertSequence(0xCA, 257, 0, 0, kSeqNone, 0, 400, 100);
-	_vm->_gameSys->insertSequence(0xC4, 256, 0, 0, kSeqNone, 0, 700, 140);
-	_vm->_gameSys->insertSequence(0xC5, 257, 0, 0, kSeqNone, 0, 500, 160);
-	_vm->_gameSys->insertSequence(0xC6, 258, 0, 0, kSeqNone, 0, 300, 140);
-	_vm->_gameSys->insertSequence(0xC7, 259, 0, 0, kSeqNone, 0, 100, 140);
-	_vm->_gameSys->insertSequence(0xC8, 251, 0, 0, kSeqNone, 0, 0, -50);
-	_vm->_gameSys->insertSequence(_s49_truckSequenceId, 256, 0, 0, kSeqNone, 0, 0, -50);
+	gameSys.setAnimation(0xC8, 251, 1);
+	gameSys.setAnimation(_truckSequenceId, 256, 0);
+	gameSys.insertSequence(0xC9, 256, 0, 0, kSeqNone, 0, 600, 85);
+	gameSys.insertSequence(0xCA, 257, 0, 0, kSeqNone, 0, 400, 100);
+	gameSys.insertSequence(0xC4, 256, 0, 0, kSeqNone, 0, 700, 140);
+	gameSys.insertSequence(0xC5, 257, 0, 0, kSeqNone, 0, 500, 160);
+	gameSys.insertSequence(0xC6, 258, 0, 0, kSeqNone, 0, 300, 140);
+	gameSys.insertSequence(0xC7, 259, 0, 0, kSeqNone, 0, 100, 140);
+	gameSys.insertSequence(0xC8, 251, 0, 0, kSeqNone, 0, 0, -50);
+	gameSys.insertSequence(_truckSequenceId, 256, 0, 0, kSeqNone, 0, 0, -50);
 
 	_vm->_timers[0] = 2;
 
 	for (int i = 0; i < 5; ++i)
 		clearObstacle(i);
 
-	_s49_obstacleIndex = 0;
+	_obstacleIndex = 0;
 
 	_vm->_timers[2] = _vm->getRandom(20) + 10;
 
-	_s49_truckId = 256;
+	_truckId = 256;
 	_vm->_timers[3] = 35;
 	
 	while (!_vm->_sceneDone) {
@@ -376,72 +382,72 @@ void Scene49::run() {
 			if (bgX6 <= -bgWidth6)
 				bgX6 = 799;
 			bgAnimToggle = !bgAnimToggle;
-			_vm->_gameSys->insertSequence(0xC9, (bgAnimToggle ? 1 : 0) + 256, 0xC9, (bgAnimToggle ? 0 : 1) + 256, kSeqSyncWait, 0, bgX1, 85);
-			_vm->_gameSys->insertSequence(0xCA, (bgAnimToggle ? 1 : 0) + 257, 0xCA, (bgAnimToggle ? 0 : 1) + 257, kSeqSyncWait, 0, bgX2, 100);
-			_vm->_gameSys->insertSequence(0xC4, (bgAnimToggle ? 1 : 0) + 256, 0xC4, (bgAnimToggle ? 0 : 1) + 256, kSeqSyncWait, 0, bgX3, 140);
-			_vm->_gameSys->insertSequence(0xC5, (bgAnimToggle ? 1 : 0) + 257, 0xC5, (bgAnimToggle ? 0 : 1) + 257, kSeqSyncWait, 0, bgX4, 160);
-			_vm->_gameSys->insertSequence(0xC6, (bgAnimToggle ? 1 : 0) + 258, 0xC6, (bgAnimToggle ? 0 : 1) + 258, kSeqSyncWait, 0, bgX5, 140);
-			_vm->_gameSys->insertSequence(0xC7, (bgAnimToggle ? 1 : 0) + 259, 0xC7, (bgAnimToggle ? 0 : 1) + 259, kSeqSyncWait, 0, bgX6, 140);
+			gameSys.insertSequence(0xC9, (bgAnimToggle ? 1 : 0) + 256, 0xC9, (bgAnimToggle ? 0 : 1) + 256, kSeqSyncWait, 0, bgX1, 85);
+			gameSys.insertSequence(0xCA, (bgAnimToggle ? 1 : 0) + 257, 0xCA, (bgAnimToggle ? 0 : 1) + 257, kSeqSyncWait, 0, bgX2, 100);
+			gameSys.insertSequence(0xC4, (bgAnimToggle ? 1 : 0) + 256, 0xC4, (bgAnimToggle ? 0 : 1) + 256, kSeqSyncWait, 0, bgX3, 140);
+			gameSys.insertSequence(0xC5, (bgAnimToggle ? 1 : 0) + 257, 0xC5, (bgAnimToggle ? 0 : 1) + 257, kSeqSyncWait, 0, bgX4, 160);
+			gameSys.insertSequence(0xC6, (bgAnimToggle ? 1 : 0) + 258, 0xC6, (bgAnimToggle ? 0 : 1) + 258, kSeqSyncWait, 0, bgX5, 140);
+			gameSys.insertSequence(0xC7, (bgAnimToggle ? 1 : 0) + 259, 0xC7, (bgAnimToggle ? 0 : 1) + 259, kSeqSyncWait, 0, bgX6, 140);
 			_vm->_timers[0] = 2;
 		}
 
-		if (_vm->_gameSys->getAnimationStatus(1) == 2) {
+		if (gameSys.getAnimationStatus(1) == 2) {
 			streetAnimToggle = !streetAnimToggle;
-			_vm->_gameSys->setAnimation(0xC8, (streetAnimToggle ? 1 : 0) + 251, 1);
-			_vm->_gameSys->insertSequence(0xC8, (streetAnimToggle ? 1 : 0) + 251, 200, (streetAnimToggle ? 0 : 1) + 251, kSeqSyncWait, 0, 0, -50);
+			gameSys.setAnimation(0xC8, (streetAnimToggle ? 1 : 0) + 251, 1);
+			gameSys.insertSequence(0xC8, (streetAnimToggle ? 1 : 0) + 251, 200, (streetAnimToggle ? 0 : 1) + 251, kSeqSyncWait, 0, 0, -50);
 		}
 
 		checkObstacles();
 
-		if (_vm->_gameSys->getAnimationStatus(0) == 2) {
-			switch (_s49_truckSequenceId) {
+		if (gameSys.getAnimationStatus(0) == 2) {
+			switch (_truckSequenceId) {
 			case 0xB1:
-				_s49_truckLaneNum = 1;
+				_truckLaneNum = 1;
 				break;
 			case 0xB0:
 			case 0xB3:
-				_s49_truckLaneNum = 2;
+				_truckLaneNum = 2;
 				break;
 			case 0xB2:
-				_s49_truckLaneNum = 3;
+				_truckLaneNum = 3;
 				break;
 			}
 			animToggle3 = !animToggle3;
-			if (_s49_truckLaneNum == 1) {
-				_vm->_gameSys->setAnimation(0xAD, (animToggle3 ? 1 : 0) + 256, 0);
-				_vm->_gameSys->insertSequence(0xAD, (animToggle3 ? 1 : 0) + 256, _s49_truckSequenceId, _s49_truckId, kSeqSyncWait, 0, 0, -50);
-				_s49_truckSequenceId = 0xAD;
-			} else if (_s49_truckLaneNum == 2) {
-				_vm->_gameSys->setAnimation(0xAE, (animToggle3 ? 1 : 0) + 256, 0);
-				_vm->_gameSys->insertSequence(0xAE, (animToggle3 ? 1 : 0) + 256, _s49_truckSequenceId, _s49_truckId, kSeqSyncWait, 0, 0, -50);
-				_s49_truckSequenceId = 0xAE;
+			if (_truckLaneNum == 1) {
+				gameSys.setAnimation(0xAD, (animToggle3 ? 1 : 0) + 256, 0);
+				gameSys.insertSequence(0xAD, (animToggle3 ? 1 : 0) + 256, _truckSequenceId, _truckId, kSeqSyncWait, 0, 0, -50);
+				_truckSequenceId = 0xAD;
+			} else if (_truckLaneNum == 2) {
+				gameSys.setAnimation(0xAE, (animToggle3 ? 1 : 0) + 256, 0);
+				gameSys.insertSequence(0xAE, (animToggle3 ? 1 : 0) + 256, _truckSequenceId, _truckId, kSeqSyncWait, 0, 0, -50);
+				_truckSequenceId = 0xAE;
 			} else {
-				_vm->_gameSys->setAnimation(0xAF, (animToggle3 ? 1 : 0) + 256, 0);
-				_vm->_gameSys->insertSequence(0xAF, (animToggle3 ? 1 : 0) + 256, _s49_truckSequenceId, _s49_truckId, kSeqSyncWait, 0, 0, -50);
-				_s49_truckSequenceId = 0xAF;
+				gameSys.setAnimation(0xAF, (animToggle3 ? 1 : 0) + 256, 0);
+				gameSys.insertSequence(0xAF, (animToggle3 ? 1 : 0) + 256, _truckSequenceId, _truckId, kSeqSyncWait, 0, 0, -50);
+				_truckSequenceId = 0xAF;
 			}
-			_s49_truckId = (animToggle3 ? 1 : 0) + 256;
-			if (_s49_scoreLevel == 1) {
-				if (!_vm->_gameSys->isSequenceActive(0xD4, 266)) {
-					_vm->_gameSys->setAnimation(0xD4, 266, 8);
-					_vm->_gameSys->insertSequence(0xD4, 266, 0, 0, kSeqNone, 0, 0, -50);
+			_truckId = (animToggle3 ? 1 : 0) + 256;
+			if (_scoreLevel == 1) {
+				if (!gameSys.isSequenceActive(0xD4, 266)) {
+					gameSys.setAnimation(0xD4, 266, 8);
+					gameSys.insertSequence(0xD4, 266, 0, 0, kSeqNone, 0, 0, -50);
 				}
-				++_s49_scoreLevel;
+				++_scoreLevel;
 				_vm->_timers[1] = 2;
 				animToggle4 = false;
 				animToggle5 = false;
 				animToggle6 = false;
-				_s49_scoreBarFlash = false;
+				_scoreBarFlash = false;
 			}
 		}
 
-		if (_s49_scoreLevel != 0 && !_vm->_timers[1]) {
+		if (_scoreLevel != 0 && !_vm->_timers[1]) {
 			refreshScoreBar();
 			_vm->_timers[1] = 8;
 			if (animToggle6) {
 				if (animToggle5) {
-					if (animToggle4 && !_vm->_gameSys->isSequenceActive(212, 266))
-						_vm->_gameSys->insertSequence(212, 266, 0, 0, kSeqNone, 0, 0, -50);
+					if (animToggle4 && !gameSys.isSequenceActive(212, 266))
+						gameSys.insertSequence(212, 266, 0, 0, kSeqNone, 0, 0, -50);
 					animToggle4 = !animToggle4;
 				}
 				animToggle5 = !animToggle5;
@@ -459,22 +465,22 @@ void Scene49::run() {
 
 		if (_vm->isKeyStatus1(Common::KEYCODE_RIGHT)) {
 			// Steer right
-			if (_s49_truckSequenceId == 0xB3)
-				_s49_truckLaneNum = 2;
-			if (_s49_truckSequenceId == 0xB1)
-				_s49_truckLaneNum = 1;
-			if (_s49_truckLaneNum != 3 && _s49_truckLaneNum != 2) {
-				if (_s49_scoreLevel) {
+			if (_truckSequenceId == 0xB3)
+				_truckLaneNum = 2;
+			if (_truckSequenceId == 0xB1)
+				_truckLaneNum = 1;
+			if (_truckLaneNum != 3 && _truckLaneNum != 2) {
+				if (_scoreLevel) {
 					_vm->_sceneDone = true;
 					_vm->_newSceneNum = 47;
 				}
 			} else {
-				int steerSequenceId = (_s49_truckLaneNum == 3) ? 0xB3 : 0xB1;
-				if (_s49_truckSequenceId == 0xAE || _s49_truckSequenceId == 0xAF) {
-					_vm->_gameSys->setAnimation(steerSequenceId, 256, 0);
-					_vm->_gameSys->insertSequence(steerSequenceId, 256, _s49_truckSequenceId, _s49_truckId, kSeqSyncExists, 0, 0, -50);
-					_s49_truckSequenceId = steerSequenceId;
-					_s49_truckId = 256;
+				int steerSequenceId = (_truckLaneNum == 3) ? 0xB3 : 0xB1;
+				if (_truckSequenceId == 0xAE || _truckSequenceId == 0xAF) {
+					gameSys.setAnimation(steerSequenceId, 256, 0);
+					gameSys.insertSequence(steerSequenceId, 256, _truckSequenceId, _truckId, kSeqSyncExists, 0, 0, -50);
+					_truckSequenceId = steerSequenceId;
+					_truckId = 256;
 				}
 			}
 			_vm->clearKeyStatus1(Common::KEYCODE_RIGHT);
@@ -482,17 +488,17 @@ void Scene49::run() {
 
 		if (_vm->isKeyStatus1(Common::KEYCODE_LEFT)) {
 			// Steer left
-			if (_s49_truckSequenceId == 0xB0)
-				_s49_truckLaneNum = 2;
-			if (_s49_truckSequenceId == 0xB2)
-				_s49_truckLaneNum = 3;
-			if (_s49_truckLaneNum == 1 || _s49_truckLaneNum == 2) {
-				int steerSequenceId = (_s49_truckLaneNum == 1) ? 0xB0 : 0xB2;
-				if (_s49_truckSequenceId == 0xAD || _s49_truckSequenceId == 0xAE) {
-					_vm->_gameSys->setAnimation(steerSequenceId, 256, 0);
-					_vm->_gameSys->insertSequence(steerSequenceId, 256, _s49_truckSequenceId, _s49_truckId, kSeqSyncExists, 0, 0, -50);
-					_s49_truckSequenceId = steerSequenceId;
-					_s49_truckId = 256;
+			if (_truckSequenceId == 0xB0)
+				_truckLaneNum = 2;
+			if (_truckSequenceId == 0xB2)
+				_truckLaneNum = 3;
+			if (_truckLaneNum == 1 || _truckLaneNum == 2) {
+				int steerSequenceId = (_truckLaneNum == 1) ? 0xB0 : 0xB2;
+				if (_truckSequenceId == 0xAD || _truckSequenceId == 0xAE) {
+					gameSys.setAnimation(steerSequenceId, 256, 0);
+					gameSys.insertSequence(steerSequenceId, 256, _truckSequenceId, _truckId, kSeqSyncExists, 0, 0, -50);
+					_truckSequenceId = steerSequenceId;
+					_truckId = 256;
 				}
 			}
 			_vm->clearKeyStatus1(Common::KEYCODE_LEFT);
@@ -503,14 +509,16 @@ void Scene49::run() {
 }
 
 void Scene49::updateAnimations() {
+	GameSys gameSys = *_vm->_gameSys;
+
 	for (int i = 0; i < 5; ++i) {
-		if (_vm->_gameSys->getAnimationStatus(i + 2) == 2) {
-			if (_s49_obstacles[i]._currSequenceId)
+		if (gameSys.getAnimationStatus(i + 2) == 2) {
+			if (_obstacles[i]._currSequenceId)
 				updateObstacle(i);
 		}
 	}
 
-	if (_vm->_gameSys->getAnimationStatus(8) == 2) {
+	if (gameSys.getAnimationStatus(8) == 2) {
 		_vm->_sceneDone = true;
 		_vm->_newSceneNum = 47;
 	}

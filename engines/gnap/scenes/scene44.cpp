@@ -47,17 +47,19 @@ enum {
 };
 
 Scene44::Scene44(GnapEngine *vm) : Scene(vm) {
-	_s44_nextSpringGuySequenceId = -1;
-	_s44_nextKissingLadySequenceId = -1;
-	_s44_currSpringGuySequenceId = -1;
-	_s44_currKissingLadySequenceId = -1;
+	_nextSpringGuySequenceId = -1;
+	_nextKissingLadySequenceId = -1;
+	_currSpringGuySequenceId = -1;
+	_currKissingLadySequenceId = -1;
 }
 
 int Scene44::init() {
-	_vm->_gameSys->setAnimation(0, 0, 0);
-	_vm->_gameSys->setAnimation(0, 0, 1);
-	_vm->_gameSys->setAnimation(0, 0, 2);
-	_vm->_gameSys->setAnimation(0, 0, 3);
+	GameSys gameSys = *_vm->_gameSys;
+
+	gameSys.setAnimation(0, 0, 0);
+	gameSys.setAnimation(0, 0, 1);
+	gameSys.setAnimation(0, 0, 2);
+	gameSys.setAnimation(0, 0, 3);
 	return 0xFF;
 }
 
@@ -88,37 +90,39 @@ void Scene44::updateHotspots() {
 }
 
 void Scene44::run() {
+	GameSys gameSys = *_vm->_gameSys;
+
 	_vm->queueInsertDeviceIcon();
 
-	_vm->_gameSys->insertSequence(0xF7, 0, 0, 0, kSeqLoop, 0, 0, 0);
-	_vm->_gameSys->insertSequence(0xFC, 256, 0, 0, kSeqNone, 0, 0, 0);
+	gameSys.insertSequence(0xF7, 0, 0, 0, kSeqLoop, 0, 0, 0);
+	gameSys.insertSequence(0xFC, 256, 0, 0, kSeqNone, 0, 0, 0);
 
 	if (_vm->isFlag(kGFSpringTaken))
-		_s44_currSpringGuySequenceId = 0xF8;
+		_currSpringGuySequenceId = 0xF8;
 	else
-		_s44_currSpringGuySequenceId = 0xF9;
+		_currSpringGuySequenceId = 0xF9;
 	
-	_s44_nextSpringGuySequenceId = -1;
-	_vm->_gameSys->setAnimation(_s44_currSpringGuySequenceId, 1, 4);
-	_vm->_gameSys->insertSequence(_s44_currSpringGuySequenceId, 1, 0, 0, kSeqNone, 0, 0, 0);
+	_nextSpringGuySequenceId = -1;
+	gameSys.setAnimation(_currSpringGuySequenceId, 1, 4);
+	gameSys.insertSequence(_currSpringGuySequenceId, 1, 0, 0, kSeqNone, 0, 0, 0);
 
 	if (_vm->isFlag(kGFUnk13)) {
 		if (_vm->_prevSceneNum != 50 || _vm->_sceneSavegameLoaded) {
-			_s44_currKissingLadySequenceId = 0xF6;
-			_s44_nextKissingLadySequenceId = -1;
+			_currKissingLadySequenceId = 0xF6;
+			_nextKissingLadySequenceId = -1;
 		} else {
 			_vm->setGrabCursorSprite(kItemGum);
-			_s44_currKissingLadySequenceId = 0xF5;
-			_s44_nextKissingLadySequenceId = 0xF6;
-			_vm->_gameSys->setAnimation(0xF5, 1, 2);
+			_currKissingLadySequenceId = 0xF5;
+			_nextKissingLadySequenceId = 0xF6;
+			gameSys.setAnimation(0xF5, 1, 2);
 		}
 	} else {
-		_s44_currKissingLadySequenceId = 0xEC;
-		_s44_nextKissingLadySequenceId = -1;
-		_vm->_gameSys->setAnimation(0xEC, 1, 2);
+		_currKissingLadySequenceId = 0xEC;
+		_nextKissingLadySequenceId = -1;
+		gameSys.setAnimation(0xEC, 1, 2);
 	}
 	
-	_vm->_gameSys->insertSequence(_s44_currKissingLadySequenceId, 1, 0, 0, kSeqNone, 0, 0, 0);
+	gameSys.insertSequence(_currKissingLadySequenceId, 1, 0, 0, kSeqNone, 0, 0, 0);
 	
 	if (_vm->isFlag(kGFGnapControlsToyUFO)) {
 		_vm->_toyUfoId = 0;
@@ -129,8 +133,8 @@ void Scene44::run() {
 			_vm->_toyUfoX = 30;
 		else
 			_vm->_toyUfoX = 770;
-		_vm->_gameSys->setAnimation(_vm->_toyUfoSequenceId | 0x10000, _vm->_toyUfoId, 3);
-		_vm->_gameSys->insertSequence(_vm->_toyUfoSequenceId | 0x10000, _vm->_toyUfoId, 0, 0, kSeqNone, 0, _vm->_toyUfoX - 274, _vm->_toyUfoY - 128);
+		gameSys.setAnimation(_vm->_toyUfoSequenceId | 0x10000, _vm->_toyUfoId, 3);
+		gameSys.insertSequence(_vm->_toyUfoSequenceId | 0x10000, _vm->_toyUfoId, 0, 0, kSeqNone, 0, _vm->_toyUfoX - 274, _vm->_toyUfoY - 128);
 		_vm->endSceneInit();
 	} else {
 		switch (_vm->_prevSceneNum) {
@@ -161,7 +165,7 @@ void Scene44::run() {
 				_vm->_platypusFacing = kDirNone;
 				_vm->_platypusId = 160;
 				_vm->_platypusSequenceDatNum = 0;
-				_vm->_gameSys->insertSequence(0xFD, 160, 0, 0, kSeqNone, 0, 0, 0);
+				gameSys.insertSequence(0xFD, 160, 0, 0, kSeqNone, 0, 0, 0);
 			}
 			_vm->endSceneInit();
 			break;
@@ -308,7 +312,7 @@ void Scene44::run() {
 					case GRAB_CURSOR:
 						_vm->playGnapPullOutDevice(8, 0);
 						_vm->playGnapUseDevice(8, 0);
-						_s44_nextSpringGuySequenceId = 0xFB;
+						_nextSpringGuySequenceId = 0xFB;
 						_vm->invAdd(kItemSpring);
 						_vm->setFlag(kGFSpringTaken);
 						updateHotspots();
@@ -369,48 +373,48 @@ void Scene44::run() {
 		_vm->toyUfoCheckTimer();
 	
 		if (!_vm->_isLeavingScene) {
-			if (_vm->_platypusActionStatus < 0 && !_vm->isFlag(kGFGnapControlsToyUFO) && _s44_currKissingLadySequenceId != 0xF5)
+			if (_vm->_platypusActionStatus < 0 && !_vm->isFlag(kGFGnapControlsToyUFO) && _currKissingLadySequenceId != 0xF5)
 				_vm->updatePlatypusIdleSequence();
 			if (_vm->_gnapActionStatus < 0 && !_vm->isFlag(kGFGnapControlsToyUFO))
 				_vm->updateGnapIdleSequence();
 			if (!_vm->_timers[4]) {
 				_vm->_timers[4] = _vm->getRandom(20) + 20;
-				if (_vm->_gnapActionStatus < 0 && _vm->_platypusActionStatus < 0 && _s44_nextKissingLadySequenceId == -1) {
+				if (_vm->_gnapActionStatus < 0 && _vm->_platypusActionStatus < 0 && _nextKissingLadySequenceId == -1) {
 					switch (_vm->getRandom(20)) {
 					case 0:
-						_s44_nextKissingLadySequenceId = 0xED;
+						_nextKissingLadySequenceId = 0xED;
 						break;
 					case 1:
-						_s44_nextKissingLadySequenceId = 0xEE;
+						_nextKissingLadySequenceId = 0xEE;
 						break;
 					case 2:
-						_s44_nextKissingLadySequenceId = 0xF0;
+						_nextKissingLadySequenceId = 0xF0;
 						break;
 					case 3:
-						_s44_nextKissingLadySequenceId = 0xF3;
+						_nextKissingLadySequenceId = 0xF3;
 						break;
 					case 4:
-						_s44_nextKissingLadySequenceId = 0xF4;
+						_nextKissingLadySequenceId = 0xF4;
 						break;
 					default:
-						_s44_nextKissingLadySequenceId = 0xEC;
+						_nextKissingLadySequenceId = 0xEC;
 						break;
 					}
-					if (_s44_nextKissingLadySequenceId != 0xEC && _s44_nextKissingLadySequenceId == _s44_currKissingLadySequenceId)
-						_s44_nextKissingLadySequenceId = -1;
+					if (_nextKissingLadySequenceId != 0xEC && _nextKissingLadySequenceId == _currKissingLadySequenceId)
+						_nextKissingLadySequenceId = -1;
 				}
 			}
 			if (!_vm->_timers[5]) {
 				_vm->_timers[5] = _vm->getRandom(20) + 20;
-				if (_vm->_gnapActionStatus < 0 && _vm->_platypusActionStatus < 0 && _s44_nextSpringGuySequenceId == -1) {
+				if (_vm->_gnapActionStatus < 0 && _vm->_platypusActionStatus < 0 && _nextSpringGuySequenceId == -1) {
 					if (_vm->getRandom(5) != 0) {
 						if (!_vm->isFlag(kGFSpringTaken))
-							_s44_nextSpringGuySequenceId = 0xF9;
+							_nextSpringGuySequenceId = 0xF9;
 					} else {
 						if (_vm->isFlag(kGFSpringTaken))
-							_s44_nextSpringGuySequenceId = 0xF8;
+							_nextSpringGuySequenceId = 0xF8;
 						else
-							_s44_nextSpringGuySequenceId = 0xFA;
+							_nextSpringGuySequenceId = 0xFA;
 					}
 				}
 			}
@@ -430,32 +434,34 @@ void Scene44::run() {
 }
 
 void Scene44::updateAnimations() {
-	if (_vm->_gameSys->getAnimationStatus(0) == 2) 	{
-		_vm->_gameSys->setAnimation(0, 0, 0);
+	GameSys gameSys = *_vm->_gameSys;
+
+	if (gameSys.getAnimationStatus(0) == 2) 	{
+		gameSys.setAnimation(0, 0, 0);
 		switch (_vm->_gnapActionStatus) {
 		case 0:
 			_vm->_sceneDone = true;
 			break;
 		case 1:
-			_s44_nextKissingLadySequenceId = 0xEF;
+			_nextKissingLadySequenceId = 0xEF;
 			break;
 		case 2:
-			_s44_nextKissingLadySequenceId = 0xF2;
+			_nextKissingLadySequenceId = 0xF2;
 			break;
 		}
 		_vm->_gnapActionStatus = -1;
 	}
 	
-	if (_vm->_gameSys->getAnimationStatus(1) == 2) {
-		_vm->_gameSys->setAnimation(0, 0, 1);
+	if (gameSys.getAnimationStatus(1) == 2) {
+		gameSys.setAnimation(0, 0, 1);
 		switch (_vm->_platypusActionStatus) {
 		case 4:
-			if (_vm->_gameSys->getAnimationStatus(2) == 2) {
-				_vm->_gameSys->insertSequence(0xFE, _vm->_platypusId, _vm->_platypusSequenceId | (_vm->_platypusSequenceDatNum << 16), _vm->_platypusId, kSeqSyncWait, 0, 0, 0);
+			if (gameSys.getAnimationStatus(2) == 2) {
+				gameSys.insertSequence(0xFE, _vm->_platypusId, _vm->_platypusSequenceId | (_vm->_platypusSequenceDatNum << 16), _vm->_platypusId, kSeqSyncWait, 0, 0, 0);
 				_vm->_platypusSequenceId = 0xFE;
 				_vm->_platypusSequenceDatNum = 0;
-				_vm->_gameSys->setAnimation(0xFE, _vm->_platypusId, 1);
-				_vm->_gameSys->removeSequence(_s44_currKissingLadySequenceId, 1, true);
+				gameSys.setAnimation(0xFE, _vm->_platypusId, 1);
+				gameSys.removeSequence(_currKissingLadySequenceId, 1, true);
 				_vm->_platypusActionStatus = 5;
 			}
 			break;
@@ -469,49 +475,49 @@ void Scene44::updateAnimations() {
 		}
 	}
 	
-	if (_vm->_gameSys->getAnimationStatus(2) == 2) {
-		if (_s44_nextKissingLadySequenceId == 0xF6) {
-			_vm->_gameSys->insertSequence(_s44_nextKissingLadySequenceId, 1, _s44_currKissingLadySequenceId, 1, kSeqSyncWait, 0, 0, 0);
+	if (gameSys.getAnimationStatus(2) == 2) {
+		if (_nextKissingLadySequenceId == 0xF6) {
+			gameSys.insertSequence(_nextKissingLadySequenceId, 1, _currKissingLadySequenceId, 1, kSeqSyncWait, 0, 0, 0);
 			_vm->initPlatypusPos(5, 8, kDirNone);
-			_s44_currKissingLadySequenceId = _s44_nextKissingLadySequenceId;
-			_s44_nextKissingLadySequenceId = -1;
-			_vm->_gameSys->setAnimation(0, 0, 2);
-		} else if (_s44_nextKissingLadySequenceId != -1) {
-			_vm->_gameSys->insertSequence(_s44_nextKissingLadySequenceId, 1, _s44_currKissingLadySequenceId, 1, kSeqSyncWait, 0, 0, 0);
-			_vm->_gameSys->setAnimation(_s44_nextKissingLadySequenceId, 1, 2);
-			_s44_currKissingLadySequenceId = _s44_nextKissingLadySequenceId;
-			_s44_nextKissingLadySequenceId = -1;
+			_currKissingLadySequenceId = _nextKissingLadySequenceId;
+			_nextKissingLadySequenceId = -1;
+			gameSys.setAnimation(0, 0, 2);
+		} else if (_nextKissingLadySequenceId != -1) {
+			gameSys.insertSequence(_nextKissingLadySequenceId, 1, _currKissingLadySequenceId, 1, kSeqSyncWait, 0, 0, 0);
+			gameSys.setAnimation(_nextKissingLadySequenceId, 1, 2);
+			_currKissingLadySequenceId = _nextKissingLadySequenceId;
+			_nextKissingLadySequenceId = -1;
 			_vm->_timers[4] = _vm->getRandom(20) + 20;
 		}
 	}
 	
-	if (_vm->_gameSys->getAnimationStatus(4) == 2) {
-		if (_s44_currSpringGuySequenceId == 0xFB) {
+	if (gameSys.getAnimationStatus(4) == 2) {
+		if (_currSpringGuySequenceId == 0xFB) {
 			_vm->setGrabCursorSprite(kItemSpring);
-			_s44_nextSpringGuySequenceId = 0xF8;
+			_nextSpringGuySequenceId = 0xF8;
 		}
-		if (_s44_nextSpringGuySequenceId != -1) {
-			_vm->_gameSys->insertSequence(_s44_nextSpringGuySequenceId, 1, _s44_currSpringGuySequenceId, 1, kSeqSyncWait, 0, 0, 0);
-			_vm->_gameSys->setAnimation(_s44_nextSpringGuySequenceId, 1, 4);
-			_s44_currSpringGuySequenceId = _s44_nextSpringGuySequenceId;
-			_s44_nextSpringGuySequenceId = -1;
+		if (_nextSpringGuySequenceId != -1) {
+			gameSys.insertSequence(_nextSpringGuySequenceId, 1, _currSpringGuySequenceId, 1, kSeqSyncWait, 0, 0, 0);
+			gameSys.setAnimation(_nextSpringGuySequenceId, 1, 4);
+			_currSpringGuySequenceId = _nextSpringGuySequenceId;
+			_nextSpringGuySequenceId = -1;
 			_vm->_timers[5] = _vm->getRandom(20) + 20;
 		}
 	}
 	
-	if (_vm->_gameSys->getAnimationStatus(3) == 2) {
+	if (gameSys.getAnimationStatus(3) == 2) {
 		switch (_vm->_toyUfoActionStatus) {
 		case 6:
 			_vm->_sceneDone = true;
 			break;
 		default:
 			_vm->_toyUfoNextSequenceId = _vm->toyUfoGetSequenceId();
-			_vm->_gameSys->insertSequence(_vm->_toyUfoNextSequenceId | 0x10000, _vm->_toyUfoId + 1,
+			gameSys.insertSequence(_vm->_toyUfoNextSequenceId | 0x10000, _vm->_toyUfoId + 1,
 				_vm->_toyUfoSequenceId | 0x10000, _vm->_toyUfoId,
 				kSeqSyncWait, 0, _vm->_toyUfoX - 274, _vm->_toyUfoY - 128);
 			_vm->_toyUfoSequenceId = _vm->_toyUfoNextSequenceId;
 			++_vm->_toyUfoId;
-			_vm->_gameSys->setAnimation(_vm->_toyUfoNextSequenceId | 0x10000, _vm->_toyUfoId, 3);
+			gameSys.setAnimation(_vm->_toyUfoNextSequenceId | 0x10000, _vm->_toyUfoId, 3);
 			break;
 		}
 		_vm->_toyUfoActionStatus = -1;

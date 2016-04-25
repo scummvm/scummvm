@@ -699,7 +699,7 @@ void CutScene::run() {
 
 	if (_vm->_prevSceneNum == 2) {
 		soundId = 0x36B;
-		duration = MAX(1, 300 / _vm->getSequenceTotalDuration(_s99_sequenceIdArr[_s99_itemsCount - 1]));//CHECKME
+		duration = MAX(1, 300 / _vm->getSequenceTotalDuration(_sequenceIdArr[_itemsCount - 1]));//CHECKME
 		_vm->_timers[0] = 0;
 	}
 
@@ -708,11 +708,11 @@ void CutScene::run() {
 
 	_vm->hideCursor();
 
-	_vm->_gameSys->drawSpriteToBackground(0, 0, _s99_resourceIdArr[0]);
+	_vm->_gameSys->drawSpriteToBackground(0, 0, _resourceIdArr[0]);
 
-	for (int j = 0; j < _s99_sequenceCountArr[0]; ++j)
-		_vm->_gameSys->insertSequence(_s99_sequenceIdArr[j], j + 2, 0, 0, kSeqNone, 0, 0, 0);
-	_vm->_gameSys->setAnimation(_s99_sequenceIdArr[0], 2, 0);
+	for (int j = 0; j < _sequenceCountArr[0]; ++j)
+		_vm->_gameSys->insertSequence(_sequenceIdArr[j], j + 2, 0, 0, kSeqNone, 0, 0, 0);
+	_vm->_gameSys->setAnimation(_sequenceIdArr[0], 2, 0);
 
 	_vm->clearKeyStatus1(Common::KEYCODE_ESCAPE);
 	_vm->clearKeyStatus1(Common::KEYCODE_SPACE);
@@ -729,14 +729,14 @@ void CutScene::run() {
 			_vm->_gameSys->requestClear2(false);
 			_vm->_gameSys->requestClear1();
 			_vm->_gameSys->setAnimation(0, 0, 0);
-			firstSequenceIndex += _s99_sequenceCountArr[itemIndex++];
-			if (itemIndex >= _s99_itemsCount) {
+			firstSequenceIndex += _sequenceCountArr[itemIndex++];
+			if (itemIndex >= _itemsCount) {
 				_vm->_sceneDone = true;
 			} else {
-				for (int m = 0; m < _s99_sequenceCountArr[itemIndex]; ++m)
-					_vm->_gameSys->insertSequence(_s99_sequenceIdArr[firstSequenceIndex + m], m + 2, 0, 0, kSeqNone, 0, 0, 0);
-				_vm->_gameSys->drawSpriteToBackground(0, 0, _s99_resourceIdArr[itemIndex]);
-				_vm->_gameSys->setAnimation(_s99_sequenceIdArr[firstSequenceIndex], 2, 0);
+				for (int m = 0; m < _sequenceCountArr[itemIndex]; ++m)
+					_vm->_gameSys->insertSequence(_sequenceIdArr[firstSequenceIndex + m], m + 2, 0, 0, kSeqNone, 0, 0, 0);
+				_vm->_gameSys->drawSpriteToBackground(0, 0, _resourceIdArr[itemIndex]);
+				_vm->_gameSys->setAnimation(_sequenceIdArr[firstSequenceIndex], 2, 0);
 			}
 		}
 
@@ -744,13 +744,13 @@ void CutScene::run() {
 			_vm->clearKeyStatus1(Common::KEYCODE_ESCAPE);
 			_vm->clearKeyStatus1(Common::KEYCODE_SPACE);
 			_vm->clearKeyStatus1(29);
-			if (_s99_canSkip[itemIndex])
+			if (_canSkip[itemIndex])
 				skip = true;
 			else
 				_vm->_sceneDone = true;
 		}
 
-		if (!_vm->_timers[0] && itemIndex == _s99_itemsCount - 1) {
+		if (!_vm->_timers[0] && itemIndex == _itemsCount - 1) {
 			_vm->_timers[0] = 2;
 			volume = MAX(1, volume - duration);
 			_vm->setSoundVolume(soundId, volume);

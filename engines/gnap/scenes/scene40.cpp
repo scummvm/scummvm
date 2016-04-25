@@ -43,8 +43,10 @@ Scene40::Scene40(GnapEngine *vm) : Scene(vm) {
 }
 
 int Scene40::init() {
-	_vm->_gameSys->setAnimation(0, 0, 0);
-	_vm->_gameSys->setAnimation(0, 0, 1);
+	GameSys gameSys = *_vm->_gameSys;
+
+	gameSys.setAnimation(0, 0, 0);
+	gameSys.setAnimation(0, 0, 1);
 	return _vm->isFlag(kGFUnk23) ? 0x01 : 0x00;
 }
 
@@ -177,8 +179,10 @@ void Scene40::run() {
 }
 
 void Scene40::updateAnimations() {
-	if (_vm->_gameSys->getAnimationStatus(0) == 2) {
-		_vm->_gameSys->setAnimation(0, 0, 0);
+	GameSys gameSys = *_vm->_gameSys;
+
+	if (gameSys.getAnimationStatus(0) == 2) {
+		gameSys.setAnimation(0, 0, 0);
 		if (_vm->_gnapActionStatus)
 			_vm->_gnapActionStatus = -1;
 		else

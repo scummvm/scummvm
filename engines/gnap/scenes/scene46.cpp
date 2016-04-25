@@ -45,18 +45,20 @@ enum {
 };
 
 Scene46::Scene46(GnapEngine *vm) : Scene(vm) {
-	_s46_currSackGuySequenceId = -1;
-	_s46_nextItchyGuySequenceId = -1;
-	_s46_nextSackGuySequenceId = -1;
-	_s46_currItchyGuySequenceId = -1;
+	_currSackGuySequenceId = -1;
+	_nextItchyGuySequenceId = -1;
+	_nextSackGuySequenceId = -1;
+	_currItchyGuySequenceId = -1;
 }
 
 int Scene46::init() {
-	_vm->_gameSys->setAnimation(0, 0, 0);
-	_vm->_gameSys->setAnimation(0, 0, 1);
-	_vm->_gameSys->setAnimation(0, 0, 2);
-	_vm->_gameSys->setAnimation(0, 0, 3);
-	_vm->_gameSys->setAnimation(0, 0, 4);
+	GameSys gameSys = *_vm->_gameSys;
+
+	gameSys.setAnimation(0, 0, 0);
+	gameSys.setAnimation(0, 0, 1);
+	gameSys.setAnimation(0, 0, 2);
+	gameSys.setAnimation(0, 0, 3);
+	gameSys.setAnimation(0, 0, 4);
 	return 0x4E;
 }
 
@@ -81,19 +83,20 @@ void Scene46::updateHotspots() {
 }
 
 void Scene46::run() {
-	_vm->queueInsertDeviceIcon();
+	GameSys gameSys = *_vm->_gameSys;
 
-	_vm->_gameSys->insertSequence(0x4D, 0, 0, 0, kSeqLoop, 0, 0, 0);
+	_vm->queueInsertDeviceIcon();
+	gameSys.insertSequence(0x4D, 0, 0, 0, kSeqLoop, 0, 0, 0);
 	
-	_s46_currSackGuySequenceId = 0x4B;
-	_s46_nextSackGuySequenceId = -1;
-	_vm->_gameSys->setAnimation(0x4B, 1, 3);
-	_vm->_gameSys->insertSequence(_s46_currSackGuySequenceId, 1, 0, 0, kSeqNone, 0, 0, 0);
+	_currSackGuySequenceId = 0x4B;
+	_nextSackGuySequenceId = -1;
+	gameSys.setAnimation(0x4B, 1, 3);
+	gameSys.insertSequence(_currSackGuySequenceId, 1, 0, 0, kSeqNone, 0, 0, 0);
 	
-	_s46_currItchyGuySequenceId = 0x47;
-	_s46_nextItchyGuySequenceId = -1;
-	_vm->_gameSys->setAnimation(0x47, 1, 4);
-	_vm->_gameSys->insertSequence(_s46_currItchyGuySequenceId, 1, 0, 0, kSeqNone, 0, 0, 0);
+	_currItchyGuySequenceId = 0x47;
+	_nextItchyGuySequenceId = -1;
+	gameSys.setAnimation(0x47, 1, 4);
+	gameSys.insertSequence(_currItchyGuySequenceId, 1, 0, 0, kSeqNone, 0, 0, 0);
 	
 	if (_vm->isFlag(kGFGnapControlsToyUFO)) {
 		_vm->_toyUfoId = 0;
@@ -104,8 +107,8 @@ void Scene46::run() {
 			_vm->_toyUfoX = 30;
 		else
 			_vm->_toyUfoX = 770;
-		_vm->_gameSys->setAnimation(_vm->_toyUfoSequenceId | 0x10000, _vm->_toyUfoId, 2);
-		_vm->_gameSys->insertSequence(_vm->_toyUfoSequenceId | 0x10000, _vm->_toyUfoId, 0, 0, kSeqNone, 0, _vm->_toyUfoX - 274, _vm->_toyUfoY - 128);
+		gameSys.setAnimation(_vm->_toyUfoSequenceId | 0x10000, _vm->_toyUfoId, 2);
+		gameSys.insertSequence(_vm->_toyUfoSequenceId | 0x10000, _vm->_toyUfoId, 0, 0, kSeqNone, 0, _vm->_toyUfoX - 274, _vm->_toyUfoY - 128);
 		_vm->endSceneInit();
 	} else if (_vm->_prevSceneNum == 44) {
 		_vm->initGnapPos(-1, 8, kDirUpRight);
@@ -290,17 +293,17 @@ void Scene46::run() {
 				_vm->updateGnapIdleSequence();
 			if (!_vm->_timers[4]) {
 				_vm->_timers[4] = _vm->getRandom(50) + 80;
-				if (_vm->_gnapActionStatus < 0 && _vm->_platypusActionStatus < 0 && _s46_nextItchyGuySequenceId == -1) {
+				if (_vm->_gnapActionStatus < 0 && _vm->_platypusActionStatus < 0 && _nextItchyGuySequenceId == -1) {
 					if (_vm->getRandom(2) != 0)
-						_s46_nextItchyGuySequenceId = 0x49;
+						_nextItchyGuySequenceId = 0x49;
 					else
-						_s46_nextItchyGuySequenceId = 0x48;
+						_nextItchyGuySequenceId = 0x48;
 				}
 			}
 			if (!_vm->_timers[5]) {
 				_vm->_timers[5] = _vm->getRandom(50) + 80;
-				if (_vm->_gnapActionStatus < 0 && _vm->_platypusActionStatus < 0 && _s46_nextSackGuySequenceId == -1)
-					_s46_nextSackGuySequenceId = 0x4C;
+				if (_vm->_gnapActionStatus < 0 && _vm->_platypusActionStatus < 0 && _nextSackGuySequenceId == -1)
+					_nextSackGuySequenceId = 0x4C;
 			}
 		}
 	
@@ -317,51 +320,53 @@ void Scene46::run() {
 }
 
 void Scene46::updateAnimations() {
-	if (_vm->_gameSys->getAnimationStatus(0) == 2) {
-		_vm->_gameSys->setAnimation(0, 0, 0);
+	GameSys gameSys = *_vm->_gameSys;
+
+	if (gameSys.getAnimationStatus(0) == 2) {
+		gameSys.setAnimation(0, 0, 0);
 		switch (_vm->_gnapActionStatus) {
 		case 0:
 			_vm->_sceneDone = true;
 			break;
 		case 1:
-			_s46_nextItchyGuySequenceId = 0x46;
+			_nextItchyGuySequenceId = 0x46;
 			break;
 		case 2:
-			_s46_nextSackGuySequenceId = 0x4A;
+			_nextSackGuySequenceId = 0x4A;
 			break;
 		}
 		_vm->_gnapActionStatus = -1;
 	}
 	
-	if (_vm->_gameSys->getAnimationStatus(3) == 2 && _s46_nextSackGuySequenceId != -1) {
-		_vm->_gameSys->insertSequence(_s46_nextSackGuySequenceId, 1, _s46_currSackGuySequenceId, 1, kSeqSyncWait, 0, 0, 0);
-		_vm->_gameSys->setAnimation(_s46_nextSackGuySequenceId, 1, 3);
-		_s46_currSackGuySequenceId = _s46_nextSackGuySequenceId;
-		_s46_nextSackGuySequenceId = -1;
+	if (gameSys.getAnimationStatus(3) == 2 && _nextSackGuySequenceId != -1) {
+		gameSys.insertSequence(_nextSackGuySequenceId, 1, _currSackGuySequenceId, 1, kSeqSyncWait, 0, 0, 0);
+		gameSys.setAnimation(_nextSackGuySequenceId, 1, 3);
+		_currSackGuySequenceId = _nextSackGuySequenceId;
+		_nextSackGuySequenceId = -1;
 		_vm->_timers[5] = _vm->getRandom(50) + 80;
 	}
 	
-	if (_vm->_gameSys->getAnimationStatus(4) == 2 && _s46_nextItchyGuySequenceId != -1) {
-		_vm->_gameSys->insertSequence(_s46_nextItchyGuySequenceId, 1, _s46_currItchyGuySequenceId, 1, kSeqSyncWait, 0, 0, 0);
-		_vm->_gameSys->setAnimation(_s46_nextItchyGuySequenceId, 1, 4);
-		_s46_currItchyGuySequenceId = _s46_nextItchyGuySequenceId;
-		_s46_nextItchyGuySequenceId = -1;
+	if (gameSys.getAnimationStatus(4) == 2 && _nextItchyGuySequenceId != -1) {
+		gameSys.insertSequence(_nextItchyGuySequenceId, 1, _currItchyGuySequenceId, 1, kSeqSyncWait, 0, 0, 0);
+		gameSys.setAnimation(_nextItchyGuySequenceId, 1, 4);
+		_currItchyGuySequenceId = _nextItchyGuySequenceId;
+		_nextItchyGuySequenceId = -1;
 		_vm->_timers[4] = _vm->getRandom(50) + 80;
 	}
 	
-	if (_vm->_gameSys->getAnimationStatus(2) == 2) {
+	if (gameSys.getAnimationStatus(2) == 2) {
 		switch (_vm->_toyUfoActionStatus) {
 		case 3:
 			_vm->_sceneDone = true;
 			break;
 		default:
 			_vm->_toyUfoNextSequenceId = _vm->toyUfoGetSequenceId();
-			_vm->_gameSys->insertSequence(_vm->_toyUfoNextSequenceId | 0x10000, _vm->_toyUfoId + 1,
+			gameSys.insertSequence(_vm->_toyUfoNextSequenceId | 0x10000, _vm->_toyUfoId + 1,
 				_vm->_toyUfoSequenceId | 0x10000, _vm->_toyUfoId,
 				kSeqSyncWait, 0, _vm->_toyUfoX - 274, _vm->_toyUfoY - 128);
 			_vm->_toyUfoSequenceId = _vm->_toyUfoNextSequenceId;
 			++_vm->_toyUfoId;
-			_vm->_gameSys->setAnimation(_vm->_toyUfoNextSequenceId | 0x10000, _vm->_toyUfoId, 2);
+			gameSys.setAnimation(_vm->_toyUfoNextSequenceId | 0x10000, _vm->_toyUfoId, 2);
 			break;
 		}
 		_vm->_toyUfoActionStatus = -1;

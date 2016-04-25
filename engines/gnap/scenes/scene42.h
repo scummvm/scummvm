@@ -42,8 +42,8 @@ public:
 	virtual void updateAnimationsCb() {};
 
 private:
-	int _s42_currBBQVendorSequenceId;
-	int _s42_nextBBQVendorSequenceId;
+	int _currBBQVendorSequenceId;
+	int _nextBBQVendorSequenceId;
 };
 
 } // End of namespace Gnap

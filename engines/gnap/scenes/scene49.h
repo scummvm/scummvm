@@ -58,14 +58,14 @@ public:
 	virtual void updateAnimationsCb() {};
 
 private:
-	int _s49_scoreBarPos;
-	int _s49_scoreLevel;
-	bool _s49_scoreBarFlash;
-	int _s49_obstacleIndex;
-	Scene49Obstacle _s49_obstacles[5];
-	int _s49_truckSequenceId;
-	int _s49_truckId;
-	int _s49_truckLaneNum;
+	int _scoreBarPos;
+	int _scoreLevel;
+	bool _scoreBarFlash;
+	int _obstacleIndex;
+	Scene49Obstacle _obstacles[5];
+	int _truckSequenceId;
+	int _truckId;
+	int _truckLaneNum;
 
 	void checkObstacles();
 	void updateObstacle(int id);

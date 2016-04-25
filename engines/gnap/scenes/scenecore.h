@@ -59,11 +59,11 @@ public:
 	void updateAnimationsCb() {}
 
 protected:
-	int _s99_itemsCount;
-	int _s99_resourceIdArr[16];
-	int _s99_sequenceCountArr[16];
-	int _s99_sequenceIdArr[50];
-	bool _s99_canSkip[16];
+	int _itemsCount;
+	int _resourceIdArr[16];
+	int _sequenceCountArr[16];
+	int _sequenceIdArr[50];
+	bool _canSkip[16];
 };
 } // End of namespace Gnap
 
