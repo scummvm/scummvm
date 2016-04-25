@@ -55,7 +55,7 @@
 namespace Wage {
 
 MacWindow::MacWindow(int id, bool scrollable, bool resizable) :
-		_scrollable(scrollable), _id(id), _resizable(resizable) {
+		BaseMacWindow(id), _scrollable(scrollable), _resizable(resizable) {
 	_active = false;
 	_borderIsDirty = true;
 	_contentIsDirty = true;

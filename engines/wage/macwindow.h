@@ -71,25 +71,48 @@ enum WindowClick {
 	kBorderResizeButton
 };
 
-class MacWindow {
+class BaseMacWindow {
+public:
+	BaseMacWindow(int id) : _id(id) {}
+	~BaseMacWindow() {}
+
+	const Common::Rect &getDimensions() { return _dims; }
+	int getId() { return _id; }
+	Graphics::ManagedSurface *getSurface() { return &_surface; }
+
+	bool draw(Graphics::ManagedSurface *g, bool forceRedraw = false) { return false; }
+	bool processEvent(Common::Event &event) { return false; }
+
+	void setCallback(bool (*callback)(WindowClick, Common::Event &, void *), void *data) { _callback = callback; _dataPtr = data; }
+
+protected:
+	int _id;
+
+	Graphics::ManagedSurface _surface;
+
+	Common::Rect _dims;
+
+	bool (*_callback)(WindowClick, Common::Event &, void *);
+	void *_dataPtr;
+};
+
+class MacWindow : public BaseMacWindow {
 public:
 	MacWindow(int id, bool scrollable, bool resizable);
 	~MacWindow();
 	void move(int x, int y);
 	void resize(int w, int h);
 	void setDimensions(const Common::Rect &r);
-	const Common::Rect &getDimensions() { return _dims; }
 	const Common::Rect &getInnerDimensions() { return _innerDims; }
+
 	bool draw(Graphics::ManagedSurface *g, bool forceRedraw = false);
+
 	void setActive(bool active);
-	Graphics::ManagedSurface *getSurface() { return &_surface; }
 	void setTitle(Common::String &title) { _title = title; }
 	void setHighlight(WindowClick highlightedPart);
 	void setScroll(float scrollPos, float scrollSize);
 	void setDirty(bool dirty) { _contentIsDirty = dirty; }
-	int getId() { return _id; }
 	bool processEvent(Common::Event &event);
-	void setCallback(bool (*callback)(WindowClick, Common::Event &, void *), void *data) { _callback = callback; _dataPtr = data; }
 	bool beingDragged() { return _beingDragged; }
 	bool beingResized() { return _beingResized; }
 
@@ -103,7 +126,6 @@ private:
 	WindowClick isInBorder(int x, int y);
 
 private:
-	Graphics::ManagedSurface _surface;
 	Graphics::ManagedSurface _borderSurface;
 	Graphics::ManagedSurface _composeSurface;
 	bool _scrollable;
@@ -111,7 +133,6 @@ private:
 	bool _active;
 	bool _borderIsDirty;
 	bool _contentIsDirty;
-	int _id;
 
 	bool _beingDragged, _beingResized;
 	int _draggedX, _draggedY;
@@ -119,13 +140,9 @@ private:
 	WindowClick _highlightedPart;
 	float _scrollPos, _scrollSize;
 
-	Common::Rect _dims;
 	Common::Rect _innerDims;
 
 	Common::String _title;
-
-	bool (*_callback)(WindowClick, Common::Event &, void *);
-	void *_dataPtr;
 };
 
 } // End of namespace Wage
