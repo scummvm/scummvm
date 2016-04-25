@@ -59,8 +59,6 @@ public:
 	void updateAnimationsCb() {}
 
 protected:
-	GnapEngine *_vm;
-
 	int _s99_itemsCount;
 	int _s99_resourceIdArr[16];
 	int _s99_sequenceCountArr[16];
