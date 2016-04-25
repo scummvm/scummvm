@@ -708,30 +708,6 @@ void GnapEngine::initGameFlags(int num) {
 		setFlag(kGFBarnPadlockOpen);
 		break;
 	}
-
-	//DEBUG!
-#if 0
-//	setFlag(kGFPlatypus); // Enable platypus
-	setFlag(kGFUnk25);
-	invClear();
-	invAdd(kItemMagazine);
-#endif
-#if 0
-	invAdd(kItemDisguise);
-#endif
-#if 0
-	//invAdd(kItemGas);
-	invAdd(kItemJoint);
-	//invAdd(kItemKeys);
-	invAdd(kItemWrench);
-	//invAdd(kItemTongs);
-	invAdd(kItemDiceQuarterHole);
-	//invAdd(kItemPill);
-	//invAdd(kItemBucketWithBeer);
-	invAdd(kItemChickenBucket);
-	invAdd(kItemBanana);
-	invAdd(kItemHorn);
-#endif
 }
 
 void GnapEngine::loadStockDat() {
