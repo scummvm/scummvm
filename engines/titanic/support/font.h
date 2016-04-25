@@ -83,6 +83,11 @@ public:
 	int stringWidth(const CString &text) const;
 
 	/**
+	 * Write a string to the specified surface
+	 */
+	int writeString(CVideoSurface *surface, const Point &pt, const CString &str);
+
+	/**
 	 * Get the text area a string will fit into
 	 * @param str		String
 	 * @param maxWidth	Maximum width in pixels

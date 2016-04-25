@@ -78,7 +78,10 @@ private:
 
 	void updateStr3(int lineNum);
 
-	void draw2(CScreenManager *screenManager);
+	/**
+	 * Get the required height to draw the text
+	 */
+	int getTextHeight(CScreenManager *screenManager);
 public:
 	CPetText(uint count = 10);
 

@@ -68,6 +68,12 @@ void CScreenManager::setSurfaceBounds(SurfaceNum surfaceNum, const Rect &r) {
 		_backSurfaces[surfaceNum]._bounds = r;
 }
 
+int CScreenManager::setFontNumber(int fontNumber) {
+	int oldFontNumber = _fontNumber;
+	_fontNumber = fontNumber;
+	return oldFontNumber;
+}
+
 /*------------------------------------------------------------------------*/
 
 OSScreenManager::OSScreenManager(TitanicEngine *vm): CScreenManager(vm),
@@ -197,7 +203,10 @@ void OSScreenManager::blitFrom(SurfaceNum surfaceNum, CVideoSurface *src,
 void OSScreenManager::proc12() {}
 void OSScreenManager::proc13() {}
 void OSScreenManager::proc14() {}
-void OSScreenManager::proc15() {}
+
+void OSScreenManager::setFontColor(byte r, byte g, byte b) {
+	_fonts[_fontNumber].setColor(r, g, b);
+}
 
 int OSScreenManager::getTextBounds(const CString &str, int maxWidth, Point *sizeOut) const {
 	return _fonts[_fontNumber].getTextBounds(str, maxWidth, sizeOut);

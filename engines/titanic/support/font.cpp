@@ -127,7 +127,11 @@ int STFont::stringWidth(const CString &text) const {
 	return total;
 }
 
-int STFont::writeChar(CVideoSurface *surface, unsigned char c, const Common::Point &pt, Rect *destRect, Rect *srcRect) {
+int STFont::writeString(CVideoSurface *surface, const Point &pt, const CString &str) {
+	return 0;
+}
+
+int STFont::writeChar(CVideoSurface *surface, unsigned char c, const Point &pt, Rect *destRect, Rect *srcRect) {
 	if (c == 233)
 		c = '$';
 
@@ -174,7 +178,7 @@ int STFont::writeChar(CVideoSurface *surface, unsigned char c, const Common::Poi
 	return 0;
 }
 
-void STFont::copyRect(CVideoSurface *surface, const Common::Point &pt, Rect &rect) {
+void STFont::copyRect(CVideoSurface *surface, const Point &pt, Rect &rect) {
 	if (surface->lock()) {
 		uint16 *lineP = surface->getBasePtr(pt.x, pt.y);
 		uint16 color = getColor();
@@ -203,7 +207,7 @@ void STFont::extendBounds(Point &textSize, byte c, int maxWidth) const {
 void STFont::checkLineWrap(Point &textSize, int maxWidth, const char *&str) const {
 	bool flag = false;
 	int totalWidth = 0;
-	for (const char *srcPtr = str; *srcPtr; ++srcPtr) {
+	for (const char *srcPtr = str; *srcPtr && *srcPtr != ' '; ++srcPtr) {
 		if (*srcPtr == ' ' && flag)
 			break;
 

@@ -108,7 +108,11 @@ public:
 	virtual void proc12() = 0;
 	virtual void proc13() = 0;
 	virtual void proc14() = 0;
-	virtual void proc15() = 0;
+
+	/**
+	 * Set the font color
+	 */
+	virtual void setFontColor(byte r, byte g, byte b) = 0;
 
 	/**
 	 * Get the text area a string will fit into
@@ -164,7 +168,7 @@ public:
 	/**
 	 * Set the current font number
 	 */
-	void setFontNumber(int fontNumber) { _fontNumber = fontNumber; }
+	int setFontNumber(int fontNumber);
 };
 
 class OSScreenManager: CScreenManager {
@@ -224,7 +228,11 @@ public:
 	virtual void proc12();
 	virtual void proc13();
 	virtual void proc14();
-	virtual void proc15();
+
+	/**
+	 * Set the font color
+	 */
+	virtual void setFontColor(byte r, byte g, byte b);
 
 	/**
 	 * Get the text area a string will fit into

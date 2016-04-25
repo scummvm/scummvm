@@ -130,7 +130,7 @@ void CPetText::draw(CScreenManager *screenManager) {
 		screenManager->fillRect(SURFACE_BACKBUFFER, &tempRect, _backR, _backG, _backB);
 	}
 
-	draw2(screenManager);
+	getTextHeight(screenManager);
 
 	tempRect = _bounds;
 	tempRect.grow(-2);
@@ -217,8 +217,13 @@ void CPetText::updateStr3(int lineNum) {
 	}
 }
 
-void CPetText::draw2(CScreenManager *screenManager) {
+int CPetText::getTextHeight(CScreenManager *screenManager) {
+	mergeStrings();
+	int oldFontNumber = screenManager->setFontNumber(_fontNumber2);
+	int textHeight = screenManager->getTextBounds(_lines, _bounds.width());
+	screenManager->setFontNumber(oldFontNumber);
 
+	return textHeight;
 }
 
 } // End of namespace Titanic
