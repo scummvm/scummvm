@@ -447,6 +447,13 @@ void Menu::renderSubmenu(MenuItem *menu) {
 }
 
 bool Menu::processEvent(Common::Event &event) {
+	if (event.type == Common::EVENT_LBUTTONDOWN)
+		return mouseClick(event.mouse.x, event.mouse.y);
+	else if (event.type == Common::EVENT_LBUTTONUP)
+		return mouseRelease(event.mouse.x, event.mouse.y);
+	else if (event.type == Common::EVENT_MOUSEMOVE)
+		return mouseMove(event.mouse.x, event.mouse.y);
+
 	return false;
 }
 

@@ -474,15 +474,6 @@ void Gui::processMenuShortCut(byte flags, uint16 ascii) {
 	_menu->processMenuShortCut(flags, ascii);
 }
 
-void Gui::mouseMove(int x, int y) {
-	if (_menu->hasAllFocus()) {
-		if (_menu->mouseMove(x, y))
-			_menu->setDirty(true);
-
-		return;
-	}
-}
-
 void Gui::pushArrowCursor() {
 	CursorMan.pushCursor(macCursorArrow, 11, 16, 1, 1, 3);
 }
@@ -492,38 +483,7 @@ void Gui::popCursor() {
 }
 
 bool Gui::processEvent(Common::Event &event) {
-	if (_wm.processEvent(event))
-		return true;
-
-	switch (event.type) {
-	case Common::EVENT_MOUSEMOVE:
-		mouseMove(event.mouse.x, event.mouse.y);
-		break;
-	case Common::EVENT_LBUTTONDOWN:
-		mouseDown(event.mouse.x, event.mouse.y);
-		break;
-	case Common::EVENT_LBUTTONUP:
-		mouseUp(event.mouse.x, event.mouse.y);
-		break;
-
-	default:
-		return false;
-	}
-
-	return true;
-}
-
-void Gui::mouseUp(int x, int y) {
-	if (_menu->hasAllFocus())
-		_menu->mouseRelease(x, y);
-
-	return;
-}
-
-void Gui::mouseDown(int x, int y) {
-	if (_menu->mouseClick(x, y)) {
-		_menu->setDirty(true);
-	}
+	return _wm.processEvent(event);
 }
 
 int Gui::calcTextX(int x, int textLine) {

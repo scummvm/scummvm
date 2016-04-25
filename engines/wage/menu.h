@@ -98,10 +98,6 @@ public:
 	bool draw(Graphics::ManagedSurface *g, bool forceRedraw = false);
 	bool processEvent(Common::Event &event);
 
-	bool mouseClick(int x, int y);
-	bool mouseRelease(int x, int y);
-	bool mouseMove(int x, int y);
-
 	void regenCommandsMenu();
 	void regenWeaponsMenu();
 	void processMenuShortCut(byte flags, uint16 ascii);
@@ -127,6 +123,10 @@ private:
 	void createCommandsMenu(MenuItem *menu);
 	void createWeaponsMenu(MenuItem *menu);
 	void executeCommand(MenuSubItem *subitem);
+
+	bool mouseClick(int x, int y);
+	bool mouseRelease(int x, int y);
+	bool mouseMove(int x, int y);
 
 	Common::Array<MenuItem *> _items;
 	MenuItem *_weapons;
