@@ -489,7 +489,7 @@ bool Menu::mouseClick(int x, int y) {
 					r.bottom += 3;
 
 					_screen.copyRectToSurface(_screenCopy, r.left, r.top, r);
-					g_system->copyRectToScreen(_screen.getBasePtr(r.left, r.top), _screen.pitch, r.left, r.top, r.width() + 1, r.height() + 1);
+					g_system->copyRectToScreen(_screen.getBasePtr(r.left, r.top), _screen.pitch, r.left, r.top, r.width(), r.height());
 				}
 
 				_activeItem = i;
