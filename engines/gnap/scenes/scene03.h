@@ -42,11 +42,11 @@ public:
 	virtual void updateAnimationsCb() {}
 
 private:
-	bool _s03_platypusHypnotized;	
-	bool _s03_platypusScared;
-	int _s03_nextPlatSequenceId;
-	int _s03_nextFrogSequenceId;
-	int _s03_currFrogSequenceId;
+	bool _platypusHypnotized;	
+	bool _platypusScared;
+	int _nextPlatSequenceId;
+	int _nextFrogSequenceId;
+	int _currFrogSequenceId;
 };
 
 } // End of namespace Gnap
