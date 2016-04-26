@@ -149,6 +149,13 @@ public:
 	 * Delete the last character from the last line
 	 */
 	void deleteLastChar();
+
+	void setNPC(int val1, int npcId);
+
+	/**
+	 * Get the font
+	 */
+	int getFontNumber() const { return _fontNumber1; }
 };
 
 } // End of namespace Titanic

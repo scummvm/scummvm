@@ -170,7 +170,7 @@ void CPetText::resize(uint count) {
 
 CString CPetText::getText() const {
 	CString result = "";
-	for (uint idx = 0; idx < _lineCount; ++idx)
+	for (int idx = 0; idx < _lineCount; ++idx)
 		result += _array[idx]._line;
 
 	return result;
@@ -245,6 +245,11 @@ void CPetText::deleteLastChar() {
 		_array[_lineCount]._line.deleteLastChar();
 		_stringsMerged = false;
 	}
+}
+
+void CPetText::setNPC(int val1, int npcId) {
+	_field64 = val1;
+	_field68 = npcId;
 }
 
 } // End of namespace Titanic
