@@ -34,7 +34,7 @@ private:
 	CPetGfxElement _val1;
 	CPetGfxElement _val2;
 	CPetGfxElement _val3;
-	CPetGfxElement _valArray1[3];
+	CPetGfxElement _gfxList[3];
 	CPetGfxElement _val4;
 	CPetGfxElement _val5;
 	CPetGfxElement _val6;
@@ -44,12 +44,17 @@ private:
 	CPetGfxElement _val9;
 	CPetGfxElement _valArray2[9];
 	int _field30C;
-	CPetText _text1;
+	CPetText _log;
 	CPetText _text2;
 	int _valArray3[3];
 	int _field414;
 	int _field418;
 	CString _string1;
+private:
+	/**
+	 * Sets up the control
+	 */
+	bool setupControl(CPetControl *petControl);
 public:
 	CPetConversations();
 

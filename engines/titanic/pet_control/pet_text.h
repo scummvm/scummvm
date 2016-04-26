@@ -30,7 +30,7 @@ namespace Titanic {
 
 class CPetText {
 	struct ArrayEntry {
-		CString _string1;
+		CString _line;
 		CString _rgb;
 		CString _string3;
 	};
@@ -111,6 +111,11 @@ public:
 	void resize(uint count);
 
 	/**
+	 * Returns the text from all the lines as a single string
+	 */
+	CString getText() const;
+
+	/**
 	 * Set the text
 	 */
 	void setText(const CString &str);
@@ -119,6 +124,11 @@ public:
 	 * Set text color
 	 */
 	void setColor(uint col);
+
+	/**
+	 * Set text color
+	 */
+	void setColor(byte r, byte g, byte b);
 
 	/**
 	 * Set the color for a line
@@ -134,6 +144,11 @@ public:
 	 * Sets the maximum number of characters per line
 	 */
 	void setMaxCharsPerLine(int maxChars);
+
+	/**
+	 * Delete the last character from the last line
+	 */
+	void deleteLastChar();
 };
 
 } // End of namespace Titanic

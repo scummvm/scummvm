@@ -47,7 +47,7 @@ void CPetText::freeArrays() {
 
 void CPetText::setup() {
 	for (int idx = 0; idx < (int)_array.size(); ++idx) {
-		_array[idx]._string1.clear();
+		_array[idx]._line.clear();
 		setLineColor(idx, _textR, _textG, _textB);
 		_array[idx]._string3.clear();
 	}
@@ -102,7 +102,7 @@ void CPetText::load(SimpleFile *file, int param) {
 		warning("TODO: CPetText::load %d,%d", var1, var2);
 		assert(_array.size() >= count);
 		for (uint idx = 0; idx < count; ++idx) {
-			_array[idx]._string1 = file->readString();
+			_array[idx]._line = file->readString();
 			_array[idx]._rgb = file->readString();
 			_array[idx]._string3 = file->readString();
 		}	
@@ -152,7 +152,7 @@ void CPetText::mergeStrings() {
 
 		for (int idx = 0; idx < _lineCount; ++idx) {
 			CString line = _array[idx]._rgb + _array[idx]._string3 +
-				_array[idx]._string1 + "\n";
+				_array[idx]._line + "\n";
 			_lines += line;
 
 		}
@@ -168,24 +168,32 @@ void CPetText::resize(uint count) {
 	_array.resize(count);
 }
 
+CString CPetText::getText() const {
+	CString result = "";
+	for (uint idx = 0; idx < _lineCount; ++idx)
+		result += _array[idx]._line;
+
+	return result;
+}
+
 void CPetText::setText(const CString &str) {
 	setup();
 	changeText(str);
 }
 
 void CPetText::changeText(const CString &str) {
-	int lineSize = _array[_lineCount]._string1.size();
+	int lineSize = _array[_lineCount]._line.size();
 	int strSize = str.size();
 
 	if (_maxCharsPerLine == -1) {
 		// No limit on horizontal characters, so append string to current line
-		_array[_lineCount]._string1 += str;
+		_array[_lineCount]._line += str;
 	} else if ((lineSize + strSize) <= _maxCharsPerLine) {
 		// New string fits into line, so add it on
-		_array[_lineCount]._string1 += str;
+		_array[_lineCount]._line += str;
 	} else {
 		// Only add part of the str up to the maximum allowed limit for line
-		_array[_lineCount]._string1 += str.left(_maxCharsPerLine - lineSize);
+		_array[_lineCount]._line += str.left(_maxCharsPerLine - lineSize);
 	}
 	
 	updateStr3(_lineCount);
@@ -198,6 +206,12 @@ void CPetText::setColor(uint col) {
 	_textB = (col >> 16) & 0xff;
 }
 
+void CPetText::setColor(byte r, byte g, byte b) {
+	_textR = r;
+	_textG = g;
+	_textB = b;
+}
+
 void CPetText::setMaxCharsPerLine(int maxChars) {
 	if (maxChars >= -1 && maxChars < 257)
 		_maxCharsPerLine = maxChars;
@@ -206,7 +220,7 @@ void CPetText::setMaxCharsPerLine(int maxChars) {
 void CPetText::updateStr3(int lineNum) {
 	if (_field64 > 0 && _field68 > 0) {
 		char line[5];
-		line[0] = line[3] = 26;
+		line[0] = line[3] = TEXTCMD_26;
 		line[1] = _field64;
 		line[2] = _field68;
 		line[4] = '\0';
@@ -224,6 +238,13 @@ int CPetText::getTextHeight(CScreenManager *screenManager) {
 	screenManager->setFontNumber(oldFontNumber);
 
 	return textHeight;
+}
+
+void CPetText::deleteLastChar() {
+	if (!_array[_lineCount]._line.empty()) {
+		_array[_lineCount]._line.deleteLastChar();
+		_stringsMerged = false;
+	}
 }
 
 } // End of namespace Titanic
