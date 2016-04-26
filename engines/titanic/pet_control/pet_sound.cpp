@@ -100,10 +100,10 @@ bool CPetSound::reset() {
 
 		CPetSection *section = getPetSection();
 		uint col = section->getColor(0);
-		_textMusicVolume.setColor(0, col);
-		_textMasterVolume.setColor(0, col);
-		_textParrotVolume.setColor(0, col);
-		_textSpeechVolume.setColor(0, col);
+		_textMusicVolume.setLineColor(0, col);
+		_textMasterVolume.setLineColor(0, col);
+		_textParrotVolume.setLineColor(0, col);
+		_textSpeechVolume.setLineColor(0, col);
 	}
 
 	return false;

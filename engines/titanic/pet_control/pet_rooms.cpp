@@ -47,7 +47,7 @@ bool CPetRooms::reset() {
 
 		uint col = getColor(0);
 		_text.setColor(col);
-		_text.setColor(0, col);
+		_text.setLineColor(0, col);
 	}
 
 	return true;

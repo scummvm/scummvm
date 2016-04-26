@@ -84,9 +84,9 @@ int STFont::getTextBounds(const CString &str, int maxWidth, Point *sizeOut) cons
 	// Loop through the characters of the string
 	if (!str.empty()) {
 		for (const char *strP = str.c_str(); *strP; ++strP) {
-			if (*strP == 26) {
+			if (*strP == TEXTCMD_26) {
 				strP += 3;
-			} else if (*strP == 27) {
+			} else if (*strP == TEXTCMD_SET_COLOR) {
 				strP += 4;
 			} else {
 				if (*strP == ' ') {
@@ -116,7 +116,7 @@ int STFont::stringWidth(const CString &text) const {
 		if (c == 26) {
 			// Skip over command parameter bytes
 			srcP += 3;
-		} else if (c == 27) {
+		} else if (c == TEXTCMD_SET_COLOR) {
 			// Skip over command parameter bytes
 			srcP += 4;
 		} else if (c != '\n') {
@@ -211,9 +211,9 @@ void STFont::checkLineWrap(Point &textSize, int maxWidth, const char *&str) cons
 		if (*srcPtr == ' ' && flag)
 			break;
 
-		if (*srcPtr == 26)
+		if (*srcPtr == TEXTCMD_26)
 			srcPtr += 3;
-		else if (*srcPtr == 27)
+		else if (*srcPtr == TEXTCMD_SET_COLOR)
 			srcPtr += 4;
 		else
 			totalWidth += _chars[*srcPtr]._width;

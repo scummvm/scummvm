@@ -48,7 +48,7 @@ void CPetText::freeArrays() {
 void CPetText::setup() {
 	for (int idx = 0; idx < (int)_array.size(); ++idx) {
 		_array[idx]._string1.clear();
-		setArrayStr2(idx, _textR, _textG, _textB);
+		setLineColor(idx, _textR, _textG, _textB);
 		_array[idx]._string3.clear();
 	}
 
@@ -56,22 +56,26 @@ void CPetText::setup() {
 	_stringsMerged = false;
 }
 
-void CPetText::setArrayStr2(uint idx, int val1, int val2, int val3) {
-	char buffer[6];
-	if (!val1)
-		val1 = 1;
-	if (!val2)
-		val2 = 1;
-	if (!val3)
-		val3 = 1;
+void CPetText::setLineColor(uint lineNum, uint col) {
+	setLineColor(lineNum, col & 0xff, (col >> 16) & 0xff, (col >> 8) & 0xff);
+}
 
-	buffer[0] = 27;
-	buffer[1] = val1;
-	buffer[2] = val2;
-	buffer[3] = val3;
-	buffer[4] = 27;
+void CPetText::setLineColor(uint lineNum, byte r, byte g, byte b) {
+	char buffer[6];
+	if (!r)
+		r = 1;
+	if (!g)
+		g = 1;
+	if (!b)
+		b = 1;
+
+	buffer[0] = TEXTCMD_SET_COLOR;
+	buffer[1] = r;
+	buffer[2] = g;
+	buffer[3] = b;
+	buffer[4] = TEXTCMD_SET_COLOR;
 	buffer[5] = '\0';
-	_array[idx]._string2 = buffer;
+	_array[lineNum]._rgb = buffer;
 }
 
 void CPetText::load(SimpleFile *file, int param) {
@@ -99,7 +103,7 @@ void CPetText::load(SimpleFile *file, int param) {
 		assert(_array.size() >= count);
 		for (uint idx = 0; idx < count; ++idx) {
 			_array[idx]._string1 = file->readString();
-			_array[idx]._string2 = file->readString();
+			_array[idx]._rgb = file->readString();
 			_array[idx]._string3 = file->readString();
 		}	
 	}
@@ -147,7 +151,7 @@ void CPetText::mergeStrings() {
 		_lines.clear();
 
 		for (int idx = 0; idx < _lineCount; ++idx) {
-			CString line = _array[idx]._string2 + _array[idx]._string3 +
+			CString line = _array[idx]._rgb + _array[idx]._string3 +
 				_array[idx]._string1 + "\n";
 			_lines += line;
 
@@ -186,10 +190,6 @@ void CPetText::changeText(const CString &str) {
 	
 	updateStr3(_lineCount);
 	_stringsMerged = false;
-}
-
-void CPetText::setColor(int val1, uint col) {
-	warning("CPetText::setColor");
 }
 
 void CPetText::setColor(uint col) {

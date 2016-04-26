@@ -31,7 +31,7 @@ namespace Titanic {
 class CPetText {
 	struct ArrayEntry {
 		CString _string1;
-		CString _string2;
+		CString _rgb;
 		CString _string3;
 	};
 private:
@@ -63,8 +63,6 @@ private:
 	void setupArrays(int count);
 
 	void freeArrays();
-
-	void setArrayStr2(uint idx, int val1, int val2, int val3);
 
 	/**
 	 * Merges the strings in the strings array
@@ -120,12 +118,17 @@ public:
 	/**
 	 * Set text color
 	 */
-	void setColor(int val1, uint col);
+	void setColor(uint col);
 
 	/**
-	 * Set text color
+	 * Set the color for a line
 	 */
-	void setColor(uint col);
+	void setLineColor(uint lineNum, byte r, byte g, byte b);
+
+	/**
+	 * Set the color for a line
+	 */
+	void setLineColor(uint lineNum, uint col);
 
 	/**
 	 * Sets the maximum number of characters per line

@@ -30,6 +30,8 @@
 
 namespace Titanic {
 
+enum TextCommand { TEXTCMD_26 = 26, TEXTCMD_SET_COLOR = 27 };
+
 class CVideoSurface;
 
 class STFont {
