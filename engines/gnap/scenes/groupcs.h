@@ -20,15 +20,87 @@
  *
  */
 
-#ifndef GNAP_SCENE54_H
-#define GNAP_SCENE54_H
+#ifndef GNAP_GROUPCS_H
+#define GNAP_GROUPCS_H
 
 #include "gnap/debugger.h"
-#include "gnap/scenes/scenecore.h"
 
 namespace Gnap {
 
 class GnapEngine;
+class CutScene;
+
+class Scene16: public CutScene {
+public:
+	Scene16(GnapEngine *vm);
+	~Scene16() {}
+
+	virtual int init();
+};
+
+class Scene471: public CutScene {
+public:
+	Scene471(GnapEngine *vm);
+	~Scene471() {}
+
+	virtual int init();
+};
+
+class Scene472: public CutScene {
+public:
+	Scene472(GnapEngine *vm);
+	~Scene472() {}
+
+	virtual int init();
+};
+
+class Scene473: public CutScene {
+public:
+	Scene473(GnapEngine *vm);
+	~Scene473() {}
+
+	virtual int init();
+};
+
+class Scene474: public CutScene {
+public:
+	Scene474(GnapEngine *vm);
+	~Scene474() {}
+
+	virtual int init();
+};
+
+class Scene475: public CutScene {
+public:
+	Scene475(GnapEngine *vm);
+	~Scene475() {}
+
+	virtual int init();
+};
+
+class Scene476: public CutScene {
+public:
+	Scene476(GnapEngine *vm);
+	~Scene476() {}
+
+	virtual int init();
+};
+
+class Scene477: public CutScene {
+public:
+	Scene477(GnapEngine *vm);
+	~Scene477() {}
+
+	virtual int init();
+};
+
+class Scene48: public CutScene {
+public:
+	Scene48(GnapEngine *vm);
+	~Scene48() {}
+
+	virtual int init();
+};
 
 class Scene541: public CutScene {
 public:
@@ -46,4 +118,5 @@ public:
 	virtual int init();
 };
 } // End of namespace Gnap
-#endif // GNAP_SCENE54_H
+
+#endif // GNAP_GROUPCS_H

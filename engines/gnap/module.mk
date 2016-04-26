@@ -10,6 +10,7 @@ MODULE_OBJS := \
 	menu.o \
 	resource.o \
 	sound.o \
+	scenes/groupcs.o \
 	scenes/scene00.o \
 	scenes/scene01.o \
 	scenes/scene02.o \
@@ -26,7 +27,6 @@ MODULE_OBJS := \
 	scenes/scene13.o \
 	scenes/scene14.o \
 	scenes/scene15.o \
-	scenes/scene16.o \
 	scenes/scene17.o \
 	scenes/scene18.o \
 	scenes/scene19.o \
@@ -53,14 +53,11 @@ MODULE_OBJS := \
 	scenes/scene44.o \
 	scenes/scene45.o \
 	scenes/scene46.o \
-	scenes/scene47.o \
-	scenes/scene48.o \
 	scenes/scene49.o \
 	scenes/scene50.o \
 	scenes/scene51.o \
 	scenes/scene52.o \
 	scenes/scene53.o \
-	scenes/scene54.o \
 	scenes/scenecore.o
 
 # This module can be built as a plugin

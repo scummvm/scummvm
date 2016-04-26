@@ -25,6 +25,8 @@
 #include "gnap/resource.h"
 #include "gnap/scenes/scenecore.h"
 
+#include "gnap/scenes/groupcs.h"
+
 #include "gnap/scenes/scene00.h"
 #include "gnap/scenes/scene01.h"
 #include "gnap/scenes/scene02.h"
@@ -41,7 +43,6 @@
 #include "gnap/scenes/scene13.h"
 #include "gnap/scenes/scene14.h"
 #include "gnap/scenes/scene15.h"
-#include "gnap/scenes/scene16.h"
 #include "gnap/scenes/scene17.h"
 #include "gnap/scenes/scene18.h"
 #include "gnap/scenes/scene19.h"
@@ -68,14 +69,11 @@
 #include "gnap/scenes/scene44.h"
 #include "gnap/scenes/scene45.h"
 #include "gnap/scenes/scene46.h"
-#include "gnap/scenes/scene47.h"
-#include "gnap/scenes/scene48.h"
 #include "gnap/scenes/scene49.h"
 #include "gnap/scenes/scene50.h"
 #include "gnap/scenes/scene51.h"
 #include "gnap/scenes/scene52.h"
 #include "gnap/scenes/scene53.h"
-#include "gnap/scenes/scene54.h"
 
 namespace Gnap {
 
