@@ -104,8 +104,10 @@ struct MenuData {
 	{ 0, NULL,			0, 0, false }
 };
 
-Menu::Menu(int id, Graphics::ManagedSurface *screen, Gui *gui) : BaseMacWindow(id), _screen(screen), _gui(gui) {
+Menu::Menu(int id, const Common::Rect &bounds, Gui *gui) : BaseMacWindow(id), _gui(gui) {
 	_font = getMenuFont();
+
+	_screen.create(bounds.width(), bounds.height(), Graphics::PixelFormat::createFormatCLUT8());
 
 	MenuItem *about = new MenuItem(_gui->_builtInFonts ? "\xa9" : "\xf0"); // (c) Symbol as the most resembling apple
 	_items.push_back(about);
@@ -157,15 +159,15 @@ Menu::Menu(int id, Graphics::ManagedSurface *screen, Gui *gui) : BaseMacWindow(i
 
 	_bbox.left = 0;
 	_bbox.top = 0;
-	_bbox.right = _screen->w - 1;
+	_bbox.right = _screen.w - 1;
 	_bbox.bottom = kMenuHeight - 1;
 
 	_menuActivated = false;
 	_activeItem = -1;
 	_activeSubItem = -1;
 
-	_screenCopy.create(_screen->w, _screen->h, Graphics::PixelFormat::createFormatCLUT8());
-	_tempSurface.create(_screen->w, _font->getFontHeight(), Graphics::PixelFormat::createFormatCLUT8());
+	_screenCopy.create(_screen.w, _screen.h, Graphics::PixelFormat::createFormatCLUT8());
+	_tempSurface.create(_screen.w, _font->getFontHeight(), Graphics::PixelFormat::createFormatCLUT8());
 }
 
 Menu::~Menu() {
@@ -343,11 +345,11 @@ bool Menu::draw(Graphics::ManagedSurface *g, bool forceRedraw) {
 
 	_contentIsDirty = true;
 
-	Design::drawFilledRoundRect(g, r, kDesktopArc, kColorWhite, _gui->_patterns, kPatternSolid);
+	Design::drawFilledRoundRect(&_screen, r, kDesktopArc, kColorWhite, _gui->_patterns, kPatternSolid);
 	r.top = 7;
-	Design::drawFilledRect(g, r, kColorWhite, _gui->_patterns, kPatternSolid);
+	Design::drawFilledRect(&_screen, r, kColorWhite, _gui->_patterns, kPatternSolid);
 	r.top = kMenuHeight - 1;
-	Design::drawFilledRect(g, r, kColorBlack, _gui->_patterns, kPatternSolid);
+	Design::drawFilledRect(&_screen, r, kColorBlack, _gui->_patterns, kPatternSolid);
 
 	for (uint i = 0; i < _items.size(); i++) {
 		int color = kColorBlack;
@@ -359,31 +361,31 @@ bool Menu::draw(Graphics::ManagedSurface *g, bool forceRedraw) {
 			hbox.left -= 1;
 			hbox.right += 2;
 
-			Design::drawFilledRect(g, hbox, kColorBlack, _gui->_patterns, kPatternSolid);
+			Design::drawFilledRect(&_screen, hbox, kColorBlack, _gui->_patterns, kPatternSolid);
 			color = kColorWhite;
 
 			if (!it->subitems.empty())
-				renderSubmenu(g, it);
+				renderSubmenu(it);
 		}
 
-		_font->drawString(g, it->name, it->bbox.left + kMenuLeftMargin, it->bbox.top + (_gui->_builtInFonts ? 2 : 1), it->bbox.width(), color);
+		_font->drawString(&_screen, it->name, it->bbox.left + kMenuLeftMargin, it->bbox.top + (_gui->_builtInFonts ? 2 : 1), it->bbox.width(), color);
 	}
 
-	g_system->copyRectToScreen(g->getPixels(), g->pitch, 0, 0, g->w, kMenuHeight);
+	g_system->copyRectToScreen(_screen.getPixels(), _screen.pitch, 0, 0, _screen.w, kMenuHeight);
 
 	return true;
 }
 
-void Menu::renderSubmenu(Graphics::ManagedSurface *g, MenuItem *menu) {
+void Menu::renderSubmenu(MenuItem *menu) {
 	Common::Rect *r = &menu->subbbox;
 
 	if (r->width() == 0 || r->height() == 0)
 		return;
 
-	Design::drawFilledRect(g, *r, kColorWhite, _gui->_patterns, kPatternSolid);
-	Design::drawRect(g, *r, 1, kColorBlack, _gui->_patterns, kPatternSolid);
-	Design::drawVLine(g, r->right + 1, r->top + 3, r->bottom + 1, 1, kColorBlack, _gui->_patterns, kPatternSolid);
-	Design::drawHLine(g, r->left + 3, r->right + 1, r->bottom + 1, 1, kColorBlack, _gui->_patterns, kPatternSolid);
+	Design::drawFilledRect(&_screen, *r, kColorWhite, _gui->_patterns, kPatternSolid);
+	Design::drawRect(&_screen, *r, 1, kColorBlack, _gui->_patterns, kPatternSolid);
+	Design::drawVLine(&_screen, r->right + 1, r->top + 3, r->bottom + 1, 1, kColorBlack, _gui->_patterns, kPatternSolid);
+	Design::drawHLine(&_screen, r->left + 3, r->right + 1, r->bottom + 1, 1, kColorBlack, _gui->_patterns, kPatternSolid);
 
 	int x = r->left + kMenuDropdownPadding;
 	int y = r->top + 1;
@@ -397,11 +399,11 @@ void Menu::renderSubmenu(Graphics::ManagedSurface *g, MenuItem *menu) {
 			color = kColorWhite;
 			Common::Rect trect(r->left, y - (_gui->_builtInFonts ? 1 : 0), r->right, y + _font->getFontHeight());
 
-			Design::drawFilledRect(g, trect, kColorBlack, _gui->_patterns, kPatternSolid);
+			Design::drawFilledRect(&_screen, trect, kColorBlack, _gui->_patterns, kPatternSolid);
 		}
 
 		if (!text.empty()) {
-			Graphics::ManagedSurface *s = g;
+			Graphics::ManagedSurface *s = &_screen;
 			int tx = x, ty = y;
 
 			if (!menu->subitems[i]->enabled) {
@@ -423,7 +425,7 @@ void Menu::renderSubmenu(Graphics::ManagedSurface *g, MenuItem *menu) {
 				// fake it here
 				for (int ii = 0; ii < _tempSurface.h; ii++) {
 					const byte *src = (const byte *)_tempSurface.getBasePtr(0, ii);
-					byte *dst = (byte *)g->getBasePtr(x, y+ii);
+					byte *dst = (byte *)_screen.getBasePtr(x, y+ii);
 					byte pat = _gui->_patterns[kPatternCheckers2 - 1][ii % 8];
 					for (int j = 0; j < r->width(); j++) {
 						if (*src != kColorGreen && (pat & (1 << (7 - (x + j) % 8))))
@@ -434,13 +436,13 @@ void Menu::renderSubmenu(Graphics::ManagedSurface *g, MenuItem *menu) {
 				}
 			}
 		} else { // Delimiter
-			Design::drawHLine(g, r->left + 1, r->right - 1, y + kMenuDropdownItemHeight / 2, 1, kColorBlack, _gui->_patterns, kPatternStripes);
+			Design::drawHLine(&_screen, r->left + 1, r->right - 1, y + kMenuDropdownItemHeight / 2, 1, kColorBlack, _gui->_patterns, kPatternStripes);
 		}
 
 		y += kMenuDropdownItemHeight;
 	}
 
-	g_system->copyRectToScreen(g->getBasePtr(r->left, r->top), g->pitch, r->left, r->top, r->width() + 3, r->height() + 3);
+	g_system->copyRectToScreen(_screen.getBasePtr(r->left, r->top), _screen.pitch, r->left, r->top, r->width() + 3, r->height() + 3);
 }
 
 bool Menu::processEvent(Common::Event &event) {
@@ -486,8 +488,8 @@ bool Menu::mouseClick(int x, int y) {
 					r.right += 3;
 					r.bottom += 3;
 
-					_screen->copyRectToSurface(_screenCopy, r.left, r.top, r);
-					g_system->copyRectToScreen(_screen->getBasePtr(r.left, r.top), _screen->pitch, r.left, r.top, r.width() + 1, r.height() + 1);
+					_screen.copyRectToSurface(_screenCopy, r.left, r.top, r);
+					g_system->copyRectToScreen(_screen.getBasePtr(r.left, r.top), _screen.pitch, r.left, r.top, r.width() + 1, r.height() + 1);
 				}
 
 				_activeItem = i;
@@ -503,12 +505,12 @@ bool Menu::mouseClick(int x, int y) {
 		if (numSubItem != _activeSubItem) {
 			_activeSubItem = numSubItem;
 
-			renderSubmenu(_screen, _items[_activeItem]);
+			renderSubmenu(_items[_activeItem]);
 		}
 	} else if (_menuActivated && _activeItem != -1) {
 		_activeSubItem = -1;
 
-		renderSubmenu(_screen, _items[_activeItem]);
+		renderSubmenu(_items[_activeItem]);
 	}
 
 	return false;

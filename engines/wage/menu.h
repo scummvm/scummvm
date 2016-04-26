@@ -92,7 +92,7 @@ enum {
 
 class Menu : public BaseMacWindow {
 public:
-	Menu(int id, Graphics::ManagedSurface *screen, Gui *gui);
+	Menu(int id, const Common::Rect &bounds, Gui *gui);
 	~Menu();
 
 	bool draw(Graphics::ManagedSurface *g, bool forceRedraw = false);
@@ -110,7 +110,7 @@ public:
 
 private:
 	Gui *_gui;
-	Graphics::ManagedSurface *_screen;
+	Graphics::ManagedSurface _screen;
 	Graphics::ManagedSurface _screenCopy;
 	Graphics::ManagedSurface _tempSurface;
 
@@ -119,7 +119,7 @@ private:
 	const char *getAcceleratorString(MenuSubItem *item, const char *prefix);
 	int calculateMenuWidth(MenuItem *menu);
 	void calcMenuBounds(MenuItem *menu);
-	void renderSubmenu(Graphics::ManagedSurface *g, MenuItem *menu);
+	void renderSubmenu(MenuItem *menu);
 	void createCommandsMenu(MenuItem *menu);
 	void createWeaponsMenu(MenuItem *menu);
 	void executeCommand(MenuSubItem *subitem);
