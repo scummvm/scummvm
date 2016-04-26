@@ -42,8 +42,9 @@ public:
 	virtual void updateAnimationsCb() {}
 
 private:
-	int _s01_pigsIdCtr, _s01_smokeIdCtr;
-	Graphics::Surface *_s01_spaceshipSurface;
+	int _pigsIdCtr;
+	int _smokeIdCtr;
+	Graphics::Surface *_spaceshipSurface;
 };
 
 } // End of namespace Gnap
