@@ -100,7 +100,6 @@ public:
 
 	void regenCommandsMenu();
 	void regenWeaponsMenu();
-	void processMenuShortCut(byte flags, uint16 ascii);
 	void enableCommand(int menunum, int action, bool state);
 	void disableAllMenus();
 
@@ -124,9 +123,12 @@ private:
 	void createWeaponsMenu(MenuItem *menu);
 	void executeCommand(MenuSubItem *subitem);
 
+	bool keyEvent(Common::Event &event);
 	bool mouseClick(int x, int y);
 	bool mouseRelease(int x, int y);
 	bool mouseMove(int x, int y);
+
+	bool processMenuShortCut(byte flags, uint16 ascii);
 
 	Common::Array<MenuItem *> _items;
 	MenuItem *_weapons;

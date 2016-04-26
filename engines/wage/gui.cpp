@@ -470,10 +470,6 @@ void Gui::regenWeaponsMenu() {
 	_menu->regenWeaponsMenu();
 }
 
-void Gui::processMenuShortCut(byte flags, uint16 ascii) {
-	_menu->processMenuShortCut(flags, ascii);
-}
-
 void Gui::pushArrowCursor() {
 	CursorMan.pushCursor(macCursorArrow, 11, 16, 1, 1, 3);
 }

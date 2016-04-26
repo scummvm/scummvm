@@ -105,9 +105,6 @@ struct MenuData {
 };
 
 Menu::Menu(int id, Gui *gui) : BaseMacWindow(id), _gui(gui) {
-	assert(_gui->_engine);
-	assert(_gui->_engine->_world);
-
 	_font = getMenuFont();
 
 	MenuItem *about = new MenuItem(_gui->_builtInFonts ? "\xa9" : "\xf0"); // (c) Symbol as the most resembling apple
@@ -447,12 +444,29 @@ void Menu::renderSubmenu(MenuItem *menu) {
 }
 
 bool Menu::processEvent(Common::Event &event) {
-	if (event.type == Common::EVENT_LBUTTONDOWN)
+	switch (event.type) {
+	case Common::EVENT_KEYDOWN:
+		return keyEvent(event);
+	case Common::EVENT_LBUTTONDOWN:
 		return mouseClick(event.mouse.x, event.mouse.y);
-	else if (event.type == Common::EVENT_LBUTTONUP)
+	case Common::EVENT_LBUTTONUP:
 		return mouseRelease(event.mouse.x, event.mouse.y);
-	else if (event.type == Common::EVENT_MOUSEMOVE)
+	case Common::EVENT_MOUSEMOVE:
 		return mouseMove(event.mouse.x, event.mouse.y);
+	default:
+		return false;
+	}
+}
+
+bool Menu::keyEvent(Common::Event &event) {
+	if (event.type != Common::EVENT_KEYDOWN)
+		return false;
+
+	if (event.kbd.flags & (Common::KBD_ALT | Common::KBD_CTRL | Common::KBD_META)) {
+		if (event.kbd.ascii >= 0x20 && event.kbd.ascii <= 0x7f) {
+			return processMenuShortCut(event.kbd.flags, event.kbd.ascii);
+		}
+	}
 
 	return false;
 }
@@ -563,7 +577,7 @@ void Menu::executeCommand(MenuSubItem *subitem) {
 	}
 }
 
-void Menu::processMenuShortCut(byte flags, uint16 ascii) {
+bool Menu::processMenuShortCut(byte flags, uint16 ascii) {
 	ascii = tolower(ascii);
 
 	if (flags & (Common::KBD_CTRL | Common::KBD_META)) {
@@ -571,9 +585,11 @@ void Menu::processMenuShortCut(byte flags, uint16 ascii) {
 			for (uint j = 0; j < _items[i]->subitems.size(); j++)
 				if (_items[i]->subitems[j]->enabled && tolower(_items[i]->subitems[j]->shortcut) == ascii) {
 					executeCommand(_items[i]->subitems[j]);
-					break;
+					return true;
 				}
 	}
+
+	return false;
 }
 
 void Menu::enableCommand(int menunum, int action, bool state) {

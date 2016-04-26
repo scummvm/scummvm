@@ -96,7 +96,6 @@ public:
 	const Graphics::Font *getFont(const char *name, Graphics::FontManager::FontUsage fallback);
 	void regenCommandsMenu();
 	void regenWeaponsMenu();
-	void processMenuShortCut(byte flags, uint16 ascii);
 	void pushArrowCursor();
 	void popCursor();
 
