@@ -21,9 +21,8 @@ DMEngine::DMEngine(OSystem *syst) : Engine(syst), _console(nullptr) {
 	// Do these from run
 
 	//Specify all default directories
-	const Common::FSNode gameDataDir(ConfMan.get("example"));
-	SearchMan.addSubDirectoryMatching(gameDataDir, "example2");
-
+	//const Common::FSNode gameDataDir(ConfMan.get("example"));
+	//SearchMan.addSubDirectoryMatching(gameDataDir, "example2");
 	DebugMan.addDebugChannel(kDMDebugExample, "example", "example desc");
 
 	// regiser random source
@@ -54,6 +53,9 @@ Common::Error DMEngine::run() {
 
 	// Run main loop
 	debug("DMEngine:: start main loop");
+
+	while (true)
+		debug("Run!");
 
 	return Common::kNoError;
 }
