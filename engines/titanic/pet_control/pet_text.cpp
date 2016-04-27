@@ -30,7 +30,7 @@ CPetText::CPetText(uint count) :
 		_backR(0xff), _backG(0xff), _backB(0xff), 
 		_textR(0), _textG(0), _textB(200),
 		_fontNumber2(0), _field64(0), _field68(0), _field6C(0),
-		_hasBorder(true), _field74(0), _field78(0), _field7C(0) {
+		_hasBorder(true), _field74(0), _textCursor(nullptr), _field7C(0) {
 	setupArrays(count);
 }
 
@@ -140,9 +140,8 @@ void CPetText::draw(CScreenManager *screenManager) {
 	tempRect.grow(-2);
 	screenManager->setFontNumber(_fontNumber2);
 
-//	int var14 = 0;
-//	screenManager->writeLines(0, &var14, _field74, )
-	warning("TODO: CPetText_Draw");
+	screenManager->writeString(0, tempRect, _field74, _lines, _textCursor);
+
 	screenManager->setFontNumber(_fontNumber1);
 }
 

@@ -106,7 +106,17 @@ public:
 		const Rect *srcRect = nullptr) = 0;
 
 	virtual void proc12() = 0;
-	virtual void proc13() = 0;
+	
+	/**
+	 * Write a string
+	 * @param surfaceNum	Destination surface
+	 * @param destRect		Bounds within dest surface
+	 * @param str			Line or lines to write
+	 * @param textCursor	Optional text cursor pointer
+	 */
+	virtual int writeString(int surfaceNum, const Rect &destRect, int val1,
+		const CString &str, CTextCursor *textCursor) = 0;
+	
 	virtual void proc14() = 0;
 
 	/**
@@ -226,7 +236,17 @@ public:
 		const Rect *srcRect = nullptr);
 
 	virtual void proc12();
-	virtual void proc13();
+
+	/**
+	 * Write a string
+	 * @param surfaceNum	Destination surface
+	 * @param destRect		Bounds within dest surface
+	 * @param str			Line or lines to write
+	 * @param textCursor	Optional text cursor pointer
+	 */
+	virtual int writeString(int surfaceNum, const Rect &destRect,
+		int val1, const CString &str, CTextCursor *textCursor);
+
 	virtual void proc14();
 
 	/**

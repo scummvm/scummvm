@@ -201,7 +201,16 @@ void OSScreenManager::blitFrom(SurfaceNum surfaceNum, CVideoSurface *src,
 }
 
 void OSScreenManager::proc12() {}
-void OSScreenManager::proc13() {}
+
+int OSScreenManager::writeString(int surfaceNum, const Rect &destRect, 
+		int val1, const CString &str, CTextCursor *textCursor) {
+	if (_backSurfaces.empty())
+		return -1;
+
+	return _fonts[_fontNumber].writeString(_backSurfaces[surfaceNum]._surface,
+		destRect, _backSurfaces[surfaceNum]._bounds, val1, str, textCursor);
+}
+
 void OSScreenManager::proc14() {}
 
 void OSScreenManager::setFontColor(byte r, byte g, byte b) {
@@ -273,7 +282,7 @@ void OSScreenManager::loadCursors() {
 	showCursor();
 
 	if (!_textCursor) {
-		_textCursor = new CTextCursor();
+		_textCursor = new CTextCursor(this);
 	}
 }
 

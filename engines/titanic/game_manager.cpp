@@ -142,7 +142,7 @@ void CGameManager::update() {
 		CScreenManager *screenManager = CScreenManager::_screenManagerPtr;
 		CTextCursor *textCursor = screenManager->_textCursor;
 		if (textCursor && textCursor->_active)
-			_bounds.extend(textCursor->getBounds());
+			_bounds.extend(textCursor->getCursorBounds());
 		
 		// Set the surface bounds
 		screenManager->setSurfaceBounds(SURFACE_BACKBUFFER, _bounds);

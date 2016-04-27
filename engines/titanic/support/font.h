@@ -27,6 +27,7 @@
 #include "common/array.h"
 #include "titanic/support/rect.h"
 #include "titanic/support/string.h"
+#include "titanic/support/text_cursor.h"
 
 namespace Titanic {
 
@@ -51,7 +52,7 @@ private:
 	 * Write a character
 	 */
 	int writeChar(CVideoSurface *surface, unsigned char c, 
-		const Common::Point &pt, Rect *destRect, Rect *srcRect);
+		const Common::Point &pt, const Rect &destRect, const Rect *srcRect);
 
 	/**
 	 * Extends a passed text area by the space required for
@@ -87,7 +88,8 @@ public:
 	/**
 	 * Write a string to the specified surface
 	 */
-	int writeString(CVideoSurface *surface, const Point &pt, const CString &str);
+	int writeString(CVideoSurface *surface, const Rect &rect1, const Rect &destRect,
+		int val1, const CString &str, CTextCursor *textCursor);
 
 	/**
 	 * Get the text area a string will fit into

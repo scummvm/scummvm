@@ -25,6 +25,7 @@
 
 #include "titanic/support/simple_file.h"
 #include "titanic/support/screen_manager.h"
+#include "titanic/support/text_cursor.h"
 
 namespace Titanic {
 
@@ -57,7 +58,7 @@ private:
 	int _field6C;
 	bool _hasBorder;
 	int _field74;
-	int _field78;
+	CTextCursor *_textCursor;
 	int _field7C;
 private:
 	void setupArrays(int count);

@@ -127,11 +127,60 @@ int STFont::stringWidth(const CString &text) const {
 	return total;
 }
 
-int STFont::writeString(CVideoSurface *surface, const Point &pt, const CString &str) {
-	return 0;
+int STFont::writeString(CVideoSurface *surface, const Rect &rect1, const Rect &destRect,
+		int val1, const CString &str, CTextCursor *textCursor) {
+	if (!_fontHeight || !_dataPtr)
+		return -1;
+
+	Point textSize;
+	Rect destBounds = destRect;
+	destBounds.constrain(rect1);
+	if (destBounds.isEmpty())
+		return -1;
+
+	const char *endP = nullptr;
+	const char *strEndP = str.c_str() + str.size() - 1;
+	for (const char *srcP = str.c_str(); *srcP; ++srcP) {
+		if (*srcP == TEXTCMD_26) {
+			srcP += 3;
+		} else if (*srcP == TEXTCMD_SET_COLOR) {
+			// Change the color used for characters
+			byte r = *++srcP;
+			byte g = *++srcP;
+			byte b = *++srcP;
+			++srcP;
+			setColor(r, g, b);
+		} else {
+			if (*srcP == ' ') {
+				// Check fo rline wrapping
+				checkLineWrap(textSize, rect1.width(), srcP);
+				if (!*srcP)
+					return endP - str.c_str();
+			}
+
+			if (*srcP != '\n') {
+				int result = writeChar(surface, *srcP, textSize, rect1, &destBounds);
+				if (result == -2)
+					return endP - str.c_str();
+				else if (!result)
+					endP = srcP;
+			}
+
+			if (srcP < strEndP)
+				extendBounds(textSize, *srcP, rect1.width());
+		}
+	}
+
+	if (textCursor && textCursor->get54() == -2) {
+		Point cursorPos(rect1.left + textSize.x, rect1.top + textSize.y);
+		textCursor->setPos(cursorPos);
+	}
+
+	return endP - str.c_str();
 }
 
-int STFont::writeChar(CVideoSurface *surface, unsigned char c, const Point &pt, Rect *destRect, Rect *srcRect) {
+int STFont::writeChar(CVideoSurface *surface, unsigned char c, const Point &pt,
+	const Rect &destRect, const Rect *srcRect) {
 	if (c == 233)
 		c = '$';
 
@@ -140,10 +189,10 @@ int STFont::writeChar(CVideoSurface *surface, unsigned char c, const Point &pt, 
 	tempRect.right = _chars[c]._offset + _chars[c]._width;
 	tempRect.top = 0;
 	tempRect.bottom = _fontHeight;
-	Point destPos(pt.x + destRect->left, pt.y + destRect->top);
+	Point destPos(pt.x + destRect.left, pt.y + destRect.top);
 
 	if (srcRect->isEmpty())
-		srcRect = destRect;
+		srcRect = &destRect;
 	if (destPos.y > srcRect->bottom)
 		return -2;
 

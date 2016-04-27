@@ -28,13 +28,63 @@
 
 namespace Titanic {
 
+class CScreenManager;
+class CVideoSurface;
+
 class CTextCursor {
+private:
+	CScreenManager *_screenManager;
+	Point _pos;
+	Rect _bounds;
+	uint _priorTicks;
+	int _field24;
+	Point _size;
+	int _field38;
+	int _field3C;
+	int _field44;
+	int _field48;
+	int _field4C;
+	CVideoSurface *_surface;
+	int _field54;
 public:
 	bool _active;
 public:
-	CTextCursor();
+	CTextCursor(CScreenManager *screenManager);
+	~CTextCursor();
 
-	Rect getBounds();
+	/**
+	 * Sets the position of the cursor
+	 */
+	void setPos(const Point &pt) { _pos = pt; }
+
+	/**
+	 * Sets the size of the cursor
+	 */
+	void setSize(const Point &size) { _size = size; }
+
+	/**
+	 * Returns the bounds for the cursor
+	 */
+	Rect getCursorBounds() const {
+		return Rect(_pos.x, _pos.y, _pos.x + _size.x, _pos.y + _size.y);
+	}
+
+	/**
+	 * Set bounds
+	 */
+	void setBounds(const Rect &r) { _bounds = r; }
+
+	/**
+	 * Clear the bounds
+	 */
+	void clearBounds() { _bounds.clear(); }
+
+	/**
+	 * Set the prior ticks
+	 */
+	void setTicks(uint ticks) { _priorTicks = ticks; }
+
+	int get54() const { return _field54; }
 };
 
 } // End of namespace Titanic

@@ -22,15 +22,19 @@
 
 #include "common/textconsole.h"
 #include "titanic/support/text_cursor.h"
+#include "titanic/support/screen_manager.h"
 
 namespace Titanic {
 
-CTextCursor::CTextCursor() : _active(false) {
+CTextCursor::CTextCursor(CScreenManager *screenManager) : 
+		_screenManager(screenManager), _priorTicks(300), _active(false),
+		_field24(0), _size(2, 10), _field38(0), _field3C(0),
+		_field44(0), _field48(0), _field4C(0), _field54(-1) {
+	screenManager->createSurface(10, 10);
 }
 
-Rect CTextCursor::getBounds() {
-	warning("CTextCursor::getBounds");
-	return Rect();
+CTextCursor::~CTextCursor() {
+	delete _surface;
 }
 
 } // End of namespace Titanic
