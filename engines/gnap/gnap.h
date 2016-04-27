@@ -579,7 +579,7 @@ public:
 	void playSequences(int fullScreenSpriteId, int sequenceId1, int sequenceId2, int sequenceId3);
 
 	// Shared by scenes 17 & 18
-	int _s18_garbageCanPos;
+	int _s18GarbageCanPos;
 
 	// Scene 4x
 	void toyUfoSetStatus(int flagNum);

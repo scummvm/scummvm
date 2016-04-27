@@ -1922,7 +1922,7 @@ void GnapEngine::initPlatypusPos(int gridX, int gridY, Facing facing) {
 
 void GnapEngine::initGlobalSceneVars() {
 	// Shared by scenes 17 && 18
-	_s18_garbageCanPos = 8;
+	_s18GarbageCanPos = 8;
 
 	// Toy UFO
 	_toyUfoId = 0;

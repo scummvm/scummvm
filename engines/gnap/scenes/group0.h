@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef GNAP_GROUP01_H
-#define GNAP_GROUP01_H
+#ifndef GNAP_GROUP0_H
+#define GNAP_GROUP0_H
 
 #include "gnap/debugger.h"
 
@@ -180,4 +180,4 @@ public:
 
 } // End of namespace Gnap
 
-#endif // GNAP_GROUP01_H
+#endif // GNAP_GROUP0_H
