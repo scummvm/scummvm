@@ -83,6 +83,7 @@ DatManager::~DatManager() {
 void DatManager::open(int index, const char *filename) {
 	close(index);
 	_datArchives[index] = new DatArchive(filename);
+	warning("Loading %s - %d", filename, index);
 }
 
 void DatManager::close(int index) {

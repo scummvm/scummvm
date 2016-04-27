@@ -40,8 +40,6 @@ public:
 	virtual void run();
 	virtual void updateAnimations();
 	virtual void updateAnimationsCb() {}
-
-private:
 };
 
 } // End of namespace Gnap

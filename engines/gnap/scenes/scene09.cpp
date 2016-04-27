@@ -28,20 +28,20 @@
 namespace Gnap {
 
 enum {
-	kHSPlatypus		= 0,
-	kHSExitKitchen	= 1,
-	kHSExitHouse	= 2,
-	kHSTrash		= 3,
-	kHSDevice		= 4,
-	kHSWalkArea1	= 5,
-	kHSWalkArea2	= 6,
-	kHSWalkArea3	= 7
+	kHS09Platypus		= 0,
+	kHS09ExitKitchen	= 1,
+	kHS09ExitHouse		= 2,
+	kHS09Trash			= 3,
+	kHS09Device			= 4,
+	kHS09WalkArea1		= 5,
+	kHS09WalkArea2		= 6,
+	kHS09WalkArea3		= 7
 };
 
 enum {
-	kASLeaveScene		= 0,
-	kASSearchTrash		= 1,
-	kASSearchTrashDone	= 2
+	kAS09LeaveScene			= 0,
+	kAS09SearchTrash		= 1,
+	kAS09SearchTrashDone	= 2
 };
 
 Scene09::Scene09(GnapEngine *vm) : Scene(vm) {
@@ -52,14 +52,14 @@ int Scene09::init() {
 }
 
 void Scene09::updateHotspots() {
-	_vm->setHotspot(kHSPlatypus, 0, 200, 0, 0, SF_WALKABLE | SF_TALK_CURSOR | SF_GRAB_CURSOR | SF_LOOK_CURSOR);
-	_vm->setHotspot(kHSExitKitchen, 280, 200, 380, 400, SF_EXIT_U_CURSOR);
-	_vm->setHotspot(kHSExitHouse, 790, 200, 799, 450, SF_EXIT_R_CURSOR | SF_WALKABLE);
-	_vm->setHotspot(kHSTrash, 440, 310, 680, 420, SF_PLAT_CURSOR | SF_TALK_CURSOR | SF_GRAB_CURSOR | SF_LOOK_CURSOR);
-	_vm->setHotspot(kHSWalkArea1, 0, 0, 799, 400);
-	_vm->setHotspot(kHSWalkArea2, 0, 0, 630, 450);
-	_vm->setHotspot(kHSWalkArea2, 0, 0, 175, 495);
-	_vm->setDeviceHotspot(kHSDevice, -1, -1, -1, -1);
+	_vm->setHotspot(kHS09Platypus, 0, 200, 0, 0, SF_WALKABLE | SF_TALK_CURSOR | SF_GRAB_CURSOR | SF_LOOK_CURSOR);
+	_vm->setHotspot(kHS09ExitKitchen, 280, 200, 380, 400, SF_EXIT_U_CURSOR);
+	_vm->setHotspot(kHS09ExitHouse, 790, 200, 799, 450, SF_EXIT_R_CURSOR | SF_WALKABLE);
+	_vm->setHotspot(kHS09Trash, 440, 310, 680, 420, SF_PLAT_CURSOR | SF_TALK_CURSOR | SF_GRAB_CURSOR | SF_LOOK_CURSOR);
+	_vm->setHotspot(kHS09WalkArea1, 0, 0, 799, 400);
+	_vm->setHotspot(kHS09WalkArea2, 0, 0, 630, 450);
+	_vm->setHotspot(kHS09WalkArea2, 0, 0, 175, 495);
+	_vm->setDeviceHotspot(kHS09Device, -1, -1, -1, -1);
 	_vm->_hotspotsCount = 8;
 }
 
@@ -97,7 +97,7 @@ void Scene09::run() {
 		_vm->updateGrabCursorSprite(0, 0);
 	
 		switch (_vm->_sceneClickedHotspot) {
-		case kHSDevice:
+		case kHS09Device:
 			if (_vm->_gnapActionStatus < 0) {
 				_vm->runMenu();
 				updateHotspots();
@@ -106,7 +106,7 @@ void Scene09::run() {
 			}
 			break;
 
-		case kHSPlatypus:
+		case kHS09Platypus:
 			switch (_vm->_verbCursor) {
 			case LOOK_CURSOR:
 				_vm->playGnapMoan1(_vm->_platX, _vm->_platY);
@@ -123,25 +123,25 @@ void Scene09::run() {
 			}
 			break;
 
-		case kHSExitKitchen:
+		case kHS09ExitKitchen:
 			_vm->_isLeavingScene = true;
 			_vm->_newSceneNum = 10;
 			_vm->gnapWalkTo(4, 7, 0, 0x107BF, 1);
-			_vm->_gnapActionStatus = kASLeaveScene;
+			_vm->_gnapActionStatus = kAS09LeaveScene;
 			_vm->platypusWalkTo(4, 8, -1, 0x107D2, 1);
 			_vm->_platypusFacing = kDirUnk4;
 			break;
 
-		case kHSExitHouse:
+		case kHS09ExitHouse:
 			_vm->_isLeavingScene = true;
 			_vm->_newSceneNum = 8;
 			_vm->gnapWalkTo(10, -1, 0, 0x107AB, 1);
-			_vm->_gnapActionStatus = kASLeaveScene;
+			_vm->_gnapActionStatus = kAS09LeaveScene;
 			_vm->platypusWalkTo(10, -1, -1, 0x107CD, 1);
 			_vm->_platypusFacing = kDirUnk4;
 			break;
 
-		case kHSTrash:
+		case kHS09Trash:
 			if (_vm->_grabCursorSpriteIndex >= 0) {
 				_vm->playGnapShowCurrItem(9, 6, 8, 0);
 			} else {
@@ -150,7 +150,7 @@ void Scene09::run() {
 					_vm->playGnapScratchingHead(8, 3);
 					break;
 				case GRAB_CURSOR:
-					_vm->_gnapActionStatus = kASSearchTrash;
+					_vm->_gnapActionStatus = kAS09SearchTrash;
 					_vm->gnapWalkTo(9, 6, 0, 0x107BC, 1);
 					break;
 				case TALK_CURSOR:
@@ -161,9 +161,9 @@ void Scene09::run() {
 			}
 			break;
 
-		case kHSWalkArea1:
-		case kHSWalkArea2:
-		case kHSWalkArea3:
+		case kHS09WalkArea1:
+		case kHS09WalkArea2:
+		case kHS09WalkArea3:
 			_vm->gnapWalkTo(-1, -1, -1, -1, 1);
 			break;
 
@@ -208,11 +208,11 @@ void Scene09::updateAnimations() {
 	if (_vm->_gameSys->getAnimationStatus(0) == 2) {
 		_vm->_gameSys->setAnimation(0, 0, 0);
 		switch (_vm->_gnapActionStatus) {
-		case kASLeaveScene:
+		case kAS09LeaveScene:
 			_vm->_sceneDone = true;
 			_vm->_gnapActionStatus = -1;
 			break;
-		case kASSearchTrash:
+		case kAS09SearchTrash:
 			_vm->_gameSys->setAnimation(0x4C, 120, 0);
 			_vm->_gameSys->insertSequence(0x4C, 120, makeRid(_vm->_gnapSequenceDatNum, _vm->_gnapSequenceId), _vm->_gnapId, kSeqSyncWait, 0, 0, 0);
 			_vm->_gameSys->removeSequence(0x4B, 2, true);
@@ -222,9 +222,9 @@ void Scene09::updateAnimations() {
 			_vm->_gnapSequenceDatNum = 0;
 			_vm->_gnapX = 9;
 			_vm->_gnapY = 6;
-			_vm->_gnapActionStatus = kASSearchTrashDone;
+			_vm->_gnapActionStatus = kAS09SearchTrashDone;
 			break;
-		case kASSearchTrashDone:
+		case kAS09SearchTrashDone:
 			_vm->_gameSys->insertSequence(0x4B, 2, 0, 0, kSeqNone, 0, 0, 0);
 			_vm->_timers[2] = 360;
 			_vm->_timers[4] = _vm->getRandom(150) + 100;

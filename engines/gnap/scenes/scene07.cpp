@@ -29,18 +29,18 @@
 namespace Gnap {
 
 enum {
-	kHSPlatypus		= 0,
-	kHSExitHouse	= 1,
-	kHSDice			= 2,
-	kHSDevice		= 3,
-	kHSWalkArea1	= 4,
-	kHSWalkArea2	= 5,
-	kHSWalkArea3	= 6
+	kHS07Platypus	= 0,
+	kHS07ExitHouse	= 1,
+	kHS07Dice		= 2,
+	kHS07Device		= 3,
+	kHS07WalkArea1	= 4,
+	kHS07WalkArea2	= 5,
+	kHS07WalkArea3	= 6
 };
 
 enum {
-	kASWait			= 0,
-	kASLeaveScene	= 1
+	kAS07Wait		= 0,
+	kAS07LeaveScene	= 1
 };
 
 Scene07::Scene07(GnapEngine *vm) : Scene(vm) {
@@ -51,15 +51,15 @@ int Scene07::init() {
 }
 
 void Scene07::updateHotspots() {
-	_vm->setHotspot(kHSPlatypus, 0, 0, 0, 0, SF_WALKABLE | SF_TALK_CURSOR | SF_GRAB_CURSOR | SF_LOOK_CURSOR);
-	_vm->setHotspot(kHSExitHouse, 700, 125, 799, 290, SF_EXIT_NE_CURSOR);
-	_vm->setHotspot(kHSDice, 200, 290, 270, 360, SF_PLAT_CURSOR | SF_TALK_CURSOR | SF_GRAB_CURSOR | SF_LOOK_CURSOR);
-	_vm->setHotspot(kHSWalkArea1, 0, 0, 325, 445);
-	_vm->setHotspot(kHSWalkArea2, 325, 0, 799, 445, _vm->_isLeavingScene ? SF_WALKABLE : SF_NONE);
-	_vm->setHotspot(kHSWalkArea3, 160, 0, 325, 495);
-	_vm->setDeviceHotspot(kHSDevice, -1, -1, -1, -1);
+	_vm->setHotspot(kHS07Platypus, 0, 0, 0, 0, SF_WALKABLE | SF_TALK_CURSOR | SF_GRAB_CURSOR | SF_LOOK_CURSOR);
+	_vm->setHotspot(kHS07ExitHouse, 700, 125, 799, 290, SF_EXIT_NE_CURSOR);
+	_vm->setHotspot(kHS07Dice, 200, 290, 270, 360, SF_PLAT_CURSOR | SF_TALK_CURSOR | SF_GRAB_CURSOR | SF_LOOK_CURSOR);
+	_vm->setHotspot(kHS07WalkArea1, 0, 0, 325, 445);
+	_vm->setHotspot(kHS07WalkArea2, 325, 0, 799, 445, _vm->_isLeavingScene ? SF_WALKABLE : SF_NONE);
+	_vm->setHotspot(kHS07WalkArea3, 160, 0, 325, 495);
+	_vm->setDeviceHotspot(kHS07Device, -1, -1, -1, -1);
 	if (_vm->isFlag(kGFPlatypus))
-		_vm->_hotspots[kHSDice]._flags = SF_DISABLED;
+		_vm->_hotspots[kHS07Dice]._flags = SF_DISABLED;
 	_vm->_hotspotsCount = 7;
 }
 
@@ -87,7 +87,7 @@ void Scene07::run() {
 		_vm->_gnapIdleFacing = kDirBottomRight;
 		_vm->_gameSys->insertSequence(0x8F, 140, 0, 0, kSeqNone, 0, 0, 0);
 		_vm->_gameSys->setAnimation(makeRid(_vm->_gnapSequenceDatNum, _vm->_gnapSequenceId), _vm->_gnapId, 0);
-		_vm->_gnapActionStatus = kASWait;
+		_vm->_gnapActionStatus = kAS07Wait;
 		_vm->_platX = 3;
 		_vm->_platY = 8;
 		_vm->_platypusId = 160;
@@ -115,7 +115,7 @@ void Scene07::run() {
 		_vm->updateGrabCursorSprite(0, 0);
 
 		switch (_vm->_sceneClickedHotspot) {
-		case kHSPlatypus:
+		case kHS07Platypus:
 			switch (_vm->_verbCursor) {
 			case LOOK_CURSOR:
 				_vm->playGnapMoan1(_vm->_platX, _vm->_platY);
@@ -132,16 +132,16 @@ void Scene07::run() {
 			}
 			break;
 
-		case kHSExitHouse:
+		case kHS07ExitHouse:
 			_vm->_isLeavingScene = true;
 			if (_vm->_gnapX > 8)
 				_vm->gnapWalkTo(_vm->_gnapX, 7, 0, 0x107AD, 1);
 			else
 				_vm->gnapWalkTo(8, 7, 0, 0x107AD, 1);
-			_vm->_gnapActionStatus = kASLeaveScene;
+			_vm->_gnapActionStatus = kAS07LeaveScene;
 			break;
 
-		case kHSDice:
+		case kHS07Dice:
 			if (_vm->_grabCursorSpriteIndex >= 0) {
 				_vm->playGnapShowCurrItem(4, 8, 3, 3);
 			} else {
@@ -169,7 +169,7 @@ void Scene07::run() {
 			}
 			break;
 
-		case kHSDevice:
+		case kHS07Device:
 			if (_vm->_gnapActionStatus < 0) {
 				_vm->runMenu();
 				updateHotspots();
@@ -177,12 +177,12 @@ void Scene07::run() {
 			}
 			break;
 
-		case kHSWalkArea1:
-		case kHSWalkArea2:
+		case kHS07WalkArea1:
+		case kHS07WalkArea2:
 			_vm->gnapWalkTo(-1, -1, -1, -1, 1);
 			break;
 			
-		case kHSWalkArea3:
+		case kHS07WalkArea3:
 			// Nothing
 			break;
 
@@ -254,7 +254,7 @@ void Scene07::updateAnimations() {
 	if (_vm->_gameSys->getAnimationStatus(0) == 2) {
 		_vm->_gameSys->setAnimation(0, 0, 0);
 		switch (_vm->_gnapActionStatus) {
-		case kASLeaveScene:
+		case kAS07LeaveScene:
 			_vm->_newSceneNum = 8;
 			_vm->_sceneDone = true;
 			break;
