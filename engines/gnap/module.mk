@@ -13,17 +13,8 @@ MODULE_OBJS := \
 	scenes/groupcs.o \
 	scenes/group0.o \
 	scenes/group1.o \
+	scenes/group2.o \
 	scenes/intro.o \
-	scenes/scene20.o \
-	scenes/scene21.o \
-	scenes/scene22.o \
-	scenes/scene23.o \
-	scenes/scene24.o \
-	scenes/scene25.o \
-	scenes/scene26.o \
-	scenes/scene27.o \
-	scenes/scene28.o \
-	scenes/scene29.o \
 	scenes/scene30.o \
 	scenes/scene31.o \
 	scenes/scene32.o \
