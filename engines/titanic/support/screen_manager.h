@@ -92,7 +92,11 @@ public:
 	virtual void proc6() = 0;
 	virtual void proc7() = 0;
 	virtual CVideoSurface *getSurface(SurfaceNum surfaceNum) const = 0;
-	virtual void proc9() = 0;
+
+	/**
+	 * Return the front render surface
+	 */
+	virtual CVideoSurface *getFrontRenderSurface() const = 0;
 	
 	/**
 	 * Fill an area with a specific color
@@ -222,7 +226,14 @@ public:
 	virtual void proc6();
 	virtual void proc7();
 	virtual CVideoSurface *getSurface(SurfaceNum surfaceNum) const;
-	virtual void proc9();
+
+	/**
+	 * Return the front render surface
+	 */
+	virtual CVideoSurface *getFrontRenderSurface() const {
+		return _frontRenderSurface;
+	}
+
 
 	/**
 	 * Fill an area with a specific color

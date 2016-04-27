@@ -23,18 +23,68 @@
 #include "common/textconsole.h"
 #include "titanic/support/text_cursor.h"
 #include "titanic/support/screen_manager.h"
+#include "titanic/titanic.h"
 
 namespace Titanic {
 
 CTextCursor::CTextCursor(CScreenManager *screenManager) : 
-		_screenManager(screenManager), _priorTicks(300), _active(false),
-		_field24(0), _size(2, 10), _field44(0), _field48(0), _field4C(0),
-		_field54(-1) {
+		_screenManager(screenManager), _active(false), _blinkVisible(false),
+		_backRenderSurface(nullptr), _frontRenderSurface(nullptr),
+		_blinkDelay(300), _size(2, 10), _priorBlinkTime(0),
+		_cursorR(0), _cursorG(0), _cursorB(0), _mode(-1) {
 	screenManager->createSurface(10, 10);
 }
 
 CTextCursor::~CTextCursor() {
 	delete _surface;
+}
+
+void CTextCursor::setColor(byte r, byte g, byte b) {
+	_cursorR = r;
+	_cursorG = g;
+	_cursorB = b;
+}
+
+void CTextCursor::show() {
+	_backRenderSurface = _screenManager->getSurface(SURFACE_BACKBUFFER);
+	_frontRenderSurface = _screenManager->getFrontRenderSurface();
+	_active = true;
+	_priorBlinkTime = g_vm->_events->getTicksCount();
+}
+
+void CTextCursor::hide() {
+	_active = false;
+}
+
+void CTextCursor::draw() {
+	if (!_active)
+		return;
+
+	// Handle updating whether the blinking cursor is visible or not
+	uint newTicks = g_vm->_events->getTicksCount();
+	while (newTicks > (_priorBlinkTime + _blinkDelay)) {
+		_priorBlinkTime += _blinkDelay;
+		_blinkVisible = !_blinkVisible;
+	}
+
+	if (_blinkVisible) {
+		Rect cursorRect = getCursorBounds();
+		_surface->blitFrom(Common::Point(0, 0), _backRenderSurface, &cursorRect);
+	
+		if (!_screenBounds.isEmpty())
+			// Limit the cursor rect to only within designated screen area
+			cursorRect.constrain(_screenBounds);
+
+		if (!cursorRect.isEmpty()) {
+			// Draw cursor onto the screen
+			_backRenderSurface->_ddSurface->fillRect(&cursorRect,
+				_cursorR, _cursorG, _cursorB);
+		}
+	}
+
+	if (_active && _blinkVisible) {
+		_screenManager->blitFrom(SURFACE_BACKBUFFER, _surface, &_pos);
+	}
 }
 
 } // End of namespace Titanic

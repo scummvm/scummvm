@@ -55,7 +55,6 @@ protected:
 protected:
 	CScreenManager *_screenManager;
 	CResourceKey _resourceKey;
-	DirectDrawSurface *_ddSurface;
 	Graphics::ManagedSurface *_rawSurface;
 	bool _pendingLoad;
 	void *_field40;
@@ -66,6 +65,7 @@ protected:
 	int _lockCount;
 public:
 	CMovie *_movie;
+	DirectDrawSurface *_ddSurface;
 	bool _blitFlag;
 	bool _blitStyleFlag;
 public:

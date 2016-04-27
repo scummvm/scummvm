@@ -34,17 +34,20 @@ class CVideoSurface;
 class CTextCursor {
 private:
 	CScreenManager *_screenManager;
+	CVideoSurface *_backRenderSurface;
+	CVideoSurface *_frontRenderSurface;
 	Point _pos;
-	Rect _bounds;
-	uint _priorTicks;
-	int _field24;
+	Rect _screenBounds;
+	uint _blinkDelay;
+	bool _blinkVisible;
 	Point _size;
 	Point _screenTopLeft;
-	int _field44;
-	int _field48;
-	int _field4C;
+	uint _priorBlinkTime;
+	byte _cursorR;
+	byte _cursorG;
+	byte _cursorB;
 	CVideoSurface *_surface;
-	int _field54;
+	int _mode;
 public:
 	bool _active;
 public:
@@ -71,24 +74,46 @@ public:
 	/**
 	 * Set bounds
 	 */
-	void setBounds(const Rect &r) { _bounds = r; }
+	void setBounds(const Rect &r) { _screenBounds = r; }
 
 	/**
 	 * Clear the bounds
 	 */
-	void clearBounds() { _bounds.clear(); }
+	void clearBounds() { _screenBounds.clear(); }
 
 	/**
-	 * Set the prior ticks
+	 * Set the blinking rate
 	 */
-	void setTicks(uint ticks) { _priorTicks = ticks; }
+	void setBlinkRate(uint ticks) { _blinkDelay = ticks; }
+
+	/**
+	 * Set the cursor color
+	 */
+	void setColor(byte r, byte g, byte b);
 
 	/**
 	 * Returns whether the text cursor is active
 	 */
 	bool isActive() const { return _active; }
 
-	int get54() const { return _field54; }
+	int getMode() const { return _mode; }
+
+	void setMode(int mode) { _mode = mode; }
+
+	/**
+	 * Show the text cursor
+	 */
+	void show();
+
+	/**
+	 * Hide the text cursor
+	 */
+	void hide();
+
+	/**
+	 * Update and draw the cursor if necessary
+	 */
+	void draw();
 };
 
 } // End of namespace Titanic

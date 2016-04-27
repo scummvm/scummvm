@@ -140,8 +140,6 @@ CVideoSurface *OSScreenManager::getSurface(SurfaceNum surfaceNum) const {
 		return nullptr;
 }
 
-void OSScreenManager::proc9() {}
-
 void OSScreenManager::fillRect(SurfaceNum surfaceNum, Rect *rect, byte r, byte g, byte b) {
 	DirectDrawSurface *surface = getDDSurface(surfaceNum);
 	if (!surface)
