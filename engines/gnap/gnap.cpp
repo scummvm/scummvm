@@ -152,69 +152,7 @@ Common::Error GnapEngine::run() {
 	_menuBackgroundSurface = nullptr;
 
 	initGlobalSceneVars();
-
-#if 1
-
 	mainLoop();
-
-#else
-
-	Graphics::Surface *testBack = new Graphics::Surface();
-	testBack->create(800, 600, _system->getScreenFormat());
-	//testBack->fillRect(Common::Rect(0, 0, 800, 600), 0xFFFFFFFF);
-	testBack->fillRect(Common::Rect(0, 0, 800, 600), 0xFF000000);
-
-	_currentSceneNum = 41;
-
-    Common::String datFilename = Common::String::format("%s_n.dat", kSceneNames[_currentSceneNum]);
-	_dat->open(0, datFilename.c_str());
-
-	_gameSys->setBackgroundSurface(testBack, 0, 500, 1, 1000);
-
-	_gameSys->insertSequence(0x11b, 100, -1, -1, kSeqNone, 0, 0, 0);
-
-	CursorMan.showMouse(true);
-
-	while (!shouldQuit()) {
-		Common::Event event;
-
-		while (_eventMan->pollEvent(event)) {
-			switch (event.type) {
-			case Common::EVENT_KEYDOWN:
-				break;
-			case Common::EVENT_LBUTTONUP:
-			case Common::EVENT_LBUTTONDOWN:
-			case Common::EVENT_RBUTTONUP:
-			case Common::EVENT_RBUTTONDOWN:
-			case Common::EVENT_MOUSEMOVE:
-				break;
-			case Common::EVENT_QUIT:
-				quitGame();
-				break;
-			default:
-				break;
-			}
-		}
-
-		_gameSys->fatUpdate();
-		_gameSys->drawSprites();
-		_gameSys->updateScreen();
-		_gameSys->_gameSysClock++;
-		updateTimers();
-
-		_system->updateScreen();
-		_system->delayMillis(100);
-
-	}
-
-	_dat->close(0);
-
-	testBack->free();
-	delete testBack;
-
-	return Common::kNoError;
-
-#endif
 
 	delete _soundMan;
 	delete _gameSys;
@@ -223,7 +161,6 @@ Common::Error GnapEngine::run() {
 	delete _spriteCache;
 	delete _dat;
 	delete _debugger;
-
 	delete _exe;
 
 	return Common::kNoError;
@@ -729,14 +666,6 @@ void GnapEngine::mainLoop() {
 	clearFlags();
 	_grabCursorSpriteIndex = -1;
 	_grabCursorSprite = nullptr;
-
-#if 0
-	// > DEBUG BEGIN
-	_currentSceneNum = 0;
-	_newSceneNum = 1;
-	_newCursorValue = 1;
-	// < DEBUG END
-#endif
 
 	loadStockDat();
 
