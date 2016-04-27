@@ -11,16 +11,8 @@ MODULE_OBJS := \
 	resource.o \
 	sound.o \
 	scenes/groupcs.o \
-	scenes/scene00.o \
-	scenes/scene01.o \
-	scenes/scene02.o \
-	scenes/scene03.o \
-	scenes/scene04.o \
-	scenes/scene05.o \
-	scenes/scene06.o \
-	scenes/scene07.o \
-	scenes/scene08.o \
-	scenes/scene09.o \
+	scenes/group0.o \
+	scenes/intro.o \
 	scenes/scene10.o \
 	scenes/scene11.o \
 	scenes/scene12.o \

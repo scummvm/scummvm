@@ -25,18 +25,18 @@
 #include "gnap/gnap.h"
 #include "gnap/gamesys.h"
 #include "gnap/resource.h"
-#include "gnap/scenes/scene00.h"
+#include "gnap/scenes/intro.h"
 
 namespace Gnap {
 
-Scene00::Scene00(GnapEngine *vm) : Scene(vm) {
+SceneIntro::SceneIntro(GnapEngine *vm) : Scene(vm) {
 }
 
-int Scene00::init() {
+int SceneIntro::init() {
 	return 0x37C;
 }
 
-void Scene00::run() {
+void SceneIntro::run() {
 	const int animIdArr[] = {
 		0x356, 0x357, 0x358, 0x35A, 0x35F,
 		0x360, 0x361, 0x362, 0x363, 0x364,

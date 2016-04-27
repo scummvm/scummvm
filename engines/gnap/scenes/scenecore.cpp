@@ -23,20 +23,12 @@
 #include "gnap/gnap.h"
 #include "gnap/gamesys.h"
 #include "gnap/resource.h"
+
 #include "gnap/scenes/scenecore.h"
-
 #include "gnap/scenes/groupcs.h"
+#include "gnap/scenes/group0.h"
+#include "gnap/scenes/intro.h"
 
-#include "gnap/scenes/scene00.h"
-#include "gnap/scenes/scene01.h"
-#include "gnap/scenes/scene02.h"
-#include "gnap/scenes/scene03.h"
-#include "gnap/scenes/scene04.h"
-#include "gnap/scenes/scene05.h"
-#include "gnap/scenes/scene06.h"
-#include "gnap/scenes/scene07.h"
-#include "gnap/scenes/scene08.h"
-#include "gnap/scenes/scene09.h"
 #include "gnap/scenes/scene10.h"
 #include "gnap/scenes/scene11.h"
 #include "gnap/scenes/scene12.h"
@@ -82,7 +74,7 @@ int GnapEngine::initSceneLogic() {
 
 	switch (_currentSceneNum) {
 	case 0:
-		_scene = new Scene00(this);
+		_scene = new SceneIntro(this);
 		backgroundId = _scene->init();
 		_gameSys->setScaleValues(0, 500, 1, 1000);
 		break;
