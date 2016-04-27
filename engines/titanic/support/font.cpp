@@ -128,11 +128,11 @@ int STFont::stringWidth(const CString &text) const {
 }
 
 int STFont::writeString(CVideoSurface *surface, const Rect &rect1, const Rect &destRect,
-		int val1, const CString &str, CTextCursor *textCursor) {
+		int yOffset, const CString &str, CTextCursor *textCursor) {
 	if (!_fontHeight || !_dataPtr)
 		return -1;
 
-	Point textSize;
+	Point textSize(0, -yOffset);
 	Rect destBounds = destRect;
 	destBounds.constrain(rect1);
 	if (destBounds.isEmpty())
@@ -171,7 +171,7 @@ int STFont::writeString(CVideoSurface *surface, const Rect &rect1, const Rect &d
 		}
 	}
 
-	if (textCursor && textCursor->get54() == -2) {
+	if (textCursor && textCursor->getMode() == -2) {
 		Point cursorPos(rect1.left + textSize.x, rect1.top + textSize.y);
 		textCursor->setPos(cursorPos);
 	}
@@ -236,7 +236,8 @@ void STFont::copyRect(CVideoSurface *surface, const Point &pt, Rect &rect) {
 			uint16 *destP = lineP;
 			for (int xp = rect.left; xp < rect.right; ++xp, ++destP) {
 				const byte *srcP = _dataPtr + yp * _dataWidth + xp;
-				//surface->changePixel(destP, color, *srcP >> 3, 1);
+				if (*srcP >> 3)
+					*destP = color;
 			}
 		}
 

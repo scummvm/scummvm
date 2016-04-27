@@ -89,7 +89,7 @@ public:
 	 * Write a string to the specified surface
 	 */
 	int writeString(CVideoSurface *surface, const Rect &rect1, const Rect &destRect,
-		int val1, const CString &str, CTextCursor *textCursor);
+		int yOffset, const CString &str, CTextCursor *textCursor);
 
 	/**
 	 * Get the text area a string will fit into
