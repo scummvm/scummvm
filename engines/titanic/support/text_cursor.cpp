@@ -28,8 +28,8 @@ namespace Titanic {
 
 CTextCursor::CTextCursor(CScreenManager *screenManager) : 
 		_screenManager(screenManager), _priorTicks(300), _active(false),
-		_field24(0), _size(2, 10), _field38(0), _field3C(0),
-		_field44(0), _field48(0), _field4C(0), _field54(-1) {
+		_field24(0), _size(2, 10), _field44(0), _field48(0), _field4C(0),
+		_field54(-1) {
 	screenManager->createSurface(10, 10);
 }
 

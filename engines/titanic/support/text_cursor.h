@@ -39,8 +39,7 @@ private:
 	uint _priorTicks;
 	int _field24;
 	Point _size;
-	int _field38;
-	int _field3C;
+	Point _screenTopLeft;
 	int _field44;
 	int _field48;
 	int _field4C;
@@ -83,6 +82,11 @@ public:
 	 * Set the prior ticks
 	 */
 	void setTicks(uint ticks) { _priorTicks = ticks; }
+
+	/**
+	 * Returns whether the text cursor is active
+	 */
+	bool isActive() const { return _active; }
 
 	int get54() const { return _field54; }
 };
