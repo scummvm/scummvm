@@ -126,10 +126,9 @@ public:
 	virtual Rect getBounds() { return Rect(); }
 
 	/**
-	 * Checks and updates any highlight of the glyph or any contextual
-	 * information it displays
+	 * Called for mouse button down messages
 	 */
-	virtual bool checkHighlight(const Point &pt) { return false; }
+	virtual bool MouseButtonDownMsg(const Point &pt) { return false; }
 
 	/**
 	 * Called when mouse drag starts
@@ -174,9 +173,9 @@ public:
 	virtual void proc27(const Point &pt, bool flag) {}
 
 	/**
-	 * Handles mouse button down messages
+	 *
 	 */
-	virtual void MouseButtonDownMsg(const Point &pt) {}
+	virtual void proc28(const Point &pt) {}
 	
 	virtual int proc29(const Point &pt) { return 0; }
 

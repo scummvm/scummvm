@@ -123,7 +123,7 @@ void CPetSound::draw2(CScreenManager *screenManager) {
 	_textSpeechVolume.draw(screenManager);
 }
 
-bool CPetSound::checkHighlight(const Point &pt) {
+bool CPetSound::MouseButtonDownMsg(const Point &pt) {
 	if (_musicVolume.checkThumb(pt) || _masterVolume.checkThumb(pt) ||
 		_speechVolume.checkThumb(pt))
 		return true;

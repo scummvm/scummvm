@@ -64,7 +64,7 @@ void CPetRoomsGlyph::drawAt(CScreenManager *screenManager, const Point &pt) {
 	warning("TODO: CPetRoomsGlyph::drawAt");
 }
 
-void CPetRoomsGlyph::MouseButtonDownMsg(const Point &pt) {
+void CPetRoomsGlyph::proc28(const Point &pt) {
 
 }
 

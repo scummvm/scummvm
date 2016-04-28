@@ -323,7 +323,7 @@ bool CPetGlyphs::MouseButtonDownMsg(const Point &pt) {
 		CPetGlyph *glyph = getGlyph(_highlightIndex);
 
 		if (glyph) {
-			if (glyph->checkHighlight(pt))
+			if (glyph->MouseButtonDownMsg(pt))
 				return true;
 
 			if (!(_flags & GFLAG_2)) {

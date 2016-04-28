@@ -71,7 +71,7 @@ void CPetLoadSave::draw2(CScreenManager *screenManager) {
 	_btnLoadSave.draw(screenManager);
 }
 
-bool CPetLoadSave::checkHighlight(const Point &pt) {
+bool CPetLoadSave::MouseButtonDownMsg(const Point &pt) {
 	if (_btnLoadSave.MouseButtonDownMsg(pt))
 		return true;
 	
