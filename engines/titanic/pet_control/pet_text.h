@@ -57,7 +57,7 @@ private:
 	int _field68;
 	int _field6C;
 	bool _hasBorder;
-	int _field74;
+	int _scrollTop;
 	CTextCursor *_textCursor;
 	int _field7C;
 private:
@@ -81,6 +81,16 @@ private:
 	 * Get the required height to draw the text
 	 */
 	int getTextHeight(CScreenManager *screenManager);
+
+	/**
+	 * Ensures the Y scrolling for the text is in the valid range
+	 */
+	void constrainScrollUp(CScreenManager *screenManager);
+
+	/**
+	 * Ensures the Y scrolling for the text is in the valid range
+	 */
+	void constrainScrollDown(CScreenManager *screenManager);
 public:
 	CPetText(uint count = 10);
 
@@ -157,6 +167,16 @@ public:
 	 * Get the font
 	 */
 	int getFontNumber() const { return _fontNumber1; }
+
+	/**
+	 * Scroll the text up
+	 */
+	void scrollUp(CScreenManager *screenManager);
+
+	/**
+	 * Scroll the text down
+	 */
+	void scrollDown(CScreenManager *screenManager);
 };
 
 } // End of namespace Titanic

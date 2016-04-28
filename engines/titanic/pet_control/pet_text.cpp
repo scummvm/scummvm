@@ -30,7 +30,7 @@ CPetText::CPetText(uint count) :
 		_backR(0xff), _backG(0xff), _backB(0xff), 
 		_textR(0), _textG(0), _textB(200),
 		_fontNumber2(0), _field64(0), _field68(0), _field6C(0),
-		_hasBorder(true), _field74(0), _textCursor(nullptr), _field7C(0) {
+		_hasBorder(true), _scrollTop(0), _textCursor(nullptr), _field7C(0) {
 	setupArrays(count);
 }
 
@@ -97,7 +97,7 @@ void CPetText::load(SimpleFile *file, int param) {
 		_textG = file->readNumber();
 		_textB = file->readNumber();
 		_hasBorder = file->readNumber() != 0;
-		_field74 = file->readNumber();
+		_scrollTop = file->readNumber();
 
 		warning("TODO: CPetText::load %d,%d", var1, var2);
 		assert(_array.size() >= count);
@@ -140,7 +140,7 @@ void CPetText::draw(CScreenManager *screenManager) {
 	tempRect.grow(-2);
 	screenManager->setFontNumber(_fontNumber2);
 
-	screenManager->writeString(SURFACE_BACKBUFFER, tempRect, _field74, _lines, _textCursor);
+	screenManager->writeString(SURFACE_BACKBUFFER, tempRect, _scrollTop, _lines, _textCursor);
 
 	screenManager->setFontNumber(_fontNumber1);
 }
@@ -248,6 +248,35 @@ void CPetText::deleteLastChar() {
 void CPetText::setNPC(int val1, int npcId) {
 	_field64 = val1;
 	_field68 = npcId;
+}
+
+void CPetText::scrollUp(CScreenManager *screenManager) {
+	int oldFontNumber = screenManager->setFontNumber(_fontNumber2);
+	_scrollTop -= screenManager->getFontHeight();
+	constrainScrollUp(screenManager);
+	screenManager->setFontNumber(oldFontNumber);
+}
+
+void CPetText::scrollDown(CScreenManager *screenManager) {
+	int oldFontNumber = screenManager->setFontNumber(_fontNumber2);
+	_scrollTop += screenManager->getFontHeight();
+	constrainScrollDown(screenManager);
+	screenManager->setFontNumber(oldFontNumber);
+}
+
+void CPetText::constrainScrollUp(CScreenManager *screenManager) {
+	if (_scrollTop < 0)
+		_scrollTop = 0;
+}
+
+void CPetText::constrainScrollDown(CScreenManager *screenManager) {
+	// Figure out the maximum scroll amount allowed
+	int maxScroll = _bounds.height() - getTextHeight(screenManager) - 4;
+	if (maxScroll < 0)
+		maxScroll = 0;
+
+	if (_scrollTop > maxScroll)
+		_scrollTop = maxScroll;
 }
 
 } // End of namespace Titanic

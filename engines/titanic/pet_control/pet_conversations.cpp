@@ -21,6 +21,7 @@
  */
 
 #include "titanic/pet_control/pet_conversations.h"
+#include "titanic/pet_control/pet_control.h"
 
 namespace Titanic {
 
@@ -44,6 +45,14 @@ bool CPetConversations::isValid(CPetControl *petControl) {
 	return setupControl(petControl);
 }
 
+bool CPetConversations::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
+	return
+		_scrollUp.MouseButtonDownMsg(msg->_mousePos) ||
+		_scrollDown.MouseButtonDownMsg(msg->_mousePos) ||
+		_val7.MouseButtonDownMsg(msg->_mousePos) ||
+		_val8.MouseButtonDownMsg(msg->_mousePos);
+}
+
 bool CPetConversations::setupControl(CPetControl *petControl) {
 	if (petControl) {
 		_petControl = petControl;
@@ -60,10 +69,10 @@ bool CPetConversations::setupControl(CPetControl *petControl) {
 		_gfxList[2].translate(20, 434);
 
 		const Rect rect2(0, 0, 11, 24);
-		_val1.setBounds(rect2);
-		_val1.translate(87, 374);
-		_val2.setBounds(rect2);
-		_val2.translate(87, 421);
+		_scrollUp.setBounds(rect2);
+		_scrollUp.translate(87, 374);
+		_scrollDown.setBounds(rect2);
+		_scrollDown.translate(87, 421);
 
 		const Rect rect3(0, 0, 39, 39);
 		_val7.setBounds(rect3);
@@ -84,6 +93,18 @@ bool CPetConversations::setupControl(CPetControl *petControl) {
 	}
 
 	return true;
+}
+
+void CPetConversations::scrollDown() {
+	_log.scrollDown(CScreenManager::_screenManagerPtr);
+	if (_petControl)
+		_petControl->makeDirty();
+}
+
+void CPetConversations::scrollUp() {
+	_log.scrollUp(CScreenManager::_screenManagerPtr);
+	if (_petControl)
+		_petControl->makeDirty();
 }
 
 } // End of namespace Titanic

@@ -31,8 +31,8 @@ namespace Titanic {
 
 class CPetConversations : public CPetSection {
 private:
-	CPetGfxElement _val1;
-	CPetGfxElement _val2;
+	CPetGfxElement _scrollUp;
+	CPetGfxElement _scrollDown;
 	CPetGfxElement _val3;
 	CPetGfxElement _gfxList[3];
 	CPetGfxElement _val4;
@@ -55,6 +55,16 @@ private:
 	 * Sets up the control
 	 */
 	bool setupControl(CPetControl *petControl);
+
+	/**
+	 * Scroll down the conversation log
+	 */
+	void scrollDown();
+
+	/**
+	 * Scroll up the conversation log
+	 */
+	void scrollUp();
 public:
 	CPetConversations();
 
@@ -72,6 +82,12 @@ public:
 	 * Returns true if the object is in a valid state
 	 */
 	virtual bool isValid(CPetControl *petControl);
+
+	/**
+	 * Following are handlers for the various messages that the PET can
+	 * pass onto the currently active section/area
+	 */
+	virtual bool MouseButtonDownMsg(CMouseButtonDownMsg *msg);
 };
 
 } // End of namespace Titanic
