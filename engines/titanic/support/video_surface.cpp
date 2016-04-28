@@ -164,6 +164,8 @@ bool CVideoSurface::proc45() {
 
 /*------------------------------------------------------------------------*/
 
+byte OSVideoSurface::_map[0x400];
+
 OSVideoSurface::OSVideoSurface(CScreenManager *screenManager, DirectDrawSurface *surface) :
 		CVideoSurface(screenManager) {
 	_ddSurface = surface;
@@ -367,8 +369,26 @@ uint16 OSVideoSurface::getPixel(const Common::Point &pt) {
 	}
 }
 
-void OSVideoSurface::changePixel(uint16 *pixelP, uint16 color, int val3, int val5) {
-	// TODO
+void OSVideoSurface::changePixel(uint16 *pixelP, uint16 *color, byte srcVal, bool remapFlag) {
+	assert(getPixelDepth() == 2);
+	const Graphics::PixelFormat &format = _ddSurface->getFormat();
+	
+	// Get the color
+	byte r, g, b;
+	format.colorToRGB(*color, r, g, b);
+	if (remapFlag) {
+		r = _map[0x3e0 - srcVal * 32 + (r >> 2)] << 2;
+		g = _map[0x3e0 - srcVal * 32 + (g >> 2)] << 2;
+		b = _map[0x3e0 - srcVal * 32 + (b >> 2)] << 2;
+	}
+
+	byte r2, g2, b2;
+	format.colorToRGB(*pixelP, r2, g2, b2);
+	r2 = _map[srcVal * 32 + (r2 >> 2)] << 2;
+	g2 = _map[srcVal * 32 + (g2 >> 2)] << 2;
+	b2 = _map[srcVal * 32 + (b2 >> 2)] << 2;
+
+	*pixelP = format.RGBToColor(r + r2, g + g2, b + b2);
 }
 
 void OSVideoSurface::shiftColors() {

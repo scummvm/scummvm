@@ -85,6 +85,11 @@ public:
 	int getPitch() const { return _surface->pitch; }
 
 	/**
+	 * Return the surface's format
+	 */
+	const Graphics::PixelFormat &getFormat() { return _surface->format; }
+
+	/**
 	 * Lock the surface for access
 	 */
 	Graphics::ManagedSurface *lock(const Rect *bounds, int flags);

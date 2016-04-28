@@ -147,7 +147,7 @@ public:
 	/**
 	 * Change a pixel
 	 */
-	virtual void changePixel(uint16 *pixelP, uint16 color, int val3, int val5) = 0;
+	virtual void changePixel(uint16 *pixelP, uint16 *color, byte srcVal, bool remapFlag = true) = 0;
 
 	/**
 	 * Shifts the colors of the surface.. maybe greys it out?
@@ -306,7 +306,7 @@ public:
 	/**
 	 * Change a pixel
 	 */
-	virtual void changePixel(uint16 *pixelP, uint16 color, int val3, int val5);
+	virtual void changePixel(uint16 *pixelP, uint16 *color, byte srcVal, bool remapFlag = true);
 
 	/**
 	 * Shifts the colors of the surface.. maybe greys it out?

@@ -236,8 +236,7 @@ void STFont::copyRect(CVideoSurface *surface, const Point &pt, Rect &rect) {
 			uint16 *destP = lineP;
 			for (int xp = rect.left; xp < rect.right; ++xp, ++destP) {
 				const byte *srcP = _dataPtr + yp * _dataWidth + xp;
-				if (!(*srcP >> 3))
-					*destP = color;
+				surface->changePixel(destP, &color, *srcP >> 3, true);
 			}
 		}
 
