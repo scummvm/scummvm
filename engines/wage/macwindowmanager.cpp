@@ -51,8 +51,10 @@
 #include "common/unzip.h"
 #include "common/system.h"
 
+#include "graphics/cursorman.h"
 #include "graphics/fonts/bdf.h"
 #include "graphics/managed_surface.h"
+#include "graphics/palette.h"
 
 #include "wage/wage.h"
 #include "wage/design.h"
@@ -63,13 +65,19 @@
 
 namespace Wage {
 
-enum {
-	kPatternCheckers = 1
+static const byte palette[] = {
+	0, 0, 0,           // Black
+	0x80, 0x80, 0x80,  // Gray
+	0xff, 0xff, 0xff,  // White
+	0x00, 0xff, 0x00,  // Green
+	0x00, 0xcf, 0x00   // Green2
 };
 
-static byte fillPatterns[][8] = { { 0xaa, 0x55, 0xaa, 0x55, 0xaa, 0x55, 0xaa, 0x55 } // kPatternCheckers
+static byte fillPatterns[][8] = { { 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff }, // kPatternSolid
+								  { 0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55 }, // kPatternStripes
+								  { 0xaa, 0x55, 0xaa, 0x55, 0xaa, 0x55, 0xaa, 0x55 }, // kPatternCheckers
+								  { 0x55, 0xaa, 0x55, 0xaa, 0x55, 0xaa, 0x55, 0xaa }  // kPatternCheckers2
 };
-
 
 MacWindowManager::MacWindowManager() {
     _screen = 0;
@@ -86,6 +94,10 @@ MacWindowManager::MacWindowManager() {
 		_patterns.push_back(fillPatterns[i]);
 
 	loadFonts();
+
+	g_system->getPaletteManager()->setPalette(palette, 0, ARRAYSIZE(palette) / 3);
+
+	CursorMan.replaceCursorPalette(palette, 0, ARRAYSIZE(palette) / 3);
 }
 
 MacWindowManager::~MacWindowManager() {

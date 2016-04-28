@@ -50,6 +50,13 @@
 
 namespace Wage {
 
+enum {
+	kPatternSolid = 1,
+	kPatternStripes = 2,
+	kPatternCheckers = 3,
+	kPatternCheckers2 = 4
+};
+
 class MacWindow;
 class Menu;
 
@@ -73,6 +80,8 @@ public:
 	bool processEvent(Common::Event &event);
 
 	BaseMacWindow *getWindow(int id) { return _windows[id]; }
+
+	Patterns &getPatterns() { return _patterns; }
 
 private:
 	void drawDesktop();

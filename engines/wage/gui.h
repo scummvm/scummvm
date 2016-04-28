@@ -75,12 +75,6 @@ enum {
 	kCursorHeight = 12
 };
 
-enum {
-	kPatternSolid = 1,
-	kPatternStripes = 2,
-	kPatternCheckers2 = 3
-};
-
 class Gui {
 public:
 	Gui(WageEngine *engine);
@@ -110,8 +104,6 @@ public:
 	bool processSceneEvents(WindowClick click, Common::Event &event);
 	bool processConsoleEvents(WindowClick click, Common::Event &event);
 
-	Patterns &getPatterns() { return _patterns; }
-
 private:
 	void drawScene();
 	void drawConsole();
@@ -131,8 +123,6 @@ public:
 	bool _cursorState;
 
 	WageEngine *_engine;
-
-	Patterns _patterns;
 
 	bool _cursorDirty;
 	Common::Rect _cursorRect;

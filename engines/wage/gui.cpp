@@ -48,7 +48,6 @@
 #include "common/timer.h"
 #include "common/system.h"
 #include "graphics/cursorman.h"
-#include "graphics/palette.h"
 #include "graphics/primitives.h"
 
 #include "wage/wage.h"
@@ -61,19 +60,6 @@
 #include "wage/world.h"
 
 namespace Wage {
-
-static const byte palette[] = {
-	0, 0, 0,           // Black
-	0x80, 0x80, 0x80,  // Gray
-	0xff, 0xff, 0xff,  // White
-	0x00, 0xff, 0x00,  // Green
-	0x00, 0xcf, 0x00   // Green2
-};
-
-static byte fillPatterns[][8] = { { 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff }, // kPatternSolid
-								  { 0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55 }, // kPatternStripes
-								  { 0x55, 0xaa, 0x55, 0xaa, 0x55, 0xaa, 0x55, 0xaa }  // kPatternCheckers2
-};
 
 static const byte macCursorArrow[] = {
 	2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3,
@@ -170,15 +156,9 @@ Gui::Gui(WageEngine *engine) {
 
 	_inputTextLineNum = 0;
 
-	g_system->getPaletteManager()->setPalette(palette, 0, ARRAYSIZE(palette) / 3);
-
-	CursorMan.replaceCursorPalette(palette, 0, 4);
 	CursorMan.replaceCursor(macCursorArrow, 11, 16, 1, 1, 3);
 	_cursorIsArrow = true;
 	CursorMan.showMouse(true);
-
-	for (int i = 0; i < ARRAYSIZE(fillPatterns); i++)
-		_patterns.push_back(fillPatterns[i]);
 
 	g_system->getTimerManager()->installTimerProc(&cursorTimerHandler, 200000, this, "wageCursor");
 

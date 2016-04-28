@@ -92,7 +92,7 @@ const Graphics::Font *Dialog::getDialogFont() {
 }
 
 void Dialog::paint() {
-	Design::drawFilledRect(&_gui->_screen, _bbox, kColorWhite, _gui->_patterns, kPatternSolid);
+	Design::drawFilledRect(&_gui->_screen, _bbox, kColorWhite, _gui->_wm.getPatterns(), kPatternSolid);
 	_font->drawString(&_gui->_screen, _text, _bbox.left + 24, _bbox.top + 16, _bbox.width(), kColorBlack);
 
 	static int boxOutline[] = { 1, 0, 0, 1, 1 };
@@ -114,7 +114,7 @@ void Dialog::paint() {
 			Common::Rect bb(button->bounds.left + 5, button->bounds.top + 5,
 				button->bounds.right - 5, button->bounds.bottom - 5);
 
-			Design::drawFilledRect(&_gui->_screen, bb, kColorBlack, _gui->_patterns, kPatternSolid);
+			Design::drawFilledRect(&_gui->_screen, bb, kColorBlack, _gui->_wm.getPatterns(), kPatternSolid);
 
 			color = kColorWhite;
 		}
@@ -137,7 +137,7 @@ void Dialog::drawOutline(Common::Rect &bounds, int *spec, int speclen) {
 	for (int i = 0; i < speclen; i++)
 		if (spec[i] != 0)
 			Design::drawRect(&_gui->_screen, bounds.left + i, bounds.top + i, bounds.right - i, bounds.bottom - i,
-						1, kColorBlack, _gui->_patterns, kPatternSolid);
+						1, kColorBlack, _gui->_wm.getPatterns(), kPatternSolid);
 }
 
 int Dialog::run() {

@@ -346,11 +346,11 @@ bool Menu::draw(Graphics::ManagedSurface *g, bool forceRedraw) {
 
 	_contentIsDirty = true;
 
-	Design::drawFilledRoundRect(&_screen, r, kDesktopArc, kColorWhite, _gui->_patterns, kPatternSolid);
+	Design::drawFilledRoundRect(&_screen, r, kDesktopArc, kColorWhite, _wm->getPatterns(), kPatternSolid);
 	r.top = 7;
-	Design::drawFilledRect(&_screen, r, kColorWhite, _gui->_patterns, kPatternSolid);
+	Design::drawFilledRect(&_screen, r, kColorWhite, _wm->getPatterns(), kPatternSolid);
 	r.top = kMenuHeight - 1;
-	Design::drawFilledRect(&_screen, r, kColorBlack, _gui->_patterns, kPatternSolid);
+	Design::drawFilledRect(&_screen, r, kColorBlack, _wm->getPatterns(), kPatternSolid);
 
 	for (uint i = 0; i < _items.size(); i++) {
 		int color = kColorBlack;
@@ -362,7 +362,7 @@ bool Menu::draw(Graphics::ManagedSurface *g, bool forceRedraw) {
 			hbox.left -= 1;
 			hbox.right += 2;
 
-			Design::drawFilledRect(&_screen, hbox, kColorBlack, _gui->_patterns, kPatternSolid);
+			Design::drawFilledRect(&_screen, hbox, kColorBlack, _wm->getPatterns(), kPatternSolid);
 			color = kColorWhite;
 
 			if (!it->subitems.empty())
@@ -383,10 +383,10 @@ void Menu::renderSubmenu(MenuItem *menu) {
 	if (r->width() == 0 || r->height() == 0)
 		return;
 
-	Design::drawFilledRect(&_screen, *r, kColorWhite, _gui->_patterns, kPatternSolid);
-	Design::drawRect(&_screen, *r, 1, kColorBlack, _gui->_patterns, kPatternSolid);
-	Design::drawVLine(&_screen, r->right + 1, r->top + 3, r->bottom + 1, 1, kColorBlack, _gui->_patterns, kPatternSolid);
-	Design::drawHLine(&_screen, r->left + 3, r->right + 1, r->bottom + 1, 1, kColorBlack, _gui->_patterns, kPatternSolid);
+	Design::drawFilledRect(&_screen, *r, kColorWhite, _wm->getPatterns(), kPatternSolid);
+	Design::drawRect(&_screen, *r, 1, kColorBlack, _wm->getPatterns(), kPatternSolid);
+	Design::drawVLine(&_screen, r->right + 1, r->top + 3, r->bottom + 1, 1, kColorBlack, _wm->getPatterns(), kPatternSolid);
+	Design::drawHLine(&_screen, r->left + 3, r->right + 1, r->bottom + 1, 1, kColorBlack, _wm->getPatterns(), kPatternSolid);
 
 	int x = r->left + kMenuDropdownPadding;
 	int y = r->top + 1;
@@ -400,7 +400,7 @@ void Menu::renderSubmenu(MenuItem *menu) {
 			color = kColorWhite;
 			Common::Rect trect(r->left, y - (_wm->hasBuiltInFonts() ? 1 : 0), r->right, y + _font->getFontHeight());
 
-			Design::drawFilledRect(&_screen, trect, kColorBlack, _gui->_patterns, kPatternSolid);
+			Design::drawFilledRect(&_screen, trect, kColorBlack, _wm->getPatterns(), kPatternSolid);
 		}
 
 		if (!text.empty()) {
@@ -427,7 +427,7 @@ void Menu::renderSubmenu(MenuItem *menu) {
 				for (int ii = 0; ii < _tempSurface.h; ii++) {
 					const byte *src = (const byte *)_tempSurface.getBasePtr(0, ii);
 					byte *dst = (byte *)_screen.getBasePtr(x, y+ii);
-					byte pat = _gui->_patterns[kPatternCheckers2 - 1][ii % 8];
+					byte pat = _wm->getPatterns()[kPatternCheckers2 - 1][ii % 8];
 					for (int j = 0; j < r->width(); j++) {
 						if (*src != kColorGreen && (pat & (1 << (7 - (x + j) % 8))))
 							*dst = *src;
@@ -437,7 +437,7 @@ void Menu::renderSubmenu(MenuItem *menu) {
 				}
 			}
 		} else { // Delimiter
-			Design::drawHLine(&_screen, r->left + 1, r->right - 1, y + kMenuDropdownItemHeight / 2, 1, kColorBlack, _gui->_patterns, kPatternStripes);
+			Design::drawHLine(&_screen, r->left + 1, r->right - 1, y + kMenuDropdownItemHeight / 2, 1, kColorBlack, _wm->getPatterns(), kPatternStripes);
 		}
 
 		y += kMenuDropdownItemHeight;

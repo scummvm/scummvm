@@ -198,7 +198,7 @@ void Gui::renderConsole(Graphics::ManagedSurface *g, const Common::Rect &r) {
 			color = kColorWhite;
 			Common::Rect trect(0, y1, _console.w, y1 + _consoleLineHeight);
 
-			Design::drawFilledRect(&_console, trect, kColorBlack, _patterns, kPatternSolid);
+			Design::drawFilledRect(&_console, trect, kColorBlack, _wm.getPatterns(), kPatternSolid);
 		}
 
 		if (line == _selectionStartY || line == _selectionEndY) {
@@ -225,7 +225,7 @@ void Gui::renderConsole(Graphics::ManagedSurface *g, const Common::Rect &r) {
 				else
 					trect.left = rectW;
 
-				Design::drawFilledRect(&_console, trect, kColorBlack, _patterns, kPatternSolid);
+				Design::drawFilledRect(&_console, trect, kColorBlack, _wm.getPatterns(), kPatternSolid);
 
 				font->drawString(&_console, beg, x1, y1, textW, color1);
 				font->drawString(&_console, end, x1 + rectW - kConWPadding - kConWOverlap, y1, textW, color2);
@@ -244,7 +244,7 @@ void Gui::renderConsole(Graphics::ManagedSurface *g, const Common::Rect &r) {
 				int rectW2 = rectW1 + font->getStringWidth(mid);
 				Common::Rect trect(rectW1, y1, rectW2, y1 + _consoleLineHeight);
 
-				Design::drawFilledRect(&_console, trect, kColorBlack, _patterns, kPatternSolid);
+				Design::drawFilledRect(&_console, trect, kColorBlack, _wm.getPatterns(), kPatternSolid);
 
 				font->drawString(&_console, beg, x1, y1, textW, kColorBlack);
 				font->drawString(&_console, mid, x1 + rectW1 - kConWPadding - kConWOverlap, y1, textW, kColorWhite);
