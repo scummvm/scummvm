@@ -64,6 +64,7 @@ enum {
 };
 
 enum {
+	kMenuHighLevel = -1,
 	kMenuAbout = 0,
 	kMenuFile = 1,
 	kMenuEdit = 2,
@@ -90,16 +91,30 @@ enum {
 	kMenuActionCommand
 };
 
+struct MenuData {
+	int menunum;
+	const char *title;
+	int action;
+	byte shortcut;
+	bool enabled;
+};
+
 class Menu : public BaseMacWindow {
 public:
 	Menu(int id, const Common::Rect &bounds, MacWindowManager *wm, Gui *gui);
 	~Menu();
 
+	void addStaticMenus(const MenuData *data);
+	void calcDimensions();
+
+	int addMenuItem(const char *name);
+	void addMenuSubItem(int id, const char *text, int action, int style = 0, char shortcut = 0, bool enabled = true);
+	void createSubMenuFromString(int id, const char *string);
+	void clearSubMenu(int id);
+
 	bool draw(Graphics::ManagedSurface *g, bool forceRedraw = false);
 	bool processEvent(Common::Event &event);
 
-	void regenCommandsMenu();
-	void regenWeaponsMenu();
 	void enableCommand(int menunum, int action, bool state);
 	void disableAllMenus();
 
@@ -120,8 +135,6 @@ private:
 	int calculateMenuWidth(MenuItem *menu);
 	void calcMenuBounds(MenuItem *menu);
 	void renderSubmenu(MenuItem *menu);
-	void createCommandsMenu(MenuItem *menu);
-	void createWeaponsMenu(MenuItem *menu);
 	void executeCommand(MenuSubItem *subitem);
 
 	bool keyEvent(Common::Event &event);
@@ -132,8 +145,6 @@ private:
 	bool processMenuShortCut(byte flags, uint16 ascii);
 
 	Common::Array<MenuItem *> _items;
-	MenuItem *_weapons;
-	MenuItem *_commands;
 
 	const Graphics::Font *_font;
 

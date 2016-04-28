@@ -145,6 +145,9 @@ private:
 	Common::String _undobuffer;
 
 	int _inputTextLineNum;
+
+	int _commandsMenuId;
+	int _weaponsMenuId;
 };
 
 } // End of namespace Wage

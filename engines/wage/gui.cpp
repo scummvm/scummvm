@@ -61,6 +61,27 @@
 
 namespace Wage {
 
+static const MenuData menuSubItems[] = {
+	{ kMenuHighLevel, "File",	0, 0, false },
+	{ kMenuHighLevel, "Edit",	0, 0, false },
+	{ kMenuFile, "New",			kMenuActionNew, 0, false },
+	{ kMenuFile, "Open...",		kMenuActionOpen, 0, false },
+	{ kMenuFile, "Close",		kMenuActionClose, 0, true },
+	{ kMenuFile, "Save",		kMenuActionSave, 0, false },
+	{ kMenuFile, "Save as...",	kMenuActionSaveAs, 0, true },
+	{ kMenuFile, "Revert",		kMenuActionRevert, 0, false },
+	{ kMenuFile, "Quit",		kMenuActionQuit, 0, true },
+
+	{ kMenuEdit, "Undo",		kMenuActionUndo, 'Z', false },
+	{ kMenuEdit, NULL,			0, 0, false },
+	{ kMenuEdit, "Cut",			kMenuActionCut, 'K', false },
+	{ kMenuEdit, "Copy",		kMenuActionCopy, 'C', false },
+	{ kMenuEdit, "Paste",		kMenuActionPaste, 'V', false },
+	{ kMenuEdit, "Clear",		kMenuActionClear, 'B', false },
+
+	{ 0, NULL,			0, 0, false }
+};
+
 static void cursorTimerHandler(void *refCon) {
     Gui *gui = (Gui *)refCon;
 
@@ -121,6 +142,22 @@ Gui::Gui(WageEngine *engine) {
 	g_system->getTimerManager()->installTimerProc(&cursorTimerHandler, 200000, this, "wageCursor");
 
 	_menu = _wm.addMenu(this);
+
+	_menu->addStaticMenus(menuSubItems);
+	_menu->addMenuSubItem(kMenuAbout, _engine->_world->getAboutMenuItemName(), kMenuActionAbout);
+
+	_commandsMenuId = _menu->addMenuItem(_engine->_world->_commandsMenuName.c_str());
+	regenCommandsMenu();
+
+	if (!_engine->_world->_weaponMenuDisabled) {
+		_weaponsMenuId = _menu->addMenuItem(_engine->_world->_weaponsMenuName.c_str());
+
+		regenWeaponsMenu();
+	} else {
+		_weaponsMenuId = -1;
+	}
+
+	_menu->calcDimensions();
 
 	_sceneWindow = _wm.addWindow(false, false, false);
 	_sceneWindow->setCallback(sceneWindowCallback, this);
@@ -231,11 +268,38 @@ static bool consoleWindowCallback(WindowClick click, Common::Event &event, void 
 }
 
 void Gui::regenCommandsMenu() {
-	_menu->regenCommandsMenu();
+	_menu->createSubMenuFromString(_commandsMenuId, _engine->_world->_commandsMenu.c_str());
 }
 
 void Gui::regenWeaponsMenu() {
-	_menu->regenWeaponsMenu();
+	if (_engine->_world->_weaponMenuDisabled)
+		return;
+
+	_menu->clearSubMenu(_weaponsMenuId);
+
+	Chr *player = _engine->_world->_player;
+	ObjArray *weapons = player->getWeapons(true);
+
+	bool empty = true;
+
+	for (uint i = 0; i < weapons->size(); i++) {
+		Obj *obj = (*weapons)[i];
+		if (obj->_type == Obj::REGULAR_WEAPON ||
+			obj->_type == Obj::THROW_WEAPON ||
+			obj->_type == Obj::MAGICAL_OBJECT) {
+			Common::String command(obj->_operativeVerb);
+			command += " ";
+			command += obj->_name;
+
+			_menu->addMenuSubItem(_weaponsMenuId, command.c_str(), kMenuActionCommand, 0, 0, true);
+
+			empty = false;
+		}
+	}
+	delete weapons;
+
+	if (empty)
+		_menu->addMenuSubItem(_weaponsMenuId, "You have no weapons", 0, 0, 0, false);
 }
 
 bool Gui::processEvent(Common::Event &event) {
