@@ -101,7 +101,7 @@ struct MenuData {
 
 class Menu : public BaseMacWindow {
 public:
-	Menu(int id, const Common::Rect &bounds, MacWindowManager *wm, Gui *gui);
+	Menu(int id, const Common::Rect &bounds, MacWindowManager *wm);
 	~Menu();
 
 	void setCommandsCallback(void (*callback)(int, Common::String &, void *), void *data) { _ccallback = callback; _cdata = data; }
@@ -126,9 +126,7 @@ public:
 	Common::Rect _bbox;
 
 private:
-	Gui *_gui;
 	Graphics::ManagedSurface _screen;
-	Graphics::ManagedSurface _screenCopy;
 	Graphics::ManagedSurface _tempSurface;
 
 private:

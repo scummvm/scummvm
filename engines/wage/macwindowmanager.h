@@ -61,8 +61,6 @@ class ManagedSurface;
 
 namespace Wage {
 
-class Gui; // FIXME
-
 enum {
 	kDesktopArc = 7
 };
@@ -98,7 +96,7 @@ public:
 	const Graphics::Font *getFont(const char *name, Graphics::FontManager::FontUsage fallback);
 
 	MacWindow *addWindow(bool scrollable, bool resizable, bool editable);
-	Menu *addMenu(Gui *gui);
+	Menu *addMenu();
 	void setActive(int id);
 
 	void setFullRefresh(bool redraw) { _fullRefresh = true; }

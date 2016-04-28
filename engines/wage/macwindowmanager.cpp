@@ -157,8 +157,8 @@ MacWindow *MacWindowManager::addWindow(bool scrollable, bool resizable, bool edi
     return w;
 }
 
-Menu *MacWindowManager::addMenu(Gui *g) {
-	_menu = new Menu(_lastId, _screen->getBounds(), this, g);
+Menu *MacWindowManager::addMenu() {
+	_menu = new Menu(_lastId, _screen->getBounds(), this);
 
 	_windows.push_back(_menu);
 

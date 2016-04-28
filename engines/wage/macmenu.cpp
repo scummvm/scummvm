@@ -49,9 +49,10 @@
 #include "common/keyboard.h"
 
 #include "graphics/primitives.h"
+#include "graphics/font.h"
 
-#include "wage/gui.h"
 #include "wage/macwindowmanager.h"
+#include "wage/macwindow.h"
 #include "wage/macmenu.h"
 
 namespace Wage {
@@ -88,8 +89,8 @@ struct MenuItem {
 	MenuItem(const char *n) : name(n) {}
 };
 
-Menu::Menu(int id, const Common::Rect &bounds, MacWindowManager *wm, Gui *gui)
-		: BaseMacWindow(id, false, wm), _gui(gui) {
+Menu::Menu(int id, const Common::Rect &bounds, MacWindowManager *wm)
+		: BaseMacWindow(id, false, wm) {
 	_font = getMenuFont();
 
 	_screen.create(bounds.width(), bounds.height(), Graphics::PixelFormat::createFormatCLUT8());
@@ -103,7 +104,6 @@ Menu::Menu(int id, const Common::Rect &bounds, MacWindowManager *wm, Gui *gui)
 	_activeItem = -1;
 	_activeSubItem = -1;
 
-	_screenCopy.create(_screen.w, _screen.h, Graphics::PixelFormat::createFormatCLUT8());
 	_tempSurface.create(_screen.w, _font->getFontHeight(), Graphics::PixelFormat::createFormatCLUT8());
 }
 
@@ -307,10 +307,12 @@ static void drawFilledRoundRect(Graphics::ManagedSurface *surface, Common::Rect 
 bool Menu::draw(Graphics::ManagedSurface *g, bool forceRedraw) {
 	Common::Rect r(_bbox);
 
-	if (!_contentIsDirty)
+	if (!_contentIsDirty && !forceRedraw)
 		return false;
 
-	_contentIsDirty = true;
+	_contentIsDirty = false;
+
+	_screen.clear(kColorGreen);
 
 	drawFilledRoundRect(&_screen, r, kDesktopArc, kColorWhite);
 	r.top = 7;
@@ -339,7 +341,9 @@ bool Menu::draw(Graphics::ManagedSurface *g, bool forceRedraw) {
 		_font->drawString(&_screen, it->name, it->bbox.left + kMenuLeftMargin, it->bbox.top + (_wm->hasBuiltInFonts() ? 2 : 1), it->bbox.width(), color);
 	}
 
-	g_system->copyRectToScreen(_screen.getPixels(), _screen.pitch, 0, 0, _screen.w, kMenuHeight);
+	g->transBlitFrom(_screen, kColorGreen);
+
+	g_system->copyRectToScreen(g->getPixels(), g->pitch, 0, 0, g->w, g->h);
 
 	return true;
 }
@@ -416,7 +420,8 @@ void Menu::renderSubmenu(MenuItem *menu) {
 		y += kMenuDropdownItemHeight;
 	}
 
-	g_system->copyRectToScreen(_screen.getBasePtr(r->left, r->top), _screen.pitch, r->left, r->top, r->width() + 2, r->height() + 2);
+	_contentIsDirty = true;
+	//g_system->copyRectToScreen(_screen.getBasePtr(r->left, r->top), _screen.pitch, r->left, r->top, r->width() + 2, r->height() + 2);
 }
 
 bool Menu::processEvent(Common::Event &event) {
@@ -449,9 +454,6 @@ bool Menu::keyEvent(Common::Event &event) {
 
 bool Menu::mouseClick(int x, int y) {
 	if (_bbox.contains(x, y)) {
-		if (!_menuActivated)
-			_screenCopy.copyFrom(_gui->_screen);
-
 		for (uint i = 0; i < _items.size(); i++)
 			if (_items[i]->bbox.contains(x, y)) {
 			  if ((uint)_activeItem == i)
@@ -462,13 +464,14 @@ bool Menu::mouseClick(int x, int y) {
 					r.right += 3;
 					r.bottom += 3;
 
-					_screen.copyRectToSurface(_screenCopy, r.left, r.top, r);
-					g_system->copyRectToScreen(_screen.getBasePtr(r.left, r.top), _screen.pitch, r.left, r.top, r.width(), r.height());
+					_wm->setFullRefresh(true);
 				}
 
 				_activeItem = i;
 				_activeSubItem = -1;
 				_menuActivated = true;
+
+				_contentIsDirty = true;
 
 				return true;
 			}
@@ -480,11 +483,13 @@ bool Menu::mouseClick(int x, int y) {
 			_activeSubItem = numSubItem;
 
 			renderSubmenu(_items[_activeItem]);
+			_contentIsDirty = true;
 		}
 	} else if (_menuActivated && _activeItem != -1) {
 		_activeSubItem = -1;
 
 		renderSubmenu(_items[_activeItem]);
+		_contentIsDirty = true;
 	}
 
 	return false;

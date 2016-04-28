@@ -143,7 +143,7 @@ Gui::Gui(WageEngine *engine) {
 
 	g_system->getTimerManager()->installTimerProc(&cursorTimerHandler, 200000, this, "wageCursor");
 
-	_menu = _wm.addMenu(this);
+	_menu = _wm.addMenu();
 
 	_menu->setCommandsCallback(menuCommandsCallback, this);
 
