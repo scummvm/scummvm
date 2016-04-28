@@ -152,8 +152,7 @@ void CPetLoadSave::highlightChange() {
 	for (int idx = 0; idx < SAVEGAME_SLOTS_COUNT; ++idx)
 		_slotNames[idx].setColor(col);
 
-	// TODO: Unknown if check
-	if (true) {
+	if (_savegameSlotNum != -1) {
 		col = section ? section->getColor(4) : 0;
 		_slotNames[_savegameSlotNum].setLineColor(0, col);
 	}
