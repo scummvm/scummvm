@@ -88,6 +88,7 @@ void TitanicEngine::initialize() {
 	CExitPellerator::init();
 	CEnterExitSecClassMiniLift::init();
 	CTelevision::init();
+	OSVideoSurface::setup();
 
 	_debugger = new Debugger(this);
 	_events = new Events(this);
