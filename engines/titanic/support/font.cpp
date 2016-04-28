@@ -232,11 +232,11 @@ void STFont::copyRect(CVideoSurface *surface, const Point &pt, Rect &rect) {
 		uint16 *lineP = surface->getBasePtr(pt.x, pt.y);
 		uint16 color = getColor();
 
-		for (int yp = rect.top; yp < rect.bottom; ++yp, lineP += surface->getPitch()) {
+		for (int yp = rect.top; yp < rect.bottom; ++yp, lineP += surface->getWidth()) {
 			uint16 *destP = lineP;
 			for (int xp = rect.left; xp < rect.right; ++xp, ++destP) {
 				const byte *srcP = _dataPtr + yp * _dataWidth + xp;
-				if (*srcP >> 3)
+				if (!(*srcP >> 3))
 					*destP = color;
 			}
 		}
