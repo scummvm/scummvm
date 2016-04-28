@@ -106,8 +106,8 @@ echo_n "Converting fonts..."
 fondu-060102/fondu -force *.bin
 echo done
 
-zip -9 wage *.bdf
-mv wage.zip wage.dat
+zip -9 classicmacfonts *.bdf
+mv classicmacfonts.zip classicmacfonts.dat
 
 echo_n "Cleaning up..."
 rm *.bdf
@@ -116,4 +116,4 @@ rm *.bin
 rm *.dmg
 echo done
 
-ls -l wage.dat
+ls -l classicmacfonts.dat
