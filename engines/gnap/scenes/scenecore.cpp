@@ -25,18 +25,16 @@
 #include "gnap/resource.h"
 
 #include "gnap/scenes/scenecore.h"
+
+#include "gnap/scenes/arcade.h"
 #include "gnap/scenes/groupcs.h"
 #include "gnap/scenes/group0.h"
 #include "gnap/scenes/group1.h"
 #include "gnap/scenes/group2.h"
 #include "gnap/scenes/group3.h"
 #include "gnap/scenes/group4.h"
+#include "gnap/scenes/group5.h"
 #include "gnap/scenes/intro.h"
-
-#include "gnap/scenes/scene50.h"
-#include "gnap/scenes/scene51.h"
-#include "gnap/scenes/scene52.h"
-#include "gnap/scenes/scene53.h"
 
 namespace Gnap {
 

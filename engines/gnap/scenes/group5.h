@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef GNAP_SCENE53_H
-#define GNAP_SCENE53_H
+#ifndef GNAP_GROUP5_H
+#define GNAP_GROUP5_H
 
 #include "gnap/debugger.h"
 #include "gnap/scenes/scenecore.h"
@@ -42,10 +42,10 @@ public:
 	virtual void updateAnimationsCb() {};
 
 private:
-	bool _s53_isGnapPhoning;
-	int _s53_currHandSequenceId;
-	int _s53_callsMadeCtr;
-	uint _s53_callsRndUsed;
+	bool _isGnapPhoning;
+	int _currHandSequenceId;
+	int _callsMadeCtr;
+	uint _callsRndUsed;
 
 	int pressPhoneNumberButton(int phoneNumber, int buttonNum);
 	int getRandomCallIndex();
@@ -54,4 +54,4 @@ private:
 };
 
 } // End of namespace Gnap
-#endif // GNAP_SCENE53_H
+#endif // GNAP_GROUP5_H

@@ -23,33 +23,33 @@
 #include "gnap/gnap.h"
 #include "gnap/gamesys.h"
 #include "gnap/resource.h"
-#include "gnap/scenes/scene53.h"
+#include "gnap/scenes/group5.h"
 
 namespace Gnap {
 
 enum {
-	kHSPlatypus		 = 0,
-	kHSDevice		 = 1,
-	kHSPhoneKey1	 = 2,
-	kHSPhoneKey2	 = 3,
-	kHSPhoneKey3	 = 4,
-	kHSPhoneKey4	 = 5,
-	kHSPhoneKey5	 = 6,
-	kHSPhoneKey6	 = 7,
-	kHSPhoneKey7	 = 8,
-	kHSPhoneKey8	 = 9,
-	kHSPhoneKey9	 = 10,
-	kHSPhoneKey0	 = 11,
-	kHSPhoneKeySharp = 12,
-	kHSPhoneKeyStar	 = 13,
-	kHSPhoneExit	 = 14
+	kHS53Platypus		 = 0,
+	kHS53Device		 = 1,
+	kHS53PhoneKey1	 = 2,
+	kHS53PhoneKey2	 = 3,
+	kHS53PhoneKey3	 = 4,
+	kHS53PhoneKey4	 = 5,
+	kHS53PhoneKey5	 = 6,
+	kHS53PhoneKey6	 = 7,
+	kHS53PhoneKey7	 = 8,
+	kHS53PhoneKey8	 = 9,
+	kHS53PhoneKey9	 = 10,
+	kHS53PhoneKey0	 = 11,
+	kHS53PhoneKeySharp = 12,
+	kHS53PhoneKeyStar	 = 13,
+	kHS53PhoneExit	 = 14
 };
 
 Scene53::Scene53(GnapEngine *vm) : Scene(vm) {
-	_s53_isGnapPhoning = false;
-	_s53_currHandSequenceId = -1;
-	_s53_callsMadeCtr = 0;
-	_s53_callsRndUsed = 0;
+	_isGnapPhoning = false;
+	_currHandSequenceId = -1;
+	_callsMadeCtr = 0;
+	_callsRndUsed = 0;
 }
 
 int Scene53::init() {
@@ -59,22 +59,22 @@ int Scene53::init() {
 }
 
 void Scene53::updateHotspots() {
-	_vm->setHotspot(kHSPlatypus, 0, 0, 0, 0, SF_WALKABLE | SF_TALK_CURSOR | SF_GRAB_CURSOR | SF_LOOK_CURSOR);
-	_vm->setHotspot(kHSPhoneKey1, 336, 238, 361, 270, SF_GRAB_CURSOR);
-	_vm->setHotspot(kHSPhoneKey2, 376, 243, 405, 274, SF_GRAB_CURSOR);
-	_vm->setHotspot(kHSPhoneKey3, 415, 248, 441, 276, SF_GRAB_CURSOR);
-	_vm->setHotspot(kHSPhoneKey4, 329, 276, 358, 303, SF_GRAB_CURSOR);
-	_vm->setHotspot(kHSPhoneKey5, 378, 282, 408, 311, SF_GRAB_CURSOR);
-	_vm->setHotspot(kHSPhoneKey6, 417, 286, 446, 319, SF_GRAB_CURSOR);
-	_vm->setHotspot(kHSPhoneKey7, 332, 311, 361, 342, SF_GRAB_CURSOR);
-	_vm->setHotspot(kHSPhoneKey8, 376, 318, 407, 349, SF_GRAB_CURSOR);
-	_vm->setHotspot(kHSPhoneKey9, 417, 320, 447, 353, SF_GRAB_CURSOR);
-	_vm->setHotspot(kHSPhoneKey0, 377, 352, 405, 384, SF_GRAB_CURSOR);
-	_vm->setHotspot(kHSPhoneKeySharp, 419, 358, 450, 394, SF_GRAB_CURSOR);
-	_vm->setHotspot(kHSPhoneKeyStar, 328, 346, 359, 379, SF_GRAB_CURSOR);
-	_vm->setHotspot(kHSPhoneExit, 150, 585, 650, 600, SF_EXIT_D_CURSOR);
+	_vm->setHotspot(kHS53Platypus, 0, 0, 0, 0, SF_WALKABLE | SF_TALK_CURSOR | SF_GRAB_CURSOR | SF_LOOK_CURSOR);
+	_vm->setHotspot(kHS53PhoneKey1, 336, 238, 361, 270, SF_GRAB_CURSOR);
+	_vm->setHotspot(kHS53PhoneKey2, 376, 243, 405, 274, SF_GRAB_CURSOR);
+	_vm->setHotspot(kHS53PhoneKey3, 415, 248, 441, 276, SF_GRAB_CURSOR);
+	_vm->setHotspot(kHS53PhoneKey4, 329, 276, 358, 303, SF_GRAB_CURSOR);
+	_vm->setHotspot(kHS53PhoneKey5, 378, 282, 408, 311, SF_GRAB_CURSOR);
+	_vm->setHotspot(kHS53PhoneKey6, 417, 286, 446, 319, SF_GRAB_CURSOR);
+	_vm->setHotspot(kHS53PhoneKey7, 332, 311, 361, 342, SF_GRAB_CURSOR);
+	_vm->setHotspot(kHS53PhoneKey8, 376, 318, 407, 349, SF_GRAB_CURSOR);
+	_vm->setHotspot(kHS53PhoneKey9, 417, 320, 447, 353, SF_GRAB_CURSOR);
+	_vm->setHotspot(kHS53PhoneKey0, 377, 352, 405, 384, SF_GRAB_CURSOR);
+	_vm->setHotspot(kHS53PhoneKeySharp, 419, 358, 450, 394, SF_GRAB_CURSOR);
+	_vm->setHotspot(kHS53PhoneKeyStar, 328, 346, 359, 379, SF_GRAB_CURSOR);
+	_vm->setHotspot(kHS53PhoneExit, 150, 585, 650, 600, SF_EXIT_D_CURSOR);
 
-	_vm->setDeviceHotspot(kHSDevice, -1, -1, -1, -1);
+	_vm->setDeviceHotspot(kHS53Device, -1, -1, -1, -1);
 	_vm->_hotspotsCount = 15;
 }
 
@@ -91,14 +91,14 @@ int Scene53::pressPhoneNumberButton(int phoneNumber, int buttonNum) {
 		0x58, 0x59, 0x5A, 0x5C, 0x5D, 0x5B
 	};
 
-	if (_s53_isGnapPhoning) {
+	if (_isGnapPhoning) {
 		_vm->_gameSys->setAnimation(kGnapHandSequenceIds[buttonNum], 40, 6);
-		_vm->_gameSys->insertSequence(kGnapHandSequenceIds[buttonNum], 40, _s53_currHandSequenceId, 40, kSeqSyncWait, 0, 0, 0);
-		_s53_currHandSequenceId = kGnapHandSequenceIds[buttonNum];
+		_vm->_gameSys->insertSequence(kGnapHandSequenceIds[buttonNum], 40, _currHandSequenceId, 40, kSeqSyncWait, 0, 0, 0);
+		_currHandSequenceId = kGnapHandSequenceIds[buttonNum];
 	} else {
 		_vm->_gameSys->setAnimation(kPlatypusHandSequenceIds[buttonNum], 40, 6);
-		_vm->_gameSys->insertSequence(kPlatypusHandSequenceIds[buttonNum], 40, _s53_currHandSequenceId, 40, kSeqSyncWait, 0, 0, 0);
-		_s53_currHandSequenceId = kPlatypusHandSequenceIds[buttonNum];
+		_vm->_gameSys->insertSequence(kPlatypusHandSequenceIds[buttonNum], 40, _currHandSequenceId, 40, kSeqSyncWait, 0, 0, 0);
+		_currHandSequenceId = kPlatypusHandSequenceIds[buttonNum];
 	}
 
 	_vm->_gnapActionStatus = 6;
@@ -117,14 +117,14 @@ int Scene53::pressPhoneNumberButton(int phoneNumber, int buttonNum) {
 
 int Scene53::getRandomCallIndex() {
 	int index, tries = 0;
-	if (_s53_callsRndUsed == 0x7FFF)
-		_s53_callsRndUsed = 0;
+	if (_callsRndUsed == 0x7FFF)
+		_callsRndUsed = 0;
 	do {
 		index = _vm->getRandom(16);
 		if (++tries == 300)
-			_s53_callsRndUsed = 0;
-	} while (_s53_callsRndUsed & (1 << index));
-	_s53_callsRndUsed |= (1 << index);
+			_callsRndUsed = 0;
+	} while (_callsRndUsed & (1 << index));
+	_callsRndUsed |= (1 << index);
 	return index;
 }
 
@@ -135,20 +135,20 @@ void Scene53::runRandomCall() {
 		0x6A, 0x6B, 0x6C, 0x6D, 0x71
 	};
 
-	++_s53_callsMadeCtr;
+	++_callsMadeCtr;
 
-	if (_s53_callsMadeCtr <= 10) {
+	if (_callsMadeCtr <= 10) {
 		int index;
 
 		do {
 			index = getRandomCallIndex();
-		} while (!_s53_isGnapPhoning && (index == 0 || index == 3 || index == 4 || index == 11));
+		} while (!_isGnapPhoning && (index == 0 || index == 3 || index == 4 || index == 11));
 		_vm->_gameSys->setAnimation(kCallSequenceIds[index], 1, 6);
 		_vm->_gameSys->insertSequence(kCallSequenceIds[index], 1, 0, 0, kSeqNone, 16, 0, 0);
 	} else {
 		_vm->_gameSys->setAnimation(0x74, 1, 6);
 		_vm->_gameSys->insertSequence(0x74, 1, 0, 0, kSeqNone, 16, 0, 0);
-		_s53_callsMadeCtr = 0;
+		_callsMadeCtr = 0;
 	}
 	
 	_vm->_gnapActionStatus = 1;
@@ -176,14 +176,14 @@ void Scene53::runChitChatLine() {
 	_vm->_gnapActionStatus = -1;
 
 	if (_vm->isFlag(kGFSpringTaken)) {
-		_vm->_gameSys->insertSequence(0x45, 40, _s53_currHandSequenceId, 40, kSeqSyncWait, 0, 0, 0);
-		_s53_currHandSequenceId = 0x45;
+		_vm->_gameSys->insertSequence(0x45, 40, _currHandSequenceId, 40, kSeqSyncWait, 0, 0, 0);
+		_currHandSequenceId = 0x45;
 	} else {
-		_vm->_gameSys->insertSequence(0x45, 40, _s53_currHandSequenceId, 40, kSeqSyncWait, 0, 0, 0);
-		_s53_currHandSequenceId = 0x5E;
+		_vm->_gameSys->insertSequence(0x45, 40, _currHandSequenceId, 40, kSeqSyncWait, 0, 0, 0);
+		_currHandSequenceId = 0x5E;
 	}
 	
-	_vm->_hotspots[kHSDevice]._flags = SF_DISABLED;
+	_vm->_hotspots[kHS53Device]._flags = SF_DISABLED;
 	
 	while (!flag) {
 		_vm->updateMouseCursor();
@@ -258,13 +258,13 @@ void Scene53::runChitChatLine() {
 	
 	if (_vm->isFlag(kGFSpringTaken)) {
 		_vm->_gameSys->setAnimation(0x73, 40, 6);
-		_vm->_gameSys->insertSequence(0x73, 40, _s53_currHandSequenceId, 40, kSeqSyncWait, 0, 0, 0);
+		_vm->_gameSys->insertSequence(0x73, 40, _currHandSequenceId, 40, kSeqSyncWait, 0, 0, 0);
 		while (_vm->_gameSys->getAnimationStatus(6) != 2) {
 			_vm->updateMouseCursor();
 			// checkGameAppStatus();
 			_vm->gameUpdateTick();
 		}
-		_s53_currHandSequenceId = 0x73;
+		_currHandSequenceId = 0x73;
 		_vm->_gnapActionStatus = -1;
 	}
 }
@@ -276,14 +276,14 @@ void Scene53::run() {
 	_vm->queueInsertDeviceIcon();
 	
 	if (_vm->isFlag(kGFSpringTaken)) {
-		_s53_currHandSequenceId = 0x45;
-		_s53_isGnapPhoning = true;
+		_currHandSequenceId = 0x45;
+		_isGnapPhoning = true;
 	} else {
-		_s53_currHandSequenceId = 0x5E;
-		_s53_isGnapPhoning = false;
+		_currHandSequenceId = 0x5E;
+		_isGnapPhoning = false;
 	}
 	
-	_vm->_gameSys->insertSequence(_s53_currHandSequenceId, 40, 0, 0, kSeqNone, 0, 0, 0);
+	_vm->_gameSys->insertSequence(_currHandSequenceId, 40, 0, 0, kSeqNone, 0, 0, 0);
 	_vm->endSceneInit();
 	_vm->setVerbCursor(GRAB_CURSOR);
 	_vm->playSound(0xA0, true);
@@ -322,13 +322,13 @@ void Scene53::run() {
 				_vm->_gnapActionStatus = 1;
 				if (_vm->isFlag(kGFSpringTaken)) {
 					_vm->_gameSys->setAnimation(0x73, 40, 6);
-					_vm->_gameSys->insertSequence(0x73, 40, _s53_currHandSequenceId, 40, kSeqSyncWait, 0, 0, 0);
+					_vm->_gameSys->insertSequence(0x73, 40, _currHandSequenceId, 40, kSeqSyncWait, 0, 0, 0);
 					while (_vm->_gameSys->getAnimationStatus(6) != 2) {
 						_vm->updateMouseCursor();
 						// checkGameAppStatus();
 						_vm->gameUpdateTick();
 					}
-					_s53_currHandSequenceId = 0x73;
+					_currHandSequenceId = 0x73;
 					_vm->_gnapActionStatus = -1;
 				}
 				if (phoneNumber == 7284141) {
@@ -348,7 +348,7 @@ void Scene53::run() {
 					phoneNumberLen = 0;
 					_vm->_sceneDone = true;
 					_vm->_newSceneNum = 17;
-					if (_s53_isGnapPhoning)
+					if (_isGnapPhoning)
 						_vm->setFlag(kGFUnk25);
 					else
 						_vm->setFlag(kGFPlatypusTalkingToAssistant);
@@ -364,13 +364,13 @@ void Scene53::run() {
 				_vm->_gnapActionStatus = 1;
 				if (_vm->isFlag(kGFSpringTaken)) {
 					_vm->_gameSys->setAnimation(0x73, 40, 6);
-					_vm->_gameSys->insertSequence(0x73, 40, _s53_currHandSequenceId, 40, kSeqSyncWait, 0, 0, 0);
+					_vm->_gameSys->insertSequence(0x73, 40, _currHandSequenceId, 40, kSeqSyncWait, 0, 0, 0);
 					while (_vm->_gameSys->getAnimationStatus(6) != 2) {
 						_vm->updateMouseCursor();
 						// checkGameAppStatus();
 						_vm->gameUpdateTick();
 					}
-					_s53_currHandSequenceId = 0x73;
+					_currHandSequenceId = 0x73;
 					_vm->_gnapActionStatus = -1;
 				}
 				_vm->_isLeavingScene = true;

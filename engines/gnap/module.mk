@@ -10,17 +10,15 @@ MODULE_OBJS := \
 	menu.o \
 	resource.o \
 	sound.o \
+	scenes/arcade.o \
 	scenes/groupcs.o \
 	scenes/group0.o \
 	scenes/group1.o \
 	scenes/group2.o \
 	scenes/group3.o \
 	scenes/group4.o \
+	scenes/group5.o \
 	scenes/intro.o \
-	scenes/scene50.o \
-	scenes/scene51.o \
-	scenes/scene52.o \
-	scenes/scene53.o \
 	scenes/scenecore.o
 
 # This module can be built as a plugin

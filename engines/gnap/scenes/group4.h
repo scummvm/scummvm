@@ -143,51 +143,6 @@ private:
 	int _currItchyGuySequenceId;
 };
 
-struct Scene49Obstacle {
-	int _currSequenceId;
-	int _closerSequenceId;
-	int _passedSequenceId;
-	int _splashSequenceId;
-	int _collisionSequenceId;
-	int _prevId;
-	int _currId;
-	int _laneNum;
-};
-
-struct ObstacleDef {
-	int _sequenceId;
-	int _ticks;
-};
-
-class Scene49: public Scene {
-public:
-	Scene49(GnapEngine *vm);
-	~Scene49() {}
-
-	virtual int init();
-	virtual void updateHotspots();
-	virtual void run();
-	virtual void updateAnimations();
-	virtual void updateAnimationsCb() {};
-
-private:
-	int _scoreBarPos;
-	int _scoreLevel;
-	bool _scoreBarFlash;
-	int _obstacleIndex;
-	Scene49Obstacle _obstacles[5];
-	int _truckSequenceId;
-	int _truckId;
-	int _truckLaneNum;
-
-	void checkObstacles();
-	void updateObstacle(int id);
-	void increaseScore(int amount);
-	void decreaseScore(int amount);
-	void refreshScoreBar();
-	void clearObstacle(int index);
-};
-
 } // End of namespace Gnap
 
 #endif // GNAP_GROUP4_H
