@@ -48,13 +48,11 @@
 #include "common/system.h"
 #include "common/keyboard.h"
 
-#include "wage/wage.h"
-#include "wage/entities.h"
-#include "wage/design.h"
+#include "graphics/primitives.h"
+
 #include "wage/gui.h"
 #include "wage/macwindowmanager.h"
 #include "wage/macmenu.h"
-#include "wage/world.h"
 
 namespace Wage {
 
@@ -98,8 +96,8 @@ Menu::Menu(int id, const Common::Rect &bounds, MacWindowManager *wm, Gui *gui)
 
 	_bbox.left = 0;
 	_bbox.top = 0;
-	_bbox.right = _screen.w - 1;
-	_bbox.bottom = kMenuHeight - 1;
+	_bbox.right = _screen.w;
+	_bbox.bottom = kMenuHeight;
 
 	_menuActivated = false;
 	_activeItem = -1;
@@ -295,6 +293,17 @@ void Menu::calcMenuBounds(MenuItem *menu) {
 	menu->subbbox.bottom = y2;
 }
 
+static void drawPixelPlain(int x, int y, int color, void *data) {
+	Graphics::ManagedSurface *surface = (Graphics::ManagedSurface *)data;
+
+	if (x >= 0 && x < surface->w && y >= 0 && y < surface->h)
+		*((byte *)surface->getBasePtr(x, y)) = (byte)color;
+}
+
+static void drawFilledRoundRect(Graphics::ManagedSurface *surface, Common::Rect &rect, int arc, int color) {
+	Graphics::drawRoundRect(rect, arc, color, true, drawPixelPlain, surface);
+}
+
 bool Menu::draw(Graphics::ManagedSurface *g, bool forceRedraw) {
 	Common::Rect r(_bbox);
 
@@ -303,11 +312,11 @@ bool Menu::draw(Graphics::ManagedSurface *g, bool forceRedraw) {
 
 	_contentIsDirty = true;
 
-	Design::drawFilledRoundRect(&_screen, r, kDesktopArc, kColorWhite, _wm->getPatterns(), kPatternSolid);
+	drawFilledRoundRect(&_screen, r, kDesktopArc, kColorWhite);
 	r.top = 7;
-	Design::drawFilledRect(&_screen, r, kColorWhite, _wm->getPatterns(), kPatternSolid);
+	_screen.fillRect(r, kColorWhite);
 	r.top = kMenuHeight - 1;
-	Design::drawFilledRect(&_screen, r, kColorBlack, _wm->getPatterns(), kPatternSolid);
+	_screen.fillRect(r, kColorBlack);
 
 	for (uint i = 0; i < _items.size(); i++) {
 		int color = kColorBlack;
@@ -317,9 +326,10 @@ bool Menu::draw(Graphics::ManagedSurface *g, bool forceRedraw) {
 			Common::Rect hbox = it->bbox;
 
 			hbox.left -= 1;
-			hbox.right += 2;
+			hbox.right += 3;
+			hbox.bottom += 1;
 
-			Design::drawFilledRect(&_screen, hbox, kColorBlack, _wm->getPatterns(), kPatternSolid);
+			_screen.fillRect(hbox, kColorBlack);
 			color = kColorWhite;
 
 			if (!it->subitems.empty())
@@ -340,10 +350,12 @@ void Menu::renderSubmenu(MenuItem *menu) {
 	if (r->width() == 0 || r->height() == 0)
 		return;
 
-	Design::drawFilledRect(&_screen, *r, kColorWhite, _wm->getPatterns(), kPatternSolid);
-	Design::drawRect(&_screen, *r, 1, kColorBlack, _wm->getPatterns(), kPatternSolid);
-	Design::drawVLine(&_screen, r->right + 1, r->top + 3, r->bottom + 1, 1, kColorBlack, _wm->getPatterns(), kPatternSolid);
-	Design::drawHLine(&_screen, r->left + 3, r->right + 1, r->bottom + 1, 1, kColorBlack, _wm->getPatterns(), kPatternSolid);
+	_screen.fillRect(*r, kColorWhite);
+	_screen.frameRect(*r, kColorBlack);
+	_screen.vLine(r->right, r->top + 3, r->bottom + 1, kColorBlack);
+	_screen.vLine(r->right + 1, r->top + 3, r->bottom + 1, kColorBlack);
+	_screen.hLine(r->left + 3, r->bottom, r->right + 1, kColorBlack);
+	_screen.hLine(r->left + 3, r->bottom + 1, r->right + 1, kColorBlack);
 
 	int x = r->left + kMenuDropdownPadding;
 	int y = r->top + 1;
@@ -357,7 +369,7 @@ void Menu::renderSubmenu(MenuItem *menu) {
 			color = kColorWhite;
 			Common::Rect trect(r->left, y - (_wm->hasBuiltInFonts() ? 1 : 0), r->right, y + _font->getFontHeight());
 
-			Design::drawFilledRect(&_screen, trect, kColorBlack, _wm->getPatterns(), kPatternSolid);
+			_screen.fillRect(trect, kColorBlack);
 		}
 
 		if (!text.empty()) {
@@ -394,13 +406,17 @@ void Menu::renderSubmenu(MenuItem *menu) {
 				}
 			}
 		} else { // Delimiter
-			Design::drawHLine(&_screen, r->left + 1, r->right - 1, y + kMenuDropdownItemHeight / 2, 1, kColorBlack, _wm->getPatterns(), kPatternStripes);
+			bool flip = r->left & 2;
+			for (int xx = r->left + 1; xx <= r->right - 1; xx++) {
+				drawPixelPlain(xx, y + kMenuDropdownItemHeight / 2, (flip ? kColorBlack : kColorWhite), &_screen);
+				flip = !flip;
+			}
 		}
 
 		y += kMenuDropdownItemHeight;
 	}
 
-	g_system->copyRectToScreen(_screen.getBasePtr(r->left, r->top), _screen.pitch, r->left, r->top, r->width() + 3, r->height() + 3);
+	g_system->copyRectToScreen(_screen.getBasePtr(r->left, r->top), _screen.pitch, r->left, r->top, r->width() + 2, r->height() + 2);
 }
 
 bool Menu::processEvent(Common::Event &event) {

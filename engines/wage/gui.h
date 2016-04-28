@@ -60,6 +60,8 @@
 namespace Wage {
 
 class Menu;
+class Scene;
+class WageEngine;
 
 enum {
 	kCursorHeight = 12

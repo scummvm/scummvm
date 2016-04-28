@@ -50,8 +50,6 @@
 
 #include "graphics/managed_surface.h"
 
-#include "wage/macwindowmanager.h"
-
 namespace Wage {
 
 class MacWindowManager;
@@ -134,7 +132,7 @@ public:
 private:
 	void drawBorder();
 	void drawBox(Graphics::ManagedSurface *g, int x, int y, int w, int h);
-	void fillRect(Graphics::ManagedSurface *g, int x, int y, int w, int h, int color = kColorBlack);
+	void fillRect(Graphics::ManagedSurface *g, int x, int y, int w, int h, int color);
 	const Graphics::Font *getTitleFont();
 	void updateInnerDims();
 	WindowClick isInBorder(int x, int y);

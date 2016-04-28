@@ -50,6 +50,7 @@
 #include "common/events.h"
 
 #include "wage/macwindow.h"
+#include "wage/macwindowmanager.h"
 
 namespace Wage {
 
@@ -201,11 +202,11 @@ void MacWindow::drawBorder() {
 	drawBox(g, x + width - size + 1, y + size,              size - 4,             height - 2 * size - 1);
 
 	if (active) {
-		fillRect(g, x + size, y + 5,           width - 2 * size - 1, 8);
-		fillRect(g, x + size, y + height - 13, width - 2 * size - 1, 8);
-		fillRect(g, x + 5,    y + size,        8,                    height - 2 * size - 1);
+		fillRect(g, x + size, y + 5,           width - 2 * size - 1, 8, kColorBlack);
+		fillRect(g, x + size, y + height - 13, width - 2 * size - 1, 8, kColorBlack);
+		fillRect(g, x + 5,    y + size,        8,                    height - 2 * size - 1, kColorBlack);
 		if (!scrollable) {
-			fillRect(g, x + width - 13, y + size, 8, height - 2 * size - 1);
+			fillRect(g, x + width - 13, y + size, 8, height - 2 * size - 1, kColorBlack);
 		} else {
 			int x1 = x + width - 15;
 			int y1 = y + size + 1;
@@ -215,7 +216,7 @@ void MacWindow::drawBorder() {
 					g->hLine(x1 + xx, y1 + yy, x1 + xx, (arrowPixels[yy][xx] != 0 ? kColorBlack : kColorWhite));
 			}
 
-			fillRect(g, x + width - 13, y + size + ARROW_H, 8, height - 2 * size - 1 - ARROW_H * 2);
+			fillRect(g, x + width - 13, y + size + ARROW_H, 8, height - 2 * size - 1 - ARROW_H * 2, kColorBlack);
 
 			y1 += height - 2 * size - ARROW_H - 2;
 			for (int yy = 0; yy < ARROW_H; yy++) {
@@ -235,7 +236,7 @@ void MacWindow::drawBorder() {
 		}
 		if (closeable) {
 			if (_highlightedPart == kBorderCloseButton) {
-				fillRect(g, x + 6, y + 6, 6, 6);
+				fillRect(g, x + 6, y + 6, 6, 6, kColorBlack);
 			} else {
 				drawBox(g, x + 5, y + 5, 7, 7);
 			}
