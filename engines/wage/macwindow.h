@@ -52,6 +52,8 @@
 
 namespace Wage {
 
+class MacWindowManager;
+
 enum WindowType {
 	kWindowUnknown,
 	kWindowWindow,
@@ -74,7 +76,7 @@ enum WindowClick {
 
 class BaseMacWindow {
 public:
-	BaseMacWindow(int id);
+	BaseMacWindow(int id, MacWindowManager *wm);
 	virtual ~BaseMacWindow() {}
 
 	const Common::Rect &getDimensions() { return _dims; }
@@ -102,11 +104,13 @@ protected:
 
 	bool (*_callback)(WindowClick, Common::Event &, void *);
 	void *_dataPtr;
+
+	MacWindowManager *_wm;
 };
 
 class MacWindow : public BaseMacWindow {
 public:
-	MacWindow(int id, bool scrollable, bool resizable);
+	MacWindow(int id, bool scrollable, bool resizable, MacWindowManager *wm);
 	virtual ~MacWindow();
 	void move(int x, int y);
 	void resize(int w, int h);
@@ -127,7 +131,6 @@ private:
 	void drawBox(Graphics::ManagedSurface *g, int x, int y, int w, int h);
 	void fillRect(Graphics::ManagedSurface *g, int x, int y, int w, int h, int color = kColorBlack);
 	const Graphics::Font *getTitleFont();
-	bool builtInFonts();
 	void updateInnerDims();
 	WindowClick isInBorder(int x, int y);
 

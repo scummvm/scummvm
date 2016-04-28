@@ -104,13 +104,13 @@ struct MenuData {
 	{ 0, NULL,			0, 0, false }
 };
 
-Menu::Menu(int id, const Common::Rect &bounds, bool builtInFonts, Gui *gui)
-		: BaseMacWindow(id), _gui(gui), _builtInFonts(builtInFonts) {
+Menu::Menu(int id, const Common::Rect &bounds, MacWindowManager *wm, Gui *gui)
+		: BaseMacWindow(id, wm), _gui(gui) {
 	_font = getMenuFont();
 
 	_screen.create(bounds.width(), bounds.height(), Graphics::PixelFormat::createFormatCLUT8());
 
-	MenuItem *about = new MenuItem(_builtInFonts ? "\xa9" : "\xf0"); // (c) Symbol as the most resembling apple
+	MenuItem *about = new MenuItem(_wm->hasBuiltInFonts() ? "\xa9" : "\xf0"); // (c) Symbol as the most resembling apple
 	_items.push_back(about);
 	_items[0]->subitems.push_back(new MenuSubItem(_gui->_engine->_world->getAboutMenuItemName(), kMenuActionAbout));
 
@@ -150,7 +150,7 @@ Menu::Menu(int id, const Common::Rect &bounds, bool builtInFonts, Gui *gui)
 			_items[i]->bbox.left = x - kMenuLeftMargin;
 			_items[i]->bbox.top = y;
 			_items[i]->bbox.right = x + w + kMenuSpacing - kMenuLeftMargin;
-			_items[i]->bbox.bottom = y + _font->getFontHeight() + (_builtInFonts ? 3 : 2);
+			_items[i]->bbox.bottom = y + _font->getFontHeight() + (_wm->hasBuiltInFonts() ? 3 : 2);
 		}
 
 		calcMenuBounds(_items[i]);
@@ -299,7 +299,7 @@ const char *Menu::getAcceleratorString(MenuSubItem *item, const char *prefix) {
 	*res = 0;
 
 	if (item->shortcut != 0)
-		sprintf(res, "%s%c%c", prefix, (_builtInFonts ? '^' : '\x11'), item->shortcut);
+		sprintf(res, "%s%c%c", prefix, (_wm->hasBuiltInFonts() ? '^' : '\x11'), item->shortcut);
 
 	return res;
 }
@@ -369,7 +369,7 @@ bool Menu::draw(Graphics::ManagedSurface *g, bool forceRedraw) {
 				renderSubmenu(it);
 		}
 
-		_font->drawString(&_screen, it->name, it->bbox.left + kMenuLeftMargin, it->bbox.top + (_builtInFonts ? 2 : 1), it->bbox.width(), color);
+		_font->drawString(&_screen, it->name, it->bbox.left + kMenuLeftMargin, it->bbox.top + (_wm->hasBuiltInFonts() ? 2 : 1), it->bbox.width(), color);
 	}
 
 	g_system->copyRectToScreen(_screen.getPixels(), _screen.pitch, 0, 0, _screen.w, kMenuHeight);
@@ -398,7 +398,7 @@ void Menu::renderSubmenu(MenuItem *menu) {
 		int color = kColorBlack;
 		if (i == (uint)_activeSubItem && !text.empty() && menu->subitems[i]->enabled) {
 			color = kColorWhite;
-			Common::Rect trect(r->left, y - (_builtInFonts ? 1 : 0), r->right, y + _font->getFontHeight());
+			Common::Rect trect(r->left, y - (_wm->hasBuiltInFonts() ? 1 : 0), r->right, y + _font->getFontHeight());
 
 			Design::drawFilledRect(&_screen, trect, kColorBlack, _gui->_patterns, kPatternSolid);
 		}
@@ -535,7 +535,7 @@ bool Menu::mouseRelease(int x, int y) {
 		_activeItem = -1;
 		_activeSubItem = -1;
 
-		_gui->_wm.setFullRefresh(true);
+		_wm->setFullRefresh(true);
 
 		return true;
 	}

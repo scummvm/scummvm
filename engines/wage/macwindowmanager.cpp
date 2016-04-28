@@ -78,6 +78,8 @@ MacWindowManager::MacWindowManager() {
 
 	_fullRefresh = true;
 
+	_builtInFonts = true;
+
 	for (int i = 0; i < ARRAYSIZE(fillPatterns); i++)
 		_patterns.push_back(fillPatterns[i]);
 }
@@ -88,7 +90,7 @@ MacWindowManager::~MacWindowManager() {
 }
 
 MacWindow *MacWindowManager::addWindow(bool scrollable, bool resizable) {
-    MacWindow *w = new MacWindow(_lastId, scrollable, resizable);
+    MacWindow *w = new MacWindow(_lastId, scrollable, resizable, this);
 
     _windows.push_back(w);
     _windowStack.push_back(w);
@@ -100,8 +102,8 @@ MacWindow *MacWindowManager::addWindow(bool scrollable, bool resizable) {
     return w;
 }
 
-Menu *MacWindowManager::addMenu(bool builtInFonts, Gui *g) {
-	_menu = new Menu(_lastId, _screen->getBounds(), builtInFonts, g);
+Menu *MacWindowManager::addMenu(Gui *g) {
+	_menu = new Menu(_lastId, _screen->getBounds(), this, g);
 
 	_windows.push_back(_menu);
 

@@ -59,9 +59,11 @@ public:
 	~MacWindowManager();
 
 	void setScreen(Graphics::ManagedSurface *screen) { _screen = screen; }
+	void setBuiltInFonts(bool builtInFonts) { _builtInFonts = builtInFonts; }
+	bool hasBuiltInFonts() { return _builtInFonts; }
 
 	MacWindow *addWindow(bool scrollable, bool resizable);
-	Menu *addMenu(bool builtInFonts, Gui *gui);
+	Menu *addMenu(Gui *gui);
 	void setActive(int id);
 
 	void setFullRefresh(bool redraw) { _fullRefresh = true; }
@@ -89,6 +91,8 @@ private:
 	Patterns _patterns;
 
 	Menu *_menu;
+
+	bool _builtInFonts;
 };
 
 } // End of namespace Wage

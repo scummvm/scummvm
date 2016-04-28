@@ -183,10 +183,11 @@ Gui::Gui(WageEngine *engine) {
 		_patterns.push_back(fillPatterns[i]);
 
 	loadFonts();
+	_wm.setBuiltInFonts(_builtInFonts);
 
 	g_system->getTimerManager()->installTimerProc(&cursorTimerHandler, 200000, this, "wageCursor");
 
-	_menu = _wm.addMenu(_builtInFonts, this);
+	_menu = _wm.addMenu(this);
 
 	_sceneWindow = _wm.addWindow(false, false);
 	_sceneWindow->setCallback(sceneWindowCallback, this);

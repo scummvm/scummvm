@@ -54,7 +54,7 @@
 
 namespace Wage {
 
-BaseMacWindow::BaseMacWindow(int id) : _id(id) {
+BaseMacWindow::BaseMacWindow(int id, MacWindowManager *wm) : _id(id), _wm(wm) {
 	_callback = 0;
 	_dataPtr = 0;
 
@@ -63,8 +63,8 @@ BaseMacWindow::BaseMacWindow(int id) : _id(id) {
 	_type = kWindowUnknown;
 }
 
-MacWindow::MacWindow(int id, bool scrollable, bool resizable) :
-		BaseMacWindow(id), _scrollable(scrollable), _resizable(resizable) {
+MacWindow::MacWindow(int id, bool scrollable, bool resizable, MacWindowManager *wm) :
+		BaseMacWindow(id, wm), _scrollable(scrollable), _resizable(resizable) {
 	_active = false;
 	_borderIsDirty = true;
 
@@ -147,10 +147,6 @@ bool MacWindow::draw(Graphics::ManagedSurface *g, bool forceRedraw) {
 
 const Graphics::Font *MacWindow::getTitleFont() {
 	return ((WageEngine *)g_engine)->_gui->getFont("Chicago-12", Graphics::FontManager::kBigGUIFont);
-}
-
-bool MacWindow::builtInFonts() {
-	return ((WageEngine *)g_engine)->_gui->builtInFonts();
 }
 
 #define ARROW_W 12
@@ -248,7 +244,7 @@ void MacWindow::drawBorder() {
 
 	if (drawTitle) {
 		const Graphics::Font *font = getTitleFont();
-		int yOff = builtInFonts() ? 3 : 1;
+		int yOff = _wm->hasBuiltInFonts() ? 3 : 1;
 
 		int w = font->getStringWidth(_title) + 10;
 		int maxWidth = width - size * 2 - 7;
@@ -329,7 +325,7 @@ bool MacWindow::processEvent(Common::Event &event) {
 			_draggedX = event.mouse.x;
 			_draggedY = event.mouse.y;
 
-			((WageEngine *)g_engine)->_gui->_wm.setFullRefresh(true);
+			_wm->setFullRefresh(true);
 		}
 
 		if (_beingResized) {
@@ -339,7 +335,7 @@ bool MacWindow::processEvent(Common::Event &event) {
 			_draggedX = event.mouse.x;
 			_draggedY = event.mouse.y;
 
-			((WageEngine *)g_engine)->_gui->_wm.setFullRefresh(true);
+			_wm->setFullRefresh(true);
 			(*_callback)(click, event, _dataPtr);
 		}
 		break;
