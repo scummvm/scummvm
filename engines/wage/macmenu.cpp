@@ -318,6 +318,9 @@ bool Menu::draw(Graphics::ManagedSurface *g, bool forceRedraw) {
 	r.top = 7;
 	_screen.fillRect(r, kColorWhite);
 	r.top = kMenuHeight - 1;
+	r.bottom++;
+	_screen.fillRect(r, kColorGreen);
+	r.bottom--;
 	_screen.fillRect(r, kColorBlack);
 
 	for (uint i = 0; i < _items.size(); i++) {
@@ -411,8 +414,9 @@ void Menu::renderSubmenu(MenuItem *menu) {
 			}
 		} else { // Delimiter
 			bool flip = r->left & 2;
-			for (int xx = r->left + 1; xx <= r->right - 1; xx++) {
-				drawPixelPlain(xx, y + kMenuDropdownItemHeight / 2, (flip ? kColorBlack : kColorWhite), &_screen);
+			byte *ptr = (byte *)_screen.getBasePtr(r->left + 1, y + kMenuDropdownItemHeight / 2);
+			for (int xx = r->left + 1; xx <= r->right - 1; xx++, ptr++) {
+				*ptr = flip ? kColorBlack : kColorWhite;
 				flip = !flip;
 			}
 		}

@@ -50,13 +50,14 @@
 #include "common/list.h"
 #include "common/unzip.h"
 #include "common/system.h"
+#include "common/stream.h"
 
 #include "graphics/cursorman.h"
 #include "graphics/fonts/bdf.h"
 #include "graphics/managed_surface.h"
 #include "graphics/palette.h"
+#include "graphics/primitives.h"
 
-#include "wage/design.h"
 #include "wage/macwindowmanager.h"
 #include "wage/macwindow.h"
 #include "wage/macmenu.h"
@@ -184,10 +185,58 @@ void MacWindowManager::setActive(int id) {
     _fullRefresh = true;
 }
 
+struct PlotData {
+	Graphics::ManagedSurface *surface;
+	Patterns *patterns;
+	uint fillType;
+	int thickness;
+
+	PlotData(Graphics::ManagedSurface *s, Patterns *p, int f, int t) :
+		surface(s), patterns(p), fillType(f), thickness(t) {}
+};
+
+static void drawPixel(int x, int y, int color, void *data) {
+	PlotData *p = (PlotData *)data;
+
+	if (p->fillType > p->patterns->size())
+		return;
+
+	byte *pat = p->patterns->operator[](p->fillType - 1);
+
+	if (p->thickness == 1) {
+		if (x >= 0 && x < p->surface->w && y >= 0 && y < p->surface->h) {
+			uint xu = (uint)x; // for letting compiler optimize it
+			uint yu = (uint)y;
+
+			*((byte *)p->surface->getBasePtr(xu, yu)) =
+				(pat[yu % 8] & (1 << (7 - xu % 8))) ?
+					color : kColorWhite;
+		}
+	} else {
+		int x1 = x;
+		int x2 = x1 + p->thickness;
+		int y1 = y;
+		int y2 = y1 + p->thickness;
+
+		for (y = y1; y < y2; y++)
+			for (x = x1; x < x2; x++)
+				if (x >= 0 && x < p->surface->w && y >= 0 && y < p->surface->h) {
+					uint xu = (uint)x; // for letting compiler optimize it
+					uint yu = (uint)y;
+					*((byte *)p->surface->getBasePtr(xu, yu)) =
+						(pat[yu % 8] & (1 << (7 - xu % 8))) ?
+							color : kColorWhite;
+				}
+	}
+}
+
 void MacWindowManager::drawDesktop() {
 	Common::Rect r(_screen->getBounds());
 
-	Design::drawFilledRoundRect(_screen, r, kDesktopArc, kColorBlack, _patterns, kPatternCheckers);
+	PlotData pd(_screen, &_patterns, kPatternCheckers, 1);
+
+	Graphics::drawRoundRect(r, kDesktopArc, kColorBlack, true, drawPixel, &pd);
+
 	g_system->copyRectToScreen(_screen->getPixels(), _screen->pitch, 0, 0, _screen->w, _screen->h);
 }
 

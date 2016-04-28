@@ -108,6 +108,7 @@ public:
 	BaseMacWindow *getWindow(int id) { return _windows[id]; }
 
 	Patterns &getPatterns() { return _patterns; }
+	void drawFilledRoundRect(Graphics::ManagedSurface *surface, Common::Rect &rect, int arc, int color);
 
 	void pushArrowCursor();
 	void popCursor();
