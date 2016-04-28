@@ -15,15 +15,8 @@ MODULE_OBJS := \
 	scenes/group1.o \
 	scenes/group2.o \
 	scenes/group3.o \
+	scenes/group4.o \
 	scenes/intro.o \
-	scenes/scene40.o \
-	scenes/scene41.o \
-	scenes/scene42.o \
-	scenes/scene43.o \
-	scenes/scene44.o \
-	scenes/scene45.o \
-	scenes/scene46.o \
-	scenes/scene49.o \
 	scenes/scene50.o \
 	scenes/scene51.o \
 	scenes/scene52.o \
