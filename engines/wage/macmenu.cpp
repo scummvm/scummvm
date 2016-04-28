@@ -52,7 +52,7 @@
 #include "wage/entities.h"
 #include "wage/design.h"
 #include "wage/gui.h"
-#include "wage/menu.h"
+#include "wage/macmenu.h"
 #include "wage/world.h"
 
 namespace Wage {

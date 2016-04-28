@@ -45,8 +45,8 @@
  *
  */
 
-#ifndef WAGE_MENU_H
-#define WAGE_MENU_H
+#ifndef WAGE_MACMENU_H
+#define WAGE_MACMENU_H
 
 namespace Wage {
 

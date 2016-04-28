@@ -57,7 +57,7 @@
 #include "wage/gui.h"
 #include "wage/macwindow.h"
 #include "wage/macwindowmanager.h"
-#include "wage/menu.h"
+#include "wage/macmenu.h"
 #include "wage/world.h"
 
 namespace Wage {
