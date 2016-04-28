@@ -27,35 +27,6 @@
 
 namespace Gnap {
 
-enum {
-	kHS20Platypus					= 0,
-	kHS20GroceryStoreHat			= 1,
-	kHS20ExitParkingLot			= 2,
-	kHS20StonerGuy				= 3,
-	kHS20GroceryStoreGuy			= 4,
-	kHS20Device					= 5,
-	kHS20ExitInsideGrubCity		= 6,
-	kHS20ExitOutsideCircusWorld	= 7,
-	kHS20ExitOutsideToyStore		= 8,
-	kHS20ExitPhone				= 9,
-	kHS20WalkArea1				= 10,
-	kHS20WalkArea2				= 11
-};
-
-enum {
-	kAS20LeaveScene					= 0,
-	kAS20TalkStonerGuyNoJoint			= 2,
-	kAS20TalkStonerGuyHasJoint		= 3,
-	kAS20GrabJoint					= 4,
-	kAS20ActionDone					= 5,
-	kAS20TalkGroceryStoreGuy			= 6,
-	kAS20GrabGroceryStoreGuy			= 9,
-	kAS20GrabGroceryStoreHat			= 10,
-	kAS20SwitchGroceryStoreHat		= 11,
-	kAS20SwitchGroceryStoreHatDone	= 12,
-	kAS20GrabJointDone				= 13
-};
-
 Scene20::Scene20(GnapEngine *vm) : Scene(vm) {
 	_stonerGuyCtr = 3;
 	_stonerGuyShowingJoint = false;
@@ -731,26 +702,6 @@ void Scene20::updateAnimations() {
 
 /*****************************************************************************/
 
-enum {
-	kHS21Platypus				= 0,
-	kHS21Banana				= 1,
-	kHS21OldLady				= 2,
-	kHS21Device				= 3,
-	kHS21ExitOutsideGrubCity	= 4,
-	kHS21WalkArea1			= 5,
-	kHS21WalkArea2			= 6
-};
-
-enum {
-	kAS21TalkOldLady				= 0,
-	kAS21GrabBanana				= 1,
-	kAS21GrabBananaDone			= 2,
-	kAS21GrabOldLady				= 3,
-	kAS21UseHatWithOldLady		= 4,
-	kAS21UseHatWithOldLadyDone	= 5,
-	kAS21LeaveScene				= 6
-};
-
 Scene21::Scene21(GnapEngine *vm) : Scene(vm) {
 	_currOldLadySequenceId = -1;
 	_nextOldLadySequenceId = -1;
@@ -1047,21 +998,6 @@ void Scene21::updateAnimations() {
 
 /*****************************************************************************/
 
-enum {
-	kHS22Platypus				= 0,
-	kHS22ExitOutsideGrubCity	= 1,
-	kHS22ExitBackGrubCity		= 2,
-	kHS22Cashier				= 3,
-	kHS22Device				= 4,
-	kHS22WalkArea1			= 5,
-	kHS22WalkArea2			= 6
-};
-
-enum {
-	kAS22LeaveScene				= 0,
-	kAS22TalkCashier				= 1
-};
-
 Scene22::Scene22(GnapEngine *vm) : Scene(vm) {
 	_caughtBefore = false;
 	_cashierCtr = 3;
@@ -1310,22 +1246,6 @@ void Scene22::updateAnimations() {
 }
 
 /*****************************************************************************/
-
-enum {
-	kHS23Platypus				= 0,
-	kHS23ExitFrontGrubCity	= 1,
-	kHS23Device				= 2,
-	kHS23Cereals				= 3,
-	kHS23WalkArea1			= 4,
-	kHS23WalkArea2			= 5
-};
-
-enum {
-	kAS23LookCereals			= 0,
-	kAS23GrabCereals			= 1,
-	kAS23GrabCerealsDone		= 2,
-	kAS23LeaveScene			= 3
-};
 
 Scene23::Scene23(GnapEngine *vm) : Scene(vm) {
 	_currStoreClerkSequenceId = -1;
@@ -1578,20 +1498,6 @@ void Scene23::updateAnimations() {
 
 /*****************************************************************************/
 
-enum {
-	kHS24Platypus				= 0,
-	kHS24ExitCircusWorld		= 1,
-	kHS24ExitOutsideGrubCity	= 2,
-	kHS24Device				= 3,
-	kHS24WalkArea1			= 4,
-	kHS24WalkArea2			= 5,
-	kHS24WalkArea3			= 6
-};
-
-enum {
-	kAS24LeaveScene			= 0
-};
-
 Scene24::Scene24(GnapEngine *vm) : Scene(vm) {
 	_currWomanSequenceId = -1;
 	_nextWomanSequenceId = -1;
@@ -1810,29 +1716,6 @@ void Scene24::updateAnimations() {
 }
 
 /*****************************************************************************/
-
-enum {
-	kHS25Platypus					= 0,
-	kHS25TicketVendor				= 1,
-	kHS25ExitOutsideCircusWorld	= 2,
-	kHS25ExitInsideCircusWorld	= 3,
-	kHS25Device					= 4,
-	kHS25Posters1					= 5,
-	kHS25Posters2					= 6,
-	kHS25Posters3					= 7,
-	kHS25Posters4					= 8,
-	kHS25WalkArea1				= 9,
-	kHS25WalkArea2				= 10
-};
-
-enum {
-	kAS25TalkTicketVendor				= 0,
-	kAS25EnterCircusWihoutTicket		= 1,
-	kAS25ShowTicketToVendor			= 2,
-	kAS25ShowTicketToVendorDone		= 3,
-	kAS25EnterCircusWihoutTicketDone	= 4,
-	kAS25LeaveScene					= 5
-};
 
 Scene25::Scene25(GnapEngine *vm) : Scene(vm) {
 	_currTicketVendorSequenceId = -1;
@@ -2180,22 +2063,6 @@ void Scene25::updateAnimations() {
 
 /*****************************************************************************/
 
-enum {
-	kHS26Platypus					= 0,
-	kHS26ExitOutsideCircusWorld	= 1,
-	kHS26ExitOutsideClown			= 2,
-	kHS26ExitArcade				= 3,
-	kHS26ExitElephant				= 4,
-	kHS26ExitBeerStand			= 5,
-	kHS26Device					= 6,
-	kHS26WalkArea1				= 7,
-	kHS26WalkArea2				= 8
-};
-
-enum {
-	kAS26LeaveScene					= 0
-};
-
 Scene26::Scene26(GnapEngine *vm) : Scene(vm) {
 	_currKidSequenceId = -1;
 	_nextKidSequenceId = -1;
@@ -2405,29 +2272,6 @@ void Scene26::updateAnimations() {
 }
 
 /*****************************************************************************/
-
-enum {
-	kHS27Platypus			= 0,
-	kHS27Janitor			= 1,
-	kHS27Device			= 2,
-	kHS27Bucket			= 3,
-	kHS27ExitCircus		= 4,
-	kHS27ExitArcade		= 5,
-	kHS27ExitBeerStand	= 6,
-	kHS27ExitClown		= 7,
-	kHS27WalkArea1		= 8
-};
-
-enum {
-	kAS27TalkJanitor				= 0,
-	kAS27GrabBucket				= 1,
-	kAS27GrabBucketDone			= 2,
-	kAS27ShowPictureToJanitor		= 3,
-	kAS27TryEnterClownTent		= 4,
-	kAS27TryEnterClownTentDone	= 5,
-	kAS27EnterClownTent			= 6,
-	kAS27LeaveScene				= 7
-};
 
 Scene27::Scene27(GnapEngine *vm) : Scene(vm) {
 	_nextJanitorSequenceId = -1;
@@ -2798,31 +2642,6 @@ void Scene27::updateAnimations() {
 }
 
 /*****************************************************************************/
-
-enum {
-	kHS28Platypus			= 0,
-	kHS28Horn				= 1,
-	kHS28Clown			= 2,
-	kHS28ExitOutsideClown	= 3,
-	kHS28EmptyBucket		= 4,
-	kHS28Device			= 5,
-	kHS28WalkArea1		= 6,
-	kHS28WalkArea2		= 7
-};
-
-enum {
-	kAS28UseBeerBucketWithClown	= 0,
-	kAS28UsePillBucketWithClown	= 1,
-	kAS28GrabHornFails			= 2,
-	kAS28GrabEmptyBucket			= 3,
-	kAS28GrabHornSuccess			= 4,
-	kAS28GrabHornSuccessDone		= 5,
-	kAS28GrabEmptyBucketDone		= 6,
-	kAS28GrabHornFailsDone		= 7,
-	kAS28TalkClown				= 8,
-	kAS28GnapWaiting				= 9,
-	kAS28LeaveScene				= 10
-};
 
 Scene28::Scene28(GnapEngine *vm) : Scene(vm) {
 	_currClownSequenceId = -1;
@@ -3218,21 +3037,6 @@ void Scene28::updateAnimations() {
 }
 
 /*****************************************************************************/
-
-enum {
-	kHS29Platypus			= 0,
-	kHS29Monkey			= 1,
-	kHS29Device			= 2,
-	kHS29ExitCircus		= 3,
-	kHS29ExitOutsideClown	= 4,
-	kHS29Aracde			= 5,
-	kHS29WalkArea1		= 6
-};
-
-enum {
-	kAS29UseBananaWithMonkey		= 0,
-	kAS29LeaveScene				= 2
-};
 
 Scene29::Scene29(GnapEngine *vm) : Scene(vm) {
 	_currMonkeySequenceId = -1;
