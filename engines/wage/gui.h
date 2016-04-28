@@ -89,8 +89,6 @@ public:
 	void setSceneDirty() { _sceneDirty = true; }
 	void regenCommandsMenu();
 	void regenWeaponsMenu();
-	void pushArrowCursor();
-	void popCursor();
 
 	void actionCopy();
 	void actionPaste();
@@ -146,8 +144,6 @@ private:
 	int _consoleLineHeight;
 	uint _consoleNumLines;
 	bool _consoleFullRedraw;
-
-	bool _cursorIsArrow;
 
 	bool _inTextSelection;
 	int _selectionStartX;

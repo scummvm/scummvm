@@ -69,7 +69,7 @@ public:
 	bool hasBuiltInFonts() { return _builtInFonts; }
 	const Graphics::Font *getFont(const char *name, Graphics::FontManager::FontUsage fallback);
 
-	MacWindow *addWindow(bool scrollable, bool resizable);
+	MacWindow *addWindow(bool scrollable, bool resizable, bool editable);
 	Menu *addMenu(Gui *gui);
 	void setActive(int id);
 
@@ -82,6 +82,9 @@ public:
 	BaseMacWindow *getWindow(int id) { return _windows[id]; }
 
 	Patterns &getPatterns() { return _patterns; }
+
+	void pushArrowCursor();
+	void popCursor();
 
 private:
 	void drawDesktop();
@@ -103,6 +106,7 @@ private:
 	Menu *_menu;
 
 	bool _builtInFonts;
+	bool _cursorIsArrow;
 };
 
 } // End of namespace Wage

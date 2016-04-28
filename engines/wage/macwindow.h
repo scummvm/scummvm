@@ -76,12 +76,13 @@ enum WindowClick {
 
 class BaseMacWindow {
 public:
-	BaseMacWindow(int id, MacWindowManager *wm);
+	BaseMacWindow(int id, bool editable, MacWindowManager *wm);
 	virtual ~BaseMacWindow() {}
 
 	const Common::Rect &getDimensions() { return _dims; }
 	int getId() { return _id; }
 	WindowType getType() { return _type; }
+	bool isEditable() { return _editable; }
 	Graphics::ManagedSurface *getSurface() { return &_surface; }
 	virtual void setActive(bool active) = 0;
 	void setDirty(bool dirty) { _contentIsDirty = dirty; }
@@ -97,6 +98,8 @@ protected:
 	int _id;
 	WindowType _type;
 
+	bool _editable;
+
 	Graphics::ManagedSurface _surface;
 	bool _contentIsDirty;
 
@@ -110,7 +113,7 @@ protected:
 
 class MacWindow : public BaseMacWindow {
 public:
-	MacWindow(int id, bool scrollable, bool resizable, MacWindowManager *wm);
+	MacWindow(int id, bool scrollable, bool resizable, bool editable, MacWindowManager *wm);
 	virtual ~MacWindow();
 	void move(int x, int y);
 	void resize(int w, int h);

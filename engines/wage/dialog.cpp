@@ -145,7 +145,7 @@ int Dialog::run() {
 	Common::Rect r(_bbox);
 
 	_tempSurface.copyRectToSurface(_gui->_screen.getBasePtr(_bbox.left, _bbox.top), _gui->_screen.pitch, 0, 0, _bbox.width() + 1, _bbox.height() + 1);
-	_gui->pushArrowCursor();
+	_gui->_wm.pushArrowCursor();
 
 	while (!shouldQuit) {
 		Common::Event event;
@@ -189,7 +189,7 @@ int Dialog::run() {
 	_gui->_screen.copyRectToSurface(_tempSurface.getBasePtr(0, 0), _tempSurface.pitch, _bbox.left, _bbox.top, _bbox.width() + 1, _bbox.height() + 1);
 	g_system->copyRectToScreen(_gui->_screen.getBasePtr(r.left, r.top), _gui->_screen.pitch, r.left, r.top, r.width() + 1, r.height() + 1);
 
-	_gui->popCursor();
+	_gui->_wm.popCursor();
 
 	return _pressedButton;
 }

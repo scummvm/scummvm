@@ -79,6 +79,44 @@ static byte fillPatterns[][8] = { { 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0x
 								  { 0x55, 0xaa, 0x55, 0xaa, 0x55, 0xaa, 0x55, 0xaa }  // kPatternCheckers2
 };
 
+static const byte macCursorArrow[] = {
+	2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3,
+	2, 0, 2, 3, 3, 3, 3, 3, 3, 3, 3,
+	2, 0, 0, 2, 3, 3, 3, 3, 3, 3, 3,
+	2, 0, 0, 0, 2, 3, 3, 3, 3, 3, 3,
+	2, 0, 0, 0, 0, 2, 3, 3, 3, 3, 3,
+	2, 0, 0, 0, 0, 0, 2, 3, 3, 3, 3,
+	2, 0, 0, 0, 0, 0, 0, 2, 3, 3, 3,
+	2, 0, 0, 0, 0, 0, 0, 0, 2, 3, 3,
+	2, 0, 0, 0, 0, 0, 0, 0, 0, 2, 3,
+	2, 0, 0, 0, 0, 0, 2, 2, 2, 2, 2,
+	2, 0, 0, 2, 0, 0, 2, 3, 3, 3, 3,
+	2, 0, 2, 3, 2, 0, 0, 2, 3, 3, 3,
+	2, 2, 3, 3, 2, 0, 0, 2, 3, 3, 3,
+	2, 3, 3, 3, 3, 2, 0, 0, 2, 3, 3,
+	3, 3, 3, 3, 3, 2, 0, 0, 2, 3, 3,
+	3, 3, 3, 3, 3, 3, 2, 2, 2, 3, 3
+};
+
+static const byte macCursorBeam[] = {
+	0, 0, 3, 3, 3, 0, 0, 3, 3, 3, 3,
+	3, 3, 0, 3, 0, 3, 3, 3, 3, 3, 3,
+	3, 3, 3, 0, 3, 3, 3, 3, 3, 3, 3,
+	3, 3, 3, 0, 3, 3, 3, 3, 3, 3, 3,
+	3, 3, 3, 0, 3, 3, 3, 3, 3, 3, 3,
+	3, 3, 3, 0, 3, 3, 3, 3, 3, 3, 3,
+	3, 3, 3, 0, 3, 3, 3, 3, 3, 3, 3,
+	3, 3, 3, 0, 3, 3, 3, 3, 3, 3, 3,
+	3, 3, 3, 0, 3, 3, 3, 3, 3, 3, 3,
+	3, 3, 3, 0, 3, 3, 3, 3, 3, 3, 3,
+	3, 3, 3, 0, 3, 3, 3, 3, 3, 3, 3,
+	3, 3, 3, 0, 3, 3, 3, 3, 3, 3, 3,
+	3, 3, 3, 0, 3, 3, 3, 3, 3, 3, 3,
+	3, 3, 3, 0, 3, 3, 3, 3, 3, 3, 3,
+	3, 3, 0, 3, 0, 3, 3, 3, 3, 3, 3,
+	0, 0, 3, 3, 3, 0, 0, 3, 3, 3, 3,
+};
+
 MacWindowManager::MacWindowManager() {
     _screen = 0;
     _lastId = 0;
@@ -98,6 +136,9 @@ MacWindowManager::MacWindowManager() {
 	g_system->getPaletteManager()->setPalette(palette, 0, ARRAYSIZE(palette) / 3);
 
 	CursorMan.replaceCursorPalette(palette, 0, ARRAYSIZE(palette) / 3);
+	CursorMan.replaceCursor(macCursorArrow, 11, 16, 1, 1, 3);
+	_cursorIsArrow = true;
+	CursorMan.showMouse(true);
 }
 
 MacWindowManager::~MacWindowManager() {
@@ -105,8 +146,8 @@ MacWindowManager::~MacWindowManager() {
         delete _windows[i];
 }
 
-MacWindow *MacWindowManager::addWindow(bool scrollable, bool resizable) {
-    MacWindow *w = new MacWindow(_lastId, scrollable, resizable, this);
+MacWindow *MacWindowManager::addWindow(bool scrollable, bool resizable, bool editable) {
+    MacWindow *w = new MacWindow(_lastId, scrollable, resizable, editable, this);
 
     _windows.push_back(w);
     _windowStack.push_back(w);
@@ -186,6 +227,19 @@ bool MacWindowManager::processEvent(Common::Event &event) {
             event.type != Common::EVENT_LBUTTONUP)
         return false;
 
+	if (_windows[_activeWindow]->isEditable() && _windows[_activeWindow]->getType() == kWindowWindow &&
+			((MacWindow *)_windows[_activeWindow])->getInnerDimensions().contains(event.mouse.x, event.mouse.y)) {
+		if (_cursorIsArrow) {
+			CursorMan.replaceCursor(macCursorBeam, 11, 16, 3, 8, 3);
+			_cursorIsArrow = false;
+		}
+	} else {
+		if (_cursorIsArrow == false) {
+			CursorMan.replaceCursor(macCursorArrow, 11, 16, 1, 1, 3);
+			_cursorIsArrow = true;
+		}
+	}
+
     for (Common::List<BaseMacWindow *>::const_iterator it = _windowStack.end(); it != _windowStack.begin();) {
         it--;
         BaseMacWindow *w = *it;
@@ -263,5 +317,17 @@ const Graphics::Font *MacWindowManager::getFont(const char *name, Graphics::Font
 
 	return font;
 }
+
+/////////////////
+// Cursor stuff
+/////////////////
+void MacWindowManager::pushArrowCursor() {
+	CursorMan.pushCursor(macCursorArrow, 11, 16, 1, 1, 3);
+}
+
+void MacWindowManager::popCursor() {
+	CursorMan.popCursor();
+}
+
 
 } // End of namespace Wage

@@ -61,44 +61,6 @@
 
 namespace Wage {
 
-static const byte macCursorArrow[] = {
-	2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3,
-	2, 0, 2, 3, 3, 3, 3, 3, 3, 3, 3,
-	2, 0, 0, 2, 3, 3, 3, 3, 3, 3, 3,
-	2, 0, 0, 0, 2, 3, 3, 3, 3, 3, 3,
-	2, 0, 0, 0, 0, 2, 3, 3, 3, 3, 3,
-	2, 0, 0, 0, 0, 0, 2, 3, 3, 3, 3,
-	2, 0, 0, 0, 0, 0, 0, 2, 3, 3, 3,
-	2, 0, 0, 0, 0, 0, 0, 0, 2, 3, 3,
-	2, 0, 0, 0, 0, 0, 0, 0, 0, 2, 3,
-	2, 0, 0, 0, 0, 0, 2, 2, 2, 2, 2,
-	2, 0, 0, 2, 0, 0, 2, 3, 3, 3, 3,
-	2, 0, 2, 3, 2, 0, 0, 2, 3, 3, 3,
-	2, 2, 3, 3, 2, 0, 0, 2, 3, 3, 3,
-	2, 3, 3, 3, 3, 2, 0, 0, 2, 3, 3,
-	3, 3, 3, 3, 3, 2, 0, 0, 2, 3, 3,
-	3, 3, 3, 3, 3, 3, 2, 2, 2, 3, 3
-};
-
-static const byte macCursorBeam[] = {
-	0, 0, 3, 3, 3, 0, 0, 3, 3, 3, 3,
-	3, 3, 0, 3, 0, 3, 3, 3, 3, 3, 3,
-	3, 3, 3, 0, 3, 3, 3, 3, 3, 3, 3,
-	3, 3, 3, 0, 3, 3, 3, 3, 3, 3, 3,
-	3, 3, 3, 0, 3, 3, 3, 3, 3, 3, 3,
-	3, 3, 3, 0, 3, 3, 3, 3, 3, 3, 3,
-	3, 3, 3, 0, 3, 3, 3, 3, 3, 3, 3,
-	3, 3, 3, 0, 3, 3, 3, 3, 3, 3, 3,
-	3, 3, 3, 0, 3, 3, 3, 3, 3, 3, 3,
-	3, 3, 3, 0, 3, 3, 3, 3, 3, 3, 3,
-	3, 3, 3, 0, 3, 3, 3, 3, 3, 3, 3,
-	3, 3, 3, 0, 3, 3, 3, 3, 3, 3, 3,
-	3, 3, 3, 0, 3, 3, 3, 3, 3, 3, 3,
-	3, 3, 3, 0, 3, 3, 3, 3, 3, 3, 3,
-	3, 3, 0, 3, 0, 3, 3, 3, 3, 3, 3,
-	0, 0, 3, 3, 3, 0, 0, 3, 3, 3, 3,
-};
-
 static void cursorTimerHandler(void *refCon) {
     Gui *gui = (Gui *)refCon;
 
@@ -156,18 +118,14 @@ Gui::Gui(WageEngine *engine) {
 
 	_inputTextLineNum = 0;
 
-	CursorMan.replaceCursor(macCursorArrow, 11, 16, 1, 1, 3);
-	_cursorIsArrow = true;
-	CursorMan.showMouse(true);
-
 	g_system->getTimerManager()->installTimerProc(&cursorTimerHandler, 200000, this, "wageCursor");
 
 	_menu = _wm.addMenu(this);
 
-	_sceneWindow = _wm.addWindow(false, false);
+	_sceneWindow = _wm.addWindow(false, false, false);
 	_sceneWindow->setCallback(sceneWindowCallback, this);
 
-	_consoleWindow = _wm.addWindow(true, true);
+	_consoleWindow = _wm.addWindow(true, true, true);
 	_consoleWindow->setCallback(consoleWindowCallback, this);
 }
 
@@ -243,11 +201,6 @@ static bool sceneWindowCallback(WindowClick click, Common::Event &event, void *g
 }
 
 bool Gui::processSceneEvents(WindowClick click, Common::Event &event) {
-	if (_cursorIsArrow == false) {
-		CursorMan.replaceCursor(macCursorArrow, 11, 16, 1, 1, 3);
-		_cursorIsArrow = true;
-	}
-
 	if (click == kBorderInner && event.type == Common::EVENT_LBUTTONUP) {
 		Designed *obj = _scene->lookUpEntity(event.mouse.x - _sceneWindow->getDimensions().left,
 												  event.mouse.y - _sceneWindow->getDimensions().top);
@@ -278,11 +231,6 @@ static bool consoleWindowCallback(WindowClick click, Common::Event &event, void 
 }
 
 bool Gui::processConsoleEvents(WindowClick click, Common::Event &event) {
-	if (click != kBorderInner && _cursorIsArrow == false) {
-		CursorMan.replaceCursor(macCursorArrow, 11, 16, 1, 1, 3);
-		_cursorIsArrow = true;
-	}
-
 	if (click == kBorderScrollUp || click == kBorderScrollDown) {
 		if (event.type == Common::EVENT_LBUTTONDOWN) {
 			int consoleHeight = _consoleWindow->getInnerDimensions().height();
@@ -361,11 +309,6 @@ bool Gui::processConsoleEvents(WindowClick click, Common::Event &event) {
 				updateTextSelection(event.mouse.x, event.mouse.y);
 				return true;
 			}
-
-			if (_cursorIsArrow) {
-				CursorMan.replaceCursor(macCursorBeam, 11, 16, 3, 8, 3);
-				_cursorIsArrow = false;
-			}
 		}
 
 		return false;
@@ -380,14 +323,6 @@ void Gui::regenCommandsMenu() {
 
 void Gui::regenWeaponsMenu() {
 	_menu->regenWeaponsMenu();
-}
-
-void Gui::pushArrowCursor() {
-	CursorMan.pushCursor(macCursorArrow, 11, 16, 1, 1, 3);
-}
-
-void Gui::popCursor() {
-	CursorMan.popCursor();
 }
 
 bool Gui::processEvent(Common::Event &event) {

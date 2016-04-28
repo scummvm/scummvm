@@ -105,7 +105,7 @@ struct MenuData {
 };
 
 Menu::Menu(int id, const Common::Rect &bounds, MacWindowManager *wm, Gui *gui)
-		: BaseMacWindow(id, wm), _gui(gui) {
+		: BaseMacWindow(id, false, wm), _gui(gui) {
 	_font = getMenuFont();
 
 	_screen.create(bounds.width(), bounds.height(), Graphics::PixelFormat::createFormatCLUT8());
