@@ -291,7 +291,7 @@ void Menu::createWeaponsMenu(MenuItem *menu) {
 }
 
 const Graphics::Font *Menu::getMenuFont() {
-	return _gui->getFont("Chicago-12", Graphics::FontManager::kBigGUIFont);
+	return _wm->getFont("Chicago-12", Graphics::FontManager::kBigGUIFont);
 }
 
 const char *Menu::getAcceleratorString(MenuSubItem *item, const char *prefix) {

@@ -46,9 +46,8 @@
  */
 
 #include "common/timer.h"
-#include "common/unzip.h"
+#include "common/system.h"
 #include "graphics/cursorman.h"
-#include "graphics/fonts/bdf.h"
 #include "graphics/palette.h"
 #include "graphics/primitives.h"
 
@@ -159,7 +158,6 @@ Gui::Gui(WageEngine *engine) {
 	_scrollPos = 0;
 	_consoleLineHeight = 8; // Dummy value which makes sense
 	_consoleNumLines = 24; // Dummy value
-	_builtInFonts = false;
 
 	_cursorX = 0;
 	_cursorY = 0;
@@ -181,9 +179,6 @@ Gui::Gui(WageEngine *engine) {
 
 	for (int i = 0; i < ARRAYSIZE(fillPatterns); i++)
 		_patterns.push_back(fillPatterns[i]);
-
-	loadFonts();
-	_wm.setBuiltInFonts(_builtInFonts);
 
 	g_system->getTimerManager()->installTimerProc(&cursorTimerHandler, 200000, this, "wageCursor");
 
@@ -207,26 +202,6 @@ void Gui::undrawCursor() {
 	_cursorState = false;
 	cursorTimerHandler(this);
 	_cursorOff = false;
-}
-
-const Graphics::Font *Gui::getFont(const char *name, Graphics::FontManager::FontUsage fallback) {
-	const Graphics::Font *font = 0;
-
-	if (!_builtInFonts) {
-		font = FontMan.getFontByName(name);
-
-		if (!font)
-			warning("Cannot load font %s", name);
-	}
-
-	if (_builtInFonts || !font)
-		font = FontMan.getFontByUsage(fallback);
-
-	return font;
-}
-
-const Graphics::Font *Gui::getTitleFont() {
-	return getFont("Chicago-12", Graphics::FontManager::kBigGUIFont);
 }
 
 void Gui::draw() {
@@ -417,50 +392,6 @@ bool Gui::processConsoleEvents(WindowClick click, Common::Event &event) {
 	}
 
 	return false;
-}
-
-void Gui::loadFonts() {
-	Common::Archive *dat;
-
-	dat = Common::makeZipArchive("wage.dat");
-
-	if (!dat) {
-		warning("Could not find wage.dat. Falling back to built-in fonts");
-		_builtInFonts = true;
-
-		return;
-	}
-
-	Common::ArchiveMemberList list;
-	dat->listMembers(list);
-
-	for (Common::ArchiveMemberList::iterator it = list.begin(); it != list.end(); ++it) {
-		Common::SeekableReadStream *stream = dat->createReadStreamForMember((*it)->getName());
-
-		Graphics::BdfFont *font = Graphics::BdfFont::loadFont(*stream);
-
-		delete stream;
-
-		Common::String fontName = (*it)->getName();
-
-		// Trim the .bdf extension
-		for (int i = fontName.size() - 1; i >= 0; --i) {
-			if (fontName[i] == '.') {
-				while ((uint)i < fontName.size()) {
-					fontName.deleteLastChar();
-				}
-				break;
-			}
-		}
-
-		FontMan.assignFontToName(fontName, font);
-
-		debug(2, " %s", fontName.c_str());
-	}
-
-	_builtInFonts = false;
-
-	delete dat;
 }
 
 void Gui::regenCommandsMenu() {

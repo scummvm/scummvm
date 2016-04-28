@@ -68,7 +68,7 @@ const Graphics::Font *Gui::getConsoleFont() {
 
 	snprintf(fontName, 128, "%s-%d", scene->getFontName(), scene->_fontSize);
 
-	return getFont(fontName, Graphics::FontManager::kConsoleFont);
+	return _wm.getFont(fontName, Graphics::FontManager::kConsoleFont);
 }
 
 void Gui::clearOutput() {

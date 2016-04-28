@@ -48,8 +48,10 @@
 #include "common/array.h"
 #include "common/events.h"
 #include "common/list.h"
+#include "common/unzip.h"
 #include "common/system.h"
 
+#include "graphics/fonts/bdf.h"
 #include "graphics/managed_surface.h"
 
 #include "wage/wage.h"
@@ -82,6 +84,8 @@ MacWindowManager::MacWindowManager() {
 
 	for (int i = 0; i < ARRAYSIZE(fillPatterns); i++)
 		_patterns.push_back(fillPatterns[i]);
+
+	loadFonts();
 }
 
 MacWindowManager::~MacWindowManager() {
@@ -183,6 +187,69 @@ bool MacWindowManager::processEvent(Common::Event &event) {
     }
 
     return false;
+}
+
+//////////////////////
+// Font stuff
+//////////////////////
+void MacWindowManager::loadFonts() {
+	Common::Archive *dat;
+
+	dat = Common::makeZipArchive("classicmacfonts.dat");
+
+	if (!dat) {
+		warning("Could not find classicmacfonts.dat. Falling back to built-in fonts");
+		_builtInFonts = true;
+
+		return;
+	}
+
+	Common::ArchiveMemberList list;
+	dat->listMembers(list);
+
+	for (Common::ArchiveMemberList::iterator it = list.begin(); it != list.end(); ++it) {
+		Common::SeekableReadStream *stream = dat->createReadStreamForMember((*it)->getName());
+
+		Graphics::BdfFont *font = Graphics::BdfFont::loadFont(*stream);
+
+		delete stream;
+
+		Common::String fontName = (*it)->getName();
+
+		// Trim the .bdf extension
+		for (int i = fontName.size() - 1; i >= 0; --i) {
+			if (fontName[i] == '.') {
+				while ((uint)i < fontName.size()) {
+					fontName.deleteLastChar();
+				}
+				break;
+			}
+		}
+
+		FontMan.assignFontToName(fontName, font);
+
+		debug(2, " %s", fontName.c_str());
+	}
+
+	_builtInFonts = false;
+
+	delete dat;
+}
+
+const Graphics::Font *MacWindowManager::getFont(const char *name, Graphics::FontManager::FontUsage fallback) {
+	const Graphics::Font *font = 0;
+
+	if (!_builtInFonts) {
+		font = FontMan.getFontByName(name);
+
+		if (!font)
+			warning("Cannot load font %s", name);
+	}
+
+	if (_builtInFonts || !font)
+		font = FontMan.getFontByUsage(fallback);
+
+	return font;
 }
 
 } // End of namespace Wage

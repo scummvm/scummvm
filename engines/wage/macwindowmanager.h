@@ -59,8 +59,8 @@ public:
 	~MacWindowManager();
 
 	void setScreen(Graphics::ManagedSurface *screen) { _screen = screen; }
-	void setBuiltInFonts(bool builtInFonts) { _builtInFonts = builtInFonts; }
 	bool hasBuiltInFonts() { return _builtInFonts; }
+	const Graphics::Font *getFont(const char *name, Graphics::FontManager::FontUsage fallback);
 
 	MacWindow *addWindow(bool scrollable, bool resizable);
 	Menu *addMenu(Gui *gui);
@@ -76,6 +76,7 @@ public:
 
 private:
 	void drawDesktop();
+	void loadFonts();
 
 private:
 	Graphics::ManagedSurface *_screen;

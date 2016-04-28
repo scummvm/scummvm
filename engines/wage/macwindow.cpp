@@ -81,6 +81,10 @@ MacWindow::MacWindow(int id, bool scrollable, bool resizable, MacWindowManager *
 MacWindow::~MacWindow() {
 }
 
+const Graphics::Font *MacWindow::getTitleFont() {
+	return _wm->getFont("Chicago-12", Graphics::FontManager::kBigGUIFont);
+}
+
 void MacWindow::setActive(bool active) {
 	if (active == _active)
 		return;
@@ -143,10 +147,6 @@ bool MacWindow::draw(Graphics::ManagedSurface *g, bool forceRedraw) {
 	g->transBlitFrom(_composeSurface, _composeSurface.getBounds(), Common::Point(_dims.left - 2, _dims.top - 2), kColorGreen2);
 
 	return true;
-}
-
-const Graphics::Font *MacWindow::getTitleFont() {
-	return ((WageEngine *)g_engine)->_gui->getFont("Chicago-12", Graphics::FontManager::kBigGUIFont);
 }
 
 #define ARROW_W 12

@@ -93,7 +93,6 @@ public:
 
 	void drawInput();
 	void setSceneDirty() { _sceneDirty = true; }
-	const Graphics::Font *getFont(const char *name, Graphics::FontManager::FontUsage fallback);
 	void regenCommandsMenu();
 	void regenWeaponsMenu();
 	void pushArrowCursor();
@@ -108,8 +107,6 @@ public:
 	void disableAllMenus();
 	void enableNewGameMenus();
 
-	bool builtInFonts() { return _builtInFonts; }
-
 	bool processSceneEvents(WindowClick click, Common::Event &event);
 	bool processConsoleEvents(WindowClick click, Common::Event &event);
 
@@ -120,7 +117,6 @@ private:
 	void drawConsole();
 	void undrawCursor();
 	void renderConsole(Graphics::ManagedSurface *g, const Common::Rect &r);
-	void loadFonts();
 	void flowText(Common::String &str);
 	const Graphics::Font *getConsoleFont();
 	const Graphics::Font *getTitleFont();
@@ -134,7 +130,6 @@ public:
 	int _cursorX, _cursorY;
 	bool _cursorState;
 
-	bool _builtInFonts;
 	WageEngine *_engine;
 
 	Patterns _patterns;
