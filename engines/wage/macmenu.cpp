@@ -487,7 +487,8 @@ bool Menu::mouseRelease(int x, int y) {
 		_menuActivated = false;
 
 		if (_activeItem != -1 && _activeSubItem != -1 && _items[_activeItem]->subitems[_activeSubItem]->enabled)
-			executeCommand(_items[_activeItem]->subitems[_activeSubItem]);
+			(*_ccallback)(_items[_activeItem]->subitems[_activeSubItem]->action,
+					_items[_activeItem]->subitems[_activeSubItem]->text, _cdata);
 
 		_activeItem = -1;
 		_activeSubItem = -1;
@@ -500,43 +501,6 @@ bool Menu::mouseRelease(int x, int y) {
 	return false;
 }
 
-void Menu::executeCommand(MenuSubItem *subitem) {
-	switch(subitem->action) {
-	case kMenuActionAbout:
-	case kMenuActionNew:
-	case kMenuActionOpen:
-	case kMenuActionClose:
-	case kMenuActionSave:
-	case kMenuActionSaveAs:
-	case kMenuActionRevert:
-	case kMenuActionQuit:
-
-	case kMenuActionUndo:
-		_gui->actionUndo();
-		break;
-	case kMenuActionCut:
-		_gui->actionCut();
-		break;
-	case kMenuActionCopy:
-		_gui->actionCopy();
-		break;
-	case kMenuActionPaste:
-		_gui->actionPaste();
-		break;
-	case kMenuActionClear:
-		_gui->actionClear();
-		break;
-
-	case kMenuActionCommand:
-		_gui->_engine->processTurn(&subitem->text, NULL);
-		break;
-
-	default:
-		warning("Unknown action: %d", subitem->action);
-
-	}
-}
-
 bool Menu::processMenuShortCut(byte flags, uint16 ascii) {
 	ascii = tolower(ascii);
 
@@ -544,7 +508,7 @@ bool Menu::processMenuShortCut(byte flags, uint16 ascii) {
 		for (uint i = 0; i < _items.size(); i++)
 			for (uint j = 0; j < _items[i]->subitems.size(); j++)
 				if (_items[i]->subitems[j]->enabled && tolower(_items[i]->subitems[j]->shortcut) == ascii) {
-					executeCommand(_items[i]->subitems[j]);
+					(*_ccallback)(_items[i]->subitems[j]->action, _items[i]->subitems[j]->text, _cdata);
 					return true;
 				}
 	}

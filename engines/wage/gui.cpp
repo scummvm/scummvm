@@ -112,6 +112,8 @@ static void cursorTimerHandler(void *refCon) {
 
 static bool sceneWindowCallback(WindowClick click, Common::Event &event, void *gui);
 static bool consoleWindowCallback(WindowClick click, Common::Event &event, void *gui);
+static void menuCommandsCallback(int action, Common::String &text, void *data);
+
 
 Gui::Gui(WageEngine *engine) {
 	_engine = engine;
@@ -142,6 +144,8 @@ Gui::Gui(WageEngine *engine) {
 	g_system->getTimerManager()->installTimerProc(&cursorTimerHandler, 200000, this, "wageCursor");
 
 	_menu = _wm.addMenu(this);
+
+	_menu->setCommandsCallback(menuCommandsCallback, this);
 
 	_menu->addStaticMenus(menuSubItems);
 	_menu->addMenuSubItem(kMenuAbout, _engine->_world->getAboutMenuItemName(), kMenuActionAbout);
@@ -267,6 +271,9 @@ static bool consoleWindowCallback(WindowClick click, Common::Event &event, void 
 	return gui->processConsoleEvents(click, event);
 }
 
+////////////////
+// Menu stuff
+////////////////
 void Gui::regenCommandsMenu() {
 	_menu->createSubMenuFromString(_commandsMenuId, _engine->_world->_commandsMenu.c_str());
 }
@@ -304,6 +311,49 @@ void Gui::regenWeaponsMenu() {
 
 bool Gui::processEvent(Common::Event &event) {
 	return _wm.processEvent(event);
+}
+
+void menuCommandsCallback(int action, Common::String &text, void *data) {
+	Gui *g = (Gui *)data;
+
+	g->executeMenuCommand(action, text);
+}
+
+void Gui::executeMenuCommand(int action, Common::String &text) {
+	switch(action) {
+	case kMenuActionAbout:
+	case kMenuActionNew:
+	case kMenuActionOpen:
+	case kMenuActionClose:
+	case kMenuActionSave:
+	case kMenuActionSaveAs:
+	case kMenuActionRevert:
+	case kMenuActionQuit:
+
+	case kMenuActionUndo:
+		actionUndo();
+		break;
+	case kMenuActionCut:
+		actionCut();
+		break;
+	case kMenuActionCopy:
+		actionCopy();
+		break;
+	case kMenuActionPaste:
+		actionPaste();
+		break;
+	case kMenuActionClear:
+		actionClear();
+		break;
+
+	case kMenuActionCommand:
+		_engine->processTurn(&text, NULL);
+		break;
+
+	default:
+		warning("Unknown action: %d", action);
+
+	}
 }
 
 } // End of namespace Wage

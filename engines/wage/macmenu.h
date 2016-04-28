@@ -104,6 +104,8 @@ public:
 	Menu(int id, const Common::Rect &bounds, MacWindowManager *wm, Gui *gui);
 	~Menu();
 
+	void setCommandsCallback(void (*callback)(int, Common::String &, void *), void *data) { _ccallback = callback; _cdata = data; }
+
 	void addStaticMenus(const MenuData *data);
 	void calcDimensions();
 
@@ -135,7 +137,6 @@ private:
 	int calculateMenuWidth(MenuItem *menu);
 	void calcMenuBounds(MenuItem *menu);
 	void renderSubmenu(MenuItem *menu);
-	void executeCommand(MenuSubItem *subitem);
 
 	bool keyEvent(Common::Event &event);
 	bool mouseClick(int x, int y);
@@ -152,6 +153,9 @@ private:
 
 	int _activeItem;
 	int _activeSubItem;
+
+	void (*_ccallback)(int action, Common::String &text, void *data);
+	void *_cdata;
 };
 
 } // End of namespace Wage
