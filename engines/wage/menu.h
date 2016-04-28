@@ -92,7 +92,7 @@ enum {
 
 class Menu : public BaseMacWindow {
 public:
-	Menu(int id, const Common::Rect &bounds, Gui *gui);
+	Menu(int id, const Common::Rect &bounds, bool builtInFonts, Gui *gui);
 	~Menu();
 
 	bool draw(Graphics::ManagedSurface *g, bool forceRedraw = false);
@@ -141,6 +141,8 @@ private:
 
 	int _activeItem;
 	int _activeSubItem;
+
+	bool _builtInFonts;
 };
 
 } // End of namespace Wage
