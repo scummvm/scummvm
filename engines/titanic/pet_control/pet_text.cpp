@@ -264,6 +264,13 @@ void CPetText::scrollDown(CScreenManager *screenManager) {
 	screenManager->setFontNumber(oldFontNumber);
 }
 
+void CPetText::scrollToBottom(CScreenManager *screenManager) {
+	int oldFontNumber = screenManager->setFontNumber(_fontNumber2);
+	_scrollTop = _bounds.height();
+	constrainScrollDown(screenManager);
+	screenManager->setFontNumber(oldFontNumber);
+}
+
 void CPetText::constrainScrollUp(CScreenManager *screenManager) {
 	if (_scrollTop < 0)
 		_scrollTop = 0;
@@ -278,5 +285,15 @@ void CPetText::constrainScrollDown(CScreenManager *screenManager) {
 	if (_scrollTop > maxScroll)
 		_scrollTop = maxScroll;
 }
+
+void CPetText::addLine(const CString &str, uint color) {
+	addLine(str, color & 0xff, (color >> 8) & 0xff,
+		(color >> 16) & 0xff);
+}
+
+void CPetText::addLine(const CString &str, byte r, byte g, byte b) {
+	warning("TODO: CPetText::addLine");
+}
+
 
 } // End of namespace Titanic

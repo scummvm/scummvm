@@ -177,6 +177,21 @@ public:
 	 * Scroll the text down
 	 */
 	void scrollDown(CScreenManager *screenManager);
+
+	/**
+	 * Scroll to the bottom of the text
+	 */
+	void scrollToBottom(CScreenManager *screenManager);
+
+	/**
+	 * Add a line to the text
+	 */
+	void addLine(const CString &str, uint color);
+
+	/**
+	 * Add a line to the text
+	 */
+	void addLine(const CString &str, byte r, byte g, byte b);
 };
 
 } // End of namespace Titanic

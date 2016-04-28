@@ -49,8 +49,35 @@ bool CPetConversations::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
 	return
 		_scrollUp.MouseButtonDownMsg(msg->_mousePos) ||
 		_scrollDown.MouseButtonDownMsg(msg->_mousePos) ||
-		_val7.MouseButtonDownMsg(msg->_mousePos) ||
-		_val8.MouseButtonDownMsg(msg->_mousePos);
+		_doorBot.MouseButtonDownMsg(msg->_mousePos) ||
+		_bellBot.MouseButtonDownMsg(msg->_mousePos);
+}
+
+bool CPetConversations::MouseButtonUpMsg(CMouseButtonUpMsg *msg) {
+	if (_scrollUp.MouseButtonUpMsg(msg->_mousePos) ||
+			_scrollDown.MouseButtonUpMsg(msg->_mousePos))
+		return true;
+
+	if (_doorBot.MouseButtonUpMsg(msg->_mousePos)) {
+		switch (canSummonNPC("DoorBot")) {
+		case SUMMON_CANT:
+			break;
+		case SUMMON_CAN:
+			summonNPC("DoorBot");
+			return true;
+		default:
+			break;
+		}
+
+		// Scroll to the bottom of the log
+		scrollToBottom();
+	}
+
+	if (_bellBot.MouseButtonUpMsg(msg->_mousePos)) {
+		// TODO
+	}
+
+	return false;
 }
 
 bool CPetConversations::setupControl(CPetControl *petControl) {
@@ -75,10 +102,10 @@ bool CPetConversations::setupControl(CPetControl *petControl) {
 		_scrollDown.translate(87, 421);
 
 		const Rect rect3(0, 0, 39, 39);
-		_val7.setBounds(rect3);
-		_val7.translate(546, 372);
-		_val8.setBounds(rect3);
-		_val8.translate(546, 418);
+		_doorBot.setBounds(rect3);
+		_doorBot.translate(546, 372);
+		_bellBot.setBounds(rect3);
+		_bellBot.translate(546, 418);
 
 		_val6.setBounds(Rect(0, 0, 37, 70));
 		_val6.translate(46, 374);
@@ -95,16 +122,34 @@ bool CPetConversations::setupControl(CPetControl *petControl) {
 	return true;
 }
 
-void CPetConversations::scrollDown() {
-	_log.scrollDown(CScreenManager::_screenManagerPtr);
-	if (_petControl)
-		_petControl->makeDirty();
-}
-
 void CPetConversations::scrollUp() {
 	_log.scrollUp(CScreenManager::_screenManagerPtr);
 	if (_petControl)
 		_petControl->makeDirty();
+	_field414 = true;
+}
+
+void CPetConversations::scrollDown() {
+	_log.scrollDown(CScreenManager::_screenManagerPtr);
+	if (_petControl)
+		_petControl->makeDirty();
+	_field414 = true;
+}
+
+void CPetConversations::scrollToBottom() {
+	_log.scrollToBottom(CScreenManager::_screenManagerPtr);
+	if (_petControl)
+		_petControl->makeDirty();
+	_field414 = true;
+}
+
+SummonResult CPetConversations::canSummonNPC(const CString &name) {
+	warning("TODO: canSummonNPC");
+	return SUMMON_ABORT;
+}
+
+void CPetConversations::summonNPC(const CString &name) {
+	warning("TODO: summonNPC");
 }
 
 } // End of namespace Titanic

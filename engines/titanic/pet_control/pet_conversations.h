@@ -29,6 +29,8 @@
 
 namespace Titanic {
 
+enum SummonResult { SUMMON_CANT = 0, SUMMON_CAN = 1, SUMMON_ABORT = 2 };
+
 class CPetConversations : public CPetSection {
 private:
 	CPetGfxElement _scrollUp;
@@ -39,8 +41,8 @@ private:
 	CPetGfxElement _val5;
 	CPetGfxElement _val6;
 	int  _field14C;
-	CPetGfxElement _val7;
-	CPetGfxElement _val8;
+	CPetGfxElement _doorBot;
+	CPetGfxElement _bellBot;
 	CPetGfxElement _val9;
 	CPetGfxElement _valArray2[9];
 	int _field30C;
@@ -57,14 +59,29 @@ private:
 	bool setupControl(CPetControl *petControl);
 
 	/**
+	 * Scroll up the conversation log
+	 */
+	void scrollUp();
+
+	/**
 	 * Scroll down the conversation log
 	 */
 	void scrollDown();
 
 	/**
-	 * Scroll up the conversation log
+	 * Scroll to the bottom of the conversation log
 	 */
-	void scrollUp();
+	void scrollToBottom();
+
+	/**
+	 * Check whether an NPC can be summoned
+	 */
+	SummonResult canSummonNPC(const CString &name);
+
+	/**
+	 * Summon an NPC
+	 */
+	void summonNPC(const CString &name);
 public:
 	CPetConversations();
 
@@ -88,6 +105,7 @@ public:
 	 * pass onto the currently active section/area
 	 */
 	virtual bool MouseButtonDownMsg(CMouseButtonDownMsg *msg);
+	virtual bool MouseButtonUpMsg(CMouseButtonUpMsg *msg);
 };
 
 } // End of namespace Titanic
