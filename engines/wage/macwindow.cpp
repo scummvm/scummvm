@@ -45,12 +45,10 @@
  *
  */
 
+#include "graphics/font.h"
 #include "graphics/primitives.h"
 #include "common/events.h"
 
-#include "wage/wage.h"
-#include "wage/macwindowmanager.h"
-#include "wage/gui.h"
 #include "wage/macwindow.h"
 
 namespace Wage {
