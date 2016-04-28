@@ -33,14 +33,14 @@ void CPetElement::getBounds(Rect *rect) {
 		*rect = Rect();
 }
 
-bool CPetElement::highlightBounds(const Point &pt) {
+bool CPetElement::MouseButtonDownMsg(const Point &pt) {
 	bool result = _bounds.contains(pt);
 	if (result)
 		setMode(MODE_SELECTED);
 	return result;
 }
 
-bool CPetElement::MouseButtonDownMsg(const Point &pt) {
+bool CPetElement::MouseButtonUpMsg(const Point &pt) {
 	bool result = _bounds.contains(pt);
 	if (result)
 		setMode(MODE_UNSELECTED);

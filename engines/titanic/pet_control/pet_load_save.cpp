@@ -72,7 +72,7 @@ void CPetLoadSave::draw2(CScreenManager *screenManager) {
 }
 
 bool CPetLoadSave::checkHighlight(const Point &pt) {
-	if (_btnLoadSave.highlightBounds(pt))
+	if (_btnLoadSave.MouseButtonDownMsg(pt))
 		return true;
 	
 	checkSlotsHighlight(pt);
@@ -80,7 +80,7 @@ bool CPetLoadSave::checkHighlight(const Point &pt) {
 }
 
 bool CPetLoadSave::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
-	if (_btnLoadSave.MouseButtonDownMsg(msg->_mousePos)) {
+	if (_btnLoadSave.MouseButtonUpMsg(msg->_mousePos)) {
 		execute();
 		resetSlots();
 		return true;

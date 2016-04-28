@@ -68,12 +68,12 @@ void CPetQuit::draw2(CScreenManager *screenManager) {
 }
 
 bool CPetQuit::checkHighlight(const Point &pt) {
-	return !_btnYes.highlightBounds(pt);
+	return !_btnYes.MouseButtonDownMsg(pt);
 }
 
 bool CPetQuit::MouseButtonUpMsg(const Point &pt) {
 	CPetControl *pet = getPetControl();
-	if (_btnYes.MouseButtonDownMsg(pt) && pet) {
+	if (_btnYes.MouseButtonUpMsg(pt) && pet) {
 		CGameManager *gameManager = pet->getGameManager();
 		if (gameManager)
 			gameManager->_gameState._quitGame = true;
