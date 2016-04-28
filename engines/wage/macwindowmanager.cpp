@@ -56,11 +56,11 @@
 #include "graphics/managed_surface.h"
 #include "graphics/palette.h"
 
-#include "wage/wage.h"
+//#include "wage/wage.h"
 #include "wage/design.h"
-#include "wage/gui.h"
-#include "wage/macwindow.h"
+//#include "wage/gui.h"
 #include "wage/macwindowmanager.h"
+#include "wage/macwindow.h"
 #include "wage/macmenu.h"
 
 namespace Wage {

@@ -48,9 +48,10 @@
 #ifndef WAGE_DESIGN_H
 #define WAGE_DESIGN_H
 
-#include "graphics/managed_surface.h"
 #include "common/memstream.h"
 #include "common/rect.h"
+
+#include "wage/macwindowmanager.h"
 
 namespace Wage {
 

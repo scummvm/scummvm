@@ -103,22 +103,12 @@ enum {
 	// the current limitation is 32 debug levels (1 << 31 is the last one)
 };
 
-enum {
-	kColorBlack  = 0,
-	kColorGray   = 1,
-	kColorWhite  = 2,
-	kColorGreen  = 3,
-	kColorGreen2 = 4
-};
-
 Common::String readPascalString(Common::SeekableReadStream *in);
 Common::Rect *readRect(Common::SeekableReadStream *in);
 const char *getIndefiniteArticle(const Common::String &word);
 const char *prependGenderSpecificPronoun(int gender);
 const char *getGenderSpecificPronoun(int gender, bool capitalize);
 bool isStorageScene(const Common::String &name);
-
-typedef Common::Array<byte *> Patterns;
 
 class WageEngine : public Engine {
 	friend class Dialog;

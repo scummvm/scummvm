@@ -73,6 +73,8 @@ World::World(WageEngine *engine) {
 	_weaponMenuDisabled = true;
 
 	_engine = engine;
+
+	_patterns = new Patterns;
 }
 
 World::~World() {
@@ -88,8 +90,10 @@ World::~World() {
 	for (uint i = 0; i < _orderedScenes.size(); i++)
 		delete _orderedScenes[i];
 
-	for (uint i = 0; i < _patterns.size(); i++)
-		free(_patterns[i]);
+	for (uint i = 0; i < _patterns->size(); i++)
+		free(_patterns->operator[](i));
+
+	delete _patterns;
 
 	delete _globalScript;
 
@@ -261,7 +265,7 @@ bool World::loadWorld(Common::MacResManager *resMan) {
 			byte *pattern = (byte *)malloc(8);
 
 			res->read(pattern, 8);
-			_patterns.push_back(pattern);
+			_patterns->push_back(pattern);
 		}
 
 		delete res;
@@ -274,7 +278,7 @@ bool World::loadWorld(Common::MacResManager *resMan) {
 				byte *pattern = (byte *)malloc(8);
 
 				res->read(pattern, 8);
-				_patterns.push_back(pattern);
+				_patterns->push_back(pattern);
 			}
 		}
 		delete res;

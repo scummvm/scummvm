@@ -48,7 +48,32 @@
 #ifndef WAGE_MACWINDOWMANAGER_H
 #define WAGE_MACWINDOWMANAGER_H
 
+#include "common/array.h"
+#include "common/list.h"
+#include "common/events.h"
+#include "common/archive.h"
+
+#include "graphics/fontman.h"
+
+namespace Graphics {
+class ManagedSurface;
+}
+
 namespace Wage {
+
+class Gui; // FIXME
+
+enum {
+	kDesktopArc = 7
+};
+
+enum {
+	kColorBlack  = 0,
+	kColorGray   = 1,
+	kColorWhite  = 2,
+	kColorGreen  = 3,
+	kColorGreen2 = 4
+};
 
 enum {
 	kPatternSolid = 1,
@@ -57,8 +82,11 @@ enum {
 	kPatternCheckers2 = 4
 };
 
+class BaseMacWindow;
 class MacWindow;
 class Menu;
+
+typedef Common::Array<byte *> Patterns;
 
 class MacWindowManager {
 public:

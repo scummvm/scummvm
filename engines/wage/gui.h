@@ -50,7 +50,6 @@
 
 #include "common/str-array.h"
 #include "graphics/font.h"
-#include "graphics/fontman.h"
 #include "graphics/managed_surface.h"
 #include "common/events.h"
 #include "common/rect.h"
@@ -63,15 +62,6 @@ namespace Wage {
 class Menu;
 
 enum {
-	kMenuHeight = 20,
-	kMenuLeftMargin = 7,
-	kMenuSpacing = 13,
-	kMenuPadding = 16,
-	kMenuDropdownPadding = 14,
-	kMenuDropdownItemHeight = 16,
-	kMenuItemHeight = 20,
-	kDesktopArc = 7,
-	kComponentsPadding = 10,
 	kCursorHeight = 12
 };
 

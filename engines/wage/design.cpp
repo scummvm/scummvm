@@ -45,8 +45,10 @@
  *
  */
 
+#include "graphics/managed_surface.h"
 #include "graphics/primitives.h"
-#include "wage/wage.h"
+
+#include "wage/macwindowmanager.h"
 #include "wage/design.h"
 
 namespace Wage {

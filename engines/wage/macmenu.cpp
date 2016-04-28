@@ -52,10 +52,21 @@
 #include "wage/entities.h"
 #include "wage/design.h"
 #include "wage/gui.h"
+#include "wage/macwindowmanager.h"
 #include "wage/macmenu.h"
 #include "wage/world.h"
 
 namespace Wage {
+
+enum {
+	kMenuHeight = 20,
+	kMenuLeftMargin = 7,
+	kMenuSpacing = 13,
+	kMenuPadding = 16,
+	kMenuDropdownPadding = 14,
+	kMenuDropdownItemHeight = 16,
+	kMenuItemHeight = 20
+};
 
 struct MenuSubItem {
 	Common::String text;

@@ -50,6 +50,8 @@
 
 #include "graphics/managed_surface.h"
 
+#include "wage/macwindowmanager.h"
+
 namespace Wage {
 
 class MacWindowManager;
