@@ -201,12 +201,22 @@ void OSScreenManager::blitFrom(SurfaceNum surfaceNum, CVideoSurface *src,
 void OSScreenManager::proc12() {}
 
 int OSScreenManager::writeString(int surfaceNum, const Rect &destRect, 
-		int val1, const CString &str, CTextCursor *textCursor) {
-	if (_backSurfaces.empty())
-		return -1;
+		int yOffset, const CString &str, CTextCursor *textCursor) {
+	CVideoSurface *surface;
+	Rect bounds;
 
-	return _fonts[_fontNumber].writeString(_backSurfaces[surfaceNum]._surface,
-		destRect, _backSurfaces[surfaceNum]._bounds, val1, str, textCursor);
+	if (surfaceNum >= 0 && surfaceNum < (int)_backSurfaces.size()) {
+		surface = _backSurfaces[surfaceNum]._surface;
+		bounds = _backSurfaces[surfaceNum]._bounds;
+	} else if (surfaceNum == -1) {
+		surface = _frontRenderSurface;
+		bounds = Rect(0, 0, surface->getWidth(), surface->getHeight());
+	} else {
+		return -1;
+	}
+
+	return _fonts[_fontNumber].writeString(surface, destRect, bounds,
+		yOffset, str, textCursor);
 }
 
 void OSScreenManager::proc14() {}

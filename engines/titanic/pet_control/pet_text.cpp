@@ -140,7 +140,7 @@ void CPetText::draw(CScreenManager *screenManager) {
 	tempRect.grow(-2);
 	screenManager->setFontNumber(_fontNumber2);
 
-	screenManager->writeString(0, tempRect, _field74, _lines, _textCursor);
+	screenManager->writeString(SURFACE_BACKBUFFER, tempRect, _field74, _lines, _textCursor);
 
 	screenManager->setFontNumber(_fontNumber1);
 }
@@ -149,11 +149,10 @@ void CPetText::mergeStrings() {
 	if (!_stringsMerged) {
 		_lines.clear();
 
-		for (int idx = 0; idx < _lineCount; ++idx) {
+		for (int idx = 0; idx <= _lineCount; ++idx) {
 			CString line = _array[idx]._rgb + _array[idx]._string3 +
 				_array[idx]._line + "\n";
 			_lines += line;
-
 		}
 
 		_stringsMerged = true;

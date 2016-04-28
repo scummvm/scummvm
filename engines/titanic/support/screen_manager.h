@@ -115,12 +115,14 @@ public:
 	 * Write a string
 	 * @param surfaceNum	Destination surface
 	 * @param destRect		Bounds within dest surface
+	 * @param yOffset		Y offset for drawing, to allow for parts of
+	 *						the text to be scrolled off-screen
 	 * @param str			Line or lines to write
 	 * @param textCursor	Optional text cursor pointer
 	 */
-	virtual int writeString(int surfaceNum, const Rect &destRect, int val1,
-		const CString &str, CTextCursor *textCursor) = 0;
-	
+	virtual int writeString(int surfaceNum, const Rect &destRect,
+		int yOffset, const CString &str, CTextCursor *textCursor) = 0;
+
 	virtual void proc14() = 0;
 
 	/**
@@ -252,11 +254,13 @@ public:
 	 * Write a string
 	 * @param surfaceNum	Destination surface
 	 * @param destRect		Bounds within dest surface
+	 * @param yOffset		Y offset for drawing, to allow for parts of
+	 *						the text to be scrolled off-screen
 	 * @param str			Line or lines to write
 	 * @param textCursor	Optional text cursor pointer
 	 */
 	virtual int writeString(int surfaceNum, const Rect &destRect,
-		int val1, const CString &str, CTextCursor *textCursor);
+		int yOffset, const CString &str, CTextCursor *textCursor);
 
 	virtual void proc14();
 
