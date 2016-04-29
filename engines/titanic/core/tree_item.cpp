@@ -314,9 +314,9 @@ CMusicRoom *CTreeItem::getMusicRoom() const {
 	return gameManager ? &gameManager->_musicRoom : nullptr;
 }
 
-int CTreeItem::getState8() const {
+int CTreeItem::getPassengerClass() const {
 	CGameManager *gameManager = getGameManager();
-	return gameManager ? gameManager->_gameState._field8 : 3;
+	return gameManager ? gameManager->_gameState._passengerClass : 3;
 }
 
 int CTreeItem::getStateC() const {

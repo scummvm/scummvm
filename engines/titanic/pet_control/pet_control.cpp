@@ -475,5 +475,16 @@ bool CPetControl::isNPCInView(const CString &name) const {
 	return false;
 }
 
+void CPetControl::summonNPC(const CString &name, int val) {
+	CGameManager *gameManager = getGameManager();
+	if (gameManager) {
+		CRoomItem *room = gameManager->getRoom();
+
+		if (room) {
+			CSummonBotMsg summonMsg(name, val);
+			summonMsg.execute(room);
+		}
+	}
+}
 
 } // End of namespace Titanic

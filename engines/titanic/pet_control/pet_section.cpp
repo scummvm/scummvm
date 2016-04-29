@@ -69,7 +69,7 @@ uint CPetSection::getColor(uint index) {
 const uint *CPetSection::getColorTable(int tableNum) {
 	if (tableNum == -1) {
 		CPetControl *pet = getPetControl();
-		tableNum = pet ? pet->getState8() : 3;
+		tableNum = pet ? pet->getPassengerClass() : 3;
 	}
 
 	switch (tableNum) {

@@ -163,7 +163,13 @@ int CPetConversations::canSummonNPC(const CString &name) {
 }
 
 void CPetConversations::summonNPC(const CString &name) {
-	warning("TODO: summonNPC");
+	if (_petControl) {
+		if (_petControl->getPassengerClass() >= 4) {
+			_petControl->displayMessage("Sorry, you must be at least 3rd class before you can summon for help.");
+		} else {
+			_petControl->summonNPC(name, 0);
+		}
+	}
 }
 
 } // End of namespace Titanic

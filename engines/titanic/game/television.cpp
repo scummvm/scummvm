@@ -234,7 +234,7 @@ bool CTelevision::MovieEndMsg(CMovieEndMsg *msg) {
 		parrotMsg.execute("PerchedParrot");
 	}
 
-	if (_fieldE0 == 3 && compareRoomNameTo("SGTState") && !getState8()) {
+	if (_fieldE0 == 3 && compareRoomNameTo("SGTState") && !getPassengerClass()) {
 		playSound("z#47.wav", 100, 0, 0);
 		_fieldF0 = playSound("b#20.wav", 100, 0, 0);
 		CTreeItem *magazine = getRoot()->findByName("Magazine");

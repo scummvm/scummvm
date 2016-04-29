@@ -262,6 +262,11 @@ public:
 	 * Check whether an NPC can be summoned
 	 */
 	int canSummonNPC(const CString &name);
+
+	/**
+	 * Summon an NPC to the player
+	 */
+	void summonNPC(const CString &name, int val);
 };
 
 } // End of namespace Titanic

@@ -279,7 +279,11 @@ public:
 	 */
 	CMusicRoom *getMusicRoom() const;
 
-	int getState8() const;
+	/**
+	 * Return the player's passenger class
+	 */
+	int getPassengerClass() const;
+	
 	int getStateC() const;
 };
 

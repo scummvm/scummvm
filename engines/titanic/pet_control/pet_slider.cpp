@@ -198,7 +198,7 @@ void CPetSoundSlider::setupThumb(const CString &name, CPetControl *petControl) {
 void CPetSoundSlider::setupBackground2(const CString &name, CPetControl *petControl) {
 	if (petControl) {
 		CString numStr = "3";
-		int mode = petControl->getState8();
+		int mode = petControl->getPassengerClass();
 		if (mode <= 3) {
 			numStr = CString(mode);			
 		} else if (mode == 4) {
@@ -216,11 +216,10 @@ void CPetSoundSlider::setupBackground2(const CString &name, CPetControl *petCont
 void CPetSoundSlider::setupThumb2(const CString &name, CPetControl *petControl) {
 	if (petControl) {
 		CString numStr = "3";
-		int mode = petControl->getState8();
+		int mode = petControl->getPassengerClass();
 		if (mode <= 3) {
 			numStr = CString(mode);
-		}
-		else if (mode == 4) {
+		} else if (mode == 4) {
 			mode = petControl->getStateC();
 			if (mode == 1) {
 				numStr = CString(mode);

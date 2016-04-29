@@ -54,7 +54,7 @@ public:
 	CGameManager *_gameManager;
 	CGameLocation _gameLocation;
 	CGameStateMovieList _movieList;
-	int _field8;
+	int _passengerClass;
 	int _fieldC;
 	GameStateMode _mode;
 	int _field14;
