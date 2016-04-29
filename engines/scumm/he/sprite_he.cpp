@@ -1341,7 +1341,7 @@ void Sprite::processImages(bool arg) {
 			wiz.img.flags |= kWIFRemapPalette;
 		if (spi->field_84) {
 			wiz.processFlags |= 0x200000;
-			wiz.img.field_390 = spi->field_84;
+			wiz.img.zbuffer = spi->field_84;
 			wiz.img.zorder = spi->priority;
 		}
 		if (spi->sourceImage) {

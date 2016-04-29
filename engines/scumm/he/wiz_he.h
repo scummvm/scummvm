@@ -43,7 +43,7 @@ struct WizImage {
 	int state;
 	int flags;
 	int shadow;
-	int field_390;
+	int zbuffer;
 	int palette;
 };
 
