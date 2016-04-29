@@ -176,10 +176,10 @@ CString CPetText::getText() const {
 
 void CPetText::setText(const CString &str) {
 	setup();
-	changeText(str);
+	appendText(str);
 }
 
-void CPetText::changeText(const CString &str) {
+void CPetText::appendText(const CString &str) {
 	int lineSize = _array[_lineCount]._line.size();
 	int strSize = str.size();
 
@@ -304,8 +304,27 @@ void CPetText::addLine(const CString &str, byte r, byte g, byte b) {
 	}
 
 	setLineColor(_lineCount, r, g, b);
-	changeText(str);
+	appendText(str);
 	++_lineCount;
+}
+
+bool CPetText::handleKey(const Common::KeyState &keyState) {
+	switch (keyState.keycode) {
+	case Common::KEYCODE_BACKSPACE:
+		deleteLastChar();
+		break;
+
+	case Common::KEYCODE_RETURN:
+	case Common::KEYCODE_KP_ENTER:
+		return true;
+
+	default:
+		if (keyState.ascii >= 32 && keyState.ascii <= 127)
+			appendText(CString(keyState.ascii, 1));
+		break;
+	}
+
+	return false;
 }
 
 } // End of namespace Titanic

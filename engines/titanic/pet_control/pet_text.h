@@ -23,6 +23,7 @@
 #ifndef TITANIC_PET_TEXT_H
 #define TITANIC_PET_TEXT_H
 
+#include "common/keyboard.h"
 #include "titanic/support/simple_file.h"
 #include "titanic/support/screen_manager.h"
 #include "titanic/support/text_cursor.h"
@@ -71,9 +72,9 @@ private:
 	void mergeStrings();
 
 	/**
-	 * Change the text
+	 * Append text to the current text line
 	 */
-	void changeText(const CString &str);
+	void appendText(const CString &str);
 
 	void updateStr3(int lineNum);
 
@@ -192,6 +193,13 @@ public:
 	 * Add a line to the text
 	 */
 	void addLine(const CString &str, byte r, byte g, byte b);
+
+	/**
+	 * Handles character processing to add or remove characters to
+	 * the current text line
+	 * @returns		True if the Enter key was pressed
+	 */
+	bool handleKey(const Common::KeyState &keyState);
 };
 
 } // End of namespace Titanic

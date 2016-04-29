@@ -104,6 +104,7 @@ public:
 	 */
 	virtual bool MouseButtonDownMsg(CMouseButtonDownMsg *msg);
 	virtual bool MouseButtonUpMsg(CMouseButtonUpMsg *msg);
+	virtual bool MouseDoubleClickMsg(CMouseDoubleClickMsg *msg);
 };
 
 } // End of namespace Titanic

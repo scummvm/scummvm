@@ -80,9 +80,9 @@ public:
 	virtual bool MouseButtonUpMsg(const Point &pt);
 
 	/**
-	 * Returns whether the passed point falls inside the item
+	 * Handles processing mouse button double click messages
 	 */
-	virtual bool contains1(const Point &pt) const;
+	virtual bool MouseDoubleClickMsg(const Point &pt) const;
 
 	virtual int proc9(const Point &pt);
 

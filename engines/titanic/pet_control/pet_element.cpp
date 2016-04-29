@@ -47,7 +47,7 @@ bool CPetElement::MouseButtonUpMsg(const Point &pt) {
 	return result;
 }
 
-bool CPetElement::contains1(const Point &pt) const {
+bool CPetElement::MouseDoubleClickMsg(const Point &pt) const {
 	return _bounds.contains(pt);
 }
 

@@ -95,6 +95,11 @@ bool CPetConversations::MouseButtonUpMsg(CMouseButtonUpMsg *msg) {
 	return false;
 }
 
+bool CPetConversations::MouseDoubleClickMsg(CMouseDoubleClickMsg *msg) {
+	return _scrollDown.MouseDoubleClickMsg(msg->_mousePos)
+		|| _scrollUp.MouseDoubleClickMsg(msg->_mousePos);
+}
+
 bool CPetConversations::setupControl(CPetControl *petControl) {
 	if (petControl) {
 		_petControl = petControl;
