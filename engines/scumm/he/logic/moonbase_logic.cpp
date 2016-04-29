@@ -42,9 +42,10 @@ private:
 	void op_load_multi_channel_wiz(int op, int numArgs, int32 *args);
 	void op_wiz_from_multi_channel_wiz(int op, int numArgs, int32 *args);
 	void op_dos_command(int op, int numArgs, int32 *args);
-	void op_set_fow_sentinel(int op, int numArgs, int32 *args);
+	void op_set_fow_sentinel(int32 *args);
 	void op_set_fow_information(int op, int numArgs, int32 *args);
 	void op_set_fow_image(int op, int numArgs, int32 *args);
+
 	void op_ai_test_kludge(int op, int numArgs, int32 *args);
 	void op_ai_master_control_program(int op, int numArgs, int32 *args);
 	void op_ai_reset(int op, int numArgs, int32 *args);
@@ -90,7 +91,7 @@ int32 LogicHEmoonbase::dispatch(int op, int numArgs, int32 *args) {
 		op_dos_command(op, numArgs, args);
 		break;
 	case OP_SET_FOW_SENTINEL:
-		op_set_fow_sentinel(op, numArgs, args);
+		op_set_fow_sentinel(args);
 		break;
 	case OP_SET_FOW_INFORMATION:
 		op_set_fow_information(op, numArgs, args);
@@ -142,9 +143,12 @@ void LogicHEmoonbase::op_dos_command(int op, int numArgs, int32 *args) {
 	LogicHE::dispatch(op, numArgs, args);
 }
 
-void LogicHEmoonbase::op_set_fow_sentinel(int op, int numArgs, int32 *args) {
-	warning("STUB: op_set_fow_sentinel()");
-	LogicHE::dispatch(op, numArgs, args);
+void LogicHEmoonbase::op_set_fow_sentinel(int32 *args) {
+	debug(2, "op_set_fow_sentinel(%d, %d, %d)", args[0], args[1], args[2]);
+
+	_vm->_moonbase->_fowSentinelImage = args[0];
+	_vm->_moonbase->_fowSentinelState = args[1];
+	_vm->_moonbase->_fowSentinelConditionBits = args[2];
 }
 
 void LogicHEmoonbase::op_set_fow_information(int op, int numArgs, int32 *args) {

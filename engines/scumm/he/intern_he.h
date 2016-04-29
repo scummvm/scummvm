@@ -27,6 +27,8 @@
 #ifdef ENABLE_HE
 #include "scumm/he/floodfill_he.h"
 #include "scumm/he/wiz_he.h"
+
+#include "scumm/he/moonbase/moonbase.h"
 #endif
 #include "scumm/actor_he.h"	// For AuxBlock & AuxEntry
 
@@ -244,6 +246,10 @@ public:
 	void queueAuxEntry(int actorNum, int subIndex);
 
 	void remapHEPalette(const uint8 *src, uint8 *dst);
+
+public:
+	/* Moonbase stuff */
+	Moonbase *_moonbase;
 };
 
 class ScummEngine_v72he : public ScummEngine_v71he {

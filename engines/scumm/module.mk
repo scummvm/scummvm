@@ -138,7 +138,8 @@ MODULE_OBJS += \
 	he/logic/funshop.o \
 	he/logic/moonbase_logic.o \
 	he/logic/puttrace.o \
-	he/logic/soccer.o
+	he/logic/soccer.o \
+	he/moonbase/moonbase.o
 endif
 
 # This module can be built as a plugin

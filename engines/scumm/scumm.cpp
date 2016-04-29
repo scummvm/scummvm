@@ -733,7 +733,7 @@ ScummEngine_v0::ScummEngine_v0(OSystem *syst, const DetectorResult &dr)
 	VAR_ACTIVE_VERB = 0xFF;
 
 	if (strcmp(dr.fp.pattern, "maniacdemo.d64") == 0 )
-		_game.features |= GF_DEMO; 
+		_game.features |= GF_DEMO;
 }
 
 ScummEngine_v6::ScummEngine_v6(OSystem *syst, const DetectorResult &dr)
@@ -832,9 +832,16 @@ ScummEngine_v71he::ScummEngine_v71he(OSystem *syst, const DetectorResult &dr)
 	_skipProcessActors = 0;
 
 	VAR_WIZ_TCOLOR = 0xFF;
+
+	/* Moonbase stuff */
+	_moonbase = 0;
+
+	if (_game.id == GID_MOONBASE)
+		_moonbase = new Moonbase();
 }
 
 ScummEngine_v71he::~ScummEngine_v71he() {
+	delete _moonbase;
 	delete _wiz;
 }
 
