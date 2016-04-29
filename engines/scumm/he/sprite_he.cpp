@@ -386,7 +386,7 @@ int Sprite::getSpriteGeneralProperty(int spriteId, int type) {
 	case 0x7B:
 		return _spriteTable[spriteId].imgFlags;
 	case 0x7D:
-		return _spriteTable[spriteId].field_90;
+		return _spriteTable[spriteId].conditionBits;
 	case 0x7E:
 		return _spriteTable[spriteId].animProgress;
 	default:
@@ -758,7 +758,7 @@ void Sprite::setSpriteGeneralProperty(int spriteId, int type, int value) {
 		_spriteTable[spriteId].flags |= kSFChanged | kSFNeedRedraw;
 		break;
 	case 0x7D:
-		_spriteTable[spriteId].field_90 = value;
+		_spriteTable[spriteId].conditionBits = value;
 		_spriteTable[spriteId].flags |= kSFChanged | kSFNeedRedraw;
 		break;
 	case 0x7E:
@@ -799,7 +799,7 @@ void Sprite::resetSprite(int spriteId) {
 	_spriteTable[spriteId].priority = 0;
 	_spriteTable[spriteId].field_84 = 0;
 	_spriteTable[spriteId].imgFlags = 0;
-	_spriteTable[spriteId].field_90 = 0;
+	_spriteTable[spriteId].conditionBits = 0;
 
 	if (_vm->_game.heversion >= 100) {
 		_spriteTable[spriteId].flags &= ~kSFMarkDirty;
@@ -1292,7 +1292,7 @@ void Sprite::processImages(bool arg) {
 
 		wiz.spriteId = spi->id;
 		wiz.spriteGroup = spi->group;
-		wiz.field_23EA = spi->field_90;
+		wiz.conditionBits = spi->conditionBits;
 		spi->curImageState = wiz.img.state = imageState;
 		spi->curImage = wiz.img.resNum = image;
 		wiz.processFlags = kWPFNewState | kWPFSetPos;
@@ -1426,7 +1426,7 @@ void Sprite::saveOrLoadSpriteData(Serializer *s) {
 		MKLINE(SpriteInfo, field_84, sleInt32, VER(48)),
 		MKLINE(SpriteInfo, classFlags, sleInt32, VER(48)),
 		MKLINE(SpriteInfo, imgFlags, sleInt32, VER(48)),
-		MKLINE(SpriteInfo, field_90, sleInt32, VER(48)),
+		MKLINE(SpriteInfo, conditionBits, sleInt32, VER(48)),
 		MKEND()
 	};
 

@@ -79,7 +79,7 @@ struct SpriteInfo {
 	int32 field_84;
 	int32 classFlags;
 	int32 imgFlags;
-	int32 field_90;
+	int32 conditionBits;
 };
 
 struct SpriteGroup {

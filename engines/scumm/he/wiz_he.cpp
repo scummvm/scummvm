@@ -2074,9 +2074,9 @@ void Wiz::displayWizComplexImage(const WizParameters *params) {
 		shadow = params->img.shadow;
 	}
 	int zbuffer = 0;
-	if (params->processFlags & 0x200000) {
+	if (params->processFlags & kWPFZBuffer) {
 		zbuffer = params->img.zbuffer;
-		debug(0, "displayWizComplexImage() unhandled flag 0x200000");
+		debug(0, "displayWizComplexImage() unhandled flag kWPFZBuffer");
 	}
 	const Common::Rect *r = NULL;
 	if (params->processFlags & kWPFClipBox) {

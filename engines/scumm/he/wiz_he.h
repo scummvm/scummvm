@@ -102,10 +102,10 @@ struct WizParameters {
 	FontProperties fontProperties;
 	EllipseProperties ellipseProperties;
 	Common::Rect box2;
-	int field_23DE;
+	int blendFlags;
 	int spriteId;
 	int spriteGroup;
-	int field_23EA;
+	int conditionBits;
 	WizImage img;
 };
 
@@ -138,7 +138,8 @@ enum WizProcessFlags {
 	kWPFFillColor = 0x20000,
 	kWPFClipBox2 = 0x40000,
 	kWPFMaskImg = 0x80000,
-	kWPFParams = 0x100000
+	kWPFParams = 0x100000,
+	kWPFZBuffer = 0x200000
 };
 
 enum {
