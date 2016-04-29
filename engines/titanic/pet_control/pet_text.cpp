@@ -292,8 +292,20 @@ void CPetText::addLine(const CString &str, uint color) {
 }
 
 void CPetText::addLine(const CString &str, byte r, byte g, byte b) {
-	warning("TODO: CPetText::addLine");
-}
+	if (_lineCount == ((int)_array.size() - 1)) {
+		// Lines array is full
+		if (_array.size() > 1) {
+			// Delete the oldest line, and add a new entry at the end
+			_array.remove_at(0);
+			_array.resize(_array.size() + 1);
+		}
 
+		--_lineCount;
+	}
+
+	setLineColor(_lineCount, r, g, b);
+	changeText(str);
+	++_lineCount;
+}
 
 } // End of namespace Titanic

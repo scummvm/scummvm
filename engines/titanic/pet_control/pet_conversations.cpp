@@ -61,6 +61,7 @@ bool CPetConversations::MouseButtonUpMsg(CMouseButtonUpMsg *msg) {
 	if (_doorBot.MouseButtonUpMsg(msg->_mousePos)) {
 		switch (canSummonNPC("DoorBot")) {
 		case SUMMON_CANT:
+			_log.addLine("Sadly, it is not possible to summon the DoorBot from this location.", getColor(1));
 			break;
 		case SUMMON_CAN:
 			summonNPC("DoorBot");
@@ -71,10 +72,24 @@ bool CPetConversations::MouseButtonUpMsg(CMouseButtonUpMsg *msg) {
 
 		// Scroll to the bottom of the log
 		scrollToBottom();
+		return true;
 	}
 
 	if (_bellBot.MouseButtonUpMsg(msg->_mousePos)) {
-		// TODO
+		switch (canSummonNPC("BellBot")) {
+		case SUMMON_CANT:
+			_log.addLine("Sadly, it is not possible to summon the BellBot from this location.", getColor(1));
+			break;
+		case SUMMON_CAN:
+			summonNPC("BellBot");
+			return true;
+		default:
+			break;
+		}
+
+		// Scroll to the bottom of the log
+		scrollToBottom();
+		return true;
 	}
 
 	return false;
