@@ -207,6 +207,11 @@ public:
 	/**
 	 * Add a line to the text
 	 */
+	void addLine(const CString &str);
+
+	/**
+	 * Add a line to the text
+	 */
 	void addLine(const CString &str, uint color);
 
 	/**

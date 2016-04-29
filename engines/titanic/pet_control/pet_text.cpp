@@ -320,6 +320,10 @@ int CPetText::getPageHeight(CScreenManager *screenManager) {
 	}
 }
 
+void CPetText::addLine(const CString &str) {
+	addLine(str, _textR, _textG, _textB);
+}
+
 void CPetText::addLine(const CString &str, uint color) {
 	addLine(str, color & 0xff, (color >> 8) & 0xff,
 		(color >> 16) & 0xff);

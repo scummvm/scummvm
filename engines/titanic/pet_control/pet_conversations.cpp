@@ -256,7 +256,13 @@ void CPetConversations::textLineEntered(const CString &textLine) {
 		return;
 
 	if (_petControl->_activeNPC) {
-		warning("TODO: textLineEntered");
+		_log.addLine("- " + textLine, getColor(0));
+
+		CTextInputMsg inputMsg(textLine, "");
+		inputMsg.execute(_petControl->_activeNPC);
+
+		if (!inputMsg._response.empty())
+			_log.addLine(inputMsg._response);
 	} else {
 		_log.addLine("There is no one here to talk to", getColor(1));
 	}
