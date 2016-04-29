@@ -23,6 +23,7 @@
 #include "titanic/pet_control/pet_control.h"
 #include "titanic/carry/carry.h"
 #include "titanic/core/project_item.h"
+#include "titanic/messages/messages.h"
 #include "titanic/messages/pet_messages.h"
 #include "titanic/game_manager.h"
 #include "titanic/game_state.h"
@@ -435,5 +436,44 @@ CString CPetControl::getRoomName() const {
 	CRoomItem *room = getRoom();
 	return room ? room->getName() : CString();
 }
+
+int CPetControl::canSummonNPC(const CString &name) {
+	// If player is the very same view as the NPC, then it's already present
+	if (isNPCInView(name))
+		return SUMMON_CAN;
+
+	// Get the room
+	CGameManager *gameManager = getGameManager();
+	if (!gameManager)
+		return SUMMON_CANT;
+	CRoomItem *room = gameManager->getRoom();
+	if (!room)
+		return SUMMON_CANT;
+
+	// Query current room to see whether the bot can be summoned to it
+	CSummonBotQueryMsg queryMsg(name);
+	return queryMsg.execute(room) ? SUMMON_CAN : SUMMON_CANT;
+}
+
+bool CPetControl::isNPCInView(const CString &name) const {
+	CGameManager *gameManager = getGameManager();
+	if (!gameManager)
+		return false;
+	CViewItem *view = gameManager->getView();
+	if (!view)
+		return false;
+	
+	// Iterate to find NPC
+	for (CTreeItem *child = view->getFirstChild(); child; child = child->scan(view)) {
+		CGameObject *gameObject = static_cast<CGameObject *>(child);
+		if (gameObject) {
+			if (!gameObject->getName().compareToIgnoreCase(name))
+				return true;
+		}
+	}
+
+	return false;
+}
+
 
 } // End of namespace Titanic

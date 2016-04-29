@@ -917,7 +917,7 @@ DEFFN(CSUBTransition)
 DEFFN(CSubTurnOffMsg)
 DEFFN(CSubTurnOnMsg)
 DEFFN(CSummonBotMsg)
-DEFFN(CSummonBotQuerryMsg)
+DEFFN(CSummonBotQueryMsg)
 DEFFN(CTakeHeadPieceMsg)
 DEFFN(CTextInputMsg)
 DEFFN(CTimeDilationMsg)
@@ -1503,7 +1503,7 @@ void CSaveableObject::initClassList() {
 	ADDFN(CSubTurnOffMsg, CMessage);
 	ADDFN(CSubTurnOnMsg, CMessage);
 	ADDFN(CSummonBotMsg, CMessage);
-	ADDFN(CSummonBotQuerryMsg, CMessage);
+	ADDFN(CSummonBotQueryMsg, CMessage);
 	ADDFN(CTakeHeadPieceMsg, CMessage);
 	ADDFN(CTextInputMsg, CMessage);
 	ADDFN(CTimeDilationMsg, CMessage);

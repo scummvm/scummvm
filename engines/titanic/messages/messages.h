@@ -343,7 +343,7 @@ MESSAGE0(CSUBTransition);
 MESSAGE0(CSubTurnOffMsg);
 MESSAGE0(CSubTurnOnMsg);
 MESSAGE2(CSummonBotMsg, CString, strValue, "", int, numValue, 0);
-MESSAGE1(CSummonBotQuerryMsg, CString, value, "");
+MESSAGE1(CSummonBotQueryMsg, CString, npcName, "");
 MESSAGE1(CTakeHeadPieceMsg, CString, value, "NULL");
 MESSAGE2(CTextInputMsg, CString, value1, "", CString, value2, "");
 MESSAGE1(CTimeDilationMsg, int, value, 0);

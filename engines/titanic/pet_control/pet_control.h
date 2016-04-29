@@ -39,6 +39,8 @@
 
 namespace Titanic {
 
+enum SummonResult { SUMMON_CANT = 0, SUMMON_PRESENT = 1, SUMMON_CAN = 2 };
+
 class CPetControl : public CGameObject {
 	DECLARE_MESSAGE_MAP
 private:
@@ -88,6 +90,11 @@ private:
 	bool containsPt(const Common::Point &pt) const;
 
 	bool getC0() const;
+
+	/**
+	 * Checks whether a designated NPC in present in the current view
+	 */
+	bool isNPCInView(const CString &name) const;
 protected:
 	bool MouseButtonDownMsg(CMouseButtonDownMsg *msg);
 	bool MouseDragStartMsg(CMouseDragStartMsg *msg);
@@ -250,6 +257,11 @@ public:
 	 * Get the room name
 	 */
 	CString getRoomName() const;
+
+	/**
+	 * Check whether an NPC can be summoned
+	 */
+	int canSummonNPC(const CString &name);
 };
 
 } // End of namespace Titanic

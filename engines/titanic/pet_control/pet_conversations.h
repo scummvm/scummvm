@@ -29,8 +29,6 @@
 
 namespace Titanic {
 
-enum SummonResult { SUMMON_CANT = 0, SUMMON_CAN = 1, SUMMON_ABORT = 2 };
-
 class CPetConversations : public CPetSection {
 private:
 	CPetGfxElement _scrollUp;
@@ -76,7 +74,7 @@ private:
 	/**
 	 * Check whether an NPC can be summoned
 	 */
-	SummonResult canSummonNPC(const CString &name);
+	int canSummonNPC(const CString &name);
 
 	/**
 	 * Summon an NPC

@@ -158,9 +158,8 @@ void CPetConversations::scrollToBottom() {
 	_field414 = true;
 }
 
-SummonResult CPetConversations::canSummonNPC(const CString &name) {
-	warning("TODO: canSummonNPC");
-	return SUMMON_ABORT;
+int CPetConversations::canSummonNPC(const CString &name) {
+	return _petControl ? _petControl->canSummonNPC(name) : SUMMON_CANT;
 }
 
 void CPetConversations::summonNPC(const CString &name) {
