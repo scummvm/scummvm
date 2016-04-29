@@ -373,7 +373,7 @@ private:
 	int _nextUpperButtonSequenceId;
 	int _currUpperButtonSequenceId;
 	int _nextLowerButtonSequenceId;
-	int _currLowerButtonSequenceId;	
+	int _currLowerButtonSequenceId;
 };
 
 class Scene17: public Scene {

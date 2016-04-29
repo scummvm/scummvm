@@ -86,7 +86,7 @@ void GnapEngine::initMenuHotspots1() {
 
 void GnapEngine::initMenuHotspots2() {
 	int curId = 0;
-	
+
 	for (int i = 0; i < 4; ++i) {
 		_hotspots[curId]._x1 = 312;
 		_hotspots[curId]._y1 = 48 * i + 85;
@@ -330,7 +330,7 @@ void GnapEngine::runMenu() {
 			updateMenuStatusQueryQuit();
 			break;
 		}
-		
+
 		gameUpdateTick();
 	}
 
@@ -376,7 +376,7 @@ void GnapEngine::runMenu() {
 	_mouseClickState._left = false;
 
 	removeDeviceIconActive();
-	
+
 	freeMenuSprite();//??? CHECKME
 }
 
@@ -465,7 +465,7 @@ void GnapEngine::updateMenuStatusMainMenu() {
 	_sceneClickedHotspot = -1;
 	if (!_timers[2])
 		_sceneClickedHotspot = getClickedHotspotId();
-		
+
 	if (_sceneClickedHotspot != 1 && _sceneClickedHotspot != 0) {
 		if (_sceneClickedHotspot != 2 && _hotspotsCount - 1 != _sceneClickedHotspot) {
 			if (_sceneClickedHotspot == 3) {
@@ -514,7 +514,7 @@ void GnapEngine::updateMenuStatusMainMenu() {
 					clearKeyStatus1(29);
 					clearKeyStatus1(30);
 				}
-				
+
 				_gameSys->removeSpriteDrawItem(_largeSprite, 300);
 				delayTicksCursor(5);
 				deleteSurface(&_largeSprite);
@@ -658,7 +658,7 @@ void GnapEngine::writeSavegameHeader(Common::OutSaveFile *out, GnapSavegameHeade
 	out->writeByte('\0');
 
 	// TODO: Add thumbnail
-	
+
 	// Write out the save date/time
 	TimeDate td;
 	g_system->getTimeAndDate(td);
@@ -930,7 +930,7 @@ void GnapEngine::updateMenuStatusQueryQuit() {
 
 	if (!_timers[2])
 		_sceneClickedHotspot = getClickedHotspotId();
-		
+
 	/*	_sceneClickedHotspot
 		0	Yes
 		1	No

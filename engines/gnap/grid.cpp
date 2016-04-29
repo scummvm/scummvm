@@ -75,7 +75,7 @@ bool GnapEngine::isPointBlocked(int gridX, int gridY) {
 
 	if ((gridX == _gnapX && gridY == _gnapY) || (gridX == _platX && gridY == _platY))
 		return true;
-		
+
 	const int x = _gridMinX + 75 * gridX;
 	const int y = _gridMinY + 48 * gridY;
 
@@ -92,7 +92,7 @@ bool GnapEngine::isPointBlocked(int gridX, int gridY) {
 
 bool GnapEngine::gridSub41F08B(int gridX, int gridY) {
 	bool result = false;
-	
+
 	_gnapWalkNodesCount = 0;
 	_gnapWalkDirXIncr = 0;
 	_gnapWalkDirYIncr = 0;
@@ -148,7 +148,7 @@ bool GnapEngine::gridSub41F08B(int gridX, int gridY) {
 		}
 		++_gnapWalkNodesCount;
 	}
-	
+
 	while (_gnapWalkDirXIncr < _gnapWalkDeltaX) {
 		_gnapWalkNodes[_gnapWalkNodesCount]._gridX1 = gridX + _gnapWalkDirX * _gnapWalkDirXIncr;
 		_gnapWalkNodes[_gnapWalkNodesCount]._gridY1 = _gnapWalkDestY;
@@ -553,7 +553,7 @@ bool GnapEngine::gnapWalkTo(int gridX, int gridY, int animationIndex, int sequen
 
 	_gnapWalkDestX = CLIP(gridX, 0, _gridMaxX - 1);
 	_gnapWalkDestY = CLIP(gridY, 0, _gridMaxY - 1);
-	
+
 	if (animationIndex >= 0 && _gnapWalkDestX == _platX && _gnapWalkDestY == _platY)
 		platypusMakeRoom();
 
@@ -562,7 +562,7 @@ bool GnapEngine::gnapWalkTo(int gridX, int gridY, int animationIndex, int sequen
 
 	if (!done && gridSub41FAD5(_gnapX, _gnapY, 0))
 		done = true;
-		
+
 	if (!done && gnapFindPath3(_gnapX, _gnapY))
 		done = true;
 
@@ -749,7 +749,7 @@ int GnapEngine::getPlatypusWalkSequenceId(int deltaX, int deltaY) {
 
 bool GnapEngine::gridSub423750(int gridX, int gridY) {
 	bool result = false;
-	
+
 	_platWalkNodesCount = 0;
 	_platWalkDirXIncr = 0;
 	_platWalkDirYIncr = 0;
@@ -1195,7 +1195,7 @@ bool GnapEngine::platFindPath3(int gridX, int gridY) {
 }
 
 bool GnapEngine::platypusWalkTo(int gridX, int gridY, int animationIndex, int sequenceId, int flags) {
-	
+
 	int datNum = flags & 3;
 	bool done = false;
 
@@ -1218,7 +1218,7 @@ bool GnapEngine::platypusWalkTo(int gridX, int gridY, int animationIndex, int se
 
 	if (!done && gridSub42419A(_platX, _platY, 0))
 		done = true;
-		
+
 	if (!done && platFindPath3(_platX, _platY))
 		done = true;
 
@@ -1349,7 +1349,7 @@ bool GnapEngine::platypusWalkTo(int gridX, int gridY, int animationIndex, int se
 
 	_platX = _platWalkDestX;
 	_platY = _platWalkDestY;
-	
+
 	return done;
 }
 

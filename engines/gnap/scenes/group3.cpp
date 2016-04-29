@@ -196,20 +196,20 @@ void Scene30::run() {
 			}
 			_vm->playSoundB();
 		}
-	
+
 		_vm->checkGameKeys();
-		
+
 		if (_vm->isKeyStatus1(8)) {
 			_vm->clearKeyStatus1(8);
 			_vm->runMenu();
 			updateHotspots();
 		}
-		
+
 		_vm->gameUpdateTick();
 	}
 }
 
-void Scene30::updateAnimations() {	
+void Scene30::updateAnimations() {
 	if (_vm->_gameSys->getAnimationStatus(0) == 2) {
 		_vm->_gameSys->setAnimation(0, 0, 0);
 		switch (_vm->_gnapActionStatus) {
@@ -474,12 +474,12 @@ void Scene31::run() {
 			}
 			break;
 		}
-	
+
 		updateAnimations();
-	
+
 		if (!_vm->isSoundPlaying(0x1093B))
 			_vm->playSound(0x1093B, true);
-	
+
 		if (!_vm->_isLeavingScene) {
 			if (_vm->_platypusActionStatus < 0)
 				_vm->updatePlatypusIdleSequence();
@@ -523,7 +523,7 @@ void Scene31::run() {
 			_vm->runMenu();
 			updateHotspots();
 		}
-		
+
 		_vm->gameUpdateTick();
 	}
 }
@@ -1391,7 +1391,7 @@ void Scene39::updateHotspots() {
 void Scene39::run() {
 	// Bug in the original? Timer was never initialized.
 	_vm->_timers[5] = 0;
-	
+
 	_vm->queueInsertDeviceIcon();
 	_currGuySequenceId = 0x33;
 
@@ -1409,16 +1409,16 @@ void Scene39::run() {
 		_vm->initPlatypusPos(5, 7, kDirNone);
 		_vm->endSceneInit();
 	}
-	
+
 	while (!_vm->_sceneDone) {
 		if (!_vm->isSoundPlaying(0x1094B)) {
 			_vm->playSound(0x1094B, true);
 			_vm->setSoundVolume(0x1094B, 60);
 		}
-		
+
 		_vm->updateMouseCursor();
 		_vm->updateCursorByHotspot();
-	
+
 		_vm->testWalk(0, 0, -1, -1, -1, -1);
 
 		_vm->_sceneClickedHotspot = _vm->getClickedHotspotId();
@@ -1430,7 +1430,7 @@ void Scene39::run() {
 			updateHotspots();
 			_vm->_timers[5] = _vm->getRandom(20) + 50;
 			break;
-	
+
 		case kHS39Platypus:
 			if (_vm->_gnapActionStatus < 0) {
 				if (_vm->_grabCursorSpriteIndex >= 0) {
@@ -1454,7 +1454,7 @@ void Scene39::run() {
 				}
 			}
 			break;
-	
+
 		case kHS39ExitUfoParty:
 			if (_vm->_gnapActionStatus < 0) {
 				_vm->_isLeavingScene = true;
@@ -1464,7 +1464,7 @@ void Scene39::run() {
 				_vm->_newSceneNum = 40;
 			}
 			break;
-	
+
 		case kHS39Sign:
 			if (_vm->_gnapActionStatus < 0) {
 				if (_vm->_grabCursorSpriteIndex >= 0) {
@@ -1485,7 +1485,7 @@ void Scene39::run() {
 				}
 			}
 			break;
-	
+
 		case kHS39ExitInsideHouse:
 			if (_vm->_gnapActionStatus < 0) {
 				_vm->_sceneDone = true;
@@ -1493,13 +1493,13 @@ void Scene39::run() {
 				_vm->_newSceneNum = 38;
 			}
 			break;
-	
+
 		case kHS39WalkArea1:
 		case kHS39WalkArea2:
 			if (_vm->_gnapActionStatus < 0)
 				_vm->gnapWalkTo(-1, -1, -1, -1, 1);
 			break;
-			
+
 		default:
 			if (_vm->_mouseClickState._left && _vm->_gnapActionStatus < 0) {
 				_vm->gnapWalkTo(-1, -1, -1, -1, 1);
@@ -1507,9 +1507,9 @@ void Scene39::run() {
 			}
 			break;
 		}
-	
+
 		updateAnimations();
-	
+
 		if (!_vm->_isLeavingScene) {
 			if (_vm->_platypusActionStatus < 0)
 				_vm->updatePlatypusIdleSequence();
@@ -1533,16 +1533,16 @@ void Scene39::run() {
 				}
 			}
 		}
-	
+
 		_vm->checkGameKeys();
-	
+
 		if (_vm->isKeyStatus1(8)) {
 			_vm->clearKeyStatus1(8);
 			_vm->runMenu();
 			updateHotspots();
 			_vm->_timers[5] = _vm->getRandom(20) + 50;
 		}
-		
+
 		_vm->gameUpdateTick();
 	}
 }
@@ -1555,7 +1555,7 @@ void Scene39::updateAnimations() {
 		else
 			_vm->_gnapActionStatus = -1;
 	}
-	
+
 	if (_vm->_gameSys->getAnimationStatus(3) == 2 && _nextGuySequenceId != -1) {
 		_vm->_gameSys->setAnimation(_nextGuySequenceId, 21, 3);
 		_vm->_gameSys->insertSequence(_nextGuySequenceId, 21, _currGuySequenceId, 21, kSeqSyncWait, 0, 0, 0);

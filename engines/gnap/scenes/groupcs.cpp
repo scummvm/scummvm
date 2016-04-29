@@ -211,7 +211,7 @@ Scene477::Scene477(GnapEngine *vm) : CutScene(vm) {}
 
 int Scene477::init() {
 	int v0, v4, v2, v3;
-	
+
 	_sequenceIdArr[0] = 0x316;
 	_sequenceIdArr[1] = 0x31A;
 	_sequenceIdArr[2] = 0x314;

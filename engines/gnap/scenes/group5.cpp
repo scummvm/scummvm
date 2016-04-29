@@ -62,7 +62,7 @@ void Scene53::updateHotspots() {
 
 int Scene53::pressPhoneNumberButton(int phoneNumber, int buttonNum) {
 	static const int kGnapHandSequenceIds[13] = {
-		0x00, 
+		0x00,
 		0x46, 0x47, 0x48, 0x49, 0x4A, 0x4B,
 		0x4C, 0x4D, 0x4E, 0x50, 0x51, 0x4F
 	};
@@ -132,7 +132,7 @@ void Scene53::runRandomCall() {
 		_vm->_gameSys->insertSequence(0x74, 1, 0, 0, kSeqNone, 16, 0, 0);
 		_callsMadeCtr = 0;
 	}
-	
+
 	_vm->_gnapActionStatus = 1;
 	while (_vm->_gameSys->getAnimationStatus(6) != 2) {
 		_vm->updateMouseCursor();
@@ -145,7 +145,7 @@ void Scene53::runRandomCall() {
 void Scene53::runChitChatLine() {
 	bool flag = false;
 	int sequenceId = -1;
-	
+
 	_vm->_gameSys->setAnimation(0x6E, 1, 6);
 	_vm->_gameSys->insertSequence(0x6E, 1, 0, 0, kSeqNone, 16, 0, 0);
 
@@ -164,17 +164,17 @@ void Scene53::runChitChatLine() {
 		_vm->_gameSys->insertSequence(0x45, 40, _currHandSequenceId, 40, kSeqSyncWait, 0, 0, 0);
 		_currHandSequenceId = 0x5E;
 	}
-	
+
 	_vm->_hotspots[kHS53Device]._flags = SF_DISABLED;
-	
+
 	while (!flag) {
 		_vm->updateMouseCursor();
 		_vm->updateCursorByHotspot();
-	
+
 		_vm->testWalk(0, 0, -1, -1, -1, -1);
 		_vm->_sceneClickedHotspot = _vm->getClickedHotspotId();
 		_vm->updateGrabCursorSprite(0, 0);
-		
+
 		switch (_vm->_sceneClickedHotspot) {
 		case 2:
 			sequenceId = 0x6F;
@@ -208,7 +208,7 @@ void Scene53::runChitChatLine() {
 			pressPhoneNumberButton(0, _vm->_sceneClickedHotspot - 1);
 			break;
 		}
-	
+
 		if (flag && sequenceId != -1) {
 			_vm->stopSound(0xA0);
 			pressPhoneNumberButton(0, _vm->_sceneClickedHotspot - 1);
@@ -233,11 +233,11 @@ void Scene53::runChitChatLine() {
 			_vm->_gnapActionStatus = -1;
 		}
 	}
-	
+
 	updateHotspots();
-	
+
 	_vm->_gnapActionStatus = 1;
-	
+
 	if (_vm->isFlag(kGFSpringTaken)) {
 		_vm->_gameSys->setAnimation(0x73, 40, 6);
 		_vm->_gameSys->insertSequence(0x73, 40, _currHandSequenceId, 40, kSeqSyncWait, 0, 0, 0);
@@ -254,9 +254,9 @@ void Scene53::runChitChatLine() {
 void Scene53::run() {
 	int phoneNumber = 0;
 	int phoneNumberLen = 0;
-	
+
 	_vm->queueInsertDeviceIcon();
-	
+
 	if (_vm->isFlag(kGFSpringTaken)) {
 		_currHandSequenceId = 0x45;
 		_isGnapPhoning = true;
@@ -264,21 +264,21 @@ void Scene53::run() {
 		_currHandSequenceId = 0x5E;
 		_isGnapPhoning = false;
 	}
-	
+
 	_vm->_gameSys->insertSequence(_currHandSequenceId, 40, 0, 0, kSeqNone, 0, 0, 0);
 	_vm->endSceneInit();
 	_vm->setVerbCursor(GRAB_CURSOR);
 	_vm->playSound(0xA0, true);
-	
+
 	while (!_vm->_sceneDone) {
 		_vm->updateMouseCursor();
 		_vm->updateCursorByHotspot();
-	
+
 		_vm->testWalk(0, 0, -1, -1, -1, -1);
-	
+
 		_vm->_sceneClickedHotspot = _vm->getClickedHotspotId();
 		_vm->updateGrabCursorSprite(0, 0);
-	
+
 		switch (_vm->_sceneClickedHotspot) {
 		case 1:
 			if (_vm->_gnapActionStatus < 0) {
@@ -319,7 +319,7 @@ void Scene53::run() {
 					phoneNumberLen = 0;
 					_vm->_sceneDone = true;
 					_vm->_newSceneNum = 17;
-				} else if (phoneNumber != 5556789 || _vm->isFlag(kGFPictureTaken)) {				
+				} else if (phoneNumber != 5556789 || _vm->isFlag(kGFPictureTaken)) {
 					runRandomCall();
 					phoneNumber = 0;
 					phoneNumberLen = 0;
@@ -362,9 +362,9 @@ void Scene53::run() {
 			}
 			break;
 		}
-	
+
 		_vm->checkGameKeys();
-	
+
 		if (_vm->isKeyStatus1(8)) {
 			_vm->clearKeyStatus1(8);
 			_vm->runMenu();

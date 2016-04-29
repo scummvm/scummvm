@@ -225,7 +225,7 @@ private:
 	int _shipPosX;
 	int _shipCannonPosX, _shipCannonPosY;
 	bool _shipCannonFiring;
-	bool _shipCannonFired; 
+	bool _shipCannonFired;
 	int _shipCannonWidth, _shipCannonHeight;
 	int _shipCannonTopY;
 	int _shipMidX, _shipMidY;

@@ -295,7 +295,7 @@ public:
 	virtual void updateAnimationsCb() {}
 
 private:
-	bool _platypusHypnotized;	
+	bool _platypusHypnotized;
 	bool _platypusScared;
 	int _nextPlatSequenceId;
 	int _nextFrogSequenceId;

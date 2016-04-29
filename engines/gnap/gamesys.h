@@ -130,43 +130,43 @@ public:
 	void drawBitmap(int resourceId);
 public:
 	GnapEngine *_vm;
-	
+
 	Common::Array<Common::Rect> _dirtyRects;
 
-	SpriteDrawItem _newSpriteDrawItems[kMaxSpriteDrawItems];	
+	SpriteDrawItem _newSpriteDrawItems[kMaxSpriteDrawItems];
 	int _newSpriteDrawItemsCount;
 
 	RemoveSequenceItem _removeSequenceItems[kMaxSequenceItems];
 	int _removeSequenceItemsCount;
-	
+
 	RemoveSpriteDrawItem _removeSpriteDrawItems[kMaxSpriteDrawItems];
 	int _removeSpriteDrawItemsCount;
-	
+
 	int _grabSpriteId;
 	Common::Rect _grabSpriteRect;
 	bool _grabSpriteChanged;
 	Graphics::Surface *_grabSpriteSurface1, *_grabSpriteSurface2;
-	
+
 	bool _reqRemoveSequenceItem;
 	int _removeSequenceItemSequenceId, _removeSequenceItemValue;
 
 	Common::Array<int> _soundIds;
-	
+
 	////////////////////////////////////////////////////////////////////////////
-	
+
 	Common::Array<Sequence> _seqItems;
 	Common::Array<Sequence> _fatSequenceItems;
-	
+
 	GfxItem _gfxItems[kMaxGfxItems];
 	int _gfxItemsCount;
-	
+
 	Animation _animations[kMaxAnimations];
 	int _animationsCount;
-	
+
 	int _backgroundImageValue3, _backgroundImageValue1;
 	int _backgroundImageValue4, _backgroundImageValue2;
 	bool _backgroundImageError; // CHECKME: Unused
-	
+
 	int32 _gameSysClock, _lastUpdateClock;
 
 	Graphics::Surface *_backgroundSurface;
@@ -179,7 +179,7 @@ public:
 	void seqRemoveGfx(int sequenceId, int id);
 	bool updateSequenceDuration(int sequenceId, int id, int *outDuration);
 	void updateAnimationsStatus(int sequenceId, int id);
-	
+
 	void restoreBackgroundRect(const Common::Rect &rect);
 
 	void blitSurface32(Graphics::Surface *destSurface, int x, int y, Graphics::Surface *sourceSurface,
@@ -195,7 +195,7 @@ public:
 	void drawSprites();
 	void updateRect(const Common::Rect &r);
 	void updateScreen();
-	
+
 	void handleReqRemoveSequenceItem();
 	void handleReqRemoveSequenceItems();
 	void handleReqRemoveSpriteDrawItems();

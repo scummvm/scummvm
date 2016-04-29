@@ -36,15 +36,15 @@ SoundMan::~SoundMan() {
 void SoundMan::playSound(int resourceId, bool looping) {
 	SoundItem soundItem;
 	soundItem._resourceId = resourceId;
-	
+
 	SoundResource *soundResource = _vm->_soundCache->get(resourceId);
 	Common::MemoryReadStream *stream = new Common::MemoryReadStream(soundResource->_data, soundResource->_size, DisposeAfterUse::NO);
 	Audio::AudioStream *audioStream = Audio::makeLoopingAudioStream(Audio::makeWAVStream(stream, DisposeAfterUse::YES), looping ? 0 : 1);
 
 	_vm->_mixer->playStream(Audio::Mixer::kPlainSoundType, &soundItem._handle, audioStream);
-	
+
 	_items.push_back(soundItem);
-	
+
 }
 
 void SoundMan::stopSound(int resourceId) {

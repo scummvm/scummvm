@@ -357,7 +357,7 @@ void Scene49::run() {
 
 	_truckId = 256;
 	_vm->_timers[3] = 35;
-	
+
 	while (!_vm->_sceneDone) {
 		if (_vm->_timers[0] == 0) {
 			// Update background animations (clouds etc.)
@@ -503,7 +503,7 @@ void Scene49::run() {
 		}
 		_vm->gameUpdateTick();
 	}
-	_vm->stopSound(0xE2);  
+	_vm->stopSound(0xE2);
 }
 
 void Scene49::updateAnimations() {
@@ -670,7 +670,7 @@ void Scene50::playTonguesIdle() {
 
 void Scene50::playRoundAnim(int roundNum) {
 	int sequenceId = 0;
-	
+
 	switch (roundNum) {
 	case 1:
 		sequenceId = 0xAF;
@@ -736,7 +736,7 @@ int Scene50::checkInput() {
 		_vm->clearKeyStatus1(Common::KEYCODE_ESCAPE);
 		_fightDone = true;
 	}
-	
+
 	return sequenceId;
 }
 
@@ -893,7 +893,7 @@ int Scene50::getRightTongueNextId() {
 
 void Scene50::playWinBadgeAnim(int tongueNum) {
 	int sequenceId;
-	
+
 	if (tongueNum == 1) {
 		if (_leftTongueRoundsWon == 1)
 	  		sequenceId = 0xC3;
@@ -983,7 +983,7 @@ void Scene50::run() {
 	}
 
 	// freeFont();
-	
+
 	_vm->_gameSys->setAnimation(0, 0, 7);
 	_vm->_gameSys->setAnimation(0, 0, 6);
 	_vm->_gameSys->setAnimation(0, 0, 5);
@@ -1243,10 +1243,10 @@ int Scene51::checkCollision(int sequenceId) {
 	bool checkFl = false;
 	for (int i = 0; i < 6; i++)
 		checkFl |= _items[i]._isCollision;
-		
+
 	if (!checkFl)
 		return false;
-		
+
 	if (isJumpingRight(sequenceId)) {
 		v8 = getPosRight(sequenceId);
 		v4 = getPosRight(sequenceId + 1);
@@ -1565,7 +1565,7 @@ void Scene51::updateGuyAnimation() {
 			_guyNextSequenceId = 0xC7;
 			break;
 		}
-	
+
 		_vm->_gameSys->insertSequence(_guyNextSequenceId, 39, _guySequenceId, 39, kSeqSyncWait, 0, 0, 0);
 		_guySequenceId = _guyNextSequenceId;
 		_guyNextSequenceId = -1;
@@ -2203,7 +2203,7 @@ void Scene52::updateAlienRow(int rowNum) {
 
 void Scene52::moveDownAlienRow() {
 	int v2[5], v3, v1, v0, v4;
-	
+
 	for (int i = 0; i < 5; ++i)
 		v2[i] = _items[0][i];
 
@@ -2238,7 +2238,7 @@ void Scene52::moveDownAlienRow() {
 
 int Scene52::updateHitAlien() {
 	int result = 0, rowNum, ya;
-	
+
 	int y = _shipCannonTopY - _shipCannonPosY;
 
 	if (y == 26) {
@@ -2262,7 +2262,7 @@ int Scene52::updateHitAlien() {
 			result = 1;
 		}
 	}
-	
+
 	return result;
 }
 
@@ -2309,7 +2309,7 @@ int Scene52::getHitAlienNum(int rowNum) {
 
 int Scene52::alienCannonHitShip(int cannonNum) {
 	int result = 0;
-	
+
 	if (_aliensCount) {
 		result = 0;
 	} else {
@@ -2332,7 +2332,7 @@ int Scene52::alienCannonHitShip(int cannonNum) {
 
 int Scene52::alienCannonHitShield(int cannonNum) {
 	int result = 0;
-	
+
 	int v3 = _alienCannonPosY[cannonNum] + 39;
 	if (_arcadeScreenBottom - 44 > v3)
 		return 0;
@@ -2361,7 +2361,7 @@ int Scene52::alienCannonHitShield(int cannonNum) {
 			return 0;
 		shieldNum = 2;
 	}
-	
+
 	if (_shieldSpriteIds[shieldNum] == -1) {
 		result = 0;
 	} else {
@@ -2383,7 +2383,7 @@ int Scene52::alienCannonHitShield(int cannonNum) {
 
 bool Scene52::shipCannonHitShield(int cannonNum) {
 	bool result = false;
-	
+
 	if (_shipCannonPosX < _shieldPosX[0])
 		return result;
 
@@ -2426,7 +2426,7 @@ bool Scene52::shipCannonHitShield(int cannonNum) {
 
 bool Scene52::shipCannonHitAlien() {
 	bool result = false;
-	
+
 	if (_aliensCount || checkAlienRow(0))
 		return false;
 
@@ -2621,7 +2621,7 @@ void Scene52::drawScore(int score) {
 
 void Scene52::run() {
 	_vm->_timers[1] = 0;
-	
+
 	_vm->hideCursor();
 
 	// TODO loadFont("maturasc", "Matura MT Script Capitals", 2000);
@@ -2710,9 +2710,9 @@ void Scene52::run() {
 				break;
 			}
 		}
-		
+
 		update();
-		
+
 		if (clearKeyStatus()) {
 			_alienWave = false;
 			_vm->_gameSys->waitForUpdate();

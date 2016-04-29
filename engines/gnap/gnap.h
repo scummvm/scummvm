@@ -279,11 +279,11 @@ private:
 	Graphics::PixelFormat _pixelFormat;
 	int _loadGameSlot;
 
-public:	
+public:
 	Common::RandomSource *_random;
-	
+
 	Common::PEResources *_exe;
-	
+
 	DatManager *_dat;
 	SpriteCache *_spriteCache;
 	SoundCache *_soundCache;
@@ -294,38 +294,38 @@ public:
 	Scene *_scene;
 
 	int _lastUpdateClock;
-	
+
 	int _debugLevel;
 	bool _gameDone;
-	
+
 	byte _keyPressState[512];
 	byte _keyDownState[512];
-	
+
 	bool _isPaused;
 	Graphics::Surface *_pauseSprite;
 	int _timers[kMaxTimers], _savedTimers[kMaxTimers];
-	
+
 	MouseButtonState _mouseButtonState;
 	MouseButtonState _mouseClickState;
-	
+
 	uint32 _keyStatus1[2];
-	
+
 	bool _sceneSavegameLoaded, _wasSavegameLoaded;
-	
+
 	Graphics::Surface *_backgroundSurface;
-	int _prevSceneNum, _currentSceneNum, _newSceneNum;	
+	int _prevSceneNum, _currentSceneNum, _newSceneNum;
 	bool _sceneDone, _sceneWaiting;
 
 	uint32 _inventory, _gameFlags;
-	
+
 	Hotspot _hotspots[20];
 	Common::Point _hotspotsWalkPos[20];
 	int _hotspotsCount;
 	int _sceneClickedHotspot;
-	
+
 	bool _isWaiting;
 	bool _isLeavingScene;
-	
+
 	bool _isStockDatLoaded;
 
 	int _newCursorValue, _cursorValue;
@@ -333,32 +333,32 @@ public:
 	int _verbCursor, _cursorIndex;
 	int _mouseX, _mouseY;
 	int _leftClickMouseX, _leftClickMouseY;
-	
+
 	Graphics::Surface *_grabCursorSprite;
 	int _currGrabCursorX, _currGrabCursorY;
 	int _grabCursorSpriteIndex, _newGrabCursorSpriteIndex;
-	
+
 	Graphics::Surface *_fullScreenSprite;
 	int _fullScreenSpriteId;
-	
+
 	int _deviceX1, _deviceY1, _deviceX2, _deviceY2;
-	
+
 	int _soundTimerIndexA;
 	int _soundTimerIndexB;
 	int _soundTimerIndexC;
 	int _idleTimerIndex;
-	
+
 	void updateEvents();
 	void gameUpdateTick();
 	void saveTimers();
 	void restoreTimers();
-	
+
 	void pauseGame();
 	void resumeGame();
 	void updatePause();
-	
+
 	int getRandom(int max);
-	
+
 	int readSavegameDescription(int savegameNum, Common::String &description);
 	int loadSavegame(int savegameNum);
 	Common::Error saveGameState(int slot, const Common::String &desc);
@@ -367,57 +367,57 @@ public:
 	void synchronize(Common::Serializer &s);
 	void writeSavegameHeader(Common::OutSaveFile *out, GnapSavegameHeader &header);
 	static bool readSavegameHeader(Common::InSaveFile *in, GnapSavegameHeader &header);
-	
+
 	void delayTicks(int a1);
 	void delayTicksCursor(int a1);
-	
+
 	void setHotspot(int index, int16 x1, int16 y1, int16 x2, int16 y2, uint16 flags = 0,
 		int16 walkX = -1, int16 walkY = -1);
 	int getHotspotIndexAtPos(int16 x, int16 y);
 	void updateCursorByHotspot();
 	int getClickedHotspotId();
-	
+
 	int getInventoryItemSpriteNum(int index);
-	
+
 	void updateMouseCursor();
 	void setVerbCursor(int verbCursor);
 	void setCursor(int cursorIndex);
 	void showCursor();
 	void hideCursor();
-	
+
 	void setGrabCursorSprite(int index);
 	void createGrabCursorSprite(int spriteId);
 	void freeGrabCursorSprite();
 	void updateGrabCursorSprite(int x, int y);
-	
+
 	void invClear();
 	void invAdd(int itemId);
 	void invRemove(int itemId);
 	bool invHas(int itemId);
-	
+
 	void clearFlags();
 	void setFlag(int num);
 	void clearFlag(int num);
 	bool isFlag(int num);
-	
+
 	Graphics::Surface *addFullScreenSprite(int resourceId, int id);
 	void removeFullScreenSprite();
 	void showFullScreenSprite(int resourceId);
-	
+
 	void queueInsertDeviceIcon();
 	void insertDeviceIconActive();
 	void removeDeviceIconActive();
 	void setDeviceHotspot(int hotspotIndex, int x1, int y1, int x2, int y2);
-	
+
 	int getSequenceTotalDuration(int resourceId);
-	
+
 	bool isSoundPlaying(int resourceId);
 	void playSound(int resourceId, bool looping);
 	void stopSound(int resourceId);
 	void setSoundVolume(int resourceId, int volume);
 
 	void updateTimers();
-	
+
 	void initGameFlags(int num);
 	void loadStockDat();
 
@@ -425,12 +425,12 @@ public:
 	void initScene();
 	void endSceneInit();
 	void afterScene();
-	
+
 	int initSceneLogic();
 	void runSceneLogic();
-	
+
 	void checkGameKeys();
-	
+
 	void startSoundTimerA(int timerIndex);
 	int playSoundA();
 	void startSoundTimerB(int timerIndex);
@@ -439,16 +439,16 @@ public:
 	int playSoundC();
 	void startIdleTimer(int timerIndex);
 	void updateIdleTimer();
-	
+
 	void screenEffect(int dir, byte r, byte g, byte b);
-	
+
 	bool isKeyStatus1(int key);
 	bool isKeyStatus2(int key);
 	void clearKeyStatus1(int key);
 	void clearAllKeyStatus1();
-	
+
 	void deleteSurface(Graphics::Surface **surface);
-	
+
 	// Menu
 	int _menuStatus;
 	int _menuSpritesIndex;
@@ -458,7 +458,7 @@ public:
 	Graphics::Surface *_largeSprite;
 	Graphics::Surface *_menuSaveLoadSprite;
 	Graphics::Surface *_menuSprite2;
-	Graphics::Surface *_menuSprite1;	
+	Graphics::Surface *_menuSprite1;
 	char _savegameFilenames[7][30];
 	Graphics::Surface *_savegameSprites[7];
 	Graphics::Surface *_spriteHandle;
@@ -474,14 +474,14 @@ public:
 	void initSaveLoadHotspots();
 	void drawInventoryFrames();
 	void insertInventorySprites();
-	void removeInventorySprites();	
+	void removeInventorySprites();
 	void runMenu();
 	void updateMenuStatusInventory();
 	void updateMenuStatusMainMenu();
 	void updateMenuStatusSaveGame();
 	void updateMenuStatusLoadGame();
 	void updateMenuStatusQueryQuit();
-	
+
 	// Grid common
 	int _gnapGridX, _gnapGridY;
 	int _platGridX, _platGridY;
@@ -507,14 +507,14 @@ public:
 	bool gnapFindPath3(int gridX, int gridY);
 	bool gnapWalkTo(int gridX, int gridY, int animationIndex, int sequenceId, int flags);
 	void gnapWalkStep();
-	
+
 	// Platypus walking
 	int _platWalkNodesCount;
 	GridStruct _platWalkNodes[kMaxGridStructs];
 	int _platX, _platY;
 	int _platWalkDestX, _platWalkDestY;
 	int _platWalkDeltaX, _platWalkDeltaY, _platWalkDirX, _platWalkDirY, _platWalkDirXIncr, _platWalkDirYIncr;
-	
+
 	int getPlatypusWalkSequenceId(int deltaX, int deltaY);
 	bool gridSub423750(int gridX, int gridY);
 	bool gridSub423CC1(int gridX, int gridY, int index);
@@ -556,7 +556,7 @@ public:
 	void gnapKissPlatypus(int callback);
 	void gnapUseJointOnPlatypus();
 	void gnapUseDisguiseOnPlatypus();
-	
+
 	// Platypus
 	Facing _platypusFacing;
 	int _platypusActionStatus;
@@ -566,15 +566,15 @@ public:
 	void updatePlatypusIdleSequence();
 	void platypusSub426234();
 	void initPlatypusPos(int gridX, int gridY, Facing facing);
-	
+
 	// Scenes
-	
+
 	int _toyUfoNextSequenceId, _toyUfoSequenceId;
 	int _toyUfoId;
 	int _toyUfoActionStatus;
 	int _toyUfoX;
 	int _toyUfoY;
-	
+
 	void initGlobalSceneVars();
 	void playSequences(int fullScreenSpriteId, int sequenceId1, int sequenceId2, int sequenceId3);
 
