@@ -146,7 +146,7 @@ public:
 	 */
 	virtual CPetText *getText() { return nullptr; }
 
-	virtual void proc27();
+	virtual void proc27(int duration);
 	virtual void proc28();
 	virtual void proc29();
 	virtual void proc30();

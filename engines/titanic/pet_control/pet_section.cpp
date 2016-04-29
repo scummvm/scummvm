@@ -46,8 +46,11 @@ void CPetSection::proc25() {
 	error("TODO");
 }
 
-void CPetSection::proc27() {
-	error("TODO");
+void CPetSection::proc27(int duration) {
+	if (duration > 0)
+		_petControl->startPetTimer(0, duration, 0, this);
+	else
+		proc28();
 }
 
 void CPetSection::proc28() {

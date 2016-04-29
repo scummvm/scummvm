@@ -46,8 +46,6 @@ CPetControl::CPetControl() : CGameObject(),
 		_currentArea(PET_CONVERSATION), _fieldC0(0), _locked(0), _fieldC8(0),
 		_activeNPC(nullptr), _treeItem2(nullptr), _hiddenRoom(nullptr),
 		_drawBounds(20, 350, 620, 480) {
-	setup();
-	_timers[0] = _timers[1] = nullptr;
 	_sections[PET_INVENTORY] = &_inventory;
 	_sections[PET_CONVERSATION] = &_conversations;
 	_sections[PET_REMOTE] = &_remote;
@@ -485,6 +483,24 @@ void CPetControl::summonNPC(const CString &name, int val) {
 			summonMsg.execute(room);
 		}
 	}
+}
+
+void CPetControl::startPetTimer(uint timerIndex, uint firstDuration, uint duration, void *target) {
+	stopPetTimer(timerIndex);
+	_timers[timerIndex]._id = (timerIndex, firstDuration, duration);
+	_timers[timerIndex]._target = target;
+	setTimer44(_timers[timerIndex]._id, 0);
+}
+
+void CPetControl::stopPetTimer(uint timerIndex) {
+	if (_timers[timerIndex]._target) {
+		stopTimer(_timers[timerIndex]._id);
+		_timers[timerIndex]._target = nullptr;
+	}
+}
+
+void CPetControl::setTimer44(int id, int val) {
+	getGameManager()->setTimer44(id, val);
 }
 
 } // End of namespace Titanic

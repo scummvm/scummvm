@@ -97,6 +97,11 @@ private:
 	void summonNPC(const CString &name);
 
 	/**
+	 * Adds an NPC timer
+	 */
+	void addNPCTimer();
+
+	/**
 	 * Handle a keypress
 	 */
 	bool handleKey(const Common::KeyState &keyState);

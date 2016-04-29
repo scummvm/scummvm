@@ -43,6 +43,11 @@ enum SummonResult { SUMMON_CANT = 0, SUMMON_PRESENT = 1, SUMMON_CAN = 2 };
 
 class CPetControl : public CGameObject {
 	DECLARE_MESSAGE_MAP
+	struct PetEventInfo {
+		int _id;
+		void *_target;
+		PetEventInfo() : _id(0), _target(nullptr) {}
+	};
 private:
 	int _fieldC0;
 	int _locked;
@@ -61,7 +66,7 @@ private:
 	CString _string2;
 	CRoomItem *_hiddenRoom;
 	Rect _drawBounds;
-	void *_timers[2];
+	PetEventInfo _timers[2];
 private:
 	/**
 	 * Returns true if the control is in a valid state
@@ -94,6 +99,8 @@ private:
 	 * Checks whether a designated NPC in present in the current view
 	 */
 	bool isNPCInView(const CString &name) const;
+
+	void setTimer44(int id, int val);
 protected:
 	bool MouseButtonDownMsg(CMouseButtonDownMsg *msg);
 	bool MouseDragStartMsg(CMouseDragStartMsg *msg);
@@ -267,6 +274,16 @@ public:
 	 * Summon an NPC to the player
 	 */
 	void summonNPC(const CString &name, int val);
+
+	/**
+	 * Start a timer
+	 */
+	void startPetTimer(uint timerIndex, uint firstDuration, uint duration, void *target);
+
+	/**
+	 * Stop a timer
+	 */
+	void stopPetTimer(uint timerIndex);
 };
 
 } // End of namespace Titanic

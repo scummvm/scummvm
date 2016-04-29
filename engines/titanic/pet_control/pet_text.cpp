@@ -388,4 +388,18 @@ bool CPetText::handleKey(char c) {
 	return false;
 }
 
+void CPetText::showCursor(int mode) {
+	CScreenManager *screenManager = CScreenManager::setCurrent();
+	_textCursor = screenManager->_textCursor;
+	if (_textCursor) {
+		_textCursor->setPos(Point(0, 0));
+		_textCursor->setSize(Point(2, 10));
+		_textCursor->setColor(0, 0, 0);
+		_textCursor->setBlinkRate(300);
+		_textCursor->setMode(mode);
+		_textCursor->setBounds(_bounds);
+		_textCursor->show();
+	}
+}
+
 } // End of namespace Titanic

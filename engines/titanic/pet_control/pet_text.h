@@ -230,6 +230,12 @@ public:
 	 * @returns		True if the Enter key was pressed
 	 */
 	bool handleKey(char c);
+
+	/**
+	 * Attaches the current system cursor to the text control,
+	 * and give it suitable defaults
+	 */
+	void showCursor(int mode);
 };
 
 } // End of namespace Titanic
