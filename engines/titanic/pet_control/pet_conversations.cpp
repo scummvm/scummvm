@@ -29,18 +29,6 @@ CPetConversations::CPetConversations() : CPetSection(),
 		_logScrolled(false), _field418(0) {
 }
 
-void CPetConversations::save(SimpleFile *file, int indent) const {
-
-}
-
-void CPetConversations::load(SimpleFile *file, int param) {
-	_textInput.load(file, param);
-	_log.load(file, param);
-
-	for (int idx = 0; idx < 3; ++idx)
-		_valArray3[idx] = file->readNumber();
-}
-
 bool CPetConversations::isValid(CPetControl *petControl) {
 	return setupControl(petControl);
 }
@@ -108,6 +96,39 @@ bool CPetConversations::KeyCharMsg(CKeyCharMsg *msg) {
 
 bool CPetConversations::VirtualKeyCharMsg(CVirtualKeyCharMsg *msg) {
 	return handleKey(msg->_keyState);
+}
+
+void CPetConversations::displayMessage(const CString &msg) {
+	_log.addLine(msg, getColor(1));
+	scrollToBottom();
+}
+
+void CPetConversations::load(SimpleFile *file, int param) {
+	_textInput.load(file, param);
+	_log.load(file, param);
+
+	for (int idx = 0; idx < 3; ++idx)
+		_valArray3[idx] = file->readNumber();
+}
+
+void CPetConversations::postLoad() {
+	reset();
+}
+
+void CPetConversations::save(SimpleFile *file, int indent) const {
+	_textInput.save(file, indent);
+	_log.save(file, indent);
+
+	for (int idx = 0; idx < 3; ++idx)
+		file->writeNumberLine(_valArray3[idx], indent);
+}
+
+void CPetConversations::enter(PetArea oldArea) {
+
+}
+
+void CPetConversations::leave() {
+
 }
 
 bool CPetConversations::setupControl(CPetControl *petControl) {

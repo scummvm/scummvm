@@ -83,10 +83,7 @@ void CPetText::load(SimpleFile *file, int param) {
 		int var1 = file->readNumber();
 		int var2 = file->readNumber();
 		uint count = file->readNumber();
-		_bounds.left = file->readNumber();
-		_bounds.top = file->readNumber();
-		_bounds.right = file->readNumber();
-		_bounds.bottom = file->readNumber();
+		_bounds = file->readRect();
 		_field3C = file->readNumber();
 		_field40 = file->readNumber();
 		_field44 = file->readNumber();
@@ -106,6 +103,33 @@ void CPetText::load(SimpleFile *file, int param) {
 			_array[idx]._rgb = file->readString();
 			_array[idx]._string3 = file->readString();
 		}	
+	}
+}
+
+void CPetText::save(SimpleFile *file, int indent) const {
+	int numLines = _lineCount + 1;
+
+	file->writeNumberLine(_array.size(), indent);
+	file->writeNumberLine(_maxCharsPerLine, indent);
+	file->writeNumberLine(numLines, indent);
+
+	file->writeRect(_bounds, indent);
+	file->writeNumberLine(_field3C, indent);
+	file->writeNumberLine(_field40, indent);
+	file->writeNumberLine(_field44, indent);
+	file->writeNumberLine(_backR, indent);
+	file->writeNumberLine(_backG, indent);
+	file->writeNumberLine(_backB, indent);
+	file->writeNumberLine(_textR, indent);
+	file->writeNumberLine(_textG, indent);
+	file->writeNumberLine(_textB, indent);
+	file->writeNumberLine(_hasBorder, indent);
+	file->writeNumberLine(_scrollTop, indent);
+
+	for (int idx = 0; idx < numLines; ++idx) {
+		file->writeQuotedLine(_array[idx]._line, indent);
+		file->writeQuotedLine(_array[idx]._rgb, indent);
+		file->writeQuotedLine(_array[idx]._string3, indent);
 	}
 }
 

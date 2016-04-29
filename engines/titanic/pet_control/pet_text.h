@@ -111,6 +111,11 @@ public:
 	void load(SimpleFile *file, int param);
 
 	/**
+	 * Save the data for the control
+	 */
+	void save(SimpleFile *file, int indent) const;
+
+	/**
 	 * Set the bounds for the control
 	 */
 	void setBounds(const Rect &bounds) { _bounds = bounds; }

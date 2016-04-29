@@ -109,16 +109,6 @@ public:
 	CPetConversations();
 
 	/**
-	 * Save the data for the class to file
-	 */
-	virtual void save(SimpleFile *file, int indent) const;
-
-	/**
-	 * Load the data for the class from file
-	 */
-	virtual void load(SimpleFile *file, int param);
-
-	/**
 	 * Returns true if the object is in a valid state
 	 */
 	virtual bool isValid(CPetControl *petControl);
@@ -132,6 +122,35 @@ public:
 	virtual bool MouseDoubleClickMsg(CMouseDoubleClickMsg *msg);
 	virtual bool KeyCharMsg(CKeyCharMsg *msg);
 	virtual bool VirtualKeyCharMsg(CVirtualKeyCharMsg *msg);
+
+	/**
+	 * Display a message
+	 */
+	virtual void displayMessage(const CString &msg);
+
+	/**
+	 * Load the data for the class from file
+	 */
+	virtual void load(SimpleFile *file, int param);
+
+	/**
+	 * Called after a game has been loaded
+	 */
+	virtual void postLoad();
+	/**
+	 * Save the data for the class to file
+	 */
+	virtual void save(SimpleFile *file, int indent) const;
+
+	/**
+	 * Called when a section is switched to
+	 */
+	virtual void enter(PetArea oldArea);
+	
+	/**
+	 * Called when a section is being left, to switch to another area
+	 */
+	virtual void leave();	
 };
 
 } // End of namespace Titanic
