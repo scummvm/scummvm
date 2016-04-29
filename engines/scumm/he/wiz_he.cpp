@@ -1429,12 +1429,12 @@ void Wiz::displayWizImage(WizImage *pwi) {
 		drawWizPolygon(pwi->resNum, pwi->state, pwi->x1, pwi->flags, 0, 0, 0);
 	} else {
 		const Common::Rect *r = NULL;
-		drawWizImage(pwi->resNum, pwi->state, 0, 0, pwi->x1, pwi->y1, 0, 0, 0, r, pwi->flags, 0, _vm->getHEPaletteSlot(0));
+		drawWizImage(pwi->resNum, pwi->state, 0, 0, pwi->x1, pwi->y1, 0, 0, 0, r, pwi->flags, 0, _vm->getHEPaletteSlot(0), 0);
 	}
 }
 
-uint8 *Wiz::drawWizImage(int resNum, int state, int maskNum, int maskState, int x1, int y1, int zorder, int shadow, int zbuffer, const Common::Rect *clipBox, int flags, int dstResNum, const uint8 *palPtr) {
-	debug(3, "drawWizImage(resNum %d, state %d maskNum %d maskState %d x1 %d y1 %d flags 0x%X zorder %d shadow %d zbuffer %d dstResNum %d)", resNum, state, maskNum, maskState, x1, y1, flags, zorder, shadow, zbuffer, dstResNum);
+uint8 *Wiz::drawWizImage(int resNum, int state, int maskNum, int maskState, int x1, int y1, int zorder, int shadow, int zbuffer, const Common::Rect *clipBox, int flags, int dstResNum, const uint8 *palPtr, uint16 conditionBits) {
+	debug(3, "drawWizImage(resNum %d, state %d maskNum %d maskState %d x1 %d y1 %d flags 0x%X zorder %d shadow %d zbuffer %d dstResNum %d conditionBits: 0x%x)", resNum, state, maskNum, maskState, x1, y1, flags, zorder, shadow, zbuffer, dstResNum, conditionBits);
 	uint8 *dataPtr;
 	uint8 *dst = NULL;
 
@@ -1747,7 +1747,7 @@ void Wiz::captureWizPolygon(int resNum, int maskNum, int maskState, int id1, int
 
 	assert(maskNum);
 	const Common::Rect *r = NULL;
-	const uint8 *src = drawWizImage(maskNum, maskState, 0, 0, 0, 0, 0, 0, 0, r, kWIFBlitToMemBuffer, 0, 0);
+	const uint8 *src = drawWizImage(maskNum, maskState, 0, 0, 0, 0, 0, 0, 0, r, kWIFBlitToMemBuffer, 0, 0, 0);
 	getWizImageDim(maskNum, maskState, srcw, srch);
 
 	dstw = wp->bound.width();
@@ -1815,7 +1815,7 @@ void Wiz::drawWizPolygonTransform(int resNum, int state, Common::Point *wp, int 
 				debug(0, "drawWizPolygonTransform() unhandled flag 0x800000");
 			}
 
-			srcWizBuf = drawWizImage(resNum, state, 0, 0, 0, 0, 0, shadow, 0, r, flags, 0, _vm->getHEPaletteSlot(palette));
+			srcWizBuf = drawWizImage(resNum, state, 0, 0, 0, 0, 0, shadow, 0, r, flags, 0, _vm->getHEPaletteSlot(palette), 0);
 		} else {
 			assert(_vm->_bytesPerPixel == 1);
 			uint8 *dataPtr = _vm->getResourceAddress(rtImage, resNum);
@@ -1826,7 +1826,7 @@ void Wiz::drawWizPolygonTransform(int resNum, int state, Common::Point *wp, int 
 		}
 	} else {
 		if (getWizImageData(resNum, state, 0) != 0) {
-			srcWizBuf = drawWizImage(resNum, state, 0, 0, 0, 0, 0, shadow, 0, r, kWIFBlitToMemBuffer, 0, _vm->getHEPaletteSlot(palette));
+			srcWizBuf = drawWizImage(resNum, state, 0, 0, 0, 0, 0, shadow, 0, r, kWIFBlitToMemBuffer, 0, _vm->getHEPaletteSlot(palette), 0);
 		} else {
 			uint8 *dataPtr = _vm->getResourceAddress(rtImage, resNum);
 			assert(dataPtr);
@@ -2001,7 +2001,7 @@ void Wiz::flushWizBuffer() {
 			drawWizPolygon(pwi->resNum, pwi->state, pwi->x1, pwi->flags, pwi->shadow, 0, pwi->palette);
 		} else {
 			const Common::Rect *r = NULL;
-			drawWizImage(pwi->resNum, pwi->state, 0, 0, pwi->x1, pwi->y1, pwi->zorder, pwi->shadow, pwi->zbuffer, r, pwi->flags, 0, _vm->getHEPaletteSlot(pwi->palette));
+			drawWizImage(pwi->resNum, pwi->state, 0, 0, pwi->x1, pwi->y1, pwi->zorder, pwi->shadow, pwi->zbuffer, r, pwi->flags, 0, _vm->getHEPaletteSlot(pwi->palette), 0);
 		}
 	}
 	_imagesNum = 0;
@@ -2023,7 +2023,7 @@ void Wiz::loadWizCursor(int resId, int palette) {
 
 	const Common::Rect *r = NULL;
 	_cursorImage = true;
-	uint8 *cursor = drawWizImage(resId, 0, 0, 0, 0, 0, 0, 0, 0, r, kWIFBlitToMemBuffer, 0, _vm->getHEPaletteSlot(palette));
+	uint8 *cursor = drawWizImage(resId, 0, 0, 0, 0, 0, 0, 0, 0, r, kWIFBlitToMemBuffer, 0, _vm->getHEPaletteSlot(palette), 0);
 	_cursorImage = false;
 
 	int32 cw, ch;
@@ -2109,7 +2109,7 @@ void Wiz::displayWizComplexImage(const WizParameters *params) {
 		++_imagesNum;
 	} else {
 		if (sourceImage != 0) {
-			drawWizImage(params->sourceImage, 0, params->img.resNum, state, po_x, po_y, params->img.zorder, shadow, zbuffer, r, flags, dstResNum, _vm->getHEPaletteSlot(palette));
+			drawWizImage(params->sourceImage, 0, params->img.resNum, state, po_x, po_y, params->img.zorder, shadow, zbuffer, r, flags, dstResNum, _vm->getHEPaletteSlot(palette), 0);
 		} else if (params->processFlags & (kWPFScaled | kWPFRotate)) {
 			drawWizComplexPolygon(params->img.resNum, state, po_x, po_y, shadow, rotationAngle, scale, r, flags, dstResNum, palette);
 		} else {
@@ -2124,7 +2124,7 @@ void Wiz::displayWizComplexImage(const WizParameters *params) {
 				}
 
 
-				drawWizImage(params->img.resNum, state, 0, 0, po_x, po_y, params->img.zorder, shadow, zbuffer, r, flags, dstResNum, _vm->getHEPaletteSlot(palette));
+				drawWizImage(params->img.resNum, state, 0, 0, po_x, po_y, params->img.zorder, shadow, zbuffer, r, flags, dstResNum, _vm->getHEPaletteSlot(palette), params->conditionBits);
 			}
 		}
 	}
