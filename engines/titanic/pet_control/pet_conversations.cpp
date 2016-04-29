@@ -126,13 +126,15 @@ void CPetConversations::save(SimpleFile *file, int indent) const {
 void CPetConversations::enter(PetArea oldArea) {
 	if (_petControl && _petControl->_activeNPC)
 		// Start a timer for the NPC
-		addNPCTimer();
+		startNPCTimer();
 
+	// Show the text cursor
 	_textInput.showCursor(-2);
 }
 
 void CPetConversations::leave() {
-
+	_textInput.hideCursor();
+	stopNPCTimer();
 }
 
 bool CPetConversations::setupControl(CPetControl *petControl) {
@@ -233,8 +235,12 @@ void CPetConversations::summonNPC(const CString &name) {
 	}
 }
 
-void CPetConversations::addNPCTimer() {
+void CPetConversations::startNPCTimer() {
 	_petControl->startPetTimer(1, 1000, 1000, this);
+}
+
+void CPetConversations::stopNPCTimer() {
+	_petControl->stopPetTimer(1);
 }
 
 bool CPetConversations::handleKey(const Common::KeyState &keyState) {

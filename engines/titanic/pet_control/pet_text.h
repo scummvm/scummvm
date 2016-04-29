@@ -236,6 +236,11 @@ public:
 	 * and give it suitable defaults
 	 */
 	void showCursor(int mode);
+
+	/**
+	 * Removes the cursor attached to the text
+	 */
+	void hideCursor();
 };
 
 } // End of namespace Titanic

@@ -402,4 +402,12 @@ void CPetText::showCursor(int mode) {
 	}
 }
 
+void CPetText::hideCursor() {
+	if (_textCursor) {
+		_textCursor->setMode(-1);
+		_textCursor->hide();
+		_textCursor = nullptr;
+	}
+}
+
 } // End of namespace Titanic

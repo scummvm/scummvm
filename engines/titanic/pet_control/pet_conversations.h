@@ -97,9 +97,14 @@ private:
 	void summonNPC(const CString &name);
 
 	/**
-	 * Adds an NPC timer
+	 * Starts the NPC timer
 	 */
-	void addNPCTimer();
+	void startNPCTimer();
+
+	/**
+	 * Stops the NPC timer
+	 */
+	void stopNPCTimer();
 
 	/**
 	 * Handle a keypress
