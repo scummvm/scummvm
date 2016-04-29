@@ -136,7 +136,7 @@ MODULE_OBJS += \
 	he/logic/basketball.o \
 	he/logic/football.o \
 	he/logic/funshop.o \
-	he/logic/moonbase.o \
+	he/logic/moonbase_logic.o \
 	he/logic/puttrace.o \
 	he/logic/soccer.o
 endif
