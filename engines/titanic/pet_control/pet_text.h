@@ -92,6 +92,11 @@ private:
 	 * Ensures the Y scrolling for the text is in the valid range
 	 */
 	void constrainScrollDown(CScreenManager *screenManager);
+
+	/**
+	 * Get the page height for paging up and down
+	 */
+	int getPageHeight(CScreenManager *screenManager);
 public:
 	CPetText(uint count = 10);
 
@@ -180,6 +185,21 @@ public:
 	void scrollDown(CScreenManager *screenManager);
 
 	/**
+	 * Scroll the text up one page
+	 */
+	void scrollUpPage(CScreenManager *screenManager);
+
+	/**
+	 * Scroll the text down one page
+	 */
+	void scrollDownPage(CScreenManager *screenManager);
+
+	/**
+	 * Scroll to the top of the text
+	 */
+	void scrollToTop(CScreenManager *screenManager);
+
+	/**
 	 * Scroll to the bottom of the text
 	 */
 	void scrollToBottom(CScreenManager *screenManager);
@@ -199,7 +219,7 @@ public:
 	 * the current text line
 	 * @returns		True if the Enter key was pressed
 	 */
-	bool handleKey(const Common::KeyState &keyState);
+	bool handleKey(char c);
 };
 
 } // End of namespace Titanic

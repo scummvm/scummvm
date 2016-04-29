@@ -56,8 +56,7 @@ private:
 	CPetControlSub5 _sub5;
 	CPetControlSub7 _sub7;
 	CPetFrame _frame;
-	CTreeItem *_treeItem1;
-	CString _string1;
+	CString _activeNPCName;
 	CTreeItem *_treeItem2;
 	CString _string2;
 	CRoomItem *_hiddenRoom;
@@ -107,6 +106,7 @@ protected:
 	bool TimerMsg(CTimerMsg *msg);
 public:
 	PetArea _currentArea;
+	CTreeItem *_activeNPC;
 public:
 	CLASSDEF
 	CPetControl();

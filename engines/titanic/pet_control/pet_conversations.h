@@ -45,9 +45,9 @@ private:
 	CPetGfxElement _valArray2[9];
 	int _field30C;
 	CPetText _log;
-	CPetText _text2;
+	CPetText _textInput;
 	int _valArray3[3];
-	int _field414;
+	bool _logScrolled;
 	int _field418;
 	CString _string1;
 private:
@@ -67,6 +67,21 @@ private:
 	void scrollDown();
 
 	/**
+	 * Scroll up one page in the conversation log
+	 */
+	void scrollUpPage();
+
+	/**
+	 * Scroll down one page in the conversation log
+	 */
+	void scrollDownPage();
+
+	/**
+	 * Scroll to the top of the conversation log
+	 */
+	void scrollToTop();
+
+	/**
 	 * Scroll to the bottom of the conversation log
 	 */
 	void scrollToBottom();
@@ -80,6 +95,16 @@ private:
 	 * Summon an NPC
 	 */
 	void summonNPC(const CString &name);
+
+	/**
+	 * Handle a keypress
+	 */
+	bool handleKey(const Common::KeyState &keyState);
+
+	/**
+	 * Handles an entered text line
+	 */
+	void textLineEntered(const CString &textLine);
 public:
 	CPetConversations();
 
@@ -105,6 +130,8 @@ public:
 	virtual bool MouseButtonDownMsg(CMouseButtonDownMsg *msg);
 	virtual bool MouseButtonUpMsg(CMouseButtonUpMsg *msg);
 	virtual bool MouseDoubleClickMsg(CMouseDoubleClickMsg *msg);
+	virtual bool KeyCharMsg(CKeyCharMsg *msg);
+	virtual bool VirtualKeyCharMsg(CVirtualKeyCharMsg *msg);
 };
 
 } // End of namespace Titanic

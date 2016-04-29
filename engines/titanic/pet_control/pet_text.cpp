@@ -264,6 +264,24 @@ void CPetText::scrollDown(CScreenManager *screenManager) {
 	screenManager->setFontNumber(oldFontNumber);
 }
 
+void CPetText::scrollUpPage(CScreenManager *screenManager) {
+	int oldFontNumber = screenManager->setFontNumber(_fontNumber2);
+	_scrollTop -= getPageHeight(screenManager);
+	constrainScrollUp(screenManager);
+	screenManager->setFontNumber(oldFontNumber);
+}
+
+void CPetText::scrollDownPage(CScreenManager *screenManager) {
+	int oldFontNumber = screenManager->setFontNumber(_fontNumber2);
+	_scrollTop += getPageHeight(screenManager);
+	constrainScrollDown(screenManager);
+	screenManager->setFontNumber(oldFontNumber);
+}
+
+void CPetText::scrollToTop(CScreenManager *screenManager) {
+	_scrollTop = 0;
+}
+
 void CPetText::scrollToBottom(CScreenManager *screenManager) {
 	int oldFontNumber = screenManager->setFontNumber(_fontNumber2);
 	_scrollTop = _bounds.height();
@@ -284,6 +302,22 @@ void CPetText::constrainScrollDown(CScreenManager *screenManager) {
 
 	if (_scrollTop > maxScroll)
 		_scrollTop = maxScroll;
+}
+
+int CPetText::getPageHeight(CScreenManager *screenManager) {
+	int textHeight = _bounds.height();
+	int oldFontNumber = screenManager->setFontNumber(_fontNumber2);
+	int fontHeight = screenManager->getFontHeight();
+	screenManager->setFontNumber(oldFontNumber);
+
+	if (fontHeight) {
+		int lines = textHeight / fontHeight;
+		if (lines > 1)
+			--lines;
+		return lines * fontHeight;
+	} else {
+		return 0;
+	}
 }
 
 void CPetText::addLine(const CString &str, uint color) {
@@ -308,19 +342,18 @@ void CPetText::addLine(const CString &str, byte r, byte g, byte b) {
 	++_lineCount;
 }
 
-bool CPetText::handleKey(const Common::KeyState &keyState) {
-	switch (keyState.keycode) {
-	case Common::KEYCODE_BACKSPACE:
+bool CPetText::handleKey(char c) {
+	switch (c) {
+	case (char)Common::KEYCODE_BACKSPACE:
 		deleteLastChar();
 		break;
 
-	case Common::KEYCODE_RETURN:
-	case Common::KEYCODE_KP_ENTER:
+	case (char)Common::KEYCODE_RETURN:
 		return true;
 
 	default:
-		if (keyState.ascii >= 32 && keyState.ascii <= 127)
-			appendText(CString(keyState.ascii, 1));
+		if (c >= 32 && c <= 127)
+			appendText(CString(c, 1));
 		break;
 	}
 

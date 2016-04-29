@@ -26,7 +26,7 @@
 namespace Titanic {
 
 CPetConversations::CPetConversations() : CPetSection(),
-		_field414(0), _field418(0) {
+		_logScrolled(false), _field418(0) {
 }
 
 void CPetConversations::save(SimpleFile *file, int indent) const {
@@ -34,7 +34,7 @@ void CPetConversations::save(SimpleFile *file, int indent) const {
 }
 
 void CPetConversations::load(SimpleFile *file, int param) {
-	_text2.load(file, param);
+	_textInput.load(file, param);
 	_log.load(file, param);
 
 	for (int idx = 0; idx < 3; ++idx)
@@ -100,6 +100,16 @@ bool CPetConversations::MouseDoubleClickMsg(CMouseDoubleClickMsg *msg) {
 		|| _scrollUp.MouseDoubleClickMsg(msg->_mousePos);
 }
 
+bool CPetConversations::KeyCharMsg(CKeyCharMsg *msg) {
+	Common::KeyState keyState;
+	keyState.ascii = msg->_key;
+	return handleKey(keyState);
+}
+
+bool CPetConversations::VirtualKeyCharMsg(CVirtualKeyCharMsg *msg) {
+	return handleKey(msg->_keyState);
+}
+
 bool CPetConversations::setupControl(CPetControl *petControl) {
 	if (petControl) {
 		_petControl = petControl;
@@ -146,21 +156,42 @@ void CPetConversations::scrollUp() {
 	_log.scrollUp(CScreenManager::_screenManagerPtr);
 	if (_petControl)
 		_petControl->makeDirty();
-	_field414 = true;
+	_logScrolled = true;
 }
 
 void CPetConversations::scrollDown() {
 	_log.scrollDown(CScreenManager::_screenManagerPtr);
 	if (_petControl)
 		_petControl->makeDirty();
-	_field414 = true;
+	_logScrolled = true;
+}
+
+void CPetConversations::scrollUpPage() {
+	_log.scrollUpPage(CScreenManager::_screenManagerPtr);
+	if (_petControl)
+		_petControl->makeDirty();
+	_logScrolled = true;
+}
+
+void CPetConversations::scrollDownPage() {
+	_log.scrollDownPage(CScreenManager::_screenManagerPtr);
+	if (_petControl)
+		_petControl->makeDirty();
+	_logScrolled = true;
+}
+
+void CPetConversations::scrollToTop() {
+	_log.scrollToTop(CScreenManager::_screenManagerPtr);
+	if (_petControl)
+		_petControl->makeDirty();
+	_logScrolled = true;
 }
 
 void CPetConversations::scrollToBottom() {
 	_log.scrollToBottom(CScreenManager::_screenManagerPtr);
 	if (_petControl)
 		_petControl->makeDirty();
-	_field414 = true;
+	_logScrolled = true;
 }
 
 int CPetConversations::canSummonNPC(const CString &name) {
@@ -175,6 +206,64 @@ void CPetConversations::summonNPC(const CString &name) {
 			_petControl->summonNPC(name, 0);
 		}
 	}
+}
+
+bool CPetConversations::handleKey(const Common::KeyState &keyState) {
+	switch (keyState.keycode) {
+	case Common::KEYCODE_UP:
+	case Common::KEYCODE_KP8:
+		scrollUp();
+		break;
+	case Common::KEYCODE_DOWN:
+	case Common::KEYCODE_KP2:
+		scrollDown();
+		break;
+	case Common::KEYCODE_PAGEUP:
+	case Common::KEYCODE_KP9:
+		scrollUpPage();
+		break;
+	case Common::KEYCODE_PAGEDOWN:
+	case Common::KEYCODE_KP3:
+		scrollDownPage();
+		break;
+	case Common::KEYCODE_HOME:
+	case Common::KEYCODE_KP7:
+		scrollToTop();
+		break;
+	case Common::KEYCODE_END:
+	case Common::KEYCODE_KP1:
+		scrollToBottom();
+		break;
+	case Common::KEYCODE_BACKSPACE:
+		// Erase key in text input
+		_textInput.handleKey((char)Common::KEYCODE_BACKSPACE);
+	case Common::KEYCODE_RETURN:
+	case Common::KEYCODE_KP_ENTER:
+		// Text line finished
+		textLineEntered(_textInput.getText());
+		return true;
+	default:
+		if (keyState.ascii >= 32 && keyState.ascii)
+			_textInput.handleKey(keyState.ascii);
+		return true;
+	}
+
+	return false;
+}
+
+void CPetConversations::textLineEntered(const CString &textLine) {
+	if (textLine.empty() || !_petControl)
+		return;
+
+	if (_petControl->_activeNPC) {
+		warning("TODO: textLineEntered");
+	} else {
+		_log.addLine("There is no one here to talk to", getColor(1));
+	}
+
+	// Clear input line and scroll log down to end to show response
+	_textInput.setup();
+	scrollToBottom();
 }
 
 } // End of namespace Titanic

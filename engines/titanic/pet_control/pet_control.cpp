@@ -44,7 +44,7 @@ END_MESSAGE_MAP()
 
 CPetControl::CPetControl() : CGameObject(), 
 		_currentArea(PET_CONVERSATION), _fieldC0(0), _locked(0), _fieldC8(0),
-		_treeItem1(nullptr), _treeItem2(nullptr), _hiddenRoom(nullptr),
+		_activeNPC(nullptr), _treeItem2(nullptr), _hiddenRoom(nullptr),
 		_drawBounds(20, 350, 620, 480) {
 	setup();
 	_timers[0] = _timers[1] = nullptr;
@@ -60,7 +60,7 @@ CPetControl::CPetControl() : CGameObject(),
 void CPetControl::save(SimpleFile *file, int indent) const {
 	file->writeNumberLine(0, indent);
 	file->writeNumberLine(_currentArea, indent);
-	file->writeQuotedLine(_string1, indent);
+	file->writeQuotedLine(_activeNPCName, indent);
 	file->writeQuotedLine(_string2, indent);
 
 	saveAreas(file, indent);
@@ -73,7 +73,7 @@ void CPetControl::load(SimpleFile *file) {
 	
 	if (!val) {
 		_currentArea = (PetArea)file->readNumber();
-		_string1 = file->readString();
+		_activeNPCName = file->readString();
 		_string2 = file->readString();
 		
 		loadAreas(file, 0);
@@ -151,8 +151,8 @@ Rect CPetControl::getBounds() {
 void CPetControl::postLoad() {
 	CProjectItem *root = getRoot();
 
-	if (!_string1.empty() && root)
-		_treeItem1 = root->findByName(_string1);
+	if (!_activeNPCName.empty() && root)
+		_activeNPC = root->findByName(_activeNPCName);
 	if (!_string2.empty() && root)
 		_treeItem2 = root->findByName(_string2);
 
