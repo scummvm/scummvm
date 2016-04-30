@@ -27,7 +27,106 @@
 namespace Titanic {
 
 CPetConversations::CPetConversations() : CPetSection(),
-		_logChanged(false), _field418(0) {
+		_logChanged(false), _field418(0), _npcNum(-1),
+		_rect1(22, 352, 598, 478) {
+	Rect logRect(85, 18, 513, 87);
+	logRect.translate(20, 350);
+	_log.setBounds(logRect);
+	_log.resize(50);
+	_log.setHasBorder(false);
+	_log.setColor(getColor(2));
+	_log.setup();
+	_log.addLine("Welcome to your PET v1.0a");
+
+	Rect inputRect(85, 95, 513, 135);
+	inputRect.translate(20, 350);
+	_textInput.setBounds(inputRect);
+	_textInput.setHasBorder(false);
+	_textInput.resize(2);
+	_textInput.setMaxCharsPerLine(74);
+	_textInput.setColor(getColor(0));
+	_textInput.setup();
+
+	_valArray3[0] = _valArray3[1] = _valArray3[2] = 0;
+}
+
+bool CPetConversations::setup(CPetControl *petControl) {
+	if (petControl && setupControl(petControl))
+		return reset();
+	return false;
+}
+
+bool CPetConversations::reset() {
+	_dials[0].setup(MODE_UNSELECTED, "3PetDial1", _petControl);
+	_dials[1].setup(MODE_UNSELECTED, "3PetDial2", _petControl);
+	_dials[2].setup(MODE_UNSELECTED, "3PetDial3", _petControl);
+	
+	_dialBackground.reset("PetDialBack", _petControl);
+	_scrollUp.reset("PetScrollUp", _petControl);
+	_scrollDown.reset("PetScrollDown", _petControl);
+
+	_doorBot.reset("PetCallDoorOut", _petControl, MODE_UNSELECTED);
+	_doorBot.reset("PetCallDoorIn", _petControl, MODE_SELECTED);
+	_bellBot.reset("PetCallBellOut", _petControl, MODE_UNSELECTED);
+	_doorBot.reset("PetCallBellIn", _petControl, MODE_SELECTED);
+
+	_indent.reset("PetSmallCharacterIndent", _petControl);
+	_splitter.reset("PetSplitter", _petControl);
+
+	_npcIcons[0].setup(MODE_UNSELECTED, "3PetSmlDoorbot", _petControl);
+	_npcIcons[1].setup(MODE_UNSELECTED, "3PetSmlDeskbot", _petControl);
+	_npcIcons[2].setup(MODE_UNSELECTED, "3PetSmlLiftbot", _petControl);
+	_npcIcons[3].setup(MODE_UNSELECTED, "3PetSmlParrot", _petControl);
+	_npcIcons[4].setup(MODE_UNSELECTED, "3PetSmlBarbot", _petControl);
+	_npcIcons[5].setup(MODE_UNSELECTED, "3PetSmlChatterbot", _petControl);
+	_npcIcons[6].setup(MODE_UNSELECTED, "3PetSmlBellbot", _petControl);
+	_npcIcons[7].setup(MODE_UNSELECTED, "3PetSmlMaitreD", _petControl);
+	_npcIcons[8].setup(MODE_UNSELECTED, "3PetSmlSuccubus", _petControl);
+
+	if (_petControl->getPassengerClass() == 1) {
+		uint col = getColor(0);
+		_textInput.setColor(col);
+		_textInput.setLineColor(0, col);
+
+		warning("TODO: Setup log shaded palette?");
+
+		_log.setColor(getColor(2));
+	}
+
+	return true;
+}
+
+void CPetConversations::draw(CScreenManager *screenManager) {
+	_dialBackground.draw(screenManager);
+	_splitter.draw(screenManager);
+	_dials[0].draw(screenManager);
+	_dials[1].draw(screenManager);
+	_dials[2].draw(screenManager);
+
+	_indent.draw(screenManager);
+	_doorBot.draw(screenManager);
+	_bellBot.draw(screenManager);
+	_scrollUp.draw(screenManager);
+	_scrollDown.draw(screenManager);
+	_log.draw(screenManager);
+	_textInput.draw(screenManager);
+
+	if (_logChanged) {
+		int fontNumber = _log.getFontNumber();
+		if (fontNumber >= 0) {
+			warning("TODO conversation draw");
+		}
+
+		_logChanged = false;
+	}
+
+	if (_npcNum >= 0)
+		_npcIcons[_npcNum].draw(screenManager);
+}
+
+Rect CPetConversations::getBounds() {
+	// TODO
+	return Rect();
 }
 
 bool CPetConversations::isValid(CPetControl *petControl) {
@@ -192,16 +291,16 @@ bool CPetConversations::setupControl(CPetControl *petControl) {
 	if (petControl) {
 		_petControl = petControl;
 
-		_val3.setBounds(Rect(0, 0, 21, 130));
-		_val3.translate(20, 350);
+		_dialBackground.setBounds(Rect(0, 0, 21, 130));
+		_dialBackground.translate(20, 350);
 		
 		const Rect rect1(0, 0, 22, 36);
-		_gfxList[0].setBounds(rect1);
-		_gfxList[0].translate(20, 359);
-		_gfxList[1].setBounds(rect1);
-		_gfxList[1].translate(20, 397);
-		_gfxList[2].setBounds(rect1);
-		_gfxList[2].translate(20, 434);
+		_dials[0].setBounds(rect1);
+		_dials[0].translate(20, 359);
+		_dials[1].setBounds(rect1);
+		_dials[1].translate(20, 397);
+		_dials[2].setBounds(rect1);
+		_dials[2].translate(20, 434);
 
 		const Rect rect2(0, 0, 11, 24);
 		_scrollUp.setBounds(rect2);
@@ -215,15 +314,15 @@ bool CPetConversations::setupControl(CPetControl *petControl) {
 		_bellBot.setBounds(rect3);
 		_bellBot.translate(546, 418);
 
-		_val6.setBounds(Rect(0, 0, 37, 70));
-		_val6.translate(46, 374);
-		_val9.setBounds(Rect(0, 0, 435, 3));
-		_val9.translate(102, 441);
+		_indent.setBounds(Rect(0, 0, 37, 70));
+		_indent.translate(46, 374);
+		_splitter.setBounds(Rect(0, 0, 435, 3));
+		_splitter.translate(102, 441);
 
 		const Rect rect4(0, 0, 33, 66);
 		for (int idx = 0; idx < 9; ++idx) {
-			_valArray2[idx].setBounds(rect4);
-			_valArray2[idx].translate(48, 376);
+			_npcIcons[idx].setBounds(rect4);
+			_npcIcons[idx].translate(48, 376);
 		}
 	}
 

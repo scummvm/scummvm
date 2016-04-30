@@ -34,17 +34,17 @@ class CPetConversations : public CPetSection {
 private:
 	CPetGfxElement _scrollUp;
 	CPetGfxElement _scrollDown;
-	CPetGfxElement _val3;
-	CPetGfxElement _gfxList[3];
+	CPetGfxElement _dialBackground;
+	CPetGfxElement _dials[3];
 	CPetGfxElement _val4;
 	CPetGfxElement _val5;
-	CPetGfxElement _val6;
-	int  _field14C;
+	CPetGfxElement _indent;
+	Rect _rect1;
 	CPetGfxElement _doorBot;
 	CPetGfxElement _bellBot;
-	CPetGfxElement _val9;
-	CPetGfxElement _valArray2[9];
-	int _field30C;
+	CPetGfxElement _splitter;
+	CPetGfxElement _npcIcons[9];
+	int _npcNum;
 	CPetText _log;
 	CPetText _textInput;
 	int _valArray3[3];
@@ -128,7 +128,28 @@ private:
 	CString getActiveNPCName() const;
 public:
 	CPetConversations();
+	virtual ~CPetConversations() {}
 
+	/**
+	 * Sets up the section
+	 */
+	virtual bool setup(CPetControl *petControl);
+	
+	/**
+	 * Reset the section
+	 */
+	virtual bool reset();
+
+	/**
+	 * Draw the section
+	 */
+	virtual void draw(CScreenManager *screenManager);
+	
+	/**
+	 * Get the bounds for the section
+	 */
+	virtual Rect getBounds();
+	
 	/**
 	 * Returns true if the object is in a valid state
 	 */
