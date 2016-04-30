@@ -192,12 +192,12 @@ void OSVideoSurface::setupPalette(byte palette[32][32], byte val) {
 			v *= base;
 			uint v2 = (v >> 36);
 			v = ((v2 >> 31) + v2) & 0xff;
-			palette[idx1][idx2] = v;
+			palette[idx1][idx2] = v << 3;
 
 			if (val != 0xff && v != idx2) {
 				v = 0x80808081 * v * val;
 				v2 = v >> 39;
-				palette[idx1][idx2] = (v2 >> 31) + v2;
+				palette[idx1][idx2] = ((v2 >> 31) + v2) << 3;
 			}
 		}
 	}
@@ -369,16 +369,16 @@ void OSVideoSurface::changePixel(uint16 *pixelP, uint16 *color, byte srcVal, boo
 	byte r, g, b;
 	srcFormat.colorToRGB(*color, r, g, b);
 	if (remapFlag) {
-		r = _palette1[31 - srcVal][r >> 3] << 3;
-		g = _palette1[31 - srcVal][g >> 3] << 3;
-		b = _palette1[31 - srcVal][b >> 3] << 3;
+		r = _palette1[31 - srcVal][r >> 3];
+		g = _palette1[31 - srcVal][g >> 3];
+		b = _palette1[31 - srcVal][b >> 3];
 	}
 
 	byte r2, g2, b2;
 	destFormat.colorToRGB(*pixelP, r2, g2, b2);
-	r2 = _palette1[srcVal][r2 >> 3] << 3;
-	g2 = _palette1[srcVal][g2 >> 3] << 3;
-	b2 = _palette1[srcVal][b2 >> 3] << 3;
+	r2 = _palette1[srcVal][r2 >> 3];
+	g2 = _palette1[srcVal][g2 >> 3];
+	b2 = _palette1[srcVal][b2 >> 3];
 
 	*pixelP = destFormat.RGBToColor(r + r2, g + g2, b + b2);
 }
