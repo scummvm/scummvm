@@ -48,7 +48,7 @@ private:
 	CPetText _log;
 	CPetText _textInput;
 	int _valArray3[3];
-	bool _logScrolled;
+	bool _logChanged;
 	int _field418;
 	CString _npcName;
 private:
@@ -176,7 +176,17 @@ public:
 	/**
 	 * Display a title for an NPC
 	 */
-	virtual void displayNPC(CGameObject *npc);
+	virtual void displayNPCName(CGameObject *npc);
+
+	/**
+	 * Show the text cursor
+	 */
+	virtual void showCursor();
+	
+	/**
+	 * Hide the text cursor
+	 */
+	virtual void hideCursor();
 };
 
 } // End of namespace Titanic

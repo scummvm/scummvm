@@ -27,7 +27,7 @@
 namespace Titanic {
 
 CPetConversations::CPetConversations() : CPetSection(),
-		_logScrolled(false), _field418(0) {
+		_logChanged(false), _field418(0) {
 }
 
 bool CPetConversations::isValid(CPetControl *petControl) {
@@ -138,7 +138,7 @@ void CPetConversations::leave() {
 	stopNPCTimer();
 }
 
-void CPetConversations::displayNPC(CGameObject *npc) {
+void CPetConversations::displayNPCName(CGameObject *npc) {
 	if (npc) {
 		displayMessage(CString());
 		CString msg = "Talking to ";
@@ -178,6 +178,14 @@ void CPetConversations::displayNPC(CGameObject *npc) {
 		_log.setNPC(1, id);
 		displayMessage(msg);
 	}
+}
+
+void CPetConversations::showCursor() {
+	_textInput.showCursor(-2);
+}
+
+void CPetConversations::hideCursor() {
+	_textInput.hideCursor();
 }
 
 bool CPetConversations::setupControl(CPetControl *petControl) {
@@ -226,42 +234,42 @@ void CPetConversations::scrollUp() {
 	_log.scrollUp(CScreenManager::_screenManagerPtr);
 	if (_petControl)
 		_petControl->makeDirty();
-	_logScrolled = true;
+	_logChanged = true;
 }
 
 void CPetConversations::scrollDown() {
 	_log.scrollDown(CScreenManager::_screenManagerPtr);
 	if (_petControl)
 		_petControl->makeDirty();
-	_logScrolled = true;
+	_logChanged = true;
 }
 
 void CPetConversations::scrollUpPage() {
 	_log.scrollUpPage(CScreenManager::_screenManagerPtr);
 	if (_petControl)
 		_petControl->makeDirty();
-	_logScrolled = true;
+	_logChanged = true;
 }
 
 void CPetConversations::scrollDownPage() {
 	_log.scrollDownPage(CScreenManager::_screenManagerPtr);
 	if (_petControl)
 		_petControl->makeDirty();
-	_logScrolled = true;
+	_logChanged = true;
 }
 
 void CPetConversations::scrollToTop() {
 	_log.scrollToTop(CScreenManager::_screenManagerPtr);
 	if (_petControl)
 		_petControl->makeDirty();
-	_logScrolled = true;
+	_logChanged = true;
 }
 
 void CPetConversations::scrollToBottom() {
 	_log.scrollToBottom(CScreenManager::_screenManagerPtr);
 	if (_petControl)
 		_petControl->makeDirty();
-	_logScrolled = true;
+	_logChanged = true;
 }
 
 int CPetConversations::canSummonNPC(const CString &name) {

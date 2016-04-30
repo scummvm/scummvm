@@ -156,13 +156,22 @@ public:
 	/**
 	 * Display a title for an NPC
 	 */
-	virtual void displayNPC(CGameObject *npc);
+	virtual void displayNPCName(CGameObject *npc) {}
 
 	virtual void proc33() {}
 	virtual void proc34() {}
 	virtual void proc35() {}
-	virtual void proc36() {}
-	virtual void proc37() {}
+
+	/**
+	 * Show the text cursor
+	 */
+	virtual void showCursor() {}
+	
+	/**
+	 * Hide the text cursor
+	 */
+	virtual void hideCursor() {}
+
 	virtual void proc38(int val) {}
 
 	/**
