@@ -221,7 +221,8 @@ public:
 class OSVideoSurface : public CVideoSurface {
 	friend class OSMovie;
 private:
-	static byte _palette[32][32];
+	static byte _palette1[32][32];
+	static byte _palette2[32][32];
 
 	/**
 	 * Setup the shading palettes
@@ -231,7 +232,10 @@ public:
 	/**
 	 * Setup statics
 	 */
-	static void setup() { setupPalette(_palette, 0xff); }
+	static void setup() {
+		setupPalette(_palette1, 0xff);
+		setupPalette(_palette2, 0xe0);
+	}
 public:
 	OSVideoSurface(CScreenManager *screenManager, DirectDrawSurface *surface);
 	OSVideoSurface(CScreenManager *screenManager, const CResourceKey &key, bool flag = false);

@@ -164,7 +164,8 @@ bool CVideoSurface::proc45() {
 
 /*------------------------------------------------------------------------*/
 
-byte OSVideoSurface::_palette[32][32];
+byte OSVideoSurface::_palette1[32][32];
+byte OSVideoSurface::_palette2[32][32];
 
 OSVideoSurface::OSVideoSurface(CScreenManager *screenManager, DirectDrawSurface *surface) :
 		CVideoSurface(screenManager) {
@@ -185,27 +186,18 @@ OSVideoSurface::OSVideoSurface(CScreenManager *screenManager, const CResourceKey
 }
 
 void OSVideoSurface::setupPalette(byte palette[32][32], byte val) {
-	int incr = 0;
-
 	for (uint idx1 = 0; idx1 < 32; ++idx1) {
-		for (uint idx2 = 0, base = 0; idx2 < 32; ++idx2, base += incr) {
+		for (uint idx2 = 0, base = 0; idx2 < 32; ++idx2, base += idx1) {
 			int64 v = 0x84210843;
 			v *= base;
-			v = ((v >> 32) + base) >> 4;
-			v += (v >> 31);
+			uint v2 = (v >> 36);
+			v = ((v2 >> 31) + v2) & 0xff;
 			palette[idx1][idx2] = v;
 
-			if (val != 0xff) {
-				v &= 0xff;
-				if (v != idx2) {
-					v = 0x80808081 * val * v * val;
-					v = (v >> 32) + incr;
-					incr = idx1;
-
-					v >>= 7;
-					v += (v >> 31);
-					palette[idx1][idx2] = v;
-				}
+			if (val != 0xff && v != idx2) {
+				v = 0x80808081 * v * val;
+				v2 = v >> 39;
+				palette[idx1][idx2] = (v2 >> 31) + v2;
 			}
 		}
 	}
@@ -376,16 +368,16 @@ void OSVideoSurface::changePixel(uint16 *pixelP, uint16 *color, byte srcVal, boo
 	byte r, g, b;
 	format.colorToRGB(*color, r, g, b);
 	if (remapFlag) {
-		r = _palette[31 - srcVal][r >> 2] << 2;
-		g = _palette[31 - srcVal][g >> 2] << 2;
-		b = _palette[31 - srcVal][b >> 2] << 2;
+		r = _palette1[31 - srcVal][r >> 2] << 2;
+		g = _palette1[31 - srcVal][g >> 2] << 2;
+		b = _palette1[31 - srcVal][b >> 2] << 2;
 	}
 
 	byte r2, g2, b2;
 	format.colorToRGB(*pixelP, r2, g2, b2);
-	r2 = _palette[srcVal][r2 >> 2] << 2;
-	g2 = _palette[srcVal][g2 >> 2] << 2;
-	b2 = _palette[srcVal][b2 >> 2] << 2;
+	r2 = _palette1[srcVal][r2 >> 2] << 2;
+	g2 = _palette1[srcVal][g2 >> 2] << 2;
+	b2 = _palette1[srcVal][b2 >> 2] << 2;
 
 	*pixelP = format.RGBToColor(r + r2, g + g2, b + b2);
 }
