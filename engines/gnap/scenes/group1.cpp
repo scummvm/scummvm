@@ -3964,7 +3964,7 @@ void Scene18::updateAnimations() {
 			gameSys.insertSequence(0x214, 39, 0x213, 39, kSeqLoop | kSeqSyncWait, 0, 0, 0);
 			while (gameSys.getAnimationStatus(5) != 2)
 				_vm->gameUpdateTick();
-			_vm->playSound(555, true);
+			_vm->playSound(0x22B, true);
 			gameSys.insertSequence(0x20D, 39, 0, 0, kSeqNone, 0, 0, 0);
 			_vm->_gnapSequenceDatNum = 0;
 			_vm->_gnapSequenceId = 0x207;

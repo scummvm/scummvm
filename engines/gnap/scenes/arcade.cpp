@@ -189,7 +189,7 @@ void Scene49::updateObstacle(int id) {
 					obstacle._currSequenceId, obstacle._currId,
 					kSeqSyncWait, 0, 0, -50);
 				obstacle._currSequenceId = obstacle._collisionSequenceId;
-				_vm->playSound(224, false);
+				_vm->playSound(0xE0, false);
 				increaseScore(30);
 			} else if ((obstacle._laneNum == 1 && _truckSequenceId == 0xB0) ||
 				(obstacle._laneNum == 2 && (_truckSequenceId == 0xB1 || _truckSequenceId == 0xB2)) ||
@@ -211,7 +211,7 @@ void Scene49::updateObstacle(int id) {
 				_truckSequenceId = obstacle._collisionSequenceId;
 				_truckId = 256;
 				obstacle._currSequenceId = obstacle._passedSequenceId;
-				_vm->playSound(225, false);
+				_vm->playSound(0xE1, false);
 				decreaseScore(30);
 			}
 		} else {
@@ -229,7 +229,7 @@ void Scene49::updateObstacle(int id) {
 					obstacle._currSequenceId, obstacle._currId,
 					kSeqSyncWait, 0, 0, -50);
 				obstacle._currSequenceId = obstacle._collisionSequenceId;
-				_vm->playSound(224, false);
+				_vm->playSound(0xE0, false);
 				increaseScore(30);
 			}
 		} else if (obstacle._splashSequenceId) {
@@ -1323,7 +1323,7 @@ void Scene51::updateItemAnimation(Scene51Item *item, int index) {
 		} else {
 			_vm->_gameSys->removeSequence(item->_currSequenceId, item->_id, true);
 			_vm->_gameSys->setAnimation(0, 0, index + 1);
-			_vm->playSound(218, false);
+			_vm->playSound(0xDA, false);
 			if (incCashAmount(item->_currSequenceId) == 1995) {
 				winMinigame();
 				_vm->_sceneDone = true;
@@ -1520,7 +1520,7 @@ void Scene51::playIntroAnim() {
 		_platypusSequenceId = _platypusNextSequenceId;
 		++soundCtr;
 		if (soundCtr % 4 == 0)
-			_vm->playSound(214, false);
+			_vm->playSound(0xD6, false);
 	}
 
 	_platypusNextSequenceId = 0x75;
@@ -1538,7 +1538,7 @@ void Scene51::playIntroAnim() {
 		} else {
 			++soundCtr;
 			if (soundCtr % 4 == 0)
-				_vm->playSound(214, false);
+				_vm->playSound(0xD6, false);
 		}
 	}
 	waitForAnim(0);
@@ -1596,7 +1596,7 @@ int Scene51::incCashAmount(int sequenceId) {
 
 void Scene51::winMinigame() {
 	updateCash(1995);
-	_vm->playSound(218, false);
+	_vm->playSound(0xDA, false);
 	// TODO delayTicksA(1, 5);
 	_vm->_newSceneNum = 48;
 	_vm->invRemove(kItemBanana);
@@ -1769,7 +1769,7 @@ void Scene51::run() {
 						} else {
 							++soundCtr;
 							if (soundCtr % 4 == 0)
-								_vm->playSound(214, false);
+								_vm->playSound(0xD6, false);
 						}
 					}
 				} else {
@@ -1821,7 +1821,7 @@ void Scene51::run() {
 						} else {
 							++soundCtr;
 							if (soundCtr % 4 == 0)
-								_vm->playSound(214, false);
+								_vm->playSound(0xD6, false);
 						}
 					}
 				} else {
@@ -1890,7 +1890,7 @@ void Scene52::update() {
 
 	if (_liveAlienRows == 0 && !_alienSingle) {
 		_alienWave = false;
-		_vm->playSound(48, false);
+		_vm->playSound(0x30, false);
 		++_alienCounter;
 		if (_alienCounter != 3) {
 			_vm->_timers[0] = 50;
@@ -2256,7 +2256,7 @@ int Scene52::updateHitAlien() {
 		if (hitAlienNum != -1 && _items[rowNum][hitAlienNum] >= 0) {
 			_gameScore = ((_items[rowNum][hitAlienNum] - 24) % 3 + _gameScore + 1) % 1000;
 			_items[rowNum][hitAlienNum] = -2;
-			_vm->playSound(44, false);
+			_vm->playSound(0x2C, false);
 			_vm->_gameSys->insertSequence(0x21, 266, 0, 0,
 				kSeqNone, 0, _alienLeftX + hitAlienNum * _alienWidth + _alienRowXOfs[rowNum] - 10, ya - _alienHeight);
 			result = 1;
@@ -2470,7 +2470,7 @@ void Scene52::shipExplode() {
 	if (!_aliensCount) {
 		_vm->_gameSys->setAnimation(0, 0, 7);
 		_vm->_gameSys->removeSequence(_ufoSequenceId, 256, true);
-		_vm->playSound(44, false);
+		_vm->playSound(0x2C, false);
 		_vm->_gameSys->insertSequence(0x21, 266, 0, 0, kSeqNone, 0, _shipPosX, _arcadeScreenBottom);
 		_aliensCount = 1;
 		_vm->playSound(0x31, false);

@@ -319,9 +319,9 @@ void Scene01::updateAnimations() {
 			break;
 
 		case kAS01LookPigs:
-			_vm->playSound(138, false);
-			_vm->playSound(139, false);
-			_vm->playSound(140, false);
+			_vm->playSound(0x8A, false);
+			_vm->playSound(0x8B, false);
+			_vm->playSound(0x8C, false);
 			_vm->_gnapActionStatus = -1;
 			break;
 
