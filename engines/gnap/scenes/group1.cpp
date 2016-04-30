@@ -3158,49 +3158,44 @@ void Scene18::updateHotspots() {
 	_vm->_hotspotsCount = 11;
 }
 
-void Scene18::gnapCarryGarbageCanTo(int a5) {
-	// TODO Cleanup
-	static const int kSequenceIds[] = {
-		0x203, 0x204
-	};
-
+void Scene18::gnapCarryGarbageCanTo(int gridX) {
 	GameSys& gameSys = *_vm->_gameSys;
 
 	int gnapSeqId, gnapId, gnapDatNum, gnapGridX;
-	int v12, v5, v10, v11, direction;
+	int destGridX, direction;
 
-	int clippedX = (_vm->_leftClickMouseX - _vm->_gridMinX + 37) / 75;
+	int curGridX = (_vm->_leftClickMouseX - _vm->_gridMinX + 37) / 75;
 
-	if (clippedX >= _vm->_gnapX)
-		v10 = clippedX - 1;
+	if (curGridX >= _vm->_gnapX)
+		destGridX = curGridX - 1;
 	else
-		v10 = clippedX + 1;
+		destGridX = curGridX + 1;
 
-	if (a5 < 0)
-		a5 = 4;
-	v5 = v10;
-	if (v10 <= a5)
-		v5 = a5;
-	v11 = v5;
-	v12 = _vm->_gridMaxX - 1;
-	if (_vm->_gridMaxX - 1 >= v11)
-		v12 = v11;
+	if (gridX < 0)
+		gridX = 4;
 
-	if (v12 == _vm->_gnapX) {
+	if (destGridX <= gridX)
+		destGridX = gridX;
+
+	int nextGridX = _vm->_gridMaxX - 1;
+	if (nextGridX >= destGridX)
+		nextGridX = destGridX;
+
+	if (nextGridX == _vm->_gnapX) {
 		gnapSeqId = _vm->_gnapSequenceId;
 		gnapId = _vm->_gnapId;
 		gnapDatNum = _vm->_gnapSequenceDatNum;
 		gnapGridX = _vm->_gnapX;
-		if (_vm->_gnapX <= clippedX)
+		if (_vm->_gnapX <= curGridX)
 			direction = 1;
 		else
 			direction = -1;
 	} else {
 		if (_vm->_gnapY == _vm->_platY) {
-			if (v12 >= _vm->_gnapX) {
-				if (v12 >= _vm->_platX && _vm->_gnapX <= _vm->_platX)
+			if (nextGridX >= _vm->_gnapX) {
+				if (nextGridX >= _vm->_platX && _vm->_gnapX <= _vm->_platX)
 					_vm->platypusMakeRoom();
-			} else if (v12 <= _vm->_platX && _vm->_gnapX >= _vm->_platX) {
+			} else if (nextGridX <= _vm->_platX && _vm->_gnapX >= _vm->_platX) {
 				_vm->platypusMakeRoom();
 			}
 		}
@@ -3208,25 +3203,28 @@ void Scene18::gnapCarryGarbageCanTo(int a5) {
 		gnapId = _vm->_gnapId;
 		gnapDatNum = _vm->_gnapSequenceDatNum;
 		gnapGridX = _vm->_gnapX;
-		int seqId = 0;
-		if (v12 < _vm->_gnapX) {
+		int seqId;
+		if (nextGridX < _vm->_gnapX) {
 			direction = -1;
-			seqId = 1;
-		} else
+			seqId = 0x204;
+		} else {
 			direction = 1;
-		int a2 = 20 * _vm->_gnapY + 1;
+			seqId = 0x203;
+		}
+
+		int seqId2 = 20 * _vm->_gnapY + 1;
 		do {
 			if (_vm->isPointBlocked(gnapGridX + direction, _vm->_gnapY))
 				break;
-			a2 += direction;
-			gameSys.insertSequence(kSequenceIds[seqId], a2,
+			seqId2 += direction;
+			gameSys.insertSequence(seqId, seqId2,
 				gnapSeqId | (gnapDatNum << 16), gnapId,
 				kSeqSyncWait, 0, 75 * gnapGridX - _vm->_gnapGridX, 48 * _vm->_gnapY - _vm->_gnapGridY);
-			gnapSeqId = kSequenceIds[seqId];
-			gnapId = a2;
+			gnapSeqId = seqId;
+			gnapId = seqId2;
 			gnapDatNum = 0;
 			gnapGridX += direction;
-		} while (v12 != gnapGridX);
+		} while (nextGridX != gnapGridX);
 	}
 
 	if (direction == 1)
@@ -3248,7 +3246,6 @@ void Scene18::gnapCarryGarbageCanTo(int a5) {
 		kSeqScale | kSeqSyncWait, 0, 75 * gnapGridX - _vm->_gnapGridX, 48 * _vm->_gnapY - _vm->_gnapGridY);
 
 	_vm->_gnapX = gnapGridX;
-
 }
 
 void Scene18::putDownGarbageCan(int animationIndex) {
