@@ -215,6 +215,11 @@ protected:
 	 * Change the view
 	 */
 	bool changeView(const CString &viewName, const CString &clipName);
+
+	/**
+	 * Support function for drag moving
+	 */
+	void dragMove(const Point &pt);
 public:
 	int _field60;
 	CursorId _cursorId;

@@ -90,7 +90,10 @@ public:
 	virtual bool KeyCharMsg(CKeyCharMsg *msg) { return false; }
 	virtual bool VirtualKeyCharMsg(CVirtualKeyCharMsg *msg) { return false; }
 
-	virtual bool proc14(void *v1) { return false; }
+	/**
+	 * Check whether a drag drop can occur
+	 */
+	virtual bool checkDragEnd(CGameObject *item) { return false; }
 	
 	/**
 	 * Returns item a drag-drop operation has dropped on, if any

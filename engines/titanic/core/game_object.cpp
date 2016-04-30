@@ -721,4 +721,13 @@ bool CGameObject::changeView(const CString &viewName, const CString &clipName) {
 	return true;
 }
 
+void CGameObject::dragMove(const Point &pt) {
+	if (_surface) {
+		_bounds.setWidth(_surface->getWidth());
+		_bounds.setHeight(_surface->getHeight());
+	}
+
+	setPosition(Point(pt.x - _bounds.width() / 2, pt.y - _bounds.height() / 2));
+}
+
 } // End of namespace Titanic

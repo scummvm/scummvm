@@ -348,8 +348,16 @@ void CPetControl::drawSquares(CScreenManager *screenManager, int count) {
 	_frame.drawSquares(screenManager, count);
 }
 
-void CPetControl::displayMessage(const CString &msg) {
-	error("TODO: CPetControl::displayMessage");
+CGameObject *CPetControl::dragEnd(const Point &pt) const {
+	return _currentArea == PET_INVENTORY ? _inventory.dragEnd(pt) : nullptr;
+}
+
+bool CPetControl::checkDragEnd(CGameObject *item) const {
+	return _sections[_currentArea]->checkDragEnd(item);
+}
+
+void CPetControl::displayMessage(const CString &msg) const {
+	_sections[_currentArea]->displayMessage(msg);
 }
 
 CGameObject *CPetControl::getFirstObject() const {

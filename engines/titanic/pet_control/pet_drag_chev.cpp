@@ -21,8 +21,15 @@
  */
 
 #include "titanic/pet_control/pet_drag_chev.h"
+#include "titanic/pet_control/pet_control.h"
+#include "titanic/messages/messages.h"
+#include "titanic/npcs/succubus.h"
 
 namespace Titanic {
+
+BEGIN_MESSAGE_MAP(CPetDragChev, CPetGraphic2)
+
+END_MESSAGE_MAP()
 
 void CPetDragChev::save(SimpleFile *file, int indent) const {
 	file->writeNumberLine(1, indent);
@@ -32,6 +39,36 @@ void CPetDragChev::save(SimpleFile *file, int indent) const {
 void CPetDragChev::load(SimpleFile *file) {
 	file->readNumber();
 	CPetGraphic2::load(file);
+}
+
+bool CPetDragChev::MouseDragStartMsg(CMouseDragStartMsg *msg) {
+	getName();
+	return checkStartDragging(msg);
+}
+
+bool CPetDragChev::MouseDragMoveMsg(CMouseDragMoveMsg *msg) {
+	dragMove(msg->_mousePos);
+	return true;
+}
+
+bool CPetDragChev::MouseDragEndMsg(CMouseDragEndMsg *msg) {
+	if (msg->_dropTarget) {
+		CSuccUBus *succubus = static_cast<CSuccUBus *>(msg->_dropTarget);
+
+		if (succubus) {
+			CSetChevRoomBits msg(_field54);
+			msg.execute(succubus);
+		} else {
+			CPetControl *petControl = getPetControl();
+			if (petControl && petControl->contains(msg->_mousePos)
+					&& msg->_mousePos.x < 528) {
+				if (petControl->checkDragEnd(this))
+					moveToHiddenRoom();
+			}
+		}
+	}
+
+	return true;
 }
 
 } // End of namespace Titanic

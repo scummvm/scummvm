@@ -207,14 +207,17 @@ public:
 	/**
 	 * Handles drag ends within the PET
 	 */
-	CGameObject *dragEnd(const Point &pt) const {
-		return _currentArea == PET_INVENTORY ? _inventory.dragEnd(pt) : nullptr;
-	}
+	CGameObject *dragEnd(const Point &pt) const;
+
+	/**
+	 * Handles checking when a drag-drop operation ends
+	 */
+	bool checkDragEnd(CGameObject *item) const;
 
 	/**
 	 * Display a message
 	 */
-	void displayMessage(const CString &msg);
+	void displayMessage(const CString &msg) const;
 
 	/**
 	 * Get the first game object stored in the PET
@@ -284,6 +287,7 @@ public:
 	 * Stop a timer
 	 */
 	void stopPetTimer(uint timerIndex);
+
 };
 
 } // End of namespace Titanic
