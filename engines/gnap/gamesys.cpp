@@ -52,7 +52,6 @@ GameSys::GameSys(GnapEngine *vm) : _vm(vm) {
 	_backgroundImageValue1 = 0;
 	_backgroundImageValue4 = 1000;
 	_backgroundImageValue2 = 1000;
-	_backgroundImageError = true;
 	_gameSysClock = 0;
 	_lastUpdateClock = 0;
 	_backgroundSurface = nullptr;
@@ -172,7 +171,6 @@ void GameSys::setBackgroundSurface(Graphics::Surface *surface, int a4, int a5, i
 
 	_backgroundSurface = surface;
 	if (!_backgroundSurface) {
-		_backgroundImageError = true;
 		return;
 	}
 
@@ -189,7 +187,6 @@ void GameSys::setBackgroundSurface(Graphics::Surface *surface, int a4, int a5, i
 
 	_vm->_system->copyRectToScreen(_frontSurface->getPixels(), _frontSurface->pitch, 0, 0, _frontSurface->w, _frontSurface->h);
 
-	_backgroundImageError = false;
 	_backgroundImageValue1 = a4;
 	_backgroundImageValue3 = a6;
 	_backgroundImageValue2 = a5;

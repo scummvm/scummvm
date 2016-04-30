@@ -3906,7 +3906,7 @@ void Scene18::updateAnimations() {
 			_vm->setFlag(kGFUnk14);
 			_vm->clearFlag(kGFTruckFilledWithGas);
 			_vm->setFlag(kGFTruckKeysUsed);
-			_vm->setFlag(kGFUnk14); // CHECKME - Set 2 times?
+			_vm->setFlag(kGFUnk14); // Useless, already set
 			updateHotspots();
 			_vm->_gnapActionStatus = kAS18LeaveScene;
 			break;

@@ -165,7 +165,6 @@ public:
 
 	int _backgroundImageValue3, _backgroundImageValue1;
 	int _backgroundImageValue4, _backgroundImageValue2;
-	bool _backgroundImageError; // CHECKME: Unused
 
 	int32 _gameSysClock, _lastUpdateClock;
 
