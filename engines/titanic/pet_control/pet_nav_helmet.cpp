@@ -22,12 +22,13 @@
 
 #include "titanic/pet_control/pet_nav_helmet.h"
 #include "titanic/pet_control/pet_control.h"
+#include "titanic/messages/pet_messages.h"
 
 namespace Titanic {
 
 CPetNavHelmet::CPetNavHelmet() :
 		_field98(0), _field9C(0), _fieldA0(0), _field18C(0),
-		_field20C(1), _field210(0), _rect1(22, 352, 598, 478) {
+		_photoOn(true), _field210(0), _rect1(22, 352, 598, 478) {
 }
 
 bool CPetNavHelmet::setup(CPetControl *petControl) {
@@ -40,8 +41,8 @@ bool CPetNavHelmet::reset() {
 	if (_petControl) {
 		_val1.setup(MODE_UNSELECTED, "3PetStarField", _petControl);
 		_val2.setup(MODE_UNSELECTED, "HomePhotoOnOff", _petControl);
-		_val3.setup(MODE_UNSELECTED, "3PetSetDestin", _petControl);
-		_val3.setup(MODE_SELECTED, "3PetSetDestin1", _petControl);
+		_setDestination.setup(MODE_UNSELECTED, "3PetSetDestin", _petControl);
+		_setDestination.setup(MODE_SELECTED, "3PetSetDestin1", _petControl);
 		_val4.setup(MODE_UNSELECTED, "3PetStarCtrl", _petControl);
 		
 		_leds[0].setup(MODE_UNSELECTED, "LEDOff1", _petControl);
@@ -62,13 +63,13 @@ bool CPetNavHelmet::reset() {
 void CPetNavHelmet::draw(CScreenManager *screenManager) {
 	_petControl->drawSquares(screenManager, 2);
 
-	if (_field20C) {
+	if (_photoOn) {
 		_val2.draw(screenManager);
 	} else {
 		_val4.draw(screenManager);
 	}
 
-	_val3.draw(screenManager);
+	_setDestination.draw(screenManager);
 	drawButton(_field98, 0, screenManager);
 	drawButton(_field9C, 2, screenManager);
 	drawButton(_fieldA0, 4, screenManager);
@@ -76,11 +77,36 @@ void CPetNavHelmet::draw(CScreenManager *screenManager) {
 }
 
 bool CPetNavHelmet::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
-	return false;
+	if (!_petControl->_treeItem2)
+		return false;
+
+	if (_val1.MouseButtonDownMsg(msg->_mousePos)) {
+		CPETHelmetOnOffMsg helmetMsg;
+		helmetMsg.execute(_petControl->_treeItem2);
+	} else if (_val2.MouseButtonDownMsg(msg->_mousePos)) {
+		if (_field210) {
+			_photoOn = !_photoOn;
+			CPETPhotoOnOffMsg photoMsg;
+			photoMsg.execute(_petControl->_treeItem2);
+		} else {
+			_petControl->displayMessage("Please supply Galactic reference material.");
+		}
+	} else if (_setDestination.MouseButtonDownMsg(msg->_mousePos)) {
+		warning("TODO: CPetNavHelmet::MouseButtonDownMsg");
+	}
+
+	return true;
 }
 
 bool CPetNavHelmet::MouseButtonUpMsg(CMouseButtonUpMsg *msg) {
-	return false;
+	if (!_petControl->_treeItem2 || !_setDestination.MouseButtonUpMsg(msg->_mousePos))
+		return false;
+
+	if (_petControl) {
+		warning("TODO: CPetNavHelmet::MouseButtonUpMsg");
+	}
+
+	return true;
 }
 
 bool CPetNavHelmet::isValid(CPetControl *petControl) {
@@ -89,7 +115,7 @@ bool CPetNavHelmet::isValid(CPetControl *petControl) {
 
 void CPetNavHelmet::load(SimpleFile *file, int param) {
 	if (!param) {
-		_field20C = file->readNumber();
+		_photoOn = file->readNumber();
 		_field210 = file->readNumber();
 	}
 }
@@ -99,7 +125,7 @@ void CPetNavHelmet::postLoad() {
 }
 
 void CPetNavHelmet::save(SimpleFile *file, int indent) const {
-	file->writeNumberLine(_field20C, indent);
+	file->writeNumberLine(_photoOn, indent);
 	file->writeNumberLine(_field210, indent);
 }
 
@@ -133,7 +159,7 @@ bool CPetNavHelmet::setupControl(CPetControl *petControl) {
 		r = Rect(0, 0, 157, 51);
 		r.translate(224, 33);
 		r.translate(20, 350);
-		_val3.setBounds(r);
+		_setDestination.setBounds(r);
 
 		r = Rect(0, 0, 580, 15);
 		r.translate(32, 445);

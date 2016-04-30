@@ -62,7 +62,6 @@ private:
 	CPetControlSub7 _sub7;
 	CPetFrame _frame;
 	CString _activeNPCName;
-	CTreeItem *_treeItem2;
 	CString _string2;
 	CRoomItem *_hiddenRoom;
 	Rect _drawBounds;
@@ -114,6 +113,7 @@ protected:
 public:
 	PetArea _currentArea;
 	CTreeItem *_activeNPC;
+	CTreeItem *_treeItem2;
 public:
 	CLASSDEF
 	CPetControl();

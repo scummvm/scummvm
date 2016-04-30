@@ -33,7 +33,7 @@ class CPetNavHelmet : public CPetSection {
 private:
 	CPetGfxElement _val1;
 	CPetGfxElement _val2;
-	CPetGfxElement _val3;
+	CPetGfxElement _setDestination;
 	CPetGfxElement _val4;
 	int _field98;
 	int _field9C;
@@ -42,7 +42,7 @@ private:
 	Rect _rect1;
 	int _field18C;
 	CPetText _text;
-	int _field20C;
+	bool _photoOn;
 	int _field210;
 private:
 	/**
