@@ -1634,6 +1634,9 @@ void Wiz::drawWizImageEx(uint8 *dst, uint8 *dataPtr, uint8 *maskPtr, int dstPitc
 	case 5:
 		copy16BitWizImage(dst, wizd, dstPitch, dstType, dstw, dsth, srcx, srcy, srcw, srch, rect, flags, xmapPtr);
 		break;
+	case 9:
+		copyT14WizImage(dst, wizd, dstPitch, dstType, dstw, dsth, srcx, srcy, rect, conditionBits);
+		break;
 #endif
 	default:
 		error("drawWizImageEx: Unhandled wiz compression type %d", comp);
@@ -1757,6 +1760,46 @@ void Wiz::copyCompositeWizImage(uint8 *dst, uint8 *wizPtr, uint8 *compositeInfoB
 		drawWizImageEx(dst, nestedWizHeader, maskPtr, dstPitch, dstType, dstw, dsth, srcx + xPos, srcy + yPos, srcw, srch,
 			subState, clipBox, drawFlags, palPtr, transColor, bitDepth, xmapPtr, subConditionBits);
 	}
+}
+
+void Wiz::copyT14WizImage(uint8 *dst, uint8 *wizd, int dstPitch, int dstType,
+		int dstw, int dsth, int srcx, int srcy, const Common::Rect *clipBox, uint16 conditionBits) {
+
+	int rawROP = conditionBits & kWMSBRopMask;
+	int nROPParam = (conditionBits & kWMSBReservedBits) >> kWMSBRopParamRShift;
+
+	switch (rawROP) {
+	default:
+	case 1:
+		warning("T14: MMX_PREMUL_ALPHA_COPY");
+		break;
+
+	case 2:
+		warning("T14: MMX_ADDITIVE");
+		break;
+
+	case 3:
+		warning("T14: MMX_SUBTRACTIVE");
+		break;
+
+	case 4:
+		warning("T14: MMX_CONSTANT_ALPHA");
+		break;
+
+	case 5:
+		warning("T14: MMX_CHEAP_50_50");
+		break;
+
+	case 6:
+		warning("T14: COPY");
+		break;
+
+	case 7:
+		warning("T14: CHEAP_50_50");
+		break;
+	}
+
+	warning("T14: params %d", nROPParam);
 }
 
 struct PolygonDrawData {
