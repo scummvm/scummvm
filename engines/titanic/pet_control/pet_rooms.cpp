@@ -187,7 +187,7 @@ bool CPetRooms::setupControl(CPetControl *petControl) {
 void CPetRooms::resetHighlight() {
 	_glyphItem.set34(fn1());
 	_glyphs.resetHighlight();
-	_glyphItem.proc14();
+	_glyphItem.updateTooltip();
 	areaChanged(PET_ROOMS);
 }
 

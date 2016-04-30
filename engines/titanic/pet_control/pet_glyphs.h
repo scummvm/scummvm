@@ -118,7 +118,10 @@ public:
 	 */
 	virtual void draw2(CScreenManager *screenManager) {}
 
-	virtual void proc14();
+	/**
+	 * Updates the tooltip being shown for the glyph
+	 */
+	virtual void updateTooltip();
 
 	/**
 	 * Get the bounds for the glyph

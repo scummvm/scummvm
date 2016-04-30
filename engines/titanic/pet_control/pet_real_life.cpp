@@ -107,7 +107,7 @@ bool CPetRealLife::setupControl(CPetControl *petControl) {
 		addButton(new CPetSound());
 		addButton(new CPetQuit());
 
-		Rect textRect(0, 0, 32, 436);
+		Rect textRect(0, 0, 276, 30);
 		textRect.moveTo(32, 436);
 		_text.setBounds(textRect);
 		_text.setHasBorder(false);

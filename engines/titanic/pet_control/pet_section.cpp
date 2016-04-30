@@ -54,11 +54,13 @@ void CPetSection::proc27(int duration) {
 }
 
 void CPetSection::proc28() {
-	error("TODO");
+	CPetText *text = getText();
+	if (text)
+		text->setup();
 }
 
 void CPetSection::proc29() {
-	error("TODO");
+	_petControl->stopPetTimer(0);
 }
 
 void CPetSection::proc30() {

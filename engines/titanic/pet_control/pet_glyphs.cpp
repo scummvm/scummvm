@@ -38,8 +38,15 @@ void CPetGlyph::drawAt(CScreenManager *screenManager, const Point &pt, bool isHi
 	_element.translate(-pt.x, -pt.y);
 }
 
-void CPetGlyph::proc14() {
-	warning("TODO: CPetGlyph::proc14");
+void CPetGlyph::updateTooltip() {
+	CPetText *petText = getPetSection()->getText();
+	if (petText) {
+		petText->setColor(getPetSection()->getColor(0));
+		getTooltip(petText);
+
+		if (_owner)
+			getPetSection()->proc29();
+	}
 }
 
 bool CPetGlyph::contains(const Point &delta, const Point &pt) {
@@ -204,7 +211,7 @@ void CPetGlyphs::changeHighlight(int index) {
 				glyph->highlightCurrent(pt);
 			}
 
-			glyph->proc14();
+			glyph->updateTooltip();
 		}
 	} else if (_owner) {
 		_owner->proc28();
@@ -308,7 +315,7 @@ bool CPetGlyphs::MouseButtonDownMsg(const Point &pt) {
 			if (glyph) {
 				if (_highlightIndex == index) {
 					glyph->MouseButtonDownMsg(glyphRect);
-					glyph->proc14();
+					glyph->updateTooltip();
 				} else {
 					changeHighlight(index);
 					makePetDirty();
@@ -430,7 +437,7 @@ bool CPetGlyphs::highlighted14() {
 	if (_highlightIndex != -1) {
 		CPetGlyph *pet = getGlyph(_highlightIndex);
 		if (pet) {
-			pet->proc14();
+			pet->updateTooltip();
 			return true;
 		}
 	}
