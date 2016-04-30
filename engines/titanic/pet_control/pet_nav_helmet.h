@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef TITANIC_PET_CONTROL_SUB5_H
-#define TITANIC_PET_CONTROL_SUB5_H
+#ifndef TITANIC_PET_NAV_HELMET_H
+#define TITANIC_PET_NAV_HELMET_H
 
 #include "titanic/pet_control/pet_section.h"
 #include "titanic/pet_control/pet_text.h"
@@ -29,7 +29,7 @@
 
 namespace Titanic {
 
-class CPetControlSub5 : public CPetSection {
+class CPetNavHelmet : public CPetSection {
 private:
 	CPetGfxElement _val1;
 	CPetGfxElement _val2;
@@ -38,19 +38,51 @@ private:
 	int _field98;
 	int _field9C;
 	int _fieldA0;
-	CPetGfxElement _valArray1[6];
-	int _field17C;
+	CPetGfxElement _leds[6];
+	Rect _rect1;
 	int _field18C;
 	CPetText _text;
 	int _field20C;
 	int _field210;
-public:
-	CPetControlSub5();
+private:
+	/**
+	 * Setup the control
+	 */
+	bool setupControl(CPetControl *petControl);
 
 	/**
-	 * Save the data for the class to file
+	 * Draw a button
 	 */
-	virtual void save(SimpleFile *file, int indent) const;
+	void drawButton(int offset, int index, CScreenManager *screenManager);
+public:
+	CPetNavHelmet();
+
+	/**
+	 * Sets up the section
+	 */
+	virtual bool setup(CPetControl *petControl);
+	
+	/**
+	 * Reset the section
+	 */
+	virtual bool reset();
+
+	/**
+	 * Draw the section
+	 */
+	virtual void draw(CScreenManager *screenManager);
+	
+	/**
+	* Following are handlers for the various messages that the PET can
+	* pass onto the currently active section/area
+	*/
+	virtual bool MouseButtonDownMsg(CMouseButtonDownMsg *msg);
+	virtual bool MouseButtonUpMsg(CMouseButtonUpMsg *msg);
+
+	/**
+	 * Returns true if the object is in a valid state
+	 */
+	virtual bool isValid(CPetControl *petControl);
 
 	/**
 	 * Load the data for the class from file
@@ -58,11 +90,16 @@ public:
 	virtual void load(SimpleFile *file, int param);
 
 	/**
-	 * Returns true if the object is in a valid state
+	 * Called after a game has been loaded
 	 */
-	virtual bool isValid(CPetControl *petControl);
+	virtual void postLoad();
+
+	/**
+	 * Save the data for the class to file
+	 */
+	virtual void save(SimpleFile *file, int indent) const;
 };
 
 } // End of namespace Titanic
 
-#endif /* TITANIC_PET_CONTROL_SUB5_H */
+#endif /* TITANIC_PET_NAV_HELMET_H */

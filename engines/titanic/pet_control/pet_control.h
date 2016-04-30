@@ -31,10 +31,10 @@
 #include "titanic/pet_control/pet_conversations.h"
 #include "titanic/pet_control/pet_frame.h"
 #include "titanic/pet_control/pet_inventory.h"
+#include "titanic/pet_control/pet_nav_helmet.h"
 #include "titanic/pet_control/pet_real_life.h"
 #include "titanic/pet_control/pet_remote.h"
 #include "titanic/pet_control/pet_rooms.h"
-#include "titanic/pet_control/pet_control_sub5.h"
 #include "titanic/pet_control/pet_control_sub7.h"
 
 namespace Titanic {
@@ -55,10 +55,10 @@ private:
 	CPetSection *_sections[7];
 	CPetConversations _conversations;
 	CPetInventory _inventory;
+	CPetNavHelmet _navHelmet;
 	CPetRemote _remote;
 	CPetRooms _rooms;
 	CPetRealLife _realLife;
-	CPetControlSub5 _sub5;
 	CPetControlSub7 _sub7;
 	CPetFrame _frame;
 	CString _activeNPCName;

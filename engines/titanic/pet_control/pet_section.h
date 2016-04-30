@@ -30,7 +30,7 @@ namespace Titanic {
 
 enum PetArea {
 	PET_INVENTORY = 0, PET_CONVERSATION = 1, PET_REMOTE = 2,
-	PET_ROOMS = 3, PET_REAL_LIFE = 4, PET_5 = 5, PET_6 = 6
+	PET_ROOMS = 3, PET_REAL_LIFE = 4, PET_NAV_HELMET = 5, PET_6 = 6
 };
 
 class CPetControl;
