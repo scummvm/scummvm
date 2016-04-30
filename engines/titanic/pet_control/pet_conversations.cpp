@@ -138,6 +138,48 @@ void CPetConversations::leave() {
 	stopNPCTimer();
 }
 
+void CPetConversations::displayNPC(CGameObject *npc) {
+	if (npc) {
+		displayMessage(CString());
+		CString msg = "Talking to ";
+		CString name = npc->getName();
+		int id = 1;
+
+		if (name.contains("Doorbot")) {
+			msg += "the DoorBot";
+		} else if (name.contains("DeskBot")) {
+			id = 2;
+			msg += "the DeskBot";
+		} else if (name.contains("LiftBot")) {
+			id = 3;
+			msg += "a LiftBot";
+		} else if (name.contains("Parrot")) {
+			id = 4;
+			msg += "the Parrot";
+		} else if (name.contains("BarBot")) {
+			id = 5;
+			msg += "the BarBot";
+		} else if (name.contains("ChatterBot")) {
+			id = 6;
+			msg += "a ChatterBot";
+		} else if (name.contains("BellBot")) {
+			id = 7;
+			msg += "the BellBot";
+		} else if (name.contains("Maitre")) {
+			id = 8;
+			msg += "the Maitre d'Bot";
+		} else if (name.contains("Succubus") || name.contains("Sub")) {
+			id = 9;
+			msg += "a Succ-U-Bus";
+		} else {
+			msg += "Unknown";
+		}
+
+		_log.setNPC(1, id);
+		displayMessage(msg);
+	}
+}
+
 bool CPetConversations::setupControl(CPetControl *petControl) {
 	if (petControl) {
 		_petControl = petControl;

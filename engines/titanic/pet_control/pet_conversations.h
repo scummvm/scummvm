@@ -171,7 +171,12 @@ public:
 	/**
 	 * Called when a section is being left, to switch to another area
 	 */
-	virtual void leave();	
+	virtual void leave();
+
+	/**
+	 * Display a title for an NPC
+	 */
+	virtual void displayNPC(CGameObject *npc);
 };
 
 } // End of namespace Titanic

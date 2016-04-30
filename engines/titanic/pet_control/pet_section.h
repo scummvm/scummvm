@@ -153,7 +153,11 @@ public:
 
 	virtual CGameObject *getBackground(int index) const { return nullptr; }
 
-	virtual void proc32() {}
+	/**
+	 * Display a title for an NPC
+	 */
+	virtual void displayNPC(CGameObject *npc);
+
 	virtual void proc33() {}
 	virtual void proc34() {}
 	virtual void proc35() {}
