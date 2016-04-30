@@ -112,9 +112,11 @@ void CPetConversations::draw(CScreenManager *screenManager) {
 	_textInput.draw(screenManager);
 
 	if (_logChanged) {
-		int fontNumber = _log.getFontNumber();
-		if (fontNumber >= 0) {
-			warning("TODO conversation draw");
+		int startIndex = _log.getLinesStart();
+		if (startIndex >= 0) {
+			int npcNum = _log.getNPCNum(1, startIndex);
+			if (npcNum > 0 && npcNum < 10)
+				_npcNum = npcNum;
 		}
 
 		_logChanged = false;

@@ -43,7 +43,7 @@ private:
 	Rect _bounds;
 	int _maxCharsPerLine;
 	int _lineCount;
-	int _fontNumber1;
+	int _linesStart;
 	int _field3C;
 	int _field40;
 	int _field44;
@@ -53,7 +53,7 @@ private:
 	int _textR;
 	int _textG;
 	int _textB;
-	int _fontNumber2;
+	int _fontNumber;
 	int _field64;
 	int _field68;
 	int _field6C;
@@ -175,9 +175,9 @@ public:
 	void setNPC(int val1, int npcId);
 
 	/**
-	 * Get the font
+	 * Get the index into _lines where on-screen text starts
 	 */
-	int getFontNumber() const { return _fontNumber1; }
+	int getLinesStart() const { return _linesStart; }
 
 	/**
 	 * Scroll the text up
@@ -241,6 +241,8 @@ public:
 	 * Removes the cursor attached to the text
 	 */
 	void hideCursor();
+
+	int getNPCNum(uint npcId, uint startIndex);
 };
 
 } // End of namespace Titanic

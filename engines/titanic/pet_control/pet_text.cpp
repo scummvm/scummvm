@@ -26,10 +26,10 @@ namespace Titanic {
 
 CPetText::CPetText(uint count) :
 		_stringsMerged(false), _maxCharsPerLine(-1), _lineCount(0),
-		_fontNumber1(-1), _field3C(0), _field40(0), _field44(0),
+		_linesStart(-1), _field3C(0), _field40(0), _field44(0),
 		_backR(0xff), _backG(0xff), _backB(0xff), 
 		_textR(0), _textG(0), _textB(200),
-		_fontNumber2(0), _field64(0), _field68(0), _field6C(0),
+		_fontNumber(0), _field64(0), _field68(0), _field6C(0),
 		_hasBorder(true), _scrollTop(0), _textCursor(nullptr), _field7C(0) {
 	setupArrays(count);
 }
@@ -162,11 +162,11 @@ void CPetText::draw(CScreenManager *screenManager) {
 
 	tempRect = _bounds;
 	tempRect.grow(-2);
-	screenManager->setFontNumber(_fontNumber2);
+	int oldFontNumber = screenManager->setFontNumber(_fontNumber);
 
 	screenManager->writeString(SURFACE_BACKBUFFER, tempRect, _scrollTop, _lines, _textCursor);
 
-	screenManager->setFontNumber(_fontNumber1);
+	screenManager->setFontNumber(oldFontNumber);
 }
 
 void CPetText::mergeStrings() {
@@ -255,7 +255,7 @@ void CPetText::updateStr3(int lineNum) {
 
 int CPetText::getTextHeight(CScreenManager *screenManager) {
 	mergeStrings();
-	int oldFontNumber = screenManager->setFontNumber(_fontNumber2);
+	int oldFontNumber = screenManager->setFontNumber(_fontNumber);
 	int textHeight = screenManager->getTextBounds(_lines, _bounds.width());
 	screenManager->setFontNumber(oldFontNumber);
 
@@ -275,28 +275,28 @@ void CPetText::setNPC(int val1, int npcId) {
 }
 
 void CPetText::scrollUp(CScreenManager *screenManager) {
-	int oldFontNumber = screenManager->setFontNumber(_fontNumber2);
+	int oldFontNumber = screenManager->setFontNumber(_fontNumber);
 	_scrollTop -= screenManager->getFontHeight();
 	constrainScrollUp(screenManager);
 	screenManager->setFontNumber(oldFontNumber);
 }
 
 void CPetText::scrollDown(CScreenManager *screenManager) {
-	int oldFontNumber = screenManager->setFontNumber(_fontNumber2);
+	int oldFontNumber = screenManager->setFontNumber(_fontNumber);
 	_scrollTop += screenManager->getFontHeight();
 	constrainScrollDown(screenManager);
 	screenManager->setFontNumber(oldFontNumber);
 }
 
 void CPetText::scrollUpPage(CScreenManager *screenManager) {
-	int oldFontNumber = screenManager->setFontNumber(_fontNumber2);
+	int oldFontNumber = screenManager->setFontNumber(_fontNumber);
 	_scrollTop -= getPageHeight(screenManager);
 	constrainScrollUp(screenManager);
 	screenManager->setFontNumber(oldFontNumber);
 }
 
 void CPetText::scrollDownPage(CScreenManager *screenManager) {
-	int oldFontNumber = screenManager->setFontNumber(_fontNumber2);
+	int oldFontNumber = screenManager->setFontNumber(_fontNumber);
 	_scrollTop += getPageHeight(screenManager);
 	constrainScrollDown(screenManager);
 	screenManager->setFontNumber(oldFontNumber);
@@ -307,7 +307,7 @@ void CPetText::scrollToTop(CScreenManager *screenManager) {
 }
 
 void CPetText::scrollToBottom(CScreenManager *screenManager) {
-	int oldFontNumber = screenManager->setFontNumber(_fontNumber2);
+	int oldFontNumber = screenManager->setFontNumber(_fontNumber);
 	_scrollTop = _bounds.height();
 	constrainScrollDown(screenManager);
 	screenManager->setFontNumber(oldFontNumber);
@@ -330,7 +330,7 @@ void CPetText::constrainScrollDown(CScreenManager *screenManager) {
 
 int CPetText::getPageHeight(CScreenManager *screenManager) {
 	int textHeight = _bounds.height();
-	int oldFontNumber = screenManager->setFontNumber(_fontNumber2);
+	int oldFontNumber = screenManager->setFontNumber(_fontNumber);
 	int fontHeight = screenManager->getFontHeight();
 	screenManager->setFontNumber(oldFontNumber);
 
@@ -408,6 +408,31 @@ void CPetText::hideCursor() {
 		_textCursor->hide();
 		_textCursor = nullptr;
 	}
+}
+
+int CPetText::getNPCNum(uint npcId, uint startIndex) {
+	if (!_stringsMerged) {
+		mergeStrings();
+		if (!_stringsMerged)
+			return -1;
+	}
+
+	int size = _lines.size();
+	if (startIndex < 5 || startIndex >= size)
+		return -1;
+
+	// Loop through string
+	for (const char *strP = _lines.c_str(); size >= 5; ++strP, --size) {
+		if (*strP == 26) {
+			byte id = *(strP - 2);
+			if (id == npcId)
+				return *(strP - 1);
+		} else if (*strP == 27) {
+			strP += 4;
+		}
+	}
+	
+	return - 1;
 }
 
 } // End of namespace Titanic
