@@ -1643,6 +1643,8 @@ void Wiz::drawWizImageEx(uint8 *dst, uint8 *dataPtr, uint8 *maskPtr, int dstPitc
 	}
 }
 
+#ifdef USE_RGB_COLOR
+
 void Wiz::copyCompositeWizImage(uint8 *dst, uint8 *wizPtr, uint8 *compositeInfoBlockPtr, uint8 *maskPtr, int dstPitch, int dstType,
 		int dstw, int dsth, int srcx, int srcy, int srcw, int srch, int state, const Common::Rect *clipBox,
 		int flags, const uint8 *palPtr, int transColor, uint8 bitDepth, const uint8 *xmapPtr, uint16 conditionBits) {
@@ -1801,6 +1803,8 @@ void Wiz::copyT14WizImage(uint8 *dst, uint8 *wizd, int dstPitch, int dstType,
 
 	warning("T14: params %d", nROPParam);
 }
+
+#endif
 
 struct PolygonDrawData {
 	struct PolygonArea {
