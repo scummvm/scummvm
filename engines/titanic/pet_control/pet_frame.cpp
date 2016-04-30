@@ -126,7 +126,7 @@ bool CPetFrame::setPetControl(CPetControl *petControl) {
 
 void CPetFrame::setArea(PetArea newArea) {
 	resetArea();
-	if (newArea < PET_6)
+	if (newArea < PET_MESSAGE)
 		_modeButtons[PET_AREAS[newArea]].setMode(MODE_SELECTED);
 }
 

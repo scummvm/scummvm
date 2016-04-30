@@ -20,25 +20,38 @@
  *
  */
 
-#ifndef TITANIC_PET_CONTROL_SUB7_H
-#define TITANIC_PET_CONTROL_SUB7_H
-
-#include "titanic/pet_control/pet_section.h"
-#include "titanic/pet_control/pet_text.h"
+#include "titanic/pet_control/pet_message.h"
 
 namespace Titanic {
 
-class CPetControlSub7 : public CPetSection {
-private:
-	CPetText _text1;
-	CPetText _text2;
-public:
-	/**
-	 * Returns true if the object is in a valid state
-	 */
-	virtual bool isValid(CPetControl *petControl);
-};
+CPetMessage::CPetMessage() {
+	Rect rect1(0, 0, 580, 70);
+	rect1.translate(32, 368);
+	_message.setBounds(rect1);
+	_message.resize(50);
+	_message.setHasBorder(false);
+
+	Rect rect2(0, 0, 580, 15);
+	rect2.translate(32, 445);
+	_tooltip.setBounds(rect2);
+	_tooltip.setHasBorder(false);
+}
+
+bool CPetMessage::setup(CPetControl *petControl) {
+	if (petControl && setupControl(petControl))
+		return reset();
+	return false;
+}
+
+void CPetMessage::draw(CScreenManager *screenManager) {
+	_message.draw(screenManager);
+	_tooltip.draw(screenManager);
+}
+
+bool CPetMessage::setupControl(CPetControl *petControl) {
+	if (petControl)
+		_petControl = petControl;
+	return true;
+}
 
 } // End of namespace Titanic
-
-#endif /* TITANIC_PET_CONTROL_SUB7_H */

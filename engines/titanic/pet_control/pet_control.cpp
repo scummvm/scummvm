@@ -52,7 +52,7 @@ CPetControl::CPetControl() : CGameObject(),
 	_sections[PET_ROOMS] = &_rooms;
 	_sections[PET_REAL_LIFE] = &_realLife;
 	_sections[PET_NAV_HELMET] = &_navHelmet;
-	_sections[PET_6] = &_sub7;
+	_sections[PET_MESSAGE] = &_message;
 }
 
 void CPetControl::save(SimpleFile *file, int indent) const {
@@ -87,7 +87,7 @@ void CPetControl::setup() {
 	_inventory.setup(this);
 	_navHelmet.setup(this);
 	_realLife.setup(this);
-	_sub7.setup(this);
+	_message.setup(this);
 	_frame.setup(this);
 }
 
@@ -98,7 +98,7 @@ bool CPetControl::isValid() {
 		_inventory.isValid(this) &&
 		_navHelmet.isValid(this) &&
 		_realLife.isValid(this) &&
-		_sub7.isValid(this) &&
+		_message.isValid(this) &&
 		_frame.isValid(this);
 }
 
@@ -109,7 +109,7 @@ void CPetControl::loadAreas(SimpleFile *file, int param) {
 	_inventory.load(file, param);
 	_navHelmet.load(file, param);
 	_realLife.load(file, param);
-	_sub7.load(file, param);
+	_message.load(file, param);
 	_frame.load(file, param);
 }
 
@@ -120,7 +120,7 @@ void CPetControl::saveAreas(SimpleFile *file, int indent) const {
 	_inventory.save(file, indent);
 	_navHelmet.save(file, indent);
 	_realLife.save(file, indent);
-	_sub7.save(file, indent);
+	_message.save(file, indent);
 	_frame.save(file, indent);
 }
 
@@ -165,7 +165,7 @@ void CPetControl::loaded() {
 	_inventory.postLoad();
 	_navHelmet.postLoad();
 	_realLife.postLoad();
-	_sub7.postLoad();
+	_message.postLoad();
 	_frame.postLoad();
 }
 
