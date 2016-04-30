@@ -164,7 +164,7 @@ bool CVideoSurface::proc45() {
 
 /*------------------------------------------------------------------------*/
 
-byte OSVideoSurface::_map[0x400];
+byte OSVideoSurface::_palette[32][32];
 
 OSVideoSurface::OSVideoSurface(CScreenManager *screenManager, DirectDrawSurface *surface) :
 		CVideoSurface(screenManager) {
@@ -184,17 +184,16 @@ OSVideoSurface::OSVideoSurface(CScreenManager *screenManager, const CResourceKey
 	}
 }
 
-void OSVideoSurface::setupMap(byte map[0x400], byte val) {
-	byte *pBase = map;
+void OSVideoSurface::setupPalette(byte palette[32][32], byte val) {
 	int incr = 0;
 
-	for (uint idx1 = 0; idx1 < 32; ++idx1, pBase += 32) {
+	for (uint idx1 = 0; idx1 < 32; ++idx1) {
 		for (uint idx2 = 0, base = 0; idx2 < 32; ++idx2, base += incr) {
 			int64 v = 0x84210843;
 			v *= base;
 			v = ((v >> 32) + base) >> 4;
 			v += (v >> 31);
-			pBase[idx2] = v;
+			palette[idx1][idx2] = v;
 
 			if (val != 0xff) {
 				v &= 0xff;
@@ -205,7 +204,7 @@ void OSVideoSurface::setupMap(byte map[0x400], byte val) {
 
 					v >>= 7;
 					v += (v >> 31);
-					pBase[idx2] = v;
+					palette[idx1][idx2] = v;
 				}
 			}
 		}
@@ -377,16 +376,16 @@ void OSVideoSurface::changePixel(uint16 *pixelP, uint16 *color, byte srcVal, boo
 	byte r, g, b;
 	format.colorToRGB(*color, r, g, b);
 	if (remapFlag) {
-		r = _map[0x3e0 - srcVal * 32 + (r >> 2)] << 2;
-		g = _map[0x3e0 - srcVal * 32 + (g >> 2)] << 2;
-		b = _map[0x3e0 - srcVal * 32 + (b >> 2)] << 2;
+		r = _palette[31 - srcVal][r >> 2] << 2;
+		g = _palette[31 - srcVal][g >> 2] << 2;
+		b = _palette[31 - srcVal][b >> 2] << 2;
 	}
 
 	byte r2, g2, b2;
 	format.colorToRGB(*pixelP, r2, g2, b2);
-	r2 = _map[srcVal * 32 + (r2 >> 2)] << 2;
-	g2 = _map[srcVal * 32 + (g2 >> 2)] << 2;
-	b2 = _map[srcVal * 32 + (b2 >> 2)] << 2;
+	r2 = _palette[srcVal][r2 >> 2] << 2;
+	g2 = _palette[srcVal][g2 >> 2] << 2;
+	b2 = _palette[srcVal][b2 >> 2] << 2;
 
 	*pixelP = format.RGBToColor(r + r2, g + g2, b + b2);
 }

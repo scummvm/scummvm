@@ -221,17 +221,17 @@ public:
 class OSVideoSurface : public CVideoSurface {
 	friend class OSMovie;
 private:
-	static byte _map[0x400];
+	static byte _palette[32][32];
 
 	/**
-	 * Setup the color mapping table
+	 * Setup the shading palettes
 	 */
-	static void setupMap(byte map[0x400], byte val);
+	static void setupPalette(byte palette[32][32], byte val);
 public:
 	/**
 	 * Setup statics
 	 */
-	static void setup() { setupMap(_map, 0xff); }
+	static void setup() { setupPalette(_palette, 0xff); }
 public:
 	OSVideoSurface(CScreenManager *screenManager, DirectDrawSurface *surface);
 	OSVideoSurface(CScreenManager *screenManager, const CResourceKey &key, bool flag = false);
