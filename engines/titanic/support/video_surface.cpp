@@ -362,24 +362,25 @@ uint16 OSVideoSurface::getPixel(const Common::Point &pt) {
 
 void OSVideoSurface::changePixel(uint16 *pixelP, uint16 *color, byte srcVal, bool remapFlag) {
 	assert(getPixelDepth() == 2);
-	const Graphics::PixelFormat &format = _ddSurface->getFormat();
-	
+	const Graphics::PixelFormat &destFormat = _ddSurface->getFormat();
+	const Graphics::PixelFormat srcFormat(2, 5, 5, 5, 0, 10, 5, 0, 0);
+
 	// Get the color
 	byte r, g, b;
-	format.colorToRGB(*color, r, g, b);
+	srcFormat.colorToRGB(*color, r, g, b);
 	if (remapFlag) {
-		r = _palette1[31 - srcVal][r >> 2] << 2;
-		g = _palette1[31 - srcVal][g >> 2] << 2;
-		b = _palette1[31 - srcVal][b >> 2] << 2;
+		r = _palette1[31 - srcVal][r >> 3] << 3;
+		g = _palette1[31 - srcVal][g >> 3] << 3;
+		b = _palette1[31 - srcVal][b >> 3] << 3;
 	}
 
 	byte r2, g2, b2;
-	format.colorToRGB(*pixelP, r2, g2, b2);
-	r2 = _palette1[srcVal][r2 >> 2] << 2;
-	g2 = _palette1[srcVal][g2 >> 2] << 2;
-	b2 = _palette1[srcVal][b2 >> 2] << 2;
+	destFormat.colorToRGB(*pixelP, r2, g2, b2);
+	r2 = _palette1[srcVal][r2 >> 3] << 3;
+	g2 = _palette1[srcVal][g2 >> 3] << 3;
+	b2 = _palette1[srcVal][b2 >> 3] << 3;
 
-	*pixelP = format.RGBToColor(r + r2, g + g2, b + b2);
+	*pixelP = destFormat.RGBToColor(r + r2, g + g2, b + b2);
 }
 
 void OSVideoSurface::shiftColors() {
