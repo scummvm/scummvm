@@ -2565,9 +2565,14 @@ bool Console::cmdVMVars(int argc, const char **argv) {
 	case 1:
 	case 2:
 	case 3: {
-		// for global, local, temp and param, we need an index
 		if (argc < 3) {
-			debugPrintf("Variable number must be specified for requested type\n");
+			for (int i = 0; i < s->variablesMax[varType]; ++i) {
+				curValue = &s->variables[varType][i];
+				debugPrintf("%s var %d == %04x:%04x", varNames[varType], i, PRINT_REG(*curValue));
+				printBasicVarInfo(*curValue);
+				debugPrintf("\n");
+			}
+
 			return true;
 		}
 		if (argc > 4) {
