@@ -1456,9 +1456,6 @@ uint8 *Wiz::drawWizImage(int resNum, int state, int maskNum, int maskState, int 
 	uint32 height = READ_LE_UINT32(wizh + 0x8);
 	debug(3, "wiz_header.comp = %d wiz_header.w = %d wiz_header.h = %d", comp, width, height);
 
-	uint8 *wizd = _vm->findWrappedBlock(MKTAG('W','I','Z','D'), dataPtr, state, 0);
-	assert(wizd);
-
 	uint8 *mask = NULL;
 	if (maskNum) {
 		uint8 *maskPtr = _vm->getResourceAddress(rtImage, maskNum);
@@ -1574,41 +1571,8 @@ uint8 *Wiz::drawWizImage(int resNum, int state, int maskNum, int maskState, int 
 		transColor = (trns == NULL) ? _vm->VAR(_vm->VAR_WIZ_TCOLOR) : -1;
 	}
 
-	switch (comp) {
-	case 0:
-		copyRawWizImage(dst, wizd, dstPitch, dstType, cw, ch, x1, y1, width, height, &rScreen, flags, palPtr, transColor, _vm->_bytesPerPixel);
-		break;
-	case 1:
-		if (flags & 0x80) {
-			dst = _vm->getMaskBuffer(0, 0, 1);
-			dstPitch /= _vm->_bytesPerPixel;
-			copyWizImageWithMask(dst, wizd, dstPitch, cw, ch, x1, y1, width, height, &rScreen, 0, 2);
-		} else if (flags & 0x100) {
-			dst = _vm->getMaskBuffer(0, 0, 1);
-			dstPitch /= _vm->_bytesPerPixel;
-			copyWizImageWithMask(dst, wizd, dstPitch, cw, ch, x1, y1, width, height, &rScreen, 0, 1);
-		} else {
-			copyWizImage(dst, wizd, dstPitch, dstType, cw, ch, x1, y1, width, height, &rScreen, flags, palPtr, xmapPtr, _vm->_bytesPerPixel);
-		}
-		break;
-#ifdef USE_RGB_COLOR
-	case 2:
-		if (maskNum) {
-			copyMaskWizImage(dst, wizd, mask, dstPitch, dstType, cw, ch, x1, y1, width, height, &rScreen, flags, palPtr);
-		} else {
-			copyRaw16BitWizImage(dst, wizd, dstPitch, dstType, cw, ch, x1, y1, width, height, &rScreen, flags, transColor);
-		}
-		break;
-	case 4:
-		// TODO: Unknown image type
-		break;
-	case 5:
-		copy16BitWizImage(dst, wizd, dstPitch, dstType, cw, ch, x1, y1, width, height, &rScreen, flags, xmapPtr);
-		break;
-#endif
-	default:
-		error("drawWizImage: Unhandled wiz compression type %d", comp);
-	}
+	drawWizImageEx(dst, dataPtr, mask, dstPitch, dstType, cw, ch, x1, y1, width, height,
+		state, &rScreen, flags, palPtr, transColor, _vm->_bytesPerPixel, xmapPtr, conditionBits);
 
 	if (!(flags & kWIFBlitToMemBuffer) && dstResNum == 0) {
 		Common::Rect rImage(x1, y1, x1 + width, y1 + height);
@@ -1625,6 +1589,57 @@ uint8 *Wiz::drawWizImage(int resNum, int state, int maskNum, int maskState, int 
 
 	return dst;
 }
+
+void Wiz::drawWizImageEx(uint8 *dst, uint8 *dataPtr, uint8 *maskPtr, int dstPitch, int dstType,
+		int dstw, int dsth, int srcx, int srcy, int srcw, int srch, int state, const Common::Rect *rect,
+		int flags, const uint8 *palPtr, int transColor, uint8 bitDepth, const uint8 *xmapPtr, uint16 conditionBits) {
+	uint8 *wizh = _vm->findWrappedBlock(MKTAG('W','I','Z','H'), dataPtr, state, 0);
+	assert(wizh);
+	uint32 comp   = READ_LE_UINT32(wizh + 0x0);
+	uint32 width  = READ_LE_UINT32(wizh + 0x4);
+	uint32 height = READ_LE_UINT32(wizh + 0x8);
+	debug(3, "wiz_header.comp = %d wiz_header.w = %d wiz_header.h = %d", comp, width, height);
+
+	uint8 *wizd = _vm->findWrappedBlock(MKTAG('W','I','Z','D'), dataPtr, state, 0);
+	assert(wizd);
+
+	switch (comp) {
+	case 0:
+		copyRawWizImage(dst, wizd, dstPitch, dstType, dstw, dsth, srcx, srcy, srcw, srch, rect, flags, palPtr, transColor, bitDepth);
+		break;
+	case 1:
+		if (flags & kWIFZPlaneOn) {
+			dst = _vm->getMaskBuffer(0, 0, 1);
+			dstPitch /= _vm->_bytesPerPixel;
+			copyWizImageWithMask(dst, wizd, dstPitch, dstw, dsth, srcx, srcy, srcw, srch, rect, 0, 2);
+		} else if (flags & kWIFZPlaneOff) {
+			dst = _vm->getMaskBuffer(0, 0, 1);
+			dstPitch /= _vm->_bytesPerPixel;
+			copyWizImageWithMask(dst, wizd, dstPitch, dstw, dsth, srcx, srcy, srcw, srch, rect, 0, 1);
+		} else {
+			copyWizImage(dst, wizd, dstPitch, dstType, dstw, dsth, srcx, srcy, srcw, srch, rect, flags, palPtr, xmapPtr, bitDepth);
+		}
+		break;
+#ifdef USE_RGB_COLOR
+	case 2:
+		if (maskPtr) {
+			copyMaskWizImage(dst, wizd, maskPtr, dstPitch, dstType, dstw, dsth, srcx, srcy, srcw, srch, rect, flags, palPtr);
+		} else {
+			copyRaw16BitWizImage(dst, wizd, dstPitch, dstType, dstw, dsth, srcx, srcy, srcw, srch, rect, flags, transColor);
+		}
+		break;
+	case 4:
+		// TODO: Unknown image type
+		break;
+	case 5:
+		copy16BitWizImage(dst, wizd, dstPitch, dstType, dstw, dsth, srcx, srcy, srcw, srch, rect, flags, xmapPtr);
+		break;
+#endif
+	default:
+		error("drawWizImageEx: Unhandled wiz compression type %d", comp);
+	}
+}
+
 
 struct PolygonDrawData {
 	struct PolygonArea {

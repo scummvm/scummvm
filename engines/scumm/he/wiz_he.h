@@ -117,6 +117,9 @@ enum WizImageFlags {
 	kWIFMarkBufferDirty = 0x10,
 	kWIFBlitToMemBuffer = 0x20,
 	kWIFIsPolygon = 0x40,
+	kWIFZPlaneOn = 0x80,
+	kWIFZPlaneOff = 0x100,
+	kWIFUseShadow = 0x200,
 	kWIFFlipX = 0x400,
 	kWIFFlipY = 0x800
 };
@@ -212,6 +215,7 @@ public:
 	void processWizImage(const WizParameters *params);
 
 	uint8 *drawWizImage(int resNum, int state, int maskNum, int maskState, int x1, int y1, int zorder, int shadow, int zbuffer, const Common::Rect *clipBox, int flags, int dstResNum, const uint8 *palPtr, uint16 conditionBits);
+	void drawWizImageEx(uint8 *dst, uint8 *src, uint8 *mask, int dstPitch, int dstType, int dstw, int dsth, int srcx, int srcy, int srcw, int srch, int state, const Common::Rect *rect, int flags, const uint8 *palPtr, int transColor, uint8 bitDepth, const uint8 *xmapPtr, uint16 conditionBits);
 	void drawWizPolygon(int resNum, int state, int id, int flags, int shadow, int dstResNum, int palette);
 	void drawWizComplexPolygon(int resNum, int state, int po_x, int po_y, int shadow, int angle, int zoom, const Common::Rect *r, int flags, int dstResNum, int palette);
 	void drawWizPolygonTransform(int resNum, int state, Common::Point *wp, int flags, int shadow, int dstResNum, int palette);
