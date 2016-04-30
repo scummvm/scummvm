@@ -422,7 +422,7 @@ private:
 	int _nextPhoneSequenceId;
 	int _currPhoneSequenceId;
 
-	void gnapCarryGarbageCanTo(int x, int y, int animationIndex, int argC, int a5);
+	void gnapCarryGarbageCanTo(int a5);
 	void putDownGarbageCan(int animationIndex);
 	void platEndPhoning(bool platFl);
 	void closeHydrantValve();

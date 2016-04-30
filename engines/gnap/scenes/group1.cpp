@@ -3158,9 +3158,7 @@ void Scene18::updateHotspots() {
 	_vm->_hotspotsCount = 11;
 }
 
-void Scene18::gnapCarryGarbageCanTo(int x, int y, int animationIndex, int argC, int a5) {
-	// CHECKME: (x, y) is always set to (-1, -1)
-
+void Scene18::gnapCarryGarbageCanTo(int a5) {
 	// TODO Cleanup
 	static const int kSequenceIds[] = {
 		0x203, 0x204
@@ -3169,12 +3167,10 @@ void Scene18::gnapCarryGarbageCanTo(int x, int y, int animationIndex, int argC, 
 	GameSys& gameSys = *_vm->_gameSys;
 
 	int gnapSeqId, gnapId, gnapDatNum, gnapGridX;
-	int clippedX, v12, v5, v10, v11, direction;
+	int v12, v5, v10, v11, direction;
 
-	if (x >= 0)
-		clippedX = x;
-	else
-		clippedX = (_vm->_leftClickMouseX - _vm->_gridMinX + 37) / 75;
+	int clippedX = (_vm->_leftClickMouseX - _vm->_gridMinX + 37) / 75;
+
 	if (clippedX >= _vm->_gnapX)
 		v10 = clippedX - 1;
 	else
@@ -3233,16 +3229,11 @@ void Scene18::gnapCarryGarbageCanTo(int x, int y, int animationIndex, int argC, 
 		} while (v12 != gnapGridX);
 	}
 
-	if (argC >= 0) {
-		_vm->_gnapSequenceId = ridToEntryIndex(argC);
-		_vm->_gnapSequenceDatNum = ridToDatIndex(argC);
-	} else {
-		if (direction == 1)
-			_vm->_gnapSequenceId = 0x20A;
-		else
-			_vm->_gnapSequenceId = 0x209;
-		_vm->_gnapSequenceDatNum = 0;
-	}
+	if (direction == 1)
+		_vm->_gnapSequenceId = 0x20A;
+	else
+		_vm->_gnapSequenceId = 0x209;
+	_vm->_gnapSequenceDatNum = 0;
 
 	if (direction == 1)
 		_vm->_gnapIdleFacing = kDirBottomRight;
@@ -3251,9 +3242,7 @@ void Scene18::gnapCarryGarbageCanTo(int x, int y, int animationIndex, int argC, 
 
 	_vm->_gnapId = 20 * _vm->_gnapY + 1;
 
-	if (animationIndex >= 0)
-		gameSys.setAnimation(makeRid(_vm->_gnapSequenceDatNum, _vm->_gnapSequenceId), _vm->_gnapId, animationIndex);
-
+	gameSys.setAnimation(makeRid(_vm->_gnapSequenceDatNum, _vm->_gnapSequenceId), _vm->_gnapId, 0);
 	gameSys.insertSequence(makeRid(_vm->_gnapSequenceDatNum, _vm->_gnapSequenceId), _vm->_gnapId,
 		gnapSeqId | (gnapDatNum << 16), gnapId,
 		kSeqScale | kSeqSyncWait, 0, 75 * gnapGridX - _vm->_gnapGridX, 48 * _vm->_gnapY - _vm->_gnapGridY);
@@ -3455,7 +3444,7 @@ void Scene18::run() {
 		case kHS18Platypus:
 			if (_vm->_gnapActionStatus < 0) {
 				if (_vm->isFlag(kGFPlatyPussDisguised)) {
-					gnapCarryGarbageCanTo(-1, -1, 0, -1, -1);
+					gnapCarryGarbageCanTo(-1);
 					putDownGarbageCan(0);
 				}
 				if (_vm->_grabCursorSpriteIndex == kItemJoint) {
@@ -3488,7 +3477,7 @@ void Scene18::run() {
 				_vm->_sceneWaiting = false;
 			} else if (_vm->_gnapActionStatus < 0) {
 				if (_vm->isFlag(kGFPlatyPussDisguised)) {
-					gnapCarryGarbageCanTo(-1, -1, 0, -1, -1);
+					gnapCarryGarbageCanTo(-1);
 					putDownGarbageCan(0);
 				}
 				if (_vm->_grabCursorSpriteIndex >= 0) {
@@ -3560,32 +3549,32 @@ void Scene18::run() {
 				if (_vm->isFlag(kGFPlatyPussDisguised)) {
 					// While carrying garbage can
 					if (_vm->_grabCursorSpriteIndex >= 0) {
-						gnapCarryGarbageCanTo(-1, -1, 0, -1, -1);
+						gnapCarryGarbageCanTo(-1);
 						putDownGarbageCan(0);
 						_vm->playGnapShowItem(_vm->_grabCursorSpriteIndex, 0, 0);
 					} else {
 						switch (_vm->_verbCursor) {
 						case LOOK_CURSOR:
-							gnapCarryGarbageCanTo(-1, -1, 0, -1, -1);
+							gnapCarryGarbageCanTo(-1);
 							putDownGarbageCan(0);
 							_vm->playGnapScratchingHead(0, 0);
 							break;
 						case GRAB_CURSOR:
 							if (_vm->isFlag(kGFTruckFilledWithGas)) {
-								gnapCarryGarbageCanTo(-1, -1, 0, -1, 2);
+								gnapCarryGarbageCanTo(2);
 								_vm->_gnapActionStatus = kAS18PutGarbageCanOnRunningHydrant;
 							} else if (!_vm->isFlag(kGFBarnPadlockOpen)) {
-								gnapCarryGarbageCanTo(-1, -1, 0, -1, 2);
+								gnapCarryGarbageCanTo(2);
 								_vm->_gnapActionStatus = kAS18PutGarbageCanOnHydrant;
 							} else {
-								gnapCarryGarbageCanTo(-1, -1, 0, -1, -1);
+								gnapCarryGarbageCanTo(-1);
 								putDownGarbageCan(0);
 								_vm->playGnapImpossible(0, 0);
 							}
 							break;
 						case TALK_CURSOR:
 						case PLAT_CURSOR:
-							gnapCarryGarbageCanTo(-1, -1, 0, -1, -1);
+							gnapCarryGarbageCanTo(-1);
 							putDownGarbageCan(0);
 							_vm->playGnapImpossible(0, 0);
 							break;
@@ -3631,7 +3620,7 @@ void Scene18::run() {
 					}
 				} else {
 					if (_vm->isFlag(kGFPlatyPussDisguised)) {
-						gnapCarryGarbageCanTo(-1, -1, 0, -1, -1);
+						gnapCarryGarbageCanTo(-1);
 						putDownGarbageCan(0);
 					}
 					if (_vm->_grabCursorSpriteIndex == kItemWrench) {
@@ -3669,7 +3658,7 @@ void Scene18::run() {
 		case kHS18ExitToyStore:
 			if (_vm->_gnapActionStatus < 0) {
 				if (_vm->isFlag(kGFPlatyPussDisguised)) {
-					gnapCarryGarbageCanTo(-1, -1, 0, -1, -1);
+					gnapCarryGarbageCanTo(-1);
 					putDownGarbageCan(0);
 				}
 				if (_vm->isFlag(kGFPictureTaken)) {
@@ -3688,7 +3677,7 @@ void Scene18::run() {
 		case kHS18ExitPhoneBooth:
 			if (_vm->_gnapActionStatus < 0) {
 				if (_vm->isFlag(kGFPlatyPussDisguised)) {
-					gnapCarryGarbageCanTo(-1, -1, 0, -1, -1);
+					gnapCarryGarbageCanTo(-1);
 					putDownGarbageCan(0);
 				}
 				closeHydrantValve();
@@ -3706,7 +3695,7 @@ void Scene18::run() {
 		case kHS18ExitGrubCity:
 			if (_vm->_gnapActionStatus < 0) {
 				if (_vm->isFlag(kGFPlatyPussDisguised)) {
-					gnapCarryGarbageCanTo(-1, -1, 0, -1, -1);
+					gnapCarryGarbageCanTo(-1);
 					putDownGarbageCan(0);
 				}
 				closeHydrantValve();
@@ -3727,7 +3716,7 @@ void Scene18::run() {
 		case kHS18WalkArea2:
 			if (_vm->_gnapActionStatus < 0) {
 				if (_vm->isFlag(kGFPlatyPussDisguised)) {
-					gnapCarryGarbageCanTo(-1, -1, 0, -1, -1);
+					gnapCarryGarbageCanTo(-1);
 					putDownGarbageCan(0);
 				} else {
 					_vm->gnapWalkTo(-1, -1, -1, -1, 1);
@@ -3739,7 +3728,7 @@ void Scene18::run() {
 		default:
 			if (_vm->_gnapActionStatus != kAS18StandingOnHydrant && _vm->_mouseClickState._left) {
 				if (_vm->isFlag(kGFPlatyPussDisguised)) {
-					gnapCarryGarbageCanTo(-1, -1, 0, -1, -1);
+					gnapCarryGarbageCanTo(-1);
 					putDownGarbageCan(0);
 				} else {
 					_vm->gnapWalkTo(-1, -1, -1, -1, 1);
