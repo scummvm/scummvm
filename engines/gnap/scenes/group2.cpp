@@ -54,12 +54,14 @@ void Scene20::updateHotspots() {
 }
 
 void Scene20::updateAnimationsCb() {
-	if (_vm->_gameSys->getAnimationStatus(2) == 2) {
+	GameSys& gameSys = *_vm->_gameSys;
+
+	if (gameSys.getAnimationStatus(2) == 2) {
 		switch (_nextStonerGuySequenceId) {
 		case 0x16B:
 			if (!_vm->_timers[4]) {
 				_stonerGuyShowingJoint = false;
-				_vm->_gameSys->insertSequence(0x16B, 21, _currStonerGuySequenceId, 21, kSeqSyncWait, 0, 0, 0);
+				gameSys.insertSequence(0x16B, 21, _currStonerGuySequenceId, 21, kSeqSyncWait, 0, 0, 0);
 				_currStonerGuySequenceId = 0x16B;
 				_nextStonerGuySequenceId = -1;
 			}
@@ -68,8 +70,8 @@ void Scene20::updateAnimationsCb() {
 			// Grab joint
 			_vm->playGnapPullOutDevice(4, 4);
 			_vm->playGnapUseDevice(0, 0);
-			_vm->_gameSys->setAnimation(0x16A, 21, 0);
-			_vm->_gameSys->insertSequence(0x16A, 21, _currStonerGuySequenceId, 21, kSeqSyncWait, 0, 0, 0);
+			gameSys.setAnimation(0x16A, 21, 0);
+			gameSys.insertSequence(0x16A, 21, _currStonerGuySequenceId, 21, kSeqSyncWait, 0, 0, 0);
 			_currStonerGuySequenceId = 0x16A;
 			_nextStonerGuySequenceId = -1;
 			_vm->invAdd(kItemJoint);
@@ -78,25 +80,25 @@ void Scene20::updateAnimationsCb() {
 			_vm->_gnapActionStatus = kAS20GrabJointDone;
 			break;
 		case 0x16E:
-			_vm->_gameSys->setAnimation(0x16E, 21, 2);
-			_vm->_gameSys->insertSequence(0x16E, 21, _currStonerGuySequenceId, 21, kSeqSyncWait, 0, 0, 0);
+			gameSys.setAnimation(0x16E, 21, 2);
+			gameSys.insertSequence(0x16E, 21, _currStonerGuySequenceId, 21, kSeqSyncWait, 0, 0, 0);
 			_currStonerGuySequenceId = 0x16E;
 			_nextStonerGuySequenceId = -1;
 			_nextGroceryStoreGuySequenceId = 0x175;
 			break;
 		case 0x16D:
-			_vm->_gameSys->setAnimation(_nextStonerGuySequenceId, 21, 2);
-			_vm->_gameSys->setAnimation(_nextStonerGuySequenceId, 21, 0);
-			_vm->_gameSys->insertSequence(_nextStonerGuySequenceId, 21, _currStonerGuySequenceId, 21, kSeqSyncWait, 0, 0, 0);
+			gameSys.setAnimation(_nextStonerGuySequenceId, 21, 2);
+			gameSys.setAnimation(_nextStonerGuySequenceId, 21, 0);
+			gameSys.insertSequence(_nextStonerGuySequenceId, 21, _currStonerGuySequenceId, 21, kSeqSyncWait, 0, 0, 0);
 			_currStonerGuySequenceId = _nextStonerGuySequenceId;
 			_nextStonerGuySequenceId = -1;
 			_vm->_gnapActionStatus = kAS20ActionDone;
 			break;
 		case 0x16F:
-			_vm->_gameSys->setAnimation(_nextStonerGuySequenceId, 21, 2);
-			_vm->_gameSys->setAnimation(0x17A, 20, 3);
-			_vm->_gameSys->insertSequence(_nextStonerGuySequenceId, 21, _currStonerGuySequenceId, 21, kSeqSyncWait, 0, 0, 0);
-			_vm->_gameSys->insertSequence(0x17A, 20, _currGroceryStoreGuySequenceId, 20, kSeqSyncWait, 0, 0, 0);
+			gameSys.setAnimation(_nextStonerGuySequenceId, 21, 2);
+			gameSys.setAnimation(0x17A, 20, 3);
+			gameSys.insertSequence(_nextStonerGuySequenceId, 21, _currStonerGuySequenceId, 21, kSeqSyncWait, 0, 0, 0);
+			gameSys.insertSequence(0x17A, 20, _currGroceryStoreGuySequenceId, 20, kSeqSyncWait, 0, 0, 0);
 			_currGroceryStoreGuySequenceId = 0x17A;
 			_nextGroceryStoreGuySequenceId = -1;
 			_currStonerGuySequenceId = _nextStonerGuySequenceId;
@@ -118,10 +120,10 @@ void Scene20::updateAnimationsCb() {
 				_nextStonerGuySequenceId = 0x171;
 				break;
 			}
-			_vm->_gameSys->insertSequence(_nextStonerGuySequenceId, 21, _currStonerGuySequenceId, 21, kSeqSyncWait, 0, 0, 0);
-			_vm->_gameSys->insertSequence(0x17C, 20, _currGroceryStoreGuySequenceId, 20, kSeqSyncWait, 0, 0, 0);
-			_vm->_gameSys->setAnimation(0x17C, 20, 3);
-			_vm->_gameSys->setAnimation(_nextStonerGuySequenceId, 21, 2);
+			gameSys.insertSequence(_nextStonerGuySequenceId, 21, _currStonerGuySequenceId, 21, kSeqSyncWait, 0, 0, 0);
+			gameSys.insertSequence(0x17C, 20, _currGroceryStoreGuySequenceId, 20, kSeqSyncWait, 0, 0, 0);
+			gameSys.setAnimation(0x17C, 20, 3);
+			gameSys.setAnimation(_nextStonerGuySequenceId, 21, 2);
 			_currGroceryStoreGuySequenceId = 0x17C;
 			_nextGroceryStoreGuySequenceId = -1;
 			_currStonerGuySequenceId = _nextStonerGuySequenceId;
@@ -129,8 +131,8 @@ void Scene20::updateAnimationsCb() {
 			break;
 		default:
 			_nextStonerGuySequenceId = 0x16C;
-			_vm->_gameSys->setAnimation(0x16C, 21, 2);
-			_vm->_gameSys->insertSequence(_nextStonerGuySequenceId, 21, _currStonerGuySequenceId, 21, kSeqSyncWait, 0, 0, 0);
+			gameSys.setAnimation(0x16C, 21, 2);
+			gameSys.insertSequence(_nextStonerGuySequenceId, 21, _currStonerGuySequenceId, 21, kSeqSyncWait, 0, 0, 0);
 			_currStonerGuySequenceId = _nextStonerGuySequenceId;
 			_nextStonerGuySequenceId = -1;
 			break;
@@ -155,6 +157,8 @@ void Scene20::stopSounds() {
 }
 
 void Scene20::run() {
+	GameSys& gameSys = *_vm->_gameSys;
+
 	_vm->playSound(0x10940, true);
 	_vm->startSoundTimerA(8);
 
@@ -175,30 +179,30 @@ void Scene20::run() {
 	}
 
 	_nextStonerGuySequenceId = -1;
-	_vm->_gameSys->setAnimation(_currStonerGuySequenceId, 21, 2);
-	_vm->_gameSys->insertSequence(_currStonerGuySequenceId, 21, 0, 0, kSeqNone, 0, 0, 0);
+	gameSys.setAnimation(_currStonerGuySequenceId, 21, 2);
+	gameSys.insertSequence(_currStonerGuySequenceId, 21, 0, 0, kSeqNone, 0, 0, 0);
 
 	_vm->_timers[6] = _vm->getRandom(20) + 30;
 
 	_currGroceryStoreGuySequenceId = 0x17C;
 	_nextGroceryStoreGuySequenceId = -1;
-	_vm->_gameSys->setAnimation(0x17C, 20, 3);
-	_vm->_gameSys->insertSequence(0x17C, 20, 0, 0, kSeqNone, 0, 0, 0);
+	gameSys.setAnimation(0x17C, 20, 3);
+	gameSys.insertSequence(0x17C, 20, 0, 0, kSeqNone, 0, 0, 0);
 
 	_vm->_timers[5] = _vm->getRandom(50) + 130;
 	if (_vm->isFlag(kGFGroceryStoreHatTaken))
-		_vm->_gameSys->insertSequence(0x17F, 20, 0, 0, kSeqNone, 0, 0, 0);
+		gameSys.insertSequence(0x17F, 20, 0, 0, kSeqNone, 0, 0, 0);
 	else
-		_vm->_gameSys->insertSequence(0x174, 20, 0, 0, kSeqNone, 0, 0, 0);
+		gameSys.insertSequence(0x174, 20, 0, 0, kSeqNone, 0, 0, 0);
 
 	_vm->queueInsertDeviceIcon();
 
 	if (_vm->isFlag(kGFSceneFlag1)) {
 		_vm->clearFlag(kGFSceneFlag1);
 		_vm->endSceneInit();
-		_vm->_gameSys->setAnimation(0x182, 140, 0);
-		_vm->_gameSys->insertSequence(0x182, 140, 0, 0, kSeqNone, 0, 0, 0);
-		while (_vm->_gameSys->getAnimationStatus(0) != 2) {
+		gameSys.setAnimation(0x182, 140, 0);
+		gameSys.insertSequence(0x182, 140, 0, 0, kSeqNone, 0, 0, 0);
+		while (gameSys.getAnimationStatus(0) != 2) {
 			// checkGameAppStatus();
 			_vm->gameUpdateTick();
 		}
@@ -484,13 +488,13 @@ void Scene20::run() {
 				if (_vm->_gnapActionStatus < 0 && _vm->_platypusActionStatus < 0) {
 					switch (_vm->getRandom(3)) {
 					case 0:
-						_vm->_gameSys->insertSequence(0x183, 253, 0, 0, kSeqNone, 0, 0, 0);
+						gameSys.insertSequence(0x183, 253, 0, 0, kSeqNone, 0, 0, 0);
 						break;
 					case 1:
-						_vm->_gameSys->insertSequence(0x184, 253, 0, 0, kSeqNone, 0, 0, 0);
+						gameSys.insertSequence(0x184, 253, 0, 0, kSeqNone, 0, 0, 0);
 						break;
 					case 2:
-						_vm->_gameSys->insertSequence(0x185, 253, 0, 0, kSeqNone, 0, 0, 0);
+						gameSys.insertSequence(0x185, 253, 0, 0, kSeqNone, 0, 0, 0);
 						break;
 					}
 				}
@@ -510,17 +514,19 @@ void Scene20::run() {
 }
 
 void Scene20::updateAnimations() {
-	if (_vm->_gameSys->getAnimationStatus(0) == 2) {
-		_vm->_gameSys->setAnimation(0, 0, 0);
+	GameSys& gameSys = *_vm->_gameSys;
+
+	if (gameSys.getAnimationStatus(0) == 2) {
+		gameSys.setAnimation(0, 0, 0);
 		switch (_vm->_gnapActionStatus) {
 		case kAS20LeaveScene:
 			_vm->_sceneDone = true;
 			break;
 		case kAS20TalkStonerGuyNoJoint:
-			_vm->_gameSys->setAnimation(0x170, 21, 2);
-			_vm->_gameSys->setAnimation(0x17B, 20, 3);
-			_vm->_gameSys->insertSequence(0x17B, 20, _currGroceryStoreGuySequenceId, 20, kSeqSyncExists, 0, 0, 0);
-			_vm->_gameSys->insertSequence(0x170, 21, _currStonerGuySequenceId, 21, kSeqSyncExists, 0, 0, 0);
+			gameSys.setAnimation(0x170, 21, 2);
+			gameSys.setAnimation(0x17B, 20, 3);
+			gameSys.insertSequence(0x17B, 20, _currGroceryStoreGuySequenceId, 20, kSeqSyncExists, 0, 0, 0);
+			gameSys.insertSequence(0x170, 21, _currStonerGuySequenceId, 21, kSeqSyncExists, 0, 0, 0);
 			_vm->stopSound(0x1A1);
 			stopSounds();
 			_currGroceryStoreGuySequenceId = 0x17B;
@@ -531,11 +537,11 @@ void Scene20::updateAnimations() {
 			_vm->_timers[6] = 100;
 			break;
 		case kAS20TalkStonerGuyHasJoint:
-			_vm->_gameSys->setAnimation(0x168, 21, 2);
-			_vm->_gameSys->setAnimation(379, 20, 3);
-			_vm->_gameSys->insertSequence(0x17B, 20, _currGroceryStoreGuySequenceId, 20, kSeqSyncExists, 0, 0, 0);
-			_vm->_gameSys->insertSequence(0x170, 21, _currStonerGuySequenceId, 21, kSeqSyncExists, 0, 0, 0);
-			_vm->_gameSys->insertSequence(0x168, 21, 0x170, 21, kSeqSyncWait, 0, 0, 0);
+			gameSys.setAnimation(0x168, 21, 2);
+			gameSys.setAnimation(379, 20, 3);
+			gameSys.insertSequence(0x17B, 20, _currGroceryStoreGuySequenceId, 20, kSeqSyncExists, 0, 0, 0);
+			gameSys.insertSequence(0x170, 21, _currStonerGuySequenceId, 21, kSeqSyncExists, 0, 0, 0);
+			gameSys.insertSequence(0x168, 21, 0x170, 21, kSeqSyncWait, 0, 0, 0);
 			_vm->stopSound(0x1A1);
 			stopSounds();
 			_currGroceryStoreGuySequenceId = 0x17B;
@@ -555,10 +561,10 @@ void Scene20::updateAnimations() {
 			_vm->_gnapActionStatus = -1;
 			break;
 		case kAS20TalkGroceryStoreGuy:
-			_vm->_gameSys->setAnimation(0x170, 21, 2);
-			_vm->_gameSys->setAnimation(0x17B, 20, 3);
-			_vm->_gameSys->insertSequence(0x17B, 20, _currGroceryStoreGuySequenceId, 20, kSeqSyncExists, 0, 0, 0);
-			_vm->_gameSys->insertSequence(0x170, 21, _currStonerGuySequenceId, 21, kSeqSyncExists, 0, 0, 0);
+			gameSys.setAnimation(0x170, 21, 2);
+			gameSys.setAnimation(0x17B, 20, 3);
+			gameSys.insertSequence(0x17B, 20, _currGroceryStoreGuySequenceId, 20, kSeqSyncExists, 0, 0, 0);
+			gameSys.insertSequence(0x170, 21, _currStonerGuySequenceId, 21, kSeqSyncExists, 0, 0, 0);
 			_vm->stopSound(0x1A1);
 			stopSounds();
 			_currGroceryStoreGuySequenceId = 0x17B;
@@ -572,10 +578,10 @@ void Scene20::updateAnimations() {
 			_vm->_timers[6] = 100;
 			break;
 		case kAS20GrabGroceryStoreGuy:
-			_vm->_gameSys->setAnimation(0x170, 21, 2);
-			_vm->_gameSys->setAnimation(0x17B, 20, 3);
-			_vm->_gameSys->insertSequence(0x170, 21, _currStonerGuySequenceId, 21, kSeqSyncExists, 0, 0, 0);
-			_vm->_gameSys->insertSequence(0x17B, 20, _currGroceryStoreGuySequenceId, 20, kSeqSyncExists, 0, 0, 0);
+			gameSys.setAnimation(0x170, 21, 2);
+			gameSys.setAnimation(0x17B, 20, 3);
+			gameSys.insertSequence(0x170, 21, _currStonerGuySequenceId, 21, kSeqSyncExists, 0, 0, 0);
+			gameSys.insertSequence(0x17B, 20, _currGroceryStoreGuySequenceId, 20, kSeqSyncExists, 0, 0, 0);
 			_vm->stopSound(0x1A1);
 			stopSounds();
 			_currGroceryStoreGuySequenceId = 0x17B;
@@ -585,10 +591,10 @@ void Scene20::updateAnimations() {
 			_nextGroceryStoreGuySequenceId = 0x178;
 			break;
 		case kAS20GrabGroceryStoreHat:
-			_vm->_gameSys->setAnimation(0x170, 21, 2);
-			_vm->_gameSys->setAnimation(0x17B, 20, 3);
-			_vm->_gameSys->insertSequence(0x17B, 20, _currGroceryStoreGuySequenceId, 20, kSeqSyncExists, 0, 0, 0);
-			_vm->_gameSys->insertSequence(0x170, 21, _currStonerGuySequenceId, 21, kSeqSyncExists, 0, 0, 0);
+			gameSys.setAnimation(0x170, 21, 2);
+			gameSys.setAnimation(0x17B, 20, 3);
+			gameSys.insertSequence(0x17B, 20, _currGroceryStoreGuySequenceId, 20, kSeqSyncExists, 0, 0, 0);
+			gameSys.insertSequence(0x170, 21, _currStonerGuySequenceId, 21, kSeqSyncExists, 0, 0, 0);
 			_vm->stopSound(0x1A1);
 			stopSounds();
 			_currGroceryStoreGuySequenceId = 0x17B;
@@ -597,8 +603,8 @@ void Scene20::updateAnimations() {
 			break;
 		case kAS20SwitchGroceryStoreHat:
 			_vm->setGrabCursorSprite(-1);
-			_vm->_gameSys->setAnimation(0x180, _vm->_gnapId, 0);
-			_vm->_gameSys->insertSequence(0x180, _vm->_gnapId, makeRid(_vm->_gnapSequenceDatNum, _vm->_gnapSequenceId), _vm->_gnapId, kSeqSyncWait, 0, 0, 0);
+			gameSys.setAnimation(0x180, _vm->_gnapId, 0);
+			gameSys.insertSequence(0x180, _vm->_gnapId, makeRid(_vm->_gnapSequenceDatNum, _vm->_gnapSequenceId), _vm->_gnapId, kSeqSyncWait, 0, 0, 0);
 			_vm->_gnapSequenceId = 0x180;
 			_vm->_gnapSequenceDatNum = 0;
 			_vm->invRemove(kItemCowboyHat);
@@ -606,14 +612,14 @@ void Scene20::updateAnimations() {
 			_vm->_gnapActionStatus = kAS20SwitchGroceryStoreHatDone;
 			break;
 		case kAS20SwitchGroceryStoreHatDone:
-			_vm->_gameSys->insertSequence(0x17F, 20, 372, 20, kSeqSyncWait, 0, 0, 0);
+			gameSys.insertSequence(0x17F, 20, 372, 20, kSeqSyncWait, 0, 0, 0);
 			_vm->setFlag(kGFGroceryStoreHatTaken);
 			_vm->hideCursor();
 			_vm->setGrabCursorSprite(-1);
 			_vm->addFullScreenSprite(0x12C, 255);
-			_vm->_gameSys->setAnimation(0x181, 256, 0);
-			_vm->_gameSys->insertSequence(0x181, 256, 0, 0, kSeqNone, 0, 0, 0);
-			while (_vm->_gameSys->getAnimationStatus(0) != 2)
+			gameSys.setAnimation(0x181, 256, 0);
+			gameSys.insertSequence(0x181, 256, 0, 0, kSeqNone, 0, 0, 0);
+			while (gameSys.getAnimationStatus(0) != 2)
 				_vm->gameUpdateTick();
 			_vm->removeFullScreenSprite();
 			_vm->showCursor();
@@ -629,41 +635,41 @@ void Scene20::updateAnimations() {
 		}
 	}
 
-	if (_vm->_gameSys->getAnimationStatus(3) == 2) {
+	if (gameSys.getAnimationStatus(3) == 2) {
 		switch (_nextGroceryStoreGuySequenceId) {
 		case 0x176:
 		case 0x177:
-			_vm->_gameSys->setAnimation(_nextGroceryStoreGuySequenceId, 20, 3);
-			_vm->_gameSys->insertSequence(_nextGroceryStoreGuySequenceId, 20, _currGroceryStoreGuySequenceId, 20, kSeqSyncWait, 0, 0, 0);
+			gameSys.setAnimation(_nextGroceryStoreGuySequenceId, 20, 3);
+			gameSys.insertSequence(_nextGroceryStoreGuySequenceId, 20, _currGroceryStoreGuySequenceId, 20, kSeqSyncWait, 0, 0, 0);
 			_currGroceryStoreGuySequenceId = _nextGroceryStoreGuySequenceId;
 			_nextGroceryStoreGuySequenceId = -1;
 			_nextStonerGuySequenceId = 0x16D;
 			break;
 		case 0x178:
-			_vm->_gameSys->setAnimation(_nextGroceryStoreGuySequenceId, 20, 3);
-			_vm->_gameSys->setAnimation(0x17D, _vm->_gnapId, 0);
-			_vm->_gameSys->insertSequence(_nextGroceryStoreGuySequenceId, 20, _currGroceryStoreGuySequenceId, 20, kSeqSyncWait, 0, 0, 0);
-			_vm->_gameSys->insertSequence(0x17D, _vm->_gnapId, makeRid(_vm->_gnapSequenceDatNum, _vm->_gnapSequenceId), _vm->_gnapId, kSeqSyncWait, 0, 0, 0);
+			gameSys.setAnimation(_nextGroceryStoreGuySequenceId, 20, 3);
+			gameSys.setAnimation(0x17D, _vm->_gnapId, 0);
+			gameSys.insertSequence(_nextGroceryStoreGuySequenceId, 20, _currGroceryStoreGuySequenceId, 20, kSeqSyncWait, 0, 0, 0);
+			gameSys.insertSequence(0x17D, _vm->_gnapId, makeRid(_vm->_gnapSequenceDatNum, _vm->_gnapSequenceId), _vm->_gnapId, kSeqSyncWait, 0, 0, 0);
 			_vm->_gnapSequenceId = 0x17D;
 			_vm->_gnapSequenceDatNum = 0;
 			_vm->_gnapActionStatus = kAS20ActionDone;
-			_vm->_gameSys->setAnimation(0x16D, 21, 2);
-			_vm->_gameSys->insertSequence(0x16D, 21, _currStonerGuySequenceId, 21, kSeqSyncWait, 0, 0, 0);
+			gameSys.setAnimation(0x16D, 21, 2);
+			gameSys.insertSequence(0x16D, 21, _currStonerGuySequenceId, 21, kSeqSyncWait, 0, 0, 0);
 			_currStonerGuySequenceId = 0x16D;
 			_currGroceryStoreGuySequenceId = 0x178;
 			_nextGroceryStoreGuySequenceId = -1;
 			_nextStonerGuySequenceId = -1;
 			break;
 		case 0x179:
-			_vm->_gameSys->setAnimation(_nextGroceryStoreGuySequenceId, 20, 3);
-			_vm->_gameSys->setAnimation(0x16D, 21, 0);
-			_vm->_gameSys->insertSequence(_nextGroceryStoreGuySequenceId, 20, _currGroceryStoreGuySequenceId, 20, kSeqSyncWait, 0, 0, 0);
-			_vm->_gameSys->insertSequence(0x17E, _vm->_gnapId, makeRid(_vm->_gnapSequenceDatNum, _vm->_gnapSequenceId), _vm->_gnapId, kSeqSyncWait, 0, 0, 0);
+			gameSys.setAnimation(_nextGroceryStoreGuySequenceId, 20, 3);
+			gameSys.setAnimation(0x16D, 21, 0);
+			gameSys.insertSequence(_nextGroceryStoreGuySequenceId, 20, _currGroceryStoreGuySequenceId, 20, kSeqSyncWait, 0, 0, 0);
+			gameSys.insertSequence(0x17E, _vm->_gnapId, makeRid(_vm->_gnapSequenceDatNum, _vm->_gnapSequenceId), _vm->_gnapId, kSeqSyncWait, 0, 0, 0);
 			_vm->_gnapSequenceId = 0x17E;
 			_vm->_gnapSequenceDatNum = 0;
 			_vm->_gnapActionStatus = kAS20ActionDone;
-			_vm->_gameSys->setAnimation(0x16D, 21, 2);
-			_vm->_gameSys->insertSequence(0x16D, 21, _currStonerGuySequenceId, 21, kSeqSyncWait, 0, 0, 0);
+			gameSys.setAnimation(0x16D, 21, 2);
+			gameSys.insertSequence(0x16D, 21, _currStonerGuySequenceId, 21, kSeqSyncWait, 0, 0, 0);
 			_currStonerGuySequenceId = 0x16D;
 			_currGroceryStoreGuySequenceId = 377;
 			_nextGroceryStoreGuySequenceId = -1;
@@ -671,25 +677,25 @@ void Scene20::updateAnimations() {
 			_vm->gnapWalkTo(4, 8, -1, 0x107BB, 1);
 			break;
 		case 0x17C:
-			_vm->_gameSys->setAnimation(0, 0, 3);
+			gameSys.setAnimation(0, 0, 3);
 			_nextStonerGuySequenceId = 0x171;
 			break;
 		case 0x17A:
-			_vm->_gameSys->setAnimation(0, 0, 3);
+			gameSys.setAnimation(0, 0, 3);
 			_nextStonerGuySequenceId = 0x16F;
 			break;
 		case 0x175:
-			_vm->_gameSys->setAnimation(0x175, 20, 0);
-			_vm->_gameSys->setAnimation(0x175, 20, 3);
-			_vm->_gameSys->insertSequence(0x175, 20, _currGroceryStoreGuySequenceId, 20, kSeqSyncWait, 0, 0, 0);
+			gameSys.setAnimation(0x175, 20, 0);
+			gameSys.setAnimation(0x175, 20, 3);
+			gameSys.insertSequence(0x175, 20, _currGroceryStoreGuySequenceId, 20, kSeqSyncWait, 0, 0, 0);
 			_currGroceryStoreGuySequenceId = 0x175;
 			_nextGroceryStoreGuySequenceId = -1;
 			_vm->_gnapActionStatus = kAS20ActionDone;
 			break;
 		default:
 			if (_nextGroceryStoreGuySequenceId != -1) {
-				_vm->_gameSys->setAnimation(_nextGroceryStoreGuySequenceId, 20, 3);
-				_vm->_gameSys->insertSequence(_nextGroceryStoreGuySequenceId, 20, _currGroceryStoreGuySequenceId, 20, kSeqSyncWait, 0, 0, 0);
+				gameSys.setAnimation(_nextGroceryStoreGuySequenceId, 20, 3);
+				gameSys.insertSequence(_nextGroceryStoreGuySequenceId, 20, _currGroceryStoreGuySequenceId, 20, kSeqSyncWait, 0, 0, 0);
 				_currGroceryStoreGuySequenceId = _nextGroceryStoreGuySequenceId;
 				_nextGroceryStoreGuySequenceId = -1;
 			}
@@ -709,6 +715,7 @@ Scene21::Scene21(GnapEngine *vm) : Scene(vm) {
 
 int Scene21::init() {
 	_vm->_gameSys->setAnimation(0, 0, 3);
+
 	return _vm->isFlag(kGFTwigTaken) ? 0x94 : 0x93;
 }
 
@@ -728,27 +735,27 @@ void Scene21::updateHotspots() {
 }
 
 void Scene21::run() {
+	GameSys& gameSys = *_vm->_gameSys;
+
 	_vm->playSound(0x10940, true);
 	_vm->startSoundTimerA(6);
-
 	_vm->_timers[5] = _vm->getRandom(100) + 100;
-
 	_vm->queueInsertDeviceIcon();
 
 	if (_vm->isFlag(kGFTwigTaken)) {
 		if (_vm->isFlag(kGFKeysTaken)) {
 			_vm->initGnapPos(5, 8, kDirBottomRight);
 			_vm->initPlatypusPos(6, 8, kDirNone);
-			_vm->_gameSys->insertSequence(0x8E, 2, 0, 0, kSeqNone, 0, 0, 0);
+			gameSys.insertSequence(0x8E, 2, 0, 0, kSeqNone, 0, 0, 0);
 			if (!_vm->isFlag(kGFUnk04))
-				_vm->_gameSys->insertSequence(0x8D, 59, 0, 0, kSeqNone, 0, 0, 0);
+				gameSys.insertSequence(0x8D, 59, 0, 0, kSeqNone, 0, 0, 0);
 			_vm->endSceneInit();
 			_vm->clearFlag(kGFKeysTaken);
 		} else {
 			_vm->initGnapPos(5, 11, kDirBottomRight);
 			_vm->initPlatypusPos(6, 11, kDirNone);
 			if (!_vm->isFlag(kGFUnk04))
-				_vm->_gameSys->insertSequence(0x8D, 59, 0, 0, kSeqNone, 0, 0, 0);
+				gameSys.insertSequence(0x8D, 59, 0, 0, kSeqNone, 0, 0, 0);
 			_vm->endSceneInit();
 			_vm->gnapWalkTo(5, 8, -1, 0x107B9, 1);
 			_vm->platypusWalkTo(6, 8, -1, 0x107C2, 1);
@@ -757,8 +764,8 @@ void Scene21::run() {
 		_vm->initGnapPos(5, 11, kDirBottomRight);
 		_vm->initPlatypusPos(6, 11, kDirNone);
 		_currOldLadySequenceId = 0x89;
-		_vm->_gameSys->setAnimation(0x89, 79, 3);
-		_vm->_gameSys->insertSequence(_currOldLadySequenceId, 79, 0, 0, kSeqNone, 0, 0, 0);
+		gameSys.setAnimation(0x89, 79, 3);
+		gameSys.insertSequence(_currOldLadySequenceId, 79, 0, 0, kSeqNone, 0, 0, 0);
 		_nextOldLadySequenceId = -1;
 		_vm->_timers[4] = _vm->getRandom(30) + 50;
 		_vm->endSceneInit();
@@ -911,7 +918,7 @@ void Scene21::run() {
 			}
 			if (!_vm->_timers[5]) {
 				_vm->_timers[5] = _vm->getRandom(100) + 100;
-				_vm->_gameSys->insertSequence(0x92, 255, 0, 0, kSeqNone, 0, 0, 0);
+				gameSys.insertSequence(0x92, 255, 0, 0, kSeqNone, 0, 0, 0);
 			}
 			_vm->playSoundA();
 		}
@@ -929,16 +936,18 @@ void Scene21::run() {
 }
 
 void Scene21::updateAnimations() {
-	if (_vm->_gameSys->getAnimationStatus(0) == 2) {
-		_vm->_gameSys->setAnimation(0, 0, 0);
+	GameSys& gameSys = *_vm->_gameSys;
+
+	if (gameSys.getAnimationStatus(0) == 2) {
+		gameSys.setAnimation(0, 0, 0);
 		switch (_vm->_gnapActionStatus) {
 		case kAS21TalkOldLady:
 			_nextOldLadySequenceId = 0x8B;
 			_vm->_gnapActionStatus = -1;
 			break;
 		case kAS21GrabBanana:
-			_vm->_gameSys->setAnimation(0x8C, 59, 0);
-			_vm->_gameSys->insertSequence(0x8C, 59, 141, 59, kSeqSyncWait, 0, 0, 0);
+			gameSys.setAnimation(0x8C, 59, 0);
+			gameSys.insertSequence(0x8C, 59, 141, 59, kSeqSyncWait, 0, 0, 0);
 			_vm->setFlag(kGFUnk04);
 			_vm->invAdd(kItemBanana);
 			updateHotspots();
@@ -953,8 +962,8 @@ void Scene21::updateAnimations() {
 			_nextOldLadySequenceId = 0x87;
 			break;
 		case kAS21UseHatWithOldLady:
-			_vm->_gameSys->setAnimation(0x8F, _vm->_gnapId, 0);
-			_vm->_gameSys->insertSequence(0x8F, _vm->_gnapId, makeRid(_vm->_gnapSequenceDatNum, _vm->_gnapSequenceId), _vm->_gnapId, kSeqSyncWait, 0, 0, 0);
+			gameSys.setAnimation(0x8F, _vm->_gnapId, 0);
+			gameSys.insertSequence(0x8F, _vm->_gnapId, makeRid(_vm->_gnapSequenceDatNum, _vm->_gnapSequenceId), _vm->_gnapId, kSeqSyncWait, 0, 0, 0);
 			_vm->_gnapSequenceDatNum = 0;
 			_vm->_gnapSequenceId = 0x8F;
 			_vm->_gnapActionStatus = kAS21UseHatWithOldLadyDone;
@@ -971,25 +980,25 @@ void Scene21::updateAnimations() {
 		}
 	}
 
-	if (_vm->_gameSys->getAnimationStatus(3) == 2 && _nextOldLadySequenceId != -1) {
+	if (gameSys.getAnimationStatus(3) == 2 && _nextOldLadySequenceId != -1) {
 		if (_nextOldLadySequenceId == 0x87) {
-			_vm->_gameSys->setAnimation(_nextOldLadySequenceId, 79, 3);
-			_vm->_gameSys->insertSequence(_nextOldLadySequenceId, 79, _currOldLadySequenceId, 79, kSeqSyncWait, 0, 0, 0);
-			_vm->_gameSys->insertSequence(0x86, _vm->_gnapId, makeRid(_vm->_gnapSequenceDatNum, _vm->_gnapSequenceId), _vm->_gnapId, kSeqSyncWait, 0, 0, 0);
+			gameSys.setAnimation(_nextOldLadySequenceId, 79, 3);
+			gameSys.insertSequence(_nextOldLadySequenceId, 79, _currOldLadySequenceId, 79, kSeqSyncWait, 0, 0, 0);
+			gameSys.insertSequence(0x86, _vm->_gnapId, makeRid(_vm->_gnapSequenceDatNum, _vm->_gnapSequenceId), _vm->_gnapId, kSeqSyncWait, 0, 0, 0);
 			_vm->_gnapSequenceId = 0x86;
 			_vm->_gnapSequenceDatNum = 0;
 			_vm->_gnapActionStatus = -1;
 			_currOldLadySequenceId = _nextOldLadySequenceId;
 			_nextOldLadySequenceId = -1;
 		} else if (_nextOldLadySequenceId == 0x91) {
-			_vm->_gameSys->setAnimation(0x91, 79, 0);
-			_vm->_gameSys->insertSequence(_nextOldLadySequenceId, 79, _currOldLadySequenceId, 79, kSeqSyncWait, 0, 0, 0);
+			gameSys.setAnimation(0x91, 79, 0);
+			gameSys.insertSequence(_nextOldLadySequenceId, 79, _currOldLadySequenceId, 79, kSeqSyncWait, 0, 0, 0);
 			_vm->_gnapActionStatus = kAS21LeaveScene;
 			_currOldLadySequenceId = _nextOldLadySequenceId;
 			_nextOldLadySequenceId = -1;
 		} else {
-			_vm->_gameSys->setAnimation(_nextOldLadySequenceId, 79, 3);
-			_vm->_gameSys->insertSequence(_nextOldLadySequenceId, 79, _currOldLadySequenceId, 79, kSeqSyncWait, 0, 0, 0);
+			gameSys.setAnimation(_nextOldLadySequenceId, 79, 3);
+			gameSys.insertSequence(_nextOldLadySequenceId, 79, _currOldLadySequenceId, 79, kSeqSyncWait, 0, 0, 0);
 			_currOldLadySequenceId = _nextOldLadySequenceId;
 			_nextOldLadySequenceId = -1;
 		}
@@ -1019,13 +1028,15 @@ void Scene22::updateHotspots() {
 }
 
 void Scene22::run() {
-	_vm->_gameSys->insertSequence(0x5D, 254, 0, 0, kSeqNone, 0, 0, 0);
+	GameSys& gameSys = *_vm->_gameSys;
+
+	gameSys.insertSequence(0x5D, 254, 0, 0, kSeqNone, 0, 0, 0);
 
 	_currCashierSequenceId = 0x59;
 	_nextCashierSequenceId = -1;
 
-	_vm->_gameSys->setAnimation(0x59, 1, 3);
-	_vm->_gameSys->insertSequence(_currCashierSequenceId, 1, 0, 0, kSeqNone, 0, 0, 0);
+	gameSys.setAnimation(0x59, 1, 3);
+	gameSys.insertSequence(_currCashierSequenceId, 1, 0, 0, kSeqNone, 0, 0, 0);
 
 	_vm->_timers[6] = _vm->getRandom(30) + 20;
 
@@ -1063,12 +1074,12 @@ void Scene22::run() {
 			_caughtBefore = true;
 			storeDetectiveSeqId = 0x54;
 		}
-		_vm->_gameSys->waitForUpdate();
-		_vm->_gameSys->requestClear1();
-		_vm->_gameSys->drawSpriteToBackground(0, 0, 0x44);
-		_vm->_gameSys->setAnimation(storeDetectiveSeqId, 256, 4);
-		_vm->_gameSys->insertSequence(storeDetectiveSeqId, 256, 0, 0, kSeqNone, 0, 0, 0);
-		while (_vm->_gameSys->getAnimationStatus(4) != 2) {
+		gameSys.waitForUpdate();
+		gameSys.requestClear1();
+		gameSys.drawSpriteToBackground(0, 0, 0x44);
+		gameSys.setAnimation(storeDetectiveSeqId, 256, 4);
+		gameSys.insertSequence(storeDetectiveSeqId, 256, 0, 0, kSeqNone, 0, 0, 0);
+		while (gameSys.getAnimationStatus(4) != 2) {
 			_vm->gameUpdateTick();
 		}
 		_vm->_sceneDone = true;
@@ -1224,8 +1235,10 @@ void Scene22::run() {
 }
 
 void Scene22::updateAnimations() {
-	if (_vm->_gameSys->getAnimationStatus(0) == 2) {
-		_vm->_gameSys->setAnimation(0, 0, 0);
+	GameSys& gameSys = *_vm->_gameSys;
+
+	if (gameSys.getAnimationStatus(0) == 2) {
+		gameSys.setAnimation(0, 0, 0);
 		switch (_vm->_gnapActionStatus) {
 		case kAS22LeaveScene:
 			_vm->_sceneDone = true;
@@ -1237,9 +1250,9 @@ void Scene22::updateAnimations() {
 		_vm->_gnapActionStatus = -1;
 	}
 
-	if (_vm->_gameSys->getAnimationStatus(3) == 2 && _nextCashierSequenceId != -1) {
-		_vm->_gameSys->setAnimation(_nextCashierSequenceId, 1, 3);
-		_vm->_gameSys->insertSequence(_nextCashierSequenceId, 1, _currCashierSequenceId, 1, kSeqSyncWait, 0, 0, 0);
+	if (gameSys.getAnimationStatus(3) == 2 && _nextCashierSequenceId != -1) {
+		gameSys.setAnimation(_nextCashierSequenceId, 1, 3);
+		gameSys.insertSequence(_nextCashierSequenceId, 1, _currCashierSequenceId, 1, kSeqSyncWait, 0, 0, 0);
 		_currCashierSequenceId = _nextCashierSequenceId;
 		_nextCashierSequenceId = -1;
 	}
@@ -1267,21 +1280,23 @@ void Scene23::updateHotspots() {
 }
 
 void Scene23::run() {
+	GameSys& gameSys = *_vm->_gameSys;
+
 	_vm->_timers[4] = _vm->getRandom(100) + 200;
 	_vm->_timers[5] = _vm->getRandom(100) + 200;
 
 	_currStoreClerkSequenceId = 0xB4;
 	_nextStoreClerkSequenceId = -1;
 
-	_vm->_gameSys->setAnimation(0xB4, 1, 4);
-	_vm->_gameSys->insertSequence(_currStoreClerkSequenceId, 1, 0, 0, kSeqNone, 0, 0, 0);
+	gameSys.setAnimation(0xB4, 1, 4);
+	gameSys.insertSequence(_currStoreClerkSequenceId, 1, 0, 0, kSeqNone, 0, 0, 0);
 
 	_vm->queueInsertDeviceIcon();
 
 	_vm->initGnapPos(-1, 7, kDirBottomRight);
 	_vm->initPlatypusPos(-2, 7, kDirNone);
-	_vm->_gameSys->insertSequence(0xBD, 255, 0, 0, kSeqNone, 0, 0, 0);
-	_vm->_gameSys->insertSequence(0xBF, 2, 0, 0, kSeqNone, 0, 0, 0);
+	gameSys.insertSequence(0xBD, 255, 0, 0, kSeqNone, 0, 0, 0);
+	gameSys.insertSequence(0xBF, 2, 0, 0, kSeqNone, 0, 0, 0);
 	_vm->endSceneInit();
 
 	_vm->platypusWalkTo(1, 7, -1, 0x107C2, 1);
@@ -1290,7 +1305,7 @@ void Scene23::run() {
 		_vm->gnapWalkTo(2, 7, -1, 0x107B9, 1);
 	} else {
 		_vm->gnapWalkTo(2, 7, 0, 0x107B9, 1);
-		while (_vm->_gameSys->getAnimationStatus(0) != 2)
+		while (gameSys.getAnimationStatus(0) != 2)
 			_vm->gameUpdateTick();
 		_vm->playSequences(0x48, 0xBA, 0xBB, 0xBC);
 		_vm->setFlag(kGFUnk24);
@@ -1408,14 +1423,14 @@ void Scene23::run() {
 				_vm->_timers[4] = _vm->getRandom(100) + 200;
 				switch (_vm->getRandom(4)) {
 				case 0:
-					_vm->_gameSys->insertSequence(0xB7, 256, 0, 0, kSeqNone, 0, 0, 0);
+					gameSys.insertSequence(0xB7, 256, 0, 0, kSeqNone, 0, 0, 0);
 					break;
 				case 1:
-					_vm->_gameSys->insertSequence(0xB8, 256, 0, 0, kSeqNone, 0, 0, 0);
+					gameSys.insertSequence(0xB8, 256, 0, 0, kSeqNone, 0, 0, 0);
 					break;
 				case 2:
 				case 3:
-					_vm->_gameSys->insertSequence(0xB9, 256, 0, 0, kSeqNone, 0, 0, 0);
+					gameSys.insertSequence(0xB9, 256, 0, 0, kSeqNone, 0, 0, 0);
 					break;
 				}
 			}
@@ -1448,17 +1463,19 @@ void Scene23::run() {
 }
 
 void Scene23::updateAnimations() {
-	if (_vm->_gameSys->getAnimationStatus(0) == 2) {
-		_vm->_gameSys->setAnimation(0, 0, 0);
+	GameSys& gameSys = *_vm->_gameSys;
+
+	if (gameSys.getAnimationStatus(0) == 2) {
+		gameSys.setAnimation(0, 0, 0);
 		switch (_vm->_gnapActionStatus) {
 		case kAS23LookCereals:
 			_vm->showFullScreenSprite(0x48);
 			_vm->_gnapActionStatus = -1;
 			break;
 		case kAS23GrabCereals:
-			_vm->_gameSys->setAnimation(0xBE, _vm->_gnapId, 0);
-			_vm->_gameSys->insertSequence(0xBE, _vm->_gnapId, makeRid(_vm->_gnapSequenceDatNum, _vm->_gnapSequenceId), _vm->_gnapId, kSeqSyncWait, 0, 0, 0);
-			_vm->_gameSys->requestRemoveSequence(0xBF, 2);
+			gameSys.setAnimation(0xBE, _vm->_gnapId, 0);
+			gameSys.insertSequence(0xBE, _vm->_gnapId, makeRid(_vm->_gnapSequenceDatNum, _vm->_gnapSequenceId), _vm->_gnapId, kSeqSyncWait, 0, 0, 0);
+			gameSys.requestRemoveSequence(0xBF, 2);
 			_vm->_gnapSequenceDatNum = 0;
 			_vm->_gnapSequenceId = 0xBE;
 			_vm->_gnapActionStatus = kAS23GrabCerealsDone;
@@ -1473,7 +1490,7 @@ void Scene23::updateAnimations() {
 		}
 	}
 
-	if (_vm->_gameSys->getAnimationStatus(4) == 2 && _nextStoreClerkSequenceId == -1) {
+	if (gameSys.getAnimationStatus(4) == 2 && _nextStoreClerkSequenceId == -1) {
 		switch (_vm->getRandom(8)) {
 		case 0:
 		case 1:
@@ -1489,8 +1506,8 @@ void Scene23::updateAnimations() {
 			_nextStoreClerkSequenceId = 0xB6;
 			break;
 		}
-		_vm->_gameSys->setAnimation(_nextStoreClerkSequenceId, 1, 4);
-		_vm->_gameSys->insertSequence(_nextStoreClerkSequenceId, 1, _currStoreClerkSequenceId, 1, kSeqSyncWait, 0, 0, 0);
+		gameSys.setAnimation(_nextStoreClerkSequenceId, 1, 4);
+		gameSys.insertSequence(_nextStoreClerkSequenceId, 1, _currStoreClerkSequenceId, 1, kSeqSyncWait, 0, 0, 0);
 		_currStoreClerkSequenceId = _nextStoreClerkSequenceId;
 		_nextStoreClerkSequenceId = -1;
 	}
@@ -1521,6 +1538,7 @@ void Scene24::updateHotspots() {
 }
 
 void Scene24::run() {
+	GameSys& gameSys = *_vm->_gameSys;
 	int counter = 0;
 
 	_vm->playSound(0x10940, true);
@@ -1528,15 +1546,15 @@ void Scene24::run() {
 
 	_vm->_timers[7] = _vm->getRandom(100) + 100;
 
-	_vm->_gameSys->insertSequence(0x2F, 256, 0, 0, kSeqNone, 0, 0, 0);
+	gameSys.insertSequence(0x2F, 256, 0, 0, kSeqNone, 0, 0, 0);
 
 	_vm->_timers[4] = _vm->getRandom(20) + 50;
 	_vm->_timers[5] = _vm->getRandom(20) + 40;
 	_vm->_timers[6] = _vm->getRandom(50) + 30;
 
-	_vm->_gameSys->insertSequence(0x36, 20, 0, 0, kSeqNone, 0, 0, 0);
-	_vm->_gameSys->insertSequence(0x30, 20, 0, 0, kSeqNone, 0, 0, 0);
-	_vm->_gameSys->insertSequence(0x35, 20, 0, 0, kSeqNone, 0, 0, 0);
+	gameSys.insertSequence(0x36, 20, 0, 0, kSeqNone, 0, 0, 0);
+	gameSys.insertSequence(0x30, 20, 0, 0, kSeqNone, 0, 0, 0);
+	gameSys.insertSequence(0x35, 20, 0, 0, kSeqNone, 0, 0, 0);
 
 	_currWomanSequenceId = 0x35;
 	_girlSequenceId = 0x36;
@@ -1651,12 +1669,12 @@ void Scene24::run() {
 			_vm->updateGnapIdleSequence();
 			if (!_vm->_timers[4]) {
 				_vm->_timers[4] = _vm->getRandom(20) + 50;
-				_vm->_gameSys->insertSequence(0x37, 20, _girlSequenceId, 20, kSeqSyncWait, 0, 0, 0);
+				gameSys.insertSequence(0x37, 20, _girlSequenceId, 20, kSeqSyncWait, 0, 0, 0);
 				_girlSequenceId = 0x37;
 			}
 			if (!_vm->_timers[5]) {
 				_vm->_timers[5] = _vm->getRandom(20) + 40;
-				_vm->_gameSys->insertSequence(0x31, 20, _boySequenceId, 20, kSeqSyncWait, 0, 0, 0);
+				gameSys.insertSequence(0x31, 20, _boySequenceId, 20, kSeqSyncWait, 0, 0, 0);
 				_boySequenceId = 0x31;
 			}
 			if (!_vm->_timers[6]) {
@@ -1673,20 +1691,20 @@ void Scene24::run() {
 					_nextWomanSequenceId = 0x34;
 					break;
 				}
-				_vm->_gameSys->insertSequence(_nextWomanSequenceId, 20, _currWomanSequenceId, 20, kSeqSyncWait, 0, 0, 0);
+				gameSys.insertSequence(_nextWomanSequenceId, 20, _currWomanSequenceId, 20, kSeqSyncWait, 0, 0, 0);
 				_currWomanSequenceId = _nextWomanSequenceId;
 			}
 			if (!_vm->_timers[7]) {
 				_vm->_timers[7] = _vm->getRandom(100) + 100;
 				switch (_vm->getRandom(3)) {
 				case 0:
-					_vm->_gameSys->insertSequence(0x38, 253, 0, 0, kSeqNone, 0, 0, 0);
+					gameSys.insertSequence(0x38, 253, 0, 0, kSeqNone, 0, 0, 0);
 					break;
 				case 1:
-					_vm->_gameSys->insertSequence(0x39, 253, 0, 0, kSeqNone, 0, 0, 0);
+					gameSys.insertSequence(0x39, 253, 0, 0, kSeqNone, 0, 0, 0);
 					break;
 				case 2:
-					_vm->_gameSys->insertSequence(0x3A, 253, 0, 0, kSeqNone, 0, 0, 0);
+					gameSys.insertSequence(0x3A, 253, 0, 0, kSeqNone, 0, 0, 0);
 					break;
 				}
 			}
@@ -1707,8 +1725,10 @@ void Scene24::run() {
 }
 
 void Scene24::updateAnimations() {
-	if (_vm->_gameSys->getAnimationStatus(0) == 2) {
-		_vm->_gameSys->setAnimation(0, 0, 0);
+	GameSys& gameSys = *_vm->_gameSys;
+
+	if (gameSys.getAnimationStatus(0) == 2) {
+		gameSys.setAnimation(0, 0, 0);
 		if (_vm->_gnapActionStatus == kAS24LeaveScene)
 			_vm->_sceneDone = true;
 		_vm->_gnapActionStatus = -1;
@@ -1745,23 +1765,25 @@ void Scene25::playAnims(int index) {
 	if (index > 4)
 		return;
 
+	GameSys& gameSys = *_vm->_gameSys;
+
 	_vm->hideCursor();
 	_vm->setGrabCursorSprite(-1);
 	switch (index) {
 	case 1:
-		_vm->_largeSprite = _vm->_gameSys->createSurface(0x25);
+		_vm->_largeSprite = gameSys.createSurface(0x25);
 		break;
 	case 2:
-		_vm->_largeSprite = _vm->_gameSys->createSurface(0x26);
+		_vm->_largeSprite = gameSys.createSurface(0x26);
 		break;
 	case 3:
-		_vm->_largeSprite = _vm->_gameSys->createSurface(0x27);
+		_vm->_largeSprite = gameSys.createSurface(0x27);
 		break;
 	case 4:
-		_vm->_largeSprite = _vm->_gameSys->createSurface(0x28);
+		_vm->_largeSprite = gameSys.createSurface(0x28);
 		break;
 	}
-	_vm->_gameSys->insertSpriteDrawItem(_vm->_largeSprite, 0, 0, 300);
+	gameSys.insertSpriteDrawItem(_vm->_largeSprite, 0, 0, 300);
 	_vm->delayTicksCursor(5);
 	while (!_vm->_mouseClickState._left && !_vm->isKeyStatus1(Common::KEYCODE_ESCAPE) && !_vm->isKeyStatus1(Common::KEYCODE_SPACE) &&
 		!_vm->isKeyStatus1(29)) {
@@ -1771,19 +1793,21 @@ void Scene25::playAnims(int index) {
 	_vm->clearKeyStatus1(Common::KEYCODE_ESCAPE);
 	_vm->clearKeyStatus1(29);
 	_vm->clearKeyStatus1(Common::KEYCODE_SPACE);
-	_vm->_gameSys->removeSpriteDrawItem(_vm->_largeSprite, 300);
+	gameSys.removeSpriteDrawItem(_vm->_largeSprite, 300);
 	_vm->delayTicksCursor(5);
 	_vm->deleteSurface(&_vm->_largeSprite);
 	_vm->showCursor();
 }
 
 void Scene25::run() {
+	GameSys& gameSys = *_vm->_gameSys;
+
 	_vm->playSound(0x10940, true);
 	_vm->startSoundTimerA(5);
 
 	_currTicketVendorSequenceId = 0x52;
-	_vm->_gameSys->setAnimation(0x52, 39, 3);
-	_vm->_gameSys->insertSequence(_currTicketVendorSequenceId, 39, 0, 0, kSeqNone, 0, 0, 0);
+	gameSys.setAnimation(0x52, 39, 3);
+	gameSys.insertSequence(_currTicketVendorSequenceId, 39, 0, 0, kSeqNone, 0, 0, 0);
 
 	_nextTicketVendorSequenceId = -1;
 	_vm->_timers[4] = _vm->getRandom(20) + 20;
@@ -2005,8 +2029,10 @@ void Scene25::run() {
 }
 
 void Scene25::updateAnimations() {
-	if (_vm->_gameSys->getAnimationStatus(0) == 2) {
-		_vm->_gameSys->setAnimation(0, 0, 0);
+	GameSys& gameSys = *_vm->_gameSys;
+
+	if (gameSys.getAnimationStatus(0) == 2) {
+		gameSys.setAnimation(0, 0, 0);
 		switch (_vm->_gnapActionStatus) {
 		case kAS25TalkTicketVendor:
 			_nextTicketVendorSequenceId = (_vm->getRandom(2) == 1) ? 0x57 : 0x5F;
@@ -2014,10 +2040,10 @@ void Scene25::updateAnimations() {
 			break;
 		case kAS25EnterCircusWihoutTicket:
 			_nextTicketVendorSequenceId = 0x5E;
-			_vm->_gameSys->setAnimation(0x5E, 39, 0);
-			_vm->_gameSys->setAnimation(_nextTicketVendorSequenceId, 39, 3);
-			_vm->_gameSys->insertSequence(_nextTicketVendorSequenceId, 39, _currTicketVendorSequenceId, 39, kSeqSyncExists, 0, 0, 0);
-			_vm->_gameSys->insertSequence(0x60, 2, 0, 0, kSeqNone, 0, 0, 0);
+			gameSys.setAnimation(0x5E, 39, 0);
+			gameSys.setAnimation(_nextTicketVendorSequenceId, 39, 3);
+			gameSys.insertSequence(_nextTicketVendorSequenceId, 39, _currTicketVendorSequenceId, 39, kSeqSyncExists, 0, 0, 0);
+			gameSys.insertSequence(0x60, 2, 0, 0, kSeqNone, 0, 0, 0);
 			_currTicketVendorSequenceId = _nextTicketVendorSequenceId;
 			_nextTicketVendorSequenceId = -1;
 			_vm->_hotspots[kHS25WalkArea1]._flags |= SF_WALKABLE;
@@ -2033,8 +2059,8 @@ void Scene25::updateAnimations() {
 			_vm->setGrabCursorSprite(-1);
 			_vm->invRemove(kItemTickets);
 			_vm->setFlag(kGFNeedleTaken);
-			_vm->_gameSys->setAnimation(0x61, 40, 0);
-			_vm->_gameSys->insertSequence(0x61, 40, 0, 0, kSeqNone, 0, 0, 0);
+			gameSys.setAnimation(0x61, 40, 0);
+			gameSys.insertSequence(0x61, 40, 0, 0, kSeqNone, 0, 0, 0);
 			_vm->_gnapActionStatus = kAS25ShowTicketToVendorDone;
 			break;
 		case kAS25ShowTicketToVendorDone:
@@ -2046,15 +2072,15 @@ void Scene25::updateAnimations() {
 		}
 	}
 
-	if (_vm->_gameSys->getAnimationStatus(3) == 2) {
+	if (gameSys.getAnimationStatus(3) == 2) {
 		if (_nextTicketVendorSequenceId == 0x53) {
-			_vm->_gameSys->insertSequence(_nextTicketVendorSequenceId, 39, _currTicketVendorSequenceId, 39, kSeqSyncWait, 0, 0, 0);
+			gameSys.insertSequence(_nextTicketVendorSequenceId, 39, _currTicketVendorSequenceId, 39, kSeqSyncWait, 0, 0, 0);
 			_currTicketVendorSequenceId = _nextTicketVendorSequenceId;
 			_nextTicketVendorSequenceId = -1;
 			_vm->_gnapActionStatus = -1;
 		} else if (_nextTicketVendorSequenceId != -1) {
-			_vm->_gameSys->setAnimation(_nextTicketVendorSequenceId, 39, 3);
-			_vm->_gameSys->insertSequence(_nextTicketVendorSequenceId, 39, _currTicketVendorSequenceId, 39, kSeqSyncWait, 0, 0, 0);
+			gameSys.setAnimation(_nextTicketVendorSequenceId, 39, 3);
+			gameSys.insertSequence(_nextTicketVendorSequenceId, 39, _currTicketVendorSequenceId, 39, kSeqSyncWait, 0, 0, 0);
 			_currTicketVendorSequenceId = _nextTicketVendorSequenceId;
 			_nextTicketVendorSequenceId = -1;
 		}
@@ -2086,13 +2112,15 @@ void Scene26::updateHotspots() {
 }
 
 void Scene26::run() {
+	GameSys& gameSys = *_vm->_gameSys;
+
 	_vm->startSoundTimerB(7);
 	_vm->playSound(0x1093B, true);
 
 	_currKidSequenceId = 0x5B;
 	_nextKidSequenceId = -1;
-	_vm->_gameSys->setAnimation(0x5B, 160, 3);
-	_vm->_gameSys->insertSequence(_currKidSequenceId, 160, 0, 0, kSeqNone, 0, 0, 0);
+	gameSys.setAnimation(0x5B, 160, 3);
+	gameSys.insertSequence(_currKidSequenceId, 160, 0, 0, kSeqNone, 0, 0, 0);
 
 	_vm->_timers[5] = _vm->getRandom(20) + 50;
 	_vm->_timers[4] = _vm->getRandom(20) + 50;
@@ -2100,10 +2128,10 @@ void Scene26::run() {
 
 	_vm->queueInsertDeviceIcon();
 
-	_vm->_gameSys->insertSequence(0x58, 40, 0, 0, kSeqLoop, 0, 0, 0);
-	_vm->_gameSys->insertSequence(0x5C, 40, 0, 0, kSeqLoop, 0, 0, 0);
-	_vm->_gameSys->insertSequence(0x5D, 40, 0, 0, kSeqLoop, 0, 0, 0);
-	_vm->_gameSys->insertSequence(0x5E, 40, 0, 0, kSeqLoop, 0, 0, 0);
+	gameSys.insertSequence(0x58, 40, 0, 0, kSeqLoop, 0, 0, 0);
+	gameSys.insertSequence(0x5C, 40, 0, 0, kSeqLoop, 0, 0, 0);
+	gameSys.insertSequence(0x5D, 40, 0, 0, kSeqLoop, 0, 0, 0);
+	gameSys.insertSequence(0x5E, 40, 0, 0, kSeqLoop, 0, 0, 0);
 
 	if (_vm->_prevSceneNum == 25) {
 		_vm->initGnapPos(-1, 8, kDirBottomRight);
@@ -2234,11 +2262,11 @@ void Scene26::run() {
 			}
 			if (!_vm->_timers[4]) {
 				_vm->_timers[4] = _vm->getRandom(20) + 130;
-				_vm->_gameSys->insertSequence(0x59, 40, 0, 0, kSeqNone, 0, 0, 0);
+				gameSys.insertSequence(0x59, 40, 0, 0, kSeqNone, 0, 0, 0);
 			}
 			if (!_vm->_timers[6]) {
 				_vm->_timers[6] = _vm->getRandom(50) + 100;
-				_vm->_gameSys->insertSequence(0x5F, 40, 0, 0, kSeqNone, 0, 0, 0);
+				gameSys.insertSequence(0x5F, 40, 0, 0, kSeqNone, 0, 0, 0);
 			}
 			_vm->playSoundB();
 		}
@@ -2256,16 +2284,18 @@ void Scene26::run() {
 }
 
 void Scene26::updateAnimations() {
-	if (_vm->_gameSys->getAnimationStatus(0) == 2) {
-		_vm->_gameSys->setAnimation(0, 0, 0);
+	GameSys& gameSys = *_vm->_gameSys;
+
+	if (gameSys.getAnimationStatus(0) == 2) {
+		gameSys.setAnimation(0, 0, 0);
 		if (_vm->_gnapActionStatus == kAS26LeaveScene)
 			_vm->_sceneDone = true;
 		_vm->_gnapActionStatus = -1;
 	}
 
-	if (_vm->_gameSys->getAnimationStatus(3) == 2 && _nextKidSequenceId != -1) {
-		_vm->_gameSys->insertSequence(_nextKidSequenceId, 160, _currKidSequenceId, 160, kSeqSyncWait, 0, 0, 0);
-		_vm->_gameSys->setAnimation(_nextKidSequenceId, 160, 3);
+	if (gameSys.getAnimationStatus(3) == 2 && _nextKidSequenceId != -1) {
+		gameSys.insertSequence(_nextKidSequenceId, 160, _currKidSequenceId, 160, kSeqSyncWait, 0, 0, 0);
+		gameSys.setAnimation(_nextKidSequenceId, 160, 3);
 		_currKidSequenceId = _nextKidSequenceId;
 		_nextKidSequenceId = -1;
 	}
@@ -2298,23 +2328,25 @@ void Scene27::updateHotspots() {
 }
 
 void Scene27::run() {
+	GameSys& gameSys = *_vm->_gameSys;
+
 	_vm->playSound(0x1093B, true);
 	_vm->startSoundTimerB(4);
 	_vm->_timers[7] = _vm->getRandom(100) + 300;
 	_vm->queueInsertDeviceIcon();
 
 	if (!_vm->isFlag(kGFUnk13))
-		_vm->_gameSys->insertSequence(0xD3, 39, 0, 0, kSeqNone, 0, 0, 0);
+		gameSys.insertSequence(0xD3, 39, 0, 0, kSeqNone, 0, 0, 0);
 
 	if (_vm->_debugLevel == 4)
 		_vm->startIdleTimer(6);
 
-	_vm->_gameSys->insertSequence(0xCB, 39, 0, 0, kSeqNone, 0, 0, 0);
+	gameSys.insertSequence(0xCB, 39, 0, 0, kSeqNone, 0, 0, 0);
 
 	_currJanitorSequenceId = 0xCB;
 	_nextJanitorSequenceId = -1;
 
-	_vm->_gameSys->setAnimation(0xCB, 39, 3);
+	gameSys.setAnimation(0xCB, 39, 3);
 	_vm->_timers[5] = _vm->getRandom(20) + 60;
 
 	switch (_vm->_prevSceneNum) {
@@ -2522,7 +2554,7 @@ void Scene27::run() {
 			if (!_vm->_timers[7]) {
 				_vm->_timers[7] = _vm->getRandom(100) + 300;
 				if (_vm->_gnapActionStatus < 0)
-					_vm->_gameSys->insertSequence(0xD4, 120, 0, 0, kSeqNone, 0, 0, 0);
+					gameSys.insertSequence(0xD4, 120, 0, 0, kSeqNone, 0, 0, 0);
 			}
 			_vm->playSoundB();
 		}
@@ -2540,8 +2572,10 @@ void Scene27::run() {
 }
 
 void Scene27::updateAnimations() {
-	if (_vm->_gameSys->getAnimationStatus(0) == 2) {
-		_vm->_gameSys->setAnimation(0, 0, 0);
+	GameSys& gameSys = *_vm->_gameSys;
+
+	if (gameSys.getAnimationStatus(0) == 2) {
+		gameSys.setAnimation(0, 0, 0);
 		switch (_vm->_gnapActionStatus) {
 		case kAS27TalkJanitor:
 			switch (_vm->getRandom(3)) {
@@ -2562,8 +2596,8 @@ void Scene27::updateAnimations() {
 			_vm->_hotspots[kHS27Bucket]._flags = SF_DISABLED;
 			_vm->invAdd(kItemEmptyBucket);
 			_vm->setFlag(kGFUnk13);
-			_vm->_gameSys->setAnimation(0xD2, 39, 0);
-			_vm->_gameSys->insertSequence(0xD2, 39, 211, 39, kSeqSyncWait, 0, 0, 0);
+			gameSys.setAnimation(0xD2, 39, 0);
+			gameSys.insertSequence(0xD2, 39, 211, 39, kSeqSyncWait, 0, 0, 0);
 			_vm->_gnapActionStatus = kAS27GrabBucketDone;
 			break;
 		case kAS27GrabBucketDone:
@@ -2575,9 +2609,9 @@ void Scene27::updateAnimations() {
 			break;
 		case kAS27TryEnterClownTent:
 			_nextJanitorSequenceId = 0xD1;
-			_vm->_gameSys->insertSequence(0xD1, 39, _currJanitorSequenceId, 39, kSeqSyncExists, 0, 0, 0);
-			_vm->_gameSys->setAnimation(_nextJanitorSequenceId, 39, 3);
-			_vm->_gameSys->setAnimation(_nextJanitorSequenceId, 39, 0);
+			gameSys.insertSequence(0xD1, 39, _currJanitorSequenceId, 39, kSeqSyncExists, 0, 0, 0);
+			gameSys.setAnimation(_nextJanitorSequenceId, 39, 3);
+			gameSys.setAnimation(_nextJanitorSequenceId, 39, 0);
 			_currJanitorSequenceId = _nextJanitorSequenceId;
 			_nextJanitorSequenceId = -1;
 			_vm->_gnapActionStatus = kAS27TryEnterClownTentDone;
@@ -2598,12 +2632,12 @@ void Scene27::updateAnimations() {
 		}
 	}
 
-	if (_vm->_gameSys->getAnimationStatus(3) == 2) {
+	if (gameSys.getAnimationStatus(3) == 2) {
 		switch (_nextJanitorSequenceId) {
 		case -1:
 			_nextJanitorSequenceId = 0xCB;
-			_vm->_gameSys->insertSequence(0xCB, 39, _currJanitorSequenceId, 39, kSeqSyncWait, 0, 0, 0);
-			_vm->_gameSys->setAnimation(_nextJanitorSequenceId, 39, 3);
+			gameSys.insertSequence(0xCB, 39, _currJanitorSequenceId, 39, kSeqSyncWait, 0, 0, 0);
+			gameSys.setAnimation(_nextJanitorSequenceId, 39, 3);
 			_currJanitorSequenceId = _nextJanitorSequenceId;
 			_nextJanitorSequenceId = -1;
 			break;
@@ -2611,9 +2645,9 @@ void Scene27::updateAnimations() {
 		case 0xCD:
 		case 0xCE:
 			_vm->_gnapActionStatus = -1;
-			_vm->_gameSys->insertSequence(_nextJanitorSequenceId, 39, _currJanitorSequenceId, 39, kSeqSyncWait, 0, 0, 0);
-			_vm->_gameSys->setAnimation(_nextJanitorSequenceId, 39, 3);
-			_vm->_gameSys->setAnimation(_nextJanitorSequenceId, 39, 0);
+			gameSys.insertSequence(_nextJanitorSequenceId, 39, _currJanitorSequenceId, 39, kSeqSyncWait, 0, 0, 0);
+			gameSys.setAnimation(_nextJanitorSequenceId, 39, 3);
+			gameSys.setAnimation(_nextJanitorSequenceId, 39, 0);
 			_currJanitorSequenceId = _nextJanitorSequenceId;
 			_nextJanitorSequenceId = -1;
 			break;
@@ -2621,8 +2655,8 @@ void Scene27::updateAnimations() {
 			// Show picture to janitor
 			_vm->playGnapPullOutDevice(0, 0);
 			_vm->playGnapUseDevice(0, 0);
-			_vm->_gameSys->insertSequence(_nextJanitorSequenceId, 39, _currJanitorSequenceId, 39, kSeqSyncWait, 0, 0, 0);
-			_vm->_gameSys->setAnimation(_nextJanitorSequenceId, 39, 0);
+			gameSys.insertSequence(_nextJanitorSequenceId, 39, _currJanitorSequenceId, 39, kSeqSyncWait, 0, 0, 0);
+			gameSys.setAnimation(_nextJanitorSequenceId, 39, 0);
 			_vm->_gnapActionStatus = kAS27EnterClownTent;
 			_currJanitorSequenceId = _nextJanitorSequenceId;
 			_nextJanitorSequenceId = -1;
@@ -2632,8 +2666,8 @@ void Scene27::updateAnimations() {
 			_vm->_newSceneNum = 28;
 			break;
 		default:
-			_vm->_gameSys->insertSequence(_nextJanitorSequenceId, 39, _currJanitorSequenceId, 39, kSeqSyncWait, 0, 0, 0);
-			_vm->_gameSys->setAnimation(_nextJanitorSequenceId, 39, 3);
+			gameSys.insertSequence(_nextJanitorSequenceId, 39, _currJanitorSequenceId, 39, kSeqSyncWait, 0, 0, 0);
+			gameSys.setAnimation(_nextJanitorSequenceId, 39, 3);
 			_currJanitorSequenceId = _nextJanitorSequenceId;
 			_nextJanitorSequenceId = -1;
 			break;
@@ -2670,44 +2704,46 @@ void Scene28::updateHotspots() {
 }
 
 void Scene28::run() {
+	GameSys& gameSys = *_vm->_gameSys;
+
 	_vm->playSound(0x1093C, true);
 	_nextClownSequenceId = -1;
 	_vm->queueInsertDeviceIcon();
-	_vm->_gameSys->insertSequence(0x124, 255, 0, 0, kSeqNone, 0, 0, 0);
+	gameSys.insertSequence(0x124, 255, 0, 0, kSeqNone, 0, 0, 0);
 
 	if (_vm->isFlag(kGFUnk22))
-		_vm->_gameSys->insertSequence(0x112, 99, 0, 0, kSeqNone, 0, 0, 0);
+		gameSys.insertSequence(0x112, 99, 0, 0, kSeqNone, 0, 0, 0);
 
 	if (_vm->isFlag(kGFMudTaken)) {
 		if (_vm->isFlag(kGFUnk21)) {
-			_vm->_gameSys->setAnimation(0x11C, 39, 3);
-			_vm->_gameSys->insertSequence(0x11C, 39, 0, 0, kSeqNone, 0, 0, 0);
+			gameSys.setAnimation(0x11C, 39, 3);
+			gameSys.insertSequence(0x11C, 39, 0, 0, kSeqNone, 0, 0, 0);
 			if (!_vm->invHas(kItemHorn))
-				_vm->_gameSys->insertSequence(0x118, 59, 0, 0, kSeqNone, 0, 0, 0);
+				gameSys.insertSequence(0x118, 59, 0, 0, kSeqNone, 0, 0, 0);
 			_currClownSequenceId = 0x11C;
 		} else {
 			_currClownSequenceId = 0x11B;
-			_vm->_gameSys->setAnimation(0x11B, 39, 3);
-			_vm->_gameSys->insertSequence(_currClownSequenceId, 39, 0, 0, kSeqNone, 0, 0, 0);
+			gameSys.setAnimation(0x11B, 39, 3);
+			gameSys.insertSequence(_currClownSequenceId, 39, 0, 0, kSeqNone, 0, 0, 0);
 			_vm->_timers[4] = _vm->getRandom(20) + 80;
 		}
 		_vm->initGnapPos(8, 8, kDirBottomLeft);
 		_vm->initPlatypusPos(9, 8, kDirUnk4);
 		_vm->endSceneInit();
 	} else {
-		_vm->_gameSys->insertSequence(0x11B, 39, 0, 0, kSeqNone, 0, 0, 0);
+		gameSys.insertSequence(0x11B, 39, 0, 0, kSeqNone, 0, 0, 0);
 		_vm->initGnapPos(8, 8, kDirBottomLeft);
 		_vm->initPlatypusPos(9, 8, kDirUnk4);
 		_vm->endSceneInit();
 		_vm->playSequences(0xF7, 0x121, 0x122, 0x123);
 		_currClownSequenceId = 0x115;
 		_vm->setFlag(kGFMudTaken);
-		_vm->_gameSys->setAnimation(0x115, 39, 3);
-		_vm->_gameSys->insertSequence(_currClownSequenceId, 39, 0x11B, 39, kSeqSyncWait, 0, 0, 0);
+		gameSys.setAnimation(0x115, 39, 3);
+		gameSys.insertSequence(_currClownSequenceId, 39, 0x11B, 39, kSeqSyncWait, 0, 0, 0);
 		_nextClownSequenceId = -1;
 		_vm->_timers[4] = _vm->getRandom(20) + 80;
 		_vm->_gnapActionStatus = kAS28GnapWaiting;
-		while (_vm->_gameSys->getAnimationStatus(3) != 2) {
+		while (gameSys.getAnimationStatus(3) != 2) {
 			_vm->gameUpdateTick();
 			_vm->updateMouseCursor();
 		}
@@ -2906,8 +2942,10 @@ void Scene28::run() {
 }
 
 void Scene28::updateAnimations() {
-	if (_vm->_gameSys->getAnimationStatus(0) == 2) {
-		_vm->_gameSys->setAnimation(0, 0, 0);
+	GameSys& gameSys = *_vm->_gameSys;
+
+	if (gameSys.getAnimationStatus(0) == 2) {
+		gameSys.setAnimation(0, 0, 0);
 		switch (_vm->_gnapActionStatus) {
 		case kAS28UseBeerBucketWithClown:
 			_vm->setFlag(kGFUnk22);
@@ -2928,17 +2966,17 @@ void Scene28::updateAnimations() {
 		case kAS28GrabHornSuccess:
 			_vm->playGnapPullOutDevice(0, 0);
 			_vm->playGnapUseDevice(0, 0);
-			_vm->_gameSys->setAnimation(0x117, 59, 0);
-			_vm->_gameSys->insertSequence(0x117, 59, 280, 59, kSeqSyncWait, 0, 0, 0);
+			gameSys.setAnimation(0x117, 59, 0);
+			gameSys.insertSequence(0x117, 59, 280, 59, kSeqSyncWait, 0, 0, 0);
 			_vm->_gnapActionStatus = kAS28GrabHornSuccessDone;
 			break;
 		case kAS28GrabHornSuccessDone:
 			_vm->hideCursor();
 			_vm->setGrabCursorSprite(-1);
 			_vm->addFullScreenSprite(0xF6, 255);
-			_vm->_gameSys->setAnimation(0x120, 256, 0);
-			_vm->_gameSys->insertSequence(0x120, 256, 0, 0, kSeqNone, 0, 0, 0);
-			while (_vm->_gameSys->getAnimationStatus(0) != 2)
+			gameSys.setAnimation(0x120, 256, 0);
+			gameSys.insertSequence(0x120, 256, 0, 0, kSeqNone, 0, 0, 0);
+			while (gameSys.getAnimationStatus(0) != 2)
 				_vm->gameUpdateTick();
 			_vm->removeFullScreenSprite();
 			_vm->showCursor();
@@ -2950,8 +2988,8 @@ void Scene28::updateAnimations() {
 		case kAS28GrabEmptyBucket:
 			_vm->playGnapPullOutDevice(0, 0);
 			_vm->playGnapUseDevice(0, 0);
-			_vm->_gameSys->setAnimation(0x111, 99, 0);
-			_vm->_gameSys->insertSequence(0x111, 99, 274, 99, kSeqSyncWait, 0, 0, 0);
+			gameSys.setAnimation(0x111, 99, 0);
+			gameSys.insertSequence(0x111, 99, 274, 99, kSeqSyncWait, 0, 0, 0);
 			_vm->_gnapActionStatus = kAS28GrabEmptyBucketDone;
 			break;
 		case kAS28GrabEmptyBucketDone:
@@ -2962,10 +3000,10 @@ void Scene28::updateAnimations() {
 			_vm->_gnapActionStatus = -1;
 			break;
 		case kAS28GrabHornFailsDone:
-			_vm->_gameSys->insertSequence(0x107B5, _vm->_gnapId, 281, 39, kSeqSyncWait, 0, 75 * _vm->_gnapX - _vm->_gnapGridX, 48 * _vm->_gnapY - _vm->_gnapGridY);
+			gameSys.insertSequence(0x107B5, _vm->_gnapId, 281, 39, kSeqSyncWait, 0, 75 * _vm->_gnapX - _vm->_gnapGridX, 48 * _vm->_gnapY - _vm->_gnapGridY);
 			_vm->_gnapSequenceId = 0x7B5;
 			_vm->_gnapSequenceDatNum = 1;
-			_vm->_gameSys->insertSequence(0x11B, 39, 0, 0, kSeqNone, 0, 0, 0);
+			gameSys.insertSequence(0x11B, 39, 0, 0, kSeqNone, 0, 0, 0);
 			_currClownSequenceId = 0x11B;
 			_nextClownSequenceId = -1;
 			_vm->_gnapActionStatus = -1;
@@ -2989,25 +3027,25 @@ void Scene28::updateAnimations() {
 		}
 	}
 
-	if (_vm->_gameSys->getAnimationStatus(3) == 2) {
+	if (gameSys.getAnimationStatus(3) == 2) {
 		switch (_nextClownSequenceId) {
 		case 0x113:
 			_vm->setGrabCursorSprite(-1);
-			_vm->_gameSys->setAnimation(_nextClownSequenceId, 39, 0);
-			_vm->_gameSys->insertSequence(0x112, 99, 0, 0, kSeqNone, _vm->getSequenceTotalDuration(_nextClownSequenceId), 0, 0);
-			_vm->_gameSys->insertSequence(_nextClownSequenceId, 39, _currClownSequenceId, 39, kSeqSyncWait, 0, 0, 0);
-			_vm->_gameSys->insertSequence(0x11B, 39, _nextClownSequenceId, 39, kSeqSyncWait, 0, 0, 0);
+			gameSys.setAnimation(_nextClownSequenceId, 39, 0);
+			gameSys.insertSequence(0x112, 99, 0, 0, kSeqNone, _vm->getSequenceTotalDuration(_nextClownSequenceId), 0, 0);
+			gameSys.insertSequence(_nextClownSequenceId, 39, _currClownSequenceId, 39, kSeqSyncWait, 0, 0, 0);
+			gameSys.insertSequence(0x11B, 39, _nextClownSequenceId, 39, kSeqSyncWait, 0, 0, 0);
 			_currClownSequenceId = 0x11B;
 			_nextClownSequenceId = -1;
 			_vm->_gnapActionStatus = kAS28GnapWaiting;
 			break;
 		case 0x116:
 			_vm->setGrabCursorSprite(-1);
-			_vm->_gameSys->setAnimation(_nextClownSequenceId, 39, 0);
-			_vm->_gameSys->insertSequence(0x112, 99, 0, 0, kSeqNone, _vm->getSequenceTotalDuration(_nextClownSequenceId), 0, 0);
-			_vm->_gameSys->insertSequence(_nextClownSequenceId, 39, _currClownSequenceId, 39, kSeqSyncWait, 0, 0, 0);
-			_vm->_gameSys->insertSequence(0x11C, 39, _nextClownSequenceId, 39, kSeqSyncWait, 0, 0, 0);
-			_vm->_gameSys->insertSequence(0x118, 59, 0, 0, kSeqNone, _vm->getSequenceTotalDuration(_nextClownSequenceId), 0, 0);
+			gameSys.setAnimation(_nextClownSequenceId, 39, 0);
+			gameSys.insertSequence(0x112, 99, 0, 0, kSeqNone, _vm->getSequenceTotalDuration(_nextClownSequenceId), 0, 0);
+			gameSys.insertSequence(_nextClownSequenceId, 39, _currClownSequenceId, 39, kSeqSyncWait, 0, 0, 0);
+			gameSys.insertSequence(0x11C, 39, _nextClownSequenceId, 39, kSeqSyncWait, 0, 0, 0);
+			gameSys.insertSequence(0x118, 59, 0, 0, kSeqNone, _vm->getSequenceTotalDuration(_nextClownSequenceId), 0, 0);
 			_currClownSequenceId = _nextClownSequenceId;
 			_nextClownSequenceId = -1;
 			_vm->_gnapActionStatus = kAS28GnapWaiting;
@@ -3018,9 +3056,9 @@ void Scene28::updateAnimations() {
 			_vm->_gnapActionStatus = -1;
 			break;
 		case 0x119:
-			_vm->_gameSys->insertSequence(_nextClownSequenceId, 39, makeRid(_vm->_gnapSequenceDatNum, _vm->_gnapSequenceId), _vm->_gnapId, kSeqSyncWait, 0, 0, 0);
-			_vm->_gameSys->setAnimation(_nextClownSequenceId, 39, 0);
-			_vm->_gameSys->removeSequence(_currClownSequenceId, 39, true);
+			gameSys.insertSequence(_nextClownSequenceId, 39, makeRid(_vm->_gnapSequenceDatNum, _vm->_gnapSequenceId), _vm->_gnapId, kSeqSyncWait, 0, 0, 0);
+			gameSys.setAnimation(_nextClownSequenceId, 39, 0);
+			gameSys.removeSequence(_currClownSequenceId, 39, true);
 			_vm->_gnapActionStatus = kAS28GrabHornFailsDone;
 			_vm->_gnapSequenceId = _nextClownSequenceId;
 			_vm->_gnapSequenceDatNum = 0;
@@ -3028,8 +3066,8 @@ void Scene28::updateAnimations() {
 			break;
 		}
 		if (_nextClownSequenceId != -1) {
-			_vm->_gameSys->insertSequence(_nextClownSequenceId, 39, _currClownSequenceId, 39, kSeqSyncWait, 0, 0, 0);
-			_vm->_gameSys->setAnimation(_nextClownSequenceId, 39, 3);
+			gameSys.insertSequence(_nextClownSequenceId, 39, _currClownSequenceId, 39, kSeqSyncWait, 0, 0, 0);
+			gameSys.setAnimation(_nextClownSequenceId, 39, 3);
 			_currClownSequenceId = _nextClownSequenceId;
 			_nextClownSequenceId = -1;
 		}
@@ -3063,6 +3101,8 @@ void Scene29::updateHotspots() {
 }
 
 void Scene29::run() {
+	GameSys& gameSys = *_vm->_gameSys;
+
 	_vm->playSound(0x1093B, true);
 	_vm->startSoundTimerB(6);
 	_vm->queueInsertDeviceIcon();
@@ -3070,22 +3110,22 @@ void Scene29::run() {
 	if (_vm->invHas(kItemHorn)) {
 		_currMonkeySequenceId = 0xE8;
 		_nextMonkeySequenceId = -1;
-		_vm->_gameSys->setAnimation(0xE8, 159, 4);
-		_vm->_gameSys->insertSequence(_currMonkeySequenceId, 159, 0, 0, kSeqNone, 0, 0, 0);
-		_vm->_gameSys->insertSequence(0xED, 39, 0, 0, kSeqNone, 0, 0, 0);
+		gameSys.setAnimation(0xE8, 159, 4);
+		gameSys.insertSequence(_currMonkeySequenceId, 159, 0, 0, kSeqNone, 0, 0, 0);
+		gameSys.insertSequence(0xED, 39, 0, 0, kSeqNone, 0, 0, 0);
 		_currManSequenceId = 0xED;
 		_nextManSequenceId = -1;
-		_vm->_gameSys->setAnimation(0xED, 39, 3);
+		gameSys.setAnimation(0xED, 39, 3);
 		_vm->_timers[4] = _vm->getRandom(20) + 60;
 	} else {
-		_vm->_gameSys->insertSequence(0xF4, 19, 0, 0, kSeqNone, 0, 0, 0);
-		_vm->_gameSys->setAnimation(0, 0, 4);
-		_vm->_gameSys->insertSequence(0xED, 39, 0, 0, kSeqNone, 0, 0, 0);
-		_vm->_gameSys->setAnimation(0, 0, 3);
+		gameSys.insertSequence(0xF4, 19, 0, 0, kSeqNone, 0, 0, 0);
+		gameSys.setAnimation(0, 0, 4);
+		gameSys.insertSequence(0xED, 39, 0, 0, kSeqNone, 0, 0, 0);
+		gameSys.setAnimation(0, 0, 3);
 	}
 
-	_vm->_gameSys->insertSequence(0xF3, 39, 0, 0, kSeqLoop, 0, 0, 0);
-	_vm->_gameSys->insertSequence(0xF5, 38, 0, 0, kSeqLoop, 0, 0, 0);
+	gameSys.insertSequence(0xF3, 39, 0, 0, kSeqLoop, 0, 0, 0);
+	gameSys.insertSequence(0xF5, 38, 0, 0, kSeqLoop, 0, 0, 0);
 
 	if (_vm->_prevSceneNum == 27) {
 		_vm->initGnapPos(12, 7, kDirBottomRight);
@@ -3279,8 +3319,10 @@ void Scene29::run() {
 }
 
 void Scene29::updateAnimations() {
-	if (_vm->_gameSys->getAnimationStatus(0) == 2) {
-		_vm->_gameSys->setAnimation(0, 0, 0);
+	GameSys& gameSys = *_vm->_gameSys;
+
+	if (gameSys.getAnimationStatus(0) == 2) {
+		gameSys.setAnimation(0, 0, 0);
 		switch (_vm->_gnapActionStatus) {
 		case kAS29UseBananaWithMonkey:
 			_nextMonkeySequenceId = 0xE5;
@@ -3291,22 +3333,22 @@ void Scene29::updateAnimations() {
 		}
 	}
 
-	if (_vm->_gameSys->getAnimationStatus(3) == 2 && _nextManSequenceId != -1) {
-		_vm->_gameSys->insertSequence(_nextManSequenceId, 39, _currManSequenceId, 39, kSeqSyncWait, 0, 0, 0);
-		_vm->_gameSys->setAnimation(_nextManSequenceId, 39, 3);
+	if (gameSys.getAnimationStatus(3) == 2 && _nextManSequenceId != -1) {
+		gameSys.insertSequence(_nextManSequenceId, 39, _currManSequenceId, 39, kSeqSyncWait, 0, 0, 0);
+		gameSys.setAnimation(_nextManSequenceId, 39, 3);
 		_currManSequenceId = _nextManSequenceId;
 		_nextManSequenceId = -1;
 	}
 
-	if (_vm->_gameSys->getAnimationStatus(4) == 2) {
+	if (gameSys.getAnimationStatus(4) == 2) {
 		if (_nextMonkeySequenceId == 0xE5) {
-			_vm->_gameSys->insertSequence(0xF2, _vm->_gnapId, makeRid(_vm->_gnapSequenceDatNum, _vm->_gnapSequenceId), _vm->_gnapId, kSeqSyncWait, 0, 0, 0);
+			gameSys.insertSequence(0xF2, _vm->_gnapId, makeRid(_vm->_gnapSequenceDatNum, _vm->_gnapSequenceId), _vm->_gnapId, kSeqSyncWait, 0, 0, 0);
 			_vm->_gnapSequenceDatNum = 0;
 			_vm->_gnapSequenceId = 0xF2;
-			_vm->_gameSys->setAnimation(0xE6, 159, 0);
-			_vm->_gameSys->setAnimation(0, 159, 4);
-			_vm->_gameSys->insertSequence(_nextMonkeySequenceId, 159, _currMonkeySequenceId, 159, kSeqSyncWait, 0, 0, 0);
-			_vm->_gameSys->insertSequence(0xE6, 159, _nextMonkeySequenceId, 159, kSeqSyncWait, 0, 0, 0);
+			gameSys.setAnimation(0xE6, 159, 0);
+			gameSys.setAnimation(0, 159, 4);
+			gameSys.insertSequence(_nextMonkeySequenceId, 159, _currMonkeySequenceId, 159, kSeqSyncWait, 0, 0, 0);
+			gameSys.insertSequence(0xE6, 159, _nextMonkeySequenceId, 159, kSeqSyncWait, 0, 0, 0);
 			_vm->_gnapActionStatus = kAS29LeaveScene;
 			_currMonkeySequenceId = 0xE6;
 			_nextMonkeySequenceId = -1;
@@ -3314,7 +3356,7 @@ void Scene29::updateAnimations() {
 			while (_vm->_timers[5])
 				_vm->gameUpdateTick();
 			_vm->platypusWalkTo(0, 8, 1, 0x107CF, 1);
-			while (_vm->_gameSys->getAnimationStatus(1) != 2)
+			while (gameSys.getAnimationStatus(1) != 2)
 				_vm->gameUpdateTick();
 		} else if (_nextMonkeySequenceId == -1) {
 			switch (_vm->getRandom(6)) {
@@ -3337,13 +3379,13 @@ void Scene29::updateAnimations() {
 				_nextMonkeySequenceId = 0xE7;
 				break;
 			}
-			_vm->_gameSys->insertSequence(_nextMonkeySequenceId, 159, _currMonkeySequenceId, 159, kSeqSyncWait, 0, 0, 0);
-			_vm->_gameSys->setAnimation(_nextMonkeySequenceId, 159, 4);
+			gameSys.insertSequence(_nextMonkeySequenceId, 159, _currMonkeySequenceId, 159, kSeqSyncWait, 0, 0, 0);
+			gameSys.setAnimation(_nextMonkeySequenceId, 159, 4);
 			_currMonkeySequenceId = _nextMonkeySequenceId;
 			_nextMonkeySequenceId = -1;
 		} else {
-			_vm->_gameSys->insertSequence(_nextMonkeySequenceId, 159, _currMonkeySequenceId, 159, kSeqSyncWait, 0, 0, 0);
-			_vm->_gameSys->setAnimation(_nextMonkeySequenceId, 159, 4);
+			gameSys.insertSequence(_nextMonkeySequenceId, 159, _currMonkeySequenceId, 159, kSeqSyncWait, 0, 0, 0);
+			gameSys.setAnimation(_nextMonkeySequenceId, 159, 4);
 			_currMonkeySequenceId = _nextMonkeySequenceId;
 			_nextMonkeySequenceId = -1;
 		}

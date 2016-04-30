@@ -55,6 +55,7 @@ void SceneIntro::run() {
 		0x1A, 0x14, 0x15, 0x16, 0x14,
 		0x19, 0};
 
+	GameSys& gameSys = *_vm->_gameSys;
 	int index = 0;
 	bool skip = false;
 
@@ -121,35 +122,35 @@ void SceneIntro::run() {
 
 	delete videoDecoder;
 
-	_vm->_gameSys->drawSpriteToBackground(0, 0, backgroundIdArr[index]);
-	_vm->_gameSys->insertSequence(0x356, 2, 0, 0, kSeqNone, 0, 0, 0);
-	_vm->_gameSys->setAnimation(0x356, 2, 0);
+	gameSys.drawSpriteToBackground(0, 0, backgroundIdArr[index]);
+	gameSys.insertSequence(0x356, 2, 0, 0, kSeqNone, 0, 0, 0);
+	gameSys.setAnimation(0x356, 2, 0);
 
 	while (!_vm->_sceneDone) {
 		_vm->gameUpdateTick();
 
-		if (_vm->_gameSys->getAnimationStatus(0) == 2 || skip ) {
+		if (gameSys.getAnimationStatus(0) == 2 || skip ) {
 			skip = false;
-			_vm->_gameSys->requestClear2(false);
-			_vm->_gameSys->requestClear1();
+			gameSys.requestClear2(false);
+			gameSys.requestClear1();
 			if ( index == 11 || index == 1 )
 				_vm->screenEffect(0, 0, 0, 0);
 
-			_vm->_gameSys->setAnimation(0, 0, 0);
+			gameSys.setAnimation(0, 0, 0);
 			if (++index >= 31)
 				_vm->_sceneDone = true;
 			else {
-				_vm->_gameSys->insertSequence(animIdArr[index], 2, 0, 0, kSeqNone, 0, 0, 0);
+				gameSys.insertSequence(animIdArr[index], 2, 0, 0, kSeqNone, 0, 0, 0);
 				if (index == 2) {
 					_vm->playSound(0x10000, false);
-					_vm->_gameSys->insertSequence(0x359, 2, 0, 0, 0, 0, 0, 0);
+					gameSys.insertSequence(0x359, 2, 0, 0, 0, 0, 0, 0);
 				} else if (index == 3)
-					_vm->_gameSys->insertSequence(0x35B, 2, 0, 0, kSeqNone, 0, 0, 0);
+					gameSys.insertSequence(0x35B, 2, 0, 0, kSeqNone, 0, 0, 0);
 				else if (index == 12)
-					_vm->_gameSys->insertSequence(0x36A, 2, 0, 0, kSeqNone, 0, 0, 0);
+					gameSys.insertSequence(0x36A, 2, 0, 0, kSeqNone, 0, 0, 0);
 
-				_vm->_gameSys->drawSpriteToBackground(0, 0, backgroundIdArr[index]);
-				_vm->_gameSys->setAnimation(animIdArr[index], 2, 0);
+				gameSys.drawSpriteToBackground(0, 0, backgroundIdArr[index]);
+				gameSys.setAnimation(animIdArr[index], 2, 0);
 
 				if (index == 11)
 					_vm->stopSound(0x10000);

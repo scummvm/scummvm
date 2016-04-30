@@ -650,6 +650,8 @@ bool Scene::clearKeyStatus() {
 }
 
 void CutScene::run() {
+	GameSys& gameSys = *_vm->_gameSys;
+
 	int itemIndex = 0;
 	int soundId = -1;
 	int volume = 100;
@@ -667,11 +669,11 @@ void CutScene::run() {
 
 	_vm->hideCursor();
 
-	_vm->_gameSys->drawSpriteToBackground(0, 0, _resourceIdArr[0]);
+	gameSys.drawSpriteToBackground(0, 0, _resourceIdArr[0]);
 
 	for (int j = 0; j < _sequenceCountArr[0]; ++j)
-		_vm->_gameSys->insertSequence(_sequenceIdArr[j], j + 2, 0, 0, kSeqNone, 0, 0, 0);
-	_vm->_gameSys->setAnimation(_sequenceIdArr[0], 2, 0);
+		gameSys.insertSequence(_sequenceIdArr[j], j + 2, 0, 0, kSeqNone, 0, 0, 0);
+	gameSys.setAnimation(_sequenceIdArr[0], 2, 0);
 
 	_vm->clearKeyStatus1(Common::KEYCODE_ESCAPE);
 	_vm->clearKeyStatus1(Common::KEYCODE_SPACE);
@@ -683,19 +685,19 @@ void CutScene::run() {
 	while (!_vm->_sceneDone) {
 		_vm->gameUpdateTick();
 
-		if (_vm->_gameSys->getAnimationStatus(0) == 2 || skip) {
+		if (gameSys.getAnimationStatus(0) == 2 || skip) {
 			skip = false;
-			_vm->_gameSys->requestClear2(false);
-			_vm->_gameSys->requestClear1();
-			_vm->_gameSys->setAnimation(0, 0, 0);
+			gameSys.requestClear2(false);
+			gameSys.requestClear1();
+			gameSys.setAnimation(0, 0, 0);
 			firstSequenceIndex += _sequenceCountArr[itemIndex++];
 			if (itemIndex >= _itemsCount) {
 				_vm->_sceneDone = true;
 			} else {
 				for (int m = 0; m < _sequenceCountArr[itemIndex]; ++m)
-					_vm->_gameSys->insertSequence(_sequenceIdArr[firstSequenceIndex + m], m + 2, 0, 0, kSeqNone, 0, 0, 0);
-				_vm->_gameSys->drawSpriteToBackground(0, 0, _resourceIdArr[itemIndex]);
-				_vm->_gameSys->setAnimation(_sequenceIdArr[firstSequenceIndex], 2, 0);
+					gameSys.insertSequence(_sequenceIdArr[firstSequenceIndex + m], m + 2, 0, 0, kSeqNone, 0, 0, 0);
+				gameSys.drawSpriteToBackground(0, 0, _resourceIdArr[itemIndex]);
+				gameSys.setAnimation(_sequenceIdArr[firstSequenceIndex], 2, 0);
 			}
 		}
 
