@@ -242,7 +242,17 @@ public:
 	 */
 	void hideCursor();
 
+	/**
+	 * Get an NPC Number embedded within on-screen text.
+	 * Used by the PET log to encode which NPC spoke
+	 */
 	int getNPCNum(uint npcId, uint startIndex);
+
+	/**
+	 * Replaces any occurances of line colors that appear in the
+	 * first list with the entry at the same index in the dest list
+	 */
+	void remapColors(uint count, uint *srcColors, uint *destColors);
 };
 
 } // End of namespace Titanic

@@ -126,6 +126,11 @@ private:
 	 * Returns the name of the currently active NPC, if any
 	 */
 	CString getActiveNPCName() const;
+
+	/**
+	 * Create a color table
+	 */
+	void copyColors(uint tableNum, uint colors[5]);
 public:
 	CPetConversations();
 	virtual ~CPetConversations() {}

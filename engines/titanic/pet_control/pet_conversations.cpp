@@ -88,7 +88,11 @@ bool CPetConversations::reset() {
 		_textInput.setColor(col);
 		_textInput.setLineColor(0, col);
 
-		warning("TODO: Setup log shaded palette?");
+		// Replace the log colors with new 1st class ones
+		uint colors1[5], colors2[5];
+		copyColors(2, colors1);
+		copyColors(1, colors2);
+		_log.remapColors(5, colors1, colors2);
 
 		_log.setColor(getColor(2));
 	}
@@ -477,6 +481,11 @@ CString CPetConversations::getActiveNPCName() const {
 		return _petControl->_activeNPC->getName();
 	else
 		return CString();
+}
+
+void CPetConversations::copyColors(uint tableNum, uint colors[5]) {
+	const uint *src = getColorTable(tableNum);
+	Common::copy(src, src + 5, colors);
 }
 
 } // End of namespace Titanic

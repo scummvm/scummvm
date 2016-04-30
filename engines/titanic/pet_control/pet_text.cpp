@@ -234,6 +234,31 @@ void CPetText::setColor(byte r, byte g, byte b) {
 	_textB = b;
 }
 
+void CPetText::remapColors(uint count, uint *srcColors, uint *destColors) {
+	if (_lineCount >= 0) {
+		int lineNum = 0;
+		int index1 = 0;
+
+		for (int lineNum = 0; lineNum <= _lineCount; ++lineNum) {
+			// Get the rgb values
+			uint r = _array[lineNum]._rgb[1];
+			uint g = _array[lineNum]._rgb[2];
+			uint b = _array[lineNum]._rgb[3];
+			uint color = r | (g << 8) | (b << 16);
+
+			for (uint index = 0; index < count; ++index) {
+				if (color == srcColors[index]) {
+					// Found a match, so replace the color
+					setLineColor(lineNum, destColors[lineNum]);
+					break;
+				}
+			}
+		}
+	}
+	
+	_stringsMerged = false;
+}
+
 void CPetText::setMaxCharsPerLine(int maxChars) {
 	if (maxChars >= -1 && maxChars < 257)
 		_maxCharsPerLine = maxChars;
