@@ -145,6 +145,29 @@ enum WizProcessFlags {
 	kWPFZBuffer = 0x200000
 };
 
+enum WizCompositeFlags {
+	kWCFConditionBits = 0x01,
+	kWCFSubState = 0x02,
+	kWCFXDelta = 0x04,
+	kWCFYDelta = 0x08,
+	kWCFDrawFlags = 0x10,
+	kWCFSubConditionBits = 0x20
+};
+
+enum WizSpcConditionTypes {
+	kWSPCCTBits = 0xc0000000,
+	kWSPCCTOr   = 0x00000000,
+	kWSPCCTAnd  = 0x40000000,
+	kWSPCCTNot  = 0x80000000
+};
+
+enum WizMoonSystemBits {
+	kWMSBRopMask = 0xff,
+	kWMSBRopParamMask = 0xff00,
+	kWMSBReservedBits = (kWMSBRopMask | kWMSBRopParamMask),
+	kWMSBRopParamRShift = 8
+};
+
 enum {
 	kWizXMap = 0,
 	kWizRMap,
@@ -224,6 +247,10 @@ public:
 #ifdef USE_RGB_COLOR
 	static void copyMaskWizImage(uint8 *dst, const uint8 *src, const uint8 *mask, int dstPitch, int dstType, int dstw, int dsth, int srcx, int srcy, int srcw, int srch, const Common::Rect *rect, int flags, const uint8 *palPtr);
 #endif
+
+	void copyCompositeWizImage(uint8 *dst, uint8 *wizPtr, uint8 *wizd, uint8 *maskPtr, int dstPitch, int dstType,
+		int dstw, int dsth, int srcx, int srcy, int srcw, int srch, int state, const Common::Rect *clipBox,
+		int flags, const uint8 *palPtr, int transColor, uint8 bitDepth, const uint8 *xmapPtr, uint16 conditionBits);
 
 	static void copyAuxImage(uint8 *dst1, uint8 *dst2, const uint8 *src, int dstw, int dsth, int srcx, int srcy, int srcw, int srch, uint8 bitdepth);
 	static void copyWizImageWithMask(uint8 *dst, const uint8 *src, int dstPitch, int dstw, int dsth, int srcx, int srcy, int srcw, int srch, const Common::Rect *rect, int maskT, int maskP);

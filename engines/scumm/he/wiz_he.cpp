@@ -1629,7 +1629,7 @@ void Wiz::drawWizImageEx(uint8 *dst, uint8 *dataPtr, uint8 *maskPtr, int dstPitc
 		}
 		break;
 	case 4:
-		// TODO: Unknown image type
+		copyCompositeWizImage(dst, dataPtr, wizd, maskPtr, dstPitch, dstType, dstw, dsth, srcx, srcy, srcw, srch, state, rect, flags, palPtr, transColor, bitDepth, xmapPtr, conditionBits);
 		break;
 	case 5:
 		copy16BitWizImage(dst, wizd, dstPitch, dstType, dstw, dsth, srcx, srcy, srcw, srch, rect, flags, xmapPtr);
@@ -1640,6 +1640,124 @@ void Wiz::drawWizImageEx(uint8 *dst, uint8 *dataPtr, uint8 *maskPtr, int dstPitc
 	}
 }
 
+void Wiz::copyCompositeWizImage(uint8 *dst, uint8 *wizPtr, uint8 *compositeInfoBlockPtr, uint8 *maskPtr, int dstPitch, int dstType,
+		int dstw, int dsth, int srcx, int srcy, int srcw, int srch, int state, const Common::Rect *clipBox,
+		int flags, const uint8 *palPtr, int transColor, uint8 bitDepth, const uint8 *xmapPtr, uint16 conditionBits) {
+
+	uint8 *nestedBlockHeader = _vm->heFindResource(MKTAG('N','E','S','T'), wizPtr);
+	assert(nestedBlockHeader);
+
+	uint8 *nestedWizHeader = _vm->heFindResource(MKTAG('M','U','L','T'), nestedBlockHeader);
+	assert(nestedWizHeader);
+
+	uint16 layerCount = READ_LE_UINT16(compositeInfoBlockPtr);
+	compositeInfoBlockPtr += 2;
+
+	uint16 defaultSubConditionBits = (conditionBits & kWMSBReservedBits);
+
+	conditionBits &= ~kWMSBReservedBits;
+
+	for (uint layerCounter = 0; layerCounter < layerCount; layerCounter++) {
+		int cmdSize = READ_LE_UINT16(compositeInfoBlockPtr);
+		uint8 *cmdPtr = compositeInfoBlockPtr + 2;
+
+		compositeInfoBlockPtr += (cmdSize + 2);
+		uint32 layerCmdDataBits = READ_LE_UINT32(cmdPtr);
+		cmdPtr += 4;
+
+		uint32 subConditionBits;
+
+		if (layerCmdDataBits & kWCFConditionBits) {
+			uint32 layerConditionBits = READ_LE_UINT32(cmdPtr);
+			cmdPtr += 4;
+
+			subConditionBits = (layerConditionBits & kWMSBReservedBits);
+			layerConditionBits &= ~kWMSBReservedBits;
+
+			if (subConditionBits == 0)
+				subConditionBits = defaultSubConditionBits;
+
+			uint32 conditionType = (layerConditionBits & kWSPCCTBits);
+			layerConditionBits &= ~kWSPCCTBits;
+
+			switch (conditionType) {
+			case kWSPCCTAnd:
+				if (layerConditionBits != (layerConditionBits & conditionBits))
+					continue;
+				break;
+
+			case kWSPCCTNot:
+				if (layerConditionBits & conditionBits)
+					continue;
+				break;
+
+			case kWSPCCTOr:
+			default:
+				if (!(layerConditionBits & conditionBits))
+					continue;
+				break;
+			}
+		} else {
+			subConditionBits = defaultSubConditionBits;
+		}
+
+		uint16 subState;
+		if (layerCmdDataBits & kWCFSubState) {
+			subState = READ_LE_UINT16(cmdPtr);
+			cmdPtr += 2;
+		} else {
+			subState = 0;
+		}
+
+		int16 xPos;
+		if (layerCmdDataBits & kWCFXDelta) {
+			xPos = (int16)READ_LE_UINT16(cmdPtr);
+			cmdPtr += 2;
+		} else {
+			xPos = 0;
+		}
+
+		int16 yPos;
+		if (layerCmdDataBits & kWCFYDelta) {
+			yPos = (int16)READ_LE_UINT16(cmdPtr);
+			cmdPtr += 2;
+		} else {
+			yPos = 0;
+		}
+
+		uint32 drawFlags;
+		if (layerCmdDataBits & kWCFDrawFlags) {
+			drawFlags = READ_LE_UINT32(cmdPtr);
+			cmdPtr += 4;
+		} else {
+			drawFlags = flags;
+		}
+
+		uint srcw1, srch1;
+		if (drawFlags & (kWIFFlipX | kWIFFlipY)) {
+			uint8 *wizh = _vm->findWrappedBlock(MKTAG('W','I','Z','H'), wizPtr, subState, 0);
+			assert(wizh);
+			srcw1 = READ_LE_UINT32(wizh + 0x4);
+			srch1 = READ_LE_UINT32(wizh + 0x8);
+		}
+
+		if (drawFlags & kWIFFlipX)
+			xPos = (srcw - (xPos + srcw1));
+
+		if (drawFlags & kWIFFlipY)
+			yPos = (srch - (yPos + srch1));
+
+		if (layerCmdDataBits & kWCFSubConditionBits) {
+			subConditionBits = READ_LE_UINT32(cmdPtr);
+			cmdPtr += 4;
+		} else {
+			subConditionBits = 0;
+		}
+
+		drawWizImageEx(dst, nestedWizHeader, maskPtr, dstPitch, dstType, dstw, dsth, srcx + xPos, srcy + yPos, srcw, srch,
+			subState, clipBox, drawFlags, palPtr, transColor, bitDepth, xmapPtr, subConditionBits);
+	}
+}
 
 struct PolygonDrawData {
 	struct PolygonArea {
