@@ -62,7 +62,7 @@ Scene49::Scene49(GnapEngine *vm) : Scene(vm) {
 }
 
 int Scene49::init() {
-	GameSys gameSys = *_vm->_gameSys;
+	GameSys& gameSys = *_vm->_gameSys;
 
 	gameSys.setAnimation(0, 0, 0);
 	gameSys.setAnimation(0, 0, 1);
@@ -158,9 +158,9 @@ void Scene49::checkObstacles() {
 }
 
 void Scene49::updateObstacle(int id) {
-	GameSys gameSys = *_vm->_gameSys;
-	Scene49Obstacle &obstacle = _obstacles[id];
+	GameSys& gameSys = *_vm->_gameSys;
 
+	Scene49Obstacle &obstacle = _obstacles[id];
 	obstacle._currId = obstacle._prevId;
 
 	switch (obstacle._laneNum) {
@@ -283,7 +283,7 @@ void Scene49::clearObstacle(int index) {
 }
 
 void Scene49::run() {
-	GameSys gameSys = *_vm->_gameSys;
+	GameSys& gameSys = *_vm->_gameSys;
 
 	bool animToggle6 = false;
 	bool animToggle5 = false;
@@ -507,7 +507,7 @@ void Scene49::run() {
 }
 
 void Scene49::updateAnimations() {
-	GameSys gameSys = *_vm->_gameSys;
+	GameSys& gameSys = *_vm->_gameSys;
 
 	for (int i = 0; i < 5; ++i) {
 		if (gameSys.getAnimationStatus(i + 2) == 2) {

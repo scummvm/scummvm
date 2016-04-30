@@ -31,7 +31,7 @@ Scene40::Scene40(GnapEngine *vm) : Scene(vm) {
 }
 
 int Scene40::init() {
-	GameSys gameSys = *_vm->_gameSys;
+	GameSys& gameSys = *_vm->_gameSys;
 
 	gameSys.setAnimation(0, 0, 0);
 	gameSys.setAnimation(0, 0, 1);
@@ -167,7 +167,7 @@ void Scene40::run() {
 }
 
 void Scene40::updateAnimations() {
-	GameSys gameSys = *_vm->_gameSys;
+	GameSys& gameSys = *_vm->_gameSys;
 
 	if (gameSys.getAnimationStatus(0) == 2) {
 		gameSys.setAnimation(0, 0, 0);
@@ -188,7 +188,7 @@ Scene41::Scene41(GnapEngine *vm) : Scene(vm) {
 }
 
 int Scene41::init() {
-	GameSys gameSys = *_vm->_gameSys;
+	GameSys& gameSys = *_vm->_gameSys;
 
 	gameSys.setAnimation(0, 0, 0);
 	gameSys.setAnimation(0, 0, 1);
@@ -219,7 +219,7 @@ void Scene41::updateHotspots() {
 }
 
 void Scene41::run() {
-	GameSys gameSys = *_vm->_gameSys;
+	GameSys& gameSys = *_vm->_gameSys;
 
 	_vm->queueInsertDeviceIcon();
 
@@ -560,7 +560,7 @@ void Scene41::run() {
 }
 
 void Scene41::updateAnimations() {
-	GameSys gameSys = *_vm->_gameSys;
+	GameSys& gameSys = *_vm->_gameSys;
 
 	if (gameSys.getAnimationStatus(0) == 2) {
 		switch (_vm->_gnapActionStatus) {
@@ -715,7 +715,7 @@ Scene42::Scene42(GnapEngine *vm) : Scene(vm) {
 }
 
 int Scene42::init() {
-	GameSys gameSys = *_vm->_gameSys;
+	GameSys& gameSys = *_vm->_gameSys;
 
 	gameSys.setAnimation(0, 0, 0);
 	gameSys.setAnimation(0, 0, 1);
@@ -750,7 +750,7 @@ void Scene42::updateHotspots() {
 }
 
 void Scene42::run() {
-	GameSys gameSys = *_vm->_gameSys;
+	GameSys& gameSys = *_vm->_gameSys;
 
 	_vm->queueInsertDeviceIcon();
 
@@ -1024,7 +1024,7 @@ void Scene42::run() {
 }
 
 void Scene42::updateAnimations() {
-	GameSys gameSys = *_vm->_gameSys;
+	GameSys& gameSys = *_vm->_gameSys;
 
 	if (gameSys.getAnimationStatus(0) == 2) {
 		switch (_vm->_gnapActionStatus) {
@@ -1160,7 +1160,7 @@ Scene43::Scene43(GnapEngine *vm) : Scene(vm) {
 }
 
 int Scene43::init() {
-	GameSys gameSys = *_vm->_gameSys;
+	GameSys& gameSys = *_vm->_gameSys;
 
 	gameSys.setAnimation(0, 0, 0);
 	gameSys.setAnimation(0, 0, 1);
@@ -1200,7 +1200,7 @@ void Scene43::updateHotspots() {
 }
 
 void Scene43::run() {
-	GameSys gameSys = *_vm->_gameSys;
+	GameSys& gameSys = *_vm->_gameSys;
 
 	_vm->queueInsertDeviceIcon();
 
@@ -1480,7 +1480,7 @@ void Scene43::run() {
 }
 
 void Scene43::updateAnimations() {
-	GameSys gameSys = *_vm->_gameSys;
+	GameSys& gameSys = *_vm->_gameSys;
 
 	if (gameSys.getAnimationStatus(0) == 2) {
 		switch (_vm->_gnapActionStatus) {
@@ -1597,7 +1597,7 @@ Scene44::Scene44(GnapEngine *vm) : Scene(vm) {
 }
 
 int Scene44::init() {
-	GameSys gameSys = *_vm->_gameSys;
+	GameSys& gameSys = *_vm->_gameSys;
 
 	gameSys.setAnimation(0, 0, 0);
 	gameSys.setAnimation(0, 0, 1);
@@ -1633,7 +1633,7 @@ void Scene44::updateHotspots() {
 }
 
 void Scene44::run() {
-	GameSys gameSys = *_vm->_gameSys;
+	GameSys& gameSys = *_vm->_gameSys;
 
 	_vm->queueInsertDeviceIcon();
 
@@ -1977,7 +1977,7 @@ void Scene44::run() {
 }
 
 void Scene44::updateAnimations() {
-	GameSys gameSys = *_vm->_gameSys;
+	GameSys& gameSys = *_vm->_gameSys;
 
 	if (gameSys.getAnimationStatus(0) == 2) 	{
 		gameSys.setAnimation(0, 0, 0);
@@ -2074,7 +2074,7 @@ Scene45::Scene45(GnapEngine *vm) : Scene(vm) {
 }
 
 int Scene45::init() {
-	GameSys gameSys = *_vm->_gameSys;
+	GameSys& gameSys = *_vm->_gameSys;
 
 	gameSys.setAnimation(0, 0, 0);
 	gameSys.setAnimation(0, 0, 1);
@@ -2115,7 +2115,7 @@ void Scene45::updateHotspots() {
 }
 
 void Scene45::run() {
-	GameSys gameSys = *_vm->_gameSys;
+	GameSys& gameSys = *_vm->_gameSys;
 
 	if (!_vm->isSoundPlaying(0x1094A))
 		_vm->playSound(0x1094A, true);
@@ -2381,7 +2381,7 @@ void Scene45::run() {
 }
 
 void Scene45::updateAnimations() {
-	GameSys gameSys = *_vm->_gameSys;
+	GameSys& gameSys = *_vm->_gameSys;
 
 	if (gameSys.getAnimationStatus(0) == 2) {
 		gameSys.setAnimation(0, 0, 0);
@@ -2457,7 +2457,7 @@ Scene46::Scene46(GnapEngine *vm) : Scene(vm) {
 }
 
 int Scene46::init() {
-	GameSys gameSys = *_vm->_gameSys;
+	GameSys& gameSys = *_vm->_gameSys;
 
 	gameSys.setAnimation(0, 0, 0);
 	gameSys.setAnimation(0, 0, 1);
@@ -2488,7 +2488,7 @@ void Scene46::updateHotspots() {
 }
 
 void Scene46::run() {
-	GameSys gameSys = *_vm->_gameSys;
+	GameSys& gameSys = *_vm->_gameSys;
 
 	_vm->queueInsertDeviceIcon();
 	gameSys.insertSequence(0x4D, 0, 0, 0, kSeqLoop, 0, 0, 0);
@@ -2725,7 +2725,7 @@ void Scene46::run() {
 }
 
 void Scene46::updateAnimations() {
-	GameSys gameSys = *_vm->_gameSys;
+	GameSys& gameSys = *_vm->_gameSys;
 
 	if (gameSys.getAnimationStatus(0) == 2) {
 		gameSys.setAnimation(0, 0, 0);
