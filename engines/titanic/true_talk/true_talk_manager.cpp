@@ -195,4 +195,27 @@ void CTrueTalkManager::fn1(CTreeItem *item, int val2, int val3) {
 	warning("CTrueTalkManager::fn1");
 }
 
+TTNamedScript *CTrueTalkManager::getTalker(const CString &name) {
+	if (name.contains("Doorbot"))
+		return _scripts.getNamedScript(104);
+	else if (name.contains("DeskBot"))
+		return _scripts.getNamedScript(103);
+	else if (name.contains("LiftBot"))
+		return _scripts.getNamedScript(105);
+	else if (name.contains("Parrot"))
+		return _scripts.getNamedScript(107);
+	else if (name.contains("BarBot"))
+		return _scripts.getNamedScript(100);
+	else if (name.contains("ChatterBot"))
+		return _scripts.getNamedScript(102);
+	else if (name.contains("BellBot"))
+		return _scripts.getNamedScript(101);
+	else if (name.contains("MaitreD"))
+		return _scripts.getNamedScript(112);
+	else if (name.contains("Succubus") || name.contains("Sub"))
+		return _scripts.getNamedScript(111);
+
+	return nullptr;
+}
+
 } // End of namespace Titanic

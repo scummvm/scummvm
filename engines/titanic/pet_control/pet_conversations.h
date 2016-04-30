@@ -26,6 +26,7 @@
 #include "titanic/pet_control/pet_section.h"
 #include "titanic/pet_control/pet_text.h"
 #include "titanic/pet_control/pet_gfx_element.h"
+#include "titanic/true_talk/true_talk_manager.h"
 
 namespace Titanic {
 
@@ -49,7 +50,7 @@ private:
 	int _valArray3[3];
 	bool _logScrolled;
 	int _field418;
-	CString _string1;
+	CString _npcName;
 private:
 	/**
 	 * Sets up the control
@@ -107,6 +108,11 @@ private:
 	void stopNPCTimer();
 
 	/**
+	 * Get the TrueTalk script associated with a given NPC
+	 */
+	TTNamedScript *getNPCScript(const CString &name) const;
+
+	/**
 	 * Handle a keypress
 	 */
 	bool handleKey(const Common::KeyState &keyState);
@@ -115,6 +121,11 @@ private:
 	 * Handles an entered text line
 	 */
 	void textLineEntered(const CString &textLine);
+
+	/**
+	 * Returns the name of the currently active NPC, if any
+	 */
+	CString getActiveNPCName() const;
 public:
 	CPetConversations();
 

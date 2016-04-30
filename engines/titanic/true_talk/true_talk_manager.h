@@ -113,6 +113,11 @@ public:
 	void update2();
 
 	void fn1(CTreeItem *item, int val2, int val3);
+
+	/**
+	 * Return a TrueTalk talker/script
+	 */
+	TTNamedScript *getTalker(const CString &name);
 };
 
 } // End of namespace Titanic

@@ -22,6 +22,7 @@
 
 #include "titanic/pet_control/pet_conversations.h"
 #include "titanic/pet_control/pet_control.h"
+#include "titanic/game_manager.h"
 
 namespace Titanic {
 
@@ -243,6 +244,19 @@ void CPetConversations::stopNPCTimer() {
 	_petControl->stopPetTimer(1);
 }
 
+TTNamedScript *CPetConversations::getNPCScript(const CString &name) const {
+	if (name.empty() || !_petControl)
+		return nullptr;
+	CGameManager *gameManager = _petControl->getGameManager();
+	if (!gameManager)
+		return nullptr;
+	CTrueTalkManager *trueTalk = gameManager->getTalkManager();
+	if (!trueTalk)
+		return nullptr;
+
+	return trueTalk->getTalker(name);
+}
+
 bool CPetConversations::handleKey(const Common::KeyState &keyState) {
 	switch (keyState.keycode) {
 	case Common::KEYCODE_UP:
@@ -305,6 +319,13 @@ void CPetConversations::textLineEntered(const CString &textLine) {
 	// Clear input line and scroll log down to end to show response
 	_textInput.setup();
 	scrollToBottom();
+}
+
+CString CPetConversations::getActiveNPCName() const {
+	if (_petControl && _petControl->_activeNPC)
+		return _petControl->_activeNPC->getName();
+	else
+		return CString();
 }
 
 } // End of namespace Titanic
