@@ -28,9 +28,8 @@ namespace Titanic {
 
 CPetElement::CPetElement() : _mode(MODE_UNSELECTED) {}
 
-void CPetElement::getBounds(Rect *rect) {
-	if (rect)
-		*rect = Rect();
+Rect CPetElement::getBounds() const {
+	return Rect();
 }
 
 bool CPetElement::MouseButtonDownMsg(const Point &pt) {

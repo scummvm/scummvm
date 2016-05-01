@@ -67,7 +67,7 @@ public:
 	/**
 	 * Get the bounds for the element
 	 */
-	virtual void getBounds(Rect *rect);
+	virtual Rect getBounds() const;
 
 	/**
 	 * Handles processing mouse button down messages

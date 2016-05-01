@@ -61,7 +61,7 @@ public:
 	/**
 	 * Get the bounds for the element
 	 */
-	virtual void getBounds(Rect *rect);
+	virtual Rect getBounds() const;
 
 	/**
 	 * Get the game object associated with this item

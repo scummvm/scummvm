@@ -76,17 +76,15 @@ void CPetGfxElement::draw(CScreenManager *screenManager, const Common::Point &de
 		obj->draw(screenManager, destPos);
 }
 
-void CPetGfxElement::getBounds(Rect *rect) {
-	if (rect) {
-		CGameObject *obj = getObject();
-		if (!obj)
-			obj = _object0;
+Rect CPetGfxElement::getBounds() const {
+	CGameObject *obj = getObject();
+	if (!obj)
+		obj = _object0;
 
-		if (obj && obj->getSurface45())
-			*rect = _bounds;
-		else
-			rect->clear();
-	}
+	if (obj && obj->getSurface45())
+		return _bounds;
+	else
+		return Rect();
 }
 
 CGameObject *CPetGfxElement::getObject() const {

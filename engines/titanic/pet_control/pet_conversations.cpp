@@ -131,8 +131,11 @@ void CPetConversations::draw(CScreenManager *screenManager) {
 }
 
 Rect CPetConversations::getBounds() {
-	// TODO
-	return Rect();
+	Rect rect = _dials[0].getBounds();
+	rect.combine(_dials[1].getBounds());
+	rect.combine(_dials[2].getBounds());
+
+	return rect;
 }
 
 bool CPetConversations::isValid(CPetControl *petControl) {
