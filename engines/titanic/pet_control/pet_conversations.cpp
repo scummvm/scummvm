@@ -68,7 +68,7 @@ bool CPetConversations::reset() {
 	_doorBot.reset("PetCallDoorOut", _petControl, MODE_UNSELECTED);
 	_doorBot.reset("PetCallDoorIn", _petControl, MODE_SELECTED);
 	_bellBot.reset("PetCallBellOut", _petControl, MODE_UNSELECTED);
-	_doorBot.reset("PetCallBellIn", _petControl, MODE_SELECTED);
+	_bellBot.reset("PetCallBellIn", _petControl, MODE_SELECTED);
 
 	_indent.reset("PetSmallCharacterIndent", _petControl);
 	_splitter.reset("PetSplitter", _petControl);
