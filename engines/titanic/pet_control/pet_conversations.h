@@ -30,12 +30,15 @@
 
 namespace Titanic {
 
+#define TOTAL_DIALS 3
+
 class CPetConversations : public CPetSection {
 private:
 	CPetGfxElement _scrollUp;
 	CPetGfxElement _scrollDown;
 	CPetGfxElement _dialBackground;
-	CPetGfxElement _dials[3];
+	CPetGfxElement _dials[TOTAL_DIALS];
+	uint _npcLevels[TOTAL_DIALS];
 	CPetGfxElement _val4;
 	CPetGfxElement _val5;
 	CPetGfxElement _indent;
@@ -47,7 +50,6 @@ private:
 	int _npcNum;
 	CPetText _log;
 	CPetText _textInput;
-	uint _npcLevels[3];
 	bool _logChanged;
 	int _field418;
 	CString _npcName;
@@ -146,6 +148,11 @@ private:
 	 * Called when the dial for an NPC is being changed
 	 */
 	void npcDialChange(uint dialNum, int oldLevel, int newLevel);
+
+	/**
+	 * Reset the dials with those for a given NPC
+	 */
+	void resetDials(const CString &name);
 public:
 	CPetConversations();
 	virtual ~CPetConversations() {}
@@ -220,6 +227,10 @@ public:
 	 * Display a title for an NPC
 	 */
 	virtual void displayNPCName(CGameObject *npc);
+
+	virtual void proc34(const CString &name);
+
+	virtual void proc35() {}
 
 	/**
 	 * Show the text cursor

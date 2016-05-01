@@ -216,7 +216,7 @@ void CPetConversations::load(SimpleFile *file, int param) {
 	_textInput.load(file, param);
 	_log.load(file, param);
 
-	for (int idx = 0; idx < 3; ++idx)
+	for (int idx = 0; idx < TOTAL_DIALS; ++idx)
 		_npcLevels[idx] = file->readNumber();
 }
 
@@ -228,7 +228,7 @@ void CPetConversations::save(SimpleFile *file, int indent) const {
 	_textInput.save(file, indent);
 	_log.save(file, indent);
 
-	for (int idx = 0; idx < 3; ++idx)
+	for (int idx = 0; idx < TOTAL_DIALS; ++idx)
 		file->writeNumberLine(_npcLevels[idx], indent);
 }
 
@@ -252,7 +252,7 @@ void CPetConversations::proc25(int val) {
 	} else {
 		CString name = _field418 ? _npcName : getActiveNPCName();
 
-		for (int idx = 0; idx < 3; ++idx) {
+		for (int idx = 0; idx < TOTAL_DIALS; ++idx) {
 			if (!_dials[idx].hasActiveMovie())
 				updateDial(idx, name);
 		}
@@ -299,6 +299,17 @@ void CPetConversations::displayNPCName(CGameObject *npc) {
 		_log.setNPC(1, id);
 		displayMessage(msg);
 	}
+}
+
+void CPetConversations::proc34(const CString &name) {
+	_field418 = 0;
+	resetDials(name);
+	startNPCTimer();
+}
+
+void CPetConversations::proc35() {
+	stopNPCTimer();
+	resetDials("0");
 }
 
 void CPetConversations::showCursor() {
@@ -543,6 +554,17 @@ void CPetConversations::npcDialChange(uint dialNum, int oldLevel, int newLevel) 
 
 		if (startFrame != endFrame)
 			_dials[dialNum].playMovie(startFrame, endFrame);
+	}
+}
+
+void CPetConversations::resetDials(const CString &name) {
+	TTNamedScript *script = getNPCScript(name);
+
+	for (int idx = 0; idx < TOTAL_DIALS; ++idx) {
+		uint oldLevel = _npcLevels[idx];
+		uint newLevel = getDialLevel(idx, script);
+		npcDialChange(idx, oldLevel, newLevel);
+		_npcLevels[idx] = newLevel;
 	}
 }
 

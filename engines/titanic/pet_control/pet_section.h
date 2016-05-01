@@ -162,7 +162,9 @@ public:
 	virtual void displayNPCName(CGameObject *npc) {}
 
 	virtual void proc33() {}
-	virtual void proc34() {}
+	
+	virtual void proc34(const CString &name) {}
+	
 	virtual void proc35() {}
 
 	/**
