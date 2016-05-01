@@ -31,7 +31,12 @@
 
 namespace Titanic {
 
-enum TextCommand { TEXTCMD_26 = 26, TEXTCMD_SET_COLOR = 27 };
+enum TextCommand { TEXTCMD_NPC = 26, TEXTCMD_SET_COLOR = 27 };
+
+enum WriteCharacterResult {
+	WC_IN_BOUNDS = 0, WC_OUTSIDE_TOP = -1, WC_OUTSIDE_BOTTOM = -2,
+	WC_OUTSIDE_LEFT = -3, WC_OUTSIDE_RIGHT = -4
+};
 
 class CVideoSurface;
 
@@ -51,7 +56,7 @@ private:
 	/**
 	 * Write a character
 	 */
-	int writeChar(CVideoSurface *surface, unsigned char c, 
+	WriteCharacterResult writeChar(CVideoSurface *surface, unsigned char c, 
 		const Common::Point &pt, const Rect &destRect, const Rect *srcRect);
 
 	/**
@@ -87,6 +92,8 @@ public:
 
 	/**
 	 * Write a string to the specified surface
+	 * @returns		The index of the last character that was visible
+	 *				with the drawing area
 	 */
 	int writeString(CVideoSurface *surface, const Rect &rect1, const Rect &destRect,
 		int yOffset, const CString &str, CTextCursor *textCursor);

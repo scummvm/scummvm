@@ -84,7 +84,7 @@ int STFont::getTextBounds(const CString &str, int maxWidth, Point *sizeOut) cons
 	// Loop through the characters of the string
 	if (!str.empty()) {
 		for (const char *strP = str.c_str(); *strP; ++strP) {
-			if (*strP == TEXTCMD_26) {
+			if (*strP == TEXTCMD_NPC) {
 				strP += 3;
 			} else if (*strP == TEXTCMD_SET_COLOR) {
 				strP += 4;
@@ -141,7 +141,7 @@ int STFont::writeString(CVideoSurface *surface, const Rect &rect1, const Rect &d
 	const char *endP = nullptr;
 	const char *strEndP = str.c_str() + str.size() - 1;
 	for (const char *srcP = str.c_str(); *srcP; ++srcP) {
-		if (*srcP == TEXTCMD_26) {
+		if (*srcP == TEXTCMD_NPC) {
 			srcP += 3;
 		} else if (*srcP == TEXTCMD_SET_COLOR) {
 			// Change the color used for characters
@@ -159,10 +159,10 @@ int STFont::writeString(CVideoSurface *surface, const Rect &rect1, const Rect &d
 			}
 
 			if (*srcP != '\n') {
-				int result = writeChar(surface, *srcP, textSize, rect1, &destBounds);
-				if (result == -2)
+				WriteCharacterResult result = writeChar(surface, *srcP, textSize, rect1, &destBounds);
+				if (result == WC_OUTSIDE_BOTTOM)
 					return endP - str.c_str();
-				else if (!result)
+				else if (result == WC_IN_BOUNDS)
 					endP = srcP;
 			}
 
@@ -176,10 +176,10 @@ int STFont::writeString(CVideoSurface *surface, const Rect &rect1, const Rect &d
 		textCursor->setPos(cursorPos);
 	}
 
-	return endP - str.c_str();
+	return endP ? endP - str.c_str() : 0;
 }
 
-int STFont::writeChar(CVideoSurface *surface, unsigned char c, const Point &pt,
+WriteCharacterResult STFont::writeChar(CVideoSurface *surface, unsigned char c, const Point &pt,
 	const Rect &destRect, const Rect *srcRect) {
 	if (c == 233)
 		c = '$';
@@ -194,7 +194,7 @@ int STFont::writeChar(CVideoSurface *surface, unsigned char c, const Point &pt,
 	if (srcRect->isEmpty())
 		srcRect = &destRect;
 	if (destPos.y > srcRect->bottom)
-		return -2;
+		return WC_OUTSIDE_BOTTOM;
 
 	if ((destPos.y + tempRect.height()) > srcRect->bottom) {
 		tempRect.bottom += tempRect.top - destPos.y;
@@ -202,7 +202,7 @@ int STFont::writeChar(CVideoSurface *surface, unsigned char c, const Point &pt,
 
 	if (destPos.y < srcRect->top) {
 		if ((tempRect.height() + destPos.y) < srcRect->top)
-			return -1;
+			return WC_OUTSIDE_TOP;
 
 		tempRect.top += srcRect->top - destPos.y;
 		destPos.y = srcRect->top;
@@ -210,21 +210,21 @@ int STFont::writeChar(CVideoSurface *surface, unsigned char c, const Point &pt,
 
 	if (destPos.x < srcRect->left) {
 		if ((tempRect.width() + destPos.x) < srcRect->left)
-			return -3;
+			return WC_OUTSIDE_LEFT;
 
 		tempRect.left += srcRect->left - destPos.x;
 		destPos.x = srcRect->left;
 	} else {
 		if ((tempRect.width() + destPos.x) > srcRect->right) {
 			if (destPos.x > srcRect->right)
-				return -4;
+				return WC_OUTSIDE_RIGHT;
 
 			tempRect.right += srcRect->left - destPos.x;
 		}
 	}
 
 	copyRect(surface, destPos, tempRect);
-	return 0;
+	return WC_IN_BOUNDS;
 }
 
 void STFont::copyRect(CVideoSurface *surface, const Point &pt, Rect &rect) {
@@ -247,7 +247,7 @@ void STFont::copyRect(CVideoSurface *surface, const Point &pt, Rect &rect) {
 void STFont::extendBounds(Point &textSize, byte c, int maxWidth) const {
 	textSize.x += _chars[c]._width;
 
-	if (textSize.x == '\n' || textSize.x > maxWidth) {
+	if (c == '\n' || textSize.x > maxWidth) {
 		textSize.x = 0;
 		textSize.y += _fontHeight;
 	}
@@ -260,7 +260,7 @@ void STFont::checkLineWrap(Point &textSize, int maxWidth, const char *&str) cons
 		if (*srcPtr == ' ' && flag)
 			break;
 
-		if (*srcPtr == TEXTCMD_26)
+		if (*srcPtr == TEXTCMD_NPC)
 			srcPtr += 3;
 		else if (*srcPtr == TEXTCMD_SET_COLOR)
 			srcPtr += 4;

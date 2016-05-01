@@ -267,7 +267,7 @@ void CPetText::setMaxCharsPerLine(int maxChars) {
 void CPetText::updateStr3(int lineNum) {
 	if (_field64 > 0 && _field68 > 0) {
 		char line[5];
-		line[0] = line[3] = TEXTCMD_26;
+		line[0] = line[3] = TEXTCMD_NPC;
 		line[1] = _field64;
 		line[2] = _field68;
 		line[4] = '\0';
@@ -333,7 +333,7 @@ void CPetText::scrollToTop(CScreenManager *screenManager) {
 
 void CPetText::scrollToBottom(CScreenManager *screenManager) {
 	int oldFontNumber = screenManager->setFontNumber(_fontNumber);
-	_scrollTop = _bounds.height();
+	_scrollTop = getTextHeight(screenManager);
 	constrainScrollDown(screenManager);
 	screenManager->setFontNumber(oldFontNumber);
 }
@@ -345,7 +345,7 @@ void CPetText::constrainScrollUp(CScreenManager *screenManager) {
 
 void CPetText::constrainScrollDown(CScreenManager *screenManager) {
 	// Figure out the maximum scroll amount allowed
-	int maxScroll = _bounds.height() - getTextHeight(screenManager) - 4;
+	int maxScroll = getTextHeight(screenManager) - _bounds.height() - 4;
 	if (maxScroll < 0)
 		maxScroll = 0;
 
