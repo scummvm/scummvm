@@ -528,7 +528,7 @@ uint CPetConversations::getDialLevel(uint dialNum, TTNamedScript *script, int v)
 	if (!script)
 		return 0;
 	else
-		return MAX(script->getDialLevel(dialNum), 15);
+		return MAX(script->getDialLevel(dialNum, flag), 15);
 }
 
 void CPetConversations::npcDialChange(uint dialNum, int oldLevel, int newLevel) {

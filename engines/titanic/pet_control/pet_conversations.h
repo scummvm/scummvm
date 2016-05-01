@@ -230,7 +230,7 @@ public:
 
 	virtual void proc34(const CString &name);
 
-	virtual void proc35() {}
+	virtual void proc35();
 
 	/**
 	 * Show the text cursor

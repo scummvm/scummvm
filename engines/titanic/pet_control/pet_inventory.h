@@ -39,8 +39,8 @@ private:
 	CPetInventoryGlyphs _items;
 	CGameObject *_itemBackgrounds[46];
 	CGameObject *_itemGlyphs[46];
-	int _field28C;
-	int _field290;
+	CGameObject *_movie;
+	bool _field290;
 	int _field294;
 	int _field298;
 private:
@@ -53,6 +53,11 @@ private:
 	 * Get the index of an item added to the PET
 	 */
 	int getItemIndex(CGameObject *item) const;
+
+	/**
+	 * Set the animated inventory item movie
+	 */
+	void setMovie(CGameObject *movie, int flag);
 public:
 	CPetInventory();
 

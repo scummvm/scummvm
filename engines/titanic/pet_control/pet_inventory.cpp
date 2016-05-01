@@ -28,7 +28,7 @@
 namespace Titanic {
 
 CPetInventory::CPetInventory() : CPetSection(),
-		_field28C(0), _field290(0), _field294(0), _field298(0) {
+		_movie(nullptr), _field290(false), _field294(0), _field298(0) {
 	for (int idx = 0; idx < TOTAL_ITEMS; ++idx) {
 		_itemBackgrounds[idx] = _itemGlyphs[idx] = nullptr;
 	}
@@ -53,8 +53,7 @@ void CPetInventory::draw(CScreenManager *screenManager) {
 }
 
 Rect CPetInventory::getBounds() { 
-	// TODO
-	return Rect(); 
+	return _movie ? _movie->getBounds() : Rect();
 }
 
 CGameObject *CPetInventory::dragEnd(const Point &pt) const {
@@ -198,6 +197,19 @@ CGameObject *CPetInventory::getImage(int index) {
 	}
 	
 	return nullptr;
+}
+
+void CPetInventory::setMovie(CGameObject *movie, int flag) {
+	if (_movie)
+		_movie->stopMovie();
+	_movie = movie;
+
+	if (_movie) {
+		if (flag)
+			_movie->playMovie(0, 14, 1);
+		else
+			_movie->playMovie(0);
+	}
 }
 
 } // End of namespace Titanic
