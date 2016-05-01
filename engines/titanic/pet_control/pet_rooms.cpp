@@ -113,9 +113,8 @@ void CPetRooms::load(SimpleFile *file, int param) {
 		int count = file->readNumber();
 
 		for (int idx = 0; idx < count; ++idx) {
-			int v1 = file->readNumber();
-			int v2 = file->readNumber();
-			warning("TODO: CPetRoomsSection::load - %d,%d", v1, v2);
+			CPetRoomsGlyph *glyph = addGlyph(file->readNumber(), false);
+			glyph->set3C(file->readNumber());
 		}
 
 		_glyphItem.set34(file->readNumber());
@@ -134,7 +133,7 @@ void CPetRooms::postLoad() {
 }
 
 void CPetRooms::save(SimpleFile *file, int indent) const {
-	_glyphs.save(file, indent);
+	_glyphs.save2(file, indent);
 	_glyphItem.save2(file, indent);
 	file->writeNumberLine(_field1C0, indent);
 	file->writeNumberLine(_field1C4, indent);
@@ -207,5 +206,18 @@ void CPetRooms::areaChanged(PetArea area) {
 	if (_petControl && _petControl->_currentArea == area)
 		_petControl->makeDirty();
 }
+
+CPetRoomsGlyph *CPetRooms::addGlyph(int val, bool highlight) {
+	CPetRoomsGlyph *glyph = new CPetRoomsGlyph(val);
+	if (!glyph->setup(_petControl, &_glyphs)) {
+		delete glyph;
+		return nullptr;
+	} else {
+		_glyphs.push_back(glyph);
+		if (highlight)
+			_glyphs.highlight(glyph);
+	}
+}
+
 
 } // End of namespace Titanic

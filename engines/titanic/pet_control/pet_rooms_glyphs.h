@@ -42,10 +42,13 @@ protected:
 	CGameObject *_field5C;
 public:
 	CPetRoomsGlyph();
+	CPetRoomsGlyph(int val);
 
-	void set34(int val);
+	void set34(int val) { _field34 = val; }
 
-	void set38(int val);
+	void set38(int val) { _field38 = val; }
+
+	void set3C(int val) { _field3C = val; }
 
 	/**
 	 * Setup the glyph
@@ -77,11 +80,12 @@ public:
 };
 
 class CPetRoomsGlyphs : public CPetGlyphs {
+private:
 public:
 	/**
 	 * Save the list
 	 */
-	void save(SimpleFile *file, int indent) const;
+	void save2(SimpleFile *file, int indent) const;
 };
 
 } // End of namespace Titanic

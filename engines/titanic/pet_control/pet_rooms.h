@@ -68,6 +68,11 @@ private:
 	int fn1();
 
 	void areaChanged(PetArea area);
+
+	/**
+	 * Adds a glyph to the list
+	 */
+	CPetRoomsGlyph *addGlyph(int val, bool highlight);
 public:
 	CPetRooms();
 

@@ -32,12 +32,10 @@ CPetRoomsGlyph::CPetRoomsGlyph() : CPetGlyph(),
 	_field50(nullptr), _field54(nullptr), _field58(nullptr), _field5C(nullptr) {
 }
 
-void CPetRoomsGlyph::set34(int val) {
-	_field34 = val;
-}
-
-void CPetRoomsGlyph::set38(int val) {
-	_field38 = val;
+CPetRoomsGlyph::CPetRoomsGlyph(int val) : CPetGlyph(),
+	_field34(val), _field38(0), _field3C(0),
+	_field40(nullptr), _field44(nullptr), _field48(nullptr), _field4C(nullptr),
+	_field50(nullptr), _field54(nullptr), _field58(nullptr), _field5C(nullptr) {
 }
 
 bool CPetRoomsGlyph::setup(CPetControl *petControl, CPetGlyphs *owner) {
@@ -87,7 +85,7 @@ void CPetRoomsGlyph::proc39() {
 
 /*------------------------------------------------------------------------*/
 
-void CPetRoomsGlyphs::save(SimpleFile *file, int indent) const {
+void CPetRoomsGlyphs::save2(SimpleFile *file, int indent) const {
 	file->writeNumberLine(size(), indent);
 
 	for (const_iterator i = begin(); i != end(); ++i)

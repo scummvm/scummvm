@@ -222,6 +222,10 @@ void CPetGlyphs::highlight(int index) {
 	warning("TODO: CPetGlyphs::highlight");
 }
 
+void CPetGlyphs::highlight(const CPetGlyph *glyph) {
+	highlight(indexOf(glyph));
+}
+
 int CPetGlyphs::getHighlightedIndex(int index) {
 	int idx = index - _firstVisibleIndex;
 	return (idx >= 0 && idx < _numVisibleGlyphs) ? idx : -1;
@@ -443,6 +447,16 @@ bool CPetGlyphs::highlighted14() {
 	}
 
 	return false;
+}
+
+int CPetGlyphs::indexOf(const CPetGlyph *glyph) const {
+	int index = 0;
+	for (const_iterator i = begin(); i != end(); ++i, ++index) {
+		if (*i == glyph)
+			return index;
+	}
+
+	return -1;
 }
 
 } // End of namespace Titanic

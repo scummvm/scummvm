@@ -321,9 +321,14 @@ public:
 	void draw(CScreenManager *screenManager);
 
 	/**
-	 * Highlight a specific glyph
+	 * Highlight a specific glyph by indexe
 	 */
 	void highlight(int index);
+
+	/**
+	 * Highlight a specific glyph
+	 */
+	void highlight(const CPetGlyph *glyph);
 
 	/**
 	 * Get the owning section for the glyphs
@@ -398,6 +403,11 @@ public:
 	void resetHighlight() { changeHighlight(-1); }
 
 	bool highlighted14();
+
+	/**
+	 * Returns the index of the specified glyph in the lsit
+	 */
+	int indexOf(const CPetGlyph *glyph) const;
 };
 
 } // End of namespace Titanic
