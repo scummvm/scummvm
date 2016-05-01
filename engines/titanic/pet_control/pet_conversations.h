@@ -47,7 +47,7 @@ private:
 	int _npcNum;
 	CPetText _log;
 	CPetText _textInput;
-	int _valArray3[3];
+	uint _npcLevels[3];
 	bool _logChanged;
 	int _field418;
 	CString _npcName;
@@ -131,6 +131,21 @@ private:
 	 * Create a color table
 	 */
 	void copyColors(uint tableNum, uint colors[5]);
+
+	/**
+	 * Updates one of the dials with data from a given NPC
+	 */
+	void updateDial(uint dialNum, const CString &npcName);
+
+	/**
+	 * Get a dial level
+	 */
+	uint getDialLevel(uint dialNum, TTNamedScript *script, int v = 1);
+
+	/**
+	 * Called when the dial for an NPC is being changed
+	 */
+	void npcDialChange(uint dialNum, int oldLevel, int newLevel);
 public:
 	CPetConversations();
 	virtual ~CPetConversations() {}
@@ -198,6 +213,8 @@ public:
 	 * Called when a section is being left, to switch to another area
 	 */
 	virtual void leave();
+
+	virtual void proc25(int val);
 
 	/**
 	 * Display a title for an NPC

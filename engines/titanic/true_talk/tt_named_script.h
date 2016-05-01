@@ -103,7 +103,12 @@ public:
 	virtual void proc32();
 	virtual void proc33(int v1, int v2);
 	virtual int proc34();
-	virtual int proc35(int v1, int v2);
+
+	/**
+	 * Get the NPC's dial level
+	 */
+	virtual int getDialLevel(uint dialNum, bool flag = true);
+
 	virtual int proc36() const;
 	virtual int proc37() const;
 

@@ -42,8 +42,11 @@ void CPetSection::displayMessage(const CString &msg) {
 	error("TODO");
 }
 
-void CPetSection::proc25() {
-	error("TODO");
+void CPetSection::proc25(int val) {
+	if (!val) {
+		proc28();
+		_petControl->makeDirty();
+	}
 }
 
 void CPetSection::proc27(int duration) {

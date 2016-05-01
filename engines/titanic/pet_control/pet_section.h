@@ -142,7 +142,7 @@ public:
 	 */
 	virtual void enterRoom(CRoomItem *room) {}
 
-	virtual void proc25();
+	virtual void proc25(int val);
 
 	/**
 	 * Get a reference to the tooltip text associated with the section

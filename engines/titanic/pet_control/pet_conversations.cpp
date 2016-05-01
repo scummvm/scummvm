@@ -47,7 +47,7 @@ CPetConversations::CPetConversations() : CPetSection(),
 	_textInput.setColor(getColor(0));
 	_textInput.setup();
 
-	_valArray3[0] = _valArray3[1] = _valArray3[2] = 0;
+	_npcLevels[0] = _npcLevels[1] = _npcLevels[2] = 0;
 }
 
 bool CPetConversations::setup(CPetControl *petControl) {
@@ -217,7 +217,7 @@ void CPetConversations::load(SimpleFile *file, int param) {
 	_log.load(file, param);
 
 	for (int idx = 0; idx < 3; ++idx)
-		_valArray3[idx] = file->readNumber();
+		_npcLevels[idx] = file->readNumber();
 }
 
 void CPetConversations::postLoad() {
@@ -229,7 +229,7 @@ void CPetConversations::save(SimpleFile *file, int indent) const {
 	_log.save(file, indent);
 
 	for (int idx = 0; idx < 3; ++idx)
-		file->writeNumberLine(_valArray3[idx], indent);
+		file->writeNumberLine(_npcLevels[idx], indent);
 }
 
 void CPetConversations::enter(PetArea oldArea) {
@@ -244,6 +244,19 @@ void CPetConversations::enter(PetArea oldArea) {
 void CPetConversations::leave() {
 	_textInput.hideCursor();
 	stopNPCTimer();
+}
+
+void CPetConversations::proc25(int val) {
+	if (val == 1) {
+		proc25(val);
+	} else {
+		CString name = _field418 ? _npcName : getActiveNPCName();
+
+		for (int idx = 0; idx < 3; ++idx) {
+			if (!_dials[idx].hasActiveMovie())
+				updateDial(idx, name);
+		}
+	}
 }
 
 void CPetConversations::displayNPCName(CGameObject *npc) {
@@ -489,6 +502,48 @@ CString CPetConversations::getActiveNPCName() const {
 void CPetConversations::copyColors(uint tableNum, uint colors[5]) {
 	const uint *src = getColorTable(tableNum);
 	Common::copy(src, src + 5, colors);
+}
+
+void CPetConversations::updateDial(uint dialNum, const CString &npcName) {
+	TTNamedScript *script = getNPCScript(npcName);
+	uint newLevel = getDialLevel(dialNum, script);
+	npcDialChange(dialNum, _npcLevels[dialNum], newLevel);
+	_npcLevels[dialNum] = newLevel;
+}
+
+uint CPetConversations::getDialLevel(uint dialNum, TTNamedScript *script, int v) {
+	bool flag = v != 0;
+
+	if (!script)
+		return 0;
+	else
+		return MAX(script->getDialLevel(dialNum), 15);
+}
+
+void CPetConversations::npcDialChange(uint dialNum, int oldLevel, int newLevel) {
+	const uint range1[2] = { 0, 21 };
+	const uint range2[2] = { 22, 43 };
+
+	if (newLevel != oldLevel) {
+		uint src = range1[0], dest = range1[1];
+		if (oldLevel < newLevel) {
+			src = range2[0];
+			dest = range2[1];
+		}
+
+		int64 val1 = (oldLevel * dest) + (100 - oldLevel) * src;
+		val1 *= 0x51EB851F;
+		val1 >>= 37;
+		uint startFrame = val1 + (val1 >> 31);
+
+		int64 val2 = (newLevel * dest) + (100 - newLevel) * src;
+		val2 *= 0x51EB851F;
+		val2 >>= 37;
+		uint endFrame = val2 + (val2 >> 31);
+
+		if (startFrame != endFrame)
+			_dials[dialNum].playMovie(startFrame, endFrame);
+	}
 }
 
 } // End of namespace Titanic

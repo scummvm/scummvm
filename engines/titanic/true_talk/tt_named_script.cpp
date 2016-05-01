@@ -218,7 +218,7 @@ int TTNamedScript::proc34() {
 	return 0;
 }
 
-int TTNamedScript::proc35(int v1, int v2) {
+int TTNamedScript::getDialLevel(uint dialNum, bool flag) {
 	warning("TODO");
 	return 0;
 }
