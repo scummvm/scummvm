@@ -37,4 +37,8 @@ void Moonbase::renderFOW() {
 	warning("STUB: renderFOW()");
 }
 
+void Moonbase::blitT14WizImage(uint8 *dst, int dstw, int dsth, int dstPitch, const Common::Rect *clipBox,
+		 uint8 *wizd, int srcx, int srcy, int rawROP, int paramROP) {
+}
+
 } // End of namespace Scumm

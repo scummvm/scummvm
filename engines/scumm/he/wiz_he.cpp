@@ -1635,7 +1635,7 @@ void Wiz::drawWizImageEx(uint8 *dst, uint8 *dataPtr, uint8 *maskPtr, int dstPitc
 		copy16BitWizImage(dst, wizd, dstPitch, dstType, dstw, dsth, srcx, srcy, srcw, srch, rect, flags, xmapPtr);
 		break;
 	case 9:
-		copyT14WizImage(dst, wizd, dstPitch, dstType, dstw, dsth, srcx, srcy, rect, conditionBits);
+		copy555WizImage(dst, wizd, dstPitch, dstType, dstw, dsth, srcx, srcy, rect, conditionBits);
 		break;
 #endif
 	default:
@@ -1764,11 +1764,11 @@ void Wiz::copyCompositeWizImage(uint8 *dst, uint8 *wizPtr, uint8 *compositeInfoB
 	}
 }
 
-void Wiz::copyT14WizImage(uint8 *dst, uint8 *wizd, int dstPitch, int dstType,
+void Wiz::copy555WizImage(uint8 *dst, uint8 *wizd, int dstPitch, int dstType,
 		int dstw, int dsth, int srcx, int srcy, const Common::Rect *clipBox, uint16 conditionBits) {
 
 	int rawROP = conditionBits & kWMSBRopMask;
-	int nROPParam = (conditionBits & kWMSBReservedBits) >> kWMSBRopParamRShift;
+	int paramROP = (conditionBits & kWMSBReservedBits) >> kWMSBRopParamRShift;
 
 	switch (rawROP) {
 	default:
@@ -1801,7 +1801,17 @@ void Wiz::copyT14WizImage(uint8 *dst, uint8 *wizd, int dstPitch, int dstType,
 		break;
 	}
 
-	warning("T14: params %d", nROPParam);
+
+	uint32 compID = READ_LE_UINT32(wizd);
+
+	if (compID == 0x12340102) {
+		_vm->_moonbase->blitT14WizImage(dst, dstw, dsth, dstPitch, clipBox, wizd, srcx, srcy, rawROP, paramROP);
+	} else if (compID == 0x12340802) {
+		warning("Distorion codec");
+	} else if (compID == 0x12340902) {
+		error("Unsupported Distortion");
+	}
+
 }
 
 #endif

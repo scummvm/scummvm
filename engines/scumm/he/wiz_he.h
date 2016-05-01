@@ -250,7 +250,7 @@ public:
 	void copyCompositeWizImage(uint8 *dst, uint8 *wizPtr, uint8 *wizd, uint8 *maskPtr, int dstPitch, int dstType,
 		int dstw, int dsth, int srcx, int srcy, int srcw, int srch, int state, const Common::Rect *clipBox,
 		int flags, const uint8 *palPtr, int transColor, uint8 bitDepth, const uint8 *xmapPtr, uint16 conditionBits);
-	void copyT14WizImage(uint8 *dst, uint8 *wizd, int dstPitch, int dstType,
+	void copy555WizImage(uint8 *dst, uint8 *wizd, int dstPitch, int dstType,
 			int dstw, int dsth, int srcx, int srcy, const Common::Rect *clipBox, uint16 conditionBits);
 #endif
 
