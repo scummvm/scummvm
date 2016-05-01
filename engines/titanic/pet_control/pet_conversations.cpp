@@ -143,9 +143,15 @@ bool CPetConversations::isValid(CPetControl *petControl) {
 }
 
 bool CPetConversations::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
+	if (_scrollDown.MouseButtonDownMsg(msg->_mousePos)) {
+		scrollDown();
+		return true;
+	} else if (_scrollUp.MouseButtonDownMsg(msg->_mousePos)) {
+		scrollUp();
+		return true;
+	}
+
 	return
-		_scrollUp.MouseButtonDownMsg(msg->_mousePos) ||
-		_scrollDown.MouseButtonDownMsg(msg->_mousePos) ||
 		_doorBot.MouseButtonDownMsg(msg->_mousePos) ||
 		_bellBot.MouseButtonDownMsg(msg->_mousePos);
 }
