@@ -34,6 +34,7 @@ enum PetArea {
 };
 
 class CPetControl;
+class CPetElement;
 class CPetText;
 class CScreenManager;
 class CRoomItem;
@@ -152,7 +153,11 @@ public:
 	virtual void proc27(int duration);
 	virtual void proc28();
 	virtual void proc29();
-	virtual void proc30();
+
+	/**
+	 * Get an element from the section by a designated Id
+	 */
+	virtual CPetElement *getElement(uint id) { return nullptr; }
 
 	virtual CGameObject *getBackground(int index) const { return nullptr; }
 

@@ -94,8 +94,8 @@ bool CPetRooms::VirtualKeyCharMsg(CVirtualKeyCharMsg *msg) {
 	return _glyphs.VirtualKeyCharMsg(msg->_keyState.keycode);
 }
 
-bool CPetRooms::proc14(void *v1) {
-	warning("TODO: proc14");
+bool CPetRooms::checkDragEnd(CGameObject *item) {
+	warning("TODO: CPetRooms::checkDragEnd");
 	return false;
 }
 
@@ -171,8 +171,8 @@ bool CPetRooms::setupControl(CPetControl *petControl) {
 	_text.setHasBorder(false);
 
 	Rect rect2(0, 0, 81, 81);
-	rect2.moveTo(374, 494);
 	_plinth.setBounds(rect2);
+	_plinth.translate(494, 374);
 
 	_chevLeftOnDim = petControl->getHiddenObject("3PetChevLeftOnDim");
 	_chevLeftOffDim = petControl->getHiddenObject("3PetChevLeftOffDim");
@@ -218,6 +218,5 @@ CPetRoomsGlyph *CPetRooms::addGlyph(int val, bool highlight) {
 			_glyphs.highlight(glyph);
 	}
 }
-
 
 } // End of namespace Titanic

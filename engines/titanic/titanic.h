@@ -65,6 +65,7 @@ enum TitanicDebugChannels {
 #define ERROR_DETAILED 3
 
 #define TOTAL_ITEMS 46
+#define TOTAL_ROOMS 34
 
 struct TitanicGameDescription;
 class TitanicEngine;
@@ -94,6 +95,11 @@ private:
 	 * Sets up the item names, short, and long descriptions
 	 */
 	void setItemNames();
+
+	/**
+	 * Sets up the list of room names
+	 */
+	void setRoomNames();
 protected:
 	const TitanicGameDescription *_gameDescription;
 	int _loadSaveSlot;
@@ -115,6 +121,7 @@ public:
 	CString _itemDescriptions[TOTAL_ITEMS];
 	CString _itemObjects[TOTAL_ITEMS];
 	CString _itemIds[40];
+	CString _roomNames[TOTAL_ROOMS];
 public:
 	TitanicEngine(OSystem *syst, const TitanicGameDescription *gameDesc);
 	virtual ~TitanicEngine();

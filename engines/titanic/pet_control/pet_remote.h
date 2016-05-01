@@ -36,23 +36,96 @@ class CPetRemoteGlyphs : public CPetGlyphs {
 class CPetRemote : public CPetSection {
 private:
 	CPetRemoteGlyphs _items;
-	CPetGfxElement _val1;
-	CPetGfxElement _val2;
-	CPetGfxElement _val3;
-	CPetGfxElement _val4;
-	CPetGfxElement _val5;
-	CPetGfxElement _val6;
-	CPetGfxElement _val7;
-	CPetGfxElement _val8;
-	CPetGfxElement _val9;
-	CPetGfxElement _val10;
-	CPetGfxElement _val11;
+	CPetGfxElement _onOff;
+	CPetGfxElement _up;
+	CPetGfxElement _down;
+	CPetGfxElement _left;
+	CPetGfxElement _right;
+	CPetGfxElement _top;
+	CPetGfxElement _bottom;
+	CPetGfxElement _action;
+	CPetGfxElement _send;
+	CPetGfxElement _receive;
+	CPetGfxElement _call;
 	CPetText _text;
+private:
+	/**
+	 * Setup the control
+	 */
+	bool setupControl(CPetControl *petControl);
+
+	/**
+	 * Get the current room
+	 */
+	CRoomItem *getRoom() const;
+
+	/**
+	 * Return a highlight index
+	 */
+	int getHighlightIndex(int val);
+
+	/**
+	 * Return the index of a room name in the master room names list
+	 */
+	int roomIndexOf(const CString &name);
 public:
+	CPetRemote();
+
+	/**
+	 * Sets up the section
+	 */
+	virtual bool setup(CPetControl *petControl);
+
+	/**
+	 * Reset the section
+	 */
+	virtual bool reset();
+
+	/**
+	 * Draw the section
+	 */
+	virtual void draw(CScreenManager *screenManager);
+
+	/**
+	* Following are handlers for the various messages that the PET can
+	* pass onto the currently active section/area
+	*/
+	virtual bool MouseButtonDownMsg(CMouseButtonDownMsg *msg);
+	virtual bool MouseButtonUpMsg(CMouseButtonUpMsg *msg);
+	virtual bool MouseDoubleClickMsg(CMouseDoubleClickMsg *msg);
+	virtual bool VirtualKeyCharMsg(CVirtualKeyCharMsg *msg);
+
 	/**
 	 * Returns true if the object is in a valid state
 	 */
 	virtual bool isValid(CPetControl *petControl);
+
+	/**
+	 * Called after a game has been loaded
+	 */
+	virtual void postLoad();
+
+	/**
+	 * Called when a section is switched to
+	 */
+	virtual void enter(PetArea oldArea);
+
+	/**
+	 * Called when a new room is entered
+	 */
+	virtual void enterRoom(CRoomItem *room);
+
+	/**
+	 * Get a reference to the tooltip text associated with the section
+	 */
+	virtual CPetText *getText();
+
+	/**
+	 * Get an element from the section by a designated Id
+	 */
+	virtual CPetElement *getElement(uint id);
+
+	virtual void proc38(int val);
 };
 
 } // End of namespace Titanic

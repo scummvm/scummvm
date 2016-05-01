@@ -66,10 +66,6 @@ void CPetSection::proc29() {
 	_petControl->stopPetTimer(0);
 }
 
-void CPetSection::proc30() {
-	error("TODO");
-}
-
 uint CPetSection::getColor(uint index) {
 	return getColorTable()[index];
 }

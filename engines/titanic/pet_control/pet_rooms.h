@@ -101,8 +101,11 @@ public:
 	virtual bool MouseDoubleClickMsg(CMouseDoubleClickMsg *msg);
 	virtual bool VirtualKeyCharMsg(CVirtualKeyCharMsg *msg);
 
-	virtual bool proc14(void *v1);
-
+	/**
+	 * Check whether a drag drop can occur
+	 */
+	virtual bool checkDragEnd(CGameObject *item);
+	
 	/**
 	 * Display a message
 	 */

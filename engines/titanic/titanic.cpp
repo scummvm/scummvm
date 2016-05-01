@@ -78,6 +78,7 @@ void TitanicEngine::initialize() {
 	DebugMan.addDebugChannel(kDebugSound, "sound", "Sound and Music handling");
 
 	setItemNames();
+	setRoomNames();
 	CSaveableObject::initClassList();
 	CEnterExitFirstClassState::init();
 	CGetLiftEye2::init();
@@ -173,5 +174,20 @@ void TitanicEngine::setItemNames() {
 		_itemIds[idx] = ITEM_IDS[idx];
 }
 
+void TitanicEngine::setRoomNames() {
+	static const char *const ROOM_NAMES[TOTAL_ROOMS] = {
+		"1stClassLobby", "1stClassRestaurant", "1stClassState",
+		"2ndClassLobby", "secClassState", "Arboretum", "FrozenArboretum",
+		"Bar", "BilgeRoom", "BilgeRoomWith", "BottomOfWell", "Bridge",
+		"CreatorsChamber", "CreatorsChamberOn", "Dome", "Home", "Lift",
+		"EmbLobby", "MoonEmbLobby", "MusicRoomLobby", "MusicRoom",
+		"ParrotLobby", "Pellerator", "PromenadeDeck", "SculptureChamber",
+		"SecClassLittleLift", "ServiceElevator", "SGTLeisure", "SGTLittleLift",
+		"SgtLobby", "SGTState", "Titania", "TopOfWell", "PlayersRoom"
+	};
+
+	for (uint idx = 0; idx < TOTAL_ROOMS; ++idx)
+		_roomNames[idx] = ROOM_NAMES[idx];
+}
 
 } // End of namespace Titanic
