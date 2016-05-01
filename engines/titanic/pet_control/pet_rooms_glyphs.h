@@ -68,12 +68,20 @@ public:
 	virtual void proc28(const Point &pt);
 
 	virtual int proc29(const Point &pt);
-	virtual void proc32();
+
+	virtual void save2(SimpleFile *file, int indent) const;
+	
 	virtual int proc33();
+	
 	virtual void proc39();
 };
 
 class CPetRoomsGlyphs : public CPetGlyphs {
+public:
+	/**
+	 * Save the list
+	 */
+	void save(SimpleFile *file, int indent) const;
 };
 
 } // End of namespace Titanic

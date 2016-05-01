@@ -193,7 +193,7 @@ public:
 	 */
 	virtual void getTooltip(CPetText *text) {}
 
-	virtual void proc32() {}
+	virtual void save2(SimpleFile *file, int indent) {}
 
 	virtual int proc33() { return 1; }
 	virtual int proc34() { return 1; }

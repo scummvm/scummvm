@@ -134,7 +134,14 @@ void CPetRooms::postLoad() {
 }
 
 void CPetRooms::save(SimpleFile *file, int indent) const {
-	warning("TODO: CPetRooms::save");
+	_glyphs.save(file, indent);
+	_glyphItem.save2(file, indent);
+	file->writeNumberLine(_field1C0, indent);
+	file->writeNumberLine(_field1C4, indent);
+	file->writeNumberLine(_field1C8, indent);
+	file->writeNumberLine(_field1CC, indent);
+	file->writeNumberLine(_field1D0, indent);
+	file->writeNumberLine(_field1D4, indent);
 }
 
 void CPetRooms::enter(PetArea oldArea) {

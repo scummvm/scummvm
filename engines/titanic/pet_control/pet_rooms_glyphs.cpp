@@ -72,8 +72,9 @@ int CPetRoomsGlyph::proc29(const Point &pt) {
 	return 0; 
 }
 
-void CPetRoomsGlyph::proc32() {
-
+void CPetRoomsGlyph::save2(SimpleFile *file, int indent) const {
+	file->writeNumberLine(_field34, indent);
+	file->writeNumberLine(_field3C, indent);
 }
 
 int CPetRoomsGlyph::proc33() {
@@ -82,6 +83,15 @@ int CPetRoomsGlyph::proc33() {
 
 void CPetRoomsGlyph::proc39() {
 
+}
+
+/*------------------------------------------------------------------------*/
+
+void CPetRoomsGlyphs::save(SimpleFile *file, int indent) const {
+	file->writeNumberLine(size(), indent);
+
+	for (const_iterator i = begin(); i != end(); ++i)
+		(*i)->save2(file, indent);
 }
 
 } // End of namespace Titanic
