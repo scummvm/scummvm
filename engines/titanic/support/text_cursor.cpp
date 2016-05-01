@@ -80,10 +80,8 @@ void CTextCursor::draw() {
 			_backRenderSurface->_ddSurface->fillRect(&cursorRect,
 				_cursorR, _cursorG, _cursorB);
 		}
-	}
-
-	if (_active && _blinkVisible) {
-		_screenManager->blitFrom(SURFACE_BACKBUFFER, _surface, &_pos);
+	
+		//_screenManager->blitFrom(SURFACE_BACKBUFFER, _surface, &_pos);
 	}
 }
 

@@ -100,7 +100,7 @@ void CInputTranslator::keyDown(const Common::KeyState &keyState) {
 		_inputHandler->handleMessage(msg);
 	}
 
-	if (keyState.ascii >= 32 && keyState.ascii <= 127) {
+	if (keyState.ascii <= 127) {
 		CKeyCharMsg msg(keyState.ascii);
 		_inputHandler->handleMessage(msg);
 	}

@@ -465,17 +465,12 @@ bool CPetConversations::handleKey(const Common::KeyState &keyState) {
 	case Common::KEYCODE_KP1:
 		scrollToBottom();
 		break;
-	case Common::KEYCODE_BACKSPACE:
-		// Erase key in text input
-		_textInput.handleKey((char)Common::KEYCODE_BACKSPACE);
-	case Common::KEYCODE_RETURN:
-	case Common::KEYCODE_KP_ENTER:
-		// Text line finished
-		textLineEntered(_textInput.getText());
-		return true;
 	default:
-		if (keyState.ascii >= 32 && keyState.ascii)
-			_textInput.handleKey(keyState.ascii);
+		if (keyState.ascii > 0 && keyState.ascii) {
+			if (_textInput.handleKey(keyState.ascii))
+				// Text line finished, so process line
+				textLineEntered(_textInput.getText());
+		}
 		return true;
 	}
 

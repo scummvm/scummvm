@@ -116,7 +116,9 @@ void OSScreenManager::setMode(int width, int height, int bpp, uint numBackSurfac
 }
 
 void OSScreenManager::drawCursors() {
-	// Nothing needed here, since ScummVM handles cursor drawing
+	// The original did both text and mouse cursor drawing here.
+	// For ScummVM, we only need to worry about the text cursor
+	_textCursor->draw();
 }
 
 DirectDrawSurface *OSScreenManager::getDDSurface(SurfaceNum surfaceNum) {

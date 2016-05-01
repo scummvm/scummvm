@@ -192,7 +192,7 @@ void CPetText::resize(uint count) {
 
 CString CPetText::getText() const {
 	CString result = "";
-	for (int idx = 0; idx < _lineCount; ++idx)
+	for (int idx = 0; idx <= _lineCount; ++idx)
 		result += _array[idx]._line;
 
 	return result;
