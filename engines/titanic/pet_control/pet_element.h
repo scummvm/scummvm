@@ -126,6 +126,11 @@ public:
 	void setMode(PetElementMode mode);
 
 	/**
+	 * Set whether the element is selected
+	 */
+	void setSelected(bool flag);
+
+	/**
 	 * Set the bounds for the element
 	 */
 	void setBounds(const Rect &r) { _bounds = r; }

@@ -51,23 +51,24 @@ CPetGfxElement *CPetRemoteGlyph::getElement(uint id) const {
 
 /*------------------------------------------------------------------------*/
 
-bool CSummonElevatorGlyph::setup(CPetControl *petControl, CPetGlyphs *owner) {
-	setDefaults("3PetLift", petControl);
+bool CBasicRemoteGlyph::setup(CPetControl *petControl, CPetGlyphs *owner) {
+	CPetRemoteGlyph::setup(petControl, owner);
+	setDefaults(_gfxName, petControl);
 	if (owner)
 		_gfxElement = getElement(18);
 	return true;
 }
 
-void CSummonElevatorGlyph::draw2(CScreenManager *screenManager) {
+void CBasicRemoteGlyph::draw2(CScreenManager *screenManager) {
 	if (_gfxElement)
 		_gfxElement->draw(screenManager);
 }
 
-bool CSummonElevatorGlyph::MouseButtonDownMsg(const Point &pt) {
+bool CBasicRemoteGlyph::MouseButtonDownMsg(const Point &pt) {
 	return _gfxElement && _gfxElement->MouseButtonDownMsg(pt); 
 }
 
-bool CSummonElevatorGlyph::MouseButtonUpMsg(const Point &pt) {
+bool CBasicRemoteGlyph::MouseButtonUpMsg(const Point &pt) {
 	if (_gfxElement && _gfxElement->MouseButtonUpMsg(pt)) {
 		getOwner()->generateMessage(RMSG_ACTIVATE, "Lift");
 		return true;
@@ -76,8 +77,64 @@ bool CSummonElevatorGlyph::MouseButtonUpMsg(const Point &pt) {
 	return false;
 }
 
-void CSummonElevatorGlyph::getTooltip(CPetText *text) {
-	text->setText("Summon Elevator");
+void CBasicRemoteGlyph::getTooltip(CPetText *text) {
+	text->setText(_tooltip);
+}
+
+/*------------------------------------------------------------------------*/
+
+bool CTelevisionControlGlyph::setup(CPetControl *petControl, CPetGlyphs *owner) {
+	CPetRemoteGlyph::setup(petControl, owner);
+	setDefaults("3PetTV", petControl);
+	if (owner) {
+		_up = getElement(1);
+		_down = getElement(2);
+		_onOff = getElement(4);
+	}
+	
+	return true;
+}
+
+void CTelevisionControlGlyph::draw2(CScreenManager *screenManager) {
+	_onOff->setSelected(_flag);
+	_onOff->draw(screenManager);
+	_up->draw(screenManager);
+	_down->draw(screenManager);
+}
+
+bool CTelevisionControlGlyph::MouseButtonDownMsg(const Point &pt) {
+	if (_onOff && _onOff->MouseButtonDownMsg(pt))
+		return true;
+	if (_up && _up->MouseButtonDownMsg(pt))
+		return true;
+	if (_down && _down->MouseButtonDownMsg(pt))
+		return true;
+
+	return false;
+}
+
+bool CTelevisionControlGlyph::MouseButtonUpMsg(const Point &pt) {
+	if (_onOff && _onOff->MouseButtonUpMsg(pt)) {
+		_flag = !_flag;
+		getOwner()->generateMessage(RMSG_ACTIVATE, "Television");
+		return true;
+	}
+
+	if (_up && _up->MouseButtonUpMsg(pt)) {
+		getOwner()->generateMessage(RMSG_UP, "Television");
+		return true;
+	}
+
+	if (_down && _down->MouseButtonUpMsg(pt)) {
+		getOwner()->generateMessage(RMSG_DOWN, "Television");
+		return true;
+	}
+
+	return false;
+}
+
+void CTelevisionControlGlyph::getTooltip(CPetText *text) {
+	text->setText("Television control");
 }
 
 } // End of namespace Titanic

@@ -216,6 +216,8 @@ CPetRoomsGlyph *CPetRooms::addGlyph(int val, bool highlight) {
 		_glyphs.push_back(glyph);
 		if (highlight)
 			_glyphs.highlight(glyph);
+
+		return glyph;
 	}
 }
 

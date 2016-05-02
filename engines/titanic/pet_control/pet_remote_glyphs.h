@@ -29,7 +29,8 @@
 namespace Titanic {
 
 enum RemoteGlyph {
-	GLYPH_SUMMON_ELEVATOR = 0
+	GLYPH_SUMMON_ELEVATOR = 0, GLYPH_SUMMON_PELLERATOR = 1,
+	GLYPH_TELEVISION_CONTROL = 2
 };
 
 enum RemoteMessage {
@@ -73,9 +74,13 @@ protected:
 	CPetGfxElement *getElement(uint id) const;
 };
 
-class CSummonElevatorGlyph : public CPetRemoteGlyph {
+class CBasicRemoteGlyph : public CPetRemoteGlyph {
+private:
+	CString _gfxName, _tooltip, _msgString;
 public:
-	CSummonElevatorGlyph() : CPetRemoteGlyph() {}
+	CBasicRemoteGlyph(const CString &gfxName, const CString &tooltip,
+		const CString &msgString) : CPetRemoteGlyph(), 
+		_gfxName(gfxName), _tooltip(tooltip), _msgString(msgString) {}
 
 	/**
 	 * Setup the glyph
@@ -102,6 +107,53 @@ public:
 	 */
 	virtual void getTooltip(CPetText *text);
 };
+
+class CSummonElevatorGlyph : public CBasicRemoteGlyph {
+public:
+	CSummonElevatorGlyph() : CBasicRemoteGlyph(
+		"3PetLift", "Summon Elevator", "Lift") {}
+};
+
+class CSummonPelleratorGlyph : public CBasicRemoteGlyph {
+public:
+	CSummonPelleratorGlyph() : CBasicRemoteGlyph(
+		"3PetPellerator", "Summon Pellerator", "Pellerator") {}
+};
+
+class CTelevisionControlGlyph : public CPetRemoteGlyph {
+private:
+	bool _flag;
+	CPetGfxElement *_up, *_down, *_onOff;
+public:
+	CTelevisionControlGlyph() : CPetRemoteGlyph(), _flag(false),
+		_up(nullptr), _down(nullptr), _onOff(nullptr) {}
+
+	/**
+	 * Setup the glyph
+	 */
+	virtual bool setup(CPetControl *petControl, CPetGlyphs *owner);
+
+	/**
+	 * Handles any secondary drawing of the glyph
+	 */
+	virtual void draw2(CScreenManager *screenManager);
+
+	/**
+	 * Called for mouse button down messages
+	 */
+	virtual bool MouseButtonDownMsg(const Point &pt);
+
+	/**
+	 * Handles mouse button up messages
+	 */
+	virtual bool MouseButtonUpMsg(const Point &pt);
+	
+	/**
+	 * Returns the tooltip text for when the glyph is selected
+	 */
+	virtual void getTooltip(CPetText *text);
+};
+
 
 } // End of namespace Titanic
 

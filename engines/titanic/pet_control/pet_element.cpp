@@ -96,4 +96,11 @@ void CPetElement::setMode(PetElementMode newMode) {
 		changeMode(newMode);
 }
 
+void CPetElement::setSelected(bool flag) {
+	if (flag)
+		changeMode(MODE_SELECTED);
+	else
+		changeMode(MODE_UNSELECTED);
+}
+
 } // End of namespace Titanic
