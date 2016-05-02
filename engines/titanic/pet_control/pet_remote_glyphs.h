@@ -108,6 +108,29 @@ public:
 	virtual void getTooltip(CPetText *text);
 };
 
+class CToggleRemoteGlyph : public CPetRemoteGlyph {
+protected:
+	CPetGfxElement *_gfxElement;
+	bool _flag;
+public:
+	CToggleRemoteGlyph() : CPetRemoteGlyph(), _gfxElement(nullptr), _flag(false) {}
+
+	/**
+	 * Setup the glyph
+	 */
+	virtual bool setup(CPetControl *petControl, CPetGlyphs *owner);
+
+	/**
+	 * Handles any secondary drawing of the glyph
+	 */
+	virtual void draw2(CScreenManager *screenManager);
+
+	/**
+	 * Called for mouse button down messages
+	 */
+	virtual bool MouseButtonDownMsg(const Point &pt);
+};
+
 class CSummonElevatorGlyph : public CBasicRemoteGlyph {
 public:
 	CSummonElevatorGlyph() : CBasicRemoteGlyph(
@@ -154,6 +177,20 @@ public:
 	virtual void getTooltip(CPetText *text);
 };
 
+class CEntertainmentDeviceGlyph : public CToggleRemoteGlyph {
+public:
+	int _field3C;
+	CPetGfxElement *_gfxElement2, *_gfxElement3;
+public:
+	CEntertainmentDeviceGlyph() : CToggleRemoteGlyph(),
+		_field3C(0), _gfxElement2(nullptr), _gfxElement3(nullptr) {}
+
+	/**
+	 * Setup the glyph
+	 */
+	virtual bool setup(CPetControl *petControl, CPetGlyphs *owner);
+
+};
 
 } // End of namespace Titanic
 

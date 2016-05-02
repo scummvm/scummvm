@@ -83,6 +83,20 @@ void CBasicRemoteGlyph::getTooltip(CPetText *text) {
 
 /*------------------------------------------------------------------------*/
 
+bool CToggleRemoteGlyph::setup(CPetControl *petControl, CPetGlyphs *owner) {
+	CPetGlyph::setup(petControl, owner);
+	if (owner)
+		_gfxElement = getElement(0);
+	return true;
+}
+
+void CToggleRemoteGlyph::draw2(CScreenManager *screenManager) {
+	_gfxElement->setMode(_flag ? MODE_SELECTED : MODE_UNSELECTED);
+	_gfxElement->draw(screenManager);
+}
+
+/*------------------------------------------------------------------------*/
+
 bool CTelevisionControlGlyph::setup(CPetControl *petControl, CPetGlyphs *owner) {
 	CPetRemoteGlyph::setup(petControl, owner);
 	setDefaults("3PetTV", petControl);
@@ -135,6 +149,18 @@ bool CTelevisionControlGlyph::MouseButtonUpMsg(const Point &pt) {
 
 void CTelevisionControlGlyph::getTooltip(CPetText *text) {
 	text->setText("Television control");
+}
+
+/*------------------------------------------------------------------------*/
+
+bool CEntertainmentDeviceGlyph::setup(CPetControl *petControl, CPetGlyphs *owner) {
+	CPetRemoteGlyph::setup(petControl, owner);
+	if (owner) {
+		_gfxElement2 = getElement(1);
+		_gfxElement3 = getElement(2);
+	}
+
+	return true;
 }
 
 } // End of namespace Titanic
