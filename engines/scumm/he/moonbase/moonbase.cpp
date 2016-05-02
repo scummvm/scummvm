@@ -49,51 +49,54 @@ void Moonbase::blitT14WizImage(uint8 *dst, int dstw, int dsth, int dstPitch, con
 		}
 	}
 
+	dst += clipBox->top * dstPitch + clipBox->left * 2;
+
 	int width = READ_LE_UINT16(wizd + 0x8 + 0);
 	int height = READ_LE_UINT16(wizd + 0x8 + 2);
 
 	int headerSize = READ_LE_UINT32(wizd + 0x4);
-	uint8 *dataPointer = &wizd[0x8 + headerSize];
-
-	warning("w: %d, h: %d, size: %d", width, height, headerSize);
+	uint8 *dataPointer = wizd + 0x8 + headerSize;
 
 	for (int i = 0; i < height; i++) {
 		uint16 lineSize      = READ_LE_UINT16(dataPointer + 0);
-		uint8 *singlesOffset = dataPointer + READ_LE_UINT16(dataPointer + 2);
-		uint8 *quadsOffset   = dataPointer + READ_LE_UINT16(dataPointer + 4);
+		uint8 *singlesOffset = READ_LE_UINT16(dataPointer + 2) + dataPointer;
+		uint8 *quadsOffset   = READ_LE_UINT16(dataPointer + 4) + dataPointer;
 
-		int linecount = width;
+		int pixels = width;
 		byte *dst1 = dst;
+		byte *codes = dataPointer + 6;
 
 		while (1) {
-			int code = *dataPointer - 2;
+			int code = *codes - 2;
+			codes++;
 
 			if (code == 0) { // quad
 				for (int c = 0; c < 4; c++) {
 					WRITE_LE_UINT16(dst1, READ_LE_UINT16(quadsOffset));
-					singlesOffset += 2;
+					quadsOffset += 2;
 					dst1 += 2;
-					linecount--;
+					pixels--;
 				}
 			} else if (code < 0) { // single
 				WRITE_LE_UINT16(dst1, READ_LE_UINT16(singlesOffset));
 				singlesOffset += 2;
 				dst1 += 2;
-				linecount--;
+				pixels--;
 			} else { // skip
 				if ((code & 1) == 0) {
 					code >>= 1;
 					dst1 += code * 2;
-					linecount -= code;
+					pixels -= code;
 				} else { // special case
-					uint16 color = READ_LE_UINT16(dataPointer);
-					WRITE_LE_UINT16(dst, color);
+					uint16 color = READ_LE_UINT16(singlesOffset);
+					WRITE_LE_UINT16(dst1, color);
 					singlesOffset += 2;
 					dst1 += 2;
+					pixels--;
 				}
 			}
 
-			if (linecount <= 0)
+			if (pixels <= 0)
 				break;
 		}
 
