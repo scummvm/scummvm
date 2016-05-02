@@ -58,10 +58,23 @@ MadeEngine::MadeEngine(OSystem *syst, const MadeGameDescription *gameDesc) : Eng
 
 	const GameSettings *g;
 
+	_eventNum = 0;
+	_eventMouseX = _eventMouseY = 0;
+	_eventKey = 0;
+	_autoStopSound = false;
+	_soundEnergyIndex = 0;
+	_soundEnergyArray = 0;
+	_musicBeatStart = 0;
+	_cdTimeStart = 0;
+
+	_gameId = -1;
+
 	const char *gameid = ConfMan.get("gameid").c_str();
 	for (g = madeSettings; g->gameid; ++g)
 		if (!scumm_stricmp(g->gameid, gameid))
 			_gameId = g->id;
+
+	assert(_gameId != -1);
 
 	_rnd = new Common::RandomSource("made");
 
@@ -84,6 +97,8 @@ MadeEngine::MadeEngine(OSystem *syst, const MadeGameDescription *gameDesc) : Eng
 	_script = new ScriptInterpreter(this);
 
 	_music = nullptr;
+
+	_soundRate = 0;
 
 	// Set default sound frequency
 	switch (getGameID()) {
