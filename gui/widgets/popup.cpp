@@ -388,6 +388,8 @@ PopUpWidget::PopUpWidget(GuiObject *boss, int x, int y, int w, int h, const char
 	_type = kPopUpWidget;
 
 	_selectedItem = -1;
+
+	_leftPadding = _rightPadding = 0;
 }
 
 void PopUpWidget::handleMouseDown(int x, int y, int button, int clickCount) {
