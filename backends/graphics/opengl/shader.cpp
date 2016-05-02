@@ -37,7 +37,7 @@ namespace {
 
 #pragma mark - Builtin Shader Sources -
 
-const char *const g_defaultVertexShader = 
+const char *const g_defaultVertexShader =
 	"attribute vec4 position;\n"
 	"attribute vec2 texCoordIn;\n"
 	"attribute vec4 blendColorIn;\n"
@@ -286,6 +286,9 @@ GLshader Shader::compileShader(const char *source, GLenum shaderType) {
 }
 
 ShaderManager::ShaderManager() : _initializeShaders(true) {
+	for (int i = 0; i < ARRAYSIZE(_builtIn); ++i) {
+		_builtIn[i] = nullptr;
+	}
 }
 
 ShaderManager::~ShaderManager() {
