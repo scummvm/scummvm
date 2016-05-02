@@ -40,6 +40,7 @@ namespace Made {
 */
 
 Object::Object() : _objData(NULL), _freeData(false) {
+	_objSize = 0;
 }
 
 Object::~Object() {

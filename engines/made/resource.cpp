@@ -43,6 +43,7 @@ Resource::~Resource() {
 
 PictureResource::PictureResource() : _picture(NULL), _picturePalette(NULL) {
 	_hasPalette = false;
+	_paletteColorCount = 0;
 }
 
 PictureResource::~PictureResource() {
@@ -182,6 +183,9 @@ void PictureResource::loadChunked(byte *source, int size) {
 /* AnimationResource */
 
 AnimationResource::AnimationResource() {
+	_flags = 0;
+	_width = 0;
+	_height = 0;
 }
 
 AnimationResource::~AnimationResource() {
