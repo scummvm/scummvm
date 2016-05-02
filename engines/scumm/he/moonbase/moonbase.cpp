@@ -38,7 +38,8 @@ void Moonbase::renderFOW() {
 }
 
 void Moonbase::blitT14WizImage(uint8 *dst, int dstw, int dsth, int dstPitch, const Common::Rect *clipBox,
-		 uint8 *wizd, int srcx, int srcy, int rawROP, int paramROP) {
+		 uint8 *wizd, int dstx, int dsty, int rawROP, int paramROP) {
+
 	Common::Rect rScreen(dstw, dsth);
 	if (clipBox) {
 		Common::Rect clip(clipBox->left, clipBox->top, clipBox->right, clipBox->bottom);
@@ -49,7 +50,10 @@ void Moonbase::blitT14WizImage(uint8 *dst, int dstw, int dsth, int dstPitch, con
 		}
 	}
 
-	dst += clipBox->top * dstPitch + clipBox->left * 2;
+	int srcx = 0;
+	int srcy = 0;
+
+	dst += dsty * dstPitch + dstx * 2;
 
 	int width = READ_LE_UINT16(wizd + 0x8 + 0);
 	int height = READ_LE_UINT16(wizd + 0x8 + 2);
@@ -62,6 +66,13 @@ void Moonbase::blitT14WizImage(uint8 *dst, int dstw, int dsth, int dstPitch, con
 		uint8 *singlesOffset = READ_LE_UINT16(dataPointer + 2) + dataPointer;
 		uint8 *quadsOffset   = READ_LE_UINT16(dataPointer + 4) + dataPointer;
 
+		if (i < srcy) {
+			dataPointer += lineSize;
+			dst += dstPitch;
+
+			continue;
+		}
+
 		int pixels = width;
 		byte *dst1 = dst;
 		byte *codes = dataPointer + 6;
@@ -72,15 +83,19 @@ void Moonbase::blitT14WizImage(uint8 *dst, int dstw, int dsth, int dstPitch, con
 
 			if (code == 0) { // quad
 				for (int c = 0; c < 4; c++) {
-					WRITE_LE_UINT16(dst1, READ_LE_UINT16(quadsOffset));
+					if (width - pixels >= srcx) {
+						WRITE_LE_UINT16(dst1, READ_LE_UINT16(quadsOffset));
+						dst1 += 2;
+					}
 					quadsOffset += 2;
-					dst1 += 2;
 					pixels--;
 				}
 			} else if (code < 0) { // single
-				WRITE_LE_UINT16(dst1, READ_LE_UINT16(singlesOffset));
+				if (width - pixels >= srcx) {
+					WRITE_LE_UINT16(dst1, READ_LE_UINT16(singlesOffset));
+					dst1 += 2;
+				}
 				singlesOffset += 2;
-				dst1 += 2;
 				pixels--;
 			} else { // skip
 				if ((code & 1) == 0) {
@@ -88,10 +103,12 @@ void Moonbase::blitT14WizImage(uint8 *dst, int dstw, int dsth, int dstPitch, con
 					dst1 += code * 2;
 					pixels -= code;
 				} else { // special case
-					uint16 color = READ_LE_UINT16(singlesOffset);
-					WRITE_LE_UINT16(dst1, color);
+					if (width - pixels >= srcx) {
+						uint16 color = READ_LE_UINT16(singlesOffset);
+						WRITE_LE_UINT16(dst1, color);
+						dst1 += 2;
+					}
 					singlesOffset += 2;
-					dst1 += 2;
 					pixels--;
 				}
 			}
