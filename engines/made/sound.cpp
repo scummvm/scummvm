@@ -237,6 +237,7 @@ void decompressSound(byte *source, byte *dest, uint16 chunkSize, uint16 chunkCou
 			break;
 
 		default:
+			delete[] soundBuffer;
 			return;
 
 		}
