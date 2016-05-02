@@ -9,6 +9,7 @@
 namespace DM {
 
 class Console;
+class DisplayMan;
 
 enum {
 	// engine debug channels
@@ -21,10 +22,12 @@ public:
 	~DMEngine();
 
 	virtual Common::Error run();
+	Common::Error go();
 
 private:
 	Console *_console;
 	Common::RandomSource *_rnd;
+	DisplayMan *_displayMan;
 };
 
 class Console : public GUI::Debugger {

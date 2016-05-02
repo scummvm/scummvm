@@ -2,7 +2,8 @@ MODULE := engines/dm
 
 MODULE_OBJS := \
 	detection.o \
-	dm.o
+	dm.o \
+	gfx.o
 
 MODULE_DIRS += \
 	engines/dm

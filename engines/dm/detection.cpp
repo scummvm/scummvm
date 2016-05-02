@@ -15,8 +15,8 @@ static const ADGameDescription gameDescriptions[] = {
 	{
 		"dm", "Amiga 2.0v English",
 		{
-		{"graphics.dat", 0, "6A2F135B53C2220F0251FA103E2A6E7E", 411960},
-		{"Dungeon.dat", 0, "30028FB6A301ECB20127EF0B3AF32B05", 25006},
+			{"graphics.dat", 0, "c2205f6225bde728417de29394f97d55", 411960},
+			{"Dungeon.dat", 0, "43a213da8eda413541dd12f90ce202f6", 25006},
 		AD_LISTEND
 		},
 	    Common::EN_GRB, Common::kPlatformAmiga, ADGF_NO_FLAGS, GUIO1(GUIO_NONE)
