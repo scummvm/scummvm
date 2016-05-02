@@ -104,8 +104,30 @@ void Moonbase::blitT14WizImage(uint8 *dst, int dstw, int dsth, int dstPitch, con
 					pixels -= code;
 				} else { // special case
 					if (width - pixels >= srcx) {
+						int alpha = code >> 1;
 						uint16 color = READ_LE_UINT16(singlesOffset);
-						WRITE_LE_UINT16(dst1, color);
+
+						//WRITE_LE_UINT16(dst1, color); // ENABLE_PREMUL_ALPHA = 0
+						// ENABLE_PREMUL_ALPHA = 2
+						if (alpha > 32) {
+							alpha -= 32;
+
+							uint32 orig = READ_LE_UINT16(dst1);
+							uint32 oR = orig & 0x7c00;
+							uint32 oG = orig & 0x03e0;
+							uint32 oB = orig & 0x1f;
+							uint32 dR = ((((color & 0x7c00) - oR) * alpha) >> 5) + oR;
+							uint32 dG = ((((color &  0x3e0) - oG) * alpha) >> 5) + oG;
+							uint32 dB = ((((color &   0x1f) - oB) * alpha) >> 5) + oB;
+
+							WRITE_LE_UINT16(dst1, (dR & 0x7c00) | (dG & 0x3e0) | (dB & 0x1f));
+						} else {
+							uint32 orig = READ_LE_UINT16(dst1);
+							uint32 pass1 = ((((orig << 16) | orig) & 0x3e07c1f * alpha) >> 5) & 0x3e07c1f;
+							uint32 pass2 = (((pass1 << 16) | pass1) + color) & 0xffff;
+							WRITE_LE_UINT16(dst1, pass2);
+						}
+
 						dst1 += 2;
 					}
 					singlesOffset += 2;
