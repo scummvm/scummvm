@@ -21,11 +21,52 @@
  */
 
 #include "titanic/pet_control/pet_remote.h"
+#include "titanic/pet_control/pet_remote_glyphs.h"
 #include "titanic/pet_control/pet_control.h"
+#include "titanic/messages/pet_messages.h"
 #include "titanic/game_manager.h"
 #include "titanic/titanic.h"
 
 namespace Titanic {
+
+static const byte REMOTE_DATA[] = {
+	0x00, 0x02, 
+		GLYPH_SUMMON_ELEVATOR, 0x10,
+	0x01,	0x02, 0x01, 0x10,
+	0x02,	0x03, 0x02, 0x04, 0x10,
+	0x03, 0x02,
+		GLYPH_SUMMON_ELEVATOR, 0x10,
+	0x04,	0x02, 0x02, 0x10,
+	0x05,	0x02, 0x01, 0x10,
+	0x06,	0x02, 0x01, 0x10,
+	0x07,	0x03, 0x02, 0x01, 0x10,
+	0x08,	0x01, 0x10,
+	0x09,	0x01, 0x10,
+	0x0A,	0x02, GLYPH_SUMMON_ELEVATOR, 0x10,
+	0x0B,	0x01, 0x11,
+	0x0C,	0x01, 0x10,
+	0x0D,	0x01, 0x10,
+	0x0E,	0x00,
+	0x0F,	0x01, 0x02,
+	0x10,	0x03, 0x12, 0x14, 0x13,
+	0x11,	0x01, 0x10,
+	0x12,	0x00,
+	0x13,	0x02, 0x01, 0x10,
+	0x14,	0x00,
+	0x15,	0x02, 0x10, 0x02,
+	0x16,	0x00,
+	0x17,	0x02, 0x01, 0x10,
+	0x18,	0x01, 0x10,
+	0x19,	0x00,
+	0x1A,	0x00,
+	0x1B,	0x00,
+	0x1C,	0x00,
+	0x1D,	0x02, GLYPH_SUMMON_ELEVATOR, 0x10,
+	0x1E,	0x0C, 0x05, 0x06, 0x07, 0x08, 0x03, 0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F,
+	0x1F,	0x01, 0x10,
+	0x20,	0x02, GLYPH_SUMMON_ELEVATOR, 0x01,
+	0x21,	0x00
+};
 
 CPetRemote::CPetRemote() : CPetSection() {
 }
@@ -117,7 +158,7 @@ CPetText *CPetRemote::getText() {
 	return &_text;
 }
 
-CPetElement *CPetRemote::getElement(uint id) {
+CPetGfxElement *CPetRemote::getElement(uint id) {
 	switch (id) {
 	case 0:
 		return &_onOff;
@@ -209,7 +250,14 @@ int CPetRemote::getHighlightIndex(int val) {
 	if (roomIndex == -1)
 		return -1;
 
-	// TODO: more
+	Common::Array<uint> remoteData;
+	getRemoteData(roomIndex, remoteData);
+
+	// Loop through the data for the room
+	for (uint idx = 0; idx < remoteData.size(); ++idx) {
+		if (remoteData[idx + 1] == val)
+			return idx;
+	}
 
 	return -1;
 }
@@ -221,6 +269,87 @@ int CPetRemote::roomIndexOf(const CString &name) {
 	}
 
 	return -1;
+}
+
+void CPetRemote::getRemoteData(int roomIndex, Common::Array<uint> &indexes) {
+	const byte *p = &REMOTE_DATA[0];
+	for (int idx = 0; idx < TOTAL_ROOMS; ++idx) {
+		if (*p == roomIndex) {
+			for (int idx = 0; idx < *p; ++idx)
+				indexes.push_back(p[idx + 1]);
+			return;
+		}
+
+		p += *(p + 1) + 2;
+	}
+}
+
+bool CPetRemote::loadGlyphs(const Common::Array<uint> &indexes) {
+	for (uint idx = 0; idx < indexes.size(); ++idx) {
+		if (!loadGlyph(indexes[idx]))
+			return false;
+	}
+
+	return true;
+}
+
+bool CPetRemote::loadGlyph(int glyphIndex) {
+	CPetRemoteGlyph *glyph = nullptr;
+
+	switch (glyphIndex) {
+	case GLYPH_SUMMON_ELEVATOR:
+		glyph = new CSummonElevatorGlyph();
+		break;
+
+	default:
+		break;
+	}
+
+	if (glyph) {
+		if (glyph->setup(_petControl, &_items)) {
+			_items.push_back(glyph);
+			return true;
+		}
+	}
+
+	return false;
+}
+
+void CPetRemote::generateMessage(RemoteMessage msgNum, const CString &name, int num) {
+	switch (msgNum) {
+	case RMSG_LEFT: {
+		CPETLeftMsg msg(name, num);
+		msg.execute(_petControl->_remoteTarget);
+		break;
+	}
+
+	case RMSG_RIGHT: {
+		CPETRightMsg msg(name, num);
+		msg.execute(_petControl->_remoteTarget);
+		break;
+	}
+
+	case RMSG_UP: {
+		CPETUpMsg msg(name, num);
+		msg.execute(_petControl->_remoteTarget);
+		break;
+	}
+
+	case RMSG_DOWN: {
+		CPETDownMsg msg(name, num);
+		msg.execute(_petControl->_remoteTarget);
+		break;
+	}
+
+	case RMSG_ACTIVATE: {
+		CPETActivateMsg msg(name, num);
+		msg.execute(_petControl->_remoteTarget);
+		break;
+	}
+
+	default:
+		break;
+	}
 }
 
 } // End of namespace Titanic

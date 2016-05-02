@@ -77,17 +77,17 @@ void CPetNavHelmet::draw(CScreenManager *screenManager) {
 }
 
 bool CPetNavHelmet::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
-	if (!_petControl->_treeItem2)
+	if (!_petControl->_remoteTarget)
 		return false;
 
 	if (_val1.MouseButtonDownMsg(msg->_mousePos)) {
 		CPETHelmetOnOffMsg helmetMsg;
-		helmetMsg.execute(_petControl->_treeItem2);
+		helmetMsg.execute(_petControl->_remoteTarget);
 	} else if (_val2.MouseButtonDownMsg(msg->_mousePos)) {
 		if (_field210) {
 			_photoOn = !_photoOn;
 			CPETPhotoOnOffMsg photoMsg;
-			photoMsg.execute(_petControl->_treeItem2);
+			photoMsg.execute(_petControl->_remoteTarget);
 		} else {
 			_petControl->displayMessage("Please supply Galactic reference material.");
 		}
@@ -99,7 +99,7 @@ bool CPetNavHelmet::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
 }
 
 bool CPetNavHelmet::MouseButtonUpMsg(CMouseButtonUpMsg *msg) {
-	if (!_petControl->_treeItem2 || !_setDestination.MouseButtonUpMsg(msg->_mousePos))
+	if (!_petControl->_remoteTarget || !_setDestination.MouseButtonUpMsg(msg->_mousePos))
 		return false;
 
 	if (_petControl) {

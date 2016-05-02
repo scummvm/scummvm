@@ -113,7 +113,7 @@ protected:
 public:
 	PetArea _currentArea;
 	CTreeItem *_activeNPC;
-	CTreeItem *_treeItem2;
+	CTreeItem *_remoteTarget;
 public:
 	CLASSDEF
 	CPetControl();

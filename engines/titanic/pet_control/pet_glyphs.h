@@ -408,6 +408,11 @@ public:
 	 * Returns the index of the specified glyph in the lsit
 	 */
 	int indexOf(const CPetGlyph *glyph) const;
+
+	/**
+	 * Resets the scrolling of the glyphs list back to the start
+	 */
+	void scrollToStart() { _firstVisibleIndex = 0; }
 };
 
 } // End of namespace Titanic

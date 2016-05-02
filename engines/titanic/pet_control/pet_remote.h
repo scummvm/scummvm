@@ -23,15 +23,13 @@
 #ifndef TITANIC_PET_REMOTE_H
 #define TITANIC_PET_REMOTE_H
 
+#include "common/array.h"
 #include "titanic/pet_control/pet_section.h"
 #include "titanic/pet_control/pet_glyphs.h"
+#include "titanic/pet_control/pet_remote_glyphs.h"
 #include "titanic/pet_control/pet_text.h"
-#include "titanic/pet_control/pet_gfx_element.h"
 
 namespace Titanic {
-
-class CPetRemoteGlyphs : public CPetGlyphs {
-};
 
 class CPetRemote : public CPetSection {
 private:
@@ -68,6 +66,26 @@ private:
 	 * Return the index of a room name in the master room names list
 	 */
 	int roomIndexOf(const CString &name);
+
+	/**
+	 * Return a list of remote action glyph indexes for a given room
+	 */
+	void getRemoteData(int roomIndex, Common::Array<uint> &indexes);
+
+	/**
+	 * Clear the list of rooms glyphs
+	 */
+	void clearGlyphs() { _items.clear(); }
+
+	/**
+	 * Load the room glyphs
+	 */
+	bool loadGlyphs(const Common::Array<uint> &indexes);
+
+	/**
+	 * Load a single room glyph
+	 */
+	bool loadGlyph(int glyphIndex);
 public:
 	CPetRemote();
 
@@ -123,9 +141,14 @@ public:
 	/**
 	 * Get an element from the section by a designated Id
 	 */
-	virtual CPetElement *getElement(uint id);
+	virtual CPetGfxElement *getElement(uint id);
 
 	virtual void proc38(int val);
+
+	/**
+	 * Generates a PET message
+	 */
+	void generateMessage(RemoteMessage msgNum, const CString &name, int num);
 };
 
 } // End of namespace Titanic

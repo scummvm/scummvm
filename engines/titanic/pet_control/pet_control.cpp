@@ -44,7 +44,7 @@ END_MESSAGE_MAP()
 
 CPetControl::CPetControl() : CGameObject(), 
 		_currentArea(PET_CONVERSATION), _fieldC0(0), _locked(0), _fieldC8(0),
-		_activeNPC(nullptr), _treeItem2(nullptr), _hiddenRoom(nullptr),
+		_activeNPC(nullptr), _remoteTarget(nullptr), _hiddenRoom(nullptr),
 		_drawBounds(20, 350, 620, 480) {
 	_sections[PET_INVENTORY] = &_inventory;
 	_sections[PET_CONVERSATION] = &_conversations;
@@ -152,7 +152,7 @@ void CPetControl::postLoad() {
 	if (!_activeNPCName.empty() && root)
 		_activeNPC = root->findByName(_activeNPCName);
 	if (!_string2.empty() && root)
-		_treeItem2 = root->findByName(_string2);
+		_remoteTarget = root->findByName(_string2);
 
 	setArea(_currentArea);
 	loaded();
@@ -179,7 +179,7 @@ void CPetControl::enterRoom(CRoomItem *room) {
 }
 
 void CPetControl::clear() {
-	_treeItem2 = nullptr;
+	_remoteTarget = nullptr;
 	_string2.clear();
 }
 
@@ -216,7 +216,7 @@ void CPetControl::fn2(int val) {
 }
 
 void CPetControl::fn3(CTreeItem *item) {
-	_treeItem2 = item;
+	_remoteTarget = item;
 	if (item)
 		_string2 = item->getName();
 	else

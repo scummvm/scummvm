@@ -364,10 +364,11 @@ MODULE_OBJS := \
 	pet_control/pet_inventory_glyphs.o \
 	pet_control/pet_message.o \
 	pet_control/pet_nav_helmet.o \
+	pet_control/pet_real_life.o \
+	pet_control/pet_remote.o \
+	pet_control/pet_remote_glyphs.o \
 	pet_control/pet_rooms.o \
 	pet_control/pet_rooms_glyphs.o \
-	pet_control/pet_remote.o \
-	pet_control/pet_real_life.o \
 	pet_control/pet_section.o \
 	pet_control/pet_drag_chev.o \
 	pet_control/pet_graphic2.o \
