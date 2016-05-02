@@ -1440,7 +1440,7 @@ void Scene2425::postInit(SceneObjectList *OwnerList) {
 	case 2425:
 		_sceneMode = 10;
 		R2_GLOBALS._player.setPosition(Common::Point(280, 150));
-		_action->signal();
+		signal();
 		break;
 	case 2455:
 		_sceneMode = 2428;
