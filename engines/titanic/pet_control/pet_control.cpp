@@ -511,4 +511,9 @@ void CPetControl::setTimer44(int id, int val) {
 	getGameManager()->setTimer44(id, val);
 }
 
+CString CPetControl::getFullViewName() {
+	CGameManager *gameManager = getGameManager();
+	return gameManager ? gameManager->getFullViewName() : CString();
+}
+
 } // End of namespace Titanic

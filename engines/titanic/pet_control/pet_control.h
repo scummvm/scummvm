@@ -288,6 +288,11 @@ public:
 	 */
 	void stopPetTimer(uint timerIndex);
 
+	/**
+	 * Return the full Id of the current view in a
+	 * room.node.view tuplet form
+	 */
+	CString getFullViewName();
 };
 
 } // End of namespace Titanic

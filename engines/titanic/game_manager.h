@@ -186,6 +186,12 @@ public:
 	 * Return the true talk manager
 	 */
 	CTrueTalkManager *getTalkManager() { return &_trueTalkManager; }
+
+	/**
+	 * Return the full Id of the current view in a
+	 * room.node.view tuplet form
+	 */
+	CString getFullViewName();
 };
 
 } // End of namespace Titanic

@@ -236,4 +236,13 @@ CScreenManager *CGameManager::setScreenManager() const {
 	return CScreenManager::setCurrent();
 }
 
+CString CGameManager::getFullViewName() {
+	CViewItem *view = getView();
+	CNodeItem *node = view->findNode();
+	CRoomItem *room = node->findRoom();
+
+	return CString::format("%s.%s.%s", room->getName().c_str(),
+		node->getName().c_str(), view->getName().c_str());
+}
+
 } // End of namespace Titanic

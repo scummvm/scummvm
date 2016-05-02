@@ -30,7 +30,7 @@ namespace Titanic {
 
 enum RemoteGlyph {
 	GLYPH_SUMMON_ELEVATOR = 0, GLYPH_SUMMON_PELLERATOR = 1,
-	GLYPH_TELEVISION_CONTROL = 2
+	GLYPH_TELEVISION_CONTROL = 2, GLYPH_ENTERTAINMENT_DEVICE = 3
 };
 
 enum RemoteMessage {
@@ -126,9 +126,14 @@ public:
 	virtual void draw2(CScreenManager *screenManager);
 
 	/**
-	 * Called for mouse button down messages
+	 * Called for mouse button down messages to the default element
 	 */
-	virtual bool MouseButtonDownMsg(const Point &pt);
+	bool elementMouseButtonDownMsg(const Point &pt);
+
+	/**
+	 * Called for mouse button up messages to the default element
+	 */
+	bool elementMouseButtonUpMsg(const Point &pt);	
 };
 
 class CSummonElevatorGlyph : public CBasicRemoteGlyph {
@@ -179,17 +184,36 @@ public:
 
 class CEntertainmentDeviceGlyph : public CToggleRemoteGlyph {
 public:
-	int _field3C;
+	bool _flag2;
 	CPetGfxElement *_gfxElement2, *_gfxElement3;
 public:
 	CEntertainmentDeviceGlyph() : CToggleRemoteGlyph(),
-		_field3C(0), _gfxElement2(nullptr), _gfxElement3(nullptr) {}
+		_flag2(false), _gfxElement2(nullptr), _gfxElement3(nullptr) {}
 
 	/**
 	 * Setup the glyph
 	 */
 	virtual bool setup(CPetControl *petControl, CPetGlyphs *owner);
 
+	/**
+	 * Handles any secondary drawing of the glyph
+	 */
+	virtual void draw2(CScreenManager *screenManager);
+
+	/**
+	 * Called for mouse button down messages
+	 */
+	virtual bool MouseButtonDownMsg(const Point &pt);
+
+	/**
+	 * Handles mouse button up messages
+	 */
+	virtual bool MouseButtonUpMsg(const Point &pt);
+	
+	/**
+	 * Returns the tooltip text for when the glyph is selected
+	 */
+	virtual void getTooltip(CPetText *text);
 };
 
 } // End of namespace Titanic

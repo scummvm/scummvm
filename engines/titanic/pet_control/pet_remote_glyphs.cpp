@@ -22,6 +22,8 @@
 
 #include "titanic/pet_control/pet_remote_glyphs.h"
 #include "titanic/pet_control/pet_remote.h"
+#include "titanic/pet_control/pet_control.h"
+#include "titanic/messages/pet_messages.h"
 
 namespace Titanic {
 
@@ -95,6 +97,25 @@ void CToggleRemoteGlyph::draw2(CScreenManager *screenManager) {
 	_gfxElement->draw(screenManager);
 }
 
+bool CToggleRemoteGlyph::elementMouseButtonDownMsg(const Point &pt) {
+	return _gfxElement->MouseButtonDownMsg(pt);
+}
+
+bool CToggleRemoteGlyph::elementMouseButtonUpMsg(const Point &pt) {
+	if (!_gfxElement->MouseButtonUpMsg(pt))
+		return false;
+
+	CTreeItem *target = getPetControl()->_remoteTarget;
+	if (target) {
+		CPETActivateMsg msg("SGTSelector", -1);
+		msg.execute(target);
+		_flag = !_flag;
+		_gfxElement->setMode(_flag ? MODE_SELECTED : MODE_UNSELECTED);
+	}
+
+	return true;
+}
+
 /*------------------------------------------------------------------------*/
 
 bool CTelevisionControlGlyph::setup(CPetControl *petControl, CPetGlyphs *owner) {
@@ -161,6 +182,58 @@ bool CEntertainmentDeviceGlyph::setup(CPetControl *petControl, CPetGlyphs *owner
 	}
 
 	return true;
+}
+
+void CEntertainmentDeviceGlyph::draw2(CScreenManager *screenManager) {
+	CString viewName = getPetControl()->getFullViewName();
+	if (viewName == "SGTState.Node 1.S") {
+		_gfxElement->setSelected(_flag);
+		_gfxElement->draw(screenManager);
+	} else if (viewName == "SGTState.Node 4.E") {
+		_gfxElement->setSelected(_flag2);
+		_gfxElement->draw(screenManager);
+		_gfxElement2->draw(screenManager);
+		_gfxElement3->draw(screenManager);
+	}
+}
+
+bool CEntertainmentDeviceGlyph::MouseButtonDownMsg(const Point &pt) {
+	CString viewName = getPetControl()->getFullViewName();
+	if (viewName == "SGTState.Node 1.S") {
+		return elementMouseButtonDownMsg(pt);
+	} else if (viewName == "SGTState.Node 4.E") {
+		return _gfxElement->MouseButtonDownMsg(pt)
+			|| _gfxElement2->MouseButtonDownMsg(pt)
+			|| _gfxElement3->MouseButtonDownMsg(pt);
+	}
+
+	return false;
+}
+
+bool CEntertainmentDeviceGlyph::MouseButtonUpMsg(const Point &pt) {
+	CString viewName = getPetControl()->getFullViewName();
+	if (viewName == "SGTState.Node 1.S") {
+		return elementMouseButtonUpMsg(pt);
+	} else if (viewName == "SGTState.Node 4.E") {
+		if (_gfxElement->MouseButtonUpMsg(pt)) {
+			_flag2 = !_flag2;
+			getOwner()->generateMessage(RMSG_ACTIVATE, "Television");
+			return true;
+		} else if (_gfxElement2->MouseButtonUpMsg(pt)) {
+			getOwner()->generateMessage(RMSG_UP, "Television");
+			return true;
+		}
+		else if (_gfxElement3->MouseButtonUpMsg(pt)) {
+			getOwner()->generateMessage(RMSG_DOWN, "Television");
+			return true;
+		}
+	}
+
+	return false;
+}
+
+void CEntertainmentDeviceGlyph::getTooltip(CPetText *text) {
+	text->setText("Operate visual entertainment device");
 }
 
 } // End of namespace Titanic
