@@ -104,6 +104,9 @@ Menu::Menu(int id, const Common::Rect &bounds, MacWindowManager *wm)
 	_activeItem = -1;
 	_activeSubItem = -1;
 
+	_ccallback = NULL;
+	_cdata = NULL;
+
 	_tempSurface.create(_screen.w, _font->getFontHeight(), Graphics::PixelFormat::createFormatCLUT8());
 }
 

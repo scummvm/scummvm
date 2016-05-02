@@ -76,6 +76,8 @@ MacWindow::MacWindow(int id, bool scrollable, bool resizable, bool editable, Mac
 	_beingDragged = false;
 	_beingResized = false;
 
+	_draggedX = _draggedY = 0;
+
 	_type = kWindowWindow;
 }
 
