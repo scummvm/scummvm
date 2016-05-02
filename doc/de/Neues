@@ -40,6 +40,14 @@ Programmcodes finden Sie auf Englisch unter:
  Gob:
    - Aufhängen während Sound-Initialisierung in mehreren Spielen behoben.
 
+ KYRA:
+   - Potentieller Absturz behoben, der in "Hand of Fate" auftritt, wenn der
+     Sumpfschlangentrank an der Ratte verwendet wird.
+     (HINWEIS: Dieser Fehler wurde bereits in Version 1.8.0 behoben,
+     jedoch nicht in der Neues-Datei erwähnt).
+   - Fehlende Stimm-Reaktionen korrigiert, wenn Gegner in der CD-Version von
+     Lands of Lore getroffen wurden.
+
  Lab:
    - Aufhängen während der End-Sequenz behoben.
    - Interne Spiel-Bedienelemente verbessert.
