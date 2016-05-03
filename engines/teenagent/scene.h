@@ -194,7 +194,7 @@ private:
 	SurfaceList on;
 	bool onEnabled;
 	Surface *ons;
-	uint32 onsCount;
+	uint32 _onsCount;
 	Animation actorAnimation, animation[4], customAnimation[4];
 	Common::Rect actorAnimationPosition, animationPosition[4];
 
@@ -214,7 +214,7 @@ private:
 
 	Common::String message;
 	Common::Point messagePos;
-	byte messageColor;
+	byte _messageColor;
 	uint messageTimer;
 	byte messageFirstFrame;
 	byte messageLastFrame;

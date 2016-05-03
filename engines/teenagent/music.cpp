@@ -36,7 +36,7 @@ static const uint32 noteToPeriod[3][12] = {
 	{214, 201, 189, 179, 170, 160, 151, 143, 135, 127, 120, 113}
 };
 
-MusicPlayer::MusicPlayer(TeenAgentEngine *vm) : Paula(false, 44100, 5000), _vm(vm), _id(0) {
+MusicPlayer::MusicPlayer(TeenAgentEngine *vm) : Paula(false, 44100, 5000), _vm(vm), _id(0), _currRow(0) {
 }
 
 MusicPlayer::~MusicPlayer() {
@@ -55,7 +55,7 @@ bool MusicPlayer::load(int id) {
 
 	Common::StackLock lock(_mutex);
 	// Load the samples
-	sampleCount = stream->readByte();
+	byte sampleCount = stream->readByte();
 
 	debugC(0, kDebugMusic, "sampleCount = %d", sampleCount);
 

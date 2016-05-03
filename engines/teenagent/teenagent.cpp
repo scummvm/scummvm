@@ -71,6 +71,13 @@ TeenAgentEngine::TeenAgentEngine(OSystem *system, const ADGameDescription *gd)
 	res = new Resources();
 
 	console = 0;
+	scene = 0;
+	inventory = 0;
+	_sceneBusy = false;
+	_dstObject = 0;
+	_musicStream = 0;
+	_markDelay = 0;
+	_gameDelay = 0;
 }
 
 TeenAgentEngine::~TeenAgentEngine() {
