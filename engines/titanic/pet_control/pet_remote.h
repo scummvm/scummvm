@@ -60,7 +60,7 @@ private:
 	/**
 	 * Return a highlight index
 	 */
-	int getHighlightIndex(int val);
+	int getHighlightIndex(RemoteGlyph val);
 
 	/**
 	 * Return the index of a room name in the master room names list

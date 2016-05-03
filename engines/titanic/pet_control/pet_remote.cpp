@@ -35,7 +35,7 @@ static const byte REMOTE_DATA[] = {
 	0x01, 0x02,
 		GLYPH_SUMMON_PELLERATOR, 0x10,
 	0x02, 0x03,
-		GLYPH_TELEVISION_CONTROL, 0x04, 0x10,
+		GLYPH_TELEVISION_CONTROL, GLYPH_OPERATE_LIGHTS, 0x10,
 	0x03, 0x02,
 		GLYPH_SUMMON_ELEVATOR, 0x10,
 	0x04, 0x02,
@@ -200,7 +200,7 @@ CPetGfxElement *CPetRemote::getElement(uint id) {
 }
 
 void CPetRemote::proc38(int val) {
-	int highlightIndex = getHighlightIndex(val);
+	int highlightIndex = getHighlightIndex((RemoteGlyph)val);
 	if (highlightIndex != -1)
 		_items.highlight(highlightIndex);
 }
@@ -253,7 +253,7 @@ CRoomItem *CPetRemote::getRoom() const {
 	return nullptr;
 }
 
-int CPetRemote::getHighlightIndex(int val) {
+int CPetRemote::getHighlightIndex(RemoteGlyph val) {
 	CRoomItem *room = getRoom();
 	if (!room)
 		return -1;
@@ -267,7 +267,7 @@ int CPetRemote::getHighlightIndex(int val) {
 
 	// Loop through the data for the room
 	for (uint idx = 0; idx < remoteData.size(); ++idx) {
-		if (remoteData[idx + 1] == val)
+		if ((RemoteGlyph)remoteData[idx + 1] == val)
 			return idx;
 	}
 
@@ -287,8 +287,8 @@ void CPetRemote::getRemoteData(int roomIndex, Common::Array<uint> &indexes) {
 	const byte *p = &REMOTE_DATA[0];
 	for (int idx = 0; idx < TOTAL_ROOMS; ++idx) {
 		if (*p == roomIndex) {
-			for (int idx = 0; idx < *p; ++idx)
-				indexes.push_back(p[idx + 1]);
+			for (int ctr = 0; ctr < *p; ++ctr)
+				indexes.push_back(p[ctr + 1]);
 			return;
 		}
 
@@ -323,6 +323,10 @@ bool CPetRemote::loadGlyph(int glyphIndex) {
 
 	case GLYPH_ENTERTAINMENT_DEVICE:
 		glyph = new CEntertainmentDeviceGlyph();
+		break;
+
+	case GLYPH_OPERATE_LIGHTS:
+		glyph = new COperateLightsGlyph();
 		break;
 
 	default:

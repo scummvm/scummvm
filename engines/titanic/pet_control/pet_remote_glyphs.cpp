@@ -236,4 +236,59 @@ void CEntertainmentDeviceGlyph::getTooltip(CPetText *text) {
 	text->setText("Operate visual entertainment device");
 }
 
+/*------------------------------------------------------------------------*/
+
+
+bool COperateLightsGlyph::setup(CPetControl *petControl, CPetGlyphs *owner) {
+	CPetRemoteGlyph::setup(petControl, owner);
+	setDefaults("3PetLights", petControl);
+
+	if (owner) {
+		_left = getElement(3);
+		_right = getElement(4);
+		_up = getElement(5);
+		_down = getElement(6);
+		_activate = getElement(7);
+	}
+
+	return true;
+}
+
+void COperateLightsGlyph::draw2(CScreenManager *screenManager) {
+	_left->draw(screenManager);
+	_right->draw(screenManager);
+	_up->draw(screenManager);
+	_down->draw(screenManager);
+	_activate->draw(screenManager);
+}
+
+bool COperateLightsGlyph::MouseButtonDownMsg(const Point &pt) {
+	if (_left->MouseButtonDownMsg(pt)
+			|| _right->MouseButtonDownMsg(pt)
+			|| _up->MouseButtonDownMsg(pt)
+			|| _down->MouseButtonDownMsg(pt)
+			|| _activate->MouseButtonDownMsg(pt))
+		return true;
+	return true;
+}
+
+bool COperateLightsGlyph::MouseButtonUpMsg(const Point &pt) {
+	if (_left && _left->MouseButtonUpMsg(pt))
+		getOwner()->generateMessage(RMSG_LEFT, "Light");
+	else if (_right && _right->MouseButtonUpMsg(pt))
+		getOwner()->generateMessage(RMSG_RIGHT, "Light");
+	else if (_up && _up->MouseButtonUpMsg(pt))
+		getOwner()->generateMessage(RMSG_UP, "Light");
+	else if (_down && _down->MouseButtonUpMsg(pt))
+		getOwner()->generateMessage(RMSG_DOWN, "Light");
+	else
+		getOwner()->generateMessage(RMSG_ACTIVATE, "Light");
+
+	return true;
+}
+
+void COperateLightsGlyph::getTooltip(CPetText *text) {
+	text->setText("Operate the lights");
+}
+
 } // End of namespace Titanic

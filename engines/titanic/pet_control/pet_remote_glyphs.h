@@ -30,7 +30,8 @@ namespace Titanic {
 
 enum RemoteGlyph {
 	GLYPH_SUMMON_ELEVATOR = 0, GLYPH_SUMMON_PELLERATOR = 1,
-	GLYPH_TELEVISION_CONTROL = 2, GLYPH_ENTERTAINMENT_DEVICE = 3
+	GLYPH_TELEVISION_CONTROL = 2, GLYPH_ENTERTAINMENT_DEVICE = 3,
+	GLYPH_OPERATE_LIGHTS = 4
 };
 
 enum RemoteMessage {
@@ -213,6 +214,40 @@ public:
 	/**
 	 * Returns the tooltip text for when the glyph is selected
 	 */
+	virtual void getTooltip(CPetText *text);
+};
+
+
+class COperateLightsGlyph : public CPetRemoteGlyph {
+public:
+	CPetGfxElement *_left, *_right, *_up, *_down, *_activate;
+public:
+	COperateLightsGlyph() : CPetRemoteGlyph(), _left(nullptr), _right(nullptr),
+		_up(nullptr), _down(nullptr), _activate(nullptr) {}
+
+	/**
+	* Setup the glyph
+	*/
+	virtual bool setup(CPetControl *petControl, CPetGlyphs *owner);
+
+	/**
+	* Handles any secondary drawing of the glyph
+	*/
+	virtual void draw2(CScreenManager *screenManager);
+
+	/**
+	* Called for mouse button down messages
+	*/
+	virtual bool MouseButtonDownMsg(const Point &pt);
+
+	/**
+	* Handles mouse button up messages
+	*/
+	virtual bool MouseButtonUpMsg(const Point &pt);
+
+	/**
+	* Returns the tooltip text for when the glyph is selected
+	*/
 	virtual void getTooltip(CPetText *text);
 };
 
