@@ -1833,7 +1833,7 @@ void Scene44::run() {
 						_vm->_gnapActionStatus = 1;
 						break;
 					case PLAT_CURSOR:
-						_vm->gnapUseDeviceOnPlatypuss();
+						_vm->gnapUseDeviceOnPlatypus();
 						_vm->platypusWalkTo(6, 7, 1, 0x107D2, 1);
 						if (_vm->_gnapX == 7 && _vm->_gnapY == 7)
 							_vm->gnapWalkStep();

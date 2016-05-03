@@ -1169,7 +1169,7 @@ void Scene22::run() {
 						_vm->_gnapActionStatus = kAS22TalkCashier;
 						break;
 					case PLAT_CURSOR:
-						_vm->gnapUseDeviceOnPlatypuss();
+						_vm->gnapUseDeviceOnPlatypus();
 						break;
 					}
 				}

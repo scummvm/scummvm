@@ -1376,7 +1376,7 @@ void Scene04::run() {
 
 	_vm->queueInsertDeviceIcon();
 
-	if (_vm->isFlag(kGFPlatyPussDisguised)) {
+	if (_vm->isFlag(kGFPlatypusDisguised)) {
 		_vm->_timers[3] = 300;
 		// TODO setCursor((LPCSTR)IDC_WAIT);
 		_vm->setGrabCursorSprite(kItemKeys);
@@ -1394,7 +1394,7 @@ void Scene04::run() {
 		_vm->invRemove(kItemDisguise);
 		_vm->invAdd(kItemKeys);
 		_vm->setFlag(kGFKeysTaken);
-		_vm->clearFlag(kGFPlatyPussDisguised);
+		_vm->clearFlag(kGFPlatypusDisguised);
 		_vm->_platypusSequenceId = 0x20C;
 		_vm->_platypusSequenceDatNum = 0;
 		_vm->_platypusFacing = kDirBottomRight;
@@ -1667,7 +1667,7 @@ void Scene04::run() {
 
 		if (!_vm->_isLeavingScene) {
 			if (_vm->_platypusActionStatus < 0 && _vm->isFlag(kGFPlatypus))
-				_vm->platypusSub426234();
+				_vm->updatePlatypusIdleSequence2();
 			if (_vm->_gnapActionStatus < 0)
 				_vm->updateGnapIdleSequence2();
 			if (!_vm->_timers[5]) {
@@ -1965,7 +1965,7 @@ void Scene05::run() {
 						break;
 					case PLAT_CURSOR:
 						if (_vm->isFlag(kGFPlatypus)) {
-							_vm->gnapUseDeviceOnPlatypuss();
+							_vm->gnapUseDeviceOnPlatypus();
 							if (_vm->platypusWalkTo(_vm->_hotspotsWalkPos[1].x, _vm->_hotspotsWalkPos[1].y, 1, 0x107C2, 1)) {
 								_vm->_platypusActionStatus = kAS05PlatSearchHaystack;
 								_vm->_platypusFacing = kDirUnk4;
@@ -3057,7 +3057,7 @@ void Scene08::run() {
 					break;
 				case PLAT_CURSOR:
 					_vm->gnapActionIdle(0x14D);
-					_vm->gnapUseDeviceOnPlatypuss();
+					_vm->gnapUseDeviceOnPlatypus();
 					_vm->platypusWalkTo(6, 6, 1, 0x107C2, 1);
 					_vm->_platypusActionStatus = kAS08PlatWithMan;
 					_vm->_platypusFacing = kDirNone;
@@ -3093,7 +3093,7 @@ void Scene08::run() {
 				case PLAT_CURSOR:
 					_vm->setFlag(kGFSceneFlag1);
 					_vm->gnapActionIdle(0x14D);
-					_vm->gnapUseDeviceOnPlatypuss();
+					_vm->gnapUseDeviceOnPlatypus();
 					_vm->platypusWalkTo(3, 7, 1, 0x107C2, 1);
 					_vm->_platypusActionStatus = kAS08PlatWithDog;
 					_vm->_platypusFacing = kDirNone;

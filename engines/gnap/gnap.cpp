@@ -1672,7 +1672,7 @@ void GnapEngine::gnapInitBrainPulseRndValue() {
 	_gnapBrainPulseRndValue = 2 * getRandom(10);
 }
 
-void GnapEngine::gnapUseDeviceOnPlatypuss() {
+void GnapEngine::gnapUseDeviceOnPlatypus() {
 	playGnapSequence(makeRid(1, getGnapSequenceId(gskPullOutDevice, _platX, _platY)));
 
 	if (_platypusFacing != kDirNone) {
@@ -1805,7 +1805,7 @@ void GnapEngine::gnapUseDisguiseOnPlatypus() {
 	_newSceneNum = 47;
 	_isLeavingScene = true;
 	_sceneDone = true;
-	setFlag(kGFPlatyPussDisguised);
+	setFlag(kGFPlatypusDisguised);
 }
 
 int GnapEngine::getPlatypusSequenceId() {
@@ -1868,7 +1868,7 @@ void GnapEngine::updatePlatypusIdleSequence() {
 	}
 }
 
-void GnapEngine::platypusSub426234() {
+void GnapEngine::updatePlatypusIdleSequence2() {
 	if (_platypusActionStatus < 0 && _gnapActionStatus < 0) {
 		if (_timers[0]) {
 			if (!_timers[1]) {

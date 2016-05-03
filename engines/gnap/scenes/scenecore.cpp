@@ -530,7 +530,7 @@ void GnapEngine::runSceneLogic() {
 			_scene = new Scene472(this);
 			_scene->init();
 			_newSceneNum = 11;
-		} else if (!isFlag(kGFPlatyPussDisguised) && _prevSceneNum == 2) {//CHECKME
+		} else if (!isFlag(kGFPlatypusDisguised) && _prevSceneNum == 2) {//CHECKME
 			if (isFlag(kGFUnk25)) {
 				_scene = new Scene473(this);
 				_scene->init();
@@ -550,7 +550,7 @@ void GnapEngine::runSceneLogic() {
 			_scene = new Scene476(this);
 			_scene->init();
 			_newSceneNum = 26;
-		} else if (isFlag(kGFPlatyPussDisguised) && _cursorValue == 1) {
+		} else if (isFlag(kGFPlatypusDisguised) && _cursorValue == 1) {
 			_scene = new Scene477(this);
 			_scene->init();
 			_newSceneNum = 4;

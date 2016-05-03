@@ -393,7 +393,7 @@ void Scene31::run() {
 						break;
 					case PLAT_CURSOR:
 						if (!_vm->invHas(kItemBucketWithBeer)) {
-							_vm->gnapUseDeviceOnPlatypuss();
+							_vm->gnapUseDeviceOnPlatypus();
 							_vm->platypusWalkTo(_vm->_hotspotsWalkPos[kHS31MeasuringClown].x, _vm->_hotspotsWalkPos[kHS31MeasuringClown].y + 1, 1, 0x107C2, 1);
 							_vm->_hotspots[kHS31WalkArea1]._flags |= SF_WALKABLE;
 							_vm->platypusWalkTo(_vm->_hotspotsWalkPos[kHS31MeasuringClown].x, _vm->_hotspotsWalkPos[kHS31MeasuringClown].y, 1, 0x107C2, 1);

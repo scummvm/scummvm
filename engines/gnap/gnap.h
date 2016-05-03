@@ -183,7 +183,7 @@ enum {
 	kGFBarnPadlockOpen		= 7,
 	kGFTruckFilledWithGas	= 8,
 	kGFTruckKeysUsed		= 9,
-	kGFPlatyPussDisguised	= 10,
+	kGFPlatypusDisguised	= 10,
 	kGFSceneFlag1			= 11,
 	kGFGnapControlsToyUFO	= 12,
 	kGFUnk13				= 13, // Tongue Fight Won?
@@ -550,7 +550,7 @@ public:
 	void updateGnapIdleSequence2();
 	void initGnapPos(int gridX, int gridY, Facing facing);
 	void gnapInitBrainPulseRndValue();
-	void gnapUseDeviceOnPlatypuss();
+	void gnapUseDeviceOnPlatypus();
 	void doCallback(int callback);
 	bool gnapPlatypusAction(int gridX, int gridY, int platSequenceId, int callback);
 	void gnapKissPlatypus(int callback);
@@ -564,11 +564,10 @@ public:
 	int getPlatypusSequenceId();
 	void playPlatypusSequence(int sequenceId);
 	void updatePlatypusIdleSequence();
-	void platypusSub426234();
+	void updatePlatypusIdleSequence2();
 	void initPlatypusPos(int gridX, int gridY, Facing facing);
 
 	// Scenes
-
 	int _toyUfoNextSequenceId, _toyUfoSequenceId;
 	int _toyUfoId;
 	int _toyUfoActionStatus;

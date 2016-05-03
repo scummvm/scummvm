@@ -184,7 +184,6 @@ void GameSys::setBackgroundSurface(Graphics::Surface *surface, int a4, int a5, i
 	}
 
 	memcpy(_frontSurface->getPixels(), surface->getPixels(), surface->pitch * surface->h);
-
 	_vm->_system->copyRectToScreen(_frontSurface->getPixels(), _frontSurface->pitch, 0, 0, _frontSurface->w, _frontSurface->h);
 
 	_backgroundImageValue1 = a4;
