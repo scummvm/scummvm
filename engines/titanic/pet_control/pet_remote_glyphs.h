@@ -32,7 +32,7 @@ enum RemoteGlyph {
 	GLYPH_SUMMON_ELEVATOR = 0, GLYPH_SUMMON_PELLERATOR = 1,
 	GLYPH_TELEVISION_CONTROL = 2, GLYPH_ENTERTAINMENT_DEVICE = 3,
 	GLYPH_OPERATE_LIGHTS = 4, GLYPH_DEPLOY_FLORAL = 5,
-	GLYPH_DEPLOY_RELAXATION = 6
+	GLYPH_DEPLOY_RELAXATION = 6, GLYPH_DEPLOY_COMFORT = 7
 };
 
 enum RemoteMessage {
@@ -130,12 +130,12 @@ public:
 	/**
 	 * Called for mouse button down messages to the default element
 	 */
-	bool elementMouseButtonDownMsg(const Point &pt);
+	bool elementMouseButtonDownMsg(const Point &pt, int petNum);
 
 	/**
 	 * Called for mouse button up messages to the default element
 	 */
-	bool elementMouseButtonUpMsg(const Point &pt);	
+	bool elementMouseButtonUpMsg(const Point &pt, int petNum);	
 };
 
 class CSummonElevatorGlyph : public CBasicRemoteGlyph {
@@ -263,14 +263,14 @@ public:
 	 * Called for mouse button down messages
 	 */
 	virtual bool MouseButtonDownMsg(const Point &pt) {
-		return elementMouseButtonDownMsg(pt);
+		return elementMouseButtonDownMsg(pt, 0);
 	}
 
 	/**
 	 * Handles mouse button up messages
 	 */
 	virtual bool MouseButtonUpMsg(const Point &pt) {
-		return elementMouseButtonUpMsg(pt);
+		return elementMouseButtonUpMsg(pt, 0);
 	}
 	
 	/**
@@ -282,6 +282,33 @@ public:
 class CDeployRelaxationGlyph : public CToggleRemoteGlyph {
 public:
 	/**
+	 * Setup the glyph
+	 */
+	virtual bool setup(CPetControl *petControl, CPetGlyphs *owner);
+
+	/**
+	 * Called for mouse button down messages
+	 */
+	virtual bool MouseButtonDownMsg(const Point &pt) {
+		return elementMouseButtonDownMsg(pt, 1);
+	}
+
+	/**
+	 * Handles mouse button up messages
+	 */
+	virtual bool MouseButtonUpMsg(const Point &pt) {
+		return elementMouseButtonUpMsg(pt, 1);
+	}
+
+	/**
+	 * Returns the tooltip text for when the glyph is selected
+	 */
+	virtual void getTooltip(CPetText *text);
+};
+
+class CDeployComfortGlyph : public CToggleRemoteGlyph {
+public:
+	/**
 	* Setup the glyph
 	*/
 	virtual bool setup(CPetControl *petControl, CPetGlyphs *owner);
@@ -290,14 +317,14 @@ public:
 	* Called for mouse button down messages
 	*/
 	virtual bool MouseButtonDownMsg(const Point &pt) {
-		return elementMouseButtonDownMsg(pt);
+		return elementMouseButtonDownMsg(pt, 2);
 	}
 
 	/**
 	* Handles mouse button up messages
 	*/
 	virtual bool MouseButtonUpMsg(const Point &pt) {
-		return elementMouseButtonUpMsg(pt);
+		return elementMouseButtonUpMsg(pt, 2);
 	}
 
 	/**

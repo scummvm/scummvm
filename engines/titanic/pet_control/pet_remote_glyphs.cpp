@@ -97,17 +97,17 @@ void CToggleRemoteGlyph::draw2(CScreenManager *screenManager) {
 	_gfxElement->draw(screenManager);
 }
 
-bool CToggleRemoteGlyph::elementMouseButtonDownMsg(const Point &pt) {
+bool CToggleRemoteGlyph::elementMouseButtonDownMsg(const Point &pt, int petNum) {
 	return _gfxElement->MouseButtonDownMsg(pt);
 }
 
-bool CToggleRemoteGlyph::elementMouseButtonUpMsg(const Point &pt) {
+bool CToggleRemoteGlyph::elementMouseButtonUpMsg(const Point &pt, int petNum) {
 	if (!_gfxElement->MouseButtonUpMsg(pt))
 		return false;
 
 	CTreeItem *target = getPetControl()->_remoteTarget;
 	if (target) {
-		CPETActivateMsg msg("SGTSelector", -1);
+		CPETActivateMsg msg("SGTSelector", petNum);
 		msg.execute(target);
 		_flag = !_flag;
 		_gfxElement->setMode(_flag ? MODE_SELECTED : MODE_UNSELECTED);
@@ -200,7 +200,7 @@ void CEntertainmentDeviceGlyph::draw2(CScreenManager *screenManager) {
 bool CEntertainmentDeviceGlyph::MouseButtonDownMsg(const Point &pt) {
 	CString viewName = getPetControl()->getFullViewName();
 	if (viewName == "SGTState.Node 1.S") {
-		return elementMouseButtonDownMsg(pt);
+		return elementMouseButtonDownMsg(pt, 4);
 	} else if (viewName == "SGTState.Node 4.E") {
 		return _gfxElement->MouseButtonDownMsg(pt)
 			|| _gfxElement2->MouseButtonDownMsg(pt)
@@ -213,7 +213,7 @@ bool CEntertainmentDeviceGlyph::MouseButtonDownMsg(const Point &pt) {
 bool CEntertainmentDeviceGlyph::MouseButtonUpMsg(const Point &pt) {
 	CString viewName = getPetControl()->getFullViewName();
 	if (viewName == "SGTState.Node 1.S") {
-		return elementMouseButtonUpMsg(pt);
+		return elementMouseButtonUpMsg(pt, 4);
 	} else if (viewName == "SGTState.Node 4.E") {
 		if (_gfxElement->MouseButtonUpMsg(pt)) {
 			_flag2 = !_flag2;
@@ -313,6 +313,18 @@ bool CDeployRelaxationGlyph::setup(CPetControl *petControl, CPetGlyphs *owner) {
 
 void CDeployRelaxationGlyph::getTooltip(CPetText *text) {
 	text->setText("Deploy fully recumbent relaxation device");
+}
+
+/*------------------------------------------------------------------------*/
+
+bool CDeployComfortGlyph::setup(CPetControl *petControl, CPetGlyphs *owner) {
+	CToggleRemoteGlyph::setup(petControl, owner);
+	setDefaults("3PetToilet", petControl);
+	return true;
+}
+
+void CDeployComfortGlyph::getTooltip(CPetText *text) {
+	text->setText("Deploy comfort workstation");
 }
 
 } // End of namespace Titanic

@@ -73,7 +73,8 @@ static const byte REMOTE_DATA[] = {
 	0x1C, 0x00,
 	0x1D, 0x02, GLYPH_SUMMON_ELEVATOR, 0x10,
 	0x1E, 0x0C,
-		GLYPH_DEPLOY_FLORAL, GLYPH_DEPLOY_RELAXATION, 0x07, 0x08, 
+		GLYPH_DEPLOY_FLORAL, GLYPH_DEPLOY_RELAXATION, GLYPH_DEPLOY_COMFORT,
+		0x08,
 		GLYPH_ENTERTAINMENT_DEVICE, 0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F,
 	0x1F, 0x01, 0x10,
 	0x20, 0x02,
@@ -336,6 +337,10 @@ bool CPetRemote::loadGlyph(int glyphIndex) {
 
 	case GLYPH_DEPLOY_RELAXATION:
 		glyph = new CDeployRelaxationGlyph();
+		break;
+
+	case GLYPH_DEPLOY_COMFORT:
+		glyph = new CDeployComfortGlyph();
 		break;
 
 	default:
