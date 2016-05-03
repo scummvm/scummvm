@@ -59,6 +59,9 @@ void Moonbase::blitT14WizImage(uint8 *dst, int dstw, int dsth, int dstPitch, con
 		return;
 	Common::Rect clippedRect = clippedDstRect.findIntersectingRect(dstOperation);
 
+	int cx = clippedRect.right - clippedRect.left;
+	int cy = clippedRect.bottom - clippedRect.top;
+
 	int sx = ((clippedRect.left - x) + srcLimitsRect.left);
 	int sy = ((clippedRect.top - y) + srcLimitsRect.top);
 
@@ -67,19 +70,18 @@ void Moonbase::blitT14WizImage(uint8 *dst, int dstw, int dsth, int dstPitch, con
 	int headerSize = READ_LE_UINT32(wizd + 0x4);
 	uint8 *dataPointer = wizd + 0x8 + headerSize;
 
-	for (int i = 0; i < height; i++) {
+	for (int i = 0; i < sy; i++) {
+		uint16 lineSize = READ_LE_UINT16(dataPointer + 0);
+
+		dataPointer += lineSize;
+	}
+
+	for (int i = 0; i < cy; i++) {
 		uint16 lineSize      = READ_LE_UINT16(dataPointer + 0);
 		uint8 *singlesOffset = READ_LE_UINT16(dataPointer + 2) + dataPointer;
 		uint8 *quadsOffset   = READ_LE_UINT16(dataPointer + 4) + dataPointer;
 
-		if (i < sy) {
-			dataPointer += lineSize;
-			dst += dstPitch;
-
-			continue;
-		}
-
-		int pixels = width;
+		int pixels = 0;
 		byte *dst1 = dst;
 		byte *codes = dataPointer + 6;
 
@@ -89,27 +91,31 @@ void Moonbase::blitT14WizImage(uint8 *dst, int dstw, int dsth, int dstPitch, con
 
 			if (code == 0) { // quad
 				for (int c = 0; c < 4; c++) {
-					if (width - pixels >= sx) {
+					if (pixels >= sx) {
 						WRITE_LE_UINT16(dst1, READ_LE_UINT16(quadsOffset));
 						dst1 += 2;
 					}
 					quadsOffset += 2;
-					pixels--;
+					pixels++;
 				}
 			} else if (code < 0) { // single
-				if (width - pixels >= sx) {
+				if (pixels >= sx) {
 					WRITE_LE_UINT16(dst1, READ_LE_UINT16(singlesOffset));
 					dst1 += 2;
 				}
 				singlesOffset += 2;
-				pixels--;
+				pixels++;
 			} else { // skip
 				if ((code & 1) == 0) {
 					code >>= 1;
-					dst1 += code * 2;
-					pixels -= code;
+
+					for (int j = 0; j < code; j++) {
+						if (pixels >= sx)
+							dst1 += 2;
+						pixels++;
+					}
 				} else { // special case
-					if (width - pixels >= sx) {
+					if (pixels >= sx) {
 						int alpha = code >> 1;
 						uint16 color = READ_LE_UINT16(singlesOffset);
 
@@ -137,11 +143,11 @@ void Moonbase::blitT14WizImage(uint8 *dst, int dstw, int dsth, int dstPitch, con
 						dst1 += 2;
 					}
 					singlesOffset += 2;
-					pixels--;
+					pixels++;
 				}
 			}
 
-			if (pixels <= 0)
+			if (pixels >= cx + sx)
 				break;
 		}
 
