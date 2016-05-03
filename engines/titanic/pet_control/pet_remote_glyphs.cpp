@@ -305,13 +305,13 @@ void CDeployFloralGlyph::getTooltip(CPetText *text) {
 
 /*------------------------------------------------------------------------*/
 
-bool CDeployRelaxationGlyph::setup(CPetControl *petControl, CPetGlyphs *owner) {
+bool CDeployFullyRelaxationGlyph::setup(CPetControl *petControl, CPetGlyphs *owner) {
 	CToggleRemoteGlyph::setup(petControl, owner);
 	setDefaults("3PetBedfoot", petControl);
 	return true;
 }
 
-void CDeployRelaxationGlyph::getTooltip(CPetText *text) {
+void CDeployFullyRelaxationGlyph::getTooltip(CPetText *text) {
 	text->setText("Deploy fully recumbent relaxation device");
 }
 
@@ -325,6 +325,150 @@ bool CDeployComfortGlyph::setup(CPetControl *petControl, CPetGlyphs *owner) {
 
 void CDeployComfortGlyph::getTooltip(CPetText *text) {
 	text->setText("Deploy comfort workstation");
+}
+
+/*------------------------------------------------------------------------*/
+
+bool CDeployMinorStorageGlyph::setup(CPetControl *petControl, CPetGlyphs *owner) {
+	CToggleRemoteGlyph::setup(petControl, owner);
+	setDefaults("3PetDraw", petControl);
+	return true;
+}
+
+void CDeployMinorStorageGlyph::getTooltip(CPetText *text) {
+	text->setText("Deploy minor horizontally mobile storage compartment");
+}
+
+/*------------------------------------------------------------------------*/
+
+bool CDeployMajorRelaxationGlyph::setup(CPetControl *petControl, CPetGlyphs *owner) {
+	CToggleRemoteGlyph::setup(petControl, owner);
+	setDefaults("3PetArmChair", petControl);
+	return true;
+}
+
+void CDeployMajorRelaxationGlyph::getTooltip(CPetText *text) {
+	text->setText("Deploy major semi-recumbent relaxation device");
+}
+
+/*------------------------------------------------------------------------*/
+
+bool CInflateRelaxationGlyph::setup(CPetControl *petControl, CPetGlyphs *owner) {
+	CToggleRemoteGlyph::setup(petControl, owner);
+	setDefaults("3PetBedhead", petControl);
+	return true;
+}
+
+void CInflateRelaxationGlyph::getTooltip(CPetText *text) {
+	text->setText("Inflate fully recumbent relaxation device ");
+}
+
+/*------------------------------------------------------------------------*/
+
+bool CDeployMaintenanceGlyph::setup(CPetControl *petControl, CPetGlyphs *owner) {
+	CToggleRemoteGlyph::setup(petControl, owner);
+	setDefaults("3PetWashstand", petControl);
+	return true;
+}
+
+void CDeployMaintenanceGlyph::getTooltip(CPetText *text) {
+	text->setText("Deploy personal maintenance hub");
+}
+
+/*------------------------------------------------------------------------*/
+
+bool CDeployWorkSurfaceGlyph::setup(CPetControl *petControl, CPetGlyphs *owner) {
+	CToggleRemoteGlyph::setup(petControl, owner);
+	setDefaults("3PetTable", petControl);
+	return true;
+}
+
+void CDeployWorkSurfaceGlyph::getTooltip(CPetText *text) {
+	text->setText("Deploy executive horizontal worksurface");
+}
+
+/*------------------------------------------------------------------------*/
+
+bool CDeployMinorRelaxationGlyph::setup(CPetControl *petControl, CPetGlyphs *owner) {
+	CToggleRemoteGlyph::setup(petControl, owner);
+	setDefaults("3PetDeskchair", petControl);
+	return true;
+}
+
+void CDeployMinorRelaxationGlyph::getTooltip(CPetText *text) {
+	text->setText("Deploy minor semi-recumbent relaxation device");
+}
+
+/*------------------------------------------------------------------------*/
+
+bool CDeploySinkGlyph::setup(CPetControl *petControl, CPetGlyphs *owner) {
+	CToggleRemoteGlyph::setup(petControl, owner);
+	setDefaults("3PetDeskchair", petControl);
+	return true;
+}
+
+void CDeploySinkGlyph::getTooltip(CPetText *text) {
+	text->setText("Deploy aqueous cleansing receptacle");
+}
+
+/*------------------------------------------------------------------------*/
+
+bool CDeployMajorStorageGlyph::setup(CPetControl *petControl, CPetGlyphs *owner) {
+	CToggleRemoteGlyph::setup(petControl, owner);
+	setDefaults("3PetChest", petControl);
+	return true;
+}
+
+void CDeployMajorStorageGlyph::getTooltip(CPetText *text) {
+	text->setText("Deploy major horizontally mobile storage compartment");
+}
+
+/*------------------------------------------------------------------------*/
+
+bool CSuccubusDeliveryGlyph::setup(CPetControl *petControl, CPetGlyphs *owner) {
+	CPetRemoteGlyph::setup(petControl, owner);
+	setDefaults("3PetSuccubus", petControl);
+
+	if (owner) {
+		_gfxElement1 = getElement(16);
+		_gfxElement2 = getElement(17);
+	}
+
+	return true;
+}
+
+void CSuccubusDeliveryGlyph::draw2(CScreenManager *screenManager) {
+	_gfxElement1->draw(screenManager);
+	_gfxElement2->draw(screenManager);
+}
+
+bool CSuccubusDeliveryGlyph::MouseButtonDownMsg(const Point &pt) {
+	return _gfxElement1->MouseButtonDownMsg(pt)
+		|| _gfxElement2->MouseButtonDownMsg(pt);
+}
+
+bool CSuccubusDeliveryGlyph::MouseButtonUpMsg(const Point &pt) {
+	CTreeItem *target = getPetControl()->_remoteTarget;
+
+	if (_gfxElement1 && _gfxElement1->MouseButtonUpMsg(pt)) {
+		if (target) {
+			CPETDeliverMsg msg;
+			msg.execute(target);
+		}
+	} else if (_gfxElement2 && _gfxElement2->MouseButtonUpMsg(pt)) {
+		if (target) {
+			CPETReceiveMsg msg;
+			msg.execute(target);
+		}
+	} else {
+		return false;
+	}
+
+	return true;
+}
+
+void CSuccubusDeliveryGlyph::getTooltip(CPetText *text) {
+	text->setText("Succ-U-Bus delivery system control");
 }
 
 } // End of namespace Titanic
