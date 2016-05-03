@@ -24,7 +24,13 @@
 
 namespace Titanic {
 
-CMovieClip::CMovieClip() {
+CMovieClip::CMovieClip(): ListItem(), _startFrame(0), _endFrame(0),
+	_field20(0), _field24(0), _field28(0), _field2C(0), _field30(0) {
+}
+
+CMovieClip::CMovieClip(const CString &name, int startFrame, int endFrame):
+	ListItem(), _name(name), _startFrame(startFrame), _endFrame(endFrame),
+	_field20(0), _field24(0), _field28(0), _field2C(0), _field30(0) {
 }
 
 void CMovieClip::save(SimpleFile *file, int indent) const {
@@ -74,6 +80,26 @@ CMovieClip *CMovieClipList::findByName(const Common::String &name) const {
 	}
 
 	return nullptr;
+}
+
+bool CMovieClipList::existsByStart(const CString &name, int startFrame) const {
+	for (const_iterator i = begin(); i != end(); ++i) {
+		CMovieClip *clip = *i;
+		if (clip->_startFrame == startFrame && clip->_name == name)
+			return true;
+	}
+
+	return false;
+}
+
+bool CMovieClipList::existsByEnd(const CString &name, int endFrame) const {
+	for (const_iterator i = begin(); i != end(); ++i) {
+		CMovieClip *clip = *i;
+		if (clip->_endFrame == endFrame && clip->_name == name)
+			return true;
+	}
+
+	return false;
 }
 
 } // End of namespace Titanic

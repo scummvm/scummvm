@@ -46,6 +46,7 @@ public:
 public:
 	CLASSDEF
 	CMovieClip();
+	CMovieClip(const CString &name, int startFrame, int endFrame);
 
 	/**
 	 * Save the data for the class to file
@@ -63,7 +64,22 @@ public:
  */
 class CMovieClipList: public List<CMovieClip> {
 public:
+	/**
+	 * Finds and returns a movie clip in the list by name
+	 */
 	CMovieClip *findByName(const Common::String &name) const;
+
+	/**
+	 * Returns true if a clip exists in the list with a given name
+	 * and starting frame number
+	 */
+	bool existsByStart(const CString &name, int startFrame = 0) const;
+
+	/**
+	 * Returns true if a clip exists in the list with a given name
+	 * and starting frame number
+	 */
+	bool existsByEnd(const CString &name, int endFrame = 0) const;
 };
 
 } // End of namespace Titanic

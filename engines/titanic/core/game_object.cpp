@@ -730,4 +730,11 @@ void CGameObject::dragMove(const Point &pt) {
 	setPosition(Point(pt.x - _bounds.width() / 2, pt.y - _bounds.height() / 2));
 }
 
+bool CGameObject::clipExistsByStart(const CString &name, int startFrame) const {
+	return _clipList1.existsByStart(name, startFrame);
+}
+
+bool CGameObject::clipExistsByEnd(const CString &name, int endFrame) const {
+	return _clipList1.existsByEnd(name, endFrame);
+}
 } // End of namespace Titanic

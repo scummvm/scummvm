@@ -326,6 +326,18 @@ public:
 	 * Marks the area occupied by the object as dirty, requiring re-rendering
 	 */
 	void makeDirty();
+
+	/**
+	 * Returns true if a clip exists in the list with a given name
+	 * and starting frame number
+	 */
+	bool clipExistsByStart(const CString &name, int startFrame = 0) const;
+
+	/**
+	 * Returns true if a clip exists in the list with a given name
+	 * and ending frame number
+	 */
+	bool clipExistsByEnd(const CString &name, int endFrame = 0) const;
 };
 
 } // End of namespace Titanic
