@@ -15,7 +15,7 @@ class DisplayMan {
 	uint16 _itemCount;
 	uint32 *_indexBytePos;
 	uint8 *_compressedData;
-	DisplayMan(const DMEngine &dmEngine); // no implementation on purpose
+	DisplayMan(const DisplayMan &other); // no implementation on purpose
 	void operator=(const DisplayMan &rhs); // no implementation on purpose
 public:
 	DisplayMan(DMEngine *dmEngine);

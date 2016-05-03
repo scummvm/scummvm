@@ -10,6 +10,7 @@ namespace DM {
 
 class Console;
 class DisplayMan;
+class DungeonMan;
 
 enum {
 	// engine debug channels
@@ -28,6 +29,7 @@ private:
 	Console *_console;
 	Common::RandomSource *_rnd;
 	DisplayMan *_displayMan;
+	DungeonMan *_dungeonMan;
 };
 
 class Console : public GUI::Debugger {
