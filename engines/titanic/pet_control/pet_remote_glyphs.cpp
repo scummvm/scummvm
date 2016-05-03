@@ -303,4 +303,16 @@ void CDeployFloralGlyph::getTooltip(CPetText *text) {
 }
 
 
+/*------------------------------------------------------------------------*/
+
+bool CDeployRelaxationGlyph::setup(CPetControl *petControl, CPetGlyphs *owner) {
+	CToggleRemoteGlyph::setup(petControl, owner);
+	setDefaults("3PetBedfoot", petControl);
+	return true;
+}
+
+void CDeployRelaxationGlyph::getTooltip(CPetText *text) {
+	text->setText("Deploy fully recumbent relaxation device");
+}
+
 } // End of namespace Titanic
