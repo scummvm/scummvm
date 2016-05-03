@@ -51,7 +51,8 @@ static const byte REMOTE_DATA[] = {
 	0x09, 0x01,
 		GLYPH_SUCCUBUS_DELIVERY,
 	0x0A, 0x02, GLYPH_SUMMON_ELEVATOR, GLYPH_SUCCUBUS_DELIVERY,
-	0x0B, 0x01, 0x11,
+	0x0B, 0x01,
+		GLYPH_NAVIGATION_CONTROLLER,
 	0x0C, 0x01,
 		GLYPH_SUCCUBUS_DELIVERY,
 	0x0D, 0x01,
@@ -59,7 +60,8 @@ static const byte REMOTE_DATA[] = {
 	0x0E, 0x00,
 	0x0F, 0x01,
 		GLYPH_TELEVISION_CONTROL,
-	0x10, 0x03, 0x12, 0x14, 0x13,
+	0x10, 0x03,
+		GLYPH_BOTTOM_OF_WELL, 0x14, 0x13,
 	0x11, 0x01,
 		GLYPH_SUCCUBUS_DELIVERY,
 	0x12, 0x00,
@@ -388,6 +390,14 @@ bool CPetRemote::loadGlyph(int glyphIndex) {
 
 	case GLYPH_SUCCUBUS_DELIVERY:
 		glyph = new CSuccubusDeliveryGlyph();
+		break;
+
+	case GLYPH_NAVIGATION_CONTROLLER:
+		glyph = new CNavigationControllerGlyph();
+		break;
+
+	case GLYPH_BOTTOM_OF_WELL:
+		glyph = new CBottomOfWellGlyph();
 		break;
 
 	default:

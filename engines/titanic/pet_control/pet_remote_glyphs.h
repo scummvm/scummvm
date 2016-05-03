@@ -37,7 +37,8 @@ enum RemoteGlyph {
 	GLYPH_INFLATE_RELAXATION = 10, GLYPH_DEPLOY_MAINTENANCE = 11,
 	GLYPH_DEPLOY_WORK_SURFACE = 12, GLYPH_DEPLOY_MINOR_RELAXATION = 13,
 	GLYPH_DEPLOY_SINK = 14, GLYPH_DEPLOY_MAJOR_STORAGE = 15,
-	GLYPH_SUCCUBUS_DELIVERY = 16
+	GLYPH_SUCCUBUS_DELIVERY = 16, GLYPH_NAVIGATION_CONTROLLER = 17,
+	GLYPH_BOTTOM_OF_WELL = 18
 };
 
 enum RemoteMessage {
@@ -141,6 +142,34 @@ public:
 	 * Called for mouse button up messages to the default element
 	 */
 	bool elementMouseButtonUpMsg(const Point &pt, int petNum);	
+};
+
+class CRemoteGotoGlyph : public CPetRemoteGlyph {
+protected:
+	int _roomIndex;
+	CPetGfxElement *_gfxElement;
+public:
+	CRemoteGotoGlyph() : CPetRemoteGlyph(), _gfxElement(nullptr), _roomIndex(21) {}
+
+	/**
+	 * Setup the glyph
+	 */
+	virtual bool setup(CPetControl *petControl, CPetGlyphs *owner);
+
+	/**
+	 * Handles any secondary drawing of the glyph
+	 */
+	virtual void draw2(CScreenManager *screenManager);
+
+	/**
+	 * Called for mouse button down messages
+	 */
+	virtual bool MouseButtonDownMsg(const Point &pt);
+
+	/**
+	 * Handles mouse button up messages
+	 */
+	virtual bool MouseButtonUpMsg(const Point &pt);
 };
 
 class CSummonElevatorGlyph : public CBasicRemoteGlyph {
@@ -580,6 +609,55 @@ public:
 	 * Handles mouse button up messages
 	 */
 	virtual bool MouseButtonUpMsg(const Point &pt);
+
+	/**
+	 * Returns the tooltip text for when the glyph is selected
+	 */
+	virtual void getTooltip(CPetText *text);
+};
+
+class CNavigationControllerGlyph : public CPetRemoteGlyph {
+private:
+	bool _flag;
+	CPetGfxElement *_gfxElement;
+public:
+	CNavigationControllerGlyph() : CPetRemoteGlyph(),
+		_flag(false), _gfxElement(nullptr) {}
+
+	/**
+	 * Setup the glyph
+	 */
+	virtual bool setup(CPetControl *petControl, CPetGlyphs *owner);
+
+	/**
+	 * Handles any secondary drawing of the glyph
+	 */
+	virtual void draw2(CScreenManager *screenManager);
+
+	/**
+	 * Called for mouse button down messages
+	 */
+	virtual bool MouseButtonDownMsg(const Point &pt);
+
+	/**
+	 * Handles mouse button up messages
+	 */
+	virtual bool MouseButtonUpMsg(const Point &pt);
+
+	/**
+	 * Returns the tooltip text for when the glyph is selected
+	 */
+	virtual void getTooltip(CPetText *text);
+};
+
+class CBottomOfWellGlyph : public CRemoteGotoGlyph {
+public:
+	CBottomOfWellGlyph() : CRemoteGotoGlyph() {}
+
+	/**
+	 * Setup the glyph
+	 */
+	virtual bool setup(CPetControl *petControl, CPetGlyphs *owner);
 
 	/**
 	 * Returns the tooltip text for when the glyph is selected

@@ -180,19 +180,6 @@ public:
 	}
 };
 
-class CTransportMsg : public CMessage {
-public:
-	CString _string;
-	int _value1, _value2;
-public:
-	CLASSDEF
-	CTransportMsg() : _value1(0), _value2(0) {}
-
-	static bool isSupportedBy(const CTreeItem *item) {
-		return supports(item, _type);
-	}
-};
-
 MESSAGE1(CTimeMsg, uint, _ticks, 0);
 
 class CTimerMsg : public CTimeMsg {
@@ -350,6 +337,7 @@ MESSAGE1(CTimeDilationMsg, int, value, 0);
 MESSAGE0(CTitleSequenceEndedMsg);
 MESSAGE0(CTransitMsg);
 MESSAGE1(CTranslateObjectMsg, Point, delta, Point());
+MESSAGE3(CTransportMsg, CString, roomName, "", int, value1, 0, int, value2, 0);
 MESSAGE1(CTriggerAutoMusicPlayerMsg, int, value, 0);
 MESSAGE1(CTriggerNPCEvent, int, value, 0);
 MESSAGE4(CTrueTalkGetAnimSetMsg, int, value1, 0, int, value2, 0, int, value3, 0, int, value4, 0);

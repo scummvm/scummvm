@@ -24,6 +24,7 @@
 #include "titanic/pet_control/pet_remote.h"
 #include "titanic/pet_control/pet_control.h"
 #include "titanic/messages/pet_messages.h"
+#include "titanic/titanic.h"
 
 namespace Titanic {
 
@@ -111,6 +112,47 @@ bool CToggleRemoteGlyph::elementMouseButtonUpMsg(const Point &pt, int petNum) {
 		msg.execute(target);
 		_flag = !_flag;
 		_gfxElement->setMode(_flag ? MODE_SELECTED : MODE_UNSELECTED);
+	}
+
+	return true;
+}
+
+/*------------------------------------------------------------------------*/
+
+bool CRemoteGotoGlyph::setup(CPetControl *petControl, CPetGlyphs *owner) {
+	CPetRemoteGlyph::setup(petControl, owner);
+
+	if (owner)
+		_gfxElement = getElement(7);
+
+	return true;
+}
+
+void CRemoteGotoGlyph::draw2(CScreenManager *screenManager) {
+	if (_gfxElement)
+		_gfxElement->draw(screenManager);
+}
+
+bool CRemoteGotoGlyph::MouseButtonDownMsg(const Point &pt) {
+	return _gfxElement && _gfxElement->MouseButtonDownMsg(pt);
+}
+
+bool CRemoteGotoGlyph::MouseButtonUpMsg(const Point &pt) {
+	if (!_gfxElement || !_gfxElement->MouseButtonUpMsg(pt))
+		return false;
+
+	CPetControl *petControl = getPetControl();
+	if (petControl) {
+		CGameManager *gameManager = petControl->getGameManager();
+
+		if (gameManager) {
+			CRoomItem *room = gameManager->getRoom();
+
+			if (room) {
+				CTransportMsg msg(g_vm->_roomNames[_roomIndex], 1, 0);
+				msg.execute(room);
+			}
+		}
 	}
 
 	return true;
@@ -469,6 +511,58 @@ bool CSuccubusDeliveryGlyph::MouseButtonUpMsg(const Point &pt) {
 
 void CSuccubusDeliveryGlyph::getTooltip(CPetText *text) {
 	text->setText("Succ-U-Bus delivery system control");
+}
+
+/*------------------------------------------------------------------------*/
+
+bool CNavigationControllerGlyph::setup(CPetControl *petControl, CPetGlyphs *owner) {
+	CPetRemoteGlyph::setup(petControl, owner);
+	setDefaults("3PetStarField", petControl);
+
+	if (owner)
+		_gfxElement = getElement(0);
+
+	return true;
+}
+
+void CNavigationControllerGlyph::draw2(CScreenManager *screenManager) {
+	_gfxElement->setMode(_flag ? MODE_SELECTED : MODE_UNSELECTED);
+	_gfxElement->draw(screenManager);
+}
+
+bool CNavigationControllerGlyph::MouseButtonDownMsg(const Point &pt) {
+	return _gfxElement->MouseButtonDownMsg(pt);
+}
+
+bool CNavigationControllerGlyph::MouseButtonUpMsg(const Point &pt) {
+	if (!_gfxElement->MouseButtonUpMsg(pt))
+		return false;
+
+	_flag = !_flag;
+	CTreeItem *target = getPetControl()->_remoteTarget;
+	if (target) {
+		CPETHelmetOnOffMsg msg;
+		msg.execute(target);
+	}
+
+	return true;
+}
+
+void CNavigationControllerGlyph::getTooltip(CPetText *text) {
+	text->setText("Navigation controller");
+}
+
+/*------------------------------------------------------------------------*/
+
+bool CBottomOfWellGlyph::setup(CPetControl *petControl, CPetGlyphs *owner) {
+	CPetRemoteGlyph::setup(petControl, owner);
+	setDefaults("3PetBotOfWell", petControl);
+
+	return true;
+}
+
+void CBottomOfWellGlyph::getTooltip(CPetText *text) {
+	text->setText("Go to the Bottom of the Well");
 }
 
 } // End of namespace Titanic
