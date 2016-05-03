@@ -38,25 +38,31 @@ void Moonbase::renderFOW() {
 }
 
 void Moonbase::blitT14WizImage(uint8 *dst, int dstw, int dsth, int dstPitch, const Common::Rect *clipBox,
-		 uint8 *wizd, int dstx, int dsty, int rawROP, int paramROP) {
+		 uint8 *wizd, int x, int y, int rawROP, int paramROP) {
 
-	Common::Rect rScreen(dstw, dsth);
+	Common::Rect clippedDstRect(dstw, dsth);
 	if (clipBox) {
 		Common::Rect clip(clipBox->left, clipBox->top, clipBox->right, clipBox->bottom);
-		if (rScreen.intersects(clip)) {
-			rScreen.clip(clip);
+		if (clippedDstRect.intersects(clip)) {
+			clippedDstRect.clip(clip);
 		} else {
 			return;
 		}
 	}
 
-	int srcx = 0;
-	int srcy = 0;
-
-	dst += dsty * dstPitch + dstx * 2;
-
 	int width = READ_LE_UINT16(wizd + 0x8 + 0);
 	int height = READ_LE_UINT16(wizd + 0x8 + 2);
+
+	Common::Rect srcLimitsRect(width, height);
+	Common::Rect dstOperation(x, y, x + width, y + height);
+	if (!clippedDstRect.intersects(dstOperation))
+		return;
+	Common::Rect clippedRect = clippedDstRect.findIntersectingRect(dstOperation);
+
+	int sx = ((clippedRect.left - x) + srcLimitsRect.left);
+	int sy = ((clippedRect.top - y) + srcLimitsRect.top);
+
+	dst += clippedRect.top * dstPitch + clippedRect.left * 2;
 
 	int headerSize = READ_LE_UINT32(wizd + 0x4);
 	uint8 *dataPointer = wizd + 0x8 + headerSize;
@@ -66,7 +72,7 @@ void Moonbase::blitT14WizImage(uint8 *dst, int dstw, int dsth, int dstPitch, con
 		uint8 *singlesOffset = READ_LE_UINT16(dataPointer + 2) + dataPointer;
 		uint8 *quadsOffset   = READ_LE_UINT16(dataPointer + 4) + dataPointer;
 
-		if (i < srcy) {
+		if (i < sy) {
 			dataPointer += lineSize;
 			dst += dstPitch;
 
@@ -83,7 +89,7 @@ void Moonbase::blitT14WizImage(uint8 *dst, int dstw, int dsth, int dstPitch, con
 
 			if (code == 0) { // quad
 				for (int c = 0; c < 4; c++) {
-					if (width - pixels >= srcx) {
+					if (width - pixels >= sx) {
 						WRITE_LE_UINT16(dst1, READ_LE_UINT16(quadsOffset));
 						dst1 += 2;
 					}
@@ -91,7 +97,7 @@ void Moonbase::blitT14WizImage(uint8 *dst, int dstw, int dsth, int dstPitch, con
 					pixels--;
 				}
 			} else if (code < 0) { // single
-				if (width - pixels >= srcx) {
+				if (width - pixels >= sx) {
 					WRITE_LE_UINT16(dst1, READ_LE_UINT16(singlesOffset));
 					dst1 += 2;
 				}
@@ -103,7 +109,7 @@ void Moonbase::blitT14WizImage(uint8 *dst, int dstw, int dsth, int dstPitch, con
 					dst1 += code * 2;
 					pixels -= code;
 				} else { // special case
-					if (width - pixels >= srcx) {
+					if (width - pixels >= sx) {
 						int alpha = code >> 1;
 						uint16 color = READ_LE_UINT16(singlesOffset);
 
