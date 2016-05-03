@@ -509,6 +509,7 @@ TextureCLUT8GPU::TextureCLUT8GPU()
 	// Setup pipeline.
 	_clut8Pipeline->setFramebuffer(_target);
 	_clut8Pipeline->setPaletteTexture(&_paletteTexture);
+	_clut8Pipeline->setColor(1.0f, 1.0f, 1.0f, 1.0f);
 }
 
 TextureCLUT8GPU::~TextureCLUT8GPU() {

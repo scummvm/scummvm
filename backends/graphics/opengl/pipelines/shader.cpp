@@ -56,6 +56,8 @@ void ShaderPipeline::activateInternal() {
 	}
 
 	_activeShader->activate();
+
+	GL_CALL(glVertexAttribPointer(_colorAttribLocation, 4, GL_FLOAT, GL_FALSE, 0, _colorAttributes));
 }
 
 void ShaderPipeline::deactivateInternal() {
@@ -74,8 +76,6 @@ void ShaderPipeline::setColor(GLfloat r, GLfloat g, GLfloat b, GLfloat a) {
 		*dst++ = b;
 		*dst++ = a;
 	}
-
-	GL_CALL(glVertexAttribPointer(_colorAttribLocation, 4, GL_FLOAT, GL_FALSE, 0, _colorAttributes));
 }
 
 void ShaderPipeline::drawTexture(const GLTexture &texture, const GLfloat *coordinates) {
