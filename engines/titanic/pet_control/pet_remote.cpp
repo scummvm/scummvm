@@ -329,6 +329,10 @@ bool CPetRemote::loadGlyph(int glyphIndex) {
 		glyph = new COperateLightsGlyph();
 		break;
 
+	case GLYPH_DEPLOY_FLORAL:
+		glyph = new CDeployFloralGlyph();
+		break;
+
 	default:
 		break;
 	}

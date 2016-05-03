@@ -238,7 +238,6 @@ void CEntertainmentDeviceGlyph::getTooltip(CPetText *text) {
 
 /*------------------------------------------------------------------------*/
 
-
 bool COperateLightsGlyph::setup(CPetControl *petControl, CPetGlyphs *owner) {
 	CPetRemoteGlyph::setup(petControl, owner);
 	setDefaults("3PetLights", petControl);
@@ -290,5 +289,18 @@ bool COperateLightsGlyph::MouseButtonUpMsg(const Point &pt) {
 void COperateLightsGlyph::getTooltip(CPetText *text) {
 	text->setText("Operate the lights");
 }
+
+/*------------------------------------------------------------------------*/
+
+bool CDeployFloralGlyph::setup(CPetControl *petControl, CPetGlyphs *owner) {
+	CToggleRemoteGlyph::setup(petControl, owner);
+	setDefaults("3PetVase", petControl);
+	return true;
+}
+
+void CDeployFloralGlyph::getTooltip(CPetText *text) {
+	text->setText("Deploy floral enhancement");
+}
+
 
 } // End of namespace Titanic
