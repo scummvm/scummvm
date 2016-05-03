@@ -121,6 +121,7 @@ bool CToggleRemoteGlyph::elementMouseButtonUpMsg(const Point &pt, int petNum) {
 
 bool CRemoteGotoGlyph::setup(CPetControl *petControl, CPetGlyphs *owner) {
 	CPetRemoteGlyph::setup(petControl, owner);
+	setDefaults(_gfxName, petControl);
 
 	if (owner)
 		_gfxElement = getElement(7);
@@ -156,6 +157,10 @@ bool CRemoteGotoGlyph::MouseButtonUpMsg(const Point &pt) {
 	}
 
 	return true;
+}
+
+void CRemoteGotoGlyph::getTooltip(CPetText *text) {
+	text->setText(_tooltip);
 }
 
 /*------------------------------------------------------------------------*/
@@ -553,16 +558,5 @@ void CNavigationControllerGlyph::getTooltip(CPetText *text) {
 }
 
 /*------------------------------------------------------------------------*/
-
-bool CBottomOfWellGlyph::setup(CPetControl *petControl, CPetGlyphs *owner) {
-	CPetRemoteGlyph::setup(petControl, owner);
-	setDefaults("3PetBotOfWell", petControl);
-
-	return true;
-}
-
-void CBottomOfWellGlyph::getTooltip(CPetText *text) {
-	text->setText("Go to the Bottom of the Well");
-}
 
 } // End of namespace Titanic

@@ -61,7 +61,7 @@ static const byte REMOTE_DATA[] = {
 	0x0F, 0x01,
 		GLYPH_TELEVISION_CONTROL,
 	0x10, 0x03,
-		GLYPH_BOTTOM_OF_WELL, 0x14, 0x13,
+		GLYPH_GOTO_BOTTOM_OF_WELL, GLYPH_GOTO_STATEROOM, GLYPH_GOTO_TOP_OF_WELL,
 	0x11, 0x01,
 		GLYPH_SUCCUBUS_DELIVERY,
 	0x12, 0x00,
@@ -69,7 +69,7 @@ static const byte REMOTE_DATA[] = {
 		GLYPH_SUMMON_PELLERATOR, GLYPH_SUCCUBUS_DELIVERY,
 	0x14, 0x00,
 	0x15, 0x02,
-		0x10, GLYPH_TELEVISION_CONTROL,
+		GLYPH_SUCCUBUS_DELIVERY, GLYPH_TELEVISION_CONTROL,
 	0x16, 0x00,
 	0x17, 0x02,
 		GLYPH_SUMMON_PELLERATOR, GLYPH_SUCCUBUS_DELIVERY,
@@ -396,8 +396,35 @@ bool CPetRemote::loadGlyph(int glyphIndex) {
 		glyph = new CNavigationControllerGlyph();
 		break;
 
-	case GLYPH_BOTTOM_OF_WELL:
-		glyph = new CBottomOfWellGlyph();
+	case GLYPH_GOTO_BOTTOM_OF_WELL:
+		glyph = new CGotoBottomOfWellGlyph();
+		break;
+
+	case GLYPH_GOTO_TOP_OF_WELL:
+		glyph = new CGotoTopOfWellGlyph();
+		break;
+
+	case GLYPH_GOTO_STATEROOM:
+		glyph = new CGotoStateroomGlyph();
+		break;
+
+	case GLYPH_GOTO_BAR:
+		glyph = new CGotoBarGlyph();
+
+	case GLYPH_GOTO_PROMENADE:
+		glyph = new CGotoPromenadeDeckGlyph();
+		break;
+
+	case GLYPH_GOTO_ARBORETUM:
+		glyph = new CGotoArboretumGlyph();
+		break;
+
+	case GLYPH_GOTO_MUSIC_ROOM:
+		glyph = new CGotoMusicRoomGlyph();
+		break;
+
+	case GLYPH_GOTO_RESTAURANT:
+		glyph = new CGotoRestaurantGlyph();
 		break;
 
 	default:
