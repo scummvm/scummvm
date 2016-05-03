@@ -165,7 +165,7 @@ struct Object {
 	//19
 	Common::String name, description;
 
-	Object(): _base(NULL) { memset(this, 0, sizeof(Object));  }
+	Object(): _base(NULL) { id = 0; actorOrientation = 0; enabled = 0;  }
 	void dump(int level = 0) const;
 	void setName(const Common::String &newName);
 	void load(byte *addr);
