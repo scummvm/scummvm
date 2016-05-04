@@ -86,6 +86,10 @@ Common::Error DMEngine::run() {
 		_displayMan->updateScreen();
 	}
 
+
+	delete[] buffer;
+	delete[] cleanByteImg0Data;
+
 	return Common::kNoError;
 }
 

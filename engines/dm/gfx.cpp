@@ -15,10 +15,11 @@ DisplayMan::~DisplayMan() {
 	delete[] _compressedData;
 	delete[] _indexBytePos;
 	delete[] _currPalette;
+	delete[] _vgaBuffer;
 }
 
 void DisplayMan::setUpScreens(uint16 width, uint16 height) {
-	_currPalette = new byte[256 * 2];
+	_currPalette = new byte[256 * 3];
 	_screenWidth = width;
 	_screenHeight = height;
 	_vgaBuffer = new byte[_screenWidth * _screenHeight];
