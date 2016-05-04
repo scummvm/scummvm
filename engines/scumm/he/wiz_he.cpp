@@ -2795,11 +2795,12 @@ int Wiz::isWizPixelNonTransparent(int resNum, int state, int x, int y, int flags
 		case 2:
 			ret = getRawWizPixelColor(wizd, x, y, w, h, 2, _vm->VAR(_vm->VAR_WIZ_TCOLOR)) != _vm->VAR(_vm->VAR_WIZ_TCOLOR) ? 1 : 0;
 			break;
-		case 4:
-			// TODO: Unknown image type
-			ret = 1;
-			debug(0, "isWizPixelNonTransparent: Unhandled wiz compression type %d", c);
+		case 4: {
+			uint16 color = 0xffff;
+			copyCompositeWizImage((byte *)&color, data, wizd, 0, 2, kDstMemory, 1, 1, -x, -y, w, h, state, 0, 0, 0, 0, 2, 0, 0);
+			ret = color != 0xffff;
 			break;
+		}
 		case 5:
 			ret = isWizPixelNonTransparent(wizd, x, y, w, h, 2);
 			break;
@@ -2839,8 +2840,7 @@ uint16 Wiz::getWizPixelColor(int resNum, int state, int x, int y) {
 		color = getRawWizPixelColor(wizd, x, y, w, h, 2, _vm->VAR(_vm->VAR_WIZ_TCOLOR));
 		break;
 	case 4:
-		// TODO: Unknown image type
-		debug(0, "getWizPixelColor: Unhandled wiz compression type %d", c);
+		copyCompositeWizImage((byte *)&color, data, wizd, 0, 2, kDstMemory, 1, 1, -x, -y, w, h, state, 0, 0, 0, 0, 2, 0, 0);
 		break;
 	case 5:
 		color = getWizPixelColor(wizd, x, y, w, h, 2, _vm->VAR(_vm->VAR_WIZ_TCOLOR));
