@@ -279,13 +279,13 @@ void Scene20::run() {
 				} else {
 					switch (_vm->_verbCursor) {
 					case LOOK_CURSOR:
-						_vm->playGnapScratchingHead(_vm->_platX, _vm->_platY);
+						_vm->playGnapScratchingHead(_vm->_plat->_pos.x, _vm->_plat->_pos.y);
 						break;
 					case GRAB_CURSOR:
 						_vm->gnapKissPlatypus(20);
 						break;
 					case TALK_CURSOR:
-						_vm->playGnapBrainPulsating(_vm->_platX, _vm->_platY);
+						_vm->playGnapBrainPulsating(_vm->_plat->_pos.x, _vm->_plat->_pos.y);
 						_vm->playPlatypusSequence(_vm->getPlatypusSequenceId());
 						break;
 					case PLAT_CURSOR:
@@ -305,7 +305,7 @@ void Scene20::run() {
 				_vm->gnapWalkTo(_vm->_hotspotsWalkPos[kHS20ExitParkingLot].x, _vm->_hotspotsWalkPos[kHS20ExitParkingLot].y, 0, 0x107AF, 1);
 				_vm->_gnapActionStatus = kAS20LeaveScene;
 				_vm->platypusWalkTo(_vm->_hotspotsWalkPos[kHS20ExitParkingLot].x, _vm->_hotspotsWalkPos[kHS20ExitParkingLot].y + 1, -1, 0x107CF, 1);
-				_vm->_platypusFacing = kDirUnk4;
+				_vm->_plat->_idleFacing = kDirUnk4;
 			}
 			break;
 
@@ -344,7 +344,7 @@ void Scene20::run() {
 				_vm->gnapWalkTo(_vm->_hotspotsWalkPos[kHS20ExitInsideGrubCity].x, _vm->_hotspotsWalkPos[kHS20ExitInsideGrubCity].y - 1, 0, 0x107BB, 1);
 				_vm->_gnapActionStatus = kAS20LeaveScene;
 				_vm->platypusWalkTo(_vm->_hotspotsWalkPos[kHS20ExitInsideGrubCity].x + 1, _vm->_hotspotsWalkPos[kHS20ExitInsideGrubCity].y, -1, 0x107C2, 1);
-				_vm->_platypusFacing = kDirUnk4;
+				_vm->_plat->_idleFacing = kDirUnk4;
 			}
 			break;
 
@@ -797,13 +797,13 @@ void Scene21::run() {
 				} else {
 					switch (_vm->_verbCursor) {
 					case LOOK_CURSOR:
-						_vm->playGnapScratchingHead(_vm->_platX, _vm->_platY);
+						_vm->playGnapScratchingHead(_vm->_plat->_pos.x, _vm->_plat->_pos.y);
 						break;
 					case GRAB_CURSOR:
 						_vm->gnapKissPlatypus(0);
 						break;
 					case TALK_CURSOR:
-						_vm->playGnapBrainPulsating(_vm->_platX, _vm->_platY);
+						_vm->playGnapBrainPulsating(_vm->_plat->_pos.x, _vm->_plat->_pos.y);
 						_vm->playPlatypusSequence(_vm->getPlatypusSequenceId());
 						break;
 					case PLAT_CURSOR:
@@ -1113,13 +1113,13 @@ void Scene22::run() {
 				} else {
 					switch (_vm->_verbCursor) {
 					case LOOK_CURSOR:
-						_vm->playGnapScratchingHead(_vm->_platX, _vm->_platY);
+						_vm->playGnapScratchingHead(_vm->_plat->_pos.x, _vm->_plat->_pos.y);
 						break;
 					case GRAB_CURSOR:
 						_vm->gnapKissPlatypus(0);
 						break;
 					case TALK_CURSOR:
-						_vm->playGnapBrainPulsating(_vm->_platX, _vm->_platY);
+						_vm->playGnapBrainPulsating(_vm->_plat->_pos.x, _vm->_plat->_pos.y);
 						_vm->playPlatypusSequence(_vm->getPlatypusSequenceId());
 						break;
 					case PLAT_CURSOR:
@@ -1337,13 +1337,13 @@ void Scene23::run() {
 				} else {
 					switch (_vm->_verbCursor) {
 					case LOOK_CURSOR:
-						_vm->playGnapScratchingHead(_vm->_platX, _vm->_platY);
+						_vm->playGnapScratchingHead(_vm->_plat->_pos.x, _vm->_plat->_pos.y);
 						break;
 					case GRAB_CURSOR:
 						_vm->gnapKissPlatypus(0);
 						break;
 					case TALK_CURSOR:
-						_vm->playGnapBrainPulsating(_vm->_platX, _vm->_platY);
+						_vm->playGnapBrainPulsating(_vm->_plat->_pos.x, _vm->_plat->_pos.y);
 						_vm->playPlatypusSequence(_vm->getPlatypusSequenceId());
 						break;
 					case PLAT_CURSOR:
@@ -1606,13 +1606,13 @@ void Scene24::run() {
 				} else {
 					switch (_vm->_verbCursor) {
 					case LOOK_CURSOR:
-						_vm->playGnapScratchingHead(_vm->_platX, _vm->_platY);
+						_vm->playGnapScratchingHead(_vm->_plat->_pos.x, _vm->_plat->_pos.y);
 						break;
 					case GRAB_CURSOR:
 						_vm->gnapKissPlatypus(0);
 						break;
 					case TALK_CURSOR:
-						_vm->playGnapBrainPulsating(_vm->_platX, _vm->_platY);
+						_vm->playGnapBrainPulsating(_vm->_plat->_pos.x, _vm->_plat->_pos.y);
 						_vm->playPlatypusSequence(_vm->getPlatypusSequenceId());
 						break;
 					case PLAT_CURSOR:
@@ -1852,13 +1852,13 @@ void Scene25::run() {
 				} else {
 					switch (_vm->_verbCursor) {
 					case LOOK_CURSOR:
-						_vm->playGnapScratchingHead(_vm->_platX, _vm->_platY);
+						_vm->playGnapScratchingHead(_vm->_plat->_pos.x, _vm->_plat->_pos.y);
 						break;
 					case GRAB_CURSOR:
 						_vm->gnapKissPlatypus(0);
 						break;
 					case TALK_CURSOR:
-						_vm->playGnapBrainPulsating(_vm->_platX, _vm->_platY);
+						_vm->playGnapBrainPulsating(_vm->_plat->_pos.x, _vm->_plat->_pos.y);
 						_vm->playPlatypusSequence(_vm->getPlatypusSequenceId());
 						break;
 					case PLAT_CURSOR:
@@ -2169,13 +2169,13 @@ void Scene26::run() {
 				} else {
 					switch (_vm->_verbCursor) {
 					case LOOK_CURSOR:
-						_vm->playGnapMoan1(_vm->_platX, _vm->_platY);
+						_vm->playGnapMoan1(_vm->_plat->_pos.x, _vm->_plat->_pos.y);
 						break;
 					case GRAB_CURSOR:
 						_vm->gnapKissPlatypus(0);
 						break;
 					case TALK_CURSOR:
-						_vm->playGnapBrainPulsating(_vm->_platX, _vm->_platY);
+						_vm->playGnapBrainPulsating(_vm->_plat->_pos.x, _vm->_plat->_pos.y);
 						_vm->playPlatypusSequence(_vm->getPlatypusSequenceId());
 						break;
 					case PLAT_CURSOR:
@@ -2403,13 +2403,13 @@ void Scene27::run() {
 				} else {
 					switch (_vm->_verbCursor) {
 					case LOOK_CURSOR:
-						_vm->playGnapMoan1(_vm->_platX, _vm->_platY);
+						_vm->playGnapMoan1(_vm->_plat->_pos.x, _vm->_plat->_pos.y);
 						break;
 					case GRAB_CURSOR:
 						_vm->gnapKissPlatypus(0);
 						break;
 					case TALK_CURSOR:
-						_vm->playGnapBrainPulsating(_vm->_platX, _vm->_platY);
+						_vm->playGnapBrainPulsating(_vm->_plat->_pos.x, _vm->_plat->_pos.y);
 						_vm->playPlatypusSequence(_vm->getPlatypusSequenceId());
 						break;
 					case PLAT_CURSOR:
@@ -2774,13 +2774,13 @@ void Scene28::run() {
 				} else {
 					switch (_vm->_verbCursor) {
 					case LOOK_CURSOR:
-						_vm->playGnapMoan1(_vm->_platX, _vm->_platY);
+						_vm->playGnapMoan1(_vm->_plat->_pos.x, _vm->_plat->_pos.y);
 						break;
 					case GRAB_CURSOR:
 						_vm->gnapKissPlatypus(0);
 						break;
 					case TALK_CURSOR:
-						_vm->playGnapBrainPulsating(_vm->_platX, _vm->_platY);
+						_vm->playGnapBrainPulsating(_vm->_plat->_pos.x, _vm->_plat->_pos.y);
 						_vm->playPlatypusSequence(_vm->getPlatypusSequenceId());
 						break;
 					case PLAT_CURSOR:
@@ -3165,13 +3165,13 @@ void Scene29::run() {
 				} else {
 					switch (_vm->_verbCursor) {
 					case LOOK_CURSOR:
-						_vm->playGnapMoan1(_vm->_platX, _vm->_platY);
+						_vm->playGnapMoan1(_vm->_plat->_pos.x, _vm->_plat->_pos.y);
 						break;
 					case GRAB_CURSOR:
 						_vm->gnapKissPlatypus(0);
 						break;
 					case TALK_CURSOR:
-						_vm->playGnapBrainPulsating(_vm->_platX, _vm->_platY);
+						_vm->playGnapBrainPulsating(_vm->_plat->_pos.x, _vm->_plat->_pos.y);
 						_vm->playPlatypusSequence(_vm->getPlatypusSequenceId());
 						break;
 					case PLAT_CURSOR:

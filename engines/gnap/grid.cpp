@@ -73,7 +73,7 @@ bool GnapEngine::isPointBlocked(int gridX, int gridY) {
 	if (gridX < 0 || gridX >= _gridMaxX || gridY < 0 || gridY >= _gridMaxY)
 		return true;
 
-	if ((_gnap->_pos == Common::Point(gridX, gridY)) || (gridX == _platX && gridY == _platY))
+	if ((_gnap->_pos == Common::Point(gridX, gridY)) || (gridX == _plat->_pos.x && gridY == _plat->_pos.y))
 		return true;
 
 	const int x = _gridMinX + 75 * gridX;
@@ -557,7 +557,7 @@ bool GnapEngine::gnapWalkTo(int gridX, int gridY, int animationIndex, int sequen
 	_gnapWalkDestX = CLIP(gridX, 0, _gridMaxX - 1);
 	_gnapWalkDestY = CLIP(gridY, 0, _gridMaxY - 1);
 
-	if (animationIndex >= 0 && _gnapWalkDestX == _platX && _gnapWalkDestY == _platY)
+	if (animationIndex >= 0 && _gnapWalkDestX == _plat->_pos.x && _gnapWalkDestY == _plat->_pos.y)
 		platypusMakeRoom();
 
 	// TODO: Simplify the cascade of Ifs
@@ -1032,160 +1032,160 @@ bool GnapEngine::platFindPath3(int gridX, int gridY) {
 	bool done = false;
 
 	while (!done && gridIncr < _gridMaxX) {
-		if (!isPointBlocked(_platX + gridIncr, _platY) && gridSub423CC1(_platX + gridIncr, _platY, gridIncr)) {
+		if (!isPointBlocked(_plat->_pos.x + gridIncr, _plat->_pos.y) && gridSub423CC1(_plat->_pos.x + gridIncr, _plat->_pos.y, gridIncr)) {
 			for (int i = 0; i < gridIncr; ++i) {
-				_platWalkNodes[i]._gridX1 = _platX + i;
-				_platWalkNodes[i]._gridY1 = _platY;
+				_platWalkNodes[i]._gridX1 = _plat->_pos.x + i;
+				_platWalkNodes[i]._gridY1 = _plat->_pos.y;
 				_platWalkNodes[i]._deltaX = 1;
 				_platWalkNodes[i]._deltaY = 0;
 			}
 			done = true;
 			break;
 		}
-		if (!isPointBlocked(_platX - gridIncr, _platY) && gridSub423CC1(_platX - gridIncr, _platY, gridIncr)) {
+		if (!isPointBlocked(_plat->_pos.x - gridIncr, _plat->_pos.y) && gridSub423CC1(_plat->_pos.x - gridIncr, _plat->_pos.y, gridIncr)) {
 			for (int i = 0; i < gridIncr; ++i) {
-				_platWalkNodes[i]._gridX1 = _platX - i;
-				_platWalkNodes[i]._gridY1 = _platY;
+				_platWalkNodes[i]._gridX1 = _plat->_pos.x - i;
+				_platWalkNodes[i]._gridY1 = _plat->_pos.y;
 				_platWalkNodes[i]._deltaX = -1;
 				_platWalkNodes[i]._deltaY = 0;
 			}
 			done = true;
 			break;
 		}
-		if (!isPointBlocked(_platX, _platY + gridIncr) && gridSub423CC1(_platX, _platY + gridIncr, gridIncr)) {
+		if (!isPointBlocked(_plat->_pos.x, _plat->_pos.y + gridIncr) && gridSub423CC1(_plat->_pos.x, _plat->_pos.y + gridIncr, gridIncr)) {
 			for (int i = 0; i < gridIncr; ++i) {
-				_platWalkNodes[i]._gridX1 = _platX;
-				_platWalkNodes[i]._gridY1 = _platY + i;
+				_platWalkNodes[i]._gridX1 = _plat->_pos.x;
+				_platWalkNodes[i]._gridY1 = _plat->_pos.y + i;
 				_platWalkNodes[i]._deltaX = 0;
 				_platWalkNodes[i]._deltaY = 1;
 			}
 			done = true;
 			break;
 		}
-		if (!isPointBlocked(_platX, _platY - gridIncr) && gridSub423CC1(_platX, _platY - gridIncr, gridIncr)) {
+		if (!isPointBlocked(_plat->_pos.x, _plat->_pos.y - gridIncr) && gridSub423CC1(_plat->_pos.x, _plat->_pos.y - gridIncr, gridIncr)) {
 			for (int i = 0; i < gridIncr; ++i) {
-				_platWalkNodes[i]._gridX1 = _platX;
-				_platWalkNodes[i]._gridY1 = _platY - i;
+				_platWalkNodes[i]._gridX1 = _plat->_pos.x;
+				_platWalkNodes[i]._gridY1 = _plat->_pos.y - i;
 				_platWalkNodes[i]._deltaX = 0;
 				_platWalkNodes[i]._deltaY = -1;
 			}
 			done = true;
 			break;
 		}
-		if (!isPointBlocked(_platX + gridIncr, _platY + gridIncr) && gridSub423CC1(_platX + gridIncr, _platY + gridIncr, gridIncr)) {
+		if (!isPointBlocked(_plat->_pos.x + gridIncr, _plat->_pos.y + gridIncr) && gridSub423CC1(_plat->_pos.x + gridIncr, _plat->_pos.y + gridIncr, gridIncr)) {
 			for (int i = 0; i < gridIncr; ++i) {
-				_platWalkNodes[i]._gridX1 = _platX + i;
-				_platWalkNodes[i]._gridY1 = _platY + i;
+				_platWalkNodes[i]._gridX1 = _plat->_pos.x + i;
+				_platWalkNodes[i]._gridY1 = _plat->_pos.y + i;
 				_platWalkNodes[i]._deltaX = 1;
 				_platWalkNodes[i]._deltaY = 1;
 			}
 			done = true;
 			break;
 		}
-		if (!isPointBlocked(_platX - gridIncr, _platY + gridIncr) && gridSub423CC1(_platX - gridIncr, _platY + gridIncr, gridIncr)) {
+		if (!isPointBlocked(_plat->_pos.x - gridIncr, _plat->_pos.y + gridIncr) && gridSub423CC1(_plat->_pos.x - gridIncr, _plat->_pos.y + gridIncr, gridIncr)) {
 			for (int i = 0; i < gridIncr; ++i) {
-				_platWalkNodes[i]._gridX1 = _platX - i;
-				_platWalkNodes[i]._gridY1 = _platY + i;
+				_platWalkNodes[i]._gridX1 = _plat->_pos.x - i;
+				_platWalkNodes[i]._gridY1 = _plat->_pos.y + i;
 				_platWalkNodes[i]._deltaX = -1;
 				_platWalkNodes[i]._deltaY = 1;
 			}
 			done = true;
 			break;
 		}
-		if (!isPointBlocked(_platX + gridIncr, _platY - gridIncr) && gridSub423CC1(_platX + gridIncr, _platY - gridIncr, gridIncr)) {
+		if (!isPointBlocked(_plat->_pos.x + gridIncr, _plat->_pos.y - gridIncr) && gridSub423CC1(_plat->_pos.x + gridIncr, _plat->_pos.y - gridIncr, gridIncr)) {
 			for (int i = 0; i < gridIncr; ++i) {
-				_platWalkNodes[i]._gridX1 = _platX + i;
-				_platWalkNodes[i]._gridY1 = _platY - i;
+				_platWalkNodes[i]._gridX1 = _plat->_pos.x + i;
+				_platWalkNodes[i]._gridY1 = _plat->_pos.y - i;
 				_platWalkNodes[i]._deltaX = 1;
 				_platWalkNodes[i]._deltaY = -1;
 			}
 			done = true;
 			break;
 		}
-		if (!isPointBlocked(_platX - gridIncr, _platY - gridIncr) && gridSub423CC1(_platX - gridIncr, _platY - gridIncr, gridIncr)) {
+		if (!isPointBlocked(_plat->_pos.x - gridIncr, _plat->_pos.y - gridIncr) && gridSub423CC1(_plat->_pos.x - gridIncr, _plat->_pos.y - gridIncr, gridIncr)) {
 			for (int i = 0; i < gridIncr; ++i) {
-				_platWalkNodes[i]._gridX1 = _platX - i;
-				_platWalkNodes[i]._gridY1 = _platY - i;
+				_platWalkNodes[i]._gridX1 = _plat->_pos.x - i;
+				_platWalkNodes[i]._gridY1 = _plat->_pos.y - i;
 				_platWalkNodes[i]._deltaX = -1;
 				_platWalkNodes[i]._deltaY = -1;
 			}
 			done = true;
 			break;
 		}
-		if (!isPointBlocked(_platX + gridIncr, _platY) && gridSub42419A(_platX + gridIncr, _platY, gridIncr)) {
+		if (!isPointBlocked(_plat->_pos.x + gridIncr, _plat->_pos.y) && gridSub42419A(_plat->_pos.x + gridIncr, _plat->_pos.y, gridIncr)) {
 			for (int i = 0; i < gridIncr; ++i) {
-				_platWalkNodes[i]._gridX1 = _platX + i;
-				_platWalkNodes[i]._gridY1 = _platY;
+				_platWalkNodes[i]._gridX1 = _plat->_pos.x + i;
+				_platWalkNodes[i]._gridY1 = _plat->_pos.y;
 				_platWalkNodes[i]._deltaX = 1;
 				_platWalkNodes[i]._deltaY = 0;
 			}
 			done = true;
 			break;
 		}
-		if (!isPointBlocked(_platX - gridIncr, _platY) && gridSub42419A(_platX - gridIncr, _platY, gridIncr)) {
+		if (!isPointBlocked(_plat->_pos.x - gridIncr, _plat->_pos.y) && gridSub42419A(_plat->_pos.x - gridIncr, _plat->_pos.y, gridIncr)) {
 			for (int i = 0; i < gridIncr; ++i) {
-				_platWalkNodes[i]._gridX1 = _platX - i;
-				_platWalkNodes[i]._gridY1 = _platY;
+				_platWalkNodes[i]._gridX1 = _plat->_pos.x - i;
+				_platWalkNodes[i]._gridY1 = _plat->_pos.y;
 				_platWalkNodes[i]._deltaX = -1;
 				_platWalkNodes[i]._deltaY = 0;
 			}
 			done = true;
 			break;
 		}
-		if (!isPointBlocked(_platX, _platY + gridIncr) && gridSub42419A(_platX, _platY + gridIncr, gridIncr)) {
+		if (!isPointBlocked(_plat->_pos.x, _plat->_pos.y + gridIncr) && gridSub42419A(_plat->_pos.x, _plat->_pos.y + gridIncr, gridIncr)) {
 			for (int i = 0; i < gridIncr; ++i) {
-				_platWalkNodes[i]._gridX1 = _platX;
-				_platWalkNodes[i]._gridY1 = _platY + i;
+				_platWalkNodes[i]._gridX1 = _plat->_pos.x;
+				_platWalkNodes[i]._gridY1 = _plat->_pos.y + i;
 				_platWalkNodes[i]._deltaX = 0;
 				_platWalkNodes[i]._deltaY = 1;
 			}
 			done = true;
 			break;
 		}
-		if (!isPointBlocked(_platX, _platY - gridIncr) && gridSub42419A(_platX, _platY - gridIncr, gridIncr)) {
+		if (!isPointBlocked(_plat->_pos.x, _plat->_pos.y - gridIncr) && gridSub42419A(_plat->_pos.x, _plat->_pos.y - gridIncr, gridIncr)) {
 			for (int i = 0; i < gridIncr; ++i) {
-				_platWalkNodes[i]._gridX1 = _platX;
-				_platWalkNodes[i]._gridY1 = _platY - i;
+				_platWalkNodes[i]._gridX1 = _plat->_pos.x;
+				_platWalkNodes[i]._gridY1 = _plat->_pos.y - i;
 				_platWalkNodes[i]._deltaX = 0;
 				_platWalkNodes[i]._deltaY = -1;
 			}
 			done = true;
 			break;
 		}
-		if (!isPointBlocked(_platX + gridIncr, _platY + gridIncr) && gridSub42419A(_platX + gridIncr, _platY + gridIncr, gridIncr)) {
+		if (!isPointBlocked(_plat->_pos.x + gridIncr, _plat->_pos.y + gridIncr) && gridSub42419A(_plat->_pos.x + gridIncr, _plat->_pos.y + gridIncr, gridIncr)) {
 			for (int i = 0; i < gridIncr; ++i) {
-				_platWalkNodes[i]._gridX1 = _platX + i;
-				_platWalkNodes[i]._gridY1 = _platY + i;
+				_platWalkNodes[i]._gridX1 = _plat->_pos.x + i;
+				_platWalkNodes[i]._gridY1 = _plat->_pos.y + i;
 				_platWalkNodes[i]._deltaX = 1;
 				_platWalkNodes[i]._deltaY = 1;
 			}
 			done = true;
 			break;
 		}
-		if (!isPointBlocked(_platX - gridIncr, _platY + gridIncr) && gridSub42419A(_platX - gridIncr, _platY + gridIncr, gridIncr)) {
+		if (!isPointBlocked(_plat->_pos.x - gridIncr, _plat->_pos.y + gridIncr) && gridSub42419A(_plat->_pos.x - gridIncr, _plat->_pos.y + gridIncr, gridIncr)) {
 			for (int i = 0; i < gridIncr; ++i) {
-				_platWalkNodes[i]._gridX1 = _platX - i;
-				_platWalkNodes[i]._gridY1 = _platY + i;
+				_platWalkNodes[i]._gridX1 = _plat->_pos.x - i;
+				_platWalkNodes[i]._gridY1 = _plat->_pos.y + i;
 				_platWalkNodes[i]._deltaX = -1;
 				_platWalkNodes[i]._deltaY = 1;
 			}
 			done = true;
 			break;
 		}
-		if (!isPointBlocked(_platX + gridIncr, _platY - gridIncr) && gridSub42419A(_platX + gridIncr, _platY - gridIncr, gridIncr)) {
+		if (!isPointBlocked(_plat->_pos.x + gridIncr, _plat->_pos.y - gridIncr) && gridSub42419A(_plat->_pos.x + gridIncr, _plat->_pos.y - gridIncr, gridIncr)) {
 			for (int i = 0; i < gridIncr; ++i) {
-				_platWalkNodes[i]._gridX1 = _platX + i;
-				_platWalkNodes[i]._gridY1 = _platY - i;
+				_platWalkNodes[i]._gridX1 = _plat->_pos.x + i;
+				_platWalkNodes[i]._gridY1 = _plat->_pos.y - i;
 				_platWalkNodes[i]._deltaX = 1;
 				_platWalkNodes[i]._deltaY = -1;
 			}
 			done = true;
 			break;
 		}
-		if (!isPointBlocked(_platX - gridIncr, _platY - gridIncr) && gridSub42419A(_platX - gridIncr, _platY - gridIncr, gridIncr)) {
+		if (!isPointBlocked(_plat->_pos.x - gridIncr, _plat->_pos.y - gridIncr) && gridSub42419A(_plat->_pos.x - gridIncr, _plat->_pos.y - gridIncr, gridIncr)) {
 			for (int i = 0; i < gridIncr; ++i) {
-				_platWalkNodes[i]._gridX1 = _platX - i;
-				_platWalkNodes[i]._gridY1 = _platY - i;
+				_platWalkNodes[i]._gridX1 = _plat->_pos.x - i;
+				_platWalkNodes[i]._gridY1 = _plat->_pos.y - i;
 				_platWalkNodes[i]._deltaX = -1;
 				_platWalkNodes[i]._deltaY = -1;
 			}
@@ -1217,17 +1217,17 @@ bool GnapEngine::platypusWalkTo(int gridX, int gridY, int animationIndex, int se
 	if (animationIndex >= 0 && _gnap->_pos == Common::Point(_platWalkDestX, _platWalkDestY))
 		gnapWalkStep();
 
-	if (gridSub423CC1(_platX, _platY, 0))
+	if (gridSub423CC1(_plat->_pos.x, _plat->_pos.y, 0))
 		done = true;
 
-	if (!done && gridSub42419A(_platX, _platY, 0))
+	if (!done && gridSub42419A(_plat->_pos.x, _plat->_pos.y, 0))
 		done = true;
 
-	if (!done && platFindPath3(_platX, _platY))
+	if (!done && platFindPath3(_plat->_pos.x, _plat->_pos.y))
 		done = true;
 
 	if (!done)
-		gridSub423750(_platX, _platY);
+		gridSub423750(_plat->_pos.x, _plat->_pos.y);
 
 	int platSequenceId = _platypusSequenceId;
 	int platId = _platypusId;
@@ -1286,13 +1286,13 @@ bool GnapEngine::platypusWalkTo(int gridX, int gridY, int animationIndex, int se
 			_platypusSequenceDatNum = datNum;
 			// CHECKME Not sure if this is correct...
 			if (_platWalkNodes[_platWalkNodesCount - 1]._deltaX > 0)
-				_platypusFacing = kDirNone;
+				_plat->_idleFacing = kDirNone;
 			else if (_platWalkNodes[_platWalkNodesCount - 1]._deltaX < 0)
-				_platypusFacing = kDirUnk4;
+				_plat->_idleFacing = kDirUnk4;
 			else if (_platWalkNodes[_platWalkNodesCount - 1]._gridX1 % 2)
-				_platypusFacing = kDirUnk4;
+				_plat->_idleFacing = kDirUnk4;
 			else
-				_platypusFacing = kDirNone;
+				_plat->_idleFacing = kDirNone;
 			if (animationIndex >= 0)
 				_gameSys->setAnimation(makeRid(_platypusSequenceDatNum, _platypusSequenceId), _platypusId, animationIndex);
 		} else if (animationIndex >= 0) {
@@ -1304,29 +1304,29 @@ bool GnapEngine::platypusWalkTo(int gridX, int gridY, int animationIndex, int se
 			_platypusSequenceId = ridToEntryIndex(sequenceId);
 			_platypusSequenceDatNum = ridToDatIndex(sequenceId);
 			if (_platypusSequenceId == 0x7C2) {
-				_platypusFacing = kDirNone;
+				_plat->_idleFacing = kDirNone;
 			} else if (_platypusSequenceId == 0x7D2) {
-				_platypusFacing = kDirUnk4;
+				_plat->_idleFacing = kDirUnk4;
 			}
 		} else {
 			if (_platWalkNodesCount > 0) {
 				if (_platWalkNodes[_platWalkNodesCount - 1]._deltaX > 0) {
 					_platypusSequenceId = 0x7C2;
-					_platypusFacing = kDirNone;
+					_plat->_idleFacing = kDirNone;
 				} else if (_platWalkNodes[_platWalkNodesCount - 1]._deltaX < 0) {
 					_platypusSequenceId = 0x7D2;
-					_platypusFacing = kDirUnk4;
+					_plat->_idleFacing = kDirUnk4;
 				} else if (_platWalkNodes[0]._deltaX > 0) {
 					_platypusSequenceId = 0x7C2;
-					_platypusFacing = kDirNone;
+					_plat->_idleFacing = kDirNone;
 				} else if (_platWalkNodes[0]._deltaX < 0) {
 					_platypusSequenceId = 0x7D2;
-					_platypusFacing = kDirUnk4;
+					_plat->_idleFacing = kDirUnk4;
 				} else {
 					_platypusSequenceId = 0x7D2;
-					_platypusFacing = kDirUnk4;
+					_plat->_idleFacing = kDirUnk4;
 				}
-			} else if (_platypusFacing != kDirNone) {
+			} else if (_plat->_idleFacing != kDirNone) {
 				_platypusSequenceId = 0x7D2;
 			} else {
 				_platypusSequenceId = 0x7C2;
@@ -1351,8 +1351,7 @@ bool GnapEngine::platypusWalkTo(int gridX, int gridY, int animationIndex, int se
 				9, 0, 75 * _platWalkDestX - _platGridX, 48 * _platWalkDestY - _platGridY);
 	}
 
-	_platX = _platWalkDestX;
-	_platY = _platWalkDestY;
+	_plat->_pos = Common::Point(_platWalkDestX, _platWalkDestY);
 
 	return done;
 }
@@ -1361,22 +1360,22 @@ void GnapEngine::platypusWalkStep() {
 	bool done = false;
 	for (int i = 1; !done && i < _gridMaxX; ++i) {
 		done = true;
-		if (!isPointBlocked(_platX + i, _platY))
-			platypusWalkTo(_platX + i, _platY, -1, -1, 1);
-		else if (!isPointBlocked(_platX - i, _platY))
-			platypusWalkTo(_platX - i, _platY, -1, -1, 1);
-		else if (!isPointBlocked(_platX, _platY + 1))
-			platypusWalkTo(_platX, _platY + 1, -1, -1, 1);
-		else if (!isPointBlocked(_platX, _platY - 1))
-			platypusWalkTo(_platX, _platY - 1, -1, -1, 1);
-		else if (!isPointBlocked(_platX + 1, _platY + 1))
-			platypusWalkTo(_platX + 1, _platY + 1, -1, -1, 1);
-		else if (!isPointBlocked(_platX - 1, _platY + 1))
-			platypusWalkTo(_platX - 1, _platY + 1, -1, -1, 1);
-		else if (!isPointBlocked(_platX + 1, _platY - 1))
-			platypusWalkTo(_platX + 1, _platY - 1, -1, -1, 1);
-		else if (!isPointBlocked(_platX - 1, _platY - 1))
-			platypusWalkTo(_platX - 1, _platY - 1, -1, -1, 1);
+		if (!isPointBlocked(_plat->_pos.x + i, _plat->_pos.y))
+			platypusWalkTo(_plat->_pos.x + i, _plat->_pos.y, -1, -1, 1);
+		else if (!isPointBlocked(_plat->_pos.x - i, _plat->_pos.y))
+			platypusWalkTo(_plat->_pos.x - i, _plat->_pos.y, -1, -1, 1);
+		else if (!isPointBlocked(_plat->_pos.x, _plat->_pos.y + 1))
+			platypusWalkTo(_plat->_pos.x, _plat->_pos.y + 1, -1, -1, 1);
+		else if (!isPointBlocked(_plat->_pos.x, _plat->_pos.y - 1))
+			platypusWalkTo(_plat->_pos.x, _plat->_pos.y - 1, -1, -1, 1);
+		else if (!isPointBlocked(_plat->_pos.x + 1, _plat->_pos.y + 1))
+			platypusWalkTo(_plat->_pos.x + 1, _plat->_pos.y + 1, -1, -1, 1);
+		else if (!isPointBlocked(_plat->_pos.x - 1, _plat->_pos.y + 1))
+			platypusWalkTo(_plat->_pos.x - 1, _plat->_pos.y + 1, -1, -1, 1);
+		else if (!isPointBlocked(_plat->_pos.x + 1, _plat->_pos.y - 1))
+			platypusWalkTo(_plat->_pos.x + 1, _plat->_pos.y - 1, -1, -1, 1);
+		else if (!isPointBlocked(_plat->_pos.x - 1, _plat->_pos.y - 1))
+			platypusWalkTo(_plat->_pos.x - 1, _plat->_pos.y - 1, -1, -1, 1);
 		else
 			done = false;
 	}
@@ -1387,7 +1386,7 @@ void GnapEngine::platypusMakeRoom() {
 	do {
 		rndGridY = getRandom(_gridMaxY);
 		rndGridX = getRandom(_gridMaxX);
-	} while (ABS(rndGridX - _platX) > 4 || ABS(rndGridY - _platY) > 3 ||
+	} while (ABS(rndGridX - _plat->_pos.x) > 4 || ABS(rndGridY - _plat->_pos.y) > 3 ||
 		isPointBlocked(rndGridX, rndGridY));
 	platypusWalkTo(rndGridX, rndGridY, -1, -1, 1);
 }

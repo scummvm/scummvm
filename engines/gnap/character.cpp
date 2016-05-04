@@ -34,4 +34,6 @@ Character::~Character() {}
 
 PlayerGnap::PlayerGnap(GnapEngine * vm) : Character(vm) {}
 
+PlayerPlat::PlayerPlat(GnapEngine * vm) : Character(vm) {}
+
 } // End of namespace Gnap

@@ -149,12 +149,14 @@ Common::Error GnapEngine::run() {
 	_soundMan = new SoundMan(this);
 	_debugger = new Debugger(this);
 	_gnap = new PlayerGnap(this);
+	_plat = new PlayerPlat(this);
 
 	_menuBackgroundSurface = nullptr;
 
 	initGlobalSceneVars();
 	mainLoop();
 
+	delete _plat;
 	delete _gnap;
 	delete _soundMan;
 	delete _gameSys;
@@ -373,10 +375,10 @@ void GnapEngine::updateCursorByHotspot() {
 			setCursor(kDisabledCursors[_verbCursor]);
 	}
 	// Update platypus hotspot
-	_hotspots[0]._x1 = _gridMinX + 75 * _platX - 30;
-	_hotspots[0]._y1 = _gridMinY + 48 * _platY - 100;
-	_hotspots[0]._x2 = _gridMinX + 75 * _platX + 30;
-	_hotspots[0]._y2 = _gridMinY + 48 * _platY;
+	_hotspots[0]._x1 = _gridMinX + 75 * _plat->_pos.x - 30;
+	_hotspots[0]._y1 = _gridMinY + 48 * _plat->_pos.y - 100;
+	_hotspots[0]._x2 = _gridMinX + 75 * _plat->_pos.x + 30;
+	_hotspots[0]._y2 = _gridMinY + 48 * _plat->_pos.y;
 }
 
 int GnapEngine::getClickedHotspotId() {
@@ -1544,7 +1546,7 @@ void GnapEngine::playGnapShowItem(int itemIndex, int gridLookX, int gridLookY) {
 }
 
 void GnapEngine::playGnapShowCurrItem(int gridX, int gridY, int gridLookX, int gridLookY) {
-	if (_platX == gridX && _platY == gridY)
+	if (_plat->_pos.x == gridX && _plat->_pos.y == gridY)
 		platypusMakeRoom();
 	gnapWalkTo(gridX, gridY, -1, -1, 1);
 	playGnapShowItem(_grabCursorSpriteIndex, gridLookX, gridLookY);
@@ -1674,18 +1676,18 @@ void GnapEngine::gnapInitBrainPulseRndValue() {
 }
 
 void GnapEngine::gnapUseDeviceOnPlatypus() {
-	playGnapSequence(makeRid(1, getGnapSequenceId(gskPullOutDevice, _platX, _platY)));
+	playGnapSequence(makeRid(1, getGnapSequenceId(gskPullOutDevice, _plat->_pos.x, _plat->_pos.y)));
 
-	if (_platypusFacing != kDirNone) {
+	if (_plat->_idleFacing != kDirNone) {
 		_gameSys->insertSequence(makeRid(1, 0x7D5), _platypusId,
 			makeRid(_platypusSequenceDatNum, _platypusSequenceId), _platypusId,
-			kSeqSyncWait, 0, 75 * _platX - _platGridX, 48 * _platY - _platGridY);
+			kSeqSyncWait, 0, 75 * _plat->_pos.x - _platGridX, 48 * _plat->_pos.y - _platGridY);
 		_platypusSequenceId = 0x7D5;
 		_platypusSequenceDatNum = 1;
 	} else {
 		_gameSys->insertSequence(makeRid(1, 0x7D4), _platypusId,
 			makeRid(_platypusSequenceDatNum, _platypusSequenceId), _platypusId,
-			kSeqSyncWait, 0, 75 * _platX - _platGridX, 48 * _platY - _platGridY);
+			kSeqSyncWait, 0, 75 * _plat->_pos.x - _platGridX, 48 * _plat->_pos.y - _platGridY);
 		_platypusSequenceId = 0x7D4;
 		_platypusSequenceDatNum = 1;
 	}
@@ -1713,17 +1715,17 @@ bool GnapEngine::gnapPlatypusAction(int gridX, int gridY, int platSequenceId, in
 
 	if (_gnapActionStatus <= -1 && _platypusActionStatus <= -1) {
 		_gnapActionStatus = 100;
-		if (isPointBlocked(_platX + gridX, _platY + gridY) && (_gnap->_pos != Common::Point(_platX + gridX, _platY + gridY)))
+		if (isPointBlocked(_plat->_pos.x + gridX, _plat->_pos.y + gridY) && (_gnap->_pos != Common::Point(_plat->_pos.x + gridX, _plat->_pos.y + gridY)))
 			platypusWalkStep();
-		if (!isPointBlocked(_platX + gridX, _platY + gridY) && (_gnap->_pos != Common::Point(_platX + gridX, _platY + gridY))) {
-			gnapWalkTo(_platX + gridX, _platY + gridY, 0, 0x107B9, 1);
+		if (!isPointBlocked(_plat->_pos.x + gridX, _plat->_pos.y + gridY) && (_gnap->_pos != Common::Point(_plat->_pos.x + gridX, _plat->_pos.y + gridY))) {
+			gnapWalkTo(_plat->_pos.x + gridX, _plat->_pos.y + gridY, 0, 0x107B9, 1);
 			while (_gameSys->getAnimationStatus(0) != 2) {
 				updateMouseCursor();
 				doCallback(callback);
 				gameUpdateTick();
 			}
 			_gameSys->setAnimation(0, 0, 0);
-			if (_gnap->_pos == Common::Point(_platX + gridX, _platY + gridY)) {
+			if (_gnap->_pos == Common::Point(_plat->_pos.x + gridX, _plat->_pos.y + gridY)) {
 				_gameSys->setAnimation(platSequenceId, _platypusId, 1);
 				playPlatypusSequence(platSequenceId);
 				while (_gameSys->getAnimationStatus(1) != 2) {
@@ -1751,10 +1753,10 @@ void GnapEngine::gnapKissPlatypus(int callback) {
 		_gnapSequenceId = 0x847;
 		_gameSys->insertSequence(0x107CB, _platypusId,
 			makeRid(_platypusSequenceDatNum, _platypusSequenceId), _platypusId,
-			kSeqSyncWait, getSequenceTotalDuration(0x10847), 75 * _platX - _platGridX, 48 * _platY - _platGridY);
+			kSeqSyncWait, getSequenceTotalDuration(0x10847), 75 * _plat->_pos.x - _platGridX, 48 * _plat->_pos.y - _platGridY);
 		_platypusSequenceDatNum = 1;
 		_platypusSequenceId = 0x7CB;
-		_platypusFacing = kDirNone;
+		_plat->_idleFacing = kDirNone;
 		playGnapSequence(0x107B5);
 		while (_gameSys->getAnimationStatus(0) != 2) {
 			updateMouseCursor();
@@ -1764,7 +1766,7 @@ void GnapEngine::gnapKissPlatypus(int callback) {
 		_gameSys->setAnimation(0, 0, 0);
 		_gnapActionStatus = -1;
 	} else {
-		playGnapSequence(getGnapSequenceId(gskScratchingHead, _platX, _platY) | 0x10000);
+		playGnapSequence(getGnapSequenceId(gskScratchingHead, _plat->_pos.x, _plat->_pos.y) | 0x10000);
 	}
 }
 
@@ -1781,10 +1783,10 @@ void GnapEngine::gnapUseJointOnPlatypus() {
 		_gnapSequenceId = 0x875;
 		_gameSys->insertSequence(0x10876, _platypusId,
 			_platypusSequenceId | (_platypusSequenceDatNum << 16), _platypusId,
-			kSeqSyncWait, 0, 15 * (5 * _platX - 25), 48 * (_platY - 7));
+			kSeqSyncWait, 0, 15 * (5 * _plat->_pos.x - 25), 48 * (_plat->_pos.y - 7));
 		_platypusSequenceDatNum = 1;
 		_platypusSequenceId = 0x876;
-		_platypusFacing = kDirNone;
+		_plat->_idleFacing = kDirNone;
 		playGnapSequence(0x107B5);
 		gnapWalkStep();
 		while (_gameSys->getAnimationStatus(0) != 2) {
@@ -1794,7 +1796,7 @@ void GnapEngine::gnapUseJointOnPlatypus() {
 		_gameSys->setAnimation(0, 0, 0);
 		_gnapActionStatus = -1;
 	} else {
-		playGnapSequence(getGnapSequenceId(gskScratchingHead, _platX, _platY) | 0x10000);
+		playGnapSequence(getGnapSequenceId(gskScratchingHead, _plat->_pos.x, _plat->_pos.y) | 0x10000);
 	}
 }
 
@@ -1815,9 +1817,9 @@ int GnapEngine::getPlatypusSequenceId() {
 
 	int sequenceId = 0x7CB;
 
-	if (_platypusFacing != kDirNone) {
+	if (_plat->_idleFacing != kDirNone) {
 		sequenceId = 0x7CC;
-		_platypusFacing = kDirUnk4;
+		_plat->_idleFacing = kDirUnk4;
 	}
 
 	return sequenceId | 0x10000;
@@ -1826,7 +1828,7 @@ int GnapEngine::getPlatypusSequenceId() {
 void GnapEngine::playPlatypusSequence(int sequenceId) {
 	_gameSys->insertSequence(sequenceId, _platypusId,
 		makeRid(_platypusSequenceDatNum, _platypusSequenceId), _platypusId,
-		kSeqScale | kSeqSyncWait, 0, 75 * _platX - _platGridX, 48 * _platY - _platGridY);
+		kSeqScale | kSeqSyncWait, 0, 75 * _plat->_pos.x - _platGridX, 48 * _plat->_pos.y - _platGridY);
 	_platypusSequenceId = ridToEntryIndex(sequenceId);
 	_platypusSequenceDatNum = ridToDatIndex(sequenceId);
 }
@@ -1837,7 +1839,7 @@ void GnapEngine::updatePlatypusIdleSequence() {
 			if (_timers[1] == 0) {
 				_timers[1] = getRandom(20) + 30;
 				int rnd = getRandom(10);
-				if (_platypusFacing != kDirNone) {
+				if (_plat->_idleFacing != kDirNone) {
 					if (rnd != 0 || _platypusSequenceId != 0x7CA) {
 						if (rnd != 1 || _platypusSequenceId != 0x7CA)
 							playPlatypusSequence(0x107CA);
@@ -1874,7 +1876,7 @@ void GnapEngine::updatePlatypusIdleSequence2() {
 		if (_timers[0]) {
 			if (!_timers[1]) {
 				_timers[1] = getRandom(20) + 30;
-				if (_platypusFacing != kDirNone) {
+				if (_plat->_idleFacing != kDirNone) {
 					if (getRandom(10) >= 2 || _platypusSequenceId != 0x7CA)
 						playPlatypusSequence(0x107CA);
 					else
@@ -1900,23 +1902,22 @@ void GnapEngine::updatePlatypusIdleSequence2() {
 void GnapEngine::initPlatypusPos(int gridX, int gridY, Facing facing) {
 	_timers[0] = 50;
 	_timers[1] = 20;
-	_platX = gridX;
-	_platY = gridY;
+	_plat->_pos = Common::Point(gridX, gridY);
 	if (facing == kDirNone)
-		_platypusFacing = kDirNone;
+		_plat->_idleFacing = kDirNone;
 	else
-		_platypusFacing = facing;
-	if (_platypusFacing == kDirUnk4) {
+		_plat->_idleFacing = facing;
+	if (_plat->_idleFacing == kDirUnk4) {
 		_platypusSequenceId = 0x7D1;
 	} else {
 		_platypusSequenceId = 0x7C1;
-		_platypusFacing = kDirNone;
+		_plat->_idleFacing = kDirNone;
 	}
-	_platypusId = 20 * _platY;
+	_platypusId = 20 * _plat->_pos.y;
 	_platypusSequenceDatNum = 1;
-	_gameSys->insertSequence(makeRid(1, _platypusSequenceId), 20 * _platY,
+	_gameSys->insertSequence(makeRid(1, _platypusSequenceId), 20 * _plat->_pos.y,
 		0, 0,
-		kSeqScale, 0, 75 * _platX - _platGridX, 48 * _platY - _platGridY);
+		kSeqScale, 0, 75 * _plat->_pos.x - _platGridX, 48 * _plat->_pos.y - _platGridY);
 }
 
 ////////////////////////////////////////////////////////////////////////////////

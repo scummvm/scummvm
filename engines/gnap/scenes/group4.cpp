@@ -76,21 +76,21 @@ void Scene40::run() {
 		case kHS40Platypus:
 			if (_vm->_gnapActionStatus < 0) {
 				if (_vm->_grabCursorSpriteIndex >= 0) {
-					_vm->playGnapImpossible(_vm->_platX, _vm->_platY);
+					_vm->playGnapImpossible(_vm->_plat->_pos.x, _vm->_plat->_pos.y);
 				} else {
 					switch (_vm->_verbCursor) {
 					case LOOK_CURSOR:
-						_vm->playGnapMoan1(_vm->_platX, _vm->_platY);
+						_vm->playGnapMoan1(_vm->_plat->_pos.x, _vm->_plat->_pos.y);
 						break;
 					case GRAB_CURSOR:
 						_vm->gnapKissPlatypus(0);
 						break;
 					case TALK_CURSOR:
-						_vm->playGnapBrainPulsating(_vm->_platX, _vm->_platY);
+						_vm->playGnapBrainPulsating(_vm->_plat->_pos.x, _vm->_plat->_pos.y);
 						_vm->playPlatypusSequence(_vm->getPlatypusSequenceId());
 						break;
 					case PLAT_CURSOR:
-						_vm->playGnapImpossible(_vm->_platX, _vm->_platY);
+						_vm->playGnapImpossible(_vm->_plat->_pos.x, _vm->_plat->_pos.y);
 						break;
 					}
 				}
@@ -351,21 +351,21 @@ void Scene41::run() {
 			case kHS41Platypus:
 				if (_vm->_gnapActionStatus < 0) {
 					if (_vm->_grabCursorSpriteIndex >= 0) {
-						_vm->playGnapImpossible(_vm->_platX, _vm->_platY);
+						_vm->playGnapImpossible(_vm->_plat->_pos.x, _vm->_plat->_pos.y);
 					} else {
 						switch (_vm->_verbCursor) {
 						case LOOK_CURSOR:
-							_vm->playGnapMoan1(_vm->_platX, _vm->_platY);
+							_vm->playGnapMoan1(_vm->_plat->_pos.x, _vm->_plat->_pos.y);
 							break;
 						case GRAB_CURSOR:
 							_vm->gnapKissPlatypus(0);
 							break;
 						case TALK_CURSOR:
-							_vm->playGnapBrainPulsating(_vm->_platX, _vm->_platY);
+							_vm->playGnapBrainPulsating(_vm->_plat->_pos.x, _vm->_plat->_pos.y);
 							_vm->playPlatypusSequence(_vm->getPlatypusSequenceId());
 							break;
 						case PLAT_CURSOR:
-							_vm->playGnapImpossible(_vm->_platX, _vm->_platY);
+							_vm->playGnapImpossible(_vm->_plat->_pos.x, _vm->_plat->_pos.y);
 							break;
 						}
 					}
@@ -863,21 +863,21 @@ void Scene42::run() {
 			case kHS42Platypus:
 				if (_vm->_gnapActionStatus < 0) {
 					if (_vm->_grabCursorSpriteIndex >= 0) {
-						_vm->playGnapImpossible(_vm->_platX, _vm->_platY);
+						_vm->playGnapImpossible(_vm->_plat->_pos.x, _vm->_plat->_pos.y);
 					} else {
 						switch (_vm->_verbCursor) {
 						case LOOK_CURSOR:
-							_vm->playGnapMoan1(_vm->_platX, _vm->_platY);
+							_vm->playGnapMoan1(_vm->_plat->_pos.x, _vm->_plat->_pos.y);
 							break;
 						case GRAB_CURSOR:
 							_vm->gnapKissPlatypus(0);
 							break;
 						case TALK_CURSOR:
-							_vm->playGnapBrainPulsating(_vm->_platX, _vm->_platY);
+							_vm->playGnapBrainPulsating(_vm->_plat->_pos.x, _vm->_plat->_pos.y);
 							_vm->playPlatypusSequence(_vm->getPlatypusSequenceId());
 							break;
 						case PLAT_CURSOR:
-							_vm->playGnapImpossible(_vm->_platX, _vm->_platY);
+							_vm->playGnapImpossible(_vm->_plat->_pos.x, _vm->_plat->_pos.y);
 							break;
 						}
 					}
@@ -888,7 +888,7 @@ void Scene42::run() {
 				_vm->_isLeavingScene = true;
 				_vm->gnapWalkTo(_vm->_gnap->_pos.x, _vm->_hotspotsWalkPos[kHS42ExitUfoParty].y, 0, 0x107AE, 1);
 				_vm->_gnapActionStatus = kAS42LeaveScene;
-				_vm->platypusWalkTo(_vm->_platX, _vm->_hotspotsWalkPos[kHS42ExitUfoParty].y, -1, 0x107C7, 1);
+				_vm->platypusWalkTo(_vm->_plat->_pos.x, _vm->_hotspotsWalkPos[kHS42ExitUfoParty].y, -1, 0x107C7, 1);
 				_vm->_newSceneNum = 40;
 				break;
 
@@ -912,8 +912,8 @@ void Scene42::run() {
 				if (_vm->_grabCursorSpriteIndex == kItemDiceQuarterHole) {
 					_vm->gnapWalkTo(_vm->_hotspotsWalkPos[kHS42BBQVendor].x, _vm->_hotspotsWalkPos[kHS42BBQVendor].y, 0, 0x107BB, 1);
 					_vm->_gnapActionStatus = kAS42UseQuarterWithBBQVendor;
-					if (_vm->_platY < 9)
-						_vm->platypusWalkTo(_vm->_platX, 9, -1, -1, 1);
+					if (_vm->_plat->_pos.y < 9)
+						_vm->platypusWalkTo(_vm->_plat->_pos.x, 9, -1, -1, 1);
 				} else if (_vm->_grabCursorSpriteIndex >= 0) {
 					_vm->playGnapShowCurrItem(_vm->_hotspotsWalkPos[kHS42BBQVendor].x, _vm->_hotspotsWalkPos[kHS42BBQVendor].y, _vm->_hotspotsWalkPos[kHS42BBQVendor].x + 1, 0);
 				} else {
@@ -1321,21 +1321,21 @@ void Scene43::run() {
 			case kHS43Platypus:
 				if (_vm->_gnapActionStatus < 0) {
 					if (_vm->_grabCursorSpriteIndex >= 0) {
-						_vm->playGnapImpossible(_vm->_platX, _vm->_platY);
+						_vm->playGnapImpossible(_vm->_plat->_pos.x, _vm->_plat->_pos.y);
 					} else {
 						switch (_vm->_verbCursor) {
 						case LOOK_CURSOR:
-							_vm->playGnapMoan1(_vm->_platX, _vm->_platY);
+							_vm->playGnapMoan1(_vm->_plat->_pos.x, _vm->_plat->_pos.y);
 							break;
 						case GRAB_CURSOR:
 							_vm->gnapKissPlatypus(0);
 							break;
 						case TALK_CURSOR:
-							_vm->playGnapBrainPulsating(_vm->_platX, _vm->_platY);
+							_vm->playGnapBrainPulsating(_vm->_plat->_pos.x, _vm->_plat->_pos.y);
 							_vm->playPlatypusSequence(_vm->getPlatypusSequenceId());
 							break;
 						case PLAT_CURSOR:
-							_vm->playGnapImpossible(_vm->_platX, _vm->_platY);
+							_vm->playGnapImpossible(_vm->_plat->_pos.x, _vm->_plat->_pos.y);
 							break;
 						}
 					}
@@ -1701,10 +1701,9 @@ void Scene44::run() {
 			} else if (!_vm->isFlag(kGFUnk13)) {
 				_vm->_timers[0] = 50;
 				_vm->_timers[1] = 20;
-				_vm->_platX = 5;
-				_vm->_platY = 8;
+				_vm->_plat->_pos = Common::Point(5, 8);
 				_vm->_platypusSequenceId = 0xFD;
-				_vm->_platypusFacing = kDirNone;
+				_vm->_plat->_idleFacing = kDirNone;
 				_vm->_platypusId = 160;
 				_vm->_platypusSequenceDatNum = 0;
 				gameSys.insertSequence(0xFD, 160, 0, 0, kSeqNone, 0, 0, 0);
@@ -1770,21 +1769,21 @@ void Scene44::run() {
 			case kHS44Platypus:
 				if (_vm->_gnapActionStatus < 0) {
 					if (_vm->_grabCursorSpriteIndex >= 0) {
-						_vm->playGnapImpossible(_vm->_platX, _vm->_platY);
+						_vm->playGnapImpossible(_vm->_plat->_pos.x, _vm->_plat->_pos.y);
 					} else {
 						switch (_vm->_verbCursor) {
 						case LOOK_CURSOR:
-							_vm->playGnapMoan1(_vm->_platX, _vm->_platY);
+							_vm->playGnapMoan1(_vm->_plat->_pos.x, _vm->_plat->_pos.y);
 							break;
 						case GRAB_CURSOR:
 							_vm->gnapKissPlatypus(0);
 							break;
 						case TALK_CURSOR:
-							_vm->playGnapBrainPulsating(_vm->_platX, _vm->_platY);
+							_vm->playGnapBrainPulsating(_vm->_plat->_pos.x, _vm->_plat->_pos.y);
 							_vm->playPlatypusSequence(_vm->getPlatypusSequenceId());
 							break;
 						case PLAT_CURSOR:
-							_vm->playGnapImpossible(_vm->_platX, _vm->_platY);
+							_vm->playGnapImpossible(_vm->_plat->_pos.x, _vm->_plat->_pos.y);
 							break;
 						}
 					}
@@ -1802,7 +1801,7 @@ void Scene44::run() {
 				_vm->_isLeavingScene = true;
 				_vm->gnapWalkTo(_vm->_hotspotsWalkPos[kHS44ExitUfo].x, _vm->_gnap->_pos.y, 0, 0x107AF, 1);
 				_vm->_gnapActionStatus = 0;
-				_vm->platypusWalkTo(_vm->_hotspotsWalkPos[kHS44ExitUfo].x, _vm->_platY, -1, 0x107CF, 1);
+				_vm->platypusWalkTo(_vm->_hotspotsWalkPos[kHS44ExitUfo].x, _vm->_plat->_pos.y, -1, 0x107CF, 1);
 				_vm->_newSceneNum = 43;
 				break;
 
@@ -2259,11 +2258,11 @@ void Scene45::run() {
 			case kHS45Platypus:
 				if (_vm->_gnapActionStatus < 0) {
 					if (_vm->_grabCursorSpriteIndex >= 0) {
-						_vm->playGnapImpossible(_vm->_platX, _vm->_platY);
+						_vm->playGnapImpossible(_vm->_plat->_pos.x, _vm->_plat->_pos.y);
 					} else {
 						switch (_vm->_verbCursor) {
 						case LOOK_CURSOR:
-							_vm->playGnapMoan1(_vm->_platX, _vm->_platY);
+							_vm->playGnapMoan1(_vm->_plat->_pos.x, _vm->_plat->_pos.y);
 							break;
 						case GRAB_CURSOR:
 							_vm->gnapKissPlatypus(0);
@@ -2271,11 +2270,11 @@ void Scene45::run() {
 							gameSys.setAnimation(_vm->_platypusSequenceId, _vm->_platypusId, 1);
 							break;
 						case TALK_CURSOR:
-							_vm->playGnapBrainPulsating(_vm->_platX, _vm->_platY);
+							_vm->playGnapBrainPulsating(_vm->_plat->_pos.x, _vm->_plat->_pos.y);
 							_vm->playPlatypusSequence(_vm->getPlatypusSequenceId());
 							break;
 						case PLAT_CURSOR:
-							_vm->playGnapImpossible(_vm->_platX, _vm->_platY);
+							_vm->playGnapImpossible(_vm->_plat->_pos.x, _vm->_plat->_pos.y);
 							break;
 						}
 					}
@@ -2296,7 +2295,7 @@ void Scene45::run() {
 					_vm->_isLeavingScene = true;
 					_vm->gnapWalkTo(_vm->_hotspotsWalkPos[kHS45ExitShoe].x, _vm->_gnap->_pos.y, 0, 0x107AF, 1);
 					_vm->_gnapActionStatus = 0;
-					_vm->platypusWalkTo(_vm->_hotspotsWalkPos[kHS45ExitShoe].x, _vm->_platY, -1, 0x107CF, 1);
+					_vm->platypusWalkTo(_vm->_hotspotsWalkPos[kHS45ExitShoe].x, _vm->_plat->_pos.y, -1, 0x107CF, 1);
 					_vm->_newSceneNum = 46;
 				}
 				break;
@@ -2306,7 +2305,7 @@ void Scene45::run() {
 					_vm->_isLeavingScene = true;
 					_vm->gnapWalkTo(_vm->_hotspotsWalkPos[kHS45ExitRight].x, _vm->_gnap->_pos.y, 0, 0x107AB, 1);
 					_vm->_gnapActionStatus = 0;
-					_vm->platypusWalkTo(_vm->_hotspotsWalkPos[kHS45ExitRight].x, _vm->_platY, -1, 0x107CD, 1);
+					_vm->platypusWalkTo(_vm->_hotspotsWalkPos[kHS45ExitRight].x, _vm->_plat->_pos.y, -1, 0x107CD, 1);
 					_vm->_newSceneNum = 41;
 				}
 				break;
@@ -2584,21 +2583,21 @@ void Scene46::run() {
 			case kHS46Platypus:
 				if (_vm->_gnapActionStatus < 0) {
 					if (_vm->_grabCursorSpriteIndex >= 0) {
-						_vm->playGnapImpossible(_vm->_platX, _vm->_platY);
+						_vm->playGnapImpossible(_vm->_plat->_pos.x, _vm->_plat->_pos.y);
 					} else {
 						switch (_vm->_verbCursor) {
 						case LOOK_CURSOR:
-							_vm->playGnapMoan1(_vm->_platX, _vm->_platY);
+							_vm->playGnapMoan1(_vm->_plat->_pos.x, _vm->_plat->_pos.y);
 							break;
 						case GRAB_CURSOR:
 							_vm->gnapKissPlatypus(0);
 							break;
 						case TALK_CURSOR:
-							_vm->playGnapBrainPulsating(_vm->_platX, _vm->_platY);
+							_vm->playGnapBrainPulsating(_vm->_plat->_pos.x, _vm->_plat->_pos.y);
 							_vm->playPlatypusSequence(_vm->getPlatypusSequenceId());
 							break;
 						case PLAT_CURSOR:
-							_vm->playGnapImpossible(_vm->_platX, _vm->_platY);
+							_vm->playGnapImpossible(_vm->_plat->_pos.x, _vm->_plat->_pos.y);
 							break;
 						}
 					}
@@ -2658,7 +2657,7 @@ void Scene46::run() {
 				_vm->_isLeavingScene = true;
 				_vm->gnapWalkTo(_vm->_hotspotsWalkPos[kHS46ExitKissinBooth].x, _vm->_gnap->_pos.y, 0, 0x107AF, 1);
 				_vm->_gnapActionStatus = 0;
-				_vm->platypusWalkTo(_vm->_hotspotsWalkPos[kHS46ExitKissinBooth].x, _vm->_platY, -1, 0x107CF, 1);
+				_vm->platypusWalkTo(_vm->_hotspotsWalkPos[kHS46ExitKissinBooth].x, _vm->_plat->_pos.y, -1, 0x107CF, 1);
 				_vm->_newSceneNum = 44;
 				break;
 
@@ -2666,7 +2665,7 @@ void Scene46::run() {
 				_vm->_isLeavingScene = true;
 				_vm->gnapWalkTo(_vm->_hotspotsWalkPos[kHS46ExitDisco].x, _vm->_gnap->_pos.y, 0, 0x107AB, 1);
 				_vm->_gnapActionStatus = 0;
-				_vm->platypusWalkTo(_vm->_hotspotsWalkPos[kHS46ExitDisco].x, _vm->_platY, -1, 0x107CD, 1);
+				_vm->platypusWalkTo(_vm->_hotspotsWalkPos[kHS46ExitDisco].x, _vm->_plat->_pos.y, -1, 0x107CD, 1);
 				_vm->_newSceneNum = 45;
 				break;
 

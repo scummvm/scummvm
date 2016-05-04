@@ -112,15 +112,15 @@ void Scene10::run() {
 				switch (_vm->_verbCursor) {
 				case LOOK_CURSOR:
 					if (_vm->isFlag(kGFMudTaken))
-						_vm->playGnapMoan1(_vm->_platX, _vm->_platY);
+						_vm->playGnapMoan1(_vm->_plat->_pos.x, _vm->_plat->_pos.y);
 					else
-						_vm->playGnapScratchingHead(_vm->_platX, _vm->_platY);
+						_vm->playGnapScratchingHead(_vm->_plat->_pos.x, _vm->_plat->_pos.y);
 					break;
 				case GRAB_CURSOR:
 					_vm->gnapKissPlatypus(10);
 					break;
 				case TALK_CURSOR:
-					_vm->playGnapBrainPulsating(_vm->_platX, _vm->_platY);
+					_vm->playGnapBrainPulsating(_vm->_plat->_pos.x, _vm->_plat->_pos.y);
 					_vm->playPlatypusSequence(_vm->getPlatypusSequenceId());
 					break;
 				case PLAT_CURSOR:
@@ -242,7 +242,7 @@ void Scene10::run() {
 						_vm->gnapUseDeviceOnPlatypus();
 						_vm->platypusWalkTo(7, 6, 1, 0x107D2, 1);
 						_vm->_platypusActionStatus = kAS10PlatWithBox;
-						_vm->_platypusFacing = kDirUnk4;
+						_vm->_plat->_idleFacing = kDirUnk4;
 						_vm->_largeSprite = gameSys.createSurface(0xC3);
 						_vm->playGnapIdle(7, 6);
 					}
@@ -368,19 +368,18 @@ void Scene10::updateAnimations() {
 
 		switch (_nextCookSequenceId) {
 		case 0x109:
-			_vm->_platX = 4;
-			_vm->_platY = 8;
+			_vm->_plat->_pos = Common::Point(4, 8);
 			gameSys.insertSequence(0x109, 100, _currCookSequenceId, 100, kSeqSyncWait, 0, 0, 0);
 			gameSys.insertSequence(0x107C9, 160,
 				_vm->_platypusSequenceId | (_vm->_platypusSequenceDatNum << 16), _vm->_platypusId,
 				kSeqSyncWait, _vm->getSequenceTotalDuration(0x109) + _vm->getSequenceTotalDuration(0x10A) + _vm->getSequenceTotalDuration(0x10843),
-				75 * _vm->_platX - _vm->_platGridX, 48 * _vm->_platY - _vm->_platGridY);
+				75 * _vm->_plat->_pos.x - _vm->_platGridX, 48 * _vm->_plat->_pos.y - _vm->_platGridY);
 			gameSys.removeSequence(0x107, 100, true);
 			_currCookSequenceId = 0x109;
 			_nextCookSequenceId = 0x843;
 			_vm->_platypusSequenceId = 0x7C9;
 			_vm->_platypusId = 160;
-			_vm->_platypusFacing = kDirNone;
+			_vm->_plat->_idleFacing = kDirNone;
 			_vm->_platypusSequenceDatNum = 1;
 			break;
 		case 0x843:
@@ -596,13 +595,13 @@ void Scene11::run() {
 			} else {
 				switch (_vm->_verbCursor) {
 				case LOOK_CURSOR:
-					_vm->playGnapMoan1(_vm->_platX, _vm->_platY);
+					_vm->playGnapMoan1(_vm->_plat->_pos.x, _vm->_plat->_pos.y);
 					break;
 				case GRAB_CURSOR:
 					_vm->gnapKissPlatypus(0);
 					break;
 				case TALK_CURSOR:
-					_vm->playGnapBrainPulsating(_vm->_platX, _vm->_platY);
+					_vm->playGnapBrainPulsating(_vm->_plat->_pos.x, _vm->_plat->_pos.y);
 					_vm->playPlatypusSequence(_vm->getPlatypusSequenceId());
 					break;
 				case PLAT_CURSOR:
@@ -1015,13 +1014,13 @@ void Scene12::run() {
 		case kHS12Platypus:
 			switch (_vm->_verbCursor) {
 			case LOOK_CURSOR:
-				_vm->playGnapMoan1(_vm->_platX, _vm->_platY);
+				_vm->playGnapMoan1(_vm->_plat->_pos.x, _vm->_plat->_pos.y);
 				break;
 			case GRAB_CURSOR:
 				_vm->gnapKissPlatypus(0);
 				break;
 			case TALK_CURSOR:
-				_vm->playGnapBrainPulsating(_vm->_platX, _vm->_platY);
+				_vm->playGnapBrainPulsating(_vm->_plat->_pos.x, _vm->_plat->_pos.y);
 				_vm->playPlatypusSequence(_vm->getPlatypusSequenceId());
 				break;
 			case PLAT_CURSOR:
@@ -1073,7 +1072,7 @@ void Scene12::run() {
 					_vm->gnapUseDeviceOnPlatypus();
 					_vm->platypusWalkTo(3, 7, 1, 0x107D2, 1);
 					_vm->_platypusActionStatus = kAS12PlatWithToothGuy;
-					_vm->_platypusFacing = kDirUnk4;
+					_vm->_plat->_idleFacing = kDirUnk4;
 					_vm->playGnapIdle(2, 7);
 					break;
 				}
@@ -1107,7 +1106,7 @@ void Scene12::run() {
 					_vm->_gnapActionStatus = kAS12TalkBarkeeper;
 					break;
 				case PLAT_CURSOR:
-					_vm->playGnapPullOutDevice(_vm->_platX, _vm->_platY);
+					_vm->playGnapPullOutDevice(_vm->_plat->_pos.x, _vm->_plat->_pos.y);
 					gameSys.setAnimation(makeRid(_vm->_gnapSequenceDatNum, _vm->_gnapSequenceId), _vm->_gnapId, 0);
 					_vm->_gnapActionStatus = kAS12PlatWithBarkeeper;
 					break;
@@ -1143,7 +1142,7 @@ void Scene12::run() {
 					_vm->gnapUseDeviceOnPlatypus();
 					_vm->platypusWalkTo(7, 6, 1, 0x107C2, 1);
 					_vm->_platypusActionStatus = kAS12PlatWithBeardGuy;
-					_vm->_platypusFacing = kDirNone;
+					_vm->_plat->_idleFacing = kDirNone;
 					_vm->playGnapIdle(7, 6);
 					break;
 				}
@@ -1524,13 +1523,13 @@ void Scene13::run() {
 		case kHS13Platypus:
 			switch (_vm->_verbCursor) {
 			case LOOK_CURSOR:
-				_vm->playGnapMoan1(_vm->_platX, _vm->_platY);
+				_vm->playGnapMoan1(_vm->_plat->_pos.x, _vm->_plat->_pos.y);
 				break;
 			case GRAB_CURSOR:
 				_vm->gnapKissPlatypus(0);
 				break;
 			case TALK_CURSOR:
-				_vm->playGnapBrainPulsating(_vm->_platX, _vm->_platY);
+				_vm->playGnapBrainPulsating(_vm->_plat->_pos.x, _vm->_plat->_pos.y);
 				_vm->playPlatypusSequence(_vm->getPlatypusSequenceId());
 				break;
 			case PLAT_CURSOR:
@@ -1694,7 +1693,7 @@ void Scene13::run() {
 
 		if (!_vm->_isLeavingScene) {
 			_vm->updatePlatypusIdleSequence();
-			if (_vm->_platY == 5 || _vm->_platY == 6)
+			if (_vm->_plat->_pos.y == 5 || _vm->_plat->_pos.y == 6)
 				_vm->platypusWalkTo(-1, 7, -1, -1, 1);
 			if (_vm->_gnapActionStatus < 0)
 				_vm->updateGnapIdleSequence();
@@ -2423,8 +2422,7 @@ void Scene17::run() {
 			_vm->gnapWalkTo(4, 8, -1, 0x107B9, 1);
 		} else if (_vm->isFlag(kGFUnk27)) {
 			_vm->initGnapPos(3, 9, kDirUpLeft);
-			_vm->_platX = _vm->_hotspotsWalkPos[2].x;
-			_vm->_platY = _vm->_hotspotsWalkPos[2].y;
+			_vm->_plat->_pos = _vm->_hotspotsWalkPos[2];
 			_vm->_platypusId = 20 * _vm->_hotspotsWalkPos[2].y;
 			gameSys.insertSequence(0x25A, 20 * _vm->_hotspotsWalkPos[2].y, 0, 0, kSeqNone, 0, 0, 0);
 			gameSys.insertSequence(0x257, 254, 0, 0, kSeqNone, 0, 0, 0);
@@ -2459,8 +2457,7 @@ void Scene17::run() {
 			_vm->clearFlag(kGFUnk16);
 			_vm->_sceneWaiting = true;
 			_vm->initGnapPos(3, 9, kDirUpLeft);
-			_vm->_platX = _vm->_hotspotsWalkPos[2].x;
-			_vm->_platY = _vm->_hotspotsWalkPos[2].y;
+			_vm->_plat->_pos = _vm->_hotspotsWalkPos[2];
 			_vm->_platypusId = 20 * _vm->_hotspotsWalkPos[2].y;
 			_currPhoneSequenceId = 0x251;
 			gameSys.insertSequence(0x25A, 20 * _vm->_hotspotsWalkPos[2].y, 0, 0, kSeqNone, 0, 0, 0);
@@ -2498,18 +2495,17 @@ void Scene17::run() {
 		_vm->_gnapSequenceDatNum = 0;
 		_vm->_gnap->_idleFacing = kDirBottomRight;
 		gameSys.insertSequence(makeRid(_vm->_gnapSequenceDatNum, _vm->_gnapSequenceId), _vm->_gnapId, 0, 0, kSeqNone, 0, 0, 0);
-		_vm->_platX = -1;
-		_vm->_platY = 8;
+		_vm->_plat->_pos = Common::Point(-1, 8);
 		_vm->_platypusId = 160;
 		gameSys.insertSequence(0x241, 160, 0, 0, kSeqNone, 0, 0, 0);
 		gameSys.insertSequence(0x107C1, _vm->_platypusId, 0x241, _vm->_platypusId,
-			kSeqScale | kSeqSyncWait, 0, 75 * _vm->_platX - _vm->_platGridX, 48 * _vm->_platY - _vm->_platGridY);
+			kSeqScale | kSeqSyncWait, 0, 75 * _vm->_plat->_pos.x - _vm->_platGridX, 48 * _vm->_plat->_pos.y - _vm->_platGridY);
 		gameSys.insertSequence(0x22C, 2, 0, 0, kSeqNone, 0, 0, 0);
 		// TODO delayTicksA(2, 9);
 		_vm->endSceneInit();
 		_vm->_platypusSequenceId = 0x7C1;
 		_vm->_platypusSequenceDatNum = 1;
-		_vm->_platypusFacing = kDirBottomRight;
+		_vm->_plat->_idleFacing = kDirBottomRight;
 		_vm->platypusWalkTo(2, 9, -1, 0x107C2, 1);
 	}
 
@@ -2544,15 +2540,15 @@ void Scene17::run() {
 						_vm->invRemove(kItemJoint);
 					}
 				} else if (_vm->_grabCursorSpriteIndex >= 0) {
-					_vm->playGnapScratchingHead(_vm->_platX, _vm->_platY);
+					_vm->playGnapScratchingHead(_vm->_plat->_pos.x, _vm->_plat->_pos.y);
 				} else {
 					switch (_vm->_verbCursor) {
 					case LOOK_CURSOR:
 					case GRAB_CURSOR:
-						_vm->playGnapScratchingHead(_vm->_platX, _vm->_platY);
+						_vm->playGnapScratchingHead(_vm->_plat->_pos.x, _vm->_plat->_pos.y);
 						break;
 					case TALK_CURSOR:
-						_vm->playGnapBrainPulsating(_vm->_platX, _vm->_platY);
+						_vm->playGnapBrainPulsating(_vm->_plat->_pos.x, _vm->_plat->_pos.y);
 						_vm->playPlatypusSequence(_vm->getPlatypusSequenceId());
 						break;
 					case PLAT_CURSOR:
@@ -2622,7 +2618,7 @@ void Scene17::run() {
 							platHangUpPhone();
 							_vm->_isLeavingScene = true;
 							_vm->gnapUseDeviceOnPlatypus();
-							_vm->_platypusFacing = kDirUpLeft;
+							_vm->_plat->_idleFacing = kDirUpLeft;
 							_vm->platypusWalkTo(_vm->_hotspotsWalkPos[2].x, _vm->_hotspotsWalkPos[2].y, 1, 0x107C2, 1);
 							_vm->setFlag(kGFUnk16);
 							_vm->_platypusActionStatus = kAS17PlatUsePhone;
@@ -2666,7 +2662,7 @@ void Scene17::run() {
 							platHangUpPhone();
 							_vm->_isLeavingScene = true;
 							_vm->gnapUseDeviceOnPlatypus();
-							_vm->_platypusFacing = kDirUpLeft;
+							_vm->_plat->_idleFacing = kDirUpLeft;
 							_vm->platypusWalkTo(_vm->_hotspotsWalkPos[2].x, _vm->_hotspotsWalkPos[2].y, 1, 0x107C2, 1);
 							_vm->setFlag(kGFUnk16);
 							_vm->_platypusActionStatus = kAS17PlatUsePhone;
@@ -3186,11 +3182,11 @@ void Scene18::gnapCarryGarbageCanTo(int gridX) {
 		else
 			direction = -1;
 	} else {
-		if (_vm->_gnap->_pos.y == _vm->_platY) {
+		if (_vm->_gnap->_pos.y == _vm->_plat->_pos.y) {
 			if (nextGridX >= _vm->_gnap->_pos.x) {
-				if (nextGridX >= _vm->_platX && _vm->_gnap->_pos.x <= _vm->_platX)
+				if (nextGridX >= _vm->_plat->_pos.x && _vm->_gnap->_pos.x <= _vm->_plat->_pos.x)
 					_vm->platypusMakeRoom();
-			} else if (nextGridX <= _vm->_platX && _vm->_gnap->_pos.x >= _vm->_platX) {
+			} else if (nextGridX <= _vm->_plat->_pos.x && _vm->_gnap->_pos.x >= _vm->_plat->_pos.x) {
 				_vm->platypusMakeRoom();
 			}
 		}
@@ -3442,17 +3438,17 @@ void Scene18::run() {
 				if (_vm->_grabCursorSpriteIndex == kItemJoint) {
 					_vm->gnapUseJointOnPlatypus();
 				} else if (_vm->_grabCursorSpriteIndex >= 0) {
-					_vm->playGnapShowItem(_vm->_grabCursorSpriteIndex, _vm->_platX, _vm->_platY);
+					_vm->playGnapShowItem(_vm->_grabCursorSpriteIndex, _vm->_plat->_pos.x, _vm->_plat->_pos.y);
 				} else {
 					switch (_vm->_verbCursor) {
 					case LOOK_CURSOR:
-						_vm->playGnapMoan1(_vm->_platX, _vm->_platY);
+						_vm->playGnapMoan1(_vm->_plat->_pos.x, _vm->_plat->_pos.y);
 						break;
 					case GRAB_CURSOR:
 						_vm->gnapKissPlatypus(0);
 						break;
 					case TALK_CURSOR:
-						_vm->playGnapBrainPulsating(_vm->_platX, _vm->_platY);
+						_vm->playGnapBrainPulsating(_vm->_plat->_pos.x, _vm->_plat->_pos.y);
 						_vm->playPlatypusSequence(_vm->getPlatypusSequenceId());
 						break;
 					case PLAT_CURSOR:
@@ -4148,17 +4144,17 @@ void Scene19::run() {
 				if (_vm->_grabCursorSpriteIndex == kItemJoint) {
 					_vm->gnapUseJointOnPlatypus();
 				} else if (_vm->_grabCursorSpriteIndex >= 0) {
-					_vm->playGnapImpossible(_vm->_platX, _vm->_platY);
+					_vm->playGnapImpossible(_vm->_plat->_pos.x, _vm->_plat->_pos.y);
 				} else {
 					switch (_vm->_verbCursor) {
 					case LOOK_CURSOR:
-						_vm->playGnapMoan1(_vm->_platX, _vm->_platY);
+						_vm->playGnapMoan1(_vm->_plat->_pos.x, _vm->_plat->_pos.y);
 						break;
 					case GRAB_CURSOR:
 						_vm->gnapKissPlatypus(0);
 						break;
 					case TALK_CURSOR:
-						_vm->playGnapBrainPulsating(_vm->_platX, _vm->_platY);
+						_vm->playGnapBrainPulsating(_vm->_plat->_pos.x, _vm->_plat->_pos.y);
 						_vm->playPlatypusSequence(_vm->getPlatypusSequenceId());
 						break;
 					case PLAT_CURSOR:

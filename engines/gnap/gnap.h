@@ -242,8 +242,6 @@ enum {
 		29	0x20000000	Gas taken
 		30	0x40000000
 		31	0x80000000
-
-
 */
 
 	// 0x7AB	Gnap walks to the right 1
@@ -285,6 +283,7 @@ public:
 	Debugger *_debugger;
 	Scene *_scene;
 	PlayerGnap *_gnap;
+	PlayerPlat *_plat;
 
 	int _lastUpdateClock;
 
@@ -504,7 +503,6 @@ public:
 	// Platypus walking
 	int _platWalkNodesCount;
 	GridStruct _platWalkNodes[kMaxGridStructs];
-	int _platX, _platY;
 	int _platWalkDestX, _platWalkDestY;
 	int _platWalkDeltaX, _platWalkDeltaY, _platWalkDirX, _platWalkDirY, _platWalkDirXIncr, _platWalkDirYIncr;
 
@@ -550,7 +548,6 @@ public:
 	void gnapUseDisguiseOnPlatypus();
 
 	// Platypus
-	Facing _platypusFacing;
 	int _platypusActionStatus;
 	int _platypusSequenceId, _platypusSequenceDatNum, _platypusId;
 	int getPlatypusSequenceId();

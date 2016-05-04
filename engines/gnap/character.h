@@ -53,6 +53,10 @@ public:
 	PlayerGnap(GnapEngine *vm);
 };
 
+class PlayerPlat : public Character {
+public:
+	PlayerPlat(GnapEngine *vm);
+};
 } // End of namespace Gnap
 
 #endif // GNAP_CHARACTER_H
