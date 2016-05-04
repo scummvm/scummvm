@@ -163,7 +163,7 @@ int16 Program::findLocal(const char* name) {
 int16 Program::addLocal(const char *name, int16 value, int16 min, int16 max) {
 	assert(_numLocals < NUM_LOCALS);
 
-	strncpy(_localNames[_numLocals], name, 10);
+	Common::strlcpy(_localNames[_numLocals], name, 10);
 	_locals[_numLocals].setRange(min, max);
 	_locals[_numLocals].setValue(value);
 
