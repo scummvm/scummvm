@@ -20,38 +20,28 @@
  *
  */
 
-#ifndef TITANIC_MOVIE_CLIP_H
-#define TITANIC_MOVIE_CLIP_H
+#ifndef TITANIC_MOVIE_RANGE_INFO_H
+#define TITANIC_MOVIE_RANGE_INFO_H
 
+#include "video/video_decoder.h"
 #include "titanic/core/list.h"
+#include "titanic/core/resource_key.h"
+#include "titanic/support/movie_event.h"
 
 namespace Titanic {
 
-enum ClipFlag { 
-	CLIPFLAG_HAS_END_FRAME = 1,
-	CLIPFLAG_4 = 4,
-	CLIPFLAG_HAS_START_FRAME = 8,
-	CLIPFLAG_PLAY = 0x10
-};
-
-class CGameObject;
-
-/**
- * Movie clip
- */
-class CMovieClip : public ListItem {
-private:
-	Common::List<void *> _items;
-	CString _string2;
-	CString _string3;
+class CMovieRangeInfo : public ListItem {
 public:
-	CString _name;
-	int _startFrame;
-	int _endFrame;
+	int _fieldC;
+	int _field10;
+	int _field14;
+	int _field18;
+	int _field1C;
+	CMovieEventList _events;
 public:
-	CLASSDEF
-	CMovieClip();
-	CMovieClip(const CString &name, int startFrame, int endFrame);
+	CMovieRangeInfo();
+	CMovieRangeInfo(const CMovieRangeInfo *src);
+	virtual ~CMovieRangeInfo() {}
 
 	/**
 	 * Save the data for the class to file
@@ -63,32 +53,12 @@ public:
 	 */
 	virtual void load(SimpleFile *file);
 
-	void process(CGameObject *owner);
-};
-
-/**
- * Movie clip list
- */
-class CMovieClipList: public List<CMovieClip> {
-public:
 	/**
-	 * Finds and returns a movie clip in the list by name
+	 * Adds an event to the events list
 	 */
-	CMovieClip *findByName(const Common::String &name) const;
-
-	/**
-	 * Returns true if a clip exists in the list with a given name
-	 * and starting frame number
-	 */
-	bool existsByStart(const CString &name, int startFrame = 0) const;
-
-	/**
-	 * Returns true if a clip exists in the list with a given name
-	 * and starting frame number
-	 */
-	bool existsByEnd(const CString &name, int endFrame = 0) const;
+	void add(CMovieEvent *movieEvent) { _events.push_back(movieEvent); }
 };
 
 } // End of namespace Titanic
 
-#endif /* TITANIC_MOVIE_CLIP_H */
+#endif /* TITANIC_MOVIE_RANGE_INFO_H */

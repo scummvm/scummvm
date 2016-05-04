@@ -338,6 +338,11 @@ public:
 	 * and ending frame number
 	 */
 	bool clipExistsByEnd(const CString &name, int endFrame = 0) const;
+
+	/**
+	 * Checks and plays a pending clip
+	 */
+	void checkPlayMovie(const CString &name, int flags);
 };
 
 } // End of namespace Titanic

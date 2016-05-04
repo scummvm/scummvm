@@ -91,7 +91,7 @@ void OSMovie::proc11() {
 	warning("TODO: OSMovie::proc11");
 }
 
-void OSMovie::proc12() {
+void OSMovie::proc12(const CString &name, int flags, CGameObject *obj) {
 	warning("TODO: OSMovie::proc12");
 }
 

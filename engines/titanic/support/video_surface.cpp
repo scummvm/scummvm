@@ -402,6 +402,12 @@ void OSVideoSurface::playMovie(uint startFrame, uint endFrame, int v3, bool v4) 
 	}
 }
 
+void OSVideoSurface::proc35(const CString &name, int flags, CGameObject *owner) {
+	if (loadIfReady() && _movie) {
+		_movie->proc12(name, flags, owner);
+	}
+}
+
 void OSVideoSurface::stopMovie() {
 	if (_movie)
 		_movie->stop();

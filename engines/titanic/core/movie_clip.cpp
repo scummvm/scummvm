@@ -21,16 +21,15 @@
  */
 
 #include "titanic/core/movie_clip.h"
+#include "titanic/core/game_object.h"
 
 namespace Titanic {
 
-CMovieClip::CMovieClip(): ListItem(), _startFrame(0), _endFrame(0),
-	_field20(0), _field24(0), _field28(0), _field2C(0), _field30(0) {
+CMovieClip::CMovieClip(): ListItem(), _startFrame(0), _endFrame(0) {
 }
 
 CMovieClip::CMovieClip(const CString &name, int startFrame, int endFrame):
-	ListItem(), _name(name), _startFrame(startFrame), _endFrame(endFrame),
-	_field20(0), _field24(0), _field28(0), _field2C(0), _field30(0) {
+	ListItem(), _name(name), _startFrame(startFrame), _endFrame(endFrame) {
 }
 
 void CMovieClip::save(SimpleFile *file, int indent) const {
@@ -48,14 +47,8 @@ void CMovieClip::load(SimpleFile *file) {
 
 	switch (val) {
 	case 1:
-		_name = file->readString();
-		_startFrame = file->readNumber();
-		_endFrame = file->readNumber();
-		_field20 = file->readNumber();
-		_field24 = file->readNumber();
-		_field28 = file->readNumber();
-		_field2C = file->readNumber();
-		_field30 = file->readNumber();
+		// This should never be used
+		assert(0);
 		break;
 
 	case 2:
@@ -70,6 +63,20 @@ void CMovieClip::load(SimpleFile *file) {
 	}
 
 	ListItem::load(file);
+}
+
+void CMovieClip::process(CGameObject *owner) {
+	int flags = 0;
+	if (_endFrame)
+		flags |= CLIPFLAG_HAS_END_FRAME;
+	if (_startFrame)
+		flags |= CLIPFLAG_HAS_START_FRAME;
+
+	warning("TODO: CMovieClip::process");
+
+	owner->checkPlayMovie(_name, flags);
+
+
 }
 
 CMovieClip *CMovieClipList::findByName(const Common::String &name) const {

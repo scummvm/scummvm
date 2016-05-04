@@ -737,4 +737,16 @@ bool CGameObject::clipExistsByStart(const CString &name, int startFrame) const {
 bool CGameObject::clipExistsByEnd(const CString &name, int endFrame) const {
 	return _clipList1.existsByEnd(name, endFrame);
 }
+
+void CGameObject::checkPlayMovie(const CString &name, int flags) {
+	if (!_surface && !_resource.empty())
+		loadResource(_resource);
+
+	if (_surface ) {
+		_surface->proc35(name, flags, (flags & CLIPFLAG_4) ? this : nullptr);
+		if (flags & CLIPFLAG_PLAY)
+			getGameManager()->_gameState.addMovie(_surface->_movie);
+	}
+}
+
 } // End of namespace Titanic

@@ -166,6 +166,8 @@ public:
 	 */
 	virtual void playMovie(uint startFrame, uint endFrame, int v3, bool v4) = 0;
 
+	virtual void proc35(const CString &name, int flags, CGameObject *owner) = 0;
+
 	/**
 	 * Stops any movie currently attached to the surface
 	 */
@@ -328,6 +330,8 @@ public:
 	 * if not already loaded
 	 */
 	virtual void playMovie(uint startFrame, uint endFrame, int v3, bool v4);
+
+	virtual void proc35(const CString &name, int flags, CGameObject *owner);
 
 	/**
 	 * Stops any movie currently attached to the surface

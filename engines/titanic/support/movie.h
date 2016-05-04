@@ -61,7 +61,7 @@ public:
 	
 	virtual void proc10() = 0;
 	virtual void proc11() = 0;
-	virtual void proc12() = 0;
+	virtual void proc12(const CString &name, int flags, CGameObject *obj) = 0;
 
 	/**
 	 * Stops the movie
@@ -119,7 +119,7 @@ public:
 	
 	virtual void proc10();
 	virtual void proc11();
-	virtual void proc12();
+	virtual void proc12(const CString &name, int flags, CGameObject *obj);
 
 	/**
 	 * Stops the movie
