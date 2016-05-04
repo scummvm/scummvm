@@ -77,7 +77,7 @@ void Scene20::updateAnimationsCb() {
 			_vm->invAdd(kItemJoint);
 			_vm->setFlag(kGFJointTaken);
 			_stonerGuyShowingJoint = false;
-			_vm->_gnapActionStatus = kAS20GrabJointDone;
+			_vm->_gnap->_actionStatus = kAS20GrabJointDone;
 			break;
 		case 0x16E:
 			gameSys.setAnimation(0x16E, 21, 2);
@@ -92,7 +92,7 @@ void Scene20::updateAnimationsCb() {
 			gameSys.insertSequence(_nextStonerGuySequenceId, 21, _currStonerGuySequenceId, 21, kSeqSyncWait, 0, 0, 0);
 			_currStonerGuySequenceId = _nextStonerGuySequenceId;
 			_nextStonerGuySequenceId = -1;
-			_vm->_gnapActionStatus = kAS20ActionDone;
+			_vm->_gnap->_actionStatus = kAS20ActionDone;
 			break;
 		case 0x16F:
 			gameSys.setAnimation(_nextStonerGuySequenceId, 21, 2);
@@ -264,14 +264,14 @@ void Scene20::run() {
 
 		switch (_vm->_sceneClickedHotspot) {
 		case kHS20Device:
-			if (_vm->_gnapActionStatus < 0) {
+			if (_vm->_gnap->_actionStatus < 0) {
 				_vm->runMenu();
 				updateHotspots();
 			}
 			break;
 
 		case kHS20Platypus:
-			if (_vm->_gnapActionStatus < 0) {
+			if (_vm->_gnap->_actionStatus < 0) {
 				if (_vm->_grabCursorSpriteIndex == kItemJoint) {
 					_vm->gnapUseJointOnPlatypus();
 				} else if (_vm->_grabCursorSpriteIndex >= 0) {
@@ -297,71 +297,71 @@ void Scene20::run() {
 			break;
 
 		case kHS20ExitParkingLot:
-			if (_vm->_gnapActionStatus < 0) {
+			if (_vm->_gnap->_actionStatus < 0) {
 				if (_stonerGuyShowingJoint)
 					_vm->_timers[4] = 0;
 				_vm->_isLeavingScene = true;
 				_vm->_newSceneNum = 21;
 				_vm->gnapWalkTo(_vm->_hotspotsWalkPos[kHS20ExitParkingLot].x, _vm->_hotspotsWalkPos[kHS20ExitParkingLot].y, 0, 0x107AF, 1);
-				_vm->_gnapActionStatus = kAS20LeaveScene;
+				_vm->_gnap->_actionStatus = kAS20LeaveScene;
 				_vm->platypusWalkTo(_vm->_hotspotsWalkPos[kHS20ExitParkingLot].x, _vm->_hotspotsWalkPos[kHS20ExitParkingLot].y + 1, -1, 0x107CF, 1);
 				_vm->_plat->_idleFacing = kDirUnk4;
 			}
 			break;
 
 		case kHS20ExitPhone:
-			if (_vm->_gnapActionStatus < 0) {
+			if (_vm->_gnap->_actionStatus < 0) {
 				if (_stonerGuyShowingJoint)
 					_vm->_timers[4] = 0;
 				_vm->_isLeavingScene = true;
 				_vm->_newSceneNum = 17;
 				_vm->gnapWalkTo(_vm->_hotspotsWalkPos[kHS20ExitPhone].x, _vm->_hotspotsWalkPos[kHS20ExitPhone].y, 0, 0x107AE, 1);
-				_vm->_gnapActionStatus = kAS20LeaveScene;
+				_vm->_gnap->_actionStatus = kAS20LeaveScene;
 				_vm->platypusWalkTo(_vm->_hotspotsWalkPos[kHS20ExitPhone].x + 1, _vm->_hotspotsWalkPos[kHS20ExitPhone].y, -1, 0x107C2, 1);
 			}
 			break;
 
 		case kHS20ExitOutsideToyStore:
-			if (_vm->_gnapActionStatus < 0) {
+			if (_vm->_gnap->_actionStatus < 0) {
 				if (_stonerGuyShowingJoint)
 					_vm->_timers[4] = 0;
 				_vm->_isLeavingScene = true;
 				_vm->_newSceneNum = 18;
 				_vm->_hotspots[kHS20WalkArea2]._flags |= SF_WALKABLE;
 				_vm->gnapWalkTo(_vm->_hotspotsWalkPos[kHS20ExitOutsideToyStore].x, _vm->_hotspotsWalkPos[kHS20ExitOutsideToyStore].y, 0, 0x107AB, 1);
-				_vm->_gnapActionStatus = kAS20LeaveScene;
+				_vm->_gnap->_actionStatus = kAS20LeaveScene;
 				_vm->platypusWalkTo(_vm->_hotspotsWalkPos[kHS20ExitOutsideToyStore].x, _vm->_hotspotsWalkPos[kHS20ExitOutsideToyStore].y + 1, -1, 0x107CD, 1);
 				_vm->_hotspots[kHS20WalkArea2]._flags &= ~SF_WALKABLE;
 			}
 			break;
 
 		case kHS20ExitInsideGrubCity:
-			if (_vm->_gnapActionStatus < 0) {
+			if (_vm->_gnap->_actionStatus < 0) {
 				if (_stonerGuyShowingJoint)
 					_vm->_timers[4] = 0;
 				_vm->_isLeavingScene = true;
 				_vm->_newSceneNum = 22;
 				_vm->gnapWalkTo(_vm->_hotspotsWalkPos[kHS20ExitInsideGrubCity].x, _vm->_hotspotsWalkPos[kHS20ExitInsideGrubCity].y - 1, 0, 0x107BB, 1);
-				_vm->_gnapActionStatus = kAS20LeaveScene;
+				_vm->_gnap->_actionStatus = kAS20LeaveScene;
 				_vm->platypusWalkTo(_vm->_hotspotsWalkPos[kHS20ExitInsideGrubCity].x + 1, _vm->_hotspotsWalkPos[kHS20ExitInsideGrubCity].y, -1, 0x107C2, 1);
 				_vm->_plat->_idleFacing = kDirUnk4;
 			}
 			break;
 
 		case kHS20ExitOutsideCircusWorld:
-			if (_vm->_gnapActionStatus < 0) {
+			if (_vm->_gnap->_actionStatus < 0) {
 				if (_stonerGuyShowingJoint)
 					_vm->_timers[4] = 0;
 				_vm->_isLeavingScene = true;
 				_vm->_newSceneNum = 24;
 				_vm->gnapWalkTo(_vm->_hotspotsWalkPos[kHS20ExitOutsideCircusWorld].x, _vm->_hotspotsWalkPos[kHS20ExitOutsideCircusWorld].y, 0, 0x107BB, 1);
-				_vm->_gnapActionStatus = kAS20LeaveScene;
+				_vm->_gnap->_actionStatus = kAS20LeaveScene;
 				_vm->platypusWalkTo(_vm->_hotspotsWalkPos[kHS20ExitOutsideCircusWorld].x + 1, _vm->_hotspotsWalkPos[kHS20ExitOutsideCircusWorld].y, -1, 0x107C2, 1);
 			}
 			break;
 
 		case kHS20StonerGuy:
-			if (_vm->_gnapActionStatus < 0) {
+			if (_vm->_gnap->_actionStatus < 0) {
 				if (_vm->_grabCursorSpriteIndex >= 0) {
 					_vm->playGnapShowCurrItem(_vm->_hotspotsWalkPos[kHS20StonerGuy].x, _vm->_hotspotsWalkPos[kHS20StonerGuy].y, 5, 4);
 				} else {
@@ -373,7 +373,7 @@ void Scene20::run() {
 						_vm->_gnap->_idleFacing = kDirUpRight;
 						_vm->gnapWalkTo(_vm->_hotspotsWalkPos[kHS20StonerGuy].x, _vm->_hotspotsWalkPos[kHS20StonerGuy].y, 0, _vm->getGnapSequenceId(gskIdle, 0, 0) | 0x10000, 1);
 						if (_stonerGuyShowingJoint)
-							_vm->_gnapActionStatus = kAS20GrabJoint;
+							_vm->_gnap->_actionStatus = kAS20GrabJoint;
 						else
 							_vm->playGnapImpossible(0, 0);
 						break;
@@ -381,9 +381,9 @@ void Scene20::run() {
 						_vm->_gnap->_idleFacing = kDirUpRight;
 						_vm->gnapWalkTo(_vm->_hotspotsWalkPos[kHS20StonerGuy].x, _vm->_hotspotsWalkPos[kHS20StonerGuy].y, 0, _vm->getGnapSequenceId(gskBrainPulsating, 0, 0) | 0x10000, 1);
 						if (_vm->isFlag(kGFJointTaken))
-							_vm->_gnapActionStatus = kAS20TalkStonerGuyNoJoint;
+							_vm->_gnap->_actionStatus = kAS20TalkStonerGuyNoJoint;
 						else
-							_vm->_gnapActionStatus = kAS20TalkStonerGuyHasJoint;
+							_vm->_gnap->_actionStatus = kAS20TalkStonerGuyHasJoint;
 						break;
 					case PLAT_CURSOR:
 						_vm->playGnapImpossible(0, 0);
@@ -394,7 +394,7 @@ void Scene20::run() {
 			break;
 
 		case kHS20GroceryStoreGuy:
-			if (_vm->_gnapActionStatus < 0) {
+			if (_vm->_gnap->_actionStatus < 0) {
 				if (_vm->_grabCursorSpriteIndex >= 0) {
 					_vm->playGnapShowCurrItem(_vm->_hotspotsWalkPos[kHS20GroceryStoreGuy].x, _vm->_hotspotsWalkPos[kHS20GroceryStoreGuy].y, 2, 4);
 				} else {
@@ -406,12 +406,12 @@ void Scene20::run() {
 						_stonerGuyShowingJoint = false;
 						_vm->_gnap->_idleFacing = kDirUpLeft;
 						_vm->gnapWalkTo(_vm->_hotspotsWalkPos[kHS20GroceryStoreGuy].x, _vm->_hotspotsWalkPos[kHS20GroceryStoreGuy].y, 0, _vm->getGnapSequenceId(gskIdle, 0, 0) | 0x10000, 1);
-						_vm->_gnapActionStatus = kAS20GrabGroceryStoreGuy;
+						_vm->_gnap->_actionStatus = kAS20GrabGroceryStoreGuy;
 						break;
 					case TALK_CURSOR:
 						_vm->_gnap->_idleFacing = kDirUpLeft;
 						_vm->gnapWalkTo(_vm->_hotspotsWalkPos[kHS20GroceryStoreGuy].x, _vm->_hotspotsWalkPos[kHS20GroceryStoreGuy].y, 0, _vm->getGnapSequenceId(gskBrainPulsating, 0, 0) | 0x10000, 1);
-						_vm->_gnapActionStatus = kAS20TalkGroceryStoreGuy;
+						_vm->_gnap->_actionStatus = kAS20TalkGroceryStoreGuy;
 						break;
 					case PLAT_CURSOR:
 						_vm->playGnapImpossible(0, 0);
@@ -422,11 +422,11 @@ void Scene20::run() {
 			break;
 
 		case kHS20GroceryStoreHat:
-			if (_vm->_gnapActionStatus < 0) {
+			if (_vm->_gnap->_actionStatus < 0) {
 				if (_vm->_grabCursorSpriteIndex == kItemCowboyHat) {
 					_vm->_gnap->_idleFacing = kDirUpRight;
 					_vm->gnapWalkTo(_vm->_hotspotsWalkPos[kHS20GroceryStoreHat].x, _vm->_hotspotsWalkPos[kHS20GroceryStoreHat].y, 0, _vm->getGnapSequenceId(gskIdle, 0, 0) | 0x10000, 1);
-					_vm->_gnapActionStatus = kAS20SwitchGroceryStoreHat;
+					_vm->_gnap->_actionStatus = kAS20SwitchGroceryStoreHat;
 				} else if (_vm->_grabCursorSpriteIndex >= 0) {
 					_vm->playGnapShowCurrItem(_vm->_hotspotsWalkPos[kHS20GroceryStoreHat].x, _vm->_hotspotsWalkPos[kHS20GroceryStoreHat].y, 1, 6);
 				} else {
@@ -438,7 +438,7 @@ void Scene20::run() {
 						_stonerGuyShowingJoint = false;
 						_vm->_gnap->_idleFacing = kDirUpLeft;
 						_vm->gnapWalkTo(_vm->_hotspotsWalkPos[kHS20GroceryStoreGuy].x, _vm->_hotspotsWalkPos[kHS20GroceryStoreGuy].y, 0, _vm->getGnapSequenceId(gskIdle, 0, 0) | 0x10000, 1);
-						_vm->_gnapActionStatus = kAS20GrabGroceryStoreHat;
+						_vm->_gnap->_actionStatus = kAS20GrabGroceryStoreHat;
 						break;
 					case TALK_CURSOR:
 					case PLAT_CURSOR:
@@ -469,14 +469,14 @@ void Scene20::run() {
 			_vm->playSound(0x10940, true);
 
 		if (!_vm->_isLeavingScene) {
-			if (_vm->_platypusActionStatus < 0) {
+			if (_vm->_plat->_actionStatus < 0) {
 				_vm->_hotspots[kHS20WalkArea1]._y2 += 48;
 				_vm->updatePlatypusIdleSequence();
 				_vm->_hotspots[kHS20WalkArea1]._y2 -= 48;
 			}
-			if (_vm->_gnapActionStatus < 0)
+			if (_vm->_gnap->_actionStatus < 0)
 				_vm->updateGnapIdleSequence();
-			if (_vm->_gnapActionStatus < 0 && !_vm->_timers[5] && _nextGroceryStoreGuySequenceId == -1) {
+			if (_vm->_gnap->_actionStatus < 0 && !_vm->_timers[5] && _nextGroceryStoreGuySequenceId == -1) {
 				_vm->_timers[5] = _vm->getRandom(50) + 130;
 				if (_vm->getRandom(4) != 0)
 					_nextGroceryStoreGuySequenceId = 0x17C;
@@ -485,7 +485,7 @@ void Scene20::run() {
 			}
 			if (!_vm->_timers[7]) {
 				_vm->_timers[7] = _vm->getRandom(100) + 100;
-				if (_vm->_gnapActionStatus < 0 && _vm->_platypusActionStatus < 0) {
+				if (_vm->_gnap->_actionStatus < 0 && _vm->_plat->_actionStatus < 0) {
 					switch (_vm->getRandom(3)) {
 					case 0:
 						gameSys.insertSequence(0x183, 253, 0, 0, kSeqNone, 0, 0, 0);
@@ -518,7 +518,7 @@ void Scene20::updateAnimations() {
 
 	if (gameSys.getAnimationStatus(0) == 2) {
 		gameSys.setAnimation(0, 0, 0);
-		switch (_vm->_gnapActionStatus) {
+		switch (_vm->_gnap->_actionStatus) {
 		case kAS20LeaveScene:
 			_vm->_sceneDone = true;
 			break;
@@ -552,13 +552,13 @@ void Scene20::updateAnimations() {
 			_vm->_timers[6] = 200;
 			_vm->_timers[4] = 100;
 			_stonerGuyShowingJoint = true;
-			_vm->_gnapActionStatus = -1;
+			_vm->_gnap->_actionStatus = -1;
 			break;
 		case kAS20GrabJoint:
 			_nextStonerGuySequenceId = 0x16A;
 			break;
 		case kAS20ActionDone:
-			_vm->_gnapActionStatus = -1;
+			_vm->_gnap->_actionStatus = -1;
 			break;
 		case kAS20TalkGroceryStoreGuy:
 			gameSys.setAnimation(0x170, 21, 2);
@@ -609,7 +609,7 @@ void Scene20::updateAnimations() {
 			_vm->_gnapSequenceDatNum = 0;
 			_vm->invRemove(kItemCowboyHat);
 			_vm->invAdd(kItemGroceryStoreHat);
-			_vm->_gnapActionStatus = kAS20SwitchGroceryStoreHatDone;
+			_vm->_gnap->_actionStatus = kAS20SwitchGroceryStoreHatDone;
 			break;
 		case kAS20SwitchGroceryStoreHatDone:
 			gameSys.insertSequence(0x17F, 20, 372, 20, kSeqSyncWait, 0, 0, 0);
@@ -626,11 +626,11 @@ void Scene20::updateAnimations() {
 			_vm->setGrabCursorSprite(kItemGroceryStoreHat);
 			_vm->_gnap->_idleFacing = kDirBottomRight;
 			_vm->gnapWalkTo(3, 8, -1, _vm->getGnapSequenceId(gskIdle, 0, 0) | 0x10000, 1);
-			_vm->_gnapActionStatus = -1;
+			_vm->_gnap->_actionStatus = -1;
 			break;
 		case kAS20GrabJointDone:
 			_vm->setGrabCursorSprite(kItemJoint);
-			_vm->_gnapActionStatus = -1;
+			_vm->_gnap->_actionStatus = -1;
 			break;
 		}
 	}
@@ -652,7 +652,7 @@ void Scene20::updateAnimations() {
 			gameSys.insertSequence(0x17D, _vm->_gnapId, makeRid(_vm->_gnapSequenceDatNum, _vm->_gnapSequenceId), _vm->_gnapId, kSeqSyncWait, 0, 0, 0);
 			_vm->_gnapSequenceId = 0x17D;
 			_vm->_gnapSequenceDatNum = 0;
-			_vm->_gnapActionStatus = kAS20ActionDone;
+			_vm->_gnap->_actionStatus = kAS20ActionDone;
 			gameSys.setAnimation(0x16D, 21, 2);
 			gameSys.insertSequence(0x16D, 21, _currStonerGuySequenceId, 21, kSeqSyncWait, 0, 0, 0);
 			_currStonerGuySequenceId = 0x16D;
@@ -667,7 +667,7 @@ void Scene20::updateAnimations() {
 			gameSys.insertSequence(0x17E, _vm->_gnapId, makeRid(_vm->_gnapSequenceDatNum, _vm->_gnapSequenceId), _vm->_gnapId, kSeqSyncWait, 0, 0, 0);
 			_vm->_gnapSequenceId = 0x17E;
 			_vm->_gnapSequenceDatNum = 0;
-			_vm->_gnapActionStatus = kAS20ActionDone;
+			_vm->_gnap->_actionStatus = kAS20ActionDone;
 			gameSys.setAnimation(0x16D, 21, 2);
 			gameSys.insertSequence(0x16D, 21, _currStonerGuySequenceId, 21, kSeqSyncWait, 0, 0, 0);
 			_currStonerGuySequenceId = 0x16D;
@@ -690,7 +690,7 @@ void Scene20::updateAnimations() {
 			gameSys.insertSequence(0x175, 20, _currGroceryStoreGuySequenceId, 20, kSeqSyncWait, 0, 0, 0);
 			_currGroceryStoreGuySequenceId = 0x175;
 			_nextGroceryStoreGuySequenceId = -1;
-			_vm->_gnapActionStatus = kAS20ActionDone;
+			_vm->_gnap->_actionStatus = kAS20ActionDone;
 			break;
 		default:
 			if (_nextGroceryStoreGuySequenceId != -1) {
@@ -782,14 +782,14 @@ void Scene21::run() {
 
 		switch (_vm->_sceneClickedHotspot) {
 		case kHS21Device:
-			if (_vm->_gnapActionStatus < 0) {
+			if (_vm->_gnap->_actionStatus < 0) {
 				_vm->runMenu();
 				updateHotspots();
 			}
 			break;
 
 		case kHS21Platypus:
-			if (_vm->_gnapActionStatus < 0) {
+			if (_vm->_gnap->_actionStatus < 0) {
 				if (_vm->_grabCursorSpriteIndex == kItemJoint) {
 					_vm->gnapUseJointOnPlatypus();
 				} else if (_vm->_grabCursorSpriteIndex >= 0) {
@@ -815,7 +815,7 @@ void Scene21::run() {
 			break;
 
 		case kHS21Banana:
-			if (_vm->_gnapActionStatus < 0) {
+			if (_vm->_gnap->_actionStatus < 0) {
 				if (_vm->_grabCursorSpriteIndex >= 0) {
 					_vm->playGnapShowItem(_vm->_grabCursorSpriteIndex, 2, 5);
 				} else {
@@ -827,7 +827,7 @@ void Scene21::run() {
 						_vm->gnapWalkTo(_vm->_gnap->_pos, 0, _vm->getGnapSequenceId(gskIdle, _vm->_hotspotsWalkPos[kHS21Banana].x, _vm->_hotspotsWalkPos[kHS21Banana].y) | 0x10000, 1);
 						_vm->playGnapPullOutDevice(2, 5);
 						_vm->playGnapUseDevice(0, 0);
-						_vm->_gnapActionStatus = kAS21GrabBanana;
+						_vm->_gnap->_actionStatus = kAS21GrabBanana;
 						break;
 					case TALK_CURSOR:
 					case PLAT_CURSOR:
@@ -838,11 +838,11 @@ void Scene21::run() {
 			break;
 
 		case kHS21OldLady:
-			if (_vm->_gnapActionStatus < 0) {
+			if (_vm->_gnap->_actionStatus < 0) {
 				if (_vm->_grabCursorSpriteIndex == kItemGroceryStoreHat) {
 					_vm->_newSceneNum = 47;
 					_vm->gnapWalkTo(4, 6, 0, _vm->getGnapSequenceId(gskIdle, 0, 0) | 0x10000, 1);
-					_vm->_gnapActionStatus = kAS21UseHatWithOldLady;
+					_vm->_gnap->_actionStatus = kAS21UseHatWithOldLady;
 				} else if (_vm->_grabCursorSpriteIndex >= 0) {
 					_vm->playGnapShowCurrItem(4, 6, 7, 4);
 				} else {
@@ -854,13 +854,13 @@ void Scene21::run() {
 						_vm->_gnap->_idleFacing = kDirUpLeft;
 						_vm->_hotspots[kHS21WalkArea1]._flags |= SF_WALKABLE;
 						_vm->gnapWalkTo(7, 6, 0, _vm->getGnapSequenceId(gskIdle, 0, 0) | 0x10000, 1);
-						_vm->_gnapActionStatus = kAS21GrabOldLady;
+						_vm->_gnap->_actionStatus = kAS21GrabOldLady;
 						_vm->_hotspots[kHS21WalkArea1]._flags &= ~SF_WALKABLE;
 						break;
 					case TALK_CURSOR:
 						_vm->_gnap->_idleFacing = kDirUpRight;
 						_vm->gnapWalkTo(_vm->_hotspotsWalkPos[kHS21OldLady].x, _vm->_hotspotsWalkPos[kHS21OldLady].y, 0, _vm->getGnapSequenceId(gskBrainPulsating, 0, 0) | 0x10000, 1);
-						_vm->_gnapActionStatus = kAS21TalkOldLady;
+						_vm->_gnap->_actionStatus = kAS21TalkOldLady;
 						break;
 					case PLAT_CURSOR:
 						_vm->playGnapImpossible(0, 0);
@@ -871,11 +871,11 @@ void Scene21::run() {
 			break;
 
 		case kHS21ExitOutsideGrubCity:
-			if (_vm->_gnapActionStatus < 0) {
+			if (_vm->_gnap->_actionStatus < 0) {
 				_vm->_isLeavingScene = true;
 				_vm->_newSceneNum = 20;
 				_vm->gnapWalkTo(_vm->_hotspotsWalkPos[kHS21ExitOutsideGrubCity].x, _vm->_hotspotsWalkPos[kHS21ExitOutsideGrubCity].y, 0, 0x107B3, 1);
-				_vm->_gnapActionStatus = kAS21LeaveScene;
+				_vm->_gnap->_actionStatus = kAS21LeaveScene;
 				_vm->platypusWalkTo(_vm->_hotspotsWalkPos[kHS21ExitOutsideGrubCity].x + 1, _vm->_hotspotsWalkPos[kHS21ExitOutsideGrubCity].y, -1, 0x107C2, 1);
 			}
 			break;
@@ -902,7 +902,7 @@ void Scene21::run() {
 		if (!_vm->_isLeavingScene) {
 			_vm->updatePlatypusIdleSequence();
 			_vm->updateGnapIdleSequence();
-			if (!_vm->isFlag(kGFTwigTaken) && !_vm->_timers[4] && _nextOldLadySequenceId == -1 && _vm->_gnapActionStatus == -1) {
+			if (!_vm->isFlag(kGFTwigTaken) && !_vm->_timers[4] && _nextOldLadySequenceId == -1 && _vm->_gnap->_actionStatus == -1) {
 				_vm->_timers[4] = _vm->getRandom(30) + 50;
 				switch (_vm->getRandom(5)) {
 				case 0:
@@ -940,10 +940,10 @@ void Scene21::updateAnimations() {
 
 	if (gameSys.getAnimationStatus(0) == 2) {
 		gameSys.setAnimation(0, 0, 0);
-		switch (_vm->_gnapActionStatus) {
+		switch (_vm->_gnap->_actionStatus) {
 		case kAS21TalkOldLady:
 			_nextOldLadySequenceId = 0x8B;
-			_vm->_gnapActionStatus = -1;
+			_vm->_gnap->_actionStatus = -1;
 			break;
 		case kAS21GrabBanana:
 			gameSys.setAnimation(0x8C, 59, 0);
@@ -951,11 +951,11 @@ void Scene21::updateAnimations() {
 			_vm->setFlag(kGFUnk04);
 			_vm->invAdd(kItemBanana);
 			updateHotspots();
-			_vm->_gnapActionStatus = kAS21GrabBananaDone;
+			_vm->_gnap->_actionStatus = kAS21GrabBananaDone;
 			break;
 		case kAS21GrabBananaDone:
 			_vm->setGrabCursorSprite(kItemBanana);
-			_vm->_gnapActionStatus = -1;
+			_vm->_gnap->_actionStatus = -1;
 			break;
 		case kAS21GrabOldLady:
 			_vm->_timers[4] = _vm->getRandom(30) + 50;
@@ -966,7 +966,7 @@ void Scene21::updateAnimations() {
 			gameSys.insertSequence(0x8F, _vm->_gnapId, makeRid(_vm->_gnapSequenceDatNum, _vm->_gnapSequenceId), _vm->_gnapId, kSeqSyncWait, 0, 0, 0);
 			_vm->_gnapSequenceDatNum = 0;
 			_vm->_gnapSequenceId = 0x8F;
-			_vm->_gnapActionStatus = kAS21UseHatWithOldLadyDone;
+			_vm->_gnap->_actionStatus = kAS21UseHatWithOldLadyDone;
 			_vm->invAdd(kItemTickets);
 			_vm->invRemove(kItemGroceryStoreHat);
 			_vm->setGrabCursorSprite(-1);
@@ -987,13 +987,13 @@ void Scene21::updateAnimations() {
 			gameSys.insertSequence(0x86, _vm->_gnapId, makeRid(_vm->_gnapSequenceDatNum, _vm->_gnapSequenceId), _vm->_gnapId, kSeqSyncWait, 0, 0, 0);
 			_vm->_gnapSequenceId = 0x86;
 			_vm->_gnapSequenceDatNum = 0;
-			_vm->_gnapActionStatus = -1;
+			_vm->_gnap->_actionStatus = -1;
 			_currOldLadySequenceId = _nextOldLadySequenceId;
 			_nextOldLadySequenceId = -1;
 		} else if (_nextOldLadySequenceId == 0x91) {
 			gameSys.setAnimation(0x91, 79, 0);
 			gameSys.insertSequence(_nextOldLadySequenceId, 79, _currOldLadySequenceId, 79, kSeqSyncWait, 0, 0, 0);
-			_vm->_gnapActionStatus = kAS21LeaveScene;
+			_vm->_gnap->_actionStatus = kAS21LeaveScene;
 			_currOldLadySequenceId = _nextOldLadySequenceId;
 			_nextOldLadySequenceId = -1;
 		} else {
@@ -1098,14 +1098,14 @@ void Scene22::run() {
 
 		switch (_vm->_sceneClickedHotspot) {
 		case kHS22Device:
-			if (_vm->_gnapActionStatus < 0) {
+			if (_vm->_gnap->_actionStatus < 0) {
 				_vm->runMenu();
 				updateHotspots();
 			}
 			break;
 
 		case kHS22Platypus:
-			if (_vm->_gnapActionStatus < 0) {
+			if (_vm->_gnap->_actionStatus < 0) {
 				if (_vm->_grabCursorSpriteIndex == kItemJoint) {
 					_vm->gnapUseJointOnPlatypus();
 				} else if (_vm->_grabCursorSpriteIndex >= 0) {
@@ -1131,27 +1131,27 @@ void Scene22::run() {
 			break;
 
 		case kHS22ExitOutsideGrubCity:
-			if (_vm->_gnapActionStatus < 0) {
+			if (_vm->_gnap->_actionStatus < 0) {
 				_vm->_isLeavingScene = true;
 				_vm->_newSceneNum = 20;
 				_vm->gnapWalkTo(_vm->_hotspotsWalkPos[kHS22ExitOutsideGrubCity].x, _vm->_hotspotsWalkPos[kHS22ExitOutsideGrubCity].y, 0, 0x107AF, 1);
-				_vm->_gnapActionStatus = kAS22LeaveScene;
+				_vm->_gnap->_actionStatus = kAS22LeaveScene;
 				_vm->platypusWalkTo(_vm->_hotspotsWalkPos[kHS22ExitOutsideGrubCity].x, _vm->_hotspotsWalkPos[kHS22ExitOutsideGrubCity].y + 1, -1, 0x107C2, 1);
 			}
 			break;
 
 		case kHS22ExitBackGrubCity:
-			if (_vm->_gnapActionStatus < 0) {
+			if (_vm->_gnap->_actionStatus < 0) {
 				_vm->_isLeavingScene = true;
 				_vm->_newSceneNum = 23;
 				_vm->gnapWalkTo(_vm->_hotspotsWalkPos[kHS22ExitBackGrubCity].x, _vm->_hotspotsWalkPos[kHS22ExitBackGrubCity].y, 0, 0x107AB, 1);
-				_vm->_gnapActionStatus = kAS22LeaveScene;
+				_vm->_gnap->_actionStatus = kAS22LeaveScene;
 				_vm->platypusWalkTo(_vm->_hotspotsWalkPos[kHS22ExitBackGrubCity].x, _vm->_hotspotsWalkPos[kHS22ExitBackGrubCity].y + 1, -1, 0x107C2, 1);
 			}
 			break;
 
 		case kHS22Cashier:
-			if (_vm->_gnapActionStatus < 0) {
+			if (_vm->_gnap->_actionStatus < 0) {
 				if (_vm->_grabCursorSpriteIndex >= 0) {
 					_vm->playGnapShowCurrItem(_vm->_hotspotsWalkPos[kHS22Cashier].x, _vm->_hotspotsWalkPos[kHS22Cashier].y, 8, 4);
 				} else {
@@ -1166,7 +1166,7 @@ void Scene22::run() {
 						_vm->_gnap->_idleFacing = kDirUpRight;
 						_vm->gnapWalkTo(_vm->_hotspotsWalkPos[kHS22Cashier].x, _vm->_hotspotsWalkPos[kHS22Cashier].y,
 							0, _vm->getGnapSequenceId(gskBrainPulsating, 0, 0) | 0x10000, 1);
-						_vm->_gnapActionStatus = kAS22TalkCashier;
+						_vm->_gnap->_actionStatus = kAS22TalkCashier;
 						break;
 					case PLAT_CURSOR:
 						_vm->gnapUseDeviceOnPlatypus();
@@ -1239,7 +1239,7 @@ void Scene22::updateAnimations() {
 
 	if (gameSys.getAnimationStatus(0) == 2) {
 		gameSys.setAnimation(0, 0, 0);
-		switch (_vm->_gnapActionStatus) {
+		switch (_vm->_gnap->_actionStatus) {
 		case kAS22LeaveScene:
 			_vm->_sceneDone = true;
 			break;
@@ -1247,7 +1247,7 @@ void Scene22::updateAnimations() {
 			_nextCashierSequenceId = 0x5C;
 			break;
 		}
-		_vm->_gnapActionStatus = -1;
+		_vm->_gnap->_actionStatus = -1;
 	}
 
 	if (gameSys.getAnimationStatus(3) == 2 && _nextCashierSequenceId != -1) {
@@ -1322,14 +1322,14 @@ void Scene23::run() {
 
 		switch (_vm->_sceneClickedHotspot) {
 		case kHS23Device:
-			if (_vm->_gnapActionStatus < 0) {
+			if (_vm->_gnap->_actionStatus < 0) {
 				_vm->runMenu();
 				updateHotspots();
 			}
 			break;
 
 		case kHS23Platypus:
-			if (_vm->_gnapActionStatus < 0) {
+			if (_vm->_gnap->_actionStatus < 0) {
 				if (_vm->_grabCursorSpriteIndex == kItemJoint) {
 					_vm->gnapUseJointOnPlatypus();
 				} else if (_vm->_grabCursorSpriteIndex >= 0) {
@@ -1355,7 +1355,7 @@ void Scene23::run() {
 			break;
 
 		case kHS23Cereals:
-			if (_vm->_gnapActionStatus < 0) {
+			if (_vm->_gnap->_actionStatus < 0) {
 				if (_vm->_grabCursorSpriteIndex >= 0) {
 					_vm->playGnapShowCurrItem(_vm->_hotspotsWalkPos[kHS23Cereals].x, _vm->_hotspotsWalkPos[kHS23Cereals].y, 5, 4);
 				} else {
@@ -1366,7 +1366,7 @@ void Scene23::run() {
 						else {
 							_vm->gnapWalkTo(_vm->_hotspotsWalkPos[kHS23Cereals].x, _vm->_hotspotsWalkPos[kHS23Cereals].y,
 								0, _vm->getGnapSequenceId(gskIdle, 0, 0) | 0x10000, 1);
-							_vm->_gnapActionStatus = kAS23LookCereals;
+							_vm->_gnap->_actionStatus = kAS23LookCereals;
 						}
 						break;
 					case GRAB_CURSOR:
@@ -1377,7 +1377,7 @@ void Scene23::run() {
 							_vm->gnapWalkTo(_vm->_hotspotsWalkPos[kHS23Cereals].x, _vm->_hotspotsWalkPos[kHS23Cereals].y,
 								0, _vm->getGnapSequenceId(gskIdle, 0, 0) | 0x10000, 1);
 							_vm->setFlag(kGFSceneFlag1);
-							_vm->_gnapActionStatus = kAS23GrabCereals;
+							_vm->_gnap->_actionStatus = kAS23GrabCereals;
 							_vm->invAdd(kItemCereals);
 						}
 						break;
@@ -1391,18 +1391,18 @@ void Scene23::run() {
 			break;
 
 		case kHS23ExitFrontGrubCity:
-			if (_vm->_gnapActionStatus < 0) {
+			if (_vm->_gnap->_actionStatus < 0) {
 				_vm->_isLeavingScene = true;
 				_vm->_newSceneNum = 22;
 				_vm->gnapWalkTo(_vm->_hotspotsWalkPos[kHS23ExitFrontGrubCity].x, _vm->_hotspotsWalkPos[kHS23ExitFrontGrubCity].y, 0, 0x107AF, 1);
-				_vm->_gnapActionStatus = kAS23LeaveScene;
+				_vm->_gnap->_actionStatus = kAS23LeaveScene;
 				_vm->platypusWalkTo(_vm->_hotspotsWalkPos[kHS23ExitFrontGrubCity].x, _vm->_hotspotsWalkPos[kHS23ExitFrontGrubCity].y - 1, -1, 0x107C2, 1);
 			}
 			break;
 
 		case kHS23WalkArea1:
 		case kHS23WalkArea2:
-			if (_vm->_gnapActionStatus < 0)
+			if (_vm->_gnap->_actionStatus < 0)
 				_vm->gnapWalkTo(-1, -1, -1, -1, 1);
 			break;
 
@@ -1419,7 +1419,7 @@ void Scene23::run() {
 		if (!_vm->_isLeavingScene) {
 			_vm->updatePlatypusIdleSequence();
 			_vm->updateGnapIdleSequence();
-			if (!_vm->_timers[4] && _vm->_gnapActionStatus == -1) {
+			if (!_vm->_timers[4] && _vm->_gnap->_actionStatus == -1) {
 				_vm->_timers[4] = _vm->getRandom(100) + 200;
 				switch (_vm->getRandom(4)) {
 				case 0:
@@ -1467,10 +1467,10 @@ void Scene23::updateAnimations() {
 
 	if (gameSys.getAnimationStatus(0) == 2) {
 		gameSys.setAnimation(0, 0, 0);
-		switch (_vm->_gnapActionStatus) {
+		switch (_vm->_gnap->_actionStatus) {
 		case kAS23LookCereals:
 			_vm->showFullScreenSprite(0x48);
-			_vm->_gnapActionStatus = -1;
+			_vm->_gnap->_actionStatus = -1;
 			break;
 		case kAS23GrabCereals:
 			gameSys.setAnimation(0xBE, _vm->_gnapId, 0);
@@ -1478,11 +1478,11 @@ void Scene23::updateAnimations() {
 			gameSys.requestRemoveSequence(0xBF, 2);
 			_vm->_gnapSequenceDatNum = 0;
 			_vm->_gnapSequenceId = 0xBE;
-			_vm->_gnapActionStatus = kAS23GrabCerealsDone;
+			_vm->_gnap->_actionStatus = kAS23GrabCerealsDone;
 			break;
 		case kAS23GrabCerealsDone:
 			_vm->setGrabCursorSprite(kItemCereals);
-			_vm->_gnapActionStatus = -1;
+			_vm->_gnap->_actionStatus = -1;
 			break;
 		case kAS23LeaveScene:
 			_vm->_sceneDone = true;
@@ -1591,14 +1591,14 @@ void Scene24::run() {
 		switch (_vm->_sceneClickedHotspot) {
 
 		case kHS24Device:
-			if (_vm->_gnapActionStatus < 0) {
+			if (_vm->_gnap->_actionStatus < 0) {
 				_vm->runMenu();
 				updateHotspots();
 			}
 			break;
 
 		case kHS24Platypus:
-			if (_vm->_gnapActionStatus < 0) {
+			if (_vm->_gnap->_actionStatus < 0) {
 				if (_vm->_grabCursorSpriteIndex == kItemJoint) {
 					_vm->gnapUseJointOnPlatypus();
 				} else if (_vm->_grabCursorSpriteIndex >= 0) {
@@ -1624,22 +1624,22 @@ void Scene24::run() {
 			break;
 
 		case kHS24ExitCircusWorld:
-			if (_vm->_gnapActionStatus < 0) {
+			if (_vm->_gnap->_actionStatus < 0) {
 				_vm->_isLeavingScene = true;
 				_vm->_newSceneNum = 25;
 				_vm->gnapWalkTo(_vm->_hotspotsWalkPos[kHS24ExitCircusWorld].x, _vm->_hotspotsWalkPos[kHS24ExitCircusWorld].y, 0, 0x107AB, 1);
-				_vm->_gnapActionStatus = kAS24LeaveScene;
+				_vm->_gnap->_actionStatus = kAS24LeaveScene;
 				_vm->platypusWalkTo(_vm->_hotspotsWalkPos[kHS24ExitCircusWorld].x + 1, _vm->_hotspotsWalkPos[kHS24ExitCircusWorld].y, -1, 0x107C2, 1);
 			}
 			break;
 
 		case kHS24ExitOutsideGrubCity:
-			if (_vm->_gnapActionStatus < 0) {
+			if (_vm->_gnap->_actionStatus < 0) {
 				_vm->_isLeavingScene = true;
 				_vm->_newSceneNum = 20;
 				_vm->_gnap->_idleFacing = kDirUpRight;
 				_vm->gnapWalkTo(_vm->_hotspotsWalkPos[kHS24ExitOutsideGrubCity].x, _vm->_hotspotsWalkPos[kHS24ExitOutsideGrubCity].y, 0, _vm->getGnapSequenceId(gskIdle, 0, 0) | 0x10000, 1);
-				_vm->_gnapActionStatus = kAS24LeaveScene;
+				_vm->_gnap->_actionStatus = kAS24LeaveScene;
 				_vm->platypusWalkTo(_vm->_hotspotsWalkPos[kHS24ExitOutsideGrubCity].x + 1, _vm->_hotspotsWalkPos[kHS24ExitOutsideGrubCity].y, -1, 0x107C2, 1);
 			}
 			break;
@@ -1647,7 +1647,7 @@ void Scene24::run() {
 		case kHS24WalkArea1:
 		case kHS24WalkArea2:
 		case kHS24WalkArea3:
-			if (_vm->_gnapActionStatus == -1)
+			if (_vm->_gnap->_actionStatus == -1)
 				_vm->gnapWalkTo(-1, -1, -1, -1, 1);
 			break;
 
@@ -1729,9 +1729,9 @@ void Scene24::updateAnimations() {
 
 	if (gameSys.getAnimationStatus(0) == 2) {
 		gameSys.setAnimation(0, 0, 0);
-		if (_vm->_gnapActionStatus == kAS24LeaveScene)
+		if (_vm->_gnap->_actionStatus == kAS24LeaveScene)
 			_vm->_sceneDone = true;
-		_vm->_gnapActionStatus = -1;
+		_vm->_gnap->_actionStatus = -1;
 	}
 }
 
@@ -1837,14 +1837,14 @@ void Scene25::run() {
 
 		switch (_vm->_sceneClickedHotspot) {
 		case kHS25Device:
-			if (_vm->_gnapActionStatus < 0) {
+			if (_vm->_gnap->_actionStatus < 0) {
 				_vm->runMenu();
 				updateHotspots();
 			}
 			break;
 
 		case kHS25Platypus:
-			if (_vm->_gnapActionStatus < 0) {
+			if (_vm->_gnap->_actionStatus < 0) {
 				if (_vm->_grabCursorSpriteIndex == kItemJoint) {
 					_vm->gnapUseJointOnPlatypus();
 				} else if (_vm->_grabCursorSpriteIndex >= 0) {
@@ -1870,9 +1870,9 @@ void Scene25::run() {
 			break;
 
 		case kHS25TicketVendor:
-			if (_vm->_gnapActionStatus < 0) {
+			if (_vm->_gnap->_actionStatus < 0) {
 				if (_vm->_grabCursorSpriteIndex == kItemTickets) {
-					_vm->_gnapActionStatus = kAS25ShowTicketToVendor;
+					_vm->_gnap->_actionStatus = kAS25ShowTicketToVendor;
 					_vm->gnapWalkTo(_vm->_hotspotsWalkPos[kHS25TicketVendor].x, _vm->_hotspotsWalkPos[kHS25TicketVendor].y,
 						0, _vm->getGnapSequenceId(gskIdle, 9, 4) | 0x10000, 1);
 					_vm->playGnapPullOutDevice(0, 0);
@@ -1889,7 +1889,7 @@ void Scene25::run() {
 					case TALK_CURSOR:
 						_vm->_gnap->_idleFacing = kDirUpRight;
 						_vm->gnapWalkTo(_vm->_hotspotsWalkPos[kHS25TicketVendor].x, _vm->_hotspotsWalkPos[kHS25TicketVendor].y, 0, _vm->getGnapSequenceId(gskBrainPulsating, 0, 0) | 0x10000, 1);
-						_vm->_gnapActionStatus = kAS25TalkTicketVendor;
+						_vm->_gnap->_actionStatus = kAS25TalkTicketVendor;
 						break;
 					case GRAB_CURSOR:
 					case PLAT_CURSOR:
@@ -1901,29 +1901,29 @@ void Scene25::run() {
 			break;
 
 		case kHS25ExitOutsideCircusWorld:
-			if (_vm->_gnapActionStatus < 0) {
+			if (_vm->_gnap->_actionStatus < 0) {
 				_vm->_isLeavingScene = true;
 				_vm->_newSceneNum = 24;
 				_vm->gnapWalkTo(_vm->_hotspotsWalkPos[kHS25ExitOutsideCircusWorld].x, _vm->_hotspotsWalkPos[kHS25ExitOutsideCircusWorld].y, 0, 0x107B4, 1);
-				_vm->_gnapActionStatus = kAS25LeaveScene;
+				_vm->_gnap->_actionStatus = kAS25LeaveScene;
 				_vm->platypusWalkTo(_vm->_hotspotsWalkPos[kHS25ExitOutsideCircusWorld].x + 1, _vm->_hotspotsWalkPos[kHS25ExitOutsideCircusWorld].y, -1, 0x107C2, 1);
 			}
 			break;
 
 		case kHS25ExitInsideCircusWorld:
-			if (_vm->_gnapActionStatus < 0) {
+			if (_vm->_gnap->_actionStatus < 0) {
 				if (_vm->isFlag(kGFNeedleTaken)) {
 					_vm->_isLeavingScene = true;
 					_vm->_newSceneNum = 26;
 					_vm->_hotspots[kHS25WalkArea1]._flags |= SF_WALKABLE;
 					_vm->gnapWalkTo(_vm->_hotspotsWalkPos[kHS25ExitInsideCircusWorld].x, _vm->_hotspotsWalkPos[kHS25ExitInsideCircusWorld].y, 0, 0x107B1, 1);
-					_vm->_gnapActionStatus = kAS25LeaveScene;
+					_vm->_gnap->_actionStatus = kAS25LeaveScene;
 					_vm->platypusWalkTo(_vm->_hotspotsWalkPos[kHS25ExitInsideCircusWorld].x + 1, _vm->_hotspotsWalkPos[kHS25ExitInsideCircusWorld].y, -1, 0x107C2, 1);
 					_vm->_hotspots[kHS25WalkArea1]._flags &= ~SF_WALKABLE;
 				} else {
 					_vm->_hotspots[kHS25WalkArea1]._flags |= SF_WALKABLE;
 					_vm->gnapWalkTo(4, 5, 0, 0x107BB, 1);
-					_vm->_gnapActionStatus = kAS25EnterCircusWihoutTicket;
+					_vm->_gnap->_actionStatus = kAS25EnterCircusWihoutTicket;
 					_vm->_hotspots[kHS25WalkArea1]._flags &= ~SF_WALKABLE;
 				}
 			}
@@ -1933,7 +1933,7 @@ void Scene25::run() {
 		case kHS25Posters2:
 		case kHS25Posters3:
 		case kHS25Posters4:
-			if (_vm->_gnapActionStatus < 0) {
+			if (_vm->_gnap->_actionStatus < 0) {
 				if (_vm->_grabCursorSpriteIndex >= 0) {
 					_vm->playGnapImpossible(0, 0);
 				} else {
@@ -1961,7 +1961,7 @@ void Scene25::run() {
 
 		case kHS25WalkArea1:
 		case kHS25WalkArea2:
-			if (_vm->_gnapActionStatus < 0)
+			if (_vm->_gnap->_actionStatus < 0)
 				_vm->gnapWalkTo(-1, -1, -1, -1, 1);
 			break;
 
@@ -1978,7 +1978,7 @@ void Scene25::run() {
 		if (!_vm->_isLeavingScene) {
 			_vm->updatePlatypusIdleSequence();
 			_vm->updateGnapIdleSequence();
-			if (!_vm->_timers[4] && _nextTicketVendorSequenceId == -1 && _vm->_gnapActionStatus == -1) {
+			if (!_vm->_timers[4] && _nextTicketVendorSequenceId == -1 && _vm->_gnap->_actionStatus == -1) {
 				_vm->_timers[4] = _vm->getRandom(20) + 20;
 				switch (_vm->getRandom(13)) {
 				case 0:
@@ -2033,10 +2033,10 @@ void Scene25::updateAnimations() {
 
 	if (gameSys.getAnimationStatus(0) == 2) {
 		gameSys.setAnimation(0, 0, 0);
-		switch (_vm->_gnapActionStatus) {
+		switch (_vm->_gnap->_actionStatus) {
 		case kAS25TalkTicketVendor:
 			_nextTicketVendorSequenceId = (_vm->getRandom(2) == 1) ? 0x57 : 0x5F;
-			_vm->_gnapActionStatus = -1;
+			_vm->_gnap->_actionStatus = -1;
 			break;
 		case kAS25EnterCircusWihoutTicket:
 			_nextTicketVendorSequenceId = 0x5E;
@@ -2050,10 +2050,10 @@ void Scene25::updateAnimations() {
 			_vm->playGnapIdle(0, 0);
 			_vm->gnapWalkTo(_vm->_hotspotsWalkPos[3].x, _vm->_hotspotsWalkPos[3].y, -1, 0x107BB, 1);
 			_vm->_hotspots[kHS25WalkArea1]._flags &= ~SF_WALKABLE;
-			_vm->_gnapActionStatus = kAS25EnterCircusWihoutTicketDone;
+			_vm->_gnap->_actionStatus = kAS25EnterCircusWihoutTicketDone;
 			break;
 		case kAS25EnterCircusWihoutTicketDone:
-			_vm->_gnapActionStatus = -1;
+			_vm->_gnap->_actionStatus = -1;
 			break;
 		case kAS25ShowTicketToVendor:
 			_vm->setGrabCursorSprite(-1);
@@ -2061,7 +2061,7 @@ void Scene25::updateAnimations() {
 			_vm->setFlag(kGFNeedleTaken);
 			gameSys.setAnimation(0x61, 40, 0);
 			gameSys.insertSequence(0x61, 40, 0, 0, kSeqNone, 0, 0, 0);
-			_vm->_gnapActionStatus = kAS25ShowTicketToVendorDone;
+			_vm->_gnap->_actionStatus = kAS25ShowTicketToVendorDone;
 			break;
 		case kAS25ShowTicketToVendorDone:
 			_nextTicketVendorSequenceId = 0x53;
@@ -2077,7 +2077,7 @@ void Scene25::updateAnimations() {
 			gameSys.insertSequence(_nextTicketVendorSequenceId, 39, _currTicketVendorSequenceId, 39, kSeqSyncWait, 0, 0, 0);
 			_currTicketVendorSequenceId = _nextTicketVendorSequenceId;
 			_nextTicketVendorSequenceId = -1;
-			_vm->_gnapActionStatus = -1;
+			_vm->_gnap->_actionStatus = -1;
 		} else if (_nextTicketVendorSequenceId != -1) {
 			gameSys.setAnimation(_nextTicketVendorSequenceId, 39, 3);
 			gameSys.insertSequence(_nextTicketVendorSequenceId, 39, _currTicketVendorSequenceId, 39, kSeqSyncWait, 0, 0, 0);
@@ -2154,14 +2154,14 @@ void Scene26::run() {
 
 		switch (_vm->_sceneClickedHotspot) {
 		case kHS26Device:
-			if (_vm->_gnapActionStatus < 0) {
+			if (_vm->_gnap->_actionStatus < 0) {
 				_vm->runMenu();
 				updateHotspots();
 			}
 			break;
 
 		case kHS26Platypus:
-			if (_vm->_gnapActionStatus < 0) {
+			if (_vm->_gnap->_actionStatus < 0) {
 				if (_vm->_grabCursorSpriteIndex == kItemJoint) {
 					_vm->gnapUseJointOnPlatypus();
 				} else if (_vm->_grabCursorSpriteIndex >= 0) {
@@ -2187,53 +2187,53 @@ void Scene26::run() {
 			break;
 
 		case kHS26ExitOutsideCircusWorld:
-			if (_vm->_gnapActionStatus < 0) {
+			if (_vm->_gnap->_actionStatus < 0) {
 				_vm->_isLeavingScene = true;
 				_vm->_newSceneNum = 25;
 				_vm->gnapWalkTo(-1, _vm->_hotspotsWalkPos[kHS26ExitOutsideCircusWorld].y, 0, 0x107AE, 1);
-				_vm->_gnapActionStatus = kAS26LeaveScene;
+				_vm->_gnap->_actionStatus = kAS26LeaveScene;
 			}
 			break;
 
 		case kHS26ExitOutsideClown:
-			if (_vm->_gnapActionStatus < 0) {
+			if (_vm->_gnap->_actionStatus < 0) {
 				_vm->_isLeavingScene = true;
 				_vm->_newSceneNum = 27;
 				_vm->gnapWalkTo(-1, _vm->_hotspotsWalkPos[kHS26ExitOutsideClown].y, 0, 0x107BC, 1);
-				_vm->_gnapActionStatus = kAS26LeaveScene;
+				_vm->_gnap->_actionStatus = kAS26LeaveScene;
 			}
 			break;
 
 		case kHS26ExitArcade:
-			if (_vm->_gnapActionStatus < 0) {
+			if (_vm->_gnap->_actionStatus < 0) {
 				_vm->_isLeavingScene = true;
 				_vm->_newSceneNum = 29;
 				_vm->gnapWalkTo(-1, _vm->_hotspotsWalkPos[kHS26ExitArcade].y, 0, 0x107BC, 1);
-				_vm->_gnapActionStatus = kAS26LeaveScene;
+				_vm->_gnap->_actionStatus = kAS26LeaveScene;
 			}
 			break;
 
 		case kHS26ExitElephant:
-			if (_vm->_gnapActionStatus < 0) {
+			if (_vm->_gnap->_actionStatus < 0) {
 				_vm->_isLeavingScene = true;
 				_vm->_newSceneNum = 30;
 				_vm->gnapWalkTo(-1, _vm->_hotspotsWalkPos[4].y, 0, 0x107BC, 1);
-				_vm->_gnapActionStatus = kAS26LeaveScene;
+				_vm->_gnap->_actionStatus = kAS26LeaveScene;
 			}
 			break;
 
 		case kHS26ExitBeerStand:
-			if (_vm->_gnapActionStatus < 0) {
+			if (_vm->_gnap->_actionStatus < 0) {
 				_vm->_isLeavingScene = true;
 				_vm->_newSceneNum = 31;
 				_vm->gnapWalkTo(-1, _vm->_hotspotsWalkPos[kHS26ExitBeerStand].y, 0, 0x107BB, 1);
-				_vm->_gnapActionStatus = kAS26LeaveScene;
+				_vm->_gnap->_actionStatus = kAS26LeaveScene;
 			}
 			break;
 
 		case kHS26WalkArea1:
 		case kHS26WalkArea2:
-			if (_vm->_gnapActionStatus < 0)
+			if (_vm->_gnap->_actionStatus < 0)
 				_vm->gnapWalkTo(-1, -1, -1, -1, 1);
 			break;
 
@@ -2288,9 +2288,9 @@ void Scene26::updateAnimations() {
 
 	if (gameSys.getAnimationStatus(0) == 2) {
 		gameSys.setAnimation(0, 0, 0);
-		if (_vm->_gnapActionStatus == kAS26LeaveScene)
+		if (_vm->_gnap->_actionStatus == kAS26LeaveScene)
 			_vm->_sceneDone = true;
-		_vm->_gnapActionStatus = -1;
+		_vm->_gnap->_actionStatus = -1;
 	}
 
 	if (gameSys.getAnimationStatus(3) == 2 && _nextKidSequenceId != -1) {
@@ -2382,20 +2382,20 @@ void Scene27::run() {
 		_vm->updateMouseCursor();
 		_vm->updateCursorByHotspot();
 		_vm->_sceneClickedHotspot = -1;
-		if (_vm->_gnapActionStatus < 0)
+		if (_vm->_gnap->_actionStatus < 0)
 			_vm->_sceneClickedHotspot = _vm->getClickedHotspotId();
 		_vm->updateGrabCursorSprite(0, 0);
 
 		switch (_vm->_sceneClickedHotspot) {
 		case kHS27Device:
-			if (_vm->_gnapActionStatus < 0) {
+			if (_vm->_gnap->_actionStatus < 0) {
 				_vm->runMenu();
 				updateHotspots();
 			}
 			break;
 
 		case kHS27Platypus:
-			if (_vm->_gnapActionStatus < 0) {
+			if (_vm->_gnap->_actionStatus < 0) {
 				if (_vm->_grabCursorSpriteIndex == kItemJoint) {
 					_vm->gnapUseJointOnPlatypus();
 				} else if (_vm->_grabCursorSpriteIndex >= 0) {
@@ -2421,11 +2421,11 @@ void Scene27::run() {
 			break;
 
 		case kHS27Janitor:
-			if (_vm->_gnapActionStatus < 0) {
+			if (_vm->_gnap->_actionStatus < 0) {
 				if (_vm->_grabCursorSpriteIndex == kItemPicture) {
 					_vm->_gnap->_idleFacing = kDirUpLeft;
 					if (_vm->gnapWalkTo(_vm->_hotspotsWalkPos[kHS27Janitor].x, _vm->_hotspotsWalkPos[kHS27Janitor].y, 0, 0x107BC, 1))
-						_vm->_gnapActionStatus = kAS27ShowPictureToJanitor;
+						_vm->_gnap->_actionStatus = kAS27ShowPictureToJanitor;
 				} else if (_vm->_grabCursorSpriteIndex >= 0) {
 					_vm->playGnapShowCurrItem(_vm->_hotspotsWalkPos[kHS27Janitor].x, _vm->_hotspotsWalkPos[kHS27Janitor].y, 7, 3);
 				} else {
@@ -2436,7 +2436,7 @@ void Scene27::run() {
 					case TALK_CURSOR:
 						_vm->_gnap->_idleFacing = kDirUpLeft;
 						_vm->gnapWalkTo(_vm->_hotspotsWalkPos[kHS27Janitor].x, _vm->_hotspotsWalkPos[kHS27Janitor].y, 0, _vm->getGnapSequenceId(gskBrainPulsating, 0, 0) | 0x10000, 1);
-						_vm->_gnapActionStatus = kAS27TalkJanitor;
+						_vm->_gnap->_actionStatus = kAS27TalkJanitor;
 						break;
 					case GRAB_CURSOR:
 					case PLAT_CURSOR:
@@ -2448,7 +2448,7 @@ void Scene27::run() {
 			break;
 
 		case kHS27Bucket:
-			if (_vm->_gnapActionStatus < 0) {
+			if (_vm->_gnap->_actionStatus < 0) {
 				if (_vm->_grabCursorSpriteIndex >= 0) {
 					_vm->playGnapShowItem(_vm->_grabCursorSpriteIndex, 3, 3);
 				} else {
@@ -2459,7 +2459,7 @@ void Scene27::run() {
 					case GRAB_CURSOR:
 						_vm->_gnap->_idleFacing = kDirUpLeft;
 						_vm->gnapWalkTo(_vm->_gnap->_pos, 0, _vm->getGnapSequenceId(gskIdle, _vm->_hotspotsWalkPos[kHS27Bucket].x, _vm->_hotspotsWalkPos[kHS27Bucket].y) | 0x10000, 1);
-						_vm->_gnapActionStatus = kAS27GrabBucket;
+						_vm->_gnap->_actionStatus = kAS27GrabBucket;
 						break;
 					case TALK_CURSOR:
 					case PLAT_CURSOR:
@@ -2471,59 +2471,59 @@ void Scene27::run() {
 			break;
 
 		case kHS27ExitCircus:
-			if (_vm->_gnapActionStatus < 0) {
+			if (_vm->_gnap->_actionStatus < 0) {
 				_vm->_isLeavingScene = true;
 				_vm->_newSceneNum = 26;
 				_vm->gnapWalkTo(-1, _vm->_hotspotsWalkPos[kHS27ExitCircus].y, 0, 0x107AE, 1);
-				_vm->_gnapActionStatus = kAS27LeaveScene;
+				_vm->_gnap->_actionStatus = kAS27LeaveScene;
 				_vm->platypusWalkTo(_vm->_hotspotsWalkPos[kHS27ExitCircus].x + 1, _vm->_hotspotsWalkPos[kHS27ExitCircus].y, -1, 0x107C7, 1);
 			}
 			break;
 
 		case kHS27ExitArcade:
-			if (_vm->_gnapActionStatus < 0) {
+			if (_vm->_gnap->_actionStatus < 0) {
 				_vm->_isLeavingScene = true;
 				_vm->_newSceneNum = 29;
 				_vm->gnapWalkTo(-1, _vm->_hotspotsWalkPos[kHS27ExitArcade].y, 0, 0x107AF, 1);
-				_vm->_gnapActionStatus = kAS27LeaveScene;
+				_vm->_gnap->_actionStatus = kAS27LeaveScene;
 				_vm->platypusWalkTo(_vm->_hotspotsWalkPos[kHS27ExitArcade].x, _vm->_hotspotsWalkPos[kHS27ExitArcade].y + 1, -1, 0x107CF, 1);
 			}
 			break;
 
 		case kHS27ExitBeerStand:
-			if (_vm->_gnapActionStatus < 0) {
+			if (_vm->_gnap->_actionStatus < 0) {
 				_vm->_isLeavingScene = true;
 				_vm->_newSceneNum = 31;
 				_vm->gnapWalkTo(-1, _vm->_hotspotsWalkPos[kHS27ExitBeerStand].y, 0, 0x107AB, 1);
-				_vm->_gnapActionStatus = kAS27LeaveScene;
+				_vm->_gnap->_actionStatus = kAS27LeaveScene;
 				_vm->platypusWalkTo(_vm->_hotspotsWalkPos[kHS27ExitBeerStand].x, _vm->_hotspotsWalkPos[kHS27ExitBeerStand].y + 1, -1, 0x107CD, 1);
 			}
 			break;
 
 		case kHS27ExitClown:
-			if (_vm->_gnapActionStatus < 0) {
+			if (_vm->_gnap->_actionStatus < 0) {
 				if (_vm->isFlag(kGFPlatypus)) {
 					_vm->_isLeavingScene = true;
 					_vm->_newSceneNum = 28;
 					_vm->gnapWalkTo(_vm->_hotspotsWalkPos[kHS27ExitClown].x, _vm->_hotspotsWalkPos[kHS27ExitClown].y, 0, 0x107AD, 1);
-					_vm->_gnapActionStatus = kAS27LeaveScene;
+					_vm->_gnap->_actionStatus = kAS27LeaveScene;
 					_vm->platypusWalkTo(_vm->_hotspotsWalkPos[kHS27ExitClown].x + 1, _vm->_hotspotsWalkPos[kHS27ExitClown].y, -1, 0x107C4, 1);
 				} else {
 					_vm->_hotspots[kHS27WalkArea1]._flags |= SF_WALKABLE;
 					_vm->gnapWalkTo(_vm->_hotspotsWalkPos[kHS27ExitClown].x, 7, 0, 0x107BC, 1);
 					_vm->_hotspots[kHS27WalkArea1]._flags &= SF_WALKABLE;
-					_vm->_gnapActionStatus = kAS27TryEnterClownTent;
+					_vm->_gnap->_actionStatus = kAS27TryEnterClownTent;
 				}
 			}
 			break;
 
 		case kHS27WalkArea1:
-			if (_vm->_gnapActionStatus < 0)
+			if (_vm->_gnap->_actionStatus < 0)
 				_vm->gnapWalkTo(-1, -1, -1, -1, 1);
 			break;
 
 		default:
-			if (_vm->_mouseClickState._left && _vm->_gnapActionStatus < 0) {
+			if (_vm->_mouseClickState._left && _vm->_gnap->_actionStatus < 0) {
 				_vm->gnapWalkTo(-1, -1, -1, -1, 1);
 				_vm->_mouseClickState._left = false;
 			}
@@ -2538,13 +2538,13 @@ void Scene27::run() {
 
 		if (!_vm->_isLeavingScene) {
 			_vm->updatePlatypusIdleSequence();
-			if (_vm->_gnapActionStatus < 0)
+			if (_vm->_gnap->_actionStatus < 0)
 				_vm->updateGnapIdleSequence();
 			if (_vm->_debugLevel == 4)
 				_vm->updateIdleTimer();
 			if (!_vm->_timers[5]) {
 				_vm->_timers[5] = _vm->getRandom(20) + 60;
-				if (_vm->_gnapActionStatus < 0) {
+				if (_vm->_gnap->_actionStatus < 0) {
 					if (_vm->getRandom(3) != 0)
 						_nextJanitorSequenceId = 0xCB;
 					else
@@ -2553,7 +2553,7 @@ void Scene27::run() {
 			}
 			if (!_vm->_timers[7]) {
 				_vm->_timers[7] = _vm->getRandom(100) + 300;
-				if (_vm->_gnapActionStatus < 0)
+				if (_vm->_gnap->_actionStatus < 0)
 					gameSys.insertSequence(0xD4, 120, 0, 0, kSeqNone, 0, 0, 0);
 			}
 			_vm->playSoundB();
@@ -2576,7 +2576,7 @@ void Scene27::updateAnimations() {
 
 	if (gameSys.getAnimationStatus(0) == 2) {
 		gameSys.setAnimation(0, 0, 0);
-		switch (_vm->_gnapActionStatus) {
+		switch (_vm->_gnap->_actionStatus) {
 		case kAS27TalkJanitor:
 			switch (_vm->getRandom(3)) {
 			case 0:
@@ -2598,11 +2598,11 @@ void Scene27::updateAnimations() {
 			_vm->setFlag(kGFUnk13);
 			gameSys.setAnimation(0xD2, 39, 0);
 			gameSys.insertSequence(0xD2, 39, 211, 39, kSeqSyncWait, 0, 0, 0);
-			_vm->_gnapActionStatus = kAS27GrabBucketDone;
+			_vm->_gnap->_actionStatus = kAS27GrabBucketDone;
 			break;
 		case kAS27GrabBucketDone:
 			_vm->setGrabCursorSprite(kItemEmptyBucket);
-			_vm->_gnapActionStatus = -1;
+			_vm->_gnap->_actionStatus = -1;
 			break;
 		case kAS27ShowPictureToJanitor:
 			_nextJanitorSequenceId = 0xD0;
@@ -2614,17 +2614,17 @@ void Scene27::updateAnimations() {
 			gameSys.setAnimation(_nextJanitorSequenceId, 39, 0);
 			_currJanitorSequenceId = _nextJanitorSequenceId;
 			_nextJanitorSequenceId = -1;
-			_vm->_gnapActionStatus = kAS27TryEnterClownTentDone;
+			_vm->_gnap->_actionStatus = kAS27TryEnterClownTentDone;
 			break;
 		case kAS27TryEnterClownTentDone:
 			_vm->_hotspots[kHS27WalkArea1]._flags |= SF_WALKABLE;
 			_vm->gnapWalkTo(_vm->_hotspotsWalkPos[7].x, 9, -1, 0x107BC, 1);
 			_vm->_hotspots[kHS27WalkArea1]._flags &= ~SF_WALKABLE;
-			_vm->_gnapActionStatus = -1;
+			_vm->_gnap->_actionStatus = -1;
 			break;
 		case kAS27EnterClownTent:
 			_vm->gnapWalkTo(_vm->_gnap->_pos, 0, 0x107B2, 1);
-			_vm->_gnapActionStatus = kAS27LeaveScene;
+			_vm->_gnap->_actionStatus = kAS27LeaveScene;
 			break;
 		case kAS27LeaveScene:
 			_vm->_sceneDone = true;
@@ -2644,7 +2644,7 @@ void Scene27::updateAnimations() {
 		case 0xCC:
 		case 0xCD:
 		case 0xCE:
-			_vm->_gnapActionStatus = -1;
+			_vm->_gnap->_actionStatus = -1;
 			gameSys.insertSequence(_nextJanitorSequenceId, 39, _currJanitorSequenceId, 39, kSeqSyncWait, 0, 0, 0);
 			gameSys.setAnimation(_nextJanitorSequenceId, 39, 3);
 			gameSys.setAnimation(_nextJanitorSequenceId, 39, 0);
@@ -2657,7 +2657,7 @@ void Scene27::updateAnimations() {
 			_vm->playGnapUseDevice(0, 0);
 			gameSys.insertSequence(_nextJanitorSequenceId, 39, _currJanitorSequenceId, 39, kSeqSyncWait, 0, 0, 0);
 			gameSys.setAnimation(_nextJanitorSequenceId, 39, 0);
-			_vm->_gnapActionStatus = kAS27EnterClownTent;
+			_vm->_gnap->_actionStatus = kAS27EnterClownTent;
 			_currJanitorSequenceId = _nextJanitorSequenceId;
 			_nextJanitorSequenceId = -1;
 			_vm->setFlag(kGFPlatypus);
@@ -2742,12 +2742,12 @@ void Scene28::run() {
 		gameSys.insertSequence(_currClownSequenceId, 39, 0x11B, 39, kSeqSyncWait, 0, 0, 0);
 		_nextClownSequenceId = -1;
 		_vm->_timers[4] = _vm->getRandom(20) + 80;
-		_vm->_gnapActionStatus = kAS28GnapWaiting;
+		_vm->_gnap->_actionStatus = kAS28GnapWaiting;
 		while (gameSys.getAnimationStatus(3) != 2) {
 			_vm->gameUpdateTick();
 			_vm->updateMouseCursor();
 		}
-		_vm->_gnapActionStatus = -1;
+		_vm->_gnap->_actionStatus = -1;
 	}
 
 	while (!_vm->_sceneDone) {
@@ -2759,14 +2759,14 @@ void Scene28::run() {
 
 		switch (_vm->_sceneClickedHotspot) {
 		case kHS28Device:
-			if (_vm->_gnapActionStatus < 0) {
+			if (_vm->_gnap->_actionStatus < 0) {
 				_vm->runMenu();
 				updateHotspots();
 			}
 			break;
 
 		case kHS28Platypus:
-			if (_vm->_gnapActionStatus < 0) {
+			if (_vm->_gnap->_actionStatus < 0) {
 				if (_vm->_grabCursorSpriteIndex == kItemJoint) {
 					_vm->gnapUseJointOnPlatypus();
 				} else if (_vm->_grabCursorSpriteIndex >= 0) {
@@ -2792,7 +2792,7 @@ void Scene28::run() {
 			break;
 
 		case kHS28Horn:
-			if (_vm->_gnapActionStatus < 0) {
+			if (_vm->_gnap->_actionStatus < 0) {
 				if (_vm->_grabCursorSpriteIndex >= 0) {
 					_vm->playGnapShowCurrItem(2, 8, 3, 4);
 				} else {
@@ -2804,7 +2804,7 @@ void Scene28::run() {
 						if (_vm->isFlag(kGFUnk21)) {
 							if (!_vm->invHas(kItemHorn)) {
 								_vm->gnapWalkTo(_vm->_gnap->_pos, 0, _vm->getGnapSequenceId(gskIdle, _vm->_hotspotsWalkPos[kHS28Horn].x, _vm->_hotspotsWalkPos[kHS28Horn].y) | 0x10000, 1);
-								_vm->_gnapActionStatus = kAS28GrabHornSuccess;
+								_vm->_gnap->_actionStatus = kAS28GrabHornSuccess;
 							}
 						} else {
 							_vm->_gnap->_idleFacing = kDirUpLeft;
@@ -2812,7 +2812,7 @@ void Scene28::run() {
 							_vm->_hotspots[kHS28WalkArea1]._flags |= SF_WALKABLE;
 							_vm->gnapWalkTo(_vm->_hotspotsWalkPos[kHS28Horn].x, _vm->_hotspotsWalkPos[kHS28Horn].y, 0, 0x107BB, 1);
 							_vm->_hotspots[kHS28WalkArea1]._flags &= ~SF_WALKABLE;
-							_vm->_gnapActionStatus = kAS28GrabHornFails;
+							_vm->_gnap->_actionStatus = kAS28GrabHornFails;
 						}
 						break;
 					case TALK_CURSOR:
@@ -2825,7 +2825,7 @@ void Scene28::run() {
 			break;
 
 		case kHS28Clown:
-			if (_vm->_gnapActionStatus < 0) {
+			if (_vm->_gnap->_actionStatus < 0) {
 				if (_vm->isFlag(kGFUnk21)) {
 					if (_vm->_verbCursor == LOOK_CURSOR)
 						_vm->playGnapScratchingHead(5, 2);
@@ -2836,13 +2836,13 @@ void Scene28::run() {
 					_vm->gnapWalkTo(_vm->_hotspotsWalkPos[kHS28Clown].x, _vm->_hotspotsWalkPos[kHS28Clown].y, 0, 0x107BC, 1);
 					_vm->playGnapPullOutDevice(0, 0);
 					_vm->playGnapUseDevice(0, 0);
-					_vm->_gnapActionStatus = kAS28UseBeerBucketWithClown;
+					_vm->_gnap->_actionStatus = kAS28UseBeerBucketWithClown;
 				} else if (_vm->_grabCursorSpriteIndex == kItemBucketWithPill) {
 					_vm->_gnap->_idleFacing = kDirUpLeft;
 					_vm->gnapWalkTo(_vm->_hotspotsWalkPos[kHS28Clown].x, _vm->_hotspotsWalkPos[kHS28Clown].y, 0, 0x107BC, 1);
 					_vm->playGnapPullOutDevice(0, 0);
 					_vm->playGnapUseDevice(0, 0);
-					_vm->_gnapActionStatus = kAS28UsePillBucketWithClown;
+					_vm->_gnap->_actionStatus = kAS28UsePillBucketWithClown;
 				} else if (_vm->_grabCursorSpriteIndex >= 0) {
 					_vm->playGnapShowCurrItem(_vm->_hotspotsWalkPos[kHS28Clown].x, _vm->_hotspotsWalkPos[kHS28Clown].y, 2, 4);
 				} else {
@@ -2853,7 +2853,7 @@ void Scene28::run() {
 					case TALK_CURSOR:
 						_vm->_gnap->_idleFacing = kDirUpLeft;
 						_vm->gnapWalkTo(5, 8, 0, _vm->getGnapSequenceId(gskBrainPulsating, 0, 0) | 0x10000, 1);
-						_vm->_gnapActionStatus = kAS28TalkClown;
+						_vm->_gnap->_actionStatus = kAS28TalkClown;
 						break;
 					case GRAB_CURSOR:
 					case PLAT_CURSOR:
@@ -2865,19 +2865,19 @@ void Scene28::run() {
 			break;
 
 		case kHS28ExitOutsideClown:
-			if (_vm->_gnapActionStatus < 0) {
+			if (_vm->_gnap->_actionStatus < 0) {
 				_vm->_isLeavingScene = true;
 				_vm->_newSceneNum = 27;
 				_vm->_hotspots[kHS28WalkArea1]._flags |= SF_WALKABLE;
 				_vm->gnapWalkTo(_vm->_hotspotsWalkPos[kHS28ExitOutsideClown].x, _vm->_hotspotsWalkPos[kHS28ExitOutsideClown].y, 0, 0x107BF, 1);
-				_vm->_gnapActionStatus = kAS28LeaveScene;
+				_vm->_gnap->_actionStatus = kAS28LeaveScene;
 				_vm->_hotspots[kHS28WalkArea1]._flags &= ~SF_WALKABLE;
 				_vm->platypusWalkTo(_vm->_hotspotsWalkPos[kHS28ExitOutsideClown].x - 1, _vm->_hotspotsWalkPos[kHS28ExitOutsideClown].y, -1, 0x107C2, 1);
 			}
 			break;
 
 		case kHS28EmptyBucket:
-			if (_vm->_gnapActionStatus < 0) {
+			if (_vm->_gnap->_actionStatus < 0) {
 				if (_vm->_grabCursorSpriteIndex >= 0) {
 					_vm->playGnapShowItem(_vm->_grabCursorSpriteIndex, 8, 6);
 				} else if (_vm->isFlag(kGFUnk21)) {
@@ -2889,7 +2889,7 @@ void Scene28::run() {
 						break;
 					case GRAB_CURSOR:
 						_vm->gnapWalkTo(_vm->_gnap->_pos, 0, _vm->getGnapSequenceId(gskIdle, _vm->_hotspotsWalkPos[kHS28EmptyBucket].x, _vm->_hotspotsWalkPos[kHS28EmptyBucket].y) | 0x10000, 1);
-						_vm->_gnapActionStatus = kAS28GrabEmptyBucket;
+						_vm->_gnap->_actionStatus = kAS28GrabEmptyBucket;
 						break;
 					case TALK_CURSOR:
 					case PLAT_CURSOR:
@@ -2902,12 +2902,12 @@ void Scene28::run() {
 
 		case kHS28WalkArea1:
 		case kHS28WalkArea2:
-			if (_vm->_gnapActionStatus < 0)
+			if (_vm->_gnap->_actionStatus < 0)
 				_vm->gnapWalkTo(-1, -1, -1, -1, 1);
 			break;
 
 		default:
-			if (_vm->_mouseClickState._left && _vm->_gnapActionStatus < 0) {
+			if (_vm->_mouseClickState._left && _vm->_gnap->_actionStatus < 0) {
 				_vm->gnapWalkTo(-1, -1, -1, -1, 1);
 				_vm->_mouseClickState._left = false;
 			}
@@ -2924,7 +2924,7 @@ void Scene28::run() {
 			_vm->updateGnapIdleSequence();
 			if (!_vm->_timers[4]) {
 				_vm->_timers[4] = _vm->getRandom(20) + 80;
-				if (_vm->_gnapActionStatus < 0 && !_vm->isFlag(kGFUnk21))
+				if (_vm->_gnap->_actionStatus < 0 && !_vm->isFlag(kGFUnk21))
 					_nextClownSequenceId = 0x114;
 			}
 		}
@@ -2946,7 +2946,7 @@ void Scene28::updateAnimations() {
 
 	if (gameSys.getAnimationStatus(0) == 2) {
 		gameSys.setAnimation(0, 0, 0);
-		switch (_vm->_gnapActionStatus) {
+		switch (_vm->_gnap->_actionStatus) {
 		case kAS28UseBeerBucketWithClown:
 			_vm->setFlag(kGFUnk22);
 			_nextClownSequenceId = 0x113;
@@ -2968,7 +2968,7 @@ void Scene28::updateAnimations() {
 			_vm->playGnapUseDevice(0, 0);
 			gameSys.setAnimation(0x117, 59, 0);
 			gameSys.insertSequence(0x117, 59, 280, 59, kSeqSyncWait, 0, 0, 0);
-			_vm->_gnapActionStatus = kAS28GrabHornSuccessDone;
+			_vm->_gnap->_actionStatus = kAS28GrabHornSuccessDone;
 			break;
 		case kAS28GrabHornSuccessDone:
 			_vm->hideCursor();
@@ -2983,21 +2983,21 @@ void Scene28::updateAnimations() {
 			_vm->setGrabCursorSprite(kItemHorn);
 			_vm->invAdd(kItemHorn);
 			updateHotspots();
-			_vm->_gnapActionStatus = -1;
+			_vm->_gnap->_actionStatus = -1;
 			break;
 		case kAS28GrabEmptyBucket:
 			_vm->playGnapPullOutDevice(0, 0);
 			_vm->playGnapUseDevice(0, 0);
 			gameSys.setAnimation(0x111, 99, 0);
 			gameSys.insertSequence(0x111, 99, 274, 99, kSeqSyncWait, 0, 0, 0);
-			_vm->_gnapActionStatus = kAS28GrabEmptyBucketDone;
+			_vm->_gnap->_actionStatus = kAS28GrabEmptyBucketDone;
 			break;
 		case kAS28GrabEmptyBucketDone:
 			_vm->setGrabCursorSprite(kItemEmptyBucket);
 			_vm->clearFlag(kGFUnk22);;
 			updateHotspots();
 			_vm->invAdd(kItemEmptyBucket);
-			_vm->_gnapActionStatus = -1;
+			_vm->_gnap->_actionStatus = -1;
 			break;
 		case kAS28GrabHornFailsDone:
 			gameSys.insertSequence(0x107B5, _vm->_gnapId, 281, 39, kSeqSyncWait, 0, 75 * _vm->_gnap->_pos.x - _vm->_gnapGridX, 48 * _vm->_gnap->_pos.y - _vm->_gnapGridY);
@@ -3006,7 +3006,7 @@ void Scene28::updateAnimations() {
 			gameSys.insertSequence(0x11B, 39, 0, 0, kSeqNone, 0, 0, 0);
 			_currClownSequenceId = 0x11B;
 			_nextClownSequenceId = -1;
-			_vm->_gnapActionStatus = -1;
+			_vm->_gnap->_actionStatus = -1;
 			_vm->gnapWalkTo(2, 8, -1, 0x107BB, 1);
 			break;
 		case kAS28TalkClown:
@@ -3019,7 +3019,7 @@ void Scene28::updateAnimations() {
 				_nextClownSequenceId = 0x11F; // NOTE CHECKME Never set, bug in the original?
 			break;
 		case kAS28GnapWaiting:
-			_vm->_gnapActionStatus = -1;
+			_vm->_gnap->_actionStatus = -1;
 			break;
 		case kAS28LeaveScene:
 			_vm->_sceneDone = true;
@@ -3037,7 +3037,7 @@ void Scene28::updateAnimations() {
 			gameSys.insertSequence(0x11B, 39, _nextClownSequenceId, 39, kSeqSyncWait, 0, 0, 0);
 			_currClownSequenceId = 0x11B;
 			_nextClownSequenceId = -1;
-			_vm->_gnapActionStatus = kAS28GnapWaiting;
+			_vm->_gnap->_actionStatus = kAS28GnapWaiting;
 			break;
 		case 0x116:
 			_vm->setGrabCursorSprite(-1);
@@ -3048,18 +3048,18 @@ void Scene28::updateAnimations() {
 			gameSys.insertSequence(0x118, 59, 0, 0, kSeqNone, _vm->getSequenceTotalDuration(_nextClownSequenceId), 0, 0);
 			_currClownSequenceId = _nextClownSequenceId;
 			_nextClownSequenceId = -1;
-			_vm->_gnapActionStatus = kAS28GnapWaiting;
+			_vm->_gnap->_actionStatus = kAS28GnapWaiting;
 			break;
 		case 0x11D:
 		case 0x11E:
 		case 0x11F:
-			_vm->_gnapActionStatus = -1;
+			_vm->_gnap->_actionStatus = -1;
 			break;
 		case 0x119:
 			gameSys.insertSequence(_nextClownSequenceId, 39, makeRid(_vm->_gnapSequenceDatNum, _vm->_gnapSequenceId), _vm->_gnapId, kSeqSyncWait, 0, 0, 0);
 			gameSys.setAnimation(_nextClownSequenceId, 39, 0);
 			gameSys.removeSequence(_currClownSequenceId, 39, true);
-			_vm->_gnapActionStatus = kAS28GrabHornFailsDone;
+			_vm->_gnap->_actionStatus = kAS28GrabHornFailsDone;
 			_vm->_gnapSequenceId = _nextClownSequenceId;
 			_vm->_gnapSequenceDatNum = 0;
 			_nextClownSequenceId = -1;
@@ -3150,14 +3150,14 @@ void Scene29::run() {
 
 		switch (_vm->_sceneClickedHotspot) {
 		case kHS29Device:
-			if (_vm->_gnapActionStatus < 0) {
+			if (_vm->_gnap->_actionStatus < 0) {
 				_vm->runMenu();
 				updateHotspots();
 			}
 			break;
 
 		case kHS29Platypus:
-			if (_vm->_gnapActionStatus < 0) {
+			if (_vm->_gnap->_actionStatus < 0) {
 				if (_vm->_grabCursorSpriteIndex == kItemJoint) {
 					_vm->gnapUseJointOnPlatypus();
 				} else if (_vm->_grabCursorSpriteIndex >= 0) {
@@ -3183,11 +3183,11 @@ void Scene29::run() {
 			break;
 
 		case kHS29Monkey:
-			if (_vm->_gnapActionStatus < 0) {
+			if (_vm->_gnap->_actionStatus < 0) {
 				if (_vm->_grabCursorSpriteIndex == kItemBanana) {
 					_vm->_gnap->_idleFacing = kDirBottomRight;
 					_vm->gnapWalkTo(_vm->_hotspotsWalkPos[kHS29Monkey].x, _vm->_hotspotsWalkPos[kHS29Monkey].y, 0, _vm->getGnapSequenceId(gskIdle, 0, 0) | 0x10000, 1);
-					_vm->_gnapActionStatus = kAS29UseBananaWithMonkey;
+					_vm->_gnap->_actionStatus = kAS29UseBananaWithMonkey;
 					_vm->_newSceneNum = 51;
 					_vm->_isLeavingScene = true;
 					_vm->setGrabCursorSprite(-1);
@@ -3211,34 +3211,34 @@ void Scene29::run() {
 			break;
 
 		case kHS29ExitCircus:
-			if (_vm->_gnapActionStatus < 0) {
+			if (_vm->_gnap->_actionStatus < 0) {
 				_vm->_isLeavingScene = true;
 				_vm->_newSceneNum = 26;
 				_vm->gnapWalkTo(_vm->_hotspotsWalkPos[kHS29ExitCircus].x, _vm->_hotspotsWalkPos[kHS29ExitCircus].y, 0, 0x107AE, 1);
-				_vm->_gnapActionStatus = kAS29LeaveScene;
+				_vm->_gnap->_actionStatus = kAS29LeaveScene;
 				_vm->platypusWalkTo(_vm->_hotspotsWalkPos[kHS29ExitCircus].x + 1, _vm->_hotspotsWalkPos[kHS29ExitCircus].y, -1, -1, 1);
 			}
 			break;
 
 		case kHS29ExitOutsideClown:
-			if (_vm->_gnapActionStatus < 0) {
+			if (_vm->_gnap->_actionStatus < 0) {
 				_vm->_isLeavingScene = true;
 				_vm->_newSceneNum = 27;
 				_vm->gnapWalkTo(_vm->_hotspotsWalkPos[kHS29ExitOutsideClown].x, _vm->_hotspotsWalkPos[kHS29ExitOutsideClown].y, 0, 0x107AB, 1);
-				_vm->_gnapActionStatus = kAS29LeaveScene;
+				_vm->_gnap->_actionStatus = kAS29LeaveScene;
 				_vm->platypusWalkTo(_vm->_hotspotsWalkPos[kHS29ExitOutsideClown].x, _vm->_hotspotsWalkPos[kHS29ExitOutsideClown].y - 1, -1, 0x107CD, 1);
 			}
 			break;
 
 		case kHS29Aracde:
-			if (_vm->_gnapActionStatus < 0) {
+			if (_vm->_gnap->_actionStatus < 0) {
 				if (_vm->_grabCursorSpriteIndex == kItemDiceQuarterHole) {
 					_vm->setGrabCursorSprite(-1);
 					_vm->_isLeavingScene = true;
 					_vm->_newSceneNum = 52;
 					_vm->gnapWalkTo(_vm->_hotspotsWalkPos[kHS29Aracde].x, _vm->_hotspotsWalkPos[kHS29Aracde].y, 0, -1, 1);
 					_vm->playGnapIdle(_vm->_hotspotsWalkPos[kHS29Aracde].x, _vm->_hotspotsWalkPos[kHS29Aracde].y);
-					_vm->_gnapActionStatus = kAS29LeaveScene;
+					_vm->_gnap->_actionStatus = kAS29LeaveScene;
 				} else if (_vm->_grabCursorSpriteIndex >= 0) {
 					_vm->playGnapShowCurrItem(_vm->_hotspotsWalkPos[kHS29Aracde].x, _vm->_hotspotsWalkPos[kHS29Aracde].y, 2, 3);
 				} else {
@@ -3257,7 +3257,7 @@ void Scene29::run() {
 			break;
 
 		case kHS29WalkArea1:
-			if (_vm->_gnapActionStatus < 0)
+			if (_vm->_gnap->_actionStatus < 0)
 				_vm->gnapWalkTo(-1, -1, -1, -1, 1);
 			break;
 
@@ -3275,14 +3275,14 @@ void Scene29::run() {
 			_vm->playSound(0x1093B, true);
 
 		if (!_vm->_isLeavingScene) {
-			if (_vm->_gnapActionStatus < 0) {
+			if (_vm->_gnap->_actionStatus < 0) {
 				_vm->updateGnapIdleSequence();
 				_vm->updatePlatypusIdleSequence();
 			}
 			if (!_vm->_timers[4]) {
 				if (_vm->invHas(kItemHorn)) {
 					_vm->_timers[4] = _vm->getRandom(20) + 60;
-					if (_vm->_gnapActionStatus < 0) {
+					if (_vm->_gnap->_actionStatus < 0) {
 						switch (_vm->getRandom(5)) {
 						case 0:
 							_nextManSequenceId = 0xED;
@@ -3323,7 +3323,7 @@ void Scene29::updateAnimations() {
 
 	if (gameSys.getAnimationStatus(0) == 2) {
 		gameSys.setAnimation(0, 0, 0);
-		switch (_vm->_gnapActionStatus) {
+		switch (_vm->_gnap->_actionStatus) {
 		case kAS29UseBananaWithMonkey:
 			_nextMonkeySequenceId = 0xE5;
 			break;
@@ -3349,7 +3349,7 @@ void Scene29::updateAnimations() {
 			gameSys.setAnimation(0, 159, 4);
 			gameSys.insertSequence(_nextMonkeySequenceId, 159, _currMonkeySequenceId, 159, kSeqSyncWait, 0, 0, 0);
 			gameSys.insertSequence(0xE6, 159, _nextMonkeySequenceId, 159, kSeqSyncWait, 0, 0, 0);
-			_vm->_gnapActionStatus = kAS29LeaveScene;
+			_vm->_gnap->_actionStatus = kAS29LeaveScene;
 			_currMonkeySequenceId = 0xE6;
 			_nextMonkeySequenceId = -1;
 			_vm->_timers[5] = 30;

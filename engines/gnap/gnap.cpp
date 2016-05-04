@@ -412,10 +412,10 @@ void GnapEngine::updateMouseCursor() {
 			setCursor(kDisabledCursors[_verbCursor]);
 		setGrabCursorSprite(-1);
 	}
-	if (_isWaiting && ((_gnapActionStatus < 0 && _platypusActionStatus < 0) || _sceneWaiting)) {
+	if (_isWaiting && ((_gnap->_actionStatus < 0 && _plat->_actionStatus < 0) || _sceneWaiting)) {
 		setCursor(kDisabledCursors[_verbCursor]);
 		_isWaiting = false;
-	} else if (!_isWaiting && (_gnapActionStatus >= 0 || _platypusActionStatus >= 0) && !_sceneWaiting) {
+	} else if (!_isWaiting && (_gnap->_actionStatus >= 0 || _plat->_actionStatus >= 0) && !_sceneWaiting) {
 		setCursor(WAIT_CURSOR);
 		_isWaiting = true;
 	}
@@ -733,8 +733,8 @@ void GnapEngine::initScene() {
 	_isLeavingScene = false;
 	_sceneDone = false;
 	_newSceneNum = 55;
-	_gnapActionStatus = -1;
-	_platypusActionStatus = -1;
+	_gnap->_actionStatus = -1;
+	_plat->_actionStatus = -1;
 	gnapInitBrainPulseRndValue();
 	hideCursor();
 	clearAllKeyStatus1();
@@ -1553,7 +1553,7 @@ void GnapEngine::playGnapShowCurrItem(int gridX, int gridY, int gridLookX, int g
 }
 
 void GnapEngine::updateGnapIdleSequence() {
-	if (_gnapActionStatus < 0) {
+	if (_gnap->_actionStatus < 0) {
 		if (_timers[2] > 0) {
 			if (_timers[3] == 0) {
 				_timers[2] = 60;
@@ -1603,7 +1603,7 @@ void GnapEngine::updateGnapIdleSequence() {
 }
 
 void GnapEngine::updateGnapIdleSequence2() {
-	if (_gnapActionStatus < 0) {
+	if (_gnap->_actionStatus < 0) {
 		if (_timers[2] > 0) {
 			if (_timers[3] == 0) {
 				_timers[2] = 60;
@@ -1637,11 +1637,11 @@ void GnapEngine::updateGnapIdleSequence2() {
 }
 
 bool GnapEngine::testWalk(int animationIndex, int someStatus, int gridX1, int gridY1, int gridX2, int gridY2) {
-	if (_mouseClickState._left && someStatus == _gnapActionStatus) {
+	if (_mouseClickState._left && someStatus == _gnap->_actionStatus) {
 		_isLeavingScene = false;
 		_gameSys->setAnimation(0, 0, animationIndex);
-		_gnapActionStatus = -1;
-		_platypusActionStatus = -1;
+		_gnap->_actionStatus = -1;
+		_plat->_actionStatus = -1;
 		gnapWalkTo(gridX1, gridY1, -1, -1, 1);
 		platypusWalkTo(gridX2, gridY2, -1, -1, 1);
 		_mouseClickState._left = false;
@@ -1713,8 +1713,8 @@ void GnapEngine::doCallback(int callback) {
 bool GnapEngine::gnapPlatypusAction(int gridX, int gridY, int platSequenceId, int callback) {
 	bool result = false;
 
-	if (_gnapActionStatus <= -1 && _platypusActionStatus <= -1) {
-		_gnapActionStatus = 100;
+	if (_gnap->_actionStatus <= -1 && _plat->_actionStatus <= -1) {
+		_gnap->_actionStatus = 100;
 		if (isPointBlocked(_plat->_pos.x + gridX, _plat->_pos.y + gridY) && (_gnap->_pos != Common::Point(_plat->_pos.x + gridX, _plat->_pos.y + gridY)))
 			platypusWalkStep();
 		if (!isPointBlocked(_plat->_pos.x + gridX, _plat->_pos.y + gridY) && (_gnap->_pos != Common::Point(_plat->_pos.x + gridX, _plat->_pos.y + gridY))) {
@@ -1736,14 +1736,14 @@ bool GnapEngine::gnapPlatypusAction(int gridX, int gridY, int platSequenceId, in
 				result = true;
 			}
 		}
-		_gnapActionStatus = -1;
+		_gnap->_actionStatus = -1;
 	}
 	return result;
 }
 
 void GnapEngine::gnapKissPlatypus(int callback) {
 	if (gnapPlatypusAction(-1, 0, 0x107D1, callback)) {
-		_gnapActionStatus = 100;
+		_gnap->_actionStatus = 100;
 		_gameSys->setAnimation(0, 0, 1);
 		_gameSys->setAnimation(0x10847, _gnapId, 0);
 		_gameSys->insertSequence(0x10847, _gnapId,
@@ -1764,7 +1764,7 @@ void GnapEngine::gnapKissPlatypus(int callback) {
 			gameUpdateTick();
 		}
 		_gameSys->setAnimation(0, 0, 0);
-		_gnapActionStatus = -1;
+		_gnap->_actionStatus = -1;
 	} else {
 		playGnapSequence(getGnapSequenceId(gskScratchingHead, _plat->_pos.x, _plat->_pos.y) | 0x10000);
 	}
@@ -1773,7 +1773,7 @@ void GnapEngine::gnapKissPlatypus(int callback) {
 void GnapEngine::gnapUseJointOnPlatypus() {
 	setGrabCursorSprite(-1);
 	if (gnapPlatypusAction(1, 0, 0x107C1, 0)) {
-		_gnapActionStatus = 100;
+		_gnap->_actionStatus = 100;
 		_gameSys->setAnimation(0, 0, 1);
 		_gameSys->setAnimation(0x10876, _platypusId, 0);
 		_gameSys->insertSequence(0x10875, _gnapId,
@@ -1794,7 +1794,7 @@ void GnapEngine::gnapUseJointOnPlatypus() {
 			gameUpdateTick();
 		}
 		_gameSys->setAnimation(0, 0, 0);
-		_gnapActionStatus = -1;
+		_gnap->_actionStatus = -1;
 	} else {
 		playGnapSequence(getGnapSequenceId(gskScratchingHead, _plat->_pos.x, _plat->_pos.y) | 0x10000);
 	}
@@ -1834,7 +1834,7 @@ void GnapEngine::playPlatypusSequence(int sequenceId) {
 }
 
 void GnapEngine::updatePlatypusIdleSequence() {
-	if (_platypusActionStatus < 0 && _gnapActionStatus < 0) {
+	if (_plat->_actionStatus < 0 && _gnap->_actionStatus < 0) {
 		if (_timers[0] > 0) {
 			if (_timers[1] == 0) {
 				_timers[1] = getRandom(20) + 30;
@@ -1872,7 +1872,7 @@ void GnapEngine::updatePlatypusIdleSequence() {
 }
 
 void GnapEngine::updatePlatypusIdleSequence2() {
-	if (_platypusActionStatus < 0 && _gnapActionStatus < 0) {
+	if (_plat->_actionStatus < 0 && _gnap->_actionStatus < 0) {
 		if (_timers[0]) {
 			if (!_timers[1]) {
 				_timers[1] = getRandom(20) + 30;

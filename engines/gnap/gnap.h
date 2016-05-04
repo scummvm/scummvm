@@ -516,7 +516,6 @@ public:
 	void platypusMakeRoom();
 
 	// Gnap
-	int _gnapActionStatus;
 	int _gnapBrainPulseNum, _gnapBrainPulseRndValue;
 	int _gnapSequenceId, _gnapSequenceDatNum, _gnapId;
 
@@ -548,7 +547,6 @@ public:
 	void gnapUseDisguiseOnPlatypus();
 
 	// Platypus
-	int _platypusActionStatus;
 	int _platypusSequenceId, _platypusSequenceDatNum, _platypusId;
 	int getPlatypusSequenceId();
 	void playPlatypusSequence(int sequenceId);

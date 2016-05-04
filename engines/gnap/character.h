@@ -43,6 +43,7 @@ public:
 
 	Common::Point _pos;
 	Facing _idleFacing;
+	int _actionStatus;
 
 protected:
 	GnapEngine *_vm;

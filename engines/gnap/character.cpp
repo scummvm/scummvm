@@ -28,6 +28,7 @@ namespace Gnap {
 Character::Character(GnapEngine *vm) : _vm(vm) {
 	_pos = Common::Point(0, 0);
 	_idleFacing = kDirNone;
+	_actionStatus = 0;
 }
 
 Character::~Character() {}
