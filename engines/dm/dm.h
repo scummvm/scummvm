@@ -23,7 +23,6 @@ public:
 	~DMEngine();
 
 	virtual Common::Error run();
-	Common::Error go();
 
 private:
 	Console *_console;

@@ -6,9 +6,23 @@
 
 namespace DM {
 
+enum dmPaletteEnum {
+	palSwoosh = 0,
+	palMousePointer = 1,
+	palCredits = 2,
+	palEntrance = 3,
+	palDungeonView0 = 4,
+	palDungeonView1 = 5,
+	palDungeonView2 = 6,
+	palDungeonView3 = 7,
+	palDungeonView4 = 8,
+	palDungeonView5 = 9,
+};
+
+
 class DisplayMan {
 	DMEngine *_vm;
-	byte *_currPalette;
+	dmPaletteEnum _currPalette;
 	uint16 _screenWidth;
 	uint16 _screenHeight;
 	byte *_vgaBuffer;
@@ -22,7 +36,7 @@ public:
 	~DisplayMan();
 	void setUpScreens(uint16 width, uint16 height);
 	void loadGraphics();
-	void setPalette(byte *buff, uint16 colorCount);
+	void loadPalette(dmPaletteEnum palette);
 	void loadIntoBitmap(uint16 index, byte *destBitmap);
 	uint16 getImageWidth(uint16 index);
 	uint16 getImageHeight(uint16 index);

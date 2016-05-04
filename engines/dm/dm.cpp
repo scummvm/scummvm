@@ -16,6 +16,7 @@
 
 namespace DM {
 
+
 DMEngine::DMEngine(OSystem *syst) : Engine(syst), _console(nullptr) {
 	// Do not load data files
 	// Do not initialize graphics here
@@ -56,38 +57,20 @@ Common::Error DMEngine::run() {
 	_displayMan->loadGraphics();
 	_dungeonMan->loadDungeonFile();
 
+	_displayMan->loadPalette(palCredits);
 
-
-
-	byte *palette = new byte[256 * 3];
-	for (int i = 0; i < 16; ++i)
-		palette[i * 3] = palette[i * 3 + 1] = palette[i * 3 + 2] = i * 16;
-
-	_displayMan->setPalette(palette, 16);
-
-	byte *buffer = new byte[320 * 200];
-	for (int i = 0; i < 320 * 100; ++i)
-		buffer[i] = 4;
-	for (int i = 320 * 100; i < 320 * 200; ++i)
-		buffer[i] = 6;
-
-	_system->copyRectToScreen(buffer, 320, 0, 0, 320, 200);
-	_system->updateScreen();
-
-
-	uint16 width = _displayMan->getImageWidth(75);
-	uint16 height = _displayMan->getImageHeight(75);
+	uint16 width = _displayMan->getImageWidth(1);
+	uint16 height = _displayMan->getImageHeight(1);
 	byte *cleanByteImg0Data = new byte[width * height];
-	_displayMan->loadIntoBitmap(75, cleanByteImg0Data);
-	_displayMan->blitToScreen(cleanByteImg0Data, width, height, 30, 30);
+	_displayMan->loadIntoBitmap(1, cleanByteImg0Data);
+	_displayMan->blitToScreen(cleanByteImg0Data, width, height, 0, 0);
 
 
 	while (true) {
 		_displayMan->updateScreen();
+		_system->delayMillis(10);
 	}
 
-
-	delete[] buffer;
 	delete[] cleanByteImg0Data;
 
 	return Common::kNoError;
