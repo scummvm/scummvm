@@ -60,6 +60,7 @@ Parallaction::Parallaction(OSystem *syst, const PARALLACTIONGameDescription *gam
 	DebugMan.addDebugChannel(kDebugMenu, "menu", "Menu debug level");
 	DebugMan.addDebugChannel(kDebugInventory, "inventory", "Inventory debug level");
 
+	_screenWidth = 0;
 	_screenHeight = 0;
 	_screenSize = 0;
 	_gameType = 0;
@@ -86,6 +87,7 @@ Parallaction::Parallaction(OSystem *syst, const PARALLACTIONGameDescription *gam
 	_inventory = 0;
 	_currentLocationIndex = 0;
 	_numLocations = 0;
+	_language = 0;
 }
 
 Parallaction::~Parallaction() {
