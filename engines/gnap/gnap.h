@@ -42,6 +42,7 @@
 #include "gnap/debugger.h"
 #include "gnap/resource.h"
 #include "gnap/scenes/scenecore.h"
+#include "gnap/character.h"
 
 struct ADGameDescription;
 
@@ -250,15 +251,6 @@ enum {
 	// 0x7AF	Gnap walks to the left 1
 	// 0x7B0	Gnap walks to the left 2
 
-enum Facing {
-	kDirNone = 0,
-	kDirBottomRight = 1,
-	kDirBottomLeft = 3,
-	kDirUnk4 = 4,
-	kDirUpLeft = 5,
-	kDirUpRight = 7
-};
-
 struct GnapSavegameHeader {
 	uint8 _version;
 	Common::String _saveName;
@@ -292,6 +284,7 @@ public:
 	SoundMan *_soundMan;
 	Debugger *_debugger;
 	Scene *_scene;
+	PlayerGnap *_gnap;
 
 	int _lastUpdateClock;
 
@@ -494,7 +487,6 @@ public:
 	// Gnap walking
 	int _gnapWalkNodesCount;
 	GridStruct _gnapWalkNodes[kMaxGridStructs];
-	int _gnapX, _gnapY;
 	int _gnapWalkDestX, _gnapWalkDestY;
 	int _gnapWalkDeltaX, _gnapWalkDeltaY, _gnapWalkDirX, _gnapWalkDirY, _gnapWalkDirXIncr, _gnapWalkDirYIncr;
 
@@ -505,6 +497,7 @@ public:
 	bool gridSub41F5FC(int gridX, int gridY, int index);
 	bool gridSub41FAD5(int gridX, int gridY, int index);
 	bool gnapFindPath3(int gridX, int gridY);
+	bool gnapWalkTo(Common::Point gridPos, int animationIndex, int sequenceId, int flags);
 	bool gnapWalkTo(int gridX, int gridY, int animationIndex, int sequenceId, int flags);
 	void gnapWalkStep();
 
@@ -525,7 +518,6 @@ public:
 	void platypusMakeRoom();
 
 	// Gnap
-	Facing _gnapIdleFacing;
 	int _gnapActionStatus;
 	int _gnapBrainPulseNum, _gnapBrainPulseRndValue;
 	int _gnapSequenceId, _gnapSequenceDatNum, _gnapId;

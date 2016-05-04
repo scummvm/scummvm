@@ -265,9 +265,8 @@ void Scene41::run() {
 	if (_vm->isFlag(kGFGnapControlsToyUFO)) {
 		_vm->_gnapSequenceId = 0x120;
 		_vm->_gnapSequenceDatNum = 0;
-		_vm->_gnapIdleFacing = kDirUpRight;
-		_vm->_gnapX = 7;
-		_vm->_gnapY = 7;
+		_vm->_gnap->_idleFacing = kDirUpRight;
+		_vm->_gnap->_pos = Common::Point(7, 7);
 		_vm->_gnapId = 140;
 		gameSys.insertSequence(0x120, 140, 0, 0, kSeqNone, 0, 0, 0);
 		gameSys.setAnimation(makeRid(_vm->_gnapSequenceDatNum, _vm->_gnapSequenceId), _vm->_gnapId, 0);
@@ -412,7 +411,7 @@ void Scene41::run() {
 						_vm->playGnapImpossible(0, 0);
 						break;
 					case TALK_CURSOR:
-						_vm->_gnapIdleFacing = kDirUpRight;
+						_vm->_gnap->_idleFacing = kDirUpRight;
 						_vm->gnapWalkTo(4, 7, 0, _vm->getGnapSequenceId(gskBrainPulsating, 0, 0) | 0x10000, 1);
 						_vm->_gnapActionStatus = kAS41TalkToyVendor;
 						break;
@@ -426,7 +425,7 @@ void Scene41::run() {
 			case kHS41Kid:
 				if (_vm->_grabCursorSpriteIndex == kItemChickenBucket) {
 					_vm->gnapWalkTo(7, 7, 0, 0x107BB, 1);
-					_vm->_gnapIdleFacing = kDirUpRight;
+					_vm->_gnap->_idleFacing = kDirUpRight;
 					_vm->_gnapActionStatus = kAS41UseChickenBucketWithKid;
 				} else if (_vm->_grabCursorSpriteIndex >= 0) {
 					_vm->playGnapShowCurrItem(7, 7, 8, 0);
@@ -437,11 +436,11 @@ void Scene41::run() {
 						break;
 					case GRAB_CURSOR:
 						_vm->gnapWalkTo(7, 7, 0, 0x107BB, 1);
-						_vm->_gnapIdleFacing = kDirUpRight;
+						_vm->_gnap->_idleFacing = kDirUpRight;
 						_vm->_gnapActionStatus = kAS41GrabKid;
 						break;
 					case TALK_CURSOR:
-						_vm->_gnapIdleFacing = kDirUpRight;
+						_vm->_gnap->_idleFacing = kDirUpRight;
 						_vm->gnapWalkTo(7, 7, 0, _vm->getGnapSequenceId(gskBrainPulsating, 0, 0) | 0x10000, 1);
 						break;
 					case PLAT_CURSOR:
@@ -887,7 +886,7 @@ void Scene42::run() {
 
 			case kHS42ExitUfoParty:
 				_vm->_isLeavingScene = true;
-				_vm->gnapWalkTo(_vm->_gnapX, _vm->_hotspotsWalkPos[kHS42ExitUfoParty].y, 0, 0x107AE, 1);
+				_vm->gnapWalkTo(_vm->_gnap->_pos.x, _vm->_hotspotsWalkPos[kHS42ExitUfoParty].y, 0, 0x107AE, 1);
 				_vm->_gnapActionStatus = kAS42LeaveScene;
 				_vm->platypusWalkTo(_vm->_platX, _vm->_hotspotsWalkPos[kHS42ExitUfoParty].y, -1, 0x107C7, 1);
 				_vm->_newSceneNum = 40;
@@ -895,7 +894,7 @@ void Scene42::run() {
 
 			case kHS42ExitToyStand:
 				_vm->_isLeavingScene = true;
-				_vm->gnapWalkTo(_vm->_hotspotsWalkPos[kHS42ExitToyStand].x, _vm->_gnapY, 0, 0x107AF, 1);
+				_vm->gnapWalkTo(_vm->_hotspotsWalkPos[kHS42ExitToyStand].x, _vm->_gnap->_pos.y, 0, 0x107AF, 1);
 				_vm->_gnapActionStatus = kAS42LeaveScene;
 				_vm->platypusWalkTo(_vm->_hotspotsWalkPos[kHS42ExitToyStand].x, _vm->_hotspotsWalkPos[kHS42ExitToyStand].y, -1, 0x107CF, 1);
 				_vm->_newSceneNum = 41;
@@ -903,7 +902,7 @@ void Scene42::run() {
 
 			case kHS42ExitUfo:
 				_vm->_isLeavingScene = true;
-				_vm->gnapWalkTo(_vm->_hotspotsWalkPos[kHS42ExitUfo].x, _vm->_gnapY, 0, 0x107AB, 1);
+				_vm->gnapWalkTo(_vm->_hotspotsWalkPos[kHS42ExitUfo].x, _vm->_gnap->_pos.y, 0, 0x107AB, 1);
 				_vm->_gnapActionStatus = kAS42LeaveScene;
 				_vm->platypusWalkTo(_vm->_hotspotsWalkPos[kHS42ExitUfo].x, _vm->_hotspotsWalkPos[kHS42ExitUfo].y, -1, 0x107CD, 1);
 				_vm->_newSceneNum = 43;
@@ -923,7 +922,7 @@ void Scene42::run() {
 						_vm->playGnapScratchingHead(_vm->_hotspotsWalkPos[kHS42BBQVendor].x - 1, 0);
 						break;
 					case TALK_CURSOR:
-						_vm->_gnapIdleFacing = kDirUpRight;
+						_vm->_gnap->_idleFacing = kDirUpRight;
 						_vm->gnapWalkTo(_vm->_hotspotsWalkPos[kHS42BBQVendor].x, _vm->_hotspotsWalkPos[kHS42BBQVendor].y, 0, _vm->getGnapSequenceId(gskBrainPulsating, 0, 0) | 0x10000, 1);
 						_vm->_gnapActionStatus = kAS42TalkBBQVendor;
 						break;
@@ -1066,7 +1065,7 @@ void Scene42::updateAnimations() {
 					gameSys.insertSequence(0x107B7, _vm->_gnapId,
 						makeRid(_vm->_gnapSequenceDatNum, _vm->_gnapSequenceId), _vm->_gnapId,
 						kSeqSyncWait, _vm->getSequenceTotalDuration(_nextBBQVendorSequenceId),
-						75 * _vm->_gnapX - _vm->_gnapGridX, 48 * _vm->_gnapY - _vm->_gnapGridY);
+						75 * _vm->_gnap->_pos.x - _vm->_gnapGridX, 48 * _vm->_gnap->_pos.y - _vm->_gnapGridY);
 					_vm->_gnapSequenceDatNum = 1;
 				} else {
 					gameSys.insertSequence(sequenceId, _vm->_gnapId,
@@ -1353,7 +1352,7 @@ void Scene43::run() {
 
 			case kHS43ExitBBQ:
 				_vm->_isLeavingScene = true;
-				_vm->gnapWalkTo(_vm->_hotspotsWalkPos[kHS43ExitBBQ].x, _vm->_gnapY, 0, 0x107AF, 1);
+				_vm->gnapWalkTo(_vm->_hotspotsWalkPos[kHS43ExitBBQ].x, _vm->_gnap->_pos.y, 0, 0x107AF, 1);
 				_vm->_gnapActionStatus = 0;
 				_vm->platypusWalkTo(_vm->_hotspotsWalkPos[kHS43ExitBBQ].x, _vm->_hotspotsWalkPos[kHS43ExitBBQ].y, -1, 0x107CF, 1);
 				_vm->_newSceneNum = 42;
@@ -1361,7 +1360,7 @@ void Scene43::run() {
 
 			case kHS43ExitKissinBooth:
 				_vm->_isLeavingScene = true;
-				_vm->gnapWalkTo(_vm->_hotspotsWalkPos[kHS43ExitKissinBooth].x, _vm->_gnapY, 0, 0x107AB, 1);
+				_vm->gnapWalkTo(_vm->_hotspotsWalkPos[kHS43ExitKissinBooth].x, _vm->_gnap->_pos.y, 0, 0x107AB, 1);
 				_vm->_gnapActionStatus = 0;
 				_vm->platypusWalkTo(_vm->_hotspotsWalkPos[kHS43ExitKissinBooth].x, _vm->_hotspotsWalkPos[kHS43ExitKissinBooth].y, -1, 0x107CD, 1);
 				_vm->_newSceneNum = 44;
@@ -1376,7 +1375,7 @@ void Scene43::run() {
 						_vm->playGnapScratchingHead(7, 0);
 						break;
 					case TALK_CURSOR:
-							_vm->_gnapIdleFacing = kDirUpRight;
+							_vm->_gnap->_idleFacing = kDirUpRight;
 							_vm->gnapWalkTo(5, 8, 0, _vm->getGnapSequenceId(gskBrainPulsating, 0, 0) | 0x10000, 1);
 							_vm->_gnapActionStatus = 2;
 						break;
@@ -1398,7 +1397,7 @@ void Scene43::run() {
 						_vm->playGnapScratchingHead(0, 0);
 						break;
 					case GRAB_CURSOR:
-						_vm->_gnapIdleFacing = kDirUpRight;
+						_vm->_gnap->_idleFacing = kDirUpRight;
 						_vm->gnapWalkTo(3, 7, 0, 67515, 1);
 						_vm->_gnapActionStatus = 1;
 						break;
@@ -1801,7 +1800,7 @@ void Scene44::run() {
 
 			case kHS44ExitUfo:
 				_vm->_isLeavingScene = true;
-				_vm->gnapWalkTo(_vm->_hotspotsWalkPos[kHS44ExitUfo].x, _vm->_gnapY, 0, 0x107AF, 1);
+				_vm->gnapWalkTo(_vm->_hotspotsWalkPos[kHS44ExitUfo].x, _vm->_gnap->_pos.y, 0, 0x107AF, 1);
 				_vm->_gnapActionStatus = 0;
 				_vm->platypusWalkTo(_vm->_hotspotsWalkPos[kHS44ExitUfo].x, _vm->_platY, -1, 0x107CF, 1);
 				_vm->_newSceneNum = 43;
@@ -1828,14 +1827,14 @@ void Scene44::run() {
 						_vm->playGnapImpossible(0, 0);
 						break;
 					case TALK_CURSOR:
-						_vm->_gnapIdleFacing = kDirUpLeft;
+						_vm->_gnap->_idleFacing = kDirUpLeft;
 						_vm->gnapWalkTo(_vm->_hotspotsWalkPos[kHS44KissingLady].x, _vm->_hotspotsWalkPos[kHS44KissingLady].y, 0, _vm->getGnapSequenceId(gskBrainPulsating, 0, 0) | 0x10000, 1);
 						_vm->_gnapActionStatus = 1;
 						break;
 					case PLAT_CURSOR:
 						_vm->gnapUseDeviceOnPlatypus();
 						_vm->platypusWalkTo(6, 7, 1, 0x107D2, 1);
-						if (_vm->_gnapX == 7 && _vm->_gnapY == 7)
+						if (_vm->_gnap->_pos == Common::Point(7, 7))
 							_vm->gnapWalkStep();
 						_vm->playGnapIdle(5, 7);
 						_vm->_platypusActionStatus = 4;
@@ -1882,7 +1881,7 @@ void Scene44::run() {
 							_vm->playGnapScratchingHead(8, 7);
 						break;
 					case TALK_CURSOR:
-						_vm->_gnapIdleFacing = kDirUpRight;
+						_vm->_gnap->_idleFacing = kDirUpRight;
 						_vm->gnapWalkTo(_vm->_hotspotsWalkPos[kHS44SpringGuy].x, _vm->_hotspotsWalkPos[kHS44SpringGuy].y, -1, _vm->getGnapSequenceId(gskBrainPulsating, 0, 0) | 0x10000, 1);
 						break;
 					case GRAB_CURSOR:
@@ -2203,7 +2202,7 @@ void Scene45::run() {
 		gameSys.setAnimation(0x107BD, _vm->_gnapId, 0);
 		gameSys.insertSequence(0x107BD, _vm->_gnapId,
 			makeRid(_vm->_gnapSequenceDatNum, _vm->_gnapSequenceId), _vm->_gnapId,
-			kSeqSyncWait, 0, 75 * _vm->_gnapX - _vm->_gnapGridX, 48 * _vm->_gnapY - _vm->_gnapGridY);
+			kSeqSyncWait, 0, 75 * _vm->_gnap->_pos.x - _vm->_gnapGridX, 48 * _vm->_gnap->_pos.y - _vm->_gnapGridY);
 		_vm->removeFullScreenSprite();
 		_vm->showCursor();
 		_vm->_gnapSequenceId = 0x7BD;
@@ -2286,7 +2285,7 @@ void Scene45::run() {
 			case kHS45ExitUfoParty:
 				if (_vm->_gnapActionStatus < 0) {
 					_vm->_isLeavingScene = true;
-					_vm->gnapWalkTo(_vm->_gnapX, _vm->_hotspotsWalkPos[kHS45ExitUfoParty].y, 0, 0x107AE, 1);
+					_vm->gnapWalkTo(_vm->_gnap->_pos.x, _vm->_hotspotsWalkPos[kHS45ExitUfoParty].y, 0, 0x107AE, 1);
 					_vm->_gnapActionStatus = 0;
 					_vm->_newSceneNum = 40;
 				}
@@ -2295,7 +2294,7 @@ void Scene45::run() {
 			case kHS45ExitShoe:
 				if (_vm->_gnapActionStatus < 0) {
 					_vm->_isLeavingScene = true;
-					_vm->gnapWalkTo(_vm->_hotspotsWalkPos[kHS45ExitShoe].x, _vm->_gnapY, 0, 0x107AF, 1);
+					_vm->gnapWalkTo(_vm->_hotspotsWalkPos[kHS45ExitShoe].x, _vm->_gnap->_pos.y, 0, 0x107AF, 1);
 					_vm->_gnapActionStatus = 0;
 					_vm->platypusWalkTo(_vm->_hotspotsWalkPos[kHS45ExitShoe].x, _vm->_platY, -1, 0x107CF, 1);
 					_vm->_newSceneNum = 46;
@@ -2305,7 +2304,7 @@ void Scene45::run() {
 			case kHS45ExitRight:
 				if (_vm->_gnapActionStatus < 0) {
 					_vm->_isLeavingScene = true;
-					_vm->gnapWalkTo(_vm->_hotspotsWalkPos[kHS45ExitRight].x, _vm->_gnapY, 0, 0x107AB, 1);
+					_vm->gnapWalkTo(_vm->_hotspotsWalkPos[kHS45ExitRight].x, _vm->_gnap->_pos.y, 0, 0x107AB, 1);
 					_vm->_gnapActionStatus = 0;
 					_vm->platypusWalkTo(_vm->_hotspotsWalkPos[kHS45ExitRight].x, _vm->_platY, -1, 0x107CD, 1);
 					_vm->_newSceneNum = 41;
@@ -2615,7 +2614,7 @@ void Scene46::run() {
 						_vm->playGnapMoan1(_vm->_hotspotsWalkPos[kHS46SackGuy].x + 1, 0);
 						break;
 					case TALK_CURSOR:
-						_vm->_gnapIdleFacing = kDirUpLeft;
+						_vm->_gnap->_idleFacing = kDirUpLeft;
 						_vm->gnapWalkTo(_vm->_hotspotsWalkPos[kHS46SackGuy].x, _vm->_hotspotsWalkPos[kHS46SackGuy].y, 0, _vm->getGnapSequenceId(gskBrainPulsating, 0, 0) | 0x10000, 1);
 						_vm->_gnapActionStatus = 2;
 						break;
@@ -2636,7 +2635,7 @@ void Scene46::run() {
 						_vm->playGnapMoan1(_vm->_hotspotsWalkPos[kHS46ItchyGuy].x - 1, 0);
 						break;
 					case TALK_CURSOR:
-						_vm->_gnapIdleFacing = kDirUpRight;
+						_vm->_gnap->_idleFacing = kDirUpRight;
 						_vm->gnapWalkTo(_vm->_hotspotsWalkPos[kHS46ItchyGuy].x, _vm->_hotspotsWalkPos[kHS46ItchyGuy].y, 0, _vm->getGnapSequenceId(gskBrainPulsating, 0, 0) | 0x10000, 1);
 						_vm->_gnapActionStatus = 1;
 						break;
@@ -2650,14 +2649,14 @@ void Scene46::run() {
 
 			case kHS46ExitUfoParty:
 				_vm->_isLeavingScene = true;
-				_vm->gnapWalkTo(_vm->_gnapX, _vm->_hotspotsWalkPos[kHS46ExitUfoParty].y, 0, 0x107AE, 1);
+				_vm->gnapWalkTo(_vm->_gnap->_pos.x, _vm->_hotspotsWalkPos[kHS46ExitUfoParty].y, 0, 0x107AE, 1);
 				_vm->_gnapActionStatus = 0;
 				_vm->_newSceneNum = 40;
 				break;
 
 			case kHS46ExitKissinBooth:
 				_vm->_isLeavingScene = true;
-				_vm->gnapWalkTo(_vm->_hotspotsWalkPos[kHS46ExitKissinBooth].x, _vm->_gnapY, 0, 0x107AF, 1);
+				_vm->gnapWalkTo(_vm->_hotspotsWalkPos[kHS46ExitKissinBooth].x, _vm->_gnap->_pos.y, 0, 0x107AF, 1);
 				_vm->_gnapActionStatus = 0;
 				_vm->platypusWalkTo(_vm->_hotspotsWalkPos[kHS46ExitKissinBooth].x, _vm->_platY, -1, 0x107CF, 1);
 				_vm->_newSceneNum = 44;
@@ -2665,7 +2664,7 @@ void Scene46::run() {
 
 			case kHS46ExitDisco:
 				_vm->_isLeavingScene = true;
-				_vm->gnapWalkTo(_vm->_hotspotsWalkPos[kHS46ExitDisco].x, _vm->_gnapY, 0, 0x107AB, 1);
+				_vm->gnapWalkTo(_vm->_hotspotsWalkPos[kHS46ExitDisco].x, _vm->_gnap->_pos.y, 0, 0x107AB, 1);
 				_vm->_gnapActionStatus = 0;
 				_vm->platypusWalkTo(_vm->_hotspotsWalkPos[kHS46ExitDisco].x, _vm->_platY, -1, 0x107CD, 1);
 				_vm->_newSceneNum = 45;

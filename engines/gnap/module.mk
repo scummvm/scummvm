@@ -1,6 +1,7 @@
 MODULE := engines/gnap
 
 MODULE_OBJS := \
+	character.o \
 	datarchive.o \
 	debugger.o \
 	detection.o \

@@ -73,7 +73,7 @@ bool GnapEngine::isPointBlocked(int gridX, int gridY) {
 	if (gridX < 0 || gridX >= _gridMaxX || gridY < 0 || gridY >= _gridMaxY)
 		return true;
 
-	if ((gridX == _gnapX && gridY == _gnapY) || (gridX == _platX && gridY == _platY))
+	if ((_gnap->_pos == Common::Point(gridX, gridY)) || (gridX == _platX && gridY == _platY))
 		return true;
 
 	const int x = _gridMinX + 75 * gridX;
@@ -537,8 +537,11 @@ bool GnapEngine::gnapFindPath3(int gridX, int gridY) {
 	return done;
 }
 
-bool GnapEngine::gnapWalkTo(int gridX, int gridY, int animationIndex, int sequenceId, int flags) {
+bool GnapEngine::gnapWalkTo(Common::Point gridPos, int animationIndex, int sequenceId, int flags) {
+	return gnapWalkTo(gridPos.x, gridPos.y, animationIndex, sequenceId, flags);
+}
 
+bool GnapEngine::gnapWalkTo(int gridX, int gridY, int animationIndex, int sequenceId, int flags) {
 	int datNum = flags & 3;
 	bool done = false;
 
@@ -557,16 +560,17 @@ bool GnapEngine::gnapWalkTo(int gridX, int gridY, int animationIndex, int sequen
 	if (animationIndex >= 0 && _gnapWalkDestX == _platX && _gnapWalkDestY == _platY)
 		platypusMakeRoom();
 
-	if (gridSub41F5FC(_gnapX, _gnapY, 0))
+	// TODO: Simplify the cascade of Ifs
+	if (gridSub41F5FC(_gnap->_pos.x, _gnap->_pos.y, 0))
 		done = true;
 
-	if (!done && gridSub41FAD5(_gnapX, _gnapY, 0))
+	if (!done && gridSub41FAD5(_gnap->_pos.x, _gnap->_pos.y, 0))
 		done = true;
 
-	if (!done && gnapFindPath3(_gnapX, _gnapY))
+	if (!done && gnapFindPath3(_gnap->_pos.x, _gnap->_pos.y))
 		done = true;
 
-	if (!done && gridSub41F08B(_gnapX, _gnapY))
+	if (!done && gridSub41F08B(_gnap->_pos.x, _gnap->_pos.y))
 		done = true;
 
 	gnapIdle();
@@ -627,7 +631,7 @@ bool GnapEngine::gnapWalkTo(int gridX, int gridY, int animationIndex, int sequen
 		if (_gnapWalkNodesCount > 0) {
 			_gnapSequenceId = gnapSequenceId;
 			_gnapId = gnapId;
-			_gnapIdleFacing = getGnapWalkFacing(_gnapWalkNodes[_gnapWalkNodesCount - 1]._deltaX, _gnapWalkNodes[_gnapWalkNodesCount - 1]._deltaY);
+			_gnap->_idleFacing = getGnapWalkFacing(_gnapWalkNodes[_gnapWalkNodesCount - 1]._deltaX, _gnapWalkNodes[_gnapWalkNodesCount - 1]._deltaY);
 			_gnapSequenceDatNum = datNum;
 			if (animationIndex >= 0)
 				_gameSys->setAnimation(makeRid(_gnapSequenceDatNum, _gnapSequenceId), _gnapId, animationIndex);
@@ -640,26 +644,26 @@ bool GnapEngine::gnapWalkTo(int gridX, int gridY, int animationIndex, int sequen
 			_gnapSequenceId = ridToEntryIndex(sequenceId);
 			_gnapSequenceDatNum = ridToDatIndex(sequenceId);
 			if (_gnapSequenceId == 0x7B9) {
-				_gnapIdleFacing = kDirBottomRight;
+				_gnap->_idleFacing = kDirBottomRight;
 			} else {
 				switch (_gnapSequenceId) {
 				case 0x7BA:
-					_gnapIdleFacing = kDirBottomLeft;
+					_gnap->_idleFacing = kDirBottomLeft;
 					break;
 				case 0x7BB:
-					_gnapIdleFacing = kDirUpRight;
+					_gnap->_idleFacing = kDirUpRight;
 					break;
 				case 0x7BC:
-					_gnapIdleFacing = kDirUpLeft;
+					_gnap->_idleFacing = kDirUpLeft;
 					break;
 				}
 			}
 		} else {
 			if (_gnapWalkNodesCount > 0) {
 				_gnapSequenceId = getGnapWalkStopSequenceId(_gnapWalkNodes[_gnapWalkNodesCount - 1]._deltaX, _gnapWalkNodes[_gnapWalkNodesCount - 1]._deltaY);
-				_gnapIdleFacing = getGnapWalkFacing(_gnapWalkNodes[_gnapWalkNodesCount - 1]._deltaX, _gnapWalkNodes[_gnapWalkNodesCount - 1]._deltaY);
+				_gnap->_idleFacing = getGnapWalkFacing(_gnapWalkNodes[_gnapWalkNodesCount - 1]._deltaX, _gnapWalkNodes[_gnapWalkNodesCount - 1]._deltaY);
 			} else if (gridX >= 0 || gridY >= 0) {
-				switch (_gnapIdleFacing) {
+				switch (_gnap->_idleFacing) {
 				case kDirBottomRight:
 					_gnapSequenceId = 0x7B9;
 					break;
@@ -674,14 +678,15 @@ bool GnapEngine::gnapWalkTo(int gridX, int gridY, int animationIndex, int sequen
 					break;
 				}
 			} else {
-				int v10 = _leftClickMouseX - (_gridMinX + 75 * _gnapX);
-				int v11 = _leftClickMouseY - (_gridMinY + 48 * _gnapY);
-				if (_leftClickMouseX == _gridMinX + 75 * _gnapX)
+				//TODO: simplify the checks by using v10 and v11
+				int v10 = _leftClickMouseX - (_gridMinX + 75 * _gnap->_pos.x);
+				int v11 = _leftClickMouseY - (_gridMinY + 48 * _gnap->_pos.y);
+				if (_leftClickMouseX == _gridMinX + 75 * _gnap->_pos.x)
 					++v10;
-				if (_leftClickMouseY == _gridMinY + 48 * _gnapY)
+				if (_leftClickMouseY == _gridMinY + 48 * _gnap->_pos.y)
 					v11 = 1;
 				_gnapSequenceId = getGnapWalkStopSequenceId(v10 / abs(v10), v11 / abs(v11));
-				_gnapIdleFacing = getGnapWalkFacing(v10 / abs(v10), v11 / abs(v11));
+				_gnap->_idleFacing = getGnapWalkFacing(v10 / abs(v10), v11 / abs(v11));
 			}
 			_gnapSequenceDatNum = datNum;
 		}
@@ -704,8 +709,7 @@ bool GnapEngine::gnapWalkTo(int gridX, int gridY, int animationIndex, int sequen
 		}
 	}
 
-	_gnapX = _gnapWalkDestX;
-	_gnapY = _gnapWalkDestY;
+	_gnap->_pos = Common::Point(_gnapWalkDestX, _gnapWalkDestY);
 
 	return done;
 }
@@ -714,22 +718,22 @@ void GnapEngine::gnapWalkStep() {
 	bool done = false;
 	for (int i = 1; i < _gridMaxX && !done; ++i) {
 		done = true;
-		if (!isPointBlocked(_gnapX + i, _gnapY))
-			gnapWalkTo(_gnapX + i, _gnapY, -1, -1, 1);
-		else if (!isPointBlocked(_gnapX - i, _gnapY))
-			gnapWalkTo(_gnapX - i, _gnapY, -1, -1, 1);
-		else if (!isPointBlocked(_gnapX, _gnapY + 1))
-			gnapWalkTo(_gnapX, _gnapY + 1, -1, -1, 1);
-		else if (!isPointBlocked(_gnapX, _gnapY - 1))
-			gnapWalkTo(_gnapX, _gnapY - 1, -1, -1, 1);
-		else if (!isPointBlocked(_gnapX + 1, _gnapY + 1))
-			gnapWalkTo(_gnapX + 1, _gnapY + 1, -1, -1, 1);
-		else if (!isPointBlocked(_gnapX - 1, _gnapY + 1))
-			gnapWalkTo(_gnapX - 1, _gnapY + 1, -1, -1, 1);
-		else if (!isPointBlocked(_gnapX + 1, _gnapY - 1))
-			gnapWalkTo(_gnapX + 1, _gnapY - 1, -1, -1, 1);
-		else if (!isPointBlocked(_gnapX - 1, _gnapY - 1))
-			gnapWalkTo(_gnapX - 1, _gnapY - 1, -1, -1, 1);
+		if (!isPointBlocked(_gnap->_pos.x + i, _gnap->_pos.y))
+			gnapWalkTo(_gnap->_pos.x + i, _gnap->_pos.y, -1, -1, 1);
+		else if (!isPointBlocked(_gnap->_pos.x - i, _gnap->_pos.y))
+			gnapWalkTo(_gnap->_pos.x - i, _gnap->_pos.y, -1, -1, 1);
+		else if (!isPointBlocked(_gnap->_pos.x, _gnap->_pos.y + 1))
+			gnapWalkTo(_gnap->_pos.x, _gnap->_pos.y + 1, -1, -1, 1);
+		else if (!isPointBlocked(_gnap->_pos.x, _gnap->_pos.y - 1))
+			gnapWalkTo(_gnap->_pos.x, _gnap->_pos.y - 1, -1, -1, 1);
+		else if (!isPointBlocked(_gnap->_pos.x + 1, _gnap->_pos.y + 1))
+			gnapWalkTo(_gnap->_pos.x + 1, _gnap->_pos.y + 1, -1, -1, 1);
+		else if (!isPointBlocked(_gnap->_pos.x - 1, _gnap->_pos.y + 1))
+			gnapWalkTo(_gnap->_pos.x - 1, _gnap->_pos.y + 1, -1, -1, 1);
+		else if (!isPointBlocked(_gnap->_pos.x + 1, _gnap->_pos.y - 1))
+			gnapWalkTo(_gnap->_pos.x + 1, _gnap->_pos.y - 1, -1, -1, 1);
+		else if (!isPointBlocked(_gnap->_pos.x - 1, _gnap->_pos.y - 1))
+			gnapWalkTo(_gnap->_pos.x - 1, _gnap->_pos.y - 1, -1, -1, 1);
 		else
 			done = false;
 	}
@@ -1210,7 +1214,7 @@ bool GnapEngine::platypusWalkTo(int gridX, int gridY, int animationIndex, int se
 	_platWalkDestX = CLIP(gridX, 0, _gridMaxX - 1);
 	_platWalkDestY = CLIP(gridY, 0, _gridMaxY - 1);
 
-	if (animationIndex >= 0 && _platWalkDestX == _gnapX && _platWalkDestY == _gnapY)
+	if (animationIndex >= 0 && _gnap->_pos == Common::Point(_platWalkDestX, _platWalkDestY))
 		gnapWalkStep();
 
 	if (gridSub423CC1(_platX, _platY, 0))
