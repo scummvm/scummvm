@@ -237,8 +237,8 @@ public:
 	void displayWizImage(WizImage *pwi);
 	void processWizImage(const WizParameters *params);
 
-	uint8 *drawWizImage(int resNum, int state, int maskNum, int maskState, int x1, int y1, int zorder, int shadow, int zbuffer, const Common::Rect *clipBox, int flags, int dstResNum, const uint8 *palPtr, uint16 conditionBits);
-	void drawWizImageEx(uint8 *dst, uint8 *src, uint8 *mask, int dstPitch, int dstType, int dstw, int dsth, int srcx, int srcy, int srcw, int srch, int state, const Common::Rect *rect, int flags, const uint8 *palPtr, int transColor, uint8 bitDepth, const uint8 *xmapPtr, uint16 conditionBits);
+	uint8 *drawWizImage(int resNum, int state, int maskNum, int maskState, int x1, int y1, int zorder, int shadow, int zbuffer, const Common::Rect *clipBox, int flags, int dstResNum, const uint8 *palPtr, uint32 conditionBits);
+	void drawWizImageEx(uint8 *dst, uint8 *src, uint8 *mask, int dstPitch, int dstType, int dstw, int dsth, int srcx, int srcy, int srcw, int srch, int state, const Common::Rect *rect, int flags, const uint8 *palPtr, int transColor, uint8 bitDepth, const uint8 *xmapPtr, uint32 conditionBits);
 	void drawWizPolygon(int resNum, int state, int id, int flags, int shadow, int dstResNum, int palette);
 	void drawWizComplexPolygon(int resNum, int state, int po_x, int po_y, int shadow, int angle, int zoom, const Common::Rect *r, int flags, int dstResNum, int palette);
 	void drawWizPolygonTransform(int resNum, int state, Common::Point *wp, int flags, int shadow, int dstResNum, int palette);
@@ -249,9 +249,9 @@ public:
 
 	void copyCompositeWizImage(uint8 *dst, uint8 *wizPtr, uint8 *wizd, uint8 *maskPtr, int dstPitch, int dstType,
 		int dstw, int dsth, int srcx, int srcy, int srcw, int srch, int state, const Common::Rect *clipBox,
-		int flags, const uint8 *palPtr, int transColor, uint8 bitDepth, const uint8 *xmapPtr, uint16 conditionBits);
+		int flags, const uint8 *palPtr, int transColor, uint8 bitDepth, const uint8 *xmapPtr, uint32 conditionBits);
 	void copy555WizImage(uint8 *dst, uint8 *wizd, int dstPitch, int dstType,
-			int dstw, int dsth, int srcx, int srcy, const Common::Rect *clipBox, uint16 conditionBits);
+			int dstw, int dsth, int srcx, int srcy, const Common::Rect *clipBox, uint32 conditionBits);
 #endif
 
 	static void copyAuxImage(uint8 *dst1, uint8 *dst2, const uint8 *src, int dstw, int dsth, int srcx, int srcy, int srcw, int srch, uint8 bitdepth);

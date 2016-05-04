@@ -1433,7 +1433,7 @@ void Wiz::displayWizImage(WizImage *pwi) {
 	}
 }
 
-uint8 *Wiz::drawWizImage(int resNum, int state, int maskNum, int maskState, int x1, int y1, int zorder, int shadow, int zbuffer, const Common::Rect *clipBox, int flags, int dstResNum, const uint8 *palPtr, uint16 conditionBits) {
+uint8 *Wiz::drawWizImage(int resNum, int state, int maskNum, int maskState, int x1, int y1, int zorder, int shadow, int zbuffer, const Common::Rect *clipBox, int flags, int dstResNum, const uint8 *palPtr, uint32 conditionBits) {
 	debug(3, "drawWizImage(resNum %d, state %d maskNum %d maskState %d x1 %d y1 %d flags 0x%X zorder %d shadow %d zbuffer %d dstResNum %d conditionBits: 0x%x)", resNum, state, maskNum, maskState, x1, y1, flags, zorder, shadow, zbuffer, dstResNum, conditionBits);
 	uint8 *dataPtr;
 	uint8 *dst = NULL;
@@ -1592,7 +1592,7 @@ uint8 *Wiz::drawWizImage(int resNum, int state, int maskNum, int maskState, int 
 
 void Wiz::drawWizImageEx(uint8 *dst, uint8 *dataPtr, uint8 *maskPtr, int dstPitch, int dstType,
 		int dstw, int dsth, int srcx, int srcy, int srcw, int srch, int state, const Common::Rect *rect,
-		int flags, const uint8 *palPtr, int transColor, uint8 bitDepth, const uint8 *xmapPtr, uint16 conditionBits) {
+		int flags, const uint8 *palPtr, int transColor, uint8 bitDepth, const uint8 *xmapPtr, uint32 conditionBits) {
 	uint8 *wizh = _vm->findWrappedBlock(MKTAG('W','I','Z','H'), dataPtr, state, 0);
 	assert(wizh);
 	uint32 comp   = READ_LE_UINT32(wizh + 0x0);
@@ -1647,7 +1647,7 @@ void Wiz::drawWizImageEx(uint8 *dst, uint8 *dataPtr, uint8 *maskPtr, int dstPitc
 
 void Wiz::copyCompositeWizImage(uint8 *dst, uint8 *wizPtr, uint8 *compositeInfoBlockPtr, uint8 *maskPtr, int dstPitch, int dstType,
 		int dstw, int dsth, int srcx, int srcy, int srcw, int srch, int state, const Common::Rect *clipBox,
-		int flags, const uint8 *palPtr, int transColor, uint8 bitDepth, const uint8 *xmapPtr, uint16 conditionBits) {
+		int flags, const uint8 *palPtr, int transColor, uint8 bitDepth, const uint8 *xmapPtr, uint32 conditionBits) {
 
 	uint8 *nestedBlockHeader = _vm->heFindResource(MKTAG('N','E','S','T'), wizPtr);
 	assert(nestedBlockHeader);
@@ -1765,7 +1765,7 @@ void Wiz::copyCompositeWizImage(uint8 *dst, uint8 *wizPtr, uint8 *compositeInfoB
 }
 
 void Wiz::copy555WizImage(uint8 *dst, uint8 *wizd, int dstPitch, int dstType,
-		int dstw, int dsth, int srcx, int srcy, const Common::Rect *clipBox, uint16 conditionBits) {
+		int dstw, int dsth, int srcx, int srcy, const Common::Rect *clipBox, uint32 conditionBits) {
 
 	int rawROP = conditionBits & kWMSBRopMask;
 	int paramROP = (conditionBits & kWMSBReservedBits) >> kWMSBRopParamRShift;
