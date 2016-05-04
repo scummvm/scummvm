@@ -27,7 +27,7 @@ DMEngine::DMEngine(OSystem *syst) : Engine(syst), _console(nullptr) {
 	//SearchMan.addSubDirectoryMatching(gameDataDir, "example2");
 	DebugMan.addDebugChannel(kDMDebugExample, "example", "example desc");
 
-	// regiser random source
+	// register random source
 	_rnd = new Common::RandomSource("quux");
 
 	debug("DMEngine::DMEngine");

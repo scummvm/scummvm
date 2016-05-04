@@ -4,7 +4,11 @@
 
 namespace DM {
 DungeonMan::DungeonMan(DMEngine *dmEngine) : _vm(dmEngine), _dungeonDataSize(0), _dungeonData(NULL) {}
-DungeonMan::~DungeonMan() { delete[] _dungeonData; }
+
+DungeonMan::~DungeonMan() {
+	delete[] _dungeonData;
+}
+
 void DungeonMan::loadDungeonFile() {
 	Common::File f;
 	f.open("Dungeon.dat");
