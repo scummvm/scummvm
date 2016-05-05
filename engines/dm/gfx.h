@@ -58,8 +58,8 @@ class DisplayMan {
 
 	byte **_unpackedBitmaps;
 	void unpackGraphics();
-	inline void drawFrameToScreen(byte *bitmap, Frame &f, Color transparent);
-	inline void drawFrameToBitMap(byte *bitmap, Frame &f, Color transparent, byte *destBitmap, uint16 destWidth);
+	void drawFrameToScreen(byte *bitmap, Frame &f, Color transparent);
+	void drawFrameToBitMap(byte *bitmap, Frame &f, Color transparent, byte *destBitmap, uint16 destWidth);
 public:
 	DisplayMan(DMEngine *dmEngine);
 	~DisplayMan();
@@ -72,8 +72,11 @@ public:
 	uint16 getImageHeight(uint16 index);
 	void DisplayMan::blitToBitmap(byte *srcBitmap, uint16 srcFromX, uint16 srcToX, uint16 srcFromY, uint16 srcToY,
 								  int16 srcWidth, uint16 destX, uint16 destY, byte *destBitmap, uint16 destWidth, Color transparent = colorNoTransparency);
-	inline void DisplayMan::blitToScreen(byte *srcBitmap, uint16 srcFromX, uint16 srcToX, uint16 srcFromY, uint16 srcToY,
-										 int16 srcWidth, uint16 destX, uint16 destY, Color transparent = colorNoTransparency);
+	void DisplayMan::blitToScreen(byte *srcBitmap, uint16 srcFromX, uint16 srcToX, uint16 srcFromY, uint16 srcToY,
+								  int16 srcWidth, uint16 destX, uint16 destY, Color transparent = colorNoTransparency);
+	void flipBitmapVertical(byte *bitmap, uint16 width, uint16 height);
+	void flipBitmapHorizontal(byte *bitmap, uint16 width, uint16 height);
+	void clearBitmap(byte *bitmap, uint16 width, uint16 height, Color color);
 	byte *getCurrentVgaBuffer();
 	void updateScreen();
 	void drawDungeon();

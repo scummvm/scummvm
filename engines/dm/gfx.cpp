@@ -180,6 +180,30 @@ void DisplayMan::blitToBitmap(byte *srcBitmap, uint16 srcFromX, uint16 srcToX, u
 		}
 }
 
+
+void DisplayMan::flipBitmapVertical(byte *bitmap, uint16 width, uint16 height) {
+	for(uint16 y = 0; y < height / 2; ++y)
+		for (uint16 x = 0; x < width; ++x) {
+			byte tmp;
+			tmp = bitmap[y*width + x];
+			bitmap[y*width + x] = bitmap[y*width + width - 1 - x];
+			bitmap[y*width + width - 1 - x] = tmp;
+		}
+}
+
+void DisplayMan::flipBitmapHorizontal(byte *bitmap, uint16 width, uint16 height) {
+	byte *tmp = new byte[width];
+
+	for (uint16 y = 0; y < height / 2; ++y) {
+		memcpy(tmp, bitmap + y * width, sizeof(byte) * width);
+		memcpy(bitmap + y * width, bitmap + (height - 1 - y) * width, sizeof(byte) * width);
+		memcpy(bitmap + y * width, tmp, sizeof(byte) * width);
+		memcpy(bitmap + (height - 1 - y) * width, tmp, sizeof(byte) * width);
+	}
+
+	delete[] tmp;
+}
+
 void DisplayMan::blitToScreen(byte *srcBitmap, uint16 srcFromX, uint16 srcToX, uint16 srcFromY, uint16 srcToY,
 							  int16 srcWidth, uint16 destX, uint16 destY, Color transparent) {
 	blitToBitmap(srcBitmap, srcFromX, srcToX, srcFromY, srcToY, srcWidth, destX, destY, getCurrentVgaBuffer(), _screenWidth, transparent);
@@ -212,11 +236,25 @@ void DisplayMan::drawFrameToBitMap(byte *bitmap, Frame &f, Color transparent, by
 	blitToBitmap(bitmap, f.srcFromX, f.srcToX + 1, f.srcFromY, f.srcToY + 1, f.srcWidth, f.destX, f.destY, destBitmap, destWidth, transparent);
 }
 
+
 void DisplayMan::drawDungeon() {
 	loadPalette(palDungeonView0);
+
 	drawFrameToScreen(_unpackedBitmaps[CeilingGraphIndice], ceilingFrame, colorFlesh);
+
+	byte *tmpBitmap = new byte[305 * 111]; // because original source reasons
+	clearBitmap(tmpBitmap, 111, 305, colorBlack);
+	blitToBitmap(_unpackedBitmaps[FloorGraphIndice], 0, getImageWidth(FloorGraphIndice), 0, getImageHeight(FloorGraphIndice), getImageWidth(FloorGraphIndice), 0, 0, tmpBitmap, 305);
+	flipBitmapHorizontal(tmpBitmap, 305, 111);
+	drawFrameToScreen(tmpBitmap, floorFrame, colorFlesh);
+
+	delete[] tmpBitmap;
 }
 
 void DisplayMan::clearScreen(Color color) {
 	memset(getCurrentVgaBuffer(), color, sizeof(byte) * _screenWidth * _screenHeight);
+}
+
+void DisplayMan::clearBitmap(byte *bitmap, uint16 width, uint16 height, Color color) {
+	memset(bitmap, color, sizeof(byte) * width * height);
 }
