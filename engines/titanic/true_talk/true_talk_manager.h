@@ -31,6 +31,7 @@ namespace Titanic {
 
 class CGameManager;
 class CTreeItem;
+class CGameObject;
 
 class CTrueTalkManager {
 private:
@@ -48,9 +49,20 @@ private:
 	 */
 	static void saveStatics(SimpleFile *file);
 
+	/**
+	 * Loads an NPC from file
+	 */
 	void loadNPC(SimpleFile *file, int charId);
 
+	/**
+	 * Saves the specified NPC to file
+	 */
 	void saveNPC(SimpleFile *file, int charId) const;
+
+	/**
+	 * Gets the script associated with an NPC game object
+	 */
+	TTNamedScript *getNpcScript(CGameObject *npc);
 public:
 	static int _v1;
 	static int _v2;
@@ -112,7 +124,7 @@ public:
 
 	void update2();
 
-	void fn1(CTreeItem *npc, int val2, int val3);
+	void fn1(CGameObject *npc, int val2, int val3);
 
 	/**
 	 * Return a TrueTalk talker/script

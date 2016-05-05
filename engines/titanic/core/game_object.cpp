@@ -699,15 +699,16 @@ void CGameObject::incState38() {
 }
 
 void CGameObject::trueTalkFn1(const CString &name, int val2, int val3) {
-	trueTalkFn1(getRoot()->findByName(name), val2, val3);
+	CGameObject *npc = static_cast<CGameObject *>(getRoot()->findByName(name));
+	trueTalkFn1(npc, val2, val3);
 }
 
-void CGameObject::trueTalkFn1(CTreeItem *item, int val2, int val3) {
+void CGameObject::trueTalkFn1(CGameObject *npc, int val2, int val3) {
 	CGameManager *gameManager = getGameManager();
 	if (gameManager) {
 		CTrueTalkManager *talkManager = gameManager->getTalkManager();
 		if (talkManager)
-			talkManager->fn1(item, val2, val3);
+			talkManager->fn1(npc, val2, val3);
 	}
 }
 

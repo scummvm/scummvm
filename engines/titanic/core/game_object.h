@@ -218,7 +218,7 @@ protected:
 
 	void trueTalkFn1(const CString &name, int val2, int val3);
 
-	void trueTalkFn1(CTreeItem *item, int val2, int val3);
+	void trueTalkFn1(CGameObject *npc, int val2, int val3);
 
 	/**
 	 * Load the surface

@@ -192,7 +192,7 @@ void CTrueTalkManager::update2() {
 	//warning("CTrueTalkManager::update2");
 }
 
-void CTrueTalkManager::fn1(CTreeItem *npc, int val2, int val3) {
+void CTrueTalkManager::fn1(CGameObject *npc, int val2, int val3) {
 	warning("CTrueTalkManager::fn1");
 }
 
@@ -217,6 +217,18 @@ TTNamedScript *CTrueTalkManager::getTalker(const CString &name) {
 		return _scripts.getNamedScript(111);
 
 	return nullptr;
+}
+
+TTNamedScript *CTrueTalkManager::getNpcScript(CGameObject *npc) {
+	CString npcName = npc->getName();
+	TTNamedScript *script = getTalker(npcName);
+
+	if (!script) {
+		// Fall back on the default NPC script
+		script = _scripts.getNamedScript(101);
+	}
+
+	return script;
 }
 
 } // End of namespace Titanic
