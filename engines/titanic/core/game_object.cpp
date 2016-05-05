@@ -315,14 +315,22 @@ void CGameObject::makeDirty() {
 	makeDirty(_bounds);
 }
 
-bool CGameObject::soundFn1(int val) {
-	if (val != 0 && val != -1) {
+bool CGameObject::soundFn1(int handle) {
+	if (handle != 0 && handle != -1) {
 		CGameManager *gameManager = getGameManager();
 		if (gameManager)
-			return gameManager->_sound.fn1(val);
+			return gameManager->_sound.fn1(handle);
 	}
 
 	return false;
+}
+
+void CGameObject::soundFn3(int handle, int val2, int val3) {
+	if (handle != 0 && handle != -1) {
+		CGameManager *gameManager = getGameManager();
+		if (gameManager)
+			return gameManager->_sound.fn3(handle, val2, val3);
+	}
 }
 
 void CGameObject::setVisible(bool val) {
@@ -688,6 +696,10 @@ void CGameObject::moveToView() {
 
 void CGameObject::incState38() {
 	getGameManager()->_gameState.inc38();
+}
+
+void CGameObject::trueTalkFn1(const CString &name, int val2, int val3) {
+	trueTalkFn1(getRoot()->findByName(name), val2, val3);
 }
 
 void CGameObject::trueTalkFn1(CTreeItem *item, int val2, int val3) {

@@ -112,7 +112,7 @@ public:
 
 	void update2();
 
-	void fn1(CTreeItem *item, int val2, int val3);
+	void fn1(CTreeItem *npc, int val2, int val3);
 
 	/**
 	 * Return a TrueTalk talker/script

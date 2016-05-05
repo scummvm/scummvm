@@ -122,7 +122,6 @@ protected:
 	 */
 	CViewItem * parseView(const CString &viewString);
 
-	bool soundFn1(int val);
 	void petFn2(int val);
 	void petFn3(CTreeItem *item);
 	void incState38();
@@ -146,6 +145,10 @@ protected:
 	 * Stop a sound
 	 */
 	void stopSound(int handle, int val2);
+
+	bool soundFn1(int handle);
+
+	void soundFn3(int handle, int val2, int val3);
 
 	/**
 	 * Adds a timer
@@ -212,6 +215,8 @@ protected:
 	 * Moves the item from it's original position to be under the current view
 	 */
 	void moveToView();
+
+	void trueTalkFn1(const CString &name, int val2, int val3);
 
 	void trueTalkFn1(CTreeItem *item, int val2, int val3);
 
