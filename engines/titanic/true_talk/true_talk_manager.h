@@ -31,13 +31,14 @@ namespace Titanic {
 
 class CGameManager;
 class CTreeItem;
-class CGameObject;
+class CTrueTalkNPC;
 
 class CTrueTalkManager {
 private:
 	CGameManager *_gameManager;
 	CTitleEngine _titleEngine;
 	TTScripts _scripts;
+	int _currentCharId;
 private:
 	/**
 	 * Loads the statics for the class
@@ -62,7 +63,7 @@ private:
 	/**
 	 * Gets the script associated with an NPC game object
 	 */
-	TTNamedScript *getNpcScript(CGameObject *npc) const;
+	TTNamedScript *getNpcScript(CTrueTalkNPC *npc) const;
 
 	/**
 	 * Gets the script associated with the current room
@@ -129,7 +130,10 @@ public:
 
 	void update2();
 
-	void fn1(CGameObject *npc, int val2, int val3);
+	/**
+	 * Start a TrueTalk conversation
+	 */
+	void start(CTrueTalkNPC *npc, int val2, int val3);
 
 	/**
 	 * Return a TrueTalk talker/script

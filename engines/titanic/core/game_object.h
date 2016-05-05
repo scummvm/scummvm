@@ -37,6 +37,7 @@ enum Found { FOUND_NONE = 0, FOUND_GLOBAL = 1, FOUND_ROOM = 2, FOUND_PET = 3, FO
 
 class CVideoSurface;
 class CMouseDragStartMsg;
+class CTrueTalkNPC;
 class OSMovie;
 
 class CGameObject : public CNamedItem {
@@ -216,9 +217,15 @@ protected:
 	 */
 	void moveToView();
 
-	void trueTalkFn1(const CString &name, int val2, int val3);
+	/**
+	 * Start a conversation with the NPC
+	 */
+	void startTalking(const CString &name, int val2, int val3);
 
-	void trueTalkFn1(CGameObject *npc, int val2, int val3);
+	/**
+	 * Start a conversation with the NPC
+	 */
+	void startTalking(CTrueTalkNPC *npc, int val2, int val3);
 
 	/**
 	 * Load the surface

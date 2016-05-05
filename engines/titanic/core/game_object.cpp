@@ -24,6 +24,7 @@
 #include "titanic/core/mail_man.h"
 #include "titanic/core/resource_key.h"
 #include "titanic/core/room_item.h"
+#include "titanic/npcs/true_talk_npc.h"
 #include "titanic/pet_control/pet_control.h"
 #include "titanic/support/files_manager.h"
 #include "titanic/support/screen_manager.h"
@@ -706,17 +707,17 @@ void CGameObject::incState38() {
 	getGameManager()->_gameState.inc38();
 }
 
-void CGameObject::trueTalkFn1(const CString &name, int val2, int val3) {
-	CGameObject *npc = static_cast<CGameObject *>(getRoot()->findByName(name));
-	trueTalkFn1(npc, val2, val3);
+void CGameObject::startTalking(const CString &npcName, int val2, int val3) {
+	CTrueTalkNPC *npc = static_cast<CTrueTalkNPC *>(getRoot()->findByName(npcName));
+	startTalking(npc, val2, val3);
 }
 
-void CGameObject::trueTalkFn1(CGameObject *npc, int val2, int val3) {
+void CGameObject::startTalking(CTrueTalkNPC *npc, int val2, int val3) {
 	CGameManager *gameManager = getGameManager();
 	if (gameManager) {
 		CTrueTalkManager *talkManager = gameManager->getTalkManager();
 		if (talkManager)
-			talkManager->fn1(npc, val2, val3);
+			talkManager->start(npc, val2, val3);
 	}
 }
 

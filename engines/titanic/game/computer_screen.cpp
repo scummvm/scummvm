@@ -114,11 +114,11 @@ bool CComputerScreen::TimerMsg(CTimerMsg *msg) {
 		playSound("y#662.wav");
 		soundFn3(handle, 10, 2);
 		playClip(392, 450);
-		trueTalkFn1("Doorbot", 0x3611A, 0);
+		startTalking("Doorbot", 0x3611A, 0);
 		sleep(8000);
 		
 		playClip(450, 492);
-		trueTalkFn1("DOorbot", 0x36121, 0);
+		startTalking("Doorbot", 0x36121, 0);
 		playClip(492, 522);
 		soundFn3(handle, 30, 2);
 

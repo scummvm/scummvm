@@ -22,6 +22,7 @@
 
 #include "titanic/true_talk/true_talk_manager.h"
 #include "titanic/core/tree_item.h"
+#include "titanic/npcs/true_talk_npc.h"
 #include "titanic/game_manager.h"
 
 #define MKTAG_BE(a3,a2,a1,a0) ((uint32)((a3) | ((a2) << 8) | ((a1) << 16) | ((a0) << 24)))
@@ -41,7 +42,7 @@ bool CTrueTalkManager::_v10;
 int CTrueTalkManager::_v11[41];
 
 CTrueTalkManager::CTrueTalkManager(CGameManager *owner) : 
-		_gameManager(owner), _scripts(&_titleEngine) {
+		_gameManager(owner), _scripts(&_titleEngine), _currentCharId(0) {
 }
 
 void CTrueTalkManager::save(SimpleFile *file) const {
@@ -192,7 +193,7 @@ void CTrueTalkManager::update2() {
 	//warning("CTrueTalkManager::update2");
 }
 
-void CTrueTalkManager::fn1(CGameObject *npc, int val2, int val3) {
+void CTrueTalkManager::start(CTrueTalkNPC *npc, int val2, int val3) {
 	warning("CTrueTalkManager::fn1");
 }
 
@@ -219,7 +220,7 @@ TTNamedScript *CTrueTalkManager::getTalker(const CString &name) const {
 	return nullptr;
 }
 
-TTNamedScript *CTrueTalkManager::getNpcScript(CGameObject *npc) const {
+TTNamedScript *CTrueTalkManager::getNpcScript(CTrueTalkNPC *npc) const {
 	CString npcName = npc->getName();
 	TTNamedScript *script = getTalker(npcName);
 

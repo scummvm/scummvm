@@ -167,9 +167,9 @@ bool CCarryParrot::PassOnDragStartMsg(CPassOnDragStartMsg *msg) {
 		return CCarry::PassOnDragStartMsg(msg);
 	}
 
-	CGameObject *npc = static_cast<CGameObject *>(getRoot()->findByName(_string6));
+	CTrueTalkNPC *npc = static_cast<CTrueTalkNPC *>(getRoot()->findByName(_string6));
 	if (npc)
-		trueTalkFn1(npc, 0x446BF, 0);
+		startTalking(npc, 0x446BF, 0);
 
 	_fieldE0 = 0;
 	playSound("z#475.wav", 100, 0, 0);
@@ -198,9 +198,9 @@ bool CCarryParrot::UseWithCharMsg(CUseWithCharMsg *msg) {
 
 bool CCarryParrot::ActMsg(CActMsg *msg) {
 	if (msg->_action == "FreeParrot" && (CParrot::_v4 == 4 || CParrot::_v4 == 1)) {
-		CGameObject *npc = static_cast<CGameObject *>(getRoot()->findByName(_string6));
+		CTrueTalkNPC *npc = static_cast<CTrueTalkNPC *>(getRoot()->findByName(_string6));
 		if (npc)
-			trueTalkFn1(npc, 0x446BF, 0);
+			startTalking(npc, 0x446BF, 0);
 
 		setVisible(false);
 		_fieldE0 = 0;
