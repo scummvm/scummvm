@@ -62,7 +62,12 @@ private:
 	/**
 	 * Gets the script associated with an NPC game object
 	 */
-	TTNamedScript *getNpcScript(CGameObject *npc);
+	TTNamedScript *getNpcScript(CGameObject *npc) const;
+
+	/**
+	 * Gets the script associated with the current room
+	 */
+	TTUnnamedScript *getRoomScript() const;
 public:
 	static int _v1;
 	static int _v2;
@@ -129,7 +134,7 @@ public:
 	/**
 	 * Return a TrueTalk talker/script
 	 */
-	TTNamedScript *getTalker(const CString &name);
+	TTNamedScript *getTalker(const CString &name) const;
 };
 
 } // End of namespace Titanic

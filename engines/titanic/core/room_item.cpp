@@ -115,4 +115,59 @@ void CRoomItem::calcNodePosition(const Point &nodePos, double &xVal, double &yVa
 	}
 }
 
+int CRoomItem::getScriptId() const {
+	CString name = getName();
+	if (name == "1stClassLobby")
+		return 130;
+	else if (name == "1stClassRestaurant")
+		return 132;
+	else if (name == "1stClassState")
+		return 131;
+	else if (name == "2ndClassLobby")
+		return 128;
+	else if (name == "Bar")
+		return 112;
+	else if (name == "BottomOfWell")
+		return 108;
+	else if (name == "Bridge")
+		return 121;
+	else if (name == "Dome")
+		return 122;
+	else if (name == "Home")
+		return 100;
+	else if (name == "Lift")
+		return 103;
+	else if (name == "MusicRoom")
+		return 117;
+	else if (name == "MusicRoomLobby")
+		return 118;
+	else if (name == "ParrotLobby")
+		return 111;
+	else if (name == "Pellerator")
+		return 104;
+	else if (name == "PromenadeDeck")
+		return 114;
+	else if (name == "SculptureChamber")
+		return 116;
+	else if (name == "secClassState")
+		return 129;
+	else if (name == "ServiceElevator")
+		return 102;
+	else if (name == "SGTLeisure")
+		return 125;
+	else if (name == "SGTLittleLift")
+		return 105;
+	else if (name == "SgtLobby")
+		return 124;
+	else if (name == "SGTState")
+		return 126;
+	else if (name == "Titania")
+		return 123;
+	else if (name == "TopOfWell")
+		return 107;
+
+	// TODO
+	return 0;
+}
+
 } // End of namespace Titanic

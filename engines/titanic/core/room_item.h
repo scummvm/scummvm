@@ -64,6 +64,11 @@ public:
 	 * Calculates the positioning of a node within the overall room
 	 */
 	void calcNodePosition(const Point &nodePos, double &xVal, double &yVal) const;
+
+	/**
+	 * Get the TrueTalk script Id associated with the room
+	 */
+	int getScriptId() const;
 };
 
 } // End of namespace Titanic

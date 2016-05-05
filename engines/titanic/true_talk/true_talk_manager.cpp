@@ -196,7 +196,7 @@ void CTrueTalkManager::fn1(CGameObject *npc, int val2, int val3) {
 	warning("CTrueTalkManager::fn1");
 }
 
-TTNamedScript *CTrueTalkManager::getTalker(const CString &name) {
+TTNamedScript *CTrueTalkManager::getTalker(const CString &name) const {
 	if (name.contains("Doorbot"))
 		return _scripts.getNamedScript(104);
 	else if (name.contains("DeskBot"))
@@ -219,13 +219,30 @@ TTNamedScript *CTrueTalkManager::getTalker(const CString &name) {
 	return nullptr;
 }
 
-TTNamedScript *CTrueTalkManager::getNpcScript(CGameObject *npc) {
+TTNamedScript *CTrueTalkManager::getNpcScript(CGameObject *npc) const {
 	CString npcName = npc->getName();
 	TTNamedScript *script = getTalker(npcName);
 
 	if (!script) {
 		// Fall back on the default NPC script
 		script = _scripts.getNamedScript(101);
+	}
+
+	return script;
+}
+
+TTUnnamedScript *CTrueTalkManager::getRoomScript() const {
+	CRoomItem *room = _gameManager->getRoom();
+	TTUnnamedScript *script = nullptr;
+	if (room) {
+		int scriptId = room->getScriptId();
+		if (scriptId)
+			script = _scripts.getUnnamedScript(scriptId);
+	}
+
+	if (!script) {
+		// Fall back on the default Room script
+		script = _scripts.getUnnamedScript(110);
 	}
 
 	return script;
