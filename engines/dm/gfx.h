@@ -7,6 +7,25 @@
 namespace DM {
 
 struct Frame;
+enum Color {
+	colorNoTransparency = 255,
+	colorBlack = 0,
+	colorDarkGary = 1,
+	colorLightGray = 2,
+	colorDarkBrown = 3,
+	colorCyan = 4,
+	colorLightBrown = 5,
+	colorDarkGreen = 6,
+	colorLightGreen = 7,
+	colorRed = 8,
+	colorGold = 9,
+	colorFlesh = 10,
+	colorYellow = 11,
+	colorDarkestGray = 12,
+	colorLightestGray = 13,
+	colorBlue = 14,
+	colorWhite = 15
+};
 
 enum dmPaletteEnum {
 	palSwoosh = 0,
@@ -51,9 +70,9 @@ public:
 	uint16 getImageWidth(uint16 index);
 	uint16 getImageHeight(uint16 index);
 	void DisplayMan::blitToBitmap(byte *srcBitmap, uint16 srcFromX, uint16 srcToX, uint16 srcFromY, uint16 srcToY,
-								  int16 srcWidth, uint16 destX, uint16 destY, byte *destBitmap, uint16 destWidth);
+								  int16 srcWidth, uint16 destX, uint16 destY, byte *destBitmap, uint16 destWidth, Color transparent = colorNoTransparency);
 	inline void DisplayMan::blitToScreen(byte *srcBitmap, uint16 srcFromX, uint16 srcToX, uint16 srcFromY, uint16 srcToY,
-								  int16 srcWidth, uint16 destX, uint16 destY);
+								  int16 srcWidth, uint16 destX, uint16 destY, Color transparent = colorNoTransparency);
 	byte *getCurrentVgaBuffer();
 	void updateScreen();
 	void drawDungeon();

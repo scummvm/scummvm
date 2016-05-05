@@ -22,6 +22,7 @@ uint16 dmPalettes[10][16] = {
 	{0x000, 0x000, 0x000, 0x000, 0x0CC, 0x000, 0x000, 0x020, 0x400, 0x000, 0x000, 0x640, 0x000, 0x000, 0x004, 0x444}
 };
 
+
 enum GraphicIndice {
 	FloorGraphIndice = 75,
 	CeilingGraphIndice = 76
@@ -34,9 +35,10 @@ struct Frame {
 	// srcWidth and srcHeight (present in the original sources) is redundant here, can be deduced from gaphicsIndice
 	uint16 srcFromX, srcToX, srcFromY, srcToY;
 	uint16 destX, destY;
+	Color transparent;
 };
 
-Frame ceilingFrame = {CeilingGraphIndice, 0, 223, 0, 28, 0, 0};
+Frame ceilingFrame = {CeilingGraphIndice, 0, 223, 0, 28, 0, 0, colorFlesh};
 
 }
 
@@ -170,16 +172,18 @@ void DisplayMan::loadIntoBitmap(uint16 index, byte *destBitmap) {
 
 void DisplayMan::blitToBitmap(byte *srcBitmap, uint16 srcFromX, uint16 srcToX, uint16 srcFromY, uint16 srcToY,
 							  int16 srcWidth, uint16 destX, uint16 destY,
-							  byte *destBitmap, uint16 destWidth) {
+							  byte *destBitmap, uint16 destWidth, Color transparent) {
 	for (uint16 y = 0; y < srcToY - srcFromY; ++y)
-		memcpy(destBitmap + destWidth * (y + destY) + destX,
-			   srcBitmap + srcWidth * (y + srcFromY) + srcFromX,
-			   sizeof(byte) * (srcToX - srcFromX));
+		for (uint16 x = 0; x < srcToX - srcFromX; ++x) {
+			byte srcPixel = srcBitmap[srcWidth*(y + srcFromY) + srcFromX + x];
+			if (srcPixel != transparent)
+				destBitmap[destWidth * (y + destY) + destX + x] = srcPixel;
+		}
 }
 
 void DisplayMan::blitToScreen(byte *srcBitmap, uint16 srcFromX, uint16 srcToX, uint16 srcFromY, uint16 srcToY,
-							  int16 srcWidth, uint16 destX, uint16 destY) {
-	blitToBitmap(srcBitmap, srcFromX, srcToX, srcFromY, srcToY, srcWidth, destX, destY, getCurrentVgaBuffer(), _screenWidth);
+							  int16 srcWidth, uint16 destX, uint16 destY, Color transparent) {
+	blitToBitmap(srcBitmap, srcFromX, srcToX, srcFromY, srcToY, srcWidth, destX, destY, getCurrentVgaBuffer(), _screenWidth, transparent);
 }
 
 void DisplayMan::updateScreen() {
@@ -202,7 +206,7 @@ uint16 DisplayMan::getImageHeight(uint16 index) {
 }
 
 void DisplayMan::drawFrame(Frame &f) {
-	blitToScreen(_unpackedBitmaps[f.graphIndice], f.srcFromX, f.srcToX, f.srcFromY, f.srcToY, getImageWidth(f.graphIndice), f.destX, f.destY);
+	blitToScreen(_unpackedBitmaps[f.graphIndice], f.srcFromX, f.srcToX, f.srcFromY, f.srcToY, getImageWidth(f.graphIndice), f.destX, f.destY, f.transparent);
 }
 
 void DisplayMan::drawDungeon() {
