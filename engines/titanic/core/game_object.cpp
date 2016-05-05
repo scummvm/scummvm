@@ -380,6 +380,14 @@ void CGameObject::playClip(const CString &name, uint flags) {
 		playMovie(clip->_startFrame, clip->_endFrame, flags);
 }
 
+void CGameObject::playClip(uint startFrame, uint endFrame) {
+	CMovieClip *clip = new CMovieClip("", startFrame, endFrame);
+	CGameManager *gameManager = getGameManager();
+	CRoomItem *room = gameManager->getRoom();
+
+	gameManager->playClip(clip, room, room);
+}
+
 void CGameObject::playMovie(uint flags) {
 	_frameNumber = -1;
 	if (!_surface && !_resource.empty()) {

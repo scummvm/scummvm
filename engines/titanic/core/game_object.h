@@ -134,7 +134,7 @@ protected:
 	/**
 	 * Plays a sound
 	 */
-	int playSound(const CString &name, int val2, int val3, int val4);
+	int playSound(const CString &name, int val2 = 100, int val3 = 0, int val4 = 0);
 
 	/**
 	 * Plays a sound
@@ -144,7 +144,7 @@ protected:
 	/**
 	 * Stop a sound
 	 */
-	void stopSound(int handle, int val2);
+	void stopSound(int handle, int val2 = 0);
 
 	bool soundFn1(int handle);
 
@@ -315,6 +315,11 @@ public:
 	 * Play an arbitrary clip
 	 */
 	void playClip(const CString &name, uint flags);
+
+	/**
+	 * Play a clip
+	 */
+	void playClip(uint startFrame, uint endFrame);
 
 	/**
 	 * Return the current view/node/room as a single string

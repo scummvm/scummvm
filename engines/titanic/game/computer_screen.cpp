@@ -21,6 +21,7 @@
  */
 
 #include "titanic/game/computer_screen.h"
+#include "titanic/messages/messages.h"
 
 namespace Titanic {
 
@@ -70,8 +71,69 @@ bool CComputerScreen::EnterViewMsg(CEnterViewMsg *msg) {
 }
 
 bool CComputerScreen::TimerMsg(CTimerMsg *msg) {
-	// TODO
-	warning("TODO: CComputerScreen::TimerMsg");
+	int handle;
+
+	switch (msg->_val3) {
+	case 0:
+		loadSound("a#32.wav");
+		loadSound("a#31.wav");
+		loadSound("a#33.wav");
+		loadSound("a#30.wav");
+		loadSound("a#29.wav");
+		playSound("a#25.wav");
+		addTimer(1, 2000, 0);
+		break;
+
+	case 1:
+		playSound("a#32.wav");
+		playSound("a#31.wav");
+		addTimer(2, 2000, 0);
+		break;
+
+	case 2: {
+		CChangeMusicMsg musicMsg(CString(), 1);
+		musicMsg.execute("HomeMusicPlayer");
+		playSound("a#33.wav");
+		playSound("a#31.wav");
+		changeView("Home.Node 4.E", "");
+		playClip(51, 150);
+		playSound("a#31.wav");
+		playClip(151, 200);
+		
+		handle = playSound("a#27.wav");
+		playClip(200, 306);
+		playSound("a#30.wav");
+		stopSound(handle, 0);
+
+		playClip(306, 338);
+		handle = playSound("a#28.wav");
+		playClip(338, 392);
+		playSound("a#29.wav");
+		stopSound(handle);
+
+		playSound("y#662.wav");
+		soundFn3(handle, 10, 2);
+		playClip(392, 450);
+		trueTalkFn1("Doorbot", 0x3611A, 0);
+		sleep(8000);
+		
+		playClip(450, 492);
+		trueTalkFn1("DOorbot", 0x36121, 0);
+		playClip(492, 522);
+		soundFn3(handle, 30, 2);
+
+		playClip(523, 540);
+		soundFn3(handle, 0, 1);
+
+		playClip(541, 551);
+		stopSound(handle);
+		break;
+	}
+
+	default:
+		break;
+	}
+
 	return true;
 }
 

@@ -759,6 +759,7 @@ DEFFN(CBilgeDispensorEvent)
 DEFFN(CBodyInBilgeRoomMsg)
 DEFFN(CBowlStateChange)
 DEFFN(CCarryObjectArrivedMsg)
+DEFFN(CChangeMusicMsg)
 DEFFN(CChangeSeasonMsg)
 DEFFN(CCheckAllPossibleCodes)
 DEFFN(CCheckChevCode)
@@ -1345,6 +1346,7 @@ void CSaveableObject::initClassList() {
 	ADDFN(CBodyInBilgeRoomMsg, CMessage);
 	ADDFN(CBowlStateChange, CMessage);
 	ADDFN(CCarryObjectArrivedMsg, CMessage);
+	ADDFN(CChangeMusicMsg, CMessage);
 	ADDFN(CChangeSeasonMsg, CMessage);
 	ADDFN(CCheckAllPossibleCodes, CMessage);
 	ADDFN(CCheckChevCode, CMessage);

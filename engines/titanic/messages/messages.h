@@ -185,13 +185,13 @@ MESSAGE1(CTimeMsg, uint, _ticks, 0);
 class CTimerMsg : public CTimeMsg {
 public:
 	uint _timerCtr;
-	int _fieldC;
+	int _val3;
 	CString _action;
 public:
 	CLASSDEF
-	CTimerMsg() : CTimeMsg(), _timerCtr(0), _fieldC(0) {}
+	CTimerMsg() : CTimeMsg(), _timerCtr(0), _val3(0) {}
 	CTimerMsg(uint ticks, uint timerCtr, int val2, const CString &action) :
-		CTimeMsg(ticks), _timerCtr(timerCtr), _fieldC(val2), _action(action) {}
+		CTimeMsg(ticks), _timerCtr(timerCtr), _val3(val2), _action(action) {}
 
 	static bool isSupportedBy(const CTreeItem *item) {
 		return supports(item, _type);
@@ -207,6 +207,7 @@ MESSAGE0(CArmPickedUpFromTableMsg);
 MESSAGE0(CBodyInBilgeRoomMsg);
 MESSAGE1(CBowlStateChange, int, value, 0);
 MESSAGE2(CCarryObjectArrivedMsg, CString, strValue, "", int, numValue, 0);
+MESSAGE2(CChangeMusicMsg, CString, strValue, "", int, numValue, 0);
 MESSAGE1(CChangeSeasonMsg, CString, season, "Summer");
 MESSAGE0(CCheckAllPossibleCodes);
 MESSAGE2(CCheckChevCode, int, value1, 0, int, value2, 0);
