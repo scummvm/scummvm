@@ -29,16 +29,15 @@ enum GraphicIndice {
 };
 
 struct Frame {
-	/*	this might have to be removed, depends on if the game uses frames with multiple bitmaps
-		If so, then GraphIndice enum will have to be moved to be available from outside gfx.cpp*/
-	GraphicIndice graphIndice;
 	// srcWidth and srcHeight (present in the original sources) is redundant here, can be deduced from gaphicsIndice
+	// these coorinates are inclusive boundaries, when blitting you gotta add +1 to srcTo fields
 	uint16 srcFromX, srcToX, srcFromY, srcToY;
+	uint16 srcWidth, srcHeight;
 	uint16 destX, destY;
-	Color transparent;
 };
 
-Frame ceilingFrame = {CeilingGraphIndice, 0, 223, 0, 28, 0, 0, colorFlesh};
+Frame ceilingFrame = {0, 223, 0, 28, 224, 29, 0, 0};
+Frame floorFrame = {0, 223, 66, 135, 224, 70, 0, 0};
 
 }
 
@@ -61,7 +60,7 @@ void DisplayMan::setUpScreens(uint16 width, uint16 height) {
 	_screenHeight = height;
 	loadPalette(palSwoosh);
 	_vgaBuffer = new byte[_screenWidth * _screenHeight];
-	memset(_vgaBuffer, 0, width * height);
+	clearScreen(colorBlack);
 }
 
 void DisplayMan::loadGraphics() {
@@ -205,11 +204,19 @@ uint16 DisplayMan::getImageHeight(uint16 index) {
 	return TOBE2(data[2], data[3]);
 }
 
-void DisplayMan::drawFrame(Frame &f) {
-	blitToScreen(_unpackedBitmaps[f.graphIndice], f.srcFromX, f.srcToX, f.srcFromY, f.srcToY, getImageWidth(f.graphIndice), f.destX, f.destY, f.transparent);
+void DisplayMan::drawFrameToScreen(byte *bitmap, Frame &f, Color transparent) {
+	blitToScreen(bitmap, f.srcFromX, f.srcToX + 1, f.srcFromY, f.srcToY + 1, f.srcWidth, f.destX, f.destY, transparent);
+}
+
+void DisplayMan::drawFrameToBitMap(byte *bitmap, Frame &f, Color transparent, byte *destBitmap, uint16 destWidth) {
+	blitToBitmap(bitmap, f.srcFromX, f.srcToX + 1, f.srcFromY, f.srcToY + 1, f.srcWidth, f.destX, f.destY, destBitmap, destWidth, transparent);
 }
 
 void DisplayMan::drawDungeon() {
 	loadPalette(palDungeonView0);
-	drawFrame(ceilingFrame);
+	drawFrameToScreen(_unpackedBitmaps[CeilingGraphIndice], ceilingFrame, colorFlesh);
+}
+
+void DisplayMan::clearScreen(Color color) {
+	memset(getCurrentVgaBuffer(), color, sizeof(byte) * _screenWidth * _screenHeight);
 }

@@ -57,9 +57,9 @@ Common::Error DMEngine::run() {
 	_displayMan->loadGraphics();
 	_dungeonMan->loadDungeonFile();
 
-	/*
 	_displayMan->loadPalette(palCredits);
 
+	/*
 	uint16 width = _displayMan->getImageWidth(1);
 	uint16 height = _displayMan->getImageHeight(1);
 	byte *cleanByteImg0Data = new byte[width * height];
@@ -68,8 +68,8 @@ Common::Error DMEngine::run() {
 	delete[] cleanByteImg0Data;
 	*/
 
-
 	while (true) {
+		_displayMan->clearScreen(colorBlack);
 		_displayMan->drawDungeon();
 		_displayMan->updateScreen();
 		_system->delayMillis(10);

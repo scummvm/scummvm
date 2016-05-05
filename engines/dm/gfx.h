@@ -58,7 +58,8 @@ class DisplayMan {
 
 	byte **_unpackedBitmaps;
 	void unpackGraphics();
-	void drawFrame(Frame &f);
+	inline void drawFrameToScreen(byte *bitmap, Frame &f, Color transparent);
+	inline void drawFrameToBitMap(byte *bitmap, Frame &f, Color transparent, byte *destBitmap, uint16 destWidth);
 public:
 	DisplayMan(DMEngine *dmEngine);
 	~DisplayMan();
@@ -72,10 +73,11 @@ public:
 	void DisplayMan::blitToBitmap(byte *srcBitmap, uint16 srcFromX, uint16 srcToX, uint16 srcFromY, uint16 srcToY,
 								  int16 srcWidth, uint16 destX, uint16 destY, byte *destBitmap, uint16 destWidth, Color transparent = colorNoTransparency);
 	inline void DisplayMan::blitToScreen(byte *srcBitmap, uint16 srcFromX, uint16 srcToX, uint16 srcFromY, uint16 srcToY,
-								  int16 srcWidth, uint16 destX, uint16 destY, Color transparent = colorNoTransparency);
+										 int16 srcWidth, uint16 destX, uint16 destY, Color transparent = colorNoTransparency);
 	byte *getCurrentVgaBuffer();
 	void updateScreen();
 	void drawDungeon();
+	void clearScreen(Color color);
 };
 
 }
