@@ -511,9 +511,9 @@ void Scene41::run() {
 
 		if (!_vm->_isLeavingScene) {
 			if (_vm->_plat->_actionStatus < 0)
-				_vm->updatePlatypusIdleSequence();
+				_vm->_plat->updateIdleSequence();
 			if (_vm->_gnap->_actionStatus < 0 && !_vm->isFlag(kGFGnapControlsToyUFO))
-				_vm->updateGnapIdleSequence();
+				_vm->_gnap->updateIdleSequence();
 			if (!_vm->_timers[4]) {
 				_vm->_timers[4] = _vm->getRandom(100) + 100;
 				if (_vm->_gnap->_actionStatus < 0 && _vm->_plat->_actionStatus < 0 && _vm->_toyUfoActionStatus == -1 && _nextToyVendorSequenceId == -1) {
@@ -979,9 +979,9 @@ void Scene42::run() {
 
 		if (!_vm->_isLeavingScene) {
 			if (_vm->_plat->_actionStatus < 0 && !_vm->isFlag(kGFGnapControlsToyUFO))
-				_vm->updatePlatypusIdleSequence();
+				_vm->_plat->updateIdleSequence();
 			if (_vm->_gnap->_actionStatus < 0 && !_vm->isFlag(kGFGnapControlsToyUFO))
-				_vm->updateGnapIdleSequence();
+				_vm->_gnap->updateIdleSequence();
 			if (!_vm->_timers[4]) {
 				_vm->_timers[4] = _vm->getRandom(20) + 30;
 				if (_vm->_gnap->_actionStatus < 0 && _vm->_plat->_actionStatus < 0 && _nextBBQVendorSequenceId == -1) {
@@ -1433,9 +1433,9 @@ void Scene43::run() {
 
 		if (!_vm->_isLeavingScene) {
 			if (_vm->_plat->_actionStatus < 0 && !_vm->isFlag(kGFGnapControlsToyUFO))
-				_vm->updatePlatypusIdleSequence();
+				_vm->_plat->updateIdleSequence();
 			if (_vm->_gnap->_actionStatus < 0 && !_vm->isFlag(kGFGnapControlsToyUFO))
-				_vm->updateGnapIdleSequence();
+				_vm->_gnap->updateIdleSequence();
 			if (!_vm->_timers[4] && (!_vm->isFlag(kGFGnapControlsToyUFO) || !_vm->isFlag(kGFGroceryStoreHatTaken))) {
 				_vm->_timers[4] = _vm->getRandom(100) + 100;
 				if (_vm->_gnap->_actionStatus < 0 && _vm->_plat->_actionStatus < 0 && _nextTwoHeadedGuySequenceId == -1) {
@@ -1915,9 +1915,9 @@ void Scene44::run() {
 
 		if (!_vm->_isLeavingScene) {
 			if (_vm->_plat->_actionStatus < 0 && !_vm->isFlag(kGFGnapControlsToyUFO) && _currKissingLadySequenceId != 0xF5)
-				_vm->updatePlatypusIdleSequence();
+				_vm->_plat->updateIdleSequence();
 			if (_vm->_gnap->_actionStatus < 0 && !_vm->isFlag(kGFGnapControlsToyUFO))
-				_vm->updateGnapIdleSequence();
+				_vm->_gnap->updateIdleSequence();
 			if (!_vm->_timers[4]) {
 				_vm->_timers[4] = _vm->getRandom(20) + 20;
 				if (_vm->_gnap->_actionStatus < 0 && _vm->_plat->_actionStatus < 0 && _nextKissingLadySequenceId == -1) {
@@ -2362,7 +2362,7 @@ void Scene45::run() {
 		_vm->toyUfoCheckTimer();
 
 		if (!_vm->_isLeavingScene && _vm->_gnap->_actionStatus < 0 && !_vm->isFlag(kGFGnapControlsToyUFO))
-			_vm->updateGnapIdleSequence();
+			_vm->_gnap->updateIdleSequence();
 
 		_vm->checkGameKeys();
 
@@ -2691,9 +2691,9 @@ void Scene46::run() {
 
 		if (!_vm->_isLeavingScene) {
 			if (_vm->_plat->_actionStatus < 0 && !_vm->isFlag(kGFGnapControlsToyUFO))
-				_vm->updatePlatypusIdleSequence();
+				_vm->_plat->updateIdleSequence();
 			if (_vm->_gnap->_actionStatus < 0 && !_vm->isFlag(kGFGnapControlsToyUFO))
-				_vm->updateGnapIdleSequence();
+				_vm->_gnap->updateIdleSequence();
 			if (!_vm->_timers[4]) {
 				_vm->_timers[4] = _vm->getRandom(50) + 80;
 				if (_vm->_gnap->_actionStatus < 0 && _vm->_plat->_actionStatus < 0 && _nextItchyGuySequenceId == -1) {

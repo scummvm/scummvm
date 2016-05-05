@@ -171,9 +171,9 @@ void Scene30::run() {
 			_vm->playSound(0x1093B, true);
 
 		if (!_vm->_isLeavingScene) {
-			_vm->updatePlatypusIdleSequence();
+			_vm->_plat->updateIdleSequence();
 			if (_vm->_gnap->_actionStatus < 0)
-				_vm->updateGnapIdleSequence();
+				_vm->_gnap->updateIdleSequence();
 			if (!_vm->_timers[4]) {
 				_vm->_timers[4] = _vm->getRandom(100) + 300;
 				if (_vm->_gnap->_actionStatus < 0) {
@@ -486,9 +486,9 @@ void Scene31::run() {
 
 		if (!_vm->_isLeavingScene) {
 			if (_vm->_plat->_actionStatus < 0)
-				_vm->updatePlatypusIdleSequence();
+				_vm->_plat->updateIdleSequence();
 			if (_vm->_gnap->_actionStatus < 0)
-				_vm->updateGnapIdleSequence();
+				_vm->_gnap->updateIdleSequence();
 			if (!_vm->_timers[4]) {
 				_vm->_timers[4] = _vm->getRandom(20) + 60;
 				if (_vm->_gnap->_actionStatus < 0 && _nextClerkSequenceId == -1) {
@@ -752,9 +752,9 @@ void Scene32::run() {
 
 		if (!_vm->_isLeavingScene) {
 			if (_vm->_plat->_actionStatus < 0)
-				_vm->updatePlatypusIdleSequence();
+				_vm->_plat->updateIdleSequence();
 			if (_vm->_gnap->_actionStatus < 0)
-				_vm->updateGnapIdleSequence();
+				_vm->_gnap->updateIdleSequence();
 			if (!_vm->_timers[4]) {
 				_vm->_timers[4] = _vm->getRandom(100) + 300;
 				if (_vm->getRandom(2) != 0)
@@ -983,9 +983,9 @@ void Scene33::run() {
 
 		if (!_vm->_isLeavingScene) {
 			if (_vm->_plat->_actionStatus < 0)
-				_vm->updatePlatypusIdleSequence();
+				_vm->_plat->updateIdleSequence();
 			if (_vm->_gnap->_actionStatus < 0)
-				_vm->updateGnapIdleSequence();
+				_vm->_gnap->updateIdleSequence();
 			if (!_vm->_timers[4]) {
 				_vm->_timers[4] = _vm->getRandom(100) + 300;
 				if (_vm->getRandom(2) != 0)
@@ -1260,8 +1260,8 @@ void Scene38::run() {
 		updateAnimations();
 
 		if (!_vm->_isLeavingScene) {
-			_vm->updatePlatypusIdleSequence();
-			_vm->updateGnapIdleSequence();
+			_vm->_plat->updateIdleSequence();
+			_vm->_gnap->updateIdleSequence();
 		}
 
 		_vm->checkGameKeys();
@@ -1531,9 +1531,9 @@ void Scene39::run() {
 
 		if (!_vm->_isLeavingScene) {
 			if (_vm->_plat->_actionStatus < 0)
-				_vm->updatePlatypusIdleSequence();
+				_vm->_plat->updateIdleSequence();
 			if (_vm->_gnap->_actionStatus < 0)
-				_vm->updateGnapIdleSequence();
+				_vm->_gnap->updateIdleSequence();
 			if (!_vm->_timers[5]) {
 				_vm->_timers[5] = _vm->getRandom(20) + 50;
 				switch (_vm->getRandom(4)) {

@@ -43,6 +43,8 @@ public:
 
 	virtual int getSequenceId(int kind, int gridX, int gridY) = 0;
 	virtual void playSequence(int sequenceId) = 0;
+	virtual void updateIdleSequence() = 0;
+	virtual void updateIdleSequence2() = 0;
 
 	Common::Point _pos;
 	Facing _idleFacing;
@@ -60,6 +62,8 @@ public:
 	PlayerGnap(GnapEngine *vm);
 	virtual int getSequenceId(int kind, int gridX, int gridY);
 	virtual void playSequence(int sequenceId);
+	virtual void updateIdleSequence();
+	virtual void updateIdleSequence2();
 
 	void initBrainPulseRndValue();
 	void kissPlatypus(int callback);
@@ -74,6 +78,8 @@ public:
 	PlayerPlat(GnapEngine *vm);
 	virtual int getSequenceId(int kind = 0, int gridX = 0, int gridY = 0);
 	virtual void playSequence(int sequenceId);
+	virtual void updateIdleSequence();
+	virtual void updateIdleSequence2();
 };
 } // End of namespace Gnap
 

@@ -489,6 +489,90 @@ void PlayerGnap::playSequence(int sequenceId) {
 	_sequenceDatNum = ridToDatIndex(sequenceId);
 }
 
+void PlayerGnap::updateIdleSequence() {
+	if (_actionStatus < 0) {
+		if (_vm->_timers[2] > 0) {
+			if (_vm->_timers[3] == 0) {
+				_vm->_timers[2] = 60;
+				_vm->_timers[3] = 300;
+				if (_idleFacing == kDirBottomRight) {
+					switch (_vm->getRandom(5)) {
+					case 0:
+						playSequence(0x107A6);
+						break;
+					case 1:
+						playSequence(0x107AA);
+						break;
+					case 2:
+						playSequence(0x10841);
+						break;
+					default:
+						playSequence(0x108A2);
+						break;
+					}
+				} else if (_idleFacing == kDirBottomLeft) {
+					if (_vm->getRandom(5) > 2)
+						playSequence(0x10832);
+					else
+						playSequence(0x10842);
+				}
+			}
+		} else {
+			_vm->_timers[2] = _vm->getRandom(30) + 20;
+			if (_idleFacing == kDirBottomRight) {
+				_vm->_gameSys->insertSequence(0x107BD, _id,
+					makeRid(_sequenceDatNum, _sequenceId), _id,
+					kSeqSyncWait, 0, 75 * _pos.x - _vm->_gnapGridX, 48 * _pos.y - _vm->_gnapGridY);
+				_sequenceId = 0x7BD;
+				_sequenceDatNum = 1;
+			} else if (_idleFacing == kDirBottomLeft) {
+				_vm->_gameSys->insertSequence(0x107BE, _id,
+					makeRid(_sequenceDatNum, _sequenceId), _id,
+					kSeqSyncWait, 0, 75 * _pos.x - _vm->_gnapGridX, 48 * _pos.y - _vm->_gnapGridY);
+				_sequenceId = 0x7BE;
+				_sequenceDatNum = 1;
+			}
+		}
+	} else {
+		_vm->_timers[2] = _vm->getRandom(30) + 20;
+		_vm->_timers[3] = 300;
+	}
+}
+
+void PlayerGnap::updateIdleSequence2() {
+	if (_actionStatus < 0) {
+		if (_vm->_timers[2] > 0) {
+			if (_vm->_timers[3] == 0) {
+				_vm->_timers[2] = 60;
+				_vm->_timers[3] = 300;
+				if (_idleFacing == kDirBottomRight) {
+					playSequence(0x107AA);
+				} else if (_idleFacing == kDirBottomLeft) {
+					playSequence(0x10832);
+				}
+			}
+		} else {
+			_vm->_timers[2] = _vm->getRandom(30) + 20;
+			if (_idleFacing == kDirBottomRight) {
+				_vm->_gameSys->insertSequence(0x107BD, _id,
+					makeRid(_sequenceDatNum, _sequenceId), _id,
+					kSeqSyncWait, 0, 75 * _pos.x - _vm->_gnapGridX, 48 * _pos.y - _vm->_gnapGridY);
+				_sequenceId = 0x7BD;
+				_sequenceDatNum = 1;
+			} else if (_idleFacing == kDirBottomLeft) {
+				_vm->_gameSys->insertSequence(0x107BE, _id,
+					makeRid(_sequenceDatNum, _sequenceId), _id,
+					kSeqSyncWait, 0, 75 * _pos.x - _vm->_gnapGridX, 48 * _pos.y - _vm->_gnapGridY);
+				_sequenceId = 0x7BE;
+				_sequenceDatNum = 1;
+			}
+		}
+	} else {
+		_vm->_timers[2] = _vm->getRandom(30) + 20;
+		_vm->_timers[3] = 300;
+	}
+}
+
 /************************************************************************************************/
 
 PlayerPlat::PlayerPlat(GnapEngine * vm) : Character(vm) {}
@@ -513,6 +597,72 @@ void PlayerPlat::playSequence(int sequenceId) {
 		kSeqScale | kSeqSyncWait, 0, 75 * _pos.x - _vm->_platGridX, 48 * _pos.y - _vm->_platGridY);
 	_sequenceId = ridToEntryIndex(sequenceId);
 	_sequenceDatNum = ridToDatIndex(sequenceId);
+}
+
+void PlayerPlat::updateIdleSequence() {
+	if (_actionStatus < 0 && _vm->_gnap->_actionStatus < 0) {
+		if (_vm->_timers[0] > 0) {
+			if (_vm->_timers[1] == 0) {
+				_vm->_timers[1] = _vm->getRandom(20) + 30;
+				int rnd = _vm->getRandom(10);
+				if (_idleFacing != kDirNone) {
+					if (rnd != 0 || _sequenceId != 0x7CA) {
+						if (rnd != 1 || _sequenceId != 0x7CA)
+							playSequence(0x107CA);
+						else
+							playSequence(0x10845);
+					} else {
+						playSequence(0x107CC);
+					}
+				} else if (rnd != 0 || _sequenceId != 0x7C9) {
+					if (rnd != 1 || _sequenceId != 0x7C9) {
+						if (rnd != 2 || _sequenceId != 0x7C9)
+							playSequence(0x107C9);
+						else
+							playSequence(0x108A4);
+					} else {
+						playSequence(0x10844);
+					}
+				} else {
+					playSequence(0x107CB);
+				}
+			}
+		} else {
+			_vm->_timers[0] = _vm->getRandom(75) + 75;
+			_vm->platypusMakeRoom();
+		}
+	} else {
+		_vm->_timers[0] = 100;
+		_vm->_timers[1] = 35;
+	}
+}
+
+void PlayerPlat::updateIdleSequence2() {
+	if (_actionStatus < 0 && _vm->_gnap->_actionStatus < 0) {
+		if (_vm->_timers[0]) {
+			if (!_vm->_timers[1]) {
+				_vm->_timers[1] = _vm->getRandom(20) + 30;
+				if (_idleFacing != kDirNone) {
+					if (_vm->getRandom(10) >= 2 || _sequenceId != 0x7CA)
+						playSequence(0x107CA);
+					else
+						playSequence(0x107CC);
+				} else {
+					if (_vm->getRandom(10) >= 2 || _sequenceId != 0x7C9) {
+						playSequence(0x107C9);
+					} else {
+						playSequence(0x107CB);
+					}
+				}
+			}
+		} else {
+			_vm->_timers[0] = _vm->getRandom(75) + 75;
+			_vm->platypusMakeRoom();
+		}
+	} else {
+		_vm->_timers[0] = 100;
+		_vm->_timers[1] = 35;
+	}
 }
 
 } // End of namespace Gnap

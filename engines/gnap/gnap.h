@@ -530,16 +530,12 @@ public:
 	void playGnapIdle(int gridX, int gridY);
 	void playGnapShowItem(int itemIndex, int gridLookX, int gridLookY);
 	void playGnapShowCurrItem(int gridX, int gridY, int gridLookX, int gridLookY);
-	void updateGnapIdleSequence();
-	void updateGnapIdleSequence2();
 	void initGnapPos(int gridX, int gridY, Facing facing);
 	void doCallback(int callback);
 	bool gnapPlatypusAction(int gridX, int gridY, int platSequenceId, int callback);
 	void gnapUseDisguiseOnPlatypus();
 
 	// Platypus
-	void updatePlatypusIdleSequence();
-	void updatePlatypusIdleSequence2();
 	void initPlatypusPos(int gridX, int gridY, Facing facing);
 
 	// Scenes

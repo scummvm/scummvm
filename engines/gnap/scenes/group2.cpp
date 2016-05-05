@@ -471,11 +471,11 @@ void Scene20::run() {
 		if (!_vm->_isLeavingScene) {
 			if (_vm->_plat->_actionStatus < 0) {
 				_vm->_hotspots[kHS20WalkArea1]._y2 += 48;
-				_vm->updatePlatypusIdleSequence();
+				_vm->_plat->updateIdleSequence();
 				_vm->_hotspots[kHS20WalkArea1]._y2 -= 48;
 			}
 			if (_vm->_gnap->_actionStatus < 0)
-				_vm->updateGnapIdleSequence();
+				_vm->_gnap->updateIdleSequence();
 			if (_vm->_gnap->_actionStatus < 0 && !_vm->_timers[5] && _nextGroceryStoreGuySequenceId == -1) {
 				_vm->_timers[5] = _vm->getRandom(50) + 130;
 				if (_vm->getRandom(4) != 0)
@@ -900,8 +900,8 @@ void Scene21::run() {
 			_vm->playSound(0x10940, true);
 
 		if (!_vm->_isLeavingScene) {
-			_vm->updatePlatypusIdleSequence();
-			_vm->updateGnapIdleSequence();
+			_vm->_plat->updateIdleSequence();
+			_vm->_gnap->updateIdleSequence();
 			if (!_vm->isFlag(kGFTwigTaken) && !_vm->_timers[4] && _nextOldLadySequenceId == -1 && _vm->_gnap->_actionStatus == -1) {
 				_vm->_timers[4] = _vm->getRandom(30) + 50;
 				switch (_vm->getRandom(5)) {
@@ -1192,8 +1192,8 @@ void Scene22::run() {
 		updateAnimations();
 
 		if (!_vm->_isLeavingScene) {
-			_vm->updatePlatypusIdleSequence();
-			_vm->updateGnapIdleSequence();
+			_vm->_plat->updateIdleSequence();
+			_vm->_gnap->updateIdleSequence();
 			if (!_vm->_timers[6] && _nextCashierSequenceId == -1) {
 				_vm->_timers[6] = _vm->getRandom(30) + 20;
 				if (_vm->getRandom(8) != 0) {
@@ -1417,8 +1417,8 @@ void Scene23::run() {
 		updateAnimations();
 
 		if (!_vm->_isLeavingScene) {
-			_vm->updatePlatypusIdleSequence();
-			_vm->updateGnapIdleSequence();
+			_vm->_plat->updateIdleSequence();
+			_vm->_gnap->updateIdleSequence();
 			if (!_vm->_timers[4] && _vm->_gnap->_actionStatus == -1) {
 				_vm->_timers[4] = _vm->getRandom(100) + 200;
 				switch (_vm->getRandom(4)) {
@@ -1665,8 +1665,8 @@ void Scene24::run() {
 			_vm->playSound(0x10940, true);
 
 		if (!_vm->_isLeavingScene) {
-			_vm->updatePlatypusIdleSequence();
-			_vm->updateGnapIdleSequence();
+			_vm->_plat->updateIdleSequence();
+			_vm->_gnap->updateIdleSequence();
 			if (!_vm->_timers[4]) {
 				_vm->_timers[4] = _vm->getRandom(20) + 50;
 				gameSys.insertSequence(0x37, 20, _girlSequenceId, 20, kSeqSyncWait, 0, 0, 0);
@@ -1976,8 +1976,8 @@ void Scene25::run() {
 		updateAnimations();
 
 		if (!_vm->_isLeavingScene) {
-			_vm->updatePlatypusIdleSequence();
-			_vm->updateGnapIdleSequence();
+			_vm->_plat->updateIdleSequence();
+			_vm->_gnap->updateIdleSequence();
 			if (!_vm->_timers[4] && _nextTicketVendorSequenceId == -1 && _vm->_gnap->_actionStatus == -1) {
 				_vm->_timers[4] = _vm->getRandom(20) + 20;
 				switch (_vm->getRandom(13)) {
@@ -2251,8 +2251,8 @@ void Scene26::run() {
 			_vm->playSound(0x1093B, true);
 
 		if (!_vm->_isLeavingScene) {
-			_vm->updatePlatypusIdleSequence();
-			_vm->updateGnapIdleSequence();
+			_vm->_plat->updateIdleSequence();
+			_vm->_gnap->updateIdleSequence();
 			if (!_vm->_timers[5] && _nextKidSequenceId == -1) {
 				_vm->_timers[5] = _vm->getRandom(20) + 50;
 				if (_vm->getRandom(5) != 0)
@@ -2537,9 +2537,9 @@ void Scene27::run() {
 			_vm->playSound(0x1093B, true);
 
 		if (!_vm->_isLeavingScene) {
-			_vm->updatePlatypusIdleSequence();
+			_vm->_plat->updateIdleSequence();
 			if (_vm->_gnap->_actionStatus < 0)
-				_vm->updateGnapIdleSequence();
+				_vm->_gnap->updateIdleSequence();
 			if (_vm->_debugLevel == 4)
 				_vm->updateIdleTimer();
 			if (!_vm->_timers[5]) {
@@ -2920,8 +2920,8 @@ void Scene28::run() {
 			_vm->playSound(0x1093C, true);
 
 		if (!_vm->_isLeavingScene) {
-			_vm->updatePlatypusIdleSequence();
-			_vm->updateGnapIdleSequence();
+			_vm->_plat->updateIdleSequence();
+			_vm->_gnap->updateIdleSequence();
 			if (!_vm->_timers[4]) {
 				_vm->_timers[4] = _vm->getRandom(20) + 80;
 				if (_vm->_gnap->_actionStatus < 0 && !_vm->isFlag(kGFUnk21))
@@ -3276,8 +3276,8 @@ void Scene29::run() {
 
 		if (!_vm->_isLeavingScene) {
 			if (_vm->_gnap->_actionStatus < 0) {
-				_vm->updateGnapIdleSequence();
-				_vm->updatePlatypusIdleSequence();
+				_vm->_gnap->updateIdleSequence();
+				_vm->_plat->updateIdleSequence();
 			}
 			if (!_vm->_timers[4]) {
 				if (_vm->invHas(kItemHorn)) {

@@ -261,9 +261,9 @@ void Scene01::run() {
 
 		if (!_vm->_isLeavingScene) {
 			if (_vm->_plat->_actionStatus < 0 && _vm->isFlag(kGFPlatypus))
-				_vm->updatePlatypusIdleSequence();
+				_vm->_plat->updateIdleSequence();
 			if (_vm->_gnap->_actionStatus < 0)
-				_vm->updateGnapIdleSequence();
+				_vm->_gnap->updateIdleSequence();
 			if (_vm->_timers[4] == 0) {
 				// Update bird animation
 				_vm->_timers[4] = _vm->getRandom(100) + 300;
@@ -673,9 +673,9 @@ void Scene02::run() {
 
 		if (!_vm->_isLeavingScene) {
 			if (_vm->_plat->_actionStatus < 0 && _vm->isFlag(kGFPlatypus))
-				_vm->updatePlatypusIdleSequence();
+				_vm->_plat->updateIdleSequence();
 			if (_vm->_gnap->_actionStatus < 0)
-				_vm->updateGnapIdleSequence();
+				_vm->_gnap->updateIdleSequence();
 			if (!_vm->_timers[4]) {
 				// Update bird animation
 				_vm->_timers[4] = _vm->getRandom(100) + 300;
@@ -1121,9 +1121,9 @@ void Scene03::run() {
 
 		if (!_vm->_isLeavingScene) {
 			if (_vm->_plat->_actionStatus < 0 && _vm->isFlag(kGFPlatypus))
-				_vm->updatePlatypusIdleSequence();
+				_vm->_plat->updateIdleSequence();
 			if (_vm->_gnap->_actionStatus < 0)
-				_vm->updateGnapIdleSequence();
+				_vm->_gnap->updateIdleSequence();
 			if (!_vm->_timers[1] && !_platypusScared) {
 				_vm->_timers[1] = _vm->getRandom(40) + 20;
 				if (_vm->_gnap->_actionStatus < 0 && _vm->_plat->_actionStatus < 0 && !_vm->isFlag(kGFPlatypus) && !_platypusHypnotized)
@@ -1664,9 +1664,9 @@ void Scene04::run() {
 
 		if (!_vm->_isLeavingScene) {
 			if (_vm->_plat->_actionStatus < 0 && _vm->isFlag(kGFPlatypus))
-				_vm->updatePlatypusIdleSequence2();
+				_vm->_plat->updateIdleSequence2();
 			if (_vm->_gnap->_actionStatus < 0)
-				_vm->updateGnapIdleSequence2();
+				_vm->_gnap->updateIdleSequence2();
 			if (!_vm->_timers[5]) {
 				_vm->_timers[5] = _vm->getRandom(150) + 300;
 				if (_vm->_gnap->_actionStatus < 0)
@@ -2107,8 +2107,8 @@ void Scene05::run() {
 
 		if (!_vm->_isLeavingScene) {
 			if (_vm->isFlag(kGFPlatypus))
-				_vm->updatePlatypusIdleSequence();
-			_vm->updateGnapIdleSequence();
+				_vm->_plat->updateIdleSequence();
+			_vm->_gnap->updateIdleSequence();
 			if (!_vm->_timers[5]) {
 				_vm->_timers[5] = _vm->getRandom(20) + 30;
 				if (_vm->_gnap->_actionStatus != kAS05TalkChicken && _nextChickenSequenceId == -1) {
@@ -2501,9 +2501,9 @@ void Scene06::run() {
 
 		if (!_vm->_isLeavingScene) {
 			if (_vm->_plat->_actionStatus < 0)
-				_vm->updatePlatypusIdleSequence();
+				_vm->_plat->updateIdleSequence();
 			if (_vm->_gnap->_actionStatus < 0)
-				_vm->updateGnapIdleSequence();
+				_vm->_gnap->updateIdleSequence();
 			if (!_vm->_timers[4]) {
 				_vm->_timers[4] = _vm->getRandom(40) + 25;
 				if (_vm->_gnap->_actionStatus < 0 && _vm->_plat->_actionStatus < 0 && _nextHorseSequenceId == -1) {
@@ -2801,7 +2801,7 @@ void Scene07::run() {
 		updateAnimations();
 
 		if (!_vm->_isLeavingScene) {
-			_vm->updateGnapIdleSequence();
+			_vm->_gnap->updateIdleSequence();
 			if (_vm->_plat->_actionStatus < 0 && _vm->_gnap->_actionStatus < 0) {
 				if (_vm->_timers[0]) {
 					if (!_vm->_timers[1]) {
@@ -3190,8 +3190,8 @@ void Scene08::run() {
 		updateAnimations();
 
 		if (!_vm->_isLeavingScene) {
-			_vm->updatePlatypusIdleSequence();
-			_vm->updateGnapIdleSequence();
+			_vm->_plat->updateIdleSequence();
+			_vm->_gnap->updateIdleSequence();
 			if (!_vm->_timers[4]) {
 				_vm->_timers[4] = _vm->getRandom(50) + 125;
 				if (_vm->_gnap->_actionStatus < 0 && _vm->_plat->_actionStatus < 0 && _nextManSequenceId == -1 &&
@@ -3491,8 +3491,8 @@ void Scene09::run() {
 		updateAnimations();
 
 		if (!_vm->_isLeavingScene && _vm->_gnap->_actionStatus != 1 && _vm->_gnap->_actionStatus != 2) {
-			_vm->updatePlatypusIdleSequence();
-			_vm->updateGnapIdleSequence();
+			_vm->_plat->updateIdleSequence();
+			_vm->_gnap->updateIdleSequence();
 			if (!_vm->_timers[4]) {
 				_vm->_timers[4] = _vm->getRandom(150) + 100;
 				if (_vm->_timers[4] & 1)

@@ -305,8 +305,8 @@ void Scene10::run() {
 		updateAnimations();
 
 		if (!_vm->_isLeavingScene) {
-			_vm->updatePlatypusIdleSequence();
-			_vm->updateGnapIdleSequence();
+			_vm->_plat->updateIdleSequence();
+			_vm->_gnap->updateIdleSequence();
 			if (!_vm->_timers[4]) {
 				_vm->_timers[4] = _vm->getRandom(80) + 150;
 				_vm->playSound(0x12B, false);
@@ -745,8 +745,8 @@ void Scene11::run() {
 				gameSys.setAnimation(0x207, 257, 4);
 				gameSys.insertSequence(0x207, 257, 0, 0, kSeqNone, 0, 0, 0);
 			}
-			_vm->updatePlatypusIdleSequence2();
-			_vm->updateGnapIdleSequence2();
+			_vm->_plat->updateIdleSequence2();
+			_vm->_gnap->updateIdleSequence2();
 			if (!_vm->_timers[5]) {
 				_vm->_timers[5] = _vm->getRandom(100) + 75;
 				if (_vm->_gnap->_actionStatus < 0 && _vm->_plat->_actionStatus < 0 && _nextGoggleGuySequenceId == -1) {
@@ -1176,8 +1176,8 @@ void Scene12::run() {
 		updateAnimations();
 
 		if (!_vm->_isLeavingScene) {
-			_vm->updatePlatypusIdleSequence();
-			_vm->updateGnapIdleSequence();
+			_vm->_plat->updateIdleSequence();
+			_vm->_gnap->updateIdleSequence();
 			if (!_vm->_timers[4]) {
 				_vm->_timers[4] = 15;
 				if (_nextToothGuySequenceId == -1) {
@@ -1692,11 +1692,11 @@ void Scene13::run() {
 		updateAnimations();
 
 		if (!_vm->_isLeavingScene) {
-			_vm->updatePlatypusIdleSequence();
+			_vm->_plat->updateIdleSequence();
 			if (_vm->_plat->_pos.y == 5 || _vm->_plat->_pos.y == 6)
 				_vm->platypusWalkTo(-1, 7, -1, -1, 1);
 			if (_vm->_gnap->_actionStatus < 0)
-				_vm->updateGnapIdleSequence();
+				_vm->_gnap->updateIdleSequence();
 			if (!_vm->_timers[4]) {
 				_vm->_timers[4] = _vm->getRandom(20) + 20;
 				switch (_vm->getRandom(5)) {
@@ -2721,8 +2721,8 @@ void Scene17::run() {
 
 		if (!_vm->_isLeavingScene) {
 			if (_vm->_plat->_actionStatus < 0)
-				_vm->updatePlatypusIdleSequence2();
-			_vm->updateGnapIdleSequence2();
+				_vm->_plat->updateIdleSequence2();
+			_vm->_gnap->updateIdleSequence2();
 			if (!_vm->_timers[4]) {
 				_vm->_timers[4] = _vm->getRandom(100) + 200;
 				if (_vm->_gnap->_actionStatus < 0 && _vm->_plat->_actionStatus < 0)
@@ -3750,7 +3750,7 @@ void Scene18::run() {
 				} else {
 					_vm->_hotspots[kHS18WalkArea1]._y2 += 48;
 					_vm->_hotspots[kHS18WalkArea2]._x1 += 75;
-					_vm->updatePlatypusIdleSequence();
+					_vm->_plat->updateIdleSequence();
 					_vm->_hotspots[kHS18WalkArea2]._x1 -= 75;
 					_vm->_hotspots[kHS18WalkArea1]._y2 -= 48;
 				}
@@ -3766,7 +3766,7 @@ void Scene18::run() {
 				_vm->playSoundA();
 			}
 			if (!_vm->isFlag(kGFPlatypusDisguised))
-				_vm->updateGnapIdleSequence();
+				_vm->_gnap->updateIdleSequence();
 		}
 
 		_vm->checkGameKeys();
@@ -4296,9 +4296,9 @@ void Scene19::run() {
 		updateAnimations();
 
 		if (!_vm->_isLeavingScene) {
-			_vm->updateGnapIdleSequence();
+			_vm->_gnap->updateIdleSequence();
 			if (!_vm->isFlag(kGFPlatypusTalkingToAssistant)) {
-				_vm->updatePlatypusIdleSequence();
+				_vm->_plat->updateIdleSequence();
 				if (!_vm->_timers[6] && _nextShopAssistantSequenceId == -1) {
 					_vm->_timers[6] = _vm->getRandom(40) + 50;
 					if (_vm->getRandom(4) != 0) {
