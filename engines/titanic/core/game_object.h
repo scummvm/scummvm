@@ -220,6 +220,11 @@ protected:
 	 * Support function for drag moving
 	 */
 	void dragMove(const Point &pt);
+
+	/**
+	 * Load a sound
+	 */
+	void loadSound(const CString &name);
 public:
 	int _field60;
 	CursorId _cursorId;

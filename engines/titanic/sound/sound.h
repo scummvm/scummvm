@@ -25,15 +25,46 @@
 
 #include "titanic/support/simple_file.h"
 #include "titanic/sound/sound_manager.h"
+#include "titanic/core/list.h"
 #include "titanic/core/view_item.h"
 
 namespace Titanic {
 
 class CGameManager;
 
+class CSoundItem : public ListItem {
+public:
+	CString _name;
+	uint _soundHandle;
+	int _field1C;
+	int _field20;
+	int _field24;
+	int _field28;
+public:
+	CSoundItem() : ListItem(), _soundHandle(0), _field1C(0),
+		_field20(0), _field24(0), _field28(0) {}
+	CSoundItem(const CString &name) : ListItem(), _name(name), 
+		_soundHandle(0), _field1C(0), _field20(0), _field24(0), _field28(0) {}
+};
+
+class CSoundItemList : public List<CSoundItem> {
+};
+
 class CSound {
 private:
 	CGameManager *_gameManager;
+	CSoundItemList _sounds;
+private:
+	/**
+	 * Check whether any sounds are done and can be be removed
+	 */
+	void checkSounds();
+
+	/**
+	 * Removes the oldest sound from the sounds list that isn't
+	 * currently playing
+	 */
+	void removeOldest();
 public:
 	QSoundManager _soundManager;
 public:
@@ -73,6 +104,13 @@ public:
 	 * Called when the view has been changed
 	 */
 	void preEnterView(CViewItem *newView, bool isNewRoom);
+
+	/**
+	 * Load a sound
+	 * @param name		Name of sound resource
+	 * @returns			Sound handle Id
+	 */
+	uint loadSound(const CString &name);
 
 	bool fn1(int val);
 	void fn2(int val);

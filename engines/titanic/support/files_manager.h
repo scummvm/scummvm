@@ -82,7 +82,10 @@ public:
 
 	void fn4(const CString &name);
 
-	void fn5(const CString &name);
+	/**
+	 * Preloads and caches a file for access shortly
+	 */
+	void preload(const CString &name);
 
 	/**
 	 * Get a resource from the executable

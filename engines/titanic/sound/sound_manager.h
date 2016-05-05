@@ -37,7 +37,13 @@ protected:
 public:
 	SoundManager();
 	
-	virtual int proc3() const { return 0; }
+	/**
+	 * Loads a sound
+	 * @param name		Name of sound resource
+	 * @returns			Loaded sound handle
+	 */
+	virtual uint loadSound(const CString &name) { return 0; }
+
 	virtual int proc4() const { return 0; }
 	virtual int proc5() const { return 0; }
 	virtual void proc6() = 0;
@@ -49,7 +55,7 @@ public:
 	virtual void proc12() {}
 	virtual void proc13() {}
 	virtual bool proc14() = 0;
-	virtual int proc15() const { return 0; }
+	virtual bool isActive(uint handle) const { return false; }
 	virtual int proc16() const { return 0; }
 	virtual void WaveMixPump() {}
 	virtual int proc18() const { return 0; }
@@ -100,7 +106,13 @@ public:
 public:
 	QSoundManager();
 
-	virtual int proc3();
+	/**
+	 * Loads a sound
+	 * @param name		Name of sound resource
+	 * @returns			Loaded sound handle
+	 */
+	virtual uint loadSound(const CString &name);
+
 	virtual int proc4();
 	virtual int proc5();
 	virtual void proc6();
@@ -112,7 +124,7 @@ public:
 	virtual void proc12();
 	virtual void proc13();
 	virtual bool proc14();
-	virtual int proc15();
+	virtual bool isActive(uint handle) const;
 	virtual int proc16();
 	virtual void WaveMixPump();
 	virtual int proc18() const;
