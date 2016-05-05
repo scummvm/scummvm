@@ -57,6 +57,7 @@ Common::Error DMEngine::run() {
 	_displayMan->loadGraphics();
 	_dungeonMan->loadDungeonFile();
 
+	/*
 	_displayMan->loadPalette(palCredits);
 
 	uint16 width = _displayMan->getImageWidth(1);
@@ -64,14 +65,16 @@ Common::Error DMEngine::run() {
 	byte *cleanByteImg0Data = new byte[width * height];
 	_displayMan->loadIntoBitmap(1, cleanByteImg0Data);
 	_displayMan->blitToScreen(cleanByteImg0Data, width, height, 0, 0);
+	delete[] cleanByteImg0Data;
+	*/
 
 
 	while (true) {
+		_displayMan->drawDungeon();
 		_displayMan->updateScreen();
 		_system->delayMillis(10);
 	}
 
-	delete[] cleanByteImg0Data;
 
 	return Common::kNoError;
 }

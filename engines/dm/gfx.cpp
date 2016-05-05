@@ -5,7 +5,8 @@
 #include "graphics/palette.h"
 #include "common/endian.h"
 
-using namespace DM;
+
+namespace DM {
 
 // this is for the Amiga version, later when we add support for more versions, this will have to be renamed
 uint16 dmPalettes[10][16] = {
@@ -21,15 +22,36 @@ uint16 dmPalettes[10][16] = {
 	{0x000, 0x000, 0x000, 0x000, 0x0CC, 0x000, 0x000, 0x020, 0x400, 0x000, 0x000, 0x640, 0x000, 0x000, 0x004, 0x444}
 };
 
+enum GraphicIndice {
+	FloorGraphIndice = 75,
+	CeilingGraphIndice = 76
+};
+
+struct Frame {
+	/*	this might have to be removed, depends on if the game uses frames with multiple bitmaps
+		If so, then GraphIndice enum will have to be moved to be available from outside gfx.cpp*/
+	GraphicIndice graphIndice;
+	// srcWidth and srcHeight (present in the original sources) is redundant here, can be deduced from gaphicsIndice
+	uint16 srcFromX, srcToX, srcFromY, srcToY;
+	uint16 destX, destY;
+};
+
+Frame ceilingFrame = {CeilingGraphIndice, 0, 223, 0, 28, 0, 0};
+
+}
+
+using namespace DM;
 
 DisplayMan::DisplayMan(DMEngine *dmEngine) :
 	_vm(dmEngine), _currPalette(palSwoosh), _screenWidth(0), _screenHeight(0),
-	_vgaBuffer(0), _itemCount(0), _indexBytePos(NULL), _compressedData(NULL) {}
+	_vgaBuffer(NULL), _itemCount(0), _packedItemPos(NULL), _packedBitmaps(NULL),
+	_unpackedBitmaps(NULL) {}
 
 DisplayMan::~DisplayMan() {
-	delete[] _compressedData;
-	delete[] _indexBytePos;
+	delete[] _packedBitmaps;
+	delete[] _packedItemPos;
 	delete[] _vgaBuffer;
+	delete[] _unpackedBitmaps;
 }
 
 void DisplayMan::setUpScreens(uint16 width, uint16 height) {
@@ -45,21 +67,47 @@ void DisplayMan::loadGraphics() {
 	f.open("graphics.dat");
 
 	_itemCount = f.readUint16BE();
-	_indexBytePos = new uint32[_itemCount + 1];
-	_indexBytePos[0] = 0;
+	_packedItemPos = new uint32[_itemCount + 1];
+	_packedItemPos[0] = 0;
 	for (uint16 i = 1; i < _itemCount + 1; ++i)
-		_indexBytePos[i] = f.readUint16BE() + _indexBytePos[i - 1];
+		_packedItemPos[i] = f.readUint16BE() + _packedItemPos[i - 1];
 
-	_compressedData = new uint8[_indexBytePos[_itemCount]];
+	_packedBitmaps = new uint8[_packedItemPos[_itemCount]];
 
 	f.seek(2 + _itemCount * 4);
-	for (uint32 i = 0; i < _indexBytePos[_itemCount]; ++i)
-		_compressedData[i] = f.readByte();
+	for (uint32 i = 0; i < _packedItemPos[_itemCount]; ++i)
+		_packedBitmaps[i] = f.readByte();
 
 	f.close();
+
+	unpackGraphics();
+}
+
+void DisplayMan::unpackGraphics() {
+	uint32 unpackedBitmapsSize = 0;
+	for (uint16 i = 0; i <= 20; ++i)
+		unpackedBitmapsSize += getImageWidth(i) * getImageHeight(i);
+	for (uint16 i = 22; i <= 532; ++i)
+		unpackedBitmapsSize += getImageWidth(i) * getImageHeight(i);
+	_unpackedBitmaps = new byte*[533];
+	// graphics items go from 0-20 and 22-532 inclusive, _unpackedItemPos 21 and 22 are there for indexing convenience
+	_unpackedBitmaps[0] = new byte[unpackedBitmapsSize];
+	loadIntoBitmap(0, _unpackedBitmaps[0]);
+	for (uint16 i = 1; i <= 20; ++i) {
+		_unpackedBitmaps[i] = _unpackedBitmaps[i - 1] + getImageWidth(i - 1) * getImageHeight(i - 1);
+		loadIntoBitmap(i, _unpackedBitmaps[i]);
+	}
+	_unpackedBitmaps[22] = _unpackedBitmaps[20] + getImageWidth(20) * getImageHeight(20);
+	for (uint16 i = 23; i < 533; ++i) {
+		_unpackedBitmaps[i] = _unpackedBitmaps[i - 1] + getImageWidth(i - 1) * getImageHeight(i - 1);
+		loadIntoBitmap(i, _unpackedBitmaps[i]);
+	}
 }
 
 void DisplayMan::loadPalette(dmPaletteEnum palette) {
+	if (_currPalette == palette)
+		return;
+
 	byte colorPalette[16 * 3];
 	for (int i = 0; i < 16; ++i) {
 		colorPalette[i * 3] = (dmPalettes[palette][i] >> 8) * (256 / 16);
@@ -67,12 +115,13 @@ void DisplayMan::loadPalette(dmPaletteEnum palette) {
 		colorPalette[i * 3 + 2] = dmPalettes[palette][i] * (256 / 16);
 	}
 	_vm->_system->getPaletteManager()->setPalette(colorPalette, 0, 16);
+	_currPalette = palette;
 }
 
 #define TOBE2(byte1, byte2) ((((uint16)(byte1)) << 8) | (uint16)(byte2))
 
 void DisplayMan::loadIntoBitmap(uint16 index, byte *destBitmap) {
-	uint8 *data = _compressedData + _indexBytePos[index];
+	uint8 *data = _packedBitmaps + _packedItemPos[index];
 	uint16 width = TOBE2(data[0], data[1]);
 	uint16 height = TOBE2(data[2], data[3]);
 	uint16 nextByteIndex = 4;
@@ -119,9 +168,18 @@ void DisplayMan::loadIntoBitmap(uint16 index, byte *destBitmap) {
 	}
 }
 
-void DisplayMan::blitToScreen(byte *srcBitmap, uint16 srcWidth, uint16 srcHeight, uint16 destX, uint16 destY) {
-	for (uint16 y = 0; y < srcHeight; ++y)
-		memcpy(getCurrentVgaBuffer() + ((y + destY) * _screenWidth + destX), srcBitmap + y * srcWidth, srcWidth * sizeof(byte));
+void DisplayMan::blitToBitmap(byte *srcBitmap, uint16 srcFromX, uint16 srcToX, uint16 srcFromY, uint16 srcToY,
+							  int16 srcWidth, uint16 destX, uint16 destY,
+							  byte *destBitmap, uint16 destWidth) {
+	for (uint16 y = 0; y < srcToY - srcFromY; ++y)
+		memcpy(destBitmap + destWidth * (y + destY) + destX,
+			   srcBitmap + srcWidth * (y + srcFromY) + srcFromX,
+			   sizeof(byte) * (srcToX - srcFromX));
+}
+
+void DisplayMan::blitToScreen(byte *srcBitmap, uint16 srcFromX, uint16 srcToX, uint16 srcFromY, uint16 srcToY,
+							  int16 srcWidth, uint16 destX, uint16 destY) {
+	blitToBitmap(srcBitmap, srcFromX, srcToX, srcFromY, srcToY, srcWidth, destX, destY, getCurrentVgaBuffer(), _screenWidth);
 }
 
 void DisplayMan::updateScreen() {
@@ -134,12 +192,20 @@ byte *DisplayMan::getCurrentVgaBuffer() {
 }
 
 uint16 DisplayMan::getImageWidth(uint16 index) {
-	uint8 *data = _compressedData + _indexBytePos[index];
+	byte *data = _packedBitmaps + _packedItemPos[index];
 	return TOBE2(data[0], data[1]);
 }
 
 uint16 DisplayMan::getImageHeight(uint16 index) {
-	uint8 *data = _compressedData + _indexBytePos[index];
+	uint8 *data = _packedBitmaps + _packedItemPos[index];
 	return TOBE2(data[2], data[3]);
 }
 
+void DisplayMan::drawFrame(Frame &f) {
+	blitToScreen(_unpackedBitmaps[f.graphIndice], f.srcFromX, f.srcToX, f.srcFromY, f.srcToY, getImageWidth(f.graphIndice), f.destX, f.destY);
+}
+
+void DisplayMan::drawDungeon() {
+	loadPalette(palDungeonView0);
+	drawFrame(ceilingFrame);
+}
