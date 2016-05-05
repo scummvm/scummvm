@@ -97,6 +97,23 @@ IsoMap::IsoMap(SagaEngine *vm) : _vm(vm) {
 	_viewScroll.x = (128 - 8) * 16;
 	_viewScroll.y = (128 - 8) * 16 - 64;
 	_viewDiff = 1;
+	_platformHeight = 0;
+	_queueCount = _readCount = 0;
+
+	for (int i = 0; i < SAGA_DRAGON_SEARCH_DIAMETER; i++)
+		for (int j = 0; j < SAGA_DRAGON_SEARCH_DIAMETER; j++)
+			_dragonSearchArray.cell[i][j].visited = _dragonSearchArray.cell[i][j].direction = 0;
+
+	for (int i = 0; i < SAGA_SEARCH_DIAMETER; i++)
+		for (int j = 0; j < SAGA_SEARCH_DIAMETER; j++)
+			_searchArray.cell[i][j].visited = _searchArray.cell[i][j].direction = 0;
+
+	for (int i = 0; i < SAGA_SEARCH_QUEUE_SIZE; i++) {
+		memset(&_dragonSearchArray.queue[i], 0, sizeof(DragonTilePoint));
+		memset(&_searchArray.queue[i], 0, sizeof(TilePoint));
+	}
+
+	memset(&_tileMap, 0, sizeof(TileMapData));
 }
 
 void IsoMap::loadImages(const ByteArray &resourceData) {
