@@ -519,7 +519,6 @@ public:
 	int getGnapShowSequenceId(int index, int gridX, int gridY);
 	void gnapIdle();
 	void gnapActionIdle(int sequenceId);
-	void playGnapSequence(int sequenceId);
 	void playGnapImpossible(int gridX, int gridY);
 	void playGnapScratchingHead(int gridX, int gridY);
 	void playGnapMoan1(int gridX, int gridY);
@@ -539,7 +538,6 @@ public:
 	void gnapUseDisguiseOnPlatypus();
 
 	// Platypus
-	void playPlatypusSequence(int sequenceId);
 	void updatePlatypusIdleSequence();
 	void updatePlatypusIdleSequence2();
 	void initPlatypusPos(int gridX, int gridY, Facing facing);

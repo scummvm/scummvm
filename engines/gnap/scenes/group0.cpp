@@ -140,7 +140,7 @@ void Scene01::run() {
 						break;
 					case TALK_CURSOR:
 						_vm->playGnapBrainPulsating(_vm->_plat->_pos.x, _vm->_plat->_pos.y);
-						_vm->playPlatypusSequence(_vm->_plat->getSequenceId());
+						_vm->_plat->playSequence(_vm->_plat->getSequenceId());
 						break;
 					case PLAT_CURSOR:
 						_vm->playGnapImpossible(0, 0);
@@ -490,7 +490,7 @@ void Scene02::run() {
 						break;
 					case TALK_CURSOR:
 						_vm->playGnapBrainPulsating(_vm->_plat->_pos.x, _vm->_plat->_pos.y);
-						_vm->playPlatypusSequence(_vm->_plat->getSequenceId());
+						_vm->_plat->playSequence(_vm->_plat->getSequenceId());
 						break;
 					case PLAT_CURSOR:
 						_vm->playGnapImpossible(0, 0);
@@ -955,7 +955,7 @@ void Scene03::run() {
 						break;
 					case TALK_CURSOR:
 						_vm->playGnapBrainPulsating(_vm->_plat->_pos.x, _vm->_plat->_pos.y);
-						_vm->playPlatypusSequence(_vm->_plat->getSequenceId());
+						_vm->_plat->playSequence(_vm->_plat->getSequenceId());
 						break;
 					case PLAT_CURSOR:
 						_vm->playGnapImpossible(0, 0);
@@ -1462,7 +1462,7 @@ void Scene04::run() {
 						break;
 					case TALK_CURSOR:
 						_vm->playGnapBrainPulsating(_vm->_plat->_pos.x, _vm->_plat->_pos.y);
-						_vm->playPlatypusSequence(_vm->_plat->getSequenceId());
+						_vm->_plat->playSequence(_vm->_plat->getSequenceId());
 						break;
 					case PLAT_CURSOR:
 						_vm->playGnapImpossible(0, 0);
@@ -1934,7 +1934,7 @@ void Scene05::run() {
 						break;
 					case TALK_CURSOR:
 						_vm->playGnapBrainPulsating(_vm->_plat->_pos.x, _vm->_plat->_pos.y);
-						_vm->playPlatypusSequence(_vm->_plat->getSequenceId());
+						_vm->_plat->playSequence(_vm->_plat->getSequenceId());
 						break;
 					case PLAT_CURSOR:
 						_vm->playGnapImpossible(0, 0);
@@ -2358,7 +2358,7 @@ void Scene06::run() {
 						break;
 					case TALK_CURSOR:
 						_vm->playGnapBrainPulsating(_vm->_plat->_pos.x, _vm->_plat->_pos.y);
-						_vm->playPlatypusSequence(_vm->_plat->getSequenceId());
+						_vm->_plat->playSequence(_vm->_plat->getSequenceId());
 						break;
 					case PLAT_CURSOR:
 						_vm->playGnapImpossible(0, 0);
@@ -2729,7 +2729,7 @@ void Scene07::run() {
 				break;
 			case TALK_CURSOR:
 				_vm->playGnapBrainPulsating(_vm->_plat->_pos.x, _vm->_plat->_pos.y);
-				_vm->playPlatypusSequence(_vm->_plat->getSequenceId());
+				_vm->_plat->playSequence(_vm->_plat->getSequenceId());
 				break;
 			case PLAT_CURSOR:
 				break;
@@ -2812,22 +2812,22 @@ void Scene07::run() {
 							if (gnapRandomValue != 0 || _vm->_plat->_sequenceId != 0x7CA) {
 								if (gnapRandomValue != 1 || _vm->_plat->_sequenceId != 0x7CA) {
 									if (_vm->_plat->_pos.y == 9)
-										_vm->playPlatypusSequence(0x107CA);
+										_vm->_plat->playSequence(0x107CA);
 								} else {
-									_vm->playPlatypusSequence(0x10845);
+									_vm->_plat->playSequence(0x10845);
 								}
 							} else {
-								_vm->playPlatypusSequence(0x107CC);
+								_vm->_plat->playSequence(0x107CC);
 							}
 						} else if (gnapRandomValue != 0 || _vm->_plat->_sequenceId != 0x7C9) {
 							if (gnapRandomValue != 1 || _vm->_plat->_sequenceId != 0x7C9) {
 								if (_vm->_plat->_pos.y == 9)
-									_vm->playPlatypusSequence(0x107C9);
+									_vm->_plat->playSequence(0x107C9);
 							} else {
-								_vm->playPlatypusSequence(0x10844);
+								_vm->_plat->playSequence(0x10844);
 							}
 						} else {
-							_vm->playPlatypusSequence(0x107CB);
+							_vm->_plat->playSequence(0x107CB);
 						}
 						gameSys.setAnimation(_vm->_plat->_sequenceId | (_vm->_plat->_sequenceDatNum << 16), _vm->_plat->_id, 1);
 					}
@@ -3000,7 +3000,7 @@ void Scene08::run() {
 					break;
 				case TALK_CURSOR:
 					_vm->playGnapBrainPulsating(_vm->_plat->_pos.x, _vm->_plat->_pos.y);
-					_vm->playPlatypusSequence(_vm->_plat->getSequenceId());
+					_vm->_plat->playSequence(_vm->_plat->getSequenceId());
 					break;
 				case PLAT_CURSOR:
 					break;
@@ -3429,7 +3429,7 @@ void Scene09::run() {
 				break;
 			case TALK_CURSOR:
 				_vm->playGnapBrainPulsating(_vm->_plat->_pos.x, _vm->_plat->_pos.y);
-				_vm->playPlatypusSequence(_vm->_plat->getSequenceId());
+				_vm->_plat->playSequence(_vm->_plat->getSequenceId());
 				break;
 			case PLAT_CURSOR:
 				break;

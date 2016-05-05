@@ -1146,55 +1146,44 @@ void GnapEngine::gnapActionIdle(int sequenceId) {
 	}
 }
 
-void GnapEngine::playGnapSequence(int sequenceId) {
-	_timers[2] = getRandom(30) + 20;
-	_timers[3] = 300;
-	gnapIdle();
-	_gameSys->insertSequence(sequenceId, _gnap->_id,
-		makeRid(_gnap->_sequenceDatNum, _gnap->_sequenceId), _gnap->_id,
-		kSeqScale | kSeqSyncWait, 0, 75 * _gnap->_pos.x - _gnapGridX, 48 * _gnap->_pos.y - _gnapGridY);
-	_gnap->_sequenceId = ridToEntryIndex(sequenceId);
-	_gnap->_sequenceDatNum = ridToDatIndex(sequenceId);
-}
-
 void GnapEngine::playGnapImpossible(int gridX, int gridY) {
-	playGnapSequence(_gnap->getSequenceId(gskImpossible, gridX, gridY) | 0x10000);
+	_gnap->playSequence(_gnap->getSequenceId(gskImpossible, gridX, gridY) | 0x10000);
 }
 
 void GnapEngine::playGnapScratchingHead(int gridX, int gridY) {
-	playGnapSequence(_gnap->getSequenceId(gskScratchingHead, gridX, gridY) | 0x10000);
+	_gnap->playSequence(_gnap->getSequenceId(gskScratchingHead, gridX, gridY) | 0x10000);
 }
 
 void GnapEngine::playGnapMoan1(int gridX, int gridY) {
-	playGnapSequence(_gnap->getSequenceId(gskMoan1, gridX, gridY) | 0x10000);
+	_gnap->playSequence(_gnap->getSequenceId(gskMoan1, gridX, gridY) | 0x10000);
 }
 
 void GnapEngine::playGnapMoan2(int gridX, int gridY) {
-	playGnapSequence(_gnap->getSequenceId(gskMoan2, gridX, gridY) | 0x10000);
+	_gnap->playSequence(_gnap->getSequenceId(gskMoan2, gridX, gridY) | 0x10000);
 }
 
 void GnapEngine::playGnapBrainPulsating(int gridX, int gridY) {
-	playGnapSequence(_gnap->getSequenceId(gskBrainPulsating, gridX, gridY) | 0x10000);
+	_gnap->playSequence(_gnap->getSequenceId(gskBrainPulsating, gridX, gridY) | 0x10000);
 }
 
 void GnapEngine::playGnapPullOutDevice(int gridX, int gridY) {
-	playGnapSequence(_gnap->getSequenceId(gskPullOutDevice, gridX, gridY) | 0x10000);
+	_gnap->playSequence(_gnap->getSequenceId(gskPullOutDevice, gridX, gridY) | 0x10000);
 }
 
 void GnapEngine::playGnapPullOutDeviceNonWorking(int gridX, int gridY) {
-	playGnapSequence(_gnap->getSequenceId(gskPullOutDeviceNonWorking, gridX, gridY) | 0x10000);
+	_gnap->playSequence(_gnap->getSequenceId(gskPullOutDeviceNonWorking, gridX, gridY) | 0x10000);
 }
 
 void GnapEngine::playGnapUseDevice(int gridX, int gridY) {
-	playGnapSequence(_gnap->getSequenceId(gskUseDevice, gridX, gridY) | 0x10000);
+	_gnap->playSequence(_gnap->getSequenceId(gskUseDevice, gridX, gridY) | 0x10000);
 }
 
 void GnapEngine::playGnapIdle(int gridX, int gridY) {
-	playGnapSequence(_gnap->getSequenceId(gskIdle, gridX, gridY) | 0x10000);
+	_gnap->playSequence(_gnap->getSequenceId(gskIdle, gridX, gridY) | 0x10000);
 }
 
 void GnapEngine::playGnapShowItem(int itemIndex, int gridLookX, int gridLookY) {
-	playGnapSequence(getGnapShowSequenceId(itemIndex, gridLookX, gridLookY) | 0x10000);
+	_gnap->playSequence(getGnapShowSequenceId(itemIndex, gridLookX, gridLookY) | 0x10000);
 }
 
 void GnapEngine::playGnapShowCurrItem(int gridX, int gridY, int gridLookX, int gridLookY) {
@@ -1213,23 +1202,23 @@ void GnapEngine::updateGnapIdleSequence() {
 				if (_gnap->_idleFacing == kDirBottomRight) {
 					switch (getRandom(5)) {
 					case 0:
-						playGnapSequence(0x107A6);
+						_gnap->playSequence(0x107A6);
 						break;
 					case 1:
-						playGnapSequence(0x107AA);
+						_gnap->playSequence(0x107AA);
 						break;
 					case 2:
-						playGnapSequence(0x10841);
+						_gnap->playSequence(0x10841);
 						break;
 					default:
-						playGnapSequence(0x108A2);
+						_gnap->playSequence(0x108A2);
 						break;
 					}
 				} else if (_gnap->_idleFacing == kDirBottomLeft) {
 					if (getRandom(5) > 2)
-						playGnapSequence(0x10832);
+						_gnap->playSequence(0x10832);
 					else
-						playGnapSequence(0x10842);
+						_gnap->playSequence(0x10842);
 				}
 			}
 		} else {
@@ -1261,9 +1250,9 @@ void GnapEngine::updateGnapIdleSequence2() {
 				_timers[2] = 60;
 				_timers[3] = 300;
 				if (_gnap->_idleFacing == kDirBottomRight) {
-					playGnapSequence(0x107AA);
+					_gnap->playSequence(0x107AA);
 				} else if (_gnap->_idleFacing == kDirBottomLeft) {
-					playGnapSequence(0x10832);
+					_gnap->playSequence(0x10832);
 				}
 			}
 		} else {
@@ -1350,7 +1339,7 @@ bool GnapEngine::gnapPlatypusAction(int gridX, int gridY, int platSequenceId, in
 			_gameSys->setAnimation(0, 0, 0);
 			if (_gnap->_pos == Common::Point(_plat->_pos.x + gridX, _plat->_pos.y + gridY)) {
 				_gameSys->setAnimation(platSequenceId, _plat->_id, 1);
-				playPlatypusSequence(platSequenceId);
+				_plat->playSequence(platSequenceId);
 				while (_gameSys->getAnimationStatus(1) != 2) {
 					updateMouseCursor();
 					doCallback(callback);
@@ -1366,21 +1355,13 @@ bool GnapEngine::gnapPlatypusAction(int gridX, int gridY, int platSequenceId, in
 
 void GnapEngine::gnapUseDisguiseOnPlatypus() {
 	_gameSys->setAnimation(0x10846, _gnap->_id, 0);
-	playGnapSequence(0x10846);
+	_gnap->playSequence(0x10846);
 	while (_gameSys->getAnimationStatus(0) != 2)
 		gameUpdateTick();
 	_newSceneNum = 47;
 	_isLeavingScene = true;
 	_sceneDone = true;
 	setFlag(kGFPlatypusDisguised);
-}
-
-void GnapEngine::playPlatypusSequence(int sequenceId) {
-	_gameSys->insertSequence(sequenceId, _plat->_id,
-		makeRid(_plat->_sequenceDatNum, _plat->_sequenceId), _plat->_id,
-		kSeqScale | kSeqSyncWait, 0, 75 * _plat->_pos.x - _platGridX, 48 * _plat->_pos.y - _platGridY);
-	_plat->_sequenceId = ridToEntryIndex(sequenceId);
-	_plat->_sequenceDatNum = ridToDatIndex(sequenceId);
 }
 
 void GnapEngine::updatePlatypusIdleSequence() {
@@ -1392,23 +1373,23 @@ void GnapEngine::updatePlatypusIdleSequence() {
 				if (_plat->_idleFacing != kDirNone) {
 					if (rnd != 0 || _plat->_sequenceId != 0x7CA) {
 						if (rnd != 1 || _plat->_sequenceId != 0x7CA)
-							playPlatypusSequence(0x107CA);
+							_plat->playSequence(0x107CA);
 						else
-							playPlatypusSequence(0x10845);
+							_plat->playSequence(0x10845);
 					} else {
-						playPlatypusSequence(0x107CC);
+						_plat->playSequence(0x107CC);
 					}
 				} else if (rnd != 0 || _plat->_sequenceId != 0x7C9) {
 					if (rnd != 1 || _plat->_sequenceId != 0x7C9) {
 						if (rnd != 2 || _plat->_sequenceId != 0x7C9)
-							playPlatypusSequence(0x107C9);
+							_plat->playSequence(0x107C9);
 						else
-							playPlatypusSequence(0x108A4);
+							_plat->playSequence(0x108A4);
 					} else {
-						playPlatypusSequence(0x10844);
+						_plat->playSequence(0x10844);
 					}
 				} else {
-					playPlatypusSequence(0x107CB);
+					_plat->playSequence(0x107CB);
 				}
 			}
 		} else {
@@ -1428,14 +1409,14 @@ void GnapEngine::updatePlatypusIdleSequence2() {
 				_timers[1] = getRandom(20) + 30;
 				if (_plat->_idleFacing != kDirNone) {
 					if (getRandom(10) >= 2 || _plat->_sequenceId != 0x7CA)
-						playPlatypusSequence(0x107CA);
+						_plat->playSequence(0x107CA);
 					else
-						playPlatypusSequence(0x107CC);
+						_plat->playSequence(0x107CC);
 				} else {
 					if (getRandom(10) >= 2 || _plat->_sequenceId != 0x7C9) {
-						playPlatypusSequence(0x107C9);
+						_plat->playSequence(0x107C9);
 					} else {
-						playPlatypusSequence(0x107CB);
+						_plat->playSequence(0x107CB);
 					}
 				}
 			}

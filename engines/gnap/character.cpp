@@ -38,8 +38,8 @@ Character::Character(GnapEngine *vm) : _vm(vm) {
 Character::~Character() {}
 
 PlayerGnap::PlayerGnap(GnapEngine * vm) : Character(vm) {
-	_gnapBrainPulseNum = 0;
-	_gnapBrainPulseRndValue = 0;
+	_brainPulseNum = 0;
+	_brainPulseRndValue = 0;
 }
 
 int PlayerGnap::getSequenceId(int kind, int gridX, int gridY) {
@@ -67,18 +67,18 @@ int PlayerGnap::getSequenceId(int kind, int gridX, int gridY) {
 			}
 		} else {
 			switch (_idleFacing) {
-	case kDirBottomRight:
-		sequenceId = 0x839;
-		break;
-	case kDirBottomLeft:
-		sequenceId = 0x83B;
-		break;
-	case kDirUpRight:
-		sequenceId = 0x83D;
-		break;
-	default:
-		sequenceId = 0x83F;
-		break;
+			case kDirBottomRight:
+				sequenceId = 0x839;
+				break;
+			case kDirBottomLeft:
+				sequenceId = 0x83B;
+				break;
+			case kDirUpRight:
+				sequenceId = 0x83D;
+				break;
+			default:
+				sequenceId = 0x83F;
+				break;
 			}
 		}
 		break;
@@ -104,18 +104,18 @@ int PlayerGnap::getSequenceId(int kind, int gridX, int gridY) {
 			}
 		} else {
 			switch (_idleFacing) {
-	case kDirBottomRight:
-		sequenceId = 0x826;
-		break;
-	case kDirBottomLeft:
-		sequenceId = 0x827;
-		break;
-	case kDirUpRight:
-		sequenceId = 0x828;
-		break;
-	default:
-		sequenceId = 0x829;
-		break;
+			case kDirBottomRight:
+				sequenceId = 0x826;
+				break;
+			case kDirBottomLeft:
+				sequenceId = 0x827;
+				break;
+			case kDirUpRight:
+				sequenceId = 0x828;
+				break;
+			default:
+				sequenceId = 0x829;
+				break;
 			}
 		}
 		break;
@@ -141,22 +141,22 @@ int PlayerGnap::getSequenceId(int kind, int gridX, int gridY) {
 			}
 		} else {
 			switch (_idleFacing) {
-	case kDirBottomRight:
-		sequenceId = 0x833;
-		_idleFacing = kDirBottomRight;
-		break;
-	case kDirBottomLeft:
-		sequenceId = 0x834;
-		_idleFacing = kDirBottomLeft;
-		break;
-	case kDirUpRight:
-		sequenceId = 0x885;
-		_idleFacing = kDirUpRight;
-		break;
-	default:
-		sequenceId = 0x834;
-		_idleFacing = kDirBottomLeft;
-		break;
+			case kDirBottomRight:
+				sequenceId = 0x833;
+				_idleFacing = kDirBottomRight;
+				break;
+			case kDirBottomLeft:
+				sequenceId = 0x834;
+				_idleFacing = kDirBottomLeft;
+				break;
+			case kDirUpRight:
+				sequenceId = 0x885;
+				_idleFacing = kDirUpRight;
+				break;
+			default:
+				sequenceId = 0x834;
+				_idleFacing = kDirBottomLeft;
+				break;
 			}
 		}
 		break;
@@ -182,56 +182,56 @@ int PlayerGnap::getSequenceId(int kind, int gridX, int gridY) {
 			}
 		} else {
 			switch (_idleFacing) {
-	case kDirBottomRight:
-		sequenceId = 0x7B9;
-		break;
-	case kDirBottomLeft:
-		sequenceId = 0x7BA;
-		break;
-	case kDirUpRight:
-		sequenceId = 0x7BB;
-		break;
-	default:
-		sequenceId = 0x7BC;
-		break;
+			case kDirBottomRight:
+				sequenceId = 0x7B9;
+				break;
+			case kDirBottomLeft:
+				sequenceId = 0x7BA;
+				break;
+			case kDirUpRight:
+				sequenceId = 0x7BB;
+				break;
+			default:
+				sequenceId = 0x7BC;
+				break;
 			}
 		}
 		break;
 
 	case gskBrainPulsating:
-		_gnapBrainPulseNum = (_gnapBrainPulseNum + 1) & 1;
+		_brainPulseNum = (_brainPulseNum + 1) & 1;
 		if (gridX > 0 && gridY > 0) {
 			if (_pos.y > gridY) {
 				if (_pos.x > gridX) {
-					sequenceId = _gnapBrainPulseRndValue + _gnapBrainPulseNum + 0x812;
+					sequenceId = _brainPulseRndValue + _brainPulseNum + 0x812;
 					_idleFacing = kDirUpLeft;
 				} else {
-					sequenceId = _gnapBrainPulseRndValue + _gnapBrainPulseNum + 0x7FE;
+					sequenceId = _brainPulseRndValue + _brainPulseNum + 0x7FE;
 					_idleFacing = kDirUpRight;
 				}
 			} else {
 				if (_pos.x > gridX) {
-					sequenceId = _gnapBrainPulseRndValue + _gnapBrainPulseNum + 0x7D6;
+					sequenceId = _brainPulseRndValue + _brainPulseNum + 0x7D6;
 					_idleFacing = kDirBottomLeft;
 				} else {
-					sequenceId = _gnapBrainPulseRndValue + _gnapBrainPulseNum + 0x7EA;
+					sequenceId = _brainPulseRndValue + _brainPulseNum + 0x7EA;
 					_idleFacing = kDirBottomRight;
 				}
 			}
 		} else {
 			switch (_idleFacing) {
-	case kDirBottomRight:
-		sequenceId = _gnapBrainPulseRndValue + _gnapBrainPulseNum + 0x7EA;
-		break;
-	case kDirBottomLeft:
-		sequenceId = _gnapBrainPulseRndValue + _gnapBrainPulseNum + 0x7D6;
-		break;
-	case kDirUpRight:
-		sequenceId = _gnapBrainPulseRndValue + _gnapBrainPulseNum + 0x7FE;
-		break;
-	default:
-		sequenceId = _gnapBrainPulseRndValue + _gnapBrainPulseNum + 0x812;
-		break;
+			case kDirBottomRight:
+				sequenceId = _brainPulseRndValue + _brainPulseNum + 0x7EA;
+				break;
+			case kDirBottomLeft:
+				sequenceId = _brainPulseRndValue + _brainPulseNum + 0x7D6;
+				break;
+			case kDirUpRight:
+				sequenceId = _brainPulseRndValue + _brainPulseNum + 0x7FE;
+				break;
+			default:
+				sequenceId = _brainPulseRndValue + _brainPulseNum + 0x812;
+				break;
 			}
 		}
 		break;
@@ -291,42 +291,42 @@ int PlayerGnap::getSequenceId(int kind, int gridX, int gridY) {
 			}
 		} else {
 			switch (_idleFacing) {
-	case kDirBottomRight:
-		sequenceId = 0x7A7;
-		break;
-	case kDirBottomLeft:
-		sequenceId = 0x82E;
-		break;
-	case kDirUpLeft:
-		sequenceId = 0x830;
-		break;
-	case kDirUpRight:
-		sequenceId = 0x82F;
-		break;
-	case kDirNone:
-	case kDirUnk4:
-		break;
+			case kDirBottomRight:
+				sequenceId = 0x7A7;
+				break;
+			case kDirBottomLeft:
+				sequenceId = 0x82E;
+				break;
+			case kDirUpLeft:
+				sequenceId = 0x830;
+				break;
+			case kDirUpRight:
+				sequenceId = 0x82F;
+				break;
+			case kDirNone:
+			case kDirUnk4:
+				break;
 			}
 		}
 		break;
 
 	case gskUseDevice:
 		switch (_idleFacing) {
-	case kDirBottomRight:
-		sequenceId = 0x83A;
-		break;
-	case kDirBottomLeft:
-		sequenceId = 0x83C;
-		break;
-	case kDirUpLeft:
-		sequenceId = 0x840;
-		break;
-	case kDirUpRight:
-		sequenceId = 0x83E;
-		break;
-	case kDirNone:
-	case kDirUnk4:
-		break;
+		case kDirBottomRight:
+			sequenceId = 0x83A;
+			break;
+		case kDirBottomLeft:
+			sequenceId = 0x83C;
+			break;
+		case kDirUpLeft:
+			sequenceId = 0x840;
+			break;
+		case kDirUpRight:
+			sequenceId = 0x83E;
+			break;
+		case kDirNone:
+		case kDirUnk4:
+			break;
 		}
 		break;
 
@@ -407,7 +407,7 @@ void PlayerGnap::useJointOnPlatypus() {
 		_vm->_plat->_sequenceDatNum = 1;
 		_vm->_plat->_sequenceId = 0x876;
 		_vm->_plat->_idleFacing = kDirNone;
-		_vm->playGnapSequence(0x107B5);
+		_vm->_gnap->playSequence(0x107B5);
 		_vm->gnapWalkStep();
 		while (_vm->_gameSys->getAnimationStatus(0) != 2) {
 			_vm->updateMouseCursor();
@@ -416,7 +416,7 @@ void PlayerGnap::useJointOnPlatypus() {
 		_vm->_gameSys->setAnimation(0, 0, 0);
 		_actionStatus = -1;
 	} else {
-		_vm->playGnapSequence(getSequenceId(gskScratchingHead, _vm->_plat->_pos.x, _vm->_plat->_pos.y) | 0x10000);
+		_vm->_gnap->playSequence(getSequenceId(gskScratchingHead, _vm->_plat->_pos.x, _vm->_plat->_pos.y) | 0x10000);
 	}
 }
 
@@ -436,7 +436,7 @@ void PlayerGnap::kissPlatypus(int callback) {
 		_vm->_plat->_sequenceDatNum = 1;
 		_vm->_plat->_sequenceId = 0x7CB;
 		_vm->_plat->_idleFacing = kDirNone;
-		_vm->playGnapSequence(0x107B5);
+		_vm->_gnap->playSequence(0x107B5);
 		while (_vm->_gameSys->getAnimationStatus(0) != 2) {
 			_vm->updateMouseCursor();
 			_vm->doCallback(callback);
@@ -445,12 +445,12 @@ void PlayerGnap::kissPlatypus(int callback) {
 		_vm->_gameSys->setAnimation(0, 0, 0);
 		_actionStatus = -1;
 	} else {
-		_vm->playGnapSequence(getSequenceId(gskScratchingHead, _vm->_plat->_pos.x, _vm->_plat->_pos.y) | 0x10000);
+		_vm->_gnap->playSequence(getSequenceId(gskScratchingHead, _vm->_plat->_pos.x, _vm->_plat->_pos.y) | 0x10000);
 	}
 }
 
 void PlayerGnap::useDeviceOnPlatypus() {
-	_vm->playGnapSequence(makeRid(1, getSequenceId(gskPullOutDevice, _vm->_plat->_pos.x, _vm->_plat->_pos.y)));
+	_vm->_gnap->playSequence(makeRid(1, getSequenceId(gskPullOutDevice, _vm->_plat->_pos.x, _vm->_plat->_pos.y)));
 
 	if (_vm->_plat->_idleFacing != kDirNone) {
 		_vm->_gameSys->insertSequence(makeRid(1, 0x7D5), _vm->_plat->_id,
@@ -475,7 +475,18 @@ void PlayerGnap::useDeviceOnPlatypus() {
 }
 
 void PlayerGnap::initBrainPulseRndValue() {
-	_gnapBrainPulseRndValue = 2 * _vm->getRandom(10);
+	_brainPulseRndValue = 2 * _vm->getRandom(10);
+}
+
+void PlayerGnap::playSequence(int sequenceId) {
+	_vm->_timers[2] = _vm->getRandom(30) + 20;
+	_vm->_timers[3] = 300;
+	_vm->gnapIdle();
+	_vm->_gameSys->insertSequence(sequenceId, _id,
+		makeRid(_sequenceDatNum, _sequenceId), _id,
+		kSeqScale | kSeqSyncWait, 0, 75 * _pos.x - _vm->_gnapGridX, 48 * _pos.y - _vm->_gnapGridY);
+	_sequenceId = ridToEntryIndex(sequenceId);
+	_sequenceDatNum = ridToDatIndex(sequenceId);
 }
 
 /************************************************************************************************/
@@ -495,4 +506,13 @@ int PlayerPlat::getSequenceId(int kind, int gridX, int gridY) {
 
 	return sequenceId | 0x10000;
 }
+
+void PlayerPlat::playSequence(int sequenceId) {
+	_vm->_gameSys->insertSequence(sequenceId, _id,
+		makeRid(_sequenceDatNum, _sequenceId), _id,
+		kSeqScale | kSeqSyncWait, 0, 75 * _pos.x - _vm->_platGridX, 48 * _pos.y - _vm->_platGridY);
+	_sequenceId = ridToEntryIndex(sequenceId);
+	_sequenceDatNum = ridToDatIndex(sequenceId);
+}
+
 } // End of namespace Gnap

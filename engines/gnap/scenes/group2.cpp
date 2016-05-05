@@ -286,7 +286,7 @@ void Scene20::run() {
 						break;
 					case TALK_CURSOR:
 						_vm->playGnapBrainPulsating(_vm->_plat->_pos.x, _vm->_plat->_pos.y);
-						_vm->playPlatypusSequence(_vm->_plat->getSequenceId());
+						_vm->_plat->playSequence(_vm->_plat->getSequenceId());
 						break;
 					case PLAT_CURSOR:
 						_vm->playGnapImpossible(0, 0);
@@ -804,7 +804,7 @@ void Scene21::run() {
 						break;
 					case TALK_CURSOR:
 						_vm->playGnapBrainPulsating(_vm->_plat->_pos.x, _vm->_plat->_pos.y);
-						_vm->playPlatypusSequence(_vm->_plat->getSequenceId());
+						_vm->_plat->playSequence(_vm->_plat->getSequenceId());
 						break;
 					case PLAT_CURSOR:
 						_vm->playGnapImpossible(0, 0);
@@ -1120,7 +1120,7 @@ void Scene22::run() {
 						break;
 					case TALK_CURSOR:
 						_vm->playGnapBrainPulsating(_vm->_plat->_pos.x, _vm->_plat->_pos.y);
-						_vm->playPlatypusSequence(_vm->_plat->getSequenceId());
+						_vm->_plat->playSequence(_vm->_plat->getSequenceId());
 						break;
 					case PLAT_CURSOR:
 						_vm->playGnapImpossible(0, 0);
@@ -1344,7 +1344,7 @@ void Scene23::run() {
 						break;
 					case TALK_CURSOR:
 						_vm->playGnapBrainPulsating(_vm->_plat->_pos.x, _vm->_plat->_pos.y);
-						_vm->playPlatypusSequence(_vm->_plat->getSequenceId());
+						_vm->_plat->playSequence(_vm->_plat->getSequenceId());
 						break;
 					case PLAT_CURSOR:
 						_vm->playGnapImpossible(0, 0);
@@ -1613,7 +1613,7 @@ void Scene24::run() {
 						break;
 					case TALK_CURSOR:
 						_vm->playGnapBrainPulsating(_vm->_plat->_pos.x, _vm->_plat->_pos.y);
-						_vm->playPlatypusSequence(_vm->_plat->getSequenceId());
+						_vm->_plat->playSequence(_vm->_plat->getSequenceId());
 						break;
 					case PLAT_CURSOR:
 						_vm->playGnapImpossible(0, 0);
@@ -1859,7 +1859,7 @@ void Scene25::run() {
 						break;
 					case TALK_CURSOR:
 						_vm->playGnapBrainPulsating(_vm->_plat->_pos.x, _vm->_plat->_pos.y);
-						_vm->playPlatypusSequence(_vm->_plat->getSequenceId());
+						_vm->_plat->playSequence(_vm->_plat->getSequenceId());
 						break;
 					case PLAT_CURSOR:
 						_vm->playGnapImpossible(0, 0);
@@ -2176,7 +2176,7 @@ void Scene26::run() {
 						break;
 					case TALK_CURSOR:
 						_vm->playGnapBrainPulsating(_vm->_plat->_pos.x, _vm->_plat->_pos.y);
-						_vm->playPlatypusSequence(_vm->_plat->getSequenceId());
+						_vm->_plat->playSequence(_vm->_plat->getSequenceId());
 						break;
 					case PLAT_CURSOR:
 						_vm->playGnapImpossible(0, 0);
@@ -2410,7 +2410,7 @@ void Scene27::run() {
 						break;
 					case TALK_CURSOR:
 						_vm->playGnapBrainPulsating(_vm->_plat->_pos.x, _vm->_plat->_pos.y);
-						_vm->playPlatypusSequence(_vm->_plat->getSequenceId());
+						_vm->_plat->playSequence(_vm->_plat->getSequenceId());
 						break;
 					case PLAT_CURSOR:
 						_vm->playGnapImpossible(0, 0);
@@ -2781,7 +2781,7 @@ void Scene28::run() {
 						break;
 					case TALK_CURSOR:
 						_vm->playGnapBrainPulsating(_vm->_plat->_pos.x, _vm->_plat->_pos.y);
-						_vm->playPlatypusSequence(_vm->_plat->getSequenceId());
+						_vm->_plat->playSequence(_vm->_plat->getSequenceId());
 						break;
 					case PLAT_CURSOR:
 						_vm->playGnapImpossible(0, 0);
@@ -3172,7 +3172,7 @@ void Scene29::run() {
 						break;
 					case TALK_CURSOR:
 						_vm->playGnapBrainPulsating(_vm->_plat->_pos.x, _vm->_plat->_pos.y);
-						_vm->playPlatypusSequence(_vm->_plat->getSequenceId());
+						_vm->_plat->playSequence(_vm->_plat->getSequenceId());
 						break;
 					case PLAT_CURSOR:
 						_vm->playGnapImpossible(0, 0);
