@@ -86,6 +86,11 @@ Puzzle::Puzzle(SagaEngine *vm) : _vm(vm), _solved(false), _active(false) {
 	_hintBox.setWidth(240);
 	_hintBox.setHeight(30);
 
+	_hintNextRqState = kRQNoHint;
+	_hintGiver = 0;
+	_hintSpeaker = 0;
+	_slidePointX = _slidePointY = 0;
+
 	initPieceInfo( 0, 268,  18,  0, 0,  0 + PUZZLE_X_OFFSET,   0 + PUZZLE_Y_OFFSET, 0, 3,
 		  Point(0, 1),  Point(0, 62), Point(15, 31), Point(0, 0), Point(0, 0), Point(0,0));
 	initPieceInfo( 1, 270,  52,  0, 0,  0 + PUZZLE_X_OFFSET,  32 + PUZZLE_Y_OFFSET, 0, 4,
