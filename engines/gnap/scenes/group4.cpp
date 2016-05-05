@@ -270,23 +270,23 @@ void Scene41::run() {
 		_vm->_gnap->_id = 140;
 		gameSys.insertSequence(0x120, 140, 0, 0, kSeqNone, 0, 0, 0);
 		gameSys.setAnimation(makeRid(_vm->_gnap->_sequenceDatNum, _vm->_gnap->_sequenceId), _vm->_gnap->_id, 0);
-		_vm->initPlatypusPos(8, 10, kDirBottomLeft);
+		_vm->_plat->initPos(8, 10, kDirBottomLeft);
 		_vm->endSceneInit();
 	} else if (_vm->_prevSceneNum == 45) {
-		_vm->initGnapPos(-1, 8, kDirUpRight);
-		_vm->initPlatypusPos(-2, 8, kDirUpLeft);
+		_vm->_gnap->initPos(-1, 8, kDirUpRight);
+		_vm->_plat->initPos(-2, 8, kDirUpLeft);
 		_vm->endSceneInit();
 		_vm->platypusWalkTo(1, 8, -1, 0x107C2, 1);
 		_vm->gnapWalkTo(2, 8, -1, 0x107B9, 1);
 	} else if (_vm->_prevSceneNum == 42) {
-		_vm->initGnapPos(11, 8, kDirUpRight);
-		_vm->initPlatypusPos(11, 9, kDirUpLeft);
+		_vm->_gnap->initPos(11, 8, kDirUpRight);
+		_vm->_plat->initPos(11, 9, kDirUpLeft);
 		_vm->endSceneInit();
 		_vm->gnapWalkTo(8, 8, -1, 0x107BA, 1);
 		_vm->platypusWalkTo(9, 8, -1, 0x107D2, 1);
 	} else {
-		_vm->initGnapPos(5, 8, kDirBottomRight);
-		_vm->initPlatypusPos(6, 8, kDirBottomLeft);
+		_vm->_gnap->initPos(5, 8, kDirBottomRight);
+		_vm->_plat->initPos(6, 8, kDirBottomLeft);
 		_vm->endSceneInit();
 	}
 
@@ -785,20 +785,20 @@ void Scene42::run() {
 		if (_vm->_toyUfoSequenceId == 0x872)
 			_vm->setGrabCursorSprite(-1);
 	} else if (_vm->_prevSceneNum == 41) {
-		_vm->initGnapPos(-1, 8, kDirUpRight);
-		_vm->initPlatypusPos(-1, 9, kDirUpLeft);
+		_vm->_gnap->initPos(-1, 8, kDirUpRight);
+		_vm->_plat->initPos(-1, 9, kDirUpLeft);
 		_vm->endSceneInit();
 		_vm->gnapWalkTo(2, 8, -1, 0x107B9, 1);
 		_vm->platypusWalkTo(1, 8, -1, 0x107C2, 1);
 	} else if (_vm->_prevSceneNum == 43) {
-		_vm->initGnapPos(11, 8, kDirUpRight);
-		_vm->initPlatypusPos(11, 9, kDirUpLeft);
+		_vm->_gnap->initPos(11, 8, kDirUpRight);
+		_vm->_plat->initPos(11, 9, kDirUpLeft);
 		_vm->endSceneInit();
 		_vm->gnapWalkTo(8, 8, -1, 0x107BA, 1);
 		_vm->platypusWalkTo(9, 8, -1, 0x107D2, 1);
 	} else {
-		_vm->initGnapPos(5, 11, kDirUpRight);
-		_vm->initPlatypusPos(6, 11, kDirUpLeft);
+		_vm->_gnap->initPos(5, 11, kDirUpRight);
+		_vm->_plat->initPos(6, 11, kDirUpLeft);
 		_vm->endSceneInit();
 		_vm->gnapWalkTo(5, 8, -1, 0x107BA, 1);
 		_vm->platypusWalkTo(6, 8, -1, 0x107C2, 1);
@@ -1065,7 +1065,7 @@ void Scene42::updateAnimations() {
 					gameSys.insertSequence(0x107B7, _vm->_gnap->_id,
 						makeRid(_vm->_gnap->_sequenceDatNum, _vm->_gnap->_sequenceId), _vm->_gnap->_id,
 						kSeqSyncWait, _vm->getSequenceTotalDuration(_nextBBQVendorSequenceId),
-						75 * _vm->_gnap->_pos.x - _vm->_gnapGridX, 48 * _vm->_gnap->_pos.y - _vm->_gnapGridY);
+						75 * _vm->_gnap->_pos.x - _vm->_gnap->_gridX, 48 * _vm->_gnap->_pos.y - _vm->_gnap->_gridY);
 					_vm->_gnap->_sequenceDatNum = 1;
 				} else {
 					gameSys.insertSequence(sequenceId, _vm->_gnap->_id,
@@ -1227,28 +1227,28 @@ void Scene43::run() {
 	} else {
 		switch (_vm->_prevSceneNum) {
 		case 42:
-			_vm->initGnapPos(-1, 8, kDirUpRight);
-			_vm->initPlatypusPos(-1, 9, kDirUpLeft);
+			_vm->_gnap->initPos(-1, 8, kDirUpRight);
+			_vm->_plat->initPos(-1, 9, kDirUpLeft);
 			_vm->endSceneInit();
 			_vm->gnapWalkTo(2, 8, -1, 0x107B9, 1);
 			_vm->platypusWalkTo(1, 8, -1, 0x107C2, 1);
 			break;
 		case 44:
-			_vm->initGnapPos(11, 8, kDirUpRight);
-			_vm->initPlatypusPos(11, 9, kDirUpLeft);
+			_vm->_gnap->initPos(11, 8, kDirUpRight);
+			_vm->_plat->initPos(11, 9, kDirUpLeft);
 			_vm->endSceneInit();
 			_vm->gnapWalkTo(8, 8, -1, 0x107BA, 1);
 			_vm->platypusWalkTo(9, 8, -1, 0x107D2, 1);
 			break;
 		case 54:
-			_vm->initGnapPos(4, 7, kDirBottomLeft);
-			_vm->initPlatypusPos(11, 8, kDirUpLeft);
+			_vm->_gnap->initPos(4, 7, kDirBottomLeft);
+			_vm->_plat->initPos(11, 8, kDirUpLeft);
 			_vm->endSceneInit();
 			_vm->platypusWalkTo(9, 8, -1, 0x107D2, 1);
 			break;
 		default:
-			_vm->initGnapPos(5, 11, kDirUpRight);
-			_vm->initPlatypusPos(6, 11, kDirUpLeft);
+			_vm->_gnap->initPos(5, 11, kDirUpRight);
+			_vm->_plat->initPos(6, 11, kDirUpLeft);
 			_vm->endSceneInit();
 			_vm->gnapWalkTo(5, 8, -1, 0x107BA, 1);
 			_vm->platypusWalkTo(6, 8, -1, 0x107C2, 1);
@@ -1681,23 +1681,23 @@ void Scene44::run() {
 	} else {
 		switch (_vm->_prevSceneNum) {
 		case 43:
-			_vm->initGnapPos(-1, 8, kDirUpRight);
-			_vm->initPlatypusPos(-1, 7, kDirUpLeft);
+			_vm->_gnap->initPos(-1, 8, kDirUpRight);
+			_vm->_plat->initPos(-1, 7, kDirUpLeft);
 			_vm->endSceneInit();
 			_vm->gnapWalkTo(2, 8, -1, 0x107B9, 1);
 			_vm->platypusWalkTo(1, 8, -1, 0x107C2, 1);
 			break;
 		case 46:
-			_vm->initGnapPos(11, 8, kDirUpRight);
-			_vm->initPlatypusPos(11, 8, kDirUpLeft);
+			_vm->_gnap->initPos(11, 8, kDirUpRight);
+			_vm->_plat->initPos(11, 8, kDirUpLeft);
 			_vm->endSceneInit();
 			_vm->gnapWalkTo(6, 8, -1, 0x107BA, 1);
 			_vm->platypusWalkTo(7, 8, -1, 0x107D2, 1);
 			break;
 		case 50:
-			_vm->initGnapPos(4, 8, kDirBottomRight);
+			_vm->_gnap->initPos(4, 8, kDirBottomRight);
 			if (_vm->_sceneSavegameLoaded) {
-				_vm->initPlatypusPos(_vm->_hotspotsWalkPos[4].x, _vm->_hotspotsWalkPos[4].y, kDirUnk4);
+				_vm->_plat->initPos(_vm->_hotspotsWalkPos[4].x, _vm->_hotspotsWalkPos[4].y, kDirUnk4);
 			} else if (!_vm->isFlag(kGFUnk13)) {
 				_vm->_timers[0] = 50;
 				_vm->_timers[1] = 20;
@@ -1711,8 +1711,8 @@ void Scene44::run() {
 			_vm->endSceneInit();
 			break;
 		default:
-			_vm->initGnapPos(5, 11, kDirUpRight);
-			_vm->initPlatypusPos(6, 11, kDirUpLeft);
+			_vm->_gnap->initPos(5, 11, kDirUpRight);
+			_vm->_plat->initPos(6, 11, kDirUpLeft);
 			_vm->endSceneInit();
 			_vm->platypusWalkTo(6, 8, -1, 0x107C2, 1);
 			_vm->gnapWalkTo(5, 8, -1, 0x107BA, 1);
@@ -2019,7 +2019,7 @@ void Scene44::updateAnimations() {
 	if (gameSys.getAnimationStatus(2) == 2) {
 		if (_nextKissingLadySequenceId == 0xF6) {
 			gameSys.insertSequence(_nextKissingLadySequenceId, 1, _currKissingLadySequenceId, 1, kSeqSyncWait, 0, 0, 0);
-			_vm->initPlatypusPos(5, 8, kDirNone);
+			_vm->_plat->initPos(5, 8, kDirNone);
 			_currKissingLadySequenceId = _nextKissingLadySequenceId;
 			_nextKissingLadySequenceId = -1;
 			gameSys.setAnimation(0, 0, 2);
@@ -2147,23 +2147,23 @@ void Scene45::run() {
 		gameSys.setAnimation(0x9E, 1, 0);
 		_vm->_gnap->_actionStatus = 1;
 		gameSys.insertSequence(_vm->_gnap->_sequenceId, _vm->_gnap->_id, 0, 0, kSeqNone, 0, 0, 0);
-		_vm->initPlatypusPos(4, 8, kDirNone);
+		_vm->_plat->initPos(4, 8, kDirNone);
 		_vm->endSceneInit();
 	} else if (_vm->_prevSceneNum == 46) {
-		_vm->initGnapPos(-1, 8, kDirUpRight);
-		_vm->initPlatypusPos(-1, 9, kDirUpLeft);
+		_vm->_gnap->initPos(-1, 8, kDirUpRight);
+		_vm->_plat->initPos(-1, 9, kDirUpLeft);
 		_vm->endSceneInit();
 		_vm->platypusWalkTo(4, 8, -1, 0x107C2, 1);
 		_vm->gnapWalkTo(2, 7, -1, 0x107B9, 1);
 	} else if (_vm->_prevSceneNum == 41) {
-		_vm->initGnapPos(11, 8, kDirUpRight);
-		_vm->initPlatypusPos(11, 9, kDirUpLeft);
+		_vm->_gnap->initPos(11, 8, kDirUpRight);
+		_vm->_plat->initPos(11, 9, kDirUpLeft);
 		_vm->endSceneInit();
 		_vm->platypusWalkTo(4, 8, -1, 0x107D2, 1);
 		_vm->gnapWalkTo(10, 9, -1, 0x107BA, 1);
 	} else {
-		_vm->initGnapPos(2, 11, kDirUpRight);
-		_vm->initPlatypusPos(6, 11, kDirUpLeft);
+		_vm->_gnap->initPos(2, 11, kDirUpRight);
+		_vm->_plat->initPos(6, 11, kDirUpLeft);
 		_vm->endSceneInit();
 		_vm->platypusWalkTo(4, 8, -1, 0x107C2, 1);
 		_vm->gnapWalkTo(2, 7, -1, 0x107B9, 1);
@@ -2201,7 +2201,7 @@ void Scene45::run() {
 		gameSys.setAnimation(0x107BD, _vm->_gnap->_id, 0);
 		gameSys.insertSequence(0x107BD, _vm->_gnap->_id,
 			makeRid(_vm->_gnap->_sequenceDatNum, _vm->_gnap->_sequenceId), _vm->_gnap->_id,
-			kSeqSyncWait, 0, 75 * _vm->_gnap->_pos.x - _vm->_gnapGridX, 48 * _vm->_gnap->_pos.y - _vm->_gnapGridY);
+			kSeqSyncWait, 0, 75 * _vm->_gnap->_pos.x - _vm->_gnap->_gridX, 48 * _vm->_gnap->_pos.y - _vm->_gnap->_gridY);
 		_vm->removeFullScreenSprite();
 		_vm->showCursor();
 		_vm->_gnap->_sequenceId = 0x7BD;
@@ -2514,20 +2514,20 @@ void Scene46::run() {
 		gameSys.insertSequence(_vm->_toyUfoSequenceId | 0x10000, _vm->_toyUfoId, 0, 0, kSeqNone, 0, _vm->_toyUfoX - 274, _vm->_toyUfoY - 128);
 		_vm->endSceneInit();
 	} else if (_vm->_prevSceneNum == 44) {
-		_vm->initGnapPos(-1, 8, kDirUpRight);
-		_vm->initPlatypusPos(-1, 8, kDirUpLeft);
+		_vm->_gnap->initPos(-1, 8, kDirUpRight);
+		_vm->_plat->initPos(-1, 8, kDirUpLeft);
 		_vm->endSceneInit();
 		_vm->platypusWalkTo(1, 8, -1, 0x107C2, 1);
 		_vm->gnapWalkTo(2, 8, -1, 0x107B9, 1);
 	} else if (_vm->_prevSceneNum == 45) {
-		_vm->initGnapPos(11, 8, kDirUpRight);
-		_vm->initPlatypusPos(12, 8, kDirUpLeft);
+		_vm->_gnap->initPos(11, 8, kDirUpRight);
+		_vm->_plat->initPos(12, 8, kDirUpLeft);
 		_vm->endSceneInit();
 		_vm->gnapWalkTo(8, 8, -1, 0x107BA, 1);
 		_vm->platypusWalkTo(9, 8, -1, 0x107D2, 1);
 	} else {
-		_vm->initGnapPos(5, 11, kDirUpRight);
-		_vm->initPlatypusPos(6, 11, kDirUpLeft);
+		_vm->_gnap->initPos(5, 11, kDirUpRight);
+		_vm->_plat->initPos(6, 11, kDirUpLeft);
 		_vm->endSceneInit();
 		_vm->platypusWalkTo(5, 8, -1, 0x107C2, 1);
 		_vm->gnapWalkTo(6, 8, -1, 0x107BA, 1);

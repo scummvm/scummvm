@@ -45,6 +45,7 @@ public:
 	virtual void playSequence(int sequenceId) = 0;
 	virtual void updateIdleSequence() = 0;
 	virtual void updateIdleSequence2() = 0;
+	virtual void initPos(int gridX, int gridY, Facing facing) = 0;
 
 	Common::Point _pos;
 	Facing _idleFacing;
@@ -52,6 +53,8 @@ public:
 	int _sequenceId;
 	int _sequenceDatNum;
 	int _id;
+	int _gridX;
+	int _gridY;
 
 protected:
 	GnapEngine *_vm;
@@ -61,6 +64,7 @@ class PlayerGnap : public Character {
 public:
 	PlayerGnap(GnapEngine *vm);
 	virtual int getSequenceId(int kind, int gridX, int gridY);
+	virtual void initPos(int gridX, int gridY, Facing facing);
 	virtual void playSequence(int sequenceId);
 	virtual void updateIdleSequence();
 	virtual void updateIdleSequence2();
@@ -70,13 +74,15 @@ public:
 	void useDeviceOnPlatypus();
 	void useJointOnPlatypus();
 
-	int _brainPulseNum, _brainPulseRndValue;
+	int _brainPulseNum;
+	int _brainPulseRndValue;
 };
 
 class PlayerPlat : public Character {
 public:
 	PlayerPlat(GnapEngine *vm);
 	virtual int getSequenceId(int kind = 0, int gridX = 0, int gridY = 0);
+	virtual void initPos(int gridX, int gridY, Facing facing);
 	virtual void playSequence(int sequenceId);
 	virtual void updateIdleSequence();
 	virtual void updateIdleSequence2();

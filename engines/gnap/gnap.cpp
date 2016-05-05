@@ -1129,7 +1129,7 @@ void GnapEngine::gnapIdle() {
 		_gnap->_sequenceId == 0x831 || _gnap->_sequenceId == 0x89A)) {
 		_gameSys->insertSequence(_gnap->getSequenceId(gskIdle, 0, 0) | 0x10000, _gnap->_id,
 			makeRid(_gnap->_sequenceDatNum, _gnap->_sequenceId), _gnap->_id,
-			kSeqSyncExists, 0, 75 * _gnap->_pos.x - _gnapGridX, 48 * _gnap->_pos.y - _gnapGridY);
+			kSeqSyncExists, 0, 75 * _gnap->_pos.x - _gnap->_gridX, 48 * _gnap->_pos.y - _gnap->_gridY);
 		_gnap->_sequenceId = _gnap->getSequenceId(gskIdle, 0, 0);
 		_gnap->_sequenceDatNum = 1;
 	}
@@ -1140,7 +1140,7 @@ void GnapEngine::gnapActionIdle(int sequenceId) {
 		ridToEntryIndex(sequenceId) == _gnap->_sequenceId) {
 		_gameSys->insertSequence(_gnap->getSequenceId(gskIdle, 0, 0) | 0x10000, _gnap->_id,
 			makeRid(_gnap->_sequenceDatNum, _gnap->_sequenceId), _gnap->_id,
-			kSeqSyncExists, 0, 75 * _gnap->_pos.x - _gnapGridX, 48 * _gnap->_pos.y - _gnapGridY);
+			kSeqSyncExists, 0, 75 * _gnap->_pos.x - _gnap->_gridX, 48 * _gnap->_pos.y - _gnap->_gridY);
 		_gnap->_sequenceId = _gnap->getSequenceId(gskIdle, 0, 0);
 		_gnap->_sequenceDatNum = 1;
 	}
@@ -1207,27 +1207,6 @@ bool GnapEngine::testWalk(int animationIndex, int someStatus, int gridX1, int gr
 	return false;
 }
 
-void GnapEngine::initGnapPos(int gridX, int gridY, Facing facing) {
-	_timers[2] = 30;
-	_timers[3] = 300;
-	_gnap->_pos = Common::Point(gridX, gridY);
-	if (facing == kDirNone)
-		_gnap->_idleFacing = kDirBottomRight;
-	else
-		_gnap->_idleFacing = facing;
-	if (_gnap->_idleFacing == kDirBottomLeft) {
-		_gnap->_sequenceId = 0x7B8;
-  	} else {
-		_gnap->_sequenceId = 0x7B5;
-		_gnap->_idleFacing = kDirBottomRight;
-	}
-	_gnap->_id = 20 * _gnap->_pos.y;
-	_gnap->_sequenceDatNum = 1;
-	_gameSys->insertSequence(makeRid(1, _gnap->_sequenceId), 20 * _gnap->_pos.y,
-		0, 0,
-		kSeqScale, 0, 75 * _gnap->_pos.x - _gnapGridX, 48 * _gnap->_pos.y - _gnapGridY);
-}
-
 void GnapEngine::doCallback(int callback) {
 	switch (callback) {
 	case 8:
@@ -1278,27 +1257,6 @@ void GnapEngine::gnapUseDisguiseOnPlatypus() {
 	_isLeavingScene = true;
 	_sceneDone = true;
 	setFlag(kGFPlatypusDisguised);
-}
-
-void GnapEngine::initPlatypusPos(int gridX, int gridY, Facing facing) {
-	_timers[0] = 50;
-	_timers[1] = 20;
-	_plat->_pos = Common::Point(gridX, gridY);
-	if (facing == kDirNone)
-		_plat->_idleFacing = kDirNone;
-	else
-		_plat->_idleFacing = facing;
-	if (_plat->_idleFacing == kDirUnk4) {
-		_plat->_sequenceId = 0x7D1;
-	} else {
-		_plat->_sequenceId = 0x7C1;
-		_plat->_idleFacing = kDirNone;
-	}
-	_plat->_id = 20 * _plat->_pos.y;
-	_plat->_sequenceDatNum = 1;
-	_gameSys->insertSequence(makeRid(1, _plat->_sequenceId), 20 * _plat->_pos.y,
-		0, 0,
-		kSeqScale, 0, 75 * _plat->_pos.x - _platGridX, 48 * _plat->_pos.y - _platGridY);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
