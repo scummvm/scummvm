@@ -516,10 +516,6 @@ public:
 	void platypusMakeRoom();
 
 	// Gnap
-	int _gnapBrainPulseNum, _gnapBrainPulseRndValue;
-	int _gnapSequenceId, _gnapSequenceDatNum, _gnapId;
-
-	int getGnapSequenceId(int kind, int gridX, int gridY);
 	int getGnapShowSequenceId(int index, int gridX, int gridY);
 	void gnapIdle();
 	void gnapActionIdle(int sequenceId);
@@ -538,17 +534,11 @@ public:
 	void updateGnapIdleSequence();
 	void updateGnapIdleSequence2();
 	void initGnapPos(int gridX, int gridY, Facing facing);
-	void gnapInitBrainPulseRndValue();
-	void gnapUseDeviceOnPlatypus();
 	void doCallback(int callback);
 	bool gnapPlatypusAction(int gridX, int gridY, int platSequenceId, int callback);
-	void gnapKissPlatypus(int callback);
-	void gnapUseJointOnPlatypus();
 	void gnapUseDisguiseOnPlatypus();
 
 	// Platypus
-	int _platypusSequenceId, _platypusSequenceDatNum, _platypusId;
-	int getPlatypusSequenceId();
 	void playPlatypusSequence(int sequenceId);
 	void updatePlatypusIdleSequence();
 	void updatePlatypusIdleSequence2();

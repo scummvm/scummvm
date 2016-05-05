@@ -1025,7 +1025,6 @@ Scene51::Scene51(GnapEngine *vm) : Scene(vm) {
 	_nextDropItemKind = -1;
 	_itemInsertX = -1;
 	_itemInsertDirection = -1;
-	_platypusSequenceId = -1;
 	_platypusNextSequenceId = -1;
 	_platypusJumpSequenceId = -1;
 	_itemsCtr = -1;
@@ -1233,12 +1232,12 @@ void Scene51::updateItemAnimations() {
 }
 
 int Scene51::checkCollision(int sequenceId) {
-	bool jumpingLeft = false, jumpingRight = false;
-	int v8, v4;
-	int result = 0;
-
 	if (!isJumping(sequenceId))
 		return false;
+
+	bool jumpingLeft = false, jumpingRight = false;
+	int v8 = 0, v4 = 0;
+	int result = 0;
 
 	bool checkFl = false;
 	for (int i = 0; i < 6; i++)
