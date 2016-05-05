@@ -165,8 +165,15 @@ int CRoomItem::getScriptId() const {
 		return 123;
 	else if (name == "TopOfWell")
 		return 107;
+	else if (name == "EmbLobby" || name == "MoonEmbLobby")
+		return 110;
+	else if (name == "CreatorsChamber" || name == "CreatorsChamberOn")
+		return 113;
+	else if (name == "Arboretum" || name == "FrozenArboretum")
+		return 115;
+	else if (name == "BilgeRoom" || name == "BilgeRoomWith")
+		return 101;
 
-	// TODO
 	return 0;
 }
 
