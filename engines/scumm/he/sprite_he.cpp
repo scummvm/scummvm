@@ -746,7 +746,7 @@ void Sprite::setSpriteField84(int spriteId, int value) {
 }
 
 void Sprite::setSpriteGeneralProperty(int spriteId, int type, int value) {
-	debug(4, "setSpriteGeneralProperty: spriteId %d type 0x%x", spriteId, type);
+	debug(0, "setSpriteGeneralProperty: spriteId %d type 0x%x value 0x%x", spriteId, type, value);
 	assertRange(1, spriteId, _varNumSprites, "sprite");
 	int32 delay;
 
