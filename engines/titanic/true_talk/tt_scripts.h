@@ -25,7 +25,7 @@
 
 #include "titanic/core/list.h"
 #include "titanic/true_talk/tt_named_script.h"
-#include "titanic/true_talk/tt_unnamed_script.h"
+#include "titanic/true_talk/tt_room_script.h"
 
 namespace Titanic {
 
@@ -34,30 +34,30 @@ class CTitleEngine;
 class TTNamedScriptListItem : public ListItem {
 public:
 	TTNamedScript *_script;
-	TTUnnamedScript *_unnamedScript;
+	TTRoomScript *_roomScript;
 public:
-	TTNamedScriptListItem() : _script(nullptr), _unnamedScript(nullptr) {}
-	TTNamedScriptListItem(TTNamedScript *script, TTUnnamedScript *unnamedScript) :
-		_script(script), _unnamedScript(unnamedScript) {}
+	TTNamedScriptListItem() : _script(nullptr), _roomScript(nullptr) {}
+	TTNamedScriptListItem(TTNamedScript *script, TTRoomScript *roomScript) :
+		_script(script), _roomScript(roomScript) {}
 	virtual ~TTNamedScriptListItem() { delete _script; }
 };
 
-PTR_LIST_ITEM(TTUnnamedScript);
+PTR_LIST_ITEM(TTRoomScript);
 
 class TTNamedScriptList : public List<TTNamedScriptListItem> {
 public:
 	TTNamedScript *findById(int charId) const;
 };
 
-class TTUnnamedScriptList : public List<TTUnnamedScriptListItem> {
+class TTRoomScriptList : public List<TTRoomScriptListItem> {
 public:
-	TTUnnamedScript *findById(int scriptId) const;
+	TTRoomScript *findById(int scriptId) const;
 };
 
 class TTScripts {
 private:
 	TTNamedScriptList _namedScripts;
-	TTUnnamedScriptList _unnamedScripts;
+	TTRoomScriptList _roomScripts;
 	CTitleEngine *_titleEngine;
 	int _field24;
 	int _field28;
@@ -70,14 +70,14 @@ private:
 	/**
 	 * Add an unnamed script to the unnamed scripts list
 	 */
-	void addScript(TTUnnamedScript *script);
+	void addScript(TTRoomScript *script);
 public:
 	TTScripts(CTitleEngine *titleEngine);
 
 	/**
-	 * Return a pointer to the specified script
+	 * Return a pointer to the specified room script
 	 */
-	TTUnnamedScript *getUnnamedScript(int scriptId) const;
+	TTRoomScript *getRoomScript(int scriptId) const;
 
 	/**
 	 * Return a pointer to the specified named character script

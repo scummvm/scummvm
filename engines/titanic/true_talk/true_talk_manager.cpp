@@ -231,18 +231,18 @@ TTNamedScript *CTrueTalkManager::getNpcScript(CGameObject *npc) const {
 	return script;
 }
 
-TTUnnamedScript *CTrueTalkManager::getRoomScript() const {
+TTRoomScript *CTrueTalkManager::getRoomScript() const {
 	CRoomItem *room = _gameManager->getRoom();
-	TTUnnamedScript *script = nullptr;
+	TTRoomScript *script = nullptr;
 	if (room) {
 		int scriptId = room->getScriptId();
 		if (scriptId)
-			script = _scripts.getUnnamedScript(scriptId);
+			script = _scripts.getRoomScript(scriptId);
 	}
 
 	if (!script) {
 		// Fall back on the default Room script
-		script = _scripts.getUnnamedScript(110);
+		script = _scripts.getRoomScript(110);
 	}
 
 	return script;

@@ -458,7 +458,7 @@ MODULE_OBJS := \
 	true_talk/title_engine.o \
 	true_talk/true_talk_manager.o \
 	true_talk/tt_script_base.o \
-	true_talk/tt_unnamed_script.o \
+	true_talk/tt_room_script.o \
 	true_talk/tt_named_script.o \
 	true_talk/tt_scripts.o \
 	true_talk/tt_string.o

@@ -100,7 +100,7 @@ void CRoomItem::load(SimpleFile *file) {
 }
 
 void CRoomItem::loading() {
-	// TODO
+	warning("TODO: CRoomItem::loading");
 }
 
 void CRoomItem::calcNodePosition(const Point &nodePos, double &xVal, double &yVal) const {

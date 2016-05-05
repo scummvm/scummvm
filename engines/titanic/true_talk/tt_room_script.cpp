@@ -21,11 +21,11 @@
  */
 
 #include "common/textconsole.h"
-#include "titanic/true_talk/tt_unnamed_script.h"
+#include "titanic/true_talk/tt_room_script.h"
 
 namespace Titanic {
 
-TTUnnamedScriptBase::TTUnnamedScriptBase(int scriptId,
+TTRoomScriptBase::TTRoomScriptBase(int scriptId,
 		const char *charClass, const char *charName,
 		int v3, int v4, int v5, int v6, int v2, int v7) : _scriptId(scriptId),
 		TTScriptBase(3, charClass, v2, charName, v3, v4, v5, v6, v7) {
@@ -33,31 +33,31 @@ TTUnnamedScriptBase::TTUnnamedScriptBase(int scriptId,
 
 /*------------------------------------------------------------------------*/
 
-TTUnnamedScript::TTUnnamedScript(int scriptId) :
-	TTUnnamedScriptBase(scriptId, "", "", 0, -1, -1, -1, 0, 0) {
+TTRoomScript::TTRoomScript(int scriptId) :
+	TTRoomScriptBase(scriptId, "", "", 0, -1, -1, -1, 0, 0) {
 }
 
-void TTUnnamedScript::proc6() {
+void TTRoomScript::proc6() {
 	warning("TODO");
 }
 
-void TTUnnamedScript::proc7() {
+void TTRoomScript::proc7() {
 	warning("TODO");
 }
 
-void TTUnnamedScript::proc8() {
+void TTRoomScript::proc8() {
 	warning("TODO");
 }
 
-void TTUnnamedScript::proc9() {
+void TTRoomScript::proc9() {
 	warning("TODO");
 }
 
-void TTUnnamedScript::proc10() {
+void TTRoomScript::proc10() {
 	warning("TODO");
 }
 
-void TTUnnamedScript::proc11() {
+void TTRoomScript::proc11() {
 	warning("TODO");
 }
 

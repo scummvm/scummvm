@@ -45,9 +45,9 @@ TTNamedScript *TTNamedScriptList::findById(int charId) const {
 
 /*------------------------------------------------------------------------*/
 
-TTUnnamedScript *TTUnnamedScriptList::findById(int scriptId) const {
-	for (TTUnnamedScriptList::const_iterator i = begin(); i != end(); ++i) {
-		const TTUnnamedScriptListItem *item = *i;
+TTRoomScript *TTRoomScriptList::findById(int scriptId) const {
+	for (TTRoomScriptList::const_iterator i = begin(); i != end(); ++i) {
+		const TTRoomScriptListItem *item = *i;
 		if (item->_item->_scriptId == scriptId)
 			return item->_item;
 	}
@@ -59,11 +59,11 @@ TTUnnamedScript *TTUnnamedScriptList::findById(int scriptId) const {
 
 TTScripts::TTScripts(CTitleEngine *titleEngine) :
 		_titleEngine(titleEngine), _field24(0), _field28(0) {
-	// Load unnamed scripts
+	// Load room scripts
 	for (int scriptNum = 100; scriptNum < 133; ++scriptNum)
-		addScript(new TTUnnamedScript(scriptNum));
+		addScript(new TTRoomScript(scriptNum));
 
-	// Load named scripts
+	// Load npc scripts
 	addScript(new DoorbotScript(104, "Doorbot", 0, "Fentible", 11, 1, -1, -1, -1, 0), 100);
 	addScript(new BellbotScript(101, "Bellbot", 0, "Krage", 8, 1), 110);
 	addScript(new LiftbotScript(105, "LiftBot", 0, "Nobby", 11, 1, -1, -1, -1, 0), 103);
@@ -77,19 +77,19 @@ TTScripts::TTScripts(CTitleEngine *titleEngine) :
 void TTScripts::addScript(TTNamedScript *script, int scriptId) {
 	script->proc13();
 	
-	// Find the unnamed script this is associated with
-	TTUnnamedScript *unnamedScript = getUnnamedScript(scriptId);
-	assert(unnamedScript);
+	// Find the room script this is associated with
+	TTRoomScript *roomScript = getRoomScript(scriptId);
+	assert(roomScript);
 
-	_namedScripts.push_back(new TTNamedScriptListItem(script, unnamedScript));
+	_namedScripts.push_back(new TTNamedScriptListItem(script, roomScript));
 }
 
-void TTScripts::addScript(TTUnnamedScript *script) {
-	_unnamedScripts.push_back(new TTUnnamedScriptListItem(script));
+void TTScripts::addScript(TTRoomScript *script) {
+	_roomScripts.push_back(new TTRoomScriptListItem(script));
 }
 
-TTUnnamedScript *TTScripts::getUnnamedScript(int scriptId) const {
-	return _unnamedScripts.findById(scriptId);
+TTRoomScript *TTScripts::getRoomScript(int scriptId) const {
+	return _roomScripts.findById(scriptId);
 }
 
 TTNamedScript *TTScripts::getNamedScript(int charId) const {

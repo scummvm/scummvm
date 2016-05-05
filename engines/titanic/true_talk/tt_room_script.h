@@ -20,18 +20,18 @@
  *
  */
 
-#ifndef TITANIC_TT_UNNAMED_SCRIPT_H
-#define TITANIC_TT_UNNAMED_SCRIPT_H
+#ifndef TITANIC_TT_ROOM_SCRIPT_H
+#define TITANIC_TT_ROOM_SCRIPT_H
 
 #include "titanic/true_talk/tt_script_base.h"
 
 namespace Titanic {
 
-class TTUnnamedScriptBase : public TTScriptBase {
+class TTRoomScriptBase : public TTScriptBase {
 public:
 	int _scriptId;
 public:
-	TTUnnamedScriptBase(int scriptId, const char *charClass, const char *charName,
+	TTRoomScriptBase(int scriptId, const char *charClass, const char *charName,
 		int v3, int v4, int v5, int v6, int v2, int v7);
 
 	virtual void proc6() = 0;
@@ -43,11 +43,11 @@ public:
 };
 
 
-class TTUnnamedScript : public TTUnnamedScriptBase {
+class TTRoomScript : public TTRoomScriptBase {
 private:
 	int _field54;
 public:
-	TTUnnamedScript(int scriptId);
+	TTRoomScript(int scriptId);
 
 	virtual void proc6();
 	virtual void proc7();
@@ -59,4 +59,4 @@ public:
 
 } // End of namespace Titanic
 
-#endif /* TITANIC_TT_UNNAMED_SCRIPT_H */
+#endif /* TITANIC_TT_ROOM_SCRIPT_H */

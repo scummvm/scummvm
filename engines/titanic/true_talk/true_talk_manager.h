@@ -67,7 +67,7 @@ private:
 	/**
 	 * Gets the script associated with the current room
 	 */
-	TTUnnamedScript *getRoomScript() const;
+	TTRoomScript *getRoomScript() const;
 public:
 	static int _v1;
 	static int _v2;
