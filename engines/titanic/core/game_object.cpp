@@ -325,18 +325,6 @@ bool CGameObject::soundFn1(int val) {
 	return false;
 }
 
-void CGameObject::soundFn2(int val, int val2) {
-	if (val != 0 && val != -1) {
-		CGameManager *gameManager = getGameManager();
-		if (gameManager) {
-			if (val2)
-				gameManager->_sound.fn3(val, 0, val2);
-			else
-				gameManager->_sound.fn2(val);
-		}
-	}
-}
-
 void CGameObject::setVisible(bool val) {
 	if (val != _visible) {
 		_visible = val;
@@ -456,7 +444,16 @@ void CGameObject::sound8(bool flag) const {
 	getGameManager()->_sound.managerProc8(flag ? 3 : 0);
 }
 
-bool CGameObject::playSound(const CString &name, int val2, int val3, int val4) {
+void CGameObject::loadSound(const CString &name) {
+	CGameManager *gameManager = getGameManager();
+	if (gameManager) {
+		g_vm->_filesManager.preload(name);
+		if (!name.empty())
+			gameManager->_sound.loadSound(name);
+	}
+}
+
+int CGameObject::playSound(const CString &name, int val2, int val3, int val4) {
 	CProximity prox;
 	prox._field8 = val2;
 	prox._fieldC = val3;
@@ -464,12 +461,24 @@ bool CGameObject::playSound(const CString &name, int val2, int val3, int val4) {
 	return playSound(name, prox);
 }
 
-bool CGameObject::playSound(const CString &name, CProximity &prox) {
+int CGameObject::playSound(const CString &name, CProximity &prox) {
 	if (prox._field28 == 2) {
 		// TODO
 	}
 
-	return false;
+	return 0;
+}
+
+void CGameObject::stopSound(int handle, int val2) {
+	if (handle != 0 && handle != -1) {
+		CGameManager *gameManager = getGameManager();
+		if (gameManager) {
+			if (val2)
+				gameManager->_sound.fn3(handle, 0, val2);
+			else
+				gameManager->_sound.fn2(handle);
+		}
+	}
 }
 
 int CGameObject::addTimer(int endVal, uint firstDuration, uint duration) {
@@ -746,15 +755,6 @@ void CGameObject::checkPlayMovie(const CString &name, int flags) {
 		_surface->proc35(name, flags, (flags & CLIPFLAG_4) ? this : nullptr);
 		if (flags & CLIPFLAG_PLAY)
 			getGameManager()->_gameState.addMovie(_surface->_movie);
-	}
-}
-
-void CGameObject::loadSound(const CString &name) {
-	CGameManager *gameManager = getGameManager();
-	if (gameManager) {
-		g_vm->_filesManager.preload(name);
-		if (!name.empty())
-			gameManager->_sound.loadSound(name);
 	}
 }
 

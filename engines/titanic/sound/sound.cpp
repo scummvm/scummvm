@@ -56,11 +56,11 @@ bool CSound::fn1(int val) {
 	return false;
 }
 
-void CSound::fn2(int val) {
+void CSound::fn2(int handle) {
 	warning("TODO: CSound::fn3");
 }
 
-void CSound::fn3(int val, int val2, int val3) {
+void CSound::fn3(int handle, int val2, int val3) {
 	warning("TODO: CSound::fn3");
 }
 

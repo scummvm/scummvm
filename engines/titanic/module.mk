@@ -412,6 +412,7 @@ MODULE_OBJS := \
 	sound/view_auto_sound_player.o \
 	sound/view_toggles_other_music.o \
 	sound/water_lapping_sounds.o \
+	sound/wave_file.o \
 	star_control/star_control.o \
 	star_control/star_control_sub1.o \
 	star_control/star_control_sub2.o \

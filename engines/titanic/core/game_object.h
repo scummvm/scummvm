@@ -123,20 +123,29 @@ protected:
 	CViewItem * parseView(const CString &viewString);
 
 	bool soundFn1(int val);
-	void soundFn2(int val, int val2);
 	void petFn2(int val);
 	void petFn3(CTreeItem *item);
 	void incState38();
 
 	/**
-	 * Plays a sound
+	 * Load a sound
 	 */
-	bool playSound(const CString &name, int val2, int val3, int val4);
+	void loadSound(const CString &name);
 
 	/**
 	 * Plays a sound
 	 */
-	bool playSound(const CString &name, CProximity &prox);
+	int playSound(const CString &name, int val2, int val3, int val4);
+
+	/**
+	 * Plays a sound
+	 */
+	int playSound(const CString &name, CProximity &prox);
+
+	/**
+	 * Stop a sound
+	 */
+	void stopSound(int handle, int val2);
 
 	/**
 	 * Adds a timer
@@ -220,11 +229,6 @@ protected:
 	 * Support function for drag moving
 	 */
 	void dragMove(const Point &pt);
-
-	/**
-	 * Load a sound
-	 */
-	void loadSound(const CString &name);
 public:
 	int _field60;
 	CursorId _cursorId;

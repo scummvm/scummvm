@@ -56,7 +56,7 @@ private:
 	int _fieldE4;
 	bool _isOn;
 	int _fieldEC;
-	int _fieldF0;
+	int _soundHandle;
 public:
 	CLASSDEF
 	CTelevision();

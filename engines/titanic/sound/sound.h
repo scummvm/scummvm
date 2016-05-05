@@ -35,7 +35,7 @@ class CGameManager;
 class CSoundItem : public ListItem {
 public:
 	CString _name;
-	uint _soundHandle;
+	int _soundHandle;
 	int _field1C;
 	int _field20;
 	int _field24;
@@ -113,8 +113,8 @@ public:
 	uint loadSound(const CString &name);
 
 	bool fn1(int val);
-	void fn2(int val);
-	void fn3(int val, int val2, int val3);
+	void fn2(int handle);
+	void fn3(int handle, int val2, int val3);
 	void managerProc8(int v) { _soundManager.proc8(v); }
 };
 

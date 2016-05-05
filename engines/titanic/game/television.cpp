@@ -51,7 +51,7 @@ int CTelevision::_v5;
 int CTelevision::_v6;
 
 CTelevision::CTelevision() : CBackground(), _fieldE0(1),
-	_fieldE4(7), _isOn(false), _fieldEC(0), _fieldF0(0) {
+	_fieldE4(7), _isOn(false), _fieldEC(0), _soundHandle(0) {
 }
 
 void CTelevision::init() {
@@ -76,7 +76,7 @@ void CTelevision::save(SimpleFile *file, int indent) const {
 	file->writeNumberLine(_v3, indent);
 	file->writeNumberLine(_fieldEC, indent);
 	file->writeNumberLine(_v4, indent);
-	file->writeNumberLine(_fieldF0, indent);
+	file->writeNumberLine(_soundHandle, indent);
 	file->writeNumberLine(_v5, indent);
 	file->writeNumberLine(_v6, indent);
 
@@ -93,7 +93,7 @@ void CTelevision::load(SimpleFile *file) {
 	_v3 = file->readNumber();
 	_fieldEC = file->readNumber();
 	_v4 = file->readNumber();
-	_fieldF0 = file->readNumber();
+	_soundHandle = file->readNumber();
 	_v5 = file->readNumber();
 	_v6 = file->readNumber();
 
@@ -103,8 +103,8 @@ void CTelevision::load(SimpleFile *file) {
 bool CTelevision::LeaveViewMsg(CLeaveViewMsg *msg) {
 	clearPet();
 	if (_isOn) {
-		if (soundFn1(_fieldF0))
-			soundFn2(_fieldF0, 0);
+		if (soundFn1(_soundHandle))
+			stopSound(_soundHandle, 0);
 
 		loadFrame(622);
 		stopMovie();
@@ -153,8 +153,8 @@ static const int END_FRAMES[8] = { 0, 55, 111, 167, 223, 279, 335, 391 };
 
 bool CTelevision::PETUpMsg(CPETUpMsg *msg) {
 	if (msg->_name == "Television" && _isOn) {
-		if (soundFn1(_fieldF0))
-			soundFn2(_fieldF0, 0);
+		if (soundFn1(_soundHandle))
+			stopSound(_soundHandle, 0);
 
 		_fieldE0 = _fieldE0 % _fieldE4 + 1;
 		stopMovie();
@@ -166,8 +166,8 @@ bool CTelevision::PETUpMsg(CPETUpMsg *msg) {
 
 bool CTelevision::PETDownMsg(CPETDownMsg *msg) {
 	if (msg->_name == "Television" && _isOn) {
-		if (soundFn1(_fieldF0))
-			soundFn2(_fieldF0, 0);
+		if (soundFn1(_soundHandle))
+			stopSound(_soundHandle, 0);
 		if (--_fieldE0 < 1)
 			_fieldE0 += _fieldE4;
 
@@ -215,8 +215,8 @@ bool CTelevision::PETActivateMsg(CPETActivateMsg *msg) {
 			_fieldE0 = 1;
 		} else {
 			stopMovie();
-			if (soundFn1(_fieldF0))
-				soundFn2(_fieldF0, 0);
+			if (soundFn1(_soundHandle))
+				stopSound(_soundHandle, 0);
 			
 			setVisible(false);
 		}
@@ -236,7 +236,7 @@ bool CTelevision::MovieEndMsg(CMovieEndMsg *msg) {
 
 	if (_fieldE0 == 3 && compareRoomNameTo("SGTState") && !getPassengerClass()) {
 		playSound("z#47.wav", 100, 0, 0);
-		_fieldF0 = playSound("b#20.wav", 100, 0, 0);
+		_soundHandle = playSound("b#20.wav", 100, 0, 0);
 		CTreeItem *magazine = getRoot()->findByName("Magazine");
 
 		if (magazine) {

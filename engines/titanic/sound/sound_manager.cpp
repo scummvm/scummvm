@@ -34,7 +34,7 @@ QSoundManager::QSoundManager() : _field18(0), _field1C(0) {
 	Common::fill(&_field4A0[0], &_field4A0[16], 0);
 }
 
-uint QSoundManager::loadSound(const CString &name) {
+int QSoundManager::loadSound(const CString &name) {
 	warning("TODO");
 	return 0;
 }
@@ -86,7 +86,7 @@ bool QSoundManager::proc14() {
 	return false;
 }
 
-bool QSoundManager::isActive(uint handle) const {
+bool QSoundManager::isActive(int handle) const {
 	warning("TODO");
 	return false;
 }
