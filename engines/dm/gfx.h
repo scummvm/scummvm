@@ -7,6 +7,7 @@
 namespace DM {
 
 struct Frame;
+
 enum Color {
 	kColorNoTransparency = 255,
 	kColorBlack = 0,
@@ -40,6 +41,13 @@ enum dmPaletteEnum {
 	kPalDungeonView5 = 9,
 };
 
+struct Viewport {
+	// TODO: should probably add width and height, seems redundant right meow
+	uint16 posX, posY;
+};
+
+extern Viewport gDefultViewPort;
+extern Viewport gDungeonViewport;
 
 
 
@@ -75,11 +83,11 @@ public:
 	void blitToBitmap(byte *srcBitmap, uint16 srcWidth, uint16 srcX, uint16 srcY,
 					  byte *destBitmap, uint16 destWidth,
 					  uint16 destFromX, uint16 destToX, uint16 destFromY, uint16 destToY,
-					  Color transparent = kColorNoTransparency);
+					  Color transparent = kColorNoTransparency, Viewport &viewport = gDefultViewPort);
 	void blitToBitmap(byte *srcBitmap, uint16 srcWidth, uint16 srcHeight, byte *destBitmap, uint16 destWidth, uint16 destX = 0, uint16 destY = 0);
 	void blitToScreen(byte *srcBitmap, uint16 srcWidth, uint16 srcX, uint16 srcY,
 					  uint16 destFromX, uint16 destToX, uint16 destFromY, uint16 destToY,
-					  Color transparent = kColorNoTransparency);
+					  Color transparent = kColorNoTransparency, Viewport &viewport = gDefultViewPort);
 
 	void flipBitmapHorizontal(byte *bitmap, uint16 width, uint16 height);
 	void flipBitmapVertical(byte *bitmap, uint16 width, uint16 height);

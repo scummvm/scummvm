@@ -38,6 +38,9 @@ struct Frame {
 Frame gCeilingFrame = {0, 223, 0, 28, 0, 0};
 Frame gFloorFrame = {0, 223, 66, 135, 0, 0};
 
+extern Viewport gDefultViewPort = {0, 0};
+extern Viewport gDungeonViewport = {0, 64};
+
 }
 
 using namespace DM;
@@ -170,20 +173,20 @@ void DisplayMan::loadIntoBitmap(uint16 index, byte *destBitmap) {
 void DisplayMan::blitToBitmap(byte *srcBitmap, uint16 srcWidth, uint16 srcX, uint16 srcY,
 							  byte *destBitmap, uint16 destWidth,
 							  uint16 destFromX, uint16 destToX, uint16 destFromY, uint16 destToY,
-							  Color transparent) {
+							  Color transparent, Viewport &destViewport) {
 	for (uint16 y = 0; y < destToY - destFromY; ++y)
 		for (uint16 x = 0; x < destToX - destFromX; ++x) {
 			byte srcPixel = srcBitmap[srcWidth * (y + srcY) + srcX + x];
 			if (srcPixel != transparent)
-				destBitmap[destWidth * (y + destFromY) + destFromX + x] = srcPixel;
+				destBitmap[destWidth * (y + destFromY + destViewport.posY) + destFromX + x + destViewport.posX] = srcPixel;
 		}
 }
 
 void DisplayMan::blitToScreen(byte *srcBitmap, uint16 srcWidth, uint16 srcX, uint16 srcY,
 							  uint16 destFromX, uint16 destToX, uint16 destFromY, uint16 destToY,
-							  Color transparent) {
+							  Color transparent, Viewport &viewport) {
 	blitToBitmap(srcBitmap, srcWidth, srcX, srcY,
-				 getCurrentVgaBuffer(), _screenWidth, destFromX, destToX, destFromY, destToY, transparent);
+				 getCurrentVgaBuffer(), _screenWidth, destFromX, destToX, destFromY, destToY, transparent, viewport);
 }
 
 void DisplayMan::blitToBitmap(byte *srcBitmap, uint16 srcWidth, uint16 srcHeight, byte *destBitmap, uint16 destWidth, uint16 destX, uint16 destY) {
@@ -235,7 +238,7 @@ uint16 DisplayMan::height(uint16 index) {
 }
 
 void DisplayMan::drawWallSetBitmap(byte *bitmap, Frame &f, uint16 srcWidth) {
-	blitToScreen(bitmap, srcWidth, f.srcX, f.srcY, f.destFromX, f.destToX + 1, f.destFromY, f.destToY + 1, kColorFlesh);
+	blitToScreen(bitmap, srcWidth, f.srcX, f.srcY, f.destFromX, f.destToX + 1, f.destFromY, f.destToY + 1, kColorFlesh, gDungeonViewport);
 }
 
 
