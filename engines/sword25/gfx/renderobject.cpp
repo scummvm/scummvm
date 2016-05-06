@@ -77,7 +77,7 @@ RenderObject::RenderObject(RenderObjectPtr<RenderObject> parentPtr, TYPES type, 
 		_handle = RenderObjectRegistry::instance().registerObject(this, handle);
 
 	if (_handle == 0)
-		return;
+		error("Failed to initialize RenderObject()");
 
 	updateAbsolutePos();
 
