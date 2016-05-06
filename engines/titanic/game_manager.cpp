@@ -199,7 +199,7 @@ void CGameManager::viewChange() {
 
 	_videoSurface1 = nullptr;
 	_videoSurface2 = CScreenManager::_screenManagerPtr->createSurface(600, 340);
-	_trueTalkManager.viewChange();
+	_trueTalkManager.clear();
 
 	for (CTreeItem *treeItem = _project; treeItem; treeItem = treeItem->scan(_project))
 		treeItem->viewChange();

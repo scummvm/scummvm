@@ -450,6 +450,7 @@ MODULE_OBJS := \
 	true_talk/barbot_script.o \
 	true_talk/bellbot_script.o \
 	true_talk/deskbot_script.o \
+	true_talk/dialogue_file.o \
 	true_talk/doorbot_script.o \
 	true_talk/liftbot_script.o \
 	true_talk/maitred_script.o \

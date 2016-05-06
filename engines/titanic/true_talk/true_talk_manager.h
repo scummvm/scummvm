@@ -24,6 +24,7 @@
 #define TITANIC_TRUE_TALK_MANAGER_H
 
 #include "titanic/support/simple_file.h"
+#include "titanic/true_talk/dialogue_file.h"
 #include "titanic/true_talk/title_engine.h"
 #include "titanic/true_talk/tt_scripts.h"
 
@@ -39,6 +40,8 @@ private:
 	CTitleEngine _titleEngine;
 	TTScripts _scripts;
 	int _currentCharId;
+	CDialogueFile *_dialogueFile;
+	int _field14;
 private:
 	/**
 	 * Loads the statics for the class
@@ -69,6 +72,11 @@ private:
 	 * Gets the script associated with the current room
 	 */
 	TTRoomScript *getRoomScript() const;
+
+	/**
+	 * Loads assets for the current character, if it's changed
+	 */
+	void loadAssets(CTrueTalkNPC *npc, int charId);
 public:
 	static int _v1;
 	static int _v2;
@@ -85,6 +93,7 @@ public:
 	static void setFlags(int index, int val);
 public:
 	CTrueTalkManager(CGameManager *owner);
+	~CTrueTalkManager();
 
 	/**
 	 * Save the data for the class to file
@@ -95,6 +104,11 @@ public:
 	 * Load the data for the class from file
 	 */
 	void load(SimpleFile *file);
+
+	/**
+	 * Clear the manager
+	 */
+	void clear();
 
 	/**
 	 * Called when a game is about to be loaded
@@ -115,11 +129,6 @@ public:
 	 * Called when a game has finished being saved
 	 */
 	void postSave() {}
-
-	/**
-	 * Called when the view changes
-	 */
-	void viewChange();
 
 	/**
 	 * Returns the scripts for the manager

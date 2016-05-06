@@ -42,7 +42,12 @@ bool CTrueTalkManager::_v10;
 int CTrueTalkManager::_v11[41];
 
 CTrueTalkManager::CTrueTalkManager(CGameManager *owner) : 
-		_gameManager(owner), _scripts(&_titleEngine), _currentCharId(0) {
+		_gameManager(owner), _scripts(&_titleEngine), _currentCharId(0),
+		_dialogueFile(nullptr), _field14(0) {
+}
+
+CTrueTalkManager::~CTrueTalkManager() {
+	clear();
 }
 
 void CTrueTalkManager::save(SimpleFile *file) const {
@@ -127,6 +132,12 @@ void CTrueTalkManager::saveStatics(SimpleFile *file) {
 		file->writeNumber(_v11[idx]);
 }
 
+void CTrueTalkManager::clear() {
+	delete _dialogueFile;
+	_dialogueFile = nullptr;
+	_currentCharId = 0;
+}
+
 void CTrueTalkManager::setFlags(int index, int val) {
 	switch (index) {
 	case 1:
@@ -181,10 +192,6 @@ void CTrueTalkManager::preLoad() {
 	warning("TODO: CTrueTalkManager::preLoad");
 }
 
-void CTrueTalkManager::viewChange() {
-	warning("CTrueTalkManager::viewChange");
-}
-
 void CTrueTalkManager::update1() {
 	//warning("CTrueTalkManager::update1");
 }
@@ -194,7 +201,7 @@ void CTrueTalkManager::update2() {
 }
 
 void CTrueTalkManager::start(CTrueTalkNPC *npc, int val2, int val3) {
-	warning("CTrueTalkManager::fn1");
+	
 }
 
 TTNamedScript *CTrueTalkManager::getTalker(const CString &name) const {
@@ -247,6 +254,24 @@ TTRoomScript *CTrueTalkManager::getRoomScript() const {
 	}
 
 	return script;
+}
+
+void CTrueTalkManager::loadAssets(CTrueTalkNPC *npc, int charId) {
+	// If assets for the character are already loaded, simply exit
+	if (_currentCharId == charId)
+		return;
+
+	// Clear any previously loaded data
+	clear();
+
+	// Signal the NPC to get the asset details
+	CTrueTalkGetAssetDetailsMsg detailsMsg;
+	detailsMsg.execute(npc);
+
+	if (!detailsMsg._filename.empty()) {
+		_dialogueFile = new CDialogueFile(detailsMsg._filename, 20);
+		_field14 = detailsMsg._numValue + 1;
+	}
 }
 
 } // End of namespace Titanic
