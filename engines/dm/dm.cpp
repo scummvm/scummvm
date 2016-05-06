@@ -59,20 +59,12 @@ Common::Error DMEngine::run() {
 
 	_displayMan->loadPalette(palCredits);
 
-	/*
-	uint16 width = _displayMan->getImageWidth(1);
-	uint16 height = _displayMan->getImageHeight(1);
-	byte *cleanByteImg0Data = new byte[width * height];
-	_displayMan->loadIntoBitmap(1, cleanByteImg0Data);
-	_displayMan->blitToScreen(cleanByteImg0Data, width, height, 0, 0);
-	delete[] cleanByteImg0Data;
-	*/
-
+	uint16 i = 0; //TODO: testing, please delete me
 	while (true) {
 		_displayMan->clearScreen(colorBlack);
-		_displayMan->drawDungeon();
+		_displayMan->drawDungeon(kDirNorth, i++, 0);
 		_displayMan->updateScreen();
-		_system->delayMillis(10);
+		_system->delayMillis(1000); //TODO: testing, please set me to 10
 	}
 
 

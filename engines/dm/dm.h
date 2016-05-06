@@ -8,6 +8,13 @@
 
 namespace DM {
 
+enum direction {
+	kDirNorth = 0,
+	kDirEast = 1,
+	kDirSouth = 2,
+	kDirWest = 3
+};
+
 class Console;
 class DisplayMan;
 class DungeonMan;

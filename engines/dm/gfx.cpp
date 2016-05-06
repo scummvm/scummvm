@@ -8,7 +8,7 @@
 
 namespace DM {
 
-// this is for the Amiga version, later when we add support for more versions, this will have to be renamed
+// TODO: this is ONLY for the Amiga version, name will have to be refactored
 uint16 dmPalettes[10][16] = {
 	{0x000, 0xFFF, 0xFFF, 0xFFF, 0xFFF, 0xFFF, 0xFFF, 0xFFF, 0x000, 0xFFF, 0xAAA, 0xFFF, 0xAAA, 0x444, 0xFF0, 0xFF0},
 	{0x000, 0x666, 0x888, 0x620, 0x0CC, 0x840, 0x080, 0x0C0, 0xF00, 0xFA0, 0xC86, 0xFF0, 0x000, 0xAAA, 0x00F, 0xFFF},
@@ -24,20 +24,19 @@ uint16 dmPalettes[10][16] = {
 
 
 enum GraphicIndice {
-	FloorGraphIndice = 75,
-	CeilingGraphIndice = 76
+	floorIndice = 75,
+	ceilingIndice = 76
 };
 
 struct Frame {
+	// FIXME: these bundaries are inclusive, workaround by adding +1 in the drawFrame methods
+	uint16 destFromX, destToX, destFromY, destToY;
 	// srcWidth and srcHeight (present in the original sources) is redundant here, can be deduced from gaphicsIndice
-	// these coorinates are inclusive boundaries, when blitting you gotta add +1 to srcTo fields
-	uint16 srcFromX, srcToX, srcFromY, srcToY;
-	uint16 srcWidth, srcHeight;
-	uint16 destX, destY;
+	uint16 srcX, srcY;
 };
 
-Frame ceilingFrame = {0, 223, 0, 28, 224, 29, 0, 0};
-Frame floorFrame = {0, 223, 66, 135, 224, 70, 0, 0};
+Frame ceilingFrame = {0, 223, 0, 28, 0, 0};
+Frame floorFrame = {0, 223, 66, 135, 0, 0};
 
 }
 
@@ -46,13 +45,13 @@ using namespace DM;
 DisplayMan::DisplayMan(DMEngine *dmEngine) :
 	_vm(dmEngine), _currPalette(palSwoosh), _screenWidth(0), _screenHeight(0),
 	_vgaBuffer(NULL), _itemCount(0), _packedItemPos(NULL), _packedBitmaps(NULL),
-	_unpackedBitmaps(NULL) {}
+	_bitmaps(NULL) {}
 
 DisplayMan::~DisplayMan() {
 	delete[] _packedBitmaps;
 	delete[] _packedItemPos;
 	delete[] _vgaBuffer;
-	delete[] _unpackedBitmaps;
+	delete[] _bitmaps;
 }
 
 void DisplayMan::setUpScreens(uint16 width, uint16 height) {
@@ -87,21 +86,21 @@ void DisplayMan::loadGraphics() {
 void DisplayMan::unpackGraphics() {
 	uint32 unpackedBitmapsSize = 0;
 	for (uint16 i = 0; i <= 20; ++i)
-		unpackedBitmapsSize += getImageWidth(i) * getImageHeight(i);
+		unpackedBitmapsSize += width(i) * height(i);
 	for (uint16 i = 22; i <= 532; ++i)
-		unpackedBitmapsSize += getImageWidth(i) * getImageHeight(i);
-	_unpackedBitmaps = new byte*[533];
+		unpackedBitmapsSize += width(i) * height(i);
 	// graphics items go from 0-20 and 22-532 inclusive, _unpackedItemPos 21 and 22 are there for indexing convenience
-	_unpackedBitmaps[0] = new byte[unpackedBitmapsSize];
-	loadIntoBitmap(0, _unpackedBitmaps[0]);
+	_bitmaps = new byte*[533];
+	_bitmaps[0] = new byte[unpackedBitmapsSize];
+	loadIntoBitmap(0, _bitmaps[0]);
 	for (uint16 i = 1; i <= 20; ++i) {
-		_unpackedBitmaps[i] = _unpackedBitmaps[i - 1] + getImageWidth(i - 1) * getImageHeight(i - 1);
-		loadIntoBitmap(i, _unpackedBitmaps[i]);
+		_bitmaps[i] = _bitmaps[i - 1] + width(i - 1) * height(i - 1);
+		loadIntoBitmap(i, _bitmaps[i]);
 	}
-	_unpackedBitmaps[22] = _unpackedBitmaps[20] + getImageWidth(20) * getImageHeight(20);
+	_bitmaps[22] = _bitmaps[20] + width(20) * height(20);
 	for (uint16 i = 23; i < 533; ++i) {
-		_unpackedBitmaps[i] = _unpackedBitmaps[i - 1] + getImageWidth(i - 1) * getImageHeight(i - 1);
-		loadIntoBitmap(i, _unpackedBitmaps[i]);
+		_bitmaps[i] = _bitmaps[i - 1] + width(i - 1) * height(i - 1);
+		loadIntoBitmap(i, _bitmaps[i]);
 	}
 }
 
@@ -169,21 +168,33 @@ void DisplayMan::loadIntoBitmap(uint16 index, byte *destBitmap) {
 	}
 }
 
-void DisplayMan::blitToBitmap(byte *srcBitmap, uint16 srcFromX, uint16 srcToX, uint16 srcFromY, uint16 srcToY,
-							  int16 srcWidth, uint16 destX, uint16 destY,
-							  byte *destBitmap, uint16 destWidth, Color transparent) {
-	for (uint16 y = 0; y < srcToY - srcFromY; ++y)
-		for (uint16 x = 0; x < srcToX - srcFromX; ++x) {
-			byte srcPixel = srcBitmap[srcWidth*(y + srcFromY) + srcFromX + x];
+void DisplayMan::blitToBitmap(byte *srcBitmap, uint16 srcWidth, uint16 srcX, uint16 srcY,
+							  byte *destBitmap, uint16 destWidth,
+							  uint16 destFromX, uint16 destToX, uint16 destFromY, uint16 destToY,
+							  Color transparent) {
+	for (uint16 y = 0; y < destToY - destFromY; ++y)
+		for (uint16 x = 0; x < destToX - destFromX; ++x) {
+			byte srcPixel = srcBitmap[srcWidth * (y + srcY) + srcX + x];
 			if (srcPixel != transparent)
-				destBitmap[destWidth * (y + destY) + destX + x] = srcPixel;
+				destBitmap[destWidth * (y + destFromY) + destFromX + x] = srcPixel;
 		}
 }
 
+void DisplayMan::blitToScreen(byte *srcBitmap, uint16 srcWidth, uint16 srcX, uint16 srcY,
+							  uint16 destFromX, uint16 destToX, uint16 destFromY, uint16 destToY,
+							  Color transparent) {
+	blitToBitmap(srcBitmap, srcWidth, srcX, srcY,
+				 getCurrentVgaBuffer(), _screenWidth, destFromX, destToX, destFromY, destToY, transparent);
+}
 
-void DisplayMan::flipBitmapVertical(byte *bitmap, uint16 width, uint16 height) {
-	for(uint16 y = 0; y < height / 2; ++y)
-		for (uint16 x = 0; x < width; ++x) {
+void DisplayMan::blitToBitmap(byte *srcBitmap, uint16 srcWidth, uint16 srcHeight, byte *destBitmap, uint16 destWidth, uint16 destX, uint16 destY) {
+	for (uint16 y = 0; y < srcHeight; ++y)
+		memcpy(destBitmap + destWidth*(y + destY) + destX, srcBitmap + y * srcWidth, sizeof(byte)* srcWidth);
+}
+
+void DisplayMan::flipBitmapHorizontal(byte *bitmap, uint16 width, uint16 height) {
+	for (uint16 y = 0; y < height; ++y)
+		for (uint16 x = 0; x < width / 2; ++x) {
 			byte tmp;
 			tmp = bitmap[y*width + x];
 			bitmap[y*width + x] = bitmap[y*width + width - 1 - x];
@@ -191,23 +202,19 @@ void DisplayMan::flipBitmapVertical(byte *bitmap, uint16 width, uint16 height) {
 		}
 }
 
-void DisplayMan::flipBitmapHorizontal(byte *bitmap, uint16 width, uint16 height) {
+void DisplayMan::flipBitmapVertical(byte *bitmap, uint16 width, uint16 height) {
 	byte *tmp = new byte[width];
 
 	for (uint16 y = 0; y < height / 2; ++y) {
-		memcpy(tmp, bitmap + y * width, sizeof(byte) * width);
-		memcpy(bitmap + y * width, bitmap + (height - 1 - y) * width, sizeof(byte) * width);
-		memcpy(bitmap + y * width, tmp, sizeof(byte) * width);
-		memcpy(bitmap + (height - 1 - y) * width, tmp, sizeof(byte) * width);
+		memcpy(tmp, bitmap + y * width, width);
+		memcpy(bitmap + y * width, bitmap + (height - 1 - y) * width, width);
+		memcpy(bitmap + (height - 1 - y) * width, tmp, width);
 	}
 
 	delete[] tmp;
 }
 
-void DisplayMan::blitToScreen(byte *srcBitmap, uint16 srcFromX, uint16 srcToX, uint16 srcFromY, uint16 srcToY,
-							  int16 srcWidth, uint16 destX, uint16 destY, Color transparent) {
-	blitToBitmap(srcBitmap, srcFromX, srcToX, srcFromY, srcToY, srcWidth, destX, destY, getCurrentVgaBuffer(), _screenWidth, transparent);
-}
+
 
 void DisplayMan::updateScreen() {
 	_vm->_system->copyRectToScreen(_vgaBuffer, _screenWidth, 0, 0, _screenWidth, _screenHeight);
@@ -218,35 +225,43 @@ byte *DisplayMan::getCurrentVgaBuffer() {
 	return _vgaBuffer;
 }
 
-uint16 DisplayMan::getImageWidth(uint16 index) {
+uint16 DisplayMan::width(uint16 index) {
 	byte *data = _packedBitmaps + _packedItemPos[index];
 	return TOBE2(data[0], data[1]);
 }
 
-uint16 DisplayMan::getImageHeight(uint16 index) {
+uint16 DisplayMan::height(uint16 index) {
 	uint8 *data = _packedBitmaps + _packedItemPos[index];
 	return TOBE2(data[2], data[3]);
 }
 
-void DisplayMan::drawFrameToScreen(byte *bitmap, Frame &f, Color transparent) {
-	blitToScreen(bitmap, f.srcFromX, f.srcToX + 1, f.srcFromY, f.srcToY + 1, f.srcWidth, f.destX, f.destY, transparent);
-}
-
-void DisplayMan::drawFrameToBitMap(byte *bitmap, Frame &f, Color transparent, byte *destBitmap, uint16 destWidth) {
-	blitToBitmap(bitmap, f.srcFromX, f.srcToX + 1, f.srcFromY, f.srcToY + 1, f.srcWidth, f.destX, f.destY, destBitmap, destWidth, transparent);
+void DisplayMan::drawWallSetBitmap(byte *bitmap, Frame &f, uint16 srcWidth) {
+	blitToScreen(bitmap, srcWidth, f.srcX, f.srcY, f.destFromX, f.destToX + 1, f.destFromY, f.destToY + 1, colorFlesh);
 }
 
 
-void DisplayMan::drawDungeon() {
+
+void DisplayMan::drawDungeon(direction dir, uint16 posX, uint16 posY) {
 	loadPalette(palDungeonView0);
+	// TODO: this is a global variable, set from here
+	bool flippedWallAndFootprints = (posX + posY + dir) & 1;
 
-	drawFrameToScreen(_unpackedBitmaps[CeilingGraphIndice], ceilingFrame, colorFlesh);
+	// NOTE: this can hold every bitmap, width and height is "flexible"
+	byte  *tmpBitmap = new byte[305 * 111];
+	clearBitmap(tmpBitmap, 305, 111, colorBlack);
 
-	byte *tmpBitmap = new byte[305 * 111]; // because original source reasons
-	clearBitmap(tmpBitmap, 111, 305, colorBlack);
-	blitToBitmap(_unpackedBitmaps[FloorGraphIndice], 0, getImageWidth(FloorGraphIndice), 0, getImageHeight(FloorGraphIndice), getImageWidth(FloorGraphIndice), 0, 0, tmpBitmap, 305);
-	flipBitmapHorizontal(tmpBitmap, 305, 111);
-	drawFrameToScreen(tmpBitmap, floorFrame, colorFlesh);
+	if (flippedWallAndFootprints) {
+		blitToBitmap(_bitmaps[floorIndice], width(floorIndice), height(floorIndice), tmpBitmap, width(floorIndice));
+		flipBitmapHorizontal(tmpBitmap, width(floorIndice), height(floorIndice));
+		drawWallSetBitmap(tmpBitmap, floorFrame, width(floorIndice));
+		drawWallSetBitmap(_bitmaps[ceilingIndice], ceilingFrame, width(ceilingIndice));
+	} else {
+		blitToBitmap(_bitmaps[ceilingIndice], width(ceilingIndice), height(ceilingIndice), tmpBitmap, width(ceilingIndice));
+		flipBitmapHorizontal(tmpBitmap, width(ceilingIndice), height(ceilingIndice));
+		drawWallSetBitmap(tmpBitmap, ceilingFrame, width(ceilingIndice));
+		drawWallSetBitmap(_bitmaps[floorIndice], floorFrame, width(floorIndice));
+	}
+
 
 	delete[] tmpBitmap;
 }
