@@ -37,7 +37,7 @@ class CTrueTalkNPC;
 class CTrueTalkManager {
 private:
 	CGameManager *_gameManager;
-	CTitleEngine _titleEngine;
+	STtitleEngine _titleEngine;
 	TTScripts _scripts;
 	int _currentCharId;
 	CDialogueFile *_dialogueFile;
@@ -89,6 +89,7 @@ public:
 	static int _v9;
 	static bool _v10;
 	static int _v11[41];
+	static CTrueTalkNPC *_currentNPC;
 
 	static void setFlags(int index, int val);
 public:

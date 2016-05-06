@@ -23,9 +23,83 @@
 #ifndef TITANIC_TITLE_ENGINE_H
 #define TITANIC_TITLE_ENGINE_H
 
+#include "common/stream.h"
+#include "common/winexe_pe.h"
+#include "titanic/support/string.h"
+#include "titanic/true_talk/title_engine_sub.h"
+#include "titanic/true_talk/tt_script_base.h"
+
 namespace Titanic {
 
 class CTitleEngine {
+protected:
+	CTitleEngineSub *_sub;
+	TTScriptBase *_script;
+public:
+	CTitleEngine();
+	~CTitleEngine();
+
+	/**
+	 * Setup the engine
+	 */
+	virtual void setup(int val1, int val2 = 0);
+
+	virtual int proc2(int val1, int val2) { return 2; }
+	
+	virtual int proc4(int unused) const = 0;
+	virtual int proc5(int64 unused) const = 0;
+	virtual int proc6(int64 unused) const = 0;
+	virtual int proc7(int64 unused) const = 0;
+	virtual int proc8() const = 0;
+
+	/**
+	 * Open a designated file
+	 */
+	virtual void open(const CString &name) = 0;
+
+	/**
+	 * Close the file
+	 */
+	virtual void close() = 0;
+};
+
+class STtitleEngine : public CTitleEngine {
+private:
+	Common::PEResources _resources;
+	Common::SeekableReadStream *_stream;
+	int _field58;
+	Common::Array<uint> _array;
+	Common::Array<byte> _data;
+public:
+	STtitleEngine();
+	~STtitleEngine();
+
+	void reset();
+
+	/**
+	 * Setup the engine
+	 */
+	virtual void setup(int val1, int val2 = 0);
+
+	virtual int proc2(int val1, int val2);
+
+	virtual void dump(int val1, int val2);
+
+	virtual int proc4(int unused) const { return 0; }
+	virtual int proc5(int64 unused) const { return 0; }
+	virtual int proc6(int64 unused) const { return 0; }
+	virtual int proc7(int64 unused) const { return 0; }
+	virtual int proc8() const { return 0; }
+
+	/**
+	 * Open a designated file
+	 */
+	virtual void open(const CString &name);
+
+	/**
+	 * Close the file
+	 */
+	virtual void close();
 };
 
 } // End of namespace Titanic

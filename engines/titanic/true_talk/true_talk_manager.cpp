@@ -40,6 +40,7 @@ bool CTrueTalkManager::_v8;
 int CTrueTalkManager::_v9;
 bool CTrueTalkManager::_v10;
 int CTrueTalkManager::_v11[41];
+CTrueTalkNPC *CTrueTalkManager::_currentNPC;
 
 CTrueTalkManager::CTrueTalkManager(CGameManager *owner) : 
 		_gameManager(owner), _scripts(&_titleEngine), _currentCharId(0),
@@ -201,7 +202,18 @@ void CTrueTalkManager::update2() {
 }
 
 void CTrueTalkManager::start(CTrueTalkNPC *npc, int val2, int val3) {
+	TTNamedScript *npcScript = getNpcScript(npc);
+	TTRoomScript *roomScript = getRoomScript();
 	
+	_titleEngine.reset();
+	uint charId = npcScript->charId();
+	loadAssets(npc, charId);
+
+	_currentNPC = npc;
+	warning("TODO: CTrueTalkManager::start");
+	_currentNPC = nullptr;
+
+	//TODO: More
 }
 
 TTNamedScript *CTrueTalkManager::getTalker(const CString &name) const {

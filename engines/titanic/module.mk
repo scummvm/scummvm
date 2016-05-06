@@ -457,12 +457,14 @@ MODULE_OBJS := \
 	true_talk/parrot_script.o \
 	true_talk/succubus_script.o \
 	true_talk/title_engine.o \
+	true_talk/title_engine_sub.o \
 	true_talk/true_talk_manager.o \
 	true_talk/tt_script_base.o \
 	true_talk/tt_room_script.o \
 	true_talk/tt_named_script.o \
 	true_talk/tt_scripts.o \
-	true_talk/tt_string.o
+	true_talk/tt_string.o \
+	true_talk/tt_title_script.o
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_TITANIC), DYNAMIC_PLUGIN)

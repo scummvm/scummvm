@@ -20,58 +20,13 @@
  *
  */
 
-#include "titanic/true_talk/title_engine.h"
+#include "titanic/true_talk/title_engine_sub.h"
 
 namespace Titanic {
 
-CTitleEngine::CTitleEngine() : _script(nullptr), _sub(nullptr) {
-}
-
-CTitleEngine::~CTitleEngine() {
-	delete _script;
-	delete _sub;
-}
-
-void CTitleEngine::setup(int val1, int val2) {
-
-}
-
-
 /*------------------------------------------------------------------------*/
 
-STtitleEngine::STtitleEngine(): CTitleEngine(), _field58(0) {
-}
-
-STtitleEngine::~STtitleEngine() {
-	delete _stream;
-}
-
-void STtitleEngine::reset() {
-	_field58 = 0;
-	_array.clear();
-}
-
-void STtitleEngine::setup(int val1, int val2) {
-	CTitleEngine::setup(val1, 3);
-}
-
-int STtitleEngine::proc2(int val1, int val2) {
-	// TODO
-	return 0;
-}
-
-void STtitleEngine::dump(int val1, int val2) {
-	// TODO
-}
-
-void STtitleEngine::open(const CString &name) {
-	_stream = _resources.getResource(Common::WinResourceID("Text"),
-		name);
-}
-
-void STtitleEngine::close() {
-	delete _stream;
-	_stream = nullptr;
+CTitleEngineSub::CTitleEngineSub(CTitleEngine *owner, int val1, int val2) {
 }
 
 } // End of namespace Titanic
