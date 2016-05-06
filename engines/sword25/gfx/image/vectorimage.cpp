@@ -217,6 +217,7 @@ Common::Rect CalculateBoundingBox(const VectorImageElement &vectorImageElement) 
 
 VectorImage::VectorImage(const byte *pFileData, uint fileSize, bool &success, const Common::String &fname) : _pixelData(0), _fname(fname) {
 	success = false;
+	_bgColor = 0;
 
 	// Create bitstream object
 	// In the following the file data will be readout of the bitstream object.
