@@ -24,6 +24,12 @@
 
 namespace Titanic {
 
+BEGIN_MESSAGE_MAP(CCharacter, CGameObject)
+	ON_MESSAGE(LeaveViewMsg)
+	ON_MESSAGE(TurnOn)
+	ON_MESSAGE(TurnOff)
+END_MESSAGE_MAP()
+
 CCharacter::CCharacter() : CGameObject(), _fieldBC(0), _fieldC0(0), _fieldC4(1) {
 }
 
@@ -45,6 +51,29 @@ void CCharacter::load(SimpleFile *file) {
 	_charName = file->readString();
 
 	CGameObject::load(file);
+}
+
+bool CCharacter::LeaveViewMsg(CLeaveViewMsg *msg) {
+	CTurnOff offMsg;
+	offMsg.execute(this);
+
+	return true;
+}
+
+bool CCharacter::TurnOn(CTurnOn *msg) {
+	if (!_fieldC4)
+		_fieldC4 = 1;
+
+	return true;
+}
+
+bool CCharacter::TurnOff(CTurnOff *msg) {
+	CString charName = getName();
+	if (charName == "Deskbot" || charName == "Barbot" || charName == "SuccUBus") {
+		_fieldC4 = 0;
+	}
+
+	return true;
 }
 
 } // End of namespace Titanic

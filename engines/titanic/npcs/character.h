@@ -28,6 +28,10 @@
 namespace Titanic {
 
 class CCharacter : public CGameObject {
+	DECLARE_MESSAGE_MAP
+	bool LeaveViewMsg(CLeaveViewMsg *msg);
+	bool TurnOn(CTurnOn *msg);
+	bool TurnOff(CTurnOff *msg);
 protected:
 	int _fieldBC;
 	int _fieldC0;
