@@ -20,13 +20,18 @@
  *
  */
 
-#include "titanic/true_talk/title_engine_sub.h"
+#include "titanic/true_talk/script_handler.h"
 
 namespace Titanic {
 
 /*------------------------------------------------------------------------*/
 
-CTitleEngineSub::CTitleEngineSub(CTitleEngine *owner, int val1, int val2) {
+CScriptHandler::CScriptHandler(CTitleEngine *owner, int val1, int val2) {
 }
+
+void CScriptHandler::setup(TTNamedScript *npcScript, TTRoomScript *roomScript, uint charId) {
+
+}
+
 
 } // End of namespace Titanic

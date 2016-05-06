@@ -20,18 +20,28 @@
  *
  */
 
-#ifndef TITANIC_TITLE_ENGINE_SUB_H
-#define TITANIC_TITLE_ENGINE_SUB_H
+#ifndef TITANIC_SCRIPT_HANDLER_H
+#define TITANIC_SCRIPT_HANDLER_H
+
+#include "titanic/true_talk/tt_named_script.h"
+#include "titanic/true_talk/tt_room_script.h"
 
 namespace Titanic {
 
 class CTitleEngine;
 
-class CTitleEngineSub {
+class CScriptHandler {
+private:
+	CTitleEngine *_owner;
 public:
-	CTitleEngineSub(CTitleEngine *owner, int val1, int val2);
+	CScriptHandler(CTitleEngine *owner, int val1, int val2);
+
+	/**
+	 * Set the character and room
+	 */
+	void setup(TTNamedScript *npcScript, TTRoomScript *roomScript, uint charId);
 };
 
 } // End of namespace Titanic
 
-#endif /* TITANIC_TITLE_ENGINE_SUB_H */
+#endif /* TITANIC_SCRIPT_HANDLER_H */

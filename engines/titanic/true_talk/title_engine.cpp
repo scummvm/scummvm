@@ -24,12 +24,12 @@
 
 namespace Titanic {
 
-CTitleEngine::CTitleEngine() : _script(nullptr), _sub(nullptr) {
+CTitleEngine::CTitleEngine() : _script(nullptr), _handler(nullptr) {
 }
 
 CTitleEngine::~CTitleEngine() {
 	delete _script;
-	delete _sub;
+	delete _handler;
 }
 
 void CTitleEngine::setup(int val1, int val2) {

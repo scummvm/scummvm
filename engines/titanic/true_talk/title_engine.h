@@ -26,14 +26,14 @@
 #include "common/stream.h"
 #include "common/winexe_pe.h"
 #include "titanic/support/string.h"
-#include "titanic/true_talk/title_engine_sub.h"
+#include "titanic/true_talk/script_handler.h"
 #include "titanic/true_talk/tt_script_base.h"
 
 namespace Titanic {
 
 class CTitleEngine {
 protected:
-	CTitleEngineSub *_sub;
+	CScriptHandler *_handler;
 	TTScriptBase *_script;
 public:
 	CTitleEngine();
