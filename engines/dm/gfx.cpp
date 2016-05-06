@@ -118,12 +118,11 @@ void DisplayMan::loadPalette(dmPaletteEnum palette) {
 	_currPalette = palette;
 }
 
-#define TOBE2(byte1, byte2) ((((uint16)(byte1)) << 8) | (uint16)(byte2))
 
 void DisplayMan::loadIntoBitmap(uint16 index, byte *destBitmap) {
 	uint8 *data = _packedBitmaps + _packedItemPos[index];
-	uint16 width = TOBE2(data[0], data[1]);
-	uint16 height = TOBE2(data[2], data[3]);
+	uint16 width = READ_BE_UINT16(data);
+	uint16 height = READ_BE_UINT16(data + 2);
 	uint16 nextByteIndex = 4;
 	for (uint16 k = 0; k < width * height;) {
 		uint8 nextByte = data[nextByteIndex++];
@@ -137,7 +136,7 @@ void DisplayMan::loadIntoBitmap(uint16 index, byte *destBitmap) {
 			for (int j = 0; j < byte1 + 1; ++j)
 				destBitmap[k++] = nibble2;
 		} else if (nibble1 == 0xC) {
-			uint16 word1 = TOBE2(data[nextByteIndex], data[nextByteIndex + 1]);
+			uint16 word1 = READ_BE_UINT16(data + nextByteIndex);
 			nextByteIndex += 2;
 			for (int j = 0; j < word1 + 1; ++j)
 				destBitmap[k++] = nibble2;
@@ -147,7 +146,7 @@ void DisplayMan::loadIntoBitmap(uint16 index, byte *destBitmap) {
 				destBitmap[k] = destBitmap[k - width];
 			destBitmap[k++] = nibble2;
 		} else if (nibble1 == 0xF) {
-			uint16 word1 = TOBE2(data[nextByteIndex], data[nextByteIndex + 1]);
+			uint16 word1 = READ_BE_UINT16(data + nextByteIndex);
 			nextByteIndex += 2;
 			for (int j = 0; j < word1 + 1; ++j, ++k)
 				destBitmap[k] = destBitmap[k - width];
@@ -227,12 +226,12 @@ byte *DisplayMan::getCurrentVgaBuffer() {
 
 uint16 DisplayMan::width(uint16 index) {
 	byte *data = _packedBitmaps + _packedItemPos[index];
-	return TOBE2(data[0], data[1]);
+	return READ_BE_UINT16(data);
 }
 
 uint16 DisplayMan::height(uint16 index) {
 	uint8 *data = _packedBitmaps + _packedItemPos[index];
-	return TOBE2(data[2], data[3]);
+	return READ_BE_UINT16(data + 2);
 }
 
 void DisplayMan::drawWallSetBitmap(byte *bitmap, Frame &f, uint16 srcWidth) {
