@@ -8,36 +8,36 @@ namespace DM {
 
 struct Frame;
 enum Color {
-	colorNoTransparency = 255,
-	colorBlack = 0,
-	colorDarkGary = 1,
-	colorLightGray = 2,
-	colorDarkBrown = 3,
-	colorCyan = 4,
-	colorLightBrown = 5,
-	colorDarkGreen = 6,
-	colorLightGreen = 7,
-	colorRed = 8,
-	colorGold = 9,
-	colorFlesh = 10,
-	colorYellow = 11,
-	colorDarkestGray = 12,
-	colorLightestGray = 13,
-	colorBlue = 14,
-	colorWhite = 15
+	kColorNoTransparency = 255,
+	kColorBlack = 0,
+	kColorDarkGary = 1,
+	kColorLightGray = 2,
+	kColorDarkBrown = 3,
+	kColorCyan = 4,
+	kColorLightBrown = 5,
+	kColorDarkGreen = 6,
+	kColorLightGreen = 7,
+	kColorRed = 8,
+	kColorGold = 9,
+	kColorFlesh = 10,
+	kColorYellow = 11,
+	kColorDarkestGray = 12,
+	kColorLightestGray = 13,
+	kColorBlue = 14,
+	kColorWhite = 15
 };
 
 enum dmPaletteEnum {
-	palSwoosh = 0,
-	palMousePointer = 1,
-	palCredits = 2,
-	palEntrance = 3,
-	palDungeonView0 = 4,
-	palDungeonView1 = 5,
-	palDungeonView2 = 6,
-	palDungeonView3 = 7,
-	palDungeonView4 = 8,
-	palDungeonView5 = 9,
+	kPalSwoosh = 0,
+	kPalMousePointer = 1,
+	kPalCredits = 2,
+	kPalEntrance = 3,
+	kPalDungeonView0 = 4,
+	kPalDungeonView1 = 5,
+	kPalDungeonView2 = 6,
+	kPalDungeonView3 = 7,
+	kPalDungeonView4 = 8,
+	kPalDungeonView5 = 9,
 };
 
 
@@ -75,11 +75,11 @@ public:
 	void blitToBitmap(byte *srcBitmap, uint16 srcWidth, uint16 srcX, uint16 srcY,
 					  byte *destBitmap, uint16 destWidth,
 					  uint16 destFromX, uint16 destToX, uint16 destFromY, uint16 destToY,
-					  Color transparent = colorNoTransparency);
+					  Color transparent = kColorNoTransparency);
 	void blitToBitmap(byte *srcBitmap, uint16 srcWidth, uint16 srcHeight, byte *destBitmap, uint16 destWidth, uint16 destX = 0, uint16 destY = 0);
 	void blitToScreen(byte *srcBitmap, uint16 srcWidth, uint16 srcX, uint16 srcY,
 					  uint16 destFromX, uint16 destToX, uint16 destFromY, uint16 destToY,
-					  Color transparent = colorNoTransparency);
+					  Color transparent = kColorNoTransparency);
 
 	void flipBitmapHorizontal(byte *bitmap, uint16 width, uint16 height);
 	void flipBitmapVertical(byte *bitmap, uint16 width, uint16 height);

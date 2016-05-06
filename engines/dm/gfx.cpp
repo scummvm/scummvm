@@ -24,8 +24,8 @@ uint16 dmPalettes[10][16] = {
 
 
 enum GraphicIndice {
-	floorIndice = 75,
-	ceilingIndice = 76
+	gFloorIndice = 75,
+	gCeilingIndice = 76
 };
 
 struct Frame {
@@ -35,15 +35,15 @@ struct Frame {
 	uint16 srcX, srcY;
 };
 
-Frame ceilingFrame = {0, 223, 0, 28, 0, 0};
-Frame floorFrame = {0, 223, 66, 135, 0, 0};
+Frame gCeilingFrame = {0, 223, 0, 28, 0, 0};
+Frame gFloorFrame = {0, 223, 66, 135, 0, 0};
 
 }
 
 using namespace DM;
 
 DisplayMan::DisplayMan(DMEngine *dmEngine) :
-	_vm(dmEngine), _currPalette(palSwoosh), _screenWidth(0), _screenHeight(0),
+	_vm(dmEngine), _currPalette(kPalSwoosh), _screenWidth(0), _screenHeight(0),
 	_vgaBuffer(NULL), _itemCount(0), _packedItemPos(NULL), _packedBitmaps(NULL),
 	_bitmaps(NULL) {}
 
@@ -57,9 +57,9 @@ DisplayMan::~DisplayMan() {
 void DisplayMan::setUpScreens(uint16 width, uint16 height) {
 	_screenWidth = width;
 	_screenHeight = height;
-	loadPalette(palSwoosh);
+	loadPalette(kPalSwoosh);
 	_vgaBuffer = new byte[_screenWidth * _screenHeight];
-	clearScreen(colorBlack);
+	clearScreen(kColorBlack);
 }
 
 void DisplayMan::loadGraphics() {
@@ -236,30 +236,30 @@ uint16 DisplayMan::height(uint16 index) {
 }
 
 void DisplayMan::drawWallSetBitmap(byte *bitmap, Frame &f, uint16 srcWidth) {
-	blitToScreen(bitmap, srcWidth, f.srcX, f.srcY, f.destFromX, f.destToX + 1, f.destFromY, f.destToY + 1, colorFlesh);
+	blitToScreen(bitmap, srcWidth, f.srcX, f.srcY, f.destFromX, f.destToX + 1, f.destFromY, f.destToY + 1, kColorFlesh);
 }
 
 
 
 void DisplayMan::drawDungeon(direction dir, uint16 posX, uint16 posY) {
-	loadPalette(palDungeonView0);
+	loadPalette(kPalDungeonView0);
 	// TODO: this is a global variable, set from here
 	bool flippedWallAndFootprints = (posX + posY + dir) & 1;
 
 	// NOTE: this can hold every bitmap, width and height is "flexible"
 	byte  *tmpBitmap = new byte[305 * 111];
-	clearBitmap(tmpBitmap, 305, 111, colorBlack);
+	clearBitmap(tmpBitmap, 305, 111, kColorBlack);
 
 	if (flippedWallAndFootprints) {
-		blitToBitmap(_bitmaps[floorIndice], width(floorIndice), height(floorIndice), tmpBitmap, width(floorIndice));
-		flipBitmapHorizontal(tmpBitmap, width(floorIndice), height(floorIndice));
-		drawWallSetBitmap(tmpBitmap, floorFrame, width(floorIndice));
-		drawWallSetBitmap(_bitmaps[ceilingIndice], ceilingFrame, width(ceilingIndice));
+		blitToBitmap(_bitmaps[gFloorIndice], width(gFloorIndice), height(gFloorIndice), tmpBitmap, width(gFloorIndice));
+		flipBitmapHorizontal(tmpBitmap, width(gFloorIndice), height(gFloorIndice));
+		drawWallSetBitmap(tmpBitmap, gFloorFrame, width(gFloorIndice));
+		drawWallSetBitmap(_bitmaps[gCeilingIndice], gCeilingFrame, width(gCeilingIndice));
 	} else {
-		blitToBitmap(_bitmaps[ceilingIndice], width(ceilingIndice), height(ceilingIndice), tmpBitmap, width(ceilingIndice));
-		flipBitmapHorizontal(tmpBitmap, width(ceilingIndice), height(ceilingIndice));
-		drawWallSetBitmap(tmpBitmap, ceilingFrame, width(ceilingIndice));
-		drawWallSetBitmap(_bitmaps[floorIndice], floorFrame, width(floorIndice));
+		blitToBitmap(_bitmaps[gCeilingIndice], width(gCeilingIndice), height(gCeilingIndice), tmpBitmap, width(gCeilingIndice));
+		flipBitmapHorizontal(tmpBitmap, width(gCeilingIndice), height(gCeilingIndice));
+		drawWallSetBitmap(tmpBitmap, gCeilingFrame, width(gCeilingIndice));
+		drawWallSetBitmap(_bitmaps[gFloorIndice], gFloorFrame, width(gFloorIndice));
 	}
 
 

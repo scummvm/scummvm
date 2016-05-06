@@ -57,11 +57,11 @@ Common::Error DMEngine::run() {
 	_displayMan->loadGraphics();
 	_dungeonMan->loadDungeonFile();
 
-	_displayMan->loadPalette(palCredits);
+	_displayMan->loadPalette(kPalCredits);
 
 	uint16 i = 0; //TODO: testing, please delete me
 	while (true) {
-		_displayMan->clearScreen(colorBlack);
+		_displayMan->clearScreen(kColorBlack);
 		_displayMan->drawDungeon(kDirNorth, i++, 0);
 		_displayMan->updateScreen();
 		_system->delayMillis(1000); //TODO: testing, please set me to 10
