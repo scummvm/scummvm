@@ -69,7 +69,8 @@ private:
 	Common::PEResources _resources;
 	Common::SeekableReadStream *_stream;
 	int _field58;
-	Common::Array<uint> _array;
+public:
+	Common::Array<uint> _indexes;
 	Common::Array<byte> _data;
 public:
 	STtitleEngine();

@@ -43,7 +43,7 @@ private:
 	TTScripts _scripts;
 	int _currentCharId;
 	CDialogueFile *_dialogueFile;
-	int _field14;
+	int _dialogueIndex;
 private:
 	/**
 	 * Loads the statics for the class
@@ -80,7 +80,12 @@ private:
 	 */
 	void loadAssets(CTrueTalkNPC *npc, int charId);
 
-	void setView(TTNamedScript *npcScript, TTRoomScript *roomScript, CViewItem *view);
+	void setDialogue(TTNamedScript *npcScript, TTRoomScript *roomScript, CViewItem *view);
+
+	/**
+	 * Read in a string from the resource
+	 */
+	CString readDialogueString();
 public:
 	static int _v1;
 	static int _v2;

@@ -28,37 +28,37 @@
 
 namespace Titanic {
 
-struct DialogueFileIndexEntry {
+struct DialogueIndexEntry {
 	uint _v1, _offset;
 
-	DialogueFileIndexEntry() : _v1(0), _offset(0) {}
+	DialogueIndexEntry() : _v1(0), _offset(0) {}
 	void load(Common::SeekableReadStream &s);
 };
 
-struct DialogueFileCacheEntry {
+struct DialogueResource {
 	bool _active;
 	uint _offset, _bytesRead, _size;
-	DialogueFileIndexEntry *_entryPtr;
+	DialogueIndexEntry *_entryPtr;
 
-	DialogueFileCacheEntry() : _active(false), _offset(0),
+	DialogueResource() : _active(false), _offset(0),
 		_bytesRead(0), _size(0), _entryPtr(nullptr) {}
 
 	/**
 	 * Return the size of a cache entry
 	 */
-	int size() const { return _active ? _size : 0; }
+	size_t size() const { return _active ? _size : 0; }
 };
 
 class CDialogueFile {
 private:
 	Common::File _file;
-	Common::Array<DialogueFileIndexEntry> _entries;
-	Common::Array<DialogueFileCacheEntry> _cache;
+	Common::Array<DialogueIndexEntry> _index;
+	Common::Array<DialogueResource> _cache;
 private:
 	/**
 	 * Add a dialogue file entry to the active cache
 	 */
-	DialogueFileCacheEntry *addToCache(int index);
+	DialogueResource *addToCache(int index);
 public:
 	CDialogueFile(const CString &filename, uint count);
 	~CDialogueFile();
@@ -69,23 +69,28 @@ public:
 	void clear();
 
 	/**
-	 * Add a dialogue file entry to the active cache
+	 * Sets up a text entry within the dialogue file for access
 	 */
-	DialogueFileCacheEntry *addToCacheDouble(int index) {
+	DialogueResource *openTextEntry(int index) {
 		return addToCache(index * 2);
 	}
 
 	/**
-	 * Add a dialogue file entry to the active cache
+	 * Sets up a wave (sound) entry within the dialogue file for access
 	 */
-	DialogueFileCacheEntry *addToCacheDouble1(int index) {
+	DialogueResource *openWaveEntry(int index) {
 		return addToCache(index * 2 + 1);
 	}
 
 	/**
+	 * Removes an entry from the cache
+	 */
+	bool closeEntry(DialogueResource *cacheEntry);
+
+	/**
 	 * Read data for a resource
 	 */
-	bool read(DialogueFileCacheEntry *cacheEntry, byte *buffer, size_t bytesToRead);
+	bool read(DialogueResource *cacheEntry, byte *buffer, size_t bytesToRead);
 };
 
 } // End of namespace Titanic

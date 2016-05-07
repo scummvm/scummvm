@@ -24,7 +24,7 @@
 
 namespace Titanic {
 
-void DialogueFileIndexEntry::load(Common::SeekableReadStream &s) {
+void DialogueIndexEntry::load(Common::SeekableReadStream &s) {
 	_v1 = s.readUint32LE();
 	_offset = s.readUint32LE();
 }
@@ -38,11 +38,11 @@ CDialogueFile::CDialogueFile(const CString &filename, uint count) {
 	_cache.resize(count);
 
 	_file.readUint32LE();		// Skip over file Id
-	_entries.resize(_file.readUint32LE());
+	_index.resize(_file.readUint32LE());
 
 	// Read in the entries
-	for (uint idx = 0; idx < _entries.size(); ++idx)
-		_entries[idx].load(_file);
+	for (uint idx = 0; idx < _index.size(); ++idx)
+		_index[idx].load(_file);
 }
 
 CDialogueFile::~CDialogueFile() {
@@ -53,8 +53,8 @@ void CDialogueFile::clear() {
 	_file.close();
 }
 
-DialogueFileCacheEntry *CDialogueFile::addToCache(int index) {
-	if (_entries.size() == 0 || index < 0 || index >= (int)_entries.size()
+DialogueResource *CDialogueFile::addToCache(int index) {
+	if (_index.size() == 0 || index < 0 || index >= (int)_index.size()
 			|| _cache.empty())
 		return nullptr;
 
@@ -65,26 +65,34 @@ DialogueFileCacheEntry *CDialogueFile::addToCache(int index) {
 	if (cacheIndex == _cache.size())
 		return nullptr;
 
-	DialogueFileIndexEntry &entry = _entries[index];
-	DialogueFileCacheEntry &cacheEntry = _cache[cacheIndex];
+	DialogueIndexEntry &indexEntry = _index[index];
+	DialogueResource &res = _cache[cacheIndex];
 
-	cacheEntry._active = true;
-	cacheEntry._offset = entry._offset;
-	cacheEntry._bytesRead = 0;
-	cacheEntry._entryPtr = &entry;
+	res._active = true;
+	res._offset = indexEntry._offset;
+	res._bytesRead = 0;
+	res._entryPtr = &indexEntry;
 
 	// Figure out the size of the entry
-	if (index == ((int)_entries.size() - 1)) {
-		cacheEntry._size = _file.size() - entry._offset;
+	if (index == ((int)_index.size() - 1)) {
+		res._size = _file.size() - indexEntry._offset;
 	} else {
-		cacheEntry._size = _entries[index + 1]._offset - entry._offset;
+		res._size = _index[index + 1]._offset - indexEntry._offset;
 	}
 
 	// Return a pointer to the loaded entry
-	return &cacheEntry;
+	return &res;
 }
 
-bool CDialogueFile::read(DialogueFileCacheEntry *cacheEntry, byte *buffer, size_t bytesToRead) {
+bool CDialogueFile::closeEntry(DialogueResource *cacheEntry) {
+	if (!cacheEntry || !cacheEntry->_active)
+		return false;
+
+	cacheEntry->_active = false;
+	return true;
+}
+
+bool CDialogueFile::read(DialogueResource *cacheEntry, byte *buffer, size_t bytesToRead) {
 	// Sanity checks that a valid record is passed, and the size can be read
 	if (!cacheEntry || !cacheEntry->_active || !bytesToRead
 		|| (cacheEntry->_bytesRead + bytesToRead) > cacheEntry->_size)

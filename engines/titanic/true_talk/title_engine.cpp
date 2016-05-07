@@ -48,7 +48,7 @@ STtitleEngine::~STtitleEngine() {
 
 void STtitleEngine::reset() {
 	_field58 = 0;
-	_array.clear();
+	_indexes.clear();
 }
 
 void STtitleEngine::setup(int val1, int val2) {

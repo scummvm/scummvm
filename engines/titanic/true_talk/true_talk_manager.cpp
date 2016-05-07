@@ -44,7 +44,7 @@ CTrueTalkNPC *CTrueTalkManager::_currentNPC;
 
 CTrueTalkManager::CTrueTalkManager(CGameManager *owner) : 
 		_gameManager(owner), _scripts(&_titleEngine), _currentCharId(0),
-		_dialogueFile(nullptr), _field14(0) {
+		_dialogueFile(nullptr), _dialogueIndex(0) {
 }
 
 CTrueTalkManager::~CTrueTalkManager() {
@@ -213,7 +213,7 @@ void CTrueTalkManager::start(CTrueTalkNPC *npc, uint id, CViewItem *view) {
 	_titleEngine._scriptHandler->setup(npcScript, roomScript, charId);
 	_currentNPC = nullptr;
 
-	setView(npcScript, roomScript, view);
+	setDialogue(npcScript, roomScript, view);
 }
 
 TTNamedScript *CTrueTalkManager::getTalker(const CString &name) const {
@@ -282,7 +282,7 @@ void CTrueTalkManager::loadAssets(CTrueTalkNPC *npc, int charId) {
 
 	if (!detailsMsg._filename.empty()) {
 		_dialogueFile = new CDialogueFile(detailsMsg._filename, 20);
-		_field14 = detailsMsg._numValue + 1;
+		_dialogueIndex = detailsMsg._numValue + 1;
 	}
 }
 
@@ -298,14 +298,57 @@ void CTrueTalkManager::processInput(CTrueTalkNPC *npc, CTextInputMsg *msg, CView
 		_currentNPC = nullptr;
 
 		loadAssets(npc, npcScript->charId());
-		setView(npcScript, roomScript, view);
+		setDialogue(npcScript, roomScript, view);
 	}
 	
 	_currentNPC = nullptr;
 }
 
-void CTrueTalkManager::setView(TTNamedScript *npcScript, TTRoomScript *roomScript, CViewItem *view) {
-	warning("TODO: CTrueTalkManager::setView");
+void CTrueTalkManager::setDialogue(TTNamedScript *npcScript, TTRoomScript *roomScript, CViewItem *view) {
+	warning("TODO: CTrueTalkManager::setDialogue");
+}
+
+#define STRING_BUFFER_SIZE 2048
+
+CString CTrueTalkManager::readDialogueString() {
+	byte buffer[STRING_BUFFER_SIZE];
+	CString result;
+
+	for (uint idx = 0; idx < _titleEngine._indexes.size(); ++idx) {
+		if (idx != 0)
+			result += " ";
+
+		// Open a text entry from the dialogue file for access
+		DialogueResource *textRes = _dialogueFile->openTextEntry(
+			_titleEngine._indexes[idx] - _dialogueIndex);
+		if (!textRes)
+			continue;
+
+		size_t entrySize = textRes->size();
+		byte *tempBuffer = (entrySize < STRING_BUFFER_SIZE) ? buffer :
+			new byte[entrySize + 1];
+		
+		_dialogueFile->read(textRes, tempBuffer, entrySize);
+		buffer[entrySize] = '\0';
+
+		// Close the resource
+		_dialogueFile->closeEntry(textRes);
+
+		// Strip off any non-printable characters
+		for (byte *p = buffer; *p != '\0'; ++p) {
+			if (*p < 32 || *p > 127)
+				*p = ' ';
+		}
+
+		// Add string to result
+		result += CString((const char *)buffer);
+
+		// Free buffer if one was allocated
+		if (entrySize >= STRING_BUFFER_SIZE)
+			delete[] tempBuffer;
+	}
+
+	return result;
 }
 
 } // End of namespace Titanic
