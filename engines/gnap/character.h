@@ -36,10 +36,21 @@ enum Facing {
 	kDirUpRight = 7
 };
 
+struct GridStruct {
+	int _deltaX, _deltaY;
+	int _gridX1, _gridY1;
+	int _sequenceId;
+	int _id;
+};
+
+const int kMaxGridStructs = 30;
+
 class Character {
 public:
 	Character(GnapEngine *vm);
 	~Character();
+
+	void walkStep();
 
 	virtual int getSequenceId(int kind, int gridX, int gridY) = 0;
 	virtual void playSequence(int sequenceId) = 0;
@@ -47,6 +58,7 @@ public:
 	virtual void updateIdleSequence2() = 0;
 	virtual void initPos(int gridX, int gridY, Facing facing) = 0;
 	virtual int getWalkSequenceId(int deltaX, int deltaY) = 0;
+	virtual bool walkTo(Common::Point gridPos, int animationIndex, int sequenceId, int flags) = 0;
 
 	Common::Point _pos;
 	Facing _idleFacing;
@@ -56,6 +68,10 @@ public:
 	int _id;
 	int _gridX;
 	int _gridY;
+	int _walkNodesCount;
+	GridStruct _walkNodes[kMaxGridStructs];
+	int _walkDestX, _walkDestY;
+	int _walkDeltaX, _walkDeltaY, _walkDirX, _walkDirY, _walkDirXIncr, _walkDirYIncr;
 
 protected:
 	GnapEngine *_vm;
@@ -70,6 +86,7 @@ public:
 	virtual void updateIdleSequence();
 	virtual void updateIdleSequence2();
 	virtual int getWalkSequenceId(int deltaX, int deltaY);
+	virtual bool walkTo(Common::Point gridPos, int animationIndex, int sequenceId, int flags);
 
 	void initBrainPulseRndValue();
 	void kissPlatypus(int callback);
@@ -78,6 +95,12 @@ public:
 
 	int _brainPulseNum;
 	int _brainPulseRndValue;
+
+private:
+	bool findPath1(int gridX, int gridY, int index);
+	bool findPath2(int gridX, int gridY, int index);
+	bool findPath3(int gridX, int gridY);
+	bool findPath4(int gridX, int gridY);
 };
 
 class PlayerPlat : public Character {
@@ -89,6 +112,13 @@ public:
 	virtual void updateIdleSequence();
 	virtual void updateIdleSequence2();
 	virtual int getWalkSequenceId(int deltaX, int deltaY);
+	virtual bool walkTo(Common::Point gridPos, int animationIndex, int sequenceId, int flags);
+
+private:
+	bool findPath1(int gridX, int gridY, int index);
+	bool findPath2(int gridX, int gridY, int index);
+	bool findPath3(int gridX, int gridY);
+	bool findPath4(int gridX, int gridY);
 };
 } // End of namespace Gnap
 

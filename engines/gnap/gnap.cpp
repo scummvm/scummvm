@@ -1189,7 +1189,7 @@ void GnapEngine::playGnapShowItem(int itemIndex, int gridLookX, int gridLookY) {
 void GnapEngine::playGnapShowCurrItem(int gridX, int gridY, int gridLookX, int gridLookY) {
 	if (_plat->_pos.x == gridX && _plat->_pos.y == gridY)
 		platypusMakeRoom();
-	gnapWalkTo(Common::Point(gridX, gridY), -1, -1, 1);
+	_gnap->walkTo(Common::Point(gridX, gridY), -1, -1, 1);
 	playGnapShowItem(_grabCursorSpriteIndex, gridLookX, gridLookY);
 }
 
@@ -1199,8 +1199,8 @@ bool GnapEngine::testWalk(int animationIndex, int someStatus, int gridX1, int gr
 		_gameSys->setAnimation(0, 0, animationIndex);
 		_gnap->_actionStatus = -1;
 		_plat->_actionStatus = -1;
-		gnapWalkTo(Common::Point(gridX1, gridY1), -1, -1, 1);
-		platypusWalkTo(Common::Point(gridX2, gridY2), -1, -1, 1);
+		_gnap->walkTo(Common::Point(gridX1, gridY1), -1, -1, 1);
+		_plat->walkTo(Common::Point(gridX2, gridY2), -1, -1, 1);
 		_mouseClickState._left = false;
 		return true;
 	}
@@ -1224,12 +1224,12 @@ bool GnapEngine::gnapPlatypusAction(int gridX, int gridY, int platSequenceId, in
 		_gnap->_actionStatus = 100;
 		Common::Point checkPt = _plat->_pos + Common::Point(gridX, gridY);
 		if (isPointBlocked(checkPt) && (_gnap->_pos != checkPt)) {
-			platypusWalkStep();
+			_plat->walkStep();
 			checkPt = _plat->_pos + Common::Point(gridX, gridY);
 		}
 
 		if (!isPointBlocked(checkPt) && (_gnap->_pos != checkPt)) {
-			gnapWalkTo(checkPt, 0, 0x107B9, 1);
+			_gnap->walkTo(checkPt, 0, 0x107B9, 1);
 			while (_gameSys->getAnimationStatus(0) != 2) {
 				updateMouseCursor();
 				doCallback(callback);

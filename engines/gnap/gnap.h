@@ -75,14 +75,6 @@ struct Hotspot {
 	}
 };
 
-struct GridStruct {
-	int _deltaX, _deltaY;
-	int _gridX1, _gridY1;
-	int _sequenceId;
-	int _id;
-};
-
-const int kMaxGridStructs = 30;
 const int kMaxTimers = 10;
 
 enum GnapDebugChannels {
@@ -483,32 +475,10 @@ public:
 	bool testWalk(int animationIndex, int someStatus, int gridX1, int gridY1, int gridX2, int gridY2);
 
 	// Gnap walking
-	int _gnapWalkNodesCount;
-	GridStruct _gnapWalkNodes[kMaxGridStructs];
-	int _gnapWalkDestX, _gnapWalkDestY;
-	int _gnapWalkDeltaX, _gnapWalkDeltaY, _gnapWalkDirX, _gnapWalkDirY, _gnapWalkDirXIncr, _gnapWalkDirYIncr;
-
 	int getGnapWalkStopSequenceId(int deltaX, int deltaY);
 	Facing getGnapWalkFacing(int deltaX, int deltaY);
-	bool gnapFindPath1(int gridX, int gridY, int index);
-	bool gnapFindPath2(int gridX, int gridY, int index);
-	bool gnapFindPath3(int gridX, int gridY);
-	bool gnapFindPath4(int gridX, int gridY);
-	bool gnapWalkTo(Common::Point gridPos, int animationIndex, int sequenceId, int flags);
-	void gnapWalkStep();
 
 	// Platypus walking
-	int _platWalkNodesCount;
-	GridStruct _platWalkNodes[kMaxGridStructs];
-	int _platWalkDestX, _platWalkDestY;
-	int _platWalkDeltaX, _platWalkDeltaY, _platWalkDirX, _platWalkDirY, _platWalkDirXIncr, _platWalkDirYIncr;
-
-	bool platFindPath1(int gridX, int gridY, int index);
-	bool platFindPath2(int gridX, int gridY, int index);
-	bool platFindPath3(int gridX, int gridY);
-	bool platFindPath4(int gridX, int gridY);
-	bool platypusWalkTo(Common::Point gridPos, int animationIndex, int sequenceId, int flags);
-	void platypusWalkStep();
 	void platypusMakeRoom();
 
 	// Gnap
