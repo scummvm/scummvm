@@ -59,6 +59,8 @@ Common::Error DMEngine::run() {
 
 	_displayMan->loadPalette(kPalCredits);
 
+	_dungeonMan->setCurrentMap(0);
+
 	uint16 i = 0; //TODO: testing, please delete me
 	while (true) {
 		_displayMan->clearScreen(kColorBlack);

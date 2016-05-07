@@ -30,11 +30,11 @@ DungeonMan::DungeonMan(DMEngine *dmEngine) : _vm(dmEngine), _rawDunFileData(NULL
 DungeonMan::~DungeonMan() {
 	delete[] _rawDunFileData;
 	delete[] _maps;
-	delete[] _dunData.dunMapsFirstColumnIndex;
-	delete[] _dunData.dunColumnsCumulativeSquareThingCount;
+	delete[] _dunData.mapsFirstColumnIndex;
+	delete[] _dunData.columnsCumulativeSquareThingCount;
 	delete[] _dunData.squareFirstThings;
-	delete[] _dunData.dunTextData;
-	delete[] _dunData.dungeonMapData;
+	delete[] _dunData.textData;
+	delete[] _dunData.mapData;
 }
 
 void DungeonMan::decompressDungeonFile() {
@@ -159,10 +159,10 @@ void DungeonMan::loadDungeonFile() {
 
 	// init party position and mapindex
 	if (_messages.newGame) {
-		_dunData.partyDir = _fileHeader.partyStartDir;
-		_dunData.partyPosX = _fileHeader.partyStartPosX;
-		_dunData.partyPosY = _fileHeader.partyStartPosY;
-		_dunData.currMapIndex = 0;
+		_currMap.partyDir = _fileHeader.partyStartDir;
+		_currMap.partyPosX = _fileHeader.partyStartPosX;
+		_currMap.partyPosY = _fileHeader.partyStartPosY;
+		_currMap.currPartyMapIndex = 0;
 	}
 
 	// load map data
@@ -199,26 +199,26 @@ void DungeonMan::loadDungeonFile() {
 	}
 
 	// TODO: ??? is this - begin
-	if (_dunData.dunMapsFirstColumnIndex) delete[] _dunData.dunMapsFirstColumnIndex;
+	if (_dunData.mapsFirstColumnIndex) delete[] _dunData.mapsFirstColumnIndex;
 
-	_dunData.dunMapsFirstColumnIndex = new uint16[_fileHeader.mapCount];
+	_dunData.mapsFirstColumnIndex = new uint16[_fileHeader.mapCount];
 	uint16 columCount = 0;
 	for (uint16 i = 0; i < _fileHeader.mapCount; ++i) {
-		_dunData.dunMapsFirstColumnIndex[i] = columCount;
+		_dunData.mapsFirstColumnIndex[i] = columCount;
 		columCount += _maps[i].width + 1;
 	}
-	_dunData.dunColumCount = columCount;
+	_dunData.columCount = columCount;
 	// TODO: ??? is this - end
 
 	if (_messages.newGame) // TODO: what purpose does this serve?
 		_fileHeader.squareFirstThingCount += 300;
 
 	// TODO: ??? is this - begin
-	if (_dunData.dunColumnsCumulativeSquareThingCount)
-		delete[] _dunData.dunColumnsCumulativeSquareThingCount;
-	_dunData.dunColumnsCumulativeSquareThingCount = new uint16[columCount];
+	if (_dunData.columnsCumulativeSquareThingCount)
+		delete[] _dunData.columnsCumulativeSquareThingCount;
+	_dunData.columnsCumulativeSquareThingCount = new uint16[columCount];
 	for (uint16 i = 0; i < columCount; ++i)
-		_dunData.dunColumnsCumulativeSquareThingCount[i] = dunDataStream.readUint16BE();
+		_dunData.columnsCumulativeSquareThingCount[i] = dunDataStream.readUint16BE();
 	// TODO: ??? is this - end
 
 	// TODO: ??? is this - begin
@@ -238,11 +238,11 @@ void DungeonMan::loadDungeonFile() {
 	// TODO: ??? is this - end
 
 	// load text data
-	if (_dunData.dunTextData)
-		delete[] _dunData.dunTextData;
-	_dunData.dunTextData = new uint16[_fileHeader.textDataWordCount];
+	if (_dunData.textData)
+		delete[] _dunData.textData;
+	_dunData.textData = new uint16[_fileHeader.textDataWordCount];
 	for (uint16 i = 0; i < _fileHeader.textDataWordCount; ++i)
-		_dunData.dunTextData[i] = dunDataStream.readUint16BE();
+		_dunData.textData[i] = dunDataStream.readUint16BE();
 
 	// TODO: ??? what this
 	if (_messages.newGame)
@@ -256,14 +256,14 @@ void DungeonMan::loadDungeonFile() {
 
 	_rawMapData = _rawDunFileData + dunDataStream.pos();
 
-	if (_dunData.dungeonMapData) delete[] _dunData.dungeonMapData;
+	if (_dunData.mapData) delete[] _dunData.mapData;
 
-	if (_messages.restartGameRequest) {
+	if (!_messages.restartGameRequest) {
 		uint8 mapCount = _fileHeader.mapCount;
-		_dunData.dungeonMapData = new byte**[_dunData.dunColumCount + mapCount];
-		byte **colFirstSquares = _dunData.dungeonMapData[mapCount];
+		_dunData.mapData = new byte**[_dunData.columCount + mapCount];
+		byte **colFirstSquares = (byte**)_dunData.mapData + mapCount;
 		for (uint8 i = 0; i < mapCount; ++i) {
-			_dunData.dungeonMapData[i] = colFirstSquares;
+			_dunData.mapData[i] = colFirstSquares;
 			byte *square = _rawMapData + _maps[i].rawDunDataOffset;
 			*colFirstSquares++ = square;
 			for (uint16 w = 0; w <= _maps[i].width; ++w) {
@@ -272,4 +272,17 @@ void DungeonMan::loadDungeonFile() {
 			}
 		}
 	}
+}
+
+void DungeonMan::setCurrentMap(uint16 mapIndex) {
+	if (_currMap.index == mapIndex)
+		return;
+
+	_currMap.index = mapIndex;
+	_currMap.data = _dunData.mapData[mapIndex];
+	_currMap.map = _maps + mapIndex;
+	_currMap.width = _maps[mapIndex].width + 1;
+	_currMap.height = _maps[mapIndex].height + 1;
+	_currMap.colCumulativeSquareFirstThingCount
+		= &_dunData.columnsCumulativeSquareThingCount[_dunData.mapsFirstColumnIndex[mapIndex]];
 }

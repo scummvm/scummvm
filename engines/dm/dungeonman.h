@@ -6,6 +6,7 @@
 namespace DM {
 
 class DungeonMan;
+class Map;
 
 enum ThingType {
 	kPartyThingType = -1, // @ CM1_THING_TYPE_PARTY, special value
@@ -57,25 +58,37 @@ class Thing {
 class DungeonData {
 	friend class DungeonMan;
 
-	direction partyDir; // @ G0308_i_PartyDirection
-	uint16 partyPosX; // @ G0306_i_PartyMapX
-	uint16 partyPosY; // @ G0307_i_PartyMapY
-	uint8 currMapIndex; // @ G0309_i_PartyMapIndex
+	// I have no idea the heck is this
+	uint16 *mapsFirstColumnIndex = NULL; // @ G0281_pui_DungeonMapsFirstColumnIndex
+	uint16 columCount; // @ G0282_ui_DungeonColumnCount
 
 	// I have no idea the heck is this
-	uint16 *dunMapsFirstColumnIndex = NULL; // @ G0281_pui_DungeonMapsFirstColumnIndex
-	uint16 dunColumCount; // @ G0282_ui_DungeonColumnCount
-
-	// I have no idea the heck is this
-	uint16 *dunColumnsCumulativeSquareThingCount = NULL; // @ G0280_pui_DungeonColumnsCumulativeSquareThingCount
+	uint16 *columnsCumulativeSquareThingCount = NULL; // @ G0280_pui_DungeonColumnsCumulativeSquareThingCount
 	Thing *squareFirstThings = NULL; // @ G0283_pT_SquareFirstThings
-	uint16 *dunTextData = NULL; // @ G0260_pui_DungeonTextData
+	uint16 *textData = NULL; // @ G0260_pui_DungeonTextData
 
 	byte *rawThingData[16] = {NULL}; // @ G0284_apuc_ThingData
 
-	byte ***dungeonMapData = NULL; // @ G0279_pppuc_DungeonMapData
+	byte ***mapData = NULL; // @ G0279_pppuc_DungeonMapData
 
+	// TODO: ??? is this doing here
 	uint16 eventMaximumCount; // @ G0369_ui_EventMaximumCount
+}; // @ AGGREGATE
+
+class CurrMapData {
+	friend class DungeonMan;
+
+	direction partyDir; // @ G0308_i_PartyDirection
+	uint16 partyPosX; // @ G0306_i_PartyMapX
+	uint16 partyPosY; // @ G0307_i_PartyMapY
+	uint8 currPartyMapIndex; // @ G0309_i_PartyMapIndex
+
+	uint8 index; // @ G0272_i_CurrentMapIndex
+	byte **data; // @ G0271_ppuc_CurrentMapData
+	Map *map; // @ G0269_ps_CurrentMap
+	uint16 width; // @ G0273_i_CurrentMapWidth
+	uint16 height; // @ G0274_i_CurrentMapHeight
+	uint16 *colCumulativeSquareFirstThingCount; // @G0270_pui_CurrentMapColumnsCumulativeSquareFirstThingCount
 }; // @ AGGREGATE
 
 struct Messages {
@@ -93,7 +106,7 @@ class Map {
 	uint8 offsetMapX, offsetMapY;
 
 	uint8 level; // only used in DMII
-	uint8 width, height; // THESRE ARE INCLUSIVE BOUNDARIES
+	uint8 width, height; // !!! THESRE ARE INCLUSIVE BOUNDARIES
 	// orn short for Ornament
 	uint8 wallOrnCount; /* May be used in a Sensor on a Wall or closed Fake Wall square */
 	uint8 randWallOrnCount; /* Used only on some Wall squares and some closed Fake Wall squares */
@@ -113,11 +126,12 @@ class Map {
 class DungeonMan {
 	DMEngine *_vm;
 
-	uint32 _rawDunFileDataSize;
+	uint32 _rawDunFileDataSize;	 // @ probably NONE
 	byte *_rawDunFileData; // @ ???
 	DungeonFileHeader _fileHeader; // @ G0278_ps_DungeonHeader
 
 	DungeonData _dunData; // @ NONE
+	CurrMapData _currMap; // @ NONE
 	Map *_maps; // @ G0277_ps_DungeonMaps
 	// does not have to be freed
 	byte *_rawMapData; // @ G0276_puc_DungeonRawMapData
@@ -134,6 +148,7 @@ public:
 	~DungeonMan();
 	// TODO: this does stuff other than load the file!
 	void loadDungeonFile();	// @ F0434_STARTEND_IsLoadDungeonSuccessful_CPSC
+	void setCurrentMap(uint16 mapIndex); // @ F0173_DUNGEON_SetCurrentMap
 };
 
 }
