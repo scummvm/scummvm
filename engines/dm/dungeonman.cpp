@@ -1,20 +1,49 @@
 #include "dungeonman.h"
 #include "common/file.h"
+#include "common/memstream.h"
+
 
 
 namespace DM {
-DungeonMan::DungeonMan(DMEngine *dmEngine) : _vm(dmEngine), _dungeonDataSize(0), _dungeonData(NULL) {}
+// TODO: refactor direction into a class
+int8 dirIntoStepCountEast[4] = {0 /* North */, 1 /* East */, 0 /* West */, -1 /* South */};
+int8 dirIntoStepCountNorth[4] = {-1 /* North */, 0 /* East */, 1 /* West */, 0 /* South */};
 
-DungeonMan::~DungeonMan() {
-	delete[] _dungeonData;
+void turnDirRight(direction &dir) { dir = (direction)((dir + 1) & 3); }
+
+
 }
 
-void DungeonMan::loadDungeonFile() {
+using namespace DM;
+
+
+void DungeonMan::mapCoordsAfterRelMovement(direction dir, uint16 stepsForward, uint16 stepsRight, uint16 &posX, uint16 &posY) {
+	posX += dirIntoStepCountEast[dir] * stepsForward;
+	posY += dirIntoStepCountNorth[dir] * stepsForward;
+	turnDirRight(dir);
+	posX += dirIntoStepCountEast[dir] * stepsRight;
+	posY += dirIntoStepCountNorth[dir] * stepsRight;
+}
+
+DungeonMan::DungeonMan(DMEngine *dmEngine) : _vm(dmEngine), _rawDunFileData(NULL), _maps(NULL), _rawMapData(NULL) {}
+
+DungeonMan::~DungeonMan() {
+	delete[] _rawDunFileData;
+	delete[] _maps;
+	delete[] _dunData.dunMapsFirstColumnIndex;
+	delete[] _dunData.dunColumnsCumulativeSquareThingCount;
+	delete[] _dunData.squareFirstThings;
+	delete[] _dunData.dunTextData;
+	delete[] _dunData.dungeonMapData;
+}
+
+void DungeonMan::decompressDungeonFile() {
 	Common::File f;
 	f.open("Dungeon.dat");
 	if (f.readUint16BE() == 0x8104) {
-		_dungeonDataSize = f.readUint32BE();
-		_dungeonData = new byte[_dungeonDataSize];
+		_rawDunFileDataSize = f.readUint32BE();
+		if (_rawDunFileData) delete[] _rawDunFileData;
+		_rawDunFileData = new byte[_rawDunFileDataSize];
 		f.readUint16BE();
 		byte common[4];
 		for (uint16 i = 0; i < 4; ++i)
@@ -29,7 +58,7 @@ void DungeonMan::loadDungeonFile() {
 		uint16 wordBuff = f.readUint16BE();
 		uint8 bitsLeftInByte = 8;
 		byte byteBuff = f.readByte();
-		while (uncompIndex < _dungeonDataSize) {
+		while (uncompIndex < _rawDunFileDataSize) {
 			while (bitsUsedInWord != 0) {
 				uint8 shiftVal;
 				if (f.eos()) {
@@ -49,18 +78,198 @@ void DungeonMan::loadDungeonFile() {
 				bitsUsedInWord -= shiftVal;
 			}
 			if (((wordBuff >> 15) & 1) == 0) {
-				_dungeonData[uncompIndex++] = common[(wordBuff >> 13) & 3];
+				_rawDunFileData[uncompIndex++] = common[(wordBuff >> 13) & 3];
 				bitsUsedInWord += 3;
 			} else if (((wordBuff >> 14) & 3) == 2) {
-				_dungeonData[uncompIndex++] = lessCommon[(wordBuff >> 10) & 15];
+				_rawDunFileData[uncompIndex++] = lessCommon[(wordBuff >> 10) & 15];
 				bitsUsedInWord += 6;
 			} else if (((wordBuff >> 14) & 3) == 3) {
-				_dungeonData[uncompIndex++] = (wordBuff >> 6) & 255;
+				_rawDunFileData[uncompIndex++] = (wordBuff >> 6) & 255;
 				bitsUsedInWord += 10;
 			}
 		}
+	} else {
+		// TODO: if the dungeon is uncompressed, read it here
 	}
 	f.close();
 }
 
+
+uint8 gAdditionalThingCounts[16] = {
+	0,    /* Door */
+	0,    /* Teleporter */
+	0,    /* Text String */
+	0,    /* Sensor */
+	75,   /* Group */
+	100,  /* Weapon */
+	120,  /* Armour */
+	0,    /* Scroll */
+	5,    /* Potion */
+	0,    /* Container */
+	140,  /* Junk */
+	0,    /* Unused */
+	0,    /* Unused */
+	0,    /* Unused */
+	60,   /* Projectile */
+	50    /* Explosion */
+}; // @ G0236_auc_Graphic559_AdditionalThingCounts
+
+// TODO: refactor THINGS into classes
+unsigned char gThingDataByteCount[16] = {
+	4,   /* Door */
+	6,   /* Teleporter */
+	4,   /* Text String */
+	8,   /* Sensor */
+	16,  /* Group */
+	4,   /* Weapon */
+	4,   /* Armour */
+	4,   /* Scroll */
+	4,   /* Potion */
+	8,   /* Container */
+	4,   /* Junk */
+	0,   /* Unused */
+	0,   /* Unused */
+	0,   /* Unused */
+	8,   /* Projectile */
+	4    /* Explosion */
+}; // @ G0235_auc_Graphic559_ThingDataByteCount
+
+const Thing Thing::specThingNone(0, 0, 0);
+
+
+void DungeonMan::loadDungeonFile() {
+	if (_messages.newGame)
+		decompressDungeonFile();
+
+	Common::MemoryReadStream dunDataStream(_rawDunFileData, _fileHeader.rawMapDataSize, DisposeAfterUse::NO);
+
+	// initialize _fileHeader
+	_fileHeader.dungeonId = _fileHeader.ornamentRandomSeed = dunDataStream.readUint16BE();
+	_fileHeader.rawMapDataSize = dunDataStream.readUint16BE();
+	_fileHeader.mapCount = dunDataStream.readByte();
+	dunDataStream.readByte(); // discard 1 byte
+	_fileHeader.textDataWordCount = dunDataStream.readUint16BE();
+	uint16 partyPosition = dunDataStream.readUint16BE();
+	_fileHeader.partyStartDir = (direction)((partyPosition >> 10) & 3);
+	_fileHeader.partyStartPosY = (partyPosition >> 5) & 0x1F;
+	_fileHeader.partyStartPosX = (partyPosition >> 0) & 0x1F;
+	_fileHeader.squareFirstThingCount = dunDataStream.readUint16BE();
+	for (uint16 i = 0; i < kThingTypeTotal; ++i)
+		_fileHeader.thingCounts[i] = dunDataStream.readUint16BE();
+
+	// init party position and mapindex
+	if (_messages.newGame) {
+		_dunData.partyDir = _fileHeader.partyStartDir;
+		_dunData.partyPosX = _fileHeader.partyStartPosX;
+		_dunData.partyPosY = _fileHeader.partyStartPosY;
+		_dunData.currMapIndex = 0;
+	}
+
+	// load map data
+	if (_maps) delete[] _maps;
+
+	_maps = new Map[_fileHeader.mapCount];
+	for (uint16 i = 0; i < _fileHeader.mapCount; ++i) {
+		_maps[i].rawDunDataOffset = dunDataStream.readUint16BE();
+		dunDataStream.readUint32BE(); // discard 4 bytes
+		_maps[i].offsetMapX = dunDataStream.readByte();
+		_maps[i].offsetMapY = dunDataStream.readByte();
+
+		uint16 tmp = dunDataStream.readUint16BE();
+		_maps[i].height = tmp >> 11;
+		_maps[i].width = (tmp >> 6) & 0x1F;
+		_maps[i].level = tmp & 0x1F; // Only used in DMII
+
+		tmp = dunDataStream.readUint16BE();
+		_maps[i].randFloorOrnCount = tmp >> 12;
+		_maps[i].floorOrnCount = (tmp >> 8) & 0xF;
+		_maps[i].randWallOrnCount = (tmp >> 4) & 0xF;
+		_maps[i].wallOrnCount = tmp & 0xF;
+
+		tmp = dunDataStream.readUint16BE();
+		_maps[i].difficulty = tmp >> 12;
+		_maps[i].creatureTypeCount = (tmp >> 4) & 0xF;
+		_maps[i].doorOrnCount = tmp & 0xF;
+
+		tmp = dunDataStream.readUint16BE();
+		_maps[i].doorSet1 = (tmp >> 12) & 0xF;
+		_maps[i].doorSet0 = (tmp >> 8) & 0xF;
+		_maps[i].wallSet = (tmp >> 4) & 0xF;
+		_maps[i].floorSet = tmp & 0xF;
+	}
+
+	// TODO: ??? is this - begin
+	if (_dunData.dunMapsFirstColumnIndex) delete[] _dunData.dunMapsFirstColumnIndex;
+
+	_dunData.dunMapsFirstColumnIndex = new uint16[_fileHeader.mapCount];
+	uint16 columCount = 0;
+	for (uint16 i = 0; i < _fileHeader.mapCount; ++i) {
+		_dunData.dunMapsFirstColumnIndex[i] = columCount;
+		columCount += _maps[i].width + 1;
+	}
+	_dunData.dunColumCount = columCount;
+	// TODO: ??? is this - end
+
+	if (_messages.newGame) // TODO: what purpose does this serve?
+		_fileHeader.squareFirstThingCount += 300;
+
+	// TODO: ??? is this - begin
+	if (_dunData.dunColumnsCumulativeSquareThingCount)
+		delete[] _dunData.dunColumnsCumulativeSquareThingCount;
+	_dunData.dunColumnsCumulativeSquareThingCount = new uint16[columCount];
+	for (uint16 i = 0; i < columCount; ++i)
+		_dunData.dunColumnsCumulativeSquareThingCount[i] = dunDataStream.readUint16BE();
+	// TODO: ??? is this - end
+
+	// TODO: ??? is this - begin
+	if (_dunData.squareFirstThings)
+		delete[] _dunData.squareFirstThings;
+	_dunData.squareFirstThings = new Thing[_fileHeader.squareFirstThingCount];
+	for (uint16 i = 0; i < _fileHeader.squareFirstThingCount; ++i) {
+		uint16 tmp = dunDataStream.readUint16BE();
+		_dunData.squareFirstThings[i].cell = tmp >> 14;
+		_dunData.squareFirstThings[i].type = (tmp >> 10) & 0xF;
+		_dunData.squareFirstThings[i].index = tmp & 0x1FF;
+	}
+	if (_messages.newGame)
+		for (uint16 i = 0; i < 300; ++i)
+			_dunData.squareFirstThings[i] = Thing::specThingNone;
+
+	// TODO: ??? is this - end
+
+	// load text data
+	if (_dunData.dunTextData)
+		delete[] _dunData.dunTextData;
+	_dunData.dunTextData = new uint16[_fileHeader.textDataWordCount];
+	for (uint16 i = 0; i < _fileHeader.textDataWordCount; ++i)
+		_dunData.dunTextData[i] = dunDataStream.readUint16BE();
+
+	// TODO: ??? what this
+	if (_messages.newGame)
+		_dunData.eventMaximumCount = 100;
+
+	// load 'Things'
+	// TODO: implement load things
+	// this is a temporary workaround to seek to raw map data
+	for (uint16 i = 0; i < kThingTypeTotal; ++i)
+		dunDataStream.skip(_fileHeader.thingCounts[i] * gThingDataByteCount[i]);
+
+	_rawMapData = _rawDunFileData + dunDataStream.pos();
+
+	if (_dunData.dungeonMapData) delete[] _dunData.dungeonMapData;
+
+	if (_messages.restartGameRequest) {
+		uint8 mapCount = _fileHeader.mapCount;
+		_dunData.dungeonMapData = new byte**[_dunData.dunColumCount + mapCount];
+		byte **colFirstSquares = _dunData.dungeonMapData[mapCount];
+		for (uint8 i = 0; i < mapCount; ++i) {
+			_dunData.dungeonMapData[i] = colFirstSquares;
+			byte *square = _rawMapData + _maps[i].rawDunDataOffset;
+			*colFirstSquares++ = square;
+			for (uint16 w = 0; w <= _maps[i].width; ++w) {
+				square += _maps[w].height + 1;
+				*colFirstSquares++ = square;
+			}
+		}
+	}
 }

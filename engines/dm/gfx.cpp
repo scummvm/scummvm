@@ -39,7 +39,7 @@ Frame gCeilingFrame = {0, 223, 0, 28, 0, 0};
 Frame gFloorFrame = {0, 223, 66, 135, 0, 0};
 
 extern Viewport gDefultViewPort = {0, 0};
-extern Viewport gDungeonViewport = {0, 64};
+extern Viewport gDungeonViewport = {0, 64};	// TODO: I guessed the numbers
 
 }
 

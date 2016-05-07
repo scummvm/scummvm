@@ -5,16 +5,135 @@
 
 namespace DM {
 
+class DungeonMan;
+
+enum ThingType {
+	kPartyThingType = -1, // @ CM1_THING_TYPE_PARTY, special value
+	kDoorThingType = 0,
+	kTeleporterThingType = 1,
+	kTextstringType = 2,
+	kSensorThingType = 3,
+	kGroupThingType = 4,
+	kWeaponThingType = 5,
+	kArmourThingType = 6,
+	kScrollThingType = 7,
+	kPotionThingType = 8,
+	kContainerThingType = 9,
+	kJunkThingType = 10,
+	kProjectileThingType = 14,
+	kExplosionThingType = 15,
+	kThingTypeTotal = 16 // +1 than the last
+}; // @ C[00..15]_THING_TYPE_...
+
+
+class DungeonFileHeader {
+	friend class DungeonMan;
+
+	uint16 dungeonId; // @ G0526_ui_DungeonID
+	// equal to dungeonId
+	uint16 ornamentRandomSeed;
+	uint32 rawMapDataSize;
+	uint8 mapCount;
+	uint16 textDataWordCount;
+	direction partyStartDir; // @ InitialPartyLocation
+	uint16 partyStartPosX, partyStartPosY;
+	uint16 squareFirstThingCount; // @ SquareFirstThingCount
+	uint16 thingCounts[16]; // @ ThingCount[16]
+}; // @ DUNGEON_HEADER
+
+class Thing {
+	friend class DungeonMan;
+
+	static const Thing specThingNone;
+
+	Thing(uint8 cell, uint8 type, uint8 index) : cell(cell), type(type), index(index) {}
+	Thing() {}
+
+	uint8 cell;
+	uint8 type;
+	uint8 index;
+}; // @ THING
+
+class DungeonData {
+	friend class DungeonMan;
+
+	direction partyDir; // @ G0308_i_PartyDirection
+	uint16 partyPosX; // @ G0306_i_PartyMapX
+	uint16 partyPosY; // @ G0307_i_PartyMapY
+	uint8 currMapIndex; // @ G0309_i_PartyMapIndex
+
+	// I have no idea the heck is this
+	uint16 *dunMapsFirstColumnIndex = NULL; // @ G0281_pui_DungeonMapsFirstColumnIndex
+	uint16 dunColumCount; // @ G0282_ui_DungeonColumnCount
+
+	// I have no idea the heck is this
+	uint16 *dunColumnsCumulativeSquareThingCount = NULL; // @ G0280_pui_DungeonColumnsCumulativeSquareThingCount
+	Thing *squareFirstThings = NULL; // @ G0283_pT_SquareFirstThings
+	uint16 *dunTextData = NULL; // @ G0260_pui_DungeonTextData
+
+	byte *rawThingData[16] = {NULL}; // @ G0284_apuc_ThingData
+
+	byte ***dungeonMapData = NULL; // @ G0279_pppuc_DungeonMapData
+
+	uint16 eventMaximumCount; // @ G0369_ui_EventMaximumCount
+}; // @ AGGREGATE
+
+struct Messages {
+	friend class DungeonMan;
+
+private:
+	bool newGame = true; // @ G0298_B_NewGame
+	bool restartGameRequest = false; // @ G0523_B_RestartGameRequested
+}; // @ AGGREGATE
+
+class Map {
+	friend class DungeonMan;
+
+	uint32 rawDunDataOffset;
+	uint8 offsetMapX, offsetMapY;
+
+	uint8 level; // only used in DMII
+	uint8 width, height; // THESRE ARE INCLUSIVE BOUNDARIES
+	// orn short for Ornament
+	uint8 wallOrnCount; /* May be used in a Sensor on a Wall or closed Fake Wall square */
+	uint8 randWallOrnCount; /* Used only on some Wall squares and some closed Fake Wall squares */
+	uint8 floorOrnCount; /* May be used in a Sensor on a Pit, open Fake Wall, Corridor or Teleporter square */
+	uint8 randFloorOrnCount; /* Used only on some Corridor squares and some open Fake Wall squares */
+
+	uint8 doorOrnCount;
+	uint8 creatureTypeCount;
+	uint8 difficulty;
+
+	uint8 floorSet, wallSet, doorSet0, doorSet1;
+
+}; // @ MAP
+
+
+
 class DungeonMan {
 	DMEngine *_vm;
-	uint32 _dungeonDataSize;
-	byte *_dungeonData;
+
+	uint32 _rawDunFileDataSize;
+	byte *_rawDunFileData; // @ ???
+	DungeonFileHeader _fileHeader; // @ G0278_ps_DungeonHeader
+
+	DungeonData _dunData; // @ NONE
+	Map *_maps; // @ G0277_ps_DungeonMaps
+	// does not have to be freed
+	byte *_rawMapData; // @ G0276_puc_DungeonRawMapData
+	Messages _messages; // @ NONE
+
 	DungeonMan(const DungeonMan &other); // no implementation on purpose
 	void operator=(const DungeonMan &rhs); // no implementation on purpose
+
+	void mapCoordsAfterRelMovement(direction dir, uint16 stepsForward, uint16 stepsRight, uint16 &posX, uint16 &posY); // @ F0150_DUNGEON_UpdateMapCoordinatesAfterRelativeMovement
+
+	void decompressDungeonFile(); // @ F0455_FLOPPY_DecompressDungeon
 public:
 	DungeonMan(DMEngine *dmEngine);
 	~DungeonMan();
-	void loadDungeonFile();
+	// TODO: this does stuff other than load the file!
+	void loadDungeonFile();	// @ F0434_STARTEND_IsLoadDungeonSuccessful_CPSC
 };
 
 }
