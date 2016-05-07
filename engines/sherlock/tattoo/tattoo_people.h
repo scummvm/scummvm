@@ -273,9 +273,8 @@ public:
 	virtual void setListenSequence(int speaker, int sequenceNum = 1);
 };
 
-} // End of namespace Scalpel
+} // End of namespace Tattoo
 
 } // End of namespace Sherlock
-
 
 #endif

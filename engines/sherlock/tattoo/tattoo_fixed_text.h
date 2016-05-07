@@ -233,7 +233,7 @@ public:
 	virtual const Common::String getActionMessage(FixedTextActionId actionId, int messageIndex);
 };
 
-} // End of namespace Scalpel
+} // End of namespace Tattoo
 
 } // End of namespace Sherlock
 
