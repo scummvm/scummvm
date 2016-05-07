@@ -60,6 +60,11 @@ protected:
 protected:
 	void processInput(CTextInputMsg *msg, CViewItem *view);
 	void performAction(int val1, int val2);
+	
+	/**
+	 * Start an animation timer
+	 */
+	int startAnimTimer(const CString &action, uint firstDuration, uint duration);
 public:
 	CLASSDEF
 	CTrueTalkNPC();

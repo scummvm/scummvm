@@ -160,18 +160,35 @@ bool CTrueTalkNPC::MovieEndMsg(CMovieEndMsg *msg) {
 }
 
 bool CTrueTalkNPC::NPCQueueIdleAnimMsg(CNPCQueueIdleAnimMsg *msg) {
-	// TODO
-	return false;
+	int rndVal = g_vm->getRandomNumber(_fieldF8 - 1) - (_fieldF8 / 2);
+	_speechTimerId = startAnimTimer("NPCIdleAnim", _fieldF4 + rndVal, 0);
+	
+	return true;
 }
 
 bool CTrueTalkNPC::TimerMsg(CTimerMsg *msg) {
-	// TODO
-	return false;
+	if (_npcFlags & NPCFLAG_4) {
+		if (_field100 > 0)
+			return false;
+
+		CNPCPlayIdleAnimationMsg idleMsg;
+		if (idleMsg.execute(this)) {
+			if (idleMsg._value) {
+				CNPCPlayAnimationMsg animMsg(idleMsg._value, 0);
+				animMsg.execute(this);
+			}
+
+			_npcFlags &= ~NPCFLAG_2;
+		}
+	}
+
+	_speechTimerId = 0;
+	return true;
 }
 
 bool CTrueTalkNPC::NPCPlayAnimationMsg(CNPCPlayAnimationMsg *msg) {
-	// TODO
-	return false;
+	warning("CTrueTalkNPC::NPCPlayAnimationMsg");
+	return true;
 }
 
 void CTrueTalkNPC::processInput(CTextInputMsg *msg, CViewItem *view) {
@@ -180,6 +197,14 @@ void CTrueTalkNPC::processInput(CTextInputMsg *msg, CViewItem *view) {
 
 void CTrueTalkNPC::performAction(int val1, int val2) {
 	// TODO
+}
+
+int CTrueTalkNPC::startAnimTimer(const CString &action, uint firstDuration, uint duration) {
+	CTimeEventInfo *timer = new CTimeEventInfo(g_vm->_events->getTicksCount(),
+		duration > 0, firstDuration, duration, this, 0, action);
+	getGameManager()->addTimer(timer);
+
+	return timer->_id;
 }
 
 } // End of namespace Titanic
