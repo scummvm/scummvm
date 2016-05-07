@@ -24,22 +24,42 @@
 #define TITANIC_TRUE_TALK_NPC_H
 
 #include "titanic/npcs/character.h"
+#include "titanic/messages/messages.h"
 
 namespace Titanic {
 
+enum NpcFlag {
+	NPCFLAG_SPEAKING = 1, NPCFLAG_2 = 2, NPCFLAG_4 = 4, NPCFLAG_8 = 8
+};
+
+class CViewItem;
+
 class CTrueTalkNPC : public CCharacter {
+	DECLARE_MESSAGE_MAP
+	bool TextInputMsg(CTextInputMsg *msg);
+	bool TrueTalkGetAssetDetailsMsg(CTrueTalkGetAssetDetailsMsg *msg);
+	bool DismissBotMsg(CDismissBotMsg *msg);
+	bool TrueTalkNotifySpeechStartedMsg(CTrueTalkNotifySpeechStartedMsg *msg);
+	bool TrueTalkNotifySpeechEndedMsg(CTrueTalkNotifySpeechEndedMsg *msg);
+	bool MovieEndMsg(CMovieEndMsg *msg);
+	bool NPCQueueIdleAnimMsg(CNPCQueueIdleAnimMsg *msg);
+	bool TimerMsg(CTimerMsg *msg);
+	bool NPCPlayAnimationMsg(CNPCPlayAnimationMsg *msg);
 protected:
-	int _fieldD4;
-	CString _string1;
+	int _assetNumber;
+	CString _assetName;
 	int _fieldE4;
-	int _fieldE8;
+	uint _npcFlags;
 	int _fieldEC;
 	int _fieldF0;
 	int _fieldF4;
 	int _fieldF8;
-	int _fieldFC;
+	int _speechTimerId;
 	int _field100;
 	int _field104;
+protected:
+	void processInput(CTextInputMsg *msg, CViewItem *view);
+	void performAction(int val1, int val2);
 public:
 	CLASSDEF
 	CTrueTalkNPC();

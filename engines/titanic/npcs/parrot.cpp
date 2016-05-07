@@ -88,15 +88,15 @@ CParrot::CParrot() : CTrueTalkNPC() {
 	_field1E8 = 0;
 	_field1EC = 30;
 
-	_string1 = "z454.dlg";
-	_fieldD4 = 0x13880;
+	_assetName = "z454.dlg";
+	_assetNumber = 0x13880;
 }
 
 void CParrot::save(SimpleFile *file, int indent) const {
 	file->writeNumberLine(1, indent);
-	file->writeNumberLine(_fieldD4, indent);
+	file->writeNumberLine(_assetNumber, indent);
 	
-	file->writeQuotedLine(_string1, indent);
+	file->writeQuotedLine(_assetName, indent);
 	file->writeNumberLine(_field108, indent);
 	file->writeNumberLine(_v1, indent);
 	file->writeNumberLine(_v2, indent);
@@ -118,9 +118,9 @@ void CParrot::save(SimpleFile *file, int indent) const {
 
 void CParrot::load(SimpleFile *file) {
 	file->readNumber();
-	_fieldD4 = file->readNumber();
+	_assetNumber = file->readNumber();
 
-	_string1 = file->readString();
+	_assetName = file->readString();
 	_field108 = file->readNumber();
 	_v1 = file->readNumber();
 	_v2 = file->readNumber();
