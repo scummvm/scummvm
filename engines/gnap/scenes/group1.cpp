@@ -410,20 +410,25 @@ void Scene10::updateAnimations() {
 		}
 
 		switch (_currCookSequenceId) {
-		case 0x106: {
-			// TODO: Refactor into a if + a switch
-			int rnd = _vm->getRandom(7);
+		case 0x106:
 			if (_vm->_gnap->_actionStatus >= 0 || _vm->_plat->_actionStatus >= 0)
 				_nextCookSequenceId = 0x106;
-			else if (rnd == 0)
-				_nextCookSequenceId = 0x104;
-			else if (rnd == 1)
-				_nextCookSequenceId = 0x103;
-			else if (rnd == 2) {
-				_nextCookSequenceId = 0x106;
-				gameSys.insertSequence(0x10D, 1, 0, 0, kSeqNone, 0, 0, 0);
-			} else
-				_nextCookSequenceId = 0x106;
+			else {
+				int rnd = _vm->getRandom(7);
+				switch (rnd) {
+				case 0:
+					_nextCookSequenceId = 0x104;
+					break;
+				case 1:
+					_nextCookSequenceId = 0x103;
+					break;
+				case 2:
+					_nextCookSequenceId = 0x106;
+					gameSys.insertSequence(0x10D, 1, 0, 0, kSeqNone, 0, 0, 0);
+					break;
+				default:
+					_nextCookSequenceId = 0x106;
+				}
 			}
 			break;
 		case 0x103:
@@ -442,17 +447,22 @@ void Scene10::updateAnimations() {
 			else
 				_nextCookSequenceId = 0x106;
 			break;
-		case 0x105: {
-			// TODO: Refactor into a if + a switch
-			int rnd = _vm->getRandom(7);
+		case 0x105:
 			if (_vm->_gnap->_actionStatus >= 0 || _vm->_plat->_actionStatus >= 0)
 				_nextCookSequenceId = 0x106;
-			else if (rnd == 0)
-				_nextCookSequenceId = 0x104;
-			else if (rnd == 1)
-				_nextCookSequenceId = 0x103;
-			else
-				_nextCookSequenceId = 0x106;
+			else {
+				int rnd = _vm->getRandom(7);
+				switch (rnd) {
+				case 0:
+					_nextCookSequenceId = 0x104;
+					break;
+				case 1:
+					_nextCookSequenceId = 0x103;
+					break;
+				default:
+					_nextCookSequenceId = 0x106;
+				}
+			}
 			_vm->_timers[2] = _vm->getRandom(30) + 20;
 			_vm->_timers[3] = 300;
 			gameSys.insertSequence(0x10C, _vm->_gnap->_id, makeRid(_vm->_gnap->_sequenceDatNum, _vm->_gnap->_sequenceId), _vm->_gnap->_id, kSeqSyncWait, 0, 0, 0);
@@ -461,7 +471,6 @@ void Scene10::updateAnimations() {
 			_vm->_gnap->_sequenceDatNum = 0;
 			_vm->_gnap->_actionStatus = -1;
 			_vm->_plat->_actionStatus = -1;
-			}
 			break;
 		}
 		if (_currCookSequenceId == 0x843)

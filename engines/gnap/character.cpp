@@ -676,7 +676,6 @@ int PlayerGnap::getWalkSequenceId(int deltaX, int deltaY) {
 
 bool PlayerGnap::walkTo(Common::Point gridPos, int animationIndex, int sequenceId, int flags) {
 	int datNum = flags & 3;
-	bool done = false;
 
 	_vm->_timers[2] = 200;
 	_vm->_timers[3] = 300;
@@ -695,17 +694,16 @@ bool PlayerGnap::walkTo(Common::Point gridPos, int animationIndex, int sequenceI
 	if (animationIndex >= 0 && _walkDestX == _vm->_plat->_pos.x && _walkDestY == _vm->_plat->_pos.y)
 		_vm->_plat->makeRoom();
 
-	if (findPath1(_pos.x, _pos.y, 0))
-		done = true;
+	bool done = findPath1(_pos.x, _pos.y, 0);
 
-	if (!done && findPath2(_pos.x, _pos.y, 0))
-		done = true;
+	if (!done)
+		done = findPath2(_pos.x, _pos.y, 0);
 
-	if (!done && findPath3(_pos.x, _pos.y))
-		done = true;
+	if (!done)
+		done = findPath3(_pos.x, _pos.y);
 
-	if (!done && findPath4(_pos.x, _pos.y))
-		done = true;
+	if (!done)
+		done = findPath4(_pos.x, _pos.y);
 
 	idle();
 
@@ -812,15 +810,14 @@ bool PlayerGnap::walkTo(Common::Point gridPos, int animationIndex, int sequenceI
 					break;
 				}
 			} else {
-				//TODO: simplify the checks by using v10 and v11
-				int v10 = _vm->_leftClickMouseX - (_vm->_gridMinX + 75 * _pos.x);
-				int v11 = _vm->_leftClickMouseY - (_vm->_gridMinY + 48 * _pos.y);
-				if (_vm->_leftClickMouseX == _vm->_gridMinX + 75 * _pos.x)
-					++v10;
-				if (_vm->_leftClickMouseY == _vm->_gridMinY + 48 * _pos.y)
-					v11 = 1;
-				_sequenceId = getWalkStopSequenceId(v10 / abs(v10), v11 / abs(v11));
-				_idleFacing = getWalkFacing(v10 / abs(v10), v11 / abs(v11));
+				int dirX = _vm->_leftClickMouseX - (_vm->_gridMinX + 75 * _pos.x);
+				int dirY = _vm->_leftClickMouseY - (_vm->_gridMinY + 48 * _pos.y);
+				if (dirX == 0)
+					dirX = 1;
+				if (dirY == 0)
+					dirY = 1;
+				_sequenceId = getWalkStopSequenceId(dirX / abs(dirX), dirY / abs(dirY));
+				_idleFacing = getWalkFacing(dirX / abs(dirX), dirY / abs(dirY));
 			}
 			_sequenceDatNum = datNum;
 		}
@@ -1271,7 +1268,6 @@ int PlayerPlat::getWalkSequenceId(int deltaX, int deltaY) {
 
 bool PlayerPlat::walkTo(Common::Point gridPos, int animationIndex, int sequenceId, int flags) {
 	int datNum = flags & 3;
-	bool done = false;
 
 	_vm->_timers[1] = 60;
 
@@ -1289,17 +1285,16 @@ bool PlayerPlat::walkTo(Common::Point gridPos, int animationIndex, int sequenceI
 	if (animationIndex >= 0 && _vm->_gnap->_pos == Common::Point(_walkDestX, _walkDestY))
 		_vm->_gnap->walkStep();
 
-	if (findPath1(_pos.x, _pos.y, 0))
-		done = true;
+	bool done = findPath1(_pos.x, _pos.y, 0);
 
-	if (!done && findPath2(_pos.x, _pos.y, 0))
-		done = true;
+	if (!done)
+		done = findPath2(_pos.x, _pos.y, 0);
 
-	if (!done && findPath3(_pos.x, _pos.y))
-		done = true;
+	if (!done)
+		done = findPath3(_pos.x, _pos.y);
 
-	if (!done && findPath4(_pos.x, _pos.y))
-		done = true;
+	if (!done)
+		done = findPath4(_pos.x, _pos.y);
 
 	int platSequenceId = _sequenceId;
 	int platId = _id;
