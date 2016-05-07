@@ -286,4 +286,26 @@ void CTrueTalkManager::loadAssets(CTrueTalkNPC *npc, int charId) {
 	}
 }
 
+void CTrueTalkManager::processInput(CTrueTalkNPC *npc, CTextInputMsg *msg, CViewItem *view) {
+	TTNamedScript *npcScript = getNpcScript(npc);
+	TTRoomScript *roomScript = getRoomScript();
+	_titleEngine.reset();
+
+	if (npcScript && roomScript) {
+		_currentNPC = npc;
+		_titleEngine._scriptHandler->processInput(npcScript, roomScript,
+			TTString(msg->_input));
+		_currentNPC = nullptr;
+
+		loadAssets(npc, npcScript->charId());
+		setView(npcScript, roomScript, view);
+	}
+	
+	_currentNPC = nullptr;
+}
+
+void CTrueTalkManager::setView(TTNamedScript *npcScript, TTRoomScript *roomScript, CViewItem *view) {
+	warning("TODO: CTrueTalkManager::setView");
+}
+
 } // End of namespace Titanic

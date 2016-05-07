@@ -23,6 +23,7 @@
 #ifndef TITANIC_TRUE_TALK_MANAGER_H
 #define TITANIC_TRUE_TALK_MANAGER_H
 
+#include "titanic/messages/messages.h"
 #include "titanic/support/simple_file.h"
 #include "titanic/true_talk/dialogue_file.h"
 #include "titanic/true_talk/title_engine.h"
@@ -32,6 +33,7 @@ namespace Titanic {
 
 class CGameManager;
 class CTreeItem;
+class CViewItem;
 class CTrueTalkNPC;
 
 class CTrueTalkManager {
@@ -77,6 +79,8 @@ private:
 	 * Loads assets for the current character, if it's changed
 	 */
 	void loadAssets(CTrueTalkNPC *npc, int charId);
+
+	void setView(TTNamedScript *npcScript, TTRoomScript *roomScript, CViewItem *view);
 public:
 	static int _v1;
 	static int _v2;
@@ -149,6 +153,11 @@ public:
 	 * Return a TrueTalk talker/script
 	 */
 	TTNamedScript *getTalker(const CString &name) const;
+
+	/**
+	 * Process player's input
+	 */
+	void processInput(CTrueTalkNPC *npc, CTextInputMsg *msg, CViewItem *view);
 };
 
 } // End of namespace Titanic

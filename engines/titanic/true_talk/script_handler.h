@@ -25,6 +25,7 @@
 
 #include "titanic/true_talk/tt_named_script.h"
 #include "titanic/true_talk/tt_room_script.h"
+#include "titanic/true_talk/tt_string.h"
 
 namespace Titanic {
 
@@ -40,6 +41,9 @@ public:
 	 * Set the character and room
 	 */
 	void setup(TTNamedScript *npcScript, TTRoomScript *roomScript, uint charId);
+
+	void processInput(TTNamedScript *npcScript, TTRoomScript *roomScript,
+		const TTString &line);
 };
 
 } // End of namespace Titanic

@@ -33,8 +33,9 @@ namespace Titanic {
 
 class CTitleEngine {
 protected:
-	CScriptHandler *_handler;
 	TTScriptBase *_script;
+public:
+	CScriptHandler *_scriptHandler;
 public:
 	CTitleEngine();
 	~CTitleEngine();

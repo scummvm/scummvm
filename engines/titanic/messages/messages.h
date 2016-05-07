@@ -269,7 +269,7 @@ MESSAGE2(CMovieFrameMsg, int, value1, 0, int, value2, 0);
 MESSAGE0(CMusicHasStartedMsg);
 MESSAGE0(CMusicHasStoppedMsg);
 MESSAGE0(CMusicSettingChangedMsg);
-MESSAGE2(CNPCPlayAnimationMsg, void *, data, 0, int, value2, 0);
+MESSAGE2(CNPCPlayAnimationMsg, void *, data, nullptr, int, value2, 0);
 MESSAGE1(CNPCPlayIdleAnimationMsg, void *, value, 0);
 MESSAGE3(CNPCPlayTalkingAnimationMsg, int, value1, 0, int, value2, 0, void *, value3, nullptr);
 MESSAGE0(CNPCQueueIdleAnimMsg);

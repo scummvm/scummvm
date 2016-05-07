@@ -30,8 +30,12 @@ CScriptHandler::CScriptHandler(CTitleEngine *owner, int val1, int val2) {
 }
 
 void CScriptHandler::setup(TTNamedScript *npcScript, TTRoomScript *roomScript, uint charId) {
-
+	// TODO
 }
 
+void CScriptHandler::processInput(TTNamedScript *npcScript, TTRoomScript *roomScript,
+		const TTString &line) {
+	// TODO
+}
 
 } // End of namespace Titanic

@@ -192,7 +192,9 @@ bool CTrueTalkNPC::NPCPlayAnimationMsg(CNPCPlayAnimationMsg *msg) {
 }
 
 void CTrueTalkNPC::processInput(CTextInputMsg *msg, CViewItem *view) {
-	// TODO
+	CTrueTalkManager *talkManager = getGameManager()->getTalkManager();
+	if (talkManager)
+		talkManager->processInput(this, msg, view);
 }
 
 void CTrueTalkNPC::performAction(int val1, int val2) {
