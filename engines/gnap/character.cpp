@@ -112,14 +112,14 @@ PlayerGnap::PlayerGnap(GnapEngine * vm) : Character(vm) {
 	_brainPulseRndValue = 0;
 }
 
-int PlayerGnap::getSequenceId(int kind, int gridX, int gridY) {
+int PlayerGnap::getSequenceId(int kind, Common::Point gridPos) {
 	int sequenceId = 0;
 
 	switch (kind) {
 	case gskPullOutDevice:
-		if (gridX > 0 && gridY > 0) {
-			if (_pos.y > gridY) {
-				if (_pos.x > gridX) {
+		if (gridPos.x > 0 && gridPos.y > 0) {
+			if (_pos.y > gridPos.y) {
+				if (_pos.x > gridPos.x) {
 					sequenceId = 0x83F;
 					_idleFacing = kDirUpLeft;
 				} else {
@@ -127,7 +127,7 @@ int PlayerGnap::getSequenceId(int kind, int gridX, int gridY) {
 					_idleFacing = kDirUpRight;
 				}
 			} else {
-				if (_pos.x > gridX) {
+				if (_pos.x > gridPos.x) {
 					sequenceId = 0x83B;
 					_idleFacing = kDirBottomLeft;
 				} else {
@@ -154,9 +154,9 @@ int PlayerGnap::getSequenceId(int kind, int gridX, int gridY) {
 		break;
 
 	case gskPullOutDeviceNonWorking:
-		if (gridX > 0 && gridY > 0) {
-			if (_pos.y > gridY) {
-				if (_pos.x > gridX) {
+		if (gridPos.x > 0 && gridPos.y > 0) {
+			if (_pos.y > gridPos.y) {
+				if (_pos.x > gridPos.x) {
 					sequenceId = 0x829;
 					_idleFacing = kDirUpLeft;
 				} else {
@@ -164,7 +164,7 @@ int PlayerGnap::getSequenceId(int kind, int gridX, int gridY) {
 					_idleFacing = kDirUpRight;
 				}
 			} else {
-				if (_pos.x > gridX) {
+				if (_pos.x > gridPos.x) {
 					sequenceId = 0x827;
 					_idleFacing = kDirBottomLeft;
 				} else {
@@ -191,9 +191,9 @@ int PlayerGnap::getSequenceId(int kind, int gridX, int gridY) {
 		break;
 
 	case gskScratchingHead:
-		if (gridX > 0 && gridY > 0) {
-			if (_pos.y > gridY) {
-				if (_pos.x > gridX) {
+		if (gridPos.x > 0 && gridPos.y > 0) {
+			if (_pos.y > gridPos.y) {
+				if (_pos.x > gridPos.x) {
 					sequenceId = 0x834;
 					_idleFacing = kDirBottomLeft;
 				} else {
@@ -201,7 +201,7 @@ int PlayerGnap::getSequenceId(int kind, int gridX, int gridY) {
 					_idleFacing = kDirUpRight;
 				}
 			} else {
-				if (_pos.x > gridX) {
+				if (_pos.x > gridPos.x) {
 					sequenceId = 0x834;
 					_idleFacing = kDirBottomLeft;
 				} else {
@@ -232,9 +232,9 @@ int PlayerGnap::getSequenceId(int kind, int gridX, int gridY) {
 		break;
 
 	case gskIdle:
-		if (gridX > 0 && gridY > 0) {
-			if (_pos.y > gridY) {
-				if (_pos.x > gridX) {
+		if (gridPos.x > 0 && gridPos.y > 0) {
+			if (_pos.y > gridPos.y) {
+				if (_pos.x > gridPos.x) {
 					sequenceId = 0x7BC;
 					_idleFacing = kDirUpLeft;
 				} else {
@@ -242,7 +242,7 @@ int PlayerGnap::getSequenceId(int kind, int gridX, int gridY) {
 					_idleFacing = kDirUpRight;
 				}
 			} else {
-				if (_pos.x > gridX) {
+				if (_pos.x > gridPos.x) {
 					sequenceId = 0x7BA;
 					_idleFacing = kDirBottomLeft;
 				} else {
@@ -270,9 +270,9 @@ int PlayerGnap::getSequenceId(int kind, int gridX, int gridY) {
 
 	case gskBrainPulsating:
 		_brainPulseNum = (_brainPulseNum + 1) & 1;
-		if (gridX > 0 && gridY > 0) {
-			if (_pos.y > gridY) {
-				if (_pos.x > gridX) {
+		if (gridPos.x > 0 && gridPos.y > 0) {
+			if (_pos.y > gridPos.y) {
+				if (_pos.x > gridPos.x) {
 					sequenceId = _brainPulseRndValue + _brainPulseNum + 0x812;
 					_idleFacing = kDirUpLeft;
 				} else {
@@ -280,7 +280,7 @@ int PlayerGnap::getSequenceId(int kind, int gridX, int gridY) {
 					_idleFacing = kDirUpRight;
 				}
 			} else {
-				if (_pos.x > gridX) {
+				if (_pos.x > gridPos.x) {
 					sequenceId = _brainPulseRndValue + _brainPulseNum + 0x7D6;
 					_idleFacing = kDirBottomLeft;
 				} else {
@@ -307,9 +307,9 @@ int PlayerGnap::getSequenceId(int kind, int gridX, int gridY) {
 		break;
 
 	case gskImpossible:
-		if (gridX > 0 && gridY > 0) {
-			if (_pos.y > gridY) {
-				if (_pos.x > gridX) {
+		if (gridPos.x > 0 && gridPos.y > 0) {
+			if (_pos.y > gridPos.y) {
+				if (_pos.x > gridPos.x) {
 					sequenceId = 0x831;
 					_idleFacing = kDirBottomLeft;
 				} else {
@@ -317,7 +317,7 @@ int PlayerGnap::getSequenceId(int kind, int gridX, int gridY) {
 					_idleFacing = kDirBottomRight;
 				}
 			} else {
-				if (_pos.x > gridX) {
+				if (_pos.x > gridPos.x) {
 					sequenceId = 0x831;
 					_idleFacing = kDirBottomLeft;
 				} else {
@@ -341,9 +341,9 @@ int PlayerGnap::getSequenceId(int kind, int gridX, int gridY) {
 		break;
 
 	case gskDeflect:
-		if (gridX > 0 && gridY > 0) {
-			if (_pos.y > gridY) {
-				if (_pos.x > gridX) {
+		if (gridPos.x > 0 && gridPos.y > 0) {
+			if (_pos.y > gridPos.y) {
+				if (_pos.x > gridPos.x) {
 					sequenceId = 0x830;
 					_idleFacing = kDirUpLeft;
 				} else {
@@ -351,7 +351,7 @@ int PlayerGnap::getSequenceId(int kind, int gridX, int gridY) {
 					_idleFacing = kDirUpRight;
 				}
 			} else {
-				if (_pos.x > gridX) {
+				if (_pos.x > gridPos.x) {
 					sequenceId = 0x82E;
 					_idleFacing = kDirBottomLeft;
 				} else {
@@ -401,9 +401,9 @@ int PlayerGnap::getSequenceId(int kind, int gridX, int gridY) {
 		break;
 
 	case gskMoan1:
-		if (gridX > 0 && gridY > 0) {
-			if (_pos.y > gridY) {
-				if (_pos.x > gridX) {
+		if (gridPos.x > 0 && gridPos.y > 0) {
+			if (_pos.y > gridPos.y) {
+				if (_pos.x > gridPos.x) {
 					sequenceId = 0x832;
 					_idleFacing = kDirBottomLeft;
 				} else {
@@ -411,7 +411,7 @@ int PlayerGnap::getSequenceId(int kind, int gridX, int gridY) {
 					_idleFacing = kDirBottomRight;
 				}
 			} else {
-				if (_pos.x > gridX) {
+				if (_pos.x > gridPos.x) {
 					sequenceId = 0x832;
 					_idleFacing = kDirBottomLeft;
 				} else {
@@ -429,9 +429,9 @@ int PlayerGnap::getSequenceId(int kind, int gridX, int gridY) {
 		break;
 
 	case gskMoan2:
-		if (gridX > 0 && gridY > 0) {
-			if (_pos.y > gridY) {
-				if (_pos.x > gridX) {
+		if (gridPos.x > 0 && gridPos.y > 0) {
+			if (_pos.y > gridPos.y) {
+				if (_pos.x > gridPos.x) {
 					sequenceId = 0x832;
 					_idleFacing = kDirBottomLeft;
 				} else {
@@ -439,7 +439,7 @@ int PlayerGnap::getSequenceId(int kind, int gridX, int gridY) {
 					_idleFacing = kDirBottomRight;
 				}
 			} else {
-				if (_pos.x > gridX) {
+				if (_pos.x > gridPos.x) {
 					sequenceId = 0x832;
 					_idleFacing = kDirBottomLeft;
 				} else {
@@ -486,7 +486,7 @@ void PlayerGnap::useJointOnPlatypus() {
 		_vm->_gameSys->setAnimation(0, 0, 0);
 		_actionStatus = -1;
 	} else {
-		playSequence(getSequenceId(gskScratchingHead, _vm->_plat->_pos.x, _vm->_plat->_pos.y) | 0x10000);
+		playSequence(getSequenceId(gskScratchingHead, _vm->_plat->_pos) | 0x10000);
 	}
 }
 
@@ -515,12 +515,12 @@ void PlayerGnap::kissPlatypus(int callback) {
 		_vm->_gameSys->setAnimation(0, 0, 0);
 		_actionStatus = -1;
 	} else {
-		playSequence(getSequenceId(gskScratchingHead, _vm->_plat->_pos.x, _vm->_plat->_pos.y) | 0x10000);
+		playSequence(getSequenceId(gskScratchingHead, _vm->_plat->_pos) | 0x10000);
 	}
 }
 
 void PlayerGnap::useDeviceOnPlatypus() {
-	playSequence(makeRid(1, getSequenceId(gskPullOutDevice, _vm->_plat->_pos.x, _vm->_plat->_pos.y)));
+	playSequence(makeRid(1, getSequenceId(gskPullOutDevice, _vm->_plat->_pos)));
 
 	if (_vm->_plat->_idleFacing != kDirNone) {
 		_vm->_gameSys->insertSequence(makeRid(1, 0x7D5), _vm->_plat->_id,
@@ -536,7 +536,7 @@ void PlayerGnap::useDeviceOnPlatypus() {
 		_vm->_plat->_sequenceDatNum = 1;
 	}
 
-	int newSequenceId = getSequenceId(gskUseDevice, 0, 0);
+	int newSequenceId = getSequenceId(gskUseDevice, Common::Point(0, 0));
 	_vm->_gameSys->insertSequence(makeRid(1, newSequenceId), _id,
 		makeRid(_sequenceDatNum, _sequenceId), _id,
 		kSeqSyncWait, 0, 75 * _pos.x - _gridX, 48 * _pos.y - _gridY);
@@ -1020,7 +1020,7 @@ int PlayerGnap::getShowSequenceId(int index, int gridX, int gridY) {
 		//Skip 29
 	default:
 		_idleFacing = facing;
-		sequenceId = getSequenceId(gskImpossible, 0, 0);
+		sequenceId = getSequenceId(gskImpossible, Common::Point(0, 0));
 		break;
 	}
 
@@ -1035,58 +1035,58 @@ void PlayerGnap::idle() {
 			_sequenceId == 0x833 || _sequenceId == 0x834 ||
 			_sequenceId == 0x885 || _sequenceId == 0x7A8 ||
 			_sequenceId == 0x831 || _sequenceId == 0x89A)) {
-		_vm->_gameSys->insertSequence(getSequenceId(gskIdle, 0, 0) | 0x10000, _id,
+		_vm->_gameSys->insertSequence(getSequenceId(gskIdle, Common::Point(0, 0)) | 0x10000, _id,
 			makeRid(_sequenceDatNum, _sequenceId), _id,
 			kSeqSyncExists, 0, 75 * _pos.x - _gridX, 48 * _pos.y - _gridY);
-		_sequenceId = getSequenceId(gskIdle, 0, 0);
+		_sequenceId = getSequenceId(gskIdle, Common::Point(0, 0));
 		_sequenceDatNum = 1;
 	}
 }
 
 void PlayerGnap::actionIdle(int sequenceId) {
 	if (_sequenceId != -1 && ridToDatIndex(sequenceId) == _sequenceDatNum && ridToEntryIndex(sequenceId) == _sequenceId) {
-		_vm->_gameSys->insertSequence(getSequenceId(gskIdle, 0, 0) | 0x10000, _id,
+		_vm->_gameSys->insertSequence(getSequenceId(gskIdle, Common::Point(0, 0)) | 0x10000, _id,
 			makeRid(_sequenceDatNum, _sequenceId), _id,
 			kSeqSyncExists, 0, 75 * _pos.x - _gridX, 48 * _pos.y - _gridY);
-		_sequenceId = getSequenceId(gskIdle, 0, 0);
+		_sequenceId = getSequenceId(gskIdle, Common::Point(0, 0));
 		_sequenceDatNum = 1;
 	}
 }
 
 void PlayerGnap::playImpossible(int gridX, int gridY) {
-	playSequence(getSequenceId(gskImpossible, gridX, gridY) | 0x10000);
+	playSequence(getSequenceId(gskImpossible, Common::Point(gridX, gridY)) | 0x10000);
 }
 
 void PlayerGnap::playScratchingHead(int gridX, int gridY) {
-	playSequence(getSequenceId(gskScratchingHead, gridX, gridY) | 0x10000);
+	playSequence(getSequenceId(gskScratchingHead, Common::Point(gridX, gridY)) | 0x10000);
 }
 
 void PlayerGnap::playMoan1(int gridX, int gridY) {
-	playSequence(getSequenceId(gskMoan1, gridX, gridY) | 0x10000);
+	playSequence(getSequenceId(gskMoan1, Common::Point(gridX, gridY)) | 0x10000);
 }
 
 void PlayerGnap::playMoan2(int gridX, int gridY) {
-	playSequence(getSequenceId(gskMoan2, gridX, gridY) | 0x10000);
+	playSequence(getSequenceId(gskMoan2, Common::Point(gridX, gridY)) | 0x10000);
 }
 
 void PlayerGnap::playBrainPulsating(int gridX, int gridY) {
-	playSequence(getSequenceId(gskBrainPulsating, gridX, gridY) | 0x10000);
+	playSequence(getSequenceId(gskBrainPulsating, Common::Point(gridX, gridY)) | 0x10000);
 }
 
 void PlayerGnap::playPullOutDevice(int gridX, int gridY) {
-	playSequence(getSequenceId(gskPullOutDevice, gridX, gridY) | 0x10000);
+	playSequence(getSequenceId(gskPullOutDevice, Common::Point(gridX, gridY)) | 0x10000);
 }
 
 void PlayerGnap::playPullOutDeviceNonWorking(int gridX, int gridY) {
-	playSequence(getSequenceId(gskPullOutDeviceNonWorking, gridX, gridY) | 0x10000);
+	playSequence(getSequenceId(gskPullOutDeviceNonWorking, Common::Point(gridX, gridY)) | 0x10000);
 }
 
 void PlayerGnap::playUseDevice(int gridX, int gridY) {
-	playSequence(getSequenceId(gskUseDevice, gridX, gridY) | 0x10000);
+	playSequence(getSequenceId(gskUseDevice, Common::Point(gridX, gridY)) | 0x10000);
 }
 
 void PlayerGnap::playIdle(int gridX, int gridY) {
-	playSequence(getSequenceId(gskIdle, gridX, gridY) | 0x10000);
+	playSequence(getSequenceId(gskIdle, Common::Point(gridX, gridY)) | 0x10000);
 }
 
 void PlayerGnap::playShowItem(int itemIndex, int gridLookX, int gridLookY) {
@@ -1150,7 +1150,7 @@ void PlayerGnap::useDisguiseOnPlatypus() {
 
 PlayerPlat::PlayerPlat(GnapEngine * vm) : Character(vm) {}
 
-int PlayerPlat::getSequenceId(int kind, int gridX, int gridY) {
+int PlayerPlat::getSequenceId(int kind, Common::Point gridPos) {
 	// The original had 3 parameters, all always set to 0.
 	// The code to handle the other values has been removed.
 

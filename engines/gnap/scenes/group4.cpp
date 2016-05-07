@@ -412,7 +412,7 @@ void Scene41::run() {
 						break;
 					case TALK_CURSOR:
 						_vm->_gnap->_idleFacing = kDirUpRight;
-						_vm->_gnap->walkTo(Common::Point(4, 7), 0, _vm->_gnap->getSequenceId(gskBrainPulsating, 0, 0) | 0x10000, 1);
+						_vm->_gnap->walkTo(Common::Point(4, 7), 0, _vm->_gnap->getSequenceId(gskBrainPulsating, Common::Point(0, 0)) | 0x10000, 1);
 						_vm->_gnap->_actionStatus = kAS41TalkToyVendor;
 						break;
 					case PLAT_CURSOR:
@@ -441,7 +441,7 @@ void Scene41::run() {
 						break;
 					case TALK_CURSOR:
 						_vm->_gnap->_idleFacing = kDirUpRight;
-						_vm->_gnap->walkTo(Common::Point(7, 7), 0, _vm->_gnap->getSequenceId(gskBrainPulsating, 0, 0) | 0x10000, 1);
+						_vm->_gnap->walkTo(Common::Point(7, 7), 0, _vm->_gnap->getSequenceId(gskBrainPulsating, Common::Point(0, 0)) | 0x10000, 1);
 						break;
 					case PLAT_CURSOR:
 						_vm->_gnap->playImpossible(0, 0);
@@ -923,7 +923,7 @@ void Scene42::run() {
 						break;
 					case TALK_CURSOR:
 						_vm->_gnap->_idleFacing = kDirUpRight;
-						_vm->_gnap->walkTo(_vm->_hotspotsWalkPos[kHS42BBQVendor], 0, _vm->_gnap->getSequenceId(gskBrainPulsating, 0, 0) | 0x10000, 1);
+						_vm->_gnap->walkTo(_vm->_hotspotsWalkPos[kHS42BBQVendor], 0, _vm->_gnap->getSequenceId(gskBrainPulsating, Common::Point(0, 0)) | 0x10000, 1);
 						_vm->_gnap->_actionStatus = kAS42TalkBBQVendor;
 						break;
 					case GRAB_CURSOR:
@@ -1376,7 +1376,7 @@ void Scene43::run() {
 						break;
 					case TALK_CURSOR:
 							_vm->_gnap->_idleFacing = kDirUpRight;
-							_vm->_gnap->walkTo(Common::Point(5, 8), 0, _vm->_gnap->getSequenceId(gskBrainPulsating, 0, 0) | 0x10000, 1);
+							_vm->_gnap->walkTo(Common::Point(5, 8), 0, _vm->_gnap->getSequenceId(gskBrainPulsating, Common::Point(0, 0)) | 0x10000, 1);
 							_vm->_gnap->_actionStatus = 2;
 						break;
 					case GRAB_CURSOR:
@@ -1827,7 +1827,7 @@ void Scene44::run() {
 						break;
 					case TALK_CURSOR:
 						_vm->_gnap->_idleFacing = kDirUpLeft;
-						_vm->_gnap->walkTo(_vm->_hotspotsWalkPos[kHS44KissingLady], 0, _vm->_gnap->getSequenceId(gskBrainPulsating, 0, 0) | 0x10000, 1);
+						_vm->_gnap->walkTo(_vm->_hotspotsWalkPos[kHS44KissingLady], 0, _vm->_gnap->getSequenceId(gskBrainPulsating, Common::Point(0, 0)) | 0x10000, 1);
 						_vm->_gnap->_actionStatus = 1;
 						break;
 					case PLAT_CURSOR:
@@ -1881,7 +1881,7 @@ void Scene44::run() {
 						break;
 					case TALK_CURSOR:
 						_vm->_gnap->_idleFacing = kDirUpRight;
-						_vm->_gnap->walkTo(_vm->_hotspotsWalkPos[kHS44SpringGuy], -1, _vm->_gnap->getSequenceId(gskBrainPulsating, 0, 0) | 0x10000, 1);
+						_vm->_gnap->walkTo(_vm->_hotspotsWalkPos[kHS44SpringGuy], -1, _vm->_gnap->getSequenceId(gskBrainPulsating, Common::Point(0, 0)) | 0x10000, 1);
 						break;
 					case GRAB_CURSOR:
 					case PLAT_CURSOR:
@@ -2614,7 +2614,7 @@ void Scene46::run() {
 						break;
 					case TALK_CURSOR:
 						_vm->_gnap->_idleFacing = kDirUpLeft;
-						_vm->_gnap->walkTo(_vm->_hotspotsWalkPos[kHS46SackGuy], 0, _vm->_gnap->getSequenceId(gskBrainPulsating, 0, 0) | 0x10000, 1);
+						_vm->_gnap->walkTo(_vm->_hotspotsWalkPos[kHS46SackGuy], 0, _vm->_gnap->getSequenceId(gskBrainPulsating, Common::Point(0, 0)) | 0x10000, 1);
 						_vm->_gnap->_actionStatus = 2;
 						break;
 					case GRAB_CURSOR:
@@ -2635,7 +2635,7 @@ void Scene46::run() {
 						break;
 					case TALK_CURSOR:
 						_vm->_gnap->_idleFacing = kDirUpRight;
-						_vm->_gnap->walkTo(_vm->_hotspotsWalkPos[kHS46ItchyGuy], 0, _vm->_gnap->getSequenceId(gskBrainPulsating, 0, 0) | 0x10000, 1);
+						_vm->_gnap->walkTo(_vm->_hotspotsWalkPos[kHS46ItchyGuy], 0, _vm->_gnap->getSequenceId(gskBrainPulsating, Common::Point(0, 0)) | 0x10000, 1);
 						_vm->_gnap->_actionStatus = 1;
 						break;
 					case GRAB_CURSOR:

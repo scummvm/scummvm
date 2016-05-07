@@ -52,7 +52,7 @@ public:
 
 	void walkStep();
 
-	virtual int getSequenceId(int kind, int gridX, int gridY) = 0;
+	virtual int getSequenceId(int kind, Common::Point gridPos) = 0;
 	virtual void playSequence(int sequenceId) = 0;
 	virtual void updateIdleSequence() = 0;
 	virtual void updateIdleSequence2() = 0;
@@ -80,7 +80,7 @@ protected:
 class PlayerGnap : public Character {
 public:
 	PlayerGnap(GnapEngine *vm);
-	virtual int getSequenceId(int kind, int gridX, int gridY);
+	virtual int getSequenceId(int kind, Common::Point gridPos);
 	virtual void initPos(int gridX, int gridY, Facing facing);
 	virtual void playSequence(int sequenceId);
 	virtual void updateIdleSequence();
@@ -124,7 +124,7 @@ private:
 class PlayerPlat : public Character {
 public:
 	PlayerPlat(GnapEngine *vm);
-	virtual int getSequenceId(int kind = 0, int gridX = 0, int gridY = 0);
+	virtual int getSequenceId(int kind = 0, Common::Point gridPos = Common::Point(0, 0));
 	virtual void initPos(int gridX, int gridY, Facing facing);
 	virtual void playSequence(int sequenceId);
 	virtual void updateIdleSequence();
