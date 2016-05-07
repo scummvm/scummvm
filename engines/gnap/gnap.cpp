@@ -1189,7 +1189,7 @@ void GnapEngine::playGnapShowItem(int itemIndex, int gridLookX, int gridLookY) {
 void GnapEngine::playGnapShowCurrItem(int gridX, int gridY, int gridLookX, int gridLookY) {
 	if (_plat->_pos.x == gridX && _plat->_pos.y == gridY)
 		platypusMakeRoom();
-	gnapWalkTo(gridX, gridY, -1, -1, 1);
+	gnapWalkTo(Common::Point(gridX, gridY), -1, -1, 1);
 	playGnapShowItem(_grabCursorSpriteIndex, gridLookX, gridLookY);
 }
 
@@ -1199,7 +1199,7 @@ bool GnapEngine::testWalk(int animationIndex, int someStatus, int gridX1, int gr
 		_gameSys->setAnimation(0, 0, animationIndex);
 		_gnap->_actionStatus = -1;
 		_plat->_actionStatus = -1;
-		gnapWalkTo(gridX1, gridY1, -1, -1, 1);
+		gnapWalkTo(Common::Point(gridX1, gridY1), -1, -1, 1);
 		platypusWalkTo(gridX2, gridY2, -1, -1, 1);
 		_mouseClickState._left = false;
 		return true;
@@ -1222,17 +1222,21 @@ bool GnapEngine::gnapPlatypusAction(int gridX, int gridY, int platSequenceId, in
 
 	if (_gnap->_actionStatus <= -1 && _plat->_actionStatus <= -1) {
 		_gnap->_actionStatus = 100;
-		if (isPointBlocked(_plat->_pos.x + gridX, _plat->_pos.y + gridY) && (_gnap->_pos != Common::Point(_plat->_pos.x + gridX, _plat->_pos.y + gridY)))
+		Common::Point checkPt = _plat->_pos + Common::Point(gridX, gridY);
+		if (isPointBlocked(checkPt) && (_gnap->_pos != checkPt)) {
 			platypusWalkStep();
-		if (!isPointBlocked(_plat->_pos.x + gridX, _plat->_pos.y + gridY) && (_gnap->_pos != Common::Point(_plat->_pos.x + gridX, _plat->_pos.y + gridY))) {
-			gnapWalkTo(_plat->_pos.x + gridX, _plat->_pos.y + gridY, 0, 0x107B9, 1);
+			checkPt = _plat->_pos + Common::Point(gridX, gridY);
+		}
+
+		if (!isPointBlocked(checkPt) && (_gnap->_pos != checkPt)) {
+			gnapWalkTo(checkPt, 0, 0x107B9, 1);
 			while (_gameSys->getAnimationStatus(0) != 2) {
 				updateMouseCursor();
 				doCallback(callback);
 				gameUpdateTick();
 			}
 			_gameSys->setAnimation(0, 0, 0);
-			if (_gnap->_pos == Common::Point(_plat->_pos.x + gridX, _plat->_pos.y + gridY)) {
+			if (_gnap->_pos == _plat->_pos + Common::Point(gridX, gridY)) {
 				_gameSys->setAnimation(platSequenceId, _plat->_id, 1);
 				_plat->playSequence(platSequenceId);
 				while (_gameSys->getAnimationStatus(1) != 2) {

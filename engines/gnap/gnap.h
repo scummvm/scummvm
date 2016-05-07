@@ -478,6 +478,7 @@ public:
 	int _gridMinX, _gridMinY;
 	int _gridMaxX, _gridMaxY;
 	bool isPointBlocked(int gridX, int gridY);
+	bool isPointBlocked(Common::Point gridPos);
 	void initSceneGrid(int gridMinX, int gridMinY, int gridMaxX, int gridMaxY);
 	bool testWalk(int animationIndex, int someStatus, int gridX1, int gridY1, int gridX2, int gridY2);
 
@@ -494,7 +495,6 @@ public:
 	bool gnapFindPath3(int gridX, int gridY);
 	bool gnapFindPath4(int gridX, int gridY);
 	bool gnapWalkTo(Common::Point gridPos, int animationIndex, int sequenceId, int flags);
-	bool gnapWalkTo(int gridX, int gridY, int animationIndex, int sequenceId, int flags);
 	void gnapWalkStep();
 
 	// Platypus walking

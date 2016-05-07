@@ -58,6 +58,10 @@ Facing GnapEngine::getGnapWalkFacing(int deltaX, int deltaY) {
 	return _gnapWalkFacings[3 * deltaX + 3 + 1 + deltaY];
 }
 
+bool GnapEngine::isPointBlocked(Common::Point gridPos) {
+	return isPointBlocked(gridPos.x, gridPos.y);
+}
+
 bool GnapEngine::isPointBlocked(int gridX, int gridY) {
 
 	if (gridX < 0 || gridX >= _gridMaxX || gridY < 0 || gridY >= _gridMaxY)
@@ -528,19 +532,17 @@ bool GnapEngine::gnapFindPath3(int gridX, int gridY) {
 }
 
 bool GnapEngine::gnapWalkTo(Common::Point gridPos, int animationIndex, int sequenceId, int flags) {
-	return gnapWalkTo(gridPos.x, gridPos.y, animationIndex, sequenceId, flags);
-}
-
-bool GnapEngine::gnapWalkTo(int gridX, int gridY, int animationIndex, int sequenceId, int flags) {
 	int datNum = flags & 3;
 	bool done = false;
 
 	_timers[2] = 200;
 	_timers[3] = 300;
 
+	int gridX = gridPos.x;
 	if (gridX < 0)
 		gridX = (_leftClickMouseX - _gridMinX + 37) / 75;
 
+	int gridY = gridPos.y;
 	if (gridY < 0)
 		gridY = (_leftClickMouseY - _gridMinY + 24) / 48;
 
@@ -705,27 +707,54 @@ bool GnapEngine::gnapWalkTo(int gridX, int gridY, int animationIndex, int sequen
 }
 
 void GnapEngine::gnapWalkStep() {
-	bool done = false;
-	for (int i = 1; i < _gridMaxX && !done; ++i) {
-		done = true;
-		if (!isPointBlocked(_gnap->_pos.x + i, _gnap->_pos.y))
-			gnapWalkTo(_gnap->_pos.x + i, _gnap->_pos.y, -1, -1, 1);
-		else if (!isPointBlocked(_gnap->_pos.x - i, _gnap->_pos.y))
-			gnapWalkTo(_gnap->_pos.x - i, _gnap->_pos.y, -1, -1, 1);
-		else if (!isPointBlocked(_gnap->_pos.x, _gnap->_pos.y + 1))
-			gnapWalkTo(_gnap->_pos.x, _gnap->_pos.y + 1, -1, -1, 1);
-		else if (!isPointBlocked(_gnap->_pos.x, _gnap->_pos.y - 1))
-			gnapWalkTo(_gnap->_pos.x, _gnap->_pos.y - 1, -1, -1, 1);
-		else if (!isPointBlocked(_gnap->_pos.x + 1, _gnap->_pos.y + 1))
-			gnapWalkTo(_gnap->_pos.x + 1, _gnap->_pos.y + 1, -1, -1, 1);
-		else if (!isPointBlocked(_gnap->_pos.x - 1, _gnap->_pos.y + 1))
-			gnapWalkTo(_gnap->_pos.x - 1, _gnap->_pos.y + 1, -1, -1, 1);
-		else if (!isPointBlocked(_gnap->_pos.x + 1, _gnap->_pos.y - 1))
-			gnapWalkTo(_gnap->_pos.x + 1, _gnap->_pos.y - 1, -1, -1, 1);
-		else if (!isPointBlocked(_gnap->_pos.x - 1, _gnap->_pos.y - 1))
-			gnapWalkTo(_gnap->_pos.x - 1, _gnap->_pos.y - 1, -1, -1, 1);
-		else
-			done = false;
+	for (int i = 1; i < _gridMaxX; ++i) {
+		Common::Point checkPt = Common::Point(_gnap->_pos.x + i, _gnap->_pos.y);
+		if (!isPointBlocked(checkPt)) {
+			gnapWalkTo(checkPt, -1, -1, 1);
+			break;
+		}
+
+		checkPt = Common::Point(_gnap->_pos.x - i, _gnap->_pos.y);
+		if (!isPointBlocked(checkPt)) {
+			gnapWalkTo(checkPt, -1, -1, 1);
+			break;
+		}
+
+		checkPt = Common::Point(_gnap->_pos.x, _gnap->_pos.y + 1);
+		if (!isPointBlocked(checkPt)) {
+			gnapWalkTo(checkPt, -1, -1, 1);
+			break;
+		}
+		
+		checkPt = Common::Point(_gnap->_pos.x, _gnap->_pos.y - 1);
+		if (!isPointBlocked(checkPt)) {
+			gnapWalkTo(checkPt, -1, -1, 1);
+			break;
+		}
+
+		checkPt = Common::Point(_gnap->_pos.x + 1, _gnap->_pos.y + 1);
+		if (!isPointBlocked(checkPt)) {
+			gnapWalkTo(checkPt, -1, -1, 1);
+			break;
+		}
+
+		checkPt = Common::Point(_gnap->_pos.x - 1, _gnap->_pos.y + 1);
+		if (!isPointBlocked(checkPt)) {
+			gnapWalkTo(checkPt, -1, -1, 1);
+			break;
+		}
+
+		checkPt = Common::Point(_gnap->_pos.x + 1, _gnap->_pos.y - 1);
+		if (!isPointBlocked(checkPt)) {
+			gnapWalkTo(checkPt, -1, -1, 1);
+			break;
+		}
+
+		checkPt = Common::Point(_gnap->_pos.x - 1, _gnap->_pos.y - 1);
+		if (!isPointBlocked(checkPt)) {
+			gnapWalkTo(checkPt, -1, -1, 1);
+			break;
+		}
 	}
 }
 
@@ -1179,7 +1208,6 @@ bool GnapEngine::platFindPath3(int gridX, int gridY) {
 }
 
 bool GnapEngine::platypusWalkTo(int gridX, int gridY, int animationIndex, int sequenceId, int flags) {
-
 	int datNum = flags & 3;
 	bool done = false;
 
