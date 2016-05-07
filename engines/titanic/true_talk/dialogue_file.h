@@ -28,18 +28,27 @@
 
 namespace Titanic {
 
+struct DialogueFileIndexEntry {
+	uint _v1, _offset;
+
+	DialogueFileIndexEntry() : _v1(0), _offset(0) {}
+	void load(Common::SeekableReadStream &s);
+};
+
+struct DialogueFileCacheEntry {
+	bool _active;
+	uint _offset, v3, _size;
+	DialogueFileIndexEntry *_entryPtr;
+
+	DialogueFileCacheEntry() : _active(false), _offset(0), _size(0),
+		v3(0), _entryPtr(nullptr) {}
+};
+
 class CDialogueFile {
-	struct CDialogueFileEntry {
-		uint v1;
-		uint v2;
-	};
-	struct EntryRec {
-		uint v1, v2, v3, v4, v5;
-	};
 private:
 	Common::File _file;
-	Common::Array<CDialogueFileEntry> _entries;
-	Common::Array<EntryRec> _data1;
+	Common::Array<DialogueFileIndexEntry> _entries;
+	Common::Array<DialogueFileCacheEntry> _cache;
 public:
 	CDialogueFile(const CString &filename, uint count);
 	~CDialogueFile();
@@ -48,6 +57,11 @@ public:
 	 * Clear the loaded data
 	 */
 	void clear();
+
+	/**
+	 * Add a dialogue file entry to the active cache
+	 */
+	DialogueFileCacheEntry *addToCache(int index);
 };
 
 } // End of namespace Titanic

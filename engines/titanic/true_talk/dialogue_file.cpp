@@ -24,20 +24,25 @@
 
 namespace Titanic {
 
+void DialogueFileIndexEntry::load(Common::SeekableReadStream &s) {
+	_v1 = s.readUint32LE();
+	_offset = s.readUint32LE();
+}
+
+/*------------------------------------------------------------------------*/
+
 CDialogueFile::CDialogueFile(const CString &filename, uint count) {
 	if (!_file.open(filename))
 		error("Could not locate dialogue file - %s", filename.c_str());
 	
-	_data1.resize(count);
+	_cache.resize(count);
 
 	_file.readUint32LE();		// Skip over file Id
 	_entries.resize(_file.readUint32LE());
 
 	// Read in the entries
-	for (uint idx = 0; idx < _entries.size(); ++idx) {
-		_entries[idx].v1 = _file.readUint32LE();
-		_entries[idx].v2 = _file.readUint32LE();
-	}
+	for (uint idx = 0; idx < _entries.size(); ++idx)
+		_entries[idx].load(_file);
 }
 
 CDialogueFile::~CDialogueFile() {
@@ -46,6 +51,36 @@ CDialogueFile::~CDialogueFile() {
 
 void CDialogueFile::clear() {
 	_file.close();
+}
+
+DialogueFileCacheEntry *CDialogueFile::addToCache(int index) {
+	if (_entries.size() == 0 || index < 0 || index >= (int)_entries.size()
+			|| !_entries[index]._v1)
+		return nullptr;
+
+	// Scan cache for a free slot
+	uint cacheIndex = 0;
+	while (cacheIndex < _cache.size() && !_cache[cacheIndex]._active)
+		++cacheIndex;
+	if (cacheIndex == _cache.size())
+		return nullptr;
+
+	DialogueFileIndexEntry &entry = _entries[index];
+	DialogueFileCacheEntry &cacheEntry = _cache[cacheIndex];
+
+	cacheEntry._active = true;
+	cacheEntry._offset = entry._offset;
+	cacheEntry.v3 = 0;
+	cacheEntry._entryPtr = &entry;
+
+	// Figure out the size of the entry
+	if (index == ((int)_entries.size() - 1)) {
+		cacheEntry._size = _file.size() - entry._offset;
+	} else {
+		cacheEntry._size = _entries[index + 1]._offset - entry._offset;
+	}
+
+	return &cacheEntry;
 }
 
 } // End of namespace Titanic
