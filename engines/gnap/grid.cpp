@@ -1206,8 +1206,8 @@ bool GnapEngine::platypusWalkTo(int gridX, int gridY, int animationIndex, int se
 	if (!done && platFindPath3(_plat->_pos.x, _plat->_pos.y))
 		done = true;
 
-	if (!done)
-		platFindPath4(_plat->_pos.x, _plat->_pos.y);
+	if (!done && platFindPath4(_plat->_pos.x, _plat->_pos.y))
+		done = true;
 
 	int platSequenceId = _plat->_sequenceId;
 	int platId = _plat->_id;
