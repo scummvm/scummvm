@@ -286,3 +286,18 @@ void DungeonMan::setCurrentMap(uint16 mapIndex) {
 	_currMap.colCumulativeSquareFirstThingCount
 		= &_dunData.columnsCumulativeSquareThingCount[_dunData.mapsFirstColumnIndex[mapIndex]];
 }
+
+byte DungeonMan::getSquare(uint16 mapX, uint16 mapY) {
+	bool isInXBounds = (mapX >= 0) && (mapX < _currMap.width);
+	bool isInYBounds = (mapY >= 0) && (mapY < _currMap.height);
+
+	if (isInXBounds && isInYBounds)
+		return _currMap.data[mapX][mapY];
+	else
+		return kWallSquareType;
+}
+
+byte DungeonMan::getRelSquare(direction dir, uint16 stepsForward, uint16 stepsRight, uint16 posX, uint16 posY) {
+	mapCoordsAfterRelMovement(dir, stepsForward, stepsForward, posX, posY);
+	return getSquare(posX, posY);
+}

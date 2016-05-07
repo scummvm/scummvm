@@ -26,6 +26,16 @@ enum ThingType {
 	kThingTypeTotal = 16 // +1 than the last
 }; // @ C[00..15]_THING_TYPE_...
 
+enum SquareType {
+	kWallSquareType = 0,
+	kCorridorSquareType = 1,
+	kPitSquareType = 2,
+	kStairsSquareType = 3,
+	kDoorSquareType = 4,
+	kTeleporterSquareType = 5,
+	kFakeWallSquareType = 6
+}; // @ C[00..06]_ELEMENT_...
+
 
 class DungeonFileHeader {
 	friend class DungeonMan;
@@ -141,6 +151,10 @@ class DungeonMan {
 	void operator=(const DungeonMan &rhs); // no implementation on purpose
 
 	void mapCoordsAfterRelMovement(direction dir, uint16 stepsForward, uint16 stepsRight, uint16 &posX, uint16 &posY); // @ F0150_DUNGEON_UpdateMapCoordinatesAfterRelativeMovement
+	byte getSquare(uint16 mapX, uint16 mapY); // @ F0151_DUNGEON_GetSquare
+	byte getRelSquare(direction dir, uint16 stepsForward, uint16 stepsRight, uint16 posX, uint16 posY); // @ F0152_DUNGEON_GetRelativeSquare
+
+	SquareType getSquareType(uint16 square) { return (SquareType)(square << 5); } // @ M34_SQUARE_TYPE
 
 	void decompressDungeonFile(); // @ F0455_FLOPPY_DecompressDungeon
 public:
@@ -149,6 +163,9 @@ public:
 	// TODO: this does stuff other than load the file!
 	void loadDungeonFile();	// @ F0434_STARTEND_IsLoadDungeonSuccessful_CPSC
 	void setCurrentMap(uint16 mapIndex); // @ F0173_DUNGEON_SetCurrentMap
+	SquareType getRelSquareType(direction dir, uint16 stepsForward, uint16 stepsRight, uint16 posX, uint16 posY) {
+		return getSquareType(getRelSquare(dir, stepsForward, stepsRight, posX, posY));
+	}// @ F0153_DUNGEON_GetRelativeSquareType
 };
 
 }
