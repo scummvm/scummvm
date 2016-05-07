@@ -46,6 +46,7 @@ public:
 	virtual void updateIdleSequence() = 0;
 	virtual void updateIdleSequence2() = 0;
 	virtual void initPos(int gridX, int gridY, Facing facing) = 0;
+	virtual int getWalkSequenceId(int deltaX, int deltaY) = 0;
 
 	Common::Point _pos;
 	Facing _idleFacing;
@@ -68,6 +69,7 @@ public:
 	virtual void playSequence(int sequenceId);
 	virtual void updateIdleSequence();
 	virtual void updateIdleSequence2();
+	virtual int getWalkSequenceId(int deltaX, int deltaY);
 
 	void initBrainPulseRndValue();
 	void kissPlatypus(int callback);
@@ -86,6 +88,7 @@ public:
 	virtual void playSequence(int sequenceId);
 	virtual void updateIdleSequence();
 	virtual void updateIdleSequence2();
+	virtual int getWalkSequenceId(int deltaX, int deltaY);
 };
 } // End of namespace Gnap
 

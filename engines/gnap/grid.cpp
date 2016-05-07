@@ -38,16 +38,6 @@ void GnapEngine::initSceneGrid(int gridMinX, int gridMinY, int gridMaxX, int gri
 	_plat->_gridY = 347 - gridMinY;
 }
 
-int GnapEngine::getGnapWalkSequenceId(int deltaX, int deltaY) {
-	static const int _gnapWalkSequenceIds[9] = {
-		0x7B2, 0x000, 0x7B4,
-		0x7AD, 0x000, 0x7AE,
-		0x7B1, 0x000, 0x7B3
-	};
-	// CHECKME This is a little weird
-	return _gnapWalkSequenceIds[3 * deltaX + 3 + 1 + deltaY];
-}
-
 int GnapEngine::getGnapWalkStopSequenceId(int deltaX, int deltaY) {
 	static const int _gnapWalkStopSequenceIds[9] = {
 		0x7BC, 0x7BA, 0x7BA,
@@ -90,7 +80,7 @@ bool GnapEngine::isPointBlocked(int gridX, int gridY) {
 
 }
 
-bool GnapEngine::gridSub41F08B(int gridX, int gridY) {
+bool GnapEngine::gnapFindPath4(int gridX, int gridY) {
 	bool result = false;
 
 	_gnapWalkNodesCount = 0;
@@ -186,7 +176,7 @@ bool GnapEngine::gridSub41F08B(int gridX, int gridY) {
 	return result;
 }
 
-bool GnapEngine::gridSub41F5FC(int gridX, int gridY, int index) {
+bool GnapEngine::gnapFindPath1(int gridX, int gridY, int index) {
 	_gnapWalkNodesCount = index;
 	_gnapWalkDirXIncr = 0;
 	_gnapWalkDirYIncr = 0;
@@ -264,7 +254,7 @@ bool GnapEngine::gridSub41F5FC(int gridX, int gridY, int index) {
 	return true;
 }
 
-bool GnapEngine::gridSub41FAD5(int gridX, int gridY, int index) {
+bool GnapEngine::gnapFindPath2(int gridX, int gridY, int index) {
 	_gnapWalkNodesCount = index;
 	_gnapWalkDirXIncr = 0;
 	_gnapWalkDirYIncr = 0;
@@ -371,7 +361,7 @@ bool GnapEngine::gnapFindPath3(int gridX, int gridY) {
 	bool done = false;
 
 	while (!done && gridIncr < _gridMaxX) {
-		if (!isPointBlocked(gridX + gridIncr, gridY) && gridSub41F5FC(gridX + gridIncr, gridY, gridIncr)) {
+		if (!isPointBlocked(gridX + gridIncr, gridY) && gnapFindPath1(gridX + gridIncr, gridY, gridIncr)) {
 			for (int i = 0; i < gridIncr; ++i) {
 				_gnapWalkNodes[i]._gridX1 = gridX + i;
 				_gnapWalkNodes[i]._gridY1 = gridY;
@@ -381,7 +371,7 @@ bool GnapEngine::gnapFindPath3(int gridX, int gridY) {
 			done = true;
 			break;
 		}
-		if (!isPointBlocked(gridX - gridIncr, gridY) && gridSub41F5FC(gridX - gridIncr, gridY, gridIncr)) {
+		if (!isPointBlocked(gridX - gridIncr, gridY) && gnapFindPath1(gridX - gridIncr, gridY, gridIncr)) {
 			for (int i = 0; i < gridIncr; ++i) {
 				_gnapWalkNodes[i]._gridX1 = gridX - i;
 				_gnapWalkNodes[i]._gridY1 = gridY;
@@ -391,7 +381,7 @@ bool GnapEngine::gnapFindPath3(int gridX, int gridY) {
 			done = true;
 			break;
 		}
-		if (!isPointBlocked(gridX, gridY + gridIncr) && gridSub41F5FC(gridX, gridY + gridIncr, gridIncr)) {
+		if (!isPointBlocked(gridX, gridY + gridIncr) && gnapFindPath1(gridX, gridY + gridIncr, gridIncr)) {
 			for (int i = 0; i < gridIncr; ++i) {
 				_gnapWalkNodes[i]._gridX1 = gridX;
 				_gnapWalkNodes[i]._gridY1 = gridY + i;
@@ -401,7 +391,7 @@ bool GnapEngine::gnapFindPath3(int gridX, int gridY) {
 			done = true;
 			break;
 		}
-		if (!isPointBlocked(gridX, gridY - gridIncr) && gridSub41F5FC(gridX, gridY - gridIncr, gridIncr)) {
+		if (!isPointBlocked(gridX, gridY - gridIncr) && gnapFindPath1(gridX, gridY - gridIncr, gridIncr)) {
 			for (int i = 0; i < gridIncr; ++i) {
 				_gnapWalkNodes[i]._gridX1 = gridX;
 				_gnapWalkNodes[i]._gridY1 = gridY - i;
@@ -411,7 +401,7 @@ bool GnapEngine::gnapFindPath3(int gridX, int gridY) {
 			done = true;
 			break;
 		}
-		if (!isPointBlocked(gridX + gridIncr, gridY + gridIncr) && gridSub41F5FC(gridX + gridIncr, gridY + gridIncr, gridIncr)) {
+		if (!isPointBlocked(gridX + gridIncr, gridY + gridIncr) && gnapFindPath1(gridX + gridIncr, gridY + gridIncr, gridIncr)) {
 			for (int i = 0; i < gridIncr; ++i) {
 				_gnapWalkNodes[i]._gridX1 = gridX + i;
 				_gnapWalkNodes[i]._gridY1 = gridY + i;
@@ -421,7 +411,7 @@ bool GnapEngine::gnapFindPath3(int gridX, int gridY) {
 			done = true;
 			break;
 		}
-		if (!isPointBlocked(gridX - gridIncr, gridY + gridIncr) && gridSub41F5FC(gridX - gridIncr, gridY + gridIncr, gridIncr)) {
+		if (!isPointBlocked(gridX - gridIncr, gridY + gridIncr) && gnapFindPath1(gridX - gridIncr, gridY + gridIncr, gridIncr)) {
 			for (int i = 0; i < gridIncr; ++i) {
 				_gnapWalkNodes[i]._gridX1 = gridX - i;
 				_gnapWalkNodes[i]._gridY1 = gridY + i;
@@ -431,7 +421,7 @@ bool GnapEngine::gnapFindPath3(int gridX, int gridY) {
 			done = true;
 			break;
 		}
-		if (!isPointBlocked(gridX + gridIncr, gridY - gridIncr) && gridSub41F5FC(gridX + gridIncr, gridY - gridIncr, gridIncr)) {
+		if (!isPointBlocked(gridX + gridIncr, gridY - gridIncr) && gnapFindPath1(gridX + gridIncr, gridY - gridIncr, gridIncr)) {
 			for (int i = 0; i < gridIncr; ++i) {
 				_gnapWalkNodes[i]._gridX1 = gridX + i;
 				_gnapWalkNodes[i]._gridY1 = gridY - i;
@@ -441,7 +431,7 @@ bool GnapEngine::gnapFindPath3(int gridX, int gridY) {
 			done = true;
 			break;
 		}
-		if (!isPointBlocked(gridX - gridIncr, gridY - gridIncr) && gridSub41F5FC(gridX - gridIncr, gridY - gridIncr, gridIncr)) {
+		if (!isPointBlocked(gridX - gridIncr, gridY - gridIncr) && gnapFindPath1(gridX - gridIncr, gridY - gridIncr, gridIncr)) {
 			for (int i = 0; i < gridIncr; ++i) {
 				_gnapWalkNodes[i]._gridX1 = gridX - i;
 				_gnapWalkNodes[i]._gridY1 = gridY - i;
@@ -451,7 +441,7 @@ bool GnapEngine::gnapFindPath3(int gridX, int gridY) {
 			done = true;
 			break;
 		}
-		if (!isPointBlocked(gridX + gridIncr, gridY) && gridSub41FAD5(gridX + gridIncr, gridY, gridIncr)) {
+		if (!isPointBlocked(gridX + gridIncr, gridY) && gnapFindPath2(gridX + gridIncr, gridY, gridIncr)) {
 			for (int i = 0; i < gridIncr; ++i) {
 				_gnapWalkNodes[i]._gridX1 = gridX + i;
 				_gnapWalkNodes[i]._gridY1 = gridY;
@@ -461,7 +451,7 @@ bool GnapEngine::gnapFindPath3(int gridX, int gridY) {
 			done = true;
 			break;
 		}
-		if (!isPointBlocked(gridX - gridIncr, gridY) && gridSub41FAD5(gridX - gridIncr, gridY, gridIncr)) {
+		if (!isPointBlocked(gridX - gridIncr, gridY) && gnapFindPath2(gridX - gridIncr, gridY, gridIncr)) {
 			for (int i = 0; i < gridIncr; ++i) {
 				_gnapWalkNodes[i]._gridX1 = gridX - i;
 				_gnapWalkNodes[i]._gridY1 = gridY;
@@ -471,7 +461,7 @@ bool GnapEngine::gnapFindPath3(int gridX, int gridY) {
 			done = true;
 			break;
 		}
-		if (!isPointBlocked(gridX, gridY + gridIncr) && gridSub41FAD5(gridX, gridY + gridIncr, gridIncr)) {
+		if (!isPointBlocked(gridX, gridY + gridIncr) && gnapFindPath2(gridX, gridY + gridIncr, gridIncr)) {
 			for (int i = 0; i < gridIncr; ++i) {
 				_gnapWalkNodes[i]._gridX1 = gridX;
 				_gnapWalkNodes[i]._gridY1 = gridY + i;
@@ -481,7 +471,7 @@ bool GnapEngine::gnapFindPath3(int gridX, int gridY) {
 			done = true;
 			break;
 		}
-		if (!isPointBlocked(gridX, gridY - gridIncr) && gridSub41FAD5(gridX, gridY - gridIncr, gridIncr)) {
+		if (!isPointBlocked(gridX, gridY - gridIncr) && gnapFindPath2(gridX, gridY - gridIncr, gridIncr)) {
 			for (int i = 0; i < gridIncr; ++i) {
 				_gnapWalkNodes[i]._gridX1 = gridX;
 				_gnapWalkNodes[i]._gridY1 = gridY - i;
@@ -491,7 +481,7 @@ bool GnapEngine::gnapFindPath3(int gridX, int gridY) {
 			done = true;
 			break;
 		}
-		if (!isPointBlocked(gridX + gridIncr, gridY + gridIncr) && gridSub41FAD5(gridX + gridIncr, gridY + gridIncr, gridIncr)) {
+		if (!isPointBlocked(gridX + gridIncr, gridY + gridIncr) && gnapFindPath2(gridX + gridIncr, gridY + gridIncr, gridIncr)) {
 			for (int i = 0; i < gridIncr; ++i) {
 				_gnapWalkNodes[i]._gridX1 = gridX + i;
 				_gnapWalkNodes[i]._gridY1 = gridY + i;
@@ -501,7 +491,7 @@ bool GnapEngine::gnapFindPath3(int gridX, int gridY) {
 			done = true;
 			break;
 		}
-		if (!isPointBlocked(gridX - gridIncr, gridY + gridIncr) && gridSub41FAD5(gridX - gridIncr, gridY + gridIncr, gridIncr)) {
+		if (!isPointBlocked(gridX - gridIncr, gridY + gridIncr) && gnapFindPath2(gridX - gridIncr, gridY + gridIncr, gridIncr)) {
 			for (int i = 0; i < gridIncr; ++i) {
 				_gnapWalkNodes[i]._gridX1 = gridX - i;
 				_gnapWalkNodes[i]._gridY1 = gridY + i;
@@ -511,7 +501,7 @@ bool GnapEngine::gnapFindPath3(int gridX, int gridY) {
 			done = true;
 			break;
 		}
-		if (!isPointBlocked(gridX + gridIncr, gridY - gridIncr) && gridSub41FAD5(gridX + gridIncr, gridY - gridIncr, gridIncr)) {
+		if (!isPointBlocked(gridX + gridIncr, gridY - gridIncr) && gnapFindPath2(gridX + gridIncr, gridY - gridIncr, gridIncr)) {
 			for (int i = 0; i < gridIncr; ++i) {
 				_gnapWalkNodes[i]._gridX1 = gridX + i;
 				_gnapWalkNodes[i]._gridY1 = gridY - i;
@@ -521,7 +511,7 @@ bool GnapEngine::gnapFindPath3(int gridX, int gridY) {
 			done = true;
 			break;
 		}
-		if (!isPointBlocked(gridX - gridIncr, gridY - gridIncr) && gridSub41FAD5(gridX - gridIncr, gridY - gridIncr, gridIncr)) {
+		if (!isPointBlocked(gridX - gridIncr, gridY - gridIncr) && gnapFindPath2(gridX - gridIncr, gridY - gridIncr, gridIncr)) {
 			for (int i = 0; i < gridIncr; ++i) {
 				_gnapWalkNodes[i]._gridX1 = gridX - i;
 				_gnapWalkNodes[i]._gridY1 = gridY - i;
@@ -561,16 +551,16 @@ bool GnapEngine::gnapWalkTo(int gridX, int gridY, int animationIndex, int sequen
 		platypusMakeRoom();
 
 	// TODO: Simplify the cascade of Ifs
-	if (gridSub41F5FC(_gnap->_pos.x, _gnap->_pos.y, 0))
+	if (gnapFindPath1(_gnap->_pos.x, _gnap->_pos.y, 0))
 		done = true;
 
-	if (!done && gridSub41FAD5(_gnap->_pos.x, _gnap->_pos.y, 0))
+	if (!done && gnapFindPath2(_gnap->_pos.x, _gnap->_pos.y, 0))
 		done = true;
 
 	if (!done && gnapFindPath3(_gnap->_pos.x, _gnap->_pos.y))
 		done = true;
 
-	if (!done && gridSub41F08B(_gnap->_pos.x, _gnap->_pos.y))
+	if (!done && gnapFindPath4(_gnap->_pos.x, _gnap->_pos.y))
 		done = true;
 
 	gnapIdle();
@@ -616,7 +606,7 @@ bool GnapEngine::gnapWalkTo(int gridX, int gridY, int animationIndex, int sequen
 				_gnapWalkNodes[index]._id -= 10;
 			else
 				_gnapWalkNodes[index]._id += 10;
-			int newSequenceId = getGnapWalkSequenceId(_gnapWalkNodes[index]._deltaX, _gnapWalkNodes[index]._deltaY);
+			int newSequenceId = _gnap->getWalkSequenceId(_gnapWalkNodes[index]._deltaX, _gnapWalkNodes[index]._deltaY);
 			_gameSys->insertSequence(makeRid(datNum, newSequenceId), _gnapWalkNodes[index]._id,
 				makeRid(gnapSequenceDatNum, gnapSequenceId), gnapId,
 				kSeqScale | kSeqSyncWait, 0, 75 * _gnapWalkNodes[index]._gridX1 - _gnap->_gridX, 48 * _gnapWalkNodes[index]._gridY1 - _gnap->_gridY);
@@ -741,17 +731,7 @@ void GnapEngine::gnapWalkStep() {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-int GnapEngine::getPlatypusWalkSequenceId(int deltaX, int deltaY) {
-	static const int _platypusWalkSequenceIds[9] = {
-		0x7C5, 0x000, 0x7C8,
-		0x7C4, 0x000, 0x7C7,
-		0x7C3, 0x000, 0x7C6
-	};
-	// CHECKME This is a little weird
-	return _platypusWalkSequenceIds[3 * deltaX + 3 + 1 + deltaY];
-}
-
-bool GnapEngine::gridSub423750(int gridX, int gridY) {
+bool GnapEngine::platFindPath4(int gridX, int gridY) {
 	bool result = false;
 
 	_platWalkNodesCount = 0;
@@ -847,7 +827,7 @@ bool GnapEngine::gridSub423750(int gridX, int gridY) {
 	return result;
 }
 
-bool GnapEngine::gridSub423CC1(int gridX, int gridY, int index) {
+bool GnapEngine::platFindPath1(int gridX, int gridY, int index) {
 	_platWalkNodesCount = index;
 	_platWalkDirXIncr = 0;
 	_platWalkDirYIncr = 0;
@@ -925,7 +905,7 @@ bool GnapEngine::gridSub423CC1(int gridX, int gridY, int index) {
 	return true;
 }
 
-bool GnapEngine::gridSub42419A(int gridX, int gridY, int index) {
+bool GnapEngine::platFindPath2(int gridX, int gridY, int index) {
 	_platWalkNodesCount = index;
 	_platWalkDirXIncr = 0;
 	_platWalkDirYIncr = 0;
@@ -1032,7 +1012,7 @@ bool GnapEngine::platFindPath3(int gridX, int gridY) {
 	bool done = false;
 
 	while (!done && gridIncr < _gridMaxX) {
-		if (!isPointBlocked(_plat->_pos.x + gridIncr, _plat->_pos.y) && gridSub423CC1(_plat->_pos.x + gridIncr, _plat->_pos.y, gridIncr)) {
+		if (!isPointBlocked(_plat->_pos.x + gridIncr, _plat->_pos.y) && platFindPath1(_plat->_pos.x + gridIncr, _plat->_pos.y, gridIncr)) {
 			for (int i = 0; i < gridIncr; ++i) {
 				_platWalkNodes[i]._gridX1 = _plat->_pos.x + i;
 				_platWalkNodes[i]._gridY1 = _plat->_pos.y;
@@ -1042,7 +1022,7 @@ bool GnapEngine::platFindPath3(int gridX, int gridY) {
 			done = true;
 			break;
 		}
-		if (!isPointBlocked(_plat->_pos.x - gridIncr, _plat->_pos.y) && gridSub423CC1(_plat->_pos.x - gridIncr, _plat->_pos.y, gridIncr)) {
+		if (!isPointBlocked(_plat->_pos.x - gridIncr, _plat->_pos.y) && platFindPath1(_plat->_pos.x - gridIncr, _plat->_pos.y, gridIncr)) {
 			for (int i = 0; i < gridIncr; ++i) {
 				_platWalkNodes[i]._gridX1 = _plat->_pos.x - i;
 				_platWalkNodes[i]._gridY1 = _plat->_pos.y;
@@ -1052,7 +1032,7 @@ bool GnapEngine::platFindPath3(int gridX, int gridY) {
 			done = true;
 			break;
 		}
-		if (!isPointBlocked(_plat->_pos.x, _plat->_pos.y + gridIncr) && gridSub423CC1(_plat->_pos.x, _plat->_pos.y + gridIncr, gridIncr)) {
+		if (!isPointBlocked(_plat->_pos.x, _plat->_pos.y + gridIncr) && platFindPath1(_plat->_pos.x, _plat->_pos.y + gridIncr, gridIncr)) {
 			for (int i = 0; i < gridIncr; ++i) {
 				_platWalkNodes[i]._gridX1 = _plat->_pos.x;
 				_platWalkNodes[i]._gridY1 = _plat->_pos.y + i;
@@ -1062,7 +1042,7 @@ bool GnapEngine::platFindPath3(int gridX, int gridY) {
 			done = true;
 			break;
 		}
-		if (!isPointBlocked(_plat->_pos.x, _plat->_pos.y - gridIncr) && gridSub423CC1(_plat->_pos.x, _plat->_pos.y - gridIncr, gridIncr)) {
+		if (!isPointBlocked(_plat->_pos.x, _plat->_pos.y - gridIncr) && platFindPath1(_plat->_pos.x, _plat->_pos.y - gridIncr, gridIncr)) {
 			for (int i = 0; i < gridIncr; ++i) {
 				_platWalkNodes[i]._gridX1 = _plat->_pos.x;
 				_platWalkNodes[i]._gridY1 = _plat->_pos.y - i;
@@ -1072,7 +1052,7 @@ bool GnapEngine::platFindPath3(int gridX, int gridY) {
 			done = true;
 			break;
 		}
-		if (!isPointBlocked(_plat->_pos.x + gridIncr, _plat->_pos.y + gridIncr) && gridSub423CC1(_plat->_pos.x + gridIncr, _plat->_pos.y + gridIncr, gridIncr)) {
+		if (!isPointBlocked(_plat->_pos.x + gridIncr, _plat->_pos.y + gridIncr) && platFindPath1(_plat->_pos.x + gridIncr, _plat->_pos.y + gridIncr, gridIncr)) {
 			for (int i = 0; i < gridIncr; ++i) {
 				_platWalkNodes[i]._gridX1 = _plat->_pos.x + i;
 				_platWalkNodes[i]._gridY1 = _plat->_pos.y + i;
@@ -1082,7 +1062,7 @@ bool GnapEngine::platFindPath3(int gridX, int gridY) {
 			done = true;
 			break;
 		}
-		if (!isPointBlocked(_plat->_pos.x - gridIncr, _plat->_pos.y + gridIncr) && gridSub423CC1(_plat->_pos.x - gridIncr, _plat->_pos.y + gridIncr, gridIncr)) {
+		if (!isPointBlocked(_plat->_pos.x - gridIncr, _plat->_pos.y + gridIncr) && platFindPath1(_plat->_pos.x - gridIncr, _plat->_pos.y + gridIncr, gridIncr)) {
 			for (int i = 0; i < gridIncr; ++i) {
 				_platWalkNodes[i]._gridX1 = _plat->_pos.x - i;
 				_platWalkNodes[i]._gridY1 = _plat->_pos.y + i;
@@ -1092,7 +1072,7 @@ bool GnapEngine::platFindPath3(int gridX, int gridY) {
 			done = true;
 			break;
 		}
-		if (!isPointBlocked(_plat->_pos.x + gridIncr, _plat->_pos.y - gridIncr) && gridSub423CC1(_plat->_pos.x + gridIncr, _plat->_pos.y - gridIncr, gridIncr)) {
+		if (!isPointBlocked(_plat->_pos.x + gridIncr, _plat->_pos.y - gridIncr) && platFindPath1(_plat->_pos.x + gridIncr, _plat->_pos.y - gridIncr, gridIncr)) {
 			for (int i = 0; i < gridIncr; ++i) {
 				_platWalkNodes[i]._gridX1 = _plat->_pos.x + i;
 				_platWalkNodes[i]._gridY1 = _plat->_pos.y - i;
@@ -1102,7 +1082,7 @@ bool GnapEngine::platFindPath3(int gridX, int gridY) {
 			done = true;
 			break;
 		}
-		if (!isPointBlocked(_plat->_pos.x - gridIncr, _plat->_pos.y - gridIncr) && gridSub423CC1(_plat->_pos.x - gridIncr, _plat->_pos.y - gridIncr, gridIncr)) {
+		if (!isPointBlocked(_plat->_pos.x - gridIncr, _plat->_pos.y - gridIncr) && platFindPath1(_plat->_pos.x - gridIncr, _plat->_pos.y - gridIncr, gridIncr)) {
 			for (int i = 0; i < gridIncr; ++i) {
 				_platWalkNodes[i]._gridX1 = _plat->_pos.x - i;
 				_platWalkNodes[i]._gridY1 = _plat->_pos.y - i;
@@ -1112,7 +1092,7 @@ bool GnapEngine::platFindPath3(int gridX, int gridY) {
 			done = true;
 			break;
 		}
-		if (!isPointBlocked(_plat->_pos.x + gridIncr, _plat->_pos.y) && gridSub42419A(_plat->_pos.x + gridIncr, _plat->_pos.y, gridIncr)) {
+		if (!isPointBlocked(_plat->_pos.x + gridIncr, _plat->_pos.y) && platFindPath2(_plat->_pos.x + gridIncr, _plat->_pos.y, gridIncr)) {
 			for (int i = 0; i < gridIncr; ++i) {
 				_platWalkNodes[i]._gridX1 = _plat->_pos.x + i;
 				_platWalkNodes[i]._gridY1 = _plat->_pos.y;
@@ -1122,7 +1102,7 @@ bool GnapEngine::platFindPath3(int gridX, int gridY) {
 			done = true;
 			break;
 		}
-		if (!isPointBlocked(_plat->_pos.x - gridIncr, _plat->_pos.y) && gridSub42419A(_plat->_pos.x - gridIncr, _plat->_pos.y, gridIncr)) {
+		if (!isPointBlocked(_plat->_pos.x - gridIncr, _plat->_pos.y) && platFindPath2(_plat->_pos.x - gridIncr, _plat->_pos.y, gridIncr)) {
 			for (int i = 0; i < gridIncr; ++i) {
 				_platWalkNodes[i]._gridX1 = _plat->_pos.x - i;
 				_platWalkNodes[i]._gridY1 = _plat->_pos.y;
@@ -1132,7 +1112,7 @@ bool GnapEngine::platFindPath3(int gridX, int gridY) {
 			done = true;
 			break;
 		}
-		if (!isPointBlocked(_plat->_pos.x, _plat->_pos.y + gridIncr) && gridSub42419A(_plat->_pos.x, _plat->_pos.y + gridIncr, gridIncr)) {
+		if (!isPointBlocked(_plat->_pos.x, _plat->_pos.y + gridIncr) && platFindPath2(_plat->_pos.x, _plat->_pos.y + gridIncr, gridIncr)) {
 			for (int i = 0; i < gridIncr; ++i) {
 				_platWalkNodes[i]._gridX1 = _plat->_pos.x;
 				_platWalkNodes[i]._gridY1 = _plat->_pos.y + i;
@@ -1142,7 +1122,7 @@ bool GnapEngine::platFindPath3(int gridX, int gridY) {
 			done = true;
 			break;
 		}
-		if (!isPointBlocked(_plat->_pos.x, _plat->_pos.y - gridIncr) && gridSub42419A(_plat->_pos.x, _plat->_pos.y - gridIncr, gridIncr)) {
+		if (!isPointBlocked(_plat->_pos.x, _plat->_pos.y - gridIncr) && platFindPath2(_plat->_pos.x, _plat->_pos.y - gridIncr, gridIncr)) {
 			for (int i = 0; i < gridIncr; ++i) {
 				_platWalkNodes[i]._gridX1 = _plat->_pos.x;
 				_platWalkNodes[i]._gridY1 = _plat->_pos.y - i;
@@ -1152,7 +1132,7 @@ bool GnapEngine::platFindPath3(int gridX, int gridY) {
 			done = true;
 			break;
 		}
-		if (!isPointBlocked(_plat->_pos.x + gridIncr, _plat->_pos.y + gridIncr) && gridSub42419A(_plat->_pos.x + gridIncr, _plat->_pos.y + gridIncr, gridIncr)) {
+		if (!isPointBlocked(_plat->_pos.x + gridIncr, _plat->_pos.y + gridIncr) && platFindPath2(_plat->_pos.x + gridIncr, _plat->_pos.y + gridIncr, gridIncr)) {
 			for (int i = 0; i < gridIncr; ++i) {
 				_platWalkNodes[i]._gridX1 = _plat->_pos.x + i;
 				_platWalkNodes[i]._gridY1 = _plat->_pos.y + i;
@@ -1162,7 +1142,7 @@ bool GnapEngine::platFindPath3(int gridX, int gridY) {
 			done = true;
 			break;
 		}
-		if (!isPointBlocked(_plat->_pos.x - gridIncr, _plat->_pos.y + gridIncr) && gridSub42419A(_plat->_pos.x - gridIncr, _plat->_pos.y + gridIncr, gridIncr)) {
+		if (!isPointBlocked(_plat->_pos.x - gridIncr, _plat->_pos.y + gridIncr) && platFindPath2(_plat->_pos.x - gridIncr, _plat->_pos.y + gridIncr, gridIncr)) {
 			for (int i = 0; i < gridIncr; ++i) {
 				_platWalkNodes[i]._gridX1 = _plat->_pos.x - i;
 				_platWalkNodes[i]._gridY1 = _plat->_pos.y + i;
@@ -1172,7 +1152,7 @@ bool GnapEngine::platFindPath3(int gridX, int gridY) {
 			done = true;
 			break;
 		}
-		if (!isPointBlocked(_plat->_pos.x + gridIncr, _plat->_pos.y - gridIncr) && gridSub42419A(_plat->_pos.x + gridIncr, _plat->_pos.y - gridIncr, gridIncr)) {
+		if (!isPointBlocked(_plat->_pos.x + gridIncr, _plat->_pos.y - gridIncr) && platFindPath2(_plat->_pos.x + gridIncr, _plat->_pos.y - gridIncr, gridIncr)) {
 			for (int i = 0; i < gridIncr; ++i) {
 				_platWalkNodes[i]._gridX1 = _plat->_pos.x + i;
 				_platWalkNodes[i]._gridY1 = _plat->_pos.y - i;
@@ -1182,7 +1162,7 @@ bool GnapEngine::platFindPath3(int gridX, int gridY) {
 			done = true;
 			break;
 		}
-		if (!isPointBlocked(_plat->_pos.x - gridIncr, _plat->_pos.y - gridIncr) && gridSub42419A(_plat->_pos.x - gridIncr, _plat->_pos.y - gridIncr, gridIncr)) {
+		if (!isPointBlocked(_plat->_pos.x - gridIncr, _plat->_pos.y - gridIncr) && platFindPath2(_plat->_pos.x - gridIncr, _plat->_pos.y - gridIncr, gridIncr)) {
 			for (int i = 0; i < gridIncr; ++i) {
 				_platWalkNodes[i]._gridX1 = _plat->_pos.x - i;
 				_platWalkNodes[i]._gridY1 = _plat->_pos.y - i;
@@ -1217,17 +1197,17 @@ bool GnapEngine::platypusWalkTo(int gridX, int gridY, int animationIndex, int se
 	if (animationIndex >= 0 && _gnap->_pos == Common::Point(_platWalkDestX, _platWalkDestY))
 		gnapWalkStep();
 
-	if (gridSub423CC1(_plat->_pos.x, _plat->_pos.y, 0))
+	if (platFindPath1(_plat->_pos.x, _plat->_pos.y, 0))
 		done = true;
 
-	if (!done && gridSub42419A(_plat->_pos.x, _plat->_pos.y, 0))
+	if (!done && platFindPath2(_plat->_pos.x, _plat->_pos.y, 0))
 		done = true;
 
 	if (!done && platFindPath3(_plat->_pos.x, _plat->_pos.y))
 		done = true;
 
 	if (!done)
-		gridSub423750(_plat->_pos.x, _plat->_pos.y);
+		platFindPath4(_plat->_pos.x, _plat->_pos.y);
 
 	int platSequenceId = _plat->_sequenceId;
 	int platId = _plat->_id;
@@ -1268,7 +1248,7 @@ bool GnapEngine::platypusWalkTo(int gridX, int gridY, int animationIndex, int se
 				_platWalkNodes[index]._id -= 10;
 			else
 				_platWalkNodes[index]._id += 10;
-			int newSequenceId = getPlatypusWalkSequenceId(_platWalkNodes[index]._deltaX, _platWalkNodes[index]._deltaY);
+			int newSequenceId = _plat->getWalkSequenceId(_platWalkNodes[index]._deltaX, _platWalkNodes[index]._deltaY);
 			_gameSys->insertSequence(makeRid(datNum, newSequenceId), _platWalkNodes[index]._id,
 				makeRid(platSequenceDatNum, platSequenceId), platId,
 				kSeqScale | kSeqSyncWait, 0, 75 * _platWalkNodes[index]._gridX1 - _plat->_gridX, 48 * _platWalkNodes[index]._gridY1 - _plat->_gridY);

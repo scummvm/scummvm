@@ -487,13 +487,12 @@ public:
 	int _gnapWalkDestX, _gnapWalkDestY;
 	int _gnapWalkDeltaX, _gnapWalkDeltaY, _gnapWalkDirX, _gnapWalkDirY, _gnapWalkDirXIncr, _gnapWalkDirYIncr;
 
-	int getGnapWalkSequenceId(int deltaX, int deltaY);
 	int getGnapWalkStopSequenceId(int deltaX, int deltaY);
 	Facing getGnapWalkFacing(int deltaX, int deltaY);
-	bool gridSub41F08B(int gridX, int gridY);
-	bool gridSub41F5FC(int gridX, int gridY, int index);
-	bool gridSub41FAD5(int gridX, int gridY, int index);
+	bool gnapFindPath1(int gridX, int gridY, int index);
+	bool gnapFindPath2(int gridX, int gridY, int index);
 	bool gnapFindPath3(int gridX, int gridY);
+	bool gnapFindPath4(int gridX, int gridY);
 	bool gnapWalkTo(Common::Point gridPos, int animationIndex, int sequenceId, int flags);
 	bool gnapWalkTo(int gridX, int gridY, int animationIndex, int sequenceId, int flags);
 	void gnapWalkStep();
@@ -504,11 +503,10 @@ public:
 	int _platWalkDestX, _platWalkDestY;
 	int _platWalkDeltaX, _platWalkDeltaY, _platWalkDirX, _platWalkDirY, _platWalkDirXIncr, _platWalkDirYIncr;
 
-	int getPlatypusWalkSequenceId(int deltaX, int deltaY);
-	bool gridSub423750(int gridX, int gridY);
-	bool gridSub423CC1(int gridX, int gridY, int index);
-	bool gridSub42419A(int gridX, int gridY, int index);
+	bool platFindPath1(int gridX, int gridY, int index);
+	bool platFindPath2(int gridX, int gridY, int index);
 	bool platFindPath3(int gridX, int gridY);
+	bool platFindPath4(int gridX, int gridY);
 	bool platypusWalkTo(int gridX, int gridY, int animationIndex, int sequenceId, int flags);
 	void platypusWalkStep();
 	void platypusMakeRoom();

@@ -598,6 +598,16 @@ void PlayerGnap::initPos(int gridX, int gridY, Facing facing) {
 		kSeqScale, 0, 75 * _pos.x - _gridX, 48 * _pos.y - _gridY);
 }
 
+int PlayerGnap::getWalkSequenceId(int deltaX, int deltaY) {
+	static const int walkSequenceIds[9] = {
+		0x7B2, 0x000, 0x7B4,
+		0x7AD, 0x000, 0x7AE,
+		0x7B1, 0x000, 0x7B3
+	};
+	// CHECKME This is a little weird
+	return walkSequenceIds[3 * deltaX + 3 + 1 + deltaY];
+}
+
 /************************************************************************************************/
 
 PlayerPlat::PlayerPlat(GnapEngine * vm) : Character(vm) {}
@@ -709,6 +719,16 @@ void PlayerPlat::initPos(int gridX, int gridY, Facing facing) {
 	_vm->_gameSys->insertSequence(makeRid(1, _sequenceId), 20 * _pos.y,
 		0, 0,
 		kSeqScale, 0, 75 * _pos.x - _gridX, 48 * _pos.y - _gridY);
+}
+
+int PlayerPlat::getWalkSequenceId(int deltaX, int deltaY) {
+	static const int walkSequenceIds[9] = {
+		0x7C5, 0x000, 0x7C8,
+		0x7C4, 0x000, 0x7C7,
+		0x7C3, 0x000, 0x7C6
+	};
+	// CHECKME This is a little weird
+	return walkSequenceIds[3 * deltaX + 3 + 1 + deltaY];
 }
 
 } // End of namespace Gnap
