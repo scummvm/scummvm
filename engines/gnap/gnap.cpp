@@ -965,52 +965,6 @@ void GnapEngine::doCallback(int callback) {
 	}
 }
 
-bool GnapEngine::gnapPlatypusAction(int gridX, int gridY, int platSequenceId, int callback) {
-	bool result = false;
-
-	if (_gnap->_actionStatus <= -1 && _plat->_actionStatus <= -1) {
-		_gnap->_actionStatus = 100;
-		Common::Point checkPt = _plat->_pos + Common::Point(gridX, gridY);
-		if (isPointBlocked(checkPt) && (_gnap->_pos != checkPt)) {
-			_plat->walkStep();
-			checkPt = _plat->_pos + Common::Point(gridX, gridY);
-		}
-
-		if (!isPointBlocked(checkPt) && (_gnap->_pos != checkPt)) {
-			_gnap->walkTo(checkPt, 0, 0x107B9, 1);
-			while (_gameSys->getAnimationStatus(0) != 2) {
-				updateMouseCursor();
-				doCallback(callback);
-				gameUpdateTick();
-			}
-			_gameSys->setAnimation(0, 0, 0);
-			if (_gnap->_pos == _plat->_pos + Common::Point(gridX, gridY)) {
-				_gameSys->setAnimation(platSequenceId, _plat->_id, 1);
-				_plat->playSequence(platSequenceId);
-				while (_gameSys->getAnimationStatus(1) != 2) {
-					updateMouseCursor();
-					doCallback(callback);
-					gameUpdateTick();
-				}
-				result = true;
-			}
-		}
-		_gnap->_actionStatus = -1;
-	}
-	return result;
-}
-
-void GnapEngine::gnapUseDisguiseOnPlatypus() {
-	_gameSys->setAnimation(0x10846, _gnap->_id, 0);
-	_gnap->playSequence(0x10846);
-	while (_gameSys->getAnimationStatus(0) != 2)
-		gameUpdateTick();
-	_newSceneNum = 47;
-	_isLeavingScene = true;
-	_sceneDone = true;
-	setFlag(kGFPlatypusDisguised);
-}
-
 ////////////////////////////////////////////////////////////////////////////////
 
 void GnapEngine::initGlobalSceneVars() {

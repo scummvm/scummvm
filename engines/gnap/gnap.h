@@ -476,8 +476,6 @@ public:
 
 	// Gnap
 	void doCallback(int callback);
-	bool gnapPlatypusAction(int gridX, int gridY, int platSequenceId, int callback);
-	void gnapUseDisguiseOnPlatypus();
 
 	// Scenes
 	int _toyUfoNextSequenceId, _toyUfoSequenceId;

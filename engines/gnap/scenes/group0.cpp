@@ -124,7 +124,7 @@ void Scene01::run() {
 		case kHS01Platypus:
 			if (_vm->_gnap->_actionStatus < 0 && _vm->isFlag(kGFPlatypus)) {
 				if (_vm->_grabCursorSpriteIndex == kItemDisguise) {
-					_vm->gnapUseDisguiseOnPlatypus();
+					_vm->_gnap->useDisguiseOnPlatypus();
 				} else if (_vm->_grabCursorSpriteIndex >= 0) {
 					_vm->_gnap->playImpossible(0, 0);
 				} else {
@@ -474,7 +474,7 @@ void Scene02::run() {
 		case kHS02Platypus:
 			if (_vm->_gnap->_actionStatus < 0 && _vm->isFlag(kGFPlatypus)) {
 				if (_vm->_grabCursorSpriteIndex == kItemDisguise) {
-					_vm->gnapUseDisguiseOnPlatypus();
+					_vm->_gnap->useDisguiseOnPlatypus();
 				} else if (_vm->_grabCursorSpriteIndex >= 0) {
 					_vm->_gnap->playImpossible(0, 0);
 				} else {
@@ -939,7 +939,7 @@ void Scene03::run() {
 		case kHS03Platypus:
 			if (_vm->_gnap->_actionStatus < 0 && _vm->isFlag(kGFPlatypus)) {
 				if (_vm->_grabCursorSpriteIndex == kItemDisguise) {
-					_vm->gnapUseDisguiseOnPlatypus();
+					_vm->_gnap->useDisguiseOnPlatypus();
 				} else if (_vm->_grabCursorSpriteIndex >= 0) {
 					_vm->_gnap->playImpossible(0, 0);
 				} else {
@@ -1443,7 +1443,7 @@ void Scene04::run() {
 		case kHS04Platypus:
 			if (_vm->_gnap->_actionStatus < 0 && _vm->isFlag(kGFPlatypus)) {
 				if (_vm->_grabCursorSpriteIndex == kItemDisguise) {
-					_vm->gnapUseDisguiseOnPlatypus();
+					_vm->_gnap->useDisguiseOnPlatypus();
 				} else if (_vm->_grabCursorSpriteIndex >= 0) {
 					_vm->_gnap->playImpossible(0, 0);
 				} else {
@@ -1918,7 +1918,7 @@ void Scene05::run() {
 		case kHS05Platypus:
 			if (_vm->_gnap->_actionStatus < 0 && _vm->isFlag(kGFPlatypus)) {
 				if (_vm->_grabCursorSpriteIndex == kItemDisguise) {
-					_vm->gnapUseDisguiseOnPlatypus();
+					_vm->_gnap->useDisguiseOnPlatypus();
 				} else if (_vm->_grabCursorSpriteIndex >= 0) {
 					_vm->_gnap->playImpossible(0, 0);
 				} else {
@@ -2342,7 +2342,7 @@ void Scene06::run() {
 		case kHS06Platypus:
 			if (_vm->_gnap->_actionStatus < 0) {
 				if (_vm->_grabCursorSpriteIndex == kItemDisguise) {
-					_vm->gnapUseDisguiseOnPlatypus();
+					_vm->_gnap->useDisguiseOnPlatypus();
 				} else if (_vm->_grabCursorSpriteIndex >= 0) {
 					_vm->_gnap->playImpossible(0, 0);
 				} else {

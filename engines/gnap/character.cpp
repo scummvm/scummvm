@@ -462,7 +462,7 @@ int PlayerGnap::getSequenceId(int kind, int gridX, int gridY) {
 
 void PlayerGnap::useJointOnPlatypus() {
 	_vm->setGrabCursorSprite(-1);
-	if (_vm->gnapPlatypusAction(1, 0, 0x107C1, 0)) {
+	if (doPlatypusAction(1, 0, 0x107C1, 0)) {
 		_actionStatus = 100;
 		_vm->_gameSys->setAnimation(0, 0, 1);
 		_vm->_gameSys->setAnimation(0x10876, _vm->_plat->_id, 0);
@@ -478,7 +478,7 @@ void PlayerGnap::useJointOnPlatypus() {
 		_vm->_plat->_sequenceId = 0x876;
 		_vm->_plat->_idleFacing = kDirNone;
 		playSequence(0x107B5);
-		_vm->_gnap->walkStep();
+		walkStep();
 		while (_vm->_gameSys->getAnimationStatus(0) != 2) {
 			_vm->updateMouseCursor();
 			_vm->gameUpdateTick();
@@ -491,7 +491,7 @@ void PlayerGnap::useJointOnPlatypus() {
 }
 
 void PlayerGnap::kissPlatypus(int callback) {
-	if (_vm->gnapPlatypusAction(-1, 0, 0x107D1, callback)) {
+	if (doPlatypusAction(-1, 0, 0x107D1, callback)) {
 		_actionStatus = 100;
 		_vm->_gameSys->setAnimation(0, 0, 1);
 		_vm->_gameSys->setAnimation(0x10847, _id, 0);
@@ -1100,6 +1100,52 @@ void PlayerGnap::playShowCurrItem(int gridX, int gridY, int gridLookX, int gridL
 	playShowItem(_vm->_grabCursorSpriteIndex, gridLookX, gridLookY);
 }
 
+bool PlayerGnap::doPlatypusAction(int gridX, int gridY, int platSequenceId, int callback) {
+	bool result = false;
+
+	if (_actionStatus <= -1 && _vm->_plat->_actionStatus <= -1) {
+		_actionStatus = 100;
+		Common::Point checkPt = _vm->_plat->_pos + Common::Point(gridX, gridY);
+		if (_vm->isPointBlocked(checkPt) && (_pos != checkPt)) {
+			_vm->_plat->walkStep();
+			checkPt = _vm->_plat->_pos + Common::Point(gridX, gridY);
+		}
+
+		if (!_vm->isPointBlocked(checkPt) && (_pos != checkPt)) {
+			walkTo(checkPt, 0, 0x107B9, 1);
+			while (_vm->_gameSys->getAnimationStatus(0) != 2) {
+				_vm->updateMouseCursor();
+				_vm->doCallback(callback);
+				_vm->gameUpdateTick();
+			}
+			_vm->_gameSys->setAnimation(0, 0, 0);
+			if (_pos == _vm->_plat->_pos + Common::Point(gridX, gridY)) {
+				_vm->_gameSys->setAnimation(platSequenceId, _vm->_plat->_id, 1);
+				_vm->_plat->playSequence(platSequenceId);
+				while (_vm->_gameSys->getAnimationStatus(1) != 2) {
+					_vm->updateMouseCursor();
+					_vm->doCallback(callback);
+					_vm->gameUpdateTick();
+				}
+				result = true;
+			}
+		}
+		_actionStatus = -1;
+	}
+	return result;
+}
+
+void PlayerGnap::useDisguiseOnPlatypus() {
+	_vm->_gameSys->setAnimation(0x10846, _id, 0);
+	playSequence(0x10846);
+	while (_vm->_gameSys->getAnimationStatus(0) != 2)
+		_vm->gameUpdateTick();
+	_vm->_newSceneNum = 47;
+	_vm->_isLeavingScene = true;
+	_vm->_sceneDone = true;
+	_vm->setFlag(kGFPlatypusDisguised);
+}
+
 /************************************************************************************************/
 
 PlayerPlat::PlayerPlat(GnapEngine * vm) : Character(vm) {}
@@ -1156,7 +1202,7 @@ void PlayerPlat::updateIdleSequence() {
 			}
 		} else {
 			_vm->_timers[0] = _vm->getRandom(75) + 75;
-			_vm->_plat->makeRoom();
+			makeRoom();
 		}
 	} else {
 		_vm->_timers[0] = 100;
@@ -1184,7 +1230,7 @@ void PlayerPlat::updateIdleSequence2() {
 			}
 		} else {
 			_vm->_timers[0] = _vm->getRandom(75) + 75;
-			_vm->_plat->makeRoom();
+			makeRoom();
 		}
 	} else {
 		_vm->_timers[0] = 100;

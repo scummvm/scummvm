@@ -89,6 +89,7 @@ public:
 	virtual bool walkTo(Common::Point gridPos, int animationIndex, int sequenceId, int flags);
 
 	void actionIdle(int sequenceId);
+	bool doPlatypusAction(int gridX, int gridY, int platSequenceId, int callback);
 	int getShowSequenceId(int index, int gridX, int gridY);
 	Facing getWalkFacing(int deltaX, int deltaY);
 	int getWalkStopSequenceId(int deltaX, int deltaY);
@@ -107,6 +108,7 @@ public:
 	void playShowItem(int itemIndex, int gridLookX, int gridLookY);
 	void playUseDevice(int gridX, int gridY);
 	void useDeviceOnPlatypus();
+	void useDisguiseOnPlatypus();
 	void useJointOnPlatypus();
 
 	int _brainPulseNum;
