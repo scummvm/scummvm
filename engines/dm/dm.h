@@ -34,6 +34,7 @@ public:
 private:
 	Console *_console;
 	Common::RandomSource *_rnd;
+public:
 	DisplayMan *_displayMan;
 	DungeonMan *_dungeonMan;
 };

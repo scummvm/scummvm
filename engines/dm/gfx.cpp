@@ -4,6 +4,7 @@
 #include "common/file.h"
 #include "graphics/palette.h"
 #include "common/endian.h"
+#include "dm/dungeonman.h"
 
 
 namespace DM {
@@ -37,6 +38,8 @@ struct Frame {
 
 Frame gCeilingFrame = {0, 223, 0, 28, 0, 0};
 Frame gFloorFrame = {0, 223, 66, 135, 0, 0};
+Frame gWallFrameD3L2 = {0,  15, 25, 73, 0, 0}; // @ FRAME G0711_s_Graphic558_Frame_Wall_D3L2
+Frame gWallFrameD3R2 = {208, 223, 25, 73, 0, 0}; // @ G0712_s_Graphic558_Frame_Wall_D3R2
 
 extern Viewport gDefultViewPort = {0, 0};
 extern Viewport gDungeonViewport = {0, 64};	// TODO: I guessed the numbers
@@ -263,6 +266,13 @@ void DisplayMan::drawDungeon(direction dir, uint16 posX, uint16 posY) {
 		drawWallSetBitmap(tmpBitmap, gCeilingFrame, width(gCeilingIndice));
 		drawWallSetBitmap(_bitmaps[gFloorIndice], gFloorFrame, width(gFloorIndice));
 	}
+
+	// TODO: CRUDE TEST CODE AT BEST
+	if (_vm->_dungeonMan->getRelSquareType(dir, 3, -2, posX, posY) == kWallSquareType)
+		drawWallSetBitmap(_bitmaps[77 + 12], gWallFrameD3L2, width(77 + 12));
+	// TODO CRUDE TEST CODE AT BEST
+
+
 
 
 	delete[] tmpBitmap;
