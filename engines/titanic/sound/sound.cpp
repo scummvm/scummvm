@@ -25,6 +25,11 @@
 
 namespace Titanic {
 
+int CSoundItem::fn1() {
+	// TODO
+	return 0;
+}
+
 CSound::CSound(CGameManager *owner) : _gameManager(owner) {
 }
 
@@ -121,6 +126,11 @@ void CSound::removeOldest() {
 			break;
 		}
 	}
+}
+
+CSoundItem *CSound::getTrueTalkSound(CDialogueFile *dialogueFile, int index) {
+	warning("TODO: CSound::getTrueTalkSound");
+	return nullptr;
 }
 
 } // End of namespace Titanic z

@@ -316,7 +316,7 @@ public:
 	/**
 	 * Play the movie specified in _resource
 	 */
-	void playMovie(uint startFrame, uint endFrame, int val3);
+	void playMovie(uint startFrame, uint endFrame, uint flags);
 
 	/**
 	 * Play an arbitrary clip

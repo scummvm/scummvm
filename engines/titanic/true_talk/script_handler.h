@@ -40,7 +40,7 @@ public:
 	/**
 	 * Set the character and room
 	 */
-	void setup(TTNamedScript *npcScript, TTRoomScript *roomScript, uint charId);
+	void setup(TTRoomScript *roomScript, TTNamedScript *npcScript, uint charId);
 
 	void processInput(TTNamedScript *npcScript, TTRoomScript *roomScript,
 		const TTString &line);

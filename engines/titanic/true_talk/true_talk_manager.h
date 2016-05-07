@@ -34,7 +34,27 @@ namespace Titanic {
 class CGameManager;
 class CTreeItem;
 class CViewItem;
+class CTrueTalkManager;
 class CTrueTalkNPC;
+
+class TTTalker : public ListItem {
+public:
+	CTrueTalkManager *_owner;
+	CTrueTalkNPC *_npc;
+	CString _string1;
+	int _field20;
+	int _field24;
+	int _field28;
+public:
+	TTTalker() : _owner(nullptr), _npc(nullptr),
+		_field20(0), _field24(0), _field28(0) {}
+	TTTalker(CTrueTalkManager *owner, CTrueTalkNPC *npc) :
+		_owner(owner), _npc(npc), _field20(0), _field24(0), _field28(0) {}
+
+};
+
+class TTTalkerList : public List<TTTalker> {
+};
 
 class CTrueTalkManager {
 private:
@@ -43,7 +63,9 @@ private:
 	TTScripts _scripts;
 	int _currentCharId;
 	CDialogueFile *_dialogueFile;
-	int _dialogueIndex;
+	int _dialogueId;
+	int _field18;
+	TTTalkerList _talkers;
 private:
 	/**
 	 * Loads the statics for the class
@@ -80,12 +102,22 @@ private:
 	 */
 	void loadAssets(CTrueTalkNPC *npc, int charId);
 
-	void setDialogue(TTNamedScript *npcScript, TTRoomScript *roomScript, CViewItem *view);
+	void setDialogue(CTrueTalkNPC *npc, TTRoomScript *roomScript, CViewItem *view);
 
 	/**
-	 * Read in a string from the resource
+	 * Read in text from the dialogue file
 	 */
 	CString readDialogueString();
+
+	/**
+	 * Read in the sound from the dialogue file
+	 */
+	int readDialogSound();
+
+	/**
+	 * Triggers animation for the NPC
+	 */
+	void triggerNPC(CTrueTalkNPC *npc);
 public:
 	static int _v1;
 	static int _v2;

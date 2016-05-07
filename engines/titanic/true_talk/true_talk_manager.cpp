@@ -44,7 +44,7 @@ CTrueTalkNPC *CTrueTalkManager::_currentNPC;
 
 CTrueTalkManager::CTrueTalkManager(CGameManager *owner) : 
 		_gameManager(owner), _scripts(&_titleEngine), _currentCharId(0),
-		_dialogueFile(nullptr), _dialogueIndex(0) {
+		_dialogueFile(nullptr), _dialogueId(0) {
 }
 
 CTrueTalkManager::~CTrueTalkManager() {
@@ -210,10 +210,10 @@ void CTrueTalkManager::start(CTrueTalkNPC *npc, uint id, CViewItem *view) {
 	loadAssets(npc, charId);
 
 	_currentNPC = npc;
-	_titleEngine._scriptHandler->setup(npcScript, roomScript, charId);
+	_titleEngine._scriptHandler->setup(roomScript, npcScript, charId);
 	_currentNPC = nullptr;
 
-	setDialogue(npcScript, roomScript, view);
+	setDialogue(npc, roomScript, view);
 }
 
 TTNamedScript *CTrueTalkManager::getTalker(const CString &name) const {
@@ -282,7 +282,7 @@ void CTrueTalkManager::loadAssets(CTrueTalkNPC *npc, int charId) {
 
 	if (!detailsMsg._filename.empty()) {
 		_dialogueFile = new CDialogueFile(detailsMsg._filename, 20);
-		_dialogueIndex = detailsMsg._numValue + 1;
+		_dialogueId = detailsMsg._numValue + 1;
 	}
 }
 
@@ -298,13 +298,25 @@ void CTrueTalkManager::processInput(CTrueTalkNPC *npc, CTextInputMsg *msg, CView
 		_currentNPC = nullptr;
 
 		loadAssets(npc, npcScript->charId());
-		setDialogue(npcScript, roomScript, view);
+		setDialogue(npc, roomScript, view);
 	}
 	
 	_currentNPC = nullptr;
 }
 
-void CTrueTalkManager::setDialogue(TTNamedScript *npcScript, TTRoomScript *roomScript, CViewItem *view) {
+void CTrueTalkManager::setDialogue(CTrueTalkNPC *npc, TTRoomScript *roomScript, CViewItem *view) {
+	// Get the dialog text
+	CString dialogStr = readDialogueString();
+	if (dialogStr.empty())
+		return;
+
+	TTTalker *talker = new TTTalker(this, npc);
+	_talkers.push_back(talker);
+
+	bool isParrot = npc->getName() == "parrot";
+
+
+
 	warning("TODO: CTrueTalkManager::setDialogue");
 }
 
@@ -320,7 +332,7 @@ CString CTrueTalkManager::readDialogueString() {
 
 		// Open a text entry from the dialogue file for access
 		DialogueResource *textRes = _dialogueFile->openTextEntry(
-			_titleEngine._indexes[idx] - _dialogueIndex);
+			_titleEngine._indexes[idx] - _dialogueId);
 		if (!textRes)
 			continue;
 
@@ -349,6 +361,49 @@ CString CTrueTalkManager::readDialogueString() {
 	}
 
 	return result;
+}
+
+int CTrueTalkManager::readDialogSound() {
+	_field18 = 0;
+
+	for (uint idx = 0; idx < _titleEngine._indexes.size(); ++idx) {
+		CSoundItem *soundItem = _gameManager->_sound.getTrueTalkSound(
+			_dialogueFile, _titleEngine._indexes[idx] - _dialogueId);
+		if (soundItem) {			
+			_field18 = soundItem->fn1();
+		}
+	}
+
+	return _field18;
+}
+
+void CTrueTalkManager::triggerNPC(CTrueTalkNPC *npc) {
+	CTrueTalkSelfQueueAnimSetMsg queueSetMsg;
+	if (queueSetMsg.execute(npc)) {
+		if (_field18 > 300) {
+			CTrueTalkQueueUpAnimSetMsg upMsg(_field18);
+			upMsg.execute(npc);
+		}
+	} else {
+		CTrueTalkGetAnimSetMsg getAnimMsg;
+		if (_field18 > 300) {
+			do {
+				getAnimMsg.execute(npc);
+				if (!getAnimMsg._endFrame)
+					break;
+
+				npc->playMovie(getAnimMsg._startFrame, getAnimMsg._endFrame, 0);
+				getAnimMsg._endFrame = 0;
+
+				uint numFrames = getAnimMsg._endFrame - getAnimMsg._startFrame;
+				int64 val = (numFrames * 1000) * 0x88888889;
+				uint diff = (val >> (32 + 5)) - 500;
+				_field18 += diff;
+
+				getAnimMsg._index++;
+			} while (_field18 > 0);
+		}
+	}
 }
 
 } // End of namespace Titanic

@@ -341,7 +341,7 @@ MESSAGE1(CTranslateObjectMsg, Point, delta, Point());
 MESSAGE3(CTransportMsg, CString, roomName, "", int, value1, 0, int, value2, 0);
 MESSAGE1(CTriggerAutoMusicPlayerMsg, int, value, 0);
 MESSAGE1(CTriggerNPCEvent, int, value, 0);
-MESSAGE4(CTrueTalkGetAnimSetMsg, int, value1, 0, int, value2, 0, int, value3, 0, int, value4, 0);
+MESSAGE4(CTrueTalkGetAnimSetMsg, int, value1, 0, uint, index, 0, uint, startFrame, 0, uint, endFrame, 0);
 MESSAGE2(CTrueTalkGetAssetDetailsMsg, CString, filename, "", int, numValue, 0);
 MESSAGE2(CTrueTalkGetStateValueMsg, int, value1, 0, int, value2, -1000);
 MESSAGE2(CTrueTalkNotifySpeechEndedMsg, int, value1, 0, int, value2, 0);

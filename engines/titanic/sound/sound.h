@@ -27,6 +27,7 @@
 #include "titanic/sound/sound_manager.h"
 #include "titanic/core/list.h"
 #include "titanic/core/view_item.h"
+#include "titanic/true_talk/dialogue_file.h"
 
 namespace Titanic {
 
@@ -45,6 +46,8 @@ public:
 		_field20(0), _field24(0), _field28(0) {}
 	CSoundItem(const CString &name) : ListItem(), _name(name), 
 		_soundHandle(0), _field1C(0), _field20(0), _field24(0), _field28(0) {}
+
+	int fn1();
 };
 
 class CSoundItemList : public List<CSoundItem> {
@@ -116,6 +119,8 @@ public:
 	void fn2(int handle);
 	void fn3(int handle, int val2, int val3);
 	void managerProc8(int v) { _soundManager.proc8(v); }
+
+	CSoundItem *getTrueTalkSound(CDialogueFile *dialogueFile, int index);
 };
 
 } // End of namespace Titanic
