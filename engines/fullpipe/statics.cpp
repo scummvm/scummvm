@@ -1576,6 +1576,9 @@ Movement::Movement(Movement *src, int *oldIdxs, int newSize, StaticANIObject *an
 	_m2x = 0;
 	_m2y = 0;
 
+	_counter = 0;
+	_counterMax = 0;
+
 	_field_78 = 0;
 	_framePosOffsets = 0;
 	_field_84 = 0;
