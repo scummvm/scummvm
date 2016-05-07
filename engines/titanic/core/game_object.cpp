@@ -707,17 +707,17 @@ void CGameObject::incState38() {
 	getGameManager()->_gameState.inc38();
 }
 
-void CGameObject::startTalking(const CString &npcName, int val2, int val3) {
+void CGameObject::startTalking(const CString &npcName, uint id, CViewItem *view) {
 	CTrueTalkNPC *npc = static_cast<CTrueTalkNPC *>(getRoot()->findByName(npcName));
-	startTalking(npc, val2, val3);
+	startTalking(npc, id, view);
 }
 
-void CGameObject::startTalking(CTrueTalkNPC *npc, int val2, int val3) {
+void CGameObject::startTalking(CTrueTalkNPC *npc, uint id, CViewItem *view) {
 	CGameManager *gameManager = getGameManager();
 	if (gameManager) {
 		CTrueTalkManager *talkManager = gameManager->getTalkManager();
 		if (talkManager)
-			talkManager->start(npc, val2, val3);
+			talkManager->start(npc, id, view);
 	}
 }
 

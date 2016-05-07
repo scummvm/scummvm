@@ -147,7 +147,7 @@ public:
 	/**
 	 * Start a TrueTalk conversation
 	 */
-	void start(CTrueTalkNPC *npc, int val2, int val3);
+	void start(CTrueTalkNPC *npc, uint id, CViewItem *view);
 
 	/**
 	 * Return a TrueTalk talker/script

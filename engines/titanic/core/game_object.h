@@ -220,12 +220,12 @@ protected:
 	/**
 	 * Start a conversation with the NPC
 	 */
-	void startTalking(const CString &name, int val2, int val3);
+	void startTalking(const CString &name, uint id, CViewItem *view = nullptr);
 
 	/**
 	 * Start a conversation with the NPC
 	 */
-	void startTalking(CTrueTalkNPC *npc, int val2, int val3);
+	void startTalking(CTrueTalkNPC *npc, uint id, CViewItem *view = nullptr);
 
 	/**
 	 * Load the surface

@@ -201,7 +201,7 @@ void CTrueTalkManager::update2() {
 	//warning("CTrueTalkManager::update2");
 }
 
-void CTrueTalkManager::start(CTrueTalkNPC *npc, int val2, int val3) {
+void CTrueTalkManager::start(CTrueTalkNPC *npc, uint id, CViewItem *view) {
 	TTNamedScript *npcScript = getNpcScript(npc);
 	TTRoomScript *roomScript = getRoomScript();
 	
@@ -210,10 +210,10 @@ void CTrueTalkManager::start(CTrueTalkNPC *npc, int val2, int val3) {
 	loadAssets(npc, charId);
 
 	_currentNPC = npc;
-	warning("TODO: CTrueTalkManager::start");
+	_titleEngine._scriptHandler->setup(npcScript, roomScript, charId);
 	_currentNPC = nullptr;
 
-	//TODO: More
+	setView(npcScript, roomScript, view);
 }
 
 TTNamedScript *CTrueTalkManager::getTalker(const CString &name) const {
