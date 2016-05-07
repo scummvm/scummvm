@@ -55,7 +55,7 @@ void CDialogueFile::clear() {
 
 DialogueFileCacheEntry *CDialogueFile::addToCache(int index) {
 	if (_entries.size() == 0 || index < 0 || index >= (int)_entries.size()
-			|| !_entries[index]._v1)
+			|| _cache.empty())
 		return nullptr;
 
 	// Scan cache for a free slot
@@ -70,7 +70,7 @@ DialogueFileCacheEntry *CDialogueFile::addToCache(int index) {
 
 	cacheEntry._active = true;
 	cacheEntry._offset = entry._offset;
-	cacheEntry.v3 = 0;
+	cacheEntry._bytesRead = 0;
 	cacheEntry._entryPtr = &entry;
 
 	// Figure out the size of the entry
@@ -80,7 +80,22 @@ DialogueFileCacheEntry *CDialogueFile::addToCache(int index) {
 		cacheEntry._size = _entries[index + 1]._offset - entry._offset;
 	}
 
+	// Return a pointer to the loaded entry
 	return &cacheEntry;
+}
+
+bool CDialogueFile::read(DialogueFileCacheEntry *cacheEntry, byte *buffer, size_t bytesToRead) {
+	// Sanity checks that a valid record is passed, and the size can be read
+	if (!cacheEntry || !cacheEntry->_active || !bytesToRead
+		|| (cacheEntry->_bytesRead + bytesToRead) > cacheEntry->_size)
+		return false;
+
+	// Move to the correct position in the file
+	_file.seek(cacheEntry->_offset + cacheEntry->_bytesRead);
+	bool result = _file.read(buffer, bytesToRead) == bytesToRead;
+	cacheEntry->_bytesRead += bytesToRead;
+
+	return result;
 }
 
 } // End of namespace Titanic

@@ -37,11 +37,16 @@ struct DialogueFileIndexEntry {
 
 struct DialogueFileCacheEntry {
 	bool _active;
-	uint _offset, v3, _size;
+	uint _offset, _bytesRead, _size;
 	DialogueFileIndexEntry *_entryPtr;
 
-	DialogueFileCacheEntry() : _active(false), _offset(0), _size(0),
-		v3(0), _entryPtr(nullptr) {}
+	DialogueFileCacheEntry() : _active(false), _offset(0),
+		_bytesRead(0), _size(0), _entryPtr(nullptr) {}
+
+	/**
+	 * Return the size of a cache entry
+	 */
+	int size() const { return _active ? _size : 0; }
 };
 
 class CDialogueFile {
@@ -49,6 +54,11 @@ private:
 	Common::File _file;
 	Common::Array<DialogueFileIndexEntry> _entries;
 	Common::Array<DialogueFileCacheEntry> _cache;
+private:
+	/**
+	 * Add a dialogue file entry to the active cache
+	 */
+	DialogueFileCacheEntry *addToCache(int index);
 public:
 	CDialogueFile(const CString &filename, uint count);
 	~CDialogueFile();
@@ -61,7 +71,21 @@ public:
 	/**
 	 * Add a dialogue file entry to the active cache
 	 */
-	DialogueFileCacheEntry *addToCache(int index);
+	DialogueFileCacheEntry *addToCacheDouble(int index) {
+		return addToCache(index * 2);
+	}
+
+	/**
+	 * Add a dialogue file entry to the active cache
+	 */
+	DialogueFileCacheEntry *addToCacheDouble1(int index) {
+		return addToCache(index * 2 + 1);
+	}
+
+	/**
+	 * Read data for a resource
+	 */
+	bool read(DialogueFileCacheEntry *cacheEntry, byte *buffer, size_t bytesToRead);
 };
 
 } // End of namespace Titanic
