@@ -551,7 +551,7 @@ void PlayerGnap::initBrainPulseRndValue() {
 void PlayerGnap::playSequence(int sequenceId) {
 	_vm->_timers[2] = _vm->getRandom(30) + 20;
 	_vm->_timers[3] = 300;
-	_vm->gnapIdle();
+	idle();
 	_vm->_gameSys->insertSequence(sequenceId, _id,
 		makeRid(_sequenceDatNum, _sequenceId), _id,
 		kSeqScale | kSeqSyncWait, 0, 75 * _pos.x - _gridX, 48 * _pos.y - _gridY);
@@ -693,7 +693,7 @@ bool PlayerGnap::walkTo(Common::Point gridPos, int animationIndex, int sequenceI
 	_walkDestY = CLIP(gridY, 0, _vm->_gridMaxY - 1);
 
 	if (animationIndex >= 0 && _walkDestX == _vm->_plat->_pos.x && _walkDestY == _vm->_plat->_pos.y)
-		_vm->platypusMakeRoom();
+		_vm->_plat->makeRoom();
 
 	if (findPath1(_pos.x, _pos.y, 0))
 		done = true;
@@ -707,7 +707,7 @@ bool PlayerGnap::walkTo(Common::Point gridPos, int animationIndex, int sequenceI
 	if (!done && findPath4(_pos.x, _pos.y))
 		done = true;
 
-	_vm->gnapIdle();
+	idle();
 
 	int gnapSequenceId = _sequenceId;
 	int gnapId = _id;
@@ -765,7 +765,7 @@ bool PlayerGnap::walkTo(Common::Point gridPos, int animationIndex, int sequenceI
 		if (_walkNodesCount > 0) {
 			_sequenceId = gnapSequenceId;
 			_id = gnapId;
-			_idleFacing = _vm->getGnapWalkFacing(_walkNodes[_walkNodesCount - 1]._deltaX, _walkNodes[_walkNodesCount - 1]._deltaY);
+			_idleFacing = getWalkFacing(_walkNodes[_walkNodesCount - 1]._deltaX, _walkNodes[_walkNodesCount - 1]._deltaY);
 			_sequenceDatNum = datNum;
 			if (animationIndex >= 0)
 				_vm->_gameSys->setAnimation(makeRid(_sequenceDatNum, _sequenceId), _id, animationIndex);
@@ -794,8 +794,8 @@ bool PlayerGnap::walkTo(Common::Point gridPos, int animationIndex, int sequenceI
 			}
 		} else {
 			if (_walkNodesCount > 0) {
-				_sequenceId = _vm->getGnapWalkStopSequenceId(_walkNodes[_walkNodesCount - 1]._deltaX, _walkNodes[_walkNodesCount - 1]._deltaY);
-				_idleFacing = _vm->getGnapWalkFacing(_walkNodes[_walkNodesCount - 1]._deltaX, _walkNodes[_walkNodesCount - 1]._deltaY);
+				_sequenceId = getWalkStopSequenceId(_walkNodes[_walkNodesCount - 1]._deltaX, _walkNodes[_walkNodesCount - 1]._deltaY);
+				_idleFacing = getWalkFacing(_walkNodes[_walkNodesCount - 1]._deltaX, _walkNodes[_walkNodesCount - 1]._deltaY);
 			} else if (gridX >= 0 || gridY >= 0) {
 				switch (_idleFacing) {
 				case kDirBottomRight:
@@ -819,8 +819,8 @@ bool PlayerGnap::walkTo(Common::Point gridPos, int animationIndex, int sequenceI
 					++v10;
 				if (_vm->_leftClickMouseY == _vm->_gridMinY + 48 * _pos.y)
 					v11 = 1;
-				_sequenceId = _vm->getGnapWalkStopSequenceId(v10 / abs(v10), v11 / abs(v11));
-				_idleFacing = _vm->getGnapWalkFacing(v10 / abs(v10), v11 / abs(v11));
+				_sequenceId = getWalkStopSequenceId(v10 / abs(v10), v11 / abs(v11));
+				_idleFacing = getWalkFacing(v10 / abs(v10), v11 / abs(v11));
 			}
 			_sequenceDatNum = datNum;
 		}
@@ -846,6 +846,211 @@ bool PlayerGnap::walkTo(Common::Point gridPos, int animationIndex, int sequenceI
 	_pos = Common::Point(_walkDestX, _walkDestY);
 
 	return done;
+}
+
+int PlayerGnap::getShowSequenceId(int index, int gridX, int gridY) {
+	int sequenceId;
+	Facing facing = _idleFacing;
+
+	if (gridY > 0 && gridX > 0) {
+		if (_pos.y > gridY) {
+			if (_pos.x > gridX)
+				_idleFacing = kDirUpLeft;
+			else
+				_idleFacing = kDirUpRight;
+		} else {
+			if (_pos.x > gridX)
+				_idleFacing = kDirUpLeft;
+			else
+				_idleFacing = kDirUpRight;
+		}
+	} else if (_idleFacing != kDirBottomRight && _idleFacing != kDirUpRight) {
+		_idleFacing = kDirUpLeft;
+	} else {
+		_idleFacing = kDirUpRight;
+	}
+
+	switch (index) {
+	case 0:
+		if (_idleFacing == kDirUpRight)
+			sequenceId = 0x8A0;
+		else
+			sequenceId = 0x8A1;
+		break;
+	case 1:
+		if (_idleFacing == kDirUpRight)
+			sequenceId = 0x880;
+		else
+			sequenceId = 0x895;
+		break;
+	case 2:
+		if (_idleFacing == kDirUpRight)
+			sequenceId = 0x884;
+		else
+			sequenceId = 0x899;
+		break;
+		//Skip 3
+	case 4:
+		if (_idleFacing == kDirUpRight)
+			sequenceId = 0x881;
+		else
+			sequenceId = 0x896;
+		break;
+	case 5:
+		if (_idleFacing == kDirUpRight)
+			sequenceId = 0x883;
+		else
+			sequenceId = 0x898;
+		break;
+	case 6:
+		if (_idleFacing == kDirUpRight)
+			sequenceId = 0x87E;
+		else
+			sequenceId = 0x893;
+		break;
+	case 7:
+		if (_idleFacing == kDirUpRight)
+			sequenceId = 0x848;
+		else
+			sequenceId = 0x890;
+		break;
+	case 8:
+		if (_idleFacing == kDirUpRight)
+			sequenceId = 0x87D;
+		else
+			sequenceId = 0x892;
+		break;
+	case 9:
+		if (_idleFacing == kDirUpRight)
+			sequenceId = 0x882;
+		else
+			sequenceId = 0x897;
+		break;
+	case 10:
+		if (_idleFacing == kDirUpRight)
+			sequenceId = 0x87C;
+		else
+			sequenceId = 0x891;
+		break;
+	case 11:
+		if (_idleFacing == kDirUpRight)
+			sequenceId = 0x87C;
+		else
+			sequenceId = 0x891;
+		break;
+	case 12:
+		if (_idleFacing == kDirUpRight)
+			sequenceId = 0x87D;
+		else
+			sequenceId = 0x892;
+		break;
+	case 13:
+		if (_idleFacing == kDirUpRight)
+			sequenceId = 0x888;
+		else
+			sequenceId = 0x89D;
+		break;
+	case 14:
+		if (_idleFacing == kDirUpRight)
+			sequenceId = 0x87F;
+		else
+			sequenceId = 0x894;
+		break;
+	case 15:
+		if (_idleFacing == kDirUpRight)
+			sequenceId = 0x87B;
+		else
+			sequenceId = 0x8A3;
+		break;
+	case 16:
+		if (_idleFacing == kDirUpRight)
+			sequenceId = 0x877;
+		else
+			sequenceId = 0x88C;
+		break;
+		//Skip 17
+	case 18:
+		sequenceId = 0x887;
+		break;
+	case 19:
+		if (_idleFacing == kDirUpRight)
+			sequenceId = 0x87A;
+		else
+			sequenceId = 0x88F;
+		break;
+	case 20:
+		if (_idleFacing == kDirUpRight)
+			sequenceId = 0x878;
+		else
+			sequenceId = 0x88D;
+		break;
+	case 21:
+		if (_idleFacing == kDirUpRight)
+			sequenceId = 0x879;
+		else
+			sequenceId = 0x88E;
+		break;
+	case 22:
+		if (_idleFacing == kDirUpRight)
+			sequenceId = 0x88A;
+		else
+			sequenceId = 0x89F;
+		break;
+	case 23:
+		if (_idleFacing == kDirUpRight)
+			sequenceId = 0x889;
+		else
+			sequenceId = 0x89E;
+		break;
+	case 24:
+		if (_idleFacing == kDirUpRight)
+			sequenceId = 0x886;
+		else
+			sequenceId = 0x89B;
+		break;
+	case 25:
+		if (_idleFacing == kDirUpRight)
+			sequenceId = 0x87A;
+		else
+			sequenceId = 0x88F;
+		break;
+		//Skip 26
+		//Skip 27
+		//Skip 28
+		//Skip 29
+	default:
+		_idleFacing = facing;
+		sequenceId = getSequenceId(gskImpossible, 0, 0);
+		break;
+	}
+
+	return sequenceId;
+}
+
+void PlayerGnap::idle() {
+	if (_sequenceDatNum == 1 &&
+			(_sequenceId == 0x7A6 || _sequenceId == 0x7AA ||
+			_sequenceId == 0x832 || _sequenceId == 0x841 ||
+			_sequenceId == 0x842 || _sequenceId == 0x8A2 ||
+			_sequenceId == 0x833 || _sequenceId == 0x834 ||
+			_sequenceId == 0x885 || _sequenceId == 0x7A8 ||
+			_sequenceId == 0x831 || _sequenceId == 0x89A)) {
+		_vm->_gameSys->insertSequence(getSequenceId(gskIdle, 0, 0) | 0x10000, _id,
+			makeRid(_sequenceDatNum, _sequenceId), _id,
+			kSeqSyncExists, 0, 75 * _pos.x - _gridX, 48 * _pos.y - _gridY);
+		_sequenceId = getSequenceId(gskIdle, 0, 0);
+		_sequenceDatNum = 1;
+	}
+}
+
+void PlayerGnap::actionIdle(int sequenceId) {
+	if (_sequenceId != -1 && ridToDatIndex(sequenceId) == _sequenceDatNum && ridToEntryIndex(sequenceId) == _sequenceId) {
+		_vm->_gameSys->insertSequence(getSequenceId(gskIdle, 0, 0) | 0x10000, _id,
+			makeRid(_sequenceDatNum, _sequenceId), _id,
+			kSeqSyncExists, 0, 75 * _pos.x - _gridX, 48 * _pos.y - _gridY);
+		_sequenceId = getSequenceId(gskIdle, 0, 0);
+		_sequenceDatNum = 1;
+	}
 }
 
 /************************************************************************************************/
@@ -904,7 +1109,7 @@ void PlayerPlat::updateIdleSequence() {
 			}
 		} else {
 			_vm->_timers[0] = _vm->getRandom(75) + 75;
-			_vm->platypusMakeRoom();
+			_vm->_plat->makeRoom();
 		}
 	} else {
 		_vm->_timers[0] = 100;
@@ -932,7 +1137,7 @@ void PlayerPlat::updateIdleSequence2() {
 			}
 		} else {
 			_vm->_timers[0] = _vm->getRandom(75) + 75;
-			_vm->platypusMakeRoom();
+			_vm->_plat->makeRoom();
 		}
 	} else {
 		_vm->_timers[0] = 100;

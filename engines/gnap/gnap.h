@@ -474,17 +474,7 @@ public:
 	void initSceneGrid(int gridMinX, int gridMinY, int gridMaxX, int gridMaxY);
 	bool testWalk(int animationIndex, int someStatus, int gridX1, int gridY1, int gridX2, int gridY2);
 
-	// Gnap walking
-	int getGnapWalkStopSequenceId(int deltaX, int deltaY);
-	Facing getGnapWalkFacing(int deltaX, int deltaY);
-
-	// Platypus walking
-	void platypusMakeRoom();
-
 	// Gnap
-	int getGnapShowSequenceId(int index, int gridX, int gridY);
-	void gnapIdle();
-	void gnapActionIdle(int sequenceId);
 	void playGnapImpossible(int gridX, int gridY);
 	void playGnapScratchingHead(int gridX, int gridY);
 	void playGnapMoan1(int gridX, int gridY);

@@ -131,7 +131,7 @@ void Scene10::run() {
 
 		case kHS10ExitBar:
 			_vm->_isLeavingScene = true;
-			_vm->gnapActionIdle(0x10C);
+			_vm->_gnap->actionIdle(0x10C);
 			_vm->_gnap->walkTo(Common::Point(0, 7), 0, 0x107AF, 1);
 			_vm->_gnap->_actionStatus = kAS10LeaveScene;
 			_vm->_plat->walkTo(Common::Point(0, 7), -1, 0x107CF, 1);
@@ -140,7 +140,7 @@ void Scene10::run() {
 
 		case kHS10ExitBackdoor:
 			_vm->_isLeavingScene = true;
-			_vm->gnapActionIdle(0x10C);
+			_vm->_gnap->actionIdle(0x10C);
 			_vm->_gnap->walkTo(Common::Point(2, 9), 0, 0x107AE, 1);
 			_vm->_gnap->_actionStatus = kAS10LeaveScene;
 			_vm->_plat->walkTo(Common::Point(3, 9), -1, 0x107C7, 1);
@@ -163,12 +163,12 @@ void Scene10::run() {
 					break;
 				case TALK_CURSOR:
 					_vm->_gnap->_idleFacing = kDirUpRight;
-					_vm->gnapActionIdle(0x10C);
+					_vm->_gnap->actionIdle(0x10C);
 					_vm->_gnap->walkTo(Common::Point(4, 8), 0, _vm->_gnap->getSequenceId(gskBrainPulsating, 0, 0) | 0x10000, 1);
 					_vm->_gnap->_actionStatus = kAS10AnnoyCook;
 					break;
 				case PLAT_CURSOR:
-					_vm->gnapActionIdle(0x10C);
+					_vm->_gnap->actionIdle(0x10C);
 					_vm->_gnap->useDeviceOnPlatypus();
 					_vm->_plat->walkTo(Common::Point(4, 6), -1, -1, 1);
 					_vm->_gnap->walkTo(Common::Point(4, 8), 0, 0x107BB, 1);
@@ -193,7 +193,7 @@ void Scene10::run() {
 					if (_vm->isFlag(kGFMudTaken))
 						_vm->playGnapMoan2(-1, -1);
 					else {
-						_vm->gnapActionIdle(0x10C);
+						_vm->_gnap->actionIdle(0x10C);
 						_vm->_gnap->walkTo(Common::Point(4, 8), 0, 0x107BB, 1);
 						_vm->_gnap->_actionStatus = kAS10AnnoyCook;
 					}
@@ -205,7 +205,7 @@ void Scene10::run() {
 					if (_vm->isFlag(kGFMudTaken))
 						_vm->playGnapMoan2(-1, -1);
 					else {
-						_vm->gnapActionIdle(0x10C);
+						_vm->_gnap->actionIdle(0x10C);
 						_vm->_gnap->useDeviceOnPlatypus();
 						_vm->_plat->walkTo(Common::Point(3, 7), -1, -1, 1);
 						_vm->_gnap->walkTo(Common::Point(4, 8), 0, 0x107BB, 1);
@@ -225,7 +225,7 @@ void Scene10::run() {
 					_vm->playGnapScratchingHead(7, 3);
 					break;
 				case GRAB_CURSOR:
-					_vm->gnapActionIdle(0x10C);
+					_vm->_gnap->actionIdle(0x10C);
 					_vm->_gnap->walkTo(Common::Point(4, 8), 0, 0x107BB, 1);
 					_vm->_gnap->_actionStatus = kAS10AnnoyCook;
 					break;
@@ -238,7 +238,7 @@ void Scene10::run() {
 					else {
 						_vm->invAdd(kItemTongs);
 						_vm->setFlag(kGFMudTaken);
-						_vm->gnapActionIdle(0x10C);
+						_vm->_gnap->actionIdle(0x10C);
 						_vm->_gnap->useDeviceOnPlatypus();
 						_vm->_plat->walkTo(Common::Point(7, 6), 1, 0x107D2, 1);
 						_vm->_plat->_actionStatus = kAS10PlatWithBox;
@@ -260,7 +260,7 @@ void Scene10::run() {
 					_vm->_gnap->playSequence(_vm->_gnap->getSequenceId(gskDeflect, 10, 5) | 0x10000);
 					break;
 				case GRAB_CURSOR:
-					_vm->gnapActionIdle(0x10C);
+					_vm->_gnap->actionIdle(0x10C);
 					_vm->_gnap->walkTo(Common::Point(9, 6), 0, 0x107BB, 1);
 					gameSys.insertSequence(0x10E, 120, makeRid(_vm->_gnap->_sequenceDatNum, _vm->_gnap->_sequenceId), _vm->_gnap->_id, kSeqSyncWait, 0, 0, 0);
 					_vm->_gnap->_sequenceId = 0x10E;
@@ -282,7 +282,7 @@ void Scene10::run() {
 		case kHS10WalkArea2:
 		case kHS10WalkArea3:
 		case kHS10WalkArea4:
-			_vm->gnapActionIdle(0x10C);
+			_vm->_gnap->actionIdle(0x10C);
 			_vm->_gnap->walkTo(Common::Point(-1, -1), -1, -1, 1);
 			break;
 
@@ -295,7 +295,7 @@ void Scene10::run() {
 
 		default:
 			if (_vm->_mouseClickState._left) {
-				_vm->gnapActionIdle(0x10C);
+				_vm->_gnap->actionIdle(0x10C);
 				_vm->_gnap->walkTo(Common::Point(-1, -1), -1, -1, 1);
 				_vm->_mouseClickState._left = false;
 			}
@@ -3185,9 +3185,9 @@ void Scene18::gnapCarryGarbageCanTo(int gridX) {
 		if (_vm->_gnap->_pos.y == _vm->_plat->_pos.y) {
 			if (nextGridX >= _vm->_gnap->_pos.x) {
 				if (nextGridX >= _vm->_plat->_pos.x && _vm->_gnap->_pos.x <= _vm->_plat->_pos.x)
-					_vm->platypusMakeRoom();
+					_vm->_plat->makeRoom();
 			} else if (nextGridX <= _vm->_plat->_pos.x && _vm->_gnap->_pos.x >= _vm->_plat->_pos.x) {
-				_vm->platypusMakeRoom();
+				_vm->_plat->makeRoom();
 			}
 		}
 		gnapSeqId = _vm->_gnap->_sequenceId;

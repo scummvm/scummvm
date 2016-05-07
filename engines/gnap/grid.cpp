@@ -38,24 +38,24 @@ void GnapEngine::initSceneGrid(int gridMinX, int gridMinY, int gridMaxX, int gri
 	_plat->_gridY = 347 - gridMinY;
 }
 
-int GnapEngine::getGnapWalkStopSequenceId(int deltaX, int deltaY) {
-	static const int _gnapWalkStopSequenceIds[9] = {
+int PlayerGnap::getWalkStopSequenceId(int deltaX, int deltaY) {
+	static const int gnapWalkStopSequenceIds[9] = {
 		0x7BC, 0x7BA, 0x7BA,
 		0x7BC, 0x000, 0x7BA,
 		0x7BB, 0x7B9, 0x7B9
 	};
 	// CHECKME This is a little weird
-	return _gnapWalkStopSequenceIds[3 * deltaX + 3 + 1 + deltaY];
+	return gnapWalkStopSequenceIds[3 * deltaX + 3 + 1 + deltaY];
 }
 
-Facing GnapEngine::getGnapWalkFacing(int deltaX, int deltaY) {
-	static const Facing _gnapWalkFacings[9] = {
+Facing PlayerGnap::getWalkFacing(int deltaX, int deltaY) {
+	static const Facing gnapWalkFacings[9] = {
 		kDirUpLeft, kDirBottomLeft, kDirBottomLeft,
 		kDirUpLeft, kDirNone, kDirBottomLeft,
 		kDirUpRight, kDirBottomRight, kDirBottomRight
 	};
 	// CHECKME This is a little weird
-	return _gnapWalkFacings[3 * deltaX + 3 + 1 + deltaY];
+	return gnapWalkFacings[3 * deltaX + 3 + 1 + deltaY];
 }
 
 bool GnapEngine::isPointBlocked(Common::Point gridPos) {
@@ -981,14 +981,14 @@ bool PlayerPlat::findPath4(int gridX, int gridY) {
 	return result;
 }
 
-void GnapEngine::platypusMakeRoom() {
+void PlayerPlat::makeRoom() {
 	int rndGridX, rndGridY;
 	do {
-		rndGridY = getRandom(_gridMaxY);
-		rndGridX = getRandom(_gridMaxX);
-	} while (ABS(rndGridX - _plat->_pos.x) > 4 || ABS(rndGridY - _plat->_pos.y) > 3 ||
-		isPointBlocked(rndGridX, rndGridY));
-	_plat->walkTo(Common::Point(rndGridX, rndGridY), -1, -1, 1);
+		rndGridY = _vm->getRandom(_vm->_gridMaxY);
+		rndGridX = _vm->getRandom(_vm->_gridMaxX);
+	} while (ABS(rndGridX - _pos.x) > 4 || ABS(rndGridY - _pos.y) > 3 ||
+		_vm->isPointBlocked(rndGridX, rndGridY));
+	walkTo(Common::Point(rndGridX, rndGridY), -1, -1, 1);
 }
 
 } // End of namespace Gnap

@@ -88,6 +88,11 @@ public:
 	virtual int getWalkSequenceId(int deltaX, int deltaY);
 	virtual bool walkTo(Common::Point gridPos, int animationIndex, int sequenceId, int flags);
 
+	void actionIdle(int sequenceId);
+	int getShowSequenceId(int index, int gridX, int gridY);
+	Facing getWalkFacing(int deltaX, int deltaY);
+	int getWalkStopSequenceId(int deltaX, int deltaY);
+	void idle();
 	void initBrainPulseRndValue();
 	void kissPlatypus(int callback);
 	void useDeviceOnPlatypus();
@@ -113,6 +118,8 @@ public:
 	virtual void updateIdleSequence2();
 	virtual int getWalkSequenceId(int deltaX, int deltaY);
 	virtual bool walkTo(Common::Point gridPos, int animationIndex, int sequenceId, int flags);
+
+	void makeRoom();
 
 private:
 	bool findPath1(int gridX, int gridY, int index);

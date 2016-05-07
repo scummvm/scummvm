@@ -2833,7 +2833,7 @@ void Scene07::run() {
 					}
 				} else {
 					_vm->_timers[0] = _vm->getRandom(75) + 75;
-					_vm->platypusMakeRoom();
+					_vm->_plat->makeRoom();
 				}
 			} else {
 				_vm->_timers[0] = 100;
@@ -2995,7 +2995,7 @@ void Scene08::run() {
 						_vm->playGnapScratchingHead(_vm->_plat->_pos.x, _vm->_plat->_pos.y);
 					break;
 				case GRAB_CURSOR:
-					_vm->gnapActionIdle(0x14D);
+					_vm->_gnap->actionIdle(0x14D);
 					_vm->_gnap->kissPlatypus(8);
 					break;
 				case TALK_CURSOR:
@@ -3010,7 +3010,7 @@ void Scene08::run() {
 
 		case kHS08ExitBackdoor:
 			_vm->_isLeavingScene = true;
-			_vm->gnapActionIdle(0x14D);
+			_vm->_gnap->actionIdle(0x14D);
 			_vm->_gnap->walkTo(Common::Point(0, 6), 0, 0x107AF, 1);
 			_vm->_gnap->_actionStatus = kAS08LeaveScene;
 			_vm->_plat->walkTo(Common::Point(0, 7), 1, 0x107CF, 1);
@@ -3019,7 +3019,7 @@ void Scene08::run() {
 
 		case kHS08ExitCrash:
 			_vm->_isLeavingScene = true;
-			_vm->gnapActionIdle(0x14D);
+			_vm->_gnap->actionIdle(0x14D);
 			_vm->_gnap->walkTo(Common::Point(3, 9), 0, 0x107AE, 1);
 			_vm->_gnap->_actionStatus = kAS08LeaveScene;
 			_vm->_plat->walkTo(Common::Point(4, 9), 1, 0x107C1, 1);
@@ -3032,7 +3032,7 @@ void Scene08::run() {
 			} else {
 				switch (_vm->_verbCursor) {
 				case LOOK_CURSOR:
-					_vm->gnapActionIdle(0x14D);
+					_vm->_gnap->actionIdle(0x14D);
 					_vm->_gnap->walkTo(Common::Point(6, 6), 0, 0x107BB, 1);
 					_vm->_gnap->_actionStatus = kAS08LookMan;
 					_vm->_gnap->_idleFacing = kDirUpRight;
@@ -3042,12 +3042,12 @@ void Scene08::run() {
 					break;
 				case TALK_CURSOR:
 					_vm->_gnap->_idleFacing = kDirUpLeft;
-					_vm->gnapActionIdle(0x14D);
+					_vm->_gnap->actionIdle(0x14D);
 					_vm->_gnap->walkTo(Common::Point(8, 6), 0, _vm->_gnap->getSequenceId(gskBrainPulsating, 0, 0) | 0x10000, 1);
 					_vm->_gnap->_actionStatus = kAS08TalkMan;
 					break;
 				case PLAT_CURSOR:
-					_vm->gnapActionIdle(0x14D);
+					_vm->_gnap->actionIdle(0x14D);
 					_vm->_gnap->useDeviceOnPlatypus();
 					_vm->_plat->walkTo(Common::Point(6, 6), 1, 0x107C2, 1);
 					_vm->_plat->_actionStatus = kAS08PlatWithMan;
@@ -3077,13 +3077,13 @@ void Scene08::run() {
 					break;
 				case TALK_CURSOR:
 					_vm->_gnap->_idleFacing = kDirUpRight;
-					_vm->gnapActionIdle(0x14D);
+					_vm->_gnap->actionIdle(0x14D);
 					_vm->_gnap->walkTo(Common::Point(4, 7), 0, _vm->_gnap->getSequenceId(gskBrainPulsating, 0, 0) | 0x10000, 1);
 					_vm->_gnap->_actionStatus = kAS08TalkDog;
 					break;
 				case PLAT_CURSOR:
 					_vm->setFlag(kGFSceneFlag1);
-					_vm->gnapActionIdle(0x14D);
+					_vm->_gnap->actionIdle(0x14D);
 					_vm->_gnap->useDeviceOnPlatypus();
 					_vm->_plat->walkTo(Common::Point(3, 7), 1, 0x107C2, 1);
 					_vm->_plat->_actionStatus = kAS08PlatWithDog;
@@ -3106,7 +3106,7 @@ void Scene08::run() {
 					if (_currDogSequenceId == 0x135) {
 						_vm->playGnapScratchingHead(6, 7);
 					} else {
-						_vm->gnapActionIdle(0x14D);
+						_vm->_gnap->actionIdle(0x14D);
 						_vm->playGnapPullOutDevice(6, 7);
 						_vm->playGnapUseDevice(0, 0);
 						_nextDogSequenceId = 0x149;
@@ -3132,7 +3132,7 @@ void Scene08::run() {
 					if (_currDogSequenceId == 0x135) {
 						_vm->playGnapScratchingHead(3, 6);
 					} else {
-						_vm->gnapActionIdle(0x14D);
+						_vm->_gnap->actionIdle(0x14D);
 						_vm->playGnapPullOutDevice(3, 6);
 						_vm->playGnapUseDevice(0, 0);
 						_nextDogSequenceId = 0x14A;
@@ -3158,7 +3158,7 @@ void Scene08::run() {
 					if (_currDogSequenceId == 0x135) {
 						_vm->playGnapScratchingHead(7, 6);
 					} else {
-						_vm->gnapActionIdle(0x14D);
+						_vm->_gnap->actionIdle(0x14D);
 						_vm->playGnapPullOutDevice(7, 6);
 						_vm->playGnapUseDevice(0, 0);
 						_nextDogSequenceId = 0x14B;
@@ -3174,13 +3174,13 @@ void Scene08::run() {
 
 		case kHS08WalkArea1:
 		case kHS08WalkArea2:
-			_vm->gnapActionIdle(0x14D);
+			_vm->_gnap->actionIdle(0x14D);
 			_vm->_gnap->walkTo(Common::Point(-1, 6), -1, -1, 1);
 			break;
 
 		default:
 			if (_vm->_mouseClickState._left) {
-				_vm->gnapActionIdle(0x14D);
+				_vm->_gnap->actionIdle(0x14D);
 				_vm->_gnap->walkTo(Common::Point(-1, -1), -1, -1, 1);
 				_vm->_mouseClickState._left = false;
 			}
