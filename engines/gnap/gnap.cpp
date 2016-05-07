@@ -1200,7 +1200,7 @@ bool GnapEngine::testWalk(int animationIndex, int someStatus, int gridX1, int gr
 		_gnap->_actionStatus = -1;
 		_plat->_actionStatus = -1;
 		gnapWalkTo(Common::Point(gridX1, gridY1), -1, -1, 1);
-		platypusWalkTo(gridX2, gridY2, -1, -1, 1);
+		platypusWalkTo(Common::Point(gridX2, gridY2), -1, -1, 1);
 		_mouseClickState._left = false;
 		return true;
 	}

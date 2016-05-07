@@ -276,14 +276,14 @@ void Scene41::run() {
 		_vm->_gnap->initPos(-1, 8, kDirUpRight);
 		_vm->_plat->initPos(-2, 8, kDirUpLeft);
 		_vm->endSceneInit();
-		_vm->platypusWalkTo(1, 8, -1, 0x107C2, 1);
+		_vm->platypusWalkTo(Common::Point(1, 8), -1, 0x107C2, 1);
 		_vm->gnapWalkTo(Common::Point(2, 8), -1, 0x107B9, 1);
 	} else if (_vm->_prevSceneNum == 42) {
 		_vm->_gnap->initPos(11, 8, kDirUpRight);
 		_vm->_plat->initPos(11, 9, kDirUpLeft);
 		_vm->endSceneInit();
 		_vm->gnapWalkTo(Common::Point(8, 8), -1, 0x107BA, 1);
-		_vm->platypusWalkTo(9, 8, -1, 0x107D2, 1);
+		_vm->platypusWalkTo(Common::Point(9, 8), -1, 0x107D2, 1);
 	} else {
 		_vm->_gnap->initPos(5, 8, kDirBottomRight);
 		_vm->_plat->initPos(6, 8, kDirBottomLeft);
@@ -383,7 +383,7 @@ void Scene41::run() {
 				_vm->_isLeavingScene = true;
 				_vm->gnapWalkTo(Common::Point(_vm->_hotspotsWalkPos[kHS41Exit].x, -1), 0, 0x107AF, 1);
 				_vm->_gnap->_actionStatus = kAS41LeaveScene;
-				_vm->platypusWalkTo(_vm->_hotspotsWalkPos[kHS41Exit].x, -1, -1, 0x107CF, 1);
+				_vm->platypusWalkTo(Common::Point(_vm->_hotspotsWalkPos[kHS41Exit].x, -1), -1, 0x107CF, 1);
 				_vm->_newSceneNum = 45;
 				break;
 
@@ -391,7 +391,7 @@ void Scene41::run() {
 				_vm->_isLeavingScene = true;
 				_vm->gnapWalkTo(Common::Point(_vm->_hotspotsWalkPos[kHS41ExitBBQ].x, -1), 0, 0x107AB, 1);
 				_vm->_gnap->_actionStatus = kAS41LeaveScene;
-				_vm->platypusWalkTo(_vm->_hotspotsWalkPos[kHS41ExitBBQ].x, -1, -1, 0x107CD, 1);
+				_vm->platypusWalkTo(Common::Point(_vm->_hotspotsWalkPos[kHS41ExitBBQ].x, -1), -1, 0x107CD, 1);
 				_vm->_newSceneNum = 42;
 				break;
 
@@ -789,19 +789,19 @@ void Scene42::run() {
 		_vm->_plat->initPos(-1, 9, kDirUpLeft);
 		_vm->endSceneInit();
 		_vm->gnapWalkTo(Common::Point(2, 8), -1, 0x107B9, 1);
-		_vm->platypusWalkTo(1, 8, -1, 0x107C2, 1);
+		_vm->platypusWalkTo(Common::Point(1, 8), -1, 0x107C2, 1);
 	} else if (_vm->_prevSceneNum == 43) {
 		_vm->_gnap->initPos(11, 8, kDirUpRight);
 		_vm->_plat->initPos(11, 9, kDirUpLeft);
 		_vm->endSceneInit();
 		_vm->gnapWalkTo(Common::Point(8, 8), -1, 0x107BA, 1);
-		_vm->platypusWalkTo(9, 8, -1, 0x107D2, 1);
+		_vm->platypusWalkTo(Common::Point(9, 8), -1, 0x107D2, 1);
 	} else {
 		_vm->_gnap->initPos(5, 11, kDirUpRight);
 		_vm->_plat->initPos(6, 11, kDirUpLeft);
 		_vm->endSceneInit();
 		_vm->gnapWalkTo(Common::Point(5, 8), -1, 0x107BA, 1);
-		_vm->platypusWalkTo(6, 8, -1, 0x107C2, 1);
+		_vm->platypusWalkTo(Common::Point(6, 8), -1, 0x107C2, 1);
 	}
 
 	while (!_vm->_sceneDone) {
@@ -888,7 +888,7 @@ void Scene42::run() {
 				_vm->_isLeavingScene = true;
 				_vm->gnapWalkTo(Common::Point(_vm->_gnap->_pos.x, _vm->_hotspotsWalkPos[kHS42ExitUfoParty].y), 0, 0x107AE, 1);
 				_vm->_gnap->_actionStatus = kAS42LeaveScene;
-				_vm->platypusWalkTo(_vm->_plat->_pos.x, _vm->_hotspotsWalkPos[kHS42ExitUfoParty].y, -1, 0x107C7, 1);
+				_vm->platypusWalkTo(Common::Point(_vm->_plat->_pos.x, _vm->_hotspotsWalkPos[kHS42ExitUfoParty].y), -1, 0x107C7, 1);
 				_vm->_newSceneNum = 40;
 				break;
 
@@ -896,7 +896,7 @@ void Scene42::run() {
 				_vm->_isLeavingScene = true;
 				_vm->gnapWalkTo(Common::Point(_vm->_hotspotsWalkPos[kHS42ExitToyStand].x, _vm->_gnap->_pos.y), 0, 0x107AF, 1);
 				_vm->_gnap->_actionStatus = kAS42LeaveScene;
-				_vm->platypusWalkTo(_vm->_hotspotsWalkPos[kHS42ExitToyStand].x, _vm->_hotspotsWalkPos[kHS42ExitToyStand].y, -1, 0x107CF, 1);
+				_vm->platypusWalkTo(_vm->_hotspotsWalkPos[kHS42ExitToyStand], -1, 0x107CF, 1);
 				_vm->_newSceneNum = 41;
 				break;
 
@@ -904,7 +904,7 @@ void Scene42::run() {
 				_vm->_isLeavingScene = true;
 				_vm->gnapWalkTo(Common::Point(_vm->_hotspotsWalkPos[kHS42ExitUfo].x, _vm->_gnap->_pos.y), 0, 0x107AB, 1);
 				_vm->_gnap->_actionStatus = kAS42LeaveScene;
-				_vm->platypusWalkTo(_vm->_hotspotsWalkPos[kHS42ExitUfo].x, _vm->_hotspotsWalkPos[kHS42ExitUfo].y, -1, 0x107CD, 1);
+				_vm->platypusWalkTo(_vm->_hotspotsWalkPos[kHS42ExitUfo], -1, 0x107CD, 1);
 				_vm->_newSceneNum = 43;
 				break;
 
@@ -913,7 +913,7 @@ void Scene42::run() {
 					_vm->gnapWalkTo(_vm->_hotspotsWalkPos[kHS42BBQVendor], 0, 0x107BB, 1);
 					_vm->_gnap->_actionStatus = kAS42UseQuarterWithBBQVendor;
 					if (_vm->_plat->_pos.y < 9)
-						_vm->platypusWalkTo(_vm->_plat->_pos.x, 9, -1, -1, 1);
+						_vm->platypusWalkTo(Common::Point(_vm->_plat->_pos.x, 9), -1, -1, 1);
 				} else if (_vm->_grabCursorSpriteIndex >= 0) {
 					_vm->playGnapShowCurrItem(_vm->_hotspotsWalkPos[kHS42BBQVendor].x, _vm->_hotspotsWalkPos[kHS42BBQVendor].y, _vm->_hotspotsWalkPos[kHS42BBQVendor].x + 1, 0);
 				} else {
@@ -1231,27 +1231,27 @@ void Scene43::run() {
 			_vm->_plat->initPos(-1, 9, kDirUpLeft);
 			_vm->endSceneInit();
 			_vm->gnapWalkTo(Common::Point(2, 8), -1, 0x107B9, 1);
-			_vm->platypusWalkTo(1, 8, -1, 0x107C2, 1);
+			_vm->platypusWalkTo(Common::Point(1, 8), -1, 0x107C2, 1);
 			break;
 		case 44:
 			_vm->_gnap->initPos(11, 8, kDirUpRight);
 			_vm->_plat->initPos(11, 9, kDirUpLeft);
 			_vm->endSceneInit();
 			_vm->gnapWalkTo(Common::Point(8, 8), -1, 0x107BA, 1);
-			_vm->platypusWalkTo(9, 8, -1, 0x107D2, 1);
+			_vm->platypusWalkTo(Common::Point(9, 8), -1, 0x107D2, 1);
 			break;
 		case 54:
 			_vm->_gnap->initPos(4, 7, kDirBottomLeft);
 			_vm->_plat->initPos(11, 8, kDirUpLeft);
 			_vm->endSceneInit();
-			_vm->platypusWalkTo(9, 8, -1, 0x107D2, 1);
+			_vm->platypusWalkTo(Common::Point(9, 8), -1, 0x107D2, 1);
 			break;
 		default:
 			_vm->_gnap->initPos(5, 11, kDirUpRight);
 			_vm->_plat->initPos(6, 11, kDirUpLeft);
 			_vm->endSceneInit();
 			_vm->gnapWalkTo(Common::Point(5, 8), -1, 0x107BA, 1);
-			_vm->platypusWalkTo(6, 8, -1, 0x107C2, 1);
+			_vm->platypusWalkTo(Common::Point(6, 8), -1, 0x107C2, 1);
 			break;
 		}
 	}
@@ -1346,7 +1346,7 @@ void Scene43::run() {
 				_vm->_isLeavingScene = true;
 				_vm->gnapWalkTo(_vm->_hotspotsWalkPos[kHS43ExitUfoParty], 0, 0x107AE, 1);
 				_vm->_gnap->_actionStatus = 0;
-				_vm->platypusWalkTo(_vm->_hotspotsWalkPos[kHS43ExitUfoParty].x, _vm->_hotspotsWalkPos[kHS43ExitUfoParty].y, -1, 0x107C7, 1);
+				_vm->platypusWalkTo(_vm->_hotspotsWalkPos[kHS43ExitUfoParty], -1, 0x107C7, 1);
 				_vm->_newSceneNum = 40;
 				break;
 
@@ -1354,7 +1354,7 @@ void Scene43::run() {
 				_vm->_isLeavingScene = true;
 				_vm->gnapWalkTo(Common::Point(_vm->_hotspotsWalkPos[kHS43ExitBBQ].x, _vm->_gnap->_pos.y), 0, 0x107AF, 1);
 				_vm->_gnap->_actionStatus = 0;
-				_vm->platypusWalkTo(_vm->_hotspotsWalkPos[kHS43ExitBBQ].x, _vm->_hotspotsWalkPos[kHS43ExitBBQ].y, -1, 0x107CF, 1);
+				_vm->platypusWalkTo(_vm->_hotspotsWalkPos[kHS43ExitBBQ], -1, 0x107CF, 1);
 				_vm->_newSceneNum = 42;
 				break;
 
@@ -1362,7 +1362,7 @@ void Scene43::run() {
 				_vm->_isLeavingScene = true;
 				_vm->gnapWalkTo(Common::Point(_vm->_hotspotsWalkPos[kHS43ExitKissinBooth].x, _vm->_gnap->_pos.y), 0, 0x107AB, 1);
 				_vm->_gnap->_actionStatus = 0;
-				_vm->platypusWalkTo(_vm->_hotspotsWalkPos[kHS43ExitKissinBooth].x, _vm->_hotspotsWalkPos[kHS43ExitKissinBooth].y, -1, 0x107CD, 1);
+				_vm->platypusWalkTo(_vm->_hotspotsWalkPos[kHS43ExitKissinBooth], -1, 0x107CD, 1);
 				_vm->_newSceneNum = 44;
 				break;
 
@@ -1685,14 +1685,14 @@ void Scene44::run() {
 			_vm->_plat->initPos(-1, 7, kDirUpLeft);
 			_vm->endSceneInit();
 			_vm->gnapWalkTo(Common::Point(2, 8), -1, 0x107B9, 1);
-			_vm->platypusWalkTo(1, 8, -1, 0x107C2, 1);
+			_vm->platypusWalkTo(Common::Point(1, 8), -1, 0x107C2, 1);
 			break;
 		case 46:
 			_vm->_gnap->initPos(11, 8, kDirUpRight);
 			_vm->_plat->initPos(11, 8, kDirUpLeft);
 			_vm->endSceneInit();
 			_vm->gnapWalkTo(Common::Point(6, 8), -1, 0x107BA, 1);
-			_vm->platypusWalkTo(7, 8, -1, 0x107D2, 1);
+			_vm->platypusWalkTo(Common::Point(7, 8), -1, 0x107D2, 1);
 			break;
 		case 50:
 			_vm->_gnap->initPos(4, 8, kDirBottomRight);
@@ -1714,7 +1714,7 @@ void Scene44::run() {
 			_vm->_gnap->initPos(5, 11, kDirUpRight);
 			_vm->_plat->initPos(6, 11, kDirUpLeft);
 			_vm->endSceneInit();
-			_vm->platypusWalkTo(6, 8, -1, 0x107C2, 1);
+			_vm->platypusWalkTo(Common::Point(6, 8), -1, 0x107C2, 1);
 			_vm->gnapWalkTo(Common::Point(5, 8), -1, 0x107BA, 1);
 			break;
 		}
@@ -1801,7 +1801,7 @@ void Scene44::run() {
 				_vm->_isLeavingScene = true;
 				_vm->gnapWalkTo(Common::Point(_vm->_hotspotsWalkPos[kHS44ExitUfo].x, _vm->_gnap->_pos.y), 0, 0x107AF, 1);
 				_vm->_gnap->_actionStatus = 0;
-				_vm->platypusWalkTo(_vm->_hotspotsWalkPos[kHS44ExitUfo].x, _vm->_plat->_pos.y, -1, 0x107CF, 1);
+				_vm->platypusWalkTo(Common::Point(_vm->_hotspotsWalkPos[kHS44ExitUfo].x, _vm->_plat->_pos.y), -1, 0x107CF, 1);
 				_vm->_newSceneNum = 43;
 				break;
 
@@ -1832,7 +1832,7 @@ void Scene44::run() {
 						break;
 					case PLAT_CURSOR:
 						_vm->_gnap->useDeviceOnPlatypus();
-						_vm->platypusWalkTo(6, 7, 1, 0x107D2, 1);
+						_vm->platypusWalkTo(Common::Point(6, 7), 1, 0x107D2, 1);
 						if (_vm->_gnap->_pos == Common::Point(7, 7))
 							_vm->gnapWalkStep();
 						_vm->playGnapIdle(5, 7);
@@ -2153,19 +2153,19 @@ void Scene45::run() {
 		_vm->_gnap->initPos(-1, 8, kDirUpRight);
 		_vm->_plat->initPos(-1, 9, kDirUpLeft);
 		_vm->endSceneInit();
-		_vm->platypusWalkTo(4, 8, -1, 0x107C2, 1);
+		_vm->platypusWalkTo(Common::Point(4, 8), -1, 0x107C2, 1);
 		_vm->gnapWalkTo(Common::Point(2, 7), -1, 0x107B9, 1);
 	} else if (_vm->_prevSceneNum == 41) {
 		_vm->_gnap->initPos(11, 8, kDirUpRight);
 		_vm->_plat->initPos(11, 9, kDirUpLeft);
 		_vm->endSceneInit();
-		_vm->platypusWalkTo(4, 8, -1, 0x107D2, 1);
+		_vm->platypusWalkTo(Common::Point(4, 8), -1, 0x107D2, 1);
 		_vm->gnapWalkTo(Common::Point(10, 9), -1, 0x107BA, 1);
 	} else {
 		_vm->_gnap->initPos(2, 11, kDirUpRight);
 		_vm->_plat->initPos(6, 11, kDirUpLeft);
 		_vm->endSceneInit();
-		_vm->platypusWalkTo(4, 8, -1, 0x107C2, 1);
+		_vm->platypusWalkTo(Common::Point(4, 8), -1, 0x107C2, 1);
 		_vm->gnapWalkTo(Common::Point(2, 7), -1, 0x107B9, 1);
 	}
 
@@ -2295,7 +2295,7 @@ void Scene45::run() {
 					_vm->_isLeavingScene = true;
 					_vm->gnapWalkTo(Common::Point(_vm->_hotspotsWalkPos[kHS45ExitShoe].x, _vm->_gnap->_pos.y), 0, 0x107AF, 1);
 					_vm->_gnap->_actionStatus = 0;
-					_vm->platypusWalkTo(_vm->_hotspotsWalkPos[kHS45ExitShoe].x, _vm->_plat->_pos.y, -1, 0x107CF, 1);
+					_vm->platypusWalkTo(Common::Point(_vm->_hotspotsWalkPos[kHS45ExitShoe].x, _vm->_plat->_pos.y), -1, 0x107CF, 1);
 					_vm->_newSceneNum = 46;
 				}
 				break;
@@ -2305,7 +2305,7 @@ void Scene45::run() {
 					_vm->_isLeavingScene = true;
 					_vm->gnapWalkTo(Common::Point(_vm->_hotspotsWalkPos[kHS45ExitRight].x, _vm->_gnap->_pos.y), 0, 0x107AB, 1);
 					_vm->_gnap->_actionStatus = 0;
-					_vm->platypusWalkTo(_vm->_hotspotsWalkPos[kHS45ExitRight].x, _vm->_plat->_pos.y, -1, 0x107CD, 1);
+					_vm->platypusWalkTo(Common::Point(_vm->_hotspotsWalkPos[kHS45ExitRight].x, _vm->_plat->_pos.y), -1, 0x107CD, 1);
 					_vm->_newSceneNum = 41;
 				}
 				break;
@@ -2517,19 +2517,19 @@ void Scene46::run() {
 		_vm->_gnap->initPos(-1, 8, kDirUpRight);
 		_vm->_plat->initPos(-1, 8, kDirUpLeft);
 		_vm->endSceneInit();
-		_vm->platypusWalkTo(1, 8, -1, 0x107C2, 1);
+		_vm->platypusWalkTo(Common::Point(1, 8), -1, 0x107C2, 1);
 		_vm->gnapWalkTo(Common::Point(2, 8), -1, 0x107B9, 1);
 	} else if (_vm->_prevSceneNum == 45) {
 		_vm->_gnap->initPos(11, 8, kDirUpRight);
 		_vm->_plat->initPos(12, 8, kDirUpLeft);
 		_vm->endSceneInit();
 		_vm->gnapWalkTo(Common::Point(8, 8), -1, 0x107BA, 1);
-		_vm->platypusWalkTo(9, 8, -1, 0x107D2, 1);
+		_vm->platypusWalkTo(Common::Point(9, 8), -1, 0x107D2, 1);
 	} else {
 		_vm->_gnap->initPos(5, 11, kDirUpRight);
 		_vm->_plat->initPos(6, 11, kDirUpLeft);
 		_vm->endSceneInit();
-		_vm->platypusWalkTo(5, 8, -1, 0x107C2, 1);
+		_vm->platypusWalkTo(Common::Point(5, 8), -1, 0x107C2, 1);
 		_vm->gnapWalkTo(Common::Point(6, 8), -1, 0x107BA, 1);
 	}
 
@@ -2657,7 +2657,7 @@ void Scene46::run() {
 				_vm->_isLeavingScene = true;
 				_vm->gnapWalkTo(Common::Point(_vm->_hotspotsWalkPos[kHS46ExitKissinBooth].x, _vm->_gnap->_pos.y), 0, 0x107AF, 1);
 				_vm->_gnap->_actionStatus = 0;
-				_vm->platypusWalkTo(_vm->_hotspotsWalkPos[kHS46ExitKissinBooth].x, _vm->_plat->_pos.y, -1, 0x107CF, 1);
+				_vm->platypusWalkTo(Common::Point(_vm->_hotspotsWalkPos[kHS46ExitKissinBooth].x, _vm->_plat->_pos.y), -1, 0x107CF, 1);
 				_vm->_newSceneNum = 44;
 				break;
 
@@ -2665,7 +2665,7 @@ void Scene46::run() {
 				_vm->_isLeavingScene = true;
 				_vm->gnapWalkTo(Common::Point(_vm->_hotspotsWalkPos[kHS46ExitDisco].x, _vm->_gnap->_pos.y), 0, 0x107AB, 1);
 				_vm->_gnap->_actionStatus = 0;
-				_vm->platypusWalkTo(_vm->_hotspotsWalkPos[kHS46ExitDisco].x, _vm->_plat->_pos.y, -1, 0x107CD, 1);
+				_vm->platypusWalkTo(Common::Point(_vm->_hotspotsWalkPos[kHS46ExitDisco].x, _vm->_plat->_pos.y), -1, 0x107CD, 1);
 				_vm->_newSceneNum = 45;
 				break;
 

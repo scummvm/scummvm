@@ -1207,15 +1207,17 @@ bool GnapEngine::platFindPath3(int gridX, int gridY) {
 	return done;
 }
 
-bool GnapEngine::platypusWalkTo(int gridX, int gridY, int animationIndex, int sequenceId, int flags) {
+bool GnapEngine::platypusWalkTo(Common::Point gridPos, int animationIndex, int sequenceId, int flags) {
 	int datNum = flags & 3;
 	bool done = false;
 
 	_timers[1] = 60;
 
+	int gridX = gridPos.x;
 	if (gridX < 0)
 		gridX = (_leftClickMouseX - _gridMinX + 37) / 75;
 
+	int gridY = gridPos.y;
 	if (gridY < 0)
 		gridY = (_leftClickMouseY - _gridMinY + 24) / 48;
 
@@ -1365,27 +1367,54 @@ bool GnapEngine::platypusWalkTo(int gridX, int gridY, int animationIndex, int se
 }
 
 void GnapEngine::platypusWalkStep() {
-	bool done = false;
-	for (int i = 1; !done && i < _gridMaxX; ++i) {
-		done = true;
-		if (!isPointBlocked(_plat->_pos.x + i, _plat->_pos.y))
-			platypusWalkTo(_plat->_pos.x + i, _plat->_pos.y, -1, -1, 1);
-		else if (!isPointBlocked(_plat->_pos.x - i, _plat->_pos.y))
-			platypusWalkTo(_plat->_pos.x - i, _plat->_pos.y, -1, -1, 1);
-		else if (!isPointBlocked(_plat->_pos.x, _plat->_pos.y + 1))
-			platypusWalkTo(_plat->_pos.x, _plat->_pos.y + 1, -1, -1, 1);
-		else if (!isPointBlocked(_plat->_pos.x, _plat->_pos.y - 1))
-			platypusWalkTo(_plat->_pos.x, _plat->_pos.y - 1, -1, -1, 1);
-		else if (!isPointBlocked(_plat->_pos.x + 1, _plat->_pos.y + 1))
-			platypusWalkTo(_plat->_pos.x + 1, _plat->_pos.y + 1, -1, -1, 1);
-		else if (!isPointBlocked(_plat->_pos.x - 1, _plat->_pos.y + 1))
-			platypusWalkTo(_plat->_pos.x - 1, _plat->_pos.y + 1, -1, -1, 1);
-		else if (!isPointBlocked(_plat->_pos.x + 1, _plat->_pos.y - 1))
-			platypusWalkTo(_plat->_pos.x + 1, _plat->_pos.y - 1, -1, -1, 1);
-		else if (!isPointBlocked(_plat->_pos.x - 1, _plat->_pos.y - 1))
-			platypusWalkTo(_plat->_pos.x - 1, _plat->_pos.y - 1, -1, -1, 1);
-		else
-			done = false;
+	for (int i = 1; i < _gridMaxX; ++i) {
+		Common::Point checkPt = Common::Point(_plat->_pos.x + i, _plat->_pos.y);
+		if (!isPointBlocked(checkPt)) {
+			platypusWalkTo(checkPt, -1, -1, 1);
+			break;
+		}
+
+		checkPt = Common::Point(_plat->_pos.x - i, _plat->_pos.y);
+		if (!isPointBlocked(checkPt)) {
+			platypusWalkTo(checkPt, -1, -1, 1);
+			break;
+		}
+
+		checkPt = Common::Point(_plat->_pos.x, _plat->_pos.y + 1);
+		if (!isPointBlocked(checkPt)) {
+			platypusWalkTo(checkPt, -1, -1, 1);
+			break;
+		}
+
+		checkPt = Common::Point(_plat->_pos.x, _plat->_pos.y - 1);
+		if (!isPointBlocked(checkPt)) {
+			platypusWalkTo(checkPt, -1, -1, 1);
+			break;
+		}
+
+		checkPt = Common::Point(_plat->_pos.x + 1, _plat->_pos.y + 1);
+		if (!isPointBlocked(checkPt)) {
+			platypusWalkTo(checkPt, -1, -1, 1);
+			break;
+		}
+
+		checkPt = Common::Point(_plat->_pos.x - 1, _plat->_pos.y + 1);
+		if (!isPointBlocked(checkPt)) {
+			platypusWalkTo(checkPt, -1, -1, 1);
+			break;
+		}
+
+		checkPt = Common::Point(_plat->_pos.x + 1, _plat->_pos.y - 1);
+		if (!isPointBlocked(checkPt)) {
+			platypusWalkTo(checkPt, -1, -1, 1);
+			break;
+		}
+
+		checkPt = Common::Point(_plat->_pos.x - 1, _plat->_pos.y - 1);
+		if (!isPointBlocked(checkPt)) {
+			platypusWalkTo(checkPt, -1, -1, 1);
+			break;
+		}
 	}
 }
 
@@ -1396,7 +1425,7 @@ void GnapEngine::platypusMakeRoom() {
 		rndGridX = getRandom(_gridMaxX);
 	} while (ABS(rndGridX - _plat->_pos.x) > 4 || ABS(rndGridY - _plat->_pos.y) > 3 ||
 		isPointBlocked(rndGridX, rndGridY));
-	platypusWalkTo(rndGridX, rndGridY, -1, -1, 1);
+	platypusWalkTo(Common::Point(rndGridX, rndGridY), -1, -1, 1);
 }
 
 } // End of namespace Gnap

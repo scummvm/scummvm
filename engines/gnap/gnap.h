@@ -507,7 +507,7 @@ public:
 	bool platFindPath2(int gridX, int gridY, int index);
 	bool platFindPath3(int gridX, int gridY);
 	bool platFindPath4(int gridX, int gridY);
-	bool platypusWalkTo(int gridX, int gridY, int animationIndex, int sequenceId, int flags);
+	bool platypusWalkTo(Common::Point gridPos, int animationIndex, int sequenceId, int flags);
 	void platypusWalkStep();
 	void platypusMakeRoom();
 
