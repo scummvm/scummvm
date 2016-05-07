@@ -475,17 +475,6 @@ public:
 	bool testWalk(int animationIndex, int someStatus, int gridX1, int gridY1, int gridX2, int gridY2);
 
 	// Gnap
-	void playGnapImpossible(int gridX, int gridY);
-	void playGnapScratchingHead(int gridX, int gridY);
-	void playGnapMoan1(int gridX, int gridY);
-	void playGnapMoan2(int gridX, int gridY);
-	void playGnapBrainPulsating(int gridX, int gridY);
-	void playGnapPullOutDevice(int gridX, int gridY);
-	void playGnapPullOutDeviceNonWorking(int gridX, int gridY);
-	void playGnapUseDevice(int gridX, int gridY);
-	void playGnapIdle(int gridX, int gridY);
-	void playGnapShowItem(int itemIndex, int gridLookX, int gridLookY);
-	void playGnapShowCurrItem(int gridX, int gridY, int gridLookX, int gridLookY);
 	void doCallback(int callback);
 	bool gnapPlatypusAction(int gridX, int gridY, int platSequenceId, int callback);
 	void gnapUseDisguiseOnPlatypus();

@@ -941,53 +941,6 @@ void GnapEngine::deleteSurface(Graphics::Surface **surface) {
 	}
 }
 
-void GnapEngine::playGnapImpossible(int gridX, int gridY) {
-	_gnap->playSequence(_gnap->getSequenceId(gskImpossible, gridX, gridY) | 0x10000);
-}
-
-void GnapEngine::playGnapScratchingHead(int gridX, int gridY) {
-	_gnap->playSequence(_gnap->getSequenceId(gskScratchingHead, gridX, gridY) | 0x10000);
-}
-
-void GnapEngine::playGnapMoan1(int gridX, int gridY) {
-	_gnap->playSequence(_gnap->getSequenceId(gskMoan1, gridX, gridY) | 0x10000);
-}
-
-void GnapEngine::playGnapMoan2(int gridX, int gridY) {
-	_gnap->playSequence(_gnap->getSequenceId(gskMoan2, gridX, gridY) | 0x10000);
-}
-
-void GnapEngine::playGnapBrainPulsating(int gridX, int gridY) {
-	_gnap->playSequence(_gnap->getSequenceId(gskBrainPulsating, gridX, gridY) | 0x10000);
-}
-
-void GnapEngine::playGnapPullOutDevice(int gridX, int gridY) {
-	_gnap->playSequence(_gnap->getSequenceId(gskPullOutDevice, gridX, gridY) | 0x10000);
-}
-
-void GnapEngine::playGnapPullOutDeviceNonWorking(int gridX, int gridY) {
-	_gnap->playSequence(_gnap->getSequenceId(gskPullOutDeviceNonWorking, gridX, gridY) | 0x10000);
-}
-
-void GnapEngine::playGnapUseDevice(int gridX, int gridY) {
-	_gnap->playSequence(_gnap->getSequenceId(gskUseDevice, gridX, gridY) | 0x10000);
-}
-
-void GnapEngine::playGnapIdle(int gridX, int gridY) {
-	_gnap->playSequence(_gnap->getSequenceId(gskIdle, gridX, gridY) | 0x10000);
-}
-
-void GnapEngine::playGnapShowItem(int itemIndex, int gridLookX, int gridLookY) {
-	_gnap->playSequence(_gnap->getShowSequenceId(itemIndex, gridLookX, gridLookY) | 0x10000);
-}
-
-void GnapEngine::playGnapShowCurrItem(int gridX, int gridY, int gridLookX, int gridLookY) {
-	if (_plat->_pos.x == gridX && _plat->_pos.y == gridY)
-		_plat->makeRoom();
-	_gnap->walkTo(Common::Point(gridX, gridY), -1, -1, 1);
-	playGnapShowItem(_grabCursorSpriteIndex, gridLookX, gridLookY);
-}
-
 bool GnapEngine::testWalk(int animationIndex, int someStatus, int gridX1, int gridY1, int gridX2, int gridY2) {
 	if (_mouseClickState._left && someStatus == _gnap->_actionStatus) {
 		_isLeavingScene = false;

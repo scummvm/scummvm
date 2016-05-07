@@ -1053,6 +1053,53 @@ void PlayerGnap::actionIdle(int sequenceId) {
 	}
 }
 
+void PlayerGnap::playImpossible(int gridX, int gridY) {
+	playSequence(getSequenceId(gskImpossible, gridX, gridY) | 0x10000);
+}
+
+void PlayerGnap::playScratchingHead(int gridX, int gridY) {
+	playSequence(getSequenceId(gskScratchingHead, gridX, gridY) | 0x10000);
+}
+
+void PlayerGnap::playMoan1(int gridX, int gridY) {
+	playSequence(getSequenceId(gskMoan1, gridX, gridY) | 0x10000);
+}
+
+void PlayerGnap::playMoan2(int gridX, int gridY) {
+	playSequence(getSequenceId(gskMoan2, gridX, gridY) | 0x10000);
+}
+
+void PlayerGnap::playBrainPulsating(int gridX, int gridY) {
+	playSequence(getSequenceId(gskBrainPulsating, gridX, gridY) | 0x10000);
+}
+
+void PlayerGnap::playPullOutDevice(int gridX, int gridY) {
+	playSequence(getSequenceId(gskPullOutDevice, gridX, gridY) | 0x10000);
+}
+
+void PlayerGnap::playPullOutDeviceNonWorking(int gridX, int gridY) {
+	playSequence(getSequenceId(gskPullOutDeviceNonWorking, gridX, gridY) | 0x10000);
+}
+
+void PlayerGnap::playUseDevice(int gridX, int gridY) {
+	playSequence(getSequenceId(gskUseDevice, gridX, gridY) | 0x10000);
+}
+
+void PlayerGnap::playIdle(int gridX, int gridY) {
+	playSequence(getSequenceId(gskIdle, gridX, gridY) | 0x10000);
+}
+
+void PlayerGnap::playShowItem(int itemIndex, int gridLookX, int gridLookY) {
+	playSequence(getShowSequenceId(itemIndex, gridLookX, gridLookY) | 0x10000);
+}
+
+void PlayerGnap::playShowCurrItem(int gridX, int gridY, int gridLookX, int gridLookY) {
+	if (_vm->_plat->_pos.x == gridX && _vm->_plat->_pos.y == gridY)
+		_vm->_plat->makeRoom();
+	walkTo(Common::Point(gridX, gridY), -1, -1, 1);
+	playShowItem(_vm->_grabCursorSpriteIndex, gridLookX, gridLookY);
+}
+
 /************************************************************************************************/
 
 PlayerPlat::PlayerPlat(GnapEngine * vm) : Character(vm) {}

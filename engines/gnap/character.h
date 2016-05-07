@@ -95,6 +95,17 @@ public:
 	void idle();
 	void initBrainPulseRndValue();
 	void kissPlatypus(int callback);
+	void playBrainPulsating(int gridX, int gridY);
+	void playIdle(int gridX, int gridY);
+	void playImpossible(int gridX, int gridY);
+	void playMoan1(int gridX, int gridY);
+	void playMoan2(int gridX, int gridY);
+	void playPullOutDevice(int gridX, int gridY);
+	void playPullOutDeviceNonWorking(int gridX, int gridY);
+	void playScratchingHead(int gridX, int gridY);
+	void playShowCurrItem(int gridX, int gridY, int gridLookX, int gridLookY);
+	void playShowItem(int itemIndex, int gridLookX, int gridLookY);
+	void playUseDevice(int gridX, int gridY);
 	void useDeviceOnPlatypus();
 	void useJointOnPlatypus();
 
