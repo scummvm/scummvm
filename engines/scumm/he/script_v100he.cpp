@@ -1997,6 +1997,7 @@ void ScummEngine_v100he::o100_setSpriteInfo() {
 				_sprite->setSpriteFlagRemapPalette(spriteId, args[0]);
 				break;
 			default:
+				warning("Unknown sprite property %d for sprite %d", args[0], spriteId);
 				break;
 			}
 		break;
