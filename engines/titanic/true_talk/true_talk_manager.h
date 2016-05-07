@@ -28,6 +28,7 @@
 #include "titanic/true_talk/dialogue_file.h"
 #include "titanic/true_talk/title_engine.h"
 #include "titanic/true_talk/tt_scripts.h"
+#include "titanic/true_talk/tt_talker.h"
 
 namespace Titanic {
 
@@ -36,25 +37,6 @@ class CTreeItem;
 class CViewItem;
 class CTrueTalkManager;
 class CTrueTalkNPC;
-
-class TTTalker : public ListItem {
-public:
-	CTrueTalkManager *_owner;
-	CTrueTalkNPC *_npc;
-	CString _string1;
-	int _field20;
-	int _field24;
-	int _field28;
-public:
-	TTTalker() : _owner(nullptr), _npc(nullptr),
-		_field20(0), _field24(0), _field28(0) {}
-	TTTalker(CTrueTalkManager *owner, CTrueTalkNPC *npc) :
-		_owner(owner), _npc(npc), _field20(0), _field24(0), _field28(0) {}
-
-};
-
-class TTTalkerList : public List<TTTalker> {
-};
 
 class CTrueTalkManager {
 private:
@@ -118,6 +100,8 @@ private:
 	 * Triggers animation for the NPC
 	 */
 	void triggerNPC(CTrueTalkNPC *npc);
+
+	void setTalker(TTTalker *talker, TTRoomScript *roomScript, CViewItem *view, bool isParrot);
 public:
 	static int _v1;
 	static int _v2;

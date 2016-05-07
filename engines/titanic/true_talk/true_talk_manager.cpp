@@ -42,6 +42,8 @@ bool CTrueTalkManager::_v10;
 int CTrueTalkManager::_v11[41];
 CTrueTalkNPC *CTrueTalkManager::_currentNPC;
 
+/*------------------------------------------------------------------------*/
+
 CTrueTalkManager::CTrueTalkManager(CGameManager *owner) : 
 		_gameManager(owner), _scripts(&_titleEngine), _currentCharId(0),
 		_dialogueFile(nullptr), _dialogueId(0) {
@@ -306,18 +308,18 @@ void CTrueTalkManager::processInput(CTrueTalkNPC *npc, CTextInputMsg *msg, CView
 
 void CTrueTalkManager::setDialogue(CTrueTalkNPC *npc, TTRoomScript *roomScript, CViewItem *view) {
 	// Get the dialog text
-	CString dialogStr = readDialogueString();
-	if (dialogStr.empty())
+	CString dialogueStr = readDialogueString();
+	if (dialogueStr.empty())
 		return;
 
+	int soundId = readDialogSound();
 	TTTalker *talker = new TTTalker(this, npc);
 	_talkers.push_back(talker);
 
-	bool isParrot = npc->getName() == "parrot";
-
-
-
-	warning("TODO: CTrueTalkManager::setDialogue");
+	bool isParrot = npc->getName().contains("parrot");
+	triggerNPC(npc);
+	setTalker(talker, roomScript, view, isParrot);
+	talker->speechStarted(dialogueStr, _titleEngine._indexes[0], soundId);
 }
 
 #define STRING_BUFFER_SIZE 2048
@@ -404,6 +406,10 @@ void CTrueTalkManager::triggerNPC(CTrueTalkNPC *npc) {
 			} while (_field18 > 0);
 		}
 	}
+}
+
+void CTrueTalkManager::setTalker(TTTalker *talker, TTRoomScript *roomScript, CViewItem *view, bool isParrot) {
+	warning("TODO: CTrueTalkManager::setTalker");
 }
 
 } // End of namespace Titanic

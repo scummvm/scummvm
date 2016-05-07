@@ -25,6 +25,7 @@
 
 #include "titanic/npcs/character.h"
 #include "titanic/messages/messages.h"
+#include "titanic/true_talk/tt_talker.h"
 
 namespace Titanic {
 
@@ -50,7 +51,7 @@ protected:
 	CString _assetName;
 	int _fieldE4;
 	uint _npcFlags;
-	int _fieldEC;
+	uint _soundId;
 	int _fieldF0;
 	int _fieldF4;
 	int _fieldF8;

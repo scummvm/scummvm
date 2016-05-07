@@ -39,7 +39,7 @@ BEGIN_MESSAGE_MAP(CTrueTalkNPC, CCharacter)
 END_MESSAGE_MAP()
 
 CTrueTalkNPC::CTrueTalkNPC() : _assetName("z451.dlg"),
-	_assetNumber(0x11170), _fieldE4(0), _npcFlags(0), _fieldEC(0), _fieldF0(0),
+	_assetNumber(0x11170), _fieldE4(0), _npcFlags(0), _soundId(0), _fieldF0(0),
 	_fieldF4(0), _fieldF8(0), _speechTimerId(0), _field100(0), _field104(0) {
 }
 
@@ -49,7 +49,7 @@ void CTrueTalkNPC::save(SimpleFile *file, int indent) const {
 	file->writeQuotedLine(_assetName, indent);
 	file->writeNumberLine(_fieldE4, indent);
 	file->writeNumberLine(_npcFlags, indent);
-	file->writeNumberLine(_fieldEC, indent);
+	file->writeNumberLine(_soundId, indent);
 	file->writeNumberLine(_fieldF0, indent);
 	file->writeNumberLine(_fieldF4, indent);
 	file->writeNumberLine(_fieldF8, indent);
@@ -66,7 +66,7 @@ void CTrueTalkNPC::load(SimpleFile *file) {
 	_assetName = file->readString();
 	_fieldE4 = file->readNumber();
 	_npcFlags = file->readNumber();
-	_fieldEC = file->readNumber();
+	_soundId = file->readNumber();
 	_fieldF0 = file->readNumber();
 	_fieldF4 = file->readNumber();
 	_fieldF8 = file->readNumber();
@@ -101,14 +101,14 @@ bool CTrueTalkNPC::TrueTalkNotifySpeechStartedMsg(CTrueTalkNotifySpeechStartedMs
 		if (_speechTimerId)
 			stopTimer(_speechTimerId);
 
-		_fieldEC = msg->_value1;
+		_soundId = msg->_soundId;
 		_fieldF0 = g_vm->_events->getTicksCount();
 
 		if (hasActiveMovie() || (_npcFlags & NPCFLAG_2)) {
 			_npcFlags &= ~NPCFLAG_2;
 			stopMovie();
 
-			CNPCPlayTalkingAnimationMsg msg1(_fieldEC, 0, 0);
+			CNPCPlayTalkingAnimationMsg msg1(_soundId, 0, 0);
 			msg1.execute(this);
 
 			if (msg1._value3) {
@@ -124,7 +124,7 @@ bool CTrueTalkNPC::TrueTalkNotifySpeechStartedMsg(CTrueTalkNotifySpeechStartedMs
 bool CTrueTalkNPC::TrueTalkNotifySpeechEndedMsg(CTrueTalkNotifySpeechEndedMsg *msg) {
 	_npcFlags &= ~NPCFLAG_SPEAKING;
 	--_field100;
-	_fieldEC = 0;
+	_soundId = 0;
 
 	if (!(_npcFlags & NPCFLAG_8)) {
 		CNPCPlayTalkingAnimationMsg msg1(0, 2, 0);
@@ -147,7 +147,7 @@ bool CTrueTalkNPC::MovieEndMsg(CMovieEndMsg *msg) {
 	}
 
 	int diff = g_vm->_events->getTicksCount() - _fieldF0;
-	int ticks = MAX((int)_fieldEC - diff, 0);
+	int ticks = MAX((int)_soundId - diff, 0);
 	CNPCPlayTalkingAnimationMsg msg1(ticks, ticks > 1000 ? 2 : 1, 0);
 	msg1.execute(this);
 

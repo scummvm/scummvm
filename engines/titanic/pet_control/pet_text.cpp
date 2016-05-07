@@ -236,9 +236,6 @@ void CPetText::setColor(byte r, byte g, byte b) {
 
 void CPetText::remapColors(uint count, uint *srcColors, uint *destColors) {
 	if (_lineCount >= 0) {
-		int lineNum = 0;
-		int index1 = 0;
-
 		for (int lineNum = 0; lineNum <= _lineCount; ++lineNum) {
 			// Get the rgb values
 			uint r = _array[lineNum]._rgb[1];
@@ -442,7 +439,7 @@ int CPetText::getNPCNum(uint npcId, uint startIndex) {
 			return -1;
 	}
 
-	int size = _lines.size();
+	uint size = _lines.size();
 	if (startIndex < 5 || startIndex >= size)
 		return -1;
 
