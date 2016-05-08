@@ -474,6 +474,10 @@ void SoundHE::processSoundOpcodes(int sound, byte *codePtr, int *soundVars) {
 			if (arg == 2) {
 				val = getSoundVar(sound, val);
 			}
+			if (!val) {
+				val = 1; // Safeguard for division by zero
+				warning("Incorrect value 0 for processSoundOpcodes() kludge DIV");
+			}
 			val = getSoundVar(sound, var) / val;
 			setSoundVar(sound, var, val);
 			break;
