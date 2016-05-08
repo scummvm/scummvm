@@ -33,8 +33,11 @@ void CScriptHandler::setup(TTRoomScript *roomScript, TTNamedScript *npcScript, u
 	// TODO
 }
 
-void CScriptHandler::processInput(TTNamedScript *npcScript, TTRoomScript *roomScript,
+void CScriptHandler::processInput(TTRoomScript *roomScript, TTNamedScript *npcScript,
 		const TTString &line) {
+	if (!roomScript || line.empty())
+		return;
+	
 	// TODO
 }
 

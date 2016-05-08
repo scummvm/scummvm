@@ -24,12 +24,18 @@
 #define TITANIC_TT_TITLE_SCRIPT_H
 
 #include "titanic/true_talk/tt_script_base.h"
+#include "titanic/true_talk/tt_string.h"
 
 namespace Titanic {
 
 class TTTitleScript : public TTScriptBase {
+private:
+	int _field50;
+	TTString _string1;
+	int _field5C;
+	int _field60;
 public:
-
+	TTTitleScript();
 };
 
 } // End of namespace Titanic

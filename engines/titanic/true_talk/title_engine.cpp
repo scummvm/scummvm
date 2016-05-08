@@ -33,9 +33,9 @@ CTitleEngine::~CTitleEngine() {
 }
 
 void CTitleEngine::setup(int val1, int val2) {
-
+	_script = new TTTitleScript();
+	_scriptHandler = new CScriptHandler(this, val1, val2);
 }
-
 
 /*------------------------------------------------------------------------*/
 

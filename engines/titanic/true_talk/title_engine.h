@@ -28,6 +28,7 @@
 #include "titanic/support/string.h"
 #include "titanic/true_talk/script_handler.h"
 #include "titanic/true_talk/tt_script_base.h"
+#include "titanic/true_talk/tt_title_script.h"
 
 namespace Titanic {
 

@@ -42,7 +42,7 @@ public:
 	 */
 	void setup(TTRoomScript *roomScript, TTNamedScript *npcScript, uint charId);
 
-	void processInput(TTNamedScript *npcScript, TTRoomScript *roomScript,
+	void processInput(TTRoomScript *roomScript, TTNamedScript *npcScript,
 		const TTString &line);
 };
 
