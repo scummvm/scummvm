@@ -177,13 +177,13 @@ void CTrueTalkManager::setFlags(int index, int val) {
 }
 
 void CTrueTalkManager::loadNPC(SimpleFile *file, int charId) {
-	TTNpcScript *script = _scripts.getNamedScript(charId);
+	TTNpcScript *script = _scripts.getNpcScript(charId);
 	if (script)
 		script->load(file);
 }
 
 void CTrueTalkManager::saveNPC(SimpleFile *file, int charId) const {
-	TTNpcScript *script = _scripts.getNamedScript(charId);
+	TTNpcScript *script = _scripts.getNpcScript(charId);
 	if (script) {
 		script->save(file);
 		file->writeNumber(MKTAG_BE('U', 'R', 'A', 'H'));
@@ -232,23 +232,23 @@ void CTrueTalkManager::start(CTrueTalkNPC *npc, uint id, CViewItem *view) {
 
 TTNpcScript *CTrueTalkManager::getTalker(const CString &name) const {
 	if (name.contains("Doorbot"))
-		return _scripts.getNamedScript(104);
+		return _scripts.getNpcScript(104);
 	else if (name.contains("DeskBot"))
-		return _scripts.getNamedScript(103);
+		return _scripts.getNpcScript(103);
 	else if (name.contains("LiftBot"))
-		return _scripts.getNamedScript(105);
+		return _scripts.getNpcScript(105);
 	else if (name.contains("Parrot"))
-		return _scripts.getNamedScript(107);
+		return _scripts.getNpcScript(107);
 	else if (name.contains("BarBot"))
-		return _scripts.getNamedScript(100);
+		return _scripts.getNpcScript(100);
 	else if (name.contains("ChatterBot"))
-		return _scripts.getNamedScript(102);
+		return _scripts.getNpcScript(102);
 	else if (name.contains("BellBot"))
-		return _scripts.getNamedScript(101);
+		return _scripts.getNpcScript(101);
 	else if (name.contains("MaitreD"))
-		return _scripts.getNamedScript(112);
+		return _scripts.getNpcScript(112);
 	else if (name.contains("Succubus") || name.contains("Sub"))
-		return _scripts.getNamedScript(111);
+		return _scripts.getNpcScript(111);
 
 	return nullptr;
 }
@@ -259,7 +259,7 @@ TTNpcScript *CTrueTalkManager::getNpcScript(CTrueTalkNPC *npc) const {
 
 	if (!script) {
 		// Fall back on the default NPC script
-		script = _scripts.getNamedScript(101);
+		script = _scripts.getNpcScript(101);
 	}
 
 	return script;

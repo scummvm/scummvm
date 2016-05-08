@@ -56,7 +56,7 @@ public:
 
 class TTScripts {
 private:
-	TTNpcScriptList _namedScripts;
+	TTNpcScriptList _npcScripts;
 	TTRoomScriptList _roomScripts;
 	CTitleEngine *_titleEngine;
 	int _field24;
@@ -80,9 +80,9 @@ public:
 	TTRoomScript *getRoomScript(int scriptId) const;
 
 	/**
-	 * Return a pointer to the specified named character script
+	 * Return a pointer to the specified character script
 	 */
-	TTNpcScript *getNamedScript(int charId) const;
+	TTNpcScript *getNpcScript(int charId) const;
 };
 
 } // End of namespace Titanic

@@ -81,7 +81,7 @@ void TTScripts::addScript(TTNpcScript *script, int scriptId) {
 	TTRoomScript *roomScript = getRoomScript(scriptId);
 	assert(roomScript);
 
-	_namedScripts.push_back(new TTNpcScriptListItem(script, roomScript));
+	_npcScripts.push_back(new TTNpcScriptListItem(script, roomScript));
 }
 
 void TTScripts::addScript(TTRoomScript *script) {
@@ -92,8 +92,8 @@ TTRoomScript *TTScripts::getRoomScript(int scriptId) const {
 	return _roomScripts.findById(scriptId);
 }
 
-TTNpcScript *TTScripts::getNamedScript(int charId) const {
-	return _namedScripts.findById(charId);
+TTNpcScript *TTScripts::getNpcScript(int charId) const {
+	return _npcScripts.findById(charId);
 }
 
 } // End of namespace Titanic
