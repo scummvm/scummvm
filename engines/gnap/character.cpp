@@ -1065,24 +1065,24 @@ void PlayerGnap::playScratchingHead(int gridX, int gridY) {
 	playSequence(getSequenceId(gskScratchingHead, Common::Point(gridX, gridY)) | 0x10000);
 }
 
-void PlayerGnap::playMoan1(int gridX, int gridY) {
-	playSequence(getSequenceId(gskMoan1, Common::Point(gridX, gridY)) | 0x10000);
+void PlayerGnap::playMoan1(Common::Point gridPos) {
+	playSequence(getSequenceId(gskMoan1, gridPos) | 0x10000);
 }
 
-void PlayerGnap::playMoan2(int gridX, int gridY) {
-	playSequence(getSequenceId(gskMoan2, Common::Point(gridX, gridY)) | 0x10000);
+void PlayerGnap::playMoan2(Common::Point gridPos) {
+	playSequence(getSequenceId(gskMoan2, gridPos) | 0x10000);
 }
 
 void PlayerGnap::playBrainPulsating(Common::Point gridPos) {
 	playSequence(getSequenceId(gskBrainPulsating, gridPos) | 0x10000);
 }
 
-void PlayerGnap::playPullOutDevice(int gridX, int gridY) {
-	playSequence(getSequenceId(gskPullOutDevice, Common::Point(gridX, gridY)) | 0x10000);
+void PlayerGnap::playPullOutDevice(Common::Point gridPos) {
+	playSequence(getSequenceId(gskPullOutDevice, gridPos) | 0x10000);
 }
 
-void PlayerGnap::playPullOutDeviceNonWorking(int gridX, int gridY) {
-	playSequence(getSequenceId(gskPullOutDeviceNonWorking, Common::Point(gridX, gridY)) | 0x10000);
+void PlayerGnap::playPullOutDeviceNonWorking(Common::Point gridPos) {
+	playSequence(getSequenceId(gskPullOutDeviceNonWorking, gridPos) | 0x10000);
 }
 
 void PlayerGnap::playUseDevice(int gridX, int gridY) {

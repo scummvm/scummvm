@@ -133,7 +133,7 @@ void Scene01::run() {
 					switch (_vm->_verbCursor) {
 					case LOOK_CURSOR:
 						if (_vm->isFlag(kGFKeysTaken))
-							gnap.playMoan1(plat._pos.x, plat._pos.y);
+							gnap.playMoan1(plat._pos);
 						else
 							gnap.playScratchingHead(plat._pos.x, plat._pos.y);
 						break;
@@ -315,7 +315,7 @@ void Scene01::updateAnimations() {
 			break;
 
 		case kAS01TakeMud:
-			gnap.playPullOutDevice(2, 3);
+			gnap.playPullOutDevice(Common::Point(2, 3));
 			gnap.playUseDevice(0, 0);
 			gameSys.insertSequence(128, 40, 129, 40, kSeqSyncWait, 0, 0, 0);
 			gameSys.setAnimation(128, 40, 3);
@@ -330,7 +330,7 @@ void Scene01::updateAnimations() {
 			break;
 
 		case kAS01UsePigs:
-			gnap.playPullOutDevice(7, 2);
+			gnap.playPullOutDevice(Common::Point(7, 2));
 			gnap.playUseDevice(0, 0);
 			gameSys.insertSequence(135, 39, 0, 0, kSeqNone, 25, _vm->getRandom(140) - 40, 0);
 			gnap._actionStatus = -1;
@@ -486,7 +486,7 @@ void Scene02::run() {
 					switch (_vm->_verbCursor) {
 					case LOOK_CURSOR:
 						if (_vm->isFlag(kGFKeysTaken))
-							gnap.playMoan1(plat._pos.x, plat._pos.y);
+							gnap.playMoan1(plat._pos);
 						else
 							gnap.playScratchingHead(plat._pos.x, plat._pos.y);
 						break;
@@ -517,7 +517,7 @@ void Scene02::run() {
 				} else {
 					switch (_vm->_verbCursor) {
 					case LOOK_CURSOR:
-						gnap.playMoan2(9, 8);
+						gnap.playMoan2(Common::Point(9, 8));
 						break;
 					case GRAB_CURSOR:
 						gnap._idleFacing = kDirBottomRight;
@@ -593,7 +593,7 @@ void Scene02::run() {
 				} else {
 					switch (_vm->_verbCursor) {
 					case LOOK_CURSOR:
-						gnap.playMoan2(2, 4);
+						gnap.playMoan2(Common::Point(2, 4));
 						break;
 					case GRAB_CURSOR:
 						gnap._idleFacing = kDirUpRight;
@@ -954,7 +954,7 @@ void Scene03::run() {
 					switch (_vm->_verbCursor) {
 					case LOOK_CURSOR:
 						if (_vm->isFlag(kGFKeysTaken))
-							gnap.playMoan1(plat._pos.x, plat._pos.y);
+							gnap.playMoan1(plat._pos);
 						else
 							gnap.playScratchingHead(plat._pos.x, plat._pos.y);
 						break;
@@ -985,7 +985,7 @@ void Scene03::run() {
 						gnap.playScratchingHead(9, 6);
 						break;
 					case GRAB_CURSOR:
-						gnap.playPullOutDevice(9, 6);
+						gnap.playPullOutDevice(Common::Point(9, 6));
 						gnap.playUseDevice(0, 0);
 						gameSys.insertSequence(0x1B3, 253, 0x1B2, 253, kSeqSyncWait, 0, 0, 0);
 						gameSys.setAnimation(0x1B3, 253, 5);
@@ -1023,7 +1023,7 @@ void Scene03::run() {
 				} else {
 					switch (_vm->_verbCursor) {
 					case LOOK_CURSOR:
-						gnap.playMoan2(2, 8);
+						gnap.playMoan2(Common::Point(2, 8));
 						break;
 					case GRAB_CURSOR:
 						if (!_vm->isFlag(kGFPlatypus))
@@ -1462,7 +1462,7 @@ void Scene04::run() {
 					switch (_vm->_verbCursor) {
 					case LOOK_CURSOR:
 						if (_vm->isFlag(kGFKeysTaken))
-							gnap.playMoan1(plat._pos.x, plat._pos.y);
+							gnap.playMoan1(plat._pos);
 						else
 							gnap.playScratchingHead(plat._pos.x, plat._pos.y);
 						break;
@@ -1470,7 +1470,7 @@ void Scene04::run() {
 						if (_vm->_cursorValue == 4)
 							gnap.kissPlatypus(0);
 						else
-							gnap.playMoan1(plat._pos.x, plat._pos.y);
+							gnap.playMoan1(plat._pos);
 						break;
 					case TALK_CURSOR:
 						gnap.playBrainPulsating(plat._pos);
@@ -1494,7 +1494,7 @@ void Scene04::run() {
 						gnap.playScratchingHead(_vm->_hotspotsWalkPos[1].x, _vm->_hotspotsWalkPos[1].y);
 						break;
 					case GRAB_CURSOR:
-						gnap.playPullOutDevice(_vm->_hotspotsWalkPos[1].x, _vm->_hotspotsWalkPos[1].y);
+						gnap.playPullOutDevice(_vm->_hotspotsWalkPos[1]);
 						gnap.playUseDevice(_vm->_hotspotsWalkPos[1].x, _vm->_hotspotsWalkPos[1].y);
 						gameSys.insertSequence(0x1FD, 100, 510, 100, kSeqSyncWait, 0, 0, 0);
 						gameSys.setAnimation(0x1FD, 100, 2);
@@ -1515,7 +1515,7 @@ void Scene04::run() {
 				} else {
 					switch (_vm->_verbCursor) {
 					case LOOK_CURSOR:
-						gnap.playMoan2(_vm->_hotspotsWalkPos[3].x, _vm->_hotspotsWalkPos[3].y);
+						gnap.playMoan2(_vm->_hotspotsWalkPos[3]);
 						break;
 					case GRAB_CURSOR:
 						gnap._idleFacing = kDirUpRight;
@@ -1541,7 +1541,7 @@ void Scene04::run() {
 					switch (_vm->_verbCursor) {
 					case LOOK_CURSOR:
 						if (gnap.walkTo(gnap._pos, 0, -1, 1)) {
-							gnap.playMoan2(_vm->_hotspotsWalkPos[2].x, _vm->_hotspotsWalkPos[2].y);
+							gnap.playMoan2(_vm->_hotspotsWalkPos[2]);
 							_nextDogSequenceId = 0x20F;
 						}
 						break;
@@ -1940,7 +1940,7 @@ void Scene05::run() {
 					switch (_vm->_verbCursor) {
 					case LOOK_CURSOR:
 						if (_vm->isFlag(kGFKeysTaken))
-							gnap.playMoan1(plat._pos.x, plat._pos.y);
+							gnap.playMoan1(plat._pos);
 						else
 							gnap.playScratchingHead(plat._pos.x, plat._pos.y);
 						break;
@@ -2003,7 +2003,7 @@ void Scene05::run() {
 				else {
 					switch (_vm->_verbCursor) {
 					case LOOK_CURSOR:
-						gnap.playMoan2(9, 7);
+						gnap.playMoan2(Common::Point(9, 7));
 						break;
 					case GRAB_CURSOR:
 						gnap._idleFacing = kDirBottomRight;
@@ -2030,7 +2030,7 @@ void Scene05::run() {
 				} else {
 					switch (_vm->_verbCursor) {
 					case LOOK_CURSOR:
-						gnap.playMoan2(2, 4);
+						gnap.playMoan2(Common::Point(2, 4));
 						break;
 					case GRAB_CURSOR:
 						gnap._idleFacing = kDirBottomLeft;
@@ -2369,7 +2369,7 @@ void Scene06::run() {
 					switch (_vm->_verbCursor) {
 					case LOOK_CURSOR:
 						if (_vm->isFlag(kGFKeysTaken))
-							gnap.playMoan1(plat._pos.x, plat._pos.y);
+							gnap.playMoan1(plat._pos);
 						else
 							gnap.playScratchingHead(plat._pos.x, plat._pos.y);
 						break;
@@ -2407,7 +2407,7 @@ void Scene06::run() {
 							gnap._actionStatus = kAS06TryToGetGas;
 						} else {
 							triedDeviceOnGas = true;
-							gnap.playPullOutDeviceNonWorking(_vm->_hotspotsWalkPos[1].x, _vm->_hotspotsWalkPos[1].y);
+							gnap.playPullOutDeviceNonWorking(_vm->_hotspotsWalkPos[1]);
 						}
 						break;
 					case TALK_CURSOR:
@@ -2746,7 +2746,7 @@ void Scene07::run() {
 		case kHS07Platypus:
 			switch (_vm->_verbCursor) {
 			case LOOK_CURSOR:
-				gnap.playMoan1(plat._pos.x, plat._pos.y);
+				gnap.playMoan1(plat._pos);
 				break;
 			case GRAB_CURSOR:
 				gnap.kissPlatypus(0);
@@ -2780,7 +2780,7 @@ void Scene07::run() {
 					_vm->setFlag(kGFPlatypus);
 					_vm->invAdd(kItemDice);
 					updateHotspots();
-					gnap.playPullOutDevice(3, 3);
+					gnap.playPullOutDevice(Common::Point(3, 3));
 					gameSys.setAnimation(0x8E, 1, 2);
 					gameSys.insertSequence(0x8E, 1, 141, 1, kSeqSyncWait, 0, 0, 0);
 					gameSys.insertSequence(gnap.getSequenceId(gskUseDevice, Common::Point(0, 0)) | 0x10000, gnap._id,
@@ -3017,7 +3017,7 @@ void Scene08::run() {
 				switch (_vm->_verbCursor) {
 				case LOOK_CURSOR:
 					if (_vm->isFlag(kGFSceneFlag1))
-						gnap.playMoan1(plat._pos.x, plat._pos.y);
+						gnap.playMoan1(plat._pos);
 					else
 						gnap.playScratchingHead(plat._pos.x, plat._pos.y);
 					break;
@@ -3134,7 +3134,7 @@ void Scene08::run() {
 						gnap.playScratchingHead(6, 7);
 					} else {
 						gnap.actionIdle(0x14D);
-						gnap.playPullOutDevice(6, 7);
+						gnap.playPullOutDevice(Common::Point(6, 7));
 						gnap.playUseDevice(0, 0);
 						_nextDogSequenceId = 0x149;
 					}
@@ -3160,7 +3160,7 @@ void Scene08::run() {
 						gnap.playScratchingHead(3, 6);
 					} else {
 						gnap.actionIdle(0x14D);
-						gnap.playPullOutDevice(3, 6);
+						gnap.playPullOutDevice(Common::Point(3, 6));
 						gnap.playUseDevice(0, 0);
 						_nextDogSequenceId = 0x14A;
 					}
@@ -3186,7 +3186,7 @@ void Scene08::run() {
 						gnap.playScratchingHead(7, 6);
 					} else {
 						gnap.actionIdle(0x14D);
-						gnap.playPullOutDevice(7, 6);
+						gnap.playPullOutDevice(Common::Point(7, 6));
 						gnap.playUseDevice(0, 0);
 						_nextDogSequenceId = 0x14B;
 					}
@@ -3453,7 +3453,7 @@ void Scene09::run() {
 		case kHS09Platypus:
 			switch (_vm->_verbCursor) {
 			case LOOK_CURSOR:
-				gnap.playMoan1(plat._pos.x, plat._pos.y);
+				gnap.playMoan1(plat._pos);
 				break;
 			case GRAB_CURSOR:
 				gnap.kissPlatypus(0);

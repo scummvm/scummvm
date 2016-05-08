@@ -69,7 +69,7 @@ void Scene20::updateAnimationsCb() {
 			break;
 		case 0x16A:
 			// Grab joint
-			gnap.playPullOutDevice(4, 4);
+			gnap.playPullOutDevice(Common::Point(4, 4));
 			gnap.playUseDevice(0, 0);
 			gameSys.setAnimation(0x16A, 21, 0);
 			gameSys.insertSequence(0x16A, 21, _currStonerGuySequenceId, 21, kSeqSyncWait, 0, 0, 0);
@@ -370,7 +370,7 @@ void Scene20::run() {
 				} else {
 					switch (_vm->_verbCursor) {
 					case LOOK_CURSOR:
-						gnap.playMoan2(5, 4);
+						gnap.playMoan2(Common::Point(5, 4));
 						break;
 					case GRAB_CURSOR:
 						gnap._idleFacing = kDirUpRight;
@@ -831,7 +831,7 @@ void Scene21::run() {
 						break;
 					case GRAB_CURSOR:
 						gnap.walkTo(gnap._pos, 0, gnap.getSequenceId(gskIdle, _vm->_hotspotsWalkPos[kHS21Banana]) | 0x10000, 1);
-						gnap.playPullOutDevice(2, 5);
+						gnap.playPullOutDevice(Common::Point(2, 5));
 						gnap.playUseDevice(0, 0);
 						gnap._actionStatus = kAS21GrabBanana;
 						break;
@@ -1373,7 +1373,7 @@ void Scene23::run() {
 					switch (_vm->_verbCursor) {
 					case LOOK_CURSOR:
 						if (_vm->isFlag(kGFSceneFlag1))
-							gnap.playMoan2(0, 0);
+							gnap.playMoan2();
 						else {
 							gnap.walkTo(_vm->_hotspotsWalkPos[kHS23Cereals], 0, gnap.getSequenceId(gskIdle, Common::Point(0, 0)) | 0x10000, 1);
 							gnap._actionStatus = kAS23LookCereals;
@@ -1890,7 +1890,7 @@ void Scene25::run() {
 				if (_vm->_grabCursorSpriteIndex == kItemTickets) {
 					gnap._actionStatus = kAS25ShowTicketToVendor;
 					gnap.walkTo(_vm->_hotspotsWalkPos[kHS25TicketVendor], 0, gnap.getSequenceId(gskIdle, Common::Point(9, 4)) | 0x10000, 1);
-					gnap.playPullOutDevice(0, 0);
+					gnap.playPullOutDevice();
 					gnap.playUseDevice(0, 0);
 				} else if (_vm->_grabCursorSpriteIndex >= 0) {
 					gnap.playShowCurrItem(_vm->_hotspotsWalkPos[kHS25TicketVendor].x, _vm->_hotspotsWalkPos[kHS25TicketVendor].y, 6, 1);
@@ -1967,7 +1967,7 @@ void Scene25::run() {
 					case GRAB_CURSOR:
 					case TALK_CURSOR:
 					case PLAT_CURSOR:
-						gnap.playMoan2(0, 0);
+						gnap.playMoan2();
 						break;
 					}
 				}
@@ -2187,7 +2187,7 @@ void Scene26::run() {
 				} else {
 					switch (_vm->_verbCursor) {
 					case LOOK_CURSOR:
-						gnap.playMoan1(plat._pos.x, plat._pos.y);
+						gnap.playMoan1(plat._pos);
 						break;
 					case GRAB_CURSOR:
 						gnap.kissPlatypus(0);
@@ -2424,7 +2424,7 @@ void Scene27::run() {
 				} else {
 					switch (_vm->_verbCursor) {
 					case LOOK_CURSOR:
-						gnap.playMoan1(plat._pos.x, plat._pos.y);
+						gnap.playMoan1(plat._pos);
 						break;
 					case GRAB_CURSOR:
 						gnap.kissPlatypus(0);
@@ -2613,7 +2613,7 @@ void Scene27::updateAnimations() {
 			}
 			break;
 		case kAS27GrabBucket:
-			gnap.playPullOutDevice(0, 0);
+			gnap.playPullOutDevice();
 			gnap.playUseDevice(0, 0);
 			_vm->_hotspots[kHS27Bucket]._flags = SF_DISABLED;
 			_vm->invAdd(kItemEmptyBucket);
@@ -2675,7 +2675,7 @@ void Scene27::updateAnimations() {
 			break;
 		case 0xD0:
 			// Show picture to janitor
-			gnap.playPullOutDevice(0, 0);
+			gnap.playPullOutDevice();
 			gnap.playUseDevice(0, 0);
 			gameSys.insertSequence(_nextJanitorSequenceId, 39, _currJanitorSequenceId, 39, kSeqSyncWait, 0, 0, 0);
 			gameSys.setAnimation(_nextJanitorSequenceId, 39, 0);
@@ -2798,7 +2798,7 @@ void Scene28::run() {
 				} else {
 					switch (_vm->_verbCursor) {
 					case LOOK_CURSOR:
-						gnap.playMoan1(plat._pos.x, plat._pos.y);
+						gnap.playMoan1(plat._pos);
 						break;
 					case GRAB_CURSOR:
 						gnap.kissPlatypus(0);
@@ -2858,13 +2858,13 @@ void Scene28::run() {
 				} else if (_vm->_grabCursorSpriteIndex == kItemBucketWithBeer) {
 					gnap._idleFacing = kDirUpLeft;
 					gnap.walkTo(_vm->_hotspotsWalkPos[kHS28Clown], 0, 0x107BC, 1);
-					gnap.playPullOutDevice(0, 0);
+					gnap.playPullOutDevice();
 					gnap.playUseDevice(0, 0);
 					gnap._actionStatus = kAS28UseBeerBucketWithClown;
 				} else if (_vm->_grabCursorSpriteIndex == kItemBucketWithPill) {
 					gnap._idleFacing = kDirUpLeft;
 					gnap.walkTo(_vm->_hotspotsWalkPos[kHS28Clown], 0, 0x107BC, 1);
-					gnap.playPullOutDevice(0, 0);
+					gnap.playPullOutDevice();
 					gnap.playUseDevice(0, 0);
 					gnap._actionStatus = kAS28UsePillBucketWithClown;
 				} else if (_vm->_grabCursorSpriteIndex >= 0) {
@@ -2989,7 +2989,7 @@ void Scene28::updateAnimations() {
 			_nextClownSequenceId = 0x119;
 			break;
 		case kAS28GrabHornSuccess:
-			gnap.playPullOutDevice(0, 0);
+			gnap.playPullOutDevice();
 			gnap.playUseDevice(0, 0);
 			gameSys.setAnimation(0x117, 59, 0);
 			gameSys.insertSequence(0x117, 59, 280, 59, kSeqSyncWait, 0, 0, 0);
@@ -3011,7 +3011,7 @@ void Scene28::updateAnimations() {
 			gnap._actionStatus = -1;
 			break;
 		case kAS28GrabEmptyBucket:
-			gnap.playPullOutDevice(0, 0);
+			gnap.playPullOutDevice();
 			gnap.playUseDevice(0, 0);
 			gameSys.setAnimation(0x111, 99, 0);
 			gameSys.insertSequence(0x111, 99, 274, 99, kSeqSyncWait, 0, 0, 0);
@@ -3192,7 +3192,7 @@ void Scene29::run() {
 				} else {
 					switch (_vm->_verbCursor) {
 					case LOOK_CURSOR:
-						gnap.playMoan1(plat._pos.x, plat._pos.y);
+						gnap.playMoan1(plat._pos);
 						break;
 					case GRAB_CURSOR:
 						gnap.kissPlatypus(0);
@@ -3271,7 +3271,7 @@ void Scene29::run() {
 				} else {
 					switch (_vm->_verbCursor) {
 					case LOOK_CURSOR:
-						gnap.playMoan2(0, 0);
+						gnap.playMoan2();
 						break;
 					case GRAB_CURSOR:
 					case TALK_CURSOR:

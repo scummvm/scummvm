@@ -99,10 +99,10 @@ public:
 	void playBrainPulsating(Common::Point gridPos = Common::Point(0, 0));
 	void playIdle(Common::Point gridPos = Common::Point(0, 0));
 	void playImpossible(Common::Point gridPos = Common::Point(0, 0));
-	void playMoan1(int gridX, int gridY);
-	void playMoan2(int gridX, int gridY);
-	void playPullOutDevice(int gridX, int gridY);
-	void playPullOutDeviceNonWorking(int gridX, int gridY);
+	void playMoan1(Common::Point gridPos = Common::Point(0, 0));
+	void playMoan2(Common::Point gridPos = Common::Point(0, 0));
+	void playPullOutDevice(Common::Point gridPos = Common::Point(0, 0));
+	void playPullOutDeviceNonWorking(Common::Point gridPos = Common::Point(0, 0));
 	void playScratchingHead(int gridX, int gridY);
 	void playShowCurrItem(int gridX, int gridY, int gridLookX, int gridLookY);
 	void playShowItem(int itemIndex, int gridLookX, int gridLookY);

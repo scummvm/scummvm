@@ -83,7 +83,7 @@ void Scene40::run() {
 				} else {
 					switch (_vm->_verbCursor) {
 					case LOOK_CURSOR:
-						gnap.playMoan1(plat._pos.x, plat._pos.y);
+						gnap.playMoan1(plat._pos);
 						break;
 					case GRAB_CURSOR:
 						gnap.kissPlatypus(0);
@@ -361,7 +361,7 @@ void Scene41::run() {
 					} else {
 						switch (_vm->_verbCursor) {
 						case LOOK_CURSOR:
-							gnap.playMoan1(plat._pos.x, plat._pos.y);
+							gnap.playMoan1(plat._pos);
 							break;
 						case GRAB_CURSOR:
 							gnap.kissPlatypus(0);
@@ -411,7 +411,7 @@ void Scene41::run() {
 				} else {
 					switch (_vm->_verbCursor) {
 					case LOOK_CURSOR:
-						gnap.playMoan1(5, 0);
+						gnap.playMoan1(Common::Point(5, 0));
 						break;
 					case GRAB_CURSOR:
 						gnap.playImpossible();
@@ -458,7 +458,7 @@ void Scene41::run() {
 
 			case kHS41ToyUfo:
 				if (_vm->_grabCursorSpriteIndex == kItemGum) {
-					gnap.playPullOutDevice(9, 0);
+					gnap.playPullOutDevice(Common::Point(9, 0));
 					gameSys.setAnimation(makeRid(gnap._sequenceDatNum, gnap._sequenceId), gnap._id, 0);
 					gnap._actionStatus = kAS41UseGumWithToyUfo;
 				}
@@ -876,7 +876,7 @@ void Scene42::run() {
 					} else {
 						switch (_vm->_verbCursor) {
 						case LOOK_CURSOR:
-							gnap.playMoan1(plat._pos.x, plat._pos.y);
+							gnap.playMoan1(plat._pos);
 							break;
 						case GRAB_CURSOR:
 							gnap.kissPlatypus(0);
@@ -1337,7 +1337,7 @@ void Scene43::run() {
 					} else {
 						switch (_vm->_verbCursor) {
 						case LOOK_CURSOR:
-							gnap.playMoan1(plat._pos.x, plat._pos.y);
+							gnap.playMoan1(plat._pos);
 							break;
 						case GRAB_CURSOR:
 							gnap.kissPlatypus(0);
@@ -1788,7 +1788,7 @@ void Scene44::run() {
 					} else {
 						switch (_vm->_verbCursor) {
 						case LOOK_CURSOR:
-							gnap.playMoan1(plat._pos.x, plat._pos.y);
+							gnap.playMoan1(plat._pos);
 							break;
 						case GRAB_CURSOR:
 							gnap.kissPlatypus(0);
@@ -1866,7 +1866,7 @@ void Scene44::run() {
 						gnap.playScratchingHead(8, 7);
 						break;
 					case GRAB_CURSOR:
-						gnap.playPullOutDevice(8, 0);
+						gnap.playPullOutDevice(Common::Point(8, 0));
 						gnap.playUseDevice(8, 0);
 						_nextSpringGuySequenceId = 0xFB;
 						_vm->invAdd(kItemSpring);
@@ -1890,7 +1890,7 @@ void Scene44::run() {
 					switch (_vm->_verbCursor) {
 					case LOOK_CURSOR:
 						if (_vm->isFlag(kGFSpringTaken))
-							gnap.playMoan1(8, 7);
+							gnap.playMoan1(Common::Point(8, 7));
 						else
 							gnap.playScratchingHead(8, 7);
 						break;
@@ -2281,7 +2281,7 @@ void Scene45::run() {
 					} else {
 						switch (_vm->_verbCursor) {
 						case LOOK_CURSOR:
-							gnap.playMoan1(plat._pos.x, plat._pos.y);
+							gnap.playMoan1(plat._pos);
 							break;
 						case GRAB_CURSOR:
 							gnap.kissPlatypus(0);
@@ -2610,7 +2610,7 @@ void Scene46::run() {
 					} else {
 						switch (_vm->_verbCursor) {
 						case LOOK_CURSOR:
-							gnap.playMoan1(plat._pos.x, plat._pos.y);
+							gnap.playMoan1(plat._pos);
 							break;
 						case GRAB_CURSOR:
 							gnap.kissPlatypus(0);
@@ -2633,7 +2633,7 @@ void Scene46::run() {
 				} else {
 					switch (_vm->_verbCursor) {
 					case LOOK_CURSOR:
-						gnap.playMoan1(_vm->_hotspotsWalkPos[kHS46SackGuy].x + 1, 0);
+						gnap.playMoan1(Common::Point(_vm->_hotspotsWalkPos[kHS46SackGuy].x + 1, 0));
 						break;
 					case TALK_CURSOR:
 						gnap._idleFacing = kDirUpLeft;
@@ -2654,7 +2654,7 @@ void Scene46::run() {
 				} else {
 					switch (_vm->_verbCursor) {
 					case LOOK_CURSOR:
-						gnap.playMoan1(_vm->_hotspotsWalkPos[kHS46ItchyGuy].x - 1, 0);
+						gnap.playMoan1(Common::Point(_vm->_hotspotsWalkPos[kHS46ItchyGuy].x - 1, 0));
 						break;
 					case TALK_CURSOR:
 						gnap._idleFacing = kDirUpRight;

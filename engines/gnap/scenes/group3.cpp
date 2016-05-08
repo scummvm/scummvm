@@ -97,7 +97,7 @@ void Scene30::run() {
 				} else {
 					switch (_vm->_verbCursor) {
 					case LOOK_CURSOR:
-						gnap.playMoan1(plat._pos.x, plat._pos.y);
+						gnap.playMoan1(plat._pos);
 						break;
 					case GRAB_CURSOR:
 						gnap.kissPlatypus(0);
@@ -355,7 +355,7 @@ void Scene31::run() {
 				} else {
 					switch (_vm->_verbCursor) {
 					case LOOK_CURSOR:
-						gnap.playMoan1(plat._pos.x, plat._pos.y);
+						gnap.playMoan1(plat._pos);
 						break;
 					case GRAB_CURSOR:
 						gnap.kissPlatypus(0);
@@ -422,7 +422,7 @@ void Scene31::run() {
 					gnap.walkTo(gnap._pos, -1, gnap.getSequenceId(gskIdle, _vm->_hotspotsWalkPos[kHS31BeerBarrel]) | 0x10000, 1);
 					_clerkMeasureMaxCtr += 5;
 					gameSys.insertSequence(0xF8, 59, 0, 0, kSeqNone, 0, 0, 0);
-					gnap.playPullOutDevice(6, 8);
+					gnap.playPullOutDevice(Common::Point(6, 8));
 					gnap.playUseDevice(0, 0);
 					gnap.walkTo(_vm->_hotspotsWalkPos[kHS31BeerBarrel], 0, 0x107BC, 1);
 					gnap._actionStatus = kAS31FillEmptyBucketWithBeer;
@@ -560,7 +560,7 @@ void Scene31::updateAnimations() {
 			break;
 		case kAS31FillEmptyBucketWithBeerDone:
 			gnap._idleFacing = kDirBottomLeft;
-			gnap.playPullOutDevice(0, 0);
+			gnap.playPullOutDevice();
 			gnap.playUseDevice(0, 0);
 			gameSys.insertSequence(0xF9, 59, 0xF8, 59, kSeqSyncWait, 0, 0, 0);
 			gnap._actionStatus = -1;
@@ -708,7 +708,7 @@ void Scene32::run() {
 				} else {
 					switch (_vm->_verbCursor) {
 					case LOOK_CURSOR:
-						gnap.playMoan1(plat._pos.x, plat._pos.y);
+						gnap.playMoan1(plat._pos);
 						break;
 					case GRAB_CURSOR:
 						gnap.kissPlatypus(0);
@@ -886,7 +886,7 @@ void Scene33::run() {
 				} else {
 					switch (_vm->_verbCursor) {
 					case LOOK_CURSOR:
-						gnap.playMoan1(plat._pos.x, plat._pos.y);
+						gnap.playMoan1(plat._pos);
 						break;
 					case GRAB_CURSOR:
 						gnap.kissPlatypus(0);
@@ -1170,7 +1170,7 @@ void Scene38::run() {
 			} else {
 				switch (_vm->_verbCursor) {
 				case LOOK_CURSOR:
-					gnap.playMoan1(plat._pos.x, plat._pos.y);
+					gnap.playMoan1(plat._pos);
 					break;
 				case GRAB_CURSOR:
 					gnap.kissPlatypus(0);
@@ -1480,7 +1480,7 @@ void Scene39::run() {
 				} else {
 					switch (_vm->_verbCursor) {
 					case LOOK_CURSOR:
-						gnap.playMoan1(plat._pos.x, plat._pos.y);
+						gnap.playMoan1(plat._pos);
 						break;
 					case GRAB_CURSOR:
 						gnap.kissPlatypus(0);
