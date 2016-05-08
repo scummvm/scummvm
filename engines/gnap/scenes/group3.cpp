@@ -123,7 +123,7 @@ void Scene30::run() {
 					gnap._actionStatus = kAS30UsePillMachine;
 					hasTakenPill = true;
 				} else if (_vm->_grabCursorSpriteIndex >= 0) {
-					gnap.playShowCurrItem(_vm->_hotspotsWalkPos[kHS30PillMachine].x, _vm->_hotspotsWalkPos[kHS30PillMachine].y, 8, 5);
+					gnap.playShowCurrItem(_vm->_hotspotsWalkPos[kHS30PillMachine], 8, 5);
 				} else {
 					switch (_vm->_verbCursor) {
 					case LOOK_CURSOR:
@@ -131,7 +131,7 @@ void Scene30::run() {
 						gnap._actionStatus = kAS30LookPillMachine;
 						break;
 					case GRAB_CURSOR:
-						gnap.playScratchingHead(8, 5);
+						gnap.playScratchingHead(Common::Point(8, 5));
 						break;
 					case TALK_CURSOR:
 					case PLAT_CURSOR:
@@ -376,15 +376,15 @@ void Scene31::run() {
 			if (gnap._actionStatus < 0 || gnap._actionStatus == kAS31PlatMeasuringClown) {
 				if (gnap._actionStatus == kAS31PlatMeasuringClown) {
 					if (_vm->_verbCursor == LOOK_CURSOR)
-						gnap.playScratchingHead(2, 2);
+						gnap.playScratchingHead(Common::Point(2, 2));
 					else
 						gnap.playImpossible();
 				} else if (_vm->_grabCursorSpriteIndex >= 0) {
-					gnap.playShowCurrItem(_vm->_hotspotsWalkPos[kHS31MeasuringClown].x, _vm->_hotspotsWalkPos[kHS31MeasuringClown].y + 1, 2, 2);
+					gnap.playShowCurrItem(_vm->_hotspotsWalkPos[kHS31MeasuringClown] + Common::Point(0, 1), 2, 2);
 				} else {
 					switch (_vm->_verbCursor) {
 					case LOOK_CURSOR:
-						gnap.playScratchingHead(2, 2);
+						gnap.playScratchingHead(Common::Point(2, 2));
 						break;
 					case GRAB_CURSOR:
 						gnap.walkTo(_vm->_hotspotsWalkPos[kHS31MeasuringClown] + Common::Point(0, 1), -1, -1, 1);
@@ -423,20 +423,20 @@ void Scene31::run() {
 					_clerkMeasureMaxCtr += 5;
 					gameSys.insertSequence(0xF8, 59, 0, 0, kSeqNone, 0, 0, 0);
 					gnap.playPullOutDevice(Common::Point(6, 8));
-					gnap.playUseDevice(0, 0);
+					gnap.playUseDevice();
 					gnap.walkTo(_vm->_hotspotsWalkPos[kHS31BeerBarrel], 0, 0x107BC, 1);
 					gnap._actionStatus = kAS31FillEmptyBucketWithBeer;
 					_vm->_timers[4] = 300;
 				} else if (_vm->_grabCursorSpriteIndex >= 0) {
-					gnap.playShowCurrItem(_vm->_hotspotsWalkPos[kHS31BeerBarrel].x, _vm->_hotspotsWalkPos[kHS31BeerBarrel].y, 6, 2);
+					gnap.playShowCurrItem(_vm->_hotspotsWalkPos[kHS31BeerBarrel], 6, 2);
 				} else {
 					switch (_vm->_verbCursor) {
 					case LOOK_CURSOR:
-						gnap.playScratchingHead(6, 2);
+						gnap.playScratchingHead(Common::Point(6, 2));
 						break;
 					case GRAB_CURSOR:
 						if (_beerGuyDistracted) {
-							gnap.playScratchingHead(6, 2);
+							gnap.playScratchingHead(Common::Point(6, 2));
 						} else {
 							gnap.walkTo(_vm->_hotspotsWalkPos[kHS31BeerBarrel], 0, 0x107BC, 1);
 							gnap._actionStatus = kAS31UseBeerBarrel;
@@ -561,7 +561,7 @@ void Scene31::updateAnimations() {
 		case kAS31FillEmptyBucketWithBeerDone:
 			gnap._idleFacing = kDirBottomLeft;
 			gnap.playPullOutDevice();
-			gnap.playUseDevice(0, 0);
+			gnap.playUseDevice();
 			gameSys.insertSequence(0xF9, 59, 0xF8, 59, kSeqSyncWait, 0, 0, 0);
 			gnap._actionStatus = -1;
 			_vm->invAdd(kItemBucketWithBeer);
@@ -906,7 +906,7 @@ void Scene33::run() {
 		case kHS33Chicken:
 			if (gnap._actionStatus < 0) {
 				if (_vm->_grabCursorSpriteIndex >= 0) {
-					gnap.playShowCurrItem(7, 9, 9, 8);
+					gnap.playShowCurrItem(Common::Point(7, 9), 9, 8);
 				} else {
 					switch (_vm->_verbCursor) {
 					case GRAB_CURSOR:
@@ -1224,11 +1224,11 @@ void Scene38::run() {
 		case kHS38HuntingTrophy:
 			if (gnap._actionStatus != kAS38HoldingHuntingTrophy) {
 				if (_vm->_grabCursorSpriteIndex >= 0) {
-					gnap.playShowCurrItem(3, 6, 2, 0);
+					gnap.playShowCurrItem(Common::Point(3, 6), 2, 0);
 				} else {
 					switch (_vm->_verbCursor) {
 					case LOOK_CURSOR:
-						gnap.playScratchingHead(0, 0);
+						gnap.playScratchingHead();
 						break;
 					case GRAB_CURSOR:
 						if (plat._actionStatus == kAS38PlatypusHoldingTrapDoor)

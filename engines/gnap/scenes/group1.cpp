@@ -116,7 +116,7 @@ void Scene10::run() {
 					if (_vm->isFlag(kGFMudTaken))
 						gnap.playMoan1(plat._pos);
 					else
-						gnap.playScratchingHead(plat._pos.x, plat._pos.y);
+						gnap.playScratchingHead(plat._pos);
 					break;
 				case GRAB_CURSOR:
 					gnap.kissPlatypus(10);
@@ -151,13 +151,13 @@ void Scene10::run() {
 
 		case kHS10Cook:
 			if (_vm->_grabCursorSpriteIndex >= 0) {
-				gnap.playShowCurrItem(4, 8, 6, 0);
+				gnap.playShowCurrItem(Common::Point(4, 8), 6, 0);
 				gameSys.setAnimation(makeRid(gnap._sequenceDatNum, gnap._sequenceId), gnap._id, 0);
 				gnap._actionStatus = kAS10AnnoyCook;
 			} else {
 				switch (_vm->_verbCursor) {
 				case LOOK_CURSOR:
-					gnap.playScratchingHead(6, 0);
+					gnap.playScratchingHead(Common::Point(6, 0));
 					break;
 				case GRAB_CURSOR:
 					gnap.playImpossible();
@@ -182,14 +182,14 @@ void Scene10::run() {
 
 		case kHS10Tongs:
 			if (_vm->_grabCursorSpriteIndex >= 0) {
-				gnap.playShowCurrItem(3, 7, 4, 0);
+				gnap.playShowCurrItem(Common::Point(3, 7), 4, 0);
 			} else {
 				switch (_vm->_verbCursor) {
 				case LOOK_CURSOR:
 					if (_vm->isFlag(kGFMudTaken))
 						gnap.playMoan2(Common::Point(-1, -1));
 					else
-						gnap.playScratchingHead(4, 3);
+						gnap.playScratchingHead(Common::Point(4, 3));
 					break;
 				case GRAB_CURSOR:
 					if (_vm->isFlag(kGFMudTaken))
@@ -220,11 +220,11 @@ void Scene10::run() {
 
 		case kHS10Box:
 			if (_vm->_grabCursorSpriteIndex >= 0) {
-				gnap.playShowCurrItem(7, 6, 6, 0);
+				gnap.playShowCurrItem(Common::Point(7, 6), 6, 0);
 			} else {
 				switch (_vm->_verbCursor) {
 				case LOOK_CURSOR:
-					gnap.playScratchingHead(7, 3);
+					gnap.playScratchingHead(Common::Point(7, 3));
 					break;
 				case GRAB_CURSOR:
 					gnap.actionIdle(0x10C);
@@ -255,7 +255,7 @@ void Scene10::run() {
 
 		case kHS10Oven:
 			if (_vm->_grabCursorSpriteIndex >= 0) {
-				gnap.playShowCurrItem(9, 6, 10, 0);
+				gnap.playShowCurrItem(Common::Point(9, 6), 10, 0);
 			} else {
 				switch (_vm->_verbCursor) {
 				case LOOK_CURSOR:
@@ -657,11 +657,11 @@ void Scene11::run() {
 					gnap._actionStatus = kAS11ShowMagazineToGoggleGuy;
 					gnap.playShowItem(_vm->_grabCursorSpriteIndex, 2, 0);
 				} else if (_vm->_grabCursorSpriteIndex >= 0) {
-					gnap.playShowCurrItem(3, 7, 2, 0);
+					gnap.playShowCurrItem(Common::Point(3, 7), 2, 0);
 				} else {
 					switch (_vm->_verbCursor) {
 					case LOOK_CURSOR:
-						gnap.playScratchingHead(1, 6);
+						gnap.playScratchingHead(Common::Point(1, 6));
 						break;
 					case GRAB_CURSOR:
 					case PLAT_CURSOR:
@@ -713,7 +713,7 @@ void Scene11::run() {
 				} else {
 					switch (_vm->_verbCursor) {
 					case LOOK_CURSOR:
-						gnap.playScratchingHead(9, 8);
+						gnap.playScratchingHead(Common::Point(9, 8));
 						break;
 					case GRAB_CURSOR:
 						gnap.walkTo(Common::Point(9, 8), 0, 0x107BA, 1);
@@ -1077,7 +1077,7 @@ void Scene12::run() {
 			} else {
 				switch (_vm->_verbCursor) {
 				case LOOK_CURSOR:
-					gnap.playScratchingHead(1, 2);
+					gnap.playScratchingHead(Common::Point(1, 2));
 					break;
 				case GRAB_CURSOR:
 					gnap.walkTo(Common::Point(3, 7), 0, 0x107BC, 1);
@@ -1576,7 +1576,7 @@ void Scene13::run() {
 
 		case kHS13BackToilet:
 			if (_vm->_grabCursorSpriteIndex >= 0) {
-				gnap.playShowCurrItem(5, 5, 6, 0);
+				gnap.playShowCurrItem(Common::Point(5, 5), 6, 0);
 			} else {
 				switch (_vm->_verbCursor) {
 				case LOOK_CURSOR:
@@ -1607,7 +1607,7 @@ void Scene13::run() {
 
 		case kHS13FrontToilet:
 			if (_vm->_grabCursorSpriteIndex >= 0) {
-				gnap.playShowCurrItem(6, 7, 7, 0);
+				gnap.playShowCurrItem(Common::Point(6, 7), 7, 0);
 			} else {
 				switch (_vm->_verbCursor) {
 				case LOOK_CURSOR:
@@ -1624,7 +1624,7 @@ void Scene13::run() {
 
 		case kHS13Scribble:
 			if (_vm->_grabCursorSpriteIndex >= 0) {
-				gnap.playShowCurrItem(7, 7, 8, 0);
+				gnap.playShowCurrItem(Common::Point(7, 7), 8, 0);
 			} else {
 				switch (_vm->_verbCursor) {
 				case LOOK_CURSOR:
@@ -1633,7 +1633,7 @@ void Scene13::run() {
 					gnap._idleFacing = kDirUpRight;
 					break;
 				case GRAB_CURSOR:
-					gnap.playScratchingHead(0, 0);
+					gnap.playScratchingHead();
 					break;
 				case TALK_CURSOR:
 					gnap._idleFacing = kDirUpRight;
@@ -1648,7 +1648,7 @@ void Scene13::run() {
 
 		case kHS13Urinal:
 			if (_vm->_grabCursorSpriteIndex >= 0) {
-				gnap.playShowCurrItem(8, 7, 9, 0);
+				gnap.playShowCurrItem(Common::Point(8, 7), 9, 0);
 			} else {
 				switch (_vm->_verbCursor) {
 				case LOOK_CURSOR:
@@ -2572,12 +2572,12 @@ void Scene17::run() {
 						_vm->invRemove(kItemJoint);
 					}
 				} else if (_vm->_grabCursorSpriteIndex >= 0) {
-					gnap.playScratchingHead(plat._pos.x, plat._pos.y);
+					gnap.playScratchingHead(plat._pos);
 				} else {
 					switch (_vm->_verbCursor) {
 					case LOOK_CURSOR:
 					case GRAB_CURSOR:
-						gnap.playScratchingHead(plat._pos.x, plat._pos.y);
+						gnap.playScratchingHead(plat._pos);
 						break;
 					case TALK_CURSOR:
 						gnap.playBrainPulsating(plat._pos);
@@ -2596,12 +2596,12 @@ void Scene17::run() {
 				if (_vm->isFlag(kGFGrassTaken)) {
 					gnap.playImpossible();
 				} else if (_vm->_grabCursorSpriteIndex >= 0) {
-					gnap.playShowCurrItem(_vm->_hotspotsWalkPos[_vm->_sceneClickedHotspot].x, _vm->_hotspotsWalkPos[_vm->_sceneClickedHotspot].y, 8, 7);
+					gnap.playShowCurrItem(_vm->_hotspotsWalkPos[_vm->_sceneClickedHotspot], 8, 7);
 				} else {
 					switch (_vm->_verbCursor) {
 					case LOOK_CURSOR:
 					case GRAB_CURSOR:
-						gnap.playScratchingHead(8, 7);
+						gnap.playScratchingHead(Common::Point(8, 7));
 						break;
 					case TALK_CURSOR:
 						gnap.playImpossible();
@@ -2628,11 +2628,11 @@ void Scene17::run() {
 					gnap.walkTo(_vm->_hotspotsWalkPos[2], 0, gnap.getSequenceId(gskIdle, Common::Point(0, 0)) | 0x10000, 1);
 					gnap._actionStatus = kAS17PutCoinIntoPhone;
 				} else if (_vm->_grabCursorSpriteIndex >= 0) {
-					gnap.playShowCurrItem(_vm->_hotspotsWalkPos[2].x, _vm->_hotspotsWalkPos[2].y, 1, 3);
+					gnap.playShowCurrItem(_vm->_hotspotsWalkPos[2], 1, 3);
 				} else {
 					switch (_vm->_verbCursor) {
 					case LOOK_CURSOR:
-						gnap.playScratchingHead(1, 3);
+						gnap.playScratchingHead(Common::Point(1, 3));
 						break;
 					case GRAB_CURSOR:
 						if (_vm->isFlag(kGFUnk18)) {
@@ -2669,11 +2669,11 @@ void Scene17::run() {
 					gnap.walkTo(_vm->_hotspotsWalkPos[2], 0, gnap.getSequenceId(gskIdle, Common::Point(0, 0)) | 0x10000, 1);
 					gnap._actionStatus = kAS17PutCoinIntoPhone;
 				} else if (_vm->_grabCursorSpriteIndex >= 0) {
-					gnap.playShowCurrItem(_vm->_hotspotsWalkPos[2].x, _vm->_hotspotsWalkPos[2].y, 1, 3);
+					gnap.playShowCurrItem(_vm->_hotspotsWalkPos[2], 1, 3);
 				} else {
 					switch (_vm->_verbCursor) {
 					case LOOK_CURSOR:
-						gnap.playScratchingHead(1, 3);
+						gnap.playScratchingHead(Common::Point(1, 3));
 						break;
 					case GRAB_CURSOR:
 						if (_vm->isFlag(kGFUnk18)) {
@@ -2863,7 +2863,7 @@ void Scene17::updateAnimations() {
 			break;
 		case kAS17GetCoinFromPhone:
 			gnap.playPullOutDevice(Common::Point(1, 3));
-			gnap.playUseDevice(0, 0);
+			gnap.playUseDevice();
 			gameSys.setAnimation(0x250, 100, 0);
 			gameSys.insertSequence(0x250, 100, 591, 100, kSeqSyncWait, 0, 0, 0);
 			_vm->invAdd(kItemDiceQuarterHole);
@@ -3513,11 +3513,11 @@ void Scene18::run() {
 					putDownGarbageCan(0);
 				}
 				if (_vm->_grabCursorSpriteIndex >= 0) {
-					gnap.playShowCurrItem(_vm->_hotspotsWalkPos[kHS18CowboyHat].x, _vm->_hotspotsWalkPos[kHS18CowboyHat].y, 3, 2);
+					gnap.playShowCurrItem(_vm->_hotspotsWalkPos[kHS18CowboyHat], 3, 2);
 				} else {
 					switch (_vm->_verbCursor) {
 					case LOOK_CURSOR:
-						gnap.playScratchingHead(3, 2);
+						gnap.playScratchingHead(Common::Point(3, 2));
 						break;
 					case GRAB_CURSOR:
 						gnap.walkTo(_vm->_hotspotsWalkPos[kHS18CowboyHat], 0, gnap.getSequenceId(gskPullOutDeviceNonWorking, Common::Point(3, 2)) | 0x10000, 1);
@@ -3535,25 +3535,27 @@ void Scene18::run() {
 			if (gnap._actionStatus < 0) {
 				if (_vm->isFlag(kGFUnk14)) {
 					if (_vm->_grabCursorSpriteIndex >= 0)
-						gnap.playShowCurrItem(_vm->_hotspotsWalkPos[kHS18GarbageCan].x, _vm->_hotspotsWalkPos[kHS18GarbageCan].y, 1, 5);
+						gnap.playShowCurrItem(_vm->_hotspotsWalkPos[kHS18GarbageCan], 1, 5);
 					else
 						gnap.playImpossible();
 				} else {
 					if (_vm->isFlag(kGFPlatypusTalkingToAssistant))
 						platEndPhoning(true);
 					if (_vm->_grabCursorSpriteIndex >= 0) {
-						if (!_vm->isFlag(kGFTruckKeysUsed))
-							gnap.playShowCurrItem(_vm->_hotspotsWalkPos[kHS18GarbageCan].x - (gnap._pos.x < _vm->_s18GarbageCanPos ? 1 : -1),
-								_vm->_hotspotsWalkPos[kHS18GarbageCan].y, _vm->_hotspotsWalkPos[kHS18GarbageCan].x, _vm->_hotspotsWalkPos[kHS18GarbageCan].y);
-						else
-							gnap.playShowCurrItem(_vm->_hotspotsWalkPos[kHS18GarbageCan].x, _vm->_hotspotsWalkPos[kHS18GarbageCan].y, 2, 4);
+						if (!_vm->isFlag(kGFTruckKeysUsed)) {
+							Common::Point destPos;
+							destPos.x = _vm->_hotspotsWalkPos[kHS18GarbageCan].x - (gnap._pos.x < _vm->_s18GarbageCanPos ? 1 : -1);
+							destPos.y = _vm->_hotspotsWalkPos[kHS18GarbageCan].y;
+							gnap.playShowCurrItem(destPos, _vm->_hotspotsWalkPos[kHS18GarbageCan].x, _vm->_hotspotsWalkPos[kHS18GarbageCan].y);
+						} else
+							gnap.playShowCurrItem(_vm->_hotspotsWalkPos[kHS18GarbageCan], 2, 4);
 					} else {
 						switch (_vm->_verbCursor) {
 						case LOOK_CURSOR:
 							if (!_vm->isFlag(kGFTruckKeysUsed))
-								gnap.playScratchingHead(_vm->_hotspotsWalkPos[kHS18GarbageCan].x - (gnap._pos.x < _vm->_s18GarbageCanPos ? 1 : -1), _vm->_hotspotsWalkPos[kHS18GarbageCan].y);
+								gnap.playScratchingHead(Common::Point(_vm->_hotspotsWalkPos[kHS18GarbageCan].x - (gnap._pos.x < _vm->_s18GarbageCanPos ? 1 : -1), _vm->_hotspotsWalkPos[kHS18GarbageCan].y));
 							else if (!_vm->isFlag(kGFTruckFilledWithGas))
-								gnap.playScratchingHead(2, 4);
+								gnap.playScratchingHead(Common::Point(2, 4));
 							break;
 						case GRAB_CURSOR:
 							if (!_vm->isFlag(kGFTruckKeysUsed)) {
@@ -3589,7 +3591,7 @@ void Scene18::run() {
 						case LOOK_CURSOR:
 							gnapCarryGarbageCanTo(-1);
 							putDownGarbageCan(0);
-							gnap.playScratchingHead(0, 0);
+							gnap.playScratchingHead();
 							break;
 						case GRAB_CURSOR:
 							if (_vm->isFlag(kGFTruckFilledWithGas)) {
@@ -3617,11 +3619,11 @@ void Scene18::run() {
 						gnap.walkTo(gnap._pos, 0, gnap.getSequenceId(gskIdle, Common::Point(2, 8)) | 0x10000, 1);
 						gnap._actionStatus = kAS18OpenTopValve;
 					} else if (_vm->_grabCursorSpriteIndex >= 0) {
-						gnap.playShowCurrItem(_vm->_hotspotsWalkPos[kHS18HydrantTopValve].x, _vm->_hotspotsWalkPos[kHS18HydrantTopValve].y, 1, 5);
+						gnap.playShowCurrItem(_vm->_hotspotsWalkPos[kHS18HydrantTopValve], 1, 5);
 					} else {
 						switch (_vm->_verbCursor) {
 						case LOOK_CURSOR:
-							gnap.playScratchingHead(1, 5);
+							gnap.playScratchingHead(Common::Point(1, 5));
 							break;
 						case GRAB_CURSOR:
 							if (_vm->isFlag(kGFBarnPadlockOpen)) {
@@ -3648,7 +3650,7 @@ void Scene18::run() {
 					if (_vm->_grabCursorSpriteIndex == -1) {
 						gnap.playImpossible();
 					} else {
-						gnap.playShowCurrItem(_vm->_hotspotsWalkPos[kHS18HydrantRightValve].x, _vm->_hotspotsWalkPos[kHS18HydrantRightValve].y, 1, 5);
+						gnap.playShowCurrItem(_vm->_hotspotsWalkPos[kHS18HydrantRightValve], 1, 5);
 					}
 				} else {
 					if (_vm->isFlag(kGFPlatypusDisguised)) {
@@ -3662,11 +3664,11 @@ void Scene18::run() {
 						else
 							gnap._actionStatus = kAS18OpenRightValveNoGarbageCan;
 					} else if (_vm->_grabCursorSpriteIndex >= 0) {
-						gnap.playShowCurrItem(_vm->_hotspotsWalkPos[kHS18HydrantRightValve].x, _vm->_hotspotsWalkPos[kHS18HydrantRightValve].y, 1, 5);
+						gnap.playShowCurrItem(_vm->_hotspotsWalkPos[kHS18HydrantRightValve], 1, 5);
 					} else {
 						switch (_vm->_verbCursor) {
 						case LOOK_CURSOR:
-							gnap.playScratchingHead(1, 5);
+							gnap.playScratchingHead(Common::Point(1, 5));
 							break;
 						case GRAB_CURSOR:
 							if (_vm->isFlag(kGFTruckFilledWithGas)) {
@@ -3882,7 +3884,7 @@ void Scene18::updateAnimations() {
 			_vm->setFlag(kGFBarnPadlockOpen);
 			updateHotspots();
 			gnap.playPullOutDevice(Common::Point(2, 7));
-			gnap.playUseDevice(0, 0);
+			gnap.playUseDevice();
 			gameSys.insertSequence(0x20C, 19, 0, 0, kSeqNone, 0, 0, 0);
 			_vm->_hotspots[kHS18WalkArea2]._flags |= SF_WALKABLE;
 			gnap.walkTo(_vm->_hotspotsWalkPos[kHS18HydrantTopValve], 0, 0x107BB, 1);
@@ -3980,7 +3982,7 @@ void Scene18::updateAnimations() {
 			_vm->setFlag(kGFTruckFilledWithGas);
 			updateHotspots();
 			gnap.playPullOutDevice(Common::Point(2, 7));
-			gnap.playUseDevice(0, 0);
+			gnap.playUseDevice();
 			gameSys.insertSequence(0x20B, 19, 0, 0, kSeqNone, 0, 0, 0);
 			_vm->_hotspots[kHS18WalkArea2]._flags |= SF_WALKABLE;
 			gnap.walkTo(_vm->_hotspotsWalkPos[kHS18HydrantRightValve], 0, 0x107BA, 1);
@@ -4230,11 +4232,11 @@ void Scene19::run() {
 		case kHS19Picture:
 			if (gnap._actionStatus < 0) {
 				if (_vm->_grabCursorSpriteIndex >= 0) {
-					gnap.playShowCurrItem(_vm->_hotspotsWalkPos[_vm->_sceneClickedHotspot].x, _vm->_hotspotsWalkPos[_vm->_sceneClickedHotspot].y, 6, 2);
+					gnap.playShowCurrItem(_vm->_hotspotsWalkPos[_vm->_sceneClickedHotspot], 6, 2);
 				} else {
 					switch (_vm->_verbCursor) {
 					case LOOK_CURSOR:
-						gnap.playScratchingHead(6, 2);
+						gnap.playScratchingHead(Common::Point(6, 2));
 						break;
 					case GRAB_CURSOR:
 						if (!_vm->isFlag(kGFPictureTaken)) {
@@ -4254,11 +4256,11 @@ void Scene19::run() {
 		case kHS19ShopAssistant:
 			if (gnap._actionStatus < 0) {
 				if (_vm->_grabCursorSpriteIndex >= 0) {
-					gnap.playShowCurrItem(_vm->_hotspotsWalkPos[_vm->_sceneClickedHotspot].x, _vm->_hotspotsWalkPos[_vm->_sceneClickedHotspot].y, 6, 2);
+					gnap.playShowCurrItem(_vm->_hotspotsWalkPos[_vm->_sceneClickedHotspot], 6, 2);
 				} else {
 					switch (_vm->_verbCursor) {
 					case LOOK_CURSOR:
-						gnap.playScratchingHead(6, 2);
+						gnap.playScratchingHead(Common::Point(6, 2));
 						break;
 					case TALK_CURSOR:
 						gnap._idleFacing = kDirUpRight;
@@ -4306,11 +4308,11 @@ void Scene19::run() {
 		case kHS19Phone:
 			if (gnap._actionStatus < 0) {
 				if (_vm->_grabCursorSpriteIndex >= 0) {
-					gnap.playShowCurrItem(_vm->_hotspotsWalkPos[_vm->_sceneClickedHotspot].x, _vm->_hotspotsWalkPos[_vm->_sceneClickedHotspot].y, 9, 1);
+					gnap.playShowCurrItem(_vm->_hotspotsWalkPos[_vm->_sceneClickedHotspot], 9, 1);
 				} else {
 					switch (_vm->_verbCursor) {
 					case LOOK_CURSOR:
-						gnap.playScratchingHead(9, 1);
+						gnap.playScratchingHead(Common::Point(9, 1));
 						break;
 					case GRAB_CURSOR:
 						gnap.walkTo(_vm->_hotspotsWalkPos[_vm->_sceneClickedHotspot], 0, -1, 1);
@@ -4403,7 +4405,7 @@ void Scene19::updateAnimations() {
 			break;
 		case kAS19GrabPicture:
 			gnap.playPullOutDevice(Common::Point(6, 2));
-			gnap.playUseDevice(0, 0);
+			gnap.playUseDevice();
 			gameSys.setAnimation(0x68, 19, 0);
 			gameSys.insertSequence(0x68, 19, 105, 19, kSeqSyncWait, 0, 0, 0);
 			_vm->invAdd(kItemPicture);

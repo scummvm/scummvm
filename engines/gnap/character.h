@@ -103,10 +103,10 @@ public:
 	void playMoan2(Common::Point gridPos = Common::Point(0, 0));
 	void playPullOutDevice(Common::Point gridPos = Common::Point(0, 0));
 	void playPullOutDeviceNonWorking(Common::Point gridPos = Common::Point(0, 0));
-	void playScratchingHead(int gridX, int gridY);
-	void playShowCurrItem(int gridX, int gridY, int gridLookX, int gridLookY);
+	void playScratchingHead(Common::Point gridPos = Common::Point(0, 0));
+	void playShowCurrItem(Common::Point destPos, int gridLookX, int gridLookY);
 	void playShowItem(int itemIndex, int gridLookX, int gridLookY);
-	void playUseDevice(int gridX, int gridY);
+	void playUseDevice(Common::Point gridPos = Common::Point(0, 0));
 	void useDeviceOnPlatypus();
 	void useDisguiseOnPlatypus();
 	void useJointOnPlatypus();

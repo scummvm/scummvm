@@ -1061,8 +1061,8 @@ void PlayerGnap::playImpossible(Common::Point gridPos) {
 	playSequence(getSequenceId(gskImpossible, gridPos) | 0x10000);
 }
 
-void PlayerGnap::playScratchingHead(int gridX, int gridY) {
-	playSequence(getSequenceId(gskScratchingHead, Common::Point(gridX, gridY)) | 0x10000);
+void PlayerGnap::playScratchingHead(Common::Point gridPos) {
+	playSequence(getSequenceId(gskScratchingHead, gridPos) | 0x10000);
 }
 
 void PlayerGnap::playMoan1(Common::Point gridPos) {
@@ -1085,8 +1085,8 @@ void PlayerGnap::playPullOutDeviceNonWorking(Common::Point gridPos) {
 	playSequence(getSequenceId(gskPullOutDeviceNonWorking, gridPos) | 0x10000);
 }
 
-void PlayerGnap::playUseDevice(int gridX, int gridY) {
-	playSequence(getSequenceId(gskUseDevice, Common::Point(gridX, gridY)) | 0x10000);
+void PlayerGnap::playUseDevice(Common::Point gridPos) {
+	playSequence(getSequenceId(gskUseDevice, gridPos) | 0x10000);
 }
 
 void PlayerGnap::playIdle(Common::Point gridPos) {
@@ -1097,12 +1097,12 @@ void PlayerGnap::playShowItem(int itemIndex, int gridLookX, int gridLookY) {
 	playSequence(getShowSequenceId(itemIndex, gridLookX, gridLookY) | 0x10000);
 }
 
-void PlayerGnap::playShowCurrItem(int gridX, int gridY, int gridLookX, int gridLookY) {
+void PlayerGnap::playShowCurrItem(Common::Point destPos, int gridLookX, int gridLookY) {
 	PlayerPlat& plat = *_vm->_plat;
 
-	if (plat._pos.x == gridX && plat._pos.y == gridY)
+	if (plat._pos == destPos)
 		plat.makeRoom();
-	walkTo(Common::Point(gridX, gridY), -1, -1, 1);
+	walkTo(destPos, -1, -1, 1);
 	playShowItem(_vm->_grabCursorSpriteIndex, gridLookX, gridLookY);
 }
 
