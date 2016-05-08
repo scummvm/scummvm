@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef TITANIC_TT_NAMED_SCRIPT_H
-#define TITANIC_TT_NAMED_SCRIPT_H
+#ifndef TITANIC_TT_NPC_SCRIPT_H
+#define TITANIC_TT_NPC_SCRIPT_H
 
 #include "titanic/support/simple_file.h"
 #include "titanic/true_talk/tt_script_base.h"
@@ -29,14 +29,14 @@
 namespace Titanic {
 
 
-class TTNamedScriptBase : public TTScriptBase {
+class TTNpcScriptBase : public TTScriptBase {
 protected:
 	int _field54;
 	int _val2;
 public:
 	int _charId;
 public:
-	TTNamedScriptBase(int charId, const char *charClass, int v2,
+	TTNpcScriptBase(int charId, const char *charClass, int v2,
 		const char *charName, int v3, int val2, int v4,
 		int v5, int v6, int v7);
 
@@ -51,7 +51,7 @@ public:
 	int charId() const { return _charId; }
 };
 
-class TTNamedScript : public TTNamedScriptBase {
+class TTNpcScript : public TTNpcScriptBase {
 protected:
 	byte *_subPtr;
 	int _field60;
@@ -69,7 +69,7 @@ protected:
 
 	void randomizeFlags();
 public:
-	TTNamedScript(int charId, const char *charClass, int v2,
+	TTNpcScript(int charId, const char *charClass, int v2,
 		const char *charName, int v3, int val2, int v4,
 		int v5, int v6, int v7);
 
@@ -117,4 +117,4 @@ public:
 
 } // End of namespace Titanic
 
-#endif /* TITANIC_TT_CHARACTER1_H */
+#endif /* TITANIC_TT_NPC_SCRIPT_H */

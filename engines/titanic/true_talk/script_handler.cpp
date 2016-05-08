@@ -29,11 +29,11 @@ namespace Titanic {
 CScriptHandler::CScriptHandler(CTitleEngine *owner, int val1, int val2) {
 }
 
-void CScriptHandler::setup(TTRoomScript *roomScript, TTNamedScript *npcScript, uint charId) {
+void CScriptHandler::setup(TTRoomScript *roomScript, TTNpcScript *npcScript, uint charId) {
 	// TODO
 }
 
-void CScriptHandler::processInput(TTRoomScript *roomScript, TTNamedScript *npcScript,
+void CScriptHandler::processInput(TTRoomScript *roomScript, TTNpcScript *npcScript,
 		const TTString &line) {
 	if (!roomScript || line.empty())
 		return;

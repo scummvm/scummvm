@@ -72,7 +72,7 @@ private:
 	/**
 	 * Gets the script associated with an NPC game object
 	 */
-	TTNamedScript *getNpcScript(CTrueTalkNPC *npc) const;
+	TTNpcScript *getNpcScript(CTrueTalkNPC *npc) const;
 
 	/**
 	 * Gets the script associated with the current room
@@ -186,7 +186,7 @@ public:
 	/**
 	 * Return a TrueTalk talker/script
 	 */
-	TTNamedScript *getTalker(const CString &name) const;
+	TTNpcScript *getTalker(const CString &name) const;
 
 	/**
 	 * Process player's input

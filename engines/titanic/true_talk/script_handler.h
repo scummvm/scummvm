@@ -23,7 +23,7 @@
 #ifndef TITANIC_SCRIPT_HANDLER_H
 #define TITANIC_SCRIPT_HANDLER_H
 
-#include "titanic/true_talk/tt_named_script.h"
+#include "titanic/true_talk/tt_npc_script.h"
 #include "titanic/true_talk/tt_room_script.h"
 #include "titanic/true_talk/tt_string.h"
 
@@ -40,9 +40,9 @@ public:
 	/**
 	 * Set the character and room
 	 */
-	void setup(TTRoomScript *roomScript, TTNamedScript *npcScript, uint charId);
+	void setup(TTRoomScript *roomScript, TTNpcScript *npcScript, uint charId);
 
-	void processInput(TTRoomScript *roomScript, TTNamedScript *npcScript,
+	void processInput(TTRoomScript *roomScript, TTNpcScript *npcScript,
 		const TTString &line);
 };
 

@@ -21,12 +21,12 @@
  */
 
 #include "common/textconsole.h"
-#include "titanic/true_talk/tt_named_script.h"
+#include "titanic/true_talk/tt_npc_script.h"
 #include "titanic/true_talk/true_talk_manager.h"
 
 namespace Titanic {
 
-TTNamedScriptBase::TTNamedScriptBase(int charId, const char *charClass, int v2,
+TTNpcScriptBase::TTNpcScriptBase(int charId, const char *charClass, int v2,
 		const char *charName, int v3, int val2, int v4, int v5, int v6, int v7) :
 		TTScriptBase(0, charClass, v2, charName, v3, v4, v5, v6, v7),
 		_charId(charId), _field54(0), _val2(val2) {
@@ -34,9 +34,9 @@ TTNamedScriptBase::TTNamedScriptBase(int charId, const char *charClass, int v2,
 
 /*------------------------------------------------------------------------*/
 
-TTNamedScript::TTNamedScript(int charId, const char *charClass, int v2,
+TTNpcScript::TTNpcScript(int charId, const char *charClass, int v2,
 		const char *charName, int v3, int val2, int v4, int v5, int v6, int v7) :
-		TTNamedScriptBase(charId, charClass, v2, charName, v3, val2, v4, v5, v6, v7),
+		TTNpcScriptBase(charId, charClass, v2, charName, v3, val2, v4, v5, v6, v7),
 		_subPtr(nullptr), _field60(0), _field64(0), _field68(0),
 		_field6C(0), _field70(0), _field74(0), _field78(0),
 		_field7C(0), _field80(0) {
@@ -51,99 +51,99 @@ TTNamedScript::TTNamedScript(int charId, const char *charClass, int v2,
 	resetFlags();
 }
 
-void TTNamedScript::resetFlags() {
+void TTNpcScript::resetFlags() {
 	Common::fill(&_array[26], &_array[146], 0);
 }
 
-void TTNamedScript::randomizeFlags() {
+void TTNpcScript::randomizeFlags() {
 	warning("TODO");
 }
 
-void TTNamedScript::proc4(int v) {
+void TTNpcScript::proc4(int v) {
 	warning("TODO");
 }
 
-int TTNamedScript::proc6() const {
+int TTNpcScript::proc6() const {
 	return 1;
 }
 
-void TTNamedScript::proc7(int v1, int v2) {
+void TTNpcScript::proc7(int v1, int v2) {
 	warning("TODO");
 }
 
-int TTNamedScript::proc8() const {
+int TTNpcScript::proc8() const {
 	return 0;
 }
 
-int TTNamedScript::proc9() const {
+int TTNpcScript::proc9() const {
 	return 2;
 }
 
-int TTNamedScript::proc10() const {
+int TTNpcScript::proc10() const {
 	return 2;
 }
 
-int TTNamedScript::proc11() const {
+int TTNpcScript::proc11() const {
 	return 2;
 }
 
-int TTNamedScript::proc12() const {
+int TTNpcScript::proc12() const {
 	return 1;
 }
 
-bool TTNamedScript::proc13() const {
+bool TTNpcScript::proc13() const {
 	warning("TODO");
 	return true;
 }
 
-void TTNamedScript::proc14(int v) {
+void TTNpcScript::proc14(int v) {
 	warning("TODO");
 }
 
-int TTNamedScript::proc15() const {
+int TTNpcScript::proc15() const {
 	return 0;
 }
 
-bool TTNamedScript::proc16() const {
+bool TTNpcScript::proc16() const {
 	return true;
 }
 
-bool TTNamedScript::proc17() const {
+bool TTNpcScript::proc17() const {
 	return true;
 }
 
-bool TTNamedScript::proc18() const {
+bool TTNpcScript::proc18() const {
 	return true;
 }
 
-void TTNamedScript::proc19(int v) {
+void TTNpcScript::proc19(int v) {
 	warning("TODO");
 }
 
-void TTNamedScript::proc20(int v) {
+void TTNpcScript::proc20(int v) {
 	warning("TODO");
 }
 
-int TTNamedScript::proc21(int v) {
+int TTNpcScript::proc21(int v) {
 	return v;
 }
 
-int TTNamedScript::proc22() const {
+int TTNpcScript::proc22() const {
 	return 0;
 }
 
-int TTNamedScript::proc23() const {
+int TTNpcScript::proc23() const {
 	return 0;
 }
 
-int TTNamedScript::proc25() const {
+int TTNpcScript::proc25() const {
 	return 0;
 }
 
-void TTNamedScript::proc26() {
+void TTNpcScript::proc26() {
 }
 
-void TTNamedScript::save(SimpleFile *file) {
+void TTNpcScript::save(SimpleFile *file) {
 	file->writeNumber(charId());
 	saveBody(file);
 
@@ -158,7 +158,7 @@ void TTNamedScript::save(SimpleFile *file) {
 		file->writeNumber(_array[idx]);
 }
 
-void TTNamedScript::load(SimpleFile *file) {
+void TTNpcScript::load(SimpleFile *file) {
 	loadBody(file);
 
 	int count = file->readNumber();
@@ -178,7 +178,7 @@ void TTNamedScript::load(SimpleFile *file) {
 	}
 }
 
-void TTNamedScript::saveBody(SimpleFile *file) {
+void TTNpcScript::saveBody(SimpleFile *file) {
 	int v = proc31();
 	file->writeNumber(v);
 
@@ -187,7 +187,7 @@ void TTNamedScript::saveBody(SimpleFile *file) {
 	}
 }
 
-void TTNamedScript::loadBody(SimpleFile *file) {
+void TTNpcScript::loadBody(SimpleFile *file) {
 	int count = file->readNumber();
 	preLoad();
 
@@ -200,38 +200,38 @@ void TTNamedScript::loadBody(SimpleFile *file) {
 	}
 }
 
-int TTNamedScript::proc31() {
+int TTNpcScript::proc31() {
 	warning("TODO");
 	return 0;
 }
 
-void TTNamedScript::proc32() {
+void TTNpcScript::proc32() {
 	warning("TODO");
 }
 
-void TTNamedScript::proc33(int v1, int v2) {
+void TTNpcScript::proc33(int v1, int v2) {
 	warning("TODO");
 }
 
-int TTNamedScript::proc34() {
-	warning("TODO");
-	return 0;
-}
-
-int TTNamedScript::getDialLevel(uint dialNum, bool flag) {
+int TTNpcScript::proc34() {
 	warning("TODO");
 	return 0;
 }
 
-int TTNamedScript::proc36() const {
+int TTNpcScript::getDialLevel(uint dialNum, bool flag) {
+	warning("TODO");
 	return 0;
 }
 
-int TTNamedScript::proc37() const {
+int TTNpcScript::proc36() const {
 	return 0;
 }
 
-void TTNamedScript::preLoad() {
+int TTNpcScript::proc37() const {
+	return 0;
+}
+
+void TTNpcScript::preLoad() {
 	if (_subPtr) {
 		error("TODO");
 	}

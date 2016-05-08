@@ -33,11 +33,11 @@
 
 namespace Titanic {
 	
-TTNamedScript *TTNamedScriptList::findById(int charId) const {
-	for (TTNamedScriptList::const_iterator i = begin(); i != end(); ++i) {
-		const TTNamedScriptListItem *item = *i;
-		if (item->_script->_charId == charId)
-			return item->_script;
+TTNpcScript *TTNpcScriptList::findById(int charId) const {
+	for (TTNpcScriptList::const_iterator i = begin(); i != end(); ++i) {
+		const TTNpcScriptListItem *item = *i;
+		if (item->_npcScript->_charId == charId)
+			return item->_npcScript;
 	}
 
 	return nullptr;
@@ -74,14 +74,14 @@ TTScripts::TTScripts(CTitleEngine *titleEngine) :
 	addScript(new SuccUBusScript(111, "Succubus", 0, "Shorbert", 9, 1, -1, -1, -1, 0), 110);
 }
 
-void TTScripts::addScript(TTNamedScript *script, int scriptId) {
+void TTScripts::addScript(TTNpcScript *script, int scriptId) {
 	script->proc13();
 	
 	// Find the room script this is associated with
 	TTRoomScript *roomScript = getRoomScript(scriptId);
 	assert(roomScript);
 
-	_namedScripts.push_back(new TTNamedScriptListItem(script, roomScript));
+	_namedScripts.push_back(new TTNpcScriptListItem(script, roomScript));
 }
 
 void TTScripts::addScript(TTRoomScript *script) {
@@ -92,7 +92,7 @@ TTRoomScript *TTScripts::getRoomScript(int scriptId) const {
 	return _roomScripts.findById(scriptId);
 }
 
-TTNamedScript *TTScripts::getNamedScript(int charId) const {
+TTNpcScript *TTScripts::getNamedScript(int charId) const {
 	return _namedScripts.findById(charId);
 }
 

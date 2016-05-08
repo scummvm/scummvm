@@ -28,7 +28,7 @@ namespace Titanic {
 
 BellbotScript::BellbotScript(int val1, const char *charClass, int v2,
 		const char *charName, int v3, int val2) :
-		TTNamedScript(val1, charClass, v2, charName, v3, val2, -1, -1, -1, 0),
+		TTNpcScript(val1, charClass, v2, charName, v3, val2, -1, -1, -1, 0),
 		_field2D0(0), _field2D4(0), _field2D8(0), _field2DC(0) {
 	CTrueTalkManager::setFlags(25, 0);
 	CTrueTalkManager::setFlags(24, 0);

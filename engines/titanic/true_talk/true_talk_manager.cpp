@@ -177,13 +177,13 @@ void CTrueTalkManager::setFlags(int index, int val) {
 }
 
 void CTrueTalkManager::loadNPC(SimpleFile *file, int charId) {
-	TTNamedScript *script = _scripts.getNamedScript(charId);
+	TTNpcScript *script = _scripts.getNamedScript(charId);
 	if (script)
 		script->load(file);
 }
 
 void CTrueTalkManager::saveNPC(SimpleFile *file, int charId) const {
-	TTNamedScript *script = _scripts.getNamedScript(charId);
+	TTNpcScript *script = _scripts.getNamedScript(charId);
 	if (script) {
 		script->save(file);
 		file->writeNumber(MKTAG_BE('U', 'R', 'A', 'H'));
@@ -216,7 +216,7 @@ void CTrueTalkManager::update2() {
 }
 
 void CTrueTalkManager::start(CTrueTalkNPC *npc, uint id, CViewItem *view) {
-	TTNamedScript *npcScript = getNpcScript(npc);
+	TTNpcScript *npcScript = getNpcScript(npc);
 	TTRoomScript *roomScript = getRoomScript();
 	
 	_titleEngine.reset();
@@ -230,7 +230,7 @@ void CTrueTalkManager::start(CTrueTalkNPC *npc, uint id, CViewItem *view) {
 	setDialogue(npc, roomScript, view);
 }
 
-TTNamedScript *CTrueTalkManager::getTalker(const CString &name) const {
+TTNpcScript *CTrueTalkManager::getTalker(const CString &name) const {
 	if (name.contains("Doorbot"))
 		return _scripts.getNamedScript(104);
 	else if (name.contains("DeskBot"))
@@ -253,9 +253,9 @@ TTNamedScript *CTrueTalkManager::getTalker(const CString &name) const {
 	return nullptr;
 }
 
-TTNamedScript *CTrueTalkManager::getNpcScript(CTrueTalkNPC *npc) const {
+TTNpcScript *CTrueTalkManager::getNpcScript(CTrueTalkNPC *npc) const {
 	CString npcName = npc->getName();
-	TTNamedScript *script = getTalker(npcName);
+	TTNpcScript *script = getTalker(npcName);
 
 	if (!script) {
 		// Fall back on the default NPC script
@@ -301,7 +301,7 @@ void CTrueTalkManager::loadAssets(CTrueTalkNPC *npc, int charId) {
 }
 
 void CTrueTalkManager::processInput(CTrueTalkNPC *npc, CTextInputMsg *msg, CViewItem *view) {
-	TTNamedScript *npcScript = getNpcScript(npc);
+	TTNpcScript *npcScript = getNpcScript(npc);
 	TTRoomScript *roomScript = getRoomScript();
 	_titleEngine.reset();
 

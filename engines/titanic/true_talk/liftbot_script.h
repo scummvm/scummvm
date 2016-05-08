@@ -23,15 +23,15 @@
 #ifndef TITANIC_LIFTBOT_SCRIPT_H
 #define TITANIC_LIFTBOT_SCRIPT_H
 
-#include "titanic/true_talk/tt_named_script.h"
+#include "titanic/true_talk/tt_npc_script.h"
 
 namespace Titanic {
 
-class LiftbotScript : public TTNamedScript {
+class LiftbotScript : public TTNpcScript {
 public:
 	LiftbotScript(int val1, const char *charClass, int v2,
 		const char *charName, int v3, int val2, int v4, int v5, int v6, int v7) :
-		TTNamedScript(val1, charClass, v2, charName, v3, val2, v4, v5, v6, v7) {}
+		TTNpcScript(val1, charClass, v2, charName, v3, val2, v4, v5, v6, v7) {}
 
 	virtual int proc6() const;
 	virtual void proc7(int v1, int v2);

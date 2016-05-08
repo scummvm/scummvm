@@ -23,11 +23,11 @@
 #ifndef TITANIC_MAITRED_SCRIPT_H
 #define TITANIC_MAITRED_SCRIPT_H
 
-#include "titanic/true_talk/tt_named_script.h"
+#include "titanic/true_talk/tt_npc_script.h"
 
 namespace Titanic {
 
-class MaitreDScript : public TTNamedScript {
+class MaitreDScript : public TTNpcScript {
 public:
 	MaitreDScript(int val1, const char *charClass, int v2,
 			const char *charName, int v3, int val2);

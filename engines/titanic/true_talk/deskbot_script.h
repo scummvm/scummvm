@@ -23,11 +23,11 @@
 #ifndef TITANIC_DESKBOT_SCRIPT_H
 #define TITANIC_DESKBOT_SCRIPT_H
 
-#include "titanic/true_talk/tt_named_script.h"
+#include "titanic/true_talk/tt_npc_script.h"
 
 namespace Titanic {
 
-class DeskbotScript : public TTNamedScript {
+class DeskbotScript : public TTNpcScript {
 public:
 	DeskbotScript(int val1, const char *charClass, int v2,
 		const char *charName, int v3, int val2);

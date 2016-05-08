@@ -23,11 +23,11 @@
 #ifndef TITANIC_BELLBOT_SCRIPT_H
 #define TITANIC_BELLBOT_SCRIPT_H
 
-#include "titanic/true_talk/tt_named_script.h"
+#include "titanic/true_talk/tt_npc_script.h"
 
 namespace Titanic {
 
-class BellbotScript : public TTNamedScript {
+class BellbotScript : public TTNpcScript {
 private:
 	int _array[150];
 	int _field2D0;
