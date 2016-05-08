@@ -136,7 +136,7 @@ enum {
 	kHS29Device				= 2,
 	kHS29ExitCircus			= 3,
 	kHS29ExitOutsideClown	= 4,
-	kHS29Aracde				= 5,
+	kHS29Arcade				= 5,
 	kHS29WalkArea1			= 6
 };
 

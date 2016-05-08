@@ -96,9 +96,9 @@ public:
 	void idle();
 	void initBrainPulseRndValue();
 	void kissPlatypus(int callback);
-	void playBrainPulsating(int gridX, int gridY);
-	void playIdle(int gridX, int gridY);
-	void playImpossible(int gridX, int gridY);
+	void playBrainPulsating(Common::Point gridPos = Common::Point(0, 0));
+	void playIdle(Common::Point gridPos = Common::Point(0, 0));
+	void playImpossible(Common::Point gridPos = Common::Point(0, 0));
 	void playMoan1(int gridX, int gridY);
 	void playMoan2(int gridX, int gridY);
 	void playPullOutDevice(int gridX, int gridY);
