@@ -34,6 +34,7 @@
 #include "titanic/events.h"
 #include "titanic/support/files_manager.h"
 #include "titanic/main_game_window.h"
+#include "titanic/support/file_reader.h"
 #include "titanic/support/movie.h"
 #include "titanic/support/screen_manager.h"
 #include "titanic/support/string.h"
@@ -116,6 +117,7 @@ public:
 	OSScreenManager *_screenManager;
 	CMainGameWindow *_window;
 	Common::RandomSource _randomSource;
+	CFileReader _fileReader;
 	CMovieList _activeMovies;
 	CString _itemNames[TOTAL_ITEMS];
 	CString _itemDescriptions[TOTAL_ITEMS];

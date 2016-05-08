@@ -431,6 +431,7 @@ MODULE_OBJS := \
 	star_control/star_control_sub15.o \
 	support/direct_draw.o \
 	support/direct_draw_surface.o \
+	support/file_reader.o \
 	support/files_manager.o \
 	support/font.o \
 	support/image.o \
@@ -458,6 +459,7 @@ MODULE_OBJS := \
 	true_talk/succubus_script.o \
 	true_talk/title_engine.o \
 	true_talk/script_handler.o \
+	true_talk/st_vocab.o \
 	true_talk/true_talk_manager.o \
 	true_talk/tt_script_base.o \
 	true_talk/tt_room_script.o \

@@ -26,6 +26,8 @@
 #include "titanic/true_talk/tt_npc_script.h"
 #include "titanic/true_talk/tt_room_script.h"
 #include "titanic/true_talk/tt_string.h"
+#include "titanic/true_talk/st_vocab.h"
+#include "titanic/support/file_reader.h"
 
 namespace Titanic {
 
@@ -35,8 +37,8 @@ class CScriptHandler {
 private:
 	CTitleEngine *_owner;
 	TTScriptBase *_script;
-	int _field8;
-	int _fieldC;
+	CFileReader &_reader;
+	STVocab _vocab;
 	int _field10;
 	int _field14;
 	int _field18;

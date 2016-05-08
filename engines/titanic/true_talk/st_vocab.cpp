@@ -20,34 +20,18 @@
  *
  */
 
-#include "titanic/true_talk/script_handler.h"
-#include "titanic/titanic.h"
+#include "titanic/true_talk/st_vocab.h"
 
 namespace Titanic {
 
-/*------------------------------------------------------------------------*/
-
-CScriptHandler::CScriptHandler(CTitleEngine *owner, int val1, int val2) :
-		_owner(owner), _script(owner->_script), _reader(g_vm->_fileReader),
-		_vocab(val2), _field10(0), _field14(0), _field18(0), _inputCtr(0), 
-		_field20(0), _field24(0), _field28(0), _field2C(0), _field30(0) {
-	
+STVocab::STVocab(int val): _field0(0), _field4(0), _field8(0),
+		_fieldC(0), _field10(0), _field18(val) {
+	_field14 = load("STvocab.txt");
 }
 
-int CScriptHandler::scriptChanged(TTRoomScript *roomScript, TTNpcScript *npcScript, uint dialogueId) {
-	if (!npcScript || !roomScript) {
-		++_inputCtr;
-		return 5;
-	}
-
-}
-
-void CScriptHandler::processInput(TTRoomScript *roomScript, TTNpcScript *npcScript,
-		const TTString &line) {
-	if (!roomScript || line.empty())
-		return;
-	
+int STVocab::load(const CString &name) {
 	// TODO
+	return 0;
 }
 
 } // End of namespace Titanic

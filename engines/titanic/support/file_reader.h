@@ -20,34 +20,19 @@
  *
  */
 
-#include "titanic/true_talk/script_handler.h"
-#include "titanic/titanic.h"
+#ifndef TITANIC_FILE_READER_H
+#define TITANIC_FILE_READER_H
+
+#include "common/file.h"
 
 namespace Titanic {
 
-/*------------------------------------------------------------------------*/
-
-CScriptHandler::CScriptHandler(CTitleEngine *owner, int val1, int val2) :
-		_owner(owner), _script(owner->_script), _reader(g_vm->_fileReader),
-		_vocab(val2), _field10(0), _field14(0), _field18(0), _inputCtr(0), 
-		_field20(0), _field24(0), _field28(0), _field2C(0), _field30(0) {
-	
-}
-
-int CScriptHandler::scriptChanged(TTRoomScript *roomScript, TTNpcScript *npcScript, uint dialogueId) {
-	if (!npcScript || !roomScript) {
-		++_inputCtr;
-		return 5;
-	}
-
-}
-
-void CScriptHandler::processInput(TTRoomScript *roomScript, TTNpcScript *npcScript,
-		const TTString &line) {
-	if (!roomScript || line.empty())
-		return;
-	
-	// TODO
-}
+class CFileReader {
+public:
+	Common::File _file;
+public:
+};
 
 } // End of namespace Titanic
+
+#endif /* TITANIC_FILE_READER_H */
