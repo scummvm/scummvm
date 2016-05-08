@@ -136,8 +136,6 @@ public:
 	 */
 	void initBounds();
 
-	void fn2();
-
 	/**
 	 * Plays a movie clip
 	 */

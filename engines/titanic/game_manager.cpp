@@ -107,10 +107,6 @@ void CGameManager::initBounds() {
 	_bounds = Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
 }
 
-void CGameManager::fn2() {
-	warning("TODO");
-}
-
 void CGameManager::playClip(CMovieClip *clip, CRoomItem *oldRoom, CRoomItem *newRoom) {
 	warning("TODO: CGameManager::playClip");
 }

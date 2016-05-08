@@ -38,7 +38,12 @@ public:
 	virtual void proc7() = 0;
 	virtual void proc8() = 0;
 	virtual void proc9() = 0;
-	virtual void proc10() = 0;
+	
+	/**
+	 * Called when the script changes
+	 */
+	virtual int scriptChanged(TTScriptBase *npcScript, int id) = 0;
+	
 	virtual void proc11() = 0;
 };
 
@@ -53,8 +58,20 @@ public:
 	virtual void proc7();
 	virtual void proc8();
 	virtual void proc9();
-	virtual void proc10();
+
+	/**
+	 * Called when the script changes
+	 */
+	virtual int scriptChanged(TTScriptBase *npcScript, int id);
+
 	virtual void proc11();
+
+	/**
+	 * Called with the new script and id
+	 */
+	int notifyScript(TTScriptBase *npcScript, int id) {
+		return scriptChanged(npcScript, id);
+	}
 };
 
 } // End of namespace Titanic

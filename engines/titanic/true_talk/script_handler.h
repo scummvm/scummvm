@@ -34,13 +34,25 @@ class CTitleEngine;
 class CScriptHandler {
 private:
 	CTitleEngine *_owner;
+	TTScriptBase *_script;
+	int _field8;
+	int _fieldC;
+	int _field10;
+	int _field14;
+	int _field18;
+	int _inputCtr;
+	int _field20;
+	int _field24;
+	int _field28;
+	int _field2C;
+	int _field30;
 public:
 	CScriptHandler(CTitleEngine *owner, int val1, int val2);
 
 	/**
 	 * Set the character and room
 	 */
-	void setup(TTRoomScript *roomScript, TTNpcScript *npcScript, uint charId);
+	int scriptChanged(TTRoomScript *roomScript, TTNpcScript *npcScript, uint dialogueId);
 
 	void processInput(TTRoomScript *roomScript, TTNpcScript *npcScript,
 		const TTString &line);

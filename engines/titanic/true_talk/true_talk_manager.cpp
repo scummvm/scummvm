@@ -224,7 +224,7 @@ void CTrueTalkManager::start(CTrueTalkNPC *npc, uint id, CViewItem *view) {
 	loadAssets(npc, charId);
 
 	_currentNPC = npc;
-	_titleEngine._scriptHandler->setup(roomScript, npcScript, charId);
+	_titleEngine._scriptHandler->scriptChanged(roomScript, npcScript, id);
 	_currentNPC = nullptr;
 
 	setDialogue(npc, roomScript, view);

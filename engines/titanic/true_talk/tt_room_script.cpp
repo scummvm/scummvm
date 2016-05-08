@@ -53,8 +53,10 @@ void TTRoomScript::proc9() {
 	warning("TODO");
 }
 
-void TTRoomScript::proc10() {
-	warning("TODO");
+int TTRoomScript::scriptChanged(TTScriptBase *npcScript, int id) {
+	if (id == 1)
+		_field54 = 1;
+	return 1;
 }
 
 void TTRoomScript::proc11() {

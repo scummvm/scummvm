@@ -44,7 +44,12 @@ public:
 	virtual void proc7(int v1, int v2) = 0;
 	virtual int proc8() const = 0;
 	virtual int proc9() const = 0;
-	virtual int proc10() const = 0;
+
+	/**
+	 * Called when the script/id changes
+	 */
+	virtual int scriptChanged(TTScriptBase *roomScript, uint id) = 0;
+
 	virtual int proc11() const = 0;
 	virtual int proc12() const = 0;
 
@@ -78,7 +83,14 @@ public:
 	virtual void proc7(int v1, int v2);
 	virtual int proc8() const;
 	virtual int proc9() const;
-	virtual int proc10() const;
+
+	/**
+	 * Called when the script/id changes
+	 */
+	virtual int scriptChanged(TTScriptBase *roomScript, uint id) {
+		return 2;
+	}
+
 	virtual int proc11() const;
 	virtual int proc12() const;
 	virtual bool proc13() const;

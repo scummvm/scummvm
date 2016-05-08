@@ -79,10 +79,6 @@ int TTNpcScript::proc9() const {
 	return 2;
 }
 
-int TTNpcScript::proc10() const {
-	return 2;
-}
-
 int TTNpcScript::proc11() const {
 	return 2;
 }
