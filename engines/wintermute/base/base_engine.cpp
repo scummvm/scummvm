@@ -84,7 +84,7 @@ void BaseEngine::LOG(bool res, const char *fmt, ...) {
 	va_end(va);
 
 	if (instance()._gameRef) {
-		instance()._gameRef->LOG("%s", buff);
+		instance()._gameRef->LOG(res, "%s", buff);
 	} else {
 		debugCN(kWintermuteDebugLog, "%02d:%02d:%02d: %s\n", hours, mins, secs, buff);
 	}
