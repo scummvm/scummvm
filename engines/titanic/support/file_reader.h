@@ -30,7 +30,9 @@ namespace Titanic {
 class CFileReader {
 public:
 	Common::File _file;
+	int _field18;
 public:
+	void reset();
 };
 
 } // End of namespace Titanic

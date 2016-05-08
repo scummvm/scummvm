@@ -24,6 +24,10 @@
 
 namespace Titanic {
 
+void CFileReader::reset() {
+	_file.close();
+	_field18 = 0;
+}
 
 
 } // End of namespace Titanic

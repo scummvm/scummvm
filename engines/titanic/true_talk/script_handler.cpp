@@ -29,17 +29,26 @@ namespace Titanic {
 
 CScriptHandler::CScriptHandler(CTitleEngine *owner, int val1, int val2) :
 		_owner(owner), _script(owner->_script), _reader(g_vm->_fileReader),
-		_vocab(val2), _field10(0), _field14(0), _field18(0), _inputCtr(0), 
+		_vocab(val2), _sub1(), _sub2(this), _field10(0), _inputCtr(0), 
 		_field20(0), _field24(0), _field28(0), _field2C(0), _field30(0) {
-	
+	g_vm->_scriptHandler = this;
+	g_vm->_script = _script;
 }
 
-int CScriptHandler::scriptChanged(TTRoomScript *roomScript, TTNpcScript *npcScript, uint dialogueId) {
+ScriptChangedResult CScriptHandler::scriptChanged(TTRoomScript *roomScript, TTNpcScript *npcScript, uint dialogueId) {
 	if (!npcScript || !roomScript) {
 		++_inputCtr;
-		return 5;
+		return SCR_5;
 	}
 
+	ScriptChangedResult result = roomScript->notifyScript(npcScript, dialogueId);
+	if (result == SCR_1)
+		result = npcScript->notifyScript(roomScript, dialogueId);
+
+	if (result != SCR_3 && result != SCR_4)
+		return result;
+
+	error("TODO: CScriptHandler::scriptChanged");
 }
 
 void CScriptHandler::processInput(TTRoomScript *roomScript, TTNpcScript *npcScript,

@@ -48,7 +48,7 @@ public:
 	/**
 	 * Called when the script/id changes
 	 */
-	virtual int scriptChanged(TTScriptBase *roomScript, uint id) = 0;
+	virtual ScriptChangedResult scriptChanged(TTScriptBase *roomScript, uint id) = 0;
 
 	virtual int proc11() const = 0;
 	virtual int proc12() const = 0;
@@ -87,8 +87,8 @@ public:
 	/**
 	 * Called when the script/id changes
 	 */
-	virtual int scriptChanged(TTScriptBase *roomScript, uint id) {
-		return 2;
+	virtual ScriptChangedResult scriptChanged(TTScriptBase *roomScript, uint id) {
+		return SCR_2;
 	}
 
 	virtual int proc11() const;
@@ -125,6 +125,13 @@ public:
 	virtual int proc37() const;
 
 	void preLoad();
+
+	/**
+	 * Called with the script and id changes
+	 */
+	ScriptChangedResult notifyScript(TTScriptBase *npcScript, int id) {
+		return scriptChanged(npcScript, id);
+	}
 };
 
 } // End of namespace Titanic

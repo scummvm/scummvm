@@ -53,6 +53,8 @@ TitanicEngine::TitanicEngine(OSystem *syst, const TitanicGameDescription *gameDe
 	_window = nullptr;
 	_screen = nullptr;
 	_screenManager = nullptr;
+	_scriptHandler = nullptr;
+	_script = nullptr;
 }
 
 TitanicEngine::~TitanicEngine() {

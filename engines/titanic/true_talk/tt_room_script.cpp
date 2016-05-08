@@ -53,10 +53,11 @@ void TTRoomScript::proc9() {
 	warning("TODO");
 }
 
-int TTRoomScript::scriptChanged(TTScriptBase *npcScript, int id) {
+ScriptChangedResult TTRoomScript::scriptChanged(TTScriptBase *npcScript, int id) {
 	if (id == 1)
 		_field54 = 1;
-	return 1;
+	
+	return SCR_1;
 }
 
 void TTRoomScript::proc11() {

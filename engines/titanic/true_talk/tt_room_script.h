@@ -42,7 +42,7 @@ public:
 	/**
 	 * Called when the script changes
 	 */
-	virtual int scriptChanged(TTScriptBase *npcScript, int id) = 0;
+	virtual ScriptChangedResult scriptChanged(TTScriptBase *npcScript, int id) = 0;
 	
 	virtual void proc11() = 0;
 };
@@ -62,14 +62,14 @@ public:
 	/**
 	 * Called when the script changes
 	 */
-	virtual int scriptChanged(TTScriptBase *npcScript, int id);
+	virtual ScriptChangedResult scriptChanged(TTScriptBase *npcScript, int id);
 
 	virtual void proc11();
 
 	/**
 	 * Called with the new script and id
 	 */
-	int notifyScript(TTScriptBase *npcScript, int id) {
+	ScriptChangedResult notifyScript(TTScriptBase *npcScript, int id) {
 		return scriptChanged(npcScript, id);
 	}
 };

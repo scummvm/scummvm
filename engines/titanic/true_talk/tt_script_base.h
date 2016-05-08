@@ -27,6 +27,10 @@
 
 namespace Titanic {
 
+enum ScriptChangedResult {
+	SCR_1 = 1, SCR_2 = 2, SCR_3 = 3, SCR_4 = 4, SCR_5 = 5
+};
+
 class TTScriptBase {
 private:
 	void reset();

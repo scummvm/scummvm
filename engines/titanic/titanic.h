@@ -38,6 +38,7 @@
 #include "titanic/support/movie.h"
 #include "titanic/support/screen_manager.h"
 #include "titanic/support/string.h"
+#include "titanic/true_talk/tt_script_base.h"
 
 /**
  * This is the namespace of the Titanic engine.
@@ -117,6 +118,8 @@ public:
 	OSScreenManager *_screenManager;
 	CMainGameWindow *_window;
 	Common::RandomSource _randomSource;
+	CScriptHandler *_scriptHandler;
+	TTScriptBase *_script;
 	CFileReader _fileReader;
 	CMovieList _activeMovies;
 	CString _itemNames[TOTAL_ITEMS];

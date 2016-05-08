@@ -32,6 +32,33 @@
 namespace Titanic {
 
 class CTitleEngine;
+class CScriptHandler;
+
+class CScriptHandlerSub1 {
+public:
+	int _field0;
+	int _field4;
+	int _field8;
+	int _fieldC;
+	int _field10;
+public:
+	CScriptHandlerSub1() : _field0(0), _field4(0), _field8(0),
+		_fieldC(0), _field10(0) {}
+};
+
+class CScriptHandlerSub2 {
+public:
+	CScriptHandler *_owner;
+	int _field4;
+	int _field8;
+	int _fieldC;
+	int _field10;
+	int _field14;
+	int _field18;
+public:
+	CScriptHandlerSub2(CScriptHandler *owner) : _owner(owner), _field4(0), _field8(0),
+		_fieldC(0), _field10(0), _field14(0), _field18(0) {}
+};
 
 class CScriptHandler {
 private:
@@ -40,8 +67,8 @@ private:
 	CFileReader &_reader;
 	STVocab _vocab;
 	int _field10;
-	int _field14;
-	int _field18;
+	CScriptHandlerSub1 _sub1;
+	CScriptHandlerSub2 _sub2;
 	int _inputCtr;
 	int _field20;
 	int _field24;
@@ -54,7 +81,7 @@ public:
 	/**
 	 * Set the character and room
 	 */
-	int scriptChanged(TTRoomScript *roomScript, TTNpcScript *npcScript, uint dialogueId);
+	ScriptChangedResult scriptChanged(TTRoomScript *roomScript, TTNpcScript *npcScript, uint dialogueId);
 
 	void processInput(TTRoomScript *roomScript, TTNpcScript *npcScript,
 		const TTString &line);
