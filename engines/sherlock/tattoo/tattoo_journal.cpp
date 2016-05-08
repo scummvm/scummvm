@@ -66,7 +66,7 @@ void TattooJournal::show() {
 
 	// Set screen to black, and set background
 	screen._backBuffer1.SHblitFrom((*_journalImages)[0], Common::Point(0, 0));
-	screen.empty();
+	screen.clear();
 	screen.setPalette(palette);
 
 	if (_journal.empty()) {
