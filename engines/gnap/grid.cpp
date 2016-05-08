@@ -38,26 +38,6 @@ void GnapEngine::initSceneGrid(int gridMinX, int gridMinY, int gridMaxX, int gri
 	_plat->_gridY = 347 - gridMinY;
 }
 
-int PlayerGnap::getWalkStopSequenceId(int deltaX, int deltaY) {
-	static const int gnapWalkStopSequenceIds[9] = {
-		0x7BC, 0x7BA, 0x7BA,
-		0x7BC, 0x000, 0x7BA,
-		0x7BB, 0x7B9, 0x7B9
-	};
-	// CHECKME This is a little weird
-	return gnapWalkStopSequenceIds[3 * deltaX + 3 + 1 + deltaY];
-}
-
-Facing PlayerGnap::getWalkFacing(int deltaX, int deltaY) {
-	static const Facing gnapWalkFacings[9] = {
-		kDirUpLeft, kDirBottomLeft, kDirBottomLeft,
-		kDirUpLeft, kDirNone, kDirBottomLeft,
-		kDirUpRight, kDirBottomRight, kDirBottomRight
-	};
-	// CHECKME This is a little weird
-	return gnapWalkFacings[3 * deltaX + 3 + 1 + deltaY];
-}
-
 bool GnapEngine::isPointBlocked(Common::Point gridPos) {
 	return isPointBlocked(gridPos.x, gridPos.y);
 }
@@ -84,6 +64,26 @@ bool GnapEngine::isPointBlocked(int gridX, int gridY) {
 }
 
 /******************************************************************************/
+
+int PlayerGnap::getWalkStopSequenceId(int deltaX, int deltaY) {
+	static const int gnapWalkStopSequenceIds[9] = {
+		0x7BC, 0x7BA, 0x7BA,
+		0x7BC, 0x000, 0x7BA,
+		0x7BB, 0x7B9, 0x7B9
+	};
+	// CHECKME This is a little weird
+	return gnapWalkStopSequenceIds[3 * deltaX + 3 + 1 + deltaY];
+}
+
+Facing PlayerGnap::getWalkFacing(int deltaX, int deltaY) {
+	static const Facing gnapWalkFacings[9] = {
+		kDirUpLeft, kDirBottomLeft, kDirBottomLeft,
+		kDirUpLeft, kDirNone, kDirBottomLeft,
+		kDirUpRight, kDirBottomRight, kDirBottomRight
+	};
+	// CHECKME This is a little weird
+	return gnapWalkFacings[3 * deltaX + 3 + 1 + deltaY];
+}
 
 bool PlayerGnap::findPath1(int gridX, int gridY, int index) {
 	_walkNodesCount = index;
