@@ -461,22 +461,24 @@ int PlayerGnap::getSequenceId(int kind, Common::Point gridPos) {
 }
 
 void PlayerGnap::useJointOnPlatypus() {
+	PlayerPlat& plat = *_vm->_plat;
+
 	_vm->setGrabCursorSprite(-1);
 	if (doPlatypusAction(1, 0, 0x107C1, 0)) {
 		_actionStatus = 100;
 		_vm->_gameSys->setAnimation(0, 0, 1);
-		_vm->_gameSys->setAnimation(0x10876, _vm->_plat->_id, 0);
+		_vm->_gameSys->setAnimation(0x10876, plat._id, 0);
 		_vm->_gameSys->insertSequence(0x10875, _id,
 			makeRid(_sequenceDatNum, _sequenceId), _id,
 			kSeqSyncWait, 0, 15 * (5 * _pos.x - 30), 48 * (_pos.y - 7));
 		_sequenceDatNum = 1;
 		_sequenceId = 0x875;
-		_vm->_gameSys->insertSequence(0x10876, _vm->_plat->_id,
-			_vm->_plat->_sequenceId | (_vm->_plat->_sequenceDatNum << 16), _vm->_plat->_id,
-			kSeqSyncWait, 0, 15 * (5 * _vm->_plat->_pos.x - 25), 48 * (_vm->_plat->_pos.y - 7));
-		_vm->_plat->_sequenceDatNum = 1;
-		_vm->_plat->_sequenceId = 0x876;
-		_vm->_plat->_idleFacing = kDirNone;
+		_vm->_gameSys->insertSequence(0x10876, plat._id,
+			plat._sequenceId | (plat._sequenceDatNum << 16), plat._id,
+			kSeqSyncWait, 0, 15 * (5 * plat._pos.x - 25), 48 * (plat._pos.y - 7));
+		plat._sequenceDatNum = 1;
+		plat._sequenceId = 0x876;
+		plat._idleFacing = kDirNone;
 		playSequence(0x107B5);
 		walkStep();
 		while (_vm->_gameSys->getAnimationStatus(0) != 2) {
@@ -486,11 +488,13 @@ void PlayerGnap::useJointOnPlatypus() {
 		_vm->_gameSys->setAnimation(0, 0, 0);
 		_actionStatus = -1;
 	} else {
-		playSequence(getSequenceId(gskScratchingHead, _vm->_plat->_pos) | 0x10000);
+		playSequence(getSequenceId(gskScratchingHead, plat._pos) | 0x10000);
 	}
 }
 
 void PlayerGnap::kissPlatypus(int callback) {
+	PlayerPlat& plat = *_vm->_plat;
+
 	if (doPlatypusAction(-1, 0, 0x107D1, callback)) {
 		_actionStatus = 100;
 		_vm->_gameSys->setAnimation(0, 0, 1);
@@ -500,12 +504,12 @@ void PlayerGnap::kissPlatypus(int callback) {
 			kSeqSyncWait, 0, 15 * (5 * _pos.x - 20) - (21 - _vm->_gridMinX), 48 * (_pos.y - 6) - (146 - _vm->_gridMinY));
 		_sequenceDatNum = 1;
 		_sequenceId = 0x847;
-		_vm->_gameSys->insertSequence(0x107CB, _vm->_plat->_id,
-			makeRid(_vm->_plat->_sequenceDatNum, _vm->_plat->_sequenceId), _vm->_plat->_id,
-			kSeqSyncWait, _vm->getSequenceTotalDuration(0x10847), 75 * _vm->_plat->_pos.x - _vm->_plat->_gridX, 48 * _vm->_plat->_pos.y - _vm->_plat->_gridY);
-		_vm->_plat->_sequenceDatNum = 1;
-		_vm->_plat->_sequenceId = 0x7CB;
-		_vm->_plat->_idleFacing = kDirNone;
+		_vm->_gameSys->insertSequence(0x107CB, plat._id,
+			makeRid(plat._sequenceDatNum, plat._sequenceId), plat._id,
+			kSeqSyncWait, _vm->getSequenceTotalDuration(0x10847), 75 * plat._pos.x - plat._gridX, 48 * plat._pos.y - plat._gridY);
+		plat._sequenceDatNum = 1;
+		plat._sequenceId = 0x7CB;
+		plat._idleFacing = kDirNone;
 		playSequence(0x107B5);
 		while (_vm->_gameSys->getAnimationStatus(0) != 2) {
 			_vm->updateMouseCursor();
@@ -515,25 +519,27 @@ void PlayerGnap::kissPlatypus(int callback) {
 		_vm->_gameSys->setAnimation(0, 0, 0);
 		_actionStatus = -1;
 	} else {
-		playSequence(getSequenceId(gskScratchingHead, _vm->_plat->_pos) | 0x10000);
+		playSequence(getSequenceId(gskScratchingHead, plat._pos) | 0x10000);
 	}
 }
 
 void PlayerGnap::useDeviceOnPlatypus() {
-	playSequence(makeRid(1, getSequenceId(gskPullOutDevice, _vm->_plat->_pos)));
+	PlayerPlat& plat = *_vm->_plat;
 
-	if (_vm->_plat->_idleFacing != kDirNone) {
-		_vm->_gameSys->insertSequence(makeRid(1, 0x7D5), _vm->_plat->_id,
-			makeRid(_vm->_plat->_sequenceDatNum, _vm->_plat->_sequenceId), _vm->_plat->_id,
-			kSeqSyncWait, 0, 75 * _vm->_plat->_pos.x - _vm->_plat->_gridX, 48 * _vm->_plat->_pos.y - _vm->_plat->_gridY);
-		_vm->_plat->_sequenceId = 0x7D5;
-		_vm->_plat->_sequenceDatNum = 1;
+	playSequence(makeRid(1, getSequenceId(gskPullOutDevice, plat._pos)));
+
+	if (plat._idleFacing != kDirNone) {
+		_vm->_gameSys->insertSequence(makeRid(1, 0x7D5), plat._id,
+			makeRid(plat._sequenceDatNum, plat._sequenceId), plat._id,
+			kSeqSyncWait, 0, 75 * plat._pos.x - plat._gridX, 48 * plat._pos.y - plat._gridY);
+		plat._sequenceId = 0x7D5;
+		plat._sequenceDatNum = 1;
 	} else {
-		_vm->_gameSys->insertSequence(makeRid(1, 0x7D4), _vm->_plat->_id,
-			makeRid(_vm->_plat->_sequenceDatNum, _vm->_plat->_sequenceId), _vm->_plat->_id,
-			kSeqSyncWait, 0, 75 * _vm->_plat->_pos.x - _vm->_plat->_gridX, 48 * _vm->_plat->_pos.y - _vm->_plat->_gridY);
-		_vm->_plat->_sequenceId = 0x7D4;
-		_vm->_plat->_sequenceDatNum = 1;
+		_vm->_gameSys->insertSequence(makeRid(1, 0x7D4), plat._id,
+			makeRid(plat._sequenceDatNum, plat._sequenceId), plat._id,
+			kSeqSyncWait, 0, 75 * plat._pos.x - plat._gridX, 48 * plat._pos.y - plat._gridY);
+		plat._sequenceId = 0x7D4;
+		plat._sequenceDatNum = 1;
 	}
 
 	int newSequenceId = getSequenceId(gskUseDevice, Common::Point(0, 0));
@@ -675,6 +681,7 @@ int PlayerGnap::getWalkSequenceId(int deltaX, int deltaY) {
 }
 
 bool PlayerGnap::walkTo(Common::Point gridPos, int animationIndex, int sequenceId, int flags) {
+	PlayerPlat& plat = *_vm->_plat;
 	int datNum = flags & 3;
 
 	_vm->_timers[2] = 200;
@@ -691,8 +698,8 @@ bool PlayerGnap::walkTo(Common::Point gridPos, int animationIndex, int sequenceI
 	_walkDestX = CLIP(gridX, 0, _vm->_gridMaxX - 1);
 	_walkDestY = CLIP(gridY, 0, _vm->_gridMaxY - 1);
 
-	if (animationIndex >= 0 && _walkDestX == _vm->_plat->_pos.x && _walkDestY == _vm->_plat->_pos.y)
-		_vm->_plat->makeRoom();
+	if (animationIndex >= 0 && _walkDestX == plat._pos.x && _walkDestY == plat._pos.y)
+		plat.makeRoom();
 
 	bool done = findPath1(_pos.x, _pos.y, 0);
 
@@ -1091,21 +1098,24 @@ void PlayerGnap::playShowItem(int itemIndex, int gridLookX, int gridLookY) {
 }
 
 void PlayerGnap::playShowCurrItem(int gridX, int gridY, int gridLookX, int gridLookY) {
-	if (_vm->_plat->_pos.x == gridX && _vm->_plat->_pos.y == gridY)
-		_vm->_plat->makeRoom();
+	PlayerPlat& plat = *_vm->_plat;
+
+	if (plat._pos.x == gridX && plat._pos.y == gridY)
+		plat.makeRoom();
 	walkTo(Common::Point(gridX, gridY), -1, -1, 1);
 	playShowItem(_vm->_grabCursorSpriteIndex, gridLookX, gridLookY);
 }
 
 bool PlayerGnap::doPlatypusAction(int gridX, int gridY, int platSequenceId, int callback) {
+	PlayerPlat& plat = *_vm->_plat;
 	bool result = false;
 
-	if (_actionStatus <= -1 && _vm->_plat->_actionStatus <= -1) {
+	if (_actionStatus <= -1 && plat._actionStatus <= -1) {
 		_actionStatus = 100;
-		Common::Point checkPt = _vm->_plat->_pos + Common::Point(gridX, gridY);
+		Common::Point checkPt = plat._pos + Common::Point(gridX, gridY);
 		if (_vm->isPointBlocked(checkPt) && (_pos != checkPt)) {
-			_vm->_plat->walkStep();
-			checkPt = _vm->_plat->_pos + Common::Point(gridX, gridY);
+			plat.walkStep();
+			checkPt = plat._pos + Common::Point(gridX, gridY);
 		}
 
 		if (!_vm->isPointBlocked(checkPt) && (_pos != checkPt)) {
@@ -1116,9 +1126,9 @@ bool PlayerGnap::doPlatypusAction(int gridX, int gridY, int platSequenceId, int 
 				_vm->gameUpdateTick();
 			}
 			_vm->_gameSys->setAnimation(0, 0, 0);
-			if (_pos == _vm->_plat->_pos + Common::Point(gridX, gridY)) {
-				_vm->_gameSys->setAnimation(platSequenceId, _vm->_plat->_id, 1);
-				_vm->_plat->playSequence(platSequenceId);
+			if (_pos == plat._pos + Common::Point(gridX, gridY)) {
+				_vm->_gameSys->setAnimation(platSequenceId, plat._id, 1);
+				plat.playSequence(platSequenceId);
 				while (_vm->_gameSys->getAnimationStatus(1) != 2) {
 					_vm->updateMouseCursor();
 					_vm->doCallback(callback);
