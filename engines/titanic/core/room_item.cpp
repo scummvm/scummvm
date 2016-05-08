@@ -78,7 +78,7 @@ void CRoomItem::load(SimpleFile *file) {
 
 		file->readBuffer();
 		_clipList.load(file);
-		loading();
+		postLoad();
 		// Deliberate fall-through
 
 	case 0:
@@ -99,8 +99,14 @@ void CRoomItem::load(SimpleFile *file) {
 	CNamedItem::load(file);
 }
 
-void CRoomItem::loading() {
-	warning("TODO: CRoomItem::loading");
+void CRoomItem::postLoad() {
+	if (!_exitMovieKey.exists().empty())
+		return;
+
+	CString name = _transitionMovieKey.exists();
+	if (name.right(7) == "nav.avi") {
+		_exitMovieKey = CResourceKey(name.left(name.size() - 7) + "exit.avi");
+	}
 }
 
 void CRoomItem::calcNodePosition(const Point &nodePos, double &xVal, double &yVal) const {

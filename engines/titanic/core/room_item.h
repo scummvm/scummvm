@@ -32,6 +32,11 @@
 namespace Titanic {
 
 class CRoomItem : public CNamedItem {
+private:
+	/**
+	 * Handles post-load processing
+	 */
+	void postLoad();
 public:
 	Rect _roomRect;
 	CMovieClipList _clipList;
@@ -39,8 +44,6 @@ public:
 	CResourceKey _transitionMovieKey;
 	CResourceKey _exitMovieKey;
 	double _roomDimensionX, _roomDimensionY;
-
-	void loading();
 public:
 	CLASSDEF
 	CRoomItem();

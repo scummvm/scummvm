@@ -80,8 +80,8 @@ void CPetText::setLineColor(uint lineNum, byte r, byte g, byte b) {
 
 void CPetText::load(SimpleFile *file, int param) {
 	if (!param) {
-		int var1 = file->readNumber();
-		int var2 = file->readNumber();
+		uint numLines = file->readNumber();
+		uint charsPerLine = file->readNumber();
 		uint count = file->readNumber();
 		_bounds = file->readRect();
 		_field3C = file->readNumber();
@@ -96,7 +96,9 @@ void CPetText::load(SimpleFile *file, int param) {
 		_hasBorder = file->readNumber() != 0;
 		_scrollTop = file->readNumber();
 
-		warning("TODO: CPetText::load %d,%d", var1, var2);
+		resize(numLines);
+		setMaxCharsPerLine(charsPerLine);
+
 		assert(_array.size() >= count);
 		for (uint idx = 0; idx < count; ++idx) {
 			_array[idx]._line = file->readString();
