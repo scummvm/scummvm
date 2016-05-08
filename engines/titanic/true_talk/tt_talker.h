@@ -38,12 +38,12 @@ public:
 	CString _string1;
 	int _dialogueId;
 	int _field24;
-	int _field28;
+	int _done;
 public:
 	TTTalker() : _owner(nullptr), _npc(nullptr),
-		_dialogueId(0), _field24(0), _field28(0) {}
+		_dialogueId(0), _field24(0), _done(0) {}
 	TTTalker(CTrueTalkManager *owner, CTrueTalkNPC *npc) :
-		_owner(owner), _npc(npc), _dialogueId(0), _field24(0), _field28(0) {}
+		_owner(owner), _npc(npc), _dialogueId(0), _field24(0), _done(0) {}
 
 	void speechStarted(const CString &dialogueStr, uint dialogueId, uint soundId);
 };

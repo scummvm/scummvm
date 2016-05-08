@@ -192,11 +192,23 @@ void CTrueTalkManager::saveNPC(SimpleFile *file, int charId) const {
 }
 
 void CTrueTalkManager::preLoad() {
-	warning("TODO: CTrueTalkManager::preLoad");
+	// Delete any previous talkers
+	for (TTTalkerList::iterator i = _talkers.begin(); i != _talkers.end(); ++i)
+		delete *i;
+	_talkers.clear();
 }
 
-void CTrueTalkManager::update1() {
-	//warning("CTrueTalkManager::update1");
+void CTrueTalkManager::removeCompleted() {
+	for (TTTalkerList::iterator i = _talkers.begin(); i != _talkers.end(); ) {
+		TTTalker *talker = *i;
+		
+		if (talker->_done) {
+			i = _talkers.erase(i);
+			delete talker;
+		} else {
+			++i;
+		}
+	}
 }
 
 void CTrueTalkManager::update2() {
@@ -410,6 +422,24 @@ void CTrueTalkManager::triggerNPC(CTrueTalkNPC *npc) {
 
 void CTrueTalkManager::setTalker(TTTalker *talker, TTRoomScript *roomScript, CViewItem *view, bool isParrot) {
 	warning("TODO: CTrueTalkManager::setTalker");
+}
+
+int CTrueTalkManager::getStateVal(int stateNum) {
+	if (!_currentNPC)
+		return -1000;
+
+	CTrueTalkGetStateValueMsg msg(stateNum, -1000);
+	msg.execute(_currentNPC);
+	return msg._stateVal;
+}
+
+bool CTrueTalkManager::triggerAction(int action, int param) {
+	if (!_currentNPC)
+		return false;
+
+	CTrueTalkTriggerActionMsg msg(action, param, 0);
+	msg.execute(_currentNPC);
+	return true;
 }
 
 } // End of namespace Titanic

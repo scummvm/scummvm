@@ -118,6 +118,16 @@ public:
 
 	static void setFlags(int index, int val);
 public:
+	/**
+	 * Get a specified state value from the currently set NPC
+	 */
+	static int getStateVal(int stateNum);
+
+	/**
+	 * Trigger an NPC action
+	 */
+	static bool triggerAction(int action, int param);
+public:
 	CTrueTalkManager(CGameManager *owner);
 	~CTrueTalkManager();
 
@@ -161,7 +171,10 @@ public:
 	 */
 	TTScripts &getScripts() { return _scripts; }
 
-	void update1();
+	/**
+	 * Remove any completed talkers
+	 */
+	void removeCompleted();
 
 	void update2();
 

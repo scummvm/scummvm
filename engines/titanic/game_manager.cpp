@@ -100,6 +100,7 @@ void CGameManager::preSave(CProjectItem *project) {
 void CGameManager::postSave() {
 	_timers.postSave();
 	_trueTalkManager.postSave();
+	_sound.postSave();
 }
 
 void CGameManager::initBounds() {
@@ -118,7 +119,7 @@ void CGameManager::update() {
 	updateMovies();
 	frameMessage(getRoom());
 	_timers.update(g_vm->_events->getTicksCount());
-	_trueTalkManager.update1();
+	_trueTalkManager.removeCompleted();
 	_trueTalkManager.update2();
 	CScreenManager::_screenManagerPtr->_mouseCursor->update();
 
