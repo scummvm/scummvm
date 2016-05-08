@@ -1208,7 +1208,9 @@ void PlayerPlat::updateIdleSequence() {
 }
 
 void PlayerPlat::updateIdleSequence2() {
-	if (_actionStatus < 0 && _vm->_gnap->_actionStatus < 0) {
+	PlayerGnap& gnap = *_vm->_gnap;
+
+	if (_actionStatus < 0 && gnap._actionStatus < 0) {
 		if (_vm->_timers[0]) {
 			if (!_vm->_timers[1]) {
 				_vm->_timers[1] = _vm->getRandom(20) + 30;
@@ -1268,6 +1270,7 @@ int PlayerPlat::getWalkSequenceId(int deltaX, int deltaY) {
 
 bool PlayerPlat::walkTo(Common::Point gridPos, int animationIndex, int sequenceId, int flags) {
 	int datNum = flags & 3;
+	PlayerGnap& gnap = *_vm->_gnap;
 
 	_vm->_timers[1] = 60;
 
@@ -1282,8 +1285,8 @@ bool PlayerPlat::walkTo(Common::Point gridPos, int animationIndex, int sequenceI
 	_walkDestX = CLIP(gridX, 0, _vm->_gridMaxX - 1);
 	_walkDestY = CLIP(gridY, 0, _vm->_gridMaxY - 1);
 
-	if (animationIndex >= 0 && _vm->_gnap->_pos == Common::Point(_walkDestX, _walkDestY))
-		_vm->_gnap->walkStep();
+	if (animationIndex >= 0 && gnap._pos == Common::Point(_walkDestX, _walkDestY))
+		gnap.walkStep();
 
 	bool done = findPath1(_pos.x, _pos.y, 0);
 

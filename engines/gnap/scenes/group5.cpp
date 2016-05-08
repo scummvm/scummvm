@@ -76,6 +76,8 @@ int Scene53::pressPhoneNumberButton(int phoneNumber, int buttonNum) {
 	};
 
 	GameSys& gameSys = *_vm->_gameSys;
+	PlayerGnap& gnap = *_vm->_gnap;
+
 	if (_isGnapPhoning) {
 		gameSys.setAnimation(kGnapHandSequenceIds[buttonNum], 40, 6);
 		gameSys.insertSequence(kGnapHandSequenceIds[buttonNum], 40, _currHandSequenceId, 40, kSeqSyncWait, 0, 0, 0);
@@ -86,13 +88,13 @@ int Scene53::pressPhoneNumberButton(int phoneNumber, int buttonNum) {
 		_currHandSequenceId = kPlatypusHandSequenceIds[buttonNum];
 	}
 
-	_vm->_gnap->_actionStatus = 6;
+	gnap._actionStatus = 6;
 	while (gameSys.getAnimationStatus(6) != 2) {
 		// checkGameAppStatus();
 		_vm->updateMouseCursor();
 		_vm->gameUpdateTick();
 	}
-	_vm->_gnap->_actionStatus = -1;
+	gnap._actionStatus = -1;
 
 	if (buttonNum < 11)
 		phoneNumber = buttonNum % 10 + 10 * phoneNumber;
@@ -121,8 +123,9 @@ void Scene53::runRandomCall() {
 	};
 
 	GameSys& gameSys = *_vm->_gameSys;
-	++_callsMadeCtr;
+	PlayerGnap& gnap = *_vm->_gnap;
 
+	++_callsMadeCtr;
 	if (_callsMadeCtr <= 10) {
 		int index;
 
@@ -137,30 +140,31 @@ void Scene53::runRandomCall() {
 		_callsMadeCtr = 0;
 	}
 
-	_vm->_gnap->_actionStatus = 1;
+	gnap._actionStatus = 1;
 	while (gameSys.getAnimationStatus(6) != 2) {
 		_vm->updateMouseCursor();
 		// checkGameAppStatus();
 		_vm->gameUpdateTick();
 	}
-	_vm->_gnap->_actionStatus = -1;
+	gnap._actionStatus = -1;
 }
 
 void Scene53::runChitChatLine() {
 	GameSys& gameSys = *_vm->_gameSys;
+	PlayerGnap& gnap = *_vm->_gnap;
 	bool flag = false;
 	int sequenceId = -1;
 
 	gameSys.setAnimation(0x6E, 1, 6);
 	gameSys.insertSequence(0x6E, 1, 0, 0, kSeqNone, 16, 0, 0);
 
-	_vm->_gnap->_actionStatus = 1;
+	gnap._actionStatus = 1;
 	while (gameSys.getAnimationStatus(6) != 2) {
 		_vm->updateMouseCursor();
 		// checkGameAppStatus();
 		_vm->gameUpdateTick();
 	}
-	_vm->_gnap->_actionStatus = -1;
+	gnap._actionStatus = -1;
 
 	if (_vm->isFlag(kGFSpringTaken)) {
 		gameSys.insertSequence(0x45, 40, _currHandSequenceId, 40, kSeqSyncWait, 0, 0, 0);
@@ -198,7 +202,7 @@ void Scene53::runChitChatLine() {
 			flag = 1;
 			_vm->_isLeavingScene = true;
 			_vm->_sceneDone = true;
-			_vm->_gnap->_actionStatus = 0;
+			gnap._actionStatus = 0;
 			_vm->_newSceneNum = 17;
 			break;
 		case 5:
@@ -217,31 +221,31 @@ void Scene53::runChitChatLine() {
 		if (flag && sequenceId != -1) {
 			_vm->stopSound(0xA0);
 			pressPhoneNumberButton(0, _vm->_sceneClickedHotspot - 1);
-			_vm->_gnap->_actionStatus = 1;
+			gnap._actionStatus = 1;
 			gameSys.setAnimation(sequenceId, 1, 6);
 			gameSys.insertSequence(sequenceId, 1, 0, 0, kSeqNone, 16, 0, 0);
-			_vm->_gnap->_actionStatus = 1;
+			gnap._actionStatus = 1;
 			while (gameSys.getAnimationStatus(6) != 2) {
 				_vm->updateMouseCursor();
 				// checkGameAppStatus();
 				_vm->gameUpdateTick();
 			}
-			_vm->_gnap->_actionStatus = -1;
+			gnap._actionStatus = -1;
 			gameSys.setAnimation(0x72, 1, 6);
 			gameSys.insertSequence(0x72, 1, 0, 0, kSeqNone, 16, 0, 0);
-			_vm->_gnap->_actionStatus = 1;
+			gnap._actionStatus = 1;
 			while (gameSys.getAnimationStatus(6) != 2) {
 				_vm->updateMouseCursor();
 				// checkGameAppStatus();
 				_vm->gameUpdateTick();
 			}
-			_vm->_gnap->_actionStatus = -1;
+			gnap._actionStatus = -1;
 		}
 	}
 
 	updateHotspots();
 
-	_vm->_gnap->_actionStatus = 1;
+	gnap._actionStatus = 1;
 
 	if (_vm->isFlag(kGFSpringTaken)) {
 		gameSys.setAnimation(0x73, 40, 6);
@@ -252,12 +256,14 @@ void Scene53::runChitChatLine() {
 			_vm->gameUpdateTick();
 		}
 		_currHandSequenceId = 0x73;
-		_vm->_gnap->_actionStatus = -1;
+		gnap._actionStatus = -1;
 	}
 }
 
 void Scene53::run() {
 	GameSys& gameSys = *_vm->_gameSys;
+	PlayerGnap& gnap = *_vm->_gnap;
+
 	int phoneNumber = 0;
 	int phoneNumberLen = 0;
 
@@ -287,7 +293,7 @@ void Scene53::run() {
 
 		switch (_vm->_sceneClickedHotspot) {
 		case 1:
-			if (_vm->_gnap->_actionStatus < 0) {
+			if (gnap._actionStatus < 0) {
 				_vm->runMenu();
 				updateHotspots();
 			}
@@ -307,7 +313,7 @@ void Scene53::run() {
 			phoneNumber = pressPhoneNumberButton(phoneNumber, _vm->_sceneClickedHotspot - 1);
 			debugC(kDebugBasic, "phoneNumber: %d", phoneNumber);
 			if (phoneNumberLen == 7) {
-				_vm->_gnap->_actionStatus = 1;
+				gnap._actionStatus = 1;
 				if (_vm->isFlag(kGFSpringTaken)) {
 					gameSys.setAnimation(0x73, 40, 6);
 					gameSys.insertSequence(0x73, 40, _currHandSequenceId, 40, kSeqSyncWait, 0, 0, 0);
@@ -317,7 +323,7 @@ void Scene53::run() {
 						_vm->gameUpdateTick();
 					}
 					_currHandSequenceId = 0x73;
-					_vm->_gnap->_actionStatus = -1;
+					gnap._actionStatus = -1;
 				}
 				if (phoneNumber == 7284141) {
 					runChitChatLine();
@@ -348,8 +354,8 @@ void Scene53::run() {
 			pressPhoneNumberButton(0, _vm->_sceneClickedHotspot - 1);
 			break;
 		case 14:
-			if (_vm->_gnap->_actionStatus < 0) {
-				_vm->_gnap->_actionStatus = 1;
+			if (gnap._actionStatus < 0) {
+				gnap._actionStatus = 1;
 				if (_vm->isFlag(kGFSpringTaken)) {
 					gameSys.setAnimation(0x73, 40, 6);
 					gameSys.insertSequence(0x73, 40, _currHandSequenceId, 40, kSeqSyncWait, 0, 0, 0);
@@ -359,11 +365,11 @@ void Scene53::run() {
 						_vm->gameUpdateTick();
 					}
 					_currHandSequenceId = 0x73;
-					_vm->_gnap->_actionStatus = -1;
+					gnap._actionStatus = -1;
 				}
 				_vm->_isLeavingScene = true;
 				_vm->_sceneDone = true;
-				_vm->_gnap->_actionStatus = 0;
+				gnap._actionStatus = 0;
 				_vm->_newSceneNum = 17;
 			}
 			break;
