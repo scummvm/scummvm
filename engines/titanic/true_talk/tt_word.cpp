@@ -24,8 +24,8 @@
 
 namespace Titanic {
 
-TTWord::TTWord(TTString &str, int val1, int val2) : _string(str),
-		_field18(val1), _field1C(val2), _fieldC(0), _field10(0),
+TTWord::TTWord(TTString &str, int mode, int val2) : _string(str),
+		_wordMode(mode), _field1C(val2), _fieldC(0), _field10(0),
 		_field20(0), _field24(0), _field28(0) {
 	_status = str.getStatus() == SS_VALID ? SS_VALID : SS_5;
 }
@@ -34,9 +34,32 @@ int TTWord::readSyn(SimpleFile *file) {
 	return 0;
 }
 
-int TTWord::load(SimpleFile *file, int *mode) {
-	// TODO
-	return 0;
+int TTWord::load(SimpleFile *file, int mode) {
+	CString str1, str2;
+	int val;
+
+	if (file->scanf("%d %s %s", &val, &str1, &str2)) {
+		_string = TTString(str1);
+		_field1C = val;
+		_field20 = readNumber(str2.c_str());
+		_wordMode = mode;
+		return 0;
+	} else {
+		return 3;
+	}
+}
+
+uint TTWord::readNumber(const char *str) {
+	uint numValue = *str;
+	if (*str == '0') {
+		numValue = MKTAG('Z', 'Z', 'Z', '[');
+	} else {
+		++str;
+		for (int idx = 0; idx < 3; ++idx, ++str)
+			numValue = (numValue << 8) + *str;
+	}
+
+	return numValue;
 }
 
 /*------------------------------------------------------------------------*/
@@ -52,8 +75,14 @@ TTWord2::TTWord2(TTString &str, int val1, int val2, int val3, int val4) :
 }
 
 int TTWord2::load(SimpleFile *file) {
-	// TODO
-	return 0;
+	int val;
+
+	if (TTWord::load(file, 1) && file->scanf("%d", &val)) {
+		_field30 = val;
+		return 0;
+	} else {
+		return 8;
+	}
 }
 
 /*------------------------------------------------------------------------*/
@@ -81,8 +110,14 @@ TTWord4::TTWord4(TTString &str, int val1, int val2, int val3, int val4) :
 }
 
 int TTWord4::load(SimpleFile *file) {
-	// TODO
-	return 0;
+	int val;
+
+	if (TTWord::load(file, 1) && file->scanf("%d", &val)) {
+		_field30 = val;
+		return 0;
+	} else {
+		return 8;
+	}
 }
 
 /*------------------------------------------------------------------------*/
@@ -92,8 +127,18 @@ TTWord5::TTWord5(TTString &str, int val1, int val2, int val3, int val4) :
 }
 
 int TTWord5::load(SimpleFile *file) {
-	// TODO
-	return 0;
+	int val;
+
+	if (TTWord::load(file, 1) && file->scanf("%d", &val)) {
+		if (val >= 0 && val <= 12) {
+			_field30 = val;
+			return 0;
+		} else {
+			return 5;
+		}
+	} else {
+		return 8;
+	}
 }
 
 } // End of namespace Titanic

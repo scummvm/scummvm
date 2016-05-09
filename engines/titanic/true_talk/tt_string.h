@@ -27,12 +27,10 @@
 
 namespace Titanic {
 
-class TTStringData {
-private:
+struct TTStringData {
 	CString _string;
-public:
 	int _referenceCount;
-public:
+
 	TTStringData() : _referenceCount(1) {}
 	TTStringData(const char *str) : _string(str), _referenceCount(1) {}
 	TTStringData(const CString &str) : _string(str), _referenceCount(1) {}
@@ -60,6 +58,8 @@ public:
 	 * Get the status of the string
 	 */
 	TTStringStatus getStatus() const { return _status; }
+
+	operator const char *() const { return _data->_string.c_str(); }
 };
 
 } // End of namespace Titanic

@@ -34,20 +34,25 @@ protected:
 	int _fieldC;
 	int _field10;
 	TTStringStatus _status;
-	int _field18;
+	int _wordMode;
 	int _field1C;
 	int _field20;
 	int _field24;
 	int _field28;
+protected:
+	/**
+	 * Read in a number
+	 */
+	uint readNumber(const char *str);
 public:
-	TTWord(TTString &str, int val1, int val2);
+	TTWord(TTString &str, int mode, int val2);
 
 	int readSyn(SimpleFile *file);
 
 	/**
 	 * Load the word
 	 */
-	int load(SimpleFile *file, int *mode);
+	int load(SimpleFile *file, int mode);
 };
 
 class TTWord1 : public TTWord {
