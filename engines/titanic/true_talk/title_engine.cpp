@@ -64,14 +64,13 @@ void STtitleEngine::dump(int val1, int val2) {
 	// TODO
 }
 
-void STtitleEngine::open(const CString &name) {
-	_stream = _resources.getResource(Common::WinResourceID("Text"),
-		name);
-}
-
-void STtitleEngine::close() {
-	delete _stream;
-	_stream = nullptr;
+SimpleFile *STtitleEngine::open(const CString &name) {
+	Common::SeekableReadStream *stream = _resources.getResource(
+		Common::WinResourceID("Text"), name);
+	
+	SimpleFile *file = new SimpleFile();
+	file->open(stream);
+	return file;
 }
 
 } // End of namespace Titanic

@@ -467,7 +467,8 @@ MODULE_OBJS := \
 	true_talk/tt_scripts.o \
 	true_talk/tt_string.o \
 	true_talk/tt_talker.o \
-	true_talk/tt_title_script.o
+	true_talk/tt_title_script.o \
+	true_talk/tt_word.o
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_TITANIC), DYNAMIC_PLUGIN)

@@ -354,6 +354,29 @@ void SimpleFile::writeClassEnd(int indent) {
 	write("}\n", 2);
 }
 
+bool SimpleFile::scanf(const char *format, ...) {
+	va_list va;
+	va_start(va, format);
+	char c;
+
+	CString formatStr(format);
+	while (!formatStr.empty()) {
+		if (formatStr.hasPrefix(" ")) {
+			formatStr.deleteChar(0);
+			safeRead(&c, 1);
+			
+			if (!Common::isSpace(c))
+				return false;
+		} else if (formatStr.hasPrefix("%d")) {
+			formatStr = CString(formatStr.c_str() + 2);
+			int *param = (int *)va_arg(va, int *);
+			*param = readNumber();
+		}
+	}
+
+	va_end(va);
+}
+
 /*------------------------------------------------------------------------*/
 
 void StdCWadFile::open(const CString &name) {

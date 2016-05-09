@@ -27,18 +27,41 @@
 
 namespace Titanic {
 
-class TTString: public CString {
+class TTStringData {
+private:
+	CString _string;
 public:
-	int _status;
+	int _referenceCount;
 public:
-	TTString() : CString(), _status(0) {}
-	TTString(const char *str) : CString(str), _status(0) {}
-	TTString(const CString &str) : CString(str), _status(0) {}
-	virtual ~TTString() {}
+	TTStringData() : _referenceCount(1) {}
+	TTStringData(const char *str) : _string(str), _referenceCount(1) {}
+	TTStringData(const CString &str) : _string(str), _referenceCount(1) {}
+};
 
-	bool isValid() const { return !_status; }
+enum TTStringStatus { SS_VALID = 0, SS_5 = 5, SS_7 = 7 };
+
+class TTString {
+private:
+	TTStringData *_data;
+	TTStringStatus _status;
+public:
+	TTString();
+	TTString(const char *str);
+	TTString(const CString &str);
+	TTString(TTString &str);
+	virtual ~TTString();
+
+	/**
+	 * Returns true if the string is valid
+	 */
+	bool isValid() const;
+
+	/**
+	 * Get the status of the string
+	 */
+	TTStringStatus getStatus() const { return _status; }
 };
 
 } // End of namespace Titanic
 
-#endif /* TITANIC_TT_OBJ8_H */
+#endif /* TITANIC_TT_STRING_H */

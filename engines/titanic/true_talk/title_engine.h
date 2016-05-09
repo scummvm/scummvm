@@ -32,6 +32,13 @@
 
 namespace Titanic {
 
+class CTitleEngine;
+
+class CTitleStream : public SimpleFile {
+public:
+	CTitleStream() : SimpleFile() {}
+};
+
 class CTitleEngine {
 public:
 	CScriptHandler *_scriptHandler;
@@ -56,12 +63,7 @@ public:
 	/**
 	 * Open a designated file
 	 */
-	virtual void open(const CString &name) = 0;
-
-	/**
-	 * Close the file
-	 */
-	virtual void close() = 0;
+	virtual SimpleFile *open(const CString &name) = 0;
 };
 
 class STtitleEngine : public CTitleEngine {
@@ -96,12 +98,7 @@ public:
 	/**
 	 * Open a designated file
 	 */
-	virtual void open(const CString &name);
-
-	/**
-	 * Close the file
-	 */
-	virtual void close();
+	virtual SimpleFile *open(const CString &name);
 };
 
 } // End of namespace Titanic

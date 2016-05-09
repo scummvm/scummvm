@@ -53,10 +53,14 @@ ScriptChangedResult CScriptHandler::scriptChanged(TTRoomScript *roomScript, TTNp
 
 void CScriptHandler::processInput(TTRoomScript *roomScript, TTNpcScript *npcScript,
 		const TTString &line) {
-	if (!roomScript || line.empty())
+	if (!roomScript || !line.isValid())
 		return;
 	
 	// TODO
+}
+
+SimpleFile *CScriptHandler::openResource(const CString &name) {
+	return _owner->open(name);
 }
 
 } // End of namespace Titanic

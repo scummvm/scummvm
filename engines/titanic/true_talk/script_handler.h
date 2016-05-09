@@ -85,6 +85,11 @@ public:
 
 	void processInput(TTRoomScript *roomScript, TTNpcScript *npcScript,
 		const TTString &line);
+
+	/**
+	 * Open a resource for access
+	 */
+	SimpleFile *openResource(const CString &name);
 };
 
 } // End of namespace Titanic

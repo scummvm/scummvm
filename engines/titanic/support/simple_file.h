@@ -122,6 +122,11 @@ public:
 	void readBuffer(char *buffer = nullptr, size_t count = 0);
 
 	/**
+	 * Scan in values from the file
+	 */
+	bool scanf(const char *format, ...);
+
+	/**
 	 * Write a string line
 	 */
 	void writeLine(const CString &str);
@@ -197,6 +202,14 @@ public:
 	 * Write out the ending footer for a class definition
 	 */
 	void writeClassEnd(int indent);
+
+	/**
+	 * Return true if the stream has finished being read
+	 */
+	bool eos() const {
+		assert(_inStream);
+		return _inStream->eos();
+	}
 };
 
 /**

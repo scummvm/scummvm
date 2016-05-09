@@ -20,18 +20,32 @@
  *
  */
 
+#include "common/file.h"
 #include "titanic/true_talk/st_vocab.h"
+#include "titanic/titanic.h"
 
 namespace Titanic {
 
-STVocab::STVocab(int val): _field0(0), _field4(0), _field8(0),
+STVocab::STVocab(int val): _field0(0), _field4(0), _vocab(nullptr),
 		_fieldC(0), _field10(0), _field18(val) {
 	_field14 = load("STvocab.txt");
 }
 
 int STVocab::load(const CString &name) {
-	// TODO
-	return 0;
+	SimpleFile *file = g_vm->_fileReader._owner->openResource(name);
+	int result = 0;
+
+	while (!file->eos()) {
+		int mode = file->readNumber();
+
+		switch (mode) {
+		case 0:
+			break;
+		}
+	}
+
+	delete file;
+	return result;
 }
 
 } // End of namespace Titanic

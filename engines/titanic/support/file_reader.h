@@ -27,12 +27,21 @@
 
 namespace Titanic {
 
+class CScriptHandler;
+
 class CFileReader {
 public:
-	Common::File _file;
+	CScriptHandler *_owner;
+	int _field4;
+	int _field8;
+	int _fieldC;
+	int _field10;
+	int _field14;
 	int _field18;
 public:
-	void reset();
+	CFileReader();
+
+	void reset(CScriptHandler *owner, int val1, int val2);
 };
 
 } // End of namespace Titanic

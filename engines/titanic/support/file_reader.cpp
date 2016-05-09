@@ -24,10 +24,13 @@
 
 namespace Titanic {
 
-void CFileReader::reset() {
-	_file.close();
-	_field18 = 0;
+CFileReader::CFileReader() : _owner(nullptr), _field4(0), _field8(0),
+	_fieldC(0), _field10(0), _field14(0), _field18(0) {
 }
 
+void CFileReader::reset(CScriptHandler *owner, int val1, int val2) {
+	_owner = owner;
+	_field18 = val2;
+}
 
 } // End of namespace Titanic

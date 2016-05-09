@@ -24,4 +24,42 @@
 
 namespace Titanic {
 
+TTString::TTString() : _status(SS_VALID) {
+	_data = new TTStringData();
+}
+
+TTString::TTString(const char *str) : _status(SS_VALID) {
+	_data = new TTStringData(str);
+}
+
+TTString::TTString(const CString &str) {
+	if (_status != SS_VALID) {
+		_status = SS_5;
+		_data = nullptr;
+	} else {
+		_status = SS_VALID;
+		_data = new TTStringData(str);
+	}
+}
+
+TTString::TTString(TTString &str) {
+	if (_status != SS_VALID) {
+		_status = SS_5;
+		_data = nullptr;
+	} else {
+		_status = SS_VALID;
+		_data = str._data;
+		_data->_referenceCount++;
+	}
+}
+
+TTString::~TTString() {
+	if (--_data->_referenceCount == 0)
+		delete _data;
+}
+
+bool TTString::isValid() const {
+	return _status == SS_VALID;
+}
+
 } // End of namespace Titanic

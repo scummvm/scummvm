@@ -20,33 +20,69 @@
  *
  */
 
-#ifndef TITANIC_ST_VOCAB_H
-#define TITANIC_ST_VOCAB_H
+#ifndef TITANIC_TT_WORD_H
+#define TITANIC_TT_WORD_H
 
-#include "titanic/support/string.h"
+#include "titanic/support/simple_file.h"
 #include "titanic/true_talk/tt_string.h"
-#include "titanic/true_talk/tt_word.h"
 
 namespace Titanic {
 
-class STVocab {
-private:
-	int _field0;
-	int _field4;
-	TTString *_vocab;
+class TTWord {
+protected:
+	TTString _string;
 	int _fieldC;
 	int _field10;
-	int _field14;
+	TTStringStatus _status;
 	int _field18;
-private:
-	/**
-	 * Load the vocab data
-	 */
-	int load(const CString &name);
+	int _field1C;
+	int _field20;
+	int _field24;
+	int _field28;
 public:
-	STVocab(int val);
+	TTWord(TTString &str, int val1, int val2);
+
+	void readSyn(SimpleFile *file);
+};
+
+class TTWord1 : public TTWord {
+protected:
+	int _field2C;
+public:
+	TTWord1(TTString &str, int val1, int val2, int val3);
+};
+
+class TTWord2 : public TTWord1 {
+protected:
+	int _field30;
+public:
+	TTWord2(TTString &str, int val1, int val2, int val3, int val4);
+};
+
+class TTWord3 : public TTWord1 {
+protected:
+	int _field30;
+	int _field34;
+	int _field38;
+	int _field3C;
+public:
+	TTWord3(TTString &str, int val1, int val2, int val3, int val4, int val5, int val6);
+};
+
+class TTWord4 : public TTWord1 {
+protected:
+	int _field30;
+public:
+	TTWord4(TTString &str, int val1, int val2, int val3, int val4);
+};
+
+class TTWord5 : public TTWord1 {
+protected:
+	int _field30;
+public:
+	TTWord5(TTString &str, int val1, int val2, int val3, int val4);
 };
 
 } // End of namespace Titanic
 
-#endif /* TITANIC_ST_VOCAB_H */
+#endif /* TITANIC_TT_WORD_H */
