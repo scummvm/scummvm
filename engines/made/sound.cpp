@@ -155,6 +155,7 @@ void decompressSound(byte *source, byte *dest, uint16 chunkSize, uint16 chunkCou
 	};
 
 	soundEnergyItem.position = 0;
+	memset(deltaSoundBuffer, 0, 1024);
 
 	if (soundEnergyArray)
 		soundEnergyArray->clear();
