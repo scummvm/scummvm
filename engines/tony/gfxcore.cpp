@@ -1767,13 +1767,6 @@ void RMGfxSourceBuffer8AA::drawAA(RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *pri
 				g /= 6;
 				b /= 6;
 
-				if (r > 0x1f)
-					r = 0x1f;
-				if (g > 0x3f)
-					g = 0x3f;
-				if (b > 0x1f)
-					b = 0x1f;
-
 				mybuf[0] = (r << 11) | (g << 5) | b;
 			}
 		}
