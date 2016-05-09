@@ -34,13 +34,11 @@ STVocab::STVocab(int val): _field0(0), _field4(0), _word(nullptr),
 int STVocab::load(const CString &name) {
 	SimpleFile *file = g_vm->_fileReader._owner->openResource(name);
 	int result = 0;
-	int param = -1;
-	int mode = 0;
 	bool skipFlag;
 
 	while (!result && !file->eos()) {
 		skipFlag = false;
-		int param = file->readNumber();
+		int mode = file->readNumber();
 		TTString space(" ");
 
 		switch (mode) {

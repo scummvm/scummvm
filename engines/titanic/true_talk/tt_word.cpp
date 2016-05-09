@@ -93,8 +93,17 @@ TTWord3::TTWord3(TTString &str, int val1, int val2, int val3, int val4, int val5
 }
 
 int TTWord3::load(SimpleFile *file) {
-	// TODO
-	return 0;
+	CString str;
+	int val1, val2;
+
+	if (!TTWord::load(file, 2) && file->scanf("%d %d %d", &str, &val1, &val2)) {
+		_field34 = readNumber(str.c_str());
+		_field30 = val1;
+		_field3C = val2;
+		return 0;
+	} else {
+		return 3;
+	}
 }
 
 /*------------------------------------------------------------------------*/
