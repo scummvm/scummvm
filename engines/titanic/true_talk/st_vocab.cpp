@@ -28,7 +28,7 @@ namespace Titanic {
 
 STVocab::STVocab(int val): _field0(0), _field4(0), _word(nullptr),
 		_fieldC(0), _field10(0), _field18(val) {
-	_field14 = load("STvocab.txt");
+	_field14 = load("STVOCAB.TXT");
 }
 
 int STVocab::load(const CString &name) {
