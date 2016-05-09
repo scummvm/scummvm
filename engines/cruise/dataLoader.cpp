@@ -258,7 +258,10 @@ int loadFile(const char* name, int idx, int destIdx) {
 		return res;
 	}
 	case type_FNT: {
-		return loadFNTSub(ptr, idx);
+		int res = loadFNTSub(ptr, idx);
+		MemFree(ptr);
+
+		return res;
 	}
 	case type_SPL: {
 		// Sound file
