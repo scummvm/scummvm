@@ -198,6 +198,44 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	{
 		{
+			// Masters of the Elements - German (from rootfather)
+			// Released in Germany as "Meister Zufall und die Herrscher der Elemente"
+			// Developed by IJsfontein, published by Tivola
+			// File version of MVM.EXE is 6.0.2.32
+			// The game disc is a hybrid CD-ROM containing both the Windows and the Macintosh release.
+			
+			"melements",
+			"",
+			AD_ENTRY1("MVM.EXE", "518a98696fe1122e08410b0f157f21bf"),
+			Common::DE_DEU,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GID_GENERIC,
+		5
+	},
+
+	{
+		{
+			// Masters of the Elements - German (from rootfather)
+			// Released in Germany as "Meister Zufall und die Herrscher der Elemente"
+			// Released on the same CD-ROM as the Windows release.
+			
+			"melements",
+			"",
+			AD_ENTRY1("Meister Zufall", "65063397536553c4f6ff2a6c07194bf7"),
+			Common::DE_DEU,
+			Common::kPlatformMacintosh,
+			ADGF_NO_FLAGS,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GID_GENERIC,
+		5
+	},
+
+	{
+		{
 			"spyclub",
 			"",
 			AD_ENTRY1("SPYCLUB.EXE", "65d06b5fef155a2473434571aff5bc29"),

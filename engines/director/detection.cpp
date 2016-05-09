@@ -71,6 +71,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "jewels",     "Jewels of the Oracle" },
 	{ "jman",       "The Journeyman Project" },
 	{ "majestic",   "Majestic Part I: Alien Encounter" },
+	{ "melements",  "Masters of the Elements" },
 	{ "spyclub",    "Spy Club" },
 	{ "amber",      "AMBER: Journeys Beyond"},
 	{ "vvvampire",  "Victor Vector & Yondo: The Vampire's Coffin"},
