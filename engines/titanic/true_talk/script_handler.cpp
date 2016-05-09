@@ -29,10 +29,16 @@ namespace Titanic {
 
 CScriptHandler::CScriptHandler(CTitleEngine *owner, int val1, int val2) :
 		_owner(owner), _script(owner->_script), _reader(g_vm->_fileReader),
-		_vocab(val2), _sub1(), _sub2(this), _field10(0), _inputCtr(0), 
+		_sub1(), _sub2(this), _field10(0), _inputCtr(0), 
 		_field20(0), _field24(0), _field28(0), _field2C(0), _field30(0) {
 	g_vm->_scriptHandler = this;
 	g_vm->_script = _script;
+	g_vm->_fileReader.reset(this, val1, val2);
+	_vocab = new STVocab(val2);
+}
+
+CScriptHandler::~CScriptHandler() {
+	delete _vocab;
 }
 
 ScriptChangedResult CScriptHandler::scriptChanged(TTRoomScript *roomScript, TTNpcScript *npcScript, uint dialogueId) {

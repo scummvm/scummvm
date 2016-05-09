@@ -64,8 +64,8 @@ class CScriptHandler {
 private:
 	CTitleEngine *_owner;
 	TTScriptBase *_script;
+	STVocab *_vocab;
 	CFileReader &_reader;
-	STVocab _vocab;
 	int _field10;
 	CScriptHandlerSub1 _sub1;
 	CScriptHandlerSub2 _sub2;
@@ -77,6 +77,7 @@ private:
 	int _field30;
 public:
 	CScriptHandler(CTitleEngine *owner, int val1, int val2);
+	~CScriptHandler();
 
 	/**
 	 * Set the character and room
