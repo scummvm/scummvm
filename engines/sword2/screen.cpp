@@ -1296,7 +1296,7 @@ void Screen::setPsxScrCache(byte *psxScrCache, uint8 level) {
 }
 
 byte *Screen::getPsxScrCache(uint8 level) {
-	if (level > 3) {
+	if (level > 2) {
 		level = 0;
 	}
 
@@ -1307,7 +1307,7 @@ byte *Screen::getPsxScrCache(uint8 level) {
 }
 
 bool Screen::getPsxScrCacheStatus(uint8 level) {
-	if (level > 3) {
+	if (level > 2) {
 		level = 0;
 	}
 
