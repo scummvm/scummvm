@@ -30,9 +30,13 @@ TTWord::TTWord(TTString &str, int val1, int val2) : _string(str),
 	_status = str.getStatus() == SS_VALID ? SS_VALID : SS_5;
 }
 
-/*------------------------------------------------------------------------*/
+int TTWord::readSyn(SimpleFile *file) {
+	return 0;
+}
 
-void TTWord::readSyn(SimpleFile *file) {
+int TTWord::load(SimpleFile *file, int *mode) {
+	// TODO
+	return 0;
 }
 
 /*------------------------------------------------------------------------*/
@@ -47,11 +51,21 @@ TTWord2::TTWord2(TTString &str, int val1, int val2, int val3, int val4) :
 		TTWord1(str, val1, val2, val3), _field30(val4) {
 }
 
+int TTWord2::load(SimpleFile *file) {
+	// TODO
+	return 0;
+}
+
 /*------------------------------------------------------------------------*/
 
 TTWord3::TTWord3(TTString &str, int val1, int val2, int val3, int val4, int val5, int val6) :
 		TTWord1(str, val1, val2, val4), _field34(val3), _field30(val5), _field3C(val6),
 		_field38(0) {
+}
+
+int TTWord3::load(SimpleFile *file) {
+	// TODO
+	return 0;
 }
 
 /*------------------------------------------------------------------------*/
@@ -66,10 +80,20 @@ TTWord4::TTWord4(TTString &str, int val1, int val2, int val3, int val4) :
 	}
 }
 
+int TTWord4::load(SimpleFile *file) {
+	// TODO
+	return 0;
+}
+
 /*------------------------------------------------------------------------*/
 
 TTWord5::TTWord5(TTString &str, int val1, int val2, int val3, int val4) :
 	TTWord1(str, val1, val2, val3), _field30(val4) {
+}
+
+int TTWord5::load(SimpleFile *file) {
+	// TODO
+	return 0;
 }
 
 } // End of namespace Titanic

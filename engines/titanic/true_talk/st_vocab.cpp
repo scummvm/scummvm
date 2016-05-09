@@ -26,7 +26,7 @@
 
 namespace Titanic {
 
-STVocab::STVocab(int val): _field0(0), _field4(0), _vocab(nullptr),
+STVocab::STVocab(int val): _field0(0), _field4(0), _word(nullptr),
 		_fieldC(0), _field10(0), _field18(val) {
 	_field14 = load("STvocab.txt");
 }
@@ -34,12 +34,70 @@ STVocab::STVocab(int val): _field0(0), _field4(0), _vocab(nullptr),
 int STVocab::load(const CString &name) {
 	SimpleFile *file = g_vm->_fileReader._owner->openResource(name);
 	int result = 0;
+	int param = -1;
+	int mode = 0;
+	bool skipFlag;
 
-	while (!file->eos()) {
-		int mode = file->readNumber();
+	while (!result && !file->eos()) {
+		skipFlag = false;
+		int param = file->readNumber();
+		TTString space(" ");
 
 		switch (mode) {
-		case 0:
+		case 0: {
+			if (_word)
+				result = _word->readSyn(file);
+			skipFlag = true;
+			break;
+		}
+
+		case 1: {
+			TTWord2 *word = new TTWord2(space, 0, 0, 0, 0);
+			result = word->load(file);
+			_word = word;
+			break;
+		}
+
+		case 2: {
+			TTWord3 *word = new TTWord3(space, 0, 0, 0, 0, 0, 0);
+			result = word->load(file);
+			_word = word;
+			break;
+		}
+
+		case 3:
+		case 9: {
+			TTWord1 *word = new TTWord1(space, 0, 0, 0);
+			result = word->load(file, &mode);
+			_word = word;
+			break;
+		}
+
+		case 4:
+		case 5:
+		case 7: {
+			TTWord *word = new TTWord(space, 0, 0);
+			result = word->load(file, &mode);
+			_word = word;
+			break;
+		}
+
+		case 8: {
+			TTWord4 *word = new TTWord4(space, 0, 0, 0, 0);
+			result = word->load(file);
+			_word = word;
+			break;
+		}
+
+		case 6: {
+			TTWord5 *word = new TTWord5(space, 0, 0, 0, 0);
+			result = word->load(file);
+			_word = word;
+			break;
+		}
+
+		default:
+			result = 4;
 			break;
 		}
 	}

@@ -78,6 +78,12 @@ size_t SimpleFile::write(const void *src, size_t count) {
 	return _outStream->write(src, count);
 }
 
+byte SimpleFile::readByte() {
+	byte b;
+	safeRead(&b, 1);
+	return b;
+}
+
 CString SimpleFile::readString() {
 	char c;
 	CString result;
@@ -368,13 +374,22 @@ bool SimpleFile::scanf(const char *format, ...) {
 			if (!Common::isSpace(c))
 				return false;
 		} else if (formatStr.hasPrefix("%d")) {
+			// Read in a number
 			formatStr = CString(formatStr.c_str() + 2);
 			int *param = (int *)va_arg(va, int *);
 			*param = readNumber();
+		} else if (formatStr.hasPrefix("%s")) {
+			// Read in text until the next space
+			formatStr = CString(formatStr.c_str() + 2);
+			CString *str = (CString *)va_arg(va, CString *);
+			str->clear();
+			while (!eos() && (c = readByte()) != ' ')
+				*str += c;
 		}
 	}
 
 	va_end(va);
+	return !eos();
 }
 
 /*------------------------------------------------------------------------*/

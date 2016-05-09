@@ -42,7 +42,12 @@ protected:
 public:
 	TTWord(TTString &str, int val1, int val2);
 
-	void readSyn(SimpleFile *file);
+	int readSyn(SimpleFile *file);
+
+	/**
+	 * Load the word
+	 */
+	int load(SimpleFile *file, int *mode);
 };
 
 class TTWord1 : public TTWord {
@@ -57,6 +62,11 @@ protected:
 	int _field30;
 public:
 	TTWord2(TTString &str, int val1, int val2, int val3, int val4);
+
+	/**
+	 * Load the word
+	 */
+	int load(SimpleFile *file);
 };
 
 class TTWord3 : public TTWord1 {
@@ -67,6 +77,11 @@ protected:
 	int _field3C;
 public:
 	TTWord3(TTString &str, int val1, int val2, int val3, int val4, int val5, int val6);
+
+	/**
+	 * Load the word
+	 */
+	int load(SimpleFile *file);
 };
 
 class TTWord4 : public TTWord1 {
@@ -74,6 +89,11 @@ protected:
 	int _field30;
 public:
 	TTWord4(TTString &str, int val1, int val2, int val3, int val4);
+
+	/**
+	 * Load the word
+	 */
+	int load(SimpleFile *file);
 };
 
 class TTWord5 : public TTWord1 {
@@ -81,6 +101,11 @@ protected:
 	int _field30;
 public:
 	TTWord5(TTString &str, int val1, int val2, int val3, int val4);
+
+	/**
+	 * Load the word
+	 */
+	int load(SimpleFile *file);
 };
 
 } // End of namespace Titanic

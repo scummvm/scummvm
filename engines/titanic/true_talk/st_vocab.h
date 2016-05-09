@@ -33,7 +33,7 @@ class STVocab {
 private:
 	int _field0;
 	int _field4;
-	TTString *_vocab;
+	TTWord *_word;
 	int _fieldC;
 	int _field10;
 	int _field14;

@@ -87,6 +87,11 @@ public:
 	virtual size_t write(const void *src, size_t count);
 
 	/**
+	 * Read a byte
+	 */
+	byte readByte();
+
+	/**
 	 * Read a string from the file
 	 */
 	CString readString();
