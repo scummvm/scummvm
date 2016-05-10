@@ -368,23 +368,34 @@ bool SimpleFile::scanf(const char *format, ...) {
 	CString formatStr(format);
 	while (!formatStr.empty()) {
 		if (formatStr.hasPrefix(" ")) {
+			// Skip over whitespaces
 			formatStr.deleteChar(0);
-			safeRead(&c, 1);
 			
+			safeRead(&c, 1);			
 			if (!Common::isSpace(c))
 				return false;
+
+			while (Common::isSpace(c))
+				safeRead(&c, 1);
+			_inStream->skip(-1);
 		} else if (formatStr.hasPrefix("%d")) {
 			// Read in a number
 			formatStr = CString(formatStr.c_str() + 2);
 			int *param = (int *)va_arg(va, int *);
 			*param = readNumber();
+			
+			if (!eos())
+				_inStream->skip(-1);
 		} else if (formatStr.hasPrefix("%s")) {
 			// Read in text until the next space
 			formatStr = CString(formatStr.c_str() + 2);
 			CString *str = (CString *)va_arg(va, CString *);
 			str->clear();
-			while (!eos() && (c = readByte()) != ' ')
+			while (!eos() && !Common::isSpace(c = readByte()))
 				*str += c;
+
+			if (!eos())
+				_inStream->skip(-1);
 		}
 	}
 

@@ -54,7 +54,7 @@ TTString::TTString(TTString &str) {
 }
 
 TTString::~TTString() {
-	if (--_data->_referenceCount == 0)
+	if (_data && --_data->_referenceCount == 0)
 		delete _data;
 }
 
