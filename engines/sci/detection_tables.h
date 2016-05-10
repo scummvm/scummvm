@@ -349,6 +349,19 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformDOS, 0, GUIO5(GUIO_NOSPEECH, GAMEOPTION_EGA_UNDITHER, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
 
+	// Conquests of Camelot - English Atari ST
+	// Game version 1.019.000
+	// Floppy: INT#10.12.90
+	// Executable reports "1.002.038"
+	{"camelot", "", {
+		{"resource.map", 0, "0f80a11867be91a158823887a49cf443", 7290},
+		{"resource.001", 0, "162f66c42e4146ee63f78fba6f1a6757", 596773},
+		{"resource.002", 0, "162f66c42e4146ee63f78fba6f1a6757", 724615},
+		{"resource.003", 0, "162f66c42e4146ee63f78fba6f1a6757", 713351},
+		{"resource.004", 0, "162f66c42e4146ee63f78fba6f1a6757", 718766},
+		AD_LISTEND},
+		Common::EN_ANY, Common::kPlatformAtariST, 0, GUIO5(GUIO_NOSPEECH, GAMEOPTION_EGA_UNDITHER, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
+
 	// Conquests of Camelot - English DOS
 	// SCI interpreter version 0.000.685
 	{"camelot", "", {
@@ -939,6 +952,22 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformAmiga, 0, GUIO4(GUIO_NOSPEECH, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
 
+	// Hoyle 1 - English Atari ST
+	// Game version 1.000.104, SCI interpreter version 1.002.024
+	{"hoyle1", "", {
+		{"resource.001", 0, "e0dd44069a62a463fd124974b915f10d", 518127},
+		{"resource.map", 0, "0af9a3dcd72a091960de070432e1f524", 4386},
+		AD_LISTEND},
+		Common::EN_ANY, Common::kPlatformAtariST, 0, GUIO4(GUIO_NOSPEECH, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
+
+	// Hoyle 1 - English Atari ST
+	// Game version 1.000.108, SCI interpreter version 1.002.026
+	{"hoyle1", "", {
+		{"resource.map", 0, "ed8355f84752e49ffa1f0cf9eca4b28e", 4140},
+		{"resource.001", 0, "e0dd44069a62a463fd124974b915f10d", 517454},
+		AD_LISTEND},
+		Common::EN_ANY, Common::kPlatformAtariST, 0, GUIO4(GUIO_NOSPEECH, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
+
 	// Hoyle 2 - English DOS
 	// SCI interpreter version 0.000.572
 	{"hoyle2", "", {
@@ -981,6 +1010,15 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.001", 0, "8f2dd70abe01112eca464cda818b5eb6", 222704},
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformAmiga, 0, GUIO5(GUIO_NOSPEECH, GAMEOPTION_EGA_UNDITHER, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
+
+	// Hoyle 2 - English Atari ST
+	// Game version 1.001.017
+	// Executable scanning reports "1.002.034"
+	{"hoyle2", "", {
+		{"resource.map", 0, "13c8cc977598b6ad61d24c6296a090fd", 1356},
+		{"resource.001", 0, "8f2dd70abe01112eca464cda818b5eb6", 216280},
+		AD_LISTEND},
+		Common::EN_ANY, Common::kPlatformAtariST, 0, GUIO5(GUIO_NOSPEECH, GAMEOPTION_EGA_UNDITHER, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
 
 	// Hoyle 2 - English Macintosh
 	// Executable scanning reports "x.yyy.zzz"
@@ -1977,6 +2015,17 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformAmiga, 0, GUIO5(GUIO_NOSPEECH, GAMEOPTION_EGA_UNDITHER, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
 
+	// Larry 2 - English Atari ST
+	// Game version 1.001.006
+	// Executable reports "1.000.159" 1988-12-02 12:22 p.m.
+	{"lsl2", "", {
+		{"resource.map", 0, "2fc3ce7da1346e4dadfee18606d814fc", 4758},
+		{"resource.001", 0, "4a24443a25e2b1492462a52809605dc2", 477342},
+		{"resource.002", 0, "4a24443a25e2b1492462a52809605dc2", 406698},
+		{"resource.003", 0, "4a24443a25e2b1492462a52809605dc2", 592433},
+		AD_LISTEND},
+		Common::EN_ANY, Common::kPlatformAtariST, 0, GUIO5(GUIO_NOSPEECH, GAMEOPTION_EGA_UNDITHER, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
+
 	// Larry 2 - English DOS Non-Interactive Demo
 	// Executable scanning reports "x.yyy.zzz"
 	// SCI interpreter version 0.000.409
@@ -2034,6 +2083,17 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformDOS, 0, GUIO5(GUIO_NOSPEECH, GAMEOPTION_EGA_UNDITHER, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
 
+	// Larry 2 - English Atari ST (Kixx)
+	// Game version 1.002.000
+	// Executable reports "1.001.008" 1989-01-12 16:30
+	{"lsl2", "", {
+		{"resource.map", 0, "2c9c3b0923e3764f5ab999bcb71c2d47", 4758},
+		{"resource.001", 0, "4a24443a25e2b1492462a52809605dc2", 477625},
+		{"resource.002", 0, "4a24443a25e2b1492462a52809605dc2", 406935},
+		{"resource.003", 0, "4a24443a25e2b1492462a52809605dc2", 592533},
+		AD_LISTEND},
+		Common::EN_ANY, Common::kPlatformAtariST, 0, GUIO5(GUIO_NOSPEECH, GAMEOPTION_EGA_UNDITHER, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
+
 	// Larry 3 - English Amiga (from www.back2roots.org)
 	// Executable scanning reports "1.002.032"
 	// SCI interpreter version 0.000.685
@@ -2047,6 +2107,19 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.005", 0, "433911eb764089d493aed1f958a5615a", 524259},
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformAmiga, 0, GUIO4(GUIO_NOSPEECH, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
+
+	// Larry 3 - English Atari ST
+	// Game version 1.021, 1990-01-27
+	// Int#6.26.90
+	// Executable scanning reports "1.002.026"
+	{"lsl3", "", {
+		{"resource.map", 0, "0b6bd3e039682830a51c5755c06591db", 5916},
+		{"resource.001", 0, "f18441027154292836b973c655fa3175", 456722},
+		{"resource.002", 0, "f18441027154292836b973c655fa3175", 578024},
+		{"resource.003", 0, "f18441027154292836b973c655fa3175", 506807},
+		{"resource.004", 0, "f18441027154292836b973c655fa3175", 513651},
+		AD_LISTEND},
+		Common::EN_ANY, Common::kPlatformAtariST, 0, GUIO4(GUIO_NOSPEECH, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
 
 	// Larry 3 - English DOS (supplied by ssburnout in bug report #3049193)
 	// 1.021 8x5.25" (label: Int#5.15.90)
@@ -2916,6 +2989,17 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformDOS, 0, GUIO5(GUIO_NOSPEECH, GAMEOPTION_EGA_UNDITHER, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
 
+	// Police Quest 2 - English Atari ST
+	// Game version 1.002.011 DS 1989-07-21
+	// Executable reports "1.002.003"
+	{"pq2", "", {
+		{"resource.map", 0, "28a6f471c7900c2c92da40eecb615d9d", 4584},
+		{"resource.001", 0, "77f02def3094af804fd2371db25b7100", 509525},
+		{"resource.002", 0, "77f02def3094af804fd2371db25b7100", 546000},
+		{"resource.003", 0, "77f02def3094af804fd2371db25b7100", 591851},
+		AD_LISTEND},
+		Common::EN_ANY, Common::kPlatformAtariST, 0, GUIO5(GUIO_NOSPEECH, GAMEOPTION_EGA_UNDITHER, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
+
 	// Police Quest 2 - English DOS (from FRG)
 	// SCI interpreter version 0.000.395
 	{"pq2", "", {
@@ -2934,6 +3018,17 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.003", 0, "77f02def3094af804fd2371db25b7100", 587511},
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformDOS, 0, GUIO5(GUIO_NOSPEECH, GAMEOPTION_EGA_UNDITHER, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
+
+	// Police Quest 2 - English Atari ST
+	// Game version 1.001.006 1989-01-16 13:30
+	// Executable reports "1.001.009"
+	{"pq2", "", {
+		{"resource.map", 0, "8e1161c684b342742d30f938a4839a4b", 4518},
+		{"resource.001", 0, "77f02def3094af804fd2371db25b7100", 506563},
+		{"resource.002", 0, "77f02def3094af804fd2371db25b7100", 541261},
+		{"resource.003", 0, "77f02def3094af804fd2371db25b7100", 587511},
+		AD_LISTEND},
+		Common::EN_ANY, Common::kPlatformAtariST, 0, GUIO5(GUIO_NOSPEECH, GAMEOPTION_EGA_UNDITHER, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
 
 	// Police Quest 2 - Japanese PC-98 (also includes english language)
 	// Executable scanning reports "x.yyy.zzz"
@@ -3204,6 +3299,19 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformDOS, 0, GUIO5(GUIO_NOSPEECH, GAMEOPTION_EGA_UNDITHER, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
 
+	// Quest for Glory 1 / Hero's Quest - English Atari ST
+	// Game version 1.137
+	// Executable reports "1.002.028"
+	{"qfg1", "", {
+		{"resource.map", 0, "2a794066ad161acbedac8fa14e46905d", 6438},
+		{"resource.000", 0, "40332d3ebfc70a4b6a6a0443c2763287", 79204},
+		{"resource.001", 0, "f7fc269d3db146830d6427d3e02d4187", 473547},
+		{"resource.002", 0, "e64004e020fdf1813be52b639b08be89", 635687},
+		{"resource.003", 0, "f0af87c60ec869946da442833aa5afa8", 640438},
+		{"resource.004", 0, "f0af87c60ec869946da442833aa5afa8", 644452},
+		AD_LISTEND},
+		Common::EN_ANY, Common::kPlatformAtariST, 0, GUIO5(GUIO_NOSPEECH, GAMEOPTION_EGA_UNDITHER, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
+
 	// Quest for Glory 1 / Hero's Quest - English DOS Demo
 	// Executable scanning reports "0.000.685"
 	{"qfg1", "Demo", {
@@ -3283,6 +3391,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		Common::EN_ANY, Common::kPlatformMacintosh, ADGF_MACRESFORK, GUIO4(GUIO_NOSPEECH, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
 
 	// Quest for Glory 2 - English Amiga
+	// Game version 1.109
 	// Executable scanning reports "1.003.004"
 	// SCI interpreter version 0.001.010
 	{"qfg2", "", {
@@ -3704,6 +3813,18 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.004", 0, "ceeda7202b96e5c85ecaa88a40a540fc", 761984},
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformAmiga, 0, GUIO5(GUIO_NOSPEECH, GAMEOPTION_EGA_UNDITHER, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI) },
+
+	// Space Quest 3 - English Atari ST
+	// Game version 1.0Q 1989-27-03 17:00
+	// Int#1.002.002
+	// Executable reports "1.002.001"
+	{"sq3", "", {
+		{"resource.map", 0, "c36e322805949affd882a75803a6a54e", 5484},
+		{"resource.001", 0, "ceeda7202b96e5c85ecaa88a40a540fc", 485146},
+		{"resource.002", 0, "ceeda7202b96e5c85ecaa88a40a540fc", 720227},
+		{"resource.003", 0, "ceeda7202b96e5c85ecaa88a40a540fc", 688524},
+		AD_LISTEND},
+		Common::EN_ANY, Common::kPlatformAtariST, 0, GUIO5(GUIO_NOSPEECH, GAMEOPTION_EGA_UNDITHER, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI) },
 
 	// Space Quest 3 - German Amiga (also includes english language)
 	// Executable scanning reports "1.004.006"
