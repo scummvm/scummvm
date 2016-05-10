@@ -44,7 +44,7 @@ private:
 	void op_dos_command(int op, int numArgs, int32 *args);
 	void op_set_fow_sentinel(int32 *args);
 	void op_set_fow_information(int op, int numArgs, int32 *args);
-	void op_set_fow_image(int op, int numArgs, int32 *args);
+	int op_set_fow_image(int op, int numArgs, int32 *args);
 
 	void op_ai_test_kludge(int op, int numArgs, int32 *args);
 	void op_ai_master_control_program(int op, int numArgs, int32 *args);
@@ -135,7 +135,7 @@ int32 LogicHEmoonbase::dispatch(int op, int numArgs, int32 *args) {
 		op_set_fow_information(op, numArgs, args);
 		break;
 	case OP_SET_FOW_IMAGE:
-		op_set_fow_image(op, numArgs, args);
+		return op_set_fow_image(op, numArgs, args);
 		break;
 
 	case OP_AI_TEST_KLUDGE:
@@ -190,13 +190,32 @@ void LogicHEmoonbase::op_set_fow_sentinel(int32 *args) {
 }
 
 void LogicHEmoonbase::op_set_fow_information(int op, int numArgs, int32 *args) {
-	warning("STUB: op_set_fow_information()");
-	LogicHE::dispatch(op, numArgs, args);
+	Common::String str("op_set_fow_information(%d", args[0]);
+	for (int i = 1; i < numArgs; i++) {
+		str += Common::String::format(", %d", args[i]);
+	}
+	str += ")";
+
+	debug(2, "%s", str.c_str());
+
+	_vm->_moonbase->setFOWInfo(
+		args[0],		// array
+		args[1],		// array down dimension
+		args[2],		// array across dimension
+		args[3],		// logical view X coordinate
+		args[4],		// logical view Y coordinate
+		args[5],		// screen draw clip rect x1
+		args[6],		// screen draw clip rect y1
+		args[7],		// screen draw clip rect x2
+		args[8],		// screen draw clip rect y2
+		args[9],		// techinque
+		args[10]		// frame
+	);
 }
 
-void LogicHEmoonbase::op_set_fow_image(int op, int numArgs, int32 *args) {
-	warning("STUB: op_set_fow_image()");
-	LogicHE::dispatch(op, numArgs, args);
+int LogicHEmoonbase::op_set_fow_image(int op, int numArgs, int32 *args) {
+	debug(2, "STUB: op_set_fow_image(%d)", args[0]);
+	return _vm->_moonbase->setFOWImage(args[0]) ? 1 : 0;
 }
 
 void LogicHEmoonbase::op_ai_test_kludge(int op, int numArgs, int32 *args) {
