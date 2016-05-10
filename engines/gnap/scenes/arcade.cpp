@@ -1033,7 +1033,7 @@ Scene51::Scene51(GnapEngine *vm) : Scene(vm) {
 
 	for (int i = 0; i < 4; i++) {
 		_digits[i] = 0;
-		_digitSequenceIds[4] = -1;
+		_digitSequenceIds[i] = -1;
 	}
 
 	for (int i = 0; i < 6; i++) {
