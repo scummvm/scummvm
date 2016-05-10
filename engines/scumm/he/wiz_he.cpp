@@ -1571,8 +1571,15 @@ uint8 *Wiz::drawWizImage(int resNum, int state, int maskNum, int maskState, int 
 		transColor = (trns == NULL) ? _vm->VAR(_vm->VAR_WIZ_TCOLOR) : -1;
 	}
 
-	drawWizImageEx(dst, dataPtr, mask, dstPitch, dstType, cw, ch, x1, y1, width, height,
-		state, &rScreen, flags, palPtr, transColor, _vm->_bytesPerPixel, xmapPtr, conditionBits);
+	if (_vm->_game.id == GID_MOONBASE &&
+			resNum == _vm->_moonbase->_fowSentinelImage &&
+			state == _vm->_moonbase->_fowSentinelState &&
+			conditionBits == _vm->_moonbase->_fowSentinelConditionBits) {
+		_vm->_moonbase->renderFOW(dst, dstPitch, dstType, cw, ch, flags);
+	} else {
+		drawWizImageEx(dst, dataPtr, mask, dstPitch, dstType, cw, ch, x1, y1, width, height,
+			state, &rScreen, flags, palPtr, transColor, _vm->_bytesPerPixel, xmapPtr, conditionBits);
+	}
 
 	if (!(flags & kWIFBlitToMemBuffer) && dstResNum == 0) {
 		Common::Rect rImage(x1, y1, x1 + width, y1 + height);
@@ -2306,13 +2313,6 @@ void Wiz::displayWizComplexImage(const WizParameters *params) {
 			if (flags & kWIFIsPolygon) {
 				drawWizPolygon(params->img.resNum, state, po_x, flags, shadow, dstResNum, palette);
 			} else {
-				if (_vm->_game.id == GID_MOONBASE) {
-					if (params->img.resNum == _vm->_moonbase->_fowSentinelImage &&
-							state == _vm->_moonbase->_fowSentinelState &&
-							params->conditionBits == _vm->_moonbase->_fowSentinelConditionBits)
-						_vm->_moonbase->renderFOW(0, 0, 0, 0, 0, flags);
-				}
-
 				drawWizImage(params->img.resNum, state, 0, 0, po_x, po_y, params->img.zorder, shadow, zbuffer, r, flags, dstResNum, _vm->getHEPaletteSlot(palette), params->conditionBits);
 			}
 		}
