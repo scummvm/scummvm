@@ -50,7 +50,6 @@ public:
 	void renderFOW(uint8 *destSurface, int dstPitch, int dstType, int dstw, int dsth, int flags);
 
 private:
-	bool captureFOWImageFromLocation(void *src);
 	int readFOWVisibilityArray(int array, int y, int x);
 	void renderFOWState(uint8 *destSurface, int dstPitch, int dstType, int dstw, int dsth, int x, int y, int srcw, int srch, int state, int flags);
 

@@ -69,25 +69,6 @@ void Moonbase::releaseFOWResources() {
 	}
 }
 
-bool Moonbase::captureFOWImageFromLocation(void *src) {
-	if (!src)
-		return false;
-
-	int imageDataSize = 0; //getMemoryBlockSize(src); // TODO
-
-	if (imageDataSize <= 0)
-		return false;
-
-	_fowImage = (byte *)malloc(imageDataSize);
-
-	if (!_fowImage)
-		return false;
-
-	memcpy(_fowImage, src, imageDataSize);
-
-	return true;
-}
-
 bool Moonbase::setFOWImage(int image) {
 	releaseFOWResources();
 
@@ -99,21 +80,21 @@ bool Moonbase::setFOWImage(int image) {
 			void *wiz = loadWizFromFilename(fowImageFilename);
 
 			if (wiz) {
-				captureFOWImageFromLocation(wiz);
+				captureFOWImageFromLocation(wiz, file.size());
 				free(wiz);
 			}
 		}
 #endif
 
 		if (!_fowImage && image < 0) {
-			int resType;
+			int resId;
 
 			// PIECES  BUBBLES CIRCLES SIMPLE*  WEDGEY BUBBLE2
 			// WEDGE2  SPIKEY  ANGLES  SMOOTHED WUZZY  SYS7-BEVELED
 			if (image >= -12 && image <= -1)
-				resType = 210 - image; // 211-222 range
+				resId = 210 - image; // 211-222 range
 			else
-				resType = 214; // default, SIMPLE
+				resId = 214; // default, SIMPLE
 
 			if (_fileName.empty()) { // We are running for the first time
 				_fileName = _vm->generateFilename(-3);
@@ -122,27 +103,19 @@ bool Moonbase::setFOWImage(int image) {
 					error("Cannot open file %s", _fileName.c_str());
 			}
 
-#if 0 // TODO
-			HRSRC hResource = FindResource(g_hInst, resType, 10);
-			if (hResource) {
-				byte res = LoadResource(g_hInst, hResource);
+			Common::SeekableReadStream *stream = _exe.getResource(Common::kPERCData, resId);
 
-				if (res) {
-					uint16 nDataSize = SizeofResource(g_hInst, hResource);
+			if (stream->size()) {
+				_fowImage = (byte *)malloc(stream->size());
 
-					if (nDataSize)
-						captureFOWImageFromLocation(res);
-				}
+				stream->read(_fowImage, stream->size());
 			}
-#endif
+
+			delete stream;
 		}
 
-		if (!_fowImage && image > 0) {
-			void *glob = _vm->getResourceAddress(rtImage, image);
-
-			if (glob)
-				captureFOWImageFromLocation(glob);
-		}
+		if (!_fowImage && image > 0)
+			_fowImage = _vm->getResourceAddress(rtImage, image);
 
 		if (!_fowImage)
 			return false;
