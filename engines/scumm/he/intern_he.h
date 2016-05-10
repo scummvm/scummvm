@@ -188,6 +188,7 @@ protected:
 #ifdef ENABLE_HE
 class ScummEngine_v71he : public ScummEngine_v70he {
 	friend class Wiz;
+	friend class Moonbase;
 
 protected:
 	bool _skipProcessActors;

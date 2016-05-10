@@ -2310,9 +2310,8 @@ void Wiz::displayWizComplexImage(const WizParameters *params) {
 					if (params->img.resNum == _vm->_moonbase->_fowSentinelImage &&
 							state == _vm->_moonbase->_fowSentinelState &&
 							params->conditionBits == _vm->_moonbase->_fowSentinelConditionBits)
-						_vm->_moonbase->renderFOW();
+						_vm->_moonbase->renderFOW(0, 0, 0, 0, 0, flags);
 				}
-
 
 				drawWizImage(params->img.resNum, state, 0, 0, po_x, po_y, params->img.zorder, shadow, zbuffer, r, flags, dstResNum, _vm->getHEPaletteSlot(palette), params->conditionBits);
 			}

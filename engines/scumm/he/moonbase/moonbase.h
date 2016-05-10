@@ -29,18 +29,63 @@ namespace Scumm {
 
 class Moonbase {
 public:
-	Moonbase();
+	Moonbase(ScummEngine_v71he *vm);
 	~Moonbase();
-
-	void renderFOW();
 
 	void blitT14WizImage(uint8 *dst, int dstw, int dsth, int dstPitch, const Common::Rect *clipBox,
 			 uint8 *wizd, int srcx, int srcy, int rawROP, int paramROP);
+
+	// FOW Stuff
+	void initFOW();
+	void releaseFOWResources();
+
+	bool setFOWImage(int id);
+
+	void setFOWInfo(int fowInfoArray, int downDim, int acrossDim, int viewX, int viewY, int clipX1,
+		int clipY1, int clipX2, int clipY2, int technique, int nFrame);
+
+
+	void renderFOW(uint8 *destSurface, int dstPitch, int dstType, int dstw, int dsth, int flags);
+
+private:
+	bool captureFOWImageFromLocation(void *src);
+	int readFOWVisibilityArray(int array, int y, int x);
+	void renderFOWState(uint8 *destSurface, int dstPitch, int dstType, int dstw, int dsth, int x, int y, int srcw, int srch, int state, int flags);
 
 public:
 	int _fowSentinelImage;
 	int _fowSentinelState;
 	uint16 _fowSentinelConditionBits;
+
+private:
+	ScummEngine_v71he *_vm;
+
+	int _fowFrameBaseNumber;
+	int _fowAnimationFrames;
+	int _fowCurrentFOWFrame;
+
+	int _fowTileW;
+	int _fowTileH;
+
+	byte *_fowImage;
+	int _fowClipX1;
+	int _fowClipY1;
+	int _fowClipX2;
+	int _fowClipY2;
+
+	int _fowDrawX;
+	int _fowDrawY;
+
+	int _fowVtx1;
+	int _fowVty1;
+	int _fowMvx;
+	int _fowMvy;
+	int _fowVw;
+	int _fowVh;
+
+	bool _fowBlackMode;
+
+	int _fowRenderTable[32768];
 };
 
 #endif

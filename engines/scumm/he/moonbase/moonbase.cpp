@@ -24,17 +24,11 @@
 
 namespace Scumm {
 
-Moonbase::Moonbase() {
-	_fowSentinelImage = -1;
-	_fowSentinelState = -1;
-	_fowSentinelConditionBits = 0;
+Moonbase::Moonbase(ScummEngine_v71he *vm) : _vm(vm) {
+	initFOW();
 }
 
 Moonbase::~Moonbase() {
-}
-
-void Moonbase::renderFOW() {
-	warning("STUB: renderFOW()");
 }
 
 void Moonbase::blitT14WizImage(uint8 *dst, int dstw, int dsth, int dstPitch, const Common::Rect *clipBox,

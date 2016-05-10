@@ -837,7 +837,7 @@ ScummEngine_v71he::ScummEngine_v71he(OSystem *syst, const DetectorResult &dr)
 	_moonbase = 0;
 
 	if (_game.id == GID_MOONBASE)
-		_moonbase = new Moonbase();
+		_moonbase = new Moonbase(this);
 }
 
 ScummEngine_v71he::~ScummEngine_v71he() {
