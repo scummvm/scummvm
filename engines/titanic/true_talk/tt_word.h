@@ -28,7 +28,7 @@
 
 namespace Titanic {
 
-class TTWord {
+class TTword {
 protected:
 	TTString _string;
 	int _fieldC;
@@ -45,7 +45,7 @@ protected:
 	 */
 	uint readNumber(const char *str);
 public:
-	TTWord(TTString &str, int mode, int val2);
+	TTword(TTString &str, int mode, int val2);
 
 	int readSyn(SimpleFile *file);
 
@@ -55,18 +55,18 @@ public:
 	int load(SimpleFile *file, int mode);
 };
 
-class TTWord1 : public TTWord {
+class TTword1 : public TTword {
 protected:
 	int _field2C;
 public:
-	TTWord1(TTString &str, int val1, int val2, int val3);
+	TTword1(TTString &str, int val1, int val2, int val3);
 };
 
-class TTWord2 : public TTWord1 {
+class TTword2 : public TTword1 {
 protected:
 	int _field30;
 public:
-	TTWord2(TTString &str, int val1, int val2, int val3, int val4);
+	TTword2(TTString &str, int val1, int val2, int val3, int val4);
 
 	/**
 	 * Load the word
@@ -74,14 +74,14 @@ public:
 	int load(SimpleFile *file);
 };
 
-class TTWord3 : public TTWord1 {
+class TTword3 : public TTword1 {
 protected:
 	int _field30;
 	int _field34;
 	int _field38;
 	int _field3C;
 public:
-	TTWord3(TTString &str, int val1, int val2, int val3, int val4, int val5, int val6);
+	TTword3(TTString &str, int val1, int val2, int val3, int val4, int val5, int val6);
 
 	/**
 	 * Load the word
@@ -89,11 +89,11 @@ public:
 	int load(SimpleFile *file);
 };
 
-class TTWord4 : public TTWord1 {
+class TTword4 : public TTword1 {
 protected:
 	int _field30;
 public:
-	TTWord4(TTString &str, int val1, int val2, int val3, int val4);
+	TTword4(TTString &str, int val1, int val2, int val3, int val4);
 
 	/**
 	 * Load the word
@@ -101,11 +101,11 @@ public:
 	int load(SimpleFile *file);
 };
 
-class TTWord5 : public TTWord1 {
+class TTword5 : public TTword1 {
 protected:
 	int _field30;
 public:
-	TTWord5(TTString &str, int val1, int val2, int val3, int val4);
+	TTword5(TTString &str, int val1, int val2, int val3, int val4);
 
 	/**
 	 * Load the word

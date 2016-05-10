@@ -24,17 +24,17 @@
 
 namespace Titanic {
 
-TTWord::TTWord(TTString &str, int mode, int val2) : _string(str),
+TTword::TTword(TTString &str, int mode, int val2) : _string(str),
 		_wordMode(mode), _field1C(val2), _fieldC(0), _field10(0),
 		_field20(0), _field24(0), _field28(0) {
 	_status = str.getStatus() == SS_VALID ? SS_VALID : SS_5;
 }
 
-int TTWord::readSyn(SimpleFile *file) {
+int TTword::readSyn(SimpleFile *file) {
 	return 0;
 }
 
-int TTWord::load(SimpleFile *file, int mode) {
+int TTword::load(SimpleFile *file, int mode) {
 	CString str1, str2;
 	int val;
 
@@ -49,7 +49,7 @@ int TTWord::load(SimpleFile *file, int mode) {
 	}
 }
 
-uint TTWord::readNumber(const char *str) {
+uint TTword::readNumber(const char *str) {
 	uint numValue = *str;
 	if (*str == '0') {
 		numValue = MKTAG('Z', 'Z', 'Z', '[');
@@ -64,20 +64,20 @@ uint TTWord::readNumber(const char *str) {
 
 /*------------------------------------------------------------------------*/
 
-TTWord1::TTWord1(TTString &str, int val1, int val2, int val3) :
-		TTWord(str, val1, val2), _field2C(val3) {
+TTword1::TTword1(TTString &str, int val1, int val2, int val3) :
+		TTword(str, val1, val2), _field2C(val3) {
 }
 
 /*------------------------------------------------------------------------*/
 
-TTWord2::TTWord2(TTString &str, int val1, int val2, int val3, int val4) :
-		TTWord1(str, val1, val2, val3), _field30(val4) {
+TTword2::TTword2(TTString &str, int val1, int val2, int val3, int val4) :
+		TTword1(str, val1, val2, val3), _field30(val4) {
 }
 
-int TTWord2::load(SimpleFile *file) {
+int TTword2::load(SimpleFile *file) {
 	int val;
 
-	if (TTWord::load(file, 1) && file->scanf("%d", &val)) {
+	if (TTword::load(file, 1) && file->scanf("%d", &val)) {
 		_field30 = val;
 		return 0;
 	} else {
@@ -87,16 +87,16 @@ int TTWord2::load(SimpleFile *file) {
 
 /*------------------------------------------------------------------------*/
 
-TTWord3::TTWord3(TTString &str, int val1, int val2, int val3, int val4, int val5, int val6) :
-		TTWord1(str, val1, val2, val4), _field34(val3), _field30(val5), _field3C(val6),
+TTword3::TTword3(TTString &str, int val1, int val2, int val3, int val4, int val5, int val6) :
+		TTword1(str, val1, val2, val4), _field34(val3), _field30(val5), _field3C(val6),
 		_field38(0) {
 }
 
-int TTWord3::load(SimpleFile *file) {
+int TTword3::load(SimpleFile *file) {
 	CString str;
 	int val1, val2;
 
-	if (!TTWord::load(file, 2) && file->scanf("%d %d %d", &str, &val1, &val2)) {
+	if (!TTword::load(file, 2) && file->scanf("%d %d %d", &str, &val1, &val2)) {
 		_field34 = readNumber(str.c_str());
 		_field30 = val1;
 		_field3C = val2;
@@ -108,8 +108,8 @@ int TTWord3::load(SimpleFile *file) {
 
 /*------------------------------------------------------------------------*/
 
-TTWord4::TTWord4(TTString &str, int val1, int val2, int val3, int val4) :
-		TTWord1(str, val1, val2, val3) {
+TTword4::TTword4(TTString &str, int val1, int val2, int val3, int val4) :
+		TTword1(str, val1, val2, val3) {
 	if (val4 >= 0 && val4 <= 9) {
 		_field30 = val4;
 	} else {
@@ -118,10 +118,10 @@ TTWord4::TTWord4(TTString &str, int val1, int val2, int val3, int val4) :
 	}
 }
 
-int TTWord4::load(SimpleFile *file) {
+int TTword4::load(SimpleFile *file) {
 	int val;
 
-	if (TTWord::load(file, 1) && file->scanf("%d", &val)) {
+	if (TTword::load(file, 1) && file->scanf("%d", &val)) {
 		_field30 = val;
 		return 0;
 	} else {
@@ -131,14 +131,14 @@ int TTWord4::load(SimpleFile *file) {
 
 /*------------------------------------------------------------------------*/
 
-TTWord5::TTWord5(TTString &str, int val1, int val2, int val3, int val4) :
-	TTWord1(str, val1, val2, val3), _field30(val4) {
+TTword5::TTword5(TTString &str, int val1, int val2, int val3, int val4) :
+	TTword1(str, val1, val2, val3), _field30(val4) {
 }
 
-int TTWord5::load(SimpleFile *file) {
+int TTword5::load(SimpleFile *file) {
 	int val;
 
-	if (TTWord::load(file, 1) && file->scanf("%d", &val)) {
+	if (TTword::load(file, 1) && file->scanf("%d", &val)) {
 		if (val >= 0 && val <= 12) {
 			_field30 = val;
 			return 0;

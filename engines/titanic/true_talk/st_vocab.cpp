@@ -50,14 +50,14 @@ int STVocab::load(const CString &name) {
 		}
 
 		case 1: {
-			TTWord2 *word = new TTWord2(space, 0, 0, 0, 0);
+			TTword2 *word = new TTword2(space, 0, 0, 0, 0);
 			result = word->load(file);
 			_word = word;
 			break;
 		}
 
 		case 2: {
-			TTWord3 *word = new TTWord3(space, 0, 0, 0, 0, 0, 0);
+			TTword3 *word = new TTword3(space, 0, 0, 0, 0, 0, 0);
 			result = word->load(file);
 			_word = word;
 			break;
@@ -65,7 +65,7 @@ int STVocab::load(const CString &name) {
 
 		case 3:
 		case 9: {
-			TTWord1 *word = new TTWord1(space, 0, 0, 0);
+			TTword1 *word = new TTword1(space, 0, 0, 0);
 			result = word->load(file, mode);
 			_word = word;
 			break;
@@ -74,21 +74,21 @@ int STVocab::load(const CString &name) {
 		case 4:
 		case 5:
 		case 7: {
-			TTWord *word = new TTWord(space, 0, 0);
+			TTword *word = new TTword(space, 0, 0);
 			result = word->load(file, mode);
 			_word = word;
 			break;
 		}
 
 		case 8: {
-			TTWord4 *word = new TTWord4(space, 0, 0, 0, 0);
+			TTword4 *word = new TTword4(space, 0, 0, 0, 0);
 			result = word->load(file);
 			_word = word;
 			break;
 		}
 
 		case 6: {
-			TTWord5 *word = new TTWord5(space, 0, 0, 0, 0);
+			TTword5 *word = new TTword5(space, 0, 0, 0, 0);
 			result = word->load(file);
 			_word = word;
 			break;
