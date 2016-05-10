@@ -33,17 +33,12 @@ TTString::TTString(const char *str) : _status(SS_VALID) {
 }
 
 TTString::TTString(const CString &str) {
-	if (_status != SS_VALID) {
-		_status = SS_5;
-		_data = nullptr;
-	} else {
-		_status = SS_VALID;
-		_data = new TTStringData(str);
-	}
+	_status = SS_VALID;
+	_data = new TTStringData(str);
 }
 
 TTString::TTString(TTString &str) {
-	if (_status != SS_VALID) {
+	if (str._status != SS_VALID) {
 		_status = SS_5;
 		_data = nullptr;
 	} else {
