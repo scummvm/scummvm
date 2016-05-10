@@ -33,7 +33,7 @@ class CutScene;
 class Scene16: public CutScene {
 public:
 	Scene16(GnapEngine *vm);
-	~Scene16() {}
+	virtual ~Scene16() {}
 
 	virtual int init();
 };
@@ -41,7 +41,7 @@ public:
 class Scene471: public CutScene {
 public:
 	Scene471(GnapEngine *vm);
-	~Scene471() {}
+	virtual ~Scene471() {}
 
 	virtual int init();
 };
@@ -49,7 +49,7 @@ public:
 class Scene472: public CutScene {
 public:
 	Scene472(GnapEngine *vm);
-	~Scene472() {}
+	virtual ~Scene472() {}
 
 	virtual int init();
 };
@@ -57,7 +57,7 @@ public:
 class Scene473: public CutScene {
 public:
 	Scene473(GnapEngine *vm);
-	~Scene473() {}
+	virtual ~Scene473() {}
 
 	virtual int init();
 };
@@ -65,7 +65,7 @@ public:
 class Scene474: public CutScene {
 public:
 	Scene474(GnapEngine *vm);
-	~Scene474() {}
+	virtual ~Scene474() {}
 
 	virtual int init();
 };
@@ -73,7 +73,7 @@ public:
 class Scene475: public CutScene {
 public:
 	Scene475(GnapEngine *vm);
-	~Scene475() {}
+	virtual ~Scene475() {}
 
 	virtual int init();
 };
@@ -81,7 +81,7 @@ public:
 class Scene476: public CutScene {
 public:
 	Scene476(GnapEngine *vm);
-	~Scene476() {}
+	virtual ~Scene476() {}
 
 	virtual int init();
 };
@@ -89,7 +89,7 @@ public:
 class Scene477: public CutScene {
 public:
 	Scene477(GnapEngine *vm);
-	~Scene477() {}
+	virtual ~Scene477() {}
 
 	virtual int init();
 };
@@ -97,7 +97,7 @@ public:
 class Scene48: public CutScene {
 public:
 	Scene48(GnapEngine *vm);
-	~Scene48() {}
+	virtual ~Scene48() {}
 
 	virtual int init();
 };
@@ -105,7 +105,7 @@ public:
 class Scene541: public CutScene {
 public:
 	Scene541(GnapEngine *vm);
-	~Scene541() {}
+	virtual ~Scene541() {}
 
 	virtual int init();
 };
@@ -113,7 +113,7 @@ public:
 class Scene542: public CutScene {
 public:
 	Scene542(GnapEngine *vm);
-	~Scene542() {}
+	virtual ~Scene542() {}
 
 	virtual int init();
 };

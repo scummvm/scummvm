@@ -148,7 +148,7 @@ class CutScene;
 class Scene30: public Scene {
 public:
 	Scene30(GnapEngine *vm);
-	~Scene30() {}
+	virtual ~Scene30() {}
 
 	virtual int init();
 	virtual void updateHotspots();
@@ -163,7 +163,7 @@ private:
 class Scene31: public Scene {
 public:
 	Scene31(GnapEngine *vm);
-	~Scene31() {}
+	virtual ~Scene31() {}
 
 	virtual int init();
 	virtual void updateHotspots();
@@ -182,7 +182,7 @@ private:
 class Scene32: public Scene {
 public:
 	Scene32(GnapEngine *vm);
-	~Scene32() {}
+	virtual ~Scene32() {}
 
 	virtual int init();
 	virtual void updateHotspots();
@@ -194,7 +194,7 @@ public:
 class Scene33: public Scene {
 public:
 	Scene33(GnapEngine *vm);
-	~Scene33() {}
+	virtual ~Scene33() {}
 
 	virtual int init();
 	virtual void updateHotspots();
@@ -210,7 +210,7 @@ private:
 class Scene38: public Scene {
 public:
 	Scene38(GnapEngine *vm);
-	~Scene38() {}
+	virtual ~Scene38() {}
 
 	virtual int init();
 	virtual void updateHotspots();
@@ -222,7 +222,7 @@ public:
 class Scene39: public Scene {
 public:
 	Scene39(GnapEngine *vm);
-	~Scene39() {}
+	virtual ~Scene39() {}
 
 	virtual int init();
 	virtual void updateHotspots();

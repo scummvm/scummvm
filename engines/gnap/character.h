@@ -48,7 +48,7 @@ const int kMaxGridStructs = 30;
 class Character {
 public:
 	Character(GnapEngine *vm);
-	~Character();
+	virtual ~Character();
 
 	void walkStep();
 
@@ -124,6 +124,7 @@ private:
 class PlayerPlat : public Character {
 public:
 	PlayerPlat(GnapEngine *vm);
+	virtual ~PlayerPlat() {}
 	virtual int getSequenceId(int kind = 0, Common::Point gridPos = Common::Point(0, 0));
 	virtual void initPos(int gridX, int gridY, Facing facing);
 	virtual void playSequence(int sequenceId);
