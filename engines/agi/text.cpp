@@ -457,7 +457,7 @@ void TextMgr::drawMessageBox(const char *textPtr, int16 forcedHeight, int16 want
 	// Caller wants to force specified width/height? set it
 	if (forcedHeight)
 		_messageState.textSize_Height = forcedHeight;
-	
+
 	if (forcedWidth) {
 		if (wantedWidth)
 			_messageState.textSize_Width = wantedWidth;
@@ -1207,7 +1207,7 @@ char *TextMgr::stringPrintf(const char *originalText) {
 	}
 
 	assert(resultString.size() < sizeof(resultPrintfBuffer));
-	strcpy(resultPrintfBuffer, resultString.c_str());
+	Common::strlcpy(resultPrintfBuffer, resultString.c_str(), 2000);
 	return resultPrintfBuffer;
 }
 

@@ -1205,7 +1205,7 @@ void MickeyEngine::printStory() {
 
 	clearScreen(IDA_DEFAULT);
 	for (iRow = 0; iRow < 25; iRow++) {
-		strcpy(szLine, buffer + pBuf);
+		Common::strlcpy(szLine, buffer + pBuf, 41);
 		drawStr(iRow, 0, IDA_DEFAULT, szLine);
 		pBuf += strlen(szLine) + 1;
 	}
@@ -1213,7 +1213,7 @@ void MickeyEngine::printStory() {
 
 	clearScreen(IDA_DEFAULT);
 	for (iRow = 0; iRow < 21; iRow++) {
-		strcpy(szLine, buffer + pBuf);
+		Common::strlcpy(szLine, buffer + pBuf, 41);
 		drawStr(iRow, 0, IDA_DEFAULT, szLine);
 		pBuf += strlen(szLine) + 1;
 	}

@@ -118,7 +118,7 @@ int AgiEngine::saveGame(const Common::String &fileName, const Common::String &de
 
 	out->writeByte(2); // was _game.state, 2 = STATE_RUNNING
 
-	strcpy(gameIDstring, _game.id);
+	Common::strlcpy(gameIDstring, _game.id, 8);
 	out->write(gameIDstring, 8);
 	debugC(5, kDebugLevelMain | kDebugLevelSavegame, "Writing game id (%s, %s)", gameIDstring, _game.id);
 

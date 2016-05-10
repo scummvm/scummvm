@@ -231,8 +231,8 @@ uint8 AgiEngine::testCompareStrings(uint8 s1, uint8 s2) {
 	char ms2[MAX_STRINGLEN];
 	int j, k, l;
 
-	strcpy(ms1, _game.strings[s1]);
-	strcpy(ms2, _game.strings[s2]);
+	Common::strlcpy(ms1, _game.strings[s1], MAX_STRINGLEN);
+	Common::strlcpy(ms2, _game.strings[s2], MAX_STRINGLEN);
 
 	l = strlen(ms1);
 	for (k = 0, j = 0; k < l; k++) {

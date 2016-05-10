@@ -662,7 +662,7 @@ void cmdWordToString(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 	uint16 stringNr = parameter[0];
 	uint16 wordNr = parameter[1];
 
-	strcpy(state->strings[stringNr], state->_vm->_words->getEgoWord(wordNr));
+	Common::strlcpy(state->strings[stringNr], state->_vm->_words->getEgoWord(wordNr), MAX_STRINGLEN);
 }
 
 void cmdOpenDialogue(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
@@ -2014,7 +2014,7 @@ void cmdGetString(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 
 	// copy string to destination
 	// TODO: not sure if set all the time or only when ENTER is pressed
-	strcpy(&state->_vm->_game.strings[stringDestNr][0], (char *)textMgr->_inputString);
+	Common::strlcpy(&state->_vm->_game.strings[stringDestNr][0], (char *)textMgr->_inputString, MAX_STRINGLEN);
 
 	textMgr->charPos_Pop();
 
@@ -2102,7 +2102,7 @@ void cmdSetString(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 	// CM: to avoid crash in Groza (str = 150)
 	if (stringNr > MAX_STRINGS)
 		return;
-	strcpy(state->strings[stringNr], state->_curLogic->texts[textNr]);
+	Common::strlcpy(state->strings[stringNr], state->_curLogic->texts[textNr], MAX_STRINGLEN);
 }
 
 void cmdDisplay(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
