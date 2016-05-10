@@ -249,5 +249,11 @@ MODULE_OBJS += \
 	saves/recorder/recorder-saves.o
 endif
 
+# I don't have any define, so I'd just add my files without any
+# ifndef USE_CLOUD ?
+MODULE_OBJS += \
+	cloud/cloudthread.o
+# endif
+
 # Include common rules
 include $(srcdir)/rules.mk

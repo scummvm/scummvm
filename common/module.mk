@@ -16,6 +16,7 @@ MODULE_OBJS := \
 	iff_container.o \
 	ini-file.o \
 	installshield_cab.o \
+	json.o \
 	language.o \
 	localization.o \
 	macresman.o \
