@@ -120,16 +120,16 @@ enum {
 };
 
 enum {
-	gskPullOutDevice			= 0,
-	gskPullOutDeviceNonWorking	= 1,
-	gskIdle						= 2,
-	gskBrainPulsating			= 3,
-	gskImpossible				= 4,
-	gskScratchingHead			= 5,
-	gskDeflect					= 6,
-	gskUseDevice				= 7,
-	gskMoan1					= 8,
-	gskMoan2					= 9
+	kGSPullOutDevice			= 0,
+	kGSPullOutDeviceNonWorking	= 1,
+	kGSIdle						= 2,
+	kGSBrainPulsating			= 3,
+	kGSImpossible				= 4,
+	kGSScratchingHead			= 5,
+	kGSDeflect					= 6,
+	kGSUseDevice				= 7,
+	kGSMoan1					= 8,
+	kGSMoan2					= 9
 };
 
 enum {
@@ -200,47 +200,6 @@ enum {
 	kGFUnk31				= 31
 };
 
-/*
-	Game flags
-		0	1			With Platypus
-		1	2			Mud taken
-		2	4			Needle taken
-		3	8			Twig taken
-		4	0x10
-		5	0x20		Keys taken
-		6	0x40		Grass taken
-		7	0x80		Barn padlock open
-		8	0x100		Truck filled with gas
-		9	0x200		Truck keys used
-		10	0x400		Platypus disguised
-		11	0x800		Scene flag 1
-		12	0x1000		Gnap controls toy ufo
-		13	0x2000
-		14	0x4000
-		15	0x8000		Spring taken
-		16	0x10000
-		17	0x20000		Joint taken
-		18	0x40000
-		19	0x80000		Grocery store hat taken
-		20	0x100000	Picture taken
-		21	0x200000
-		22	0x400000
-		23	0x800000
-		24	0x1000000
-		25	0x2000000
-		26	0x4000000	Platypus talking with toy shop assistant
-		27	0x8000000
-		28	0x10000000
-		29	0x20000000	Gas taken
-		30	0x40000000
-		31	0x80000000
-*/
-
-	// 0x7AB	Gnap walks to the right 1
-	// 0x7AC	Gnap walks to the right 2
-	// 0x7AF	Gnap walks to the left 1
-	// 0x7B0	Gnap walks to the left 2
-
 struct GnapSavegameHeader {
 	uint8 _version;
 	Common::String _saveName;
@@ -263,7 +222,6 @@ private:
 
 public:
 	Common::RandomSource *_random;
-
 	Common::PEResources *_exe;
 
 	DatManager *_dat;

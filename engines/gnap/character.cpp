@@ -116,7 +116,7 @@ int PlayerGnap::getSequenceId(int kind, Common::Point gridPos) {
 	int sequenceId = 0;
 
 	switch (kind) {
-	case gskPullOutDevice:
+	case kGSPullOutDevice:
 		if (gridPos.x > 0 && gridPos.y > 0) {
 			if (_pos.y > gridPos.y) {
 				if (_pos.x > gridPos.x) {
@@ -153,7 +153,7 @@ int PlayerGnap::getSequenceId(int kind, Common::Point gridPos) {
 		}
 		break;
 
-	case gskPullOutDeviceNonWorking:
+	case kGSPullOutDeviceNonWorking:
 		if (gridPos.x > 0 && gridPos.y > 0) {
 			if (_pos.y > gridPos.y) {
 				if (_pos.x > gridPos.x) {
@@ -190,7 +190,7 @@ int PlayerGnap::getSequenceId(int kind, Common::Point gridPos) {
 		}
 		break;
 
-	case gskScratchingHead:
+	case kGSScratchingHead:
 		if (gridPos.x > 0 && gridPos.y > 0) {
 			if (_pos.y > gridPos.y) {
 				if (_pos.x > gridPos.x) {
@@ -231,7 +231,7 @@ int PlayerGnap::getSequenceId(int kind, Common::Point gridPos) {
 		}
 		break;
 
-	case gskIdle:
+	case kGSIdle:
 		if (gridPos.x > 0 && gridPos.y > 0) {
 			if (_pos.y > gridPos.y) {
 				if (_pos.x > gridPos.x) {
@@ -268,7 +268,7 @@ int PlayerGnap::getSequenceId(int kind, Common::Point gridPos) {
 		}
 		break;
 
-	case gskBrainPulsating:
+	case kGSBrainPulsating:
 		_brainPulseNum = (_brainPulseNum + 1) & 1;
 		if (gridPos.x > 0 && gridPos.y > 0) {
 			if (_pos.y > gridPos.y) {
@@ -306,7 +306,7 @@ int PlayerGnap::getSequenceId(int kind, Common::Point gridPos) {
 		}
 		break;
 
-	case gskImpossible:
+	case kGSImpossible:
 		if (gridPos.x > 0 && gridPos.y > 0) {
 			if (_pos.y > gridPos.y) {
 				if (_pos.x > gridPos.x) {
@@ -340,7 +340,7 @@ int PlayerGnap::getSequenceId(int kind, Common::Point gridPos) {
 		}
 		break;
 
-	case gskDeflect:
+	case kGSDeflect:
 		if (gridPos.x > 0 && gridPos.y > 0) {
 			if (_pos.y > gridPos.y) {
 				if (_pos.x > gridPos.x) {
@@ -380,7 +380,7 @@ int PlayerGnap::getSequenceId(int kind, Common::Point gridPos) {
 		}
 		break;
 
-	case gskUseDevice:
+	case kGSUseDevice:
 		switch (_idleFacing) {
 		case kDirBottomRight:
 			sequenceId = 0x83A;
@@ -400,7 +400,7 @@ int PlayerGnap::getSequenceId(int kind, Common::Point gridPos) {
 		}
 		break;
 
-	case gskMoan1:
+	case kGSMoan1:
 		if (gridPos.x > 0 && gridPos.y > 0) {
 			if (_pos.y > gridPos.y) {
 				if (_pos.x > gridPos.x) {
@@ -428,7 +428,7 @@ int PlayerGnap::getSequenceId(int kind, Common::Point gridPos) {
 		}
 		break;
 
-	case gskMoan2:
+	case kGSMoan2:
 		if (gridPos.x > 0 && gridPos.y > 0) {
 			if (_pos.y > gridPos.y) {
 				if (_pos.x > gridPos.x) {
@@ -488,7 +488,7 @@ void PlayerGnap::useJointOnPlatypus() {
 		_vm->_gameSys->setAnimation(0, 0, 0);
 		_actionStatus = -1;
 	} else {
-		playSequence(getSequenceId(gskScratchingHead, plat._pos) | 0x10000);
+		playSequence(getSequenceId(kGSScratchingHead, plat._pos) | 0x10000);
 	}
 }
 
@@ -519,14 +519,14 @@ void PlayerGnap::kissPlatypus(int callback) {
 		_vm->_gameSys->setAnimation(0, 0, 0);
 		_actionStatus = -1;
 	} else {
-		playSequence(getSequenceId(gskScratchingHead, plat._pos) | 0x10000);
+		playSequence(getSequenceId(kGSScratchingHead, plat._pos) | 0x10000);
 	}
 }
 
 void PlayerGnap::useDeviceOnPlatypus() {
 	PlayerPlat& plat = *_vm->_plat;
 
-	playSequence(makeRid(1, getSequenceId(gskPullOutDevice, plat._pos)));
+	playSequence(makeRid(1, getSequenceId(kGSPullOutDevice, plat._pos)));
 
 	if (plat._idleFacing != kDirNone) {
 		_vm->_gameSys->insertSequence(makeRid(1, 0x7D5), plat._id,
@@ -542,7 +542,7 @@ void PlayerGnap::useDeviceOnPlatypus() {
 		plat._sequenceDatNum = 1;
 	}
 
-	int newSequenceId = getSequenceId(gskUseDevice, Common::Point(0, 0));
+	int newSequenceId = getSequenceId(kGSUseDevice, Common::Point(0, 0));
 	_vm->_gameSys->insertSequence(makeRid(1, newSequenceId), _id,
 		makeRid(_sequenceDatNum, _sequenceId), _id,
 		kSeqSyncWait, 0, 75 * _pos.x - _gridX, 48 * _pos.y - _gridY);
@@ -1024,7 +1024,7 @@ int PlayerGnap::getShowSequenceId(int index, int gridX, int gridY) {
 		//Skip 29
 	default:
 		_idleFacing = facing;
-		sequenceId = getSequenceId(gskImpossible, Common::Point(0, 0));
+		sequenceId = getSequenceId(kGSImpossible, Common::Point(0, 0));
 		break;
 	}
 
@@ -1039,58 +1039,58 @@ void PlayerGnap::idle() {
 			_sequenceId == 0x833 || _sequenceId == 0x834 ||
 			_sequenceId == 0x885 || _sequenceId == 0x7A8 ||
 			_sequenceId == 0x831 || _sequenceId == 0x89A)) {
-		_vm->_gameSys->insertSequence(getSequenceId(gskIdle, Common::Point(0, 0)) | 0x10000, _id,
+		_vm->_gameSys->insertSequence(getSequenceId(kGSIdle, Common::Point(0, 0)) | 0x10000, _id,
 			makeRid(_sequenceDatNum, _sequenceId), _id,
 			kSeqSyncExists, 0, 75 * _pos.x - _gridX, 48 * _pos.y - _gridY);
-		_sequenceId = getSequenceId(gskIdle, Common::Point(0, 0));
+		_sequenceId = getSequenceId(kGSIdle, Common::Point(0, 0));
 		_sequenceDatNum = 1;
 	}
 }
 
 void PlayerGnap::actionIdle(int sequenceId) {
 	if (_sequenceId != -1 && ridToDatIndex(sequenceId) == _sequenceDatNum && ridToEntryIndex(sequenceId) == _sequenceId) {
-		_vm->_gameSys->insertSequence(getSequenceId(gskIdle, Common::Point(0, 0)) | 0x10000, _id,
+		_vm->_gameSys->insertSequence(getSequenceId(kGSIdle, Common::Point(0, 0)) | 0x10000, _id,
 			makeRid(_sequenceDatNum, _sequenceId), _id,
 			kSeqSyncExists, 0, 75 * _pos.x - _gridX, 48 * _pos.y - _gridY);
-		_sequenceId = getSequenceId(gskIdle, Common::Point(0, 0));
+		_sequenceId = getSequenceId(kGSIdle, Common::Point(0, 0));
 		_sequenceDatNum = 1;
 	}
 }
 
 void PlayerGnap::playImpossible(Common::Point gridPos) {
-	playSequence(getSequenceId(gskImpossible, gridPos) | 0x10000);
+	playSequence(getSequenceId(kGSImpossible, gridPos) | 0x10000);
 }
 
 void PlayerGnap::playScratchingHead(Common::Point gridPos) {
-	playSequence(getSequenceId(gskScratchingHead, gridPos) | 0x10000);
+	playSequence(getSequenceId(kGSScratchingHead, gridPos) | 0x10000);
 }
 
 void PlayerGnap::playMoan1(Common::Point gridPos) {
-	playSequence(getSequenceId(gskMoan1, gridPos) | 0x10000);
+	playSequence(getSequenceId(kGSMoan1, gridPos) | 0x10000);
 }
 
 void PlayerGnap::playMoan2(Common::Point gridPos) {
-	playSequence(getSequenceId(gskMoan2, gridPos) | 0x10000);
+	playSequence(getSequenceId(kGSMoan2, gridPos) | 0x10000);
 }
 
 void PlayerGnap::playBrainPulsating(Common::Point gridPos) {
-	playSequence(getSequenceId(gskBrainPulsating, gridPos) | 0x10000);
+	playSequence(getSequenceId(kGSBrainPulsating, gridPos) | 0x10000);
 }
 
 void PlayerGnap::playPullOutDevice(Common::Point gridPos) {
-	playSequence(getSequenceId(gskPullOutDevice, gridPos) | 0x10000);
+	playSequence(getSequenceId(kGSPullOutDevice, gridPos) | 0x10000);
 }
 
 void PlayerGnap::playPullOutDeviceNonWorking(Common::Point gridPos) {
-	playSequence(getSequenceId(gskPullOutDeviceNonWorking, gridPos) | 0x10000);
+	playSequence(getSequenceId(kGSPullOutDeviceNonWorking, gridPos) | 0x10000);
 }
 
 void PlayerGnap::playUseDevice(Common::Point gridPos) {
-	playSequence(getSequenceId(gskUseDevice, gridPos) | 0x10000);
+	playSequence(getSequenceId(kGSUseDevice, gridPos) | 0x10000);
 }
 
 void PlayerGnap::playIdle(Common::Point gridPos) {
-	playSequence(getSequenceId(gskIdle, gridPos) | 0x10000);
+	playSequence(getSequenceId(kGSIdle, gridPos) | 0x10000);
 }
 
 void PlayerGnap::playShowItem(int itemIndex, int gridLookX, int gridLookY) {

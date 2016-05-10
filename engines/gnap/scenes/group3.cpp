@@ -419,7 +419,7 @@ void Scene31::run() {
 			if (gnap._actionStatus < 0 || gnap._actionStatus == kAS31PlatMeasuringClown) {
 				if (_vm->_grabCursorSpriteIndex == kItemEmptyBucket && _beerGuyDistracted) {
 					_vm->setGrabCursorSprite(-1);
-					gnap.walkTo(gnap._pos, -1, gnap.getSequenceId(gskIdle, _vm->_hotspotsWalkPos[kHS31BeerBarrel]) | 0x10000, 1);
+					gnap.walkTo(gnap._pos, -1, gnap.getSequenceId(kGSIdle, _vm->_hotspotsWalkPos[kHS31BeerBarrel]) | 0x10000, 1);
 					_clerkMeasureMaxCtr += 5;
 					gameSys.insertSequence(0xF8, 59, 0, 0, kSeqNone, 0, 0, 0);
 					gnap.playPullOutDevice(Common::Point(6, 8));
@@ -911,14 +911,14 @@ void Scene33::run() {
 					switch (_vm->_verbCursor) {
 					case GRAB_CURSOR:
 						gnap._idleFacing = kDirBottomRight;
-						if (gnap.walkTo(_vm->_hotspotsWalkPos[kHS33Chicken], 0, gnap.getSequenceId(gskIdle, Common::Point(0, 0)) | 0x10000, 1))
+						if (gnap.walkTo(_vm->_hotspotsWalkPos[kHS33Chicken], 0, gnap.getSequenceId(kGSIdle, Common::Point(0, 0)) | 0x10000, 1))
 							gnap._actionStatus = kAS33UseChicken;
 						else
 							gnap._actionStatus = -1;
 						break;
 					case TALK_CURSOR:
 						gnap._idleFacing = kDirBottomRight;
-						gnap.walkTo(_vm->_hotspotsWalkPos[kHS33Chicken], 0, gnap.getSequenceId(gskBrainPulsating, Common::Point(0, 0)) | 0x10000, 1);
+						gnap.walkTo(_vm->_hotspotsWalkPos[kHS33Chicken], 0, gnap.getSequenceId(kGSBrainPulsating, Common::Point(0, 0)) | 0x10000, 1);
 						gnap._actionStatus = kAS33TalkChicken;
 						break;
 					case LOOK_CURSOR:
