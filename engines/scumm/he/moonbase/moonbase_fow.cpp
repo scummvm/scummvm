@@ -138,7 +138,7 @@ bool Moonbase::setFOWImage(int image) {
 			return false;
 	}
 
-	int nStates = _vm->_wiz->getWizImageStates(0); //_fowImage); // TODO
+	int nStates = _vm->_wiz->getWizImageStates(_fowImage);
 
 	if (nStates > FOW_ANIM_FRAME_COUNT) {
 		releaseFOWResources();
@@ -349,7 +349,7 @@ void Moonbase::setFOWInfo(int fowInfoArray, int downDim, int acrossDim, int view
 void Moonbase::renderFOWState(uint8 *destSurface, int dstPitch, int dstType, int dstw, int dsth, int x, int y, int srcw, int srch, int state, int flags) {
 	int spotx, spoty;
 
-	//getWizImageSpot(_fowImage, state, &spotx, &spoty); // TODO
+	_vm->_wiz->getWizStateSpot(_fowImage, state, &spotx, &spoty);
 	Common::Rect r(_fowClipX1, _fowClipY1, _fowClipX2, _fowClipY2);
 
 	_vm->_wiz->drawWizImageEx(destSurface, _fowImage, 0, dstPitch, dstType, dstw, dsth, x - spotx, y - spoty, srcw, srch, state, &r, flags, 0, 0, 16, 0, 0);

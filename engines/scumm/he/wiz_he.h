@@ -221,6 +221,8 @@ public:
 
 	void getWizImageDim(int resNum, int state, int32 &w, int32 &h);
 	int getWizImageStates(int resnum);
+	int getWizImageStates(const uint8 *ptr);
+	void getWizStateSpot(byte *data, int state, int *x, int *y);
 	int isWizPixelNonTransparent(int resnum, int state, int x, int y, int flags);
 	uint16 getWizPixelColor(int resnum, int state, int x, int y);
 	int getWizImageData(int resNum, int state, int type);

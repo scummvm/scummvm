@@ -2744,6 +2744,11 @@ int Wiz::getWizImageData(int resNum, int state, int type) {
 int Wiz::getWizImageStates(int resNum) {
 	const uint8 *dataPtr = _vm->getResourceAddress(rtImage, resNum);
 	assert(dataPtr);
+
+	return getWizImageStates(dataPtr);
+}
+
+int Wiz::getWizImageStates(const uint8 *dataPtr) {
 	if (READ_BE_UINT32(dataPtr) == MKTAG('M','U','L','T')) {
 		const byte *offs, *wrap;
 
@@ -2759,6 +2764,18 @@ int Wiz::getWizImageStates(int resNum) {
 	} else {
 		return 1;
 	}
+}
+
+void Wiz::getWizStateSpot(byte *data, int state, int *x, int *y) {
+	byte *spot = _vm->findWrappedBlock(MKTAG('S','P','O','T'), data, state, 0);
+
+	if (!spot) {
+		*x = *y = 0;
+		return;
+	}
+
+	*x = READ_LE_UINT32(spot + 0x0);
+	*y = READ_LE_UINT32(spot + 0x4);
 }
 
 int Wiz::isWizPixelNonTransparent(int resNum, int state, int x, int y, int flags) {
