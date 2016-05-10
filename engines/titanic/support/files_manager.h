@@ -37,7 +37,7 @@ class CFilesManagerList : public List<ListItem> {
 class CFilesManager {
 private:
 	CGameManager *_gameManager;
-	Common::PEResources *_exeResources;
+	Common::PEResources _exeResources;
 	CFilesManagerList _list;
 	CString _string1;
 	CString _string2;

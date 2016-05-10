@@ -41,7 +41,7 @@ STFont::~STFont() {
 
 void STFont::load(int fontNumber) {
 	assert(!_dataPtr);
-	Common::SeekableReadStream *stream = g_vm->_filesManager.getResource(
+	Common::SeekableReadStream *stream = g_vm->_filesManager->getResource(
 		Common::WinResourceID("STFONT"), fontNumber);
 	if (!stream)
 		error("Could not locate the specified font");

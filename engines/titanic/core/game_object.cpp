@@ -240,7 +240,7 @@ void CGameObject::loadResource(const CString &name) {
 }
 
 void CGameObject::loadMovie(const CString &name, bool pendingFlag) {
-	g_vm->_filesManager.preload(name);
+	g_vm->_filesManager->preload(name);
 
 	// Create the surface if it doesn't already exist
 	if (!_surface) {
@@ -273,7 +273,7 @@ void CGameObject::loadImage(const CString &name, bool pendingFlag) {
 			_surface = nullptr;
 		}
 
-		g_vm->_filesManager.preload(name);
+		g_vm->_filesManager->preload(name);
 
 		if (!name.empty()) {
 			_surface = new OSVideoSurface(screenManager, CResourceKey(name), pendingFlag);
@@ -464,7 +464,7 @@ void CGameObject::sound8(bool flag) const {
 void CGameObject::loadSound(const CString &name) {
 	CGameManager *gameManager = getGameManager();
 	if (gameManager) {
-		g_vm->_filesManager.preload(name);
+		g_vm->_filesManager->preload(name);
 		if (!name.empty())
 			gameManager->_sound.loadSound(name);
 	}

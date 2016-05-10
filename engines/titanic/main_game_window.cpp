@@ -134,7 +134,7 @@ void CMainGameWindow::draw() {
 			break;
 
 		case GSMODE_5:
-			g_vm->_filesManager.debug(scrManager);
+			g_vm->_filesManager->debug(scrManager);
 			break;
 
 		default:

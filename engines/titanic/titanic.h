@@ -111,9 +111,9 @@ protected:
 	virtual Common::Error run();
 	virtual bool hasFeature(EngineFeature f) const;
 public:
-	CFilesManager _filesManager;
 	Debugger *_debugger;
 	Events *_events;
+	CFilesManager *_filesManager;
 	Graphics::Screen *_screen;
 	OSScreenManager *_screenManager;
 	CMainGameWindow *_window;

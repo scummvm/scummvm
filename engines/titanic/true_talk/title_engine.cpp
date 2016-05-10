@@ -21,6 +21,7 @@
  */
 
 #include "titanic/true_talk/title_engine.h"
+#include "titanic/titanic.h"
 
 namespace Titanic {
 
@@ -40,7 +41,6 @@ void CTitleEngine::setup(int val1, int val2) {
 /*------------------------------------------------------------------------*/
 
 STtitleEngine::STtitleEngine(): CTitleEngine(), _field58(0) {
-	_resources.loadFromEXE("ST.exe");
 }
 
 STtitleEngine::~STtitleEngine() {
@@ -66,7 +66,7 @@ void STtitleEngine::dump(int val1, int val2) {
 }
 
 SimpleFile *STtitleEngine::open(const CString &name) {
-	Common::SeekableReadStream *stream = _resources.getResource(
+	Common::SeekableReadStream *stream = g_vm->_filesManager->getResource(
 		Common::WinResourceID("TEXT"), name);
 	assert(stream);
 

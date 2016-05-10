@@ -68,7 +68,6 @@ public:
 
 class STtitleEngine : public CTitleEngine {
 private:
-	Common::PEResources _resources;
 	Common::SeekableReadStream *_stream;
 	int _field58;
 public:

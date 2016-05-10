@@ -50,6 +50,7 @@ TitanicEngine::TitanicEngine(OSystem *syst, const TitanicGameDescription *gameDe
 	g_vm = this;
 	_debugger = nullptr;
 	_events = nullptr;
+	_filesManager = nullptr;
 	_window = nullptr;
 	_screen = nullptr;
 	_screenManager = nullptr;
@@ -63,6 +64,7 @@ TitanicEngine::~TitanicEngine() {
 	delete _screen;
 	delete _window;
 	delete _screenManager;
+	delete _filesManager;
 	CSaveableObject::freeClassList();
 	_activeMovies.clear();
 }
@@ -95,6 +97,7 @@ void TitanicEngine::initialize() {
 
 	_debugger = new Debugger(this);
 	_events = new Events(this);
+	_filesManager = new CFilesManager();
 	_screen = new Graphics::Screen(0, 0);
 	_screenManager = new OSScreenManager(this);
 	_window = new CMainGameWindow(this);

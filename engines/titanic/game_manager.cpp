@@ -41,7 +41,7 @@ CGameManager::CGameManager(CProjectItem *project, CGameView *gameView):
 	_videoSurface1 = nullptr;
 	_videoSurface2 = CScreenManager::_screenManagerPtr->createSurface(600, 340);
 	_project->setGameManager(this);
-	g_vm->_filesManager.setGameManager(this);
+	g_vm->_filesManager->setGameManager(this);
 }
 
 void CGameManager::load(SimpleFile *file) {

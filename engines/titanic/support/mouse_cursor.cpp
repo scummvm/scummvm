@@ -63,7 +63,7 @@ CMouseCursor::~CMouseCursor() {
 
 void CMouseCursor::loadCursorImages() {
 	const CString name("ycursors.avi");
-	g_vm->_filesManager.fn4(name);
+	g_vm->_filesManager->fn4(name);
 
 	// WORKAROUND: We need to manipulate ycursors.avi file so it can be read
 	// by the ScummVM AVIDecoder, by removing the redundant second video track

@@ -75,7 +75,7 @@ CString CResourceKey::exists() const {
 }
 
 bool CResourceKey::scanForFile() const {
-	return g_vm->_filesManager.scanForFile(_value);
+	return g_vm->_filesManager->scanForFile(_value);
 }
 
 FileType CResourceKey::fileTypeSuffix() const {
