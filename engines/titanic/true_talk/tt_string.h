@@ -49,6 +49,9 @@ public:
 	TTString(TTString &str);
 	virtual ~TTString();
 
+	void operator=(const TTString &str);
+	void operator=(const CString &str);
+
 	/**
 	 * Returns true if the string is valid
 	 */

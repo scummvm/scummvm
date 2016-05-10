@@ -39,7 +39,7 @@ int TTWord::load(SimpleFile *file, int mode) {
 	int val;
 
 	if (file->scanf("%d %s %s", &val, &str1, &str2)) {
-		_string = TTString(str1);
+		_string = str1;
 		_field1C = val;
 		_field20 = readNumber(str2.c_str());
 		_wordMode = mode;

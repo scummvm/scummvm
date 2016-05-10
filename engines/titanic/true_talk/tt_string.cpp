@@ -53,6 +53,28 @@ TTString::~TTString() {
 		delete _data;
 }
 
+void TTString::operator=(const TTString &str) {
+	// Delete old string reference, if any
+	if (_data && --_data->_referenceCount == 0)
+		delete _data;
+
+	// Copy source string data
+	_status = str._status;
+	_data = str._data;
+	if (_data)
+		_data->_referenceCount++;
+}
+
+void TTString::operator=(const CString &str) {
+	// Delete old string reference, if any
+	if (_data && --_data->_referenceCount == 0)
+		delete _data;
+
+	// Create new string data
+	_data = new TTStringData(str);
+	_status = SS_VALID;
+}
+
 bool TTString::isValid() const {
 	return _status == SS_VALID;
 }
