@@ -292,22 +292,22 @@ void Scene53::run() {
 		_vm->updateGrabCursorSprite(0, 0);
 
 		switch (_vm->_sceneClickedHotspot) {
-		case 1:
+		case kHS53Device:
 			if (gnap._actionStatus < 0) {
 				_vm->runMenu();
 				updateHotspots();
 			}
 			break;
-		case 2:
-		case 3:
-		case 4:
-		case 5:
-		case 6:
-		case 7:
-		case 8:
-		case 9:
-		case 10:
-		case 11:
+		case kHS53PhoneKey1:
+		case kHS53PhoneKey2:
+		case kHS53PhoneKey3:
+		case kHS53PhoneKey4:
+		case kHS53PhoneKey5:
+		case kHS53PhoneKey6:
+		case kHS53PhoneKey7:
+		case kHS53PhoneKey8:
+		case kHS53PhoneKey9:
+		case kHS53PhoneKey0:
 			_vm->stopSound(0xA0);
 			++phoneNumberLen;
 			phoneNumber = pressPhoneNumberButton(phoneNumber, _vm->_sceneClickedHotspot - 1);
@@ -349,11 +349,11 @@ void Scene53::run() {
 				}
 			}
 			break;
-		case 12:
-		case 13:
+		case kHS53PhoneKeySharp:
+		case kHS53PhoneKeyStar:
 			pressPhoneNumberButton(0, _vm->_sceneClickedHotspot - 1);
 			break;
-		case 14:
+		case kHS53PhoneExit:
 			if (gnap._actionStatus < 0) {
 				gnap._actionStatus = 1;
 				if (_vm->isFlag(kGFSpringTaken)) {

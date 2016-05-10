@@ -115,7 +115,6 @@ void Scene01::run() {
 		_vm->updateGrabCursorSprite(0, 0);
 
 		switch (_vm->_sceneClickedHotspot) {
-
 		case kHS01Device:
 			if (gnap._actionStatus < 0) {
 				_vm->runMenu();
