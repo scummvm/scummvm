@@ -245,9 +245,11 @@ static const GameSettings gameVariantsTable[] = {
 	{"monkey", "CD",           0, GID_MONKEY,     5, 0, MDT_ADLIB,                        GF_AUDIOTRACKS, UNK, GUIO2(GUIO_NOSPEECH, GUIO_NOMIDI)},
 	{"monkey", "FM-TOWNS",     0, GID_MONKEY,     5, 0, MDT_TOWNS,                        GF_AUDIOTRACKS, Common::kPlatformFMTowns, GUIO4(GUIO_NOSPEECH, GUIO_NOMIDI, GUIO_MIDITOWNS, GUIO_NOASPECT)},
 	{"monkey", "SEGA",         0, GID_MONKEY,     5, 0, MDT_NONE,                         GF_AUDIOTRACKS, Common::kPlatformSegaCD, GUIO2(GUIO_NOSPEECH, GUIO_NOMIDI)},
+	{"monkey", "SE Talkie",    0, GID_MONKEY,     5, 0, MDT_ADLIB | MDT_MIDI | MDT_PREFER_MT32, GF_AUDIOTRACKS, UNK, GUIO0()},
 
 	{"monkey2",  "", 0, GID_MONKEY2,  5, 0, MDT_PCSPK | MDT_ADLIB | MDT_MIDI | MDT_PREFER_MT32, 0, UNK, GUIO1(GUIO_NOSPEECH)},
 	{"monkey2", "FM-TOWNS", 0, GID_MONKEY2,  5, 0, MDT_PCSPK | MDT_TOWNS | MDT_ADLIB | MDT_MIDI | MDT_PREFER_MT32, 0, Common::kPlatformFMTowns, GUIO5(GUIO_NOSPEECH, GUIO_MIDITOWNS, GUIO_MIDIADLIB, GUIO_MIDIMT32, GUIO_NOASPECT)},
+	{"monkey2", "SE Talkie",0, GID_MONKEY2,  5, 0, MDT_PCSPK | MDT_ADLIB | MDT_MIDI | MDT_PREFER_MT32, 0, UNK, GUIO0()},
 
 	{"atlantis", "", 0, GID_INDY4,    5, 0, MDT_PCSPK | MDT_ADLIB | MDT_MIDI | MDT_PREFER_MT32, 0, UNK, GUIO0()},
 	{"atlantis", "Steam", "steam", GID_INDY4,    5, 0, MDT_PCSPK | MDT_ADLIB | MDT_MIDI | MDT_PREFER_MT32, 0, UNK, GUIO0()},
