@@ -1038,10 +1038,10 @@ Scene51::Scene51(GnapEngine *vm) : Scene(vm) {
 
 	for (int i = 0; i < 6; i++) {
 		_items[i]._currSequenceId = -1;
-		_items[i]._droppedSequenceId;
+		_items[i]._droppedSequenceId = 0;
 		_items[i]._x = 0;
 		_items[i]._y = 0;
-		_items[i]._collisionX;
+		_items[i]._collisionX = 0;
 		_items[i]._canCatch = false;
 		_items[i]._isCollision = false;
 		_items[i]._x2 = 0;
