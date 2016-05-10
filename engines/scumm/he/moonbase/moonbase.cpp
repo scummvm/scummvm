@@ -21,6 +21,7 @@
  */
 
 #include "scumm/he/intern_he.h"
+#include "scumm/he/moonbase/moonbase.h"
 
 namespace Scumm {
 

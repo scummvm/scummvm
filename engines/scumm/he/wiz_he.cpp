@@ -31,6 +31,7 @@
 #include "scumm/scumm.h"
 #include "scumm/util.h"
 #include "scumm/he/wiz_he.h"
+#include "scumm/he/moonbase/moonbase.h"
 
 namespace Scumm {
 

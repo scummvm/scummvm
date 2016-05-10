@@ -186,6 +186,11 @@ Common::String ScummEngine_v70he::generateFilename(const int room) const {
 		}
 
 		if (_filenamePattern.genMethod == kGenHEPC || _filenamePattern.genMethod == kGenHEIOS) {
+			if (id == '3' && _game.id == GID_MOONBASE) {
+				result = Common::String::format("%s.u32", _filenamePattern.pattern);
+				break;
+			}
+
 			// For HE >= 98, we already called snprintf above.
 			if (_game.heversion < 98 || room < 0)
 				result = Common::String::format("%s.he%c", _filenamePattern.pattern, id);

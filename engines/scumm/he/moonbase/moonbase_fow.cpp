@@ -21,7 +21,9 @@
  */
 
 #include "common/config-manager.h"
+
 #include "scumm/he/intern_he.h"
+#include "scumm/he/moonbase/moonbase.h"
 
 namespace Scumm {
 
@@ -108,10 +110,18 @@ bool Moonbase::setFOWImage(int image) {
 
 			// PIECES  BUBBLES CIRCLES SIMPLE*  WEDGEY BUBBLE2
 			// WEDGE2  SPIKEY  ANGLES  SMOOTHED WUZZY  SYS7-BEVELED
-			if (image >= -1 && image <= 12)
+			if (image >= -12 && image <= -1)
 				resType = 210 - image; // 211-222 range
 			else
 				resType = 214; // default, SIMPLE
+
+			if (_fileName.empty()) { // We are running for the first time
+				_fileName = _vm->generateFilename(-3);
+
+				if (!_exe.loadFromEXE(_fileName))
+					error("Cannot open file %s", _fileName.c_str());
+			}
+
 #if 0 // TODO
 			HRSRC hResource = FindResource(g_hInst, resType, 10);
 			if (hResource) {

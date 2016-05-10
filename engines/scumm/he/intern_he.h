@@ -27,8 +27,6 @@
 #ifdef ENABLE_HE
 #include "scumm/he/floodfill_he.h"
 #include "scumm/he/wiz_he.h"
-
-#include "scumm/he/moonbase/moonbase.h"
 #endif
 #include "scumm/actor_he.h"	// For AuxBlock & AuxEntry
 
@@ -186,6 +184,8 @@ protected:
 };
 
 #ifdef ENABLE_HE
+class Moonbase;
+
 class ScummEngine_v71he : public ScummEngine_v70he {
 	friend class Wiz;
 	friend class Moonbase;

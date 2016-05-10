@@ -25,6 +25,8 @@
 
 #ifdef ENABLE_HE
 
+#include "common/winexe_pe.h"
+
 namespace Scumm {
 
 class Moonbase {
@@ -86,6 +88,9 @@ private:
 	bool _fowBlackMode;
 
 	int _fowRenderTable[32768];
+
+	Common::PEResources _exe;
+	Common::String _fileName;
 };
 
 #endif

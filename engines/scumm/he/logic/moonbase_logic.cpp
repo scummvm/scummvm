@@ -22,6 +22,7 @@
 
 #include "scumm/he/intern_he.h"
 #include "scumm/he/logic_he.h"
+#include "scumm/he/moonbase/moonbase.h"
 
 namespace Scumm {
 
@@ -214,7 +215,7 @@ void LogicHEmoonbase::op_set_fow_information(int op, int numArgs, int32 *args) {
 }
 
 int LogicHEmoonbase::op_set_fow_image(int op, int numArgs, int32 *args) {
-	debug(2, "STUB: op_set_fow_image(%d)", args[0]);
+	debug(2, "op_set_fow_image(%d)", args[0]);
 	return _vm->_moonbase->setFOWImage(args[0]) ? 1 : 0;
 }
 
