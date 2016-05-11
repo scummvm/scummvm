@@ -567,8 +567,8 @@ void BMVPlayer::PlayBMV(CORO_PARAM, SCNHANDLE hFileStem, int myEscape) {
 
 	assert(!bMovieOn);
 
-	strcpy(szMovieFile, (char *)LockMem(hFileStem));
-	strcat(szMovieFile, BMOVIE_EXTENSION);
+	Common::strlcpy(szMovieFile, (char *)LockMem(hFileStem), 14);
+	Common::strlcat(szMovieFile, BMOVIE_EXTENSION, 14);
 
 	assert(strlen(szMovieFile) <= 12);
 

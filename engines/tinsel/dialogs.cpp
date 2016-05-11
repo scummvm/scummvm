@@ -1671,10 +1671,10 @@ static void Select(int i, bool force) {
 #else
 			// Current description with cursor appended
 			if (cd.box[i].boxText != NULL) {
-				strcpy(g_sedit, cd.box[i].boxText);
-				strcat(g_sedit, sCursor);
+				Common::strlcpy(g_sedit, cd.box[i].boxText, SG_DESC_LEN+2);
+				Common::strlcat(g_sedit, sCursor, SG_DESC_LEN+2);
 			} else {
-				strcpy(g_sedit, sCursor);
+				Common::strlcpy(g_sedit, sCursor, SG_DESC_LEN+2);
 			}
 #endif
 

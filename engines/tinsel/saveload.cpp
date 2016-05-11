@@ -563,7 +563,7 @@ static void DoSave() {
 
 		while (1) {
 			Common::String fname = _vm->getSavegameFilename(ano);
-			strcpy(tmpName, fname.c_str());
+			Common::strlcpy(tmpName, fname.c_str(), FNAMELEN);
 
 			for (i = 0; i < g_numSfiles; i++)
 				if (!strcmp(g_savedFiles[i].name, tmpName))

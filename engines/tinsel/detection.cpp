@@ -235,7 +235,7 @@ const ADGameDescription *TinselMetaEngine::fallbackDetect(const FileMap &allFile
 		for (fileDesc = g->desc.filesDescriptions; fileDesc->fileName; fileDesc++) {
 			// Get the next filename, stripping off any '1' suffix character
 			char tempFilename[50];
-			strcpy(tempFilename, fileDesc->fileName);
+			Common::strlcpy(tempFilename, fileDesc->fileName, 50);
 			char *pOne = strchr(tempFilename, '1');
 			if (pOne) {
 				do {
@@ -275,7 +275,7 @@ const ADGameDescription *TinselMetaEngine::fallbackDetect(const FileMap &allFile
 		for (fileDesc = g->desc.filesDescriptions; fileDesc->fileName; fileDesc++) {
 			// Get the next filename, stripping off any '1' suffix character
 			char tempFilename[50];
-			strcpy(tempFilename, fileDesc->fileName);
+			Common::strlcpy(tempFilename, fileDesc->fileName, 50);
 			char *pOne = strchr(tempFilename, '1');
 			if (pOne) {
 				do {

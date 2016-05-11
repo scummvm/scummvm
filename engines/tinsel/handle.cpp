@@ -258,7 +258,7 @@ void LoadExtraGraphData(SCNHANDLE start, SCNHANDLE next) {
 }
 
 void SetCdPlaySceneDetails(int fileNum, const char *fileName) {
-	strcpy(g_szCdPlayFile, fileName);
+	Common::strlcpy(g_szCdPlayFile, fileName, 100);
 }
 
 void SetCdPlayHandle(int fileNum) {
