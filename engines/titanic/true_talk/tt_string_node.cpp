@@ -29,6 +29,10 @@ TTstringNode::TTstringNode() : _pPrior(nullptr), _pNext(nullptr),
 		_field14(0), _mode(0), _field1C(0) {
 }
 
+TTstringNode::~TTstringNode() {
+	detach();
+}
+
 void TTstringNode::initialize(int mode) {
 	_mode = mode;
 	_field14 = 0;
@@ -41,10 +45,32 @@ void TTstringNode::initialize(int mode) {
 	}
 }
 
+void TTstringNode::initialize(TTstringNode *oldNode) {
+	_mode = oldNode->_mode;
+	_field14 = oldNode->_field14;
+
+	if (_string.isValid()) {
+		_field1C = 0;
+	} else {
+		_field1C = 11;
+		warning("TTstringNode::initialize has bad subobj");
+	}
+
+	delete oldNode;
+}
+
 void TTstringNode::addNode(TTstringNode *newNode) {
 	TTstringNode *tail = getTail();
 	tail->_pNext = newNode;
 	newNode->_pPrior = this;
+}
+
+void TTstringNode::detach() {
+	if (_pPrior)
+		_pPrior->_pNext = _pNext;
+
+	if (_pNext)
+		_pNext->_pPrior = _pPrior;
 }
 
 TTstringNode *TTstringNode::getTail() const {
@@ -56,6 +82,17 @@ TTstringNode *TTstringNode::getTail() const {
 		node = node->_pNext;
 
 	return node;
+}
+
+TTstringNode *TTstringNode::scan(TTstringNode *start, const TTString &str, int mode) {
+	for (; start; start = start->_pNext) {
+		if (start->_mode == mode || (mode == 3 && start->_mode < 3)) {
+			if (!strcmp(start->_string.c_str(), str.c_str()))
+				start;
+		}
+	}
+
+	return nullptr;
 }
 
 /*------------------------------------------------------------------------*/

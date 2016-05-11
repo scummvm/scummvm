@@ -38,6 +38,11 @@ protected:
 	 * Initializes state for the node
 	 */
 	void initialize(int mode);
+
+	/**
+	 * Initializes state for the node
+	 */
+	void initialize(TTstringNode *oldNode);
 public:
 	TTstringNode *_pPrior;
 	TTstringNode *_pNext;
@@ -47,11 +52,22 @@ public:
 	int _field1C;
 public:
 	TTstringNode();
+	virtual ~TTstringNode();
 
 	/**
 	 * Links the passed node to this node as a linked list
 	 */
 	void addNode(TTstringNode *newNode);
+
+	/**
+	 * Detaches a node from any predecessor and/or successor
+	 */
+	void detach();
+
+	/**
+	 * Scan for a node with a given string
+	 */
+	static TTstringNode *scan(TTstringNode *start, const TTString &str, int mode);
 };
 
 class TTsynonymNode : public TTstringNode {
