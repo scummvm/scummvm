@@ -47,10 +47,10 @@
 #ifndef COMMON_JSON_H
 #define COMMON_JSON_H
 
-#include "array.h"
-#include "hashmap.h"
-#include "hash-str.h"
-#include "str.h"
+#include "common/array.h"
+#include "common/hashmap.h"
+#include "common/hash-str.h"
+#include "common/str.h"
 
 // Win32 incompatibilities
 #if defined(WIN32) && !defined(__GNUC__)

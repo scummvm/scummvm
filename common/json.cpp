@@ -44,12 +44,7 @@
 * THE SOFTWARE.
 */
 
-#include "JSON.h"
-
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
-#include <math.h>
+#include "common/json.h"
 
 #ifdef __MINGW32__
 #define wcsncasecmp wcsnicmp
@@ -155,54 +150,54 @@ bool JSON::extractString(const char **data, String &str) {
 
 			// Deal with the escaped char
 			switch (**data) {
-				case '"': next_char = '"';
-					break;
-				case '\\': next_char = '\\';
-					break;
-				case '/': next_char = '/';
-					break;
-				case 'b': next_char = '\b';
-					break;
-				case 'f': next_char = '\f';
-					break;
-				case 'n': next_char = '\n';
-					break;
-				case 'r': next_char = '\r';
-					break;
-				case 't': next_char = '\t';
-					break;
-				case 'u': {
-					// We need 5 chars (4 hex + the 'u') or its not valid
-					if (!simplejson_wcsnlen(*data, 5))
-						return false;
-
-					// Deal with the chars
-					next_char = 0;
-					for (int i = 0; i < 4; i++) {
-						// Do it first to move off the 'u' and leave us on the
-						// final hex digit as we move on by one later on
-						(*data)++;
-
-						next_char <<= 4;
-
-						// Parse the hex digit
-						if (**data >= '0' && **data <= '9')
-							next_char |= (**data - '0');
-						else if (**data >= 'A' && **data <= 'F')
-							next_char |= (10 + (**data - 'A'));
-						else if (**data >= 'a' && **data <= 'f')
-							next_char |= (10 + (**data - 'a'));
-						else {
-							// Invalid hex digit = invalid JSON
-							return false;
-						}
-					}
-					break;
-				}
-
-					// By the spec, only the above cases are allowed
-				default:
+			case '"': next_char = '"';
+				break;
+			case '\\': next_char = '\\';
+				break;
+			case '/': next_char = '/';
+				break;
+			case 'b': next_char = '\b';
+				break;
+			case 'f': next_char = '\f';
+				break;
+			case 'n': next_char = '\n';
+				break;
+			case 'r': next_char = '\r';
+				break;
+			case 't': next_char = '\t';
+				break;
+			case 'u': {
+				// We need 5 chars (4 hex + the 'u') or its not valid
+				if (!simplejson_wcsnlen(*data, 5))
 					return false;
+
+				// Deal with the chars
+				next_char = 0;
+				for (int i = 0; i < 4; i++) {
+					// Do it first to move off the 'u' and leave us on the
+					// final hex digit as we move on by one later on
+					(*data)++;
+
+					next_char <<= 4;
+
+					// Parse the hex digit
+					if (**data >= '0' && **data <= '9')
+						next_char |= (**data - '0');
+					else if (**data >= 'A' && **data <= 'F')
+						next_char |= (10 + (**data - 'A'));
+					else if (**data >= 'a' && **data <= 'f')
+						next_char |= (10 + (**data - 'a'));
+					else {
+						// Invalid hex digit = invalid JSON
+						return false;
+					}
+				}
+				break;
+			}
+
+				// By the spec, only the above cases are allowed
+			default:
+				return false;
 			}
 		}
 
@@ -594,41 +589,41 @@ JSONValue::JSONValue(const JSONValue &source) {
 	_type = source._type;
 
 	switch (_type) {
-		case JSONType_String:
-			_stringValue = new String(*source._stringValue);
-			break;
+	case JSONType_String:
+		_stringValue = new String(*source._stringValue);
+		break;
 
-		case JSONType_Bool:
-			_boolValue = source._boolValue;
-			break;
+	case JSONType_Bool:
+		_boolValue = source._boolValue;
+		break;
 
-		case JSONType_Number:
-			_numberValue = source._numberValue;
-			break;
+	case JSONType_Number:
+		_numberValue = source._numberValue;
+		break;
 
-		case JSONType_Array: {
-			JSONArray source_array = *source._arrayValue;
-			JSONArray::iterator iter;
-			_arrayValue = new JSONArray();
-			for (iter = source_array.begin(); iter != source_array.end(); iter++)
-				_arrayValue->push_back(new JSONValue(**iter));
-			break;
+	case JSONType_Array: {
+		JSONArray source_array = *source._arrayValue;
+		JSONArray::iterator iter;
+		_arrayValue = new JSONArray();
+		for (iter = source_array.begin(); iter != source_array.end(); iter++)
+			_arrayValue->push_back(new JSONValue(**iter));
+		break;
+	}
+
+	case JSONType_Object: {
+		JSONObject source_object = *source._objectValue;
+		_objectValue = new JSONObject();
+		JSONObject::iterator iter;
+		for (iter = source_object.begin(); iter != source_object.end(); iter++) {
+			String name = (*iter)._key;
+			(*_objectValue)[name] = new JSONValue(*((*iter)._value));
 		}
+		break;
+	}
 
-		case JSONType_Object: {
-			JSONObject source_object = *source._objectValue;
-			_objectValue = new JSONObject();
-			JSONObject::iterator iter;
-			for (iter = source_object.begin(); iter != source_object.end(); iter++) {
-				String name = (*iter)._key;
-				(*_objectValue)[name] = new JSONValue(*((*iter)._value));
-			}
-			break;
-		}
-
-		case JSONType_Null:
-			// Nothing to do.
-			break;
+	case JSONType_Null:
+		// Nothing to do.
+		break;
 	}
 }
 
@@ -792,12 +787,12 @@ const JSONObject &JSONValue::asObject() const {
 */
 std::size_t JSONValue::countChildren() const {
 	switch (_type) {
-		case JSONType_Array:
-			return _arrayValue->size();
-		case JSONType_Object:
-			return _objectValue->size();
-		default:
-			return 0;
+	case JSONType_Array:
+		return _arrayValue->size();
+	case JSONType_Object:
+		return _objectValue->size();
+	default:
+		return 0;
 	}
 }
 
@@ -922,58 +917,58 @@ String JSONValue::stringifyImpl(size_t const indentDepth) const {
 	String const indentStr1 = indent(indentDepth1);
 
 	switch (_type) {
-		case JSONType_Null:
+	case JSONType_Null:
+		ret_string = "null";
+		break;
+
+	case JSONType_String:
+		ret_string = stringifyString(*_stringValue);
+		break;
+
+	case JSONType_Bool:
+		ret_string = _boolValue ? "true" : "false";
+		break;
+
+	case JSONType_Number: {
+		if (isinf(_numberValue) || isnan(_numberValue))
 			ret_string = "null";
-			break;
-
-		case JSONType_String:
-			ret_string = stringifyString(*_stringValue);
-			break;
-
-		case JSONType_Bool:
-			ret_string = _boolValue ? "true" : "false";
-			break;
-
-		case JSONType_Number: {
-			if (isinf(_numberValue) || isnan(_numberValue))
-				ret_string = "null";
-			else {
-				char str[80];
-				sprintf(str, "%.15Lf", _numberValue); //ss.precision(15);
-				ret_string = str;
-			}
-			break;
+		else {
+			char str[80];
+			sprintf(str, "%.15Lf", _numberValue); //ss.precision(15);
+			ret_string = str;
 		}
+		break;
+	}
 
-		case JSONType_Array: {
-			ret_string = indentDepth ? "[\n" + indentStr1 : "[";
-			JSONArray::const_iterator iter = _arrayValue->begin();
-			while (iter != _arrayValue->end()) {
-				ret_string += (*iter)->stringifyImpl(indentDepth1);
+	case JSONType_Array: {
+		ret_string = indentDepth ? "[\n" + indentStr1 : "[";
+		JSONArray::const_iterator iter = _arrayValue->begin();
+		while (iter != _arrayValue->end()) {
+			ret_string += (*iter)->stringifyImpl(indentDepth1);
 
-				// Not at the end - add a separator
-				if (++iter != _arrayValue->end())
-					ret_string += ",";
-			}
-			ret_string += indentDepth ? "\n" + indentStr + "]" : "]";
-			break;
+			// Not at the end - add a separator
+			if (++iter != _arrayValue->end())
+				ret_string += ",";
 		}
+		ret_string += indentDepth ? "\n" + indentStr + "]" : "]";
+		break;
+	}
 
-		case JSONType_Object: {
-			ret_string = indentDepth ? "{\n" + indentStr1 : "{";
-			JSONObject::const_iterator iter = _objectValue->begin();
-			while (iter != _objectValue->end()) {
-				ret_string += stringifyString((*iter)._key);
-				ret_string += ":";
-				ret_string += (*iter)._value->stringifyImpl(indentDepth1);
+	case JSONType_Object: {
+		ret_string = indentDepth ? "{\n" + indentStr1 : "{";
+		JSONObject::const_iterator iter = _objectValue->begin();
+		while (iter != _objectValue->end()) {
+			ret_string += stringifyString((*iter)._key);
+			ret_string += ":";
+			ret_string += (*iter)._value->stringifyImpl(indentDepth1);
 
-				// Not at the end - add a separator
-				if (++iter != _objectValue->end())
-					ret_string += ",";
-			}
-			ret_string += indentDepth ? "\n" + indentStr + "}" : "}";
-			break;
+			// Not at the end - add a separator
+			if (++iter != _objectValue->end())
+				ret_string += ",";
 		}
+		ret_string += indentDepth ? "\n" + indentStr + "}" : "}";
+		break;
+	}
 	}
 
 	return ret_string;
