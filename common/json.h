@@ -21,28 +21,28 @@
 */
 
 /*
- * Files JSON.h and JSONValue.h part of the SimpleJSON Library - http://mjpa.in/json
- *
- * Copyright (C) 2010 Mike Anchor
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
- */
+* Files JSON.h and JSONValue.h part of the SimpleJSON Library - http://mjpa.in/json
+*
+* Copyright (C) 2010 Mike Anchor
+*
+* Permission is hereby granted, free of charge, to any person obtaining a copy
+* of this software and associated documentation files (the "Software"), to deal
+* in the Software without restriction, including without limitation the rights
+* to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+* copies of the Software, and to permit persons to whom the Software is
+* furnished to do so, subject to the following conditions:
+*
+* The above copyright notice and this permission notice shall be included in
+* all copies or substantial portions of the Software.
+*
+* THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+* IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+* FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+* AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+* LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+* OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+* THE SOFTWARE.
+*/
 
 #ifndef COMMON_JSON_H
 #define COMMON_JSON_H
@@ -103,11 +103,11 @@ static inline bool isinf(double x) {
 
 // Simple function to check a string 's' has at least 'n' characters
 // Tkachov: that's not wchar_t anymore, though it should work for C-strings too
-static inline bool simplejson_wcsnlen(const char* s, size_t n) {
+static inline bool simplejson_wcsnlen(const char *s, size_t n) {
 	if (s == 0)
 		return false;
 
-	const char* save = s;
+	const char *save = s;
 	while (n-- > 0) {
 		if (*(save++) == 0) return false;
 	}
@@ -133,52 +133,52 @@ class JSONValue {
 
 public:
 	JSONValue(/*NULL*/);
-	JSONValue(const char* m_char_value);
-	JSONValue(const String& m_string_value);
-	JSONValue(bool m_bool_value);
-	JSONValue(double m_number_value);
-	JSONValue(const JSONArray& m_array_value);
-	JSONValue(const JSONObject& m_object_value);
-	JSONValue(const JSONValue& m_source);
+	JSONValue(const char *charValue);
+	JSONValue(const String &stringValue);
+	JSONValue(bool boolValue);
+	JSONValue(double numberValue);
+	JSONValue(const JSONArray &arrayValue);
+	JSONValue(const JSONObject &objectValue);
+	JSONValue(const JSONValue &source);
 	~JSONValue();
 
-	bool IsNull() const;
-	bool IsString() const;
-	bool IsBool() const;
-	bool IsNumber() const;
-	bool IsArray() const;
-	bool IsObject() const;
+	bool isNull() const;
+	bool isString() const;
+	bool isBool() const;
+	bool isNumber() const;
+	bool isArray() const;
+	bool isObject() const;
 
-	const String& AsString() const;
-	bool AsBool() const;
-	double AsNumber() const;
-	const JSONArray& AsArray() const;
-	const JSONObject& AsObject() const;
+	const String &asString() const;
+	bool asBool() const;
+	double asNumber() const;
+	const JSONArray &asArray() const;
+	const JSONObject &asObject() const;
 
-	std::size_t CountChildren() const;
-	bool HasChild(std::size_t index) const;
-	JSONValue* Child(std::size_t index);
-	bool HasChild(const char* name) const;
-	JSONValue* Child(const char* name);
-	Array<String> ObjectKeys() const;
+	size_t countChildren() const;
+	bool hasChild(size_t index) const;
+	JSONValue *child(size_t index);
+	bool hasChild(const char *name) const;
+	JSONValue *child(const char *name);
+	Array<String> objectKeys() const;
 
-	String Stringify(bool const prettyprint = false) const;
+	String stringify(bool const prettyprint = false) const;
 protected:
-	static JSONValue* Parse(const char** data);
+	static JSONValue *parse(const char **data);
 
 private:
-	static String StringifyString(const String& str);
-	String StringifyImpl(size_t const indentDepth) const;
-	static String Indent(size_t depth);
+	static String stringifyString(const String &str);
+	String stringifyImpl(size_t const indentDepth) const;
+	static String indent(size_t depth);
 
-	JSONType type;
+	JSONType _type;
 
 	union {
-		bool bool_value;
-		double number_value;
-		String* string_value;
-		JSONArray* array_value;
-		JSONObject* object_value;
+		bool _boolValue;
+		double _numberValue;
+		String *_stringValue;
+		JSONArray *_arrayValue;
+		JSONObject *_objectValue;
 	};
 
 };
@@ -189,17 +189,17 @@ class JSON {
 	friend class JSONValue;
 
 public:
-	static JSONValue* Parse(const char* data);
-	static String Stringify(const JSONValue* value);
+	static JSONValue *parse(const char *data);
+	static String stringify(const JSONValue *value);
 protected:
-	static bool SkipWhitespace(const char** data);
-	static bool ExtractString(const char** data, String& str);
-	static double ParseInt(const char** data);
-	static double ParseDecimal(const char** data);
+	static bool skipWhitespace(const char **data);
+	static bool extractString(const char **data, String &str);
+	static double parseInt(const char **data);
+	static double parseDecimal(const char **data);
 private:
 	JSON();
 };
 
-}  // End of namespace Common
+} // End of namespace Common
 
 #endif

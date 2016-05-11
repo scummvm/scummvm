@@ -26,9 +26,10 @@
 void cloudThread(void *thread); //this one is passed to TimerManager in main()
 
 class CloudThread {
-	bool firstTime;
+	bool _firstTime;
 public:
-	CloudThread(): firstTime(true) {};
+	CloudThread(): _firstTime(true) {};
+
 	void work();
 };
 

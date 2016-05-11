@@ -21,28 +21,28 @@
 */
 
 /*
- * Files JSON.cpp and JSONValue.cpp part of the SimpleJSON Library - http://mjpa.in/json
- *
- * Copyright (C) 2010 Mike Anchor
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
- */
+* Files JSON.cpp and JSONValue.cpp part of the SimpleJSON Library - http://mjpa.in/json
+*
+* Copyright (C) 2010 Mike Anchor
+*
+* Permission is hereby granted, free of charge, to any person obtaining a copy
+* of this software and associated documentation files (the "Software"), to deal
+* in the Software without restriction, including without limitation the rights
+* to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+* copies of the Software, and to permit persons to whom the Software is
+* furnished to do so, subject to the following conditions:
+*
+* The above copyright notice and this permission notice shall be included in
+* all copies or substantial portions of the Software.
+*
+* THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+* IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+* FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+* AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+* LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+* OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+* THE SOFTWARE.
+*/
 
 #include "JSON.h"
 
@@ -78,18 +78,18 @@ JSON::JSON() {}
 *
 * @return JSONValue* Returns a JSON Value representing the root, or NULL on error
 */
-JSONValue* JSON::Parse(const char* data) {
+JSONValue *JSON::parse(const char *data) {
 	// Skip any preceding whitespace, end of data = no JSON = fail
-	if (!SkipWhitespace(&data))
+	if (!skipWhitespace(&data))
 		return NULL;
 
 	// We need the start of a value here now...
-	JSONValue* value = JSONValue::Parse(&data);
+	JSONValue *value = JSONValue::parse(&data);
 	if (value == NULL)
 		return NULL;
 
 	// Can be white space now and should be at the end of the string then...
-	if (SkipWhitespace(&data)) {
+	if (skipWhitespace(&data)) {
 		delete value;
 		return NULL;
 	}
@@ -107,9 +107,9 @@ JSONValue* JSON::Parse(const char* data) {
 *
 * @return String Returns a JSON encoded string representation of the given value
 */
-String JSON::Stringify(const JSONValue* value) {
+String JSON::stringify(const JSONValue *value) {
 	if (value != NULL)
-		return value->Stringify();
+		return value->stringify();
 	else
 		return "";
 }
@@ -123,7 +123,7 @@ String JSON::Stringify(const JSONValue* value) {
 *
 * @return bool Returns true if there is more data, or false if the end of the text was reached
 */
-bool JSON::SkipWhitespace(const char** data) {
+bool JSON::skipWhitespace(const char **data) {
 	while (**data != 0 && (**data == ' ' || **data == '\t' || **data == '\r' || **data == '\n'))
 		(*data)++;
 
@@ -141,7 +141,7 @@ bool JSON::SkipWhitespace(const char** data) {
 *
 * @return bool Returns true on success, false on failure
 */
-bool JSON::ExtractString(const char** data, String& str) {
+bool JSON::extractString(const char **data, String &str) {
 	str = "";
 
 	while (**data != 0) {
@@ -239,7 +239,7 @@ bool JSON::ExtractString(const char** data, String& str) {
 *
 * @return double Returns the double value of the number found
 */
-double JSON::ParseInt(const char** data) {
+double JSON::parseInt(const char **data) {
 	double integer = 0;
 	while (**data != 0 && **data >= '0' && **data <= '9')
 		integer = integer * 10 + (*(*data)++ - '0');
@@ -256,7 +256,7 @@ double JSON::ParseInt(const char** data) {
 *
 * @return double Returns the double value of the decimal found
 */
-double JSON::ParseDecimal(const char** data) {
+double JSON::parseDecimal(const char **data) {
 	double decimal = 0.0;
 	double factor = 0.1;
 	while (**data != 0 && **data >= '0' && **data <= '9') {
@@ -276,11 +276,11 @@ double JSON::ParseDecimal(const char** data) {
 *
 * @return JSONValue* Returns a pointer to a JSONValue object on success, NULL on error
 */
-JSONValue* JSONValue::Parse(const char** data) {
+JSONValue *JSONValue::parse(const char **data) {
 	// Is it a string?
 	if (**data == '"') {
 		String str;
-		if (!JSON::ExtractString(&(++(*data)), str))
+		if (!JSON::extractString(&(++(*data)), str))
 			return NULL;
 		else
 			return new JSONValue(str);
@@ -311,7 +311,7 @@ JSONValue* JSONValue::Parse(const char** data) {
 		if (**data == '0')
 			(*data)++;
 		else if (**data >= '1' && **data <= '9')
-			number = JSON::ParseInt(data);
+			number = JSON::parseInt(data);
 		else
 			return NULL;
 
@@ -326,7 +326,7 @@ JSONValue* JSONValue::Parse(const char** data) {
 			// Find the decimal and sort the decimal place out
 			// Use ParseDecimal as ParseInt won't work with decimals less than 0.1
 			// thanks to Javier Abadia for the report & fix
-			double decimal = JSON::ParseDecimal(data);
+			double decimal = JSON::parseDecimal(data);
 
 			// Save the number
 			number += decimal;
@@ -348,7 +348,7 @@ JSONValue* JSONValue::Parse(const char** data) {
 				return NULL;
 
 			// Sort the expo out
-			double expo = JSON::ParseInt(data);
+			double expo = JSON::parseInt(data);
 			for (double i = 0.0; i < expo; i++)
 				number = neg_expo ? (number / 10.0) : (number * 10.0);
 		}
@@ -367,7 +367,7 @@ JSONValue* JSONValue::Parse(const char** data) {
 
 		while (**data != 0) {
 			// Whitespace at the start?
-			if (!JSON::SkipWhitespace(data)) {
+			if (!JSON::skipWhitespace(data)) {
 				FREE_OBJECT(object);
 				return NULL;
 			}
@@ -380,13 +380,13 @@ JSONValue* JSONValue::Parse(const char** data) {
 
 			// We want a string now...
 			String name;
-			if (!JSON::ExtractString(&(++(*data)), name)) {
+			if (!JSON::extractString(&(++(*data)), name)) {
 				FREE_OBJECT(object);
 				return NULL;
 			}
 
 			// More whitespace?
-			if (!JSON::SkipWhitespace(data)) {
+			if (!JSON::skipWhitespace(data)) {
 				FREE_OBJECT(object);
 				return NULL;
 			}
@@ -398,13 +398,13 @@ JSONValue* JSONValue::Parse(const char** data) {
 			}
 
 			// More whitespace?
-			if (!JSON::SkipWhitespace(data)) {
+			if (!JSON::skipWhitespace(data)) {
 				FREE_OBJECT(object);
 				return NULL;
 			}
 
 			// The value is here
-			JSONValue* value = Parse(data);
+			JSONValue *value = parse(data);
 			if (value == NULL) {
 				FREE_OBJECT(object);
 				return NULL;
@@ -416,7 +416,7 @@ JSONValue* JSONValue::Parse(const char** data) {
 			object[name] = value;
 
 			// More whitespace?
-			if (!JSON::SkipWhitespace(data)) {
+			if (!JSON::skipWhitespace(data)) {
 				FREE_OBJECT(object);
 				return NULL;
 			}
@@ -449,7 +449,7 @@ JSONValue* JSONValue::Parse(const char** data) {
 
 		while (**data != 0) {
 			// Whitespace at the start?
-			if (!JSON::SkipWhitespace(data)) {
+			if (!JSON::skipWhitespace(data)) {
 				FREE_ARRAY(array);
 				return NULL;
 			}
@@ -461,7 +461,7 @@ JSONValue* JSONValue::Parse(const char** data) {
 			}
 
 			// Get the value
-			JSONValue* value = Parse(data);
+			JSONValue *value = parse(data);
 			if (value == NULL) {
 				FREE_ARRAY(array);
 				return NULL;
@@ -471,7 +471,7 @@ JSONValue* JSONValue::Parse(const char** data) {
 			array.push_back(value);
 
 			// More whitespace?
-			if (!JSON::SkipWhitespace(data)) {
+			if (!JSON::skipWhitespace(data)) {
 				FREE_ARRAY(array);
 				return NULL;
 			}
@@ -508,7 +508,7 @@ JSONValue* JSONValue::Parse(const char** data) {
 * @access public
 */
 JSONValue::JSONValue(/*NULL*/) {
-	type = JSONType_Null;
+	_type = JSONType_Null;
 }
 
 /**
@@ -518,9 +518,9 @@ JSONValue::JSONValue(/*NULL*/) {
 *
 * @param char* m_char_value The string to use as the value
 */
-JSONValue::JSONValue(const char* m_char_value) {
-	type = JSONType_String;
-	string_value = new String(String(m_char_value));
+JSONValue::JSONValue(const char *charValue) {
+	_type = JSONType_String;
+	_stringValue = new String(String(charValue));
 }
 
 /**
@@ -530,9 +530,9 @@ JSONValue::JSONValue(const char* m_char_value) {
 *
 * @param String m_string_value The string to use as the value
 */
-JSONValue::JSONValue(const String& m_string_value) {
-	type = JSONType_String;
-	string_value = new String(m_string_value);
+JSONValue::JSONValue(const String &stringValue) {
+	_type = JSONType_String;
+	_stringValue = new String(stringValue);
 }
 
 /**
@@ -542,9 +542,9 @@ JSONValue::JSONValue(const String& m_string_value) {
 *
 * @param bool m_bool_value The bool to use as the value
 */
-JSONValue::JSONValue(bool m_bool_value) {
-	type = JSONType_Bool;
-	bool_value = m_bool_value;
+JSONValue::JSONValue(bool boolValue) {
+	_type = JSONType_Bool;
+	_boolValue = boolValue;
 }
 
 /**
@@ -554,9 +554,9 @@ JSONValue::JSONValue(bool m_bool_value) {
 *
 * @param double m_number_value The number to use as the value
 */
-JSONValue::JSONValue(double m_number_value) {
-	type = JSONType_Number;
-	number_value = m_number_value;
+JSONValue::JSONValue(double numberValue) {
+	_type = JSONType_Number;
+	_numberValue = numberValue;
 }
 
 /**
@@ -566,9 +566,9 @@ JSONValue::JSONValue(double m_number_value) {
 *
 * @param JSONArray m_array_value The JSONArray to use as the value
 */
-JSONValue::JSONValue(const JSONArray& m_array_value) {
-	type = JSONType_Array;
-	array_value = new JSONArray(m_array_value);
+JSONValue::JSONValue(const JSONArray &arrayValue) {
+	_type = JSONType_Array;
+	_arrayValue = new JSONArray(arrayValue);
 }
 
 /**
@@ -578,9 +578,9 @@ JSONValue::JSONValue(const JSONArray& m_array_value) {
 *
 * @param JSONObject m_object_value The JSONObject to use as the value
 */
-JSONValue::JSONValue(const JSONObject& m_object_value) {
-	type = JSONType_Object;
-	object_value = new JSONObject(m_object_value);
+JSONValue::JSONValue(const JSONObject &objectValue) {
+	_type = JSONType_Object;
+	_objectValue = new JSONObject(objectValue);
 }
 
 /**
@@ -590,38 +590,38 @@ JSONValue::JSONValue(const JSONObject& m_object_value) {
 *
 * @param JSONValue m_source The source JSONValue that is being copied
 */
-JSONValue::JSONValue(const JSONValue& m_source) {
-	type = m_source.type;
+JSONValue::JSONValue(const JSONValue &source) {
+	_type = source._type;
 
-	switch (type) {
+	switch (_type) {
 		case JSONType_String:
-			string_value = new String(*m_source.string_value);
+			_stringValue = new String(*source._stringValue);
 			break;
 
 		case JSONType_Bool:
-			bool_value = m_source.bool_value;
+			_boolValue = source._boolValue;
 			break;
 
 		case JSONType_Number:
-			number_value = m_source.number_value;
+			_numberValue = source._numberValue;
 			break;
 
 		case JSONType_Array: {
-			JSONArray source_array = *m_source.array_value;
+			JSONArray source_array = *source._arrayValue;
 			JSONArray::iterator iter;
-			array_value = new JSONArray();
+			_arrayValue = new JSONArray();
 			for (iter = source_array.begin(); iter != source_array.end(); iter++)
-				array_value->push_back(new JSONValue(**iter));
+				_arrayValue->push_back(new JSONValue(**iter));
 			break;
 		}
 
 		case JSONType_Object: {
-			JSONObject source_object = *m_source.object_value;
-			object_value = new JSONObject();
+			JSONObject source_object = *source._objectValue;
+			_objectValue = new JSONObject();
 			JSONObject::iterator iter;
 			for (iter = source_object.begin(); iter != source_object.end(); iter++) {
 				String name = (*iter)._key;
-				(*object_value)[name] = new JSONValue(*((*iter)._value));
+				(*_objectValue)[name] = new JSONValue(*((*iter)._value));
 			}
 			break;
 		}
@@ -639,21 +639,19 @@ JSONValue::JSONValue(const JSONValue& m_source) {
 * @access public
 */
 JSONValue::~JSONValue() {
-	if (type == JSONType_Array) {
+	if (_type == JSONType_Array) {
 		JSONArray::iterator iter;
-		for (iter = array_value->begin(); iter != array_value->end(); iter++)
+		for (iter = _arrayValue->begin(); iter != _arrayValue->end(); iter++)
 			delete *iter;
-		delete array_value;
-	}
-	else if (type == JSONType_Object) {
+		delete _arrayValue;
+	} else if (_type == JSONType_Object) {
 		JSONObject::iterator iter;
-		for (iter = object_value->begin(); iter != object_value->end(); iter++) {
+		for (iter = _objectValue->begin(); iter != _objectValue->end(); iter++) {
 			delete (*iter)._value;
 		}
-		delete object_value;
-	}
-	else if (type == JSONType_String) {
-		delete string_value;
+		delete _objectValue;
+	} else if (_type == JSONType_String) {
+		delete _stringValue;
 	}
 }
 
@@ -664,8 +662,8 @@ JSONValue::~JSONValue() {
 *
 * @return bool Returns true if it is a NULL value, false otherwise
 */
-bool JSONValue::IsNull() const {
-	return type == JSONType_Null;
+bool JSONValue::isNull() const {
+	return _type == JSONType_Null;
 }
 
 /**
@@ -675,8 +673,8 @@ bool JSONValue::IsNull() const {
 *
 * @return bool Returns true if it is a String value, false otherwise
 */
-bool JSONValue::IsString() const {
-	return type == JSONType_String;
+bool JSONValue::isString() const {
+	return _type == JSONType_String;
 }
 
 /**
@@ -686,8 +684,8 @@ bool JSONValue::IsString() const {
 *
 * @return bool Returns true if it is a Bool value, false otherwise
 */
-bool JSONValue::IsBool() const {
-	return type == JSONType_Bool;
+bool JSONValue::isBool() const {
+	return _type == JSONType_Bool;
 }
 
 /**
@@ -697,8 +695,8 @@ bool JSONValue::IsBool() const {
 *
 * @return bool Returns true if it is a Number value, false otherwise
 */
-bool JSONValue::IsNumber() const {
-	return type == JSONType_Number;
+bool JSONValue::isNumber() const {
+	return _type == JSONType_Number;
 }
 
 /**
@@ -708,8 +706,8 @@ bool JSONValue::IsNumber() const {
 *
 * @return bool Returns true if it is an Array value, false otherwise
 */
-bool JSONValue::IsArray() const {
-	return type == JSONType_Array;
+bool JSONValue::isArray() const {
+	return _type == JSONType_Array;
 }
 
 /**
@@ -719,85 +717,85 @@ bool JSONValue::IsArray() const {
 *
 * @return bool Returns true if it is an Object value, false otherwise
 */
-bool JSONValue::IsObject() const {
-	return type == JSONType_Object;
+bool JSONValue::isObject() const {
+	return _type == JSONType_Object;
 }
 
 /**
 * Retrieves the String value of this JSONValue
-* Use IsString() before using this method.
+* Use isString() before using this method.
 *
 * @access public
 *
 * @return String Returns the string value
 */
-const String& JSONValue::AsString() const {
-	return (*string_value);
+const String &JSONValue::asString() const {
+	return (*_stringValue);
 }
 
 /**
 * Retrieves the Bool value of this JSONValue
-* Use IsBool() before using this method.
+* Use isBool() before using this method.
 *
 * @access public
 *
 * @return bool Returns the bool value
 */
-bool JSONValue::AsBool() const {
-	return bool_value;
+bool JSONValue::asBool() const {
+	return _boolValue;
 }
 
 /**
 * Retrieves the Number value of this JSONValue
-* Use IsNumber() before using this method.
+* Use isNumber() before using this method.
 *
 * @access public
 *
 * @return double Returns the number value
 */
-double JSONValue::AsNumber() const {
-	return number_value;
+double JSONValue::asNumber() const {
+	return _numberValue;
 }
 
 /**
 * Retrieves the Array value of this JSONValue
-* Use IsArray() before using this method.
+* Use isArray() before using this method.
 *
 * @access public
 *
 * @return JSONArray Returns the array value
 */
-const JSONArray& JSONValue::AsArray() const {
-	return (*array_value);
+const JSONArray &JSONValue::asArray() const {
+	return (*_arrayValue);
 }
 
 /**
 * Retrieves the Object value of this JSONValue
-* Use IsObject() before using this method.
+* Use isObject() before using this method.
 *
 * @access public
 *
 * @return JSONObject Returns the object value
 */
-const JSONObject& JSONValue::AsObject() const {
-	return (*object_value);
+const JSONObject &JSONValue::asObject() const {
+	return (*_objectValue);
 }
 
 /**
 * Retrieves the number of children of this JSONValue.
 * This number will be 0 or the actual number of children
-* if IsArray() or IsObject().
+* if isArray() or isObject().
 *
 * @access public
 *
 * @return The number of children.
 */
-std::size_t JSONValue::CountChildren() const {
-	switch (type) {
+std::size_t JSONValue::countChildren() const {
+	switch (_type) {
 		case JSONType_Array:
-			return array_value->size();
+			return _arrayValue->size();
 		case JSONType_Object:
-			return object_value->size();
+			return _objectValue->size();
 		default:
 			return 0;
 	}
@@ -805,71 +803,67 @@ std::size_t JSONValue::CountChildren() const {
 
 /**
 * Checks if this JSONValue has a child at the given index.
-* Use IsArray() before using this method.
+* Use isArray() before using this method.
 *
 * @access public
 *
 * @return bool Returns true if the array has a value at the given index.
 */
-bool JSONValue::HasChild(std::size_t index) const {
-	if (type == JSONType_Array) {
-		return index < array_value->size();
-	}
-	else {
+bool JSONValue::hasChild(std::size_t index) const {
+	if (_type == JSONType_Array) {
+		return index < _arrayValue->size();
+	} else {
 		return false;
 	}
 }
 
 /**
 * Retrieves the child of this JSONValue at the given index.
-* Use IsArray() before using this method.
+* Use isArray() before using this method.
 *
 * @access public
 *
 * @return JSONValue* Returns JSONValue at the given index or NULL
 *                    if it doesn't exist.
 */
-JSONValue* JSONValue::Child(std::size_t index) {
-	if (index < array_value->size()) {
-		return (*array_value)[index];
-	}
-	else {
+JSONValue *JSONValue::child(std::size_t index) {
+	if (index < _arrayValue->size()) {
+		return (*_arrayValue)[index];
+	} else {
 		return NULL;
 	}
 }
 
 /**
 * Checks if this JSONValue has a child at the given key.
-* Use IsObject() before using this method.
+* Use isObject() before using this method.
 *
 * @access public
 *
 * @return bool Returns true if the object has a value at the given key.
 */
-bool JSONValue::HasChild(const char* name) const {
-	if (type == JSONType_Object) {
-		return object_value->find(name) != object_value->end();
-	}
-	else {
+bool JSONValue::hasChild(const char *name) const {
+	if (_type == JSONType_Object) {
+		return _objectValue->find(name) != _objectValue->end();
+	} else {
 		return false;
 	}
 }
 
 /**
 * Retrieves the child of this JSONValue at the given key.
-* Use IsObject() before using this method.
+* Use isObject() before using this method.
 *
 * @access public
 *
 * @return JSONValue* Returns JSONValue for the given key in the object
 *                    or NULL if it doesn't exist.
 */
-JSONValue* JSONValue::Child(const char* name) {
-	JSONObject::const_iterator it = object_value->find(name);
-	if (it != object_value->end()) {
+JSONValue *JSONValue::child(const char *name) {
+	JSONObject::const_iterator it = _objectValue->find(name);
+	if (it != _objectValue->end()) {
 		return it->_value;
-	}
-	else {
+	} else {
 		return NULL;
 	}
 }
@@ -882,12 +876,12 @@ JSONValue* JSONValue::Child(const char* name) {
 *
 * @return std::vector<String> A vector containing the keys.
 */
-Array<String> JSONValue::ObjectKeys() const {
+Array<String> JSONValue::objectKeys() const {
 	Array<String> keys;
 
-	if (type == JSONType_Object) {
-		JSONObject::const_iterator iter = object_value->begin();
-		while (iter != object_value->end()) {
+	if (_type == JSONType_Object) {
+		JSONObject::const_iterator iter = _objectValue->begin();
+		while (iter != _objectValue->end()) {
 			keys.push_back(iter->_key);
 
 			iter++;
@@ -906,9 +900,9 @@ Array<String> JSONValue::ObjectKeys() const {
 *
 * @return String Returns the JSON string
 */
-String JSONValue::Stringify(bool const prettyprint) const {
+String JSONValue::stringify(bool const prettyprint) const {
 	size_t const indentDepth = prettyprint ? 1 : 0;
-	return StringifyImpl(indentDepth);
+	return stringifyImpl(indentDepth);
 }
 
 
@@ -921,31 +915,31 @@ String JSONValue::Stringify(bool const prettyprint) const {
 *
 * @return String Returns the JSON string
 */
-String JSONValue::StringifyImpl(size_t const indentDepth) const {
+String JSONValue::stringifyImpl(size_t const indentDepth) const {
 	String ret_string;
 	size_t const indentDepth1 = indentDepth ? indentDepth + 1 : 0;
-	String const indentStr = Indent(indentDepth);
-	String const indentStr1 = Indent(indentDepth1);
+	String const indentStr = indent(indentDepth);
+	String const indentStr1 = indent(indentDepth1);
 
-	switch (type) {
+	switch (_type) {
 		case JSONType_Null:
 			ret_string = "null";
 			break;
 
 		case JSONType_String:
-			ret_string = StringifyString(*string_value);
+			ret_string = stringifyString(*_stringValue);
 			break;
 
 		case JSONType_Bool:
-			ret_string = bool_value ? "true" : "false";
+			ret_string = _boolValue ? "true" : "false";
 			break;
 
 		case JSONType_Number: {
-			if (isinf(number_value) || isnan(number_value))
+			if (isinf(_numberValue) || isnan(_numberValue))
 				ret_string = "null";
 			else {
 				char str[80];
-				sprintf(str, "%.15Lf", number_value); //ss.precision(15);
+				sprintf(str, "%.15Lf", _numberValue); //ss.precision(15);
 				ret_string = str;
 			}
 			break;
@@ -953,12 +947,12 @@ String JSONValue::StringifyImpl(size_t const indentDepth) const {
 
 		case JSONType_Array: {
 			ret_string = indentDepth ? "[\n" + indentStr1 : "[";
-			JSONArray::const_iterator iter = array_value->begin();
-			while (iter != array_value->end()) {
-				ret_string += (*iter)->StringifyImpl(indentDepth1);
+			JSONArray::const_iterator iter = _arrayValue->begin();
+			while (iter != _arrayValue->end()) {
+				ret_string += (*iter)->stringifyImpl(indentDepth1);
 
 				// Not at the end - add a separator
-				if (++iter != array_value->end())
+				if (++iter != _arrayValue->end())
 					ret_string += ",";
 			}
 			ret_string += indentDepth ? "\n" + indentStr + "]" : "]";
@@ -967,14 +961,14 @@ String JSONValue::StringifyImpl(size_t const indentDepth) const {
 
 		case JSONType_Object: {
 			ret_string = indentDepth ? "{\n" + indentStr1 : "{";
-			JSONObject::const_iterator iter = object_value->begin();
-			while (iter != object_value->end()) {
-				ret_string += StringifyString((*iter)._key);
+			JSONObject::const_iterator iter = _objectValue->begin();
+			while (iter != _objectValue->end()) {
+				ret_string += stringifyString((*iter)._key);
 				ret_string += ":";
-				ret_string += (*iter)._value->StringifyImpl(indentDepth1);
+				ret_string += (*iter)._value->stringifyImpl(indentDepth1);
 
 				// Not at the end - add a separator
-				if (++iter != object_value->end())
+				if (++iter != _objectValue->end())
 					ret_string += ",";
 			}
 			ret_string += indentDepth ? "\n" + indentStr + "}" : "}";
@@ -996,7 +990,7 @@ String JSONValue::StringifyImpl(size_t const indentDepth) const {
 *
 * @return String Returns the JSON string
 */
-String JSONValue::StringifyString(const String& str) {
+String JSONValue::stringifyString(const String &str) {
 	String str_out = "\"";
 
 	String::const_iterator iter = str.begin();
@@ -1006,23 +1000,17 @@ String JSONValue::StringifyString(const String& str) {
 		if (chr == '"' || chr == '\\' || chr == '/') {
 			str_out += '\\';
 			str_out += chr;
-		}
-		else if (chr == '\b') {
+		} else if (chr == '\b') {
 			str_out += "\\b";
-		}
-		else if (chr == '\f') {
+		} else if (chr == '\f') {
 			str_out += "\\f";
-		}
-		else if (chr == '\n') {
+		} else if (chr == '\n') {
 			str_out += "\\n";
-		}
-		else if (chr == '\r') {
+		} else if (chr == '\r') {
 			str_out += "\\r";
-		}
-		else if (chr == '\t') {
+		} else if (chr == '\t') {
 			str_out += "\\t";
-		}
-		else if (chr < ' ' || chr > 126) {
+		} else if (chr < ' ' || chr > 126) {
 			str_out += "\\u";
 			for (int i = 0; i < 4; i++) {
 				int value = (chr >> 12) & 0xf;
@@ -1032,8 +1020,7 @@ String JSONValue::StringifyString(const String& str) {
 					str_out += (char)('A' + (value - 10));
 				chr <<= 4;
 			}
-		}
-		else {
+		} else {
 			str_out += chr;
 		}
 
@@ -1053,7 +1040,7 @@ String JSONValue::StringifyString(const String& str) {
 *
 * @return String Returns the string
 */
-String JSONValue::Indent(size_t depth) {
+String JSONValue::indent(size_t depth) {
 	const size_t indent_step = 2;
 	depth ? --depth : 0;
 	String indentStr;
@@ -1061,4 +1048,4 @@ String JSONValue::Indent(size_t depth) {
 	return indentStr;
 }
 
-}  // End of namespace Common
+} // End of namespace Common
