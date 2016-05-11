@@ -65,8 +65,8 @@ private:
 	int _fowAnimationFrames;
 	int _fowCurrentFOWFrame;
 
-	int _fowTileW;
-	int _fowTileH;
+	int32 _fowTileW;
+	int32 _fowTileH;
 
 	uint8 *_fowImage;
 	int _fowClipX1;
