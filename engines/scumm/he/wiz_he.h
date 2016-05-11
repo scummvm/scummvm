@@ -220,16 +220,19 @@ public:
 	void remapWizImagePal(const WizParameters *params);
 
 	void getWizImageDim(int resNum, int state, int32 &w, int32 &h);
+	void getWizImageDim(uint8 *dataPtr, int state, int32 &w, int32 &h);
 	int getWizImageStates(int resnum);
 	int getWizImageStates(const uint8 *ptr);
-	void getWizStateSpot(byte *data, int state, int *x, int *y);
 	int isWizPixelNonTransparent(int resnum, int state, int x, int y, int flags);
+	int isWizPixelNonTransparent(uint8 *data, int state, int x, int y, int flags);
+	int isPixelNonTransparent(const uint8 *data, int x, int y, int w, int h, uint8 bitdepth);
 	uint16 getWizPixelColor(int resnum, int state, int x, int y);
 	int getWizImageData(int resNum, int state, int type);
 
 	void flushWizBuffer();
 
 	void getWizImageSpot(int resId, int state, int32 &x, int32 &y);
+	void getWizImageSpot(uint8 *data, int state, int32 &x, int32 &y);
 	void loadWizCursor(int resId, int palette);
 
 	void captureWizImage(int resNum, const Common::Rect& r, bool frontBuffer, int compType);
@@ -274,7 +277,6 @@ public:
 	template<int type> static void write8BitColor(uint8 *dst, const uint8 *src, int dstType, const uint8 *palPtr, const uint8 *xmapPtr, uint8 bitDepth);
 	static void writeColor(uint8 *dstPtr, int dstType, uint16 color);
 
-	int isWizPixelNonTransparent(const uint8 *data, int x, int y, int w, int h, uint8 bitdepth);
 	uint16 getWizPixelColor(const uint8 *data, int x, int y, int w, int h, uint8 bitDepth, uint16 color);
 	uint16 getRawWizPixelColor(const uint8 *data, int x, int y, int w, int h, uint8 bitDepth, uint16 color);
 	void computeWizHistogram(uint32 *histogram, const uint8 *data, const Common::Rect& rCapt);

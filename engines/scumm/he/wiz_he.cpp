@@ -977,7 +977,7 @@ void Wiz::decompressRawWizImage(uint8 *dst, int dstPitch, int dstType, const uin
 	}
 }
 
-int Wiz::isWizPixelNonTransparent(const uint8 *data, int x, int y, int w, int h, uint8 bitDepth) {
+int Wiz::isPixelNonTransparent(const uint8 *data, int x, int y, int w, int h, uint8 bitDepth) {
 	if (x < 0 || x >= w || y < 0 || y >= h) {
 		return 0;
 	}
@@ -2699,6 +2699,10 @@ void Wiz::processWizImage(const WizParameters *params) {
 void Wiz::getWizImageDim(int resNum, int state, int32 &w, int32 &h) {
 	uint8 *dataPtr = _vm->getResourceAddress(rtImage, resNum);
 	assert(dataPtr);
+	getWizImageDim(dataPtr, state, w, h);
+}
+
+void Wiz::getWizImageDim(uint8 *dataPtr, int state, int32 &w, int32 &h) {
 	uint8 *wizh = _vm->findWrappedBlock(MKTAG('W','I','Z','H'), dataPtr, state, 0);
 	assert(wizh);
 	w = READ_LE_UINT32(wizh + 0x4);
@@ -2708,6 +2712,10 @@ void Wiz::getWizImageDim(int resNum, int state, int32 &w, int32 &h) {
 void Wiz::getWizImageSpot(int resId, int state, int32 &x, int32 &y) {
 	uint8 *dataPtr = _vm->getResourceAddress(rtImage, resId);
 	assert(dataPtr);
+	getWizImageSpot(dataPtr, state, x, y);
+}
+
+void Wiz::getWizImageSpot(uint8 *dataPtr, int state, int32 &x, int32 &y) {
 	uint8 *spotPtr = _vm->findWrappedBlock(MKTAG('S','P','O','T'), dataPtr, state, 0);
 	if (spotPtr) {
 		x = READ_LE_UINT32(spotPtr + 0);
@@ -2767,22 +2775,15 @@ int Wiz::getWizImageStates(const uint8 *dataPtr) {
 	}
 }
 
-void Wiz::getWizStateSpot(byte *data, int state, int *x, int *y) {
-	byte *spot = _vm->findWrappedBlock(MKTAG('S','P','O','T'), data, state, 0);
-
-	if (!spot) {
-		*x = *y = 0;
-		return;
-	}
-
-	*x = READ_LE_UINT32(spot + 0x0);
-	*y = READ_LE_UINT32(spot + 0x4);
-}
-
 int Wiz::isWizPixelNonTransparent(int resNum, int state, int x, int y, int flags) {
-	int ret = 0;
 	uint8 *data = _vm->getResourceAddress(rtImage, resNum);
 	assert(data);
+
+	return isWizPixelNonTransparent(data, state, x, y, flags);
+}
+
+int Wiz::isWizPixelNonTransparent(uint8 *data, int state, int x, int y, int flags) {
+	int ret = 0;
 	uint8 *wizh = _vm->findWrappedBlock(MKTAG('W','I','Z','H'), data, state, 0);
 	assert(wizh);
 	int c = READ_LE_UINT32(wizh + 0x0);
@@ -2806,7 +2807,7 @@ int Wiz::isWizPixelNonTransparent(int resNum, int state, int x, int y, int flags
 			}
 			break;
 		case 1:
-			ret = isWizPixelNonTransparent(wizd, x, y, w, h, 1);
+			ret = isPixelNonTransparent(wizd, x, y, w, h, 1);
 			break;
 #ifdef USE_RGB_COLOR
 		case 2:
@@ -2819,7 +2820,7 @@ int Wiz::isWizPixelNonTransparent(int resNum, int state, int x, int y, int flags
 			break;
 		}
 		case 5:
-			ret = isWizPixelNonTransparent(wizd, x, y, w, h, 2);
+			ret = isPixelNonTransparent(wizd, x, y, w, h, 2);
 			break;
 #endif
 		default:

@@ -130,16 +130,8 @@ bool Moonbase::setFOWImage(int image) {
 
 	_fowAnimationFrames = (nStates + FOW_ANIM_FRAME_COUNT - 1) / FOW_ANIM_FRAME_COUNT;
 
-	Common::Point fowTileSize(0, 0); //getWizStateSize(_fowImage, (nStates - 1)); // TODO
-
-	_fowTileW = fowTileSize.x;
-	_fowTileH = fowTileSize.y;
-
-	int hitTestValue = 0;
-	uint pixelValue = 0;
-
-	//LayeredWizHitTest(&hitTestValue, &pixelValue, _fowImage, (nStates - 1), 0, 0, 0, 0); // TODO
-	_fowBlackMode = (pixelValue == 0) ? 1 : 0;
+	_vm->_wiz->getWizImageDim(_fowImage, (nStates - 1), _fowTileW, _fowTileH);
+	_fowBlackMode = !_vm->_wiz->isWizPixelNonTransparent(_fowImage, nStates - 1, 0, 0, 0);
 
 	if (ConfMan.hasKey("EnableFOWRects"))
 		_fowBlackMode = (ConfMan.getInt("EnableFOWRects") == 1);
@@ -166,7 +158,7 @@ enum FOWElement {
 };
 
 int Moonbase::readFOWVisibilityArray(int array, int y, int x) {
-	//_vm->VAR(_vm->VAR_U32_ARRAY_UNK) = array; // TODO
+	_vm->VAR(116) = array;
 
 	if (_vm->readArray(116, y, x) > 0)
 		return FOW_EMPTY;
@@ -332,7 +324,7 @@ void Moonbase::setFOWInfo(int fowInfoArray, int downDim, int acrossDim, int view
 void Moonbase::renderFOWState(uint8 *destSurface, int dstPitch, int dstType, int dstw, int dsth, int x, int y, int srcw, int srch, int state, int flags) {
 	int spotx, spoty;
 
-	_vm->_wiz->getWizStateSpot(_fowImage, state, &spotx, &spoty);
+	_vm->_wiz->getWizImageSpot(_fowImage, state, spotx, spoty);
 	Common::Rect r(_fowClipX1, _fowClipY1, _fowClipX2, _fowClipY2);
 
 	_vm->_wiz->drawWizImageEx(destSurface, _fowImage, 0, dstPitch, dstType, dstw, dsth, x - spotx, y - spoty, srcw, srch, state, &r, flags, 0, 0, 16, 0, 0);

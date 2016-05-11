@@ -191,7 +191,9 @@ void LogicHEmoonbase::op_set_fow_sentinel(int32 *args) {
 }
 
 void LogicHEmoonbase::op_set_fow_information(int op, int numArgs, int32 *args) {
-	Common::String str("op_set_fow_information(%d", args[0]);
+	Common::String str;
+
+	str = Common::String::format("op_set_fow_information(%d", args[0]);
 	for (int i = 1; i < numArgs; i++) {
 		str += Common::String::format(", %d", args[i]);
 	}
