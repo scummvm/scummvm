@@ -118,6 +118,7 @@ done
 # Default lib behavior yes/no/auto
 _vorbis=auto
 _sdlnet=auto
+_libcurl=auto
 _tremor=auto
 _tremolo=no
 _flac=auto
@@ -186,9 +187,11 @@ _staticlibpath=
 _xcodetoolspath=
 _sparklepath=
 _sdlconfig=sdl2-config
+_libcurlconfig=curl-config
 _freetypeconfig=freetype-config
 _sdlpath="$PATH"
 _freetypepath="$PATH"
+_libcurlpath="$PATH"
 _nasmpath="$PATH"
 NASMFLAGS=""
 NASM=""
@@ -202,6 +205,7 @@ _have_x86=no
 
 # Add (virtual) features
 add_feature 16bit "16bit color" "_16bit"
+add_feature cloud "cloud" "_cloud"
 add_feature faad "libfaad" "_faad"
 add_feature flac "FLAC" "_flac"
 add_feature freetype2 "FreeType2" "_freetype2"
@@ -430,6 +434,41 @@ find_freetypeconfig() {
 
 	if test -z "$_freetypeconfig"; then
 		echo "none found!"
+	fi
+}
+
+#
+# Determine curl-config
+#
+find_libcurlconfig() {
+	echo_n "Looking for curl-config... "
+	libcurlconfigs="$_libcurlconfig"
+	_libcurlconfig=
+
+	IFS="${IFS=   }"; ac_save_ifs="$IFS"; IFS="$SEPARATOR"
+	for path_dir in $_libcurlpath; do
+		#reset separator to parse sdlconfigs
+		IFS=":"
+		for libcurlconfig in $libcurlconfigs; do
+			if test -f "$path_dir/$libcurlconfig" ; then
+				_libcurlconfig="$path_dir/$libcurlconfig"
+				echo $_libcurlconfig
+				# Save the prefix
+				_libcurlpath=$path_dir
+				if test `basename $path_dir` = bin ; then
+					_sdlpath=`dirname $path_dir`
+				fi
+				# break at first sdl-config found in path
+				break 2
+			fi
+		done
+	done
+
+	IFS="$ac_save_ifs"
+
+	if test -z "$_libcurlconfig"; then
+		echo "none found!"
+		exit 1
 	fi
 }
 
@@ -3678,24 +3717,6 @@ EOF
 cc_check -lm && append_var LIBS "-lm"
 
 #
-# Check for SDL_Net
-#
-echocheck "SDL_Net"
-if test "$_sdlnet" = auto ; then
-	_sdlnet=no
-	cat > $TMPC << EOF
-#include "SDL/SDL_net.h"
-int main(int argc, char *argv[]) { SDLNet_Init(); return 0; }
-EOF
-	cc_check $LIBS $INCLUDES -lSDL_net && _sdlnet=yes
-fi
-if test "$_sdlnet" = yes ; then
-	LIBS="$LIBS -lSDL_net"
-fi
-define_in_config_if_yes "$_sdlnet" 'USE_SDL_NET'
-echo "$_sdlnet"
-
-#
 # Check for Ogg Vorbis
 #
 echocheck "Ogg Vorbis"
@@ -4089,6 +4110,85 @@ EOF
 		_sparkle=no
 	;;
 esac
+
+#
+# Check for SDL_Net
+#
+echocheck "SDL_Net"
+if test "$_sdlnet" = auto ; then
+	_sdlnet=no
+	cat > $TMPC << EOF
+#include "SDL/SDL_net.h"
+int main(int argc, char *argv[]) { SDLNet_Init(); return 0; }
+EOF
+	cc_check $LIBS $INCLUDES -lSDL_net && _sdlnet=yes
+fi
+if test "$_sdlnet" = yes ; then
+	LIBS="$LIBS -lSDL_net"
+fi
+define_in_config_if_yes "$_sdlnet" 'USE_SDL_NET'
+echo "$_sdlnet"
+
+#
+# Check for libcurl to be present
+#
+if test "$_libcurl" != "no"; then
+
+	# Look for the curl-config script
+	find_libcurlconfig
+
+	if test -z "$_libcurlconfig"; then
+		_libcurl=no
+	else
+		LIBCURL_LIBS=`$_libcurlconfig --libs`
+		LIBCURL_CFLAGS=`$_libcurlconfig --cflags`
+
+		if test "$_libcurl" = "auto"; then
+			_libcurl=no
+
+			cat > $TMPC << EOF
+			#include <curl/curl.h>
+			int main(int argc, char *argv[]) {
+				int x;
+				curl_easy_setopt(NULL,CURLOPT_URL,NULL);
+				x=CURL_ERROR_SIZE;
+				x=CURLOPT_WRITEFUNCTION;
+				x=CURLOPT_WRITEDATA;
+				x=CURLOPT_ERRORBUFFER;
+				x=CURLOPT_STDERR;
+				x=CURLOPT_VERBOSE;
+
+				curl_version_info_data *data = curl_version_info(CURLVERSION_NOW);
+				if (data->features & CURL_VERSION_SSL)
+					return 0;
+				return 1;
+			}
+EOF
+
+			cc_check_no_clean $LIBCURL_CFLAGS $LIBCURL_LIBS
+			if test "$?" -eq 0; then
+				$TMPO$HOSTEXEEXT
+				if test "$?" -eq 0; then
+					_libcurl=yes
+				else
+					_libcurl="no SSL support"
+				fi
+			fi
+			cc_check_clean
+		fi
+
+		if test "$_libcurl" = "yes"; then
+			append_var LIBS "$LIBCURL_LIBS"
+			append_var INCLUDES "$LIBCURL_CFLAGS"
+		fi
+	fi
+
+fi
+
+echocheck "libcurl"
+echo "$_libcurl"
+
+define_in_config_if_yes "$_libcurl" "USE_LIBCURL"
 
 #
 # Check is NSDockTilePlugIn protocol is supported
