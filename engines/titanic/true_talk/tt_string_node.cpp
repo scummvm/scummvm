@@ -59,6 +59,17 @@ void TTstringNode::initialize(TTstringNode *oldNode) {
 	delete oldNode;
 }
 
+TTstringNode *TTstringNode::scan(TTstringNode *start, const TTString &str, int mode) {
+	for (; start; start = start->_pNext) {
+		if (start->_mode == mode || (mode == 3 && start->_mode < 3)) {
+			if (!strcmp(start->_string.c_str(), str.c_str()))
+				start;
+		}
+	}
+
+	return nullptr;
+}
+
 void TTstringNode::addNode(TTstringNode *newNode) {
 	TTstringNode *tail = getTail();
 	tail->_pNext = newNode;
@@ -84,20 +95,15 @@ TTstringNode *TTstringNode::getTail() const {
 	return node;
 }
 
-TTstringNode *TTstringNode::scan(TTstringNode *start, const TTString &str, int mode) {
-	for (; start; start = start->_pNext) {
-		if (start->_mode == mode || (mode == 3 && start->_mode < 3)) {
-			if (!strcmp(start->_string.c_str(), str.c_str()))
-				start;
-		}
-	}
-
-	return nullptr;
-}
-
 /*------------------------------------------------------------------------*/
 
 TTsynonymNode::TTsynonymNode() : TTstringNode() {
+}
+
+TTsynonymNode::TTsynonymNode(const TTsynonymNode *src) {
+	_string = src->_string;
+	initialize(src->_mode);
+	_field14 = src->_field14;
 }
 
 TTsynonymNode::TTsynonymNode(int mode, const char *str, int val2) :
@@ -107,5 +113,21 @@ TTsynonymNode::TTsynonymNode(int mode, const char *str, int val2) :
 	_field14 = val2;
 }
 
+TTsynonymNode *TTsynonymNode::copy(TTsynonymNode *src) {
+	if (src->_field1C) {
+		_field1C = 5;
+		return this;
+	} else {
+		_field1C = 0;
+		if (src == this)
+			return this;
+
+		_string = src->_string;
+		TTsynonymNode *newNode = new TTsynonymNode(src);
+		initialize(newNode);
+
+		return this;
+	}
+}
 
 } // End of namespace Titanic

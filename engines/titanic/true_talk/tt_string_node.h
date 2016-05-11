@@ -73,7 +73,10 @@ public:
 class TTsynonymNode : public TTstringNode {
 public:
 	TTsynonymNode();
+	TTsynonymNode(const TTsynonymNode *src);
 	TTsynonymNode(int mode, const char *str, int val2);
+
+	TTsynonymNode *copy(TTsynonymNode *src);
 };
 
 } // End of namespace Titanic
