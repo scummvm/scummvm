@@ -106,7 +106,7 @@ bool Moonbase::setFOWImage(int image) {
 			Common::SeekableReadStream *stream = _exe.getResource(Common::kPERCData, resId);
 
 			if (stream->size()) {
-				_fowImage = (byte *)malloc(stream->size());
+				_fowImage = (uint8 *)malloc(stream->size());
 
 				stream->read(_fowImage, stream->size());
 			}

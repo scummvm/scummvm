@@ -68,7 +68,7 @@ private:
 	int _fowTileW;
 	int _fowTileH;
 
-	byte *_fowImage;
+	uint8 *_fowImage;
 	int _fowClipX1;
 	int _fowClipY1;
 	int _fowClipX2;
