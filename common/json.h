@@ -54,8 +54,6 @@
 
 // Win32 incompatibilities
 #if defined(WIN32) && !defined(__GNUC__)
-#define wcsncasecmp _strnicmp
-
 static inline bool isnan(double x) {
 	return x != x;
 }
@@ -65,44 +63,7 @@ static inline bool isinf(double x) {
 }
 #endif
 
-// Linux compile fix - from quaker66
-#ifdef __GNUC__
-	#include <cstring>
-	#include <cstdlib>
-#endif
-
-// Mac compile fixes - from quaker66, Lion fix by dabrahams
-// Tkachov: I probably broke those
-#if defined(__APPLE__) && __DARWIN_C_LEVEL < 200809L || (defined(WIN32) && defined(__GNUC__)) || defined(ANDROID)
-	#include <wctype.h>
-	#include <wchar.h>
-	
-	static inline int wcsncasecmp(const char *s1, const char *s2, size_t n)
-	{
-		int lc1  = 0;
-		int lc2  = 0;
-
-		while (n--)
-		{
-			lc1 = towlower (*s1);
-			lc2 = towlower (*s2);
-
-			if (lc1 != lc2)
-				return (lc1 - lc2);
-
-			if (!lc1)
-				return 0;
-
-			++s1;
-			++s2;
-		}
-
-		return 0;
-	}
-#endif
-
 // Simple function to check a string 's' has at least 'n' characters
-// Tkachov: that's not wchar_t anymore, though it should work for C-strings too
 static inline bool simplejson_wcsnlen(const char *s, size_t n) {
 	if (s == 0)
 		return false;
@@ -121,8 +82,6 @@ namespace Common {
 class JSONValue;
 typedef Array<JSONValue*> JSONArray;
 typedef HashMap<String, JSONValue*> JSONObject;
-
-//JSONValue.h:
 
 class JSON;
 
@@ -182,8 +141,6 @@ private:
 	};
 
 };
-
-//EOF JSONValue.h
 
 class JSON {
 	friend class JSONValue;

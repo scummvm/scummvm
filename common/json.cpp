@@ -281,15 +281,15 @@ JSONValue *JSONValue::parse(const char **data) {
 			return new JSONValue(str);
 	}
 
-	// Is it a boolean?
-	else if ((simplejson_wcsnlen(*data, 4) && wcsncasecmp(*data, "true", 4) == 0) || (simplejson_wcsnlen(*data, 5) && wcsncasecmp(*data, "false", 5) == 0)) {
-		bool value = wcsncasecmp(*data, "true", 4) == 0;
+	// Is it a boolean?	
+	else if ((simplejson_wcsnlen(*data, 4) && scumm_strnicmp(*data, "true", 4) == 0) || (simplejson_wcsnlen(*data, 5) && scumm_strnicmp(*data, "false", 5) == 0)) {
+		bool value = scumm_strnicmp(*data, "true", 4) == 0;
 		(*data) += value ? 4 : 5;
 		return new JSONValue(value);
 	}
 
 	// Is it a null?
-	else if (simplejson_wcsnlen(*data, 4) && wcsncasecmp(*data, "null", 4) == 0) {
+	else if (simplejson_wcsnlen(*data, 4) && scumm_strnicmp(*data, "null", 4) == 0) {
 		(*data) += 4;
 		return new JSONValue();
 	}
