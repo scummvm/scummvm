@@ -42,7 +42,7 @@ int TTword::readSyn(SimpleFile *file) {
 		return 5;
 
 	// Create new synanym node
-	TTsynonymNode *synNode = new TTsynonymNode(mode, str.c_str(), val1);
+	TTsynonym *synNode = new TTsynonym(mode, str.c_str(), val1);
 
 	if (_synP) {
 		// A synonym already exists, so add new one as a tail
@@ -56,7 +56,7 @@ int TTword::readSyn(SimpleFile *file) {
 	return 0;
 }
 
-void TTword::appendNode(TTsynonymNode *node) {
+void TTword::appendNode(TTsynonym *node) {
 	if (_synP)
 		_synP->addNode(node);
 	else
@@ -99,9 +99,9 @@ bool TTword::testFileHandle(SimpleFile *file) const {
 	return true;
 }
 
-TTword *TTword::scanCopy(const TTString &str, TTsynonymNode *node, int mode) {
+TTword *TTword::scanCopy(const TTString &str, TTsynonym *node, int mode) {
 	if (_synP) {
-		TTstringNode *strNode = _synP->scan(_synP, str, mode);
+		TTstringNode *strNode = TTsynonym::findByName(_synP, str, mode);
 		if (strNode) {
 			node->copy(strNode);
 			node->_pPrior = nullptr;

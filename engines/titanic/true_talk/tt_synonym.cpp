@@ -20,51 +20,52 @@
  *
  */
 
-#ifndef TITANIC_TT_STRING_NODE_H
-#define TITANIC_TT_STRING_NODE_H
-
-#include "titanic/true_talk/tt_string.h"
+#include "titanic/true_talk/tt_synonym.h"
 
 namespace Titanic {
 
-class TTstringNode {
-private:
-	/**
-	 * Returns the final node at the end of the linked list of nodes
-	 */
-	TTstringNode *getTail();
-protected:
-	/**
-	 * Initializes state for the node
-	 */
-	void initialize(int mode);
+TTsynonym::TTsynonym() : TTstringNode() {
+}
 
-	/**
-	 * Initializes state for the node
-	 */
-	void initialize(TTstringNode *oldNode);
-public:
-	TTstringNode *_pPrior;
-	TTstringNode *_pNext;
-	TTString _string;
-	int _field14;
-	int _mode;
-	int _field1C;
-public:
-	TTstringNode();
-	virtual ~TTstringNode();
+TTsynonym::TTsynonym(const TTstringNode *src) {
+	_string = src->_string;
+	initialize(src->_mode);
+	_field14 = src->_field14;
+}
 
-	/**
-	 * Links the passed node to this node as a linked list
-	 */
-	void addNode(TTstringNode *newNode);
+TTsynonym::TTsynonym(int mode, const char *str, int val2) :
+		TTstringNode() {
+	_string = str;
+	initialize(mode);
+	_field14 = val2;
+}
 
-	/**
-	 * Detaches a node from any predecessor and/or successor
-	 */
-	void detach();
-};
+TTsynonym *TTsynonym::findByName(TTsynonym *start, const TTString &str, int mode) {
+	for (; start; start = static_cast<TTsynonym *>(start->_pNext)) {
+		if (start->_mode == mode || (mode == 3 && start->_mode < 3)) {
+			if (!strcmp(start->_string.c_str(), str.c_str()))
+				start;
+		}
+	}
+
+	return nullptr;
+}
+
+TTsynonym *TTsynonym::copy(TTstringNode *src) {
+	if (src->_field1C) {
+		_field1C = 5;
+		return this;
+	} else {
+		_field1C = 0;
+		if (src == this)
+			return this;
+
+		_string = src->_string;
+		TTsynonym *newNode = new TTsynonym(src);
+		initialize(newNode);
+
+		return this;
+	}
+}
 
 } // End of namespace Titanic
-
-#endif /* TITANIC_TT_STRING_NODE_H */

@@ -25,7 +25,7 @@
 
 #include "titanic/support/simple_file.h"
 #include "titanic/true_talk/tt_string.h"
-#include "titanic/true_talk/tt_string_node.h"
+#include "titanic/true_talk/tt_synonym.h"
 
 namespace Titanic {
 
@@ -46,7 +46,7 @@ protected:
 	bool testFileHandle(SimpleFile *file) const;
 public:
 	TTword *_pNext;
-	TTsynonymNode *_synP;
+	TTsynonym *_synP;
 	TTString _string;
 public:
 	TTword(TTString &str, int mode, int val2);
@@ -59,14 +59,14 @@ public:
 	/**
 	 * Either sets the first synonym for a word, or adds it to an existing one
 	 */
-	void appendNode(TTsynonymNode *node);
+	void appendNode(TTsynonym *node);
 
 	/**
 	 * Load the word
 	 */
 	int load(SimpleFile *file, int mode);
 
-	TTword *scanCopy(const TTString &str, TTsynonymNode *node, int mode);
+	TTword *scanCopy(const TTString &str, TTsynonym *node, int mode);
 
 	const char *c_str() const { return _string.c_str(); }
 	operator const char *() const { return c_str(); }

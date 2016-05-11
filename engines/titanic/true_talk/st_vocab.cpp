@@ -141,7 +141,7 @@ void STVocab::addWord(TTword *word) {
 }
 
 TTword *STVocab::findWord(const TTString &str) {
-	TTsynonymNode *tempNode = new TTsynonymNode();
+	TTsynonym *tempNode = new TTsynonym();
 	bool flag = false;
 	TTword *word = _pHead;
 

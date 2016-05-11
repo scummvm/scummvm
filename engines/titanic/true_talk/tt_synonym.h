@@ -20,51 +20,28 @@
  *
  */
 
-#ifndef TITANIC_TT_STRING_NODE_H
-#define TITANIC_TT_STRING_NODE_H
+#ifndef TITANIC_TT_SYNONYM_H
+#define TITANIC_TT_SYNONYM_H
 
-#include "titanic/true_talk/tt_string.h"
+#include "titanic/true_talk/tt_string_node.h"
 
 namespace Titanic {
 
-class TTstringNode {
-private:
-	/**
-	 * Returns the final node at the end of the linked list of nodes
-	 */
-	TTstringNode *getTail();
-protected:
-	/**
-	 * Initializes state for the node
-	 */
-	void initialize(int mode);
-
-	/**
-	 * Initializes state for the node
-	 */
-	void initialize(TTstringNode *oldNode);
+class TTsynonym : public TTstringNode {
 public:
-	TTstringNode *_pPrior;
-	TTstringNode *_pNext;
-	TTString _string;
-	int _field14;
-	int _mode;
-	int _field1C;
-public:
-	TTstringNode();
-	virtual ~TTstringNode();
+	TTsynonym();
+	TTsynonym(const TTstringNode *src);
+	TTsynonym(int mode, const char *str, int val2);
+
+	TTsynonym *copy(TTstringNode *src);
 
 	/**
-	 * Links the passed node to this node as a linked list
+	 * Scan for a synonym with a given string
 	 */
-	void addNode(TTstringNode *newNode);
+	static TTsynonym *findByName(TTsynonym *start, const TTString &str, int mode);
 
-	/**
-	 * Detaches a node from any predecessor and/or successor
-	 */
-	void detach();
 };
 
 } // End of namespace Titanic
 
-#endif /* TITANIC_TT_STRING_NODE_H */
+#endif /* TITANIC_TT_SYNONYM_H */
