@@ -61,7 +61,7 @@ public:
 	 */
 	int load(SimpleFile *file, int mode);
 
-	TTword *fn1(const TTString &str, TTsynonymNode *node, int val);
+	TTword *scanCopy(const TTString &str, TTsynonymNode *node, int mode);
 
 	const char *c_str() const { return _string.c_str(); }
 	operator const char *() const { return c_str(); }

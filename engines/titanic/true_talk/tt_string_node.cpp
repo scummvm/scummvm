@@ -100,7 +100,7 @@ TTstringNode *TTstringNode::getTail() const {
 TTsynonymNode::TTsynonymNode() : TTstringNode() {
 }
 
-TTsynonymNode::TTsynonymNode(const TTsynonymNode *src) {
+TTsynonymNode::TTsynonymNode(const TTstringNode *src) {
 	_string = src->_string;
 	initialize(src->_mode);
 	_field14 = src->_field14;
@@ -113,7 +113,7 @@ TTsynonymNode::TTsynonymNode(int mode, const char *str, int val2) :
 	_field14 = val2;
 }
 
-TTsynonymNode *TTsynonymNode::copy(TTsynonymNode *src) {
+TTsynonymNode *TTsynonymNode::copy(TTstringNode *src) {
 	if (src->_field1C) {
 		_field1C = 5;
 		return this;

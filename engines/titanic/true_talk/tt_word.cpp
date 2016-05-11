@@ -92,8 +92,16 @@ bool TTword::testFileHandle(SimpleFile *file) const {
 	return true;
 }
 
-TTword *TTword::fn1(const TTString &str, TTsynonymNode *node, int val) {
-	// TODO
+TTword *TTword::scanCopy(const TTString &str, TTsynonymNode *node, int mode) {
+	if (_synP) {
+		TTstringNode *strNode = _synP->scan(_synP, str, mode);
+		if (strNode) {
+			node->copy(strNode);
+			node->_pPrior = nullptr;
+			node->_pNext = nullptr;
+		}
+	}
+
 	return nullptr;
 }
 

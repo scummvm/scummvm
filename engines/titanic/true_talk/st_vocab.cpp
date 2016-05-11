@@ -127,7 +127,7 @@ TTword *STVocab::findWord(const TTString &str) {
 
 	while (!flag) {
 		if (_field18 != 3 || strcmp(word->c_str(), str)) {
-			if (word->fn1(str, tempNode, _field18))
+			if (word->scanCopy(str, tempNode, _field18))
 				word = word->_pNext;
 			else
 				flag = true;
