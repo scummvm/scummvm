@@ -146,7 +146,7 @@ int TTword3::load(SimpleFile *file) {
 	CString str;
 	int val1, val2;
 
-	if (!TTword::load(file, 2) && file->scanf("%d %d %d", &str, &val1, &val2)) {
+	if (!TTword::load(file, 2) && file->scanf("%s %d %d", &str, &val1, &val2)) {
 		_field34 = readNumber(str.c_str());
 		_field30 = val1;
 		_field3C = val2;
