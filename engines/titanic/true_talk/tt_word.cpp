@@ -127,7 +127,7 @@ TTword2::TTword2(TTString &str, int val1, int val2, int val3, int val4) :
 int TTword2::load(SimpleFile *file) {
 	int val;
 
-	if (TTword::load(file, 1) && file->scanf("%d", &val)) {
+	if (!TTword::load(file, 1) && file->scanf("%d", &val)) {
 		_field30 = val;
 		return 0;
 	} else {
@@ -171,7 +171,7 @@ TTword4::TTword4(TTString &str, int val1, int val2, int val3, int val4) :
 int TTword4::load(SimpleFile *file) {
 	int val;
 
-	if (TTword::load(file, 1) && file->scanf("%d", &val)) {
+	if (!TTword::load(file, 1) && file->scanf("%d", &val)) {
 		_field30 = val;
 		return 0;
 	} else {
@@ -188,7 +188,7 @@ TTword5::TTword5(TTString &str, int val1, int val2, int val3, int val4) :
 int TTword5::load(SimpleFile *file) {
 	int val;
 
-	if (TTword::load(file, 1) && file->scanf("%d", &val)) {
+	if (!TTword::load(file, 1) && file->scanf("%d", &val)) {
 		if (val >= 0 && val <= 12) {
 			_field30 = val;
 			return 0;
