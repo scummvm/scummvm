@@ -159,11 +159,10 @@ void OSystem_SDL::init() {
 		_taskbarManager = new Common::TaskbarManager();
 #endif
 
-//TODO: define USE_CLOUD
-//#if defined(USE_CLOUD)
+#if defined(USE_CLOUD)
 	if (_cloudThread == 0)
 		_cloudThread = new Cloud::Manager();
-//#endif
+#endif
 
 }
 

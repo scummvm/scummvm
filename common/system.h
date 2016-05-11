@@ -56,10 +56,9 @@ class HardwareInputSet;
 class Keymap;
 class KeymapperDefaultBindings;
 #endif
-//TODO: define USE_CLOUD
-//#if defined(USE_CLOUD)
+#if defined(USE_CLOUD)
 class CloudManager;
-//#endif
+#endif
 }
 
 class AudioCDManager;
@@ -182,15 +181,14 @@ protected:
 	Common::UpdateManager *_updateManager;
 #endif
 
-//TODO: define USE_CLOUD
-//#if defined(USE_CLOUD)
+#if defined(USE_CLOUD)
 	/**
 	* No default value is provided for _cloudThread by OSystem.
 	*
 	* @note _cloudThread is deleted by the OSystem destructor.
 	*/
 	Common::CloudManager *_cloudThread;
-//#endif
+#endif
 
 	/**
 	 * No default value is provided for _fsFactory by OSystem.
@@ -1130,8 +1128,7 @@ public:
 	}
 #endif
 
-//TODO: define USE_CLOUD
-//#if defined(USE_CLOUD)
+#if defined(USE_CLOUD)
 	/**
 	* Returns the CloudManager, used to sync save games and
 	* upload/download files from user's cloud storage.
@@ -1141,7 +1138,7 @@ public:
 	virtual Common::CloudManager *getCloudManager() {
 		return _cloudThread;
 	}
-//#endif
+#endif
 
 	/**
 	 * Returns the FilesystemFactory object, depending on the current architecture.

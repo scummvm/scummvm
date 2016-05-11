@@ -476,11 +476,10 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 		dlg.runModal();
 	}
 #endif
-	
-	//TODO: define USE_CLOUD
-//#ifdef USE_CLOUD
+		
+#ifdef USE_CLOUD
 	system.getCloudManager()->syncSaves();
-//#endif
+#endif
 
 	// Unless a game was specified, show the launcher dialog
 	if (0 == ConfMan.getActiveDomain())

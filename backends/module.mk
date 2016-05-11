@@ -19,6 +19,12 @@ MODULE_OBJS := \
 	saves/default/default-saves.o \
 	timer/default/default-timer.o
 
+ifdef USE_CLOUD
+MODULE_OBJS += \
+	cloud/manager.o \
+	cloud/storage.o \
+	cloud/dropbox/dropboxstorage.o
+endif
 
 ifdef USE_ELF_LOADER
 MODULE_OBJS += \
@@ -248,14 +254,6 @@ MODULE_OBJS += \
 	mixer/nullmixer/nullsdl-mixer.o \
 	saves/recorder/recorder-saves.o
 endif
-
-# I don't have any define, so I'd just add my files without any
-# ifndef USE_CLOUD ?
-MODULE_OBJS += \	
-	cloud/manager.o \
-	cloud/storage.o \
-	cloud/dropbox/storage.o
-# endif
 
 # Include common rules
 include $(srcdir)/rules.mk

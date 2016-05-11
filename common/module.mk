@@ -62,9 +62,8 @@ MODULE_OBJS += \
 	updates.o
 endif
 
-#TODO define USE_CLOUD
-#ifdef USE_CLOUD
-#endif
+ifdef USE_CLOUD
+endif
 
 # Include common rules
 include $(srcdir)/rules.mk
