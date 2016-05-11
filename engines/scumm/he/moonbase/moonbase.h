@@ -92,8 +92,8 @@ private:
 	Common::String _fileName;
 };
 
-#endif
-
 } // End of namespace Scumm
 
-#endif
+#endif // ENABLE_HE
+
+#endif // SCUMM_HE_MOONBASE_H
