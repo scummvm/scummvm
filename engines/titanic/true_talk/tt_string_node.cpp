@@ -84,9 +84,9 @@ void TTstringNode::detach() {
 		_pNext->_pPrior = _pPrior;
 }
 
-TTstringNode *TTstringNode::getTail() const {
+TTstringNode *TTstringNode::getTail() {
 	if (_pNext == nullptr)
-		return nullptr;
+		return this;
 	
 	TTstringNode *node = _pNext;
 	while (node->_pNext)

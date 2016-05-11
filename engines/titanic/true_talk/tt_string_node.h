@@ -32,7 +32,7 @@ private:
 	/**
 	 * Returns the final node at the end of the linked list of nodes
 	 */
-	TTstringNode *getTail() const;
+	TTstringNode *getTail();
 protected:
 	/**
 	 * Initializes state for the node
