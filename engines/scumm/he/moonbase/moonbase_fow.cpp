@@ -322,7 +322,7 @@ void Moonbase::setFOWInfo(int fowInfoArray, int downDim, int acrossDim, int view
 }
 
 void Moonbase::renderFOWState(uint8 *destSurface, int dstPitch, int dstType, int dstw, int dsth, int x, int y, int srcw, int srch, int state, int flags) {
-	int spotx, spoty;
+	int32 spotx, spoty;
 
 	_vm->_wiz->getWizImageSpot(_fowImage, state, spotx, spoty);
 	Common::Rect r(_fowClipX1, _fowClipY1, _fowClipX2, _fowClipY2);
