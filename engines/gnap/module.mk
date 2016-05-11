@@ -9,6 +9,7 @@ MODULE_OBJS := \
 	gnap.o \
 	grid.o \
 	menu.o \
+	music.o \
 	resource.o \
 	sound.o \
 	scenes/arcade.o \

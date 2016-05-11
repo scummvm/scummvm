@@ -43,6 +43,7 @@
 #include "gnap/resource.h"
 #include "gnap/scenes/scenecore.h"
 #include "gnap/character.h"
+#include "gnap/music.h"
 
 struct ADGameDescription;
 
@@ -53,6 +54,7 @@ class SequenceResource;
 class SpriteResource;
 class GameSys;
 class SoundMan;
+class MusicPlayer;
 
 #define GNAP_SAVEGAME_VERSION 1
 
@@ -78,7 +80,8 @@ struct Hotspot {
 const int kMaxTimers = 10;
 
 enum GnapDebugChannels {
-	kDebugBasic	= 1 << 0
+	kDebugBasic	= 1 << 0,
+	kDebugMusic = 1 << 1
 };
 
 enum {
@@ -234,6 +237,7 @@ public:
 	Scene *_scene;
 	PlayerGnap *_gnap;
 	PlayerPlat *_plat;
+	MusicPlayer *_music;
 
 	int _lastUpdateClock;
 
@@ -453,6 +457,9 @@ public:
 	int toyUfoGetSequenceId();
 	bool toyUfoCheckTimer();
 	void toyUfoFlyTo(int destX, int destY, int minX, int maxX, int minY, int maxY, int animationIndex);
+
+	void playMidi(const char *name);
+	void stopMidi();
 };
 
 } // End of namespace Gnap

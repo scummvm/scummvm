@@ -496,6 +496,7 @@ void GnapEngine::updateMenuStatusMainMenu() {
 							playMidi("pause.mid", 0);
 						}
 						*/
+						warning("TODO: playMidi");
 					} else if (i == 1) {
 						_gameSys->drawSpriteToSurface(_largeSprite, 0, 0, 0x1078E);
 						_gameSys->insertDirtyRect(dirtyRect);

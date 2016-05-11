@@ -99,10 +99,12 @@ GnapEngine::GnapEngine(OSystem *syst, const ADGameDescription *gd) :
 
 	Engine::syncSoundSettings();
 	_scene = nullptr;
+	_music = nullptr;
 }
 
 GnapEngine::~GnapEngine() {
 	delete _random;
+	delete _music;
 }
 
 Common::Error GnapEngine::run() {
@@ -263,7 +265,7 @@ void GnapEngine::pauseGame() {
 		_gameSys->insertSpriteDrawItem(_pauseSprite, (800 - _pauseSprite->w) / 2, (600 - _pauseSprite->h) / 2, 356);
 		_lastUpdateClock = 0;
 		gameUpdateTick();
-		// TODO playMidi("pause.mid");
+		playMidi("pause.mid");
 		_isPaused = true;
 	}
 }
@@ -275,7 +277,7 @@ void GnapEngine::resumeGame() {
 		_lastUpdateClock = 0;
 		gameUpdateTick();
 		deleteSurface(&_pauseSprite);
-		// TODO stopMidi();
+		stopMidi();
 		_isPaused = false;
 		clearAllKeyStatus1();
 		_mouseClickState._left = false;
@@ -1128,4 +1130,19 @@ void GnapEngine::toyUfoFlyTo(int destX, int destY, int minX, int maxX, int minY,
 	}
 }
 
+void GnapEngine::playMidi(const char *name) {
+	if (_music)
+		return;
+
+	_music = new MusicPlayer(name);
+	_music->playSMF(true);
+}
+
+void GnapEngine::stopMidi() {
+	if (_music) {
+		_music->stop();
+		delete _music;
+		_music = nullptr;
+	}
+}
 } // End of namespace Gnap
