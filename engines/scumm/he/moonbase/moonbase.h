@@ -56,7 +56,7 @@ private:
 public:
 	int _fowSentinelImage;
 	int _fowSentinelState;
-	uint16 _fowSentinelConditionBits;
+	uint32 _fowSentinelConditionBits;
 
 private:
 	ScummEngine_v71he *_vm;
