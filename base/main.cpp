@@ -477,10 +477,10 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 	}
 #endif
 	
-	CloudThread thread;
-	Common::TimerManager *manager = system.getTimerManager();
-	if (!manager->installTimerProc(cloudThread, 1000000, &thread, "Cloud Thread"))
-		warning("Failed to create cloud thread");
+	//TODO: define USE_CLOUD
+//#ifdef USE_CLOUD
+	system.getCloudThread()->start();
+//#endif
 
 	// Unless a game was specified, show the launcher dialog
 	if (0 == ConfMan.getActiveDomain())

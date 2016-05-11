@@ -58,6 +58,12 @@ class KeymapperDefaultBindings;
 #endif
 }
 
+//TODO: define USE_CLOUD
+//TODO: probably move to common and name CloudManager
+//#if defined(USE_CLOUD)
+class CloudThread;
+//#endif
+
 class AudioCDManager;
 class FilesystemFactory;
 class PaletteManager;
@@ -177,6 +183,16 @@ protected:
 	 */
 	Common::UpdateManager *_updateManager;
 #endif
+
+//TODO: define USE_CLOUD
+//#if defined(USE_CLOUD)
+	/**
+	* No default value is provided for _cloudThread by OSystem.
+	*
+	* @note _cloudThread is deleted by the OSystem destructor.
+	*/
+	CloudThread *_cloudThread;
+//#endif
 
 	/**
 	 * No default value is provided for _fsFactory by OSystem.
@@ -1115,6 +1131,19 @@ public:
 		return _updateManager;
 	}
 #endif
+
+//TODO: define USE_CLOUD
+//#if defined(USE_CLOUD)
+	/**
+	* Returns the CloudThread, used to sync save games and
+	* upload/download files from user's cloud storage.
+	*
+	* @return the CloudThread for the current architecture
+	*/
+	virtual CloudThread *getCloudThread() {
+		return _cloudThread;
+	}
+//#endif
 
 	/**
 	 * Returns the FilesystemFactory object, depending on the current architecture.

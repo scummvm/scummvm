@@ -23,6 +23,8 @@
 #include "cloudthread.h"
 #include "common/debug.h"
 #include "common/json.h"
+#include "common/system.h"
+#include "common/timer.h"
 
 void example1();
 void example2();
@@ -30,10 +32,10 @@ void example3();
 
 void cloudThread(void *thread) {
 	CloudThread *cloudThread = (CloudThread *)thread;
-	cloudThread->work();
+	cloudThread->handler();
 };
 
-void CloudThread::work() {
+void CloudThread::handler() {
 	if (_firstTime) {
 		_firstTime = false;
 
@@ -41,6 +43,21 @@ void CloudThread::work() {
 		example2();
 		example3();
 	} else { }
+}
+
+void CloudThread::setTimeout(int interval) {
+	Common::TimerManager *manager = g_system->getTimerManager();
+	if (!manager->installTimerProc(cloudThread, interval, this, "Cloud Thread"))
+		warning("Failed to create cloud thread");
+}
+
+void CloudThread::unsetTimeout() {
+	Common::TimerManager *manager = g_system->getTimerManager();
+	manager->removeTimerProc(cloudThread);
+}
+
+void CloudThread::start() {
+	setTimeout(1000000); //in one second
 }
 
 /// SimpleJSON examples:

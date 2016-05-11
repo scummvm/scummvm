@@ -23,14 +23,19 @@
 #ifndef BACKENDS_CLOUD_CLOUDTHREAD_H
 #define BACKENDS_CLOUD_CLOUDTHREAD_H
 
-void cloudThread(void *thread); //this one is passed to TimerManager in main()
-
 class CloudThread {
+	friend void cloudThread(void*); //calls private handler()
+
 	bool _firstTime;
+
+	void handler();
+	void setTimeout(int interval);
+	void unsetTimeout();
+
 public:
 	CloudThread(): _firstTime(true) {};
 
-	void work();
+	void start();
 };
 
 #endif
