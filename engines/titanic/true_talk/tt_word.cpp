@@ -56,6 +56,13 @@ int TTword::readSyn(SimpleFile *file) {
 	return 0;
 }
 
+void TTword::appendNode(TTsynonymNode *node) {
+	if (_synP)
+		_synP->addNode(node);
+	else
+		_synP = node;
+}
+
 int TTword::load(SimpleFile *file, int mode) {
 	CString str1, str2;
 	int val;

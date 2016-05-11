@@ -26,7 +26,7 @@
 
 namespace Titanic {
 
-STVocab::STVocab(int val): _vocab(nullptr), _field4(0), _word(nullptr),
+STVocab::STVocab(int val): _pHead(nullptr), _pTail(nullptr), _word(nullptr),
 		_fieldC(0), _field10(0), _field18(val) {
 	_field14 = load("STVOCAB.TXT");
 }
@@ -117,13 +117,33 @@ int STVocab::load(const CString &name) {
 }
 
 void STVocab::addWord(TTword *word) {
-	// TODO
+	TTword *existingWord = findWord(word->_string);
+
+	if (existingWord) {
+		if (word->_synP) {
+			// Move over the synonym
+			existingWord->appendNode(word->_synP);
+			word->_synP = nullptr;
+		}
+
+		_word = nullptr;
+		if (word)
+			delete word;
+	} else if (_pTail) {
+		_pTail->_pNext = word;
+		_pTail = word;
+	} else {
+		if (!_pHead)
+			_pHead = word;
+
+		_pTail = word;
+	}
 }
 
 TTword *STVocab::findWord(const TTString &str) {
 	TTsynonymNode *tempNode = new TTsynonymNode();
 	bool flag = false;
-	TTword *word = _vocab;
+	TTword *word = _pHead;
 
 	while (!flag) {
 		if (_field18 != 3 || strcmp(word->c_str(), str)) {

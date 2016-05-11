@@ -31,8 +31,8 @@ namespace Titanic {
 
 class STVocab {
 private:
-	TTword *_vocab;
-	int _field4;
+	TTword *_pHead;
+	TTword *_pTail;
 	TTword *_word;
 	int _fieldC;
 	int _field10;

@@ -31,8 +31,6 @@ namespace Titanic {
 
 class TTword {
 protected:
-	TTString _string;
-	TTsynonymNode *_synP;
 	TTStringStatus _status;
 	int _wordMode;
 	int _field1C;
@@ -48,6 +46,8 @@ protected:
 	bool testFileHandle(SimpleFile *file) const;
 public:
 	TTword *_pNext;
+	TTsynonymNode *_synP;
+	TTString _string;
 public:
 	TTword(TTString &str, int mode, int val2);
 
@@ -55,6 +55,11 @@ public:
 	 * Read in a synonym for the given word
 	 */
 	int readSyn(SimpleFile *file);
+
+	/**
+	 * Either sets the first synonym for a word, or adds it to an existing one
+	 */
+	void appendNode(TTsynonymNode *node);
 
 	/**
 	 * Load the word
