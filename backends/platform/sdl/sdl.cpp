@@ -33,7 +33,7 @@
 #include "gui/EventRecorder.h"
 #include "common/taskbar.h"
 #include "common/textconsole.h"
-#include "backends/cloud/cloudthread.h"
+#include "backends/cloud/manager.h"
 
 #include "backends/saves/default/default-saves.h"
 
@@ -162,7 +162,7 @@ void OSystem_SDL::init() {
 //TODO: define USE_CLOUD
 //#if defined(USE_CLOUD)
 	if (_cloudThread == 0)
-		_cloudThread = new CloudThread();
+		_cloudThread = new Cloud::Manager();
 //#endif
 
 }

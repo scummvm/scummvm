@@ -20,22 +20,22 @@
 *
 */
 
-#ifndef BACKENDS_CLOUD_CLOUDTHREAD_H
-#define BACKENDS_CLOUD_CLOUDTHREAD_H
+#include "backends/cloud/manager.h"
+#include "backends/cloud/dropbox/dropboxstorage.h"
 
-class CloudThread {
-	friend void cloudThread(void*); //calls private handler()
+namespace Cloud {
 
-	bool _firstTime;
+Manager::Manager(): _currentStorage(new Dropbox::DropboxStorage()) {};
 
-	void handler();
-	void setTimeout(int interval);
-	void unsetTimeout();
+Manager::~Manager() { delete _currentStorage; }
 
-public:
-	CloudThread(): _firstTime(true) {};
+Storage* Manager::getCurrentStorage() {
+	return _currentStorage;
+}
 
-	void start();
-};
+void Manager::syncSaves() {
+	Storage* storage = getCurrentStorage();
+	if (storage) storage->syncSaves();
+}
 
-#endif
+} //end of namespace Cloud

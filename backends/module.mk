@@ -251,8 +251,10 @@ endif
 
 # I don't have any define, so I'd just add my files without any
 # ifndef USE_CLOUD ?
-MODULE_OBJS += \
-	cloud/cloudthread.o
+MODULE_OBJS += \	
+	cloud/manager.o \
+	cloud/storage.o \
+	cloud/dropbox/storage.o
 # endif
 
 # Include common rules

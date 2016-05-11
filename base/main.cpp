@@ -66,7 +66,7 @@
 #endif
 
 #include "backends/keymapper/keymapper.h"
-#include "backends/cloud/cloudthread.h"
+#include "common/cloudmanager.h"
 
 #if defined(_WIN32_WCE)
 #include "backends/platform/wince/CELauncherDialog.h"
@@ -479,7 +479,7 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 	
 	//TODO: define USE_CLOUD
 //#ifdef USE_CLOUD
-	system.getCloudThread()->start();
+	system.getCloudManager()->syncSaves();
 //#endif
 
 	// Unless a game was specified, show the launcher dialog

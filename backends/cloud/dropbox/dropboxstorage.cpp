@@ -20,22 +20,17 @@
 *
 */
 
-#include "cloudthread.h"
+#include "backends/cloud/dropbox/dropboxstorage.h"
 #include "common/debug.h"
 #include "common/json.h"
-#include "common/system.h"
-#include "common/timer.h"
 
 void example1();
 void example2();
 void example3();
 
-void cloudThread(void *thread) {
-	CloudThread *cloudThread = (CloudThread *)thread;
-	cloudThread->handler();
-};
+namespace Cloud { namespace Dropbox {
 
-void CloudThread::handler() {
+void DropboxStorage::handler() {
 	if (_firstTime) {
 		_firstTime = false;
 
@@ -45,20 +40,15 @@ void CloudThread::handler() {
 	} else { }
 }
 
-void CloudThread::setTimeout(int interval) {
-	Common::TimerManager *manager = g_system->getTimerManager();
-	if (!manager->installTimerProc(cloudThread, interval, this, "Cloud Thread"))
-		warning("Failed to create cloud thread");
-}
-
-void CloudThread::unsetTimeout() {
-	Common::TimerManager *manager = g_system->getTimerManager();
-	manager->removeTimerProc(cloudThread);
-}
-
-void CloudThread::start() {
+void DropboxStorage::listDirectory(Common::String path) {
 	setTimeout(1000000); //in one second
 }
+
+void DropboxStorage::syncSaves() {
+	setTimeout(1000000); //in one second
+}
+
+} } //end of namespace Cloud::Dropbox
 
 /// SimpleJSON examples:
 
