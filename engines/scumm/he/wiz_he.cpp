@@ -1763,8 +1763,6 @@ void Wiz::copyCompositeWizImage(uint8 *dst, uint8 *wizPtr, uint8 *compositeInfoB
 		if (layerCmdDataBits & kWCFSubConditionBits) {
 			subConditionBits = READ_LE_UINT32(cmdPtr);
 			cmdPtr += 4;
-		} else {
-			subConditionBits = 0;
 		}
 
 		drawWizImageEx(dst, nestedWizHeader, maskPtr, dstPitch, dstType, dstw, dsth, srcx + xPos, srcy + yPos, srcw, srch,
