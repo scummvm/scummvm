@@ -26,7 +26,7 @@
 
 namespace Titanic {
 
-STVocab::STVocab(int val): _field0(0), _field4(0), _word(nullptr),
+STVocab::STVocab(int val): _vocab(nullptr), _field4(0), _word(nullptr),
 		_fieldC(0), _field10(0), _field18(val) {
 	_field14 = load("STVOCAB.TXT");
 }
@@ -98,10 +98,46 @@ int STVocab::load(const CString &name) {
 			result = 4;
 			break;
 		}
+
+		if (!skipFlag && _word) {
+			if (result) {
+				// Something wrong occurred, so delete word
+				delete _word;
+				_word = nullptr;
+			} else {
+				// Add the word to the master vocab list
+				addWord(_word);
+			}
+		}
 	}
 
+	// Close resource and return result
 	delete file;
 	return result;
+}
+
+void STVocab::addWord(TTword *word) {
+	// TODO
+}
+
+TTword *STVocab::findWord(const TTString &str) {
+	TTsynonymNode *tempNode = new TTsynonymNode();
+	bool flag = false;
+	TTword *word = _vocab;
+
+	while (!flag) {
+		if (_field18 != 3 || strcmp(word->c_str(), str)) {
+			if (word->fn1(str, tempNode, _field18))
+				word = word->_pNext;
+			else
+				flag = true;
+		} else {
+			flag = true;
+		}
+	}
+
+	delete tempNode;
+	return word;
 }
 
 } // End of namespace Titanic

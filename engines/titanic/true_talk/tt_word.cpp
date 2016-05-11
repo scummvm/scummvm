@@ -27,7 +27,7 @@
 namespace Titanic {
 
 TTword::TTword(TTString &str, int mode, int val2) : _string(str),
-		_wordMode(mode), _field1C(val2), _fieldC(0), _synP(nullptr),
+		_wordMode(mode), _field1C(val2), _pNext(nullptr), _synP(nullptr),
 		_field20(0), _field24(0), _field28(0) {
 	_status = str.getStatus() == SS_VALID ? SS_VALID : SS_5;
 }
@@ -90,6 +90,11 @@ bool TTword::testFileHandle(SimpleFile *file) const {
 
 	// TODO: Figure out why original compares passed file handle against specific values
 	return true;
+}
+
+TTword *TTword::fn1(const TTString &str, TTsynonymNode *node, int val) {
+	// TODO
+	return nullptr;
 }
 
 /*------------------------------------------------------------------------*/

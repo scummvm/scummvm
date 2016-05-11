@@ -63,7 +63,8 @@ public:
 	 */
 	TTStringStatus getStatus() const { return _status; }
 
-	operator const char *() const { return _data->_string.c_str(); }
+	const char *c_str() const { return _data->_string.c_str(); }
+	operator const char *() const { return c_str(); }
 };
 
 } // End of namespace Titanic

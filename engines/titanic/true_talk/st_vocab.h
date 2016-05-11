@@ -31,7 +31,7 @@ namespace Titanic {
 
 class STVocab {
 private:
-	int _field0;
+	TTword *_vocab;
 	int _field4;
 	TTword *_word;
 	int _fieldC;
@@ -43,6 +43,16 @@ private:
 	 * Load the vocab data
 	 */
 	int load(const CString &name);
+
+	/**
+	 * Adds a specified word to the vocab list
+	 */
+	void addWord(TTword *word);
+
+	/**
+	 * Scans the vocab list for an existing word match
+	 */
+	TTword *findWord(const TTString &str);
 public:
 	STVocab(int val);
 };

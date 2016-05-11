@@ -32,7 +32,6 @@ namespace Titanic {
 class TTword {
 protected:
 	TTString _string;
-	int _fieldC;
 	TTsynonymNode *_synP;
 	TTStringStatus _status;
 	int _wordMode;
@@ -48,6 +47,8 @@ protected:
 
 	bool testFileHandle(SimpleFile *file) const;
 public:
+	TTword *_pNext;
+public:
 	TTword(TTString &str, int mode, int val2);
 
 	/**
@@ -59,6 +60,11 @@ public:
 	 * Load the word
 	 */
 	int load(SimpleFile *file, int mode);
+
+	TTword *fn1(const TTString &str, TTsynonymNode *node, int val);
+
+	const char *c_str() const { return _string.c_str(); }
+	operator const char *() const { return c_str(); }
 };
 
 class TTword1 : public TTword {
