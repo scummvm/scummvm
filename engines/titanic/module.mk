@@ -466,6 +466,7 @@ MODULE_OBJS := \
 	true_talk/tt_npc_script.o \
 	true_talk/tt_scripts.o \
 	true_talk/tt_string.o \
+	true_talk/tt_string_node.o \
 	true_talk/tt_talker.o \
 	true_talk/tt_title_script.o \
 	true_talk/tt_word.o

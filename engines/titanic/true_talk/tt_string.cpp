@@ -66,6 +66,10 @@ void TTString::operator=(const TTString &str) {
 }
 
 void TTString::operator=(const CString &str) {
+	operator=(str.c_str());
+}
+
+void TTString::operator=(const char *str) {
 	// Delete old string reference, if any
 	if (_data && --_data->_referenceCount == 0)
 		delete _data;

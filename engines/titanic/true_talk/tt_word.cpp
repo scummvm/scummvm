@@ -21,16 +21,38 @@
  */
 
 #include "titanic/true_talk/tt_word.h"
+#include "titanic/true_talk/tt_string_node.h"
+#include "titanic/titanic.h"
 
 namespace Titanic {
 
 TTword::TTword(TTString &str, int mode, int val2) : _string(str),
-		_wordMode(mode), _field1C(val2), _fieldC(0), _field10(0),
+		_wordMode(mode), _field1C(val2), _fieldC(0), _synP(nullptr),
 		_field20(0), _field24(0), _field28(0) {
 	_status = str.getStatus() == SS_VALID ? SS_VALID : SS_5;
 }
 
 int TTword::readSyn(SimpleFile *file) {
+	CString str;
+	int mode, val1;
+
+	if (!file->scanf("%s %d %d", &str, &mode, &val1))
+		return 8;
+	if (!testFileHandle(file))
+		return 5;
+
+	// Create new synanym node
+	TTsynonymNode *synNode = new TTsynonymNode(mode, str.c_str(), val1);
+
+	if (_synP) {
+		// A synonym already exists, so add new one as a tail
+		// at the end of the linked list of synonyms
+		_synP->addNode(synNode);
+	} else {
+		// Very first synonym, so set it
+		_synP = synNode;
+	}
+
 	return 0;
 }
 
@@ -60,6 +82,14 @@ uint TTword::readNumber(const char *str) {
 	}
 
 	return numValue;
+}
+
+bool TTword::testFileHandle(SimpleFile *file) const {
+	if (g_vm->_fileReader.is18Equals(3))
+		return true;
+
+	// TODO: Figure out why original compares passed file handle against specific values
+	return true;
 }
 
 /*------------------------------------------------------------------------*/

@@ -51,6 +51,7 @@ public:
 
 	void operator=(const TTString &str);
 	void operator=(const CString &str);
+	void operator=(const char *str);
 
 	/**
 	 * Returns true if the string is valid

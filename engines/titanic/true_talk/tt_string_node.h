@@ -20,32 +20,46 @@
  *
  */
 
-#ifndef TITANIC_FILE_READER_H
-#define TITANIC_FILE_READER_H
+#ifndef TITANIC_TT_STRING_NODE_H
+#define TITANIC_TT_STRING_NODE_H
 
-#include "common/file.h"
+#include "titanic/true_talk/tt_string.h"
 
 namespace Titanic {
 
-class CScriptHandler;
-
-class CFileReader {
+class TTstringNode {
+private:
+	/**
+	 * Returns the final node at the end of the linked list of nodes
+	 */
+	TTstringNode *getTail() const;
+protected:
+	/**
+	 * Initializes state for the node
+	 */
+	void initialize(int mode);
 public:
-	CScriptHandler *_owner;
-	int _field4;
-	int _field8;
-	int _fieldC;
-	int _field10;
+	TTstringNode *_pPrior;
+	TTstringNode *_pNext;
+	TTString _string;
 	int _field14;
-	int _field18;
+	int _mode;
+	int _field1C;
 public:
-	CFileReader();
+	TTstringNode();
 
-	void reset(CScriptHandler *owner, int val1, int val2);
+	/**
+	 * Links the passed node to this node as a linked list
+	 */
+	void addNode(TTstringNode *newNode);
+};
 
-	bool is18Equals(int val) const { return _field18 == val; }
+class TTsynonymNode : public TTstringNode {
+public:
+	TTsynonymNode();
+	TTsynonymNode(int mode, const char *str, int val2);
 };
 
 } // End of namespace Titanic
 
-#endif /* TITANIC_FILE_READER_H */
+#endif /* TITANIC_TT_STRING_NODE_H */

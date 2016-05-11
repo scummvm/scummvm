@@ -25,6 +25,7 @@
 
 #include "titanic/support/simple_file.h"
 #include "titanic/true_talk/tt_string.h"
+#include "titanic/true_talk/tt_string_node.h"
 
 namespace Titanic {
 
@@ -32,7 +33,7 @@ class TTword {
 protected:
 	TTString _string;
 	int _fieldC;
-	int _field10;
+	TTsynonymNode *_synP;
 	TTStringStatus _status;
 	int _wordMode;
 	int _field1C;
@@ -44,9 +45,14 @@ protected:
 	 * Read in a number
 	 */
 	uint readNumber(const char *str);
+
+	bool testFileHandle(SimpleFile *file) const;
 public:
 	TTword(TTString &str, int mode, int val2);
 
+	/**
+	 * Read in a synonym for the given word
+	 */
 	int readSyn(SimpleFile *file);
 
 	/**

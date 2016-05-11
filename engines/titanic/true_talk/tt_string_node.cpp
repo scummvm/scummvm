@@ -20,32 +20,55 @@
  *
  */
 
-#ifndef TITANIC_FILE_READER_H
-#define TITANIC_FILE_READER_H
-
-#include "common/file.h"
+#include "common/textconsole.h"
+#include "titanic/true_talk/tt_string_node.h"
 
 namespace Titanic {
 
-class CScriptHandler;
+TTstringNode::TTstringNode() : _pPrior(nullptr), _pNext(nullptr),
+		_field14(0), _mode(0), _field1C(0) {
+}
 
-class CFileReader {
-public:
-	CScriptHandler *_owner;
-	int _field4;
-	int _field8;
-	int _fieldC;
-	int _field10;
-	int _field14;
-	int _field18;
-public:
-	CFileReader();
+void TTstringNode::initialize(int mode) {
+	_mode = mode;
+	_field14 = 0;
 
-	void reset(CScriptHandler *owner, int val1, int val2);
+	if (_string.isValid()) {
+		_field1C = 0;
+	} else {
+		_field1C = 11;
+		warning("TTstringNode::initialize has bad subobj");
+	}
+}
 
-	bool is18Equals(int val) const { return _field18 == val; }
-};
+void TTstringNode::addNode(TTstringNode *newNode) {
+	TTstringNode *tail = getTail();
+	tail->_pNext = newNode;
+	newNode->_pPrior = this;
+}
+
+TTstringNode *TTstringNode::getTail() const {
+	if (_pNext == nullptr)
+		return nullptr;
+	
+	TTstringNode *node = _pNext;
+	while (node->_pNext)
+		node = node->_pNext;
+
+	return node;
+}
+
+/*------------------------------------------------------------------------*/
+
+TTsynonymNode::TTsynonymNode() : TTstringNode() {
+}
+
+TTsynonymNode::TTsynonymNode(int mode, const char *str, int val2) :
+		TTstringNode() {
+	_string = str;
+	initialize(mode);
+	_field14 = val2;
+}
+
 
 } // End of namespace Titanic
-
-#endif /* TITANIC_FILE_READER_H */
