@@ -7,6 +7,13 @@
 namespace DM {
 
 struct Frame;
+enum WallSet {
+	kWallSetStone = 0 // @ C0_WALL_SET_STONE
+};
+
+enum FloorSet {
+	kFloorSetStone = 0 // @ C0_FLOOR_SET_STONE
+};
 
 enum Color {
 	kColorNoTransparency = 255,
@@ -57,13 +64,24 @@ class DisplayMan {
 	uint16 _screenWidth;
 	uint16 _screenHeight;
 	byte *_vgaBuffer;
-	uint16 _itemCount;
+
+	uint16 _packedItemCount;
 	uint32 *_packedItemPos;
 	byte *_packedBitmaps; // TODO: this doesn't not contaion graphics exclusively, will have to be moved
+
+	byte **_bitmaps;
+
+
+	// the last two pointers are owned by this array
+	byte *_wallSetBitMaps[15] = {NULL};	// @G[0696..0710]_puc_Bitmap_WallSet_...
+
+	// pointers are not owned by these fields
+	byte *_floorBitmap;
+	byte *_ceilingBitmap;
+
 	DisplayMan(const DisplayMan &other); // no implementation on purpose
 	void operator=(const DisplayMan &rhs); // no implementation on purpose
 
-	byte **_bitmaps;
 	byte *getCurrentVgaBuffer();
 	// the original functions has two position parameters, but they are always set to zero
 	void loadIntoBitmap(uint16 index, byte *destBitmap); // @ F0466_EXPAND_GraphicToBitmap
@@ -73,7 +91,11 @@ public:
 	DisplayMan(DMEngine *dmEngine);
 	~DisplayMan();
 	void setUpScreens(uint16 width, uint16 height);
+
 	void loadGraphics();
+	void loadWallSet(WallSet set); // @ F0095_DUNGEONVIEW_LoadWallSet
+	void loadFloorSet(FloorSet set); // @ F0094_DUNGEONVIEW_LoadFloorSet
+
 	void loadPalette(dmPaletteEnum palette);
 
 	/// Gives the width of an IMG0 type item

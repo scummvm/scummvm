@@ -24,6 +24,7 @@ uint16 dmPalettes[10][16] = {
 };
 
 
+
 enum GraphicIndice {
 	gFloorIndice = 75,
 	gCeilingIndice = 76
@@ -50,7 +51,7 @@ using namespace DM;
 
 DisplayMan::DisplayMan(DMEngine *dmEngine) :
 	_vm(dmEngine), _currPalette(kPalSwoosh), _screenWidth(0), _screenHeight(0),
-	_vgaBuffer(NULL), _itemCount(0), _packedItemPos(NULL), _packedBitmaps(NULL),
+	_vgaBuffer(NULL), _packedItemCount(0), _packedItemPos(NULL), _packedBitmaps(NULL),
 	_bitmaps(NULL) {}
 
 DisplayMan::~DisplayMan() {
@@ -58,6 +59,8 @@ DisplayMan::~DisplayMan() {
 	delete[] _packedItemPos;
 	delete[] _vgaBuffer;
 	delete[] _bitmaps;
+	delete[] _wallSetBitMaps[13]; // copy of another bitmap, just flipped
+	delete[] _wallSetBitMaps[14]; // copy of another bitmap, just flipped
 }
 
 void DisplayMan::setUpScreens(uint16 width, uint16 height) {
@@ -72,16 +75,16 @@ void DisplayMan::loadGraphics() {
 	Common::File f;
 	f.open("graphics.dat");
 
-	_itemCount = f.readUint16BE();
-	_packedItemPos = new uint32[_itemCount + 1];
+	_packedItemCount = f.readUint16BE();
+	_packedItemPos = new uint32[_packedItemCount + 1];
 	_packedItemPos[0] = 0;
-	for (uint16 i = 1; i < _itemCount + 1; ++i)
+	for (uint16 i = 1; i < _packedItemCount + 1; ++i)
 		_packedItemPos[i] = f.readUint16BE() + _packedItemPos[i - 1];
 
-	_packedBitmaps = new uint8[_packedItemPos[_itemCount]];
+	_packedBitmaps = new uint8[_packedItemPos[_packedItemCount]];
 
-	f.seek(2 + _itemCount * 4);
-	for (uint32 i = 0; i < _packedItemPos[_itemCount]; ++i)
+	f.seek(2 + _packedItemCount * 4);
+	for (uint32 i = 0; i < _packedItemPos[_packedItemCount]; ++i)
 		_packedBitmaps[i] = f.readByte();
 
 	f.close();
@@ -245,17 +248,35 @@ void DisplayMan::drawWallSetBitmap(byte *bitmap, Frame &f, uint16 srcWidth) {
 }
 
 
+enum WallSetIndices {
+	kDoorFrameFront = 0, // @  G0709_puc_Bitmap_WallSet_DoorFrameFront
+	kDoorFrameLeft_D1C = 1, // @  G0708_puc_Bitmap_WallSet_DoorFrameLeft_D1C
+	kFameLeft_D2C = 2, // @  G0707_puc_Bitmap_WallSet_DoorFrameLeft_D2C
+	kDoorFrameLeft_D3C = 3, // @  G0706_puc_Bitmap_WallSet_DoorFrameLeft_D3C
+	kDoorFrameLeft_D3L = 4, // @  G0705_puc_Bitmap_WallSet_DoorFrameLeft_D3L
+	kDoorFrameTop_D1LCR = 5, // @  G0704_puc_Bitmap_WallSet_DoorFrameTop_D1LCR
+	kDoorFrameTop_D2LCR = 6, // @  G0703_puc_Bitmap_WallSet_DoorFrameTop_D2LCR
+	kWall_D0R = 7, // @  G0702_puc_Bitmap_WallSet_Wall_D0R
+	kWall_D0L = 8, // @  G0701_puc_Bitmap_WallSet_Wall_D0L
+	kWall_D1LCR = 9, // @  G0700_puc_Bitmap_WallSet_Wall_D1LCR
+	kWall_D2LCR = 10, // @  G0699_puc_Bitmap_WallSet_Wall_D2LCR
+	kWall_D3LCR = 11, // @  G0698_puc_Bitmap_WallSet_Wall_D3LCR
+	kWall_D3L2 = 12, // @  G0697_puc_Bitmap_WallSet_Wall_D3L2
+
+	kWall_D3R2 = 13, // @  G0696_puc_Bitmap_WallSet_Wall_D3R2
+	kDoorFrameRight_D1C = 14// @  G0710_puc_Bitmap_WallSet_DoorFrameRight_D1C
+};
 
 void DisplayMan::drawDungeon(direction dir, uint16 posX, uint16 posY) {
 	loadPalette(kPalDungeonView0);
 	// TODO: this is a global variable, set from here
-	bool flippedWallAndFootprints = (posX + posY + dir) & 1;
+	bool flippedFloorCeiling = (posX + posY + dir) & 1;
 
 	// NOTE: this can hold every bitmap, width and height is "flexible"
 	byte  *tmpBitmap = new byte[305 * 111];
 	clearBitmap(tmpBitmap, 305, 111, kColorBlack);
 
-	if (flippedWallAndFootprints) {
+	if (flippedFloorCeiling) {
 		blitToBitmap(_bitmaps[gFloorIndice], width(gFloorIndice), height(gFloorIndice), tmpBitmap, width(gFloorIndice));
 		flipBitmapHorizontal(tmpBitmap, width(gFloorIndice), height(gFloorIndice));
 		drawWallSetBitmap(tmpBitmap, gFloorFrame, width(gFloorIndice));
@@ -284,4 +305,37 @@ void DisplayMan::clearScreen(Color color) {
 
 void DisplayMan::clearBitmap(byte *bitmap, uint16 width, uint16 height, Color color) {
 	memset(bitmap, color, sizeof(byte) * width * height);
+}
+
+
+void DisplayMan::loadWallSet(WallSet set) {
+	// there are 2 bitmaps per set, first one is at 75
+	GraphicIndice indice = (GraphicIndice)(75 + (2 * set));
+	_floorBitmap = _bitmaps[indice];
+	_ceilingBitmap = _bitmaps[indice + 1];
+}
+
+void DisplayMan::loadFloorSet(FloorSet set) {
+	// there are 13 bitmaps perset, first one is at 77
+	uint16 firstIndice = (set * 13) + 77;
+	for (uint16 i = 0; i < 13; ++i) {
+		_wallSetBitMaps[i] = _bitmaps[i + firstIndice];
+	}
+
+
+	uint16 leftDoorIndice = firstIndice + kDoorFrameLeft_D1C;
+	uint16 w = width(leftDoorIndice), h = height(leftDoorIndice);
+	if (_wallSetBitMaps[kDoorFrameRight_D1C])
+		delete[] _wallSetBitMaps[kDoorFrameRight_D1C];
+	_wallSetBitMaps[kDoorFrameRight_D1C] = new byte[w * h];
+	blitToBitmap(_wallSetBitMaps[kDoorFrameLeft_D1C], w, h, _wallSetBitMaps[kDoorFrameRight_D1C], w);
+	flipBitmapHorizontal(_wallSetBitMaps[kDoorFrameRight_D1C], w, h);
+
+	uint16 leftWallIndice = firstIndice + kWall_D3L2;
+	w = width(leftWallIndice), h = height(leftWallIndice);
+	if (_wallSetBitMaps[kWall_D3R2])
+		delete[] _wallSetBitMaps[kWall_D3R2];
+	_wallSetBitMaps[kWall_D3R2] = new byte[w * h];
+	blitToBitmap(_wallSetBitMaps[kWall_D3L2], w, h, _wallSetBitMaps[kWall_D3R2], w);
+	flipBitmapHorizontal(_wallSetBitMaps[kWall_D3R2], w, h);
 }

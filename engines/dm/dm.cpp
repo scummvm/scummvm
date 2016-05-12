@@ -56,6 +56,8 @@ Common::Error DMEngine::run() {
 	_displayMan->setUpScreens(320, 200);
 	_displayMan->loadGraphics();
 	_dungeonMan->loadDungeonFile();
+	_displayMan->loadFloorSet(kFloorSetStone);
+	_displayMan->loadWallSet(kWallSetStone);
 
 	_displayMan->loadPalette(kPalCredits);
 
