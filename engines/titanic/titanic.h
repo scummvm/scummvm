@@ -34,7 +34,7 @@
 #include "titanic/events.h"
 #include "titanic/support/files_manager.h"
 #include "titanic/main_game_window.h"
-#include "titanic/support/file_reader.h"
+#include "titanic/support/exe_resources.h"
 #include "titanic/support/movie.h"
 #include "titanic/support/screen_manager.h"
 #include "titanic/support/string.h"
@@ -120,7 +120,7 @@ public:
 	Common::RandomSource _randomSource;
 	CScriptHandler *_scriptHandler;
 	TTScriptBase *_script;
-	CFileReader _fileReader;
+	CExeResources _exeResources;
 	CMovieList _activeMovies;
 	CString _itemNames[TOTAL_ITEMS];
 	CString _itemDescriptions[TOTAL_ITEMS];

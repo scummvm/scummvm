@@ -32,7 +32,7 @@ STVocab::STVocab(int val): _pHead(nullptr), _pTail(nullptr), _word(nullptr),
 }
 
 int STVocab::load(const CString &name) {
-	SimpleFile *file = g_vm->_fileReader._owner->openResource(name);
+	SimpleFile *file = g_vm->_exeResources._owner->openResource(name);
 	int result = 0;
 	bool skipFlag;
 

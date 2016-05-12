@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef TITANIC_FILE_READER_H
-#define TITANIC_FILE_READER_H
+#ifndef TITANIC_EXE_RESOURCES_H
+#define TITANIC_EXE_RESOURCES_H
 
 #include "common/file.h"
 
@@ -29,7 +29,7 @@ namespace Titanic {
 
 class CScriptHandler;
 
-class CFileReader {
+class CExeResources {
 public:
 	CScriptHandler *_owner;
 	int _field4;
@@ -39,7 +39,7 @@ public:
 	int _field14;
 	int _field18;
 public:
-	CFileReader();
+	CExeResources();
 
 	void reset(CScriptHandler *owner, int val1, int val2);
 
@@ -48,4 +48,4 @@ public:
 
 } // End of namespace Titanic
 
-#endif /* TITANIC_FILE_READER_H */
+#endif /* TITANIC_EXE_RESOURCES_H */

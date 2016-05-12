@@ -92,7 +92,7 @@ uint TTword::readNumber(const char *str) {
 }
 
 bool TTword::testFileHandle(SimpleFile *file) const {
-	if (g_vm->_fileReader.is18Equals(3))
+	if (g_vm->_exeResources.is18Equals(3))
 		return true;
 
 	// TODO: Figure out why original compares passed file handle against specific values

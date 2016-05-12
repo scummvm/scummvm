@@ -20,15 +20,15 @@
  *
  */
 
-#include "titanic/support/file_reader.h"
+#include "titanic/support/exe_resources.h"
 
 namespace Titanic {
 
-CFileReader::CFileReader() : _owner(nullptr), _field4(0), _field8(0),
+CExeResources::CExeResources() : _owner(nullptr), _field4(0), _field8(0),
 	_fieldC(0), _field10(0), _field14(0), _field18(0) {
 }
 
-void CFileReader::reset(CScriptHandler *owner, int val1, int val2) {
+void CExeResources::reset(CScriptHandler *owner, int val1, int val2) {
 	_owner = owner;
 	_field18 = val2;
 }

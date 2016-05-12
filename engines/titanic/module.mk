@@ -431,7 +431,7 @@ MODULE_OBJS := \
 	star_control/star_control_sub15.o \
 	support/direct_draw.o \
 	support/direct_draw_surface.o \
-	support/file_reader.o \
+	support/exe_resources.o \
 	support/files_manager.o \
 	support/font.o \
 	support/image.o \
