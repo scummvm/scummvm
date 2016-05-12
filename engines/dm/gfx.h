@@ -87,6 +87,7 @@ class DisplayMan {
 	void loadIntoBitmap(uint16 index, byte *destBitmap); // @ F0466_EXPAND_GraphicToBitmap
 	void unpackGraphics();
 	void drawWallSetBitmap(byte *bitmap, Frame &f); // @ F0100_DUNGEONVIEW_DrawWallSetBitmap
+	void drawSquareD3L(direction dir, int16 posX, int16 posY); // @ F0116_DUNGEONVIEW_DrawSquareD3L
 public:
 	DisplayMan(DMEngine *dmEngine);
 	~DisplayMan();
@@ -117,7 +118,7 @@ public:
 
 	void clearBitmap(byte *bitmap, uint16 width, uint16 height, Color color);
 	void clearScreen(Color color);
-	void drawDungeon(direction dir, uint16 posX, uint16 posY); // @ F0128_DUNGEONVIEW_Draw_CPSF
+	void drawDungeon(direction dir, int16 posX, int16 posY); // @ F0128_DUNGEONVIEW_Draw_CPSF
 	void updateScreen();
 };
 

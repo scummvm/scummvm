@@ -253,6 +253,10 @@ void DisplayMan::drawWallSetBitmap(byte *bitmap, Frame &f) {
 	blitToScreen(bitmap, f.srcWidth, f.srcX, f.srcY, f.destFromX, f.destToX, f.destFromY, f.destToY, kColorFlesh, gDungeonViewport);
 }
 
+void drawSquareD3L(direction dir, int16 posX, int16 posY) {
+
+}
+
 
 enum WallSetIndices {
 	kDoorFrameFront = 0, // @  G0709_puc_Bitmap_WallSet_DoorFrameFront
@@ -273,7 +277,7 @@ enum WallSetIndices {
 	kDoorFrameRight_D1C = 14// @  G0710_puc_Bitmap_WallSet_DoorFrameRight_D1C
 };
 
-void DisplayMan::drawDungeon(direction dir, uint16 posX, uint16 posY) {
+void DisplayMan::drawDungeon(direction dir, int16 posX, int16 posY) {
 	loadPalette(kPalDungeonView0);
 	// TODO: this is a global variable, set from here
 	bool flippedFloorCeiling = (posX + posY + dir) & 1;
@@ -296,11 +300,14 @@ void DisplayMan::drawDungeon(direction dir, uint16 posX, uint16 posY) {
 		drawWallSetBitmap(_floorBitmap, gFloorFrame);
 	}
 
-	if (_vm->_dungeonMan->getRelSquareType(dir, 3, -2, posX, posY) == kWallSquareType)
+	if (_vm->_dungeonMan->getRelSquareType(dir, 3, -2, posX, posY) == kWallElemType)
 		drawWallSetBitmap(_wallSetBitMaps[kWall_D3L2], gWallFrameD3L2);
-	if (_vm->_dungeonMan->getRelSquareType(dir, 3, 2, posX, posY) == kWallSquareType)
+	if (_vm->_dungeonMan->getRelSquareType(dir, 3, 2, posX, posY) == kWallElemType)
 		drawWallSetBitmap(_wallSetBitMaps[kWall_D3R2], gWallFrameD3R2);
 
+	// D3L
+	int16 tmpPosX = posX, tmpPosY = posY;
+	_vm->_dungeonMan->getRelSquareType(dir, 3, -1, tmpPosX, tmpPosY);
 
 
 

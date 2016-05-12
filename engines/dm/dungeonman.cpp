@@ -16,7 +16,7 @@ void turnDirRight(direction &dir) { dir = (direction)((dir + 1) & 3); }
 using namespace DM;
 
 
-void DungeonMan::mapCoordsAfterRelMovement(direction dir, uint16 stepsForward, uint16 stepsRight, uint16 &posX, uint16 &posY) {
+void DungeonMan::mapCoordsAfterRelMovement(direction dir, int16 stepsForward, int16 stepsRight, int16 &posX, int16 &posY) {
 	posX += dirIntoStepCountEast[dir] * stepsForward;
 	posY += dirIntoStepCountNorth[dir] * stepsForward;
 	turnDirRight(dir);
@@ -282,17 +282,36 @@ void DungeonMan::setCurrentMap(uint16 mapIndex) {
 		= &_dunData.columnsCumulativeSquareThingCount[_dunData.mapsFirstColumnIndex[mapIndex]];
 }
 
-byte DungeonMan::getSquare(uint16 mapX, uint16 mapY) {
+byte DungeonMan::getSquare(int16 mapX, int16 mapY) {
 	bool isInXBounds = (mapX >= 0) && (mapX < _currMap.width);
 	bool isInYBounds = (mapY >= 0) && (mapY < _currMap.height);
 
 	if (isInXBounds && isInYBounds)
 		return _currMap.data[mapX][mapY];
-	else
-		return kWallSquareType;
+
+	int16 tmpSquare;
+	if (isInYBounds) {
+		tmpSquare = getSquareType(_currMap.data[0][mapY]);
+		if (mapX == -1 && (tmpSquare == kCorridorElemType || tmpSquare == kPitElemType))
+			return (kWallElemType << 5) | kWallEastRandOrnAllowed;
+
+		tmpSquare = getSquareType(_currMap.data[_currMap.width - 1][mapY]);
+		if (mapX == _currMap.width && (tmpSquare == kCorridorElemType || tmpSquare == kPitElemType))
+			return (kWallElemType << 5) | kWallWestRandOrnAllowed;
+	} else if (isInXBounds) {
+		tmpSquare = getSquareType(_currMap.data[mapX][0]);
+		if (mapY == -1 && (tmpSquare == kCorridorElemType || tmpSquare == kPitElemType))
+			return (kWallElemType << 5) | kWallSouthRandOrnAllowed;
+
+		tmpSquare = getSquareType(_currMap.data[mapX][_currMap.height - 1]);
+		if (mapY == _currMap.height && (tmpSquare == kCorridorElemType || tmpSquare == kPitElemType))
+			return (kWallElemType << 5) | kWallNorthRandOrnAllowed;
+	}
+
+	return kWallElemType << 5;
 }
 
-byte DungeonMan::getRelSquare(direction dir, uint16 stepsForward, uint16 stepsRight, uint16 posX, uint16 posY) {
+byte DungeonMan::getRelSquare(direction dir, int16 stepsForward, int16 stepsRight, int16 posX, int16 posY) {
 	mapCoordsAfterRelMovement(dir, stepsForward, stepsForward, posX, posY);
 	return getSquare(posX, posY);
 }
