@@ -30,17 +30,22 @@ enum GraphicIndice {
 	gCeilingIndice = 76
 };
 
+// The frames in the orignal sources contain inclusive boundaries and byte widths, not pixel widths
 struct Frame {
-	// FIXME: these bundaries are inclusive, workaround by adding +1 in the drawFrame methods
 	uint16 destFromX, destToX, destFromY, destToY;
-	// srcWidth and srcHeight (present in the original sources) is redundant here, can be deduced from gaphicsIndice
+	uint16 srcWidth, srcHeight;
 	uint16 srcX, srcY;
+
+	Frame(uint16 destFromX, uint16 destToX, uint16 destFromY, uint16 destToY,
+		  uint16 srcWidth, uint16 srcHeight, uint16 srcX, uint16 srcY):
+		destFromX(destFromX), destToX(destToX + 1), destFromY(destFromY), destToY(destToY + 1),
+		srcWidth(srcWidth * 2), srcHeight(srcHeight), srcX(srcX), srcY(srcY) {}
 };
 
-Frame gCeilingFrame = {0, 223, 0, 28, 0, 0};
-Frame gFloorFrame = {0, 223, 66, 135, 0, 0};
-Frame gWallFrameD3L2 = {0,  15, 25, 73, 0, 0}; // @ FRAME G0711_s_Graphic558_Frame_Wall_D3L2
-Frame gWallFrameD3R2 = {208, 223, 25, 73, 0, 0}; // @ G0712_s_Graphic558_Frame_Wall_D3R2
+Frame gCeilingFrame(0, 223, 0, 28, 112, 29, 0, 0);
+Frame gFloorFrame(0, 223, 66, 135, 112, 70, 0, 0);
+Frame gWallFrameD3L2(0,  15, 25, 73, 8, 49, 0, 0); // @ FRAME G0711_s_Graphic558_Frame_Wall_D3L2
+Frame gWallFrameD3R2(208, 223, 25, 73, 8, 49, 0, 0); // @ G0712_s_Graphic558_Frame_Wall_D3R2
 
 extern Viewport gDefultViewPort = {0, 0};
 extern Viewport gDungeonViewport = {0, 64};	// TODO: I guessed the numbers
@@ -59,8 +64,8 @@ DisplayMan::~DisplayMan() {
 	delete[] _packedItemPos;
 	delete[] _vgaBuffer;
 	delete[] _bitmaps;
-	delete[] _wallSetBitMaps[13]; // copy of another bitmap, just flipped
-	delete[] _wallSetBitMaps[14]; // copy of another bitmap, just flipped
+	delete[] _wallSetBitMaps[13]; // copy of another bitmap, but flipped
+	delete[] _wallSetBitMaps[14]; // copy of another bitmap, but flipped
 }
 
 void DisplayMan::setUpScreens(uint16 width, uint16 height) {
@@ -244,7 +249,7 @@ uint16 DisplayMan::height(uint16 index) {
 }
 
 void DisplayMan::drawWallSetBitmap(byte *bitmap, Frame &f, uint16 srcWidth) {
-	blitToScreen(bitmap, srcWidth, f.srcX, f.srcY, f.destFromX, f.destToX + 1, f.destFromY, f.destToY + 1, kColorFlesh, gDungeonViewport);
+	blitToScreen(bitmap, srcWidth, f.srcX, f.srcY, f.destFromX, f.destToX, f.destFromY, f.destToY, kColorFlesh, gDungeonViewport);
 }
 
 
