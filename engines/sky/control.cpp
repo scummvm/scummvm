@@ -167,7 +167,7 @@ ControlStatus::~ControlStatus() {
 
 void ControlStatus::setToText(const char *newText) {
 	char tmpLine[256];
-	strcpy(tmpLine, newText);
+	Common::strlcpy(tmpLine, newText, 256);
 	if (_textData) {
 		_statusText->flushForRedraw();
 		free(_textData);
