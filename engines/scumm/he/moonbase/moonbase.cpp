@@ -107,12 +107,16 @@ void Moonbase::blitT14WizImage(uint8 *dst, int dstw, int dsth, int dstPitch, con
 							WRITE_LE_UINT16(dst1, READ_LE_UINT16(src));
 						} else if (rawROP == 2) { // MMX_ADDITIVE
 							uint16 color = READ_LE_UINT16(src);
-							uint32 orig = READ_LE_UINT16(dst1);
+							uint16 orig = READ_LE_UINT16(dst1);
 
 							uint32 r = MIN<uint32>(0x7c00, (orig & 0x7c00) + (color & 0x7c00));
 							uint32 g = MIN<uint32>(0x03e0, (orig & 0x03e0) + (color & 0x03e0));
 							uint32 b = MIN<uint32>(0x001f, (orig & 0x001f) + (color & 0x001f));
 							WRITE_LE_UINT16(dst1, (r | g | b));
+						} else if (rawROP == 5) { // MMX_CHEAP_50_50
+							uint16 color = (READ_LE_UINT16(src) >> 1) & 0x3DEF;
+							uint16 orig = (READ_LE_UINT16(dst1) >> 1) & 0x3DEF;
+							WRITE_LE_UINT16(dst1, (color + orig));
 						}
 						dst1 += 2;
 					}
