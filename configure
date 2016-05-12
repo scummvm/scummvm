@@ -4193,22 +4193,24 @@ define_in_config_if_yes "$_libcurl" "USE_LIBCURL"
 #
 # Check whether to build cloud integration support
 #
-echo_n "Cloud integration"
+echo_n "Cloud integration..."
 if test "$_cloud" = "no"; then
 	echo "no"
 else
-	if test "_sdl_net" = "yes" -or "_libcurl" = "yes"; then		
+	_cloud=no
+	if test "$_sdlnet" = "yes"; then
 		_cloud=yes
-		if test "_sdl_net" = "yes"; then
-			echo "local"
-		fi
-		if test "_libcurl" = "yes"; then
-			echo "servers"		
-		fi
-	else
-		_cloud=no
-		echo "no"
+		echo_n "local"
 	fi
+	if test "$_libcurl" = "yes"; then
+		if test "$_cloud" = "yes"; then echo_n ", "; fi
+		_cloud=yes
+		echo_n "servers"
+	fi
+	if test "$_cloud" = "no"; then
+		echo_n "no"
+	fi
+	echo  # newline
 fi
 define_in_config_if_yes $_cloud 'USE_CLOUD'
 
