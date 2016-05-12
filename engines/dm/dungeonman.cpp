@@ -11,7 +11,6 @@ int8 dirIntoStepCountNorth[4] = {-1 /* North */, 0 /* East */, 1 /* West */, 0 /
 
 void turnDirRight(direction &dir) { dir = (direction)((dir + 1) & 3); }
 
-
 }
 
 using namespace DM;
@@ -225,12 +224,8 @@ void DungeonMan::loadDungeonFile() {
 	if (_dunData.squareFirstThings)
 		delete[] _dunData.squareFirstThings;
 	_dunData.squareFirstThings = new Thing[_fileHeader.squareFirstThingCount];
-	for (uint16 i = 0; i < _fileHeader.squareFirstThingCount; ++i) {
-		uint16 tmp = dunDataStream.readUint16BE();
-		_dunData.squareFirstThings[i].cell = tmp >> 14;
-		_dunData.squareFirstThings[i].type = (tmp >> 10) & 0xF;
-		_dunData.squareFirstThings[i].index = tmp & 0x1FF;
-	}
+	for (uint16 i = 0; i < _fileHeader.squareFirstThingCount; ++i)
+		_dunData.squareFirstThings[i].set(dunDataStream.readUint16BE());
 	if (_messages.newGame)
 		for (uint16 i = 0; i < 300; ++i)
 			_dunData.squareFirstThings[i] = Thing::specThingNone;

@@ -52,13 +52,40 @@ class DungeonFileHeader {
 	uint16 thingCounts[16]; // @ ThingCount[16]
 }; // @ DUNGEON_HEADER
 
+class Map {
+	friend class DungeonMan;
+
+	uint32 rawDunDataOffset;
+	uint8 offsetMapX, offsetMapY;
+
+	uint8 level; // only used in DMII
+	uint8 width, height; // !!! THESRE ARE INCLUSIVE BOUNDARIES
+	// orn short for Ornament
+	uint8 wallOrnCount; /* May be used in a Sensor on a Wall or closed Fake Wall square */
+	uint8 randWallOrnCount; /* Used only on some Wall squares and some closed Fake Wall squares */
+	uint8 floorOrnCount; /* May be used in a Sensor on a Pit, open Fake Wall, Corridor or Teleporter square */
+	uint8 randFloorOrnCount; /* Used only on some Corridor squares and some open Fake Wall squares */
+
+	uint8 doorOrnCount;
+	uint8 creatureTypeCount;
+	uint8 difficulty;
+
+	uint8 floorSet, wallSet, doorSet0, doorSet1;
+}; // @ MAP
+
 class Thing {
 	friend class DungeonMan;
 
 	static const Thing specThingNone;
 
-	Thing(uint8 cell, uint8 type, uint8 index) : cell(cell), type(type), index(index) {}
 	Thing() {}
+	Thing(uint8 cell, uint8 type, uint8 index) : cell(cell), type(type), index(index) {}
+
+	void set(uint16 dat) {
+		cell = dat >> 14;
+		type = (dat >> 10) & 0xF;
+		index = dat & 0x1FF;
+	}
 
 	uint8 cell;
 	uint8 type;
@@ -109,27 +136,6 @@ private:
 	bool restartGameRequest = false; // @ G0523_B_RestartGameRequested
 }; // @ AGGREGATE
 
-class Map {
-	friend class DungeonMan;
-
-	uint32 rawDunDataOffset;
-	uint8 offsetMapX, offsetMapY;
-
-	uint8 level; // only used in DMII
-	uint8 width, height; // !!! THESRE ARE INCLUSIVE BOUNDARIES
-	// orn short for Ornament
-	uint8 wallOrnCount; /* May be used in a Sensor on a Wall or closed Fake Wall square */
-	uint8 randWallOrnCount; /* Used only on some Wall squares and some closed Fake Wall squares */
-	uint8 floorOrnCount; /* May be used in a Sensor on a Pit, open Fake Wall, Corridor or Teleporter square */
-	uint8 randFloorOrnCount; /* Used only on some Corridor squares and some open Fake Wall squares */
-
-	uint8 doorOrnCount;
-	uint8 creatureTypeCount;
-	uint8 difficulty;
-
-	uint8 floorSet, wallSet, doorSet0, doorSet1;
-
-}; // @ MAP
 
 
 
