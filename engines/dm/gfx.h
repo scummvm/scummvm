@@ -65,9 +65,10 @@ class DisplayMan {
 
 	byte **_bitmaps;
 	byte *getCurrentVgaBuffer();
-	void loadIntoBitmap(uint16 index, byte *destBitmap);
+	// the original functions has two position parameters, but they are always set to zero
+	void loadIntoBitmap(uint16 index, byte *destBitmap); // @ F0466_EXPAND_GraphicToBitmap
 	void unpackGraphics();
-	void drawWallSetBitmap(byte *bitmap, Frame &f, uint16 srcWidth);
+	void drawWallSetBitmap(byte *bitmap, Frame &f, uint16 srcWidth); // @ F0100_DUNGEONVIEW_DrawWallSetBitmap
 public:
 	DisplayMan(DMEngine *dmEngine);
 	~DisplayMan();
@@ -94,7 +95,7 @@ public:
 
 	void clearBitmap(byte *bitmap, uint16 width, uint16 height, Color color);
 	void clearScreen(Color color);
-	void drawDungeon(direction dir, uint16 posX, uint16 posY);
+	void drawDungeon(direction dir, uint16 posX, uint16 posY); // @ F0128_DUNGEONVIEW_Draw_CPSF
 	void updateScreen();
 };
 
