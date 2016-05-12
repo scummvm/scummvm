@@ -3,7 +3,8 @@ MODULE := engines/dm
 MODULE_OBJS := \
 	detection.o \
 	dm.o \
-	gfx.o
+	gfx.o \
+	dungeonman.o
 
 MODULE_DIRS += \
 	engines/dm

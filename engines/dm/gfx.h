@@ -86,7 +86,7 @@ class DisplayMan {
 	// the original functions has two position parameters, but they are always set to zero
 	void loadIntoBitmap(uint16 index, byte *destBitmap); // @ F0466_EXPAND_GraphicToBitmap
 	void unpackGraphics();
-	void drawWallSetBitmap(byte *bitmap, Frame &f, uint16 srcWidth); // @ F0100_DUNGEONVIEW_DrawWallSetBitmap
+	void drawWallSetBitmap(byte *bitmap, Frame &f); // @ F0100_DUNGEONVIEW_DrawWallSetBitmap
 public:
 	DisplayMan(DMEngine *dmEngine);
 	~DisplayMan();

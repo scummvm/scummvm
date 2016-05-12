@@ -37,14 +37,14 @@ struct Frame {
 	uint16 srcX, srcY;
 
 	Frame(uint16 destFromX, uint16 destToX, uint16 destFromY, uint16 destToY,
-		  uint16 srcWidth, uint16 srcHeight, uint16 srcX, uint16 srcY):
+		  uint16 srcWidth, uint16 srcHeight, uint16 srcX, uint16 srcY) :
 		destFromX(destFromX), destToX(destToX + 1), destFromY(destFromY), destToY(destToY + 1),
 		srcWidth(srcWidth * 2), srcHeight(srcHeight), srcX(srcX), srcY(srcY) {}
 };
 
 Frame gCeilingFrame(0, 223, 0, 28, 112, 29, 0, 0);
 Frame gFloorFrame(0, 223, 66, 135, 112, 70, 0, 0);
-Frame gWallFrameD3L2(0,  15, 25, 73, 8, 49, 0, 0); // @ FRAME G0711_s_Graphic558_Frame_Wall_D3L2
+Frame gWallFrameD3L2(0, 15, 25, 73, 8, 49, 0, 0); // @ FRAME G0711_s_Graphic558_Frame_Wall_D3L2
 Frame gWallFrameD3R2(208, 223, 25, 73, 8, 49, 0, 0); // @ G0712_s_Graphic558_Frame_Wall_D3R2
 
 extern Viewport gDefultViewPort = {0, 0};
@@ -63,6 +63,7 @@ DisplayMan::~DisplayMan() {
 	delete[] _packedBitmaps;
 	delete[] _packedItemPos;
 	delete[] _vgaBuffer;
+	delete[] _bitmaps[0];
 	delete[] _bitmaps;
 	delete[] _wallSetBitMaps[13]; // copy of another bitmap, but flipped
 	delete[] _wallSetBitMaps[14]; // copy of another bitmap, but flipped
@@ -248,8 +249,8 @@ uint16 DisplayMan::height(uint16 index) {
 	return READ_BE_UINT16(data + 2);
 }
 
-void DisplayMan::drawWallSetBitmap(byte *bitmap, Frame &f, uint16 srcWidth) {
-	blitToScreen(bitmap, srcWidth, f.srcX, f.srcY, f.destFromX, f.destToX, f.destFromY, f.destToY, kColorFlesh, gDungeonViewport);
+void DisplayMan::drawWallSetBitmap(byte *bitmap, Frame &f) {
+	blitToScreen(bitmap, f.srcWidth, f.srcX, f.srcY, f.destFromX, f.destToX, f.destFromY, f.destToY, kColorFlesh, gDungeonViewport);
 }
 
 
@@ -282,21 +283,23 @@ void DisplayMan::drawDungeon(direction dir, uint16 posX, uint16 posY) {
 	clearBitmap(tmpBitmap, 305, 111, kColorBlack);
 
 	if (flippedFloorCeiling) {
-		blitToBitmap(_bitmaps[gFloorIndice], width(gFloorIndice), height(gFloorIndice), tmpBitmap, width(gFloorIndice));
-		flipBitmapHorizontal(tmpBitmap, width(gFloorIndice), height(gFloorIndice));
-		drawWallSetBitmap(tmpBitmap, gFloorFrame, width(gFloorIndice));
-		drawWallSetBitmap(_bitmaps[gCeilingIndice], gCeilingFrame, width(gCeilingIndice));
+		uint16 w = gFloorFrame.srcWidth, h = gFloorFrame.srcHeight;
+		blitToBitmap(_floorBitmap, w, h, tmpBitmap, w);
+		flipBitmapHorizontal(tmpBitmap, w, h);
+		drawWallSetBitmap(tmpBitmap, gFloorFrame);
+		drawWallSetBitmap(_ceilingBitmap, gCeilingFrame);
 	} else {
-		blitToBitmap(_bitmaps[gCeilingIndice], width(gCeilingIndice), height(gCeilingIndice), tmpBitmap, width(gCeilingIndice));
-		flipBitmapHorizontal(tmpBitmap, width(gCeilingIndice), height(gCeilingIndice));
-		drawWallSetBitmap(tmpBitmap, gCeilingFrame, width(gCeilingIndice));
-		drawWallSetBitmap(_bitmaps[gFloorIndice], gFloorFrame, width(gFloorIndice));
+		uint16 w = gCeilingFrame.srcWidth, h = gCeilingFrame.srcHeight;
+		blitToBitmap(_ceilingBitmap, w, h, tmpBitmap, w);
+		flipBitmapHorizontal(tmpBitmap, w, h);
+		drawWallSetBitmap(tmpBitmap, gCeilingFrame);
+		drawWallSetBitmap(_floorBitmap, gFloorFrame);
 	}
 
-	// TODO: CRUDE TEST CODE AT BEST
 	if (_vm->_dungeonMan->getRelSquareType(dir, 3, -2, posX, posY) == kWallSquareType)
-		drawWallSetBitmap(_bitmaps[77 + 12], gWallFrameD3L2, width(77 + 12));
-	// TODO CRUDE TEST CODE AT BEST
+		drawWallSetBitmap(_wallSetBitMaps[kWall_D3L2], gWallFrameD3L2);
+	if (_vm->_dungeonMan->getRelSquareType(dir, 3, 2, posX, posY) == kWallSquareType)
+		drawWallSetBitmap(_wallSetBitMaps[kWall_D3R2], gWallFrameD3R2);
 
 
 

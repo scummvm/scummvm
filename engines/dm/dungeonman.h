@@ -163,7 +163,7 @@ public:
 	// TODO: this does stuff other than load the file!
 	void loadDungeonFile();	// @ F0434_STARTEND_IsLoadDungeonSuccessful_CPSC
 	void setCurrentMap(uint16 mapIndex); // @ F0173_DUNGEON_SetCurrentMap
-	SquareType getRelSquareType(direction dir, uint16 stepsForward, uint16 stepsRight, uint16 posX, uint16 posY) {
+	SquareType getRelSquareType(direction dir, int16 stepsForward, int16 stepsRight, int16 posX, int16 posY) {
 		return getSquareType(getRelSquare(dir, stepsForward, stepsRight, posX, posY));
 	}// @ F0153_DUNGEON_GetRelativeSquareType
 };
