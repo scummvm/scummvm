@@ -26,7 +26,7 @@
 #include "titanic/true_talk/tt_npc_script.h"
 #include "titanic/true_talk/tt_room_script.h"
 #include "titanic/true_talk/tt_string.h"
-#include "titanic/true_talk/st_vocab.h"
+#include "titanic/true_talk/tt_vocab.h"
 #include "titanic/support/exe_resources.h"
 
 namespace Titanic {
@@ -64,7 +64,7 @@ class CScriptHandler {
 private:
 	CTitleEngine *_owner;
 	TTScriptBase *_script;
-	STVocab *_vocab;
+	TTvocab *_vocab;
 	CExeResources &_resources;
 	int _field10;
 	CScriptHandlerSub1 _sub1;

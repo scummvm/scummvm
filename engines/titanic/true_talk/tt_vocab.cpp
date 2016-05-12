@@ -21,17 +21,17 @@
  */
 
 #include "common/file.h"
-#include "titanic/true_talk/st_vocab.h"
+#include "titanic/true_talk/tt_vocab.h"
 #include "titanic/titanic.h"
 
 namespace Titanic {
 
-STVocab::STVocab(int val): _pHead(nullptr), _pTail(nullptr), _word(nullptr),
+TTvocab::TTvocab(int val): _pHead(nullptr), _pTail(nullptr), _word(nullptr),
 		_fieldC(0), _field10(0), _field18(val) {
 	_field14 = load("STVOCAB.TXT");
 }
 
-STVocab::~STVocab() {
+TTvocab::~TTvocab() {
 	if (_pHead) {
 		_pHead->deleteSiblings();
 		delete _pHead;
@@ -39,7 +39,7 @@ STVocab::~STVocab() {
 	}
 }
 
-int STVocab::load(const CString &name) {
+int TTvocab::load(const CString &name) {
 	SimpleFile *file = g_vm->_exeResources._owner->openResource(name);
 	int result = 0;
 	bool skipFlag;
@@ -124,7 +124,7 @@ int STVocab::load(const CString &name) {
 	return result;
 }
 
-void STVocab::addWord(TTword *word) {
+void TTvocab::addWord(TTword *word) {
 	TTword *existingWord = findWord(word->_string);
 
 	if (existingWord) {
@@ -148,7 +148,7 @@ void STVocab::addWord(TTword *word) {
 	}
 }
 
-TTword *STVocab::findWord(const TTString &str) {
+TTword *TTvocab::findWord(const TTString &str) {
 	TTsynonym *tempNode = new TTsynonym();
 	bool flag = false;
 	TTword *word = _pHead;

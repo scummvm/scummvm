@@ -34,7 +34,7 @@ CScriptHandler::CScriptHandler(CTitleEngine *owner, int val1, int val2) :
 	g_vm->_scriptHandler = this;
 	g_vm->_script = _script;
 	g_vm->_exeResources.reset(this, val1, val2);
-	_vocab = new STVocab(val2);
+	_vocab = new TTvocab(val2);
 }
 
 CScriptHandler::~CScriptHandler() {

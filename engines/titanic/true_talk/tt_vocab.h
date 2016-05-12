@@ -29,7 +29,7 @@
 
 namespace Titanic {
 
-class STVocab {
+class TTvocab {
 private:
 	TTword *_pHead;
 	TTword *_pTail;
@@ -54,8 +54,8 @@ private:
 	 */
 	TTword *findWord(const TTString &str);
 public:
-	STVocab(int val);
-	~STVocab();
+	TTvocab(int val);
+	~TTvocab();
 };
 
 } // End of namespace Titanic

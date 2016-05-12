@@ -459,7 +459,6 @@ MODULE_OBJS := \
 	true_talk/succubus_script.o \
 	true_talk/title_engine.o \
 	true_talk/script_handler.o \
-	true_talk/st_vocab.o \
 	true_talk/true_talk_manager.o \
 	true_talk/tt_script_base.o \
 	true_talk/tt_room_script.o \
@@ -470,6 +469,7 @@ MODULE_OBJS := \
 	true_talk/tt_synonym.o \
 	true_talk/tt_talker.o \
 	true_talk/tt_title_script.o \
+	true_talk/tt_vocab.o \
 	true_talk/tt_word.o
 
 # This module can be built as a plugin
