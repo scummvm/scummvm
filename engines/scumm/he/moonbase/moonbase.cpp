@@ -97,9 +97,9 @@ void Moonbase::blitT14WizImage(uint8 *dst, int dstw, int dsth, int dstPitch, con
 							uint16 color = READ_LE_UINT16(quadsOffset);
 							uint32 orig = READ_LE_UINT16(dst1);
 
-							uint32 r = MIN(0x7c00u, (orig & 0x7c00) + (color & 0x7c00));
-							uint32 g = MIN(0x03e0u, (orig & 0x03e0) + (color & 0x03e0));
-							uint32 b = MIN(0x001fu, (orig & 0x001f) + (color & 0x001f));
+							uint32 r = MIN<uint32>(0x7c00, (orig & 0x7c00) + (color & 0x7c00));
+							uint32 g = MIN<uint32>(0x03e0, (orig & 0x03e0) + (color & 0x03e0));
+							uint32 b = MIN<uint32>(0x001f, (orig & 0x001f) + (color & 0x001f));
 							WRITE_LE_UINT16(dst1, (r | g | b));
 						}
 						dst1 += 2;
@@ -115,9 +115,9 @@ void Moonbase::blitT14WizImage(uint8 *dst, int dstw, int dsth, int dstPitch, con
 						uint16 color = READ_LE_UINT16(singlesOffset);
 						uint32 orig = READ_LE_UINT16(dst1);
 
-						uint32 r = MIN(0x7c00u, (orig & 0x7c00) + (color & 0x7c00));
-						uint32 g = MIN(0x03e0u, (orig & 0x03e0) + (color & 0x03e0));
-						uint32 b = MIN(0x001fu, (orig & 0x001f) + (color & 0x001f));
+						uint32 r = MIN<uint32>(0x7c00u, (orig & 0x7c00) + (color & 0x7c00));
+						uint32 g = MIN<uint32>(0x03e0u, (orig & 0x03e0) + (color & 0x03e0));
+						uint32 b = MIN<uint32>(0x001fu, (orig & 0x001f) + (color & 0x001f));
 						WRITE_LE_UINT16(dst1, (r | g | b));
 					}
 					dst1 += 2;
