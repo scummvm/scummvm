@@ -88,13 +88,25 @@ void Moonbase::blitT14WizImage(uint8 *dst, int dstw, int dsth, int dstPitch, con
 			int code = *codes - 2;
 			codes++;
 
-			if (code == 0) { // quad
-				for (int c = 0; c < 4; c++) {
+			if (code <= 0) { // quad or single
+				uint8 *src;
+				int cnt;
+				if (code == 0) { // quad
+					src = quadsOffset;
+					quadsOffset += 8;
+					cnt = 4; // 4 pixels
+				} else { // single
+					src = singlesOffset;
+					singlesOffset += 2;
+					cnt = 1;
+				}
+
+				for (int c = 0; c < cnt; c++) {
 					if (pixels >= sx) {
 						if (rawROP == 1) { // MMX_PREMUL_ALPHA_COPY
-							WRITE_LE_UINT16(dst1, READ_LE_UINT16(quadsOffset));
+							WRITE_LE_UINT16(dst1, READ_LE_UINT16(src));
 						} else if (rawROP == 2) { // MMX_ADDITIVE
-							uint16 color = READ_LE_UINT16(quadsOffset);
+							uint16 color = READ_LE_UINT16(src);
 							uint32 orig = READ_LE_UINT16(dst1);
 
 							uint32 r = MIN<uint32>(0x7c00, (orig & 0x7c00) + (color & 0x7c00));
@@ -104,26 +116,9 @@ void Moonbase::blitT14WizImage(uint8 *dst, int dstw, int dsth, int dstPitch, con
 						}
 						dst1 += 2;
 					}
-					quadsOffset += 2;
+					src += 2;
 					pixels++;
 				}
-			} else if (code < 0) { // single
-				if (pixels >= sx) {
-					if (rawROP == 1) { // MMX_PREMUL_ALPHA_COPY
-						WRITE_LE_UINT16(dst1, READ_LE_UINT16(singlesOffset));
-					} else if (rawROP == 2) { // MMX_ADDITIVE
-						uint16 color = READ_LE_UINT16(singlesOffset);
-						uint32 orig = READ_LE_UINT16(dst1);
-
-						uint32 r = MIN<uint32>(0x7c00u, (orig & 0x7c00) + (color & 0x7c00));
-						uint32 g = MIN<uint32>(0x03e0u, (orig & 0x03e0) + (color & 0x03e0));
-						uint32 b = MIN<uint32>(0x001fu, (orig & 0x001f) + (color & 0x001f));
-						WRITE_LE_UINT16(dst1, (r | g | b));
-					}
-					dst1 += 2;
-				}
-				singlesOffset += 2;
-				pixels++;
 			} else { // skip
 				if ((code & 1) == 0) {
 					code >>= 1;
