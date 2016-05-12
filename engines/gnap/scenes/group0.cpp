@@ -508,7 +508,7 @@ void Scene02::run() {
 			if (gnap._actionStatus < 0) {
 				if (_vm->_grabCursorSpriteIndex == kItemTwig) {
 					gnap._idleFacing = kDirUpRight;
-					Common::Point destPos = Common::Point(_vm->_hotspotsWalkPos[_vm->_sceneClickedHotspot].x, _vm->_hotspotsWalkPos[_vm->_sceneClickedHotspot].y + 1); 
+					Common::Point destPos = _vm->_hotspotsWalkPos[_vm->_sceneClickedHotspot] + Common::Point(0, 1); 
 					gnap.walkTo(destPos, 0, gnap.getSequenceId(kGSIdle, Common::Point(0, 0)) | 0x10000, 1);
 					gnap._actionStatus = kAS02UseTwigWithChicken;
 				} else if (_vm->_grabCursorSpriteIndex >= 0) {
@@ -1967,7 +1967,7 @@ void Scene05::run() {
 				} else {
 					switch (_vm->_verbCursor) {
 					case LOOK_CURSOR:
-						gnap.playScratchingHead(Common::Point(_vm->_hotspotsWalkPos[1].x, _vm->_hotspotsWalkPos[1].y - 1));
+						gnap.playScratchingHead(_vm->_hotspotsWalkPos[1] + Common::Point(0, -1));
 						break;
 					case GRAB_CURSOR:
 					case TALK_CURSOR:

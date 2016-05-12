@@ -3147,8 +3147,7 @@ void Scene18::updateHotspots() {
 			_vm->_hotspots[kHS18HydrantRightValve]._rect.left = 148;
 			_vm->_hotspots[kHS18HydrantRightValve]._rect.top = 403;
 			_vm->_hotspots[kHS18GarbageCan]._flags = SF_DISABLED;
-			_vm->_hotspotsWalkPos[kHS18GarbageCan].x = 3;
-			_vm->_hotspotsWalkPos[kHS18GarbageCan].y = 7;
+			_vm->_hotspotsWalkPos[kHS18GarbageCan] = Common::Point(3, 7);
 		} else {
 			_vm->_hotspots[kHS18HydrantTopValve]._rect.top = 246;
 		}
@@ -3159,8 +3158,7 @@ void Scene18::updateHotspots() {
 	} else if (_vm->isFlag(kGFTruckKeysUsed)) {
 		_vm->_hotspots[kHS18GarbageCan]._rect = Common::Rect(115, 365, 168, 470);
 		_vm->_hotspots[kHS18GarbageCan]._flags = SF_WALKABLE | SF_TALK_CURSOR | SF_GRAB_CURSOR | SF_LOOK_CURSOR;
-		_vm->_hotspotsWalkPos[kHS18GarbageCan].x = 3;
-		_vm->_hotspotsWalkPos[kHS18GarbageCan].y = 7;
+		_vm->_hotspotsWalkPos[kHS18GarbageCan] = Common::Point(3, 7);
 	}
 	if (_vm->isFlag(kGFPlatypusDisguised))
 		_vm->_hotspots[kHS18GarbageCan]._flags = SF_DISABLED;

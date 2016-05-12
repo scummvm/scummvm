@@ -326,8 +326,7 @@ void GnapEngine::setHotspot(int index, int16 x1, int16 y1, int16 x2, int16 y2, u
 	int16 walkX, int16 walkY) {
 	_hotspots[index]._rect = Common::Rect(x1, y1, x2, y2);
 	_hotspots[index]._flags = flags;
-	_hotspotsWalkPos[index].x = walkX;
-	_hotspotsWalkPos[index].y = walkY;
+	_hotspotsWalkPos[index] = Common::Point(walkX, walkY);
 }
 
 int GnapEngine::getHotspotIndexAtPos(Common::Point pos) {
