@@ -28,7 +28,7 @@
 namespace Cloud {
 
 class Storage {
-	friend void cloudThread(void*); //calls handler()
+	friend void cloudThread(void *); //calls handler()
 
 protected:
 	virtual void handler();
@@ -45,7 +45,8 @@ public:
 	* @param path		directory to list	
 	*/
 
-	//TODO: actually make it list directories and some callback to pass gathered files list
+	//TODO: actually make it list directories
+	//TODO: add some callback to pass gathered files list
 
 	virtual void listDirectory(Common::String path) = 0;
 

@@ -28,7 +28,8 @@ void example1();
 void example2();
 void example3();
 
-namespace Cloud { namespace Dropbox {
+namespace Cloud {
+namespace Dropbox {
 
 void DropboxStorage::handler() {
 	if (_firstTime) {
@@ -48,7 +49,8 @@ void DropboxStorage::syncSaves() {
 	setTimeout(1000000); //in one second
 }
 
-} } //end of namespace Cloud::Dropbox
+} //end of namespace Dropbox
+} //end of namespace Cloud
 
 /// SimpleJSON examples:
 

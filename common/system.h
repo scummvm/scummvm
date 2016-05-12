@@ -56,9 +56,7 @@ class HardwareInputSet;
 class Keymap;
 class KeymapperDefaultBindings;
 #endif
-#if defined(USE_CLOUD)
 class CloudManager;
-#endif
 }
 
 class AudioCDManager;

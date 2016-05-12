@@ -160,7 +160,7 @@ const char *gScummVMFeatures = ""
 #ifdef USE_LIBCURL
 	"servers"
 #ifdef USE_SDL_NET
-	" "
+	", "
 #endif
 #endif
 #ifdef USE_SDL_NET
