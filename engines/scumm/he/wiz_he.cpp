@@ -1779,11 +1779,12 @@ void Wiz::copy555WizImage(uint8 *dst, uint8 *wizd, int dstPitch, int dstType,
 	switch (rawROP) {
 	default:
 	case 1:
+		rawROP = 1;
 		// MMX_PREMUL_ALPHA_COPY
 		break;
 
 	case 2:
-		warning("T14: MMX_ADDITIVE");
+		//warning("T14: MMX_ADDITIVE");
 		break;
 
 	case 3:

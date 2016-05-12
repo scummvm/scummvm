@@ -34,6 +34,10 @@ Moonbase::~Moonbase() {
 
 void Moonbase::blitT14WizImage(uint8 *dst, int dstw, int dsth, int dstPitch, const Common::Rect *clipBox,
 		 uint8 *wizd, int x, int y, int rawROP, int paramROP) {
+	bool premulAlpa = false;
+
+	if (rawROP == 1)
+		premulAlpa = true;
 
 	Common::Rect clippedDstRect(dstw, dsth);
 	if (clipBox) {
@@ -87,7 +91,17 @@ void Moonbase::blitT14WizImage(uint8 *dst, int dstw, int dsth, int dstPitch, con
 			if (code == 0) { // quad
 				for (int c = 0; c < 4; c++) {
 					if (pixels >= sx) {
-						WRITE_LE_UINT16(dst1, READ_LE_UINT16(quadsOffset));
+						if (rawROP == 1) { // MMX_PREMUL_ALPHA_COPY
+							WRITE_LE_UINT16(dst1, READ_LE_UINT16(quadsOffset));
+						} else if (rawROP == 2) { // MMX_ADDITIVE
+							uint16 color = READ_LE_UINT16(quadsOffset);
+							uint32 orig = READ_LE_UINT16(dst1);
+
+							uint32 r = MIN(0x7c00u, (orig & 0x7c00) + (color & 0x7c00));
+							uint32 g = MIN(0x03e0u, (orig & 0x03e0) + (color & 0x03e0));
+							uint32 b = MIN(0x001fu, (orig & 0x001f) + (color & 0x001f));
+							WRITE_LE_UINT16(dst1, (r | g | b));
+						}
 						dst1 += 2;
 					}
 					quadsOffset += 2;
@@ -95,7 +109,17 @@ void Moonbase::blitT14WizImage(uint8 *dst, int dstw, int dsth, int dstPitch, con
 				}
 			} else if (code < 0) { // single
 				if (pixels >= sx) {
-					WRITE_LE_UINT16(dst1, READ_LE_UINT16(singlesOffset));
+					if (rawROP == 1) { // MMX_PREMUL_ALPHA_COPY
+						WRITE_LE_UINT16(dst1, READ_LE_UINT16(singlesOffset));
+					} else if (rawROP == 2) { // MMX_ADDITIVE
+						uint16 color = READ_LE_UINT16(singlesOffset);
+						uint32 orig = READ_LE_UINT16(dst1);
+
+						uint32 r = MIN(0x7c00u, (orig & 0x7c00) + (color & 0x7c00));
+						uint32 g = MIN(0x03e0u, (orig & 0x03e0) + (color & 0x03e0));
+						uint32 b = MIN(0x001fu, (orig & 0x001f) + (color & 0x001f));
+						WRITE_LE_UINT16(dst1, (r | g | b));
+					}
 					dst1 += 2;
 				}
 				singlesOffset += 2;
@@ -115,25 +139,27 @@ void Moonbase::blitT14WizImage(uint8 *dst, int dstw, int dsth, int dstPitch, con
 						uint16 color = READ_LE_UINT16(singlesOffset);
 						uint32 orig = READ_LE_UINT16(dst1);
 
-						//WRITE_LE_UINT16(dst1, color); // ENABLE_PREMUL_ALPHA = 0
-						// ENABLE_PREMUL_ALPHA = 2
-						if (alpha > 32) {
-							alpha -= 32;
-
-							uint32 oR = orig & 0x7c00;
-							uint32 oG = orig & 0x03e0;
-							uint32 oB = orig & 0x1f;
-							uint32 dR = ((((color & 0x7c00) - oR) * alpha) >> 5) + oR;
-							uint32 dG = ((((color &  0x3e0) - oG) * alpha) >> 5) + oG;
-							uint32 dB = ((((color &   0x1f) - oB) * alpha) >> 5) + oB;
-
-							WRITE_LE_UINT16(dst1, (dR & 0x7c00) | (dG & 0x3e0) | (dB & 0x1f));
+						if (!premulAlpa) {
+							WRITE_LE_UINT16(dst1, color); // ENABLE_PREMUL_ALPHA = 0
 						} else {
-							uint32 pix = ((orig << 16) | orig) & 0x3e07c1f;
-							pix = (((pix * alpha) & 0xffffffff) >> 5) & 0x3e07c1f;
-							pix = ((pix << 16) + pix + color) & 0xffff;
+							if (alpha > 32) {
+								alpha -= 32;
 
-							WRITE_LE_UINT16(dst1, pix);
+								uint32 oR = orig & 0x7c00;
+								uint32 oG = orig & 0x03e0;
+								uint32 oB = orig & 0x1f;
+								uint32 dR = ((((color & 0x7c00) - oR) * alpha) >> 5) + oR;
+								uint32 dG = ((((color &  0x3e0) - oG) * alpha) >> 5) + oG;
+								uint32 dB = ((((color &   0x1f) - oB) * alpha) >> 5) + oB;
+
+								WRITE_LE_UINT16(dst1, (dR & 0x7c00) | (dG & 0x3e0) | (dB & 0x1f));
+							} else {
+								uint32 pix = ((orig << 16) | orig) & 0x3e07c1f;
+								pix = (((pix * alpha) & 0xffffffff) >> 5) & 0x3e07c1f;
+								pix = ((pix << 16) + pix + color) & 0xffff;
+
+								WRITE_LE_UINT16(dst1, pix);
+							}
 						}
 
 						dst1 += 2;
