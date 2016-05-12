@@ -32,6 +32,14 @@ TTword::TTword(TTString &str, int mode, int val2) : _string(str),
 	_status = str.getStatus() == SS_VALID ? SS_VALID : SS_5;
 }
 
+void TTword::deleteSiblings() {
+	while (_pNext) {
+		TTword *next = _pNext;
+		_pNext = next->_pNext;
+		delete next;
+	}
+}
+
 int TTword::readSyn(SimpleFile *file) {
 	CString str;
 	int mode, val1;

@@ -31,6 +31,14 @@ STVocab::STVocab(int val): _pHead(nullptr), _pTail(nullptr), _word(nullptr),
 	_field14 = load("STVOCAB.TXT");
 }
 
+STVocab::~STVocab() {
+	if (_pHead) {
+		_pHead->deleteSiblings();
+		delete _pHead;
+		_pHead = _pTail = nullptr;
+	}
+}
+
 int STVocab::load(const CString &name) {
 	SimpleFile *file = g_vm->_exeResources._owner->openResource(name);
 	int result = 0;

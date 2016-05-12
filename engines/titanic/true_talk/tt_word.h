@@ -52,6 +52,11 @@ public:
 	TTword(TTString &str, int mode, int val2);
 
 	/**
+	 * Delete any following words chained to the word
+	 */
+	void deleteSiblings();
+
+	/**
 	 * Read in a synonym for the given word
 	 */
 	int readSyn(SimpleFile *file);

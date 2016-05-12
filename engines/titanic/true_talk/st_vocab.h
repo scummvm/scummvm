@@ -55,6 +55,7 @@ private:
 	TTword *findWord(const TTString &str);
 public:
 	STVocab(int val);
+	~STVocab();
 };
 
 } // End of namespace Titanic
