@@ -1577,6 +1577,10 @@ uint8 *Wiz::drawWizImage(int resNum, int state, int maskNum, int maskState, int 
 			state == _vm->_moonbase->_fowSentinelState &&
 			conditionBits == _vm->_moonbase->_fowSentinelConditionBits) {
 		_vm->_moonbase->renderFOW(dst, dstPitch, dstType, cw, ch, flags);
+		x1 = 0;
+		y1 = 0;
+		width = rScreen.width();
+		height = rScreen.height();
 	} else {
 		drawWizImageEx(dst, dataPtr, mask, dstPitch, dstType, cw, ch, x1, y1, width, height,
 			state, &rScreen, flags, palPtr, transColor, _vm->_bytesPerPixel, xmapPtr, conditionBits);
