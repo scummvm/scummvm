@@ -303,12 +303,8 @@ void Scene41::run() {
 		if (!_vm->isSoundPlaying(0x1094B))
 			_vm->playSound(0x1094B, true);
 
-		if (!_vm->isFlag(kGFGnapControlsToyUFO)) {
-			_vm->_hotspots[kHS41ToyUfo]._x1 = _vm->_toyUfoX - 25;
-			_vm->_hotspots[kHS41ToyUfo]._y1 = _vm->_toyUfoY - 20;
-			_vm->_hotspots[kHS41ToyUfo]._x2 = _vm->_toyUfoX + 25;
-			_vm->_hotspots[kHS41ToyUfo]._y2 = _vm->_toyUfoY + 20;
-		}
+		if (!_vm->isFlag(kGFGnapControlsToyUFO))
+			_vm->_hotspots[kHS41ToyUfo]._rect = Common::Rect(_vm->_toyUfoX - 25, _vm->_toyUfoY - 20, _vm->_toyUfoX + 25, _vm->_toyUfoY + 20);
 
 		_vm->updateMouseCursor();
 		_vm->updateCursorByHotspot();

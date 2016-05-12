@@ -324,26 +324,24 @@ void GnapEngine::delayTicksCursor(int a1) {
 
 void GnapEngine::setHotspot(int index, int16 x1, int16 y1, int16 x2, int16 y2, uint16 flags,
 	int16 walkX, int16 walkY) {
-	_hotspots[index]._x1 = x1;
-	_hotspots[index]._y1 = y1;
-	_hotspots[index]._x2 = x2;
-	_hotspots[index]._y2 = y2;
+	_hotspots[index]._rect = Common::Rect(x1, y1, x2, y2);
 	_hotspots[index]._flags = flags;
 	_hotspots[index]._id = index;
 	_hotspotsWalkPos[index].x = walkX;
 	_hotspotsWalkPos[index].y = walkY;
 }
 
-int GnapEngine::getHotspotIndexAtPos(int16 x, int16 y) {
-	for (int i = 0; i < _hotspotsCount; ++i)
-		if (!_hotspots[i].isFlag(SF_DISABLED) && _hotspots[i].isPointInside(x, y))
+int GnapEngine::getHotspotIndexAtPos(Common::Point pos) {
+	for (int i = 0; i < _hotspotsCount; ++i) {
+		if (!_hotspots[i].isFlag(SF_DISABLED) && _hotspots[i].isPointInside(pos))
 			return i;
+	}
 	return -1;
 }
 
 void GnapEngine::updateCursorByHotspot() {
 	if (!_isWaiting) {
-		int hotspotIndex = getHotspotIndexAtPos(_mouseX, _mouseY);
+		int hotspotIndex = getHotspotIndexAtPos(Common::Point(_mouseX, _mouseY));
 
 		if (_debugger->_showHotspotNumber) {
 			// NOTE This causes some display glitches so don't worry
@@ -377,10 +375,8 @@ void GnapEngine::updateCursorByHotspot() {
 			setCursor(kDisabledCursors[_verbCursor]);
 	}
 	// Update platypus hotspot
-	_hotspots[0]._x1 = _gridMinX + 75 * _plat->_pos.x - 30;
-	_hotspots[0]._y1 = _gridMinY + 48 * _plat->_pos.y - 100;
-	_hotspots[0]._x2 = _gridMinX + 75 * _plat->_pos.x + 30;
-	_hotspots[0]._y2 = _gridMinY + 48 * _plat->_pos.y;
+	_hotspots[0]._rect = Common::Rect(_gridMinX + 75 * _plat->_pos.x - 30, _gridMinY + 48 * _plat->_pos.y - 100
+									, _gridMinX + 75 * _plat->_pos.x + 30, _gridMinY + 48 * _plat->_pos.y);
 }
 
 int GnapEngine::getClickedHotspotId() {
@@ -388,7 +384,7 @@ int GnapEngine::getClickedHotspotId() {
 	if (_isWaiting)
 		_mouseClickState._left = false;
 	else if (_mouseClickState._left) {
-		int hotspotIndex = getHotspotIndexAtPos(_leftClickMouseX, _leftClickMouseY);
+		int hotspotIndex = getHotspotIndexAtPos(Common::Point(_leftClickMouseX, _leftClickMouseY));
 		if (hotspotIndex >= 0) {
 			_mouseClickState._left = false;
 			_timers[3] = 300;
@@ -578,10 +574,8 @@ void GnapEngine::setDeviceHotspot(int hotspotIndex, int x1, int y1, int x2, int 
 		_deviceY1 = 14;
 	if (y2 == -1)
 		_deviceY2 = 79;
-	_hotspots[hotspotIndex]._x1 = _deviceX1;
-	_hotspots[hotspotIndex]._y1 = _deviceY1;
-	_hotspots[hotspotIndex]._x2 = _deviceX2;
-	_hotspots[hotspotIndex]._y2 = _deviceY2;
+
+	_hotspots[hotspotIndex]._rect = Common::Rect(_deviceX1, _deviceY1, _deviceX2, _deviceY2);
 	_hotspots[hotspotIndex]._flags = SF_TALK_CURSOR | SF_GRAB_CURSOR | SF_LOOK_CURSOR;
 	_hotspots[hotspotIndex]._id = hotspotIndex;
 }

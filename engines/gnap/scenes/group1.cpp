@@ -2068,10 +2068,7 @@ void Scene15::run() {
 		_vm->updateMouseCursor();
 		_vm->updateCursorByHotspot();
 
-		_vm->_hotspots[kHS15Platypus]._x1 = 0;
-		_vm->_hotspots[kHS15Platypus]._y1 = 0;
-		_vm->_hotspots[kHS15Platypus]._x2 = 0;
-		_vm->_hotspots[kHS15Platypus]._y2 = 0;
+		_vm->_hotspots[kHS15Platypus].clearRect();
 
 		_vm->_sceneClickedHotspot = _vm->getClickedHotspotId();
 		_vm->updateGrabCursorSprite(0, 0);
@@ -3147,23 +3144,20 @@ void Scene18::updateHotspots() {
 	if (_vm->isFlag(kGFTruckFilledWithGas)) {
 		if (_vm->isFlag(kGFTruckKeysUsed)) {
 			_vm->_hotspots[kHS18HydrantTopValve]._flags = SF_DISABLED;
-			_vm->_hotspots[kHS18HydrantRightValve]._x1 = 148;
-			_vm->_hotspots[kHS18HydrantRightValve]._y1 = 403;
+			_vm->_hotspots[kHS18HydrantRightValve]._rect.left = 148;
+			_vm->_hotspots[kHS18HydrantRightValve]._rect.top = 403;
 			_vm->_hotspots[kHS18GarbageCan]._flags = SF_DISABLED;
 			_vm->_hotspotsWalkPos[kHS18GarbageCan].x = 3;
 			_vm->_hotspotsWalkPos[kHS18GarbageCan].y = 7;
 		} else {
-			_vm->_hotspots[kHS18HydrantTopValve]._y1 = 246;
+			_vm->_hotspots[kHS18HydrantTopValve]._rect.top = 246;
 		}
 	} else if (_vm->isFlag(kGFBarnPadlockOpen)) {
 		_vm->_hotspots[kHS18HydrantRightValve]._flags = SF_DISABLED;
-		_vm->_hotspots[kHS18HydrantTopValve]._x1 = 105;
-		_vm->_hotspots[kHS18HydrantTopValve]._x2 = 192;
+		_vm->_hotspots[kHS18HydrantTopValve]._rect.left = 105;
+		_vm->_hotspots[kHS18HydrantTopValve]._rect.right = 192;
 	} else if (_vm->isFlag(kGFTruckKeysUsed)) {
-		_vm->_hotspots[kHS18GarbageCan]._x1 = 115;
-		_vm->_hotspots[kHS18GarbageCan]._y1 = 365;
-		_vm->_hotspots[kHS18GarbageCan]._x2 = 168;
-		_vm->_hotspots[kHS18GarbageCan]._y2 = 470;
+		_vm->_hotspots[kHS18GarbageCan]._rect = Common::Rect(115, 365, 168, 470);
 		_vm->_hotspots[kHS18GarbageCan]._flags = SF_WALKABLE | SF_TALK_CURSOR | SF_GRAB_CURSOR | SF_LOOK_CURSOR;
 		_vm->_hotspotsWalkPos[kHS18GarbageCan].x = 3;
 		_vm->_hotspotsWalkPos[kHS18GarbageCan].y = 7;
@@ -3794,11 +3788,11 @@ void Scene18::run() {
 						_vm->clearFlag(kGFPlatypusTalkingToAssistant);
 					}
 				} else {
-					_vm->_hotspots[kHS18WalkArea1]._y2 += 48;
-					_vm->_hotspots[kHS18WalkArea2]._x1 += 75;
+					_vm->_hotspots[kHS18WalkArea1]._rect.bottom += 48;
+					_vm->_hotspots[kHS18WalkArea2]._rect.left += 75;
 					plat.updateIdleSequence();
-					_vm->_hotspots[kHS18WalkArea2]._x1 -= 75;
-					_vm->_hotspots[kHS18WalkArea1]._y2 -= 48;
+					_vm->_hotspots[kHS18WalkArea2]._rect.left -= 75;
+					_vm->_hotspots[kHS18WalkArea1]._rect.bottom -= 48;
 				}
 				if (!_vm->_timers[5]) {
 					_vm->_timers[5] = _vm->getRandom(100) + 100;

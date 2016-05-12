@@ -66,14 +66,20 @@ struct MouseButtonState {
 };
 
 struct Hotspot {
-	int16 _x1, _y1, _x2, _y2;
+	Common::Rect _rect;
 	uint16 _flags;
 	int _id;
-	bool isPointInside(int16 x, int16 y) const {
-		return x >= _x1 && x <= _x2 && y >= _y1 && y <= _y2;
+
+	bool isPointInside(Common::Point pos) const {
+		return _rect.contains(pos);
 	}
+
 	bool isFlag(uint16 flag) const {
 		return (_flags & flag) != 0;
+	}
+
+	void clearRect() {
+		_rect = Common::Rect(0, 0, 0, 0);
 	}
 };
 
@@ -319,7 +325,7 @@ public:
 
 	void setHotspot(int index, int16 x1, int16 y1, int16 x2, int16 y2, uint16 flags = 0,
 		int16 walkX = -1, int16 walkY = -1);
-	int getHotspotIndexAtPos(int16 x, int16 y);
+	int getHotspotIndexAtPos(Common::Point pos);
 	void updateCursorByHotspot();
 	int getClickedHotspotId();
 

@@ -473,9 +473,9 @@ void Scene20::run() {
 
 		if (!_vm->_isLeavingScene) {
 			if (plat._actionStatus < 0) {
-				_vm->_hotspots[kHS20WalkArea1]._y2 += 48;
+				_vm->_hotspots[kHS20WalkArea1]._rect.bottom += 48;
 				plat.updateIdleSequence();
-				_vm->_hotspots[kHS20WalkArea1]._y2 -= 48;
+				_vm->_hotspots[kHS20WalkArea1]._rect.bottom -= 48;
 			}
 			if (gnap._actionStatus < 0)
 				gnap.updateIdleSequence();

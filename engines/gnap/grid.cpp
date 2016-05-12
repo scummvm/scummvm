@@ -47,16 +47,13 @@ bool GnapEngine::isPointBlocked(int gridX, int gridY) {
 	if (gridX < 0 || gridX >= _gridMaxX || gridY < 0 || gridY >= _gridMaxY)
 		return true;
 
-	if ((_gnap->_pos == Common::Point(gridX, gridY)) || (gridX == _plat->_pos.x && gridY == _plat->_pos.y))
+	if ((_gnap->_pos == Common::Point(gridX, gridY)) || (_plat->_pos == Common::Point(gridX, gridY)))
 		return true;
 
-	const int x = _gridMinX + 75 * gridX;
-	const int y = _gridMinY + 48 * gridY;
+	Common::Point pos = Common::Point(_gridMinX + 75 * gridX, _gridMinY + 48 * gridY);
 
 	for (int i = 0; i < _hotspotsCount; ++i) {
-		if (x >= _hotspots[i]._x1 && x <= _hotspots[i]._x2 &&
-			y >= _hotspots[i]._y1 && y <= _hotspots[i]._y2 &&
-			!(_hotspots[i]._flags & SF_WALKABLE))
+		if (_hotspots[i].isPointInside(pos) && !(_hotspots[i]._flags & SF_WALKABLE))
 			return true;
 	}
 
