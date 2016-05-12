@@ -326,7 +326,6 @@ void GnapEngine::setHotspot(int index, int16 x1, int16 y1, int16 x2, int16 y2, u
 	int16 walkX, int16 walkY) {
 	_hotspots[index]._rect = Common::Rect(x1, y1, x2, y2);
 	_hotspots[index]._flags = flags;
-	_hotspots[index]._id = index;
 	_hotspotsWalkPos[index].x = walkX;
 	_hotspotsWalkPos[index].y = walkY;
 }
@@ -388,7 +387,7 @@ int GnapEngine::getClickedHotspotId() {
 		if (hotspotIndex >= 0) {
 			_mouseClickState._left = false;
 			_timers[3] = 300;
-			result = _hotspots[hotspotIndex]._id;
+			result = hotspotIndex;
 		}
 	}
 	return result;
@@ -577,7 +576,6 @@ void GnapEngine::setDeviceHotspot(int hotspotIndex, int x1, int y1, int x2, int 
 
 	_hotspots[hotspotIndex]._rect = Common::Rect(_deviceX1, _deviceY1, _deviceX2, _deviceY2);
 	_hotspots[hotspotIndex]._flags = SF_TALK_CURSOR | SF_GRAB_CURSOR | SF_LOOK_CURSOR;
-	_hotspots[hotspotIndex]._id = hotspotIndex;
 }
 
 int GnapEngine::getSequenceTotalDuration(int resourceId) {

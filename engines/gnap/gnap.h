@@ -68,7 +68,6 @@ struct MouseButtonState {
 struct Hotspot {
 	Common::Rect _rect;
 	uint16 _flags;
-	int _id;
 
 	bool isPointInside(Common::Point pos) const {
 		return _rect.contains(pos);
