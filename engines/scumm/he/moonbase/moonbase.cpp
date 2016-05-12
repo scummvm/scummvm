@@ -155,8 +155,7 @@ void Moonbase::blitT14WizImage(uint8 *dst, int dstw, int dsth, int dstPitch, con
 							} else {
 								uint32 pix = ((orig << 16) | orig) & 0x3e07c1f;
 								pix = (((pix * alpha) & 0xffffffff) >> 5) & 0x3e07c1f;
-								pix = ((pix << 16) + pix + color) & 0xffff;
-
+								pix = ((pix >> 16) + pix + color) & 0xffff;
 								WRITE_LE_UINT16(dst1, pix);
 							}
 						}

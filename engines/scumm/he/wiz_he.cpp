@@ -1800,7 +1800,7 @@ void Wiz::copy555WizImage(uint8 *dst, uint8 *wizd, int dstPitch, int dstType,
 		break;
 
 	case 5:
-		warning("T14: MMX_CHEAP_50_50");
+		//warning("T14: MMX_CHEAP_50_50");
 		break;
 
 	case 6:
