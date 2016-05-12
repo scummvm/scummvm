@@ -368,16 +368,14 @@ bool SimpleFile::scanf(const char *format, ...) {
 	CString formatStr(format);
 	while (!formatStr.empty()) {
 		if (formatStr.hasPrefix(" ")) {
-			// Skip over whitespaces
 			formatStr.deleteChar(0);
 			
 			safeRead(&c, 1);			
 			if (!Common::isSpace(c))
 				return false;
 
-			while (Common::isSpace(c))
-				safeRead(&c, 1);
-			_inStream->skip(-1);
+			// Skip over whitespaces
+			skipSpaces();
 		} else if (formatStr.hasPrefix("%d")) {
 			// Read in a number
 			formatStr = CString(formatStr.c_str() + 2);
@@ -399,8 +397,18 @@ bool SimpleFile::scanf(const char *format, ...) {
 		}
 	}
 
+	skipSpaces();
 	va_end(va);
 	return !eos();
+}
+
+void SimpleFile::skipSpaces() {
+	char c = ' ';
+	while (!eos() && Common::isSpace(c))
+		safeRead(&c, 1);
+
+	if (!eos())
+		_inStream->skip(-1);
 }
 
 /*------------------------------------------------------------------------*/

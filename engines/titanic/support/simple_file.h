@@ -48,6 +48,11 @@ public:
  * This class implements basic reading and writing to files
  */
 class SimpleFile {
+private:
+	/**
+	 * Skip over any pending spaces
+	 */
+	void skipSpaces();
 protected:
 	Common::SeekableReadStream *_inStream;
 	Common::OutSaveFile *_outStream;
@@ -213,7 +218,7 @@ public:
 	 */
 	bool eos() const {
 		assert(_inStream);
-		return _inStream->eos();
+		return _inStream->pos() >= _inStream->size();
 	}
 };
 
