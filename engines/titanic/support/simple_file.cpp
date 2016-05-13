@@ -399,7 +399,7 @@ bool SimpleFile::scanf(const char *format, ...) {
 
 	skipSpaces();
 	va_end(va);
-	return !eos();
+	return true;
 }
 
 void SimpleFile::skipSpaces() {

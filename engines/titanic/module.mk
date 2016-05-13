@@ -460,10 +460,15 @@ MODULE_OBJS := \
 	true_talk/title_engine.o \
 	true_talk/script_handler.o \
 	true_talk/true_talk_manager.o \
-	true_talk/tt_script_base.o \
-	true_talk/tt_room_script.o \
+	true_talk/tt_action.o \
+	true_talk/tt_adj.o \
+	true_talk/tt_major_word.o \
 	true_talk/tt_npc_script.o \
 	true_talk/tt_parser.o \
+	true_talk/tt_picture.o \
+	true_talk/tt_pronoun.o \
+	true_talk/tt_room_script.o \
+	true_talk/tt_script_base.o \
 	true_talk/tt_scripts.o \
 	true_talk/tt_string.o \
 	true_talk/tt_string_node.o \

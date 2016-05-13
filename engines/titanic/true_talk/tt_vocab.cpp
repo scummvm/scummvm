@@ -22,6 +22,12 @@
 
 #include "common/file.h"
 #include "titanic/true_talk/tt_vocab.h"
+#include "titanic/true_talk/tt_adj.h"
+#include "titanic/true_talk/tt_action.h"
+#include "titanic/true_talk/tt_adj.h"
+#include "titanic/true_talk/tt_major_word.h"
+#include "titanic/true_talk/tt_picture.h"
+#include "titanic/true_talk/tt_pronoun.h"
 #include "titanic/titanic.h"
 
 namespace Titanic {
@@ -58,14 +64,14 @@ int TTvocab::load(const CString &name) {
 		}
 
 		case 1: {
-			TTword2 *word = new TTword2(space, 0, 0, 0, 0);
+			TTaction *word = new TTaction(space, 0, 0, 0, 0);
 			result = word->load(file);
 			_word = word;
 			break;
 		}
 
 		case 2: {
-			TTword3 *word = new TTword3(space, 0, 0, 0, 0, 0, 0);
+			TTpicture *word = new TTpicture(space, 0, 0, 0, 0, 0, 0);
 			result = word->load(file);
 			_word = word;
 			break;
@@ -73,7 +79,7 @@ int TTvocab::load(const CString &name) {
 
 		case 3:
 		case 9: {
-			TTword1 *word = new TTword1(space, 0, 0, 0);
+			TTmajorWord *word = new TTmajorWord(space, 0, 0, 0);
 			result = word->load(file, mode);
 			_word = word;
 			break;
@@ -89,14 +95,14 @@ int TTvocab::load(const CString &name) {
 		}
 
 		case 8: {
-			TTword4 *word = new TTword4(space, 0, 0, 0, 0);
+			TTadj *word = new TTadj(space, 0, 0, 0, 0);
 			result = word->load(file);
 			_word = word;
 			break;
 		}
 
 		case 6: {
-			TTword5 *word = new TTword5(space, 0, 0, 0, 0);
+			TTpronoun *word = new TTpronoun(space, 0, 0, 0, 0);
 			result = word->load(file);
 			_word = word;
 			break;

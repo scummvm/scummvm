@@ -127,64 +127,6 @@ public:
 	virtual int proc24() const { return 0; }
 };
 
-class TTword1 : public TTword {
-protected:
-	int _field2C;
-public:
-	TTword1(TTString &str, int val1, int val2, int val3);
-};
-
-class TTword2 : public TTword1 {
-protected:
-	int _field30;
-public:
-	TTword2(TTString &str, int val1, int val2, int val3, int val4);
-
-	/**
-	 * Load the word
-	 */
-	int load(SimpleFile *file);
-};
-
-class TTword3 : public TTword1 {
-protected:
-	int _field30;
-	int _field34;
-	int _field38;
-	int _field3C;
-public:
-	TTword3(TTString &str, int val1, int val2, int val3, int val4, int val5, int val6);
-
-	/**
-	 * Load the word
-	 */
-	int load(SimpleFile *file);
-};
-
-class TTword4 : public TTword1 {
-protected:
-	int _field30;
-public:
-	TTword4(TTString &str, int val1, int val2, int val3, int val4);
-
-	/**
-	 * Load the word
-	 */
-	int load(SimpleFile *file);
-};
-
-class TTword5 : public TTword1 {
-protected:
-	int _field30;
-public:
-	TTword5(TTString &str, int val1, int val2, int val3, int val4);
-
-	/**
-	 * Load the word
-	 */
-	int load(SimpleFile *file);
-};
-
 } // End of namespace Titanic
 
 #endif /* TITANIC_TT_WORD_H */
