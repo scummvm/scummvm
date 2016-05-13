@@ -28,6 +28,8 @@
 namespace Titanic {
 
 class TTaction : public TTmajorWord {
+private:
+	static bool _staticFlag; 
 protected:
 	int _field30;
 public:
@@ -38,6 +40,11 @@ public:
 	 * Load the word
 	 */
 	int load(SimpleFile *file);
+
+	/**
+	 * Creates a copy of the word
+	 */
+	virtual TTword *copy();
 };
 
 } // End of namespace Titanic

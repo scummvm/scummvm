@@ -24,6 +24,8 @@
 
 namespace Titanic {
 
+bool TTpicture::_staticFlag;
+
 TTpicture::TTpicture(TTString &str, int val1, int val2, int val3, int val4, int val5, int val6) :
 		TTmajorWord(str, val1, val2, val4), _field34(val3), _field30(val5), _field3C(val6),
 		_field38(0) {
@@ -55,6 +57,22 @@ int TTpicture::load(SimpleFile *file) {
 		return 0;
 	} else {
 		return 3;
+	}
+}
+
+TTword *TTpicture::copy() {
+	TTpicture *returnWordP = new TTpicture(this);
+	returnWordP->_status = _status;
+	if (!_status) {
+		_staticFlag = false;
+		return returnWordP;
+	} else if (_status == SS_13 && !_staticFlag) {
+		_staticFlag = true;
+		delete returnWordP;
+		return copy();
+	} else {
+		delete returnWordP;
+		return nullptr;
 	}
 }
 

@@ -36,7 +36,7 @@ struct TTStringData {
 	TTStringData(const CString &str) : _string(str), _referenceCount(1) {}
 };
 
-enum TTStringStatus { SS_VALID = 0, SS_5 = 5, SS_7 = 7 };
+enum TTStringStatus { SS_VALID = 0, SS_5 = 5, SS_7 = 7, SS_8 = 8, SS_13 = 13 };
 
 class TTString {
 private:

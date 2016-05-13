@@ -24,6 +24,8 @@
 
 namespace Titanic {
 
+bool TTmajorWord::_staticFlag;
+
 TTmajorWord::TTmajorWord(TTString &str, int val1, int val2, int val3) :
 		TTword(str, val1, val2), _field2C(val3) {
 }
@@ -34,6 +36,22 @@ TTmajorWord::TTmajorWord(TTmajorWord *src) : TTword(src) {
 		_status = SS_5;
 	} else {
 		_field2C = src->_field2C;
+	}
+}
+
+TTword *TTmajorWord::copy() {
+	TTmajorWord *returnWordP = new TTmajorWord(this);
+	returnWordP->_status = _status;
+	if (!_status) {
+		_staticFlag = false;
+		return returnWordP;
+	} else if (_status == SS_13 && !_staticFlag) {
+		_staticFlag = true;
+		delete returnWordP;
+		return copy();
+	} else {
+		delete returnWordP;
+		return nullptr;
 	}
 }
 

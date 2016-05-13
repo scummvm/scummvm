@@ -28,11 +28,18 @@
 namespace Titanic {
 
 class TTmajorWord : public TTword {
+private:
+	static bool _staticFlag;
 protected:
 	int _field2C;
 public:
 	TTmajorWord(TTString &str, int val1, int val2, int val3);
 	TTmajorWord(TTmajorWord *src);
+
+	/**
+	 * Creates a copy of the word
+	 */
+	virtual TTword *copy();
 };
 
 } // End of namespace Titanic
