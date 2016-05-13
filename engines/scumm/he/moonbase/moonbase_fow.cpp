@@ -330,8 +330,15 @@ void Moonbase::renderFOWState(uint8 *destSurface, int dstPitch, int dstType, int
 	_vm->_wiz->drawWizImageEx(destSurface, _fowImage, 0, dstPitch, dstType, dstw, dsth, x - spotx, y - spoty, srcw, srch, state, &r, flags, 0, 0, 16, 0, 0);
 }
 
-static void blackRect_16bpp(uint8 *destSurface, int x1, int y1, int x2, int y2) {
-	// TODO
+static void blackRect_16bpp(uint8 *destSurface, int dstPitch, int dstw, int dsth, int x1, int y1, int x2, int y2) {
+	byte *dst = destSurface + dstPitch * y1 + x1 * 2;
+	int h = y2 - y1;
+	int w = ((x2 - x1) + 1) * 2;
+
+	while ( --h >= 0 ) {
+		memset(dst, 0, w);
+		dst += dstPitch;
+	}
 }
 
 void Moonbase::renderFOW(uint8 *destSurface, int dstPitch, int dstType, int dstw, int dsth, int flags) {
@@ -385,7 +392,7 @@ void Moonbase::renderFOW(uint8 *destSurface, int dstPitch, int dstType, int dstw
 						y2 = MIN(y2, cy2);
 
 						if ((x2 >= x1) && (y2 >= y1) && (x1 <= _fowClipX2) && (y1 <= _fowClipY2))
-							blackRect_16bpp(destSurface, x1, y1, x2, y2);
+							blackRect_16bpp(destSurface, dstPitch, dstw, dsth, x1, y1, x2, y2);
 					} else {
 						int subState;
 
