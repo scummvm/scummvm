@@ -1615,10 +1615,6 @@ void Wiz::drawWizImageEx(uint8 *dst, uint8 *dataPtr, uint8 *maskPtr, int dstPitc
 	uint8 *wizd = _vm->findWrappedBlock(MKTAG('W','I','Z','D'), dataPtr, state, 0);
 	assert(wizd);
 
-	if (srcw == srch && srcw == 30) {
-		warning("FOG: comp %d bits: %x", comp, conditionBits);
-	}
-
 	switch (comp) {
 	case 0:
 		copyRawWizImage(dst, wizd, dstPitch, dstType, dstw, dsth, srcx, srcy, srcw, srch, rect, flags, palPtr, transColor, bitDepth);
@@ -1686,19 +1682,11 @@ void Wiz::copyCompositeWizImage(uint8 *dst, uint8 *wizPtr, uint8 *compositeInfoB
 		uint32 layerCmdDataBits = READ_LE_UINT32(cmdPtr);
 		cmdPtr += 4;
 
-		if (srcw == srch && srcw == 30) {
-			warning("layerbits: %x", layerCmdDataBits);
-		}
-
 		uint32 subConditionBits;
 
 		if (layerCmdDataBits & kWCFConditionBits) {
 			uint32 layerConditionBits = READ_LE_UINT32(cmdPtr);
 			cmdPtr += 4;
-
-			if (srcw == srch && srcw == 30) {
-				warning("layercondbits: %x", layerConditionBits);
-			}
 
 			subConditionBits = (layerConditionBits & kWMSBReservedBits);
 			layerConditionBits &= ~kWMSBReservedBits;
@@ -1733,9 +1721,6 @@ void Wiz::copyCompositeWizImage(uint8 *dst, uint8 *wizPtr, uint8 *compositeInfoB
 		uint16 subState;
 		if (layerCmdDataBits & kWCFSubState) {
 			subState = READ_LE_UINT16(cmdPtr);
-			if (srcw == srch && srcw == 30) {
-				warning("state: %x substate: %x", state, subState);
-			}
 			cmdPtr += 2;
 		} else {
 			subState = 0;
@@ -1782,10 +1767,6 @@ void Wiz::copyCompositeWizImage(uint8 *dst, uint8 *wizPtr, uint8 *compositeInfoB
 		if (layerCmdDataBits & kWCFSubConditionBits) {
 			subConditionBits = READ_LE_UINT32(cmdPtr);
 			cmdPtr += 4;
-		}
-
-		if (srcw == srch && srcw == 30) {
-			warning("subBits: %x", subConditionBits);
 		}
 
 		drawWizImageEx(dst, nestedWizHeader, maskPtr, dstPitch, dstType, dstw, dsth, srcx + xPos, srcy + yPos, srcw, srch,
