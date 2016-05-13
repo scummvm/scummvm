@@ -26,7 +26,27 @@ enum ThingType {
 	kThingTypeTotal = 16 // +1 than the last
 }; // @ C[00..15]_THING_TYPE_...
 
-enum ElementType {
+
+enum SquareMask {
+	kWallWestRandOrnAllowed = 0x1,
+	kWallSouthRandOrnAllowed = 0x2,
+	kWallEastRandOrnAllowed = 0x4,
+	kWallNorthRandOrnAllowed = 0x8,
+	kPitImaginary = 0x1,
+	kPitInvisible = 0x4,
+	kPitOpen = 0x8,
+	kStairsUp = 0x4,
+	kStairsNorthSouthOrient = 0x8,
+	kDoorNorthSouthOrient = 0x8,
+	kTeleporterVisible = 0x4,
+	kTeleporterOpen = 0x8,
+	kFakeWallImaginary = 0x1,
+	kFakeWallOpen = 0x4,
+	kFakeWallRandOrnOrFootPAllowed = 0x8,
+	kThingListPresent = 0x10
+};
+
+enum SquareType {
 	kChampionElemType = -2,
 	kCreatureElemType = -1,
 	kWallElemType = 0,
@@ -42,11 +62,17 @@ enum ElementType {
 	kStairsFrontElemType = 19
 }; // @ C[-2..19]_ELEMENT_...
 
-enum WallOrnMask {
-	kWallWestRandOrnAllowed = 0x1,
-	kWallSouthRandOrnAllowed = 0x2,
-	kWallEastRandOrnAllowed = 0x4,
-	kWallNorthRandOrnAllowed = 0x8
+class Square {
+	byte dat;
+public:
+	Square(byte dat = 0) : dat(dat) {}
+	Square(SquareType type) { setType(type); }
+	Square &set(byte dat) { this->dat = dat; return *this; }
+	Square &set(SquareMask mask) { dat |= mask; return *this; }
+	bool get(SquareMask mask) { return dat & mask; }
+	SquareType getType() { return (SquareType)(dat >> 5); } // @ M34_SQUARE_TYPE
+	Square &setType(SquareType type) { dat = (dat & 0x1F) | type << 5; return *this; }
+	byte toByte() { return dat; } // I don't like 'em casts
 };
 
 
@@ -169,12 +195,12 @@ class DungeonMan {
 	DungeonMan(const DungeonMan &other); // no implementation on purpose
 	void operator=(const DungeonMan &rhs); // no implementation on purpose
 
-	byte getSquare(int16 mapX, int16 mapY); // @ F0151_DUNGEON_GetSquare
-	byte getRelSquare(direction dir, int16 stepsForward, int16 stepsRight, int16 posX, int16 posY); // @ F0152_DUNGEON_GetRelativeSquare
-
-	ElementType getSquareType(int16 square) { return (ElementType)(square << 5); } // @ M34_SQUARE_TYPE
+	Square getSquare(int16 mapX, int16 mapY); // @ F0151_DUNGEON_GetSquare
+	Square getRelSquare(direction dir, int16 stepsForward, int16 stepsRight, int16 posX, int16 posY); // @ F0152_DUNGEON_GetRelativeSquare
 
 	void decompressDungeonFile(); // @ F0455_FLOPPY_DecompressDungeon
+
+	Thing getSqureFirstThingIndex(int16 mapX, int16 mapY); // @ F0160_DUNGEON_GetSquareFirstThingIndex
 public:
 	DungeonMan(DMEngine *dmEngine);
 	~DungeonMan();
@@ -182,9 +208,9 @@ public:
 	void loadDungeonFile();	// @ F0434_STARTEND_IsLoadDungeonSuccessful_CPSC
 	void setCurrentMap(uint16 mapIndex); // @ F0173_DUNGEON_SetCurrentMap
 	void mapCoordsAfterRelMovement(direction dir, int16 stepsForward, int16 stepsRight, int16 &posX, int16 &posY); // @ F0150_DUNGEON_UpdateMapCoordinatesAfterRelativeMovement
-	ElementType getRelSquareType(direction dir, int16 stepsForward, int16 stepsRight, int16 posX, int16 posY) {
-		return getSquareType(getRelSquare(dir, stepsForward, stepsRight, posX, posY));
-	}// @ F0153_DUNGEON_GetRelativeSquareType
+	SquareType getRelSquareType(direction dir, int16 stepsForward, int16 stepsRight, int16 posX, int16 posY) {
+		return Square(getRelSquare(dir, stepsForward, stepsRight, posX, posY)).getType();
+	} // @ F0153_DUNGEON_GetRelativeSquareType
 };
 
 }

@@ -282,36 +282,43 @@ void DungeonMan::setCurrentMap(uint16 mapIndex) {
 		= &_dunData.columnsCumulativeSquareThingCount[_dunData.mapsFirstColumnIndex[mapIndex]];
 }
 
-byte DungeonMan::getSquare(int16 mapX, int16 mapY) {
+
+Square DungeonMan::getSquare(int16 mapX, int16 mapY) {
 	bool isInXBounds = (mapX >= 0) && (mapX < _currMap.width);
 	bool isInYBounds = (mapY >= 0) && (mapY < _currMap.height);
 
 	if (isInXBounds && isInYBounds)
 		return _currMap.data[mapX][mapY];
 
-	int16 tmpSquare;
+
+	Square tmpSquare;
 	if (isInYBounds) {
-		tmpSquare = getSquareType(_currMap.data[0][mapY]);
-		if (mapX == -1 && (tmpSquare == kCorridorElemType || tmpSquare == kPitElemType))
-			return (kWallElemType << 5) | kWallEastRandOrnAllowed;
+		Square tmpSquare(_currMap.data[0][mapY]);
+		if (mapX == -1 && (tmpSquare.getType() == kCorridorElemType || tmpSquare.getType() == kPitElemType))
+			return Square(kWallElemType).set(kWallEastRandOrnAllowed);
 
-		tmpSquare = getSquareType(_currMap.data[_currMap.width - 1][mapY]);
-		if (mapX == _currMap.width && (tmpSquare == kCorridorElemType || tmpSquare == kPitElemType))
-			return (kWallElemType << 5) | kWallWestRandOrnAllowed;
+		tmpSquare.set(_currMap.data[_currMap.width - 1][mapY]);
+		if (mapX == _currMap.width && (tmpSquare.getType() == kCorridorElemType || tmpSquare.getType() == kPitElemType))
+			return Square(kWallElemType).set(kWallWestRandOrnAllowed);
 	} else if (isInXBounds) {
-		tmpSquare = getSquareType(_currMap.data[mapX][0]);
-		if (mapY == -1 && (tmpSquare == kCorridorElemType || tmpSquare == kPitElemType))
-			return (kWallElemType << 5) | kWallSouthRandOrnAllowed;
+		tmpSquare.set(_currMap.data[mapX][0]);
+		if (mapY == -1 && (tmpSquare.getType() == kCorridorElemType || tmpSquare.getType() == kPitElemType))
+			return Square(kWallElemType).set(kWallSouthRandOrnAllowed);
 
-		tmpSquare = getSquareType(_currMap.data[mapX][_currMap.height - 1]);
-		if (mapY == _currMap.height && (tmpSquare == kCorridorElemType || tmpSquare == kPitElemType))
+		tmpSquare.set(_currMap.data[mapX][_currMap.height - 1]);
+		if (mapY == _currMap.height && (tmpSquare.getType() == kCorridorElemType || tmpSquare.getType() == kPitElemType))
 			return (kWallElemType << 5) | kWallNorthRandOrnAllowed;
 	}
 
-	return kWallElemType << 5;
+	return Square(kWallElemType);
 }
 
-byte DungeonMan::getRelSquare(direction dir, int16 stepsForward, int16 stepsRight, int16 posX, int16 posY) {
+Square DungeonMan::getRelSquare(direction dir, int16 stepsForward, int16 stepsRight, int16 posX, int16 posY) {
 	mapCoordsAfterRelMovement(dir, stepsForward, stepsForward, posX, posY);
 	return getSquare(posX, posY);
+}
+
+Thing DungeonMan::getSqureFirstThingIndex(int16 mapX, int16 mapY) {
+	//if (mapX < 0 || mapX >= _currMap.width || mapY < 0 || mapY >= _currMap.height || !(_currMap.data[mapX] & kThingListPresent))
+	return Thing();
 }
