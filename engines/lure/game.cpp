@@ -762,11 +762,11 @@ bool Game::GetTellActions() {
 				// Second parameter
 				action = (Action) commands[_numTellCommands * 3];
 				if (action == ASK)
-					strcat(statusLine, stringList.getString(S_FOR));
+					Common::strlcat(statusLine, stringList.getString(S_FOR), MAX_DESC_SIZE);
 				else if (action == GIVE)
-					strcat(statusLine, stringList.getString(S_TO));
+					Common::strlcat(statusLine, stringList.getString(S_TO), MAX_DESC_SIZE);
 				else if (action == USE)
-					strcat(statusLine, stringList.getString(S_ON));
+					Common::strlcat(statusLine, stringList.getString(S_ON), MAX_DESC_SIZE);
 				else {
 					// All other commads don't need a second parameter
 					++paramIndex;
