@@ -28,6 +28,15 @@ TTpronoun::TTpronoun(TTString &str, int val1, int val2, int val3, int val4) :
 		TTmajorWord(str, val1, val2, val3), _field30(val4) {
 }
 
+TTpronoun::TTpronoun(TTpronoun *src) : TTmajorWord(src) {
+	if (src->getStatus()) {
+		_field30 = 0;
+		_status = SS_5;
+	} else {
+		_field30 = src->_field30;
+	}
+}
+
 int TTpronoun::load(SimpleFile *file) {
 	int val;
 

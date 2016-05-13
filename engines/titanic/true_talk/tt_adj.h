@@ -32,6 +32,7 @@ protected:
 	int _field30;
 public:
 	TTadj(TTString &str, int val1, int val2, int val3, int val4);
+	TTadj(TTadj *src);
 
 	/**
 	 * Load the word

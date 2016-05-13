@@ -32,6 +32,7 @@ protected:
 	int _field2C;
 public:
 	TTmajorWord(TTString &str, int val1, int val2, int val3);
+	TTmajorWord(TTmajorWord *src);
 };
 
 } // End of namespace Titanic

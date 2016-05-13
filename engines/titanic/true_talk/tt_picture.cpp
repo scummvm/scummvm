@@ -29,6 +29,21 @@ TTpicture::TTpicture(TTString &str, int val1, int val2, int val3, int val4, int 
 		_field38(0) {
 }
 
+TTpicture::TTpicture(TTpicture *src) : TTmajorWord(src) {
+	if (getStatus()) {
+		_field34 = 0;
+		_field30 = 0;
+		_field38 = 0;
+		_field3C = 0;
+		_status = SS_5;
+	} else {
+		_field34 = src->_field34;
+		_field30 = src->_field30;
+		_field38 = src->_field38;
+		_field3C = src->_field3C;
+	}
+}
+
 int TTpicture::load(SimpleFile *file) {
 	CString str;
 	int val1, val2;

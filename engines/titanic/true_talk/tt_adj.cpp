@@ -34,6 +34,15 @@ TTadj::TTadj(TTString &str, int val1, int val2, int val3, int val4) :
 	}
 }
 
+TTadj::TTadj(TTadj *src) : TTmajorWord(src) {
+	if (src->getStatus()) {
+		_field30 = 0;
+		_status = SS_5;
+	} else {
+		_field30 = src->_field30;
+	}
+}
+
 int TTadj::load(SimpleFile *file) {
 	int val;
 
