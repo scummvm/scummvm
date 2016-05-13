@@ -33,7 +33,39 @@ TTword::TTword(TTString &str, int mode, int val2) : _string(str),
 }
 
 TTword::TTword(TTword *src) {
-	// TODO
+	if (src->getStatus() != SS_VALID) {
+		_status = SS_5;
+		return;
+	}
+
+	_string = src->_string;
+	_wordMode = src->_wordMode;
+	_field1C = src->_field1C;
+	_field20 = src->_field20;
+	_synP = nullptr;
+
+	TTsynonym *priorSyn = nullptr;
+	for (TTsynonym *synP = _synP; synP && !_status;) {
+		TTsynonym *newSyn = new TTsynonym(synP);
+		if (!newSyn) {
+			_status = SS_7;
+		} else {
+			newSyn->_pPrior = priorSyn;
+			newSyn->_pNext = nullptr;
+
+			if (priorSyn) {
+				priorSyn->_pNext = newSyn;
+			} else {
+				_synP = newSyn;
+			}
+
+			priorSyn = newSyn;
+		}
+	}
+
+	_pNext = src->_pNext;
+	_field24 = src->_field24;
+	_field28 = src->_field28;
 }
 
 void TTword::deleteSiblings() {

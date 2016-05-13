@@ -79,6 +79,11 @@ public:
 	operator const char *() const { return c_str(); }
 
 	/**
+	 * Return the status of the word
+	 */
+	TTStringStatus getStatus() const { return _status; }
+
+	/**
 	 * Creates a copy of the word
 	 */
 	virtual TTword *copy();
