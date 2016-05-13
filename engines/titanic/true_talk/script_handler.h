@@ -24,6 +24,7 @@
 #define TITANIC_SCRIPT_HANDLER_H
 
 #include "titanic/true_talk/tt_npc_script.h"
+#include "titanic/true_talk/tt_parser.h"
 #include "titanic/true_talk/tt_room_script.h"
 #include "titanic/true_talk/tt_string.h"
 #include "titanic/true_talk/tt_vocab.h"
@@ -46,20 +47,6 @@ public:
 		_fieldC(0), _field10(0) {}
 };
 
-class CScriptHandlerSub2 {
-public:
-	CScriptHandler *_owner;
-	int _field4;
-	int _field8;
-	int _fieldC;
-	int _field10;
-	int _field14;
-	int _field18;
-public:
-	CScriptHandlerSub2(CScriptHandler *owner) : _owner(owner), _field4(0), _field8(0),
-		_fieldC(0), _field10(0), _field14(0), _field18(0) {}
-};
-
 class CScriptHandler {
 private:
 	CTitleEngine *_owner;
@@ -68,7 +55,7 @@ private:
 	CExeResources &_resources;
 	int _field10;
 	CScriptHandlerSub1 _sub1;
-	CScriptHandlerSub2 _sub2;
+	TTparser _parser;
 	int _inputCtr;
 	int _field20;
 	int _field24;

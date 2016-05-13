@@ -29,7 +29,7 @@ namespace Titanic {
 
 CScriptHandler::CScriptHandler(CTitleEngine *owner, int val1, int val2) :
 		_owner(owner), _script(owner->_script), _resources(g_vm->_exeResources),
-		_sub1(), _sub2(this), _field10(0), _inputCtr(0), 
+		_sub1(), _parser(this), _field10(0), _inputCtr(0), 
 		_field20(0), _field24(0), _field28(0), _field2C(0), _field30(0) {
 	g_vm->_scriptHandler = this;
 	g_vm->_script = _script;

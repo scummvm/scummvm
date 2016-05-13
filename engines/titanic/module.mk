@@ -463,6 +463,7 @@ MODULE_OBJS := \
 	true_talk/tt_script_base.o \
 	true_talk/tt_room_script.o \
 	true_talk/tt_npc_script.o \
+	true_talk/tt_parser.o \
 	true_talk/tt_scripts.o \
 	true_talk/tt_string.o \
 	true_talk/tt_string_node.o \
