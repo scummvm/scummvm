@@ -91,6 +91,8 @@ public:
 	 * Open a resource for access
 	 */
 	SimpleFile *openResource(const CString &name);
+
+
 };
 
 } // End of namespace Titanic

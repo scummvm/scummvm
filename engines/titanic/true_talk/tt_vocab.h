@@ -56,6 +56,8 @@ private:
 public:
 	TTvocab(int val);
 	~TTvocab();
+
+	TTword *getPrimeWord(TTString &str, TTword **words);
 };
 
 } // End of namespace Titanic

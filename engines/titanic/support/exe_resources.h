@@ -29,6 +29,8 @@ namespace Titanic {
 
 class CScriptHandler;
 
+enum FileHandle { HANDLE_STDIN = 0, HANDLE_STDOUT = 1, HANDLE_STDERR = 2 };
+
 class CExeResources {
 public:
 	CScriptHandler *_owner;

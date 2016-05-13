@@ -32,6 +32,10 @@ TTword::TTword(TTString &str, int mode, int val2) : _string(str),
 	_status = str.getStatus() == SS_VALID ? SS_VALID : SS_5;
 }
 
+TTword::TTword(TTword *src) {
+	// TODO
+}
+
 void TTword::deleteSiblings() {
 	while (_pNext) {
 		TTword *next = _pNext;
@@ -50,7 +54,7 @@ int TTword::readSyn(SimpleFile *file) {
 		return 5;
 
 	// Create new synanym node
-	TTsynonym *synNode = new TTsynonym(mode, str.c_str(), val1);
+	TTsynonym *synNode = new TTsynonym(mode, str.c_str(), (FileHandle)val1);
 
 	if (_synP) {
 		// A synonym already exists, so add new one as a tail
@@ -99,7 +103,7 @@ uint TTword::readNumber(const char *str) {
 	return numValue;
 }
 
-bool TTword::testFileHandle(SimpleFile *file) const {
+bool TTword::testFileHandle(FileHandle file) const {
 	if (g_vm->_exeResources.is18Equals(3))
 		return true;
 
@@ -119,6 +123,24 @@ TTword *TTword::scanCopy(const TTString &str, TTsynonym *node, int mode) {
 
 	return nullptr;
 }
+
+TTword *TTword::copy() {
+	return new TTword(this);
+}
+
+FileHandle TTword::getSynFile() const {
+	return _synP ? _synP->_file : HANDLE_STDIN;
+}
+
+bool TTword::checkSynFile(FileHandle file) const {
+	return _synP && _synP->_file == file;
+}
+
+void TTword::setSynFile(FileHandle file) {
+	if (_synP && testFileHandle(file))
+		_synP->_file = file;
+}
+
 
 /*------------------------------------------------------------------------*/
 

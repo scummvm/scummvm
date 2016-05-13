@@ -168,4 +168,33 @@ TTword *TTvocab::findWord(const TTString &str) {
 	return word;
 }
 
+TTword *TTvocab::getPrimeWord(TTString &str, TTword **words) {
+	TTsynonym *synonym = new TTsynonym();
+	char c = str.charAt(0);
+	TTword *vocabList = _pHead;
+	TTword *returnWord = nullptr;
+
+	if (!Common::isDigit(c)) {
+		returnWord = new TTword(str, 3, 300);
+	} else if (!vocabList) {
+		// No vocab present. Should never happen
+	} else {
+		TTword *foundWord = nullptr;
+		while (!foundWord && vocabList) {
+			if (_field18 == 3 && !strcmp(str.c_str(), vocabList->c_str())) {
+
+			}
+		}
+
+		// TODO
+
+	}
+
+	if (words)
+		*words = vocabList;
+	delete synonym;
+	
+	return returnWord;
+}
+
 } // End of namespace Titanic

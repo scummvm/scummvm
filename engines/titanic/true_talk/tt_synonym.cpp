@@ -30,14 +30,14 @@ TTsynonym::TTsynonym() : TTstringNode() {
 TTsynonym::TTsynonym(const TTstringNode *src) {
 	_string = src->_string;
 	initialize(src->_mode);
-	_field14 = src->_field14;
+	_file = src->_file;
 }
 
-TTsynonym::TTsynonym(int mode, const char *str, int val2) :
+TTsynonym::TTsynonym(int mode, const char *str, FileHandle file) :
 		TTstringNode() {
 	_string = str;
 	initialize(mode);
-	_field14 = val2;
+	_file = file;
 }
 
 TTsynonym *TTsynonym::findByName(TTsynonym *start, const TTString &str, int mode) {

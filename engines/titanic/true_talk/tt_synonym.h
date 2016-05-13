@@ -31,8 +31,11 @@ class TTsynonym : public TTstringNode {
 public:
 	TTsynonym();
 	TTsynonym(const TTstringNode *src);
-	TTsynonym(int mode, const char *str, int val2);
+	TTsynonym(int mode, const char *str, FileHandle file);
 
+	/**
+	 * Copy the synonym
+	 */
 	TTsynonym *copy(TTstringNode *src);
 
 	/**

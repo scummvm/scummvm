@@ -43,13 +43,15 @@ protected:
 	 */
 	uint readNumber(const char *str);
 
-	bool testFileHandle(SimpleFile *file) const;
+	bool testFileHandle(SimpleFile *file) const { return true; }
+	bool testFileHandle(FileHandle resHandle) const;
 public:
 	TTword *_pNext;
 	TTsynonym *_synP;
 	TTString _string;
 public:
 	TTword(TTString &str, int mode, int val2);
+	TTword(TTword *src);
 
 	/**
 	 * Delete any following words chained to the word
@@ -75,6 +77,45 @@ public:
 
 	const char *c_str() const { return _string.c_str(); }
 	operator const char *() const { return c_str(); }
+
+	virtual TTword *copy();
+	virtual int proc2() const { return 0; }
+	virtual int proc3() const { return -1; }
+	virtual void proc4() {}
+	virtual void proc5() {}
+	virtual int proc6() const { return 0; }
+	virtual int proc7() const { return 0; }
+	virtual int proc8() const { return 0; }
+	virtual int proc9() const { return 0; }
+	virtual int proc10() const { return 0; }
+	virtual void proc11() {}
+	virtual int proc12() const { return 0; }
+	virtual int proc13() const { return 0; }
+	virtual int proc14() const { return 0; }
+	virtual int proc15() const { return -1; }
+	virtual int proc16() const { return 0; }
+	virtual int proc17() const { return 0; }
+	virtual int proc18() const { return 0; }
+	virtual int proc19() const { return 0; }
+	virtual int proc20() const { return 0; }
+
+	/**
+	 * Returns the file associated with the word's first synonym
+	 */
+	virtual FileHandle getSynFile() const;
+
+	/**
+	 * Checks whether the file associated with the word's first
+	 * synonym matches the specified file
+	 */
+	virtual bool checkSynFile(FileHandle file) const;
+
+	/**
+	 * Sets the file associated with a synonym
+	 */
+	virtual void setSynFile(FileHandle file);
+
+	virtual int proc24() const { return 0; }
 };
 
 class TTword1 : public TTword {

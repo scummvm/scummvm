@@ -26,7 +26,7 @@
 namespace Titanic {
 
 TTstringNode::TTstringNode() : _pPrior(nullptr), _pNext(nullptr),
-		_field14(0), _mode(0), _field1C(0) {
+		_file(HANDLE_STDIN), _mode(0), _field1C(0) {
 }
 
 TTstringNode::~TTstringNode() {
@@ -35,7 +35,7 @@ TTstringNode::~TTstringNode() {
 
 void TTstringNode::initialize(int mode) {
 	_mode = mode;
-	_field14 = 0;
+	_file = HANDLE_STDIN;
 
 	if (_string.isValid()) {
 		_field1C = 0;
@@ -47,7 +47,7 @@ void TTstringNode::initialize(int mode) {
 
 void TTstringNode::initialize(TTstringNode *oldNode) {
 	_mode = oldNode->_mode;
-	_field14 = oldNode->_field14;
+	_file = oldNode->_file;
 
 	if (_string.isValid()) {
 		_field1C = 0;

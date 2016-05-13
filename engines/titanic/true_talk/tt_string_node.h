@@ -24,6 +24,7 @@
 #define TITANIC_TT_STRING_NODE_H
 
 #include "titanic/true_talk/tt_string.h"
+#include "titanic/support/exe_resources.h"
 
 namespace Titanic {
 
@@ -47,7 +48,7 @@ public:
 	TTstringNode *_pPrior;
 	TTstringNode *_pNext;
 	TTString _string;
-	int _field14;
+	FileHandle _file;
 	int _mode;
 	int _field1C;
 public:
