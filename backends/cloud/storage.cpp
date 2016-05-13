@@ -26,7 +26,7 @@
 
 namespace Cloud {
 
-static void cloudThread(void *thread) {
+void cloudThread(void *thread) {
 	Storage *cloudThread = (Storage *)thread;
 	cloudThread->handler();
 }

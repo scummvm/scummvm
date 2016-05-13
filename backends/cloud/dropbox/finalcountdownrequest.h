@@ -35,7 +35,7 @@ public:
 	FinalCountdownRequest(Callback cb) : Request(cb), _times(5) {};
 
 	virtual bool handle() {
-		if(--_times == 0) {
+		if (--_times == 0) {
 			warning("It's the final countdown!");
 			_callback(0); //meh, don't have anything for you, my caller
 			return true;

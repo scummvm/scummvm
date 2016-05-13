@@ -25,7 +25,7 @@
 
 namespace Cloud {
 
-Manager::Manager(): _currentStorage(new Dropbox::DropboxStorage()) {};
+Manager::Manager(): _currentStorage(new Dropbox::DropboxStorage()) {}
 
 Manager::~Manager() { delete _currentStorage; }
 
