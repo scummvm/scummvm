@@ -30,13 +30,13 @@ namespace Titanic {
 class TTsynonym : public TTstringNode {
 public:
 	TTsynonym();
-	TTsynonym(const TTstringNode *src);
+	TTsynonym(const TTsynonym *src);
 	TTsynonym(int mode, const char *str, FileHandle file);
 
 	/**
 	 * Copy the synonym
 	 */
-	TTsynonym *copy(TTstringNode *src);
+	TTsynonym *copy(TTsynonym *src);
 
 	/**
 	 * Scan for a synonym with a given string

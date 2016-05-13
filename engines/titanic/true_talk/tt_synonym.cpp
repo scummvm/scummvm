@@ -27,7 +27,7 @@ namespace Titanic {
 TTsynonym::TTsynonym() : TTstringNode() {
 }
 
-TTsynonym::TTsynonym(const TTstringNode *src) {
+TTsynonym::TTsynonym(const TTsynonym *src) {
 	_string = src->_string;
 	initialize(src->_mode);
 	_file = src->_file;
@@ -51,7 +51,7 @@ TTsynonym *TTsynonym::findByName(TTsynonym *start, const TTString &str, int mode
 	return nullptr;
 }
 
-TTsynonym *TTsynonym::copy(TTstringNode *src) {
+TTsynonym *TTsynonym::copy(TTsynonym *src) {
 	if (src->_field1C) {
 		_field1C = 5;
 		return this;

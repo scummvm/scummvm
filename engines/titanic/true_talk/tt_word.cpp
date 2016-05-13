@@ -113,7 +113,7 @@ bool TTword::testFileHandle(FileHandle file) const {
 
 TTword *TTword::scanCopy(const TTString &str, TTsynonym *node, int mode) {
 	if (_synP) {
-		TTstringNode *strNode = TTsynonym::findByName(_synP, str, mode);
+		TTsynonym *strNode = TTsynonym::findByName(_synP, str, mode);
 		if (strNode) {
 			node->copy(strNode);
 			node->_pPrior = nullptr;

@@ -78,7 +78,11 @@ public:
 	const char *c_str() const { return _string.c_str(); }
 	operator const char *() const { return c_str(); }
 
+	/**
+	 * Creates a copy of the word
+	 */
 	virtual TTword *copy();
+	
 	virtual int proc2() const { return 0; }
 	virtual int proc3() const { return -1; }
 	virtual void proc4() {}
