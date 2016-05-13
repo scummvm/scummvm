@@ -27,14 +27,9 @@
 
 namespace Cloud { namespace Dropbox {
 
-class DropboxStorage: public Cloud::Storage {
-	bool _firstTime;
-
-protected:
-	virtual void handler();
-
+class DropboxStorage: public Cloud::Storage {	
 public:
-	DropboxStorage() : _firstTime(true) {};
+	DropboxStorage() {};
 
 	virtual void listDirectory(Common::String path);
 	virtual void syncSaves();

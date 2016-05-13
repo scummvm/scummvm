@@ -20,26 +20,34 @@
 *
 */
 
-#include "backends/cloud/dropbox/dropboxstorage.h"
-#include "backends/cloud/dropbox/finalcountdownrequest.h"
-#include "common/debug.h"
+#ifndef BACKENDS_CLOUD_REQUEST_H
+#define BACKENDS_CLOUD_REQUEST_H
 
 namespace Cloud {
-namespace Dropbox {
 
-static void finalCountdownCallback(void *ptr) {
-	warning("ladies and gentlemen, this is your callback speaking");
-	warning("the returned pointer is %d", ptr);
-	warning("thank you for your attention");
-}
+class Request {
+protected:
+	/**
+	* Callback, which should be called before Request returns true in handle().
+	* That's the way Requests pass the result to the code which asked to create this request.	
+	*/
 
-void DropboxStorage::listDirectory(Common::String path) {
-	startTimer(1000000); //in one second
-}
+	typedef void(*Callback)(void *result);
+	Callback _callback;
 
-void DropboxStorage::syncSaves() {	
-	addRequest(new FinalCountdownRequest(finalCountdownCallback));	
-}
+public:
+	Request(Callback cb): _callback(cb) {};
+	virtual ~Request() {};
 
-} //end of namespace Dropbox
+	/**
+	* Method, which does actual work. Depends on what this Request is doing.
+	*
+	* @return true if request's work is complete and it may be removed from Storage's list
+	*/
+
+	virtual bool handle() = 0;
+};
+
 } //end of namespace Cloud
+
+#endif

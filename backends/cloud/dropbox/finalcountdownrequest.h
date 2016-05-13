@@ -20,26 +20,33 @@
 *
 */
 
-#include "backends/cloud/dropbox/dropboxstorage.h"
-#include "backends/cloud/dropbox/finalcountdownrequest.h"
-#include "common/debug.h"
+#ifndef BACKENDS_CLOUD_DROPBOX_FINALCOUNTDOWNREQUEST_H
+#define BACKENDS_CLOUD_DROPBOX_FINALCOUNTDOWNREQUEST_H
+
+#include "backends/cloud/request.h"
 
 namespace Cloud {
 namespace Dropbox {
 
-static void finalCountdownCallback(void *ptr) {
-	warning("ladies and gentlemen, this is your callback speaking");
-	warning("the returned pointer is %d", ptr);
-	warning("thank you for your attention");
-}
+class FinalCountdownRequest : public Cloud::Request {
+	int _times;
 
-void DropboxStorage::listDirectory(Common::String path) {
-	startTimer(1000000); //in one second
-}
+public:
+	FinalCountdownRequest(Callback cb) : Request(cb), _times(5) {};
 
-void DropboxStorage::syncSaves() {	
-	addRequest(new FinalCountdownRequest(finalCountdownCallback));	
-}
+	virtual bool handle() {
+		if(--_times == 0) {
+			warning("It's the final countdown!");
+			_callback(0); //meh, don't have anything for you, my caller
+			return true;
+		}
 
-} //end of namespace Dropbox
-} //end of namespace Cloud
+		warning("%d...", _times);
+		return false;
+	}
+};
+
+}
+}  //end of namespace Cloud::Dropbox
+
+#endif

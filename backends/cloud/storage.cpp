@@ -31,19 +31,37 @@ static void cloudThread(void *thread) {
 	cloudThread->handler();
 }
 
+Storage::Storage() : _timerStarted(false) {}
+
+void Storage::addRequest(Request *request) {
+	_requests.push_back(request);
+	if (!_timerStarted) startTimer();
+}
+
 void Storage::handler() {
-	unsetTimeout();
+	//TODO: lock mutex here (in case another handler() would be called before this one ends)
+	warning("handler's here");
+	for (Common::Array<Request *>::iterator i = _requests.begin(); i != _requests.end();) {
+		if ((*i)->handle()) _requests.erase(i);
+		else ++i;
+	}
+	if (_requests.empty()) stopTimer();
+	//TODO: unlock mutex here
 }
 
-void Storage::setTimeout(int interval) {
+void Storage::startTimer(int interval) {
 	Common::TimerManager *manager = g_system->getTimerManager();
-	if (!manager->installTimerProc(cloudThread, interval, this, "Cloud Thread"))
-		; // warning("Failed to create cloud thread");
+	if (manager->installTimerProc(cloudThread, interval, this, "Cloud Thread")) {
+		_timerStarted = true;
+	} else {
+		warning("Failed to create cloud thread");		
+	}
 }
 
-void Storage::unsetTimeout() {
+void Storage::stopTimer() {
 	Common::TimerManager *manager = g_system->getTimerManager();
 	manager->removeTimerProc(cloudThread);
+	_timerStarted = false;
 }
 
 } //end of namespace Cloud

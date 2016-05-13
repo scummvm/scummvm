@@ -24,19 +24,25 @@
 #define BACKENDS_CLOUD_STORAGE_H
 
 #include "common/str.h"
+#include "common/array.h"
+#include "backends/cloud/request.h"
 
 namespace Cloud {
 
 class Storage {
 	friend void cloudThread(void *); //calls handler()
+	bool _timerStarted;
 
 protected:
-	virtual void handler();
-	virtual void setTimeout(int interval);
-	virtual void unsetTimeout();
+	Common::Array<Request *> _requests;
+
+	virtual void addRequest(Request *request); //starts the timer if it's not started
+	virtual void handler();	
+	virtual void startTimer(int interval = 1000000); //1 second is the default interval
+	virtual void stopTimer();
 
 public:
-	Storage() {};
+	Storage();
 	virtual ~Storage() {};
 
 	/**
