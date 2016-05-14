@@ -185,16 +185,24 @@ void CampScene::mWhileDoOpen() {
 	_vm->_numAnimTimers = 0;
 	_vm->_images.clear();
 
-	if (_vm->_conversation == 2) {
-		// Cutscene at end of Chapter 6
-		Resource *spriteData = _vm->_files->loadFile(28, 37);
-		_vm->_objectsTable[28] = new SpriteResource(_vm, spriteData);
-		delete spriteData;
+	if (_vm->isCD()) {
+		if (_vm->_conversation == 2) {
+			// Cutscene at end of Chapter 6
+			Resource *spriteData = _vm->_files->loadFile(28, 37);
+			_vm->_objectsTable[28] = new SpriteResource(_vm, spriteData);
+			delete spriteData;
 
-		_vm->_animation->freeAnimationData();
-		animResource = _vm->_files->loadFile(28, 38);
-		_vm->_animation->loadAnimations(animResource);
-		delete animResource;
+			_vm->_animation->freeAnimationData();
+			animResource = _vm->_files->loadFile(28, 38);
+			_vm->_animation->loadAnimations(animResource);
+			delete animResource;
+		}
+	} else {
+		_vm->freeCells();
+		_vm->_oldRects.clear();
+		_vm->_newRects.clear();
+		_vm->_numAnimTimers = 0;
+		_vm->_images.clear();
 	}
 }
 
