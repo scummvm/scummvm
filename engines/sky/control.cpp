@@ -402,7 +402,8 @@ void Control::animClick(ConResource *pButton) {
 void Control::drawMainPanel() {
 	memset(_screenBuf, 0, GAME_SCREEN_WIDTH * FULL_SCREEN_HEIGHT);
 	_system->copyRectToScreen(_screenBuf, GAME_SCREEN_WIDTH, 0, 0, GAME_SCREEN_WIDTH, FULL_SCREEN_HEIGHT);
-	_controlPanel->drawToScreen(NO_MASK);
+	if (_controlPanel)
+		_controlPanel->drawToScreen(NO_MASK);
 	_exitButton->drawToScreen(NO_MASK);
 	_savePanButton->drawToScreen(NO_MASK);
 	_restorePanButton->drawToScreen(NO_MASK);
