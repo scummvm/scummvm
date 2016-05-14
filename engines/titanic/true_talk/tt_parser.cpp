@@ -69,7 +69,7 @@ int TTparser::normalize(TTinput *input) {
 				break;
 			
 			case '\'':
-				if (!normalizeQuotedString(srcLine, index, *destLine))
+				if (!normalizeContraction(srcLine, index, *destLine))
 					flag = true;
 				break;
 			
@@ -165,7 +165,7 @@ int TTparser::isSpecialCommand(const TTstring &str, int &index) {
 	}
 }
 
-bool TTparser::normalizeQuotedString(const TTstring &srcLine, int srcIndex, TTstring &destLine) {
+bool TTparser::normalizeContraction(const TTstring &srcLine, int srcIndex, TTstring &destLine) {
 	// TODO
 	return false;
 }

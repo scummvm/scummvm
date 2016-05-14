@@ -38,9 +38,10 @@ private:
 	int normalize(TTinput *input);
 	
 	/**
-	 * Submethod called by normalize to handle text following single quote chracters
+	 * Submethod called by normalize to handle expanding contacted word pairs
+	 * like can't, should've, and so on.
 	 */
-	bool normalizeQuotedString(const TTstring &srcLine, int srcIndex, TTstring &destLine);
+	bool normalizeContraction(const TTstring &srcLine, int srcIndex, TTstring &destLine);
 
 	/**
 	 * Checks for what is likely special developer cheat codes
