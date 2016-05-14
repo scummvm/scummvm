@@ -23,6 +23,8 @@
 #ifndef TITANIC_TT_PARSER_H
 #define TITANIC_TT_PARSER_H
 
+#include "titanic/true_talk/tt_input.h"
+
 namespace Titanic {
 
 class CScriptHandler;
@@ -39,6 +41,11 @@ public:
 public:
 	TTparser(CScriptHandler *owner) : _owner(owner), _field4(0), _field8(0),
 		_fieldC(0), _field10(0), _field14(0), _field18(0) {}
+
+	/**
+	 * Gets passed a newly created input wrapper during conversation text processing
+	 */
+	void processInput(TTinput *input);
 };
 
 } // End of namespace Titanic

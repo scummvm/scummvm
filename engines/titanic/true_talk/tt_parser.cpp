@@ -22,7 +22,12 @@
 
 #include "titanic/true_talk/tt_parser.h"
 #include "titanic/true_talk/script_handler.h"
+#include "titanic/true_talk/tt_input.h"
 
 namespace Titanic {
+
+void TTparser::processInput(TTinput *input) {
+	warning("TODO: TTparser::processInput");
+}
 
 } // End of namespace Titanic

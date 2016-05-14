@@ -27,7 +27,7 @@
 
 namespace Titanic {
 
-class BellbotScript : public TTNpcScript {
+class BellbotScript : public TTnpcScript {
 private:
 	int _array[150];
 	int _field2D0;

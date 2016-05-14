@@ -28,7 +28,7 @@
 
 namespace Titanic {
 
-class TTTitleScript : public TTScriptBase {
+class TTTitleScript : public TTscriptBase {
 private:
 	int _field50;
 	TTstring _string1;

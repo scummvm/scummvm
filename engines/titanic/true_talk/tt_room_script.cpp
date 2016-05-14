@@ -25,42 +25,42 @@
 
 namespace Titanic {
 
-TTRoomScriptBase::TTRoomScriptBase(int scriptId,
+TTroomScriptBase::TTroomScriptBase(int scriptId,
 		const char *charClass, const char *charName,
 		int v3, int v4, int v5, int v6, int v2, int v7) : _scriptId(scriptId),
-		TTScriptBase(3, charClass, v2, charName, v3, v4, v5, v6, v7) {
+		TTscriptBase(3, charClass, v2, charName, v3, v4, v5, v6, v7) {
 }
 
 /*------------------------------------------------------------------------*/
 
-TTRoomScript::TTRoomScript(int scriptId) :
-	TTRoomScriptBase(scriptId, "", "", 0, -1, -1, -1, 0, 0) {
+TTroomScript::TTroomScript(int scriptId) :
+	TTroomScriptBase(scriptId, "", "", 0, -1, -1, -1, 0, 0) {
 }
 
-void TTRoomScript::proc6() {
+void TTroomScript::proc6() {
 	warning("TODO");
 }
 
-void TTRoomScript::proc7() {
+void TTroomScript::proc7() {
 	warning("TODO");
 }
 
-void TTRoomScript::proc8() {
+void TTroomScript::proc8() {
 	warning("TODO");
 }
 
-void TTRoomScript::proc9() {
+void TTroomScript::proc9() {
 	warning("TODO");
 }
 
-ScriptChangedResult TTRoomScript::scriptChanged(TTScriptBase *npcScript, int id) {
+ScriptChangedResult TTroomScript::scriptChanged(TTscriptBase *npcScript, int id) {
 	if (id == 1)
 		_field54 = 1;
 	
 	return SCR_1;
 }
 
-void TTRoomScript::proc11() {
+void TTroomScript::proc11() {
 	warning("TODO");
 }
 

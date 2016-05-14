@@ -29,14 +29,14 @@
 namespace Titanic {
 
 
-class TTNpcScriptBase : public TTScriptBase {
+class TTnpcScriptBase : public TTscriptBase {
 protected:
 	int _field54;
 	int _val2;
 public:
 	int _charId;
 public:
-	TTNpcScriptBase(int charId, const char *charClass, int v2,
+	TTnpcScriptBase(int charId, const char *charClass, int v2,
 		const char *charName, int v3, int val2, int v4,
 		int v5, int v6, int v7);
 
@@ -48,7 +48,7 @@ public:
 	/**
 	 * Called when the script/id changes
 	 */
-	virtual ScriptChangedResult scriptChanged(TTScriptBase *roomScript, uint id) = 0;
+	virtual ScriptChangedResult scriptChanged(TTscriptBase *roomScript, uint id) = 0;
 
 	virtual int proc11() const = 0;
 	virtual int proc12() const = 0;
@@ -56,7 +56,7 @@ public:
 	int charId() const { return _charId; }
 };
 
-class TTNpcScript : public TTNpcScriptBase {
+class TTnpcScript : public TTnpcScriptBase {
 protected:
 	byte *_subPtr;
 	int _field60;
@@ -74,7 +74,7 @@ protected:
 
 	void randomizeFlags();
 public:
-	TTNpcScript(int charId, const char *charClass, int v2,
+	TTnpcScript(int charId, const char *charClass, int v2,
 		const char *charName, int v3, int val2, int v4,
 		int v5, int v6, int v7);
 
@@ -87,7 +87,7 @@ public:
 	/**
 	 * Called when the script/id changes
 	 */
-	virtual ScriptChangedResult scriptChanged(TTScriptBase *roomScript, uint id) {
+	virtual ScriptChangedResult scriptChanged(TTscriptBase *roomScript, uint id) {
 		return SCR_2;
 	}
 
@@ -129,7 +129,7 @@ public:
 	/**
 	 * Called with the script and id changes
 	 */
-	ScriptChangedResult notifyScript(TTScriptBase *npcScript, int id) {
+	ScriptChangedResult notifyScript(TTscriptBase *npcScript, int id) {
 		return scriptChanged(npcScript, id);
 	}
 };

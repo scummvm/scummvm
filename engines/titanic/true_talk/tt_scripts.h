@@ -31,33 +31,33 @@ namespace Titanic {
 
 class CTitleEngine;
 
-class TTNpcScriptListItem : public ListItem {
+class TTnpcScriptListItem : public ListItem {
 public:
-	TTNpcScript *_npcScript;
-	TTRoomScript *_roomScript;
+	TTnpcScript *_npcScript;
+	TTroomScript *_roomScript;
 public:
-	TTNpcScriptListItem() : _npcScript(nullptr), _roomScript(nullptr) {}
-	TTNpcScriptListItem(TTNpcScript *script, TTRoomScript *roomScript) :
+	TTnpcScriptListItem() : _npcScript(nullptr), _roomScript(nullptr) {}
+	TTnpcScriptListItem(TTnpcScript *script, TTroomScript *roomScript) :
 		_npcScript(script), _roomScript(roomScript) {}
-	virtual ~TTNpcScriptListItem() { delete _npcScript; }
+	virtual ~TTnpcScriptListItem() { delete _npcScript; }
 };
 
-PTR_LIST_ITEM(TTRoomScript);
+PTR_LIST_ITEM(TTroomScript);
 
-class TTNpcScriptList : public List<TTNpcScriptListItem> {
+class TTnpcScriptList : public List<TTnpcScriptListItem> {
 public:
-	TTNpcScript *findById(int charId) const;
+	TTnpcScript *findById(int charId) const;
 };
 
-class TTRoomScriptList : public List<TTRoomScriptListItem> {
+class TTroomScriptList : public List<TTroomScriptListItem> {
 public:
-	TTRoomScript *findById(int scriptId) const;
+	TTroomScript *findById(int scriptId) const;
 };
 
-class TTScripts {
+class TTscripts {
 private:
-	TTNpcScriptList _npcScripts;
-	TTRoomScriptList _roomScripts;
+	TTnpcScriptList _npcScripts;
+	TTroomScriptList _roomScripts;
 	CTitleEngine *_titleEngine;
 	int _field24;
 	int _field28;
@@ -65,24 +65,24 @@ private:
 	/**
 	 * Add a named script to the named scripts list
 	 */
-	void addScript(TTNpcScript *script, int charId);
+	void addScript(TTnpcScript *script, int charId);
 
 	/**
 	 * Add an unnamed script to the unnamed scripts list
 	 */
-	void addScript(TTRoomScript *script);
+	void addScript(TTroomScript *script);
 public:
-	TTScripts(CTitleEngine *titleEngine);
+	TTscripts(CTitleEngine *titleEngine);
 
 	/**
 	 * Return a pointer to the specified room script
 	 */
-	TTRoomScript *getRoomScript(int scriptId) const;
+	TTroomScript *getRoomScript(int scriptId) const;
 
 	/**
 	 * Return a pointer to the specified character script
 	 */
-	TTNpcScript *getNpcScript(int charId) const;
+	TTnpcScript *getNpcScript(int charId) const;
 };
 
 } // End of namespace Titanic

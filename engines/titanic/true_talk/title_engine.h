@@ -42,10 +42,10 @@ public:
 class CTitleEngine {
 public:
 	CScriptHandler *_scriptHandler;
-	TTScriptBase *_script;
+	TTscriptBase *_script;
 public:
 	CTitleEngine();
-	~CTitleEngine();
+	virtual ~CTitleEngine();
 
 	/**
 	 * Setup the engine
@@ -75,7 +75,7 @@ public:
 	Common::Array<byte> _data;
 public:
 	STtitleEngine();
-	~STtitleEngine();
+	virtual ~STtitleEngine();
 
 	void reset();
 

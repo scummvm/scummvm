@@ -21,6 +21,7 @@
  */
 
 #include "titanic/true_talk/script_handler.h"
+#include "titanic/true_talk/tt_input.h"
 #include "titanic/titanic.h"
 
 namespace Titanic {
@@ -41,7 +42,7 @@ CScriptHandler::~CScriptHandler() {
 	delete _vocab;
 }
 
-ScriptChangedResult CScriptHandler::scriptChanged(TTRoomScript *roomScript, TTNpcScript *npcScript, uint dialogueId) {
+ScriptChangedResult CScriptHandler::scriptChanged(TTroomScript *roomScript, TTnpcScript *npcScript, uint dialogueId) {
 	if (!npcScript || !roomScript) {
 		++_inputCtr;
 		return SCR_5;
@@ -57,12 +58,19 @@ ScriptChangedResult CScriptHandler::scriptChanged(TTRoomScript *roomScript, TTNp
 	error("TODO: CScriptHandler::scriptChanged");
 }
 
-void CScriptHandler::processInput(TTRoomScript *roomScript, TTNpcScript *npcScript,
+int CScriptHandler::processInput(TTroomScript *roomScript, TTnpcScript *npcScript,
 		const TTstring &line) {
 	if (!roomScript || !line.isValid())
-		return;
+		return SS_5;
 	
+	TTinput *input = new TTinput(_inputCtr++, line, this, roomScript, npcScript);
+	_parser.processInput(input);
+
+	warning("TODO: CScriptHandler::processInput");
+
 	// TODO
+	delete input;
+	return SS_VALID;
 }
 
 SimpleFile *CScriptHandler::openResource(const CString &name) {

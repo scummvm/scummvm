@@ -179,13 +179,13 @@ void CTrueTalkManager::setFlags(int index, int val) {
 }
 
 void CTrueTalkManager::loadNPC(SimpleFile *file, int charId) {
-	TTNpcScript *script = _scripts.getNpcScript(charId);
+	TTnpcScript *script = _scripts.getNpcScript(charId);
 	if (script)
 		script->load(file);
 }
 
 void CTrueTalkManager::saveNPC(SimpleFile *file, int charId) const {
-	TTNpcScript *script = _scripts.getNpcScript(charId);
+	TTnpcScript *script = _scripts.getNpcScript(charId);
 	if (script) {
 		script->save(file);
 		file->writeNumber(MKTAG_BE('U', 'R', 'A', 'H'));
@@ -218,8 +218,8 @@ void CTrueTalkManager::update2() {
 }
 
 void CTrueTalkManager::start(CTrueTalkNPC *npc, uint id, CViewItem *view) {
-	TTNpcScript *npcScript = getNpcScript(npc);
-	TTRoomScript *roomScript = getRoomScript();
+	TTnpcScript *npcScript = getNpcScript(npc);
+	TTroomScript *roomScript = getRoomScript();
 	
 	_titleEngine.reset();
 	uint charId = npcScript->charId();
@@ -232,7 +232,7 @@ void CTrueTalkManager::start(CTrueTalkNPC *npc, uint id, CViewItem *view) {
 	setDialogue(npc, roomScript, view);
 }
 
-TTNpcScript *CTrueTalkManager::getTalker(const CString &name) const {
+TTnpcScript *CTrueTalkManager::getTalker(const CString &name) const {
 	if (name.contains("Doorbot"))
 		return _scripts.getNpcScript(104);
 	else if (name.contains("DeskBot"))
@@ -255,9 +255,9 @@ TTNpcScript *CTrueTalkManager::getTalker(const CString &name) const {
 	return nullptr;
 }
 
-TTNpcScript *CTrueTalkManager::getNpcScript(CTrueTalkNPC *npc) const {
+TTnpcScript *CTrueTalkManager::getNpcScript(CTrueTalkNPC *npc) const {
 	CString npcName = npc->getName();
-	TTNpcScript *script = getTalker(npcName);
+	TTnpcScript *script = getTalker(npcName);
 
 	if (!script) {
 		// Fall back on the default NPC script
@@ -267,9 +267,9 @@ TTNpcScript *CTrueTalkManager::getNpcScript(CTrueTalkNPC *npc) const {
 	return script;
 }
 
-TTRoomScript *CTrueTalkManager::getRoomScript() const {
+TTroomScript *CTrueTalkManager::getRoomScript() const {
 	CRoomItem *room = _gameManager->getRoom();
-	TTRoomScript *script = nullptr;
+	TTroomScript *script = nullptr;
 	if (room) {
 		int scriptId = room->getScriptId();
 		if (scriptId)
@@ -303,8 +303,8 @@ void CTrueTalkManager::loadAssets(CTrueTalkNPC *npc, int charId) {
 }
 
 void CTrueTalkManager::processInput(CTrueTalkNPC *npc, CTextInputMsg *msg, CViewItem *view) {
-	TTNpcScript *npcScript = getNpcScript(npc);
-	TTRoomScript *roomScript = getRoomScript();
+	TTnpcScript *npcScript = getNpcScript(npc);
+	TTroomScript *roomScript = getRoomScript();
 	_titleEngine.reset();
 
 	if (npcScript && roomScript) {
@@ -320,7 +320,7 @@ void CTrueTalkManager::processInput(CTrueTalkNPC *npc, CTextInputMsg *msg, CView
 	_currentNPC = nullptr;
 }
 
-void CTrueTalkManager::setDialogue(CTrueTalkNPC *npc, TTRoomScript *roomScript, CViewItem *view) {
+void CTrueTalkManager::setDialogue(CTrueTalkNPC *npc, TTroomScript *roomScript, CViewItem *view) {
 	// Get the dialog text
 	CString dialogueStr = readDialogueString();
 	if (dialogueStr.empty())
@@ -422,7 +422,7 @@ void CTrueTalkManager::triggerNPC(CTrueTalkNPC *npc) {
 	}
 }
 
-void CTrueTalkManager::setTalker(TTTalker *talker, TTRoomScript *roomScript, CViewItem *view, bool isParrot) {
+void CTrueTalkManager::setTalker(TTTalker *talker, TTroomScript *roomScript, CViewItem *view, bool isParrot) {
 	warning("TODO: CTrueTalkManager::setTalker");
 }
 

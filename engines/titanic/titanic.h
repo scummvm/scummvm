@@ -119,7 +119,7 @@ public:
 	CMainGameWindow *_window;
 	Common::RandomSource _randomSource;
 	CScriptHandler *_scriptHandler;
-	TTScriptBase *_script;
+	TTscriptBase *_script;
 	CExeResources _exeResources;
 	CMovieList _activeMovies;
 	CString _itemNames[TOTAL_ITEMS];

@@ -28,7 +28,7 @@ namespace Titanic {
 
 DeskbotScript::DeskbotScript(int val1, const char *charClass, int v2,
 		const char *charName, int v3, int val2) :
-		TTNpcScript(val1, charClass, v2, charName, v3, val2, -1, -1, -1, 0) {
+		TTnpcScript(val1, charClass, v2, charName, v3, val2, -1, -1, -1, 0) {
 	CTrueTalkManager::setFlags(18, 0);
 	CTrueTalkManager::setFlags(19, 0);
 	CTrueTalkManager::setFlags(20, 0);

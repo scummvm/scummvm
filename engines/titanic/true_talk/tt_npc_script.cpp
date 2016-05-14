@@ -26,17 +26,17 @@
 
 namespace Titanic {
 
-TTNpcScriptBase::TTNpcScriptBase(int charId, const char *charClass, int v2,
+TTnpcScriptBase::TTnpcScriptBase(int charId, const char *charClass, int v2,
 		const char *charName, int v3, int val2, int v4, int v5, int v6, int v7) :
-		TTScriptBase(0, charClass, v2, charName, v3, v4, v5, v6, v7),
+		TTscriptBase(0, charClass, v2, charName, v3, v4, v5, v6, v7),
 		_charId(charId), _field54(0), _val2(val2) {
 }
 
 /*------------------------------------------------------------------------*/
 
-TTNpcScript::TTNpcScript(int charId, const char *charClass, int v2,
+TTnpcScript::TTnpcScript(int charId, const char *charClass, int v2,
 		const char *charName, int v3, int val2, int v4, int v5, int v6, int v7) :
-		TTNpcScriptBase(charId, charClass, v2, charName, v3, val2, v4, v5, v6, v7),
+		TTnpcScriptBase(charId, charClass, v2, charName, v3, val2, v4, v5, v6, v7),
 		_subPtr(nullptr), _field60(0), _field64(0), _field68(0),
 		_field6C(0), _field70(0), _field74(0), _field78(0),
 		_field7C(0), _field80(0) {
@@ -51,95 +51,95 @@ TTNpcScript::TTNpcScript(int charId, const char *charClass, int v2,
 	resetFlags();
 }
 
-void TTNpcScript::resetFlags() {
+void TTnpcScript::resetFlags() {
 	Common::fill(&_array[26], &_array[146], 0);
 }
 
-void TTNpcScript::randomizeFlags() {
+void TTnpcScript::randomizeFlags() {
 	warning("TODO");
 }
 
-void TTNpcScript::proc4(int v) {
+void TTnpcScript::proc4(int v) {
 	warning("TODO");
 }
 
-int TTNpcScript::proc6() const {
+int TTnpcScript::proc6() const {
 	return 1;
 }
 
-void TTNpcScript::proc7(int v1, int v2) {
+void TTnpcScript::proc7(int v1, int v2) {
 	warning("TODO");
 }
 
-int TTNpcScript::proc8() const {
+int TTnpcScript::proc8() const {
 	return 0;
 }
 
-int TTNpcScript::proc9() const {
+int TTnpcScript::proc9() const {
 	return 2;
 }
 
-int TTNpcScript::proc11() const {
+int TTnpcScript::proc11() const {
 	return 2;
 }
 
-int TTNpcScript::proc12() const {
+int TTnpcScript::proc12() const {
 	return 1;
 }
 
-bool TTNpcScript::proc13() const {
+bool TTnpcScript::proc13() const {
 	warning("TODO");
 	return true;
 }
 
-void TTNpcScript::proc14(int v) {
+void TTnpcScript::proc14(int v) {
 	warning("TODO");
 }
 
-int TTNpcScript::proc15() const {
+int TTnpcScript::proc15() const {
 	return 0;
 }
 
-bool TTNpcScript::proc16() const {
+bool TTnpcScript::proc16() const {
 	return true;
 }
 
-bool TTNpcScript::proc17() const {
+bool TTnpcScript::proc17() const {
 	return true;
 }
 
-bool TTNpcScript::proc18() const {
+bool TTnpcScript::proc18() const {
 	return true;
 }
 
-void TTNpcScript::proc19(int v) {
+void TTnpcScript::proc19(int v) {
 	warning("TODO");
 }
 
-void TTNpcScript::proc20(int v) {
+void TTnpcScript::proc20(int v) {
 	warning("TODO");
 }
 
-int TTNpcScript::proc21(int v) {
+int TTnpcScript::proc21(int v) {
 	return v;
 }
 
-int TTNpcScript::proc22() const {
+int TTnpcScript::proc22() const {
 	return 0;
 }
 
-int TTNpcScript::proc23() const {
+int TTnpcScript::proc23() const {
 	return 0;
 }
 
-int TTNpcScript::proc25() const {
+int TTnpcScript::proc25() const {
 	return 0;
 }
 
-void TTNpcScript::proc26() {
+void TTnpcScript::proc26() {
 }
 
-void TTNpcScript::save(SimpleFile *file) {
+void TTnpcScript::save(SimpleFile *file) {
 	file->writeNumber(charId());
 	saveBody(file);
 
@@ -154,7 +154,7 @@ void TTNpcScript::save(SimpleFile *file) {
 		file->writeNumber(_array[idx]);
 }
 
-void TTNpcScript::load(SimpleFile *file) {
+void TTnpcScript::load(SimpleFile *file) {
 	loadBody(file);
 
 	int count = file->readNumber();
@@ -174,7 +174,7 @@ void TTNpcScript::load(SimpleFile *file) {
 	}
 }
 
-void TTNpcScript::saveBody(SimpleFile *file) {
+void TTnpcScript::saveBody(SimpleFile *file) {
 	int v = proc31();
 	file->writeNumber(v);
 
@@ -183,7 +183,7 @@ void TTNpcScript::saveBody(SimpleFile *file) {
 	}
 }
 
-void TTNpcScript::loadBody(SimpleFile *file) {
+void TTnpcScript::loadBody(SimpleFile *file) {
 	int count = file->readNumber();
 	preLoad();
 
@@ -196,38 +196,38 @@ void TTNpcScript::loadBody(SimpleFile *file) {
 	}
 }
 
-int TTNpcScript::proc31() {
+int TTnpcScript::proc31() {
 	warning("TODO");
 	return 0;
 }
 
-void TTNpcScript::proc32() {
+void TTnpcScript::proc32() {
 	warning("TODO");
 }
 
-void TTNpcScript::proc33(int v1, int v2) {
+void TTnpcScript::proc33(int v1, int v2) {
 	warning("TODO");
 }
 
-int TTNpcScript::proc34() {
-	warning("TODO");
-	return 0;
-}
-
-int TTNpcScript::getDialLevel(uint dialNum, bool flag) {
+int TTnpcScript::proc34() {
 	warning("TODO");
 	return 0;
 }
 
-int TTNpcScript::proc36() const {
+int TTnpcScript::getDialLevel(uint dialNum, bool flag) {
+	warning("TODO");
 	return 0;
 }
 
-int TTNpcScript::proc37() const {
+int TTnpcScript::proc36() const {
 	return 0;
 }
 
-void TTNpcScript::preLoad() {
+int TTnpcScript::proc37() const {
+	return 0;
+}
+
+void TTnpcScript::preLoad() {
 	if (_subPtr) {
 		error("TODO");
 	}

@@ -27,11 +27,11 @@
 
 namespace Titanic {
 
-class TTRoomScriptBase : public TTScriptBase {
+class TTroomScriptBase : public TTscriptBase {
 public:
 	int _scriptId;
 public:
-	TTRoomScriptBase(int scriptId, const char *charClass, const char *charName,
+	TTroomScriptBase(int scriptId, const char *charClass, const char *charName,
 		int v3, int v4, int v5, int v6, int v2, int v7);
 
 	virtual void proc6() = 0;
@@ -42,17 +42,17 @@ public:
 	/**
 	 * Called when the script changes
 	 */
-	virtual ScriptChangedResult scriptChanged(TTScriptBase *npcScript, int id) = 0;
+	virtual ScriptChangedResult scriptChanged(TTscriptBase *npcScript, int id) = 0;
 	
 	virtual void proc11() = 0;
 };
 
 
-class TTRoomScript : public TTRoomScriptBase {
+class TTroomScript : public TTroomScriptBase {
 private:
 	int _field54;
 public:
-	TTRoomScript(int scriptId);
+	TTroomScript(int scriptId);
 
 	virtual void proc6();
 	virtual void proc7();
@@ -62,14 +62,14 @@ public:
 	/**
 	 * Called when the script changes
 	 */
-	virtual ScriptChangedResult scriptChanged(TTScriptBase *npcScript, int id);
+	virtual ScriptChangedResult scriptChanged(TTscriptBase *npcScript, int id);
 
 	virtual void proc11();
 
 	/**
 	 * Called with the new script and id
 	 */
-	ScriptChangedResult notifyScript(TTScriptBase *npcScript, int id) {
+	ScriptChangedResult notifyScript(TTscriptBase *npcScript, int id) {
 		return scriptChanged(npcScript, id);
 	}
 };

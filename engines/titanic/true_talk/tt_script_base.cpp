@@ -25,7 +25,7 @@
 
 namespace Titanic {
 
-TTScriptBase::TTScriptBase(int v1, const char *charClass, int v2,
+TTscriptBase::TTscriptBase(int v1, const char *charClass, int v2,
 		const char *charName, int v3, int v4, int v5, int v6, int v7) :
 		_charName(charName), _charClass(charClass), 
 		_field4(0), _field8(0), _fieldC(0),
@@ -50,13 +50,13 @@ TTScriptBase::TTScriptBase(int v1, const char *charClass, int v2,
 		reset();
 }
 
-bool TTScriptBase::areNamesValid() {
+bool TTscriptBase::areNamesValid() {
 	bool result = !_charName.isValid() && !_charClass.isValid();
 	_status = result ? 0 : 11;
 	return result;
 }
 
-void TTScriptBase::reset() {
+void TTscriptBase::reset() {
 	_field4 = 0;
 	_field8 = 4;
 	_fieldC = 0;
@@ -73,19 +73,23 @@ void TTScriptBase::reset() {
 	_field48 = 0;
 }
 
-void TTScriptBase::proc2(int v) {
+void TTscriptBase::processInput(TTinput *input) {
+	warning("TODO: TTscriptBase::processInput");
+}
+
+void TTscriptBase::proc2(int v) {
 	warning("TODO");
 }
 
-void TTScriptBase::proc3(int v) {
+void TTscriptBase::proc3(int v) {
 	warning("TODO");
 }
 
-void TTScriptBase::proc4(int v) {
+void TTscriptBase::proc4(int v) {
 	warning("TODO");
 }
 
-void TTScriptBase::proc5() {
+void TTscriptBase::proc5() {
 	warning("TODO");
 }
 

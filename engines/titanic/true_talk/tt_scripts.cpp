@@ -33,9 +33,9 @@
 
 namespace Titanic {
 	
-TTNpcScript *TTNpcScriptList::findById(int charId) const {
-	for (TTNpcScriptList::const_iterator i = begin(); i != end(); ++i) {
-		const TTNpcScriptListItem *item = *i;
+TTnpcScript *TTnpcScriptList::findById(int charId) const {
+	for (TTnpcScriptList::const_iterator i = begin(); i != end(); ++i) {
+		const TTnpcScriptListItem *item = *i;
 		if (item->_npcScript->_charId == charId)
 			return item->_npcScript;
 	}
@@ -45,9 +45,9 @@ TTNpcScript *TTNpcScriptList::findById(int charId) const {
 
 /*------------------------------------------------------------------------*/
 
-TTRoomScript *TTRoomScriptList::findById(int scriptId) const {
-	for (TTRoomScriptList::const_iterator i = begin(); i != end(); ++i) {
-		const TTRoomScriptListItem *item = *i;
+TTroomScript *TTroomScriptList::findById(int scriptId) const {
+	for (TTroomScriptList::const_iterator i = begin(); i != end(); ++i) {
+		const TTroomScriptListItem *item = *i;
 		if (item->_item->_scriptId == scriptId)
 			return item->_item;
 	}
@@ -57,11 +57,11 @@ TTRoomScript *TTRoomScriptList::findById(int scriptId) const {
 
 /*------------------------------------------------------------------------*/
 
-TTScripts::TTScripts(CTitleEngine *titleEngine) :
+TTscripts::TTscripts(CTitleEngine *titleEngine) :
 		_titleEngine(titleEngine), _field24(0), _field28(0) {
 	// Load room scripts
 	for (int scriptNum = 100; scriptNum < 133; ++scriptNum)
-		addScript(new TTRoomScript(scriptNum));
+		addScript(new TTroomScript(scriptNum));
 
 	// Load npc scripts
 	addScript(new DoorbotScript(104, "Doorbot", 0, "Fentible", 11, 1, -1, -1, -1, 0), 100);
@@ -74,25 +74,25 @@ TTScripts::TTScripts(CTitleEngine *titleEngine) :
 	addScript(new SuccUBusScript(111, "Succubus", 0, "Shorbert", 9, 1, -1, -1, -1, 0), 110);
 }
 
-void TTScripts::addScript(TTNpcScript *script, int scriptId) {
+void TTscripts::addScript(TTnpcScript *script, int scriptId) {
 	script->proc13();
 	
 	// Find the room script this is associated with
-	TTRoomScript *roomScript = getRoomScript(scriptId);
+	TTroomScript *roomScript = getRoomScript(scriptId);
 	assert(roomScript);
 
-	_npcScripts.push_back(new TTNpcScriptListItem(script, roomScript));
+	_npcScripts.push_back(new TTnpcScriptListItem(script, roomScript));
 }
 
-void TTScripts::addScript(TTRoomScript *script) {
-	_roomScripts.push_back(new TTRoomScriptListItem(script));
+void TTscripts::addScript(TTroomScript *script) {
+	_roomScripts.push_back(new TTroomScriptListItem(script));
 }
 
-TTRoomScript *TTScripts::getRoomScript(int scriptId) const {
+TTroomScript *TTscripts::getRoomScript(int scriptId) const {
 	return _roomScripts.findById(scriptId);
 }
 
-TTNpcScript *TTScripts::getNpcScript(int charId) const {
+TTnpcScript *TTscripts::getNpcScript(int charId) const {
 	return _npcScripts.findById(charId);
 }
 

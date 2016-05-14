@@ -42,7 +42,7 @@ class CTrueTalkManager {
 private:
 	CGameManager *_gameManager;
 	STtitleEngine _titleEngine;
-	TTScripts _scripts;
+	TTscripts _scripts;
 	int _currentCharId;
 	CDialogueFile *_dialogueFile;
 	int _dialogueId;
@@ -72,19 +72,19 @@ private:
 	/**
 	 * Gets the script associated with an NPC game object
 	 */
-	TTNpcScript *getNpcScript(CTrueTalkNPC *npc) const;
+	TTnpcScript *getNpcScript(CTrueTalkNPC *npc) const;
 
 	/**
 	 * Gets the script associated with the current room
 	 */
-	TTRoomScript *getRoomScript() const;
+	TTroomScript *getRoomScript() const;
 
 	/**
 	 * Loads assets for the current character, if it's changed
 	 */
 	void loadAssets(CTrueTalkNPC *npc, int charId);
 
-	void setDialogue(CTrueTalkNPC *npc, TTRoomScript *roomScript, CViewItem *view);
+	void setDialogue(CTrueTalkNPC *npc, TTroomScript *roomScript, CViewItem *view);
 
 	/**
 	 * Read in text from the dialogue file
@@ -101,7 +101,7 @@ private:
 	 */
 	void triggerNPC(CTrueTalkNPC *npc);
 
-	void setTalker(TTTalker *talker, TTRoomScript *roomScript, CViewItem *view, bool isParrot);
+	void setTalker(TTTalker *talker, TTroomScript *roomScript, CViewItem *view, bool isParrot);
 public:
 	static int _v1;
 	static int _v2;
@@ -169,7 +169,7 @@ public:
 	/**
 	 * Returns the scripts for the manager
 	 */
-	TTScripts &getScripts() { return _scripts; }
+	TTscripts &getScripts() { return _scripts; }
 
 	/**
 	 * Remove any completed talkers
@@ -186,7 +186,7 @@ public:
 	/**
 	 * Return a TrueTalk talker/script
 	 */
-	TTNpcScript *getTalker(const CString &name) const;
+	TTnpcScript *getTalker(const CString &name) const;
 
 	/**
 	 * Process player's input

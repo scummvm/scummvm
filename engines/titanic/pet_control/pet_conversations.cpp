@@ -432,7 +432,7 @@ void CPetConversations::stopNPCTimer() {
 	_petControl->stopPetTimer(1);
 }
 
-TTNpcScript *CPetConversations::getNPCScript(const CString &name) const {
+TTnpcScript *CPetConversations::getNPCScript(const CString &name) const {
 	if (name.empty() || !_petControl)
 		return nullptr;
 	CGameManager *gameManager = _petControl->getGameManager();
@@ -517,13 +517,13 @@ void CPetConversations::copyColors(uint tableNum, uint colors[5]) {
 }
 
 void CPetConversations::updateDial(uint dialNum, const CString &npcName) {
-	TTNpcScript *script = getNPCScript(npcName);
+	TTnpcScript *script = getNPCScript(npcName);
 	uint newLevel = getDialLevel(dialNum, script);
 	npcDialChange(dialNum, _npcLevels[dialNum], newLevel);
 	_npcLevels[dialNum] = newLevel;
 }
 
-uint CPetConversations::getDialLevel(uint dialNum, TTNpcScript *script, int v) {
+uint CPetConversations::getDialLevel(uint dialNum, TTnpcScript *script, int v) {
 	bool flag = v != 0;
 
 	if (!script)
@@ -559,7 +559,7 @@ void CPetConversations::npcDialChange(uint dialNum, int oldLevel, int newLevel) 
 }
 
 void CPetConversations::resetDials(const CString &name) {
-	TTNpcScript *script = getNPCScript(name);
+	TTnpcScript *script = getNPCScript(name);
 
 	for (int idx = 0; idx < TOTAL_DIALS; ++idx) {
 		uint oldLevel = _npcLevels[idx];

@@ -462,6 +462,7 @@ MODULE_OBJS := \
 	true_talk/true_talk_manager.o \
 	true_talk/tt_action.o \
 	true_talk/tt_adj.o \
+	true_talk/tt_input.o \
 	true_talk/tt_major_word.o \
 	true_talk/tt_npc_script.o \
 	true_talk/tt_parser.o \

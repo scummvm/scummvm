@@ -112,7 +112,7 @@ private:
 	/**
 	 * Get the TrueTalk script associated with a given NPC
 	 */
-	TTNpcScript *getNPCScript(const CString &name) const;
+	TTnpcScript *getNPCScript(const CString &name) const;
 
 	/**
 	 * Handle a keypress
@@ -142,7 +142,7 @@ private:
 	/**
 	 * Get a dial level
 	 */
-	uint getDialLevel(uint dialNum, TTNpcScript *script, int v = 1);
+	uint getDialLevel(uint dialNum, TTnpcScript *script, int v = 1);
 
 	/**
 	 * Called when the dial for an NPC is being changed

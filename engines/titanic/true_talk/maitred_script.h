@@ -27,7 +27,7 @@
 
 namespace Titanic {
 
-class MaitreDScript : public TTNpcScript {
+class MaitreDScript : public TTnpcScript {
 public:
 	MaitreDScript(int val1, const char *charClass, int v2,
 			const char *charName, int v3, int val2);

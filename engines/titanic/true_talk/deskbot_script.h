@@ -27,7 +27,7 @@
 
 namespace Titanic {
 
-class DeskbotScript : public TTNpcScript {
+class DeskbotScript : public TTnpcScript {
 public:
 	DeskbotScript(int val1, const char *charClass, int v2,
 		const char *charName, int v3, int val2);

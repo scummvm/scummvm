@@ -50,7 +50,7 @@ public:
 class CScriptHandler {
 private:
 	CTitleEngine *_owner;
-	TTScriptBase *_script;
+	TTscriptBase *_script;
 	TTvocab *_vocab;
 	CExeResources &_resources;
 	int _field10;
@@ -69,9 +69,10 @@ public:
 	/**
 	 * Set the character and room
 	 */
-	ScriptChangedResult scriptChanged(TTRoomScript *roomScript, TTNpcScript *npcScript, uint dialogueId);
+	ScriptChangedResult scriptChanged(TTroomScript *roomScript, 
+		TTnpcScript *npcScript, uint dialogueId);
 
-	void processInput(TTRoomScript *roomScript, TTNpcScript *npcScript,
+	int processInput(TTroomScript *roomScript, TTnpcScript *npcScript,
 		const TTstring &line);
 
 	/**
