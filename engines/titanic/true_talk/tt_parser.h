@@ -31,7 +31,21 @@ class CScriptHandler;
 
 class TTparser {
 private:
+	/**
+	 * Normalizes a passed input, taking care of things like removing extra
+	 * spaces and lowercasing everything
+	 */
 	int normalize(TTinput *input);
+	
+	/**
+	 * Submethod called by normalize to handle text following single quote chracters
+	 */
+	bool normalizeQuotedString(const TTstring &srcLine, int srcIndex, TTstring &destLine);
+
+	/**
+	 * Checks for what is likely special developer cheat codes
+	 */
+	static int isSpecialCommand(const TTstring &str, int &index);
 public:
 	CScriptHandler *_owner;
 	int _field4;

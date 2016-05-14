@@ -71,6 +71,8 @@ public:
 public:
 	TTinput(int inputCtr, const TTstring &line, CScriptHandler *owner,
 		TTroomScript *roomScript, TTnpcScript *npcScript);
+
+	void set38(int v);
 };
 
 } // End of namespace Titanic

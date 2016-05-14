@@ -40,4 +40,8 @@ TTinput::TTinput(int inputCtr, const TTstring &line, CScriptHandler *owner,
 	_status = _line.isValid() && _string2.isValid() ? SS_11: SS_VALID;
 }
 
+void TTinput::set38(int val) {
+	_field38 = val;
+}
+
 } // End of namespace Titanic

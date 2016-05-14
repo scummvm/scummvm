@@ -36,24 +36,138 @@ int TTparser::processInput(TTinput *input) {
 }
 
 int TTparser::normalize(TTinput *input) {
-	TTstring *line = new TTstring();
+	TTstring *destLine = new TTstring();
+	const TTstring &srcLine = input->_line;
+	int srcSize = srcLine.size();
+	int savedIndex = 0;
+	int counter1 = 0;
+	int commandVal;
 
-	for (const char *lineP = input->_line.c_str(); lineP; ++lineP) {
-		char c = *lineP;
+	for (int index = 0; index < srcSize; ++index) {
+		char c = srcLine[index];
 		if (Common::isLower(c)) {
-			(*line) += c;
+			(*destLine) += c;
 		} else if (Common::isSpace(c)) {
-			if (!line->empty() && line->lastChar() != ' ')
-				(*line) += ' ';
+			if (!destLine->empty() && destLine->lastChar() != ' ')
+				(*destLine) += ' ';
 		} else if (Common::isUpper(c)) {
-			(*line) += toupper(c);
+			(*destLine) += toupper(c);
 		} else if (Common::isDigit(c)) {
-			// TODO: num handling
+			if (c == '0' && isSpecialCommand(srcLine, index)) {
+				input->set38(10);
+			} else {
+				// Iterate through all the digits of the number
+				(*destLine) += c;
+				while (Common::isDigit(srcLine[index + 1]))
+					(*destLine) += srcLine[++index];
+			}
+		} else if (Common::isPunct(c)) {
+			bool flag = false;
+			switch (c) {
+			case '!':
+				input->set38(3);
+				break;
+			
+			case '\'':
+				if (!normalizeQuotedString(srcLine, index, *destLine))
+					flag = true;
+				break;
+			
+			case '.':
+				input->set38(1);
+				break;
+			
+			case ':':
+				commandVal = isSpecialCommand(srcLine, index);
+				if (commandVal) {
+					input->set38(commandVal);
+					index += 2;
+				} else {
+					flag = true;
+				}
+				break;
+			
+			case ';':
+				commandVal = isSpecialCommand(srcLine, index);
+				if (commandVal == 6) {
+					input->set38(7);
+					index += 2;
+				} else if (commandVal != 0) {
+					input->set38(commandVal);
+					index += 2;
+				}
+				break;
+			
+			case '<':
+				++index;
+				commandVal = isSpecialCommand(srcLine, index);
+				if (commandVal == 6) {
+					input->set38(12);
+				} else {
+					--index;
+					flag = true;
+				}
+				break;
+
+			case '>':
+				++index;
+				commandVal = isSpecialCommand(srcLine, index);
+				if (commandVal == 6 || commandVal == 9) {
+					input->set38(11);
+				} else {
+					--index;
+					flag = true;
+				}
+				break;
+
+			case '?':
+				input->set38(2);
+				break;
+
+			default:
+				flag = true;
+				break;
+			}
+
+			if (flag && (!savedIndex || (index - savedIndex) == 1))
+				++counter1;
+
+			savedIndex = index;
 		}
-		// TODO other cases
 	}
 
 	return 0;
+}
+
+int TTparser::isSpecialCommand(const TTstring &str, int &index) {
+	if (str[index] != ':' && str[index] != ';')
+		return 0;
+
+	if (str[index + 1] != '-')
+		return 0;
+
+	index += 2;
+	switch (str[index]) {
+	case '(':
+	case '<':
+		return 8;
+
+	case ')':
+	case '>':
+		return 6;
+
+	case 'P':
+	case 'p':
+		return 9;
+
+	default:
+		return 5;
+	}
+}
+
+bool TTparser::normalizeQuotedString(const TTstring &srcLine, int srcIndex, TTstring &destLine) {
+	// TODO
+	return false;
 }
 
 } // End of namespace Titanic

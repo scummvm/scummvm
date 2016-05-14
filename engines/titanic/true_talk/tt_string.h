@@ -57,9 +57,11 @@ public:
 	TTstring &operator+=(const char *str);
 	TTstring &operator+=(const TTstring &str);
 	TTstring &operator+=(char c);
+	const char &operator[](uint index);
 	bool empty() const;
 	char firstChar() const;
 	char lastChar() const;
+	int size() const;
 
 	/**
 	 * Create a new copy of the string

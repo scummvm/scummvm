@@ -95,6 +95,10 @@ TTstring &TTstring::operator+=(char c) {
 	return *this;
 }
 
+const char &TTstring::operator[](uint index) {
+	return *(c_str() + index);
+}
+
 bool TTstring::empty() const {
 	return _data->_string.empty();
 }
@@ -105,6 +109,10 @@ char TTstring::firstChar() const {
 
 char TTstring::lastChar() const {
 	return _data->_string.lastChar();
+}
+
+int TTstring::size() const {
+	return _data->_string.size();
 }
 
 TTstring *TTstring::copy() const {
