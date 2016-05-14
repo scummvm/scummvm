@@ -1781,14 +1781,14 @@ void ScummEngine_v100he::o100_setSpriteInfo() {
 	byte subOp = fetchScriptByte();
 
 	switch (subOp) {
-	case 0:
+	case 0: // SO_INIT
 		_curMaxSpriteId = pop();
 		_curSpriteId = pop();
 
 		if (_curSpriteId > _curMaxSpriteId)
 			SWAP(_curSpriteId, _curMaxSpriteId);
 		break;
-	case 2:
+	case 2: // SO_ANGLE
 		args[0] = pop();
 		if (_curSpriteId > _curMaxSpriteId)
 			break;
@@ -1799,7 +1799,7 @@ void ScummEngine_v100he::o100_setSpriteInfo() {
 		for (; spriteId <= _curMaxSpriteId; spriteId++)
 			_sprite->setSpriteAngle(spriteId, args[0]);
 		break;
-	case 3:
+	case 3: // SO_ANIMATION
 		args[0] = pop();
 		if (_curSpriteId > _curMaxSpriteId)
 			break;
@@ -1810,7 +1810,7 @@ void ScummEngine_v100he::o100_setSpriteInfo() {
 		for (; spriteId <= _curMaxSpriteId; spriteId++)
 			_sprite->setSpriteFlagAutoAnim(spriteId, args[0]);
 		break;
-	case 4:
+	case 4: // SO_ANIMATION_SPEED
 		args[0] = pop();
 		if (_curSpriteId > _curMaxSpriteId)
 			break;
@@ -1821,7 +1821,7 @@ void ScummEngine_v100he::o100_setSpriteInfo() {
 		for (; spriteId <= _curMaxSpriteId; spriteId++)
 			_sprite->setSpriteAnimSpeed(spriteId, args[0]);
 		break;
-	case 6:
+	case 6: // SO_AT
 		args[1] = pop();
 		args[0] = pop();
 		if (_curSpriteId > _curMaxSpriteId)
@@ -1833,7 +1833,7 @@ void ScummEngine_v100he::o100_setSpriteInfo() {
 		for (; spriteId <= _curMaxSpriteId; spriteId++)
 			_sprite->setSpritePosition(spriteId, args[0], args[1]);
 		break;
-	case 7:
+	case 7: // SO_AT_IMAGE
 		args[0] = pop();
 		if (_curSpriteId > _curMaxSpriteId)
 			break;
@@ -1844,7 +1844,7 @@ void ScummEngine_v100he::o100_setSpriteInfo() {
 		for (; spriteId <= _curMaxSpriteId; spriteId++)
 			_sprite->setSpriteSourceImage(spriteId, args[0]);
 		break;
-	case 16:
+	case 16: // SO_CLASS
 		n = getStackList(args, ARRAYSIZE(args));
 		if (_curSpriteId != 0 && _curMaxSpriteId != 0 && n != 0) {
 			int *p = &args[n - 1];
@@ -1867,7 +1867,7 @@ void ScummEngine_v100he::o100_setSpriteInfo() {
 			} while (--n);
 		}
 		break;
-	case 32:
+	case 32: // SO_ERASE
 		args[0] = pop();
 		if (_curSpriteId > _curMaxSpriteId)
 			break;
@@ -1878,7 +1878,7 @@ void ScummEngine_v100he::o100_setSpriteInfo() {
 		for (; spriteId <= _curMaxSpriteId; spriteId++)
 			_sprite->setSpriteFlagEraseType(spriteId, args[0]);
 		break;
-	case 38:
+	case 38: // SO_GROUP
 		args[0] = pop();
 		if (_curSpriteId > _curMaxSpriteId)
 			break;
@@ -1889,7 +1889,7 @@ void ScummEngine_v100he::o100_setSpriteInfo() {
 		for (; spriteId <= _curMaxSpriteId; spriteId++)
 			_sprite->setSpriteGroup(spriteId, args[0]);
 		break;
-	case 40:
+	case 40: // SO_IMAGE
 		args[0] = pop();
 		if (_curSpriteId > _curMaxSpriteId)
 			break;
@@ -1900,7 +1900,7 @@ void ScummEngine_v100he::o100_setSpriteInfo() {
 		for (; spriteId <= _curMaxSpriteId; spriteId++)
 			_sprite->setSpriteImage(spriteId, args[0]);
 		break;
-	case 48:
+	case 48: // SO_MASK
 		args[0] = pop();
 		if (_curSpriteId > _curMaxSpriteId)
 			break;
@@ -1911,7 +1911,7 @@ void ScummEngine_v100he::o100_setSpriteInfo() {
 		for (; spriteId <= _curMaxSpriteId; spriteId++)
 			_sprite->setSpriteMaskImage(spriteId, args[0]);
 		break;
-	case 49:
+	case 49: // SO_MOVE
 		args[1] = pop();
 		args[0] = pop();
 		if (_curSpriteId > _curMaxSpriteId)
@@ -1923,10 +1923,10 @@ void ScummEngine_v100he::o100_setSpriteInfo() {
 		for (; spriteId <= _curMaxSpriteId; spriteId++)
 			_sprite->moveSprite(spriteId, args[0], args[1]);
 		break;
-	case 52:
+	case 52: // SO_NAME
 		copyScriptString(string, sizeof(string));
 		break;
-	case 53:
+	case 53: // SO_NEW
 		if (_curSpriteId > _curMaxSpriteId)
 			break;
 		spriteId = _curSpriteId;
@@ -1936,7 +1936,7 @@ void ScummEngine_v100he::o100_setSpriteInfo() {
 		for (; spriteId <= _curMaxSpriteId; spriteId++)
 			_sprite->resetSprite(spriteId);
 		break;
-	case 54:
+	case 54: // SO_NEW_GENERAL_PROPERTY
 		args[1] = pop();
 		args[0] = pop();
 		if (_curSpriteId > _curMaxSpriteId)
@@ -1948,7 +1948,7 @@ void ScummEngine_v100he::o100_setSpriteInfo() {
 		for (; spriteId <= _curMaxSpriteId; spriteId++)
 			_sprite->setSpriteGeneralProperty(spriteId, args[0], args[1]);
 		break;
-	case 57:
+	case 57: // SO_PALETTE
 		args[0] = pop();
 		if (_curSpriteId > _curMaxSpriteId)
 			break;
@@ -1959,7 +1959,7 @@ void ScummEngine_v100he::o100_setSpriteInfo() {
 		for (; spriteId <= _curMaxSpriteId; spriteId++)
 			_sprite->setSpritePalette(spriteId, args[0]);
 		break;
-	case 59:
+	case 59: // SO_PRIORITY
 		args[0] = pop();
 		if (_curSpriteId > _curMaxSpriteId)
 			break;
@@ -1970,7 +1970,7 @@ void ScummEngine_v100he::o100_setSpriteInfo() {
 		for (; spriteId <= _curMaxSpriteId; spriteId++)
 			_sprite->setSpritePriority(spriteId, args[0]);
 		break;
-	case 60:
+	case 60: // SO_PROPERTY
 		args[1] = pop();
 		args[0] = pop();
 		if (_curSpriteId > _curMaxSpriteId)
@@ -2001,10 +2001,10 @@ void ScummEngine_v100he::o100_setSpriteInfo() {
 				break;
 			}
 		break;
-	case 61:
+	case 61: // SO_RESTART
 		_sprite->resetTables(true);
 		break;
-	case 65:
+	case 65: // SO_SCALE
 		args[0] = pop();
 		if (_curSpriteId > _curMaxSpriteId)
 			break;
@@ -2015,7 +2015,7 @@ void ScummEngine_v100he::o100_setSpriteInfo() {
 		for (; spriteId <= _curMaxSpriteId; spriteId++)
 			_sprite->setSpriteScale(spriteId, args[0]);
 		break;
-	case 70:
+	case 70: // SO_SHADOW
 		args[0] = pop();
 		if (_curSpriteId > _curMaxSpriteId)
 			break;
@@ -2026,7 +2026,7 @@ void ScummEngine_v100he::o100_setSpriteInfo() {
 		for (; spriteId <= _curMaxSpriteId; spriteId++)
 			_sprite->setSpriteShadow(spriteId, args[0]);
 		break;
-	case 73:
+	case 73: // SO_STATE
 		args[0] = pop();
 		if (_curSpriteId > _curMaxSpriteId)
 			break;
@@ -2037,7 +2037,7 @@ void ScummEngine_v100he::o100_setSpriteInfo() {
 		for (; spriteId <= _curMaxSpriteId; spriteId++)
 			_sprite->setSpriteImageState(spriteId, args[0]);
 		break;
-	case 74:
+	case 74: // SO_STEP_DIST
 		args[1] = pop();
 		args[0] = pop();
 		if (_curSpriteId > _curMaxSpriteId)
@@ -2049,7 +2049,7 @@ void ScummEngine_v100he::o100_setSpriteInfo() {
 		for (; spriteId <= _curMaxSpriteId; spriteId++)
 			_sprite->setSpriteDist(spriteId, args[0], args[1]);
 		break;
-	case 75:
+	case 75: // SO_STEP_DIST_X
 		args[0] = pop();
 		if (_curSpriteId > _curMaxSpriteId)
 			break;
@@ -2062,7 +2062,7 @@ void ScummEngine_v100he::o100_setSpriteInfo() {
 			_sprite->setSpriteDist(spriteId, args[0], tmp[1]);
 		}
 		break;
-	case 76:
+	case 76: // SO_STEP_DIST_Y
 		args[0] = pop();
 		if (_curSpriteId > _curMaxSpriteId)
 			break;
@@ -2075,7 +2075,7 @@ void ScummEngine_v100he::o100_setSpriteInfo() {
 			_sprite->setSpriteDist(spriteId, tmp[0], args[0]);
 		}
 		break;
-	case 82:
+	case 82: // SO_UPDATE
 		args[0] = pop();
 		if (_curSpriteId > _curMaxSpriteId)
 			break;
@@ -2086,7 +2086,7 @@ void ScummEngine_v100he::o100_setSpriteInfo() {
 		for (; spriteId <= _curMaxSpriteId; spriteId++)
 			_sprite->setSpriteFlagUpdateType(spriteId, args[0]);
 		break;
-	case 83:
+	case 83: // SO_VARIABLE
 		args[1] = pop();
 		args[0] = pop();
 		if (_curSpriteId > _curMaxSpriteId)
@@ -2098,7 +2098,7 @@ void ScummEngine_v100he::o100_setSpriteInfo() {
 		for (; spriteId <= _curMaxSpriteId; spriteId++)
 			_sprite->setSpriteUserValue(spriteId, args[0], args[1]);
 		break;
-	case 88:
+	case 88: // SO_IMAGE_ZCLIP
 		args[0] = pop();
 		if (_curSpriteId > _curMaxSpriteId)
 			break;
@@ -2107,9 +2107,9 @@ void ScummEngine_v100he::o100_setSpriteInfo() {
 			spriteId++;
 
 		for (; spriteId <= _curMaxSpriteId; spriteId++)
-			_sprite->setSpriteField84(spriteId, args[0]);
+			_sprite->setSpriteZBuffer(spriteId, args[0]);
 		break;
-	case 89:
+	case 89: // SO_NEVER_ZCLIP
 		if (_curSpriteId > _curMaxSpriteId)
 			break;
 		spriteId = _curSpriteId;
@@ -2117,7 +2117,7 @@ void ScummEngine_v100he::o100_setSpriteInfo() {
 			spriteId++;
 
 		for (; spriteId <= _curMaxSpriteId; spriteId++)
-			_sprite->setSpriteField84(spriteId, 0);
+			_sprite->setSpriteZBuffer(spriteId, 0);
 		break;
 	default:
 		error("o100_setSpriteInfo: Unknown case %d", subOp);

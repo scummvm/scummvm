@@ -739,10 +739,10 @@ void Sprite::setSpriteResetClass(int spriteId) {
 	_spriteTable[spriteId].classFlags = 0;
 }
 
-void Sprite::setSpriteField84(int spriteId, int value) {
+void Sprite::setSpriteZBuffer(int spriteId, int value) {
 	assertRange(1, spriteId, _varNumSprites, "sprite");
 
-	_spriteTable[spriteId].field_84 = value;
+	_spriteTable[spriteId].zbufferImage = value;
 }
 
 void Sprite::setSpriteGeneralProperty(int spriteId, int type, int value) {
@@ -797,7 +797,7 @@ void Sprite::resetSprite(int spriteId) {
 	_spriteTable[spriteId].sourceImage = 0;
 	_spriteTable[spriteId].maskImage = 0;
 	_spriteTable[spriteId].priority = 0;
-	_spriteTable[spriteId].field_84 = 0;
+	_spriteTable[spriteId].zbufferImage = 0;
 	_spriteTable[spriteId].imgFlags = 0;
 	_spriteTable[spriteId].conditionBits = 0;
 
@@ -816,7 +816,7 @@ void Sprite::setSpriteImage(int spriteId, int imageNum) {
 	origResWizStates = _spriteTable[spriteId].imageStateCount;
 
 	_spriteTable[spriteId].image = imageNum;
-	_spriteTable[spriteId].field_74 = 0;
+	_spriteTable[spriteId].animIndex = 0;
 	_spriteTable[spriteId].imageState = 0;
 
 	if (_spriteTable[spriteId].image) {
@@ -1339,9 +1339,9 @@ void Sprite::processImages(bool arg) {
 		}
 		if (spr_flags & kSFRemapPalette)
 			wiz.img.flags |= kWIFRemapPalette;
-		if (spi->field_84) {
+		if (spi->zbufferImage) {
 			wiz.processFlags |= 0x200000;
-			wiz.img.zbuffer = spi->field_84;
+			wiz.img.zbuffer = spi->zbufferImage;
 			wiz.img.zorder = spi->priority;
 		}
 		if (spi->sourceImage) {
@@ -1419,11 +1419,11 @@ void Sprite::saveOrLoadSpriteData(Serializer *s) {
 		MKLINE(SpriteInfo, curAngle, sleInt32, VER(48)),
 		MKLINE(SpriteInfo, curScale, sleInt32, VER(48)),
 		MKLINE(SpriteInfo, curImgFlags, sleInt32, VER(48)),
-		MKLINE(SpriteInfo, field_74, sleInt32, VER(48)),
+		MKLINE(SpriteInfo, animIndex, sleInt32, VER(48)),
 		MKLINE(SpriteInfo, animSpeed, sleInt32, VER(48)),
 		MKLINE(SpriteInfo, sourceImage, sleInt32, VER(48)),
 		MKLINE(SpriteInfo, maskImage, sleInt32, VER(48)),
-		MKLINE(SpriteInfo, field_84, sleInt32, VER(48)),
+		MKLINE(SpriteInfo, zbufferImage, sleInt32, VER(48)),
 		MKLINE(SpriteInfo, classFlags, sleInt32, VER(48)),
 		MKLINE(SpriteInfo, imgFlags, sleInt32, VER(48)),
 		MKLINE(SpriteInfo, conditionBits, sleInt32, VER(48)),
