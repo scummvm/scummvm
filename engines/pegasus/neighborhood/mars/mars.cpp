@@ -1950,7 +1950,7 @@ void Mars::pickedUpItem(Item *item) {
 }
 
 void Mars::dropItemIntoRoom(Item *item, Hotspot *dropSpot) {
-	if (dropSpot->getObjectID() == kAttackRobotHotSpotID) {
+	if (dropSpot && dropSpot->getObjectID() == kAttackRobotHotSpotID) {
 		_attackingItem = (InventoryItem *)item;
 		startExtraSequence(kMars48RobotDefends, kExtraCompletedFlag, kFilterNoInput);
 		loadLoopSound2("");
