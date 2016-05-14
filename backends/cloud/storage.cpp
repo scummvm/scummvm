@@ -42,7 +42,10 @@ void Storage::handler() {
 	//TODO: lock mutex here (in case another handler() would be called before this one ends)
 	warning("handler's here");
 	for (Common::Array<Request *>::iterator i = _requests.begin(); i != _requests.end();) {
-		if ((*i)->handle()) _requests.erase(i);
+		if ((*i)->handle()) {
+			delete (*i);
+			_requests.erase(i);
+		}
 		else ++i;
 	}
 	if (_requests.empty()) stopTimer();

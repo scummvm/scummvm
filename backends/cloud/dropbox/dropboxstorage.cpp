@@ -19,18 +19,26 @@
 * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 *
 */
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
 
 #include "backends/cloud/dropbox/dropboxstorage.h"
-#include "backends/cloud/dropbox/finalcountdownrequest.h"
+#include "backends/cloud/dropbox/curlrequest.h"
 #include "common/debug.h"
+#include <curl/curl.h>
 
 namespace Cloud {
 namespace Dropbox {
 
-static void finalCountdownCallback(void *ptr) {
-	warning("ladies and gentlemen, this is your callback speaking");
-	warning("the returned pointer is %d", ptr);
-	warning("thank you for your attention");
+static void curlCallback(void *ptr) {
+	debug("--- curl request is complete ---");
+}
+
+DropboxStorage::DropboxStorage() {
+	curl_global_init(CURL_GLOBAL_ALL);
+}
+
+DropboxStorage::~DropboxStorage() {
+	curl_global_cleanup();
 }
 
 void DropboxStorage::listDirectory(Common::String path) {
@@ -38,7 +46,8 @@ void DropboxStorage::listDirectory(Common::String path) {
 }
 
 void DropboxStorage::syncSaves() {	
-	addRequest(new FinalCountdownRequest(finalCountdownCallback));	
+	addRequest(new CurlRequest(curlCallback, "tkachov.ru"));
+	addRequest(new CurlRequest(curlCallback, "bash.im"));
 }
 
 } //end of namespace Dropbox

@@ -20,33 +20,29 @@
 *
 */
 
-#ifndef BACKENDS_CLOUD_DROPBOX_FINALCOUNTDOWNREQUEST_H
-#define BACKENDS_CLOUD_DROPBOX_FINALCOUNTDOWNREQUEST_H
+#ifndef BACKENDS_CLOUD_DROPBOX_CURLREQUEST_H
+#define BACKENDS_CLOUD_DROPBOX_CURLREQUEST_H
 
 #include "backends/cloud/request.h"
+
+typedef void CURLM;
 
 namespace Cloud {
 namespace Dropbox {
 
-class FinalCountdownRequest : public Cloud::Request {
-	int _times;
+class CurlRequest : public Cloud::Request {
+	bool _firstTime;
+	CURLM *_curlm;
+	char *_url;
 
 public:
-	FinalCountdownRequest(Callback cb) : Request(cb), _times(5) {};
+	CurlRequest(Callback cb, char *url);
+	virtual ~CurlRequest();
 
-	virtual bool handle() {
-		if (--_times == 0) {
-			warning("It's the final countdown!");
-			_callback(0); //meh, don't have anything for you, my caller
-			return true;
-		}
-
-		warning("%d...", _times);
-		return false;
-	}
+	virtual bool handle();
 };
 
-}
-}  //end of namespace Cloud::Dropbox
+}  //end of namespace Dropbox
+}  //end of namespace Cloud
 
 #endif

@@ -29,7 +29,8 @@ namespace Cloud { namespace Dropbox {
 
 class DropboxStorage: public Cloud::Storage {	
 public:
-	DropboxStorage() {};
+	DropboxStorage();
+	virtual ~DropboxStorage();
 
 	virtual void listDirectory(Common::String path);
 	virtual void syncSaves();

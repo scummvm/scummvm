@@ -23,7 +23,8 @@ ifdef USE_CLOUD
 MODULE_OBJS += \
 	cloud/manager.o \
 	cloud/storage.o \
-	cloud/dropbox/dropboxstorage.o
+	cloud/dropbox/dropboxstorage.o \
+	cloud/dropbox/curlrequest.o
 endif
 
 ifdef USE_ELF_LOADER
