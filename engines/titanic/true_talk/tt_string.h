@@ -57,21 +57,51 @@ public:
 	TTstring &operator+=(const char *str);
 	TTstring &operator+=(const TTstring &str);
 	TTstring &operator+=(char c);
-	const char &operator[](uint index);
-	bool empty() const;
-	char firstChar() const;
-	char lastChar() const;
-	int size() const;
+
+	const char &operator[](uint index) {
+		return *(c_str() + index);
+	}
+
+	bool empty() const {
+		return _data->_string.empty();
+	}
+
+	char firstChar() const {
+		return _data->_string.firstChar();
+	}
+
+	char lastChar() const {
+		return _data->_string.lastChar();
+	}
+
+	int size() const {
+		return _data->_string.size();
+	}
+
+	void deleteLastChar() {
+		_data->_string.deleteLastChar();
+	}
+
+	bool hasSuffix(const CString &str) const {
+		return _data->_string.hasSuffix(str);
+	}
+	bool hasSuffix(const char *str) const {
+		return _data->_string.hasSuffix(str);
+	}
 
 	/**
 	 * Create a new copy of the string
 	 */
-	TTstring *copy() const;
+	TTstring *copy() const {
+		return new TTstring(c_str());
+	}
 
 	/**
 	 * Returns true if the string is valid
 	 */
-	bool isValid() const;
+	bool isValid() const {
+		return _status == SS_VALID;
+	}
 
 	/**
 	 * Get the status of the string
@@ -97,6 +127,13 @@ public:
 	 * Save the sring to a passed file
 	 */
 	void save(SimpleFile *file) const;
+
+	/**
+	 * Compare a substring within the string at the specified index
+	 */
+	bool compareAt(int index, const char *str) const {
+		return !strncmp(c_str() + index, str, strlen(str));
+	}
 };
 
 } // End of namespace Titanic

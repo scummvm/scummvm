@@ -166,6 +166,87 @@ int TTparser::isSpecialCommand(const TTstring &str, int &index) {
 }
 
 bool TTparser::normalizeContraction(const TTstring &srcLine, int srcIndex, TTstring &destLine) {
+	int startIndex = srcIndex + 1;
+	switch (srcLine[startIndex]) {
+	case 'd':
+		srcIndex += 2;
+		if (srcLine.compareAt(srcIndex, " a ") || srcLine.compareAt(srcIndex, " the ")) {
+			destLine += " had";
+		} else {
+			destLine += " would";
+		}
+
+		srcIndex = startIndex;
+		break;
+
+	case 'l':
+		if (srcLine[srcIndex + 2] == 'l') {
+			// 'll ending
+			destLine += " will";
+			srcIndex = startIndex;
+		}
+		break;
+
+	case 'm':
+		// 'm ending
+		destLine += " am";
+		srcIndex = startIndex;
+		break;
+
+	case 'r':
+		// 're ending
+		if (srcLine[srcIndex + 2] == 'e') {
+			destLine += " are";
+			srcIndex = startIndex;
+		}
+		break;
+
+	case 's':
+		destLine += "s*";
+		srcIndex = startIndex;
+		break;
+
+	case 't':
+		if (srcLine[srcIndex - 1] == 'n' && srcIndex >= 3) {
+			if (srcLine[srcIndex - 3] == 'c' && srcLine[srcIndex - 2] == 'a' &&
+				(srcIndex == 3 || srcLine[srcIndex - 4])) {
+				// can't -> can not
+				destLine += 'n';
+			} else if (srcLine[srcIndex - 3] == 'w' && srcLine[srcIndex - 2] == 'o' &&
+				(srcIndex == 3 || srcLine[srcIndex - 4])) {
+				// won't -> will not
+				destLine.deleteLastChar();
+				destLine.deleteLastChar();
+				destLine += "ill";
+			} else if (srcLine[srcIndex - 3] == 'a' && srcLine[srcIndex - 2] == 'i' &&
+				(srcIndex == 3 || srcLine[srcIndex - 4])) {
+				// ain't -> am not
+				destLine.deleteLastChar();
+				destLine.deleteLastChar();
+				destLine += "m";
+			} else if (srcLine.hasSuffix(" sha") || 
+					(srcIndex == 4 && srcLine.hasSuffix("sha"))) {
+				// shan't -> shall not
+				destLine.deleteLastChar();
+				destLine += "ll";
+			}
+
+			destLine += " not";
+		}
+		break;
+
+	case 'v':
+		// 've ending
+		if (srcLine[startIndex + 2] == 'e') {
+			destLine += " have";
+			srcIndex = startIndex;
+		}
+		break;
+
+	default:
+		break;
+	}
+
 	// TODO
 	return false;
 }
