@@ -47,7 +47,7 @@ protected:
 public:
 	TTstringNode *_pPrior;
 	TTstringNode *_pNext;
-	TTString _string;
+	TTstring _string;
 	FileHandle _file;
 	int _mode;
 	int _field1C;

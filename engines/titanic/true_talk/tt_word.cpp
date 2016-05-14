@@ -26,7 +26,7 @@
 
 namespace Titanic {
 
-TTword::TTword(TTString &str, int mode, int val2) : _string(str),
+TTword::TTword(TTstring &str, int mode, int val2) : _string(str),
 		_wordMode(mode), _field1C(val2), _pNext(nullptr), _synP(nullptr),
 		_field20(0), _field24(0), _field28(0) {
 	_status = str.getStatus() == SS_VALID ? SS_VALID : SS_5;
@@ -143,7 +143,7 @@ bool TTword::testFileHandle(FileHandle file) const {
 	return true;
 }
 
-TTword *TTword::scanCopy(const TTString &str, TTsynonym *node, int mode) {
+TTword *TTword::scanCopy(const TTstring &str, TTsynonym *node, int mode) {
 	if (_synP) {
 		TTsynonym *strNode = TTsynonym::findByName(_synP, str, mode);
 		if (strNode) {

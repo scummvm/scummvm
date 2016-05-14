@@ -89,7 +89,7 @@ public:
 	/**
 	 * Write out data
 	 */
-	virtual size_t write(const void *src, size_t count);
+	virtual size_t write(const void *src, size_t count) const;
 
 	/**
 	 * Read a byte
@@ -139,62 +139,67 @@ public:
 	/**
 	 * Write a string line
 	 */
-	void writeLine(const CString &str);
+	void writeLine(const CString &str) const;
 
 	/**
 	 * Write a string
 	 */
-	void writeString(const CString &str);
+	void writeString(const CString &str) const;
 
 	/**
 	 * Write a quoted string
 	 */
-	void writeQuotedString(const CString &str);
+	void writeQuotedString(const CString &str) const;
 
 	/**
 	 * Write a quoted string line
 	 */
-	void writeQuotedLine(const CString &str, int indent);
+	void writeQuotedLine(const CString &str, int indent) const;
 
 	/**
 	 * Write a number to file
 	 */
-	void writeNumber(int val);
+	void writeNumber(int val) const;
 
 	/**
 	 * Write a number line to file
 	 */
-	void writeNumberLine(int val, int indent);
+	void writeNumberLine(int val, int indent) const;
 
 	/**
 	 * Write a floating point number
 	 */
-	void writeFloat(double val);
+	void writeFloat(double val) const;
 
 	/**
 	 * Write a floating point number as a line
 	 */
-	void writeFloatLine(double val, int indent);
+	void writeFloatLine(double val, int indent) const;
 
 	/**
 	 * Write out a point line
 	 */
-	void writePoint(const Point &pt, int indent);
+	void writePoint(const Point &pt, int indent)const;
 
 	/**
 	 * Write out a rect line
 	 */
-	void writeRect(const Rect &r, int indent);
+	void writeRect(const Rect &r, int indent) const;
 
 	/**
 	 * Write out a bounds line
 	 */
-	void writeBounds(const Rect &r, int indent);
+	void writeBounds(const Rect &r, int indent) const;
+
+	/**
+	 * Write out a string using a format specifier, just like fprintf
+	 */
+	void writeFormat(const char *format, ...) const;
 
 	/**
 	 * Write out a number of tabs to form an indent in the output
 	 */
-	void writeIndent(uint indent);
+	void writeIndent(uint indent) const;
 
 	/**
 	 * Validates that the following non-space character is either

@@ -52,12 +52,12 @@ private:
 	/**
 	 * Scans the vocab list for an existing word match
 	 */
-	TTword *findWord(const TTString &str);
+	TTword *findWord(const TTstring &str);
 public:
 	TTvocab(int val);
 	~TTvocab();
 
-	TTword *getPrimeWord(TTString &str, TTword **words);
+	TTword *getPrimeWord(TTstring &str, TTword **words);
 };
 
 } // End of namespace Titanic

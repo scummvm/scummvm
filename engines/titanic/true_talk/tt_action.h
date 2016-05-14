@@ -33,7 +33,7 @@ private:
 protected:
 	int _field30;
 public:
-	TTaction(TTString &str, int val1, int val2, int val3, int val4);
+	TTaction(TTstring &str, int val1, int val2, int val3, int val4);
 	TTaction(TTaction *src);
 
 	/**
@@ -45,6 +45,8 @@ public:
 	 * Creates a copy of the word
 	 */
 	virtual TTword *copy();
+
+	virtual bool proc12(int val) const { return _field30 == val; }
 };
 
 } // End of namespace Titanic

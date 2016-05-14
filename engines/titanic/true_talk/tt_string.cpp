@@ -21,23 +21,24 @@
  */
 
 #include "titanic/true_talk/tt_string.h"
+#include "titanic/support/simple_file.h"
 
 namespace Titanic {
 
-TTString::TTString() : _status(SS_VALID) {
-	_data = new TTStringData();
+TTstring::TTstring() : _status(SS_VALID) {
+	_data = new TTstringData();
 }
 
-TTString::TTString(const char *str) : _status(SS_VALID) {
-	_data = new TTStringData(str);
+TTstring::TTstring(const char *str) : _status(SS_VALID) {
+	_data = new TTstringData(str);
 }
 
-TTString::TTString(const CString &str) {
+TTstring::TTstring(const CString &str) {
 	_status = SS_VALID;
-	_data = new TTStringData(str);
+	_data = new TTstringData(str);
 }
 
-TTString::TTString(TTString &str) {
+TTstring::TTstring(TTstring &str) {
 	if (str._status != SS_VALID) {
 		_status = SS_5;
 		_data = nullptr;
@@ -48,12 +49,12 @@ TTString::TTString(TTString &str) {
 	}
 }
 
-TTString::~TTString() {
+TTstring::~TTstring() {
 	if (_data && --_data->_referenceCount == 0)
 		delete _data;
 }
 
-void TTString::operator=(const TTString &str) {
+void TTstring::operator=(const TTstring &str) {
 	// Delete old string reference, if any
 	if (_data && --_data->_referenceCount == 0)
 		delete _data;
@@ -65,22 +66,26 @@ void TTString::operator=(const TTString &str) {
 		_data->_referenceCount++;
 }
 
-void TTString::operator=(const CString &str) {
+void TTstring::operator=(const CString &str) {
 	operator=(str.c_str());
 }
 
-void TTString::operator=(const char *str) {
+void TTstring::operator=(const char *str) {
 	// Delete old string reference, if any
 	if (_data && --_data->_referenceCount == 0)
 		delete _data;
 
 	// Create new string data
-	_data = new TTStringData(str);
+	_data = new TTstringData(str);
 	_status = SS_VALID;
 }
 
-bool TTString::isValid() const {
+bool TTstring::isValid() const {
 	return _status == SS_VALID;
+}
+
+void TTstring::save(SimpleFile *file) const {
+	file->writeFormat("%s", c_str());
 }
 
 } // End of namespace Titanic

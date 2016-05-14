@@ -26,7 +26,7 @@ namespace Titanic {
 
 bool TTpronoun::_staticFlag;
 
-TTpronoun::TTpronoun(TTString &str, int val1, int val2, int val3, int val4) :
+TTpronoun::TTpronoun(TTstring &str, int val1, int val2, int val3, int val4) :
 		TTmajorWord(str, val1, val2, val3), _field30(val4) {
 }
 

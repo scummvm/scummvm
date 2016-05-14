@@ -27,29 +27,31 @@
 
 namespace Titanic {
 
-struct TTStringData {
+class SimpleFile;
+
+struct TTstringData {
 	CString _string;
 	int _referenceCount;
 
-	TTStringData() : _referenceCount(1) {}
-	TTStringData(const char *str) : _string(str), _referenceCount(1) {}
-	TTStringData(const CString &str) : _string(str), _referenceCount(1) {}
+	TTstringData() : _referenceCount(1) {}
+	TTstringData(const char *str) : _string(str), _referenceCount(1) {}
+	TTstringData(const CString &str) : _string(str), _referenceCount(1) {}
 };
 
-enum TTStringStatus { SS_VALID = 0, SS_5 = 5, SS_7 = 7, SS_8 = 8, SS_13 = 13 };
+enum TTstringStatus { SS_VALID = 0, SS_5 = 5, SS_7 = 7, SS_8 = 8, SS_13 = 13 };
 
-class TTString {
+class TTstring {
 private:
-	TTStringData *_data;
-	TTStringStatus _status;
+	TTstringData *_data;
+	TTstringStatus _status;
 public:
-	TTString();
-	TTString(const char *str);
-	TTString(const CString &str);
-	TTString(TTString &str);
-	virtual ~TTString();
+	TTstring();
+	TTstring(const char *str);
+	TTstring(const CString &str);
+	TTstring(TTstring &str);
+	virtual ~TTstring();
 
-	void operator=(const TTString &str);
+	void operator=(const TTstring &str);
 	void operator=(const CString &str);
 	void operator=(const char *str);
 
@@ -61,7 +63,7 @@ public:
 	/**
 	 * Get the status of the string
 	 */
-	TTStringStatus getStatus() const { return _status; }
+	TTstringStatus getStatus() const { return _status; }
 
 	/**
 	 * Get a char * pointer to the string data
@@ -77,6 +79,11 @@ public:
 	 * Get a character at a specified index
 	 */
 	char charAt(int index) const { return *(c_str() + index); }
+
+	/**
+	 * Save the sring to a passed file
+	 */
+	void save(SimpleFile *file) const;
 };
 
 } // End of namespace Titanic

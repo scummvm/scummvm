@@ -26,7 +26,7 @@ namespace Titanic {
 
 bool TTmajorWord::_staticFlag;
 
-TTmajorWord::TTmajorWord(TTString &str, int val1, int val2, int val3) :
+TTmajorWord::TTmajorWord(TTstring &str, int val1, int val2, int val3) :
 		TTword(str, val1, val2), _field2C(val3) {
 }
 
@@ -37,6 +37,18 @@ TTmajorWord::TTmajorWord(TTmajorWord *src) : TTword(src) {
 	} else {
 		_field2C = src->_field2C;
 	}
+}
+
+int TTmajorWord::saveData(SimpleFile *file, int val) const {
+	int result = TTword::save(file);
+	if (!result) {
+		file->writeFormat("%1.0d", val);
+		file->writeFormat("%c", '\n');
+		if (_synP)
+			result = _synP->save(file);
+	}
+
+	return result;
 }
 
 TTword *TTmajorWord::copy() {

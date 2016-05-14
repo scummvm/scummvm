@@ -72,7 +72,7 @@ public:
 	ScriptChangedResult scriptChanged(TTRoomScript *roomScript, TTNpcScript *npcScript, uint dialogueId);
 
 	void processInput(TTRoomScript *roomScript, TTNpcScript *npcScript,
-		const TTString &line);
+		const TTstring &line);
 
 	/**
 	 * Open a resource for access

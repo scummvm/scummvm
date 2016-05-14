@@ -33,7 +33,7 @@ private:
 protected:
 	int _field30;
 public:
-	TTadj(TTString &str, int val1, int val2, int val3, int val4);
+	TTadj(TTstring &str, int val1, int val2, int val3, int val4);
 	TTadj(TTadj *src);
 
 	/**
@@ -45,6 +45,19 @@ public:
 	 * Creates a copy of the word
 	 */
 	virtual TTword *copy();
+
+	virtual bool proc14(int val) const { return _field30 == val; }
+	virtual int proc15() const { return _field30; }
+	virtual bool proc16() const { return _field30 >= 7; }
+	virtual bool proc17() const { return _field30 <= 3; }
+	virtual bool proc18() const { return _field30 > 3 && _field30 < 7; }
+
+	/**
+	 * Dumps data associated with the word to file
+	 */
+	virtual int save(SimpleFile *file) const {
+		return saveData(file, _field30);
+	}
 };
 
 } // End of namespace Titanic

@@ -58,7 +58,7 @@ ScriptChangedResult CScriptHandler::scriptChanged(TTRoomScript *roomScript, TTNp
 }
 
 void CScriptHandler::processInput(TTRoomScript *roomScript, TTNpcScript *npcScript,
-		const TTString &line) {
+		const TTstring &line) {
 	if (!roomScript || !line.isValid())
 		return;
 	

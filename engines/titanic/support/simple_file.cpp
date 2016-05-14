@@ -73,7 +73,7 @@ size_t SimpleFile::unsafeRead(void *dst, size_t count) {
 	return _inStream->read(dst, count);
 }
 
-size_t SimpleFile::write(const void *src, size_t count) {
+size_t SimpleFile::write(const void *src, size_t count) const {
 	assert(_outStream);
 	return _outStream->write(src, count);
 }
@@ -237,12 +237,12 @@ void SimpleFile::readBuffer(char *buffer, size_t count) {
 	}
 }
 
-void SimpleFile::writeLine(const CString &str) {
+void SimpleFile::writeLine(const CString &str) const {
 	write(str.c_str(), str.size());
 	write("\r\n", 2);
 }
 
-void SimpleFile::writeString(const CString &str) {
+void SimpleFile::writeString(const CString &str) const {
 	if (str.empty())
 		return;
 
@@ -279,58 +279,69 @@ void SimpleFile::writeString(const CString &str) {
 	}
 }
 
-void SimpleFile::writeQuotedString(const CString &str) {
+void SimpleFile::writeQuotedString(const CString &str) const {
 	write("\"", 1);
 	writeString(str);
 	write("\" ", 2);
 }
 
-void SimpleFile::writeQuotedLine(const CString &str, int indent) {
+void SimpleFile::writeQuotedLine(const CString &str, int indent) const {
 	writeIndent(indent);
 	writeQuotedString(str);
 	write("\n", 1);
 }
 
-void SimpleFile::writeNumber(int val) {
+void SimpleFile::writeNumber(int val) const {
 	CString str = CString::format("%d ", val);
 	write(str.c_str(), str.size());
 }
 
-void SimpleFile::writeNumberLine(int val, int indent) {
+void SimpleFile::writeNumberLine(int val, int indent) const {
 	writeIndent(indent);
 	writeNumber(val);
 	write("\n", 1);
 }
 
-void SimpleFile::writeFloat(double val) {
+void SimpleFile::writeFloat(double val) const {
 	Common::String valStr = Common::String::format("%f ", val);
 	write(valStr.c_str(), valStr.size());
 }
 
-void SimpleFile::writeFloatLine(double val, int indent) {
+void SimpleFile::writeFloatLine(double val, int indent) const {
 	writeIndent(indent);
 	writeFloat(val);
 	write("\n", 1);
 }
 
-void SimpleFile::writePoint(const Point &pt, int indent) {
+void SimpleFile::writePoint(const Point &pt, int indent) const {
 	writeIndent(indent);
 	writeNumber(pt.x);
 	writeNumber(pt.y);
 	write("\n", 1);
 }
 
-void SimpleFile::writeRect(const Rect &r, int indent) {
+void SimpleFile::writeRect(const Rect &r, int indent) const {
 	writePoint(Point(r.left, r.top), indent);
 	writePoint(Point(r.right, r.bottom), indent);
 }
 
-void SimpleFile::writeBounds(const Rect &r, int indent) {
+void SimpleFile::writeBounds(const Rect &r, int indent) const {
 	writePoint(Point(r.left, r.top), indent);
 	writePoint(Point(r.width(), r.height()), indent);
 }
 
-void SimpleFile::writeIndent(uint indent) {
+void SimpleFile::writeFormat(const char *format, ...) const {
+	// Convert the format specifier and params to a string
+	va_list va;
+	va_start(va, format);
+	CString line = CString::vformat(format, va);
+	va_end(va);
+
+	// Write out the string
+	write(format, strlen(format));
+}
+
+void SimpleFile::writeIndent(uint indent) const {
 	for (uint idx = 0; idx < indent; ++idx)
 		write("\t", 1);
 }
@@ -383,7 +394,7 @@ bool SimpleFile::scanf(const char *format, ...) {
 			*param = readNumber();
 			
 			if (!eos())
-				_inStream->skip(-1);
+				_inStream->seek(-1, SEEK_CUR);
 		} else if (formatStr.hasPrefix("%s")) {
 			// Read in text until the next space
 			formatStr = CString(formatStr.c_str() + 2);
@@ -393,7 +404,7 @@ bool SimpleFile::scanf(const char *format, ...) {
 				*str += c;
 
 			if (!eos())
-				_inStream->skip(-1);
+				_inStream->seek(-1, SEEK_CUR);
 		}
 	}
 
@@ -408,7 +419,7 @@ void SimpleFile::skipSpaces() {
 		safeRead(&c, 1);
 
 	if (!eos())
-		_inStream->skip(-1);
+		_inStream->seek(-1, SEEK_CUR);
 }
 
 /*------------------------------------------------------------------------*/

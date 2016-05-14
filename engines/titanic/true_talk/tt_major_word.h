@@ -32,14 +32,21 @@ private:
 	static bool _staticFlag;
 protected:
 	int _field2C;
+protected:
+	/**
+	 * Dumps data for the word to a file
+	 */
+	int saveData(SimpleFile *file, int val) const;
 public:
-	TTmajorWord(TTString &str, int val1, int val2, int val3);
+	TTmajorWord(TTstring &str, int val1, int val2, int val3);
 	TTmajorWord(TTmajorWord *src);
 
 	/**
 	 * Creates a copy of the word
 	 */
 	virtual TTword *copy();
+
+	virtual bool proc2(int val) const { return _field2C == val; }
 };
 
 } // End of namespace Titanic

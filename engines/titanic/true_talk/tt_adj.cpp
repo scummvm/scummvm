@@ -26,7 +26,7 @@ namespace Titanic {
 
 bool TTadj::_staticFlag;
 
-TTadj::TTadj(TTString &str, int val1, int val2, int val3, int val4) :
+TTadj::TTadj(TTstring &str, int val1, int val2, int val3, int val4) :
 		TTmajorWord(str, val1, val2, val3) {
 	if (val4 >= 0 && val4 <= 9) {
 		_field30 = val4;

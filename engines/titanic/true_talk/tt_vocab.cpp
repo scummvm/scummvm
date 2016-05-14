@@ -53,7 +53,7 @@ int TTvocab::load(const CString &name) {
 	while (!result && !file->eos()) {
 		skipFlag = false;
 		int mode = file->readNumber();
-		TTString space(" ");
+		TTstring space(" ");
 
 		switch (mode) {
 		case 0: {
@@ -154,7 +154,7 @@ void TTvocab::addWord(TTword *word) {
 	}
 }
 
-TTword *TTvocab::findWord(const TTString &str) {
+TTword *TTvocab::findWord(const TTstring &str) {
 	TTsynonym *tempNode = new TTsynonym();
 	bool flag = false;
 	TTword *word = _pHead;
@@ -174,7 +174,7 @@ TTword *TTvocab::findWord(const TTString &str) {
 	return word;
 }
 
-TTword *TTvocab::getPrimeWord(TTString &str, TTword **words) {
+TTword *TTvocab::getPrimeWord(TTstring &str, TTword **words) {
 	TTsynonym *synonym = new TTsynonym();
 	char c = str.charAt(0);
 	TTword *vocabList = _pHead;

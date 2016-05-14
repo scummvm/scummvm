@@ -32,11 +32,11 @@ private:
 	static bool _staticFlag;
 protected:
 	int _field30;
-	int _field34;
+	uint _tag;
 	int _field38;
 	int _field3C;
 public:
-	TTpicture(TTString &str, int val1, int val2, int val3, int val4, int val5, int val6);
+	TTpicture(TTstring &str, int val1, int val2, int val3, int val4, int val5, int val6);
 	TTpicture(TTpicture *src);
 
 	/**
@@ -48,6 +48,25 @@ public:
 	 * Creates a copy of the word
 	 */
 	virtual TTword *copy();
+
+	/**
+	 * Checks whether the word's tag is a known type
+	 */
+	virtual bool checkTag() const;
+	
+	/**
+	 * Compare the word's tag to a given tag value
+	 */
+	virtual bool compareTagTo(uint tag) const;
+
+	/**
+	 * Return the tag associated with the word
+	 */
+	virtual uint getTag() const;
+	
+	virtual bool proc9(int val) const;
+	virtual int proc10() const;
+
 };
 
 } // End of namespace Titanic

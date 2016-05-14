@@ -33,7 +33,7 @@ private:
 protected:
 	int _field30;
 public:
-	TTpronoun(TTString &str, int val1, int val2, int val3, int val4);
+	TTpronoun(TTstring &str, int val1, int val2, int val3, int val4);
 	TTpronoun(TTpronoun *src);
 
 	/**
@@ -45,6 +45,15 @@ public:
 	 * Creates a copy of the word
 	 */
 	virtual TTword *copy();
+
+	virtual bool proc19(int val) const { return _field30 == val; }
+
+	/**
+	 * Dumps data associated with the word to file
+	 */
+	virtual int save(SimpleFile *file) const {
+		return saveData(file, _field30);
+	}
 };
 
 } // End of namespace Titanic

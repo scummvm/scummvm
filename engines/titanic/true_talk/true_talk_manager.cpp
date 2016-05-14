@@ -310,7 +310,7 @@ void CTrueTalkManager::processInput(CTrueTalkNPC *npc, CTextInputMsg *msg, CView
 	if (npcScript && roomScript) {
 		_currentNPC = npc;
 		_titleEngine._scriptHandler->processInput(roomScript, npcScript,
-			TTString(msg->_input));
+			TTstring(msg->_input));
 		_currentNPC = nullptr;
 
 		loadAssets(npc, npcScript->charId());

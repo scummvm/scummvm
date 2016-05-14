@@ -31,7 +31,7 @@ namespace Titanic {
 
 class TTword {
 protected:
-	TTStringStatus _status;
+	TTstringStatus _status;
 	int _wordMode;
 	int _field1C;
 	int _field20;
@@ -48,9 +48,9 @@ protected:
 public:
 	TTword *_pNext;
 	TTsynonym *_synP;
-	TTString _string;
+	TTstring _string;
 public:
-	TTword(TTString &str, int mode, int val2);
+	TTword(TTstring &str, int mode, int val2);
 	TTword(TTword *src);
 
 	/**
@@ -73,7 +73,7 @@ public:
 	 */
 	int load(SimpleFile *file, int mode);
 
-	TTword *scanCopy(const TTString &str, TTsynonym *node, int mode);
+	TTword *scanCopy(const TTstring &str, TTsynonym *node, int mode);
 
 	const char *c_str() const { return _string.c_str(); }
 	operator const char *() const { return c_str(); }
@@ -81,31 +81,44 @@ public:
 	/**
 	 * Return the status of the word
 	 */
-	TTStringStatus getStatus() const { return _status; }
+	TTstringStatus getStatus() const { return _status; }
 
 	/**
 	 * Creates a copy of the word
 	 */
 	virtual TTword *copy();
 	
-	virtual int proc2() const { return 0; }
+	virtual bool proc2(int val) const { return false; }
 	virtual int proc3() const { return -1; }
 	virtual void proc4() {}
 	virtual void proc5() {}
-	virtual int proc6() const { return 0; }
-	virtual int proc7() const { return 0; }
-	virtual int proc8() const { return 0; }
-	virtual int proc9() const { return 0; }
+
+	/**
+	 * Checks whether the word's tag is a known type
+	 */
+	virtual bool checkTag() const { return false; }
+	
+	/**
+	 * Compare the word's tag to a given tag value
+	 */
+	virtual bool compareTagTo(uint tag) const { return false; }
+
+	/**
+	 * Return the tag associated with the word
+	 */
+	virtual uint getTag() const { return 0; }
+	
+	virtual bool proc9(int val) const { return false; }
 	virtual int proc10() const { return 0; }
 	virtual void proc11() {}
-	virtual int proc12() const { return 0; }
+	virtual bool proc12(int val) const { return false; }
 	virtual int proc13() const { return 0; }
-	virtual int proc14() const { return 0; }
+	virtual bool proc14(int val) const { return false; }
 	virtual int proc15() const { return -1; }
-	virtual int proc16() const { return 0; }
-	virtual int proc17() const { return 0; }
-	virtual int proc18() const { return 0; }
-	virtual int proc19() const { return 0; }
+	virtual bool proc16() const { return false; }
+	virtual bool proc17() const { return false; }
+	virtual bool proc18() const { return false; }
+	virtual bool proc19(int val) const { return false; }
 	virtual int proc20() const { return 0; }
 
 	/**
@@ -124,7 +137,10 @@ public:
 	 */
 	virtual void setSynFile(FileHandle file);
 
-	virtual int proc24() const { return 0; }
+	/**
+	 * Dumps data associated with the word to file
+	 */
+	virtual int save(SimpleFile *file) const { return 0; }
 };
 
 } // End of namespace Titanic

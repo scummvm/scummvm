@@ -38,7 +38,7 @@ protected:
 	int _field4;
 	int _field8;
 	int _fieldC;
-	TTString _charName, _charClass;
+	TTstring _charName, _charClass;
 	int _field20;
 	int _field24;
 	int _field28;

@@ -24,6 +24,7 @@
 #define TITANIC_TT_SYNONYM_H
 
 #include "titanic/true_talk/tt_string_node.h"
+#include "titanic/support/simple_file.h"
 
 namespace Titanic {
 
@@ -41,8 +42,12 @@ public:
 	/**
 	 * Scan for a synonym with a given string
 	 */
-	static TTsynonym *findByName(TTsynonym *start, const TTString &str, int mode);
+	static TTsynonym *findByName(TTsynonym *start, const TTstring &str, int mode);
 
+	/**
+	 * Save data for the synonym to file
+	 */
+	int save(SimpleFile *file);
 };
 
 } // End of namespace Titanic

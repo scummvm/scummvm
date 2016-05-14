@@ -40,7 +40,7 @@ TTsynonym::TTsynonym(int mode, const char *str, FileHandle file) :
 	_file = file;
 }
 
-TTsynonym *TTsynonym::findByName(TTsynonym *start, const TTString &str, int mode) {
+TTsynonym *TTsynonym::findByName(TTsynonym *start, const TTstring &str, int mode) {
 	for (; start; start = static_cast<TTsynonym *>(start->_pNext)) {
 		if (start->_mode == mode || (mode == 3 && start->_mode < 3)) {
 			if (!strcmp(start->_string.c_str(), str.c_str()))
@@ -66,6 +66,31 @@ TTsynonym *TTsynonym::copy(TTsynonym *src) {
 
 		return this;
 	}
+}
+
+int TTsynonym::save(SimpleFile *file) {
+	for (TTstringNode *synP = this; synP; synP = synP->_pNext) {
+		file->writeFormat("%s", " 0 ");
+		synP->_string.save(file);
+		file->writeFormat("%c", ' ');
+
+		if (synP->_mode) {
+			file->writeFormat("%1.0d", synP->_mode);
+		} else {
+			file->writeFormat("%c", '0');
+		}
+
+		file->writeFormat("%c", ' ');
+		
+		if (synP->_file) {
+			file->writeFormat("%2.0d", synP->_file);
+		} else {
+			file->writeFormat("%c", ' ');
+		}
+		file->writeFormat("%c", '\n');
+	}
+
+	return 0;
 }
 
 } // End of namespace Titanic

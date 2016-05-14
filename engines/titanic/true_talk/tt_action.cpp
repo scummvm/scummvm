@@ -26,7 +26,7 @@ namespace Titanic {
 
 bool TTaction::_staticFlag;
 
-TTaction::TTaction(TTString &str, int val1, int val2, int val3, int val4) :
+TTaction::TTaction(TTstring &str, int val1, int val2, int val3, int val4) :
 		TTmajorWord(str, val1, val2, val3), _field30(val4) {
 }
 
