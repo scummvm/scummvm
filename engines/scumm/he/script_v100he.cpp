@@ -2236,40 +2236,43 @@ void ScummEngine_v100he::o100_videoOps() {
 	byte subOp = fetchScriptByte();
 
 	switch (subOp) {
-	case 0:
+	case 0: // SO_INIT
 		memset(_videoParams.filename, 0, sizeof(_videoParams.filename));
 		_videoParams.status = 0;
 		_videoParams.flags = 0;
-		_videoParams.unk2 = pop();
+		_videoParams.number = pop();
 		_videoParams.wizResNum = 0;
+
+		if (_videoParams.number != 1 && _videoParams.number != -1)
+			warning("o100_videoOps: number: %d", _videoParams.number);
 		break;
-	case 19:
+	case 19: // SO_CLOSE
 		_videoParams.status = 19;
 		break;
-	case 40:
+	case 40: // SO_IMAGE
 		_videoParams.wizResNum = pop();
 		if (_videoParams.wizResNum)
 			_videoParams.flags |= 2;
 		break;
-	case 47:
+	case 47: // SO_LOAD
 		copyScriptString(_videoParams.filename, sizeof(_videoParams.filename));
 		_videoParams.status = 47;
 		break;
-	case 67:
+	case 67: // SO_SET_FLAGS
 		_videoParams.flags |= pop();
 		break;
-	case 92:
-		if (_videoParams.status == 47) {
+	case 92: // SO_END
+		if (_videoParams.status == 47) { // SO_LOAD
 			// Start video
 			if (_videoParams.flags == 0)
 				_videoParams.flags = 4;
 
-			if (_videoParams.flags == 2) {
+			if (_videoParams.flags & 2) {
 				VAR(119) = _moviePlay->load(convertFilePath(_videoParams.filename), _videoParams.flags, _videoParams.wizResNum);
 			} else {
 				VAR(119) = _moviePlay->load(convertFilePath(_videoParams.filename), _videoParams.flags);
 			}
-		} else if (_videoParams.status == 19) {
+		} else if (_videoParams.status == 19) { // SO_CLOSE
 			// Stop video
 			_moviePlay->close();
 		}

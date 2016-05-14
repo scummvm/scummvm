@@ -440,7 +440,7 @@ protected:
 		byte filename[260];
 		int32 status;
 		int32 flags;
-		int32 unk2;
+		int32 number;
 		int32 wizResNum;
 	};
 
