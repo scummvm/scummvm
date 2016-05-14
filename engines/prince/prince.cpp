@@ -1543,20 +1543,18 @@ void PrinceEngine::showAnim(Anim &anim) {
 
 	// make_special_shadow
 	if ((anim._flags & 0x80)) {
-		if (animSurface) {
-			DrawNode newDrawNode;
-			newDrawNode.posX = x;
-			newDrawNode.posY = y + animSurface->h - anim._shadowBack;
-			newDrawNode.posZ = Hero::kHeroShadowZ;
-			newDrawNode.width = 0;
-			newDrawNode.height = 0;
-			newDrawNode.scaleValue = _scaleValue;
-			newDrawNode.originalRoomSurface = nullptr;
-			newDrawNode.data = this;
-			newDrawNode.drawFunction = &Hero::showHeroShadow;
-			newDrawNode.s = animSurface;
-			_drawNodeList.push_back(newDrawNode);
-		}
+		DrawNode newDrawNode;
+		newDrawNode.posX = x;
+		newDrawNode.posY = y + animSurface->h - anim._shadowBack;
+		newDrawNode.posZ = Hero::kHeroShadowZ;
+		newDrawNode.width = 0;
+		newDrawNode.height = 0;
+		newDrawNode.scaleValue = _scaleValue;
+		newDrawNode.originalRoomSurface = nullptr;
+		newDrawNode.data = this;
+		newDrawNode.drawFunction = &Hero::showHeroShadow;
+		newDrawNode.s = animSurface;
+		_drawNodeList.push_back(newDrawNode);
 	}
 
 	//ShowFrameCodeShadow
