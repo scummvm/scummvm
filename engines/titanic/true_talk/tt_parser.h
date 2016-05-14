@@ -30,22 +30,24 @@ namespace Titanic {
 class CScriptHandler;
 
 class TTparser {
+private:
+	int normalize(TTinput *input);
 public:
 	CScriptHandler *_owner;
 	int _field4;
-	int _field8;
+	TTinput *_input;
 	int _fieldC;
 	int _field10;
 	int _field14;
 	int _field18;
 public:
-	TTparser(CScriptHandler *owner) : _owner(owner), _field4(0), _field8(0),
-		_fieldC(0), _field10(0), _field14(0), _field18(0) {}
+	TTparser(CScriptHandler *owner) : _owner(owner), _field4(0),
+		_input(nullptr), _fieldC(0), _field10(0), _field14(0), _field18(0) {}
 
 	/**
 	 * Gets passed a newly created input wrapper during conversation text processing
 	 */
-	void processInput(TTinput *input);
+	int processInput(TTinput *input);
 };
 
 } // End of namespace Titanic

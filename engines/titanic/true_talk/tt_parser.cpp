@@ -26,8 +26,34 @@
 
 namespace Titanic {
 
-void TTparser::processInput(TTinput *input) {
+int TTparser::processInput(TTinput *input) {
+	_input = input;
+	if (normalize(input))
+		return 0;
+
 	warning("TODO: TTparser::processInput");
+	return 0;
+}
+
+int TTparser::normalize(TTinput *input) {
+	TTstring *line = new TTstring();
+
+	for (const char *lineP = input->_line.c_str(); lineP; ++lineP) {
+		char c = *lineP;
+		if (Common::isLower(c)) {
+			(*line) += c;
+		} else if (Common::isSpace(c)) {
+			if (!line->empty() && line->lastChar() != ' ')
+				(*line) += ' ';
+		} else if (Common::isUpper(c)) {
+			(*line) += toupper(c);
+		} else if (Common::isDigit(c)) {
+			// TODO: num handling
+		}
+		// TODO other cases
+	}
+
+	return 0;
 }
 
 } // End of namespace Titanic

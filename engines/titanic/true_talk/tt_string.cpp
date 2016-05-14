@@ -80,6 +80,37 @@ void TTstring::operator=(const char *str) {
 	_status = SS_VALID;
 }
 
+TTstring &TTstring::operator+=(const char *str) {
+	_data->_string += str;
+	return *this;
+}
+
+TTstring &TTstring::operator+=(const TTstring &str) {
+	_data->_string += str;
+	return *this;
+}
+
+TTstring &TTstring::operator+=(char c) {
+	_data->_string += c;
+	return *this;
+}
+
+bool TTstring::empty() const {
+	return _data->_string.empty();
+}
+
+char TTstring::firstChar() const {
+	return _data->_string.firstChar();
+}
+
+char TTstring::lastChar() const {
+	return _data->_string.lastChar();
+}
+
+TTstring *TTstring::copy() const {
+	return new TTstring(c_str());
+}
+
 bool TTstring::isValid() const {
 	return _status == SS_VALID;
 }

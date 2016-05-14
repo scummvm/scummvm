@@ -54,6 +54,17 @@ public:
 	void operator=(const TTstring &str);
 	void operator=(const CString &str);
 	void operator=(const char *str);
+	TTstring &operator+=(const char *str);
+	TTstring &operator+=(const TTstring &str);
+	TTstring &operator+=(char c);
+	bool empty() const;
+	char firstChar() const;
+	char lastChar() const;
+
+	/**
+	 * Create a new copy of the string
+	 */
+	TTstring *copy() const;
 
 	/**
 	 * Returns true if the string is valid

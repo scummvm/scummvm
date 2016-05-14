@@ -65,6 +65,8 @@ int CScriptHandler::processInput(TTroomScript *roomScript, TTnpcScript *npcScrip
 	
 	TTinput *input = new TTinput(_inputCtr++, line, this, roomScript, npcScript);
 	_parser.processInput(input);
+	roomScript->processInput(input);
+	npcScript->processInput(input);
 
 	warning("TODO: CScriptHandler::processInput");
 

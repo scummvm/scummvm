@@ -73,8 +73,9 @@ void TTscriptBase::reset() {
 	_field48 = 0;
 }
 
-void TTscriptBase::processInput(TTinput *input) {
+int TTscriptBase::processInput(TTinput *input) {
 	warning("TODO: TTscriptBase::processInput");
+	return 0;
 }
 
 void TTscriptBase::proc2(int v) {

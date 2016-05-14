@@ -59,7 +59,6 @@ private:
 	int _inputCtr;
 	int _field34;
 	int _field38;
-	TTstring _line;
 	TTstring _string2;
 	int _field4C;
 	TTroomScript *_roomScript;
@@ -67,6 +66,8 @@ private:
 	int _field58;
 	int _field5C;
 	int _status;
+public:
+	TTstring _line;
 public:
 	TTinput(int inputCtr, const TTstring &line, CScriptHandler *owner,
 		TTroomScript *roomScript, TTnpcScript *npcScript);
