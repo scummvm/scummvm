@@ -352,9 +352,6 @@ void DungeonMan::loadDungeonFile() {
 }
 
 void DungeonMan::setCurrentMap(uint16 mapIndex) {
-	if (_currMap.index == mapIndex)
-		return;
-
 	_currMap.index = mapIndex;
 	_currMap.data = _dunData.mapData[mapIndex];
 	_currMap.map = _maps + mapIndex;

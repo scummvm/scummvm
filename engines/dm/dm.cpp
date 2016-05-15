@@ -54,9 +54,12 @@ Common::Error DMEngine::run() {
 	_displayMan = new DisplayMan(this);
 	_dungeonMan = new DungeonMan(this);
 
-	_dungeonMan->loadDungeonFile();
-
 	_displayMan->setUpScreens(320, 200);
+
+	_dungeonMan->loadDungeonFile();
+	_dungeonMan->setCurrentMapAndPartyMap(0);
+
+
 	_displayMan->loadGraphics();
 
 
@@ -64,7 +67,7 @@ Common::Error DMEngine::run() {
 
 	_displayMan->loadPalette(gPalCredits);
 
-	_dungeonMan->setCurrentMapAndPartyMap(0);
+
 
 	uint16 i = 0; //TODO: testing, please delete me
 	while (true) {
