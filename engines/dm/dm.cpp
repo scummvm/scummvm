@@ -53,15 +53,18 @@ Common::Error DMEngine::run() {
 	_console = new Console(this);
 	_displayMan = new DisplayMan(this);
 	_dungeonMan = new DungeonMan(this);
+
+	_dungeonMan->loadDungeonFile();
+
 	_displayMan->setUpScreens(320, 200);
 	_displayMan->loadGraphics();
-	_dungeonMan->loadDungeonFile();
-	_displayMan->loadFloorSet(kFloorSetStone);
-	_displayMan->loadWallSet(kWallSetStone);
 
-	_displayMan->loadPalette(kPalCredits);
 
-	_dungeonMan->setCurrentMap(0);
+	_displayMan->loadCurrentMapGraphics();
+
+	_displayMan->loadPalette(gPalCredits);
+
+	_dungeonMan->setCurrentMapAndPartyMap(0);
 
 	uint16 i = 0; //TODO: testing, please delete me
 	while (true) {
@@ -69,6 +72,7 @@ Common::Error DMEngine::run() {
 		_displayMan->drawDungeon(kDirNorth, i++, 0);
 		_displayMan->updateScreen();
 		_system->delayMillis(1000); //TODO: testing, please set me to 10
+		if (i == 3) break;
 	}
 
 

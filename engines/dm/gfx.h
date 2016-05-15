@@ -6,6 +6,12 @@
 
 namespace DM {
 
+extern uint16 gPalSwoosh[16];
+extern uint16 gPalMousePointer[16];
+extern uint16 gPalCredits[16];
+extern uint16 gPalEntrance[16];
+extern uint16 gPalDungeonView[6][16];
+
 struct Frame;
 enum WallSet {
 	kWallSetStone = 0 // @ C0_WALL_SET_STONE
@@ -35,18 +41,6 @@ enum Color {
 	kColorWhite = 15
 };
 
-enum dmPaletteEnum {
-	kPalSwoosh = 0,
-	kPalMousePointer = 1,
-	kPalCredits = 2,
-	kPalEntrance = 3,
-	kPalDungeonView0 = 4,
-	kPalDungeonView1 = 5,
-	kPalDungeonView2 = 6,
-	kPalDungeonView3 = 7,
-	kPalDungeonView4 = 8,
-	kPalDungeonView5 = 9,
-};
 
 struct Viewport {
 	// TODO: should probably add width and height, seems redundant right meow
@@ -57,18 +51,42 @@ extern Viewport gDefultViewPort;
 extern Viewport gDungeonViewport;
 
 
+#define kAlcoveOrnCount 3
+#define kFountainOrnCount 1
+
+#define kFloorSetGraphicCount 2 // @ C002_FLOOR_SET_GRAPHIC_COUNT
+#define kWallSetGraphicCount 13 // @ C013_WALL_SET_GRAPHIC_COUNT
+#define kStairsGraphicCount 18 // @ C018_STAIRS_GRAPHIC_COUNT
+#define kDoorSetGraphicsCount 3 // @ C003_DOOR_SET_GRAPHIC_COUNT
+#define kDoorButtonCount 1 // @ C001_DOOR_BUTTON_COUNT
+#define kNativeBitmapIndex 0 // @ C0_NATIVE_BITMAP_INDEX
+#define kNativeCoordinateSet 1 // @ C1_COORDINATE_SET
+#define kCreatureTypeCount 27 // @ C027_CREATURE_TYPE_COUNT
+#define kExplosionAspectCount 4 // @ C004_EXPLOSION_ASPECT_COUNT
+#define kObjAspectCount 85 // @ C085_OBJECT_ASPECT_COUNT
+#define kProjectileAspectCount 14 // @ C014_PROJECTILE_ASPECT_COUNT
+
+
+#define kDoorButton 0 // @ C0_DOOR_BUTTON
+#define kWallOrnInscription 0 // @ C0_WALL_ORNAMENT_INSCRIPTION
+#define kFloorOrnFootprints 15 // @ C15_FLOOR_ORNAMENT_FOOTPRINTS
+#define kDoorOrnDestroyedMask 15 // @ C15_DOOR_ORNAMENT_DESTROYED_MASK
+#define kDoorOrnThivesEyeMask 16 // @ C16_DOOR_ORNAMENT_THIEVES_EYE_MASK
+
+
+
 
 class DisplayMan {
 	DMEngine *_vm;
-	dmPaletteEnum _currPalette;
 	uint16 _screenWidth;
 	uint16 _screenHeight;
 	byte *_vgaBuffer;
 
-	uint16 _packedItemCount;
-	uint32 *_packedItemPos;
-	byte *_packedBitmaps; // TODO: this doesn't not contaion graphics exclusively, will have to be moved
 
+	/// Related to graphics.dat file
+	uint16 grapItemCount; // @ G0632_ui_GraphicCount
+	uint32 *_packedItemPos;
+	byte *_packedBitmaps;
 	byte **_bitmaps;
 
 
@@ -79,25 +97,36 @@ class DisplayMan {
 	byte *_floorBitmap;
 	byte *_ceilingBitmap;
 
+
+	byte *_palChangesProjectile[4]; // @G0075_apuc_PaletteChanges_Projectile
+
+
 	DisplayMan(const DisplayMan &other); // no implementation on purpose
 	void operator=(const DisplayMan &rhs); // no implementation on purpose
 
 	byte *getCurrentVgaBuffer();
-	// the original functions has two position parameters, but they are always set to zero
+	// the original function has two position parameters, but they are always set to zero
 	void loadIntoBitmap(uint16 index, byte *destBitmap); // @ F0466_EXPAND_GraphicToBitmap
 	void unpackGraphics();
+
 	void drawWallSetBitmap(byte *bitmap, Frame &f); // @ F0100_DUNGEONVIEW_DrawWallSetBitmap
 	void drawSquareD3L(direction dir, int16 posX, int16 posY); // @ F0116_DUNGEONVIEW_DrawSquareD3L
+
+	void loadWallSet(WallSet set); // @ F0095_DUNGEONVIEW_LoadWallSet
+	void loadFloorSet(FloorSet set); // @ F0094_DUNGEONVIEW_LoadFloorSet
+
+	void applyCreatureReplColors(int replacedColor, int replacementColor); // @ F0093_DUNGEONVIEW_ApplyCreatureReplacementColors
+
 public:
 	DisplayMan(DMEngine *dmEngine);
 	~DisplayMan();
 	void setUpScreens(uint16 width, uint16 height);
 
-	void loadGraphics();
-	void loadWallSet(WallSet set); // @ F0095_DUNGEONVIEW_LoadWallSet
-	void loadFloorSet(FloorSet set); // @ F0094_DUNGEONVIEW_LoadFloorSet
+	void loadGraphics(); // @ F0479_MEMORY_ReadGraphicsDatHeader, F0460_START_InitializeGraphicData
 
-	void loadPalette(dmPaletteEnum palette);
+	void loadCurrentMapGraphics();
+
+	void loadPalette(uint16 *palette);
 
 	/// Gives the width of an IMG0 type item
 	uint16 width(uint16 index);
@@ -120,10 +149,22 @@ public:
 	void clearScreen(Color color);
 	void drawDungeon(direction dir, int16 posX, int16 posY); // @ F0128_DUNGEONVIEW_Draw_CPSF
 	void updateScreen();
+
+
+	int16 _championPortraitOrdinal = 0; // @ G0289_i_DungeonView_ChampionPortraitOrdinal
+	int16 _currMapAlcoveOrnIndices[kAlcoveOrnCount]; // @ G0267_ai_CurrentMapAlcoveOrnamentIndices
+	int16 _currMapFountainOrnIndices[kFountainOrnCount]; // @ G0268_ai_CurrentMapFountainOrnamentIndices
+	int16 _currMapWallOrnInfo[16][2]; // @ G0101_aai_CurrentMapWallOrnamentsInf
+	int16 _currMapFloorOrnInfo[16][2]; // @ G0102_aai_CurrentMapFloorOrnamentsInfo
+	int16 _currMapDoorOrnInfo[17][2]; // @ G0103_aai_CurrentMapDoorOrnamentsInfo
+	byte *_currMapAllowedCreatureTypes; // @ G0264_puc_CurrentMapAllowedCreatureTypes
+	byte _currMapWallOrnIndices[16]; // @ G0261_auc_CurrentMapWallOrnamentIndices
+	byte _currMapFloorOrnIndices[16]; // @ G0262_auc_CurrentMapFloorOrnamentIndices
+	byte _currMapDoorOrnIndices[18]; // @ G0263_auc_CurrentMapDoorOrnamentIndices
+
+	int16 _currMapViAltarIndex; // @ G0266_i_CurrentMapViAltarWallOrnamentIndex
 };
 
 }
-
-
 
 #endif
