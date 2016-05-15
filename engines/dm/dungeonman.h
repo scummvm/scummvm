@@ -402,11 +402,11 @@ struct CurrMapData {
 	uint8 currPartyMapIndex; // @ G0309_i_PartyMapIndex
 
 	uint8 index; // @ G0272_i_CurrentMapIndex
-	byte **data; // @ G0271_ppuc_CurrentMapData
-	Map *map; // @ G0269_ps_CurrentMap
+	byte **data = NULL; // @ G0271_ppuc_CurrentMapData
+	Map *map = NULL; // @ G0269_ps_CurrentMap
 	uint16 width; // @ G0273_i_CurrentMapWidth
 	uint16 height; // @ G0274_i_CurrentMapHeight
-	uint16 *colCumulativeSquareFirstThingCount; // @G0270_pui_CurrentMapColumnsCumulativeSquareFirstThingCount
+	uint16 *colCumulativeSquareFirstThingCount = NULL; // @G0270_pui_CurrentMapColumnsCumulativeSquareFirstThingCount
 }; // @ AGGREGATE
 
 struct Messages {
@@ -454,15 +454,15 @@ public:
 	} // @ F0153_DUNGEON_GetRelativeSquareType
 	void setSquareAspect(uint16 *aspectArray, direction dir, int16 mapX, int16 mapY); // @ F0172_DUNGEON_SetSquareAspect
 
-	uint32 _rawDunFileDataSize;	 // @ probably NONE
-	byte *_rawDunFileData; // @ ???
+	uint32 _rawDunFileDataSize = 0;	 // @ probably NONE
+	byte *_rawDunFileData = NULL; // @ ???
 	DungeonFileHeader _fileHeader; // @ G0278_ps_DungeonHeader
 
 	DungeonData _dunData; // @ NONE
 	CurrMapData _currMap; // @ NONE
-	Map *_maps; // @ G0277_ps_DungeonMaps
+	Map *_maps = NULL; // @ G0277_ps_DungeonMaps
 	// does not have to be freed
-	byte *_rawMapData; // @ G0276_puc_DungeonRawMapData
+	byte *_rawMapData = NULL; // @ G0276_puc_DungeonRawMapData
 	Messages _messages; // @ NONE;
 
 	int16 _currMapInscriptionWallOrnIndex; // @ G0265_i_CurrentMapInscriptionWallOrnamentIndex

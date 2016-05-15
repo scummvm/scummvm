@@ -56,11 +56,12 @@ Common::Error DMEngine::run() {
 
 	_displayMan->setUpScreens(320, 200);
 
+	_displayMan->loadGraphics();
+
 	_dungeonMan->loadDungeonFile();
 	_dungeonMan->setCurrentMapAndPartyMap(0);
 
 
-	_displayMan->loadGraphics();
 
 
 	_displayMan->loadCurrentMapGraphics();

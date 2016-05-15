@@ -421,7 +421,7 @@ int16 DungeonMan::getSquareFirstThingIndex(int16 mapX, int16 mapY) {
 	if (mapX < 0 || mapX >= _currMap.width || mapY < 0 || mapY >= _currMap.height || !Square(_currMap.data[mapX][mapY]).get(kThingListPresent))
 		return -1;
 
-	int16 y;
+	int16 y = 0;
 	uint16 index = _currMap.colCumulativeSquareFirstThingCount[mapX];
 	byte* square = _currMap.data[mapX];
 	while (y++ != mapY)
