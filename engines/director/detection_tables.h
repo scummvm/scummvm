@@ -227,7 +227,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 			AD_ENTRY1("Meister Zufall", "65063397536553c4f6ff2a6c07194bf7"),
 			Common::DE_DEU,
 			Common::kPlatformMacintosh,
-			ADGF_NO_FLAGS,
+			ADGF_MACRESFORK,
 			GUIO1(GUIO_NOASPECT)
 		},
 		GID_GENERIC,
