@@ -23,7 +23,7 @@
 #ifndef TITANIC_FILES_MANAGER_H
 #define TITANIC_FILES_MANAGER_H
 
-#include "common/winexe_pe.h"
+#include "common/hashmap.h"
 #include "titanic/core/list.h"
 #include "titanic/support/screen_manager.h"
 
@@ -35,9 +35,18 @@ class CFilesManagerList : public List<ListItem> {
 };
 
 class CFilesManager {
+	struct ResourceEntry {
+		uint _offset;
+		uint _size;
+		
+		ResourceEntry() : _offset(0), _size(0) {}
+		ResourceEntry(uint offset, uint size) : _offset(offset), _size(size) {}
+	};
+	typedef Common::HashMap<Common::String, ResourceEntry> ResourceHash;
 private:
 	CGameManager *_gameManager;
-	Common::PEResources _exeResources;
+	Common::File _datFile;
+	ResourceHash _resources;
 	CFilesManagerList _list;
 	CString _string1;
 	CString _string2;
@@ -47,6 +56,8 @@ private:
 	int _field1C;
 	int _field3C;
 	const CString _assetsPath;
+private:
+	void loadResourceIndex();
 public:
 	CFilesManager();
 	~CFilesManager();
@@ -90,8 +101,7 @@ public:
 	/**
 	 * Get a resource from the executable
 	 */
-	Common::SeekableReadStream *getResource(Common::WinResourceID area,
-		Common::WinResourceID name);
+	Common::SeekableReadStream *getResource(const CString &str);
 };
 
 } // End of namespace Titanic

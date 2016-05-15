@@ -28,10 +28,38 @@ namespace Titanic {
 
 CFilesManager::CFilesManager() : _gameManager(nullptr), _assetsPath("Assets"),
 		_field0(0), _drive(-1), _field18(0), _field1C(0), _field3C(0) {
-	_exeResources.loadFromEXE("st.exe");
+	loadResourceIndex();
 }
 
 CFilesManager::~CFilesManager() {
+	_datFile.close();
+}
+
+void CFilesManager::loadResourceIndex() {
+	if (!_datFile.open("titanic.dat"))
+		error("Could not find titanic.dat data file");
+
+	uint headerId = _datFile.readUint32BE();
+	uint version = _datFile.readUint16LE();
+	if (headerId != MKTAG('S', 'V', 'T', 'N') || version < 1)
+		error("Invalid data file");
+
+	// Read in entries
+	uint offset, size;
+	char c;
+	Common::String resourceName;
+	for (;;) {
+		offset = _datFile.readUint32LE();
+		size = _datFile.readUint32LE();
+		if (size == 0)
+			break;
+
+		Common::String resName;
+		while ((c = _datFile.readByte()) != '\0')
+			resName += c;
+
+		_resources[resName] = ResourceEntry(offset, size);
+	}
 }
 
 bool CFilesManager::fileExists(const CString &name) {
@@ -92,9 +120,11 @@ void CFilesManager::preload(const CString &name) {
 	// We don't currently do any preloading of resources
 }
 
-Common::SeekableReadStream *CFilesManager::getResource(
-		Common::WinResourceID area, Common::WinResourceID name) {
-	return _exeResources.getResource(area, name);
+Common::SeekableReadStream *CFilesManager::getResource(const CString &str) {
+	ResourceEntry resEntry = _resources[str];
+	_datFile.seek(resEntry._offset);
+
+	return _datFile.readStream(resEntry._size);
 }
 
 } // End of namespace Titanic

@@ -67,7 +67,7 @@ void STtitleEngine::dump(int val1, int val2) {
 
 SimpleFile *STtitleEngine::open(const CString &name) {
 	Common::SeekableReadStream *stream = g_vm->_filesManager->getResource(
-		Common::WinResourceID("TEXT"), name);
+		CString::format("TEXT/%s", name.c_str()));
 	assert(stream);
 
 	SimpleFile *file = new SimpleFile();
