@@ -549,20 +549,20 @@ void ScummEngine_v100he::o100_arrayOps() {
 	debug(9,"o100_arrayOps: array %d case %d", array, subOp);
 
 	switch (subOp) {
-	case 35:
+	case 35:			// SO_FORMATTED_STRING
 		decodeScriptString(string);
 		len = resStrLen(string);
 		data = defineArray(array, kStringArray, 0, 0, 0, len);
 		memcpy(data, string, len);
 		break;
-	case 77:			// SO_ASSIGN_STRING
+	case 77:			// SO_STRING
 		copyScriptString(string, sizeof(string));
 		len = resStrLen(string);
 		data = defineArray(array, kStringArray, 0, 0, 0, len);
 		memcpy(data, string, len);
 		break;
 
-	case 128:		// SO_ASSIGN_2DIM_LIST
+	case 128:			// SO_ASSIGN_2DIM_LIST
 		len = getStackList(list, ARRAYSIZE(list));
 		id = readVar(array);
 		if (id == 0)
@@ -572,7 +572,7 @@ void ScummEngine_v100he::o100_arrayOps() {
 			writeArray(array, c, len, list[len]);
 		}
 		break;
-	case 129:		// SO_ASSIGN_INT_LIST
+	case 129:			// SO_ASSIGN_INT_LIST
 		b = pop();
 		c = pop();
 		id = readVar(array);
@@ -583,7 +583,7 @@ void ScummEngine_v100he::o100_arrayOps() {
 			writeArray(array, 0, b + c, pop());
 		}
 		break;
-	case 130:
+	case 130:			//
 		len = getStackList(list, ARRAYSIZE(list));
 		dim1end = pop();
 		dim1start = pop();
@@ -607,7 +607,7 @@ void ScummEngine_v100he::o100_arrayOps() {
 			dim2start++;
 		}
 		break;
-	case 131:
+	case 131:			// SO_COMPLEX_ARRAY_COPY_OPERATION
 		{
 			int a2_dim1end = pop();
 			int a2_dim1start = pop();
@@ -624,7 +624,7 @@ void ScummEngine_v100he::o100_arrayOps() {
 			copyArray(array, a1_dim2start, a1_dim2end, a1_dim1start, a1_dim1end, array2, a2_dim2start, a2_dim2end, a2_dim1start, a2_dim1end);
 		}
 		break;
-	case 132:
+	case 132:			// SO_COMPLEX_ARRAY_MATH_OPERATION
 		// TODO: Used by room 2 script 2180 in Moonbase Commander
 		fetchScriptWord();
 		fetchScriptWord();
@@ -661,7 +661,7 @@ void ScummEngine_v100he::o100_arrayOps() {
 		}
 		warning("STUB: o100_arrayOps: case 132 type %d", type);
 		break;
-	case 133:
+	case 133:			// SO_RANGE_ARRAY_ASSIGNMENT
 		b = pop();
 		c = pop();
 		dim1end = pop();
