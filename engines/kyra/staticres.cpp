@@ -838,6 +838,14 @@ void KyraEngine_LoK::initStaticResource() {
 		SoundResourceInfo_PC98 resInfoIngame("KYRAM%d.DAT");
 		_sound->initAudioResourceInfo(kMusicIntro, &resInfoIntro);
 		_sound->initAudioResourceInfo(kMusicIngame, &resInfoIngame);
+
+		// This should never happen, but we add this to silence static
+		// analysis tools which complain about memory leaks.
+		delete[] soundFiles;
+	} else {
+		// This should never happen, but we add this to silence static
+		// analysis tools which complain about memory leaks.
+		delete[] soundFiles;
 	}
 }
 
