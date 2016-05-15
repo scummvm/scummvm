@@ -642,7 +642,9 @@ int BubbleBox::doBox_v1(int item, int box, int &btnSelected) {
 			}
 		}
 	}
-	
+
+	delete icons;
+
 	_vm->_screen->restoreScreen();
 	_vm->_boxDataStart = _startItem;
 	_vm->_boxSelectYOld = -1;
