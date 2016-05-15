@@ -47,8 +47,10 @@ void GnapEngine::initMenuHotspots1() {
 	int curId = 0;
 
 	for (int i = 0; i < 3; ++i) {
+		int top = 74 * i + 69;
 		for (int j = 0; j < 3; ++j) {
-			_hotspots[curId]._rect = Common::Rect(87 * j + 262, 74 * i + 69, _hotspots[curId]._rect.left + 79, _hotspots[curId]._rect.top + 66);
+			int left = 87 * j + 262;
+			_hotspots[curId]._rect = Common::Rect(left, top, left + 79, top + 66);
 			_hotspots[curId]._flags = SF_NONE;
 			++curId;
 		}
@@ -72,7 +74,8 @@ void GnapEngine::initMenuHotspots2() {
 	int curId = 0;
 
 	for (int i = 0; i < 4; ++i) {
-		_hotspots[curId]._rect = Common::Rect(312, 48 * i + 85, _hotspots[curId]._rect.left + 153, _hotspots[curId]._rect.top + 37);
+		int top = 48 * i + 85;
+		_hotspots[curId]._rect = Common::Rect(312, top, 465, top + 37);
 		_hotspots[curId]._flags = SF_GRAB_CURSOR;
 		++curId;
 	}
@@ -118,7 +121,8 @@ void GnapEngine::initSaveLoadHotspots() {
 	int curId = 0;
 
 	for (int i = 0; i < 7; ++i ) {
-		_hotspots[curId]._rect = Common::Rect(288, 31 * i + 74, _hotspots[curId]._rect.left + 91, _hotspots[curId]._rect.top + 22);
+		int top = 31 * i + 74;
+		_hotspots[curId]._rect = Common::Rect(288, top, 379, top + 22);
 		_hotspots[curId]._flags = SF_GRAB_CURSOR;
 		++curId;
 	}
