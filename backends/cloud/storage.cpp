@@ -21,6 +21,7 @@
 */
 
 #include "backends/cloud/storage.h"
+#include "common/debug.h"
 #include "common/system.h"
 #include "common/timer.h"
 
@@ -40,15 +41,17 @@ void Storage::addRequest(Request *request) {
 
 void Storage::handler() {
 	//TODO: lock mutex here (in case another handler() would be called before this one ends)
-	warning("handler's here");
+	debug("\nhandler's here");
 	for (Common::Array<Request *>::iterator i = _requests.begin(); i != _requests.end();) {
-		if ((*i)->handle()) {
+		if ((*i)->handle(_connectionManager)) {
 			delete (*i);
 			_requests.erase(i);
 		}
 		else ++i;
 	}
 	if (_requests.empty()) stopTimer();
+
+	_connectionManager.handle();
 	//TODO: unlock mutex here
 }
 

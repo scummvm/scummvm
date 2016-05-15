@@ -24,7 +24,9 @@ MODULE_OBJS += \
 	cloud/manager.o \
 	cloud/storage.o \
 	cloud/dropbox/dropboxstorage.o \
-	cloud/dropbox/curlrequest.o
+	cloud/dropbox/curlrequest.o \
+	cloud/curl/connectionmanager.o \
+	cloud/curl/networkreadstream.o
 endif
 
 ifdef USE_ELF_LOADER

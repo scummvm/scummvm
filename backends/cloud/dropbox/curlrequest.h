@@ -25,21 +25,22 @@
 
 #include "backends/cloud/request.h"
 
-typedef void CURLM;
-
 namespace Cloud {
+
+class NetworkReadStream;
+
 namespace Dropbox {
 
 class CurlRequest : public Cloud::Request {
 	bool _firstTime;
-	CURLM *_curlm;
-	char *_url;
+	const char *_url;
+	NetworkReadStream *_stream;
 
 public:
-	CurlRequest(Callback cb, char *url);
+	CurlRequest(Callback cb, const char *url);
 	virtual ~CurlRequest();
 
-	virtual bool handle();
+	virtual bool handle(ConnectionManager& manager);
 };
 
 }  //end of namespace Dropbox

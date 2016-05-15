@@ -22,43 +22,51 @@
 
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 
-#include "backends/cloud/dropbox/curlrequest.h"
+#include "backends/cloud/curl/connectionmanager.h"
 #include "backends/cloud/curl/networkreadstream.h"
 #include "common/debug.h"
 #include <curl/curl.h>
 
 namespace Cloud {
-namespace Dropbox {
 
-CurlRequest::CurlRequest(Callback cb, const char *url) : Request(cb), _firstTime(true), _stream(0) {	
-	_url = url;
+ConnectionManager::ConnectionManager(): _multi(0) {
+	curl_global_init(CURL_GLOBAL_ALL);
+	_multi = curl_multi_init();
 }
 
-CurlRequest::~CurlRequest() {
-	if (_stream) delete _stream;
+ConnectionManager::~ConnectionManager() {
+	curl_multi_cleanup(_multi);
+	curl_global_cleanup();
 }
 
-bool CurlRequest::handle(ConnectionManager& manager) {
-	if (_firstTime) {
-		_stream = manager.makeRequest(_url);
-		_firstTime = false;
-	}
+NetworkReadStream *ConnectionManager::makeRequest(const char *url) {
+	NetworkReadStream *stream = new NetworkReadStream(url);
+	curl_multi_add_handle(_multi, stream->getEasyHandle());
+	return stream;
+}
 
-	if (_stream) {
-		const int kBufSize = 10000;
-		char buf[kBufSize+1];
-		uint32 readBytes = _stream->read(buf, kBufSize);
-		debug("%d", readBytes);
-		//if(readBytes != 0) debug("%s", buf);
+void ConnectionManager::handle() {
+	int U;
+	curl_multi_perform(_multi, &U);
 
-		if(_stream->eos()) {
-			_callback(0);
-			return true;
+	int Q;
+	CURLMsg *curlMsg;
+	while ((curlMsg = curl_multi_info_read(_multi, &Q))) {
+		if (curlMsg->msg == CURLMSG_DONE) {
+			CURL *e = curlMsg->easy_handle;
+
+			NetworkReadStream *stream;
+			curl_easy_getinfo(e, CURLINFO_PRIVATE, &stream);
+			if (stream) stream->done();			
+
+			debug("ConnectionManager: SUCCESS (%d - %s)", curlMsg->data.result, curl_easy_strerror(curlMsg->data.result));
+			curl_multi_remove_handle(_multi, e);			
+		}
+		else {
+			debug("ConnectionManager: FAILURE (CURLMsg (%d))", curlMsg->msg);
+			//TODO: notify stream on this case also
 		}
 	}
-
-	return false;
 }
 
-} //end of namespace Dropbox
 } //end of namespace Cloud

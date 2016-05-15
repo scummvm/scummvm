@@ -20,49 +20,26 @@
 *
 */
 
-#ifndef BACKENDS_CLOUD_STORAGE_H
-#define BACKENDS_CLOUD_STORAGE_H
+#ifndef BACKENDS_CLOUD_CURL_CONNECTIONMANAGER_H
+#define BACKENDS_CLOUD_CURL_CONNECTIONMANAGER_H
 
 #include "common/str.h"
-#include "common/array.h"
-#include "backends/cloud/request.h"
-#include "backends/cloud/curl/connectionmanager.h"
+
+typedef void CURLM;
 
 namespace Cloud {
 
-class Storage {
-	friend void cloudThread(void *); //calls handler()
-	bool _timerStarted;
+class NetworkReadStream;
 
-protected:
-	Common::Array<Request *> _requests;
-	ConnectionManager _connectionManager;
-
-	virtual void addRequest(Request *request); //starts the timer if it's not started
-	virtual void handler();	
-	virtual void startTimer(int interval = 1000000); //1 second is the default interval
-	virtual void stopTimer();
+class ConnectionManager {
+	CURLM *_multi;
 
 public:
-	Storage();
-	virtual ~Storage() {};
+	ConnectionManager();
+	virtual ~ConnectionManager();
 
-	/**
-	* Lists given directory.
-	*
-	* @param path		directory to list	
-	*/
-
-	//TODO: actually make it list directories
-	//TODO: add some callback to pass gathered files list
-
-	virtual void listDirectory(Common::String path) = 0;
-
-	/**
-	* Starts saves syncing process.
-	*/
-
-	virtual void syncSaves() = 0;
+	NetworkReadStream *makeRequest(const char *url);
+	void handle();
 };
 
 } //end of namespace Cloud

@@ -47,7 +47,7 @@ void DropboxStorage::listDirectory(Common::String path) {
 
 void DropboxStorage::syncSaves() {	
 	addRequest(new CurlRequest(curlCallback, "tkachov.ru"));
-	addRequest(new CurlRequest(curlCallback, "bash.im"));
+	addRequest(new CurlRequest(curlCallback, "scummvm.org"));
 }
 
 } //end of namespace Dropbox
