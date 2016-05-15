@@ -659,7 +659,7 @@ void ScummEngine_v100he::o100_arrayOps() {
 		default:
 			error("o100_arrayOps: case 132 unknown type %d)", type);
 		}
-		debug(0, "o100_arrayOps: case 132 type %d", type);
+		warning("STUB: o100_arrayOps: case 132 type %d", type);
 		break;
 	case 133:
 		b = pop();
@@ -1110,6 +1110,7 @@ void ScummEngine_v100he::o100_resourceRoutines() {
 		break;
 	case 128:
 		// TODO: Clear Heap
+		warning("STUB: o100_resourceRoutines: clear Heap");
 		break;
 	case 129:
 		// Dummy case
@@ -2472,6 +2473,7 @@ void ScummEngine_v100he::o100_getSpriteGroupInfo() {
 		pop();
 		pop();
 		push(0);
+		warning("STUB: o100_getSpriteGroupInfo, subop 54");
 		break;
 	case 59:
 		spriteGroupId = pop();
