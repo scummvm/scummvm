@@ -223,6 +223,7 @@ int InventoryManager::displayInv() {
 	else
 		_vm->_useItem = -1;
 
+	free(names);
 	free(inv);
 	return 0;
 }

@@ -855,9 +855,9 @@ Common::Array<MovItem *> *MovGraph::getPaths(StaticANIObject *ani, int x, int y,
 			if (sz > 0) {
 				for (int j = 0; j < sz; j++)
 					_items[idx]->movitems->push_back(movitems[j]);
-
-				delete movitems;
 			}
+
+			delete movitems;
 		}
 
 		delete movarr;
