@@ -26,7 +26,7 @@
 #include "common/str.h"
 #include "common/array.h"
 #include "backends/cloud/request.h"
-#include "backends/cloud/curl/connectionmanager.h"
+#include "backends/networking/curl/connectionmanager.h"
 
 namespace Cloud {
 
@@ -36,7 +36,7 @@ class Storage {
 
 protected:
 	Common::Array<Request *> _requests;
-	ConnectionManager _connectionManager;
+	Networking::ConnectionManager _connectionManager;
 
 	virtual void addRequest(Request *request); //starts the timer if it's not started
 	virtual void handler();	

@@ -23,7 +23,7 @@
 #ifndef BACKENDS_CLOUD_REQUEST_H
 #define BACKENDS_CLOUD_REQUEST_H
 
-#include "backends/cloud/curl/connectionmanager.h"
+#include "backends/networking/curl/connectionmanager.h"
 
 namespace Cloud {
 
@@ -47,7 +47,7 @@ public:
 	* @return true if request's work is complete and it may be removed from Storage's list
 	*/
 
-	virtual bool handle(ConnectionManager& manager) = 0;
+	virtual bool handle(Networking::ConnectionManager &manager) = 0;
 };
 
 } //end of namespace Cloud

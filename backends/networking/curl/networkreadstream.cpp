@@ -22,15 +22,15 @@
 
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 
-#include "backends/cloud/curl/networkreadstream.h"
+#include "backends/networking/curl/networkreadstream.h"
 #include "common/debug.h"
 #include <curl/curl.h>
 
-namespace Cloud {
+namespace Networking {
 
 static size_t curlDataCallback(char *d, size_t n, size_t l, void *p) {	
 	NetworkReadStream *stream = (NetworkReadStream *)p;
-	if (stream) return stream->dataCallback(d, n, l);
+	if (stream) return stream->write(d, n*l);
 	return 0;
 }
 
@@ -53,31 +53,18 @@ bool NetworkReadStream::eos() const {
 }
 
 uint32 NetworkReadStream::read(void *dataPtr, uint32 dataSize) {
-	uint32 available = _bytes.size();
+	uint32 actuallyRead = MemoryReadWriteStream::read(dataPtr, dataSize);
 
-	if (available == 0) {
+	if (actuallyRead == 0) {
 		if (_requestComplete) _eos = true;
 		return 0;
 	}
 
-	char *data = (char *)dataPtr;
-	uint32 actuallyRead = (dataSize < available ? dataSize : available);	
-	for (uint32 i = 0; i < actuallyRead; ++i) data[i] = _bytes[i];
-	data[actuallyRead] = 0;
-	_bytes.erase(0, actuallyRead);
 	return actuallyRead;
 }
 
 void NetworkReadStream::done() {
 	_requestComplete = true;
-}
-
-size_t NetworkReadStream::dataCallback(char *d, size_t n, size_t l) {
-	//TODO: return CURL_WRITEFUNC_PAUSE if _bytes is too long
-	//TODO: remember https://curl.haxx.se/libcurl/c/curl_easy_pause.html (Memory Use / compressed data case)
-	//TODO: if using pause, don't forget to unpause it somehow from read() up there
-	_bytes += Common::String(d, n*l);
-	return n*l;
 }
 
 } //end of namespace Cloud

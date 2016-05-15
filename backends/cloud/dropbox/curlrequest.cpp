@@ -23,7 +23,7 @@
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 
 #include "backends/cloud/dropbox/curlrequest.h"
-#include "backends/cloud/curl/networkreadstream.h"
+#include "backends/networking/curl/networkreadstream.h"
 #include "common/debug.h"
 #include <curl/curl.h>
 
@@ -38,7 +38,7 @@ CurlRequest::~CurlRequest() {
 	if (_stream) delete _stream;
 }
 
-bool CurlRequest::handle(ConnectionManager& manager) {
+bool CurlRequest::handle(Networking::ConnectionManager &manager) {
 	if (_firstTime) {
 		_stream = manager.makeRequest(_url);
 		_firstTime = false;

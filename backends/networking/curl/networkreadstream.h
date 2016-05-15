@@ -20,20 +20,20 @@
 *
 */
 
-#ifndef BACKENDS_CLOUD_CURL_NETWORKREADSTREAM_H
-#define BACKENDS_CLOUD_CURL_NETWORKREADSTREAM_H
+#ifndef BACKENDS_NETWORKING_CURL_NETWORKREADSTREAM_H
+#define BACKENDS_NETWORKING_CURL_NETWORKREADSTREAM_H
 
+#include "common/memstream.h"
 #include "common/stream.h"
 #include "common/str.h"
 
 typedef void CURL;
 
-namespace Cloud {
+namespace Networking {
 
-class NetworkReadStream: public Common::ReadStream {	
+class NetworkReadStream: public Common::MemoryReadWriteStream {	
 	CURL *_easy;
 	bool _eos, _requestComplete;
-	Common::String _bytes;
 
 public:	
 	NetworkReadStream(const char *url);
@@ -68,7 +68,6 @@ public:
 	virtual uint32 read(void *dataPtr, uint32 dataSize);
 
 	void done();
-	size_t dataCallback(char *d, size_t n, size_t l);
 };
 
 } //end of namespace Cloud

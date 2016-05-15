@@ -22,12 +22,12 @@
 
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 
-#include "backends/cloud/curl/connectionmanager.h"
-#include "backends/cloud/curl/networkreadstream.h"
+#include "backends/networking/curl/connectionmanager.h"
+#include "backends/networking/curl/networkreadstream.h"
 #include "common/debug.h"
 #include <curl/curl.h>
 
-namespace Cloud {
+namespace Networking {
 
 ConnectionManager::ConnectionManager(): _multi(0) {
 	curl_global_init(CURL_GLOBAL_ALL);
@@ -60,9 +60,8 @@ void ConnectionManager::handle() {
 			if (stream) stream->done();			
 
 			debug("ConnectionManager: SUCCESS (%d - %s)", curlMsg->data.result, curl_easy_strerror(curlMsg->data.result));
-			curl_multi_remove_handle(_multi, e);			
-		}
-		else {
+			curl_multi_remove_handle(_multi, e);
+		} else {
 			debug("ConnectionManager: FAILURE (CURLMsg (%d))", curlMsg->msg);
 			//TODO: notify stream on this case also
 		}

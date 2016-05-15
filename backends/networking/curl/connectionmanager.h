@@ -20,14 +20,14 @@
 *
 */
 
-#ifndef BACKENDS_CLOUD_CURL_CONNECTIONMANAGER_H
-#define BACKENDS_CLOUD_CURL_CONNECTIONMANAGER_H
+#ifndef BACKENDS_NETWORKING_CURL_CONNECTIONMANAGER_H
+#define BACKENDS_NETWORKING_CURL_CONNECTIONMANAGER_H
 
 #include "common/str.h"
 
 typedef void CURLM;
 
-namespace Cloud {
+namespace Networking {
 
 class NetworkReadStream;
 
