@@ -839,6 +839,8 @@ void KyraEngine_LoK::initStaticResource() {
 		_sound->initAudioResourceInfo(kMusicIntro, &resInfoIntro);
 		_sound->initAudioResourceInfo(kMusicIngame, &resInfoIngame);
 	}
+
+	delete[] soundFiles;
 }
 
 void KyraEngine_LoK::loadMouseShapes() {
