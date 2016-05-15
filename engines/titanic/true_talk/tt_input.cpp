@@ -35,9 +35,9 @@ TTinputSubBase::TTinputSubBase() : _field0(0), _field4(0), _field8(0),
 TTinput::TTinput(int inputCtr, const TTstring &line, CScriptHandler *owner,
 		TTroomScript *roomScript, TTnpcScript *npcScript) :
 		_owner(owner), _field2C(1), _inputCtr(inputCtr), _field34(0),
-		_field38(0), _line(line), _field4C(0), _roomScript(roomScript),
+		_field38(0), _initialLine(line), _field4C(0), _roomScript(roomScript),
 		_npcScript(npcScript), _field58(0), _field5C(0) {
-	_status = _line.isValid() && _string2.isValid() ? SS_11: SS_VALID;
+	_status = _initialLine.isValid() && _normalizedLine.isValid() ? SS_11: SS_VALID;
 }
 
 void TTinput::set38(int val) {

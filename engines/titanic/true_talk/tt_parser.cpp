@@ -37,7 +37,7 @@ int TTparser::processInput(TTinput *input) {
 
 int TTparser::normalize(TTinput *input) {
 	TTstring *destLine = new TTstring();
-	const TTstring &srcLine = input->_line;
+	const TTstring &srcLine = input->_initialLine;
 	int srcSize = srcLine.size();
 	int savedIndex = 0;
 	int counter1 = 0;
@@ -135,6 +135,17 @@ int TTparser::normalize(TTinput *input) {
 			savedIndex = index;
 		}
 	}
+
+	if (counter1 >= 4)
+		input->set38(4);
+
+	// Remove any trailing spaces
+	while (destLine->hasSuffix(" "))
+		destLine->deleteLastChar();
+
+	// Copy out the normalized line
+	input->_normalizedLine = *destLine;
+	delete destLine;
 
 	return 0;
 }
