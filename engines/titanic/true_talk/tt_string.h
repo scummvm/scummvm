@@ -58,7 +58,7 @@ public:
 	TTstring &operator+=(const TTstring &str);
 	TTstring &operator+=(char c);
 
-	const char &operator[](uint index) {
+	const char &operator[](int index) {
 		return *(c_str() + index);
 	}
 

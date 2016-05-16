@@ -24,6 +24,7 @@
 #define TITANIC_STRING_H
 
 #include "common/scummsys.h"
+#include "common/array.h"
 #include "common/str.h"
 
 namespace Titanic {
@@ -100,6 +101,8 @@ public:
 	 */
 	static CString format(const char *fmt, ...);
 };
+
+typedef Common::Array<CString> StringArray;
 
 } // End of namespace Titanic
 

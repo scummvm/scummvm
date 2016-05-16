@@ -46,7 +46,27 @@ private:
 	/**
 	 * Checks for what is likely special developer cheat codes
 	 */
-	static int isSpecialCommand(const TTstring &str, int &index);
+	static int isEmoticon(const TTstring &str, int &index);
+
+	/**
+	 * Checks if any word within a passed line has an entry in the list of replacements,
+	 * and if found, replaces it with it's equivalent replacement string
+	 * @param line			Line to check
+	 * @param strings		List of strings to check for. Strings come in pairs, with the
+	 * first being the string to match, and the second the replacement
+	 */
+	static void searchAndReplace(TTstring &line, const StringArray &strings);
+
+	/**
+	 * Checks the string starting at a given index for any word in the passed string array,
+	 * and if found, replaces it in the line with it's replacement
+	 * @param line			Line to check
+	 * @param startIndex	Starting index in the start to check
+	 * @param strings		List of strings to check for. Strings come in pairs, with the
+	 * first being the string to match, and the second the replacement
+	 * @returns				Index of the start of the following word			
+	 */
+	static int searchAndReplace(TTstring &line, int startIndex, const StringArray &strings);
 public:
 	CScriptHandler *_owner;
 	int _field4;

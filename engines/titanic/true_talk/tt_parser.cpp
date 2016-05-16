@@ -31,6 +31,8 @@ int TTparser::processInput(TTinput *input) {
 	if (normalize(input))
 		return 0;
 
+	// Scan for and replace common slang and contractions with verbose versions
+
 	warning("TODO: TTparser::processInput");
 	return 0;
 }
@@ -53,7 +55,7 @@ int TTparser::normalize(TTinput *input) {
 		} else if (Common::isUpper(c)) {
 			(*destLine) += toupper(c);
 		} else if (Common::isDigit(c)) {
-			if (c == '0' && isSpecialCommand(srcLine, index)) {
+			if (c == '0' && isEmoticon(srcLine, index)) {
 				input->set38(10);
 			} else {
 				// Iterate through all the digits of the number
@@ -78,7 +80,7 @@ int TTparser::normalize(TTinput *input) {
 				break;
 			
 			case ':':
-				commandVal = isSpecialCommand(srcLine, index);
+				commandVal = isEmoticon(srcLine, index);
 				if (commandVal) {
 					input->set38(commandVal);
 					index += 2;
@@ -88,7 +90,7 @@ int TTparser::normalize(TTinput *input) {
 				break;
 			
 			case ';':
-				commandVal = isSpecialCommand(srcLine, index);
+				commandVal = isEmoticon(srcLine, index);
 				if (commandVal == 6) {
 					input->set38(7);
 					index += 2;
@@ -100,7 +102,7 @@ int TTparser::normalize(TTinput *input) {
 			
 			case '<':
 				++index;
-				commandVal = isSpecialCommand(srcLine, index);
+				commandVal = isEmoticon(srcLine, index);
 				if (commandVal == 6) {
 					input->set38(12);
 				} else {
@@ -111,7 +113,7 @@ int TTparser::normalize(TTinput *input) {
 
 			case '>':
 				++index;
-				commandVal = isSpecialCommand(srcLine, index);
+				commandVal = isEmoticon(srcLine, index);
 				if (commandVal == 6 || commandVal == 9) {
 					input->set38(11);
 				} else {
@@ -150,7 +152,7 @@ int TTparser::normalize(TTinput *input) {
 	return 0;
 }
 
-int TTparser::isSpecialCommand(const TTstring &str, int &index) {
+int TTparser::isEmoticon(const TTstring &str, int &index) {
 	if (str[index] != ':' && str[index] != ';')
 		return 0;
 
@@ -258,8 +260,53 @@ bool TTparser::normalizeContraction(const TTstring &srcLine, int srcIndex, TTstr
 		break;
 	}
 
-	// TODO
 	return false;
+}
+
+void TTparser::searchAndReplace(TTstring &line, const StringArray &strings) {
+	int charIndex = 0;
+	while (charIndex >= 0)
+		charIndex = searchAndReplace(line, charIndex, strings);
+}
+
+int TTparser::searchAndReplace(TTstring &line, int startIndex, const StringArray &strings) {
+	int lineSize = line.size();
+	if (startIndex >= lineSize)
+		return -1;
+
+	for (uint idx = 0; idx < strings.size(); idx += 2) {
+		const CString &origStr = strings[idx];
+		const CString &replacementStr = strings[idx + 1];
+
+		if (!strncmp(line.c_str() + startIndex, origStr.c_str(), strings[idx].size())) {
+			// Ensure that that a space follows the match, or the end of string,
+			// so the end of the string doesn't match on parts of larger words
+			char c = line[startIndex + strings[idx].size()];
+			if (c == ' ' || c == '\0') {
+				// Replace the text in the line with it's replacement
+				line = CString(line.c_str(), line.c_str() + startIndex) + replacementStr +
+					CString(line.c_str() + startIndex + origStr.size());
+
+				startIndex += replacementStr.size();
+				break;
+			}
+		}
+	}
+
+	// Skip to the end of the current word
+	while (startIndex < lineSize && line[startIndex] != ' ')
+		++startIndex;
+	if (startIndex == lineSize)
+		return -1;
+
+	// ..and all spaces following it until the start of the next word
+	while (startIndex < lineSize && line[startIndex] == ' ')
+		++startIndex;
+	if (startIndex == lineSize)
+		return -1;
+
+	// Return index of the start of the next word
+	return startIndex;
 }
 
 } // End of namespace Titanic

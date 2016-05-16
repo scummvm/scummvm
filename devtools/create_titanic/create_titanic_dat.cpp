@@ -49,12 +49,66 @@
  */
 
 #define VERSION_NUMBER 1
+#define HEADER_SIZE 0x280
 
 Common::File inputFile, outputFile;
 Common::PEResources res;
 uint headerOffset = 6;
-uint dataOffset = 0x200;
+uint dataOffset = HEADER_SIZE;
 #define SEGMENT_OFFSET 0x401C00
+
+static const char *const ITEM_NAMES[46] = {
+	"LeftArmWith", "LeftArmWithout", "RightArmWith", "RightArmWithout", "BridgeRed",
+	"BridgeYellow", "BridgeBlue", "BridgeGreen", "Parrot", "CentralCore", "BrainGreen",
+	"BrainYellow", "BrainRed", "BrainBlue", "ChickenGreasy", "ChickenPlain", "ChickenPurple",
+	"ChickenRed", "ChickenYellow", "CrushedTV", "Ear", "Ear1", "Eyeball", "Eyeball1",
+	"Feather", "Lemon", "GlassEmpty", "GlassPurple", "GlassRed", "GlassYellow", "Hammer",
+	"Hose", "HoseEnd", "LiftHead", "LongStick", "Magazine", "Mouth", "MusicKey", "Napkin",
+	"Nose", "Perch", "PhonoCylinder", "PhonoCylinder1", "PhonoCylinder2", "PhonoCylinder3",
+	"Photo"
+};
+
+static const char *const ITEM_DESCRIPTIONS[46] = {
+	"The Maitre d'Bot's left arm holding a key", "The Maitre d'Bot's left arm",
+	"The Maitre d'Bot's right arm holding Titania's auditory center",
+	"The Maitre d'Bot's right arm", "Red Fuse", "Yellow Fuse", "Blue Fuse",
+	"Green Fuse", "The Parrot", "Titania's central intelligence core",
+	"Titania's auditory center", "Titania's olfactory center",
+	"Titania's speech center", "Titania's vision center", "rather greasy chicken",
+	"very plain chicken", "chicken smeared with starling pur$e",
+	"chicken covered with tomato sauce", "chicken coated in mustard sauce",
+	"A crushed television set", "Titania's ear", "Titania's ear", "Titania's eye",
+	"Titania's eye", "A parrot feather", "A nice fat juicy lemon",
+	"An empty beer glass", "A beer glass containing pur$ed flock of starlings",
+	"A beer glass containing tomato sauce", "A beer glass containing mustard sauce",
+	"A hammer", "A hose", "The other end of a hose", "The LiftBot's head",
+	"A rather long stick", "A magazine", "Titania's mouth", "A key",
+	"A super-absorbent napkin", "Titania's nose", "A perch", "A phonograph cylinder",
+	"A phonograph cylinder", "A phonograph cylinder", "A phonograph cylinder",
+	"A photograph"
+};
+
+static const char *const ITEM_IDS[40] = {
+	"MaitreD Left Arm", "MaitreD Right Arm", "OlfactoryCentre", "AuditoryCentre",
+	"SpeechCentre", "VisionCentre", "CentralCore", "Perch", "SeasonBridge",
+	"FanBridge", "BeamBridge", "ChickenBridge", "CarryParrot", "Chicken",
+	"CrushedTV", "Feathers", "Lemon", "BeerGlass", "BigHammer", "Ear1", "Ear 2",
+	"Eye1", "Eye2", "Mouth", "Nose", "NoseSpare", "Hose", "DeadHoseSpare",
+	"HoseEnd", "DeadHoseEndSpare", "BrokenLiftbotHead", "LongStick", "Magazine",
+	"Napkin", "Phonograph Cylinder", "Phonograph Cylinder 1", "Phonograph Cylinder 2",
+	"Phonograph Cylinder 3", "Photograph", "Music System Key"
+};
+
+static const char *const ROOM_NAMES[34] = {
+	"1stClassLobby", "1stClassRestaurant", "1stClassState",
+	"2ndClassLobby", "secClassState", "Arboretum", "FrozenArboretum",
+	"Bar", "BilgeRoom", "BilgeRoomWith", "BottomOfWell", "Bridge",
+	"CreatorsChamber", "CreatorsChamberOn", "Dome", "Home", "Lift",
+	"EmbLobby", "MoonEmbLobby", "MusicRoomLobby", "MusicRoom",
+	"ParrotLobby", "Pellerator", "PromenadeDeck", "SculptureChamber",
+	"SecClassLittleLift", "ServiceElevator", "SGTLeisure", "SGTLittleLift",
+	"SgtLobby", "SGTState", "Titania", "TopOfWell", "PlayersRoom"
+};
 
 void NORETURN_PRE error(const char *s, ...) {
 	printf("%s\n", s);
@@ -62,7 +116,7 @@ void NORETURN_PRE error(const char *s, ...) {
 }
 
 void writeEntryHeader(const char *name, uint offset, uint size) {
-	assert(headerOffset < 0x200);
+	assert(headerOffset < HEADER_SIZE);
 	outputFile.seek(headerOffset);
 	outputFile.writeLong(offset);
 	outputFile.writeLong(size);
@@ -72,7 +126,7 @@ void writeEntryHeader(const char *name, uint offset, uint size) {
 }
 
 void writeFinalEntryHeader() {
-	assert(headerOffset <= 0x1F8);
+	assert(headerOffset <= (HEADER_SIZE - 8));
 	outputFile.seek(headerOffset);
 	outputFile.writeLong(0);
 	outputFile.writeLong(0);
@@ -101,6 +155,19 @@ void writeStringArray(const char *name, uint offset, int count) {
 	dataOffset += size;
 
 	delete[] offsets;
+}
+
+void writeStringArray(const char *name, const char *const *strings, int count) {
+	outputFile.seek(dataOffset);
+
+	// Iterate through writing each string
+	for (int idx = 0; idx < count; ++idx) {
+		outputFile.writeString(strings[idx]);
+	}
+
+	uint size = outputFile.size() - dataOffset;
+	writeEntryHeader(name, dataOffset, size);
+	dataOffset += size;
 }
 
 Common::WinResourceID getResId(uint id) {
@@ -152,10 +219,15 @@ void writeHeader() {
 }
 
 void writeData() {
-	writeStringArray("TEXT/STRINGS1", 0x21B7C8, 376);
-	writeStringArray("TEXT/STRINGS2", 0x21BDB0, 218);
-	writeStringArray("TEXT/STRINGS3", 0x21C120, 1576);
-	writeStringArray("TEXT/STRINGS4", 0x21D9C8, 82);
+	writeStringArray("TEXT/ITEM_DESCRIPTIONS", ITEM_DESCRIPTIONS, 46);
+	writeStringArray("TEXT/ITEM_NAMES", ITEM_NAMES, 46);
+	writeStringArray("TEXT/ITEM_IDS", ITEM_IDS, 40);
+	writeStringArray("TEXT/ROOM_NAMES", ROOM_NAMES, 34);
+
+	writeStringArray("TEXT/PHRASES", 0x21B7C8, 376);
+	writeStringArray("TEXT/REPLACEMENTS1", 0x21BDB0, 218);
+	writeStringArray("TEXT/REPLACEMENTS2", 0x21C120, 1576);
+	writeStringArray("TEXT/REPLACEMENTS3", 0x21D9C8, 82);
 
 	writeResource("Bitmap", "BACKDROP");
 	writeResource("Bitmap", "EVILTWIN");
