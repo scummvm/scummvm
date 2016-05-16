@@ -28,6 +28,7 @@
 #include "graphics/pixelformat.h"
 #include "graphics/surface.h"
 #include "image/codecs/codec.h"
+#include "common/util.h"
 #include "common/debug.h"
 
 namespace Director {
@@ -48,7 +49,6 @@ void DIBDecoder::destroy() {
 
 	delete[] _palette;
 	_palette = 0;
-
 	_paletteColorCount = 0;
 
 	delete _codec;
@@ -56,31 +56,28 @@ void DIBDecoder::destroy() {
 }
 
 void DIBDecoder::loadPalette(Common::SeekableReadStream &stream) {
-	uint16 palentries = 256;
 	_palette = new byte[1024];
 
-	uint16 size = stream.size();
-	uint16 index = 0;
-	for (int i = 6; i < stream.size() + 6; i+=6) {
-		uint16 n = size - i;
-		if (i >= palentries) {
-			break;
-		}
-		stream.seek(n + 4);
-		_palette[index] = stream.readByte();
-		++index;
-		stream.seek(n + 2);
-		_palette[index] = stream.readByte();
-		++index;
-		stream.seek(n);
-		_palette[index] = stream.readByte();
-		++index;
-		_palette[index] = 0;
-		++index;
+	uint16 steps = stream.size()/6;
+	uint16 index = (steps * 4) - 1;
+
+	for (uint8 i = 0; i < steps; i++) {
+		_palette[index--] = 0;
+
+		_palette[index--] = stream.readByte();
+		stream.readByte();
+
+		_palette[index--] = stream.readByte();
+		stream.readByte();
+
+		_palette[index--] = stream.readByte();
+		stream.readByte();
 	}
+
+	index = (steps * 4) - 1;
+
 	while (index < 1024) {
-		_palette[index] = 0;
-		++index;
+		_palette[index++] = 0;
 	}
 }	
 

@@ -54,11 +54,11 @@ DirectorEngine::DirectorEngine(OSystem *syst, const DirectorGameDescription *gam
 	//FIXME
 	RIFFArchive riff;
 	riff.openFile("bookshelf_example.mmm");
-	Common::SeekableReadStream *dib = riff.getResource(1145651744, 1103);
-	Common::SeekableReadStream *pal = riff.getResource(1129076052, 1025);
 	Director::DIBDecoder img;
-	img.loadPalette(*pal);
+	Common::SeekableReadStream *dib = riff.getResource(MKTAG('D', 'I', 'B', ' '), 1103);
 	img.loadStream(*dib);
+	Common::SeekableReadStream *pal = riff.getResource(MKTAG('C', 'L', 'U', 'T'), 1025);
+	img.loadPalette(*pal);
 }
 
 DirectorEngine::~DirectorEngine() {
