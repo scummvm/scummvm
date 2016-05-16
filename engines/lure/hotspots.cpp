@@ -1925,7 +1925,7 @@ void Hotspot::doStatus(HotspotData *hotspot) {
 	if (numGroats > 0) {
 		Common::strlcat(buffer, "\n\n", MAX_DESC_SIZE);
 		Common::strlcat(buffer, stringList.getString(S_YOU_HAVE), MAX_DESC_SIZE);
-		snprintf(buffer + strlen(buffer), MAX_DESC_SIZE, "%d", numGroats);
+		snprintf(buffer + strlen(buffer), MAX_DESC_SIZE - strlen(buffer), "%d", numGroats);
 		Common::strlcat(buffer, " ", MAX_DESC_SIZE);
 		Common::strlcat(buffer, stringList.getString((numGroats == 1) ? S_GROAT : S_GROATS), MAX_DESC_SIZE); // Make sure we're not overrunning
 	}
