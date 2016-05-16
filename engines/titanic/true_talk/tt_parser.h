@@ -24,13 +24,38 @@
 #define TITANIC_TT_PARSER_H
 
 #include "titanic/true_talk/tt_input.h"
+#include "titanic/true_talk/tt_string.h"
 
 namespace Titanic {
 
+enum NumberFlag { NF_2 = 2, NF_8 = 8, NF_10 = 0x10 };
+
 class CScriptHandler;
+
+struct NumberEntry {
+	CString _text;
+	int _value;
+	int _flags;
+
+	NumberEntry() : _value(0), _flags(0) {}
+	NumberEntry(const CString &text, int value, int flags) :
+		_text(text), _value(value), _flags(flags) {}
+};
+typedef Common::Array<NumberEntry> NumberArray;
 
 class TTparser {
 private:
+	StringArray _replacements1;
+	StringArray _replacements2;
+	StringArray _replacements3;
+	StringArray _phrases;
+	NumberArray _numbers;
+private:
+	/**
+	 * Loads the various replacement string data arrays
+	 */
+	void loadArrays();
+
 	/**
 	 * Normalizes a passed input, taking care of things like removing extra
 	 * spaces and lowercasing everything
@@ -74,9 +99,9 @@ private:
 	 * a plain decimal representation.
 	 * @param line			Line to check
 	 * @param startIndex	Starting index in the start to check
-	 * @returns				True if end of line hasn't been reached yet
+	 * @returns				Pointer to matching number entry, if match occurred
 	 */
-	static bool replaceNumbers(TTstring &line, int *startIndex);
+	const NumberEntry *replaceNumbers(TTstring &line, int *startIndex);
 public:
 	CScriptHandler *_owner;
 	int _field4;
@@ -86,8 +111,7 @@ public:
 	int _field14;
 	int _field18;
 public:
-	TTparser(CScriptHandler *owner) : _owner(owner), _field4(0),
-		_input(nullptr), _fieldC(0), _field10(0), _field14(0), _field18(0) {}
+	TTparser(CScriptHandler *owner);
 
 	/**
 	 * Gets passed a newly created input wrapper during conversation text processing

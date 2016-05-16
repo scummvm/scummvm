@@ -49,7 +49,7 @@
  */
 
 #define VERSION_NUMBER 1
-#define HEADER_SIZE 0x280
+#define HEADER_SIZE 0x290
 
 Common::File inputFile, outputFile;
 Common::PEResources res;
@@ -108,6 +108,90 @@ static const char *const ROOM_NAMES[34] = {
 	"ParrotLobby", "Pellerator", "PromenadeDeck", "SculptureChamber",
 	"SecClassLittleLift", "ServiceElevator", "SGTLeisure", "SGTLittleLift",
 	"SgtLobby", "SGTState", "Titania", "TopOfWell", "PlayersRoom"
+};
+
+struct NumberEntry {
+	const char *_text;
+	int _value;
+	uint _flags;
+};
+
+const NumberEntry NUMBERS[76] = {
+	{ "a", 1, 3 },
+	{ "and", 0, 1 },
+	{ "negative", 0, 10 },
+	{ "minus", 0, 10 },
+	{ "below zeor", 0, 8 },
+	{ "degrees below zero", 0, 8 },
+	{ "nil", 0, 2 },
+	{ "zero", 0, 2 },
+	{ "one", 1, 0x12 },
+	{ "two", 2, 0x12 },
+	{ "three", 3, 0x12 },
+	{ "four", 4, 0x12 },
+	{ "five", 5, 0x12 },
+	{ "six", 6, 0x12 },
+	{ "seven", 7, 0x12 },
+	{ "eight", 8, 0x12 },
+	{ "nine", 9, 0x12 },
+	{ "0", 0, 2 },
+	{ "1", 1, 2 },
+	{ "2", 2, 2 },
+	{ "3", 3, 2 },
+	{ "4", 4, 2 },
+	{ "5", 5, 2 },
+	{ "6", 6, 2 },
+	{ "7", 7, 2 },
+	{ "8", 8, 2 },
+	{ "9", 9, 2 },
+	{ "first", 1, 2 },
+	{ "second", 2, 2 },
+	{ "third", 3, 2 },
+	{ "fourth", 4, 2 },
+	{ "fifth", 5, 2 },
+	{ "sixth", 6, 2 },
+	{ "seventh", 7, 2 },
+	{ "eighth", 8, 2 },
+	{ "ninth", 9, 2 },
+	{ "ten", 10, 2 },
+	{ "eleven", 11, 2 },
+	{ "twelve", 12, 2 },
+	{ "thirteen", 13, 2 },
+	{ "fourteen", 14, 2 },
+	{ "fifteen", 15, 2 },
+	{ "sixteen", 16, 2 },
+	{ "seventeen", 17, 2 },
+	{ "eighteen", 18, 2 },
+	{ "nineteen", 19, 2 },
+	{ "tenth", 10, 2 },
+	{ "eleventh", 11, 2 },
+	{ "twelfth", 12, 2 },
+	{ "thirteenth", 13, 2 },
+	{ "fourteenth", 14, 2 },
+	{ "fifteenth", 15, 2 },
+	{ "sixteenth", 16, 2 },
+	{ "seventeenth", 17, 2 },
+	{ "eighteenth", 18, 2 },
+	{ "nineteenth", 19, 2 },
+	{ "twenty", 20, 0x12 },
+	{ "thirty", 30, 0x12 },
+	{ "forty", 40, 0x12 },
+	{ "fourty", 40, 0x12 },
+	{ "fifty", 50, 0x12 },
+	{ "sixty", 60, 0x12 },
+	{ "seventy", 70, 0x12 },
+	{ "eighty", 80, 0x12 },
+	{ "ninety", 90, 0x12 },
+	{ "twentieth", 20, 2 },
+	{ "thirtieth", 30, 2 },
+	{ "fortieth", 40, 2 },
+	{ "fiftieth", 50, 2 },
+	{ "sixtieth", 60, 2 },
+	{ "seventieth", 70, 2 },
+	{ "eightieth", 80, 2 },
+	{ "ninetieth", 90, 2 },
+	{ "hundred", 100, 4 },
+	{ "hundredth", 100, 6 }
 };
 
 void NORETURN_PRE error(const char *s, ...) {
@@ -209,6 +293,21 @@ void writeResource(const char *sectionStr, const char *resId) {
 	writeResource(nameBuffer, file);
 }
 
+void writeNumbers() {
+	outputFile.seek(dataOffset);
+
+	// Iterate through writing each string
+	for (int idx = 0; idx < 76; ++idx) {
+		outputFile.writeString(NUMBERS[idx]._text);
+		outputFile.writeLong(NUMBERS[idx]._value);
+		outputFile.writeLong(NUMBERS[idx]._flags);
+	}
+
+	uint size = outputFile.size() - dataOffset;
+	writeEntryHeader("TEXT/NUMBERS", dataOffset, size);
+	dataOffset += size;
+}
+
 void writeHeader() {
 	// Write out magic string
 	const char *MAGIC_STR = "SVTN";
@@ -219,16 +318,6 @@ void writeHeader() {
 }
 
 void writeData() {
-	writeStringArray("TEXT/ITEM_DESCRIPTIONS", ITEM_DESCRIPTIONS, 46);
-	writeStringArray("TEXT/ITEM_NAMES", ITEM_NAMES, 46);
-	writeStringArray("TEXT/ITEM_IDS", ITEM_IDS, 40);
-	writeStringArray("TEXT/ROOM_NAMES", ROOM_NAMES, 34);
-
-	writeStringArray("TEXT/PHRASES", 0x21B7C8, 376);
-	writeStringArray("TEXT/REPLACEMENTS1", 0x21BDB0, 218);
-	writeStringArray("TEXT/REPLACEMENTS2", 0x21C120, 1576);
-	writeStringArray("TEXT/REPLACEMENTS3", 0x21D9C8, 82);
-
 	writeResource("Bitmap", "BACKDROP");
 	writeResource("Bitmap", "EVILTWIN");
 	writeResource("Bitmap", "RESTORED");
@@ -250,6 +339,17 @@ void writeData() {
 	writeResource("TEXT", "STVOCAB.TXT");
 	writeResource("TEXT", "JRQUOTES.TXT");
 	writeResource("TEXT", 155);
+
+	writeStringArray("TEXT/ITEM_DESCRIPTIONS", ITEM_DESCRIPTIONS, 46);
+	writeStringArray("TEXT/ITEM_NAMES", ITEM_NAMES, 46);
+	writeStringArray("TEXT/ITEM_IDS", ITEM_IDS, 40);
+	writeStringArray("TEXT/ROOM_NAMES", ROOM_NAMES, 34);
+
+	writeStringArray("TEXT/PHRASES", 0x21B7C8, 376);
+	writeStringArray("TEXT/REPLACEMENTS1", 0x21BDB0, 218);
+	writeStringArray("TEXT/REPLACEMENTS2", 0x21C120, 1576);
+	writeStringArray("TEXT/REPLACEMENTS3", 0x21D9C8, 82);
+	writeNumbers();
 }
 
 int main(int argc, char *argv[]) {

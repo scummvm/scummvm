@@ -27,23 +27,62 @@
 
 namespace Titanic {
 
+TTparser::TTparser(CScriptHandler *owner) : _owner(owner), _field4(0),
+		_input(nullptr), _fieldC(0), _field10(0), _field14(0), _field18(0) {
+	loadArrays();
+}
+
+void TTparser::loadArrays() {
+	Common::SeekableReadStream *r;
+	r = g_vm->_filesManager->getResource("TEXT/REPLACEMENTS1");
+	while (r->pos() < r->size())
+		_replacements1.push_back(readStringFromStream(r));
+	delete r;
+
+	r = g_vm->_filesManager->getResource("TEXT/REPLACEMENTS2");
+	while (r->pos() < r->size())
+		_replacements2.push_back(readStringFromStream(r));
+	delete r;
+
+	r = g_vm->_filesManager->getResource("TEXT/REPLACEMENTS3");
+	while (r->pos() < r->size())
+		_replacements3.push_back(readStringFromStream(r));
+	delete r;
+
+	r = g_vm->_filesManager->getResource("TEXT/PHRASES");
+	while (r->pos() < r->size())
+		_phrases.push_back(readStringFromStream(r));
+	delete r;
+
+	r = g_vm->_filesManager->getResource("TEXT/NUMBERS");
+	while (r->pos() < r->size()) {
+		NumberEntry ne;
+		ne._text = readStringFromStream(r);
+		ne._value = r->readSint32LE();
+		ne._flags = r->readUint32LE();
+		_numbers.push_back(ne);
+	}
+	delete r;
+
+}
+
 int TTparser::processInput(TTinput *input) {
 	_input = input;
 	if (normalize(input))
 		return 0;
 
 	// Scan for and replace common slang and contractions with verbose versions
-	searchAndReplace(input->_normalizedLine, g_vm->_replacements1);
-	searchAndReplace(input->_normalizedLine, g_vm->_replacements2);
+	searchAndReplace(input->_normalizedLine, _replacements1);
+	searchAndReplace(input->_normalizedLine, _replacements2);
 
 	// Check entire normalized line against common phrases to replace
-	for (uint idx = 0; idx < g_vm->_phrases.size(); idx += 2) {
-		if (!g_vm->_phrases[idx].compareTo(input->_normalizedLine))
-			input->_normalizedLine = g_vm->_phrases[idx + 1];
+	for (uint idx = 0; idx < _phrases.size(); idx += 2) {
+		if (!_phrases[idx].compareTo(input->_normalizedLine))
+			input->_normalizedLine = _phrases[idx + 1];
 	}
 
 	// Do a further search and replace of roman numerals to decimal
-	searchAndReplace(input->_normalizedLine, g_vm->_replacements3);
+	searchAndReplace(input->_normalizedLine, _replacements3);
 
 	warning("TODO: TTparser::processInput");
 	return 0;
@@ -321,17 +360,18 @@ int TTparser::searchAndReplace(TTstring &line, int startIndex, const StringArray
 	return startIndex;
 }
 
-bool TTparser::replaceNumbers(TTstring &line, int *startIndex) {
+const NumberEntry *TTparser::replaceNumbers(TTstring &line, int *startIndex) {
 	int lineSize = line.size();
 	int index = *startIndex;
-	if (index < 0 || index >= lineSize)
-		return true;
+	if (index < 0 || index >= lineSize) {
+		*startIndex = -1;
+		return nullptr;
+	}
 
-	NumberArray &numbers = g_vm->_numbers;
 	NumberEntry *numEntry = nullptr;
 
-	for (uint idx = 0; idx < numbers.size(); ++idx) {
-		NumberEntry &ne = numbers[idx];
+	for (uint idx = 0; idx < _numbers.size(); ++idx) {
+		NumberEntry &ne = _numbers[idx];
 		if (!strncmp(line.c_str() + index, ne._text.c_str(), ne._text.size())) {
 			if ((ne._flags & NF_10) || (index + ne._text.size()) >= lineSize ||
 					line[index + ne._text.size()] == ' ') {
@@ -352,7 +392,10 @@ bool TTparser::replaceNumbers(TTstring &line, int *startIndex) {
 	while (*startIndex < lineSize && Common::isSpace(line[*startIndex]))
 		++*startIndex;
 
-	return *startIndex < lineSize;
+	if (*startIndex >= lineSize)
+		*startIndex = -1;
+
+	return numEntry;
 }
 
 } // End of namespace Titanic

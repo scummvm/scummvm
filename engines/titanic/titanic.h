@@ -82,17 +82,6 @@ struct TitanicSavegameHeader {
 	int _totalFrames;
 };
 
-enum NumberFlag { NF_2 = 2, NF_8 = 8, NF_10 = 0x10 };
-
-struct NumberEntry {
-	CString _text;
-	int _value;
-	int _flags;
-	NumberEntry(const CString &text, int value, int flags) :
-		_text(text), _value(value), _flags(flags) {}
-};
-typedef Common::Array<NumberEntry> NumberArray;
-
 class TitanicEngine : public Engine {
 private:
 	/**
@@ -114,11 +103,6 @@ private:
 	 * Sets up the list of room names
 	 */
 	void setRoomNames();
-
-	/**
-	 * Set the replacement strings and common phrases lists used by the praser
-	 */
-	void setParserStrings();
 protected:
 	const TitanicGameDescription *_gameDescription;
 	int _loadSaveSlot;
@@ -144,11 +128,6 @@ public:
 	CString _itemObjects[TOTAL_ITEMS];
 	StringArray _itemIds;
 	StringArray _roomNames;
-	StringArray _replacements1;
-	StringArray _replacements2;
-	StringArray _replacements3;
-	StringArray _phrases;
-	NumberArray _numbers;
 public:
 	TitanicEngine(OSystem *syst, const TitanicGameDescription *gameDesc);
 	virtual ~TitanicEngine();

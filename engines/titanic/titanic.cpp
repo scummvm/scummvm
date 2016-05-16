@@ -103,7 +103,6 @@ void TitanicEngine::initialize() {
 
 	setItemNames();
 	setRoomNames();
-	setParserStrings();
 
 	_window->applicationStarting();
 }
@@ -131,60 +130,28 @@ Common::Error TitanicEngine::run() {
 	return Common::kNoError;
 }
 
-static CString readString(Common::SeekableReadStream *s) {
-	CString result;
-	char c;
-	while ((c = s->readByte()) != '\0')
-		result += c;
-
-	return result;
-}
-
 void TitanicEngine::setItemNames() {
 	Common::SeekableReadStream *r;
 	r = g_vm->_filesManager->getResource("TEXT/ITEM_NAMES");
 	while (r->pos() < r->size())
-		_itemNames.push_back(readString(r));
+		_itemNames.push_back(readStringFromStream(r));
 	delete r;
 
 	r = g_vm->_filesManager->getResource("TEXT/ITEM_DESCRIPTIONS");
 	while (r->pos() < r->size())
-		_itemNames.push_back(readString(r));
+		_itemNames.push_back(readStringFromStream(r));
 	delete r;
 
 	r = g_vm->_filesManager->getResource("TEXT/ITEM_IDS");
 	while (r->pos() < r->size())
-		_itemIds.push_back(readString(r));
+		_itemIds.push_back(readStringFromStream(r));
 	delete r;
 }
 
 void TitanicEngine::setRoomNames() {
 	Common::SeekableReadStream *r = g_vm->_filesManager->getResource("TEXT/ROOM_NAMES");
 	while (r->pos() < r->size())
-		_roomNames.push_back(readString(r));
-	delete r;
-}
-
-void TitanicEngine::setParserStrings() {
-	Common::SeekableReadStream *r;
-	r = g_vm->_filesManager->getResource("TEXT/REPLACEMENTS1");
-	while (r->pos() < r->size())
-		_replacements1.push_back(readString(r));
-	delete r;
-
-	r = g_vm->_filesManager->getResource("TEXT/REPLACEMENTS2");
-	while (r->pos() < r->size())
-		_replacements2.push_back(readString(r));
-	delete r;
-
-	r = g_vm->_filesManager->getResource("TEXT/REPLACEMENTS3");
-	while (r->pos() < r->size())
-		_replacements3.push_back(readString(r));
-	delete r;
-
-	r = g_vm->_filesManager->getResource("TEXT/PHRASES");
-	while (r->pos() < r->size())
-		_phrases.push_back(readString(r));
+		_roomNames.push_back(readStringFromStream(r));
 	delete r;
 }
 

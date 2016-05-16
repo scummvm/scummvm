@@ -25,6 +25,17 @@
 
 namespace Titanic {
 
+CString readStringFromStream(Common::SeekableReadStream *s) {
+	CString result;
+	char c;
+	while ((c = s->readByte()) != '\0')
+		result += c;
+
+	return result;
+}
+
+/*------------------------------------------------------------------------*/
+
 bool File::open(const Common::String &name) {
 	if (!Common::File::open(name))
 		error("Could not open file - %s", name.c_str());

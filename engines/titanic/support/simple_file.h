@@ -269,6 +269,11 @@ public:
 	Common::SeekableReadStream *readStream() const { return _inStream; }
 };
 
+/**
+ * General purpose support method for reading an ASCIIZ string from a stream
+ */
+CString readStringFromStream(Common::SeekableReadStream *s);
+
 } // End of namespace Titanic
 
 #endif /* TITANIC_SIMPLE_FILE_H */
