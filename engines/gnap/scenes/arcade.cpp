@@ -250,7 +250,8 @@ void Scene49::increaseScore(int amount) {
 		_scoreBarPos += amount;
 		_vm->_gameSys->fillSurface(0, _scoreBarPos, 508, amount, 22, 255, 0, 0);
 	}
-	_scoreLevel = _scoreBarPos + amount >= 556;
+
+	_scoreLevel = (_scoreBarPos + amount >= 556) ? 1 : 0;
 }
 
 void Scene49::decreaseScore(int amount) {
