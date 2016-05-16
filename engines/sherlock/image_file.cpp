@@ -302,12 +302,6 @@ ImageFile3DO::ImageFile3DO(Common::SeekableReadStream &stream, bool isRoomData) 
 	}
 }
 
-ImageFile3DO::~ImageFile3DO() {
-	// already done in ImageFile destructor
-	//for (uint idx = 0; idx < size(); ++idx)
-	//	(*this)[idx]._frame.free();
-}
-
 void ImageFile3DO::load(Common::SeekableReadStream &stream, bool isRoomData) {
 	uint32 headerId = 0;
 
@@ -380,7 +374,7 @@ void ImageFile3DO::loadAnimationFile(Common::SeekableReadStream &stream) {
 		if (streamLeft < celDataSize)
 			error("load3DOAnimationFile: expected cel data, not enough bytes");
 
-		// 
+		//
 		// Load data for frame and decompress it
 		byte *data = new byte[celDataSize];
 		stream.read(data, celDataSize);
@@ -683,7 +677,7 @@ void ImageFile3DO::load3DOCelRoomData(Common::SeekableReadStream &stream) {
 
 		if (ccbFlags & 0x200) // bit 9
 			ccbFlags_compressed = true;
-		
+
 		// PRE0 first 3 bits define how many bits per encoded pixel are used
 		ccbPRE0_bitsPerPixel = imagefile3DO_cel_bitsPerPixelLookupTable[ccbPRE0 & 0x07];
 		if (!ccbPRE0_bitsPerPixel)
@@ -713,7 +707,7 @@ void ImageFile3DO::load3DOCelRoomData(Common::SeekableReadStream &stream) {
 
 		stream.read(celDataPtr, celDataSize);
 		streamLeft -= celDataSize;
-		
+
 		// Set up frame
 		{
 			ImageFrame imageFrame;

@@ -155,7 +155,6 @@ private:
 public:
 	ImageFile3DO(const Common::String &name, ImageFile3DOType imageFile3DOType);
 	ImageFile3DO(Common::SeekableReadStream &stream, bool isRoomData = false);
-	~ImageFile3DO();
 	static void setVm(SherlockEngine *vm);
 };
 
