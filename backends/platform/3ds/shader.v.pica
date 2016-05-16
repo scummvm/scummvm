@@ -1,0 +1,59 @@
+;* ScummVM - Graphic Adventure Engine
+;*
+;* ScummVM is the legal property of its developers, whose names
+;* are too numerous to list here. Please refer to the COPYRIGHT
+;* file distributed with this source distribution.
+;*
+;* This program is free software; you can redistribute it and/or
+;* modify it under the terms of the GNU General Public License
+;* as published by the Free Software Foundation; either version 2
+;* of the License, or (at your option) any later version.
+;*
+;* This program is distributed in the hope that it will be useful,
+;* but WITHOUT ANY WARRANTY; without even the implied warranty of
+;* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;* GNU General Public License for more details.
+;*
+;* You should have received a copy of the GNU General Public License
+;* along with this program; if not, write to the Free Software
+;* Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+;*
+
+; Uniforms
+.fvec projection[4], modelView[4]
+
+; Constants
+.constf myconst(0.0, 1.0, -1.0, 0.1)
+.alias  zeros myconst.xxxx ; Vector full of zeros
+.alias  ones  myconst.yyyy ; Vector full of ones
+
+; Outputs
+.out outpos position
+.out outtex texcoord0
+
+; Inputs (defined as aliases for convenience)
+.alias inpos v0
+.alias intex v1
+
+.proc main
+	; Force the w component of inpos to be 1.0
+	mov r0.xyz, inpos
+	mov r0.w,   ones
+	
+	; r1 = modelView * inpos
+	dp4 r1.x, modelView[0], r0
+	dp4 r1.y, modelView[1], r0
+	dp4 r1.z, modelView[2], r0
+	dp4 r1.w, modelView[3], r0
+
+	; outpos = projection * r1
+	dp4 outpos.x, projection[0], r1
+	dp4 outpos.y, projection[1], r1
+	dp4 outpos.z, projection[2], r1
+	dp4 outpos.w, projection[3], r1
+
+ 	mov outtex, intex
+
+	end
+.end
+

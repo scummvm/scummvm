@@ -251,6 +251,7 @@
 
 	#if defined(__DC__) || \
 		  defined(__DS__) || \
+		  defined(__3DS__) || \
 		  defined(__GP32__) || \
 		  defined(IPHONE) || \
 		  defined(__PLAYSTATION2__) || \
@@ -367,7 +368,7 @@
 #endif
 
 #ifndef STRINGBUFLEN
-	#if defined(__N64__) || defined(__DS__)
+	#if defined(__N64__) || defined(__DS__) || defined(__3DS__)
 		#define STRINGBUFLEN 256
 	#else
 		#define STRINGBUFLEN 1024
