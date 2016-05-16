@@ -5,6 +5,7 @@
 
 
 
+
 namespace DM {
 // TODO: refactor direction into a class
 int8 dirIntoStepCountEast[4] = {0 /* North */, 1 /* East */, 0 /* West */, -1 /* South */};
@@ -252,6 +253,8 @@ void DungeonMan::loadDungeonFile() {
 	_dunData.columCount = columCount;
 	// TODO: ??? is this - end
 
+
+	uint32 actualSquareFirstThingCount = _fileHeader.squareFirstThingCount;
 	if (_messages.newGame) // TODO: what purpose does this serve?
 		_fileHeader.squareFirstThingCount += 300;
 
@@ -267,11 +270,11 @@ void DungeonMan::loadDungeonFile() {
 	if (_dunData.squareFirstThings)
 		delete[] _dunData.squareFirstThings;
 	_dunData.squareFirstThings = new Thing[_fileHeader.squareFirstThingCount];
-	for (uint16 i = 0; i < _fileHeader.squareFirstThingCount; ++i)
+	for (uint16 i = 0; i < actualSquareFirstThingCount; ++i)
 		_dunData.squareFirstThings[i].set(dunDataStream.readUint16BE());
 	if (_messages.newGame)
 		for (uint16 i = 0; i < 300; ++i)
-			_dunData.squareFirstThings[i] = Thing::thingNone;
+			_dunData.squareFirstThings[actualSquareFirstThingCount + i] = Thing::thingNone;
 
 	// TODO: ??? is this - end
 
@@ -291,19 +294,18 @@ void DungeonMan::loadDungeonFile() {
 	for (uint16 thingType = kDoorThingType; thingType < kThingTypeTotal; ++thingType) {
 		uint16 thingCount = _fileHeader.thingCounts[thingType];
 		if (_messages.newGame) {
-			// _fileHeader.thingCounts[thingType] = 1024; // TODO: what this?? check back later
+			_fileHeader.thingCounts[thingType] = MIN((thingType == kExplosionThingType) ? 768 : 1024, thingCount + gAdditionalThingCounts[thingType]);
 		}
 		uint16 thingStoreWordCount = gThingDataWordCount[thingType];
-		if (!thingStoreWordCount || !thingCount)
-			continue;
+
 
 		if (_dunData.thingsData[thingType]) {
 			delete[] _dunData.thingsData[thingType][0];
 			delete[] _dunData.thingsData[thingType];
 		}
-		_dunData.thingsData[thingType] = new uint16*[thingCount];
-		_dunData.thingsData[thingType][0] = new uint16[thingCount * thingStoreWordCount];
-		for (uint16 i = 0; i < thingCount; ++i)
+		_dunData.thingsData[thingType] = new uint16*[_fileHeader.thingCounts[thingType]];
+		_dunData.thingsData[thingType][0] = new uint16[_fileHeader.thingCounts[thingType] * thingStoreWordCount];
+		for (uint16 i = 0; i < _fileHeader.thingCounts[thingType]; ++i)
 			_dunData.thingsData[thingType][i] = _dunData.thingsData[thingType][0] + i * thingStoreWordCount;
 
 		if (thingType == kGroupThingType) {
@@ -327,23 +329,34 @@ void DungeonMan::loadDungeonFile() {
 				for (uint16 j = 0; j < thingStoreWordCount; ++j)
 					_dunData.thingsData[thingType][i][j] = dunDataStream.readUint16BE();
 		}
+
+		if (_messages.newGame) {
+			if ((thingType == kGroupThingType) || thingType >= kProjectileThingType)
+				_dunData.eventMaximumCount += _fileHeader.thingCounts[thingType];
+			for (uint16 i = 0; i < gAdditionalThingCounts[thingType]; ++i) {
+				_dunData.thingsData[thingType][thingCount + i][0] = Thing::thingNone.toUint16();
+			}
+		}
+
 	}
 
 
 	// load map data
-	_rawMapData = _rawDunFileData + dunDataStream.pos();
+	if (!_messages.restartGameRequest)
+		_rawMapData = _rawDunFileData + dunDataStream.pos();
 
-	if (_dunData.mapData) delete[] _dunData.mapData;
 
 	if (!_messages.restartGameRequest) {
 		uint8 mapCount = _fileHeader.mapCount;
+		if (_dunData.mapData)
+			delete[] _dunData.mapData;
 		_dunData.mapData = new byte**[_dunData.columCount + mapCount];
 		byte **colFirstSquares = (byte**)_dunData.mapData + mapCount;
 		for (uint8 i = 0; i < mapCount; ++i) {
 			_dunData.mapData[i] = colFirstSquares;
 			byte *square = _rawMapData + _maps[i].rawDunDataOffset;
 			*colFirstSquares++ = square;
-			for (uint16 w = 0; w <= _maps[i].width; ++w) {
+			for (uint16 w = 1; w <= _maps[i].width; ++w) {
 				square += _maps[w].height + 1;
 				*colFirstSquares++ = square;
 			}
