@@ -23,8 +23,6 @@
 #ifndef TITANIC_EXE_RESOURCES_H
 #define TITANIC_EXE_RESOURCES_H
 
-#include "common/file.h"
-
 namespace Titanic {
 
 class CScriptHandler;

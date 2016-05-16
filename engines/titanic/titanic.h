@@ -25,6 +25,7 @@
 
 #include "common/scummsys.h"
 #include "common/random.h"
+#include "common/str-array.h"
 #include "common/system.h"
 #include "common/serializer.h"
 #include "engines/advancedDetector.h"
@@ -102,6 +103,11 @@ private:
 	 * Sets up the list of room names
 	 */
 	void setRoomNames();
+
+	/**
+	 * Set the replacement strings and common phrases lists used by the praser
+	 */
+	void setParserStrings();
 protected:
 	const TitanicGameDescription *_gameDescription;
 	int _loadSaveSlot;
@@ -122,11 +128,15 @@ public:
 	TTscriptBase *_script;
 	CExeResources _exeResources;
 	CMovieList _activeMovies;
-	CString _itemNames[TOTAL_ITEMS];
-	CString _itemDescriptions[TOTAL_ITEMS];
+	StringArray _itemNames;
+	StringArray _itemDescriptions;
 	CString _itemObjects[TOTAL_ITEMS];
-	CString _itemIds[40];
-	CString _roomNames[TOTAL_ROOMS];
+	StringArray _itemIds;
+	StringArray _roomNames;
+	StringArray _replacements1;
+	StringArray _replacements2;
+	StringArray _replacements3;
+	StringArray _phrases;
 public:
 	TitanicEngine(OSystem *syst, const TitanicGameDescription *gameDesc);
 	virtual ~TitanicEngine();

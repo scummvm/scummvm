@@ -40,6 +40,7 @@
 #include "titanic/moves/enter_exit_first_class_state.h"
 #include "titanic/moves/enter_exit_sec_class_mini_lift.h"
 #include "titanic/moves/exit_pellerator.h"
+#include "titanic/support/simple_file.h"
 
 namespace Titanic {
 
@@ -81,8 +82,6 @@ void TitanicEngine::initialize() {
 	DebugMan.addDebugChannel(kDebugGraphics, "graphics", "Graphics handling");
 	DebugMan.addDebugChannel(kDebugSound, "sound", "Sound and Music handling");
 
-	setItemNames();
-	setRoomNames();
 	CSaveableObject::initClassList();
 	CEnterExitFirstClassState::init();
 	CGetLiftEye2::init();
@@ -101,6 +100,11 @@ void TitanicEngine::initialize() {
 	_screen = new Graphics::Screen(0, 0);
 	_screenManager = new OSScreenManager(this);
 	_window = new CMainGameWindow(this);
+
+	setItemNames();
+	setRoomNames();
+	setParserStrings();
+
 	_window->applicationStarting();
 }
 
@@ -127,72 +131,61 @@ Common::Error TitanicEngine::run() {
 	return Common::kNoError;
 }
 
+static CString readString(Common::SeekableReadStream *s) {
+	CString result;
+	char c;
+	while ((c = s->readByte()) != '\0')
+		result += c;
+
+	return result;
+}
+
 void TitanicEngine::setItemNames() {
-	static const char *const NAMES[TOTAL_ITEMS] = {
-		"LeftArmWith", "LeftArmWithout", "RightArmWith", "RightArmWithout", "BridgeRed",
-		"BridgeYellow", "BridgeBlue", "BridgeGreen", "Parrot", "CentralCore", "BrainGreen",
-		"BrainYellow", "BrainRed", "BrainBlue", "ChickenGreasy", "ChickenPlain", "ChickenPurple",
-		"ChickenRed", "ChickenYellow", "CrushedTV", "Ear", "Ear1", "Eyeball", "Eyeball1",
-		"Feather", "Lemon", "GlassEmpty", "GlassPurple", "GlassRed", "GlassYellow", "Hammer",
-		"Hose", "HoseEnd", "LiftHead", "LongStick", "Magazine", "Mouth", "MusicKey", "Napkin",
-		"Nose", "Perch", "PhonoCylinder", "PhonoCylinder1", "PhonoCylinder2", "PhonoCylinder3",
-		"Photo"
-	};
-	for (uint idx = 0; idx < TOTAL_ITEMS; ++idx)
-		_itemNames[idx] = NAMES[idx];
+	Common::SeekableReadStream *r;
+	r = g_vm->_filesManager->getResource("TEXT/ITEM_NAMES");
+	while (r->pos() < r->size())
+		_itemNames.push_back(readString(r));
+	delete r;
 
-	// Item descriptions
-	static const char *const DESCRIPTIONS[TOTAL_ITEMS] = {
-		"The Maitre d'Bot's left arm holding a key", "The Maitre d'Bot's left arm",
-		"The Maitre d'Bot's right arm holding Titania's auditory center",
-		"The Maitre d'Bot's right arm", "Red Fuse", "Yellow Fuse", "Blue Fuse",
-		"Green Fuse", "The Parrot", "Titania's central intelligence core",
-		"Titania's auditory center", "Titania's olfactory center",
-		"Titania's speech center", "Titania's vision center", "rather greasy chicken",
-		"very plain chicken", "chicken smeared with starling pur$e",
-		"chicken covered with tomato sauce", "chicken coated in mustard sauce",
-		"A crushed television set", "Titania's ear", "Titania's ear", "Titania's eye",
-		"Titania's eye", "A parrot feather", "A nice fat juicy lemon",
-		"An empty beer glass", "A beer glass containing pur$ed flock of starlings",
-		"A beer glass containing tomato sauce", "A beer glass containing mustard sauce",
-		"A hammer", "A hose", "The other end of a hose", "The LiftBot's head",
-		"A rather long stick", "A magazine", "Titania's mouth", "A key",
-		"A super-absorbent napkin", "Titania's nose", "A perch", "A phonograph cylinder",
-		"A phonograph cylinder", "A phonograph cylinder", "A phonograph cylinder",
-		"A photograph"
-	};
-	for (uint idx = 0; idx < TOTAL_ITEMS; ++idx)
-		_itemDescriptions[idx] = DESCRIPTIONS[idx];
+	r = g_vm->_filesManager->getResource("TEXT/ITEM_DESCRIPTIONS");
+	while (r->pos() < r->size())
+		_itemNames.push_back(readString(r));
+	delete r;
 
-	// Item identifiers
-	static const char *const ITEM_IDS[40] = {
-		"MaitreD Left Arm", "MaitreD Right Arm", "OlfactoryCentre", "AuditoryCentre",
-		"SpeechCentre", "VisionCentre", "CentralCore", "Perch", "SeasonBridge",
-		"FanBridge", "BeamBridge", "ChickenBridge", "CarryParrot", "Chicken",
-		"CrushedTV", "Feathers", "Lemon", "BeerGlass", "BigHammer", "Ear1", "Ear 2",
-		"Eye1", "Eye2", "Mouth", "Nose", "NoseSpare", "Hose", "DeadHoseSpare",
-		"HoseEnd", "DeadHoseEndSpare", "BrokenLiftbotHead", "LongStick", "Magazine",
-		"Napkin", "Phonograph Cylinder", "Phonograph Cylinder 1", "Phonograph Cylinder 2",
-		"Phonograph Cylinder 3", "Photograph", "Music System Key"
-	};
-	for (uint idx = 0; idx < 40; ++idx)
-		_itemIds[idx] = ITEM_IDS[idx];
+	r = g_vm->_filesManager->getResource("TEXT/ITEM_IDS");
+	while (r->pos() < r->size())
+		_itemIds.push_back(readString(r));
+	delete r;
 }
 
 void TitanicEngine::setRoomNames() {
-	static const char *const ROOM_NAMES[TOTAL_ROOMS] = {
-		"1stClassLobby", "1stClassRestaurant", "1stClassState",
-		"2ndClassLobby", "secClassState", "Arboretum", "FrozenArboretum",
-		"Bar", "BilgeRoom", "BilgeRoomWith", "BottomOfWell", "Bridge",
-		"CreatorsChamber", "CreatorsChamberOn", "Dome", "Home", "Lift",
-		"EmbLobby", "MoonEmbLobby", "MusicRoomLobby", "MusicRoom",
-		"ParrotLobby", "Pellerator", "PromenadeDeck", "SculptureChamber",
-		"SecClassLittleLift", "ServiceElevator", "SGTLeisure", "SGTLittleLift",
-		"SgtLobby", "SGTState", "Titania", "TopOfWell", "PlayersRoom"
-	};
+	Common::SeekableReadStream *r = g_vm->_filesManager->getResource("TEXT/ROOM_NAMES");
+	while (r->pos() < r->size())
+		_roomNames.push_back(readString(r));
+	delete r;
+}
 
-	for (uint idx = 0; idx < TOTAL_ROOMS; ++idx)
-		_roomNames[idx] = ROOM_NAMES[idx];
+void TitanicEngine::setParserStrings() {
+	Common::SeekableReadStream *r;
+	r = g_vm->_filesManager->getResource("TEXT/REPLACEMENTS1");
+	while (r->pos() < r->size())
+		_replacements1.push_back(readString(r));
+	delete r;
+
+	r = g_vm->_filesManager->getResource("TEXT/REPLACEMENTS2");
+	while (r->pos() < r->size())
+		_replacements2.push_back(readString(r));
+	delete r;
+
+	r = g_vm->_filesManager->getResource("TEXT/REPLACEMENTS3");
+	while (r->pos() < r->size())
+		_replacements3.push_back(readString(r));
+	delete r;
+
+	r = g_vm->_filesManager->getResource("TEXT/PHRASES");
+	while (r->pos() < r->size())
+		_phrases.push_back(readString(r));
+	delete r;
 }
 
 } // End of namespace Titanic

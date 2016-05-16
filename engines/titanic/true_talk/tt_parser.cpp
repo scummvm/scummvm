@@ -23,6 +23,7 @@
 #include "titanic/true_talk/tt_parser.h"
 #include "titanic/true_talk/script_handler.h"
 #include "titanic/true_talk/tt_input.h"
+#include "titanic/titanic.h"
 
 namespace Titanic {
 
@@ -32,6 +33,17 @@ int TTparser::processInput(TTinput *input) {
 		return 0;
 
 	// Scan for and replace common slang and contractions with verbose versions
+	searchAndReplace(input->_normalizedLine, g_vm->_replacements1);
+	searchAndReplace(input->_normalizedLine, g_vm->_replacements2);
+
+	// Check entire normalized line against common phrases to replace
+	for (uint idx = 0; idx < g_vm->_phrases.size(); idx += 2) {
+		if (!g_vm->_phrases[idx].compareTo(input->_normalizedLine))
+			input->_normalizedLine = g_vm->_phrases[idx + 1];
+	}
+
+	// Do a further search and replace of roman numerals to decimal
+	searchAndReplace(input->_normalizedLine, g_vm->_replacements3);
 
 	warning("TODO: TTparser::processInput");
 	return 0;
