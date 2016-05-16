@@ -1620,8 +1620,8 @@ void Scene51::updateCash(int amount) {
 
 void Scene51::drawDigit(int digit, int position) {
 	if (digit != _digits[position]) {
-		_vm->_gameSys->insertSequence(kDigitSequenceIds[digit], 253,
-			_digitSequenceIds[position], 253,
+		_vm->_gameSys->insertSequence(kDigitSequenceIds[digit], 253 + position,
+			_digitSequenceIds[position], 253 + position,
 			kSeqSyncWait, 0, kDigitPositions[position] - 20, -20);
 		_digitSequenceIds[position] = kDigitSequenceIds[digit];
 		_digits[position] = digit;
@@ -1632,8 +1632,7 @@ void Scene51::initCashDisplay() {
 	for (int position = 0; position < 4; ++position) {
 		_digits[position] = 0;
 		_digitSequenceIds[position] = kDigitSequenceIds[0];
-		_vm->_gameSys->insertSequence(kDigitSequenceIds[0], 253, 0, 0,
-			kSeqNone, 0, kDigitPositions[position] - 20, -20);
+		_vm->_gameSys->insertSequence(kDigitSequenceIds[0], 253 + position, 0, 0, kSeqNone, 0, kDigitPositions[position] - 20, -20);
 	}
 	_cashAmount = 0;
 }
