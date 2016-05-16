@@ -625,7 +625,7 @@ void ScummEngine_v100he::o100_arrayOps() {
 		}
 		break;
 	case 132:			// SO_COMPLEX_ARRAY_MATH_OPERATION
-		// TODO: Used by room 2 script 2180 in Moonbase Commander
+		// TODO: Used by room 2 script 2180 in Moonbase Commander (modify-line-of-sight)
 		fetchScriptWord();
 		fetchScriptWord();
 		type = pop();
