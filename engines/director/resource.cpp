@@ -235,9 +235,9 @@ bool RIFFArchive::openStream(Common::SeekableReadStream *stream, uint32 startOff
 	uint32 cftcSize = stream->readUint32LE();
 	uint32 startPos = stream->pos();
 	stream->readUint32LE(); // unknown (always 0?)
-
 	while ((uint32)stream->pos() < startPos + cftcSize) {
 		uint32 tag = convertTagToUppercase(stream->readUint32BE());
+
 		uint32 size = stream->readUint32LE();
 		uint32 id = stream->readUint32LE();
 		uint32 offset = stream->readUint32LE();
@@ -270,8 +270,7 @@ Common::SeekableReadStream *RIFFArchive::getResource(uint32 tag, uint16 id) {
 
 	// Adjust to skip the resource header
 	uint32 offset = res.offset + 12;
-	uint32 size = res.size - 12;
-
+	uint32 size = res.size - 4;
 	// Skip the Pascal string
 	_stream->seek(offset);
 	byte stringSize = _stream->readByte() + 1; // 1 for this byte

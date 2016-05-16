@@ -30,6 +30,7 @@
 #include "common/stream.h"
 #include "common/system.h"
 #include "common/textconsole.h"
+#include "director/dib.h"
 
 #include "director/director.h"
 #include "director/resource.h"
