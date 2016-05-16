@@ -50,6 +50,15 @@ DirectorEngine::DirectorEngine(OSystem *syst, const DirectorGameDescription *gam
 	const Common::FSNode gameDataDir(ConfMan.get("path"));
 	SearchMan.addSubDirectoryMatching(gameDataDir, "data");
 	SearchMan.addSubDirectoryMatching(gameDataDir, "install");
+
+	//FIXME
+	RIFFArchive riff;
+	riff.openFile("bookshelf_example.mmm");
+	Common::SeekableReadStream *dib = riff.getResource(1145651744, 1103);
+	Common::SeekableReadStream *pal = riff.getResource(1129076052, 1025);
+	Director::DIBDecoder img;
+	img.loadPalette(*pal);
+	img.loadStream(*dib);
 }
 
 DirectorEngine::~DirectorEngine() {
