@@ -27,6 +27,7 @@
 #include "common/mutex.h"
 #include "common/random.h"
 
+#include "gob/sound/sound.h"
 #include "gob/sound/soundmixer.h"
 
 namespace Audio {
@@ -39,18 +40,13 @@ class SoundDesc;
 
 class BackgroundAtmosphere : private SoundMixer {
 public:
-	enum PlayMode {
-		kPlayModeLinear,
-		kPlayModeRandom
-	};
-
 	BackgroundAtmosphere(Audio::Mixer &mixer);
 	~BackgroundAtmosphere();
 
 	void playBA();
 	void stopBA();
 
-	void setPlayMode(PlayMode mode);
+	void setPlayMode(Sound::BackgroundPlayMode mode);
 
 	void queueSample(SoundDesc &sndDesc);
 	void queueClear();
@@ -60,7 +56,7 @@ public:
 	void unshade();
 
 private:
-	PlayMode _playMode;
+	Sound::BackgroundPlayMode _playMode;
 
 	Common::Array<SoundDesc *> _queue;
 	int _queuePos;
