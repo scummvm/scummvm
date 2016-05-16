@@ -97,6 +97,11 @@ GnapEngine::GnapEngine(OSystem *syst, const ADGameDescription *gd) :
 	Engine::syncSoundSettings();
 	_scene = nullptr;
 	_music = nullptr;
+
+	_wasSavegameLoaded = false;
+	for (int i = 0; i < kMaxTimers; ++i)
+		_savedTimers[i] = _timers[i] = 0;
+		
 }
 
 GnapEngine::~GnapEngine() {
