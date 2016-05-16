@@ -22,15 +22,23 @@
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 
 #include "backends/cloud/dropbox/dropboxstorage.h"
-#include "backends/cloud/dropbox/curlrequest.h"
+#include "backends/networking/curl/curljsonrequest.h"
 #include "common/debug.h"
+#include "common/json.h"
 #include <curl/curl.h>
 
 namespace Cloud {
 namespace Dropbox {
 
-static void curlCallback(void *ptr) {
-	debug("--- curl request is complete ---");
+static void curlJsonCallback(void *ptr) {
+	Common::JSONValue *json = (Common::JSONValue *)ptr;
+	if (json) {
+		debug("curlJsonCallback:");
+		debug("%s", json->stringify(true).c_str());
+		delete json;
+	} else {
+		debug("curlJsonCallback: got NULL instead of JSON!");
+	}
 }
 
 DropboxStorage::DropboxStorage() {
@@ -45,9 +53,9 @@ void DropboxStorage::listDirectory(Common::String path) {
 	startTimer(1000000); //in one second
 }
 
-void DropboxStorage::syncSaves() {	
-	addRequest(new CurlRequest(curlCallback, "tkachov.ru"));
-	addRequest(new CurlRequest(curlCallback, "scummvm.org"));
+void DropboxStorage::syncSaves() {
+	//not so Dropbox, just testing JSON requesting & parsing:
+	addRequest(new Networking::CurlJsonRequest(curlJsonCallback, "https://api.vk.com/method/users.get?v=5.50&user_ids=205387401"));
 }
 
 } //end of namespace Dropbox

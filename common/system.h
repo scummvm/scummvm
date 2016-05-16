@@ -185,7 +185,7 @@ protected:
 	*
 	* @note _cloudThread is deleted by the OSystem destructor.
 	*/
-	Common::CloudManager *_cloudThread;
+	Common::CloudManager *_cloudManager;
 #endif
 
 	/**
@@ -1134,7 +1134,7 @@ public:
 	* @return the CloudManager for the current architecture
 	*/
 	virtual Common::CloudManager *getCloudManager() {
-		return _cloudThread;
+		return _cloudManager;
 	}
 #endif
 

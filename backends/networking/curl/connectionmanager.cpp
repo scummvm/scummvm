@@ -46,25 +46,25 @@ NetworkReadStream *ConnectionManager::makeRequest(const char *url) {
 }
 
 void ConnectionManager::handle() {
-	int U;
-	curl_multi_perform(_multi, &U);
+	int transfersRunning;
+	curl_multi_perform(_multi, &transfersRunning);
 
-	int Q;
+	int messagesInQueue;
 	CURLMsg *curlMsg;
-	while ((curlMsg = curl_multi_info_read(_multi, &Q))) {
+	while ((curlMsg = curl_multi_info_read(_multi, &messagesInQueue))) {
+		CURL *easyHandle = curlMsg->easy_handle;
+
+		NetworkReadStream *stream;
+		curl_easy_getinfo(easyHandle, CURLINFO_PRIVATE, &stream);
+		if (stream) stream->done(); //I'm not sure it's OK to notify "done()" on failure
+
 		if (curlMsg->msg == CURLMSG_DONE) {
-			CURL *e = curlMsg->easy_handle;
-
-			NetworkReadStream *stream;
-			curl_easy_getinfo(e, CURLINFO_PRIVATE, &stream);
-			if (stream) stream->done();			
-
-			debug("ConnectionManager: SUCCESS (%d - %s)", curlMsg->data.result, curl_easy_strerror(curlMsg->data.result));
-			curl_multi_remove_handle(_multi, e);
+			debug("ConnectionManager: SUCCESS (%d - %s)", curlMsg->data.result, curl_easy_strerror(curlMsg->data.result));			
 		} else {
-			debug("ConnectionManager: FAILURE (CURLMsg (%d))", curlMsg->msg);
-			//TODO: notify stream on this case also
+			debug("ConnectionManager: FAILURE (CURLMsg (%d))", curlMsg->msg);			
 		}
+
+		curl_multi_remove_handle(_multi, easyHandle);
 	}
 }
 

@@ -22,37 +22,38 @@
 
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 
-#include "backends/cloud/dropbox/curlrequest.h"
+#include "backends/networking/curl/curljsonrequest.h"
 #include "backends/networking/curl/networkreadstream.h"
 #include "common/debug.h"
+#include "common/json.h"
 #include <curl/curl.h>
 
-namespace Cloud {
-namespace Dropbox {
+namespace Networking {
 
-CurlRequest::CurlRequest(Callback cb, const char *url) : Request(cb), _firstTime(true), _stream(0) {	
+CurlJsonRequest::CurlJsonRequest(Callback cb, const char *url) : Request(cb), _stream(0) {	
 	_url = url;
 }
 
-CurlRequest::~CurlRequest() {
+CurlJsonRequest::~CurlJsonRequest() {
 	if (_stream) delete _stream;
 }
 
-bool CurlRequest::handle(Networking::ConnectionManager &manager) {
-	if (_firstTime) {
-		_stream = manager.makeRequest(_url);
-		_firstTime = false;
-	}
+bool CurlJsonRequest::handle(ConnectionManager &manager) {
+	if (!_stream) _stream = manager.makeRequest(_url);
 
 	if (_stream) {
-		const int kBufSize = 10000;
+		const int kBufSize = 16*1024;
 		char buf[kBufSize+1];
 		uint32 readBytes = _stream->read(buf, kBufSize);
-		debug("%d", readBytes);
-		//if(readBytes != 0) debug("%s", buf);
-
-		if(_stream->eos()) {
-			_callback(0);
+		if (readBytes != 0) _contents += Common::String(buf, readBytes);
+		if (_stream->eos()) {
+			//TODO: check that stream's CURL easy handle's HTTP response code is 200 OK
+			debug("CurlJsonRequest: contents:\n%s", _contents.c_str());
+			if (_callback) {
+				Common::JSONValue *json = Common::JSON::parse(_contents.c_str()); //TODO: somehow fix JSON to work with UTF-8
+				debug("CurlJsonRequest: JSONValue pointer = %p", json);
+				_callback(json); //potential memory leak, free it in your callbacks!
+			}
 			return true;
 		}
 	}
@@ -60,5 +61,4 @@ bool CurlRequest::handle(Networking::ConnectionManager &manager) {
 	return false;
 }
 
-} //end of namespace Dropbox
-} //end of namespace Cloud
+} //end of namespace Networking

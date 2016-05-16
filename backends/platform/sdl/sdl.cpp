@@ -160,8 +160,8 @@ void OSystem_SDL::init() {
 #endif
 
 #if defined(USE_CLOUD)
-	if (_cloudThread == 0)
-		_cloudThread = new Cloud::Manager();
+	if (_cloudManager == 0)
+		_cloudManager = new Cloud::Manager();
 #endif
 
 }

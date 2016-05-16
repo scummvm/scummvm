@@ -20,31 +20,27 @@
 *
 */
 
-#ifndef BACKENDS_CLOUD_DROPBOX_CURLREQUEST_H
-#define BACKENDS_CLOUD_DROPBOX_CURLREQUEST_H
+#ifndef BACKENDS_NETWORKING_CURL_CURLJSONREQUEST_H
+#define BACKENDS_NETWORKING_CURL_CURLJSONREQUEST_H
 
 #include "backends/cloud/request.h"
 
 namespace Networking {
+
 class NetworkReadStream;
-}
 
-namespace Cloud {
-namespace Dropbox {
-
-class CurlRequest : public Cloud::Request {
-	bool _firstTime;
+class CurlJsonRequest : public Cloud::Request {	
 	const char *_url;
-	Networking::NetworkReadStream *_stream;
+	NetworkReadStream *_stream;
+	Common::String _contents;
 
 public:
-	CurlRequest(Callback cb, const char *url);
-	virtual ~CurlRequest();
+	CurlJsonRequest(Callback cb, const char *url);
+	virtual ~CurlJsonRequest();
 
-	virtual bool handle(Networking::ConnectionManager &manager);
+	virtual bool handle(ConnectionManager &manager);
 };
 
-}  //end of namespace Dropbox
-}  //end of namespace Cloud
+}  //end of namespace Networking
 
 #endif

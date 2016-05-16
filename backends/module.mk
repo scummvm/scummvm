@@ -23,14 +23,14 @@ ifdef USE_CLOUD
 MODULE_OBJS += \
 	cloud/manager.o \
 	cloud/storage.o \
-	cloud/dropbox/dropboxstorage.o \
-	cloud/dropbox/curlrequest.o
+	cloud/dropbox/dropboxstorage.o
 endif
 
 ifdef USE_LIBCURL
 MODULE_OBJS += \
 	networking/curl/connectionmanager.o \
-	networking/curl/networkreadstream.o
+	networking/curl/networkreadstream.o \
+	networking/curl/curljsonrequest.o
 endif
 
 ifdef USE_ELF_LOADER
