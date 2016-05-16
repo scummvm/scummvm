@@ -91,7 +91,7 @@ struct Window : public Port, public Common::Serializable {
 		bDrawn(false) {
 	}
 
-	~Window() {}
+	virtual ~Window() {}
 
 	void syncRect(Common::Serializer &ser, Common::Rect &targetRect) {
 		ser.syncAsSint16LE(targetRect.top);
