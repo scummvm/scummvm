@@ -1180,8 +1180,6 @@ Common::Archive *InstallerLoader::load(Resource *owner, const Common::String &fi
 			delete tmpFile;
 			tmpFile = 0;
 		}
-		delete[] outbuffer;
-		outbuffer = 0;
 	}
 
 	archives.clear();
