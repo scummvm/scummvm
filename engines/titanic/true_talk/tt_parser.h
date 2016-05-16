@@ -67,6 +67,16 @@ private:
 	 * @returns				Index of the start of the following word			
 	 */
 	static int searchAndReplace(TTstring &line, int startIndex, const StringArray &strings);
+
+	/**
+	 * Checks the string starting at a given index for a number representation
+	 * such as roman numericals, spelled out numbers, etc. and replaces it with
+	 * a plain decimal representation.
+	 * @param line			Line to check
+	 * @param startIndex	Starting index in the start to check
+	 * @returns				True if end of line hasn't been reached yet
+	 */
+	static bool replaceNumbers(TTstring &line, int *startIndex);
 public:
 	CScriptHandler *_owner;
 	int _field4;

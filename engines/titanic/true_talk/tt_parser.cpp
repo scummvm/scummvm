@@ -321,4 +321,38 @@ int TTparser::searchAndReplace(TTstring &line, int startIndex, const StringArray
 	return startIndex;
 }
 
+bool TTparser::replaceNumbers(TTstring &line, int *startIndex) {
+	int lineSize = line.size();
+	int index = *startIndex;
+	if (index < 0 || index >= lineSize)
+		return true;
+
+	NumberArray &numbers = g_vm->_numbers;
+	NumberEntry *numEntry = nullptr;
+
+	for (uint idx = 0; idx < numbers.size(); ++idx) {
+		NumberEntry &ne = numbers[idx];
+		if (!strncmp(line.c_str() + index, ne._text.c_str(), ne._text.size())) {
+			if ((ne._flags & NF_10) || (index + ne._text.size()) >= lineSize ||
+					line[index + ne._text.size()] == ' ') {
+				*startIndex += ne._text.size();
+				numEntry = &ne;
+				break;
+			}
+		}
+	}
+
+	if (!numEntry || !(numEntry->_flags & NF_10)) {
+		// Skip to end of current word
+		while (*startIndex < lineSize && !Common::isSpace(line[*startIndex]))
+			++*startIndex;
+	}
+
+	// Skip over following spaces until start of following word is reached
+	while (*startIndex < lineSize && Common::isSpace(line[*startIndex]))
+		++*startIndex;
+
+	return *startIndex < lineSize;
+}
+
 } // End of namespace Titanic
