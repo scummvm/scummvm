@@ -38,6 +38,9 @@
 #include "engines/engine.h"
 #include "graphics/pixelformat.h"
 #include "graphics/wincursor.h"
+#include "graphics/fontman.h"
+#include "graphics/font.h"
+#include "graphics/fonts/ttf.h"
 
 #include "gnap/debugger.h"
 #include "gnap/resource.h"
@@ -243,6 +246,7 @@ public:
 	PlayerGnap *_gnap;
 	PlayerPlat *_plat;
 	MusicPlayer *_music;
+	Graphics::Font *_font;
 
 	int _lastUpdateClock;
 

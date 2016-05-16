@@ -261,8 +261,6 @@ void GameSys::drawSpriteToSurface(Graphics::Surface *surface, int x, int y, int 
 }
 
 void GameSys::drawTextToSurface(Graphics::Surface *surface, int x, int y, byte r, byte g, byte b, const char *text) {
-	// NOTE Not that nice but will have to do for now
-
 	bool doDirty = false;
 
 	if (!surface) {
@@ -271,29 +269,33 @@ void GameSys::drawTextToSurface(Graphics::Surface *surface, int x, int y, byte r
 	}
 
 	uint32 color = surface->format.RGBToColor(r, g, b);
+	if (_vm->_font) {
+		_vm->_font->drawString(surface, text, x, y, _vm->_font->getStringWidth(text), color);
 
-	for (const char *cp = text; *cp != 0; ++cp) {
-		byte c = *cp;
-		if (c < 32 || c > 127)
-			c = (byte)'_';
-		c -= 32;
-		int w = _dejaVuSans9ptCharDescriptors[c]._width;
-		const byte *data = _dejaVuSans9ptCharBitmaps + _dejaVuSans9ptCharDescriptors[c]._offset;
-		for (int xc = 0; xc < w; ++xc) {
-			for (int yc = 15; yc >= 0; --yc) {
-				byte *dst = (byte*)surface->getBasePtr(x + xc, y + yc);
-				if (data[1 - (yc >> 3)] & (1 << (yc & 7)))
-					WRITE_LE_UINT32(dst, color);
+		if (doDirty)
+			insertDirtyRect(Common::Rect(x, y, x + _vm->_font->getStringWidth(text), y + _vm->_font->getFontHeight()));
+	} else {
+		for (const char *cp = text; *cp != 0; ++cp) {
+			byte c = *cp;
+			if (c < 32 || c > 127)
+				c = (byte)'_';
+			c -= 32;
+			int w = _dejaVuSans9ptCharDescriptors[c]._width;
+			const byte *data = _dejaVuSans9ptCharBitmaps + _dejaVuSans9ptCharDescriptors[c]._offset;
+			for (int xc = 0; xc < w; ++xc) {
+				for (int yc = 15; yc >= 0; --yc) {
+					byte *dst = (byte*)surface->getBasePtr(x + xc, y + yc);
+					if (data[1 - (yc >> 3)] & (1 << (yc & 7)))
+						WRITE_LE_UINT32(dst, color);
+				}
+				data += 2;
 			}
-			data += 2;
+			x += w + 1;
 		}
-		x += w + 1;
-	}
 
-	if (doDirty) {
-		insertDirtyRect(Common::Rect(x, y, x + getTextWidth(text), y + 16));
+		if (doDirty)
+			insertDirtyRect(Common::Rect(x, y, x + getTextWidth(text), y + 16));
 	}
-
 }
 
 int GameSys::getTextHeight(const char *text) {

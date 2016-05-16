@@ -20,6 +20,7 @@
  *
  */
 
+#include "graphics/cursorman.h"
 #include "gnap/gnap.h"
 #include "gnap/datarchive.h"
 #include "gnap/gamesys.h"
@@ -28,13 +29,9 @@
 
 #include "common/config-manager.h"
 #include "common/debug-channels.h"
-#include "common/error.h"
-#include "common/fs.h"
 #include "common/timer.h"
 
 #include "engines/util.h"
-
-#include "graphics/cursorman.h"
 
 namespace Gnap {
 
@@ -143,6 +140,15 @@ Common::Error GnapEngine::run() {
 	if (!_exe->loadFromEXE("ufos.exe"))
 		error("Could not load ufos.exe");
 
+#ifdef USE_FREETYPE2
+	Common::SeekableReadStream *stream = _exe->getResource(Common::kPEFont, 2000);
+	_font = Graphics::loadTTFFont(*stream, 24);
+	if (!_font)
+		warning("Unable to load font");
+#else
+	_font = nullptr;
+#endif
+
 	_dat = new DatManager();
 	_spriteCache = new SpriteCache(_dat);
 	_soundCache = new SoundCache(_dat);
@@ -167,6 +173,7 @@ Common::Error GnapEngine::run() {
 	delete _spriteCache;
 	delete _dat;
 	delete _debugger;
+	delete _font;
 	delete _exe;
 
 	return Common::kNoError;
@@ -342,10 +349,13 @@ void GnapEngine::updateCursorByHotspot() {
 		int hotspotIndex = getHotspotIndexAtPos(Common::Point(_mouseX, _mouseY));
 
 		if (_debugger->_showHotspotNumber) {
-			// NOTE This causes some display glitches so don't worry
+			// NOTE This causes some display glitches
 			char t[256];
-			sprintf(t, "hotspot = %d", hotspotIndex);
-			_gameSys->fillSurface(0, 10, 10, 80, 16, 0, 0, 0);
+			sprintf(t, "hotspot = %2d", hotspotIndex);
+			if (!_font)
+				_gameSys->fillSurface(0, 10, 10, 80, 16, 0, 0, 0);
+			else
+				_gameSys->fillSurface(0, 8, 9, _font->getStringWidth(t) + 10, _font->getFontHeight() + 2, 0, 0, 0);
 			_gameSys->drawTextToSurface(0, 10, 10, 255, 255, 255, t);
 		}
 

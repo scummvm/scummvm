@@ -2623,9 +2623,6 @@ void Scene52::run() {
 
 	_vm->hideCursor();
 
-	// TODO loadFont("maturasc", "Matura MT Script Capitals", 2000);
-	// TODO setFontSize(24);
-
 	_gameScore = 0;
 	_vm->_gameSys->drawTextToSurface(0, 300, 80, 255, 255, 255, "SCORE");
 	_vm->_gameSys->drawTextToSurface(0, 468, 80, 255, 255, 255, "0");
@@ -2720,9 +2717,6 @@ void Scene52::run() {
 			_vm->_sceneDone = true;
 		}
 	}
-
-	// TODO freeFont();
-
 	_vm->_gameSys->waitForUpdate();
 }
 
