@@ -857,7 +857,7 @@ void GameSys::drawSprites() {
 				} else {
 					int resourceId = (gfxItem5->_sequenceId & 0xFFFF0000) | gfxItem5->_currFrame._spriteId;
 					SpriteResource *spriteResource = _vm->_spriteCache->get(resourceId);
-					seqDrawSpriteFrame(spriteResource, gfxItem5->_currFrame, 0);
+					seqDrawSpriteFrame(spriteResource, gfxItem5->_currFrame, nullptr);
 					_vm->_spriteCache->release(resourceId);
 				}
 			}
@@ -1023,7 +1023,7 @@ void GameSys::fatUpdateFrame() {
 					// NOTE Skipped avi code
 				}
 			} else {
-				Sequence *seqItem = seqFind(gfxItem->_sequenceId, gfxItem->_id, 0);
+				Sequence *seqItem = seqFind(gfxItem->_sequenceId, gfxItem->_id, nullptr);
 				if (!animation) {
 					gfxItem->_sequenceId = -1;
 					gfxItem->_animation = nullptr;
@@ -1178,7 +1178,7 @@ void GameSys::fatUpdateFrame() {
 		Sequence *seqItem = &_fatSequenceItems[i];
 		if (((seqItem->_flags & 8) || (seqItem->_flags & 0x20)) && seqItem->_sequenceId2 != -1) {
 			duration = 0;
-			if (((seqItem->_flags & 0x20) && seqLocateGfx(seqItem->_sequenceId2, seqItem->_id2, 0)) ||
+			if (((seqItem->_flags & 0x20) && seqLocateGfx(seqItem->_sequenceId2, seqItem->_id2, nullptr)) ||
 				updateSequenceDuration(seqItem->_sequenceId2, seqItem->_id2, &duration)) {
 				int index = -1;
 				bool found = false;
@@ -1229,7 +1229,7 @@ void GameSys::fatUpdateFrame() {
 
 	for (uint i = 0; i < _seqItems.size(); ++i) {
 		Sequence *seqItem = &_seqItems[i];
-		if (seqLocateGfx(seqItem->_sequenceId, seqItem->_id, 0)) {
+		if (seqLocateGfx(seqItem->_sequenceId, seqItem->_id, nullptr)) {
 			updateAnimationsStatus(seqItem->_sequenceId, seqItem->_id);
 			if (seqItem->_flags & 2) {
 				int gfxDuration;

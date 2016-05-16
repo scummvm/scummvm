@@ -358,10 +358,10 @@ void GnapEngine::updateCursorByHotspot() {
 			char t[256];
 			sprintf(t, "hotspot = %2d", hotspotIndex);
 			if (!_font)
-				_gameSys->fillSurface(0, 10, 10, 80, 16, 0, 0, 0);
+				_gameSys->fillSurface(nullptr, 10, 10, 80, 16, 0, 0, 0);
 			else
-				_gameSys->fillSurface(0, 8, 9, _font->getStringWidth(t) + 10, _font->getFontHeight() + 2, 0, 0, 0);
-			_gameSys->drawTextToSurface(0, 10, 10, 255, 255, 255, t);
+				_gameSys->fillSurface(nullptr, 8, 9, _font->getStringWidth(t) + 10, _font->getFontHeight() + 2, 0, 0, 0);
+			_gameSys->drawTextToSurface(nullptr, 10, 10, 255, 255, 255, t);
 		}
 
 		if (hotspotIndex < 0)
@@ -906,15 +906,15 @@ void GnapEngine::updateIdleTimer() {
 void GnapEngine::screenEffect(int dir, byte r, byte g, byte b) {
 	if (dir == 1) {
 		for (int y = 300; y < 600; y += 50) {
-			_gameSys->fillSurface(0, 0, y, 800, 50, r, g, b);
-			_gameSys->fillSurface(0, 0, 549 - y + 1, 800, 50, r, g, b);
+			_gameSys->fillSurface(nullptr, 0, y, 800, 50, r, g, b);
+			_gameSys->fillSurface(nullptr, 0, 549 - y + 1, 800, 50, r, g, b);
 			gameUpdateTick();
 			_system->delayMillis(50);
 		}
 	} else {
 		for (int y = 0; y < 300; y += 50) {
-			_gameSys->fillSurface(0, 0, y, 800, 50, r, g, b);
-			_gameSys->fillSurface(0, 0, 549 - y + 1, 800, 50, r, g, b);
+			_gameSys->fillSurface(nullptr, 0, y, 800, 50, r, g, b);
+			_gameSys->fillSurface(nullptr, 0, 549 - y + 1, 800, 50, r, g, b);
 			gameUpdateTick();
 			_system->delayMillis(50);
 		}

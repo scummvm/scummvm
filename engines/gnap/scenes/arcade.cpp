@@ -248,7 +248,7 @@ void Scene49::updateObstacle(int id) {
 void Scene49::increaseScore(int amount) {
 	if (_scoreBarPos + amount <= 556) {
 		_scoreBarPos += amount;
-		_vm->_gameSys->fillSurface(0, _scoreBarPos, 508, amount, 22, 255, 0, 0);
+		_vm->_gameSys->fillSurface(nullptr, _scoreBarPos, 508, amount, 22, 255, 0, 0);
 	}
 
 	_scoreLevel = (_scoreBarPos + amount >= 556) ? 1 : 0;
@@ -258,7 +258,7 @@ void Scene49::decreaseScore(int amount) {
 	if (_scoreBarPos >= 226 && _scoreLevel == 0) {
 		if (_scoreBarFlash)
 			refreshScoreBar();
-		_vm->_gameSys->fillSurface(0, _scoreBarPos, 508, amount, 22, 89, 0, 5);
+		_vm->_gameSys->fillSurface(nullptr, _scoreBarPos, 508, amount, 22, 89, 0, 5);
 		_scoreBarPos -= amount;
 		_scoreLevel = 0;
 	}
@@ -266,9 +266,9 @@ void Scene49::decreaseScore(int amount) {
 
 void Scene49::refreshScoreBar() {
 	if (_scoreBarFlash)
-		_vm->_gameSys->fillSurface(0, 226, 508, 330, 22, 255, 0, 0);
+		_vm->_gameSys->fillSurface(nullptr, 226, 508, 330, 22, 255, 0, 0);
 	else
-		_vm->_gameSys->fillSurface(0, 226, 508, 330, 22, 89, 0, 5);
+		_vm->_gameSys->fillSurface(nullptr, 226, 508, 330, 22, 89, 0, 5);
 	_scoreBarFlash = !_scoreBarFlash;
 }
 
@@ -630,8 +630,8 @@ void Scene50::initRound() {
 	_vm->_timers[3] = getRightTongueActionTicks();
 	_vm->_timers[4] = 0;
 	_vm->_timers[6] = 0;
-	_vm->_gameSys->fillSurface(0, 91, 73, 260, 30, 212, 0, 0);
-	_vm->_gameSys->fillSurface(0, 450, 73, 260, 30, 212, 0, 0);
+	_vm->_gameSys->fillSurface(nullptr, 91, 73, 260, 30, 212, 0, 0);
+	_vm->_gameSys->fillSurface(nullptr, 450, 73, 260, 30, 212, 0, 0);
 	_timeRemaining = 40;
 	drawCountdown(40);
 }
@@ -652,8 +652,8 @@ bool Scene50::updateCountdown() {
 void Scene50::drawCountdown(int value) {
 	char str[8];
 	sprintf(str, "%02d", value);
-	_vm->_gameSys->fillSurface(0, 371, 505, 50, 27, 0, 0, 0);
-	_vm->_gameSys->drawTextToSurface(0, 381, 504, 255, 255, 255, str);
+	_vm->_gameSys->fillSurface(nullptr, 371, 505, 50, 27, 0, 0, 0);
+	_vm->_gameSys->drawTextToSurface(nullptr, 381, 504, 255, 255, 255, str);
 }
 
 void Scene50::playTonguesIdle() {
@@ -698,7 +698,7 @@ bool Scene50::updateEnergyBars(int newLeftBarPos, int newRightBarPos) {
 		if (newLeftBarPos < 0)
 			newLeftBarPos = 0;
 		_leftTongueEnergyBarPos = newLeftBarPos;
-		_vm->_gameSys->fillSurface(0, 26 * newLeftBarPos + 91, 73, 260 - 26 * newLeftBarPos, 30, 0, 0, 0);
+		_vm->_gameSys->fillSurface(nullptr, 26 * newLeftBarPos + 91, 73, 260 - 26 * newLeftBarPos, 30, 0, 0, 0);
 	}
 
 	if (newRightBarPos != _rightTongueEnergyBarPos) {
@@ -706,7 +706,7 @@ bool Scene50::updateEnergyBars(int newLeftBarPos, int newRightBarPos) {
 			newRightBarPos = 0;
 		_rightTongueEnergyBarPos = newRightBarPos;
 		if (newRightBarPos != 10)
-			_vm->_gameSys->fillSurface(0, 26 * (9 - newRightBarPos) + 450, 73, 26, 30, 0, 0, 0);
+			_vm->_gameSys->fillSurface(nullptr, 26 * (9 - newRightBarPos) + 450, 73, 26, 30, 0, 0, 0);
 	}
 
 	if (newLeftBarPos * newRightBarPos > 0)
@@ -2190,7 +2190,7 @@ void Scene52::updateAlienRow(int rowNum) {
 		if (rowNum == 1) {
 			for (int j = 0; j < 3; ++j) {
 				if (_shieldSpriteIds[j] != -1) {
-					_vm->_gameSys->fillSurface(0, _shieldPosX[j], _arcadeScreenBottom - 44, 33, 44, 0, 0, 0);
+					_vm->_gameSys->fillSurface(nullptr, _shieldPosX[j], _arcadeScreenBottom - 44, 33, 44, 0, 0, 0);
 					_shieldSpriteIds[j] = -1;
 				}
 			}
@@ -2368,7 +2368,7 @@ int Scene52::alienCannonHitShield(int cannonNum) {
 		if (_shieldSpriteIds[shieldNum] <= 21) {
 			_vm->_gameSys->drawSpriteToBackground(_shieldPosX[shieldNum], _arcadeScreenBottom - 44, _shieldSpriteIds[shieldNum]);
 		} else {
-			_vm->_gameSys->fillSurface(0, _shieldPosX[shieldNum], _arcadeScreenBottom - 44, 33, 44, 0, 0, 0);
+			_vm->_gameSys->fillSurface(nullptr, _shieldPosX[shieldNum], _arcadeScreenBottom - 44, 33, 44, 0, 0, 0);
 			_shieldSpriteIds[shieldNum] = -1;
 		}
 		_vm->_gameSys->setAnimation(0, 0, cannonNum + 9);
@@ -2412,7 +2412,7 @@ bool Scene52::shipCannonHitShield(int cannonNum) {
 		if (_shieldSpriteIds[shieldNum] <= 21) {
 			_vm->_gameSys->drawSpriteToBackground(_shieldPosX[shieldNum], _arcadeScreenBottom - 44, _shieldSpriteIds[shieldNum]);
 		} else {
-			_vm->_gameSys->fillSurface(0, _shieldPosX[shieldNum], _arcadeScreenBottom - 44, 33, 44, 0, 0, 0);
+			_vm->_gameSys->fillSurface(nullptr, _shieldPosX[shieldNum], _arcadeScreenBottom - 44, 33, 44, 0, 0, 0);
 			_shieldSpriteIds[shieldNum] = -1;
 		}
 		_vm->_gameSys->insertSequence(0x21, shieldNum + 257, 0, 0, kSeqNone, 0, _shipCannonPosX - 18, _arcadeScreenBottom - 44);
@@ -2588,9 +2588,9 @@ void Scene52::updateAlien(int rowNum) {
 void Scene52::loseShip() {
 	--_shipsLeft;
 	if (_shipsLeft == 2) {
-		_vm->_gameSys->fillSurface(0, 120, 140, _shipMidX, _shipMidY, 0, 0, 0);
+		_vm->_gameSys->fillSurface(nullptr, 120, 140, _shipMidX, _shipMidY, 0, 0, 0);
 	} else if (_shipsLeft == 1) {
-		_vm->_gameSys->fillSurface(0, 120, 185, _shipMidX, _shipMidY, 0, 0, 0);
+		_vm->_gameSys->fillSurface(nullptr, 120, 185, _shipMidX, _shipMidY, 0, 0, 0);
 	}
 }
 
@@ -2614,8 +2614,8 @@ void Scene52::initAnims() {
 void Scene52::drawScore(int score) {
 	char str[4];
 	sprintf(str, "%03d", score);
-	_vm->_gameSys->fillSurface(0, 420, 80, 48, 30, 0, 0, 0);
-	_vm->_gameSys->drawTextToSurface(0, 420, 80, 255, 255, 255, str);
+	_vm->_gameSys->fillSurface(nullptr, 420, 80, 48, 30, 0, 0, 0);
+	_vm->_gameSys->drawTextToSurface(nullptr, 420, 80, 255, 255, 255, str);
 }
 
 void Scene52::run() {
@@ -2624,8 +2624,8 @@ void Scene52::run() {
 	_vm->hideCursor();
 
 	_gameScore = 0;
-	_vm->_gameSys->drawTextToSurface(0, 300, 80, 255, 255, 255, "SCORE");
-	_vm->_gameSys->drawTextToSurface(0, 468, 80, 255, 255, 255, "0");
+	_vm->_gameSys->drawTextToSurface(nullptr, 300, 80, 255, 255, 255, "SCORE");
+	_vm->_gameSys->drawTextToSurface(nullptr, 468, 80, 255, 255, 255, "0");
 
 	drawScore(0);
 
