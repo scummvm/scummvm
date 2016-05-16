@@ -4,7 +4,7 @@
 # from it. Mac only, unfortunately.
 #
 # On Windows you perhaps can perform the extraction manually with use of
-# HFV Explorer: https://web.archive.org/web/20011202005455/http://gamma.nic.fi/~lpesonen/HFVExplorer/
+# HFSxplorer: http://www.catacombae.org/hfsexplorer/
 #
 # More information could be found in the vMac documentation: http://www.gryphel.com/c/image/
 #

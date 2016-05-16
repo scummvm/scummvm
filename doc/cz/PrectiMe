@@ -651,7 +651,7 @@ Abyste mohli spustit verzi pro Mac OS X od Wyrmkeep musíte data zkopírovat z 
 
   <http://wiki.scummvm.org/index.php/HOWTO-Mac_Games>
 
-I když se v tomto článku píše hlavně o hrách SCUMM, je zde také zmíněn nástroj "HFVExplorer", který potřebujete k extrakci souborů. Nezapomeňte, že data řeči "Inherit the Earth Voices" musíte umístit do stejného adresáře, kde jsou uložena data hry:
+I když se v tomto článku píše hlavně o hrách SCUMM, je zde také zmíněn nástroj "HFSExplorer", který potřebujete k extrakci souborů. Nezapomeňte, že data řeči "Inherit the Earth Voices" musíte umístit do stejného adresáře, kde jsou uložena data hry:
 
   Inherit the Earth.app/Contents/Resources
 
@@ -915,7 +915,7 @@ Nebo můžete použít 'extract_mm_c64' z balíčku nástrojů pro extrahován�
 
 3.26) Poznámky ke hrám Macintosh:
 ----- ---------------------------
-Všechny adventury LucasArts založené na SCUMM, kromě COMI, také existují ve verzích pro in Macintosh. ScummVM může většinu (všechny?) použít, nicméně, v některých případech je nutná dodatečná práce. Nejdříve, pokud pro toto nepoužíváte Macintosh, přístup k datům na CD/disketě může být obtížný. Důvodem je to, že Mac používá zvláštní formát disku nazvaný HFS, který ostatní systémy většinou nepodporují. Nicméně existuje, několik nástrojů, které jsou zadarmo a umožňují číst takovéto svazky HFS. Například "HFVExplorer" pro Windows a "hfsutils" pro Linux a ostatní Unixové operační systémy.
+Všechny adventury LucasArts založené na SCUMM, kromě COMI, také existují ve verzích pro in Macintosh. ScummVM může většinu (všechny?) použít, nicméně, v některých případech je nutná dodatečná práce. Nejdříve, pokud pro toto nepoužíváte Macintosh, přístup k datům na CD/disketě může být obtížný. Důvodem je to, že Mac používá zvláštní formát disku nazvaný HFS, který ostatní systémy většinou nepodporují. Nicméně existuje, několik nástrojů, které jsou zadarmo a umožňují číst takovéto svazky HFS. Například "HFSExplorer" pro Windows a "hfsutils" pro Linux a ostatní Unixové operační systémy.
 
 Většina novějších her na Macintosh je dodávána pouze s jedním datovým souborem (v některých případech byl tento soubor učiněn neviditelným, takže možná budete potřebovat dodatečné nástroje, abyste ho mohli zkopírovat). ScummVM je schopen takovýto soubor použít přímo; jednoduše odkažte ScummVM na složku obsahující tento soubor a mělo by to fungovat (tak jako s každou podporovanou hrou).
 

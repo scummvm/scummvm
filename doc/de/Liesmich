@@ -878,7 +878,7 @@ einem PC arbeiten, lesen Sie hierfür:
   http://wiki.scummvm.org/index.php/HOWTO-Mac_Games
 
 Obwohl hier in erster Linie über SCUMM-Spiele gesprochen wird, findet das
-Dienstprogramm „HFVExplorer“ Erwähnung, welches Sie benötigen, um die Dateien zu
+Dienstprogramm „HFSExplorer“ Erwähnung, welches Sie benötigen, um die Dateien zu
 extrahieren. Beachten Sie, dass Sie die Sprachausgabedaten aus „Inherit the
 Earth Voices“ im selben Verzeichnis ablegen müssen wie die Spieldaten, die sich
 an folgendem Ort befinden:
@@ -1280,7 +1280,7 @@ kompliziert werden, auf die CD- oder Diskettendaten zuzugreifen. Der Grund
 hierfür ist, dass der Mac ein spezielles Datenträgerformat nutzt, welches sich
 HFS nennt, und das andere Systeme normalerweise nicht unterstützen. Es gibt
 jedoch zahlreiche kostenlose Tools, die es ermöglichen, einen solchen
-HFS-Datenträger zu lesen. Z. B. „HFVExplorer“ für Windows und „hfsutils“ für
+HFS-Datenträger zu lesen. Z. B. „HFSExplorer“ für Windows und „hfsutils“ für
 Linux und andere Betriebssysteme, die Unix ähnlich sind.
 
 Die meisten neueren Spiele für den Macintosh wurden nur mit einer einzigen
