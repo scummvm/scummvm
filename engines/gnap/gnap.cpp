@@ -101,7 +101,8 @@ GnapEngine::GnapEngine(OSystem *syst, const ADGameDescription *gd) :
 	_wasSavegameLoaded = false;
 	for (int i = 0; i < kMaxTimers; ++i)
 		_savedTimers[i] = _timers[i] = 0;
-		
+
+	_isWaiting = false;
 }
 
 GnapEngine::~GnapEngine() {
