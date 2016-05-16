@@ -1,7 +1,7 @@
 For a more comprehensive changelog of the latest experimental code, see:
         https://github.com/scummvm/scummvm/commits/
 
-1.8.1 (XXXX-XX-XX)
+1.8.1 (2016-05-25)
  General:
    - Removed TESTING flag from several supported games.
    - Added Chinese Pinyin translation.
