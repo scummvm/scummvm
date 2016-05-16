@@ -95,7 +95,7 @@ public:
 	ImageFile();
 	ImageFile(const Common::String &name, bool skipPal = false, bool animImages = false);
 	ImageFile(Common::SeekableReadStream &stream, bool skipPal = false);
-	~ImageFile();
+	virtual ~ImageFile();
 	static void setVm(SherlockEngine *vm);
 };
 
