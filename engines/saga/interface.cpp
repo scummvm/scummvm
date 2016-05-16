@@ -2299,6 +2299,9 @@ void Interface::drawPanelButtonText(InterfacePanel *panel, PanelButton *panelBut
 		break;
 	}
 	if (_vm->getGameId() == GID_ITE) {
+		if (textId > kTextEnterProtectAnswer)
+			error("This should not happen. Please report to ScummVM Team how you achieved this error.");
+
 		text = _vm->getTextString(textId);
 		textFont = kKnownFontMedium;
 		textShadowKnownColor = kKnownColorVerbTextShadow;
