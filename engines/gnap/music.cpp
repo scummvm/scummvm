@@ -73,7 +73,7 @@ void MusicPlayer::playSMF(bool loop) {
 	Common::File musicFile;
 	musicFile.open(_filename);
 	if (!musicFile.isOpen()) {
-		debugC(2, kDebugMusic, "Cannot open music file %s", _filename);
+		debugC(2, kDebugMusic, "Cannot open music file %s", _filename.c_str());
 		return;
 	}
 	int midiMusicSize = musicFile.size();
@@ -96,7 +96,7 @@ void MusicPlayer::playSMF(bool loop) {
 		_isLooping = loop;
 		_isPlaying = true;
 	} else {
-		debugC(2, kDebugMusic, "Cannot play music file %s", _filename);
+		debugC(2, kDebugMusic, "Cannot play music file %s", _filename.c_str());
 		delete parser;
 	}
 }
