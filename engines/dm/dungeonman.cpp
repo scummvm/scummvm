@@ -293,6 +293,8 @@ void DungeonMan::loadDungeonFile() {
 		}
 		uint16 thingStoreWordCount = gThingDataWordCount[thingType];
 
+		if (thingStoreWordCount == 0)
+			continue;
 
 		if (_dunData.thingsData[thingType]) {
 			delete[] _dunData.thingsData[thingType][0];
