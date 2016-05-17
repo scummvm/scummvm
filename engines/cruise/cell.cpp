@@ -129,14 +129,11 @@ void createTextObject(cellStruct *pObject, int overlayIdx, int messageIdx, int x
 
 	cellStruct *pNewElement;
 	cellStruct *si = pObject->next;
-	cellStruct *var_2;
 
 	while (si) {
 		pObject = si;
 		si = si->next;
 	}
-
-	var_2 = si;
 
 	pNewElement = (cellStruct *) MemAlloc(sizeof(cellStruct));
 	memset(pNewElement, 0, sizeof(cellStruct));
@@ -157,11 +154,7 @@ void createTextObject(cellStruct *pObject, int overlayIdx, int messageIdx, int x
 	pNewElement->parentOverlay = parentOvl;
 	pNewElement->gfxPtr = NULL;
 
-	if (var_2) {
-		cx = var_2;
-	} else {
-		cx = savePObject;
-	}
+	cx = savePObject;
 
 	pNewElement->prev = cx->prev;
 	cx->prev = pNewElement;
