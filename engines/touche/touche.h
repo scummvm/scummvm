@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef TOUCHE_ENGINE_H
-#define TOUCHE_ENGINE_H
+#ifndef TOUCHE_TOUCHE_H
+#define TOUCHE_TOUCHE_H
 
 #include "common/array.h"
 #include "common/endian.h"

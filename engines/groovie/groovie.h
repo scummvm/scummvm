@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef GROOVIE_H
-#define GROOVIE_H
+#ifndef GROOVIE_GROOVIE_H
+#define GROOVIE_GROOVIE_H
 
 #include "groovie/debug.h"
 #include "groovie/font.h"
@@ -132,4 +132,4 @@ private:
 
 } // End of namespace Groovie
 
-#endif // GROOVIE_H
+#endif // GROOVIE_GROOVIE_H

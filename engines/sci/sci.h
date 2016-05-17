@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef SCI_H
-#define SCI_H
+#ifndef SCI_SCI_H
+#define SCI_SCI_H
 
 #include "engines/engine.h"
 #include "common/macresman.h"
@@ -460,4 +460,4 @@ const char *getSciVersionDesc(SciVersion version);
 
 } // End of namespace Sci
 
-#endif // SCI_H
+#endif // SCI_SCI_H

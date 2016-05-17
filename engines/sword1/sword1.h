@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef SWORD1_H
-#define SWORD1_H
+#ifndef SWORD1_SWORD1_H
+#define SWORD1_SWORD1_H
 
 #include "engines/engine.h"
 #include "common/error.h"
@@ -150,4 +150,4 @@ private:
 
 } // End of namespace Sword1
 
-#endif //BSSWORD1_H
+#endif // SWORD1_SWORD1_H

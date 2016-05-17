@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef DRASCULA_H
-#define DRASCULA_H
+#ifndef DRASCULA_DRASCULA_H
+#define DRASCULA_DRASCULA_H
 
 #include "common/scummsys.h"
 #include "common/archive.h"
@@ -784,4 +784,4 @@ protected:
 
 } // End of namespace Drascula
 
-#endif /* DRASCULA_H */
+#endif /* DRASCULA_DRASCULA_H */

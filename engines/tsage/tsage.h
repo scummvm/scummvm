@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef TSAGE_H
-#define TSAGE_H
+#ifndef TSAGE_TSAGE_H
+#define TSAGE_TSAGE_H
 
 #include "engines/engine.h"
 #include "gui/debugger.h"

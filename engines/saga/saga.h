@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef SAGA_H
-#define SAGA_H
+#ifndef SAGA_SAGA_H
+#define SAGA_SAGA_H
 
 #include "engines/engine.h"
 

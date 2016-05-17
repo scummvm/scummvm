@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef TUCKER_ENGINE_H
-#define TUCKER_ENGINE_H
+#ifndef TUCKER_TUCKER_H
+#define TUCKER_TUCKER_H
 
 #include "common/file.h"
 #include "common/util.h"

@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef DREAMWEB_H
-#define DREAMWEB_H
+#ifndef DREAMWEB_DREAMWEB_H
+#define DREAMWEB_DREAMWEB_H
 
 #include "common/error.h"
 #include "common/keyboard.h"

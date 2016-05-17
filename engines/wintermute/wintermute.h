@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef WINTERMUTE_H
-#define WINTERMUTE_H
+#ifndef WINTERMUTE_WINTERMUTE_H
+#define WINTERMUTE_WINTERMUTE_H
 
 #include "engines/engine.h"
 #include "engines/advancedDetector.h"

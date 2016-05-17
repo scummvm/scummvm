@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef SHERLOCK_HOLMES_H
-#define SHERLOCK_HOLMES_H
+#ifndef SHERLOCK_SHERLOCK_H
+#define SHERLOCK_SHERLOCK_H
 
 #include "common/scummsys.h"
 #include "common/array.h"

@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef COMPOSER_H
-#define COMPOSER_H
+#ifndef COMPOSER_COMPOSER_H
+#define COMPOSER_COMPOSER_H
 
 #include "common/ini-file.h"
 #include "common/random.h"

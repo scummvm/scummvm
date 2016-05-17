@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef PRINCE_H
-#define PRINCE_H
+#ifndef PRINCE_PRINCE_H
+#define PRINCE_PRINCE_H
 
 #include "common/random.h"
 #include "common/system.h"

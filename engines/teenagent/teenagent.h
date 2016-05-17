@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef TEENAGENT_ENGINE_H
-#define TEENAGENT_ENGINE_H
+#ifndef TEENAGENT_TEENAGENT_H
+#define TEENAGENT_TEENAGENT_H
 
 #include "engines/engine.h"
 

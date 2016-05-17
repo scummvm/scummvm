@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef HUGO_H
-#define HUGO_H
+#ifndef HUGO_HUGO_H
+#define HUGO_HUGO_H
 
 #include "engines/engine.h"
 
@@ -341,4 +341,4 @@ private:
 
 } // End of namespace Hugo
 
-#endif // Hugo_H
+#endif // HUGO_HUGO_H
