@@ -67,7 +67,21 @@ public:
 	*/
 	virtual uint32 read(void *dataPtr, uint32 dataSize);
 
-	void done();
+	/**
+	* This method is called by ConnectionManager to indicate
+	* that transfer is finished.
+	*
+	* @note It's called on failure too.
+	*/
+	void finished();
+
+	/**
+	* Returns HTTP response code from inner CURL handle.
+	* It returns -1 to indicate there is no inner handle.
+	*
+	* @note This method should be called when eos() == true.
+	*/
+	long httpResponseCode();
 };
 
 } //end of namespace Cloud

@@ -56,6 +56,7 @@ void DropboxStorage::listDirectory(Common::String path) {
 void DropboxStorage::syncSaves() {
 	//not so Dropbox, just testing JSON requesting & parsing:
 	addRequest(new Networking::CurlJsonRequest(curlJsonCallback, "https://api.vk.com/method/users.get?v=5.50&user_ids=205387401"));
+	addRequest(new Networking::CurlJsonRequest(curlJsonCallback, "https://api.vk.com/method/users.get?v=5.50&user_ids=28870501"));
 }
 
 } //end of namespace Dropbox

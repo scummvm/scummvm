@@ -30,12 +30,30 @@
 
 namespace Networking {
 
-CurlJsonRequest::CurlJsonRequest(Callback cb, const char *url) : Request(cb), _stream(0) {	
+CurlJsonRequest::CurlJsonRequest(Callback cb, const char *url) : Request(cb), _stream(0), _contentsStream(DisposeAfterUse::YES) {
 	_url = url;
 }
 
 CurlJsonRequest::~CurlJsonRequest() {
 	if (_stream) delete _stream;
+}
+
+char *CurlJsonRequest::getPreparedContents() {
+	//write one more byte in the end
+	byte zero[1] = { 0 };
+	_contentsStream.write(zero, 1);
+
+	//replace all "bad" bytes with '.' character
+	byte *result = _contentsStream.getData();
+	uint32 size = _contentsStream.size();
+	for (uint32 i = 0; i < size; ++i)
+		if (result[i] < 0x20 || result[i] > 0x7f)
+			result[i] = '.';
+
+	//make it zero-terminated string
+	result[size - 1] = '\0';
+
+	return (char *)result;
 }
 
 bool CurlJsonRequest::handle(ConnectionManager &manager) {
@@ -45,13 +63,17 @@ bool CurlJsonRequest::handle(ConnectionManager &manager) {
 		const int kBufSize = 16*1024;
 		char buf[kBufSize+1];
 		uint32 readBytes = _stream->read(buf, kBufSize);
-		if (readBytes != 0) _contents += Common::String(buf, readBytes);
-		if (_stream->eos()) {
-			//TODO: check that stream's CURL easy handle's HTTP response code is 200 OK
-			debug("CurlJsonRequest: contents:\n%s", _contents.c_str());
+		if (readBytes != 0)
+			if (_contentsStream.write(buf, readBytes) != readBytes)
+				warning("MemoryWriteStreamDynamic was unable to write all the bytes");
+
+		if (_stream->eos()) {			
+			if (_stream->httpResponseCode() != 200)
+				warning("HTTP response code is not 200 OK");
+
 			if (_callback) {
-				Common::JSONValue *json = Common::JSON::parse(_contents.c_str()); //TODO: somehow fix JSON to work with UTF-8
-				debug("CurlJsonRequest: JSONValue pointer = %p", json);
+				char *contents = getPreparedContents();				
+				Common::JSONValue *json = Common::JSON::parse(contents);				
 				_callback(json); //potential memory leak, free it in your callbacks!
 			}
 			return true;

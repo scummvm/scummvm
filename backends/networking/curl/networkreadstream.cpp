@@ -63,8 +63,15 @@ uint32 NetworkReadStream::read(void *dataPtr, uint32 dataSize) {
 	return actuallyRead;
 }
 
-void NetworkReadStream::done() {
+void NetworkReadStream::finished() {
 	_requestComplete = true;
+}
+
+long NetworkReadStream::httpResponseCode() {
+	long responseCode = -1;
+	if (_easy)
+		curl_easy_getinfo(_easy, CURLINFO_RESPONSE_CODE, &responseCode);
+	return responseCode;
 }
 
 } //end of namespace Cloud

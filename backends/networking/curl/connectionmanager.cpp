@@ -56,7 +56,7 @@ void ConnectionManager::handle() {
 
 		NetworkReadStream *stream;
 		curl_easy_getinfo(easyHandle, CURLINFO_PRIVATE, &stream);
-		if (stream) stream->done(); //I'm not sure it's OK to notify "done()" on failure
+		if (stream) stream->finished();
 
 		if (curlMsg->msg == CURLMSG_DONE) {
 			debug("ConnectionManager: SUCCESS (%d - %s)", curlMsg->data.result, curl_easy_strerror(curlMsg->data.result));			

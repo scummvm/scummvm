@@ -24,6 +24,7 @@
 #define BACKENDS_NETWORKING_CURL_CURLJSONREQUEST_H
 
 #include "backends/cloud/request.h"
+#include "common/memstream.h"
 
 namespace Networking {
 
@@ -32,7 +33,10 @@ class NetworkReadStream;
 class CurlJsonRequest : public Cloud::Request {	
 	const char *_url;
 	NetworkReadStream *_stream;
-	Common::String _contents;
+	Common::MemoryWriteStreamDynamic _contentsStream;
+
+	/** Prepares raw bytes from _contentsStream to be parsed with Common::JSON::parse(). */
+	char *getPreparedContents();
 
 public:
 	CurlJsonRequest(Callback cb, const char *url);
