@@ -21,6 +21,25 @@ namespace DM {
 #define kFirstFloorOrn 247 // @ C247_GRAPHIC_FIRST_FLOOR_ORNAMENT
 #define kFirstDoorOrn 303 // @ C303_GRAPHIC_FIRST_DOOR_ORNAMENT
 
+enum WallSetIndices {
+	kDoorFrameFront = 0, // @  G0709_puc_Bitmap_WallSet_DoorFrameFront
+	kDoorFrameLeft_D1C = 1, // @  G0708_puc_Bitmap_WallSet_DoorFrameLeft_D1C
+	kFameLeft_D2C = 2, // @  G0707_puc_Bitmap_WallSet_DoorFrameLeft_D2C
+	kDoorFrameLeft_D3C = 3, // @  G0706_puc_Bitmap_WallSet_DoorFrameLeft_D3C
+	kDoorFrameLeft_D3L = 4, // @  G0705_puc_Bitmap_WallSet_DoorFrameLeft_D3L
+	kDoorFrameTop_D1LCR = 5, // @  G0704_puc_Bitmap_WallSet_DoorFrameTop_D1LCR
+	kDoorFrameTop_D2LCR = 6, // @  G0703_puc_Bitmap_WallSet_DoorFrameTop_D2LCR
+	kWall_D0R = 7, // @  G0702_puc_Bitmap_WallSet_Wall_D0R
+	kWall_D0L = 8, // @  G0701_puc_Bitmap_WallSet_Wall_D0L
+	kWall_D1LCR = 9, // @  G0700_puc_Bitmap_WallSet_Wall_D1LCR
+	kWall_D2LCR = 10, // @  G0699_puc_Bitmap_WallSet_Wall_D2LCR
+	kWall_D3LCR = 11, // @  G0698_puc_Bitmap_WallSet_Wall_D3LCR
+	kWall_D3L2 = 12, // @  G0697_puc_Bitmap_WallSet_Wall_D3L2
+
+	kWall_D3R2 = 13, // @  G0696_puc_Bitmap_WallSet_Wall_D3R2
+	kDoorFrameRight_D1C = 14// @  G0710_puc_Bitmap_WallSet_DoorFrameRight_D1C
+};
+
 
 byte gDoorOrnCoordIndices[12] = { // @ G0196_auc_Graphic558_DoorOrnamentCoordinateSetIndices
 	0,   /* Door Ornament #00 Square Grid */
@@ -496,15 +515,18 @@ DisplayMan::~DisplayMan() {
 	delete[] _packedItemPos;
 	delete[] _packedBitmaps;
 	delete[] _vgaBuffer;
-	delete[] _bitmaps[0];
-	delete[] _bitmaps;
-	delete[] _wallSetBitMaps[13]; // copy of another bitmap, but flipped
-	delete[] _wallSetBitMaps[14]; // copy of another bitmap, but flipped
+	if (_bitmaps) {
+		delete[] _bitmaps[0];
+		delete[] _bitmaps;
+	}
+	delete[] _wallSetBitMaps[kWall_D3R2]; // copy of another bitmap, but flipped
+	delete[] _wallSetBitMaps[kDoorFrameRight_D1C]; // copy of another bitmap, but flipped
 }
 
 void DisplayMan::setUpScreens(uint16 width, uint16 height) {
 	_screenWidth = width;
 	_screenHeight = height;
+	delete[] _vgaBuffer;
 	_vgaBuffer = new byte[_screenWidth * _screenHeight];
 	clearScreen(kColorBlack);
 }
@@ -514,11 +536,13 @@ void DisplayMan::loadGraphics() {
 	f.open("graphics.dat");
 
 	grapItemCount = f.readUint16BE();
+	delete[] _packedItemPos;
 	_packedItemPos = new uint32[grapItemCount + 1];
 	_packedItemPos[0] = 0;
 	for (uint16 i = 1; i < grapItemCount + 1; ++i)
 		_packedItemPos[i] = f.readUint16BE() + _packedItemPos[i - 1];
 
+	delete[] _packedBitmaps;
 	_packedBitmaps = new uint8[_packedItemPos[grapItemCount]];
 
 	f.seek(2 + grapItemCount * 4);
@@ -553,6 +577,10 @@ void DisplayMan::unpackGraphics() {
 	for (uint16 i = 22; i <= 532; ++i)
 		unpackedBitmapsSize += width(i) * height(i);
 	// graphics items go from 0-20 and 22-532 inclusive, _unpackedItemPos 21 and 22 are there for indexing convenience
+	if (_bitmaps) {
+		delete[] _bitmaps[0];
+		delete[] _bitmaps;
+	}
 	_bitmaps = new byte*[533];
 	_bitmaps[0] = new byte[unpackedBitmapsSize];
 	loadIntoBitmap(0, _bitmaps[0]);
@@ -702,25 +730,6 @@ void DisplayMan::drawSquareD3L(direction dir, int16 posX, int16 posY) {
 }
 
 
-enum WallSetIndices {
-	kDoorFrameFront = 0, // @  G0709_puc_Bitmap_WallSet_DoorFrameFront
-	kDoorFrameLeft_D1C = 1, // @  G0708_puc_Bitmap_WallSet_DoorFrameLeft_D1C
-	kFameLeft_D2C = 2, // @  G0707_puc_Bitmap_WallSet_DoorFrameLeft_D2C
-	kDoorFrameLeft_D3C = 3, // @  G0706_puc_Bitmap_WallSet_DoorFrameLeft_D3C
-	kDoorFrameLeft_D3L = 4, // @  G0705_puc_Bitmap_WallSet_DoorFrameLeft_D3L
-	kDoorFrameTop_D1LCR = 5, // @  G0704_puc_Bitmap_WallSet_DoorFrameTop_D1LCR
-	kDoorFrameTop_D2LCR = 6, // @  G0703_puc_Bitmap_WallSet_DoorFrameTop_D2LCR
-	kWall_D0R = 7, // @  G0702_puc_Bitmap_WallSet_Wall_D0R
-	kWall_D0L = 8, // @  G0701_puc_Bitmap_WallSet_Wall_D0L
-	kWall_D1LCR = 9, // @  G0700_puc_Bitmap_WallSet_Wall_D1LCR
-	kWall_D2LCR = 10, // @  G0699_puc_Bitmap_WallSet_Wall_D2LCR
-	kWall_D3LCR = 11, // @  G0698_puc_Bitmap_WallSet_Wall_D3LCR
-	kWall_D3L2 = 12, // @  G0697_puc_Bitmap_WallSet_Wall_D3L2
-
-	kWall_D3R2 = 13, // @  G0696_puc_Bitmap_WallSet_Wall_D3R2
-	kDoorFrameRight_D1C = 14// @  G0710_puc_Bitmap_WallSet_DoorFrameRight_D1C
-};
-
 void DisplayMan::drawDungeon(direction dir, int16 posX, int16 posY) {
 	loadPalette(gPalDungeonView[0]);
 	// TODO: this is a global variable, set from here
@@ -783,16 +792,14 @@ void DisplayMan::loadWallSet(WallSet set) {
 
 	uint16 leftDoorIndice = firstIndice + kDoorFrameLeft_D1C;
 	uint16 w = width(leftDoorIndice), h = height(leftDoorIndice);
-	if (_wallSetBitMaps[kDoorFrameRight_D1C])
-		delete[] _wallSetBitMaps[kDoorFrameRight_D1C];
+	delete[] _wallSetBitMaps[kDoorFrameRight_D1C];
 	_wallSetBitMaps[kDoorFrameRight_D1C] = new byte[w * h];
 	blitToBitmap(_wallSetBitMaps[kDoorFrameLeft_D1C], w, h, _wallSetBitMaps[kDoorFrameRight_D1C], w);
 	flipBitmapHorizontal(_wallSetBitMaps[kDoorFrameRight_D1C], w, h);
 
 	uint16 leftWallIndice = firstIndice + kWall_D3L2;
 	w = width(leftWallIndice), h = height(leftWallIndice);
-	if (_wallSetBitMaps[kWall_D3R2])
-		delete[] _wallSetBitMaps[kWall_D3R2];
+	delete[] _wallSetBitMaps[kWall_D3R2];
 	_wallSetBitMaps[kWall_D3R2] = new byte[w * h];
 	blitToBitmap(_wallSetBitMaps[kWall_D3L2], w, h, _wallSetBitMaps[kWall_D3R2], w);
 	flipBitmapHorizontal(_wallSetBitMaps[kWall_D3R2], w, h);

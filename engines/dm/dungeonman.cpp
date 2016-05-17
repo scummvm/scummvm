@@ -84,7 +84,7 @@ void DungeonMan::decompressDungeonFile() {
 	f.open("Dungeon.dat");
 	if (f.readUint16BE() == 0x8104) {
 		_rawDunFileDataSize = f.readUint32BE();
-		if (_rawDunFileData) delete[] _rawDunFileData;
+		delete[] _rawDunFileData;
 		_rawDunFileData = new byte[_rawDunFileDataSize];
 		f.readUint16BE();
 		byte common[4];
@@ -209,8 +209,7 @@ void DungeonMan::loadDungeonFile() {
 	}
 
 	// load map data
-	if (_maps) delete[] _maps;
-
+	delete[] _maps;
 	_maps = new Map[_fileHeader.mapCount];
 	for (uint16 i = 0; i < _fileHeader.mapCount; ++i) {
 		_maps[i].rawDunDataOffset = dunDataStream.readUint16BE();
@@ -242,8 +241,7 @@ void DungeonMan::loadDungeonFile() {
 	}
 
 	// TODO: ??? is this - begin
-	if (_dunData.mapsFirstColumnIndex) delete[] _dunData.mapsFirstColumnIndex;
-
+	delete[] _dunData.mapsFirstColumnIndex;
 	_dunData.mapsFirstColumnIndex = new uint16[_fileHeader.mapCount];
 	uint16 columCount = 0;
 	for (uint16 i = 0; i < _fileHeader.mapCount; ++i) {
@@ -259,16 +257,14 @@ void DungeonMan::loadDungeonFile() {
 		_fileHeader.squareFirstThingCount += 300;
 
 	// TODO: ??? is this - begin
-	if (_dunData.columnsCumulativeSquareThingCount)
-		delete[] _dunData.columnsCumulativeSquareThingCount;
+	delete[] _dunData.columnsCumulativeSquareThingCount;
 	_dunData.columnsCumulativeSquareThingCount = new uint16[columCount];
 	for (uint16 i = 0; i < columCount; ++i)
 		_dunData.columnsCumulativeSquareThingCount[i] = dunDataStream.readUint16BE();
 	// TODO: ??? is this - end
 
 	// TODO: ??? is this - begin
-	if (_dunData.squareFirstThings)
-		delete[] _dunData.squareFirstThings;
+	delete[] _dunData.squareFirstThings;
 	_dunData.squareFirstThings = new Thing[_fileHeader.squareFirstThingCount];
 	for (uint16 i = 0; i < actualSquareFirstThingCount; ++i)
 		_dunData.squareFirstThings[i].set(dunDataStream.readUint16BE());
@@ -279,8 +275,7 @@ void DungeonMan::loadDungeonFile() {
 	// TODO: ??? is this - end
 
 	// load text data
-	if (_dunData.textData)
-		delete[] _dunData.textData;
+	delete[] _dunData.textData;
 	_dunData.textData = new uint16[_fileHeader.textDataWordCount];
 	for (uint16 i = 0; i < _fileHeader.textDataWordCount; ++i)
 		_dunData.textData[i] = dunDataStream.readUint16BE();
@@ -348,8 +343,7 @@ void DungeonMan::loadDungeonFile() {
 
 	if (!_messages.restartGameRequest) {
 		uint8 mapCount = _fileHeader.mapCount;
-		if (_dunData.mapData)
-			delete[] _dunData.mapData;
+		delete[] _dunData.mapData;
 		_dunData.mapData = new byte**[_dunData.columCount + mapCount];
 		byte **colFirstSquares = (byte**)_dunData.mapData + mapCount;
 		for (uint8 i = 0; i < mapCount; ++i) {
