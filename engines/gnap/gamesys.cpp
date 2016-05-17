@@ -443,7 +443,7 @@ void GameSys::seqInsertGfx(int index, int duration) {
 	seqLocateGfx(seqItem->_sequenceId, seqItem->_id, &gfxIndex);
 
 	if (gfxIndex != _gfxItemsCount)
-		memcpy(&_gfxItems[gfxIndex + sequenceResource->_animationsCount],	&_gfxItems[gfxIndex], sizeof(GfxItem) * (_gfxItemsCount - gfxIndex));
+		memmove(&_gfxItems[gfxIndex + sequenceResource->_animationsCount],	&_gfxItems[gfxIndex], sizeof(GfxItem) * (_gfxItemsCount - gfxIndex));
 	_gfxItemsCount += sequenceResource->_animationsCount;
 
 	for (int i = 0; i < sequenceResource->_animationsCount; ++i) {
@@ -523,7 +523,7 @@ void GameSys::seqRemoveGfx(int sequenceId, int id) {
 			if (gfxItem->_prevFrame._spriteId == -1) {
 				--_gfxItemsCount;
 				if (gfxIndex != _gfxItemsCount)
-					memcpy(&_gfxItems[gfxIndex], &_gfxItems[gfxIndex + 1], sizeof(GfxItem) * (_gfxItemsCount - gfxIndex));
+					memmove(&_gfxItems[gfxIndex], &_gfxItems[gfxIndex + 1], sizeof(GfxItem) * (_gfxItemsCount - gfxIndex));
 			} else {
 				gfxItem->_sequenceId = -1;
 				gfxItem->_animation = nullptr;
@@ -945,7 +945,7 @@ void GameSys::handleReqRemoveSequenceItem() {
 				++gfxIndex2a;
 			_gfxItemsCount -= gfxIndex2a - gfxIndex2;
 			if (_gfxItemsCount != gfxIndex2)
-				memcpy(&_gfxItems[gfxIndex2], &_gfxItems[gfxIndex2a], sizeof(GfxItem) * (_gfxItemsCount - gfxIndex2));
+				memmove(&_gfxItems[gfxIndex2], &_gfxItems[gfxIndex2a], sizeof(GfxItem) * (_gfxItemsCount - gfxIndex2));
 		}
 	}
 }
@@ -1095,7 +1095,7 @@ void GameSys::fatUpdateFrame() {
 						} else if (v20 && gfxItem->_prevFrame._spriteId == -1) {
 							--_gfxItemsCount;
 							if (_gfxItemsCount != i)
-								memcpy(&_gfxItems[i], &_gfxItems[i + 1], sizeof(GfxItem) * (_gfxItemsCount - i));
+								memmove(&_gfxItems[i], &_gfxItems[i + 1], sizeof(GfxItem) * (_gfxItemsCount - i));
 							--i;
 						} else {
 							gfxItem->_updFlag = false;
@@ -1112,7 +1112,7 @@ void GameSys::fatUpdateFrame() {
 		} else {
 			--_gfxItemsCount;
 			if (_gfxItemsCount != i)
-				memcpy(&_gfxItems[i], &_gfxItems[i + 1], sizeof(GfxItem) * (_gfxItemsCount - i));
+				memmove(&_gfxItems[i], &_gfxItems[i + 1], sizeof(GfxItem) * (_gfxItemsCount - i));
 			--i;
 		}
 	}
@@ -1124,7 +1124,7 @@ void GameSys::fatUpdateFrame() {
 				int insertIndex;
 				seqLocateGfx(-1, _newSpriteDrawItems[k]._id, &insertIndex);
 				if (_gfxItemsCount != insertIndex)
-					memcpy(&_gfxItems[insertIndex + 1], &_gfxItems[insertIndex], sizeof(GfxItem) * (_gfxItemsCount - insertIndex));
+					memmove(&_gfxItems[insertIndex + 1], &_gfxItems[insertIndex], sizeof(GfxItem) * (_gfxItemsCount - insertIndex));
 				++_gfxItemsCount;
 				GfxItem *gfxItem = &_gfxItems[insertIndex];
 				gfxItem->_sequenceId = -1;
