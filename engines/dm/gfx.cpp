@@ -21,6 +21,30 @@ namespace DM {
 #define kFirstFloorOrn 247 // @ C247_GRAPHIC_FIRST_FLOOR_ORNAMENT
 #define kFirstDoorOrn 303 // @ C303_GRAPHIC_FIRST_DOOR_ORNAMENT
 
+
+enum ViewSquare {
+	kViewSquare_D4C = -3, // @ CM3_VIEW_SQUARE_D4C
+	kViewSquare_D4L = -2, // @ CM2_VIEW_SQUARE_D4L
+	kViewSquare_D4R = -1, // @ CM1_VIEW_SQUARE_D4R
+	kViewSquare_D3C = 0, // @ C00_VIEW_SQUARE_D3C
+	kViewSquare_D3L = 1, // @ C01_VIEW_SQUARE_D3L
+	kViewSquare_D3R = 2, // @ C02_VIEW_SQUARE_D3R
+	kViewSquare_D2C = 3, // @ C03_VIEW_SQUARE_D2C
+	kViewSquare_D2L = 4, // @ C04_VIEW_SQUARE_D2L
+	kViewSquare_D2R = 5, // @ C05_VIEW_SQUARE_D2R
+	kViewSquare_D1C = 6, // @ C06_VIEW_SQUARE_D1C
+	kViewSquare_D1L = 7, // @ C07_VIEW_SQUARE_D1L
+	kViewSquare_D1R = 8, // @ C08_VIEW_SQUARE_D1R
+	kViewSquare_D0C = 9, // @ C09_VIEW_SQUARE_D0C
+	kViewSquare_D0L = 10, // @ C10_VIEW_SQUARE_D0L
+	kViewSquare_D0R = 11, // @ C11_VIEW_SQUARE_D0R
+	kViewSquare_D3C_Explosion = 3, // @ C03_VIEW_SQUARE_D3C_EXPLOSION
+	kViewSquare_D3L_Explosion = 4, // @ C04_VIEW_SQUARE_D3L_EXPLOSION
+	kViewSquare_D1C_Explosion = 9, // @ C09_VIEW_SQUARE_D1C_EXPLOSION
+	kViewSquare_D0C_Explosion = 12 // @ C12_VIEW_SQUARE_D0C_EXPLOSION
+};
+
+
 enum WallSetIndices {
 	kDoorFrameFront = 0, // @  G0709_puc_Bitmap_WallSet_DoorFrameFront
 	kDoorFrameLeft_D1C = 1, // @  G0708_puc_Bitmap_WallSet_DoorFrameLeft_D1C
@@ -484,9 +508,9 @@ struct Frame {
 		srcWidth(srcWidth * 2), srcHeight(srcHeight), srcX(srcX), srcY(srcY) {}
 };
 
-Frame gCeilingFrame(0, 223, 0, 28, 112, 29, 0, 0);
-Frame gFloorFrame(0, 223, 66, 135, 112, 70, 0, 0);
-Frame gWallFrameD3L2(0, 15, 25, 73, 8, 49, 0, 0); // @ FRAME G0711_s_Graphic558_Frame_Wall_D3L2
+Frame gCeilingFrame(0, 223, 0, 28, 112, 29, 0, 0); // @ K0012_s_Frame_Ceiling
+Frame gFloorFrame(0, 223, 66, 135, 112, 70, 0, 0); // @ K0013_s_Frame_Floor
+Frame gWallFrameD3L2(0, 15, 25, 73, 8, 49, 0, 0); // @ G0711_s_Graphic558_Frame_Wall_D3L2
 Frame gWallFrameD3R2(208, 223, 25, 73, 8, 49, 0, 0); // @ G0712_s_Graphic558_Frame_Wall_D3R2
 
 extern Viewport gDefultViewPort = {0, 0};
@@ -761,6 +785,7 @@ void DisplayMan::drawDungeon(direction dir, int16 posX, int16 posY) {
 	// D3L
 	int16 tmpPosX = posX, tmpPosY = posY;
 	_vm->_dungeonMan->getRelSquareType(dir, 3, -1, tmpPosX, tmpPosY);
+	drawSquareD3L(dir, posX, posY);
 
 
 
