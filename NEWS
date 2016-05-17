@@ -39,6 +39,7 @@ For a more comprehensive changelog of the latest experimental code, see:
  Lab:
    - Fixed lock-up during ending sequence.
    - Improved internal game controls.
+   - Fixed lock-up during some in-game animations.
 
  SAGA:
    - Fixed user interface colors in the French and German versions of I Have No
