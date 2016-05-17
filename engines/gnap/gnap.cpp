@@ -103,6 +103,10 @@ GnapEngine::GnapEngine(OSystem *syst, const ADGameDescription *gd) :
 		_savedTimers[i] = _timers[i] = 0;
 
 	_isWaiting = false;
+	_sceneWaiting = false;
+
+	_mousePos = Common::Point(0, 0);
+	_currGrabCursorX = _currGrabCursorY = 0;
 }
 
 GnapEngine::~GnapEngine() {
@@ -205,8 +209,7 @@ void GnapEngine::updateEvents() {
 			_keyDownState[event.kbd.keycode] = 0;
   			break;
 		case Common::EVENT_MOUSEMOVE:
-  			_mouseX = event.mouse.x;
-  			_mouseY = event.mouse.y;
+  			_mousePos = event.mouse;
   			break;
 		case Common::EVENT_LBUTTONUP:
   			_mouseButtonState._left = false;
@@ -352,7 +355,7 @@ int GnapEngine::getHotspotIndexAtPos(Common::Point pos) {
 
 void GnapEngine::updateCursorByHotspot() {
 	if (!_isWaiting) {
-		int hotspotIndex = getHotspotIndexAtPos(Common::Point(_mouseX, _mouseY));
+		int hotspotIndex = getHotspotIndexAtPos(_mousePos);
 
 		if (_debugger->_showHotspotNumber) {
 			// NOTE This causes some display glitches
@@ -474,8 +477,8 @@ void GnapEngine::setGrabCursorSprite(int index) {
 void GnapEngine::createGrabCursorSprite(int spriteId) {
 	_grabCursorSprite = _gameSys->createSurface(spriteId);
 	_gameSys->insertSpriteDrawItem(_grabCursorSprite,
-		_mouseX - (_grabCursorSprite->w / 2),
-		_mouseY - (_grabCursorSprite->h / 2),
+		_mousePos.x - (_grabCursorSprite->w / 2),
+		_mousePos.y - (_grabCursorSprite->h / 2),
 		300);
 	delayTicks(5);
 }
@@ -491,8 +494,8 @@ void GnapEngine::freeGrabCursorSprite() {
 
 void GnapEngine::updateGrabCursorSprite(int x, int y) {
 	if (_grabCursorSprite) {
-		int newGrabCursorX = _mouseX - (_grabCursorSprite->w / 2) - x;
-		int newGrabCursorY = _mouseY - (_grabCursorSprite->h / 2) - y;
+		int newGrabCursorX = _mousePos.x - (_grabCursorSprite->w / 2) - x;
+		int newGrabCursorY = _mousePos.y - (_grabCursorSprite->h / 2) - y;
 		if (_currGrabCursorX != newGrabCursorX || _currGrabCursorY != newGrabCursorY) {
 			_currGrabCursorX = newGrabCursorX;
 			_currGrabCursorY = newGrabCursorY;

@@ -286,7 +286,7 @@ public:
 	int _newCursorValue, _cursorValue;
 
 	int _verbCursor, _cursorIndex;
-	int _mouseX, _mouseY;
+	Common::Point _mousePos;
 	int _leftClickMouseX, _leftClickMouseY;
 
 	Graphics::Surface *_grabCursorSprite;
