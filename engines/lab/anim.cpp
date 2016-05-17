@@ -206,6 +206,8 @@ void Anim::diffNextFrame(bool onlyDiffData) {
 					_vm->updateEvents();
 					_vm->waitTOF();
 				}
+
+				_waitForEffect = false;
 			}
 
 			_size -= 8;
@@ -215,7 +217,9 @@ void Anim::diffNextFrame(bool onlyDiffData) {
 			_diffFile->skip(2);
 
 			// Sound effects embedded in animations are started here. These are
-			// usually animation-specific, like door opening sounds, and are not looped
+			// usually animation-specific, like door opening sounds, and are not looped.
+			// The engine should wait for all such sounds to end.
+			_waitForEffect = true;
 			_vm->_music->playSoundEffect(_sampleSpeed, _size, false, _diffFile);
 			break;
 
@@ -231,6 +235,8 @@ void Anim::diffNextFrame(bool onlyDiffData) {
 						if (drawOnScreen)
 							didTOF = true;
 					}
+
+					_waitForEffect = false;
 				}
 
 				_isPlaying = false;
