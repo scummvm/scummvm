@@ -71,6 +71,7 @@ void ScummEngine_v70he::o70_startSound() {
 		value = pop();
 		_heSndSoundId = pop();
 		_sound->addSoundToQueue(_heSndSoundId, 0, 0, 8);
+		break;
 	case 56:
 		_heSndFlags |= 16;
 		break;
