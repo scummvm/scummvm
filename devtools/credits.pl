@@ -817,6 +817,7 @@ begin_credits("Credits");
 			begin_section("Android");
 				add_person("Andre Heider", "dhewg", "");
 				add_person("Angus Lees", "Gus", "");
+				add_person("Lubomyr Lisen", "", "");
 			end_section();
 
 			begin_section("Dreamcast");
@@ -844,7 +845,7 @@ begin_credits("Credits");
 				add_person("Frantisek Dufka", "fanoush", "(retired)");
 				add_person("Tarek Soliman", "tsoliman", "");
 			end_section();
-			
+
 			begin_section("Nintendo 3DS");
 				add_person("Thomas Edvalson", "Cruel", "");
 			end_section();
