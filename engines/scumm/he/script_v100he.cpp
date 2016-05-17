@@ -626,9 +626,9 @@ void ScummEngine_v100he::o100_arrayOps() {
 		break;
 	case 132:			// SO_COMPLEX_ARRAY_MATH_OPERATION
 		{
-			// TODO: Used by room 2 script 2180 in Moonbase Commander (modify-line-of-sight)
-			int a2 = fetchScriptWord();
-			int a1 = fetchScriptWord();
+			// Used by room 2 script 2180 in Moonbase Commander (modify-line-of-sight)
+			int array2 = fetchScriptWord();
+			int array1 = fetchScriptWord();
 			type = pop();
 			int a1_dim1end = pop();
 			int a1_dim1start = pop();
@@ -657,20 +657,39 @@ void ScummEngine_v100he::o100_arrayOps() {
 			if (a12_num != a22_num || a12_num != d12_num || a11_num != a21_num || a11_num != d11_num) {
 				error("Operation size mismatch (%d vs %d)(%d vs %d)", a12_num, a22_num, a11_num, a21_num);
 			}
-			switch (type) {
-			case 1: // Addition
-				break;
-			case 2: // Subtraction
-				break;
-			case 3: // Binary AND
-				break;
-			case 4: // Binary OR
-				break;
-			case 5: // Binary XOR
-				break;
-			default:
-				error("o100_arrayOps: case 132 unknown type %d)", type);
+
+			for (; a1_dim2start <= a1_dim2end; ++a1_dim2start, ++a2_dim2start, ++dim2start) {
+				int a2dim1 = a2_dim1start;
+				int a1dim1 = a1_dim1start;
+				int dim1 = dim1start;
+				for (; a1dim1 <= a1_dim1end; ++a1dim1, ++a2dim1, ++dim1) {
+					int val1 = readArray(array1, a1_dim2start, a1dim1);
+					int val2 = readArray(array2, a2_dim2start, a2dim1);
+					int res;
+
+					switch (type) {
+					case 1: // Addition
+						res = val2 + val1;
+						break;
+					case 2: // Subtraction
+						res = val2 - val1;
+						break;
+					case 3: // Binary AND
+						res = val2 & val1;
+						break;
+					case 4: // Binary OR
+						res = val2 | val1;
+						break;
+					case 5: // Binary XOR
+						res = val2 ^ val1;
+						break;
+					default:
+						error("o100_arrayOps: case 132 unknown type %d)", type);
+					}
+					writeArray(array, dim2start, dim1, res);
+				}
 			}
+
 			warning("STUB: o100_arrayOps: case 132 type %d", type);
 			break;
 		}
