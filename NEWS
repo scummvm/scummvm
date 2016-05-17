@@ -2,6 +2,9 @@ For a more comprehensive changelog of the latest experimental code, see:
         https://github.com/scummvm/scummvm/commits/
 
 1.8.1 (2016-05-25)
+ New ports:
+   - Added Nintendo 3DS port.
+
  General:
    - Removed TESTING flag from several supported games.
    - Added Chinese Pinyin translation.
