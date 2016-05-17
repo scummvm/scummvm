@@ -357,7 +357,7 @@ void DungeonMan::loadDungeonFile() {
 			byte *square = _rawMapData + _maps[i].rawDunDataOffset;
 			*colFirstSquares++ = square;
 			for (uint16 w = 1; w <= _maps[i].width; ++w) {
-				square += _maps[w].height + 1;
+				square += _maps[i].height + 1;
 				*colFirstSquares++ = square;
 			}
 		}
