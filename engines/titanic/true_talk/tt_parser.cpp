@@ -84,7 +84,24 @@ int TTparser::processInput(TTinput *input) {
 	// Do a further search and replace of roman numerals to decimal
 	searchAndReplace(input->_normalizedLine, _replacements3);
 
-	warning("TODO: TTparser::processInput");
+	// Replace any roman numerals, spelled out words, etc. with decimal numbers
+	CTrueTalkManager::_v1 = -1000;
+	int idx = 0;
+	do {
+		idx = replaceNumbers(input->_normalizedLine, idx);
+	} while (idx >= 0);
+
+	if (CTrueTalkManager::_v1 == -1000 && !input->_normalizedLine.empty()) {
+		// Scan the text for any numeric digits
+		for (const char *strP = input->_normalizedLine.c_str(); *strP; ++strP) {
+			if (Common::isDigit(*strP)) {
+				// Found digit, so convert it and any following ones
+				CTrueTalkManager::_v1 = atoi(strP);
+				break;
+			}
+		}
+	}
+
 	return 0;
 }
 
