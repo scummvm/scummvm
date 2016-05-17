@@ -689,9 +689,6 @@ int AgiEngine::loadGame(const Common::String &fileName, bool checkId) {
 			}
 		}
 	}
-	for (i = vtEntries; i < SCREENOBJECTS_MAX; i++) {
-		memset(&_game.screenObjTable[i], 0, sizeof(ScreenObjEntry));
-	}
 
 	// Fix some pointers in screenObjTable
 
