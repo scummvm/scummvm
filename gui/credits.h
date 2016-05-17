@@ -343,6 +343,7 @@ static const char *credits[] = {
 "C1""Android",
 "C0""Andre Heider",
 "C0""Angus Lees",
+"C0""Lubomyr Lisen",
 "",
 "C1""Dreamcast",
 "C0""Marcus Comstedt",
