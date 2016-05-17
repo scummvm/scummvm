@@ -360,7 +360,57 @@ int TTparser::searchAndReplace(TTstring &line, int startIndex, const StringArray
 	return startIndex;
 }
 
-const NumberEntry *TTparser::replaceNumbers(TTstring &line, int *startIndex) {
+int TTparser::replaceNumbers(TTstring &line, int startIndex) {
+	int index = startIndex;
+	const NumberEntry *numEntry = replaceNumbers2(line, &index);
+	if (!numEntry || !(numEntry->_flags & NF_2))
+		return index;
+
+	bool flag1 = false, flag2 = false, flag3 = false;
+	int total = 0, factor = 0;
+
+	do {
+		if (numEntry->_flags & NF_1) {
+			flag2 = true;
+			if (numEntry->_flags & NF_8)
+				flag1 = true;
+
+			if (numEntry->_flags & NF_4) {
+				flag3 = true;
+				factor *= numEntry->_value;
+			}
+
+			if (numEntry->_flags & NF_2) {
+				if (flag3) {
+					total += factor;
+					factor = 0;
+				}
+
+				factor += numEntry->_value;
+			}
+		}
+	} while (replaceNumbers2(line, &index));
+
+	if (!flag2)
+		return index;
+
+	if (index >= 0) {
+		if (line[index - 1] != ' ')
+			return index;
+	}
+
+	total += factor;
+	CTrueTalkManager::_v1 = total;
+	if (flag1)
+		total = -total;
+
+	CString numStr = CString::format("%d", total);
+	line = CString(line.c_str(), line.c_str() + startIndex) + numStr +
+		CString(line.c_str() + index);
+	return index;
+}
+
+const NumberEntry *TTparser::replaceNumbers2(TTstring &line, int *startIndex) {
 	int lineSize = line.size();
 	int index = *startIndex;
 	if (index < 0 || index >= lineSize) {
@@ -373,7 +423,7 @@ const NumberEntry *TTparser::replaceNumbers(TTstring &line, int *startIndex) {
 	for (uint idx = 0; idx < _numbers.size(); ++idx) {
 		NumberEntry &ne = _numbers[idx];
 		if (!strncmp(line.c_str() + index, ne._text.c_str(), ne._text.size())) {
-			if ((ne._flags & NF_10) || (index + ne._text.size()) >= lineSize ||
+			if ((ne._flags & NF_10) || (index + (int)ne._text.size()) >= lineSize ||
 					line[index + ne._text.size()] == ' ') {
 				*startIndex += ne._text.size();
 				numEntry = &ne;

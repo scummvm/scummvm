@@ -28,7 +28,7 @@
 
 namespace Titanic {
 
-enum NumberFlag { NF_2 = 2, NF_8 = 8, NF_10 = 0x10 };
+enum NumberFlag { NF_1 = 1, NF_2 = 2, NF_4 = 4, NF_8 = 8, NF_10 = 0x10 };
 
 class CScriptHandler;
 
@@ -94,6 +94,16 @@ private:
 	static int searchAndReplace(TTstring &line, int startIndex, const StringArray &strings);
 
 	/**
+	* Checks the string starting at a given index for a number representation
+	* such as roman numericals, spelled out numbers, etc. and replaces it with
+	* a plain decimal representation.
+	* @param line		Line to check
+	* @param startIndex	Starting index in the start to check
+	* @returns			Index of the start of the following word, or -1 if at end of line
+	*/
+	int replaceNumbers(TTstring &line, int startIndex);
+
+	/**
 	 * Checks the string starting at a given index for a number representation
 	 * such as roman numericals, spelled out numbers, etc. and replaces it with
 	 * a plain decimal representation.
@@ -101,7 +111,7 @@ private:
 	 * @param startIndex	Starting index in the start to check
 	 * @returns				Pointer to matching number entry, if match occurred
 	 */
-	const NumberEntry *replaceNumbers(TTstring &line, int *startIndex);
+	const NumberEntry *replaceNumbers2(TTstring &line, int *startIndex);
 public:
 	CScriptHandler *_owner;
 	int _field4;
