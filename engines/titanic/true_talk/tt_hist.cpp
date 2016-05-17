@@ -20,63 +20,13 @@
  *
  */
 
-#ifndef TITANIC_TT_SCRIPT_BASE_H
-#define TITANIC_TT_SCRIPT_BASE_H
-
-#include "titanic/true_talk/tt_string.h"
 #include "titanic/true_talk/tt_hist.h"
+#include "titanic/true_talk/tt_input.h"
 
 namespace Titanic {
 
-enum ScriptChangedResult {
-	SCR_1 = 1, SCR_2 = 2, SCR_3 = 3, SCR_4 = 4, SCR_5 = 5
-};
-
-class TTinput;
-
-class TTscriptBase {
-private:
-	void reset();
-protected:
-	int _field4;
-	int _field8;
-	TThist *_hist;
-	TTstring _charName, _charClass;
-	int _field20;
-	int _field24;
-	int _field28;
-	int _field2C;
-	int _field30;
-	int _field34;
-	int _field38;
-	int _field3C;
-	int _field40;
-	int _field44;
-	int _field48;
-	int _status;
-public:
-	TTscriptBase(int v1, const char *charClass, int v2, const char *charName,
-		int v3, int v4, int v5, int v6, int v7);
-
-	bool areNamesValid();
-
-	int getStatus() const { return _status; }
-
-	/**
-	 * Gets passed a newly created input wrapper during conversation text processing
-	 */
-	int preprocess(TTinput *input);
-
-	virtual void proc2(int v);
-
-	virtual void proc3(int v);
-
-	virtual void proc4(int v);
-
-	virtual void proc5();
-};
-
+TThist::TThist(TTinput *input) {
+	// TODO
+}
 
 } // End of namespace Titanic
-
-#endif /* TITANIC_TT_SCRIPT_BASE_H */

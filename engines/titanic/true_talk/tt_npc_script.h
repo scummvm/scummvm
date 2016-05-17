@@ -28,7 +28,6 @@
 
 namespace Titanic {
 
-
 class TTnpcScriptBase : public TTscriptBase {
 protected:
 	int _field54;

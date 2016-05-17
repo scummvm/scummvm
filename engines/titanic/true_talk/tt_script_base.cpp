@@ -28,7 +28,7 @@ namespace Titanic {
 TTscriptBase::TTscriptBase(int v1, const char *charClass, int v2,
 		const char *charName, int v3, int v4, int v5, int v6, int v7) :
 		_charName(charName), _charClass(charClass), 
-		_field4(0), _field8(0), _fieldC(0),
+		_field4(0), _field8(0), _hist(nullptr),
 		_field20(0), _field24(0), _field28(0), _field2C(0),
 		_field30(0), _field34(0), _field38(0), _field3C(0),
 		_field40(0), _field44(0), _field48(0), _status(0) {
@@ -59,7 +59,7 @@ bool TTscriptBase::areNamesValid() {
 void TTscriptBase::reset() {
 	_field4 = 0;
 	_field8 = 4;
-	_fieldC = 0;
+	_hist = nullptr;
 	_field20 = 0;
 	_field24 = -1;
 	_field28 = -1;
@@ -74,8 +74,10 @@ void TTscriptBase::reset() {
 }
 
 int TTscriptBase::preprocess(TTinput *input) {
-	warning("TODO: TTscriptBase::preprocess");
-	return 0;
+	delete _hist;
+	_hist = new TTscriptHist(input);
+
+	return _hist ? SS_VALID : SS_7;
 }
 
 void TTscriptBase::proc2(int v) {
