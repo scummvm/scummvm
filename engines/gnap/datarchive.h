@@ -36,10 +36,10 @@
 namespace Gnap {
 
 struct DatEntry {
-    uint32 _ofs;
-    uint32 _outSize1;
-    uint32 _type;
-    uint32 _outSize2;
+	uint32 _ofs;
+	uint32 _outSize1;
+	uint32 _type;
+	uint32 _outSize2;
 };
 
 class DatArchive {

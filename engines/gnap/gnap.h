@@ -93,7 +93,7 @@ enum GnapDebugChannels {
 };
 
 enum {
-	SF_NONE             = 0x0000,
+	SF_NONE				= 0x0000,
 	SF_LOOK_CURSOR		= 0x0001,
 	SF_GRAB_CURSOR		= 0x0002,
 	SF_TALK_CURSOR		= 0x0004,

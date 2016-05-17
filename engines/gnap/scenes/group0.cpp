@@ -2297,8 +2297,8 @@ void Scene06::updateHotspots() {
 	_vm->setHotspot(kHS06WalkArea4, 475, 469, 800, 505);
 	_vm->setHotspot(kHS06WalkArea5, 0, 0, 800, 504);
 	_vm->setDeviceHotspot(kHS06Device, -1, -1, -1, -1);
-    if (_vm->isFlag(kGFGasTaken))
-    	_vm->_hotspots[kHS06Ladder]._flags = SF_DISABLED;
+	if (_vm->isFlag(kGFGasTaken))
+		_vm->_hotspots[kHS06Ladder]._flags = SF_DISABLED;
 	if (_vm->_cursorValue == 4) {
 		_vm->_hotspots[kHS06Ladder]._flags = SF_DISABLED;
 		_vm->_hotspots[kHS06Gas]._flags = SF_DISABLED;

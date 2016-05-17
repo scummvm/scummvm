@@ -47,9 +47,9 @@ DatArchive::DatArchive(const char *filename) {
 	_entries = new DatEntry[_entriesCount];
 	for (int i = 0; i < _entriesCount; ++i) {
 		_entries[i]._ofs = _fd->readUint32LE();
-    	_entries[i]._outSize1 = _fd->readUint32LE();
-    	_entries[i]._type = _fd->readUint32LE();
-    	_entries[i]._outSize2 = _fd->readUint32LE();
+		_entries[i]._outSize1 = _fd->readUint32LE();
+		_entries[i]._type = _fd->readUint32LE();
+		_entries[i]._outSize2 = _fd->readUint32LE();
 	}
 }
 
