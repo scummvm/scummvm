@@ -64,7 +64,7 @@ public:
 	/**
 	 * Gets passed a newly created input wrapper during conversation text processing
 	 */
-	int processInput(TTinput *input);
+	int preprocess(TTinput *input);
 
 	virtual void proc2(int v);
 

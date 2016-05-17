@@ -124,9 +124,10 @@ public:
 	TTparser(CScriptHandler *owner);
 
 	/**
-	 * Gets passed a newly created input wrapper during conversation text processing
+	 * Preprocesses the passed input text, to handle things like lowercasing
+	 * all the words, and replcaing common slang with their full equivalents
 	 */
-	int processInput(TTinput *input);
+	int preprocess(TTinput *input);
 };
 
 } // End of namespace Titanic

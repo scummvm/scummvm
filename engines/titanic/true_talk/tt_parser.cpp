@@ -66,7 +66,7 @@ void TTparser::loadArrays() {
 
 }
 
-int TTparser::processInput(TTinput *input) {
+int TTparser::preprocess(TTinput *input) {
 	_input = input;
 	if (normalize(input))
 		return 0;

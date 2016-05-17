@@ -73,8 +73,8 @@ void TTscriptBase::reset() {
 	_field48 = 0;
 }
 
-int TTscriptBase::processInput(TTinput *input) {
-	warning("TODO: TTscriptBase::processInput");
+int TTscriptBase::preprocess(TTinput *input) {
+	warning("TODO: TTscriptBase::preprocess");
 	return 0;
 }
 
