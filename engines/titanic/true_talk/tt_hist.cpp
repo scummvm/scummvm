@@ -21,11 +21,11 @@
  */
 
 #include "titanic/true_talk/tt_hist.h"
-#include "titanic/true_talk/tt_input.h"
+#include "titanic/true_talk/tt_sentence.h"
 
 namespace Titanic {
 
-TThist::TThist(TTinput *input) {
+TThist::TThist(TTsentence *sentence) {
 	// TODO
 }
 

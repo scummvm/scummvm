@@ -73,9 +73,9 @@ void TTscriptBase::reset() {
 	_field48 = 0;
 }
 
-int TTscriptBase::preprocess(TTinput *input) {
+int TTscriptBase::preprocess(TTsentence *sentence) {
 	delete _hist;
-	_hist = new TTscriptHist(input);
+	_hist = new TTscriptHist(sentence);
 
 	return _hist ? SS_VALID : SS_7;
 }

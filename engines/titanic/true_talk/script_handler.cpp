@@ -21,7 +21,7 @@
  */
 
 #include "titanic/true_talk/script_handler.h"
-#include "titanic/true_talk/tt_input.h"
+#include "titanic/true_talk/tt_sentence.h"
 #include "titanic/titanic.h"
 
 namespace Titanic {
@@ -63,15 +63,15 @@ int CScriptHandler::processInput(TTroomScript *roomScript, TTnpcScript *npcScrip
 	if (!roomScript || !line.isValid())
 		return SS_5;
 	
-	TTinput *input = new TTinput(_inputCtr++, line, this, roomScript, npcScript);
-	_parser.preprocess(input);
-	roomScript->preprocess(input);
-	npcScript->preprocess(input);
+	TTsentence *sentence = new TTsentence(_inputCtr++, line, this, roomScript, npcScript);
+	_parser.preprocess(sentence);
+	roomScript->preprocess(sentence);
+	npcScript->preprocess(sentence);
 
 	warning("TODO: CScriptHandler::processInput");
 
 	// TODO
-	delete input;
+	delete sentence;
 	return SS_VALID;
 }
 

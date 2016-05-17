@@ -20,61 +20,28 @@
  *
  */
 
-#ifndef TITANIC_TT_INPUT_H
-#define TITANIC_TT_INPUT_H
-
-#include "titanic/true_talk/tt_npc_script.h"
-#include "titanic/true_talk/tt_room_script.h"
-#include "titanic/true_talk/tt_string.h"
+#include "titanic/true_talk/tt_sentence.h"
+#include "titanic/true_talk/script_handler.h"
 
 namespace Titanic {
 
-class CScriptHandler;
+TTsentenceSubBase::TTsentenceSubBase() : _field0(0), _field4(0), _field8(0),
+	_fieldC(0), _field10(0), _field14(0), _field18(0), _field1C(0),
+	_field20(0), _field24(0) {
+}
 
-class TTinputSubBase {
-public:
-	int _field0;
-	int _field4;
-	int _field8;
-	int _fieldC;
-	int _field10;
-	int _field14;
-	int _field18;
-	int _field1C;
-	int _field20;
-	int _field24;
-public:
-	TTinputSubBase();
-};
+/*------------------------------------------------------------------------*/
 
-class TTinputSub : public TTinputSubBase {
-public:
-};
+TTsentence::TTsentence(int inputCtr, const TTstring &line, CScriptHandler *owner,
+		TTroomScript *roomScript, TTnpcScript *npcScript) :
+		_owner(owner), _field2C(1), _inputCtr(inputCtr), _field34(0),
+		_field38(0), _initialLine(line), _field4C(0), _roomScript(roomScript),
+		_npcScript(npcScript), _field58(0), _field5C(0) {
+	_status = _initialLine.isValid() && _normalizedLine.isValid() ? SS_11: SS_VALID;
+}
 
-class TTinput {
-private:
-	CScriptHandler *_owner;
-	TTinputSub _sub;
-	int _field2C;
-	int _inputCtr;
-	int _field34;
-	int _field38;
-	int _field4C;
-	TTroomScript *_roomScript;
-	TTnpcScript *_npcScript;
-	int _field58;
-	int _field5C;
-	int _status;
-public:
-	TTstring _initialLine;
-	TTstring _normalizedLine;
-public:
-	TTinput(int inputCtr, const TTstring &line, CScriptHandler *owner,
-		TTroomScript *roomScript, TTnpcScript *npcScript);
-
-	void set38(int v);
-};
+void TTsentence::set38(int val) {
+	_field38 = val;
+}
 
 } // End of namespace Titanic
-
-#endif /* TITANIC_TT_INPUT_H */

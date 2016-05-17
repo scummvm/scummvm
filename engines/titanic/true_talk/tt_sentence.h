@@ -20,28 +20,61 @@
  *
  */
 
-#include "titanic/true_talk/tt_input.h"
-#include "titanic/true_talk/script_handler.h"
+#ifndef TITANIC_TT_SENTENCE_H
+#define TITANIC_TT_SENTENCE_H
+
+#include "titanic/true_talk/tt_npc_script.h"
+#include "titanic/true_talk/tt_room_script.h"
+#include "titanic/true_talk/tt_string.h"
 
 namespace Titanic {
 
-TTinputSubBase::TTinputSubBase() : _field0(0), _field4(0), _field8(0),
-	_fieldC(0), _field10(0), _field14(0), _field18(0), _field1C(0),
-	_field20(0), _field24(0) {
-}
+class CScriptHandler;
 
-/*------------------------------------------------------------------------*/
+class TTsentenceSubBase {
+public:
+	int _field0;
+	int _field4;
+	int _field8;
+	int _fieldC;
+	int _field10;
+	int _field14;
+	int _field18;
+	int _field1C;
+	int _field20;
+	int _field24;
+public:
+	TTsentenceSubBase();
+};
 
-TTinput::TTinput(int inputCtr, const TTstring &line, CScriptHandler *owner,
-		TTroomScript *roomScript, TTnpcScript *npcScript) :
-		_owner(owner), _field2C(1), _inputCtr(inputCtr), _field34(0),
-		_field38(0), _initialLine(line), _field4C(0), _roomScript(roomScript),
-		_npcScript(npcScript), _field58(0), _field5C(0) {
-	_status = _initialLine.isValid() && _normalizedLine.isValid() ? SS_11: SS_VALID;
-}
+class TTsentenceSub : public TTsentenceSubBase {
+public:
+};
 
-void TTinput::set38(int val) {
-	_field38 = val;
-}
+class TTsentence {
+private:
+	CScriptHandler *_owner;
+	TTsentenceSub _sub;
+	int _field2C;
+	int _inputCtr;
+	int _field34;
+	int _field38;
+	int _field4C;
+	TTroomScript *_roomScript;
+	TTnpcScript *_npcScript;
+	int _field58;
+	int _field5C;
+	int _status;
+public:
+	TTstring _initialLine;
+	TTstring _normalizedLine;
+public:
+	TTsentence(int inputCtr, const TTstring &line, CScriptHandler *owner,
+		TTroomScript *roomScript, TTnpcScript *npcScript);
+
+	void set38(int v);
+};
 
 } // End of namespace Titanic
+
+#endif /* TITANIC_TT_SENTENCE_H */

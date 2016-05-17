@@ -23,7 +23,7 @@
 #ifndef TITANIC_TT_PARSER_H
 #define TITANIC_TT_PARSER_H
 
-#include "titanic/true_talk/tt_input.h"
+#include "titanic/true_talk/tt_sentence.h"
 #include "titanic/true_talk/tt_string.h"
 
 namespace Titanic {
@@ -60,7 +60,7 @@ private:
 	 * Normalizes a passed input, taking care of things like removing extra
 	 * spaces and lowercasing everything
 	 */
-	int normalize(TTinput *input);
+	int normalize(TTsentence *sentence);
 	
 	/**
 	 * Submethod called by normalize to handle expanding contacted word pairs
@@ -115,7 +115,7 @@ private:
 public:
 	CScriptHandler *_owner;
 	int _field4;
-	TTinput *_input;
+	TTsentence *_sentence;
 	int _fieldC;
 	int _field10;
 	int _field14;
@@ -127,7 +127,7 @@ public:
 	 * Preprocesses the passed input text, to handle things like lowercasing
 	 * all the words, and replcaing common slang with their full equivalents
 	 */
-	int preprocess(TTinput *input);
+	int preprocess(TTsentence *sentence);
 };
 
 } // End of namespace Titanic

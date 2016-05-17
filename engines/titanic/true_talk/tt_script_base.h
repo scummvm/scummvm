@@ -32,7 +32,7 @@ enum ScriptChangedResult {
 	SCR_1 = 1, SCR_2 = 2, SCR_3 = 3, SCR_4 = 4, SCR_5 = 5
 };
 
-class TTinput;
+class TTsentence;
 
 class TTscriptBase {
 private:
@@ -65,7 +65,7 @@ public:
 	/**
 	 * Gets passed a newly created input wrapper during conversation text processing
 	 */
-	int preprocess(TTinput *input);
+	int preprocess(TTsentence *sentence);
 
 	virtual void proc2(int v);
 

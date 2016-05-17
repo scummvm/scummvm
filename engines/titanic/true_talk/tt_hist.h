@@ -25,19 +25,19 @@
 
 namespace Titanic {
 
-class TTinput;
+class TTsentence;
 
 class TThist {
 protected:
 	int _field0;
-	TTinput *_input;
+	TTsentence *_input;
 public:
-	TThist(TTinput *input);
+	TThist(TTsentence *sentence);
 };
 
 class TTscriptHist : public TThist {
 public:
-	TTscriptHist(TTinput *input) : TThist(input) {}
+	TTscriptHist(TTsentence *sentence) : TThist(sentence) {}
 };
 
 } // End of namespace Titanic

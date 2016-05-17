@@ -22,13 +22,13 @@
 
 #include "titanic/true_talk/tt_parser.h"
 #include "titanic/true_talk/script_handler.h"
-#include "titanic/true_talk/tt_input.h"
+#include "titanic/true_talk/tt_sentence.h"
 #include "titanic/titanic.h"
 
 namespace Titanic {
 
 TTparser::TTparser(CScriptHandler *owner) : _owner(owner), _field4(0),
-		_input(nullptr), _fieldC(0), _field10(0), _field14(0), _field18(0) {
+		_sentence(nullptr), _fieldC(0), _field10(0), _field14(0), _field18(0) {
 	loadArrays();
 }
 
@@ -66,34 +66,34 @@ void TTparser::loadArrays() {
 
 }
 
-int TTparser::preprocess(TTinput *input) {
-	_input = input;
-	if (normalize(input))
+int TTparser::preprocess(TTsentence *sentence) {
+	_sentence = sentence;
+	if (normalize(sentence))
 		return 0;
 
 	// Scan for and replace common slang and contractions with verbose versions
-	searchAndReplace(input->_normalizedLine, _replacements1);
-	searchAndReplace(input->_normalizedLine, _replacements2);
+	searchAndReplace(sentence->_normalizedLine, _replacements1);
+	searchAndReplace(sentence->_normalizedLine, _replacements2);
 
 	// Check entire normalized line against common phrases to replace
 	for (uint idx = 0; idx < _phrases.size(); idx += 2) {
-		if (!_phrases[idx].compareTo(input->_normalizedLine))
-			input->_normalizedLine = _phrases[idx + 1];
+		if (!_phrases[idx].compareTo(sentence->_normalizedLine))
+			sentence->_normalizedLine = _phrases[idx + 1];
 	}
 
 	// Do a further search and replace of roman numerals to decimal
-	searchAndReplace(input->_normalizedLine, _replacements3);
+	searchAndReplace(sentence->_normalizedLine, _replacements3);
 
 	// Replace any roman numerals, spelled out words, etc. with decimal numbers
 	CTrueTalkManager::_v1 = -1000;
 	int idx = 0;
 	do {
-		idx = replaceNumbers(input->_normalizedLine, idx);
+		idx = replaceNumbers(sentence->_normalizedLine, idx);
 	} while (idx >= 0);
 
-	if (CTrueTalkManager::_v1 == -1000 && !input->_normalizedLine.empty()) {
+	if (CTrueTalkManager::_v1 == -1000 && !sentence->_normalizedLine.empty()) {
 		// Scan the text for any numeric digits
-		for (const char *strP = input->_normalizedLine.c_str(); *strP; ++strP) {
+		for (const char *strP = sentence->_normalizedLine.c_str(); *strP; ++strP) {
 			if (Common::isDigit(*strP)) {
 				// Found digit, so convert it and any following ones
 				CTrueTalkManager::_v1 = atoi(strP);
@@ -105,9 +105,9 @@ int TTparser::preprocess(TTinput *input) {
 	return 0;
 }
 
-int TTparser::normalize(TTinput *input) {
+int TTparser::normalize(TTsentence *sentence) {
 	TTstring *destLine = new TTstring();
-	const TTstring &srcLine = input->_initialLine;
+	const TTstring &srcLine = sentence->_initialLine;
 	int srcSize = srcLine.size();
 	int savedIndex = 0;
 	int counter1 = 0;
@@ -124,7 +124,7 @@ int TTparser::normalize(TTinput *input) {
 			(*destLine) += toupper(c);
 		} else if (Common::isDigit(c)) {
 			if (c == '0' && isEmoticon(srcLine, index)) {
-				input->set38(10);
+				sentence->set38(10);
 			} else {
 				// Iterate through all the digits of the number
 				(*destLine) += c;
@@ -135,7 +135,7 @@ int TTparser::normalize(TTinput *input) {
 			bool flag = false;
 			switch (c) {
 			case '!':
-				input->set38(3);
+				sentence->set38(3);
 				break;
 			
 			case '\'':
@@ -144,13 +144,13 @@ int TTparser::normalize(TTinput *input) {
 				break;
 			
 			case '.':
-				input->set38(1);
+				sentence->set38(1);
 				break;
 			
 			case ':':
 				commandVal = isEmoticon(srcLine, index);
 				if (commandVal) {
-					input->set38(commandVal);
+					sentence->set38(commandVal);
 					index += 2;
 				} else {
 					flag = true;
@@ -160,10 +160,10 @@ int TTparser::normalize(TTinput *input) {
 			case ';':
 				commandVal = isEmoticon(srcLine, index);
 				if (commandVal == 6) {
-					input->set38(7);
+					sentence->set38(7);
 					index += 2;
 				} else if (commandVal != 0) {
-					input->set38(commandVal);
+					sentence->set38(commandVal);
 					index += 2;
 				}
 				break;
@@ -172,7 +172,7 @@ int TTparser::normalize(TTinput *input) {
 				++index;
 				commandVal = isEmoticon(srcLine, index);
 				if (commandVal == 6) {
-					input->set38(12);
+					sentence->set38(12);
 				} else {
 					--index;
 					flag = true;
@@ -183,7 +183,7 @@ int TTparser::normalize(TTinput *input) {
 				++index;
 				commandVal = isEmoticon(srcLine, index);
 				if (commandVal == 6 || commandVal == 9) {
-					input->set38(11);
+					sentence->set38(11);
 				} else {
 					--index;
 					flag = true;
@@ -191,7 +191,7 @@ int TTparser::normalize(TTinput *input) {
 				break;
 
 			case '?':
-				input->set38(2);
+				sentence->set38(2);
 				break;
 
 			default:
@@ -207,14 +207,14 @@ int TTparser::normalize(TTinput *input) {
 	}
 
 	if (counter1 >= 4)
-		input->set38(4);
+		sentence->set38(4);
 
 	// Remove any trailing spaces
 	while (destLine->hasSuffix(" "))
 		destLine->deleteLastChar();
 
 	// Copy out the normalized line
-	input->_normalizedLine = *destLine;
+	sentence->_normalizedLine = *destLine;
 	delete destLine;
 
 	return 0;
