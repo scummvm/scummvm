@@ -284,7 +284,7 @@ void GameSys::drawTextToSurface(Graphics::Surface *surface, int x, int y, byte r
 			const byte *data = _dejaVuSans9ptCharBitmaps + _dejaVuSans9ptCharDescriptors[c]._offset;
 			for (int xc = 0; xc < w; ++xc) {
 				for (int yc = 15; yc >= 0; --yc) {
-					byte *dst = (byte*)surface->getBasePtr(x + xc, y + yc);
+					byte *dst = (byte *)surface->getBasePtr(x + xc, y + yc);
 					if (data[1 - (yc >> 3)] & (1 << (yc & 7)))
 						WRITE_LE_UINT32(dst, color);
 				}
@@ -387,8 +387,8 @@ void GameSys::drawBitmap(int resourceId) {
 		bmpSurface->w != _backgroundSurface->w || bmpSurface->h != _backgroundSurface->h) {
 		debugC(kDebugBasic, "GameSys::drawBitmap() Different bitmap properties than current background");
 	} else {
-		byte *src = (byte*)bmpSurface->getPixels();
-		byte *dst = (byte*)_backgroundSurface->getPixels();
+		byte *src = (byte *)bmpSurface->getPixels();
+		byte *dst = (byte *)_backgroundSurface->getPixels();
 		const int pitch = bmpSurface->pitch;
 		int height = bmpSurface->h;
 		while (height--) {
@@ -606,8 +606,8 @@ void GameSys::restoreBackgroundRect(const Common::Rect &rect) {
 	Common::Rect clipRect;
 	if (!intersectRect(clipRect, rect, _screenRect))
 		return;
-	byte *src = (byte*)_backgroundSurface->getBasePtr(clipRect.left, clipRect.top);
-	byte *dst = (byte*)_frontSurface->getBasePtr(clipRect.left, clipRect.top);
+	byte *src = (byte *)_backgroundSurface->getBasePtr(clipRect.left, clipRect.top);
+	byte *dst = (byte *)_frontSurface->getBasePtr(clipRect.left, clipRect.top);
 	const int bytes = _backgroundSurface->format.bytesPerPixel * clipRect.width();
 	int height = clipRect.height();
 	while (height--) {
@@ -621,8 +621,8 @@ void GameSys::blitSurface32(Graphics::Surface *destSurface, int x, int y, Graphi
 	Common::Rect &sourceRect, bool transparent) {
 
 	const int sourcePitch = sourceSurface->pitch;
-	byte *dst = (byte*)destSurface->getBasePtr(x, y);
-	byte *src = (byte*)sourceSurface->getBasePtr(sourceRect.left, sourceRect.top);
+	byte *dst = (byte *)destSurface->getBasePtr(x, y);
+	byte *src = (byte *)sourceSurface->getBasePtr(sourceRect.left, sourceRect.top);
 	int width = sourceRect.width();
 	int height = sourceRect.height();
 	while (height--) {
@@ -644,7 +644,7 @@ void GameSys::blitSprite32(Graphics::Surface *destSurface, int x, int y, byte *s
 	int sourceWidth, Common::Rect &sourceRect, uint32 *sourcePalette, bool transparent) {
 
 	const int sourcePitch = (sourceWidth + 3) & 0xFFFFFFFC;
-	byte *dst = (byte*)destSurface->getBasePtr(x, y);
+	byte *dst = (byte *)destSurface->getBasePtr(x, y);
 	byte *src = sourcePixels + sourceRect.left + sourcePitch * sourceRect.top;
 	int width = sourceRect.width();
 	int height = sourceRect.height();
@@ -677,7 +677,7 @@ void GameSys::blitSpriteScaled32(Graphics::Surface *destSurface, Common::Rect &f
 	const int sourcePitch = (sourceWidth + 3) & 0xFFFFFFFC;
 
 	if (!frameRect.equals(destRect)) {
-		byte *dst = (byte*)destSurface->getBasePtr(destRect.left, destRect.top);
+		byte *dst = (byte *)destSurface->getBasePtr(destRect.left, destRect.top);
 		byte *src = sourcePixels + sourcePitch * sourceRect.top + sourceRect.left;
 		const int height = destRect.bottom - destRect.top;
 		const int width = destRect.right - destRect.left;
@@ -704,7 +704,7 @@ void GameSys::blitSpriteScaled32(Graphics::Surface *destSurface, Common::Rect &f
 			hsrc = src + sourcePitch * ((yi + 0x8000) >> 16);
 		}
 	} else {
-		byte *dst = (byte*)destSurface->getBasePtr(frameRect.left, frameRect.top);
+		byte *dst = (byte *)destSurface->getBasePtr(frameRect.left, frameRect.top);
 		byte *src = sourcePixels + sourcePitch * sourceRect.top + sourceRect.left;
 		const int height = frameRect.bottom - frameRect.top;
 		const int width = frameRect.right - frameRect.left;
@@ -887,7 +887,7 @@ void GameSys::drawSprites() {
 void GameSys::updateRect(const Common::Rect &r) {
 	debugC(kDebugBasic, "GameSys::updateRect() %d, %d, %d, %d [%d, %d]", r.left, r.top, r.right, r.bottom, r.width(), r.height());
 	if (r.width() > 0 && r.height() > 0) {
-		byte *pixels = (byte*)_frontSurface->getBasePtr(r.left, r.top);
+		byte *pixels = (byte *)_frontSurface->getBasePtr(r.left, r.top);
 		_vm->_system->copyRectToScreen(pixels, _frontSurface->pitch, r.left, r.top,
 			r.width(), r.height());
 	}

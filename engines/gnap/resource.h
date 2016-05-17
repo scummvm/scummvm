@@ -157,7 +157,7 @@ protected:
 		~Resource() { delete _obj; }
 	};
 
-	typedef Common::HashMap<int, Resource*> CacheMap;
+	typedef Common::HashMap<int, Resource *> CacheMap;
 	typedef typename CacheMap::iterator CacheMapIterator;
 
 	DatManager *_dat;

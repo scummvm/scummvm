@@ -90,8 +90,8 @@ void SceneIntro::run() {
 				} else {
 					// The intro AVI is played upside down, it's the only video played in the English version
 					for (uint16 y = 0; y < frame->h / 2; y++) {
-						uint32 *ptrFrom = (uint32*)frame->getBasePtr(0, y);
-						uint32 *ptrTo = (uint32*)frame->getBasePtr(0, frame->h - y - 1);
+						uint32 *ptrFrom = (uint32 *)frame->getBasePtr(0, y);
+						uint32 *ptrTo = (uint32 *)frame->getBasePtr(0, frame->h - y - 1);
 						for (uint16 x = 0; x < frame->w; x++) {
 							uint32 t = *ptrFrom; 
 							*ptrFrom = *ptrTo;

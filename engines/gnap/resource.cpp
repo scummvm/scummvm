@@ -96,7 +96,7 @@ SpriteResource::SpriteResource(int resourceId, byte *data, uint32 size) {
 	_unknownVal2 = READ_LE_UINT16(_data + 6);
 	_transparent = (READ_LE_UINT16(_data + 8) != 0);
 	_colorsCount = READ_LE_UINT16(_data + 10);
-	_palette = (uint32*)(_data + 12);
+	_palette = (uint32 *)(_data + 12);
 	_pixels = _data + 12 + _colorsCount * 4;
 	debugC(kDebugBasic, "SpriteResource() width: %d; height: %d; colorsCount: %d", _width, _height, _colorsCount);
 }
