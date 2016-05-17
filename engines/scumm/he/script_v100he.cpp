@@ -625,42 +625,55 @@ void ScummEngine_v100he::o100_arrayOps() {
 		}
 		break;
 	case 132:			// SO_COMPLEX_ARRAY_MATH_OPERATION
-		// TODO: Used by room 2 script 2180 in Moonbase Commander (modify-line-of-sight)
-		fetchScriptWord();
-		fetchScriptWord();
-		type = pop();
-		pop();
-		pop();
-		pop();
-		pop();
-		pop();
-		pop();
-		pop();
-		pop();
-		dim1end = pop();
-		dim1start = pop();
-		dim2end = pop();
-		dim2start = pop();
-		id = readVar(array);
-		if (id == 0) {
-			defineArray(array, kDwordArray, dim2start, dim2end, dim1start, dim1end);
+		{
+			// TODO: Used by room 2 script 2180 in Moonbase Commander (modify-line-of-sight)
+			int a2 = fetchScriptWord();
+			int a1 = fetchScriptWord();
+			type = pop();
+			int a1_dim1end = pop();
+			int a1_dim1start = pop();
+			int a1_dim2end = pop();
+			int a1_dim2start = pop();
+			int a2_dim1end = pop();
+			int a2_dim1start = pop();
+			int a2_dim2end = pop();
+			int a2_dim2start = pop();
+			dim1end = pop();
+			dim1start = pop();
+			dim2end = pop();
+			dim2start = pop();
+
+			int a12_num = a1_dim2end - a1_dim2start + 1;
+			int a11_num = a1_dim1end - a1_dim1start + 1;
+			int a22_num = a2_dim2end - a2_dim2start + 1;
+			int a21_num = a2_dim1end - a2_dim1start + 1;
+			int d12_num = dim2end - dim2start + 1;
+			int d11_num = dim1end - dim1start + 1;
+
+			id = readVar(array);
+			if (id == 0) {
+				defineArray(array, kDwordArray, dim2start, dim2end, dim1start, dim1end);
+			}
+			if (a12_num != a22_num || a12_num != d12_num || a11_num != a21_num || a11_num != d11_num) {
+				error("Operation size mismatch (%d vs %d)(%d vs %d)", a12_num, a22_num, a11_num, a21_num);
+			}
+			switch (type) {
+			case 1: // Addition
+				break;
+			case 2: // Subtraction
+				break;
+			case 3: // Binary AND
+				break;
+			case 4: // Binary OR
+				break;
+			case 5: // Binary XOR
+				break;
+			default:
+				error("o100_arrayOps: case 132 unknown type %d)", type);
+			}
+			warning("STUB: o100_arrayOps: case 132 type %d", type);
+			break;
 		}
-		switch (type) {
-		case 1:
-			break;
-		case 2:
-			break;
-		case 3:
-			break;
-		case 4:
-			break;
-		case 5:
-			break;
-		default:
-			error("o100_arrayOps: case 132 unknown type %d)", type);
-		}
-		warning("STUB: o100_arrayOps: case 132 type %d", type);
-		break;
 	case 133:			// SO_RANGE_ARRAY_ASSIGNMENT
 		b = pop();
 		c = pop();
