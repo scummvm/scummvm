@@ -23,8 +23,12 @@
 #ifndef BACKENDS_NETWORKING_CURL_CONNECTIONMANAGER_H
 #define BACKENDS_NETWORKING_CURL_CONNECTIONMANAGER_H
 
+#include "backends/networking/curl/request.h"
 #include "common/str.h"
+#include "common/singleton.h"
+#include "common/array.h"
 
+typedef void CURL;
 typedef void CURLM;
 struct curl_slist;
 
@@ -32,17 +36,43 @@ namespace Networking {
 
 class NetworkReadStream;
 
-class ConnectionManager {
-	CURLM *_multi;
+class ConnectionManager : public Common::Singleton<ConnectionManager> {
+	friend void connectionsThread(void *); //calls handle()
+
+	CURLM *_multi;	
+	bool _timerStarted;
+	Common::Array<Request *> _requests;	
+	
+	void startTimer(int interval = 1000000); //1 second is the default interval
+	void stopTimer();
+	void handle();
+	void interateRequests();
+	void processTransfers();
 
 public:
 	ConnectionManager();
 	virtual ~ConnectionManager();
 
-	NetworkReadStream *makeRequest(const char *url, curl_slist *headersList, Common::String postFields);
-	void handle();
+	/**
+	* All libcurl transfers are going through this ConnectionManager.
+	* So, if you want to start any libcurl transfer, you must create
+	* an easy handle and register it using this method.
+	*/
+	void registerEasyHandle(CURL *easy);
+
+	/**
+	* Use this method to add new Request into manager's queue.
+	* Manager will periodically call handle() method of these
+	* Requests until they return true.
+	*
+	* @note This method starts the timer if it's not started yet.
+	*/
+	void addRequest(Request *request);
 };
 
-} //end of namespace Cloud
+/** Shortcut for accessing the connection manager. */
+#define ConnMan		Networking::ConnectionManager::instance()
+
+} //end of namespace Networking
 
 #endif

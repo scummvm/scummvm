@@ -23,6 +23,7 @@
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 
 #include "backends/networking/curl/curljsonrequest.h"
+#include "backends/networking/curl/connectionmanager.h"
 #include "backends/networking/curl/networkreadstream.h"
 #include "common/debug.h"
 #include "common/json.h"
@@ -56,8 +57,8 @@ char *CurlJsonRequest::getPreparedContents() {
 	return (char *)result;
 }
 
-bool CurlJsonRequest::handle(ConnectionManager &manager) {
-	if (!_stream) _stream = manager.makeRequest(_url, _headersList, _postFields);
+bool CurlJsonRequest::handle() {
+	if (!_stream) _stream = new NetworkReadStream(_url, _headersList, _postFields);
 
 	if (_stream) {
 		const int kBufSize = 16*1024;

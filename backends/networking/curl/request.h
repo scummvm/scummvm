@@ -20,21 +20,20 @@
 *
 */
 
-#ifndef BACKENDS_CLOUD_REQUEST_H
-#define BACKENDS_CLOUD_REQUEST_H
+#ifndef BACKENDS_NETWORKING_CURL_REQUEST_H
+#define BACKENDS_NETWORKING_CURL_REQUEST_H
 
-#include "backends/networking/curl/connectionmanager.h"
-
-namespace Cloud {
+namespace Networking {
 
 class Request {
 protected:
+	typedef void(*Callback)(void *result);
+
 	/**
 	* Callback, which should be called before Request returns true in handle().
-	* That's the way Requests pass the result to the code which asked to create this request.	
+	* That's the way Requests pass the result to the code which asked to create this request.
 	*/
 
-	typedef void(*Callback)(void *result);
 	Callback _callback;
 
 public:
@@ -47,7 +46,7 @@ public:
 	* @return true if request's work is complete and it may be removed from Storage's list
 	*/
 
-	virtual bool handle(Networking::ConnectionManager &manager) = 0;
+	virtual bool handle() = 0;
 };
 
 } //end of namespace Cloud

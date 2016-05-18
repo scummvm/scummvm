@@ -23,7 +23,7 @@
 #ifndef BACKENDS_NETWORKING_CURL_CURLJSONREQUEST_H
 #define BACKENDS_NETWORKING_CURL_CURLJSONREQUEST_H
 
-#include "backends/cloud/request.h"
+#include "backends/networking/curl/request.h"
 #include "common/memstream.h"
 
 struct curl_slist;
@@ -32,7 +32,7 @@ namespace Networking {
 
 class NetworkReadStream;
 
-class CurlJsonRequest : public Cloud::Request {	
+class CurlJsonRequest : public Request {	
 	const char *_url;
 	NetworkReadStream *_stream;
 	curl_slist *_headersList;
@@ -46,7 +46,7 @@ public:
 	CurlJsonRequest(Callback cb, const char *url);
 	virtual ~CurlJsonRequest();
 
-	virtual bool handle(ConnectionManager &manager);
+	virtual bool handle();
 
 	void addHeader(Common::String header);
 

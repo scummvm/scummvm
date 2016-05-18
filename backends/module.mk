@@ -21,8 +21,7 @@ MODULE_OBJS := \
 
 ifdef USE_CLOUD
 MODULE_OBJS += \
-	cloud/manager.o \
-	cloud/storage.o \
+	cloud/manager.o \	
 	cloud/dropbox/dropboxstorage.o
 endif
 

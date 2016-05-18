@@ -40,8 +40,6 @@ public:
 	NetworkReadStream(const char *url, curl_slist *headersList, Common::String postFields);
 	virtual ~NetworkReadStream();
 
-	CURL *getEasyHandle() const { return _easy; }
-
 	/**
 	* Returns true if a read failed because the stream end has been reached.
 	* This flag is cleared by clearErr().

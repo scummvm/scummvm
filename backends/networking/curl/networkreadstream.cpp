@@ -23,6 +23,7 @@
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 
 #include "backends/networking/curl/networkreadstream.h"
+#include "backends/networking/curl/connectionmanager.h"
 #include "common/debug.h"
 #include <curl/curl.h>
 
@@ -47,6 +48,7 @@ NetworkReadStream::NetworkReadStream(const char *url, curl_slist *headersList, C
 	curl_easy_setopt(_easy, CURLOPT_HTTPHEADER, headersList);
 	curl_easy_setopt(_easy, CURLOPT_POSTFIELDSIZE, postFields.size());
 	curl_easy_setopt(_easy, CURLOPT_COPYPOSTFIELDS, postFields.c_str());
+	ConnMan.registerEasyHandle(_easy);
 }
 
 NetworkReadStream::~NetworkReadStream() {

@@ -22,6 +22,7 @@
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 
 #include "backends/cloud/dropbox/dropboxstorage.h"
+#include "backends/networking/curl/connectionmanager.h"
 #include "backends/networking/curl/curljsonrequest.h"
 #include "common/config-manager.h"
 #include "common/debug.h"
@@ -76,8 +77,7 @@ DropboxStorage::~DropboxStorage() {
 	curl_global_cleanup();
 }
 
-void DropboxStorage::listDirectory(Common::String path) {
-	startTimer(1000000); //in one second
+void DropboxStorage::listDirectory(Common::String path) {	
 }
 
 void DropboxStorage::syncSaves() {
@@ -88,7 +88,7 @@ void DropboxStorage::syncSaves() {
 void DropboxStorage::printInfo() {
 	Networking::CurlJsonRequest *request = new Networking::CurlJsonRequest(printJsonCallback, "https://api.dropboxapi.com/1/account/info");
 	request->addHeader("Authorization: Bearer " + _token);
-	addRequest(request);
+	ConnMan.addRequest(request);
 }
 
 DropboxStorage *DropboxStorage::loadFromConfig() {
@@ -119,10 +119,10 @@ Common::String DropboxStorage::getAuthLink() {
 	return url;
 }
 
-DropboxStorage *DropboxStorage::authThroughConsole() {
+void DropboxStorage::authThroughConsole() {
 	if (!ConfMan.hasKey("DROPBOX_KEY", "cloud") || !ConfMan.hasKey("DROPBOX_SECRET", "cloud")) {
 		warning("No Dropbox keys available, cannot do auth");
-		return 0;
+		return;
 	}
 
 	KEY = ConfMan.get("DROPBOX_KEY", "cloud");
@@ -130,29 +130,25 @@ DropboxStorage *DropboxStorage::authThroughConsole() {
 
 	if (ConfMan.hasKey("dropbox_code", "cloud")) {
 		//phase 2: get access_token using specified code
-		return getAccessToken(ConfMan.get("dropbox_code", "cloud"));
+		getAccessToken(ConfMan.get("dropbox_code", "cloud"));
+		return;
 	}
 
 	debug("Navigate to this URL and press \"Allow\":");
 	debug("%s\n", getAuthLink().c_str());
 	debug("Then, add dropbox_code key in [cloud] section of configuration file. You should copy the <code> value from URL and put it as value for that key.\n");
 	debug("Navigate to this URL to get more information on ScummVM's configuration files:");
-	debug("http://wiki.scummvm.org/index.php/User_Manual/Configuring_ScummVM#Using_the_configuration_file_to_configure_ScummVM\n");
-	return 0;
+	debug("http://wiki.scummvm.org/index.php/User_Manual/Configuring_ScummVM#Using_the_configuration_file_to_configure_ScummVM\n");	
 }
 
-DropboxStorage *DropboxStorage::getAccessToken(Common::String code) {
+void DropboxStorage::getAccessToken(Common::String code) {
 	Networking::CurlJsonRequest *request = new Networking::CurlJsonRequest(saveAccessTokenCallback, "https://api.dropboxapi.com/1/oauth2/token");
 	request->addPostField("code=" + code);
 	request->addPostField("grant_type=authorization_code");
 	request->addPostField("client_id=" + KEY);
 	request->addPostField("client_secret=" + SECRET);
-	request->addPostField("&redirect_uri=http%3A%2F%2Flocalhost%3A12345%2F");
-	
-	//OK, that's not how I imagined that...	
-	DropboxStorage *storage = new DropboxStorage("", "");
-	storage->addRequest(request);
-	return storage;
+	request->addPostField("&redirect_uri=http%3A%2F%2Flocalhost%3A12345%2F");	
+	ConnMan.addRequest(request);	
 }
 
 } //end of namespace Dropbox
