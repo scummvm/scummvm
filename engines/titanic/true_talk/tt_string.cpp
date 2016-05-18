@@ -95,6 +95,10 @@ TTstring &TTstring::operator+=(char c) {
 	return *this;
 }
 
+bool TTstring::operator==(const TTstring &str) {
+	return _data && str._data && _data->_string == str._data->_string;
+}
+
 void TTstring::save(SimpleFile *file) const {
 	file->writeFormat("%s", c_str());
 }

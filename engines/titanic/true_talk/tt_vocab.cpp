@@ -33,7 +33,7 @@
 namespace Titanic {
 
 TTvocab::TTvocab(int val): _headP(nullptr), _tailP(nullptr), _word(nullptr),
-		_fieldC(0), _field10(0), _field18(val) {
+		_fieldC(0), _field10(0), _vocabMode(val) {
 	_field14 = load("STVOCAB.TXT");
 }
 
@@ -160,8 +160,8 @@ TTword *TTvocab::findWord(const TTstring &str) {
 	TTword *word = _headP;
 
 	while (word && !flag) {
-		if (_field18 != 3 || strcmp(word->c_str(), str)) {
-			if (word->scanCopy(str, tempNode, _field18))
+		if (_vocabMode != 3 || strcmp(word->c_str(), str)) {
+			if (word->findSynByName(str, tempNode, _vocabMode))
 				flag = true;
 			else
 				word = word->_nextP;
@@ -177,18 +177,20 @@ TTword *TTvocab::findWord(const TTstring &str) {
 TTword *TTvocab::getPrimeWord(TTstring &str, TTword **words) {
 	TTsynonym *synonym = new TTsynonym();
 	char c = str.charAt(0);
-	TTword *vocabList = _headP;
 	TTword *returnWord = nullptr;
 
 	if (!Common::isDigit(c)) {
 		returnWord = new TTword(str, 3, 300);
-	} else if (!vocabList) {
-		// No vocab present. Should never happen
 	} else {
 		TTword *foundWord = nullptr;
-		while (!foundWord && vocabList) {
-			if (_field18 == 3 && !strcmp(str.c_str(), vocabList->c_str())) {
-
+		for (TTword *vocabP = _headP; vocabP && !foundWord; vocabP = vocabP->_nextP) {
+			if (_vocabMode == 3 && !strcmp(str.c_str(), vocabP->c_str())) {
+				foundWord = vocabP->copy();
+				foundWord->_nextP = nullptr;
+				foundWord->setSyn(nullptr);
+			} else {
+				vocabP->findSynByName(str, synonym, _vocabMode);
+				// TODO
 			}
 		}
 
@@ -196,8 +198,8 @@ TTword *TTvocab::getPrimeWord(TTstring &str, TTword **words) {
 
 	}
 
-	if (words)
-		*words = vocabList;
+//	if (words)
+//		*words = vocabList;
 	delete synonym;
 	
 	return returnWord;

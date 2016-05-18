@@ -46,6 +46,18 @@ void TTnode::detach() {
 		_nextP->_priorP = _priorP;
 }
 
+void TTnode::deleteSiblings() {
+	// Detach current node from prior one, if there is one
+	if (_priorP)
+		_priorP->_nextP = nullptr;
+
+	// Iterate through the linked chain of nodes, deleting each in turn
+	for (TTnode *curP = _nextP, *nextP = nullptr; nextP; curP = nextP) {
+		nextP = curP->_nextP;
+		delete curP;
+	}
+}
+
 TTnode *TTnode::getTail() {
 	if (_nextP == nullptr)
 		return this;

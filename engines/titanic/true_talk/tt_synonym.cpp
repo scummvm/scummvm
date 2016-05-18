@@ -42,32 +42,16 @@ TTsynonym::TTsynonym(int mode, const char *str, FileHandle file) :
 	_file = file;
 }
 
-TTsynonym *TTsynonym::findByName(TTsynonym *start, const TTstring &str, int mode) {
-	for (; start; start = static_cast<TTsynonym *>(start->_nextP)) {
-		if (start->_mode == mode || (mode == 3 && start->_mode < 3)) {
-			if (!strcmp(start->_string.c_str(), str.c_str()))
-				start;
-		}
-	}
-
-	return nullptr;
-}
-
-TTsynonym *TTsynonym::copy(TTsynonym *src) {
+TTsynonym *TTsynonym::copyFrom(const TTsynonym *src) {
 	if (src->_field1C) {
 		_field1C = 5;
-		return this;
 	} else {
 		_field1C = 0;
-		if (src == this)
-			return this;
-
-		_string = src->_string;
-		TTsynonym *newNode = new TTsynonym(src);
-		initialize(newNode);
-
-		return this;
+		if (src != this)
+			_string = src->_string;
 	}
+
+	return this;
 }
 
 int TTsynonym::save(SimpleFile *file) {

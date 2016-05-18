@@ -100,6 +100,15 @@ int TTword::readSyn(SimpleFile *file) {
 	return 0;
 }
 
+void TTword::setSyn(TTsynonym *synP) {
+	if (_synP) {
+		_synP->deleteSiblings();
+		delete _synP;
+	}
+
+	_synP = synP;
+}
+
 void TTword::appendNode(TTsynonym *node) {
 	if (_synP)
 		_synP->addNode(node);
@@ -143,17 +152,20 @@ bool TTword::testFileHandle(FileHandle file) const {
 	return true;
 }
 
-TTword *TTword::scanCopy(const TTstring &str, TTsynonym *node, int mode) {
-	if (_synP) {
-		TTsynonym *strNode = TTsynonym::findByName(_synP, str, mode);
-		if (strNode) {
-			node->copy(strNode);
-			node->_priorP = nullptr;
-			node->_nextP = nullptr;
-		}
-	}
+bool TTword::findSynByName(const TTstring &str, TTsynonym *dest, int mode) const {
+	if (!_synP)
+		return false;
 
-	return nullptr;
+	const TTsynonym *synP = static_cast<const TTsynonym *>(_synP->findByName(str, mode));
+	if (synP) {
+		dest->copyFrom(synP);
+		dest->_priorP = nullptr;
+		dest->_nextP = nullptr;
+
+		return true;
+	} else {
+		return false;
+	}
 }
 
 TTword *TTword::copy() {

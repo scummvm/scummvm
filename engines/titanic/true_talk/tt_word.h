@@ -64,6 +64,11 @@ public:
 	int readSyn(SimpleFile *file);
 
 	/**
+	 * Set a new synonym for the word
+	 */
+	void setSyn(TTsynonym *synP);
+
+	/**
 	 * Either sets the first synonym for a word, or adds it to an existing one
 	 */
 	void appendNode(TTsynonym *node);
@@ -73,7 +78,13 @@ public:
 	 */
 	int load(SimpleFile *file, int mode);
 
-	TTword *scanCopy(const TTstring &str, TTsynonym *node, int mode);
+	/**
+	 * Finds a synonym in the word by name, if one exists
+	 * @param str		Name to search for
+	 * @param dest		Destination synonym instance to copy match into
+	 * @returns			Returns true if a match was found
+	 */
+	bool findSynByName(const TTstring &str, TTsynonym *dest, int mode) const;
 
 	const char *c_str() const { return _string.c_str(); }
 	operator const char *() const { return c_str(); }

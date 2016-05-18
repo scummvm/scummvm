@@ -47,6 +47,11 @@ public:
 	int _field1C;
 public:
 	TTstringNode();
+
+	/**
+	 * Find a string node in the linked chain by name
+	 */
+	TTstringNode *findByName(const TTstring &str, int mode);
 };
 
 } // End of namespace Titanic

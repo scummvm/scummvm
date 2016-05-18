@@ -40,14 +40,9 @@ public:
 	TTsynonym(int mode, const char *str, FileHandle file);
 
 	/**
-	 * Copy the synonym
+	 * Copies data from one synonym to another
 	 */
-	TTsynonym *copy(TTsynonym *src);
-
-	/**
-	 * Scan for a synonym with a given string
-	 */
-	static TTsynonym *findByName(TTsynonym *start, const TTstring &str, int mode);
+	TTsynonym *copyFrom(const TTsynonym *src);
 
 	/**
 	 * Save data for the synonym to file

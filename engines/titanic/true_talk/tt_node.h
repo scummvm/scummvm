@@ -44,6 +44,11 @@ public:
 	void detach();
 
 	/**
+	 * Delete any sibling chain attached to this node
+	 */
+	void deleteSiblings();
+
+	/**
 	 * Returns the final node at the end of the linked list of nodes
 	 */
 	TTnode *getTail();
