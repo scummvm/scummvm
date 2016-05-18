@@ -470,7 +470,21 @@ int TTparser::findFrames(TTsentence *sentence) {
 	_sentenceSub = &sentence->_sub;
 	_sentence = sentence;
 
+	TTstring *line = sentence->_normalizedLine.copy();
+	TTstring wordString;
+	for (;;) {
+		// Keep stripping words off the start of the passed input
+		TTstring wordString = line->tokenize(" \n");
+		if (wordString.empty())
+			break;
+
+		//TTword *word = nullptr;
+		//_owner->_vocab.fn1(wordString, &word);
+	}
+
+
 	// TODO
+	delete line;
 	return 0;
 }
 
