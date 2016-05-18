@@ -2485,50 +2485,52 @@ void ScummEngine_v100he::o100_getSpriteGroupInfo() {
 
 	byte subOp = fetchScriptByte();
 
+	warning("o100_getSpriteGroupInfo, subop %d", subOp);
+
 	switch (subOp) {
-	case 5:
+	case 5: // SO_ARRAY
 		spriteGroupId = pop();
 		if (spriteGroupId)
 			push(getGroupSpriteArray(spriteGroupId));
 		else
 			push(0);
 		break;
-	case 40:
+	case 40: // SO_IMAGE
 		spriteGroupId = pop();
 		if (spriteGroupId)
 			push(_sprite->getGroupDstResNum(spriteGroupId));
 		else
 			push(0);
 		break;
-	case 54:
+	case 54: // SO_NEW_GENERAL_PROPERTY
 		// TODO: U32 related
 		pop();
 		pop();
 		push(0);
 		warning("STUB: o100_getSpriteGroupInfo, subop 54");
 		break;
-	case 59:
+	case 59: // SO_PRIORITY
 		spriteGroupId = pop();
 		if (spriteGroupId)
 			push(_sprite->getGroupPriority(spriteGroupId));
 		else
 			push(0);
 		break;
-	case 60:
+	case 60: // SO_PROPERTY
 		type = pop();
 		spriteGroupId = pop();
 		if (spriteGroupId) {
 			switch (type) {
-			case 0:
+			case 0: // SPRGRPPROP_XMUL
 				push(_sprite->getGroupXMul(spriteGroupId));
 				break;
-			case 1:
+			case 1: // SPRGRPPROP_XDIV
 				push(_sprite->getGroupXDiv(spriteGroupId));
 				break;
-			case 2:
+			case 2: // SPRGRPPROP_YMUL
 				push(_sprite->getGroupYMul(spriteGroupId));
 				break;
-			case 3:
+			case 3: // SPRGRPPROP_YDIV
 				push(_sprite->getGroupYDiv(spriteGroupId));
 				break;
 			default:
@@ -2538,7 +2540,7 @@ void ScummEngine_v100he::o100_getSpriteGroupInfo() {
 			push(0);
 		}
 		break;
-	case 85:
+	case 85: // SO_XPOS
 		spriteGroupId = pop();
 		if (spriteGroupId) {
 			_sprite->getGroupPosition(spriteGroupId, tx, ty);
@@ -2547,7 +2549,7 @@ void ScummEngine_v100he::o100_getSpriteGroupInfo() {
 			push(0);
 		}
 		break;
-	case 86:
+	case 86: // SO_YPOS
 		spriteGroupId = pop();
 		if (spriteGroupId) {
 			_sprite->getGroupPosition(spriteGroupId, tx, ty);
