@@ -88,10 +88,8 @@ bool GnapMetaEngine::hasFeature(MetaEngineFeature f) const {
 		(f == kSupportsLoadingDuringStartup) ||
 		(f == kSupportsDeleteSave) ||
 		(f == kSavesSupportMetaInfo) ||
-		(f == kSavesSupportCreationDate);
-#if 0
 		(f == kSavesSupportThumbnail) ||
-#endif
+		(f == kSavesSupportCreationDate);
 }
 
 bool Gnap::GnapEngine::hasFeature(EngineFeature f) const {
@@ -147,35 +145,35 @@ SaveStateDescriptor GnapMetaEngine::querySaveMetaInfos(const char *target, int s
 	Common::String fileName = Common::String::format("%s.%03d", target, slot);
 	Common::InSaveFile *file = g_system->getSavefileManager()->openForLoading(fileName);
 	if (file) {
+		char saveIdentBuffer[5];
+		file->read(saveIdentBuffer, 5);
 
-		int32 version = file->readSint32BE();
-		if (version != GNAP_SAVEGAME_VERSION) {
+		int32 version = file->readByte();
+		if (version > GNAP_SAVEGAME_VERSION) {
 			delete file;
 			return SaveStateDescriptor();
 		}
 
-		uint32 saveNameLength = file->readUint16BE();
 		char saveName[256];
-		file->read(saveName, saveNameLength);
-		saveName[saveNameLength] = 0;
+		char ch;
+		int i = 0;
+		while ((ch = (char)file->readByte()) != '\0')
+			saveName[i++] = ch;
 
 		SaveStateDescriptor desc(slot, saveName);
 
-		Graphics::Surface *const thumbnail = Graphics::loadThumbnail(*file);
-		desc.setThumbnail(thumbnail);
+		if (version != 1) {
+			Graphics::Surface *const thumbnail = Graphics::loadThumbnail(*file);
+			desc.setThumbnail(thumbnail);
+		}
 
-		uint32 saveDate = file->readUint32BE();
-		uint16 saveTime = file->readUint16BE();
-
-		int day = (saveDate >> 24) & 0xFF;
-		int month = (saveDate >> 16) & 0xFF;
-		int year = saveDate & 0xFFFF;
+		int year = file->readSint16LE();
+		int month = file->readSint16LE();
+		int day = file->readSint16LE();
+		int hour = file->readSint16LE();
+		int minutes = file->readSint16LE();
 
 		desc.setSaveDate(year, month, day);
-
-		int hour = (saveTime >> 8) & 0xFF;
-		int minutes = saveTime & 0xFF;
-
 		desc.setSaveTime(hour, minutes);
 
 		delete file;

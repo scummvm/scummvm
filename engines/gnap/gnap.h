@@ -59,7 +59,7 @@ class GameSys;
 class SoundMan;
 class MusicPlayer;
 
-#define GNAP_SAVEGAME_VERSION 1
+#define GNAP_SAVEGAME_VERSION 2
 
 struct MouseButtonState {
 	bool _left;

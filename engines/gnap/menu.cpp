@@ -25,6 +25,7 @@
 #include "common/translation.h"
 
 #include "gui/saveload.h"
+#include "graphics/thumbnail.h"
 
 #include "gnap/gnap.h"
 #include "gnap/datarchive.h"
@@ -576,7 +577,7 @@ void GnapEngine::writeSavegameHeader(Common::OutSaveFile *out, GnapSavegameHeade
 	out->writeString(header._saveName);
 	out->writeByte('\0');
 
-	// TODO: Add thumbnail
+	Graphics::saveThumbnail(*out);
 
 	// Write out the save date/time
 	TimeDate td;
@@ -608,7 +609,13 @@ bool GnapEngine::readSavegameHeader(Common::InSaveFile *in, GnapSavegameHeader &
 		header._saveName += ch;
 
 	// TODO: Get the thumbnail
-	header._thumbnail = nullptr;
+	if (header._version == 1)
+		header._thumbnail = nullptr;
+	else {
+		header._thumbnail = Graphics::loadThumbnail(*in);
+		if (!header._thumbnail)
+			return false;
+	}
 
 	// Read in save date/time
 	header._year = in->readSint16LE();
