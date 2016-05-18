@@ -54,7 +54,7 @@ public:
 	/**
 	* Returns Dropbox auth link.
 	*/
-	static Common::String DropboxStorage::getAuthLink();
+	static Common::String getAuthLink();
 
 	/**
 	* Show message with Dropbox auth instructions. (Temporary)
