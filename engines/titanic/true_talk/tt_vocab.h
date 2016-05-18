@@ -57,7 +57,15 @@ public:
 	TTvocab(int val);
 	~TTvocab();
 
-	TTword *getPrimeWord(TTstring &str, TTword **words);
+	/**
+	 * Scans the vocab list for a word with a synonym matching the passed string.
+	 * If found, creates a new word instance that only has the matching synonym
+	 * linked to it.
+	 * @param str		Word text to scan for
+	 * @param srcWord	Optional pointer to store the original word match was found on
+	 * @returns			A new word instance if a match if found, or null if not
+	 */
+	TTword *getPrimeWord(TTstring &str, TTword **srcWord) const;
 };
 
 } // End of namespace Titanic

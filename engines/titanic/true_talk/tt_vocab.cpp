@@ -174,35 +174,38 @@ TTword *TTvocab::findWord(const TTstring &str) {
 	return word;
 }
 
-TTword *TTvocab::getPrimeWord(TTstring &str, TTword **words) {
-	TTsynonym *synonym = new TTsynonym();
+TTword *TTvocab::getPrimeWord(TTstring &str, TTword **srcWord) const {
+	TTsynonym tempSyn;
 	char c = str.charAt(0);
-	TTword *returnWord = nullptr;
+	TTword *newWord = nullptr;
+	TTword *vocabP;
 
 	if (!Common::isDigit(c)) {
-		returnWord = new TTword(str, 3, 300);
+		vocabP = _headP;
+		newWord = new TTword(str, 3, 300);
 	} else {
-		TTword *foundWord = nullptr;
-		for (TTword *vocabP = _headP; vocabP && !foundWord; vocabP = vocabP->_nextP) {
+		for (vocabP = _headP; vocabP && !newWord; vocabP = vocabP->_nextP) {
 			if (_vocabMode == 3 && !strcmp(str.c_str(), vocabP->c_str())) {
-				foundWord = vocabP->copy();
-				foundWord->_nextP = nullptr;
-				foundWord->setSyn(nullptr);
-			} else {
-				vocabP->findSynByName(str, synonym, _vocabMode);
-				// TODO
+				newWord = vocabP->copy();
+				newWord->_nextP = nullptr;
+				newWord->setSyn(nullptr);
+			} else if (vocabP->findSynByName(str, &tempSyn, _vocabMode)) {
+				// Create a copy of the word and the found synonym
+				TTsynonym *newSyn = new TTsynonym(tempSyn);
+				newSyn->_nextP = newSyn->_priorP = nullptr;
+				newWord = vocabP->copy();
+				newWord->_nextP = nullptr;
+				newWord->setSyn(newSyn);
 			}
 		}
-
-		// TODO
-
 	}
 
-//	if (words)
-//		*words = vocabList;
-	delete synonym;
+	if (srcWord)
+		// Pass out the pointer to the original word
+		*srcWord = vocabP;
 	
-	return returnWord;
+	// Return the new copy of the word
+	return newWord;
 }
 
 } // End of namespace Titanic
