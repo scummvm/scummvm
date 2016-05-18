@@ -4617,9 +4617,9 @@ extern void Xmovement(int x) {
 			GetAniPosition(g_objArray[0], &g_InvD[g_ino].inventoryX, &aniY);
 			g_InvD[g_ino].inventoryX +=x;
 			MultiSetAniX(g_objArray[0], g_InvD[g_ino].inventoryX);
-			for (i = 1; g_objArray[i] && i < MAX_WCOMP; i++)
+			for (i = 1; i < MAX_WCOMP && g_objArray[i]; i++)
 				MultiMoveRelXY(g_objArray[i], x, 0);
-			for (i = 0; g_iconArray[i] && i < MAX_ICONS; i++)
+			for (i = 0; i < MAX_ICONS && g_iconArray[i]; i++)
 				MultiMoveRelXY(g_iconArray[i], x, 0);
 			break;
 
@@ -4665,9 +4665,9 @@ extern void Ymovement(int y) {
 			GetAniPosition(g_objArray[0], &aniX, &g_InvD[g_ino].inventoryY);
 			g_InvD[g_ino].inventoryY +=y;
 			MultiSetAniY(g_objArray[0], g_InvD[g_ino].inventoryY);
-			for (i = 1; g_objArray[i] && i < MAX_WCOMP; i++)
+			for (i = 1; i < MAX_WCOMP && g_objArray[i]; i++)
 				MultiMoveRelXY(g_objArray[i], 0, y);
-			for (i = 0; g_iconArray[i] && i < MAX_ICONS; i++)
+			for (i = 0; i < MAX_ICONS && g_iconArray[i]; i++)
 				MultiMoveRelXY(g_iconArray[i], 0, y);
 			break;
 
