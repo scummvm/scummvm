@@ -28,6 +28,7 @@
 #include "common/str.h"
 
 typedef void CURL;
+struct curl_slist;
 
 namespace Networking {
 
@@ -36,7 +37,7 @@ class NetworkReadStream: public Common::MemoryReadWriteStream {
 	bool _eos, _requestComplete;
 
 public:	
-	NetworkReadStream(const char *url);
+	NetworkReadStream(const char *url, curl_slist *headersList, Common::String postFields);
 	virtual ~NetworkReadStream();
 
 	CURL *getEasyHandle() const { return _easy; }

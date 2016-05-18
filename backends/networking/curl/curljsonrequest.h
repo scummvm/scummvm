@@ -26,6 +26,8 @@
 #include "backends/cloud/request.h"
 #include "common/memstream.h"
 
+struct curl_slist;
+
 namespace Networking {
 
 class NetworkReadStream;
@@ -33,6 +35,8 @@ class NetworkReadStream;
 class CurlJsonRequest : public Cloud::Request {	
 	const char *_url;
 	NetworkReadStream *_stream;
+	curl_slist *_headersList;
+	Common::String _postFields;
 	Common::MemoryWriteStreamDynamic _contentsStream;
 
 	/** Prepares raw bytes from _contentsStream to be parsed with Common::JSON::parse(). */
@@ -43,6 +47,10 @@ public:
 	virtual ~CurlJsonRequest();
 
 	virtual bool handle(ConnectionManager &manager);
+
+	void addHeader(Common::String header);
+
+	void addPostField(Common::String header);
 };
 
 }  //end of namespace Networking

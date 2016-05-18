@@ -35,6 +35,8 @@ public:
 	Manager();
 	virtual ~Manager();
 
+	virtual void init();
+
 	virtual Storage* getCurrentStorage();
 	virtual void syncSaves();
 };

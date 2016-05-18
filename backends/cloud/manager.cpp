@@ -22,12 +22,25 @@
 
 #include "backends/cloud/manager.h"
 #include "backends/cloud/dropbox/dropboxstorage.h"
+#include "common/config-manager.h"
 
 namespace Cloud {
 
-Manager::Manager(): _currentStorage(new Dropbox::DropboxStorage()) {}
+Manager::Manager(): _currentStorage(0) {}
 
 Manager::~Manager() { delete _currentStorage; }
+
+void Manager::init() {
+	if (ConfMan.hasKey("current_storage_type", "cloud")) {
+		Common::String storageType = ConfMan.get("current_storage_type", "cloud");
+		if (storageType == "Dropbox") _currentStorage = Dropbox::DropboxStorage::loadFromConfig();
+		else warning("Unknown cloud storage type '%s' passed", storageType.c_str());
+	}
+	else {
+		//this is temporary console offer to auth with Dropbox (because there is no other storage type yet anyway)
+		Dropbox::DropboxStorage::authThroughConsole();
+	}
+}
 
 Storage* Manager::getCurrentStorage() {
 	return _currentStorage;

@@ -24,18 +24,47 @@
 #define BACKENDS_CLOUD_DROPBOX_STORAGE_H
 
 #include "backends/cloud/storage.h"
+#include "../manager.h"
 
-namespace Cloud { namespace Dropbox {
+namespace Cloud {
+namespace Dropbox {
 
-class DropboxStorage: public Cloud::Storage {	
-public:
-	DropboxStorage();
+class DropboxStorage: public Cloud::Storage {
+	static Common::String KEY, SECRET;
+
+	Common::String _token, _uid;
+
+	/** This private constructor is called from loadFromConfig(). */
+	DropboxStorage(Common::String token, Common::String uid);
+
+	static DropboxStorage *getAccessToken(Common::String code);
+
+public:	
 	virtual ~DropboxStorage();
 
 	virtual void listDirectory(Common::String path);
 	virtual void syncSaves();
+	virtual void printInfo();	
+	/**
+	* Load token and user id from configs and return DropboxStorage for those.	
+	* @return pointer to the newly created DropboxStorage or 0 if some problem occured.
+	*/
+	static DropboxStorage *loadFromConfig();
+
+	/**
+	* Returns Dropbox auth link.
+	*/
+	static Common::String DropboxStorage::getAuthLink();
+
+	/**
+	* Show message with Dropbox auth instructions. (Temporary)
+	* Returns temporary DropboxStorage, which does network requests
+	* to get access token.
+	*/
+	static DropboxStorage *authThroughConsole();
 };
 
-} }  //end of namespace Cloud::Dropbox
+} //end of namespace Dropbox
+} //end of namespace Cloud
 
 #endif

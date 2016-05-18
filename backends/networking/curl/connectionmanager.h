@@ -26,6 +26,7 @@
 #include "common/str.h"
 
 typedef void CURLM;
+struct curl_slist;
 
 namespace Networking {
 
@@ -38,7 +39,7 @@ public:
 	ConnectionManager();
 	virtual ~ConnectionManager();
 
-	NetworkReadStream *makeRequest(const char *url);
+	NetworkReadStream *makeRequest(const char *url, curl_slist *headersList, Common::String postFields);
 	void handle();
 };
 

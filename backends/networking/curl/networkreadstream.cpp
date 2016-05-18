@@ -34,7 +34,9 @@ static size_t curlDataCallback(char *d, size_t n, size_t l, void *p) {
 	return 0;
 }
 
-NetworkReadStream::NetworkReadStream(const char *url): _easy(0), _eos(false), _requestComplete(false) {
+NetworkReadStream::NetworkReadStream(const char *url, curl_slist *headersList, Common::String postFields):
+	_easy(0), _eos(false), _requestComplete(false)
+{
 	_easy = curl_easy_init();
 	curl_easy_setopt(_easy, CURLOPT_WRITEFUNCTION, curlDataCallback);
 	curl_easy_setopt(_easy, CURLOPT_WRITEDATA, this); //so callback can call us
@@ -42,6 +44,9 @@ NetworkReadStream::NetworkReadStream(const char *url): _easy(0), _eos(false), _r
 	curl_easy_setopt(_easy, CURLOPT_HEADER, 0L);
 	curl_easy_setopt(_easy, CURLOPT_URL, url);
 	curl_easy_setopt(_easy, CURLOPT_VERBOSE, 0L);
+	curl_easy_setopt(_easy, CURLOPT_HTTPHEADER, headersList);
+	curl_easy_setopt(_easy, CURLOPT_POSTFIELDSIZE, postFields.size());
+	curl_easy_setopt(_easy, CURLOPT_COPYPOSTFIELDS, postFields.c_str());
 }
 
 NetworkReadStream::~NetworkReadStream() {

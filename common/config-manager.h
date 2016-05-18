@@ -94,6 +94,11 @@ public:
 	static char const *const kKeymapperDomain;
 #endif
 
+#ifdef USE_CLOUD
+	/** The name of cloud domain used to store user's tokens */
+	static char const *const kCloudDomain;
+#endif
+
 	void				loadDefaultConfigFile();
 	void				loadConfigFile(const String &filename);
 
@@ -186,6 +191,10 @@ private:
 
 #ifdef ENABLE_KEYMAPPER
 	Domain			_keymapperDomain;
+#endif
+
+#ifdef USE_CLOUD
+	Domain			_cloudDomain;
 #endif
 
 	Array<String>	_domainSaveOrder;

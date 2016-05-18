@@ -30,7 +30,7 @@
 
 namespace Networking {
 
-CurlJsonRequest::CurlJsonRequest(Callback cb, const char *url) : Request(cb), _stream(0), _contentsStream(DisposeAfterUse::YES) {
+CurlJsonRequest::CurlJsonRequest(Callback cb, const char *url) : Request(cb), _stream(0), _headersList(0), _contentsStream(DisposeAfterUse::YES) {
 	_url = url;
 }
 
@@ -57,7 +57,7 @@ char *CurlJsonRequest::getPreparedContents() {
 }
 
 bool CurlJsonRequest::handle(ConnectionManager &manager) {
-	if (!_stream) _stream = manager.makeRequest(_url);
+	if (!_stream) _stream = manager.makeRequest(_url, _headersList, _postFields);
 
 	if (_stream) {
 		const int kBufSize = 16*1024;
@@ -82,5 +82,17 @@ bool CurlJsonRequest::handle(ConnectionManager &manager) {
 
 	return false;
 }
+
+void CurlJsonRequest::addHeader(Common::String header) {
+	_headersList = curl_slist_append(_headersList, header.c_str());
+}
+
+void CurlJsonRequest::addPostField(Common::String keyValuePair) {
+	if (_postFields == "")
+		_postFields = keyValuePair;
+	else
+		_postFields += "&" + keyValuePair;
+}
+
 
 } //end of namespace Networking

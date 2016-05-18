@@ -29,8 +29,16 @@ namespace Common {
 
 class CloudManager {
 public:
-	CloudManager() {};
-	virtual ~CloudManager() {};
+	CloudManager() {}
+	virtual ~CloudManager() {}
+
+	/**
+	* Loads all information from configs and creates current Storage instance.
+	*
+	* @note It's called once on startup in scummvm_main().
+	*/
+
+	virtual void init() = 0;
 
 	/**
 	* Returns active Storage, which could be used to interact

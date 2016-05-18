@@ -63,6 +63,12 @@ public:
 	*/
 
 	virtual void syncSaves() = 0;
+
+	/**
+	* Prints user info on console. (Temporary)
+	*/
+
+	virtual void printInfo() = 0;
 };
 
 } //end of namespace Cloud

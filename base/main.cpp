@@ -478,6 +478,7 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 #endif
 		
 #ifdef USE_CLOUD
+	system.getCloudManager()->init();
 	system.getCloudManager()->syncSaves();
 #endif
 

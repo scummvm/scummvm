@@ -39,8 +39,8 @@ ConnectionManager::~ConnectionManager() {
 	curl_global_cleanup();
 }
 
-NetworkReadStream *ConnectionManager::makeRequest(const char *url) {
-	NetworkReadStream *stream = new NetworkReadStream(url);
+NetworkReadStream *ConnectionManager::makeRequest(const char *url, curl_slist *headersList, Common::String postFields) {
+	NetworkReadStream *stream = new NetworkReadStream(url, headersList, postFields);
 	curl_multi_add_handle(_multi, stream->getEasyHandle());
 	return stream;
 }
