@@ -95,7 +95,7 @@ bool DIBDecoder::loadStream(Common::SeekableReadStream &stream) {
 	uint32 height = stream.readUint32LE();
 	stream.readUint16LE(); // planes
 	uint16 bitsPerPixel = stream.readUint16LE();
-	uint32 compression = stream.readUint32LE();
+	uint32 compression = stream.readUint32BE();
 	uint32 imageSize = stream.readUint32LE();
 	/* uint32 pixelsPerMeterX = */ stream.readUint32LE();
 	/* uint32 pixelsPerMeterY = */ stream.readUint32LE();
@@ -105,7 +105,7 @@ bool DIBDecoder::loadStream(Common::SeekableReadStream &stream) {
 	_paletteColorCount = (_paletteColorCount == 0) ? 255: _paletteColorCount;
 
 	uint16 imageRawSize = stream.size() - 40;
-	Common::SeekableSubReadStream subStream(&stream, 40, imageRawSize);
+	Common::SeekableSubReadStream subStream(&stream, 40, stream.size());
 
 	warning("w: %d h: %d bpp: %d pal: %d size: %d (size rep: %d) comp: %x", width, height, bitsPerPixel, _paletteColorCount, imageRawSize, imageSize, compression);
 
