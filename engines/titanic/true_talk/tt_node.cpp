@@ -21,37 +21,40 @@
  */
 
 #include "common/textconsole.h"
-#include "titanic/true_talk/tt_string_node.h"
+#include "titanic/true_talk/tt_node.h"
 
 namespace Titanic {
 
-TTstringNode::TTstringNode() : TTnode() {
+TTnode::TTnode() : _priorP(nullptr), _nextP(nullptr) {
 }
 
-void TTstringNode::initialize(int mode) {
-	_mode = mode;
-	_file = HANDLE_STDIN;
-
-	if (_string.isValid()) {
-		_field1C = 0;
-	} else {
-		_field1C = 11;
-		warning("TTstringNode::initialize has bad subobj");
-	}
+TTnode::~TTnode() {
+	detach();
 }
 
-void TTstringNode::initialize(TTstringNode *oldNode) {
-	_mode = oldNode->_mode;
-	_file = oldNode->_file;
+void TTnode::addNode(TTnode *newNode) {
+	TTnode *tail = getTail();
+	tail->_nextP = newNode;
+	newNode->_priorP = this;
+}
 
-	if (_string.isValid()) {
-		_field1C = 0;
-	} else {
-		_field1C = 11;
-		warning("TTstringNode::initialize has bad subobj");
-	}
+void TTnode::detach() {
+	if (_priorP)
+		_priorP->_nextP = _nextP;
 
-	delete oldNode;
+	if (_nextP)
+		_nextP->_priorP = _priorP;
+}
+
+TTnode *TTnode::getTail() {
+	if (_nextP == nullptr)
+		return this;
+	
+	TTnode *node = _nextP;
+	while (node->_nextP)
+		node = node->_nextP;
+
+	return node;
 }
 
 } // End of namespace Titanic

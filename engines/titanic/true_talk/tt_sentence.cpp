@@ -40,6 +40,15 @@ TTsentence::TTsentence(int inputCtr, const TTstring &line, CScriptHandler *owner
 	_status = _initialLine.isValid() && _normalizedLine.isValid() ? SS_11: SS_VALID;
 }
 
+TTsentence::TTsentence(const TTsentence *src) : _initialLine(src->_initialLine),
+		_normalizedLine(src->_normalizedLine) {
+	copyFrom(*src);
+}
+
+void TTsentence::copyFrom(const TTsentence &src) {
+
+}
+
 void TTsentence::set38(int val) {
 	_field38 = val;
 }

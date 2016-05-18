@@ -46,7 +46,7 @@ protected:
 	bool testFileHandle(SimpleFile *file) const { return true; }
 	bool testFileHandle(FileHandle resHandle) const;
 public:
-	TTword *_pNext;
+	TTword *_nextP;
 	TTsynonym *_synP;
 	TTstring _string;
 public:

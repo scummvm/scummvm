@@ -20,38 +20,35 @@
  *
  */
 
-#include "common/textconsole.h"
-#include "titanic/true_talk/tt_string_node.h"
+#ifndef TITANIC_TT_NODE_H
+#define TITANIC_TT_NODE_H
 
 namespace Titanic {
 
-TTstringNode::TTstringNode() : TTnode() {
-}
+class TTnode {
+public:
+	TTnode *_priorP;
+	TTnode *_nextP;
+public:
+	TTnode();
+	virtual ~TTnode();
 
-void TTstringNode::initialize(int mode) {
-	_mode = mode;
-	_file = HANDLE_STDIN;
+	/**
+	 * Links the passed node to this node as a linked list
+	 */
+	void addNode(TTnode *newNode);
 
-	if (_string.isValid()) {
-		_field1C = 0;
-	} else {
-		_field1C = 11;
-		warning("TTstringNode::initialize has bad subobj");
-	}
-}
+	/**
+	 * Detaches a node from any predecessor and/or successor
+	 */
+	void detach();
 
-void TTstringNode::initialize(TTstringNode *oldNode) {
-	_mode = oldNode->_mode;
-	_file = oldNode->_file;
-
-	if (_string.isValid()) {
-		_field1C = 0;
-	} else {
-		_field1C = 11;
-		warning("TTstringNode::initialize has bad subobj");
-	}
-
-	delete oldNode;
-}
+	/**
+	 * Returns the final node at the end of the linked list of nodes
+	 */
+	TTnode *getTail();
+};
 
 } // End of namespace Titanic
+
+#endif /* TITANIC_TT_NODE_H */

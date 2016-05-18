@@ -32,16 +32,16 @@
 
 namespace Titanic {
 
-TTvocab::TTvocab(int val): _pHead(nullptr), _pTail(nullptr), _word(nullptr),
+TTvocab::TTvocab(int val): _headP(nullptr), _tailP(nullptr), _word(nullptr),
 		_fieldC(0), _field10(0), _field18(val) {
 	_field14 = load("STVOCAB.TXT");
 }
 
 TTvocab::~TTvocab() {
-	if (_pHead) {
-		_pHead->deleteSiblings();
-		delete _pHead;
-		_pHead = _pTail = nullptr;
+	if (_headP) {
+		_headP->deleteSiblings();
+		delete _headP;
+		_headP = _tailP = nullptr;
 	}
 }
 
@@ -143,28 +143,28 @@ void TTvocab::addWord(TTword *word) {
 		_word = nullptr;
 		if (word)
 			delete word;
-	} else if (_pTail) {
-		_pTail->_pNext = word;
-		_pTail = word;
+	} else if (_tailP) {
+		_tailP->_nextP = word;
+		_tailP = word;
 	} else {
-		if (!_pHead)
-			_pHead = word;
+		if (!_headP)
+			_headP = word;
 
-		_pTail = word;
+		_tailP = word;
 	}
 }
 
 TTword *TTvocab::findWord(const TTstring &str) {
 	TTsynonym *tempNode = new TTsynonym();
 	bool flag = false;
-	TTword *word = _pHead;
+	TTword *word = _headP;
 
 	while (word && !flag) {
 		if (_field18 != 3 || strcmp(word->c_str(), str)) {
 			if (word->scanCopy(str, tempNode, _field18))
 				flag = true;
 			else
-				word = word->_pNext;
+				word = word->_nextP;
 		} else {
 			flag = true;
 		}
@@ -177,7 +177,7 @@ TTword *TTvocab::findWord(const TTstring &str) {
 TTword *TTvocab::getPrimeWord(TTstring &str, TTword **words) {
 	TTsynonym *synonym = new TTsynonym();
 	char c = str.charAt(0);
-	TTword *vocabList = _pHead;
+	TTword *vocabList = _headP;
 	TTword *returnWord = nullptr;
 
 	if (!Common::isDigit(c)) {

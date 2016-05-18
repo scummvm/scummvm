@@ -23,17 +23,13 @@
 #ifndef TITANIC_TT_STRING_NODE_H
 #define TITANIC_TT_STRING_NODE_H
 
+#include "titanic/true_talk/tt_node.h"
 #include "titanic/true_talk/tt_string.h"
 #include "titanic/support/exe_resources.h"
 
 namespace Titanic {
 
-class TTstringNode {
-private:
-	/**
-	 * Returns the final node at the end of the linked list of nodes
-	 */
-	TTstringNode *getTail();
+class TTstringNode : public TTnode {
 protected:
 	/**
 	 * Initializes state for the node
@@ -45,25 +41,12 @@ protected:
 	 */
 	void initialize(TTstringNode *oldNode);
 public:
-	TTstringNode *_pPrior;
-	TTstringNode *_pNext;
 	TTstring _string;
 	FileHandle _file;
 	int _mode;
 	int _field1C;
 public:
 	TTstringNode();
-	virtual ~TTstringNode();
-
-	/**
-	 * Links the passed node to this node as a linked list
-	 */
-	void addNode(TTstringNode *newNode);
-
-	/**
-	 * Detaches a node from any predecessor and/or successor
-	 */
-	void detach();
 };
 
 } // End of namespace Titanic

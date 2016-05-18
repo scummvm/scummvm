@@ -27,8 +27,8 @@
 namespace Titanic {
 
 TTword::TTword(TTstring &str, int mode, int val2) : _string(str),
-		_wordMode(mode), _field1C(val2), _pNext(nullptr), _synP(nullptr),
-		_field20(0), _field24(0), _field28(0) {
+		_wordMode(mode), _field1C(val2), _field20(0), _field24(0),
+		_field28(0), _synP(nullptr), _nextP(nullptr) {
 	_status = str.getStatus() == SS_VALID ? SS_VALID : SS_5;
 }
 
@@ -50,11 +50,11 @@ TTword::TTword(TTword *src) {
 		if (!newSyn) {
 			_status = SS_7;
 		} else {
-			newSyn->_pPrior = priorSyn;
-			newSyn->_pNext = nullptr;
+			newSyn->_priorP = priorSyn;
+			newSyn->_nextP = nullptr;
 
 			if (priorSyn) {
-				priorSyn->_pNext = newSyn;
+				priorSyn->_nextP = newSyn;
 			} else {
 				_synP = newSyn;
 			}
@@ -63,15 +63,15 @@ TTword::TTword(TTword *src) {
 		}
 	}
 
-	_pNext = src->_pNext;
+	_nextP = src->_nextP;
 	_field24 = src->_field24;
 	_field28 = src->_field28;
 }
 
 void TTword::deleteSiblings() {
-	while (_pNext) {
-		TTword *next = _pNext;
-		_pNext = next->_pNext;
+	while (_nextP) {
+		TTword *next = _nextP;
+		_nextP = next->_nextP;
 		delete next;
 	}
 }
@@ -148,8 +148,8 @@ TTword *TTword::scanCopy(const TTstring &str, TTsynonym *node, int mode) {
 		TTsynonym *strNode = TTsynonym::findByName(_synP, str, mode);
 		if (strNode) {
 			node->copy(strNode);
-			node->_pPrior = nullptr;
-			node->_pNext = nullptr;
+			node->_priorP = nullptr;
+			node->_nextP = nullptr;
 		}
 	}
 

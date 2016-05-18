@@ -24,24 +24,26 @@
 
 namespace Titanic {
 
-TTsynonym::TTsynonym() : TTstringNode() {
+TTsynonym::TTsynonym() : TTstringNode(), _file(HANDLE_STDIN), 
+		_mode(0), _field1C(0) {
 }
 
-TTsynonym::TTsynonym(const TTsynonym *src) {
+TTsynonym::TTsynonym(const TTsynonym *src) : TTstringNode(),
+		_mode(0), _field1C(0) {
 	_string = src->_string;
 	initialize(src->_mode);
 	_file = src->_file;
 }
 
 TTsynonym::TTsynonym(int mode, const char *str, FileHandle file) :
-		TTstringNode() {
+		TTstringNode(), _mode(0), _field1C(0) {
 	_string = str;
 	initialize(mode);
 	_file = file;
 }
 
 TTsynonym *TTsynonym::findByName(TTsynonym *start, const TTstring &str, int mode) {
-	for (; start; start = static_cast<TTsynonym *>(start->_pNext)) {
+	for (; start; start = static_cast<TTsynonym *>(start->_nextP)) {
 		if (start->_mode == mode || (mode == 3 && start->_mode < 3)) {
 			if (!strcmp(start->_string.c_str(), str.c_str()))
 				start;
@@ -69,7 +71,7 @@ TTsynonym *TTsynonym::copy(TTsynonym *src) {
 }
 
 int TTsynonym::save(SimpleFile *file) {
-	for (TTstringNode *synP = this; synP; synP = synP->_pNext) {
+	for (TTstringNode *synP = this; synP; synP = static_cast<TTstringNode *>(synP->_nextP)) {
 		file->writeFormat("%s", " 0 ");
 		synP->_string.save(file);
 		file->writeFormat("%c", ' ');

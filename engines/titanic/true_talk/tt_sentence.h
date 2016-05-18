@@ -65,12 +65,18 @@ private:
 	int _field58;
 	int _field5C;
 	int _status;
+private:
+	/**
+	 * Copy sentence data from a given source
+	 */
+	void copyFrom(const TTsentence &src);
 public:
 	TTstring _initialLine;
 	TTstring _normalizedLine;
 public:
 	TTsentence(int inputCtr, const TTstring &line, CScriptHandler *owner,
 		TTroomScript *roomScript, TTnpcScript *npcScript);
+	TTsentence(const TTsentence *src);
 
 	void set38(int v);
 };

@@ -464,6 +464,7 @@ MODULE_OBJS := \
 	true_talk/tt_adj.o \
 	true_talk/tt_hist.o \
 	true_talk/tt_major_word.o \
+	true_talk/tt_node.o \
 	true_talk/tt_npc_script.o \
 	true_talk/tt_parser.o \
 	true_talk/tt_picture.o \
@@ -472,6 +473,7 @@ MODULE_OBJS := \
 	true_talk/tt_script_base.o \
 	true_talk/tt_scripts.o \
 	true_talk/tt_sentence.o \
+	true_talk/tt_sentence_node.o \
 	true_talk/tt_string.o \
 	true_talk/tt_string_node.o \
 	true_talk/tt_synonym.o \

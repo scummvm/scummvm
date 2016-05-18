@@ -30,9 +30,11 @@ class TTsentence;
 class TThist {
 protected:
 	int _field0;
-	TTsentence *_input;
+	TTsentence *_sentence;
+	int _status;
 public:
 	TThist(TTsentence *sentence);
+	virtual ~TThist();
 };
 
 class TTscriptHist : public TThist {

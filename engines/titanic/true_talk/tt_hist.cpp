@@ -25,8 +25,12 @@
 
 namespace Titanic {
 
-TThist::TThist(TTsentence *sentence) {
-	// TODO
+TThist::TThist(TTsentence *sentence) : _status(0) {
+	_sentence = new TTsentence(sentence);
+}
+
+TThist::~TThist() {
+	delete _sentence;
 }
 
 } // End of namespace Titanic

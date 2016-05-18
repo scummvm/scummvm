@@ -21,37 +21,11 @@
  */
 
 #include "common/textconsole.h"
-#include "titanic/true_talk/tt_string_node.h"
+#include "titanic/true_talk/tt_sentence_node.h"
 
 namespace Titanic {
 
-TTstringNode::TTstringNode() : TTnode() {
-}
-
-void TTstringNode::initialize(int mode) {
-	_mode = mode;
-	_file = HANDLE_STDIN;
-
-	if (_string.isValid()) {
-		_field1C = 0;
-	} else {
-		_field1C = 11;
-		warning("TTstringNode::initialize has bad subobj");
-	}
-}
-
-void TTstringNode::initialize(TTstringNode *oldNode) {
-	_mode = oldNode->_mode;
-	_file = oldNode->_file;
-
-	if (_string.isValid()) {
-		_field1C = 0;
-	} else {
-		_field1C = 11;
-		warning("TTstringNode::initialize has bad subobj");
-	}
-
-	delete oldNode;
+TTsentenceNode::TTsentenceNode() : TTnode() {
 }
 
 } // End of namespace Titanic
