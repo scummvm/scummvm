@@ -26,11 +26,14 @@
 #include "common/debug.h"
 #include "common/scummsys.h"
 #include "common/error.h"
+#include "common/events.h"
 #include "common/macresman.h"
 #include "common/stream.h"
 #include "common/system.h"
 #include "common/textconsole.h"
 #include "director/dib.h"
+
+#include "engines/util.h"
 
 #include "director/director.h"
 #include "director/resource.h"
@@ -51,6 +54,17 @@ DirectorEngine::DirectorEngine(OSystem *syst, const DirectorGameDescription *gam
 	const Common::FSNode gameDataDir(ConfMan.get("path"));
 	SearchMan.addSubDirectoryMatching(gameDataDir, "data");
 	SearchMan.addSubDirectoryMatching(gameDataDir, "install");
+}
+
+DirectorEngine::~DirectorEngine() {
+	delete _mainArchive;
+	delete _macBinary;
+}
+
+Common::Error DirectorEngine::run() {
+	debug("Starting v%d Director game", getVersion());
+
+	initGraphics(640, 480, true);
 
 	//FIXME
 	RIFFArchive riff;
@@ -63,16 +77,21 @@ DirectorEngine::DirectorEngine(OSystem *syst, const DirectorGameDescription *gam
 	Common::SeekableReadStream *dib = riff.getResource(MKTAG('D', 'I', 'B', ' '), 1103);
 	img.loadStream(*dib);
 
+	bool stop = false;
 
-}
+	while (!stop) {
+		Common::Event event;
 
-DirectorEngine::~DirectorEngine() {
-	delete _mainArchive;
-	delete _macBinary;
-}
+		while (_eventMan->pollEvent(event)) {
+			if (event.type == Common::EVENT_QUIT)
+				stop = true;
+		}
 
-Common::Error DirectorEngine::run() {
-	debug("Starting v%d Director game", getVersion());
+		g_system->updateScreen();
+		g_system->delayMillis(50);
+	}
+
+	return Common::kNoError;
 
 	if (getPlatform() == Common::kPlatformWindows)
 		loadEXE();

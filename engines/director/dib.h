@@ -63,7 +63,7 @@ public:
 	uint16 getPaletteColorCount() const { return _paletteColorCount; }
 
 private:
-	Image::BitmapRawDecoder *_codec;
+	Image::Codec *_codec;
 	const Graphics::Surface *_surface;
 	byte *_palette;
 	uint8 _paletteColorCount;

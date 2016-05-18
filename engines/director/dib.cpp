@@ -27,13 +27,13 @@
 #include "common/textconsole.h"
 #include "graphics/pixelformat.h"
 #include "graphics/surface.h"
- #include "graphics/palette.h"
+#include "graphics/palette.h"
 #include "image/codecs/codec.h"
 #include "common/util.h"
 #include "common/debug.h"
 #include "image/codecs/bmp_raw.h"
 #include "common/system.h"
-#include "common/events.h"
+
 namespace Director {
 
 DIBDecoder::DIBDecoder() {
@@ -78,7 +78,7 @@ void DIBDecoder::loadPalette(Common::SeekableReadStream &stream) {
 	while (index < 768) {
 		_palette[index++] = 0;
 	}
-}	
+}
 
 bool DIBDecoder::loadStream(Common::SeekableReadStream &stream) {
 
@@ -87,36 +87,37 @@ bool DIBDecoder::loadStream(Common::SeekableReadStream &stream) {
 	Common::hexdump(buf, stream.size());
 	stream.seek(0);
 
-	if (stream.readByte() != 40)
-		return false;
-	if (stream.readByte() != 0)
+	uint32 headerSize = stream.readUint32LE();
+	if (headerSize != 40)
 		return false;
 
-	stream.seek(4);
-	uint16 width = stream.readUint32LE();
-	uint16 height = stream.readUint32LE();
-	stream.seek(32);
-	_paletteColorCount = stream.readByte() + (stream.readByte() << 8);
+	uint32 width = stream.readUint32LE();
+	uint32 height = stream.readUint32LE();
+	stream.readUint16LE(); // planes
+	uint16 bitsPerPixel = stream.readUint16LE();
+	uint32 compression = stream.readUint32LE();
+	uint32 imageSize = stream.readUint32LE();
+	/* uint32 pixelsPerMeterX = */ stream.readUint32LE();
+	/* uint32 pixelsPerMeterY = */ stream.readUint32LE();
+	_paletteColorCount = stream.readUint32LE();
+	/* uint32 colorsImportant = */ stream.readUint32LE();
+
 	_paletteColorCount = (_paletteColorCount == 0) ? 255: _paletteColorCount;
-	uint16 totalsize = 14 + stream.size() + 1024;
+
 	uint16 imageRawSize = stream.size() - 40;
 	Common::SeekableSubReadStream subStream(&stream, 40, imageRawSize);
 
-	_codec = new Image::BitmapRawDecoder(width, height, 4);
+	warning("w: %d h: %d bpp: %d pal: %d size: %d (size rep: %d) comp: %x", width, height, bitsPerPixel, _paletteColorCount, imageRawSize, imageSize, compression);
+
+	_codec = Image::createBitmapCodec(compression, width, height, bitsPerPixel);
+	if (!_codec)
+		return false;
 	_surface = _codec->decodeFrame(subStream);
 
 	//FIXME
 	g_system->getPaletteManager()->setPalette(_palette, 0, _paletteColorCount - 1);
-	g_system->copyRectToScreen(_surface->getPixels(), _surface->pitch, 100, 100, 24, 24);
-	g_system->updateScreen();
+	g_system->copyRectToScreen(_surface->getPixels(), _surface->pitch, 0, 0, width, height);
 
-	int stop = 0;
-
-	while (stop < 100) {
-		g_system->delayMillis(50);
-		g_system->updateScreen();
-		stop++;
-	}
 	return true;
 }
 
