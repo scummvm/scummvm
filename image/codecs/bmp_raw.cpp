@@ -48,7 +48,24 @@ const Graphics::Surface *BitmapRawDecoder::decodeFrame(Common::SeekableReadStrea
 	int srcPitch = _width * (_bitsPerPixel >> 3);
 	const int extraDataLength = (srcPitch % 4) ? 4 - (srcPitch % 4) : 0;
 
-	if (_bitsPerPixel == 8) {
+	if (_bitsPerPixel == 4) {
+		for (int i = 0; i < _height; i++) {
+			byte *dst = (byte *)_surface->getBasePtr(0, _height - i - 1);
+			for (int j = 0; j < _width; j++) {
+				byte color = stream.readByte();
+
+				*dst++ = (color & 0xf0) >> 4;
+				j++;
+
+				if (j ==_width)
+					break;
+
+				*dst++ = color & 0x0f;
+			}
+
+			stream.skip(extraDataLength);
+		}
+	} else if (_bitsPerPixel == 8) {
 		byte *dst = (byte *)_surface->getPixels();
 
 		for (int i = 0; i < _height; i++) {
@@ -100,6 +117,7 @@ const Graphics::Surface *BitmapRawDecoder::decodeFrame(Common::SeekableReadStrea
 
 Graphics::PixelFormat BitmapRawDecoder::getPixelFormat() const {
 	switch (_bitsPerPixel) {
+	case 4:
 	case 8:
 		return Graphics::PixelFormat::createFormatCLUT8();
 	case 24:
