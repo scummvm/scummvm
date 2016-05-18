@@ -25,6 +25,7 @@
 
 #include "titanic/true_talk/tt_npc_script.h"
 #include "titanic/true_talk/tt_room_script.h"
+#include "titanic/true_talk/tt_sentence_node.h"
 #include "titanic/true_talk/tt_string.h"
 
 namespace Titanic {
@@ -59,7 +60,7 @@ private:
 	int _inputCtr;
 	int _field34;
 	int _field38;
-	int _field4C;
+	TTsentenceNode *_nodesP;
 	TTroomScript *_roomScript;
 	TTnpcScript *_npcScript;
 	int _field58;
@@ -79,6 +80,8 @@ public:
 	TTsentence(const TTsentence *src);
 
 	void set38(int v);
+
+	int getStatus() const { return _status; }
 };
 
 } // End of namespace Titanic

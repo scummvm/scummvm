@@ -25,7 +25,10 @@
 
 namespace Titanic {
 
-TTsentenceNode::TTsentenceNode() : TTnode() {
+TTsentenceNode::TTsentenceNode() : TTnode(), _val(0) {
+}
+
+TTsentenceNode::TTsentenceNode(int val) : TTnode(), _val(val) {
 }
 
 } // End of namespace Titanic

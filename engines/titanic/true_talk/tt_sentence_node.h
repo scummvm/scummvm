@@ -29,7 +29,10 @@ namespace Titanic {
 
 class TTsentenceNode : public TTnode {
 public:
+	int _val;
+public:
 	TTsentenceNode();
+	TTsentenceNode(int val);
 };
 
 } // End of namespace Titanic

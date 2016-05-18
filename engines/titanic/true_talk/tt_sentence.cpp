@@ -35,7 +35,7 @@ TTsentenceSubBase::TTsentenceSubBase() : _field0(0), _field4(0), _field8(0),
 TTsentence::TTsentence(int inputCtr, const TTstring &line, CScriptHandler *owner,
 		TTroomScript *roomScript, TTnpcScript *npcScript) :
 		_owner(owner), _field2C(1), _inputCtr(inputCtr), _field34(0),
-		_field38(0), _initialLine(line), _field4C(0), _roomScript(roomScript),
+		_field38(0), _initialLine(line), _nodesP(nullptr), _roomScript(roomScript),
 		_npcScript(npcScript), _field58(0), _field5C(0) {
 	_status = _initialLine.isValid() && _normalizedLine.isValid() ? SS_11: SS_VALID;
 }
@@ -46,7 +46,35 @@ TTsentence::TTsentence(const TTsentence *src) : _initialLine(src->_initialLine),
 }
 
 void TTsentence::copyFrom(const TTsentence &src) {
+	if (!src.getStatus())
+		_status = SS_5;
+	else if (!src._initialLine.isValid() || !src._normalizedLine.isValid())
+		_status = SS_11;
+	else
+		_status = SS_VALID;
 
+	_inputCtr = src._inputCtr;
+	_owner = src._owner;
+	_roomScript = src._roomScript;
+	_npcScript = src._npcScript;
+	_field58 = src._field58;
+	_field5C = src._field5C;
+	_field34 = src._field34;
+	_field38 = src._field38;
+	_field2C = src._field2C;
+	_nodesP = nullptr;
+
+	if (src._nodesP) {
+		// Source has processed nodes, so duplicate them
+		for (TTsentenceNode *node = src._nodesP; node;
+				node = static_cast<TTsentenceNode *>(node->_nextP)) {
+			TTsentenceNode *newNode = new TTsentenceNode(node->_val);
+			if (_nodesP)
+				_nodesP->addNode(newNode);
+			else
+				_nodesP = newNode;
+		}
+	}
 }
 
 void TTsentence::set38(int val) {
