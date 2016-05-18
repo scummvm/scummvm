@@ -235,7 +235,7 @@ void GameSys::drawSpriteToBackground(int x, int y, int resourceId) {
 Graphics::Surface *GameSys::allocSurface(int width, int height) {
 	Graphics::Surface *surface = new Graphics::Surface();
 	surface->create(width, height, _backgroundSurface->format);
-	surface->fillRect(Common::Rect(0, 0, surface->w, surface->h), 0xFFFF00FF);
+	surface->fillRect(Common::Rect(0, 0, surface->w, surface->h), 0xFFFFFF00);
 	return surface;
 }
 
@@ -630,7 +630,7 @@ void GameSys::blitSurface32(Graphics::Surface *destSurface, int x, int y, Graphi
 		byte *rdst = dst;
 		for (int xc = 0; xc < width; ++xc) {
 			uint32 pixel = READ_LE_UINT32(rsrc);
-			if (!transparent || pixel != 0xFFFF00FF)
+			if (!transparent || pixel != 0xFFFFFF00)
 				WRITE_LE_UINT32(rdst, pixel);
 			rsrc += 4;
 			rdst += 4;
@@ -654,9 +654,9 @@ void GameSys::blitSprite32(Graphics::Surface *destSurface, int x, int y, byte *s
 			byte srcPixel = src[xc];
 			if (!transparent || srcPixel) {
 				uint32 rgb = sourcePalette[srcPixel];
-				rdst[0] = rgb & 0x000000FF;
-				rdst[1] = (rgb & 0x0000FF00) >> 8;
-				rdst[2] = (rgb & 0x00FF0000) >> 16;
+				rdst[1] = rgb & 0x000000FF;
+				rdst[2] = (rgb & 0x0000FF00) >> 8;
+				rdst[3] = (rgb & 0x00FF0000) >> 16;
 			}
 			rdst += 4;
 		}
@@ -691,9 +691,9 @@ void GameSys::blitSpriteScaled32(Graphics::Surface *destSurface, Common::Rect &f
 				byte srcPixel = *wsrc;
 				if (srcPixel) {
 					uint32 rgb = sourcePalette[srcPixel];
-					wdst[0] = rgb & 0x000000FF;
-					wdst[1] = (rgb & 0x0000FF00) >> 8;
-					wdst[2] = (rgb & 0x00FF0000) >> 16;
+					wdst[1] = rgb & 0x000000FF;
+					wdst[2] = (rgb & 0x0000FF00) >> 8;
+					wdst[3] = (rgb & 0x00FF0000) >> 16;
 				}
 				wdst += 4;
 				xi += xs;
@@ -718,9 +718,9 @@ void GameSys::blitSpriteScaled32(Graphics::Surface *destSurface, Common::Rect &f
 				byte srcPixel = *wsrc;
 				if (srcPixel) {
 					uint32 rgb = sourcePalette[srcPixel];
-					wdst[0] = rgb & 0x000000FF;
-					wdst[1] = (rgb & 0x0000FF00) >> 8;
-					wdst[2] = (rgb & 0x00FF0000) >> 16;
+					wdst[1] = rgb & 0x000000FF;
+					wdst[2] = (rgb & 0x0000FF00) >> 8;
+					wdst[3] = (rgb & 0x00FF0000) >> 16;
 				}
 				wdst += 4;
 				xi += xs;

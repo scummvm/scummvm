@@ -115,8 +115,8 @@ GnapEngine::~GnapEngine() {
 }
 
 Common::Error GnapEngine::run() {
-	// Initialize the graphics mode to ARGB8888
-	Graphics::PixelFormat format = Graphics::PixelFormat(4, 8, 8, 8, 8, 16, 8, 0, 24);
+	// Initialize the graphics mode to RGBA8888
+	Graphics::PixelFormat format = Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0);
 	initGraphics(800, 600, true, &format);
 
 	// We do not support color conversion yet
