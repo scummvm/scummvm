@@ -611,6 +611,7 @@ int BubbleBox::doBox_v1(int item, int box, int &btnSelected) {
 		_vm->_events->showCursor();
 		warning("TODO: pop values");
 		_vm->_screen->restoreScreen();
+		delete icons;
 		return retval_;
 	}
 
