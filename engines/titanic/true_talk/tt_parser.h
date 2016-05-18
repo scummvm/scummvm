@@ -114,7 +114,7 @@ private:
 	const NumberEntry *replaceNumbers2(TTstring &line, int *startIndex);
 public:
 	CScriptHandler *_owner;
-	int _field4;
+	TTsentenceSub *_sentenceSub;
 	TTsentence *_sentence;
 	int _fieldC;
 	int _field10;

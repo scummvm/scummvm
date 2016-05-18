@@ -27,7 +27,7 @@
 
 namespace Titanic {
 
-TTparser::TTparser(CScriptHandler *owner) : _owner(owner), _field4(0),
+TTparser::TTparser(CScriptHandler *owner) : _owner(owner), _sentenceSub(nullptr),
 		_sentence(nullptr), _fieldC(0), _field10(0), _field14(0), _field18(0) {
 	loadArrays();
 }
@@ -466,6 +466,10 @@ const NumberEntry *TTparser::replaceNumbers2(TTstring &line, int *startIndex) {
 }
 
 int TTparser::findFrames(TTsentence *sentence) {
+	static bool flag;
+	_sentenceSub = &sentence->_sub;
+	_sentence = sentence;
+
 	// TODO
 	return 0;
 }

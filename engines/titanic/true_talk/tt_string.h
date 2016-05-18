@@ -134,6 +134,12 @@ public:
 	bool compareAt(int index, const char *str) const {
 		return !strncmp(c_str() + index, str, strlen(str));
 	}
+
+	/**
+	 * Split off everything in the string until the first occurance
+	 * of any specified delimiter character
+	 */
+	TTstring tokenize(const char *delim);
 };
 
 } // End of namespace Titanic

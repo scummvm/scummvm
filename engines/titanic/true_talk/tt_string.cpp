@@ -99,4 +99,23 @@ void TTstring::save(SimpleFile *file) const {
 	file->writeFormat("%s", c_str());
 }
 
+TTstring TTstring::tokenize(const char *delim) {
+	const char *strP = _data->_string.c_str();
+	const char *splitP = nullptr, *chP;
+
+	for (const char *d = delim; d; ++d) {
+		chP = strchr(strP, *d);
+		if (chP && (splitP == nullptr || chP < splitP))
+			splitP = chP;
+	}
+
+	if (splitP) {
+		TTstring result(CString(strP, splitP));
+		_data->_string = CString(splitP + 1);
+		return result;
+	} else {
+		return TTstring();
+	}
+}
+
 } // End of namespace Titanic

@@ -55,7 +55,6 @@ public:
 class TTsentence {
 private:
 	CScriptHandler *_owner;
-	TTsentenceSub _sub;
 	int _field2C;
 	int _inputCtr;
 	int _field34;
@@ -72,6 +71,7 @@ private:
 	 */
 	void copyFrom(const TTsentence &src);
 public:
+	TTsentenceSub _sub;
 	TTstring _initialLine;
 	TTstring _normalizedLine;
 public:
