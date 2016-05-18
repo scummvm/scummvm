@@ -34,7 +34,7 @@
 #include "common/scummsys.h"
 #include "common/str.h"
 #include "image/image_decoder.h"
-
+#include "image/codecs/bmp_raw.h"
 namespace Common {
 class SeekableReadStream;
 }
@@ -63,7 +63,7 @@ public:
 	uint16 getPaletteColorCount() const { return _paletteColorCount; }
 
 private:
-	Image::Codec *_codec;
+	Image::BitmapRawDecoder *_codec;
 	const Graphics::Surface *_surface;
 	byte *_palette;
 	uint8 _paletteColorCount;

@@ -34,6 +34,7 @@
 
 #include "director/director.h"
 #include "director/resource.h"
+#include "graphics/surface.h"
 
 namespace Director {
 
@@ -55,10 +56,14 @@ DirectorEngine::DirectorEngine(OSystem *syst, const DirectorGameDescription *gam
 	RIFFArchive riff;
 	riff.openFile("bookshelf_example.mmm");
 	Director::DIBDecoder img;
-	Common::SeekableReadStream *dib = riff.getResource(MKTAG('D', 'I', 'B', ' '), 1103);
-	img.loadStream(*dib);
+
 	Common::SeekableReadStream *pal = riff.getResource(MKTAG('C', 'L', 'U', 'T'), 1025);
 	img.loadPalette(*pal);
+
+	Common::SeekableReadStream *dib = riff.getResource(MKTAG('D', 'I', 'B', ' '), 1103);
+	img.loadStream(*dib);
+
+
 }
 
 DirectorEngine::~DirectorEngine() {
