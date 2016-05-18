@@ -79,7 +79,8 @@ public:
 		TTroomScript *roomScript, TTnpcScript *npcScript);
 	TTsentence(const TTsentence *src);
 
-	void set38(int v);
+	void set34(int v) { _field34 = v; }
+	void set38(int v) { _field38 = v; }
 
 	int getStatus() const { return _status; }
 };

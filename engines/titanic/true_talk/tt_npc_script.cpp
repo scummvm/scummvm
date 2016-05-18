@@ -63,10 +63,6 @@ void TTnpcScript::proc4(int v) {
 	warning("TODO");
 }
 
-int TTnpcScript::proc6() const {
-	return 1;
-}
-
 void TTnpcScript::proc7(int v1, int v2) {
 	warning("TODO");
 }

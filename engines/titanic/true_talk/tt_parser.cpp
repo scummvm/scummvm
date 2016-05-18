@@ -465,4 +465,9 @@ const NumberEntry *TTparser::replaceNumbers2(TTstring &line, int *startIndex) {
 	return numEntry;
 }
 
+int TTparser::findFrames(TTsentence *sentence) {
+	// TODO
+	return 0;
+}
+
 } // End of namespace Titanic

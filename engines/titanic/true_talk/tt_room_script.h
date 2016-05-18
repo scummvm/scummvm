@@ -27,6 +27,9 @@
 
 namespace Titanic {
 
+class TTnpcScript;
+class TTsentence;
+
 class TTroomScriptBase : public TTscriptBase {
 public:
 	int _scriptId;
@@ -34,7 +37,7 @@ public:
 	TTroomScriptBase(int scriptId, const char *charClass, const char *charName,
 		int v3, int v4, int v5, int v6, int v2, int v7);
 
-	virtual void proc6() = 0;
+	virtual int proc6(TTnpcScript *npcScript, TTsentence *sentence, int val) = 0;
 	virtual void proc7() = 0;
 	virtual void proc8() = 0;
 	virtual void proc9() = 0;
@@ -54,7 +57,7 @@ private:
 public:
 	TTroomScript(int scriptId);
 
-	virtual void proc6();
+	virtual int proc6(TTnpcScript *npcScript, TTsentence *sentence, int val) { return 1; }
 	virtual void proc7();
 	virtual void proc8();
 	virtual void proc9();

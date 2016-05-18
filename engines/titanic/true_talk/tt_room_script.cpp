@@ -37,10 +37,6 @@ TTroomScript::TTroomScript(int scriptId) :
 	TTroomScriptBase(scriptId, "", "", 0, -1, -1, -1, 0, 0) {
 }
 
-void TTroomScript::proc6() {
-	warning("TODO");
-}
-
 void TTroomScript::proc7() {
 	warning("TODO");
 }

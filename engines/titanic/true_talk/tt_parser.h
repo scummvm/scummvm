@@ -128,6 +128,8 @@ public:
 	 * all the words, and replcaing common slang with their full equivalents
 	 */
 	int preprocess(TTsentence *sentence);
+
+	int findFrames(TTsentence *sentence);
 };
 
 } // End of namespace Titanic

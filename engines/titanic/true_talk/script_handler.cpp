@@ -64,9 +64,21 @@ int CScriptHandler::processInput(TTroomScript *roomScript, TTnpcScript *npcScrip
 		return SS_5;
 	
 	TTsentence *sentence = new TTsentence(_inputCtr++, line, this, roomScript, npcScript);
-	_parser.preprocess(sentence);
+	int result = _parser.preprocess(sentence);
 	roomScript->preprocess(sentence);
 	npcScript->preprocess(sentence);
+
+	int canProcess = 0;
+	if (result) {
+		sentence->set34(result);
+		if (roomScript->proc6(npcScript, sentence, result)) {
+			canProcess = npcScript->proc6(roomScript, sentence, result);
+		}
+	}
+
+	if (canProcess == 0 || canProcess == 1) {
+		_parser.findFrames(sentence);
+	}
 
 	warning("TODO: CScriptHandler::processInput");
 

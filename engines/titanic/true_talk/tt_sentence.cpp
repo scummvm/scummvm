@@ -77,8 +77,4 @@ void TTsentence::copyFrom(const TTsentence &src) {
 	}
 }
 
-void TTsentence::set38(int val) {
-	_field38 = val;
-}
-
 } // End of namespace Titanic

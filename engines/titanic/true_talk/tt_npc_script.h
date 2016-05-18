@@ -28,6 +28,9 @@
 
 namespace Titanic {
 
+class TTroomScript;
+class TTsentence;
+
 class TTnpcScriptBase : public TTscriptBase {
 protected:
 	int _field54;
@@ -39,7 +42,7 @@ public:
 		const char *charName, int v3, int val2, int v4,
 		int v5, int v6, int v7);
 
-	virtual int proc6() const = 0;
+	virtual int proc6(TTroomScript *roomScript, TTsentence *sentence, int val) const = 0;
 	virtual void proc7(int v1, int v2) = 0;
 	virtual int proc8() const = 0;
 	virtual int proc9() const = 0;
@@ -78,7 +81,7 @@ public:
 		int v5, int v6, int v7);
 
 	virtual void proc4(int v);
-	virtual int proc6() const;
+	virtual int proc6(TTroomScript *roomScript, TTsentence *sentence, int val) const { return 1; }
 	virtual void proc7(int v1, int v2);
 	virtual int proc8() const;
 	virtual int proc9() const;
