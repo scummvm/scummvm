@@ -34,6 +34,7 @@
 #include "image/codecs/mpeg.h"
 #include "image/codecs/msvideo1.h"
 #include "image/codecs/msrle.h"
+#include "image/codecs/msrle4.h"
 #include "image/codecs/qtrle.h"
 #include "image/codecs/rpza.h"
 #include "image/codecs/smc.h"
@@ -198,6 +199,8 @@ Codec *createBitmapCodec(uint32 tag, int width, int height, int bitsPerPixel) {
 		return new BitmapRawDecoder(width, height, bitsPerPixel);
 	case SWAP_CONSTANT_32(1):
 		return new MSRLEDecoder(width, height, bitsPerPixel);
+	case SWAP_CONSTANT_32(2):
+		return new MSRLE4Decoder(width, height, bitsPerPixel);
 	case MKTAG('C','R','A','M'):
 	case MKTAG('m','s','v','c'):
 	case MKTAG('W','H','A','M'):
