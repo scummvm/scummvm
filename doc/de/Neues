@@ -3,6 +3,9 @@ Programmcodes finden Sie auf Englisch unter:
         https://github.com/scummvm/scummvm/commits/
 
 1.8.1 (25.05.2016)
+ Neue Portierungen:
+   - Portierung für den Nintendo 3DS hinzugefügt.
+
  Allgemein:
    - "TESTING"-Markierung von mehreren unterstützten Spielen entfernt.
    - Chinesische Übersetzung (Pinyin) der Benutzeroberfläche hinzugefügt.
