@@ -122,4 +122,21 @@ TTstring TTstring::tokenize(const char *delim) {
 	}
 }
 
+int TTstring::deletePrefix(int count) {
+	int strSize = size();
+	if (count > strSize)
+		count = strSize;
+
+	if (_data->_referenceCount == 1) {
+		// No other references to this string, so we can just directly modify it
+		_data->_string = CString(_data->_string.c_str() + count);
+	} else {
+		// Detach string from current shared data, and create a new one with the substring
+		_data->_referenceCount--;
+		_data = new TTstringData(_data->_string.c_str() + count);
+	}
+
+	return 1;
+}
+
 } // End of namespace Titanic

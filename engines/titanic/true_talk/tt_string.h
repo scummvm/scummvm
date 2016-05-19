@@ -90,6 +90,10 @@ public:
 		return _data->_string.hasSuffix(str);
 	}
 
+	bool contains(const char *s) const {
+		return _data->_string.contains(s);
+	}
+
 	/**
 	 * Create a new copy of the string
 	 */
@@ -141,6 +145,11 @@ public:
 	 * of any specified delimiter character
 	 */
 	TTstring tokenize(const char *delim);
+
+	/**
+	 * Delets a specififed number of characters from the start of the string
+	 */
+	int deletePrefix(int count);
 };
 
 } // End of namespace Titanic

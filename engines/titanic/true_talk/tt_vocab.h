@@ -66,6 +66,8 @@ public:
 	 * @returns			A new word instance if a match if found, or null if not
 	 */
 	TTword *getPrimeWord(TTstring &str, TTword **srcWord) const;
+
+	void fn1(TTstring &str);
 };
 
 } // End of namespace Titanic

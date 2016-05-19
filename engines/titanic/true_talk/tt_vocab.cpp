@@ -208,4 +208,12 @@ TTword *TTvocab::getPrimeWord(TTstring &str, TTword **srcWord) const {
 	return newWord;
 }
 
+void TTvocab::fn1(TTstring &str) {
+	TTstring tempStr(str);
+	
+	if (tempStr.contains("pre")) {
+
+	}
+}
+
 } // End of namespace Titanic
