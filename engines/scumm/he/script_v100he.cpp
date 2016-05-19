@@ -942,10 +942,10 @@ void ScummEngine_v100he::o100_setSpriteGroupInfo() {
 	byte subOp = fetchScriptByte();
 
 	switch (subOp) {
-	case 0:
+	case 0: // SO_INIT
 		_curSpriteGroupId = pop();
 		break;
-	case 6:
+	case 6: // SO_MOVE
 		value2 = pop();
 		value1 = pop();
 		if (!_curSpriteGroupId)
@@ -953,7 +953,7 @@ void ScummEngine_v100he::o100_setSpriteGroupInfo() {
 
 		_sprite->setGroupPosition(_curSpriteGroupId, value1, value2);
 		break;
-	case 18:
+	case 18: // SO_CLIPPED
 		value4 = pop();
 		value3 = pop();
 		value2 = pop();
@@ -963,10 +963,10 @@ void ScummEngine_v100he::o100_setSpriteGroupInfo() {
 
 		_sprite->setGroupBounds(_curSpriteGroupId, value1, value2, value3, value4);
 		break;
-	case 38:
+	case 38: // SO_GROUP
 		type = pop() - 1;
 		switch (type) {
-		case 0:
+		case 0: // SPRGRPOP_MOVE
 			value2 = pop();
 			value1 = pop();
 			if (!_curSpriteGroupId)
@@ -974,48 +974,48 @@ void ScummEngine_v100he::o100_setSpriteGroupInfo() {
 
 			_sprite->moveGroupMembers(_curSpriteGroupId, value1, value2);
 			break;
-		case 1:
+		case 1: // SPRGRPOP_ORDER
 			value1 = pop();
 			if (!_curSpriteGroupId)
 				break;
 
 			_sprite->setGroupMembersPriority(_curSpriteGroupId, value1);
 			break;
-		case 2:
+		case 2: // SPRGRPOP_NEW_GROUP
 			value1 = pop();
 			if (!_curSpriteGroupId)
 				break;
 
 			_sprite->setGroupMembersGroup(_curSpriteGroupId, value1);
 			break;
-		case 3:
+		case 3: // SPRGRPOP_UPDATE_TYPE
 			value1 = pop();
 			if (!_curSpriteGroupId)
 				break;
 
 			_sprite->setGroupMembersUpdateType(_curSpriteGroupId, value1);
 			break;
-		case 4:
+		case 4: // SPRGRPOP_NEW
 			if (!_curSpriteGroupId)
 				break;
 
 			_sprite->setGroupMembersResetSprite(_curSpriteGroupId);
 			break;
-		case 5:
+		case 5: // SPRGRPOP_ANIMATION_SPEED
 			value1 = pop();
 			if (!_curSpriteGroupId)
 				break;
 
 			_sprite->setGroupMembersAnimationSpeed(_curSpriteGroupId, value1);
 			break;
-		case 6:
+		case 6: // SPRGRPOP_ANIMATION_TYPE
 			value1 = pop();
 			if (!_curSpriteGroupId)
 				break;
 
 			_sprite->setGroupMembersAutoAnimFlag(_curSpriteGroupId, value1);
 			break;
-		case 7:
+		case 7: // SPRGRPOP_SHADOW
 			value1 = pop();
 			if (!_curSpriteGroupId)
 				break;
@@ -1026,14 +1026,14 @@ void ScummEngine_v100he::o100_setSpriteGroupInfo() {
 			error("o100_setSpriteGroupInfo subOp 38: Unknown case %d", subOp);
 		}
 		break;
-	case 40:
+	case 40: // SO_IMAGE
 		value1 = pop();
 		if (!_curSpriteGroupId)
 			break;
 
 		_sprite->setGroupImage(_curSpriteGroupId, value1);
 		break;
-	case 49:
+	case 49: // SO_AT
 		value2 = pop();
 		value1 = pop();
 		if (!_curSpriteGroupId)
@@ -1041,51 +1041,51 @@ void ScummEngine_v100he::o100_setSpriteGroupInfo() {
 
 		_sprite->moveGroup(_curSpriteGroupId, value1, value2);
 		break;
-	case 52:
+	case 52: // SO_NAME
 		copyScriptString(string, sizeof(string));
 		break;
-	case 53:
+	case 53: // SO_NEW
 		if (!_curSpriteGroupId)
 			break;
 
 		_sprite->resetGroup(_curSpriteGroupId);
 		break;
-	case 54:
+	case 54: // SO_NEW_GENERAL_PROPERTY
 		// dummy case
 		pop();
 		pop();
 		break;
-	case 59:
+	case 59: // SO_PRIORITY
 		value1 = pop();
 		if (!_curSpriteGroupId)
 			break;
 
 		_sprite->setGroupPriority(_curSpriteGroupId, value1);
 		break;
-	case 60:
+	case 60: // SO_PROPERTY
 		type = pop();
 		value1 = pop();
 		if (!_curSpriteGroupId)
 			break;
 
 		switch (type) {
-		case 0:
+		case 0: // SPRGRPPROP_XMUL
 			_sprite->setGroupXMul(_curSpriteGroupId, value1);
 			break;
-		case 1:
+		case 1: // SPRGRPPROP_XDIV
 			_sprite->setGroupXDiv(_curSpriteGroupId, value1);
 			break;
-		case 2:
+		case 2: // SPRGRPPROP_YMUL
 			_sprite->setGroupYMul(_curSpriteGroupId, value1);
 			break;
-		case 3:
+		case 3: // SPRGRPPROP_YDIV
 			_sprite->setGroupYDiv(_curSpriteGroupId, value1);
 			break;
 		default:
 			error("o100_setSpriteGroupInfo subOp 60: Unknown case %d", subOp);
 		}
 		break;
-	case 89:
+	case 89: // SO_NEVER_ZCLIP
 		if (!_curSpriteGroupId)
 			break;
 
