@@ -97,6 +97,7 @@ GnapEngine::GnapEngine(OSystem *syst, const ADGameDescription *gd) :
 	Engine::syncSoundSettings();
 	_scene = nullptr;
 	_music = nullptr;
+	_tempThumbnail = nullptr;
 
 	_wasSavegameLoaded = false;
 	for (int i = 0; i < kMaxTimers; ++i)
@@ -112,6 +113,7 @@ GnapEngine::GnapEngine(OSystem *syst, const ADGameDescription *gd) :
 GnapEngine::~GnapEngine() {
 	delete _random;
 	delete _music;
+	delete _tempThumbnail;
 }
 
 Common::Error GnapEngine::run() {

@@ -248,6 +248,8 @@ public:
 	MusicPlayer *_music;
 	Graphics::Font *_font;
 
+	Common::MemoryWriteStreamDynamic *_tempThumbnail;
+
 	int _lastUpdateClock;
 
 	int _debugLevel;

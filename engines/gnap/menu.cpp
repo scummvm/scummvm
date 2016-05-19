@@ -210,8 +210,11 @@ void GnapEngine::runMenu() {
 	_menuStatus = 0;
 	_menuDone = false;
 
-	createMenuSprite();//??? CHECKME Crashes when done in loadStockDat() find out why
+	delete _tempThumbnail;
+	_tempThumbnail = new Common::MemoryWriteStreamDynamic;
+	Graphics::saveThumbnail(*_tempThumbnail);
 
+	createMenuSprite();
 	insertDeviceIconActive();
 
 	for (int i = 0; i < 7; ++i) {
@@ -577,7 +580,9 @@ void GnapEngine::writeSavegameHeader(Common::OutSaveFile *out, GnapSavegameHeade
 	out->writeString(header._saveName);
 	out->writeByte('\0');
 
-	Graphics::saveThumbnail(*out);
+	// This implies the menu is used
+	// If we want to save/load at any time, then a check should be added
+	out->write(_tempThumbnail->getData(), _tempThumbnail->size());
 
 	// Write out the save date/time
 	TimeDate td;
@@ -608,7 +613,7 @@ bool GnapEngine::readSavegameHeader(Common::InSaveFile *in, GnapSavegameHeader &
 	while ((ch = (char)in->readByte()) != '\0')
 		header._saveName += ch;
 
-	// TODO: Get the thumbnail
+	// Get the thumbnail, saved in v2 or later
 	if (header._version == 1)
 		header._thumbnail = nullptr;
 	else {
