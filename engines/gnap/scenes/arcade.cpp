@@ -718,10 +718,12 @@ bool Scene50::updateEnergyBars(int newLeftBarPos, int newRightBarPos) {
 }
 
 void Scene50::waitForAnim(int animationIndex) {
-	while (_vm->_gameSys->getAnimationStatus(animationIndex) != 2) {
+	GameSys& gameSys = *_vm->_gameSys;
+
+	while (gameSys.getAnimationStatus(animationIndex) != 2 && !_vm->_gameDone)
 		_vm->gameUpdateTick();
-	}
-	_vm->_gameSys->setAnimation(0, 0, animationIndex);
+
+	gameSys.setAnimation(0, 0, animationIndex);
 }
 
 int Scene50::checkInput() {
@@ -945,7 +947,7 @@ void Scene50::run() {
 
 	_vm->_timers[5] = 15;
 
-	while (!_fightDone) {
+	while (!_fightDone && !_vm->_gameDone) {
 		/* TODO
 		if (sceneXX_sub_4466B1())
 			_fightDone = true;
@@ -1458,8 +1460,7 @@ bool Scene51::isJumping(int sequenceId) {
 }
 
 void Scene51::waitForAnim(int animationIndex) {
-	while (_vm->_gameSys->getAnimationStatus(animationIndex) != 2) {
-		// pollMessages();
+	while (_vm->_gameSys->getAnimationStatus(animationIndex) != 2 && _vm->_gameDone) {
 		updateItemAnimations();
 		_vm->gameUpdateTick();
 	}
@@ -1605,10 +1606,9 @@ void Scene51::winMinigame() {
 void Scene51::playCashAppearAnim() {
 	_vm->_gameSys->setAnimation(0xC8, 252, 0);
 	_vm->_gameSys->insertSequence(0xC8, 252, 0, 0, kSeqNone, 0, -20, -20);
-	while (_vm->_gameSys->getAnimationStatus(0) != 2) {
+
+	while (_vm->_gameSys->getAnimationStatus(0) != 2 && !_vm->_gameDone)
 		_vm->gameUpdateTick();
-		// checkGameAppStatus();
-	}
 }
 
 void Scene51::updateCash(int amount) {
@@ -1726,8 +1726,7 @@ void Scene51::run() {
 			isIdle = false;
 		}
 
-		while (_vm->isKeyStatus2(Common::KEYCODE_RIGHT) && _platypusNextSequenceId != 0x96) {
-			// pollMessages();
+		while (_vm->isKeyStatus2(Common::KEYCODE_RIGHT) && _platypusNextSequenceId != 0x96 && !_vm->_gameDone) {
 			if (_platypusNextSequenceId == 0xB6)
 				_platypusNextSequenceId = 0x76;
 			updateItemAnimations();
@@ -1780,8 +1779,7 @@ void Scene51::run() {
 			_vm->gameUpdateTick();
 		}
 
-		while (_vm->isKeyStatus2(Common::KEYCODE_LEFT) && _platypusNextSequenceId != 0xB6) {
-			// pollMessages();
+		while (_vm->isKeyStatus2(Common::KEYCODE_LEFT) && _platypusNextSequenceId != 0xB6 && !_vm->_gameDone) {
 			updateItemAnimations();
 			if (startWalk) {
 				_platypusNextSequenceId = 0xA5;
@@ -1879,7 +1877,7 @@ void Scene52::updateHotspots() {
 }
 
 void Scene52::update() {
-	for (int rowNum = 0; rowNum < 7; ++rowNum) {
+	for (int rowNum = 0; rowNum < 7 && !_vm->_gameDone; ++rowNum) {
 		_vm->gameUpdateTick();
 		if (_vm->_gameSys->getAnimationStatus(_alienRowAnims[rowNum]) == 2) {
 			updateAlienRow(rowNum);
@@ -1936,7 +1934,7 @@ void Scene52::update() {
 		loseShip();
 		if (_shipsLeft != 0) {
 			_vm->_timers[3] = 40;
-			while (_vm->_timers[3]) {
+			while (_vm->_timers[3] && !_vm->_gameDone) {
 				updateAlienCannons();
 				if (_shipCannonFiring)
 					updateShipCannon();

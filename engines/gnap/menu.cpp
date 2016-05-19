@@ -427,9 +427,8 @@ void GnapEngine::updateMenuStatusMainMenu() {
 						_gameSys->insertDirtyRect(dirtyRect);
 					}
 
-					while (!_mouseClickState._left && !isKeyStatus1(28) && !isKeyStatus1(30) && !isKeyStatus1(29) && !_timers[2]) {
+					while (!_mouseClickState._left && !isKeyStatus1(28) && !isKeyStatus1(30) && !isKeyStatus1(29) && !_timers[2] && !_gameDone)
 						gameUpdateTick();
-					}
 
 					playSound(0x108F5, false);
 					_mouseClickState._left = false;

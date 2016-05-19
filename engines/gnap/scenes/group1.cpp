@@ -1488,7 +1488,7 @@ void Scene13::showScribble() {
 	_vm->_largeSprite = gameSys.createSurface(0x6F);
 	gameSys.insertSpriteDrawItem(_vm->_largeSprite, 0, 0, 300);
 	while (!_vm->_mouseClickState._left && !_vm->isKeyStatus1(Common::KEYCODE_ESCAPE) &&
-		!_vm->isKeyStatus1(Common::KEYCODE_SPACE) && !_vm->isKeyStatus1(29))
+		!_vm->isKeyStatus1(Common::KEYCODE_SPACE) && !_vm->isKeyStatus1(29) && !_vm->_gameDone)
 		_vm->gameUpdateTick();
 	_vm->_mouseClickState._left = false;
 	_vm->clearKeyStatus1(Common::KEYCODE_ESCAPE);
@@ -2365,7 +2365,7 @@ void Scene17::platHangUpPhone() {
 		plat._actionStatus = -1;
 		gameSys.setAnimation(0x257, 254, 4);
 		gameSys.insertSequence(0x257, 254, _currPhoneSequenceId, 254, kSeqSyncExists, 0, 0, 0);
-		while (gameSys.getAnimationStatus(4) != 2)
+		while (gameSys.getAnimationStatus(4) != 2 && !_vm->_gameDone)
 			_vm->gameUpdateTick();
 		gameSys.setAnimation(0x25B, plat._id, 1);
 		gameSys.insertSequence(0x25B, plat._id, plat._sequenceId | (plat._sequenceDatNum << 16), plat._id, kSeqSyncWait, 0, 0, 0);
@@ -2374,7 +2374,7 @@ void Scene17::platHangUpPhone() {
 		_currPhoneSequenceId = -1;
 		_nextPhoneSequenceId = -1;
 		_vm->clearFlag(kGFPlatypusTalkingToAssistant);
-		while (gameSys.getAnimationStatus(1) != 2)
+		while (gameSys.getAnimationStatus(1) != 2 && !_vm->_gameDone)
 			_vm->gameUpdateTick();
 		gnap._actionStatus = savedGnapActionStatus;
 		_vm->updateMouseCursor();
@@ -3272,7 +3272,7 @@ void Scene18::putDownGarbageCan(int animationIndex) {
 	PlayerGnap& gnap = *_vm->_gnap;
 
 	if (animationIndex >= 0) {
-		while (gameSys.getAnimationStatus(animationIndex) != 2)
+		while (gameSys.getAnimationStatus(animationIndex) != 2 && !_vm->_gameDone)
 			_vm->gameUpdateTick();
 	}
 	if (gnap._idleFacing != kDirNone && gnap._idleFacing != kDirBottomRight && gnap._idleFacing != kDirUpRight)
@@ -3296,7 +3296,7 @@ void Scene18::putDownGarbageCan(int animationIndex) {
 	gameSys.insertSequence(0x1FB, 19, 0, 0, kSeqNone, 0, 15 * (5 * _vm->_s18GarbageCanPos - 40), 0);
 	gameSys.setAnimation(0x1FA, 19, 4);
 	gameSys.insertSequence(0x1FA, 19, 507, 19, kSeqSyncWait, 0, 15 * (5 * _vm->_s18GarbageCanPos - 40), 0);
-	while (gameSys.getAnimationStatus(4) != 2)
+	while (gameSys.getAnimationStatus(4) != 2 && !_vm->_gameDone)
 		_vm->gameUpdateTick();
 }
 
@@ -3311,7 +3311,7 @@ void Scene18::platEndPhoning(bool platFl) {
 		if (_currPhoneSequenceId != -1) {
 			gameSys.setAnimation(0x21E, 254, 3);
 			gameSys.insertSequence(0x21E, 254, _currPhoneSequenceId, 254, kSeqSyncExists, 0, 0, 0);
-			while (gameSys.getAnimationStatus(3) != 2)
+			while (gameSys.getAnimationStatus(3) != 2 && !_vm->_gameDone)
 				_vm->gameUpdateTick();
 		}
 		gameSys.removeSequence(0x21F, 254, true);
@@ -3352,7 +3352,7 @@ void Scene18::closeHydrantValve() {
 void Scene18::waitForGnapAction() {
 	PlayerGnap& gnap = *_vm->_gnap;
 
-	while (gnap._actionStatus >= 0) {
+	while (gnap._actionStatus >= 0 && !_vm->_gameDone) {
 		updateAnimations();
 		_vm->gameUpdateTick();
 	}
@@ -3890,7 +3890,7 @@ void Scene18::updateAnimations() {
 			gameSys.removeSequence(0x20C, 19, true);
 			gameSys.setAnimation(0x217, 39, 5);
 			gameSys.insertSequence(0x217, 39, 0x216, 39, kSeqLoop | kSeqSyncWait, 0, 0, 0);
-			while (gameSys.getAnimationStatus(5) != 2)
+			while (gameSys.getAnimationStatus(5) != 2 && !_vm->_gameDone)
 				_vm->gameUpdateTick();
 			_vm->playSound(0x22B, true);
 			gameSys.insertSequence(0x20E, 39, 0, 0, kSeqNone, 0, 0, 0);
@@ -3927,7 +3927,7 @@ void Scene18::updateAnimations() {
 			_cowboyHatSurface = _vm->addFullScreenSprite(0x1D2, 255);
 			gameSys.setAnimation(0x218, 256, 0);
 			gameSys.insertSequence(0x218, 256, 0, 0, kSeqNone, 0, 0, 0);
-			while (gameSys.getAnimationStatus(0) != 2)
+			while (gameSys.getAnimationStatus(0) != 2 && !_vm->_gameDone)
 				_vm->gameUpdateTick();
 			_vm->_newSceneNum = 18;
 			_vm->invAdd(kItemCowboyHat);
@@ -3992,7 +3992,7 @@ void Scene18::updateAnimations() {
 			gameSys.removeSequence(0x20B, 19, true);
 			gameSys.setAnimation(0x213, 39, 5);
 			gameSys.insertSequence(0x214, 39, 0x213, 39, kSeqLoop | kSeqSyncWait, 0, 0, 0);
-			while (gameSys.getAnimationStatus(5) != 2)
+			while (gameSys.getAnimationStatus(5) != 2 && !_vm->_gameDone)
 				_vm->gameUpdateTick();
 			_vm->playSound(0x22B, true);
 			gameSys.insertSequence(0x20D, 39, 0, 0, kSeqNone, 0, 0, 0);
@@ -4008,7 +4008,7 @@ void Scene18::updateAnimations() {
 			gameSys.removeSequence(0x20B, 19, true);
 			gameSys.setAnimation(0x211, 39, 5);
 			gameSys.insertSequence(0x212, 39, 0x211, 39, kSeqLoop | kSeqSyncWait, 0, 0, 0);
-			while (gameSys.getAnimationStatus(5) != 2)
+			while (gameSys.getAnimationStatus(5) != 2 && !_vm->_gameDone)
 				_vm->gameUpdateTick();
 			_vm->playSound(0x22B, true);
 			gameSys.insertSequence(0x20D, 39, 0, 0, kSeqNone, 0, 0, 0);
@@ -4411,10 +4411,9 @@ void Scene19::updateAnimations() {
 			_pictureSurface = _vm->addFullScreenSprite(0xF, 255);
 			gameSys.setAnimation(0x61, 256, 0);
 			gameSys.insertSequence(0x61, 256, 0, 0, kSeqNone, 0, 0, 0);
-			while (gameSys.getAnimationStatus(0) != 2) {
-				// checkGameAppStatus();
+			while (gameSys.getAnimationStatus(0) != 2 && !_vm->_gameDone)
 				_vm->gameUpdateTick();
-			}
+
 			_vm->setFlag(kGFUnk27);
 			_vm->showCursor();
 			_vm->_newSceneNum = 17;
@@ -4454,9 +4453,9 @@ void Scene19::updateAnimations() {
 			_currShopAssistantSequenceId = _nextShopAssistantSequenceId;
 			_nextShopAssistantSequenceId = -1;
 			_vm->_timers[5] = 10;
-			while (_vm->_timers[5]) {
+			while (_vm->_timers[5] && !_vm->_gameDone)
 				_vm->gameUpdateTick();
-			}
+
 			gnap.playIdle(Common::Point(6, 2));
 			gnap._actionStatus = -1;
 			break;

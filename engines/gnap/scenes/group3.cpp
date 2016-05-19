@@ -238,7 +238,7 @@ void Scene30::updateAnimations() {
 			gameSys.removeSequence(0x105, gnap._id, true);
 			gameSys.setAnimation(0x102, 256, 0);
 			gameSys.insertSequence(0x102, 256, 0, 0, kSeqNone, 0, 0, 0);
-			while (gameSys.getAnimationStatus(0) != 2)
+			while (gameSys.getAnimationStatus(0) != 2 && !_vm->_gameDone)
 				_vm->gameUpdateTick();
 			gameSys.setAnimation(0x103, gnap._id, 0);
 			gameSys.insertSequence(0x103, gnap._id, 0, 0, kSeqNone, 0, 0, 0);

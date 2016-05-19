@@ -205,10 +205,9 @@ void Scene20::run() {
 		_vm->endSceneInit();
 		gameSys.setAnimation(0x182, 140, 0);
 		gameSys.insertSequence(0x182, 140, 0, 0, kSeqNone, 0, 0, 0);
-		while (gameSys.getAnimationStatus(0) != 2) {
-			// checkGameAppStatus();
+		while (gameSys.getAnimationStatus(0) != 2 && !_vm->_gameDone)
 			_vm->gameUpdateTick();
-		}
+
 		gnap.initPos(11, 8, kDirBottomLeft);
 		plat.initPos(11, 9, kDirUnk4);
 		gnap.walkTo(Common::Point(5, 8), -1, 0x107BA, 1);
@@ -623,7 +622,7 @@ void Scene20::updateAnimations() {
 			_vm->addFullScreenSprite(0x12C, 255);
 			gameSys.setAnimation(0x181, 256, 0);
 			gameSys.insertSequence(0x181, 256, 0, 0, kSeqNone, 0, 0, 0);
-			while (gameSys.getAnimationStatus(0) != 2)
+			while (gameSys.getAnimationStatus(0) != 2 && !_vm->_gameDone)
 				_vm->gameUpdateTick();
 			_vm->removeFullScreenSprite();
 			_vm->showCursor();
@@ -1088,9 +1087,9 @@ void Scene22::run() {
 		gameSys.drawSpriteToBackground(0, 0, 0x44);
 		gameSys.setAnimation(storeDetectiveSeqId, 256, 4);
 		gameSys.insertSequence(storeDetectiveSeqId, 256, 0, 0, kSeqNone, 0, 0, 0);
-		while (gameSys.getAnimationStatus(4) != 2) {
+		while (gameSys.getAnimationStatus(4) != 2 && !_vm->_gameDone)
 			_vm->gameUpdateTick();
-		}
+
 		_vm->_sceneDone = true;
 		_vm->_newSceneNum = 20;
 		_caughtBefore = true;
@@ -1316,8 +1315,9 @@ void Scene23::run() {
 		gnap.walkTo(Common::Point(2, 7), -1, 0x107B9, 1);
 	} else {
 		gnap.walkTo(Common::Point(2, 7), 0, 0x107B9, 1);
-		while (gameSys.getAnimationStatus(0) != 2)
+		while (gameSys.getAnimationStatus(0) != 2 && !_vm->_gameDone)
 			_vm->gameUpdateTick();
+
 		_vm->playSequences(0x48, 0xBA, 0xBB, 0xBC);
 		_vm->setFlag(kGFUnk24);
 	}
@@ -1800,7 +1800,7 @@ void Scene25::playAnims(int index) {
 	gameSys.insertSpriteDrawItem(_vm->_largeSprite, 0, 0, 300);
 	_vm->delayTicksCursor(5);
 	while (!_vm->_mouseClickState._left && !_vm->isKeyStatus1(Common::KEYCODE_ESCAPE) && !_vm->isKeyStatus1(Common::KEYCODE_SPACE) &&
-		!_vm->isKeyStatus1(29)) {
+		!_vm->isKeyStatus1(29) && !_vm->_gameDone) {
 		_vm->gameUpdateTick();
 	}
 	_vm->_mouseClickState._left = false;
@@ -2767,7 +2767,7 @@ void Scene28::run() {
 		_nextClownSequenceId = -1;
 		_vm->_timers[4] = _vm->getRandom(20) + 80;
 		gnap._actionStatus = kAS28GnapWaiting;
-		while (gameSys.getAnimationStatus(3) != 2) {
+		while (gameSys.getAnimationStatus(3) != 2 && !_vm->_gameDone) {
 			_vm->gameUpdateTick();
 			_vm->updateMouseCursor();
 		}
@@ -3001,8 +3001,9 @@ void Scene28::updateAnimations() {
 			_vm->addFullScreenSprite(0xF6, 255);
 			gameSys.setAnimation(0x120, 256, 0);
 			gameSys.insertSequence(0x120, 256, 0, 0, kSeqNone, 0, 0, 0);
-			while (gameSys.getAnimationStatus(0) != 2)
+			while (gameSys.getAnimationStatus(0) != 2 && !_vm->_gameDone)
 				_vm->gameUpdateTick();
+
 			_vm->removeFullScreenSprite();
 			_vm->showCursor();
 			_vm->setGrabCursorSprite(kItemHorn);
@@ -3381,10 +3382,12 @@ void Scene29::updateAnimations() {
 			_currMonkeySequenceId = 0xE6;
 			_nextMonkeySequenceId = -1;
 			_vm->_timers[5] = 30;
-			while (_vm->_timers[5])
+			while (_vm->_timers[5] && !_vm->_gameDone)
 				_vm->gameUpdateTick();
+
 			_vm->_plat->walkTo(Common::Point(0, 8), 1, 0x107CF, 1);
-			while (gameSys.getAnimationStatus(1) != 2)
+
+			while (gameSys.getAnimationStatus(1) != 2 && !_vm->_gameDone)
 				_vm->gameUpdateTick();
 		} else if (_nextMonkeySequenceId == -1) {
 			switch (_vm->getRandom(6)) {

@@ -1139,7 +1139,7 @@ void Scene42::updateAnimations() {
 				_vm->addFullScreenSprite(0x13E, 255);
 				gameSys.setAnimation(0x151, 256, 0);
 				gameSys.insertSequence(0x151, 256, 0, 0, kSeqNone, 0, 0, 0);
-				while (gameSys.getAnimationStatus(0) != 2)
+				while (gameSys.getAnimationStatus(0) != 2 && !_vm->_gameDone)
 					_vm->gameUpdateTick();
 				_vm->removeFullScreenSprite();
 				_vm->showCursor();
@@ -2189,7 +2189,7 @@ void Scene45::run() {
 		_vm->setGrabCursorSprite(-1);
 		gameSys.setAnimation(0x9D, gnap._id, 0);
 		gameSys.insertSequence(0x9D, gnap._id, makeRid(gnap._sequenceDatNum, gnap._sequenceId), gnap._id, kSeqSyncWait, 0, 0, 0);
-		while (gameSys.getAnimationStatus(0) != 2) {
+		while (gameSys.getAnimationStatus(0) != 2 && !_vm->_gameDone) {
 			_vm->gameUpdateTick();
 			if (gameSys.getAnimationStatus(2) == 2) {
 				gameSys.setAnimation(0, 0, 2);
@@ -2211,7 +2211,7 @@ void Scene45::run() {
 		_vm->addFullScreenSprite(0x8A, 255);
 		gameSys.setAnimation(0xA0, 256, 0);
 		gameSys.insertSequence(0xA0, 256, 0, 0, kSeqNone, 0, 0, 0);
-		while (gameSys.getAnimationStatus(0) != 2)
+		while (gameSys.getAnimationStatus(0) != 2 && !_vm->_gameDone)
 			_vm->gameUpdateTick();
 		gameSys.setAnimation(0x107BD, gnap._id, 0);
 		gameSys.insertSequence(0x107BD, gnap._id,

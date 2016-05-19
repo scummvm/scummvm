@@ -89,8 +89,7 @@ int Scene53::pressPhoneNumberButton(int phoneNumber, int buttonNum) {
 	}
 
 	gnap._actionStatus = 6;
-	while (gameSys.getAnimationStatus(6) != 2) {
-		// checkGameAppStatus();
+	while (gameSys.getAnimationStatus(6) != 2 && !_vm->_gameDone) {
 		_vm->updateMouseCursor();
 		_vm->gameUpdateTick();
 	}
@@ -141,9 +140,8 @@ void Scene53::runRandomCall() {
 	}
 
 	gnap._actionStatus = 1;
-	while (gameSys.getAnimationStatus(6) != 2) {
+	while (gameSys.getAnimationStatus(6) != 2 && !_vm->_gameDone) {
 		_vm->updateMouseCursor();
-		// checkGameAppStatus();
 		_vm->gameUpdateTick();
 	}
 	gnap._actionStatus = -1;
@@ -159,9 +157,8 @@ void Scene53::runChitChatLine() {
 	gameSys.insertSequence(0x6E, 1, 0, 0, kSeqNone, 16, 0, 0);
 
 	gnap._actionStatus = 1;
-	while (gameSys.getAnimationStatus(6) != 2) {
+	while (gameSys.getAnimationStatus(6) != 2 && !_vm->_gameDone) {
 		_vm->updateMouseCursor();
-		// checkGameAppStatus();
 		_vm->gameUpdateTick();
 	}
 	gnap._actionStatus = -1;
@@ -225,18 +222,16 @@ void Scene53::runChitChatLine() {
 			gameSys.setAnimation(sequenceId, 1, 6);
 			gameSys.insertSequence(sequenceId, 1, 0, 0, kSeqNone, 16, 0, 0);
 			gnap._actionStatus = 1;
-			while (gameSys.getAnimationStatus(6) != 2) {
+			while (gameSys.getAnimationStatus(6) != 2 && !_vm->_gameDone) {
 				_vm->updateMouseCursor();
-				// checkGameAppStatus();
 				_vm->gameUpdateTick();
 			}
 			gnap._actionStatus = -1;
 			gameSys.setAnimation(0x72, 1, 6);
 			gameSys.insertSequence(0x72, 1, 0, 0, kSeqNone, 16, 0, 0);
 			gnap._actionStatus = 1;
-			while (gameSys.getAnimationStatus(6) != 2) {
+			while (gameSys.getAnimationStatus(6) != 2 && !_vm->_gameDone) {
 				_vm->updateMouseCursor();
-				// checkGameAppStatus();
 				_vm->gameUpdateTick();
 			}
 			gnap._actionStatus = -1;
@@ -250,9 +245,8 @@ void Scene53::runChitChatLine() {
 	if (_vm->isFlag(kGFSpringTaken)) {
 		gameSys.setAnimation(0x73, 40, 6);
 		gameSys.insertSequence(0x73, 40, _currHandSequenceId, 40, kSeqSyncWait, 0, 0, 0);
-		while (gameSys.getAnimationStatus(6) != 2) {
+		while (gameSys.getAnimationStatus(6) != 2 && !_vm->_gameDone) {
 			_vm->updateMouseCursor();
-			// checkGameAppStatus();
 			_vm->gameUpdateTick();
 		}
 		_currHandSequenceId = 0x73;
@@ -317,9 +311,8 @@ void Scene53::run() {
 				if (_vm->isFlag(kGFSpringTaken)) {
 					gameSys.setAnimation(0x73, 40, 6);
 					gameSys.insertSequence(0x73, 40, _currHandSequenceId, 40, kSeqSyncWait, 0, 0, 0);
-					while (gameSys.getAnimationStatus(6) != 2) {
+					while (gameSys.getAnimationStatus(6) != 2 && !_vm->_gameDone) {
 						_vm->updateMouseCursor();
-						// checkGameAppStatus();
 						_vm->gameUpdateTick();
 					}
 					_currHandSequenceId = 0x73;
@@ -359,9 +352,8 @@ void Scene53::run() {
 				if (_vm->isFlag(kGFSpringTaken)) {
 					gameSys.setAnimation(0x73, 40, 6);
 					gameSys.insertSequence(0x73, 40, _currHandSequenceId, 40, kSeqSyncWait, 0, 0, 0);
-					while (gameSys.getAnimationStatus(6) != 2) {
+					while (gameSys.getAnimationStatus(6) != 2 && !_vm->_gameDone) {
 						_vm->updateMouseCursor();
-						// checkGameAppStatus();
 						_vm->gameUpdateTick();
 					}
 					_currHandSequenceId = 0x73;

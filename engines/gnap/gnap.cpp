@@ -241,7 +241,6 @@ void GnapEngine::updateEvents() {
 void GnapEngine::gameUpdateTick() {
 	updateEvents();
 
-	// TODO Check _gameDone in the various game loops
 	if (shouldQuit()) {
 		_gameDone = true;
 		_sceneDone = true;
@@ -307,13 +306,12 @@ void GnapEngine::resumeGame() {
 }
 
 void GnapEngine::updatePause() {
-	while (_isPaused) {
+	while (_isPaused && !_gameDone) {
 		gameUpdateTick();
 		if (isKeyStatus1(Common::KEYCODE_p)) {
 			clearKeyStatus1(Common::KEYCODE_p);
 			resumeGame();
 		}
-		//_system->delayMillis(100);
 	}
 }
 
@@ -557,7 +555,7 @@ void GnapEngine::showFullScreenSprite(int resourceId) {
 	setGrabCursorSprite(-1);
 	addFullScreenSprite(resourceId, 256);
 	while (!_mouseClickState._left && !isKeyStatus1(Common::KEYCODE_ESCAPE) &&
-		!isKeyStatus1(Common::KEYCODE_SPACE) && !isKeyStatus1(29)) {
+		!isKeyStatus1(Common::KEYCODE_SPACE) && !isKeyStatus1(29) && !_gameDone) {
 		gameUpdateTick();
 	}
 	_mouseClickState._left = false;
@@ -737,8 +735,6 @@ void GnapEngine::mainLoop() {
 		deleteSurface(&_backgroundSurface);
 
 	_dat->close(1);
-	// TODO freeMenuSprite();
-	// TODO freeFont();
 }
 
 void GnapEngine::initScene() {
@@ -829,7 +825,6 @@ void GnapEngine::checkGameKeys() {
 		pauseGame();
 		updatePause();
 	}
-	// TODO? Debug input
 }
 
 void GnapEngine::startSoundTimerA(int timerIndex) {
@@ -911,14 +906,14 @@ void GnapEngine::updateIdleTimer() {
 
 void GnapEngine::screenEffect(int dir, byte r, byte g, byte b) {
 	if (dir == 1) {
-		for (int y = 300; y < 600; y += 50) {
+		for (int y = 300; y < 600 && !_gameDone; y += 50) {
 			_gameSys->fillSurface(nullptr, 0, y, 800, 50, r, g, b);
 			_gameSys->fillSurface(nullptr, 0, 549 - y + 1, 800, 50, r, g, b);
 			gameUpdateTick();
 			_system->delayMillis(50);
 		}
 	} else {
-		for (int y = 0; y < 300; y += 50) {
+		for (int y = 0; y < 300 && !_gameDone; y += 50) {
 			_gameSys->fillSurface(nullptr, 0, y, 800, 50, r, g, b);
 			_gameSys->fillSurface(nullptr, 0, 549 - y + 1, 800, 50, r, g, b);
 			gameUpdateTick();
@@ -1000,13 +995,13 @@ void GnapEngine::playSequences(int fullScreenSpriteId, int sequenceId1, int sequ
 		kSeqSyncWait, 0, 15 * (5 * _gnap->_pos.x - 25), 48 * (_gnap->_pos.y - 8));
 	_gnap->_sequenceId = sequenceId2;
 	_gnap->_sequenceDatNum = 0;
-	while (_gameSys->getAnimationStatus(0) != 2)
+	while (_gameSys->getAnimationStatus(0) != 2 && !_gameDone)
 		gameUpdateTick();
 	hideCursor();
 	addFullScreenSprite(fullScreenSpriteId, 255);
 	_gameSys->setAnimation(sequenceId1, 256, 0);
 	_gameSys->insertSequence(sequenceId1, 256, 0, 0, kSeqNone, 0, 0, 0);
-	while (_gameSys->getAnimationStatus(0) != 2)
+	while (_gameSys->getAnimationStatus(0) != 2 && !_gameDone)
 		gameUpdateTick();
 	_gameSys->setAnimation(sequenceId3, _gnap->_id, 0);
 	_gameSys->insertSequence(sequenceId3, _gnap->_id,

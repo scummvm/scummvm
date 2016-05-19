@@ -481,7 +481,7 @@ void PlayerGnap::useJointOnPlatypus() {
 		plat._idleFacing = kDirNone;
 		playSequence(0x107B5);
 		walkStep();
-		while (_vm->_gameSys->getAnimationStatus(0) != 2) {
+		while (_vm->_gameSys->getAnimationStatus(0) != 2 && !_vm->_gameDone) {
 			_vm->updateMouseCursor();
 			_vm->gameUpdateTick();
 		}
@@ -511,7 +511,7 @@ void PlayerGnap::kissPlatypus(int callback) {
 		plat._sequenceId = 0x7CB;
 		plat._idleFacing = kDirNone;
 		playSequence(0x107B5);
-		while (_vm->_gameSys->getAnimationStatus(0) != 2) {
+		while (_vm->_gameSys->getAnimationStatus(0) != 2 && !_vm->_gameDone) {
 			_vm->updateMouseCursor();
 			_vm->doCallback(callback);
 			_vm->gameUpdateTick();
@@ -1120,7 +1120,7 @@ bool PlayerGnap::doPlatypusAction(int gridX, int gridY, int platSequenceId, int 
 
 		if (!_vm->isPointBlocked(checkPt) && (_pos != checkPt)) {
 			walkTo(checkPt, 0, 0x107B9, 1);
-			while (_vm->_gameSys->getAnimationStatus(0) != 2) {
+			while (_vm->_gameSys->getAnimationStatus(0) != 2 && !_vm->_gameDone) {
 				_vm->updateMouseCursor();
 				_vm->doCallback(callback);
 				_vm->gameUpdateTick();
@@ -1129,7 +1129,7 @@ bool PlayerGnap::doPlatypusAction(int gridX, int gridY, int platSequenceId, int 
 			if (_pos == plat._pos + Common::Point(gridX, gridY)) {
 				_vm->_gameSys->setAnimation(platSequenceId, plat._id, 1);
 				plat.playSequence(platSequenceId);
-				while (_vm->_gameSys->getAnimationStatus(1) != 2) {
+				while (_vm->_gameSys->getAnimationStatus(1) != 2 && !_vm->_gameDone) {
 					_vm->updateMouseCursor();
 					_vm->doCallback(callback);
 					_vm->gameUpdateTick();
@@ -1145,8 +1145,9 @@ bool PlayerGnap::doPlatypusAction(int gridX, int gridY, int platSequenceId, int 
 void PlayerGnap::useDisguiseOnPlatypus() {
 	_vm->_gameSys->setAnimation(0x10846, _id, 0);
 	playSequence(0x10846);
-	while (_vm->_gameSys->getAnimationStatus(0) != 2)
+	while (_vm->_gameSys->getAnimationStatus(0) != 2 && !_vm->_gameDone)
 		_vm->gameUpdateTick();
+
 	_vm->_newSceneNum = 47;
 	_vm->_isLeavingScene = true;
 	_vm->_sceneDone = true;

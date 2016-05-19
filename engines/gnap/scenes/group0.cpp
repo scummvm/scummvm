@@ -1209,7 +1209,7 @@ void Scene03::updateAnimations() {
 			_vm->addFullScreenSprite(0x106, 255);
 			gameSys.setAnimation(0x1C9, 256, 1);
 			gameSys.insertSequence(0x1C9, 256, 0, 0, kSeqNone, 0, 0, 0);
-			while (gameSys.getAnimationStatus(1) != 2)
+			while (gameSys.getAnimationStatus(1) != 2 && !_vm->_gameDone)
 				_vm->gameUpdateTick();
 			_vm->removeFullScreenSprite();
 			gameSys.setAnimation(0x1BA, 99, 1);
@@ -1224,12 +1224,12 @@ void Scene03::updateAnimations() {
 			gnap.playBrainPulsating();
 			gameSys.insertSequence(0x1BF, 99, plat._sequenceId | (plat._sequenceDatNum << 16), 99, kSeqSyncExists, 0, 0, 0);
 			gameSys.setAnimation(0x1BF, 99, 1);
-			while (gameSys.getAnimationStatus(1) != 2)
+			while (gameSys.getAnimationStatus(1) != 2 && !_vm->_gameDone)
 				_vm->gameUpdateTick();
 			_vm->addFullScreenSprite(0x106, 255);
 			gameSys.setAnimation(0x1C9, 256, 1);
 			gameSys.insertSequence(0x1C9, 256, 0, 0, kSeqNone, 0, 0, 0);
-			while (gameSys.getAnimationStatus(1) != 2)
+			while (gameSys.getAnimationStatus(1) != 2 && !_vm->_gameDone)
 				_vm->gameUpdateTick();
 			_vm->removeFullScreenSprite();
 			gameSys.setAnimation(0x1BA, 99, 1);
@@ -2191,7 +2191,7 @@ void Scene05::updateAnimations() {
 			_nextChickenSequenceId = 0x14B;
 			break;
 		case kAS05GrabLadder:
-			while (gameSys.isSequenceActive(0x149, 39))
+			while (gameSys.isSequenceActive(0x149, 39) && !_vm->_gameDone)
 				_vm->gameUpdateTick();
 			gameSys.insertSequence(0x14E, gnap._id + 1, 0, 0, kSeqNone, 0, 0, 0);
 			gameSys.insertSequence(0x14D, gnap._id, makeRid(gnap._sequenceDatNum, gnap._sequenceId), gnap._id, kSeqSyncWait, 0, 0, 0);
