@@ -32,27 +32,26 @@ const float FAILURE = 1e20;
 
 class IContainedObject {
 private:
-	int objID;
-	float valueG;
+	int _objID;
+	float _valueG;
 
 protected:
-	virtual float getG() const { return valueG; }
+	virtual float getG() const { return _valueG; }
 	virtual float calcH() { return 0; }
 
-
 public:
-	IContainedObject() { valueG = 0; }
-	IContainedObject(float inG) { valueG = inG; }
+	IContainedObject() { _valueG = 0; }
+	IContainedObject(float inG) { _valueG = inG; }
 	IContainedObject(IContainedObject &sourceContainedObject);
 	virtual ~IContainedObject() {}
 
 	virtual IContainedObject *duplicate() = 0;
 
-	void setValueG(float inG) { valueG = inG; }
-	float getValueG() { return valueG; }
+	void setValueG(float inG) { _valueG = inG; }
+	float getValueG() { return _valueG; }
 
-	int getObjID() const { return objID; }
-	void setObjID(int inputObjID) { objID = inputObjID; }
+	int getObjID() const { return _objID; }
+	void setObjID(int inputObjID) { _objID = inputObjID; }
 
 	virtual int numChildrenToGen() = 0;
 	virtual IContainedObject *createChildObj(int index, int &completionFlag) = 0;
@@ -65,40 +64,38 @@ public:
 
 class Node {
 private:
-	Node *pParent;
-	Common::List<Node *> vpChildren;
+	Node *_parent;
+	Common::List<Node *> _children;
 
-	int m_depth;
-	static int m_nodeCount;
+	int _depth;
+	static int _nodeCount;
 
-	IContainedObject *pContents;
+	IContainedObject *_contents;
 
 public:
 	Node();
 	Node(Node *sourceNode);
 	~Node();
 
-	void setParent(Node *parentPtr) { pParent = parentPtr; }
-	Node *getParent() const { return pParent; }
+	void setParent(Node *parentPtr) { _parent = parentPtr; }
+	Node *getParent() const { return _parent; }
 
-	void setDepth(int depth) { m_depth = depth; }
-	int getDepth() const { return m_depth; }
+	void setDepth(int depth) { _depth = depth; }
+	int getDepth() const { return _depth; }
 
-	static int getNodeCount() { return m_nodeCount; }
+	static int getNodeCount() { return _nodeCount; }
 
-	void setContainedObject(IContainedObject *pValue) { pContents = pValue; }
-	IContainedObject *getContainedObject() { return pContents; }
+	void setContainedObject(IContainedObject *value) { _contents = value; }
+	IContainedObject *getContainedObject() { return _contents; }
 
-	Common::List<Node *> getChildren() const { return vpChildren; }
+	Common::List<Node *> getChildren() const { return _children; }
 	int generateChildren();
 	int generateNextChild();
 	Node *popChild();
 
-	float getObjectT() { return pContents->calcT(); }
+	float getObjectT() { return _contents->calcT(); }
 
 	Node *getFirstStep();
-
-	void printPath();
 };
 
 } // End of namespace Scumm

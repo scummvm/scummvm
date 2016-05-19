@@ -140,6 +140,7 @@ MODULE_OBJS += \
 	he/logic/puttrace.o \
 	he/logic/soccer.o \
 	he/moonbase/ai_defenseunit.o \
+	he/moonbase/ai_node.o \
 	he/moonbase/ai_types.o \
 	he/moonbase/ai_weapon.o \
 	he/moonbase/moonbase.o \
