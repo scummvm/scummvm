@@ -875,6 +875,7 @@ Special configuration feature:
                                            android-arm for Android ARM
                                            android-mips for Android MIPS
                                            android-x86 for Android x86
+                                           androidsdl for Android with SDL backend
                                            caanoo for Caanoo
                                            dingux for Dingux
                                            raspberrypi for Raspberry Pi
@@ -1327,6 +1328,26 @@ android-mips)
 	;;
 android-x86)
 	_host_os=android
+	_host_cpu=i686
+	_host_alias=i686-linux-android
+	;;
+androidsdl-armeabi | androidsdl-armeabi-v7a)
+	_host_os=androidsdl
+	_host_cpu=arm
+	_host_alias=arm-linux-androideabi
+	;;
+androidsdl-arm64-v8a)
+	_host_os=androidsdl
+	_host_cpu=aarch64
+	_host_alias=aarch64-linux-android
+	;;
+androidsdl-mips)
+	_host_os=androidsdl
+	_host_cpu=mipsel
+	_host_alias=mipsel-linux-android
+	;;
+androidsdl-x86)
+	_host_os=androidsdl
 	_host_cpu=i686
 	_host_alias=i686-linux-android
 	;;
@@ -1852,7 +1873,7 @@ if test "$have_gcc" = yes ; then
 			case $_host_os in
 			# newlib-based system include files suppress non-C89 function
 			# declarations under __STRICT_ANSI__
-			3ds | amigaos* | android | dreamcast | ds | gamecube | mingw* | n64 | psp | ps2 | ps3 | tizen | wii | wince )
+			3ds | amigaos* | android | androidsdl | dreamcast | ds | gamecube | mingw* | n64 | psp | ps2 | ps3 | tizen | wii | wince )
 				;;
 			*)
 				append_var CXXFLAGS "-ansi"
@@ -1888,7 +1909,7 @@ echo $_use_cxx11
 # However, some platforms use GNU extensions in system header files, so
 # for these we must not use -pedantic.
 case $_host_os in
-android | gamecube | psp | tizen | wii | webos)
+android | androidsdl | gamecube | psp | tizen | wii | webos)
 	;;
 *)
 	# ICC does not support pedantic, while GCC and clang do.
@@ -2635,6 +2656,15 @@ if test -n "$_host"; then
 			_mt32emu=no
 			_timidity=no
 			;;
+		androidsdl | androidsdl-armeabi | androidsdl-armeabi-v7a | androidsdl-mips | androidsdl-x86 | androidsdl-arm64-v8a)
+			DEFINES="$DEFINES -DANDROIDSDL"
+			_unix=yes
+			_seq_midi=no
+			_mt32emu=no
+			_timidity=no
+			_backend="androidsdl"
+			_port_mk="backends/platform/androidsdl/androidsdl.mk"
+			;;
 		arm-linux|arm*-linux-gnueabi|arm-*-linux)
 			;;
 		arm-riscos|linupy)
@@ -3089,6 +3119,8 @@ case $_backend in
 		append_var LDFLAGS "-Wl,-z,noexecstack"
 		append_var INCLUDES "-I$ANDROID_NDK/sources/cxx-stl/system/include"
 		;;
+	androidsdl)
+		;;		
 	dc)
 		append_var INCLUDES '-I$(srcdir)/backends/platform/dc'
 		append_var INCLUDES '-isystem $(ronindir)/include'
@@ -3246,7 +3278,7 @@ append_var MODULES "backends/platform/$_backend"
 # Setup SDL specifics for SDL based backends
 #
 case $_backend in
-	dingux | gph | linuxmoto | maemo | openpandora | samsungtv | sdl)
+	androidsdl | dingux | gph | linuxmoto | maemo | openpandora | samsungtv | sdl)
 		find_sdlconfig
 		append_var INCLUDES "`$_sdlconfig --prefix="$_sdlpath" --cflags`"
 		append_var LIBS "`$_sdlconfig --prefix="$_sdlpath" --libs`"
@@ -3269,7 +3301,7 @@ esac
 # Enable 16bit support only for backends which support it
 #
 case $_backend in
-	3ds | android | dingux | dc | gph | iphone | ios7 | maemo | openpandora | psp | samsungtv | sdl | tizen | webos | wii)
+	3ds | android | androidsdl | dingux | dc | gph | iphone | ios7 | maemo | openpandora | psp | samsungtv | sdl | tizen | webos | wii)
 		if test "$_16bit" = auto ; then
 			_16bit=yes
 		else
@@ -3348,7 +3380,7 @@ case $_host_os in
 	amigaos* | cygwin* | dreamcast | ds | gamecube | mingw* | n64 | ps2 | ps3 | psp | wii | wince)
 		_posix=no
 		;;
-	3ds | android | beos* | bsd* | darwin* | freebsd* | gnu* | gph-linux | haiku* | hpux* | iphone | ios7 | irix*| k*bsd*-gnu* | linux* | maemo | mint* | netbsd* | openbsd* | solaris* | sunos* | uclinux* | webos)
+	3ds | android | androidsdl | beos* | bsd* | darwin* | freebsd* | gnu* | gph-linux | haiku* | hpux* | iphone | ios7 | irix*| k*bsd*-gnu* | linux* | maemo | mint* | netbsd* | openbsd* | solaris* | sunos* | uclinux* | webos)
 		_posix=yes
 		;;
 	os2-emx*)

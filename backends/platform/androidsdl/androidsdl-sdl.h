@@ -20,34 +20,19 @@
  *
  */
 
-#include "common/scummsys.h"
-
-#if defined(POSIX) && !defined(MACOSX) && !defined(SAMSUNGTV) && !defined(MAEMO) && !defined(WEBOS) && !defined(LINUXMOTO) && !defined(GPH_DEVICE) && !defined(GP2X) && !defined(DINGUX) && !defined(OPENPANDORA) && !defined(PLAYSTATION3) && !defined(ANDROIDSDL)
+#ifndef PLATFORM_SDL_ANDROIDSDL_H
+#define PLATFORM_SDL_ANDROIDSDL_H
 
 #include "backends/platform/sdl/posix/posix.h"
-#include "backends/plugins/sdl/sdl-provider.h"
-#include "base/main.h"
 
-int main(int argc, char *argv[]) {
+class OSystem_ANDROIDSDL : public OSystem_POSIX {
+public:
+	virtual void initBackend();
 
-	// Create our OSystem instance
-	g_system = new OSystem_POSIX();
-	assert(g_system);
-
-	// Pre initialize the backend
-	((OSystem_POSIX *)g_system)->init();
-
-#ifdef DYNAMIC_MODULES
-	PluginManager::instance().addPluginProvider(new SDLPluginProvider());
+#ifdef ENABLE_KEYMAPPER
+	// FIXME: This just calls parent methods, is it needed?
+	virtual Common::HardwareInputSet *getHardwareInputSet();
 #endif
-
-	// Invoke the actual ScummVM main entry point:
-	int res = scummvm_main(argc, argv);
-
-	// Free OSystem
-	delete (OSystem_POSIX *)g_system;
-
-	return res;
-}
+};
 
 #endif
