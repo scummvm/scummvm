@@ -27,6 +27,8 @@
 
 namespace Scumm {
 
+class ScummEngine;
+
 extern ScummEngine *_vm;
 
 typedef Common::List<int>::iterator intVecItr;
