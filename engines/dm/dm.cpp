@@ -76,7 +76,7 @@ Common::Error DMEngine::run() {
 		_displayMan->drawDungeon(kDirNorth, i++, 0);
 		_displayMan->updateScreen();
 		_system->delayMillis(1000); //TODO: testing, please set me to 10
-		if (i == 3) break;
+		if (i == 10) break;
 	}
 
 

@@ -466,8 +466,6 @@ public:
 	Messages _messages; // @ NONE;
 
 	int16 _currMapInscriptionWallOrnIndex; // @ G0265_i_CurrentMapInscriptionWallOrnamentIndex
-
-
 };
 
 }
