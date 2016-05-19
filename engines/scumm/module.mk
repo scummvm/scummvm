@@ -139,6 +139,7 @@ MODULE_OBJS += \
 	he/logic/moonbase_logic.o \
 	he/logic/puttrace.o \
 	he/logic/soccer.o \
+	he/moonbase/ai_defenseunit.o \
 	he/moonbase/moonbase.o \
 	he/moonbase/moonbase_fow.o
 endif
