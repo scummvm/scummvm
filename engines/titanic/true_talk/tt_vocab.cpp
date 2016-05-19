@@ -210,10 +210,39 @@ TTword *TTvocab::getPrimeWord(TTstring &str, TTword **srcWord) const {
 
 void TTvocab::fn1(TTstring &str) {
 	TTstring tempStr(str);
-	
-	if (tempStr.contains("pre")) {
+	TTword *word = nullptr;
+	int prefixLen = 0;
 
+	if (tempStr.hasPrefix("pre")) {
+		prefixLen = 3;
+	} else if (tempStr.hasPrefix("re") || tempStr.hasPrefix("co")) {
+		prefixLen = 2;
+	} else if (tempStr.hasPrefix("inter") || tempStr.hasPrefix("multi")) {
+		prefixLen = 5;
+	} else if (tempStr.hasPrefix("over") || tempStr.hasPrefix("post") || tempStr.hasPrefix("self")) {
+		prefixLen = 4;
+	}
+	if (prefixLen) {
+		// Known prefix found, so scan for word without prefix
+		tempStr.deletePrefix(prefixLen);
+		word = getPrimeWord(tempStr);
+		if (word)
+			tempStr = str;
+	} else {
+		if (tempStr.hasPrefix("anti"))
+			prefixLen = 4;
+		else if (tempStr.hasPrefix("counter"))
+			prefixLen = 7;
+
+		if (prefixLen) {
+			tempStr.deletePrefix(prefixLen);
+			word = getPrimeWord(tempStr);
+			if (word)
+				tempStr = str;
+		}
 	}
+
+	// TODO
 }
 
 } // End of namespace Titanic

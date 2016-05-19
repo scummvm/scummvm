@@ -65,7 +65,7 @@ public:
 	 * @param srcWord	Optional pointer to store the original word match was found on
 	 * @returns			A new word instance if a match if found, or null if not
 	 */
-	TTword *getPrimeWord(TTstring &str, TTword **srcWord) const;
+	TTword *getPrimeWord(TTstring &str, TTword **srcWord = nullptr) const;
 
 	void fn1(TTstring &str);
 };

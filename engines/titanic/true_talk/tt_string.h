@@ -83,6 +83,12 @@ public:
 		_data->_string.deleteLastChar();
 	}
 
+	bool hasPrefix(const CString &str) const {
+		return _data->_string.hasPrefix(str);
+	}
+	bool hasPrefix(const const char *str) const {
+		return _data->_string.hasPrefix(str);
+	}
 	bool hasSuffix(const CString &str) const {
 		return _data->_string.hasSuffix(str);
 	}
