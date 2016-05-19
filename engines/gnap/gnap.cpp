@@ -246,7 +246,6 @@ void GnapEngine::gameUpdateTick() {
 		_sceneDone = true;
 	}
 
-	// TODO Improve this (variable frame delay to keep ~15fps)
 	int currClock = _system->getMillis();
 	if (currClock >= _lastUpdateClock + 66) {
 		_gameSys->fatUpdate();

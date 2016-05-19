@@ -2830,28 +2830,19 @@ void Scene07::run() {
 					if (!_vm->_timers[1]) {
 						_vm->_timers[1] = _vm->getRandom(20) + 30;
 						int gnapRandomValue = _vm->getRandom(20);
-						// TODO Cleanup
 						if (plat._idleFacing != kDirNone) {
-							if (gnapRandomValue != 0 || plat._sequenceId != 0x7CA) {
-								if (gnapRandomValue != 1 || plat._sequenceId != 0x7CA) {
-									if (plat._pos.y == 9)
-										plat.playSequence(0x107CA);
-								} else {
-									plat.playSequence(0x10845);
-								}
-							} else {
+							if (gnapRandomValue == 0 && plat._sequenceId == 0x7CA)
 								plat.playSequence(0x107CC);
-							}
-						} else if (gnapRandomValue != 0 || plat._sequenceId != 0x7C9) {
-							if (gnapRandomValue != 1 || plat._sequenceId != 0x7C9) {
-								if (plat._pos.y == 9)
-									plat.playSequence(0x107C9);
-							} else {
+							else if (gnapRandomValue == 1 && plat._sequenceId == 0x7CA)
+								plat.playSequence(0x10845);
+							else if (plat._pos.y == 9)
+								plat.playSequence(0x107CA);
+						} else if (gnapRandomValue == 0 && plat._sequenceId == 0x7C9)
+								plat.playSequence(0x107CB);
+						else if (gnapRandomValue == 1 && plat._sequenceId == 0x7C9)
 								plat.playSequence(0x10844);
-							}
-						} else {
-							plat.playSequence(0x107CB);
-						}
+						else if (plat._pos.y == 9)
+								plat.playSequence(0x107C9);
 						gameSys.setAnimation(plat._sequenceId | (plat._sequenceDatNum << 16), plat._id, 1);
 					}
 				} else {
