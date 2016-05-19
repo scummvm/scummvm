@@ -208,7 +208,7 @@ TTword *TTvocab::getPrimeWord(TTstring &str, TTword **srcWord) const {
 	return newWord;
 }
 
-void TTvocab::fn1(TTstring &str) {
+TTword *TTvocab::getPrefixedWord(TTstring &str) {
 	TTstring tempStr(str);
 	TTword *word = nullptr;
 	int prefixLen = 0;
@@ -221,28 +221,57 @@ void TTvocab::fn1(TTstring &str) {
 		prefixLen = 5;
 	} else if (tempStr.hasPrefix("over") || tempStr.hasPrefix("post") || tempStr.hasPrefix("self")) {
 		prefixLen = 4;
-	}
+	}
+
 	if (prefixLen) {
 		// Known prefix found, so scan for word without prefix
 		tempStr.deletePrefix(prefixLen);
 		word = getPrimeWord(tempStr);
 		if (word)
 			tempStr = str;
-	} else {
-		if (tempStr.hasPrefix("anti"))
-			prefixLen = 4;
-		else if (tempStr.hasPrefix("counter"))
-			prefixLen = 7;
 
-		if (prefixLen) {
-			tempStr.deletePrefix(prefixLen);
-			word = getPrimeWord(tempStr);
-			if (word)
-				tempStr = str;
+	} else if (tempStr.hasPrefix("anti") || tempStr.hasPrefix("counter")) {
+		prefixLen = tempStr[0] == 'a' ? 4 : 7;
+
+		tempStr.deletePrefix(prefixLen);
+		word = getPrimeWord(tempStr);
+		if (!word)
+			tempStr = str;
+		else if (word->_wordMode == 8) {
+			delete word;
+			word = nullptr;
+		}
+
+	} else if (tempStr.hasPrefix("hyper") || tempStr.hasPrefix("super") ||
+			tempStr.hasPrefix("ultra")) {
+		tempStr.deletePrefix(5);
+		word = getPrimeWord(tempStr);
+
+		if (!word)
+			tempStr = str;
+		else if (word->_wordMode == 8) {
+			int val1 = word->proc15();
+			int val2 = word->proc15();
+
+			if (val2 < 5) {
+				if (--val1 > 0)
+					word->unkFn1(val1);
+			} else if (++val1 < 11) {
+				word->unkFn1(val1);
+			}
 		}
 	}
 
-	// TODO
+	if (word) {
+		// Set the original word on either the found word or synonym
+		if (word->hasSynonyms())
+			word->setSynStr(&str);
+		else
+			word->_string = str;
+	}
+
+	delete tempStr;
+	return word;
 }
 
 } // End of namespace Titanic

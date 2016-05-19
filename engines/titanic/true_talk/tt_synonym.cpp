@@ -42,6 +42,11 @@ TTsynonym::TTsynonym(int mode, const char *str, FileHandle file) :
 	_file = file;
 }
 
+TTsynonym::TTsynonym(int mode, TTstring *str) : TTstringNode() {
+	_string = *str;
+	initialize(mode);
+}
+
 TTsynonym *TTsynonym::copyFrom(const TTsynonym *src) {
 	if (src->_field1C) {
 		_field1C = 5;

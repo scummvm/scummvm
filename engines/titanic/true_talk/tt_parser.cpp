@@ -474,7 +474,7 @@ int TTparser::findFrames(TTsentence *sentence) {
 	TTstring wordString;
 	for (;;) {
 		// Keep stripping words off the start of the passed input
-		TTstring wordString = line->tokenize(" \n");
+		wordString = line->tokenize(" \n");
 		if (wordString.empty())
 			break;
 

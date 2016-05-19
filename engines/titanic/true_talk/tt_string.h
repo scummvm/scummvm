@@ -86,7 +86,7 @@ public:
 	bool hasPrefix(const CString &str) const {
 		return _data->_string.hasPrefix(str);
 	}
-	bool hasPrefix(const const char *str) const {
+	bool hasPrefix(const char *str) const {
 		return _data->_string.hasPrefix(str);
 	}
 	bool hasSuffix(const CString &str) const {

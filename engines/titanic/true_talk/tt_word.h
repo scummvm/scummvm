@@ -32,7 +32,6 @@ namespace Titanic {
 class TTword {
 protected:
 	TTstringStatus _status;
-	int _wordMode;
 	int _field1C;
 	int _field20;
 	int _field24;
@@ -49,6 +48,7 @@ public:
 	TTword *_nextP;
 	TTsynonym *_synP;
 	TTstring _string;
+	int _wordMode;
 public:
 	TTword(TTstring &str, int mode, int val2);
 	TTword(TTword *src);
@@ -67,6 +67,16 @@ public:
 	 * Set a new synonym for the word
 	 */
 	void setSyn(TTsynonym *synP);
+
+	/**
+	 * Set a new synonym string
+	 */
+	int setSynStr(TTstring *str);
+
+	/**
+	 * Returns true if synonyms have been set for the word
+	 */
+	bool hasSynonyms() const { return _synP != nullptr; }
 
 	/**
 	 * Either sets the first synonym for a word, or adds it to an existing one
@@ -99,6 +109,8 @@ public:
 	 */
 	virtual TTword *copy();
 	
+	void unkFn1(int val);
+
 	virtual bool proc2(int val) const { return false; }
 	virtual int proc3() const { return -1; }
 	virtual void proc4() {}

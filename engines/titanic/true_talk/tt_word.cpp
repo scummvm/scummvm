@@ -109,6 +109,16 @@ void TTword::setSyn(TTsynonym *synP) {
 	_synP = synP;
 }
 
+int TTword::setSynStr(TTstring *str) {
+	if (str->empty())
+		return 4;
+
+	TTstring *newStr = new TTstring(*str);
+	TTsynonym *newSyn = new TTsynonym(4, newStr);
+	setSyn(newSyn);
+	return 0;
+}
+
 void TTword::appendNode(TTsynonym *node) {
 	if (_synP)
 		_synP->addNode(node);
@@ -170,6 +180,10 @@ bool TTword::findSynByName(const TTstring &str, TTsynonym *dest, int mode) const
 
 TTword *TTword::copy() {
 	return new TTword(this);
+}
+
+void TTword::unkFn1(int val) {
+	// TODO: This method seems to reference a field beyond the size of TTword
 }
 
 FileHandle TTword::getSynFile() const {

@@ -67,7 +67,13 @@ public:
 	 */
 	TTword *getPrimeWord(TTstring &str, TTword **srcWord = nullptr) const;
 
-	void fn1(TTstring &str);
+	/**
+	 * Checks the passed word for common prefixes, and checks for a word
+	 * match for the word without the given prefix
+	 * @param str		Word to check
+	 * @returns			New word instance for found match, or nullptr otherwise
+	 */
+	TTword *getPrefixedWord(TTstring &str);
 };
 
 } // End of namespace Titanic
