@@ -65,12 +65,12 @@ private:
 	TTword *getPrimeWord(TTstring &str, TTword **srcWord = nullptr) const;
 
 	/**
-	 * Checks the passed word for common pluralization, and if present checks
-	 * for a word match for the base singular word
+	 * Checks the passed word for common suffixes, like 's', 'ing', etc. and, if found,
+	 * checks for a word match for the base word without the suffix.
 	 * @param str		Word to check
 	 * @returns			New word instance for found match, or nullptr otherwise
 	 */
-	TTword *getPluralizedWord(TTstring &str) const;
+	TTword *getSuffixedWord(TTstring &str) const;
 
 	/**
 	 * Checks the passed word for common prefixes, and checks for a word

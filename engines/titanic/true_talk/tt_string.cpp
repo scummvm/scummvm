@@ -139,4 +139,22 @@ int TTstring::deletePrefix(int count) {
 	return 1;
 }
 
+int TTstring::deleteSuffix(int count) {
+	int strSize = size();
+	if (count > strSize)
+		count = strSize;
+
+	CString newStr(_data->_string.c_str(), _data->_string.c_str() + strSize - count);
+	if (_data->_referenceCount == 1) {
+		// No other references to this string, so we can just directly modify it
+		_data->_string = newStr;
+	} else {
+		// Detach string from current shared data, and create a new one with the substring
+		_data->_referenceCount--;
+		_data = new TTstringData(newStr);
+	}
+
+	return 1;
+}
+
 } // End of namespace Titanic

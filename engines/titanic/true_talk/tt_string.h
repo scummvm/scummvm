@@ -156,6 +156,12 @@ public:
 	 * Delets a specififed number of characters from the start of the string
 	 */
 	int deletePrefix(int count);
+
+	/**
+	 * Delets a specififed number of characters from the end of the string
+	 */
+	int deleteSuffix(int count);
+
 };
 
 } // End of namespace Titanic

@@ -180,7 +180,7 @@ TTword *TTvocab::getWord(TTstring &str, TTword **srcWord) const {
 	if (!word) {
 		TTstring tempStr(str);
 		if (tempStr.size() > 2) {
-			word = getPluralizedWord(tempStr);
+			word = getSuffixedWord(tempStr);
 
 			if (!word)
 				word = getPrefixedWord(tempStr);
@@ -224,7 +224,32 @@ TTword *TTvocab::getPrimeWord(TTstring &str, TTword **srcWord) const {
 	return newWord;
 }
 
-TTword *TTvocab::getPluralizedWord(TTstring &str) const {
+TTword *TTvocab::getSuffixedWord(TTstring &str) const {
+	TTstring tempStr(str);
+	TTword *word = nullptr;
+
+	if (tempStr.hasSuffix("s")) {
+		tempStr.deleteSuffix(1);
+		word = getPrimeWord(tempStr);
+
+		if (!word) {
+			if (!tempStr.hasSuffix("e")) {
+				tempStr = str;
+			} else {
+				tempStr.deleteLastChar();
+				word = getPrimeWord(tempStr);
+			}
+		}
+	
+	} else if (tempStr.hasSuffix("ing")) {
+		tempStr.deleteSuffix(3);
+		word = getPrimeWord(tempStr);
+
+		if (word) {
+
+		}
+	}
+
 	// TODO
 	return nullptr;
 }
