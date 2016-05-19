@@ -113,6 +113,12 @@ MODULE_OBJS += \
 	taskbar/win32/win32-taskbar.o
 endif
 
+ifeq ($(BACKEND),androidsdl)
+MODULE_OBJS += \
+	events/androidsdl/androidsdl-events.o \
+	graphics/androidsdl/androidsdl-graphics.o
+endif
+
 ifdef AMIGAOS
 MODULE_OBJS += \
 	fs/amigaos4/amigaos4-fs.o \

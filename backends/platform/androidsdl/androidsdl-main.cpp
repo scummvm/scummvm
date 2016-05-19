@@ -20,34 +20,23 @@
  *
  */
 
-#include "common/scummsys.h"
-
-#if defined(POSIX) && !defined(MACOSX) && !defined(SAMSUNGTV) && !defined(MAEMO) && !defined(WEBOS) && !defined(LINUXMOTO) && !defined(GPH_DEVICE) && !defined(GP2X) && !defined(DINGUX) && !defined(OPENPANDORA) && !defined(PLAYSTATION3) && !defined(ANDROIDSDL)
-
-#include "backends/platform/sdl/posix/posix.h"
-#include "backends/plugins/sdl/sdl-provider.h"
+#include "backends/platform/androidsdl/androidsdl-sdl.h"
 #include "base/main.h"
 
 int main(int argc, char *argv[]) {
 
 	// Create our OSystem instance
-	g_system = new OSystem_POSIX();
+	g_system = new OSystem_ANDROIDSDL();
 	assert(g_system);
 
 	// Pre initialize the backend
 	((OSystem_POSIX *)g_system)->init();
 
-#ifdef DYNAMIC_MODULES
-	PluginManager::instance().addPluginProvider(new SDLPluginProvider());
-#endif
-
 	// Invoke the actual ScummVM main entry point:
 	int res = scummvm_main(argc, argv);
 
 	// Free OSystem
-	delete (OSystem_POSIX *)g_system;
+	delete (OSystem_ANDROIDSDL *)g_system;
 
 	return res;
 }
-
-#endif
