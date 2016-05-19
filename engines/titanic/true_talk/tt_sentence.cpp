@@ -27,7 +27,17 @@ namespace Titanic {
 
 TTsentenceSubBase::TTsentenceSubBase() : _field0(0), _field4(0), _field8(0),
 	_fieldC(0), _field10(0), _field14(0), _field18(0), _field1C(0),
-	_field20(0), _field24(0) {
+	_nextP(nullptr), _field24(0) {
+}
+
+void TTsentenceSubBase::deleteSiblings() {
+	// Iterate through the linked chain of nodes, deleting each in turn
+	for (TTsentenceSubBase *curP = _nextP, *nextP = nullptr; nextP; curP = nextP) {
+		nextP = curP->_nextP;
+		delete curP;
+	}
+
+	_nextP = nullptr;
 }
 
 /*------------------------------------------------------------------------*/
@@ -43,6 +53,15 @@ TTsentence::TTsentence(int inputCtr, const TTstring &line, CScriptHandler *owner
 TTsentence::TTsentence(const TTsentence *src) : _initialLine(src->_initialLine),
 		_normalizedLine(src->_normalizedLine) {
 	copyFrom(*src);
+}
+
+TTsentence::~TTsentence() {
+	_sub.deleteSiblings();
+
+	if (_nodesP) {
+		_nodesP->deleteSiblings();
+		delete _nodesP;
+	}
 }
 
 void TTsentence::copyFrom(const TTsentence &src) {

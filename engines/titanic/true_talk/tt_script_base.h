@@ -25,6 +25,7 @@
 
 #include "titanic/true_talk/tt_string.h"
 #include "titanic/true_talk/tt_hist.h"
+#include "titanic/true_talk/tt_node.h"
 
 namespace Titanic {
 
@@ -38,7 +39,7 @@ class TTscriptBase {
 private:
 	void reset();
 protected:
-	int _field4;
+	TTnode *_nodesP;
 	int _field8;
 	TThist *_hist;
 	TTstring _charName, _charClass;
@@ -57,6 +58,7 @@ protected:
 public:
 	TTscriptBase(int v1, const char *charClass, int v2, const char *charName,
 		int v3, int v4, int v5, int v6, int v7);
+	virtual ~TTscriptBase();
 
 	bool areNamesValid();
 

@@ -68,6 +68,13 @@ TTword::TTword(TTword *src) {
 	_field28 = src->_field28;
 }
 
+TTword::~TTword() {
+	if (_synP) {
+		_synP->deleteSiblings();
+		delete _synP;
+	}
+}
+
 void TTword::deleteSiblings() {
 	while (_nextP) {
 		TTword *next = _nextP;

@@ -42,10 +42,15 @@ public:
 	int _field14;
 	int _field18;
 	int _field1C;
-	int _field20;
+	TTsentenceSubBase *_nextP;
 	int _field24;
 public:
 	TTsentenceSubBase();
+
+	/**
+	 * Delete any sibling chain attached to this node
+	 */
+	void deleteSiblings();
 };
 
 class TTsentenceSub : public TTsentenceSubBase {
@@ -78,6 +83,7 @@ public:
 	TTsentence(int inputCtr, const TTstring &line, CScriptHandler *owner,
 		TTroomScript *roomScript, TTnpcScript *npcScript);
 	TTsentence(const TTsentence *src);
+	~TTsentence();
 
 	void set34(int v) { _field34 = v; }
 	void set38(int v) { _field38 = v; }

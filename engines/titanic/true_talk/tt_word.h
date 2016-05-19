@@ -52,6 +52,7 @@ public:
 public:
 	TTword(TTstring &str, int mode, int val2);
 	TTword(TTword *src);
+	~TTword();
 
 	/**
 	 * Delete any following words chained to the word
