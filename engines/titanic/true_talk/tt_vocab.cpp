@@ -174,6 +174,22 @@ TTword *TTvocab::findWord(const TTstring &str) {
 	return word;
 }
 
+TTword *TTvocab::getWord(TTstring &str, TTword **srcWord) const {
+	TTword *word = getPrimeWord(str, srcWord);
+
+	if (!word) {
+		TTstring tempStr(str);
+		if (tempStr.size() > 2) {
+			word = getPluralizedWord(tempStr);
+
+			if (!word)
+				word = getPrefixedWord(tempStr);
+		}
+	}
+
+	return word;
+}
+
 TTword *TTvocab::getPrimeWord(TTstring &str, TTword **srcWord) const {
 	TTsynonym tempSyn;
 	char c = str.charAt(0);
@@ -208,7 +224,12 @@ TTword *TTvocab::getPrimeWord(TTstring &str, TTword **srcWord) const {
 	return newWord;
 }
 
-TTword *TTvocab::getPrefixedWord(TTstring &str) {
+TTword *TTvocab::getPluralizedWord(TTstring &str) const {
+	// TODO
+	return nullptr;
+}
+
+TTword *TTvocab::getPrefixedWord(TTstring &str) const {
 	TTstring tempStr(str);
 	TTword *word = nullptr;
 	int prefixLen = 0;

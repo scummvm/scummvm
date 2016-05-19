@@ -53,9 +53,6 @@ private:
 	 * Scans the vocab list for an existing word match
 	 */
 	TTword *findWord(const TTstring &str);
-public:
-	TTvocab(int val);
-	~TTvocab();
 
 	/**
 	 * Scans the vocab list for a word with a synonym matching the passed string.
@@ -68,12 +65,31 @@ public:
 	TTword *getPrimeWord(TTstring &str, TTword **srcWord = nullptr) const;
 
 	/**
+	 * Checks the passed word for common pluralization, and if present checks
+	 * for a word match for the base singular word
+	 * @param str		Word to check
+	 * @returns			New word instance for found match, or nullptr otherwise
+	 */
+	TTword *getPluralizedWord(TTstring &str) const;
+
+	/**
 	 * Checks the passed word for common prefixes, and checks for a word
 	 * match for the word without the given prefix
 	 * @param str		Word to check
 	 * @returns			New word instance for found match, or nullptr otherwise
 	 */
-	TTword *getPrefixedWord(TTstring &str);
+	TTword *getPrefixedWord(TTstring &str) const;
+public:
+	TTvocab(int val);
+	~TTvocab();
+
+	/**
+	 * Gets a matching word from the vocab list given a passed string
+	 * @param str		Word text to scan for
+	 * @param srcWord	Optional pointer to store the original word match was found on
+	 * @returns			A new word instance if a match if found, or null if not
+	 */
+	TTword *getWord(TTstring &str, TTword **srcWord = nullptr) const;
 };
 
 } // End of namespace Titanic
