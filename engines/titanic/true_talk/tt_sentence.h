@@ -31,6 +31,7 @@
 namespace Titanic {
 
 class CScriptHandler;
+class TTword;
 
 class TTsentenceSubBase {
 public:
@@ -89,6 +90,13 @@ public:
 	void set38(int v) { _field38 = v; }
 
 	int getStatus() const { return _status; }
+
+	/**
+	 * Adds a found vocab word to the list of words representing
+	 * the player's input
+	 * @param word		Word to node
+	 */
+	int storeVocabHit(TTword *word);
 };
 
 } // End of namespace Titanic

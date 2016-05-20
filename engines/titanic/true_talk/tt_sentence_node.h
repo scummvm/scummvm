@@ -24,15 +24,16 @@
 #define TITANIC_TT_SENTENCE_NODE_H
 
 #include "titanic/true_talk/tt_node.h"
+#include "titanic/true_talk/tt_word.h"
 
 namespace Titanic {
 
 class TTsentenceNode : public TTnode {
 public:
-	int _val;
+	TTword *_wordP;
 public:
 	TTsentenceNode();
-	TTsentenceNode(int val);
+	TTsentenceNode(TTword *word);
 };
 
 } // End of namespace Titanic

@@ -87,13 +87,27 @@ void TTsentence::copyFrom(const TTsentence &src) {
 		// Source has processed nodes, so duplicate them
 		for (TTsentenceNode *node = src._nodesP; node;
 				node = static_cast<TTsentenceNode *>(node->_nextP)) {
-			TTsentenceNode *newNode = new TTsentenceNode(node->_val);
+			TTsentenceNode *newNode = new TTsentenceNode(node->_wordP);
 			if (_nodesP)
 				_nodesP->addNode(newNode);
 			else
 				_nodesP = newNode;
 		}
 	}
+}
+
+int TTsentence::storeVocabHit(TTword *word) {
+	if (!word)
+		return 0;
+
+	TTsentenceNode *node = new TTsentenceNode(word);
+	if (_nodesP) {
+		_nodesP->addNode(node);
+	} else {
+		_nodesP = node;
+	}
+
+	return 0;
 }
 
 } // End of namespace Titanic

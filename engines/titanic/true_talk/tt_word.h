@@ -37,7 +37,6 @@ enum WordMode {
 class TTword {
 protected:
 	TTstringStatus _status;
-	int _field20;
 	int _field24;
 	int _field28;
 protected:
@@ -54,6 +53,7 @@ public:
 	TTstring _string;
 	WordMode _wordMode;
 	int _field1C;
+	uint _tag;
 public:
 	TTword(TTstring &str, WordMode mode, int val2);
 	TTword(TTword *src);

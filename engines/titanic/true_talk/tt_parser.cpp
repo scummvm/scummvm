@@ -478,8 +478,15 @@ int TTparser::findFrames(TTsentence *sentence) {
 		if (wordString.empty())
 			break;
 
-		//TTword *word = nullptr;
-		//_owner->_vocab.fn1(wordString, &word);
+		TTword *srcWord = nullptr;
+		TTword *word = _owner->_vocab->getWord(wordString, &word);
+		sentence->storeVocabHit(srcWord);
+
+		if (word) {
+			// TODO
+		} else {
+
+		}
 	}
 
 

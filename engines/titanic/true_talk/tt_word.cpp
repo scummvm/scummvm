@@ -27,7 +27,7 @@
 namespace Titanic {
 
 TTword::TTword(TTstring &str, WordMode mode, int val2) : _string(str),
-		_wordMode(mode), _field1C(val2), _field20(0), _field24(0),
+		_wordMode(mode), _field1C(val2), _tag(0), _field24(0),
 		_field28(0), _synP(nullptr), _nextP(nullptr) {
 	_status = str.getStatus() == SS_VALID ? SS_VALID : SS_5;
 }
@@ -41,7 +41,7 @@ TTword::TTword(TTword *src) {
 	_string = src->_string;
 	_wordMode = src->_wordMode;
 	_field1C = src->_field1C;
-	_field20 = src->_field20;
+	_tag = src->_tag;
 	_synP = nullptr;
 
 	TTsynonym *priorSyn = nullptr;
@@ -140,7 +140,7 @@ int TTword::load(SimpleFile *file, WordMode mode) {
 	if (file->scanf("%d %s %s", &val, &str1, &str2)) {
 		_string = str1;
 		_field1C = val;
-		_field20 = readNumber(str2.c_str());
+		_tag = readNumber(str2.c_str());
 		_wordMode = mode;
 		return 0;
 	} else {
