@@ -472,7 +472,7 @@ void DungeonMan::setSquareAspect(uint16 *aspectArray, direction dir, int16 mapX,
 	memset(aspectArray, 0, 5 * sizeof(int16));
 	aspectArray[kElemAspect] = square.getType();
 
-	_vm->_displayMan->_championPortraitOrdinal = 0; // BUG0_75
+	_vm->_displayMan->_championPortraitOrdinal = 0; // BUG0_75, possible fix
 	switch (square.getType()) {
 	case kWallElemType:
 		switch (dir) {

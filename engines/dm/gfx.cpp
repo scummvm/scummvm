@@ -19,7 +19,7 @@ struct Frame {
 	Frame(uint16 destFromX, uint16 destToX, uint16 destFromY, uint16 destToY,
 		  uint16 srcWidth, uint16 srcHeight, uint16 srcX, uint16 srcY) :
 		destFromX(destFromX), destToX(destToX + 1), destFromY(destFromY), destToY(destToY + 1),
-		srcWidth(srcWidth), srcHeight(srcHeight), srcX(srcX), srcY(srcY) {}
+		srcWidth(srcWidth * 2), srcHeight(srcHeight), srcX(srcX), srcY(srcY) {}
 };
 
 
@@ -59,28 +59,28 @@ enum ViewSquare {
 Frame gCeilingFrame(0, 223, 0, 28, 112, 29, 0, 0); // @ K0012_s_Frame_Ceiling
 Frame gFloorFrame(0, 223, 66, 135, 112, 70, 0, 0); // @ K0013_s_Frame_Floor
 
-Frame gFrameWall_D3L2 = {0,  15, 25, 73, 8 * 2, 49, 0, 0}; // @ G0711_s_Graphic558_Frame_Wall_D3L2
-Frame gFrameWall_D3R2 = {208, 223, 25, 73, 8 * 2, 49, 0, 0}; // @ G0712_s_Graphic558_Frame_Wall_D3R2
+Frame gFrameWall_D3L2 = {0,  15, 25, 73, 8, 49, 0, 0}; // @ G0711_s_Graphic558_Frame_Wall_D3L2
+Frame gFrameWall_D3R2 = {208, 223, 25, 73, 8, 49, 0, 0}; // @ G0712_s_Graphic558_Frame_Wall_D3R2
 Frame gFrameWalls[12] = { // @ G0163_as_Graphic558_Frame_Walls
 	/* { X1, X2, Y1, Y2, pixelWidth, Height, X, Y } */
-	{74, 149, 25,  75,  64 * 2,  51,  18, 0},   /* D3C */
-	{0,  83, 25,  75,  64 * 2,  51,  32, 0},   /* D3L */
-	{139, 223, 25,  75,  64 * 2,  51,   0, 0},   /* D3R */
-	{60, 163, 20,  90,  72 * 2,  71,  16, 0},   /* D2C */
-	{0,  74, 20,  90,  72 * 2,  71,  61, 0},   /* D2L */
-	{149, 223, 20,  90,  72 * 2,  71,   0, 0},   /* D2R */
-	{32, 191,  9, 119, 128 * 2, 111,  48, 0},   /* D1C */
-	{0,  63,  9, 119, 128 * 2, 111, 192, 0},   /* D1L */
-	{160, 223,  9, 119, 128 * 2, 111,   0, 0},   /* D1R */
-	{0, 223,  0, 135,   0 * 2,   0,   0, 0},   /* D0C */
-	{0,  31,  0, 135,  16 * 2, 136,   0, 0},   /* D0L */
-	{192, 223,  0, 135,  16 * 2, 136,   0, 0}}; /* D0R */
+	{74, 149, 25,  75,  64,  51,  18, 0},   /* D3C */
+	{0,  83, 25,  75,  64,  51,  32, 0},   /* D3L */
+	{139, 223, 25,  75,  64,  51,   0, 0},   /* D3R */
+	{60, 163, 20,  90,  72,  71,  16, 0},   /* D2C */
+	{0,  74, 20,  90,  72,  71,  61, 0},   /* D2L */
+	{149, 223, 20,  90,  72,  71,   0, 0},   /* D2R */
+	{32, 191,  9, 119, 128, 111,  48, 0},   /* D1C */
+	{0,  63,  9, 119, 128, 111, 192, 0},   /* D1L */
+	{160, 223,  9, 119, 128, 111,   0, 0},   /* D1R */
+	{0, 223,  0, 135,   0,   0,   0, 0},   /* D0C */
+	{0,  31,  0, 135,  16, 136,   0, 0},   /* D0L */
+	{192, 223,  0, 135,  16, 136,   0, 0}}; /* D0R */
 
 
 enum WallSetIndices {
 	kDoorFrameFront = 0, // @  G0709_puc_Bitmap_WallSet_DoorFrameFront
 	kDoorFrameLeft_D1C = 1, // @  G0708_puc_Bitmap_WallSet_DoorFrameLeft_D1C
-	kFameLeft_D2C = 2, // @  G0707_puc_Bitmap_WallSet_DoorFrameLeft_D2C
+	kDoorFameLeft_D2C = 2, // @  G0707_puc_Bitmap_WallSet_DoorFrameLeft_D2C
 	kDoorFrameLeft_D3C = 3, // @  G0706_puc_Bitmap_WallSet_DoorFrameLeft_D3C
 	kDoorFrameLeft_D3L = 4, // @  G0705_puc_Bitmap_WallSet_DoorFrameLeft_D3L
 	kDoorFrameTop_D1LCR = 5, // @  G0704_puc_Bitmap_WallSet_DoorFrameTop_D1LCR
@@ -690,8 +690,8 @@ void DisplayMan::loadIntoBitmap(uint16 index, byte *destBitmap) {
 
 			for (int j = 0; j < byte1 / 2; ++j) {
 				uint8 byte2 = data[nextByteIndex++];
-				destBitmap[k++] = byte2 & 0x0F;
 				destBitmap[k++] = (byte2 & 0xF0) >> 4;
+				destBitmap[k++] = byte2 & 0x0F;
 			}
 		}
 	}
@@ -764,8 +764,15 @@ uint16 DisplayMan::height(uint16 index) {
 	return READ_BE_UINT16(data + 2);
 }
 
+
+void DisplayMan::drawWallSetBitmapWithoutTransparency(byte *bitmap, Frame &f) {
+	if (f.srcWidth)
+		blitToScreen(bitmap, f.srcWidth, f.srcX, f.srcY, f.destFromX, f.destToX, f.destFromY, f.destToY, kColorNoTransparency, gDungeonViewport);
+}
+
 void DisplayMan::drawWallSetBitmap(byte *bitmap, Frame &f) {
-	blitToScreen(bitmap, f.srcWidth, f.srcX, f.srcY, f.destFromX, f.destToX, f.destFromY, f.destToY, kColorFlesh, gDungeonViewport);
+	if (f.srcWidth)
+		blitToScreen(bitmap, f.srcWidth, f.srcX, f.srcY, f.destFromX, f.destToX, f.destFromY, f.destToY, kColorFlesh, gDungeonViewport);
 }
 
 void DisplayMan::drawSquareD3L(direction dir, int16 posX, int16 posY) {
@@ -778,9 +785,110 @@ void DisplayMan::drawSquareD3L(direction dir, int16 posX, int16 posY) {
 	}
 }
 
+void DisplayMan::drawSquareD3R(direction dir, int16 posX, int16 posY) {
+	uint16 squareAspect[5];
+	_vm->_dungeonMan->setSquareAspect(squareAspect, dir, posX, posY);
+	switch (squareAspect[0]) {
+	case kWallElemType:
+		drawWallSetBitmap(_wallSetBitMaps[kWall_D3LCR], gFrameWalls[kViewSquare_D3R]);
+		break;
+	}
+}
+void DisplayMan::drawSquareD3C(direction dir, int16 posX, int16 posY) {
+	uint16 squareAspect[5];
+	_vm->_dungeonMan->setSquareAspect(squareAspect, dir, posX, posY);
+	switch (squareAspect[0]) {
+	case kWallElemType:
+		drawWallSetBitmapWithoutTransparency(_wallSetBitMaps[kWall_D3LCR], gFrameWalls[kViewSquare_D3C]);
+		break;
+	}
+}
+void DisplayMan::drawSquareD2L(direction dir, int16 posX, int16 posY) {
+	uint16 squareAspect[5];
+	_vm->_dungeonMan->setSquareAspect(squareAspect, dir, posX, posY);
+	switch (squareAspect[0]) {
+	case kWallElemType:
+		drawWallSetBitmap(_wallSetBitMaps[kWall_D2LCR], gFrameWalls[kViewSquare_D2L]);
+		break;
+	}
+}
+void DisplayMan::drawSquareD2R(direction dir, int16 posX, int16 posY) {
+	uint16 squareAspect[5];
+	_vm->_dungeonMan->setSquareAspect(squareAspect, dir, posX, posY);
+	switch (squareAspect[0]) {
+	case kWallElemType:
+		drawWallSetBitmap(_wallSetBitMaps[kWall_D2LCR], gFrameWalls[kViewSquare_D2R]);
+		break;
+	}
+}
+void DisplayMan::drawSquareD2C(direction dir, int16 posX, int16 posY) {
+	uint16 squareAspect[5];
+	_vm->_dungeonMan->setSquareAspect(squareAspect, dir, posX, posY);
+	switch (squareAspect[0]) {
+	case kWallElemType:
+		drawWallSetBitmapWithoutTransparency(_wallSetBitMaps[kWall_D2LCR], gFrameWalls[kViewSquare_D2C]);
+		break;
+	}
+}
+void DisplayMan::drawSquareD1L(direction dir, int16 posX, int16 posY) {
+	uint16 squareAspect[5];
+	_vm->_dungeonMan->setSquareAspect(squareAspect, dir, posX, posY);
+	switch (squareAspect[0]) {
+	case kWallElemType:
+		drawWallSetBitmap(_wallSetBitMaps[kWall_D1LCR], gFrameWalls[kViewSquare_D1L]);
+		break;
+	}
+}
+void DisplayMan::drawSquareD1R(direction dir, int16 posX, int16 posY) {
+	uint16 squareAspect[5];
+	_vm->_dungeonMan->setSquareAspect(squareAspect, dir, posX, posY);
+	switch (squareAspect[0]) {
+	case kWallElemType:
+		drawWallSetBitmap(_wallSetBitMaps[kWall_D1LCR], gFrameWalls[kViewSquare_D1R]);
+		break;
+	}
+}
+void DisplayMan::drawSquareD1C(direction dir, int16 posX, int16 posY) {
+	uint16 squareAspect[5];
+	_vm->_dungeonMan->setSquareAspect(squareAspect, dir, posX, posY);
+	switch (squareAspect[0]) {
+	case kWallElemType:
+		drawWallSetBitmapWithoutTransparency(_wallSetBitMaps[kWall_D1LCR], gFrameWalls[kViewSquare_D1C]);
+		break;
+	}
+}
+void DisplayMan::drawSquareD0L(direction dir, int16 posX, int16 posY) {
+	uint16 squareAspect[5];
+	_vm->_dungeonMan->setSquareAspect(squareAspect, dir, posX, posY);
+	switch (squareAspect[0]) {
+	case kWallElemType:
+		drawWallSetBitmap(_wallSetBitMaps[kWall_D0L], gFrameWalls[kViewSquare_D0L]);
+		break;
+	}
+}
+
+void DisplayMan::drawSquareD0R(direction dir, int16 posX, int16 posY) {
+	uint16 squareAspect[5];
+	_vm->_dungeonMan->setSquareAspect(squareAspect, dir, posX, posY);
+	switch (squareAspect[0]) {
+	case kWallElemType:
+		drawWallSetBitmap(_wallSetBitMaps[kWall_D0R], gFrameWalls[kViewSquare_D0R]);
+		break;
+	}
+}
+
+void DisplayMan::drawSquareD0C(direction dir, int16 posX, int16 posY) {
+	uint16 squareAspect[5];
+	_vm->_dungeonMan->setSquareAspect(squareAspect, dir, posX, posY);
+	switch (squareAspect[0]) {
+	case kWallElemType:
+		drawWallSetBitmap(_wallSetBitMaps[kWall_D0L], gFrameWalls[kViewSquare_D0L]);
+		break;
+	}
+}
 
 void DisplayMan::drawDungeon(direction dir, int16 posX, int16 posY) {
-	loadPalette(gPalDungeonView[0]);
+	loadPalette(gPalEntrance);
 	// TODO: this is a global variable, set from here
 	bool flippedFloorCeiling = (posX + posY + dir) & 1;
 
@@ -795,7 +903,7 @@ void DisplayMan::drawDungeon(direction dir, int16 posX, int16 posY) {
 		drawWallSetBitmap(tmpBitmap, gFloorFrame);
 		drawWallSetBitmap(_ceilingBitmap, gCeilingFrame);
 
-		for (uint16 i = kWall_D0R; i <= kWall_D3LCR; ++i)
+		for (uint16 i = kWall_D0R; i <= kWall_D3LCR && false; ++i) // TODO: I dunno what this flipped wall thing is, but it messes everything up, disable with && false
 			_wallSetBitMaps[i] = _wallSetBitMapsFlipped[i];
 	} else {
 		uint16 w = gCeilingFrame.srcWidth, h = gCeilingFrame.srcHeight;
@@ -810,10 +918,40 @@ void DisplayMan::drawDungeon(direction dir, int16 posX, int16 posY) {
 	if (_vm->_dungeonMan->getRelSquareType(dir, 3, 2, posX, posY) == kWallElemType)
 		drawWallSetBitmap(_wallSetBitMaps[kWall_D3R2], gFrameWall_D3R2);
 
-	// D3L
 	int16 tmpPosX = posX, tmpPosY = posY;
-	_vm->_dungeonMan->getRelSquareType(dir, 3, -1, tmpPosX, tmpPosY);
-	//drawSquareD3L(dir, posX, posY);
+	_vm->_dungeonMan->mapCoordsAfterRelMovement(dir, 3, -1, tmpPosX, tmpPosY);
+	drawSquareD3L(dir, posX, posY);
+	tmpPosX = posX, tmpPosY = posY;
+	_vm->_dungeonMan->mapCoordsAfterRelMovement(dir, 3, 1, tmpPosX, tmpPosY);
+	drawSquareD3R(dir, tmpPosX, tmpPosY);
+	tmpPosX = posX, tmpPosY = posY;
+	_vm->_dungeonMan->mapCoordsAfterRelMovement(dir, 3, 0, tmpPosX, tmpPosY);
+	drawSquareD3C(dir, tmpPosX, tmpPosY);
+	tmpPosX = posX, tmpPosY = posY;
+	_vm->_dungeonMan->mapCoordsAfterRelMovement(dir, 2, -1, tmpPosX, tmpPosY);
+	drawSquareD2L(dir, tmpPosX, tmpPosY);
+	tmpPosX = posX, tmpPosY = posY;
+	_vm->_dungeonMan->mapCoordsAfterRelMovement(dir, 2, 1, tmpPosX, tmpPosY);
+	drawSquareD2R(dir, tmpPosX, tmpPosY);
+	tmpPosX = posX, tmpPosY = posY;
+	_vm->_dungeonMan->mapCoordsAfterRelMovement(dir, 2, 0, tmpPosX, tmpPosY);
+	drawSquareD2C(dir, tmpPosX, tmpPosY);
+	tmpPosX = posX, tmpPosY = posY;
+	_vm->_dungeonMan->mapCoordsAfterRelMovement(dir, 1, -1, tmpPosX, tmpPosY);
+	drawSquareD1L(dir, tmpPosX, tmpPosY);
+	tmpPosX = posX, tmpPosY = posY;
+	_vm->_dungeonMan->mapCoordsAfterRelMovement(dir, 1, 1, tmpPosX, tmpPosY);
+	drawSquareD1R(dir, tmpPosX, tmpPosY);
+	tmpPosX = posX, tmpPosY = posY;
+	_vm->_dungeonMan->mapCoordsAfterRelMovement(dir, 1, 0, tmpPosX, tmpPosY);
+	drawSquareD1C(dir, tmpPosX, tmpPosY);
+	tmpPosX = posX, tmpPosY = posY;
+	_vm->_dungeonMan->mapCoordsAfterRelMovement(dir, 0, -1, tmpPosX, tmpPosY);
+	drawSquareD0L(dir, tmpPosX, tmpPosY);
+	tmpPosX = posX, tmpPosY = posY;
+	_vm->_dungeonMan->mapCoordsAfterRelMovement(dir, 0, 1, tmpPosX, tmpPosY);
+	drawSquareD0R(dir, tmpPosX, tmpPosY);
+	drawSquareD0C(dir, posX, posY);
 
 
 	for (uint16 i = kWall_D0R; i <= kWall_D3LCR; ++i)

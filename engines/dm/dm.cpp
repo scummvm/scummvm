@@ -68,15 +68,13 @@ Common::Error DMEngine::run() {
 
 	_displayMan->loadPalette(gPalCredits);
 
-
-
 	uint16 i = 0; //TODO: testing, please delete me
 	while (true) {
 		_displayMan->clearScreen(kColorBlack);
-		_displayMan->drawDungeon(kDirNorth, i++, 0);
+		_displayMan->drawDungeon(_dungeonMan->_currMap.partyDir, _dungeonMan->_currMap.partyPosX, _dungeonMan->_currMap.partyPosY + i);
 		_displayMan->updateScreen();
-		_system->delayMillis(1000); //TODO: testing, please set me to 10
-		if (i == 10) break;
+		_system->delayMillis(2000); //TODO: testing, please set me to 10
+		if (++i == 100) break;
 	}
 
 
