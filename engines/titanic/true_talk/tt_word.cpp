@@ -116,11 +116,11 @@ void TTword::setSyn(TTsynonym *synP) {
 	_synP = synP;
 }
 
-int TTword::setSynStr(TTstring *str) {
-	if (str->empty())
+int TTword::setSynStr(TTstring &str) {
+	if (str.empty())
 		return 4;
 
-	TTstring *newStr = new TTstring(*str);
+	TTstring *newStr = new TTstring(str);
 	TTsynonym *newSyn = new TTsynonym(4, newStr);
 	setSyn(newSyn);
 	return 0;

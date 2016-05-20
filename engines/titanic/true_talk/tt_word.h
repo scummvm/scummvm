@@ -77,7 +77,7 @@ public:
 	/**
 	 * Set a new synonym string
 	 */
-	int setSynStr(TTstring *str);
+	int setSynStr(TTstring &str);
 
 	/**
 	 * Returns true if synonyms have been set for the word

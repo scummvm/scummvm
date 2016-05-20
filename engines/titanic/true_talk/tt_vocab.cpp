@@ -476,7 +476,7 @@ TTword *TTvocab::getSuffixedWord(TTstring &str) const {
 	}
 
 	if (word)
-		word->setSynStr(&str);
+		word->setSynStr(str);
 
 	return word;
 }
@@ -538,7 +538,7 @@ TTword *TTvocab::getPrefixedWord(TTstring &str) const {
 	if (word) {
 		// Set the original word on either the found word or synonym
 		if (word->hasSynonyms())
-			word->setSynStr(&str);
+			word->setSynStr(str);
 		else
 			word->_string = str;
 	}
