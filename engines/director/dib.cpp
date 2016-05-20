@@ -59,24 +59,20 @@ void DIBDecoder::destroy() {
 }
 
 void DIBDecoder::loadPalette(Common::SeekableReadStream &stream) {
-	_palette = new byte[768];
 	uint16 steps = stream.size()/6;
 	uint16 index = (steps * 3) - 1;
+	_palette = new byte[index];
 
 	for (uint8 i = 0; i < steps; i++) {
-		_palette[index--] = stream.readByte();
+		_palette[index - 2] = stream.readByte();
 		stream.readByte();
 
-		_palette[index--] = stream.readByte();
+		_palette[index - 1] = stream.readByte();
 		stream.readByte();
 
-		_palette[index--] = stream.readByte();
+		_palette[index] = stream.readByte();
 		stream.readByte();
-	}
-
-	index = (steps * 3) - 1;
-	while (index < 768) {
-		_palette[index++] = 0;
+		index -= 3;
 	}
 }
 
