@@ -413,12 +413,7 @@ void GnapEngine::updateMenuStatusMainMenu() {
 					if (i == 0) {
 						_gameSys->drawSpriteToSurface(_largeSprite, 0, 0, 0x1078D);
 						_gameSys->insertSpriteDrawItem(_largeSprite, 0, 0, 300);
-						/* TODO
-						if (_midiFlag) {
-							playMidi("pause.mid", 0);
-						}
-						*/
-						warning("TODO: playMidi");
+						playMidi("pause.mid");
 					} else if (i == 1) {
 						_gameSys->drawSpriteToSurface(_largeSprite, 0, 0, 0x1078E);
 						_gameSys->insertDirtyRect(dirtyRect);
