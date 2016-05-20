@@ -57,7 +57,9 @@ void SoundMan::stopSound(int resourceId) {
 }
 
 void SoundMan::setSoundVolume(int resourceId, int volume) {
-	// TODO
+	const int index = find(resourceId);
+	int realVol = volume * 2.55;
+	_vm->_mixer->setChannelVolume(_items[index]._handle, realVol);
 }
 
 bool SoundMan::isSoundPlaying(int resourceId) {
