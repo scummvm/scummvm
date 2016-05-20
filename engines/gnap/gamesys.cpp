@@ -651,6 +651,7 @@ void GameSys::blitSprite32(Graphics::Surface *destSurface, int x, int y, byte *s
 			byte srcPixel = src[xc];
 			if (!transparent || srcPixel) {
 				uint32 rgb = sourcePalette[srcPixel];
+				rdst[0] = 0xFF;
 				rdst[1] = rgb & 0x000000FF;
 				rdst[2] = (rgb & 0x0000FF00) >> 8;
 				rdst[3] = (rgb & 0x00FF0000) >> 16;
@@ -688,6 +689,7 @@ void GameSys::blitSpriteScaled32(Graphics::Surface *destSurface, Common::Rect &f
 				byte srcPixel = *wsrc;
 				if (srcPixel) {
 					uint32 rgb = sourcePalette[srcPixel];
+					wdst[0] = 0xFF;
 					wdst[1] = rgb & 0x000000FF;
 					wdst[2] = (rgb & 0x0000FF00) >> 8;
 					wdst[3] = (rgb & 0x00FF0000) >> 16;
@@ -715,6 +717,7 @@ void GameSys::blitSpriteScaled32(Graphics::Surface *destSurface, Common::Rect &f
 				byte srcPixel = *wsrc;
 				if (srcPixel) {
 					uint32 rgb = sourcePalette[srcPixel];
+					wdst[0] = 0xFF;
 					wdst[1] = rgb & 0x000000FF;
 					wdst[2] = (rgb & 0x0000FF00) >> 8;
 					wdst[3] = (rgb & 0x00FF0000) >> 16;
