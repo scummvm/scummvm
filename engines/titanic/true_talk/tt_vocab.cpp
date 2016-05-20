@@ -52,7 +52,7 @@ int TTvocab::load(const CString &name) {
 
 	while (!result && !file->eos()) {
 		skipFlag = false;
-		int mode = file->readNumber();
+		WordMode mode = (WordMode)file->readNumber();
 		TTstring space(" ");
 
 		switch (mode) {
@@ -64,14 +64,14 @@ int TTvocab::load(const CString &name) {
 		}
 
 		case 1: {
-			TTaction *word = new TTaction(space, 0, 0, 0, 0);
+			TTaction *word = new TTaction(space, WMODE_NONE, 0, 0, 0);
 			result = word->load(file);
 			_word = word;
 			break;
 		}
 
 		case 2: {
-			TTpicture *word = new TTpicture(space, 0, 0, 0, 0, 0, 0);
+			TTpicture *word = new TTpicture(space, WMODE_NONE, 0, 0, 0, 0, 0);
 			result = word->load(file);
 			_word = word;
 			break;
@@ -79,7 +79,7 @@ int TTvocab::load(const CString &name) {
 
 		case 3:
 		case 9: {
-			TTmajorWord *word = new TTmajorWord(space, 0, 0, 0);
+			TTmajorWord *word = new TTmajorWord(space, WMODE_NONE, 0, 0);
 			result = word->load(file, mode);
 			_word = word;
 			break;
@@ -88,21 +88,21 @@ int TTvocab::load(const CString &name) {
 		case 4:
 		case 5:
 		case 7: {
-			TTword *word = new TTword(space, 0, 0);
+			TTword *word = new TTword(space, WMODE_NONE, 0);
 			result = word->load(file, mode);
 			_word = word;
 			break;
 		}
 
 		case 8: {
-			TTadj *word = new TTadj(space, 0, 0, 0, 0);
+			TTadj *word = new TTadj(space, WMODE_NONE, 0, 0, 0);
 			result = word->load(file);
 			_word = word;
 			break;
 		}
 
 		case 6: {
-			TTpronoun *word = new TTpronoun(space, 0, 0, 0, 0);
+			TTpronoun *word = new TTpronoun(space, WMODE_NONE, 0, 0, 0);
 			result = word->load(file);
 			_word = word;
 			break;
@@ -198,7 +198,7 @@ TTword *TTvocab::getPrimeWord(TTstring &str, TTword **srcWord) const {
 
 	if (!Common::isDigit(c)) {
 		vocabP = _headP;
-		newWord = new TTword(str, 3, 300);
+		newWord = new TTword(str, WMODE_3, 300);
 	} else {
 		for (vocabP = _headP; vocabP && !newWord; vocabP = vocabP->_nextP) {
 			if (_vocabMode == 3 && !strcmp(str.c_str(), vocabP->c_str())) {
@@ -246,8 +246,42 @@ TTword *TTvocab::getSuffixedWord(TTstring &str) const {
 		word = getPrimeWord(tempStr);
 
 		if (word) {
+			if (word->_wordMode == 1) {
+				delete word;
+				word = nullptr;
+			} else {
+				delete word;
+				word = new TTadj(str, WMODE_8, 0, 0, 0);
+			}
+		} else {
+			tempStr += "e";
+			word = getPrimeWord(tempStr);
 
+			if (word) {
+				if (word->_wordMode != 1) {
+					delete word;
+					word = new TTadj(str, WMODE_8, 0, 0, 0);
+				}
+			} else {
+				tempStr.deleteSuffix(2);
+				word = getPrimeWord(tempStr);
+
+				if (word) {
+					if (word->_wordMode != 1) {
+						delete word;
+						word = new TTadj(str, WMODE_8, 0, 0, 0);
+					}
+				} else {
+					tempStr = str;
+				}
+			}
 		}
+	
+	} else if (tempStr.hasSuffix("ed")) {
+		tempStr.deleteSuffix(1);
+		word = getPrimeWord(tempStr);
+
+		// TODO
 	}
 
 	// TODO

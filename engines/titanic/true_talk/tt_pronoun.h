@@ -33,7 +33,7 @@ private:
 protected:
 	int _field30;
 public:
-	TTpronoun(TTstring &str, int val1, int val2, int val3, int val4);
+	TTpronoun(TTstring &str, WordMode mode, int val2, int val3, int val4);
 	TTpronoun(TTpronoun *src);
 
 	/**

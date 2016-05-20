@@ -26,8 +26,8 @@ namespace Titanic {
 
 bool TTpicture::_staticFlag;
 
-TTpicture::TTpicture(TTstring &str, int val1, int val2, int val3, int val4, int val5, int val6) :
-		TTmajorWord(str, val1, val2, val4), _tag(val3), _field30(val5), _field3C(val6),
+TTpicture::TTpicture(TTstring &str, WordMode mode, int val2, int val3, int val4, int val5, int val6) :
+		TTmajorWord(str, mode, val2, val4), _tag(val3), _field30(val5), _field3C(val6),
 		_field38(0) {
 }
 
@@ -50,7 +50,7 @@ int TTpicture::load(SimpleFile *file) {
 	CString str;
 	int val1, val2;
 
-	if (!TTword::load(file, 2) && file->scanf("%s %d %d", &str, &val1, &val2)) {
+	if (!TTword::load(file, WMODE_2) && file->scanf("%s %d %d", &str, &val1, &val2)) {
 		_tag = readNumber(str.c_str());
 		_field30 = val1;
 		_field3C = val2;

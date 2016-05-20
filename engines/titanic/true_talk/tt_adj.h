@@ -33,7 +33,7 @@ private:
 protected:
 	int _field30;
 public:
-	TTadj(TTstring &str, int val1, int val2, int val3, int val4);
+	TTadj(TTstring &str, WordMode mode, int val2, int val3, int val4);
 	TTadj(TTadj *src);
 
 	/**

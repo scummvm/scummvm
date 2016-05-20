@@ -26,7 +26,7 @@
 
 namespace Titanic {
 
-TTword::TTword(TTstring &str, int mode, int val2) : _string(str),
+TTword::TTword(TTstring &str, WordMode mode, int val2) : _string(str),
 		_wordMode(mode), _field1C(val2), _field20(0), _field24(0),
 		_field28(0), _synP(nullptr), _nextP(nullptr) {
 	_status = str.getStatus() == SS_VALID ? SS_VALID : SS_5;
@@ -133,7 +133,7 @@ void TTword::appendNode(TTsynonym *node) {
 		_synP = node;
 }
 
-int TTword::load(SimpleFile *file, int mode) {
+int TTword::load(SimpleFile *file, WordMode mode) {
 	CString str1, str2;
 	int val;
 

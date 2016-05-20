@@ -29,6 +29,11 @@
 
 namespace Titanic {
 
+enum WordMode { 
+	WMODE_NONE = 0, WMODE_1 = 1, WMODE_2 = 2, WMODE_3 = 3,
+	WMODE_6 = 6, WMODE_8 = 8
+};
+
 class TTword {
 protected:
 	TTstringStatus _status;
@@ -48,9 +53,9 @@ public:
 	TTword *_nextP;
 	TTsynonym *_synP;
 	TTstring _string;
-	int _wordMode;
+	WordMode _wordMode;
 public:
-	TTword(TTstring &str, int mode, int val2);
+	TTword(TTstring &str, WordMode mode, int val2);
 	TTword(TTword *src);
 	~TTword();
 
@@ -87,7 +92,7 @@ public:
 	/**
 	 * Load the word
 	 */
-	int load(SimpleFile *file, int mode);
+	int load(SimpleFile *file, WordMode mode);
 
 	/**
 	 * Finds a synonym in the word by name, if one exists
