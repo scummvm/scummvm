@@ -804,7 +804,7 @@ void GameSys::drawSprites() {
 		if (gfxItem2->_prevFrame._spriteId != -1) {
 			bool transparent = false;
 			if (gfxItem2->_currFrame._spriteId != -1) {
-				if (gfxItem2->_flags & 1) {
+				if (gfxItem2->_flags) {
 					transparent = true;
 				} else {
 					int resourceId = (gfxItem2->_sequenceId & 0xFFFF0000) | gfxItem2->_currFrame._spriteId;
@@ -822,7 +822,7 @@ void GameSys::drawSprites() {
 
 		if (gfxItem2->_currFrame._spriteId != -1) {
 			bool transparent = false;
-			if (gfxItem2->_flags & 1) {
+			if (gfxItem2->_flags) {
 				transparent = true;
 			} else {
 				int resourceId = (gfxItem2->_sequenceId & 0xFFFF0000) | gfxItem2->_currFrame._spriteId;
@@ -845,7 +845,7 @@ void GameSys::drawSprites() {
 
 		if (gfxItem5->_updFlag) {
 			if (gfxItem5->_currFrame._spriteId != -1) {
-				if (gfxItem5->_flags & 1) {
+				if (gfxItem5->_flags) {
 					seqDrawStaticFrame(gfxItem5->_surface, gfxItem5->_currFrame, nullptr);
 				} else {
 					int resourceId = (gfxItem5->_sequenceId & 0xFFFF0000) | gfxItem5->_currFrame._spriteId;
@@ -855,7 +855,7 @@ void GameSys::drawSprites() {
 				}
 			}
 		} else if (gfxItem5->_updRectsCount > 0) {
-			if (gfxItem5->_flags & 1) {
+			if (gfxItem5->_flags) {
 				for (int n = 0; n < gfxItem5->_updRectsCount; ++n)
 					seqDrawStaticFrame(gfxItem5->_surface, gfxItem5->_prevFrame, &gfxItem5->_updRects[n]);
 			} else {
@@ -969,8 +969,8 @@ void GameSys::handleReqRemoveSpriteDrawItems() {
 		for (int j = 0; j < _removeSpriteDrawItemsCount; ++j) {
 			for (int i = 0; i < _gfxItemsCount; ++i) {
 				GfxItem *gfxItem = &_gfxItems[i];
-				if (gfxItem->_sequenceId == -1 && !gfxItem->_animation && (gfxItem->_flags & 1) &&
-					gfxItem->_id == _removeSpriteDrawItems[j]._id && _removeSpriteDrawItems[j]._surface == gfxItem->_surface) {
+				if (gfxItem->_sequenceId == -1 && !gfxItem->_animation && gfxItem->_flags
+				 && gfxItem->_id == _removeSpriteDrawItems[j]._id && _removeSpriteDrawItems[j]._surface == gfxItem->_surface) {
 					gfxItem->_flags = 0;
 					gfxItem->_currFrame._duration = 0;
 					gfxItem->_currFrame._spriteId = -1;
@@ -995,8 +995,6 @@ void GameSys::fatUpdateFrame() {
 		return;
 
 	int duration, currFrameNum;
-
-	// NOTE Skipped avi code (reqAviStart)
 
 	for (int i = 0; i < _gfxItemsCount; ++i) {
 		GfxItem *gfxItem = &_gfxItems[i];
@@ -1130,22 +1128,20 @@ void GameSys::fatUpdateFrame() {
 	if (_grabSpriteChanged) {
 		for (int i = 0; i < _gfxItemsCount; ++i) {
 			GfxItem *gfxItem = &_gfxItems[i];
-			if (gfxItem->_sequenceId == -1 && !gfxItem->_animation && (gfxItem->_flags & 1) &&
-				gfxItem->_id == _grabSpriteId && gfxItem->_surface == _grabSpriteSurface1) {
-					gfxItem->_currFrame._duration = 0;
-					gfxItem->_currFrame._isScaled = false;
-					gfxItem->_currFrame._rect = _grabSpriteRect;
-					gfxItem->_currFrame._spriteId = _grabSpriteSurface2 ? 1 : -1;// TODO
-					gfxItem->_currFrame._soundId = -1;
-					gfxItem->_updFlag = true;
-					gfxItem->_surface = _grabSpriteSurface2;
-					break;
-				}
+			if (gfxItem->_sequenceId == -1 && !gfxItem->_animation && gfxItem->_flags
+			 && gfxItem->_id == _grabSpriteId && gfxItem->_surface == _grabSpriteSurface1) {
+				gfxItem->_currFrame._duration = 0;
+				gfxItem->_currFrame._isScaled = false;
+				gfxItem->_currFrame._rect = _grabSpriteRect;
+				gfxItem->_currFrame._spriteId = _grabSpriteSurface2 ? 1 : -1;// TODO
+				gfxItem->_currFrame._soundId = -1;
+				gfxItem->_updFlag = true;
+				gfxItem->_surface = _grabSpriteSurface2;
+				break;
+			}
 		}
 		_grabSpriteChanged = false;
 	}
-
-	// NOTE Skipped avi code (reqAviStart)
 
 	debugC(kDebugBasic, "GameSys::fatUpdateFrame() _fatSequenceItems.size(): %d", _fatSequenceItems.size());
 
@@ -1231,7 +1227,6 @@ void GameSys::fatUpdate() {
 	handleReqRemoveSequenceItem();
 	handleReqRemoveSequenceItems();
 	handleReqRemoveSpriteDrawItems();
-	// NOTE Skipped avi stuff (reqAviStop)
 
 	fatUpdateFrame();
 }
