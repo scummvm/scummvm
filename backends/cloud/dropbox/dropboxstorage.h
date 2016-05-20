@@ -42,9 +42,36 @@ class DropboxStorage: public Cloud::Storage {
 public:	
 	virtual ~DropboxStorage();
 
-	virtual void listDirectory(Common::String path);
-	virtual void syncSaves();
-	virtual void printInfo();	
+	/** Returns pointer to Common::Array<CloudFile>. */
+	virtual void listDirectory(Common::String path, ListDirectoryCallback callback) {} //TODO
+
+	/** Calls the callback when finished. */
+	virtual void upload(Common::String path, Common::ReadStream* contents, OperationCallback callback) {} //TODO
+
+	/** Returns pointer to Common::ReadStream. */
+	virtual void download(Common::String path, DownloadCallback callback) {} //TODO
+
+	/** Calls the callback when finished. */
+	virtual void remove(Common::String path, OperationCallback callback) {} //TODO
+
+	/** Calls the callback when finished. */
+	virtual void syncSaves(OperationCallback callback);
+
+	/** Calls the callback when finished. */
+	virtual void createDirectory(Common::String path, OperationCallback callback) {} //TODO
+
+	/** Calls the callback when finished. */
+	virtual void touch(Common::String path, OperationCallback callback) {} //TODO
+
+	/** Returns pointer to the ServiceInfo struct. */
+	virtual void info(InfoCallback callback);
+
+	/** Returns whether saves sync process is running. */
+	virtual bool isSyncing() { return false; } //TODO
+
+	/** Returns whether there are any requests running. */
+	virtual bool isWorking() { return false; } //TODO
+
 	/**
 	* Load token and user id from configs and return DropboxStorage for those.	
 	* @return pointer to the newly created DropboxStorage or 0 if some problem occured.

@@ -23,37 +23,90 @@
 #ifndef BACKENDS_CLOUD_STORAGE_H
 #define BACKENDS_CLOUD_STORAGE_H
 
+#include "common/array.h"
+#include "common/stream.h"
 #include "common/str.h"
 
 namespace Cloud {
 
+class StorageFile {
+	Common::String _path, _name;
+	uint32 _size, _timestamp;
+	bool _isDirectory;
+
+public:
+	StorageFile(Common::String pth, uint32 sz, uint32 ts, bool dir) {
+		_path = pth;
+
+		_name = pth;
+		for (uint32 i = _name.size() - 1; i >= 0; --i) {
+			if (_name[i] == '/' || _name[i] == '\\') {
+				_name.erase(0, i);
+				break;
+			}
+			if (i == 0) break; //OK, I admit that's strange
+		}
+
+		_size = sz;
+		_timestamp = ts;
+		_isDirectory = dir;
+	}
+
+	Common::String path() const { return _path; }
+	Common::String name() const { return _name; }
+	uint32 size() const { return _size; }
+	uint32 timestamp() const { return _timestamp; }
+	bool isDirectory() const { return _isDirectory; }
+};
+
+class StorageInfo {
+	Common::String _info;
+
+public:
+	StorageInfo(Common::String info): _info(info) {}
+
+	Common::String info() const { return _info; }
+};
+
 class Storage {
 public:
+	typedef void(*ListDirectoryCallback)(Common::Array<StorageFile>& result);
+	typedef void(*DownloadCallback)(Common::ReadStream* result);
+	typedef void(*InfoCallback)(StorageInfo result);
+	typedef void(*OperationCallback)(bool successed);
+
 	Storage() {}
 	virtual ~Storage() {}
 
-	/**
-	* Lists given directory.
-	*
-	* @param path		directory to list	
-	*/
+	/** Returns pointer to Common::Array<CloudFile>. */
+	virtual void listDirectory(Common::String path, ListDirectoryCallback callback) = 0;
 
-	//TODO: actually make it list directories
-	//TODO: add some callback to pass gathered files list
+	/** Calls the callback when finished. */
+	virtual void upload(Common::String path, Common::ReadStream* contents, OperationCallback callback) = 0;
 
-	virtual void listDirectory(Common::String path) = 0;
+	/** Returns pointer to Common::ReadStream. */
+	virtual void download(Common::String path, DownloadCallback callback) = 0;
 
-	/**
-	* Starts saves syncing process.
-	*/
+	/** Calls the callback when finished. */
+	virtual void remove(Common::String path, OperationCallback callback) = 0;
 
-	virtual void syncSaves() = 0;
+	/** Calls the callback when finished. */
+	virtual void syncSaves(OperationCallback callback) = 0;
 
-	/**
-	* Prints user info on console. (Temporary)
-	*/
+	/** Calls the callback when finished. */
+	virtual void createDirectory(Common::String path, OperationCallback callback) = 0;
 
-	virtual void printInfo() = 0;
+	/** Calls the callback when finished. */
+	virtual void touch(Common::String path, OperationCallback callback) = 0;
+
+	/** Returns pointer to the ServiceInfo struct. */
+	virtual void info(InfoCallback callback) = 0;
+
+	/** Returns whether saves sync process is running. */
+	virtual bool isSyncing() = 0;
+
+	/** Returns whether there are any requests running. */
+	virtual bool isWorking() = 0;
 };
 
 } //end of namespace Cloud

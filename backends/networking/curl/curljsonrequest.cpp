@@ -75,7 +75,7 @@ bool CurlJsonRequest::handle() {
 			if (_callback) {
 				char *contents = getPreparedContents();				
 				Common::JSONValue *json = Common::JSON::parse(contents);				
-				_callback(json); //potential memory leak, free it in your callbacks!
+				_callback(this, json); //potential memory leak, free it in your callbacks!
 			}
 			return true;
 		}

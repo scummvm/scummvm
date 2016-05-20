@@ -53,7 +53,7 @@ public:
 	* Starts saves syncing process in currently active storage if there is any.
 	*/
 
-	virtual void syncSaves() = 0;
+	virtual void syncSaves(Cloud::Storage::OperationCallback callback = 0) = 0;
 };
 
 } //end of namespace Common

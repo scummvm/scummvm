@@ -35,7 +35,7 @@ namespace Dropbox {
 Common::String DropboxStorage::KEY; //can't use ConfMan there yet, loading it on instance creation/auth
 Common::String DropboxStorage::SECRET; //TODO: hide these secrets somehow
 
-static void printJsonCallback(void *ptr) {
+static void printJsonCallback(Networking::Request* rq, void *ptr) {
 	Common::JSONValue *json = (Common::JSONValue *)ptr;
 	if (json) {
 		debug("printJsonCallback:");
@@ -46,7 +46,7 @@ static void printJsonCallback(void *ptr) {
 	}
 }
 
-static void saveAccessTokenCallback(void *ptr) {
+static void saveAccessTokenCallback(Networking::Request* rq, void *ptr) {
 	Common::JSONValue *json = (Common::JSONValue *)ptr;
 	if (json) {
 		debug("saveAccessTokenCallback:");
@@ -69,6 +69,29 @@ static void saveAccessTokenCallback(void *ptr) {
 	}
 }
 
+void infoCallback(Networking::Request* request, void *jsonPointer) {
+	if (!request) {
+		warning("infoCallback: got NULL instead of Request");
+
+		Common::JSONValue *json = (Common::JSONValue *)jsonPointer;
+		if (json) delete json; //yeah I know we can delete NULL safely
+		return;
+	}
+
+	Storage::InfoCallback callback = (Storage::InfoCallback)request->pointer();
+
+	Common::JSONValue *json = (Common::JSONValue *)jsonPointer;
+	if (json) {
+		//Common::JSONObject result = json->asObject();
+		if (callback) {
+			callback(StorageInfo(json->stringify()));
+		}
+		delete json;
+	} else {
+		warning("infoCallback: got NULL instead of JSON!");
+	}
+}
+
 DropboxStorage::DropboxStorage(Common::String accessToken, Common::String userId): _token(accessToken), _uid(userId) {
 	curl_global_init(CURL_GLOBAL_ALL);
 }
@@ -77,18 +100,21 @@ DropboxStorage::~DropboxStorage() {
 	curl_global_cleanup();
 }
 
-void DropboxStorage::listDirectory(Common::String path) {	
+void syncSavesInfoCallback(StorageInfo info) {
+	debug("info: %s", info.info().c_str());
 }
 
-void DropboxStorage::syncSaves() {
-	//not syncing, but already something:
-	printInfo();
+void DropboxStorage::syncSaves(OperationCallback callback) {
+	//this is not the real syncSaves() implementation
+	info(syncSavesInfoCallback);
 }
 
-void DropboxStorage::printInfo() {
-	Networking::CurlJsonRequest *request = new Networking::CurlJsonRequest(printJsonCallback, "https://api.dropboxapi.com/1/account/info");
+void DropboxStorage::info(InfoCallback callback) {	
+	Networking::CurlJsonRequest *request = new Networking::CurlJsonRequest(infoCallback, "https://api.dropboxapi.com/1/account/info");
 	request->addHeader("Authorization: Bearer " + _token);
 	ConnMan.addRequest(request);
+
+	request->setPointer(callback);
 }
 
 DropboxStorage *DropboxStorage::loadFromConfig() {

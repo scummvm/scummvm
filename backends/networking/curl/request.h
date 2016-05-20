@@ -27,7 +27,7 @@ namespace Networking {
 
 class Request {
 protected:
-	typedef void(*Callback)(void *result);
+	typedef void(*Callback)(Request* request, void *result);
 
 	/**
 	* Callback, which should be called before Request returns true in handle().
@@ -35,6 +35,13 @@ protected:
 	*/
 
 	Callback _callback;
+
+	/**
+	* Pointer, which could be set by Request creating code. It might be accessed
+	* from this Request when callback is called, for example.
+	*/
+
+	void *_pointer;
 
 public:
 	Request(Callback cb): _callback(cb) {};
@@ -47,6 +54,9 @@ public:
 	*/
 
 	virtual bool handle() = 0;
+
+	void setPointer(void *ptr) { _pointer = ptr; }
+	void *pointer() const { return _pointer;  }
 };
 
 } //end of namespace Cloud

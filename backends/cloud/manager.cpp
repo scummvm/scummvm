@@ -46,9 +46,9 @@ Storage* Manager::getCurrentStorage() {
 	return _currentStorage;
 }
 
-void Manager::syncSaves() {
+void Manager::syncSaves(Storage::OperationCallback callback) {
 	Storage* storage = getCurrentStorage();
-	if (storage) storage->syncSaves();
+	if (storage) storage->syncSaves(callback);
 }
 
 } //end of namespace Cloud

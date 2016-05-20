@@ -38,7 +38,7 @@ public:
 	virtual void init();
 
 	virtual Storage* getCurrentStorage();
-	virtual void syncSaves();
+	virtual void syncSaves(Storage::OperationCallback callback);
 };
 
 } //end of namespace Cloud
