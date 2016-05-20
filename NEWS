@@ -4,6 +4,7 @@ For a more comprehensive changelog of the latest experimental code, see:
 1.8.1 (2016-05-25)
  New ports:
    - Added Nintendo 3DS port.
+   - Added Android SDL port.
 
  General:
    - Removed TESTING flag from several supported games.
