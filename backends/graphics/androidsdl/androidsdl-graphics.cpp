@@ -22,32 +22,21 @@
 
 #include "common/scummsys.h"
 
-#if defined(POSIX) && !defined(MACOSX) && !defined(SAMSUNGTV) && !defined(MAEMO) && !defined(WEBOS) && !defined(LINUXMOTO) && !defined(GPH_DEVICE) && !defined(GP2X) && !defined(DINGUX) && !defined(OPENPANDORA) && !defined(PLAYSTATION3) && !defined(ANDROIDSDL)
+#if defined(ANDROIDSDL)
 
-#include "backends/platform/sdl/posix/posix.h"
-#include "backends/plugins/sdl/sdl-provider.h"
-#include "base/main.h"
+#include "backends/graphics/androidsdl/androidsdl-graphics.h"
+#include "backends/events/androidsdl/androidsdl-events.h"
+#include "common/mutex.h"
+#include "common/textconsole.h"
+#include "graphics/font.h"
+#include "graphics/fontman.h"
+#include "graphics/scaler.h"
+#include "graphics/scaler/aspect.h"
+#include "graphics/scaler/downscaler.h"
+#include "graphics/surface.h"
 
-int main(int argc, char *argv[]) {
-
-	// Create our OSystem instance
-	g_system = new OSystem_POSIX();
-	assert(g_system);
-
-	// Pre initialize the backend
-	((OSystem_POSIX *)g_system)->init();
-
-#ifdef DYNAMIC_MODULES
-	PluginManager::instance().addPluginProvider(new SDLPluginProvider());
-#endif
-
-	// Invoke the actual ScummVM main entry point:
-	int res = scummvm_main(argc, argv);
-
-	// Free OSystem
-	delete (OSystem_POSIX *)g_system;
-
-	return res;
+AndroidSdlGraphicsManager::AndroidSdlGraphicsManager(SdlEventSource *sdlEventSource, SdlWindow *window)
+ : SurfaceSdlGraphicsManager(sdlEventSource, window) {
 }
 
 #endif
