@@ -42,7 +42,7 @@ TTaction::TTaction(TTaction *src) : TTmajorWord(src) {
 int TTaction::load(SimpleFile *file) {
 	int val;
 
-	if (!TTword::load(file, WMODE_1) && file->scanf("%d", &val)) {
+	if (!TTword::load(file, WMODE_ACTION) && file->scanf("%d", &val)) {
 		_field30 = val;
 		return 0;
 	} else {

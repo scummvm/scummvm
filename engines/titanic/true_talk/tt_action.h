@@ -41,6 +41,8 @@ public:
 	 */
 	int load(SimpleFile *file);
 
+	void setVal(int val) { _field30 = val; }
+
 	/**
 	 * Creates a copy of the word
 	 */

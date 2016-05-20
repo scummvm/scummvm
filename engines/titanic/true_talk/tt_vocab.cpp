@@ -280,12 +280,205 @@ TTword *TTvocab::getSuffixedWord(TTstring &str) const {
 	} else if (tempStr.hasSuffix("ed")) {
 		tempStr.deleteSuffix(1);
 		word = getPrimeWord(tempStr);
+		
+		if (!word) {
+			tempStr.deleteSuffix(1);
+			word = getPrimeWord(tempStr);
+		}
 
-		// TODO
+		if (word) {
+			if (word->_wordMode == WMODE_ACTION) {
+				static_cast<TTaction *>(word)->setVal(1);
+			}
+		} else {
+			tempStr = str;
+		}
+
+	} else if (tempStr.hasSuffix("ly")) {
+		tempStr.deleteSuffix(2);
+		word = getPrimeWord(tempStr);
+
+		if (word) {
+			delete word;
+			word = new TTword(str, WMODE_9, 0);
+		} else {
+			tempStr = str;
+		}
+	
+	} else if (tempStr.hasSuffix("er")) {
+		tempStr.deleteSuffix(1);
+		word = getPrimeWord(tempStr);
+
+		if (word) {
+			if (word->_wordMode == WMODE_8) {
+				int val1 = word->proc15();
+				int val2 = word->proc15();
+
+				if (val2 < 5) {
+					if (--val1 > 0) {
+						word->unkFn1(val1);
+					}
+				} else {
+					if (++val1 < 11) {
+						word->unkFn1(val1);
+					}
+				}
+			}
+		} else {
+			tempStr.deleteSuffix(1);
+			word = getPrimeWord(tempStr);
+
+			if (word) {
+				if (word->_wordMode == WMODE_8) {
+					int val1 = word->proc15();
+					int val2 = word->proc15();
+
+					if (val2 < 5) {
+						if (--val1 > 0) {
+							word->unkFn1(val1);
+						}
+					} else {
+						if (++val1 < 11) {
+							word->unkFn1(val1);
+						}
+					}
+				}
+			} else {
+				tempStr.deleteSuffix(1);
+				word = getPrimeWord(tempStr);
+
+				if (word && word->_wordMode == WMODE_8) {
+					int val1 = word->proc15();
+					int val2 = word->proc15();
+
+					if (val2 < 5) {
+						if (--val1 > 0) {
+							word->unkFn1(val1);
+						}
+					} else {
+						if (++val1 < 11) {
+							word->unkFn1(val1);
+						}
+					}
+				}
+			}
+		}
+	
+	} else if (tempStr.hasSuffix("est")) {
+		tempStr.deleteSuffix(2);
+		word = getPrimeWord(tempStr);
+
+		if (word) {
+			if (word->_wordMode == WMODE_8) {
+				int val1 = word->proc15();
+				int val2 = word->proc15();
+
+				if (val2 < 5) {
+					if (--val1 > 0) {
+						word->unkFn1(val1);
+					}
+				} else {
+					if (++val1 < 11) {
+						word->unkFn1(val1);
+					}
+				}
+			}
+		} else {
+			tempStr.deleteSuffix(1);
+			word = getPrimeWord(tempStr);
+
+			if (word) {
+				if (word->_wordMode == WMODE_8) {
+					int val1 = word->proc15();
+					int val2 = word->proc15();
+
+					if (val2 < 5) {
+						if (--val1 > 0) {
+							word->unkFn1(val1);
+						}
+					} else {
+						if (++val1 < 11) {
+							word->unkFn1(val1);
+						}
+					}
+				}
+			} else {
+				tempStr.deleteSuffix(1);
+				word = getPrimeWord(tempStr);
+
+				if (word) {
+					int val1 = word->proc15();
+					int val2 = word->proc15();
+
+					if (val2 < 5) {
+						if (--val1 > 0) {
+							word->unkFn1(val1);
+						}
+					} else {
+						if (++val1 < 11) {
+							word->unkFn1(val1);
+						}
+					}
+				}
+			}
+		}
+
+	} else if (tempStr.hasSuffix("s*")) {
+		tempStr.deleteSuffix(2);
+		word = getPrimeWord(tempStr);
+
+		if (word) {
+			if (word->_wordMode == WMODE_6 || word->_wordMode == WMODE_9) {
+				delete word;
+				TTstring isStr("is");
+				word = getPrimeWord(isStr);
+			} else {
+				switch (word->_field1C) {
+				case 200:
+					if (word->proc10() == 2) {
+						delete word;
+						word = new TTpronoun(tempStr, WMODE_6, 601, 0, 5);
+					} else if (word->proc10() == 1) {
+						delete word;
+						word = new TTpronoun(tempStr, WMODE_6, 601, 0, 4);
+					}
+					break;
+
+				case 201:
+					delete word;
+					word = new TTpronoun(tempStr, WMODE_6, 601, 0, 5);
+					break;
+
+				case 202:
+				case 203:
+					if (word->proc10() == 2) {
+						delete word;
+						word = new TTpronoun(tempStr, WMODE_6, 601, 0, 5);
+					} else {
+						int val = word->proc10() == 1 ? 0 : 4;
+						delete word;
+						word = new TTpronoun(tempStr, WMODE_6, 601, 0, val);
+					}
+					break;
+
+				case 204:
+					delete word;
+					word = new TTpronoun(tempStr, WMODE_6, 601, 0, 6);
+					break;
+
+				default:
+					delete word;
+					word = new TTpronoun(tempStr, WMODE_6, 601, 0, 0);
+					break;
+				}
+			}
+		}
 	}
 
-	// TODO
-	return nullptr;
+	if (word)
+		word->setSynStr(&str);
+
+	return word;
 }
 
 TTword *TTvocab::getPrefixedWord(TTstring &str) const {

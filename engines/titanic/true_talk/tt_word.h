@@ -30,14 +30,13 @@
 namespace Titanic {
 
 enum WordMode { 
-	WMODE_NONE = 0, WMODE_1 = 1, WMODE_2 = 2, WMODE_3 = 3,
-	WMODE_6 = 6, WMODE_8 = 8
+	WMODE_NONE = 0, WMODE_ACTION = 1, WMODE_2 = 2, WMODE_3 = 3,
+	WMODE_6 = 6, WMODE_8 = 8, WMODE_9 = 9
 };
 
 class TTword {
 protected:
 	TTstringStatus _status;
-	int _field1C;
 	int _field20;
 	int _field24;
 	int _field28;
@@ -54,6 +53,7 @@ public:
 	TTsynonym *_synP;
 	TTstring _string;
 	WordMode _wordMode;
+	int _field1C;
 public:
 	TTword(TTstring &str, WordMode mode, int val2);
 	TTword(TTword *src);
