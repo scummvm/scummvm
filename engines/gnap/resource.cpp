@@ -36,7 +36,9 @@ void SequenceFrame::loadFromStream(Common::MemoryReadStream &stream) {
 	_rect.bottom = stream.readUint32LE();
 	_spriteId = stream.readUint32LE();
 	_soundId = stream.readUint32LE();
-	_unusedVal = stream.readUint32LE();
+
+	// Skip an unused value
+	stream.readUint32LE();
 
 	debugC(kDebugBasic, "SequenceFrame() spriteId: %d; soundId: %d", _spriteId, _soundId);
 }
@@ -44,8 +46,9 @@ void SequenceFrame::loadFromStream(Common::MemoryReadStream &stream) {
 // SequenceAnimation
 
 void SequenceAnimation::loadFromStream(Common::MemoryReadStream &stream) {
-	_unusedVal1 = stream.readUint16LE();
-	_unusedVal2 = stream.readUint16LE();
+	// Skip two unused values
+	stream.readUint32LE();
+
 	_additionalDelay = stream.readUint32LE();
 	_framesCount = stream.readUint16LE();
 	_maxTotalDuration = stream.readUint16LE();
@@ -59,7 +62,9 @@ void SequenceAnimation::loadFromStream(Common::MemoryReadStream &stream) {
 
 SequenceResource::SequenceResource(int resourceId, byte *data, uint32 size) {
 	Common::MemoryReadStream stream(data, size, DisposeAfterUse::NO);
-	_unusedVal1 = stream.readUint32LE();
+	// Skip an unused value
+	stream.readUint32LE();
+
 	_sequenceId = stream.readUint32LE();
 	_defaultId = stream.readUint32LE();
 	_sequenceId2 = stream.readUint32LE();

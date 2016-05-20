@@ -51,13 +51,10 @@ struct SequenceFrame {
 	Common::Rect _rect;
 	int32 _spriteId;
 	int32 _soundId;
-	int32 _unusedVal;
 	void loadFromStream(Common::MemoryReadStream &stream);
 };
 
 struct SequenceAnimation {
-	int16 _unusedVal1;
-	int16 _unusedVal2;
 	int32 _additionalDelay;
 	int16 _framesCount;
 	int16 _maxTotalDuration;
@@ -72,7 +69,6 @@ public:
 	SequenceResource(int resourceId, byte *data, uint32 size);
 	~SequenceResource();
 public:
-	uint32 _unusedVal1;
 	int32 _sequenceId;
 	int32 _defaultId;
 	int32 _sequenceId2;
