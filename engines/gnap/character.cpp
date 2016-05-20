@@ -676,8 +676,11 @@ int PlayerGnap::getWalkSequenceId(int deltaX, int deltaY) {
 		0x7AD, 0x000, 0x7AE,
 		0x7B1, 0x000, 0x7B3
 	};
-	// CHECKME This is a little weird
-	return walkSequenceIds[3 * deltaX + 3 + 1 + deltaY];
+
+	int id = 3 * (deltaX + 1) + deltaY + 1;
+	assert(id >= 0 && id < 9);
+
+	return walkSequenceIds[id];
 }
 
 bool PlayerGnap::walkTo(Common::Point gridPos, int animationIndex, int sequenceId, int flags) {
@@ -1275,8 +1278,11 @@ int PlayerPlat::getWalkSequenceId(int deltaX, int deltaY) {
 		0x7C4, 0x000, 0x7C7,
 		0x7C3, 0x000, 0x7C6
 	};
-	// CHECKME This is a little weird
-	return walkSequenceIds[3 * deltaX + 3 + 1 + deltaY];
+
+	int id = 3 * (deltaX + 1) + deltaY + 1;
+	assert(id >= 0 && id < 9);
+
+	return walkSequenceIds[id];
 }
 
 bool PlayerPlat::walkTo(Common::Point gridPos, int animationIndex, int sequenceId, int flags) {

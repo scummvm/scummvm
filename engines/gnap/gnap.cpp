@@ -1049,7 +1049,6 @@ void GnapEngine::toyUfoFlyTo(int destX, int destY, int minX, int maxX, int minY,
 	if (destY == -1)
 		destY = _leftClickMouseY;
 
-	//CHECKME
 	int clippedDestX = CLIP(destX, minX, maxX);
 	int clippedDestY = CLIP(destY, minY, maxY);
 	int dirX = 0, dirY = 0; // 0, -1 or 1
