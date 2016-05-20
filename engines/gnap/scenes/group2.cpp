@@ -3036,13 +3036,15 @@ void Scene28::updateAnimations() {
 			gnap.walkTo(Common::Point(2, 8), -1, 0x107BB, 1);
 			break;
 		case kAS28TalkClown:
-			_clownTalkCtr = (_clownTalkCtr + 1) % 2;
+			// The original was only using the first two sequences,
+			// due to a bug.
+			_clownTalkCtr = (_clownTalkCtr + 1) % 3;
 			if (_clownTalkCtr == 0)
 				_nextClownSequenceId = 0x11D;
 			else if (_clownTalkCtr == 1)
 				_nextClownSequenceId = 0x11E;
 			else if (_clownTalkCtr == 2)
-				_nextClownSequenceId = 0x11F; // NOTE CHECKME Never set, bug in the original?
+				_nextClownSequenceId = 0x11F;
 			break;
 		case kAS28GnapWaiting:
 			gnap._actionStatus = -1;
