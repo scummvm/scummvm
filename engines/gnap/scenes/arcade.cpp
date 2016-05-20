@@ -948,11 +948,6 @@ void Scene50::run() {
 	_vm->_timers[5] = 15;
 
 	while (!_fightDone && !_vm->_gameDone) {
-		/* TODO
-		if (sceneXX_sub_4466B1())
-			_fightDone = true;
-		*/
-
 		int playerSequenceId = checkInput();
 		if (playerSequenceId != -1)
 			_leftTongueNextSequenceId = playerSequenceId;
@@ -984,8 +979,6 @@ void Scene50::run() {
 		}
 		_vm->gameUpdateTick();
 	}
-
-	// freeFont();
 
 	_vm->_gameSys->setAnimation(0, 0, 7);
 	_vm->_gameSys->setAnimation(0, 0, 6);

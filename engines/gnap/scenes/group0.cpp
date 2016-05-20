@@ -1388,7 +1388,6 @@ void Scene04::run() {
 
 	if (_vm->isFlag(kGFPlatypusDisguised)) {
 		_vm->_timers[3] = 300;
-		// TODO setCursor((LPCSTR)IDC_WAIT);
 		_vm->setGrabCursorSprite(kItemKeys);
 		gnap._pos = Common::Point(4, 7);
 		gnap._id = 140;
