@@ -224,7 +224,7 @@ void GameSys::drawSpriteToBackground(int x, int y, int resourceId) {
 	int spriteWidth = spriteResource->_width;
 	int spriteHeight = spriteResource->_height;
 	Common::Rect dstRect(0, 0, spriteWidth, spriteHeight);
-	blitSprite32(_backgroundSurface, x, y, sourcePixels, spriteResource->_width, dstRect, sourcePalette, spriteResource->_transparent != 0);
+	blitSprite32(_backgroundSurface, x, y, sourcePixels, spriteResource->_width, dstRect, sourcePalette, spriteResource->_transparent);
 	_vm->_spriteCache->release(resourceId);
 
 	// Add dirty rect so the modified background is redrawn
@@ -255,7 +255,7 @@ void GameSys::drawSpriteToSurface(Graphics::Surface *surface, int x, int y, int 
 	uint32 *sourcePalette = spriteResource->_palette;
 	byte *sourcePixels = spriteResource->_pixels;
 	Common::Rect dstRect(0, 0, spriteResource->_width, spriteResource->_height);
-	blitSprite32(surface, x, y, sourcePixels, spriteResource->_width, dstRect, sourcePalette, true);//spriteResource->_transparent != 0);
+	blitSprite32(surface, x, y, sourcePixels, spriteResource->_width, dstRect, sourcePalette, true);
 	_vm->_spriteCache->release(resourceId);
 }
 
@@ -779,7 +779,7 @@ void GameSys::seqDrawSpriteFrame(SpriteResource *spriteResource, SequenceFrame &
 		blitSpriteScaled32(_frontSurface,	frame._rect, clipRect, sourcePixels, spriteResource->_width, sourceRect, sourcePalette);
 	} else {
 		clipRect.translate(-frame._rect.left, -frame._rect.top);
-		blitSprite32(_frontSurface, x, y, sourcePixels, spriteResource->_width, clipRect, sourcePalette, true);//spriteResource->_transparent != 0);
+		blitSprite32(_frontSurface, x, y, sourcePixels, spriteResource->_width, clipRect, sourcePalette, true);
 	}
 }
 
