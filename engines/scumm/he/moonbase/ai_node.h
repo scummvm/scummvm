@@ -23,7 +23,7 @@
 #ifndef SCUMM_HE_MOONBASE_AI_NODE_H
 #define SCUMM_HE_MOONBASE_AI_NODE_H
 
-#include "common/list.h"
+#include "common/array.h"
 
 namespace Scumm {
 
@@ -65,7 +65,7 @@ public:
 class Node {
 private:
 	Node *_parent;
-	Common::List<Node *> _children;
+	Common::Array<Node *> _children;
 
 	int _depth;
 	static int _nodeCount;
@@ -88,7 +88,7 @@ public:
 	void setContainedObject(IContainedObject *value) { _contents = value; }
 	IContainedObject *getContainedObject() { return _contents; }
 
-	Common::List<Node *> getChildren() const { return _children; }
+	Common::Array<Node *> getChildren() const { return _children; }
 	int generateChildren();
 	int generateNextChild();
 	Node *popChild();

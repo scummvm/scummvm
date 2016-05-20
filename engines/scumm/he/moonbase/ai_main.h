@@ -27,11 +27,11 @@
 
 namespace Scumm {
 
-class ScummEngine;
+class ScummEngine_v71he;
 
-extern ScummEngine *_vm;
+extern ScummEngine_v71he *_vm;
 
-typedef Common::List<int>::iterator intVecItr;
+typedef Common::Array<int>::iterator intVecItr;
 
 enum {
 	TERRAIN_TYPE_GOOD = 0,
@@ -182,8 +182,8 @@ int TempChooseTarget(int behavior);
 
 int GetEnergyHogType();
 
-extern Common::List<int> lastXCoord[];
-extern Common::List<int> lastYCoord[];
+extern Common::Array<int> lastXCoord[];
+extern Common::Array<int> lastYCoord[];
 
 } // End of namespace Scumm
 

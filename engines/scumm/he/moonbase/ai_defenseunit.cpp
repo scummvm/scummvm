@@ -22,7 +22,7 @@
 
 #include "common/rect.h"
 #include "common/util.h"
-#include "scumm/scumm.h"
+#include "scumm/he/intern_he.h"
 #include "scumm/he/moonbase/ai_defenseunit.h"
 #include "scumm/he/moonbase/ai_main.h"
 

@@ -32,6 +32,12 @@ Moonbase::Moonbase(ScummEngine_v71he *vm) : _vm(vm) {
 Moonbase::~Moonbase() {
 }
 
+int Moonbase::readFromArray(int array, int y, int x) {
+	_vm->VAR(116) = array;
+
+	return _vm->readArray(116, y, x);
+}
+
 void Moonbase::blitT14WizImage(uint8 *dst, int dstw, int dsth, int dstPitch, const Common::Rect *clipBox,
 		 uint8 *wizd, int x, int y, int rawROP, int paramROP) {
 	bool premulAlpa = false;

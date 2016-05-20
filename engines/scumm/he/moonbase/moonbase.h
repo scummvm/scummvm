@@ -34,6 +34,8 @@ public:
 	Moonbase(ScummEngine_v71he *vm);
 	~Moonbase();
 
+	int readFromArray(int array, int y, int x);
+
 	void blitT14WizImage(uint8 *dst, int dstw, int dsth, int dstPitch, const Common::Rect *clipBox,
 			 uint8 *wizd, int srcx, int srcy, int rawROP, int paramROP);
 
