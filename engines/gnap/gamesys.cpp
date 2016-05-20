@@ -786,8 +786,6 @@ void GameSys::seqDrawSpriteFrame(SpriteResource *spriteResource, SequenceFrame &
 void GameSys::drawSprites() {
 	debugC(kDebugBasic, "GameSys::drawSprites() _gfxItemsCount: %d", _gfxItemsCount);
 
-	// TODO Split into multiple functions for clarity
-
 	// Restore dirty background and collect rects to be redrawn for all sprites
 	// which aren't marked to be redrawn yet
 	Common::Rect intersectingRect;
@@ -853,7 +851,7 @@ void GameSys::drawSprites() {
 				if (gfxItem5->_flags & 1) {
 					seqDrawStaticFrame(gfxItem5->_surface, gfxItem5->_currFrame, nullptr);
 				} else if (gfxItem5->_flags & 2) {
-					// TODO seqDrawAviFrame(gfxItem5->currFrame.spriteId, &gfxItem5->currFrame, 0, gfxItem5->flags & 8);
+					error("drawSprites - Unexpected AVI frame");
 				} else {
 					int resourceId = (gfxItem5->_sequenceId & 0xFFFF0000) | gfxItem5->_currFrame._spriteId;
 					SpriteResource *spriteResource = _vm->_spriteCache->get(resourceId);
@@ -866,11 +864,7 @@ void GameSys::drawSprites() {
 				for (int n = 0; n < gfxItem5->_updRectsCount; ++n)
 					seqDrawStaticFrame(gfxItem5->_surface, gfxItem5->_prevFrame, &gfxItem5->_updRects[n]);
 			} else if (gfxItem5->_flags & 2) {
-				/* TODO
-				spriteData4 = gfxItem5->prevFrame.spriteId;
-				for (int n = 0; n < gfxItem5->updRectsCount; ++n)
-					seqDrawAviFrame(spriteData4, &gfxItem5->prevFrame, &gfxItem5->updRects[n], gfxItem5->flags & 8);
-				*/
+				error("drawSprites - Unexpected AVI frame");
 			} else {
 				int resourceId = (gfxItem5->_sequenceId & 0xFFFF0000) | gfxItem5->_prevFrame._spriteId;
 				SpriteResource *spriteResource = _vm->_spriteCache->get(resourceId);
