@@ -38,6 +38,12 @@ void TTnode::addNode(TTnode *newNode) {
 	newNode->_priorP = this;
 }
 
+void TTnode::addToHead(TTnode *newNode) {
+	TTnode *head = getHead();
+	head->_priorP = newNode;
+	newNode->_nextP = head;
+}
+
 void TTnode::detach() {
 	if (_priorP)
 		_priorP->_nextP = _nextP;
@@ -56,6 +62,17 @@ void TTnode::deleteSiblings() {
 		nextP = curP->_nextP;
 		delete curP;
 	}
+}
+
+TTnode *TTnode::getHead() {
+	if (_priorP == nullptr)
+		return this;
+
+	TTnode *node = _priorP;
+	while (node->_priorP)
+		node = node->_priorP;
+
+	return node;
 }
 
 TTnode *TTnode::getTail() {

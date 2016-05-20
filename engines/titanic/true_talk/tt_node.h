@@ -39,6 +39,12 @@ public:
 	void addNode(TTnode *newNode);
 
 	/**
+	 * Adds a new node at the beginning of the linked list
+	 */
+	void addToHead(TTnode *newNode);
+
+
+	/**
 	 * Detaches a node from any predecessor and/or successor
 	 */
 	void detach();
@@ -47,6 +53,11 @@ public:
 	 * Delete any sibling chain attached to this node
 	 */
 	void deleteSiblings();
+
+	/**
+	 * Returns the first node at the beginning of a linked list of nodes
+	 */
+	TTnode *getHead();
 
 	/**
 	 * Returns the final node at the end of the linked list of nodes
