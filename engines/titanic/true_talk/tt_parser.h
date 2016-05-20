@@ -23,6 +23,7 @@
 #ifndef TITANIC_TT_PARSER_H
 #define TITANIC_TT_PARSER_H
 
+#include "titanic/true_talk/tt_node.h"
 #include "titanic/true_talk/tt_sentence.h"
 #include "titanic/true_talk/tt_string.h"
 
@@ -43,6 +44,14 @@ struct NumberEntry {
 };
 typedef Common::Array<NumberEntry> NumberArray;
 
+class TTparserNode : public TTnode {
+public:
+	uint _tag;
+public:
+	TTparserNode() : TTnode(), _tag(0) {}
+	TTparserNode(uint tag) : TTnode(), _tag(tag) {}
+};
+
 class TTparser {
 private:
 	StringArray _replacements1;
@@ -50,6 +59,7 @@ private:
 	StringArray _replacements3;
 	StringArray _phrases;
 	NumberArray _numbers;
+	TTparserNode *_nodesP;
 private:
 	/**
 	 * Loads the various replacement string data arrays
@@ -112,6 +122,13 @@ private:
 	 * @returns				Pointer to matching number entry, if match occurred
 	 */
 	const NumberEntry *replaceNumbers2(TTstring &line, int *startIndex);
+
+	void loadRequests(TTword *word);
+
+	/**
+	 * Creates a new parser node, and adds it to the parser's list
+	 */
+	void addNode(uint tag);
 public:
 	CScriptHandler *_owner;
 	TTsentenceSub *_sentenceSub;
@@ -122,6 +139,7 @@ public:
 	int _field18;
 public:
 	TTparser(CScriptHandler *owner);
+	~TTparser();
 
 	/**
 	 * Preprocesses the passed input text, to handle things like lowercasing

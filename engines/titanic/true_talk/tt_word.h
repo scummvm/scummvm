@@ -31,7 +31,8 @@ namespace Titanic {
 
 enum WordMode { 
 	WMODE_NONE = 0, WMODE_ACTION = 1, WMODE_2 = 2, WMODE_3 = 3,
-	WMODE_6 = 6, WMODE_8 = 8, WMODE_9 = 9
+	WMODE_4 = 4, WMODE_5 = 5, WMODE_6 = 6, WMODE_7 = 7,
+	WMODE_8 = 8, WMODE_9 = 9
 };
 
 class TTword {

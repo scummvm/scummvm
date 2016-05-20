@@ -23,13 +23,22 @@
 #include "titanic/true_talk/tt_parser.h"
 #include "titanic/true_talk/script_handler.h"
 #include "titanic/true_talk/tt_sentence.h"
+#include "titanic/true_talk/tt_word.h"
 #include "titanic/titanic.h"
 
 namespace Titanic {
 
 TTparser::TTparser(CScriptHandler *owner) : _owner(owner), _sentenceSub(nullptr),
-		_sentence(nullptr), _fieldC(0), _field10(0), _field14(0), _field18(0) {
+		_sentence(nullptr), _fieldC(0), _field10(0), _field14(0), _field18(0),
+		_nodesP(nullptr) {
 	loadArrays();
+}
+
+TTparser::~TTparser() {
+	if (_nodesP) {
+		_nodesP->deleteSiblings();
+		delete _nodesP;
+	}
 }
 
 void TTparser::loadArrays() {
@@ -493,6 +502,27 @@ int TTparser::findFrames(TTsentence *sentence) {
 	// TODO
 	delete line;
 	return 0;
+}
+
+void TTparser::loadRequests(TTword *word) {
+	if (word->_tag != MKTAG('Z', 'Z', 'Z', 'T'))
+		addNode(word->_tag);
+
+	switch (word->_wordMode) {
+	case WMODE_NONE:
+		break;
+
+	case WMODE_ACTION:
+		break;
+	}
+	// TODO
+}
+
+void TTparser::addNode(uint tag) {
+	TTparserNode *newNode = new TTparserNode(tag);
+	if (_nodesP)
+		_nodesP->addToHead(newNode);
+	_nodesP = newNode;
 }
 
 } // End of namespace Titanic
