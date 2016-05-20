@@ -69,8 +69,6 @@ void Scene01::updateHotspots() {
 }
 
 void Scene01::run() {
-	// NOTE Removed _s01_dword_474380 which was set when the mud was taken
-	// which is also set in the global game flags.
 	GameSys& gameSys = *_vm->_gameSys;
 	PlayerGnap& gnap = *_vm->_gnap;
 	PlayerPlat& plat = *_vm->_plat;

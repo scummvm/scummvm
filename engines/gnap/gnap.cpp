@@ -683,8 +683,7 @@ void GnapEngine::loadStockDat() {
 	if (!_isStockDatLoaded) {
 		_isStockDatLoaded = true;
 		_dat->open(1, "stock_n.dat");
-		//createMenuSprite();
-		// NOTE Skipped preloading of data
+		// The pre-loading of data is skipped as it's no longer required on modern hardware
 	}
 }
 
