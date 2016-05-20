@@ -1,4 +1,4 @@
-ScummVM 1.8.1pre - OPENPANDORA README - HOW TO INSTALL
+ScummVM 1.8.1 - OPENPANDORA README - HOW TO INSTALL
 ------------------------------------------------------------------------
 
 Please refer to the:
