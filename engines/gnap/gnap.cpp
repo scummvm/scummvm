@@ -327,14 +327,31 @@ int GnapEngine::loadSavegame(int savegameNum) {
 	return 1;
 }
 
-void GnapEngine::delayTicks(int a1) {
-	// TODO
-	gameUpdateTick();
+void GnapEngine::delayTicks(int val, int idx = 0, bool updateCursor = false) {
+	int startTick = _timers[idx];
+
+	_timers[idx] = val;
+
+	while (_timers[idx] && !_gameDone) {
+		gameUpdateTick();
+
+		if (updateCursor)
+			updateGrabCursorSprite(0, 0);
+	}
+
+	startTick -= _timers[idx];
+	if (startTick < 0)
+		startTick = 0;
+
+	_timers[idx] = startTick;
 }
 
-void GnapEngine::delayTicksCursor(int a1) {
-	// TODO
-	gameUpdateTick();
+void GnapEngine::delayTicksA(int val, int idx) {
+	delayTicks(val, idx);
+}
+
+void GnapEngine::delayTicksCursor(int val) {
+	delayTicks(val, 0, true);
 }
 
 void GnapEngine::setHotspot(int index, int16 x1, int16 y1, int16 x2, int16 y2, uint16 flags,

@@ -2530,7 +2530,7 @@ void Scene17::run() {
 		gameSys.insertSequence(0x107C1, plat._id, 0x241, plat._id,
 			kSeqScale | kSeqSyncWait, 0, 75 * plat._pos.x - plat._gridX, 48 * plat._pos.y - plat._gridY);
 		gameSys.insertSequence(0x22C, 2, 0, 0, kSeqNone, 0, 0, 0);
-		// TODO delayTicksA(2, 9);
+		_vm->delayTicksA(2, 9);
 		_vm->endSceneInit();
 		plat._sequenceId = 0x7C1;
 		plat._sequenceDatNum = 1;

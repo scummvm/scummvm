@@ -616,11 +616,11 @@ void Scene50::playWinAnim(int tongueNum, bool fightOver) {
 		waitForAnim(6);
 		waitForAnim(5);
 	}
-	// TODO delayTicksA(1, 7);
+	_vm->delayTicksA(1, 7);
 }
 
 void Scene50::delayTicks() {
-	// TODO delayTicksA(3, 7);
+	_vm->delayTicksA(3, 7);
 }
 
 void Scene50::initRound() {
@@ -941,7 +941,7 @@ void Scene50::run() {
 	_vm->setGrabCursorSprite(-1);
 	_vm->hideCursor();
 
-	// TODO delayTicksA(1, 7);
+	_vm->delayTicksA(1, 7);
 
 	playRoundAnim(_roundNum);
 
@@ -1598,7 +1598,7 @@ int Scene51::incCashAmount(int sequenceId) {
 void Scene51::winMinigame() {
 	updateCash(1995);
 	_vm->playSound(0xDA, false);
-	// TODO delayTicksA(1, 5);
+	_vm->delayTicksA(1, 5);
 	_vm->_newSceneNum = 48;
 	_vm->invRemove(kItemBanana);
 }

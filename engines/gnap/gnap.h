@@ -325,8 +325,9 @@ public:
 	void writeSavegameHeader(Common::OutSaveFile *out, GnapSavegameHeader &header);
 	static bool readSavegameHeader(Common::InSaveFile *in, GnapSavegameHeader &header);
 
-	void delayTicks(int a1);
-	void delayTicksCursor(int a1);
+	void delayTicks(int val, int idx, bool updateCursor);
+	void delayTicksA(int val, int idx);
+	void delayTicksCursor(int val);
 
 	void setHotspot(int index, int16 x1, int16 y1, int16 x2, int16 y2, uint16 flags = 0,
 		int16 walkX = -1, int16 walkY = -1);
