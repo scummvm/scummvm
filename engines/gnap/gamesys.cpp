@@ -803,7 +803,7 @@ void GameSys::drawSprites() {
 
 		if (gfxItem2->_prevFrame._spriteId != -1) {
 			bool transparent = false;
-			if (gfxItem2->_currFrame._spriteId != -1 && !(gfxItem2->_flags & 2)) {
+			if (gfxItem2->_currFrame._spriteId != -1) {
 				if (gfxItem2->_flags & 1) {
 					transparent = true;
 				} else {
@@ -813,8 +813,7 @@ void GameSys::drawSprites() {
 					_vm->_spriteCache->release(resourceId);
 				}
 			}
-			if ((gfxItem2->_flags & 8) || gfxItem2->_currFrame._spriteId == -1 ||
-				(!(gfxItem2->_flags & 2) && (!gfxItem2->_prevFrame._rect.equals(gfxItem2->_currFrame._rect) || !transparent))) {
+			if (gfxItem2->_currFrame._spriteId == -1 || !gfxItem2->_prevFrame._rect.equals(gfxItem2->_currFrame._rect) || !transparent) {
 				restoreBackgroundRect(gfxItem2->_prevFrame._rect);
 				for (int l = 0; l < _gfxItemsCount; ++l)
 					_gfxItems[l].testUpdRect(gfxItem2->_prevFrame._rect);
@@ -825,15 +824,13 @@ void GameSys::drawSprites() {
 			bool transparent = false;
 			if (gfxItem2->_flags & 1) {
 				transparent = true;
-			} else if (!(gfxItem2->_flags & 2)) {
+			} else {
 				int resourceId = (gfxItem2->_sequenceId & 0xFFFF0000) | gfxItem2->_currFrame._spriteId;
 				SpriteResource *spriteResource = _vm->_spriteCache->get(resourceId);
 				transparent = spriteResource->_transparent;
 				_vm->_spriteCache->release(resourceId);
 			}
-			if (((gfxItem2->_flags & 2) && !(gfxItem2->_flags & 8)) ||
-				gfxItem2->_prevFrame._spriteId == -1 ||
-				!gfxItem2->_prevFrame._rect.equals(gfxItem2->_currFrame._rect) || transparent) {
+			if (gfxItem2->_prevFrame._spriteId == -1 || !gfxItem2->_prevFrame._rect.equals(gfxItem2->_currFrame._rect) || transparent) {
 				for (int l = k; l < _gfxItemsCount; ++l)
 					_gfxItems[l].testUpdRect(gfxItem2->_currFrame._rect);
 			}
@@ -850,8 +847,6 @@ void GameSys::drawSprites() {
 			if (gfxItem5->_currFrame._spriteId != -1) {
 				if (gfxItem5->_flags & 1) {
 					seqDrawStaticFrame(gfxItem5->_surface, gfxItem5->_currFrame, nullptr);
-				} else if (gfxItem5->_flags & 2) {
-					error("drawSprites - Unexpected AVI frame");
 				} else {
 					int resourceId = (gfxItem5->_sequenceId & 0xFFFF0000) | gfxItem5->_currFrame._spriteId;
 					SpriteResource *spriteResource = _vm->_spriteCache->get(resourceId);
@@ -863,8 +858,6 @@ void GameSys::drawSprites() {
 			if (gfxItem5->_flags & 1) {
 				for (int n = 0; n < gfxItem5->_updRectsCount; ++n)
 					seqDrawStaticFrame(gfxItem5->_surface, gfxItem5->_prevFrame, &gfxItem5->_updRects[n]);
-			} else if (gfxItem5->_flags & 2) {
-				error("drawSprites - Unexpected AVI frame");
 			} else {
 				int resourceId = (gfxItem5->_sequenceId & 0xFFFF0000) | gfxItem5->_prevFrame._spriteId;
 				SpriteResource *spriteResource = _vm->_spriteCache->get(resourceId);
@@ -1008,13 +1001,8 @@ void GameSys::fatUpdateFrame() {
 	for (int i = 0; i < _gfxItemsCount; ++i) {
 		GfxItem *gfxItem = &_gfxItems[i];
 		SequenceAnimation *animation = gfxItem->_animation;
-		if ((gfxItem->_sequenceId != -1 && animation) || (gfxItem->_flags & 2) ||
-			gfxItem->_prevFrame._spriteId != -1 || gfxItem->_prevFrame._duration > 0) {
-			if (gfxItem->_sequenceId == -1 || gfxItem->_updFlag) {
-				if ((gfxItem->_flags & 2) && !gfxItem->_updFlag) {
-					// NOTE Skipped avi code
-				}
-			} else {
+		if ((gfxItem->_sequenceId != -1 && animation) || gfxItem->_prevFrame._spriteId != -1 || gfxItem->_prevFrame._duration > 0) {
+			if (gfxItem->_sequenceId != -1 && !gfxItem->_updFlag) {
 				Sequence *seqItem = seqFind(gfxItem->_sequenceId, gfxItem->_id, nullptr);
 				if (!animation) {
 					gfxItem->_sequenceId = -1;
