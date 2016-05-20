@@ -224,7 +224,7 @@ void GameSys::drawSpriteToBackground(int x, int y, int resourceId) {
 	int spriteWidth = spriteResource->_width;
 	int spriteHeight = spriteResource->_height;
 	Common::Rect dstRect(0, 0, spriteWidth, spriteHeight);
-	blitSprite32(_backgroundSurface, x, y, sourcePixels, spriteResource->_width, dstRect, sourcePalette, true);//spriteResource->_transparent != 0);
+	blitSprite32(_backgroundSurface, x, y, sourcePixels, spriteResource->_width, dstRect, sourcePalette, spriteResource->_transparent != 0);
 	_vm->_spriteCache->release(resourceId);
 
 	// Add dirty rect so the modified background is redrawn
