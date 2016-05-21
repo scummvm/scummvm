@@ -53,7 +53,7 @@ public:
 	TTsynonym *_synP;
 	TTstring _string;
 	WordMode _wordMode;
-	int _field1C;
+	int _id;
 	uint _tag;
 public:
 	TTword(TTstring &str, WordMode mode, int val2);

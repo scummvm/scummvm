@@ -42,6 +42,18 @@ void TTsentenceSubBase::deleteSiblings() {
 
 /*------------------------------------------------------------------------*/
 
+TTsentenceSub *TTsentenceSub::addSibling() {
+	if (this == nullptr || _nextP != nullptr)
+		// This should never happen
+		return nullptr;
+
+	TTsentenceSub *nextP = new TTsentenceSub();
+	_nextP = nextP;
+	return nextP;
+}
+
+/*------------------------------------------------------------------------*/
+
 TTsentence::TTsentence(int inputCtr, const TTstring &line, CScriptHandler *owner,
 		TTroomScript *roomScript, TTnpcScript *npcScript) :
 		_owner(owner), _field2C(1), _inputCtr(inputCtr), _field34(0),

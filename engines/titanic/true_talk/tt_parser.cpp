@@ -22,6 +22,7 @@
 
 #include "titanic/true_talk/tt_parser.h"
 #include "titanic/true_talk/script_handler.h"
+#include "titanic/true_talk/tt_action.h"
 #include "titanic/true_talk/tt_sentence.h"
 #include "titanic/true_talk/tt_word.h"
 #include "titanic/titanic.h"
@@ -504,7 +505,9 @@ int TTparser::findFrames(TTsentence *sentence) {
 	return 0;
 }
 
-void TTparser::loadRequests(TTword *word) {
+int TTparser::loadRequests(TTword *word) {
+	int status = 0;
+
 	if (word->_tag != MKTAG('Z', 'Z', 'Z', 'T'))
 		addNode(word->_tag);
 
@@ -513,8 +516,126 @@ void TTparser::loadRequests(TTword *word) {
 		break;
 
 	case WMODE_ACTION:
+		if (word->_id != 0x70 && word->_id != 0x71)
+			addNode(1);
+		addNode(17);
+
+		switch (word->_id) {
+		case 101:
+		case 110:
+			addNode(5);
+			addNode(4);
+			break;
+
+		case 102:
+			addNode(4);
+			break;
+
+		case 103:
+		case 111:
+			addNode(8);
+			addNode(7);
+			addNode(5);
+			addNode(4);
+			break;
+
+		case 104:
+		case 107:
+			addNode(15);
+			addNode(5);
+			addNode(4);
+			break;
+
+		case 106:
+			addNode(7);
+			addNode(4);
+			break;
+
+		case 108:
+			addNode(5);
+			addNode(4);
+			addNode(23);
+			break;
+
+		case 112:
+		case 113:
+			addNode(13);
+			addNode(5);
+			break;
+
+		default:
+			break;
+		}
+
+		if (_sentenceSub) {
+			if (_sentenceSub->get18() == 0 || _sentenceSub->get18() == 2) {
+				TTaction *action = static_cast<TTaction *>(word);
+				_sentenceSub->set18(action->getVal());
+			}
+		}
+		break;
+
+	case WMODE_2:
+		if (word->checkTag() && _sentence->_field58 > 0)
+			_sentence->_field58--;
+		addNode(14);
+		break;
+
+	case WMODE_3:
+		switch (word->_id) {
+		case 300:
+			addNode(14);
+			status = 1;
+			break;
+
+		case 306:
+			addNode(23);
+			addNode(4);
+			break;
+
+		case 307:
+		case 308:
+			addNode(23);
+			break;
+
+		default:
+			break;
+		}
+
+		if (status != 1) {
+			addToConceptList(word);
+			addNode(14);
+		}
+		break;
+
+	case WMODE_4:
+		addNode(2);
+		status = 1;
+		break;
+
+	case WMODE_5:
+		if (_sentence->check2C()) {
+			_sentenceSub->_field1C = 1;
+			_sentenceSub = _sentenceSub->addSibling();
+			delete this;
+		} else {
+			addNode(23);
+		}
+		break;
+
+	case WMODE_6:
+		status = fn2(word);
+		break;
+
+	default:
 		break;
 	}
+	// TODO
+
+	return status;
+}
+
+void TTparser::addToConceptList(TTword *word) {
 	// TODO
 }
 
@@ -523,6 +644,34 @@ void TTparser::addNode(uint tag) {
 	if (_nodesP)
 		_nodesP->addToHead(newNode);
 	_nodesP = newNode;
+}
+
+int TTparser::fn2(TTword *word) {
+	switch (word->_id) {
+	case 600:
+		addNode(13);
+		return 0;
+
+	case 601:
+		addNode(12);
+		return 1;
+
+	case 602:
+	case 607:
+		return checkReferent(static_cast<TTpronoun *>(word));
+
+	case 608:
+		return 1;
+
+	default:
+		return 0;
+	}
+	int checkReferent(TTpronoun *pronoun);
+}
+
+int TTparser::checkReferent(TTpronoun *pronoun) {
+	// TODO
+	return 0;
 }
 
 } // End of namespace Titanic

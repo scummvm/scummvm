@@ -24,6 +24,7 @@
 #define TITANIC_TT_PARSER_H
 
 #include "titanic/true_talk/tt_node.h"
+#include "titanic/true_talk/tt_pronoun.h"
 #include "titanic/true_talk/tt_sentence.h"
 #include "titanic/true_talk/tt_string.h"
 
@@ -123,12 +124,16 @@ private:
 	 */
 	const NumberEntry *replaceNumbers2(TTstring &line, int *startIndex);
 
-	void loadRequests(TTword *word);
+	int loadRequests(TTword *word);
+	void addToConceptList(TTword *word);
+	int fn2(TTword *word);
+	int checkReferent(TTpronoun *pronoun);
 
 	/**
 	 * Creates a new parser node, and adds it to the parser's list
 	 */
 	void addNode(uint tag);
+
 public:
 	CScriptHandler *_owner;
 	TTsentenceSub *_sentenceSub;

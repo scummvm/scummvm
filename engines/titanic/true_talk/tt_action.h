@@ -42,6 +42,7 @@ public:
 	int load(SimpleFile *file);
 
 	void setVal(int val) { _field30 = val; }
+	int getVal() const { return _field30; }
 
 	/**
 	 * Creates a copy of the word

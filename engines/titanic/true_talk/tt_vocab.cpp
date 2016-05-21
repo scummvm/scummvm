@@ -433,7 +433,7 @@ TTword *TTvocab::getSuffixedWord(TTstring &str) const {
 				TTstring isStr("is");
 				word = getPrimeWord(isStr);
 			} else {
-				switch (word->_field1C) {
+				switch (word->_id) {
 				case 200:
 					if (word->proc10() == 2) {
 						delete word;

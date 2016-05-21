@@ -52,10 +52,20 @@ public:
 	 * Delete any sibling chain attached to this node
 	 */
 	void deleteSiblings();
+
+	void set18(int val) { _field18 = val; }
+	int get18() const { return _field18; }
+	bool is24() const { return _field24 == 0; }
 };
 
 class TTsentenceSub : public TTsentenceSubBase {
 public:
+	TTsentenceSub() : TTsentenceSubBase() {}
+
+	/**
+	 * Adds a new sibling instance
+	 */
+	TTsentenceSub *addSibling();
 };
 
 class TTsentence {
@@ -68,7 +78,6 @@ private:
 	TTsentenceNode *_nodesP;
 	TTroomScript *_roomScript;
 	TTnpcScript *_npcScript;
-	int _field58;
 	int _field5C;
 	int _status;
 private:
@@ -80,6 +89,7 @@ public:
 	TTsentenceSub _sub;
 	TTstring _initialLine;
 	TTstring _normalizedLine;
+	int _field58;
 public:
 	TTsentence(int inputCtr, const TTstring &line, CScriptHandler *owner,
 		TTroomScript *roomScript, TTnpcScript *npcScript);
@@ -88,6 +98,7 @@ public:
 
 	void set34(int v) { _field34 = v; }
 	void set38(int v) { _field38 = v; }
+	bool check2C() const { return _field2C > 1 && _field2C <= 10; }
 
 	int getStatus() const { return _status; }
 
