@@ -33,7 +33,7 @@ Moonbase::~Moonbase() {
 }
 
 int Moonbase::readFromArray(int array, int y, int x) {
-	_vm->VAR(116) = array;
+	_vm->VAR(((ScummEngine_v90he *)_vm)->VAR_U32_ARRAY_UNK) = array;
 
 	return _vm->readArray(116, y, x);
 }

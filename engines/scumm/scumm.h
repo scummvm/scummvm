@@ -701,9 +701,11 @@ protected:
 	void ignoreScriptByte() { fetchScriptByte(); }
 	void push(int a);
 	int pop();
+public: // TODO. FIXME
 	virtual int readVar(uint var);
 	virtual void writeVar(uint var, int value);
 
+protected:
 	void beginCutscene(int *args);
 	void endCutscene();
 	void abortCutscene();

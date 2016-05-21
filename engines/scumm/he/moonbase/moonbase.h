@@ -40,6 +40,10 @@ public:
 			 uint8 *wizd, int srcx, int srcy, int rawROP, int paramROP);
 
 	// FOW Stuff
+	bool isFOW(int resNum, int state, uint32 conditionBits) {
+		return resNum == _fowSentinelImage && state == _fowSentinelState && conditionBits == _fowSentinelConditionBits;
+	}
+
 	void initFOW();
 	void releaseFOWResources();
 

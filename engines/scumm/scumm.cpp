@@ -833,16 +833,9 @@ ScummEngine_v71he::ScummEngine_v71he(OSystem *syst, const DetectorResult &dr)
 	_skipProcessActors = 0;
 
 	VAR_WIZ_TCOLOR = 0xFF;
-
-	/* Moonbase stuff */
-	_moonbase = 0;
-
-	if (_game.id == GID_MOONBASE)
-		_moonbase = new Moonbase(this);
 }
 
 ScummEngine_v71he::~ScummEngine_v71he() {
-	delete _moonbase;
 	delete _wiz;
 }
 
@@ -892,6 +885,12 @@ ScummEngine_v90he::ScummEngine_v90he(OSystem *syst, const DetectorResult &dr)
 
 	VAR_U32_VERSION = 0xFF;
 	VAR_U32_ARRAY_UNK = 0xFF;
+
+	/* Moonbase stuff */
+	_moonbase = 0;
+
+	if (_game.id == GID_MOONBASE)
+		_moonbase = new Moonbase(this);
 }
 
 ScummEngine_v90he::~ScummEngine_v90he() {
@@ -903,6 +902,7 @@ ScummEngine_v90he::~ScummEngine_v90he() {
 	if (_game.heversion >= 99) {
 		free(_hePalettes);
 	}
+	delete _moonbase;
 }
 
 ScummEngine_vCUPhe::ScummEngine_vCUPhe(OSystem *syst, const DetectorResult &dr) : Engine(syst){

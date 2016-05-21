@@ -27,9 +27,9 @@
 
 namespace Scumm {
 
-class ScummEngine_v71he;
+class ScummEngine_v90he;
 
-extern ScummEngine_v71he *_vm;
+extern ScummEngine_v90he *_vm;
 
 typedef Common::Array<int>::iterator intVecItr;
 

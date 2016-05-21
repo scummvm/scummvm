@@ -247,10 +247,6 @@ public:
 	void queueAuxEntry(int actorNum, int subIndex);
 
 	void remapHEPalette(const uint8 *src, uint8 *dst);
-
-public:
-	/* Moonbase stuff */
-	Moonbase *_moonbase;
 };
 
 class ScummEngine_v72he : public ScummEngine_v71he {
@@ -430,6 +426,7 @@ protected:
 
 class ScummEngine_v90he : public ScummEngine_v80he {
 	friend class LogicHE;
+	friend class Moonbase;
 	friend class MoviePlayer;
 	friend class Sprite;
 
@@ -456,6 +453,9 @@ protected:
 	LogicHE *_logicHE;
 	MoviePlayer *_moviePlay;
 	Sprite *_sprite;
+
+public:
+	Moonbase *_moonbase;
 
 public:
 	ScummEngine_v90he(OSystem *syst, const DetectorResult &dr);

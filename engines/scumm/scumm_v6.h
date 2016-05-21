@@ -119,7 +119,7 @@ protected:
 	ArrayHeader *getArray(int array);
 	byte *defineArray(int array, int type, int dim2, int dim1);
 	int findFreeArrayId();
-public:
+public: // FIXME. TODO
 	void nukeArray(int array);
 
 protected:
