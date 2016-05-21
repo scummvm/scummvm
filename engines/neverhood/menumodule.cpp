@@ -23,6 +23,8 @@
 #include "common/config-manager.h"
 #include "common/translation.h"
 
+#include "audio/mixer.h"
+
 #include "gui/saveload.h"
 
 #include "neverhood/menumodule.h"

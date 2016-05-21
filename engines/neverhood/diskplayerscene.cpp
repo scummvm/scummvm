@@ -22,6 +22,7 @@
 
 #include "neverhood/diskplayerscene.h"
 #include "neverhood/mouse.h"
+#include "neverhood/smackerplayer.h"
 
 namespace Neverhood {
 
