@@ -90,6 +90,9 @@ public:
 	 */
 	void printCall() const;
 
+	/** This command's resource tree index */
+	uint16 getIndex() const;
+
 protected:
 	struct SubTypeDesc {
 		Resources::Command::SubType subType;

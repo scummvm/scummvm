@@ -29,6 +29,7 @@ namespace Stark {
 namespace Tools {
 
 class Command;
+struct ControlStructure;
 
 /**
  * An aggregate of script commands
@@ -47,6 +48,9 @@ public:
 	/** Does the block contain commands? */
 	bool isEmpty() const;
 
+	/** Can the block branch? */
+	bool isCondition() const;
+
 	/**
 	 * Blocks are linked together in the block graph with these relationships:
 	 * - follower: The natural follower of the block. Used when the block is not a branch, nor an end point.
@@ -57,19 +61,59 @@ public:
 	void setBranches(Block *trueBranch, Block *falseBranch);
 	void setFollower(Block *follower);
 	void addPredecessor(Block *predecessor);
+	Block *getTrueBranch() const;
+	Block *getFalseBranch() const;
 
 	/**
 	 * Print a list of this block's commands to the debug output
 	 */
 	void print() const;
 
+	/**
+	 * The high level control structure this block has the main role in
+	 */
+	bool hasControlStructure() const;
+	void setControlStructure(ControlStructure *controlStructure);
+
+	// Graph query methods
+	bool hasPredecessor(Block *predecessor);
+	Block *findMergePoint(Block *other);
+	bool checkAllBranchesConverge(Block *junction);
+
 private:
+	bool hasPredecessorIntern(Common::Array<Block *> &visited, Block *predecessor);
+	Block *findMergePointIntern(Common::Array<Block *> visited, Block *other);
+	Block *findChildMergePoint(Common::Array<Block *> visited, Block *child, Block *other);
+	bool checkAllBranchesConvergeIntern(Common::Array<Block *> visited, Block *junction);
+	bool checkChildConvergeIntern(Common::Array<Block *> visited, Block *child, Block *junction);
+
+	uint16 getFirstCommandIndex() const;
+
 	Common::Array<Command *> _commands;
 
 	Block *_follower;
 	Block *_trueBranch;
 	Block *_falseBranch;
 	Common::Array<Block *> _predecessors;
+
+	ControlStructure *_controlStructure;
+};
+
+struct ControlStructure {
+	enum ControlStructureType {
+		kTypeIf,
+		kTypeWhile
+	};
+
+	ControlStructureType type;
+	Block *condition;
+	bool invertedCondition;
+	Block *loopHead;
+	Block *thenHead;
+	Block *elseHead;
+	Block *next;
+
+	ControlStructure(ControlStructureType t);
 };
 
 } // End of namespace Tools

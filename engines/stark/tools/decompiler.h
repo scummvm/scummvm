@@ -37,6 +37,7 @@ namespace Tools {
 
 class Block;
 class Command;
+struct ControlStructure;
 
 class Decompiler {
 public:
@@ -50,14 +51,19 @@ private:
 	void linkCommandBranches();
 	Command *findEntryPoint();
 	void buildBlocks();
+	void analyseControlFlow();
 
 	Common::Array<Command *> _commands;
 	Command *_entryPoint;
 
 	Common::Array<Block *> _blocks;
+	Common::Array<ControlStructure *> _controlStructures;
 
 	void buildBlocks(Block *block, Command *command);
 	Block *buildBranchBlocks(Command *command);
+
+	void detectWhile();
+	void detectIf();
 };
 
 } // End of namespace Tools

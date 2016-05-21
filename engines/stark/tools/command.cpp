@@ -248,5 +248,9 @@ void Command::printCall() const {
 	debug("%d: %s(%s)", _index, _subTypeDesc->name, describeArguments().c_str());
 }
 
+uint16 Command::getIndex() const {
+	return _index;
+}
+
 } // End of namespace Tools
 } // End of namespace Stark
