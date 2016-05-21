@@ -27,14 +27,14 @@ namespace Networking {
 
 class Request {
 protected:
-	typedef void(*Callback)(Request* request, void *result);
+	typedef void(*SimpleCallback)(Request* request, void *result);
 
 	/**
 	* Callback, which should be called before Request returns true in handle().
 	* That's the way Requests pass the result to the code which asked to create this request.
 	*/
 
-	Callback _callback;
+	SimpleCallback _callback;
 
 	/**
 	* Pointer, which could be set by Request creating code. It might be accessed
@@ -44,7 +44,7 @@ protected:
 	void *_pointer;
 
 public:
-	Request(Callback cb): _callback(cb) {};
+	Request(SimpleCallback cb): _callback(cb) {};
 	virtual ~Request() {};
 
 	/**

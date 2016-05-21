@@ -92,6 +92,30 @@ void infoCallback(Networking::Request* request, void *jsonPointer) {
 	}
 }
 
+void info2Callback(Networking::Request* request, void *jsonPointer) {
+	if (!request) {
+		warning("infoCallback: got NULL instead of Request");
+
+		Common::JSONValue *json = (Common::JSONValue *)jsonPointer;
+		if (json) delete json; //yeah I know we can delete NULL safely
+		return;
+	}
+
+	Common::BaseCallback *callback = (Common::BaseCallback *)request->pointer();
+
+	Common::JSONValue *json = (Common::JSONValue *)jsonPointer;
+	if (json) {
+		//Common::JSONObject result = json->asObject();
+		if (callback) {
+			(*callback)(new StorageInfo(json->stringify()));
+			delete callback;
+		}
+		delete json;
+	} else {
+		warning("infoCallback: got NULL instead of JSON!");
+	}
+}
+
 DropboxStorage::DropboxStorage(Common::String accessToken, Common::String userId): _token(accessToken), _uid(userId) {
 	curl_global_init(CURL_GLOBAL_ALL);
 }
@@ -104,13 +128,26 @@ void syncSavesInfoCallback(StorageInfo info) {
 	debug("info: %s", info.info().c_str());
 }
 
+void DropboxStorage::infoMethodCallback(void *storageInfo) {
+	StorageInfo *info = (StorageInfo *)storageInfo;
+	debug("info: %s", info->info().c_str());
+}
+
 void DropboxStorage::syncSaves(OperationCallback callback) {
-	//this is not the real syncSaves() implementation
-	info(syncSavesInfoCallback);
+	//this is not the real syncSaves() implementation	
+	info2(new Common::Callback<DropboxStorage>(this, &DropboxStorage::infoMethodCallback));
 }
 
 void DropboxStorage::info(InfoCallback callback) {	
 	Networking::CurlJsonRequest *request = new Networking::CurlJsonRequest(infoCallback, "https://api.dropboxapi.com/1/account/info");
+	request->addHeader("Authorization: Bearer " + _token);
+	ConnMan.addRequest(request);
+
+	request->setPointer(callback);
+}
+
+void DropboxStorage::info2(Common::Callback<DropboxStorage> *callback) {
+	Networking::CurlJsonRequest *request = new Networking::CurlJsonRequest(info2Callback, "https://api.dropboxapi.com/1/account/info");
 	request->addHeader("Authorization: Bearer " + _token);
 	ConnMan.addRequest(request);
 

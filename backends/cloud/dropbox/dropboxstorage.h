@@ -25,6 +25,7 @@
 
 #include "backends/cloud/storage.h"
 #include "backends/cloud/manager.h"
+#include "common/callback.h"
 
 namespace Cloud {
 namespace Dropbox {
@@ -38,6 +39,8 @@ class DropboxStorage: public Cloud::Storage {
 	DropboxStorage(Common::String token, Common::String uid);
 
 	static void getAccessToken(Common::String code);
+
+	void infoMethodCallback(void *serviceInfoPtr);
 
 public:	
 	virtual ~DropboxStorage();
@@ -65,6 +68,7 @@ public:
 
 	/** Returns pointer to the ServiceInfo struct. */
 	virtual void info(InfoCallback callback);
+	void info2(Common::Callback<DropboxStorage> *callback);
 
 	/** Returns whether saves sync process is running. */
 	virtual bool isSyncing() { return false; } //TODO
