@@ -12,6 +12,7 @@ int8 dirIntoStepCountEast[4] = {0 /* North */, 1 /* East */, 0 /* West */, -1 /*
 int8 dirIntoStepCountNorth[4] = {-1 /* North */, 0 /* East */, 1 /* West */, 0 /* South */};
 
 void turnDirRight(direction &dir) { dir = (direction)((dir + 1) & 3); }
+bool isOrientedWestEast(direction dir) { return dir & 1; }
 
 
 }
@@ -458,21 +459,24 @@ enum SquareAspectIndice {
 	kStairsUpAspect = 2,
 	kDoorStateAspect = 2,
 	kDoorThingIndexAspect = 3,
-	kFloorOrnOrdAspect = 4
+	kFloorOrnOrdAspect = 4,
+	kFootprintsAspect = 0x8000 // @ MASK0x8000_FOOTPRINTS          
 };
 
 
-void DungeonMan::setSquareAspect(uint16 *aspectArray, direction dir, int16 mapX, int16 mapY) {
+// TODO: get rid of the GOTOs
+void DungeonMan::setSquareAspect(uint16 *aspectArray, direction dir, int16 mapX, int16 mapY) {	// complete, except where marked
 	bool leftOrnAllowed, rightOrnAllowed, frontOrnAllowed;
 	bool squareIsFakeWall;
+	bool footPrintsAllowed;
 
+	_vm->_displayMan->_championPortraitOrdinal = 0; // BUG0_75, possible fix
+
+	memset(aspectArray, 0, 5 * sizeof(uint16));
 	Thing thing = getSquareFirstThing(mapX, mapY);
 	Square square = getSquare(mapX, mapY);
 
-	memset(aspectArray, 0, 5 * sizeof(int16));
 	aspectArray[kElemAspect] = square.getType();
-
-	_vm->_displayMan->_championPortraitOrdinal = 0; // BUG0_75, possible fix
 	switch (square.getType()) {
 	case kWallElemType:
 		switch (dir) {
@@ -499,6 +503,7 @@ void DungeonMan::setSquareAspect(uint16 *aspectArray, direction dir, int16 mapX,
 		}
 
 		squareIsFakeWall = false;
+T0172010_ClosedFakeWall:
 		setSquareAspectOrnOrdinals(aspectArray, leftOrnAllowed, frontOrnAllowed, rightOrnAllowed, dir, mapX, mapY, squareIsFakeWall);
 
 		while ((thing != Thing::thingEndOfList) && (thing.getType() <= kSensorThingType)) {
@@ -507,13 +512,13 @@ void DungeonMan::setSquareAspect(uint16 *aspectArray, direction dir, int16 mapX,
 				if (thing.getType() == kTextstringType) {
 					if (TextString(getThingData(thing)).isVisible()) {
 						aspectArray[sideIndex + 1] = _currMapInscriptionWallOrnIndex + 1;
-
-					} else {
-						Sensor sensor(getThingData(thing));
-						aspectArray[sideIndex + 1] = sensor.getOrnOrdinal();
-						if (sensor.getType() == kSensorWallChampionPortrait) {
-							_vm->_displayMan->_championPortraitOrdinal = indexToOrdinal(sensor.getData());
-						}
+						_vm->_displayMan->_inscriptionThing = thing; // BUG0_76
+					}
+				} else {
+					Sensor sensor(getThingData(thing));
+					aspectArray[sideIndex + 1] = sensor.getOrnOrdinal();
+					if (sensor.getType() == kSensorWallChampionPortrait) {
+						_vm->_displayMan->_championPortraitOrdinal = indexToOrdinal(sensor.getData());
 					}
 				}
 			}
@@ -521,8 +526,60 @@ void DungeonMan::setSquareAspect(uint16 *aspectArray, direction dir, int16 mapX,
 		}
 		if (squareIsFakeWall && (_currMap.partyPosX != mapX) && (_currMap.partyPosY != mapY)) {
 			aspectArray[kFirstGroupOrObjectAspect] = Thing::thingEndOfList.toUint16();
+			return;
 		}
 		break;
+	case kPitElemType:
+		if (square.get(kPitOpen))
+			aspectArray[kPitInvisibleAspect] = square.get(kPitInvisible);
+		else
+			aspectArray[kElemAspect] = kCorridorElemType;
+		footPrintsAllowed = true;
+		goto T0172030_Pit;
+	case kFakeWallElemType:
+		if (!square.get(kFakeWallOpen)) {
+			aspectArray[kElemAspect] = kWallElemType;
+			leftOrnAllowed = rightOrnAllowed = frontOrnAllowed = square.get(kFakeWallRandOrnOrFootPAllowed);
+			squareIsFakeWall = true;
+			goto T0172010_ClosedFakeWall;
+		}
+		aspectArray[kWallElemType] = kCorridorElemType;
+		footPrintsAllowed = square.get(kFakeWallRandOrnOrFootPAllowed);
+		// intentional fallthrough
+	case kCorridorElemType:
+		aspectArray[kFloorOrnOrdAspect] = getRandomOrnOrdinal(square.get(kCorridorRandOrnAllowed), _currMap.map->randFloorOrnCount, mapX, mapY, 30);
+T0172029_Teleporter:
+		footPrintsAllowed = true;
+T0172030_Pit:
+		while ((thing != Thing::thingEndOfList) && (thing.getType() <= kSensorThingType)) {
+			if (thing.getType() == kSensorThingType)
+				aspectArray[kFloorOrnOrdAspect] = Sensor(getThingData(thing)).getOrnOrdinal();
+			thing = getNextThing(thing);
+		}
+		goto T0172049_Footprints;
+	case kTeleporterElemType:
+		aspectArray[kTeleporterVisibleAspect] = square.get(kTeleporterOpen) && square.get(kTeleporterVisible);
+		goto T0172029_Teleporter;
+	case kStairsElemType:
+		aspectArray[kElemAspect] = ((square.get(kStairsNorthSouthOrient) >> 3) == isOrientedWestEast(dir)) ? kStairsSideElemType : kStairsFrontElemType;
+		aspectArray[kStairsUpAspect] = square.get(kStairsUp);
+		footPrintsAllowed = false;
+		goto T0172046_Stairs;
+	case kDoorElemType:
+		if ((square.get(kDoorNorthSouthOrient) >> 3) == isOrientedWestEast(dir)) {
+			aspectArray[kElemAspect] = kDoorSideElemType;
+		} else {
+			aspectArray[kElemAspect] = kDoorFrontElemType;
+			aspectArray[kDoorStateAspect] = square.getDoorState();
+			aspectArray[kDoorThingIndexAspect] = getSquareFirstThing(mapX, mapY).getIndex();
+		}
+		footPrintsAllowed = true;
+T0172046_Stairs:
+		while ((thing != Thing::thingEndOfList) && (thing.getType() <= kSensorThingType))
+			thing = getNextThing(thing);
+T0172049_Footprints:
+		if (footPrintsAllowed) // TODO: I skipped some party query code, must come back later and complete
+			aspectArray[kFloorOrnOrdAspect] &= kFootprintsAspect;
 	}
 	aspectArray[kFirstGroupOrObjectAspect] = thing.toUint16();
 }

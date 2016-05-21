@@ -10,46 +10,6 @@ class DungeonMan;
 struct Map;
 
 
-int16 ordinalToIndex(int16 val); // @ M01_ORDINAL_TO_INDEX
-int16 indexToOrdinal(int16 val); // @ M00_INDEX_TO_ORDINAL
-enum ThingType {
-	kPartyThingType = -1, // @ CM1_THING_TYPE_PARTY, special value
-	kDoorThingType = 0,
-	kTeleporterThingType = 1,
-	kTextstringType = 2,
-	kSensorThingType = 3,
-	kGroupThingType = 4,
-	kWeaponThingType = 5,
-	kArmourThingType = 6,
-	kScrollThingType = 7,
-	kPotionThingType = 8,
-	kContainerThingType = 9,
-	kJunkThingType = 10,
-	kProjectileThingType = 14,
-	kExplosionThingType = 15,
-	kThingTypeTotal = 16 // +1 than the last (explosionThingType)
-}; // @ C[00..15]_THING_TYPE_...
-
-class Thing {
-	uint16 data;
-public:
-	static const Thing thingNone;
-	static const Thing thingEndOfList;
-
-	Thing() {}
-	Thing(uint16 d) { set(d); }
-
-	void set(uint16 d) {
-		data = d;
-	}
-
-	byte getCell() const { return data >> 14; }
-	ThingType getType() const { return (ThingType)((data >> 10) & 0xF); }
-	uint16 getIndex() const { return data & 0x1FF; }
-	uint16 toUint16() const { return data; } // I don't like 'em cast operators
-	bool operator==(const Thing &rhs) const { return data == rhs.data; }
-	bool operator!=(const Thing &rhs) const { return data != rhs.data; }
-}; // @ THING
 
 struct CreatureInfo {
 	byte creatureAspectIndex;
@@ -297,6 +257,7 @@ enum SquareMask {
 	kWallSouthRandOrnAllowed = 0x2,
 	kWallEastRandOrnAllowed = 0x4,
 	kWallNorthRandOrnAllowed = 0x8,
+	kCorridorRandOrnAllowed = 0x8,
 	kPitImaginary = 0x1,
 	kPitInvisible = 0x4,
 	kPitOpen = 0x8,
@@ -334,7 +295,9 @@ public:
 	Square(SquareType type) { setType(type); }
 	Square &set(byte dat) { this->data = dat; return *this; }
 	Square &set(SquareMask mask) { data |= mask; return *this; }
-	bool get(SquareMask mask) { return data & mask; }
+	byte get(SquareMask mask) { return data & mask; }
+	byte getDoorState() { return data & 0x7; } // @ M36_DOOR_STATE
+	Square &setDoorState(byte state) { data = ((data & ~0x7) | state); } // @ M37_SET_DOOR_STATE
 	SquareType getType() { return (SquareType)(data >> 5); } // @ M34_SQUARE_TYPE
 	Square &setType(SquareType type) { data = (data & 0x1F) | type << 5; return *this; }
 	byte toByte() { return data; } // I don't like 'em casts

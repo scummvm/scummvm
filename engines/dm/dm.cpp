@@ -71,7 +71,7 @@ Common::Error DMEngine::run() {
 	uint16 i = 0; //TODO: testing, please delete me
 	while (true) {
 		_displayMan->clearScreen(kColorBlack);
-		_displayMan->drawDungeon(_dungeonMan->_currMap.partyDir, _dungeonMan->_currMap.partyPosX, _dungeonMan->_currMap.partyPosY + i);
+		_displayMan->drawDungeon(_dungeonMan->_currMap.partyDir, _dungeonMan->_currMap.partyPosX, _dungeonMan->_currMap.partyPosY);
 		_displayMan->updateScreen();
 		_system->delayMillis(2000); //TODO: testing, please set me to 10
 		if (++i == 100) break;

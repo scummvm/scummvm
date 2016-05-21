@@ -166,7 +166,6 @@ public:
 	void drawDungeon(direction dir, int16 posX, int16 posY); // @ F0128_DUNGEONVIEW_Draw_CPSF
 	void updateScreen();
 
-
 	int16 _championPortraitOrdinal = 0; // @ G0289_i_DungeonView_ChampionPortraitOrdinal
 	int16 _currMapAlcoveOrnIndices[kAlcoveOrnCount] = {0}; // @ G0267_ai_CurrentMapAlcoveOrnamentIndices
 	int16 _currMapFountainOrnIndices[kFountainOrnCount] = {0}; // @ G0268_ai_CurrentMapFountainOrnamentIndices
@@ -179,6 +178,8 @@ public:
 	byte _currMapDoorOrnIndices[18] = {0}; // @ G0263_auc_CurrentMapDoorOrnamentIndices
 
 	int16 _currMapViAltarIndex = 0; // @ G0266_i_CurrentMapViAltarWallOrnamentIndex
+
+	Thing _inscriptionThing = Thing::thingNone; // @ G0290_T_DungeonView_InscriptionThing
 };
 
 }
