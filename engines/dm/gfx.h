@@ -12,6 +12,13 @@ extern uint16 gPalCredits[16];
 extern uint16 gPalEntrance[16];
 extern uint16 gPalDungeonView[6][16];
 
+typedef struct {
+	uint16 X1;
+	uint16 X2;
+	uint16 Y1;
+	uint16 Y2;
+} Box; // @ BOX_BYTE, BOX_WORD
+
 struct Frame;
 enum WallSet {
 	kWallSetStone = 0 // @ C0_WALL_SET_STONE
@@ -91,11 +98,7 @@ class DisplayMan {
 
 
 	// the last two pointers are owned by this array
-	byte *_wallSetBitMaps[15] = {NULL};	// @G[0696..0710]_puc_Bitmap_WallSet_...
-
-	// only [7-11] is used, indexing convenience
-	byte *_wallSetBitMapsNative[12] = {NULL}; // @G[0095..0099]_puc_Bitmap_Wall...
-	byte *_wallSetBitMapsFlipped[12] = {NULL}; // @G[0090..0094]_puc_Bitmap_Wall...
+	byte *_wallSetBitMaps[25] = {NULL};	// @G[0696..0710]_puc_Bitmap_WallSet_...
 
 	// pointers are not owned by these fields
 	byte *_floorBitmap = NULL;

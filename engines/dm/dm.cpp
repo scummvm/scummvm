@@ -68,13 +68,18 @@ Common::Error DMEngine::run() {
 
 	_displayMan->loadPalette(gPalCredits);
 
+	byte pos[] = {kDirSouth, 1, 3, kDirSouth, 1, 4, kDirSouth, 1, 5, kDirSouth, 1, 6, kDirSouth, 1, 7, kDirEast, 1, 7};
+
 	uint16 i = 0; //TODO: testing, please delete me
 	while (true) {
 		_displayMan->clearScreen(kColorBlack);
-		_displayMan->drawDungeon(_dungeonMan->_currMap.partyDir, _dungeonMan->_currMap.partyPosX, _dungeonMan->_currMap.partyPosY);
+		_displayMan->drawDungeon((direction)pos[i*3 + 0], pos[i*3 + 1], pos[i*3 + 2]);
+		//_displayMan->drawDungeon(_dungeonMan->_currMap.partyDir, _dungeonMan->_currMap.partyPosX, _dungeonMan->_currMap.partyPosY + i);
 		_displayMan->updateScreen();
-		_system->delayMillis(2000); //TODO: testing, please set me to 10
-		if (++i == 100) break;
+		_system->delayMillis(1000); //TODO: testing, please set me to 10
+		if(i == 0)
+			_system->delayMillis(0000); //TODO: testing, please set me to 10
+		if (++i == 6) i = 0;
 	}
 
 

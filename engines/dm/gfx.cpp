@@ -93,7 +93,19 @@ enum WallSetIndices {
 	kWall_D3L2 = 12, // @  G0697_puc_Bitmap_WallSet_Wall_D3L2
 
 	kWall_D3R2 = 13, // @  G0696_puc_Bitmap_WallSet_Wall_D3R2
-	kDoorFrameRight_D1C = 14// @  G0710_puc_Bitmap_WallSet_DoorFrameRight_D1C
+	kDoorFrameRight_D1C = 14, // @  G0710_puc_Bitmap_WallSet_DoorFrameRight_D1C
+
+	kWall_D0R_Flipped = 15,
+	kWall_D0L_Flipped = 16,
+	kWall_D1LCR_Flipped = 17,
+	kWall_D2LCR_Flipped = 18,
+	kWall_D3LCR_Flipped = 19,
+
+	kWall_D0R_Native = 20,
+	kWall_D0L_Native = 21,
+	kWall_D1LCR_Native = 22,
+	kWall_D2LCR_Native = 23,
+	kWall_D3LCR_Native = 24,
 };
 
 
@@ -562,8 +574,8 @@ DisplayMan::~DisplayMan() {
 	}
 	delete[] _wallSetBitMaps[kWall_D3R2]; // copy of another bitmap, but flipped
 	delete[] _wallSetBitMaps[kDoorFrameRight_D1C]; // copy of another bitmap, but flipped
-	for (uint16 i = kWall_D0R; i <= kWall_D3LCR; ++i)
-		delete[] _wallSetBitMapsFlipped[i];
+	for (uint16 i = kWall_D0L_Flipped; i <= kWall_D3LCR_Flipped; ++i)
+		delete[] _wallSetBitMaps[i];
 }
 
 void DisplayMan::setUpScreens(uint16 width, uint16 height) {
@@ -903,8 +915,8 @@ void DisplayMan::drawDungeon(direction dir, int16 posX, int16 posY) {
 		drawWallSetBitmap(tmpBitmap, gFloorFrame);
 		drawWallSetBitmap(_ceilingBitmap, gCeilingFrame);
 
-		for (uint16 i = kWall_D0R; i <= kWall_D3LCR && false; ++i) // TODO: I dunno what this flipped wall thing is, but it messes everything up, disable with && false
-			_wallSetBitMaps[i] = _wallSetBitMapsFlipped[i];
+		for (uint16 i = 0; i <= kWall_D3LCR - kWall_D0R; ++i)
+			_wallSetBitMaps[i + kWall_D0R] = _wallSetBitMaps[i + kWall_D0R_Flipped];
 	} else {
 		uint16 w = gCeilingFrame.srcWidth, h = gCeilingFrame.srcHeight;
 		blitToBitmap(_ceilingBitmap, w, h, tmpBitmap, w);
@@ -920,7 +932,7 @@ void DisplayMan::drawDungeon(direction dir, int16 posX, int16 posY) {
 
 	int16 tmpPosX = posX, tmpPosY = posY;
 	_vm->_dungeonMan->mapCoordsAfterRelMovement(dir, 3, -1, tmpPosX, tmpPosY);
-	drawSquareD3L(dir, posX, posY);
+	drawSquareD3L(dir, tmpPosX, tmpPosY);
 	tmpPosX = posX, tmpPosY = posY;
 	_vm->_dungeonMan->mapCoordsAfterRelMovement(dir, 3, 1, tmpPosX, tmpPosY);
 	drawSquareD3R(dir, tmpPosX, tmpPosY);
@@ -954,8 +966,8 @@ void DisplayMan::drawDungeon(direction dir, int16 posX, int16 posY) {
 	drawSquareD0C(dir, posX, posY);
 
 
-	for (uint16 i = kWall_D0R; i <= kWall_D3LCR; ++i)
-		_wallSetBitMaps[i] = _wallSetBitMapsNative[i];
+	for (uint16 i = 0; i <= kWall_D3LCR - kWall_D0R; ++i)
+		_wallSetBitMaps[i + kWall_D0R] = _wallSetBitMaps[i + kWall_D0R_Native];
 
 	delete[] tmpBitmap;
 }
@@ -976,35 +988,54 @@ void DisplayMan::loadFloorSet(FloorSet set) {
 	_ceilingBitmap = _bitmaps[indice + 1];
 }
 
+
+Box gBoxWallBitmap_D3LCR = {0, 115, 0, 50}; // @ G0161_s_Graphic558_Box_WallBitmap_D3LCR
+Box gBoxWallBitmap_D2LCR = {0, 135, 0, 70}; // @ G0162_s_Graphic558_Box_WallBitmap_D2LCR
+
 void DisplayMan::loadWallSet(WallSet set) {
 	uint16 firstIndice = (set * kWallSetGraphicCount) + kFirstWallSet;
 	for (uint16 i = 0; i < kWallSetGraphicCount; ++i) {
 		_wallSetBitMaps[i] = _bitmaps[i + firstIndice];
 	}
 
-	uint16 leftDoorIndice = firstIndice + kDoorFrameLeft_D1C;
-	uint16 w = width(leftDoorIndice), h = height(leftDoorIndice);
-	delete[] _wallSetBitMaps[kDoorFrameRight_D1C];
-	_wallSetBitMaps[kDoorFrameRight_D1C] = new byte[w * h];
-	blitToBitmap(_wallSetBitMaps[kDoorFrameLeft_D1C], w, h, _wallSetBitMaps[kDoorFrameRight_D1C], w);
-	flipBitmapHorizontal(_wallSetBitMaps[kDoorFrameRight_D1C], w, h);
+	for (uint16 i = 0; i <= kWall_D3LCR - kWall_D0R; ++i)
+		_wallSetBitMaps[i + kWall_D0R_Native] = _wallSetBitMaps[i + kWall_D0R];
 
-	uint16 leftWallIndice = firstIndice + kWall_D3L2;
-	w = width(leftWallIndice), h = height(leftWallIndice);
-	delete[] _wallSetBitMaps[kWall_D3R2];
-	_wallSetBitMaps[kWall_D3R2] = new byte[w * h];
-	blitToBitmap(_wallSetBitMaps[kWall_D3L2], w, h, _wallSetBitMaps[kWall_D3R2], w);
-	flipBitmapHorizontal(_wallSetBitMaps[kWall_D3R2], w, h);
-	for (uint16 i = kWall_D0R; i <= kWall_D3LCR; ++i)
-		_wallSetBitMapsNative[i] = _wallSetBitMaps[i];
+	uint16 srcIndex[7] = {kDoorFrameLeft_D1C,  kWall_D3L2, kWall_D1LCR,         kWall_D0L,         kWall_D0R,
+	kWall_D2LCR,         kWall_D3LCR};
 
-	for (uint16 i = kWall_D0R; i <= kWall_D3LCR; ++i) {
-		uint16 w = width(firstIndice + i), h = height(firstIndice + i);
-		delete[] _wallSetBitMapsFlipped[i];
-		_wallSetBitMapsFlipped[i] = new byte[w * h];
-		blitToBitmap(_wallSetBitMaps[i], w, h, _wallSetBitMapsFlipped[i], w);
-		flipBitmapHorizontal(_wallSetBitMapsFlipped[i], w, h);
+	uint16 destIndex[7] = {kDoorFrameRight_D1C, kWall_D3R2, kWall_D1LCR_Flipped, kWall_D0R_Flipped, kWall_D0L_Flipped,
+	kWall_D2LCR_Flipped, kWall_D3LCR_Flipped};
+
+	for (uint16 i = 0; i < 7; ++i) {
+		uint16 srcGraphicIndice = firstIndice + srcIndex[i];
+		uint16 w = width(srcGraphicIndice), h = height(srcGraphicIndice);
+		delete[] _wallSetBitMaps[destIndex[i]];
+		_wallSetBitMaps[destIndex[i]] = new byte[w * h];
+		blitToBitmap(_wallSetBitMaps[srcIndex[i]], w, h, _wallSetBitMaps[destIndex[i]], w);
+		if (srcIndex[i] != kWall_D2LCR && srcIndex[i] != kWall_D3LCR) // TODO: implement flipping of these two bitmaps, disabled with if
+			flipBitmapHorizontal(_wallSetBitMaps[destIndex[i]], w, h);
 	}
+
+
+	/*
+	uint16 graphicIndice = firstIndice + kWall_D2LCR;
+	uint16 w = width(graphicIndice), h = height(graphicIndice);
+	byte *tmp = new byte[w * h];
+	clearBitmap(tmp, w, h, kColorFlesh);
+	Box *box = &gBoxWallBitmap_D2LCR;
+	blitToBitmap(_wallSetBitMaps[kWall_D2LCR_Flipped], w, 8, 0, tmp, w, box->X1, box->X2, box->Y1, box->Y2, kColorNoTransparency);
+	delete[] _wallSetBitMaps[kWall_D2LCR_Flipped];
+	_wallSetBitMaps[kWall_D2LCR_Flipped] = tmp;
+
+	graphicIndice = firstIndice + kWall_D3LCR;
+	w = width(graphicIndice), h = height(graphicIndice);
+	tmp = new byte[w * h];
+	clearBitmap(tmp, w, h, kColorFlesh);
+	box = &gBoxWallBitmap_D3LCR;
+	blitToBitmap(_wallSetBitMaps[kWall_D3LCR_Flipped], w, 8, 0, tmp, w, box->X1, box->X2, box->Y1, box->Y2, kColorNoTransparency);
+	delete[] _wallSetBitMaps[kWall_D3LCR_Flipped];
+	_wallSetBitMaps[kWall_D3LCR_Flipped] = tmp;*/
 }
 
 
