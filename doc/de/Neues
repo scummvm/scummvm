@@ -14,6 +14,7 @@ Programmcodes finden Sie auf Englisch unter:
 1.8.1 (25.05.2016)
  Neue Portierungen:
    - Portierung für den Nintendo 3DS hinzugefügt.
+   - Portierung für Android SDL hinzugefügt.
 
  Allgemein:
    - "TESTING"-Markierung von mehreren unterstützten Spielen entfernt.
