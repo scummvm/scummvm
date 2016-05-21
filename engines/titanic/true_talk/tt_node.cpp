@@ -32,7 +32,7 @@ TTnode::~TTnode() {
 	detach();
 }
 
-void TTnode::addNode(TTnode *newNode) {
+void TTnode::addToTail(TTnode *newNode) {
 	TTnode *tail = getTail();
 	tail->_nextP = newNode;
 	newNode->_priorP = this;

@@ -89,7 +89,7 @@ void TTsentence::copyFrom(const TTsentence &src) {
 				node = static_cast<TTsentenceNode *>(node->_nextP)) {
 			TTsentenceNode *newNode = new TTsentenceNode(node->_wordP);
 			if (_nodesP)
-				_nodesP->addNode(newNode);
+				_nodesP->addToTail(newNode);
 			else
 				_nodesP = newNode;
 		}
@@ -102,7 +102,7 @@ int TTsentence::storeVocabHit(TTword *word) {
 
 	TTsentenceNode *node = new TTsentenceNode(word);
 	if (_nodesP) {
-		_nodesP->addNode(node);
+		_nodesP->addToTail(node);
 	} else {
 		_nodesP = node;
 	}

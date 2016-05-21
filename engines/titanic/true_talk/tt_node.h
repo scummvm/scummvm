@@ -34,15 +34,14 @@ public:
 	virtual ~TTnode();
 
 	/**
-	 * Links the passed node to this node as a linked list
-	 */
-	void addNode(TTnode *newNode);
-
-	/**
 	 * Adds a new node at the beginning of the linked list
 	 */
 	void addToHead(TTnode *newNode);
 
+	/**
+	 * Links the passed node to this node as a linked list
+	 */
+	void addToTail(TTnode *newNode);
 
 	/**
 	 * Detaches a node from any predecessor and/or successor

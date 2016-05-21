@@ -98,7 +98,7 @@ int TTword::readSyn(SimpleFile *file) {
 	if (_synP) {
 		// A synonym already exists, so add new one as a tail
 		// at the end of the linked list of synonyms
-		_synP->addNode(synNode);
+		_synP->addToTail(synNode);
 	} else {
 		// Very first synonym, so set it
 		_synP = synNode;
@@ -128,7 +128,7 @@ int TTword::setSynStr(TTstring &str) {
 
 void TTword::appendNode(TTsynonym *node) {
 	if (_synP)
-		_synP->addNode(node);
+		_synP->addToTail(node);
 	else
 		_synP = node;
 }
