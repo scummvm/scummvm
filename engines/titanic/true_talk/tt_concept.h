@@ -20,66 +20,55 @@
  *
  */
 
-#ifndef TITANIC_TT_SCRIPT_BASE_H
-#define TITANIC_TT_SCRIPT_BASE_H
+#ifndef TITANIC_TT_CONCEPT_H
+#define TITANIC_TT_CONCEPT_H
 
 #include "titanic/true_talk/tt_string.h"
-#include "titanic/true_talk/tt_hist.h"
-#include "titanic/true_talk/tt_node.h"
 
 namespace Titanic {
 
-enum ScriptChangedResult {
-	SCR_1 = 1, SCR_2 = 2, SCR_3 = 3, SCR_4 = 4, SCR_5 = 5
-};
+enum ScriptType { ST_UNKNOWN_SCRIPT = 0, ST_ROOM_SCRIPT = 1, ST_NPC_SCRIPT = 2 };
 
-class TTsentence;
+class TTscriptBase;
+class TTword;
 
-class TTscriptBase {
+class TTconcept {
 private:
-	void reset();
-protected:
-	TTnode *_nodesP;
-	TThist *_hist;
-	TTstring _charName, _charClass;
+	int _field0;
+	TTscriptBase *_scriptP;
+	TTword *_wordP;
+	TTstring _string1;
+	int _field14;
+	ScriptType _scriptType;
+	int _field1C;
 	int _field20;
-	int _field24;
-	int _field28;
+	TTstring _string2;
 	int _field2C;
 	int _field30;
 	int _field34;
 	int _field38;
-	int _field3C;
-	int _field40;
-	int _field44;
-	int _field48;
 	int _status;
-public:
-	int _field8;
-public:
-	TTscriptBase(int v1, const char *charClass, int v2, const char *charName,
-		int v3, int v4, int v5, int v6, int v7);
-	virtual ~TTscriptBase();
-
-	bool areNamesValid();
-
-	int getStatus() const { return _status; }
+private:
+	/**
+	 * Sets the status of the concept
+	 */
+	bool setStatus();
 
 	/**
-	 * Gets passed a newly created input wrapper during conversation text processing
+	 * Sets the script type and resets other fields
 	 */
-	int preprocess(TTsentence *sentence);
+	void setScriptType(ScriptType scriptType);
 
-	virtual void proc2(int v);
+	/**
+	 * Resets the concept
+	 */
+	void reset();
+public:
+	TTconcept();
+	TTconcept(TTscriptBase *script, ScriptType scriptType);
 
-	virtual void proc3(int v);
-
-	virtual void proc4(int v);
-
-	virtual void proc5();
 };
-
 
 } // End of namespace Titanic
 
-#endif /* TITANIC_TT_SCRIPT_BASE_H */
+#endif /* TITANIC_TT_CONCEPT_H */
