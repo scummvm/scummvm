@@ -2934,6 +2934,84 @@ static const uint16 qfg3PatchChiefPriority[] = {
 	PATCH_END
 };
 
+// There are 3 points that can't be achieved in the game. They should've been
+// awarded for telling Rakeesh and Kreesha (room 285) about the Simabni
+// initiation.
+// However the array of posibble messages the hero can tell in that room
+// (local 156) is missing the "Tell about Initiation" message (#31) which
+// awards these points.
+// This patch adds the message to that array, thus allowing the hero to tell
+// that message (after completing the initiation) and gain the 3 points.
+// A side effect of increasing the local156 array is that the next local
+// array is shifted and shrinks in size from 4 words to 3. The patch changes
+// the 2 locations in the script that reference that array, to point to the new
+// location ($aa --> $ab). It is safe to shrink the 2nd array to 3 words
+// because only the first element in it is ever used.
+//
+// Note: You have to re-enter the room in case a saved game was loaded from a
+// previous version of ScummVM and that saved game was made inside that room.
+//
+// Applies to: English, French, German, Italian, Spanish and the GOG release.
+// Responsible method: heap in script 285
+// Fixes bug #7086
+static const uint16 qfg3SignatureMissingPoints1[] = {
+	// local[$9c] = [0 -41 -76 1 -30 -77 -33 -34 -35 -36 -37 -42 -80 999]
+	// local[$aa] = [0 0 0 0]
+	SIG_UINT16(0x0000),                 //   0 START MARKER
+	SIG_MAGICDWORD,
+	SIG_UINT16(0xFFD7),                 // -41 "Greet"
+	SIG_UINT16(0xFFB4),                 // -76 "Say Good-bye"
+	SIG_UINT16(0x0001),                 //   1 "Tell about Tarna"
+	SIG_UINT16(0xFFE2),                 // -30 "Tell about Simani"
+	SIG_UINT16(0xFFB3),                 // -77 "Tell about Prisoner"
+	SIG_UINT16(0xFFDF),                 // -33 "Dispelled Leopard Lady"
+	SIG_UINT16(0xFFDE),                 // -34 "Tell about Leopard Lady"
+	SIG_UINT16(0xFFDD),                 // -35 "Tell about Leopard Lady"
+	SIG_UINT16(0xFFDC),                 // -36 "Tell about Leopard Lady"
+	SIG_UINT16(0xFFDB),                 // -37 "Tell about Village"
+	SIG_UINT16(0xFFD6),                 // -42 "Greet"
+	SIG_UINT16(0xFFB0),                 // -80 "Say Good-bye"
+	SIG_UINT16(0x03E7),                 // 999 END MARKER
+	SIG_ADDTOOFFSET(+2),                // local[$aa][0]
+	SIG_END
+};
+
+static const uint16 qfg3PatchMissingPoints1[] = {
+	PATCH_ADDTOOFFSET(+14),
+	PATCH_UINT16(0xFFE1),               // -31 "Tell about Initiation"
+	PATCH_UINT16(0xFFDE),               // -34 "Tell about Leopard Lady"
+	PATCH_UINT16(0xFFDD),               // -35 "Tell about Leopard Lady"
+	PATCH_UINT16(0xFFDC),               // -36 "Tell about Leopard Lady"
+	PATCH_UINT16(0xFFDB),               // -37 "Tell about Village"
+	PATCH_UINT16(0xFFD6),               // -42 "Greet"
+	PATCH_UINT16(0xFFB0),               // -80 "Say Good-bye"
+	PATCH_UINT16(0x03E7),               // 999 END MARKER
+	PATCH_GETORIGINALBYTE(+28),         // local[$aa][0].low
+	PATCH_GETORIGINALBYTE(+29),         // local[$aa][0].high
+	PATCH_END
+};
+
+static const uint16 qfg3SignatureMissingPoints2a[] = {
+	SIG_MAGICDWORD,
+	0x35, 0x00,                         // ldi 0
+	0xb3, 0xaa,                         // sali local[$aa]
+	SIG_END
+};
+
+static const uint16 qfg3SignatureMissingPoints2b[] = {
+	SIG_MAGICDWORD,
+	0x36,                               // push
+	0x5b, 0x02, 0xaa,                   // lea local[$aa]
+	SIG_END
+};
+
+static const uint16 qfg3PatchMissingPoints2[] = {
+	PATCH_ADDTOOFFSET(+3),
+	0xab,                               // local[$aa] ==> local[$ab]
+	PATCH_END
+};
+
+
 // Partly WORKAROUND:
 // During combat, the game is not properly throttled. That's because the game uses
 // an inner loop for combat and does not iterate through the main loop.
@@ -2995,14 +3073,17 @@ static const uint16 qfg3PatchCombatSpeedThrottling2[] = {
 
 //          script, description,                                      signature                    patch
 static const SciScriptPatcherEntry qfg3Signatures[] = {
-	{  true,   944, "import dialog continuous calls",              1, qfg3SignatureImportDialog,           qfg3PatchImportDialog },
-	{  true,   440, "dialog crash when asking about Woo",          1, qfg3SignatureWooDialog,              qfg3PatchWooDialog },
-	{  true,   440, "dialog crash when asking about Woo",          1, qfg3SignatureWooDialogAlt,           qfg3PatchWooDialogAlt },
-	{  true,    52, "export character save bug",                   2, qfg3SignatureExportChar,             qfg3PatchExportChar },
-	{  true,    54, "import character from QfG1 bug",              1, qfg3SignatureImportQfG1Char,         qfg3PatchImportQfG1Char },
-	{  true,   640, "chief in hut priority fix",                   1, qfg3SignatureChiefPriority,          qfg3PatchChiefPriority },
-	{  true,   550, "combat speed throttling script",              1, qfg3SignatureCombatSpeedThrottling1, qfg3PatchCombatSpeedThrottling1 },
-	{  true,   550, "combat speed throttling heap",                1, qfg3SignatureCombatSpeedThrottling2, qfg3PatchCombatSpeedThrottling2 },
+	{  true,   944, "import dialog continuous calls",                     1, qfg3SignatureImportDialog,           qfg3PatchImportDialog },
+	{  true,   440, "dialog crash when asking about Woo",                 1, qfg3SignatureWooDialog,              qfg3PatchWooDialog },
+	{  true,   440, "dialog crash when asking about Woo",                 1, qfg3SignatureWooDialogAlt,           qfg3PatchWooDialogAlt },
+	{  true,    52, "export character save bug",                          2, qfg3SignatureExportChar,             qfg3PatchExportChar },
+	{  true,    54, "import character from QfG1 bug",                     1, qfg3SignatureImportQfG1Char,         qfg3PatchImportQfG1Char },
+	{  true,   640, "chief in hut priority fix",                          1, qfg3SignatureChiefPriority,          qfg3PatchChiefPriority },
+	{  true,   285, "missing points for telling about initiation heap",   1, qfg3SignatureMissingPoints1,         qfg3PatchMissingPoints1 },
+	{  true,   285, "missing points for telling about initiation script", 1, qfg3SignatureMissingPoints2a,	      qfg3PatchMissingPoints2 },
+	{  true,   285, "missing points for telling about initiation script", 1, qfg3SignatureMissingPoints2b,        qfg3PatchMissingPoints2 },
+	{  true,   550, "combat speed throttling script",                     1, qfg3SignatureCombatSpeedThrottling1, qfg3PatchCombatSpeedThrottling1 },
+	{  true,   550, "combat speed throttling heap",                       1, qfg3SignatureCombatSpeedThrottling2, qfg3PatchCombatSpeedThrottling2 },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
