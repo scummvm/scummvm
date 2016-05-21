@@ -38,7 +38,7 @@ protected:
 
 public:
 	Request(Common::BaseCallback<> *cb): _callback(cb) {};
-	virtual ~Request() {};
+	virtual ~Request() { delete _callback; };
 
 	/**
 	* Method, which does actual work. Depends on what this Request is doing.
