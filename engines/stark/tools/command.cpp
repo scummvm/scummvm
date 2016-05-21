@@ -49,8 +49,13 @@ void Command::initBranches() {
 			_followerIndex = _arguments[0].intValue;
 			break;
 		case kFlowBranch:
-			_falseBranchIndex = _arguments[0].intValue;
-			_trueBranchIndex = _arguments[1].intValue;
+			if (_arguments[0].intValue == _arguments[1].intValue) {
+				// Degenerate conditions are handled here so that blocks are not split after them
+				_followerIndex = _arguments[0].intValue;
+			} else {
+				_falseBranchIndex = _arguments[0].intValue;
+				_trueBranchIndex = _arguments[1].intValue;
+			}
 			break;
 		case kFlowEnd:
 			// No followers
@@ -63,7 +68,7 @@ bool Command::isEntryPoint() const {
 }
 
 bool Command::isBranch() const {
-	return _subTypeDesc->controlFlowType == kFlowBranch;
+	return _trueBranchIndex >= 0 && _falseBranchIndex >= 0;
 }
 
 bool Command::isBranchTarget() const {
