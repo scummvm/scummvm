@@ -71,7 +71,6 @@ public:
 class TTsentence {
 private:
 	CScriptHandler *_owner;
-	int _field2C;
 	int _inputCtr;
 	int _field34;
 	int _field38;
@@ -90,6 +89,7 @@ public:
 	int _field58;
 	TTroomScript *_roomScript;
 	TTnpcScript *_npcScript;
+	int _field2C;
 public:
 	TTsentence(int inputCtr, const TTstring &line, CScriptHandler *owner,
 		TTroomScript *roomScript, TTnpcScript *npcScript);

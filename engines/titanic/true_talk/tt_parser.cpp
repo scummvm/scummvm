@@ -628,10 +628,92 @@ int TTparser::loadRequests(TTword *word) {
 		status = fn2(word);
 		break;
 
+	case WMODE_7:
+		switch (word->_id) {
+		case 700:
+			addNode(6);
+			addNode(5);
+			break;
+		case 701:
+			addNode(11);
+			break;
+		case 702:
+			status = 1;
+			break;
+		case 703:
+			addNode(9);
+			break;
+		case 704:
+			addNode(10);
+			break;
+		default:
+			break;
+		}
+
+	case WMODE_8:
+		if (word->_id == 304) {
+			// Nothing
+		} else if (word->_id == 801) {
+			addNode(22);
+		} else {
+			if (word->proc16())
+				_sentence->_field58++;
+			if (word->proc17())
+				_sentence->_field58++;
+		}
+		break;
+
+	case WMODE_9:
+		switch (word->_id) {
+		case 900:
+		case 901:
+		case 902:
+		case 904:
+			if (_sentence->_field2C == 9) {
+				_sentenceSub->_field1C = 1;
+				_sentenceSub = _sentenceSub->addSibling();
+				addNode(1);
+			}
+			else {
+				addNode(23);
+				addNode(13);
+				addNode(1);
+			}
+			break;
+
+		case 905:
+		case 907:
+		case 908:
+		case 909:
+			addNode(23);
+			break;
+
+		case 906:
+			addNode(23);
+			status = 1;
+			break;
+
+		case 910:
+			addNode(4);
+			addNode(24);
+			addNode(23);
+			addNode(14);
+			status = 1;
+			break;
+
+		default:
+			break;
+		}
+
+		if (word->_id == 906) {
+			addNode(14);
+			status = 1;
+		}
+		break;
+
 	default:
 		break;
 	}
-	// TODO
 
 	return status;
 }
@@ -678,7 +760,6 @@ int TTparser::fn2(TTword *word) {
 	default:
 		return 0;
 	}
-	int checkReferent(TTpronoun *pronoun);
 }
 
 int TTparser::checkReferent(TTpronoun *pronoun) {
