@@ -1,8 +1,8 @@
-scummvm (1.8.1~pre) unstable; urgency=low
+scummvm (1.8.1) unstable; urgency=low
 
-  * Development snapshot
+  * 1.8.1 release
 
- -- Tarek Soliman <tsoliman@scummvm.org>  Fri, 13 May 2016 11:46:43 -0500
+ -- Tarek Soliman <tsoliman@scummvm.org>  Fri, 20 May 2016 20:05:11 -0500
 
 scummvm (1.8.0) unstable; urgency=low
 
