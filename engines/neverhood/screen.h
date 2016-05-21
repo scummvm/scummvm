@@ -25,10 +25,13 @@
 
 #include "common/array.h"
 #include "graphics/surface.h"
-#include "video/smk_decoder.h"
 #include "neverhood/neverhood.h"
 #include "neverhood/microtiles.h"
 #include "neverhood/graphics.h"
+
+namespace Video {
+	class SmackerDecoder;
+}
 
 namespace Neverhood {
 

@@ -26,9 +26,10 @@
 #include "neverhood/neverhood.h"
 #include "neverhood/module.h"
 #include "neverhood/scene.h"
-#include "neverhood/smackerplayer.h"
 
 namespace Neverhood {
+
+class SmackerPlayer;
 
 class Module1300 : public Module {
 public:
