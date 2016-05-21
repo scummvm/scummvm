@@ -23,6 +23,7 @@
 #ifndef SCUMM_HE_MOONBASE_AI_TREE_H
 #define SCUMM_HE_MOONBASE_AI_TREE_H
 
+#include "common/hash-str.h"
 #include "scumm/he/moonbase/ai_node.h"
 
 namespace Scumm {
@@ -36,14 +37,13 @@ class Tree {
 private:
 	Node *pBaseNode;
 
-	int m_maxDepth;
-	int m_maxNodes;
+	int _maxDepth;
+	int _maxNodes;
 
 	int currentChildIndex;
-	unsigned long m_startTime;
 
-	//fnpMMap m_currentMap;
-	Node *m_currentNode;
+	Common::StringMap _currentMap;
+	Node *_currentNode;
 
 public:
 	Tree();
@@ -56,14 +56,11 @@ public:
 	void duplicateTree(Node *sourceNode, Node *destNode);
 
 	Node *getBaseNode() const { return pBaseNode; }
-	void setMaxDepth(int maxDepth) { m_maxDepth = maxDepth; }
-	int getMaxDepth() const { return m_maxDepth; }
+	void setMaxDepth(int maxDepth) { _maxDepth = maxDepth; }
+	int getMaxDepth() const { return _maxDepth; }
 
-	void setMaxNodes(int maxNodes) { m_maxNodes = maxNodes; }
-	int getMaxNodes() const { return m_maxNodes; }
-
-	void setStartTime(unsigned long sTime) { m_startTime = sTime; }
-	unsigned long getStartTime() const { return m_startTime; }
+	void setMaxNodes(int maxNodes) { _maxNodes = maxNodes; }
+	int getMaxNodes() const { return _maxNodes; }
 
 	Node *aStarSearch();
 
