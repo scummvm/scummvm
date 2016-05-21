@@ -45,13 +45,13 @@ enum {
 
 class DefenseUnit {
 private:
-	int m_ID;
-	Common::Point m_pos;
-	int m_distanceTo;
-	int m_state;
-	int m_radius;
-	int m_armor;
-	int m_cost;
+	int _id;
+	Common::Point _pos;
+	int _distanceTo;
+	int _state;
+	int _radius;
+	int _armor;
+	int _cost;
 
 public:
 	DefenseUnit();
@@ -59,26 +59,26 @@ public:
 
 	virtual ~DefenseUnit();
 
-	void setID(int id) { m_ID = id; }
-	void setDistanceTo(int distanceTo) { m_distanceTo = distanceTo; }
-	void setState(int state) { m_state = state; }
-	void setRadius(int radius) { m_radius = radius; }
-	void setArmor(int armor) { m_armor = armor; }
-	void setDamage(int damage) { m_armor -= damage; }
+	void setID(int id) { _id = id; }
+	void setDistanceTo(int distanceTo) { _distanceTo = distanceTo; }
+	void setState(int state) { _state = state; }
+	void setRadius(int radius) { _radius = radius; }
+	void setArmor(int armor) { _armor = armor; }
+	void setDamage(int damage) { _armor -= damage; }
 	void setPos(int x, int y) {
-		m_pos.x = x;
-		m_pos.y = y;
+		_pos.x = x;
+		_pos.y = y;
 	}
-	void setCost(int cost) { m_cost = cost; }
+	void setCost(int cost) { _cost = cost; }
 
-	int getID() const { return m_ID; }
-	int getDistanceTo() const { return m_distanceTo; }
-	int getState() const { return m_state; }
-	int getRadius() const { return m_radius; }
-	int getArmor() const { return m_armor; }
-	int getPosX() const { return m_pos.x; }
-	int getPosY() const { return m_pos.y; }
-	int getCost() const { return m_cost; }
+	int getID() const { return _id; }
+	int getDistanceTo() const { return _distanceTo; }
+	int getState() const { return _state; }
+	int getRadius() const { return _radius; }
+	int getArmor() const { return _armor; }
+	int getPosX() const { return _pos.x; }
+	int getPosY() const { return _pos.y; }
+	int getCost() const { return _cost; }
 
 	virtual int getType() const = 0;
 

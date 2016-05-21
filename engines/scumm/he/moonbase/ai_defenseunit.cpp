@@ -29,17 +29,17 @@
 namespace Scumm {
 
 DefenseUnit::DefenseUnit() {
-	m_state = DUS_ON;
+	_state = DUS_ON;
 }
 
 DefenseUnit::DefenseUnit(DefenseUnit *inUnit) {
-	m_ID = inUnit->getID();
-	m_pos.x = inUnit->getPosX();
-	m_pos.y = inUnit->getPosY();
-	m_distanceTo = inUnit->getDistanceTo();
-	m_state = inUnit->getState();
-	m_radius = inUnit->getRadius();
-	m_armor = inUnit->getArmor();
+	_id = inUnit->getID();
+	_pos.x = inUnit->getPosX();
+	_pos.y = inUnit->getPosY();
+	_distanceTo = inUnit->getDistanceTo();
+	_state = inUnit->getState();
+	_radius = inUnit->getRadius();
+	_armor = inUnit->getArmor();
 }
 
 DefenseUnit::~DefenseUnit() {
