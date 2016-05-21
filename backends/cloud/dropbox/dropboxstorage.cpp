@@ -66,14 +66,14 @@ DropboxStorage::~DropboxStorage() {
 	curl_global_cleanup();
 }
 
-void DropboxStorage::syncSaves(Common::BaseCallback<bool> *callback) {
+void DropboxStorage::syncSaves(BoolCallback callback) {
 	//this is not the real syncSaves() implementation
 	info(new Common::Callback<DropboxStorage, StorageInfo>(this, &DropboxStorage::infoMethodCallback));
 	//that line meant the following:
 	//"please, do the info API request and, when it's finished, call the infoMethodCallback() of me"
 }
 
-void DropboxStorage::info(Common::BaseCallback<StorageInfo> *outerCallback) {
+void DropboxStorage::info(StorageInfoCallback outerCallback) {
 	Common::BaseCallback<> *innerCallback = new Common::CallbackBridge<DropboxStorage, StorageInfo>(this, &DropboxStorage::infoInnerCallback, outerCallback);
 	Networking::CurlJsonRequest *request = new Networking::CurlJsonRequest(innerCallback, "https://api.dropboxapi.com/1/account/info");
 	request->addHeader("Authorization: Bearer " + _token);
@@ -84,8 +84,8 @@ void DropboxStorage::info(Common::BaseCallback<StorageInfo> *outerCallback) {
 	//and then calls the outerCallback (which wants to receive StorageInfo, not void *)
 }
 
-void DropboxStorage::infoInnerCallback(Common::BaseCallback<StorageInfo> *outerCallback, void *ptr) {	
-	Common::JSONValue *json = (Common::JSONValue *)ptr;
+void DropboxStorage::infoInnerCallback(StorageInfoCallback outerCallback, void *jsonPointer) {
+	Common::JSONValue *json = (Common::JSONValue *)jsonPointer;
 	if (!json) {
 		warning("NULL passed instead of JSON");
 		delete outerCallback;
@@ -93,6 +93,8 @@ void DropboxStorage::infoInnerCallback(Common::BaseCallback<StorageInfo> *outerC
 	}
 
 	if (outerCallback) {
+		//TODO: check that JSON doesn't contain some error message instead of an actual response
+		//TODO: use JSON fields to construct StorageInfo		
 		(*outerCallback)(StorageInfo(json->stringify()));
 		delete outerCallback;
 	}

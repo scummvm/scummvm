@@ -39,37 +39,37 @@ class DropboxStorage: public Cloud::Storage {
 
 	static void getAccessToken(Common::String code);
 
+	/** Constructs StorageInfo based on JSON response from cloud. */
+	void infoInnerCallback(StorageInfoCallback outerCallback, void *json);
+
 public:	
 	virtual ~DropboxStorage();
 
 	/** Returns pointer to Common::Array<StorageFile>. */
-	virtual void listDirectory(Common::String path, Common::BaseCallback< Common::Array<StorageFile> > *callback) {} //TODO
+	virtual void listDirectory(Common::String path, FileArrayCallback callback) {} //TODO
 
 	/** Calls the callback when finished. */
-	virtual void upload(Common::String path, Common::ReadStream* contents, Common::BaseCallback<bool> *callback) {} //TODO
+	virtual void upload(Common::String path, Common::ReadStream* contents, BoolCallback callback) {} //TODO
 
 	/** Returns pointer to Common::ReadStream. */
-	virtual void download(Common::String path, Common::BaseCallback<Common::ReadStream> *callback) {} //TODO
+	virtual void download(Common::String path, ReadStreamCallback callback) {} //TODO
 
 	/** Calls the callback when finished. */
-	virtual void remove(Common::String path, Common::BaseCallback<bool> *callback) {} //TODO
+	virtual void remove(Common::String path, BoolCallback callback) {} //TODO
 
 	/** Calls the callback when finished. */
-	virtual void syncSaves(Common::BaseCallback<bool> *callback);
+	virtual void syncSaves(BoolCallback callback);
 
 	/** Calls the callback when finished. */
-	virtual void createDirectory(Common::String path, Common::BaseCallback<bool> *callback) {} //TODO
+	virtual void createDirectory(Common::String path, BoolCallback callback) {} //TODO
 
 	/** Calls the callback when finished. */
-	virtual void touch(Common::String path, Common::BaseCallback<bool> *callback) {} //TODO
+	virtual void touch(Common::String path, BoolCallback callback) {} //TODO
 
 	/** Returns pointer to the StorageInfo struct. */
-	virtual void info(Common::BaseCallback<StorageInfo> *callback);
+	virtual void info(StorageInfoCallback callback);
 
-	/** This is what is called by CurlJsonRequest. */
-	void infoInnerCallback(Common::BaseCallback<StorageInfo> *outerCallback, void *ptr);
-
-	/** This is what is called by infoInnerCallback() (it's its outer callback). */
+	/** This method is passed into info(). (Temporary) */
 	void infoMethodCallback(StorageInfo storageInfo);
 
 	/** Returns whether saves sync process is running. */

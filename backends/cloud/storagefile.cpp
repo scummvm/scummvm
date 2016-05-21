@@ -20,27 +20,29 @@
 *
 */
 
-#ifndef BACKENDS_CLOUD_MANAGER_H
-#define BACKENDS_CLOUD_MANAGER_H
-
-#include "common/cloudmanager.h"
-#include "common/str.h"
+#include "backends/cloud/storagefile.h"
 
 namespace Cloud {
 
-class Manager: public Common::CloudManager {
-	Storage* _currentStorage;
+StorageFile::StorageFile(Common::String pth, uint32 sz, uint32 ts, bool dir) {
+	_path = pth;
 
-public:
-	Manager();
-	virtual ~Manager();
+	_name = pth;
+	if (_name.size() != 0) {
+		uint32 i = _name.size() - 1;
+		while (true) {
+			if (_name[i] == '/' || _name[i] == '\\') {
+				_name.erase(0, i);
+				break;
+			}
+			if (i == 0) break;
+			--i;
+		}
+	}
 
-	virtual void init();
-
-	virtual Storage* getCurrentStorage();
-	virtual void syncSaves(Storage::BoolCallback callback);
-};
+	_size = sz;
+	_timestamp = ts;
+	_isDirectory = dir;
+}
 
 } //end of namespace Cloud
-
-#endif

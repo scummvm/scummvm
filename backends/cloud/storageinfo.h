@@ -20,25 +20,26 @@
 *
 */
 
-#ifndef BACKENDS_CLOUD_MANAGER_H
-#define BACKENDS_CLOUD_MANAGER_H
+#ifndef BACKENDS_CLOUD_STORAGEINFO_H
+#define BACKENDS_CLOUD_STORAGEINFO_H
 
-#include "common/cloudmanager.h"
 #include "common/str.h"
 
 namespace Cloud {
 
-class Manager: public Common::CloudManager {
-	Storage* _currentStorage;
+/**
+* StorageInfo contains information about remote cloud storage.
+* It's disk quota usage, owner name, and such.
+*/
+
+class StorageInfo {
+	/** Temporary StorageInfo just contains raw JSON, received from cloud storage. */
+	Common::String _info;
 
 public:
-	Manager();
-	virtual ~Manager();
+	StorageInfo(Common::String info): _info(info) {}
 
-	virtual void init();
-
-	virtual Storage* getCurrentStorage();
-	virtual void syncSaves(Storage::BoolCallback callback);
+	Common::String info() const { return _info; }
 };
 
 } //end of namespace Cloud

@@ -20,25 +20,32 @@
 *
 */
 
-#ifndef BACKENDS_CLOUD_MANAGER_H
-#define BACKENDS_CLOUD_MANAGER_H
+#ifndef BACKENDS_CLOUD_STORAGEFILE_H
+#define BACKENDS_CLOUD_STORAGEFILE_H
 
-#include "common/cloudmanager.h"
 #include "common/str.h"
 
 namespace Cloud {
 
-class Manager: public Common::CloudManager {
-	Storage* _currentStorage;
+/**
+* StorageFile represents a file storaged on remote cloud storage.
+* It contains basic information about a file, and might be used
+* when listing directories or syncing files.
+*/
+
+class StorageFile {
+	Common::String _path, _name;
+	uint32 _size, _timestamp;
+	bool _isDirectory;
 
 public:
-	Manager();
-	virtual ~Manager();
+	StorageFile(Common::String pth, uint32 sz, uint32 ts, bool dir);
 
-	virtual void init();
-
-	virtual Storage* getCurrentStorage();
-	virtual void syncSaves(Storage::BoolCallback callback);
+	Common::String path() const { return _path; }
+	Common::String name() const { return _name; }
+	uint32 size() const { return _size; }
+	uint32 timestamp() const { return _timestamp; }
+	bool isDirectory() const { return _isDirectory; }
 };
 
 } //end of namespace Cloud

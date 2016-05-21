@@ -46,7 +46,7 @@ Storage* Manager::getCurrentStorage() {
 	return _currentStorage;
 }
 
-void Manager::syncSaves(Common::BaseCallback<bool> *callback) {
+void Manager::syncSaves(Storage::BoolCallback callback) {
 	Storage* storage = getCurrentStorage();
 	if (storage) storage->syncSaves(callback);
 }

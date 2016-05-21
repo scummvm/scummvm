@@ -27,76 +27,44 @@
 #include "common/stream.h"
 #include "common/str.h"
 #include "common/callback.h"
+#include "backends/cloud/storagefile.h"
+#include "backends/cloud/storageinfo.h"
 
 namespace Cloud {
 
-class StorageFile {
-	Common::String _path, _name;
-	uint32 _size, _timestamp;
-	bool _isDirectory;
-
-public:
-	StorageFile(Common::String pth, uint32 sz, uint32 ts, bool dir) {
-		_path = pth;
-
-		_name = pth;
-		for (uint32 i = _name.size() - 1; i >= 0; --i) {
-			if (_name[i] == '/' || _name[i] == '\\') {
-				_name.erase(0, i);
-				break;
-			}
-			if (i == 0) break; //OK, I admit that's strange
-		}
-
-		_size = sz;
-		_timestamp = ts;
-		_isDirectory = dir;
-	}
-
-	Common::String path() const { return _path; }
-	Common::String name() const { return _name; }
-	uint32 size() const { return _size; }
-	uint32 timestamp() const { return _timestamp; }
-	bool isDirectory() const { return _isDirectory; }
-};
-
-class StorageInfo {
-	Common::String _info;
-
-public:
-	StorageInfo(Common::String info): _info(info) {}
-
-	Common::String info() const { return _info; }
-};
-
 class Storage {
 public:
+	typedef Common::BaseCallback< Common::Array<StorageFile> > *FileArrayCallback;
+	typedef Common::BaseCallback<Common::ReadStream *> *ReadStreamCallback;
+	typedef Common::BaseCallback<StorageInfo> *StorageInfoCallback;
+	typedef Common::BaseCallback<bool> *BoolCallback;
+
 	Storage() {}
 	virtual ~Storage() {}
 
-	/** Returns pointer to Common::Array<StorageFile>. */
-	virtual void listDirectory(Common::String path, Common::BaseCallback< Common::Array<StorageFile> > *callback) = 0;
+	/** Returns Common::Array<StorageFile>. */
+	virtual void listDirectory(Common::String path, FileArrayCallback callback) = 0;
 
 	/** Calls the callback when finished. */
-	virtual void upload(Common::String path, Common::ReadStream* contents, Common::BaseCallback<bool> *callback) = 0;
+	virtual void upload(Common::String path, Common::ReadStream* contents, BoolCallback callback) = 0;
 
 	/** Returns pointer to Common::ReadStream. */
-	virtual void download(Common::String path, Common::BaseCallback<Common::ReadStream> *callback) = 0;
+	virtual void download(Common::String path, ReadStreamCallback callback) = 0;
 
 	/** Calls the callback when finished. */
-	virtual void remove(Common::String path, Common::BaseCallback<bool> *callback) = 0;
+	virtual void remove(Common::String path, BoolCallback callback) = 0;
 
 	/** Calls the callback when finished. */
-	virtual void syncSaves(Common::BaseCallback<bool> *callback) = 0;
+	virtual void syncSaves(BoolCallback callback) = 0;
 
 	/** Calls the callback when finished. */
-	virtual void createDirectory(Common::String path, Common::BaseCallback<bool> *callback) = 0;
+	virtual void createDirectory(Common::String path, BoolCallback callback) = 0;
 
 	/** Calls the callback when finished. */
-	virtual void touch(Common::String path, Common::BaseCallback<bool> *callback) = 0;
+	virtual void touch(Common::String path, BoolCallback callback) = 0;
 
-	/** Returns pointer to the StorageInfo struct. */
-	 virtual void info(Common::BaseCallback<StorageInfo> *callback) = 0;
+	/** Returns the StorageInfo struct. */
+	virtual void info(StorageInfoCallback callback) = 0;
 
 	/** Returns whether saves sync process is running. */
 	virtual bool isSyncing() = 0;
