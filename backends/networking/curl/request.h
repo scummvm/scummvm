@@ -22,30 +22,22 @@
 
 #ifndef BACKENDS_NETWORKING_CURL_REQUEST_H
 #define BACKENDS_NETWORKING_CURL_REQUEST_H
-#include <common/callback.h>
+
+#include "common/callback.h"
 
 namespace Networking {
 
 class Request {
 protected:
-	typedef void(*SimpleCallback)(Request* request, void *result);
-
 	/**
 	* Callback, which should be called before Request returns true in handle().
 	* That's the way Requests pass the result to the code which asked to create this request.
 	*/
 
-	Common::BaseCallback* _callback;
-
-	/**
-	* Pointer, which could be set by Request creating code. It might be accessed
-	* from this Request when callback is called, for example.
-	*/
-
-	void *_pointer;
+	Common::BaseCallback<> *_callback;
 
 public:
-	Request(Common::BaseCallback* cb): _callback(cb) {};
+	Request(Common::BaseCallback<> *cb): _callback(cb) {};
 	virtual ~Request() {};
 
 	/**
@@ -55,9 +47,6 @@ public:
 	*/
 
 	virtual bool handle() = 0;
-
-	void setPointer(void *ptr) { _pointer = ptr; }
-	void *pointer() const { return _pointer;  }
 };
 
 } //end of namespace Cloud

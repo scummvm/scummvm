@@ -35,17 +35,6 @@ namespace Dropbox {
 Common::String DropboxStorage::KEY; //can't use ConfMan there yet, loading it on instance creation/auth
 Common::String DropboxStorage::SECRET; //TODO: hide these secrets somehow
 
-static void printJsonCallback(Networking::Request* rq, void *ptr) {
-	Common::JSONValue *json = (Common::JSONValue *)ptr;
-	if (json) {
-		debug("printJsonCallback:");
-		debug("%s", json->stringify(true).c_str());
-		delete json;
-	} else {
-		debug("printJsonCallback: got NULL instead of JSON!");
-	}
-}
-
 static void saveAccessTokenCallback(void *ptr) {
 	Common::JSONValue *json = (Common::JSONValue *)ptr;
 	if (json) {
@@ -69,53 +58,6 @@ static void saveAccessTokenCallback(void *ptr) {
 	}
 }
 
-void infoCallback(Networking::Request* request, void *jsonPointer) {
-	if (!request) {
-		warning("infoCallback: got NULL instead of Request");
-
-		Common::JSONValue *json = (Common::JSONValue *)jsonPointer;
-		if (json) delete json; //yeah I know we can delete NULL safely
-		return;
-	}
-
-	Storage::InfoCallback callback = (Storage::InfoCallback)request->pointer();
-
-	Common::JSONValue *json = (Common::JSONValue *)jsonPointer;
-	if (json) {
-		//Common::JSONObject result = json->asObject();
-		if (callback) {
-			callback(StorageInfo(json->stringify()));
-		}
-		delete json;
-	} else {
-		warning("infoCallback: got NULL instead of JSON!");
-	}
-}
-
-void info2Callback(Networking::Request* request, void *jsonPointer) {
-	if (!request) {
-		warning("infoCallback: got NULL instead of Request");
-
-		Common::JSONValue *json = (Common::JSONValue *)jsonPointer;
-		if (json) delete json; //yeah I know we can delete NULL safely
-		return;
-	}
-
-	Common::BaseCallback *callback = (Common::BaseCallback *)request->pointer();
-
-	Common::JSONValue *json = (Common::JSONValue *)jsonPointer;
-	if (json) {
-		//Common::JSONObject result = json->asObject();
-		if (callback) {
-			(*callback)(new StorageInfo(json->stringify()));
-			delete callback;
-		}
-		delete json;
-	} else {
-		warning("infoCallback: got NULL instead of JSON!");
-	}
-}
-
 DropboxStorage::DropboxStorage(Common::String accessToken, Common::String userId): _token(accessToken), _uid(userId) {
 	curl_global_init(CURL_GLOBAL_ALL);
 }
@@ -124,41 +66,42 @@ DropboxStorage::~DropboxStorage() {
 	curl_global_cleanup();
 }
 
-void syncSavesInfoCallback(StorageInfo info) {
-	debug("info: %s", info.info().c_str());
+void DropboxStorage::syncSaves(Common::BaseCallback<bool> *callback) {
+	//this is not the real syncSaves() implementation
+	info(new Common::Callback<DropboxStorage, StorageInfo>(this, &DropboxStorage::infoMethodCallback));
+	//that line meant the following:
+	//"please, do the info API request and, when it's finished, call the infoMethodCallback() of me"
 }
 
-void DropboxStorage::infoMethodCallback(void *storageInfo) {
-	StorageInfo *info = (StorageInfo *)storageInfo;
-	debug("info: %s", info->info().c_str());
-}
-
-void DropboxStorage::syncSaves(OperationCallback callback) {
-	//this is not the real syncSaves() implementation	
-	info2(new Common::Callback<DropboxStorage>(this, &DropboxStorage::infoMethodCallback));
-}
-
-void DropboxStorage::info(InfoCallback callback) {	
-	/*
-	Networking::CurlJsonRequest *request = new Networking::CurlJsonRequest(infoCallback, "https://api.dropboxapi.com/1/account/info");
-	request->addHeader("Authorization: Bearer " + _token);
-	ConnMan.addRequest(request);
-
-	request->setPointer(callback);
-	*/
-}
-
-void DropboxStorage::info2BridgeCallback(Common::BaseCallback *outerCallback, void *ptr) {
-	//no NULL checks, delete and such yet
-	Common::JSONValue *json = (Common::JSONValue *)ptr;
-	(*outerCallback)(new StorageInfo(json->stringify()));
-}
-
-void DropboxStorage::info2(Common::BaseCallback *outerCallback) {
-	Common::BaseCallback *innerCallback = new Common::CallbackBridge<DropboxStorage>(this, &DropboxStorage::info2BridgeCallback, outerCallback);
+void DropboxStorage::info(Common::BaseCallback<StorageInfo> *outerCallback) {
+	Common::BaseCallback<> *innerCallback = new Common::CallbackBridge<DropboxStorage, StorageInfo>(this, &DropboxStorage::infoInnerCallback, outerCallback);
 	Networking::CurlJsonRequest *request = new Networking::CurlJsonRequest(innerCallback, "https://api.dropboxapi.com/1/account/info");
 	request->addHeader("Authorization: Bearer " + _token);
 	ConnMan.addRequest(request);
+	//that callback bridge wraps the outerCallback (passed in arguments from user) into innerCallback
+	//so, when CurlJsonRequest is finished, it calls the innerCallback
+	//innerCallback (which is DropboxStorage::infoInnerCallback in this case) processes the void *ptr
+	//and then calls the outerCallback (which wants to receive StorageInfo, not void *)
+}
+
+void DropboxStorage::infoInnerCallback(Common::BaseCallback<StorageInfo> *outerCallback, void *ptr) {	
+	Common::JSONValue *json = (Common::JSONValue *)ptr;
+	if (!json) {
+		warning("NULL passed instead of JSON");
+		delete outerCallback;
+		return;
+	}
+
+	if (outerCallback) {
+		(*outerCallback)(StorageInfo(json->stringify()));
+		delete outerCallback;
+	}
+	
+	delete json;
+}
+
+void DropboxStorage::infoMethodCallback(StorageInfo storageInfo) {
+	debug("info: %s", storageInfo.info().c_str());
 }
 
 DropboxStorage *DropboxStorage::loadFromConfig() {
@@ -212,7 +155,7 @@ void DropboxStorage::authThroughConsole() {
 }
 
 void DropboxStorage::getAccessToken(Common::String code) {
-	Common::BaseCallback *callback = new Common::GlobalFunctionCallback(saveAccessTokenCallback);
+	Common::BaseCallback<> *callback = new Common::GlobalFunctionCallback(saveAccessTokenCallback);
 	Networking::CurlJsonRequest *request = new Networking::CurlJsonRequest(callback, "https://api.dropboxapi.com/1/oauth2/token");
 	request->addPostField("code=" + code);
 	request->addPostField("grant_type=authorization_code");

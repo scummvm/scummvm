@@ -24,7 +24,6 @@
 #define BACKENDS_CLOUD_DROPBOX_STORAGE_H
 
 #include "backends/cloud/storage.h"
-#include "backends/cloud/manager.h"
 #include "common/callback.h"
 
 namespace Cloud {
@@ -40,36 +39,38 @@ class DropboxStorage: public Cloud::Storage {
 
 	static void getAccessToken(Common::String code);
 
-	void infoMethodCallback(void *serviceInfoPtr);
-
 public:	
 	virtual ~DropboxStorage();
 
-	/** Returns pointer to Common::Array<CloudFile>. */
-	virtual void listDirectory(Common::String path, ListDirectoryCallback callback) {} //TODO
+	/** Returns pointer to Common::Array<StorageFile>. */
+	virtual void listDirectory(Common::String path, Common::BaseCallback< Common::Array<StorageFile> > *callback) {} //TODO
 
 	/** Calls the callback when finished. */
-	virtual void upload(Common::String path, Common::ReadStream* contents, OperationCallback callback) {} //TODO
+	virtual void upload(Common::String path, Common::ReadStream* contents, Common::BaseCallback<bool> *callback) {} //TODO
 
 	/** Returns pointer to Common::ReadStream. */
-	virtual void download(Common::String path, DownloadCallback callback) {} //TODO
+	virtual void download(Common::String path, Common::BaseCallback<Common::ReadStream> *callback) {} //TODO
 
 	/** Calls the callback when finished. */
-	virtual void remove(Common::String path, OperationCallback callback) {} //TODO
+	virtual void remove(Common::String path, Common::BaseCallback<bool> *callback) {} //TODO
 
 	/** Calls the callback when finished. */
-	virtual void syncSaves(OperationCallback callback);
+	virtual void syncSaves(Common::BaseCallback<bool> *callback);
 
 	/** Calls the callback when finished. */
-	virtual void createDirectory(Common::String path, OperationCallback callback) {} //TODO
+	virtual void createDirectory(Common::String path, Common::BaseCallback<bool> *callback) {} //TODO
 
 	/** Calls the callback when finished. */
-	virtual void touch(Common::String path, OperationCallback callback) {} //TODO
+	virtual void touch(Common::String path, Common::BaseCallback<bool> *callback) {} //TODO
 
-	/** Returns pointer to the ServiceInfo struct. */
-	virtual void info(InfoCallback callback);
-	void info2(Common::BaseCallback *outerCallback);
-	void info2BridgeCallback(Common::BaseCallback *outerCallback, void *ptr);
+	/** Returns pointer to the StorageInfo struct. */
+	virtual void info(Common::BaseCallback<StorageInfo> *callback);
+
+	/** This is what is called by CurlJsonRequest. */
+	void infoInnerCallback(Common::BaseCallback<StorageInfo> *outerCallback, void *ptr);
+
+	/** This is what is called by infoInnerCallback() (it's its outer callback). */
+	void infoMethodCallback(StorageInfo storageInfo);
 
 	/** Returns whether saves sync process is running. */
 	virtual bool isSyncing() { return false; } //TODO

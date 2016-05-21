@@ -31,7 +31,7 @@
 
 namespace Networking {
 
-CurlJsonRequest::CurlJsonRequest(Common::BaseCallback* cb, const char *url) : Request(cb), _stream(0), _headersList(0), _contentsStream(DisposeAfterUse::YES) {
+CurlJsonRequest::CurlJsonRequest(Common::BaseCallback<> *cb, const char *url): Request(cb), _stream(0), _headersList(0), _contentsStream(DisposeAfterUse::YES) {
 	_url = url;
 }
 

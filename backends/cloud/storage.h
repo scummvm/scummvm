@@ -26,6 +26,7 @@
 #include "common/array.h"
 #include "common/stream.h"
 #include "common/str.h"
+#include "common/callback.h"
 
 namespace Cloud {
 
@@ -70,37 +71,32 @@ public:
 
 class Storage {
 public:
-	typedef void(*ListDirectoryCallback)(Common::Array<StorageFile>& result);
-	typedef void(*DownloadCallback)(Common::ReadStream* result);
-	typedef void(*InfoCallback)(StorageInfo result);
-	typedef void(*OperationCallback)(bool successed);
-
 	Storage() {}
 	virtual ~Storage() {}
 
-	/** Returns pointer to Common::Array<CloudFile>. */
-	virtual void listDirectory(Common::String path, ListDirectoryCallback callback) = 0;
+	/** Returns pointer to Common::Array<StorageFile>. */
+	virtual void listDirectory(Common::String path, Common::BaseCallback< Common::Array<StorageFile> > *callback) = 0;
 
 	/** Calls the callback when finished. */
-	virtual void upload(Common::String path, Common::ReadStream* contents, OperationCallback callback) = 0;
+	virtual void upload(Common::String path, Common::ReadStream* contents, Common::BaseCallback<bool> *callback) = 0;
 
 	/** Returns pointer to Common::ReadStream. */
-	virtual void download(Common::String path, DownloadCallback callback) = 0;
+	virtual void download(Common::String path, Common::BaseCallback<Common::ReadStream> *callback) = 0;
 
 	/** Calls the callback when finished. */
-	virtual void remove(Common::String path, OperationCallback callback) = 0;
+	virtual void remove(Common::String path, Common::BaseCallback<bool> *callback) = 0;
 
 	/** Calls the callback when finished. */
-	virtual void syncSaves(OperationCallback callback) = 0;
+	virtual void syncSaves(Common::BaseCallback<bool> *callback) = 0;
 
 	/** Calls the callback when finished. */
-	virtual void createDirectory(Common::String path, OperationCallback callback) = 0;
+	virtual void createDirectory(Common::String path, Common::BaseCallback<bool> *callback) = 0;
 
 	/** Calls the callback when finished. */
-	virtual void touch(Common::String path, OperationCallback callback) = 0;
+	virtual void touch(Common::String path, Common::BaseCallback<bool> *callback) = 0;
 
-	/** Returns pointer to the ServiceInfo struct. */
-	virtual void info(InfoCallback callback) = 0;
+	/** Returns pointer to the StorageInfo struct. */
+	 virtual void info(Common::BaseCallback<StorageInfo> *callback) = 0;
 
 	/** Returns whether saves sync process is running. */
 	virtual bool isSyncing() = 0;

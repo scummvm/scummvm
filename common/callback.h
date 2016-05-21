@@ -25,45 +25,116 @@
 
 namespace Common {
 
-class BaseCallback {
+/**
+* BaseCallback<S> is a simple base class for object-oriented callbacks.
+*
+* Object-oriented callbacks are such callbacks that know exact instance
+* which method must be called.
+*
+* For backwards compatibility purposes, there is a GlobalFunctionCallback,
+* which is BaseCallback<void *>, so it can be used with global C-like
+* functions too.
+*
+* <S> is the type, which is passed to operator() of this callback.
+* This allows you to specify that you accept a callback, which wants
+* to receive an <S> object.
+*/
+
+template<typename S = void *> class BaseCallback {
 public:
 	BaseCallback() {}
 	virtual ~BaseCallback() {}
-	virtual void operator()(void *ptr) = 0;
+	virtual void operator()(S data) = 0;
 };
 
-class GlobalFunctionCallback: public BaseCallback {
+/**
+* GlobalFunctionCallback is a simple wrapper for global C functions.
+*
+* If there is a method, which accepts BaseCallback<void *>, you can
+* easily pass your C function by passing
+*     new GlobalFunctionCallback(yourFunction)
+*/
+
+class GlobalFunctionCallback: public BaseCallback<void *> {
 	typedef void(*GlobalFunction)(void *result);
 	GlobalFunction _callback;
 
 public:
 	GlobalFunctionCallback(GlobalFunction cb): _callback(cb) {}
 	virtual ~GlobalFunctionCallback() {}
-	virtual void operator()(void *ptr) {
-		if (_callback) _callback(ptr);
+	virtual void operator()(void *data) {
+		if (_callback) _callback(data);
 	}
 };
 
-template<class T> class Callback: public BaseCallback {
-	typedef void(T::*TMethod)(void *);
+/**
+* Callback<T, S> implements an object-oriented callback.
+*
+* <T> stands for a class which method you want to call.
+* <S>, again, is the type of an object passed to operator().
+*
+* So, if you have void MyClass::myMethod(AnotherClass) method,
+* the corresponding callback is Callback<MyClass, AnotherClass>.
+* You create it similarly to this:
+*     new Callback<MyClass, AnotherClass>(
+*         pointerToMyClassObject,
+*         &MyClass::myMethod
+*     )
+*/
+
+template<class T, typename S = void *> class Callback: public BaseCallback<S> {
+protected:
+	typedef void(T::*TMethod)(S);
 	T *_object;
 	TMethod _method;
 public:
 	Callback(T *object, TMethod method): _object(object), _method(method) {}
 	virtual ~Callback() {}
-	void operator()(void *ptr) { (_object->*_method)(ptr); }
+	void operator()(S data) { (_object->*_method)(data); }
 };
 
-template<class T> class CallbackBridge: public BaseCallback {
-	typedef void(T::*TCallbackMethod)(BaseCallback *, void *);
+/**
+* CallbackBridge<T, OS, S> helps you to chain callbacks.
+*
+* CallbackBridge keeps a pointer to BaseCallback<OS>.
+* When its operator() is called, it passes this pointer
+* along with the actual data (of type <S>) to the method
+* of <T> class.
+*
+* This is needed when you have to call a callback only
+* when your own callback is called. So, your callback
+* is "inner" and the other one is "outer".
+*
+* CallbackBridge implements the "inner" one and calls
+* the method you wanted. It passes the "outer", so you
+* can call it from your method. You can ignore it, but
+* probably there is no point in using CallbackBridge then.
+*
+* So, if you receive a BaseCallback<SomeClass> callback
+* and you want to call it from your MyClass::myMethod method,
+* you should create CallbackBridge<MyClass, SomeClass, S>,
+* where <S> is data type you want to receive in MyClass::myMethod.
+*
+* You create it similarly to this:
+*     new Callback<MyClass, SomeClass, AnotherClass>(
+*         pointerToMyClassObject,
+*         &MyClass::myMethod,
+*         outerCallback
+*     )
+* where `outerCallback` is BaseCallback<SomeClass> and `myMethod` is:
+* void MyClass::myMethod(BaseCallback<SomeClass> *, AnotherClass)
+*/
+
+template<class T, typename OS, typename S = void *> class CallbackBridge: public BaseCallback<S> {
+	typedef void(T::*TCallbackMethod)(BaseCallback<OS> *, S);
 	T *_object;
 	TCallbackMethod _method;
-	BaseCallback *_outerCallback;
+	BaseCallback<OS> *_outerCallback;
 public:
-	CallbackBridge(T *object, TCallbackMethod method, BaseCallback *outerCallback):
+	CallbackBridge(T *object, TCallbackMethod method, BaseCallback<OS> *outerCallback):
 		_object(object), _method(method), _outerCallback(outerCallback) {}
 	virtual ~CallbackBridge() {}
-	void operator()(void *ptr) { (_object->*_method)(_outerCallback, ptr); }
+	void operator()(S data) { (_object->*_method)(_outerCallback, data); }
 };
 
 } // End of namespace Common
