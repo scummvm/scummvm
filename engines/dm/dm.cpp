@@ -9,12 +9,20 @@
 #include "engines/engine.h"
 #include "graphics/palette.h"
 #include "common/file.h"
+#include "common/events.h"
 
 #include "dm/dm.h"
 #include "dm/gfx.h"
 #include "dm/dungeonman.h"
 
 namespace DM {
+
+int8 dirIntoStepCountEast[4] = {0 /* North */, 1 /* East */, 0 /* West */, -1 /* South */};
+int8 dirIntoStepCountNorth[4] = {-1 /* North */, 0 /* East */, 1 /* West */, 0 /* South */};
+
+void turnDirRight(direction &dir) { dir = (direction)((dir + 1) & 3); }
+void turnDirLeft(direction &dir) { dir = (direction)((dir - 1) & 3); }
+bool isOrientedWestEast(direction dir) { return dir & 1; }
 
 
 DMEngine::DMEngine(OSystem *syst) : Engine(syst), _console(nullptr) {
@@ -59,7 +67,8 @@ Common::Error DMEngine::run() {
 	_displayMan->loadGraphics();
 
 	_dungeonMan->loadDungeonFile();
-	_dungeonMan->setCurrentMapAndPartyMap(0);
+	int16 dummyMapIndex = 0;
+	_dungeonMan->setCurrentMapAndPartyMap(dummyMapIndex);
 
 
 
@@ -68,18 +77,44 @@ Common::Error DMEngine::run() {
 
 	_displayMan->loadPalette(gPalCredits);
 
-	byte pos[] = {kDirSouth, 1, 3, kDirSouth, 1, 4, kDirSouth, 1, 5, kDirSouth, 1, 6, kDirSouth, 1, 7, kDirEast, 1, 7};
-
-	uint16 i = 0; //TODO: testing, please delete me
+	CurrMapData &currMap = _dungeonMan->_currMap;
 	while (true) {
+		Common::Event event;
+		while (_system->getEventManager()->pollEvent(event)) {
+			if (event.type == Common::EVENT_KEYDOWN && !event.synthetic)
+				switch (event.kbd.keycode) {
+				case Common::KEYCODE_w:
+					_dungeonMan->mapCoordsAfterRelMovement(currMap.partyDir, 1, 0, currMap.partyPosX, currMap.partyPosY);
+					break;
+				case Common::KEYCODE_a:
+					_dungeonMan->mapCoordsAfterRelMovement(currMap.partyDir, 0, -1, currMap.partyPosX, currMap.partyPosY);
+					break;
+				case Common::KEYCODE_s:
+					_dungeonMan->mapCoordsAfterRelMovement(currMap.partyDir, -1, 0, currMap.partyPosX, currMap.partyPosY);
+					break;
+				case Common::KEYCODE_d:
+					_dungeonMan->mapCoordsAfterRelMovement(currMap.partyDir, 0, 1, currMap.partyPosX, currMap.partyPosY);
+					break;
+				case Common::KEYCODE_q:
+					turnDirLeft(currMap.partyDir);
+					break;
+				case Common::KEYCODE_e:
+					turnDirRight(currMap.partyDir);
+					break;
+				case Common::KEYCODE_UP:
+					if (dummyMapIndex < 13)
+						_dungeonMan->setCurrentMapAndPartyMap(++dummyMapIndex);
+					break;
+				case Common::KEYCODE_DOWN:
+					if (dummyMapIndex > 0)
+						_dungeonMan->setCurrentMapAndPartyMap(--dummyMapIndex);
+					break;
+				}
+		}
 		_displayMan->clearScreen(kColorBlack);
-		_displayMan->drawDungeon((direction)pos[i*3 + 0], pos[i*3 + 1], pos[i*3 + 2]);
-		//_displayMan->drawDungeon(_dungeonMan->_currMap.partyDir, _dungeonMan->_currMap.partyPosX, _dungeonMan->_currMap.partyPosY + i);
+		_displayMan->drawDungeon(_dungeonMan->_currMap.partyDir, _dungeonMan->_currMap.partyPosX, _dungeonMan->_currMap.partyPosY);
 		_displayMan->updateScreen();
-		_system->delayMillis(1000); //TODO: testing, please set me to 10
-		if(i == 0)
-			_system->delayMillis(0000); //TODO: testing, please set me to 10
-		if (++i == 6) i = 0;
+		_system->delayMillis(10);
 	}
 
 

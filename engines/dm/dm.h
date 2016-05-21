@@ -20,8 +20,15 @@ enum direction {
 	kDirWest = 3
 };
 
-int16 ordinalToIndex(int16 val); // @ M01_ORDINAL_TO_INDEX
-int16 indexToOrdinal(int16 val); // @ M00_INDEX_TO_ORDINAL
+// TODO: refactor direction into a class
+extern int8 dirIntoStepCountEast[4];
+extern int8 dirIntoStepCountNorth[4];
+
+void turnDirRight(direction &dir);
+void turnDirLeft(direction &dir);
+bool isOrientedWestEast(direction dir);
+
+
 enum ThingType {
 	kPartyThingType = -1, // @ CM1_THING_TYPE_PARTY, special value
 	kDoorThingType = 0,

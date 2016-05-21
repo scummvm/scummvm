@@ -5,18 +5,6 @@
 
 
 
-
-namespace DM {
-// TODO: refactor direction into a class
-int8 dirIntoStepCountEast[4] = {0 /* North */, 1 /* East */, 0 /* West */, -1 /* South */};
-int8 dirIntoStepCountNorth[4] = {-1 /* North */, 0 /* East */, 1 /* West */, 0 /* South */};
-
-void turnDirRight(direction &dir) { dir = (direction)((dir + 1) & 3); }
-bool isOrientedWestEast(direction dir) { return dir & 1; }
-
-
-}
-
 using namespace DM;
 
 CreatureInfo gCreatureInfo[kCreatureTypeCount] = { // @ G0243_as_Graphic559_CreatureInfo

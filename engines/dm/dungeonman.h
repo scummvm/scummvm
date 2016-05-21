@@ -9,7 +9,8 @@ namespace DM {
 class DungeonMan;
 struct Map;
 
-
+int16 ordinalToIndex(int16 val); // @ M01_ORDINAL_TO_INDEX
+int16 indexToOrdinal(int16 val); // @ M00_INDEX_TO_ORDINAL
 
 struct CreatureInfo {
 	byte creatureAspectIndex;
@@ -360,8 +361,8 @@ struct DungeonData {
 
 struct CurrMapData {
 	direction partyDir; // @ G0308_i_PartyDirection
-	uint16 partyPosX; // @ G0306_i_PartyMapX
-	uint16 partyPosY; // @ G0307_i_PartyMapY
+	int16 partyPosX; // @ G0306_i_PartyMapX
+	int16 partyPosY; // @ G0307_i_PartyMapY
 	uint8 currPartyMapIndex; // @ G0309_i_PartyMapIndex
 
 	uint8 index; // @ G0272_i_CurrentMapIndex
