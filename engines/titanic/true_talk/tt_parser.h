@@ -33,6 +33,7 @@ namespace Titanic {
 enum NumberFlag { NF_1 = 1, NF_2 = 2, NF_4 = 4, NF_8 = 8, NF_10 = 0x10 };
 
 class CScriptHandler;
+class TTconcept;
 
 struct NumberEntry {
 	CString _text;
@@ -61,6 +62,7 @@ private:
 	StringArray _phrases;
 	NumberArray _numbers;
 	TTparserNode *_nodesP;
+	TTconcept *_conceptP;
 private:
 	/**
 	 * Loads the various replacement string data arrays
@@ -134,6 +136,10 @@ private:
 	 */
 	void addNode(uint tag);
 
+	/**
+	 * Add a concept node
+	 */
+	int addConcept(TTconcept *concept);
 public:
 	CScriptHandler *_owner;
 	TTsentenceSub *_sentenceSub;

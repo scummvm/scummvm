@@ -23,6 +23,7 @@
 #include "titanic/true_talk/tt_parser.h"
 #include "titanic/true_talk/script_handler.h"
 #include "titanic/true_talk/tt_action.h"
+#include "titanic/true_talk/tt_concept.h"
 #include "titanic/true_talk/tt_sentence.h"
 #include "titanic/true_talk/tt_word.h"
 #include "titanic/titanic.h"
@@ -31,7 +32,7 @@ namespace Titanic {
 
 TTparser::TTparser(CScriptHandler *owner) : _owner(owner), _sentenceSub(nullptr),
 		_sentence(nullptr), _fieldC(0), _field10(0), _field14(0), _field18(0),
-		_nodesP(nullptr) {
+		_nodesP(nullptr), _conceptP(nullptr) {
 	loadArrays();
 }
 
@@ -646,6 +647,17 @@ void TTparser::addNode(uint tag) {
 	_nodesP = newNode;
 }
 
+int TTparser::addConcept(TTconcept *concept) {
+	if (!concept)
+		return SS_5;
+
+	if (_conceptP)
+		concept->_nextP = _conceptP;
+	_conceptP = concept;
+
+	return SS_VALID;
+}
+
 int TTparser::fn2(TTword *word) {
 	switch (word->_id) {
 	case 600:
@@ -670,7 +682,26 @@ int TTparser::fn2(TTword *word) {
 }
 
 int TTparser::checkReferent(TTpronoun *pronoun) {
-	// TODO
+	TTconcept *concept;
+
+	switch (pronoun->getVal()) {
+	case 0:
+		return 0;
+
+	case 1:
+		concept = new TTconcept(_owner->_script, ST_ROOM_SCRIPT);
+		break;
+
+	case 2:
+		concept = new TTconcept(_sentence->_npcScript, ST_NPC_SCRIPT);
+		break;
+
+	default:
+		concept = new TTconcept(pronoun, (ScriptType)pronoun->getVal());
+		break;
+	}
+
+	addConcept(concept);
 	return 0;
 }
 

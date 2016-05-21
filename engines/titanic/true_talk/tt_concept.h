@@ -34,7 +34,6 @@ class TTword;
 
 class TTconcept {
 private:
-	int _field0;
 	TTscriptBase *_scriptP;
 	TTword *_wordP;
 	TTstring _string1;
@@ -60,13 +59,20 @@ private:
 	void setScriptType(ScriptType scriptType);
 
 	/**
+	 * Sets up the concept for a word reference
+	 */
+	int initializeWordRef(TTword *word);
+
+	/**
 	 * Resets the concept
 	 */
 	void reset();
 public:
+	TTconcept *_nextP;
+public:
 	TTconcept();
 	TTconcept(TTscriptBase *script, ScriptType scriptType);
-
+	TTconcept(TTword *word, ScriptType scriptType);
 };
 
 } // End of namespace Titanic

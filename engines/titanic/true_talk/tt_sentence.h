@@ -76,8 +76,6 @@ private:
 	int _field34;
 	int _field38;
 	TTsentenceNode *_nodesP;
-	TTroomScript *_roomScript;
-	TTnpcScript *_npcScript;
 	int _field5C;
 	int _status;
 private:
@@ -90,6 +88,8 @@ public:
 	TTstring _initialLine;
 	TTstring _normalizedLine;
 	int _field58;
+	TTroomScript *_roomScript;
+	TTnpcScript *_npcScript;
 public:
 	TTsentence(int inputCtr, const TTstring &line, CScriptHandler *owner,
 		TTroomScript *roomScript, TTnpcScript *npcScript);

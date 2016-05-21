@@ -50,7 +50,6 @@ public:
 class CScriptHandler {
 private:
 	CTitleEngine *_owner;
-	TTscriptBase *_script;
 	CExeResources &_resources;
 	int _field10;
 	CScriptHandlerSub1 _sub1;
@@ -63,6 +62,7 @@ private:
 	int _field30;
 public:
 	TTvocab *_vocab;
+	TTscriptBase *_script;
 public:
 	CScriptHandler(CTitleEngine *owner, int val1, int val2);
 	~CScriptHandler();

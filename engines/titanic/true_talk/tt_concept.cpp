@@ -43,6 +43,21 @@ TTconcept::TTconcept(TTscriptBase *script, ScriptType scriptType) :
 		reset();
 }
 
+TTconcept::TTconcept(TTword *word, ScriptType scriptType) :
+	_string1(" "), _string2(" "), _wordP(nullptr), _scriptP(nullptr) {
+	
+	if (!word || !setStatus() || word->getStatus()) {
+		_status = SS_5;
+	} else {
+		_status = initializeWordRef(word);
+		if (!_status)
+			setScriptType(scriptType);
+	}
+
+	if (_status)
+		reset();
+}
+
 bool TTconcept::setStatus() {
 	if (_string1.isValid() && _string2.isValid()) {
 		_status = SS_VALID;
@@ -54,7 +69,7 @@ bool TTconcept::setStatus() {
 }
 
 void TTconcept::setScriptType(ScriptType scriptType) {
-	_field0 = 0;
+	_nextP = nullptr;
 	_field14 = 0;
 	_scriptType = scriptType;
 	_field1C = -1;
@@ -64,6 +79,12 @@ void TTconcept::setScriptType(ScriptType scriptType) {
 	_field34 = 0;
 	_field38 = 0;
 	_status = 0;
+}
+
+int TTconcept::initializeWordRef(TTword *word) {
+	delete _wordP;
+	_wordP = word;
+	return 0;
 }
 
 void TTconcept::reset() {
