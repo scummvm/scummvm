@@ -32,6 +32,18 @@ public:
 	virtual void operator()(void *ptr) = 0;
 };
 
+class GlobalFunctionCallback: public BaseCallback {
+	typedef void(*GlobalFunction)(void *result);
+	GlobalFunction _callback;
+
+public:
+	GlobalFunctionCallback(GlobalFunction cb): _callback(cb) {}
+	virtual ~GlobalFunctionCallback() {}
+	virtual void operator()(void *ptr) {
+		if (_callback) _callback(ptr);
+	}
+};
+
 template<class T> class Callback: public BaseCallback {
 	typedef void(T::*TMethod)(void *);
 	T *_object;
@@ -40,6 +52,18 @@ public:
 	Callback(T *object, TMethod method): _object(object), _method(method) {}
 	virtual ~Callback() {}
 	void operator()(void *ptr) { (_object->*_method)(ptr); }
+};
+
+template<class T> class CallbackBridge: public BaseCallback {
+	typedef void(T::*TCallbackMethod)(BaseCallback *, void *);
+	T *_object;
+	TCallbackMethod _method;
+	BaseCallback *_outerCallback;
+public:
+	CallbackBridge(T *object, TCallbackMethod method, BaseCallback *outerCallback):
+		_object(object), _method(method), _outerCallback(outerCallback) {}
+	virtual ~CallbackBridge() {}
+	void operator()(void *ptr) { (_object->*_method)(_outerCallback, ptr); }
 };
 
 } // End of namespace Common

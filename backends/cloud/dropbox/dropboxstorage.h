@@ -68,7 +68,8 @@ public:
 
 	/** Returns pointer to the ServiceInfo struct. */
 	virtual void info(InfoCallback callback);
-	void info2(Common::Callback<DropboxStorage> *callback);
+	void info2(Common::BaseCallback *outerCallback);
+	void info2BridgeCallback(Common::BaseCallback *outerCallback, void *ptr);
 
 	/** Returns whether saves sync process is running. */
 	virtual bool isSyncing() { return false; } //TODO

@@ -46,7 +46,7 @@ static void printJsonCallback(Networking::Request* rq, void *ptr) {
 	}
 }
 
-static void saveAccessTokenCallback(Networking::Request* rq, void *ptr) {
+static void saveAccessTokenCallback(void *ptr) {
 	Common::JSONValue *json = (Common::JSONValue *)ptr;
 	if (json) {
 		debug("saveAccessTokenCallback:");
@@ -139,19 +139,26 @@ void DropboxStorage::syncSaves(OperationCallback callback) {
 }
 
 void DropboxStorage::info(InfoCallback callback) {	
+	/*
 	Networking::CurlJsonRequest *request = new Networking::CurlJsonRequest(infoCallback, "https://api.dropboxapi.com/1/account/info");
 	request->addHeader("Authorization: Bearer " + _token);
 	ConnMan.addRequest(request);
 
 	request->setPointer(callback);
+	*/
 }
 
-void DropboxStorage::info2(Common::Callback<DropboxStorage> *callback) {
-	Networking::CurlJsonRequest *request = new Networking::CurlJsonRequest(info2Callback, "https://api.dropboxapi.com/1/account/info");
+void DropboxStorage::info2BridgeCallback(Common::BaseCallback *outerCallback, void *ptr) {
+	//no NULL checks, delete and such yet
+	Common::JSONValue *json = (Common::JSONValue *)ptr;
+	(*outerCallback)(new StorageInfo(json->stringify()));
+}
+
+void DropboxStorage::info2(Common::BaseCallback *outerCallback) {
+	Common::BaseCallback *innerCallback = new Common::CallbackBridge<DropboxStorage>(this, &DropboxStorage::info2BridgeCallback, outerCallback);
+	Networking::CurlJsonRequest *request = new Networking::CurlJsonRequest(innerCallback, "https://api.dropboxapi.com/1/account/info");
 	request->addHeader("Authorization: Bearer " + _token);
 	ConnMan.addRequest(request);
-
-	request->setPointer(callback);
 }
 
 DropboxStorage *DropboxStorage::loadFromConfig() {
@@ -205,7 +212,8 @@ void DropboxStorage::authThroughConsole() {
 }
 
 void DropboxStorage::getAccessToken(Common::String code) {
-	Networking::CurlJsonRequest *request = new Networking::CurlJsonRequest(saveAccessTokenCallback, "https://api.dropboxapi.com/1/oauth2/token");
+	Common::BaseCallback *callback = new Common::GlobalFunctionCallback(saveAccessTokenCallback);
+	Networking::CurlJsonRequest *request = new Networking::CurlJsonRequest(callback, "https://api.dropboxapi.com/1/oauth2/token");
 	request->addPostField("code=" + code);
 	request->addPostField("grant_type=authorization_code");
 	request->addPostField("client_id=" + KEY);

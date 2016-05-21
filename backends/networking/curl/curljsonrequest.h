@@ -26,6 +26,10 @@
 #include "backends/networking/curl/request.h"
 #include "common/memstream.h"
 
+namespace Common {
+class BaseCallback;
+}
+
 struct curl_slist;
 
 namespace Networking {
@@ -43,7 +47,7 @@ class CurlJsonRequest : public Request {
 	char *getPreparedContents();
 
 public:
-	CurlJsonRequest(SimpleCallback cb, const char *url);
+	CurlJsonRequest(Common::BaseCallback *cb, const char *url);
 	virtual ~CurlJsonRequest();
 
 	virtual bool handle();

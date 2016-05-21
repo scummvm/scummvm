@@ -31,7 +31,7 @@
 
 namespace Networking {
 
-CurlJsonRequest::CurlJsonRequest(SimpleCallback cb, const char *url) : Request(cb), _stream(0), _headersList(0), _contentsStream(DisposeAfterUse::YES) {
+CurlJsonRequest::CurlJsonRequest(Common::BaseCallback* cb, const char *url) : Request(cb), _stream(0), _headersList(0), _contentsStream(DisposeAfterUse::YES) {
 	_url = url;
 }
 
@@ -75,7 +75,7 @@ bool CurlJsonRequest::handle() {
 			if (_callback) {
 				char *contents = getPreparedContents();				
 				Common::JSONValue *json = Common::JSON::parse(contents);				
-				_callback(this, json); //potential memory leak, free it in your callbacks!
+				(*_callback)(json); //potential memory leak, free it in your callbacks!
 			}
 			return true;
 		}

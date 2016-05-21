@@ -22,6 +22,7 @@
 
 #ifndef BACKENDS_NETWORKING_CURL_REQUEST_H
 #define BACKENDS_NETWORKING_CURL_REQUEST_H
+#include <common/callback.h>
 
 namespace Networking {
 
@@ -34,7 +35,7 @@ protected:
 	* That's the way Requests pass the result to the code which asked to create this request.
 	*/
 
-	SimpleCallback _callback;
+	Common::BaseCallback* _callback;
 
 	/**
 	* Pointer, which could be set by Request creating code. It might be accessed
@@ -44,7 +45,7 @@ protected:
 	void *_pointer;
 
 public:
-	Request(SimpleCallback cb): _callback(cb) {};
+	Request(Common::BaseCallback* cb): _callback(cb) {};
 	virtual ~Request() {};
 
 	/**
