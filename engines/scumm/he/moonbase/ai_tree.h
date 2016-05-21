@@ -55,7 +55,7 @@ public:
 
 	void duplicateTree(Node *sourceNode, Node *destNode);
 
-	Node *GetBaseNode() const { return pBaseNode; }
+	Node *getBaseNode() const { return pBaseNode; }
 	void setMaxDepth(int maxDepth) { m_maxDepth = maxDepth; }
 	int getMaxDepth() const { return m_maxDepth; }
 

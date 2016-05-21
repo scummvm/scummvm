@@ -108,7 +108,7 @@ public:
 
 	void enableWaterFlag() { _waterFlag = 1; }
 	void disableWaterFlag() { _waterFlag = 0; }
-	int GetWaterFlag() const { return _waterFlag; }
+	int getWaterFlag() const { return _waterFlag; }
 
 	virtual int numChildrenToGen();
 	virtual IContainedObject *createChildObj(int, int &);

@@ -553,8 +553,15 @@ protected:
 	byte VAR_NUM_PALETTES;
 	byte VAR_NUM_UNK;
 
+public: // FIXME. TODO. Should be protected. Used by Moonbase
 	byte VAR_U32_VERSION;
 	byte VAR_U32_ARRAY_UNK;
+	byte VAR_U32_USER_VAR_A;
+	byte VAR_U32_USER_VAR_B;
+	byte VAR_U32_USER_VAR_C;
+	byte VAR_U32_USER_VAR_D;
+	byte VAR_U32_USER_VAR_E;
+	byte VAR_U32_USER_VAR_F;
 };
 
 class ScummEngine_v99he : public ScummEngine_v90he {

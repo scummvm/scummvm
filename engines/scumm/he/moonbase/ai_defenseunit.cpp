@@ -123,13 +123,13 @@ int AntiAirUnit::selectWeapon(int index) {
 
 	case 2:
 		if (getState() == DUS_OFF) {
-			if (GetPlayerEnergy() > 6) {
+			if (getPlayerEnergy() > 6) {
 				if (!_vm->_rnd.getRandomNumber(3)) {
 					return ITEM_VIRUS;
 				}
 			}
 
-			if (GetPlayerEnergy() > 2) {
+			if (getPlayerEnergy() > 2) {
 				if (!_vm->_rnd.getRandomNumber(1)) {
 					return ITEM_SPIKE;
 				}
@@ -169,8 +169,8 @@ Common::Point *ShieldUnit::createTargetPos(int index, int distance, int weaponTy
 		case ITEM_CRAWLER:
 			ratio = MAX(0.0, 1.0 - (static_cast<float>(getRadius()) / static_cast<float>(distance - 20)));
 			{
-				int maxX = GetMaxX();
-				int maxY = GetMaxY();
+				int maxX = getMaxX();
+				int maxY = getMaxY();
 				int thisX = (static_cast<int>(sourceX + ratio * (getPosX() - sourceX)) + maxX) % maxX;
 				int thisY = (static_cast<int>(sourceY + ratio * (getPosY() - sourceY)) + maxY) % maxY;
 				targetPos->x = thisX;
@@ -221,8 +221,8 @@ Common::Point *ShieldUnit::createTargetPos(int index, int distance, int weaponTy
 int ShieldUnit::selectWeapon(int index) {
 	warning("Shield weapon select");
 
-	int myUnit = GetClosestUnit(getPosX(), getPosY(), GetMaxX(), GetCurrentPlayer(), 1, BUILDING_MAIN_BASE, 1, 0);
-	int dist = GetDistance(getPosX(), getPosY(), GetHubX(myUnit), GetHubY(myUnit));
+	int myUnit = getClosestUnit(getPosX(), getPosY(), getMaxX(), getCurrentPlayer(), 1, BUILDING_MAIN_BASE, 1, 0);
+	int dist = getDistance(getPosX(), getPosY(), getHubX(myUnit), getHubY(myUnit));
 
 	if ((dist < (getRadius() - 20)) && (dist > 90)) {
 		return ITEM_SPIKE;
@@ -231,7 +231,7 @@ int ShieldUnit::selectWeapon(int index) {
 	switch (index) {
 	case 0:
 		if (getState() == DUS_OFF)  {
-			if (GetPlayerEnergy() < 3) {
+			if (getPlayerEnergy() < 3) {
 				return ITEM_BOMB;
 			} else {
 				return ITEM_SPIKE;
@@ -287,11 +287,11 @@ Common::Point *MineUnit::createTargetPos(int index, int distance, int weaponType
 }
 
 int MineUnit::selectWeapon(int index) {
-	int myUnit = GetClosestUnit(getPosX(), getPosY(), GetMaxX(), GetCurrentPlayer(), 1, 0, 0, 0);
+	int myUnit = getClosestUnit(getPosX(), getPosY(), getMaxX(), getCurrentPlayer(), 1, 0, 0, 0);
 	int x = getPosX();
 	int y = getPosY();
 
-	int dist = GetDistance(x, y, GetHubX(myUnit), GetHubY(myUnit));
+	int dist = getDistance(x, y, getHubX(myUnit), getHubY(myUnit));
 
 	if ((getState() == DUS_ON) && (dist < 110)) {
 		return ITEM_EMP;
@@ -334,17 +334,17 @@ Common::Point *HubUnit::createTargetPos(int index, int distance, int weaponType,
 int HubUnit::selectWeapon(int index) {
 	warning("Hub weapon select");
 
-	int energy = GetPlayerEnergy();
+	int energy = getPlayerEnergy();
 
 	if (energy > 6) {
 		//possibly choose crawler
-		if (GetBuildingWorth(getID()) > 21) {
+		if (getBuildingWorth(getID()) > 21) {
 			return ITEM_CRAWLER;
 		}
 	}
 
 	//choose betw/ bomb and cluster
-	if (GetBuildingArmor(getID()) < 1.5) {
+	if (getBuildingArmor(getID()) < 1.5) {
 		return ITEM_CLUSTER;
 	}
 
@@ -483,17 +483,17 @@ Common::Point *EnergyUnit::createTargetPos(int index, int distance, int weaponTy
 int EnergyUnit::selectWeapon(int index) {
 	warning("Energy weapon select");
 
-	int energy = GetPlayerEnergy();
+	int energy = getPlayerEnergy();
 
 	if (energy > 6) {
 		//possibly choose crawler
-		if (GetBuildingWorth(getID()) > 21) {
+		if (getBuildingWorth(getID()) > 21) {
 			return ITEM_CRAWLER;
 		}
 	}
 
 	//choose betw/ bomb and cluster
-	if (GetBuildingArmor(getID()) < 1.5) {
+	if (getBuildingArmor(getID()) < 1.5) {
 		return ITEM_CLUSTER;
 	}
 
@@ -539,17 +539,17 @@ Common::Point *OffenseUnit::createTargetPos(int index, int distance, int weaponT
 int OffenseUnit::selectWeapon(int index) {
 	warning("Offense weapon select");
 
-	int energy = GetPlayerEnergy();
+	int energy = getPlayerEnergy();
 
 	if (energy > 6) {
 		//possibly choose crawler
-		if (GetBuildingWorth(getID()) > 21) {
+		if (getBuildingWorth(getID()) > 21) {
 			return ITEM_CRAWLER;
 		}
 	}
 
 	//choose betw/ bomb and cluster
-	if (GetBuildingArmor(getID()) < 1.5) {
+	if (getBuildingArmor(getID()) < 1.5) {
 		return ITEM_CLUSTER;
 	}
 
@@ -589,13 +589,13 @@ Common::Point *CrawlerUnit::createTargetPos(int index, int distance, int weaponT
 
 int CrawlerUnit::selectWeapon(int index) {
 	warning("Crawler weapon select");
-	int myUnit = GetClosestUnit(getPosX(), getPosY(), GetMaxX(), GetCurrentPlayer(), 1, 0, 0, 0);
-	int dist = GetDistance(GetHubX(myUnit), GetHubY(myUnit), getPosX(), getPosY());
+	int myUnit = getClosestUnit(getPosX(), getPosY(), getMaxX(), getCurrentPlayer(), 1, 0, 0, 0);
+	int dist = getDistance(getHubX(myUnit), getHubY(myUnit), getPosX(), getPosY());
 
 	int x = getPosX();
 	int y = getPosY();
-	int energy = GetPlayerEnergy();
-	int terrain = GetTerrain(x, y);
+	int energy = getPlayerEnergy();
+	int terrain = getTerrain(x, y);
 
 	if (terrain != TERRAIN_TYPE_WATER) {
 		if ((energy > 2) && (dist < 220)) {

@@ -35,6 +35,7 @@ public:
 	~Moonbase();
 
 	int readFromArray(int array, int y, int x);
+	int callScummFunction(int scriptNumber, int paramCount,...);
 
 	void blitT14WizImage(uint8 *dst, int dstw, int dsth, int dstPitch, const Common::Rect *clipBox,
 			 uint8 *wizd, int srcx, int srcy, int rawROP, int paramROP);

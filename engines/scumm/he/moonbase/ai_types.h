@@ -77,19 +77,19 @@ public:
 		}
 	}
 
-	int GetID() const { return _id; }
-	char *GetNameString() const { return _nameString; }
-	int GetBehaviorVariation() const { return _behaviorVariation; }
-	int GetTargetVariation() const { return _targetVariation; }
-	int GetAngleVariation() const { return _angleVariation; }
-	int GetPowerVariation() const { return _powerVariation; }
+	int getID() const { return _id; }
+	char *getNameString() const { return _nameString; }
+	int getBehaviorVariation() const { return _behaviorVariation; }
+	int getTargetVariation() const { return _targetVariation; }
+	int getAngleVariation() const { return _angleVariation; }
+	int getPowerVariation() const { return _powerVariation; }
 
-	void SetID(int id) { _id = id; }
-	void SetNameString(char *nameString) { _nameString = nameString; }
-	void SetBehaviorVariation(int behaviorVariation) { _behaviorVariation = behaviorVariation; }
-	void SetTargetVariation(int targetVariation) { _targetVariation = targetVariation; }
-	void SetAngleVariation(int angleVariation) { _angleVariation = angleVariation; }
-	void SetPowerVariation(int powerVariation) { _powerVariation = powerVariation; }
+	void setID(int id) { _id = id; }
+	void setNameString(char *nameString) { _nameString = nameString; }
+	void setBehaviorVariation(int behaviorVariation) { _behaviorVariation = behaviorVariation; }
+	void setTargetVariation(int targetVariation) { _targetVariation = targetVariation; }
+	void setAngleVariation(int angleVariation) { _angleVariation = angleVariation; }
+	void setPowerVariation(int powerVariation) { _powerVariation = powerVariation; }
 };
 
 } // End of namespace Scumm

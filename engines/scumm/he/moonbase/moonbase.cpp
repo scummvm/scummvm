@@ -38,6 +38,22 @@ int Moonbase::readFromArray(int array, int y, int x) {
 	return _vm->readArray(116, y, x);
 }
 
+int Moonbase::callScummFunction(int scriptNumber, int paramCount,...) {
+	va_list va_params;
+	va_start(va_params, paramCount);
+	int args[25];
+
+	for (int i = 0; i < paramCount; i++)
+		args[i] = va_arg(va_params, int);
+
+	va_end(va_params);
+
+	_vm->runScript(scriptNumber, 0, 1, args);
+
+	return _vm->pop();
+}
+
+
 void Moonbase::blitT14WizImage(uint8 *dst, int dstw, int dsth, int dstPitch, const Common::Rect *clipBox,
 		 uint8 *wizd, int x, int y, int rawROP, int paramROP) {
 	bool premulAlpa = false;

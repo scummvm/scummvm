@@ -891,6 +891,13 @@ ScummEngine_v90he::ScummEngine_v90he(OSystem *syst, const DetectorResult &dr)
 
 	if (_game.id == GID_MOONBASE)
 		_moonbase = new Moonbase(this);
+
+	VAR_U32_USER_VAR_A = 0xFF;
+	VAR_U32_USER_VAR_B = 0xFF;
+	VAR_U32_USER_VAR_C = 0xFF;
+	VAR_U32_USER_VAR_D = 0xFF;
+	VAR_U32_USER_VAR_E = 0xFF;
+	VAR_U32_USER_VAR_F = 0xFF;
 }
 
 ScummEngine_v90he::~ScummEngine_v90he() {
