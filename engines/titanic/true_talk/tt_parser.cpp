@@ -718,8 +718,14 @@ int TTparser::loadRequests(TTword *word) {
 	return status;
 }
 
-void TTparser::addToConceptList(TTword *word) {
+int TTparser::considerRequests(TTword *word) {
 	// TODO
+	return 0;
+}
+
+void TTparser::addToConceptList(TTword *word) {
+	TTconcept *concept = new TTconcept(word, ST_UNKNOWN_SCRIPT);
+	addConcept(concept);
 }
 
 void TTparser::addNode(uint tag) {

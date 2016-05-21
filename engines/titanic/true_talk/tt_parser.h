@@ -127,6 +127,8 @@ private:
 	const NumberEntry *replaceNumbers2(TTstring &line, int *startIndex);
 
 	int loadRequests(TTword *word);
+	int considerRequests(TTword *word);
+
 	void addToConceptList(TTword *word);
 	int fn2(TTword *word);
 	int checkReferent(TTpronoun *pronoun);
