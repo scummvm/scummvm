@@ -51,10 +51,12 @@ SoundHE::SoundHE(ScummEngine *parent, Audio::Mixer *mixer)
 	_heMusicTracks(0) {
 
 	memset(_heChannel, 0, sizeof(_heChannel));
+	_heSoundChannels = new Audio::SoundHandle[8]();
 }
 
 SoundHE::~SoundHE() {
 	free(_heMusic);
+	delete[] _heSoundChannels;
 }
 
 void SoundHE::addSoundToQueue(int sound, int heOffset, int heChannel, int heFlags) {
