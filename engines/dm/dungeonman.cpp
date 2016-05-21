@@ -7,6 +7,8 @@
 
 using namespace DM;
 
+
+
 CreatureInfo gCreatureInfo[kCreatureTypeCount] = { // @ G0243_as_Graphic559_CreatureInfo
 												   /* { CreatureAspectIndex, AttackSoundOrdinal, Attributes, GraphicInfo,
 												   MovementTicks, AttackTicks, Defense, BaseHealth, Attack, PoisonAttack,
@@ -435,21 +437,6 @@ Thing DungeonMan::getSquareFirstThing(int16 mapX, int16 mapY) {
 		return Thing::thingEndOfList;
 	return _dunData.squareFirstThings[index];
 }
-
-enum SquareAspectIndice {
-	kElemAspect = 0,
-	kFirstGroupOrObjectAspect = 1,
-	kRightWallOrnOrdAspect = 2,
-	kFrontWallOrnOrdAspect = 3,
-	kLeftWallOrnOrdAspect = 4,
-	kPitInvisibleAspect = 2,
-	kTeleporterVisibleAspect = 2,
-	kStairsUpAspect = 2,
-	kDoorStateAspect = 2,
-	kDoorThingIndexAspect = 3,
-	kFloorOrnOrdAspect = 4,
-	kFootprintsAspect = 0x8000 // @ MASK0x8000_FOOTPRINTS          
-};
 
 
 // TODO: get rid of the GOTOs

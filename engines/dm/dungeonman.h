@@ -12,6 +12,23 @@ struct Map;
 int16 ordinalToIndex(int16 val); // @ M01_ORDINAL_TO_INDEX
 int16 indexToOrdinal(int16 val); // @ M00_INDEX_TO_ORDINAL
 
+
+enum SquareAspectIndice {
+	kElemAspect = 0,
+	kFirstGroupOrObjectAspect = 1,
+	kRightWallOrnOrdAspect = 2,
+	kFrontWallOrnOrdAspect = 3,
+	kLeftWallOrnOrdAspect = 4,
+	kPitInvisibleAspect = 2,
+	kTeleporterVisibleAspect = 2,
+	kStairsUpAspect = 2,
+	kDoorStateAspect = 2,
+	kDoorThingIndexAspect = 3,
+	kFloorOrnOrdAspect = 4,
+	kFootprintsAspect = 0x8000 // @ MASK0x8000_FOOTPRINTS          
+};
+
+
 struct CreatureInfo {
 	byte creatureAspectIndex;
 	byte attackSoundOrdinal;

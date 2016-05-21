@@ -28,6 +28,28 @@ enum FloorSet {
 	kFloorSetStone = 0 // @ C0_FLOOR_SET_STONE
 };
 
+enum StairIndex {
+	kStairsNativeIndex_Up_Front_D3L = 0, // @ G0675_i_StairsNativeBitmapIndex_Up_Front_D3L
+	kStairsNativeIndex_Up_Front_D3C = 1, // @ G0676_i_StairsNativeBitmapIndex_Up_Front_D3C
+	kStairsNativeIndex_Up_Front_D2L = 2, // @ G0677_i_StairsNativeBitmapIndex_Up_Front_D2L
+	kStairsNativeIndex_Up_Front_D2C = 3, // @ G0678_i_StairsNativeBitmapIndex_Up_Front_D2C
+	kStairsNativeIndex_Up_Front_D1L = 4, // @ G0679_i_StairsNativeBitmapIndex_Up_Front_D1L
+	kStairsNativeIndex_Up_Front_D1C = 5, // @ G0680_i_StairsNativeBitmapIndex_Up_Front_D1C
+	kStairsNativeIndex_Up_Front_D0C_Left = 6, // @ G0681_i_StairsNativeBitmapIndex_Up_Front_D0C_Left
+	kStairsNativeIndex_Down_Front_D3L = 7, // @ G0682_i_StairsNativeBitmapIndex_Down_Front_D3L
+	kStairsNativeIndex_Down_Front_D3C = 8, // @ G0683_i_StairsNativeBitmapIndex_Down_Front_D3C
+	kStairsNativeIndex_Down_Front_D2L = 9, // @ G0684_i_StairsNativeBitmapIndex_Down_Front_D2L
+	kStairsNativeIndex_Down_Front_D2C = 10, // @ G0685_i_StairsNativeBitmapIndex_Down_Front_D2C
+	kStairsNativeIndex_Down_Front_D1L = 11, // @ G0686_i_StairsNativeBitmapIndex_Down_Front_D1L
+	kStairsNativeIndex_Down_Front_D1C = 12, // @ G0687_i_StairsNativeBitmapIndex_Down_Front_D1C
+	kStairsNativeIndex_Down_Front_D0C_Left = 13, // @ G0688_i_StairsNativeBitmapIndex_Down_Front_D0C_Left
+	kStairsNativeIndex_Side_D2L = 14, // @ G0689_i_StairsNativeBitmapIndex_Side_D2L
+	kStairsNativeIndex_Up_Side_D1L = 15, // @ G0690_i_StairsNativeBitmapIndex_Up_Side_D1L
+	kStairsNativeIndex_Down_Side_D1L = 16, // @ G0691_i_StairsNativeBitmapIndex_Down_Side_D1L
+	kStairsNativeIndex_Side_D0L = 17 // @ G0692_i_StairsNativeBitmapIndex_Side_D0L
+};
+
+
 enum Color {
 	kColorNoTransparency = 255,
 	kColorBlack = 0,
@@ -91,14 +113,17 @@ class DisplayMan {
 
 
 	/// Related to graphics.dat file
-	uint16 grapItemCount = 0; // @ G0632_ui_GraphicCount
+	uint16 _grapItemCount = 0; // @ G0632_ui_GraphicCount
 	uint32 *_packedItemPos = NULL;
 	byte *_packedBitmaps = NULL;
 	byte **_bitmaps = NULL;
 
 
-	// the last two pointers are owned by this array
+	// pointers 13,14 and [15-19] are owned by this array
 	byte *_wallSetBitMaps[25] = {NULL};	// @G[0696..0710]_puc_Bitmap_WallSet_...
+
+	uint16 _stairIndices[kStairsGraphicCount] = {0};
+
 
 	// pointers are not owned by these fields
 	byte *_floorBitmap = NULL;
@@ -116,7 +141,8 @@ class DisplayMan {
 	void loadIntoBitmap(uint16 index, byte *destBitmap); // @ F0466_EXPAND_GraphicToBitmap
 	void unpackGraphics();
 
-	// @ F0104_DUNGEONVIEW_DrawFloorPitOrStairsBitmap
+	void drawFloorPitOrStairsBitmapFlippedHorizontally(StairIndex relIndex, Frame &frame); // @ F0105_DUNGEONVIEW_DrawFloorPitOrStairsBitmapFlippedHorizontally
+	void drawFloorPitOrStairsBitmap(StairIndex relIndex, Frame &frame); // @ F0104_DUNGEONVIEW_DrawFloorPitOrStairsBitmap
 	void drawWallSetBitmap(byte *bitmap, Frame &f); // @ F0100_DUNGEONVIEW_DrawWallSetBitmap
 	void drawWallSetBitmapWithoutTransparency(byte *bitmap, Frame &f); // @ F0101_DUNGEONVIEW_DrawWallSetBitmapWithoutTransparency
 	void drawSquareD3L(direction dir, int16 posX, int16 posY); // @ F0116_DUNGEONVIEW_DrawSquareD3L
@@ -137,6 +163,8 @@ class DisplayMan {
 
 	void applyCreatureReplColors(int replacedColor, int replacementColor); // @ F0093_DUNGEONVIEW_ApplyCreatureReplacementColors
 
+	// some methods use this for a stratchpad, don't make assumptions about content between function calls
+	byte *_tmpBitmap = NULL;
 public:
 	DisplayMan(DMEngine *dmEngine);
 	~DisplayMan();
