@@ -44,7 +44,7 @@ protected:
 	HEMusic *_heMusic;
 	int16 _heMusicTracks;
 
-	Audio::SoundHandle _heSoundChannels[8];
+	Audio::SoundHandle *_heSoundChannels;
 
 public: // Used by createSound()
 	struct {

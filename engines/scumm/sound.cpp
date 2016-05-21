@@ -97,12 +97,17 @@ Sound::Sound(ScummEngine *parent, Audio::Mixer *mixer)
 	_loomSteamCD.balance = 0;
 
 	_isLoomSteam = _vm->_game.id == GID_LOOM && Common::File::exists("CDDA.SOU");
+
+	_loomSteamCDAudioHandle = new Audio::SoundHandle();
+	_talkChannelHandle = new Audio::SoundHandle();
 }
 
 Sound::~Sound() {
 	stopCDTimer();
 	stopCD();
 	free(_offsetTable);
+	delete _loomSteamCDAudioHandle;
+	delete _talkChannelHandle;
 }
 
 void Sound::addSoundToQueue(int sound, int heOffset, int heChannel, int heFlags) {
@@ -425,7 +430,7 @@ void Sound::processSfxQueues() {
 		if (_talk_sound_mode & 1)
 			startTalkSound(_talk_sound_a1, _talk_sound_b1, 1);
 		if (_talk_sound_mode & 2)
-			startTalkSound(_talk_sound_a2, _talk_sound_b2, 2, &_talkChannelHandle);
+			startTalkSound(_talk_sound_a2, _talk_sound_b2, 2, _talkChannelHandle);
 		_talk_sound_mode = 0;
 	}
 
@@ -439,7 +444,7 @@ void Sound::processSfxQueues() {
 		} else if (_vm->_game.heversion >= 60) {
 			finished = !isSoundRunning(1);
 		} else {
-			finished = !_mixer->isSoundHandleActive(_talkChannelHandle);
+			finished = !_mixer->isSoundHandleActive(*_talkChannelHandle);
 		}
 
 		if ((uint) act < 0x80 && ((_vm->_game.version == 8) || (_vm->_game.version <= 7 && !_vm->_string[0].no_talk_anim))) {
@@ -675,7 +680,7 @@ void Sound::stopTalkSound() {
 		} else if (_vm->_game.heversion >= 60) {
 			stopSound(1);
 		} else {
-			_mixer->stopHandle(_talkChannelHandle);
+			_mixer->stopHandle(*_talkChannelHandle);
 		}
 		_sfxMode &= ~2;
 	}
@@ -1060,7 +1065,7 @@ void Sound::playCDTrackInternal(int track, int numLoops, int startFrame, int dur
 		g_system->getAudioCDManager()->play(track, numLoops, startFrame, duration);
 	} else {
 		// Stop any currently playing track
-		_mixer->stopHandle(_loomSteamCDAudioHandle);
+		_mixer->stopHandle(*_loomSteamCDAudioHandle);
 
 		Common::File *cddaFile = new Common::File();
 		if (cddaFile->open("CDDA.SOU")) {
@@ -1068,7 +1073,7 @@ void Sound::playCDTrackInternal(int track, int numLoops, int startFrame, int dur
 			Audio::Timestamp end = Audio::Timestamp(0, startFrame + duration, 75);
 			Audio::SeekableAudioStream *stream = makeCDDAStream(cddaFile, DisposeAfterUse::YES);
 
-			_mixer->playStream(Audio::Mixer::kMusicSoundType, &_loomSteamCDAudioHandle,
+			_mixer->playStream(Audio::Mixer::kMusicSoundType, _loomSteamCDAudioHandle,
 			                    Audio::makeLoopingAudioStream(stream, start, end, (numLoops < 1) ? numLoops + 1 : numLoops));
 		} else {
 			delete cddaFile;
@@ -1080,14 +1085,14 @@ void Sound::stopCD() {
 	if (!_isLoomSteam)
 		g_system->getAudioCDManager()->stop();
 	else
-		_mixer->stopHandle(_loomSteamCDAudioHandle);
+		_mixer->stopHandle(*_loomSteamCDAudioHandle);
 }
 
 int Sound::pollCD() const {
 	if (!_isLoomSteam)
 		return g_system->getAudioCDManager()->isPlaying();
 	else
-		return _mixer->isSoundHandleActive(_loomSteamCDAudioHandle);
+		return _mixer->isSoundHandleActive(*_loomSteamCDAudioHandle);
 }
 
 void Sound::updateCD() {
@@ -1100,7 +1105,7 @@ AudioCDManager::Status Sound::getCDStatus() {
 		return g_system->getAudioCDManager()->getStatus();
 	else {
 		AudioCDManager::Status info = _loomSteamCD;
-		info.playing = _mixer->isSoundHandleActive(_loomSteamCDAudioHandle);
+		info.playing = _mixer->isSoundHandleActive(*_loomSteamCDAudioHandle);
 		return info;
 	}
 }

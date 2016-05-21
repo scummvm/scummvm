@@ -25,6 +25,8 @@
 #include "common/system.h"
 #include "common/util.h"
 
+#include "audio/mixer.h"
+
 #include "graphics/cursorman.h"
 #include "graphics/palette.h"
 
@@ -242,9 +244,15 @@ SmushPlayer::SmushPlayer(ScummEngine_v7 *scumm) {
 	_paused = false;
 	_pauseStartTime = 0;
 	_pauseTime = 0;
+
+
+	_IACTchannel = new Audio::SoundHandle();
+	_compressedFileSoundHandle = new Audio::SoundHandle();
 }
 
 SmushPlayer::~SmushPlayer() {
+	delete _IACTchannel;
+	delete _compressedFileSoundHandle;
 }
 
 void SmushPlayer::init(int32 speed) {
@@ -271,8 +279,8 @@ void SmushPlayer::init(int32 speed) {
 	vs->pitch = vs->w;
 	_vm->_gdi->_numStrips = vs->w / 8;
 
-	_vm->_mixer->stopHandle(_compressedFileSoundHandle);
-	_vm->_mixer->stopHandle(_IACTchannel);
+	_vm->_mixer->stopHandle(*_compressedFileSoundHandle);
+	_vm->_mixer->stopHandle(*_IACTchannel);
 	_IACTpos = 0;
 	_vm->_smixer->stop();
 }
@@ -470,7 +478,7 @@ void SmushPlayer::handleIACT(int32 subSize, Common::SeekableReadStream &b) {
 
 					if (!_IACTstream) {
 						_IACTstream = Audio::makeQueuingAudioStream(22050, true);
-						_vm->_mixer->playStream(Audio::Mixer::kSFXSoundType, &_IACTchannel, _IACTstream);
+						_vm->_mixer->playStream(Audio::Mixer::kSFXSoundType, _IACTchannel, _IACTstream);
 					}
 					_IACTstream->queueBuffer(output_data, 0x1000, DisposeAfterUse::YES, Audio::FLAG_STEREO | Audio::FLAG_16BITS);
 
@@ -1091,7 +1099,7 @@ void SmushPlayer::seekSan(const char *file, int32 pos, int32 contFrame) {
 }
 
 void SmushPlayer::tryCmpFile(const char *filename) {
-	_vm->_mixer->stopHandle(_compressedFileSoundHandle);
+	_vm->_mixer->stopHandle(*_compressedFileSoundHandle);
 
 	_compressedFileMode = false;
 	const char *i = strrchr(filename, '.');
@@ -1110,7 +1118,7 @@ void SmushPlayer::tryCmpFile(const char *filename) {
 	strcpy(fname + (i - filename), ".ogg");
 	if (file->open(fname)) {
 		_compressedFileMode = true;
-		_vm->_mixer->playStream(Audio::Mixer::kSFXSoundType, &_compressedFileSoundHandle, Audio::makeVorbisStream(file, DisposeAfterUse::YES));
+		_vm->_mixer->playStream(Audio::Mixer::kSFXSoundType, _compressedFileSoundHandle, Audio::makeVorbisStream(file, DisposeAfterUse::YES));
 		return;
 	}
 #endif
@@ -1119,7 +1127,7 @@ void SmushPlayer::tryCmpFile(const char *filename) {
 	strcpy(fname + (i - filename), ".mp3");
 	if (file->open(fname)) {
 		_compressedFileMode = true;
-		_vm->_mixer->playStream(Audio::Mixer::kSFXSoundType, &_compressedFileSoundHandle, Audio::makeMP3Stream(file, DisposeAfterUse::YES));
+		_vm->_mixer->playStream(Audio::Mixer::kSFXSoundType, _compressedFileSoundHandle, Audio::makeMP3Stream(file, DisposeAfterUse::YES));
 		return;
 	}
 #endif
@@ -1185,12 +1193,12 @@ void SmushPlayer::play(const char *filename, int32 speed, int32 offset, int32 st
 			// the sound. Synt to time instead.
 			now = _vm->_system->getMillis() - _pauseTime;
 			elapsed = now - _startTime;
-		} else if (_vm->_mixer->isSoundHandleActive(_compressedFileSoundHandle)) {
+		} else if (_vm->_mixer->isSoundHandleActive(*_compressedFileSoundHandle)) {
 			// Compressed SMUSH files.
-			elapsed = _vm->_mixer->getSoundElapsedTime(_compressedFileSoundHandle);
-		} else if (_vm->_mixer->isSoundHandleActive(_IACTchannel)) {
+			elapsed = _vm->_mixer->getSoundElapsedTime(*_compressedFileSoundHandle);
+		} else if (_vm->_mixer->isSoundHandleActive(*_IACTchannel)) {
 			// Curse of Monkey Island SMUSH files.
-			elapsed = _vm->_mixer->getSoundElapsedTime(_IACTchannel);
+			elapsed = _vm->_mixer->getSoundElapsedTime(*_IACTchannel);
 		} else {
 			// For other SMUSH files, we don't necessarily have any
 			// one channel to sync against, so we have to use
@@ -1245,8 +1253,8 @@ void SmushPlayer::play(const char *filename, int32 speed, int32 offset, int32 st
 			break;
 		if (_vm->shouldQuit() || _vm->_saveLoadFlag || _vm->_smushVideoShouldFinish) {
 			_smixer->stop();
-			_vm->_mixer->stopHandle(_compressedFileSoundHandle);
-			_vm->_mixer->stopHandle(_IACTchannel);
+			_vm->_mixer->stopHandle(*_compressedFileSoundHandle);
+			_vm->_mixer->stopHandle(*_IACTchannel);
 			_IACTpos = 0;
 			break;
 		}

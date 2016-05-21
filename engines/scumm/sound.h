@@ -26,9 +26,13 @@
 #include "common/scummsys.h"
 #include "common/str.h"
 #include "audio/mididrv.h"
-#include "audio/mixer.h"
 #include "backends/audiocd/audiocd.h"
 #include "scumm/saveload.h"
+
+namespace Audio {
+class Mixer;
+class SoundHandle;
+}
 
 namespace Scumm {
 
@@ -81,12 +85,12 @@ protected:
 	int16 _currentCDSound;
 	int16 _currentMusic;
 
-	Audio::SoundHandle _loomSteamCDAudioHandle;
+	Audio::SoundHandle *_loomSteamCDAudioHandle;
 	bool _isLoomSteam;
 	AudioCDManager::Status _loomSteamCD;
 
 public:
-	Audio::SoundHandle _talkChannelHandle;	// Handle of mixer channel actor is talking on
+	Audio::SoundHandle *_talkChannelHandle;	// Handle of mixer channel actor is talking on
 
 	bool _soundsPaused;
 	byte _sfxMode;
