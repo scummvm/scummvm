@@ -486,7 +486,11 @@ void GnapEngine::updateMenuStatusMainMenu() {
 		}
 	}
 #else
-	// Original Code
+	// NOTE:
+	// This is the code for the original behavior.
+	// It's currently not working prolery, but could be
+	// fixed to replace the ScummVM screens currently
+	// used.
 		_timers[2] = 10;
 		playSound(0x108F4, false);
 		_gameSys->removeSpriteDrawItem(_menuSprite1, 262);
@@ -653,7 +657,12 @@ Common::String GnapEngine::generateSaveName(int slot) {
 }
 
 void GnapEngine::updateMenuStatusSaveGame() {
-#if 0 // TODO
+#if 0
+	// NOTE:
+	// This is the code for the original screen game.
+	// It could be eventually fixed and could replace
+	// the ScummVM screens currently used.
+
 	char v43[30];
 	int v46;
 	v43[0] = '\0';
