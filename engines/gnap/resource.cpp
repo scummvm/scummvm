@@ -59,9 +59,9 @@ void SequenceAnimation::loadFromStream(Common::MemoryReadStream &stream) {
 }
 
 // SequenceResource
-
-SequenceResource::SequenceResource(int resourceId, byte *data, uint32 size) {
+SequenceResource::SequenceResource(byte *data, uint32 size) {
 	Common::MemoryReadStream stream(data, size, DisposeAfterUse::NO);
+
 	// Skip an unused value
 	stream.readUint32LE();
 
@@ -84,7 +84,6 @@ SequenceResource::SequenceResource(int resourceId, byte *data, uint32 size) {
 		_animations[i].loadFromStream(stream);
 		stream.seek(oldOffs);
 	}
-	// TODO Convert resourceIds
 }
 
 SequenceResource::~SequenceResource() {
@@ -92,8 +91,7 @@ SequenceResource::~SequenceResource() {
 }
 
 // SpriteResource
-
-SpriteResource::SpriteResource(int resourceId, byte *data, uint32 size) {
+SpriteResource::SpriteResource(byte *data, uint32 size) {
 	_data = data;
 	_width = READ_LE_UINT16(_data);
 	_height = READ_LE_UINT16(_data + 2);
@@ -111,8 +109,7 @@ SpriteResource::~SpriteResource() {
 }
 
 // SoundResource
-
-SoundResource::SoundResource(int resourceId, byte *data, uint32 size) {
+SoundResource::SoundResource(byte *data, uint32 size) {
 	_data = data;
 	_size = size;
 }

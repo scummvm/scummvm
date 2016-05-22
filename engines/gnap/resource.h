@@ -66,7 +66,7 @@ struct SequenceAnimation {
 
 class SequenceResource {
 public:
-	SequenceResource(int resourceId, byte *data, uint32 size);
+	SequenceResource(byte *data, uint32 size);
 	~SequenceResource();
 public:
 	int32 _sequenceId;
@@ -83,7 +83,7 @@ public:
 
 class SpriteResource {
 public:
-	SpriteResource(int resourceId, byte *data, uint32 size);
+	SpriteResource(byte *data, uint32 size);
 	~SpriteResource();
 public:
 	byte *_data;
@@ -98,7 +98,7 @@ public:
 
 class SoundResource {
 public:
-	SoundResource(int resourceId, byte *data, uint32 size);
+	SoundResource(byte *data, uint32 size);
 	~SoundResource();
 public:
 	byte *_data;
@@ -172,7 +172,7 @@ protected:
 
 		byte *resourceData = _dat->loadResource(resourceId);
 		uint32 resourceSize = _dat->getResourceSize(resourceId);
-		ResourceClass *obj = new ResourceClass(resourceId, resourceData, resourceSize);
+		ResourceClass *obj = new ResourceClass(resourceData, resourceSize);
 		if (FreeAfterLoad)
 			delete[] resourceData;
 		return obj;
