@@ -26,8 +26,8 @@ namespace Titanic {
 
 bool TTaction::_staticFlag;
 
-TTaction::TTaction(TTstring &str, WordMode mode, int val2, int val3, int val4) :
-		TTmajorWord(str, mode, val2, val3), _field30(val4) {
+TTaction::TTaction(TTstring &str, WordClass wordClass, int val2, int val3, int val4) :
+		TTmajorWord(str, wordClass, val2, val3), _field30(val4) {
 }
 
 TTaction::TTaction(TTaction *src) : TTmajorWord(src) {
@@ -42,7 +42,7 @@ TTaction::TTaction(TTaction *src) : TTmajorWord(src) {
 int TTaction::load(SimpleFile *file) {
 	int val;
 
-	if (!TTword::load(file, WMODE_ACTION) && file->scanf("%d", &val)) {
+	if (!TTword::load(file, WC_ACTION) && file->scanf("%d", &val)) {
 		_field30 = val;
 		return 0;
 	} else {

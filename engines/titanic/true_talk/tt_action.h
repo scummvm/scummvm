@@ -33,7 +33,7 @@ private:
 protected:
 	int _field30;
 public:
-	TTaction(TTstring &str, WordMode mode, int val2, int val3, int val4);
+	TTaction(TTstring &str, WordClass wordClass, int val2, int val3, int val4);
 	TTaction(TTaction *src);
 
 	/**

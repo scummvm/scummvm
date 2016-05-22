@@ -26,8 +26,8 @@ namespace Titanic {
 
 bool TTmajorWord::_staticFlag;
 
-TTmajorWord::TTmajorWord(TTstring &str, WordMode mode, int val2, int val3) :
-		TTword(str, mode, val2), _field2C(val3) {
+TTmajorWord::TTmajorWord(TTstring &str, WordClass wordClass, int val2, int val3) :
+		TTword(str, wordClass, val2), _field2C(val3) {
 }
 
 TTmajorWord::TTmajorWord(TTmajorWord *src) : TTword(src) {

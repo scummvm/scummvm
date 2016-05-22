@@ -512,11 +512,11 @@ int TTparser::loadRequests(TTword *word) {
 	if (word->_tag != MKTAG('Z', 'Z', 'Z', 'T'))
 		addNode(word->_tag);
 
-	switch (word->_wordMode) {
-	case WMODE_NONE:
+	switch (word->_wordClass) {
+	case WC_UNKNOWN:
 		break;
 
-	case WMODE_ACTION:
+	case WC_ACTION:
 		if (word->_id != 0x70 && word->_id != 0x71)
 			addNode(1);
 		addNode(17);
@@ -576,13 +576,13 @@ int TTparser::loadRequests(TTword *word) {
 		}
 		break;
 
-	case WMODE_2:
+	case WC_THING:
 		if (word->checkTag() && _sentence->_field58 > 0)
 			_sentence->_field58--;
 		addNode(14);
 		break;
 
-	case WMODE_3:
+	case WC_ABSTRACT:
 		switch (word->_id) {
 		case 300:
 			addNode(14);
@@ -609,12 +609,12 @@ int TTparser::loadRequests(TTword *word) {
 		}
 		break;
 
-	case WMODE_4:
+	case WC_ARTICLE:
 		addNode(2);
 		status = 1;
 		break;
 
-	case WMODE_5:
+	case WC_CONJUNCTION:
 		if (_sentence->check2C()) {
 			_sentenceSub->_field1C = 1;
 			_sentenceSub = _sentenceSub->addSibling();
@@ -624,11 +624,11 @@ int TTparser::loadRequests(TTword *word) {
 		}
 		break;
 
-	case WMODE_6:
+	case WC_PRONOUN:
 		status = fn2(word);
 		break;
 
-	case WMODE_7:
+	case WC_PREPOSITION:
 		switch (word->_id) {
 		case 700:
 			addNode(6);
@@ -650,7 +650,7 @@ int TTparser::loadRequests(TTword *word) {
 			break;
 		}
 
-	case WMODE_8:
+	case WC_ADJECTIVE:
 		if (word->_id == 304) {
 			// Nothing
 		} else if (word->_id == 801) {
@@ -663,7 +663,7 @@ int TTparser::loadRequests(TTword *word) {
 		}
 		break;
 
-	case WMODE_9:
+	case WC_ADVERB:
 		switch (word->_id) {
 		case 900:
 		case 901:
@@ -771,8 +771,8 @@ int TTparser::considerRequests(TTword *word) {
 				break;
 
 			case 2:
-				if (!word->_wordMode) {
-					word->_wordMode = WMODE_2;
+				if (!word->_wordClass) {
+					word->_wordClass = WC_THING;
 					addToConceptList(word);
 					addNode(14);
 				}

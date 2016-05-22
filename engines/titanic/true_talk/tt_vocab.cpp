@@ -52,57 +52,57 @@ int TTvocab::load(const CString &name) {
 
 	while (!result && !file->eos()) {
 		skipFlag = false;
-		WordMode mode = (WordMode)file->readNumber();
+		WordClass wordClass = (WordClass)file->readNumber();
 		TTstring space(" ");
 
-		switch (mode) {
-		case 0: {
+		switch (wordClass) {
+		case WC_UNKNOWN: {
 			if (_word)
 				result = _word->readSyn(file);
 			skipFlag = true;
 			break;
 		}
 
-		case 1: {
-			TTaction *word = new TTaction(space, WMODE_NONE, 0, 0, 0);
+		case WC_ACTION: {
+			TTaction *word = new TTaction(space, WC_UNKNOWN, 0, 0, 0);
 			result = word->load(file);
 			_word = word;
 			break;
 		}
 
-		case 2: {
-			TTpicture *word = new TTpicture(space, WMODE_NONE, 0, 0, 0, 0, 0);
+		case WC_THING: {
+			TTpicture *word = new TTpicture(space, WC_UNKNOWN, 0, 0, 0, 0, 0);
 			result = word->load(file);
 			_word = word;
 			break;
 		}
 
-		case 3:
-		case 9: {
-			TTmajorWord *word = new TTmajorWord(space, WMODE_NONE, 0, 0);
-			result = word->load(file, mode);
+		case WC_ABSTRACT:
+		case WC_ADVERB: {
+			TTmajorWord *word = new TTmajorWord(space, WC_UNKNOWN, 0, 0);
+			result = word->load(file, wordClass);
 			_word = word;
 			break;
 		}
 
-		case 4:
-		case 5:
-		case 7: {
-			TTword *word = new TTword(space, WMODE_NONE, 0);
-			result = word->load(file, mode);
+		case WC_ARTICLE:
+		case WC_CONJUNCTION:
+		case WC_PREPOSITION: {
+			TTword *word = new TTword(space, WC_UNKNOWN, 0);
+			result = word->load(file, wordClass);
 			_word = word;
 			break;
 		}
 
-		case 8: {
-			TTadj *word = new TTadj(space, WMODE_NONE, 0, 0, 0);
+		case WC_ADJECTIVE: {
+			TTadj *word = new TTadj(space, WC_UNKNOWN, 0, 0, 0);
 			result = word->load(file);
 			_word = word;
 			break;
 		}
 
-		case 6: {
-			TTpronoun *word = new TTpronoun(space, WMODE_NONE, 0, 0, 0);
+		case WC_PRONOUN: {
+			TTpronoun *word = new TTpronoun(space, WC_UNKNOWN, 0, 0, 0);
 			result = word->load(file);
 			_word = word;
 			break;
@@ -198,7 +198,7 @@ TTword *TTvocab::getPrimeWord(TTstring &str, TTword **srcWord) const {
 
 	if (!Common::isDigit(c)) {
 		vocabP = _headP;
-		newWord = new TTword(str, WMODE_3, 300);
+		newWord = new TTword(str, WC_ABSTRACT, 300);
 	} else {
 		for (vocabP = _headP; vocabP && !newWord; vocabP = vocabP->_nextP) {
 			if (_vocabMode == 3 && !strcmp(str.c_str(), vocabP->c_str())) {
@@ -246,30 +246,30 @@ TTword *TTvocab::getSuffixedWord(TTstring &str) const {
 		word = getPrimeWord(tempStr);
 
 		if (word) {
-			if (word->_wordMode == 1) {
+			if (word->_wordClass == 1) {
 				delete word;
 				word = nullptr;
 			} else {
 				delete word;
-				word = new TTadj(str, WMODE_8, 0, 0, 0);
+				word = new TTadj(str, WC_ADJECTIVE, 0, 0, 0);
 			}
 		} else {
 			tempStr += "e";
 			word = getPrimeWord(tempStr);
 
 			if (word) {
-				if (word->_wordMode != 1) {
+				if (word->_wordClass != 1) {
 					delete word;
-					word = new TTadj(str, WMODE_8, 0, 0, 0);
+					word = new TTadj(str, WC_ADJECTIVE, 0, 0, 0);
 				}
 			} else {
 				tempStr.deleteSuffix(2);
 				word = getPrimeWord(tempStr);
 
 				if (word) {
-					if (word->_wordMode != 1) {
+					if (word->_wordClass != 1) {
 						delete word;
-						word = new TTadj(str, WMODE_8, 0, 0, 0);
+						word = new TTadj(str, WC_ADJECTIVE, 0, 0, 0);
 					}
 				} else {
 					tempStr = str;
@@ -287,7 +287,7 @@ TTword *TTvocab::getSuffixedWord(TTstring &str) const {
 		}
 
 		if (word) {
-			if (word->_wordMode == WMODE_ACTION) {
+			if (word->_wordClass == WC_ACTION) {
 				static_cast<TTaction *>(word)->setVal(1);
 			}
 		} else {
@@ -300,7 +300,7 @@ TTword *TTvocab::getSuffixedWord(TTstring &str) const {
 
 		if (word) {
 			delete word;
-			word = new TTword(str, WMODE_9, 0);
+			word = new TTword(str, WC_ADVERB, 0);
 		} else {
 			tempStr = str;
 		}
@@ -310,7 +310,7 @@ TTword *TTvocab::getSuffixedWord(TTstring &str) const {
 		word = getPrimeWord(tempStr);
 
 		if (word) {
-			if (word->_wordMode == WMODE_8) {
+			if (word->_wordClass == WC_ADJECTIVE) {
 				int val1 = word->proc15();
 				int val2 = word->proc15();
 
@@ -329,7 +329,7 @@ TTword *TTvocab::getSuffixedWord(TTstring &str) const {
 			word = getPrimeWord(tempStr);
 
 			if (word) {
-				if (word->_wordMode == WMODE_8) {
+				if (word->_wordClass == WC_ADJECTIVE) {
 					int val1 = word->proc15();
 					int val2 = word->proc15();
 
@@ -347,7 +347,7 @@ TTword *TTvocab::getSuffixedWord(TTstring &str) const {
 				tempStr.deleteSuffix(1);
 				word = getPrimeWord(tempStr);
 
-				if (word && word->_wordMode == WMODE_8) {
+				if (word && word->_wordClass == WC_ADJECTIVE) {
 					int val1 = word->proc15();
 					int val2 = word->proc15();
 
@@ -369,7 +369,7 @@ TTword *TTvocab::getSuffixedWord(TTstring &str) const {
 		word = getPrimeWord(tempStr);
 
 		if (word) {
-			if (word->_wordMode == WMODE_8) {
+			if (word->_wordClass == WC_ADJECTIVE) {
 				int val1 = word->proc15();
 				int val2 = word->proc15();
 
@@ -388,7 +388,7 @@ TTword *TTvocab::getSuffixedWord(TTstring &str) const {
 			word = getPrimeWord(tempStr);
 
 			if (word) {
-				if (word->_wordMode == WMODE_8) {
+				if (word->_wordClass == WC_ADJECTIVE) {
 					int val1 = word->proc15();
 					int val2 = word->proc15();
 
@@ -428,7 +428,7 @@ TTword *TTvocab::getSuffixedWord(TTstring &str) const {
 		word = getPrimeWord(tempStr);
 
 		if (word) {
-			if (word->_wordMode == WMODE_6 || word->_wordMode == WMODE_9) {
+			if (word->_wordClass == WC_PRONOUN || word->_wordClass == WC_ADVERB) {
 				delete word;
 				TTstring isStr("is");
 				word = getPrimeWord(isStr);
@@ -437,38 +437,38 @@ TTword *TTvocab::getSuffixedWord(TTstring &str) const {
 				case 200:
 					if (word->proc10() == 2) {
 						delete word;
-						word = new TTpronoun(tempStr, WMODE_6, 601, 0, 5);
+						word = new TTpronoun(tempStr, WC_PRONOUN, 601, 0, 5);
 					} else if (word->proc10() == 1) {
 						delete word;
-						word = new TTpronoun(tempStr, WMODE_6, 601, 0, 4);
+						word = new TTpronoun(tempStr, WC_PRONOUN, 601, 0, 4);
 					}
 					break;
 
 				case 201:
 					delete word;
-					word = new TTpronoun(tempStr, WMODE_6, 601, 0, 5);
+					word = new TTpronoun(tempStr, WC_PRONOUN, 601, 0, 5);
 					break;
 
 				case 202:
 				case 203:
 					if (word->proc10() == 2) {
 						delete word;
-						word = new TTpronoun(tempStr, WMODE_6, 601, 0, 5);
+						word = new TTpronoun(tempStr, WC_PRONOUN, 601, 0, 5);
 					} else {
 						int val = word->proc10() == 1 ? 0 : 4;
 						delete word;
-						word = new TTpronoun(tempStr, WMODE_6, 601, 0, val);
+						word = new TTpronoun(tempStr, WC_PRONOUN, 601, 0, val);
 					}
 					break;
 
 				case 204:
 					delete word;
-					word = new TTpronoun(tempStr, WMODE_6, 601, 0, 6);
+					word = new TTpronoun(tempStr, WC_PRONOUN, 601, 0, 6);
 					break;
 
 				default:
 					delete word;
-					word = new TTpronoun(tempStr, WMODE_6, 601, 0, 0);
+					word = new TTpronoun(tempStr, WC_PRONOUN, 601, 0, 0);
 					break;
 				}
 			}
@@ -510,7 +510,7 @@ TTword *TTvocab::getPrefixedWord(TTstring &str) const {
 		word = getPrimeWord(tempStr);
 		if (!word)
 			tempStr = str;
-		else if (word->_wordMode == 8) {
+		else if (word->_wordClass == 8) {
 			delete word;
 			word = nullptr;
 		}
@@ -522,7 +522,7 @@ TTword *TTvocab::getPrefixedWord(TTstring &str) const {
 
 		if (!word)
 			tempStr = str;
-		else if (word->_wordMode == 8) {
+		else if (word->_wordClass == 8) {
 			int val1 = word->proc15();
 			int val2 = word->proc15();
 
