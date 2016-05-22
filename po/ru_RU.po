@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
 "POT-Creation-Date: 2016-04-07 08:55+0100\n"
-"PO-Revision-Date: 2016-02-21 23:32+0300\n"
+"PO-Revision-Date: 2016-05-22 17:04+0300\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Russian\n"
 "Language: Russian\n"
@@ -1267,17 +1267,17 @@ msgid ""
 "Would you like to enable this feature?"
 msgstr ""
 "ScummVM стал поддерживать автоматическую проверку\n"
-"обновлений, которая требует доступа в Интернет\n"
+"обновлений, которая требует доступа в Интернет.\n"
 "\n"
-"Хотели бы вы включить эту опцию?"
+"Вы хотите включить эту опцию?"
 
 #: gui/updates-dialog.cpp:55
 msgid "(You can always enable it in the options dialog on the Misc tab)"
-msgstr "(Вы можете всегда её включыть в Опциях на закладку Другое)"
+msgstr "(Вы всегда можете включить её в настройках на закладке \"Разное\")"
 
 #: gui/updates-dialog.cpp:92
 msgid "Check for updates automatically"
-msgstr "Автоматически проверить обновления"
+msgstr "Автоматически проверять обновления"
 
 #: gui/updates-dialog.cpp:111
 msgid "Proceed"
@@ -2424,7 +2424,7 @@ msgid ""
 "real-time prompt."
 msgstr ""
 "Показывает окно со строкой ввода команды и ставит игру на паузу (как в SCI) "
-"вместоввода в реальном времени."
+"вместо ввода в реальном времени."
 
 #: engines/agi/saveload.cpp:777 engines/avalanche/parser.cpp:1887
 #: engines/cge/events.cpp:85 engines/cge2/events.cpp:78
@@ -2739,11 +2739,11 @@ msgstr "~В~ыбросить страницу"
 
 #: engines/mohawk/dialogs.cpp:103
 msgid "Show ~M~ap"
-msgstr "П~о~казать карту"
+msgstr "Показать ~к~арту"
 
 #: engines/mohawk/dialogs.cpp:109
 msgid "Main Men~u~"
-msgstr "~Г~лавное меню"
+msgstr "Главное мен~ю~"
 
 #: engines/mohawk/dialogs.cpp:240
 msgid "~W~ater Effect Enabled"
@@ -2939,7 +2939,7 @@ msgstr ""
 
 #: engines/scumm/detection.cpp:1335
 msgid "Show Object Line"
-msgstr "Показывать линии объектов"
+msgstr "Показывать строку объектов"
 
 #: engines/scumm/detection.cpp:1336
 msgid "Show the names of objects at the bottom of the screen"
@@ -3808,7 +3808,7 @@ msgstr "Использовать английскую озвучку"
 msgid ""
 "Use English speech instead of German for every language other than German"
 msgstr ""
-"Использовать английскую озвучку вместо немецкой для всех языков кроме "
+"Использовать английскую озвучку вместо немецкой для всех языков, кроме "
 "немецкого"
 
 #: engines/teenagent/resources.cpp:95
