@@ -115,6 +115,11 @@ public:
 	operator const char *() const { return c_str(); }
 
 	/**
+	 * Return the text of the word
+	 */
+	const TTstring getText() { return _string; }
+
+	/**
 	 * Compares the word's text to a passed string
 	 */
 	bool compareTo(const char *str) const;

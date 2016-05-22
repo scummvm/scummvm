@@ -41,7 +41,7 @@ TTconcept::TTconcept(TTscriptBase *script, ScriptType scriptType) :
 		setScriptType(scriptType);
 		_scriptP = script;
 
-		if (scriptType == ST_UNKNOWN_SCRIPT && script->_field8 == 1)
+		if (scriptType == ST_UNKNOWN_SCRIPT && script->_id == 1)
 			_scriptType = ST_ROOM_SCRIPT;
 	}
 
@@ -200,6 +200,29 @@ void TTconcept::copyFrom(TTconcept *src) {
 
 	if (_status)
 		reset();
+}
+
+bool TTconcept::checkWordId1() const {
+	return (_wordP && (_wordP->_id == 200 || _wordP->_id == 201 ||
+		_wordP->_id == 602 || _wordP->_id == 607)) ||
+		(_scriptP && _scriptP->_id <= 2);
+}
+
+bool TTconcept::checkWordId2() const {
+	return (_wordP && _wordP->_id == 204) || (_scriptP && _scriptP->getId() == 3);
+}
+
+bool TTconcept::checkWordClass() const {
+	return !_scriptP && _wordP && (_wordP->_wordClass == WC_THING || _wordP->_wordClass == WC_PRONOUN);
+}
+
+const TTstring TTconcept::getText() {
+	if (_scriptP)
+		return _scriptP->getText();
+	else if (_wordP)
+		return _wordP->getText();
+	else
+		return TTstring();
 }
 
 } // End of namespace Titanic

@@ -735,8 +735,8 @@ int TTparser::considerRequests(TTword *word) {
 	bool flag = false;
 
 	while (word) {
-		int ecx = 906;
-		int edx = 12;
+		//int ecx = 906;
+		//int edx = 12;
 
 		if (nodeP->_tag == MKTAG('C', 'O', 'M', 'E')) {
 			addNode(7);

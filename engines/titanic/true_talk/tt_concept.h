@@ -103,6 +103,15 @@ public:
 	int getStatus() const { return _status; }
 
 	void setFlag(bool val) { _flag = val; }
+
+	bool checkWordId1() const;
+	bool checkWordId2() const;
+	bool checkWordClass() const;
+
+	/**
+	 * Return text assocaited with the concept's word or script
+	 */
+	const TTstring getText();
 };
 
 } // End of namespace Titanic

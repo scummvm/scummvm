@@ -55,15 +55,28 @@ protected:
 	int _field48;
 	int _status;
 public:
-	int _field8;
+	int _id;
 public:
-	TTscriptBase(int v1, const char *charClass, int v2, const char *charName,
+	TTscriptBase(int scriptId, const char *charClass, int v2, const char *charName,
 		int v3, int v4, int v5, int v6, int v7);
 	virtual ~TTscriptBase();
 
 	bool areNamesValid();
 
+	/**
+	 * Return the Id of the script
+	 */
+	int getId() const { return _id; }
+
+	/**
+	 * Return the status
+	 */
 	int getStatus() const { return _status; }
+
+	/**
+	 * Return the script text
+	 */
+	const TTstring getText() { return _charClass; }
 
 	/**
 	 * Gets passed a newly created input wrapper during conversation text processing

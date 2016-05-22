@@ -25,16 +25,16 @@
 
 namespace Titanic {
 
-TTscriptBase::TTscriptBase(int v1, const char *charClass, int v2,
+TTscriptBase::TTscriptBase(int scriptId, const char *charClass, int v2,
 		const char *charName, int v3, int v4, int v5, int v6, int v7) :
 		_charName(charName), _charClass(charClass), 
-		_nodesP(nullptr), _field8(0), _hist(nullptr),
+		_nodesP(nullptr), _id(0), _hist(nullptr),
 		_field20(0), _field24(0), _field28(0), _field2C(0),
 		_field30(0), _field34(0), _field38(0), _field3C(0),
 		_field40(0), _field44(0), _field48(0), _status(0) {
 	if (!areNamesValid()) {
 		if (!v7 || !getStatus()) {
-			_field8 = v1;
+			_id = scriptId;
 			_field20 = v3;
 			_field24 = v4;
 			_field28 = v5;
@@ -65,7 +65,7 @@ bool TTscriptBase::areNamesValid() {
 
 void TTscriptBase::reset() {
 	_nodesP = nullptr;
-	_field8 = 4;
+	_id = 4;
 	_hist = nullptr;
 	_field20 = 0;
 	_field24 = -1;
