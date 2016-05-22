@@ -80,7 +80,7 @@ Tree::~Tree() {
 	while (pNodeItr != NULL) {
 		// If any children are left, move to one of them
 		if (!(pNodeItr->getChildren().empty())) {
-			int size = (pNodeItr->getChildren()).size();
+			//int size = (pNodeItr->getChildren()).size();
 			pNodeItr = pNodeItr->popChild();
 		} else {
 			// Delete this node, and move up to the parent for further processing
@@ -157,11 +157,10 @@ Node *Tree::aStarSearch_singlePassInit() {
 
 Node *Tree::aStarSearch_singlePass(Node **currentNode) {
 	currentNode = NULL;
-	float currentT;
-
 	Node *retNode = NULL;
 
 #if 0
+	float currentT;
 	static int maxTime = 0;
 
 	if (currentChildIndex == 1) {

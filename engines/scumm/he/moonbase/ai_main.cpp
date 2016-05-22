@@ -726,7 +726,7 @@ int masterControlProgram(const int paramCount, const int *params) {
 		// Here to scope tempLaunchAction
 		int *tempLaunchAction = NULL;
 
-		int errCod;
+		int errCod = 0;
 
 		_acquireTarget++;
 

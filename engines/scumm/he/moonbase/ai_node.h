@@ -28,7 +28,7 @@
 namespace Scumm {
 
 const float SUCCESS = -1;
-const float FAILURE = 1e20;
+const float FAILURE = 1e20f;
 
 class IContainedObject {
 private:
