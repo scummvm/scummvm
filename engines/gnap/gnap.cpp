@@ -938,11 +938,11 @@ void GnapEngine::screenEffect(int dir, byte r, byte g, byte b) {
 }
 
 bool GnapEngine::isKeyStatus1(int key) {
-	return _keyPressState[key] != 0;;
+	return _keyPressState[key] != 0;
 }
 
 bool GnapEngine::isKeyStatus2(int key) {
-	return _keyDownState[key] != 0;;
+	return _keyDownState[key] != 0;
 }
 
 void GnapEngine::clearKeyStatus1(int key) {
