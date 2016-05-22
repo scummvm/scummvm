@@ -369,8 +369,8 @@ void Scene53::run() {
 
 		_vm->checkGameKeys();
 
-		if (_vm->isKeyStatus1(8)) {
-			_vm->clearKeyStatus1(8);
+		if (_vm->isKeyStatus1(Common::KEYCODE_BACKSPACE)) {
+			_vm->clearKeyStatus1(Common::KEYCODE_BACKSPACE);
 			_vm->runMenu();
 			updateHotspots();
 		}

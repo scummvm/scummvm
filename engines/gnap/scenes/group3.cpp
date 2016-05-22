@@ -203,8 +203,8 @@ void Scene30::run() {
 
 		_vm->checkGameKeys();
 
-		if (_vm->isKeyStatus1(8)) {
-			_vm->clearKeyStatus1(8);
+		if (_vm->isKeyStatus1(Common::KEYCODE_BACKSPACE)) {
+			_vm->clearKeyStatus1(Common::KEYCODE_BACKSPACE);
 			_vm->runMenu();
 			updateHotspots();
 		}
@@ -528,8 +528,8 @@ void Scene31::run() {
 
 		_vm->checkGameKeys();
 
-		if (_vm->isKeyStatus1(8)) {
-			_vm->clearKeyStatus1(8);
+		if (_vm->isKeyStatus1(Common::KEYCODE_BACKSPACE)) {
+			_vm->clearKeyStatus1(Common::KEYCODE_BACKSPACE);
 			_vm->runMenu();
 			updateHotspots();
 		}
@@ -777,8 +777,8 @@ void Scene32::run() {
 
 		_vm->checkGameKeys();
 
-		if (_vm->isKeyStatus1(8)) {
-			_vm->clearKeyStatus1(8);
+		if (_vm->isKeyStatus1(Common::KEYCODE_BACKSPACE)) {
+			_vm->clearKeyStatus1(Common::KEYCODE_BACKSPACE);
 			_vm->runMenu();
 			updateHotspots();
 		}
@@ -1019,8 +1019,8 @@ void Scene33::run() {
 
 		_vm->checkGameKeys();
 
-		if (_vm->isKeyStatus1(8)) {
-			_vm->clearKeyStatus1(8);
+		if (_vm->isKeyStatus1(Common::KEYCODE_BACKSPACE)) {
+			_vm->clearKeyStatus1(Common::KEYCODE_BACKSPACE);
 			_vm->runMenu();
 			updateHotspots();
 		}
@@ -1285,8 +1285,8 @@ void Scene38::run() {
 
 		_vm->checkGameKeys();
 
-		if (_vm->isKeyStatus1(8)) {
-			_vm->clearKeyStatus1(8);
+		if (_vm->isKeyStatus1(Common::KEYCODE_BACKSPACE)) {
+			_vm->clearKeyStatus1(Common::KEYCODE_BACKSPACE);
 			_vm->runMenu();
 			updateHotspots();
 		}
@@ -1578,8 +1578,8 @@ void Scene39::run() {
 
 		_vm->checkGameKeys();
 
-		if (_vm->isKeyStatus1(8)) {
-			_vm->clearKeyStatus1(8);
+		if (_vm->isKeyStatus1(Common::KEYCODE_BACKSPACE)) {
+			_vm->clearKeyStatus1(Common::KEYCODE_BACKSPACE);
 			_vm->runMenu();
 			updateHotspots();
 			_vm->_timers[5] = _vm->getRandom(20) + 50;
