@@ -361,6 +361,57 @@ protected:
 
 };
 
+/**
+ * Double linked list with sorted nodes.
+ */
+template<class T>
+class SortedArray : public Array<T> {
+public:
+	typedef T *iterator;
+	typedef uint size_type;
+
+	SortedArray(int (*comparator)(const void *, const void *)) {
+		_comparator = comparator;
+	}
+
+	/**
+	 * Inserts element at the sorted position.
+	 */
+	void insert(const T &element) {
+		T *where = (T *)bsearch(element, this->front(), this->_size, sizeof(T), _comparator);
+		insert(where, element);
+	}
+
+	T &operator[](size_type idx) {
+		error("Operation not allowed with SortedArray");
+	}
+
+	void insert_at(size_type idx, const T &element) {
+		error("Operation not allowed with SortedArray");
+	}
+
+	void insert_at(size_type idx, const Array<T> &array) {
+		error("Operation not allowed with SortedArray");
+	}
+
+	void insert(iterator pos, const T &element) {
+		error("Operation not allowed with SortedArray");
+	}
+
+	void push_back(const T &element) {
+		error("Operation not allowed with SortedArray");
+	}
+
+	void push_back(const Array<T> &array) {
+		error("Operation not allowed with SortedArray");
+	}
+
+
+
+private:
+	int (*_comparator)(const void *, const void *);
+};
+
 } // End of namespace Common
 
 #endif
