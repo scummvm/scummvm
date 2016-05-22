@@ -98,6 +98,16 @@ public:
 	bool compareTo(const char *str) const;
 
 	/**
+	 * Set an owner for the concept
+	 */
+	int setOwner(TTconcept *src);
+
+	/**
+	 * Set an owner for the concept
+	 */
+	int setOwner(TTword *src, bool dontDup);
+
+	/**
 	 * Return the status of the concept
 	 */
 	int getStatus() const { return _status; }

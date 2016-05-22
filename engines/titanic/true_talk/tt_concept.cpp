@@ -202,6 +202,36 @@ void TTconcept::copyFrom(TTconcept *src) {
 		reset();
 }
 
+int TTconcept::setOwner(TTconcept *src) {
+	if (this) {
+		if (src->_wordP) {
+			TTword *newWord = src->_wordP->copy();
+			return setOwner(newWord, 1);
+		}
+	}
+
+	return 0;
+}
+
+int TTconcept::setOwner(TTword *src, bool dontDup) {
+	TTword *word = dontDup ? src : src->copy();
+	
+	if (word) {
+		if (!_word2P) {
+			_word2P = word;
+		} else {
+			// Add word to end of word list
+			TTword *tailP = _word2P;
+			while (tailP->_nextP)
+				tailP = tailP->_nextP;
+
+			tailP->_nextP = word;
+		}
+	}
+
+	return 0;
+}
+
 bool TTconcept::checkWordId1() const {
 	return (_wordP && (_wordP->_id == 200 || _wordP->_id == 201 ||
 		_wordP->_id == 602 || _wordP->_id == 607)) ||
