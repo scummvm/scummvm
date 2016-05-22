@@ -21,6 +21,7 @@
  */
 
 #include "common/config-manager.h"
+#include "audio/mixer.h"
 
 #include "agi/agi.h"
 #include "agi/graphics.h"

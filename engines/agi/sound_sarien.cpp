@@ -21,6 +21,7 @@
  */
 
 #include "common/random.h"
+#include "audio/mixer.h"
 
 #include "agi/agi.h"
 
@@ -92,11 +93,11 @@ SoundGenSarien::SoundGenSarien(AgiBase *vm, Audio::Mixer *pMixer) : SoundGen(vm,
 		debug(0, "Initializing sound: envelopes disabled");
 	}
 
-	_mixer->playStream(Audio::Mixer::kMusicSoundType, &_soundHandle, this, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO, true);
+	_mixer->playStream(Audio::Mixer::kMusicSoundType, _soundHandle, this, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO, true);
 }
 
 SoundGenSarien::~SoundGenSarien() {
-	_mixer->stopHandle(_soundHandle);
+	_mixer->stopHandle(*_soundHandle);
 
 	free(_sndBuffer);
 }
