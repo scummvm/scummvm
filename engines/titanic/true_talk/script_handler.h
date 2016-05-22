@@ -81,7 +81,10 @@ public:
 	 */
 	SimpleFile *openResource(const CString &name);
 
-
+	/**
+	 * Called when concept data is copied from one to another
+	 */
+	void setParserConcept(TTconcept *newConcept, TTconcept *oldConcept);
 };
 
 } // End of namespace Titanic

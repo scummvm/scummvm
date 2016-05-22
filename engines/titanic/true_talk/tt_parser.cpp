@@ -895,4 +895,11 @@ int TTparser::checkReferent(TTpronoun *pronoun) {
 	return 0;
 }
 
+void TTparser::conceptChanged(TTconcept *newConcept, TTconcept *oldConcept) {
+	if (!oldConcept && newConcept != _currentConceptP)
+		_currentConceptP = nullptr;
+	else if (oldConcept && oldConcept == _currentConceptP)
+		_currentConceptP = newConcept;
+}
+
 } // End of namespace Titanic

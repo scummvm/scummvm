@@ -210,4 +210,21 @@ void TTword::setSynFile(FileHandle file) {
 		_synP->_file = file;
 }
 
+TTstringStatus TTword::getChainStatus() const {
+	for (const TTword *word = this; word; word = word->_nextP) {
+		if (word->getStatus())
+			return word->getStatus();
+	}
+
+	return SS_VALID;
+}
+
+TTword *TTword::copyWords() {
+	TTword *result = copy();
+	for (TTword *word = result; word; word = word->_nextP)
+		word->_nextP = word->_nextP->copy();
+
+	return result;
+}
+
 } // End of namespace Titanic

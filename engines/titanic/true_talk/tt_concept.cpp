@@ -23,6 +23,7 @@
 #include "titanic/true_talk/tt_concept.h"
 #include "titanic/true_talk/tt_script_base.h"
 #include "titanic/true_talk/tt_word.h"
+#include "titanic/titanic.h"
 
 namespace Titanic {
 
@@ -58,7 +59,7 @@ TTconcept::TTconcept(TTword *word, ScriptType scriptType) :
 		reset();
 }
 
-TTconcept::TTconcept(const TTconcept &src) :
+TTconcept::TTconcept(TTconcept &src) :
 		_string1(src._string1), _string2(src._string2),
 		_wordP(nullptr), _scriptP(nullptr) {
 
@@ -96,7 +97,7 @@ void TTconcept::setScriptType(ScriptType scriptType) {
 	_scriptType = scriptType;
 	_field1C = -1;
 	_field20 = 0;
-	_field2C = 0;
+	_word2 = nullptr;
 	_field30 = 0;
 	_field34 = 0;
 	_field38 = 0;
@@ -124,8 +125,31 @@ bool TTconcept::compareTo(const char *str) const {
 		_wordP->compareTo(str);
 }
 
-void TTconcept::copyFrom(const TTconcept &src) {
-	// TODO
+void TTconcept::copyFrom(TTconcept &src) {
+	_nextP = src._nextP;
+	_field14 = src._field14;
+	_scriptType = src._scriptType;
+	_field1C = src._field1C;
+	_field20 = src._field20;
+
+	if (src._word2) {
+		_word2 = src._word2->copyWords();
+		if (src._word2->getChainStatus())
+			_status = 11;
+	} else {
+		_word2 = nullptr;
+	}
+
+	_field30 = src._field30;
+	_field34 = src._field34;
+	
+	if (src._field38 == 1) {
+		g_vm->_exeResources._owner->setParserConcept(this, &src);
+		src.set38(1);
+		_field38 = 1;
+	}
+
+	_status = src._status;
 }
 
 } // End of namespace Titanic

@@ -125,6 +125,16 @@ public:
 	TTstringStatus getStatus() const { return _status; }
 
 	/**
+	 * Return the status of the entire word chain
+	 */
+	TTstringStatus getChainStatus() const;
+
+	/**
+	 * Copy the word and any attached to it
+	 */
+	TTword *copyWords();
+
+	/**
 	 * Creates a copy of the word
 	 */
 	virtual TTword *copy();

@@ -73,6 +73,7 @@ private:
 	NumberArray _numbers;
 	TTparserNode *_nodesP;
 	TTconcept *_conceptP;
+	TTconcept *_currentConceptP;
 private:
 	/**
 	 * Loads the various replacement string data arrays
@@ -173,6 +174,11 @@ public:
 	int preprocess(TTsentence *sentence);
 
 	int findFrames(TTsentence *sentence);
+
+	/**
+	 * Called when a concept is copied from one to another
+	 */
+	void conceptChanged(TTconcept *newConcept, TTconcept *oldConcept);
 };
 
 } // End of namespace Titanic

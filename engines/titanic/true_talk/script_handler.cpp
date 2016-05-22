@@ -22,6 +22,7 @@
 
 #include "titanic/true_talk/script_handler.h"
 #include "titanic/true_talk/tt_sentence.h"
+#include "titanic/true_talk/tt_parser.h"
 #include "titanic/titanic.h"
 
 namespace Titanic {
@@ -89,6 +90,10 @@ int CScriptHandler::processInput(TTroomScript *roomScript, TTnpcScript *npcScrip
 
 SimpleFile *CScriptHandler::openResource(const CString &name) {
 	return _owner->open(name);
+}
+
+void CScriptHandler::setParserConcept(TTconcept *newConcept, TTconcept *oldConcept) {
+	_parser.conceptChanged(newConcept, oldConcept);
 }
 
 } // End of namespace Titanic

@@ -42,7 +42,7 @@ private:
 	int _field1C;
 	int _field20;
 	TTstring _string2;
-	int _field2C;
+	TTword *_word2;
 	int _field30;
 	int _field34;
 	int _field38;
@@ -71,14 +71,14 @@ private:
 	/**
 	 * Copy auxiliary data from the specified source concept
 	 */
-	void copyFrom(const TTconcept &src);
+	void copyFrom(TTconcept &src);
 public:
 	TTconcept *_nextP;
 public:
 	TTconcept();
 	TTconcept(TTscriptBase *script, ScriptType scriptType);
 	TTconcept(TTword *word, ScriptType scriptType);
-	TTconcept(const TTconcept &src);
+	TTconcept(TTconcept &src);
 
 	/**
 	 * Compares the name of the associated word, if any,
@@ -90,6 +90,8 @@ public:
 	 * Return the status of the concept
 	 */
 	int getStatus() const { return _status; }
+
+	void set38(int val) { _field38 = val; }
 };
 
 } // End of namespace Titanic
