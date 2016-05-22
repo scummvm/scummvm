@@ -447,6 +447,10 @@ public:
 	Messages _messages; // @ NONE;
 
 	int16 _currMapInscriptionWallOrnIndex; // @ G0265_i_CurrentMapInscriptionWallOrnamentIndex
+	byte _dungeonViewClickableBoxes[6][4]; // G0291_aauc_DungeonViewClickableBoxes
+	bool _isFacingAlcove; // @ G0286_B_FacingAlcove
+	bool _isFacingViAltar; // @ G0287_B_FacingViAltar
+	bool _isFacingFountain; // @ G0288_B_FacingFountain
 };
 
 }

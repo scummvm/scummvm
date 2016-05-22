@@ -49,6 +49,23 @@ enum StairIndex {
 	kStairsNativeIndex_Side_D0L = 17 // @ G0692_i_StairsNativeBitmapIndex_Side_D0L
 };
 
+enum ViewWall {
+	kViewWall_D3L_RIGHT = 0, // @ C00_VIEW_WALL_D3L_RIGHT 
+	kViewWall_D3R_LEFT = 1, // @ C01_VIEW_WALL_D3R_LEFT  
+	kViewWall_D3L_FRONT = 2, // @ C02_VIEW_WALL_D3L_FRONT 
+	kViewWall_D3C_FRONT = 3, // @ C03_VIEW_WALL_D3C_FRONT 
+	kViewWall_D3R_FRONT = 4, // @ C04_VIEW_WALL_D3R_FRONT 
+	kViewWall_D2L_RIGHT = 5, // @ C05_VIEW_WALL_D2L_RIGHT 
+	kViewWall_D2R_LEFT = 6, // @ C06_VIEW_WALL_D2R_LEFT  
+	kViewWall_D2L_FRONT = 7, // @ C07_VIEW_WALL_D2L_FRONT 
+	kViewWall_D2C_FRONT = 8, // @ C08_VIEW_WALL_D2C_FRONT 
+	kViewWall_D2R_FRONT = 9, // @ C09_VIEW_WALL_D2R_FRONT 
+	kViewWall_D1L_RIGHT = 10, // @ C10_VIEW_WALL_D1L_RIGHT
+	kViewWall_D1R_LEFT = 11, // @ C11_VIEW_WALL_D1R_LEFT 
+	kViewWall_D1C_FRONT = 12  // @ C12_VIEW_WALL_D1C_FRONT
+};
+
+
 
 enum Color {
 	kColorNoTransparency = 255,
@@ -163,6 +180,8 @@ class DisplayMan {
 
 	void applyCreatureReplColors(int replacedColor, int replacementColor); // @ F0093_DUNGEONVIEW_ApplyCreatureReplacementColors
 
+	bool isDrawnWallOrnAnAlcove(int16 wallOrnOrd, ViewWall viewWallIndex); // @ F0107_DUNGEONVIEW_IsDrawnWallOrnamentAnAlcove_CPSF
+
 	// some methods use this for a stratchpad, don't make assumptions about content between function calls
 	byte *_tmpBitmap = NULL;
 public:
@@ -201,7 +220,7 @@ public:
 	int16 _championPortraitOrdinal = 0; // @ G0289_i_DungeonView_ChampionPortraitOrdinal
 	int16 _currMapAlcoveOrnIndices[kAlcoveOrnCount] = {0}; // @ G0267_ai_CurrentMapAlcoveOrnamentIndices
 	int16 _currMapFountainOrnIndices[kFountainOrnCount] = {0}; // @ G0268_ai_CurrentMapFountainOrnamentIndices
-	int16 _currMapWallOrnInfo[16][2] = {0}; // @ G0101_aai_CurrentMapWallOrnamentsInf
+	int16 _currMapWallOrnInfo[16][2] = {0}; // @ G0101_aai_CurrentMapWallOrnamentsInfo
 	int16 _currMapFloorOrnInfo[16][2] = {0}; // @ G0102_aai_CurrentMapFloorOrnamentsInfo
 	int16 _currMapDoorOrnInfo[17][2] = {0}; // @ G0103_aai_CurrentMapDoorOrnamentsInfo
 	byte *_currMapAllowedCreatureTypes = NULL; // @ G0264_puc_CurrentMapAllowedCreatureTypes

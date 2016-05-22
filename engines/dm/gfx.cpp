@@ -121,6 +121,7 @@ enum ViewSquare {
 	kViewSquare_D0C_Explosion = 12 // @ C12_VIEW_SQUARE_D0C_EXPLOSION
 };
 
+
 Frame gCeilingFrame(0, 223, 0, 28, 112, 29, 0, 0); // @ K0012_s_Frame_Ceiling
 Frame gFloorFrame(0, 223, 66, 135, 112, 70, 0, 0); // @ K0013_s_Frame_Floor
 
@@ -607,8 +608,9 @@ enum GraphicIndice {
 
 
 
-extern Viewport gDefultViewPort = {0, 0};
-extern Viewport gDungeonViewport = {0, 64};	// TODO: I guessed the numbers
+Viewport gDefultViewPort = {0, 0};
+// TODO: I guessed the numbers
+Viewport gDungeonViewport = {0, 64}; // @ G0296_puc_Bitmap_Viewport
 
 byte gPalChangesNoChanges[16] = {0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120, 130, 140, 150}; // @ G0017_auc_Graphic562_PaletteChanges_NoChanges
 
@@ -1004,6 +1006,9 @@ void DisplayMan::drawSquareD1C(direction dir, int16 posX, int16 posY) {
 			drawFloorPitOrStairsBitmap(kStairsNativeIndex_Down_Front_D1C, gStairFrames[kFrameStairsDownFront_D1C]);
 		break;
 	case kWallElemType:
+		_vm->_dungeonMan->_isFacingAlcove = false;
+		_vm->_dungeonMan->_isFacingViAltar = false;
+		_vm->_dungeonMan->_isFacingFountain = false;
 		drawWallSetBitmapWithoutTransparency(_wallSetBitMaps[kWall_D1LCR], gFrameWalls[kViewSquare_D1C]);
 		break;
 	}
@@ -1060,6 +1065,11 @@ void DisplayMan::drawDungeon(direction dir, int16 posX, int16 posY) {
 	// NOTE: this can hold every bitmap, width and height is "flexible"
 	byte  *tmpBitmap = new byte[305 * 111];
 	clearBitmap(tmpBitmap, 305, 111, kColorBlack);
+
+	memset(_vm->_dungeonMan->_dungeonViewClickableBoxes, 0, sizeof(_vm->_dungeonMan->_dungeonViewClickableBoxes));
+	for (uint16 i = 0; i < 6; ++i) {
+		_vm->_dungeonMan->_dungeonViewClickableBoxes[i][0] = 255;
+	}
 
 	if (flippedFloorCeiling) {
 		uint16 w = gFloorFrame.srcWidth, h = gFloorFrame.srcHeight;
@@ -1215,6 +1225,8 @@ void DisplayMan::loadCurrentMapGraphics() {
 	uint16 fountainCount = 0;
 	Map &currMap = *_vm->_dungeonMan->_currMap.map;
 
+	_currMapViAltarIndex = -1;
+
 	for (uint16 i = 0; i < currMap.wallOrnCount; ++i) {
 		uint16 ornIndice = _currMapWallOrnIndices[i];
 		uint16 nativeIndice = kFirstWallOrn + ornIndice * 2;
@@ -1283,4 +1295,42 @@ void DisplayMan::drawFloorPitOrStairsBitmapFlippedHorizontally(StairIndex relInd
 		flipBitmapHorizontal(_tmpBitmap, f.srcWidth, f.srcHeight);
 		blitToScreen(_tmpBitmap, f.srcWidth, f.srcX, f.srcY, f.destFromX, f.destToX, f.destFromY, f.destToY, kColorFlesh, gDungeonViewport);
 	}
+}
+
+
+Box gBoxWallPatchBehindInscription = {110, 113, 37, 63}; // @ G0202_ac_Graphic558_Box_WallPatchBehindInscription 
+byte gInscriptionLineY[4] = { // @ G0203_auc_Graphic558_InscriptionLineY
+	48,   /* 1 Line  */
+	59,   /* 2 lines */
+	75,   /* 3 lines */
+	86}; /* 4 lines */
+byte gWallOrnDerivedBitmapIndexIncrement[12] = { // @ G0190_auc_Graphic558_WallOrnamentDerivedBitmapIndexIncrement
+	0,   /* D3L Right */
+	0,   /* D3R Left */
+	1,   /* D3L Front */
+	1,   /* D3C Front */
+	1,   /* D3R Front */
+	2,   /* D2L Right */
+	2,   /* D2R Left */
+	3,   /* D2L Front */
+	3,   /* D2C Front */
+	3,   /* D2R Front */
+	4,   /* D1L Right */
+	4}; /* D1R Left */
+
+byte gPalChangesDoorButtonAndWallOrn_D3[16] = {0, 0, 120, 30, 40, 30, 0, 60, 30, 90, 100, 110, 0, 10, 0, 20}; // @ G0198_auc_Graphic558_PaletteChanges_DoorButtonAndWallOrnament_D3
+byte gPalChangesDoorButtonAndWallOrn_D2[16] = {0, 120, 10, 30, 40, 30, 60, 70, 50, 90, 100, 110, 0, 20, 140, 130}; // @ G0199_auc_Graphic558_PaletteChanges_DoorButtonAndWallOrnament_D2
+
+byte gUnreadableInscriptionBoxY2[15] = { // @ G0204_auc_Graphic558_UnreadableInscriptionBoxY2
+	/* { Y for 1 line, Y for 2 lines, Y for 3 lines } */
+	45, 48, 53,   /* D3L Right, D3R Left */
+	43, 49, 56,   /* D3L Front, D3C Front, D3R Front */
+	42, 49, 56,   /* D2L Right, D2R Left */
+	46, 53, 63,   /* D2L Front, D2C Front, D2R Front */
+	46, 57, 68}; /* D1L Right, D1R Left */
+
+Box gBoxChampionPortraitOnWall = {96, 127, 35, 63}; // G0109_s_Graphic558_Box_ChampionPortraitOnWall
+
+bool DisplayMan::isDrawnWallOrnAnAlcove(int16 wallOrnOrd, ViewWall viewWallIndex) {
+	return false; // dummy
 }
