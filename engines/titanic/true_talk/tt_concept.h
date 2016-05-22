@@ -24,6 +24,7 @@
 #define TITANIC_TT_CONCEPT_H
 
 #include "titanic/true_talk/tt_string.h"
+#include "titanic/true_talk/tt_word.h"
 
 namespace Titanic {
 
@@ -114,6 +115,8 @@ public:
 
 	void setFlag(bool val) { _flag = val; }
 
+	void set1C(int val) { _field1C = val; }
+
 	bool checkWordId1() const;
 	bool checkWordId2() const;
 	bool checkWordClass() const;
@@ -122,6 +125,16 @@ public:
 	 * Return text assocaited with the concept's word or script
 	 */
 	const TTstring getText();
+
+	/**
+	 * Find a word by Id
+	 */
+	TTconcept *findByWordId(int id);
+
+	/**
+	 * Find a word by it's class
+	 */
+	TTconcept *findByWordClass(WordClass wordClass);
 };
 
 } // End of namespace Titanic

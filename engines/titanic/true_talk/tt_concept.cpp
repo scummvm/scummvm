@@ -255,4 +255,22 @@ const TTstring TTconcept::getText() {
 		return TTstring();
 }
 
+TTconcept *TTconcept::findByWordId(int id) {
+	for (TTconcept *conceptP = this; conceptP; conceptP = conceptP->_nextP) {
+		if (conceptP->_wordP && conceptP->_wordP->_id == id)
+			return conceptP;
+	}
+
+	return nullptr;
+}
+
+TTconcept *TTconcept::findByWordClass(WordClass wordClass) {
+	for (TTconcept *conceptP = this; conceptP; conceptP = conceptP->_nextP) {
+		if (conceptP->_wordP && conceptP->_wordP->_wordClass == wordClass)
+			return conceptP;
+	}
+
+	return nullptr;
+}
+
 } // End of namespace Titanic
