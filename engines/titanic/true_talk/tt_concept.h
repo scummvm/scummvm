@@ -82,6 +82,11 @@ public:
 	~TTconcept();
 
 	/**
+	 * Destroys any attached sibling concepts to the given concept
+	 */
+	void deleteSiblings();
+
+	/**
 	 * Compares the name of the associated word, if any,
 	 * to the passed string
 	 */

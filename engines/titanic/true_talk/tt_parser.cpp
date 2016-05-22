@@ -31,8 +31,8 @@
 namespace Titanic {
 
 TTparser::TTparser(CScriptHandler *owner) : _owner(owner), _sentenceSub(nullptr),
-		_sentence(nullptr), _fieldC(0), _field10(0), _field14(0), _field18(0),
-		_nodesP(nullptr), _conceptP(nullptr) {
+		_sentence(nullptr), _fieldC(0), _field10(0), _field14(0),
+		_currentWordP(nullptr), _nodesP(nullptr), _conceptP(nullptr) {
 	loadArrays();
 }
 
@@ -41,6 +41,13 @@ TTparser::~TTparser() {
 		_nodesP->deleteSiblings();
 		delete _nodesP;
 	}
+
+	if (_conceptP) {
+		_conceptP->deleteSiblings();
+		delete _conceptP;
+	}
+
+	delete _currentWordP;
 }
 
 void TTparser::loadArrays() {

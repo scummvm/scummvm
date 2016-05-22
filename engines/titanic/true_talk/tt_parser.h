@@ -162,7 +162,7 @@ public:
 	int _fieldC;
 	int _field10;
 	int _field14;
-	int _field18;
+	TTword *_currentWordP;
 public:
 	TTparser(CScriptHandler *owner);
 	~TTparser();

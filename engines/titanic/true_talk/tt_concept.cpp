@@ -97,6 +97,15 @@ TTconcept::~TTconcept() {
 		g_vm->_exeResources._owner->setParserConcept(this, nullptr);
 }
 
+void TTconcept::deleteSiblings() {
+	for (TTconcept *currP = _nextP, *nextP; currP; currP = nextP) {
+		nextP = currP->_nextP;
+		delete currP;
+	}
+
+	_nextP = nullptr;
+}
+
 bool TTconcept::setStatus() {
 	if (_string1.isValid() && _string2.isValid()) {
 		_status = SS_VALID;
