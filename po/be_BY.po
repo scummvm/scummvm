@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
 "POT-Creation-Date: 2016-04-07 08:55+0100\n"
-"PO-Revision-Date: 2016-02-21 23:32+0300\n"
+"PO-Revision-Date: 2016-05-22 17:05+0300\n"
 "Last-Translator: Ivan Lukyanov <greencis@mail.ru>\n"
 "Language-Team: Ivan Lukyanov <greencis@mail.ru>\n"
 "Language: Belarusian\n"
@@ -1054,15 +1054,15 @@ msgstr "Мова графічнага інтэрфейсу ScummVM"
 
 #: gui/options.cpp:1235
 msgid "Update check:"
-msgstr ""
+msgstr "Правяраць абнаўленні:"
 
 #: gui/options.cpp:1235
 msgid "How often to check ScummVM updates"
-msgstr ""
+msgstr "Як часта правяраць абнаўленні ScummVM"
 
 #: gui/options.cpp:1247
 msgid "Check now"
-msgstr ""
+msgstr "Праверыць цяпер"
 
 #: gui/options.cpp:1382
 msgid "You have to restart ScummVM before your changes will take effect."
@@ -1264,19 +1264,22 @@ msgid ""
 "\n"
 "Would you like to enable this feature?"
 msgstr ""
+"ScummVM стаў падтрымліваць аўтаматычную праверку\n"
+"абнаўленняў, якая патрабуе доступу ў Інтэрнэт.\n"
+"\n"
+"Ці жадаеце вы ўключыць гэту опцыю?"
 
 #: gui/updates-dialog.cpp:55
 msgid "(You can always enable it in the options dialog on the Misc tab)"
-msgstr ""
+msgstr "(Вы заўсёды можаце ўключыць яе ў наладах на закладцы \"Рознае\")"
 
 #: gui/updates-dialog.cpp:92
-#, fuzzy
 msgid "Check for updates automatically"
-msgstr "Правяраю абнаўленні..."
+msgstr "Аўтаматычна правяраць абнаўленні"
 
 #: gui/updates-dialog.cpp:111
 msgid "Proceed"
-msgstr ""
+msgstr "Працягнуць"
 
 #: gui/widget.cpp:327 gui/widget.cpp:329 gui/widget.cpp:335 gui/widget.cpp:337
 msgid "Clear value"
@@ -1407,20 +1410,19 @@ msgstr "Hercules Бурштынавы"
 
 #: common/updates.cpp:58
 msgid "Daily"
-msgstr ""
+msgstr "Штодзень"
 
 #: common/updates.cpp:60
 msgid "Weekly"
-msgstr ""
+msgstr "Штотыдзень"
 
 #: common/updates.cpp:62
 msgid "Monthly"
-msgstr ""
+msgstr "Штомесяц"
 
 #: common/updates.cpp:64
-#, fuzzy
 msgid "<Bad value>"
-msgstr "Ачысціць значэнне"
+msgstr "<Хібнае значэнне>"
 
 #: engines/advancedDetector.cpp:334
 #, c-format
@@ -2404,23 +2406,26 @@ msgstr ""
 "меню гульні."
 
 #: engines/agi/detection.cpp:177
-#, fuzzy
 msgid "Use Hercules hires font"
-msgstr "Hercules Зялёны"
+msgstr "Выкарыстоўваць шрыфт Hercules"
 
 #: engines/agi/detection.cpp:178
 msgid "Uses Hercules hires font, when font file is available."
 msgstr ""
+"Выкарыстоўвае шрыфт высокага адрознення Hercules, калі даступны файл са "
+"шрыфтам."
 
 #: engines/agi/detection.cpp:187
 msgid "Pause when entering commands"
-msgstr ""
+msgstr "Паўза падчас уводу каманд"
 
 #: engines/agi/detection.cpp:188
 msgid ""
 "Shows a command prompt window and pauses the game (like in SCI) instead of a "
 "real-time prompt."
 msgstr ""
+"Паказвае акно з радком уводу каманды і ставіць гульню на паўзу (як у SCI) "
+"замест уводу ў рэальным часе."
 
 #: engines/agi/saveload.cpp:777 engines/avalanche/parser.cpp:1887
 #: engines/cge/events.cpp:85 engines/cge2/events.cpp:78
@@ -2712,11 +2717,11 @@ msgstr ""
 
 #: engines/mohawk/detection.cpp:168
 msgid "Play the Myst fly by movie"
-msgstr ""
+msgstr "Прайграваць ролік пралёту над Myst"
 
 #: engines/mohawk/detection.cpp:169
 msgid "The Myst fly by movie was not played by the original engine."
-msgstr ""
+msgstr "Ролік пралёту над Myst не прайграваўся арыгінальным рухавічком."
 
 #. I18N: Option for fast scene switching
 #: engines/mohawk/dialogs.cpp:96 engines/mohawk/dialogs.cpp:239
@@ -2733,14 +2738,12 @@ msgid "~D~rop Page"
 msgstr "~В~ыкінуць старонку"
 
 #: engines/mohawk/dialogs.cpp:103
-#, fuzzy
 msgid "Show ~M~ap"
-msgstr "П~а~казаць карту"
+msgstr "Паказаць ~к~арту"
 
 #: engines/mohawk/dialogs.cpp:109
-#, fuzzy
 msgid "Main Men~u~"
-msgstr "~Г~алоўнае меню"
+msgstr "Галоўнае мен~ю~"
 
 #: engines/mohawk/dialogs.cpp:240
 msgid "~W~ater Effect Enabled"
@@ -2933,13 +2936,12 @@ msgstr ""
 "Выкарыстоўваць альтэрнатыўны набор срэбных курсораў замест звычайных залатых"
 
 #: engines/scumm/detection.cpp:1335
-#, fuzzy
 msgid "Show Object Line"
-msgstr "Паказваць назвы аб'ектаў"
+msgstr "Паказваць радок аб'ектаў"
 
 #: engines/scumm/detection.cpp:1336
 msgid "Show the names of objects at the bottom of the screen"
-msgstr ""
+msgstr "Паказваць назвы аб'ектаў унізе экрана"
 
 #: engines/scumm/dialogs.cpp:176
 #, c-format
@@ -3800,12 +3802,14 @@ msgstr "Паказвае назвы аб'ектаў пры навядзенні курсора мышы"
 
 #: engines/sword25/detection.cpp:46
 msgid "Use English speech"
-msgstr ""
+msgstr "Выкарыстоўваць англійскую агучку"
 
 #: engines/sword25/detection.cpp:47
 msgid ""
 "Use English speech instead of German for every language other than German"
 msgstr ""
+"Выкарыстоўваць англійскую агучку замест нямецкай для ўсіх моў, акрамя "
+"нямецкай"
 
 #: engines/teenagent/resources.cpp:95
 msgid ""
