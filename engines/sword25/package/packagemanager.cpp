@@ -82,7 +82,7 @@ Common::String PackageManager::ensureSpeechLang(const Common::String &fileName) 
 		return fileName;
 
 	Common::String newFileName = "/speech/en";
-	int fileIdx = 9;
+	uint fileIdx = 9;
 	while (fileIdx < fileName.size() && fileName[fileIdx] != '/')
 		++fileIdx;
 	if (fileIdx < fileName.size())
