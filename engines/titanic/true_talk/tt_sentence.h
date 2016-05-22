@@ -31,11 +31,12 @@
 namespace Titanic {
 
 class CScriptHandler;
+class TTconcept;
 class TTword;
 
 class TTsentenceSubBase {
 public:
-	int _field0;
+	TTconcept *_conceptP;
 	int _field4;
 	int _field8;
 	int _fieldC;

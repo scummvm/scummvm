@@ -719,8 +719,81 @@ int TTparser::loadRequests(TTword *word) {
 }
 
 int TTparser::considerRequests(TTword *word) {
+	if (_nodesP)
+		return 0;
+
+	TTparserNode *nodeP = _nodesP;
+	TTconcept *concept = nullptr;
+	int status = 0;
+	bool flag = false;
+
+	while (word) {
+		int ecx = 906;
+		int edx = 12;
+
+		if (nodeP->_tag == MKTAG('C', 'O', 'M', 'E')) {
+			addNode(7);
+			addNode(5);
+			addNode(21);
+
+			if (!_sentence->_field2C)
+				_sentence->_field2C = 15;
+		} else if (nodeP->_tag == MKTAG('C', 'U', 'R', 'S') ||
+				nodeP->_tag == MKTAG('S', 'E', 'X', 'X')) {
+			if (_sentence->_field58 > 1)
+				_sentence->_field58--;
+			flag = true;
+
+		} else if (nodeP->_tag == MKTAG('E', 'X', 'I', 'T')) {
+			addNode(8);
+			addNode(5);
+			addNode(21);
+
+			if (!_sentence->_field2C)
+				_sentence->_field2C = 14;
+
+
+		} else if (nodeP->_tag < MKTAG('C', 'O', 'M', 'E')) {
+			if (_sentence->_field58 > 1)
+				_sentence->_field58--;
+			flag = true;
+		} else {
+			switch (nodeP->_tag) {
+			case CHECK_COMMAND_FORM:
+				if (_sentenceSub->_field4 && _sentence->_field2C == 1 &&
+						!_sentenceSub->_conceptP) {
+					concept = new TTconcept(_sentence->_npcScript, ST_NPC_SCRIPT);
+					_sentenceSub->_conceptP = concept;
+					_sentenceSub->_field18 = 3;
+				}
+
+				flag = true;
+				break;
+
+			case 2:
+				if (!word->_wordMode) {
+					word->_wordMode = WMODE_2;
+					addToConceptList(word);
+					addNode(14);
+				}
+
+				flag = true;
+				break;
+
+			case 3:
+				// TODO
+				//flag = _sentenceSub
+				break;
+
+			default:
+				break;
+			}
+		}
+	}
+
 	// TODO
-	return 0;
+	delete concept;
+	return status;
 }
 
 void TTparser::addToConceptList(TTword *word) {

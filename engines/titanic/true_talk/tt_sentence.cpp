@@ -25,9 +25,9 @@
 
 namespace Titanic {
 
-TTsentenceSubBase::TTsentenceSubBase() : _field0(0), _field4(0), _field8(0),
-	_fieldC(0), _field10(0), _field14(0), _field18(0), _field1C(0),
-	_nextP(nullptr), _field24(0) {
+TTsentenceSubBase::TTsentenceSubBase() : _conceptP(nullptr), _field4(0),
+	_field8(0), _fieldC(0), _field10(0), _field14(0), _field18(0),
+	_field1C(0), _nextP(nullptr), _field24(0) {
 }
 
 void TTsentenceSubBase::deleteSiblings() {

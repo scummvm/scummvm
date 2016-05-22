@@ -32,6 +32,10 @@ namespace Titanic {
 
 enum NumberFlag { NF_1 = 1, NF_2 = 2, NF_4 = 4, NF_8 = 8, NF_10 = 0x10 };
 
+enum ParserTag {
+	CHECK_COMMAND_FORM = 1
+};
+
 class CScriptHandler;
 class TTconcept;
 
