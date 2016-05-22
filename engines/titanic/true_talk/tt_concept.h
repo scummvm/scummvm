@@ -42,10 +42,10 @@ private:
 	int _field1C;
 	int _field20;
 	TTstring _string2;
-	TTword *_word2;
+	TTword *_word2P;
 	int _field30;
 	int _field34;
-	int _field38;
+	bool _flag;
 	int _status;
 private:
 	/**
@@ -79,6 +79,7 @@ public:
 	TTconcept(TTscriptBase *script, ScriptType scriptType);
 	TTconcept(TTword *word, ScriptType scriptType);
 	TTconcept(TTconcept &src);
+	~TTconcept();
 
 	/**
 	 * Compares the name of the associated word, if any,
@@ -91,7 +92,7 @@ public:
 	 */
 	int getStatus() const { return _status; }
 
-	void set38(int val) { _field38 = val; }
+	void setFlag(bool val) { _flag = val; }
 };
 
 } // End of namespace Titanic

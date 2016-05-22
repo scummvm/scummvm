@@ -27,7 +27,12 @@
 
 namespace Titanic {
 
-TTconcept::TTconcept() {
+TTconcept::TTconcept() : _string1(" "), _string2(" "), 
+		_scriptP(nullptr), _wordP(nullptr) {
+	if (setStatus())
+		setScriptType(ST_UNKNOWN_SCRIPT);
+	else
+		reset();
 }
 
 TTconcept::TTconcept(TTscriptBase *script, ScriptType scriptType) :
@@ -81,6 +86,17 @@ TTconcept::TTconcept(TTconcept &src) :
 		reset();
 }
 
+TTconcept::~TTconcept() {
+	if (_word2P) {
+		_word2P->deleteSiblings();
+		delete _word2P;
+	}
+	delete _wordP;
+
+	if (_flag)
+		g_vm->_exeResources._owner->setParserConcept(this, nullptr);
+}
+
 bool TTconcept::setStatus() {
 	if (_string1.isValid() && _string2.isValid()) {
 		_status = SS_VALID;
@@ -97,10 +113,10 @@ void TTconcept::setScriptType(ScriptType scriptType) {
 	_scriptType = scriptType;
 	_field1C = -1;
 	_field20 = 0;
-	_word2 = nullptr;
+	_word2P = nullptr;
 	_field30 = 0;
 	_field34 = 0;
-	_field38 = 0;
+	_flag = false;
 	_status = 0;
 }
 
@@ -132,21 +148,21 @@ void TTconcept::copyFrom(TTconcept &src) {
 	_field1C = src._field1C;
 	_field20 = src._field20;
 
-	if (src._word2) {
-		_word2 = src._word2->copyWords();
-		if (src._word2->getChainStatus())
+	if (src._word2P) {
+		_word2P = src._word2P->copyWords();
+		if (src._word2P->getChainStatus())
 			_status = 11;
 	} else {
-		_word2 = nullptr;
+		_word2P = nullptr;
 	}
 
 	_field30 = src._field30;
 	_field34 = src._field34;
 	
-	if (src._field38 == 1) {
+	if (src._flag) {
 		g_vm->_exeResources._owner->setParserConcept(this, &src);
-		src.set38(1);
-		_field38 = 1;
+		src.setFlag(true);
+		_flag = true;
 	}
 
 	_status = src._status;

@@ -71,6 +71,8 @@ ScriptChangedResult CScriptHandler::scriptChanged(TTroomScript *roomScript, TTnp
 	_concept2P = nullptr;
 	_concept3P = nullptr;
 	_concept4P = nullptr;
+
+	return result;
 }
 
 int CScriptHandler::processInput(TTroomScript *roomScript, TTnpcScript *npcScript,
