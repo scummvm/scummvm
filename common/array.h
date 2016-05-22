@@ -378,7 +378,7 @@ public:
 	 * Inserts element at the sorted position.
 	 */
 	void insert(const T &element) {
-		T *where = (T *)bsearch(element, this->front(), this->_size, sizeof(T), _comparator);
+		T *where = (T *)bsearchMin(element, this->front(), this->_size, sizeof(T), _comparator);
 		insert(where, element);
 	}
 
@@ -406,7 +406,29 @@ public:
 		error("Operation not allowed with SortedArray");
 	}
 
+private:
+	// Based on code Copyright (C) 2008-2009 Ksplice, Inc.
+	// Author: Tim Abbott <tabbott@ksplice.com>
+	// Licensed under GPLv2+
+	void *bsearchMin(const void *key, const void *base, uint num, uint size,
+					int (*cmp)(const void *key, const void *elt)) {
+		uint start = 0, end = num;
+		int result;
 
+		while (start < end) {
+			uint mid = start + (end - start) / 2;
+
+			result = cmp(key, (byte *)base + mid * size);
+			if (result < 0)
+				end = mid;
+			else if (result > 0)
+				start = mid + 1;
+			else
+				return (void *)((byte *)base + mid * size);
+		}
+
+		return (void *)((byte *)base + start * size);
+	}
 
 private:
 	int (*_comparator)(const void *, const void *);
