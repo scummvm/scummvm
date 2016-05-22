@@ -30,7 +30,7 @@ TTpronoun::TTpronoun(TTstring &str, WordClass wordClass, int val2, int val3, int
 		TTmajorWord(str, wordClass, val2, val3), _field30(val4) {
 }
 
-TTpronoun::TTpronoun(TTpronoun *src) : TTmajorWord(src) {
+TTpronoun::TTpronoun(const TTpronoun *src) : TTmajorWord(src) {
 	if (src->getStatus()) {
 		_field30 = 0;
 		_status = SS_5;
@@ -54,7 +54,7 @@ int TTpronoun::load(SimpleFile *file) {
 	}
 }
 
-TTword *TTpronoun::copy() {
+TTword *TTpronoun::copy() const {
 	TTpronoun *returnWordP = new TTpronoun(this);
 	returnWordP->_status = _status;
 	if (!_status) {

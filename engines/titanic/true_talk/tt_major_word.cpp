@@ -30,7 +30,7 @@ TTmajorWord::TTmajorWord(TTstring &str, WordClass wordClass, int val2, int val3)
 		TTword(str, wordClass, val2), _field2C(val3) {
 }
 
-TTmajorWord::TTmajorWord(TTmajorWord *src) : TTword(src) {
+TTmajorWord::TTmajorWord(const TTmajorWord *src) : TTword(src) {
 	if (src->getStatus()) {
 		_field2C = 0;
 		_status = SS_5;
@@ -51,7 +51,7 @@ int TTmajorWord::saveData(SimpleFile *file, int val) const {
 	return result;
 }
 
-TTword *TTmajorWord::copy() {
+TTword *TTmajorWord::copy() const {
 	TTmajorWord *returnWordP = new TTmajorWord(this);
 	returnWordP->_status = _status;
 	if (!_status) {

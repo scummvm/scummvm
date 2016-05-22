@@ -37,7 +37,7 @@ protected:
 	int _field3C;
 public:
 	TTpicture(TTstring &str, WordClass wordClass, int val2, int val3, int val4, int val5, int val6);
-	TTpicture(TTpicture *src);
+	TTpicture(const TTpicture *src);
 
 	/**
 	 * Load the word
@@ -47,7 +47,7 @@ public:
 	/**
 	 * Creates a copy of the word
 	 */
-	virtual TTword *copy();
+	virtual TTword *copy() const;
 
 	/**
 	 * Checks whether the word's tag is a known type

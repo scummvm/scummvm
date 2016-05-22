@@ -36,7 +36,7 @@ TTadj::TTadj(TTstring &str, WordClass wordClass, int val2, int val3, int val4) :
 	}
 }
 
-TTadj::TTadj(TTadj *src) : TTmajorWord(src) {
+TTadj::TTadj(const TTadj *src) : TTmajorWord(src) {
 	if (src->getStatus()) {
 		_field30 = 0;
 		_status = SS_5;
@@ -56,7 +56,7 @@ int TTadj::load(SimpleFile *file) {
 	}
 }
 
-TTword *TTadj::copy() {
+TTword *TTadj::copy() const {
 	TTadj *returnWordP = new TTadj(this);
 	returnWordP->_status = _status;
 	if (!_status) {

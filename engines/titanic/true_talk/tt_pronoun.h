@@ -34,7 +34,7 @@ protected:
 	int _field30;
 public:
 	TTpronoun(TTstring &str, WordClass wordClass, int val2, int val3, int val4);
-	TTpronoun(TTpronoun *src);
+	TTpronoun(const TTpronoun *src);
 
 	/**
 	 * Load the word
@@ -46,7 +46,7 @@ public:
 	/**
 	 * Creates a copy of the word
 	 */
-	virtual TTword *copy();
+	virtual TTword *copy() const;
 
 	virtual bool proc19(int val) const { return _field30 == val; }
 

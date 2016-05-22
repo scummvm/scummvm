@@ -34,7 +34,7 @@ protected:
 	int _field30;
 public:
 	TTaction(TTstring &str, WordClass wordClass, int val2, int val3, int val4);
-	TTaction(TTaction *src);
+	TTaction(const TTaction *src);
 
 	/**
 	 * Load the word
@@ -47,7 +47,7 @@ public:
 	/**
 	 * Creates a copy of the word
 	 */
-	virtual TTword *copy();
+	virtual TTword *copy() const;
 
 	virtual bool proc12(int val) const { return _field30 == val; }
 };

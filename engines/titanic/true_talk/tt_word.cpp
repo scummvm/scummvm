@@ -32,7 +32,7 @@ TTword::TTword(TTstring &str, WordClass wordClass, int id) : _string(str),
 	_status = str.getStatus() == SS_VALID ? SS_VALID : SS_5;
 }
 
-TTword::TTword(TTword *src) {
+TTword::TTword(const TTword *src) {
 	if (src->getStatus() != SS_VALID) {
 		_status = SS_5;
 		return;
@@ -189,7 +189,7 @@ bool TTword::compareTo(const char *str) const {
 	return _string == str;
 }
 
-TTword *TTword::copy() {
+TTword *TTword::copy() const {
 	return new TTword(this);
 }
 

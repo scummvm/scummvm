@@ -31,7 +31,7 @@ TTpicture::TTpicture(TTstring &str, WordClass wordClass, int val2, int val3, int
 		_field38(0) {
 }
 
-TTpicture::TTpicture(TTpicture *src) : TTmajorWord(src) {
+TTpicture::TTpicture(const TTpicture *src) : TTmajorWord(src) {
 	if (getStatus()) {
 		_tag = 0;
 		_field30 = 0;
@@ -60,7 +60,7 @@ int TTpicture::load(SimpleFile *file) {
 	}
 }
 
-TTword *TTpicture::copy() {
+TTword *TTpicture::copy() const {
 	TTpicture *returnWordP = new TTpicture(this);
 	returnWordP->_status = _status;
 	if (!_status) {

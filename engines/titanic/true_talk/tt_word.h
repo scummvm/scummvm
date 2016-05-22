@@ -65,7 +65,7 @@ public:
 	uint _tag;
 public:
 	TTword(TTstring &str, WordClass wordClass, int val2);
-	TTword(TTword *src);
+	TTword(const TTword *src);
 	~TTword();
 
 	/**
@@ -137,7 +137,7 @@ public:
 	/**
 	 * Creates a copy of the word
 	 */
-	virtual TTword *copy();
+	virtual TTword *copy() const;
 	
 	void unkFn1(int val);
 

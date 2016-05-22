@@ -30,7 +30,7 @@ TTaction::TTaction(TTstring &str, WordClass wordClass, int val2, int val3, int v
 		TTmajorWord(str, wordClass, val2, val3), _field30(val4) {
 }
 
-TTaction::TTaction(TTaction *src) : TTmajorWord(src) {
+TTaction::TTaction(const TTaction *src) : TTmajorWord(src) {
 	if (src->getStatus()) {
 		_field30 = 0;
 		_status = SS_5;
@@ -50,7 +50,7 @@ int TTaction::load(SimpleFile *file) {
 	}
 }
 
-TTword *TTaction::copy() {
+TTword *TTaction::copy() const {
 	TTaction *returnWordP = new TTaction(this);
 	returnWordP->_status = _status;
 	if (!_status) {

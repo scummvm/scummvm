@@ -34,7 +34,7 @@ protected:
 	int _field30;
 public:
 	TTadj(TTstring &str, WordClass wordClass, int val2, int val3, int val4);
-	TTadj(TTadj *src);
+	TTadj(const TTadj *src);
 
 	/**
 	 * Load the word
@@ -44,7 +44,7 @@ public:
 	/**
 	 * Creates a copy of the word
 	 */
-	virtual TTword *copy();
+	virtual TTword *copy() const;
 
 	virtual bool proc14(int val) const { return _field30 == val; }
 	virtual int proc15() const { return _field30; }

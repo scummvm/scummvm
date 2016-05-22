@@ -39,12 +39,12 @@ protected:
 	int saveData(SimpleFile *file, int val) const;
 public:
 	TTmajorWord(TTstring &str, WordClass wordClass, int val2, int val3);
-	TTmajorWord(TTmajorWord *src);
+	TTmajorWord(const TTmajorWord *src);
 
 	/**
 	 * Creates a copy of the word
 	 */
-	virtual TTword *copy();
+	virtual TTword *copy() const;
 
 	virtual bool proc2(int val) const { return _field2C == val; }
 };
