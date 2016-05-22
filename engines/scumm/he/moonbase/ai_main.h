@@ -86,7 +86,7 @@ enum {
 
 static int energyHogType = 0;
 
-void resetAI();
+void resetAI(ScummEngine_v90he *vm);
 void cleanUpAI();
 void setAIType(const int paramCount, const int *params);
 int masterControlProgram(const int paramCount, const int *params);

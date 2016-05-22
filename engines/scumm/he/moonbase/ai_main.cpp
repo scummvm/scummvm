@@ -168,7 +168,9 @@ const int *MCP_params;
 Common::Array<int> lastXCoord[5];
 Common::Array<int> lastYCoord[5];
 
-void resetAI() {
+void resetAI(ScummEngine_v90he *vm) {
+	_vm = vm;
+
 	AIstate = STATE_CHOOSE_BEHAVIOR;
 	warning("----------------------> Resetting AI");
 

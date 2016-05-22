@@ -23,6 +23,7 @@
 #include "scumm/he/intern_he.h"
 #include "scumm/he/logic_he.h"
 #include "scumm/he/moonbase/moonbase.h"
+#include "scumm/he/moonbase/ai_main.h"
 
 namespace Scumm {
 
@@ -48,7 +49,7 @@ private:
 	int op_set_fow_image(int op, int numArgs, int32 *args);
 
 	void op_ai_test_kludge(int op, int numArgs, int32 *args);
-	void op_ai_master_control_program(int op, int numArgs, int32 *args);
+	int op_ai_master_control_program(int op, int numArgs, int32 *args);
 	void op_ai_reset(int op, int numArgs, int32 *args);
 	void op_ai_set_type(int op, int numArgs, int32 *args);
 	void op_ai_clean_up(int op, int numArgs, int32 *args);
@@ -137,14 +138,12 @@ int32 LogicHEmoonbase::dispatch(int op, int numArgs, int32 *args) {
 		break;
 	case OP_SET_FOW_IMAGE:
 		return op_set_fow_image(op, numArgs, args);
-		break;
 
 	case OP_AI_TEST_KLUDGE:
 		op_ai_test_kludge(op, numArgs, args);
 		break;
 	case OP_AI_MASTER_CONTROL_PROGRAM:
-		op_ai_master_control_program(op, numArgs, args);
-		break;
+		return op_ai_master_control_program(op, numArgs, args);
 	case OP_AI_RESET:
 		op_ai_reset(op, numArgs, args);
 		break;
@@ -226,24 +225,24 @@ void LogicHEmoonbase::op_ai_test_kludge(int op, int numArgs, int32 *args) {
 	LogicHE::dispatch(op, numArgs, args);
 }
 
-void LogicHEmoonbase::op_ai_master_control_program(int op, int numArgs, int32 *args) {
-	warning("STUB: op_ai_master_control_program()");
-	LogicHE::dispatch(op, numArgs, args);
+int LogicHEmoonbase::op_ai_master_control_program(int op, int numArgs, int32 *args) {
+	warning("op_ai_master_control_program()");
+	return masterControlProgram(numArgs, args);
 }
 
 void LogicHEmoonbase::op_ai_reset(int op, int numArgs, int32 *args) {
-	warning("STUB: op_ai_reset)");
-	LogicHE::dispatch(op, numArgs, args);
+	warning("op_ai_reset())");
+	resetAI(_vm);
 }
 
 void LogicHEmoonbase::op_ai_set_type(int op, int numArgs, int32 *args) {
-	warning("STUB: op_ai_set_type()");
-	LogicHE::dispatch(op, numArgs, args);
+	warning("op_ai_set_type()");
+	setAIType(numArgs, args);
 }
 
 void LogicHEmoonbase::op_ai_clean_up(int op, int numArgs, int32 *args) {
-	warning("STUB: op_ai_clean_up()");
-	LogicHE::dispatch(op, numArgs, args);
+	warning("op_ai_clean_up()");
+	cleanUpAI();
 }
 
 LogicHE *makeLogicHEmoonbase(ScummEngine_v90he *vm) {
