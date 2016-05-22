@@ -71,9 +71,9 @@ int Scene49::init() {
 	_vm->_timers[2] = 0;
 	_vm->_timers[0] = 0;
 	_vm->_timers[1] = 0;
-	_vm->clearKeyStatus1(28);
-	_vm->clearKeyStatus1(54);
-	_vm->clearKeyStatus1(52);
+	_vm->clearKeyStatus1(Common::KEYCODE_ESCAPE);
+	_vm->clearKeyStatus1(Common::KEYCODE_RIGHT);
+	_vm->clearKeyStatus1(Common::KEYCODE_LEFT);
 	return 0xD5;
 }
 
@@ -2704,7 +2704,7 @@ void Scene52::run() {
 			_alienWave = false;
 			_vm->_gameSys->waitForUpdate();
 			initAnims();
-			_vm->clearKeyStatus1(30);
+			_vm->clearKeyStatus1(Common::KEYCODE_SPACE);
 			_vm->_sceneDone = true;
 		}
 	}

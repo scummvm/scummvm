@@ -1488,11 +1488,11 @@ void Scene13::showScribble() {
 	_vm->_largeSprite = gameSys.createSurface(0x6F);
 	gameSys.insertSpriteDrawItem(_vm->_largeSprite, 0, 0, 300);
 	while (!_vm->_mouseClickState._left && !_vm->isKeyStatus1(Common::KEYCODE_ESCAPE) &&
-		!_vm->isKeyStatus1(Common::KEYCODE_SPACE) && !_vm->isKeyStatus1(29) && !_vm->_gameDone)
+		!_vm->isKeyStatus1(Common::KEYCODE_SPACE) && !_vm->isKeyStatus1(Common::KEYCODE_RETURN) && !_vm->_gameDone)
 		_vm->gameUpdateTick();
 	_vm->_mouseClickState._left = false;
 	_vm->clearKeyStatus1(Common::KEYCODE_ESCAPE);
-	_vm->clearKeyStatus1(29);
+	_vm->clearKeyStatus1(Common::KEYCODE_RETURN);
 	_vm->clearKeyStatus1(Common::KEYCODE_SPACE);
 	gameSys.removeSpriteDrawItem(_vm->_largeSprite, 300);
 	_vm->deleteSurface(&_vm->_largeSprite);

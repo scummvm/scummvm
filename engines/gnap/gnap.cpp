@@ -570,13 +570,13 @@ void GnapEngine::showFullScreenSprite(int resourceId) {
 	hideCursor();
 	setGrabCursorSprite(-1);
 	addFullScreenSprite(resourceId, 256);
-	while (!_mouseClickState._left && !isKeyStatus1(Common::KEYCODE_ESCAPE) &&
-		!isKeyStatus1(Common::KEYCODE_SPACE) && !isKeyStatus1(29) && !_gameDone) {
+	while (!_mouseClickState._left && !isKeyStatus1(Common::KEYCODE_ESCAPE)
+		&& !isKeyStatus1(Common::KEYCODE_SPACE) && !isKeyStatus1(Common::KEYCODE_RETURN) && !_gameDone) {
 		gameUpdateTick();
 	}
 	_mouseClickState._left = false;
 	clearKeyStatus1(Common::KEYCODE_ESCAPE);
-	clearKeyStatus1(29);
+	clearKeyStatus1(Common::KEYCODE_RETURN);
 	clearKeyStatus1(Common::KEYCODE_SPACE);
 	removeFullScreenSprite();
 	showCursor();
@@ -739,8 +739,8 @@ void GnapEngine::mainLoop() {
 		_soundCache->purge(true);
 		_spriteCache->purge(true);
 
-		if (isKeyStatus1(28)) {
-			clearKeyStatus1(28);
+		if (isKeyStatus1(Common::KEYCODE_ESCAPE)) {
+			clearKeyStatus1(Common::KEYCODE_ESCAPE);
 			if (_debugLevel == 4)
 				_gameDone = true;
 		}

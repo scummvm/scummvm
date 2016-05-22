@@ -157,10 +157,10 @@ void SceneIntro::run() {
 			}
 		}
 
-		if (_vm->isKeyStatus1(Common::KEYCODE_ESCAPE) || _vm->isKeyStatus1(Common::KEYCODE_SPACE) || _vm->isKeyStatus1(29)) {
+		if (_vm->isKeyStatus1(Common::KEYCODE_ESCAPE) || _vm->isKeyStatus1(Common::KEYCODE_SPACE) || _vm->isKeyStatus1(Common::KEYCODE_RETURN)) {
 			_vm->clearKeyStatus1(Common::KEYCODE_ESCAPE);
 			_vm->clearKeyStatus1(Common::KEYCODE_SPACE);
-			_vm->clearKeyStatus1(29);
+			_vm->clearKeyStatus1(Common::KEYCODE_RETURN);
 			if (index == 0) {
 				skip = true;
 				_vm->stopSound(0x3CF);

@@ -238,7 +238,7 @@ void GnapEngine::runMenu() {
 
 	_timers[2] = 10;
 
-	while (!isKeyStatus1(8) && !isKeyStatus1(28) && !_sceneDone && !_menuDone) {
+	while (!isKeyStatus1(Common::KEYCODE_BACKSPACE) && !isKeyStatus1(Common::KEYCODE_ESCAPE) && !_sceneDone && !_menuDone) {
 		updateCursorByHotspot();
 
 		switch (_menuStatus) {
@@ -422,14 +422,15 @@ void GnapEngine::updateMenuStatusMainMenu() {
 						_gameSys->insertDirtyRect(dirtyRect);
 					}
 
-					while (!_mouseClickState._left && !isKeyStatus1(28) && !isKeyStatus1(30) && !isKeyStatus1(29) && !_timers[2] && !_gameDone)
+					while (!_mouseClickState._left && !isKeyStatus1(Common::KEYCODE_ESCAPE) && !isKeyStatus1(Common::KEYCODE_RETURN)
+							&& !isKeyStatus1(Common::KEYCODE_SPACE) && !_timers[2] && !_gameDone)
 						gameUpdateTick();
 
 					playSound(0x108F5, false);
 					_mouseClickState._left = false;
-					clearKeyStatus1(28);
-					clearKeyStatus1(29);
-					clearKeyStatus1(30);
+					clearKeyStatus1(Common::KEYCODE_ESCAPE);
+					clearKeyStatus1(Common::KEYCODE_RETURN);
+					clearKeyStatus1(Common::KEYCODE_SPACE);
 				}
 
 				_gameSys->removeSpriteDrawItem(_largeSprite, 300);

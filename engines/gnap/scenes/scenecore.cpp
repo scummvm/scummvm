@@ -677,7 +677,7 @@ void CutScene::run() {
 
 	_vm->clearKeyStatus1(Common::KEYCODE_ESCAPE);
 	_vm->clearKeyStatus1(Common::KEYCODE_SPACE);
-	_vm->clearKeyStatus1(29);
+	_vm->clearKeyStatus1(Common::KEYCODE_RETURN);
 
 	_vm->_mouseClickState._left = false;
 
@@ -701,10 +701,10 @@ void CutScene::run() {
 			}
 		}
 
-		if (_vm->isKeyStatus1(Common::KEYCODE_ESCAPE) || _vm->isKeyStatus1(Common::KEYCODE_SPACE) || _vm->isKeyStatus1(29)) {
+		if (_vm->isKeyStatus1(Common::KEYCODE_ESCAPE) || _vm->isKeyStatus1(Common::KEYCODE_SPACE) || _vm->isKeyStatus1(Common::KEYCODE_RETURN)) {
 			_vm->clearKeyStatus1(Common::KEYCODE_ESCAPE);
 			_vm->clearKeyStatus1(Common::KEYCODE_SPACE);
-			_vm->clearKeyStatus1(29);
+			_vm->clearKeyStatus1(Common::KEYCODE_RETURN);
 			if (_canSkip[itemIndex])
 				skip = true;
 			else
