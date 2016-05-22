@@ -1573,9 +1573,6 @@ void Scene24::run() {
 	_girlSequenceId = 0x36;
 	_boySequenceId = 0x30;
 
-	if (_vm->_debugLevel == 4)
-		_vm->startIdleTimer(8);
-
 	_vm->queueInsertDeviceIcon();
 
 	if (_vm->_prevSceneNum == 20) {
@@ -1721,8 +1718,6 @@ void Scene24::run() {
 					break;
 				}
 			}
-			if (_vm->_debugLevel == 4)
-				_vm->updateIdleTimer();
 			_vm->playSoundA();
 		}
 
@@ -2359,9 +2354,6 @@ void Scene27::run() {
 	if (!_vm->isFlag(kGFUnk13))
 		gameSys.insertSequence(0xD3, 39, 0, 0, kSeqNone, 0, 0, 0);
 
-	if (_vm->_debugLevel == 4)
-		_vm->startIdleTimer(6);
-
 	gameSys.insertSequence(0xCB, 39, 0, 0, kSeqNone, 0, 0, 0);
 
 	_currJanitorSequenceId = 0xCB;
@@ -2561,8 +2553,6 @@ void Scene27::run() {
 			plat.updateIdleSequence();
 			if (gnap._actionStatus < 0)
 				gnap.updateIdleSequence();
-			if (_vm->_debugLevel == 4)
-				_vm->updateIdleTimer();
 			if (!_vm->_timers[5]) {
 				_vm->_timers[5] = _vm->getRandom(20) + 60;
 				if (gnap._actionStatus < 0) {

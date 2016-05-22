@@ -738,12 +738,6 @@ void GnapEngine::mainLoop() {
 		_sequenceCache->purge(true);
 		_soundCache->purge(true);
 		_spriteCache->purge(true);
-
-		if (isKeyStatus1(Common::KEYCODE_ESCAPE)) {
-			clearKeyStatus1(Common::KEYCODE_ESCAPE);
-			if (_debugLevel == 4)
-				_gameDone = true;
-		}
 	}
 
 	if (_backgroundSurface)

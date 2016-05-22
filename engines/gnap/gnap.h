@@ -251,8 +251,6 @@ public:
 	Common::MemoryWriteStreamDynamic *_tempThumbnail;
 
 	int _lastUpdateClock;
-
-	int _debugLevel;
 	bool _gameDone;
 
 	byte _keyPressState[512];
