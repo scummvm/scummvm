@@ -142,6 +142,11 @@ public:
 	TTstringStatus getChainStatus() const;
 
 	/**
+	 * Returns true if the word is of the specified class
+	 */
+	bool isClass(WordClass wordClass) const { return _wordClass == wordClass; }
+
+	/**
 	 * Copy the word and any attached to it
 	 */
 	TTword *copyWords();

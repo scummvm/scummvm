@@ -49,7 +49,7 @@
  */
 
 #define VERSION_NUMBER 1
-#define HEADER_SIZE 0x290
+#define HEADER_SIZE 0x300
 
 Common::File inputFile, outputFile;
 Common::PEResources res;
@@ -349,6 +349,8 @@ void writeData() {
 	writeStringArray("TEXT/REPLACEMENTS1", 0x21BDB0, 218);
 	writeStringArray("TEXT/REPLACEMENTS2", 0x21C120, 1576);
 	writeStringArray("TEXT/REPLACEMENTS3", 0x21D9C8, 82);
+	writeStringArray("TEXT/PRONOUNS", 0x22F718, 15);
+
 	writeNumbers();
 }
 
