@@ -43,10 +43,6 @@ MusicPlayer::MusicPlayer(const char *filename) : _filename(filename) {
 		else
 			_driver->sendGMReset();
 
-		// TODO: Load cmf.ins with the instrument table.  It seems that an
-		// interface for such an operation is supported for AdLib.  Maybe for
-		// this card, setting instruments is necessary.
-
 		_driver->setTimerCallback(this, &timerCallback);
 	}
 }
