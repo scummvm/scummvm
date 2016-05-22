@@ -472,7 +472,7 @@ int Defender::calculateDefenseUnitPosition(int targetX, int targetY, int index) 
 					}
 				}
 
-				if ((_vm->_rnd.getRandomNumber((int)pow(3, shieldCount + 1) - 1) == 0) && (getPlayerEnergy() > 6))
+				if ((_vm->_rnd.getRandomNumber((int)pow(3.0f, shieldCount + 1) - 1) == 0) && (getPlayerEnergy() > 6))
 					setUnit(ITEM_SHIELD);
 				else
 					setUnit(ITEM_ANTIAIR);
