@@ -55,10 +55,10 @@ private:
 	CScriptHandlerSub1 _sub1;
 	TTparser _parser;
 	int _inputCtr;
-	int _field20;
-	int _field24;
-	int _field28;
-	int _field2C;
+	TTconcept *_concept1P;
+	TTconcept *_concept2P;
+	TTconcept *_concept3P;
+	TTconcept *_concept4P;
 	int _field30;
 public:
 	TTvocab *_vocab;
