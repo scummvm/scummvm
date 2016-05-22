@@ -770,7 +770,7 @@ int TTparser::considerRequests(TTword *word) {
 				flag = true;
 				break;
 
-			case 2:
+			case EXPECT_THING:
 				if (!word->_wordClass) {
 					word->_wordClass = WC_THING;
 					addToConceptList(word);
@@ -780,9 +780,33 @@ int TTparser::considerRequests(TTword *word) {
 				flag = true;
 				break;
 
-			case 3:
+			case OBJECT_IS_TO:
 				// TODO
 				//flag = _sentenceSub
+				break;
+
+			case SEEK_ACTOR:
+			case SEEK_OBJECT:
+			case SEEK_OBJECT_OVERRIDE:
+			case SEEK_TO:
+			case SEEK_FROM:
+			case SEEK_TO_OVERRIDE:
+			case SEEK_FROM_OVERRIDE:
+			case SEEK_LOCATION:
+			case SEEK_OWNERSHIP:
+			case SEEK_STATE:
+			case SEEK_MODIFIERS:
+			case SEEK_NEW_FRAME:
+			case SEEK_STATE_OBJECT:
+			case SET_ACTION:
+			case SET_COLOR:
+			case ACTOR_IS_TO:
+			case ACTOR_IS_FROM:
+			case ACTOR_IS_OBJECT:
+			case STATE_IDENTITY:
+			case WORD_TYPE_IS_SENTENCE_TYPE:
+			case COMPLEX_VERB:
+				// TODO
 				break;
 
 			default:
