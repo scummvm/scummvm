@@ -13,6 +13,15 @@ int16 ordinalToIndex(int16 val); // @ M01_ORDINAL_TO_INDEX
 int16 indexToOrdinal(int16 val); // @ M00_INDEX_TO_ORDINAL
 
 
+enum TextType {
+	/* Used for text on walls */
+	kTextTypeInscription = 0, // @ C0_TEXT_TYPE_INSCRIPTION 
+	/* Used for messages displayed when the party walks on a square */
+	kTextTypeMessage = 1, // @ C1_TEXT_TYPE_MESSAGE 
+	/* Used for text on scrolls and champion information */
+	kTextTypeScroll = 2 // @ C2_TEXT_TYPE_SCROLL 
+};
+
 enum SquareAspectIndice {
 	kElemAspect = 0,
 	kFirstGroupOrObjectAspect = 1,
@@ -287,7 +296,8 @@ enum SquareMask {
 	kFakeWallImaginary = 0x1,
 	kFakeWallOpen = 0x4,
 	kFakeWallRandOrnOrFootPAllowed = 0x8,
-	kThingListPresent = 0x10
+	kThingListPresent = 0x10,
+	kDecodeEvenIfInvisible = 0x8000
 };
 
 enum SquareType {
@@ -434,8 +444,9 @@ public:
 		return Square(getRelSquare(dir, stepsForward, stepsRight, posX, posY)).getType();
 	} // @ F0153_DUNGEON_GetRelativeSquareType
 	void setSquareAspect(uint16 *aspectArray, direction dir, int16 mapX, int16 mapY); // @ F0172_DUNGEON_SetSquareAspect
+	void decodeText(char *destString, Thing thing, TextType type); // F0168_DUNGEON_DecodeText
 
-	uint32 _rawDunFileDataSize = 0;	 // @ probably NONE
+		uint32 _rawDunFileDataSize = 0;	 // @ probably NONE
 	byte *_rawDunFileData = NULL; // @ ???
 	DungeonFileHeader _fileHeader; // @ G0278_ps_DungeonHeader
 
