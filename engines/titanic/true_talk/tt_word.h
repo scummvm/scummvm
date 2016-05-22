@@ -115,6 +115,11 @@ public:
 	operator const char *() const { return c_str(); }
 
 	/**
+	 * Compares the word's text to a passed string
+	 */
+	bool compareTo(const char *str) const;
+
+	/**
 	 * Return the status of the word
 	 */
 	TTstringStatus getStatus() const { return _status; }

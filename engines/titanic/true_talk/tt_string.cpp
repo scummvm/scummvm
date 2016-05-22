@@ -99,6 +99,10 @@ bool TTstring::operator==(const TTstring &str) {
 	return _data && str._data && _data->_string == str._data->_string;
 }
 
+bool TTstring::operator==(const char *str) {
+	return _data && _data->_string == str;
+}
+
 void TTstring::save(SimpleFile *file) const {
 	file->writeFormat("%s", c_str());
 }

@@ -185,6 +185,10 @@ bool TTword::findSynByName(const TTstring &str, TTsynonym *dest, int mode) const
 	}
 }
 
+bool TTword::compareTo(const char *str) const {
+	return _string == str;
+}
+
 TTword *TTword::copy() {
 	return new TTword(this);
 }

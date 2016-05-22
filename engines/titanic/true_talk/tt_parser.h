@@ -152,6 +152,8 @@ private:
 	 * Add a concept node
 	 */
 	int addConcept(TTconcept *concept);
+
+	bool fn3(int *v, int v2);
 public:
 	CScriptHandler *_owner;
 	TTsentenceSub *_sentenceSub;

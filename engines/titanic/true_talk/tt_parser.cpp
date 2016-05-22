@@ -781,11 +781,12 @@ int TTparser::considerRequests(TTword *word) {
 				break;
 
 			case OBJECT_IS_TO:
-				// TODO
-				//flag = _sentenceSub
+				flag = fn3(&_sentenceSub->_field8, 3);
 				break;
 
 			case SEEK_ACTOR:
+
+
 			case SEEK_OBJECT:
 			case SEEK_OBJECT_OVERRIDE:
 			case SEEK_TO:
@@ -863,6 +864,11 @@ int TTparser::fn2(TTword *word) {
 	default:
 		return 0;
 	}
+}
+
+bool TTparser::fn3(int *v, int v2) {
+	// TODO
+	return false;
 }
 
 int TTparser::checkReferent(TTpronoun *pronoun) {

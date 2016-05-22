@@ -67,12 +67,29 @@ private:
 	 * Resets the concept
 	 */
 	void reset();
+
+	/**
+	 * Copy auxiliary data from the specified source concept
+	 */
+	void copyFrom(const TTconcept &src);
 public:
 	TTconcept *_nextP;
 public:
 	TTconcept();
 	TTconcept(TTscriptBase *script, ScriptType scriptType);
 	TTconcept(TTword *word, ScriptType scriptType);
+	TTconcept(const TTconcept &src);
+
+	/**
+	 * Compares the name of the associated word, if any,
+	 * to the passed string
+	 */
+	bool compareTo(const char *str) const;
+
+	/**
+	 * Return the status of the concept
+	 */
+	int getStatus() const { return _status; }
 };
 
 } // End of namespace Titanic
