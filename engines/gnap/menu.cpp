@@ -438,14 +438,10 @@ void GnapEngine::updateMenuStatusMainMenu() {
 				deleteSurface(&_largeSprite);
 				showCursor();
 			} else if (_hotspotsCount - 3 == _sceneClickedHotspot) {
-				// Button
+				// Button - Return to the inventory
 				_timers[2] = 10;
 				playSound(0x108F4, false);
 				initMenuHotspots1();
-				/* TODO
-				if (_mouseX < 93 || _mouseX > 638 || _mouseY < 0 || _mouseY > 600)
-					SetCursorPos(400, 300);
-					*/
 				_menuStatus = 0;
 				if (_menuSprite1)
 					_gameSys->removeSpriteDrawItem(_menuSprite1, 262);
