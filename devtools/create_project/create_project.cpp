@@ -347,6 +347,20 @@ int main(int argc, char *argv[]) {
 		setup.defines.push_back("MACOSX");
 		setup.defines.push_back("IPHONE");
 	}
+
+	bool updatesEnabled = false;
+	for (FeatureList::const_iterator i = setup.features.begin(); i != setup.features.end(); ++i) {
+		if (i->enable && !strcmp(i->name, "updates"))
+			updatesEnabled = true;
+	}
+	if (updatesEnabled) {
+		setup.defines.push_back("USE_SPARKLE");
+		if (projectType != kProjectXcode)
+			setup.libraries.push_back("winsparkle");
+		else
+			setup.libraries.push_back("sparkle");
+	}
+
 	setup.defines.push_back("SDL_BACKEND");
 	if (!setup.useSDL2) {
 		cout << "\nBuilding against SDL 1.2\n\n";
@@ -964,6 +978,7 @@ const Feature s_features[] = {
 	{          "vkeybd",        "ENABLE_VKEYBD",         "", false, "Virtual keyboard support"},
 	{       "keymapper",     "ENABLE_KEYMAPPER",         "", false, "Keymapper support"},
 	{   "eventrecorder", "ENABLE_EVENTRECORDER",         "", false, "Event recorder support"},
+	{         "updates",          "USE_UPDATES",         "", false, "Updates support"},
 	{      "langdetect",       "USE_DETECTLANG",         "", true,  "System language detection support" } // This feature actually depends on "translation", there
 	                                                                                                      // is just no current way of properly detecting this...
 };
