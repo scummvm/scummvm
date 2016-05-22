@@ -25,10 +25,16 @@
 
 namespace Scumm {
 
+static int compareTreeNodes(const void *a, const void *b) {
+	return ((const TreeNode *)a)->value - ((const TreeNode *)b)->value;
+}
+
 Tree::Tree() {
 	pBaseNode = new Node;
 	_maxDepth = MAX_DEPTH;
 	_maxNodes = MAX_NODES;
+
+	_currentMap = new Common::SortedArray<TreeNode *>(compareTreeNodes);
 }
 
 Tree::Tree(IContainedObject *contents) {
@@ -36,6 +42,8 @@ Tree::Tree(IContainedObject *contents) {
 	pBaseNode->setContainedObject(contents);
 	_maxDepth = MAX_DEPTH;
 	_maxNodes = MAX_NODES;
+
+	_currentMap = new Common::SortedArray<TreeNode *>(compareTreeNodes);
 }
 
 Tree::Tree(IContainedObject *contents, int maxDepth) {
@@ -43,6 +51,8 @@ Tree::Tree(IContainedObject *contents, int maxDepth) {
 	pBaseNode->setContainedObject(contents);
 	_maxDepth = maxDepth;
 	_maxNodes = MAX_NODES;
+
+	_currentMap = new Common::SortedArray<TreeNode *>(compareTreeNodes);
 }
 
 Tree::Tree(IContainedObject *contents, int maxDepth, int maxNodes) {
@@ -50,6 +60,8 @@ Tree::Tree(IContainedObject *contents, int maxDepth, int maxNodes) {
 	pBaseNode->setContainedObject(contents);
 	_maxDepth = maxDepth;
 	_maxNodes = maxNodes;
+
+	_currentMap = new Common::SortedArray<TreeNode *>(compareTreeNodes);
 }
 
 void Tree::duplicateTree(Node *sourceNode, Node *destNode) {
@@ -68,6 +80,7 @@ Tree::Tree(const Tree *sourceTree) {
 	pBaseNode = new Node(sourceTree->getBaseNode());
 	_maxDepth = sourceTree->getMaxDepth();
 	_maxNodes = sourceTree->getMaxNodes();
+	_currentMap = new Common::SortedArray<TreeNode *>(compareTreeNodes);
 
 	duplicateTree(sourceTree->getBaseNode(), pBaseNode);
 }
@@ -80,7 +93,6 @@ Tree::~Tree() {
 	while (pNodeItr != NULL) {
 		// If any children are left, move to one of them
 		if (!(pNodeItr->getChildren().empty())) {
-			//int size = (pNodeItr->getChildren()).size();
 			pNodeItr = pNodeItr->popChild();
 		} else {
 			// Delete this node, and move up to the parent for further processing
@@ -90,13 +102,12 @@ Tree::~Tree() {
 			pTemp = NULL;
 		}
 	}
+
+	delete _currentMap;
 }
 
-
 Node *Tree::aStarSearch() {
-	return NULL;
-#if 0
-	fnpMMap mmfpOpen;
+	Common::SortedArray<TreeNode *> mmfpOpen(compareTreeNodes);
 
 	Node *currentNode = NULL;
 	float currentT;
@@ -106,24 +117,24 @@ Node *Tree::aStarSearch() {
 	float temp = pBaseNode->getContainedObject()->calcT();
 
 	if (static_cast<int>(temp) != SUCCESS) {
-
-		mmfpOpen.insert(fnpMMap::value_type(pBaseNode->getObjectT(), pBaseNode));
+		mmfpOpen.insert(new TreeNode(pBaseNode->getObjectT(), pBaseNode));
 
 		while (mmfpOpen.size() && (retNode == NULL)) {
-			currentNode = mmfpOpen.begin()->second;
+			currentNode = mmfpOpen.front()->node;
 			mmfpOpen.erase(mmfpOpen.begin());
 
 			if ((currentNode->getDepth() < _maxDepth) && (Node::getNodeCount() < _maxNodes)) {
 				// Generate nodes
-				int numChildren = currentNode->generateChildren();
 				Common::Array<Node *> vChildren = currentNode->getChildren();
 
 				for (Common::Array<Node *>::iterator i = vChildren.begin(); i != vChildren.end(); i++) {
 					IContainedObject *pTemp = (*i)->getContainedObject();
 					currentT = pTemp->calcT();
 
-					if (currentT == SUCCESS) retNode = *i;
-					else mmfpOpen.insert(fnpMMap::value_type(currentT, (*i)));
+					if (currentT == SUCCESS)
+						retNode = *i;
+					else
+						mmfpOpen.insert(new TreeNode(currentT, (*i)));
 				}
 			} else {
 				retNode = currentNode;
@@ -134,7 +145,6 @@ Node *Tree::aStarSearch() {
 	}
 
 	return retNode;
-#endif
 }
 
 
@@ -146,8 +156,7 @@ Node *Tree::aStarSearch_singlePassInit() {
 	float temp = pBaseNode->getContainedObject()->calcT();
 
 	if (static_cast<int>(temp) != SUCCESS) {
-		//_currentMap.insert(fnpMMap::value_type(pBaseNode->getObjectT(), pBaseNode));
-		//assert(_currentMap.size());
+		_currentMap->insert(new TreeNode(pBaseNode->getObjectT(), pBaseNode));
 	} else {
 		retNode = pBaseNode;
 	}
@@ -157,10 +166,9 @@ Node *Tree::aStarSearch_singlePassInit() {
 
 Node *Tree::aStarSearch_singlePass(Node **currentNode) {
 	currentNode = NULL;
+	float currentT;
 	Node *retNode = NULL;
 
-#if 0
-	float currentT;
 	static int maxTime = 0;
 
 	if (currentChildIndex == 1) {
@@ -168,13 +176,13 @@ Node *Tree::aStarSearch_singlePass(Node **currentNode) {
 	}
 
 	if (currentChildIndex) {
-		if (!(_currentMap.size())) {
+		if (!(_currentMap->size())) {
 			retNode = _currentNode;
 			return retNode;
 		}
 
-		_currentNode = _currentMap.begin()->second;
-		_currentMap.erase(_currentMap.begin());
+		_currentNode = _currentMap->front()->node;
+		_currentMap->erase(_currentMap->begin());
 	}
 
 	if ((_currentNode->getDepth() < _maxDepth) && (Node::getNodeCount() < _maxNodes) && ((!maxTime) || (getTimerValue(3) < maxTime))) {
@@ -184,7 +192,7 @@ Node *Tree::aStarSearch_singlePass(Node **currentNode) {
 		if (currentChildIndex) {
 			Common::Array<Node *> vChildren = _currentNode->getChildren();
 
-			if (!vChildren.size() && !_currentMap.size()) {
+			if (!vChildren.size() && !_currentMap->size()) {
 				currentChildIndex = 0;
 				retNode = _currentNode;
 			}
@@ -197,11 +205,11 @@ Node *Tree::aStarSearch_singlePass(Node **currentNode) {
 					retNode = *i;
 					i = vChildren.end() - 1;
 				} else {
-					_currentMap.insert(fnpMMap::value_type(currentT, (*i)));
+					_currentMap->insert(new TreeNode(currentT, (*i)));
 				}
 			}
 
-			if (!(_currentMap.size()) && (currentT != SUCCESS)) {
+			if (!(_currentMap->size()) && (currentT != SUCCESS)) {
 				assert(_currentNode != NULL);
 				retNode = _currentNode;
 			}
@@ -209,7 +217,6 @@ Node *Tree::aStarSearch_singlePass(Node **currentNode) {
 	} else {
 		retNode = _currentNode;
 	}
-#endif
 
 	return retNode;
 }

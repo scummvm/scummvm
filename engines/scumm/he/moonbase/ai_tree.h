@@ -23,15 +23,20 @@
 #ifndef SCUMM_HE_MOONBASE_AI_TREE_H
 #define SCUMM_HE_MOONBASE_AI_TREE_H
 
-#include "common/hash-str.h"
+#include "common/array.h"
 #include "scumm/he/moonbase/ai_node.h"
 
 namespace Scumm {
 
-//typedef std::multimap< float, Node *, std::less<float> > fnpMMap;
-
 const int MAX_DEPTH = 100;
 const int MAX_NODES = 1000000;
+
+struct TreeNode {
+	float value;
+	Node *node;
+
+	TreeNode(float v, Node *n) { value = v; node = n; }
+};
 
 class Tree {
 private:
@@ -42,7 +47,7 @@ private:
 
 	int currentChildIndex;
 
-	Common::StringMap _currentMap;
+	Common::SortedArray<TreeNode *> *_currentMap;
 	Node *_currentNode;
 
 public:
