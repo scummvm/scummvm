@@ -273,4 +273,12 @@ TTconcept *TTconcept::findByWordClass(WordClass wordClass) {
 	return nullptr;
 }
 
+bool TTconcept::isWordId(int id) const {
+	return this && _wordP && _wordP->_id == id;
+}
+
+int TTconcept::getWordId() const {
+	return this && _wordP ? _wordP->_id : 0;
+}
+
 } // End of namespace Titanic

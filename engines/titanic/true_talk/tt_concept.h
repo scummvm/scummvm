@@ -135,6 +135,16 @@ public:
 	 * Find a word by it's class
 	 */
 	TTconcept *findByWordClass(WordClass wordClass);
+
+	/**
+	 * Returns true if the concept has a word with a given Id
+	 */
+	bool isWordId(int id) const;
+
+	/**
+	 * If a word is associated, return it's Id
+	 */
+	int getWordId() const;
 };
 
 } // End of namespace Titanic

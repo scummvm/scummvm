@@ -48,7 +48,9 @@ public:
 	 */
 	virtual TTword *copy() const;
 
-	virtual bool proc19(int val) const { return _field30 == val; }
+	virtual bool comparePronounTo(int val) const { 
+		return _field30 == val;
+	}
 
 	/**
 	 * Dumps data associated with the word to file

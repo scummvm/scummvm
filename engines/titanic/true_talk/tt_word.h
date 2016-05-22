@@ -125,6 +125,13 @@ public:
 	bool compareTo(const char *str) const;
 
 	/**
+	 * Compares the word's text to a passed string
+	 */
+	bool compareTo(TTstring *str) const {
+		return compareTo(str->c_str());
+	}
+
+	/**
 	 * Return the status of the word
 	 */
 	TTstringStatus getStatus() const { return _status; }
@@ -176,7 +183,7 @@ public:
 	virtual bool proc16() const { return false; }
 	virtual bool proc17() const { return false; }
 	virtual bool proc18() const { return false; }
-	virtual bool proc19(int val) const { return false; }
+	virtual bool comparePronounTo(int val) const { return false; }
 	virtual int proc20() const { return 0; }
 
 	/**
