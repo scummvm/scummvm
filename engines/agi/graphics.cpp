@@ -1178,13 +1178,17 @@ void GfxMgr::drawCharacterOnDisplay(int16 x, int16 y, const byte character, byte
 #define SHAKE_HORIZONTAL_PIXELS 4
 
 // Sierra used some EGA port trickery to do it, we have to do it by copying pixels around
+//
+// Shaking locations:
+// - Fanmade "Enclosure" right during the intro
+// - Space Quest 2 almost right at the start when getting captured (after walking into the space ship)
 void GfxMgr::shakeScreen(int16 repeatCount) {
 	int shakeNr, shakeCount;
 	uint8 *blackSpace;
 	int16 shakeHorizontalPixels = SHAKE_HORIZONTAL_PIXELS * (2 + _displayWidthMulAdjust);
 	int16 shakeVerticalPixels = SHAKE_VERTICAL_PIXELS * (1 + _displayHeightMulAdjust);
 
-	if ((blackSpace = (uint8 *)calloc(shakeVerticalPixels * _displayScreenWidth, 1)) == NULL)
+	if ((blackSpace = (uint8 *)calloc(shakeHorizontalPixels * _displayScreenWidth, 1)) == NULL)
 		return;
 
 	shakeCount = repeatCount * 8; // effectively 4 shakes per repeat
