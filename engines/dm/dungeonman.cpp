@@ -705,6 +705,69 @@ char gInscriptionEscReplacementStrings[32][8] = { // @ G0257_aac_Graphic559_Insc
 	{0,  0,  0,  0, 0, 0, 0, 0}};
 
 
-void decodeText(char *destString, Thing thing, TextType type) {
+void DungeonMan::decodeText(char *destString, Thing thing, TextType type) {
+	char sepChar;
+	TextString textString(_dunData.thingsData[kTextstringType][thing.getIndex()]);
+	if ((textString.isVisible()) || (type & kDecodeEvenIfInvisible)) {
+		type = (TextType)(type & ~kDecodeEvenIfInvisible);
+		if (type == kTextTypeMessage) {
+			*destString++ = '\n';
+			sepChar = ' ';
+		} else if (type == kTextTypeInscription) {
+			sepChar = 0x80;
+		} else {
+			sepChar = '\n';
+		}
+		uint16 codeCounter = 0;
+		int16 escChar = 0;
+		uint16 *codeWord = _dunData.textData + textString.getWordOffset();
+		uint16 code, codes;
+		char *escReplString = NULL;
+		for (;;) { /*infinite loop*/
+			if (!codeCounter) {
+				codes = *codeWord++;
+				code = (codes >> 10) & 0x1F;
+			} else if (codeCounter == 1) {
+				code = (codes >> 5) & 0x1F;
+			} else {
+				code = codes & 0x1F;
+			}
+			++codeCounter;
+			codeCounter %= 3;
 
+			if (escChar) {
+				*destString = '\0';
+				if (escChar == 30) {
+					if (type != kTextTypeInscription) {
+						escReplString = gMessageAndScrollEscReplacementStrings[code];
+					} else {
+						escReplString = gInscriptionEscReplacementStrings[code];
+					}
+				} else {
+					escReplString = gEscReplacementCharacters[code];
+				}
+				strcat(destString, escReplString);
+				destString += strlen(escReplString);
+				escChar = 0;
+			} else if (code < 28) {
+				if (type != kTextTypeInscription) {
+					if (code == 26) {
+						code = ' ';
+					} else if (code == 27) {
+						code = '.';
+					} else {
+						code += 'A';
+					}
+				}
+				*destString++ = code;
+			} else if (code == 28) {
+				*destString++ = sepChar;
+			} else if (code <= 30) {
+				escChar = code;
+			} else {
+				break;
+			}
+		}
+	}
+	*destString = ((type == kTextTypeInscription) ? 0x81 : '\0');
 }
