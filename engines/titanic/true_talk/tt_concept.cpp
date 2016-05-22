@@ -77,7 +77,7 @@ TTconcept::TTconcept(TTconcept &src) :
 			
 			if (src._wordP) {
 				_status = initializeWordRef(src._wordP);
-				copyFrom(src);
+				initialize(src);
 			}
 		}
 	}
@@ -150,7 +150,7 @@ bool TTconcept::compareTo(const char *str) const {
 		_wordP->compareTo(str);
 }
 
-void TTconcept::copyFrom(TTconcept &src) {
+void TTconcept::initialize(TTconcept &src) {
 	_nextP = src._nextP;
 	_field14 = src._field14;
 	_scriptType = src._scriptType;
@@ -175,6 +175,31 @@ void TTconcept::copyFrom(TTconcept &src) {
 	}
 
 	_status = src._status;
+}
+
+void TTconcept::copyFrom(TTconcept *src) {
+	if (this != src) {
+		if (src->getStatus()) {
+			_status = SS_5;
+		} else {
+			_string1 = src->_string1;
+			_string2 = src->_string2;
+
+			if (setStatus()) {
+				_scriptP = src->_scriptP;
+				if (src->_wordP) {
+					_status = initializeWordRef(src->_wordP);
+					initialize(*src);
+				} else {
+					_wordP = nullptr;
+					initialize(*src);
+				}
+			}
+		}
+	}
+
+	if (_status)
+		reset();
 }
 
 } // End of namespace Titanic

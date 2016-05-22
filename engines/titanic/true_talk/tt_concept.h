@@ -69,9 +69,9 @@ private:
 	void reset();
 
 	/**
-	 * Copy auxiliary data from the specified source concept
+	 * Initialize inner data for the concept from a given source concept
 	 */
-	void copyFrom(TTconcept &src);
+	void initialize(TTconcept &src);
 public:
 	TTconcept *_nextP;
 public:
@@ -85,6 +85,11 @@ public:
 	 * Destroys any attached sibling concepts to the given concept
 	 */
 	void deleteSiblings();
+
+	/**
+	 * Copies data from a source concept
+	 */
+	void copyFrom(TTconcept *src);
 
 	/**
 	 * Compares the name of the associated word, if any,
