@@ -872,6 +872,21 @@ uint32 SdlEventSource::obtainUnicode(const SDL_keysym keySym) {
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 	SDL_Event events[2];
 
+	// Update the event queue here to give SDL a chance to insert TEXTINPUT
+	// events for KEYDOWN events. Otherwise we have a high chance that on
+	// Windows the TEXTINPUT event is not in the event queue at this point.
+	// In this case we will get two events with ascii values due to mapKey
+	// and dispatchSDLEvent. This results in nasty double input of characters
+	// in the GUI.
+	//
+	// FIXME: This is all a bit fragile because in mapKey we derive the ascii
+	// value from the key code if no unicode value is given. This is legacy
+	// behavior and should be removed anyway. If that is removed, we might not
+	// even need to do this peeking here but instead can rely on the
+	// SDL_TEXTINPUT case in dispatchSDLEvent to introduce keydown/keyup with
+	// proper ASCII values (but with KEYCODE_INVALID as keycode).
+	SDL_PumpEvents();
+
 	// In SDL2, the unicode field has been removed from the keysym struct.
 	// Instead a SDL_TEXTINPUT event is generated on key combinations that
 	// generates unicode.
