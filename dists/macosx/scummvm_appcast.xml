@@ -6,6 +6,16 @@
 		<description>Most recent changes with links to updates.</description>
 		<language>en</language>
 		<item>
+			<title>Version 1.8.1</title>
+			<sparkle:releaseNotesLink>
+				https://scummvm.org/frs/scummvm/1.8.1/ReleaseNotes
+			</sparkle:releaseNotesLink>
+			<pubDate>Wed, 25 May 2016 19:26:00 +0000</pubDate>
+			<enclosure url="https://www.scummvm.org/frs/scummvm/1.8.1/scummvm-1.8.1-macosx.dmg"
+						sparkle:version="1.8.1" length="15791070" type="application/octet-stream"
+						sparkle:dsaSignature="MC0CFQDF0u/pGH51pMPzCbsv07eCNxuGDQIUdrKWVTznbF69fzuzIieR4Lc0U2Y=" />
+		</item>
+		<item>
 			<title>Version 1.8.0</title>
 			<sparkle:releaseNotesLink>
 				https://scummvm.org/frs/scummvm/1.8.0/ReleaseNotes
