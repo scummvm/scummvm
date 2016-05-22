@@ -76,13 +76,13 @@ UpdatesDialog::UpdatesDialog() : Dialog(30, 20, 260, 124) {
 	_y = (screenH - _h) / 2;
 
 	// Each line is represented by one static text item.
-	int y = 10;
-	for (int i = 0; i < lines.size(); i++) {
+	uint y = 10;
+	for (uint i = 0; i < lines.size(); i++) {
 		new StaticTextWidget(this, 10, y, maxlineWidth, kLineHeight,
 								lines[i], Graphics::kTextAlignCenter);
 		y += kLineHeight;
 	}
-	for (int i = 0; i < lines2.size(); i++) {
+	for (uint i = 0; i < lines2.size(); i++) {
 		new StaticTextWidget(this, 10, y, maxlineWidth2, kLineHeight,
 								lines2[i], Graphics::kTextAlignCenter, 0, ThemeEngine::kFontStyleTooltip);
 		y += kLineHeight;
