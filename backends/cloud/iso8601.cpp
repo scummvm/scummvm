@@ -25,39 +25,12 @@
 
 namespace {
 
-uint32 find(const Common::String &haystack, const Common::String &needle, uint32 pos = 0) {
-	if (pos >= haystack.size()) {
-		return Common::String::npos;
-	}
-
-	//TODO: write something smarter
-	uint32 lastIndex = haystack.size() - needle.size();
-	for (uint32 i = pos; i < lastIndex; ++i) {
-		bool found = true;
-		for (uint32 j = 0; j < needle.size(); ++j)
-			if (haystack[i + j] != needle[j]) {
-				found = false;
-				break;
-			}
-
-		if (found) return i;
-	}
-
-	return Common::String::npos;
-}
-
 Common::String getSubstring(const Common::String &s, uint32 beginning, uint32 ending) {
 	//beginning inclusive, ending exclusive
-	if (beginning == -1 || ending == -1) return ""; //bad
 	Common::String result = s;
 	result.erase(ending);
 	result.erase(0, beginning);
 	return result;
-}
-
-int parseInt(Common::String s) {
-	//TODO: not sure this is not forbidden at all
-	return atoi(s.c_str());
 }
 
 }
@@ -67,13 +40,14 @@ namespace ISO8601 {
 
 uint32 convertToTimestamp(const Common::String &iso8601Date) {		
 	//2015-05-12T15:50:38Z
-	uint32 firstHyphen = find(iso8601Date, "-");
-	uint32 secondHyphen = find(iso8601Date, "-", firstHyphen + 1);
-	uint32 tSeparator = find(iso8601Date, "T", secondHyphen + 1);
-	uint32 firstColon = find(iso8601Date, ":", tSeparator + 1);
-	uint32 secondColon = find(iso8601Date, ":", firstColon + 1);
-	uint32 zSeparator = find(iso8601Date, "Z", secondColon + 1);
-	//now note '+1' which means if there ever was '-1' result of find(), we still did a valid find() from 0th char
+	const char *cstr = iso8601Date.c_str();	
+	uint32 firstHyphen = strchr(cstr, '-') - cstr;
+	uint32 secondHyphen = strchr(cstr + firstHyphen + 1, '-') - cstr;
+	uint32 tSeparator = strchr(cstr + secondHyphen + 1, 'T') - cstr;
+	uint32 firstColon = strchr(cstr + tSeparator + 1, ':') - cstr;
+	uint32 secondColon = strchr(cstr + firstColon + 1, ':') - cstr;
+	uint32 zSeparator = strchr(cstr + secondColon + 1, 'Z') - cstr;
+	//now note '+1' which means if there ever was '-1' result of find(), we still did a valid find() from 0th char	
 
 	Common::String year = getSubstring(iso8601Date, 0, firstHyphen);
 	Common::String month = getSubstring(iso8601Date, firstHyphen + 1, secondHyphen);
@@ -83,12 +57,12 @@ uint32 convertToTimestamp(const Common::String &iso8601Date) {
 	Common::String second = getSubstring(iso8601Date, secondColon + 1, zSeparator);
 	//now note only 'ending' argument was not '+1' (which means I could've make that function such that -1 means 'until the end')
 
-	int Y = parseInt(year);
-	int M = parseInt(month);
-	int D = parseInt(day);
-	int h = parseInt(hour);
-	int m = parseInt(minute);
-	int s = parseInt(second);
+	int Y = atoi(year.c_str());
+	int M = atoi(month.c_str());
+	int D = atoi(day.c_str());
+	int h = atoi(hour.c_str());
+	int m = atoi(minute.c_str());
+	int s = atoi(second.c_str());
 
 	//ok, now I compose a timestamp based on my basic perception of time/date
 	//yeah, I know about leap years and leap seconds and all, but still we don't care there
