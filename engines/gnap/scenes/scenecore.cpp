@@ -660,7 +660,7 @@ void CutScene::run() {
 
 	if (_vm->_prevSceneNum == 2) {
 		soundId = 0x36B;
-		duration = MAX(1, 300 / _vm->getSequenceTotalDuration(_sequenceIdArr[_itemsCount - 1]));//CHECKME
+		duration = MAX(1, 300 / _vm->getSequenceTotalDuration(_sequenceIdArr[_itemsCount - 1]));
 		_vm->_timers[0] = 0;
 	}
 

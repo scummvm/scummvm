@@ -1287,6 +1287,8 @@ int PlayerPlat::getWalkSequenceId(int deltaX, int deltaY) {
 }
 
 bool PlayerPlat::walkTo(Common::Point gridPos, int animationIndex, int sequenceId, int flags) {
+	// Note: flags is always 1. The code could be simplified.
+
 	int datNum = flags & 3;
 	PlayerGnap& gnap = *_vm->_gnap;
 
