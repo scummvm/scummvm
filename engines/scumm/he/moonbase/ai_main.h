@@ -88,8 +88,8 @@ static int energyHogType = 0;
 
 void resetAI(ScummEngine_v90he *vm);
 void cleanUpAI();
-void setAIType(const int paramCount, const int *params);
-int masterControlProgram(const int paramCount, const int *params);
+void setAIType(const int paramCount, const int32 *params);
+int masterControlProgram(const int paramCount, const int32 *params);
 
 int chooseBehavior();
 int chooseTarget(int behavior);

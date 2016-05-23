@@ -211,7 +211,7 @@ void cleanUpAI() {
 	}
 }
 
-void setAIType(const int paramCount, const int *params) {
+void setAIType(const int paramCount, const int32 *params) {
 	if (AItype[params[AI_TYPE_PLAYER_NUM]]) {
 		delete AItype[params[AI_TYPE_PLAYER_NUM]];
 		AItype[params[AI_TYPE_PLAYER_NUM]] = NULL;
@@ -228,7 +228,7 @@ void setAIType(const int paramCount, const int *params) {
 	warning("AI for player %d is %s", params[AI_TYPE_PLAYER_NUM], AItype[params[AI_TYPE_PLAYER_NUM]]->getNameString());
 }
 
-int masterControlProgram(const int paramCount, const int *params) {
+int masterControlProgram(const int paramCount, const int32 *params) {
 	static Tree *myTree;
 
 	static int index;
