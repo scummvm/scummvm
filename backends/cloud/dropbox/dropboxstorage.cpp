@@ -22,6 +22,7 @@
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 
 #include "backends/cloud/dropbox/dropboxstorage.h"
+#include "backends/cloud/dropbox/dropboxlistdirectoryrequest.h"
 #include "backends/networking/curl/connectionmanager.h"
 #include "backends/networking/curl/curljsonrequest.h"
 #include "common/config-manager.h"
@@ -75,37 +76,20 @@ void DropboxStorage::saveConfig(Common::String keyPrefix) {
 	ConfMan.set(keyPrefix + "user_id", _uid, "cloud");
 }
 
-void printJson(void *ptr) {
-	Common::JSONValue *json = (Common::JSONValue *)ptr;
-	if (json) {		
-		debug("%s", json->stringify(true).c_str());
-	} else {
-		warning("null, not json");
-	}
+void DropboxStorage::printFiles(Common::Array<StorageFile> files) {
+	debug("files:");
+	for (uint32 i = 0; i < files.size(); ++i)
+		debug("\t%s", files[i].name().c_str());
 }
 
 void DropboxStorage::listDirectory(Common::String path, FileArrayCallback outerCallback, bool recursive) {
-	//Common::BaseCallback<> *innerCallback = new Common::CallbackBridge<DropboxStorage, Common::Array<StorageFile> >(this, &DropboxStorage::listDirectoryInnerCallback, outerCallback);
-	Common::BaseCallback<> *innerCallback = new Common::GlobalFunctionCallback(printJson); //okay
-	Networking::CurlJsonRequest *request = new Networking::CurlJsonRequest(innerCallback, "https://api.dropboxapi.com/2/files/list_folder");
-	request->addHeader("Authorization: Bearer " + _token);
-	request->addHeader("Content-Type: application/json");	
-
-	Common::JSONObject jsonRequestParameters;
-	jsonRequestParameters.setVal("path", new Common::JSONValue(path));
-	jsonRequestParameters.setVal("recursive", new Common::JSONValue(recursive));
-	jsonRequestParameters.setVal("include_media_info", new Common::JSONValue(false));
-	jsonRequestParameters.setVal("include_deleted", new Common::JSONValue(false));
-
-	Common::JSONValue value(jsonRequestParameters);	
-	request->addPostField(Common::JSON::stringify(&value));
-
-	ConnMan.addRequest(request);
+	ConnMan.addRequest(new DropboxListDirectoryRequest(_token, path, outerCallback, recursive));
 }
 
 void DropboxStorage::syncSaves(BoolCallback callback) {
 	//this is not the real syncSaves() implementation	
-	listDirectory("", 0); //"" is root in Dropbox, not "/"
+	//"" is root in Dropbox, not "/"
+	listDirectory("", new Common::Callback<DropboxStorage, Common::Array<StorageFile> >(this, &DropboxStorage::printFiles), true);
 }
 
 void DropboxStorage::info(StorageInfoCallback outerCallback) {

@@ -21,9 +21,11 @@ MODULE_OBJS := \
 
 ifdef USE_CLOUD
 MODULE_OBJS += \
+	cloud/iso8601.o \
 	cloud/manager.o \
 	cloud/storagefile.o \
-	cloud/dropbox/dropboxstorage.o
+	cloud/dropbox/dropboxstorage.o \
+	cloud/dropbox/dropboxlistdirectoryrequest.o
 endif
 
 ifdef USE_LIBCURL

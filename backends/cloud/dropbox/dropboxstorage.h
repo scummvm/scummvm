@@ -42,6 +42,8 @@ class DropboxStorage: public Cloud::Storage {
 	/** Constructs StorageInfo based on JSON response from cloud. */
 	void infoInnerCallback(StorageInfoCallback outerCallback, void *json);
 
+	void printFiles(Common::Array<StorageFile> files);
+
 public:	
 	virtual ~DropboxStorage();
 

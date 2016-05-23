@@ -20,29 +20,18 @@
 *
 */
 
-#include "backends/cloud/storagefile.h"
+#ifndef BACKENDS_CLOUD_ISO8601_H
+#define BACKENDS_CLOUD_ISO8601_H
+
+#include "common/str.h"
 
 namespace Cloud {
+namespace ISO8601 {
 
-StorageFile::StorageFile(Common::String pth, uint32 sz, uint32 ts, bool dir) {
-	_path = pth;
+	/** Returns timestamp corresponding to given ISO 8601 date */
+	uint32 convertToTimestamp(const Common::String &iso8601Date);
 
-	_name = pth;
-	if (_name.size() != 0) {
-		uint32 i = _name.size() - 1;
-		while (true) {
-			if (_name[i] == '/' || _name[i] == '\\') {
-				_name.erase(0, i+1);
-				break;
-			}
-			if (i == 0) break;
-			--i;
-		}
-	}
-
-	_size = sz;
-	_timestamp = ts;
-	_isDirectory = dir;
-}
-
+} //end of namespace ISO8601
 } //end of namespace Cloud
+
+#endif
