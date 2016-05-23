@@ -415,7 +415,7 @@ private:
 	// Based on code Copyright (C) 2008-2009 Ksplice, Inc.
 	// Author: Tim Abbott <tabbott@ksplice.com>
 	// Licensed under GPLv2+
-	void *bsearchMin(void *key, void *base, uint num, uint size,
+	void *bsearchMin(void *key, void *base, uint num, uint size_,
 					int (*cmp)(const void *key, const void *elt)) {
 		uint start_ = 0, end_ = num;
 		int result;
@@ -423,16 +423,16 @@ private:
 		while (start_ < end_) {
 			uint mid = start_ + (end_ - start_) / 2;
 
-			result = cmp(key, (byte *)base + mid * size);
+			result = cmp(key, (byte *)base + mid * size_);
 			if (result < 0)
 				end_ = mid;
 			else if (result > 0)
 				start_ = mid + 1;
 			else
-				return (void *)((byte *)base + mid * size);
+				return (void *)((byte *)base + mid * size_);
 		}
 
-		return (void *)((byte *)base + start_ * size);
+		return (void *)((byte *)base + start_ * size_);
 	}
 
 private:
