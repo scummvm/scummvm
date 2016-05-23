@@ -417,22 +417,22 @@ private:
 	// Licensed under GPLv2+
 	void *bsearchMin(const void *key, const void *base, uint num, uint size,
 					int (*cmp)(const void *key, const void *elt)) {
-		uint start = 0, end = num;
+		uint start_ = 0, end_ = num;
 		int result;
 
-		while (start < end) {
-			uint mid = start + (end - start) / 2;
+		while (start_ < end_) {
+			uint mid = start_ + (end_ - start_) / 2;
 
 			result = cmp(key, (byte *)base + mid * size);
 			if (result < 0)
-				end = mid;
+				end_ = mid;
 			else if (result > 0)
-				start = mid + 1;
+				start_ = mid + 1;
 			else
 				return (void *)((byte *)base + mid * size);
 		}
 
-		return (void *)((byte *)base + start * size);
+		return (void *)((byte *)base + start_ * size);
 	}
 
 private:
