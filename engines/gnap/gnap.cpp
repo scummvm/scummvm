@@ -705,6 +705,7 @@ void GnapEngine::mainLoop() {
 		int slot = _loadGameSlot;
 		_loadGameSlot = -1;
 		loadGameState(slot);
+		_wasSavegameLoaded = true;
 
 		showCursor();
 	}
