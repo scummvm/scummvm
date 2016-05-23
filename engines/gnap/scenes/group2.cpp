@@ -3010,7 +3010,7 @@ void Scene28::updateAnimations() {
 			break;
 		case kAS28GrabEmptyBucketDone:
 			_vm->setGrabCursorSprite(kItemEmptyBucket);
-			_vm->clearFlag(kGFUnk22);;
+			_vm->clearFlag(kGFUnk22);
 			updateHotspots();
 			_vm->invAdd(kItemEmptyBucket);
 			gnap._actionStatus = -1;

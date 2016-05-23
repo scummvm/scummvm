@@ -2263,7 +2263,7 @@ void Scene05::updateAnimations() {
 /*****************************************************************************/
 
 Scene06::Scene06(GnapEngine *vm) : Scene(vm) {
-	_horseTurnedBack = false;;
+	_horseTurnedBack = false;
 	_nextPlatSequenceId = -1;
 	_nextHorseSequenceId = -1;
 	_currHorseSequenceId = -1;
