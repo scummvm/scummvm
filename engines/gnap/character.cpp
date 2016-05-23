@@ -28,7 +28,7 @@ namespace Gnap {
 
 Character::Character(GnapEngine *vm) : _vm(vm) {
 	_pos = Common::Point(0, 0);
-	_idleFacing = kDirNone;
+	_idleFacing = kDirIdleLeft;
 	_actionStatus = 0;
 	_sequenceId = 0;
 	_sequenceDatNum = 0;
@@ -373,8 +373,8 @@ int PlayerGnap::getSequenceId(int kind, Common::Point gridPos) {
 			case kDirUpRight:
 				sequenceId = 0x82F;
 				break;
-			case kDirNone:
-			case kDirUnk4:
+			case kDirIdleLeft:
+			case kDirIdleRight:
 				break;
 			}
 		}
@@ -394,8 +394,8 @@ int PlayerGnap::getSequenceId(int kind, Common::Point gridPos) {
 		case kDirUpRight:
 			sequenceId = 0x83E;
 			break;
-		case kDirNone:
-		case kDirUnk4:
+		case kDirIdleLeft:
+		case kDirIdleRight:
 			break;
 		}
 		break;
@@ -478,7 +478,7 @@ void PlayerGnap::useJointOnPlatypus() {
 			kSeqSyncWait, 0, 15 * (5 * plat._pos.x - 25), 48 * (plat._pos.y - 7));
 		plat._sequenceDatNum = 1;
 		plat._sequenceId = 0x876;
-		plat._idleFacing = kDirNone;
+		plat._idleFacing = kDirIdleLeft;
 		playSequence(0x107B5);
 		walkStep();
 		while (_vm->_gameSys->getAnimationStatus(0) != 2 && !_vm->_gameDone) {
@@ -509,7 +509,7 @@ void PlayerGnap::kissPlatypus(int callback) {
 			kSeqSyncWait, _vm->getSequenceTotalDuration(0x10847), 75 * plat._pos.x - plat._gridX, 48 * plat._pos.y - plat._gridY);
 		plat._sequenceDatNum = 1;
 		plat._sequenceId = 0x7CB;
-		plat._idleFacing = kDirNone;
+		plat._idleFacing = kDirIdleLeft;
 		playSequence(0x107B5);
 		while (_vm->_gameSys->getAnimationStatus(0) != 2 && !_vm->_gameDone) {
 			_vm->updateMouseCursor();
@@ -528,7 +528,7 @@ void PlayerGnap::useDeviceOnPlatypus() {
 
 	playSequence(makeRid(1, getSequenceId(kGSPullOutDevice, plat._pos)));
 
-	if (plat._idleFacing != kDirNone) {
+	if (plat._idleFacing != kDirIdleLeft) {
 		_vm->_gameSys->insertSequence(makeRid(1, 0x7D5), plat._id,
 			makeRid(plat._sequenceDatNum, plat._sequenceId), plat._id,
 			kSeqSyncWait, 0, 75 * plat._pos.x - plat._gridX, 48 * plat._pos.y - plat._gridY);
@@ -653,10 +653,11 @@ void PlayerGnap::initPos(int gridX, int gridY, Facing facing) {
 	_vm->_timers[2] = 30;
 	_vm->_timers[3] = 300;
 	_pos = Common::Point(gridX, gridY);
-	if (facing == kDirNone)
+	if (facing == kDirIdleLeft)
 		_idleFacing = kDirBottomRight;
 	else
 		_idleFacing = facing;
+
 	if (_idleFacing == kDirBottomLeft) {
 		_sequenceId = 0x7B8;
 	} else {
@@ -1167,9 +1168,9 @@ int PlayerPlat::getSequenceId(int kind, Common::Point gridPos) {
 
 	int sequenceId = 0x7CB;
 
-	if (_idleFacing != kDirNone) {
+	if (_idleFacing != kDirIdleLeft) {
 		sequenceId = 0x7CC;
-		_idleFacing = kDirUnk4;
+		_idleFacing = kDirIdleRight;
 	}
 
 	return sequenceId | 0x10000;
@@ -1189,7 +1190,7 @@ void PlayerPlat::updateIdleSequence() {
 			if (_vm->_timers[1] == 0) {
 				_vm->_timers[1] = _vm->getRandom(20) + 30;
 				int rnd = _vm->getRandom(10);
-				if (_idleFacing != kDirNone) {
+				if (_idleFacing != kDirIdleLeft) {
 					if (rnd != 0 || _sequenceId != 0x7CA) {
 						if (rnd != 1 || _sequenceId != 0x7CA)
 							playSequence(0x107CA);
@@ -1228,7 +1229,7 @@ void PlayerPlat::updateIdleSequence2() {
 		if (_vm->_timers[0]) {
 			if (!_vm->_timers[1]) {
 				_vm->_timers[1] = _vm->getRandom(20) + 30;
-				if (_idleFacing != kDirNone) {
+				if (_idleFacing != kDirIdleLeft) {
 					if (_vm->getRandom(10) >= 2 || _sequenceId != 0x7CA)
 						playSequence(0x107CA);
 					else
@@ -1255,15 +1256,15 @@ void PlayerPlat::initPos(int gridX, int gridY, Facing facing) {
 	_vm->_timers[0] = 50;
 	_vm->_timers[1] = 20;
 	_pos = Common::Point(gridX, gridY);
-	if (facing == kDirNone)
-		_idleFacing = kDirNone;
+	if (facing == kDirIdleLeft)
+		_idleFacing = kDirIdleLeft;
 	else
 		_idleFacing = facing;
-	if (_idleFacing == kDirUnk4) {
+	if (_idleFacing == kDirIdleRight) {
 		_sequenceId = 0x7D1;
 	} else {
 		_sequenceId = 0x7C1;
-		_idleFacing = kDirNone;
+		_idleFacing = kDirIdleLeft;
 	}
 	_id = 20 * _pos.y;
 	_sequenceDatNum = 1;
@@ -1371,15 +1372,14 @@ bool PlayerPlat::walkTo(Common::Point gridPos, int animationIndex, int sequenceI
 			_sequenceId = platSequenceId;
 			_id = platId;
 			_sequenceDatNum = datNum;
-			// CHECKME Not sure if this is correct...
 			if (_walkNodes[_walkNodesCount - 1]._deltaX > 0)
-				_idleFacing = kDirNone;
+				_idleFacing = kDirIdleLeft;
 			else if (_walkNodes[_walkNodesCount - 1]._deltaX < 0)
-				_idleFacing = kDirUnk4;
+				_idleFacing = kDirIdleRight;
 			else if (_walkNodes[_walkNodesCount - 1]._gridX1 % 2)
-				_idleFacing = kDirUnk4;
+				_idleFacing = kDirIdleRight;
 			else
-				_idleFacing = kDirNone;
+				_idleFacing = kDirIdleLeft;
 			if (animationIndex >= 0)
 				_vm->_gameSys->setAnimation(makeRid(_sequenceDatNum, _sequenceId), _id, animationIndex);
 		} else if (animationIndex >= 0) {
@@ -1391,29 +1391,29 @@ bool PlayerPlat::walkTo(Common::Point gridPos, int animationIndex, int sequenceI
 			_sequenceId = ridToEntryIndex(sequenceId);
 			_sequenceDatNum = ridToDatIndex(sequenceId);
 			if (_sequenceId == 0x7C2) {
-				_idleFacing = kDirNone;
+				_idleFacing = kDirIdleLeft;
 			} else if (_sequenceId == 0x7D2) {
-				_idleFacing = kDirUnk4;
+				_idleFacing = kDirIdleRight;
 			}
 		} else {
 			if (_walkNodesCount > 0) {
 				if (_walkNodes[_walkNodesCount - 1]._deltaX > 0) {
 					_sequenceId = 0x7C2;
-					_idleFacing = kDirNone;
+					_idleFacing = kDirIdleLeft;
 				} else if (_walkNodes[_walkNodesCount - 1]._deltaX < 0) {
 					_sequenceId = 0x7D2;
-					_idleFacing = kDirUnk4;
+					_idleFacing = kDirIdleRight;
 				} else if (_walkNodes[0]._deltaX > 0) {
 					_sequenceId = 0x7C2;
-					_idleFacing = kDirNone;
+					_idleFacing = kDirIdleLeft;
 				} else if (_walkNodes[0]._deltaX < 0) {
 					_sequenceId = 0x7D2;
-					_idleFacing = kDirUnk4;
+					_idleFacing = kDirIdleRight;
 				} else {
 					_sequenceId = 0x7D2;
-					_idleFacing = kDirUnk4;
+					_idleFacing = kDirIdleRight;
 				}
-			} else if (_idleFacing != kDirNone) {
+			} else if (_idleFacing != kDirIdleLeft) {
 				_sequenceId = 0x7D2;
 			} else {
 				_sequenceId = 0x7C2;

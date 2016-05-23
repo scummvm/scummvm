@@ -1708,13 +1708,13 @@ void Scene44::run() {
 		case 50:
 			gnap.initPos(4, 8, kDirBottomRight);
 			if (_vm->_sceneSavegameLoaded) {
-				plat.initPos(_vm->_hotspotsWalkPos[4].x, _vm->_hotspotsWalkPos[4].y, kDirUnk4);
+				plat.initPos(_vm->_hotspotsWalkPos[4].x, _vm->_hotspotsWalkPos[4].y, kDirIdleRight);
 			} else if (!_vm->isFlag(kGFUnk13)) {
 				_vm->_timers[0] = 50;
 				_vm->_timers[1] = 20;
 				plat._pos = Common::Point(5, 8);
 				plat._sequenceId = 0xFD;
-				plat._idleFacing = kDirNone;
+				plat._idleFacing = kDirIdleLeft;
 				plat._id = 160;
 				plat._sequenceDatNum = 0;
 				gameSys.insertSequence(0xFD, 160, 0, 0, kSeqNone, 0, 0, 0);
@@ -2032,7 +2032,7 @@ void Scene44::updateAnimations() {
 	if (gameSys.getAnimationStatus(2) == 2) {
 		if (_nextKissingLadySequenceId == 0xF6) {
 			gameSys.insertSequence(_nextKissingLadySequenceId, 1, _currKissingLadySequenceId, 1, kSeqSyncWait, 0, 0, 0);
-			plat.initPos(5, 8, kDirNone);
+			plat.initPos(5, 8, kDirIdleLeft);
 			_currKissingLadySequenceId = _nextKissingLadySequenceId;
 			_nextKissingLadySequenceId = -1;
 			gameSys.setAnimation(0, 0, 2);
@@ -2162,7 +2162,7 @@ void Scene45::run() {
 		gameSys.setAnimation(0x9E, 1, 0);
 		gnap._actionStatus = 1;
 		gameSys.insertSequence(gnap._sequenceId, gnap._id, 0, 0, kSeqNone, 0, 0, 0);
-		plat.initPos(4, 8, kDirNone);
+		plat.initPos(4, 8, kDirIdleLeft);
 		_vm->endSceneInit();
 	} else if (_vm->_prevSceneNum == 46) {
 		gnap.initPos(-1, 8, kDirUpRight);

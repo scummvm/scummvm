@@ -68,7 +68,7 @@ void Scene30::run() {
 
 	_kidSequenceId = 0x101;
 	gnap.initPos(7, 12, kDirBottomRight);
-	plat.initPos(6, 12, kDirNone);
+	plat.initPos(6, 12, kDirIdleLeft);
 	_vm->endSceneInit();
 	gnap.walkTo(Common::Point(7, 8), -1, 0x107B9, 1);
 	plat.walkTo(Common::Point(6, 8), -1, 0x107C2, 1);
@@ -319,13 +319,13 @@ void Scene31::run() {
 
 	if (_vm->_prevSceneNum == 27) {
 		gnap.initPos(-1, 8, kDirBottomLeft);
-		plat.initPos(-1, 9, kDirUnk4);
+		plat.initPos(-1, 9, kDirIdleRight);
 		_vm->endSceneInit();
 		gnap.walkTo(Common::Point(3, 8), -1, 0x107BA, 1);
 		plat.walkTo(Common::Point(3, 9), -1, 0x107D2, 1);
 	} else {
 		gnap.initPos(7, 12, kDirBottomRight);
-		plat.initPos(6, 12, kDirNone);
+		plat.initPos(6, 12, kDirIdleLeft);
 		_vm->endSceneInit();
 		gnap.walkTo(Common::Point(7, 8), -1, 0x107BA, 1);
 		plat.walkTo(Common::Point(6, 8), -1, 0x107D2, 1);
@@ -675,13 +675,13 @@ void Scene32::run() {
 
 	if (_vm->_prevSceneNum == 33) {
 		gnap.initPos(11, 6, kDirBottomLeft);
-		plat.initPos(12, 6, kDirUnk4);
+		plat.initPos(12, 6, kDirIdleRight);
 		_vm->endSceneInit();
 		plat.walkTo(Common::Point(9, 6), -1, 0x107D2, 1);
 		gnap.walkTo(Common::Point(8, 6), -1, 0x107BA, 1);
 	} else {
 		gnap.initPos(1, 6, kDirBottomRight);
-		plat.initPos(1, 7, kDirNone);
+		plat.initPos(1, 7, kDirIdleLeft);
 		_vm->endSceneInit();
 	}
 
@@ -839,26 +839,26 @@ void Scene33::run() {
 	switch (_vm->_prevSceneNum) {
 	case 34:
 		gnap.initPos(11, 7, kDirBottomLeft);
-		plat.initPos(12, 7, kDirUnk4);
+		plat.initPos(12, 7, kDirIdleRight);
 		_vm->endSceneInit();
 		gnap.walkTo(Common::Point(8, 7), -1, 0x107BA, 1);
 		plat.walkTo(Common::Point(9, 7), -1, 0x107D2, 1);
 		break;
 	case 37:
 		gnap.initPos(7, 7, kDirBottomRight);
-		plat.initPos(8, 7, kDirNone);
+		plat.initPos(8, 7, kDirIdleLeft);
 		_vm->endSceneInit();
 		break;
 	case 32:
 		gnap.initPos(-1, 6, kDirBottomRight);
-		plat.initPos(-1, 7, kDirNone);
+		plat.initPos(-1, 7, kDirIdleLeft);
 		_vm->endSceneInit();
 		plat.walkTo(Common::Point(2, 7), -1, 0x107C2, 1);
 		gnap.walkTo(Common::Point(2, 8), -1, 0x107B9, 1);
 		break;
 	default:
 		gnap.initPos(3, 7, kDirBottomRight);
-		plat.initPos(2, 7, kDirNone);
+		plat.initPos(2, 7, kDirIdleLeft);
 		_vm->endSceneInit();
 		break;
 	}
@@ -1142,10 +1142,10 @@ void Scene38::run() {
 
 	if (_vm->_prevSceneNum == 39) {
 		gnap.initPos(3, 7, kDirBottomLeft);
-		plat.initPos(4, 7, kDirUnk4);
+		plat.initPos(4, 7, kDirIdleRight);
 	} else {
 		gnap.initPos(3, 8, kDirBottomRight);
-		plat.initPos(4, 8, kDirNone);
+		plat.initPos(4, 8, kDirIdleLeft);
 	}
 	_vm->endSceneInit();
 
@@ -1372,7 +1372,7 @@ void Scene38::updateAnimations() {
 			gnap._sequenceDatNum = 0;
 			gameSys.setAnimation(0x9F, gnap._id, 0);
 			gnap._actionStatus = kAS38HoldingHuntingTrophy;
-			if (plat._idleFacing != kDirNone)
+			if (plat._idleFacing != kDirIdleLeft)
 				plat.playSequence(0x107D5);
 			else
 				plat.playSequence(0x107D4);
@@ -1448,7 +1448,7 @@ void Scene39::run() {
 		_vm->endSceneInit();
 	} else {
 		gnap.initPos(4, 7, kDirBottomRight);
-		plat.initPos(5, 7, kDirNone);
+		plat.initPos(5, 7, kDirIdleLeft);
 		_vm->endSceneInit();
 	}
 

@@ -209,42 +209,42 @@ void Scene20::run() {
 			_vm->gameUpdateTick();
 
 		gnap.initPos(11, 8, kDirBottomLeft);
-		plat.initPos(11, 9, kDirUnk4);
+		plat.initPos(11, 9, kDirIdleRight);
 		gnap.walkTo(Common::Point(5, 8), -1, 0x107BA, 1);
 		plat.walkTo(Common::Point(6, 9), -1, 0x107C2, 1);
 	} else {
 		switch (_vm->_prevSceneNum) {
 		case 17:
 			gnap.initPos(5, 11, kDirBottomRight);
-			plat.initPos(6, 11, kDirNone);
+			plat.initPos(6, 11, kDirIdleLeft);
 			_vm->endSceneInit();
 			gnap.walkTo(Common::Point(5, 8), -1, 0x107B9, 1);
 			plat.walkTo(Common::Point(6, 9), -1, 0x107C2, 1);
 			break;
 		case 18:
 			gnap.initPos(11, 8, kDirBottomLeft);
-			plat.initPos(11, 9, kDirUnk4);
+			plat.initPos(11, 9, kDirIdleRight);
 			_vm->endSceneInit();
 			gnap.walkTo(Common::Point(5, 8), -1, 0x107BA, 1);
 			plat.walkTo(Common::Point(6, 9), -1, 0x107C2, 1);
 			break;
 		case 21:
 			gnap.initPos(-1, 8, kDirBottomLeft);
-			plat.initPos(-1, 9, kDirUnk4);
+			plat.initPos(-1, 9, kDirIdleRight);
 			_vm->endSceneInit();
 			gnap.walkTo(Common::Point(3, 8), -1, 0x107B9, 1);
 			plat.walkTo(Common::Point(3, 9), -1, 0x107C2, 1);
 			break;
 		case 22:
 			gnap.initPos(7, 6, kDirBottomRight);
-			plat.initPos(8, 6, kDirNone);
+			plat.initPos(8, 6, kDirIdleLeft);
 			_vm->endSceneInit();
 			gnap.walkTo(Common::Point(8, 8), -1, 0x107B9, 1);
 			plat.walkTo(Common::Point(9, 9), -1, 0x107C2, 1);
 			break;
 		default:
 			gnap.initPos(8, 6, kDirBottomLeft);
-			plat.initPos(9, 6, kDirUnk4);
+			plat.initPos(9, 6, kDirIdleRight);
 			_vm->endSceneInit();
 			_vm->_hotspots[kHS20WalkArea2]._flags |= SF_WALKABLE;
 			gnap.walkTo(Common::Point(8, 8), -1, 0x107BA, 1);
@@ -307,7 +307,7 @@ void Scene20::run() {
 				gnap.walkTo(_vm->_hotspotsWalkPos[kHS20ExitParkingLot], 0, 0x107AF, 1);
 				gnap._actionStatus = kAS20LeaveScene;
 				plat.walkTo(_vm->_hotspotsWalkPos[kHS20ExitParkingLot] + Common::Point(0, 1), -1, 0x107CF, 1);
-				plat._idleFacing = kDirUnk4;
+				plat._idleFacing = kDirIdleRight;
 			}
 			break;
 
@@ -346,7 +346,7 @@ void Scene20::run() {
 				gnap.walkTo(_vm->_hotspotsWalkPos[kHS20ExitInsideGrubCity] + Common::Point(0, - 1), 0, 0x107BB, 1);
 				gnap._actionStatus = kAS20LeaveScene;
 				plat.walkTo(_vm->_hotspotsWalkPos[kHS20ExitInsideGrubCity] + Common::Point(1, 0), -1, 0x107C2, 1);
-				plat._idleFacing = kDirUnk4;
+				plat._idleFacing = kDirIdleRight;
 			}
 			break;
 
@@ -750,7 +750,7 @@ void Scene21::run() {
 	if (_vm->isFlag(kGFTwigTaken)) {
 		if (_vm->isFlag(kGFKeysTaken)) {
 			gnap.initPos(5, 8, kDirBottomRight);
-			plat.initPos(6, 8, kDirNone);
+			plat.initPos(6, 8, kDirIdleLeft);
 			gameSys.insertSequence(0x8E, 2, 0, 0, kSeqNone, 0, 0, 0);
 			if (!_vm->isFlag(kGFUnk04))
 				gameSys.insertSequence(0x8D, 59, 0, 0, kSeqNone, 0, 0, 0);
@@ -758,7 +758,7 @@ void Scene21::run() {
 			_vm->clearFlag(kGFKeysTaken);
 		} else {
 			gnap.initPos(5, 11, kDirBottomRight);
-			plat.initPos(6, 11, kDirNone);
+			plat.initPos(6, 11, kDirIdleLeft);
 			if (!_vm->isFlag(kGFUnk04))
 				gameSys.insertSequence(0x8D, 59, 0, 0, kSeqNone, 0, 0, 0);
 			_vm->endSceneInit();
@@ -767,7 +767,7 @@ void Scene21::run() {
 		}
 	} else {
 		gnap.initPos(5, 11, kDirBottomRight);
-		plat.initPos(6, 11, kDirNone);
+		plat.initPos(6, 11, kDirIdleLeft);
 		_currOldLadySequenceId = 0x89;
 		gameSys.setAnimation(0x89, 79, 3);
 		gameSys.insertSequence(_currOldLadySequenceId, 79, 0, 0, kSeqNone, 0, 0, 0);
@@ -1052,11 +1052,11 @@ void Scene22::run() {
 
 	if (_vm->_prevSceneNum == 20) {
 		gnap.initPos(2, 8, kDirBottomRight);
-		plat.initPos(1, 8, kDirNone);
+		plat.initPos(1, 8, kDirIdleLeft);
 		_vm->endSceneInit();
 	} else {
 		gnap.initPos(11, _vm->_hotspotsWalkPos[kHS22ExitBackGrubCity].y, kDirBottomRight);
-		plat.initPos(11, _vm->_hotspotsWalkPos[kHS22ExitBackGrubCity].y + 1, kDirNone);
+		plat.initPos(11, _vm->_hotspotsWalkPos[kHS22ExitBackGrubCity].y + 1, kDirIdleLeft);
 		_vm->endSceneInit();
 		gnap.walkTo(Common::Point(8, 8), -1, 0x107B9, 1);
 		plat.walkTo(Common::Point(9, 8), -1, 0x107C2, 1);
@@ -1304,7 +1304,7 @@ void Scene23::run() {
 	_vm->queueInsertDeviceIcon();
 
 	gnap.initPos(-1, 7, kDirBottomRight);
-	plat.initPos(-2, 7, kDirNone);
+	plat.initPos(-2, 7, kDirIdleLeft);
 	gameSys.insertSequence(0xBD, 255, 0, 0, kSeqNone, 0, 0, 0);
 	gameSys.insertSequence(0xBF, 2, 0, 0, kSeqNone, 0, 0, 0);
 	_vm->endSceneInit();
@@ -1577,13 +1577,13 @@ void Scene24::run() {
 
 	if (_vm->_prevSceneNum == 20) {
 		gnap.initPos(1, 8, kDirBottomRight);
-		plat.initPos(2, 8, kDirNone);
+		plat.initPos(2, 8, kDirIdleLeft);
 		_vm->endSceneInit();
 		gnap.walkTo(Common::Point(1, 9), -1, 0x107B9, 1);
 		plat.walkTo(Common::Point(2, 9), -1, 0x107C2, 1);
 	} else {
 		gnap.initPos(8, 8, kDirBottomLeft);
-		plat.initPos(8, 8, kDirUnk4);
+		plat.initPos(8, 8, kDirIdleRight);
 		_vm->endSceneInit();
 		gnap.walkTo(Common::Point(2, 8), -1, 0x107BA, 1);
 		plat.walkTo(Common::Point(3, 8), -1, 0x107C2, 1);
@@ -1827,13 +1827,13 @@ void Scene25::run() {
 
 	if (_vm->_prevSceneNum == 24) {
 		gnap.initPos(5, 11, kDirUpLeft);
-		plat.initPos(6, 11, kDirUnk4);
+		plat.initPos(6, 11, kDirIdleRight);
 		_vm->endSceneInit();
 		gnap.walkTo(Common::Point(5, 7), -1, 0x107BA, 1);
 		plat.walkTo(Common::Point(6, 7), -1, 0x107C2, 1);
 	} else {
 		gnap.initPos(5, 6, kDirBottomRight);
-		plat.initPos(6, 6, kDirNone);
+		plat.initPos(6, 6, kDirIdleLeft);
 		_vm->endSceneInit();
 		gnap.walkTo(Common::Point(5, 8), -1, 0x107B9, 1);
 		plat.walkTo(Common::Point(6, 8), -1, 0x107C2, 1);
@@ -2148,13 +2148,13 @@ void Scene26::run() {
 
 	if (_vm->_prevSceneNum == 25) {
 		gnap.initPos(-1, 8, kDirBottomRight);
-		plat.initPos(-2, 8, kDirNone);
+		plat.initPos(-2, 8, kDirIdleLeft);
 		_vm->endSceneInit();
 		gnap.walkTo(Common::Point(2, 8), -1, 0x107B9, 1);
 		plat.walkTo(Common::Point(1, 8), -1, 0x107C2, 1);
 	} else {
 		gnap.initPos(2, 8, kDirBottomRight);
-		plat.initPos(3, 8, kDirNone);
+		plat.initPos(3, 8, kDirIdleLeft);
 		_vm->endSceneInit();
 	}
 
@@ -2365,28 +2365,28 @@ void Scene27::run() {
 	switch (_vm->_prevSceneNum) {
 	case 26:
 		gnap.initPos(7, 12, kDirBottomRight);
-		plat.initPos(6, 12, kDirNone);
+		plat.initPos(6, 12, kDirIdleLeft);
 		_vm->endSceneInit();
 		gnap.walkTo(Common::Point(7, 8), -1, 0x107B9, 1);
 		plat.walkTo(Common::Point(6, 8), -1, 0x107C2, 1);
 		break;
 	case 29:
 		gnap.initPos(-1, 8, kDirBottomRight);
-		plat.initPos(-1, 9, kDirNone);
+		plat.initPos(-1, 9, kDirIdleLeft);
 		_vm->endSceneInit();
 		gnap.walkTo(Common::Point(3, 8), -1, 0x107B9, 1);
 		plat.walkTo(Common::Point(3, 9), -1, 0x107C2, 1);
 		break;
 	case 31:
 		gnap.initPos(12, 8, kDirBottomLeft);
-		plat.initPos(12, 9, kDirUnk4);
+		plat.initPos(12, 9, kDirIdleRight);
 		_vm->endSceneInit();
 		gnap.walkTo(Common::Point(8, 8), -1, 0x107BA, 1);
 		plat.walkTo(Common::Point(8, 9), -1, 0x107C2, 1);
 		break;
 	default:
 		gnap.initPos(6, 8, kDirBottomRight);
-		plat.initPos(5, 9, kDirNone);
+		plat.initPos(5, 9, kDirIdleLeft);
 		_vm->endSceneInit();
 		break;
 	}
@@ -2742,12 +2742,12 @@ void Scene28::run() {
 			_vm->_timers[4] = _vm->getRandom(20) + 80;
 		}
 		gnap.initPos(8, 8, kDirBottomLeft);
-		plat.initPos(9, 8, kDirUnk4);
+		plat.initPos(9, 8, kDirIdleRight);
 		_vm->endSceneInit();
 	} else {
 		gameSys.insertSequence(0x11B, 39, 0, 0, kSeqNone, 0, 0, 0);
 		gnap.initPos(8, 8, kDirBottomLeft);
-		plat.initPos(9, 8, kDirUnk4);
+		plat.initPos(9, 8, kDirIdleRight);
 		_vm->endSceneInit();
 		_vm->playSequences(0xF7, 0x121, 0x122, 0x123);
 		_currClownSequenceId = 0x115;
@@ -3149,13 +3149,13 @@ void Scene29::run() {
 
 	if (_vm->_prevSceneNum == 27) {
 		gnap.initPos(12, 7, kDirBottomRight);
-		plat.initPos(12, 8, kDirNone);
+		plat.initPos(12, 8, kDirIdleLeft);
 		_vm->endSceneInit();
 		gnap.walkTo(Common::Point(8, 7), -1, 0x107B9, 1);
 		plat.walkTo(Common::Point(8, 8), -1, 0x107C2, 1);
 	} else {
 		gnap.initPos(-1, 7, kDirBottomRight);
-		plat.initPos(-2, 7, kDirNone);
+		plat.initPos(-2, 7, kDirIdleLeft);
 		_vm->endSceneInit();
 		gnap.walkTo(Common::Point(2, 7), -1, 0x107B9, 1);
 		plat.walkTo(Common::Point(1, 7), -1, 0x107C2, 1);

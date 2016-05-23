@@ -75,7 +75,7 @@ int PlayerGnap::getWalkStopSequenceId(int deltaX, int deltaY) {
 Facing PlayerGnap::getWalkFacing(int deltaX, int deltaY) {
 	static const Facing gnapWalkFacings[9] = {
 		kDirUpLeft, kDirBottomLeft, kDirBottomLeft,
-		kDirUpLeft, kDirNone, kDirBottomLeft,
+		kDirUpLeft, kDirIdleLeft, kDirBottomLeft,
 		kDirUpRight, kDirBottomRight, kDirBottomRight
 	};
 	// CHECKME This is a little weird

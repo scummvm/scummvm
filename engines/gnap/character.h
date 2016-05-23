@@ -28,10 +28,10 @@ namespace Gnap {
 class GnapEngine;
 
 enum Facing {
-	kDirNone = 0,
+	kDirIdleLeft = 0,
 	kDirBottomRight = 1,
 	kDirBottomLeft = 3,
-	kDirUnk4 = 4,
+	kDirIdleRight = 4,
 	kDirUpLeft = 5,
 	kDirUpRight = 7
 };
