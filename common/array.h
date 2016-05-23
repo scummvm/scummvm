@@ -378,6 +378,11 @@ public:
 	 * Inserts element at the sorted position.
 	 */
 	void insert(const T &element) {
+		if (!this->_size) {
+			this->insert_aux(this->_storage, &element, &element + 1);
+			return;
+		}
+
 		T *where = (T *)bsearchMin(element, this->front(), this->_size, sizeof(T), _comparator);
 		insert(where, element);
 	}
