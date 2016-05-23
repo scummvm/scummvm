@@ -164,7 +164,7 @@ patternList *moveList[5];
 
 int *storedLaunchAction[5] = {NULL};
 
-const int *MCP_params;
+const int32 *MCP_params;
 
 Common::Array<int> lastXCoord[5];
 Common::Array<int> lastYCoord[5];
