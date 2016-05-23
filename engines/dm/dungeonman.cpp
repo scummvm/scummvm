@@ -378,7 +378,6 @@ void DungeonMan::setCurrentMapAndPartyMap(uint16 mapIndex) {
 
 	_currMapInscriptionWallOrnIndex = _currMap.map->wallOrnCount;
 	_vm->_displayMan->_currMapWallOrnIndices[_currMapInscriptionWallOrnIndex] = kWallOrnInscription;
-
 }
 
 

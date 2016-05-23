@@ -12,6 +12,8 @@ extern uint16 gPalCredits[16];
 extern uint16 gPalEntrance[16];
 extern uint16 gPalDungeonView[6][16];
 
+
+
 typedef struct {
 	uint16 X1;
 	uint16 X2;

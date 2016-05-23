@@ -16,12 +16,22 @@ struct Frame {
 	uint16 srcWidth, srcHeight;
 	uint16 srcX, srcY;
 
+	Frame() {}
 	Frame(uint16 destFromX, uint16 destToX, uint16 destFromY, uint16 destToY,
 		  uint16 srcWidth, uint16 srcHeight, uint16 srcX, uint16 srcY) :
 		destFromX(destFromX), destToX(destToX + 1), destFromY(destFromY), destToY(destToY + 1),
 		srcWidth(srcWidth * 2), srcHeight(srcHeight), srcX(srcX), srcY(srcY) {}
 };
 
+
+enum ViewCell {
+	kViewCellFronLeft = 0, // @ C00_VIEW_CELL_FRONT_LEFT
+	kViewCellFrontRight = 1, // @ C01_VIEW_CELL_FRONT_RIGHT
+	kViewCellBackRight = 2, // @ C02_VIEW_CELL_BACK_RIGHT
+	kViewCellBackLeft = 3, // @ C03_VIEW_CELL_BACK_LEFT
+	kViewCellAlcove = 4, // @ C04_VIEW_CELL_ALCOVE
+	kViewCellDoorButtonOrWallOrn = 5 // @ C05_VIEW_CELL_DOOR_BUTTON_OR_WALL_ORNAMENT
+};
 
 enum StairFrameIndex {
 	kFrameStairsUpFront_D3L = 0, // @ G0110_s_Graphic558_Frame_StairsUpFront_D3L 
@@ -200,7 +210,7 @@ byte gFloorOrnCoordSetIndices[9] = { // @ G0195_auc_Graphic558_FloorOrnamentCoor
 	2,   /* Floor Ornament 07 Tiny Pressure Pad */
 	0}; /* Floor Ornament 08 Puddle */
 
-byte gWallOrnCoordSets[8][13][6] = { // @ G0205_aaauc_Graphic558_WallOrnamentCoordinateSets
+uint16 gWallOrnCoordSets[8][13][6] = { // @ G0205_aaauc_Graphic558_WallOrnamentCoordinateSets
 	/* { X1, X2, Y1, Y2, PixelWidth, Height } */
 	{{80,  83, 41,  45,  8 * 2,   5},     /* D3L */
 	{140, 143, 41,  45,  8 * 2,   5},     /* D3R */
@@ -603,7 +613,9 @@ byte gPalChangesCreature_D2[16] = {0, 10, 20, 30, 40, 30, 60, 70, 50, 0, 0, 110,
 
 
 enum GraphicIndice {
-	kDoorMaskDestroyedIndice = 301 // @ C301_GRAPHIC_DOOR_MASK_DESTROYED
+	kInscriptionFontIndice = 120, // @ C120_GRAPHIC_INSCRIPTION_FONT
+	kDoorMaskDestroyedIndice = 301, // @ C301_GRAPHIC_DOOR_MASK_DESTROYED
+	kChampionPortraitsIndice = 26 // @ C026_GRAPHIC_CHAMPION_PORTRAITS
 };
 
 
@@ -868,6 +880,10 @@ void DisplayMan::drawSquareD3L(direction dir, int16 posX, int16 posY) {
 		break;
 	case kWallElemType:
 		drawWallSetBitmap(_wallSetBitMaps[kWall_D3LCR], gFrameWalls[kViewSquare_D3L]);
+		isDrawnWallOrnAnAlcove(squareAspect[kRightWallOrnOrdAspect], kViewWall_D3L_RIGHT);
+		if (isDrawnWallOrnAnAlcove(squareAspect[kFrontWallOrnOrdAspect], kViewWall_D3L_FRONT)) {
+			// ... missing code
+		}
 		break;
 	}
 }
@@ -884,6 +900,10 @@ void DisplayMan::drawSquareD3R(direction dir, int16 posX, int16 posY) {
 		break;
 	case kWallElemType:
 		drawWallSetBitmap(_wallSetBitMaps[kWall_D3LCR], gFrameWalls[kViewSquare_D3R]);
+		isDrawnWallOrnAnAlcove(squareAspect[kLeftWallOrnOrdAspect], kViewWall_D3R_LEFT);
+		if (isDrawnWallOrnAnAlcove(squareAspect[kFrontWallOrnOrdAspect], kViewWall_D3R_FRONT)) {
+			// ... missing code
+		}
 		break;
 	}
 }
@@ -899,6 +919,9 @@ void DisplayMan::drawSquareD3C(direction dir, int16 posX, int16 posY) {
 		break;
 	case kWallElemType:
 		drawWallSetBitmapWithoutTransparency(_wallSetBitMaps[kWall_D3LCR], gFrameWalls[kViewSquare_D3C]);
+		if (isDrawnWallOrnAnAlcove(squareAspect[kFrontWallOrnOrdAspect], kViewWall_D3C_FRONT)) {
+			//... missing code
+		}
 		break;
 	}
 }
@@ -914,6 +937,10 @@ void DisplayMan::drawSquareD2L(direction dir, int16 posX, int16 posY) {
 		break;
 	case kWallElemType:
 		drawWallSetBitmap(_wallSetBitMaps[kWall_D2LCR], gFrameWalls[kViewSquare_D2L]);
+		isDrawnWallOrnAnAlcove(squareAspect[kRightWallOrnOrdAspect], kViewWall_D2L_RIGHT);
+		if (isDrawnWallOrnAnAlcove(squareAspect[kFrontWallOrnOrdAspect], kViewWall_D2L_FRONT)) {
+			// ... missing code
+		}
 		break;
 	case kStairsSideElemType:
 		drawFloorPitOrStairsBitmap(kStairsNativeIndex_Side_D2L, gFrameWalls[kFrameStairsSide_D2L]);
@@ -932,6 +959,10 @@ void DisplayMan::drawSquareD2R(direction dir, int16 posX, int16 posY) {
 		break;
 	case kWallElemType:
 		drawWallSetBitmap(_wallSetBitMaps[kWall_D2LCR], gFrameWalls[kViewSquare_D2R]);
+		isDrawnWallOrnAnAlcove(squareAspect[kLeftWallOrnOrdAspect], kViewWall_D2R_LEFT);
+		if (isDrawnWallOrnAnAlcove(squareAspect[kFrontWallOrnOrdAspect], kViewWall_D2R_FRONT)) {
+			// ... missing code
+		}
 		break;
 	case kStairsSideElemType:
 		drawFloorPitOrStairsBitmapFlippedHorizontally(kStairsNativeIndex_Side_D2L, gStairFrames[kFrameStairsSide_D2R]);
@@ -950,6 +981,9 @@ void DisplayMan::drawSquareD2C(direction dir, int16 posX, int16 posY) {
 		break;
 	case kWallElemType:
 		drawWallSetBitmapWithoutTransparency(_wallSetBitMaps[kWall_D2LCR], gFrameWalls[kViewSquare_D2C]);
+		if (isDrawnWallOrnAnAlcove(squareAspect[kFrontWallOrnOrdAspect], kViewWall_D2C_FRONT)) {
+			// ... missing code
+		}
 		break;
 	}
 }
@@ -965,6 +999,7 @@ void DisplayMan::drawSquareD1L(direction dir, int16 posX, int16 posY) {
 		break;
 	case kWallElemType:
 		drawWallSetBitmap(_wallSetBitMaps[kWall_D1LCR], gFrameWalls[kViewSquare_D1L]);
+		isDrawnWallOrnAnAlcove(squareAspect[kRightWallOrnOrdAspect], kViewWall_D1L_RIGHT);
 		break;
 	case kStairsSideElemType:
 		if (squareAspect[kStairsUpAspect])
@@ -986,6 +1021,7 @@ void DisplayMan::drawSquareD1R(direction dir, int16 posX, int16 posY) {
 		break;
 	case kWallElemType:
 		drawWallSetBitmap(_wallSetBitMaps[kWall_D1LCR], gFrameWalls[kViewSquare_D1R]);
+		isDrawnWallOrnAnAlcove(squareAspect[kLeftWallOrnOrdAspect], kViewWall_D1R_LEFT);
 		break;
 	case kStairsSideElemType:
 		if (squareAspect[kStairsUpAspect])
@@ -1010,6 +1046,9 @@ void DisplayMan::drawSquareD1C(direction dir, int16 posX, int16 posY) {
 		_vm->_dungeonMan->_isFacingViAltar = false;
 		_vm->_dungeonMan->_isFacingFountain = false;
 		drawWallSetBitmapWithoutTransparency(_wallSetBitMaps[kWall_D1LCR], gFrameWalls[kViewSquare_D1C]);
+		if (isDrawnWallOrnAnAlcove(squareAspect[kFrontWallOrnOrdAspect], kViewWall_D1C_FRONT)) {
+			// .... code not yet implemneted
+		}
 		break;
 	}
 }
@@ -1332,5 +1371,134 @@ byte gUnreadableInscriptionBoxY2[15] = { // @ G0204_auc_Graphic558_UnreadableIns
 Box gBoxChampionPortraitOnWall = {96, 127, 35, 63}; // G0109_s_Graphic558_Box_ChampionPortraitOnWall
 
 bool DisplayMan::isDrawnWallOrnAnAlcove(int16 wallOrnOrd, ViewWall viewWallIndex) {
-	return false; // dummy
+	byte *bitmapGreen;
+	byte *bitmapRed;
+	int16 coordinateSetOffset;
+	bool flipHorizontal;
+	bool isInscription;
+	bool isAlcove;
+	Frame frame;
+	unsigned char inscriptionString[70];
+
+
+	if (wallOrnOrd) {
+		int16 var_X;
+		int16 wallOrnIndex = wallOrnOrd - 1;
+		int16 nativeBitmapIndex = _currMapWallOrnInfo[wallOrnIndex][kNativeBitmapIndex];
+
+		uint16 *coordinateSetA = gWallOrnCoordSets[_currMapWallOrnInfo[wallOrnIndex][kNativeCoordinateSet]][viewWallIndex];
+		isAlcove = _vm->_dungeonMan->isWallOrnAnAlcove(wallOrnIndex);
+		if (isInscription = (wallOrnIndex == _vm->_dungeonMan->_currMapInscriptionWallOrnIndex)) {
+			_vm->_dungeonMan->decodeText((char*)inscriptionString, _inscriptionThing, kTextTypeInscription);
+		}
+
+		if (viewWallIndex >= kViewWall_D1L_RIGHT) {
+			if (viewWallIndex == kViewWall_D1C_FRONT) {
+				if (isInscription) {
+					Frame &D1CFrame = gFrameWalls[kViewSquare_D1C];
+					blitToScreen(_wallSetBitMaps[kWall_D1LCR], D1CFrame.srcWidth, 94, 28, gBoxWallPatchBehindInscription.X1, gBoxWallPatchBehindInscription.X2,
+								 gBoxWallPatchBehindInscription.Y1, gBoxWallPatchBehindInscription.Y2, kColorNoTransparency, gDungeonViewport);
+
+					unsigned char *string = inscriptionString;
+					bitmapRed = _bitmaps[kInscriptionFontIndice];
+					int16 textLineIndex = 0;
+					do {
+						int16 characterCount = 0;
+						unsigned char *character = string;
+						while (*character++ < 0x80) {
+							characterCount++;
+						}
+						frame.destToX = (frame.destFromX = 112 - (characterCount * 4)) + 7;
+						frame.destFromY = (frame.destToY = gInscriptionLineY[textLineIndex++]) - 7;
+						while (characterCount--) {
+							blitToScreen(bitmapRed, 288, (*string++) * 8, 0, frame.destFromX, frame.destToX, frame.destFromY, frame.destToY, kColorFlesh, gDungeonViewport);
+							frame.destFromX += 8;
+							frame.destToX += 8;
+						}
+					} while (*string++ != 0x81);
+					return isAlcove;
+				}
+				nativeBitmapIndex++;
+				for (uint16 i = 0; i < 4; ++i)
+					_vm->_dungeonMan->_dungeonViewClickableBoxes[kViewCellDoorButtonOrWallOrn][i] = coordinateSetA[i];
+				_vm->_dungeonMan->_isFacingAlcove = isAlcove;
+				_vm->_dungeonMan->_isFacingViAltar = (wallOrnIndex == _currMapViAltarIndex);
+				_vm->_dungeonMan->_isFacingFountain = false;
+				for (int16 fountainOrnIndex = 0; fountainOrnIndex < kFountainOrnCount; ++fountainOrnIndex) {
+					if (_currMapFountainOrnIndices[fountainOrnIndex] == wallOrnIndex) {
+						_vm->_dungeonMan->_isFacingFountain = true;
+						break;
+					}
+				}
+			}
+			bitmapGreen = _bitmaps[nativeBitmapIndex];
+			if (viewWallIndex == kViewWall_D1R_LEFT) {
+				blitToBitmap(bitmapGreen, coordinateSetA[4], coordinateSetA[5], _tmpBitmap, coordinateSetA[4]);
+				bitmapGreen = _tmpBitmap;
+			}
+			var_X = 0;
+		} else {
+			coordinateSetOffset = 0;
+			uint16 *coordSetB;
+			int16 wallOrnCoordSetIndex = _currMapWallOrnInfo[wallOrnIndex][kNativeCoordinateSet];
+			if (flipHorizontal = (viewWallIndex == kViewWall_D2R_LEFT) || (viewWallIndex == kViewWall_D3R_LEFT)) {
+				coordSetB = gWallOrnCoordSets[wallOrnCoordSetIndex][kViewWall_D1R_LEFT];
+			} else if ((viewWallIndex == kViewWall_D2L_RIGHT) || (viewWallIndex == kViewWall_D3L_RIGHT)) {
+				coordSetB = gWallOrnCoordSets[wallOrnCoordSetIndex][kViewWall_D1L_RIGHT];
+			} else {
+				nativeBitmapIndex++;
+				coordSetB = gWallOrnCoordSets[wallOrnCoordSetIndex][kViewWall_D1C_FRONT];
+				if (viewWallIndex == kViewWall_D2L_FRONT) {
+					coordinateSetOffset = 6;
+				} else if (viewWallIndex == kViewWall_D2R_FRONT) {
+					coordinateSetOffset = -6;
+				}
+			}
+			int16 pixelWidth = (coordinateSetA + coordinateSetOffset)[1] - (coordinateSetA + coordinateSetOffset)[0];
+			// TODO: I skipped some bitmap shrinking code here
+			bitmapGreen = _bitmaps[nativeBitmapIndex];
+			var_X = pixelWidth;
+			if (flipHorizontal) {
+				blitToBitmap(bitmapGreen, coordSetB[4], coordSetB[5], _tmpBitmap, coordSetB[4]);
+				bitmapGreen = _tmpBitmap;
+				var_X = 15 - (var_X & 0xF);
+			} else if (viewWallIndex == kViewWall_D2L_FRONT) {
+				var_X -= coordinateSetA[1] - coordinateSetA[0];
+			} else {
+				var_X = 0;
+			}
+		}
+		if (isInscription) {
+			unsigned char *string = inscriptionString;
+			int16 unreadableTextLineCount = 0;
+			do {
+				while (*string < 0x80) {
+					string++;
+				}
+				unreadableTextLineCount++;
+			} while (*string++ != 0x81);
+
+			if (unreadableTextLineCount < 4) {
+				frame.destFromX = coordinateSetA[0];
+				frame.destToX = coordinateSetA[1];
+				frame.destFromY = coordinateSetA[2];
+				frame.destToY = coordinateSetA[3];
+				frame.srcWidth = coordinateSetA[4];
+				frame.srcHeight = coordinateSetA[5];
+
+				coordinateSetA = &frame.destFromX;
+
+				coordinateSetA[3] = gUnreadableInscriptionBoxY2[gWallOrnDerivedBitmapIndexIncrement[viewWallIndex] * 3 + unreadableTextLineCount - 1];
+			}
+		}
+		blitToScreen(bitmapGreen, coordinateSetA[4], var_X, 0, coordinateSetA[0], coordinateSetA[1], coordinateSetA[2], coordinateSetA[3], kColorFlesh, gDungeonViewport);
+
+		if ((viewWallIndex == kViewWall_D1C_FRONT) && _championPortraitOrdinal--) {
+			Box &box = gBoxChampionPortraitOnWall;
+			blitToScreen(_bitmaps[kChampionPortraitsIndice], 256, (_championPortraitOrdinal & 0x7) << 5, _championPortraitOrdinal, box.X1, box.X2, box.Y1, box.Y2,
+						 kColorDarkGary, gDungeonViewport);
+		}
+		return isAlcove;
+	}
+	return false;
 }
