@@ -415,7 +415,7 @@ private:
 	// Based on code Copyright (C) 2008-2009 Ksplice, Inc.
 	// Author: Tim Abbott <tabbott@ksplice.com>
 	// Licensed under GPLv2+
-	void *bsearchMin(const void *key, const void *base, uint num, uint size,
+	void *bsearchMin(void *key, void *base, uint num, uint size,
 					int (*cmp)(const void *key, const void *elt)) {
 		uint start_ = 0, end_ = num;
 		int result;
