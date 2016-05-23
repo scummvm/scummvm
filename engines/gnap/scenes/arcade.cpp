@@ -813,7 +813,7 @@ void Scene50::updateAnimations() {
 			_leftTongueNextSequenceId = -1;
 			_rightTongueId = _rightTongueNextId;
 			_leftTongueId = _leftTongueNextId;
-			_leftTongueEnergy -= _vm->getRandom(2) + 1;//CHECKME
+			_leftTongueEnergy -= _vm->getRandom(1) + 1;
 		} else {
 			_rightTongueNextId = getRightTongueNextId();
 			_vm->_gameSys->setAnimation(_rightTongueNextSequenceId, _rightTongueNextId, 5);
@@ -831,8 +831,7 @@ void Scene50::updateAnimations() {
 				_leftTongueNextSequenceId = 0xB8;
 			} else {
 				_vm->_timers[4] = 20;
-				//CHECKME
-				if (_rightTongueSequenceId != 0xBB && _rightTongueSequenceId != 0xC0 && _vm->getRandom(8) != _roundNum)
+				if (_rightTongueSequenceId != 0xBB && _rightTongueSequenceId != 0xC0 && _vm->getRandom(7) != _roundNum)
 					_leftTongueNextSequenceId = 0xB7;
 				else
 					_leftTongueNextSequenceId = 0xB8;
