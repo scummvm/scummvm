@@ -30,6 +30,13 @@ namespace Scumm {
 
 DefenseUnit::DefenseUnit() {
 	_state = DUS_ON;
+
+	_id = -1;
+	_distanceTo = 0;
+	_state = 0;
+	_radius = 0;
+	_armor = 0;
+	_cost = 0;
 }
 
 DefenseUnit::DefenseUnit(DefenseUnit *inUnit) {
@@ -40,6 +47,7 @@ DefenseUnit::DefenseUnit(DefenseUnit *inUnit) {
 	_state = inUnit->getState();
 	_radius = inUnit->getRadius();
 	_armor = inUnit->getArmor();
+	_cost = inUnit->getCost();
 }
 
 DefenseUnit::~DefenseUnit() {

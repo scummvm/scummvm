@@ -36,6 +36,14 @@ Traveller::Traveller() {
 	_waterFlag = 0;
 	setValueG(0);
 	unsetDisabled();
+
+	_sourceHub = 0;
+	_angleTo = 0;
+	_powerTo = 0;
+	_waterSourceX = 0;
+	_waterSourceY = 0;
+	_waterDestX = 0;
+	_waterDestY = 0;
 }
 
 Traveller::Traveller(int originX, int originY) {
@@ -45,6 +53,14 @@ Traveller::Traveller(int originX, int originY) {
 
 	_posX = originX;
 	_posY = originY;
+
+	_sourceHub = 0;
+	_angleTo = 0;
+	_powerTo = 0;
+	_waterSourceX = 0;
+	_waterSourceY = 0;
+	_waterDestX = 0;
+	_waterDestY = 0;
 }
 
 void Traveller::adjustPosX(int offsetX) {

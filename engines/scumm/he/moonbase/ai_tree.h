@@ -45,7 +45,7 @@ private:
 	int _maxDepth;
 	int _maxNodes;
 
-	int currentChildIndex;
+	int _currentChildIndex;
 
 	Common::SortedArray<TreeNode *> *_currentMap;
 	Node *_currentNode;
@@ -70,7 +70,7 @@ public:
 	Node *aStarSearch();
 
 	Node *aStarSearch_singlePassInit();
-	Node *aStarSearch_singlePass(Node **currentNode);
+	Node *aStarSearch_singlePass();
 
 	int IsBaseNode(Node *thisNode);
 };

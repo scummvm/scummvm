@@ -27,6 +27,7 @@ namespace Scumm {
 
 AIEntity::AIEntity(int id) {
 	switch (id) {
+	default:
 	case BRUTAKAS:
 		warning("BRUTAKAS");
 		_id = id;

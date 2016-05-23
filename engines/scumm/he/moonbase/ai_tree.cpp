@@ -33,6 +33,8 @@ Tree::Tree() {
 	pBaseNode = new Node;
 	_maxDepth = MAX_DEPTH;
 	_maxNodes = MAX_NODES;
+	_currentNode = 0;
+	_currentChildIndex = 0;
 
 	_currentMap = new Common::SortedArray<TreeNode *>(compareTreeNodes);
 }
@@ -42,6 +44,8 @@ Tree::Tree(IContainedObject *contents) {
 	pBaseNode->setContainedObject(contents);
 	_maxDepth = MAX_DEPTH;
 	_maxNodes = MAX_NODES;
+	_currentNode = 0;
+	_currentChildIndex = 0;
 
 	_currentMap = new Common::SortedArray<TreeNode *>(compareTreeNodes);
 }
@@ -51,6 +55,8 @@ Tree::Tree(IContainedObject *contents, int maxDepth) {
 	pBaseNode->setContainedObject(contents);
 	_maxDepth = maxDepth;
 	_maxNodes = MAX_NODES;
+	_currentNode = 0;
+	_currentChildIndex = 0;
 
 	_currentMap = new Common::SortedArray<TreeNode *>(compareTreeNodes);
 }
@@ -60,6 +66,8 @@ Tree::Tree(IContainedObject *contents, int maxDepth, int maxNodes) {
 	pBaseNode->setContainedObject(contents);
 	_maxDepth = maxDepth;
 	_maxNodes = maxNodes;
+	_currentNode = 0;
+	_currentChildIndex = 0;
 
 	_currentMap = new Common::SortedArray<TreeNode *>(compareTreeNodes);
 }
@@ -81,6 +89,8 @@ Tree::Tree(const Tree *sourceTree) {
 	_maxDepth = sourceTree->getMaxDepth();
 	_maxNodes = sourceTree->getMaxNodes();
 	_currentMap = new Common::SortedArray<TreeNode *>(compareTreeNodes);
+	_currentNode = 0;
+	_currentChildIndex = 0;
 
 	duplicateTree(sourceTree->getBaseNode(), pBaseNode);
 }
@@ -151,7 +161,7 @@ Node *Tree::aStarSearch() {
 Node *Tree::aStarSearch_singlePassInit() {
 	Node *retNode = NULL;
 
-	currentChildIndex = 1;
+	_currentChildIndex = 1;
 
 	float temp = pBaseNode->getContainedObject()->calcT();
 
@@ -164,18 +174,17 @@ Node *Tree::aStarSearch_singlePassInit() {
 	return retNode;
 }
 
-Node *Tree::aStarSearch_singlePass(Node **currentNode) {
-	currentNode = NULL;
-	float currentT;
+Node *Tree::aStarSearch_singlePass() {
+	float currentT = 0.0;
 	Node *retNode = NULL;
 
 	static int maxTime = 0;
 
-	if (currentChildIndex == 1) {
+	if (_currentChildIndex == 1) {
 		maxTime = getPlayerMaxTime();
 	}
 
-	if (currentChildIndex) {
+	if (_currentChildIndex) {
 		if (!(_currentMap->size())) {
 			retNode = _currentNode;
 			return retNode;
@@ -187,13 +196,13 @@ Node *Tree::aStarSearch_singlePass(Node **currentNode) {
 
 	if ((_currentNode->getDepth() < _maxDepth) && (Node::getNodeCount() < _maxNodes) && ((!maxTime) || (getTimerValue(3) < maxTime))) {
 		// Generate nodes
-		currentChildIndex = _currentNode->generateChildren();
+		_currentChildIndex = _currentNode->generateChildren();
 
-		if (currentChildIndex) {
+		if (_currentChildIndex) {
 			Common::Array<Node *> vChildren = _currentNode->getChildren();
 
 			if (!vChildren.size() && !_currentMap->size()) {
-				currentChildIndex = 0;
+				_currentChildIndex = 0;
 				retNode = _currentNode;
 			}
 

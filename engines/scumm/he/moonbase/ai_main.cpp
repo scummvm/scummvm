@@ -938,7 +938,7 @@ int masterControlProgram(const int paramCount, const int32 *params) {
 			}
 		}
 
-		delete launchAction;
+		delete[] launchAction;
 		launchAction = NULL;
 
 		AIstate = STATE_CHOOSE_BEHAVIOR;
@@ -1880,7 +1880,7 @@ int *approachTarget(Tree *myTree, int &xTarget, int &yTarget, Node **currentNode
 	int *retVal = NULL;
 
 	*currentNode = NULL;
-	Node *retNode = myTree->aStarSearch_singlePass(currentNode);
+	Node *retNode = myTree->aStarSearch_singlePass();
 
 	if (*currentNode != NULL)
 		warning("########################################### Got a possible solution");
@@ -1988,8 +1988,7 @@ int *acquireTarget(int targetX, int targetY, Tree *myTree, int &errorCode) {
 	int currentPlayer = getCurrentPlayer();
 	int *retVal = NULL;
 
-	Node *currentNode = NULL;
-	Node *retNode = myTree->aStarSearch_singlePass(&currentNode);
+	Node *retNode = myTree->aStarSearch_singlePass();
 
 	if (myTree->IsBaseNode(retNode))
 		return acquireTarget(targetX, targetY);

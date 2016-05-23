@@ -47,7 +47,7 @@ private:
 
 
 public:
-	Sortie() {}
+	Sortie() { _unitType = 0; _shotPosX = _shotPosY = 0; }
 	virtual ~Sortie();
 
 	static void setSourcePos(int x, int y) {

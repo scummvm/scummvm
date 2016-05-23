@@ -27,6 +27,7 @@ namespace Scumm {
 
 Weapon::Weapon(int typeID) { //, float damage, int radius)
 	switch (typeID) {
+	default:
 	case ITEM_BOMB:
 		becomeBomb();
 		break;
