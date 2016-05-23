@@ -101,10 +101,17 @@ void DropboxStorage::infoInnerCallback(StorageInfoCallback outerCallback, void *
 		return;
 	}
 
-	if (outerCallback) {
-		//TODO: check that JSON doesn't contain some error message instead of an actual response
-		//TODO: use JSON fields to construct StorageInfo		
-		(*outerCallback)(StorageInfo(json->stringify()));
+	if (outerCallback) {		
+		//Dropbox documentation states there is no errors for this API method
+		Common::JSONObject info = json->asObject();
+		Common::String uid = Common::String::format("%d", info.getVal("uid")->asNumber());
+		Common::String name = info.getVal("display_name")->asString();
+		Common::String email = info.getVal("email")->asString();
+		Common::JSONObject quota = info.getVal("quota_info")->asObject();
+		uint32 quotaNormal = quota.getVal("normal")->asNumber();
+		uint32 quotaShared = quota.getVal("shared")->asNumber();
+		uint32 quotaAllocated = quota.getVal("quota")->asNumber();		
+		(*outerCallback)(StorageInfo(uid, name, email, quotaNormal+quotaShared, quotaAllocated));
 		delete outerCallback;
 	}
 	
@@ -112,7 +119,10 @@ void DropboxStorage::infoInnerCallback(StorageInfoCallback outerCallback, void *
 }
 
 void DropboxStorage::infoMethodCallback(StorageInfo storageInfo) {
-	debug("info: %s", storageInfo.info().c_str());
+	debug("\nStorage info:");
+	debug("User name: %s", storageInfo.name().c_str());
+	debug("Email: %s", storageInfo.email().c_str());
+	debug("Disk usage: %u/%u", storageInfo.used(), storageInfo.available());
 }
 
 DropboxStorage *DropboxStorage::loadFromConfig(Common::String keyPrefix) {

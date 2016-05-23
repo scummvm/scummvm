@@ -32,14 +32,20 @@ namespace Cloud {
 * It's disk quota usage, owner name, and such.
 */
 
-class StorageInfo {
-	/** Temporary StorageInfo just contains raw JSON, received from cloud storage. */
-	Common::String _info;
+class StorageInfo {	
+	Common::String _uid, _name, _email;
+	uint32 _usedBytes, _allocatedBytes;
 
 public:
-	StorageInfo(Common::String info): _info(info) {}
+	StorageInfo(Common::String uid, Common::String name, Common::String email, uint32 used, uint32 allocated):
+		_uid(uid), _name(name), _email(email), _usedBytes(used), _allocatedBytes(allocated) {}
 
-	Common::String info() const { return _info; }
+	Common::String uid() const { return _uid; }
+	Common::String name() const { return _name; }
+	Common::String email() const { return _email; }
+	uint32 used() const { return _usedBytes; }
+	uint32 available() const { return _allocatedBytes; }
+
 };
 
 } //end of namespace Cloud
