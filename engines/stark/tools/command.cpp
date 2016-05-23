@@ -129,7 +129,7 @@ const Command::SubTypeDesc *Command::searchSubTypeDesc(Resources::Command::SubTy
 		}
 	}
 
-	error("Command subtype %d is not described", subType);
+	return nullptr;
 }
 
 Common::String Command::describeArguments() const {
@@ -169,6 +169,14 @@ uint16 Command::getIndex() const {
 	return _index;
 }
 
+bool Command::hasSubtypeDescription() const {
+	return _subTypeDesc != nullptr;
+}
+
+Resources::Command::SubType Command::getSubType() const {
+	return _subType;
+}
+
 CFGCommand::CFGCommand(Resources::Command *resource) :
 		Command(resource),
 		_followerIndex(-1),
@@ -178,7 +186,9 @@ CFGCommand::CFGCommand(Resources::Command *resource) :
 		_trueBranch(nullptr),
 		_falseBranch(nullptr),
 		_block(nullptr) {
-	initBranches();
+	if (_subTypeDesc) {
+		initBranches();
+	}
 }
 
 void CFGCommand::initBranches() {

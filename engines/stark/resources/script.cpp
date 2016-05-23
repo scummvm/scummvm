@@ -379,7 +379,11 @@ void Script::print(uint depth) {
 
 	// Print the blocks
 	printWithDepth(depth + 1, "Blocks");
-	decompiler->printBlocks();
+	if (decompiler->getError() == "") {
+		decompiler->printBlocks();
+	} else {
+		debug("Decompilation failure: %s", decompiler->getError().c_str());
+	}
 
 	delete decompiler;
 }

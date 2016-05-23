@@ -57,6 +57,9 @@ public:
 
 	/** This command's resource tree index */
 	uint16 getIndex() const;
+	Resources::Command::SubType getSubType() const;
+	bool hasSubtypeDescription() const;
+
 
 protected:
 	struct SubTypeDesc {

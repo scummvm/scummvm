@@ -47,8 +47,11 @@ public:
 	void printCommands() const;
 	void printBlocks() const;
 
+	Common::String getError() const;
+
 private:
 	// Command control flow graph construction
+	bool checkCommands();
 	void linkCommandBranches();
 	CFGCommand *findEntryPoint();
 
@@ -61,6 +64,8 @@ private:
 	void analyseControlFlow();
 	void detectWhile();
 	void detectIf();
+
+	Common::String _error;
 
 	Common::Array<CFGCommand *> _commands;
 	CFGCommand *_entryPoint;

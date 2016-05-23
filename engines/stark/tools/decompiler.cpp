@@ -40,6 +40,9 @@ Decompiler::Decompiler(Resources::Script *script) {
 	if (_commands.empty()) {
 		return;
 	}
+	if (!checkCommands()) {
+		return;
+	}
 
 	_entryPoint = findEntryPoint();
 
@@ -210,6 +213,22 @@ void Decompiler::detectIf() {
 		block->setControlStructure(controlStructure);
 		_controlStructures.push_back(controlStructure);
 	}
+}
+
+bool Decompiler::checkCommands() {
+	for (uint i = 0; i < _commands.size(); i++) {
+		Command *command = _commands[i];
+		if (!command->hasSubtypeDescription()) {
+			_error = Common::String::format("Command subtype %d is not described", command->getSubType());
+			return false;
+		}
+	}
+
+	return true;
+}
+
+Common::String Decompiler::getError() const {
+	return _error;
 }
 
 } // End of namespace Tools
