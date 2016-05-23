@@ -74,6 +74,7 @@ MODULE_OBJS := \
 	services/staticprovider.o \
 	services/userinterface.o \
 	stark.o \
+	tools/abstractsyntaxtree.o \
 	tools/block.o \
 	tools/command.o \
 	tools/decompiler.o \
