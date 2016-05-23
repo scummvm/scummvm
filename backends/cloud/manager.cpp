@@ -26,28 +26,67 @@
 
 namespace Cloud {
 
-Manager::Manager(): _currentStorage(0) {}
+Manager::Manager(): _currentStorageIndex(0) {}
 
-Manager::~Manager() { delete _currentStorage; }
+Manager::~Manager() {
+	//TODO: do we have to save storages on manager destruction?	
+	for (uint32 i = 0; i < _storages.size(); ++i)
+		delete _storages[i];
+	_storages.clear();	
+}
 
 void Manager::init() {
-	if (ConfMan.hasKey("current_storage_type", "cloud")) {
-		Common::String storageType = ConfMan.get("current_storage_type", "cloud");
-		if (storageType == "Dropbox") _currentStorage = Dropbox::DropboxStorage::loadFromConfig();
-		else warning("Unknown cloud storage type '%s' passed", storageType.c_str());
+	bool offerDropbox = false;
+
+	if (ConfMan.hasKey("storages_number", "cloud")) {
+		int storages = ConfMan.getInt("storages_number", "cloud");
+		for (int i = 1; i <= storages; ++i) {
+			Storage *loaded = 0;
+			Common::String keyPrefix = Common::String::format("storage%d_", i);
+			if (ConfMan.hasKey(keyPrefix + "type", "cloud")) {
+				Common::String storageType = ConfMan.get(keyPrefix + "type", "cloud");
+				if (storageType == "Dropbox") loaded = Dropbox::DropboxStorage::loadFromConfig(keyPrefix);
+				else warning("Unknown cloud storage type '%s' passed", storageType.c_str());
+			} else {
+				warning("Cloud storage #%d (out of %d) is missing.", i, storages);
+			}
+			if (loaded) _storages.push_back(loaded);
+		}
+
+		uint32 index = 0;
+		if (ConfMan.hasKey("current_storage", "cloud")) {
+			index = ConfMan.getInt("current_storage", "cloud") - 1; //count from 1, all for UX
+		}
+		if (index >= _storages.size()) index = 0;
+		_currentStorageIndex = index;
+
+		if (_storages.size() == 0) offerDropbox = true;
+	} else {
+		offerDropbox = true;
 	}
-	else {
+
+	if (offerDropbox) {
 		//this is temporary console offer to auth with Dropbox (because there is no other storage type yet anyway)
 		Dropbox::DropboxStorage::authThroughConsole();
 	}
 }
 
-Storage* Manager::getCurrentStorage() {
-	return _currentStorage;
+void Manager::save() {
+	ConfMan.set("storages_number", Common::String::format("%d", _storages.size()), "cloud");
+	ConfMan.set("current_storage", Common::String::format("%d", _currentStorageIndex + 1), "cloud");
+	for (uint32 i = 0; i < _storages.size(); ++i)
+		_storages[i]->saveConfig(Common::String::format("storage%d_", i+1));
+	ConfMan.flushToDisk();
+}
+
+Storage *Manager::getCurrentStorage() {
+	if (_currentStorageIndex < _storages.size())
+		return _storages[_currentStorageIndex];
+	return 0;
 }
 
 void Manager::syncSaves(Storage::BoolCallback callback) {
-	Storage* storage = getCurrentStorage();
+	Storage *storage = getCurrentStorage();
 	if (storage) storage->syncSaves(callback);
 }
 

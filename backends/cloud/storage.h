@@ -42,6 +42,22 @@ public:
 	Storage() {}
 	virtual ~Storage() {}
 
+	/**
+	 * Storage methods, which are used by CloudManager to save
+	 * storage in configuration file.
+	 */
+
+	/**
+	 * Save storage data using ConfMan.
+	 * @param keyPrefix all saved keys must start with this prefix.
+	 * @note every Storage must write keyPrefix + "type" key
+	 *       with common value (e.g. "Dropbox").
+	 */
+
+	virtual void saveConfig(Common::String keyPrefix) = 0;
+
+	/** Public Cloud API comes down there. */
+
 	/** Returns Common::Array<StorageFile>. */
 	virtual void listDirectory(Common::String path, FileArrayCallback callback) = 0;
 

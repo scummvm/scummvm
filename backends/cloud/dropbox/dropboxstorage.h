@@ -45,7 +45,23 @@ class DropboxStorage: public Cloud::Storage {
 public:	
 	virtual ~DropboxStorage();
 
-	/** Returns pointer to Common::Array<StorageFile>. */
+	/**
+	* Storage methods, which are used by CloudManager to save
+	* storage in configuration file.
+	*/
+
+	/**
+	* Save storage data using ConfMan.
+	* @param keyPrefix all saved keys must start with this prefix.
+	* @note every Storage must write keyPrefix + "type" key
+	*       with common value (e.g. "Dropbox").
+	*/
+
+	virtual void saveConfig(Common::String keyPrefix);
+
+	/** Public Cloud API comes down there. */
+
+	/** Returns Common::Array<StorageFile>. */
 	virtual void listDirectory(Common::String path, FileArrayCallback callback) {} //TODO
 
 	/** Calls the callback when finished. */
@@ -66,7 +82,7 @@ public:
 	/** Calls the callback when finished. */
 	virtual void touch(Common::String path, BoolCallback callback) {} //TODO
 
-	/** Returns pointer to the StorageInfo struct. */
+	/** Returns the StorageInfo struct. */
 	virtual void info(StorageInfoCallback callback);
 
 	/** This method is passed into info(). (Temporary) */
@@ -82,7 +98,7 @@ public:
 	* Load token and user id from configs and return DropboxStorage for those.	
 	* @return pointer to the newly created DropboxStorage or 0 if some problem occured.
 	*/
-	static DropboxStorage *loadFromConfig();
+	static DropboxStorage *loadFromConfig(Common::String keyPrefix);
 
 	/**
 	* Returns Dropbox auth link.

@@ -45,9 +45,12 @@ static void saveAccessTokenCallback(void *ptr) {
 		if (!result.contains("access_token") || !result.contains("uid")) {
 			warning("Bad response, no token/uid passed");
 		} else {
-			ConfMan.set("current_storage_type", "Dropbox", "cloud");
-			ConfMan.set("current_storage_access_token", result.getVal("access_token")->asString(), "cloud");
-			ConfMan.set("current_storage_user_id", result.getVal("uid")->asString(), "cloud");
+			//we suppose that's the first storage
+			ConfMan.set("storages_number", "1", "cloud");
+			ConfMan.set("current_storage", "1", "cloud");
+			ConfMan.set("storage1_type", "Dropbox", "cloud");
+			ConfMan.set("storage1_access_token", result.getVal("access_token")->asString(), "cloud");
+			ConfMan.set("storage1_user_id", result.getVal("uid")->asString(), "cloud");
 			ConfMan.removeKey("dropbox_code", "cloud");
 			debug("Now please restart ScummVM to apply the changes.");
 		}
@@ -64,6 +67,12 @@ DropboxStorage::DropboxStorage(Common::String accessToken, Common::String userId
 
 DropboxStorage::~DropboxStorage() {
 	curl_global_cleanup();
+}
+
+void DropboxStorage::saveConfig(Common::String keyPrefix) {
+	ConfMan.set(keyPrefix + "type", "Dropbox", "cloud");
+	ConfMan.set(keyPrefix + "access_token", _token, "cloud");
+	ConfMan.set(keyPrefix + "user_id", _uid, "cloud");
 }
 
 void DropboxStorage::syncSaves(BoolCallback callback) {
@@ -106,22 +115,22 @@ void DropboxStorage::infoMethodCallback(StorageInfo storageInfo) {
 	debug("info: %s", storageInfo.info().c_str());
 }
 
-DropboxStorage *DropboxStorage::loadFromConfig() {
+DropboxStorage *DropboxStorage::loadFromConfig(Common::String keyPrefix) {
 	KEY = ConfMan.get("DROPBOX_KEY", "cloud");
 	SECRET = ConfMan.get("DROPBOX_SECRET", "cloud");
 
-	if (!ConfMan.hasKey("current_storage_access_token", "cloud")) {
+	if (!ConfMan.hasKey(keyPrefix + "access_token", "cloud")) {
 		warning("No access_token found");
 		return 0;
 	}
 
-	if (!ConfMan.hasKey("current_storage_user_id", "cloud")) {
+	if (!ConfMan.hasKey(keyPrefix + "user_id", "cloud")) {
 		warning("No user_id found");
 		return 0;
 	}
 
-	Common::String accessToken = ConfMan.get("current_storage_access_token", "cloud");
-	Common::String userId = ConfMan.get("current_storage_user_id", "cloud");
+	Common::String accessToken = ConfMan.get(keyPrefix + "access_token", "cloud");
+	Common::String userId = ConfMan.get(keyPrefix + "user_id", "cloud");
 	return new DropboxStorage(accessToken, userId);
 }
 

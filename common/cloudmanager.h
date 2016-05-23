@@ -41,13 +41,19 @@ public:
 	virtual void init() = 0;
 
 	/**
+	* Saves all information into configuration file.
+	*/
+
+	virtual void save() = 0;
+
+	/**
 	* Returns active Storage, which could be used to interact
 	*  with cloud storage.
 	*
 	* @return	active Cloud::Storage or null, if there is no active Storage.
 	*/
 
-	virtual Cloud::Storage* getCurrentStorage() = 0;
+	virtual Cloud::Storage *getCurrentStorage() = 0;
 
 	/**
 	* Starts saves syncing process in currently active storage if there is any.
