@@ -68,8 +68,10 @@ int PlayerGnap::getWalkStopSequenceId(int deltaX, int deltaY) {
 		0x7BC, 0x000, 0x7BA,
 		0x7BB, 0x7B9, 0x7B9
 	};
-	// CHECKME This is a little weird
-	return gnapWalkStopSequenceIds[3 * deltaX + 3 + 1 + deltaY];
+
+	int id = 3 * (deltaX + 1) + deltaY + 1;
+	assert (id >= 0 && id < 9 );
+	return gnapWalkStopSequenceIds[id];
 }
 
 Facing PlayerGnap::getWalkFacing(int deltaX, int deltaY) {
@@ -78,8 +80,10 @@ Facing PlayerGnap::getWalkFacing(int deltaX, int deltaY) {
 		kDirUpLeft, kDirIdleLeft, kDirBottomLeft,
 		kDirUpRight, kDirBottomRight, kDirBottomRight
 	};
-	// CHECKME This is a little weird
-	return gnapWalkFacings[3 * deltaX + 3 + 1 + deltaY];
+
+	int id = 3 * (deltaX + 1) + deltaY + 1;
+	assert (id >= 0 && id < 9 );
+	return gnapWalkFacings[id];
 }
 
 bool PlayerGnap::findPath1(int gridX, int gridY, int index) {
