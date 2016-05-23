@@ -28,7 +28,7 @@
 namespace Stark {
 namespace Tools {
 
-class Command;
+class CFGCommand;
 struct ControlStructure;
 
 /**
@@ -43,7 +43,7 @@ public:
 	Block();
 
 	/** Add a command at the end of the block, and set it as the command's block */
-	void appendCommand(Command *command);
+	void appendCommand(CFGCommand *command);
 
 	/** Does the block contain commands? */
 	bool isEmpty() const;
@@ -89,7 +89,7 @@ private:
 
 	uint16 getFirstCommandIndex() const;
 
-	Common::Array<Command *> _commands;
+	Common::Array<CFGCommand *> _commands;
 
 	Block *_follower;
 	Block *_trueBranch;

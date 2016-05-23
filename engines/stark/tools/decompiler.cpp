@@ -35,7 +35,7 @@ Decompiler::Decompiler(Resources::Script *script) {
 	// Convert the script commands to decompiler commands
 	Common::Array<Resources::Command *> resourceCommands = script->listChildren<Resources::Command>();
 	for (uint i = 0; i < resourceCommands.size(); i++) {
-		_commands.push_back(new Command(resourceCommands[i]));
+		_commands.push_back(new CFGCommand(resourceCommands[i]));
 	}
 	if (_commands.empty()) {
 		return;
@@ -81,7 +81,7 @@ void Decompiler::linkCommandBranches() {
 	}
 }
 
-Command *Decompiler::findEntryPoint() {
+CFGCommand *Decompiler::findEntryPoint() {
 	for (uint i = 0; i < _commands.size(); i++) {
 		if (_commands[i]->isEntryPoint()) {
 			return _commands[i];
@@ -98,8 +98,8 @@ void Decompiler::buildBlocks() {
 	buildBlocks(entryPointBlock, _entryPoint);
 }
 
-void Decompiler::buildBlocks(Block *block, Command *command) {
-	Command *blockCommand = command;
+void Decompiler::buildBlocks(Block *block, CFGCommand *command) {
+	CFGCommand *blockCommand = command;
 	while (blockCommand) {
 		if (blockCommand->getBlock()) {
 			block->setFollower(blockCommand->getBlock());
@@ -127,7 +127,7 @@ void Decompiler::buildBlocks(Block *block, Command *command) {
 	}
 }
 
-Block *Decompiler::buildBranchBlocks(Command *command) {
+Block *Decompiler::buildBranchBlocks(CFGCommand *command) {
 	if (command->getBlock()) {
 		// The command already has a block. No need to go through this path again.
 		return command->getBlock();

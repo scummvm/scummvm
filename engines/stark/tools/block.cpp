@@ -37,7 +37,7 @@ Block::Block() :
 
 }
 
-void Block::appendCommand(Command *command) {
+void Block::appendCommand(CFGCommand *command) {
 	_commands.push_back(command);
 	command->setBlock(this);
 }

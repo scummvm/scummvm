@@ -36,7 +36,7 @@ class Script;
 namespace Tools {
 
 class Block;
-class Command;
+class CFGCommand;
 struct ControlStructure;
 
 class Decompiler {
@@ -48,22 +48,26 @@ public:
 	void printBlocks() const;
 
 private:
+	// Command control flow graph construction
 	void linkCommandBranches();
-	Command *findEntryPoint();
-	void buildBlocks();
-	void analyseControlFlow();
+	CFGCommand *findEntryPoint();
 
-	Common::Array<Command *> _commands;
-	Command *_entryPoint;
+	// Block control flow graph construction
+	void buildBlocks();
+	void buildBlocks(Block *block, CFGCommand *command);
+	Block *buildBranchBlocks(CFGCommand *command);
+
+	// Control flow analysis
+	void analyseControlFlow();
+	void detectWhile();
+	void detectIf();
+
+	Common::Array<CFGCommand *> _commands;
+	CFGCommand *_entryPoint;
 
 	Common::Array<Block *> _blocks;
 	Common::Array<ControlStructure *> _controlStructures;
 
-	void buildBlocks(Block *block, Command *command);
-	Block *buildBranchBlocks(Command *command);
-
-	void detectWhile();
-	void detectIf();
 };
 
 } // End of namespace Tools

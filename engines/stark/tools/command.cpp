@@ -27,72 +27,18 @@
 namespace Stark {
 namespace Tools {
 
-Command::Command(Resources::Command *resource) :
-		_followerIndex(-1),
-		_trueBranchIndex(-1),
-		_falseBranchIndex(-1),
-		_follower(nullptr),
-		_trueBranch(nullptr),
-		_falseBranch(nullptr),
-		_block(nullptr) {
+Command::Command(Command *command) {
+	_index = command->_index;
+	_subType = command->_subType;
+	_subTypeDesc = command->_subTypeDesc;
+	_arguments = command->_arguments;
+}
+
+Command::Command(Resources::Command *resource) {
 	_index = resource->getIndex();
 	_subType = (Resources::Command::SubType) resource->getSubType();
 	_subTypeDesc = searchSubTypeDesc(_subType);
 	_arguments = resource->getArguments();
-
-	initBranches();
-}
-
-void Command::initBranches() {
-	switch (_subTypeDesc->controlFlowType) {
-		case kFlowNormal:
-			_followerIndex = _arguments[0].intValue;
-			break;
-		case kFlowBranch:
-			if (_arguments[0].intValue == _arguments[1].intValue) {
-				// Degenerate conditions are handled here so that blocks are not split after them
-				_followerIndex = _arguments[0].intValue;
-			} else {
-				_falseBranchIndex = _arguments[0].intValue;
-				_trueBranchIndex = _arguments[1].intValue;
-			}
-			break;
-		case kFlowEnd:
-			// No followers
-			break;
-	}
-}
-
-bool Command::isEntryPoint() const {
-	return _subType == Resources::Command::kCommandBegin;
-}
-
-bool Command::isBranch() const {
-	return _trueBranchIndex >= 0 && _falseBranchIndex >= 0;
-}
-
-bool Command::isBranchTarget() const {
-	return _predecessors.size() > 1;
-}
-
-Block *Command::getBlock() const {
-	return _block;
-}
-
-void Command::setBlock(Block *block) {
-	_block = block;
-}
-
-Command *Command::getFollower() const {
-	return _follower;
-}
-
-Command *Command::getTrueBranch() const {
-	return _trueBranch;
-}
-
-Command *Command::getFalseBranch() const {
-	return _falseBranch;
 }
 
 const Command::SubTypeDesc *Command::searchSubTypeDesc(Resources::Command::SubType subType) {
@@ -186,35 +132,6 @@ const Command::SubTypeDesc *Command::searchSubTypeDesc(Resources::Command::SubTy
 	error("Command subtype %d is not described", subType);
 }
 
-void Command::linkBranches(const Common::Array<Command *> &commands) {
-	if (_followerIndex >= 0) {
-		_follower = findCommandWithIndex(commands, _followerIndex);
-		_follower->_predecessors.push_back(this);
-	}
-
-	if (_falseBranchIndex >= 0) {
-		_falseBranch = findCommandWithIndex(commands, _falseBranchIndex);
-		_falseBranch->_predecessors.push_back(this);
-	}
-
-	if (_trueBranchIndex >= 0) {
-		_trueBranch = findCommandWithIndex(commands, _trueBranchIndex);
-		_trueBranch->_predecessors.push_back(this);
-	}
-}
-
-Command *Command::findCommandWithIndex(const Common::Array<Command *> &commands, int32 index) {
-	for (uint i = 0; i < commands.size(); i++) {
-		Command *command = commands[i];
-
-		if (command->_index == index) {
-			return command;
-		}
-	}
-
-	error("Unable to find command with index %d", index);
-}
-
 Common::String Command::describeArguments() const {
 	Common::String desc;
 
@@ -250,6 +167,99 @@ void Command::printCall() const {
 
 uint16 Command::getIndex() const {
 	return _index;
+}
+
+CFGCommand::CFGCommand(Resources::Command *resource) :
+		Command(resource),
+		_followerIndex(-1),
+		_trueBranchIndex(-1),
+		_falseBranchIndex(-1),
+		_follower(nullptr),
+		_trueBranch(nullptr),
+		_falseBranch(nullptr),
+		_block(nullptr) {
+	initBranches();
+}
+
+void CFGCommand::initBranches() {
+	switch (_subTypeDesc->controlFlowType) {
+		case kFlowNormal:
+			_followerIndex = _arguments[0].intValue;
+			break;
+		case kFlowBranch:
+			if (_arguments[0].intValue == _arguments[1].intValue) {
+				// Degenerate conditions are handled here so that blocks are not split after them
+				_followerIndex = _arguments[0].intValue;
+			} else {
+				_falseBranchIndex = _arguments[0].intValue;
+				_trueBranchIndex = _arguments[1].intValue;
+			}
+			break;
+		case kFlowEnd:
+			// No followers
+			break;
+	}
+}
+
+bool CFGCommand::isEntryPoint() const {
+	return _subType == Resources::Command::kCommandBegin;
+}
+
+bool CFGCommand::isBranch() const {
+	return _trueBranchIndex >= 0 && _falseBranchIndex >= 0;
+}
+
+bool CFGCommand::isBranchTarget() const {
+	return _predecessors.size() > 1;
+}
+
+Block *CFGCommand::getBlock() const {
+	return _block;
+}
+
+void CFGCommand::setBlock(Block *block) {
+	_block = block;
+}
+
+CFGCommand *CFGCommand::getFollower() const {
+	return _follower;
+}
+
+CFGCommand *CFGCommand::getTrueBranch() const {
+	return _trueBranch;
+}
+
+CFGCommand *CFGCommand::getFalseBranch() const {
+	return _falseBranch;
+}
+
+void CFGCommand::linkBranches(const Common::Array<CFGCommand *> &commands) {
+	if (_followerIndex >= 0) {
+		_follower = findCommandWithIndex(commands, _followerIndex);
+		_follower->_predecessors.push_back(this);
+	}
+
+	if (_falseBranchIndex >= 0) {
+		_falseBranch = findCommandWithIndex(commands, _falseBranchIndex);
+		_falseBranch->_predecessors.push_back(this);
+	}
+
+	if (_trueBranchIndex >= 0) {
+		_trueBranch = findCommandWithIndex(commands, _trueBranchIndex);
+		_trueBranch->_predecessors.push_back(this);
+	}
+}
+
+CFGCommand *CFGCommand::findCommandWithIndex(const Common::Array<CFGCommand *> &commands, int32 index) {
+	for (uint i = 0; i < commands.size(); i++) {
+		CFGCommand *command = commands[i];
+
+		if (command->_index == index) {
+			return command;
+		}
+	}
+
+	error("Unable to find command with index %d", index);
 }
 
 } // End of namespace Tools

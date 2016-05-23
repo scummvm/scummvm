@@ -33,14 +33,11 @@ namespace Tools {
 class Block;
 
 /**
- * A script command for disassembly use
+ * A base script command for disassembly use
  *
  * As opposed to the Command class in the Resources namespace, this class
  * is not meant to be executed. It is meant to be used for script disassembly,
  * to store analysis results.
- * It contains informations relative to the control flow.
- *
- * This class is a node in the disassembly command graph.
  */
 class Command {
 public:
@@ -50,40 +47,8 @@ public:
 		kFlowEnd
 	};
 
+	Command(Command *command);
 	Command(Resources::Command *resource);
-
-	/** Is this command an entry point for the whole script? */
-	bool isEntryPoint() const;
-
-	/** Can this command influence the control flow? */
-	bool isBranch() const;
-
-	/** Is this command a jump target? */
-	bool isBranchTarget() const;
-
-	/**
-	 * Commands are linked together in the command graph with these relationships:
-	 * - follower: The natural follower of the command. Used when the command is not a branch, nor an end point.
-	 * - true branch: The next command when the command's condition evaluates to true.
-	 * - false branch: The next command when the command's condition evaluates to false.
-	 * - predecessors: A list of commands whose execution can lead to this command.
-	 */
-	Command *getFollower() const;
-	Command *getTrueBranch() const;
-	Command *getFalseBranch() const;
-
-	/**
-	 * Commands are aggregated into blocks
-	 */
-	Block *getBlock() const;
-	void setBlock(Block *block);
-
-	/**
-	 * Add the command to the command graph
-	 *
-	 * This sets the graph edges concerning this command.
-	 */
-	void linkBranches(const Common::Array<Command *> &commands);
 
 	/**
 	 * Print a call to this command to the debug output
@@ -103,28 +68,73 @@ protected:
 	/** Get a description for a command subtype from an internal database */
 	static const SubTypeDesc *searchSubTypeDesc(Resources::Command::SubType subType);
 
-	/** Set the link indices from the argument values */
-	void initBranches();
-
 	/** List the arguments values as a coma separated string */
 	Common::String describeArguments() const;
-
-	/** Gets the command with the specifed index */
-	static Command *findCommandWithIndex(const Common::Array<Command *> &commands, int32 index);
 
 	uint16 _index;
 	Resources::Command::SubType _subType;
 	const SubTypeDesc *_subTypeDesc;
 	Common::Array<Resources::Command::Argument> _arguments;
+};
+
+/**
+ * A script command with control flow information
+ *
+ * This class is a node in the disassembly command control flow graph.
+ * It is referenced by the blocks in the block control flow graph.
+ */
+class CFGCommand : public Command {
+public:
+	CFGCommand(Resources::Command *resource);
+
+	/** Is this command an entry point for the whole script? */
+	bool isEntryPoint() const;
+
+	/** Can this command influence the control flow? */
+	bool isBranch() const;
+
+	/** Is this command a jump target? */
+	bool isBranchTarget() const;
+
+	/**
+	 * Commands are linked together in the command graph with these relationships:
+	 * - follower: The natural follower of the command. Used when the command is not a branch, nor an end point.
+	 * - true branch: The next command when the command's condition evaluates to true.
+	 * - false branch: The next command when the command's condition evaluates to false.
+	 * - predecessors: A list of commands whose execution can lead to this command.
+	 */
+	CFGCommand *getFollower() const;
+	CFGCommand *getTrueBranch() const;
+	CFGCommand *getFalseBranch() const;
+
+	/**
+	 * Commands are aggregated into blocks
+	 */
+	Block *getBlock() const;
+	void setBlock(Block *block);
+
+	/**
+	 * Add the command to the command graph
+	 *
+	 * This sets the graph edges concerning this command.
+	 */
+	void linkBranches(const Common::Array<CFGCommand *> &commands);
+
+protected:
+	/** Set the link indices from the argument values */
+	void initBranches();
+
+	/** Gets the command with the specifed index */
+	static CFGCommand *findCommandWithIndex(const Common::Array<CFGCommand *> &commands, int32 index);
 
 	int32 _followerIndex;
 	int32 _trueBranchIndex;
 	int32 _falseBranchIndex;
 
-	Command *_follower;
-	Command *_trueBranch;
-	Command *_falseBranch;
-	Common::Array<Command *> _predecessors;
+	CFGCommand *_follower;
+	CFGCommand *_trueBranch;
+	CFGCommand *_falseBranch;
+	Common::Array<CFGCommand *> _predecessors;
 
 	Block *_block;
 };
