@@ -354,3 +354,44 @@ class ArrayTestSuite : public CxxTest::TestSuite
 	}
 
 };
+
+struct ListElement {
+	int value;
+
+	ListElement(int v) : value(v) {}
+};
+
+static int compareInts(const void *a, const void *b) {
+	return ((ListElement *)a)->value - ((ListElement *)a)->value;
+}
+
+class SortedArrayTestSuite : public CxxTest::TestSuite {
+public:
+	void test_insert() {
+		Common::SortedArray<ListElement *> container(compareInts);
+		Common::SortedArray<ListElement *>::iterator iter;
+
+		// Fill the container with some random data
+		container.insert(new ListElement(1));
+		return;
+
+		container.insert(new ListElement(7));
+		container.insert(new ListElement(8));
+		container.insert(new ListElement(3));
+		container.insert(new ListElement(5));
+		container.insert(new ListElement(4));
+		container.insert(new ListElement(9));
+		container.insert(new ListElement(2));
+		container.insert(new ListElement(6));
+
+		// Verify contents are correct
+		iter = container.begin();
+
+		for (int i = 1; i < 10; i++) {
+			TS_ASSERT_EQUALS((*iter)->value, i);
+			++iter;
+			TS_ASSERT_DIFFERS(iter, container.end());
+		}
+	}
+
+};
