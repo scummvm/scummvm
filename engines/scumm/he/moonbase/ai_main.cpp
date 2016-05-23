@@ -158,6 +158,7 @@ AIEntity *AItype[5];
 
 int AIstate = STATE_CHOOSE_BEHAVIOR;
 int behavior = 2;
+static int energyHogType = 0;
 
 patternList *moveList[5];
 
@@ -326,7 +327,7 @@ int masterControlProgram(const int paramCount, const int32 *params) {
 		behavior = chooseBehavior();
 		warning("Behavior mode: %d", behavior);
 
-		if (_vm->_rnd.getRandomNumber(99) < AItype[getCurrentPlayer()]->getBehaviorVariation() * AI_VAR_BASE_BEHAVIOR + 1) {
+		if ((int)_vm->_rnd.getRandomNumber(99) < AItype[getCurrentPlayer()]->getBehaviorVariation() * AI_VAR_BASE_BEHAVIOR + 1) {
 			if (_vm->_rnd.getRandomNumber(1)) {
 				behavior--;
 
@@ -1028,10 +1029,6 @@ int masterControlProgram(const int paramCount, const int32 *params) {
 int chooseBehavior() {
 	static int dominantMode = 0;
 
-	int modeValue[3];
-
-	const int DEFAULT_SCALE = 5;
-
 	if (getBuildingStackPtr() < 5)
 		return OFFENSE_MODE;
 
@@ -1041,86 +1038,50 @@ int chooseBehavior() {
 
 	switch (AIpersonality) {
 	case BRUTAKAS:
-		modeValue[ENERGY_MODE] = DEFAULT_SCALE;
-		modeValue[OFFENSE_MODE] = 2 * DEFAULT_SCALE;
-		modeValue[DEFENSE_MODE] = 0;
 		dominantMode = OFFENSE_MODE;
 		break;
 
 	case AGI:
-		modeValue[ENERGY_MODE] = DEFAULT_SCALE;
-		modeValue[OFFENSE_MODE] = 0;
-		modeValue[DEFENSE_MODE] = 2 * DEFAULT_SCALE;
 		dominantMode = DEFENSE_MODE;
 		break;
 
 	case EL_GATO:
-		modeValue[ENERGY_MODE] = 2 * DEFAULT_SCALE;
-		modeValue[OFFENSE_MODE] = DEFAULT_SCALE;
-		modeValue[DEFENSE_MODE] = 0;
 		dominantMode = ENERGY_MODE;
 		break;
 
 	case PIXELAHT:
-		modeValue[ENERGY_MODE] = DEFAULT_SCALE;
-		modeValue[OFFENSE_MODE] = 0;
-		modeValue[DEFENSE_MODE] = DEFAULT_SCALE;
 		dominantMode = DEFENSE_MODE;
 		break;
 
 	case CYBALL:
-		modeValue[ENERGY_MODE] = 0;
-		modeValue[OFFENSE_MODE] = 0;
-		modeValue[DEFENSE_MODE] = 0;
 		dominantMode = ENERGY_MODE;
 		break;
 
 	case NEEP:
-		modeValue[ENERGY_MODE] = 0;
-		modeValue[OFFENSE_MODE] = DEFAULT_SCALE;
-		modeValue[DEFENSE_MODE] = DEFAULT_SCALE;
 		dominantMode = DEFENSE_MODE;
 		break;
 
 	case WARCUPINE:
-		modeValue[ENERGY_MODE] = 5 * DEFAULT_SCALE;
-		modeValue[OFFENSE_MODE] = DEFAULT_SCALE;
-		modeValue[DEFENSE_MODE] = 0;
 		dominantMode = ENERGY_MODE;
 		break;
 
 	case AONE:
-		modeValue[ENERGY_MODE] = 0;
-		modeValue[OFFENSE_MODE] = DEFAULT_SCALE;
-		modeValue[DEFENSE_MODE] = 2 * DEFAULT_SCALE;
 		dominantMode = DEFENSE_MODE;
 		break;
 
 	case SPANDO:
-		modeValue[ENERGY_MODE] = DEFAULT_SCALE;
-		modeValue[OFFENSE_MODE] = DEFAULT_SCALE;
-		modeValue[DEFENSE_MODE] = DEFAULT_SCALE;
 		dominantMode = ENERGY_MODE;
 		break;
 
 	case ORBNU_LUNATEK:
-		modeValue[ENERGY_MODE] = 0;
-		modeValue[OFFENSE_MODE] = 0;
-		modeValue[DEFENSE_MODE] = 0;
 		dominantMode = ENERGY_MODE;
 		break;
 
 	case CRAWLER_CHUCKER:
-		modeValue[ENERGY_MODE] = 0;
-		modeValue[OFFENSE_MODE] = 2 * DEFAULT_SCALE;
-		modeValue[DEFENSE_MODE] = 0;
 		dominantMode = OFFENSE_MODE;
 		break;
 
 	case ENERGY_HOG:
-		modeValue[ENERGY_MODE] = 2 * DEFAULT_SCALE;
-		modeValue[OFFENSE_MODE] = 0;
-		modeValue[DEFENSE_MODE] = 0;
 		dominantMode = ENERGY_MODE;
 		{
 			int breakFlag = 0;
@@ -1135,9 +1096,6 @@ int chooseBehavior() {
 		break;
 
 	case RANGER:
-		modeValue[ENERGY_MODE] = 2 * DEFAULT_SCALE;
-		modeValue[OFFENSE_MODE] = 0;
-		modeValue[DEFENSE_MODE] = 0;
 		dominantMode = OFFENSE_MODE;
 
 		//random chance of defense if really early in game, otherwise offense
@@ -1148,9 +1106,6 @@ int chooseBehavior() {
 		break;
 
 	default:  //BRUTAKAS
-		modeValue[ENERGY_MODE] = DEFAULT_SCALE;
-		modeValue[OFFENSE_MODE] = 2 * DEFAULT_SCALE;
-		modeValue[DEFENSE_MODE] = 0;
 		dominantMode = OFFENSE_MODE;
 		break;
 	}
@@ -2880,9 +2835,6 @@ int simulateBuildingLaunch(int x, int y, int power, int angle, int numSteps, int
 		sWhichUnit = getClosestUnit(x + 10, y, 30, getCurrentPlayer(), 1, BUILDING_MAIN_BASE, 0, 0);
 	}
 
-	int savedUnscaledXLoc = 0;
-	int savedUnscaledYLoc = 0;
-
 	for (int i = 1; i <= numSteps; i++) {
 		unscaledXLoc = sXLoc / SCALE_X;
 		unscaledYLoc = sYLoc / SCALE_Y;
@@ -2924,9 +2876,6 @@ int simulateBuildingLaunch(int x, int y, int power, int angle, int numSteps, int
 
 				if (!isEnergy)
 					cfes = checkForEnergySquare(unscaledXLoc, unscaledYLoc);
-
-				savedUnscaledXLoc = unscaledXLoc;
-				savedUnscaledYLoc = unscaledYLoc;
 
 				if (cfco || cfuo || cfes || cfao) {
 					sXSpeed = 0;

@@ -84,8 +84,6 @@ enum {
 	MIN_DIST = 108
 };
 
-static int energyHogType = 0;
-
 void resetAI(ScummEngine_v90he *vm);
 void cleanUpAI();
 void setAIType(const int paramCount, const int32 *params);
