@@ -70,10 +70,12 @@ bool CurlJsonRequest::handle() {
 
 		if (_stream->eos()) {			
 			if (_stream->httpResponseCode() != 200)
-				warning("HTTP response code is not 200 OK");
+				warning("HTTP response code is not 200 OK (it's %d)", _stream->httpResponseCode());
 
 			if (_callback) {
-				char *contents = getPreparedContents();				
+				char *contents = getPreparedContents();
+				if (_stream->httpResponseCode() != 200)
+					debug("%s", contents);
 				Common::JSONValue *json = Common::JSON::parse(contents);				
 				(*_callback)(json); //potential memory leak, free it in your callbacks!
 			}

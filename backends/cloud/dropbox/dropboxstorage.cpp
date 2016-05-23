@@ -75,11 +75,37 @@ void DropboxStorage::saveConfig(Common::String keyPrefix) {
 	ConfMan.set(keyPrefix + "user_id", _uid, "cloud");
 }
 
+void printJson(void *ptr) {
+	Common::JSONValue *json = (Common::JSONValue *)ptr;
+	if (json) {		
+		debug("%s", json->stringify(true).c_str());
+	} else {
+		warning("null, not json");
+	}
+}
+
+void DropboxStorage::listDirectory(Common::String path, FileArrayCallback outerCallback, bool recursive) {
+	//Common::BaseCallback<> *innerCallback = new Common::CallbackBridge<DropboxStorage, Common::Array<StorageFile> >(this, &DropboxStorage::listDirectoryInnerCallback, outerCallback);
+	Common::BaseCallback<> *innerCallback = new Common::GlobalFunctionCallback(printJson); //okay
+	Networking::CurlJsonRequest *request = new Networking::CurlJsonRequest(innerCallback, "https://api.dropboxapi.com/2/files/list_folder");
+	request->addHeader("Authorization: Bearer " + _token);
+	request->addHeader("Content-Type: application/json");	
+
+	Common::JSONObject jsonRequestParameters;
+	jsonRequestParameters.setVal("path", new Common::JSONValue(path));
+	jsonRequestParameters.setVal("recursive", new Common::JSONValue(recursive));
+	jsonRequestParameters.setVal("include_media_info", new Common::JSONValue(false));
+	jsonRequestParameters.setVal("include_deleted", new Common::JSONValue(false));
+
+	Common::JSONValue value(jsonRequestParameters);	
+	request->addPostField(Common::JSON::stringify(&value));
+
+	ConnMan.addRequest(request);
+}
+
 void DropboxStorage::syncSaves(BoolCallback callback) {
-	//this is not the real syncSaves() implementation
-	info(new Common::Callback<DropboxStorage, StorageInfo>(this, &DropboxStorage::infoMethodCallback));
-	//that line meant the following:
-	//"please, do the info API request and, when it's finished, call the infoMethodCallback() of me"
+	//this is not the real syncSaves() implementation	
+	listDirectory("", 0); //"" is root in Dropbox, not "/"
 }
 
 void DropboxStorage::info(StorageInfoCallback outerCallback) {

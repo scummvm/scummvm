@@ -62,7 +62,7 @@ public:
 	/** Public Cloud API comes down there. */
 
 	/** Returns Common::Array<StorageFile>. */
-	virtual void listDirectory(Common::String path, FileArrayCallback callback) {} //TODO
+	virtual void listDirectory(Common::String path, FileArrayCallback callback, bool recursive = false);
 
 	/** Calls the callback when finished. */
 	virtual void upload(Common::String path, Common::ReadStream* contents, BoolCallback callback) {} //TODO
