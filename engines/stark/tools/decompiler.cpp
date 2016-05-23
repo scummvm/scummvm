@@ -23,15 +23,18 @@
 #include "engines/stark/tools/decompiler.h"
 
 #include "engines/stark/resources/command.h"
+
+#include "engines/stark/tools/abstractsyntaxtree.h"
 #include "engines/stark/tools/block.h"
-#include "engines/stark/tools/command.h"
 
 #include "common/debug.h"
 
 namespace Stark {
 namespace Tools {
 
-Decompiler::Decompiler(Resources::Script *script) {
+Decompiler::Decompiler(Resources::Script *script) :
+		_entryPoint(nullptr),
+		_astHead(nullptr) {
 	// Convert the script commands to decompiler commands
 	Common::Array<Resources::Command *> resourceCommands = script->listChildren<Resources::Command>();
 	for (uint i = 0; i < resourceCommands.size(); i++) {
@@ -49,6 +52,7 @@ Decompiler::Decompiler(Resources::Script *script) {
 	linkCommandBranches();
 	buildBlocks();
 	analyseControlFlow();
+	_astHead = buildAST();
 }
 
 void Decompiler::printCommands() const {
@@ -76,6 +80,8 @@ Decompiler::~Decompiler() {
 	for (uint i = 0; i < _controlStructures.size(); i++) {
 		delete _controlStructures[i];
 	}
+
+	delete _astHead;
 }
 
 void Decompiler::linkCommandBranches() {
@@ -229,6 +235,88 @@ bool Decompiler::checkCommands() {
 
 Common::String Decompiler::getError() const {
 	return _error;
+}
+
+ASTNode *Decompiler::buildAST() {
+	Block *entryPoint = _entryPoint->getBlock();
+
+	ASTBlock *head = new ASTBlock(nullptr);
+	buildASTFromBlock(head, entryPoint, nullptr);
+	return head;
+}
+
+void Decompiler::buildASTFromBlock(ASTBlock *parent, Block *block, Block *stopBlock) {
+	if (block == stopBlock) {
+		return;
+	}
+
+	Common::Array<CFGCommand *> commands = block->getLinearCommands();
+	for (uint i = 0; i < commands.size(); i++) {
+		parent->addNode(new ASTCommand(parent, commands[i]));
+	}
+
+	if (block->hasControlStructure()) {
+		ControlStructure *cfgControlStructure = block->getControlStructure();
+		ASTNode *astControlStructure;
+		switch (cfgControlStructure->type) {
+			case ControlStructure::kTypeIf:
+				astControlStructure = buildASTConditionFromBlock(parent, block);
+				break;
+			case ControlStructure::kTypeWhile:
+				astControlStructure = buildASTLoopFromBlock(parent, block);
+				break;
+			default:
+				error("Unknown control structure type %d", cfgControlStructure->type);
+		}
+
+		parent->addNode(astControlStructure);
+
+		if (cfgControlStructure->next) {
+			buildASTFromBlock(parent, cfgControlStructure->next, stopBlock);
+		}
+	} else {
+		Block *follower = block->getFollower();
+		if (follower) {
+			buildASTFromBlock(parent, follower, stopBlock);
+		}
+	}
+}
+
+ASTCondition *Decompiler::buildASTConditionFromBlock(ASTNode *parent, Block *block) {
+	ControlStructure *controlStructure = block->getControlStructure();
+
+	ASTCondition *condition = new ASTCondition(parent);
+	condition->condition = new ASTCommand(condition, block->getConditionCommand());
+	condition->invertedCondition = controlStructure->invertedCondition;
+
+	condition->thenBlock = new ASTBlock(condition);
+	buildASTFromBlock(condition->thenBlock, controlStructure->thenHead, controlStructure->next);
+
+	if (controlStructure->elseHead) {
+		condition->elseBlock = new ASTBlock(condition);
+		buildASTFromBlock(condition->elseBlock, controlStructure->elseHead, controlStructure->next);
+	}
+
+	return condition;
+}
+
+ASTLoop *Decompiler::buildASTLoopFromBlock(ASTNode *parent, Block *block) {
+	ControlStructure *controlStructure = block->getControlStructure();
+
+	ASTLoop *loop = new ASTLoop(parent);
+	loop->condition = new ASTCommand(loop, block->getConditionCommand());
+	loop->invertedCondition = controlStructure->invertedCondition;
+
+	loop->loopBlock = new ASTBlock(loop);
+	buildASTFromBlock(loop->loopBlock, controlStructure->loopHead, block);
+
+	return loop;
+}
+
+void Decompiler::printDecompiled() {
+	if (_astHead) {
+		_astHead->print(0);
+	}
 }
 
 } // End of namespace Tools

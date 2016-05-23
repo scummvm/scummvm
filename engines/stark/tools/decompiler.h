@@ -38,6 +38,10 @@ namespace Tools {
 class Block;
 class CFGCommand;
 struct ControlStructure;
+struct ASTBlock;
+struct ASTNode;
+struct ASTCondition;
+struct ASTLoop;
 
 class Decompiler {
 public:
@@ -46,6 +50,7 @@ public:
 
 	void printCommands() const;
 	void printBlocks() const;
+	void printDecompiled();
 
 	Common::String getError() const;
 
@@ -65,6 +70,12 @@ private:
 	void detectWhile();
 	void detectIf();
 
+	// AST generation
+	ASTNode *buildAST();
+	void buildASTFromBlock(ASTBlock *parent, Block *block, Block *stopBlock);
+	ASTCondition *buildASTConditionFromBlock(ASTNode *parent, Block *block);
+	ASTLoop *buildASTLoopFromBlock(ASTNode *parent, Block *block);
+
 	Common::String _error;
 
 	Common::Array<CFGCommand *> _commands;
@@ -73,6 +84,7 @@ private:
 	Common::Array<Block *> _blocks;
 	Common::Array<ControlStructure *> _controlStructures;
 
+	ASTNode *_astHead;
 };
 
 } // End of namespace Tools

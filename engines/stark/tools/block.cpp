@@ -197,6 +197,10 @@ bool Block::checkChildConvergeIntern(Common::Array<Block *> visited, Block *chil
 	return true;
 }
 
+Block *Block::getFollower() const {
+	return _follower;
+}
+
 Block *Block::getTrueBranch() const {
 	return _trueBranch;
 }
@@ -215,6 +219,35 @@ bool Block::hasControlStructure() const {
 
 void Block::setControlStructure(ControlStructure *controlStructure) {
 	_controlStructure = controlStructure;
+}
+
+ControlStructure *Block::getControlStructure() const {
+	return _controlStructure;
+}
+
+Common::Array<CFGCommand *> Block::getLinearCommands() const {
+	if (!hasControlStructure()) {
+		return _commands;
+	} else {
+		Common::Array<CFGCommand *> commands;
+
+		// The last command in the block is the condition.
+		// Exclude it from the linear commands.
+		for (uint i = 0; i < _commands.size() - 1; i ++) {
+			commands.push_back(_commands[i]);
+		}
+
+		return commands;
+	}
+}
+
+CFGCommand *Block::getConditionCommand() const {
+	if (hasControlStructure()) {
+		// The condition command is always the last one
+		return _commands[_commands.size() - 1];
+	} else {
+		return nullptr;
+	}
 }
 
 ControlStructure::ControlStructure(ControlStructureType t) :

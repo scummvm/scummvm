@@ -45,6 +45,12 @@ public:
 	/** Add a command at the end of the block, and set it as the command's block */
 	void appendCommand(CFGCommand *command);
 
+	/** Get the commands from the block that are not part of a condition */
+	Common::Array<CFGCommand *> getLinearCommands() const;
+
+	/** Get the command from the block that plays as a condition in a control structure */
+	CFGCommand *getConditionCommand() const;
+
 	/** Does the block contain commands? */
 	bool isEmpty() const;
 
@@ -63,6 +69,7 @@ public:
 	void addPredecessor(Block *predecessor);
 	Block *getTrueBranch() const;
 	Block *getFalseBranch() const;
+	Block *getFollower() const;
 
 	/**
 	 * Print a list of this block's commands to the debug output
@@ -73,6 +80,7 @@ public:
 	 * The high level control structure this block has the main role in
 	 */
 	bool hasControlStructure() const;
+	ControlStructure *getControlStructure() const;
 	void setControlStructure(ControlStructure *controlStructure);
 
 	// Graph query methods

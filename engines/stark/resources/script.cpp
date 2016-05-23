@@ -377,10 +377,10 @@ void Script::print(uint depth) {
 
 	Tools::Decompiler *decompiler = new Tools::Decompiler(this);
 
-	// Print the blocks
-	printWithDepth(depth + 1, "Blocks");
+	// Print the decompiled output
+	printWithDepth(depth + 1, "Decompiled output");
 	if (decompiler->getError() == "") {
-		decompiler->printBlocks();
+		decompiler->printDecompiled();
 	} else {
 		debug("Decompilation failure: %s", decompiler->getError().c_str());
 	}
