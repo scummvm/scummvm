@@ -20,6 +20,7 @@ RESOURCES = \
 	$(PATH_BUILD_RES)/layout/main.xml \
 	$(PATH_BUILD_RES)/drawable/scummvm.png \
 	$(PATH_BUILD_RES)/drawable/scummvm_big.png \
+	$(PATH_BUILD_RES)/drawable-xhdpi/leanback_icon.png \
 	$(PATH_BUILD_RES)/drawable-xhdpi/ouya_icon.png
 
 DIST_ANDROID_MK = $(PATH_DIST)/jni/Android.mk
