@@ -287,7 +287,7 @@ void GameSys::drawTextToSurface(Graphics::Surface *surface, int x, int y, byte r
 	} else {
 		for (const char *cp = text; *cp != 0; ++cp) {
 			byte c = *cp;
-			if (c < 32 || c > 127)
+			if (c < 32 || c >= 127)
 				c = (byte)'_';
 			c -= 32;
 			int w = _dejaVuSans9ptCharDescriptors[c]._width;
@@ -312,7 +312,7 @@ int GameSys::getTextHeight(const char *text) {
 	byte height = 0;
 	for (const char *cp = text; *cp != 0; ++cp) {
 		byte c = *cp;
-		if (c < 32 || c > 127)
+		if (c < 32 || c >= 127)
 			c = (byte)'_';
 		c -= 32;
 		height = MAX(height, _dejaVuSans9ptCharDescriptors[c]._width);
@@ -324,7 +324,7 @@ int GameSys::getTextWidth(const char *text) {
 	int width = 0;
 	for (const char *cp = text; *cp != 0; ++cp) {
 		byte c = *cp;
-		if (c < 32 || c > 127)
+		if (c < 32 || c >= 127)
 			c = (byte)'_';
 		c -= 32;
 		width += _dejaVuSans9ptCharDescriptors[c]._width + 1;
