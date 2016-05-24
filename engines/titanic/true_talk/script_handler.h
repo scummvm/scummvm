@@ -53,16 +53,16 @@ private:
 	CExeResources &_resources;
 	int _field10;
 	CScriptHandlerSub1 _sub1;
-	TTparser _parser;
 	int _inputCtr;
+	int _field30;
+public:
+	TTparser _parser;
+	TTvocab *_vocab;
+	TTscriptBase *_script;
 	TTconcept *_concept1P;
 	TTconcept *_concept2P;
 	TTconcept *_concept3P;
 	TTconcept *_concept4P;
-	int _field30;
-public:
-	TTvocab *_vocab;
-	TTscriptBase *_script;
 public:
 	CScriptHandler(CTitleEngine *owner, int val1, int val2);
 	~CScriptHandler();

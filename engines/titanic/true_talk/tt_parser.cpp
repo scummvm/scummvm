@@ -50,29 +50,21 @@ TTparser::~TTparser() {
 	delete _currentWordP;
 }
 
+void TTparser::loadArray(StringArray &arr, const CString &name) {
+	Common::SeekableReadStream *r = g_vm->_filesManager->getResource(name);
+	while (r->pos() < r->size())
+		arr.push_back(readStringFromStream(r));
+	delete r;
+}
+
 void TTparser::loadArrays() {
-	Common::SeekableReadStream *r;
-	r = g_vm->_filesManager->getResource("TEXT/REPLACEMENTS1");
-	while (r->pos() < r->size())
-		_replacements1.push_back(readStringFromStream(r));
-	delete r;
+	loadArray(_replacements1, "TEXT/REPLACEMENTS1");
+	loadArray(_replacements2, "TEXT/REPLACEMENTS2");
+	loadArray(_replacements3, "TEXT/REPLACEMENTS3");
+	loadArray(_phrases, "TEXT/PHRASES");
+	loadArray(_pronouns, "TEXT/PRONOUNS");
 
-	r = g_vm->_filesManager->getResource("TEXT/REPLACEMENTS2");
-	while (r->pos() < r->size())
-		_replacements2.push_back(readStringFromStream(r));
-	delete r;
-
-	r = g_vm->_filesManager->getResource("TEXT/REPLACEMENTS3");
-	while (r->pos() < r->size())
-		_replacements3.push_back(readStringFromStream(r));
-	delete r;
-
-	r = g_vm->_filesManager->getResource("TEXT/PHRASES");
-	while (r->pos() < r->size())
-		_phrases.push_back(readStringFromStream(r));
-	delete r;
-
-	r = g_vm->_filesManager->getResource("TEXT/NUMBERS");
+	Common::SeekableReadStream *r = g_vm->_filesManager->getResource("TEXT/NUMBERS");
 	while (r->pos() < r->size()) {
 		NumberEntry ne;
 		ne._text = readStringFromStream(r);
@@ -81,7 +73,6 @@ void TTparser::loadArrays() {
 		_numbers.push_back(ne);
 	}
 	delete r;
-
 }
 
 int TTparser::preprocess(TTsentence *sentence) {
@@ -490,7 +481,8 @@ int TTparser::findFrames(TTsentence *sentence) {
 
 	TTstring *line = sentence->_normalizedLine.copy();
 	TTstring wordString;
-	for (;;) {
+	int status = 0;
+	for (int ctr = 1; !status; ++ctr) {
 		// Keep stripping words off the start of the passed input
 		wordString = line->tokenize(" \n");
 		if (wordString.empty())
@@ -500,17 +492,23 @@ int TTparser::findFrames(TTsentence *sentence) {
 		TTword *word = _owner->_vocab->getWord(wordString, &word);
 		sentence->storeVocabHit(srcWord);
 
-		if (word) {
-			// TODO
-		} else {
-
+		if (!word && ctr == 1) {
+			word = new TTword(wordString, WC_UNKNOWN, 0);
 		}
+
+		for (TTword *currP = word; currP && !status; currP = currP->_nextP)
+			status = processRequests(currP);
+
+		word->deleteSiblings();
+		delete word;
 	}
 
+	if (!status) {
+		status = fn1();
+	}
 
-	// TODO
 	delete line;
-	return 0;
+	return status;
 }
 
 int TTparser::loadRequests(TTword *word) {
@@ -767,10 +765,10 @@ int TTparser::considerRequests(TTword *word) {
 		} else {
 			switch (nodeP->_tag) {
 			case CHECK_COMMAND_FORM:
-				if (_sentenceSub->_field4 && _sentence->_field2C == 1 &&
-						!_sentenceSub->_conceptP) {
+				if (_sentenceSub->_concept1P && _sentence->_field2C == 1 &&
+						!_sentenceSub->_concept0P) {
 					concept = new TTconcept(_sentence->_npcScript, ST_NPC_SCRIPT);
-					_sentenceSub->_conceptP = concept;
+					_sentenceSub->_concept0P = concept;
 					_sentenceSub->_field18 = 3;
 				}
 
@@ -788,7 +786,7 @@ int TTparser::considerRequests(TTword *word) {
 				break;
 
 			case OBJECT_IS_TO:
-				flag = fn3(&_sentenceSub->_field8, 3);
+				flag = fn3(&_sentenceSub->_concept2P, 3);
 				break;
 
 			case SEEK_ACTOR:
@@ -828,6 +826,11 @@ int TTparser::considerRequests(TTword *word) {
 	return status;
 }
 
+int TTparser::processRequests(TTword *word) {
+	// TODO
+	return 0;
+}
+
 void TTparser::addToConceptList(TTword *word) {
 	TTconcept *concept = new TTconcept(word, ST_UNKNOWN_SCRIPT);
 	addConcept(concept);
@@ -849,6 +852,11 @@ int TTparser::addConcept(TTconcept *concept) {
 	_conceptP = concept;
 
 	return SS_VALID;
+}
+
+int TTparser::fn1() {
+	// TODO
+	return 0;
 }
 
 int TTparser::fn2(TTword *word) {
@@ -873,7 +881,7 @@ int TTparser::fn2(TTword *word) {
 	}
 }
 
-bool TTparser::fn3(int *v, int v2) {
+bool TTparser::fn3(TTconcept **v, int v2) {
 	// TODO
 	return false;
 }

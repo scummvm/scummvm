@@ -36,12 +36,12 @@ class TTword;
 
 class TTsentenceSubBase {
 public:
-	TTconcept *_conceptP;
-	int _field4;
-	int _field8;
-	int _fieldC;
-	int _field10;
-	int _field14;
+	TTconcept *_concept0P;
+	TTconcept *_concept1P;
+	TTconcept *_concept2P;
+	TTconcept *_concept3P;
+	TTconcept *_concept4P;
+	TTconcept *_concept5P;
 	int _field18;
 	int _field1C;
 	TTsentenceSubBase *_nextP;
@@ -57,6 +57,8 @@ public:
 	void set18(int val) { _field18 = val; }
 	int get18() const { return _field18; }
 	bool is24() const { return _field24 == 0; }
+
+	TTconcept **setConcept(int conceptIndex, TTconcept *src);
 };
 
 class TTsentenceSub : public TTsentenceSubBase {

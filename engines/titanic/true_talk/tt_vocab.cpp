@@ -34,7 +34,7 @@ namespace Titanic {
 
 TTvocab::TTvocab(int val): _headP(nullptr), _tailP(nullptr), _word(nullptr),
 		_fieldC(0), _field10(0), _vocabMode(val) {
-	_field14 = load("STVOCAB.TXT");
+	load("STVOCAB.TXT");
 }
 
 TTvocab::~TTvocab() {

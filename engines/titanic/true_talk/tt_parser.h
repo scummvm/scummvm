@@ -76,6 +76,11 @@ private:
 	TTconcept *_currentConceptP;
 private:
 	/**
+	 * Load the data for a given array resource
+	 */
+	void loadArray(StringArray &arr, const CString &name);
+
+	/**
 	 * Loads the various replacement string data arrays
 	 */
 	void loadArrays();
@@ -139,6 +144,7 @@ private:
 
 	int loadRequests(TTword *word);
 	int considerRequests(TTword *word);
+	int processRequests(TTword *word);
 
 	void addToConceptList(TTword *word);
 	int fn2(TTword *word);
@@ -154,7 +160,8 @@ private:
 	 */
 	int addConcept(TTconcept *concept);
 
-	bool fn3(int *v, int v2);
+	int fn1();
+	bool fn3(TTconcept **v, int v2);
 public:
 	CScriptHandler *_owner;
 	TTsentenceSub *_sentenceSub;
@@ -163,6 +170,7 @@ public:
 	int _field10;
 	int _field14;
 	TTword *_currentWordP;
+	StringArray _pronouns;
 public:
 	TTparser(CScriptHandler *owner);
 	~TTparser();

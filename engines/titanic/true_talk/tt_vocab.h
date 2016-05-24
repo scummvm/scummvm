@@ -36,7 +36,6 @@ private:
 	TTword *_word;
 	int _fieldC;
 	int _field10;
-	int _field14;
 	int _vocabMode;
 private:
 	/**

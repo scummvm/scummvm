@@ -21,13 +21,16 @@
  */
 
 #include "titanic/true_talk/tt_sentence.h"
+#include "titanic/true_talk/tt_concept.h"
 #include "titanic/true_talk/script_handler.h"
+#include "titanic/titanic.h"
 
 namespace Titanic {
 
-TTsentenceSubBase::TTsentenceSubBase() : _conceptP(nullptr), _field4(0),
-	_field8(0), _fieldC(0), _field10(0), _field14(0), _field18(0),
-	_field1C(0), _nextP(nullptr), _field24(0) {
+TTsentenceSubBase::TTsentenceSubBase() : _concept0P(nullptr), 
+		_concept1P(nullptr), _concept2P(nullptr), _concept3P(nullptr),
+		_concept4P(nullptr), _concept5P(nullptr), _field18(0),
+		_field1C(0), _nextP(nullptr), _field24(0) {
 }
 
 void TTsentenceSubBase::deleteSiblings() {
@@ -38,6 +41,60 @@ void TTsentenceSubBase::deleteSiblings() {
 	}
 
 	_nextP = nullptr;
+}
+
+TTconcept **TTsentenceSubBase::setConcept(int conceptIndex, TTconcept *src) {
+	TTconcept **conceptPP = nullptr;
+	switch (conceptIndex) {
+	case 1:
+		conceptPP = &_concept1P;
+		break;
+	case 2:
+		conceptPP = &_concept2P;
+		break;
+	case 3:
+		conceptPP = &_concept3P;
+		break;
+	case 4:
+		conceptPP = &_concept4P;
+		break;
+	case 5:
+		conceptPP = &_concept5P;
+		break;
+	default:
+		break;
+	}
+
+	bool isPronoun = false;
+	StringArray &pronouns = g_vm->_scriptHandler->_parser._pronouns;
+	for (uint idx = 0; idx < pronouns.size() && !isPronoun; ++idx) {
+		isPronoun = pronouns[idx] == src->getText();
+	}
+
+	CScriptHandler &scrHandler = *g_vm->_exeResources._owner;
+	if (!isPronoun) {
+		switch (conceptIndex) {
+		case 0:
+			delete scrHandler._concept2P;
+			scrHandler._concept2P = new TTconcept(*src);
+			break;
+
+		case 1:
+			delete scrHandler._concept4P;
+			scrHandler._concept4P = new TTconcept(*src);
+			break;
+
+		case 2:
+			delete scrHandler._concept1P;
+			scrHandler._concept1P = new TTconcept(*src);
+			break;
+
+		default:
+			break;
+		}
+	}
+
+	return conceptPP;
 }
 
 /*------------------------------------------------------------------------*/
