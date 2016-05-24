@@ -1945,15 +1945,9 @@ void Scene52::update() {
 		}
 	}
 
-	if (_vm->_timers[1] || getFreeShipCannon() == -1) {
-		_nextUfoSequenceId = 34;
-		if (_ufoSequenceId != 34)
-			_shipFlag = true;
-	} else {
-		_nextUfoSequenceId = 34;
-		if (_ufoSequenceId != 34)
-			_shipFlag = true;
-	}
+	_nextUfoSequenceId = 34;
+	if (_ufoSequenceId != 34)
+		_shipFlag = true;
 
 	if (_shipFlag) {
 		if (_vm->_gameSys->getAnimationStatus(7) == 2) {
@@ -1966,13 +1960,8 @@ void Scene52::update() {
 
 	if (_alienWave && !_vm->_timers[0]) {
 		playSound();
-		int v0 = _alienSpeed;
-		if (_alienSpeed >= 10)
-			v0 = 10;
-		int v1 = v0;
-		if (v0 < 2)
-			v1 = 2;
-		_vm->_timers[0] = v1;
+		int delay = CLIP(_alienSpeed, 2, 10);
+		_vm->_timers[0] = delay;
 	}
 }
 
