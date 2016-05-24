@@ -906,6 +906,7 @@ int PlayerGnap::getShowSequenceId(int index, int gridX, int gridY) {
 			sequenceId = 0x890;
 		break;
 	case 8:
+	case 12:
 		if (_idleFacing == kDirUpRight)
 			sequenceId = 0x87D;
 		else
@@ -918,22 +919,11 @@ int PlayerGnap::getShowSequenceId(int index, int gridX, int gridY) {
 			sequenceId = 0x897;
 		break;
 	case 10:
-		if (_idleFacing == kDirUpRight)
-			sequenceId = 0x87C;
-		else
-			sequenceId = 0x891;
-		break;
 	case 11:
 		if (_idleFacing == kDirUpRight)
 			sequenceId = 0x87C;
 		else
 			sequenceId = 0x891;
-		break;
-	case 12:
-		if (_idleFacing == kDirUpRight)
-			sequenceId = 0x87D;
-		else
-			sequenceId = 0x892;
 		break;
 	case 13:
 		if (_idleFacing == kDirUpRight)
@@ -964,6 +954,7 @@ int PlayerGnap::getShowSequenceId(int index, int gridX, int gridY) {
 		sequenceId = 0x887;
 		break;
 	case 19:
+	case 25:
 		if (_idleFacing == kDirUpRight)
 			sequenceId = 0x87A;
 		else
@@ -998,12 +989,6 @@ int PlayerGnap::getShowSequenceId(int index, int gridX, int gridY) {
 			sequenceId = 0x886;
 		else
 			sequenceId = 0x89B;
-		break;
-	case 25:
-		if (_idleFacing == kDirUpRight)
-			sequenceId = 0x87A;
-		else
-			sequenceId = 0x88F;
 		break;
 		//Skip 26
 		//Skip 27
