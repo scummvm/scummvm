@@ -47,6 +47,16 @@ public:
 	virtual void save() = 0;
 
 	/**
+	* Adds new Storage into list.	
+	*
+	* @param	storage Cloud::Storage to add.
+	* @param	makeCurrent whether added storage should be the new current storage.
+	* @param	saveConfig whether save() should be called to update configuration file.
+	*/
+
+	virtual void addStorage(Cloud::Storage *storage, bool makeCurrent = true, bool saveConfig = true) = 0;
+
+	/**
 	* Returns active Storage, which could be used to interact
 	*  with cloud storage.
 	*

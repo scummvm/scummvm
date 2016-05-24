@@ -23,6 +23,7 @@
 #include "backends/cloud/manager.h"
 #include "backends/cloud/dropbox/dropboxstorage.h"
 #include "common/config-manager.h"
+#include "onedrive/onedrivestorage.h"
 
 namespace Cloud {
 
@@ -37,6 +38,7 @@ Manager::~Manager() {
 
 void Manager::init() {
 	bool offerDropbox = false;
+	bool offerOneDrive = true;
 
 	if (ConfMan.hasKey("storages_number", "cloud")) {
 		int storages = ConfMan.getInt("storages_number", "cloud");
@@ -46,7 +48,10 @@ void Manager::init() {
 			if (ConfMan.hasKey(keyPrefix + "type", "cloud")) {
 				Common::String storageType = ConfMan.get(keyPrefix + "type", "cloud");
 				if (storageType == "Dropbox") loaded = Dropbox::DropboxStorage::loadFromConfig(keyPrefix);
-				else warning("Unknown cloud storage type '%s' passed", storageType.c_str());
+				else if (storageType == "OneDrive") {
+					loaded = OneDrive::OneDriveStorage::loadFromConfig(keyPrefix);
+					offerOneDrive = false;
+				} else warning("Unknown cloud storage type '%s' passed", storageType.c_str());
 			} else {
 				warning("Cloud storage #%d (out of %d) is missing.", i, storages);
 			}
@@ -66,8 +71,11 @@ void Manager::init() {
 	}
 
 	if (offerDropbox) {
-		//this is temporary console offer to auth with Dropbox (because there is no other storage type yet anyway)
+		//this is temporary console offer to auth with Dropbox
 		Dropbox::DropboxStorage::authThroughConsole();
+	} else if(offerOneDrive) {
+		//OneDrive time
+		OneDrive::OneDriveStorage::authThroughConsole();
 	}
 }
 
@@ -77,6 +85,13 @@ void Manager::save() {
 	for (uint32 i = 0; i < _storages.size(); ++i)
 		_storages[i]->saveConfig(Common::String::format("storage%d_", i+1));
 	ConfMan.flushToDisk();
+}
+
+void Manager::addStorage(Cloud::Storage *storage, bool makeCurrent, bool saveConfig) {
+	if (!storage) error("Cloud::Manager: NULL storage passed");
+	_storages.push_back(storage);
+	if (makeCurrent) _currentStorageIndex = _storages.size() - 1;
+	if (saveConfig) save();
 }
 
 Storage *Manager::getCurrentStorage() {

@@ -38,6 +38,7 @@ public:
 
 	virtual void init();
 	virtual void save();
+	virtual void addStorage(Cloud::Storage *storage, bool makeCurrent = true, bool saveConfig = true);
 
 	virtual Storage *getCurrentStorage();
 	virtual void syncSaves(Storage::BoolCallback callback);

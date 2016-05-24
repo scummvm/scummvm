@@ -45,7 +45,7 @@ bool DownloadRequest::handle() {
 		return true;
 	}
 
-	const int kBufSize = 16 * 1024;
+	const int kBufSize = 640 * 1024; //640 KB is enough to everyone?..
 	char buf[kBufSize];
 	uint32 readBytes = _remoteFileStream->read(buf, kBufSize);
 
