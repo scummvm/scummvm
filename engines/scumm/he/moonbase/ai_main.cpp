@@ -2719,6 +2719,8 @@ int getUnitsWithinRadius(int x, int y, int radius) {
 	assert(y >= 0);
 	assert(radius >= 0);
 
+	debug(0, "getUnitsWithinRadius(%d, %d, %d)", x, y, radius);
+
 	int retVal = _vm->_moonbase->callScummFunction(MCP_params[F_GET_UNITS_WITHIN_RADIUS], 3, x, y, radius);
 	return retVal;
 }
