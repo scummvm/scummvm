@@ -58,9 +58,17 @@ GameSys::GameSys(GnapEngine *vm) : _vm(vm) {
 	_frontSurface = nullptr;
 	for (int i = 0; i < kMaxAnimations; ++i) {
 		_animations[i]._sequenceId = -1;
-		_animations[i]._id = 0;
+		_animations[i]._id = -1;
 		_animations[i]._status = 0;
 	}
+	_removeSequenceItems->_sequenceId = -1;
+	_removeSequenceItems->_id = -1;
+	_removeSequenceItems->_forceFrameReset = false;
+	_removeSpriteDrawItems->_id = -1;
+	_removeSpriteDrawItems->_surface = nullptr;
+
+	_grabSpriteSurface1 = _grabSpriteSurface2 = nullptr;
+
 	_screenRect = Common::Rect(0, 0, 800, 600);
 }
 

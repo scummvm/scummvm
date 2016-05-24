@@ -59,7 +59,8 @@ struct SequenceAnimation {
 	int16 _framesCount;
 	int16 _maxTotalDuration;
 	SequenceFrame *frames;
-	SequenceAnimation() : frames(nullptr) {}
+
+	SequenceAnimation() : frames(nullptr), _additionalDelay(0), _framesCount(0), _maxTotalDuration(0) {}
 	~SequenceAnimation() { delete[] frames; }
 	void loadFromStream(Common::MemoryReadStream &stream);
 };
