@@ -662,7 +662,7 @@ CutScene::CutScene(GnapEngine *vm) : Scene(vm) {
 
 	for (int i = 0; i < 50; i++)
 		_sequenceIdArr[i] = -1;
-};
+}
 
 void CutScene::run() {
 	GameSys& gameSys = *_vm->_gameSys;
