@@ -4077,8 +4077,10 @@ static const int kS19ShopAssistantSequenceIds[] = {
 
 Scene19::Scene19(GnapEngine *vm) : Scene(vm) {
 	_toyGrabCtr = 0;
-	_pictureSurface = 0;
 	_shopAssistantCtr = 0;
+	_currShopAssistantSequenceId = -1;
+	_nextShopAssistantSequenceId = -1;
+
 	_pictureSurface = nullptr;
 }
 

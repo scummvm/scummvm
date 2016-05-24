@@ -1020,6 +1020,7 @@ Scene51::Scene51(GnapEngine *vm) : Scene(vm) {
 	_nextDropItemKind = -1;
 	_itemInsertX = -1;
 	_itemInsertDirection = -1;
+	_platypusSequenceId = -1;
 	_platypusNextSequenceId = -1;
 	_platypusJumpSequenceId = -1;
 	_itemsCtr = -1;
