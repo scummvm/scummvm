@@ -36,8 +36,10 @@
 #include "engines/util.h"
 
 #include "director/director.h"
+#include "director/score.h"
 #include "director/resource.h"
 #include "graphics/surface.h"
+
 
 namespace Director {
 
@@ -74,8 +76,11 @@ Common::Error DirectorEngine::run() {
 	Common::SeekableReadStream *pal = riff.getResource(MKTAG('C', 'L', 'U', 'T'), 1025);
 	img.loadPalette(*pal);
 
-	Common::SeekableReadStream *dib = riff.getResource(MKTAG('D', 'I', 'B', ' '), 1103);
+	Common::SeekableReadStream *dib = riff.getResource(MKTAG('D', 'I', 'B', ' '), 1026);
 	img.loadStream(*dib);
+
+	Common::SeekableReadStream *scr = riff.getResource(MKTAG('V','W','S','C'),1024);
+	Director::Score score = Director::Score(*scr);
 
 	bool stop = false;
 

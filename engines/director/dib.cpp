@@ -78,10 +78,7 @@ void DIBDecoder::loadPalette(Common::SeekableReadStream &stream) {
 
 bool DIBDecoder::loadStream(Common::SeekableReadStream &stream) {
 
-	byte *buf = (byte *)malloc(stream.size());
-	stream.read(buf, stream.size());
-	Common::hexdump(buf, stream.size());
-	stream.seek(0);
+
 
 	uint32 headerSize = stream.readUint32LE();
 	if (headerSize != 40)

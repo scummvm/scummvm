@@ -4,7 +4,8 @@ MODULE_OBJS = \
 	detection.o \
 	dib.o \
 	director.o \
-	resource.o
+	resource.o \
+	score.o
 # This module can be built as a plugin
 ifeq ($(ENABLE_DIRECTOR), DYNAMIC_PLUGIN)
 PLUGIN := 1
