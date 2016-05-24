@@ -23,6 +23,7 @@
 #ifndef TITANIC_TT_SENTENCE_H
 #define TITANIC_TT_SENTENCE_H
 
+#include "titanic/true_talk/tt_concept_node.h"
 #include "titanic/true_talk/tt_npc_script.h"
 #include "titanic/true_talk/tt_room_script.h"
 #include "titanic/true_talk/tt_sentence_node.h"
@@ -31,45 +32,17 @@
 namespace Titanic {
 
 class CScriptHandler;
-class TTconcept;
 class TTword;
 
-class TTsentenceSubBase {
+class TTsentenceConcept : public TTconceptNode {
 public:
-	TTconcept *_concept0P;
-	TTconcept *_concept1P;
-	TTconcept *_concept2P;
-	TTconcept *_concept3P;
-	TTconcept *_concept4P;
-	TTconcept *_concept5P;
-	int _field18;
-	int _field1C;
-	TTsentenceSubBase *_nextP;
-	int _field24;
-public:
-	TTsentenceSubBase();
-
-	/**
-	 * Delete any sibling chain attached to this node
-	 */
-	void deleteSiblings();
-
-	void set18(int val) { _field18 = val; }
-	int get18() const { return _field18; }
-	bool is24() const { return _field24 == 0; }
-
-	TTconcept **setConcept(int conceptIndex, TTconcept *src);
-	int changeConcept(int mode, TTconcept **conceptPP, int conceptIndex);
-};
-
-class TTsentenceSub : public TTsentenceSubBase {
-public:
-	TTsentenceSub() : TTsentenceSubBase() {}
+	TTsentenceConcept() : TTconceptNode() {}
+	TTsentenceConcept(const TTsentenceConcept &src) : TTconceptNode(src) {}
 
 	/**
 	 * Adds a new sibling instance
 	 */
-	TTsentenceSub *addSibling();
+	TTsentenceConcept *addSibling();
 };
 
 class TTsentence {
@@ -87,7 +60,7 @@ private:
 	 */
 	void copyFrom(const TTsentence &src);
 public:
-	TTsentenceSub _sub;
+	TTsentenceConcept _sentenceConcept;
 	TTstring _initialLine;
 	TTstring _normalizedLine;
 	int _field58;

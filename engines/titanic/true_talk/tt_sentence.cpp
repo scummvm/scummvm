@@ -27,99 +27,12 @@
 
 namespace Titanic {
 
-TTsentenceSubBase::TTsentenceSubBase() : _concept0P(nullptr), 
-		_concept1P(nullptr), _concept2P(nullptr), _concept3P(nullptr),
-		_concept4P(nullptr), _concept5P(nullptr), _field18(0),
-		_field1C(0), _nextP(nullptr), _field24(0) {
-}
-
-void TTsentenceSubBase::deleteSiblings() {
-	// Iterate through the linked chain of nodes, deleting each in turn
-	for (TTsentenceSubBase *curP = _nextP, *nextP = nullptr; nextP; curP = nextP) {
-		nextP = curP->_nextP;
-		delete curP;
-	}
-
-	_nextP = nullptr;
-}
-
-TTconcept **TTsentenceSubBase::setConcept(int conceptIndex, TTconcept *src) {
-	TTconcept **conceptPP = nullptr;
-	switch (conceptIndex) {
-	case 1:
-		conceptPP = &_concept1P;
-		break;
-	case 2:
-		conceptPP = &_concept2P;
-		break;
-	case 3:
-		conceptPP = &_concept3P;
-		break;
-	case 4:
-		conceptPP = &_concept4P;
-		break;
-	case 5:
-		conceptPP = &_concept5P;
-		break;
-	default:
-		break;
-	}
-
-	bool isPronoun = false;
-	StringArray &pronouns = g_vm->_scriptHandler->_parser._pronouns;
-	for (uint idx = 0; idx < pronouns.size() && !isPronoun; ++idx) {
-		isPronoun = pronouns[idx] == src->getText();
-	}
-
-	CScriptHandler &scrHandler = *g_vm->_exeResources._owner;
-	if (!isPronoun) {
-		switch (conceptIndex) {
-		case 0:
-			delete scrHandler._concept2P;
-			scrHandler._concept2P = new TTconcept(*src);
-			break;
-
-		case 1:
-			delete scrHandler._concept4P;
-			scrHandler._concept4P = new TTconcept(*src);
-			break;
-
-		case 2:
-			delete scrHandler._concept1P;
-			scrHandler._concept1P = new TTconcept(*src);
-			break;
-
-		default:
-			break;
-		}
-	}
-
-	return conceptPP;
-}
-
-int TTsentenceSubBase::changeConcept(int mode, TTconcept **conceptPP, int conceptIndex) {
-	TTconcept **newConceptPP = setConcept(conceptIndex, *conceptPP);
-
-	if (mode == 0 || (mode == 1 && !*newConceptPP)) {
-		if (!*conceptPP)
-			return SS_5;
-
-		delete *newConceptPP;
-		*newConceptPP = new TTconcept(**conceptPP);
-		return SS_VALID;
-	} else {
-		return SS_1;
-	}
-}
-
-/*------------------------------------------------------------------------*/
-
-TTsentenceSub *TTsentenceSub::addSibling() {
+TTsentenceConcept *TTsentenceConcept::addSibling() {
 	if (this == nullptr || _nextP != nullptr)
 		// This should never happen
 		return nullptr;
 
-	TTsentenceSub *nextP = new TTsentenceSub();
+	TTsentenceConcept *nextP = new TTsentenceConcept();
 	_nextP = nextP;
 	return nextP;
 }
@@ -134,13 +47,13 @@ TTsentence::TTsentence(int inputCtr, const TTstring &line, CScriptHandler *owner
 	_status = _initialLine.isValid() && _normalizedLine.isValid() ? SS_11: SS_VALID;
 }
 
-TTsentence::TTsentence(const TTsentence *src) : _initialLine(src->_initialLine),
-		_normalizedLine(src->_normalizedLine) {
+TTsentence::TTsentence(const TTsentence *src) : _sentenceConcept(src->_sentenceConcept),
+		_initialLine(src->_initialLine), _normalizedLine(src->_normalizedLine) {
 	copyFrom(*src);
 }
 
 TTsentence::~TTsentence() {
-	_sub.deleteSiblings();
+	_sentenceConcept.deleteSiblings();
 
 	if (_nodesP) {
 		_nodesP->deleteSiblings();

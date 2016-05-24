@@ -30,7 +30,7 @@
 
 namespace Titanic {
 
-TTparser::TTparser(CScriptHandler *owner) : _owner(owner), _sentenceSub(nullptr),
+TTparser::TTparser(CScriptHandler *owner) : _owner(owner), _sentenceConcept(nullptr),
 		_sentence(nullptr), _fieldC(0), _field10(0), _field14(0),
 		_currentWordP(nullptr), _nodesP(nullptr), _conceptP(nullptr) {
 	loadArrays();
@@ -476,7 +476,7 @@ const NumberEntry *TTparser::replaceNumbers2(TTstring &line, int *startIndex) {
 
 int TTparser::findFrames(TTsentence *sentence) {
 	static bool flag;
-	_sentenceSub = &sentence->_sub;
+	_sentenceConcept = &sentence->_sentenceConcept;
 	_sentence = sentence;
 
 	TTstring *line = sentence->_normalizedLine.copy();
@@ -573,10 +573,10 @@ int TTparser::loadRequests(TTword *word) {
 			break;
 		}
 
-		if (_sentenceSub) {
-			if (_sentenceSub->get18() == 0 || _sentenceSub->get18() == 2) {
+		if (_sentenceConcept) {
+			if (_sentenceConcept->get18() == 0 || _sentenceConcept->get18() == 2) {
 				TTaction *action = static_cast<TTaction *>(word);
-				_sentenceSub->set18(action->getVal());
+				_sentenceConcept->set18(action->getVal());
 			}
 		}
 		break;
@@ -621,8 +621,8 @@ int TTparser::loadRequests(TTword *word) {
 
 	case WC_CONJUNCTION:
 		if (_sentence->check2C()) {
-			_sentenceSub->_field1C = 1;
-			_sentenceSub = _sentenceSub->addSibling();
+			_sentenceConcept->_field1C = 1;
+			_sentenceConcept = _sentenceConcept->addSibling();
 			delete this;
 		} else {
 			addNode(23);
@@ -675,8 +675,8 @@ int TTparser::loadRequests(TTword *word) {
 		case 902:
 		case 904:
 			if (_sentence->_field2C == 9) {
-				_sentenceSub->_field1C = 1;
-				_sentenceSub = _sentenceSub->addSibling();
+				_sentenceConcept->_field1C = 1;
+				_sentenceConcept = _sentenceConcept->addSibling();
 				addNode(1);
 			}
 			else {
@@ -765,11 +765,11 @@ int TTparser::considerRequests(TTword *word) {
 		} else {
 			switch (nodeP->_tag) {
 			case CHECK_COMMAND_FORM:
-				if (_sentenceSub->_concept1P && _sentence->_field2C == 1 &&
-						!_sentenceSub->_concept0P) {
+				if (_sentenceConcept->_concept1P && _sentence->_field2C == 1 &&
+						!_sentenceConcept->_concept0P) {
 					concept = new TTconcept(_sentence->_npcScript, ST_NPC_SCRIPT);
-					_sentenceSub->_concept0P = concept;
-					_sentenceSub->_field18 = 3;
+					_sentenceConcept->_concept0P = concept;
+					_sentenceConcept->_field18 = 3;
 				}
 
 				flag = true;
@@ -786,7 +786,7 @@ int TTparser::considerRequests(TTword *word) {
 				break;
 
 			case OBJECT_IS_TO:
-				flag = fn3(&_sentenceSub->_concept2P, 3);
+				flag = fn3(&_sentenceConcept->_concept2P, 3);
 				break;
 
 			case SEEK_ACTOR:

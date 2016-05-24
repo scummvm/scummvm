@@ -463,6 +463,7 @@ MODULE_OBJS := \
 	true_talk/tt_action.o \
 	true_talk/tt_adj.o \
 	true_talk/tt_concept.o \
+	true_talk/tt_concept_node.o \
 	true_talk/tt_hist.o \
 	true_talk/tt_major_word.o \
 	true_talk/tt_node.o \

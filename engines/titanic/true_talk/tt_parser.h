@@ -164,7 +164,7 @@ private:
 	bool fn3(TTconcept **v, int v2);
 public:
 	CScriptHandler *_owner;
-	TTsentenceSub *_sentenceSub;
+	TTsentenceConcept *_sentenceConcept;
 	TTsentence *_sentence;
 	int _fieldC;
 	int _field10;
