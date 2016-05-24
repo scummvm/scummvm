@@ -59,6 +59,7 @@ public:
 	bool is24() const { return _field24 == 0; }
 
 	TTconcept **setConcept(int conceptIndex, TTconcept *src);
+	int changeConcept(int mode, TTconcept **conceptPP, int conceptIndex);
 };
 
 class TTsentenceSub : public TTsentenceSubBase {

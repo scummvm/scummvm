@@ -97,6 +97,21 @@ TTconcept **TTsentenceSubBase::setConcept(int conceptIndex, TTconcept *src) {
 	return conceptPP;
 }
 
+int TTsentenceSubBase::changeConcept(int mode, TTconcept **conceptPP, int conceptIndex) {
+	TTconcept **newConceptPP = setConcept(conceptIndex, *conceptPP);
+
+	if (mode == 0 || (mode == 1 && !*newConceptPP)) {
+		if (!*conceptPP)
+			return SS_5;
+
+		delete *newConceptPP;
+		*newConceptPP = new TTconcept(**conceptPP);
+		return SS_VALID;
+	} else {
+		return SS_1;
+	}
+}
+
 /*------------------------------------------------------------------------*/
 
 TTsentenceSub *TTsentenceSub::addSibling() {
