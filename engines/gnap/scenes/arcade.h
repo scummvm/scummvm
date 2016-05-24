@@ -235,10 +235,10 @@ private:
 	int _alienWidth, _alienHeight;
 	int _alienLeftX, _alienTopY;
 	int _alienRowDownCtr;
-	int _alienRowKind[7];
-	int _alienRowAnims[7];
-	int _alienRowIds[7];
-	int _alienRowXOfs[7];
+	int _alienRowKind[8];
+	int _alienRowAnims[8];
+	int _alienRowIds[8];
+	int _alienRowXOfs[8];
 	int _alienCannonFired[3];
 	int _alienCannonPosX[3];
 	int _alienCannonPosY[3];
