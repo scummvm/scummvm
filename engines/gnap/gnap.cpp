@@ -157,6 +157,7 @@ Common::Error GnapEngine::run() {
 	_font = Graphics::loadTTFFont(*stream, 24);
 	if (!_font)
 		warning("Unable to load font");
+	delete stream;
 #else
 	_font = nullptr;
 #endif

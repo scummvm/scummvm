@@ -65,6 +65,9 @@ GameSys::GameSys(GnapEngine *vm) : _vm(vm) {
 }
 
 GameSys::~GameSys() {
+	if (_frontSurface)
+		_frontSurface->free();
+	delete _frontSurface;
 }
 
 void GameSys::insertSequence(int sequenceId, int id, int sequenceId2, int id2, int flags, int totalDuration, int16 x, int16 y) {
