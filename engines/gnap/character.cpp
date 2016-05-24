@@ -430,22 +430,12 @@ int PlayerGnap::getSequenceId(int kind, Common::Point gridPos) {
 
 	case kGSMoan2:
 		if (gridPos.x > 0 && gridPos.y > 0) {
-			if (_pos.y > gridPos.y) {
-				if (_pos.x > gridPos.x) {
-					sequenceId = 0x832;
-					_idleFacing = kDirBottomLeft;
-				} else {
-					sequenceId = 0x7AA;
-					_idleFacing = kDirBottomRight;
-				}
+			if (_pos.x > gridPos.x) {
+				sequenceId = 0x832;
+				_idleFacing = kDirBottomLeft;
 			} else {
-				if (_pos.x > gridPos.x) {
-					sequenceId = 0x832;
-					_idleFacing = kDirBottomLeft;
-				} else {
-					sequenceId = 0x7AA;
-					_idleFacing = kDirBottomRight;
-				}
+				sequenceId = 0x7AA;
+				_idleFacing = kDirBottomRight;
 			}
 		} else if (_idleFacing != kDirBottomRight && _idleFacing != kDirUpRight) {
 			sequenceId = 0x832;
@@ -861,17 +851,10 @@ int PlayerGnap::getShowSequenceId(int index, int gridX, int gridY) {
 	Facing facing = _idleFacing;
 
 	if (gridY > 0 && gridX > 0) {
-		if (_pos.y > gridY) {
-			if (_pos.x > gridX)
-				_idleFacing = kDirUpLeft;
-			else
-				_idleFacing = kDirUpRight;
-		} else {
-			if (_pos.x > gridX)
-				_idleFacing = kDirUpLeft;
-			else
-				_idleFacing = kDirUpRight;
-		}
+		if (_pos.x > gridX)
+			_idleFacing = kDirUpLeft;
+		else
+			_idleFacing = kDirUpRight;
 	} else if (_idleFacing != kDirBottomRight && _idleFacing != kDirUpRight) {
 		_idleFacing = kDirUpLeft;
 	} else {
