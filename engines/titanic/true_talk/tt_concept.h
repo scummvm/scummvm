@@ -113,6 +113,11 @@ public:
 	 */
 	int getStatus() const { return _status; }
 
+	/**
+	 * True true if the concept is valid
+	 */
+	bool isValid() const { return _status == SS_VALID; }
+
 	void setFlag(bool val) { _flag = val; }
 
 	void set1C(int val) { _field1C = val; }

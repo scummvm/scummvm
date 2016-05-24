@@ -29,12 +29,13 @@ namespace Titanic {
 
 class TTconceptNode {
 public:
-	TTconcept *_concept0P;
-	TTconcept *_concept1P;
-	TTconcept *_concept2P;
-	TTconcept *_concept3P;
-	TTconcept *_concept4P;
-	TTconcept *_concept5P;
+	TTconcept *_concepts[6];
+	TTconcept *&_concept0P;
+	TTconcept *&_concept1P;
+	TTconcept *&_concept2P;
+	TTconcept *&_concept3P;
+	TTconcept *&_concept4P;
+	TTconcept *&_concept5P;
 	int _field18;
 	int _field1C;
 	TTconceptNode *_nextP;

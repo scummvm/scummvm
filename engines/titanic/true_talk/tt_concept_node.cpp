@@ -26,20 +26,28 @@
 
 namespace Titanic {
 
-TTconceptNode::TTconceptNode() : _concept0P(nullptr), 
-		_concept1P(nullptr), _concept2P(nullptr), _concept3P(nullptr),
-		_concept4P(nullptr), _concept5P(nullptr), _field18(0),
-		_field1C(0), _nextP(nullptr), _status(0) {
+TTconceptNode::TTconceptNode() : _concept0P(_concepts[0]), _concept1P(_concepts[1]),
+		_concept2P(_concepts[2]), _concept3P(_concepts[3]), _concept4P(_concepts[4]),
+		_concept5P(_concepts[5]), _field18(0), _field1C(0), _nextP(nullptr), _status(0) {
 }
 
-TTconceptNode::TTconceptNode(const TTconceptNode &src) : _concept0P(nullptr),
-		_concept1P(nullptr), _concept2P(nullptr), _concept3P(nullptr),
-		_concept4P(nullptr), _concept5P(nullptr), _field18(0),
-		_field1C(0), _nextP(nullptr), _status(0) {
+TTconceptNode::TTconceptNode(const TTconceptNode &src) : _concept0P(_concepts[0]), _concept1P(_concepts[1]),
+		_concept2P(_concepts[2]), _concept3P(_concepts[3]), _concept4P(_concepts[4]),
+		_concept5P(_concepts[5]), _field18(0), _field1C(0), _nextP(nullptr), _status(0) {
 	if (src._status) {
 		_status = SS_5;
 	} else {
-		// TODO
+		for (int idx = 0; idx < 6; ++idx) {
+			if (src._concepts[idx]) {
+				_concepts[idx] = new TTconcept(*src._concepts[idx]);
+				if (!_concepts[idx]->isValid())
+					_status = SS_11;
+			}
+		}
+
+		_field18 = src._field18;
+		_field1C = src._field1C;
+		_nextP = src._nextP;
 	}
 }
 
