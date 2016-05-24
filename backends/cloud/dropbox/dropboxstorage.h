@@ -73,7 +73,7 @@ public:
 	virtual Networking::NetworkReadStream *streamFile(Common::String path);
 
 	/** Calls the callback when finished. */
-	virtual void download(Common::String path, BoolCallback callback);
+	virtual void download(Common::String remotePath, Common::String localPath, BoolCallback callback);
 
 	/** Calls the callback when finished. */
 	virtual void remove(Common::String path, BoolCallback callback) {} //TODO

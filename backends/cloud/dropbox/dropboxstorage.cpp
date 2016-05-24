@@ -30,6 +30,7 @@
 #include "common/debug.h"
 #include "common/json.h"
 #include <curl/curl.h>
+#include <common/file.h>
 
 namespace Cloud {
 namespace Dropbox {
@@ -100,15 +101,23 @@ Networking::NetworkReadStream *DropboxStorage::streamFile(Common::String path) {
 	return request->execute();
 }
 
-void DropboxStorage::download(Common::String path, BoolCallback callback) {
-	ConnMan.addRequest(new DownloadRequest(callback, streamFile(path)));
+void DropboxStorage::download(Common::String remotePath, Common::String localPath, BoolCallback callback) {
+	Common::DumpFile *f = new Common::DumpFile();
+	if (!f->open(localPath)) {
+		warning("DropboxStorage: unable to open file to download into");
+		if (callback) (*callback)(false);
+		delete f;
+		return;
+	}
+
+	ConnMan.addRequest(new DownloadRequest(callback, streamFile(remotePath), f));
 }
 
 void DropboxStorage::syncSaves(BoolCallback callback) {
 	//this is not the real syncSaves() implementation	
 	//"" is root in Dropbox, not "/"
 	//listDirectory("", new Common::Callback<DropboxStorage, Common::Array<StorageFile> >(this, &DropboxStorage::printFiles), true);
-	download("/notempty.txt", 0);
+	download("/remote/test.jpg", "local/test.jpg", 0);
 }
 
 void DropboxStorage::info(StorageInfoCallback outerCallback) {

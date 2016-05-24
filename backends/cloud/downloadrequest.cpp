@@ -26,38 +26,45 @@
 
 namespace Cloud {
 
-DownloadRequest::DownloadRequest(Storage::BoolCallback callback, Networking::NetworkReadStream *stream):
-	Request(0), _boolCallback(callback), _stream(stream) {}
+DownloadRequest::DownloadRequest(Storage::BoolCallback callback, Networking::NetworkReadStream *stream, Common::DumpFile *dumpFile):
+	Request(0), _boolCallback(callback), _remoteFileStream(stream), _localFile(dumpFile) {}
 
 bool DownloadRequest::handle() {
-	if (!_stream) {
+	if (!_remoteFileStream) {
 		warning("DownloadRequest: no stream to read");
+		return true;
+	}
+
+	if (!_localFile) {
+		warning("DownloadRequest: no file to write");
+		return true;
+	}
+
+	if (!_localFile->isOpen()) {
+		warning("DownloadRequest: failed to open file to write");
 		return true;
 	}
 
 	const int kBufSize = 16 * 1024;
 	char buf[kBufSize];
-	uint32 readBytes = _stream->read(buf, kBufSize);
+	uint32 readBytes = _remoteFileStream->read(buf, kBufSize);
 
-	//TODO: save into file
-	/*
 	if (readBytes != 0)
-		if (_outputStream.write(buf, readBytes) != readBytes)
-			warning("DropboxDownloadRequest: unable to write all received bytes into output stream");
-	*/
+		if (_localFile->write(buf, readBytes) != readBytes) {
+			warning("DownloadRequest: unable to write all received bytes into output file");
+			if (_boolCallback) (*_boolCallback)(false);
+			return true;
+		}
 
-	buf[readBytes] = 0;
-	debug("%s", buf); //TODO: remove
-
-	if (_stream->eos()) {
-		if (_stream->httpResponseCode() != 200) {
-			warning("HTTP response code is not 200 OK (it's %ld)", _stream->httpResponseCode());
+	if (_remoteFileStream->eos()) {
+		if (_remoteFileStream->httpResponseCode() != 200) {
+			warning("HTTP response code is not 200 OK (it's %ld)", _remoteFileStream->httpResponseCode());
 			//TODO: do something about it actually			
 		}
 
-		if (_boolCallback) (*_boolCallback)(_stream->httpResponseCode() == 200);
+		if (_boolCallback) (*_boolCallback)(_remoteFileStream->httpResponseCode() == 200);
 
-		//TODO: close file stream
+		_localFile->close(); //yes, I know it's closed automatically in ~DumpFile()
 		return true;
 	}
 
