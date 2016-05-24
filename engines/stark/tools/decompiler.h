@@ -76,6 +76,11 @@ private:
 	ASTCondition *buildASTConditionFromBlock(ASTNode *parent, Block *block);
 	ASTLoop *buildASTLoopFromBlock(ASTNode *parent, Block *block);
 
+	// AST verification
+	void verifyAST();
+	bool verifyCommandInAST(CFGCommand *cfgCommand);
+	bool verifyCommandSuccessorInAST(CFGCommand *cfgCommand, CFGCommand *cfgSuccessor, ASTNode *astSuccessor, const char *successorType);
+
 	Common::String _error;
 
 	Common::Array<CFGCommand *> _commands;

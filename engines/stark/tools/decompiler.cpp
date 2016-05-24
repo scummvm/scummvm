@@ -53,6 +53,7 @@ Decompiler::Decompiler(Resources::Script *script) :
 	buildBlocks();
 	analyseControlFlow();
 	_astHead = buildAST();
+	verifyAST();
 }
 
 void Decompiler::printCommands() const {
@@ -317,6 +318,68 @@ void Decompiler::printDecompiled() {
 	if (_astHead) {
 		_astHead->print(0);
 	}
+}
+
+void Decompiler::verifyAST() {
+	for (uint i = 0; i < _commands.size(); i++) {
+		CFGCommand *command = _commands[i];
+		if (!verifyCommandInAST(command)) {
+			return;
+		}
+	}
+}
+
+bool Decompiler::verifyCommandInAST(CFGCommand *cfgCommand) {
+	Common::Array<const ASTCommand *> list = _astHead->listCommands(cfgCommand->getIndex());
+
+	if (list.empty()) {
+		_error = Common::String::format("Command %d not found in the AST", cfgCommand->getIndex());
+		return false;
+	}
+
+	if (list.size() > 1) {
+		_error = Common::String::format("Command %d found %d times in the AST", cfgCommand->getIndex(), list.size());
+		return false;
+	}
+
+	const ASTCommand *astCommand = list[0];
+
+	ASTNode *follower = nullptr, *trueBranch = nullptr, *falseBranch = nullptr;
+	astCommand->findSuccessors(&follower, &trueBranch, &falseBranch);
+
+	if (!verifyCommandSuccessorInAST(cfgCommand, cfgCommand->getFollower(), follower, "follower")) {
+		return false;
+	}
+
+	if (!verifyCommandSuccessorInAST(cfgCommand, cfgCommand->getTrueBranch(), trueBranch, "trueBranch")) {
+		return false;
+	}
+
+	if (!verifyCommandSuccessorInAST(cfgCommand, cfgCommand->getFalseBranch(), falseBranch, "falseBranch")) {
+		return false;
+	}
+
+	return true;
+}
+
+bool Decompiler::verifyCommandSuccessorInAST(CFGCommand *cfgCommand, CFGCommand *cfgSuccessor, ASTNode *astSuccessor, const char *successorType) {
+	if (cfgSuccessor) {
+		if (!astSuccessor) {
+			_error = Common::String::format("Command %d does not have a %s in the AST",
+			                                cfgCommand->getIndex(), successorType);
+			return false;
+		}
+
+		const ASTCommand *astSuccessorCommand = astSuccessor->getFirstCommand();
+		int16 expectedSuccessorIndex = cfgSuccessor->getIndex();
+		if (astSuccessorCommand->getIndex() != expectedSuccessorIndex) {
+			_error = Common::String::format("Command %d has an unexpected %s %d in the AST, should be %d",
+			                                cfgCommand->getIndex(), successorType, astSuccessorCommand->getIndex(), expectedSuccessorIndex);
+			return false;
+		}
+	}
+
+	return true;
 }
 
 } // End of namespace Tools

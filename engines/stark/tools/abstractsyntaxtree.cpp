@@ -45,6 +45,10 @@ void ASTNode::printWithDepth(uint depth, const Common::String &string) const {
 	debug("%s%s", prefix.c_str(), string.c_str());
 }
 
+void ASTNode::findSuccessors(ASTNode **follower, ASTNode **trueBranch, ASTNode **falseBranch) const {
+	findSuccessorsIntern(this, follower, trueBranch, falseBranch);
+}
+
 ASTBlock::ASTBlock(ASTNode *parent) :
 		ASTNode(parent) {
 
@@ -66,6 +70,45 @@ void ASTBlock::print(uint depth) {
 	}
 }
 
+Common::Array<const ASTCommand *> ASTBlock::listCommands(uint16 index) const {
+	Common::Array<const ASTCommand *> list;
+
+	for (uint i = 0; i < _children.size(); i++) {
+		list.push_back(_children[i]->listCommands(index));
+	}
+
+	return list;
+}
+
+void ASTBlock::findSuccessorsIntern(const ASTNode *node, ASTNode **follower, ASTNode **trueBranch, ASTNode **falseBranch) const {
+	if (node == this) {
+		if (_parent) {
+			_parent->findSuccessorsIntern(node, follower, trueBranch, falseBranch);
+		}
+		return;
+	}
+
+	for (uint i = 0; i < _children.size() - 1; i++) {
+		if (node == _children[i]) {
+			*follower = _children[i+1];
+			return;
+		}
+	}
+
+	if (node == _children.back()) {
+		if (_parent) {
+			_parent->findSuccessorsIntern(this, follower, trueBranch, falseBranch);
+		}
+		return;
+	}
+
+	error("Unknown node");
+}
+
+const ASTCommand *ASTBlock::getFirstCommand() const {
+	return _children[0]->getFirstCommand();
+}
+
 ASTCommand::ASTCommand(ASTNode *parent, Command *command) :
 		ASTNode(parent),
 		Command(command) {
@@ -78,6 +121,26 @@ void ASTCommand::print(uint depth) {
 
 Common::String ASTCommand::callString() {
 	return Common::String::format("%s(%s)", _subTypeDesc->name, describeArguments().c_str());
+}
+
+Common::Array<const ASTCommand *> ASTCommand::listCommands(uint16 index) const {
+	Common::Array<const ASTCommand *> list;
+
+	if (_index == index) {
+		list.push_back(this);
+	}
+
+	return list;
+}
+
+void ASTCommand::findSuccessorsIntern(const ASTNode *node, ASTNode **follower, ASTNode **trueBranch, ASTNode **falseBranch) const {
+	assert(node == this);
+
+	_parent->findSuccessorsIntern(node, follower, trueBranch, falseBranch);
+}
+
+const ASTCommand *ASTCommand::getFirstCommand() const {
+	return this;
 }
 
 ASTCondition::ASTCondition(ASTNode *parent) :
@@ -108,6 +171,58 @@ void ASTCondition::print(uint depth) {
 	printWithDepth(depth, "}");
 }
 
+Common::Array<const ASTCommand *> ASTCondition::listCommands(uint16 index) const {
+	Common::Array<const ASTCommand *> list;
+
+	list.push_back(condition->listCommands(index));
+	list.push_back(thenBlock->listCommands(index));
+	if (elseBlock) {
+		list.push_back(elseBlock->listCommands(index));
+	}
+
+	return list;
+}
+
+void ASTCondition::findSuccessorsIntern(const ASTNode *node, ASTNode **follower, ASTNode **trueBranch, ASTNode **falseBranch) const {
+	if (node == this) {
+		_parent->findSuccessorsIntern(node, follower, trueBranch, falseBranch);
+		return;
+	}
+
+	if (node == condition) {
+		ASTNode *nextNode = nullptr;
+		if (!elseBlock) {
+			_parent->findSuccessorsIntern(this, &nextNode, nullptr, nullptr);
+		}
+
+		if (!invertedCondition) {
+			*trueBranch = thenBlock;
+			*falseBranch = elseBlock ? elseBlock : nextNode;
+		} else {
+			*trueBranch = elseBlock ? elseBlock : nextNode;
+			*falseBranch = thenBlock;
+		}
+
+		return;
+	}
+
+	if (node == thenBlock) {
+		_parent->findSuccessorsIntern(this, follower, trueBranch, falseBranch);
+		return;
+	}
+
+	if (node == elseBlock) {
+		_parent->findSuccessorsIntern(this, follower, trueBranch, falseBranch);
+		return;
+	}
+
+	error("Unknown node");
+}
+
+const ASTCommand *ASTCondition::getFirstCommand() const {
+	return condition->getFirstCommand();
+}
+
 ASTLoop::ASTLoop(ASTNode *parent) :
 		ASTNode(parent),
 		condition(nullptr),
@@ -128,6 +243,48 @@ void ASTLoop::print(uint depth) {
 	loopBlock->print(depth + 1);
 
 	printWithDepth(depth, "}");
+}
+
+Common::Array<const ASTCommand *> ASTLoop::listCommands(uint16 index) const {
+	Common::Array<const ASTCommand *> list;
+
+	list.push_back(condition->listCommands(index));
+	list.push_back(loopBlock->listCommands(index));
+
+	return list;
+}
+
+void ASTLoop::findSuccessorsIntern(const ASTNode *node, ASTNode **follower, ASTNode **trueBranch, ASTNode **falseBranch) const {
+	if (node == this) {
+		_parent->findSuccessorsIntern(node, follower, trueBranch, falseBranch);
+		return;
+	}
+
+	if (node == condition) {
+		ASTNode *nextNode = nullptr;
+		_parent->findSuccessorsIntern(this, &nextNode, nullptr, nullptr);
+
+		if (!invertedCondition) {
+			*trueBranch = loopBlock;
+			*falseBranch = nextNode;
+		} else {
+			*trueBranch = nextNode;
+			*falseBranch = loopBlock;
+		}
+
+		return;
+	}
+
+	if (node == loopBlock) {
+		*follower = condition;
+		return;
+	}
+
+	error("Unknown node");
+}
+
+const ASTCommand *ASTLoop::getFirstCommand() const {
+	return condition->getFirstCommand();
 }
 
 } // End of namespace Tools
