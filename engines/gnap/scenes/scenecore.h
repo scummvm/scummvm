@@ -49,7 +49,7 @@ protected:
 
 class CutScene : public Scene {
 public:
-	CutScene(GnapEngine *vm) : Scene(vm) {};
+	CutScene(GnapEngine *vm);
 	virtual ~CutScene() {};
 
 	virtual int init() = 0;

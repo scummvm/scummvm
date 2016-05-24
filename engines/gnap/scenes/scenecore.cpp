@@ -649,6 +649,21 @@ bool Scene::clearKeyStatus() {
 	return false;
 }
 
+/****************************************************************************/
+
+CutScene::CutScene(GnapEngine *vm) : Scene(vm) {
+	_itemsCount = -1;
+	
+	for (int i = 0; i < 16; i++) {
+		_resourceIdArr[i] = -1;
+		_sequenceCountArr[i] = -1;
+		_canSkip[i] = false;
+	}
+
+	for (int i = 0; i < 50; i++)
+		_sequenceIdArr[i] = -1;
+};
+
 void CutScene::run() {
 	GameSys& gameSys = *_vm->_gameSys;
 
