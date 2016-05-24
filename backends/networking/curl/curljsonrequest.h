@@ -23,21 +23,14 @@
 #ifndef BACKENDS_NETWORKING_CURL_CURLJSONREQUEST_H
 #define BACKENDS_NETWORKING_CURL_CURLJSONREQUEST_H
 
-#include "backends/networking/curl/request.h"
+#include "backends/networking/curl/curlrequest.h"
 #include "common/memstream.h"
-#include "common/json.h"
-
-struct curl_slist;
 
 namespace Networking {
 
 class NetworkReadStream;
 
-class CurlJsonRequest : public Request {	
-	const char *_url;
-	NetworkReadStream *_stream;
-	curl_slist *_headersList;
-	Common::String _postFields;
+class CurlJsonRequest: public CurlRequest {	
 	Common::MemoryWriteStreamDynamic _contentsStream;
 
 	/** Prepares raw bytes from _contentsStream to be parsed with Common::JSON::parse(). */
@@ -48,10 +41,6 @@ public:
 	virtual ~CurlJsonRequest();
 
 	virtual bool handle();
-
-	void addHeader(Common::String header);
-
-	void addPostField(Common::String header);
 };
 
 }  //end of namespace Networking

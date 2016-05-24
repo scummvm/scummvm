@@ -20,32 +20,26 @@
 *
 */
 
-#ifndef BACKENDS_CLOUD_DROPBOX_DROPBOXLISTDIRECTORYREQUEST_H
-#define BACKENDS_CLOUD_DROPBOX_DROPBOXLISTDIRECTORYREQUEST_H
+#ifndef BACKENDS_CLOUD_DOWNLOADREQUEST_H
+#define BACKENDS_CLOUD_DOWNLOADREQUEST_H
 
-#include "backends/cloud/storage.h"
 #include "backends/networking/curl/request.h"
-#include "common/callback.h"
+#include "backends/networking/curl/networkreadstream.h"
+#include "backends/cloud/storage.h"
 
 namespace Cloud {
-namespace Dropbox {
 
-class DropboxListDirectoryRequest: public Networking::Request {
-	Storage::FileArrayCallback _filesCallback;
-	Common::String _token;
-	bool _complete;
-	Common::Array<StorageFile> _files;
-
-	void responseCallback(void *jsonPtr);
+class DownloadRequest: public Networking::Request {	
+	Networking::NetworkReadStream *_stream;
+	Storage::BoolCallback _boolCallback;
 
 public:
-	DropboxListDirectoryRequest(Common::String token, Common::String path, Storage::FileArrayCallback cb, bool recursive = false);
-	virtual ~DropboxListDirectoryRequest() { delete _filesCallback; }
+	DownloadRequest(Storage::BoolCallback callback, Networking::NetworkReadStream *stream);
+	virtual ~DownloadRequest() {}
 
 	virtual bool handle();
 };
 
-} //end of namespace Dropbox
 } //end of namespace Cloud
 
 #endif

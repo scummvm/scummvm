@@ -67,10 +67,13 @@ public:
 	virtual void listDirectory(Common::String path, FileArrayCallback callback, bool recursive = false);
 
 	/** Calls the callback when finished. */
-	virtual void upload(Common::String path, Common::ReadStream* contents, BoolCallback callback) {} //TODO
+	virtual void upload(Common::String path, Common::ReadStream *contents, BoolCallback callback) {} //TODO
 
-	/** Returns pointer to Common::ReadStream. */
-	virtual void download(Common::String path, ReadStreamCallback callback) {} //TODO
+	/** Returns pointer to Networking::NetworkReadStream. */
+	virtual Networking::NetworkReadStream *streamFile(Common::String path);
+
+	/** Calls the callback when finished. */
+	virtual void download(Common::String path, BoolCallback callback);
 
 	/** Calls the callback when finished. */
 	virtual void remove(Common::String path, BoolCallback callback) {} //TODO

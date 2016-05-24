@@ -23,6 +23,7 @@
 
 #include "backends/cloud/dropbox/dropboxstorage.h"
 #include "backends/cloud/dropbox/dropboxlistdirectoryrequest.h"
+#include "backends/cloud/downloadrequest.h"
 #include "backends/networking/curl/connectionmanager.h"
 #include "backends/networking/curl/curljsonrequest.h"
 #include "common/config-manager.h"
@@ -86,10 +87,28 @@ void DropboxStorage::listDirectory(Common::String path, FileArrayCallback outerC
 	ConnMan.addRequest(new DropboxListDirectoryRequest(_token, path, outerCallback, recursive));
 }
 
+Networking::NetworkReadStream *DropboxStorage::streamFile(Common::String path) {
+	Common::JSONObject jsonRequestParameters;
+	jsonRequestParameters.setVal("path", new Common::JSONValue(path));
+	Common::JSONValue value(jsonRequestParameters);
+
+	Networking::CurlRequest *request = new Networking::CurlRequest(0, "https://content.dropboxapi.com/2/files/download");
+	request->addHeader("Authorization: Bearer " + _token);
+	request->addHeader("Dropbox-API-Arg: " + Common::JSON::stringify(&value));
+	request->addHeader("Content-Type: "); //required to be empty (as we do POST, it's usually app/form-url-encoded)
+
+	return request->execute();
+}
+
+void DropboxStorage::download(Common::String path, BoolCallback callback) {
+	ConnMan.addRequest(new DownloadRequest(callback, streamFile(path)));
+}
+
 void DropboxStorage::syncSaves(BoolCallback callback) {
 	//this is not the real syncSaves() implementation	
 	//"" is root in Dropbox, not "/"
-	listDirectory("", new Common::Callback<DropboxStorage, Common::Array<StorageFile> >(this, &DropboxStorage::printFiles), true);
+	//listDirectory("", new Common::Callback<DropboxStorage, Common::Array<StorageFile> >(this, &DropboxStorage::printFiles), true);
+	download("/notempty.txt", 0);
 }
 
 void DropboxStorage::info(StorageInfoCallback outerCallback) {

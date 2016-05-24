@@ -23,7 +23,6 @@
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 
 #include "backends/networking/curl/curljsonrequest.h"
-#include "backends/networking/curl/connectionmanager.h"
 #include "backends/networking/curl/networkreadstream.h"
 #include "common/debug.h"
 #include "common/json.h"
@@ -31,13 +30,10 @@
 
 namespace Networking {
 
-CurlJsonRequest::CurlJsonRequest(Common::BaseCallback<> *cb, const char *url): Request(cb), _stream(0), _headersList(0), _contentsStream(DisposeAfterUse::YES) {
-	_url = url;
-}
+CurlJsonRequest::CurlJsonRequest(Common::BaseCallback<> *cb, const char *url):
+	CurlRequest(cb, url), _contentsStream(DisposeAfterUse::YES) {}
 
-CurlJsonRequest::~CurlJsonRequest() {
-	if (_stream) delete _stream;
-}
+CurlJsonRequest::~CurlJsonRequest() {}
 
 char *CurlJsonRequest::getPreparedContents() {
 	//write one more byte in the end
@@ -70,7 +66,7 @@ bool CurlJsonRequest::handle() {
 
 		if (_stream->eos()) {			
 			if (_stream->httpResponseCode() != 200)
-				warning("HTTP response code is not 200 OK (it's %d)", _stream->httpResponseCode());
+				warning("HTTP response code is not 200 OK (it's %ld)", _stream->httpResponseCode());
 
 			if (_callback) {
 				char *contents = getPreparedContents();
@@ -85,17 +81,5 @@ bool CurlJsonRequest::handle() {
 
 	return false;
 }
-
-void CurlJsonRequest::addHeader(Common::String header) {
-	_headersList = curl_slist_append(_headersList, header.c_str());
-}
-
-void CurlJsonRequest::addPostField(Common::String keyValuePair) {
-	if (_postFields == "")
-		_postFields = keyValuePair;
-	else
-		_postFields += "&" + keyValuePair;
-}
-
 
 } //end of namespace Networking

@@ -29,6 +29,7 @@
 #include "common/callback.h"
 #include "backends/cloud/storagefile.h"
 #include "backends/cloud/storageinfo.h"
+#include "backends/networking/curl/networkreadstream.h"
 
 namespace Cloud {
 
@@ -62,10 +63,13 @@ public:
 	virtual void listDirectory(Common::String path, FileArrayCallback callback, bool recursive = false) = 0;
 
 	/** Calls the callback when finished. */
-	virtual void upload(Common::String path, Common::ReadStream* contents, BoolCallback callback) = 0;
+	virtual void upload(Common::String path, Common::ReadStream *contents, BoolCallback callback) = 0;
 
-	/** Returns pointer to Common::ReadStream. */
-	virtual void download(Common::String path, ReadStreamCallback callback) = 0;
+	/** Returns pointer to Networking::NetworkReadStream. */
+	virtual Networking::NetworkReadStream *streamFile(Common::String path) = 0;
+
+	/** Calls the callback when finished. */
+	virtual void download(Common::String path, BoolCallback callback) = 0;
 
 	/** Calls the callback when finished. */
 	virtual void remove(Common::String path, BoolCallback callback) = 0;

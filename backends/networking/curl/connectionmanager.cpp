@@ -83,7 +83,7 @@ void ConnectionManager::handle() {
 
 void ConnectionManager::interateRequests() {
 	//call handle() of all running requests (so they can do their work)
-	debug("handler's here");
+	debug("handling %d request(s)", _requests.size());
 	for (Common::Array<Request *>::iterator i = _requests.begin(); i != _requests.end();) {
 		if ((*i)->handle()) {
 			delete (*i);

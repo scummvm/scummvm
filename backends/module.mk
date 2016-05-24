@@ -24,6 +24,7 @@ MODULE_OBJS += \
 	cloud/iso8601.o \
 	cloud/manager.o \
 	cloud/storagefile.o \
+	cloud/downloadrequest.o \
 	cloud/dropbox/dropboxstorage.o \
 	cloud/dropbox/dropboxlistdirectoryrequest.o
 endif
@@ -32,6 +33,7 @@ ifdef USE_LIBCURL
 MODULE_OBJS += \
 	networking/curl/connectionmanager.o \
 	networking/curl/networkreadstream.o \
+	networking/curl/curlrequest.o \
 	networking/curl/curljsonrequest.o
 endif
 

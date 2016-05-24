@@ -20,32 +20,39 @@
 *
 */
 
-#ifndef BACKENDS_CLOUD_DROPBOX_DROPBOXLISTDIRECTORYREQUEST_H
-#define BACKENDS_CLOUD_DROPBOX_DROPBOXLISTDIRECTORYREQUEST_H
+#ifndef BACKENDS_NETWORKING_CURL_CURLREQUEST_H
+#define BACKENDS_NETWORKING_CURL_CURLREQUEST_H
 
-#include "backends/cloud/storage.h"
 #include "backends/networking/curl/request.h"
-#include "common/callback.h"
+#include "common/str.h"
 
-namespace Cloud {
-namespace Dropbox {
+struct curl_slist;
 
-class DropboxListDirectoryRequest: public Networking::Request {
-	Storage::FileArrayCallback _filesCallback;
-	Common::String _token;
-	bool _complete;
-	Common::Array<StorageFile> _files;
+namespace Networking {
 
-	void responseCallback(void *jsonPtr);
+class NetworkReadStream;
+
+class CurlRequest: public Request {
+protected:
+	const char *_url;
+	NetworkReadStream *_stream;
+	curl_slist *_headersList;
+	Common::String _postFields;
 
 public:
-	DropboxListDirectoryRequest(Common::String token, Common::String path, Storage::FileArrayCallback cb, bool recursive = false);
-	virtual ~DropboxListDirectoryRequest() { delete _filesCallback; }
+	CurlRequest(Common::BaseCallback<> *cb, const char *url);
+	virtual ~CurlRequest();
 
 	virtual bool handle();
+
+	void addHeader(Common::String header);
+
+	void addPostField(Common::String header);
+
+	/** Start this Request with ConnMan. Returns its ReadStream. */
+	NetworkReadStream *execute();
 };
 
-} //end of namespace Dropbox
-} //end of namespace Cloud
+}  //end of namespace Networking
 
 #endif

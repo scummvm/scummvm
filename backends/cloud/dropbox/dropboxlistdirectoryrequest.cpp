@@ -24,6 +24,7 @@
 #include "backends/cloud/iso8601.h"
 #include "backends/networking/curl/connectionmanager.h"
 #include "backends/networking/curl/curljsonrequest.h"
+#include "common/json.h"
 
 namespace Cloud {
 namespace Dropbox {

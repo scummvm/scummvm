@@ -52,7 +52,8 @@ NetworkReadStream::NetworkReadStream(const char *url, curl_slist *headersList, C
 }
 
 NetworkReadStream::~NetworkReadStream() {
-	curl_easy_cleanup(_easy);
+	if (_easy)
+		curl_easy_cleanup(_easy);
 }
 
 bool NetworkReadStream::eos() const {
