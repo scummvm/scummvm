@@ -1052,12 +1052,12 @@ void GameSys::fatUpdateFrame() {
 						}
 						currFrameNum = gfxItem->_currFrameNum;
 						if (animation->_framesCount > currFrameNum) {
-							while (animation->_framesCount > currFrameNum &&
-								animation->frames[currFrameNum]._duration <= duration) {
+							while (animation->_framesCount > currFrameNum
+								&& animation->frames[currFrameNum]._duration <= duration) {
 								if (animation->frames[currFrameNum]._soundId != -1)
 									_soundIds.push_back((gfxItem->_sequenceId & 0xFFFF0000) | animation->frames[currFrameNum]._soundId);
-									duration -= animation->frames[currFrameNum]._duration;
-									++currFrameNum;
+								duration -= animation->frames[currFrameNum]._duration;
+								++currFrameNum;
 							}
 							if (animation->_framesCount > currFrameNum)
 								gfxItem->_currFrame = animation->frames[currFrameNum++];
