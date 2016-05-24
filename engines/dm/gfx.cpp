@@ -1052,6 +1052,7 @@ void DisplayMan::drawSquareD1C(direction dir, int16 posX, int16 posY) {
 		break;
 	}
 }
+
 void DisplayMan::drawSquareD0L(direction dir, int16 posX, int16 posY) {
 	uint16 squareAspect[5];
 	_vm->_dungeonMan->setSquareAspect(squareAspect, dir, posX, posY);
@@ -1434,6 +1435,7 @@ bool DisplayMan::isDrawnWallOrnAnAlcove(int16 wallOrnOrd, ViewWall viewWallIndex
 			bitmapGreen = _bitmaps[nativeBitmapIndex];
 			if (viewWallIndex == kViewWall_D1R_LEFT) {
 				blitToBitmap(bitmapGreen, coordinateSetA[4], coordinateSetA[5], _tmpBitmap, coordinateSetA[4]);
+				flipBitmapHorizontal(_tmpBitmap, coordinateSetA[4], coordinateSetA[5]);
 				bitmapGreen = _tmpBitmap;
 			}
 			var_X = 0;
@@ -1455,11 +1457,14 @@ bool DisplayMan::isDrawnWallOrnAnAlcove(int16 wallOrnOrd, ViewWall viewWallIndex
 				}
 			}
 			int16 pixelWidth = (coordinateSetA + coordinateSetOffset)[1] - (coordinateSetA + coordinateSetOffset)[0];
-			// TODO: I skipped some bitmap shrinking code here
+			blitToBitmapShrinkWithPalChange(_bitmaps[nativeBitmapIndex], coordSetB[4] << 1, coordSetB[5], _tmpBitmap, pixelWidth + 1, coordinateSetA[5],
+				(viewWallIndex <= kViewWall_D3R_FRONT) ? gPalChangesDoorButtonAndWallOrn_D3 : gPalChangesDoorButtonAndWallOrn_D2);
 			bitmapGreen = _bitmaps[nativeBitmapIndex];
 			var_X = pixelWidth;
 			if (flipHorizontal) {
-				blitToBitmap(bitmapGreen, coordSetB[4], coordSetB[5], _tmpBitmap, coordSetB[4]);
+				if(bitmapGreen != _tmpBitmap)
+					blitToBitmap(bitmapGreen, coordSetB[4], coordSetB[5], _tmpBitmap, coordSetB[4]);
+				flipBitmapHorizontal(_tmpBitmap, coordSetB[4], coordSetB[5]);
 				bitmapGreen = _tmpBitmap;
 				var_X = 15 - (var_X & 0xF);
 			} else if (viewWallIndex == kViewWall_D2L_FRONT) {
@@ -1495,10 +1500,26 @@ bool DisplayMan::isDrawnWallOrnAnAlcove(int16 wallOrnOrd, ViewWall viewWallIndex
 
 		if ((viewWallIndex == kViewWall_D1C_FRONT) && _championPortraitOrdinal--) {
 			Box &box = gBoxChampionPortraitOnWall;
-			blitToScreen(_bitmaps[kChampionPortraitsIndice], 256, (_championPortraitOrdinal & 0x7) << 5, _championPortraitOrdinal, box.X1, box.X2, box.Y1, box.Y2,
+			blitToScreen(_bitmaps[kChampionPortraitsIndice], 256, (_championPortraitOrdinal & 0x7) << 5, (_championPortraitOrdinal >> 3) * 29, box.X1, box.X2, box.Y1, box.Y2,
 						 kColorDarkGary, gDungeonViewport);
 		}
 		return isAlcove;
 	}
 	return false;
+}
+
+
+void DisplayMan::blitToBitmapShrinkWithPalChange(byte *srcBitmap, int16 srcWidth, int16 srcHeight, byte *destBitmap, int16 destWidth, int16 destHeight, byte *palChange) {
+	double rateW = srcWidth / destWidth;
+	double rateH = srcHeight / destHeight;
+
+	for (uint16 y = 0; y < destHeight; ++y) {
+		for (uint16 x = 0; x < destWidth; ++x) {
+			if (palChange)
+				destBitmap[y * destWidth + x] = palChange[srcBitmap[(int)(y * rateH * srcWidth) + (int)(x * rateW)]];
+			else
+				destBitmap[y * destWidth + x] = srcBitmap[(int)(y * rateH * srcWidth) + (int)(x * rateW)];
+		}
+	}
+
 }

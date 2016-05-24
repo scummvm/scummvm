@@ -206,6 +206,9 @@ public:
 					  byte *destBitmap, uint16 destWidth,
 					  uint16 destFromX, uint16 destToX, uint16 destFromY, uint16 destToY,
 					  Color transparent = kColorNoTransparency, Viewport &viewport = gDefultViewPort);
+	void blitToBitmapShrinkWithPalChange(byte *srcBitmap, int16 srcWidth, int16 srcHight,
+										 byte *destBitmap, int16 destWidth, int16 destHeight, byte *palChange); // @ F0129_VIDEO_BlitShrinkWithPaletteChanges
+
 	void blitToBitmap(byte *srcBitmap, uint16 srcWidth, uint16 srcHeight, byte *destBitmap, uint16 destWidth, uint16 destX = 0, uint16 destY = 0);
 	void blitToScreen(byte *srcBitmap, uint16 srcWidth, uint16 srcX, uint16 srcY,
 					  uint16 destFromX, uint16 destToX, uint16 destFromY, uint16 destToY,
