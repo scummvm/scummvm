@@ -2479,6 +2479,13 @@ void ScummEngine::setActorRedrawFlags() {
 			_actors[j]->_needRedraw = true;
 		}
 	} else {
+		if (_game.heversion >= 72) {
+			for (j = 1; j < _numActors; j++) {
+				if (_actors[j]->_costume && _actors[j]->_heXmapNum)
+					_actors[j]->_needRedraw = true;
+			}
+		}
+
 		for (i = 0; i < _gdi->_numStrips; i++) {
 			int strip = _screenStartStrip + i;
 			if (testGfxAnyUsageBits(strip)) {
