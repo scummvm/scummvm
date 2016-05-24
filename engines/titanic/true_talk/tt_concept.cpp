@@ -242,6 +242,11 @@ bool TTconcept::checkWordId2() const {
 	return (_wordP && _wordP->_id == 204) || (_scriptP && _scriptP->getId() == 3);
 }
 
+bool TTconcept::checkWordId3() const {
+	return isWordClass(WC_ABSTRACT) || isWordClass(WC_ADJECTIVE) ||
+		(isWordClass(WC_ADVERB) && getWordId() != 910);
+}
+
 bool TTconcept::checkWordClass() const {
 	return !_scriptP && _wordP && (_wordP->_wordClass == WC_THING || _wordP->_wordClass == WC_PRONOUN);
 }

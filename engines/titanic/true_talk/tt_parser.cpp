@@ -790,7 +790,13 @@ int TTparser::considerRequests(TTword *word) {
 				break;
 
 			case SEEK_ACTOR:
+				if (_sentenceConcept->_concept0P) {
 
+				}
+				else {
+
+				}
+				break;
 
 			case SEEK_OBJECT:
 			case SEEK_OBJECT_OVERRIDE:
@@ -854,6 +860,30 @@ int TTparser::addConcept(TTconcept *concept) {
 	return SS_VALID;
 }
 
+void TTparser::removeConcept(TTconcept *concept) {
+	// If no concept passed, exit immediately
+	if (!concept)
+		return;
+
+	if (_conceptP == concept) {
+		// Concept specified is the ver ystart of the linked list, so reset head pointer
+		_conceptP = _conceptP->_nextP;
+	} else {
+		// Scan through the linked list, looking for the specific concept
+		for (TTconcept *currP = _conceptP; currP; currP = currP->_nextP) {
+			if (currP->_nextP == concept) {
+				// Found match, so unlink the next link from the chain
+				currP->_nextP = currP->_nextP->_nextP;
+				break;
+			}
+		}
+	}
+
+	// FInally, delete the concept
+	concept->_nextP = nullptr;
+	delete concept;
+}
+
 int TTparser::fn1() {
 	// TODO
 	return 0;
@@ -915,6 +945,33 @@ void TTparser::conceptChanged(TTconcept *newConcept, TTconcept *oldConcept) {
 		_currentConceptP = nullptr;
 	else if (oldConcept && oldConcept == _currentConceptP)
 		_currentConceptP = newConcept;
+}
+
+bool TTparser::checkConcept2(TTconcept *concept, int conceptMode) {
+	switch (conceptMode) {
+	case 3:
+		return concept->checkWordId2();
+
+	case 5:
+		return concept->checkWordClass();
+
+	case 8:
+		return concept->checkWordId1();
+
+	case 9:
+		if (!concept->checkWordId3() && _sentenceConcept->_concept2P) {
+			if (!_sentenceConcept->_concept2P->checkWordId2() || !concept->checkWordId2()) {
+				return _sentenceConcept->_concept2P->checkWordClass() &&
+					concept->checkWordClass();
+			}
+		}
+		break;
+
+	default:
+		break;
+	}
+
+	return false;
 }
 
 } // End of namespace Titanic

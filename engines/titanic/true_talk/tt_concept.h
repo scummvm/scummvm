@@ -118,12 +118,20 @@ public:
 	 */
 	bool isValid() const { return _status == SS_VALID; }
 
+	/**
+	 * Returns true if the word is of the specified class
+	 */
+	bool isWordClass(WordClass wordClass) const { 
+		return _wordP && _wordP->isClass(wordClass); 
+	}
+
 	void setFlag(bool val) { _flag = val; }
 
 	void set1C(int val) { _field1C = val; }
 
 	bool checkWordId1() const;
 	bool checkWordId2() const;
+	bool checkWordId3() const;
 	bool checkWordClass() const;
 
 	/**

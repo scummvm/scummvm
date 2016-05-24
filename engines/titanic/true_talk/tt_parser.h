@@ -147,7 +147,6 @@ private:
 	int processRequests(TTword *word);
 
 	void addToConceptList(TTword *word);
-	int fn2(TTword *word);
 	int checkReferent(TTpronoun *pronoun);
 
 	/**
@@ -160,8 +159,15 @@ private:
 	 */
 	int addConcept(TTconcept *concept);
 
+	/**
+	 * Detaches a concept from the main concept list if prseent, then deletes it
+	 */
+	void removeConcept(TTconcept *concept);
+
 	int fn1();
+	int fn2(TTword *word);
 	bool fn3(TTconcept **v, int v2);
+	bool checkConcept2(TTconcept *concept, int conceptMode);
 public:
 	CScriptHandler *_owner;
 	TTsentenceConcept *_sentenceConcept;

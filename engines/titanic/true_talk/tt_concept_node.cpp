@@ -51,7 +51,6 @@ TTconceptNode::TTconceptNode(const TTconceptNode &src) : _concept0P(_concepts[0]
 	}
 }
 
-
 void TTconceptNode::deleteSiblings() {
 	// Iterate through the linked chain of nodes, deleting each in turn
 	for (TTconceptNode *curP = _nextP, *nextP = nullptr; nextP; curP = nextP) {
