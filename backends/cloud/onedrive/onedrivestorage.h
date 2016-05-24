@@ -32,13 +32,28 @@ namespace OneDrive {
 class OneDriveStorage: public Cloud::Storage {
 	static Common::String KEY, SECRET;
 
-	Common::String _token, _uid;
+	Common::String _token, _uid, _refreshToken;
 
 	/** This private constructor is called from loadFromConfig(). */
-	OneDriveStorage(Common::String token, Common::String uid);
+	OneDriveStorage(Common::String token, Common::String uid, Common::String refreshToken);
 
-	static void getAccessToken(Common::String code);	
+	/**
+	* This private constructor is called from authThroughConsole() (phase 2).
+	* It uses OAuth code flow to get tokens.
+	*/
+	OneDriveStorage(Common::String code);
 
+	/**
+	* Gets new access_token. If <code> passed is "", refresh_token is used.
+	* Use "" in order to refresh token and pass a callback, so you could
+	* continue your work when new token is available.
+	*/
+	void getAccessToken(BoolCallback callback, Common::String code = "");	
+	void tokenRefreshed(BoolCallback callback, void *jsonPointer);
+	void codeFlowComplete(bool success);
+
+	void printJson(void *jsonPointer);
+	void printJsonTokenReceived(bool success);
 public:	
 	virtual ~OneDriveStorage();
 
@@ -90,11 +105,6 @@ public:
 
 	/** Returns whether there are any requests running. */
 	virtual bool isWorking() { return false; } //TODO
-
-	/**
-	* Add OneDriveStorage with given token and uid into Cloud::Manager.	
-	*/
-	static void addStorage(Common::String token, Common::String uid);
 
 	/**
 	* Load token and user id from configs and return OneDriveStorage for those.	

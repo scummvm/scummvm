@@ -46,8 +46,10 @@ NetworkReadStream::NetworkReadStream(const char *url, curl_slist *headersList, C
 	curl_easy_setopt(_easy, CURLOPT_URL, url);
 	curl_easy_setopt(_easy, CURLOPT_VERBOSE, 0L);
 	curl_easy_setopt(_easy, CURLOPT_HTTPHEADER, headersList);
-	curl_easy_setopt(_easy, CURLOPT_POSTFIELDSIZE, postFields.size());
-	curl_easy_setopt(_easy, CURLOPT_COPYPOSTFIELDS, postFields.c_str());
+	if (postFields.size() != 0) {
+		curl_easy_setopt(_easy, CURLOPT_POSTFIELDSIZE, postFields.size());
+		curl_easy_setopt(_easy, CURLOPT_COPYPOSTFIELDS, postFields.c_str());
+	}
 	ConnMan.registerEasyHandle(_easy);
 }
 
