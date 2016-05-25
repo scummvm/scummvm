@@ -1858,6 +1858,32 @@ Scene52::Scene52(GnapEngine *vm) : Scene(vm) {
 	_aliensInitialized = false;
 	_alienDirection = 0;
 	_soundToggle = false;
+	_arcadeScreenBottom = 0;
+	_shipsLeft = 0;
+	_shipPosX = 0;
+	_shipCannonPosX = 0;
+	_shipCannonPosY = 0;
+	_shipCannonFiring = false;
+	_shipCannonFired = false;
+	_shipCannonWidth = 0;
+	_shipCannonHeight = 0;
+	_shipCannonTopY = 0;
+	_shipMidX = 0;
+	_shipMidY = 0;
+	_shipFlag = false;
+	_alienSpeed = 0;
+	_alienWidth = 0;
+	_alienHeight = 0;
+	_alienLeftX = 0;
+	_alienTopY = 0;
+	_alienRowDownCtr = 0;
+	_alienWave = false;
+	_alienSingle = false;
+	_alienCounter = 0;
+	_bottomAlienFlag = false;
+	_aliensCount = 0;
+	_nextUfoSequenceId = -1;
+	_ufoSequenceId = -1;
 }
 
 int Scene52::init() {
