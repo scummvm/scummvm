@@ -10,6 +10,11 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Added optional "pause, when entering commands" feature, that was only
      available in the original interpreter for Hercules rendering.
 
+ SCI:
+   - Fix a missing dialog line in QfG3 which awards the player with 3 additional
+     points. This is a bug in the original game interpreter. Due to this bug,
+     it was not possible to get all points in the original game.
+
 1.8.1 (2016-05-25)
  New ports:
    - Added Nintendo 3DS port.
