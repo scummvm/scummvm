@@ -166,9 +166,9 @@ private:
 
 	int fn1();
 	int fn2(TTword *word);
-	bool fn3(TTconcept **v, int v2);
 	bool checkConcept2(TTconcept *concept, int conceptMode);
 	int filterConcepts(int conceptMode, int conceptIndex);
+	bool resetConcept(TTconcept **conceptPP, int conceptIndex);
 public:
 	CScriptHandler *_owner;
 	TTsentenceConcept *_sentenceConcept;

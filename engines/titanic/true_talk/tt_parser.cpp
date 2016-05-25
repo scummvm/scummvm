@@ -786,7 +786,7 @@ int TTparser::considerRequests(TTword *word) {
 				break;
 
 			case OBJECT_IS_TO:
-				flag = fn3(&_sentenceConcept->_concept2P, 3);
+				flag = resetConcept(&_sentenceConcept->_concept2P, 3);
 				break;
 
 			case SEEK_ACTOR:
@@ -814,7 +814,11 @@ int TTparser::considerRequests(TTword *word) {
 			case SET_COLOR:
 			case ACTOR_IS_TO:
 			case ACTOR_IS_FROM:
+
 			case ACTOR_IS_OBJECT:
+				flag = resetConcept(&_sentenceConcept->_concept0P, 2);
+				break;
+
 			case STATE_IDENTITY:
 			case WORD_TYPE_IS_SENTENCE_TYPE:
 			case COMPLEX_VERB:
@@ -911,11 +915,6 @@ int TTparser::fn2(TTword *word) {
 	}
 }
 
-bool TTparser::fn3(TTconcept **v, int v2) {
-	// TODO
-	return false;
-}
-
 int TTparser::checkReferent(TTpronoun *pronoun) {
 	TTconcept *concept;
 
@@ -994,6 +993,19 @@ int TTparser::filterConcepts(int conceptMode, int conceptIndex) {
 	}
 
 	return result;
+}
+
+bool TTparser::resetConcept(TTconcept **conceptPP, int conceptIndex) {
+	TTconcept **ptrPP = _sentenceConcept->setConcept(conceptIndex, nullptr);
+
+	if (!*ptrPP)
+		return 0;
+
+	int result = _sentenceConcept->changeConcept(1, conceptPP, conceptIndex);
+	if (*conceptPP)
+		_sentenceConcept->setConcept(conceptIndex, *conceptPP);
+
+	return !result;
 }
 
 } // End of namespace Titanic
