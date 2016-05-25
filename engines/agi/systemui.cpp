@@ -585,7 +585,7 @@ void SystemUI::readSavedGameSlots(bool filterNonexistant, bool withAutoSaveSlot)
 	slotIdArray.push_back(SYSTEMUI_SAVEDGAME_MAXIMUM_SLOTS); // so that the loop will process all slots
 
 	SavedGameSlotIdArray::iterator it;
-	SavedGameSlotIdArray::iterator end = slotIdArray.end();;
+	SavedGameSlotIdArray::iterator end = slotIdArray.end();
 
 	for (it = slotIdArray.begin(); it != end; it++) {
 		curSlotId = *it;

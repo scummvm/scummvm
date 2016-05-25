@@ -605,7 +605,7 @@ void GfxMgr::render_BlockEGA(int16 x, int16 y, int16 width, int16 height, bool c
 
 		switch (_upscaledHires) {
 		case DISPLAY_UPSCALED_640x400:
-			offsetDisplay += _displayScreenWidth;;
+			offsetDisplay += _displayScreenWidth;
 			break;
 		default:
 			break;
@@ -660,7 +660,7 @@ void GfxMgr::render_BlockCGA(int16 x, int16 y, int16 width, int16 height, bool c
 
 		switch (_upscaledHires) {
 		case DISPLAY_UPSCALED_640x400:
-			offsetDisplay += _displayScreenWidth;;
+			offsetDisplay += _displayScreenWidth;
 			break;
 		default:
 			break;
@@ -743,7 +743,7 @@ void GfxMgr::render_BlockHercules(int16 x, int16 y, int16 width, int16 height, b
 
 		offsetVisual += SCRIPT_WIDTH - width;
 		offsetDisplay += _displayScreenWidth - displayWidth;
-		offsetDisplay += _displayScreenWidth;;
+		offsetDisplay += _displayScreenWidth;
 
 		remainingHeight--;
 	}

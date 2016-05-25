@@ -829,7 +829,7 @@ SavedGameSlotIdArray AgiEngine::getSavegameSlotIds() {
 	filenames = _saveFileMan->listSavefiles(_targetName + ".###");
 
 	Common::StringArray::iterator it;
-	Common::StringArray::iterator end = filenames.end();;
+	Common::StringArray::iterator end = filenames.end();
 
 	// convert to lower-case, just to be sure
 	for (it = filenames.begin(); it != end; it++) {

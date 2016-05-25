@@ -62,7 +62,7 @@ void Sprite::create(uint16 width, uint16 height, const Graphics::PixelFormat &f)
 	actualHeight = height;
 	format = f;
 	w = MAX(nextHigher2(width), 64u);
-	h = MAX(nextHigher2(height), 64u);;
+	h = MAX(nextHigher2(height), 64u);
 	pitch = w * format.bytesPerPixel;
 	dirtyPixels = true;
 

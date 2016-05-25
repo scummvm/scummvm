@@ -85,7 +85,7 @@ void MSRLE4Decoder::decode4(Common::SeekableReadStream &stream) {
 					return;
 				}
 
-				output = (byte *)_surface->getBasePtr(x, y);;
+				output = (byte *)_surface->getBasePtr(x, y);
 
 			} else {
 				// Copy data
