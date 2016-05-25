@@ -327,7 +327,7 @@ public:
 	void delayTicksA(int val, int idx);
 	void delayTicksCursor(int val);
 
-	void setHotspot(int index, int16 x1, int16 y1, int16 x2, int16 y2, uint16 flags = 0,
+	void setHotspot(int index, int16 x1, int16 y1, int16 x2, int16 y2, uint16 flags = SF_NONE,
 		int16 walkX = -1, int16 walkY = -1);
 	int getHotspotIndexAtPos(Common::Point pos);
 	void updateCursorByHotspot();
