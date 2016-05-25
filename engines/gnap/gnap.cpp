@@ -137,7 +137,7 @@ GnapEngine::GnapEngine(OSystem *syst, const ADGameDescription *gd) :
 	for (int i = 0; i < 7; i++)
 		_savegameSprites[i] = nullptr;
 	for (int i = 0; i < 30; i++)
-		_menuInventorySprites[30] = nullptr ;
+		_menuInventorySprites[i] = nullptr;
 }
 
 GnapEngine::~GnapEngine() {
