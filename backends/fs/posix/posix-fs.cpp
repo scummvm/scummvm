@@ -252,6 +252,30 @@ Common::WriteStream *POSIXFilesystemNode::createWriteStream() {
 	return StdioStream::makeFromPath(getPath(), true);
 }
 
+bool POSIXFilesystemNode::create(bool isDirectory) {
+	bool success;
+
+	if (isDirectory) {
+		success = mkdir(_path.c_str(), 0755) == 0;
+	} else {
+		success = creat(_path.c_str(), 0755) != -1;
+	}
+
+	if (success) {		
+		setFlags();
+		if (_isValid) {
+			if (_isDirectory != isDirectory) warning("failed to create %s: got %s", isDirectory ? "directory" : "file", _isDirectory ? "directory" : "file");			
+			return _isDirectory == isDirectory;
+		}
+
+		warning("POSIXFilesystemNode: %s() was a success, but stat indicates there is no such %s",
+			isDirectory ? "mkdir" : "creat", isDirectory ? "directory" : "file");
+		return false;
+	}
+
+	return false;
+}
+
 namespace Posix {
 
 bool assureDirectoryExists(const Common::String &dir, const char *prefix) {

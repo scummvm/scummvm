@@ -103,7 +103,7 @@ Networking::NetworkReadStream *DropboxStorage::streamFile(Common::String path) {
 
 void DropboxStorage::download(Common::String remotePath, Common::String localPath, BoolCallback callback) {
 	Common::DumpFile *f = new Common::DumpFile();
-	if (!f->open(localPath)) {
+	if (!f->open(localPath, true)) {
 		warning("DropboxStorage: unable to open file to download into");
 		if (callback) (*callback)(false);
 		delete f;
@@ -116,8 +116,8 @@ void DropboxStorage::download(Common::String remotePath, Common::String localPat
 void DropboxStorage::syncSaves(BoolCallback callback) {
 	//this is not the real syncSaves() implementation	
 	//"" is root in Dropbox, not "/"
-	//listDirectory("", new Common::Callback<DropboxStorage, Common::Array<StorageFile> >(this, &DropboxStorage::printFiles), true);
-	download("/remote/test.jpg", "local/test.jpg", 0);
+	//this must create all these directories:
+	download("/remote/test.jpg", "local/a/b/c/d/test.jpg", 0);
 }
 
 void DropboxStorage::info(StorageInfoCallback outerCallback) {
