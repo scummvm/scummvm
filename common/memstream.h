@@ -234,12 +234,12 @@ private:
 			// Copy old data
 			if (_readPos < _writePos) {
 				memcpy(_data, old_data + _readPos, _writePos - _readPos);
-				_writePos -= _readPos;
+				_writePos = _length;
 				_readPos = 0;
 			} else {
 				memcpy(_data, old_data + _readPos, oldCapacity - _readPos);
 				memcpy(_data + oldCapacity - _readPos, old_data, _writePos);
-				_writePos += oldCapacity - _readPos;
+				_writePos = _length;
 				_readPos = 0;
 			}
 			free(old_data);
@@ -270,7 +270,7 @@ public:
 		return dataSize;
 	}
 
-	uint32 read(void *dataPtr, uint32 dataSize) {
+	virtual uint32 read(void *dataPtr, uint32 dataSize) {
 		uint32 length = _length;
 		if (length < dataSize) dataSize = length;
 		if (dataSize == 0 || _capacity == 0) return 0;
