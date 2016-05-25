@@ -407,6 +407,7 @@ const SciWorkaroundEntry kCelWide_workarounds[] = {
 	{ GID_PQ2,            -1,   255,  0,              "DIcon", "setSize",                   NULL,     0, { WORKAROUND_STILLCALL, 0 } }, // when showing picture within windows, called with 2nd/3rd parameters as objects
 	{ GID_SQ1,             1,   255,  0,              "DIcon", "setSize",                   NULL,     0, { WORKAROUND_STILLCALL, 0 } }, // DEMO: Called with 2nd/3rd parameters as objects when clicking on the menu - bug #5012
 	{ GID_FANMADE,        -1,   979,  0,              "DIcon", "setSize",                   NULL,     0, { WORKAROUND_STILLCALL, 0 } }, // In The Gem Scenario and perhaps other fanmade games, this is called with 2nd/3rd parameters as objects - bug #5144
+	{ GID_LSL6HIRES,      -1,    94,  0,    "ll6ControlPanel",    "init",                   NULL,     0, { WORKAROUND_STILLCALL, 0 } }, // when opening the "controls" panel from the main menu, the third argument is missing
 	SCI_WORKAROUNDENTRY_TERMINATOR
 };
 
