@@ -108,6 +108,36 @@ GnapEngine::GnapEngine(OSystem *syst, const ADGameDescription *gd) :
 
 	_mousePos = Common::Point(0, 0);
 	_currGrabCursorX = _currGrabCursorY = 0;
+
+	_idleTimerIndex = -1;
+	_menuStatus = 0;
+	_menuSpritesIndex = -1;
+	_menuDone = false;
+	_menuBackgroundSurface = nullptr;
+	_menuQuitQuerySprite = nullptr;
+	_largeSprite = nullptr;
+	_menuSaveLoadSprite = nullptr;
+	_menuSprite2 = nullptr;
+	_menuSprite1 = nullptr;
+	_spriteHandle = nullptr;
+	_cursorSprite = nullptr;
+	_savegameIndex = -1;
+	_gridMinX = 0;
+	_gridMinY = 0;
+	_gridMaxX = 0;
+	_gridMaxY = 0;
+	_toyUfoNextSequenceId = -1;
+	_toyUfoSequenceId = -1;
+	_toyUfoId = -1;
+	_toyUfoActionStatus = -1;
+	_toyUfoX = 0;
+	_toyUfoY = 0;
+	_s18GarbageCanPos = 0;
+
+	for (int i = 0; i < 7; i++)
+		_savegameSprites[i] = nullptr;
+	for (int i = 0; i < 30; i++)
+		_menuInventorySprites[30] = nullptr ;
 }
 
 GnapEngine::~GnapEngine() {

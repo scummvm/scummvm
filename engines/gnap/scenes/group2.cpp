@@ -31,6 +31,10 @@ Scene20::Scene20(GnapEngine *vm) : Scene(vm) {
 	_stonerGuyCtr = 3;
 	_stonerGuyShowingJoint = false;
 	_groceryStoreGuyCtr = 0;
+	_currStonerGuySequenceId = -1;
+	_nextStonerGuySequenceId = -1;
+	_currGroceryStoreGuySequenceId = -1;
+	_nextGroceryStoreGuySequenceId = -1;
 }
 
 int Scene20::init() {
@@ -1016,6 +1020,7 @@ void Scene21::updateAnimations() {
 Scene22::Scene22(GnapEngine *vm) : Scene(vm) {
 	_caughtBefore = false;
 	_cashierCtr = 3;
+	_nextCashierSequenceId = -1;
 }
 
 int Scene22::init() {

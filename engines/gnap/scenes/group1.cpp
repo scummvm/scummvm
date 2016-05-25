@@ -2315,6 +2315,8 @@ Scene17::Scene17(GnapEngine *vm) : Scene(vm) {
 	_platPhoneCtr = 0;
 	_nextPhoneSequenceId = -1;
 	_currPhoneSequenceId = -1;
+	_currWrenchSequenceId = -1;
+	_currCarWindowSequenceId = -1;
 }
 
 int Scene17::init() {
