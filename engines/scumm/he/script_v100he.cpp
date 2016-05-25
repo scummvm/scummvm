@@ -356,38 +356,38 @@ void ScummEngine_v100he::o100_actorOps() {
 		// FIXME: check stack parameters
 		debug(0,"o100_actorOps: case 0 UNHANDLED");
 		break;
-	case 3:
+	case 3:			// SO_ANIMATION
 		pop();
 		pop();
 		pop();
 		break;
-	case 4:		// SO_ANIMATION_SPEED
+	case 4:			// SO_ANIMATION_SPEED
 		a->setAnimSpeed(pop());
 		break;
-	case 6:
+	case 6:			// SO_AT
 		j = pop();
 		i = pop();
 		a->putActor(i, j);
 		break;
-	case 8:
+	case 8:			// SO_BACKGROUND_OFF
 		a->_drawToBackBuf = false;
 		a->_needRedraw = true;
 		a->_needBgReset = true;
 		break;
-	case 9:
+	case 9:			// SO_BACKGROUND_ON
 		a->drawActorToBackBuf(a->getPos().x, a->getPos().y);
 		break;
-	case 14:
+	case 14:		// SO_CHARSET
 		a->_charset = pop();
 		break;
-	case 18:
+	case 18:		// SO_CLIPPED
 		a->_clipOverride.bottom = pop();
 		a->_clipOverride.right = pop();
 		a->_clipOverride.top = pop();
 		a->_clipOverride.left = pop();
 		adjustRect(a->_clipOverride);
 		break;
-	case 22:
+	case 22:		// SO_CONDITION
 		k = getStackList(args, ARRAYSIZE(args));
 		for (i = 0; i < k; ++i) {
 			a->setUserCondition(args[i] & 0x7F, args[i] & 0x80);
@@ -399,7 +399,7 @@ void ScummEngine_v100he::o100_actorOps() {
 	case 27:		// SO_DEFAULT
 		a->initActor(0);
 		break;
-	case 32:
+	case 32:		// SO_ERASE
 		k = pop();
 		a->setHEFlag(1, k);
 		break;
@@ -417,11 +417,11 @@ void ScummEngine_v100he::o100_actorOps() {
 		a->remapActorPaletteColor(i, j);
 		a->_needRedraw = true;
 		break;
-	case 59:
+	case 59:		// SO_PRIORITY
 		a->_layer = pop();
 		a->_needRedraw = true;
 		break;
-	case 63:
+	case 63:		// SO_ROOM_PALETTE
 		a->_hePaletteNum = pop();
 		a->_needRedraw = true;
 		break;
@@ -438,7 +438,7 @@ void ScummEngine_v100he::o100_actorOps() {
 		i = pop();
 		a->setActorWalkSpeed(i, j);
 		break;
-	case 78:
+	case 78:		// SO_TALKIE
 		{
 		copyScriptString(string, sizeof(string));
 		int slot = pop();
@@ -461,7 +461,7 @@ void ScummEngine_v100he::o100_actorOps() {
 	case 89:		// SO_NEVER_ZCLIP
 		a->_forceClip = 0;
 		break;
-	case 128:
+	case 128:		// SO_ACTOR_DEFAULT_CLIPPED
 		_actorClipOverride.bottom = pop();
 		_actorClipOverride.right = pop();
 		_actorClipOverride.top = pop();
@@ -517,7 +517,7 @@ void ScummEngine_v100he::o100_actorOps() {
 	case 141:		// SO_TALK_COLOR
 		a->_talkColor = pop();
 		break;
-	case 142:
+	case 142:		// SO_TALK_CONDITION
 		k = pop();
 		if (k == 0)
 			k = _rnd.getRandomNumberRng(1, 10);
@@ -583,7 +583,7 @@ void ScummEngine_v100he::o100_arrayOps() {
 			writeArray(array, 0, b + c, pop());
 		}
 		break;
-	case 130:			//
+	case 130:			// SO_COMPLEX_ARRAY_ASSIGNMENT
 		len = getStackList(list, ARRAYSIZE(list));
 		dim1end = pop();
 		dim1start = pop();
@@ -1617,13 +1617,13 @@ void ScummEngine_v100he::o100_roomOps() {
 		setPalColor(d, a, b, c);
 		break;
 
-	case 129:
+	case 129:		// SO_OBJECT_ORDER
 		b = pop();
 		a = pop();
 		swapObjects(a, b);
 		break;
 
-	case 130:
+	case 130:		// SO_ROOM_COPY_PALETTE
 		a = pop();
 		b = pop();
 		if (_game.features & GF_16BIT_COLOR)
@@ -1658,7 +1658,7 @@ void ScummEngine_v100he::o100_roomOps() {
 		setCurrentPalette(a);
 		break;
 
-	case 135:
+	case 135:		// SO_ROOM_PALETTE_IN_ROOM
 		b = pop();
 		a = pop();
 		setRoomPalette(a, b);
@@ -1670,7 +1670,7 @@ void ScummEngine_v100he::o100_roomOps() {
 		_saveLoadFlag = pop();
 		break;
 
-	case 137:
+	case 137:		// SO_ROOM_SAVEGAME_BY_NAME
 		byte buffer[256];
 
 		copyScriptString((byte *)buffer, sizeof(buffer));
