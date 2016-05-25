@@ -162,12 +162,20 @@ reg_t GfxCompare::kernelCantBeHere32(const reg_t curObject, const reg_t listRefe
 	// rects before operating on them, but this call leverages SCI16 engine
 	// code that operates on inclusive rects, so the rect's bottom-right
 	// point is not modified like in other SCI32 kernel calls
-	Common::Rect checkRect(
-		readSelectorValue(_segMan, curObject, SELECTOR(brLeft)),
-		readSelectorValue(_segMan, curObject, SELECTOR(brTop)),
-		readSelectorValue(_segMan, curObject, SELECTOR(brRight)),
-		readSelectorValue(_segMan, curObject, SELECTOR(brBottom))
-	);
+	Common::Rect checkRect;
+
+	// At least LSL6 hires passes invalid rectangles which trigger the
+	// isValidRect assertion in the Rect constructor; this is avoided by
+	// assigning the properties after construction and then testing the
+	// rect for validity ourselves here. SSCI does not care about whether
+	// or not the rects are valid
+	checkRect.left = readSelectorValue(_segMan, curObject, SELECTOR(brLeft));
+	checkRect.top = readSelectorValue(_segMan, curObject, SELECTOR(brTop));
+	checkRect.right = readSelectorValue(_segMan, curObject, SELECTOR(brRight));
+	checkRect.bottom = readSelectorValue(_segMan, curObject, SELECTOR(brBottom));
+	if (!checkRect.isValidRect()) {
+		return make_reg(0, 0);
+	}
 
 	uint16 result = 0;
 	uint16 signal = readSelectorValue(_segMan, curObject, SELECTOR(signal));

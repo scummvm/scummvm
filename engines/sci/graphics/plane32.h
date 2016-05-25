@@ -275,7 +275,11 @@ public:
 	 * given screen rect.
 	 */
 	inline void clipScreenRect(const Common::Rect &screenRect) {
-		if (_screenRect.intersects(screenRect)) {
+		// LSL6 hires creates planes with invalid rects; SSCI does not
+		// care about this, but `Common::Rect::clip` does, so we need to
+		// check whether or not the rect is actually valid before clipping
+		// and only clip valid rects
+		if (_screenRect.isValidRect() && _screenRect.intersects(screenRect)) {
 			_screenRect.clip(screenRect);
 		} else {
 			_screenRect.left = 0;
