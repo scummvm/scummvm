@@ -388,25 +388,26 @@ Graphics::Surface *GameSys::loadBitmap(int resourceId) {
 }
 
 void GameSys::drawBitmap(int resourceId) {
+	assert(_backgroundSurface);
+
 	Graphics::Surface *bmpSurface = loadBitmap(resourceId);
-	if (!bmpSurface || !_backgroundSurface) {
-		debugC(kDebugBasic, "GameSys::drawBitmap() Error loading the bitmap");
-		return;
+	if (!bmpSurface)
+		error("GameSys::drawBitmap() Error loading the bitmap");
+
+	if (bmpSurface->format != _backgroundSurface->format
+		|| bmpSurface->w != _backgroundSurface->w || bmpSurface->h != _backgroundSurface->h)
+		error("GameSys::drawBitmap() Different bitmap properties than current background");
+
+	byte *src = (byte *)bmpSurface->getPixels();
+	byte *dst = (byte *)_backgroundSurface->getPixels();
+	const int pitch = bmpSurface->pitch;
+	int height = bmpSurface->h;
+	while (height--) {
+		memcpy(dst, src, pitch);
+		src += pitch;
+		dst += pitch;
 	}
-	if (bmpSurface->format != _backgroundSurface->format ||
-		bmpSurface->w != _backgroundSurface->w || bmpSurface->h != _backgroundSurface->h) {
-		debugC(kDebugBasic, "GameSys::drawBitmap() Different bitmap properties than current background");
-	} else {
-		byte *src = (byte *)bmpSurface->getPixels();
-		byte *dst = (byte *)_backgroundSurface->getPixels();
-		const int pitch = bmpSurface->pitch;
-		int height = bmpSurface->h;
-		while (height--) {
-			memcpy(dst, src, pitch);
-			src += pitch;
-			dst += pitch;
-		}
-	}
+
 	bmpSurface->free();
 	delete bmpSurface;
 
