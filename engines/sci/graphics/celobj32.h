@@ -474,7 +474,7 @@ private:
 	bool analyzeForRemap() const;
 
 public:
-	CelObjView(GuiResourceId viewId, int16 loopNo, int16 celNo);
+	CelObjView(const GuiResourceId viewId, const int16 loopNo, const int16 celNo);
 	virtual ~CelObjView() override {};
 
 	using CelObj::draw;
@@ -525,7 +525,7 @@ public:
 	 */
 	int16 _priority;
 
-	CelObjPic(GuiResourceId pictureId, int16 celNo);
+	CelObjPic(const GuiResourceId pictureId, const int16 celNo);
 	virtual ~CelObjPic() override {};
 
 	using CelObj::draw;
@@ -546,7 +546,7 @@ public:
  */
 class CelObjMem : public CelObj {
 public:
-	CelObjMem(reg_t bitmap);
+	CelObjMem(const reg_t bitmap);
 	virtual ~CelObjMem() override {};
 
 	virtual CelObjMem *duplicate() const override;
@@ -562,7 +562,7 @@ public:
  */
 class CelObjColor : public CelObj {
 public:
-	CelObjColor(uint8 color, int16 width, int16 height);
+	CelObjColor(const uint8 color, const int16 width, const int16 height);
 	virtual ~CelObjColor() override {};
 
 	using CelObj::draw;
