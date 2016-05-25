@@ -375,7 +375,9 @@ int Scene02::init() {
 }
 
 void Scene02::updateHotspots() {
-	_vm->setHotspot(kHS02Platypus, 0, 0, 0, 0, SF_DISABLED | SF_WALKABLE);
+	_vm->setHotspot(kHS02Platypus, 0, 0, 0, 0, SF_WALKABLE | SF_TALK_CURSOR | SF_GRAB_CURSOR | SF_LOOK_CURSOR);
+	if (!_vm->isFlag(kGFPlatypus))
+		_vm->_hotspots[kHS02Platypus]._flags |= SF_DISABLED;
 	_vm->setHotspot(kHS02Chicken, 606, 455, 702, 568, SF_PLAT_CURSOR | SF_TALK_CURSOR | SF_GRAB_CURSOR | SF_LOOK_CURSOR, 7, 8);
 	_vm->setHotspot(kHS02Truck1, 385, 258, 464, 304, SF_PLAT_CURSOR | SF_TALK_CURSOR | SF_GRAB_CURSOR | SF_LOOK_CURSOR, 6, 5);
 	_vm->setHotspot(kHS02Truck2, 316, 224, 390, 376, SF_PLAT_CURSOR | SF_TALK_CURSOR | SF_GRAB_CURSOR | SF_LOOK_CURSOR, 5, 6);
@@ -384,13 +386,11 @@ void Scene02::updateHotspots() {
 	_vm->setHotspot(kHS02ExitBarn, 610, 0, 800, 164, SF_EXIT_U_CURSOR, 10, 5);
 	_vm->setHotspot(kHS02ExitCreek, 780, 336, 800, 556, SF_EXIT_R_CURSOR | SF_WALKABLE, 10, 8);
 	_vm->setHotspot(kHS02ExitPigpen, 0, 300, 20, 600, SF_EXIT_L_CURSOR | SF_WALKABLE, 0, 8);
-	_vm->setHotspot(kHS02WalkArea1, 92, 140, 304, 430, 0, 3, 1);
+	_vm->setHotspot(kHS02WalkArea1, 92, 140, 304, 430, SF_NONE, 3, 1);
 	_vm->setHotspot(kHS02WalkArea2, 0, 0, 800, 380);
 	_vm->setHotspot(kHS02WalkArea3, 0, 0, 386, 445);
 	_vm->setHotspot(kHS02WalkArea4, 386, 0, 509, 410);
 	_vm->setDeviceHotspot(kHS02Device, -1, -1, -1, -1);
-	if (_vm->isFlag(kGFPlatypus))
-		_vm->_hotspots[kHS02Platypus]._flags = SF_WALKABLE | SF_TALK_CURSOR | SF_GRAB_CURSOR | SF_LOOK_CURSOR;
 	_vm->_hotspotsCount = 14;
 }
 
