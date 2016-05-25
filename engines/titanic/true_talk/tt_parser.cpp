@@ -974,4 +974,26 @@ bool TTparser::checkConcept2(TTconcept *concept, int conceptMode) {
 	return false;
 }
 
+int TTparser::filterConcepts(int conceptMode, int conceptIndex) {
+	int result = 0;
+
+	for (TTconcept *currP = _conceptP; currP && !result; currP = currP->_nextP) {
+		if (checkConcept2(currP, conceptMode)) {
+			TTconcept **ptrPP = _sentenceConcept->setConcept(conceptIndex, currP);
+			TTconcept *newConcept = new TTconcept(*currP);
+			*ptrPP = newConcept;
+
+			if (newConcept->isValid()) {
+				removeConcept(currP);
+				(*ptrPP)->_nextP = nullptr;
+				result = 1;
+			} else {
+				result = -2;
+			}
+		}
+	}
+
+	return result;
+}
+
 } // End of namespace Titanic
