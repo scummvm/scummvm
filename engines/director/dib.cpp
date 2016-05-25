@@ -100,17 +100,10 @@ bool DIBDecoder::loadStream(Common::SeekableReadStream &stream) {
 	uint16 imageRawSize = stream.size() - 40;
 	Common::SeekableSubReadStream subStream(&stream, 40, stream.size());
 
-	warning("w: %d h: %d bpp: %d pal: %d size: %d (size rep: %d) comp: %x", width, height, bitsPerPixel, _paletteColorCount, imageRawSize, imageSize, compression);
-
 	_codec = Image::createBitmapCodec(compression, width, height, bitsPerPixel);
 	if (!_codec)
 		return false;
 	_surface = _codec->decodeFrame(subStream);
-
-	//FIXME
-	g_system->getPaletteManager()->setPalette(_palette, 0, _paletteColorCount - 1);
-	g_system->copyRectToScreen(_surface->getPixels(), _surface->pitch, 0, 0, width, height);
-
 	return true;
 }
 

@@ -23,6 +23,8 @@
 #include "common/rect.h"
 #include "common/stream.h"
 #include "common/array.h"
+#include "director/resource.h"
+
 namespace Director {
 
 #define CHANNEL_COUNT 24
@@ -68,50 +70,56 @@ enum mainChannelsPosition {
     kPaletePosition = 15
 };
 
-struct Sprite {
+class Sprite {
 public:
-    bool enabled;
-    uint8 castId;
-    //castType type;
-    uint16 flags;
-    Common::Point startPoint;
-    uint16 width;
-    uint16 height;
     Sprite();
-    Sprite(const Sprite& sprite);
+    Sprite(const Sprite &sprite);
+    bool _enabled;
+    uint8 _castId;
+    //castType type;
+    uint16 _flags;
+    Common::Point _startPoint;
+    uint16 _width;
+    uint16 _height;
 };
 
-struct Frame {
+class Frame {
 public:
-    uint8 actionId;
-    
-    uint8 transFlags;
-    uint8 transChunkSize;
-    uint8 transType;
-    uint8 tempo;
-    
-    uint16 sound1;
-    uint8 soundType1;
-    uint16 sound2;
-    uint8 soundType2;
-
-    uint8 skipFrameFlag;
-    uint8 blend;
-    Common::Array<Sprite*> sprites;
-
     Frame();
     ~Frame();
-    Frame(const Frame& frame);
+    Frame(const Frame &frame);
     void readChannel(Common::SeekableReadStream &stream, uint16 offset, uint16 size);
+    void display();
+
 private:
     void readSprite(Common::SeekableReadStream &stream, uint16 offset, uint16 size);
     void readMainChannels(Common::SeekableReadStream &stream, uint16 offset, uint16 size);
+
+public:
+    uint8 _actionId;
+    uint8 _transFlags;
+    uint8 _transChunkSize;
+    uint8 _transType;
+    uint8 _tempo;
+
+    uint16 _sound1;
+    uint8 _soundType1;
+    uint16 _sound2;
+    uint8 _soundType2;
+
+    uint8 _skipFrameFlag;
+    uint8 _blend;
+    Common::Array<Sprite *> _sprites;
+
 };
 
-struct Score {
+class Score {
 public:
-	Score(Common::SeekableReadStream &stream);
-    Common::Array<Frame*> frames;
+    Common::Array<Frame *> _frames;
+
+public:
+    Score(Common::SeekableReadStream &stream);
+    void play();
 };
 
 } //End of namespace Director

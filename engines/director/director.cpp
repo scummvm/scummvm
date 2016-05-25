@@ -66,37 +66,13 @@ DirectorEngine::~DirectorEngine() {
 Common::Error DirectorEngine::run() {
 	debug("Starting v%d Director game", getVersion());
 
-	initGraphics(640, 480, true);
-
 	//FIXME
-	RIFFArchive riff;
-	riff.openFile("bookshelf_example.mmm");
-	Director::DIBDecoder img;
+	_mainArchive = new RIFFArchive();
+	_mainArchive->openFile("bookshelf_example.mmm");
 
-	Common::SeekableReadStream *pal = riff.getResource(MKTAG('C', 'L', 'U', 'T'), 1025);
-	img.loadPalette(*pal);
-
-	Common::SeekableReadStream *dib = riff.getResource(MKTAG('D', 'I', 'B', ' '), 1026);
-	img.loadStream(*dib);
-
-	Common::SeekableReadStream *scr = riff.getResource(MKTAG('V','W','S','C'),1024);
-	Director::Score score = Director::Score(*scr);
-
-	bool stop = false;
-
-	while (!stop) {
-		Common::Event event;
-
-		while (_eventMan->pollEvent(event)) {
-			if (event.type == Common::EVENT_QUIT)
-				stop = true;
-		}
-
-		g_system->updateScreen();
-		g_system->delayMillis(50);
-	}
-
-	return Common::kNoError;
+	Common::SeekableReadStream *scr = _mainArchive->getResource(MKTAG('V','W','S','C'), 1024);
+	Score score(*scr);
+	score.play();
 
 	if (getPlatform() == Common::kPlatformWindows)
 		loadEXE();
