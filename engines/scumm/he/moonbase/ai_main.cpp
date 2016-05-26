@@ -31,8 +31,6 @@
 
 namespace Scumm {
 
-ScummEngine_v90he *_vm;
-
 enum {
 	F_GET_SCUMM_DATA = 0,
 	F_GET_WORLD_DIST = 1,
@@ -166,9 +164,7 @@ int *storedLaunchAction[5] = {NULL};
 
 const int32 *MCP_params;
 
-void AI::resetAI(ScummEngine_v90he *vm) {
-	_vm = vm;
-
+void AI::resetAI() {
 	AIstate = STATE_CHOOSE_BEHAVIOR;
 	warning("----------------------> Resetting AI");
 

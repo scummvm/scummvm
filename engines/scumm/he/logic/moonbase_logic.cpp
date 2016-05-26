@@ -232,7 +232,7 @@ int LogicHEmoonbase::op_ai_master_control_program(int op, int numArgs, int32 *ar
 
 void LogicHEmoonbase::op_ai_reset(int op, int numArgs, int32 *args) {
 	warning("op_ai_reset())");
-	_vm->_moonbase->_ai->resetAI(_vm);
+	_vm->_moonbase->_ai->resetAI();
 }
 
 void LogicHEmoonbase::op_ai_set_type(int op, int numArgs, int32 *args) {

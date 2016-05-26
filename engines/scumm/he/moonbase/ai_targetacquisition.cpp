@@ -46,7 +46,7 @@ void Sortie::setEnemyDefenses(int enemyDefensesScummArray, int defendX, int defe
 	int currentPlayer = _ai->getCurrentPlayer();
 
 	for (int i = 0; i < 200; i++) {
-		int thisElement = _vm->_moonbase->readFromArray(enemyDefensesScummArray, 0, i);
+		int thisElement = _ai->_vm->_moonbase->readFromArray(enemyDefensesScummArray, 0, i);
 
 		if (thisElement) {
 			if (_ai->getBuildingOwner(thisElement)) {
@@ -223,7 +223,7 @@ IContainedObject *Sortie::createChildObj(int index, int &completionFlag) {
 				if ((AAcounter != 3) && (currentWeapon->getTypeID() == ITEM_CLUSTER))
 					thisDamage = 0;
 
-				if (!_vm->_rnd.getRandomNumber(4))
+				if (!_ai->_vm->_rnd.getRandomNumber(4))
 					currentWeapon->setTypeID(ITEM_MINE);
 
 				(*i)->setDamage(thisDamage);
@@ -331,7 +331,7 @@ int Defender::calculateDefenseUnitPosition(int targetX, int targetY, int index) 
 	int hubIndex = 0;
 
 	for (int i = 0; i < 200; i++) {
-		int thisUnit = _vm->_moonbase->readFromArray(unitsArray, 0, i);
+		int thisUnit = _ai->_vm->_moonbase->readFromArray(unitsArray, 0, i);
 
 		if (thisUnit) {
 			if (((_ai->getBuildingType(thisUnit) == BUILDING_MAIN_BASE) || (_ai->getBuildingType(thisUnit) == BUILDING_OFFENSIVE_LAUNCHER))  && (_ai->getBuildingOwner(thisUnit) == currentPlayer)) {
@@ -361,7 +361,7 @@ int Defender::calculateDefenseUnitPosition(int targetX, int targetY, int index) 
 		}
 	}
 
-	_vm->_moonbase->deallocateArray(unitsArray);
+	_ai->_vm->_moonbase->deallocateArray(unitsArray);
 
 	//Check if repair is needed
 	int targetUnit = _ai->getClosestUnit(targetX + 5, targetY, 15, currentPlayer, 1, 0, 0, 0);
@@ -374,7 +374,7 @@ int Defender::calculateDefenseUnitPosition(int targetX, int targetY, int index) 
 			int defCount = 0;
 
 			for (int i = 0; i < 200; i++) {
-				int thisUnit = _vm->_moonbase->readFromArray(unitsArray, 0, i);
+				int thisUnit = _ai->_vm->_moonbase->readFromArray(unitsArray, 0, i);
 
 				if (thisUnit) {
 					if (((_ai->getBuildingType(thisUnit) == BUILDING_SHIELD) || (_ai->getBuildingType(thisUnit) == BUILDING_ANTI_AIR)) && (_ai->getBuildingOwner(thisUnit) == currentPlayer) && (_ai->getBuildingState(thisUnit) == 0)) {
@@ -384,7 +384,7 @@ int Defender::calculateDefenseUnitPosition(int targetX, int targetY, int index) 
 				}
 			}
 
-			_vm->_moonbase->deallocateArray(unitsArray);
+			_ai->_vm->_moonbase->deallocateArray(unitsArray);
 
 			if (defCount) {
 				//repair
@@ -428,8 +428,8 @@ int Defender::calculateDefenseUnitPosition(int targetX, int targetY, int index) 
 		//Number of random chances to land
 		for (int j = 0; j < 3; j++) {
 			//Pick random angle and dist within semicircle (-90 to +90) and (40 to 150)
-			int randAngle = directAngleToHub + _vm->_rnd.getRandomNumber(179) - 90;
-			int randDist = _vm->_rnd.getRandomNumber(109) + 40;
+			int randAngle = directAngleToHub + _ai->_vm->_rnd.getRandomNumber(179) - 90;
+			int randDist = _ai->_vm->_rnd.getRandomNumber(109) + 40;
 
 			int x = targetX + randDist * cos(_ai->degToRad(randAngle));
 			int y = targetY + randDist * sin(_ai->degToRad(randAngle));
@@ -459,7 +459,7 @@ int Defender::calculateDefenseUnitPosition(int targetX, int targetY, int index) 
 				int shieldCount = 0;
 
 				for (int k = 0; k < 200; k++) {
-					int thisUnit = _vm->_moonbase->readFromArray(unitsArray2, 0, k);
+					int thisUnit = _ai->_vm->_moonbase->readFromArray(unitsArray2, 0, k);
 
 					if (thisUnit) {
 						if ((_ai->getBuildingType(thisUnit) == BUILDING_SHIELD) && (_ai->getBuildingOwner(thisUnit) == currentPlayer))
@@ -472,7 +472,7 @@ int Defender::calculateDefenseUnitPosition(int targetX, int targetY, int index) 
 					}
 				}
 
-				if ((_vm->_rnd.getRandomNumber((int)pow(3.0f, shieldCount + 1) - 1) == 0) && (_ai->getPlayerEnergy() > 6))
+				if ((_ai->_vm->_rnd.getRandomNumber((int)pow(3.0f, shieldCount + 1) - 1) == 0) && (_ai->getPlayerEnergy() > 6))
 					setUnit(ITEM_SHIELD);
 				else
 					setUnit(ITEM_ANTIAIR);
@@ -480,7 +480,7 @@ int Defender::calculateDefenseUnitPosition(int targetX, int targetY, int index) 
 				setPower(power);
 				setAngle(angle);
 
-				_vm->_moonbase->deallocateArray(unitsArray2);
+				_ai->_vm->_moonbase->deallocateArray(unitsArray2);
 				return 1;
 			}
 
@@ -527,14 +527,14 @@ int Defender::calculateDefenseUnitPosition(int targetX, int targetY, int index) 
 	if (hubIndex == 0) return -3;
 
 	do {
-		int sourceHub = hubArray[_vm->_rnd.getRandomNumber(hubIndex - 1)];
+		int sourceHub = hubArray[_ai->_vm->_rnd.getRandomNumber(hubIndex - 1)];
 
 		setSourceX(_ai->getHubX(sourceHub));
 		setSourceY(_ai->getHubY(sourceHub));
 		setSourceUnit(sourceHub);
 		setUnit(ITEM_HUB);
-		setPower(_vm->_rnd.getRandomNumber(299) + 200);
-		setAngle(_vm->_rnd.getRandomNumber(359));
+		setPower(_ai->_vm->_rnd.getRandomNumber(299) + 200);
+		setAngle(_ai->_vm->_rnd.getRandomNumber(359));
 		count++;
 
 		if (count > (NUM_HUBS * 3)) break;

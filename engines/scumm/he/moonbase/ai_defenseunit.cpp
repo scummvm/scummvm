@@ -133,13 +133,13 @@ int AntiAirUnit::selectWeapon(int index) {
 	case 2:
 		if (getState() == DUS_OFF) {
 			if (_ai->getPlayerEnergy() > 6) {
-				if (!_vm->_rnd.getRandomNumber(3)) {
+				if (!_ai->_vm->_rnd.getRandomNumber(3)) {
 					return ITEM_VIRUS;
 				}
 			}
 
 			if (_ai->getPlayerEnergy() > 2) {
-				if (!_vm->_rnd.getRandomNumber(1)) {
+				if (!_ai->_vm->_rnd.getRandomNumber(1)) {
 					return ITEM_SPIKE;
 				}
 			}
@@ -358,19 +358,19 @@ int HubUnit::selectWeapon(int index) {
 	}
 
 	if (energy > 2) {
-		if (!_vm->_rnd.getRandomNumber(3)) {
+		if (!_ai->_vm->_rnd.getRandomNumber(3)) {
 			return ITEM_SPIKE;
 		}
 
-		if (!_vm->_rnd.getRandomNumber(4)) {
+		if (!_ai->_vm->_rnd.getRandomNumber(4)) {
 			return ITEM_GUIDED;
 		}
 
-		if (!_vm->_rnd.getRandomNumber(4)) {
+		if (!_ai->_vm->_rnd.getRandomNumber(4)) {
 			return ITEM_MINE;
 		}
 
-		if (!_vm->_rnd.getRandomNumber(9)) {
+		if (!_ai->_vm->_rnd.getRandomNumber(9)) {
 			return ITEM_EMP;
 		}
 	}
@@ -506,7 +506,7 @@ int EnergyUnit::selectWeapon(int index) {
 	}
 
 	if (energy > 2) {
-		if (!_vm->_rnd.getRandomNumber(3)) {
+		if (!_ai->_vm->_rnd.getRandomNumber(3)) {
 			return ITEM_EMP;
 		}
 	}
@@ -617,7 +617,7 @@ int CrawlerUnit::selectWeapon(int index) {
 		}
 
 		if (energy > 2) {
-			if (_vm->_rnd.getRandomNumber(1)) {
+			if (_ai->_vm->_rnd.getRandomNumber(1)) {
 				return ITEM_MINE;
 			} else {
 				return ITEM_TIME_EXPIRED;

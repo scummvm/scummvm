@@ -26,10 +26,10 @@
 
 namespace Scumm {
 
-Moonbase::Moonbase(ScummEngine_v71he *vm) : _vm(vm) {
+Moonbase::Moonbase(ScummEngine_v90he *vm) : _vm(vm) {
 	initFOW();
 
-	_ai = new AI;
+	_ai = new AI(_vm);
 }
 
 Moonbase::~Moonbase() {
@@ -37,15 +37,15 @@ Moonbase::~Moonbase() {
 }
 
 int Moonbase::readFromArray(int array, int y, int x) {
-	_vm->VAR(((ScummEngine_v90he *)_vm)->VAR_U32_ARRAY_UNK) = array;
+	_vm->VAR(_vm->VAR_U32_ARRAY_UNK) = array;
 
-	return _vm->readArray(((ScummEngine_v90he *)_vm)->VAR_U32_ARRAY_UNK, y, x);
+	return _vm->readArray(_vm->VAR_U32_ARRAY_UNK, y, x);
 }
 
 void Moonbase::deallocateArray(int array) {
-	_vm->VAR(((ScummEngine_v90he *)_vm)->VAR_U32_ARRAY_UNK) = array;
+	_vm->VAR(_vm->VAR_U32_ARRAY_UNK) = array;
 
-	return _vm->nukeArray(((ScummEngine_v90he *)_vm)->VAR_U32_ARRAY_UNK);
+	return _vm->nukeArray(_vm->VAR_U32_ARRAY_UNK);
 }
 
 int Moonbase::callScummFunction(int scriptNumber, int paramCount,...) {

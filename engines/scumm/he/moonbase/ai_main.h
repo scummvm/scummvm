@@ -30,8 +30,6 @@ namespace Scumm {
 
 class ScummEngine_v90he;
 
-extern ScummEngine_v90he *_vm;
-
 enum {
 	TERRAIN_TYPE_GOOD = 0,
 	TERRAIN_TYPE_SLOPE = 1,
@@ -85,7 +83,9 @@ enum {
 
 class AI {
 public:
-	void resetAI(ScummEngine_v90he *vm);
+	AI(ScummEngine_v90he *vm) : _vm(vm) {}
+
+	void resetAI();
 	void cleanUpAI();
 	void setAIType(const int paramCount, const int32 *params);
 	int masterControlProgram(const int paramCount, const int32 *params);
@@ -190,6 +190,8 @@ private:
 public:
 	Common::Array<int> lastXCoord[5];
 	Common::Array<int> lastYCoord[5];
+
+	ScummEngine_v90he *_vm;
 };
 
 } // End of namespace Scumm
