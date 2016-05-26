@@ -41,25 +41,25 @@
 namespace Stark {
 
 Console::Console() : GUI::Debugger() {
-	registerCmd("dumpArchive",			WRAP_METHOD(Console, Cmd_DumpArchive));
-	registerCmd("dumpRoot",				WRAP_METHOD(Console, Cmd_DumpRoot));
-	registerCmd("dumpStatic",			WRAP_METHOD(Console, Cmd_DumpStatic));
-	registerCmd("dumpGlobal",			WRAP_METHOD(Console, Cmd_DumpGlobal));
-	registerCmd("dumpLevel",			WRAP_METHOD(Console, Cmd_DumpLevel));
-	registerCmd("dumpKnowledge",	WRAP_METHOD(Console, Cmd_DumpKnowledge));
-	registerCmd("dumpLocation",			WRAP_METHOD(Console, Cmd_DumpLocation));
-	registerCmd("listScripts",			WRAP_METHOD(Console, Cmd_ListScripts));
-	registerCmd("enableScript",			WRAP_METHOD(Console, Cmd_EnableScript));
-	registerCmd("forceScript",			WRAP_METHOD(Console, Cmd_ForceScript));
-	registerCmd("listInventory",			WRAP_METHOD(Console, Cmd_ListInventory));
-	registerCmd("listLocations",			WRAP_METHOD(Console, Cmd_ListLocations));
-	registerCmd("location",				WRAP_METHOD(Console, Cmd_Location));
-	registerCmd("chapter",				WRAP_METHOD(Console, Cmd_Chapter));
-	registerCmd("changeLocation",		WRAP_METHOD(Console, Cmd_ChangeLocation));
-	registerCmd("changeChapter",		WRAP_METHOD(Console, Cmd_ChangeChapter));
-	registerCmd("changeKnowledge",		WRAP_METHOD(Console, Cmd_ChangeKnowledge));
-	registerCmd("selectDialogOption",	WRAP_METHOD(Console, Cmd_SelectDialogOption));
-	registerCmd("enableInventoryItem", WRAP_METHOD(Console, Cmd_EnableInventoryItem));
+	registerCmd("dumpArchive",          WRAP_METHOD(Console, Cmd_DumpArchive));
+	registerCmd("dumpRoot",             WRAP_METHOD(Console, Cmd_DumpRoot));
+	registerCmd("dumpStatic",           WRAP_METHOD(Console, Cmd_DumpStatic));
+	registerCmd("dumpGlobal",           WRAP_METHOD(Console, Cmd_DumpGlobal));
+	registerCmd("dumpLevel",            WRAP_METHOD(Console, Cmd_DumpLevel));
+	registerCmd("dumpKnowledge",        WRAP_METHOD(Console, Cmd_DumpKnowledge));
+	registerCmd("dumpLocation",         WRAP_METHOD(Console, Cmd_DumpLocation));
+	registerCmd("listScripts",          WRAP_METHOD(Console, Cmd_ListScripts));
+	registerCmd("enableScript",         WRAP_METHOD(Console, Cmd_EnableScript));
+	registerCmd("forceScript",          WRAP_METHOD(Console, Cmd_ForceScript));
+	registerCmd("listInventory",        WRAP_METHOD(Console, Cmd_ListInventory));
+	registerCmd("listLocations",        WRAP_METHOD(Console, Cmd_ListLocations));
+	registerCmd("location",             WRAP_METHOD(Console, Cmd_Location));
+	registerCmd("chapter",              WRAP_METHOD(Console, Cmd_Chapter));
+	registerCmd("changeLocation",       WRAP_METHOD(Console, Cmd_ChangeLocation));
+	registerCmd("changeChapter",        WRAP_METHOD(Console, Cmd_ChangeChapter));
+	registerCmd("changeKnowledge",      WRAP_METHOD(Console, Cmd_ChangeKnowledge));
+	registerCmd("selectDialogOption",   WRAP_METHOD(Console, Cmd_SelectDialogOption));
+	registerCmd("enableInventoryItem",  WRAP_METHOD(Console, Cmd_EnableInventoryItem));
 }
 
 Console::~Console() {
