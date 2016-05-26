@@ -101,16 +101,6 @@ private:
 	static uint16 _nextObjectId;
 
 	/**
-	 * The dimensions of the plane, in game script
-	 * coordinates.
-	 * TODO: These are never used and are always
-	 * scriptWidth x scriptHeight in SCI engine? The actual
-	 * dimensions of the plane are always in
-	 * gameRect/planeRect.
-	 */
-	int16 _width, _height;
-
-	/**
 	 * For planes that are used to render picture data, the
 	 * resource ID of the picture to be displayed. This
 	 * value may also be one of the special
@@ -134,10 +124,6 @@ private:
 	 * changePic).
 	 */
 	bool _pictureChanged;
-
-	// TODO: Are these ever actually used?
-	int _field_34, _field_38; // probably a point or ratio
-	int _field_3C, _field_40; // probably a point or ratio
 
 	/**
 	 * Converts the dimensions of the game rect used by

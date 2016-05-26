@@ -45,8 +45,6 @@ void DrawList::add(ScreenItem *screenItem, const Common::Rect &rect) {
 uint16 Plane::_nextObjectId = 20000;
 
 Plane::Plane(const Common::Rect &gameRect, PlanePictureCodes pictureId) :
-_width(g_sci->_gfxFrameout->getCurrentBuffer().scriptWidth),
-_height(g_sci->_gfxFrameout->getCurrentBuffer().scriptHeight),
 _pictureId(pictureId),
 _mirrored(false),
 _back(0),
@@ -65,8 +63,6 @@ _gameRect(gameRect) {
 }
 
 Plane::Plane(reg_t object) :
-_width(g_sci->_gfxFrameout->getCurrentBuffer().scriptWidth),
-_height(g_sci->_gfxFrameout->getCurrentBuffer().scriptHeight),
 _priorityChanged(false),
 _object(object),
 _redrawAllCount(g_sci->_gfxFrameout->getScreenCount()),
@@ -97,8 +93,6 @@ _moved(0) {
 Plane::Plane(const Plane &other) :
 _pictureId(other._pictureId),
 _mirrored(other._mirrored),
-_field_34(other._field_34), _field_38(other._field_38),
-_field_3C(other._field_3C), _field_40(other._field_40),
 _back(other._back),
 _object(other._object),
 _priority(other._priority),
@@ -116,11 +110,7 @@ void Plane::operator=(const Plane &other) {
 	_mirrored = other._mirrored;
 	_priority = other._priority;
 	_back = other._back;
-	_width = other._width;
-	_field_34 = other._field_34;
-	_height = other._height;
 	_screenRect = other._screenRect;
-	_field_3C = other._field_3C;
 	_priorityChanged = other._priorityChanged;
 }
 
@@ -769,8 +759,6 @@ void Plane::sync(const Plane *other, const Common::Rect &screenRect) {
 	}
 
 	convertGameRectToPlaneRect();
-	_width = g_sci->_gfxFrameout->getCurrentBuffer().scriptWidth;
-	_height = g_sci->_gfxFrameout->getCurrentBuffer().scriptHeight;
 	_screenRect = _planeRect;
 	// NOTE: screenRect originally was retrieved through globals
 	// instead of being passed into the function
