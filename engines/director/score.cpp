@@ -61,10 +61,144 @@ Score::Score(Common::SeekableReadStream &stream) {
 	_frames.remove_at(0);
 }
 
+void Score::loadConfig(Common::SeekableReadStream &stream) {
+	/*uint16 unk1 = */ stream.readUint16BE();
+	/*ver1 = */ stream.readUint16BE();
+	_movieRect.top = stream.readUint16BE();
+	_movieRect.left = stream.readUint16BE();
+	_movieRect.bottom = stream.readUint16BE();
+	_movieRect.right = stream.readUint16BE();
+
+	_castArrayStart = stream.readUint16BE();
+	_castArrayEnd = stream.readUint16BE();
+	_initialFrameRate = stream.readByte();
+	stream.skip(9);
+	/*uint16 stageColor = */ stream.readUint16BE();
+}
+
 void Score::readVersion(uint32 rid) {
 	_versionMinor = rid & 0xffff;
 	_versionMajor = rid >> 16;
 	debug("%d.%d", _versionMajor, _versionMinor);
+}
+
+void Score::loadCastData(Common::SeekableReadStream &stream) {
+	for (uint16 id = _castArrayStart; id < _castArrayEnd; id++) {
+		byte size = stream.readByte();
+		if (size > 0) {
+			debug("%d", stream.pos());
+			uint8 castType = stream.readByte();
+			switch (castType) {
+			case kCastBitmap:
+				_casts[id] = getBitmapCast(stream);
+				_casts[id]->type = kCastBitmap;
+				break;
+			case kCastText:
+				_casts[id] = getTextCast(stream);
+				_casts[id]->type = kCastText;
+				break;
+			case kCastShape:
+				_casts[id] = getShapeCast(stream);
+				_casts[id]->type = kCastShape;
+				break;
+			case kCastButton:
+				_casts[id] = getButtonCast(stream);
+				_casts[id]->type = kCastButton;
+				break;
+			default:
+				warning("Unhandled cast type: %d", castType);
+				stream.skip(size - 1);
+				break;
+			}
+		}
+	}
+}
+
+BitmapCast *Score::getBitmapCast(Common::SeekableReadStream &stream) {
+	BitmapCast *cast = new BitmapCast();
+	/*byte flags = */ stream.readByte();
+	/*uint16 someFlaggyThing = */ stream.readUint16BE();
+
+	cast->initialRect.top = stream.readUint16BE();
+	cast->initialRect.left = stream.readUint16BE();
+	cast->initialRect.bottom = stream.readUint16BE();
+	cast->initialRect.right = stream.readUint16BE();
+
+	cast->boundingRect.top = stream.readUint16BE();
+	cast->boundingRect.left = stream.readUint16BE();
+	cast->boundingRect.bottom = stream.readUint16BE();
+	cast->boundingRect.right = stream.readUint16BE();
+
+	cast->regX = stream.readUint16BE();
+	cast->regY = stream.readUint16BE();
+	/*uint16 unk1 =*/ stream.readUint16BE();
+	/*uint16 unk2 =*/ stream.readUint16BE();
+	return cast;
+}
+
+TextCast *Score::getTextCast(Common::SeekableReadStream &stream) {
+	TextCast *cast = new TextCast();
+	/*byte flags =*/ stream.readByte();
+	cast->borderSize = stream.readByte();
+	cast->gutterSize = stream.readByte();
+	cast->boxShadow = stream.readByte();
+	cast->textType = stream.readByte();
+	cast->textAlign = stream.readUint16BE();
+	stream.skip(6); //palinfo
+	/*uint32 unk1 = */ stream.readUint32BE();
+
+	cast->initialRect.top = stream.readUint16BE();
+	cast->initialRect.left = stream.readUint16BE();
+	cast->initialRect.bottom = stream.readUint16BE();
+	cast->initialRect.right = stream.readUint16BE();
+
+	cast->textShadow = stream.readByte();
+	cast->textFlags = stream.readByte();
+	/*uint16 unk2 =*/ stream.readUint16BE();
+	return cast;
+}
+
+ShapeCast *Score::getShapeCast(Common::SeekableReadStream &stream) {
+	ShapeCast *cast = new ShapeCast();
+	/*byte flags = */ stream.readByte();
+	/*unk1 = */ stream.readByte();
+	cast->shapeType = stream.readByte();
+
+	cast->initialRect.top = stream.readUint16BE();
+	cast->initialRect.left = stream.readUint16BE();
+	cast->initialRect.bottom = stream.readUint16BE();
+	cast->initialRect.right = stream.readUint16BE();
+
+	cast->pattern = stream.readUint16BE();
+	cast->fgCol = stream.readByte();
+	cast->bgCol = stream.readByte();
+	cast->fillType = stream.readByte();
+	cast->lineThickness = stream.readByte();
+	cast->lineDirection = stream.readByte();
+	return cast;
+}
+
+ButtonCast *Score::getButtonCast(Common::SeekableReadStream &stream) {
+	ButtonCast *cast = new ButtonCast();
+	/*byte flags =*/ stream.readByte();
+	cast->borderSize = stream.readByte();
+	cast->gutterSize = stream.readByte();
+	cast->boxShadow = stream.readByte();
+	cast->textType = stream.readByte();
+	cast->textAlign = stream.readUint16BE();
+	stream.skip(6); //palinfo
+	/*uint32 unk1 = */ stream.readUint32BE();
+
+	cast->initialRect.top = stream.readUint16BE();
+	cast->initialRect.left = stream.readUint16BE();
+	cast->initialRect.bottom = stream.readUint16BE();
+	cast->initialRect.right = stream.readUint16BE();
+
+	cast->textShadow = stream.readByte();
+	cast->textFlags = stream.readByte();
+	/*uint16 unk2 =*/ stream.readUint16BE();
+	cast->buttonType = stream.readUint16BE();
+	return cast;
 }
 
 void Score::play() {

@@ -70,6 +70,45 @@ enum mainChannelsPosition {
     kPaletePosition = 15
 };
 
+struct Cast {
+    castType type;
+    Common::Rect initialRect;
+};
+
+struct BitmapCast : Cast {
+    Common::Rect boundingRect;
+    uint16 regX;
+    uint16 regY;
+    uint8 flags;
+};
+
+struct ShapeCast : Cast {
+    byte shapeType;
+    uint16 pattern;
+    byte fgCol;
+    byte bgCol;
+    byte fillType;
+    byte lineThickness;
+    byte lineDirection;
+};
+
+struct TextCast : Cast {
+    byte borderSize;
+    byte gutterSize;
+    byte boxShadow;
+
+    byte textType;
+    byte textAlign;
+    byte textShadow;
+    byte textFlags;
+};
+
+struct ButtonCast : TextCast {
+    //TODO types?
+    uint16 buttonType;
+};
+
+
 class Sprite {
 public:
     Sprite();
@@ -115,16 +154,29 @@ public:
 
 class Score {
 public:
+    Score(Common::SeekableReadStream &stream);
+    void readVersion(uint32 rid);
+    void loadConfig(Common::SeekableReadStream &stream);
+    void loadCastData(Common::SeekableReadStream &stream);
+    void play();
+
+private:
+    BitmapCast *getBitmapCast(Common::SeekableReadStream &stream);
+    TextCast *getTextCast(Common::SeekableReadStream &stream);
+    ButtonCast *getButtonCast(Common::SeekableReadStream &stream);
+    ShapeCast *getShapeCast(Common::SeekableReadStream &stream);
+
+public:
     Common::Array<Frame *> _frames;
+    Common::HashMap<int, Cast *> _casts;
 
 private:
     uint16 _versionMinor;
     uint16 _versionMajor;
-
-public:
-    Score(Common::SeekableReadStream &stream);
-    void readVersion(uint32 rid);
-    void play();
+    byte _initialFrameRate;
+    uint16 _castArrayStart;
+    uint16 _castArrayEnd;
+    Common::Rect _movieRect;
 };
 
 } //End of namespace Director

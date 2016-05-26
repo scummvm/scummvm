@@ -72,6 +72,13 @@ Common::Error DirectorEngine::run() {
 
 	Common::SeekableReadStream *scr = _mainArchive->getResource(MKTAG('V','W','S','C'), 1024);
 	Score score(*scr);
+
+	Common::SeekableReadStream *conf = _mainArchive->getResource(MKTAG('V','W','C','F'), 1024);
+	score.loadConfig(*conf);
+
+	Common::SeekableReadStream *records = _mainArchive->getResource(MKTAG('V','W','C','R'), 1024);
+	score.loadCastData(*records);
+
 	score.play();
 
 	if (getPlatform() == Common::kPlatformWindows)
