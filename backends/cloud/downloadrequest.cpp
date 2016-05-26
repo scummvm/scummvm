@@ -57,7 +57,7 @@ bool DownloadRequest::handle() {
 		if (_localFile->write(buf, readBytes) != readBytes) {
 			warning("DownloadRequest: unable to write all received bytes into output file");
 			ConnMan.getRequestInfo(_id).state = Networking::FINISHED;
-			if (_boolCallback) (*_boolCallback)(false);			
+			if (_boolCallback) (*_boolCallback)(Storage::RequestBoolPair(_id, false));
 			return true;
 		}
 
@@ -68,7 +68,7 @@ bool DownloadRequest::handle() {
 		}
 
 		ConnMan.getRequestInfo(_id).state = Networking::FINISHED;
-		if (_boolCallback) (*_boolCallback)(_remoteFileStream->httpResponseCode() == 200);
+		if (_boolCallback) (*_boolCallback)(Storage::RequestBoolPair(_id, _remoteFileStream->httpResponseCode() == 200));
 
 		_localFile->close(); //yes, I know it's closed automatically in ~DumpFile()
 		return true;
@@ -82,7 +82,7 @@ void DownloadRequest::restart() {
 	//thus, it can't restart it
 	warning("DownloadRequest: cannot be restarted");
 	ConnMan.getRequestInfo(_id).state = Networking::FINISHED;
-	if (_boolCallback) (*_boolCallback)(false);
+	if (_boolCallback) (*_boolCallback)(Storage::RequestBoolPair(_id, false));
 	//TODO: fix that
 }
 

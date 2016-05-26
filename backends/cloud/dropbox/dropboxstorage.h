@@ -40,7 +40,7 @@ class DropboxStorage: public Cloud::Storage {
 	static void getAccessToken(Common::String code);
 
 	/** Constructs StorageInfo based on JSON response from cloud. */
-	void infoInnerCallback(StorageInfoCallback outerCallback, void *json);
+	void infoInnerCallback(StorageInfoCallback outerCallback, Networking::RequestDataPair json);
 
 	void printFiles(Common::Array<StorageFile> files);
 
@@ -91,7 +91,7 @@ public:
 	virtual int32 info(StorageInfoCallback callback);
 
 	/** This method is passed into info(). (Temporary) */
-	void infoMethodCallback(StorageInfo storageInfo);
+	void infoMethodCallback(RequestStorageInfoPair pair);
 
 	/** Returns whether saves sync process is running. */
 	virtual bool isSyncing() { return false; } //TODO

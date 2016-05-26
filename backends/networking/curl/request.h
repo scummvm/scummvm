@@ -28,6 +28,16 @@
 
 namespace Networking {
 
+template<typename T> struct RequestIdPair {
+	int32 id;
+	T value;
+
+	RequestIdPair(int32 rid, T v) : id(rid), value(v) {}
+};
+
+typedef RequestIdPair<void *> RequestDataPair;
+typedef Common::BaseCallback<RequestDataPair> *DataCallback;
+
 class Request {
 protected:
 	/**
@@ -35,12 +45,12 @@ protected:
 	* That's the way Requests pass the result to the code which asked to create this request.
 	*/
 
-	Common::BaseCallback<> *_callback;
+	DataCallback _callback;
 
 	int32 _id;
 
 public:
-	Request(Common::BaseCallback<> *cb): _callback(cb), _id(-1) {}
+	Request(DataCallback cb): _callback(cb), _id(-1) {}
 	virtual ~Request() { delete _callback; }
 
 	/**

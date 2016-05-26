@@ -40,7 +40,7 @@ class DropboxListDirectoryRequest: public Networking::Request {
 	Common::Array<StorageFile> _files;
 	int32 _requestId;
 
-	void responseCallback(void *jsonPtr);
+	void responseCallback(Networking::RequestDataPair pair);
 	void startupWork();
 
 public:

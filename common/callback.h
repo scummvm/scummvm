@@ -48,21 +48,21 @@ public:
 };
 
 /**
-* GlobalFunctionCallback is a simple wrapper for global C functions.
+* GlobalFunctionCallback<T> is a simple wrapper for global C functions.
 *
-* If there is a method, which accepts BaseCallback<void *>, you can
+* If there is a method, which accepts BaseCallback<T>, you can
 * easily pass your C function by passing
-*     new GlobalFunctionCallback(yourFunction)
+*     new GlobalFunctionCallback<T>(yourFunction)
 */
 
-class GlobalFunctionCallback: public BaseCallback<void *> {
-	typedef void(*GlobalFunction)(void *result);
+template<typename T> class GlobalFunctionCallback: public BaseCallback<T> {
+	typedef void(*GlobalFunction)(T result);
 	GlobalFunction _callback;
 
 public:
 	GlobalFunctionCallback(GlobalFunction cb): _callback(cb) {}
 	virtual ~GlobalFunctionCallback() {}
-	virtual void operator()(void *data) {
+	virtual void operator()(T data) {
 		if (_callback) _callback(data);
 	}
 };

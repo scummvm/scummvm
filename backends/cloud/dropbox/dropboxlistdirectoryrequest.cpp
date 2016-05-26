@@ -25,6 +25,7 @@
 #include "backends/networking/curl/connectionmanager.h"
 #include "backends/networking/curl/curljsonrequest.h"
 #include "common/json.h"
+#include "backends/cloud/storage.h"
 
 namespace Cloud {
 namespace Dropbox {
@@ -39,7 +40,7 @@ void DropboxListDirectoryRequest::startupWork() {
 	_files.clear();
 	_complete = false;
 
-	Common::BaseCallback<> *innerCallback = new Common::Callback<DropboxListDirectoryRequest>(this, &DropboxListDirectoryRequest::responseCallback);
+	Networking::DataCallback innerCallback = new Common::Callback<DropboxListDirectoryRequest, Networking::RequestDataPair>(this, &DropboxListDirectoryRequest::responseCallback);
 	Networking::CurlJsonRequest *request = new Networking::CurlJsonRequest(innerCallback, "https://api.dropboxapi.com/2/files/list_folder");
 	request->addHeader("Authorization: Bearer " + _token);
 	request->addHeader("Content-Type: application/json");
@@ -57,8 +58,8 @@ void DropboxListDirectoryRequest::startupWork() {
 }
 
 
-void DropboxListDirectoryRequest::responseCallback(void *jsonPtr) {
-	Common::JSONValue *json = (Common::JSONValue *)jsonPtr;
+void DropboxListDirectoryRequest::responseCallback(Networking::RequestDataPair pair) {
+	Common::JSONValue *json = (Common::JSONValue *)pair.value;
 	if (json) {
 		Common::JSONObject response = json->asObject();
 		
@@ -88,7 +89,7 @@ void DropboxListDirectoryRequest::responseCallback(void *jsonPtr) {
 		bool hasMore = response.getVal("has_more")->asBool();
 
 		if (hasMore) {
-			Common::BaseCallback<> *innerCallback = new Common::Callback<DropboxListDirectoryRequest>(this, &DropboxListDirectoryRequest::responseCallback);
+			Networking::DataCallback innerCallback = new Common::Callback<DropboxListDirectoryRequest, Networking::RequestDataPair>(this, &DropboxListDirectoryRequest::responseCallback);
 			Networking::CurlJsonRequest *request = new Networking::CurlJsonRequest(innerCallback, "https://api.dropboxapi.com/2/files/list_folder/continue");
 			request->addHeader("Authorization: Bearer " + _token);
 			request->addHeader("Content-Type: application/json");
@@ -114,7 +115,7 @@ void DropboxListDirectoryRequest::responseCallback(void *jsonPtr) {
 bool DropboxListDirectoryRequest::handle() {
 	if (_complete && _filesCallback) {
 		ConnMan.getRequestInfo(_id).state = Networking::FINISHED;
-		if (_filesCallback) (*_filesCallback)(_files);
+		if (_filesCallback) (*_filesCallback)(Storage::RequestFileArrayPair(_id, _files));
 	}
 
 	return _complete;

@@ -30,7 +30,7 @@
 
 namespace Networking {
 
-CurlRequest::CurlRequest(Common::BaseCallback<> *cb, const char *url): 
+CurlRequest::CurlRequest(DataCallback cb, const char *url): 
 	Request(cb), _url(url), _stream(0), _headersList(0) {}
 
 CurlRequest::~CurlRequest() {

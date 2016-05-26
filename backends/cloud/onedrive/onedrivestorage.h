@@ -49,11 +49,11 @@ class OneDriveStorage: public Cloud::Storage {
 	* continue your work when new token is available.
 	*/
 	void getAccessToken(BoolCallback callback, Common::String code = "");	
-	void tokenRefreshed(BoolCallback callback, void *jsonPointer);
-	void codeFlowComplete(bool success);
+	void tokenRefreshed(BoolCallback callback, Networking::RequestDataPair pair);
+	void codeFlowComplete(RequestBoolPair pair);
 
-	void printJson(void *jsonPointer);
-	void printJsonTokenReceived(bool success);
+	void printJson(Networking::RequestDataPair pair);
+	void printJsonTokenReceived(RequestBoolPair pair);
 public:	
 	virtual ~OneDriveStorage();
 

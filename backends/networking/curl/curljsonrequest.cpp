@@ -31,7 +31,7 @@
 
 namespace Networking {
 
-CurlJsonRequest::CurlJsonRequest(Common::BaseCallback<> *cb, const char *url):
+CurlJsonRequest::CurlJsonRequest(DataCallback cb, const char *url):
 	CurlRequest(cb, url), _contentsStream(DisposeAfterUse::YES) {}
 
 CurlJsonRequest::~CurlJsonRequest() {}
@@ -75,7 +75,7 @@ bool CurlJsonRequest::handle() {
 				if (_stream->httpResponseCode() != 200)
 					debug("%s", contents);
 				Common::JSONValue *json = Common::JSON::parse(contents);				
-				(*_callback)(json); //potential memory leak, free it in your callbacks!
+				(*_callback)(RequestDataPair(_id, json)); //potential memory leak, free it in your callbacks!
 			}
 			return true;
 		}

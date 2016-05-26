@@ -46,12 +46,11 @@ enum RequestState {
 struct RequestInfo {
 	int32 id;
 	Request *request;
-	RequestState state;
-	void *data;
+	RequestState state;	
 	uint32 retryInSeconds;
 
-	RequestInfo() : id(-1), request(0), state(FINISHED), data(0), retryInSeconds(0) {}
-	RequestInfo(int32 rqId, Request *rq) : id(rqId), request(rq), state(PROCESSING), data(0), retryInSeconds(0) {}
+	RequestInfo() : id(-1), request(0), state(FINISHED), retryInSeconds(0) {}
+	RequestInfo(int32 rqId, Request *rq) : id(rqId), request(rq), state(PROCESSING), retryInSeconds(0) {}
 };
 
 class ConnectionManager : public Common::Singleton<ConnectionManager> {

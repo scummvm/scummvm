@@ -38,8 +38,8 @@ namespace Dropbox {
 Common::String DropboxStorage::KEY; //can't use ConfMan there yet, loading it on instance creation/auth
 Common::String DropboxStorage::SECRET; //TODO: hide these secrets somehow
 
-static void saveAccessTokenCallback(void *ptr) {
-	Common::JSONValue *json = (Common::JSONValue *)ptr;
+static void saveAccessTokenCallback(Networking::RequestDataPair pair) {
+	Common::JSONValue *json = (Common::JSONValue *)pair.value;
 	if (json) {
 		debug("saveAccessTokenCallback:");
 		debug("%s", json->stringify(true).c_str());
@@ -105,7 +105,7 @@ int32 DropboxStorage::download(Common::String remotePath, Common::String localPa
 	Common::DumpFile *f = new Common::DumpFile();
 	if (!f->open(localPath, true)) {
 		warning("DropboxStorage: unable to open file to download into");
-		if (callback) (*callback)(false);
+		if (callback) (*callback)(RequestBoolPair(-1, false));
 		delete f;
 		return -1;
 	}
@@ -121,7 +121,7 @@ int32 DropboxStorage::syncSaves(BoolCallback callback) {
 }
 
 int32 DropboxStorage::info(StorageInfoCallback outerCallback) {
-	Common::BaseCallback<> *innerCallback = new Common::CallbackBridge<DropboxStorage, StorageInfo>(this, &DropboxStorage::infoInnerCallback, outerCallback);
+	Networking::DataCallback innerCallback = new Common::CallbackBridge<DropboxStorage, RequestStorageInfoPair, Networking::RequestDataPair>(this, &DropboxStorage::infoInnerCallback, outerCallback);
 	Networking::CurlJsonRequest *request = new Networking::CurlJsonRequest(innerCallback, "https://api.dropboxapi.com/1/account/info");
 	request->addHeader("Authorization: Bearer " + _token);
 	return ConnMan.addRequest(request);
@@ -131,8 +131,8 @@ int32 DropboxStorage::info(StorageInfoCallback outerCallback) {
 	//and then calls the outerCallback (which wants to receive StorageInfo, not void *)
 }
 
-void DropboxStorage::infoInnerCallback(StorageInfoCallback outerCallback, void *jsonPointer) {
-	Common::JSONValue *json = (Common::JSONValue *)jsonPointer;
+void DropboxStorage::infoInnerCallback(StorageInfoCallback outerCallback, Networking::RequestDataPair pair) {
+	Common::JSONValue *json = (Common::JSONValue *)pair.value;
 	if (!json) {
 		warning("NULL passed instead of JSON");
 		delete outerCallback;
@@ -148,19 +148,19 @@ void DropboxStorage::infoInnerCallback(StorageInfoCallback outerCallback, void *
 		Common::JSONObject quota = info.getVal("quota_info")->asObject();
 		uint32 quotaNormal = quota.getVal("normal")->asNumber();
 		uint32 quotaShared = quota.getVal("shared")->asNumber();
-		uint32 quotaAllocated = quota.getVal("quota")->asNumber();		
-		(*outerCallback)(StorageInfo(uid, name, email, quotaNormal+quotaShared, quotaAllocated));
+		uint32 quotaAllocated = quota.getVal("quota")->asNumber();
+		(*outerCallback)(RequestStorageInfoPair(-1, StorageInfo(uid, name, email, quotaNormal+quotaShared, quotaAllocated)));
 		delete outerCallback;
 	}
 	
 	delete json;
 }
 
-void DropboxStorage::infoMethodCallback(StorageInfo storageInfo) {
+void DropboxStorage::infoMethodCallback(RequestStorageInfoPair pair) {
 	debug("\nStorage info:");
-	debug("User name: %s", storageInfo.name().c_str());
-	debug("Email: %s", storageInfo.email().c_str());
-	debug("Disk usage: %u/%u", storageInfo.used(), storageInfo.available());
+	debug("User name: %s", pair.value.name().c_str());
+	debug("Email: %s", pair.value.email().c_str());
+	debug("Disk usage: %u/%u", pair.value.used(), pair.value.available());
 }
 
 DropboxStorage *DropboxStorage::loadFromConfig(Common::String keyPrefix) {
@@ -214,7 +214,7 @@ void DropboxStorage::authThroughConsole() {
 }
 
 void DropboxStorage::getAccessToken(Common::String code) {
-	Common::BaseCallback<> *callback = new Common::GlobalFunctionCallback(saveAccessTokenCallback);
+	Networking::DataCallback callback = new Common::GlobalFunctionCallback<Networking::RequestDataPair>(saveAccessTokenCallback);
 	Networking::CurlJsonRequest *request = new Networking::CurlJsonRequest(callback, "https://api.dropboxapi.com/1/oauth2/token");
 	request->addPostField("code=" + code);
 	request->addPostField("grant_type=authorization_code");

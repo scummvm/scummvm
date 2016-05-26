@@ -40,7 +40,7 @@ protected:
 	Common::String _postFields;
 
 public:
-	CurlRequest(Common::BaseCallback<> *cb, const char *url);
+	CurlRequest(DataCallback cb, const char *url);
 	virtual ~CurlRequest();
 
 	virtual bool handle();

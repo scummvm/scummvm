@@ -30,15 +30,21 @@
 #include "backends/cloud/storagefile.h"
 #include "backends/cloud/storageinfo.h"
 #include "backends/networking/curl/networkreadstream.h"
+#include <backends/networking/curl/request.h>
 
 namespace Cloud {
 
 class Storage {
 public:
-	typedef Common::BaseCallback< Common::Array<StorageFile> > *FileArrayCallback;
-	typedef Common::BaseCallback<Common::ReadStream *> *ReadStreamCallback;
-	typedef Common::BaseCallback<StorageInfo> *StorageInfoCallback;
-	typedef Common::BaseCallback<bool> *BoolCallback;
+	typedef Networking::RequestIdPair<Common::Array<StorageFile>&> RequestFileArrayPair;
+	typedef Networking::RequestIdPair<Common::ReadStream *> RequestReadStreamPair;
+	typedef Networking::RequestIdPair<StorageInfo> RequestStorageInfoPair;
+	typedef Networking::RequestIdPair<bool> RequestBoolPair;	
+
+	typedef Common::BaseCallback<RequestFileArrayPair> *FileArrayCallback;
+	typedef Common::BaseCallback<RequestReadStreamPair> *ReadStreamCallback;
+	typedef Common::BaseCallback<RequestStorageInfoPair> *StorageInfoCallback;
+	typedef Common::BaseCallback<RequestBoolPair> *BoolCallback;
 
 	Storage() {}
 	virtual ~Storage() {}

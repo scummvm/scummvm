@@ -42,7 +42,7 @@ OneDriveStorage::OneDriveStorage(Common::String accessToken, Common::String user
 	_token(accessToken), _uid(userId), _refreshToken(refreshToken) {}
 
 OneDriveStorage::OneDriveStorage(Common::String code) {
-	getAccessToken(new Common::Callback<OneDriveStorage, bool>(this, &OneDriveStorage::codeFlowComplete), code);
+	getAccessToken(new Common::Callback<OneDriveStorage, RequestBoolPair>(this, &OneDriveStorage::codeFlowComplete), code);
 }
 
 OneDriveStorage::~OneDriveStorage() {}
@@ -52,11 +52,11 @@ void OneDriveStorage::getAccessToken(BoolCallback callback, Common::String code)
 
 	if (!codeFlow && _refreshToken == "") {
 		warning("OneDriveStorage: no refresh token available to get new access token.");
-		if (callback) (*callback)(false);
+		if (callback) (*callback)(RequestBoolPair(-1, false));
 		return;
 	}
 
-	Common::BaseCallback<> *innerCallback = new Common::CallbackBridge<OneDriveStorage, bool>(this, &OneDriveStorage::tokenRefreshed, callback);
+	Networking::DataCallback innerCallback = new Common::CallbackBridge<OneDriveStorage, RequestBoolPair, Networking::RequestDataPair>(this, &OneDriveStorage::tokenRefreshed, callback);
 	Networking::CurlJsonRequest *request = new Networking::CurlJsonRequest(innerCallback, "https://login.live.com/oauth20_token.srf");
 	if (codeFlow) {
 		request->addPostField("code=" + code);
@@ -71,11 +71,11 @@ void OneDriveStorage::getAccessToken(BoolCallback callback, Common::String code)
 	ConnMan.addRequest(request);
 }
 
-void OneDriveStorage::tokenRefreshed(BoolCallback callback, void *jsonPointer) {
-	Common::JSONValue *json = (Common::JSONValue *)jsonPointer;
+void OneDriveStorage::tokenRefreshed(BoolCallback callback, Networking::RequestDataPair pair) {
+	Common::JSONValue *json = (Common::JSONValue *)pair.value;
 	if (!json) {
 		warning("OneDriveStorage: got NULL instead of JSON");
-		if (callback) (*callback)(false);
+		if (callback) (*callback)(RequestBoolPair(-1, false));
 		return;
 	}
 
@@ -83,19 +83,19 @@ void OneDriveStorage::tokenRefreshed(BoolCallback callback, void *jsonPointer) {
 	if (!result.contains("access_token") || !result.contains("user_id") || !result.contains("refresh_token")) {
 		warning("Bad response, no token or user_id passed");
 		debug("%s", json->stringify().c_str());
-		if (callback) (*callback)(false);
+		if (callback) (*callback)(RequestBoolPair(-1, false));
 	} else {
 		_token = result.getVal("access_token")->asString();
 		_uid = result.getVal("user_id")->asString();
 		_refreshToken = result.getVal("refresh_token")->asString();
 		g_system->getCloudManager()->save(); //ask CloudManager to save our new refreshToken
-		if (callback) (*callback)(true);
+		if (callback) (*callback)(RequestBoolPair(-1, true));
 	}
 	delete json;
 }
 
-void OneDriveStorage::codeFlowComplete(bool success) {
-	if (!success) {
+void OneDriveStorage::codeFlowComplete(RequestBoolPair pair) {
+	if (!pair.value) {
 		warning("OneDriveStorage: failed to get access token through code flow");
 		return;
 	}
@@ -113,12 +113,12 @@ void OneDriveStorage::saveConfig(Common::String keyPrefix) {
 	ConfMan.set(keyPrefix + "refresh_token", _refreshToken, "cloud");
 }
 
-void OneDriveStorage::printJsonTokenReceived(bool success) {
-	if (success) syncSaves(0); //try again
+void OneDriveStorage::printJsonTokenReceived(RequestBoolPair pair) {
+	if (pair.value) syncSaves(0); //try again
 }
 
-void OneDriveStorage::printJson(void *jsonPointer) {
-	Common::JSONValue *json = (Common::JSONValue *)jsonPointer;
+void OneDriveStorage::printJson(Networking::RequestDataPair pair) {
+	Common::JSONValue *json = (Common::JSONValue *)pair.value;
 	if (!json) {
 		warning("printJson: NULL");
 		return;
@@ -128,7 +128,7 @@ void OneDriveStorage::printJson(void *jsonPointer) {
 	if (result.contains("error")) {
 		//Common::JSONObject error = result.getVal("error")->asObject();
 		debug("bad token, trying again...");
-		getAccessToken(new Common::Callback<OneDriveStorage, bool>(this, &OneDriveStorage::printJsonTokenReceived));
+		getAccessToken(new Common::Callback<OneDriveStorage, RequestBoolPair>(this, &OneDriveStorage::printJsonTokenReceived));
 		delete json;
 		return;
 	}
@@ -139,7 +139,7 @@ void OneDriveStorage::printJson(void *jsonPointer) {
 
 int32 OneDriveStorage::syncSaves(BoolCallback callback) {
 	//this is not the real syncSaves() implementation	
-	Common::BaseCallback<> *innerCallback = new Common::Callback<OneDriveStorage>(this, &OneDriveStorage::printJson);
+	Networking::DataCallback innerCallback = new Common::Callback<OneDriveStorage, Networking::RequestDataPair>(this, &OneDriveStorage::printJson);
 	Networking::CurlJsonRequest *request = new Networking::CurlJsonRequest(innerCallback, "https://api.onedrive.com/v1.0/drives/");	
 	request->addHeader("Authorization: bearer " + _token);
 	return ConnMan.addRequest(request);

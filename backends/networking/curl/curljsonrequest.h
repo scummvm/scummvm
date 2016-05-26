@@ -37,7 +37,7 @@ class CurlJsonRequest: public CurlRequest {
 	char *getPreparedContents();
 
 public:
-	CurlJsonRequest(Common::BaseCallback<> *cb, const char *url);
+	CurlJsonRequest(DataCallback cb, const char *url); //TODO: use some Callback<JSON> already
 	virtual ~CurlJsonRequest();
 
 	virtual bool handle();
