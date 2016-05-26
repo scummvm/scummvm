@@ -33,7 +33,7 @@ class AI;
 
 class Moonbase {
 public:
-	Moonbase(ScummEngine_v90he *vm);
+	Moonbase(ScummEngine_v100he *vm);
 	~Moonbase();
 
 	int readFromArray(int array, int y, int x);
@@ -71,7 +71,7 @@ public:
 	AI *_ai;
 
 private:
-	ScummEngine_v90he *_vm;
+	ScummEngine_v100he *_vm;
 
 	int _fowFrameBaseNumber;
 	int _fowAnimationFrames;

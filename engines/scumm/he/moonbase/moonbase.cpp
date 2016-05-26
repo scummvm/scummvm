@@ -26,7 +26,7 @@
 
 namespace Scumm {
 
-Moonbase::Moonbase(ScummEngine_v90he *vm) : _vm(vm) {
+Moonbase::Moonbase(ScummEngine_v100he *vm) : _vm(vm) {
 	initFOW();
 
 	_ai = new AI(_vm);

@@ -591,7 +591,8 @@ protected:
 
 	byte _debugInputBuffer[256];
 public:
-	ScummEngine_v100he(OSystem *syst, const DetectorResult &dr) : ScummEngine_v99he(syst, dr) {}
+	ScummEngine_v100he(OSystem *syst, const DetectorResult &dr);
+	~ScummEngine_v100he();
 
 	virtual void resetScumm();
 

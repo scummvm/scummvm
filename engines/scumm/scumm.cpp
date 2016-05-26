@@ -885,7 +885,20 @@ ScummEngine_v90he::ScummEngine_v90he(OSystem *syst, const DetectorResult &dr)
 
 	VAR_U32_VERSION = 0xFF;
 	VAR_U32_ARRAY_UNK = 0xFF;
+}
 
+ScummEngine_v90he::~ScummEngine_v90he() {
+	delete _moviePlay;
+	delete _sprite;
+	if (_game.heversion >= 98) {
+		delete _logicHE;
+	}
+	if (_game.heversion >= 99) {
+		free(_hePalettes);
+	}
+}
+
+ScummEngine_v100he::ScummEngine_v100he(OSystem *syst, const DetectorResult &dr) : ScummEngine_v99he(syst, dr) {
 	/* Moonbase stuff */
 	_moonbase = 0;
 
@@ -900,15 +913,7 @@ ScummEngine_v90he::ScummEngine_v90he(OSystem *syst, const DetectorResult &dr)
 	VAR_U32_USER_VAR_F = 0xFF;
 }
 
-ScummEngine_v90he::~ScummEngine_v90he() {
-	delete _moviePlay;
-	delete _sprite;
-	if (_game.heversion >= 98) {
-		delete _logicHE;
-	}
-	if (_game.heversion >= 99) {
-		free(_hePalettes);
-	}
+ScummEngine_v100he::~ScummEngine_v100he() {
 	delete _moonbase;
 }
 
