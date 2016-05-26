@@ -45,6 +45,7 @@ private:
 	bool Cmd_DumpLevel(int argc, const char **argv);
 	bool Cmd_DumpLocation(int argc, const char **argv);
 	bool Cmd_ForceScript(int argc, const char **argv);
+	bool Cmd_DecompileScript(int argc, const char **argv);
 	bool Cmd_ListInventory(int argc, const char **argv);
 	bool Cmd_EnableInventoryItem(int argc, const char **argv);
 	bool Cmd_ListLocations(int argc, const char** argv);

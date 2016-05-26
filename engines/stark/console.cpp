@@ -35,6 +35,7 @@
 #include "engines/stark/services/resourceprovider.h"
 #include "engines/stark/services/services.h"
 #include "engines/stark/services/staticprovider.h"
+#include "engines/stark/tools/decompiler.h"
 
 #include "common/file.h"
 
@@ -51,6 +52,7 @@ Console::Console() : GUI::Debugger() {
 	registerCmd("listScripts",          WRAP_METHOD(Console, Cmd_ListScripts));
 	registerCmd("enableScript",         WRAP_METHOD(Console, Cmd_EnableScript));
 	registerCmd("forceScript",          WRAP_METHOD(Console, Cmd_ForceScript));
+	registerCmd("decompileScript",      WRAP_METHOD(Console, Cmd_DecompileScript));
 	registerCmd("listInventory",        WRAP_METHOD(Console, Cmd_ListInventory));
 	registerCmd("listLocations",        WRAP_METHOD(Console, Cmd_ListLocations));
 	registerCmd("location",             WRAP_METHOD(Console, Cmd_Location));
@@ -273,6 +275,36 @@ bool Console::Cmd_ForceScript(int argc, const char **argv) {
 	return true;
 }
 
+bool Console::Cmd_DecompileScript(int argc, const char **argv) {
+	if (argc >= 2) {
+		uint index = atoi(argv[1]);
+
+		Common::Array<Resources::Script *> scripts = listAllLocationScripts();
+		if (index < scripts.size()) {
+			Resources::Script *script = scripts[index];
+
+			Tools::Decompiler *decompiler = new Tools::Decompiler(script);
+			if (decompiler->getError() != "") {
+				debugPrintf("Decompilation failure: %s\n", decompiler->getError().c_str());
+			}
+
+			decompiler->printDecompiled();
+
+			delete decompiler;
+
+			return true;
+		} else {
+			debugPrintf("Invalid index %d, only %d indices available\n", index, scripts.size());
+		}
+	} else {
+		debugPrintf("Too few args\n");
+	}
+
+	debugPrintf("Decompile a script. Use listScripts to get an id\n");
+	debugPrintf("Usage :\n");
+	debugPrintf("decompileScript [id]\n");
+	return true;
+}
 
 bool Console::Cmd_DumpLocation(int argc, const char **argv) {
 	StarkGlobal->getCurrent()->getLocation()->print();
