@@ -76,8 +76,14 @@ public:
 	void set34(int v) { _field34 = v; }
 	void set38(int v) { _field38 = v; }
 	bool check2C() const { return _field2C > 1 && _field2C <= 10; }
+	int concept18(TTconceptNode *conceptNode) {
+		return conceptNode ? conceptNode->get18() : 0;
+	}
+	int get58() const { return _field58; }
 
 	int getStatus() const { return _status; }
+
+	TTconcept *getFrameSlot(int conceptIndex, TTconceptNode *conceptNode);
 
 	/**
 	 * Adds a found vocab word to the list of words representing
@@ -85,6 +91,9 @@ public:
 	 * @param word		Word to node
 	 */
 	int storeVocabHit(TTword *word);
+
+	bool fn2(int conceptIndex, const TTstring &str, TTconceptNode *conceptNode);
+	bool fn4(int mode, int wordId, TTconcept *concept);
 };
 
 } // End of namespace Titanic

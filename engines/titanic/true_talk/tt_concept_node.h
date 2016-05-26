@@ -58,7 +58,12 @@ public:
 	bool isValid() const { return _status == SS_VALID; }
 
 	TTconcept **setConcept(int conceptIndex, TTconcept *src);
+	int replaceConcept(int mode, int conceptIndex, TTconcept *concept);
 	int changeConcept(int mode, TTconcept **conceptPP, int conceptIndex);
+
+	int concept1WordId() const {
+		return _concept1P ? _concept1P->getWordId() : 0;
+	}
 };
 
 } // End of namespace Titanic

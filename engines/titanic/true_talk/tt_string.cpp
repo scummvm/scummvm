@@ -95,11 +95,11 @@ TTstring &TTstring::operator+=(char c) {
 	return *this;
 }
 
-bool TTstring::operator==(const TTstring &str) {
+bool TTstring::operator==(const TTstring &str) const {
 	return _data && str._data && _data->_string == str._data->_string;
 }
 
-bool TTstring::operator==(const char *str) {
+bool TTstring::operator==(const char *str) const {
 	return _data && _data->_string == str;
 }
 

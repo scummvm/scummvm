@@ -107,4 +107,115 @@ int TTsentence::storeVocabHit(TTword *word) {
 	return 0;
 }
 
+bool TTsentence::fn2(int conceptIndex, const TTstring &str, TTconceptNode *conceptNode) {
+	if (!conceptNode)
+		conceptNode = &_sentenceConcept;
+	TTconcept *concept = getFrameSlot(conceptIndex, conceptNode);
+
+	if (!concept)
+		return str == "isEmpty";
+
+	bool abortFlag = false;
+	switch (concept->_scriptType) {
+	case 1:
+		if (str == "thePlayer")
+			abortFlag = 1;
+		break;
+
+	case 2:
+		if (str == "targetNpc")
+			abortFlag = 1;
+		break;
+
+	case 3:
+		if (str == "otherNpc")
+			abortFlag = 1;
+		break;
+
+	default:
+		break;
+	}
+
+	TTstring conceptText = concept->getText();
+	if (abortFlag || str == conceptText || concept->compareTo(str)) {
+		delete concept;
+		return true;
+	}
+
+	if (conceptIndex == 1 && g_vm->_exeResources._owner->_concept4P) {
+		if (str == g_vm->_exeResources._owner->_concept4P->getText() &&
+				conceptText == "do")
+			goto exit;
+	}
+
+	if (g_vm->_exeResources._owner->_concept2P && (conceptIndex == 0 ||
+			conceptIndex == 3 || conceptIndex == 4)) {
+		if (str == g_vm->_exeResources._owner->_concept2P->getText() &&
+				(conceptText == "it" || conceptText == "he" || conceptText == "she" ||
+				conceptText == "him" || conceptText == "her" || conceptText == "them" ||
+				conceptText == "they"))
+			goto exit;
+	}
+
+	if (g_vm->_exeResources._owner->_concept1P && (conceptIndex == 0 ||
+		conceptIndex == 2 || conceptIndex == 3 || conceptIndex == 4 || conceptIndex == 5)) {
+		if (str == g_vm->_exeResources._owner->_concept2P->getText() &&
+			(conceptText == "it" || conceptText == "that" || conceptText == "he" ||
+				conceptText == "she" || conceptText == "him" || conceptText == "her" ||
+				conceptText == "them" || conceptText == "they" || conceptText == "those" ||
+				conceptText == "1" || conceptText == "thing"))
+			goto exit;
+	}
+
+	if (g_vm->_exeResources._owner->_concept1P && (conceptIndex == 0 || conceptIndex == 2)) {
+		if (conceptText == "?" && str == g_vm->_exeResources._owner->_concept2P->getText()) {
+			delete concept;
+			concept = getFrameSlot(5, conceptNode);
+			conceptText = concept->getText();
+
+			if (conceptText == "it" || conceptText == "that" || conceptText == "he" ||
+				conceptText == "she" || conceptText == "him" || conceptText == "her" ||
+				conceptText == "them" || conceptText == "they" || conceptText == "those" ||
+				conceptText == "1" || conceptText == "thing")
+				abortFlag = true;
+		}
+	}
+
+exit:
+	delete concept;
+	return abortFlag;
+}
+
+bool TTsentence::fn4(int mode, int wordId, TTconcept *concept) {
+	if (!concept)
+		return false;
+
+	switch (mode) {
+	case 1:
+		return _sentenceConcept._concept1P && _sentenceConcept._concept1P->getWordId() == wordId;
+
+	case 5:
+		return _sentenceConcept._concept5P && _sentenceConcept._concept5P->getWordId() == wordId;
+
+	default:
+		return false;
+	}
+}
+
+TTconcept *TTsentence::getFrameSlot(int conceptIndex, TTconceptNode *conceptNode) {
+	TTconcept *newConcept = new TTconcept();
+	
+	if (!conceptNode)
+		conceptNode = &_sentenceConcept;
+	TTconcept *concept = conceptNode->_concepts[conceptIndex];
+	newConcept->copyFrom(concept);
+
+	if (!newConcept->isValid()) {
+		delete newConcept;
+		newConcept = nullptr;
+	}
+
+	return newConcept;
+}
+
 } // End of namespace Titanic

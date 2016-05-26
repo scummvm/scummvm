@@ -115,6 +115,24 @@ TTconcept **TTconceptNode::setConcept(int conceptIndex, TTconcept *src) {
 	return conceptPP;
 }
 
+int TTconceptNode::replaceConcept(int mode, int conceptIndex, TTconcept *concept) {
+	TTconcept **conceptPP = setConcept(conceptIndex, concept);
+
+	if (mode == 0 || (mode == 1 && !*conceptPP)) {
+		if (!concept || !concept->isValid())
+			return SS_5;
+
+		if (mode == 0 && *conceptPP) {
+			delete *conceptPP;
+		}
+
+		*conceptPP = new TTconcept(*concept);
+		return (*conceptPP)->isValid() ? SS_VALID : SS_11;
+	} else {
+		return SS_1;
+	}
+}
+
 int TTconceptNode::changeConcept(int mode, TTconcept **conceptPP, int conceptIndex) {
 	TTconcept **newConceptPP = setConcept(conceptIndex, *conceptPP);
 

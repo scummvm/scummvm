@@ -504,7 +504,7 @@ int TTparser::findFrames(TTsentence *sentence) {
 	}
 
 	if (!status) {
-		status = fn1();
+		status = checkForAction();
 	}
 
 	delete line;
@@ -888,7 +888,7 @@ void TTparser::removeConcept(TTconcept *concept) {
 	delete concept;
 }
 
-int TTparser::fn1() {
+int TTparser::checkForAction() {
 	// TODO
 	return 0;
 }
