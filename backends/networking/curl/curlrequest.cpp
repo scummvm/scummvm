@@ -42,11 +42,18 @@ bool CurlRequest::handle() {
 
 	if (_stream && _stream->eos()) {		
 		if (_stream->httpResponseCode() != 200)
-			warning("HTTP response code is not 200 OK (it's %ld)", _stream->httpResponseCode());		
+			warning("HTTP response code is not 200 OK (it's %ld)", _stream->httpResponseCode());
+		ConnMan.getRequestInfo(_id).state = Networking::FINISHED;
 		return true;
 	}
 
 	return false;
+}
+
+void CurlRequest::restart() {
+	if (_stream) delete _stream;
+	_stream = 0;
+	//with no stream available next handle() will create another one
 }
 
 void CurlRequest::addHeader(Common::String header) {

@@ -44,9 +44,9 @@ public:
 	virtual ~CurlRequest();
 
 	virtual bool handle();
+	virtual void restart();
 
 	void addHeader(Common::String header);
-
 	void addPostField(Common::String header);
 
 	/** Start this Request with ConnMan. Returns its ReadStream. */

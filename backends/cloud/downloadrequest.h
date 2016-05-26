@@ -40,6 +40,7 @@ public:
 	virtual ~DownloadRequest() { delete _localFile; }
 
 	virtual bool handle();
+	virtual void restart();
 };
 
 } //end of namespace Cloud

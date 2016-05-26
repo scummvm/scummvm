@@ -23,6 +23,7 @@
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 
 #include "backends/networking/curl/curljsonrequest.h"
+#include "backends/networking/curl/connectionmanager.h"
 #include "backends/networking/curl/networkreadstream.h"
 #include "common/debug.h"
 #include "common/json.h"
@@ -68,6 +69,7 @@ bool CurlJsonRequest::handle() {
 			if (_stream->httpResponseCode() != 200)
 				warning("HTTP response code is not 200 OK (it's %ld)", _stream->httpResponseCode());
 
+			ConnMan.getRequestInfo(_id).state = Networking::FINISHED;
 			if (_callback) {
 				char *contents = getPreparedContents();
 				if (_stream->httpResponseCode() != 200)

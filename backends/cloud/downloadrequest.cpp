@@ -21,6 +21,7 @@
 */
 
 #include "backends/cloud/downloadrequest.h"
+#include "backends/networking/curl/connectionmanager.h"
 #include "common/debug.h"
 #include "common/textconsole.h"
 
@@ -32,16 +33,19 @@ DownloadRequest::DownloadRequest(Storage::BoolCallback callback, Networking::Net
 bool DownloadRequest::handle() {
 	if (!_remoteFileStream) {
 		warning("DownloadRequest: no stream to read");
+		ConnMan.getRequestInfo(_id).state = Networking::FINISHED;
 		return true;
 	}
 
 	if (!_localFile) {
 		warning("DownloadRequest: no file to write");
+		ConnMan.getRequestInfo(_id).state = Networking::FINISHED;
 		return true;
 	}
 
 	if (!_localFile->isOpen()) {
 		warning("DownloadRequest: failed to open file to write");
+		ConnMan.getRequestInfo(_id).state = Networking::FINISHED;
 		return true;
 	}
 
@@ -52,7 +56,8 @@ bool DownloadRequest::handle() {
 	if (readBytes != 0)
 		if (_localFile->write(buf, readBytes) != readBytes) {
 			warning("DownloadRequest: unable to write all received bytes into output file");
-			if (_boolCallback) (*_boolCallback)(false);
+			ConnMan.getRequestInfo(_id).state = Networking::FINISHED;
+			if (_boolCallback) (*_boolCallback)(false);			
 			return true;
 		}
 
@@ -62,6 +67,7 @@ bool DownloadRequest::handle() {
 			//TODO: do something about it actually			
 		}
 
+		ConnMan.getRequestInfo(_id).state = Networking::FINISHED;
 		if (_boolCallback) (*_boolCallback)(_remoteFileStream->httpResponseCode() == 200);
 
 		_localFile->close(); //yes, I know it's closed automatically in ~DumpFile()
@@ -69,6 +75,15 @@ bool DownloadRequest::handle() {
 	}
 
 	return false;
+}
+
+void DownloadRequest::restart() {
+	//this request doesn't know anything about the _remoteFileStream it's reading
+	//thus, it can't restart it
+	warning("DownloadRequest: cannot be restarted");
+	ConnMan.getRequestInfo(_id).state = Networking::FINISHED;
+	if (_boolCallback) (*_boolCallback)(false);
+	//TODO: fix that
 }
 
 } //end of namespace Cloud

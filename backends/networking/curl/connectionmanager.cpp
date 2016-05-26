@@ -50,10 +50,14 @@ void ConnectionManager::registerEasyHandle(CURL *easy) {
 
 int32 ConnectionManager::addRequest(Request *request) {
 	int32 newId = _nextId++;
-	_requests[newId] = request;
+	_requests[newId] = RequestInfo(newId, request);
 	request->setId(newId);
 	if (!_timerStarted) startTimer();
 	return newId;
+}
+
+RequestInfo &ConnectionManager::getRequestInfo(int32 id) {
+	return _requests[id];
 }
 
 //private goes here:
@@ -87,15 +91,34 @@ void ConnectionManager::handle() {
 void ConnectionManager::interateRequests() {
 	//call handle() of all running requests (so they can do their work)
 	debug("handling %d request(s)", _requests.size());
-	for (Common::HashMap<int32, Request *>::iterator i = _requests.begin(); i != _requests.end();) {
-		Request *request = i->_value;
-		if (request && request->handle()) {
-			delete request;
-			//_requests.erase(i);
-			_requests[i->_key] = 0;
-			++i; //that's temporary
-		} else ++i;
+	Common::Array<int32> idsToRemove;
+	for (Common::HashMap<int32, RequestInfo>::iterator i = _requests.begin(); i != _requests.end(); ++i) {
+		RequestInfo &info = _requests[i->_key];
+		
+		switch(info.state) {
+		case FINISHED:
+			delete info.request;
+			info.request = 0;
+			idsToRemove.push_back(info.id);
+			break;
+
+		case PROCESSING:
+			info.request->handle();
+			break;
+
+		case RETRY:
+			if (info.retryInSeconds > 0) --info.retryInSeconds;
+			else {
+				info.state = PROCESSING;
+				info.request->restart();
+			}
+
+		default:
+			; //nothing to do
+		}
 	}
+	for (uint32 i = 0; i < idsToRemove.size(); ++i)
+		_requests.erase(idsToRemove[i]);
 	if (_requests.empty()) stopTimer();
 }
 

@@ -30,23 +30,32 @@ namespace Cloud {
 namespace Dropbox {
 
 DropboxListDirectoryRequest::DropboxListDirectoryRequest(Common::String token, Common::String path, Storage::FileArrayCallback cb, bool recursive):
-	Networking::Request(0), _filesCallback(cb), _token(token), _complete(false) {	
-	Common::BaseCallback<> *innerCallback = new Common::Callback<DropboxListDirectoryRequest>(this, &DropboxListDirectoryRequest::responseCallback);//new Common::GlobalFunctionCallback(printJson); //okay
+	Networking::Request(0), _requestedPath(path), _requestedRecursive(recursive), _filesCallback(cb),
+	_token(token), _complete(false), _requestId(-1) {
+	startupWork();
+}
+
+void DropboxListDirectoryRequest::startupWork() {
+	_files.clear();
+	_complete = false;
+
+	Common::BaseCallback<> *innerCallback = new Common::Callback<DropboxListDirectoryRequest>(this, &DropboxListDirectoryRequest::responseCallback);
 	Networking::CurlJsonRequest *request = new Networking::CurlJsonRequest(innerCallback, "https://api.dropboxapi.com/2/files/list_folder");
 	request->addHeader("Authorization: Bearer " + _token);
 	request->addHeader("Content-Type: application/json");
 
 	Common::JSONObject jsonRequestParameters;
-	jsonRequestParameters.setVal("path", new Common::JSONValue(path));
-	jsonRequestParameters.setVal("recursive", new Common::JSONValue(recursive));
+	jsonRequestParameters.setVal("path", new Common::JSONValue(_requestedPath));
+	jsonRequestParameters.setVal("recursive", new Common::JSONValue(_requestedRecursive));
 	jsonRequestParameters.setVal("include_media_info", new Common::JSONValue(false));
 	jsonRequestParameters.setVal("include_deleted", new Common::JSONValue(false));
 
 	Common::JSONValue value(jsonRequestParameters);
 	request->addPostField(Common::JSON::stringify(&value));
 
-	ConnMan.addRequest(request);
+	_requestId = ConnMan.addRequest(request);
 }
+
 
 void DropboxListDirectoryRequest::responseCallback(void *jsonPtr) {
 	Common::JSONValue *json = (Common::JSONValue *)jsonPtr;
@@ -103,13 +112,24 @@ void DropboxListDirectoryRequest::responseCallback(void *jsonPtr) {
 }
 
 bool DropboxListDirectoryRequest::handle() {
-	if (_complete && _filesCallback) {		
-		(*_filesCallback)(_files);
+	if (_complete && _filesCallback) {
+		ConnMan.getRequestInfo(_id).state = Networking::FINISHED;
+		if (_filesCallback) (*_filesCallback)(_files);
 	}
 
 	return _complete;
 }
 
+void DropboxListDirectoryRequest::restart() {
+	if (_requestId != -1) {
+		Networking::RequestInfo &info = ConnMan.getRequestInfo(_requestId);
+		//TODO: I'm really not sure some CurlRequest would handle this (it must stop corresponding CURL transfer)
+		info.state = Networking::FINISHED; //may be CANCELED or INTERRUPTED or something?
+		_requestId = -1;
+	}
+
+	startupWork();
+}
 
 } //end of namespace Dropbox
 } //end of namespace Cloud

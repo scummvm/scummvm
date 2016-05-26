@@ -36,12 +36,30 @@ namespace Networking {
 
 class NetworkReadStream;
 
+enum RequestState {
+	PROCESSING,
+	PAUSED,
+	RETRY,
+	FINISHED
+};
+
+struct RequestInfo {
+	int32 id;
+	Request *request;
+	RequestState state;
+	void *data;
+	uint32 retryInSeconds;
+
+	RequestInfo() : id(-1), request(0), state(FINISHED), data(0), retryInSeconds(0) {}
+	RequestInfo(int32 rqId, Request *rq) : id(rqId), request(rq), state(PROCESSING), data(0), retryInSeconds(0) {}
+};
+
 class ConnectionManager : public Common::Singleton<ConnectionManager> {
 	friend void connectionsThread(void *); //calls handle()
 
 	CURLM *_multi;	
 	bool _timerStarted;
-	Common::HashMap<int32, Request *> _requests;
+	Common::HashMap<int32, RequestInfo> _requests;
 	int32 _nextId;
 	
 	void startTimer(int interval = 1000000); //1 second is the default interval
@@ -70,7 +88,9 @@ public:
 	*
 	* @return generated Request's id, which might be used to get its status
 	*/
-	int32 addRequest(Request *request);
+	int32 addRequest(Request *request);	
+
+	RequestInfo &getRequestInfo(int32 id);
 };
 
 /** Shortcut for accessing the connection manager. */

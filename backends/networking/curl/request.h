@@ -51,6 +51,8 @@ public:
 
 	virtual bool handle() = 0;
 
+	virtual void restart() = 0;
+
 	void setId(int32 id) { _id = id; }
 };
 
