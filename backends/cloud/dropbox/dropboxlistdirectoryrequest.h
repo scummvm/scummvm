@@ -47,7 +47,7 @@ public:
 	DropboxListDirectoryRequest(Common::String token, Common::String path, Storage::FileArrayCallback cb, bool recursive = false);
 	virtual ~DropboxListDirectoryRequest() { delete _filesCallback; }
 
-	virtual bool handle();
+	virtual void handle();
 	virtual void restart();
 };
 

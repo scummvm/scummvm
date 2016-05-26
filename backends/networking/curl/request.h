@@ -55,11 +55,9 @@ public:
 
 	/**
 	* Method, which does actual work. Depends on what this Request is doing.
-	*
-	* @return true if request's work is complete and it may be removed from Storage's list
 	*/
 
-	virtual bool handle() = 0;
+	virtual void handle() = 0;
 
 	virtual void restart() = 0;
 

@@ -112,13 +112,11 @@ void DropboxListDirectoryRequest::responseCallback(Networking::RequestDataPair p
 	delete json;
 }
 
-bool DropboxListDirectoryRequest::handle() {
-	if (_complete && _filesCallback) {
+void DropboxListDirectoryRequest::handle() {
+	if (_complete) {
 		ConnMan.getRequestInfo(_id).state = Networking::FINISHED;
 		if (_filesCallback) (*_filesCallback)(Storage::RequestFileArrayPair(_id, _files));
 	}
-
-	return _complete;
 }
 
 void DropboxListDirectoryRequest::restart() {

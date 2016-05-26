@@ -40,7 +40,7 @@ public:
 	CurlJsonRequest(DataCallback cb, const char *url); //TODO: use some Callback<JSON> already
 	virtual ~CurlJsonRequest();
 
-	virtual bool handle();
+	virtual void handle();
 };
 
 }  //end of namespace Networking

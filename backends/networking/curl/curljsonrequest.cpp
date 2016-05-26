@@ -54,7 +54,7 @@ char *CurlJsonRequest::getPreparedContents() {
 	return (char *)result;
 }
 
-bool CurlJsonRequest::handle() {
+void CurlJsonRequest::handle() {
 	if (!_stream) _stream = new NetworkReadStream(_url, _headersList, _postFields);
 
 	if (_stream) {
@@ -77,11 +77,8 @@ bool CurlJsonRequest::handle() {
 				Common::JSONValue *json = Common::JSON::parse(contents);				
 				(*_callback)(RequestDataPair(_id, json)); //potential memory leak, free it in your callbacks!
 			}
-			return true;
 		}
 	}
-
-	return false;
 }
 
 } //end of namespace Networking

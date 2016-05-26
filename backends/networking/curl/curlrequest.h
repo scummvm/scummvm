@@ -43,7 +43,7 @@ public:
 	CurlRequest(DataCallback cb, const char *url);
 	virtual ~CurlRequest();
 
-	virtual bool handle();
+	virtual void handle();
 	virtual void restart();
 
 	void addHeader(Common::String header);

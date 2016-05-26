@@ -30,23 +30,23 @@ namespace Cloud {
 DownloadRequest::DownloadRequest(Storage::BoolCallback callback, Networking::NetworkReadStream *stream, Common::DumpFile *dumpFile):
 	Request(0), _boolCallback(callback), _remoteFileStream(stream), _localFile(dumpFile) {}
 
-bool DownloadRequest::handle() {
+void DownloadRequest::handle() {
 	if (!_remoteFileStream) {
 		warning("DownloadRequest: no stream to read");
 		ConnMan.getRequestInfo(_id).state = Networking::FINISHED;
-		return true;
+		return;
 	}
 
 	if (!_localFile) {
 		warning("DownloadRequest: no file to write");
 		ConnMan.getRequestInfo(_id).state = Networking::FINISHED;
-		return true;
+		return;
 	}
 
 	if (!_localFile->isOpen()) {
 		warning("DownloadRequest: failed to open file to write");
 		ConnMan.getRequestInfo(_id).state = Networking::FINISHED;
-		return true;
+		return;
 	}
 
 	const int kBufSize = 640 * 1024; //640 KB is enough to everyone?..
@@ -58,7 +58,7 @@ bool DownloadRequest::handle() {
 			warning("DownloadRequest: unable to write all received bytes into output file");
 			ConnMan.getRequestInfo(_id).state = Networking::FINISHED;
 			if (_boolCallback) (*_boolCallback)(Storage::RequestBoolPair(_id, false));
-			return true;
+			return;
 		}
 
 	if (_remoteFileStream->eos()) {
@@ -70,11 +70,8 @@ bool DownloadRequest::handle() {
 		ConnMan.getRequestInfo(_id).state = Networking::FINISHED;
 		if (_boolCallback) (*_boolCallback)(Storage::RequestBoolPair(_id, _remoteFileStream->httpResponseCode() == 200));
 
-		_localFile->close(); //yes, I know it's closed automatically in ~DumpFile()
-		return true;
+		_localFile->close(); //yes, I know it's closed automatically in ~DumpFile()		
 	}
-
-	return false;
 }
 
 void DownloadRequest::restart() {

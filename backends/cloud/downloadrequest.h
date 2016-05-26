@@ -39,7 +39,7 @@ public:
 	DownloadRequest(Storage::BoolCallback callback, Networking::NetworkReadStream *stream, Common::DumpFile *dumpFile);
 	virtual ~DownloadRequest() { delete _localFile; }
 
-	virtual bool handle();
+	virtual void handle();
 	virtual void restart();
 };
 
