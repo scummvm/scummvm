@@ -126,14 +126,35 @@ void OneDriveStorage::printJson(Networking::RequestJsonPair pair) {
 	delete json;
 }
 
-Networking::NetworkReadStream *OneDriveStorage::streamFile(Common::String path) {
-	Common::String url = "https://api.onedrive.com/v1.0/drive/special/approot:/" + path + ":/content";
-	//NOT USING OneDriveTokenRefresher, because it's CurlJsonRequest, which saves all contents in memory to parse as JSON
-	//we actually don't even need a token if the download is "pre-authenticated" (whatever it means)
-	//still, we'd have to know direct URL (might be found in Item's "@content.downloadUrl", received from the server)
-	Networking::CurlRequest *request = new Networking::CurlRequest(0, url.c_str());	
+void OneDriveStorage::fileInfoCallback(ReadStreamCallback outerCallback, Networking::RequestJsonPair pair) {
+	if (!pair.value) {
+		warning("fileInfoCallback: NULL");
+		if (outerCallback) (*outerCallback)(RequestReadStreamPair(pair.id, 0));
+		return;
+	}
+
+	Common::JSONObject result = pair.value->asObject();
+	if (result.contains("@content.downloadUrl")) {
+		const char *url = result.getVal("@content.downloadUrl")->asString().c_str();
+		if (outerCallback)
+			(*outerCallback)(RequestReadStreamPair(
+				pair.id,
+				new Networking::NetworkReadStream(url, 0, "")
+			));
+	} else {
+		warning("downloadUrl not found in passed JSON");
+		debug("%s", pair.value->stringify().c_str());
+		if (outerCallback) (*outerCallback)(RequestReadStreamPair(pair.id, 0));
+	}
+	delete pair.value;
+}
+
+int32 OneDriveStorage::streamFile(Common::String path, ReadStreamCallback outerCallback) {
+	Common::String url = "https://api.onedrive.com/v1.0/drive/special/approot:/" + path + ":/";	
+	Networking::JsonCallback innerCallback = new Common::CallbackBridge<OneDriveStorage, RequestReadStreamPair, Networking::RequestJsonPair>(this, &OneDriveStorage::fileInfoCallback, outerCallback);
+	Networking::CurlJsonRequest *request = new OneDriveTokenRefresher(this, innerCallback, url.c_str());
 	request->addHeader("Authorization: Bearer " + _token);
-	return request->execute();
+	return ConnMan.addRequest(request);
 }
 
 int32 OneDriveStorage::download(Common::String remotePath, Common::String localPath, BoolCallback callback) {
@@ -145,7 +166,7 @@ int32 OneDriveStorage::download(Common::String remotePath, Common::String localP
 		return -1;
 	}
 
-	return ConnMan.addRequest(new DownloadRequest(callback, streamFile(remotePath), f));
+	return ConnMan.addRequest(new DownloadRequest(this, callback, remotePath, f));
 }
 
 void OneDriveStorage::fileDownloaded(RequestBoolPair pair) {

@@ -31,7 +31,7 @@
 
 namespace Networking {
 
-CurlJsonRequest::CurlJsonRequest(JsonCallback cb, const char *url):
+CurlJsonRequest::CurlJsonRequest(JsonCallback cb, Common::String url):
 	CurlRequest(0, url), _jsonCallback(cb), _contentsStream(DisposeAfterUse::YES) {}
 
 CurlJsonRequest::~CurlJsonRequest() {}
@@ -55,7 +55,7 @@ char *CurlJsonRequest::getPreparedContents() {
 }
 
 void CurlJsonRequest::handle() {
-	if (!_stream) _stream = new NetworkReadStream(_url, _headersList, _postFields);
+	if (!_stream) _stream = new NetworkReadStream(_url.c_str(), _headersList, _postFields);
 
 	if (_stream) {
 		const int kBufSize = 16*1024;

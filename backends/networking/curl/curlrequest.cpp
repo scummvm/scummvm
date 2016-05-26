@@ -30,7 +30,7 @@
 
 namespace Networking {
 
-CurlRequest::CurlRequest(DataCallback cb, const char *url): 
+CurlRequest::CurlRequest(DataCallback cb, Common::String url):
 	Request(cb), _url(url), _stream(0), _headersList(0) {}
 
 CurlRequest::~CurlRequest() {
@@ -38,7 +38,7 @@ CurlRequest::~CurlRequest() {
 }
 
 void CurlRequest::handle() {
-	if (!_stream) _stream = new NetworkReadStream(_url, _headersList, _postFields);	
+	if (!_stream) _stream = new NetworkReadStream(_url.c_str(), _headersList, _postFields);	
 
 	if (_stream && _stream->eos()) {		
 		if (_stream->httpResponseCode() != 200)
@@ -71,13 +71,13 @@ void CurlRequest::addPostField(Common::String keyValuePair) {
 		_postFields += "&" + keyValuePair;
 }
 
-NetworkReadStream *CurlRequest::execute() {
+Cloud::Storage::RequestReadStreamPair CurlRequest::execute() {
 	if (!_stream) {
-		_stream = new NetworkReadStream(_url, _headersList, _postFields);
+		_stream = new NetworkReadStream(_url.c_str(), _headersList, _postFields);
 		ConnMan.addRequest(this);
 	}
 
-	return _stream;
+	return Cloud::Storage::RequestReadStreamPair(_id, _stream);
 }
 
 } //end of namespace Networking

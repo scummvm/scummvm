@@ -42,7 +42,7 @@ class CurlJsonRequest: public CurlRequest {
 	char *getPreparedContents();
 
 public:
-	CurlJsonRequest(JsonCallback cb, const char *url);
+	CurlJsonRequest(JsonCallback cb, Common::String url);
 	virtual ~CurlJsonRequest();
 
 	virtual void handle(); 

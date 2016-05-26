@@ -109,7 +109,7 @@ void OneDriveTokenRefresher::restart() {
 	if (_jsonCallback) (*_jsonCallback)(Networking::RequestJsonPair(_id, 0));
 }
 
-Networking::NetworkReadStream *OneDriveTokenRefresher::execute() {
+Cloud::Storage::RequestReadStreamPair OneDriveTokenRefresher::execute() {
 	if (!_started) {
 		for (uint32 i = 0; i < _headers.size(); ++i)
 			_innerRequest->addHeader(_headers[i]);

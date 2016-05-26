@@ -35,8 +35,9 @@ class DownloadRequest: public Networking::Request {
 	Networking::NetworkReadStream *_remoteFileStream;
 	Common::DumpFile *_localFile;	
 
+	void streamCallback(Storage::RequestReadStreamPair pair);
 public:
-	DownloadRequest(Storage::BoolCallback callback, Networking::NetworkReadStream *stream, Common::DumpFile *dumpFile);
+	DownloadRequest(Storage *storage, Storage::BoolCallback callback, Common::String remoteFile, Common::DumpFile *dumpFile);
 	virtual ~DownloadRequest() { delete _localFile; }
 
 	virtual void handle();

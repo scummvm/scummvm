@@ -52,7 +52,7 @@ public:
 	virtual void setHeaders(Common::Array<Common::String> &headers) { _headers = headers; }
 	virtual void addHeader(Common::String header) { _headers.push_back(header); }
 	virtual void addPostField(Common::String field) { _innerRequest->addPostField(field); }
-	virtual Networking::NetworkReadStream *execute();
+	virtual Cloud::Storage::RequestReadStreamPair execute();
 };
 
 } //end of namespace OneDrive

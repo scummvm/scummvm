@@ -27,25 +27,39 @@
 
 namespace Cloud {
 
-DownloadRequest::DownloadRequest(Storage::BoolCallback callback, Networking::NetworkReadStream *stream, Common::DumpFile *dumpFile):
-	Request(0), _boolCallback(callback), _remoteFileStream(stream), _localFile(dumpFile) {}
+DownloadRequest::DownloadRequest(Storage *storage, Storage::BoolCallback callback, Common::String remoteFile, Common::DumpFile *dumpFile):
+	Request(0), _boolCallback(callback), _remoteFileStream(0), _localFile(dumpFile) {
+	storage->streamFile(remoteFile, new Common::Callback<DownloadRequest, Storage::RequestReadStreamPair>(this, &DownloadRequest::streamCallback));
+}
 
-void DownloadRequest::handle() {
-	if (!_remoteFileStream) {
-		warning("DownloadRequest: no stream to read");
+void DownloadRequest::streamCallback(Storage::RequestReadStreamPair pair) {
+	if (!pair.value) {
+		warning("DownloadRequest: no ReadStream passed");
 		ConnMan.getRequestInfo(_id).state = Networking::FINISHED;
+		if (_boolCallback) (*_boolCallback)(Storage::RequestBoolPair(_id, false));
 		return;
 	}
 
+	_remoteFileStream = (Networking::NetworkReadStream *)pair.value;
+}
+
+void DownloadRequest::handle() {	
 	if (!_localFile) {
 		warning("DownloadRequest: no file to write");
 		ConnMan.getRequestInfo(_id).state = Networking::FINISHED;
+		if (_boolCallback) (*_boolCallback)(Storage::RequestBoolPair(_id, false));
 		return;
 	}
 
 	if (!_localFile->isOpen()) {
 		warning("DownloadRequest: failed to open file to write");
 		ConnMan.getRequestInfo(_id).state = Networking::FINISHED;
+		if (_boolCallback) (*_boolCallback)(Storage::RequestBoolPair(_id, false));
+		return;
+	}
+
+	if (!_remoteFileStream) {
+		//waiting for callback
 		return;
 	}
 

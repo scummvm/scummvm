@@ -49,6 +49,8 @@ class OneDriveStorage: public Cloud::Storage {
 
 	void printJson(Networking::RequestJsonPair pair);
 	void fileDownloaded(RequestBoolPair pair);
+
+	void fileInfoCallback(ReadStreamCallback outerCallback, Networking::RequestJsonPair pair);
 public:	
 	virtual ~OneDriveStorage();
 
@@ -75,7 +77,7 @@ public:
 	virtual int32 upload(Common::String path, Common::ReadStream *contents, BoolCallback callback) { return -1; } //TODO
 
 	/** Returns pointer to Networking::NetworkReadStream. */
-	virtual int32 streamFile(Common::String path);
+	virtual int32 streamFile(Common::String path, ReadStreamCallback callback);
 
 	/** Calls the callback when finished. */
 	virtual int32 download(Common::String remotePath, Common::String localPath, BoolCallback callback);

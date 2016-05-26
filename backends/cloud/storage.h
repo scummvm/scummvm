@@ -37,7 +37,7 @@ namespace Cloud {
 class Storage {
 public:
 	typedef Networking::RequestIdPair<Common::Array<StorageFile>&> RequestFileArrayPair;
-	typedef Networking::RequestIdPair<Common::ReadStream *> RequestReadStreamPair;
+	typedef Networking::RequestIdPair<Networking::NetworkReadStream *> RequestReadStreamPair;
 	typedef Networking::RequestIdPair<StorageInfo> RequestStorageInfoPair;
 	typedef Networking::RequestIdPair<bool> RequestBoolPair;	
 
@@ -78,7 +78,7 @@ public:
 	virtual int32 upload(Common::String path, Common::ReadStream *contents, BoolCallback callback) = 0;
 
 	/** Returns pointer to Networking::NetworkReadStream. */
-	virtual Networking::NetworkReadStream *streamFile(Common::String path) = 0; //TODO: return int32 somehow
+	virtual int32 streamFile(Common::String path, ReadStreamCallback callback) = 0;
 
 	/** Calls the callback when finished. */
 	virtual int32 download(Common::String remotePath, Common::String localPath, BoolCallback callback) = 0;

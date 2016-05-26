@@ -88,7 +88,7 @@ int32 DropboxStorage::listDirectory(Common::String path, FileArrayCallback outer
 	return ConnMan.addRequest(new DropboxListDirectoryRequest(_token, path, outerCallback, recursive));
 }
 
-Networking::NetworkReadStream *DropboxStorage::streamFile(Common::String path) {
+int32 DropboxStorage::streamFile(Common::String path, ReadStreamCallback callback) {
 	Common::JSONObject jsonRequestParameters;
 	jsonRequestParameters.setVal("path", new Common::JSONValue(path));
 	Common::JSONValue value(jsonRequestParameters);
@@ -98,7 +98,9 @@ Networking::NetworkReadStream *DropboxStorage::streamFile(Common::String path) {
 	request->addHeader("Dropbox-API-Arg: " + Common::JSON::stringify(&value));
 	request->addHeader("Content-Type: "); //required to be empty (as we do POST, it's usually app/form-url-encoded)
 
-	return request->execute();
+	RequestReadStreamPair pair = request->execute();
+	if (callback) (*callback)(pair);
+	return pair.id;
 }
 
 int32 DropboxStorage::download(Common::String remotePath, Common::String localPath, BoolCallback callback) {
@@ -110,7 +112,7 @@ int32 DropboxStorage::download(Common::String remotePath, Common::String localPa
 		return -1;
 	}
 
-	return ConnMan.addRequest(new DownloadRequest(callback, streamFile(remotePath), f));
+	return ConnMan.addRequest(new DownloadRequest(this, callback, remotePath, f));
 }
 
 int32 DropboxStorage::syncSaves(BoolCallback callback) {
