@@ -1573,8 +1573,8 @@ uint8 *Wiz::drawWizImage(int resNum, int state, int maskNum, int maskState, int 
 	}
 
 	if (_vm->_game.id == GID_MOONBASE &&
-			((ScummEngine_v90he *)_vm)->_moonbase->isFOW(resNum, state, conditionBits)) {
-		((ScummEngine_v90he *)_vm)->_moonbase->renderFOW(dst, dstPitch, dstType, cw, ch, flags);
+			((ScummEngine_v100he *)_vm)->_moonbase->isFOW(resNum, state, conditionBits)) {
+		((ScummEngine_v100he *)_vm)->_moonbase->renderFOW(dst, dstPitch, dstType, cw, ch, flags);
 		x1 = 0;
 		y1 = 0;
 		width = rScreen.width();
@@ -1814,7 +1814,7 @@ void Wiz::copy555WizImage(uint8 *dst, uint8 *wizd, int dstPitch, int dstType,
 	uint32 compID = READ_LE_UINT32(wizd);
 
 	if (compID == 0x12340102) {
-		((ScummEngine_v90he *)_vm)->_moonbase->blitT14WizImage(dst, dstw, dsth, dstPitch, clipBox, wizd, srcx, srcy, rawROP, paramROP);
+		((ScummEngine_v100he *)_vm)->_moonbase->blitT14WizImage(dst, dstw, dsth, dstPitch, clipBox, wizd, srcx, srcy, rawROP, paramROP);
 	} else if (compID == 0x12340802) {
 		warning("Distorion codec");
 	} else if (compID == 0x12340902) {

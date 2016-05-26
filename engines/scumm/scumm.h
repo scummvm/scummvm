@@ -700,8 +700,6 @@ protected:
 	void ignoreScriptWord() { fetchScriptWord(); }
 	void ignoreScriptByte() { fetchScriptByte(); }
 	void push(int a);
-
-public: // TODO. FIXME should be protected. Used by Moonbase
 	int pop();
 	virtual int readVar(uint var);
 	virtual void writeVar(uint var, int value);

@@ -78,7 +78,6 @@ protected:
 	void getResultPosIndirect();
 	virtual void getResultPos();
 
-public: // TODO. FIXME. Should be protected. Used by Moonbase
 	virtual int readVar(uint var);
 	virtual void writeVar(uint var, int value);
 

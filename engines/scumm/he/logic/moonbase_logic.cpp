@@ -33,7 +33,7 @@ namespace Scumm {
  */
 class LogicHEmoonbase : public LogicHE {
 public:
-	LogicHEmoonbase(ScummEngine_v90he *vm) : LogicHE(vm) {}
+	LogicHEmoonbase(ScummEngine_v100he *vm) : LogicHE(vm) { _vm1 = vm; }
 
 	int versionID();
 
@@ -53,12 +53,15 @@ private:
 	void op_ai_reset(int op, int numArgs, int32 *args);
 	void op_ai_set_type(int op, int numArgs, int32 *args);
 	void op_ai_clean_up(int op, int numArgs, int32 *args);
+
+private:
+	ScummEngine_v100he *_vm1;
 };
 
 int LogicHEmoonbase::versionID() {
-	if (_vm->_game.features & GF_DEMO)
+	if (_vm1->_game.features & GF_DEMO)
 		return -100;
-	else if (strcmp(_vm->_game.variant, "1.1") == 0)
+	else if (strcmp(_vm1->_game.variant, "1.1") == 0)
 		return 110;
 	else
 		return 100;
@@ -184,9 +187,9 @@ void LogicHEmoonbase::op_dos_command(int op, int numArgs, int32 *args) {
 void LogicHEmoonbase::op_set_fow_sentinel(int32 *args) {
 	debug(2, "op_set_fow_sentinel(%d, %d, %d)", args[0], args[1], args[2]);
 
-	_vm->_moonbase->_fowSentinelImage = args[0];
-	_vm->_moonbase->_fowSentinelState = args[1];
-	_vm->_moonbase->_fowSentinelConditionBits = args[2];
+	_vm1->_moonbase->_fowSentinelImage = args[0];
+	_vm1->_moonbase->_fowSentinelState = args[1];
+	_vm1->_moonbase->_fowSentinelConditionBits = args[2];
 }
 
 void LogicHEmoonbase::op_set_fow_information(int op, int numArgs, int32 *args) {
@@ -200,7 +203,7 @@ void LogicHEmoonbase::op_set_fow_information(int op, int numArgs, int32 *args) {
 
 	debug(2, "%s", str.c_str());
 
-	_vm->_moonbase->setFOWInfo(
+	_vm1->_moonbase->setFOWInfo(
 		args[0],		// array
 		args[1],		// array down dimension
 		args[2],		// array across dimension
@@ -217,7 +220,7 @@ void LogicHEmoonbase::op_set_fow_information(int op, int numArgs, int32 *args) {
 
 int LogicHEmoonbase::op_set_fow_image(int op, int numArgs, int32 *args) {
 	debug(2, "op_set_fow_image(%d)", args[0]);
-	return _vm->_moonbase->setFOWImage(args[0]) ? 1 : 0;
+	return _vm1->_moonbase->setFOWImage(args[0]) ? 1 : 0;
 }
 
 void LogicHEmoonbase::op_ai_test_kludge(int op, int numArgs, int32 *args) {
@@ -227,25 +230,25 @@ void LogicHEmoonbase::op_ai_test_kludge(int op, int numArgs, int32 *args) {
 
 int LogicHEmoonbase::op_ai_master_control_program(int op, int numArgs, int32 *args) {
 	warning("op_ai_master_control_program()");
-	return _vm->_moonbase->_ai->masterControlProgram(numArgs, args);
+	return _vm1->_moonbase->_ai->masterControlProgram(numArgs, args);
 }
 
 void LogicHEmoonbase::op_ai_reset(int op, int numArgs, int32 *args) {
 	warning("op_ai_reset())");
-	_vm->_moonbase->_ai->resetAI();
+	_vm1->_moonbase->_ai->resetAI();
 }
 
 void LogicHEmoonbase::op_ai_set_type(int op, int numArgs, int32 *args) {
 	warning("op_ai_set_type()");
-	_vm->_moonbase->_ai->setAIType(numArgs, args);
+	_vm1->_moonbase->_ai->setAIType(numArgs, args);
 }
 
 void LogicHEmoonbase::op_ai_clean_up(int op, int numArgs, int32 *args) {
 	warning("op_ai_clean_up()");
-	_vm->_moonbase->_ai->cleanUpAI();
+	_vm1->_moonbase->_ai->cleanUpAI();
 }
 
-LogicHE *makeLogicHEmoonbase(ScummEngine_v90he *vm) {
+LogicHE *makeLogicHEmoonbase(ScummEngine_v100he *vm) {
 	return new LogicHEmoonbase(vm);
 }
 

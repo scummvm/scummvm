@@ -455,9 +455,6 @@ protected:
 	Sprite *_sprite;
 
 public:
-	Moonbase *_moonbase;
-
-public:
 	ScummEngine_v90he(OSystem *syst, const DetectorResult &dr);
 	~ScummEngine_v90he();
 
@@ -553,15 +550,8 @@ protected:
 	byte VAR_NUM_PALETTES;
 	byte VAR_NUM_UNK;
 
-public: // FIXME. TODO. Should be protected. Used by Moonbase
 	byte VAR_U32_VERSION;
 	byte VAR_U32_ARRAY_UNK;
-	byte VAR_U32_USER_VAR_A;
-	byte VAR_U32_USER_VAR_B;
-	byte VAR_U32_USER_VAR_C;
-	byte VAR_U32_USER_VAR_D;
-	byte VAR_U32_USER_VAR_E;
-	byte VAR_U32_USER_VAR_F;
 };
 
 class ScummEngine_v99he : public ScummEngine_v90he {
@@ -585,16 +575,24 @@ protected:
 };
 
 class ScummEngine_v100he : public ScummEngine_v99he {
+friend class AI;
+
 protected:
 	ResType _heResType;
 	int32 _heResId;
 
 	byte _debugInputBuffer[256];
+
+public:
+	Moonbase *_moonbase;
+
 public:
 	ScummEngine_v100he(OSystem *syst, const DetectorResult &dr);
 	~ScummEngine_v100he();
 
 	virtual void resetScumm();
+
+	virtual void setupScummVars();
 
 protected:
 	virtual void setupOpcodes();
@@ -641,6 +639,14 @@ protected:
 	void o100_getSpriteInfo();
 	void o100_getWizData();
 	void o100_getVideoData();
+
+protected:
+	byte VAR_U32_USER_VAR_A;
+	byte VAR_U32_USER_VAR_B;
+	byte VAR_U32_USER_VAR_C;
+	byte VAR_U32_USER_VAR_D;
+	byte VAR_U32_USER_VAR_E;
+	byte VAR_U32_USER_VAR_F;
 };
 
 class ScummEngine_vCUPhe : public Engine {
