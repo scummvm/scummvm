@@ -166,10 +166,7 @@ int *storedLaunchAction[5] = {NULL};
 
 const int32 *MCP_params;
 
-Common::Array<int> lastXCoord[5];
-Common::Array<int> lastYCoord[5];
-
-void resetAI(ScummEngine_v90he *vm) {
+void AI::resetAI(ScummEngine_v90he *vm) {
 	_vm = vm;
 
 	AIstate = STATE_CHOOSE_BEHAVIOR;
@@ -194,7 +191,7 @@ void resetAI(ScummEngine_v90he *vm) {
 	}
 }
 
-void cleanUpAI() {
+void AI::cleanUpAI() {
 	warning("----------------------> Cleaning Up AI");
 
 	for (int i = 1; i != 5; i++) {
@@ -212,7 +209,7 @@ void cleanUpAI() {
 	}
 }
 
-void setAIType(const int paramCount, const int32 *params) {
+void AI::setAIType(const int paramCount, const int32 *params) {
 	if (AItype[params[AI_TYPE_PLAYER_NUM]]) {
 		delete AItype[params[AI_TYPE_PLAYER_NUM]];
 		AItype[params[AI_TYPE_PLAYER_NUM]] = NULL;
@@ -229,7 +226,7 @@ void setAIType(const int paramCount, const int32 *params) {
 	warning("AI for player %d is %s", params[AI_TYPE_PLAYER_NUM], AItype[params[AI_TYPE_PLAYER_NUM]]->getNameString());
 }
 
-int masterControlProgram(const int paramCount, const int32 *params) {
+int AI::masterControlProgram(const int paramCount, const int32 *params) {
 	static Tree *myTree;
 
 	static int index;
@@ -1026,7 +1023,7 @@ int masterControlProgram(const int paramCount, const int32 *params) {
 	return 1;
 }
 
-int chooseBehavior() {
+int AI::chooseBehavior() {
 	static int dominantMode = 0;
 
 	if (getBuildingStackPtr() < 5)
@@ -1446,7 +1443,7 @@ int chooseBehavior() {
 	return -1;
 }
 
-int chooseTarget(int behavior1) {
+int AI::chooseTarget(int behavior1) {
 	int numPools = getNumberOfPools();
 	int currentPlayer = getCurrentPlayer();
 
@@ -1805,7 +1802,7 @@ int chooseTarget(int behavior1) {
 	return 0;
 }
 
-Tree *initApproachTarget(int targetX, int targetY, Node **retNode) {
+Tree *AI::initApproachTarget(int targetX, int targetY, Node **retNode) {
 	int sourceHub = 0;
 
 	if (behavior == 2)
@@ -1813,7 +1810,7 @@ Tree *initApproachTarget(int targetX, int targetY, Node **retNode) {
 	else
 		sourceHub = getClosestUnit(targetX + 10, targetY, getMaxX(), getCurrentPlayer(), 1, BUILDING_MAIN_BASE, 1, MIN_DIST);
 
-	Traveller *myTraveller = new Traveller(getHubX(sourceHub), getHubY(sourceHub));
+	Traveller *myTraveller = new Traveller(getHubX(sourceHub), getHubY(sourceHub), this);
 	myTraveller->setSourceHub(sourceHub);
 
 	//target adjustment so that room is allowed for the appropriate shot
@@ -1825,13 +1822,13 @@ Tree *initApproachTarget(int targetX, int targetY, Node **retNode) {
 	Traveller::setTargetPosY(targetY + adjY);
 	Traveller::setMaxDist(340);
 
-	Tree *myTree = new Tree(myTraveller, TREE_DEPTH);
+	Tree *myTree = new Tree(myTraveller, TREE_DEPTH, this);
 	*retNode = myTree->aStarSearch_singlePassInit();
 
 	return myTree;
 }
 
-int *approachTarget(Tree *myTree, int &xTarget, int &yTarget, Node **currentNode) {
+int *AI::approachTarget(Tree *myTree, int &xTarget, int &yTarget, Node **currentNode) {
 	int *retVal = NULL;
 
 	*currentNode = NULL;
@@ -1905,13 +1902,13 @@ int *approachTarget(Tree *myTree, int &xTarget, int &yTarget, Node **currentNode
 	return retVal;
 }
 
-Tree *initAcquireTarget(int targetX, int targetY, Node **retNode) {
+Tree *AI::initAcquireTarget(int targetX, int targetY, Node **retNode) {
 	int sourceHub = getClosestUnit(targetX, targetY, getMaxX(), getCurrentPlayer(), 1, BUILDING_MAIN_BASE, 1, MIN_DIST);
 	warning("My coords (%d): %d %d", sourceHub, getHubX(sourceHub), getHubY(sourceHub));
 
 	Sortie::setSourcePos(getHubX(sourceHub), getHubY(sourceHub));
 	Sortie::setTargetPos(targetX, targetY);
-	Sortie *myBaseTarget = new Sortie();
+	Sortie *myBaseTarget = new Sortie(this);
 	myBaseTarget->setValueG(0);
 
 	myBaseTarget->setUnitType(ITEM_BOMB);
@@ -1932,14 +1929,13 @@ Tree *initAcquireTarget(int targetX, int targetY, Node **retNode) {
 		return NULL;
 	}
 
-	Tree *myTree = new Tree(myBaseTarget, 4);
+	Tree *myTree = new Tree(myBaseTarget, 4, this);
 	*retNode = myTree->aStarSearch_singlePassInit();
 
 	return myTree;
 }
 
-
-int *acquireTarget(int targetX, int targetY, Tree *myTree, int &errorCode) {
+int *AI::acquireTarget(int targetX, int targetY, Tree *myTree, int &errorCode) {
 	int currentPlayer = getCurrentPlayer();
 	int *retVal = NULL;
 
@@ -2005,7 +2001,7 @@ int *acquireTarget(int targetX, int targetY, Tree *myTree, int &errorCode) {
 	return retVal;
 }
 
-int *acquireTarget(int targetX, int targetY) {
+int *AI::acquireTarget(int targetX, int targetY) {
 	int *retVal = new int[4];
 	int sourceHub = getClosestUnit(targetX, targetY, getMaxX(), getCurrentPlayer(), 1, BUILDING_MAIN_BASE, 1, 110);
 
@@ -2023,7 +2019,7 @@ int *acquireTarget(int targetX, int targetY) {
 	return retVal;
 }
 
-int *energizeTarget(int &targetX, int &targetY, int index) {
+int *AI::energizeTarget(int &targetX, int &targetY, int index) {
 	int n = 10;
 	static int currentPlayer = 0;
 	static int pool = 0;
@@ -2237,7 +2233,7 @@ int *energizeTarget(int &targetX, int &targetY, int index) {
 	return retVal;
 }
 
-int *offendTarget(int &targetX, int &targetY, int index) {
+int *AI::offendTarget(int &targetX, int &targetY, int index) {
 	int *retVal = NULL;
 
 	int target = getClosestUnit(targetX + 10, targetY, 20, 0, 0, 0, 0);
@@ -2253,35 +2249,35 @@ int *offendTarget(int &targetX, int &targetY, int index) {
 
 	switch (type) {
 	case BUILDING_OFFENSIVE_LAUNCHER:
-		thisUnit = new OffenseUnit();
+		thisUnit = new OffenseUnit(this);
 		break;
 
 	case BUILDING_TOWER:
-		thisUnit = new TowerUnit();
+		thisUnit = new TowerUnit(this);
 		break;
 
 	case BUILDING_MAIN_BASE:
-		thisUnit = new HubUnit();
+		thisUnit = new HubUnit(this);
 		break;
 
 	case BUILDING_ENERGY_COLLECTOR:
-		thisUnit = new EnergyUnit();
+		thisUnit = new EnergyUnit(this);
 		break;
 
 	case BUILDING_CRAWLER:
-		thisUnit = new CrawlerUnit();
+		thisUnit = new CrawlerUnit(this);
 		break;
 
 	case BUILDING_BRIDGE:
-		thisUnit = new BridgeUnit();
+		thisUnit = new BridgeUnit(this);
 		break;
 
 	case BUILDING_SHIELD:
-		thisUnit = new ShieldUnit();
+		thisUnit = new ShieldUnit(this);
 		break;
 
 	default:
-		thisUnit = new HubUnit();
+		thisUnit = new HubUnit(this);
 		break;
 	}
 
@@ -2355,9 +2351,9 @@ int *offendTarget(int &targetX, int &targetY, int index) {
 	return retVal;
 }
 
-int *defendTarget(int &targetX, int &targetY, int index) {
+int *AI::defendTarget(int &targetX, int &targetY, int index) {
 	int *retVal = NULL;
-	Defender *thisDefender = new Defender;
+	Defender *thisDefender = new Defender(this);
 	int defStatus = thisDefender->calculateDefenseUnitPosition(targetX, targetY, index);
 
 	if (defStatus > 0) {
@@ -2407,138 +2403,138 @@ int *defendTarget(int &targetX, int &targetY, int index) {
 	return retVal;
 }
 
-int getClosestUnit(int x, int y, int radius, int player, int alignment, int unitType, int checkUnitEnabled) {
+int AI::getClosestUnit(int x, int y, int radius, int player, int alignment, int unitType, int checkUnitEnabled) {
 	assert((unitType >= 0) && (unitType <= 12));
 
 	int retVal = _vm->_moonbase->callScummFunction(MCP_params[F_GET_CLOSEST_UNIT], 7, x, y, radius, player, alignment, unitType, checkUnitEnabled);
 	return retVal;
 }
 
-int getClosestUnit(int x, int y, int radius, int player, int alignment, int unitType, int checkUnitEnabled, int minDist) {
+int AI::getClosestUnit(int x, int y, int radius, int player, int alignment, int unitType, int checkUnitEnabled, int minDist) {
 	assert((unitType >= 0) && (unitType <= 12));
 	int retVal = _vm->_moonbase->callScummFunction(MCP_params[F_GET_CLOSEST_UNIT], 8, x, y, radius, player, alignment, unitType, checkUnitEnabled, minDist);
 	return retVal;
 }
 
-int getDistance(int originX, int originY, int endX, int endY) {
+int AI::getDistance(int originX, int originY, int endX, int endY) {
 	int retVal = _vm->_moonbase->callScummFunction(MCP_params[F_GET_WORLD_DIST], 4, originX, originY, endX, endY);
 	return retVal;
 }
 
-int calcAngle(int originX, int originY, int endX, int endY) {
+int AI::calcAngle(int originX, int originY, int endX, int endY) {
 	int retVal = _vm->_moonbase->callScummFunction(MCP_params[F_GET_WORLD_ANGLE], 5, originX, originY, endX, endY, 0);
 	return retVal;
 }
 
-int calcAngle(int originX, int originY, int endX, int endY, int noWrapFlag) {
+int AI::calcAngle(int originX, int originY, int endX, int endY, int noWrapFlag) {
 	int retVal = _vm->_moonbase->callScummFunction(MCP_params[F_GET_WORLD_ANGLE], 5, originX, originY, endX, endY, noWrapFlag);
 	return retVal;
 }
 
-int getTerrain(int x, int y) {
+int AI::getTerrain(int x, int y) {
 	int retVal = _vm->_moonbase->callScummFunction(MCP_params[F_GET_TERRAIN_TYPE], 2, x, y);
 	return retVal;
 }
 
-int estimateNextRoundEnergy(int player) {
+int AI::estimateNextRoundEnergy(int player) {
 	int retVal = _vm->_moonbase->callScummFunction(MCP_params[F_ESTIMATE_NEXT_ROUND_ENERGY], 1, player);
 	return retVal / 10;
 }
 
-int getHubX(int hub) {
+int AI::getHubX(int hub) {
 	assert(hub >= 0 && hub <= 500);
 	int retVal = _vm->_moonbase->callScummFunction(MCP_params[F_GET_SCUMM_DATA], 2, D_GET_HUB_X, hub);
 	return retVal;
 }
 
-int getHubY(int hub) {
+int AI::getHubY(int hub) {
 	assert(hub >= 0 && hub <= 500);
 	int retVal = _vm->_moonbase->callScummFunction(MCP_params[F_GET_SCUMM_DATA], 2, D_GET_HUB_Y, hub);
 	return retVal;
 }
 
-int getMaxX() {
+int AI::getMaxX() {
 	int retVal = _vm->_moonbase->callScummFunction(MCP_params[F_GET_SCUMM_DATA], 1, D_GET_WORLD_X_SIZE);
 	return retVal;
 }
 
-int getMaxY() {
+int AI::getMaxY() {
 	int retVal = _vm->_moonbase->callScummFunction(MCP_params[F_GET_SCUMM_DATA], 1, D_GET_WORLD_Y_SIZE);
 	return retVal;
 }
 
-int getCurrentPlayer() {
+int AI::getCurrentPlayer() {
 	int retVal = _vm->_moonbase->callScummFunction(MCP_params[F_GET_SCUMM_DATA], 1, D_GET_CURRENT_PLAYER);
 	assert(retVal != 0);
 	return retVal;
 }
 
-int getMaxPower() {
+int AI::getMaxPower() {
 	int retVal = _vm->_moonbase->callScummFunction(MCP_params[F_GET_SCUMM_DATA], 1, D_GET_MAX_POWER);
 	return retVal;
 }
 
-int getMinPower() {
+int AI::getMinPower() {
 	int retVal = _vm->_moonbase->callScummFunction(MCP_params[F_GET_SCUMM_DATA], 1, D_GET_MIN_POWER);
 	return retVal;
 }
 
-int getTerrainSquareSize() {
+int AI::getTerrainSquareSize() {
 	int retVal = _vm->_moonbase->callScummFunction(MCP_params[F_GET_SCUMM_DATA], 1, D_GET_TERRAIN_SQUARE_SIZE);
 	return retVal;
 }
 
-int getBuildingOwner(int building) {
+int AI::getBuildingOwner(int building) {
 	assert((building > 0) && (building < 501));
 	int retVal = _vm->_moonbase->callScummFunction(MCP_params[F_GET_SCUMM_DATA], 2, D_GET_BUILDING_OWNER, building);
 	return retVal;
 }
 
-int getBuildingState(int building) {
+int AI::getBuildingState(int building) {
 	assert((building > 0) && (building < 501));
 	int retVal = _vm->_moonbase->callScummFunction(MCP_params[F_GET_SCUMM_DATA], 2, D_GET_BUILDING_STATE, building);
 	return retVal;
 }
 
-int getBuildingType(int building) {
+int AI::getBuildingType(int building) {
 	assert((building > 0) && (building < 501));
 	int retVal = _vm->_moonbase->callScummFunction(MCP_params[F_GET_SCUMM_DATA], 2, D_GET_BUILDING_TYPE, building);
 	return retVal;
 }
 
-int getBuildingArmor(int building) {
+int AI::getBuildingArmor(int building) {
 	assert((building > 0) && (building < 501));
 	int retVal = _vm->_moonbase->callScummFunction(MCP_params[F_GET_SCUMM_DATA], 2, D_GET_BUILDING_ARMOR, building);
 	return retVal;
 }
 
-int getBuildingWorth(int building) {
+int AI::getBuildingWorth(int building) {
 	assert((building > 0) && (building < 501));
 	int retVal = _vm->_moonbase->callScummFunction(MCP_params[F_GET_SCUMM_DATA], 2, D_GET_BUILDING_WORTH, building);
 	return retVal;
 }
 
-int getEnergyPoolsArray() {
+int AI::getEnergyPoolsArray() {
 	int retVal = _vm->_moonbase->callScummFunction(MCP_params[F_GET_SCUMM_DATA], 1, D_GET_ENERGY_POOLS_ARRAY);
 	return retVal;
 }
 
-int getCoordinateVisibility(int x, int y, int playerNum) {
+int AI::getCoordinateVisibility(int x, int y, int playerNum) {
 	int retVal = _vm->_moonbase->callScummFunction(MCP_params[F_GET_SCUMM_DATA], 4, D_GET_COORDINATE_VISIBILITY, x, y, playerNum);
 	return retVal;
 }
 
-int getUnitVisibility(int unit, int playerNum) {
+int AI::getUnitVisibility(int unit, int playerNum) {
 	int retVal = _vm->_moonbase->callScummFunction(MCP_params[F_GET_SCUMM_DATA], 3, D_GET_UNIT_VISIBILITY, unit, playerNum);
 	return retVal;
 }
 
-int getEnergyPoolVisibility(int pool, int playerNum) {
+int AI::getEnergyPoolVisibility(int pool, int playerNum) {
 	int retVal = _vm->_moonbase->callScummFunction(MCP_params[F_GET_SCUMM_DATA], 3, D_GET_ENERGY_POOL_VISIBILITY, pool, playerNum);
 	return retVal;
 }
 
-int getNumberOfPools() {
+int AI::getNumberOfPools() {
 	int retVal = 0;
 
 	if (AItype[getCurrentPlayer()]->getID() == ENERGY_HOG) {
@@ -2550,72 +2546,72 @@ int getNumberOfPools() {
 	return retVal;
 }
 
-int getNumberOfPlayers() {
+int AI::getNumberOfPlayers() {
 	int retVal = _vm->_moonbase->callScummFunction(MCP_params[F_GET_SCUMM_DATA], 1, D_GET_NUMBER_OF_PLAYERS);
 	return retVal;
 }
 
-int getPlayerEnergy() {
+int AI::getPlayerEnergy() {
 	int retVal = _vm->_moonbase->callScummFunction(MCP_params[F_GET_SCUMM_DATA], 1, D_GET_PLAYER_ENERGY);
 	return static_cast<int>(static_cast<float>(retVal) / 10.0);
 }
 
-int getPlayerMaxTime() {
+int AI::getPlayerMaxTime() {
 	int retVal = _vm->_moonbase->callScummFunction(MCP_params[F_GET_SCUMM_DATA], 1, D_GET_PLAYER_MAX_TIME);
 	return retVal;
 }
 
-int getWindXSpeed() {
+int AI::getWindXSpeed() {
 	int retVal = _vm->_moonbase->callScummFunction(MCP_params[F_GET_SCUMM_DATA], 1, D_GET_WIND_X_SPEED);
 	return retVal;
 }
 
-int getWindYSpeed() {
+int AI::getWindYSpeed() {
 	int retVal = _vm->_moonbase->callScummFunction(MCP_params[F_GET_SCUMM_DATA], 1, D_GET_WIND_Y_SPEED);
 	return retVal;
 }
 
-int getTotalWindSpeed() {
+int AI::getTotalWindSpeed() {
 	int retVal = _vm->_moonbase->callScummFunction(MCP_params[F_GET_SCUMM_DATA], 1, D_GET_TOTAL_WIND_SPEED);
 	return retVal;
 }
 
-int getWindXSpeedMax() {
+int AI::getWindXSpeedMax() {
 	int retVal = _vm->_moonbase->callScummFunction(MCP_params[F_GET_SCUMM_DATA], 1, D_GET_WIND_X_SPEED_MAX);
 	return retVal;
 }
 
-int getWindYSpeedMax() {
+int AI::getWindYSpeedMax() {
 	int retVal = _vm->_moonbase->callScummFunction(MCP_params[F_GET_SCUMM_DATA], 1, D_GET_WIND_Y_SPEED_MAX);
 	return retVal;
 }
 
-int getBigXSize() {
+int AI::getBigXSize() {
 	int retVal = _vm->_moonbase->callScummFunction(MCP_params[F_GET_SCUMM_DATA], 1, D_GET_BIG_X_SIZE);
 	return retVal;
 }
 
-int getBigYSize() {
+int AI::getBigYSize() {
 	int retVal = _vm->_moonbase->callScummFunction(MCP_params[F_GET_SCUMM_DATA], 1, D_GET_BIG_Y_SIZE);
 	return retVal;
 }
 
-int getEnergyPoolWidth(int pool) {
+int AI::getEnergyPoolWidth(int pool) {
 	int retVal = _vm->_moonbase->callScummFunction(MCP_params[F_GET_SCUMM_DATA], 2, D_GET_ENERGY_POOL_WIDTH, pool);
 	return retVal;
 }
 
-int getBuildingMaxArmor(int building) {
+int AI::getBuildingMaxArmor(int building) {
 	int retVal = _vm->_moonbase->callScummFunction(MCP_params[F_GET_SCUMM_DATA], 2, D_GET_BUILDING_MAX_ARMOR, building);
 	return retVal;
 }
 
-int getTimerValue(int timerNum) {
+int AI::getTimerValue(int timerNum) {
 	int retVal = _vm->_moonbase->callScummFunction(MCP_params[F_GET_SCUMM_DATA], 2, D_GET_TIMER_VALUE, timerNum);
 	return retVal;
 }
 
-int getLastAttacked(int &x, int &y) {
+int AI::getLastAttacked(int &x, int &y) {
 	int currentPlayer = getCurrentPlayer();
 	x = _vm->_moonbase->callScummFunction(MCP_params[F_GET_SCUMM_DATA], 2, D_GET_LAST_ATTACKED_X, currentPlayer);
 	y = _vm->_moonbase->callScummFunction(MCP_params[F_GET_SCUMM_DATA], 2, D_GET_LAST_ATTACKED_Y, currentPlayer);
@@ -2625,12 +2621,12 @@ int getLastAttacked(int &x, int &y) {
 	return 0;
 }
 
-int getPlayerTeam(int player) {
+int AI::getPlayerTeam(int player) {
 	int retVal = _vm->_moonbase->callScummFunction(MCP_params[F_GET_SCUMM_DATA], 2, D_GET_PLAYER_TEAM, player);
 	return retVal;
 }
 
-int getBuildingTeam(int building) {
+int AI::getBuildingTeam(int building) {
 	assert((building >= 1) && (building <= 500));
 
 	if (getBuildingOwner(building) == 0) return 0;
@@ -2639,37 +2635,37 @@ int getBuildingTeam(int building) {
 	return retVal;
 }
 
-int getFOW() {
+int AI::getFOW() {
 	int retVal = _vm->_moonbase->callScummFunction(MCP_params[F_GET_SCUMM_DATA], 1, D_GET_FOW);
 	return retVal;
 }
 
-int getAnimSpeed() {
+int AI::getAnimSpeed() {
 	int retVal = _vm->_moonbase->callScummFunction(MCP_params[F_GET_SCUMM_DATA], 1, D_GET_ANIM_SPEED);
 	return retVal;
 }
 
-int getBuildingStackPtr() {
+int AI::getBuildingStackPtr() {
 	int retVal = _vm->_moonbase->callScummFunction(MCP_params[F_GET_SCUMM_DATA], 1, D_GET_BUILDING_STACK_PTR);
 	return retVal;
 }
 
-int getTurnCounter() {
+int AI::getTurnCounter() {
 	int retVal = _vm->_moonbase->callScummFunction(MCP_params[F_GET_SCUMM_DATA], 1, D_GET_TURN_COUNTER);
 	return retVal;
 }
 
-int getGroundAltitude(int x, int y) {
+int AI::getGroundAltitude(int x, int y) {
 	int retVal = _vm->_moonbase->callScummFunction(MCP_params[F_GET_GROUND_ALTITUDE], 2, x, y);
 	return retVal;
 }
 
-int checkForCordOverlap(int xStart, int yStart, int affectRadius, int simulateFlag) {
+int AI::checkForCordOverlap(int xStart, int yStart, int affectRadius, int simulateFlag) {
 	int retVal = _vm->_moonbase->callScummFunction(MCP_params[F_CHECK_FOR_CORD_OVERLAP], 4, xStart, yStart, affectRadius, simulateFlag);
 	return retVal;
 }
 
-int checkForAngleOverlap(int unit, int angle) {
+int AI::checkForAngleOverlap(int unit, int angle) {
 	assert(angle > -721);
 	assert(angle < 721);
 
@@ -2679,42 +2675,42 @@ int checkForAngleOverlap(int unit, int angle) {
 	return retVal;
 }
 
-int checkForUnitOverlap(int x, int y, int radius, int ignoredUnit) {
+int AI::checkForUnitOverlap(int x, int y, int radius, int ignoredUnit) {
 	int retVal = _vm->_moonbase->callScummFunction(MCP_params[F_CHECK_FOR_UNIT_OVERLAP], 4, x, y, radius, ignoredUnit);
 	return retVal;
 }
 
-int checkForEnergySquare(int x, int y) {
+int AI::checkForEnergySquare(int x, int y) {
 	int retVal = _vm->_moonbase->callScummFunction(MCP_params[F_CHECK_FOR_ENERGY_SQUARE], 2, x, y);
 	return retVal;
 }
 
-int aiChat() {
+int AI::aiChat() {
 	int retVal = _vm->_moonbase->callScummFunction(MCP_params[F_AI_CHAT], 0);
 	return retVal;
 }
 
-int getPowerAngleFromPoint(int originX, int originY, int endX, int endY, int threshold, int olFlag) {
+int AI::getPowerAngleFromPoint(int originX, int originY, int endX, int endY, int threshold, int olFlag) {
 	int retVal = _vm->_moonbase->callScummFunction(MCP_params[F_GET_POWER_ANGLE_FROM_POINT], 6, originX, originY, endX, endY, threshold, olFlag);
 	return retVal;
 }
 
-int getPowerAngleFromPoint(int originX, int originY, int endX, int endY, int threshold) {
+int AI::getPowerAngleFromPoint(int originX, int originY, int endX, int endY, int threshold) {
 	int retVal = _vm->_moonbase->callScummFunction(MCP_params[F_GET_POWER_ANGLE_FROM_POINT], 5, originX, originY, endX, endY, threshold);
 	return retVal;
 }
 
-int checkIfWaterState(int x, int y) {
+int AI::checkIfWaterState(int x, int y) {
 	int retVal = _vm->_moonbase->callScummFunction(MCP_params[F_CHECK_IF_WATER_STATE], 2, x, y);
 	return retVal;
 }
 
-int checkIfWaterSquare(int x, int y) {
+int AI::checkIfWaterSquare(int x, int y) {
 	int retVal = _vm->_moonbase->callScummFunction(MCP_params[F_CHECK_IF_WATER_SQUARE], 2, x, y);
 	return retVal;
 }
 
-int getUnitsWithinRadius(int x, int y, int radius) {
+int AI::getUnitsWithinRadius(int x, int y, int radius) {
 	assert(x >= 0);
 	assert(y >= 0);
 	assert(radius >= 0);
@@ -2725,21 +2721,21 @@ int getUnitsWithinRadius(int x, int y, int radius) {
 	return retVal;
 }
 
-int getLandingPoint(int x, int y, int power, int angle) {
+int AI::getLandingPoint(int x, int y, int power, int angle) {
 	int retVal = _vm->_moonbase->callScummFunction(MCP_params[F_GET_LANDING_POINT], 4, x, y, power, angle);
 	return retVal;
 }
 
-int getEnemyUnitsVisible(int playerNum) {
+int AI::getEnemyUnitsVisible(int playerNum) {
 	int retVal = _vm->_moonbase->callScummFunction(MCP_params[F_GET_ENEMY_UNITS_VISIBLE], 1, playerNum);
 	return retVal;
 }
 
-float degToRad(float degrees) {
+float AI::degToRad(float degrees) {
 	return degrees * M_PI / 180.;
 }
 
-void limitLocation(int &a, int &b, int c, int d) {
+void AI::limitLocation(int &a, int &b, int c, int d) {
 	if (a >= 0) {
 		a = (a % c);
 	} else {
@@ -2753,7 +2749,7 @@ void limitLocation(int &a, int &b, int c, int d) {
 	}
 }
 
-int energyPoolSize(int pool) {
+int AI::energyPoolSize(int pool) {
 	int width = getEnergyPoolWidth(pool);
 
 	switch (width) {
@@ -2770,7 +2766,7 @@ int energyPoolSize(int pool) {
 	return 0;
 }
 
-int getMaxCollectors(int pool) {
+int AI::getMaxCollectors(int pool) {
 	int width = getEnergyPoolWidth(pool);
 
 	switch (width) {
@@ -2787,7 +2783,7 @@ int getMaxCollectors(int pool) {
 	return 0;
 }
 
-int simulateBuildingLaunch(int x, int y, int power, int angle, int numSteps, int isEnergy) {
+int AI::simulateBuildingLaunch(int x, int y, int power, int angle, int numSteps, int isEnergy) {
 	static int sXSpeed = 0;
 	static int sYSpeed = 0;
 	static int sZSpeed = 0;
@@ -2939,7 +2935,7 @@ int simulateBuildingLaunch(int x, int y, int power, int angle, int numSteps, int
 	return 0;
 }
 
-int simulateWeaponLaunch(int x, int y, int power, int angle, int numSteps) {
+int AI::simulateWeaponLaunch(int x, int y, int power, int angle, int numSteps) {
 	static int sXSpeed = 0;
 	static int sYSpeed = 0;
 	static int sZSpeed = 0;
@@ -3054,7 +3050,7 @@ int simulateWeaponLaunch(int x, int y, int power, int angle, int numSteps) {
 	return 0;
 }
 
-int fakeSimulateWeaponLaunch(int x, int y, int power, int angle) {
+int AI::fakeSimulateWeaponLaunch(int x, int y, int power, int angle) {
 	int distance = power * 480 / getMaxPower();
 	float radAngle = degToRad(angle);
 	int maxX = getMaxX();
@@ -3069,7 +3065,7 @@ int fakeSimulateWeaponLaunch(int x, int y, int power, int angle) {
 	return MAX(1, x + y * maxX);
 }
 
-int getEnergyHogType() {
+int AI::getEnergyHogType() {
 	return energyHogType;
 }
 

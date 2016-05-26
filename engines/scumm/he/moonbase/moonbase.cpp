@@ -22,14 +22,18 @@
 
 #include "scumm/he/intern_he.h"
 #include "scumm/he/moonbase/moonbase.h"
+#include "scumm/he/moonbase/ai_main.h"
 
 namespace Scumm {
 
 Moonbase::Moonbase(ScummEngine_v71he *vm) : _vm(vm) {
 	initFOW();
+
+	_ai = new AI;
 }
 
 Moonbase::~Moonbase() {
+	delete _ai;
 }
 
 int Moonbase::readFromArray(int array, int y, int x) {

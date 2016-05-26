@@ -58,13 +58,14 @@ private:
 	int _waterDestX;
 	int _waterDestY;
 
+	AI *_ai;
 
 protected:
 	virtual float calcH();
 
 public:
-	Traveller();
-	Traveller(int originX, int originY);
+	Traveller(AI *ai);
+	Traveller(int originX, int originY, AI *ai);
 	~Traveller() {}
 
 	IContainedObject *duplicate() { return this; }

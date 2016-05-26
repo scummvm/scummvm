@@ -43,28 +43,28 @@ Sortie::~Sortie() {
 
 void Sortie::setEnemyDefenses(int enemyDefensesScummArray, int defendX, int defendY) {
 	DefenseUnit *thisUnit;
-	int currentPlayer = getCurrentPlayer();
+	int currentPlayer = _ai->getCurrentPlayer();
 
 	for (int i = 0; i < 200; i++) {
 		int thisElement = _vm->_moonbase->readFromArray(enemyDefensesScummArray, 0, i);
 
 		if (thisElement) {
-			if (getBuildingOwner(thisElement)) {
-				if (getPlayerTeam(currentPlayer) != getBuildingTeam(thisElement)) {
-					int type = getBuildingType(thisElement);
+			if (_ai->getBuildingOwner(thisElement)) {
+				if (_ai->getPlayerTeam(currentPlayer) != _ai->getBuildingTeam(thisElement)) {
+					int type = _ai->getBuildingType(thisElement);
 
 					switch (type) {
 					case BUILDING_ANTI_AIR:
-						thisUnit = new AntiAirUnit();
+						thisUnit = new AntiAirUnit(_ai);
 						break;
 
 					case BUILDING_SHIELD:
-						thisUnit = new ShieldUnit();
+						thisUnit = new ShieldUnit(_ai);
 						break;
 
 					case BUILDING_EXPLOSIVE_MINE:
-						if (getDistance(getHubX(thisElement), getHubY(thisElement), defendX, defendY) < 90)
-							thisUnit = new MineUnit();
+						if (_ai->getDistance(_ai->getHubX(thisElement), _ai->getHubY(thisElement), defendX, defendY) < 90)
+							thisUnit = new MineUnit(_ai);
 						else
 							thisUnit = NULL;
 
@@ -81,9 +81,9 @@ void Sortie::setEnemyDefenses(int enemyDefensesScummArray, int defendX, int defe
 
 					if (thisUnit != NULL) {
 						thisUnit->setID(thisElement);
-						thisUnit->setPos(getHubX(thisElement), getHubY(thisElement));
+						thisUnit->setPos(_ai->getHubX(thisElement), _ai->getHubY(thisElement));
 
-						if (getBuildingState(thisElement)) thisUnit->setState(DUS_OFF);
+						if (_ai->getBuildingState(thisElement)) thisUnit->setState(DUS_OFF);
 
 						_enemyDefenses.push_back(thisUnit);
 					}
@@ -111,7 +111,7 @@ int Sortie::numChildrenToGen() {
 
 IContainedObject *Sortie::createChildObj(int index, int &completionFlag) {
 	float thisDamage;
-	Sortie *retSortie = new Sortie;
+	Sortie *retSortie = new Sortie(_ai);
 	int activeDefenses = 0;
 
 	Common::Array<DefenseUnit *> thisEnemyDefenses;
@@ -122,23 +122,23 @@ IContainedObject *Sortie::createChildObj(int index, int &completionFlag) {
 
 		switch ((*k)->getType()) {
 		case DUT_ANTI_AIR:
-			temp = new AntiAirUnit(*k);
+			temp = new AntiAirUnit(*k, _ai);
 			break;
 
 		case DUT_SHIELD:
-			temp = new ShieldUnit(*k);
+			temp = new ShieldUnit(*k, _ai);
 			break;
 
 		case DUT_MINE:
-			temp = new MineUnit(*k);
+			temp = new MineUnit(*k, _ai);
 			break;
 
 		case DUT_CRAWLER:
-			temp = new CrawlerUnit(*k);
+			temp = new CrawlerUnit(*k, _ai);
 			break;
 
 		default:
-			temp = new ShieldUnit(*k);
+			temp = new ShieldUnit(*k, _ai);
 			break;
 		}
 
@@ -155,7 +155,7 @@ IContainedObject *Sortie::createChildObj(int index, int &completionFlag) {
 	retSortie->setUnitType(currentWeapon->getTypeID());
 
 	// Calculate distance from target to source hub
-	int distance = getDistance(currentTarget->getPosX(), currentTarget->getPosY(), getSourcePosX(), getSourcePosY());
+	int distance = _ai->getDistance(currentTarget->getPosX(), currentTarget->getPosY(), getSourcePosX(), getSourcePosY());
 
 	// Pick correct shot position according to index
 	Common::Point *targetCoords;
@@ -169,7 +169,7 @@ IContainedObject *Sortie::createChildObj(int index, int &completionFlag) {
 
 	// Loop through defensive units, toggling anti-air units and deciding if this weapon will land safely
 	for (Common::Array<DefenseUnit *>::iterator i = thisEnemyDefenses.begin(); i != thisEnemyDefenses.end(); i++) {
-		distance = getDistance((*i)->getPosX(), (*i)->getPosY(), targetCoords->x, targetCoords->y);
+		distance = _ai->getDistance((*i)->getPosX(), (*i)->getPosY(), targetCoords->x, targetCoords->y);
 
 		// Check to see if we're within an active defense's radius
 		if ((distance < (*i)->getRadius()) && ((*i)->getState() == DUS_ON)) {
@@ -210,10 +210,10 @@ IContainedObject *Sortie::createChildObj(int index, int &completionFlag) {
 		for (Common::Array<DefenseUnit *>::iterator i = thisEnemyDefenses.begin(); i != thisEnemyDefenses.end(); ) {
 			// Special simulated crawler detonation location used, since it walks a bit
 			if (currentWeapon->getTypeID() == ITEM_CRAWLER)
-				distance = getDistance((*i)->getPosX(), (*i)->getPosY(), currentTarget->getPosX(), currentTarget->getPosY());
+				distance = _ai->getDistance((*i)->getPosX(), (*i)->getPosY(), currentTarget->getPosX(), currentTarget->getPosY());
 			// Normal detonation location used here
 			else {
-				distance = getDistance((*i)->getPosX(), (*i)->getPosY(), targetCoords->x, targetCoords->y);
+				distance = _ai->getDistance((*i)->getPosX(), (*i)->getPosY(), targetCoords->x, targetCoords->y);
 			}
 
 			if (distance < currentWeapon->getRadius()) {
@@ -320,10 +320,10 @@ void Sortie::printEnemyDefenses() {
 }
 
 int Defender::calculateDefenseUnitPosition(int targetX, int targetY, int index) {
-	int currentPlayer = getCurrentPlayer();
+	int currentPlayer = _ai->getCurrentPlayer();
 
 	//get list of near hubs
-	int unitsArray = getUnitsWithinRadius(targetX + 5, targetY, 480);
+	int unitsArray = _ai->getUnitsWithinRadius(targetX + 5, targetY, 480);
 
 	const int NUM_HUBS = 10;
 	//Order on dist
@@ -334,11 +334,11 @@ int Defender::calculateDefenseUnitPosition(int targetX, int targetY, int index) 
 		int thisUnit = _vm->_moonbase->readFromArray(unitsArray, 0, i);
 
 		if (thisUnit) {
-			if (((getBuildingType(thisUnit) == BUILDING_MAIN_BASE) || (getBuildingType(thisUnit) == BUILDING_OFFENSIVE_LAUNCHER))  && (getBuildingOwner(thisUnit) == currentPlayer)) {
+			if (((_ai->getBuildingType(thisUnit) == BUILDING_MAIN_BASE) || (_ai->getBuildingType(thisUnit) == BUILDING_OFFENSIVE_LAUNCHER))  && (_ai->getBuildingOwner(thisUnit) == currentPlayer)) {
 				for (int j = 0; j < NUM_HUBS; j++) {
 					if (hubArray[j]) {
-						int distCurrent = getDistance(targetX, targetY, getHubX(thisUnit), getHubY(thisUnit));
-						int distSaved = getDistance(targetX, targetY, getHubX(hubArray[j]), getHubY(hubArray[j]));
+						int distCurrent = _ai->getDistance(targetX, targetY, _ai->getHubX(thisUnit), _ai->getHubY(thisUnit));
+						int distSaved = _ai->getDistance(targetX, targetY, _ai->getHubX(hubArray[j]), _ai->getHubY(hubArray[j]));
 
 						if (distCurrent < distSaved) {
 							hubArray[hubIndex] = hubArray[j];
@@ -364,20 +364,20 @@ int Defender::calculateDefenseUnitPosition(int targetX, int targetY, int index) 
 	_vm->_moonbase->deallocateArray(unitsArray);
 
 	//Check if repair is needed
-	int targetUnit = getClosestUnit(targetX + 5, targetY, 15, currentPlayer, 1, 0, 0, 0);
+	int targetUnit = _ai->getClosestUnit(targetX + 5, targetY, 15, currentPlayer, 1, 0, 0, 0);
 
-	if (targetUnit && (targetUnit != BUILDING_CRAWLER) && (getBuildingTeam(targetUnit) == getPlayerTeam(currentPlayer))) {
-		int armor = getBuildingArmor(targetUnit);
+	if (targetUnit && (targetUnit != BUILDING_CRAWLER) && (_ai->getBuildingTeam(targetUnit) == _ai->getPlayerTeam(currentPlayer))) {
+		int armor = _ai->getBuildingArmor(targetUnit);
 
-		if (armor < getBuildingMaxArmor(targetUnit)) {
-			unitsArray = getUnitsWithinRadius(targetX + 5, targetY, 170);
+		if (armor < _ai->getBuildingMaxArmor(targetUnit)) {
+			unitsArray = _ai->getUnitsWithinRadius(targetX + 5, targetY, 170);
 			int defCount = 0;
 
 			for (int i = 0; i < 200; i++) {
 				int thisUnit = _vm->_moonbase->readFromArray(unitsArray, 0, i);
 
 				if (thisUnit) {
-					if (((getBuildingType(thisUnit) == BUILDING_SHIELD) || (getBuildingType(thisUnit) == BUILDING_ANTI_AIR)) && (getBuildingOwner(thisUnit) == currentPlayer) && (getBuildingState(thisUnit) == 0)) {
+					if (((_ai->getBuildingType(thisUnit) == BUILDING_SHIELD) || (_ai->getBuildingType(thisUnit) == BUILDING_ANTI_AIR)) && (_ai->getBuildingOwner(thisUnit) == currentPlayer) && (_ai->getBuildingState(thisUnit) == 0)) {
 						defCount++;
 						i = 200;
 					}
@@ -388,10 +388,10 @@ int Defender::calculateDefenseUnitPosition(int targetX, int targetY, int index) 
 
 			if (defCount) {
 				//repair
-				int hubUnit = getClosestUnit(targetX, targetY, 480, currentPlayer, 1, BUILDING_MAIN_BASE, 1, 110);
+				int hubUnit = _ai->getClosestUnit(targetX, targetY, 480, currentPlayer, 1, BUILDING_MAIN_BASE, 1, 110);
 
 				if (hubUnit && (hubUnit != targetUnit)) {
-					int powAngle = abs(getPowerAngleFromPoint(getHubX(hubUnit), getHubY(hubUnit), targetX, targetY, 20));
+					int powAngle = abs(_ai->getPowerAngleFromPoint(_ai->getHubX(hubUnit), _ai->getHubY(hubUnit), targetX, targetY, 20));
 					int power = powAngle / 360;
 					int angle = powAngle - (power * 360);
 
@@ -411,18 +411,18 @@ int Defender::calculateDefenseUnitPosition(int targetX, int targetY, int index) 
 
 	//For each hub
 	for (int i = 0; i < MIN(NUM_HUBS, hubIndex); i++) {
-		int hubX = getHubX(hubArray[i]);
-		int hubY = getHubY(hubArray[i]);
+		int hubX = _ai->getHubX(hubArray[i]);
+		int hubY = _ai->getHubY(hubArray[i]);
 		//get angle to hub
 		int directAngleToHub = 0;
 
 		//If this hub is the target
 		if ((hubX == targetX) && (hubY == targetY)) {
 			//make the angle seed point at the closest enemy
-			int enemyUnit = getClosestUnit(hubX, hubY, getMaxX(), currentPlayer, 0, 0, 0);
-			directAngleToHub = calcAngle(targetX, targetY, getHubX(enemyUnit), getHubY(enemyUnit));
+			int enemyUnit = _ai->getClosestUnit(hubX, hubY, _ai->getMaxX(), currentPlayer, 0, 0, 0);
+			directAngleToHub = _ai->calcAngle(targetX, targetY, _ai->getHubX(enemyUnit), _ai->getHubY(enemyUnit));
 		} else {
-			directAngleToHub = calcAngle(targetX, targetY, hubX, hubY);
+			directAngleToHub = _ai->calcAngle(targetX, targetY, hubX, hubY);
 		}
 
 		//Number of random chances to land
@@ -431,10 +431,10 @@ int Defender::calculateDefenseUnitPosition(int targetX, int targetY, int index) 
 			int randAngle = directAngleToHub + _vm->_rnd.getRandomNumber(179) - 90;
 			int randDist = _vm->_rnd.getRandomNumber(109) + 40;
 
-			int x = targetX + randDist * cos(degToRad(randAngle));
-			int y = targetY + randDist * sin(degToRad(randAngle));
+			int x = targetX + randDist * cos(_ai->degToRad(randAngle));
+			int y = targetY + randDist * sin(_ai->degToRad(randAngle));
 
-			int powAngle = getPowerAngleFromPoint(hubX, hubY, x, y, 20);
+			int powAngle = _ai->getPowerAngleFromPoint(hubX, hubY, x, y, 20);
 
 			if (powAngle < 0)
 				continue;
@@ -443,7 +443,7 @@ int Defender::calculateDefenseUnitPosition(int targetX, int targetY, int index) 
 			int angle = powAngle - (power * 360);
 
 			int coords = 0;
-			coords = simulateBuildingLaunch(hubX, hubY, power, angle, 100, 0);
+			coords = _ai->simulateBuildingLaunch(hubX, hubY, power, angle, 100, 0);
 
 			//if valid, return
 			if (coords > 0) {
@@ -451,28 +451,28 @@ int Defender::calculateDefenseUnitPosition(int targetX, int targetY, int index) 
 
 				setSourceX(hubX);
 				setSourceY(hubY);
-				setTargetX((x + getMaxX()) % getMaxX());
-				setTargetY((y + getMaxY()) % getMaxY());
+				setTargetX((x + _ai->getMaxX()) % _ai->getMaxX());
+				setTargetY((y + _ai->getMaxY()) % _ai->getMaxY());
 				setSourceUnit(hubArray[i]);
 
-				int unitsArray2 = getUnitsWithinRadius(targetX + 5, targetY, 200);
+				int unitsArray2 = _ai->getUnitsWithinRadius(targetX + 5, targetY, 200);
 				int shieldCount = 0;
 
 				for (int k = 0; k < 200; k++) {
 					int thisUnit = _vm->_moonbase->readFromArray(unitsArray2, 0, k);
 
 					if (thisUnit) {
-						if ((getBuildingType(thisUnit) == BUILDING_SHIELD) && (getBuildingOwner(thisUnit) == currentPlayer))
+						if ((_ai->getBuildingType(thisUnit) == BUILDING_SHIELD) && (_ai->getBuildingOwner(thisUnit) == currentPlayer))
 							shieldCount++;
 
-						if ((getBuildingType(thisUnit) == BUILDING_BRIDGE) && (getBuildingOwner(thisUnit) == currentPlayer)) {
+						if ((_ai->getBuildingType(thisUnit) == BUILDING_BRIDGE) && (_ai->getBuildingOwner(thisUnit) == currentPlayer)) {
 							shieldCount--;
 							shieldCount = MAX(-1, shieldCount);
 						}
 					}
 				}
 
-				if ((_vm->_rnd.getRandomNumber((int)pow(3.0f, shieldCount + 1) - 1) == 0) && (getPlayerEnergy() > 6))
+				if ((_vm->_rnd.getRandomNumber((int)pow(3.0f, shieldCount + 1) - 1) == 0) && (_ai->getPlayerEnergy() > 6))
 					setUnit(ITEM_SHIELD);
 				else
 					setUnit(ITEM_ANTIAIR);
@@ -486,11 +486,11 @@ int Defender::calculateDefenseUnitPosition(int targetX, int targetY, int index) 
 
 			if (coords < 0) {
 				//drop a bridge for the cord
-				int yCoord  = -coords / getMaxX();
-				int xCoord = -coords - (yCoord * getMaxX());
+				int yCoord  = -coords / _ai->getMaxX();
+				int xCoord = -coords - (yCoord * _ai->getMaxX());
 
-				if (checkIfWaterState(xCoord, yCoord)) {
-					int terrainSquareSize = getTerrainSquareSize();
+				if (_ai->checkIfWaterState(xCoord, yCoord)) {
+					int terrainSquareSize = _ai->getTerrainSquareSize();
 					xCoord = ((xCoord / terrainSquareSize * terrainSquareSize) + (terrainSquareSize / 2));
 					yCoord = ((yCoord / terrainSquareSize * terrainSquareSize) + (terrainSquareSize / 2));
 
@@ -502,8 +502,8 @@ int Defender::calculateDefenseUnitPosition(int targetX, int targetY, int index) 
 					setTargetX(x);
 					setTargetY(y);
 
-					int nextUnit = getClosestUnit(x, y, 480, getCurrentPlayer(), 1, BUILDING_MAIN_BASE, 1, 120);
-					powAngle = getPowerAngleFromPoint(getHubX(nextUnit), getHubY(nextUnit), x, y, 15);
+					int nextUnit = _ai->getClosestUnit(x, y, 480, _ai->getCurrentPlayer(), 1, BUILDING_MAIN_BASE, 1, 120);
+					powAngle = _ai->getPowerAngleFromPoint(_ai->getHubX(nextUnit), _ai->getHubY(nextUnit), x, y, 15);
 
 					powAngle = abs(powAngle);
 					power = powAngle / 360;
@@ -529,8 +529,8 @@ int Defender::calculateDefenseUnitPosition(int targetX, int targetY, int index) 
 	do {
 		int sourceHub = hubArray[_vm->_rnd.getRandomNumber(hubIndex - 1)];
 
-		setSourceX(getHubX(sourceHub));
-		setSourceY(getHubY(sourceHub));
+		setSourceX(_ai->getHubX(sourceHub));
+		setSourceY(_ai->getHubY(sourceHub));
 		setSourceUnit(sourceHub);
 		setUnit(ITEM_HUB);
 		setPower(_vm->_rnd.getRandomNumber(299) + 200);
@@ -539,12 +539,12 @@ int Defender::calculateDefenseUnitPosition(int targetX, int targetY, int index) 
 
 		if (count > (NUM_HUBS * 3)) break;
 
-		coords = simulateBuildingLaunch(getSourceX(), getSourceY(), getPower(), getAngle(), 100, 0);
+		coords = _ai->simulateBuildingLaunch(getSourceX(), getSourceY(), getPower(), getAngle(), 100, 0);
 	} while (coords <= 0);
 
 	if (coords > 0) {
-		setTargetX(coords % getMaxX());
-		setTargetY(coords / getMaxX());
+		setTargetX(coords % _ai->getMaxX());
+		setTargetY(coords / _ai->getMaxX());
 	} else {
 		setTargetX(0);
 		setTargetY(0);

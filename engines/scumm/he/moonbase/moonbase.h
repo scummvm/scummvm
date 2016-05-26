@@ -29,6 +29,8 @@
 
 namespace Scumm {
 
+class AI;
+
 class Moonbase {
 public:
 	Moonbase(ScummEngine_v71he *vm);
@@ -65,6 +67,8 @@ public:
 	int _fowSentinelImage;
 	int _fowSentinelState;
 	uint32 _fowSentinelConditionBits;
+
+	AI *_ai;
 
 private:
 	ScummEngine_v71he *_vm;

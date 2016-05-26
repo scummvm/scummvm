@@ -20,6 +20,8 @@
  *
  */
 
+#include "scumm/he/intern_he.h"
+#include "scumm/he/moonbase/moonbase.h"
 #include "scumm/he/moonbase/ai_traveller.h"
 #include "scumm/he/moonbase/ai_main.h"
 
@@ -32,7 +34,7 @@ int Traveller::_maxDist = 0;
 int Traveller::_numToGen = 0;
 int Traveller::_sizeAngleStep = 0;
 
-Traveller::Traveller() {
+Traveller::Traveller(AI *ai) : _ai(ai) {
 	_waterFlag = 0;
 	setValueG(0);
 	unsetDisabled();
@@ -46,7 +48,7 @@ Traveller::Traveller() {
 	_waterDestY = 0;
 }
 
-Traveller::Traveller(int originX, int originY) {
+Traveller::Traveller(int originX, int originY, AI *ai) : _ai(ai) {
 	_waterFlag = 0;
 	setValueG(0);
 	unsetDisabled();
@@ -64,7 +66,7 @@ Traveller::Traveller(int originX, int originY) {
 }
 
 void Traveller::adjustPosX(int offsetX) {
-	int maxX = getMaxX();
+	int maxX = _ai->getMaxX();
 	int deltaX = _posX + offsetX;
 
 	if (deltaX < 0) _posX = maxX + deltaX;
@@ -73,7 +75,7 @@ void Traveller::adjustPosX(int offsetX) {
 }
 
 void Traveller::adjustPosY(int offsetY) {
-	int maxY = getMaxX();
+	int maxY = _ai->getMaxX();
 	int deltaY = _posY + offsetY;
 
 	if (deltaY < 0) _posY = maxY + deltaY;
@@ -89,7 +91,7 @@ void Traveller::adjustXY(int offsetX, int offsetY) {
 float Traveller::calcH() {
 	float retVal = 0;
 	// Calc dist from here to target
-	retVal = getDistance(_posX, _posY, _targetPosX, _targetPosY);
+	retVal = _ai->getDistance(_posX, _posY, _targetPosX, _targetPosY);
 	// Divide by _maxDist to get minimum number of jumps to goal
 	retVal /= static_cast<float>(_maxDist);
 
@@ -98,7 +100,7 @@ float Traveller::calcH() {
 
 int Traveller::numChildrenToGen() {
 	if (!_numToGen)
-		_numToGen = getAnimSpeed() + 2;
+		_numToGen = _ai->getAnimSpeed() + 2;
 
 	return _numToGen;
 }
@@ -111,7 +113,7 @@ IContainedObject *Traveller::createChildObj(int index, int &completionFlag) {
 
 	nodeCount++;
 
-	Traveller *retTraveller = new Traveller;
+	Traveller *retTraveller = new Traveller(_ai);
 
 	static int dir, angle, power;
 
@@ -119,14 +121,14 @@ IContainedObject *Traveller::createChildObj(int index, int &completionFlag) {
 		// Calculate angle between here and target
 		int directAngle = 0;
 
-		if (getEnergyHogType())
-			directAngle = calcAngle(_posX, _posY, _targetPosX, _targetPosY, 1);
+		if (_ai->getEnergyHogType())
+			directAngle = _ai->calcAngle(_posX, _posY, _targetPosX, _targetPosY, 1);
 		else
-			directAngle = calcAngle(_posX, _posY, _targetPosX, _targetPosY);
+			directAngle = _ai->calcAngle(_posX, _posY, _targetPosX, _targetPosY);
 
 		// Calculate the offset angle for this index
 		if (!_sizeAngleStep)
-			_sizeAngleStep = 52 - (getAnimSpeed() * 7);
+			_sizeAngleStep = 52 - (_ai->getAnimSpeed() * 7);
 
 		dir = _sizeAngleStep * ((static_cast<int>(index / NUM_POWER_STEPS) + 1) >> 1);
 		// Calculate the sign value for the offset for this index
@@ -136,12 +138,12 @@ IContainedObject *Traveller::createChildObj(int index, int &completionFlag) {
 
 		// Calculate power for this index
 		int maxPower = 0;
-		int directDist = getDistance(_posX, _posY, _targetPosX, _targetPosY);
+		int directDist = _ai->getDistance(_posX, _posY, _targetPosX, _targetPosY);
 
 		if (directDist > _maxDist + 120)
-			maxPower = getMaxPower();
+			maxPower = _ai->getMaxPower();
 		else
-			maxPower = (static_cast<float>(directDist) / static_cast<float>(_maxDist + 120)) * getMaxPower();
+			maxPower = (static_cast<float>(directDist) / static_cast<float>(_maxDist + 120)) * _ai->getMaxPower();
 
 		maxPower -= 70;
 		power = maxPower * (1 - ((index % NUM_POWER_STEPS) * SIZE_POWER_STEP));
@@ -155,7 +157,7 @@ IContainedObject *Traveller::createChildObj(int index, int &completionFlag) {
 	int coords = 0;
 
 	if (!(index % NUM_POWER_STEPS) || (!lastSuccessful)) {
-		coords = simulateBuildingLaunch(_posX, _posY, power, angle, 10, 0);
+		coords = _ai->simulateBuildingLaunch(_posX, _posY, power, angle, 10, 0);
 		lastSuccessful = 0;
 	} else {
 		completionState = 1;
@@ -172,34 +174,34 @@ IContainedObject *Traveller::createChildObj(int index, int &completionFlag) {
 		completionState = 1;
 	}
 
-	int whoseTurn = getCurrentPlayer();
-	int maxX = getMaxX();
+	int whoseTurn = _ai->getCurrentPlayer();
+	int maxX = _ai->getMaxX();
 
 	// Check new position to see if landing is clear
 	if (coords > 0) {
 		int yCoord = coords / maxX;
 		int xCoord = coords - (yCoord * maxX);
 
-		int terrain = getTerrain(xCoord, yCoord);
+		int terrain = _ai->getTerrain(xCoord, yCoord);
 		assert(terrain == TERRAIN_TYPE_GOOD);
 
-		float pwr = getMinPower() * .3;
+		float pwr = _ai->getMinPower() * .3;
 		float cosine = cos((static_cast<float>(angle) / 360) * (2 * M_PI));
 		float sine = sin((static_cast<float>(angle) / 360) * (2 * M_PI));
 		int xParam = xCoord + (pwr * cosine);
 		int yParam = yCoord + (pwr * sine);
 
 		if (xParam < 0)
-			xParam += getMaxX();
-		else if (xParam > getMaxX())
-			xParam -= getMaxX();
+			xParam += _ai->getMaxX();
+		else if (xParam > _ai->getMaxX())
+			xParam -= _ai->getMaxX();
 
 		if (yParam < 0)
-			yParam += getMaxY();
-		else if (yParam > getMaxY())
-			yParam -= getMaxY();
+			yParam += _ai->getMaxY();
+		else if (yParam > _ai->getMaxY())
+			yParam -= _ai->getMaxY();
 
-		if (checkIfWaterState(xParam, yParam)) {
+		if (_ai->checkIfWaterState(xParam, yParam)) {
 			delete retTraveller;
 			return NULL;
 		}
@@ -208,7 +210,7 @@ IContainedObject *Traveller::createChildObj(int index, int &completionFlag) {
 		retTraveller->setPosX(xCoord);
 
 		// Iterate through the previous action list, making sure this one isn't on it
-		for (intVecItr i = (lastXCoord[whoseTurn]).begin(), j = (lastYCoord[whoseTurn]).begin(); i != (lastXCoord[whoseTurn]).end(); i++, j++) {
+		for (Common::Array<int>::iterator i = (_ai->lastXCoord[whoseTurn]).begin(), j = (_ai->lastYCoord[whoseTurn]).begin(); i != (_ai->lastXCoord[whoseTurn]).end(); i++, j++) {
 			// Check if this shot is the same as the last time we tried
 			if ((*i == retTraveller->getPosX()) && (*j == retTraveller->getPosY())) {
 				retTraveller->setDisabled();
@@ -224,8 +226,8 @@ IContainedObject *Traveller::createChildObj(int index, int &completionFlag) {
 		int xCoord = -coords - (yCoord * maxX);
 
 		// If landing fault is because of water, add 1 extra to g and turn on water flag.  Also set coords, and adjust power to water fault location
-		if (checkIfWaterState(xCoord, yCoord)) {
-			int terrainSquareSize = getTerrainSquareSize();
+		if (_ai->checkIfWaterState(xCoord, yCoord)) {
+			int terrainSquareSize = _ai->getTerrainSquareSize();
 			xCoord = ((xCoord / terrainSquareSize * terrainSquareSize) + (terrainSquareSize / 2));
 			yCoord = ((yCoord / terrainSquareSize * terrainSquareSize) + (terrainSquareSize / 2));
 
@@ -234,10 +236,10 @@ IContainedObject *Traveller::createChildObj(int index, int &completionFlag) {
 			retTraveller->setPosX(xCoord + (terrainSquareSize * 1.414 * (xDist / (abs(xDist) + 1))));
 			retTraveller->setPosY(yCoord + (terrainSquareSize * 1.414 * (yDist / (abs(yDist) + 1))));
 
-			int closestHub = getClosestUnit(retTraveller->getPosX(), retTraveller->getPosY(), getMaxX(), getCurrentPlayer(), 1, BUILDING_MAIN_BASE, 1, 110);
+			int closestHub = _ai->getClosestUnit(retTraveller->getPosX(), retTraveller->getPosY(), _ai->getMaxX(), _ai->getCurrentPlayer(), 1, BUILDING_MAIN_BASE, 1, 110);
 
-			retTraveller->setWaterSourceX(getHubX(closestHub));
-			retTraveller->setWaterSourceY(getHubY(closestHub));
+			retTraveller->setWaterSourceX(_ai->getHubX(closestHub));
+			retTraveller->setWaterSourceY(_ai->getHubY(closestHub));
 			retTraveller->setWaterDestX(retTraveller->getPosX());
 			retTraveller->setWaterDestY(retTraveller->getPosY());
 
@@ -258,7 +260,7 @@ IContainedObject *Traveller::createChildObj(int index, int &completionFlag) {
 }
 
 int Traveller::checkSuccess() {
-	if (getDistance(_posX + 1, _posY, _targetPosX, _targetPosY) < _maxDist)
+	if (_ai->getDistance(_posX + 1, _posY, _targetPosX, _targetPosY) < _maxDist)
 		return SUCCESS;
 
 	return 0;

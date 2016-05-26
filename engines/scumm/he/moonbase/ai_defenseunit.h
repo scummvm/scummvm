@@ -25,6 +25,8 @@
 
 namespace Scumm {
 
+class AI;
+
 enum {
 	DUT_ANTI_AIR = 1,
 	DUT_SHIELD = 2,
@@ -53,9 +55,12 @@ private:
 	int _armor;
 	int _cost;
 
+protected:
+	AI *_ai;
+
 public:
-	DefenseUnit();
-	DefenseUnit(DefenseUnit *inUnit);
+	DefenseUnit(AI *ai);
+	DefenseUnit(DefenseUnit *inUnit, AI *ai);
 
 	virtual ~DefenseUnit();
 
@@ -90,8 +95,8 @@ class AntiAirUnit : public DefenseUnit {
 private:
 
 public:
-	AntiAirUnit();
-	AntiAirUnit(DefenseUnit *inUnit);
+	AntiAirUnit(AI *ai);
+	AntiAirUnit(DefenseUnit *inUnit, AI *ai);
 	int getType() const { return DUT_ANTI_AIR; }
 	Common::Point *createTargetPos(int index, int distance, int weaponType, int sourceX, int sourceY);
 	int selectWeapon(int index);
@@ -101,8 +106,8 @@ class ShieldUnit : public DefenseUnit {
 private:
 
 public:
-	ShieldUnit();
-	ShieldUnit(DefenseUnit *inUnit);
+	ShieldUnit(AI *ai);
+	ShieldUnit(DefenseUnit *inUnit, AI *ai);
 	int getType() const { return DUT_SHIELD; }
 	Common::Point *createTargetPos(int index, int distance, int weaponType, int sourceX, int sourceY);
 	int selectWeapon(int index);
@@ -112,8 +117,8 @@ class MineUnit : public DefenseUnit {
 private:
 
 public:
-	MineUnit();
-	MineUnit(DefenseUnit *inUnit);
+	MineUnit(AI *ai);
+	MineUnit(DefenseUnit *inUnit, AI *ai);
 	int getType() const { return DUT_MINE; }
 	Common::Point *createTargetPos(int index, int distance, int weaponType, int sourceX, int sourceY);
 	int selectWeapon(int index);
@@ -123,8 +128,8 @@ class HubUnit : public DefenseUnit {
 private:
 
 public:
-	HubUnit();
-	HubUnit(DefenseUnit *inUnit);
+	HubUnit(AI *ai);
+	HubUnit(DefenseUnit *inUnit, AI *ai);
 	int getType() const { return DUT_HUB; }
 	Common::Point *createTargetPos(int index, int distance, int weaponType, int sourceX, int sourceY);
 	int selectWeapon(int index);
@@ -134,8 +139,8 @@ class TowerUnit : public DefenseUnit {
 private:
 
 public:
-	TowerUnit();
-	TowerUnit(DefenseUnit *inUnit);
+	TowerUnit(AI *ai);
+	TowerUnit(DefenseUnit *inUnit, AI *ai);
 	int getType() const { return DUT_TOWER; }
 	Common::Point *createTargetPos(int index, int distance, int weaponType, int sourceX, int sourceY);
 	int selectWeapon(int index);
@@ -145,8 +150,8 @@ class BridgeUnit : public DefenseUnit {
 private:
 
 public:
-	BridgeUnit();
-	BridgeUnit(DefenseUnit *inUnit);
+	BridgeUnit(AI *ai);
+	BridgeUnit(DefenseUnit *inUnit, AI *ai);
 	int getType() const { return DUT_BRIDGE; }
 	Common::Point *createTargetPos(int index, int distance, int weaponType, int sourceX, int sourceY);
 	int selectWeapon(int index);
@@ -156,8 +161,8 @@ class EnergyUnit : public DefenseUnit {
 private:
 
 public:
-	EnergyUnit();
-	EnergyUnit(DefenseUnit *inUnit);
+	EnergyUnit(AI *ai);
+	EnergyUnit(DefenseUnit *inUnit, AI *ai);
 	int getType() const { return DUT_ENERGY; }
 	Common::Point *createTargetPos(int index, int distance, int weaponType, int sourceX, int sourceY);
 	int selectWeapon(int index);
@@ -167,8 +172,8 @@ class OffenseUnit : public DefenseUnit {
 private:
 
 public:
-	OffenseUnit();
-	OffenseUnit(DefenseUnit *inUnit);
+	OffenseUnit(AI *ai);
+	OffenseUnit(DefenseUnit *inUnit, AI *ai);
 	int getType() const { return DUT_OFFENSE; }
 	Common::Point *createTargetPos(int index, int distance, int weaponType, int sourceX, int sourceY);
 	int selectWeapon(int index);
@@ -178,8 +183,8 @@ class CrawlerUnit : public DefenseUnit {
 private:
 
 public:
-	CrawlerUnit();
-	CrawlerUnit(DefenseUnit *inUnit);
+	CrawlerUnit(AI *ai);
+	CrawlerUnit(DefenseUnit *inUnit, AI *ai);
 	int getType() const { return DUT_CRAWLER; }
 	Common::Point *createTargetPos(int index, int distance, int weaponType, int sourceX, int sourceY);
 	int selectWeapon(int index);

@@ -44,10 +44,10 @@ private:
 	int _unitType;
 	int _shotPosX, _shotPosY;
 	Common::Array<DefenseUnit *> _enemyDefenses;
-
+	AI *_ai;
 
 public:
-	Sortie() { _unitType = 0; _shotPosX = _shotPosY = 0; }
+	Sortie(AI *ai) { _ai = ai; _unitType = 0; _shotPosX = _shotPosY = 0; }
 	virtual ~Sortie();
 
 	static void setSourcePos(int x, int y) {
@@ -109,8 +109,10 @@ private:
 	int _power;
 	int _angle;
 	int _unit;
+	AI *_ai;
 
 public:
+	Defender(AI *ai) : _ai(ai) {}
 	void setSourceX(int sourceX) { _sourceX = sourceX; }
 	void setSourceY(int sourceY) { _sourceY = sourceY; }
 	void setTargetX(int targetX) { _targetX = targetX; }

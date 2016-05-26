@@ -20,6 +20,9 @@
  *
  */
 
+#include "scumm/he/intern_he.h"
+
+#include "scumm/he/moonbase/moonbase.h"
 #include "scumm/he/moonbase/ai_tree.h"
 #include "scumm/he/moonbase/ai_main.h"
 
@@ -29,7 +32,7 @@ static int compareTreeNodes(const void *a, const void *b) {
 	return ((const TreeNode *)a)->value - ((const TreeNode *)b)->value;
 }
 
-Tree::Tree() {
+Tree::Tree(AI *ai) : _ai(ai) {
 	pBaseNode = new Node;
 	_maxDepth = MAX_DEPTH;
 	_maxNodes = MAX_NODES;
@@ -39,7 +42,7 @@ Tree::Tree() {
 	_currentMap = new Common::SortedArray<TreeNode *>(compareTreeNodes);
 }
 
-Tree::Tree(IContainedObject *contents) {
+Tree::Tree(IContainedObject *contents, AI *ai) : _ai(ai) {
 	pBaseNode = new Node;
 	pBaseNode->setContainedObject(contents);
 	_maxDepth = MAX_DEPTH;
@@ -50,7 +53,7 @@ Tree::Tree(IContainedObject *contents) {
 	_currentMap = new Common::SortedArray<TreeNode *>(compareTreeNodes);
 }
 
-Tree::Tree(IContainedObject *contents, int maxDepth) {
+Tree::Tree(IContainedObject *contents, int maxDepth, AI *ai) : _ai(ai) {
 	pBaseNode = new Node;
 	pBaseNode->setContainedObject(contents);
 	_maxDepth = maxDepth;
@@ -61,7 +64,7 @@ Tree::Tree(IContainedObject *contents, int maxDepth) {
 	_currentMap = new Common::SortedArray<TreeNode *>(compareTreeNodes);
 }
 
-Tree::Tree(IContainedObject *contents, int maxDepth, int maxNodes) {
+Tree::Tree(IContainedObject *contents, int maxDepth, int maxNodes, AI *ai) : _ai(ai) {
 	pBaseNode = new Node;
 	pBaseNode->setContainedObject(contents);
 	_maxDepth = maxDepth;
@@ -84,7 +87,7 @@ void Tree::duplicateTree(Node *sourceNode, Node *destNode) {
 	}
 }
 
-Tree::Tree(const Tree *sourceTree) {
+Tree::Tree(const Tree *sourceTree, AI *ai) : _ai(ai) {
 	pBaseNode = new Node(sourceTree->getBaseNode());
 	_maxDepth = sourceTree->getMaxDepth();
 	_maxNodes = sourceTree->getMaxNodes();
@@ -181,7 +184,7 @@ Node *Tree::aStarSearch_singlePass() {
 	static int maxTime = 0;
 
 	if (_currentChildIndex == 1) {
-		maxTime = getPlayerMaxTime();
+		maxTime = _ai->getPlayerMaxTime();
 	}
 
 	if (_currentChildIndex) {
@@ -194,7 +197,7 @@ Node *Tree::aStarSearch_singlePass() {
 		_currentMap->erase(_currentMap->begin());
 	}
 
-	if ((_currentNode->getDepth() < _maxDepth) && (Node::getNodeCount() < _maxNodes) && ((!maxTime) || (getTimerValue(3) < maxTime))) {
+	if ((_currentNode->getDepth() < _maxDepth) && (Node::getNodeCount() < _maxNodes) && ((!maxTime) || (_ai->getTimerValue(3) < maxTime))) {
 		// Generate nodes
 		_currentChildIndex = _currentNode->generateChildren();
 

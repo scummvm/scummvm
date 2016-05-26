@@ -31,6 +31,8 @@ namespace Scumm {
 const int MAX_DEPTH = 100;
 const int MAX_NODES = 1000000;
 
+class AI;
+
 struct TreeNode {
 	float value;
 	Node *node;
@@ -50,12 +52,14 @@ private:
 	Common::SortedArray<TreeNode *> *_currentMap;
 	Node *_currentNode;
 
+	AI *_ai;
+
 public:
-	Tree();
-	Tree(IContainedObject *contents);
-	Tree(IContainedObject *contents, int maxDepth);
-	Tree(IContainedObject *contents, int maxDepth, int maxNodes);
-	Tree(const Tree *sourceTree);
+	Tree(AI *ai);
+	Tree(IContainedObject *contents, AI *ai);
+	Tree(IContainedObject *contents, int maxDepth, AI *ai);
+	Tree(IContainedObject *contents, int maxDepth, int maxNodes, AI *ai);
+	Tree(const Tree *sourceTree, AI *ai);
 	~Tree();
 
 	void duplicateTree(Node *sourceNode, Node *destNode);

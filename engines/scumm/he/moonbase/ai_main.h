@@ -23,6 +23,7 @@
 #ifndef SCUMM_HE_MOONBASE_AI_MAIN_H
 #define SCUMM_HE_MOONBASE_AI_MAIN_H
 
+#include "common/array.h"
 #include "scumm/he/moonbase/ai_tree.h"
 
 namespace Scumm {
@@ -30,8 +31,6 @@ namespace Scumm {
 class ScummEngine_v90he;
 
 extern ScummEngine_v90he *_vm;
-
-typedef Common::Array<int>::iterator intVecItr;
 
 enum {
 	TERRAIN_TYPE_GOOD = 0,
@@ -84,98 +83,114 @@ enum {
 	MIN_DIST = 108
 };
 
-void resetAI(ScummEngine_v90he *vm);
-void cleanUpAI();
-void setAIType(const int paramCount, const int32 *params);
-int masterControlProgram(const int paramCount, const int32 *params);
+class AI {
+public:
+	void resetAI(ScummEngine_v90he *vm);
+	void cleanUpAI();
+	void setAIType(const int paramCount, const int32 *params);
+	int masterControlProgram(const int paramCount, const int32 *params);
 
-int chooseBehavior();
-int chooseTarget(int behavior);
+private:
+	int chooseBehavior();
+	int chooseTarget(int behavior);
 
-Tree *initApproachTarget(int targetX, int targetY, Node **retNode);
-int *approachTarget(Tree *myTree, int &x, int &y, Node **currentNode);
-Tree *initAcquireTarget(int targetX, int targetY, Node **retNode);
-int *acquireTarget(int targetX, int targetY);
-int *acquireTarget(int targetX, int targetY, Tree *myTree, int &errorCode);
-int *offendTarget(int &targetX, int &targetY, int index);
-int *defendTarget(int &targetX, int &targetY, int index);
-int *energizeTarget(int &targetX, int &targetY, int index);
+	Tree *initApproachTarget(int targetX, int targetY, Node **retNode);
+	int *approachTarget(Tree *myTree, int &x, int &y, Node **currentNode);
+	Tree *initAcquireTarget(int targetX, int targetY, Node **retNode);
+	int *acquireTarget(int targetX, int targetY);
+	int *acquireTarget(int targetX, int targetY, Tree *myTree, int &errorCode);
+	int *offendTarget(int &targetX, int &targetY, int index);
+	int *defendTarget(int &targetX, int &targetY, int index);
+	int *energizeTarget(int &targetX, int &targetY, int index);
 
-int getClosestUnit(int x, int y, int radius, int player, int alignment, int unitType, int checkUnitEnabled);
-int getClosestUnit(int x, int y, int radius, int player, int alignment, int unitType, int checkUnitEnabled, int minDist);
+public:
+	int getClosestUnit(int x, int y, int radius, int player, int alignment, int unitType, int checkUnitEnabled);
+	int getClosestUnit(int x, int y, int radius, int player, int alignment, int unitType, int checkUnitEnabled, int minDist);
 
-int getDistance(int originX, int originY, int endX, int endY);
-int calcAngle(int originX, int originY, int endX, int endY);
-int calcAngle(int originX, int originY, int endX, int endY, int noWrapFlag);
-int getTerrain(int x, int y);
-int getHubX(int hub);
-int getHubY(int hub);
-int getMaxX();
-int getMaxY();
-int getCurrentPlayer();
-int getMaxPower();
-int getMinPower();
-int getTerrainSquareSize();
-int getBuildingOwner(int building);
-int getBuildingState(int building);
-int getBuildingType(int building);
-int getBuildingArmor(int building);
-int getBuildingWorth(int building);
-int getEnergyPoolsArray();
-int getCoordinateVisibility(int x, int y, int playerNum);
-int getUnitVisibility(int unit, int playerNum);
-int getEnergyPoolVisibility(int pool, int playerNum);
-int getNumberOfPools();
-int getNumberOfPlayers();
-int getPlayerEnergy();
-int getPlayerMaxTime();
-int getWindXSpeed();
-int getWindYSpeed();
-int getTotalWindSpeed();
-int getWindXSpeedMax();
-int getWindYSpeedMax();
-int getBigXSize();
-int getBigYSize();
-int getEnergyPoolWidth(int pool);
-int getBuildingMaxArmor(int building);
-int getTimerValue(int timerNum);
-int getLastAttacked(int &x, int &y);
-int getPlayerTeam(int player);
-int getBuildingTeam(int building);
-int getFOW();
-int getAnimSpeed();
-int getBuildingStackPtr();
-int getTurnCounter();
+	int getDistance(int originX, int originY, int endX, int endY);
+	int calcAngle(int originX, int originY, int endX, int endY);
+	int calcAngle(int originX, int originY, int endX, int endY, int noWrapFlag);
+	int getTerrain(int x, int y);
 
-int getGroundAltitude(int x, int y);
-int checkForCordOverlap(int xStart, int yStart, int affectRadius, int simulateFlag);
-int checkForAngleOverlap(int unit, int angle);
-int estimateNextRoundEnergy(int player);
-int checkForUnitOverlap(int x, int y, int radius, int ignoredUnit);
-int checkForEnergySquare(int x, int y);
-int aiChat();
+	int getHubX(int hub);
+	int getHubY(int hub);
+	int getMaxX();
+	int getMaxY();
 
-int simulateBuildingLaunch(int x, int y, int power, int angle, int numSteps, int isEnergy);
-int simulateWeaponLaunch(int x, int y, int power, int angle, int numSteps);
-int fakeSimulateWeaponLaunch(int x, int y, int power, int angle);
+	int getCurrentPlayer();
+	int getMaxPower();
+	int getMinPower();
+	int getTerrainSquareSize();
+	int getBuildingOwner(int building);
+	int getBuildingState(int building);
+	int getBuildingType(int building);
+	int getBuildingArmor(int building);
+	int getBuildingMaxArmor(int building);
+	int getBuildingWorth(int building);
+	int getBuildingTeam(int building);
 
-int getPowerAngleFromPoint(int originX, int originY, int endX, int endY, int threshold, int olFlag);
-int getPowerAngleFromPoint(int originX, int originY, int endX, int endY, int threshold);
-int checkIfWaterState(int x, int y);
-int checkIfWaterSquare(int x, int y);
-int getUnitsWithinRadius(int x, int y, int radius);
-int getLandingPoint(int x, int y, int power, int angle);
-int getEnemyUnitsVisible(int playerNum);
+	int getPlayerEnergy();
+	int getPlayerMaxTime();
+	int getTimerValue(int timerNum);
+	int getPlayerTeam(int player);
 
-float degToRad(float degrees);
-void limitLocation(int &a, int &b, int c, int d);
-int energyPoolSize(int pool);
-int getMaxCollectors(int pool);
+	int getAnimSpeed();
 
-int getEnergyHogType();
+	int simulateBuildingLaunch(int x, int y, int power, int angle, int numSteps, int isEnergy);
 
-extern Common::Array<int> lastXCoord[];
-extern Common::Array<int> lastYCoord[];
+	int getPowerAngleFromPoint(int originX, int originY, int endX, int endY, int threshold, int olFlag);
+	int getPowerAngleFromPoint(int originX, int originY, int endX, int endY, int threshold);
+	int checkIfWaterState(int x, int y);
+	int getUnitsWithinRadius(int x, int y, int radius);
+
+	float degToRad(float degrees);
+
+	int getEnergyHogType();
+
+private:
+	int getEnergyPoolsArray();
+	int getCoordinateVisibility(int x, int y, int playerNum);
+	int getUnitVisibility(int unit, int playerNum);
+	int getEnergyPoolVisibility(int pool, int playerNum);
+	int getNumberOfPools();
+	int getNumberOfPlayers();
+	int getWindXSpeed();
+	int getWindYSpeed();
+	int getTotalWindSpeed();
+	int getWindXSpeedMax();
+	int getWindYSpeedMax();
+	int getBigXSize();
+	int getBigYSize();
+	int getEnergyPoolWidth(int pool);
+	int getLastAttacked(int &x, int &y);
+	int getFOW();
+	int getBuildingStackPtr();
+	int getTurnCounter();
+
+	int getGroundAltitude(int x, int y);
+	int checkForCordOverlap(int xStart, int yStart, int affectRadius, int simulateFlag);
+	int checkForAngleOverlap(int unit, int angle);
+	int estimateNextRoundEnergy(int player);
+	int checkForUnitOverlap(int x, int y, int radius, int ignoredUnit);
+	int checkForEnergySquare(int x, int y);
+	int aiChat();
+
+	int simulateWeaponLaunch(int x, int y, int power, int angle, int numSteps);
+	int fakeSimulateWeaponLaunch(int x, int y, int power, int angle);
+
+	int checkIfWaterSquare(int x, int y);
+
+	int getLandingPoint(int x, int y, int power, int angle);
+	int getEnemyUnitsVisible(int playerNum);
+
+	void limitLocation(int &a, int &b, int c, int d);
+	int energyPoolSize(int pool);
+	int getMaxCollectors(int pool);
+
+public:
+	Common::Array<int> lastXCoord[5];
+	Common::Array<int> lastYCoord[5];
+};
 
 } // End of namespace Scumm
 

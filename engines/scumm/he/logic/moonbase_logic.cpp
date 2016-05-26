@@ -227,22 +227,22 @@ void LogicHEmoonbase::op_ai_test_kludge(int op, int numArgs, int32 *args) {
 
 int LogicHEmoonbase::op_ai_master_control_program(int op, int numArgs, int32 *args) {
 	warning("op_ai_master_control_program()");
-	return masterControlProgram(numArgs, args);
+	return _vm->_moonbase->_ai->masterControlProgram(numArgs, args);
 }
 
 void LogicHEmoonbase::op_ai_reset(int op, int numArgs, int32 *args) {
 	warning("op_ai_reset())");
-	resetAI(_vm);
+	_vm->_moonbase->_ai->resetAI(_vm);
 }
 
 void LogicHEmoonbase::op_ai_set_type(int op, int numArgs, int32 *args) {
 	warning("op_ai_set_type()");
-	setAIType(numArgs, args);
+	_vm->_moonbase->_ai->setAIType(numArgs, args);
 }
 
 void LogicHEmoonbase::op_ai_clean_up(int op, int numArgs, int32 *args) {
 	warning("op_ai_clean_up()");
-	cleanUpAI();
+	_vm->_moonbase->_ai->cleanUpAI();
 }
 
 LogicHE *makeLogicHEmoonbase(ScummEngine_v90he *vm) {
