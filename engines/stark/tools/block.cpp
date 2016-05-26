@@ -33,7 +33,8 @@ Block::Block() :
 		_follower(nullptr),
 		_trueBranch(nullptr),
 		_falseBranch(nullptr),
-		_controlStructure(nullptr) {
+		_controlStructure(nullptr),
+		_infiniteLoopStart(false) {
 
 }
 
@@ -69,6 +70,10 @@ void Block::print() const {
 		}
 	}
 
+	if (_infiniteLoopStart) {
+		debug("infinite loop start: %d", getFirstCommandIndex());
+	}
+
 	if (isCondition() && !_controlStructure) {
 		debug("unrecognized control flow");
 	}
@@ -95,13 +100,18 @@ bool Block::isCondition() const {
 	return _trueBranch != nullptr && _falseBranch != nullptr;
 }
 
-bool Block::hasPredecessor(Block *predecessor) {
-	Common::Array<Block *> visited;
+bool Block::hasPredecessor(Block *predecessor) const {
+	Common::Array<const Block *> visited;
 	return hasPredecessorIntern(visited, predecessor);
 }
 
-bool Block::hasPredecessorIntern(Common::Array<Block *> &visited, Block *predecessor) {
+bool Block::hasPredecessorIntern(Common::Array<const Block *> &visited, Block *predecessor) const {
 	visited.push_back(this);
+
+	if (isInfiniteLoopStart()) {
+		// Don't follow infinite loops
+		return false;
+	}
 
 	for (uint i = 0; i < _predecessors.size(); i++) {
 		if (_predecessors[i] == predecessor) {
@@ -117,13 +127,41 @@ bool Block::hasPredecessorIntern(Common::Array<Block *> &visited, Block *predece
 	return false;
 }
 
+bool Block::hasSuccessor(Block *successor) const {
+	Common::Array<const Block *> visited;
+	return hasSuccessorIntern(visited, successor);
+}
+
+bool Block::hasSuccessorIntern(Common::Array<const Block *> &visited, Block *successor) const {
+	visited.push_back(this);
+
+	if (this == successor) {
+		return true;
+	}
+
+	bool followerHasSuccessor = hasChildSuccessorIntern(visited, _follower, successor);
+	bool trueBranchHasSuccessor = hasChildSuccessorIntern(visited, _trueBranch, successor);
+	bool falseBranchHasSuccessor = hasChildSuccessorIntern(visited, _falseBranch, successor);
+
+	return followerHasSuccessor || trueBranchHasSuccessor || falseBranchHasSuccessor;
+}
+
+bool Block::hasChildSuccessorIntern(Common::Array<const Block *> &visited, Block *child, Block *successor) const {
+	if (!child) {
+		return false;
+	}
+
+	bool alreadyVisited = Common::find(visited.begin(), visited.end(), child) != visited.end();
+	return !alreadyVisited && child->hasSuccessorIntern(visited, successor);
+}
+
 Block *Block::findMergePoint(Block *other) {
 	// TODO: Find the closest merge point? How to define that notion?
-	Common::Array<Block *> visited;
+	Common::Array<const Block *> visited;
 	return findMergePointIntern(visited, other);
 }
 
-Block *Block::findMergePointIntern(Common::Array<Block *> visited, Block *other) {
+Block *Block::findMergePointIntern(Common::Array<const Block *> &visited, Block *other) {
 	visited.push_back(this);
 
 	if (other == this) {
@@ -152,7 +190,7 @@ Block *Block::findMergePointIntern(Common::Array<Block *> visited, Block *other)
 	return nullptr;
 }
 
-Block *Block::findChildMergePoint(Common::Array<Block *> visited, Block *child, Block *other) {
+Block *Block::findChildMergePoint(Common::Array<const Block *> &visited, Block *child, Block *other) const {
 	if (child) {
 		bool alreadyVisited = Common::find(visited.begin(), visited.end(), child) != visited.end();
 		if (!alreadyVisited) {
@@ -163,12 +201,18 @@ Block *Block::findChildMergePoint(Common::Array<Block *> visited, Block *child, 
 	return nullptr;
 }
 
-bool Block::checkAllBranchesConverge(Block *junction) {
-	Common::Array<Block *> visited;
+bool Block::checkAllBranchesConverge(Block *junction) const {
+	// Check if there is at least one path to the junction node
+	if (!hasSuccessor(junction)) {
+		return false;
+	}
+
+	// Check all the successors go to the junction point or loop infinitely
+	Common::Array<const Block *> visited;
 	return checkAllBranchesConvergeIntern(visited, junction);
 }
 
-bool Block::checkAllBranchesConvergeIntern(Common::Array<Block *> visited, Block *junction) {
+bool Block::checkAllBranchesConvergeIntern(Common::Array<const Block *> &visited, Block *junction) const {
 	visited.push_back(this);
 
 	if (this == junction) {
@@ -179,6 +223,11 @@ bool Block::checkAllBranchesConvergeIntern(Common::Array<Block *> visited, Block
 		return false;
 	}
 
+	if (isInfiniteLoopStart()) {
+		// Don't follow infinite loops
+		return false;
+	}
+
 	bool followerConverges = checkChildConvergeIntern(visited, _follower, junction);
 	bool trueBranchConverges = checkChildConvergeIntern(visited, _trueBranch, junction);
 	bool falseBranchConverges = checkChildConvergeIntern(visited, _falseBranch, junction);
@@ -186,7 +235,7 @@ bool Block::checkAllBranchesConvergeIntern(Common::Array<Block *> visited, Block
 	return followerConverges && trueBranchConverges && falseBranchConverges;
 }
 
-bool Block::checkChildConvergeIntern(Common::Array<Block *> visited, Block *child, Block *junction) {
+bool Block::checkChildConvergeIntern(Common::Array<const Block *> &visited, Block *child, Block *junction) const {
 	if (child) {
 		bool alreadyVisited = Common::find(visited.begin(), visited.end(), child) != visited.end();
 		if (!alreadyVisited) {
@@ -225,6 +274,14 @@ ControlStructure *Block::getControlStructure() const {
 	return _controlStructure;
 }
 
+void Block::setInfiniteLoopStart(bool infiniteLoopStart) {
+	_infiniteLoopStart = infiniteLoopStart;
+}
+
+bool Block::isInfiniteLoopStart() const {
+	return _infiniteLoopStart;
+}
+
 Common::Array<CFGCommand *> Block::getLinearCommands() const {
 	if (!hasControlStructure()) {
 		return _commands;
@@ -244,7 +301,7 @@ Common::Array<CFGCommand *> Block::getLinearCommands() const {
 CFGCommand *Block::getConditionCommand() const {
 	if (hasControlStructure()) {
 		// The condition command is always the last one
-		return _commands[_commands.size() - 1];
+		return _commands.back();
 	} else {
 		return nullptr;
 	}

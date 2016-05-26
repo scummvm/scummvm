@@ -83,17 +83,24 @@ public:
 	ControlStructure *getControlStructure() const;
 	void setControlStructure(ControlStructure *controlStructure);
 
+	/** Flag to indicate this block is the first in an unconditional infinite loop */
+	bool isInfiniteLoopStart() const;
+	void setInfiniteLoopStart(bool infiniteLoopStart);
+
 	// Graph query methods
-	bool hasPredecessor(Block *predecessor);
+	bool hasPredecessor(Block *predecessor) const;
+	bool hasSuccessor(Block *successor) const;
 	Block *findMergePoint(Block *other);
-	bool checkAllBranchesConverge(Block *junction);
+	bool checkAllBranchesConverge(Block *junction) const;
 
 private:
-	bool hasPredecessorIntern(Common::Array<Block *> &visited, Block *predecessor);
-	Block *findMergePointIntern(Common::Array<Block *> visited, Block *other);
-	Block *findChildMergePoint(Common::Array<Block *> visited, Block *child, Block *other);
-	bool checkAllBranchesConvergeIntern(Common::Array<Block *> visited, Block *junction);
-	bool checkChildConvergeIntern(Common::Array<Block *> visited, Block *child, Block *junction);
+	bool hasPredecessorIntern(Common::Array<const Block *> &visited, Block *predecessor) const;
+	bool hasSuccessorIntern(Common::Array<const Block *> &visited, Block *successor) const;
+	bool hasChildSuccessorIntern(Common::Array<const Block *> &visited, Block *child, Block *successor) const;
+	Block *findMergePointIntern(Common::Array<const Block *> &visited, Block *other);
+	Block *findChildMergePoint(Common::Array<const Block *> &visited, Block *child, Block *other) const;
+	bool checkAllBranchesConvergeIntern(Common::Array<const Block *> &visited, Block *junction) const;
+	bool checkChildConvergeIntern(Common::Array<const Block *> &visited, Block *child, Block *junction) const;
 
 	uint16 getFirstCommandIndex() const;
 
@@ -105,6 +112,7 @@ private:
 	Common::Array<Block *> _predecessors;
 
 	ControlStructure *_controlStructure;
+	bool _infiniteLoopStart;
 };
 
 struct ControlStructure {

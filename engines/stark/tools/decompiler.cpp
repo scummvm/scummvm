@@ -152,8 +152,31 @@ Block *Decompiler::buildBranchBlocks(CFGCommand *command) {
 }
 
 void Decompiler::analyseControlFlow() {
+	detectInfiniteLoop();
 	detectWhile();
 	detectIf();
+}
+
+void Decompiler::detectInfiniteLoop() {
+	for (uint i = 0; i < _blocks.size(); i++) {
+		Block *block = _blocks[i];
+
+		// Check all paths from the block go back to itself
+		if (block->getFollower()) {
+			bool followerConvergesBack = block->getFollower()->checkAllBranchesConverge(block);
+
+			if (followerConvergesBack) {
+				block->setInfiniteLoopStart(true);
+			}
+		} else if (block->isCondition()) {
+			bool trueBranchConvergesBack = block->getTrueBranch()->checkAllBranchesConverge(block);
+			bool falseBranchConvergesBack = block->getFalseBranch()->checkAllBranchesConverge(block);
+
+			if (trueBranchConvergesBack && falseBranchConvergesBack) {
+				block->setInfiniteLoopStart(true);
+			}
+		}
+	}
 }
 
 void Decompiler::detectWhile() {
@@ -162,6 +185,7 @@ void Decompiler::detectWhile() {
 
 		if (block->hasControlStructure()) continue;
 		if (!block->isCondition()) continue;
+		if (block->isInfiniteLoopStart()) continue; // TODO: This should be handled by checkAllBranchesConverge already
 
 		// Check all paths from the body branch go back to the condition
 		// TODO: If the original had "break" statement, this will not work
@@ -247,8 +271,23 @@ ASTNode *Decompiler::buildAST() {
 }
 
 void Decompiler::buildASTFromBlock(ASTBlock *parent, Block *block, Block *stopBlock) {
-	if (block == stopBlock) {
-		return;
+	if (block->isInfiniteLoopStart()) {
+		bool alreadyVisited = Common::find(_visitedInfiniteLoopStarts.begin(), _visitedInfiniteLoopStarts.end(), block)
+		                      != _visitedInfiniteLoopStarts.end();
+		if (alreadyVisited) {
+			// Don't add the same loop multiple times in the AST
+			return;
+		}
+
+		_visitedInfiniteLoopStarts.push_back(block);
+
+		ASTLoop *loop = new ASTLoop(parent);
+		loop->loopBlock = new ASTBlock(loop);
+		parent->addNode(loop);
+
+		// Hijack the parameters to add the current block to the loop body and continue
+		parent = loop->loopBlock;
+		stopBlock = block;
 	}
 
 	Common::Array<CFGCommand *> commands = block->getLinearCommands();
@@ -272,12 +311,12 @@ void Decompiler::buildASTFromBlock(ASTBlock *parent, Block *block, Block *stopBl
 
 		parent->addNode(astControlStructure);
 
-		if (cfgControlStructure->next) {
+		if (cfgControlStructure->next && cfgControlStructure->next != stopBlock) {
 			buildASTFromBlock(parent, cfgControlStructure->next, stopBlock);
 		}
 	} else {
 		Block *follower = block->getFollower();
-		if (follower) {
+		if (follower && follower != stopBlock) {
 			buildASTFromBlock(parent, follower, stopBlock);
 		}
 	}

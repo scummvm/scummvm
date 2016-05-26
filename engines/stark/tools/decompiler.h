@@ -67,6 +67,7 @@ private:
 
 	// Control flow analysis
 	void analyseControlFlow();
+	void detectInfiniteLoop();
 	void detectWhile();
 	void detectIf();
 
@@ -90,6 +91,7 @@ private:
 	Common::Array<ControlStructure *> _controlStructures;
 
 	ASTNode *_astHead;
+	Common::Array<Block *> _visitedInfiniteLoopStarts;
 };
 
 } // End of namespace Tools

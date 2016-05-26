@@ -237,7 +237,13 @@ ASTLoop::~ASTLoop() {
 }
 
 void ASTLoop::print(uint depth) {
-	Common::String loopHeader = Common::String::format("while (%s%s) {", invertedCondition ? "!" : "", condition->callString().c_str());
+	Common::String loopHeader;
+	if (condition) {
+		loopHeader = Common::String::format("while (%s%s) {", invertedCondition ? "!" : "",
+		                         condition->callString().c_str());
+	} else {
+		loopHeader = "loop {";
+	}
 	printWithDepth(depth, loopHeader);
 
 	loopBlock->print(depth + 1);
@@ -248,7 +254,9 @@ void ASTLoop::print(uint depth) {
 Common::Array<const ASTCommand *> ASTLoop::listCommands(uint16 index) const {
 	Common::Array<const ASTCommand *> list;
 
-	list.push_back(condition->listCommands(index));
+	if (condition) {
+		list.push_back(condition->listCommands(index));
+	}
 	list.push_back(loopBlock->listCommands(index));
 
 	return list;
@@ -276,7 +284,7 @@ void ASTLoop::findSuccessorsIntern(const ASTNode *node, ASTNode **follower, ASTN
 	}
 
 	if (node == loopBlock) {
-		*follower = condition;
+		*follower = condition ? (ASTNode *)condition : (ASTNode *)loopBlock;
 		return;
 	}
 
@@ -284,7 +292,7 @@ void ASTLoop::findSuccessorsIntern(const ASTNode *node, ASTNode **follower, ASTN
 }
 
 const ASTCommand *ASTLoop::getFirstCommand() const {
-	return condition->getFirstCommand();
+	return condition ? condition->getFirstCommand() : loopBlock->getFirstCommand();
 }
 
 } // End of namespace Tools
